@@ -1,0 +1,169 @@
+name: Daily Documentation Update
+
+on:
+  schedule:
+    - cron: '17 8 * * *'  # 8:17 UTC daily
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force full rebuild (skip change detection)'
+        type: boolean
+        default: false
+
+jobs:
+  # ── Job 1: Check for updates, download all languages, commit ──────────
+  check-and-download:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    outputs:
+      changed: ${{ steps.result.outputs.changed }}
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+          lfs: true
+
+      - name: Check sitemap for updates
+        id: sitemap
+        run: |
+          if python3 scripts/check_sitemap.py --basedir .; then
+            echo "updated=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "updated=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Download all languages
+        if: steps.sitemap.outputs.updated == 'true' || inputs.force == true
+        run: |
+          for lang in de en es fr id it ja ko pt ru zh-CN zh-TW; do
+            python3 scripts/download_md.py --basedir . --force --lang "$lang"
+          done
+
+      - name: Check for content changes
+        if: steps.sitemap.outputs.updated == 'true' || inputs.force == true
+        id: check
+        run: |
+          if git diff --quiet -- docs/; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Generate changelog
+        if: steps.check.outputs.changed == 'true'
+        run: python3 scripts/generate_changelog.py --basedir . --no-pdf
+
+      - name: Commit updated docs
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/ .last_sitemap_check CHANGES.md
+          COMMIT_DATE=$(date +%Y-%m-%d)
+          git commit -m "docs: update documentation ${COMMIT_DATE}"
+          git push
+
+      - name: Commit sitemap timestamp only (no content changes)
+        if: steps.sitemap.outputs.updated == 'true' && steps.check.outputs.changed != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .last_sitemap_check
+          git diff --cached --quiet && exit 0
+          git commit -m "chore: update sitemap check timestamp"
+          git push
+
+      - name: Set output
+        id: result
+        run: |
+          if [ "${{ steps.check.outputs.changed }}" = "true" ] || [ "${{ inputs.force }}" = "true" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  # ── Job 2: Build PDFs in parallel (one per language) ──────────────────
+  build-pdfs:
+    needs: check-and-download
+    if: needs.check-and-download.outputs.changed == 'true'
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        lang: [de, en, es, fr, id, it, ja, ko, pt, ru, zh-CN, zh-TW]
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+          lfs: true
+
+      - name: Pull latest docs
+        run: git pull origin main
+
+      - name: Install dependencies
+        run: brew install pandoc weasyprint pymupdf
+
+      - name: Generate PDF
+        run: |
+          python3 scripts/merge_docs.py --lang "${{ matrix.lang }}" --basedir .
+          python3 scripts/generate_pdf.py --lang "${{ matrix.lang }}" --basedir .
+
+      - name: Generate changelog PDF
+        if: matrix.lang == 'en'
+        run: |
+          mkdir -p output
+          python3 -c "
+          import sys; sys.path.insert(0, 'scripts')
+          from generate_changelog import generate_changelog_pdf
+          generate_changelog_pdf('CHANGES.md', 'output')
+          "
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: pdf-${{ matrix.lang }}
+          path: output/*.pdf
+          retention-days: 1
+
+  # ── Job 3: Collect PDFs and deploy to GitHub Pages ────────────────────
+  deploy:
+    needs: build-pdfs
+    runs-on: macos-latest
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          lfs: true
+
+      - name: Download all PDF artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: output
+          pattern: pdf-*
+          merge-multiple: true
+
+      - name: Build site
+        run: |
+          mkdir -p dist
+          cp output/*.pdf dist/
+          brew install pandoc
+          pandoc CHANGES.md -o dist/changes.html --to=html5 --standalone --metadata title="Documentation Changes"
+          cp site/index.html dist/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Documentation</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #fafafa; color: #1a1a2e;
+    display: flex; justify-content: center; padding: 40px 20px;
+  }
+  .container { max-width: 640px; width: 100%; }
+  h1 { font-size: 28px; margin-bottom: 8px; }
+  .subtitle { color: #666; font-size: 15px; margin-bottom: 32px; }
+  .card {
+    background: white; border: 1px solid #e5e5e5; border-radius: 8px;
+    padding: 20px; margin-bottom: 16px;
+  }
+  .card h2 { font-size: 16px; margin-bottom: 12px; color: #D97706; }
+  .download-link {
+    display: block; padding: 10px 16px; margin: 6px 0;
+    background: #f8f8f8; border: 1px solid #e0e0e0; border-radius: 6px;
+    color: #1a6dcc; text-decoration: none; font-size: 14px;
+  }
+  .download-link:hover { background: #f0f0f0; border-color: #ccc; }
+  .links { margin-top: 24px; font-size: 13px; color: #888; }
+  .links a { color: #1a6dcc; }
+  footer { margin-top: 32px; font-size: 12px; color: #aaa; text-align: center; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Claude Code Documentation</h1>
+  <p class="subtitle">Unofficial PDF e-books generated daily from <a href="https://code.claude.com/docs" style="color:#1a6dcc">code.claude.com/docs</a></p>
+
+  <div class="card">
+    <h2>Documentation PDFs</h2>
+    <a class="download-link" href="claude_code_documentation.pdf">English (A5)</a>
+    <a class="download-link" href="claude_code_documentation_zh-tw.pdf">繁體中文 (A5)</a>
+    <a class="download-link" href="claude_code_documentation_zh-cn.pdf">简体中文 (A5)</a>
+    <a class="download-link" href="claude_code_documentation_ja.pdf">日本語 (A5)</a>
+    <a class="download-link" href="claude_code_documentation_de.pdf">Deutsch (A5)</a>
+    <a class="download-link" href="claude_code_documentation_es.pdf">Español (A5)</a>
+    <a class="download-link" href="claude_code_documentation_fr.pdf">Français (A5)</a>
+    <a class="download-link" href="claude_code_documentation_id.pdf">Bahasa Indonesia (A5)</a>
+    <a class="download-link" href="claude_code_documentation_it.pdf">Italiano (A5)</a>
+    <a class="download-link" href="claude_code_documentation_ko.pdf">한국어 (A5)</a>
+    <a class="download-link" href="claude_code_documentation_pt.pdf">Português (A5)</a>
+    <a class="download-link" href="claude_code_documentation_ru.pdf">Русский (A5)</a>
+  </div>
+
+  <div class="card">
+    <h2>Latest Changes</h2>
+    <a class="download-link" href="changes.pdf">Changelog PDF</a>
+    <a class="download-link" href="changes.html">View changelog in browser</a>
+  </div>
+
+  <div class="links">
+    <p><a href="https://github.com/anthropics/claude-code">Claude Code</a> documentation is owned by Anthropic.</p>
+    <p style="margin-top:6px">
+      <a href="https://github.com/bepsvpt/cc-docs">Source repository</a> &middot;
+      <a href="https://github.com/bepsvpt/cc-docs/commits/main/docs">Change history</a>
+    </p>
+  </div>
+
+  <footer>Updated daily by GitHub Actions</footer>
+</div>
+</body>
+</html>

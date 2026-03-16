@@ -1,0 +1,89 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
+# 출력 스타일
+
+> 소프트웨어 엔지니어링 이상의 용도로 Claude Code 적응시키기
+
+출력 스타일을 사용하면 Claude Code의 로컬 스크립트 실행, 파일 읽기/쓰기, TODO 추적과 같은 핵심 기능을 유지하면서 모든 유형의 에이전트로 사용할 수 있습니다.
+
+## 기본 제공 출력 스타일
+
+Claude Code의 **Default** 출력 스타일은 기존 시스템 프롬프트이며, 소프트웨어 엔지니어링 작업을 효율적으로 완료하도록 설계되었습니다.
+
+코드베이스와 Claude의 작동 방식을 가르치는 데 중점을 두는 두 가지 추가 기본 제공 출력 스타일이 있습니다:
+
+* **Explanatory**: 소프트웨어 엔지니어링 작업을 완료하는 동안 교육용 "Insights"를 제공합니다. 구현 선택 사항과 코드베이스 패턴을 이해하는 데 도움이 됩니다.
+
+* **Learning**: 협업 방식의 학습 모드로, Claude는 코딩하면서 "Insights"를 공유할 뿐만 아니라 사용자가 작은 전략적 코드 조각을 직접 작성하도록 요청합니다. Claude Code는 구현할 코드에 `TODO(human)` 마커를 추가합니다.
+
+## 출력 스타일의 작동 방식
+
+출력 스타일은 Claude Code의 시스템 프롬프트를 직접 수정합니다.
+
+* 모든 출력 스타일은 효율적인 출력을 위한 지침(간결한 응답 등)을 제외합니다.
+* 사용자 정의 출력 스타일은 `keep-coding-instructions`가 true가 아닌 한 코딩 관련 지침(테스트를 통한 코드 검증 등)을 제외합니다.
+* 모든 출력 스타일은 시스템 프롬프트 끝에 추가된 자체 사용자 정의 지침을 가집니다.
+* 모든 출력 스타일은 대화 중에 Claude가 출력 스타일 지침을 준수하도록 상기시키는 알림을 트리거합니다.
+
+## 출력 스타일 변경
+
+`/config`를 실행하고 **Output style**을 선택하여 메뉴에서 스타일을 선택합니다. 선택 사항은 [로컬 프로젝트 수준](/ko/settings)의 `.claude/settings.local.json`에 저장됩니다.
+
+메뉴 없이 스타일을 설정하려면 설정 파일에서 `outputStyle` 필드를 직접 편집합니다:
+
+```json  theme={null}
+{
+  "outputStyle": "Explanatory"
+}
+```
+
+출력 스타일은 세션 시작 시 시스템 프롬프트에 설정되므로, 변경 사항은 새 세션을 시작할 때 적용됩니다. 이렇게 하면 시스템 프롬프트가 대화 전체에서 안정적으로 유지되어 프롬프트 캐싱이 지연 시간과 비용을 줄일 수 있습니다.
+
+## 사용자 정의 출력 스타일 만들기
+
+사용자 정의 출력 스타일은 frontmatter와 시스템 프롬프트에 추가될 텍스트가 포함된 Markdown 파일입니다:
+
+```markdown  theme={null}
+---
+name: My Custom Style
+description:
+  A brief description of what this style does, to be displayed to the user
+---
+
+# Custom Style Instructions
+
+You are an interactive CLI tool that helps users with software engineering
+tasks. [Your custom instructions here...]
+
+## Specific Behaviors
+
+[Define how the assistant should behave in this style...]
+```
+
+이러한 파일은 사용자 수준(`~/.claude/output-styles`) 또는 프로젝트 수준(`.claude/output-styles`)에 저장할 수 있습니다.
+
+### Frontmatter
+
+출력 스타일 파일은 메타데이터 지정을 위한 frontmatter를 지원합니다:
+
+| Frontmatter                | 목적                                       | 기본값        |
+| :------------------------- | :--------------------------------------- | :--------- |
+| `name`                     | 출력 스타일의 이름(파일 이름이 아닌 경우)                 | 파일 이름에서 상속 |
+| `description`              | `/config` 선택기에 표시되는 출력 스타일의 설명           | 없음         |
+| `keep-coding-instructions` | Claude Code의 시스템 프롬프트의 코딩 관련 부분을 유지할지 여부 | false      |
+
+## 관련 기능과의 비교
+
+### 출력 스타일 vs. CLAUDE.md vs. --append-system-prompt
+
+출력 스타일은 소프트웨어 엔지니어링에 특정한 Claude Code의 기본 시스템 프롬프트 부분을 완전히 "끕니다". CLAUDE.md와 `--append-system-prompt`는 Claude Code의 기본 시스템 프롬프트를 편집하지 않습니다. CLAUDE.md는 내용을 Claude Code의 기본 시스템 프롬프트 *다음에* 사용자 메시지로 추가합니다. `--append-system-prompt`는 내용을 시스템 프롬프트에 추가합니다.
+
+### 출력 스타일 vs. [Agents](/ko/sub-agents)
+
+출력 스타일은 주 에이전트 루프에 직접 영향을 미치며 시스템 프롬프트에만 영향을 줍니다. 에이전트는 특정 작업을 처리하기 위해 호출되며 사용할 모델, 사용 가능한 도구, 에이전트 사용 시기에 대한 일부 컨텍스트와 같은 추가 설정을 포함할 수 있습니다.
+
+### 출력 스타일 vs. [Skills](/ko/skills)
+
+출력 스타일은 Claude가 응답하는 방식(형식, 톤, 구조)을 수정하며 선택되면 항상 활성화됩니다. Skills는 `/skill-name`으로 호출하거나 관련성이 있을 때 Claude가 자동으로 로드하는 작업별 프롬프트입니다. 일관된 형식 지정 기본 설정에는 출력 스타일을 사용하고, 재사용 가능한 워크플로우 및 작업에는 skills를 사용합니다.

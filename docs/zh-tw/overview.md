@@ -1,0 +1,224 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
+# Claude Code 概述
+
+> Claude Code 是一個代理編碼工具，可以讀取您的程式碼庫、編輯檔案、執行命令，並與您的開發工具整合。可在您的終端、IDE、桌面應用程式和瀏覽器中使用。
+
+Claude Code 是一個由 AI 驅動的編碼助手，可幫助您建立功能、修復錯誤和自動化開發任務。它理解您的整個程式碼庫，並可以跨多個檔案和工具工作以完成任務。
+
+## 開始使用
+
+選擇您的環境以開始使用。大多數介面需要 [Claude 訂閱](https://claude.com/pricing)或 [Anthropic Console](https://console.anthropic.com/) 帳戶。終端 CLI 和 VS Code 也支援[第三方提供商](/zh-TW/third-party-integrations)。
+
+<Tabs>
+  <Tab title="Terminal">
+    功能完整的 CLI，用於直接在終端中使用 Claude Code。編輯檔案、執行命令，並從命令列管理整個專案。
+
+    To install Claude Code, use one of the following methods:
+
+    <Tabs>
+      <Tab title="Native Install (Recommended)">
+        **macOS, Linux, WSL:**
+
+        ```bash  theme={null}
+        curl -fsSL https://claude.ai/install.sh | bash
+        ```
+
+        **Windows PowerShell:**
+
+        ```powershell  theme={null}
+        irm https://claude.ai/install.ps1 | iex
+        ```
+
+        **Windows CMD:**
+
+        ```batch  theme={null}
+        curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+        ```
+
+        **Windows requires [Git for Windows](https://git-scm.com/downloads/win).** Install it first if you don't have it.
+
+        <Info>
+          Native installations automatically update in the background to keep you on the latest version.
+        </Info>
+      </Tab>
+
+      <Tab title="Homebrew">
+        ```bash  theme={null}
+        brew install --cask claude-code
+        ```
+
+        <Info>
+          Homebrew installations do not auto-update. Run `brew upgrade claude-code` periodically to get the latest features and security fixes.
+        </Info>
+      </Tab>
+
+      <Tab title="WinGet">
+        ```powershell  theme={null}
+        winget install Anthropic.ClaudeCode
+        ```
+
+        <Info>
+          WinGet installations do not auto-update. Run `winget upgrade Anthropic.ClaudeCode` periodically to get the latest features and security fixes.
+        </Info>
+      </Tab>
+    </Tabs>
+
+    然後在任何專案中啟動 Claude Code：
+
+    ```bash  theme={null}
+    cd your-project
+    claude
+    ```
+
+    首次使用時，系統會提示您登入。就這麼簡單！[繼續快速入門 →](/zh-TW/quickstart)
+
+    <Tip>
+      請參閱[進階設定](/zh-TW/setup)以了解安裝選項、手動更新或卸載說明。如果遇到問題，請訪問[疑難排解](/zh-TW/troubleshooting)。
+    </Tip>
+  </Tab>
+
+  <Tab title="VS Code">
+    VS Code 擴充功能在編輯器中直接提供內聯差異、@-提及、計畫審查和對話歷史記錄。
+
+    * [安裝 VS Code](vscode:extension/anthropic.claude-code)
+    * [安裝 Cursor](cursor:extension/anthropic.claude-code)
+
+    或在擴充功能檢視中搜尋「Claude Code」（Mac 上為 `Cmd+Shift+X`，Windows/Linux 上為 `Ctrl+Shift+X`）。安裝後，開啟命令面板（`Cmd+Shift+P` / `Ctrl+Shift+P`），輸入「Claude Code」，然後選擇**在新標籤中開啟**。
+
+    [開始使用 VS Code →](/zh-TW/vs-code#get-started)
+  </Tab>
+
+  <Tab title="Desktop app">
+    一個獨立應用程式，用於在 IDE 或終端外執行 Claude Code。以視覺方式審查差異、並排執行多個工作階段、排程重複任務，以及啟動雲端工作階段。
+
+    下載並安裝：
+
+    * [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs)（Intel 和 Apple Silicon）
+    * [Windows](https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs)（x64）
+    * [Windows ARM64](https://claude.ai/api/desktop/win32/arm64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs)（僅限遠端工作階段）
+
+    安裝後，啟動 Claude，登入，然後按一下**Code** 標籤以開始編碼。需要[付費訂閱](https://claude.com/pricing)。
+
+    [深入了解桌面應用程式 →](/zh-TW/desktop-quickstart)
+  </Tab>
+
+  <Tab title="Web">
+    在瀏覽器中執行 Claude Code，無需本機設定。啟動長時間執行的任務，並在完成後檢查，處理您本機沒有的儲存庫，或並行執行多個任務。可在桌面瀏覽器和 Claude iOS 應用程式上使用。
+
+    在 [claude.ai/code](https://claude.ai/code) 開始編碼。
+
+    [開始在網路上使用 →](/zh-TW/claude-code-on-the-web#getting-started)
+  </Tab>
+
+  <Tab title="JetBrains">
+    IntelliJ IDEA、PyCharm、WebStorm 和其他 JetBrains IDE 的外掛程式，具有互動式差異檢視和選擇內容共享。
+
+    從 JetBrains Marketplace 安裝 [Claude Code 外掛程式](https://plugins.jetbrains.com/plugin/27310-claude-code-beta-)，然後重新啟動 IDE。
+
+    [開始使用 JetBrains →](/zh-TW/jetbrains)
+  </Tab>
+</Tabs>
+
+## 您可以做什麼
+
+以下是您可以使用 Claude Code 的一些方式：
+
+<AccordionGroup>
+  <Accordion title="自動化您一直在推遲的工作" icon="wand-magic-sparkles">
+    Claude Code 處理佔用您一整天的繁瑣任務：為未測試的程式碼編寫測試、修復整個專案中的 lint 錯誤、解決合併衝突、更新依賴項和編寫發行說明。
+
+    ```bash  theme={null}
+    claude "write tests for the auth module, run them, and fix any failures"
+    ```
+  </Accordion>
+
+  <Accordion title="建立功能和修復錯誤" icon="hammer">
+    用純文字描述您想要的內容。Claude Code 規劃方法、跨多個檔案編寫程式碼，並驗證其是否有效。
+
+    對於錯誤，貼上錯誤訊息或描述症狀。Claude Code 透過您的程式碼庫追蹤問題、識別根本原因並實施修復。請參閱[常見工作流程](/zh-TW/common-workflows)以了解更多範例。
+  </Accordion>
+
+  <Accordion title="建立提交和拉取請求" icon="code-branch">
+    Claude Code 直接與 git 配合使用。它暫存變更、編寫提交訊息、建立分支並開啟拉取請求。
+
+    ```bash  theme={null}
+    claude "commit my changes with a descriptive message"
+    ```
+
+    在 CI 中，您可以使用 [GitHub Actions](/zh-TW/github-actions) 或 [GitLab CI/CD](/zh-TW/gitlab-ci-cd) 自動化程式碼審查和問題分類。
+  </Accordion>
+
+  <Accordion title="使用 MCP 連接您的工具" icon="plug">
+    [Model Context Protocol (MCP)](/zh-TW/mcp) 是一個開放標準，用於將 AI 工具連接到外部資料來源。使用 MCP，Claude Code 可以讀取 Google Drive 中的設計文件、更新 Jira 中的票證、從 Slack 提取資料，或使用您自己的自訂工具。
+  </Accordion>
+
+  <Accordion title="使用說明、skills 和 hooks 進行自訂" icon="sliders">
+    [`CLAUDE.md`](/zh-TW/memory) 是您新增到專案根目錄的 markdown 檔案，Claude Code 在每個工作階段開始時讀取。使用它來設定編碼標準、架構決策、首選程式庫和審查檢查清單。Claude 也會在工作時建立[自動記憶](/zh-TW/memory#auto-memory)，儲存學習內容，例如建置命令和除錯見解，跨工作階段而無需您編寫任何內容。
+
+    建立[自訂命令](/zh-TW/skills)以封裝您的團隊可以共享的可重複工作流程，例如 `/review-pr` 或 `/deploy-staging`。
+
+    [Hooks](/zh-TW/hooks) 可讓您在 Claude Code 操作之前或之後執行 shell 命令，例如在每次檔案編輯後自動格式化或在提交前執行 lint。
+  </Accordion>
+
+  <Accordion title="執行代理團隊並建立自訂代理" icon="users">
+    生成[多個 Claude Code 代理](/zh-TW/sub-agents)，同時處理任務的不同部分。主導代理協調工作、指派子任務並合併結果。
+
+    對於完全自訂的工作流程，[Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview) 可讓您建立由 Claude Code 的工具和功能驅動的自己的代理，並完全控制編排、工具存取和權限。
+  </Accordion>
+
+  <Accordion title="使用 CLI 進行管道、指令碼和自動化" icon="terminal">
+    Claude Code 是可組合的，遵循 Unix 哲學。將日誌管道傳輸到其中、在 CI 中執行它，或將其與其他工具鏈接：
+
+    ```bash  theme={null}
+    # Monitor logs and get alerted
+    tail -f app.log | claude -p "Slack me if you see any anomalies"
+
+    # Automate translations in CI
+    claude -p "translate new strings into French and raise a PR for review"
+
+    # Bulk operations across files
+    git diff main --name-only | claude -p "review these changed files for security issues"
+    ```
+
+    請參閱 [CLI 參考](/zh-TW/cli-reference)以了解完整的命令和旗標集。
+  </Accordion>
+
+  <Accordion title="從任何地方工作" icon="globe">
+    工作階段不受限於單一介面。當您的內容變更時，在環境之間移動工作：
+
+    * 離開您的辦公桌，使用[遠端控制](/zh-TW/remote-control)從您的手機或任何瀏覽器繼續工作
+    * 在[網路](/zh-TW/claude-code-on-the-web)或 [iOS 應用程式](https://apps.apple.com/app/claude-by-anthropic/id6473753684)上啟動長時間執行的任務，然後使用 `/teleport` 將其提取到終端
+    * 使用 `/desktop` 將終端工作階段交付給[桌面應用程式](/zh-TW/desktop)以進行視覺差異審查
+    * 從團隊聊天路由任務：在 [Slack](/zh-TW/slack) 中提及 `@Claude` 並提供錯誤報告，然後取回拉取請求
+  </Accordion>
+</AccordionGroup>
+
+## 在任何地方使用 Claude Code
+
+每個介面都連接到相同的基礎 Claude Code 引擎，因此您的 CLAUDE.md 檔案、設定和 MCP servers 可在所有介面中使用。
+
+除了上述[終端](/zh-TW/quickstart)、[VS Code](/zh-TW/vs-code)、[JetBrains](/zh-TW/jetbrains)、[桌面](/zh-TW/desktop)和[網路](/zh-TW/claude-code-on-the-web)環境外，Claude Code 還與 CI/CD、聊天和瀏覽器工作流程整合：
+
+| 我想要...                | 最佳選項                                                                                                                |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| 從我的手機或其他裝置繼續本機工作階段    | [遠端控制](/zh-TW/remote-control)                                                                                       |
+| 在本機啟動任務，在行動裝置上繼續      | [網路](/zh-TW/claude-code-on-the-web)或 [Claude iOS 應用程式](https://apps.apple.com/app/claude-by-anthropic/id6473753684) |
+| 自動化 PR 審查和問題分類        | [GitHub Actions](/zh-TW/github-actions) 或 [GitLab CI/CD](/zh-TW/gitlab-ci-cd)                                       |
+| 在每個 PR 上獲得自動程式碼審查     | [GitHub Code Review](/zh-TW/code-review)                                                                            |
+| 將 Slack 中的錯誤報告路由到拉取請求 | [Slack](/zh-TW/slack)                                                                                               |
+| 除錯即時網路應用程式            | [Chrome](/zh-TW/chrome)                                                                                             |
+| 為您自己的工作流程建立自訂代理       | [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview)                                                 |
+
+## 後續步驟
+
+安裝 Claude Code 後，這些指南可幫助您深入了解。
+
+* [快速入門](/zh-TW/quickstart)：逐步完成您的第一個真實任務，從探索程式碼庫到提交修復
+* [儲存說明和記憶](/zh-TW/memory)：使用 CLAUDE.md 檔案和自動記憶為 Claude 提供持久說明
+* [常見工作流程](/zh-TW/common-workflows)和[最佳實踐](/zh-TW/best-practices)：從 Claude Code 獲得最大收益的模式
+* [設定](/zh-TW/settings)：為您的工作流程自訂 Claude Code
+* [疑難排解](/zh-TW/troubleshooting)：常見問題的解決方案
+* [code.claude.com](https://code.claude.com/)：演示、定價和產品詳細資訊

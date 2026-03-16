@@ -1,0 +1,11 @@
+# Build artifacts
+build/
+output/
+__pycache__/
+*.pyc
+
+# CI build artifacts
+dist/
+
+# OS files
+.DS_Store

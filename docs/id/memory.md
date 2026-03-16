@@ -1,0 +1,356 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
+# Bagaimana Claude mengingat proyek Anda
+
+> Berikan Claude instruksi persisten dengan file CLAUDE.md, dan biarkan Claude mengumpulkan pembelajaran secara otomatis dengan auto memory.
+
+Setiap sesi Claude Code dimulai dengan context window yang segar. Dua mekanisme membawa pengetahuan lintas sesi:
+
+* **File CLAUDE.md**: instruksi yang Anda tulis untuk memberikan Claude konteks persisten
+* **Auto memory**: catatan yang Claude tulis sendiri berdasarkan koreksi dan preferensi Anda
+
+Halaman ini mencakup cara untuk:
+
+* [Menulis dan mengorganisir file CLAUDE.md](#claudemd-files)
+* [Membatasi aturan ke tipe file tertentu](#organize-rules-with-clauderules) dengan `.claude/rules/`
+* [Mengonfigurasi auto memory](#auto-memory) agar Claude membuat catatan secara otomatis
+* [Memecahkan masalah](#troubleshoot-memory-issues) ketika instruksi tidak diikuti
+
+## CLAUDE.md vs auto memory
+
+Claude Code memiliki dua sistem memori yang saling melengkapi. Keduanya dimuat di awal setiap percakapan. Claude memperlakukan mereka sebagai konteks, bukan konfigurasi yang ditegakkan. Semakin spesifik dan ringkas instruksi Anda, semakin konsisten Claude mengikutinya.
+
+|                           | File CLAUDE.md                                    | Auto memory                                                       |
+| :------------------------ | :------------------------------------------------ | :---------------------------------------------------------------- |
+| **Siapa yang menulisnya** | Anda                                              | Claude                                                            |
+| **Apa yang dikandungnya** | Instruksi dan aturan                              | Pembelajaran dan pola                                             |
+| **Cakupan**               | Proyek, pengguna, atau organisasi                 | Per working tree                                                  |
+| **Dimuat ke dalam**       | Setiap sesi                                       | Setiap sesi (200 baris pertama)                                   |
+| **Gunakan untuk**         | Standar pengkodean, alur kerja, arsitektur proyek | Perintah build, wawasan debugging, preferensi yang Claude temukan |
+
+Gunakan file CLAUDE.md ketika Anda ingin memandu perilaku Claude. Auto memory memungkinkan Claude belajar dari koreksi Anda tanpa usaha manual.
+
+Subagents juga dapat mempertahankan auto memory mereka sendiri. Lihat [konfigurasi subagent](/id/sub-agents#enable-persistent-memory) untuk detail.
+
+## File CLAUDE.md
+
+File CLAUDE.md adalah file markdown yang memberikan Claude instruksi persisten untuk proyek, alur kerja pribadi Anda, atau seluruh organisasi Anda. Anda menulis file ini dalam teks biasa; Claude membacanya di awal setiap sesi.
+
+### Pilih di mana menempatkan file CLAUDE.md
+
+File CLAUDE.md dapat berada di beberapa lokasi, masing-masing dengan cakupan yang berbeda. Lokasi yang lebih spesifik memiliki prioritas lebih tinggi daripada yang lebih luas.
+
+| Cakupan                 | Lokasi                                                                                                                                                                  | Tujuan                                                       | Contoh kasus penggunaan                                                  | Dibagikan dengan                   |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------ | ---------------------------------- |
+| **Kebijakan terkelola** | • macOS: `/Library/Application Support/ClaudeCode/CLAUDE.md`<br />• Linux dan WSL: `/etc/claude-code/CLAUDE.md`<br />• Windows: `C:\Program Files\ClaudeCode\CLAUDE.md` | Instruksi di seluruh organisasi yang dikelola oleh IT/DevOps | Standar pengkodean perusahaan, kebijakan keamanan, persyaratan kepatuhan | Semua pengguna dalam organisasi    |
+| **Instruksi proyek**    | `./CLAUDE.md` atau `./.claude/CLAUDE.md`                                                                                                                                | Instruksi bersama tim untuk proyek                           | Arsitektur proyek, standar pengkodean, alur kerja umum                   | Anggota tim melalui kontrol sumber |
+| **Instruksi pengguna**  | `~/.claude/CLAUDE.md`                                                                                                                                                   | Preferensi pribadi untuk semua proyek                        | Preferensi gaya kode, pintasan alat pribadi                              | Hanya Anda (semua proyek)          |
+
+File CLAUDE.md dalam hierarki direktori di atas direktori kerja dimuat sepenuhnya saat peluncuran. File CLAUDE.md di subdirektori dimuat sesuai permintaan ketika Claude membaca file di direktori tersebut. Lihat [Bagaimana file CLAUDE.md dimuat](#how-claudemd-files-load) untuk urutan resolusi lengkap.
+
+Untuk proyek besar, Anda dapat memecah instruksi menjadi file khusus topik menggunakan [aturan proyek](#organize-rules-with-clauderules). Aturan memungkinkan Anda membatasi instruksi ke tipe file atau subdirektori tertentu.
+
+### Siapkan CLAUDE.md proyek
+
+CLAUDE.md proyek dapat disimpan di `./CLAUDE.md` atau `./.claude/CLAUDE.md`. Buat file ini dan tambahkan instruksi yang berlaku untuk siapa pun yang bekerja pada proyek: perintah build dan test, standar pengkodean, keputusan arsitektur, konvensi penamaan, dan alur kerja umum. Instruksi ini dibagikan dengan tim Anda melalui kontrol versi, jadi fokus pada standar tingkat proyek daripada preferensi pribadi.
+
+<Tip>
+  Jalankan `/init` untuk menghasilkan CLAUDE.md awal secara otomatis. Claude menganalisis basis kode Anda dan membuat file dengan perintah build, instruksi test, dan konvensi proyek yang ditemukannya. Jika CLAUDE.md sudah ada, `/init` menyarankan perbaikan daripada menimpanya. Perbaiki dari sana dengan instruksi yang Claude tidak akan temukan sendiri.
+</Tip>
+
+### Tulis instruksi yang efektif
+
+File CLAUDE.md dimuat ke dalam context window di awal setiap sesi, mengonsumsi token bersama percakapan Anda. Karena mereka adalah konteks daripada konfigurasi yang ditegakkan, cara Anda menulis instruksi mempengaruhi seberapa andal Claude mengikutinya. Instruksi yang spesifik, ringkas, dan terstruktur dengan baik bekerja paling baik.
+
+**Ukuran**: targetkan di bawah 200 baris per file CLAUDE.md. File yang lebih panjang mengonsumsi lebih banyak konteks dan mengurangi kepatuhan. Jika instruksi Anda berkembang besar, pisahkan menggunakan [impor](#import-additional-files) atau file [`.claude/rules/`](#organize-rules-with-clauderules).
+
+**Struktur**: gunakan header markdown dan bullet untuk mengelompokkan instruksi terkait. Claude memindai struktur dengan cara yang sama seperti pembaca: bagian yang terorganisir lebih mudah diikuti daripada paragraf padat.
+
+**Spesifisitas**: tulis instruksi yang cukup konkret untuk diverifikasi. Misalnya:
+
+* "Gunakan indentasi 2 spasi" daripada "Format kode dengan baik"
+* "Jalankan `npm test` sebelum commit" daripada "Uji perubahan Anda"
+* "Handler API berada di `src/api/handlers/`" daripada "Jaga file tetap terorganisir"
+
+**Konsistensi**: jika dua aturan saling bertentangan, Claude mungkin memilih satu secara sembarangan. Tinjau file CLAUDE.md Anda, file CLAUDE.md bersarang di subdirektori, dan file [`.claude/rules/`](#organize-rules-with-clauderules) secara berkala untuk menghapus instruksi yang ketinggalan zaman atau bertentangan. Dalam monorepo, gunakan [`claudeMdExcludes`](#exclude-specific-claudemd-files) untuk melewati file CLAUDE.md dari tim lain yang tidak relevan dengan pekerjaan Anda.
+
+### Impor file tambahan
+
+File CLAUDE.md dapat mengimpor file tambahan menggunakan sintaks `@path/to/import`. File yang diimpor diperluas dan dimuat ke dalam konteks saat peluncuran bersama CLAUDE.md yang mereferensikannya.
+
+Jalur relatif dan absolut diizinkan. Jalur relatif diselesaikan relatif terhadap file yang berisi impor, bukan direktori kerja. File yang diimpor dapat secara rekursif mengimpor file lain, dengan kedalaman maksimal lima hop.
+
+Untuk menarik README, package.json, dan panduan alur kerja, referensikan mereka dengan sintaks `@` di mana saja di CLAUDE.md Anda:
+
+```text  theme={null}
+Lihat @README untuk gambaran umum proyek dan @package.json untuk perintah npm yang tersedia untuk proyek ini.
+
+# Instruksi Tambahan
+- alur kerja git @docs/git-instructions.md
+```
+
+Untuk preferensi pribadi yang tidak ingin Anda periksa, impor file dari direktori home Anda. Impor masuk ke CLAUDE.md bersama, tetapi file yang ditunjuknya tetap di mesin Anda:
+
+```text  theme={null}
+# Preferensi Individu
+- @~/.claude/my-project-instructions.md
+```
+
+<Warning>
+  Pertama kali Claude Code menemukan impor eksternal dalam proyek, itu menampilkan dialog persetujuan yang mencantumkan file. Jika Anda menolak, impor tetap dinonaktifkan dan dialog tidak muncul lagi.
+</Warning>
+
+Untuk pendekatan yang lebih terstruktur untuk mengorganisir instruksi, lihat [`.claude/rules/`](#organize-rules-with-clauderules).
+
+### Bagaimana file CLAUDE.md dimuat
+
+Claude Code membaca file CLAUDE.md dengan berjalan naik pohon direktori dari direktori kerja saat ini, memeriksa setiap direktori di sepanjang jalan. Ini berarti jika Anda menjalankan Claude Code di `foo/bar/`, itu memuat instruksi dari `foo/bar/CLAUDE.md` dan `foo/CLAUDE.md`.
+
+Claude juga menemukan file CLAUDE.md di subdirektori di bawah direktori kerja saat ini. Alih-alih memuatnya saat peluncuran, mereka disertakan ketika Claude membaca file di subdirektori tersebut.
+
+Jika Anda bekerja di monorepo besar di mana file CLAUDE.md tim lain diambil, gunakan [`claudeMdExcludes`](#exclude-specific-claudemd-files) untuk melewatinya.
+
+#### Muat dari direktori tambahan
+
+Flag `--add-dir` memberikan Claude akses ke direktori tambahan di luar direktori kerja utama Anda. Secara default, file CLAUDE.md dari direktori ini tidak dimuat.
+
+Untuk juga memuat file CLAUDE.md dari direktori tambahan, termasuk `CLAUDE.md`, `.claude/CLAUDE.md`, dan `.claude/rules/*.md`, atur variabel lingkungan `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD`:
+
+```bash  theme={null}
+CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ../shared-config
+```
+
+### Organisir aturan dengan `.claude/rules/`
+
+Untuk proyek yang lebih besar, Anda dapat mengorganisir instruksi menjadi beberapa file menggunakan direktori `.claude/rules/`. Ini membuat instruksi modular dan lebih mudah bagi tim untuk dipertahankan. Aturan juga dapat [dibatasi ke jalur file tertentu](#path-specific-rules), sehingga mereka hanya dimuat ke dalam konteks ketika Claude bekerja dengan file yang cocok, mengurangi kebisingan dan menghemat ruang konteks.
+
+<Note>
+  Aturan dimuat ke dalam konteks setiap sesi atau ketika file yang cocok dibuka. Untuk instruksi khusus tugas yang tidak perlu berada dalam konteks sepanjang waktu, gunakan [skills](/id/skills) sebagai gantinya, yang hanya dimuat ketika Anda menginvokasinya atau ketika Claude menentukan mereka relevan dengan prompt Anda.
+</Note>
+
+#### Siapkan aturan
+
+Tempatkan file markdown di direktori `.claude/rules/` proyek Anda. Setiap file harus mencakup satu topik, dengan nama file deskriptif seperti `testing.md` atau `api-design.md`. Semua file `.md` ditemukan secara rekursif, jadi Anda dapat mengorganisir aturan ke dalam subdirektori seperti `frontend/` atau `backend/`:
+
+```text  theme={null}
+your-project/
+├── .claude/
+│   ├── CLAUDE.md           # Instruksi proyek utama
+│   └── rules/
+│       ├── code-style.md   # Pedoman gaya kode
+│       ├── testing.md      # Konvensi pengujian
+│       └── security.md     # Persyaratan keamanan
+```
+
+Aturan tanpa [frontmatter `paths`](#path-specific-rules) dimuat saat peluncuran dengan prioritas yang sama seperti `.claude/CLAUDE.md`.
+
+#### Aturan khusus jalur
+
+Aturan dapat dibatasi ke file tertentu menggunakan frontmatter YAML dengan bidang `paths`. Aturan bersyarat ini hanya berlaku ketika Claude bekerja dengan file yang cocok dengan pola yang ditentukan.
+
+```markdown  theme={null}
+---
+paths:
+  - "src/api/**/*.ts"
+---
+
+# Aturan Pengembangan API
+
+- Semua endpoint API harus menyertakan validasi input
+- Gunakan format respons kesalahan standar
+- Sertakan komentar dokumentasi OpenAPI
+```
+
+Aturan tanpa bidang `paths` dimuat tanpa syarat dan berlaku untuk semua file. Aturan bersyarat jalur dipicu ketika Claude membaca file yang cocok dengan pola, bukan pada setiap penggunaan alat.
+
+Gunakan pola glob di bidang `paths` untuk mencocokkan file berdasarkan ekstensi, direktori, atau kombinasi apa pun:
+
+| Pola                   | Cocok dengan                               |
+| ---------------------- | ------------------------------------------ |
+| `**/*.ts`              | Semua file TypeScript di direktori apa pun |
+| `src/**/*`             | Semua file di bawah direktori `src/`       |
+| `*.md`                 | File Markdown di root proyek               |
+| `src/components/*.tsx` | Komponen React di direktori tertentu       |
+
+Anda dapat menentukan beberapa pola dan menggunakan ekspansi kurung untuk mencocokkan beberapa ekstensi dalam satu pola:
+
+```markdown  theme={null}
+---
+paths:
+  - "src/**/*.{ts,tsx}"
+  - "lib/**/*.ts"
+  - "tests/**/*.test.ts"
+---
+```
+
+#### Bagikan aturan lintas proyek dengan symlink
+
+Direktori `.claude/rules/` mendukung symlink, jadi Anda dapat mempertahankan set aturan bersama dan menautkannya ke beberapa proyek. Symlink diselesaikan dan dimuat secara normal, dan symlink melingkar terdeteksi dan ditangani dengan anggun.
+
+Contoh ini menautkan direktori bersama dan file individual:
+
+```bash  theme={null}
+ln -s ~/shared-claude-rules .claude/rules/shared
+ln -s ~/company-standards/security.md .claude/rules/security.md
+```
+
+#### Aturan tingkat pengguna
+
+Aturan pribadi di `~/.claude/rules/` berlaku untuk setiap proyek di mesin Anda. Gunakan untuk preferensi yang bukan khusus proyek:
+
+```text  theme={null}
+~/.claude/rules/
+├── preferences.md    # Preferensi pengkodean pribadi Anda
+└── workflows.md      # Alur kerja pilihan Anda
+```
+
+Aturan tingkat pengguna dimuat sebelum aturan proyek, memberikan aturan proyek prioritas lebih tinggi.
+
+### Kelola CLAUDE.md untuk tim besar
+
+Untuk organisasi yang menerapkan Claude Code di seluruh tim, Anda dapat memusatkan instruksi dan mengontrol file CLAUDE.md mana yang dimuat.
+
+#### Terapkan CLAUDE.md di seluruh organisasi
+
+Organisasi dapat menerapkan CLAUDE.md yang dikelola secara terpusat yang berlaku untuk semua pengguna di mesin. File ini tidak dapat dikecualikan oleh pengaturan individual.
+
+<Steps>
+  <Step title="Buat file di lokasi kebijakan terkelola">
+    * macOS: `/Library/Application Support/ClaudeCode/CLAUDE.md`
+    * Linux dan WSL: `/etc/claude-code/CLAUDE.md`
+    * Windows: `C:\Program Files\ClaudeCode\CLAUDE.md`
+  </Step>
+
+  <Step title="Terapkan dengan sistem manajemen konfigurasi Anda">
+    Gunakan MDM, Group Policy, Ansible, atau alat serupa untuk mendistribusikan file di seluruh mesin pengembang. Lihat [pengaturan terkelola](/id/permissions#managed-settings) untuk opsi konfigurasi di seluruh organisasi lainnya.
+  </Step>
+</Steps>
+
+#### Kecualikan file CLAUDE.md tertentu
+
+Dalam monorepo besar, file CLAUDE.md leluhur mungkin berisi instruksi yang tidak relevan dengan pekerjaan Anda. Pengaturan `claudeMdExcludes` memungkinkan Anda melewati file tertentu berdasarkan jalur atau pola glob.
+
+Contoh ini mengecualikan CLAUDE.md tingkat atas dan direktori aturan dari folder induk. Tambahkan ke `.claude/settings.local.json` agar pengecualian tetap lokal ke mesin Anda:
+
+```json  theme={null}
+{
+  "claudeMdExcludes": [
+    "**/monorepo/CLAUDE.md",
+    "/home/user/monorepo/other-team/.claude/rules/**"
+  ]
+}
+```
+
+Pola dicocokkan dengan jalur file absolut menggunakan sintaks glob. Anda dapat mengonfigurasi `claudeMdExcludes` di lapisan [pengaturan](/id/settings#settings-files) apa pun: pengguna, proyek, lokal, atau kebijakan terkelola. Array digabungkan di seluruh lapisan.
+
+File CLAUDE.md kebijakan terkelola tidak dapat dikecualikan. Ini memastikan instruksi di seluruh organisasi selalu berlaku terlepas dari pengaturan individual.
+
+## Auto memory
+
+Auto memory memungkinkan Claude mengumpulkan pengetahuan lintas sesi tanpa Anda menulis apa pun. Claude menyimpan catatan untuk dirinya sendiri saat bekerja: perintah build, wawasan debugging, catatan arsitektur, preferensi gaya kode, dan kebiasaan alur kerja. Claude tidak menyimpan sesuatu setiap sesi. Itu memutuskan apa yang layak diingat berdasarkan apakah informasi akan berguna dalam percakapan masa depan.
+
+<Note>
+  Auto memory memerlukan Claude Code v2.1.59 atau lebih baru. Periksa versi Anda dengan `claude --version`.
+</Note>
+
+### Aktifkan atau nonaktifkan auto memory
+
+Auto memory aktif secara default. Untuk mengalihkannya, buka `/memory` dalam sesi dan gunakan toggle auto memory, atau atur `autoMemoryEnabled` dalam pengaturan proyek Anda:
+
+```json  theme={null}
+{
+  "autoMemoryEnabled": false
+}
+```
+
+Untuk menonaktifkan auto memory melalui variabel lingkungan, atur `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1`.
+
+### Lokasi penyimpanan
+
+Setiap proyek mendapatkan direktori memori sendiri di `~/.claude/projects/<project>/memory/`. Jalur `<project>` berasal dari repositori git, jadi semua worktrees dan subdirektori dalam repo yang sama berbagi satu direktori auto memory. Di luar repo git, root proyek digunakan sebagai gantinya.
+
+Untuk menyimpan auto memory di lokasi berbeda, atur `autoMemoryDirectory` dalam pengaturan pengguna atau lokal Anda:
+
+```json  theme={null}
+{
+  "autoMemoryDirectory": "~/my-custom-memory-dir"
+}
+```
+
+Pengaturan ini diterima dari pengaturan kebijakan, lokal, dan pengguna. Itu tidak diterima dari pengaturan proyek (`.claude/settings.json`) untuk mencegah proyek bersama mengarahkan ulang penulisan auto memory ke lokasi sensitif.
+
+Direktori berisi titik masuk `MEMORY.md` dan file topik opsional:
+
+```text  theme={null}
+~/.claude/projects/<project>/memory/
+├── MEMORY.md          # Indeks ringkas, dimuat ke dalam setiap sesi
+├── debugging.md       # Catatan terperinci tentang pola debugging
+├── api-conventions.md # Keputusan desain API
+└── ...                # File topik lain yang Claude buat
+```
+
+`MEMORY.md` bertindak sebagai indeks direktori memori. Claude membaca dan menulis file di direktori ini sepanjang sesi Anda, menggunakan `MEMORY.md` untuk melacak apa yang disimpan di mana.
+
+Auto memory adalah mesin-lokal. Semua worktrees dan subdirektori dalam repositori git yang sama berbagi satu direktori auto memory. File tidak dibagikan di seluruh mesin atau lingkungan cloud.
+
+### Bagaimana cara kerjanya
+
+200 baris pertama `MEMORY.md` dimuat di awal setiap percakapan. Konten di luar baris 200 tidak dimuat saat awal sesi. Claude membuat `MEMORY.md` ringkas dengan memindahkan catatan terperinci ke file topik terpisah.
+
+Batas 200 baris ini hanya berlaku untuk `MEMORY.md`. File CLAUDE.md dimuat sepenuhnya terlepas dari panjangnya, meskipun file yang lebih pendek menghasilkan kepatuhan yang lebih baik.
+
+File topik seperti `debugging.md` atau `patterns.md` tidak dimuat saat startup. Claude membacanya sesuai permintaan menggunakan alat file standarnya ketika membutuhkan informasi.
+
+Claude membaca dan menulis file memori selama sesi Anda. Ketika Anda melihat "Writing memory" atau "Recalled memory" di antarmuka Claude Code, Claude secara aktif memperbarui atau membaca dari `~/.claude/projects/<project>/memory/`.
+
+### Audit dan edit memori Anda
+
+File auto memory adalah markdown biasa yang dapat Anda edit atau hapus kapan saja. Jalankan [`/memory`](#view-and-edit-with-memory) untuk menelusuri dan membuka file memori dari dalam sesi.
+
+## Lihat dan edit dengan `/memory`
+
+Perintah `/memory` mencantumkan semua file CLAUDE.md dan rules yang dimuat dalam sesi saat ini, memungkinkan Anda mengalihkan auto memory on atau off, dan menyediakan tautan untuk membuka folder auto memory. Pilih file apa pun untuk membukanya di editor Anda.
+
+Ketika Anda meminta Claude untuk mengingat sesuatu, seperti "selalu gunakan pnpm, bukan npm" atau "ingat bahwa tes API memerlukan instans Redis lokal," Claude menyimpannya ke auto memory. Untuk menambahkan instruksi ke CLAUDE.md sebagai gantinya, minta Claude secara langsung, seperti "tambahkan ini ke CLAUDE.md," atau edit file sendiri melalui `/memory`.
+
+## Memecahkan masalah memori
+
+Ini adalah masalah paling umum dengan CLAUDE.md dan auto memory, bersama dengan langkah-langkah untuk men-debug mereka.
+
+### Claude tidak mengikuti CLAUDE.md saya
+
+CLAUDE.md adalah konteks, bukan penegakan. Claude membacanya dan mencoba mengikutinya, tetapi tidak ada jaminan kepatuhan ketat, terutama untuk instruksi yang samar atau bertentangan.
+
+Untuk men-debug:
+
+* Jalankan `/memory` untuk memverifikasi file CLAUDE.md Anda dimuat. Jika file tidak terdaftar, Claude tidak dapat melihatnya.
+* Periksa bahwa CLAUDE.md yang relevan berada di lokasi yang dimuat untuk sesi Anda (lihat [Pilih di mana menempatkan file CLAUDE.md](#choose-where-to-put-claudemd-files)).
+* Buat instruksi lebih spesifik. "Gunakan indentasi 2 spasi" bekerja lebih baik daripada "format kode dengan baik."
+* Cari instruksi yang bertentangan di seluruh file CLAUDE.md. Jika dua file memberikan panduan berbeda untuk perilaku yang sama, Claude mungkin memilih satu secara sembarangan.
+
+<Tip>
+  Gunakan hook [`InstructionsLoaded`](/id/hooks#instructionsloaded) untuk mencatat dengan tepat file instruksi mana yang dimuat, kapan mereka dimuat, dan mengapa. Ini berguna untuk men-debug aturan khusus jalur atau file yang dimuat malas di subdirektori.
+</Tip>
+
+### Saya tidak tahu apa yang disimpan auto memory
+
+Jalankan `/memory` dan pilih folder auto memory untuk menelusuri apa yang Claude simpan. Semuanya adalah markdown biasa yang dapat Anda baca, edit, atau hapus.
+
+### CLAUDE.md saya terlalu besar
+
+File di atas 200 baris mengonsumsi lebih banyak konteks dan dapat mengurangi kepatuhan. Pindahkan konten terperinci ke file terpisah yang direferensikan dengan impor `@path` (lihat [Impor file tambahan](#import-additional-files)), atau pisahkan instruksi Anda di seluruh file [`.claude/rules/`](#organize-rules-with-clauderules).
+
+### Instruksi tampak hilang setelah `/compact`
+
+CLAUDE.md sepenuhnya bertahan dari pemadatan. Setelah `/compact`, Claude membaca ulang CLAUDE.md Anda dari disk dan menyuntikkannya kembali segar ke dalam sesi. Jika instruksi hilang setelah pemadatan, itu diberikan hanya dalam percakapan, bukan ditulis ke CLAUDE.md. Tambahkan ke CLAUDE.md untuk membuatnya bertahan lintas sesi.
+
+Lihat [Tulis instruksi yang efektif](#write-effective-instructions) untuk panduan tentang ukuran, struktur, dan spesifisitas.
+
+## Sumber daya terkait
+
+* [Skills](/id/skills): paket alur kerja yang dapat diulang yang dimuat sesuai permintaan
+* [Settings](/id/settings): konfigurasi perilaku Claude Code dengan file pengaturan
+* [Kelola sesi](/id/sessions): kelola konteks, lanjutkan percakapan, dan jalankan sesi paralel
+* [Memori subagent](/id/sub-agents#enable-persistent-memory): biarkan subagents mempertahankan auto memory mereka sendiri
