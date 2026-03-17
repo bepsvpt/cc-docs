@@ -1,5 +1,37 @@
 # Documentation Changes
 
+## 2026-03-17
+
+15 pages modified
+
+
+### English
+
+
+**Modified**
+
+- **Changelog** (`changelog.md`): 47 lines added, 0 removed
+- **Built-in commands** (`commands.md`): 1 lines added, 1 removed
+- **Data usage** (`data-usage.md`): 8 lines added, 8 removed
+- **Discover and install prebuilt plugins through marketplaces** (`discover-plugins.md`): 3 lines added, 5 removed
+- **Environment variables** (`env-vars.md`): 3 lines added, 1 removed
+- **Speed up responses with fast mode** (`fast-mode.md`): 5 lines added, 6 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 51 lines added, 2 removed
+  - New section: "### Auto-approve specific permission prompts"
+- **Hooks reference** (`hooks.md`): 38 lines added, 9 removed
+  - New section: "#### Permission update entries"
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 1 lines added, 1 removed
+- **Create and distribute a plugin marketplace** (`plugin-marketplaces.md`): 8 lines added, 8 removed
+- **Create plugins** (`plugins.md`): 1 lines added, 1 removed
+- **Configure server-managed settings (public beta)** (`server-managed-settings.md`): 3 lines added, 3 removed
+- **Claude Code settings** (`settings.md`): 1 lines added, 1 removed
+- **Customize your status line** (`statusline.md`): 6 lines added, 4 removed
+  - New section: "# Build progress bar: printf -v creates a run of spaces, then"
+  - New section: "# ${var// /▓} replaces each space with a block character"
+- **Create custom subagents** (`sub-agents.md`): 4 lines added, 0 removed
+
+---
+
 ## 2026-03-16
 
 123 pages added
@@ -139,4 +171,3 @@
 - **疑難排解** (`troubleshooting.md`)
 - **在 VS Code 中使用 Claude Code** (`vs-code.md`)
 - **零數據保留** (`zero-data-retention.md`)
-
