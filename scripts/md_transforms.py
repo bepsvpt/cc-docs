@@ -6,8 +6,9 @@ order matches the original clean_md() exactly — reordering can produce
 different output.
 
 Pipeline:
-    strip_metadata → convert_jsx_components → clean_html_tags →
-    resolve_links → dedent_blocks → finalize
+    strip_metadata → protect_code_spans → convert_jsx_components →
+    clean_html_tags → resolve_links → restore_code_spans →
+    dedent_blocks → finalize
 """
 
 import os
@@ -39,6 +40,74 @@ def strip_metadata(md):
     # Remove exported JSX component definitions
     md = re.sub(r'^export\s+const\s+\w+\s*=.*?^};', '', md, flags=re.DOTALL | re.MULTILINE)
     return md
+
+
+# ---------------------------------------------------------------------------
+# 1b. protect/restore code spans — shield code from HTML/link transforms
+# ---------------------------------------------------------------------------
+
+def protect_code_spans(md):
+    """Extract code spans into placeholders to shield them from HTML/link transforms.
+
+    Phase 1 extracts fenced code blocks (``` or longer), Phase 2 extracts
+    inline code spans (single and double backtick).  Returns (md, store)
+    where store[i] is the original text for placeholder i.
+    """
+    store = []
+
+    def _placeholder(original):
+        idx = len(store)
+        store.append(original)
+        return f'\x00CODE{idx}\x00'
+
+    # -- Phase 1: fenced code blocks (line-by-line) --
+    lines = md.split('\n')
+    out = []
+    block_lines = []
+    fence_marker = None
+
+    for line in lines:
+        if fence_marker is None:
+            m = re.match(r'^(\s*)(`{3,})(\w*)(.*)', line)
+            if m:
+                fence_marker = m.group(2)
+                indent, lang, rest = m.group(1), m.group(3), m.group(4)
+                # Clean annotations from the opening fence line (moved from
+                # clean_html_tags lines 217-219 — they can't run there because
+                # fenced blocks are placeholders by then).
+                if rest:
+                    rest = re.sub(r'[ \t]+theme=\{null\}', '', rest)
+                    if lang and rest.strip():
+                        rest = ''
+                block_lines = [f'{indent}{fence_marker}{lang}{rest}']
+            else:
+                out.append(line)
+        else:
+            block_lines.append(line)
+            stripped = line.strip()
+            close_m = re.match(r'^(`{3,})\s*$', stripped)
+            if close_m and len(close_m.group(1)) >= len(fence_marker):
+                out.append(_placeholder('\n'.join(block_lines)))
+                fence_marker = None
+                block_lines = []
+
+    # Unclosed fence — keep original lines unprotected
+    if block_lines:
+        out.extend(block_lines)
+
+    md = '\n'.join(out)
+
+    # -- Phase 2: inline code spans --
+    # Double-backtick first (can contain single backticks), then single-backtick.
+    md = re.sub(r'``[^`]+``', lambda m: _placeholder(m.group(0)), md)
+    md = re.sub(r'`[^`\n]+`', lambda m: _placeholder(m.group(0)), md)
+
+    return md, store
+
+
+def restore_code_spans(md, store):
+    """Replace placeholders with their original code span content."""
+    return re.sub(r'\x00CODE(\d+)\x00', lambda m: store[int(m.group(1))], md)
 
 
 # ---------------------------------------------------------------------------
@@ -213,11 +282,6 @@ def clean_html_tags(md, images_dir):
         return f'*[Image: {alt}]*' if alt else ''
     md = re.sub(r'!\[([^\]]*)\]\(([^)]+)\)', handle_md_img, md)
 
-    # Clean code block annotations
-    md = re.sub(r'(```\w*)[ \t]+theme=\{null\}', r'\1', md)
-    md = re.sub(r'(```\w+)[ \t]+[^\n]+', r'\1', md)
-    md = re.sub(r'(```\w+)[ \t]+\{[^}]*\}', r'\1', md)
-
     return md
 
 
@@ -369,9 +433,11 @@ def clean_md(md, *, images_dir, slug_to_anchor, base_url, lang_path,
              fragment_map=None):
     """Run the full transformation pipeline on a markdown document."""
     md = strip_metadata(md)
+    md, code_store = protect_code_spans(md)
     md = convert_jsx_components(md, images_dir)
     md = clean_html_tags(md, images_dir)
     md = resolve_links(md, slug_to_anchor, base_url, lang_path, fragment_map)
+    md = restore_code_spans(md, code_store)
     md = dedent_blocks(md)
     md = finalize(md)
     return md

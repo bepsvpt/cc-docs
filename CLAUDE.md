@@ -97,4 +97,5 @@ exist unless you pass `--force` to re-download everything.
 
 ### Transform pipeline ordering (`md_transforms.py`)
 - Image validation (`handle_md_img`) MUST run before `resolve_links` — the link regex also matches image syntax
-- Pipeline: `strip_metadata` → `convert_jsx_components` → `clean_html_tags` → `resolve_links` → `dedent_blocks` → `finalize`
+- Code spans (inline backticks + fenced blocks) are extracted into NUL-byte placeholders before JSX/HTML/link transforms, then restored before `dedent_blocks` — prevents `<tag>` patterns inside code from being stripped
+- Pipeline: `strip_metadata` → `protect_code_spans` → `convert_jsx_components` → `clean_html_tags` → `resolve_links` → `restore_code_spans` → `dedent_blocks` → `finalize`
