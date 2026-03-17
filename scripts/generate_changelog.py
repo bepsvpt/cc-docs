@@ -110,6 +110,7 @@ def parse_git_diff(basedir):
         changed_headings = []
         is_new_file = False
         is_deleted_file = False
+        in_fenced_block = False
 
         for line in result.stdout.split("\n"):
             # New file in diff
@@ -127,6 +128,7 @@ def parse_git_diff(basedir):
                 changed_headings = []
                 is_new_file = False
                 is_deleted_file = False
+                in_fenced_block = False
 
             elif line.startswith("new file"):
                 is_new_file = True
@@ -136,10 +138,14 @@ def parse_git_diff(basedir):
 
             elif line.startswith("+") and not line.startswith("+++"):
                 added_count += 1
-                # Track changed headings
-                heading_m = re.match(r"^\+\s*(#{1,6}\s+.+)$", line)
-                if heading_m:
-                    changed_headings.append(heading_m.group(1))
+                # Toggle fenced code block state (``` or ~~~)
+                if re.match(r"^\+\s*(`{3,}|~{3,})", line):
+                    in_fenced_block = not in_fenced_block
+                # Track changed headings (skip inside fenced code blocks)
+                elif not in_fenced_block:
+                    heading_m = re.match(r"^\+\s*(#{1,6}\s+.+)$", line)
+                    if heading_m:
+                        changed_headings.append(heading_m.group(1))
 
             elif line.startswith("-") and not line.startswith("---"):
                 removed_count += 1

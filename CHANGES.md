@@ -26,8 +26,6 @@
 - **Configure server-managed settings (public beta)** (`server-managed-settings.md`): 3 lines added, 3 removed
 - **Claude Code settings** (`settings.md`): 1 lines added, 1 removed
 - **Customize your status line** (`statusline.md`): 6 lines added, 4 removed
-  - New section: "# Build progress bar: printf -v creates a run of spaces, then"
-  - New section: "# ${var// /▓} replaces each space with a block character"
 - **Create custom subagents** (`sub-agents.md`): 4 lines added, 0 removed
 
 ---
