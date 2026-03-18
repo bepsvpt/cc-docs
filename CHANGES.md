@@ -1,5 +1,54 @@
 # Documentation Changes
 
+## 2026-03-18
+
+27 pages modified
+
+
+### English
+
+
+**Modified**
+
+- **Claude Code on Amazon Bedrock** (`amazon-bedrock.md`): 1 lines added, 1 removed
+- **Authentication** (`authentication.md`): 18 lines added, 1 removed
+  - New section: "### Authentication precedence"
+- **Changelog** (`changelog.md`): 29 lines added, 0 removed
+- **Code Review** (`code-review.md`): 1 lines added, 1 removed
+- **Built-in commands** (`commands.md`): 4 lines added, 3 removed
+- **Common workflows** (`common-workflows.md`): 14 lines added, 12 removed
+- **Manage costs effectively** (`costs.md`): 1 lines added, 1 removed
+- **Environment variables** (`env-vars.md`): 7 lines added, 4 removed
+- **Claude Code on Google Vertex AI** (`google-vertex-ai.md`): 2 lines added, 2 removed
+- **Run Claude Code programmatically** (`headless.md`): 14 lines added, 0 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 4 lines added, 2 removed
+- **Hooks reference** (`hooks.md`): 17 lines added, 16 removed
+- **Interactive mode** (`interactive-mode.md`): 7 lines added, 0 removed
+  - New section: "### Voice input"
+- **Customize keyboard shortcuts** (`keybindings.md`): 8 lines added, 0 removed
+  - New section: "### Voice actions"
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 1 lines added, 1 removed
+- **How Claude remembers your project** (`memory.md`): 16 lines added, 0 removed
+- **Enterprise network configuration** (`network-config.md`): 5 lines added, 0 removed
+- **Claude Code overview** (`overview.md`): 7 lines added, 7 removed
+- **Configure permissions** (`permissions.md`): 22 lines added, 11 removed
+- **Create and distribute a plugin marketplace** (`plugin-marketplaces.md`): 36 lines added, 9 removed
+  - New section: "### Pre-populate plugins for containers"
+- **Plugins reference** (`plugins-reference.md`): 66 lines added, 13 removed
+  - New section: "#### Persistent data directory"
+- **Continue local sessions from any device with Remote Control** (`remote-control.md`): 14 lines added, 0 removed
+  - New section: "## Troubleshooting"
+- **Sandboxing** (`sandboxing.md`): 17 lines added, 2 removed
+- **Claude Code settings** (`settings.md`): 33 lines added, 22 removed
+  - New section: "### Global config settings"
+- **Create custom subagents** (`sub-agents.md`): 45 lines added, 3 removed
+  - New section: "### Invoke subagents explicitly"
+- **Optimize your terminal setup** (`terminal-config.md`): 5 lines added, 1 removed
+- **Troubleshooting** (`troubleshooting.md`): 15 lines added, 0 removed
+  - New section: "### "This organization has been disabled" with an active subscription"
+
+---
+
 ## 2026-03-17
 
 15 pages modified
