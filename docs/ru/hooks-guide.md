@@ -305,6 +305,7 @@ Matcher фильтрует по типу конфигурации: `user_setting
 | `SubagentStart`      | When a subagent is spawned                                                                                                                     |
 | `SubagentStop`       | When a subagent finishes                                                                                                                       |
 | `Stop`               | When Claude finishes responding                                                                                                                |
+| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                       |
 | `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                             |
 | `TaskCompleted`      | When a task is being marked as completed                                                                                                       |
 | `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session |

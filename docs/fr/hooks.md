@@ -18,7 +18,7 @@ Les hooks se déclenchent à des points spécifiques pendant une session Claude 
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/lBsitdsGyD9caWJQ/images/hooks-lifecycle.svg?fit=max&auto=format&n=lBsitdsGyD9caWJQ&q=85&s=be3486ef2cf2563eb213b6cbbce93982" alt="Diagramme du cycle de vie des hooks montrant la séquence des hooks de SessionStart à travers la boucle agentique jusqu'à SessionEnd, avec WorktreeCreate, WorktreeRemove et InstructionsLoaded comme événements asynchrones autonomes" width="520" height="1100" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/2YzYcIR7V1VggfgF/images/hooks-lifecycle.svg?fit=max&auto=format&n=2YzYcIR7V1VggfgF&q=85&s=3004e6c5dc95c4fe7fa3eb40fdc4176c" alt="Diagramme du cycle de vie des hooks montrant la séquence des hooks de SessionStart à travers la boucle agentique jusqu'à SessionEnd, avec WorktreeCreate, WorktreeRemove et InstructionsLoaded comme événements asynchrones autonomes" width="520" height="1100" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
@@ -36,6 +36,7 @@ Le tableau ci-dessous résume le moment où chaque événement se déclenche. La
 | `SubagentStart`      | When a subagent is spawned                                                                                                                     |
 | `SubagentStop`       | When a subagent finishes                                                                                                                       |
 | `Stop`               | When Claude finishes responding                                                                                                                |
+| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                       |
 | `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                             |
 | `TaskCompleted`      | When a task is being marked as completed                                                                                                       |
 | `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session |

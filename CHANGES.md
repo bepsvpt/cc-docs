@@ -1,5 +1,134 @@
 # Documentation Changes
 
+## 2026-03-19
+
+42 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Automatisieren Sie Workflows mit Hooks** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Hooks-Referenz** (`hooks.md`): 2 lines added, 1 removed
+
+### English
+
+
+**Modified**
+
+- **Best Practices for Claude Code** (`best-practices.md`): 1 lines added, 1 removed
+- **Changelog** (`changelog.md`): 21 lines added, 0 removed
+- **CLI reference** (`cli-reference.md`): 17 lines added, 17 removed
+- **Data usage** (`data-usage.md`): 10 lines added, 10 removed
+  - New section: "### Feedback using the `/feedback` command"
+- **Use Claude Code Desktop** (`desktop.md`): 6 lines added, 6 removed
+- **Environment variables** (`env-vars.md`): 6 lines added, 3 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 17 lines added, 12 removed
+- **Hooks reference** (`hooks.md`): 69 lines added, 41 removed
+  - New section: "### StopFailure"
+  - New section: "#### StopFailure input"
+- **Model configuration** (`model-config.md`): 16 lines added, 0 removed
+  - New section: "## Add a custom model option"
+- **Claude Code overview** (`overview.md`): 5 lines added, 5 removed
+- **Configure permissions** (`permissions.md`): 8 lines added, 8 removed
+- **Create and distribute a plugin marketplace** (`plugin-marketplaces.md`): 3 lines added, 1 removed
+- **Plugins reference** (`plugins-reference.md`): 31 lines added, 21 removed
+- **Continue local sessions from any device with Remote Control** (`remote-control.md`): 31 lines added, 5 removed
+  - New section: "### "Remote Control is not yet enabled for your account""
+  - New section: "### "Remote Control is disabled by your organization's policy""
+  - New section: "### "Remote credentials fetch failed""
+- **Sandboxing** (`sandboxing.md`): 9 lines added, 8 removed
+- **Security** (`security.md`): 1 lines added, 1 removed
+- **Claude Code settings** (`settings.md`): 12 lines added, 11 removed
+- **Create custom subagents** (`sub-agents.md`): 12 lines added, 8 removed
+- **Troubleshooting** (`troubleshooting.md`): 1 lines added, 1 removed
+- **Use Claude Code in VS Code** (`vs-code.md`): 38 lines added, 17 removed
+  - New section: "### The built-in IDE MCP server"
+
+### Español
+
+
+**Modified**
+
+- **Automatizar flujos de trabajo con hooks** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Referencia de hooks** (`hooks.md`): 2 lines added, 1 removed
+
+### Français
+
+
+**Modified**
+
+- **Automatiser les workflows avec les hooks** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Référence des hooks** (`hooks.md`): 2 lines added, 1 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Otomatisasi alur kerja dengan hooks** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Referensi Hooks** (`hooks.md`): 2 lines added, 1 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Automatizzare i flussi di lavoro con hooks** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Riferimento dei hooks** (`hooks.md`): 2 lines added, 1 removed
+
+### 日本語
+
+
+**Modified**
+
+- **hooks でワークフローを自動化する** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Hooks リファレンス** (`hooks.md`): 2 lines added, 1 removed
+
+### 한국어
+
+
+**Modified**
+
+- **hooks를 사용하여 워크플로우 자동화** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Hooks 참조** (`hooks.md`): 2 lines added, 1 removed
+
+### Português
+
+
+**Modified**
+
+- **Automatizar fluxos de trabalho com hooks** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Referência de hooks** (`hooks.md`): 2 lines added, 1 removed
+
+### Русский
+
+
+**Modified**
+
+- **Автоматизация рабочих процессов с помощью hooks** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Справочник по hooks** (`hooks.md`): 2 lines added, 1 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **使用 hooks 自动化工作流** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Hooks 参考** (`hooks.md`): 2 lines added, 1 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **使用 hooks 自動化工作流程** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Hooks 參考** (`hooks.md`): 2 lines added, 1 removed
+
+---
+
 ## 2026-03-18
 
 27 pages modified

@@ -18,7 +18,7 @@ Hooks срабатывают в определённых точках сеанс
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/lBsitdsGyD9caWJQ/images/hooks-lifecycle.svg?fit=max&auto=format&n=lBsitdsGyD9caWJQ&q=85&s=be3486ef2cf2563eb213b6cbbce93982" alt="Диаграмма жизненного цикла hook, показывающая последовательность hooks от SessionStart через агентский цикл к SessionEnd, с WorktreeCreate, WorktreeRemove и InstructionsLoaded как отдельные асинхронные события" width="520" height="1100" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/2YzYcIR7V1VggfgF/images/hooks-lifecycle.svg?fit=max&auto=format&n=2YzYcIR7V1VggfgF&q=85&s=3004e6c5dc95c4fe7fa3eb40fdc4176c" alt="Диаграмма жизненного цикла hook, показывающая последовательность hooks от SessionStart через агентский цикл к SessionEnd, с WorktreeCreate, WorktreeRemove и InstructionsLoaded как отдельные асинхронные события" width="520" height="1100" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
@@ -36,6 +36,7 @@ Hooks срабатывают в определённых точках сеанс
 | `SubagentStart`      | When a subagent is spawned                                                                                                                     |
 | `SubagentStop`       | When a subagent finishes                                                                                                                       |
 | `Stop`               | When Claude finishes responding                                                                                                                |
+| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                       |
 | `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                             |
 | `TaskCompleted`      | When a task is being marked as completed                                                                                                       |
 | `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session |
