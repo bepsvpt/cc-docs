@@ -1,5 +1,35 @@
 # Documentation Changes
 
+## 2026-03-20
+
+16 pages modified
+
+
+### English
+
+
+**Modified**
+
+- **Changelog** (`changelog.md`): 20 lines added, 0 removed
+- **CLI reference** (`cli-reference.md`): 56 lines added, 54 removed
+- **Discover and install prebuilt plugins through marketplaces** (`discover-plugins.md`): 1 lines added, 1 removed
+- **Environment variables** (`env-vars.md`): 1 lines added, 1 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 1 lines added, 1 removed
+- **Hooks reference** (`hooks.md`): 3 lines added, 2 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 5 lines added, 0 removed
+  - New section: "### Push messages with channels"
+- **Model configuration** (`model-config.md`): 2 lines added, 1 removed
+- **Claude Code overview** (`overview.md`): 15 lines added, 14 removed
+- **Create and distribute a plugin marketplace** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **Create plugins** (`plugins.md`): 1 lines added, 1 removed
+- **Continue local sessions from any device with Remote Control** (`remote-control.md`): 1 lines added, 0 removed
+- **Run prompts on a schedule** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Claude Code settings** (`settings.md`): 2 lines added, 1 removed
+- **Customize your status line** (`statusline.md`): 5 lines added, 0 removed
+- **Create custom subagents** (`sub-agents.md`): 3 lines added, 2 removed
+
+---
+
 ## 2026-03-19
 
 42 pages modified
