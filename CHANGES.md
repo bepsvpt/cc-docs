@@ -1,5 +1,35 @@
 # Documentation Changes
 
+## 2026-03-21
+
+16 pages modified
+
+
+### English
+
+
+**Modified**
+
+- **Changelog** (`changelog.md`): 30 lines added, 0 removed
+- **CLI reference** (`cli-reference.md`): 1 lines added, 1 removed
+- **Use Claude Code Desktop** (`desktop.md`): 3 lines added, 2 removed
+- **Discover and install prebuilt plugins through marketplaces** (`discover-plugins.md`): 3 lines added, 3 removed
+- **Environment variables** (`env-vars.md`): 1 lines added, 1 removed
+- **Extend Claude Code** (`features-overview.md`): 2 lines added, 2 removed
+- **How Claude remembers your project** (`memory.md`): 5 lines added, 5 removed
+- **Configure permissions** (`permissions.md`): 4 lines added, 1 removed
+- **Create and distribute a plugin marketplace** (`plugin-marketplaces.md`): 0 lines added, 1 removed
+- **Continue local sessions from any device with Remote Control** (`remote-control.md`): 3 lines added, 3 removed
+- **Sandboxing** (`sandboxing.md`): 3 lines added, 1 removed
+- **Configure server-managed settings (public beta)** (`server-managed-settings.md`): 22 lines added, 1 removed
+- **Claude Code settings** (`settings.md`): 32 lines added, 5 removed
+- **Extend Claude with skills** (`skills.md`): 17 lines added, 16 removed
+- **Customize your status line** (`statusline.md`): 105 lines added, 26 removed
+  - New section: "### Rate limit usage"
+- **Create custom subagents** (`sub-agents.md`): 12 lines added, 1 removed
+
+---
+
 ## 2026-03-20
 
 16 pages modified
