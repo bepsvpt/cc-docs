@@ -1,5 +1,24 @@
 # Documentation Changes
 
+## 2026-03-22
+
+6 pages modified
+
+
+### English
+
+
+**Modified**
+
+- **Environment variables** (`env-vars.md`): 1 lines added, 1 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 1 lines added, 1 removed
+- **Monitoring** (`monitoring-usage.md`): 21 lines added, 15 removed
+- **Plugins reference** (`plugins-reference.md`): 6 lines added, 0 removed
+- **Claude Code settings** (`settings.md`): 55 lines added, 54 removed
+- **Optimize your terminal setup** (`terminal-config.md`): 9 lines added, 1 removed
+
+---
+
 ## 2026-03-21
 
 16 pages modified
