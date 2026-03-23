@@ -1,5 +1,27 @@
 # Documentation Changes
 
+## 2026-03-23
+
+8 pages modified
+
+
+### English
+
+
+**Modified**
+
+- **CLI reference** (`cli-reference.md`): 57 lines added, 56 removed
+- **Environment variables** (`env-vars.md`): 1 lines added, 1 removed
+- **Run Claude Code programmatically** (`headless.md`): 29 lines added, 1 removed
+  - New section: "### Start faster with bare mode"
+- **How Claude Code works** (`how-claude-code-works.md`): 1 lines added, 1 removed
+- **Interactive mode** (`interactive-mode.md`): 18 lines added, 18 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 1 lines added, 1 removed
+- **Configure permissions** (`permissions.md`): 2 lines added, 0 removed
+- **Claude Code settings** (`settings.md`): 1 lines added, 0 removed
+
+---
+
 ## 2026-03-22
 
 6 pages modified
