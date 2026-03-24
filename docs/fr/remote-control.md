@@ -10,9 +10,9 @@
   Remote Control est disponible sur tous les plans. Les administrateurs Team et Enterprise doivent d'abord activer Claude Code dans les [paramètres d'administration](https://claude.ai/admin-settings/claude-code).
 </Note>
 
-Remote Control connecte [claude.ai/code](https://claude.ai/code) ou l'application Claude pour [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) et [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude) à une session Claude Code s'exécutant sur votre machine. Démarrez une tâche à votre bureau, puis reprenez-la depuis votre téléphone sur le canapé ou un navigateur sur un autre ordinateur.
+Remote Control connecte [claude.ai/code](https://claude.ai/code) ou l'application Claude pour [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) et [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude) à une session Claude Code s'exécutant sur votre machine. Commencez une tâche à votre bureau, puis reprenez-la depuis votre téléphone sur le canapé ou un navigateur sur un autre ordinateur.
 
-Lorsque vous démarrez une session Remote Control sur votre machine, Claude continue de s'exécuter localement à tout moment, donc rien ne se déplace vers le cloud. Avec Remote Control, vous pouvez :
+Lorsque vous démarrez une session Remote Control sur votre machine, Claude continue à s'exécuter localement à tout moment, donc rien ne se déplace vers le cloud. Avec Remote Control, vous pouvez :
 
 * **Utiliser votre environnement local complet à distance** : votre système de fichiers, [serveurs MCP](/fr/mcp), outils et configuration de projet restent tous disponibles
 * **Travailler depuis les deux surfaces à la fois** : la conversation reste synchronisée sur tous les appareils connectés, vous pouvez donc envoyer des messages depuis votre terminal, navigateur et téléphone de manière interchangeable
@@ -36,23 +36,43 @@ Avant d'utiliser Remote Control, confirmez que votre environnement répond à ce
 
 ## Démarrer une session Remote Control
 
-Vous pouvez démarrer une nouvelle session directement dans Remote Control, ou connecter une session qui s'exécute déjà.
+Vous pouvez démarrer un serveur Remote Control dédié, démarrer une session interactive avec Remote Control activé, ou connecter une session déjà en cours d'exécution.
 
 <Tabs>
-  <Tab title="Nouvelle session">
+  <Tab title="Mode serveur">
     Accédez à votre répertoire de projet et exécutez :
 
     ```bash  theme={null}
     claude remote-control
     ```
 
-    Le processus continue de s'exécuter dans votre terminal, en attente de connexions distantes. Il affiche une URL de session que vous pouvez utiliser pour [vous connecter depuis un autre appareil](#connect-from-another-device), et vous pouvez appuyer sur la barre d'espace pour afficher un code QR pour un accès rapide depuis votre téléphone. Pendant qu'une session distante est active, le terminal affiche l'état de la connexion et l'activité des outils.
+    Le processus reste en cours d'exécution dans votre terminal en mode serveur, en attente de connexions distantes. Il affiche une URL de session que vous pouvez utiliser pour [vous connecter depuis un autre appareil](#connect-from-another-device), et vous pouvez appuyer sur la barre d'espace pour afficher un code QR pour un accès rapide depuis votre téléphone. Pendant qu'une session distante est active, le terminal affiche l'état de la connexion et l'activité des outils.
 
-    Cette commande prend en charge les drapeaux suivants :
+    Drapeaux disponibles :
 
-    * **`--name "My Project"`** : définir un titre de session personnalisé visible dans la liste des sessions sur claude.ai/code. Vous pouvez également passer le nom comme argument positionnel : `claude remote-control "My Project"`
-    * **`--verbose`** : afficher les journaux détaillés de connexion et de session
-    * **`--sandbox`** / **`--no-sandbox`** : activer ou désactiver le [sandboxing](/fr/sandboxing) pour l'isolation du système de fichiers et du réseau pendant la session. Le sandboxing est désactivé par défaut.
+    | Drapeau                      | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+    | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+    | `--name "My Project"`        | Définissez un titre de session personnalisé visible dans la liste des sessions sur claude.ai/code.                                                                                                                                                                                                                                                                                                                                                                 |
+    | `--spawn <mode>`             | Comment les sessions concurrentes sont créées. Appuyez sur `w` à l'exécution pour basculer.<br />• `same-dir` (par défaut) : toutes les sessions partagent le répertoire de travail actuel, elles peuvent donc entrer en conflit si elles modifient les mêmes fichiers.<br />• `worktree` : chaque session à la demande obtient sa propre [git worktree](/fr/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees). Nécessite un référentiel git. |
+    | `--capacity <N>`             | Nombre maximum de sessions concurrentes. La valeur par défaut est 32.                                                                                                                                                                                                                                                                                                                                                                                              |
+    | `--verbose`                  | Afficher les journaux de connexion et de session détaillés.                                                                                                                                                                                                                                                                                                                                                                                                        |
+    | `--sandbox` / `--no-sandbox` | Activer ou désactiver le [sandboxing](/fr/sandboxing) pour l'isolation du système de fichiers et du réseau. Désactivé par défaut.                                                                                                                                                                                                                                                                                                                                  |
+  </Tab>
+
+  <Tab title="Session interactive">
+    Pour démarrer une session Claude Code interactive normale avec Remote Control activé, utilisez le drapeau `--remote-control` (ou `--rc`) :
+
+    ```bash  theme={null}
+    claude --remote-control
+    ```
+
+    Passez éventuellement un nom pour la session :
+
+    ```bash  theme={null}
+    claude --remote-control "My Project"
+    ```
+
+    Cela vous donne une session interactive complète dans votre terminal que vous pouvez également contrôler depuis claude.ai ou l'application Claude. Contrairement à `claude remote-control` (mode serveur), vous pouvez taper des messages localement tandis que la session est également disponible à distance.
   </Tab>
 
   <Tab title="À partir d'une session existante">
@@ -76,9 +96,9 @@ Vous pouvez démarrer une nouvelle session directement dans Remote Control, ou c
 
 Une fois qu'une session Remote Control est active, vous avez plusieurs façons de vous connecter depuis un autre appareil :
 
-* **Ouvrir l'URL de session** dans n'importe quel navigateur pour accéder directement à la session sur [claude.ai/code](https://claude.ai/code). À la fois `claude remote-control` et `/remote-control` affichent cette URL dans le terminal.
-* **Scannez le code QR** affiché à côté de l'URL de session pour l'ouvrir directement dans l'application Claude. Avec `claude remote-control`, appuyez sur la barre d'espace pour basculer l'affichage du code QR.
-* **Ouvrir [claude.ai/code](https://claude.ai/code) ou l'application Claude** et trouver la session par nom dans la liste des sessions. Les sessions Remote Control affichent une icône d'ordinateur avec un point d'état vert lorsqu'elles sont en ligne.
+* **Ouvrez l'URL de la session** dans n'importe quel navigateur pour accéder directement à la session sur [claude.ai/code](https://claude.ai/code). À la fois `claude remote-control` et `/remote-control` affichent cette URL dans le terminal.
+* **Scannez le code QR** affiché à côté de l'URL de la session pour l'ouvrir directement dans l'application Claude. Avec `claude remote-control`, appuyez sur la barre d'espace pour basculer l'affichage du code QR.
+* **Ouvrez [claude.ai/code](https://claude.ai/code) ou l'application Claude** et trouvez la session par nom dans la liste des sessions. Les sessions Remote Control affichent une icône d'ordinateur avec un point d'état vert lorsqu'elles sont en ligne.
 
 La session distante prend son nom à partir de l'argument `--name` (ou du nom passé à `/remote-control`), votre dernier message, votre valeur `/rename`, ou « Remote Control session » s'il n'y a pas d'historique de conversation. Si l'environnement a déjà une session active, vous serez invité à choisir si vous souhaitez la continuer ou en démarrer une nouvelle.
 
@@ -86,9 +106,9 @@ Si vous n'avez pas encore l'application Claude, utilisez la commande `/mobile` d
 
 ### Activer Remote Control pour toutes les sessions
 
-Par défaut, Remote Control ne s'active que lorsque vous exécutez explicitement `claude remote-control` ou `/remote-control`. Pour l'activer automatiquement pour chaque session, exécutez `/config` dans Claude Code et définissez **Enable Remote Control for all sessions** sur `true`. Définissez-le sur `false` pour désactiver.
+Par défaut, Remote Control ne s'active que lorsque vous exécutez explicitement `claude remote-control`, `claude --remote-control`, ou `/remote-control`. Pour l'activer automatiquement pour chaque session interactive, exécutez `/config` dans Claude Code et définissez **Enable Remote Control for all sessions** sur `true`. Définissez-le sur `false` pour le désactiver.
 
-Chaque instance Claude Code prend en charge une session distante à la fois. Si vous exécutez plusieurs instances, chacune obtient son propre environnement et sa propre session.
+Avec ce paramètre activé, chaque processus Claude Code interactif enregistre une session distante. Si vous exécutez plusieurs instances, chacune obtient son propre environnement et sa propre session. Pour exécuter plusieurs sessions concurrentes à partir d'un seul processus, utilisez plutôt le mode serveur avec `--spawn`.
 
 ## Connexion et sécurité
 
@@ -104,14 +124,14 @@ Utilisez Remote Control lorsque vous êtes au milieu d'un travail local et que v
 
 ## Limitations
 
-* **Une session distante à la fois** : chaque session Claude Code prend en charge une connexion distante.
-* **Le terminal doit rester ouvert** : Remote Control s'exécute en tant que processus local. Si vous fermez le terminal ou arrêtez le processus `claude`, la session se termine. Exécutez `claude remote-control` à nouveau pour démarrer une nouvelle.
+* **Une session distante par processus interactif** : en dehors du mode serveur, chaque instance Claude Code prend en charge une session distante à la fois. Utilisez le mode serveur avec `--spawn` pour exécuter plusieurs sessions concurrentes à partir d'un seul processus.
+* **Le terminal doit rester ouvert** : Remote Control s'exécute en tant que processus local. Si vous fermez le terminal ou arrêtez le processus `claude`, la session se termine. Exécutez `claude remote-control` à nouveau pour démarrer une nouvelle session.
 * **Panne réseau prolongée** : si votre machine est allumée mais incapable d'atteindre le réseau pendant plus de dix minutes environ, la session expire et le processus se termine. Exécutez `claude remote-control` à nouveau pour démarrer une nouvelle session.
 
 ## Ressources connexes
 
-* [Claude Code sur le web](/fr/claude-code-on-the-web) : exécuter des sessions dans des environnements cloud gérés par Anthropic au lieu de sur votre machine
-* [Authentification](/fr/authentication) : configurer `/login` et gérer les identifiants pour claude.ai
+* [Claude Code sur le web](/fr/claude-code-on-the-web) : exécutez des sessions dans des environnements cloud gérés par Anthropic au lieu de sur votre machine
+* [Authentification](/fr/authentication) : configurez `/login` et gérez les identifiants pour claude.ai
 * [Référence CLI](/fr/cli-reference) : liste complète des drapeaux et commandes incluant `claude remote-control`
 * [Sécurité](/fr/security) : comment les sessions Remote Control s'intègrent dans le modèle de sécurité Claude Code
-* [Utilisation des données](/fr/data-usage) : quelles données circulent via l'API Anthropic pendant les sessions locales et distantes
+* [Utilisation des données](/fr/data-usage) : quelles données circulent via l'API Anthropic lors des sessions locales et distantes

@@ -14,11 +14,11 @@
 
 * 打开的终端或命令提示符
   * 如果您之前从未使用过终端，请查看[终端指南](/zh-CN/terminal-guide)
-* 一个要处理的代码项目
-* 一个 [Claude 订阅](https://claude.com/pricing)（Pro、Max、Teams 或 Enterprise）、[Claude Console](https://console.anthropic.com/) 账户，或通过[支持的云提供商](/zh-CN/third-party-integrations)的访问权限
+* 一个可以使用的代码项目
+* 一个 [Claude 订阅](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_prereq)（Pro、Max、Teams 或 Enterprise）、[Claude Console](https://console.anthropic.com/) 账户，或通过[支持的云提供商](/zh-CN/third-party-integrations)的访问权限
 
 <Note>
-  本指南涵盖终端 CLI。Claude Code 也可在[网页](https://claude.ai/code)、[桌面应用](/zh-CN/desktop)、[VS Code](/zh-CN/vs-code) 和 [JetBrains IDE](/zh-CN/jetbrains)、[Slack](/zh-CN/slack) 中使用，以及通过 [GitHub Actions](/zh-CN/github-actions) 和 [GitLab](/zh-CN/gitlab-ci-cd) 进行 CI/CD。请参阅[所有界面](/zh-CN/overview#use-claude-code-everywhere)。
+  本指南涵盖终端 CLI。Claude Code 也可在[网页](https://claude.ai/code)、[桌面应用](/zh-CN/desktop)、[VS Code](/zh-CN/vs-code) 和 [JetBrains IDE](/zh-CN/jetbrains)、[Slack](/zh-CN/slack) 中使用，以及通过 [GitHub Actions](/zh-CN/github-actions) 和 [GitLab](/zh-CN/gitlab-ci-cd) 进行 CI/CD。查看[所有界面](/zh-CN/overview#use-claude-code-everywhere)。
 </Note>
 
 ## 步骤 1：安装 Claude Code
@@ -89,8 +89,8 @@ claude
 
 您可以使用以下任何账户类型登录：
 
-* [Claude Pro、Max、Teams 或 Enterprise](https://claude.com/pricing)（推荐）
-* [Claude Console](https://console.anthropic.com/)（具有预付费额度的 API 访问）。首次登录时，会在 Console 中自动创建一个"Claude Code"工作区，用于集中成本跟踪。
+* [Claude Pro、Max、Teams 或 Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_login)（推荐）
+* [Claude Console](https://console.anthropic.com/)（具有预付费额度的 API 访问）。首次登录时，Console 中会自动为集中成本跟踪创建一个"Claude Code"工作区。
 * [Amazon Bedrock、Google Vertex AI 或 Microsoft Foundry](/zh-CN/third-party-integrations)（企业云提供商）
 
 登录后，您的凭证将被存储，您无需再次登录。要稍后切换账户，请使用 `/login` 命令。
@@ -112,7 +112,7 @@ claude
 
 ## 步骤 4：提出您的第一个问题
 
-让我们从了解您的代码库开始。尝试以下命令之一：
+让我们从理解您的代码库开始。尝试以下命令之一：
 
 ```text  theme={null}
 这个项目做什么？
@@ -143,11 +143,11 @@ Claude Code 能做什么？
 ```
 
 ```text  theme={null}
-Claude Code 能与 Docker 一起工作吗？
+Claude Code 可以与 Docker 一起工作吗？
 ```
 
 <Note>
-  Claude Code 根据需要读取您的项目文件。您无需手动添加上下文。
+  Claude Code 根据需要读取您的项目文件。您不必手动添加上下文。
 </Note>
 
 ## 步骤 5：进行您的第一次代码更改
@@ -290,14 +290,14 @@ Claude Code 将：
   </Accordion>
 
   <Accordion title="让 Claude 先探索">
-    在进行更改之前，让 Claude 了解您的代码：
+    在进行更改之前，让 Claude 理解您的代码：
 
     ```text  theme={null}
     分析数据库架构
     ```
 
     ```text  theme={null}
-    构建一个仪表板，显示英国客户最常退回的产品
+    构建一个仪表板，显示英国客户最常退货的产品
     ```
   </Accordion>
 

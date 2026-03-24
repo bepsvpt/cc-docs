@@ -141,7 +141,7 @@ Múltiples instalaciones de Claude Code pueden causar desajustes de versión o c
     which -a claude
     ```
 
-    Verifica si están presentes las versiones del instalador nativo y npm:
+    Verifica si las versiones del instalador nativo y npm están presentes:
 
     ```bash  theme={null}
     ls -la ~/.local/bin/claude
@@ -204,7 +204,7 @@ Confirma que el binario existe y es ejecutable:
 ls -la $(which claude)
 ```
 
-En Linux, verifica si faltan bibliotecas compartidas. Si `ldd` muestra bibliotecas faltantes, es posible que necesites instalar paquetes del sistema. En Alpine Linux y otras distribuciones basadas en musl, consulta [Configuración de Alpine Linux](/es/setup#alpine-linux-and-musl-based-distributions).
+En Linux, verifica si hay bibliotecas compartidas faltantes. Si `ldd` muestra bibliotecas faltantes, es posible que necesites instalar paquetes del sistema. En Alpine Linux y otras distribuciones basadas en musl, consulta [Configuración de Alpine Linux](/es/setup#alpine-linux-and-musl-based-distributions).
 
 ```bash  theme={null}
 ldd $(which claude) | grep "not found"
@@ -235,7 +235,7 @@ En PowerShell, el mismo problema aparece como:
 Invoke-Expression: Missing argument in parameter list.
 ```
 
-Esto significa que la URL de instalación devolvió una página HTML en lugar del script de instalación. Si la página HTML dice "App unavailable in region", Claude Code no está disponible en tu país. Consulta [países compatibles](https://www.anthropic.com/supported-countries).
+Esto significa que la URL de instalación devolvió una página HTML en lugar del script de instalación. Si la página HTML dice "App unavailable in region," Claude Code no está disponible en tu país. Consulta [países compatibles](https://www.anthropic.com/supported-countries).
 
 De lo contrario, esto puede ocurrir debido a problemas de red, enrutamiento regional, o una interrupción temporal del servicio.
 
@@ -255,7 +255,7 @@ De lo contrario, esto puede ocurrir debido a problemas de red, enrutamiento regi
    winget install Anthropic.ClaudeCode
    ```
 
-2. **Reintentar después de unos minutos**: el problema suele ser temporal. Espera e intenta el comando original nuevamente.
+2. **Reintentar después de unos minutos**: el problema es a menudo temporal. Espera e intenta el comando original nuevamente.
 
 ### `command not found: claude` después de la instalación
 
@@ -272,7 +272,7 @@ Esto significa que el directorio de instalación no está en la ruta de búsqued
 
 ### `curl: (56) Failure writing output to destination`
 
-El comando `curl ... | bash` descarga el script y lo pasa directamente a Bash para su ejecución usando una tubería (`|`). Este error significa que la conexión se interrumpió antes de que el script terminara de descargarse. Las causas comunes incluyen interrupciones de red, la descarga siendo bloqueada a mitad de camino, o límites de recursos del sistema.
+El comando `curl ... | bash` descarga el script y lo pasa directamente a Bash para su ejecución usando una tubería (`|`). Este error significa que la conexión se rompió antes de que el script terminara de descargar. Las causas comunes incluyen interrupciones de red, la descarga siendo bloqueada a mitad de camino, o límites de recursos del sistema.
 
 **Soluciones:**
 
@@ -280,7 +280,7 @@ El comando `curl ... | bash` descarga el script y lo pasa directamente a Bash pa
    ```bash  theme={null}
    curl -fsSL https://storage.googleapis.com -o /dev/null
    ```
-   Si el comando se completa silenciosamente, tu conexión está bien y el problema probablemente es intermitente. Reintentar el comando de instalación. Si ves un error, tu red puede estar bloqueando la descarga.
+   Si el comando se completa silenciosamente, tu conexión está bien y el problema es probablemente intermitente. Reintentar el comando de instalación. Si ves un error, tu red puede estar bloqueando la descarga.
 
 2. **Intenta un método de instalación alternativo**:
 
@@ -423,7 +423,7 @@ Al instalar Claude Code en un contenedor Docker, instalar como root en `/` puede
 
 **Soluciones:**
 
-1. **Establece un directorio de trabajo** antes de ejecutar el instalador. Cuando se ejecuta desde `/`, el instalador escanea todo el sistema de archivos, lo que causa un uso excesivo de memoria. Establecer `WORKDIR` limita el escaneo a un directorio pequeño:
+1. **Establece un directorio de trabajo** antes de ejecutar el instalador. Cuando se ejecuta desde `/`, el instalador escanea todo el sistema de archivos, lo que causa un uso excesivo de memoria. Establecer `WORKDIR` limita el escaneo a un pequeño directorio:
    ```dockerfile  theme={null}
    WORKDIR /tmp
    RUN curl -fsSL https://claude.ai/install.sh | bash
@@ -732,7 +732,7 @@ apk add ripgrep
 pacman -S ripgrep
 ```
 
-Luego establece `USE_BUILTIN_RIPGREP=0` en tu [entorno](/es/settings#environment-variables).
+Luego establece `USE_BUILTIN_RIPGREP=0` en tu [entorno](/es/env-vars).
 
 ### Resultados de búsqueda lentos o incompletos en WSL
 
@@ -748,7 +748,7 @@ Las penalizaciones de rendimiento de lectura de disco al [trabajar entre sistema
 
 2. **Mueve el proyecto al sistema de archivos de Linux**: si es posible, asegúrate de que tu proyecto esté ubicado en el sistema de archivos de Linux (`/home/`) en lugar del sistema de archivos de Windows (`/mnt/c/`).
 
-3. **Usa Windows nativo en su lugar**: considera ejecutar Claude Code de forma nativa en Windows en lugar de a través de WSL, para mejor rendimiento del sistema de archivos.
+3. **Usa Windows nativo en su lugar**: considera ejecutar Claude Code nativamente en Windows en lugar de a través de WSL, para mejor rendimiento del sistema de archivos.
 
 ## Problemas de integración de IDE
 
@@ -756,7 +756,7 @@ Si Claude Code no se conecta a tu IDE o se comporta inesperadamente dentro de un
 
 ### IDE de JetBrains no detectado en WSL2
 
-Si estás usando Claude Code en WSL2 con IDEs de JetBrains y obteniendo errores "No available IDEs detected", esto probablemente se debe a la configuración de red de WSL2 o Windows Firewall bloqueando la conexión.
+Si estás usando Claude Code en WSL2 con IDEs de JetBrains y obteniendo errores "No available IDEs detected", esto es probablemente debido a la configuración de red de WSL2 o Windows Firewall bloqueando la conexión.
 
 #### Modos de red de WSL2
 
@@ -807,19 +807,19 @@ Si estás experimentando problemas de integración de IDE en Windows, [crea un p
 
 ### La tecla Escape no funciona en terminales de IDE de JetBrains
 
-Si estás usando Claude Code en terminales de JetBrains y la tecla `Esc` no interrumpe el agente como se espera, esto probablemente se debe a un choque de atajos de teclado con los atajos de teclado predeterminados de JetBrains.
+Si estás usando Claude Code en terminales de JetBrains y la tecla `Esc` no interrumpe el agente como se espera, esto es probablemente debido a un choque de atajos de teclado con los atajos de teclado predeterminados de JetBrains.
 
 Para corregir este problema:
 
 1. Ve a Settings → Tools → Terminal
-2. Ya sea:
+2. Cualquiera de:
    * Desmarca "Move focus to the editor with Escape", o
    * Haz clic en "Configure terminal keybindings" y elimina el atajo "Switch focus to Editor"
 3. Aplica los cambios
 
 Esto permite que la tecla `Esc` interrumpa correctamente las operaciones de Claude Code.
 
-## Problemas de formato de markdown
+## Problemas de formato de Markdown
 
 Claude Code a veces genera archivos markdown con etiquetas de lenguaje faltantes en cercas de código, lo que puede afectar el resaltado de sintaxis y la legibilidad en GitHub, editores, y herramientas de documentación.
 

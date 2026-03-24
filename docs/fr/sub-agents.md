@@ -142,9 +142,9 @@ La commande `/agents` fournit une interface interactive pour gérer les sous-age
 * Créer de nouveaux sous-agents avec une configuration guidée ou une génération Claude
 * Modifier la configuration des sous-agents existants et l'accès aux outils
 * Supprimer les sous-agents personnalisés
-* Voir quels sous-agents sont actifs lorsque des doublons existent
+* Voir quels sous-agents sont actifs en cas de doublons
 
-C'est la méthode recommandée pour créer et gérer les sous-agents. Pour la création manuelle ou l'automatisation, vous pouvez également ajouter directement des fichiers de sous-agent.
+C'est la méthode recommandée pour créer et gérer les sous-agents. Pour la création manuelle ou l'automatisation, vous pouvez également ajouter des fichiers de sous-agent directement.
 
 Pour lister tous les sous-agents configurés à partir de la ligne de commande sans démarrer une session interactive, exécutez `claude agents`. Cela affiche les agents groupés par source et indique lesquels sont remplacés par des définitions de priorité plus élevée.
 
@@ -157,13 +157,13 @@ Les sous-agents sont des fichiers Markdown avec du frontmatter YAML. Stockez-les
 | Drapeau CLI `--agents`         | Session actuelle        | 1 (la plus élevée) | Passer JSON lors du lancement de Claude Code |
 | `.claude/agents/`              | Projet actuel           | 2                  | Interactif ou manuel                         |
 | `~/.claude/agents/`            | Tous vos projets        | 3                  | Interactif ou manuel                         |
-| Répertoire `agents/` du plugin | Où le plugin est activé | 4 (la plus basse)  | Installé avec [plugins](/fr/plugins)         |
+| Répertoire `agents/` du plugin | Où le plugin est activé | 4 (la plus basse)  | Installé avec les [plugins](/fr/plugins)     |
 
 **Les sous-agents de projet** (`.claude/agents/`) sont idéaux pour les sous-agents spécifiques à une base de code. Enregistrez-les dans le contrôle de version pour que votre équipe puisse les utiliser et les améliorer de manière collaborative.
 
 **Les sous-agents utilisateur** (`~/.claude/agents/`) sont des sous-agents personnels disponibles dans tous vos projets.
 
-**Les sous-agents définis par CLI** sont passés en JSON lors du lancement de Claude Code. Ils n'existent que pour cette session et ne sont pas enregistrés sur le disque, ce qui les rend utiles pour les tests rapides ou les scripts d'automatisation :
+**Les sous-agents définis par CLI** sont passés en JSON lors du lancement de Claude Code. Ils n'existent que pour cette session et ne sont pas enregistrés sur le disque, ce qui les rend utiles pour les tests rapides ou les scripts d'automatisation. Vous pouvez définir plusieurs sous-agents dans un seul appel `--agents` :
 
 ```bash  theme={null}
 claude --agents '{
@@ -172,13 +172,21 @@ claude --agents '{
     "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
     "tools": ["Read", "Grep", "Glob", "Bash"],
     "model": "sonnet"
+  },
+  "debugger": {
+    "description": "Debugging specialist for errors and test failures.",
+    "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
   }
 }'
 ```
 
-Le drapeau `--agents` accepte JSON avec les mêmes champs de [frontmatter](#supported-frontmatter-fields) que les sous-agents basés sur fichier : `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills` et `memory`. Utilisez `prompt` pour l'invite système, équivalent au corps markdown dans les sous-agents basés sur fichier. Consultez la [référence CLI](/fr/cli-reference#agents-flag-format) pour le format JSON complet.
+Le drapeau `--agents` accepte JSON avec les mêmes champs de [frontmatter](#supported-frontmatter-fields) que les sous-agents basés sur fichier : `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills` et `memory`. Utilisez `prompt` pour l'invite système, équivalent au corps markdown dans les sous-agents basés sur fichier.
 
 **Les sous-agents de plugin** proviennent des [plugins](/fr/plugins) que vous avez installés. Ils apparaissent dans `/agents` aux côtés de vos sous-agents personnalisés. Consultez la [référence des composants de plugin](/fr/plugins-reference#agents) pour plus de détails sur la création de sous-agents de plugin.
+
+<Note>
+  Pour des raisons de sécurité, les sous-agents de plugin ne prennent pas en charge les champs frontmatter `hooks`, `mcpServers` ou `permissionMode`. Ces champs sont ignorés lors du chargement des agents à partir d'un plugin. Si vous en avez besoin, copiez le fichier d'agent dans `.claude/agents/` ou `~/.claude/agents/`. Vous pouvez également ajouter des règles à [`permissions.allow`](/fr/settings#permission-settings) dans `settings.json` ou `settings.local.json`, mais ces règles s'appliquent à l'ensemble de la session, pas seulement au sous-agent du plugin.
+</Note>
 
 ### Écrire des fichiers de sous-agent
 
@@ -212,11 +220,11 @@ Les champs suivants peuvent être utilisés dans le frontmatter YAML. Seuls `nam
 | `description`     | Oui         | Quand Claude doit déléguer à ce sous-agent                                                                                                                                                                                                                                                                               |
 | `tools`           | Non         | [Outils](#available-tools) que le sous-agent peut utiliser. Hérite de tous les outils s'il est omis                                                                                                                                                                                                                      |
 | `disallowedTools` | Non         | Outils à refuser, supprimés de la liste héritée ou spécifiée                                                                                                                                                                                                                                                             |
-| `model`           | Non         | [Modèle](#choose-a-model) à utiliser : `sonnet`, `opus`, `haiku` ou `inherit`. Par défaut `inherit`                                                                                                                                                                                                                      |
+| `model`           | Non         | [Modèle](#choose-a-model) à utiliser : `sonnet`, `opus`, `haiku`, un ID de modèle complet (par exemple, `claude-opus-4-6`), ou `inherit`. Par défaut `inherit`                                                                                                                                                           |
 | `permissionMode`  | Non         | [Mode de permission](#permission-modes) : `default`, `acceptEdits`, `dontAsk`, `bypassPermissions` ou `plan`                                                                                                                                                                                                             |
 | `maxTurns`        | Non         | Nombre maximum de tours d'agent avant que le sous-agent s'arrête                                                                                                                                                                                                                                                         |
 | `skills`          | Non         | [Skills](/fr/skills) à charger dans le contexte du sous-agent au démarrage. Le contenu complet de la skill est injecté, pas seulement mis à disposition pour l'invocation. Les sous-agents n'héritent pas des skills de la conversation parent                                                                           |
-| `mcpServers`      | Non         | [Serveurs MCP](/fr/mcp) disponibles pour ce sous-agent. Chaque entrée est soit un nom de serveur référençant un serveur déjà configuré (par exemple, `"slack"`) soit une définition en ligne avec le nom du serveur comme clé et une [configuration complète du serveur MCP](/fr/mcp#configure-mcp-servers) comme valeur |
+| `mcpServers`      | Non         | [Serveurs MCP](/fr/mcp) disponibles pour ce sous-agent. Chaque entrée est soit un nom de serveur référençant un serveur déjà configuré (par exemple, `"slack"`) soit une définition en ligne avec le nom du serveur comme clé et une [configuration de serveur MCP](/fr/mcp#configure-mcp-servers) complète comme valeur |
 | `hooks`           | Non         | [Hooks de cycle de vie](#define-hooks-for-subagents) limités à ce sous-agent                                                                                                                                                                                                                                             |
 | `memory`          | Non         | [Portée de la mémoire persistante](#enable-persistent-memory) : `user`, `project` ou `local`. Active l'apprentissage entre sessions                                                                                                                                                                                      |
 | `background`      | Non         | Définir sur `true` pour toujours exécuter ce sous-agent en tant que [tâche d'arrière-plan](#run-subagents-in-foreground-or-background). Par défaut : `false`                                                                                                                                                             |
@@ -227,16 +235,17 @@ Les champs suivants peuvent être utilisés dans le frontmatter YAML. Seuls `nam
 Le champ `model` contrôle quel [modèle IA](/fr/model-config) le sous-agent utilise :
 
 * **Alias de modèle** : Utilisez l'un des alias disponibles : `sonnet`, `opus` ou `haiku`
-* **inherit** : Utiliser le même modèle que la conversation principale
+* **ID de modèle complet** : Utilisez un ID de modèle complet tel que `claude-opus-4-6` ou `claude-sonnet-4-6`. Accepte les mêmes valeurs que le drapeau `--model`
+* **inherit** : Utilisez le même modèle que la conversation principale
 * **Omis** : S'il n'est pas spécifié, par défaut `inherit` (utilise le même modèle que la conversation principale)
 
-### Contrôler les capacités du sous-agent
+### Contrôler les capacités des sous-agents
 
 Vous pouvez contrôler ce que les sous-agents peuvent faire via l'accès aux outils, les modes de permission et les règles conditionnelles.
 
 #### Outils disponibles
 
-Les sous-agents peuvent utiliser n'importe lequel des [outils internes](/fr/settings#tools-available-to-claude) de Claude Code. Par défaut, les sous-agents héritent de tous les outils de la conversation principale, y compris les outils MCP.
+Les sous-agents peuvent utiliser n'importe lequel des [outils internes](/fr/tools-reference) de Claude Code. Par défaut, les sous-agents héritent de tous les outils de la conversation principale, y compris les outils MCP.
 
 Pour restreindre les outils, utilisez le champ `tools` (liste blanche) ou le champ `disallowedTools` (liste noire) :
 
@@ -263,7 +272,7 @@ tools: Agent(worker, researcher), Read, Bash
 ---
 ```
 
-C'est une liste blanche : seuls les sous-agents `worker` et `researcher` peuvent être générés. Si l'agent essaie de générer un autre type, la demande échoue et l'agent ne voit que les types autorisés dans son invite. Pour bloquer des agents spécifiques tout en en autorisant d'autres, utilisez plutôt [`permissions.deny`](#disable-specific-subagents).
+C'est une liste blanche : seuls les sous-agents `worker` et `researcher` peuvent être générés. Si l'agent essaie de générer un autre type, la demande échoue et l'agent ne voit que les types autorisés dans son invite. Pour bloquer des agents spécifiques tout en autorisant tous les autres, utilisez plutôt [`permissions.deny`](#disable-specific-subagents).
 
 Pour autoriser la génération de n'importe quel sous-agent sans restrictions, utilisez `Agent` sans parenthèses :
 
@@ -273,23 +282,50 @@ tools: Agent, Read, Bash
 
 Si `Agent` est complètement omis de la liste `tools`, l'agent ne peut générer aucun sous-agent. Cette restriction s'applique uniquement aux agents s'exécutant en tant que thread principal avec `claude --agent`. Les sous-agents ne peuvent pas générer d'autres sous-agents, donc `Agent(agent_type)` n'a aucun effet dans les définitions de sous-agent.
 
+#### Limiter les serveurs MCP à un sous-agent
+
+Utilisez le champ `mcpServers` pour donner à un sous-agent l'accès aux serveurs [MCP](/fr/mcp) qui ne sont pas disponibles dans la conversation principale. Les serveurs en ligne définis ici sont connectés au démarrage du sous-agent et déconnectés à la fin. Les références de chaîne partagent la connexion de la session parent.
+
+Chaque entrée de la liste est soit une définition de serveur en ligne, soit une chaîne référençant un serveur MCP déjà configuré dans votre session :
+
+```yaml  theme={null}
+---
+name: browser-tester
+description: Tests features in a real browser using Playwright
+mcpServers:
+  # Inline definition: scoped to this subagent only
+  - playwright:
+      type: stdio
+      command: npx
+      args: ["-y", "@playwright/mcp@latest"]
+  # Reference by name: reuses an already-configured server
+  - github
+---
+
+Use the Playwright tools to navigate, screenshot, and interact with pages.
+```
+
+Les définitions en ligne utilisent le même schéma que les entrées de serveur `.mcp.json` (`stdio`, `http`, `sse`, `ws`), indexées par le nom du serveur.
+
+Pour garder un serveur MCP en dehors de la conversation principale et éviter que ses descriptions d'outils ne consomment du contexte, définissez-le en ligne ici plutôt que dans `.mcp.json`. Le sous-agent obtient les outils ; la conversation parent ne les obtient pas.
+
 #### Modes de permission
 
 Le champ `permissionMode` contrôle comment le sous-agent gère les invites de permission. Les sous-agents héritent du contexte de permission de la conversation principale mais peuvent remplacer le mode.
 
-| Mode                | Comportement                                                                                           |
-| :------------------ | :----------------------------------------------------------------------------------------------------- |
-| `default`           | Vérification de permission standard avec invites                                                       |
-| `acceptEdits`       | Acceptation automatique des modifications de fichiers                                                  |
-| `dontAsk`           | Refus automatique des invites de permission (les outils explicitement autorisés fonctionnent toujours) |
-| `bypassPermissions` | Ignorer toutes les vérifications de permission                                                         |
-| `plan`              | Mode plan (exploration en lecture seule)                                                               |
+| Mode                | Comportement                                                                                      |
+| :------------------ | :------------------------------------------------------------------------------------------------ |
+| `default`           | Vérification de permission standard avec invites                                                  |
+| `acceptEdits`       | Auto-accepter les modifications de fichiers                                                       |
+| `dontAsk`           | Auto-refuser les invites de permission (les outils explicitement autorisés fonctionnent toujours) |
+| `bypassPermissions` | Ignorer tous les contrôles de permission                                                          |
+| `plan`              | Mode plan (exploration en lecture seule)                                                          |
 
 <Warning>
-  Utilisez `bypassPermissions` avec prudence. Il ignore toutes les vérifications de permission, permettant au sous-agent d'exécuter n'importe quelle opération sans approbation.
+  Utilisez `bypassPermissions` avec prudence. Il ignore tous les contrôles de permission, permettant au sous-agent d'exécuter n'importe quelle opération sans approbation.
 </Warning>
 
-Si le parent utilise `bypassPermissions`, cela prend la priorité et ne peut pas être remplacé.
+Si le parent utilise `bypassPermissions`, cela prend précédence et ne peut pas être remplacé.
 
 #### Précharger les skills dans les sous-agents
 
@@ -328,7 +364,7 @@ You are a code reviewer. As you review code, update your agent memory with
 patterns, conventions, and recurring issues you discover.
 ```
 
-Choisissez une portée en fonction de la largeur avec laquelle la mémoire doit s'appliquer :
+Choisissez une portée en fonction de la largeur d'application de la mémoire :
 
 | Portée    | Emplacement                                   | Utiliser quand                                                                                                               |
 | :-------- | :-------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------- |
@@ -358,7 +394,7 @@ Lorsque la mémoire est activée :
 
 #### Règles conditionnelles avec hooks
 
-Pour un contrôle plus dynamique de l'utilisation des outils, utilisez les hooks `PreToolUse` pour valider les opérations avant leur exécution. C'est utile lorsque vous devez autoriser certaines opérations d'un outil tout en en bloquant d'autres.
+Pour un contrôle plus dynamique de l'utilisation des outils, utilisez les hooks `PreToolUse` pour valider les opérations avant leur exécution. C'est utile lorsque vous devez autoriser certaines opérations d'un outil tout en en bloquer d'autres.
 
 Cet exemple crée un sous-agent qui n'autorise que les requêtes de base de données en lecture seule. Le hook `PreToolUse` exécute le script spécifié dans `command` avant chaque commande Bash :
 
@@ -394,9 +430,9 @@ fi
 exit 0
 ```
 
-Consultez [Hook input](/fr/hooks#pretooluse-input) pour le schéma d'entrée complet et [les codes de sortie](/fr/hooks#exit-code-output) pour savoir comment les codes de sortie affectent le comportement.
+Consultez [Hook input](/fr/hooks#pretooluse-input) pour le schéma d'entrée complet et [exit codes](/fr/hooks#exit-code-output) pour savoir comment les codes de sortie affectent le comportement.
 
-#### Désactiver les sous-agents spécifiques
+#### Désactiver des sous-agents spécifiques
 
 Vous pouvez empêcher Claude d'utiliser des sous-agents spécifiques en les ajoutant au tableau `deny` dans vos [paramètres](/fr/settings#permission-settings). Utilisez le format `Agent(subagent-name)` où `subagent-name` correspond au champ name du sous-agent.
 
@@ -420,12 +456,12 @@ Consultez la [documentation Permissions](/fr/permissions#tool-specific-permissio
 
 Les sous-agents peuvent définir des [hooks](/fr/hooks) qui s'exécutent pendant le cycle de vie du sous-agent. Il y a deux façons de configurer les hooks :
 
-1. **Dans le frontmatter du sous-agent** : Définir les hooks qui s'exécutent uniquement pendant que ce sous-agent est actif
+1. **Dans le frontmatter du sous-agent** : Définir les hooks qui s'exécutent uniquement pendant que ce sous-agent spécifique est actif
 2. **Dans `settings.json`** : Définir les hooks qui s'exécutent dans la session principale lorsque les sous-agents démarrent ou s'arrêtent
 
 #### Hooks dans le frontmatter du sous-agent
 
-Définissez les hooks directement dans le fichier markdown du sous-agent. Ces hooks s'exécutent uniquement pendant que ce sous-agent spécifique est actif et sont nettoyés lorsqu'il se termine.
+Définissez les hooks directement dans le fichier markdown du sous-agent. Ces hooks s'exécutent uniquement pendant que ce sous-agent spécifique est actif et sont nettoyés à la fin.
 
 Tous les [événements de hook](/fr/hooks#hook-events) sont pris en charge. Les événements les plus courants pour les sous-agents sont :
 
@@ -466,7 +502,7 @@ Configurez les hooks dans `settings.json` qui répondent aux événements du cyc
 | `SubagentStart` | Nom du type d'agent | Quand un sous-agent commence l'exécution |
 | `SubagentStop`  | Nom du type d'agent | Quand un sous-agent se termine           |
 
-Les deux événements prennent en charge les matchers pour cibler des types d'agents spécifiques par nom. Cet exemple exécute un script de configuration uniquement lorsque le sous-agent `db-agent` démarre et un script de nettoyage lorsque n'importe quel sous-agent s'arrête :
+Les deux événements prennent en charge les matchers pour cibler des types d'agents spécifiques par nom. Cet exemple exécute un script de configuration uniquement lorsque le sous-agent `db-agent` démarre, et un script de nettoyage lorsque n'importe quel sous-agent s'arrête :
 
 ```json  theme={null}
 {
@@ -509,8 +545,8 @@ Have the code-reviewer subagent look at my recent changes
 
 Les sous-agents peuvent s'exécuter au premier plan (bloquant) ou en arrière-plan (concurrent) :
 
-* **Les sous-agents au premier plan** bloquent la conversation principale jusqu'à la fin. Les invites de permission et les questions de clarification (comme [`AskUserQuestion`](/fr/settings#tools-available-to-claude)) vous sont transmises.
-* **Les sous-agents en arrière-plan** s'exécutent simultanément pendant que vous continuez à travailler. Avant de lancer, Claude Code vous demande les permissions d'outils dont le sous-agent aura besoin, en s'assurant qu'il a les approbations nécessaires à l'avance. Une fois en cours d'exécution, le sous-agent hérite de ces permissions et refuse automatiquement tout ce qui n'est pas pré-approuvé. Si un sous-agent en arrière-plan doit poser des questions de clarification, cet appel d'outil échoue mais le sous-agent continue.
+* **Les sous-agents au premier plan** bloquent la conversation principale jusqu'à la fin. Les invites de permission et les questions de clarification (comme [`AskUserQuestion`](/fr/tools-reference)) vous sont transmises.
+* **Les sous-agents en arrière-plan** s'exécutent simultanément pendant que vous continuez à travailler. Avant le lancement, Claude Code vous demande les permissions d'outils dont le sous-agent aura besoin, en s'assurant qu'il a les approbations nécessaires à l'avance. Une fois en cours d'exécution, le sous-agent hérite de ces permissions et auto-refuse tout ce qui n'est pas pré-approuvé. Si un sous-agent en arrière-plan doit poser des questions de clarification, cet appel d'outil échoue mais le sous-agent continue.
 
 Si un sous-agent en arrière-plan échoue en raison de permissions manquantes, vous pouvez le [reprendre](#resume-subagents) au premier plan pour réessayer avec des invites interactives.
 
@@ -519,7 +555,7 @@ Claude décide si les sous-agents s'exécutent au premier plan ou en arrière-pl
 * Demander à Claude de « run this in the background »
 * Appuyer sur **Ctrl+B** pour mettre une tâche en arrière-plan
 
-Pour désactiver toute la fonctionnalité de tâche en arrière-plan, définissez la variable d'environnement `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` sur `1`. Consultez [Variables d'environnement](/fr/settings#environment-variables).
+Pour désactiver toute la fonctionnalité de tâche en arrière-plan, définissez la variable d'environnement `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` sur `1`. Consultez [Variables d'environnement](/fr/env-vars).
 
 ### Modèles courants
 
@@ -572,10 +608,10 @@ Utilisez les **sous-agents** quand :
 
 Envisagez plutôt les [Skills](/fr/skills) lorsque vous souhaitez des invites ou des workflows réutilisables qui s'exécutent dans le contexte de la conversation principale plutôt que dans un contexte de sous-agent isolé.
 
-Pour une question rapide sur quelque chose déjà dans votre conversation, utilisez [`/btw`](/fr/interactive-mode#side-questions-with-btw) au lieu d'un sous-agent. Il voit votre contexte complet mais n'a pas d'accès aux outils, et la réponse est rejetée plutôt que d'être ajoutée à l'historique.
+Pour une question rapide sur quelque chose déjà dans votre conversation, utilisez [`/btw`](/fr/interactive-mode#side-questions-with-btw) au lieu d'un sous-agent. Il voit votre contexte complet mais n'a pas d'accès aux outils, et la réponse est ignorée plutôt que d'être ajoutée à l'historique.
 
 <Note>
-  Les sous-agents ne peuvent pas générer d'autres sous-agents. Si votre workflow nécessite une délégation imbriquée, utilisez [Skills](/fr/skills) ou [chaînez les sous-agents](#chain-subagents) à partir de la conversation principale.
+  Les sous-agents ne peuvent pas générer d'autres sous-agents. Si votre workflow nécessite une délégation imbriquée, utilisez les [Skills](/fr/skills) ou [chaînez les sous-agents](#chain-subagents) à partir de la conversation principale.
 </Note>
 
 ### Gérer le contexte du sous-agent
@@ -601,12 +637,12 @@ Vous pouvez également demander à Claude l'ID d'agent si vous souhaitez le réf
 Les transcriptions de sous-agent persistent indépendamment de la conversation principale :
 
 * **Compaction de la conversation principale** : Lorsque la conversation principale se compacte, les transcriptions de sous-agent ne sont pas affectées. Elles sont stockées dans des fichiers séparés.
-* **Persistance de session** : Les transcriptions de sous-agent persistent au sein de leur session. Vous pouvez [reprendre un sous-agent](#resume-subagents) après avoir redémarré Claude Code en reprenant la même session.
+* **Persistance de session** : Les transcriptions de sous-agent persistent au sein de leur session. Vous pouvez [reprendre un sous-agent](#resume-subagents) après le redémarrage de Claude Code en reprenant la même session.
 * **Nettoyage automatique** : Les transcriptions sont nettoyées en fonction du paramètre `cleanupPeriodDays` (par défaut : 30 jours).
 
 #### Auto-compaction
 
-Les sous-agents prennent en charge la compaction automatique en utilisant la même logique que la conversation principale. Par défaut, la compaction automatique se déclenche à environ 95 % de capacité. Pour déclencher la compaction plus tôt, définissez `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` sur un pourcentage inférieur (par exemple, `50`). Consultez [variables d'environnement](/fr/settings#environment-variables) pour plus de détails.
+Les sous-agents prennent en charge la compaction automatique en utilisant la même logique que la conversation principale. Par défaut, la compaction automatique se déclenche à environ 95 % de capacité. Pour déclencher la compaction plus tôt, définissez `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` sur un pourcentage inférieur (par exemple, `50`). Consultez [variables d'environnement](/fr/env-vars) pour plus de détails.
 
 Les événements de compaction sont enregistrés dans les fichiers de transcription de sous-agent :
 
@@ -621,11 +657,11 @@ Les événements de compaction sont enregistrés dans les fichiers de transcript
 }
 ```
 
-La valeur `preTokens` indique combien de tokens ont été utilisés avant la compaction.
+La valeur `preTokens` indique le nombre de tokens utilisés avant la compaction.
 
 ## Exemples de sous-agents
 
-Ces exemples démontrent des modèles efficaces pour construire des sous-agents. Utilisez-les comme points de départ ou générez une version personnalisée avec Claude.
+Ces exemples démontrent des modèles efficaces pour construire des sous-agents. Utilisez-les comme points de départ, ou générez une version personnalisée avec Claude.
 
 <Tip>
   **Meilleures pratiques :**
@@ -638,7 +674,7 @@ Ces exemples démontrent des modèles efficaces pour construire des sous-agents.
 
 ### Examinateur de code
 
-Un sous-agent en lecture seule qui examine le code sans le modifier. Cet exemple montre comment concevoir un sous-agent ciblé avec un accès limité aux outils (pas d'outils Edit ou Write) et une invite détaillée qui spécifie exactement ce qu'il faut rechercher et comment formater la sortie.
+Un sous-agent en lecture seule qui examine le code sans le modifier. Cet exemple montre comment concevoir un sous-agent ciblé avec un accès limité aux outils (pas d'Edit ou Write) et une invite détaillée qui spécifie exactement ce qu'il faut chercher et comment formater la sortie.
 
 ```markdown  theme={null}
 ---
@@ -675,7 +711,7 @@ Include specific examples of how to fix issues.
 
 ### Débogueur
 
-Un sous-agent qui peut à la fois analyser et corriger les problèmes. Contrairement à l'examinateur de code, celui-ci inclut Edit car la correction des bugs nécessite de modifier le code. L'invite fournit un workflow clair du diagnostic à la vérification.
+Un sous-agent qui peut à la fois analyser et corriger les problèmes. Contrairement à l'examinateur de code, celui-ci inclut Edit car corriger les bugs nécessite de modifier le code. L'invite fournit un workflow clair du diagnostic à la vérification.
 
 ```markdown  theme={null}
 ---
@@ -712,7 +748,7 @@ Focus on fixing the underlying issue, not the symptoms.
 
 ### Data scientist
 
-Un sous-agent spécifique au domaine pour le travail d'analyse de données. Cet exemple montre comment créer des sous-agents pour des workflows spécialisés en dehors des tâches de codage typiques. Il définit explicitement `model: sonnet` pour une analyse plus capable.
+Un sous-agent spécialisé dans le domaine pour le travail d'analyse de données. Cet exemple montre comment créer des sous-agents pour des workflows spécialisés en dehors des tâches de codage typiques. Il définit explicitement `model: sonnet` pour une analyse plus capable.
 
 ```markdown  theme={null}
 ---
@@ -749,7 +785,7 @@ Always ensure queries are efficient and cost-effective.
 
 ### Validateur de requête de base de données
 
-Un sous-agent qui permet l'accès Bash mais valide les commandes pour n'autoriser que les requêtes SQL en lecture seule. Cet exemple montre comment utiliser les hooks `PreToolUse` pour la validation conditionnelle lorsque vous avez besoin d'un contrôle plus fin que le champ `tools` ne le permet.
+Un sous-agent qui autorise l'accès à Bash mais valide les commandes pour n'autoriser que les requêtes SQL en lecture seule. Cet exemple montre comment utiliser les hooks `PreToolUse` pour la validation conditionnelle lorsque vous avez besoin d'un contrôle plus fin que le champ `tools` ne le permet.
 
 ```markdown  theme={null}
 ---

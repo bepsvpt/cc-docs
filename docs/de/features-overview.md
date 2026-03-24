@@ -126,7 +126,7 @@ Einige Funktionen können ähnlich wirken. Hier erfahren Sie, wie Sie sie unters
   </Tab>
 
   <Tab title="MCP vs Skill">
-    MCP verbindet Claude mit externen Diensten. Skills erweitern das Wissen von Claude, einschließlich der Verwendung dieser Dienste effektiv.
+    MCP verbindet Claude mit externen Diensten. Skills erweitern das Wissen von Claude, einschließlich der effektiven Verwendung dieser Dienste.
 
     | Aspekt         | MCP                                                     | Skill                                                              |
     | -------------- | ------------------------------------------------------- | ------------------------------------------------------------------ |

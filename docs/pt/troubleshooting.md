@@ -259,7 +259,7 @@ Caso contrário, isso pode acontecer devido a problemas de rede, roteamento regi
 
 ### `command not found: claude` após a instalação
 
-A instalação terminou, mas `claude` não funciona. A mensagem de erro exata varia por plataforma:
+A instalação terminou, mas `claude` não funciona. O erro exato varia por plataforma:
 
 | Plataforma  | Mensagem de erro                                                       |
 | :---------- | :--------------------------------------------------------------------- |
@@ -417,7 +417,7 @@ O assassino OOM do Linux encerrou o processo porque o sistema ficou sem memória
 
 3. **Use uma instância maior** se possível. Claude Code requer pelo menos 4 GB de RAM.
 
-### A instalação trava no Docker
+### Instalação trava em Docker
 
 Ao instalar Claude Code em um contêiner Docker, instalar como root em `/` pode causar travamentos.
 
@@ -533,7 +533,7 @@ Você pode encontrar os seguintes problemas em WSL:
 * Execute `npm config set os linux` antes da instalação
 * Instale com `npm install -g @anthropic-ai/claude-code --force --no-os-check`. Não use `sudo`.
 
-**Erros de Node não encontrado**: se você vir `exec: node: not found` ao executar `claude`, seu ambiente WSL pode estar usando uma instalação do Node.js do Windows. Você pode confirmar isso com `which npm` e `which node`, que devem apontar para caminhos Linux começando com `/usr/` em vez de `/mnt/c/`. Para corrigir isso, tente instalar Node via gerenciador de pacotes da sua distribuição Linux ou via [`nvm`](https://github.com/nvm-sh/nvm).
+**Erros de Node não encontrado**: se você vir `exec: node: not found` ao executar `claude`, seu ambiente WSL pode estar usando uma instalação do Windows de Node.js. Você pode confirmar isso com `which npm` e `which node`, que devem apontar para caminhos Linux começando com `/usr/` em vez de `/mnt/c/`. Para corrigir isso, tente instalar Node via gerenciador de pacotes da sua distribuição Linux ou via [`nvm`](https://github.com/nvm-sh/nvm).
 
 **Conflitos de versão nvm**: se você tiver nvm instalado tanto em WSL quanto em Windows, você pode experimentar conflitos de versão ao alternar versões do Node em WSL. Isso acontece porque WSL importa o PATH do Windows por padrão, fazendo nvm/npm do Windows ter prioridade sobre a instalação WSL.
 
@@ -621,7 +621,7 @@ Se você está experimentando problemas de autenticação:
 
 Se o navegador não abrir automaticamente durante o login, pressione `c` para copiar a URL OAuth para sua área de transferência e depois cole-a em seu navegador manualmente.
 
-### Erro OAuth: Código inválido
+### Erro OAuth: Invalid code
 
 Se você vir `OAuth error: Invalid code. Please make sure the full code was copied`, o código de login expirou ou foi truncado durante a cópia e colagem.
 
@@ -654,7 +654,7 @@ Ou copie a URL manualmente: quando o prompt de login aparecer, pressione `c` par
 
 Se Claude Code solicitar que você faça login novamente após uma sessão, seu token OAuth pode ter expirado.
 
-Execute `/login` para se autenticar novamente. Se isso acontecer frequentemente, verifique se seu relógio do sistema está preciso, pois a validação de token depende de timestamps corretos.
+Execute `/login` para se autenticar novamente. Se isso acontecer frequentemente, verifique se o relógio do seu sistema está preciso, pois a validação de token depende de timestamps corretos.
 
 ## Locais de arquivo de configuração
 
@@ -664,7 +664,7 @@ Claude Code armazena configuração em vários locais:
 | :---------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
 | `~/.claude/settings.json`     | Configurações do usuário (permissões, hooks, substituições de modelo)                                                                 |
 | `.claude/settings.json`       | Configurações do projeto (verificadas no controle de origem)                                                                          |
-| `.claude/settings.local.json` | Configurações locais do projeto (não confirmadas)                                                                                     |
+| `.claude/settings.local.json` | Configurações do projeto local (não confirmadas)                                                                                      |
 | `~/.claude.json`              | Estado global (tema, OAuth, servidores MCP)                                                                                           |
 | `.mcp.json`                   | Servidores MCP do projeto (verificados no controle de origem)                                                                         |
 | `managed-mcp.json`            | [Servidores MCP gerenciados](/pt/mcp#managed-mcp-configuration)                                                                       |
@@ -732,11 +732,11 @@ apk add ripgrep
 pacman -S ripgrep
 ```
 
-Depois defina `USE_BUILTIN_RIPGREP=0` em seu [ambiente](/pt/settings#environment-variables).
+Depois defina `USE_BUILTIN_RIPGREP=0` em seu [ambiente](/pt/env-vars).
 
 ### Resultados de pesquisa lentos ou incompletos em WSL
 
-Penalidades de desempenho de leitura de disco ao [trabalhar entre sistemas de arquivos em WSL](https://learn.microsoft.com/en-us/windows/wsl/filesystems) podem resultar em menos correspondências do que esperado ao usar Claude Code em WSL. A pesquisa ainda funciona, mas retorna menos resultados do que em um sistema de arquivos nativo.
+Penalidades de desempenho de leitura de disco ao [trabalhar entre sistemas de arquivos em WSL](https://learn.microsoft.com/en-us/windows/wsl/filesystems) podem resultar em menos correspondências do que o esperado ao usar Claude Code em WSL. A pesquisa ainda funciona, mas retorna menos resultados do que em um sistema de arquivos nativo.
 
 <Note>
   `/doctor` mostrará Search como OK neste caso.
@@ -780,7 +780,7 @@ WSL2 usa rede NAT por padrão, o que pode impedir a detecção de IDE. Você tem
 
 **Opção 2: Mude para rede espelhada**
 
-Adicione ao `.wslconfig` em seu diretório de usuário do Windows:
+Adicione a `.wslconfig` em seu diretório de usuário do Windows:
 
 ```ini  theme={null}
 [wsl2]

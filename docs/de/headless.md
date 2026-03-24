@@ -6,7 +6,7 @@
 
 > Verwenden Sie das Agent SDK, um Claude Code programmgesteuert über die CLI, Python oder TypeScript auszuführen.
 
-Das [Agent SDK](https://platform.claude.com/docs/de/agent-sdk/overview) bietet Ihnen die gleichen Tools, die Agent-Schleife und das Kontextmanagement, die Claude Code antreiben. Es ist als CLI für Skripte und CI/CD verfügbar oder als [Python](https://platform.claude.com/docs/de/agent-sdk/python) und [TypeScript](https://platform.claude.com/docs/de/agent-sdk/typescript) Pakete für vollständige programmgesteuerte Kontrolle.
+Das [Agent SDK](https://platform.claude.com/docs/de/agent-sdk/overview) bietet Ihnen die gleichen Tools, die Agent-Schleife und das Kontextmanagement, die Claude Code antreiben. Es ist als CLI für Skripte und CI/CD verfügbar oder als [Python](https://platform.claude.com/docs/de/agent-sdk/python)- und [TypeScript](https://platform.claude.com/docs/de/agent-sdk/typescript)-Pakete für vollständige programmgesteuerte Kontrolle.
 
 <Note>
   Die CLI hieß früher „Headless-Modus". Das Flag `-p` und alle CLI-Optionen funktionieren auf die gleiche Weise.
@@ -54,7 +54,7 @@ claude -p "Summarize this project" --output-format json
 
 Um eine Ausgabe zu erhalten, die einem bestimmten Schema entspricht, verwenden Sie `--output-format json` mit `--json-schema` und einer [JSON Schema](https://json-schema.org/)-Definition. Die Antwort enthält Metadaten über die Anfrage (Sitzungs-ID, Nutzung usw.) mit der strukturierten Ausgabe im Feld `structured_output`.
 
-Dieses Beispiel extrahiert Funktionsnamen und gibt sie als Array von Strings zurück:
+Dieses Beispiel extrahiert Funktionsnamen und gibt sie als Array von Zeichenketten zurück:
 
 ```bash  theme={null}
 claude -p "Extract the main function names from auth.py" \
@@ -79,13 +79,13 @@ claude -p "Extract the main function names from auth.py" \
 
 ### Antworten streamen
 
-Verwenden Sie `--output-format stream-json` mit `--verbose` und `--include-partial-messages`, um Token zu erhalten, während sie generiert werden. Jede Zeile ist ein JSON-Objekt, das ein Ereignis darstellt:
+Verwenden Sie `--output-format stream-json` mit `--verbose` und `--include-partial-messages`, um Token zu empfangen, während sie generiert werden. Jede Zeile ist ein JSON-Objekt, das ein Ereignis darstellt:
 
 ```bash  theme={null}
 claude -p "Explain recursion" --output-format stream-json --verbose --include-partial-messages
 ```
 
-Das folgende Beispiel verwendet [jq](https://jqlang.github.io/jq/), um nach Text-Deltas zu filtern und nur den Streaming-Text anzuzeigen. Das Flag `-r` gibt rohe Strings aus (keine Anführungszeichen) und `-j` verbindet ohne Zeilenumbrüche, sodass Token kontinuierlich streamen:
+Das folgende Beispiel verwendet [jq](https://jqlang.github.io/jq/), um nach Text-Deltas zu filtern und nur den Streaming-Text anzuzeigen. Das Flag `-r` gibt Rohzeichenketten aus (keine Anführungszeichen) und `-j` verbindet ohne Zeilenumbrüche, sodass Token kontinuierlich gestreamt werden:
 
 ```bash  theme={null}
 claude -p "Write a poem" --output-format stream-json --verbose --include-partial-messages | \
@@ -96,7 +96,7 @@ Für programmgesteuertes Streaming mit Rückrufen und Nachrichtenobjekten siehe 
 
 ### Tools automatisch genehmigen
 
-Verwenden Sie `--allowedTools`, um Claude bestimmte Tools ohne Aufforderung zu verwenden. Dieses Beispiel führt eine Test-Suite aus und behebt Fehler, wobei Claude Bash-Befehle ausführen und Dateien lesen/bearbeiten kann, ohne um Erlaubnis zu fragen:
+Verwenden Sie `--allowedTools`, um Claude die Verwendung bestimmter Tools ohne Aufforderung zu ermöglichen. Dieses Beispiel führt eine Test-Suite aus und behebt Fehler, wobei Claude Bash-Befehle ausführen und Dateien lesen/bearbeiten kann, ohne um Genehmigung zu fragen:
 
 ```bash  theme={null}
 claude -p "Run the test suite and fix any failures" \
@@ -112,10 +112,10 @@ claude -p "Look at my staged changes and create an appropriate commit" \
   --allowedTools "Bash(git diff *),Bash(git log *),Bash(git status *),Bash(git commit *)"
 ```
 
-Das Flag `--allowedTools` verwendet [Berechtigungsregelsyntax](/de/settings#permission-rule-syntax). Das nachfolgende ` *` aktiviert Präfix-Matching, sodass `Bash(git diff *)` jeden Befehl erlaubt, der mit `git diff` beginnt. Das Leerzeichen vor `*` ist wichtig: ohne es würde `Bash(git diff*)` auch `git diff-index` entsprechen.
+Das Flag `--allowedTools` verwendet [Berechtigungsregelsyntax](/de/settings#permission-rule-syntax). Das nachfolgende ` *` ermöglicht Präfix-Matching, sodass `Bash(git diff *)` jeden Befehl erlaubt, der mit `git diff` beginnt. Das Leerzeichen vor `*` ist wichtig: ohne es würde `Bash(git diff*)` auch `git diff-index` entsprechen.
 
 <Note>
-  Benutzer-aufgerufene [skills](/de/skills) wie `/commit` und [integrierte Befehle](/de/interactive-mode#built-in-commands) sind nur im interaktiven Modus verfügbar. Im `-p`-Modus beschreiben Sie stattdessen die Aufgabe, die Sie ausführen möchten.
+  Benutzer-aufgerufene [skills](/de/skills) wie `/commit` und [integrierte Befehle](/de/commands) sind nur im interaktiven Modus verfügbar. Im `-p`-Modus beschreiben Sie stattdessen die Aufgabe, die Sie ausführen möchten.
 </Note>
 
 ### System-Eingabeaufforderung anpassen

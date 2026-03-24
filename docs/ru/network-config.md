@@ -6,7 +6,7 @@
 
 > Настройте Claude Code для корпоративных сред с прокси-серверами, пользовательскими центрами сертификации (CA) и взаимной аутентификацией Transport Layer Security (mTLS).
 
-Claude Code поддерживает различные конфигурации сети и безопасности предприятия через переменные окружения. Это включает маршрутизацию трафика через корпоративные прокси-серверы, доверие пользовательским центрам сертификации (CA) и аутентификацию с использованием сертификатов взаимного Transport Layer Security (mTLS) для повышенной безопасности.
+Claude Code поддерживает различные конфигурации сети и безопасности предприятия через переменные окружения. Это включает маршрутизацию трафика через корпоративные прокси-серверы, доверие пользовательским центрам сертификации (CA) и аутентификацию с помощью сертификатов взаимного Transport Layer Security (mTLS) для повышенной безопасности.
 
 <Note>
   Все переменные окружения, показанные на этой странице, также можно настроить в [`settings.json`](/ru/settings).
@@ -55,7 +55,7 @@ export HTTPS_PROXY=http://username:password@proxy.example.com:8080
 
 ## Пользовательские сертификаты CA
 
-Если ваша корпоративная среда использует пользовательские центры сертификации для HTTPS-соединений (через прокси или прямой доступ к API), настройте Claude Code для доверия им:
+Если ваша корпоративная среда использует пользовательские CA для HTTPS соединений (через прокси или прямой доступ к API), настройте Claude Code для доверия им:
 
 ```bash  theme={null}
 export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
@@ -63,7 +63,7 @@ export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
 
 ## Аутентификация mTLS
 
-Для корпоративных сред, требующих аутентификацию с использованием сертификата клиента:
+Для корпоративных сред, требующих аутентификацию с помощью сертификата клиента:
 
 ```bash  theme={null}
 # Сертификат клиента для аутентификации
@@ -78,16 +78,18 @@ export CLAUDE_CODE_CLIENT_KEY_PASSPHRASE="your-passphrase"
 
 ## Требования к доступу в сети
 
-Claude Code требует доступ к следующим URL-адресам:
+Claude Code требует доступ к следующим URL:
 
 * `api.anthropic.com`: конечные точки Claude API
 * `claude.ai`: аутентификация для учетных записей claude.ai
 * `platform.claude.com`: аутентификация для учетных записей Anthropic Console
 
-Убедитесь, что эти URL-адреса добавлены в белый список в конфигурации прокси и правилах брандмауэра. Это особенно важно при использовании Claude Code в контейнеризованных или ограниченных сетевых средах.
+Убедитесь, что эти URL добавлены в белый список в конфигурации прокси и правилах брандмауэра. Это особенно важно при использовании Claude Code в контейнеризованных или ограниченных сетевых средах.
+
+[Claude Code в веб-версии](/ru/claude-code-on-the-web) и [Code Review](/ru/code-review) подключаются к вашим репозиториям из управляемой Anthropic инфраструктуры. Если ваша организация GitHub Enterprise Cloud ограничивает доступ по IP-адресу, включите [наследование списка разрешенных IP для установленных GitHub Apps](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps). GitHub App Claude регистрирует свои диапазоны IP, поэтому включение этого параметра позволяет получить доступ без ручной конфигурации. Чтобы [добавить диапазоны в список разрешенных вручную](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address) вместо этого, или для настройки других брандмауэров, см. [IP-адреса Anthropic API](https://platform.claude.com/docs/en/api/ip-addresses).
 
 ## Дополнительные ресурсы
 
 * [Параметры Claude Code](/ru/settings)
-* [Справочник переменных окружения](/ru/settings#environment-variables)
+* [Справочник переменных окружения](/ru/env-vars)
 * [Руководство по устранению неполадок](/ru/troubleshooting)

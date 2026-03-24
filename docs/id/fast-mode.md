@@ -58,7 +58,7 @@ Mode cepat memiliki harga per-token yang lebih tinggi daripada Opus 4.6 standar:
 
 Mode cepat kompatibel dengan jendela konteks yang diperluas 1M token.
 
-Ketika Anda beralih ke mode cepat di tengah percakapan, Anda membayar harga token input mode cepat tanpa cache penuh untuk seluruh konteks percakapan. Ini lebih mahal daripada jika Anda telah mengaktifkan mode cepat dari awal.
+Ketika Anda beralih ke mode cepat di tengah percakapan, Anda membayar harga token input tanpa cache mode cepat penuh untuk seluruh konteks percakapan. Ini lebih mahal daripada jika Anda telah mengaktifkan mode cepat dari awal.
 
 ## Tentukan kapan menggunakan mode cepat
 
@@ -70,7 +70,7 @@ Mode cepat terbaik untuk pekerjaan interaktif di mana latensi respons lebih pent
 
 Mode standar lebih baik untuk:
 
-* Tugas otonom jangka panjang di mana kecepatan kurang penting
+* Tugas otonomi jangka panjang di mana kecepatan kurang penting
 * Pemrosesan batch atau pipeline CI/CD
 * Beban kerja sensitif biaya
 
@@ -106,14 +106,14 @@ Mode cepat memerlukan semua hal berikut:
 
 Admin dapat mengaktifkan mode cepat di:
 
-* **Console** (pelanggan API): [preferensi Claude Code](https://platform.claude.com/claude-code/preferences)
+* **Konsol** (pelanggan API): [preferensi Claude Code](https://platform.claude.com/claude-code/preferences)
 * **Claude AI** (Teams dan Enterprise): [Admin Settings > Claude Code](https://claude.ai/admin-settings/claude-code)
 
-Opsi lain untuk menonaktifkan mode cepat sepenuhnya adalah mengatur `CLAUDE_CODE_DISABLE_FAST_MODE=1`. Lihat [Variabel lingkungan](/id/settings#environment-variables).
+Opsi lain untuk menonaktifkan mode cepat sepenuhnya adalah dengan menetapkan `CLAUDE_CODE_DISABLE_FAST_MODE=1`. Lihat [Variabel lingkungan](/id/env-vars).
 
 ### Require per-session opt-in
 
-Secara default, mode cepat bertahan di seluruh sesi: jika pengguna mengaktifkan mode cepat, mode ini tetap aktif di sesi mendatang. Administrator pada paket [Teams](https://claude.com/pricing#team-&-enterprise) atau [Enterprise](https://anthropic.com/contact-sales) dapat mencegah ini dengan mengatur `fastModePerSessionOptIn` ke `true` di [pengaturan terkelola](/id/settings#settings-files) atau [pengaturan yang dikelola server](/id/server-managed-settings). Ini menyebabkan setiap sesi dimulai dengan mode cepat mati, memerlukan pengguna untuk secara eksplisit mengaktifkannya dengan `/fast`.
+Secara default, mode cepat bertahan di seluruh sesi: jika pengguna mengaktifkan mode cepat, mode ini tetap aktif di sesi mendatang. Administrator pada paket [Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise) atau [Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise) dapat mencegah ini dengan menetapkan `fastModePerSessionOptIn` ke `true` di [pengaturan terkelola](/id/settings#settings-files) atau [pengaturan yang dikelola server](/id/server-managed-settings). Ini menyebabkan setiap sesi dimulai dengan mode cepat mati, memerlukan pengguna untuk secara eksplisit mengaktifkannya dengan `/fast`.
 
 ```json  theme={null}
 {

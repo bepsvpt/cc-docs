@@ -159,7 +159,7 @@ Misalkan Anda perlu memperbarui kode lama untuk menggunakan pola dan praktik mod
 
   * Minta Claude untuk menjelaskan manfaat pendekatan modern
   * Minta agar perubahan mempertahankan kompatibilitas backward ketika diperlukan
-  * Lakukan refactoring dalam increment kecil yang dapat diuji
+  * Lakukan refactoring dalam kenaikan kecil yang dapat diuji
 </Tip>
 
 ***
@@ -189,7 +189,7 @@ Misalkan Anda ingin menggunakan subagents AI khusus untuk menangani tugas spesif
     ```
   </Step>
 
-  <Step title="Minta subagents spesifik secara eksplisit">
+  <Step title="Secara eksplisit minta subagents spesifik">
     ```text  theme={null}
     use the code-reviewer subagent to check the auth module
     ```
@@ -204,7 +204,7 @@ Misalkan Anda ingin menggunakan subagents AI khusus untuk menangani tugas spesif
     /agents
     ```
 
-    Kemudian pilih "Create New subagent" dan ikuti prompt untuk mendefinisikan:
+    Kemudian pilih "Create New subagent" dan ikuti prompt untuk menentukan:
 
     * Pengenal unik yang menggambarkan tujuan subagent (misalnya, `code-reviewer`, `api-designer`).
     * Kapan Claude harus menggunakan agen ini
@@ -217,7 +217,7 @@ Misalkan Anda ingin menggunakan subagents AI khusus untuk menangani tugas spesif
   Tips:
 
   * Buat subagents khusus proyek di `.claude/agents/` untuk berbagi tim
-  * Gunakan field `description` deskriptif untuk mengaktifkan delegasi otomatis
+  * Gunakan bidang `description` deskriptif untuk mengaktifkan delegasi otomatis
   * Batasi akses alat ke apa yang benar-benar dibutuhkan setiap subagent
   * Periksa [dokumentasi subagents](/id/sub-agents) untuk contoh terperinci
 </Tip>
@@ -226,7 +226,7 @@ Misalkan Anda ingin menggunakan subagents AI khusus untuk menangani tugas spesif
 
 ## Gunakan Plan Mode untuk analisis kode yang aman
 
-Plan Mode menginstruksikan Claude untuk membuat rencana dengan menganalisis basis kode dengan operasi read-only, sempurna untuk menjelajahi basis kode, merencanakan perubahan kompleks, atau meninjau kode dengan aman. Dalam Plan Mode, Claude menggunakan [`AskUserQuestion`](/id/settings#tools-available-to-claude) untuk mengumpulkan persyaratan dan memperjelas tujuan Anda sebelum mengusulkan rencana.
+Plan Mode menginstruksikan Claude untuk membuat rencana dengan menganalisis basis kode dengan operasi read-only, sempurna untuk menjelajahi basis kode, merencanakan perubahan kompleks, atau meninjau kode dengan aman. Dalam Plan Mode, Claude menggunakan [`AskUserQuestion`](/id/tools-reference) untuk mengumpulkan persyaratan dan memperjelas tujuan Anda sebelum mengusulkan rencana.
 
 ### Kapan menggunakan Plan Mode
 
@@ -250,9 +250,9 @@ Untuk memulai sesi baru dalam Plan Mode, gunakan flag `--permission-mode plan`:
 claude --permission-mode plan
 ```
 
-**Jalankan query "headless" dalam Plan Mode**
+**Jalankan kueri "headless" dalam Plan Mode**
 
-Anda juga dapat menjalankan query dalam Plan Mode secara langsung dengan `-p` (yaitu, dalam ["headless mode"](/id/headless)):
+Anda juga dapat menjalankan kueri dalam Plan Mode secara langsung dengan `-p` (yaitu, dalam ["headless mode"](/id/headless)):
 
 ```bash  theme={null}
 claude --permission-mode plan -p "Analyze the authentication system and suggest improvements"
@@ -325,7 +325,7 @@ Misalkan Anda perlu menambahkan tes untuk kode yang tidak tercakup.
   </Step>
 </Steps>
 
-Claude dapat menghasilkan tes yang mengikuti pola dan konvensi yang ada dalam proyek Anda. Saat meminta tes, jadilah spesifik tentang perilaku apa yang ingin Anda verifikasi. Claude memeriksa file tes yang ada untuk mencocokkan gaya, framework, dan pola pernyataan yang sudah digunakan.
+Claude dapat menghasilkan tes yang mengikuti pola dan konvensi proyek Anda yang ada. Saat meminta tes, jadilah spesifik tentang perilaku apa yang ingin Anda verifikasi. Claude memeriksa file tes yang ada untuk mencocokkan gaya, framework, dan pola pernyataan yang sudah digunakan.
 
 Untuk cakupan komprehensif, minta Claude untuk mengidentifikasi kasus tepi yang mungkin Anda lewatkan. Claude dapat menganalisis jalur kode Anda dan menyarankan tes untuk kondisi kesalahan, nilai batas, dan input yang tidak terduga yang mudah diabaikan.
 
@@ -403,7 +403,7 @@ Misalkan Anda perlu menambah atau memperbarui dokumentasi untuk kode Anda.
 
 ## Bekerja dengan gambar
 
-Misalkan Anda perlu bekerja dengan gambar dalam basis kode Anda, dan Anda ingin bantuan Claude dalam menganalisis konten gambar.
+Misalkan Anda perlu bekerja dengan gambar dalam basis kode Anda, dan Anda ingin bantuan Claude menganalisis konten gambar.
 
 <Steps>
   <Step title="Tambahkan gambar ke percakapan">
@@ -506,37 +506,37 @@ Gunakan @ untuk dengan cepat menyertakan file atau direktori tanpa menunggu Clau
 
 [Extended thinking](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) diaktifkan secara default, memberikan Claude ruang untuk bernalar melalui masalah kompleks langkah demi langkah sebelum merespons. Penalaran ini terlihat dalam verbose mode, yang dapat Anda aktifkan dengan `Ctrl+O`.
 
-Selain itu, Opus 4.6 memperkenalkan adaptive reasoning: alih-alih anggaran token thinking yang tetap, model secara dinamis mengalokasikan thinking berdasarkan pengaturan [effort level](/id/model-config#adjust-effort-level) Anda. Extended thinking dan adaptive reasoning bekerja bersama untuk memberi Anda kontrol atas seberapa dalam Claude bernalar sebelum merespons.
+Selain itu, Opus 4.6 dan Sonnet 4.6 mendukung adaptive reasoning: alih-alih anggaran token thinking yang tetap, model secara dinamis mengalokasikan thinking berdasarkan pengaturan [effort level](/id/model-config#adjust-effort-level) Anda. Extended thinking dan adaptive reasoning bekerja bersama untuk memberi Anda kontrol atas seberapa dalam Claude bernalar sebelum merespons.
 
-Extended thinking sangat berharga untuk keputusan arsitektur kompleks, bug yang menantang, perencanaan implementasi multi-langkah, dan mengevaluasi trade-off antara pendekatan yang berbeda.
+Extended thinking sangat berharga untuk keputusan arsitektur kompleks, bug menantang, perencanaan implementasi multi-langkah, dan mengevaluasi trade-off antara pendekatan yang berbeda.
 
 <Note>
-  Frasa seperti "think", "think hard", dan "think more" diinterpretasikan sebagai instruksi prompt reguler dan tidak mengalokasikan token thinking.
+  Frasa seperti "think", "think hard", dan "think more" ditafsirkan sebagai instruksi prompt reguler dan tidak mengalokasikan token thinking.
 </Note>
 
 ### Konfigurasikan thinking mode
 
 Thinking diaktifkan secara default, tetapi Anda dapat menyesuaikan atau menonaktifkannya.
 
-| Scope                       | Cara mengkonfigurasi                                                                             | Detail                                                                                                                                                                                             |
-| --------------------------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Effort level**            | Sesuaikan di `/model` atau atur [`CLAUDE_CODE_EFFORT_LEVEL`](/id/settings#environment-variables) | Kontrol kedalaman thinking untuk Opus 4.6 dan Sonnet 4.6: low, medium, high. Lihat [Adjust effort level](/id/model-config#adjust-effort-level)                                                     |
-| **Kata kunci `ultrathink`** | Sertakan "ultrathink" di mana saja dalam prompt Anda                                             | Menetapkan effort ke high untuk giliran itu pada Opus 4.6 dan Sonnet 4.6. Berguna untuk tugas sekali jadi yang memerlukan penalaran mendalam tanpa mengubah pengaturan effort Anda secara permanen |
-| **Pintasan toggle**         | Tekan `Option+T` (macOS) atau `Alt+T` (Windows/Linux)                                            | Toggle thinking on/off untuk sesi saat ini (semua model). Mungkin memerlukan [konfigurasi terminal](/id/terminal-config) untuk mengaktifkan pintasan tombol Option                                 |
-| **Default global**          | Gunakan `/config` untuk toggle thinking mode                                                     | Menetapkan default Anda di semua proyek (semua model).<br />Disimpan sebagai `alwaysThinkingEnabled` di `~/.claude/settings.json`                                                                  |
-| **Batasi anggaran token**   | Atur variabel lingkungan [`MAX_THINKING_TOKENS`](/id/settings#environment-variables)             | Batasi anggaran thinking ke jumlah token tertentu (diabaikan pada Opus 4.6 kecuali diatur ke 0). Contoh: `export MAX_THINKING_TOKENS=10000`                                                        |
+| Scope                       | Cara mengkonfigurasi                                                                            | Detail                                                                                                                                                                                             |
+| --------------------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Effort level**            | Jalankan `/effort`, sesuaikan di `/model`, atau atur [`CLAUDE_CODE_EFFORT_LEVEL`](/id/env-vars) | Kontrol kedalaman thinking untuk Opus 4.6 dan Sonnet 4.6. Lihat [Adjust effort level](/id/model-config#adjust-effort-level)                                                                        |
+| **Kata kunci `ultrathink`** | Sertakan "ultrathink" di mana saja dalam prompt Anda                                            | Menetapkan effort ke high untuk giliran itu pada Opus 4.6 dan Sonnet 4.6. Berguna untuk tugas sekali jadi yang memerlukan penalaran mendalam tanpa mengubah pengaturan effort Anda secara permanen |
+| **Pintasan toggle**         | Tekan `Option+T` (macOS) atau `Alt+T` (Windows/Linux)                                           | Toggle thinking on/off untuk sesi saat ini (semua model). Mungkin memerlukan [konfigurasi terminal](/id/terminal-config) untuk mengaktifkan pintasan tombol Option                                 |
+| **Default global**          | Gunakan `/config` untuk toggle thinking mode                                                    | Menetapkan default Anda di semua proyek (semua model).<br />Disimpan sebagai `alwaysThinkingEnabled` di `~/.claude/settings.json`                                                                  |
+| **Batasi anggaran token**   | Atur variabel lingkungan [`MAX_THINKING_TOKENS`](/id/env-vars)                                  | Batasi anggaran thinking ke jumlah token tertentu (diabaikan pada Opus 4.6 dan Sonnet 4.6 kecuali diatur ke 0). Contoh: `export MAX_THINKING_TOKENS=10000`                                         |
 
 Untuk melihat proses thinking Claude, tekan `Ctrl+O` untuk toggle verbose mode dan lihat penalaran internal ditampilkan sebagai teks italic abu-abu.
 
-### Cara kerja extended thinking
+### Cara extended thinking bekerja
 
 Extended thinking mengontrol berapa banyak penalaran internal yang dilakukan Claude sebelum merespons. Lebih banyak thinking memberikan lebih banyak ruang untuk menjelajahi solusi, menganalisis kasus tepi, dan memperbaiki kesalahan sendiri.
 
-**Dengan Opus 4.6**, thinking menggunakan adaptive reasoning: model secara dinamis mengalokasikan token thinking berdasarkan [effort level](/id/model-config#adjust-effort-level) yang Anda pilih (low, medium, high). Ini adalah cara yang direkomendasikan untuk menyesuaikan trade-off antara kecepatan dan kedalaman penalaran.
+**Dengan Opus 4.6 dan Sonnet 4.6**, thinking menggunakan adaptive reasoning: model secara dinamis mengalokasikan token thinking berdasarkan [effort level](/id/model-config#adjust-effort-level) yang Anda pilih. Ini adalah cara yang direkomendasikan untuk menyesuaikan trade-off antara kecepatan dan kedalaman penalaran.
 
-**Dengan model lain**, thinking menggunakan anggaran tetap hingga 31.999 token dari anggaran output Anda. Anda dapat membatasinya dengan variabel lingkungan [`MAX_THINKING_TOKENS`](/id/settings#environment-variables), atau menonaktifkan thinking sepenuhnya melalui `/config` atau toggle `Option+T`/`Alt+T`.
+**Dengan model lama**, thinking menggunakan anggaran tetap hingga 31.999 token dari anggaran output Anda. Anda dapat membatasinya dengan variabel lingkungan [`MAX_THINKING_TOKENS`](/id/env-vars), atau menonaktifkan thinking sepenuhnya melalui `/config` atau toggle `Option+T`/`Alt+T`.
 
-`MAX_THINKING_TOKENS` diabaikan pada Opus 4.6 dan Sonnet 4.6, karena adaptive reasoning mengontrol kedalaman thinking sebagai gantinya. Satu pengecualian: mengatur `MAX_THINKING_TOKENS=0` masih menonaktifkan thinking sepenuhnya pada model apa pun. Untuk menonaktifkan adaptive thinking dan kembali ke anggaran thinking tetap, atur `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1`. Lihat [variabel lingkungan](/id/settings#environment-variables).
+`MAX_THINKING_TOKENS` diabaikan pada Opus 4.6 dan Sonnet 4.6, karena adaptive reasoning mengontrol kedalaman thinking sebagai gantinya. Satu pengecualian: mengatur `MAX_THINKING_TOKENS=0` masih menonaktifkan thinking sepenuhnya pada model apa pun. Untuk menonaktifkan adaptive thinking dan kembali ke anggaran thinking tetap, atur `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1`. Lihat [variabel lingkungan](/id/env-vars).
 
 <Warning>
   Anda dikenakan biaya untuk semua token thinking yang digunakan, meskipun model Claude 4 menampilkan thinking yang diringkas
@@ -558,11 +558,17 @@ Sesi disimpan per direktori proyek. Pemilih `/resume` menampilkan sesi dari repo
 
 ### Beri nama sesi Anda
 
-Berikan sesi nama deskriptif untuk menemukannya nanti. Ini adalah praktik terbaik saat bekerja pada beberapa tugas atau fitur.
+Berikan sesi nama deskriptif untuk menemukannya nanti. Ini adalah praktik terbaik saat mengerjakan beberapa tugas atau fitur.
 
 <Steps>
-  <Step title="Beri nama sesi saat ini">
-    Gunakan `/rename` selama sesi untuk memberikannya nama yang mudah diingat:
+  <Step title="Beri nama sesi">
+    Beri nama sesi saat startup dengan `-n`:
+
+    ```bash  theme={null}
+    claude -n auth-refactor
+    ```
+
+    Atau gunakan `/rename` selama sesi, yang juga menampilkan nama di bilah prompt:
 
     ```text  theme={null}
     /rename auth-refactor
@@ -638,7 +644,7 @@ Sesi yang di-fork (dibuat dengan `/rewind` atau `--fork-session`) dikelompokkan 
 
 ## Jalankan sesi Claude Code paralel dengan Git worktrees
 
-Saat bekerja pada beberapa tugas sekaligus, Anda memerlukan setiap sesi Claude untuk memiliki salinan basis kode sendiri sehingga perubahan tidak bertabrakan. Git worktrees menyelesaikan ini dengan membuat direktori kerja terpisah yang masing-masing memiliki file dan cabang sendiri, sambil berbagi riwayat repositori dan koneksi remote yang sama. Ini berarti Anda dapat memiliki Claude bekerja pada fitur di satu worktree sambil memperbaiki bug di worktree lain, tanpa sesi apa pun mengganggu yang lain.
+Saat mengerjakan beberapa tugas sekaligus, Anda memerlukan setiap sesi Claude untuk memiliki salinannya sendiri dari basis kode sehingga perubahan tidak bertabrakan. Git worktrees menyelesaikan ini dengan membuat direktori kerja terpisah yang masing-masing memiliki file dan cabang mereka sendiri, sambil berbagi riwayat repositori dan koneksi remote yang sama. Ini berarti Anda dapat memiliki Claude bekerja pada fitur di satu worktree sambil memperbaiki bug di worktree lain, tanpa sesi mana pun mengganggu yang lain.
 
 Gunakan flag `--worktree` (`-w`) untuk membuat worktree terisolasi dan memulai Claude di dalamnya. Nilai yang Anda berikan menjadi nama direktori worktree dan nama cabang:
 
@@ -664,11 +670,11 @@ Anda juga dapat meminta Claude untuk "work in a worktree" atau "start a worktree
 
 ### Worktrees subagent
 
-Subagents juga dapat menggunakan isolasi worktree untuk bekerja secara paralel tanpa konflik. Minta Claude untuk "use worktrees for your agents" atau konfigurasikan di [custom subagent](/id/sub-agents#supported-frontmatter-fields) dengan menambahkan `isolation: worktree` ke frontmatter agen. Setiap subagent mendapatkan worktree sendiri yang secara otomatis dibersihkan ketika subagent selesai tanpa perubahan.
+Subagents juga dapat menggunakan isolasi worktree untuk bekerja secara paralel tanpa konflik. Minta Claude untuk "use worktrees for your agents" atau konfigurasikan di [custom subagent](/id/sub-agents#supported-frontmatter-fields) dengan menambahkan `isolation: worktree` ke frontmatter agen. Setiap subagent mendapatkan worktree-nya sendiri yang secara otomatis dibersihkan ketika subagent selesai tanpa perubahan.
 
 ### Pembersihan worktree
 
-Saat Anda keluar dari sesi worktree, Claude menangani pembersihan berdasarkan apakah Anda membuat perubahan:
+Ketika Anda keluar dari sesi worktree, Claude menangani pembersihan berdasarkan apakah Anda membuat perubahan:
 
 * **Tidak ada perubahan**: worktree dan cabangnya dihapus secara otomatis
 * **Perubahan atau commit ada**: Claude meminta Anda untuk menyimpan atau menghapus worktree. Menyimpan mempertahankan direktori dan cabang sehingga Anda dapat kembali nanti. Menghapus menghapus direktori worktree dan cabangnya, membuang semua perubahan yang tidak dilakukan dan commit
@@ -717,12 +723,76 @@ Untuk koordinasi otomatis sesi paralel dengan tugas bersama dan pesan, lihat [ag
 Ketika Anda memulai tugas yang berjalan lama dan beralih ke jendela lain, Anda dapat menyiapkan notifikasi desktop sehingga Anda tahu ketika Claude selesai atau membutuhkan input Anda. Ini menggunakan event hook `Notification` [](/id/hooks-guide#get-notified-when-claude-needs-input), yang diaktifkan setiap kali Claude menunggu izin, idle dan siap untuk prompt baru, atau menyelesaikan autentikasi.
 
 <Steps>
-  <Step title="Buka menu hooks">
-    Ketik `/hooks` dan pilih `Notification` dari daftar event.
+  <Step title="Tambahkan hook ke pengaturan Anda">
+    Buka `~/.claude/settings.json` dan tambahkan hook `Notification` yang memanggil perintah notifikasi asli platform Anda:
+
+    <Tabs>
+      <Tab title="macOS">
+        ```json  theme={null}
+        {
+          "hooks": {
+            "Notification": [
+              {
+                "matcher": "",
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+        ```
+      </Tab>
+
+      <Tab title="Linux">
+        ```json  theme={null}
+        {
+          "hooks": {
+            "Notification": [
+              {
+                "matcher": "",
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "notify-send 'Claude Code' 'Claude Code needs your attention'"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+        ```
+      </Tab>
+
+      <Tab title="Windows">
+        ```json  theme={null}
+        {
+          "hooks": {
+            "Notification": [
+              {
+                "matcher": "",
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "powershell.exe -Command \"[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); [System.Windows.Forms.MessageBox]::Show('Claude Code needs your attention', 'Claude Code')\""
+                  }
+                ]
+              }
+            ]
+          }
+        }
+        ```
+      </Tab>
+    </Tabs>
+
+    Jika file pengaturan Anda sudah memiliki kunci `hooks`, gabungkan entri `Notification` ke dalamnya daripada menimpa. Anda juga dapat meminta Claude untuk menulis hook untuk Anda dengan menggambarkan apa yang Anda inginkan di CLI.
   </Step>
 
-  <Step title="Konfigurasikan matcher">
-    Pilih `+ Match all (no filter)` untuk diaktifkan pada semua jenis notifikasi. Untuk memberi tahu hanya untuk event spesifik, pilih `+ Add new matcher…` dan masukkan salah satu nilai ini:
+  <Step title="Secara opsional sempit matcher">
+    Secara default hook diaktifkan pada semua jenis notifikasi. Untuk diaktifkan hanya untuk event tertentu, atur bidang `matcher` ke salah satu nilai ini:
 
     | Matcher              | Diaktifkan ketika                                        |
     | :------------------- | :------------------------------------------------------- |
@@ -732,42 +802,12 @@ Ketika Anda memulai tugas yang berjalan lama dan beralih ke jendela lain, Anda d
     | `elicitation_dialog` | Claude mengajukan pertanyaan kepada Anda                 |
   </Step>
 
-  <Step title="Tambahkan perintah notifikasi Anda">
-    Pilih `+ Add new hook…` dan masukkan perintah untuk OS Anda:
-
-    <Tabs>
-      <Tab title="macOS">
-        Menggunakan [`osascript`](https://ss64.com/mac/osascript.html) untuk memicu notifikasi macOS asli melalui AppleScript:
-
-        ```
-        osascript -e 'display notification "Claude Code needs your attention" with title "Claude Code"'
-        ```
-      </Tab>
-
-      <Tab title="Linux">
-        Menggunakan `notify-send`, yang sudah diinstal sebelumnya di sebagian besar desktop Linux dengan daemon notifikasi:
-
-        ```
-        notify-send 'Claude Code' 'Claude Code needs your attention'
-        ```
-      </Tab>
-
-      <Tab title="Windows (PowerShell)">
-        Menggunakan PowerShell untuk menampilkan kotak pesan asli melalui Windows Forms .NET:
-
-        ```
-        powershell.exe -Command "[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); [System.Windows.Forms.MessageBox]::Show('Claude Code needs your attention', 'Claude Code')"
-        ```
-      </Tab>
-    </Tabs>
-  </Step>
-
-  <Step title="Simpan ke pengaturan pengguna">
-    Pilih `User settings` untuk menerapkan notifikasi di semua proyek Anda.
+  <Step title="Verifikasi hook">
+    Ketik `/hooks` dan pilih `Notification` untuk mengkonfirmasi hook muncul. Memilihnya menampilkan perintah yang akan dijalankan. Untuk mengujinya end-to-end, minta Claude untuk menjalankan perintah yang memerlukan izin dan beralih dari terminal, atau minta Claude untuk memicu notifikasi secara langsung.
   </Step>
 </Steps>
 
-Untuk panduan lengkap dengan contoh konfigurasi JSON, lihat [Automate workflows with hooks](/id/hooks-guide#get-notified-when-claude-needs-input). Untuk skema event lengkap dan jenis notifikasi, lihat [referensi Notification](/id/hooks#notification).
+Untuk skema event lengkap dan jenis notifikasi, lihat [referensi Notification](/id/hooks#notification).
 
 ***
 
@@ -907,7 +947,7 @@ what are the limitations of Claude Code?
     Pola untuk mendapatkan hasil maksimal dari Claude Code
   </Card>
 
-  <Card title="Cara kerja Claude Code" icon="gear" href="/id/how-claude-code-works">
+  <Card title="Cara Claude Code bekerja" icon="gear" href="/id/how-claude-code-works">
     Pahami loop agentic dan manajemen konteks
   </Card>
 

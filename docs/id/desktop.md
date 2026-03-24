@@ -11,7 +11,7 @@ Tab Code dalam aplikasi Claude Desktop memungkinkan Anda menggunakan Claude Code
 Desktop menambahkan kemampuan ini di atas pengalaman Claude Code standar:
 
 * [Tinjauan diff visual](#review-changes-with-diff-view) dengan komentar inline
-* [Pratinjau aplikasi langsung](#preview-your-app) dengan server dev
+* [Pratinjau aplikasi langsung](#preview-your-app) dengan dev server
 * [Pemantauan PR GitHub](#monitor-pull-request-status) dengan perbaikan otomatis dan penggabungan otomatis
 * [Sesi paralel](#work-in-parallel-with-sessions) dengan isolasi Git worktree otomatis
 * [Tugas terjadwal](#schedule-recurring-tasks) yang menjalankan Claude sesuai jadwal berulang
@@ -49,7 +49,7 @@ Tombol **+** di sebelah kotak prompt memberi Anda akses ke lampiran file, [skill
 
 Kotak prompt mendukung dua cara untuk membawa konteks eksternal:
 
-* **File @mention**: ketik `@` diikuti nama file untuk menambahkan file ke konteks percakapan. Claude kemudian dapat membaca dan mereferensikan file tersebut.
+* **File @mention**: ketik `@` diikuti dengan nama file untuk menambahkan file ke konteks percakapan. Claude kemudian dapat membaca dan mereferensikan file tersebut.
 * **Lampirkan file**: lampirkan gambar, PDF, dan file lainnya ke prompt Anda menggunakan tombol lampiran, atau seret dan lepas file langsung ke prompt. Ini berguna untuk berbagi tangkapan layar bug, mockup desain, atau dokumen referensi.
 
 ### Pilih mode izin
@@ -75,7 +75,7 @@ Admin enterprise dapat membatasi mode izin mana yang tersedia. Lihat [konfiguras
 
 ### Pratinjau aplikasi Anda
 
-Claude dapat memulai server dev dan membuka browser tertanam untuk memverifikasi perubahannya. Ini berfungsi untuk aplikasi web frontend serta server backend: Claude dapat menguji endpoint API, melihat log server, dan mengulangi masalah yang ditemukannya. Dalam kebanyakan kasus, Claude memulai server secara otomatis setelah mengedit file proyek. Anda juga dapat meminta Claude untuk pratinjau kapan saja. Secara default, Claude [memverifikasi otomatis](#auto-verify-changes) perubahan setelah setiap edit.
+Claude dapat memulai dev server dan membuka browser tertanam untuk memverifikasi perubahannya. Ini berfungsi untuk aplikasi web frontend serta server backend: Claude dapat menguji endpoint API, melihat log server, dan mengulangi masalah yang ditemukannya. Dalam kebanyakan kasus, Claude memulai server secara otomatis setelah mengedit file proyek. Anda juga dapat meminta Claude untuk pratinjau kapan saja. Secara default, Claude [memverifikasi otomatis](#auto-verify-changes) perubahan setelah setiap edit.
 
 Dari panel pratinjau, Anda dapat:
 
@@ -85,9 +85,9 @@ Dari panel pratinjau, Anda dapat:
 * Pertahankan cookie dan penyimpanan lokal di seluruh restart server dengan memilih **Pertahankan sesi** di dropdown, sehingga Anda tidak perlu masuk kembali selama pengembangan
 * Edit konfigurasi server atau hentikan semua server sekaligus
 
-Claude membuat konfigurasi server awal berdasarkan proyek Anda. Jika aplikasi Anda menggunakan perintah dev khusus, edit `.claude/launch.json` agar sesuai dengan setup Anda. Lihat [Konfigurasi server pratinjau](#configure-preview-servers) untuk referensi lengkap.
+Claude membuat konfigurasi server awal berdasarkan proyek Anda. Jika aplikasi Anda menggunakan perintah dev kustom, edit `.claude/launch.json` agar sesuai dengan setup Anda. Lihat [Konfigurasi server pratinjau](#configure-preview-servers) untuk referensi lengkap.
 
-Untuk menghapus data sesi yang disimpan, aktifkan **Pertahankan sesi pratinjau** di Pengaturan → Claude Code. Untuk menonaktifkan pratinjau sepenuhnya, aktifkan **Pratinjau** di Pengaturan → Claude Code.
+Untuk menghapus data sesi yang disimpan, alihkan **Pertahankan sesi pratinjau** di Pengaturan → Claude Code. Untuk menonaktifkan pratinjau sepenuhnya, alihkan **Pratinjau** di Pengaturan → Claude Code.
 
 ### Tinjau perubahan dengan tampilan diff
 
@@ -129,7 +129,7 @@ Setiap sesi adalah percakapan independen dengan konteks dan perubahannya sendiri
 
 Klik **+ Sesi Baru** di sidebar untuk bekerja pada beberapa tugas secara paralel. Untuk repositori Git, setiap sesi mendapatkan salinan proyek Anda yang terisolasi menggunakan [Git worktrees](/id/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees), sehingga perubahan dalam satu sesi tidak mempengaruhi sesi lain sampai Anda melakukan commit.
 
-Worktrees disimpan di `<project-root>/.claude/worktrees/` secara default. Anda dapat mengubah ini ke direktori khusus di Pengaturan → Claude Code di bawah "Lokasi Worktree". Anda juga dapat mengatur awalan cabang yang ditambahkan ke setiap nama cabang worktree, yang berguna untuk menjaga cabang yang dibuat Claude tetap terorganisir. Untuk menghapus worktree setelah selesai, arahkan ke sesi di sidebar dan klik ikon arsip.
+Worktrees disimpan di `<project-root>/.claude/worktrees/` secara default. Anda dapat mengubah ini ke direktori kustom di Pengaturan → Claude Code di bawah "Lokasi Worktree". Anda juga dapat mengatur awalan cabang yang ditambahkan ke setiap nama cabang worktree, yang berguna untuk menjaga cabang yang dibuat Claude tetap terorganisir. Untuk menghapus worktree ketika selesai, arahkan ke sesi di sidebar dan klik ikon arsip.
 
 <Note>
   Isolasi sesi memerlukan [Git](https://git-scm.com/downloads). Sebagian besar Mac menyertakan Git secara default. Jalankan `git --version` di Terminal untuk memeriksa. Di Windows, Git diperlukan agar tab Code berfungsi: [unduh Git untuk Windows](https://git-scm.com/downloads/win), pasang, dan mulai ulang aplikasi. Jika Anda mengalami kesalahan Git, coba sesi Cowork untuk membantu memecahkan masalah setup Anda.
@@ -139,7 +139,7 @@ Gunakan ikon filter di bagian atas sidebar untuk memfilter sesi berdasarkan stat
 
 ### Jalankan tugas jangka panjang dari jarak jauh
 
-Untuk refaktor besar, suite pengujian, migrasi, atau tugas jangka panjang lainnya, pilih **Jarak Jauh** alih-alih **Lokal** saat memulai sesi. Sesi jarak jauh berjalan di infrastruktur cloud Anthropic dan terus berjalan bahkan jika Anda menutup aplikasi atau mematikan komputer. Periksa kembali kapan saja untuk melihat kemajuan atau mengarahkan Claude ke arah yang berbeda. Anda juga dapat memantau sesi jarak jauh dari [claude.ai/code](https://claude.ai/code) atau aplikasi Claude iOS.
+Untuk refaktor besar, suite pengujian, migrasi, atau tugas jangka panjang lainnya, pilih **Jarak Jauh** alih-alih **Lokal** saat memulai sesi. Sesi jarak jauh berjalan pada infrastruktur cloud Anthropic dan terus berjalan bahkan jika Anda menutup aplikasi atau mematikan komputer. Periksa kembali kapan saja untuk melihat kemajuan atau mengarahkan Claude ke arah yang berbeda. Anda juga dapat memantau sesi jarak jauh dari [claude.ai/code](https://claude.ai/code) atau aplikasi Claude iOS.
 
 Sesi jarak jauh juga mendukung beberapa repositori. Setelah memilih lingkungan cloud, klik tombol **+** di sebelah pil repo untuk menambahkan repositori tambahan ke sesi. Setiap repo mendapatkan pemilih cabang sendiri. Ini berguna untuk tugas yang mencakup beberapa basis kode, seperti memperbarui perpustakaan bersama dan konsumennya.
 
@@ -164,11 +164,11 @@ Untuk mengelola atau memutuskan konektor, buka Pengaturan → Konektor di aplika
 
 Setelah terhubung, Claude dapat membaca kalender Anda, mengirim pesan, membuat masalah, dan berinteraksi dengan alat Anda secara langsung. Anda dapat meminta Claude konektor apa yang dikonfigurasi di sesi Anda.
 
-Konektor adalah [MCP servers](/id/mcp) dengan alur pengaturan grafis. Gunakan untuk integrasi cepat dengan layanan yang didukung. Untuk integrasi yang tidak tercantum di Konektor, tambahkan MCP servers secara manual melalui [file pengaturan](/id/mcp#installing-mcp-servers). Anda juga dapat [membuat konektor khusus](https://support.claude.com/en/articles/11175166-getting-started-with-custom-connectors-using-remote-mcp).
+Konektor adalah [MCP servers](/id/mcp) dengan alur pengaturan grafis. Gunakan untuk integrasi cepat dengan layanan yang didukung. Untuk integrasi yang tidak tercantum di Konektor, tambahkan MCP servers secara manual melalui [file pengaturan](/id/mcp#installing-mcp-servers). Anda juga dapat [membuat konektor kustom](https://support.claude.com/en/articles/11175166-getting-started-with-custom-connectors-using-remote-mcp).
 
 ### Gunakan skills
 
-[Skills](/id/skills) memperluas apa yang dapat dilakukan Claude. Claude memuatnya secara otomatis ketika relevan, atau Anda dapat menginvokan satu secara langsung: ketik `/` di kotak prompt atau klik tombol **+** dan pilih **Slash commands** untuk melihat apa yang tersedia. Ini mencakup [perintah bawaan](/id/interactive-mode#built-in-commands), [skills khusus](/id/skills#create-custom-skills) Anda, skills proyek dari basis kode Anda, dan skills dari [plugins yang diinstal](/id/plugins) apa pun. Pilih satu dan itu muncul disorot di bidang input. Ketik tugas Anda setelahnya dan kirim seperti biasa.
+[Skills](/id/skills) memperluas apa yang dapat dilakukan Claude. Claude memuatnya secara otomatis ketika relevan, atau Anda dapat menginvokan satu secara langsung: ketik `/` di kotak prompt atau klik tombol **+** dan pilih **Slash commands** untuk melihat apa yang tersedia. Ini mencakup [perintah bawaan](/id/commands), [skills kustom](/id/skills#create-custom-skills) Anda, skills proyek dari basis kode Anda, dan skills dari [plugins yang diinstal](/id/plugins) apa pun. Pilih satu dan itu muncul disorot di bidang input. Ketik tugas Anda setelahnya dan kirim seperti biasa.
 
 ### Instal plugins
 
@@ -180,7 +180,7 @@ Plugins dapat dibatasi pada akun pengguna Anda, proyek tertentu, atau lokal saja
 
 ### Konfigurasikan server pratinjau
 
-Claude secara otomatis mendeteksi setup server dev Anda dan menyimpan konfigurasi di `.claude/launch.json` di root folder yang Anda pilih saat memulai sesi. Pratinjau menggunakan folder ini sebagai direktori kerjanya, jadi jika Anda memilih folder induk, subfolder dengan server dev mereka sendiri tidak akan terdeteksi secara otomatis. Untuk bekerja dengan server subfolder, mulai sesi di folder itu secara langsung atau tambahkan konfigurasi secara manual.
+Claude secara otomatis mendeteksi setup dev server Anda dan menyimpan konfigurasi di `.claude/launch.json` di root folder yang Anda pilih saat memulai sesi. Pratinjau menggunakan folder ini sebagai direktori kerjanya, jadi jika Anda memilih folder induk, subfolder dengan server dev mereka sendiri tidak akan terdeteksi secara otomatis. Untuk bekerja dengan server subfolder, mulai sesi di folder itu secara langsung atau tambahkan konfigurasi secara manual.
 
 Untuk menyesuaikan cara server Anda dimulai, misalnya menggunakan `yarn dev` alih-alih `npm run dev` atau mengubah port, edit file secara manual atau klik **Edit konfigurasi** di dropdown Pratinjau untuk membukanya di editor kode Anda. File mendukung JSON dengan komentar.
 
@@ -204,7 +204,7 @@ Anda dapat menentukan beberapa konfigurasi untuk menjalankan server berbeda dari
 
 Ketika `autoVerify` diaktifkan, Claude secara otomatis memverifikasi perubahan kode setelah mengedit file. Mengambil tangkapan layar, memeriksa kesalahan, dan mengkonfirmasi perubahan berfungsi sebelum menyelesaikan responsnya.
 
-Verifikasi otomatis aktif secara default. Nonaktifkan per-proyek dengan menambahkan `"autoVerify": false` ke `.claude/launch.json`, atau aktifkan dari menu dropdown **Pratinjau**.
+Verifikasi otomatis aktif secara default. Nonaktifkan per-proyek dengan menambahkan `"autoVerify": false` ke `.claude/launch.json`, atau alihkan dari menu dropdown **Pratinjau**.
 
 ```json  theme={null}
 {
@@ -234,7 +234,7 @@ Setiap entri dalam array `configurations` menerima bidang berikut:
 
 ##### Kapan menggunakan `program` vs `runtimeExecutable`
 
-Gunakan `runtimeExecutable` dengan `runtimeArgs` untuk memulai server dev melalui pengelola paket. Misalnya, `"runtimeExecutable": "npm"` dengan `"runtimeArgs": ["run", "dev"]` menjalankan `npm run dev`.
+Gunakan `runtimeExecutable` dengan `runtimeArgs` untuk memulai dev server melalui package manager. Misalnya, `"runtimeExecutable": "npm"` dengan `"runtimeArgs": ["run", "dev"]` menjalankan `npm run dev`.
 
 Gunakan `program` ketika Anda memiliki skrip mandiri yang ingin Anda jalankan dengan `node` secara langsung. Misalnya, `"program": "server.js"` menjalankan `node server.js`. Lewatkan flag tambahan dengan `args`.
 
@@ -242,7 +242,7 @@ Gunakan `program` ketika Anda memiliki skrip mandiri yang ingin Anda jalankan de
 
 Bidang `autoPort` mengontrol apa yang terjadi ketika port pilihan Anda sudah digunakan:
 
-* **`true`**: Claude menemukan dan menggunakan port gratis secara otomatis. Cocok untuk sebagian besar server dev.
+* **`true`**: Claude menemukan dan menggunakan port gratis secara otomatis. Cocok untuk sebagian besar dev server.
 * **`false`**: Claude gagal dengan kesalahan. Gunakan ini ketika server Anda harus menggunakan port tertentu, seperti untuk callback OAuth atau allowlist CORS.
 * **Tidak diatur (default)**: Claude menanyakan apakah server memerlukan port itu, kemudian menyimpan jawaban Anda.
 
@@ -301,7 +301,7 @@ Konfigurasi ini menunjukkan setup umum untuk tipe proyek berbeda:
   </Tab>
 
   <Tab title="Node.js script">
-    Untuk menjalankan skrip Node.js secara langsung alih-alih menggunakan perintah pengelola paket, gunakan bidang `program`:
+    Untuk menjalankan skrip Node.js secara langsung alih-alih menggunakan perintah package manager, gunakan bidang `program`:
 
     ```json  theme={null}
     {
@@ -334,7 +334,7 @@ Untuk membuat tugas terjadwal, klik **Jadwal** di sidebar, kemudian **+ Tugas Ba
 | Bidang    | Deskripsi                                                                                                                                                                                                                          |
 | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Nama      | Pengidentifikasi untuk tugas. Dikonversi ke kebab-case huruf kecil dan digunakan sebagai nama folder di disk. Harus unik di seluruh tugas Anda.                                                                                    |
-| Deskripsi | Ringkasan singkat yang ditampilkan di daftar tugas.                                                                                                                                                                                |
+| Deskripsi | Ringkasan singkat yang ditampilkan dalam daftar tugas.                                                                                                                                                                             |
 | Prompt    | Instruksi yang dikirim ke Claude ketika tugas berjalan. Tulis ini dengan cara yang sama seperti Anda menulis pesan apa pun di kotak prompt. Input prompt juga mencakup kontrol untuk model, mode izin, folder kerja, dan worktree. |
 | Frekuensi | Seberapa sering tugas berjalan. Lihat [opsi frekuensi](#frequency-options) di bawah.                                                                                                                                               |
 
@@ -343,7 +343,7 @@ Anda juga dapat membuat tugas dengan mendeskripsikan apa yang Anda inginkan di s
 ### Opsi frekuensi
 
 * **Manual**: tidak ada jadwal, hanya berjalan ketika Anda klik **Jalankan sekarang**. Berguna untuk menyimpan prompt yang Anda picu sesuai permintaan
-* **Setiap jam**: berjalan setiap jam. Setiap tugas mendapatkan offset tetap hingga 10 menit dari atas jam untuk menjarangkan lalu lintas API
+* **Setiap jam**: berjalan setiap jam. Setiap tugas mendapatkan offset tetap hingga 10 menit dari atas jam untuk membuat lalu lintas API berjenjang
 * **Harian**: menampilkan pemilih waktu, default ke 9:00 AM waktu lokal
 * **Hari kerja**: sama dengan Harian tetapi melewati Sabtu dan Minggu
 * **Mingguan**: menampilkan pemilih waktu dan pemilih hari
@@ -352,7 +352,7 @@ Untuk interval yang tidak ditawarkan pemilih (setiap 15 menit, hari pertama seti
 
 ### Cara tugas terjadwal berjalan
 
-Tugas terjadwal berjalan secara lokal di mesin Anda. Desktop memeriksa jadwal setiap menit saat aplikasi terbuka dan memulai sesi segar ketika tugas jatuh tempo, independen dari sesi manual apa pun yang Anda buka. Setiap tugas mendapatkan penundaan tetap hingga 10 menit setelah waktu terjadwal untuk menjarangkan lalu lintas API. Penundaan bersifat deterministik: tugas yang sama selalu dimulai pada offset yang sama.
+Tugas terjadwal berjalan secara lokal di mesin Anda. Desktop memeriksa jadwal setiap menit saat aplikasi terbuka dan memulai sesi segar ketika tugas jatuh tempo, independen dari sesi manual apa pun yang Anda buka. Setiap tugas mendapatkan penundaan tetap hingga 10 menit setelah waktu terjadwal untuk membuat lalu lintas API berjenjang. Penundaan bersifat deterministik: tugas yang sama selalu dimulai pada offset yang sama.
 
 Ketika tugas dijalankan, Anda mendapatkan notifikasi desktop dan sesi baru muncul di bawah bagian **Terjadwal** di sidebar. Buka untuk melihat apa yang dilakukan Claude, tinjau perubahan, atau respons ke prompt izin. Sesi bekerja seperti yang lain: Claude dapat mengedit file, menjalankan perintah, membuat commit, dan membuka pull request.
 
@@ -368,7 +368,7 @@ Ingat ini saat menulis prompt. Tugas yang dijadwalkan untuk 9 pagi mungkin berja
 
 Setiap tugas memiliki mode izin sendiri, yang Anda atur saat membuat atau mengedit tugas. Aturan izin dari `~/.claude/settings.json` juga berlaku untuk sesi tugas terjadwal. Jika tugas berjalan dalam mode Tanya dan perlu menjalankan alat yang tidak memiliki izin, run macet sampai Anda menyetujuinya. Sesi tetap terbuka di sidebar sehingga Anda dapat menjawab nanti.
 
-Untuk menghindari macet, klik **Jalankan sekarang** setelah membuat tugas, tonton prompt izin, dan pilih "selalu izinkan" untuk setiap satu. Run tugas masa depan secara otomatis menyetujui alat yang sama tanpa meminta. Anda dapat meninjau dan mencabut persetujuan ini dari halaman detail tugas.
+Untuk menghindari macet, klik **Jalankan sekarang** setelah membuat tugas, tonton prompt izin, dan pilih "selalu izinkan" untuk setiap satu. Run masa depan dari tugas itu secara otomatis menyetujui alat yang sama tanpa meminta. Anda dapat meninjau dan mencabut persetujuan ini dari halaman detail tugas.
 
 ### Kelola tugas terjadwal
 
@@ -383,19 +383,19 @@ Klik tugas di daftar **Jadwal** untuk membuka halaman detailnya. Dari sini Anda 
 
 Anda juga dapat mengelola tugas dengan meminta Claude di sesi Desktop apa pun. Misalnya, "jeda tugas dependency-audit saya", "hapus tugas standup-prep", atau "tunjukkan tugas terjadwal saya."
 
-Untuk mengedit prompt tugas di disk, buka `~/.claude/scheduled-tasks/<task-name>/SKILL.md` (atau di bawah [`CLAUDE_CONFIG_DIR`](/id/settings#environment-variables) jika diatur). File menggunakan frontmatter YAML untuk `name` dan `description`, dengan prompt sebagai body. Perubahan berlaku pada run berikutnya. Jadwal, folder, model, dan status yang diaktifkan tidak ada di file ini: ubah melalui formulir Edit atau minta Claude.
+Untuk mengedit prompt tugas di disk, buka `~/.claude/scheduled-tasks/<task-name>/SKILL.md` (atau di bawah [`CLAUDE_CONFIG_DIR`](/id/env-vars) jika diatur). File menggunakan frontmatter YAML untuk `name` dan `description`, dengan prompt sebagai body. Perubahan berlaku pada run berikutnya. Jadwal, folder, model, dan status yang diaktifkan tidak ada dalam file ini: ubah melalui formulir Edit atau minta Claude.
 
 ## Konfigurasi lingkungan
 
 Lingkungan yang Anda pilih saat [memulai sesi](#start-a-session) menentukan di mana Claude mengeksekusi dan cara Anda terhubung:
 
 * **Lokal**: berjalan di mesin Anda dengan akses langsung ke file Anda
-* **Jarak Jauh**: berjalan di infrastruktur cloud Anthropic. Sesi terus berlanjut bahkan jika Anda menutup aplikasi.
-* **SSH**: berjalan di mesin jarak jauh yang Anda hubungkan melalui SSH, seperti server Anda sendiri, cloud VM, atau dev containers
+* **Jarak Jauh**: berjalan pada infrastruktur cloud Anthropic. Sesi terus berlanjut bahkan jika Anda menutup aplikasi.
+* **SSH**: berjalan di mesin jarak jauh yang Anda hubungkan melalui SSH, seperti server Anda sendiri, cloud VM, atau dev container
 
 ### Sesi lokal
 
-Sesi lokal mewarisi variabel lingkungan dari shell Anda. Jika Anda memerlukan variabel tambahan, atur di profil shell Anda, seperti `~/.zshrc` atau `~/.bashrc`, dan mulai ulang aplikasi desktop. Lihat [variabel lingkungan](/id/settings#environment-variables) untuk daftar lengkap variabel yang didukung.
+Sesi lokal mewarisi variabel lingkungan dari shell Anda. Jika Anda memerlukan variabel tambahan, atur di profil shell Anda, seperti `~/.zshrc` atau `~/.bashrc`, dan mulai ulang aplikasi desktop. Lihat [variabel lingkungan](/id/env-vars) untuk daftar lengkap variabel yang didukung.
 
 [Extended thinking](/id/common-workflows#use-extended-thinking-thinking-mode) diaktifkan secara default, yang meningkatkan kinerja pada tugas penalaran kompleks tetapi menggunakan token tambahan. Untuk menonaktifkan pemikiran sepenuhnya, atur `MAX_THINKING_TOKENS=0` di profil shell Anda. Di Opus, `MAX_THINKING_TOKENS` diabaikan kecuali untuk `0` karena penalaran adaptif mengontrol kedalaman pemikiran sebagai gantinya.
 
@@ -403,11 +403,11 @@ Sesi lokal mewarisi variabel lingkungan dari shell Anda. Jika Anda memerlukan va
 
 Sesi jarak jauh terus berlanjut di latar belakang bahkan jika Anda menutup aplikasi. Penggunaan dihitung terhadap [batas rencana langganan](/id/costs) Anda tanpa biaya komputasi terpisah.
 
-Anda dapat membuat lingkungan cloud khusus dengan tingkat akses jaringan dan variabel lingkungan yang berbeda. Pilih dropdown lingkungan saat memulai sesi jarak jauh dan pilih **Tambah lingkungan**. Lihat [lingkungan cloud](/id/claude-code-on-the-web#cloud-environment) untuk detail tentang mengonfigurasi akses jaringan dan variabel lingkungan.
+Anda dapat membuat lingkungan cloud kustom dengan tingkat akses jaringan dan variabel lingkungan yang berbeda. Pilih dropdown lingkungan saat memulai sesi jarak jauh dan pilih **Tambah lingkungan**. Lihat [lingkungan cloud](/id/claude-code-on-the-web#cloud-environment) untuk detail tentang mengonfigurasi akses jaringan dan variabel lingkungan.
 
 ### Sesi SSH
 
-Sesi SSH memungkinkan Anda menjalankan Claude Code di mesin jarak jauh sambil menggunakan aplikasi desktop sebagai antarmuka Anda. Ini berguna untuk bekerja dengan basis kode yang tinggal di cloud VM, dev containers, atau server dengan perangkat keras atau dependensi tertentu.
+Sesi SSH memungkinkan Anda menjalankan Claude Code di mesin jarak jauh sambil menggunakan aplikasi desktop sebagai antarmuka Anda. Ini berguna untuk bekerja dengan basis kode yang tinggal di cloud VM, dev container, atau server dengan perangkat keras atau dependensi tertentu.
 
 Untuk menambahkan koneksi SSH, klik dropdown lingkungan sebelum memulai sesi dan pilih **+ Tambah koneksi SSH**. Dialog menanyakan:
 
@@ -446,7 +446,7 @@ Pengaturan yang dikelola jarak jauh yang diunggah melalui konsol admin saat ini 
 
 ### Kebijakan manajemen perangkat
 
-Tim IT dapat mengelola aplikasi desktop melalui MDM di macOS atau kebijakan grup di Windows. Kebijakan yang tersedia termasuk mengaktifkan atau menonaktifkan fitur Claude Code, mengontrol pembaruan otomatis, dan menetapkan URL penyebaran khusus.
+Tim IT dapat mengelola aplikasi desktop melalui MDM di macOS atau kebijakan grup di Windows. Kebijakan yang tersedia termasuk mengaktifkan atau menonaktifkan fitur Claude Code, mengontrol pembaruan otomatis, dan menetapkan URL penyebaran kustom.
 
 * **macOS**: konfigurasikan melalui domain preferensi `com.anthropic.Claude` menggunakan alat seperti Jamf atau Kandji
 * **Windows**: konfigurasikan melalui registri di `SOFTWARE\Policies\Claude`
@@ -457,7 +457,7 @@ Organisasi enterprise dapat memerlukan SSO untuk semua pengguna. Lihat [autentik
 
 ### Penanganan data
 
-Claude Code memproses kode Anda secara lokal di sesi lokal atau di infrastruktur cloud Anthropic di sesi jarak jauh. Percakapan dan konteks kode dikirim ke API Anthropic untuk diproses. Lihat [penanganan data](/id/data-usage) untuk detail tentang retensi data, privasi, dan kepatuhan.
+Claude Code memproses kode Anda secara lokal dalam sesi lokal atau pada infrastruktur cloud Anthropic dalam sesi jarak jauh. Percakapan dan konteks kode dikirim ke API Anthropic untuk diproses. Lihat [penanganan data](/id/data-usage) untuk detail tentang retensi data, privasi, dan kepatuhan.
 
 ### Penyebaran
 
@@ -466,7 +466,7 @@ Desktop dapat didistribusikan melalui alat penyebaran enterprise:
 * **macOS**: distribusikan melalui MDM seperti Jamf atau Kandji menggunakan installer `.dmg`
 * **Windows**: sebarkan melalui paket MSIX atau installer `.exe`. Lihat [Sebarkan Claude Desktop untuk Windows](https://support.claude.com/en/articles/12622703-deploy-claude-desktop-for-windows) untuk opsi penyebaran enterprise termasuk instalasi senyap
 
-Untuk konfigurasi jaringan seperti pengaturan proxy, allowlisting firewall, dan gateway LLM, lihat [konfigurasi jaringan](/id/network-config).
+Untuk konfigurasi jaringan seperti pengaturan proxy, allowlist firewall, dan gateway LLM, lihat [konfigurasi jaringan](/id/network-config).
 
 Untuk referensi konfigurasi enterprise lengkap, lihat [panduan konfigurasi enterprise](https://support.claude.com/en/articles/12622667-enterprise-configuration).
 
@@ -576,7 +576,7 @@ Jika Claude tidak dapat menemukan alat seperti `npm`, `node`, atau perintah CLI 
 
 ### Kesalahan Git dan Git LFS
 
-Di Windows, Git diperlukan untuk tab Code memulai sesi lokal. Jika Anda melihat "Git diperlukan," instal [Git untuk Windows](https://git-scm.com/downloads/win) dan mulai ulang aplikasi.
+Di Windows, Git diperlukan agar tab Code memulai sesi lokal. Jika Anda melihat "Git diperlukan," instal [Git untuk Windows](https://git-scm.com/downloads/win) dan mulai ulang aplikasi.
 
 Jika Anda melihat "Git LFS diperlukan oleh repositori ini tetapi tidak diinstal," instal Git LFS dari [git-lfs.com](https://git-lfs.com/), jalankan `git lfs install`, dan mulai ulang aplikasi.
 

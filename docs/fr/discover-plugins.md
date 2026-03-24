@@ -154,7 +154,7 @@ Anthropic maintient également une [marketplace de plugins de démonstration](ht
   </Step>
 
   <Step title="Utiliser votre nouveau plugin">
-    Après l'installation, les commandes du plugin sont immédiatement disponibles. Les commandes de plugin sont espacées par le nom du plugin, donc **commit-commands** fournit des commandes comme `/commit-commands:commit`.
+    Après l'installation, exécutez `/reload-plugins` pour activer le plugin. Les commandes de plugin sont espacées par le nom du plugin, donc **commit-commands** fournit des commandes comme `/commit-commands:commit`.
 
     Essayez en effectuant une modification à un fichier et en exécutant :
 
@@ -296,15 +296,13 @@ claude plugin uninstall formatter@your-org --scope project
 
 ### Appliquer les modifications de plugin sans redémarrer
 
-Quand vous installez, activez ou désactivez des plugins pendant une session, certaines modifications (comme les nouvelles commandes et hooks) prennent effet immédiatement. D'autres, y compris les mises à jour du serveur LSP, nécessitent un redémarrage.
-
-Pour activer toutes les modifications de plugin en attente sans redémarrer, exécutez :
+Quand vous installez, activez ou désactivez des plugins pendant une session, exécutez `/reload-plugins` pour récupérer toutes les modifications sans redémarrer :
 
 ```shell  theme={null}
 /reload-plugins
 ```
 
-Claude Code recharge tous les plugins actifs et signale ce qui a été chargé. Si des serveurs LSP ont été ajoutés ou mis à jour, il vous le fera savoir, ceux-ci nécessitent un redémarrage pour prendre effet.
+Claude Code recharge tous les plugins actifs et affiche les comptages pour les commandes rechargées, les skills, les agents, les hooks, les MCP servers de plugin et les serveurs LSP de plugin.
 
 ## Gérer les marketplaces
 

@@ -6,9 +6,7 @@
 
 > Pelajari cara mengaktifkan dan mengonfigurasi OpenTelemetry untuk Claude Code.
 
-Claude Code mendukung metrik dan acara OpenTelemetry (OTel) untuk pemantauan dan observabilitas.
-
-Semua metrik adalah data deret waktu yang diekspor melalui protokol metrik standar OpenTelemetry, dan acara diekspor melalui protokol log/acara OpenTelemetry. Adalah tanggung jawab pengguna untuk memastikan backend metrik dan log mereka dikonfigurasi dengan benar dan bahwa granularitas agregasi memenuhi persyaratan pemantauan mereka.
+Lacak penggunaan Claude Code, biaya, dan aktivitas alat di seluruh organisasi Anda dengan mengekspor data telemetri melalui OpenTelemetry (OTel). Claude Code mengekspor metrik sebagai data deret waktu melalui protokol metrik standar, dan acara melalui protokol log/acara. Konfigurasikan backend metrik dan log Anda agar sesuai dengan persyaratan pemantauan Anda.
 
 ## Mulai cepat
 
@@ -56,8 +54,8 @@ Contoh konfigurasi pengaturan terkelola:
     "OTEL_METRICS_EXPORTER": "otlp",
     "OTEL_LOGS_EXPORTER": "otlp",
     "OTEL_EXPORTER_OTLP_PROTOCOL": "grpc",
-    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://collector.company.com:4317",
-    "OTEL_EXPORTER_OTLP_HEADERS": "Authorization=Bearer company-token"
+    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://collector.example.com:4317",
+    "OTEL_EXPORTER_OTLP_HEADERS": "Authorization=Bearer example-token"
   }
 }
 ```
@@ -70,24 +68,26 @@ Contoh konfigurasi pengaturan terkelola:
 
 ### Variabel konfigurasi umum
 
-| Variabel Lingkungan                             | Deskripsi                                                                 | Nilai Contoh                         |
-| ----------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------ |
-| `CLAUDE_CODE_ENABLE_TELEMETRY`                  | Mengaktifkan pengumpulan telemetri (diperlukan)                           | `1`                                  |
-| `OTEL_METRICS_EXPORTER`                         | Jenis pengekspor metrik (dipisahkan koma)                                 | `console`, `otlp`, `prometheus`      |
-| `OTEL_LOGS_EXPORTER`                            | Jenis pengekspor log/acara (dipisahkan koma)                              | `console`, `otlp`                    |
-| `OTEL_EXPORTER_OTLP_PROTOCOL`                   | Protokol untuk pengekspor OTLP (semua sinyal)                             | `grpc`, `http/json`, `http/protobuf` |
-| `OTEL_EXPORTER_OTLP_ENDPOINT`                   | Titik akhir pengumpul OTLP (semua sinyal)                                 | `http://localhost:4317`              |
-| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`           | Protokol untuk metrik (menimpa umum)                                      | `grpc`, `http/json`, `http/protobuf` |
-| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`           | Titik akhir metrik OTLP (menimpa umum)                                    | `http://localhost:4318/v1/metrics`   |
-| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`              | Protokol untuk log (menimpa umum)                                         | `grpc`, `http/json`, `http/protobuf` |
-| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`              | Titik akhir log OTLP (menimpa umum)                                       | `http://localhost:4318/v1/logs`      |
-| `OTEL_EXPORTER_OTLP_HEADERS`                    | Header autentikasi untuk OTLP                                             | `Authorization=Bearer token`         |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`         | Kunci klien untuk autentikasi mTLS                                        | Jalur ke file kunci klien            |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE` | Sertifikat klien untuk autentikasi mTLS                                   | Jalur ke file sertifikat klien       |
-| `OTEL_METRIC_EXPORT_INTERVAL`                   | Interval ekspor dalam milidetik (default: 60000)                          | `5000`, `60000`                      |
-| `OTEL_LOGS_EXPORT_INTERVAL`                     | Interval ekspor log dalam milidetik (default: 5000)                       | `1000`, `10000`                      |
-| `OTEL_LOG_USER_PROMPTS`                         | Aktifkan pencatatan konten prompt pengguna (default: dinonaktifkan)       | `1` untuk mengaktifkan               |
-| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`   | Interval untuk menyegarkan header dinamis (default: 1740000ms / 29 menit) | `900000`                             |
+| Variabel Lingkungan                                 | Deskripsi                                                                                                                     | Nilai Contoh                         |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | Mengaktifkan pengumpulan telemetri (diperlukan)                                                                               | `1`                                  |
+| `OTEL_METRICS_EXPORTER`                             | Jenis pengekspor metrik, dipisahkan koma                                                                                      | `console`, `otlp`, `prometheus`      |
+| `OTEL_LOGS_EXPORTER`                                | Jenis pengekspor log/acara, dipisahkan koma                                                                                   | `console`, `otlp`                    |
+| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | Protokol untuk pengekspor OTLP, berlaku untuk semua sinyal                                                                    | `grpc`, `http/json`, `http/protobuf` |
+| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | Titik akhir pengumpul OTLP untuk semua sinyal                                                                                 | `http://localhost:4317`              |
+| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | Protokol untuk metrik, menimpa pengaturan umum                                                                                | `grpc`, `http/json`, `http/protobuf` |
+| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | Titik akhir metrik OTLP, menimpa pengaturan umum                                                                              | `http://localhost:4318/v1/metrics`   |
+| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | Protokol untuk log, menimpa pengaturan umum                                                                                   | `grpc`, `http/json`, `http/protobuf` |
+| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | Titik akhir log OTLP, menimpa pengaturan umum                                                                                 | `http://localhost:4318/v1/logs`      |
+| `OTEL_EXPORTER_OTLP_HEADERS`                        | Header autentikasi untuk OTLP                                                                                                 | `Authorization=Bearer token`         |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | Kunci klien untuk autentikasi mTLS                                                                                            | Jalur ke file kunci klien            |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | Sertifikat klien untuk autentikasi mTLS                                                                                       | Jalur ke file sertifikat klien       |
+| `OTEL_METRIC_EXPORT_INTERVAL`                       | Interval ekspor dalam milidetik (default: 60000)                                                                              | `5000`, `60000`                      |
+| `OTEL_LOGS_EXPORT_INTERVAL`                         | Interval ekspor log dalam milidetik (default: 5000)                                                                           | `1000`, `10000`                      |
+| `OTEL_LOG_USER_PROMPTS`                             | Aktifkan pencatatan konten prompt pengguna (default: dinonaktifkan)                                                           | `1` untuk mengaktifkan               |
+| `OTEL_LOG_TOOL_DETAILS`                             | Aktifkan pencatatan nama server MCP/alat dan nama skill dalam acara alat (default: dinonaktifkan)                             | `1` untuk mengaktifkan               |
+| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | Preferensi temporalitas metrik (default: `delta`). Atur ke `cumulative` jika backend Anda mengharapkan temporalitas kumulatif | `delta`, `cumulative`                |
+| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | Interval untuk menyegarkan header dinamis (default: 1740000ms / 29 menit)                                                     | `900000`                             |
 
 ### Kontrol kardinalitas metrik
 
@@ -148,7 +148,7 @@ Atribut khusus ini akan disertakan dalam semua metrik dan acara, memungkinkan An
 <Warning>
   **Persyaratan pemformatan penting untuk OTEL\_RESOURCE\_ATTRIBUTES:**
 
-  Variabel lingkungan `OTEL_RESOURCE_ATTRIBUTES` mengikuti [spesifikasi W3C Baggage](https://www.w3.org/TR/baggage/), yang memiliki persyaratan pemformatan yang ketat:
+  Variabel lingkungan `OTEL_RESOURCE_ATTRIBUTES` menggunakan pasangan kunci=nilai yang dipisahkan koma dengan persyaratan pemformatan yang ketat:
 
   * **Tidak ada spasi yang diizinkan**: Nilai tidak dapat berisi spasi. Misalnya, `user.organizationName=My Company` tidak valid
   * **Format**: Harus berupa pasangan kunci=nilai yang dipisahkan koma: `key1=value1,key2=value2`
@@ -173,6 +173,8 @@ Atribut khusus ini akan disertakan dalam semua metrik dan acara, memungkinkan An
 </Warning>
 
 ### Konfigurasi contoh
+
+Atur variabel lingkungan ini sebelum menjalankan `claude`. Setiap blok menunjukkan konfigurasi lengkap untuk pengekspor atau skenario penerapan yang berbeda:
 
 ```bash  theme={null}
 # Debugging konsol (interval 1 detik)
@@ -200,9 +202,9 @@ export CLAUDE_CODE_ENABLE_TELEMETRY=1
 export OTEL_METRICS_EXPORTER=otlp
 export OTEL_LOGS_EXPORTER=otlp
 export OTEL_EXPORTER_OTLP_METRICS_PROTOCOL=http/protobuf
-export OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://metrics.company.com:4318
+export OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://metrics.example.com:4318
 export OTEL_EXPORTER_OTLP_LOGS_PROTOCOL=grpc
-export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://logs.company.com:4317
+export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://logs.example.com:4317
 
 # Hanya metrik (tanpa acara/log)
 export CLAUDE_CODE_ENABLE_TELEMETRY=1
@@ -223,13 +225,15 @@ export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
 
 Semua metrik dan acara berbagi atribut standar ini:
 
-| Atribut             | Deskripsi                                                          | Dikendalikan Oleh                                   |
-| ------------------- | ------------------------------------------------------------------ | --------------------------------------------------- |
-| `session.id`        | Pengidentifikasi sesi unik                                         | `OTEL_METRICS_INCLUDE_SESSION_ID` (default: true)   |
-| `app.version`       | Versi Claude Code saat ini                                         | `OTEL_METRICS_INCLUDE_VERSION` (default: false)     |
-| `organization.id`   | UUID organisasi (saat diautentikasi)                               | Selalu disertakan saat tersedia                     |
-| `user.account_uuid` | UUID akun (saat diautentikasi)                                     | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (default: true) |
-| `terminal.type`     | Jenis terminal (misalnya, `iTerm.app`, `vscode`, `cursor`, `tmux`) | Selalu disertakan saat terdeteksi                   |
+| Atribut             | Deskripsi                                                                         | Dikendalikan Oleh                                   |
+| ------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------- |
+| `session.id`        | Pengidentifikasi sesi unik                                                        | `OTEL_METRICS_INCLUDE_SESSION_ID` (default: true)   |
+| `app.version`       | Versi Claude Code saat ini                                                        | `OTEL_METRICS_INCLUDE_VERSION` (default: false)     |
+| `organization.id`   | UUID organisasi (saat diautentikasi)                                              | Selalu disertakan saat tersedia                     |
+| `user.account_uuid` | UUID akun (saat diautentikasi)                                                    | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (default: true) |
+| `user.id`           | Pengidentifikasi perangkat/instalasi anonim, dihasilkan per instalasi Claude Code | Selalu disertakan                                   |
+| `user.email`        | Alamat email pengguna (saat diautentikasi melalui OAuth)                          | Selalu disertakan saat tersedia                     |
+| `terminal.type`     | Jenis terminal, seperti `iTerm.app`, `vscode`, `cursor`, atau `tmux`              | Selalu disertakan saat terdeteksi                   |
 
 ### Metrik
 
@@ -247,6 +251,8 @@ Claude Code mengekspor metrik berikut:
 | `claude_code.active_time.total`       | Total waktu aktif dalam detik              | s      |
 
 ### Detail metrik
+
+Setiap metrik mencakup atribut standar yang tercantum di atas. Metrik dengan atribut khusus konteks tambahan dicatat di bawah ini.
 
 #### Penghitung sesi
 
@@ -288,7 +294,7 @@ Ditingkatkan setelah setiap permintaan API.
 **Atribut**:
 
 * Semua [atribut standar](#standard-attributes)
-* `model`: Pengidentifikasi model (misalnya, "claude-sonnet-4-5-20250929")
+* `model`: Pengidentifikasi model (misalnya, "claude-sonnet-4-6")
 
 #### Penghitung token
 
@@ -298,7 +304,7 @@ Ditingkatkan setelah setiap permintaan API.
 
 * Semua [atribut standar](#standard-attributes)
 * `type`: (`"input"`, `"output"`, `"cacheRead"`, `"cacheCreation"`)
-* `model`: Pengidentifikasi model (misalnya, "claude-sonnet-4-5-20250929")
+* `model`: Pengidentifikasi model (misalnya, "claude-sonnet-4-6")
 
 #### Penghitung keputusan alat pengeditan kode
 
@@ -307,21 +313,37 @@ Ditingkatkan saat pengguna menerima atau menolak penggunaan alat Edit, Write, at
 **Atribut**:
 
 * Semua [atribut standar](#standard-attributes)
-* `tool`: Nama alat (`"Edit"`, `"Write"`, `"NotebookEdit"`)
+* `tool_name`: Nama alat (`"Edit"`, `"Write"`, `"NotebookEdit"`)
 * `decision`: Keputusan pengguna (`"accept"`, `"reject"`)
-* `language`: Bahasa pemrograman file yang diedit (misalnya, `"TypeScript"`, `"Python"`, `"JavaScript"`, `"Markdown"`). Mengembalikan `"unknown"` untuk ekstensi file yang tidak dikenali.
+* `source`: Sumber keputusan - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, atau `"user_reject"`
+* `language`: Bahasa pemrograman file yang diedit, seperti `"TypeScript"`, `"Python"`, `"JavaScript"`, atau `"Markdown"`. Mengembalikan `"unknown"` untuk ekstensi file yang tidak dikenali.
 
 #### Penghitung waktu aktif
 
-Melacak waktu aktual yang dihabiskan untuk menggunakan Claude Code secara aktif (bukan waktu idle). Metrik ini ditingkatkan selama interaksi pengguna seperti mengetik prompt atau menerima respons.
+Melacak waktu aktual yang dihabiskan secara aktif menggunakan Claude Code, tidak termasuk waktu idle. Metrik ini ditingkatkan selama interaksi pengguna (mengetik, membaca respons) dan selama pemrosesan CLI (eksekusi alat, pembuatan respons AI).
 
 **Atribut**:
 
 * Semua [atribut standar](#standard-attributes)
+* `type`: `"user"` untuk interaksi keyboard, `"cli"` untuk eksekusi alat dan respons AI
 
 ### Acara
 
 Claude Code mengekspor acara berikut melalui log/acara OpenTelemetry (saat `OTEL_LOGS_EXPORTER` dikonfigurasi):
+
+#### Atribut korelasi acara
+
+Saat pengguna mengirimkan prompt, Claude Code dapat membuat beberapa panggilan API dan menjalankan beberapa alat. Atribut `prompt.id` memungkinkan Anda menghubungkan semua acara tersebut kembali ke prompt tunggal yang memicunya.
+
+| Atribut     | Deskripsi                                                                                                      |
+| ----------- | -------------------------------------------------------------------------------------------------------------- |
+| `prompt.id` | Pengidentifikasi UUID v4 yang menghubungkan semua acara yang dihasilkan saat memproses prompt pengguna tunggal |
+
+Untuk melacak semua aktivitas yang dipicu oleh prompt tunggal, filter acara Anda berdasarkan nilai `prompt.id` tertentu. Ini mengembalikan acara user\_prompt, acara api\_request apa pun, dan acara tool\_result apa pun yang terjadi saat memproses prompt tersebut.
+
+<Note>
+  `prompt.id` sengaja dikecualikan dari metrik karena setiap prompt menghasilkan ID unik, yang akan membuat jumlah deret waktu terus bertambah. Gunakan untuk analisis tingkat acara dan jejak audit saja.
+</Note>
 
 #### Acara prompt pengguna
 
@@ -334,6 +356,7 @@ Dicatat saat pengguna mengirimkan prompt.
 * Semua [atribut standar](#standard-attributes)
 * `event.name`: `"user_prompt"`
 * `event.timestamp`: Stempel waktu ISO 8601
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
 * `prompt_length`: Panjang prompt
 * `prompt`: Konten prompt (diredaksi secara default, aktifkan dengan `OTEL_LOG_USER_PROMPTS=1`)
 
@@ -348,14 +371,19 @@ Dicatat saat alat menyelesaikan eksekusi.
 * Semua [atribut standar](#standard-attributes)
 * `event.name`: `"tool_result"`
 * `event.timestamp`: Stempel waktu ISO 8601
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
 * `tool_name`: Nama alat
 * `success`: `"true"` atau `"false"`
 * `duration_ms`: Waktu eksekusi dalam milidetik
 * `error`: Pesan kesalahan (jika gagal)
-* `decision`: Baik `"accept"` atau `"reject"`
-* `source`: Sumber keputusan - `"config"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, atau `"user_reject"`
+* `decision_type`: Baik `"accept"` atau `"reject"`
+* `decision_source`: Sumber keputusan - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, atau `"user_reject"`
+* `tool_result_size_bytes`: Ukuran hasil alat dalam byte
+* `mcp_server_scope`: Pengidentifikasi cakupan server MCP (untuk alat MCP)
 * `tool_parameters`: String JSON yang berisi parameter khusus alat (saat tersedia)
-  * Untuk alat Bash: mencakup `bash_command`, `full_command`, `timeout`, `description`, `sandbox`
+  * Untuk alat Bash: mencakup `bash_command`, `full_command`, `timeout`, `description`, `dangerouslyDisableSandbox`, dan `git_commit_id` (SHA komit, saat perintah `git commit` berhasil)
+  * Untuk alat MCP (saat `OTEL_LOG_TOOL_DETAILS=1`): mencakup `mcp_server_name`, `mcp_tool_name`
+  * Untuk alat Skill (saat `OTEL_LOG_TOOL_DETAILS=1`): mencakup `skill_name`
 
 #### Acara permintaan API
 
@@ -368,13 +396,15 @@ Dicatat untuk setiap permintaan API ke Claude.
 * Semua [atribut standar](#standard-attributes)
 * `event.name`: `"api_request"`
 * `event.timestamp`: Stempel waktu ISO 8601
-* `model`: Model yang digunakan (misalnya, "claude-sonnet-4-5-20250929")
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
+* `model`: Model yang digunakan (misalnya, "claude-sonnet-4-6")
 * `cost_usd`: Biaya perkiraan dalam USD
 * `duration_ms`: Durasi permintaan dalam milidetik
 * `input_tokens`: Jumlah token input
 * `output_tokens`: Jumlah token output
 * `cache_read_tokens`: Jumlah token yang dibaca dari cache
 * `cache_creation_tokens`: Jumlah token yang digunakan untuk pembuatan cache
+* `speed`: `"fast"` atau `"normal"`, menunjukkan apakah mode cepat aktif
 
 #### Acara kesalahan API
 
@@ -387,11 +417,13 @@ Dicatat saat permintaan API ke Claude gagal.
 * Semua [atribut standar](#standard-attributes)
 * `event.name`: `"api_error"`
 * `event.timestamp`: Stempel waktu ISO 8601
-* `model`: Model yang digunakan (misalnya, "claude-sonnet-4-5-20250929")
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
+* `model`: Model yang digunakan (misalnya, "claude-sonnet-4-6")
 * `error`: Pesan kesalahan
-* `status_code`: Kode status HTTP (jika berlaku)
+* `status_code`: Kode status HTTP sebagai string, atau `"undefined"` untuk kesalahan non-HTTP
 * `duration_ms`: Durasi permintaan dalam milidetik
 * `attempt`: Nomor upaya (untuk permintaan yang dicoba ulang)
+* `speed`: `"fast"` atau `"normal"`, menunjukkan apakah mode cepat aktif
 
 #### Acara keputusan alat
 
@@ -404,13 +436,14 @@ Dicatat saat keputusan izin alat dibuat (terima/tolak).
 * Semua [atribut standar](#standard-attributes)
 * `event.name`: `"tool_decision"`
 * `event.timestamp`: Stempel waktu ISO 8601
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
 * `tool_name`: Nama alat (misalnya, "Read", "Edit", "Write", "NotebookEdit")
 * `decision`: Baik `"accept"` atau `"reject"`
-* `source`: Sumber keputusan - `"config"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, atau `"user_reject"`
+* `source`: Sumber keputusan - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, atau `"user_reject"`
 
 ## Menafsirkan data metrik dan acara
 
-Metrik yang diekspor oleh Claude Code memberikan wawasan berharga tentang pola penggunaan dan produktivitas. Berikut adalah beberapa visualisasi dan analisis umum yang dapat Anda buat:
+Metrik dan acara yang diekspor mendukung berbagai analisis:
 
 ### Pemantauan penggunaan
 
@@ -489,11 +522,13 @@ Semua metrik dan acara diekspor dengan atribut sumber daya berikut:
 
 Untuk panduan komprehensif tentang mengukur pengembalian investasi untuk Claude Code, termasuk pengaturan telemetri, analisis biaya, metrik produktivitas, dan pelaporan otomatis, lihat [Panduan Pengukuran ROI Claude Code](https://github.com/anthropics/claude-code-monitoring-guide). Repositori ini menyediakan konfigurasi Docker Compose siap pakai, pengaturan Prometheus dan OpenTelemetry, dan template untuk menghasilkan laporan produktivitas yang terintegrasi dengan alat seperti Linear.
 
-## Pertimbangan keamanan/privasi
+## Keamanan dan privasi
 
 * Telemetri adalah opt-in dan memerlukan konfigurasi eksplisit
-* Informasi sensitif seperti kunci API atau konten file tidak pernah disertakan dalam metrik atau acara
-* Konten prompt pengguna diredaksi secara default - hanya panjang prompt yang dicatat. Untuk mengaktifkan pencatatan prompt pengguna, atur `OTEL_LOG_USER_PROMPTS=1`
+* Konten file mentah dan cuplikan kode tidak disertakan dalam metrik atau acara. Acara eksekusi alat mencakup perintah bash dan jalur file di bidang `tool_parameters`, yang mungkin berisi nilai sensitif. Jika perintah Anda mungkin menyertakan rahasia, konfigurasikan backend telemetri Anda untuk memfilter atau menyunting `tool_parameters`
+* Saat diautentikasi melalui OAuth, `user.email` disertakan dalam atribut telemetri. Jika ini menjadi perhatian bagi organisasi Anda, bekerja dengan backend telemetri Anda untuk memfilter atau menyunting bidang ini
+* Konten prompt pengguna tidak dikumpulkan secara default. Hanya panjang prompt yang dicatat. Untuk menyertakan konten prompt, atur `OTEL_LOG_USER_PROMPTS=1`
+* Nama server MCP/alat dan nama skill tidak dicatat secara default karena dapat mengungkapkan konfigurasi khusus pengguna. Untuk menyertakannya, atur `OTEL_LOG_TOOL_DETAILS=1`
 
 ## Memantau Claude Code di Amazon Bedrock
 

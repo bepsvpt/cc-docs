@@ -10,7 +10,7 @@
 
 Ekstensi VS Code menyediakan antarmuka grafis asli untuk Claude Code, terintegrasi langsung ke dalam IDE Anda. Ini adalah cara yang direkomendasikan untuk menggunakan Claude Code di VS Code.
 
-Dengan ekstensi, Anda dapat meninjau dan mengedit rencana Claude sebelum menerimanya, auto-accept edits saat dibuat, @-mention file dengan rentang baris tertentu dari pilihan Anda, akses riwayat percakapan, dan buka beberapa percakapan di tab atau jendela terpisah.
+Dengan ekstensi, Anda dapat meninjau dan mengedit rencana Claude sebelum menerimanya, auto-accept edits saat dibuat, @-mention file dengan rentang baris tertentu dari pilihan Anda, mengakses riwayat percakapan, dan membuka beberapa percakapan di tab atau jendela terpisah.
 
 ## Prasyarat
 
@@ -30,7 +30,7 @@ Klik tautan untuk IDE Anda untuk menginstal secara langsung:
 * [Instal untuk VS Code](vscode:extension/anthropic.claude-code)
 * [Instal untuk Cursor](cursor:extension/anthropic.claude-code)
 
-Atau di VS Code, tekan `Cmd+Shift+X` (Mac) atau `Ctrl+Shift+X` (Windows/Linux) untuk membuka tampilan Ekstensi, cari "Claude Code", dan klik **Instal**.
+Atau di VS Code, tekan `Cmd+Shift+X` (Mac) atau `Ctrl+Shift+X` (Windows/Linux) untuk membuka tampilan Extensions, cari "Claude Code", dan klik **Install**.
 
 <Note>Jika ekstensi tidak muncul setelah instalasi, restart VS Code atau jalankan "Developer: Reload Window" dari Command Palette.</Note>
 
@@ -169,7 +169,7 @@ Dialog plugin menampilkan dua tab: **Plugins** dan **Marketplaces**.
 
 Di tab Plugins:
 
-* **Installed plugins** muncul di bagian atas dengan tombol toggle untuk mengaktifkan atau menonaktifkannya
+* **Installed plugins** muncul di bagian atas dengan switch toggle untuk mengaktifkan atau menonaktifkannya
 * **Available plugins** dari marketplace yang dikonfigurasi muncul di bawah
 * Cari untuk memfilter plugins berdasarkan nama atau deskripsi
 * Klik **Install** pada plugin yang tersedia apa pun
@@ -238,8 +238,8 @@ Beberapa pintasan tergantung pada panel mana yang "focused" (menerima input keyb
 
 Ekstensi memiliki dua jenis pengaturan:
 
-* **Pengaturan ekstensi** di VS Code: mengontrol perilaku ekstensi dalam VS Code. Buka dengan `Cmd+,` (Mac) atau `Ctrl+,` (Windows/Linux), kemudian buka Extensions → Claude Code. Anda juga dapat mengetik `/` dan memilih **General Config** untuk membuka pengaturan.
-* **Pengaturan Claude Code** di `~/.claude/settings.json`: dibagikan antara ekstensi dan CLI. Gunakan untuk perintah yang diizinkan, variabel lingkungan, hooks, dan MCP servers. Lihat [Settings](/id/settings) untuk detail.
+* **Extension settings** di VS Code: mengontrol perilaku ekstensi dalam VS Code. Buka dengan `Cmd+,` (Mac) atau `Ctrl+,` (Windows/Linux), kemudian buka Extensions → Claude Code. Anda juga dapat mengetik `/` dan memilih **General Config** untuk membuka pengaturan.
+* **Claude Code settings** di `~/.claude/settings.json`: dibagikan antara ekstensi dan CLI. Gunakan untuk perintah yang diizinkan, variabel lingkungan, hooks, dan MCP servers. Lihat [Settings](/id/settings) untuk detail.
 
 <Tip>
   Tambahkan `"$schema": "https://json.schemastore.org/claude-code-settings.json"` ke `settings.json` Anda untuk mendapatkan autocomplete dan validasi inline untuk semua pengaturan yang tersedia langsung di VS Code.
@@ -256,7 +256,7 @@ Ekstensi memiliki dua jenis pengaturan:
 | `autosave`                        | `true`    | Auto-save file sebelum Claude membaca atau menulisnya                                                                    |
 | `useCtrlEnterToSend`              | `false`   | Gunakan Ctrl/Cmd+Enter alih-alih Enter untuk mengirim prompt                                                             |
 | `enableNewConversationShortcut`   | `true`    | Aktifkan Cmd/Ctrl+N untuk memulai percakapan baru                                                                        |
-| `hideOnboarding`                  | `false`   | Sembunyikan daftar periksa onboarding (ikon topi kelulusan)                                                              |
+| `hideOnboarding`                  | `false`   | Sembunyikan daftar periksa onboarding (ikon graduation cap)                                                              |
 | `respectGitIgnore`                | `true`    | Kecualikan pola .gitignore dari pencarian file                                                                           |
 | `environmentVariables`            | `[]`      | Atur variabel lingkungan untuk proses Claude. Gunakan pengaturan Claude Code sebagai gantinya untuk konfigurasi bersama. |
 | `disableLoginPrompt`              | `false`   | Lewati prompt autentikasi (untuk setup penyedia pihak ketiga)                                                            |
@@ -267,13 +267,13 @@ Ekstensi memiliki dua jenis pengaturan:
 
 Claude Code tersedia sebagai ekstensi VS Code (panel grafis) dan CLI (command-line interface di terminal). Beberapa fitur hanya tersedia di CLI. Jika Anda memerlukan fitur khusus CLI, jalankan `claude` di terminal terintegrasi VS Code.
 
-| Fitur                  | CLI                                             | Ekstensi VS Code                                                                           |
-| ---------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Perintah dan skills    | [Semua](/id/interactive-mode#built-in-commands) | Subset (ketik `/` untuk melihat yang tersedia)                                             |
-| Konfigurasi MCP server | Ya                                              | Parsial (tambahkan server melalui CLI; kelola server yang ada dengan `/mcp` di panel chat) |
-| Checkpoints            | Ya                                              | Ya                                                                                         |
-| Pintasan bash `!`      | Ya                                              | Tidak                                                                                      |
-| Tab completion         | Ya                                              | Tidak                                                                                      |
+| Fitur                  | CLI                   | Ekstensi VS Code                                                                           |
+| ---------------------- | --------------------- | ------------------------------------------------------------------------------------------ |
+| Perintah dan skills    | [Semua](/id/commands) | Subset (ketik `/` untuk melihat yang tersedia)                                             |
+| Konfigurasi MCP server | Ya                    | Parsial (tambahkan server melalui CLI; kelola server yang ada dengan `/mcp` di panel chat) |
+| Checkpoints            | Ya                    | Ya                                                                                         |
+| Pintasan bash `!`      | Ya                    | Tidak                                                                                      |
+| Tab completion         | Ya                    | Tidak                                                                                      |
 
 ### Rewind dengan checkpoints
 
@@ -321,7 +321,7 @@ Untuk mengelola MCP servers tanpa meninggalkan VS Code, ketik `/mcp` di panel ch
 
 Claude Code terintegrasi dengan git untuk membantu dengan alur kerja kontrol versi langsung di VS Code. Minta Claude untuk commit perubahan, membuat pull request, atau bekerja di seluruh branch.
 
-### Buat commits dan pull requests
+### Buat commit dan pull request
 
 Claude dapat stage perubahan, menulis pesan commit, dan membuat pull request berdasarkan pekerjaan Anda:
 
@@ -341,7 +341,7 @@ Gunakan flag `--worktree` (`-w`) untuk memulai Claude di worktree terisolasi den
 claude --worktree feature-auth
 ```
 
-Setiap worktree mempertahankan status file independen sambil berbagi riwayat git. Ini mencegah instance Claude saling mengganggu saat bekerja pada tugas berbeda. Untuk detail lebih lanjut, lihat [Jalankan sesi Claude Code paralel dengan Git worktrees](/id/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees).
+Setiap worktree mempertahankan status file independen sambil berbagi riwayat git. Ini mencegah instance Claude saling mengganggu saat bekerja pada tugas berbeda. Untuk detail lebih lanjut, lihat [Jalankan sesi Claude paralel dengan Git worktrees](/id/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees).
 
 ## Gunakan penyedia pihak ketiga
 

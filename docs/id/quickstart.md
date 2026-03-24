@@ -6,7 +6,7 @@
 
 > Selamat datang di Claude Code!
 
-Panduan cepat ini akan membuat Anda menggunakan bantuan coding bertenaga AI dalam beberapa menit. Di akhir panduan, Anda akan memahami cara menggunakan Claude Code untuk tugas-tugas pengembangan umum.
+Panduan cepat ini akan membuat Anda menggunakan bantuan pengkodean bertenaga AI dalam beberapa menit. Di akhir panduan, Anda akan memahami cara menggunakan Claude Code untuk tugas-tugas pengembangan umum.
 
 ## Sebelum Anda memulai
 
@@ -15,7 +15,7 @@ Pastikan Anda memiliki:
 * Terminal atau command prompt yang terbuka
   * Jika Anda belum pernah menggunakan terminal sebelumnya, lihat [panduan terminal](/id/terminal-guide)
 * Proyek kode untuk dikerjakan
-* [Langganan Claude](https://claude.com/pricing) (Pro, Max, Teams, atau Enterprise), akun [Claude Console](https://console.anthropic.com/), atau akses melalui [penyedia cloud yang didukung](/id/third-party-integrations)
+* [Langganan Claude](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_prereq) (Pro, Max, Teams, atau Enterprise), akun [Claude Console](https://console.anthropic.com/), atau akses melalui [penyedia cloud yang didukung](/id/third-party-integrations)
 
 <Note>
   Panduan ini mencakup CLI terminal. Claude Code juga tersedia di [web](https://claude.ai/code), sebagai [aplikasi desktop](/id/desktop), di [VS Code](/id/vs-code) dan [IDE JetBrains](/id/jetbrains), di [Slack](/id/slack), dan di CI/CD dengan [GitHub Actions](/id/github-actions) dan [GitLab](/id/gitlab-ci-cd). Lihat [semua antarmuka](/id/overview#use-claude-code-everywhere).
@@ -89,8 +89,8 @@ claude
 
 Anda dapat masuk menggunakan salah satu jenis akun ini:
 
-* [Claude Pro, Max, Teams, atau Enterprise](https://claude.com/pricing) (direkomendasikan)
-* [Claude Console](https://console.anthropic.com/) (akses API dengan kredit prabayar). Pada login pertama, workspace "Claude Code" secara otomatis dibuat di Console untuk pelacakan biaya terpusat.
+* [Claude Pro, Max, Teams, atau Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_login) (direkomendasikan)
+* [Claude Console](https://console.anthropic.com/) (akses API dengan kredit prabayar). Pada login pertama, ruang kerja "Claude Code" secara otomatis dibuat di Console untuk pelacakan biaya terpusat.
 * [Amazon Bedrock, Google Vertex AI, atau Microsoft Foundry](/id/third-party-integrations) (penyedia cloud enterprise)
 
 Setelah masuk, kredensial Anda disimpan dan Anda tidak perlu masuk lagi. Untuk beralih akun nanti, gunakan perintah `/login`.
@@ -104,7 +104,7 @@ cd /path/to/your/project
 claude
 ```
 
-Anda akan melihat layar sambutan Claude Code dengan informasi sesi, percakapan terbaru, dan pembaruan terbaru. Ketik `/help` untuk perintah yang tersedia atau `/resume` untuk melanjutkan percakapan sebelumnya.
+Anda akan melihat layar sambutan Claude Code dengan informasi sesi Anda, percakapan terbaru, dan pembaruan terbaru. Ketik `/help` untuk perintah yang tersedia atau `/resume` untuk melanjutkan percakapan sebelumnya.
 
 <Tip>
   Setelah masuk (Langkah 2), kredensial Anda disimpan di sistem Anda. Pelajari lebih lanjut di [Manajemen Kredensial](/id/authentication#credential-management).
@@ -132,7 +132,7 @@ di mana titik masuk utama?
 jelaskan struktur folder
 ```
 
-Anda juga dapat bertanya kepada Claude tentang kemampuannya sendiri:
+Anda juga dapat menanyakan Claude tentang kemampuannya sendiri:
 
 ```text  theme={null}
 apa yang dapat dilakukan Claude Code?
@@ -152,7 +152,7 @@ bisakah Claude Code bekerja dengan Docker?
 
 ## Langkah 5: Buat perubahan kode pertama Anda
 
-Sekarang mari buat Claude Code melakukan beberapa coding sebenarnya. Coba tugas sederhana:
+Sekarang mari buat Claude Code melakukan beberapa pengkodean aktual. Coba tugas sederhana:
 
 ```text  theme={null}
 tambahkan fungsi hello world ke file utama
@@ -178,7 +178,7 @@ file apa yang telah saya ubah?
 ```
 
 ```text  theme={null}
-commit perubahan saya dengan pesan deskriptif
+komit perubahan saya dengan pesan deskriptif
 ```
 
 Anda juga dapat meminta operasi Git yang lebih kompleks:
@@ -188,11 +188,11 @@ buat cabang baru bernama feature/quickstart
 ```
 
 ```text  theme={null}
-tunjukkan 5 commit terakhir saya
+tunjukkan 5 komit terakhir saya
 ```
 
 ```text  theme={null}
-bantu saya menyelesaikan konflik merge
+bantu saya menyelesaikan konflik penggabungan
 ```
 
 ## Langkah 7: Perbaiki bug atau tambahkan fitur
@@ -222,10 +222,10 @@ Claude Code akan:
 
 Ada beberapa cara untuk bekerja dengan Claude:
 
-**Refactor kode**
+**Refaktor kode**
 
 ```text  theme={null}
-refactor modul autentikasi untuk menggunakan async/await alih-alih callbacks
+refaktor modul autentikasi untuk menggunakan async/await alih-alih callback
 ```
 
 **Tulis tes**
@@ -247,7 +247,7 @@ tinjau perubahan saya dan sarankan perbaikan
 ```
 
 <Tip>
-  Berbicara dengan Claude seperti Anda berbicara dengan rekan kerja yang membantu. Jelaskan apa yang ingin Anda capai, dan itu akan membantu Anda sampai ke sana.
+  Berbicara dengan Claude seperti Anda berbicara dengan rekan kerja yang membantu. Jelaskan apa yang ingin Anda capai, dan Claude akan membantu Anda mencapainya.
 </Tip>
 
 ## Perintah penting
@@ -258,10 +258,10 @@ Berikut adalah perintah paling penting untuk penggunaan sehari-hari:
 | ------------------- | -------------------------------------------------- | ----------------------------------- |
 | `claude`            | Mulai mode interaktif                              | `claude`                            |
 | `claude "task"`     | Jalankan tugas satu kali                           | `claude "perbaiki kesalahan build"` |
-| `claude -p "query"` | Jalankan kueri sekali jalan, lalu keluar           | `claude -p "jelaskan fungsi ini"`   |
+| `claude -p "query"` | Jalankan kueri sekali, lalu keluar                 | `claude -p "jelaskan fungsi ini"`   |
 | `claude -c`         | Lanjutkan percakapan terbaru di direktori saat ini | `claude -c`                         |
 | `claude -r`         | Lanjutkan percakapan sebelumnya                    | `claude -r`                         |
-| `claude commit`     | Buat commit Git                                    | `claude commit`                     |
+| `claude commit`     | Buat komit Git                                     | `claude commit`                     |
 | `/clear`            | Hapus riwayat percakapan                           | `/clear`                            |
 | `/help`             | Tampilkan perintah yang tersedia                   | `/help`                             |
 | `exit` atau Ctrl+C  | Keluar dari Claude Code                            | `exit`                              |

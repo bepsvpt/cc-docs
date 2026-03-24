@@ -31,7 +31,7 @@ Total code changes:    0 lines added, 0 lines removed
 
 ## Mengelola biaya untuk tim
 
-Saat menggunakan Claude API, Anda dapat [menetapkan batas pengeluaran ruang kerja](https://platform.claude.com/docs/en/build-with-claude/workspaces#workspace-limits) pada total pengeluaran ruang kerja Claude Code. Admin dapat [melihat pelaporan biaya dan penggunaan](https://platform.claude.com/docs/en/build-with-claude/workspaces#usage-and-cost-tracking) di Konsol.
+Saat menggunakan Claude API, Anda dapat [menetapkan batas pengeluaran ruang kerja](https://platform.claude.com/docs/id/build-with-claude/workspaces#workspace-limits) pada total pengeluaran ruang kerja Claude Code. Admin dapat [melihat pelaporan biaya dan penggunaan](https://platform.claude.com/docs/id/build-with-claude/workspaces#usage-and-cost-tracking) di Konsol.
 
 <Note>
   Ketika Anda pertama kali mengautentikasi Claude Code dengan akun Claude Console Anda, ruang kerja yang disebut "Claude Code" secara otomatis dibuat untuk Anda. Ruang kerja ini menyediakan pelacakan dan manajemen biaya terpusat untuk semua penggunaan Claude Code di organisasi Anda. Anda tidak dapat membuat kunci API untuk ruang kerja ini; ini secara eksklusif untuk autentikasi dan penggunaan Claude Code.
@@ -165,7 +165,7 @@ File [CLAUDE.md](/id/memory) Anda dimuat ke konteks saat awal sesi. Jika berisi 
 
 ### Sesuaikan pemikiran yang diperluas
 
-Pemikiran yang diperluas diaktifkan secara default dengan anggaran 31.999 token karena secara signifikan meningkatkan kinerja pada tugas perencanaan dan penalaran yang kompleks. Namun, token pemikiran ditagih sebagai token output, jadi untuk tugas yang lebih sederhana di mana penalaran mendalam tidak diperlukan, Anda dapat mengurangi biaya dengan menurunkan [tingkat upaya](/id/model-config#adjust-effort-level) di `/model` untuk Opus 4.6, menonaktifkan pemikiran di `/config`, atau menurunkan anggaran (misalnya, `MAX_THINKING_TOKENS=8000`).
+Pemikiran yang diperluas diaktifkan secara default dengan anggaran 31.999 token karena secara signifikan meningkatkan kinerja pada tugas perencanaan dan penalaran yang kompleks. Namun, token pemikiran ditagih sebagai token output, jadi untuk tugas yang lebih sederhana di mana penalaran mendalam tidak diperlukan, Anda dapat mengurangi biaya dengan menurunkan [tingkat upaya](/id/model-config#adjust-effort-level) dengan `/effort` atau di `/model`, menonaktifkan pemikiran di `/config`, atau menurunkan anggaran (misalnya, `MAX_THINKING_TOKENS=8000`).
 
 ### Delegasikan operasi verbose ke subagents
 

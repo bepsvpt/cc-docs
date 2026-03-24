@@ -165,7 +165,7 @@ Su archivo [CLAUDE.md](/es/memory) se carga en contexto al inicio de la sesión.
 
 ### Ajuste el pensamiento extendido
 
-El pensamiento extendido está habilitado por defecto con un presupuesto de 31,999 tokens porque mejora significativamente el rendimiento en tareas complejas de planificación y razonamiento. Sin embargo, los tokens de pensamiento se facturan como tokens de salida, por lo que para tareas más simples donde el razonamiento profundo no es necesario, puede reducir costos bajando el [nivel de esfuerzo](/es/model-config#adjust-effort-level) en `/model` para Opus 4.6, deshabilitando el pensamiento en `/config`, o bajando el presupuesto (por ejemplo, `MAX_THINKING_TOKENS=8000`).
+El pensamiento extendido está habilitado por defecto con un presupuesto de 31,999 tokens porque mejora significativamente el rendimiento en tareas complejas de planificación y razonamiento. Sin embargo, los tokens de pensamiento se facturan como tokens de salida, por lo que para tareas más simples donde el razonamiento profundo no es necesario, puede reducir costos bajando el [nivel de esfuerzo](/es/model-config#adjust-effort-level) con `/effort` o en `/model`, deshabilitando el pensamiento en `/config`, o bajando el presupuesto (por ejemplo, `MAX_THINKING_TOKENS=8000`).
 
 ### Delegue operaciones detalladas a subagents
 

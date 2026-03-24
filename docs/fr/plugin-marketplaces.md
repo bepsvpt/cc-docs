@@ -239,7 +239,7 @@ Une fois qu'un plugin est cloné ou copié sur la machine locale, il est copié 
 
 ### Chemins relatifs
 
-Pour les plugins dans le même dépôt :
+Pour les plugins dans le même dépôt, utilisez un chemin commençant par `./` :
 
 ```json  theme={null}
 {
@@ -247,6 +247,8 @@ Pour les plugins dans le même dépôt :
   "source": "./plugins/my-plugin"
 }
 ```
+
+Les chemins se résolvent par rapport à la racine de la place de marché, qui est le répertoire contenant `.claude-plugin/`. Dans l'exemple ci-dessus, `./plugins/my-plugin` pointe vers `<repo>/plugins/my-plugin`, même si `marketplace.json` se trouve à `<repo>/.claude-plugin/marketplace.json`. N'utilisez pas `../` pour sortir de `.claude-plugin/`.
 
 <Note>
   Les chemins relatifs ne fonctionnent que lorsque les utilisateurs ajoutent votre place de marché via Git (GitHub, GitLab ou URL git). Si les utilisateurs ajoutent votre place de marché via une URL directe vers le fichier `marketplace.json`, les chemins relatifs ne se résoudront pas correctement. Pour la distribution basée sur les URL, utilisez plutôt les sources GitHub, npm ou URL git. Consultez [Dépannage](#plugins-with-relative-paths-fail-in-url-based-marketplaces) pour plus de détails.
@@ -310,11 +312,11 @@ Vous pouvez épingler à une branche, un tag ou un commit spécifique :
 }
 ```
 
-| Champ | Type   | Description                                                                              |
-| :---- | :----- | :--------------------------------------------------------------------------------------- |
-| `url` | string | Obligatoire. URL complète du dépôt git (doit se terminer par `.git`)                     |
-| `ref` | string | Optionnel. Branche ou tag Git (par défaut la branche par défaut du dépôt)                |
-| `sha` | string | Optionnel. SHA de commit git complet de 40 caractères pour épingler à une version exacte |
+| Champ | Type   | Description                                                                                                                                                              |
+| :---- | :----- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `url` | string | Obligatoire. URL complète du dépôt git (`https://` ou `git@`). Le suffixe `.git` est optionnel, donc les URL Azure DevOps et AWS CodeCommit sans le suffixe fonctionnent |
+| `ref` | string | Optionnel. Branche ou tag Git (par défaut la branche par défaut du dépôt)                                                                                                |
+| `sha` | string | Optionnel. SHA de commit git complet de 40 caractères pour épingler à une version exacte                                                                                 |
 
 ### Sous-répertoires Git
 
@@ -627,6 +629,10 @@ Autoriser les places de marché basées sur le système de fichiers à partir d'
 ```
 
 Utilisez `".*"` comme `pathPattern` pour autoriser n'importe quel chemin du système de fichiers tout en contrôlant les sources réseau avec `hostPattern`.
+
+<Note>
+  `strictKnownMarketplaces` restreint ce que les utilisateurs peuvent ajouter, mais n'enregistre pas les places de marché par lui-même. Pour rendre les places de marché autorisées disponibles automatiquement sans que les utilisateurs exécutent `/plugin marketplace add`, associez-le à [`extraKnownMarketplaces`](/fr/settings#extraknownmarketplaces) dans le même `managed-settings.json`. Voir [Utiliser les deux ensemble](/fr/settings#strictknownmarketplaces).
+</Note>
 
 #### Comment fonctionnent les restrictions
 

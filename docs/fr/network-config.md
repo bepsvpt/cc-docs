@@ -6,7 +6,7 @@
 
 > Configurez Claude Code pour les environnements d'entreprise avec des serveurs proxy, des autorités de certification (CA) personnalisées et l'authentification mutuelle Transport Layer Security (mTLS).
 
-Claude Code prend en charge diverses configurations réseau et de sécurité d'entreprise via des variables d'environnement. Cela inclut le routage du trafic via des serveurs proxy d'entreprise, la confiance envers des autorités de certification (CA) personnalisées et l'authentification avec des certificats Transport Layer Security (mTLS) mutuels pour une sécurité renforcée.
+Claude Code prend en charge diverses configurations réseau et de sécurité d'entreprise via des variables d'environnement. Cela inclut le routage du trafic via des serveurs proxy d'entreprise, la confiance envers des autorités de certification (CA) personnalisées et l'authentification avec des certificats mTLS (Transport Layer Security mutuel) pour une sécurité renforcée.
 
 <Note>
   Toutes les variables d'environnement affichées sur cette page peuvent également être configurées dans [`settings.json`](/fr/settings).
@@ -37,9 +37,9 @@ export NO_PROXY="*"
   Claude Code ne prend pas en charge les proxies SOCKS.
 </Note>
 
-### Authentification de base
+### Authentification basique
 
-Si votre proxy nécessite une authentification de base, incluez les identifiants dans l'URL du proxy :
+Si votre proxy nécessite une authentification basique, incluez les identifiants dans l'URL du proxy :
 
 ```bash  theme={null}
 export HTTPS_PROXY=http://username:password@proxy.example.com:8080
@@ -72,7 +72,7 @@ export CLAUDE_CODE_CLIENT_CERT=/path/to/client-cert.pem
 # Clé privée du client
 export CLAUDE_CODE_CLIENT_KEY=/path/to/client-key.pem
 
-# Optionnel : Phrase de passe pour la clé privée chiffrée
+# Optionnel : phrase de passe pour la clé privée chiffrée
 export CLAUDE_CODE_CLIENT_KEY_PASSPHRASE="your-passphrase"
 ```
 
@@ -80,14 +80,16 @@ export CLAUDE_CODE_CLIENT_KEY_PASSPHRASE="your-passphrase"
 
 Claude Code nécessite l'accès aux URL suivantes :
 
-* `api.anthropic.com` : Points de terminaison de l'API Claude
+* `api.anthropic.com` : points de terminaison de l'API Claude
 * `claude.ai` : authentification pour les comptes claude.ai
 * `platform.claude.com` : authentification pour les comptes Anthropic Console
 
-Assurez-vous que ces URL sont autorisées dans votre configuration proxy et vos règles de pare-feu. Ceci est particulièrement important lors de l'utilisation de Claude Code dans des environnements réseau conteneurisés ou restreints.
+Assurez-vous que ces URL sont autorisées dans votre configuration proxy et vos règles de pare-feu. C'est particulièrement important lors de l'utilisation de Claude Code dans des environnements réseau conteneurisés ou restreints.
+
+[Claude Code sur le web](/fr/claude-code-on-the-web) et [Code Review](/fr/code-review) se connectent à vos référentiels à partir de l'infrastructure gérée par Anthropic. Si votre organisation GitHub Enterprise Cloud restreint l'accès par adresse IP, activez [l'héritage de la liste d'autorisation IP pour les applications GitHub installées](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps). L'application GitHub Claude enregistre ses plages d'adresses IP, donc l'activation de ce paramètre permet l'accès sans configuration manuelle. Pour [ajouter les plages à votre liste d'autorisation manuellement](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address) à la place, ou pour configurer d'autres pare-feu, consultez les [adresses IP de l'API Anthropic](https://platform.claude.com/docs/en/api/ip-addresses).
 
 ## Ressources supplémentaires
 
 * [Paramètres Claude Code](/fr/settings)
-* [Référence des variables d'environnement](/fr/settings#environment-variables)
+* [Référence des variables d'environnement](/fr/env-vars)
 * [Guide de dépannage](/fr/troubleshooting)

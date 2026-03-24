@@ -109,11 +109,11 @@ Gli amministratori possono abilitare la modalità veloce in:
 * **Console** (clienti API): [Preferenze Claude Code](https://platform.claude.com/claude-code/preferences)
 * **Claude AI** (Teams e Enterprise): [Admin Settings > Claude Code](https://claude.ai/admin-settings/claude-code)
 
-Un'altra opzione per disabilitare completamente la modalità veloce è impostare `CLAUDE_CODE_DISABLE_FAST_MODE=1`. Vedi [Variabili di ambiente](/it/settings#environment-variables).
+Un'altra opzione per disabilitare completamente la modalità veloce è impostare `CLAUDE_CODE_DISABLE_FAST_MODE=1`. Vedi [Variabili di ambiente](/it/env-vars).
 
 ### Richiedi opt-in per sessione
 
-Per impostazione predefinita, la modalità veloce persiste tra le sessioni: se un utente abilita la modalità veloce, rimane attiva nelle sessioni future. Gli amministratori sui piani [Teams](https://claude.com/pricing#team-&-enterprise) o [Enterprise](https://anthropic.com/contact-sales) possono impedire questo impostando `fastModePerSessionOptIn` a `true` nelle [impostazioni gestite](/it/settings#settings-files) o [impostazioni gestite dal server](/it/server-managed-settings). Ciò fa sì che ogni sessione inizi con la modalità veloce disattivata, richiedendo agli utenti di abilitarla esplicitamente con `/fast`.
+Per impostazione predefinita, la modalità veloce persiste tra le sessioni: se un utente abilita la modalità veloce, rimane attiva nelle sessioni future. Gli amministratori sui piani [Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise) o [Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise) possono prevenire questo impostando `fastModePerSessionOptIn` a `true` nelle [impostazioni gestite](/it/settings#settings-files) o [impostazioni gestite dal server](/it/server-managed-settings). Questo fa sì che ogni sessione inizi con la modalità veloce disattivata, richiedendo agli utenti di abilitarla esplicitamente con `/fast`.
 
 ```json  theme={null}
 {
@@ -142,7 +142,7 @@ La modalità veloce è una funzione di anteprima di ricerca. Ciò significa:
 * La disponibilità e i prezzi sono soggetti a modifiche
 * La configurazione API sottostante potrebbe evolversi
 
-Segnala problemi o feedback tramite i tuoi soliti canali di supporto Anthropic.
+Segnala problemi o feedback attraverso i tuoi soliti canali di supporto Anthropic.
 
 ## Vedi anche
 

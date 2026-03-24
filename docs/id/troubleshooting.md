@@ -9,7 +9,7 @@
 ## Troubleshoot installation issues
 
 <Tip>
-  Jika Anda lebih suka melewati terminal sepenuhnya, [aplikasi Claude Code Desktop](/id/desktop-quickstart) memungkinkan Anda menginstal dan menggunakan Claude Code melalui antarmuka grafis. Unduh untuk [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) atau [Windows](https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs) dan mulai coding tanpa setup baris perintah apa pun.
+  Jika Anda lebih suka melewati terminal sepenuhnya, [aplikasi Claude Code Desktop](/id/desktop-quickstart) memungkinkan Anda menginstal dan menggunakan Claude Code melalui antarmuka grafis. Unduh untuk [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) atau [Windows](https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs) dan mulai coding tanpa setup command-line apa pun.
 </Tip>
 
 Temukan pesan kesalahan atau gejala yang Anda lihat:
@@ -38,7 +38,7 @@ Jika masalah Anda tidak terdaftar, kerjakan langkah-langkah diagnostik ini.
 
 ### Check network connectivity
 
-Installer mengunduh dari `storage.googleapis.com`. Verifikasi bahwa Anda dapat menjangkaunya:
+Installer mengunduh dari `storage.googleapis.com`. Verifikasi Anda dapat menjangkaunya:
 
 ```bash  theme={null}
 curl -sI https://storage.googleapis.com
@@ -46,7 +46,7 @@ curl -sI https://storage.googleapis.com
 
 Jika ini gagal, jaringan Anda mungkin memblokir koneksi. Penyebab umum:
 
-* Firewall perusahaan atau proxy yang memblokir Google Cloud Storage
+* Firewall perusahaan atau proxy memblokir Google Cloud Storage
 * Pembatasan jaringan regional: coba VPN atau jaringan alternatif
 * Masalah TLS/SSL: perbarui sertifikat CA sistem Anda, atau periksa apakah `HTTPS_PROXY` dikonfigurasi
 
@@ -86,7 +86,7 @@ Periksa apakah direktori instalasi ada di PATH Anda dengan membuat daftar entri 
 
     Atau, tutup dan buka kembali terminal Anda.
 
-    Verifikasi bahwa perbaikan berhasil:
+    Verifikasi perbaikan berhasil:
 
     ```bash  theme={null}
     claude --version
@@ -107,7 +107,7 @@ Periksa apakah direktori instalasi ada di PATH Anda dengan membuat daftar entri 
 
     Mulai ulang terminal Anda agar perubahan berlaku.
 
-    Verifikasi bahwa perbaikan berhasil:
+    Verifikasi perbaikan berhasil:
 
     ```powershell  theme={null}
     claude --version
@@ -121,7 +121,7 @@ Periksa apakah direktori instalasi ada di PATH Anda dengan membuat daftar entri 
 
     Jika tidak ada output, buka System Settings, buka Environment Variables, dan tambahkan `%USERPROFILE%\.local\bin` ke variabel User PATH Anda. Mulai ulang terminal Anda.
 
-    Verifikasi bahwa perbaikan berhasil:
+    Verifikasi perbaikan berhasil:
 
     ```batch  theme={null}
     claude --version
@@ -135,7 +135,7 @@ Beberapa instalasi Claude Code dapat menyebabkan ketidakcocokan versi atau peril
 
 <Tabs>
   <Tab title="macOS/Linux">
-    Buat daftar semua biner `claude` yang ditemukan di PATH Anda:
+    Buat daftar semua binary `claude` yang ditemukan di PATH Anda:
 
     ```bash  theme={null}
     which -a claude
@@ -196,9 +196,9 @@ sudo chown -R $(whoami) ~/.local
 
 ### Verify the binary works
 
-Jika `claude` diinstal tetapi mogok atau hang saat startup, jalankan pemeriksaan ini untuk mempersempit penyebabnya.
+Jika `claude` diinstal tetapi crash atau hang saat startup, jalankan pemeriksaan ini untuk mempersempit penyebabnya.
 
-Konfirmasi bahwa biner ada dan dapat dieksekusi:
+Konfirmasi binary ada dan dapat dieksekusi:
 
 ```bash  theme={null}
 ls -la $(which claude)
@@ -210,7 +210,7 @@ Di Linux, periksa perpustakaan bersama yang hilang. Jika `ldd` menunjukkan perpu
 ldd $(which claude) | grep "not found"
 ```
 
-Jalankan pemeriksaan kewarasan cepat bahwa biner dapat dieksekusi:
+Jalankan pemeriksaan kewarasan cepat bahwa binary dapat dieksekusi:
 
 ```bash  theme={null}
 claude --version
@@ -272,11 +272,11 @@ Ini berarti direktori instalasi tidak ada di jalur pencarian shell Anda. Lihat [
 
 ### `curl: (56) Failure writing output to destination`
 
-Perintah `curl ... | bash` mengunduh skrip dan meneruskannya langsung ke Bash untuk dieksekusi menggunakan pipa (`|`). Kesalahan ini berarti koneksi putus sebelum skrip selesai diunduh. Penyebab umum termasuk gangguan jaringan, unduhan diblokir di tengah aliran, atau batas sumber daya sistem.
+Perintah `curl ... | bash` mengunduh skrip dan meneruskannya langsung ke Bash untuk dieksekusi menggunakan pipe (`|`). Kesalahan ini berarti koneksi putus sebelum skrip selesai diunduh. Penyebab umum termasuk gangguan jaringan, unduhan diblokir di tengah aliran, atau batas sumber daya sistem.
 
 **Solusi:**
 
-1. **Periksa stabilitas jaringan**: Biner Claude Code dihosting di Google Cloud Storage. Uji bahwa Anda dapat menjangkaunya:
+1. **Periksa stabilitas jaringan**: Binary Claude Code dihosting di Google Cloud Storage. Uji bahwa Anda dapat menjangkaunya:
    ```bash  theme={null}
    curl -fsSL https://storage.googleapis.com -o /dev/null
    ```
@@ -326,7 +326,7 @@ Kesalahan seperti `curl: (35) TLS connect error`, `schannel: next InitializeSecu
    ```bash  theme={null}
    export NODE_EXTRA_CA_CERTS=/path/to/corporate-ca.pem
    ```
-   Tanyakan kepada tim IT Anda untuk file sertifikat jika Anda tidak memilikinya. Anda juga dapat mencoba koneksi langsung untuk mengkonfirmasi proxy adalah penyebabnya.
+   Tanyakan kepada tim IT Anda untuk file sertifikat jika Anda tidak memilikinya. Anda juga dapat mencoba pada koneksi langsung untuk mengkonfirmasi proxy adalah penyebabnya.
 
 ### `Failed to fetch version from storage.googleapis.com`
 
@@ -384,7 +384,7 @@ Jika Anda melihat `'irm' is not recognized` atau `The token '&&' is not valid`, 
 
 ### Install killed on low-memory Linux servers
 
-Jika Anda melihat `Killed` selama instalasi di VPS atau instans cloud:
+Jika Anda melihat `Killed` selama instalasi di VPS atau instance cloud:
 
 ```text  theme={null}
 Setting up Claude Code...
@@ -415,15 +415,15 @@ Pembunuh OOM Linux menghentikan proses karena sistem kehabisan memori. Claude Co
 
 2. **Tutup proses lain** untuk membebaskan memori sebelum menginstal.
 
-3. **Gunakan instans yang lebih besar** jika memungkinkan. Claude Code memerlukan setidaknya 4 GB RAM.
+3. **Gunakan instance yang lebih besar** jika memungkinkan. Claude Code memerlukan setidaknya 4 GB RAM.
 
 ### Install hangs in Docker
 
-Saat menginstal Claude Code di kontainer Docker, menginstal sebagai root ke `/` dapat menyebabkan hang.
+Saat menginstal Claude Code di container Docker, menginstal sebagai root ke `/` dapat menyebabkan hang.
 
 **Solusi:**
 
-1. **Atur direktori kerja** sebelum menjalankan installer. Saat dijalankan dari `/`, installer memindai seluruh sistem file, yang menyebabkan penggunaan memori berlebihan. Menetapkan `WORKDIR` membatasi pemindaian ke direktori kecil:
+1. **Atur direktori kerja** sebelum menjalankan installer. Saat dijalankan dari `/`, installer memindai seluruh filesystem, yang menyebabkan penggunaan memori berlebihan. Menetapkan `WORKDIR` membatasi pemindaian ke direktori kecil:
    ```dockerfile  theme={null}
    WORKDIR /tmp
    RUN curl -fsSL https://claude.ai/install.sh | bash
@@ -460,7 +460,7 @@ Jika Git Anda diinstal di tempat lain, temukan jalur dengan menjalankan `where.e
 
 ### Linux: wrong binary variant installed (musl/glibc mismatch)
 
-Jika Anda melihat kesalahan tentang perpustakaan bersama yang hilang seperti `libstdc++.so.6` atau `libgcc_s.so.1` setelah instalasi, installer mungkin telah mengunduh varian biner yang salah untuk sistem Anda.
+Jika Anda melihat kesalahan tentang perpustakaan bersama yang hilang seperti `libstdc++.so.6` atau `libgcc_s.so.1` setelah instalasi, installer mungkin telah mengunduh varian binary yang salah untuk sistem Anda.
 
 ```text  theme={null}
 Error loading shared library libstdc++.so.6: No such file or directory
@@ -476,7 +476,7 @@ Ini dapat terjadi pada sistem berbasis glibc yang memiliki paket cross-compilati
    ```
    Jika menunjukkan `linux-vdso.so` atau referensi ke `/lib/x86_64-linux-gnu/`, Anda berada di glibc. Jika menunjukkan `musl`, Anda berada di musl.
 
-2. **Jika Anda berada di glibc tetapi mendapat biner musl**, hapus instalasi dan instal ulang. Anda juga dapat mengunduh biner yang benar secara manual dari bucket GCS di `https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/{VERSION}/manifest.json`. Ajukan [GitHub issue](https://github.com/anthropics/claude-code/issues) dengan output dari `ldd /bin/ls` dan `ls /lib/libc.musl*`.
+2. **Jika Anda berada di glibc tetapi mendapat binary musl**, hapus instalasi dan instal ulang. Anda juga dapat mengunduh binary yang benar secara manual dari bucket GCS di `https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/{VERSION}/manifest.json`. Ajukan [GitHub issue](https://github.com/anthropics/claude-code/issues) dengan output dari `ldd /bin/ls` dan `ls /lib/libc.musl*`.
 
 3. **Jika Anda benar-benar di musl** (Alpine Linux), instal paket yang diperlukan:
    ```bash  theme={null}
@@ -485,7 +485,7 @@ Ini dapat terjadi pada sistem berbasis glibc yang memiliki paket cross-compilati
 
 ### `Illegal instruction` on Linux
 
-Jika installer mencetak `Illegal instruction` alih-alih pesan OOM `Killed`, biner yang diunduh tidak cocok dengan arsitektur CPU Anda. Ini biasanya terjadi pada server ARM yang menerima biner x86, atau pada CPU lama yang kekurangan set instruksi yang diperlukan.
+Jika installer mencetak `Illegal instruction` alih-alih pesan OOM `Killed`, binary yang diunduh tidak cocok dengan arsitektur CPU Anda. Ini biasanya terjadi pada server ARM yang menerima binary x86, atau pada CPU lama yang kekurangan set instruksi yang diperlukan.
 
 ```text  theme={null}
 bash: line 142: 2238232 Illegal instruction    "$binary_path" install ${TARGET:+"$TARGET"}
@@ -497,7 +497,7 @@ bash: line 142: 2238232 Illegal instruction    "$binary_path" install ${TARGET:+
    ```bash  theme={null}
    uname -m
    ```
-   `x86_64` berarti 64-bit Intel/AMD, `aarch64` berarti ARM64. Jika biner tidak cocok, [ajukan GitHub issue](https://github.com/anthropics/claude-code/issues) dengan output.
+   `x86_64` berarti 64-bit Intel/AMD, `aarch64` berarti ARM64. Jika binary tidak cocok, [ajukan GitHub issue](https://github.com/anthropics/claude-code/issues) dengan output.
 
 2. **Coba metode instalasi alternatif** sementara masalah arsitektur diselesaikan:
    ```bash  theme={null}
@@ -506,7 +506,7 @@ bash: line 142: 2238232 Illegal instruction    "$binary_path" install ${TARGET:+
 
 ### `dyld: cannot load` on macOS
 
-Jika Anda melihat `dyld: cannot load` atau `Abort trap: 6` selama instalasi, biner tidak kompatibel dengan versi macOS atau hardware Anda.
+Jika Anda melihat `dyld: cannot load` atau `Abort trap: 6` selama instalasi, binary tidak kompatibel dengan versi macOS atau hardware Anda.
 
 ```text  theme={null}
 dyld: cannot load 'claude-2.1.42-darwin-x64' (load command 0x80000034 is unknown)
@@ -517,7 +517,7 @@ Abort trap: 6
 
 1. **Periksa versi macOS Anda**: Claude Code memerlukan macOS 13.0 atau lebih baru. Buka menu Apple dan pilih About This Mac untuk memeriksa versi Anda.
 
-2. **Perbarui macOS** jika Anda berada di versi lama. Biner menggunakan perintah load yang versi macOS lama tidak mendukung.
+2. **Perbarui macOS** jika Anda berada di versi lama. Binary menggunakan perintah load yang versi macOS lama tidak mendukung.
 
 3. **Coba Homebrew** sebagai metode instalasi alternatif:
    ```bash  theme={null}
@@ -528,21 +528,21 @@ Abort trap: 6
 
 Anda mungkin mengalami masalah berikut di WSL:
 
-**OS/platform detection issues**: jika Anda menerima kesalahan selama instalasi, WSL mungkin menggunakan `npm` Windows. Coba:
+**OS/platform detection issues**: jika Anda menerima kesalahan selama instalasi, WSL mungkin menggunakan Windows `npm`. Coba:
 
 * Jalankan `npm config set os linux` sebelum instalasi
 * Instal dengan `npm install -g @anthropic-ai/claude-code --force --no-os-check`. Jangan gunakan `sudo`.
 
-**Node not found errors**: jika Anda melihat `exec: node: not found` saat menjalankan `claude`, lingkungan WSL Anda mungkin menggunakan instalasi Node.js Windows. Anda dapat mengkonfirmasi ini dengan `which npm` dan `which node`, yang harus menunjuk ke jalur Linux yang dimulai dengan `/usr/` daripada `/mnt/c/`. Untuk memperbaiki ini, coba menginstal Node melalui manajer paket distribusi Linux Anda atau melalui [`nvm`](https://github.com/nvm-sh/nvm).
+**Node not found errors**: jika Anda melihat `exec: node: not found` saat menjalankan `claude`, lingkungan WSL Anda mungkin menggunakan instalasi Windows Node.js. Anda dapat mengkonfirmasi ini dengan `which npm` dan `which node`, yang harus menunjuk ke jalur Linux yang dimulai dengan `/usr/` daripada `/mnt/c/`. Untuk memperbaiki ini, coba menginstal Node melalui package manager distribusi Linux Anda atau melalui [`nvm`](https://github.com/nvm-sh/nvm).
 
-**nvm version conflicts**: jika Anda memiliki nvm terinstal di WSL dan Windows, Anda mungkin mengalami konflik versi saat beralih versi Node di WSL. Ini terjadi karena WSL mengimpor PATH Windows secara default, menyebabkan Windows nvm/npm mengambil prioritas atas instalasi WSL.
+**nvm version conflicts**: jika Anda memiliki nvm terinstal di WSL dan Windows, Anda mungkin mengalami konflik versi saat beralih versi Node di WSL. Ini terjadi karena WSL mengimpor Windows PATH secara default, menyebabkan Windows nvm/npm mengambil prioritas atas instalasi WSL.
 
 Anda dapat mengidentifikasi masalah ini dengan:
 
 * Menjalankan `which npm` dan `which node` - jika mereka menunjuk ke jalur Windows (dimulai dengan `/mnt/c/`), versi Windows sedang digunakan
 * Mengalami fungsionalitas yang rusak setelah beralih versi Node dengan nvm di WSL
 
-Untuk mengatasi masalah ini, perbaiki PATH Linux Anda untuk memastikan versi Linux node/npm mengambil prioritas:
+Untuk mengatasi masalah ini, perbaiki Linux PATH Anda untuk memastikan versi Linux node/npm mengambil prioritas:
 
 **Solusi utama: Pastikan nvm dimuat dengan benar di shell Anda**
 
@@ -570,7 +570,7 @@ export PATH="$HOME/.nvm/versions/node/$(node -v)/bin:$PATH"
 ```
 
 <Warning>
-  Hindari menonaktifkan impor PATH Windows melalui `appendWindowsPath = false` karena ini menghancurkan kemampuan untuk memanggil executable Windows dari WSL. Demikian pula, hindari mencopot Node.js dari Windows jika Anda menggunakannya untuk pengembangan Windows.
+  Hindari menonaktifkan impor Windows PATH melalui `appendWindowsPath = false` karena ini merusak kemampuan untuk memanggil executable Windows dari WSL. Demikian pula, hindari menghapus Node.js dari Windows jika Anda menggunakannya untuk pengembangan Windows.
 </Warning>
 
 ### WSL2 sandbox setup
@@ -597,7 +597,7 @@ WSL1 tidak mendukung sandboxing. Jika Anda melihat "Sandboxing requires WSL2", A
 
 Jika installer native gagal dengan kesalahan izin, direktori target mungkin tidak dapat ditulis. Lihat [Check directory permissions](#check-directory-permissions).
 
-Jika Anda sebelumnya menginstal dengan npm dan mengalami kesalahan izin khusus npm, beralih ke installer native:
+Jika Anda sebelumnya menginstal dengan npm dan mengalami kesalahan spesifik npm, beralih ke installer native:
 
 ```bash  theme={null}
 curl -fsSL https://claude.ai/install.sh | bash
@@ -635,9 +635,9 @@ Jika Anda melihat `OAuth error: Invalid code. Please make sure the full code was
 
 Jika Anda melihat `API Error: 403 {"error":{"type":"forbidden","message":"Request not allowed"}}` setelah login:
 
-* **Claude Pro/Max users**: verifikasi langganan Anda aktif di [claude.ai/settings](https://claude.ai/settings)
-* **Console users**: konfirmkan akun Anda memiliki peran "Claude Code" atau "Developer" yang ditetapkan oleh admin Anda
-* **Behind a proxy**: proxy perusahaan dapat mengganggu permintaan API. Lihat [network configuration](/id/network-config) untuk setup proxy.
+* **Pengguna Claude Pro/Max**: verifikasi langganan Anda aktif di [claude.ai/settings](https://claude.ai/settings)
+* **Pengguna Console**: konfirmasi akun Anda memiliki peran "Claude Code" atau "Developer" yang ditetapkan oleh admin Anda
+* **Di belakang proxy**: proxy perusahaan dapat mengganggu permintaan API. Lihat [network configuration](/id/network-config) untuk setup proxy.
 
 ### OAuth login fails in WSL2
 
@@ -672,7 +672,7 @@ Claude Code menyimpan konfigurasi di beberapa lokasi:
 
 Di Windows, `~` mengacu pada direktori home pengguna Anda, seperti `C:\Users\YourName`.
 
-Untuk detail tentang mengonfigurasi file-file ini, lihat [Settings](/id/settings) dan [MCP](/id/mcp).
+Untuk detail tentang mengonfigurasi file ini, lihat [Settings](/id/settings) dan [MCP](/id/mcp).
 
 ### Resetting configuration
 
@@ -689,7 +689,7 @@ rm .mcp.json
 ```
 
 <Warning>
-  Ini akan menghapus semua pengaturan, konfigurasi server MCP, dan riwayat sesi Anda.
+  Ini akan menghapus semua pengaturan, konfigurasi MCP server, dan riwayat sesi Anda.
 </Warning>
 
 ## Performance and stability
@@ -698,7 +698,7 @@ Bagian-bagian ini mencakup masalah yang terkait dengan penggunaan sumber daya, r
 
 ### High CPU or memory usage
 
-Claude Code dirancang untuk bekerja dengan sebagian besar lingkungan pengembangan, tetapi dapat mengonsumsi sumber daya signifikan saat memproses basis kode besar. Jika Anda mengalami masalah kinerja:
+Claude Code dirancang untuk bekerja dengan sebagian besar lingkungan pengembangan, tetapi dapat mengonsumsi sumber daya signifikan saat memproses codebase besar. Jika Anda mengalami masalah kinerja:
 
 1. Gunakan `/compact` secara teratur untuk mengurangi ukuran konteks
 2. Tutup dan mulai ulang Claude Code di antara tugas-tugas besar
@@ -732,11 +732,11 @@ apk add ripgrep
 pacman -S ripgrep
 ```
 
-Kemudian atur `USE_BUILTIN_RIPGREP=0` di [environment](/id/settings#environment-variables) Anda.
+Kemudian atur `USE_BUILTIN_RIPGREP=0` di [environment](/id/env-vars) Anda.
 
 ### Slow or incomplete search results on WSL
 
-Penalti kinerja pembacaan disk saat [bekerja lintas sistem file di WSL](https://learn.microsoft.com/en-us/windows/wsl/filesystems) dapat menghasilkan kecocokan yang lebih sedikit dari yang diharapkan saat menggunakan Claude Code di WSL. Pencarian masih berfungsi, tetapi mengembalikan hasil lebih sedikit daripada di sistem file native.
+Penalti kinerja pembacaan disk saat [bekerja lintas filesystem di WSL](https://learn.microsoft.com/en-us/windows/wsl/filesystems) dapat menghasilkan kecocokan yang lebih sedikit dari yang diharapkan saat menggunakan Claude Code di WSL. Pencarian masih berfungsi, tetapi mengembalikan hasil lebih sedikit daripada di filesystem native.
 
 <Note>
   `/doctor` akan menunjukkan Search sebagai OK dalam kasus ini.
@@ -746,9 +746,9 @@ Penalti kinerja pembacaan disk saat [bekerja lintas sistem file di WSL](https://
 
 1. **Kirimkan pencarian yang lebih spesifik**: kurangi jumlah file yang dicari dengan menentukan direktori atau jenis file: "Search for JWT validation logic in the auth-service package" atau "Find use of md5 hash in JS files".
 
-2. **Pindahkan proyek ke sistem file Linux**: jika memungkinkan, pastikan proyek Anda berada di sistem file Linux (`/home/`) daripada sistem file Windows (`/mnt/c/`).
+2. **Pindahkan proyek ke filesystem Linux**: jika memungkinkan, pastikan proyek Anda berada di filesystem Linux (`/home/`) daripada filesystem Windows (`/mnt/c/`).
 
-3. **Gunakan Windows native sebagai gantinya**: pertimbangkan menjalankan Claude Code secara native di Windows alih-alih melalui WSL, untuk kinerja sistem file yang lebih baik.
+3. **Gunakan Windows native sebagai gantinya**: pertimbangkan menjalankan Claude Code secara native di Windows alih-alih melalui WSL, untuk kinerja filesystem yang lebih baik.
 
 ## IDE integration issues
 
@@ -762,7 +762,7 @@ Jika Anda menggunakan Claude Code di WSL2 dengan IDE JetBrains dan mendapatkan k
 
 WSL2 menggunakan jaringan NAT secara default, yang dapat mencegah deteksi IDE. Anda memiliki dua opsi:
 
-**Option 1: Configure Windows Firewall** (recommended)
+**Opsi 1: Konfigurasi Windows Firewall** (direkomendasikan)
 
 1. Temukan alamat IP WSL2 Anda:
    ```bash  theme={null}
@@ -778,7 +778,7 @@ WSL2 menggunakan jaringan NAT secara default, yang dapat mencegah deteksi IDE. A
 
 3. Mulai ulang IDE dan Claude Code Anda
 
-**Option 2: Switch to mirrored networking**
+**Opsi 2: Beralih ke mirrored networking**
 
 Tambahkan ke `.wslconfig` di direktori pengguna Windows Anda:
 
@@ -807,7 +807,7 @@ Jika Anda mengalami masalah integrasi IDE di Windows, [buat issue](https://githu
 
 ### Escape key not working in JetBrains IDE terminals
 
-Jika Anda menggunakan Claude Code di terminal JetBrains dan tombol `Esc` tidak mengganggu agen seperti yang diharapkan, ini mungkin karena benturan keybinding dengan pintasan default JetBrains.
+Jika Anda menggunakan Claude Code di terminal JetBrains dan tombol `Esc` tidak mengganggu agen seperti yang diharapkan, ini mungkin karena benturan pintasan keyboard dengan pintasan default JetBrains.
 
 Untuk memperbaiki masalah ini:
 
@@ -821,11 +821,11 @@ Ini memungkinkan tombol `Esc` untuk benar-benar mengganggu operasi Claude Code.
 
 ## Markdown formatting issues
 
-Claude Code kadang-kadang menghasilkan file markdown dengan tag bahasa yang hilang pada pagar kode, yang dapat mempengaruhi syntax highlighting dan keterbacaan di GitHub, editor, dan alat dokumentasi.
+Claude Code kadang-kadang menghasilkan file markdown dengan tag bahasa yang hilang pada fence kode, yang dapat mempengaruhi syntax highlighting dan readability di GitHub, editor, dan alat dokumentasi.
 
 ### Missing language tags in code blocks
 
-Jika Anda melihat blok kode seperti ini dalam markdown yang dihasilkan:
+Jika Anda memperhatikan blok kode seperti ini dalam markdown yang dihasilkan:
 
 ````markdown  theme={null}
 ```
@@ -861,7 +861,7 @@ Jika markdown yang dihasilkan memiliki baris kosong berlebihan atau spasi yang t
 
 1. **Minta koreksi pemformatan**: minta Claude untuk "Fix spacing and formatting issues in this markdown file."
 
-2. **Gunakan alat pemformatan**: atur hooks untuk menjalankan pemformat markdown seperti `prettier` atau skrip pemformatan khusus pada file markdown yang dihasilkan.
+2. **Gunakan alat pemformatan**: atur hooks untuk menjalankan formatter markdown seperti `prettier` atau skrip pemformatan kustom pada file markdown yang dihasilkan.
 
 3. **Tentukan preferensi pemformatan**: sertakan persyaratan pemformatan dalam prompt Anda atau file [memory](/id/memory) proyek.
 
@@ -882,9 +882,9 @@ Jika Anda mengalami masalah yang tidak tercakup di sini:
 3. Jalankan `/doctor` untuk mendiagnosis masalah. Ini memeriksa:
    * Tipe instalasi, versi, dan fungsionalitas pencarian
    * Status auto-update dan versi yang tersedia
-   * File pengaturan yang tidak valid (JSON yang salah bentuk, tipe yang salah)
-   * Kesalahan konfigurasi server MCP
-   * Masalah konfigurasi keybinding
+   * File pengaturan yang tidak valid (JSON yang salah bentuk, tipe yang tidak benar)
+   * Kesalahan konfigurasi MCP server
+   * Masalah konfigurasi pintasan keyboard
    * Peringatan penggunaan konteks (file CLAUDE.md besar, penggunaan token MCP tinggi, aturan izin yang tidak dapat dijangkau)
    * Plugin dan kesalahan pemuatan agen
 4. Tanyakan Claude secara langsung tentang kemampuan dan fiturnya - Claude memiliki akses bawaan ke dokumentasinya

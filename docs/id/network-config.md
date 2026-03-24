@@ -86,8 +86,10 @@ Claude Code memerlukan akses ke URL berikut:
 
 Pastikan URL ini diizinkan dalam konfigurasi proxy dan aturan firewall Anda. Ini sangat penting ketika menggunakan Claude Code di lingkungan jaringan terkontainer atau terbatas.
 
+[Claude Code di web](/id/claude-code-on-the-web) dan [Code Review](/id/code-review) terhubung ke repositori Anda dari infrastruktur yang dikelola Anthropic. Jika organisasi GitHub Enterprise Cloud Anda membatasi akses berdasarkan alamat IP, aktifkan [pewarisan daftar izin IP untuk GitHub Apps yang diinstal](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps). Claude GitHub App mendaftarkan rentang IP-nya, jadi mengaktifkan pengaturan ini memungkinkan akses tanpa konfigurasi manual. Untuk [menambahkan rentang ke daftar izin Anda secara manual](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address) sebagai gantinya, atau untuk mengonfigurasi firewall lainnya, lihat [Alamat IP API Anthropic](https://platform.claude.com/docs/en/api/ip-addresses).
+
 ## Sumber daya tambahan
 
 * [Pengaturan Claude Code](/id/settings)
-* [Referensi variabel lingkungan](/id/settings#environment-variables)
+* [Referensi variabel lingkungan](/id/env-vars)
 * [Panduan pemecahan masalah](/id/troubleshooting)

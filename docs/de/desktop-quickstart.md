@@ -19,16 +19,16 @@ Diese Seite führt Sie durch die Installation der App und den Start Ihrer ersten
 Die Desktop-App hat drei Registerkarten:
 
 * **Chat**: Allgemeine Konversation ohne Dateizugriff, ähnlich wie claude.ai.
-* **Cowork**: Ein autonomer Hintergrund-Agent, der an Aufgaben in einer Cloud-VM mit eigener Umgebung arbeitet. Er kann unabhängig arbeiten, während Sie andere Aufgaben erledigen.
+* **Cowork**: Ein autonomer Hintergrund-Agent, der an Aufgaben in einer Cloud-VM mit eigener Umgebung arbeitet. Er kann unabhängig arbeiten, während Sie andere Dinge tun.
 * **Code**: Ein interaktiver Coding-Assistent mit direktem Zugriff auf Ihre lokalen Dateien. Sie überprüfen und genehmigen jede Änderung in Echtzeit.
 
 Chat und Cowork werden in den [Claude Desktop-Supportartikeln](https://support.claude.com/en/collections/16163169-claude-desktop) behandelt. Diese Seite konzentriert sich auf die Registerkarte **Code**.
 
 <Note>
-  Claude Code erfordert ein [Pro-, Max-, Teams- oder Enterprise-Abonnement](https://claude.com/pricing).
+  Claude Code erfordert ein [Pro-, Max-, Teams- oder Enterprise-Abonnement](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing).
 </Note>
 
-## Installation
+## Installieren
 
 <Steps>
   <Step title="App herunterladen">
@@ -44,7 +44,7 @@ Chat und Cowork werden in den [Claude Desktop-Supportartikeln](https://support.c
       </Card>
     </CardGroup>
 
-    Für Windows ARM64 [hier herunterladen](https://claude.ai/api/desktop/win32/arm64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs).
+    Für Windows ARM64 [laden Sie hier herunter](https://claude.ai/api/desktop/win32/arm64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs).
 
     Linux wird derzeit nicht unterstützt.
   </Step>
@@ -95,7 +95,7 @@ Wählen Sie mit der geöffneten Registerkarte „Code" ein Projekt aus und geben
   <Step title="Überprüfen und akzeptieren Sie Änderungen">
     Standardmäßig startet die Registerkarte „Code" im [Modus „Berechtigungen erfragen"](/de/desktop#choose-a-permission-mode), in dem Claude Änderungen vorschlägt und auf Ihre Genehmigung wartet, bevor er sie anwendet. Sie sehen:
 
-    1. Eine [Diff-Ansicht](/de/desktop#review-changes-with-diff-view), die genau zeigt, was sich in jeder Datei ändert
+    1. Eine [Diff-Ansicht](/de/desktop#review-changes-with-diff-view), die genau zeigt, was sich in jeder Datei ändern wird
     2. Schaltflächen „Akzeptieren"/„Ablehnen", um jede Änderung zu genehmigen oder abzulehnen
     3. Echtzeit-Updates, während Claude Ihre Anfrage bearbeitet
 
@@ -111,11 +111,11 @@ Sie haben Ihre erste Bearbeitung vorgenommen. Für die vollständige Referenz zu
 
 **Geben Sie Claude mehr Kontext.** Geben Sie `@filename` im Eingabefeld ein, um eine bestimmte Datei in die Konversation zu ziehen, fügen Sie Bilder und PDFs mit der Schaltfläche „Anhang" an, oder ziehen Sie Dateien direkt in das Eingabefeld. Je mehr Kontext Claude hat, desto besser sind die Ergebnisse. Siehe [Dateien und Kontext zu Eingaben hinzufügen](/de/desktop#add-files-and-context-to-prompts).
 
-**Verwenden Sie Skills für wiederholbare Aufgaben.** Geben Sie `/` ein oder klicken Sie auf **+** → **Slash commands**, um [integrierte Befehle](/de/interactive-mode#built-in-commands), [benutzerdefinierte Skills](/de/skills) und Plugin-Skills zu durchsuchen. Skills sind wiederverwendbare Eingaben, die Sie jederzeit aufrufen können, wie Code-Review-Checklisten oder Bereitstellungsschritte.
+**Verwenden Sie Skills für wiederholbare Aufgaben.** Geben Sie `/` ein oder klicken Sie auf **+** → **Slash commands**, um [integrierte Befehle](/de/commands), [benutzerdefinierte Skills](/de/skills) und Plugin-Skills zu durchsuchen. Skills sind wiederverwendbare Eingaben, die Sie aufrufen können, wenn Sie sie benötigen, wie Code-Review-Checklisten oder Bereitstellungsschritte.
 
 **Überprüfen Sie Änderungen vor dem Commit.** Nachdem Claude Dateien bearbeitet hat, wird ein `+12 -1`-Indikator angezeigt. Klicken Sie darauf, um die [Diff-Ansicht](/de/desktop#review-changes-with-diff-view) zu öffnen, überprüfen Sie Änderungen Datei für Datei und kommentieren Sie bestimmte Zeilen. Claude liest Ihre Kommentare und überarbeitet. Klicken Sie auf **Code überprüfen**, um Claude die Diffs selbst auswerten zu lassen und Inline-Vorschläge zu hinterlassen.
 
-**Passen Sie an, wie viel Kontrolle Sie haben.** Ihr [Berechtigungsmodus](/de/desktop#choose-a-permission-mode) steuert das Gleichgewicht. „Berechtigungen erfragen" (Standard) erfordert Genehmigung vor jeder Bearbeitung. „Auto-Akzeptanz" akzeptiert Dateibearbeitungen automatisch für schnellere Iteration. Plan Mode lässt Claude einen Ansatz planen, ohne Dateien zu berühren, was vor einem großen Refactoring nützlich ist.
+**Passen Sie an, wie viel Kontrolle Sie haben.** Ihr [Berechtigungsmodus](/de/desktop#choose-a-permission-mode) steuert das Gleichgewicht. „Berechtigungen erfragen" (Standard) erfordert Genehmigung vor jeder Bearbeitung. „Auto-Akzeptanz" akzeptiert Dateibearbeitungen automatisch für schnellere Iteration. Der Plan Mode lässt Claude einen Ansatz planen, ohne Dateien zu berühren, was vor einem großen Refactoring nützlich ist.
 
 **Fügen Sie Plugins für mehr Funktionen hinzu.** Klicken Sie auf die Schaltfläche **+** neben dem Eingabefeld und wählen Sie **Plugins**, um [Plugins](/de/desktop#install-plugins) zu durchsuchen und zu installieren, die Skills, Agents, MCP servers und mehr hinzufügen.
 
@@ -125,7 +125,7 @@ Sie haben Ihre erste Bearbeitung vorgenommen. Für die vollständige Referenz zu
 
 **Setzen Sie Claude auf einen Zeitplan.** Richten Sie [geplante Aufgaben](/de/desktop#schedule-recurring-tasks) ein, um Claude automatisch regelmäßig auszuführen: eine tägliche Code-Überprüfung jeden Morgen, eine wöchentliche Abhängigkeitsprüfung oder eine Zusammenfassung, die von Ihren verbundenen Tools abruft.
 
-**Skalieren Sie auf, wenn Sie bereit sind.** Öffnen Sie [parallele Sitzungen](/de/desktop#work-in-parallel-with-sessions) aus der Seitenleiste, um an mehreren Aufgaben gleichzeitig zu arbeiten, jede in ihrem eigenen Git-Worktree. Senden Sie [langfristige Arbeiten in die Cloud](/de/desktop#run-long-running-tasks-remotely), damit sie auch dann fortgesetzt werden, wenn Sie die App schließen, oder [setzen Sie eine Sitzung im Web oder in Ihrer IDE fort](/de/desktop#continue-in-another-surface), wenn eine Aufgabe länger als erwartet dauert. [Verbinden Sie externe Tools](/de/desktop#extend-claude-code) wie GitHub, Slack und Linear, um Ihren Workflow zusammenzubringen.
+**Skalieren Sie auf, wenn Sie bereit sind.** Öffnen Sie [parallele Sitzungen](/de/desktop#work-in-parallel-with-sessions) aus der Seitenleiste, um an mehreren Aufgaben gleichzeitig zu arbeiten, jede in ihrem eigenen Git-Worktree. Senden Sie [langfristige Arbeit in die Cloud](/de/desktop#run-long-running-tasks-remotely), damit sie auch dann fortgesetzt wird, wenn Sie die App schließen, oder [setzen Sie eine Sitzung im Web oder in Ihrer IDE fort](/de/desktop#continue-in-another-surface), wenn eine Aufgabe länger als erwartet dauert. [Verbinden Sie externe Tools](/de/desktop#extend-claude-code) wie GitHub, Slack und Linear, um Ihren Workflow zusammenzubringen.
 
 ## Kommen Sie von der CLI?
 
@@ -134,6 +134,6 @@ Desktop führt die gleiche Engine wie die CLI mit einer grafischen Benutzeroberf
 ## Was kommt als Nächstes
 
 * [Claude Code Desktop verwenden](/de/desktop): Berechtigungsmodi, parallele Sitzungen, Diff-Ansicht, Konnektoren und Enterprise-Konfiguration
-* [Fehlersuche](/de/desktop#troubleshooting): Lösungen für häufige Fehler und Einrichtungsprobleme
+* [Fehlerbehebung](/de/desktop#troubleshooting): Lösungen für häufige Fehler und Setup-Probleme
 * [Best Practices](/de/best-practices): Tipps zum Schreiben effektiver Eingaben und zum Herausholen des Besten aus Claude Code
 * [Häufige Workflows](/de/common-workflows): Tutorials zum Debuggen, Refactoring, Testen und mehr

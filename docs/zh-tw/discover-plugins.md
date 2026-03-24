@@ -154,7 +154,7 @@ Anthropic 也維護一個[演示外掛程式市場](https://github.com/anthropic
   </Step>
 
   <Step title="使用您的新外掛程式">
-    安裝後，外掛程式的命令立即可用。外掛程式命令由外掛程式名稱命名空間，因此 **commit-commands** 提供 `/commit-commands:commit` 之類的命令。
+    安裝後，執行 `/reload-plugins` 以啟動外掛程式。外掛程式命令由外掛程式名稱命名空間，因此 **commit-commands** 提供 `/commit-commands:commit` 之類的命令。
 
     透過對檔案進行變更並執行以下命令來試試看：
 
@@ -296,15 +296,13 @@ claude plugin uninstall formatter@your-org --scope project
 
 ### 在不重新啟動的情況下套用外掛程式變更
 
-當您在工作階段期間安裝、啟用或停用外掛程式時，某些變更（如新命令和 hooks）會立即生效。其他變更（包括 LSP 伺服器更新）需要重新啟動。
-
-若要在不重新啟動的情況下啟動所有待處理的外掛程式變更，請執行：
+當您在工作階段期間安裝、啟用或停用外掛程式時，執行 `/reload-plugins` 以在不重新啟動的情況下啟動所有變更：
 
 ```shell  theme={null}
 /reload-plugins
 ```
 
-Claude Code 重新載入所有活動外掛程式並報告已載入的內容。如果新增或更新了任何 LSP 伺服器，它會讓您知道這些需要重新啟動才能生效。
+Claude Code 重新載入所有活動外掛程式，並顯示已重新載入的命令、技能、代理、hooks、外掛程式 MCP servers 和外掛程式 LSP servers 的計數。
 
 ## 管理市場
 

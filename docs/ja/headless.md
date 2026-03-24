@@ -79,7 +79,7 @@ claude -p "Extract the main function names from auth.py" \
 
 ### レスポンスをストリーミングする
 
-`--output-format stream-json` を `--verbose` および `--include-partial-messages` と共に使用して、生成されるトークンをリアルタイムで受け取ります。各行は、イベントを表す JSON オブジェクトです。
+`--output-format stream-json` を `--verbose` および `--include-partial-messages` と共に使用して、生成されるトークンをリアルタイムで受け取ります。各行はイベントを表す JSON オブジェクトです。
 
 ```bash  theme={null}
 claude -p "Explain recursion" --output-format stream-json --verbose --include-partial-messages
@@ -96,7 +96,7 @@ claude -p "Write a poem" --output-format stream-json --verbose --include-partial
 
 ### ツールを自動承認する
 
-`--allowedTools` を使用して、Claude が確認を求めずに特定のツールを使用できるようにします。この例は、テストスイートを実行し、失敗を修正し、Claude が許可を求めずに Bash コマンドを実行し、ファイルを読み取り/編集できるようにします。
+`--allowedTools` を使用して、Claude が確認を求めずに特定のツールを使用できるようにします。この例はテストスイートを実行し、失敗を修正し、Claude が許可を求めずに Bash コマンドを実行し、ファイルを読み取り/編集できるようにします。
 
 ```bash  theme={null}
 claude -p "Run the test suite and fix any failures" \
@@ -115,12 +115,12 @@ claude -p "Look at my staged changes and create an appropriate commit" \
 `--allowedTools` フラグは [パーミッションルール構文](/ja/settings#permission-rule-syntax) を使用します。末尾の ` *` はプレフィックスマッチングを有効にするため、`Bash(git diff *)` は `git diff` で始まるすべてのコマンドを許可します。スペースは重要です。スペースがない場合、`Bash(git diff*)` は `git diff-index` にも一致します。
 
 <Note>
-  ユーザーが呼び出した [skills](/ja/skills) （`/commit` など）および [組み込みコマンド](/ja/interactive-mode#built-in-commands) は、対話モードでのみ利用可能です。`-p` モードでは、代わりに実行したいタスクを説明してください。
+  ユーザーが呼び出した [skills](/ja/skills)（`/commit` など）および [組み込みコマンド](/ja/commands) は、対話モードでのみ利用可能です。`-p` モードでは、代わりに実行したいタスクを説明してください。
 </Note>
 
 ### システムプロンプトをカスタマイズする
 
-`--append-system-prompt` を使用して、Claude Code のデフォルト動作を保持しながら指示を追加します。この例は、PR diff を Claude にパイプし、セキュリティ脆弱性をレビューするよう指示します。
+`--append-system-prompt` を使用して、Claude Code のデフォルト動作を保持しながら指示を追加します。この例は PR diff を Claude にパイプし、セキュリティ脆弱性をレビューするよう指示します。
 
 ```bash  theme={null}
 gh pr diff "$1" | claude -p \
@@ -132,7 +132,7 @@ gh pr diff "$1" | claude -p \
 
 ### 会話を続ける
 
-`--continue` を使用して最新の会話を続けるか、`--resume` をセッション ID と共に使用して特定の会話を続けます。この例は、レビューを実行してから、フォローアッププロンプトを送信します。
+`--continue` を使用して最新の会話を続けるか、`--resume` をセッション ID と共に使用して特定の会話を続けます。この例はレビューを実行し、その後フォローアッププロンプトを送信します。
 
 ```bash  theme={null}
 # 最初のリクエスト

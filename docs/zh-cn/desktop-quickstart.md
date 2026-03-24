@@ -6,7 +6,7 @@
 
 > 在桌面上安装 Claude Code 并开始您的第一个编码会话
 
-桌面应用为您提供具有图形界面的 Claude Code：可视化 diff 审查、实时应用预览、GitHub PR 监控和自动合并、使用 Git worktree 隔离的并行会话、计划任务以及远程运行任务的能力。无需终端。
+桌面应用为您提供具有图形界面的 Claude Code：可视化差异审查、实时应用预览、GitHub PR 监控和自动合并、使用 Git worktree 隔离的并行会话、计划任务以及远程运行任务的能力。无需终端。
 
 本页面将指导您安装应用并开始您的第一个会话。如果您已经设置完成，请参阅[使用 Claude Code Desktop](/zh-CN/desktop)了解完整参考。
 
@@ -25,7 +25,7 @@
 Chat 和 Cowork 在 [Claude Desktop 支持文章](https://support.claude.com/en/collections/16163169-claude-desktop)中有介绍。本页面重点关注 **Code** 选项卡。
 
 <Note>
-  Claude Code 需要 [Pro、Max、Teams 或 Enterprise 订阅](https://claude.com/pricing)。
+  Claude Code 需要 [Pro、Max、Teams 或 Enterprise 订阅](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing)。
 </Note>
 
 ## 安装
@@ -50,11 +50,11 @@ Chat 和 Cowork 在 [Claude Desktop 支持文章](https://support.claude.com/en/
   </Step>
 
   <Step title="登录">
-    从您的应用程序文件夹 (macOS) 或开始菜单 (Windows) 启动 Claude。使用您的 Anthropic 账户登录。
+    从应用程序文件夹 (macOS) 或开始菜单 (Windows) 启动 Claude。使用您的 Anthropic 账户登录。
   </Step>
 
   <Step title="打开 Code 选项卡">
-    点击顶部中心的 **Code** 选项卡。如果点击 Code 提示您升级，您需要先[订阅付费计划](https://claude.com/pricing)。如果提示您在线登录，请完成登录并重启应用。如果您看到 403 错误，请参阅[身份验证故障排除](/zh-CN/desktop#403-or-authentication-errors-in-the-code-tab)。
+    点击顶部中心的 **Code** 选项卡。如果点击 Code 提示您升级，您需要先[订阅付费计划](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_upgrade)。如果提示您在线登录，请完成登录并重启应用。如果您看到 403 错误，请参阅[身份验证故障排除](/zh-CN/desktop#403-or-authentication-errors-in-the-code-tab)。
   </Step>
 </Steps>
 
@@ -83,7 +83,7 @@ Chat 和 Cowork 在 [Claude Desktop 支持文章](https://support.claude.com/en/
   </Step>
 
   <Step title="告诉 Claude 要做什么">
-    输入您想让 Claude 做的事情：
+    输入您希望 Claude 做的事情：
 
     * `Find a TODO comment and fix it`
     * `Add tests for the main function`
@@ -111,21 +111,21 @@ Chat 和 Cowork 在 [Claude Desktop 支持文章](https://support.claude.com/en/
 
 **为 Claude 提供更多上下文。** 在提示框中输入 `@filename` 以将特定文件拉入对话，使用附件按钮附加图像和 PDF，或直接将文件拖放到提示中。Claude 拥有的上下文越多，结果越好。请参阅[添加文件和上下文](/zh-CN/desktop#add-files-and-context-to-prompts)。
 
-**使用 skills 处理可重复的任务。** 输入 `/` 或点击 **+** → **Slash commands** 以浏览[内置命令](/zh-CN/interactive-mode#built-in-commands)、[自定义 skills](/zh-CN/skills) 和插件 skills。Skills 是可重用的提示，您可以在需要时调用，例如代码审查清单或部署步骤。
+**使用 skills 处理可重复的任务。** 输入 `/` 或点击 **+** → **Slash commands** 以浏览[内置命令](/zh-CN/commands)、[自定义 skills](/zh-CN/skills) 和插件 skills。Skills 是可重用的提示，您可以在需要时调用，例如代码审查清单或部署步骤。
 
 **在提交前审查更改。** Claude 编辑文件后，会出现 `+12 -1` 指示器。点击它以打开[差异视图](/zh-CN/desktop#review-changes-with-diff-view)，逐个文件审查修改，并对特定行进行评论。Claude 会读取您的评论并进行修订。点击 **Review code** 让 Claude 自己评估差异并留下内联建议。
 
-**调整您拥有的控制量。** 您的[权限模式](/zh-CN/desktop#choose-a-permission-mode)控制平衡。询问权限（默认）在每次编辑前需要批准。自动接受编辑会自动接受文件编辑以加快迭代。Plan mode 让 Claude 在不触及任何文件的情况下规划方法，这在大型重构前很有用。
+**调整您拥有的控制量。** 您的[权限模式](/zh-CN/desktop#choose-a-permission-mode)控制平衡。询问权限（默认）在每次编辑前需要批准。自动接受编辑会自动接受文件编辑以加快迭代。Plan mode 让 Claude 在不接触任何文件的情况下规划方法，这在大型重构前很有用。
 
 **添加插件以获得更多功能。** 点击提示框旁的 **+** 按钮并选择 **Plugins** 以浏览和安装[插件](/zh-CN/desktop#install-plugins)，这些插件添加 skills、代理、MCP servers 等。
 
-**预览您的应用。** 点击 **Preview** 下拉菜单以直接在桌面中运行您的开发服务器。Claude 可以查看正在运行的应用、测试端点、检查日志并迭代它看到的内容。请参阅[预览您的应用](/zh-CN/desktop#preview-your-app)。
+**预览您的应用。** 点击 **Preview** 下拉菜单以直接在桌面中运行您的开发服务器。Claude 可以查看正在运行的应用、测试端点、检查日志并对其看到的内容进行迭代。请参阅[预览您的应用](/zh-CN/desktop#preview-your-app)。
 
 **跟踪您的拉取请求。** 打开 PR 后，Claude Code 监控 CI 检查结果，可以自动修复失败或在所有检查通过后合并 PR。请参阅[监控拉取请求状态](/zh-CN/desktop#monitor-pull-request-status)。
 
-**将 Claude 放在日程上。** 设置[计划任务](/zh-CN/desktop#schedule-recurring-tasks)以定期自动运行 Claude：每天早上进行代码审查、每周进行依赖项审计，或从您连接的工具中提取信息的简报。
+**将 Claude 放在日程上。** 设置[计划任务](/zh-CN/desktop#schedule-recurring-tasks)以定期自动运行 Claude：每天早上进行代码审查、每周进行依赖审计，或从您连接的工具中提取信息的简报。
 
-**准备好时扩展。** 从侧边栏打开[并行会话](/zh-CN/desktop#work-in-parallel-with-sessions)以同时处理多个任务，每个任务都在自己的 Git worktree 中。将[长期运行的工作发送到云](/zh-CN/desktop#run-long-running-tasks-remotely)，以便即使关闭应用也会继续，或者如果任务花费的时间比预期长，[在网络或 IDE 中继续会话](/zh-CN/desktop#continue-in-another-surface)。[连接外部工具](/zh-CN/desktop#extend-claude-code)，如 GitHub、Slack 和 Linear，以整合您的工作流。
+**准备好时扩展。** 从侧边栏打开[并行会话](/zh-CN/desktop#work-in-parallel-with-sessions)以同时处理多个任务，每个任务都在自己的 Git worktree 中。将[长期运行的工作发送到云](/zh-CN/desktop#run-long-running-tasks-remotely)，以便即使关闭应用也能继续，或者如果任务花费的时间比预期长，[在网络或 IDE 中继续会话](/zh-CN/desktop#continue-in-another-surface)。[连接外部工具](/zh-CN/desktop#extend-claude-code)，如 GitHub、Slack 和 Linear，以整合您的工作流。
 
 ## 来自 CLI？
 

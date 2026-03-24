@@ -25,7 +25,7 @@ O aplicativo de desktop tem três abas:
 Chat e Cowork são cobertos nos [artigos de suporte do Claude Desktop](https://support.claude.com/en/collections/16163169-claude-desktop). Esta página se concentra na aba **Code**.
 
 <Note>
-  Claude Code requer uma [assinatura Pro, Max, Teams ou Enterprise](https://claude.com/pricing).
+  Claude Code requer uma [assinatura Pro, Max, Teams ou Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing).
 </Note>
 
 ## Instalar
@@ -36,7 +36,7 @@ Chat e Cowork são cobertos nos [artigos de suporte do Claude Desktop](https://s
 
     <CardGroup cols={2}>
       <Card title="macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
-        Compilação universal para Intel e Apple Silicon
+        Build universal para Intel e Apple Silicon
       </Card>
 
       <Card title="Windows" icon="windows" href="https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code&utm_medium=docs">
@@ -54,7 +54,7 @@ Chat e Cowork são cobertos nos [artigos de suporte do Claude Desktop](https://s
   </Step>
 
   <Step title="Abra a aba Code">
-    Clique na aba **Code** no topo do centro. Se clicar em Code solicitar que você faça upgrade, você precisa [assinar um plano pago](https://claude.com/pricing) primeiro. Se solicitar que você faça login online, conclua o login e reinicie o aplicativo. Se você vir um erro 403, consulte [solução de problemas de autenticação](/pt/desktop#403-or-authentication-errors-in-the-code-tab).
+    Clique na aba **Code** no topo do centro. Se clicar em Code solicitar que você faça upgrade, você precisa [se inscrever em um plano pago](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_upgrade) primeiro. Se solicitar que você faça login online, conclua o login e reinicie o aplicativo. Se você vir um erro 403, consulte [solução de problemas de autenticação](/pt/desktop#403-or-authentication-errors-in-the-code-tab).
   </Step>
 </Steps>
 
@@ -74,12 +74,12 @@ Com a aba Code aberta, escolha um projeto e dê a Claude algo para fazer.
 
     Você também pode selecionar:
 
-    * **Remote**: Execute sessões na infraestrutura em nuvem da Anthropic que continuam mesmo se você fechar o aplicativo. Sessões remotas usam a mesma infraestrutura que [Claude Code na web](/pt/claude-code-on-the-web).
+    * **Remote**: Execute sessões na infraestrutura em nuvem da Anthropic que continuam mesmo se você fechar o aplicativo. As sessões remotas usam a mesma infraestrutura que [Claude Code na web](/pt/claude-code-on-the-web).
     * **SSH**: Conecte-se a uma máquina remota via SSH (seus próprios servidores, VMs em nuvem ou dev containers). Claude Code deve estar instalado na máquina remota.
   </Step>
 
   <Step title="Escolha um modelo">
-    Selecione um modelo no menu suspenso ao lado do botão enviar. Consulte [modelos](/pt/model-config#available-models) para uma comparação de Opus, Sonnet e Haiku. Você não pode alterar o modelo após o início da sessão.
+    Selecione um modelo no dropdown ao lado do botão enviar. Consulte [modelos](/pt/model-config#available-models) para uma comparação de Opus, Sonnet e Haiku. Você não pode alterar o modelo após a sessão iniciar.
   </Step>
 
   <Step title="Diga a Claude o que fazer">
@@ -111,15 +111,15 @@ Você fez sua primeira edição. Para a referência completa sobre tudo que o De
 
 **Dê a Claude mais contexto.** Digite `@filename` na caixa de prompt para puxar um arquivo específico para a conversa, anexe imagens e PDFs usando o botão de anexo, ou arraste e solte arquivos diretamente no prompt. Quanto mais contexto Claude tiver, melhores serão os resultados. Consulte [Adicionar arquivos e contexto](/pt/desktop#add-files-and-context-to-prompts).
 
-**Use skills para tarefas repetíveis.** Digite `/` ou clique em **+** → **Slash commands** para procurar [comandos integrados](/pt/interactive-mode#built-in-commands), [skills personalizadas](/pt/skills) e skills de plugin. Skills são prompts reutilizáveis que você pode invocar sempre que precisar, como listas de verificação de revisão de código ou etapas de implantação.
+**Use skills para tarefas repetíveis.** Digite `/` ou clique em **+** → **Slash commands** para procurar [comandos integrados](/pt/commands), [skills personalizadas](/pt/skills) e skills de plugin. Skills são prompts reutilizáveis que você pode invocar sempre que precisar, como listas de verificação de revisão de código ou etapas de implantação.
 
-**Revise as alterações antes de fazer commit.** Depois que Claude edita arquivos, um indicador `+12 -1` aparece. Clique nele para abrir a [visualização de diff](/pt/desktop#review-changes-with-diff-view), revise as modificações arquivo por arquivo e comente em linhas específicas. Claude lê seus comentários e revisa. Clique em **Review code** para que Claude avalie os diffs em si e deixe sugestões inline.
+**Revise as alterações antes de fazer commit.** Depois que Claude edita arquivos, um indicador `+12 -1` aparece. Clique nele para abrir a [visualização de diff](/pt/desktop#review-changes-with-diff-view), revise as modificações arquivo por arquivo e comente em linhas específicas. Claude lê seus comentários e revisa. Clique em **Review code** para que Claude avalie os diffs e deixe sugestões inline.
 
 **Ajuste quanto controle você tem.** Seu [modo de permissão](/pt/desktop#choose-a-permission-mode) controla o equilíbrio. Ask permissions (padrão) requer aprovação antes de cada edição. Auto accept edits aceita automaticamente edições de arquivo para iteração mais rápida. Plan mode permite que Claude mapeie uma abordagem sem tocar em nenhum arquivo, o que é útil antes de uma grande refatoração.
 
 **Adicione plugins para mais capacidades.** Clique no botão **+** ao lado da caixa de prompt e selecione **Plugins** para procurar e instalar [plugins](/pt/desktop#install-plugins) que adicionam skills, agentes, MCP servers e muito mais.
 
-**Visualize seu aplicativo.** Clique no menu suspenso **Preview** para executar seu servidor de desenvolvimento diretamente no desktop. Claude pode visualizar o aplicativo em execução, testar endpoints, inspecionar logs e iterar sobre o que vê. Consulte [Visualize seu aplicativo](/pt/desktop#preview-your-app).
+**Visualize seu aplicativo.** Clique no dropdown **Preview** para executar seu servidor de desenvolvimento diretamente no desktop. Claude pode visualizar o aplicativo em execução, testar endpoints, inspecionar logs e iterar sobre o que vê. Consulte [Visualize seu aplicativo](/pt/desktop#preview-your-app).
 
 **Rastreie sua solicitação de pull.** Depois de abrir um PR, Claude Code monitora os resultados de verificação de CI e pode corrigir automaticamente falhas ou mesclar o PR assim que todas as verificações passarem. Consulte [Monitore o status da solicitação de pull](/pt/desktop#monitor-pull-request-status).
 

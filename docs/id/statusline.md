@@ -29,7 +29,7 @@ Gunakan [perintah `/statusline`](#use-the-statusline-command) untuk membuat Clau
 
 ### Gunakan perintah /statusline
 
-Perintah `/statusline` menerima instruksi bahasa alami yang mendeskripsikan apa yang ingin Anda tampilkan. Claude Code menghasilkan file skrip di `~/.claude/` dan memperbarui pengaturan Anda secara otomatis:
+Perintah `/statusline` menerima instruksi bahasa alami yang menjelaskan apa yang ingin Anda tampilkan. Claude Code menghasilkan file skrip di `~/.claude/` dan memperbarui pengaturan Anda secara otomatis:
 
 ```text  theme={null}
 /statusline show model name and context percentage with a progress bar
@@ -164,11 +164,11 @@ Claude Code mengirim bidang JSON berikut ke skrip Anda melalui stdin:
 | `version`                                                                 | Versi Claude Code                                                                                                                                                                         |
 | `output_style.name`                                                       | Nama gaya output saat ini                                                                                                                                                                 |
 | `vim.mode`                                                                | Mode vim saat ini (`NORMAL` atau `INSERT`) ketika [vim mode](/id/interactive-mode#vim-editor-mode) diaktifkan                                                                             |
-| `agent.name`                                                              | Nama agen saat menjalankan dengan flag `--agent` atau pengaturan agen dikonfigurasi                                                                                                       |
+| `agent.name`                                                              | Nama agen saat menjalankan dengan bendera `--agent` atau pengaturan agen dikonfigurasi                                                                                                    |
 | `worktree.name`                                                           | Nama worktree aktif. Hadir hanya selama sesi `--worktree`                                                                                                                                 |
 | `worktree.path`                                                           | Jalur absolut ke direktori worktree                                                                                                                                                       |
 | `worktree.branch`                                                         | Nama cabang Git untuk worktree (misalnya, `"worktree-my-feature"`). Tidak ada untuk worktree berbasis hook                                                                                |
-| `worktree.original_cwd`                                                   | Direktori Claude berada sebelum memasuki worktree                                                                                                                                         |
+| `worktree.original_cwd`                                                   | Direktori tempat Claude berada sebelum memasuki worktree                                                                                                                                  |
 | `worktree.original_branch`                                                | Cabang Git yang diperiksa sebelum memasuki worktree. Tidak ada untuk worktree berbasis hook                                                                                               |
 
 <Accordion title="Skema JSON lengkap">
@@ -231,7 +231,7 @@ Claude Code mengirim bidang JSON berikut ke skrip Anda melalui stdin:
   **Bidang yang mungkin tidak ada** (tidak ada dalam JSON):
 
   * `vim`: muncul hanya ketika vim mode diaktifkan
-  * `agent`: muncul hanya saat menjalankan dengan flag `--agent` atau pengaturan agen dikonfigurasi
+  * `agent`: muncul hanya saat menjalankan dengan bendera `--agent` atau pengaturan agen dikonfigurasi
   * `worktree`: muncul hanya selama sesi `--worktree`. Ketika ada, `branch` dan `original_branch` juga mungkin tidak ada untuk worktree berbasis hook
 
   **Bidang yang mungkin `null`**:
@@ -290,13 +290,14 @@ Tampilkan model saat ini dan penggunaan jendela konteks dengan bilah kemajuan vi
   MODEL=$(echo "$input" | jq -r '.model.display_name')
   PCT=$(echo "$input" | jq -r '.context_window.used_percentage // 0' | cut -d. -f1)
 
-  # Build progress bar: printf creates spaces, tr replaces with blocks
+  # Build progress bar: printf -v creates a run of spaces, then
+  # ${var// /▓} replaces each space with a block character
   BAR_WIDTH=10
   FILLED=$((PCT * BAR_WIDTH / 100))
   EMPTY=$((BAR_WIDTH - FILLED))
   BAR=""
-  [ "$FILLED" -gt 0 ] && BAR=$(printf "%${FILLED}s" | tr ' ' '▓')
-  [ "$EMPTY" -gt 0 ] && BAR="${BAR}$(printf "%${EMPTY}s" | tr ' ' '░')"
+  [ "$FILLED" -gt 0 ] && printf -v FILL "%${FILLED}s" && BAR="${FILL// /▓}"
+  [ "$EMPTY" -gt 0 ] && printf -v PAD "%${EMPTY}s" && BAR="${BAR}${PAD// /░}"
 
   echo "[$MODEL] $BAR $PCT%"
   ```
@@ -434,9 +435,9 @@ Setiap skrip memeriksa apakah direktori saat ini adalah repositori git, menghitu
 
 ### Pelacakan biaya dan durasi
 
-Lacak biaya API sesi Anda dan waktu yang telah berlalu. Bidang `cost.total_cost_usd` mengakumulasi biaya semua panggilan API dalam sesi saat ini. Bidang `cost.total_duration_ms` mengukur total waktu yang telah berlalu sejak sesi dimulai, sementara `cost.total_api_duration_ms` melacak hanya waktu yang dihabiskan menunggu respons API.
+Lacak biaya API sesi dan waktu yang telah berlalu. Bidang `cost.total_cost_usd` mengakumulasi biaya semua panggilan API dalam sesi saat ini. Bidang `cost.total_duration_ms` mengukur total waktu yang telah berlalu sejak sesi dimulai, sementara `cost.total_api_duration_ms` melacak hanya waktu yang dihabiskan menunggu respons API.
 
-Setiap skrip memformat biaya sebagai mata uang dan mengonversi milidetik menjadi menit dan detik:
+Setiap skrip memformat biaya sebagai mata uang dan mengonversi milidetik ke menit dan detik:
 
 <Frame>
   <img src="https://mintcdn.com/claude-code/nibzesLaJVh4ydOq/images/statusline-cost-tracking.png?fit=max&auto=format&n=nibzesLaJVh4ydOq&q=85&s=e3444a51fe6f3440c134bd5f1f08ad29" alt="Baris status yang menampilkan nama model, biaya sesi, dan durasi" width="588" height="180" data-path="images/statusline-cost-tracking.png" />
@@ -522,7 +523,8 @@ Contoh ini menggabungkan beberapa teknik: warna berbasis ambang batas (hijau di 
   else BAR_COLOR="$GREEN"; fi
 
   FILLED=$((PCT / 10)); EMPTY=$((10 - FILLED))
-  BAR=$(printf "%${FILLED}s" | tr ' ' '█')$(printf "%${EMPTY}s" | tr ' ' '░')
+  printf -v FILL "%${FILLED}s"; printf -v PAD "%${EMPTY}s"
+  BAR="${FILL// /█}${PAD// /░}"
 
   MINS=$((DURATION_MS / 60000)); SECS=$(((DURATION_MS % 60000) / 1000))
 

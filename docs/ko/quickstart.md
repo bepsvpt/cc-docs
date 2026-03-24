@@ -15,7 +15,7 @@
 * 열려 있는 터미널 또는 명령 프롬프트
   * 터미널을 처음 사용하는 경우 [터미널 가이드](/ko/terminal-guide)를 확인하십시오
 * 작업할 코드 프로젝트
-* [Claude 구독](https://claude.com/pricing)(Pro, Max, Teams 또는 Enterprise), [Claude Console](https://console.anthropic.com/) 계정 또는 [지원되는 클라우드 제공자](/ko/third-party-integrations)를 통한 액세스
+* [Claude 구독](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_prereq) (Pro, Max, Teams 또는 Enterprise), [Claude Console](https://console.anthropic.com/) 계정 또는 [지원되는 클라우드 제공자](/ko/third-party-integrations)를 통한 액세스
 
 <Note>
   이 가이드는 터미널 CLI를 다룹니다. Claude Code는 [웹](https://claude.ai/code), [데스크톱 앱](/ko/desktop), [VS Code](/ko/vs-code) 및 [JetBrains IDE](/ko/jetbrains), [Slack](/ko/slack), [GitHub Actions](/ko/github-actions) 및 [GitLab](/ko/gitlab-ci-cd)의 CI/CD에서도 사용할 수 있습니다. [모든 인터페이스](/ko/overview#use-claude-code-everywhere)를 참조하십시오.
@@ -87,11 +87,11 @@ claude
 # 프롬프트를 따라 계정으로 로그인하십시오
 ```
 
-다음 계정 유형 중 하나로 로그인할 수 있습니다:
+다음 계정 유형 중 하나를 사용하여 로그인할 수 있습니다:
 
-* [Claude Pro, Max, Teams 또는 Enterprise](https://claude.com/pricing)(권장)
-* [Claude Console](https://console.anthropic.com/)(선불 크레딧이 있는 API 액세스). 처음 로그인할 때 "Claude Code" 작업 공간이 Console에서 자동으로 생성되어 비용 추적을 중앙화합니다.
-* [Amazon Bedrock, Google Vertex AI 또는 Microsoft Foundry](/ko/third-party-integrations)(엔터프라이즈 클라우드 제공자)
+* [Claude Pro, Max, Teams 또는 Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_login) (권장)
+* [Claude Console](https://console.anthropic.com/) (선불 크레딧이 있는 API 액세스). 처음 로그인할 때 비용 추적을 위해 Console에서 "Claude Code" 워크스페이스가 자동으로 생성됩니다.
+* [Amazon Bedrock, Google Vertex AI 또는 Microsoft Foundry](/ko/third-party-integrations) (엔터프라이즈 클라우드 제공자)
 
 로그인하면 자격 증명이 저장되고 다시 로그인할 필요가 없습니다. 나중에 계정을 전환하려면 `/login` 명령을 사용하십시오.
 
@@ -220,7 +220,7 @@ Claude Code는 다음을 수행합니다:
 
 ## 단계 8: 다른 일반적인 워크플로우 시도
 
-Claude와 함께 작업하는 방법은 여러 가지입니다:
+Claude와 함께 작업하는 여러 가지 방법이 있습니다:
 
 **코드 리팩토링**
 
@@ -247,7 +247,7 @@ Claude와 함께 작업하는 방법은 여러 가지입니다:
 ```
 
 <Tip>
-  도움이 되는 동료와 대화하듯이 Claude와 대화하십시오. 달성하고 싶은 것을 설명하면 도움을 드릴 것입니다.
+  도움이 되는 동료처럼 Claude와 대화하십시오. 달성하고 싶은 것을 설명하면 도움을 드릴 것입니다.
 </Tip>
 
 ## 필수 명령
@@ -303,13 +303,13 @@ Claude와 함께 작업하는 방법은 여러 가지입니다:
 
   <Accordion title="바로가기로 시간 절약">
     * `?`를 눌러 사용 가능한 모든 키보드 바로가기 보기
-    * 명령 완성을 위해 Tab 사용
+    * Tab을 사용하여 명령 완성
     * ↑를 눌러 명령 기록 보기
     * `/`를 입력하여 모든 명령 및 skills 보기
   </Accordion>
 </AccordionGroup>
 
-## 다음은?
+## 다음 단계
 
 기본 사항을 배웠으므로 더 고급 기능을 살펴보십시오:
 

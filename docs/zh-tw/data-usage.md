@@ -27,7 +27,7 @@
 
 當您在 Claude Code 中看到「Claude 在此工作階段中表現如何？」提示時，回應此調查（包括選擇「關閉」），只會記錄您的數字評分（1、2、3 或關閉）。我們不會作為此調查的一部分收集或儲存任何對話文字記錄、輸入、輸出或其他工作階段資料。與豎起大拇指/向下大拇指回饋或 `/bug` 報告不同，此工作階段品質調查是一個簡單的產品滿意度指標。您對此調查的回應不會影響您的資料訓練偏好設定，也不能用於訓練我們的 AI 模型。
 
-若要停用這些調查，請設定 `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`。使用第三方提供者（Bedrock、Vertex、Foundry）或停用遙測時，調查也會自動停用。
+若要停用這些調查，請設定 `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`。當設定 `DISABLE_TELEMETRY` 或 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 時，調查也會停用。若要控制頻率而不是停用，請在您的設定檔中設定 [`feedbackSurveyRate`](/zh-TW/settings#available-settings) 為 `0` 到 `1` 之間的機率。
 
 ### 資料保留
 
@@ -86,13 +86,13 @@ Claude Code 從使用者的機器連接到 Sentry 進行操作錯誤記錄。資
 
 ## 按 API 提供者的預設行為
 
-根據預設，當使用 Bedrock、Vertex 或 Foundry 時，我們會停用所有非必要流量（包括錯誤報告、遙測、錯誤報告功能和工作階段品質調查）。您也可以透過設定 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 環境變數一次選擇退出所有這些。以下是完整的預設行為：
+根據預設，當使用 Bedrock、Vertex 或 Foundry 時，錯誤報告、遙測和錯誤報告會停用。工作階段品質調查是例外，無論提供者為何都會出現。您可以透過設定 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 一次選擇退出所有非必要流量，包括調查。以下是完整的預設行為：
 
-| 服務                        | Claude API                                              | Vertex API                                 | Bedrock API                                 | Foundry API                                 |
-| ------------------------- | ------------------------------------------------------- | ------------------------------------------ | ------------------------------------------- | ------------------------------------------- |
-| **Statsig（指標）**           | 預設開啟。<br />`DISABLE_TELEMETRY=1` 以停用。                   | 預設關閉。<br />`CLAUDE_CODE_USE_VERTEX` 必須為 1。 | 預設關閉。<br />`CLAUDE_CODE_USE_BEDROCK` 必須為 1。 | 預設關閉。<br />`CLAUDE_CODE_USE_FOUNDRY` 必須為 1。 |
-| **Sentry（錯誤）**            | 預設開啟。<br />`DISABLE_ERROR_REPORTING=1` 以停用。             | 預設關閉。<br />`CLAUDE_CODE_USE_VERTEX` 必須為 1。 | 預設關閉。<br />`CLAUDE_CODE_USE_BEDROCK` 必須為 1。 | 預設關閉。<br />`CLAUDE_CODE_USE_FOUNDRY` 必須為 1。 |
-| **Claude API（`/bug` 報告）** | 預設開啟。<br />`DISABLE_BUG_COMMAND=1` 以停用。                 | 預設關閉。<br />`CLAUDE_CODE_USE_VERTEX` 必須為 1。 | 預設關閉。<br />`CLAUDE_CODE_USE_BEDROCK` 必須為 1。 | 預設關閉。<br />`CLAUDE_CODE_USE_FOUNDRY` 必須為 1。 |
-| **工作階段品質調查**              | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。 | 預設關閉。<br />`CLAUDE_CODE_USE_VERTEX` 必須為 1。 | 預設關閉。<br />`CLAUDE_CODE_USE_BEDROCK` 必須為 1。 | 預設關閉。<br />`CLAUDE_CODE_USE_FOUNDRY` 必須為 1。 |
+| 服務                        | Claude API                                              | Vertex API                                              | Bedrock API                                             | Foundry API                                             |
+| ------------------------- | ------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------- |
+| **Statsig（指標）**           | 預設開啟。<br />`DISABLE_TELEMETRY=1` 以停用。                   | 預設關閉。<br />`CLAUDE_CODE_USE_VERTEX` 必須為 1。              | 預設關閉。<br />`CLAUDE_CODE_USE_BEDROCK` 必須為 1。             | 預設關閉。<br />`CLAUDE_CODE_USE_FOUNDRY` 必須為 1。             |
+| **Sentry（錯誤）**            | 預設開啟。<br />`DISABLE_ERROR_REPORTING=1` 以停用。             | 預設關閉。<br />`CLAUDE_CODE_USE_VERTEX` 必須為 1。              | 預設關閉。<br />`CLAUDE_CODE_USE_BEDROCK` 必須為 1。             | 預設關閉。<br />`CLAUDE_CODE_USE_FOUNDRY` 必須為 1。             |
+| **Claude API（`/bug` 報告）** | 預設開啟。<br />`DISABLE_BUG_COMMAND=1` 以停用。                 | 預設關閉。<br />`CLAUDE_CODE_USE_VERTEX` 必須為 1。              | 預設關閉。<br />`CLAUDE_CODE_USE_BEDROCK` 必須為 1。             | 預設關閉。<br />`CLAUDE_CODE_USE_FOUNDRY` 必須為 1。             |
+| **工作階段品質調查**              | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。 | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。 | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。 | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。 |
 
 所有環境變數都可以簽入 `settings.json`（[閱讀更多](/zh-TW/settings)）。

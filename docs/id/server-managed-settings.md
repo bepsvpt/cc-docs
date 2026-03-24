@@ -11,7 +11,7 @@ Pengaturan yang dikelola server memungkinkan administrator untuk mengonfigurasi 
 Pendekatan ini dirancang untuk organisasi yang tidak memiliki infrastruktur manajemen perangkat, atau perlu mengelola pengaturan untuk pengguna pada perangkat yang tidak dikelola.
 
 <Note>
-  Pengaturan yang dikelola server berada dalam beta publik dan tersedia untuk pelanggan [Claude for Teams](https://claude.com/pricing#team-&-enterprise) dan [Claude for Enterprise](https://anthropic.com/contact-sales). Fitur dapat berkembang sebelum ketersediaan umum.
+  Pengaturan yang dikelola server berada dalam beta publik dan tersedia untuk pelanggan [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) dan [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise). Fitur dapat berkembang sebelum ketersediaan umum.
 </Note>
 
 ## Persyaratan
@@ -53,9 +53,9 @@ Jika perangkat Anda terdaftar dalam solusi MDM atau manajemen endpoint, pengatur
           "Read(./.env)",
           "Read(./.env.*)",
           "Read(./secrets/**)"
-        ]
-      },
-      "disableBypassPermissionsMode": "disable"
+        ],
+        "disableBypassPermissionsMode": "disable"
+      }
     }
     ```
   </Step>
@@ -89,7 +89,7 @@ Pengaturan yang dikelola server memiliki batasan berikut selama periode beta:
 
 ### Prioritas pengaturan
 
-Pengaturan yang dikelola server dan [pengaturan yang dikelola endpoint](/id/settings#settings-files) keduanya menempati tingkat tertinggi dalam [hierarki pengaturan](/id/settings#settings-precedence) Claude Code. Tidak ada tingkat pengaturan lain yang dapat menimpanya, termasuk argumen baris perintah. Ketika keduanya ada, pengaturan yang dikelola server memiliki prioritas dan pengaturan yang dikelola endpoint tidak digunakan.
+Pengaturan yang dikelola server dan [pengaturan yang dikelola endpoint](/id/settings#settings-files) keduanya menempati tingkat tertinggi dalam [hierarki pengaturan](/id/settings#settings-precedence) Claude Code. Tidak ada tingkat pengaturan lain yang dapat menggantinya, termasuk argumen baris perintah. Ketika keduanya ada, pengaturan yang dikelola server memiliki prioritas dan pengaturan yang dikelola endpoint tidak digunakan.
 
 ### Perilaku pengambilan dan caching
 
@@ -107,7 +107,7 @@ Claude Code mengambil pengaturan dari server Anthropic pada startup dan melakuka
 * Claude Code mengambil pengaturan segar di latar belakang
 * Pengaturan yang di-cache bertahan melalui kegagalan jaringan
 
-Claude Code menerapkan pembaruan pengaturan secara otomatis tanpa restart, kecuali untuk pengaturan lanjutan seperti konfigurasi OpenTelemetry, yang memerlukan restart penuh agar efektif.
+Claude Code menerapkan pembaruan pengaturan secara otomatis tanpa restart, kecuali untuk pengaturan lanjutan seperti konfigurasi OpenTelemetry, yang memerlukan restart penuh untuk berlaku.
 
 ### Dialog persetujuan keamanan
 
@@ -145,12 +145,12 @@ Pengaturan yang dikelola server menyediakan penegakan kebijakan terpusat, tetapi
 | Skenario                                                      | Perilaku                                                                                                                                     |
 | :------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------- |
 | Pengguna mengedit file pengaturan yang di-cache               | File yang dirusak berlaku pada startup, tetapi pengaturan yang benar dipulihkan pada pengambilan server berikutnya                           |
-| Pengguna menghapus file pengaturan yang di-cache              | Perilaku peluncuran pertama terjadi: pengaturan mengambil secara asinkron dengan jendela unenforced singkat                                  |
+| Pengguna menghapus file pengaturan yang di-cache              | Perilaku peluncuran pertama terjadi: pengaturan mengambil secara asinkron dengan jendela yang tidak diterapkan singkat                       |
 | API tidak tersedia                                            | Pengaturan yang di-cache berlaku jika tersedia, jika tidak pengaturan terkelola tidak diterapkan sampai pengambilan yang berhasil berikutnya |
 | Pengguna melakukan autentikasi dengan organisasi yang berbeda | Pengaturan tidak dikirimkan untuk akun di luar organisasi yang dikelola                                                                      |
 | Pengguna menetapkan `ANTHROPIC_BASE_URL` non-default          | Pengaturan yang dikelola server dilewati saat menggunakan penyedia API pihak ketiga                                                          |
 
-Untuk mendeteksi perubahan konfigurasi runtime, gunakan [hook `ConfigChange`](/id/hooks#configchange) untuk mencatat modifikasi atau memblokir perubahan yang tidak sah sebelum diterapkan.
+Untuk mendeteksi perubahan konfigurasi runtime, gunakan [hook `ConfigChange`](/id/hooks#configchange) untuk mencatat modifikasi atau memblokir perubahan yang tidak sah sebelum berlaku.
 
 Untuk jaminan penegakan yang lebih kuat, gunakan [pengaturan yang dikelola endpoint](/id/settings#settings-files) pada perangkat yang terdaftar dalam solusi MDM.
 

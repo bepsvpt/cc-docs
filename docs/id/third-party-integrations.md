@@ -2,19 +2,30 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Ringkasan penyebaran enterprise
+# Ikhtisar penyebaran enterprise
 
 > Pelajari bagaimana Claude Code dapat terintegrasi dengan berbagai layanan pihak ketiga dan infrastruktur untuk memenuhi persyaratan penyebaran enterprise.
 
-Halaman ini memberikan gambaran umum tentang opsi penyebaran yang tersedia dan membantu Anda memilih konfigurasi yang tepat untuk organisasi Anda.
+Organisasi dapat menyebarkan Claude Code melalui Anthropic secara langsung atau melalui penyedia cloud. Halaman ini membantu Anda memilih konfigurasi yang tepat.
 
-## Perbandingan penyedia
+## Bandingkan opsi penyebaran
+
+Untuk sebagian besar organisasi, Claude for Teams atau Claude for Enterprise memberikan pengalaman terbaik. Anggota tim mendapatkan akses ke Claude Code dan Claude di web dengan satu langganan, penagihan terpusat, dan tidak ada setup infrastruktur yang diperlukan.
+
+**Claude for Teams** adalah self-service dan mencakup fitur kolaborasi, alat admin, dan manajemen penagihan. Terbaik untuk tim yang lebih kecil yang perlu memulai dengan cepat.
+
+**Claude for Enterprise** menambahkan SSO dan domain capture, izin berbasis peran, akses API kepatuhan, dan pengaturan kebijakan terkelola untuk menyebarkan konfigurasi Claude Code di seluruh organisasi. Terbaik untuk organisasi yang lebih besar dengan persyaratan keamanan dan kepatuhan.
+
+Pelajari lebih lanjut tentang [rencana Tim](https://support.claude.com/en/articles/9266767-what-is-the-team-plan) dan [rencana Enterprise](https://support.claude.com/en/articles/9797531-what-is-the-enterprise-plan).
+
+Jika organisasi Anda memiliki persyaratan infrastruktur khusus, bandingkan opsi di bawah ini:
 
 <table>
   <thead>
     <tr>
       <th>Fitur</th>
-      <th>Anthropic</th>
+      <th>Claude for Teams/Enterprise</th>
+      <th>Anthropic Console</th>
       <th>Amazon Bedrock</th>
       <th>Google Vertex AI</th>
       <th>Microsoft Foundry</th>
@@ -23,11 +34,30 @@ Halaman ini memberikan gambaran umum tentang opsi penyebaran yang tersedia dan m
 
   <tbody>
     <tr>
+      <td>Terbaik untuk</td>
+      <td>Sebagian besar organisasi (direkomendasikan)</td>
+      <td>Pengembang individual</td>
+      <td>Penyebaran native AWS</td>
+      <td>Penyebaran native GCP</td>
+      <td>Penyebaran native Azure</td>
+    </tr>
+
+    <tr>
+      <td>Penagihan</td>
+      <td><strong>Teams:</strong> \$150/seat (Premium) dengan PAYG tersedia<br /><strong>Enterprise:</strong> <a href="https://claude.com/contact-sales?utm_source=claude_code&utm_medium=docs&utm_content=third_party_enterprise">Hubungi Penjualan</a></td>
+      <td>PAYG</td>
+      <td>PAYG melalui AWS</td>
+      <td>PAYG melalui GCP</td>
+      <td>PAYG melalui Azure</td>
+    </tr>
+
+    <tr>
       <td>Wilayah</td>
-      <td>Negara yang didukung [countries](https://www.anthropic.com/supported-countries)</td>
-      <td>Beberapa AWS [regions](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html)</td>
-      <td>Beberapa GCP [regions](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations)</td>
-      <td>Beberapa Azure [regions](https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/)</td>
+      <td>[Negara](https://www.anthropic.com/supported-countries) yang didukung</td>
+      <td>[Negara](https://www.anthropic.com/supported-countries) yang didukung</td>
+      <td>[Wilayah](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html) AWS yang beragam</td>
+      <td>[Wilayah](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations) GCP yang beragam</td>
+      <td>[Wilayah](https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/) Azure yang beragam</td>
     </tr>
 
     <tr>
@@ -36,10 +66,12 @@ Halaman ini memberikan gambaran umum tentang opsi penyebaran yang tersedia dan m
       <td>Diaktifkan secara default</td>
       <td>Diaktifkan secara default</td>
       <td>Diaktifkan secara default</td>
+      <td>Diaktifkan secara default</td>
     </tr>
 
     <tr>
       <td>Autentikasi</td>
+      <td>Claude.ai SSO atau email</td>
       <td>Kunci API</td>
       <td>Kunci API atau kredensial AWS</td>
       <td>Kredensial GCP</td>
@@ -48,15 +80,26 @@ Halaman ini memberikan gambaran umum tentang opsi penyebaran yang tersedia dan m
 
     <tr>
       <td>Pelacakan biaya</td>
-      <td>Dashboard</td>
+      <td>Dashboard penggunaan</td>
+      <td>Dashboard penggunaan</td>
       <td>AWS Cost Explorer</td>
       <td>GCP Billing</td>
       <td>Azure Cost Management</td>
     </tr>
 
     <tr>
+      <td>Termasuk Claude di web</td>
+      <td>Ya</td>
+      <td>Tidak</td>
+      <td>Tidak</td>
+      <td>Tidak</td>
+      <td>Tidak</td>
+    </tr>
+
+    <tr>
       <td>Fitur enterprise</td>
-      <td>Tim, pemantauan penggunaan</td>
+      <td>Manajemen tim, SSO, pemantauan penggunaan</td>
+      <td>Tidak ada</td>
       <td>Kebijakan IAM, CloudTrail</td>
       <td>Peran IAM, Cloud Audit Logs</td>
       <td>Kebijakan RBAC, Azure Monitor</td>
@@ -64,191 +107,147 @@ Halaman ini memberikan gambaran umum tentang opsi penyebaran yang tersedia dan m
   </tbody>
 </table>
 
-## Penyedia cloud
+Pilih opsi penyebaran untuk melihat instruksi setup:
 
-<CardGroup cols={3}>
-  <Card title="Amazon Bedrock" icon="aws" href="/id/amazon-bedrock">
-    Gunakan model Claude melalui infrastruktur AWS dengan autentikasi berbasis kunci API atau IAM dan pemantauan asli AWS
-  </Card>
+* [Claude for Teams atau Enterprise](/id/authentication#claude-for-teams-or-enterprise)
+* [Anthropic Console](/id/authentication#claude-console-authentication)
+* [Amazon Bedrock](/id/amazon-bedrock)
+* [Google Vertex AI](/id/google-vertex-ai)
+* [Microsoft Foundry](/id/microsoft-foundry)
 
-  <Card title="Google Vertex AI" icon="google" href="/id/google-vertex-ai">
-    Akses model Claude melalui Google Cloud Platform dengan keamanan dan kepatuhan tingkat enterprise
-  </Card>
+## Konfigurasi proxy dan gateway
 
-  <Card title="Microsoft Foundry" icon="microsoft" href="/id/microsoft-foundry">
-    Akses Claude melalui Azure dengan autentikasi kunci API atau Microsoft Entra ID dan penagihan Azure
-  </Card>
-</CardGroup>
+Sebagian besar organisasi dapat menggunakan penyedia cloud secara langsung tanpa konfigurasi tambahan. Namun, Anda mungkin perlu mengonfigurasi proxy perusahaan atau gateway LLM jika organisasi Anda memiliki persyaratan jaringan atau manajemen khusus. Ini adalah konfigurasi berbeda yang dapat digunakan bersama:
 
-## Infrastruktur korporat
+* **Corporate proxy**: Merutekan lalu lintas melalui proxy HTTP/HTTPS. Gunakan ini jika organisasi Anda memerlukan semua lalu lintas keluar untuk melewati server proxy untuk pemantauan keamanan, kepatuhan, atau penegakan kebijakan jaringan. Konfigurasi dengan variabel lingkungan `HTTPS_PROXY` atau `HTTP_PROXY`. Pelajari lebih lanjut di [Konfigurasi jaringan enterprise](/id/network-config).
+* **LLM Gateway**: Layanan yang berada di antara Claude Code dan penyedia cloud untuk menangani autentikasi dan perutean. Gunakan ini jika Anda memerlukan pelacakan penggunaan terpusat di seluruh tim, pembatasan laju kustom atau anggaran, atau manajemen autentikasi terpusat. Konfigurasi dengan variabel lingkungan `ANTHROPIC_BASE_URL`, `ANTHROPIC_BEDROCK_BASE_URL`, atau `ANTHROPIC_VERTEX_BASE_URL`. Pelajari lebih lanjut di [Konfigurasi gateway LLM](/id/llm-gateway).
 
-<CardGroup cols={2}>
-  <Card title="Enterprise Network" icon="shield" href="/id/network-config">
-    Konfigurasikan Claude Code untuk bekerja dengan server proxy organisasi Anda dan persyaratan SSL/TLS
-  </Card>
+Contoh berikut menunjukkan variabel lingkungan yang harus diatur di shell atau profil shell Anda (`.bashrc`, `.zshrc`). Lihat [Pengaturan](/id/settings) untuk metode konfigurasi lainnya.
 
-  <Card title="LLM Gateway" icon="server" href="/id/llm-gateway">
-    Sebarkan akses model terpusat dengan pelacakan penggunaan, penganggaran, dan pencatatan audit
-  </Card>
-</CardGroup>
+### Amazon Bedrock
 
-## Ringkasan konfigurasi
+<Tabs>
+  <Tab title="Corporate proxy">
+    Rutekan lalu lintas Bedrock melalui proxy perusahaan Anda dengan mengatur [variabel lingkungan](/id/env-vars) berikut:
 
-Claude Code mendukung opsi konfigurasi fleksibel yang memungkinkan Anda menggabungkan penyedia dan infrastruktur yang berbeda:
+    ```bash  theme={null}
+    # Enable Bedrock
+    export CLAUDE_CODE_USE_BEDROCK=1
+    export AWS_REGION=us-east-1
 
-<Note>
-  Pahami perbedaan antara:
+    # Configure corporate proxy
+    export HTTPS_PROXY='https://proxy.example.com:8080'
+    ```
+  </Tab>
 
-  * **Proxy korporat**: Proxy HTTP/HTTPS untuk merutekan lalu lintas (diatur melalui `HTTPS_PROXY` atau `HTTP_PROXY`)
-  * **LLM Gateway**: Layanan yang menangani autentikasi dan menyediakan endpoint yang kompatibel dengan penyedia (diatur melalui `ANTHROPIC_BASE_URL`, `ANTHROPIC_BEDROCK_BASE_URL`, atau `ANTHROPIC_VERTEX_BASE_URL`)
+  <Tab title="LLM Gateway">
+    Rutekan lalu lintas Bedrock melalui gateway LLM Anda dengan mengatur [variabel lingkungan](/id/env-vars) berikut:
 
-  Kedua konfigurasi dapat digunakan secara bersamaan.
-</Note>
+    ```bash  theme={null}
+    # Enable Bedrock
+    export CLAUDE_CODE_USE_BEDROCK=1
 
-### Menggunakan Bedrock dengan proxy korporat
+    # Configure LLM gateway
+    export ANTHROPIC_BEDROCK_BASE_URL='https://your-llm-gateway.com/bedrock'
+    export CLAUDE_CODE_SKIP_BEDROCK_AUTH=1  # If gateway handles AWS auth
+    ```
+  </Tab>
+</Tabs>
 
-Rutekan lalu lintas Bedrock melalui proxy HTTP/HTTPS korporat:
+### Microsoft Foundry
 
-```bash  theme={null}
-# Aktifkan Bedrock
-export CLAUDE_CODE_USE_BEDROCK=1
-export AWS_REGION=us-east-1
+<Tabs>
+  <Tab title="Corporate proxy">
+    Rutekan lalu lintas Foundry melalui proxy perusahaan Anda dengan mengatur [variabel lingkungan](/id/env-vars) berikut:
 
-# Konfigurasikan proxy korporat
-export HTTPS_PROXY='https://proxy.example.com:8080'
-```
+    ```bash  theme={null}
+    # Enable Microsoft Foundry
+    export CLAUDE_CODE_USE_FOUNDRY=1
+    export ANTHROPIC_FOUNDRY_RESOURCE=your-resource
+    export ANTHROPIC_FOUNDRY_API_KEY=your-api-key  # Or omit for Entra ID auth
 
-### Menggunakan Bedrock dengan LLM Gateway
+    # Configure corporate proxy
+    export HTTPS_PROXY='https://proxy.example.com:8080'
+    ```
+  </Tab>
 
-Gunakan layanan gateway yang menyediakan endpoint yang kompatibel dengan Bedrock:
+  <Tab title="LLM Gateway">
+    Rutekan lalu lintas Foundry melalui gateway LLM Anda dengan mengatur [variabel lingkungan](/id/env-vars) berikut:
 
-```bash  theme={null}
-# Aktifkan Bedrock
-export CLAUDE_CODE_USE_BEDROCK=1
+    ```bash  theme={null}
+    # Enable Microsoft Foundry
+    export CLAUDE_CODE_USE_FOUNDRY=1
 
-# Konfigurasikan gateway LLM
-export ANTHROPIC_BEDROCK_BASE_URL='https://your-llm-gateway.com/bedrock'
-export CLAUDE_CODE_SKIP_BEDROCK_AUTH=1  # Jika gateway menangani autentikasi AWS
-```
+    # Configure LLM gateway
+    export ANTHROPIC_FOUNDRY_BASE_URL='https://your-llm-gateway.com'
+    export CLAUDE_CODE_SKIP_FOUNDRY_AUTH=1  # If gateway handles Azure auth
+    ```
+  </Tab>
+</Tabs>
 
-### Menggunakan Foundry dengan proxy korporat
+### Google Vertex AI
 
-Rutekan lalu lintas Azure melalui proxy HTTP/HTTPS korporat:
+<Tabs>
+  <Tab title="Corporate proxy">
+    Rutekan lalu lintas Vertex AI melalui proxy perusahaan Anda dengan mengatur [variabel lingkungan](/id/env-vars) berikut:
 
-```bash  theme={null}
-# Aktifkan Microsoft Foundry
-export CLAUDE_CODE_USE_FOUNDRY=1
-export ANTHROPIC_FOUNDRY_RESOURCE=your-resource
-export ANTHROPIC_FOUNDRY_API_KEY=your-api-key  # Atau abaikan untuk autentikasi Entra ID
+    ```bash  theme={null}
+    # Enable Vertex
+    export CLAUDE_CODE_USE_VERTEX=1
+    export CLOUD_ML_REGION=us-east5
+    export ANTHROPIC_VERTEX_PROJECT_ID=your-project-id
 
-# Konfigurasikan proxy korporat
-export HTTPS_PROXY='https://proxy.example.com:8080'
-```
+    # Configure corporate proxy
+    export HTTPS_PROXY='https://proxy.example.com:8080'
+    ```
+  </Tab>
 
-### Menggunakan Foundry dengan LLM Gateway
+  <Tab title="LLM Gateway">
+    Rutekan lalu lintas Vertex AI melalui gateway LLM Anda dengan mengatur [variabel lingkungan](/id/env-vars) berikut:
 
-Gunakan layanan gateway yang menyediakan endpoint yang kompatibel dengan Azure:
+    ```bash  theme={null}
+    # Enable Vertex
+    export CLAUDE_CODE_USE_VERTEX=1
 
-```bash  theme={null}
-# Aktifkan Microsoft Foundry
-export CLAUDE_CODE_USE_FOUNDRY=1
+    # Configure LLM gateway
+    export ANTHROPIC_VERTEX_BASE_URL='https://your-llm-gateway.com/vertex'
+    export CLAUDE_CODE_SKIP_VERTEX_AUTH=1  # If gateway handles GCP auth
+    ```
+  </Tab>
+</Tabs>
 
-# Konfigurasikan gateway LLM
-export ANTHROPIC_FOUNDRY_BASE_URL='https://your-llm-gateway.com'
-export CLAUDE_CODE_SKIP_FOUNDRY_AUTH=1  # Jika gateway menangani autentikasi Azure
-```
-
-### Menggunakan Vertex AI dengan proxy korporat
-
-Rutekan lalu lintas Vertex AI melalui proxy HTTP/HTTPS korporat:
-
-```bash  theme={null}
-# Aktifkan Vertex
-export CLAUDE_CODE_USE_VERTEX=1
-export CLOUD_ML_REGION=us-east5
-export ANTHROPIC_VERTEX_PROJECT_ID=your-project-id
-
-# Konfigurasikan proxy korporat
-export HTTPS_PROXY='https://proxy.example.com:8080'
-```
-
-### Menggunakan Vertex AI dengan LLM Gateway
-
-Gabungkan model Google Vertex AI dengan gateway LLM untuk manajemen terpusat:
-
-```bash  theme={null}
-# Aktifkan Vertex
-export CLAUDE_CODE_USE_VERTEX=1
-
-# Konfigurasikan gateway LLM
-export ANTHROPIC_VERTEX_BASE_URL='https://your-llm-gateway.com/vertex'
-export CLAUDE_CODE_SKIP_VERTEX_AUTH=1  # Jika gateway menangani autentikasi GCP
-```
-
-### Konfigurasi autentikasi
-
-Claude Code menggunakan `ANTHROPIC_AUTH_TOKEN` untuk header `Authorization` ketika diperlukan. Bendera `SKIP_AUTH` (`CLAUDE_CODE_SKIP_BEDROCK_AUTH`, `CLAUDE_CODE_SKIP_VERTEX_AUTH`) digunakan dalam skenario gateway LLM di mana gateway menangani autentikasi penyedia.
-
-## Memilih konfigurasi penyebaran yang tepat
-
-Pertimbangkan faktor-faktor ini saat memilih pendekatan penyebaran Anda:
-
-### Akses penyedia langsung
-
-Terbaik untuk organisasi yang:
-
-* Menginginkan pengaturan paling sederhana
-* Memiliki infrastruktur AWS atau GCP yang sudah ada
-* Membutuhkan pemantauan asli penyedia dan kepatuhan
-
-### Proxy korporat
-
-Terbaik untuk organisasi yang:
-
-* Memiliki persyaratan proxy korporat yang sudah ada
-* Membutuhkan pemantauan lalu lintas dan kepatuhan
-* Harus merutekan semua lalu lintas melalui jalur jaringan tertentu
-
-### LLM Gateway
-
-Terbaik untuk organisasi yang:
-
-* Membutuhkan pelacakan penggunaan di seluruh tim
-* Ingin beralih secara dinamis antar model
-* Memerlukan pembatasan kecepatan khusus atau anggaran
-* Membutuhkan manajemen autentikasi terpusat
-
-## Debugging
-
-Saat men-debug penyebaran Anda:
-
-* Gunakan [perintah slash](/id/slash-commands) `claude /status`. Perintah ini memberikan visibilitas ke dalam autentikasi, proxy, dan pengaturan URL apa pun yang diterapkan.
-* Atur variabel lingkungan `export ANTHROPIC_LOG=debug` untuk mencatat permintaan.
+<Tip>
+  Gunakan `/status` di Claude Code untuk memverifikasi bahwa konfigurasi proxy dan gateway Anda diterapkan dengan benar.
+</Tip>
 
 ## Praktik terbaik untuk organisasi
 
-### 1. Investasi dalam dokumentasi dan memori
+### Investasi dalam dokumentasi dan memori
 
 Kami sangat merekomendasikan investasi dalam dokumentasi sehingga Claude Code memahami basis kode Anda. Organisasi dapat menyebarkan file CLAUDE.md di berbagai tingkat:
 
-* **Di seluruh organisasi**: Sebarkan ke direktori sistem seperti `/Library/Application Support/ClaudeCode/CLAUDE.md` (macOS) untuk standar perusahaan
-* **Tingkat repositori**: Buat file `CLAUDE.md` di akar repositori yang berisi arsitektur proyek, perintah build, dan pedoman kontribusi. Periksa ini ke dalam kontrol sumber sehingga semua pengguna mendapat manfaat
+* **Seluruh organisasi**: Sebarkan ke direktori sistem seperti `/Library/Application Support/ClaudeCode/CLAUDE.md` (macOS) untuk standar perusahaan
+* **Tingkat repositori**: Buat file `CLAUDE.md` di akar repositori yang berisi arsitektur proyek, perintah build, dan panduan kontribusi. Periksa ini ke dalam kontrol sumber sehingga semua pengguna mendapat manfaat
 
-  [Pelajari lebih lanjut](/id/memory).
+Pelajari lebih lanjut di [Memori dan file CLAUDE.md](/id/memory).
 
-### 2. Sederhanakan penyebaran
+### Sederhanakan penyebaran
 
-Jika Anda memiliki lingkungan pengembangan khusus, kami menemukan bahwa membuat cara "satu klik" untuk menginstal Claude Code adalah kunci untuk meningkatkan adopsi di seluruh organisasi.
+Jika Anda memiliki lingkungan pengembangan kustom, kami menemukan bahwa membuat cara "satu klik" untuk menginstal Claude Code adalah kunci untuk meningkatkan adopsi di seluruh organisasi.
 
-### 3. Mulai dengan penggunaan terpandu
+### Mulai dengan penggunaan terpandu
 
-Dorong pengguna baru untuk mencoba Claude Code untuk Q\&A basis kode, atau pada perbaikan bug yang lebih kecil atau permintaan fitur. Minta Claude Code untuk membuat rencana. Periksa saran Claude dan berikan umpan balik jika tidak sesuai jalur. Seiring waktu, ketika pengguna memahami paradigma baru ini dengan lebih baik, mereka akan lebih efektif dalam membiarkan Claude Code berjalan lebih agentic.
+Dorong pengguna baru untuk mencoba Claude Code untuk Q\&A basis kode, atau pada perbaikan bug yang lebih kecil atau permintaan fitur. Minta Claude Code untuk membuat rencana. Periksa saran Claude dan berikan umpan balik jika tidak sesuai. Seiring waktu, ketika pengguna memahami paradigma baru ini dengan lebih baik, mereka akan lebih efektif dalam membiarkan Claude Code berjalan lebih agentik.
 
-### 4. Konfigurasikan kebijakan keamanan
+### Versi model pin untuk penyedia cloud
 
-Tim keamanan dapat mengonfigurasi izin terkelola untuk apa yang Claude Code diizinkan dan tidak diizinkan untuk dilakukan, yang tidak dapat ditimpa oleh konfigurasi lokal. [Pelajari lebih lanjut](/id/security).
+Jika Anda menyebarkan melalui [Bedrock](/id/amazon-bedrock), [Vertex AI](/id/google-vertex-ai), atau [Foundry](/id/microsoft-foundry), pin versi model tertentu menggunakan `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, dan `ANTHROPIC_DEFAULT_HAIKU_MODEL`. Tanpa pinning, alias Claude Code menyelesaikan versi terbaru, yang dapat merusak pengguna ketika Anthropic merilis model baru yang belum diaktifkan di akun Anda. Lihat [Konfigurasi model](/id/model-config#pin-models-for-third-party-deployments) untuk detail.
 
-### 5. Manfaatkan MCP untuk integrasi
+### Konfigurasi kebijakan keamanan
+
+Tim keamanan dapat mengonfigurasi izin terkelola untuk apa yang Claude Code diizinkan dan tidak diizinkan untuk lakukan, yang tidak dapat ditimpa oleh konfigurasi lokal. [Pelajari lebih lanjut](/id/security).
+
+### Manfaatkan MCP untuk integrasi
 
 MCP adalah cara yang bagus untuk memberikan Claude Code lebih banyak informasi, seperti menghubungkan ke sistem manajemen tiket atau log kesalahan. Kami merekomendasikan bahwa satu tim pusat mengonfigurasi server MCP dan memeriksa konfigurasi `.mcp.json` ke dalam basis kode sehingga semua pengguna mendapat manfaat. [Pelajari lebih lanjut](/id/mcp).
 
@@ -256,9 +255,8 @@ Di Anthropic, kami mempercayai Claude Code untuk mendorong pengembangan di selur
 
 ## Langkah berikutnya
 
-* [Siapkan Amazon Bedrock](/id/amazon-bedrock) untuk penyebaran asli AWS
-* [Konfigurasikan Google Vertex AI](/id/google-vertex-ai) untuk penyebaran GCP
-* [Siapkan Microsoft Foundry](/id/microsoft-foundry) untuk penyebaran Azure
-* [Konfigurasikan Enterprise Network](/id/network-config) untuk persyaratan jaringan
-* [Sebarkan LLM Gateway](/id/llm-gateway) untuk manajemen enterprise
-* [Pengaturan](/id/settings) untuk opsi konfigurasi dan variabel lingkungan
+Setelah Anda memilih opsi penyebaran dan mengonfigurasi akses untuk tim Anda:
+
+1. **Luncurkan ke tim Anda**: Bagikan instruksi instalasi dan minta anggota tim [menginstal Claude Code](/id/setup) dan autentikasi dengan kredensial mereka.
+2. **Atur konfigurasi bersama**: Buat [file CLAUDE.md](/id/memory) di repositori Anda untuk membantu Claude Code memahami basis kode dan standar pengkodean Anda.
+3. **Konfigurasi izin**: Tinjau [pengaturan keamanan](/id/security) untuk menentukan apa yang dapat dan tidak dapat dilakukan Claude Code di lingkungan Anda.

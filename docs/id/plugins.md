@@ -281,7 +281,9 @@ Gunakan flag `--plugin-dir` untuk menguji plugins selama pengembangan. Ini memua
 claude --plugin-dir ./my-plugin
 ```
 
-Saat Anda membuat perubahan pada plugin Anda, jalankan `/reload-plugins` untuk mengambil pembaruan tanpa memulai ulang. Perubahan pada konfigurasi LSP server masih memerlukan restart penuh. Uji komponen plugin Anda:
+Ketika plugin `--plugin-dir` memiliki nama yang sama dengan plugin marketplace yang diinstal, salinan lokal mengambil prioritas untuk sesi itu. Ini memungkinkan Anda menguji perubahan pada plugin yang sudah Anda instal tanpa mencopot pemasangannya terlebih dahulu. Plugin marketplace yang dipaksa diaktifkan oleh managed settings adalah satu-satunya pengecualian dan tidak dapat ditimpa.
+
+Saat Anda membuat perubahan pada plugin Anda, jalankan `/reload-plugins` untuk mengambil pembaruan tanpa memulai ulang. Ini memuat ulang commands, skills, agents, hooks, plugin MCP servers, dan plugin LSP servers. Uji komponen plugin Anda:
 
 * Coba skills Anda dengan `/plugin-name:skill-name`
 * Periksa bahwa agents muncul di `/agents`

@@ -395,7 +395,7 @@ O inline in `plugin.json`:
 
 **Funzionalità MCP del plugin**:
 
-* **Ciclo di vita automatico**: I server si avviano quando il plugin si abilita, ma devi riavviare Claude Code per applicare le modifiche del server MCP (abilitazione o disabilitazione)
+* **Ciclo di vita automatico**: All'avvio della sessione, i server per i plugin abilitati si connettono automaticamente. Se abiliti o disabiliti un plugin durante una sessione, esegui `/reload-plugins` per connettere o disconnettere i suoi server MCP
 * **Variabili di ambiente**: Utilizza `${CLAUDE_PLUGIN_ROOT}` per i percorsi relativi al plugin
 * **Accesso alle variabili di ambiente dell'utente**: Accesso alle stesse variabili di ambiente dei server configurati manualmente
 * **Tipi di trasporto multipli**: Supporto per trasporti stdio, SSE e HTTP (il supporto del trasporto può variare a seconda del server)
@@ -944,6 +944,19 @@ Questo è particolarmente utile quando si lavora con server MCP che:
   Se incontri frequentemente avvisi di output con server MCP specifici, considera di aumentare il limite o configurare il server per impaginare o filtrare le sue risposte.
 </Warning>
 
+## Rispondi alle richieste di elicitazione MCP
+
+I server MCP possono richiedere input strutturato da te durante un'attività utilizzando l'elicitazione. Quando un server ha bisogno di informazioni che non può ottenere da solo, Claude Code visualizza una finestra di dialogo interattiva e passa la tua risposta al server. Non è richiesta alcuna configurazione da parte tua: le finestre di dialogo di elicitazione appaiono automaticamente quando un server le richiede.
+
+I server possono richiedere input in due modi:
+
+* **Modalità modulo**: Claude Code mostra una finestra di dialogo con campi modulo definiti dal server (per esempio, un prompt di nome utente e password). Compila i campi e invia.
+* **Modalità URL**: Claude Code apre un URL del browser per l'autenticazione o l'approvazione. Completa il flusso nel browser, quindi conferma nella CLI.
+
+Per rispondere automaticamente alle richieste di elicitazione senza mostrare una finestra di dialogo, utilizza l'[hook `Elicitation`](/it/hooks#elicitation).
+
+Se stai costruendo un server MCP che utilizza l'elicitazione, vedi la [specifica di elicitazione MCP](https://modelcontextprotocol.io/docs/learn/client-concepts#elicitation) per i dettagli del protocollo e gli esempi di schema.
+
 ## Utilizza risorse MCP
 
 I server MCP possono esporre risorse che puoi referenziare utilizzando menzioni @, simile a come referenzi i file.
@@ -1010,16 +1023,17 @@ Aggiungi istruzioni del server chiare e descrittive che spieghino:
 
 ### Configura la ricerca degli strumenti
 
-La ricerca degli strumenti viene eseguita in modalità auto per impostazione predefinita, il che significa che si attiva solo quando le definizioni dei tuoi strumenti MCP superano la soglia di contesto. Se hai pochi strumenti, vengono caricati normalmente senza ricerca degli strumenti. Questa funzionalità richiede modelli che supportano blocchi `tool_reference`: Sonnet 4 e successivi, oppure Opus 4 e successivi. I modelli Haiku non supportano la ricerca degli strumenti.
+La ricerca degli strumenti è abilitata per impostazione predefinita: gli strumenti MCP vengono differiti e scoperti su richiesta. Quando `ANTHROPIC_BASE_URL` punta a un host non di prima parte, la ricerca degli strumenti è disabilitata per impostazione predefinita perché la maggior parte dei proxy non inoltrano blocchi `tool_reference`. Imposta `ENABLE_TOOL_SEARCH` esplicitamente se il tuo proxy lo fa. Questa funzionalità richiede modelli che supportano blocchi `tool_reference`: Sonnet 4 e successivi, oppure Opus 4 e successivi. I modelli Haiku non supportano la ricerca degli strumenti.
 
 Controlla il comportamento della ricerca degli strumenti con la variabile di ambiente `ENABLE_TOOL_SEARCH`:
 
-| Valore     | Comportamento                                                                                   |
-| :--------- | :---------------------------------------------------------------------------------------------- |
-| `auto`     | Si attiva quando gli strumenti MCP superano il 10% del contesto (predefinito)                   |
-| `auto:<N>` | Si attiva a una soglia personalizzata, dove `<N>` è una percentuale (ad es. `auto:5` per il 5%) |
-| `true`     | Sempre abilitato                                                                                |
-| `false`    | Disabilitato, tutti gli strumenti MCP caricati in anticipo                                      |
+| Valore          | Comportamento                                                                                                 |
+| :-------------- | :------------------------------------------------------------------------------------------------------------ |
+| (non impostato) | Abilitato per impostazione predefinita. Disabilitato quando `ANTHROPIC_BASE_URL` è un host non di prima parte |
+| `true`          | Sempre abilitato, incluso per `ANTHROPIC_BASE_URL` non di prima parte                                         |
+| `auto`          | Si attiva quando gli strumenti MCP superano il 10% del contesto                                               |
+| `auto:<N>`      | Si attiva a una soglia personalizzata, dove `<N>` è una percentuale (ad es. `auto:5` per il 5%)               |
+| `false`         | Disabilitato, tutti gli strumenti MCP caricati in anticipo                                                    |
 
 ```bash  theme={null}
 # Utilizza una soglia personalizzata del 5%
@@ -1074,7 +1088,7 @@ I server MCP possono esporre prompt che diventano disponibili come comandi in Cl
 <Tip>
   Suggerimenti:
 
-  * I prompt MCP vengono scoperto dinamicamente dai server connessi
+  * I prompt MCP vengono scoperti dinamicamente dai server connessi
   * Gli argomenti vengono analizzati in base ai parametri definiti del prompt
   * I risultati del prompt vengono iniettati direttamente nella conversazione
   * I nomi del server e del prompt vengono normalizzati (gli spazi diventano trattini bassi)

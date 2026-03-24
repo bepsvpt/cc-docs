@@ -10,9 +10,9 @@
   Le mode rapide est en [aperçu de recherche](#research-preview). La fonctionnalité, la tarification et la disponibilité peuvent changer en fonction des commentaires.
 </Note>
 
-Le mode rapide est une configuration haute vitesse pour Claude Opus 4.6, rendant le modèle 2,5 fois plus rapide à un coût par token plus élevé. Activez-le avec `/fast` quand vous avez besoin de vitesse pour un travail interactif comme l'itération rapide ou le débogage en direct, et désactivez-le quand le coût importe plus que la latence.
+Le mode rapide est une configuration haute vitesse pour Claude Opus 4.6, rendant le modèle 2,5 fois plus rapide à un coût par jeton plus élevé. Activez-le avec `/fast` quand vous avez besoin de vitesse pour un travail interactif comme l'itération rapide ou le débogage en direct, et désactivez-le quand le coût importe plus que la latence.
 
-Le mode rapide n'est pas un modèle différent. Il utilise le même Opus 4.6 avec une configuration API différente qui privilégie la vitesse à l'efficacité des coûts. Vous obtenez une qualité et des capacités identiques, juste des réponses plus rapides.
+Le mode rapide n'est pas un modèle différent. Il utilise le même Opus 4.6 avec une configuration API différente qui priorise la vitesse plutôt que l'efficacité des coûts. Vous obtenez une qualité et des capacités identiques, juste des réponses plus rapides.
 
 <Note>
   Le mode rapide nécessite Claude Code v2.1.36 ou ultérieur. Vérifiez votre version avec `claude --version`.
@@ -49,16 +49,16 @@ Quand vous désactivez le mode rapide avec `/fast` à nouveau, vous restez sur O
 
 ## Comprendre le compromis de coût
 
-Le mode rapide a une tarification par token plus élevée que l'Opus 4.6 standard :
+Le mode rapide a une tarification par jeton plus élevée que l'Opus 4.6 standard :
 
 | Mode                              | Entrée (MTok) | Sortie (MTok) |
 | --------------------------------- | ------------- | ------------- |
 | Mode rapide sur Opus 4.6 (\<200K) | 30 \$         | 150 \$        |
 | Mode rapide sur Opus 4.6 (>200K)  | 60 \$         | 225 \$        |
 
-Le mode rapide est compatible avec la fenêtre de contexte étendue de 1M token.
+Le mode rapide est compatible avec la fenêtre de contexte étendue de 1 million de jetons.
 
-Quand vous basculez en mode rapide en milieu de conversation, vous payez le prix complet du token d'entrée non mis en cache du mode rapide pour tout le contexte de la conversation. Cela coûte plus cher que si vous aviez activé le mode rapide dès le départ.
+Quand vous basculez en mode rapide en milieu de conversation, vous payez le prix complet du jeton d'entrée non mis en cache du mode rapide pour tout le contexte de la conversation. Cela coûte plus cher que si vous aviez activé le mode rapide dès le départ.
 
 ## Décider quand utiliser le mode rapide
 
@@ -93,7 +93,7 @@ Le mode rapide nécessite tous les éléments suivants :
 * **Utilisation supplémentaire activée** : votre compte doit avoir l'utilisation supplémentaire activée, ce qui permet la facturation au-delà de l'utilisation incluse dans votre plan. Pour les comptes individuels, activez ceci dans vos [paramètres de facturation Console](https://platform.claude.com/settings/organization/billing). Pour Teams et Enterprise, un administrateur doit activer l'utilisation supplémentaire pour l'organisation.
 
 <Note>
-  L'utilisation du mode rapide est facturée directement à l'utilisation supplémentaire, même si vous avez une utilisation restante sur votre plan. Cela signifie que les tokens du mode rapide ne comptent pas par rapport à l'utilisation incluse de votre plan et sont facturés au tarif du mode rapide à partir du premier token.
+  L'utilisation du mode rapide est facturée directement à l'utilisation supplémentaire, même si vous avez une utilisation restante sur votre plan. Cela signifie que les jetons du mode rapide ne comptent pas par rapport à l'utilisation incluse de votre plan et sont facturés au tarif du mode rapide à partir du premier jeton.
 </Note>
 
 * **Activation par l'administrateur pour Teams et Enterprise** : le mode rapide est désactivé par défaut pour les organisations Teams et Enterprise. Un administrateur doit explicitement [activer le mode rapide](#enable-fast-mode-for-your-organization) avant que les utilisateurs puissent y accéder.
@@ -107,13 +107,13 @@ Le mode rapide nécessite tous les éléments suivants :
 Les administrateurs peuvent activer le mode rapide dans :
 
 * **Console** (clients API) : [Préférences Claude Code](https://platform.claude.com/claude-code/preferences)
-* **Claude AI** (Teams et Enterprise) : [Paramètres administrateur > Claude Code](https://claude.ai/admin-settings/claude-code)
+* **Claude AI** (Teams et Enterprise) : [Paramètres d'administration > Claude Code](https://claude.ai/admin-settings/claude-code)
 
-Une autre option pour désactiver complètement le mode rapide est de définir `CLAUDE_CODE_DISABLE_FAST_MODE=1`. Consultez [Variables d'environnement](/fr/settings#environment-variables).
+Une autre option pour désactiver complètement le mode rapide est de définir `CLAUDE_CODE_DISABLE_FAST_MODE=1`. Consultez [Variables d'environnement](/fr/env-vars).
 
 ### Opt-in par session
 
-Par défaut, le mode rapide persiste entre les sessions : si un utilisateur active le mode rapide, il reste activé dans les sessions futures. Les administrateurs sur les plans [Teams](https://claude.com/pricing#team-&-enterprise) ou [Enterprise](https://anthropic.com/contact-sales) peuvent empêcher cela en définissant `fastModePerSessionOptIn` à `true` dans les [paramètres gérés](/fr/settings#settings-files) ou les [paramètres gérés par le serveur](/fr/server-managed-settings). Cela fait que chaque session commence avec le mode rapide désactivé, obligeant les utilisateurs à l'activer explicitement avec `/fast`.
+Par défaut, le mode rapide persiste entre les sessions : si un utilisateur active le mode rapide, il reste activé dans les sessions futures. Les administrateurs sur les plans [Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise) ou [Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise) peuvent empêcher cela en définissant `fastModePerSessionOptIn` à `true` dans les [paramètres gérés](/fr/settings#settings-files) ou les [paramètres gérés par le serveur](/fr/server-managed-settings). Cela fait que chaque session commence avec le mode rapide désactivé, obligeant les utilisateurs à l'activer explicitement avec `/fast`.
 
 ```json  theme={null}
 {
@@ -147,5 +147,5 @@ Signalez les problèmes ou les commentaires via vos canaux de support Anthropic 
 ## Voir aussi
 
 * [Configuration du modèle](/fr/model-config) : basculer les modèles et ajuster les niveaux d'effort
-* [Gérer les coûts efficacement](/fr/costs) : suivre l'utilisation des tokens et réduire les coûts
+* [Gérer les coûts efficacement](/fr/costs) : suivre l'utilisation des jetons et réduire les coûts
 * [Configuration de la ligne d'état](/fr/statusline) : afficher les informations du modèle et du contexte

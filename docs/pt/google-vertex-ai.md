@@ -12,20 +12,20 @@ Antes de configurar Claude Code com Vertex AI, certifique-se de que você tem:
 
 * Uma conta do Google Cloud Platform (GCP) com faturamento ativado
 * Um projeto GCP com a API Vertex AI ativada
-* Acesso aos modelos Claude desejados (por exemplo, Claude Sonnet 4.5)
+* Acesso aos modelos Claude desejados (por exemplo, Claude Sonnet 4.6)
 * Google Cloud SDK (`gcloud`) instalado e configurado
 * Cota alocada na região GCP desejada
 
-## Configuração de região
-
-Claude Code pode ser usado com endpoints globais e regionais do Vertex AI [global](https://cloud.google.com/blog/products/ai-machine-learning/global-endpoint-for-claude-models-generally-available-on-vertex-ai).
-
 <Note>
-  O Vertex AI pode não suportar os modelos padrão do Claude Code em todas as regiões. Você pode precisar mudar para uma [região ou modelo suportado](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations#genai-partner-models).
+  Se você está implantando Claude Code para vários usuários, [fixe suas versões de modelo](#5-pin-model-versions) para evitar problemas quando Anthropic lançar novos modelos.
 </Note>
 
+## Configuração de Região
+
+Claude Code pode ser usado com endpoints [globais](https://cloud.google.com/blog/products/ai-machine-learning/global-endpoint-for-claude-models-generally-available-on-vertex-ai) e regionais do Vertex AI.
+
 <Note>
-  O Vertex AI pode não suportar os modelos padrão do Claude Code em endpoints globais. Você pode precisar mudar para um endpoint regional ou [modelo suportado](https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-partner-models#supported_models).
+  Vertex AI pode não suportar os modelos padrão do Claude Code em todas as [regiões](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations#genai-partner-models) ou em [endpoints globais](https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-partner-models#supported_models). Você pode precisar mudar para uma região suportada, usar um endpoint regional ou especificar um modelo suportado.
 </Note>
 
 ## Configuração
@@ -48,7 +48,7 @@ Solicite acesso aos modelos Claude no Vertex AI:
 
 1. Navegue até o [Vertex AI Model Garden](https://console.cloud.google.com/vertex-ai/model-garden)
 2. Procure por modelos "Claude"
-3. Solicite acesso aos modelos Claude desejados (por exemplo, Claude Sonnet 4.5)
+3. Solicite acesso aos modelos Claude desejados (por exemplo, Claude Sonnet 4.6)
 4. Aguarde a aprovação (pode levar 24-48 horas)
 
 ### 3. Configurar credenciais GCP
@@ -85,31 +85,35 @@ export VERTEX_REGION_CLAUDE_4_0_SONNET=us-east5
 export VERTEX_REGION_CLAUDE_4_1_OPUS=europe-west1
 ```
 
-<Note>
-  [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) é automaticamente suportado quando você especifica o sinalizador efêmero `cache_control`. Para desativá-lo, defina `DISABLE_PROMPT_CACHING=1`. Para limites de taxa aumentados, entre em contato com o suporte do Google Cloud.
-</Note>
+[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) é automaticamente suportado quando você especifica a flag efêmera `cache_control`. Para desativá-lo, defina `DISABLE_PROMPT_CACHING=1`. Para limites de taxa aumentados, entre em contato com o suporte do Google Cloud. Ao usar Vertex AI, os comandos `/login` e `/logout` são desativados, pois a autenticação é tratada através das credenciais do Google Cloud.
 
-<Note>
-  Ao usar Vertex AI, os comandos `/login` e `/logout` são desativados, pois a autenticação é tratada através de credenciais do Google Cloud.
-</Note>
+### 5. Fixar versões de modelo
 
-### 5. Configuração de modelo
+<Warning>
+  Fixe versões de modelo específicas para cada implantação. Se você usar aliases de modelo (`sonnet`, `opus`, `haiku`) sem fixar, Claude Code pode tentar usar uma versão de modelo mais recente que não está ativada no seu projeto Vertex AI, quebrando usuários existentes quando Anthropic lançar atualizações.
+</Warning>
 
-Claude Code usa estes modelos padrão para Vertex AI:
-
-| Tipo de modelo        | Valor padrão                 |
-| :-------------------- | :--------------------------- |
-| Modelo primário       | `claude-sonnet-4-5@20250929` |
-| Modelo pequeno/rápido | `claude-haiku-4-5@20251001`  |
-
-<Note>
-  Para usuários do Vertex AI, Claude Code não será atualizado automaticamente de Haiku 3.5 para Haiku 4.5. Para mudar manualmente para um modelo Haiku mais recente, defina a variável de ambiente `ANTHROPIC_DEFAULT_HAIKU_MODEL` para o nome completo do modelo (por exemplo, `claude-haiku-4-5@20251001`).
-</Note>
-
-Para personalizar modelos:
+Defina estas variáveis de ambiente para IDs de modelo Vertex AI específicos:
 
 ```bash  theme={null}
-export ANTHROPIC_MODEL='claude-opus-4-1@20250805'
+export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6'
+export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
+export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
+```
+
+Para IDs de modelo atuais e legados, consulte [Visão geral de modelos](https://platform.claude.com/docs/en/about-claude/models/overview). Consulte [Configuração de modelo](/pt/model-config#pin-models-for-third-party-deployments) para a lista completa de variáveis de ambiente.
+
+Claude Code usa estes modelos padrão quando nenhuma variável de fixação está definida:
+
+| Tipo de modelo        | Valor padrão                |
+| :-------------------- | :-------------------------- |
+| Modelo primário       | `claude-sonnet-4-6`         |
+| Modelo pequeno/rápido | `claude-haiku-4-5@20251001` |
+
+Para personalizar modelos ainda mais:
+
+```bash  theme={null}
+export ANTHROPIC_MODEL='claude-opus-4-6'
 export ANTHROPIC_SMALL_FAST_MODEL='claude-haiku-4-5@20251001'
 ```
 
@@ -126,28 +130,26 @@ Para permissões mais restritivas, crie uma função personalizada com apenas as
 Para detalhes, consulte a [documentação de IAM do Vertex](https://cloud.google.com/vertex-ai/docs/general/access-control).
 
 <Note>
-  Recomendamos criar um projeto GCP dedicado para Claude Code para simplificar o rastreamento de custos e controle de acesso.
+  Crie um projeto GCP dedicado para Claude Code para simplificar o rastreamento de custos e controle de acesso.
 </Note>
 
 ## Janela de contexto de 1M de tokens
 
-Claude Sonnet 4 e Sonnet 4.5 suportam a [janela de contexto de 1M de tokens](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window) no Vertex AI.
+Claude Opus 4.6, Sonnet 4.6, Sonnet 4.5 e Sonnet 4 suportam a [janela de contexto de 1M de tokens](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window) no Vertex AI. Claude Code ativa automaticamente a janela de contexto estendida quando você seleciona uma variante de modelo 1M.
 
-<Note>
-  A janela de contexto de 1M de tokens está atualmente em beta. Para usar a janela de contexto estendida, inclua o cabeçalho beta `context-1m-2025-08-07` em suas solicitações do Vertex AI.
-</Note>
+Para ativar a janela de contexto de 1M para seu modelo fixado, acrescente `[1m]` ao ID do modelo. Consulte [Fixar modelos para implantações de terceiros](/pt/model-config#pin-models-for-third-party-deployments) para detalhes.
 
 ## Resolução de problemas
 
 Se você encontrar problemas de cota:
 
-* Verifique as cotas atuais ou solicite um aumento de cota através do [Cloud Console](https://cloud.google.com/docs/quotas/view-manage)
+* Verifique cotas atuais ou solicite aumento de cota através do [Cloud Console](https://cloud.google.com/docs/quotas/view-manage)
 
-Se você encontrar erros "model not found" 404:
+Se você encontrar erros "modelo não encontrado" 404:
 
 * Confirme que o modelo está Ativado no [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden)
 * Verifique se você tem acesso à região especificada
-* Se estiver usando `CLOUD_ML_REGION=global`, verifique se seus modelos suportam endpoints globais no [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) em "Supported features". Para modelos que não suportam endpoints globais, faça um dos seguintes:
+* Se estiver usando `CLOUD_ML_REGION=global`, verifique se seus modelos suportam endpoints globais no [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) em "Recursos suportados". Para modelos que não suportam endpoints globais, faça um dos seguintes:
   * Especifique um modelo suportado via `ANTHROPIC_MODEL` ou `ANTHROPIC_SMALL_FAST_MODEL`, ou
   * Defina um endpoint regional usando variáveis de ambiente `VERTEX_REGION_<MODEL_NAME>`
 

@@ -18,7 +18,7 @@ Un **plugin** è una directory autonoma di componenti che estende Claude Code co
 
 ### Skills
 
-I plugin aggiungono skills a Claude Code, creando scorciatoie `/name` che tu o Claude potete invocare.
+I plugin aggiungono skills a Claude Code, creando scorciatoie `/name` che Lei o Claude potete invocare.
 
 **Posizione**: Directory `skills/` o `commands/` nella radice del plugin
 

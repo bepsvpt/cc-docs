@@ -103,12 +103,12 @@
   </Step>
 </Steps>
 
-若要深入瞭解 plugin 可以執行的操作，包括 hook、agent、MCP server 和 LSP server，請參閱 [Plugin](/zh-TW/plugins)。
+若要深入瞭解 plugin 可以執行的操作，包括 hook、agent、MCP server 和 LSP server，請參閱 [Plugins](/zh-TW/plugins)。
 
 <Note>
   **plugin 如何安裝**：當使用者安裝 plugin 時，Claude Code 會將 plugin 目錄複製到快取位置。這表示 plugin 無法使用 `../shared-utils` 之類的路徑參考其目錄外的檔案，因為這些檔案不會被複製。
 
-  如果您需要在 plugin 之間共享檔案，請使用符號連結（在複製期間會被追蹤）。有關詳細資訊，請參閱 [Plugin 快取和檔案解析](/zh-TW/plugins-reference#plugin-caching-and-file-resolution)。
+  如果您需要在 plugin 之間共享檔案，請使用符號連結（在複製期間會被追蹤）。有關詳細資訊，請參閱 [Plugin caching and file resolution](/zh-TW/plugins-reference#plugin-caching-and-file-resolution)。
 </Note>
 
 ## 建立 marketplace 檔案
@@ -190,18 +190,18 @@
 
 **標準中繼資料欄位：**
 
-| 欄位            | 類型      | 描述                                                                      |
-| :------------ | :------ | :---------------------------------------------------------------------- |
-| `description` | string  | 簡短的 plugin 描述                                                           |
-| `version`     | string  | Plugin 版本                                                               |
-| `author`      | object  | Plugin 作者資訊（`name` 必需，`email` 選用）                                       |
-| `homepage`    | string  | Plugin 首頁或文件 URL                                                        |
-| `repository`  | string  | 原始碼儲存庫 URL                                                              |
-| `license`     | string  | SPDX 授權識別碼（例如，MIT、Apache-2.0）                                           |
-| `keywords`    | array   | 用於 plugin 發現和分類的標籤                                                      |
-| `category`    | string  | Plugin 類別以供組織                                                           |
-| `tags`        | array   | 用於可搜尋性的標籤                                                               |
-| `strict`      | boolean | 控制 `plugin.json` 是否為元件定義的權威（預設值：true）。請參閱下面的 [Strict 模式](#strict-mode)。 |
+| 欄位            | 類型      | 描述                                                                        |
+| :------------ | :------ | :------------------------------------------------------------------------ |
+| `description` | string  | 簡短的 plugin 描述                                                             |
+| `version`     | string  | Plugin 版本                                                                 |
+| `author`      | object  | Plugin 作者資訊（`name` 必需，`email` 選用）                                         |
+| `homepage`    | string  | Plugin 首頁或文件 URL                                                          |
+| `repository`  | string  | 原始碼儲存庫 URL                                                                |
+| `license`     | string  | SPDX 授權識別碼（例如，MIT、Apache-2.0）                                             |
+| `keywords`    | array   | 用於 plugin 發現和分類的標籤                                                        |
+| `category`    | string  | Plugin 類別以供組織                                                             |
+| `tags`        | array   | 用於可搜尋性的標籤                                                                 |
+| `strict`      | boolean | 控制 `plugin.json` 是否為元件定義的權威（預設值：true）。請參閱下面的 [Strict mode](#strict-mode)。 |
 
 **元件配置欄位：**
 
@@ -239,7 +239,7 @@ Plugin 來源告訴 Claude Code 在您的 marketplace 中列出的每個個別 p
 
 ### 相對路徑
 
-對於同一儲存庫中的 plugin：
+對於同一儲存庫中的 plugin，使用以 `./` 開頭的路徑：
 
 ```json  theme={null}
 {
@@ -247,6 +247,8 @@ Plugin 來源告訴 Claude Code 在您的 marketplace 中列出的每個個別 p
   "source": "./plugins/my-plugin"
 }
 ```
+
+路徑相對於 marketplace 根目錄解析，即包含 `.claude-plugin/` 的目錄。在上面的範例中，`./plugins/my-plugin` 指向 `<repo>/plugins/my-plugin`，即使 `marketplace.json` 位於 `<repo>/.claude-plugin/marketplace.json`。不要使用 `../` 爬出 `.claude-plugin/`。
 
 <Note>
   相對路徑僅在使用者透過 Git（GitHub、GitLab 或 git URL）新增您的 marketplace 時有效。如果使用者透過直接 URL 新增您的 marketplace 到 `marketplace.json` 檔案，相對路徑將無法正確解析。對於基於 URL 的分發，請改用 GitHub、npm 或 git URL 來源。有關詳細資訊，請參閱[疑難排解](#plugins-with-relative-paths-fail-in-url-based-marketplaces)。
@@ -310,11 +312,11 @@ Plugin 來源告訴 Claude Code 在您的 marketplace 中列出的每個個別 p
 }
 ```
 
-| 欄位    | 類型     | 描述                                |
-| :---- | :----- | :-------------------------------- |
-| `url` | string | 必需。完整的 git 儲存庫 URL（必須以 `.git` 結尾） |
-| `ref` | string | 選用。Git 分支或標籤（預設為儲存庫預設分支）          |
-| `sha` | string | 選用。完整的 40 字元 git 提交 SHA 以固定到確切版本  |
+| 欄位    | 類型     | 描述                                                                                                   |
+| :---- | :----- | :--------------------------------------------------------------------------------------------------- |
+| `url` | string | 必需。完整的 git 儲存庫 URL（`https://` 或 `git@`）。`.git` 後綴是選用的，因此 Azure DevOps 和 AWS CodeCommit URL 不含後綴也可以運作 |
+| `ref` | string | 選用。Git 分支或標籤（預設為儲存庫預設分支）                                                                             |
+| `sha` | string | 選用。完整的 40 字元 git 提交 SHA 以固定到確切版本                                                                     |
 
 ### Git 子目錄
 
@@ -457,9 +459,9 @@ Plugin 來源告訴 Claude Code 在您的 marketplace 中列出的每個個別 p
 
 * **`commands` 和 `agents`**：您可以指定多個目錄或個別檔案。路徑相對於 plugin 根目錄。
 * **`${CLAUDE_PLUGIN_ROOT}`**：在 hook 和 MCP server 配置中使用此變數來參考 plugin 安裝目錄內的檔案。這是必要的，因為 plugin 在安裝時被複製到快取位置。
-* **`strict: false`**：由於此設定為 false，plugin 不需要自己的 `plugin.json`。marketplace 項目定義所有內容。請參閱下面的 [Strict 模式](#strict-mode)。
+* **`strict: false`**：由於此設定為 false，plugin 不需要自己的 `plugin.json`。marketplace 項目定義所有內容。請參閱下面的 [Strict mode](#strict-mode)。
 
-### Strict 模式
+### Strict mode
 
 `strict` 欄位控制 `plugin.json` 是否為元件定義（命令、agent、hook、skill、MCP server、輸出樣式）的權威。
 
@@ -554,7 +556,7 @@ export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 }
 ```
 
-有關完整的配置選項，請參閱 [Plugin 設定](/zh-TW/settings#plugin-settings)。
+有關完整的配置選項，請參閱 [Plugin settings](/zh-TW/settings#plugin-settings)。
 
 ### 受管 marketplace 限制
 
@@ -627,6 +629,10 @@ export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 ```
 
 使用 `".*"` 作為 `pathPattern` 以允許任何檔案系統路徑，同時仍使用 `hostPattern` 控制網路來源。
+
+<Note>
+  `strictKnownMarketplaces` 限制使用者可以新增的內容，但不會自行註冊 marketplace。若要在不需要使用者執行 `/plugin marketplace add` 的情況下自動提供允許的 marketplace，請將其與同一 `managed-settings.json` 中的 [`extraKnownMarketplaces`](/zh-TW/settings#extraknownmarketplaces) 配對。請參閱[同時使用兩者](/zh-TW/settings#strictknownmarketplaces)。
+</Note>
 
 #### 限制如何運作
 
@@ -753,7 +759,7 @@ claude plugin validate .
 /plugin install test-plugin@marketplace-name
 ```
 
-有關完整的 plugin 測試工作流程，請參閱[在本機測試您的 plugin](/zh-TW/plugins#test-your-plugins-locally)。有關技術疑難排解，請參閱 [Plugin 參考](/zh-TW/plugins-reference)。
+有關完整的 plugin 測試工作流程，請參閱[在本機測試您的 plugin](/zh-TW/plugins#test-your-plugins-locally)。有關技術疑難排解，請參閱 [Plugins reference](/zh-TW/plugins-reference)。
 
 ## 疑難排解
 
@@ -772,12 +778,12 @@ claude plugin validate .
 
 從您的 marketplace 目錄執行 `claude plugin validate .` 或 `/plugin validate .` 以檢查問題。常見錯誤：
 
-| 錯誤                                                | 原因               | 解決方案                                       |
-| :------------------------------------------------ | :--------------- | :----------------------------------------- |
-| `File not found: .claude-plugin/marketplace.json` | 缺少 manifest      | 使用必需欄位建立 `.claude-plugin/marketplace.json` |
-| `Invalid JSON syntax: Unexpected token...`        | JSON 語法錯誤        | 檢查缺少的逗號、多餘的逗號或未引用的字串                       |
-| `Duplicate plugin name "x" found in marketplace`  | 兩個 plugin 共享相同名稱 | 為每個 plugin 指定唯一的 `name` 值                  |
-| `plugins[0].source: Path traversal not allowed`   | 來源路徑包含 `..`      | 使用相對於 marketplace 根目錄的路徑，不含 `..`           |
+| 錯誤                                                | 原因               | 解決方案                                                        |
+| :------------------------------------------------ | :--------------- | :---------------------------------------------------------- |
+| `File not found: .claude-plugin/marketplace.json` | 缺少 manifest      | 使用必需欄位建立 `.claude-plugin/marketplace.json`                  |
+| `Invalid JSON syntax: Unexpected token...`        | JSON 語法錯誤        | 檢查缺少的逗號、多餘的逗號或未引用的字串                                        |
+| `Duplicate plugin name "x" found in marketplace`  | 兩個 plugin 共享相同名稱 | 為每個 plugin 指定唯一的 `name` 值                                   |
+| `plugins[0].source: Path contains ".."`           | 來源路徑包含 `..`      | 使用相對於 marketplace 根目錄的路徑，不含 `..`。請參閱[相對路徑](#relative-paths) |
 
 **警告**（非阻止性）：
 
@@ -847,14 +853,14 @@ export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000  # 5 分鐘
 
 **原因**：Plugin 被複製到快取目錄而不是就地使用。參考 plugin 目錄外檔案的路徑（例如 `../shared-utils`）無法運作，因為這些檔案不會被複製。
 
-**解決方案**：有關解決方案（包括符號連結和目錄重組），請參閱 [Plugin 快取和檔案解析](/zh-TW/plugins-reference#plugin-caching-and-file-resolution)。
+**解決方案**：有關解決方案（包括符號連結和目錄重組），請參閱 [Plugin caching and file resolution](/zh-TW/plugins-reference#plugin-caching-and-file-resolution)。
 
-有關其他偵錯工具和常見問題，請參閱[偵錯和開發工具](/zh-TW/plugins-reference#debugging-and-development-tools)。
+有關其他偵錯工具和常見問題，請參閱[Debugging and development tools](/zh-TW/plugins-reference#debugging-and-development-tools)。
 
 ## 另請參閱
 
 * [探索並安裝預先建立的 plugin](/zh-TW/discover-plugins) - 從現有 marketplace 安裝 plugin
-* [Plugin](/zh-TW/plugins) - 建立您自己的 plugin
-* [Plugin 參考](/zh-TW/plugins-reference) - 完整的技術規格和架構
-* [Plugin 設定](/zh-TW/settings#plugin-settings) - Plugin 配置選項
-* [strictKnownMarketplaces 參考](/zh-TW/settings#strictknownmarketplaces) - 受管 marketplace 限制
+* [Plugins](/zh-TW/plugins) - 建立您自己的 plugin
+* [Plugins reference](/zh-TW/plugins-reference) - 完整的技術規格和架構
+* [Plugin settings](/zh-TW/settings#plugin-settings) - Plugin 配置選項
+* [strictKnownMarketplaces reference](/zh-TW/settings#strictknownmarketplaces) - 受管 marketplace 限制

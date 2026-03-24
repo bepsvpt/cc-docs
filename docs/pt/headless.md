@@ -77,7 +77,7 @@ claude -p "Extract the main function names from auth.py" \
   ```
 </Tip>
 
-### Respostas de streaming
+### Respostas de stream
 
 Use `--output-format stream-json` com `--verbose` e `--include-partial-messages` para receber tokens conforme são gerados. Cada linha é um objeto JSON representando um evento:
 
@@ -115,7 +115,7 @@ claude -p "Look at my staged changes and create an appropriate commit" \
 O sinalizador `--allowedTools` usa [sintaxe de regra de permissão](/pt/settings#permission-rule-syntax). O ` *` à direita habilita correspondência de prefixo, então `Bash(git diff *)` permite qualquer comando começando com `git diff`. O espaço antes de `*` é importante: sem ele, `Bash(git diff*)` também corresponderia a `git diff-index`.
 
 <Note>
-  Skills invocadas pelo usuário como `/commit` e [comandos integrados](/pt/interactive-mode#built-in-commands) estão disponíveis apenas no modo interativo. No modo `-p`, descreva a tarefa que você deseja realizar.
+  [skills](/pt/skills) invocadas pelo usuário como `/commit` e [comandos integrados](/pt/commands) estão disponíveis apenas no modo interativo. No modo `-p`, descreva a tarefa que você deseja realizar.
 </Note>
 
 ### Personalizar o prompt do sistema

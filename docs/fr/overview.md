@@ -10,7 +10,7 @@ Claude Code est un assistant de codage alimenté par l'IA qui vous aide à crée
 
 ## Commencer
 
-Choisissez votre environnement pour commencer. La plupart des surfaces nécessitent un [abonnement Claude](https://claude.com/pricing) ou un compte [Anthropic Console](https://console.anthropic.com/). Le CLI Terminal et VS Code prennent également en charge les [fournisseurs tiers](/fr/third-party-integrations).
+Choisissez votre environnement pour commencer. La plupart des surfaces nécessitent un [abonnement Claude](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=overview_pricing) ou un compte [Anthropic Console](https://console.anthropic.com/). Le CLI Terminal et VS Code prennent également en charge les [fournisseurs tiers](/fr/third-party-integrations).
 
 <Tabs>
   <Tab title="Terminal">
@@ -100,7 +100,7 @@ Choisissez votre environnement pour commencer. La plupart des surfaces nécessit
     * [Windows](https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs) (x64)
     * [Windows ARM64](https://claude.ai/api/desktop/win32/arm64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs) (sessions distantes uniquement)
 
-    Après l'installation, lancez Claude, connectez-vous et cliquez sur l'onglet **Code** pour commencer à coder. Un [abonnement payant](https://claude.com/pricing) est requis.
+    Après l'installation, lancez Claude, connectez-vous et cliquez sur l'onglet **Code** pour commencer à coder. Un [abonnement payant](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=overview_desktop_pricing) est requis.
 
     [En savoir plus sur l'application de bureau →](/fr/desktop-quickstart)
   </Tab>
@@ -155,7 +155,7 @@ Voici quelques-unes des façons dont vous pouvez utiliser Claude Code :
     Le [Model Context Protocol (MCP)](/fr/mcp) est une norme ouverte pour connecter les outils d'IA aux sources de données externes. Avec MCP, Claude Code peut lire vos documents de conception dans Google Drive, mettre à jour les tickets dans Jira, extraire les données de Slack ou utiliser vos outils personnalisés.
   </Accordion>
 
-  <Accordion title="Personnaliser avec des instructions, des compétences et des hooks" icon="sliders">
+  <Accordion title="Personnaliser avec des instructions, des skills et des hooks" icon="sliders">
     [`CLAUDE.md`](/fr/memory) est un fichier markdown que vous ajoutez à la racine de votre projet que Claude Code lit au début de chaque session. Utilisez-le pour définir les normes de codage, les décisions architecturales, les bibliothèques préférées et les listes de contrôle d'examen. Claude construit également une [mémoire automatique](/fr/memory#auto-memory) au fur et à mesure qu'il travaille, en sauvegardant les apprentissages comme les commandes de construction et les informations de débogage entre les sessions sans que vous ayez à écrire quoi que ce soit.
 
     Créez des [commandes personnalisées](/fr/skills) pour empaqueter les flux de travail répétables que votre équipe peut partager, comme `/review-pr` ou `/deploy-staging`.
@@ -166,11 +166,11 @@ Voici quelques-unes des façons dont vous pouvez utiliser Claude Code :
   <Accordion title="Exécuter des équipes d'agents et créer des agents personnalisés" icon="users">
     Lancez [plusieurs agents Claude Code](/fr/sub-agents) qui travaillent sur différentes parties d'une tâche simultanément. Un agent principal coordonne le travail, assigne les sous-tâches et fusionne les résultats.
 
-    Pour les flux de travail entièrement personnalisés, le [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview) vous permet de créer vos propres agents alimentés par les outils et les capacités de Claude Code, avec un contrôle total sur l'orchestration, l'accès aux outils et les permissions.
+    Pour les flux de travail entièrement personnalisés, le [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview) vous permet de créer vos propres agents alimentés par les outils et capacités de Claude Code, avec un contrôle total sur l'orchestration, l'accès aux outils et les permissions.
   </Accordion>
 
-  <Accordion title="Canaliser, scripter et automatiser avec le CLI" icon="terminal">
-    Claude Code est composable et suit la philosophie Unix. Canalisez les journaux dedans, exécutez-le en CI ou enchaînez-le avec d'autres outils :
+  <Accordion title="Piping, scripts et automatisation avec le CLI" icon="terminal">
+    Claude Code est composable et suit la philosophie Unix. Canalisez les journaux dedans, exécutez-le en CI ou chaînez-le avec d'autres outils :
 
     ```bash  theme={null}
     # Monitor logs and get alerted

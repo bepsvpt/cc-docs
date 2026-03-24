@@ -58,7 +58,7 @@ remind me at 3pm to push the release branch
 in 45 minutes, check whether the integration tests passed
 ```
 
-Claude heftet die Feuerzeit an eine bestimmte Minute und Stunde mit einem Cron-Ausdruck an und bestätigt, wann es läuft.
+Claude heftet die Ausführungszeit an eine bestimmte Minute und Stunde mit einem Cron-Ausdruck an und bestätigt, wann sie läuft.
 
 ## Verwalten Sie geplante Aufgaben
 
@@ -90,12 +90,12 @@ Alle Zeiten werden in Ihrer lokalen Zeitzone interpretiert. Ein Cron-Ausdruck wi
 
 ### Jitter
 
-Um zu vermeiden, dass jede Sitzung die API zum gleichen Wanduhrzeitpunkt trifft, fügt der Scheduler einen kleinen deterministischen Offset zu Feuerzeiten hinzu:
+Um zu vermeiden, dass jede Sitzung die API zum gleichen Wanduhrzeitpunkt trifft, fügt der Scheduler einen kleinen deterministischen Offset zu Ausführungszeiten hinzu:
 
 * Wiederkehrende Aufgaben läuft bis zu 10% ihrer Periode zu spät, begrenzt auf 15 Minuten. Ein stündlicher Job könnte überall von `:00` bis `:06` laufen.
 * Einmalige Aufgaben, die für die Ober- oder Unterseite der Stunde geplant sind, läuft bis zu 90 Sekunden früh.
 
-Der Offset wird von der Task-ID abgeleitet, daher erhält die gleiche Aufgabe immer den gleichen Offset. Wenn genaue Zeitpunkte wichtig sind, wählen Sie eine Minute, die nicht `:00` oder `:30` ist, zum Beispiel `3 9 * * *` statt `0 9 * * *`, und der einmalige Jitter wird nicht angewendet.
+Der Offset wird von der Aufgaben-ID abgeleitet, daher erhält die gleiche Aufgabe immer den gleichen Offset. Wenn genaue Zeitangaben wichtig sind, wählen Sie eine Minute, die nicht `:00` oder `:30` ist, zum Beispiel `3 9 * * *` statt `0 9 * * *`, und der einmalige Jitter wird nicht angewendet.
 
 ### Ablauf nach drei Tagen
 
@@ -114,13 +114,13 @@ Wiederkehrende Aufgaben verfallen automatisch 3 Tage nach der Erstellung. Die Au
 | `0 9 * * 1-5`  | Wochentags um 9 Uhr lokal     |
 | `30 14 15 3 *` | 15. März um 14:30 Uhr lokal   |
 
-Der Wochentag verwendet `0` oder `7` für Sonntag bis `6` für Samstag. Erweiterte Syntax wie `L`, `W`, `?` und Name-Aliase wie `MON` oder `JAN` werden nicht unterstützt.
+Der Wochentag verwendet `0` oder `7` für Sonntag bis `6` für Samstag. Erweiterte Syntax wie `L`, `W`, `?` und Namensaliase wie `MON` oder `JAN` werden nicht unterstützt.
 
 Wenn sowohl der Tag des Monats als auch der Wochentag eingeschränkt sind, stimmt ein Datum überein, wenn eines der Felder übereinstimmt. Dies folgt der Standard-Vixie-Cron-Semantik.
 
 ## Deaktivieren Sie geplante Aufgaben
 
-Setzen Sie `CLAUDE_CODE_DISABLE_CRON=1` in Ihrer Umgebung, um den Scheduler vollständig zu deaktivieren. Die Cron-Tools und `/loop` werden nicht verfügbar, und alle bereits geplanten Aufgaben stoppen das Läufen. Siehe [Umgebungsvariablen](/de/settings#environment-variables) für die vollständige Liste der Deaktivierungsflags.
+Setzen Sie `CLAUDE_CODE_DISABLE_CRON=1` in Ihrer Umgebung, um den Scheduler vollständig zu deaktivieren. Die Cron-Tools und `/loop` werden nicht verfügbar, und alle bereits geplanten Aufgaben stoppen das Läufen. Siehe [Umgebungsvariablen](/de/env-vars) für die vollständige Liste der Deaktivierungsflags.
 
 ## Einschränkungen
 

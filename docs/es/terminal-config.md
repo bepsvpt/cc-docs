@@ -18,7 +18,7 @@ Tienes varias opciones para ingresar saltos de línea en Claude Code:
 
 * **Escape rápido**: Escribe `\` seguido de Enter para crear una nueva línea
 * **Shift+Enter**: Funciona de forma nativa en iTerm2, WezTerm, Ghostty y Kitty
-* **Atajo de teclado**: Configura un enlace de tecla para insertar una nueva línea en otras terminales
+* **Atajo de teclado**: Configura un atajo de teclado para insertar una nueva línea en otras terminales
 
 **Configura Shift+Enter para otras terminales**
 
@@ -42,22 +42,23 @@ Ejecuta `/terminal-setup` dentro de Claude Code para configurar automáticamente
 
 ### Configuración de notificaciones
 
-Nunca te pierdas cuando Claude completa una tarea con la configuración adecuada de notificaciones:
+Cuando Claude termina de trabajar y está esperando tu entrada, dispara un evento de notificación. Puedes mostrar este evento como una notificación de escritorio a través de tu terminal o ejecutar lógica personalizada con [ganchos de notificación](/es/hooks#notification).
 
-#### Notificaciones del sistema iTerm 2
+#### Notificaciones de terminal
 
-Para alertas de iTerm 2 cuando se completan tareas:
+Kitty y Ghostty admiten notificaciones de escritorio sin configuración adicional. iTerm 2 requiere configuración:
 
-1. Abre Preferencias de iTerm 2
-2. Navega a Perfiles → Terminal
-3. Habilita "Silenciar campana" y Filtrar Alertas → "Enviar alertas generadas por secuencia de escape"
-4. Establece tu retraso de notificación preferido
+1. Abre Configuración de iTerm 2 → Perfiles → Terminal
+2. Habilita "Alertas del Centro de Notificaciones"
+3. Haz clic en "Filtrar Alertas" y marca "Enviar alertas generadas por secuencia de escape"
 
-Ten en cuenta que estas notificaciones son específicas de iTerm 2 y no están disponibles en la Terminal predeterminada de macOS.
+Si las notificaciones no aparecen, verifica que tu aplicación de terminal tenga permisos de notificación en la configuración de tu sistema operativo.
 
-#### Ganchos de notificación personalizados
+Otras terminales, incluyendo la Terminal predeterminada de macOS, no admiten notificaciones nativas. Usa [ganchos de notificación](/es/hooks#notification) en su lugar.
 
-Para manejo avanzado de notificaciones, puedes crear [ganchos de notificación](/es/hooks#notification) para ejecutar tu propia lógica.
+#### Ganchos de notificación
+
+Para agregar comportamiento personalizado cuando se disparen notificaciones, como reproducir un sonido o enviar un mensaje, configura un [gancho de notificación](/es/hooks#notification). Los ganchos se ejecutan junto con las notificaciones de terminal, no como reemplazo.
 
 ### Manejo de entradas grandes
 
@@ -67,9 +68,9 @@ Cuando trabajes con código extenso o instrucciones largas:
 * **Usa flujos de trabajo basados en archivos**: Escribe contenido en un archivo y pide a Claude que lo lea
 * **Ten en cuenta las limitaciones de VS Code**: La terminal de VS Code es particularmente propensa a truncar pegados largos
 
-### Modo Vim
+### Vim Mode
 
-Claude Code admite un subconjunto de enlaces de teclas Vim que se pueden habilitar con `/vim` o configurar a través de `/config`.
+Claude Code admite un subconjunto de atajos de teclado Vim que se pueden habilitar con `/vim` o configurar a través de `/config`.
 
 El subconjunto admitido incluye:
 

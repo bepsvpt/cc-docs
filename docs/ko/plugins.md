@@ -281,7 +281,9 @@ LSP (Language Server Protocol) 플러그인은 Claude에 실시간 코드 인텔
 claude --plugin-dir ./my-plugin
 ```
 
-플러그인을 변경할 때 `/reload-plugins`를 실행하여 다시 시작하지 않고 업데이트를 적용합니다. LSP server 구성 변경은 여전히 전체 다시 시작이 필요합니다. 플러그인 구성 요소를 테스트합니다:
+`--plugin-dir` 플러그인이 설치된 마켓플레이스 플러그인과 동일한 이름을 가진 경우 로컬 복사본이 해당 세션에 우선합니다. 이를 통해 먼저 제거하지 않고도 이미 설치한 플러그인의 변경 사항을 테스트할 수 있습니다. 관리 설정에 의해 강제로 활성화된 마켓플레이스 플러그인은 유일한 예외이며 재정의할 수 없습니다.
+
+플러그인을 변경할 때 `/reload-plugins`를 실행하여 다시 시작하지 않고 업데이트를 적용합니다. 이는 명령, skills, agents, hooks, 플러그인 MCP servers, 플러그인 LSP servers를 다시 로드합니다. 플러그인 구성 요소를 테스트합니다:
 
 * `/plugin-name:skill-name`으로 skills를 시도해보세요
 * agents가 `/agents`에 나타나는지 확인하세요

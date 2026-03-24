@@ -25,7 +25,9 @@ Halaman ini mencakup:
 
 ## Cara kerja ulasan
 
-Setelah admin [mengaktifkan Code Review](#set-up-code-review) untuk organisasi Anda, ulasan berjalan secara otomatis ketika permintaan tarik dibuka atau diperbarui. Beberapa agen menganalisis diff dan kode sekitarnya secara paralel pada infrastruktur Anthropic. Setiap agen mencari kelas masalah yang berbeda, kemudian langkah verifikasi memeriksa kandidat terhadap perilaku kode aktual untuk menyaring positif palsu. Hasilnya dideduplikasi, diurutkan berdasarkan tingkat keparahan, dan diposting sebagai komentar sebaris pada baris spesifik tempat masalah ditemukan. Jika tidak ada masalah yang ditemukan, Claude memposting komentar konfirmasi singkat pada PR.
+Setelah admin [mengaktifkan Code Review](#set-up-code-review) untuk organisasi Anda, ulasan dipicu ketika PR dibuka, pada setiap push, atau ketika diminta secara manual, tergantung pada perilaku yang dikonfigurasi repositori. Mengomentari `@claude review` [memulai ulasan pada PR](#manually-trigger-reviews) dalam mode apa pun.
+
+Ketika ulasan berjalan, beberapa agen menganalisis diff dan kode sekitarnya secara paralel pada infrastruktur Anthropic. Setiap agen mencari kelas masalah yang berbeda, kemudian langkah verifikasi memeriksa kandidat terhadap perilaku kode aktual untuk menyaring positif palsu. Hasilnya dideduplikasi, diurutkan berdasarkan tingkat keparahan, dan diposting sebagai komentar sebaris pada baris spesifik tempat masalah ditemukan. Jika tidak ada masalah yang ditemukan, Claude memposting komentar konfirmasi singkat pada PR.
 
 Ulasan diskalakan dalam biaya dengan ukuran dan kompleksitas PR, selesai rata-rata dalam 20 menit. Admin dapat memantau aktivitas ulasan dan pengeluaran melalui [dasbor analitik](#view-usage).
 
@@ -41,7 +43,7 @@ Setiap temuan diberi tag dengan tingkat keparahan:
 
 Temuan mencakup bagian penalaran yang dapat diperluas yang dapat Anda perluas untuk memahami mengapa Claude menandai masalah dan bagaimana Claude memverifikasi masalah.
 
-### Apa yang diperiksa Code Review
+### Apa yang Code Review periksa
 
 Secara default, Code Review berfokus pada kebenaran: bug yang akan merusak produksi, bukan preferensi pemformatan atau cakupan pengujian yang hilang. Anda dapat memperluas apa yang diperiksa dengan [menambahkan file panduan](#customize-reviews) ke repositori Anda.
 
@@ -73,31 +75,45 @@ Admin mengaktifkan Code Review sekali untuk organisasi dan memilih repositori ma
   </Step>
 
   <Step title="Atur pemicu ulasan per repo">
-    Setelah penyiapan selesai, bagian Code Review menampilkan repositori Anda dalam tabel. Untuk setiap repositori, gunakan dropdown untuk memilih kapan ulasan berjalan:
+    Setelah penyiapan selesai, bagian Code Review menampilkan repositori Anda dalam tabel. Untuk setiap repositori, gunakan dropdown **Review Behavior** untuk memilih kapan ulasan berjalan:
 
-    * **Setelah pembuatan PR saja**: ulasan berjalan sekali ketika PR dibuka atau ditandai siap untuk ditinjau
-    * **Setelah setiap push ke cabang PR**: ulasan berjalan pada setiap push, menangkap masalah baru saat PR berkembang dan secara otomatis menyelesaikan thread ketika Anda memperbaiki masalah yang ditandai
+    * **Once after PR creation**: ulasan berjalan sekali ketika PR dibuka atau ditandai siap untuk ditinjau
+    * **After every push**: ulasan berjalan pada setiap push ke cabang PR, menangkap masalah baru saat PR berkembang dan secara otomatis menyelesaikan utas ketika Anda memperbaiki masalah yang ditandai
+    * **Manual**: ulasan dimulai hanya ketika seseorang [mengomentari `@claude review` pada PR](#manually-trigger-reviews); push berikutnya ke PR tersebut kemudian ditinjau secara otomatis
 
-    Meninjau pada setiap push menjalankan lebih banyak ulasan dan biaya lebih banyak. Mulai dengan pembuatan PR saja dan beralih ke on-push untuk repo tempat Anda menginginkan cakupan berkelanjutan dan pembersihan thread otomatis.
+    Meninjau pada setiap push menjalankan ulasan paling banyak dan biaya paling banyak. Mode manual berguna untuk repo lalu lintas tinggi di mana Anda ingin memilih PR tertentu untuk ditinjau, atau hanya mulai meninjau PR Anda setelah siap.
   </Step>
 </Steps>
 
 Tabel repositori juga menampilkan biaya rata-rata per ulasan untuk setiap repo berdasarkan aktivitas terbaru. Gunakan menu tindakan baris untuk mengaktifkan atau menonaktifkan Code Review per repositori, atau untuk menghapus repositori sepenuhnya.
 
-Untuk memverifikasi penyiapan, buka PR pengujian. Jalankan pemeriksaan bernama **Claude Code Review** muncul dalam beberapa menit. Jika tidak, konfirmasi bahwa repositori terdaftar di pengaturan admin Anda dan Claude GitHub App memiliki akses ke repositori tersebut.
+Untuk memverifikasi penyiapan, buka PR pengujian. Jika Anda memilih pemicu otomatis, jalankan pemeriksaan bernama **Claude Code Review** muncul dalam beberapa menit. Jika Anda memilih Manual, komentari `@claude review` pada PR untuk memulai ulasan pertama. Jika tidak ada jalankan pemeriksaan yang muncul, konfirmasi repositori terdaftar di pengaturan admin Anda dan Claude GitHub App memiliki akses ke repositori tersebut.
+
+## Pemicu ulasan secara manual
+
+Komentari `@claude review` pada permintaan tarik untuk memulai ulasan dan memilih PR tersebut ke dalam ulasan yang dipicu push ke depannya. Ini berfungsi terlepas dari pemicu yang dikonfigurasi repositori: gunakan untuk memilih PR tertentu ke dalam ulasan dalam mode Manual, atau untuk mendapatkan ulasan kembali segera di mode lain. Bagaimanapun, push ke PR tersebut memicu ulasan dari saat itu.
+
+Agar komentar memicu ulasan:
+
+* Posting sebagai komentar PR tingkat atas, bukan komentar sebaris pada baris diff
+* Letakkan `@claude review` di awal komentar
+* Anda harus memiliki akses pemilik, anggota, atau kolaborator ke repositori
+* PR harus terbuka dan bukan draf
+
+Jika ulasan sudah berjalan pada PR tersebut, permintaan antri sampai ulasan yang sedang berlangsung selesai. Anda dapat memantau kemajuan melalui jalankan pemeriksaan pada PR.
 
 ## Sesuaikan ulasan
 
 Code Review membaca dua file dari repositori Anda untuk memandu apa yang ditandai. Keduanya bersifat aditif di atas pemeriksaan kebenaran default:
 
 * **`CLAUDE.md`**: instruksi proyek bersama yang digunakan Claude Code untuk semua tugas, bukan hanya ulasan. Gunakan ketika panduan juga berlaku untuk sesi Claude Code interaktif.
-* **`REVIEW.md`**: panduan khusus ulasan, dibaca secara eksklusif selama ulasan kode. Gunakan untuk aturan yang ketat tentang apa yang harus ditandai atau dilewati selama ulasan dan akan mengacaukan `CLAUDE.md` umum Anda.
+* **`REVIEW.md`**: panduan khusus ulasan, dibaca secara eksklusif selama ulasan kode. Gunakan untuk aturan yang ketat tentang apa yang ditandai atau dilewati selama ulasan dan akan mengacaukan `CLAUDE.md` umum Anda.
 
 ### CLAUDE.md
 
-Code Review membaca file `CLAUDE.md` repositori Anda dan memperlakukan pelanggaran yang baru diperkenalkan sebagai temuan tingkat nit. Ini bekerja secara dua arah: jika PR Anda mengubah kode dengan cara yang membuat pernyataan `CLAUDE.md` ketinggalan zaman, Claude menandai bahwa dokumen perlu diperbarui juga.
+Code Review membaca file `CLAUDE.md` repositori Anda dan memperlakukan pelanggaran yang baru diperkenalkan sebagai temuan tingkat nit. Ini berfungsi dua arah: jika PR Anda mengubah kode dengan cara yang membuat pernyataan `CLAUDE.md` ketinggalan zaman, Claude menandai bahwa dokumen perlu diperbarui juga.
 
-Claude membaca file `CLAUDE.md` di setiap tingkat hierarki direktori Anda, sehingga aturan dalam `CLAUDE.md` subdirektori hanya berlaku untuk file di bawah jalur tersebut. Lihat [dokumentasi memori](/id/memory) untuk lebih lanjut tentang cara kerja `CLAUDE.md`.
+Claude membaca file `CLAUDE.md` di setiap tingkat hierarki direktori Anda, jadi aturan di `CLAUDE.md` subdirektori hanya berlaku untuk file di bawah jalur tersebut. Lihat [dokumentasi memori](/id/memory) untuk lebih lanjut tentang cara kerja `CLAUDE.md`.
 
 Untuk panduan khusus ulasan yang tidak ingin Anda terapkan pada sesi Claude Code umum, gunakan [`REVIEW.md`](#review-md) sebagai gantinya.
 
@@ -135,12 +151,12 @@ Claude secara otomatis menemukan `REVIEW.md` di akar repositori. Tidak ada konfi
 
 Buka [claude.ai/analytics/code-review](https://claude.ai/analytics/code-review) untuk melihat aktivitas Code Review di seluruh organisasi Anda. Dasbor menampilkan:
 
-| Bagian             | Apa yang ditampilkan                                                                           |
-| :----------------- | :--------------------------------------------------------------------------------------------- |
-| PRs ditinjau       | Hitungan harian permintaan tarik yang ditinjau selama rentang waktu yang dipilih               |
-| Biaya mingguan     | Pengeluaran mingguan pada Code Review                                                          |
-| Umpan balik        | Hitungan komentar ulasan yang secara otomatis diselesaikan karena pengembang mengatasi masalah |
-| Rincian repositori | Hitungan per-repo dari PR yang ditinjau dan komentar yang diselesaikan                         |
+| Bagian               | Apa yang ditampilkan                                                                           |
+| :------------------- | :--------------------------------------------------------------------------------------------- |
+| PRs reviewed         | Hitungan harian permintaan tarik yang ditinjau selama rentang waktu yang dipilih               |
+| Cost weekly          | Pengeluaran mingguan pada Code Review                                                          |
+| Feedback             | Hitungan komentar ulasan yang secara otomatis diselesaikan karena pengembang mengatasi masalah |
+| Repository breakdown | Hitungan per-repo PR yang ditinjau dan komentar yang diselesaikan                              |
 
 Tabel repositori di pengaturan admin juga menampilkan biaya rata-rata per ulasan untuk setiap repo.
 
@@ -148,20 +164,23 @@ Tabel repositori di pengaturan admin juga menampilkan biaya rata-rata per ulasan
 
 Code Review ditagih berdasarkan penggunaan token. Ulasan rata-rata \$15-25, diskalakan dengan ukuran PR, kompleksitas basis kode, dan berapa banyak masalah yang memerlukan verifikasi. Penggunaan Code Review ditagih secara terpisah melalui [penggunaan ekstra](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) dan tidak dihitung terhadap penggunaan yang disertakan dalam paket Anda.
 
-Pemicu ulasan yang Anda pilih mempengaruhi total biaya:
+Pemicu ulasan yang Anda pilih mempengaruhi biaya total:
 
-* **Setelah pembuatan PR saja**: berjalan sekali per PR
-* **Setelah setiap push**: berjalan pada setiap komit, mengalikan biaya dengan jumlah push
+* **Once after PR creation**: berjalan sekali per PR
+* **After every push**: berjalan pada setiap push, mengalikan biaya dengan jumlah push
+* **Manual**: tidak ada ulasan sampai seseorang mengomentari `@claude review` pada PR
 
-Biaya muncul di tagihan Anthropic Anda terlepas dari apakah organisasi Anda menggunakan AWS Bedrock atau Google Vertex AI untuk fitur Claude Code lainnya. Untuk menetapkan batas pengeluaran bulanan untuk Code Review, buka [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) dan konfigurasikan batas untuk layanan Claude Code Review.
+Dalam mode apa pun, mengomentari `@claude review` [memilih PR ke dalam ulasan yang dipicu push](#manually-trigger-reviews), jadi biaya tambahan terjadi per push setelah komentar tersebut.
+
+Biaya muncul pada tagihan Anthropic Anda terlepas dari apakah organisasi Anda menggunakan AWS Bedrock atau Google Vertex AI untuk fitur Claude Code lainnya. Untuk menetapkan batas pengeluaran bulanan untuk Code Review, buka [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) dan konfigurasikan batas untuk layanan Claude Code Review.
 
 Pantau pengeluaran melalui bagan biaya mingguan di [analitik](#view-usage) atau kolom biaya rata-rata per-repo di pengaturan admin.
 
 ## Sumber daya terkait
 
-Code Review dirancang untuk bekerja bersama dengan sisa Claude Code. Jika Anda ingin menjalankan ulasan secara lokal sebelum membuka PR, memerlukan penyiapan yang di-host sendiri, atau ingin mendalami bagaimana `CLAUDE.md` membentuk perilaku Claude di seluruh alat, halaman-halaman ini adalah perhentian berikutnya yang baik:
+Code Review dirancang untuk bekerja bersama dengan sisa Claude Code. Jika Anda ingin menjalankan ulasan secara lokal sebelum membuka PR, memerlukan penyiapan yang di-host sendiri, atau ingin mendalami cara `CLAUDE.md` membentuk perilaku Claude di seluruh alat, halaman-halaman ini adalah perhentian berikutnya yang baik:
 
-* [Plugins](/id/discover-plugins): telusuri pasar plugin, termasuk plugin `code-review` untuk menjalankan ulasan on-demand secara lokal sebelum push
+* [Plugins](/id/discover-plugins): telusuri pasar plugin, termasuk plugin `code-review` untuk menjalankan ulasan sesuai permintaan secara lokal sebelum push
 * [GitHub Actions](/id/github-actions): jalankan Claude dalam alur kerja GitHub Actions Anda sendiri untuk otomasi khusus di luar ulasan kode
 * [GitLab CI/CD](/id/gitlab-ci-cd): integrasi Claude yang di-host sendiri untuk pipeline GitLab
 * [Memory](/id/memory): cara kerja file `CLAUDE.md` di seluruh Claude Code

@@ -62,7 +62,7 @@ Um CLAUDE.md de projeto pode ser armazenado em `./CLAUDE.md` ou `./.claude/CLAUD
 
 ### Escreva instruções eficazes
 
-Arquivos CLAUDE.md são carregados na janela de contexto no início de cada sessão, consumindo tokens junto com sua conversa. Como são contexto e não configuração imposta, como você escreve as instruções afeta o quão confiável Claude as segue. Instruções específicas, concisas e bem estruturadas funcionam melhor.
+Arquivos CLAUDE.md são carregados na janela de contexto no início de cada sessão, consumindo tokens junto com sua conversa. Como são contexto em vez de configuração imposta, como você escreve as instruções afeta o quão confiável Claude as segue. Instruções específicas, concisas e bem estruturadas funcionam melhor.
 
 **Tamanho**: alvo de menos de 200 linhas por arquivo CLAUDE.md. Arquivos mais longos consomem mais contexto e reduzem a aderência. Se suas instruções estão crescendo muito, divida-as usando [importações](#import-additional-files) ou arquivos [`.claude/rules/`](#organize-rules-with-clauderules).
 
@@ -80,9 +80,9 @@ Arquivos CLAUDE.md são carregados na janela de contexto no início de cada sess
 
 Arquivos CLAUDE.md podem importar arquivos adicionais usando a sintaxe `@path/to/import`. Arquivos importados são expandidos e carregados em contexto no lançamento junto com o CLAUDE.md que os referencia.
 
-Caminhos relativos e absolutos são permitidos. Caminhos relativos são resolvidos relativos ao arquivo contendo a importação, não ao diretório de trabalho. Arquivos importados podem importar recursivamente outros arquivos, com uma profundidade máxima de cinco saltos.
+Caminhos relativos e absolutos são permitidos. Caminhos relativos são resolvidos em relação ao arquivo contendo a importação, não ao diretório de trabalho. Arquivos importados podem importar recursivamente outros arquivos, com uma profundidade máxima de cinco saltos.
 
-Para trazer um README, package.json e um guia de fluxo de trabalho, referencie-os com a sintaxe `@` em qualquer lugar em seu CLAUDE.md:
+Para trazer um README, package.json e um guia de fluxo de trabalho, referencie-os com a sintaxe `@` em qualquer lugar do seu CLAUDE.md:
 
 ```text  theme={null}
 Veja @README para visão geral do projeto e @package.json para comandos npm disponíveis para este projeto.
@@ -91,7 +91,7 @@ Veja @README para visão geral do projeto e @package.json para comandos npm disp
 - fluxo de trabalho git @docs/git-instructions.md
 ```
 
-Para preferências pessoais que você não quer fazer check-in, importe um arquivo do seu diretório home. A importação vai no CLAUDE.md compartilhado, mas o arquivo para o qual aponta fica em sua máquina:
+Para preferências pessoais que você não quer fazer check-in, importe um arquivo do seu diretório home. A importação vai no CLAUDE.md compartilhado, mas o arquivo para o qual aponta fica na sua máquina:
 
 ```text  theme={null}
 # Preferências Individuais
@@ -124,15 +124,15 @@ CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ../shared-config
 
 ### Organize regras com `.claude/rules/`
 
-Para projetos maiores, você pode organizar instruções em vários arquivos usando o diretório `.claude/rules/`. Isso mantém as instruções modulares e mais fáceis para as equipes manterem. As regras também podem ser [escopadas para caminhos de arquivo específicos](#path-specific-rules), para que apenas sejam carregadas em contexto quando Claude trabalha com arquivos correspondentes, reduzindo ruído e economizando espaço de contexto.
+Para projetos maiores, você pode organizar instruções em múltiplos arquivos usando o diretório `.claude/rules/`. Isso mantém as instruções modulares e mais fáceis para as equipes manterem. As regras também podem ser [escopadas para caminhos de arquivo específicos](#path-specific-rules), então elas só são carregadas em contexto quando Claude trabalha com arquivos correspondentes, reduzindo ruído e economizando espaço de contexto.
 
 <Note>
-  As regras são carregadas em contexto a cada sessão ou quando arquivos correspondentes são abertos. Para instruções específicas de tarefa que não precisam estar em contexto o tempo todo, use [skills](/pt/skills) em vez disso, que são carregadas apenas quando você as invoca ou quando Claude determina que são relevantes para seu prompt.
+  As regras são carregadas em contexto a cada sessão ou quando arquivos correspondentes são abertos. Para instruções específicas de tarefa que não precisam estar em contexto o tempo todo, use [skills](/pt/skills) em vez disso, que só são carregadas quando você as invoca ou quando Claude determina que são relevantes para seu prompt.
 </Note>
 
 #### Configure regras
 
-Coloque arquivos markdown no diretório `.claude/rules/` do seu projeto. Cada arquivo deve cobrir um tópico, com um nome de arquivo descritivo como `testing.md` ou `api-design.md`. Todos os arquivos `.md` são descobertos recursivamente, para que você possa organizar regras em subdiretórios como `frontend/` ou `backend/`:
+Coloque arquivos markdown no diretório `.claude/rules/` do seu projeto. Cada arquivo deve cobrir um tópico, com um nome de arquivo descritivo como `testing.md` ou `api-design.md`. Todos os arquivos `.md` são descobertos recursivamente, então você pode organizar regras em subdiretórios como `frontend/` ou `backend/`:
 
 ```text  theme={null}
 seu-projeto/
@@ -148,7 +148,7 @@ Regras sem [frontmatter `paths`](#path-specific-rules) são carregadas no lança
 
 #### Regras específicas de caminho
 
-As regras podem ser escopadas para arquivos específicos usando frontmatter YAML com o campo `paths`. Essas regras condicionais se aplicam apenas quando Claude está trabalhando com arquivos correspondentes aos padrões especificados.
+As regras podem ser escopadas para arquivos específicos usando frontmatter YAML com o campo `paths`. Essas regras condicionais só se aplicam quando Claude está trabalhando com arquivos correspondentes aos padrões especificados.
 
 ```markdown  theme={null}
 ---
@@ -174,7 +174,7 @@ Use padrões glob no campo `paths` para corresponder arquivos por extensão, dir
 | `*.md`                 | Arquivos Markdown na raiz do projeto               |
 | `src/components/*.tsx` | Componentes React em um diretório específico       |
 
-Você pode especificar vários padrões e usar expansão de chaves para corresponder várias extensões em um padrão:
+Você pode especificar múltiplos padrões e usar expansão de chaves para corresponder múltiplas extensões em um padrão:
 
 ```markdown  theme={null}
 ---
@@ -187,9 +187,9 @@ paths:
 
 #### Compartilhe regras entre projetos com symlinks
 
-O diretório `.claude/rules/` suporta symlinks, para que você possa manter um conjunto compartilhado de regras e vinculá-las em vários projetos. Symlinks são resolvidos e carregados normalmente, e symlinks circulares são detectados e tratados graciosamente.
+O diretório `.claude/rules/` suporta symlinks, então você pode manter um conjunto compartilhado de regras e vinculá-las em múltiplos projetos. Symlinks são resolvidos e carregados normalmente, e symlinks circulares são detectados e tratados graciosamente.
 
-Este exemplo vincula um diretório compartilhado e um arquivo individual:
+Este exemplo vincula tanto um diretório compartilhado quanto um arquivo individual:
 
 ```bash  theme={null}
 ln -s ~/shared-claude-rules .claude/rules/shared
@@ -198,7 +198,7 @@ ln -s ~/company-standards/security.md .claude/rules/security.md
 
 #### Regras de nível de usuário
 
-Regras pessoais em `~/.claude/rules/` se aplicam a cada projeto em sua máquina. Use-as para preferências que não são específicas do projeto:
+Regras pessoais em `~/.claude/rules/` se aplicam a cada projeto na sua máquina. Use-as para preferências que não são específicas do projeto:
 
 ```text  theme={null}
 ~/.claude/rules/
@@ -232,7 +232,7 @@ As organizações podem implantar um CLAUDE.md gerenciado centralmente que se ap
 
 Em grandes monorepos, arquivos CLAUDE.md ancestrais podem conter instruções que não são relevantes para seu trabalho. A configuração `claudeMdExcludes` permite que você pule arquivos específicos por caminho ou padrão glob.
 
-Este exemplo exclui um CLAUDE.md de nível superior e um diretório de regras de uma pasta pai. Adicione-o a `.claude/settings.local.json` para que a exclusão permaneça local em sua máquina:
+Este exemplo exclui um CLAUDE.md de nível superior e um diretório de regras de uma pasta pai. Adicione-o a `.claude/settings.local.json` para que a exclusão permaneça local à sua máquina:
 
 ```json  theme={null}
 {
@@ -243,13 +243,13 @@ Este exemplo exclui um CLAUDE.md de nível superior e um diretório de regras de
 }
 ```
 
-Padrões são correspondidos contra caminhos de arquivo absolutos usando sintaxe glob. Você pode configurar `claudeMdExcludes` em qualquer [camada de configurações](/pt/settings#settings-files): usuário, projeto, local ou política gerenciada. Arrays são mescladas entre camadas.
+Padrões são correspondidos contra caminhos de arquivo absolutos usando sintaxe glob. Você pode configurar `claudeMdExcludes` em qualquer [camada de configurações](/pt/settings#settings-files): usuário, projeto, local ou política gerenciada. Arrays são mesclados entre camadas.
 
 Arquivos CLAUDE.md de política gerenciada não podem ser excluídos. Isso garante que as instruções em toda a organização sempre se apliquem independentemente das configurações individuais.
 
 ## Memória automática
 
-A memória automática permite que Claude acumule conhecimento entre sessões sem você escrever nada. Claude salva notas para si mesma conforme trabalha: comandos de compilação, insights de depuração, notas de arquitetura, preferências de estilo de código e hábitos de fluxo de trabalho. Claude não salva algo a cada sessão. Ele decide o que vale a pena lembrar com base em se a informação seria útil em uma conversa futura.
+A memória automática permite que Claude acumule conhecimento entre sessões sem você escrever nada. Claude salva notas para si mesma enquanto trabalha: comandos de compilação, insights de depuração, notas de arquitetura, preferências de estilo de código e hábitos de fluxo de trabalho. Claude não salva algo a cada sessão. Ela decide o que vale a pena lembrar com base em se a informação seria útil em uma conversa futura.
 
 <Note>
   A memória automática requer Claude Code v2.1.59 ou posterior. Verifique sua versão com `claude --version`.
@@ -257,7 +257,7 @@ A memória automática permite que Claude acumule conhecimento entre sessões se
 
 ### Ative ou desative a memória automática
 
-A memória automática está ativada por padrão. Para alterná-la, abra `/memory` em uma sessão e use o toggle de memória automática, ou defina `autoMemoryEnabled` em suas configurações de projeto:
+A memória automática está ativada por padrão. Para alterná-la, abra `/memory` em uma sessão e use o toggle de memória automática, ou defina `autoMemoryEnabled` nas configurações do seu projeto:
 
 ```json  theme={null}
 {
@@ -269,9 +269,9 @@ Para desabilitar a memória automática via variável de ambiente, defina `CLAUD
 
 ### Local de armazenamento
 
-Cada projeto obtém seu próprio diretório de memória em `~/.claude/projects/<project>/memory/`. O caminho `<project>` é derivado do repositório git, para que todos os worktrees e subdiretórios dentro do mesmo repositório compartilhem um diretório de memória automática. Fora de um repositório git, a raiz do projeto é usada em vez disso.
+Cada projeto obtém seu próprio diretório de memória em `~/.claude/projects/<project>/memory/`. O caminho `<project>` é derivado do repositório git, então todos os worktrees e subdiretórios dentro do mesmo repositório compartilham um diretório de memória automática. Fora de um repositório git, a raiz do projeto é usada em vez disso.
 
-Para armazenar memória automática em um local diferente, defina `autoMemoryDirectory` em suas configurações de usuário ou local:
+Para armazenar memória automática em um local diferente, defina `autoMemoryDirectory` nas suas configurações de usuário ou local:
 
 ```json  theme={null}
 {
@@ -307,11 +307,11 @@ Claude lê e escreve arquivos de memória durante sua sessão. Quando você vê 
 
 ### Audite e edite sua memória
 
-Arquivos de memória automática são markdown simples que você pode editar ou deletar a qualquer momento. Execute [`/memory`](#view-and-edit-with-memory) para procurar e abrir arquivos de memória de dentro de uma sessão.
+Arquivos de memória automática são markdown simples que você pode editar ou deletar a qualquer momento. Execute [`/memory`](#view-and-edit-with-memory) para navegar e abrir arquivos de memória de dentro de uma sessão.
 
 ## Visualize e edite com `/memory`
 
-O comando `/memory` lista todos os arquivos CLAUDE.md e rules carregados em sua sessão atual, permite que você alterne a memória automática ativada ou desativada e fornece um link para abrir a pasta de memória automática. Selecione qualquer arquivo para abri-lo em seu editor.
+O comando `/memory` lista todos os arquivos CLAUDE.md e rules carregados em sua sessão atual, permite que você alterne a memória automática ativada ou desativada, e fornece um link para abrir a pasta de memória automática. Selecione qualquer arquivo para abri-lo no seu editor.
 
 Quando você pede a Claude para lembrar algo, como "sempre use pnpm, não npm" ou "lembre-se de que os testes de API requerem uma instância local de Redis," Claude salva em memória automática. Para adicionar instruções a CLAUDE.md em vez disso, peça a Claude diretamente, como "adicione isto a CLAUDE.md," ou edite o arquivo você mesmo via `/memory`.
 
@@ -321,7 +321,7 @@ Estes são os problemas mais comuns com CLAUDE.md e memória automática, junto 
 
 ### Claude não está seguindo meu CLAUDE.md
 
-CLAUDE.md é contexto, não imposição. Claude o lê e tenta segui-lo, mas não há garantia de conformidade estrita, especialmente para instruções vagas ou conflitantes.
+O conteúdo de CLAUDE.md é entregue como uma mensagem de usuário após o prompt do sistema, não como parte do próprio prompt do sistema. Claude o lê e tenta segui-lo, mas não há garantia de conformidade estrita, especialmente para instruções vagas ou conflitantes.
 
 Para depurar:
 
@@ -330,13 +330,15 @@ Para depurar:
 * Torne as instruções mais específicas. "Use indentação de 2 espaços" funciona melhor do que "formate o código adequadamente."
 * Procure por instruções conflitantes entre arquivos CLAUDE.md. Se dois arquivos dão orientação diferente para o mesmo comportamento, Claude pode escolher um arbitrariamente.
 
+Para instruções que você quer no nível do prompt do sistema, use [`--append-system-prompt`](/pt/cli-reference#system-prompt-flags). Isso deve ser passado a cada invocação, então é mais adequado para scripts e automação do que para uso interativo.
+
 <Tip>
   Use o hook [`InstructionsLoaded`](/pt/hooks#instructionsloaded) para registrar exatamente quais arquivos de instrução são carregados, quando são carregados e por quê. Isso é útil para depurar regras específicas de caminho ou arquivos carregados preguiçosamente em subdiretórios.
 </Tip>
 
 ### Não sei o que a memória automática salvou
 
-Execute `/memory` e selecione a pasta de memória automática para procurar o que Claude salvou. Tudo é markdown simples que você pode ler, editar ou deletar.
+Execute `/memory` e selecione a pasta de memória automática para navegar o que Claude salvou. Tudo é markdown simples que você pode ler, editar ou deletar.
 
 ### Meu CLAUDE.md é muito grande
 
@@ -344,7 +346,7 @@ Arquivos com mais de 200 linhas consomem mais contexto e podem reduzir a aderên
 
 ### Instruções parecem perdidas após `/compact`
 
-CLAUDE.md sobrevive completamente à compactação. Após `/compact`, Claude relê seu CLAUDE.md do disco e o reinjecta fresco na sessão. Se uma instrução desapareceu após compactação, foi dada apenas em conversa, não escrita em CLAUDE.md. Adicione-a a CLAUDE.md para torná-la persistente entre sessões.
+CLAUDE.md sobrevive completamente à compactação. Após `/compact`, Claude relê seu CLAUDE.md do disco e o reinjecta fresco na sessão. Se uma instrução desapareceu após compactação, ela foi dada apenas em conversa, não escrita em CLAUDE.md. Adicione-a a CLAUDE.md para torná-la persistir entre sessões.
 
 Veja [Escreva instruções eficazes](#write-effective-instructions) para orientação sobre tamanho, estrutura e especificidade.
 

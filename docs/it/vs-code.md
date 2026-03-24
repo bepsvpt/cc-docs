@@ -49,10 +49,10 @@ Una volta installata, puoi iniziare a utilizzare Claude Code tramite l'interfacc
     Altri modi per aprire Claude Code:
 
     * **Barra attività**: fai clic sull'icona Spark nella barra laterale sinistra per aprire l'elenco delle sessioni. Fai clic su qualsiasi sessione per aprirla come scheda dell'editor completa, o avvia una nuova. Questa icona è sempre visibile nella Barra attività.
-    * **Tavolozza dei comandi**: `Cmd+Shift+P` (Mac) o `Ctrl+Shift+P` (Windows/Linux), digita "Claude Code" e seleziona un'opzione come "Open in New Tab"
+    * **Tavolozza dei comandi**: `Cmd+Shift+P` (Mac) o `Ctrl+Shift+P` (Windows/Linux), digita "Claude Code" e seleziona un'opzione come "Apri in Nuova Scheda"
     * **Barra di stato**: fai clic su **✱ Claude Code** nell'angolo in basso a destra della finestra. Funziona anche quando nessun file è aperto.
 
-    Quando apri il pannello per la prima volta, appare una checklist **Learn Claude Code**. Completa ogni elemento facendo clic su **Show me**, oppure chiudila con la X. Per riaprirla in seguito, deseleziona **Hide Onboarding** nelle impostazioni di VS Code in Estensioni → Claude Code.
+    Quando apri il pannello per la prima volta, appare una checklist **Impara Claude Code**. Completa ogni elemento facendo clic su **Mostrami**, oppure chiudila con la X. Per riaprirla in seguito, deseleziona **Nascondi onboarding** nelle impostazioni di VS Code in Estensioni → Claude Code.
 
     Puoi trascinare il pannello Claude per riposizionarlo ovunque in VS Code. Consulta [Personalizza il tuo flusso di lavoro](#customize-your-workflow) per i dettagli.
   </Step>
@@ -107,15 +107,15 @@ Puoi anche tenere premuto `Shift` mentre trascini i file nella casella dei promp
 
 ### Riprendi conversazioni passate
 
-Fai clic sul menu a discesa in cima al pannello Claude Code per accedere alla cronologia delle conversazioni. Puoi cercare per parola chiave o sfogliare per tempo (Oggi, Ieri, Ultimi 7 giorni, ecc.). Fai clic su qualsiasi conversazione per riprenderla con la cronologia completa dei messaggi. Passa il mouse su una sessione per rivelare le azioni di ridenominazione e rimozione: rinomina per darle un titolo descrittivo, o rimuovi per eliminarla dall'elenco. Per ulteriori informazioni sulla ripresa delle sessioni, consulta [Flussi di lavoro comuni](/it/common-workflows#resume-previous-conversations).
+Fai clic sul menu a discesa in cima al pannello Claude Code per accedere alla cronologia delle conversazioni. Puoi cercare per parola chiave o sfogliare per tempo (Oggi, Ieri, Ultimi 7 giorni, ecc.). Fai clic su qualsiasi conversazione per riprenderla con la cronologia completa dei messaggi. Passa il mouse su una sessione per rivelare le azioni di rinomina e rimozione: rinomina per darle un titolo descrittivo, o rimuovi per eliminarla dall'elenco. Per ulteriori informazioni sulla ripresa delle sessioni, consulta [Flussi di lavoro comuni](/it/common-workflows#resume-previous-conversations).
 
 ### Riprendi sessioni remote da Claude.ai
 
 Se utilizzi [Claude Code sul web](/it/claude-code-on-the-web), puoi riprendere quelle sessioni remote direttamente in VS Code. Ciò richiede l'accesso con **Claude.ai Subscription**, non Anthropic Console.
 
 <Steps>
-  <Step title="Apri Conversazioni passate">
-    Fai clic sul menu a discesa **Past Conversations** in cima al pannello Claude Code.
+  <Step title="Apri Conversazioni Passate">
+    Fai clic sul menu a discesa **Conversazioni Passate** in cima al pannello Claude Code.
   </Step>
 
   <Step title="Seleziona la scheda Remote">
@@ -128,7 +128,7 @@ Se utilizzi [Claude Code sul web](/it/claude-code-on-the-web), puoi riprendere q
 </Steps>
 
 <Note>
-  Solo le sessioni web avviate con un repository GitHub appaiono nella scheda Remote. La ripresa carica la cronologia della conversazione localmente; le modifiche non vengono sincronizzate di nuovo su claude.ai.
+  Solo le sessioni web avviate con un repository GitHub appaiono nella scheda Remote. La ripresa carica la cronologia della conversazione localmente; le modifiche non vengono sincronizzate di nuovo a claude.ai.
 </Note>
 
 ## Personalizza il tuo flusso di lavoro
@@ -149,9 +149,9 @@ Puoi trascinare il pannello Claude per riposizionarlo ovunque in VS Code. Afferr
 
 ### Esegui più conversazioni
 
-Usa **Open in New Tab** o **Open in New Window** dalla Tavolozza dei comandi per avviare conversazioni aggiuntive. Ogni conversazione mantiene la propria cronologia e contesto, permettendoti di lavorare su diversi compiti in parallelo.
+Usa **Apri in Nuova Scheda** o **Apri in Nuova Finestra** dalla Tavolozza dei comandi per avviare conversazioni aggiuntive. Ogni conversazione mantiene la propria cronologia e contesto, permettendoti di lavorare su diversi compiti in parallelo.
 
-Quando utilizzi le schede, un piccolo punto colorato sull'icona spark indica lo stato: blu significa che una richiesta di permesso è in sospeso, arancione significa che Claude ha finito mentre la scheda era nascosta.
+Quando usi le schede, un piccolo punto colorato sull'icona spark indica lo stato: blu significa che una richiesta di permesso è in sospeso, arancione significa che Claude ha finito mentre la scheda era nascosta.
 
 ### Passa alla modalità terminale
 
@@ -161,28 +161,28 @@ Puoi anche aprire le impostazioni di VS Code (`Cmd+,` su Mac o `Ctrl+,` su Windo
 
 ## Gestisci i plugin
 
-L'estensione VS Code include un'interfaccia grafica per installare e gestire i [plugin](/it/plugins). Digita `/plugins` nella casella dei prompt per aprire l'interfaccia **Manage plugins**.
+L'estensione VS Code include un'interfaccia grafica per installare e gestire i [plugin](/it/plugins). Digita `/plugins` nella casella dei prompt per aprire l'interfaccia **Gestisci plugin**.
 
 ### Installa i plugin
 
-La finestra di dialogo del plugin mostra due schede: **Plugins** e **Marketplaces**.
+La finestra di dialogo del plugin mostra due schede: **Plugin** e **Marketplace**.
 
-Nella scheda Plugins:
+Nella scheda Plugin:
 
 * I **plugin installati** appaiono in cima con interruttori per abilitarli o disabilitarli
 * I **plugin disponibili** dai tuoi marketplace configurati appaiono sotto
 * Cerca per filtrare i plugin per nome o descrizione
-* Fai clic su **Install** su qualsiasi plugin disponibile
+* Fai clic su **Installa** su qualsiasi plugin disponibile
 
 Quando installi un plugin, scegli l'ambito di installazione:
 
-* **Install for you**: disponibile in tutti i tuoi progetti (ambito utente)
-* **Install for this project**: condiviso con i collaboratori del progetto (ambito progetto)
-* **Install locally**: solo per te, solo in questo repository (ambito locale)
+* **Installa per te**: disponibile in tutti i tuoi progetti (ambito utente)
+* **Installa per questo progetto**: condiviso con i collaboratori del progetto (ambito progetto)
+* **Installa localmente**: solo per te, solo in questo repository (ambito locale)
 
 ### Gestisci i marketplace
 
-Passa alla scheda **Marketplaces** per aggiungere o rimuovere fonti di plugin:
+Passa alla scheda **Marketplace** per aggiungere o rimuovere fonti di plugin:
 
 * Inserisci un repository GitHub, URL o percorso locale per aggiungere un nuovo marketplace
 * Fai clic sull'icona di aggiornamento per aggiornare l'elenco dei plugin di un marketplace
@@ -194,7 +194,7 @@ Dopo aver apportato modifiche, un banner ti chiede di riavviare Claude Code per 
   La gestione dei plugin in VS Code utilizza gli stessi comandi CLI sotto il cofano. I plugin e i marketplace che configuri nell'estensione sono disponibili anche nella CLI e viceversa.
 </Note>
 
-Per ulteriori informazioni sul sistema dei plugin, consulta [Plugin](/it/plugins) e [Plugin marketplaces](/it/plugin-marketplaces).
+Per ulteriori informazioni sul sistema dei plugin, consulta [Plugin](/it/plugins) e [Marketplace dei plugin](/it/plugin-marketplaces).
 
 ## Automatizza le attività del browser con Chrome
 
@@ -251,7 +251,7 @@ L'estensione ha due tipi di impostazioni:
 | --------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `selectedModel`                   | `default`   | Modello per le nuove conversazioni. Cambia per sessione con `/model`.                                                            |
 | `useTerminal`                     | `false`     | Avvia Claude in modalità terminale invece di pannello grafico                                                                    |
-| `initialPermissionMode`           | `default`   | Controlla i prompt di approvazione: `default` (chiedi ogni volta), `plan`, `acceptEdits`, o `bypassPermissions`                  |
+| `initialPermissionMode`           | `default`   | Controlla i prompt di approvazione: `default` (chiedi ogni volta), `plan`, `acceptEdits` o `bypassPermissions`                   |
 | `preferredLocation`               | `panel`     | Dove Claude si apre: `sidebar` (destra) o `panel` (nuova scheda)                                                                 |
 | `autosave`                        | `true`      | Salva automaticamente i file prima che Claude li legga o scriva                                                                  |
 | `useCtrlEnterToSend`              | `false`     | Usa Ctrl/Cmd+Enter invece di Enter per inviare i prompt                                                                          |
@@ -267,21 +267,21 @@ L'estensione ha due tipi di impostazioni:
 
 Claude Code è disponibile sia come estensione VS Code (pannello grafico) che come CLI (interfaccia della riga di comando nel terminale). Alcune funzioni sono disponibili solo nella CLI. Se hai bisogno di una funzione solo CLI, esegui `claude` nel terminale integrato di VS Code.
 
-| Funzione                      | CLI                                             | Estensione VS Code                                                                                  |
-| ----------------------------- | ----------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| Comandi e skills              | [Tutti](/it/interactive-mode#built-in-commands) | Sottoinsieme (digita `/` per vedere quelli disponibili)                                             |
-| Configurazione del server MCP | Sì                                              | Parziale (aggiungi server tramite CLI; gestisci i server esistenti con `/mcp` nel pannello di chat) |
-| Checkpoints                   | Sì                                              | Sì                                                                                                  |
-| Scorciatoia bash `!`          | Sì                                              | No                                                                                                  |
-| Completamento scheda          | Sì                                              | No                                                                                                  |
+| Funzione                      | CLI                   | Estensione VS Code                                                                                  |
+| ----------------------------- | --------------------- | --------------------------------------------------------------------------------------------------- |
+| Comandi e skills              | [Tutti](/it/commands) | Sottoinsieme (digita `/` per vedere quelli disponibili)                                             |
+| Configurazione del server MCP | Sì                    | Parziale (aggiungi server tramite CLI; gestisci i server esistenti con `/mcp` nel pannello di chat) |
+| Checkpoint                    | Sì                    | Sì                                                                                                  |
+| Scorciatoia bash `!`          | Sì                    | No                                                                                                  |
+| Completamento scheda          | Sì                    | No                                                                                                  |
 
 ### Riavvolgi con i checkpoint
 
 L'estensione VS Code supporta i checkpoint, che tracciano le modifiche ai file di Claude e ti permettono di riavvolgere a uno stato precedente. Passa il mouse su qualsiasi messaggio per rivelare il pulsante di riavvolgimento, quindi scegli tra tre opzioni:
 
-* **Fork conversation from here**: avvia un nuovo ramo di conversazione da questo messaggio mantenendo intatte tutte le modifiche al codice
-* **Rewind code to here**: ripristina le modifiche ai file a questo punto nella conversazione mantenendo la cronologia completa della conversazione
-* **Fork conversation and rewind code**: avvia un nuovo ramo di conversazione e ripristina le modifiche ai file a questo punto
+* **Crea un ramo di conversazione da qui**: avvia un nuovo ramo di conversazione da questo messaggio mantenendo intatte tutte le modifiche al codice
+* **Riavvolgi il codice a qui**: ripristina le modifiche ai file a questo punto della conversazione mantenendo la cronologia completa della conversazione
+* **Crea un ramo di conversazione e riavvolgi il codice**: avvia un nuovo ramo di conversazione e ripristina le modifiche ai file a questo punto
 
 Per i dettagli completi su come funzionano i checkpoint e le loro limitazioni, consulta [Checkpointing](/it/checkpointing).
 
@@ -289,7 +289,7 @@ Per i dettagli completi su come funzionano i checkpoint e le loro limitazioni, c
 
 Per utilizzare la CLI mentre rimani in VS Code, apri il terminale integrato (`` Ctrl+` `` su Windows/Linux o `` Cmd+` `` su Mac) ed esegui `claude`. La CLI si integra automaticamente con il tuo IDE per funzioni come la visualizzazione dei diff e la condivisione dei diagnostici.
 
-Se utilizzi un terminale esterno, esegui `/ide` all'interno di Claude Code per connetterlo a VS Code.
+Se utilizzi un terminale esterno, esegui `/ide` all'interno di Claude Code per collegarlo a VS Code.
 
 ### Passa tra l'estensione e la CLI
 
@@ -341,7 +341,7 @@ Usa il flag `--worktree` (`-w`) per avviare Claude in un worktree isolato con i 
 claude --worktree feature-auth
 ```
 
-Ogni worktree mantiene uno stato di file indipendente mentre condivide la cronologia git. Ciò impedisce alle istanze di Claude di interferire l'una con l'altra quando lavorano su compiti diversi. Per ulteriori dettagli, consulta [Esegui sessioni parallele di Claude Code con Git worktrees](/it/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees).
+Ogni worktree mantiene uno stato di file indipendente mentre condivide la cronologia di git. Ciò impedisce alle istanze di Claude di interferire l'una con l'altra quando lavorano su diversi compiti. Per ulteriori dettagli, consulta [Esegui sessioni parallele di Claude Code con Git worktrees](/it/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees).
 
 ## Usa provider di terze parti
 
@@ -369,7 +369,7 @@ Per impostazione predefinita, Claude Code si connette direttamente all'API di An
 
 Il tuo codice rimane privato. Claude Code elabora il tuo codice per fornire assistenza ma non lo utilizza per addestrare i modelli. Per i dettagli sulla gestione dei dati e su come rinunciare alla registrazione, consulta [Dati e privacy](/it/data-usage).
 
-Con le autorizzazioni di modifica automatica abilitate, Claude Code può modificare i file di configurazione di VS Code (come `settings.json` o `tasks.json`) che VS Code potrebbe eseguire automaticamente. Per ridurre il rischio quando si lavora con codice non attendibile:
+Con le autorizzazioni di auto-edit abilitate, Claude Code può modificare i file di configurazione di VS Code (come `settings.json` o `tasks.json`) che VS Code potrebbe eseguire automaticamente. Per ridurre il rischio quando si lavora con codice non attendibile:
 
 * Abilita la [Modalità limitata di VS Code](https://code.visualstudio.com/docs/editor/workspace-trust#_restricted-mode) per gli spazi di lavoro non attendibili
 * Usa la modalità di approvazione manuale invece di auto-accept per le modifiche
@@ -391,7 +391,7 @@ L'icona Spark appare nella **Barra degli strumenti dell'editor** (in alto a dest
 2. **Controlla la versione di VS Code**: Richiede 1.98.0 o superiore (Aiuto → Informazioni)
 3. **Riavvia VS Code**: Esegui "Developer: Reload Window" dalla Tavolozza dei comandi
 4. **Disabilita le estensioni in conflitto**: Disabilita temporaneamente altre estensioni AI (Cline, Continue, ecc.)
-5. **Controlla l'attendibilità dell'area di lavoro**: L'estensione non funziona in Modalità limitata
+5. **Controlla l'affidabilità dell'area di lavoro**: L'estensione non funziona in Modalità limitata
 
 In alternativa, fai clic su "✱ Claude Code" nella **Barra di stato** (angolo in basso a destra). Funziona anche senza un file aperto. Puoi anche usare la **Tavolozza dei comandi** (`Cmd+Shift+P` / `Ctrl+Shift+P`) e digitare "Claude Code".
 

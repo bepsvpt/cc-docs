@@ -84,10 +84,12 @@ Claude Code requer acesso aos seguintes URLs:
 * `claude.ai`: autenticação para contas claude.ai
 * `platform.claude.com`: autenticação para contas do Anthropic Console
 
-Certifique-se de que esses URLs estão na lista de permissão em sua configuração de proxy e regras de firewall. Isso é especialmente importante ao usar Claude Code em ambientes de rede containerizados ou restritos.
+Certifique-se de que esses URLs estão na lista de permissões em sua configuração de proxy e regras de firewall. Isso é especialmente importante ao usar Claude Code em ambientes de rede containerizados ou restritos.
+
+[Claude Code na web](/pt/claude-code-on-the-web) e [Code Review](/pt/code-review) se conectam aos seus repositórios a partir da infraestrutura gerenciada pela Anthropic. Se sua organização GitHub Enterprise Cloud restringe o acesso por endereço IP, ative [herança de lista de permissão de IP para GitHub Apps instalados](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps). O Claude GitHub App registra seus intervalos de IP, portanto, ativar essa configuração permite acesso sem configuração manual. Para [adicionar os intervalos à sua lista de permissões manualmente](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address), ou para configurar outros firewalls, consulte [Endereços IP da API Anthropic](https://platform.claude.com/docs/en/api/ip-addresses).
 
 ## Recursos adicionais
 
-* [Configurações do Claude Code](/pt/settings)
-* [Referência de variáveis de ambiente](/pt/settings#environment-variables)
+* [Configurações de Claude Code](/pt/settings)
+* [Referência de variáveis de ambiente](/pt/env-vars)
 * [Guia de solução de problemas](/pt/troubleshooting)

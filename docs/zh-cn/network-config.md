@@ -39,18 +39,18 @@ export NO_PROXY="*"
 
 ### 基本身份验证
 
-如果您的代理需要基本身份验证，请在代理 URL 中包含凭据：
+如果您的代理需要基本身份验证，请在代理 URL 中包含凭证：
 
 ```bash  theme={null}
 export HTTPS_PROXY=http://username:password@proxy.example.com:8080
 ```
 
 <Warning>
-  避免在脚本中硬编码密码。改用环境变量或安全凭据存储。
+  避免在脚本中硬编码密码。改用环境变量或安全凭证存储。
 </Warning>
 
 <Tip>
-  对于需要高级身份验证（NTLM、Kerberos 等）的代理，请考虑使用支持您的身份验证方法的 LLM Gateway 服务。
+  对于需要高级身份验证（NTLM、Kerberos 等）的代理，请考虑使用支持您的身份验证方法的 LLM 网关服务。
 </Tip>
 
 ## 自定义 CA 证书
@@ -81,13 +81,15 @@ export CLAUDE_CODE_CLIENT_KEY_PASSPHRASE="your-passphrase"
 Claude Code 需要访问以下 URL：
 
 * `api.anthropic.com`：Claude API 端点
-* `claude.ai`：claude.ai 账户的身份验证
-* `platform.claude.com`：Anthropic Console 账户的身份验证
+* `claude.ai`：claude.ai 账户身份验证
+* `platform.claude.com`：Anthropic 控制台账户身份验证
 
 确保这些 URL 在您的代理配置和防火墙规则中被列入白名单。这在容器化或受限网络环境中使用 Claude Code 时尤为重要。
+
+[Claude Code on the web](/zh-CN/claude-code-on-the-web) 和 [Code Review](/zh-CN/code-review) 从 Anthropic 管理的基础设施连接到您的存储库。如果您的 GitHub Enterprise Cloud 组织按 IP 地址限制访问，请启用 [已安装 GitHub Apps 的 IP 允许列表继承](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps)。Claude GitHub App 注册了其 IP 范围，因此启用此设置允许访问而无需手动配置。要 [手动将范围添加到您的允许列表](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address)，或配置其他防火墙，请参阅 [Anthropic API IP 地址](https://platform.claude.com/docs/en/api/ip-addresses)。
 
 ## 其他资源
 
 * [Claude Code 设置](/zh-CN/settings)
-* [环境变量参考](/zh-CN/settings#environment-variables)
+* [环境变量参考](/zh-CN/env-vars)
 * [故障排除指南](/zh-CN/troubleshooting)

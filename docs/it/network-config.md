@@ -19,17 +19,17 @@ Claude Code supporta varie configurazioni di rete e sicurezza aziendali attraver
 Claude Code rispetta le variabili di ambiente proxy standard:
 
 ```bash  theme={null}
-# HTTPS proxy (consigliato)
+# Proxy HTTPS (consigliato)
 export HTTPS_PROXY=https://proxy.example.com:8080
 
-# HTTP proxy (se HTTPS non disponibile)
+# Proxy HTTP (se HTTPS non disponibile)
 export HTTP_PROXY=http://proxy.example.com:8080
 
-# Bypass proxy per richieste specifiche - formato separato da spazi
+# Ignora il proxy per richieste specifiche - formato separato da spazi
 export NO_PROXY="localhost 192.168.1.1 example.com .example.com"
-# Bypass proxy per richieste specifiche - formato separato da virgole
+# Ignora il proxy per richieste specifiche - formato separato da virgole
 export NO_PROXY="localhost,192.168.1.1,example.com,.example.com"
-# Bypass proxy per tutte le richieste
+# Ignora il proxy per tutte le richieste
 export NO_PROXY="*"
 ```
 
@@ -55,7 +55,7 @@ export HTTPS_PROXY=http://username:password@proxy.example.com:8080
 
 ## Certificati CA personalizzati
 
-Se l'ambiente aziendale utilizza CA personalizzate per le connessioni HTTPS (sia attraverso un proxy che per l'accesso diretto all'API), configurare Claude Code per fidarsi di esse:
+Se l'ambiente aziendale utilizza CA personalizzate per le connessioni HTTPS (sia tramite proxy che accesso diretto all'API), configurare Claude Code per fidarsi di esse:
 
 ```bash  theme={null}
 export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
@@ -78,16 +78,18 @@ export CLAUDE_CODE_CLIENT_KEY_PASSPHRASE="your-passphrase"
 
 ## Requisiti di accesso alla rete
 
-Claude Code richiede l'accesso ai seguenti URL:
+Claude Code richiede accesso ai seguenti URL:
 
 * `api.anthropic.com`: endpoint dell'API Claude
-* `claude.ai`: autenticazione per gli account claude.ai
-* `platform.claude.com`: autenticazione per gli account Anthropic Console
+* `claude.ai`: autenticazione per account claude.ai
+* `platform.claude.com`: autenticazione per account Anthropic Console
 
 Assicurarsi che questi URL siano inseriti nella whitelist nella configurazione del proxy e nelle regole del firewall. Ciò è particolarmente importante quando si utilizza Claude Code in ambienti di rete containerizzati o limitati.
+
+[Claude Code sul web](/it/claude-code-on-the-web) e [Code Review](/it/code-review) si connettono ai repository dall'infrastruttura gestita da Anthropic. Se l'organizzazione GitHub Enterprise Cloud limita l'accesso per indirizzo IP, abilitare [l'ereditarietà della lista di indirizzi IP consentiti per le app GitHub installate](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps). L'app GitHub di Claude registra i suoi intervalli di indirizzi IP, quindi l'abilitazione di questa impostazione consente l'accesso senza configurazione manuale. Per [aggiungere gli intervalli alla lista di indirizzi consentiti manualmente](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address), oppure per configurare altri firewall, consultare gli [indirizzi IP dell'API Anthropic](https://platform.claude.com/docs/en/api/ip-addresses).
 
 ## Risorse aggiuntive
 
 * [Impostazioni di Claude Code](/it/settings)
-* [Riferimento delle variabili di ambiente](/it/settings#environment-variables)
+* [Riferimento delle variabili di ambiente](/it/env-vars)
 * [Guida alla risoluzione dei problemi](/it/troubleshooting)

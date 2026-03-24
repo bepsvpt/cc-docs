@@ -16,13 +16,13 @@ Tugas bersifat session-scoped: mereka hidup dalam proses Claude Code saat ini da
 
 ## Jadwalkan prompt berulang dengan /loop
 
-Skill `/loop` [bundled skill](/id/skills#bundled-skills) adalah cara tercepat untuk menjadwalkan prompt berulang. Berikan interval opsional dan prompt, dan Claude menyiapkan pekerjaan cron yang berjalan di latar belakang sementara sesi tetap terbuka.
+Skill `/loop` [bundled skill](/id/skills#bundled-skills) adalah cara tercepat untuk menjadwalkan prompt berulang. Berikan interval opsional dan prompt, dan Claude menyiapkan cron job yang berjalan di latar belakang sementara sesi tetap terbuka.
 
 ```text  theme={null}
 /loop 5m check if the deployment finished and tell me what happened
 ```
 
-Claude mengurai interval, mengonversinya ke ekspresi cron, menjadwalkan pekerjaan, dan mengonfirmasi cadence dan ID pekerjaan.
+Claude mengurai interval, mengonversinya ke ekspresi cron, menjadwalkan job, dan mengonfirmasi cadence dan ID job.
 
 ### Sintaks interval
 
@@ -32,19 +32,19 @@ Interval bersifat opsional. Anda dapat memimpinnya, mengikutinya, atau meninggal
 | :------------------------- | :------------------------------------ | :---------------------- |
 | Token terdepan             | `/loop 30m check the build`           | setiap 30 menit         |
 | Klausa `every` di belakang | `/loop check the build every 2 hours` | setiap 2 jam            |
-| Tidak ada interval         | `/loop check the build`               | default setiap 10 menit |
+| Tanpa interval             | `/loop check the build`               | default setiap 10 menit |
 
 Unit yang didukung adalah `s` untuk detik, `m` untuk menit, `h` untuk jam, dan `d` untuk hari. Detik dibulatkan ke menit terdekat karena cron memiliki granularitas satu menit. Interval yang tidak terbagi rata ke dalam unit mereka, seperti `7m` atau `90m`, dibulatkan ke interval yang bersih terdekat dan Claude memberi tahu Anda apa yang dipilihnya.
 
 ### Loop di atas perintah lain
 
-Prompt terjadwal itu sendiri dapat berupa invokasi perintah atau skill. Ini berguna untuk menjalankan kembali alur kerja yang telah Anda paket.
+Prompt terjadwal itu sendiri dapat berupa invokasi perintah atau skill. Ini berguna untuk menjalankan kembali workflow yang sudah Anda paket.
 
 ```text  theme={null}
 /loop 20m /review-pr 1234
 ```
 
-Setiap kali pekerjaan berjalan, Claude menjalankan `/review-pr 1234` seolah-olah Anda telah mengetiknya.
+Setiap kali job berjalan, Claude menjalankan `/review-pr 1234` seolah-olah Anda telah mengetiknya.
 
 ## Atur pengingat sekali jalan
 
@@ -58,7 +58,7 @@ remind me at 3pm to push the release branch
 in 45 minutes, check whether the integration tests passed
 ```
 
-Claude menyematkan waktu api ke menit dan jam tertentu menggunakan ekspresi cron dan mengonfirmasi kapan akan berjalan.
+Claude menyematkan waktu berjalan ke menit dan jam tertentu menggunakan ekspresi cron dan mengonfirmasi kapan akan berjalan.
 
 ## Kelola tugas terjadwal
 
@@ -90,9 +90,9 @@ Semua waktu ditafsirkan dalam zona waktu lokal Anda. Ekspresi cron seperti `0 9 
 
 ### Jitter
 
-Untuk menghindari setiap sesi mengenai API pada momen dinding jam yang sama, penjadwal menambahkan offset deterministik kecil untuk waktu api:
+Untuk menghindari setiap sesi mengenai API pada momen dinding jam yang sama, penjadwal menambahkan offset deterministik kecil untuk waktu berjalan:
 
-* Tugas berulang berjalan hingga 10% dari periode mereka terlambat, dibatasi pada 15 menit. Pekerjaan per jam mungkin berjalan di mana saja dari `:00` hingga `:06`.
+* Tugas berulang berjalan hingga 10% dari periode mereka terlambat, dibatasi pada 15 menit. Job per jam mungkin berjalan di mana saja dari `:00` hingga `:06`.
 * Tugas sekali jalan yang dijadwalkan untuk bagian atas atau bawah jam berjalan hingga 90 detik lebih awal.
 
 Offset berasal dari ID tugas, jadi tugas yang sama selalu mendapatkan offset yang sama. Jika waktu yang tepat penting, pilih menit yang bukan `:00` atau `:30`, misalnya `3 9 * * *` daripada `0 9 * * *`, dan jitter sekali jalan tidak akan berlaku.
@@ -103,7 +103,7 @@ Tugas berulang secara otomatis kedaluwarsa 3 hari setelah pembuatan. Tugas berja
 
 ## Referensi ekspresi cron
 
-`CronCreate` menerima ekspresi cron 5-field standar: `minute hour day-of-month month day-of-week`. Semua field mendukung wildcard (`*`), nilai tunggal (`5`), langkah (`*/15`), rentang (`1-5`), dan daftar yang dipisahkan koma (`1,15,30`).
+`CronCreate` menerima ekspresi cron standar 5-field: `minute hour day-of-month month day-of-week`. Semua field mendukung wildcard (`*`), nilai tunggal (`5`), langkah (`*/15`), rentang (`1-5`), dan daftar yang dipisahkan koma (`1,15,30`).
 
 | Contoh         | Arti                              |
 | :------------- | :-------------------------------- |
@@ -116,18 +116,18 @@ Tugas berulang secara otomatis kedaluwarsa 3 hari setelah pembuatan. Tugas berja
 
 Day-of-week menggunakan `0` atau `7` untuk Minggu hingga `6` untuk Sabtu. Sintaks yang diperluas seperti `L`, `W`, `?`, dan alias nama seperti `MON` atau `JAN` tidak didukung.
 
-Ketika hari-bulan dan hari-minggu keduanya dibatasi, tanggal cocok jika salah satu field cocok. Ini mengikuti semantik vixie-cron standar.
+Ketika day-of-month dan day-of-week keduanya dibatasi, tanggal cocok jika salah satu field cocok. Ini mengikuti semantik vixie-cron standar.
 
 ## Nonaktifkan tugas terjadwal
 
-Atur `CLAUDE_CODE_DISABLE_CRON=1` di lingkungan Anda untuk menonaktifkan penjadwal sepenuhnya. Alat cron dan `/loop` menjadi tidak tersedia, dan tugas yang sudah terjadwal berhenti berjalan. Lihat [Environment variables](/id/settings#environment-variables) untuk daftar lengkap flag disable.
+Atur `CLAUDE_CODE_DISABLE_CRON=1` di lingkungan Anda untuk menonaktifkan penjadwal sepenuhnya. Alat cron dan `/loop` menjadi tidak tersedia, dan tugas yang sudah terjadwal berhenti berjalan. Lihat [Environment variables](/id/env-vars) untuk daftar lengkap flag disable.
 
 ## Keterbatasan
 
 Penjadwalan session-scoped memiliki batasan yang melekat:
 
 * Tugas hanya berjalan saat Claude Code berjalan dan idle. Menutup terminal atau membiarkan sesi keluar membatalkan semuanya.
-* Tidak ada catch-up untuk api yang terlewat. Jika waktu terjadwal tugas berlalu saat Claude sibuk dengan permintaan yang berjalan lama, itu berjalan sekali saat Claude menjadi idle, bukan sekali per interval yang terlewat.
+* Tidak ada catch-up untuk fire yang terlewat. Jika waktu terjadwal tugas berlalu saat Claude sibuk dengan permintaan yang berjalan lama, itu berjalan sekali saat Claude menjadi idle, bukan sekali per interval yang terlewat.
 * Tidak ada persistensi di seluruh restart. Memulai ulang Claude Code menghapus semua tugas session-scoped.
 
-Untuk otomasi yang didorong cron yang perlu berjalan tanpa pengawasan, gunakan [GitHub Actions workflow](/id/github-actions) dengan pemicu `schedule`, atau [Desktop scheduled tasks](/id/desktop#schedule-recurring-tasks) jika Anda menginginkan alur pengaturan grafis.
+Untuk otomasi yang didorong cron yang perlu berjalan tanpa pengawasan, gunakan [GitHub Actions workflow](/id/github-actions) dengan trigger `schedule`, atau [Desktop scheduled tasks](/id/desktop#schedule-recurring-tasks) jika Anda menginginkan alur pengaturan grafis.

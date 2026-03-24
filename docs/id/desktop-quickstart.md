@@ -25,7 +25,7 @@ Aplikasi desktop memiliki tiga tab:
 Chat dan Cowork tercakup dalam [artikel dukungan Claude Desktop](https://support.claude.com/en/collections/16163169-claude-desktop). Halaman ini berfokus pada tab **Code**.
 
 <Note>
-  Claude Code memerlukan [langganan Pro, Max, Teams, atau Enterprise](https://claude.com/pricing).
+  Claude Code memerlukan [langganan Pro, Max, Teams, atau Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing).
 </Note>
 
 ## Instal
@@ -54,7 +54,7 @@ Chat dan Cowork tercakup dalam [artikel dukungan Claude Desktop](https://support
   </Step>
 
   <Step title="Buka tab Code">
-    Klik tab **Code** di bagian atas tengah. Jika mengklik Code meminta Anda untuk upgrade, Anda perlu [berlangganan paket berbayar](https://claude.com/pricing) terlebih dahulu. Jika meminta Anda untuk masuk online, selesaikan masuk dan mulai ulang aplikasi. Jika Anda melihat kesalahan 403, lihat [pemecahan masalah autentikasi](/id/desktop#403-or-authentication-errors-in-the-code-tab).
+    Klik tab **Code** di bagian atas tengah. Jika mengklik Code meminta Anda untuk upgrade, Anda perlu [berlangganan paket berbayar](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_upgrade) terlebih dahulu. Jika meminta Anda untuk masuk online, selesaikan masuk dan mulai ulang aplikasi. Jika Anda melihat kesalahan 403, lihat [pemecahan masalah autentikasi](/id/desktop#403-or-authentication-errors-in-the-code-tab).
   </Step>
 </Steps>
 
@@ -95,7 +95,7 @@ Dengan tab Code terbuka, pilih proyek dan beri Claude sesuatu untuk dikerjakan.
   <Step title="Tinjau dan terima perubahan">
     Secara default, tab Code dimulai dalam [mode Minta izin](/id/desktop#choose-a-permission-mode), di mana Claude mengusulkan perubahan dan menunggu persetujuan Anda sebelum menerapkannya. Anda akan melihat:
 
-    1. [Tampilan diff](/id/desktop#review-changes-with-diff-view) menunjukkan dengan tepat apa yang akan berubah di setiap file
+    1. [Tampilan diff](/id/desktop#review-changes-with-diff-view) yang menunjukkan dengan tepat apa yang akan berubah di setiap file
     2. Tombol Terima/Tolak untuk menyetujui atau menolak setiap perubahan
     3. Pembaruan real-time saat Claude menyelesaikan permintaan Anda
 
@@ -111,7 +111,7 @@ Anda telah membuat edit pertama Anda. Untuk referensi lengkap tentang semua yang
 
 **Beri Claude lebih banyak konteks.** Ketik `@filename` di kotak prompt untuk menarik file tertentu ke dalam percakapan, lampirkan gambar dan PDF menggunakan tombol lampiran, atau seret dan lepas file langsung ke prompt. Semakin banyak konteks yang dimiliki Claude, semakin baik hasilnya. Lihat [Tambahkan file dan konteks](/id/desktop#add-files-and-context-to-prompts).
 
-**Gunakan skills untuk tugas yang dapat diulang.** Ketik `/` atau klik **+** → **Slash commands** untuk menjelajahi [perintah bawaan](/id/interactive-mode#built-in-commands), [skills kustom](/id/skills), dan skills plugin. Skills adalah prompt yang dapat digunakan kembali yang dapat Anda panggil kapan pun Anda membutuhkannya, seperti daftar periksa tinjauan kode atau langkah penyebaran.
+**Gunakan skills untuk tugas yang dapat diulang.** Ketik `/` atau klik **+** → **Slash commands** untuk menjelajahi [perintah bawaan](/id/commands), [skills kustom](/id/skills), dan skills plugin. Skills adalah prompt yang dapat digunakan kembali yang dapat Anda panggil kapan pun Anda membutuhkannya, seperti daftar periksa tinjauan kode atau langkah penyebaran.
 
 **Tinjau perubahan sebelum melakukan commit.** Setelah Claude mengedit file, indikator `+12 -1` muncul. Klik untuk membuka [tampilan diff](/id/desktop#review-changes-with-diff-view), tinjau modifikasi file demi file, dan beri komentar pada baris tertentu. Claude membaca komentar Anda dan merevisi. Klik **Review code** untuk membuat Claude mengevaluasi diff itu sendiri dan meninggalkan saran inline.
 
@@ -125,11 +125,11 @@ Anda telah membuat edit pertama Anda. Untuk referensi lengkap tentang semua yang
 
 **Letakkan Claude pada jadwal.** Atur [tugas terjadwal](/id/desktop#schedule-recurring-tasks) untuk menjalankan Claude secara otomatis secara berulang: tinjauan kode harian setiap pagi, audit dependensi mingguan, atau briefing yang menarik dari alat yang terhubung.
 
-**Skalakan ketika Anda siap.** Buka [sesi paralel](/id/desktop#work-in-parallel-with-sessions) dari sidebar untuk bekerja pada beberapa tugas sekaligus, masing-masing di Git worktree-nya sendiri. Kirim [pekerjaan jangka panjang ke cloud](/id/desktop#run-long-running-tasks-remotely) sehingga terus berlanjut bahkan jika Anda menutup aplikasi, atau [lanjutkan sesi di web atau di IDE Anda](/id/desktop#continue-in-another-surface) jika tugas memakan waktu lebih lama dari yang diharapkan. [Hubungkan alat eksternal](/id/desktop#extend-claude-code) seperti GitHub, Slack, dan Linear untuk menyatukan alur kerja Anda.
+**Skalakan ketika Anda siap.** Buka [sesi paralel](/id/desktop#work-in-parallel-with-sessions) dari sidebar untuk bekerja pada beberapa tugas sekaligus, masing-masing di worktree Git-nya sendiri. Kirim [pekerjaan jangka panjang ke cloud](/id/desktop#run-long-running-tasks-remotely) sehingga terus berjalan bahkan jika Anda menutup aplikasi, atau [lanjutkan sesi di web atau di IDE Anda](/id/desktop#continue-in-another-surface) jika tugas memakan waktu lebih lama dari yang diharapkan. [Hubungkan alat eksternal](/id/desktop#extend-claude-code) seperti GitHub, Slack, dan Linear untuk menyatukan alur kerja Anda.
 
 ## Datang dari CLI?
 
-Desktop menjalankan mesin yang sama dengan CLI dengan antarmuka grafis. Anda dapat menjalankan keduanya secara bersamaan pada proyek yang sama, dan mereka berbagi konfigurasi (file CLAUDE.md, MCP servers, hooks, skills, dan settings). Untuk perbandingan lengkap fitur, setara flag, dan apa yang tidak tersedia di Desktop, lihat [perbandingan CLI](/id/desktop#coming-from-the-cli).
+Desktop menjalankan mesin yang sama dengan CLI dengan antarmuka grafis. Anda dapat menjalankan keduanya secara bersamaan pada proyek yang sama, dan mereka berbagi konfigurasi (file CLAUDE.md, MCP servers, hooks, skills, dan settings). Untuk perbandingan lengkap fitur, setara flag, dan apa yang tidak tersedia di Desktop, lihat [Perbandingan CLI](/id/desktop#coming-from-the-cli).
 
 ## Apa selanjutnya
 

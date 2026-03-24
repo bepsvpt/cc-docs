@@ -2,29 +2,38 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Установка Claude Code
+# Расширенная настройка
 
-> Установите, аутентифицируйте и начните использовать Claude Code на вашей машине разработки.
+> Системные требования, установка для конкретной платформы, управление версиями и удаление Claude Code.
+
+На этой странице рассматриваются системные требования, детали установки для конкретной платформы, обновления и удаление. Для пошагового руководства по вашему первому сеансу см. [краткое руководство](/ru/quickstart). Если вы никогда раньше не использовали терминал, см. [руководство по терминалу](/ru/terminal-guide).
 
 ## Системные требования
 
+Claude Code работает на следующих платформах и конфигурациях:
+
 * **Операционная система**:
   * macOS 13.0+
-  * Windows 10 1809+ или Windows Server 2019+ ([см. примечания по установке](#platform-specific-setup))
+  * Windows 10 1809+ или Windows Server 2019+
   * Ubuntu 20.04+
   * Debian 10+
-  * Alpine Linux 3.19+ ([требуются дополнительные зависимости](#platform-specific-setup))
+  * Alpine Linux 3.19+
 * **Оборудование**: 4 ГБ+ ОЗУ
-* **Сеть**: требуется подключение к интернету (см. [конфигурация сети](/ru/network-config#network-access-requirements))
-* **Shell**: лучше всего работает в Bash или Zsh
+* **Сеть**: требуется подключение в Интернет. См. [конфигурация сети](/ru/network-config#network-access-requirements).
+* **Shell**: Bash, Zsh, PowerShell или CMD. В Windows требуется [Git for Windows](https://git-scm.com/downloads/win).
 * **Местоположение**: [поддерживаемые Anthropic страны](https://www.anthropic.com/supported-countries)
 
 ### Дополнительные зависимости
 
 * **ripgrep**: обычно включен в Claude Code. Если поиск не работает, см. [устранение неполадок поиска](/ru/troubleshooting#search-and-discovery-issues).
-* **[Node.js 18+](https://nodejs.org/en/download)**: требуется только для [устаревшей установки npm](#npm-installation-deprecated)
 
-## Установка
+## Установка Claude Code
+
+<Tip>
+  Предпочитаете графический интерфейс? [Приложение Desktop](/ru/desktop-quickstart) позволяет использовать Claude Code без терминала. Загрузите его для [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) или [Windows](https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs).
+
+  Новичок в терминале? См. [руководство по терминалу](/ru/terminal-guide) для пошаговых инструкций.
+</Tip>
 
 To install Claude Code, use one of the following methods:
 
@@ -76,49 +85,136 @@ To install Claude Code, use one of the following methods:
   </Tab>
 </Tabs>
 
-После завершения процесса установки перейдите в ваш проект и запустите Claude Code:
+После завершения установки откройте терминал в проекте, над которым вы хотите работать, и запустите Claude Code:
 
 ```bash  theme={null}
-cd your-awesome-project
 claude
 ```
 
-Если вы столкнетесь с какими-либо проблемами во время установки, обратитесь к [руководству по устранению неполадок](/ru/troubleshooting).
+Если вы столкнулись с какими-либо проблемами во время установки, см. [руководство по устранению неполадок](/ru/troubleshooting).
 
-<Tip>
-  Запустите `claude doctor` после установки, чтобы проверить тип и версию вашей установки.
-</Tip>
+### Настройка в Windows
 
-### Установка для конкретной платформы
+Claude Code в Windows требует [Git for Windows](https://git-scm.com/downloads/win) или WSL. Вы можете запустить `claude` из PowerShell, CMD или Git Bash. Claude Code использует Git Bash внутри для выполнения команд. Вам не нужно запускать PowerShell от имени администратора.
 
-**Windows**: запустите Claude Code в собственной среде (требуется [Git Bash](https://git-scm.com/downloads/win)) или внутри WSL. Поддерживаются как WSL 1, так и WSL 2, но WSL 1 имеет ограниченную поддержку и не поддерживает такие функции, как Bash tool sandboxing.
+**Вариант 1: Native Windows с Git Bash**
 
-**Alpine Linux и другие дистрибутивы на основе musl/uClibc**:
+Установите [Git for Windows](https://git-scm.com/downloads/win), затем выполните команду установки из PowerShell или CMD.
 
-Собственный установщик на Alpine и других дистрибутивах на основе musl/uClibc требует `libgcc`, `libstdc++` и `ripgrep`. Установите их с помощью менеджера пакетов вашего дистрибутива, затем установите `USE_BUILTIN_RIPGREP=0`.
+Если Claude Code не может найти вашу установку Git Bash, установите путь в [файле settings.json](/ru/settings):
 
-На Alpine:
+```json  theme={null}
+{
+  "env": {
+    "CLAUDE_CODE_GIT_BASH_PATH": "C:\\Program Files\\Git\\bin\\bash.exe"
+  }
+}
+```
+
+**Вариант 2: WSL**
+
+Поддерживаются как WSL 1, так и WSL 2. WSL 2 поддерживает [sandboxing](/ru/sandboxing) для повышенной безопасности. WSL 1 не поддерживает sandboxing.
+
+### Alpine Linux и дистрибутивы на основе musl
+
+Встроенный установщик на Alpine и других дистрибутивах на основе musl/uClibc требует `libgcc`, `libstdc++` и `ripgrep`. Установите их с помощью менеджера пакетов вашего дистрибутива, затем установите `USE_BUILTIN_RIPGREP=0`.
+
+Этот пример устанавливает необходимые пакеты на Alpine:
 
 ```bash  theme={null}
 apk add libgcc libstdc++ ripgrep
 ```
 
-### Аутентификация
+Затем установите `USE_BUILTIN_RIPGREP` на `0` в файле [`settings.json`](/ru/settings#available-settings):
 
-#### Для отдельных пользователей
+```json  theme={null}
+{
+  "env": {
+    "USE_BUILTIN_RIPGREP": "0"
+  }
+}
+```
 
-1. **План Claude Pro или Max** (рекомендуется): подпишитесь на [план Pro или Max](https://claude.ai/pricing) Claude для единой подписки, которая включает как Claude Code, так и Claude в веб-версии. Управляйте своей учетной записью в одном месте и входите с помощью своей учетной записи Claude.ai.
-2. **Claude Console**: подключитесь через [Claude Console](https://console.anthropic.com) и завершите процесс OAuth. Требуется активное выставление счетов в Anthropic Console. Рабочее пространство "Claude Code" автоматически создается для отслеживания использования и управления затратами. Вы не можете создавать ключи API для рабочего пространства Claude Code; оно предназначено исключительно для использования Claude Code.
+## Проверка установки
 
-#### Для команд и организаций
+После установки убедитесь, что Claude Code работает:
 
-1. **Claude for Teams или Enterprise** (рекомендуется): подпишитесь на [Claude for Teams](https://claude.com/pricing#team-&-enterprise) или [Claude for Enterprise](https://anthropic.com/contact-sales) для централизованного выставления счетов, управления командой и доступа как к Claude Code, так и к Claude в веб-версии. Члены команды входят с помощью своих учетных записей Claude.ai.
-2. **Claude Console с командным выставлением счетов**: установите общую организацию [Claude Console](https://console.anthropic.com) с командным выставлением счетов. Пригласите членов команды и назначьте роли для отслеживания использования.
-3. **Облачные провайдеры**: настройте Claude Code для использования [Amazon Bedrock, Google Vertex AI или Microsoft Foundry](/ru/third-party-integrations) для развертываний с вашей существующей облачной инфраструктурой.
+```bash  theme={null}
+claude --version
+```
 
-### Установка конкретной версии
+Для более подробной проверки установки и конфигурации выполните [`claude doctor`](/ru/troubleshooting#get-more-help):
 
-Собственный установщик принимает либо конкретный номер версии, либо канал выпуска (`latest` или `stable`). Канал, который вы выбираете во время установки, становится вашим значением по умолчанию для автоматических обновлений. Дополнительную информацию см. в разделе [Настройка канала выпуска](#configure-release-channel).
+```bash  theme={null}
+claude doctor
+```
+
+## Аутентификация
+
+Claude Code требует учетную запись Pro, Max, Teams, Enterprise или Console. Бесплатный план Claude.ai не включает доступ к Claude Code. Вы также можете использовать Claude Code с поставщиком API третьей стороны, таким как [Amazon Bedrock](/ru/amazon-bedrock), [Google Vertex AI](/ru/google-vertex-ai) или [Microsoft Foundry](/ru/microsoft-foundry).
+
+После установки войдите, выполнив `claude` и следуя подсказкам браузера. См. [Аутентификация](/ru/authentication) для всех типов учетных записей и параметров настройки команды.
+
+## Обновление Claude Code
+
+Встроенные установки автоматически обновляются в фоновом режиме. Вы можете [настроить канал выпуска](#configure-release-channel) для управления тем, получаете ли вы обновления немедленно или по отложенному стабильному расписанию, или [отключить автоматические обновления](#disable-auto-updates) полностью. Установки Homebrew и WinGet требуют ручного обновления.
+
+### Автоматические обновления
+
+Claude Code проверяет наличие обновлений при запуске и периодически во время работы. Обновления загружаются и устанавливаются в фоновом режиме, а затем вступают в силу при следующем запуске Claude Code.
+
+<Note>
+  Установки Homebrew и WinGet не обновляются автоматически. Используйте `brew upgrade claude-code` или `winget upgrade Anthropic.ClaudeCode` для ручного обновления.
+
+  **Известная проблема:** Claude Code может уведомить вас об обновлениях до того, как новая версия будет доступна в этих менеджерах пакетов. Если обновление не удается, подождите и повторите попытку позже.
+
+  Homebrew сохраняет старые версии на диске после обновлений. Периодически выполняйте `brew cleanup claude-code` для освобождения дискового пространства.
+</Note>
+
+### Настройка канала выпуска
+
+Управляйте каналом выпуска, который Claude Code использует для автоматических обновлений и `claude update`, с помощью параметра `autoUpdatesChannel`:
+
+* `"latest"`, по умолчанию: получайте новые функции сразу же после их выпуска
+* `"stable"`: используйте версию, которая обычно имеет возраст около одной недели, пропуская выпуски с серьезными регрессиями
+
+Настройте это через `/config` → **Auto-update channel**, или добавьте в [файл settings.json](/ru/settings):
+
+```json  theme={null}
+{
+  "autoUpdatesChannel": "stable"
+}
+```
+
+Для развертываний в масштабах предприятия вы можете обеспечить согласованный канал выпуска во всей организации, используя [управляемые параметры](/ru/permissions#managed-settings).
+
+### Отключение автоматических обновлений
+
+Установите `DISABLE_AUTOUPDATER` на `"1"` в ключе `env` файла [`settings.json`](/ru/settings#available-settings):
+
+```json  theme={null}
+{
+  "env": {
+    "DISABLE_AUTOUPDATER": "1"
+  }
+}
+```
+
+### Ручное обновление
+
+Чтобы применить обновление немедленно без ожидания следующей проверки в фоновом режиме, выполните:
+
+```bash  theme={null}
+claude update
+```
+
+## Расширенные параметры установки
+
+Эти параметры предназначены для закрепления версии, миграции с npm и проверки целостности двоичного файла.
+
+### Установка определенной версии
+
+Встроенный установщик принимает либо конкретный номер версии, либо канал выпуска (`latest` или `stable`). Канал, который вы выбираете во время установки, становится вашим значением по умолчанию для автоматических обновлений. См. [настройка канала выпуска](#configure-release-channel) для получения дополнительной информации.
 
 Для установки последней версии (по умолчанию):
 
@@ -164,7 +260,7 @@ apk add libgcc libstdc++ ripgrep
   </Tab>
 </Tabs>
 
-Для установки конкретного номера версии:
+Для установки определенного номера версии:
 
 <Tabs>
   <Tab title="macOS, Linux, WSL">
@@ -186,121 +282,72 @@ apk add libgcc libstdc++ ripgrep
   </Tab>
 </Tabs>
 
-### Целостность двоичного файла и подписание кода
+### Устаревшая установка npm
 
-* Контрольные суммы SHA256 для всех платформ опубликованы в манифестах выпуска, в настоящее время расположенные по адресу `https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/{VERSION}/manifest.json` (пример: замените `{VERSION}` на `2.0.30`)
-* Подписанные двоичные файлы распространяются для следующих платформ:
-  * macOS: подписано "Anthropic PBC" и заверено Apple
-  * Windows: подписано "Anthropic, PBC"
+Установка npm устарела. Встроенный установщик быстрее, не требует зависимостей и автоматически обновляется в фоновом режиме. По возможности используйте метод [встроенной установки](#install-claude-code).
 
-## Установка NPM (устаревшая)
+#### Миграция с npm на встроенный установщик
 
-Установка NPM устаревшая. Используйте метод [собственной установки](#installation) когда это возможно. Для миграции существующей установки npm на собственную запустите `claude install`.
+Если вы ранее установили Claude Code с помощью npm, переключитесь на встроенный установщик:
 
-**Глобальная установка npm**
+```bash  theme={null}
+# Установка встроенного двоичного файла
+curl -fsSL https://claude.ai/install.sh | bash
 
-```sh  theme={null}
+# Удаление старой установки npm
+npm uninstall -g @anthropic-ai/claude-code
+```
+
+Вы также можете выполнить `claude install` из существующей установки npm для установки встроенного двоичного файла рядом с ней, а затем удалить версию npm.
+
+#### Установка с npm
+
+Если вам нужна установка npm по причинам совместимости, у вас должен быть установлен [Node.js 18+](https://nodejs.org/en/download). Установите пакет глобально:
+
+```bash  theme={null}
 npm install -g @anthropic-ai/claude-code
 ```
 
 <Warning>
-  НЕ используйте `sudo npm install -g`, так как это может привести к проблемам с разрешениями и рискам безопасности.
-  Если вы столкнетесь с ошибками разрешений, см. [устранение неполадок с разрешениями](/ru/troubleshooting#command-not-found-claude-or-permission-errors) для рекомендуемых решений.
+  НЕ используйте `sudo npm install -g`, так как это может привести к проблемам с разрешениями и рискам безопасности. Если вы столкнулись с ошибками разрешений, см. [устранение неполадок ошибок разрешений](/ru/troubleshooting#permission-errors-during-installation).
 </Warning>
 
-## Установка Windows
+### Целостность двоичного файла и подпись кода
 
-**Вариант 1: Claude Code в WSL**
+Вы можете проверить целостность двоичных файлов Claude Code, используя контрольные суммы SHA256 и подписи кода.
 
-* Поддерживаются как WSL 1, так и WSL 2
-* WSL 2 поддерживает [sandboxing](/ru/sandboxing) для повышенной безопасности. WSL 1 не поддерживает sandboxing.
-
-**Вариант 2: Claude Code на собственной Windows с Git Bash**
-
-* Требуется [Git for Windows](https://git-scm.com/downloads/win)
-* Для портативных установок Git укажите путь к вашему `bash.exe`:
-  ```powershell  theme={null}
-  $env:CLAUDE_CODE_GIT_BASH_PATH="C:\Program Files\Git\bin\bash.exe"
-  ```
-
-## Обновление Claude Code
-
-### Автоматические обновления
-
-Claude Code автоматически обновляется, чтобы убедиться, что у вас есть последние функции и исправления безопасности.
-
-* **Проверки обновлений**: выполняются при запуске и периодически во время работы
-* **Процесс обновления**: загружает и устанавливает автоматически в фоновом режиме
-* **Уведомления**: вы увидите уведомление при установке обновлений
-* **Применение обновлений**: обновления вступают в силу при следующем запуске Claude Code
-
-<Note>
-  Установки Homebrew и WinGet не обновляются автоматически. Используйте `brew upgrade claude-code` или `winget upgrade Anthropic.ClaudeCode` для ручного обновления.
-
-  **Известная проблема:** Claude Code может уведомить вас об обновлениях до того, как новая версия будет доступна в этих менеджерах пакетов. Если обновление не удается, подождите и попробуйте позже.
-</Note>
-
-### Настройка канала выпуска
-
-Настройте, какой канал выпуска Claude Code следует для автоматических обновлений и `claude update` с помощью параметра `autoUpdatesChannel`:
-
-* `"latest"` (по умолчанию): получайте новые функции сразу после их выпуска
-* `"stable"`: используйте версию, которая обычно примерно на неделю старше, пропуская выпуски с серьезными регрессиями
-
-Настройте это через `/config` → **Auto-update channel**, или добавьте это в ваш [файл settings.json](/ru/settings):
-
-```json  theme={null}
-{
-  "autoUpdatesChannel": "stable"
-}
-```
-
-Для корпоративных развертываний вы можете обеспечить согласованный канал выпуска во всей вашей организации, используя [управляемые параметры](/ru/settings#settings-files).
-
-### Отключение автоматических обновлений
-
-Установите переменную окружения `DISABLE_AUTOUPDATER` в вашей оболочке или [файле settings.json](/ru/settings):
-
-```bash  theme={null}
-export DISABLE_AUTOUPDATER=1
-```
-
-### Ручное обновление
-
-```bash  theme={null}
-claude update
-```
+* Контрольные суммы SHA256 для всех платформ опубликованы в манифестах выпуска по адресу `https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/{VERSION}/manifest.json`. Замените `{VERSION}` номером версии, например `2.0.30`.
+* Подписанные двоичные файлы распространяются для следующих платформ:
+  * **macOS**: подписано "Anthropic PBC" и заверено Apple
+  * **Windows**: подписано "Anthropic, PBC"
 
 ## Удаление Claude Code
 
-Если вам нужно удалить Claude Code, следуйте инструкциям для вашего метода установки.
+Чтобы удалить Claude Code, следуйте инструкциям для вашего метода установки.
 
-### Собственная установка
+### Встроенная установка
 
 Удалите двоичный файл Claude Code и файлы версии:
 
-**macOS, Linux, WSL:**
+<Tabs>
+  <Tab title="macOS, Linux, WSL">
+    ```bash  theme={null}
+    rm -f ~/.local/bin/claude
+    rm -rf ~/.local/share/claude
+    ```
+  </Tab>
 
-```bash  theme={null}
-rm -f ~/.local/bin/claude
-rm -rf ~/.local/share/claude
-```
-
-**Windows PowerShell:**
-
-```powershell  theme={null}
-Remove-Item -Path "$env:USERPROFILE\.local\bin\claude.exe" -Force
-Remove-Item -Path "$env:USERPROFILE\.local\share\claude" -Recurse -Force
-```
-
-**Windows CMD:**
-
-```batch  theme={null}
-del "%USERPROFILE%\.local\bin\claude.exe"
-rmdir /s /q "%USERPROFILE%\.local\share\claude"
-```
+  <Tab title="Windows PowerShell">
+    ```powershell  theme={null}
+    Remove-Item -Path "$env:USERPROFILE\.local\bin\claude.exe" -Force
+    Remove-Item -Path "$env:USERPROFILE\.local\share\claude" -Recurse -Force
+    ```
+  </Tab>
+</Tabs>
 
 ### Установка Homebrew
+
+Удалите cask Homebrew:
 
 ```bash  theme={null}
 brew uninstall --cask claude-code
@@ -308,56 +355,50 @@ brew uninstall --cask claude-code
 
 ### Установка WinGet
 
+Удалите пакет WinGet:
+
 ```powershell  theme={null}
 winget uninstall Anthropic.ClaudeCode
 ```
 
-### Установка NPM
+### npm
+
+Удалите глобальный пакет npm:
 
 ```bash  theme={null}
 npm uninstall -g @anthropic-ai/claude-code
 ```
 
-### Очистка файлов конфигурации (необязательно)
+### Удаление файлов конфигурации
 
 <Warning>
-  Удаление файлов конфигурации удалит все ваши параметры, разрешенные инструменты, конфигурации MCP server и историю сеанса.
+  Удаление файлов конфигурации удалит все ваши параметры, разрешенные инструменты, конфигурации MCP servers и историю сеансов.
 </Warning>
 
-Для удаления параметров Claude Code и кэшированных данных:
+Чтобы удалить параметры Claude Code и кэшированные данные:
 
-**macOS, Linux, WSL:**
+<Tabs>
+  <Tab title="macOS, Linux, WSL">
+    ```bash  theme={null}
+    # Удаление пользовательских параметров и состояния
+    rm -rf ~/.claude
+    rm ~/.claude.json
 
-```bash  theme={null}
-# Удалить пользовательские параметры и состояние
-rm -rf ~/.claude
-rm ~/.claude.json
+    # Удаление параметров для конкретного проекта (выполните из каталога вашего проекта)
+    rm -rf .claude
+    rm -f .mcp.json
+    ```
+  </Tab>
 
-# Удалить параметры для конкретного проекта (запустите из каталога вашего проекта)
-rm -rf .claude
-rm -f .mcp.json
-```
+  <Tab title="Windows PowerShell">
+    ```powershell  theme={null}
+    # Удаление пользовательских параметров и состояния
+    Remove-Item -Path "$env:USERPROFILE\.claude" -Recurse -Force
+    Remove-Item -Path "$env:USERPROFILE\.claude.json" -Force
 
-**Windows PowerShell:**
-
-```powershell  theme={null}
-# Удалить пользовательские параметры и состояние
-Remove-Item -Path "$env:USERPROFILE\.claude" -Recurse -Force
-Remove-Item -Path "$env:USERPROFILE\.claude.json" -Force
-
-# Удалить параметры для конкретного проекта (запустите из каталога вашего проекта)
-Remove-Item -Path ".claude" -Recurse -Force
-Remove-Item -Path ".mcp.json" -Force
-```
-
-**Windows CMD:**
-
-```batch  theme={null}
-REM Удалить пользовательские параметры и состояние
-rmdir /s /q "%USERPROFILE%\.claude"
-del "%USERPROFILE%\.claude.json"
-
-REM Удалить параметры для конкретного проекта (запустите из каталога вашего проекта)
-rmdir /s /q ".claude"
-del ".mcp.json"
-```
+    # Удаление параметров для конкретного проекта (выполните из каталога вашего проекта)
+    Remove-Item -Path ".claude" -Recurse -Force
+    Remove-Item -Path ".mcp.json" -Force
+    ```
+  </Tab>
+</Tabs>

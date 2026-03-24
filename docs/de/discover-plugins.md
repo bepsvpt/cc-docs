@@ -154,7 +154,7 @@ Anthropic verwaltet auch einen [Demo-Plugins-Marktplatz](https://github.com/anth
   </Step>
 
   <Step title="Verwenden Sie Ihr neues Plugin">
-    Nach der Installation sind die Befehle des Plugins sofort verfügbar. Plugin-Befehle werden nach dem Plugin-Namen benannt, daher bietet **commit-commands** Befehle wie `/commit-commands:commit`.
+    Nach der Installation führen Sie `/reload-plugins` aus, um das Plugin zu aktivieren. Plugin-Befehle werden nach dem Plugin-Namen benannt, daher bietet **commit-commands** Befehle wie `/commit-commands:commit`.
 
     Probieren Sie es aus, indem Sie eine Änderung an einer Datei vornehmen und ausführen:
 
@@ -296,15 +296,13 @@ claude plugin uninstall formatter@your-org --scope project
 
 ### Wenden Sie Plugin-Änderungen an, ohne neu zu starten
 
-Wenn Sie während einer Sitzung Plugins installieren, aktivieren oder deaktivieren, werden einige Änderungen (wie neue Befehle und hooks) sofort wirksam. Andere, einschließlich LSP-Server-Updates, erfordern einen Neustart.
-
-Um alle ausstehenden Plugin-Änderungen ohne Neustart zu aktivieren, führen Sie aus:
+Wenn Sie während einer Sitzung Plugins installieren, aktivieren oder deaktivieren, führen Sie `/reload-plugins` aus, um alle Änderungen ohne Neustart zu aktivieren:
 
 ```shell  theme={null}
 /reload-plugins
 ```
 
-Claude Code lädt alle aktiven Plugins neu und meldet, was geladen wurde. Wenn LSP-Server hinzugefügt oder aktualisiert wurden, wird Ihnen mitgeteilt, dass diese einen Neustart erfordern, um wirksam zu werden.
+Claude Code lädt alle aktiven Plugins neu und zeigt Zählungen für neu geladene Befehle, skills, Agenten, hooks, Plugin-MCP-Server und Plugin-LSP-Server an.
 
 ## Verwalten Sie Marktplätze
 

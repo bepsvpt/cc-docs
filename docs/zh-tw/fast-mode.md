@@ -21,7 +21,7 @@
 需要了解的事項：
 
 * 使用 `/fast` 在 Claude Code CLI 中切換快速模式。也可在 Claude Code VS Code 擴充功能中透過 `/fast` 使用。
-* Opus 4.6 快速模式定價起價為 \$30/150 MTok。快速模式在 2 月 16 日太平洋時間晚上 11:59 之前享受所有方案 50% 折扣。
+* Opus 4.6 快速模式定價起價為 \$30/150 MTok。快速模式在 2 月 16 日太平洋時間 11:59pm 之前以 50% 折扣提供給所有方案。
 * 適用於訂閱方案（Pro/Max/Team/Enterprise）上的所有 Claude Code 使用者和 Claude Console。
 * 對於訂閱方案（Pro/Max/Team/Enterprise）上的 Claude Code 使用者，快速模式僅透過額外使用提供，不包含在訂閱速率限制中。
 
@@ -36,7 +36,7 @@
 
 預設情況下，快速模式在工作階段之間保持。管理員可以配置快速模式在每個工作階段重設。詳見[要求每個工作階段選擇加入](#require-per-session-opt-in)。
 
-為了獲得最佳成本效率，請在工作階段開始時啟用快速模式，而不是在對話中途切換。詳見[了解成本權衡](#understand-the-cost-tradeoff)。
+為了獲得最佳成本效率，在工作階段開始時啟用快速模式，而不是在對話中途切換。詳見[了解成本權衡](#understand-the-cost-tradeoff)。
 
 當您啟用快速模式時：
 
@@ -78,19 +78,19 @@
 
 快速模式和努力等級都會影響回應速度，但方式不同：
 
-| 設定          | 效果                         |
-| ----------- | -------------------------- |
-| **快速模式**    | 相同的模型品質、更低的延遲、更高的成本        |
-| **較低的努力等級** | 較少的思考時間、更快的回應、在複雜任務上可能品質較低 |
+| 設定          | 效果                        |
+| ----------- | ------------------------- |
+| **快速模式**    | 相同的模型品質、更低的延遲、更高的成本       |
+| **較低的努力等級** | 較少的思考時間、更快的回應、複雜任務上可能品質較低 |
 
-您可以結合兩者：使用快速模式搭配較低的[努力等級](/zh-TW/model-config#adjust-effort-level)，在直接任務上獲得最大速度。
+您可以結合兩者：在直接任務上使用快速模式搭配較低的[努力等級](/zh-TW/model-config#adjust-effort-level)以獲得最大速度。
 
 ## 要求
 
 快速模式需要以下所有條件：
 
 * **第三方雲端提供商上不可用**：快速模式在 Amazon Bedrock、Google Vertex AI 或 Microsoft Azure Foundry 上不可用。快速模式可透過 Anthropic Console API 和使用額外使用的 Claude 訂閱方案取得。
-* **啟用額外使用**：您的帳戶必須啟用額外使用，這允許超出您方案包含使用量的計費。對於個人帳戶，請在您的 [Console 計費設定](https://platform.claude.com/settings/organization/billing)中啟用此功能。對於 Teams 和 Enterprise，管理員必須為組織啟用額外使用。
+* **啟用額外使用**：您的帳戶必須啟用額外使用，這允許超出您方案包含使用量的計費。對於個人帳戶，在您的 [Console 計費設定](https://platform.claude.com/settings/organization/billing)中啟用此功能。對於 Teams 和 Enterprise，管理員必須為組織啟用額外使用。
 
 <Note>
   快速模式使用直接計費到額外使用，即使您的方案上還有剩餘使用量。這意味著快速模式 token 不計入您方案的包含使用量，並從第一個 token 開始按快速模式費率計費。
@@ -109,11 +109,11 @@
 * **Console**（API 客戶）：[Claude Code 偏好設定](https://platform.claude.com/claude-code/preferences)
 * **Claude AI**（Teams 和 Enterprise）：[管理員設定 > Claude Code](https://claude.ai/admin-settings/claude-code)
 
-另一個完全禁用快速模式的選項是設定 `CLAUDE_CODE_DISABLE_FAST_MODE=1`。詳見[環境變數](/zh-TW/settings#environment-variables)。
+另一個完全禁用快速模式的選項是設定 `CLAUDE_CODE_DISABLE_FAST_MODE=1`。詳見[環境變數](/zh-TW/env-vars)。
 
 ### 要求每個工作階段選擇加入
 
-預設情況下，快速模式在工作階段之間保持：如果使用者啟用快速模式，它會在未來工作階段中保持開啟。[Teams](https://claude.com/pricing#team-&-enterprise) 或 [Enterprise](https://anthropic.com/contact-sales) 方案上的管理員可以透過在[受管設定](/zh-TW/settings#settings-files)或[伺服器受管設定](/zh-TW/server-managed-settings)中將 `fastModePerSessionOptIn` 設定為 `true` 來防止這種情況。這會導致每個工作階段以快速模式關閉開始，要求使用者使用 `/fast` 明確啟用它。
+預設情況下，快速模式在工作階段之間保持：如果使用者啟用快速模式，它在未來工作階段中保持開啟。[Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise) 或 [Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise) 方案上的管理員可以透過在[受管設定](/zh-TW/settings#settings-files)或[伺服器受管設定](/zh-TW/server-managed-settings)中將 `fastModePerSessionOptIn` 設定為 `true` 來防止這種情況。這會導致每個工作階段以快速模式關閉開始，要求使用者使用 `/fast` 明確啟用它。
 
 ```json  theme={null}
 {
@@ -121,18 +121,18 @@
 }
 ```
 
-這對於控制使用者執行多個並行工作階段的組織中的成本很有用。使用者在需要速度時仍可以使用 `/fast` 啟用快速模式，但它會在每個新工作階段開始時重設。使用者的快速模式偏好設定仍會保存，因此移除此設定會還原預設的持久行為。
+這對於控制執行多個並行工作階段的使用者的組織成本很有用。使用者在需要速度時仍可以使用 `/fast` 啟用快速模式，但它在每個新工作階段開始時重設。使用者的快速模式偏好設定仍會保存，因此移除此設定會還原預設的持久行為。
 
 ## 處理速率限制
 
 快速模式與標準 Opus 4.6 有不同的速率限制。當您達到快速模式速率限制或用完額外使用額度時：
 
 1. 快速模式自動回退到標準 Opus 4.6
-2. `↯` 圖示變灰以指示冷卻期
+2. `↯` 圖示變灰以指示冷卻
 3. 您以標準速度和定價繼續工作
 4. 冷卻期過期時，快速模式自動重新啟用
 
-要手動禁用快速模式而不是等待冷卻期，請再次執行 `/fast`。
+要手動禁用快速模式而不是等待冷卻，請再次執行 `/fast`。
 
 ## 研究預覽
 

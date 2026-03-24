@@ -4,7 +4,7 @@
 
 # Passen Sie Ihre Statuszeile an
 
-> Konfigurieren Sie eine benutzerdefinierte Statusleiste, um die Kontextfensternutzung, Kosten und Git-Status in Claude Code zu überwachen
+> Konfigurieren Sie eine benutzerdefinierte Statusleiste zur Überwachung der Kontextfensternutzung, Kosten und Git-Status in Claude Code
 
 Die Statuszeile ist eine anpassbare Leiste am unteren Rand von Claude Code, die jedes Shell-Skript ausführt, das Sie konfigurieren. Sie empfängt JSON-Sitzungsdaten auf stdin und zeigt alles an, was Ihr Skript ausgibt, und bietet Ihnen eine persistente, auf einen Blick sichtbare Ansicht der Kontextnutzung, Kosten, Git-Status oder alles andere, das Sie verfolgen möchten.
 
@@ -25,19 +25,19 @@ Diese Seite führt Sie durch [das Einrichten einer grundlegenden Statuszeile](#s
 
 ## Richten Sie eine Statuszeile ein
 
-Verwenden Sie den [`/statusline`-Befehl](#use-the-statusline-command), um Claude Code ein Skript für Sie generieren zu lassen, oder [erstellen Sie manuell ein Skript](#manually-configure-a-status-line) und fügen Sie es zu Ihren Einstellungen hinzu.
+Verwenden Sie den [`/statusline` Befehl](#use-the-statusline-command), um Claude Code ein Skript für Sie generieren zu lassen, oder [erstellen Sie manuell ein Skript](#manually-configure-a-status-line) und fügen Sie es zu Ihren Einstellungen hinzu.
 
-### Verwenden Sie den /statusline-Befehl
+### Verwenden Sie den /statusline Befehl
 
-Der `/statusline`-Befehl akzeptiert Anweisungen in natürlicher Sprache, die beschreiben, was Sie angezeigt haben möchten. Claude Code generiert eine Skriptdatei in `~/.claude/` und aktualisiert Ihre Einstellungen automatisch:
+Der `/statusline` Befehl akzeptiert Anweisungen in natürlicher Sprache, die beschreiben, was Sie angezeigt haben möchten. Claude Code generiert eine Skriptdatei in `~/.claude/` und aktualisiert Ihre Einstellungen automatisch:
 
 ```text  theme={null}
 /statusline show model name and context percentage with a progress bar
 ```
 
-### Konfigurieren Sie eine Statuszeile manuell
+### Statuszeile manuell konfigurieren
 
-Fügen Sie ein `statusLine`-Feld zu Ihren Benutzereinstellungen (`~/.claude/settings.json`, wobei `~` Ihr Basisverzeichnis ist) oder [Projekteinstellungen](/de/settings#settings-files) hinzu. Setzen Sie `type` auf `"command"` und verweisen Sie `command` auf einen Skriptpfad oder einen Inline-Shell-Befehl. Eine vollständige Anleitung zum Erstellen eines Skripts finden Sie unter [Erstellen Sie eine Statuszeile Schritt für Schritt](#build-a-status-line-step-by-step).
+Fügen Sie ein `statusLine` Feld zu Ihren Benutzereinstellungen (`~/.claude/settings.json`, wobei `~` Ihr Heimatverzeichnis ist) oder [Projekteinstellungen](/de/settings#settings-files) hinzu. Setzen Sie `type` auf `"command"` und verweisen Sie `command` auf einen Skriptpfad oder einen Inline-Shell-Befehl. Eine vollständige Anleitung zum Erstellen eines Skripts finden Sie unter [Erstellen Sie eine Statuszeile Schritt für Schritt](#build-a-status-line-step-by-step).
 
 ```json  theme={null}
 {
@@ -49,7 +49,7 @@ Fügen Sie ein `statusLine`-Feld zu Ihren Benutzereinstellungen (`~/.claude/sett
 }
 ```
 
-Das `command`-Feld wird in einer Shell ausgeführt, sodass Sie auch Inline-Befehle anstelle einer Skriptdatei verwenden können. Dieses Beispiel verwendet `jq`, um die JSON-Eingabe zu analysieren und den Modellnamen und den Kontextprozentsatz anzuzeigen:
+Das `command` Feld wird in einer Shell ausgeführt, sodass Sie auch Inline-Befehle anstelle einer Skriptdatei verwenden können. Dieses Beispiel verwendet `jq`, um die JSON-Eingabe zu analysieren und den Modellnamen und den Kontextprozentsatz anzuzeigen:
 
 ```json  theme={null}
 {
@@ -60,11 +60,11 @@ Das `command`-Feld wird in einer Shell ausgeführt, sodass Sie auch Inline-Befeh
 }
 ```
 
-Das optionale `padding`-Feld fügt zusätzlichen horizontalen Abstand (in Zeichen) zum Inhalt der Statuszeile hinzu. Standardmäßig `0`. Dieser Abstand wird zusätzlich zum integrierten Abstand der Benutzeroberfläche hinzugefügt, sodass er die relative Einrückung steuert, anstatt den absoluten Abstand vom Terminalrand zu steuern.
+Das optionale `padding` Feld fügt zusätzlichen horizontalen Abstand (in Zeichen) zum Inhalt der Statuszeile hinzu. Standardmäßig `0`. Dieser Abstand wird zusätzlich zum integrierten Abstand der Benutzeroberfläche hinzugefügt, sodass er die relative Einrückung steuert, anstatt den absoluten Abstand vom Terminalrand.
 
 ### Deaktivieren Sie die Statuszeile
 
-Führen Sie `/statusline` aus und bitten Sie es, Ihre Statuszeile zu entfernen oder zu löschen (z. B. `/statusline delete`, `/statusline clear`, `/statusline remove it`). Sie können auch das `statusLine`-Feld manuell aus Ihrer settings.json löschen.
+Führen Sie `/statusline` aus und bitten Sie es, Ihre Statuszeile zu entfernen oder zu löschen (z. B. `/statusline delete`, `/statusline clear`, `/statusline remove it`). Sie können auch das `statusLine` Feld manuell aus Ihrer settings.json löschen.
 
 ## Erstellen Sie eine Statuszeile Schritt für Schritt
 
@@ -82,7 +82,7 @@ Diese Beispiele verwenden Bash-Skripte, die auf macOS und Linux funktionieren. U
   <Step title="Erstellen Sie ein Skript, das JSON liest und Ausgabe druckt">
     Claude Code sendet JSON-Daten über stdin an Ihr Skript. Dieses Skript verwendet [`jq`](https://jqlang.github.io/jq/), einen Befehlszeilen-JSON-Parser, den Sie möglicherweise installieren müssen, um den Modellnamen, das Verzeichnis und den Kontextprozentsatz zu extrahieren, und druckt dann eine formatierte Zeile.
 
-    Speichern Sie dies unter `~/.claude/statusline.sh` (wobei `~` Ihr Basisverzeichnis ist, z. B. `/Users/username` auf macOS oder `/home/username` auf Linux):
+    Speichern Sie dies unter `~/.claude/statusline.sh` (wobei `~` Ihr Heimatverzeichnis ist, z. B. `/Users/username` auf macOS oder `/home/username` auf Linux):
 
     ```bash  theme={null}
     #!/bin/bash
@@ -130,46 +130,46 @@ Claude Code führt Ihr Skript aus und leitet [JSON-Sitzungsdaten](#available-dat
 
 **Wann es aktualisiert wird**
 
-Ihr Skript wird nach jeder neuen Assistentnachricht ausgeführt, wenn sich der Berechtigungsmodus ändert oder wenn der Vim-Modus umgeschaltet wird. Aktualisierungen werden mit 300 ms entprellt, was bedeutet, dass schnelle Änderungen zusammengefasst werden und Ihr Skript einmal ausgeführt wird, wenn sich die Dinge beruhigt haben. Wenn eine neue Aktualisierung ausgelöst wird, während Ihr Skript noch läuft, wird die laufende Ausführung abgebrochen. Wenn Sie Ihr Skript bearbeiten, werden die Änderungen erst angezeigt, wenn Ihre nächste Interaktion mit Claude Code eine Aktualisierung auslöst.
+Ihr Skript wird nach jeder neuen Assistentnachricht ausgeführt, wenn sich der Berechtigungsmodus ändert oder wenn der Vim-Modus umgeschaltet wird. Aktualisierungen werden mit 300 ms entprellt, was bedeutet, dass schnelle Änderungen zusammengefasst werden und Ihr Skript einmal ausgeführt wird, wenn sich die Dinge beruhigen. Wenn eine neue Aktualisierung ausgelöst wird, während Ihr Skript noch läuft, wird die laufende Ausführung abgebrochen. Wenn Sie Ihr Skript bearbeiten, werden die Änderungen erst bei Ihrer nächsten Interaktion mit Claude Code angezeigt, die eine Aktualisierung auslöst.
 
 **Was Ihr Skript ausgeben kann**
 
-* **Mehrere Zeilen**: Jede `echo`- oder `print`-Anweisung wird als separate Zeile angezeigt. Siehe das [mehrzeilige Beispiel](#display-multiple-lines).
+* **Mehrere Zeilen**: Jede `echo` oder `print` Anweisung wird als separate Zeile angezeigt. Siehe das [mehrzeilige Beispiel](#display-multiple-lines).
 * **Farben**: Verwenden Sie [ANSI-Escape-Codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors) wie `\033[32m` für Grün (Terminal muss diese unterstützen). Siehe das [Git-Status-Beispiel](#git-status-with-colors).
-* **Links**: Verwenden Sie [OSC 8-Escape-Sequenzen](https://en.wikipedia.org/wiki/ANSI_escape_code#OSC), um Text anklickbar zu machen (Cmd+Klick auf macOS, Strg+Klick auf Windows/Linux). Erfordert ein Terminal, das Hyperlinks wie iTerm2, Kitty oder WezTerm unterstützt. Siehe das [Beispiel für anklickbare Links](#clickable-links).
+* **Links**: Verwenden Sie [OSC 8 Escape-Sequenzen](https://en.wikipedia.org/wiki/ANSI_escape_code#OSC), um Text anklickbar zu machen (Cmd+Klick auf macOS, Strg+Klick auf Windows/Linux). Erfordert ein Terminal, das Hyperlinks wie iTerm2, Kitty oder WezTerm unterstützt. Siehe das [anklickbare Links-Beispiel](#clickable-links).
 
-<Note>Die Statuszeile wird lokal ausgeführt und verbraucht keine API-Token. Sie wird vorübergehend während bestimmter UI-Interaktionen ausgeblendet, einschließlich Autovervollständigungsvorschläge, das Hilfemenü und Berechtigungsaufforderungen.</Note>
+<Note>Die Statuszeile wird lokal ausgeführt und verbraucht keine API-Token. Sie wird vorübergehend während bestimmter UI-Interaktionen ausgeblendet, einschließlich Autovervollständigungsvorschlägen, dem Hilfemenü und Berechtigungsaufforderungen.</Note>
 
 ## Verfügbare Daten
 
 Claude Code sendet die folgenden JSON-Felder über stdin an Ihr Skript:
 
-| Feld                                                                      | Beschreibung                                                                                                                                                                                                          |
-| ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `model.id`, `model.display_name`                                          | Aktuelle Modellkennung und Anzeigename                                                                                                                                                                                |
-| `cwd`, `workspace.current_dir`                                            | Aktuelles Arbeitsverzeichnis. Beide Felder enthalten denselben Wert; `workspace.current_dir` wird für Konsistenz mit `workspace.project_dir` bevorzugt.                                                               |
-| `workspace.project_dir`                                                   | Verzeichnis, in dem Claude Code gestartet wurde, das sich von `cwd` unterscheiden kann, wenn sich das Arbeitsverzeichnis während einer Sitzung ändert                                                                 |
-| `cost.total_cost_usd`                                                     | Gesamtsitzungskosten in USD                                                                                                                                                                                           |
-| `cost.total_duration_ms`                                                  | Gesamtverstrichene Zeit seit Sitzungsbeginn in Millisekunden                                                                                                                                                          |
-| `cost.total_api_duration_ms`                                              | Gesamtzeit, die auf API-Antworten wartet, in Millisekunden                                                                                                                                                            |
-| `cost.total_lines_added`, `cost.total_lines_removed`                      | Geänderte Codezeilen                                                                                                                                                                                                  |
-| `context_window.total_input_tokens`, `context_window.total_output_tokens` | Kumulative Token-Zählungen über die Sitzung                                                                                                                                                                           |
-| `context_window.context_window_size`                                      | Maximale Kontextfenstergröße in Token. Standardmäßig 200.000 oder 1.000.000 für Modelle mit erweitertem Kontext.                                                                                                      |
-| `context_window.used_percentage`                                          | Vorberechneter Prozentsatz der Kontextfensternutzung                                                                                                                                                                  |
-| `context_window.remaining_percentage`                                     | Vorberechneter Prozentsatz des verbleibenden Kontextfensters                                                                                                                                                          |
-| `context_window.current_usage`                                            | Token-Zählungen aus dem letzten API-Aufruf, beschrieben in [Kontextfensterfelder](#context-window-fields)                                                                                                             |
-| `exceeds_200k_tokens`                                                     | Ob die Gesamttoken-Zählung (Eingabe-, Cache- und Ausgabe-Token kombiniert) aus der letzten API-Antwort 200.000 überschreitet. Dies ist ein fester Schwellenwert unabhängig von der tatsächlichen Kontextfenstergröße. |
-| `session_id`                                                              | Eindeutige Sitzungskennung                                                                                                                                                                                            |
-| `transcript_path`                                                         | Pfad zur Gesprächstranskriptdatei                                                                                                                                                                                     |
-| `version`                                                                 | Claude Code-Version                                                                                                                                                                                                   |
-| `output_style.name`                                                       | Name des aktuellen Ausgabestils                                                                                                                                                                                       |
-| `vim.mode`                                                                | Aktueller Vim-Modus (`NORMAL` oder `INSERT`), wenn [Vim-Modus](/de/interactive-mode#vim-editor-mode) aktiviert ist                                                                                                    |
-| `agent.name`                                                              | Agent-Name bei Ausführung mit dem `--agent`-Flag oder konfigurierter Agent-Einstellung                                                                                                                                |
-| `worktree.name`                                                           | Name des aktiven Worktree. Nur während `--worktree`-Sitzungen vorhanden                                                                                                                                               |
-| `worktree.path`                                                           | Absoluter Pfad zum Worktree-Verzeichnis                                                                                                                                                                               |
-| `worktree.branch`                                                         | Git-Branch-Name für den Worktree (z. B. `"worktree-my-feature"`). Fehlt bei Hook-basierten Worktrees                                                                                                                  |
-| `worktree.original_cwd`                                                   | Das Verzeichnis, in dem Claude sich befand, bevor es den Worktree betrat                                                                                                                                              |
-| `worktree.original_branch`                                                | Git-Branch, der vor dem Betreten des Worktree ausgecheckt wurde. Fehlt bei Hook-basierten Worktrees                                                                                                                   |
+| Feld                                                                      | Beschreibung                                                                                                                                                                                                       |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `model.id`, `model.display_name`                                          | Aktuelle Modellkennung und Anzeigename                                                                                                                                                                             |
+| `cwd`, `workspace.current_dir`                                            | Aktuelles Arbeitsverzeichnis. Beide Felder enthalten denselben Wert; `workspace.current_dir` wird für Konsistenz mit `workspace.project_dir` bevorzugt.                                                            |
+| `workspace.project_dir`                                                   | Verzeichnis, in dem Claude Code gestartet wurde, das sich von `cwd` unterscheiden kann, wenn sich das Arbeitsverzeichnis während einer Sitzung ändert                                                              |
+| `cost.total_cost_usd`                                                     | Gesamtsitzungskosten in USD                                                                                                                                                                                        |
+| `cost.total_duration_ms`                                                  | Gesamtverstrichene Zeit seit Sitzungsbeginn in Millisekunden                                                                                                                                                       |
+| `cost.total_api_duration_ms`                                              | Gesamtzeit, die auf API-Antworten wartet, in Millisekunden                                                                                                                                                         |
+| `cost.total_lines_added`, `cost.total_lines_removed`                      | Geänderte Codezeilen                                                                                                                                                                                               |
+| `context_window.total_input_tokens`, `context_window.total_output_tokens` | Kumulative Token-Zählungen über die Sitzung                                                                                                                                                                        |
+| `context_window.context_window_size`                                      | Maximale Kontextfenstergröße in Token. Standardmäßig 200.000 oder 1.000.000 für Modelle mit erweitertem Kontext.                                                                                                   |
+| `context_window.used_percentage`                                          | Vorberechneter Prozentsatz der Kontextfensternutzung                                                                                                                                                               |
+| `context_window.remaining_percentage`                                     | Vorberechneter Prozentsatz des verbleibenden Kontextfensters                                                                                                                                                       |
+| `context_window.current_usage`                                            | Token-Zählungen aus dem letzten API-Aufruf, beschrieben in [Kontextfenster-Felder](#context-window-fields)                                                                                                         |
+| `exceeds_200k_tokens`                                                     | Ob die Gesamttoken-Zählung (Eingabe-, Cache- und Ausgabe-Token kombiniert) aus der letzten API-Antwort 200k überschreitet. Dies ist ein fester Schwellenwert unabhängig von der tatsächlichen Kontextfenstergröße. |
+| `session_id`                                                              | Eindeutige Sitzungskennung                                                                                                                                                                                         |
+| `transcript_path`                                                         | Pfad zur Gesprächstranskriptdatei                                                                                                                                                                                  |
+| `version`                                                                 | Claude Code-Version                                                                                                                                                                                                |
+| `output_style.name`                                                       | Name des aktuellen Ausgabestils                                                                                                                                                                                    |
+| `vim.mode`                                                                | Aktueller Vim-Modus (`NORMAL` oder `INSERT`), wenn [Vim-Modus](/de/interactive-mode#vim-editor-mode) aktiviert ist                                                                                                 |
+| `agent.name`                                                              | Agent-Name bei Ausführung mit dem `--agent` Flag oder konfigurierter Agent-Einstellung                                                                                                                             |
+| `worktree.name`                                                           | Name des aktiven Worktree. Nur während `--worktree` Sitzungen vorhanden                                                                                                                                            |
+| `worktree.path`                                                           | Absoluter Pfad zum Worktree-Verzeichnis                                                                                                                                                                            |
+| `worktree.branch`                                                         | Git-Branch-Name für den Worktree (z. B. `"worktree-my-feature"`). Fehlt bei Hook-basierten Worktrees                                                                                                               |
+| `worktree.original_cwd`                                                   | Das Verzeichnis, in dem Claude sich befand, bevor es den Worktree betrat                                                                                                                                           |
+| `worktree.original_branch`                                                | Git-Branch, der vor dem Betreten des Worktree ausgecheckt wurde. Fehlt bei Hook-basierten Worktrees                                                                                                                |
 
 <Accordion title="Vollständiges JSON-Schema">
   Ihr Statuszeilen-Befehl empfängt diese JSON-Struktur über stdin:
@@ -230,9 +230,9 @@ Claude Code sendet die folgenden JSON-Felder über stdin an Ihr Skript:
 
   **Felder, die möglicherweise fehlen** (nicht in JSON vorhanden):
 
-  * `vim`: wird nur angezeigt, wenn der Vim-Modus aktiviert ist
-  * `agent`: wird nur angezeigt, wenn mit dem `--agent`-Flag oder konfigurierter Agent-Einstellung ausgeführt wird
-  * `worktree`: wird nur während `--worktree`-Sitzungen angezeigt. Wenn vorhanden, können `branch` und `original_branch` auch bei Hook-basierten Worktrees fehlen
+  * `vim`: erscheint nur, wenn Vim-Modus aktiviert ist
+  * `agent`: erscheint nur bei Ausführung mit dem `--agent` Flag oder konfigurierter Agent-Einstellung
+  * `worktree`: erscheint nur während `--worktree` Sitzungen. Wenn vorhanden, können `branch` und `original_branch` auch bei Hook-basierten Worktrees fehlen
 
   **Felder, die `null` sein können**:
 
@@ -242,25 +242,25 @@ Claude Code sendet die folgenden JSON-Felder über stdin an Ihr Skript:
   Behandeln Sie fehlende Felder mit bedingtem Zugriff und Null-Werte mit Fallback-Standardwerten in Ihren Skripten.
 </Accordion>
 
-### Kontextfensterfelder
+### Kontextfenster-Felder
 
-Das `context_window`-Objekt bietet zwei Möglichkeiten, die Kontextnutzung zu verfolgen:
+Das `context_window` Objekt bietet zwei Möglichkeiten, die Kontextnutzung zu verfolgen:
 
-* **Kumulative Summen** (`total_input_tokens`, `total_output_tokens`): Summe aller Token über die gesamte Sitzung, nützlich für die Verfolgung des Gesamtverbrauchs
+* **Kumulative Summen** (`total_input_tokens`, `total_output_tokens`): Summe aller Token über die gesamte Sitzung, nützlich zur Verfolgung des Gesamtverbrauchs
 * **Aktuelle Nutzung** (`current_usage`): Token-Zählungen aus dem letzten API-Aufruf, verwenden Sie dies für einen genauen Kontextprozentsatz, da er den tatsächlichen Kontextzustand widerspiegelt
 
-Das `current_usage`-Objekt enthält:
+Das `current_usage` Objekt enthält:
 
 * `input_tokens`: Eingabe-Token im aktuellen Kontext
 * `output_tokens`: generierte Ausgabe-Token
 * `cache_creation_input_tokens`: Token, die in den Cache geschrieben wurden
 * `cache_read_input_tokens`: Token, die aus dem Cache gelesen wurden
 
-Das `used_percentage`-Feld wird nur aus Eingabe-Token berechnet: `input_tokens + cache_creation_input_tokens + cache_read_input_tokens`. Es enthält keine `output_tokens`.
+Das `used_percentage` Feld wird nur aus Eingabe-Token berechnet: `input_tokens + cache_creation_input_tokens + cache_read_input_tokens`. Es enthält keine `output_tokens`.
 
-Wenn Sie den Kontextprozentsatz manuell aus `current_usage` berechnen, verwenden Sie die gleiche Formel nur für Eingaben, um `used_percentage` zu entsprechen.
+Wenn Sie den Kontextprozentsatz manuell aus `current_usage` berechnen, verwenden Sie die gleiche Eingabe-only-Formel, um `used_percentage` zu entsprechen.
 
-Das `current_usage`-Objekt ist `null` vor dem ersten API-Aufruf in einer Sitzung.
+Das `current_usage` Objekt ist `null` vor dem ersten API-Aufruf in einer Sitzung.
 
 ## Beispiele
 
@@ -270,11 +270,11 @@ Diese Beispiele zeigen häufige Statuszeilen-Muster. Um ein Beispiel zu verwende
 2. Machen Sie es ausführbar: `chmod +x ~/.claude/statusline.sh`
 3. Fügen Sie den Pfad zu Ihren [Einstellungen](#manually-configure-a-status-line) hinzu
 
-Die Bash-Beispiele verwenden [`jq`](https://jqlang.github.io/jq/) zum Analysieren von JSON. Python und Node.js haben integrierte JSON-Analyse.
+Die Bash-Beispiele verwenden [`jq`](https://jqlang.github.io/jq/) zum Analysieren von JSON. Python und Node.js haben integriertes JSON-Parsing.
 
 ### Kontextfensternutzung
 
-Zeigen Sie das aktuelle Modell und die Kontextfensternutzung mit einem visuellen Fortschrittsbalken an. Jedes Skript liest JSON von stdin, extrahiert das `used_percentage`-Feld und erstellt einen 10-Zeichen-Balken, wobei gefüllte Blöcke (▓) die Nutzung darstellen:
+Zeigen Sie das aktuelle Modell und die Kontextfensternutzung mit einem visuellen Fortschrittsbalken an. Jedes Skript liest JSON von stdin, extrahiert das `used_percentage` Feld und erstellt einen 10-Zeichen-Balken, wobei gefüllte Blöcke (▓) die Nutzung darstellen:
 
 <Frame>
   <img src="https://mintcdn.com/claude-code/nibzesLaJVh4ydOq/images/statusline-context-window-usage.png?fit=max&auto=format&n=nibzesLaJVh4ydOq&q=85&s=15b58ab3602f036939145dde3165c6f7" alt="Eine Statuszeile, die Modellname und einen Fortschrittsbalken mit Prozentsatz anzeigt" width="448" height="152" data-path="images/statusline-context-window-usage.png" />
@@ -290,13 +290,14 @@ Zeigen Sie das aktuelle Modell und die Kontextfensternutzung mit einem visuellen
   MODEL=$(echo "$input" | jq -r '.model.display_name')
   PCT=$(echo "$input" | jq -r '.context_window.used_percentage // 0' | cut -d. -f1)
 
-  # Build progress bar: printf creates spaces, tr replaces with blocks
+  # Build progress bar: printf -v creates a run of spaces, then
+  # ${var// /▓} replaces each space with a block character
   BAR_WIDTH=10
   FILLED=$((PCT * BAR_WIDTH / 100))
   EMPTY=$((BAR_WIDTH - FILLED))
   BAR=""
-  [ "$FILLED" -gt 0 ] && BAR=$(printf "%${FILLED}s" | tr ' ' '▓')
-  [ "$EMPTY" -gt 0 ] && BAR="${BAR}$(printf "%${EMPTY}s" | tr ' ' '░')"
+  [ "$FILLED" -gt 0 ] && printf -v FILL "%${FILLED}s" && BAR="${FILL// /▓}"
+  [ "$EMPTY" -gt 0 ] && printf -v PAD "%${EMPTY}s" && BAR="${BAR}${PAD// /░}"
 
   echo "[$MODEL] $BAR $PCT%"
   ```
@@ -434,7 +435,7 @@ Jedes Skript prüft, ob das aktuelle Verzeichnis ein Git-Repository ist, zählt 
 
 ### Kosten- und Dauer-Verfolgung
 
-Verfolgen Sie die API-Kosten und verstrichene Zeit Ihrer Sitzung. Das `cost.total_cost_usd`-Feld sammelt die Kosten aller API-Aufrufe in der aktuellen Sitzung. Das `cost.total_duration_ms`-Feld misst die Gesamtverstrichene Zeit seit Sitzungsbeginn, während `cost.total_api_duration_ms` nur die Zeit verfolgt, die auf API-Antworten wartet.
+Verfolgen Sie die API-Kosten und verstrichene Zeit Ihrer Sitzung. Das `cost.total_cost_usd` Feld sammelt die Kosten aller API-Aufrufe in der aktuellen Sitzung. Das `cost.total_duration_ms` Feld misst die Gesamtverstrichene Zeit seit Sitzungsbeginn, während `cost.total_api_duration_ms` nur die Zeit verfolgt, die auf API-Antworten wartet.
 
 Jedes Skript formatiert Kosten als Währung und konvertiert Millisekunden in Minuten und Sekunden:
 
@@ -495,13 +496,13 @@ Jedes Skript formatiert Kosten als Währung und konvertiert Millisekunden in Min
 
 ### Mehrere Zeilen anzeigen
 
-Ihr Skript kann mehrere Zeilen ausgeben, um eine reichhaltigere Anzeige zu erstellen. Jede `echo`-Anweisung erzeugt eine separate Zeile im Statusbereich.
+Ihr Skript kann mehrere Zeilen ausgeben, um eine reichhaltigere Anzeige zu erstellen. Jede `echo` Anweisung erzeugt eine separate Zeile im Statusbereich.
 
 <Frame>
   <img src="https://mintcdn.com/claude-code/nibzesLaJVh4ydOq/images/statusline-multiline.png?fit=max&auto=format&n=nibzesLaJVh4ydOq&q=85&s=60f11387658acc9ff75158ae85f2ac87" alt="Eine mehrzeilige Statuszeile, die Modellname, Verzeichnis, Git-Branch in der ersten Zeile und einen Kontextnutzungs-Fortschrittsbalken mit Kosten und Dauer in der zweiten Zeile anzeigt" width="776" height="212" data-path="images/statusline-multiline.png" />
 </Frame>
 
-Dieses Beispiel kombiniert mehrere Techniken: schwellenwertbasierte Farben (Grün unter 70 %, Gelb 70–89 %, Rot 90 %+), einen Fortschrittsbalken und Git-Branch-Informationen. Jede `print`- oder `echo`-Anweisung erstellt eine separate Zeile:
+Dieses Beispiel kombiniert mehrere Techniken: schwellenwertbasierte Farben (Grün unter 70%, Gelb 70-89%, Rot 90%+), einen Fortschrittsbalken und Git-Branch-Informationen. Jede `print` oder `echo` Anweisung erstellt eine separate Zeile:
 
 <CodeGroup>
   ```bash Bash theme={null}
@@ -522,7 +523,8 @@ Dieses Beispiel kombiniert mehrere Techniken: schwellenwertbasierte Farben (Grü
   else BAR_COLOR="$GREEN"; fi
 
   FILLED=$((PCT / 10)); EMPTY=$((10 - FILLED))
-  BAR=$(printf "%${FILLED}s" | tr ' ' '█')$(printf "%${EMPTY}s" | tr ' ' '░')
+  printf -v FILL "%${FILLED}s"; printf -v PAD "%${EMPTY}s"
+  BAR="${FILL// /█}${PAD// /░}"
 
   MINS=$((DURATION_MS / 60000)); SECS=$(((DURATION_MS % 60000) / 1000))
 
@@ -601,13 +603,13 @@ Dieses Beispiel kombiniert mehrere Techniken: schwellenwertbasierte Farben (Grü
 
 ### Anklickbare Links
 
-Dieses Beispiel erstellt einen anklickbaren Link zu Ihrem GitHub-Repository. Es liest die Git-Remote-URL, konvertiert das SSH-Format mit `sed` in HTTPS und umhüllt den Repository-Namen mit OSC 8-Escape-Codes. Halten Sie Cmd (macOS) oder Strg (Windows/Linux) gedrückt und klicken Sie, um den Link in Ihrem Browser zu öffnen.
+Dieses Beispiel erstellt einen anklickbaren Link zu Ihrem GitHub-Repository. Es liest die Git-Remote-URL, konvertiert das SSH-Format mit `sed` in HTTPS und umhüllt den Repository-Namen mit OSC 8 Escape-Codes. Halten Sie Cmd (macOS) oder Strg (Windows/Linux) gedrückt und klicken Sie, um den Link in Ihrem Browser zu öffnen.
 
 <Frame>
   <img src="https://mintcdn.com/claude-code/nibzesLaJVh4ydOq/images/statusline-links.png?fit=max&auto=format&n=nibzesLaJVh4ydOq&q=85&s=4bcc6e7deb7cf52f41ab85a219b52661" alt="Eine Statuszeile, die einen anklickbaren Link zu einem GitHub-Repository anzeigt" width="726" height="198" data-path="images/statusline-links.png" />
 </Frame>
 
-Jedes Skript ruft die Git-Remote-URL ab, konvertiert das SSH-Format in HTTPS und umhüllt den Repository-Namen mit OSC 8-Escape-Codes. Die Bash-Version verwendet `printf '%b'`, das Backslash-Escapes zuverlässiger interpretiert als `echo -e` über verschiedene Shells hinweg:
+Jedes Skript ruft die Git-Remote-URL ab, konvertiert das SSH-Format in HTTPS und umhüllt den Repository-Namen mit OSC 8 Escape-Codes. Die Bash-Version verwendet `printf '%b'`, das Backslash-Escapes zuverlässiger interpretiert als `echo -e` über verschiedene Shells hinweg:
 
 <CodeGroup>
   ```bash Bash theme={null}
@@ -681,7 +683,7 @@ Jedes Skript ruft die Git-Remote-URL ab, konvertiert das SSH-Format in HTTPS und
 
 ### Teure Operationen zwischenspeichern
 
-Ihr Statuszeilen-Skript wird während aktiver Sitzungen häufig ausgeführt. Befehle wie `git status` oder `git diff` können langsam sein, besonders in großen Repositories. Dieses Beispiel speichert Git-Informationen in einer temporären Datei zwischen und aktualisiert sie nur alle 5 Sekunden.
+Ihr Statuszeilen-Skript wird während aktiver Sitzungen häufig ausgeführt. Befehle wie `git status` oder `git diff` können langsam sein, besonders in großen Repositories. Dieses Beispiel speichert Git-Informationen in einer temporären Datei und aktualisiert sie nur alle 5 Sekunden.
 
 Verwenden Sie einen stabilen, festen Dateinamen für die Cache-Datei wie `/tmp/statusline-git-cache`. Jede Statuszeilen-Invokation wird als neuer Prozess ausgeführt, daher erzeugen prozessbasierte Identifikatoren wie `$$`, `os.getpid()` oder `process.pid` jedes Mal einen anderen Wert und der Cache wird nie wiederverwendet.
 
@@ -861,8 +863,8 @@ Oder führen Sie ein Bash-Skript direkt aus:
 ## Tipps
 
 * **Mit Mock-Eingabe testen**: `echo '{"model":{"display_name":"Opus"},"context_window":{"used_percentage":25}}' | ./statusline.sh`
-* **Ausgabe kurz halten**: Die Statusleiste hat eine begrenzte Breite, daher kann lange Ausgabe abgeschnitten oder unangenehm umgebrochen werden
-* **Langsame Operationen zwischenspeichern**: Ihr Skript wird während aktiver Sitzungen häufig ausgeführt, daher können Befehle wie `git status` zu Verzögerungen führen. Siehe das [Caching-Beispiel](#cache-expensive-operations), um damit umzugehen.
+* **Ausgabe kurz halten**: Die Statusleiste hat begrenzte Breite, daher kann lange Ausgabe abgeschnitten oder unangenehm umgebrochen werden
+* **Langsame Operationen zwischenspeichern**: Ihr Skript wird während aktiver Sitzungen häufig ausgeführt, daher können Befehle wie `git status` zu Verzögerungen führen. Siehe das [Caching-Beispiel](#cache-expensive-operations) für die Handhabung.
 
 Community-Projekte wie [ccstatusline](https://github.com/sirmalloc/ccstatusline) und [starship-claude](https://github.com/martinemde/starship-claude) bieten vorkonfigurierte Konfigurationen mit Designs und zusätzlichen Funktionen.
 
@@ -875,7 +877,7 @@ Community-Projekte wie [ccstatusline](https://github.com/sirmalloc/ccstatusline)
 * Führen Sie Ihr Skript manuell aus, um zu überprüfen, dass es Ausgabe erzeugt
 * Wenn `disableAllHooks` in Ihren Einstellungen auf `true` gesetzt ist, ist die Statuszeile auch deaktiviert. Entfernen Sie diese Einstellung oder setzen Sie sie auf `false`, um sie erneut zu aktivieren.
 * Führen Sie `claude --debug` aus, um den Exit-Code und stderr aus der ersten Statuszeilen-Invokation in einer Sitzung zu protokollieren
-* Bitten Sie Claude, Ihre Einstellungsdatei zu lesen und den `statusLine`-Befehl direkt auszuführen, um Fehler zu finden
+* Bitten Sie Claude, Ihre Einstellungsdatei zu lesen und den `statusLine` Befehl direkt auszuführen, um Fehler zu finden
 
 **Statuszeile zeigt `--` oder leere Werte**
 
@@ -885,11 +887,11 @@ Community-Projekte wie [ccstatusline](https://github.com/sirmalloc/ccstatusline)
 
 **Kontextprozentsatz zeigt unerwartete Werte**
 
-* Verwenden Sie `used_percentage` für einen genauen Kontextzustand anstelle von kumulativen Summen
+* Verwenden Sie `used_percentage` für genauen Kontextzustand anstelle von kumulativen Summen
 * Die `total_input_tokens` und `total_output_tokens` sind kumulativ über die Sitzung und können die Kontextfenstergröße überschreiten
-* Der Kontextprozentsatz kann sich von der `/context`-Ausgabe unterscheiden, je nachdem, wann jeder berechnet wird
+* Der Kontextprozentsatz kann sich von der `/context` Ausgabe unterscheiden, je nachdem, wann jeder berechnet wird
 
-**OSC 8-Links sind nicht anklickbar**
+**OSC 8-Links nicht anklickbar**
 
 * Überprüfen Sie, dass Ihr Terminal OSC 8-Hyperlinks unterstützt (iTerm2, Kitty, WezTerm)
 * Terminal.app unterstützt keine anklickbaren Links

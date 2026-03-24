@@ -25,9 +25,9 @@ export HTTPS_PROXY=https://proxy.example.com:8080
 # HTTP-Proxy (falls HTTPS nicht verfügbar)
 export HTTP_PROXY=http://proxy.example.com:8080
 
-# Proxy für spezifische Anfragen umgehen - durch Leerzeichen getrennt
+# Proxy für spezifische Anfragen umgehen – durch Leerzeichen getrennt
 export NO_PROXY="localhost 192.168.1.1 example.com .example.com"
-# Proxy für spezifische Anfragen umgehen - durch Komma getrennt
+# Proxy für spezifische Anfragen umgehen – durch Komma getrennt
 export NO_PROXY="localhost,192.168.1.1,example.com,.example.com"
 # Proxy für alle Anfragen umgehen
 export NO_PROXY="*"
@@ -46,7 +46,7 @@ export HTTPS_PROXY=http://username:password@proxy.example.com:8080
 ```
 
 <Warning>
-  Vermeiden Sie das Hartcodieren von Passwörtern in Skripten. Verwenden Sie stattdessen Umgebungsvariablen oder sichere Anmeldedatenspeicherung.
+  Vermeiden Sie das Hardcodieren von Passwörtern in Skripten. Verwenden Sie stattdessen Umgebungsvariablen oder sichere Anmeldedatenspeicherung.
 </Warning>
 
 <Tip>
@@ -84,10 +84,12 @@ Claude Code benötigt Zugriff auf die folgenden URLs:
 * `claude.ai`: Authentifizierung für claude.ai-Konten
 * `platform.claude.com`: Authentifizierung für Anthropic Console-Konten
 
-Stellen Sie sicher, dass diese URLs in Ihrer Proxy-Konfiguration und Firewall-Regeln auf die Whitelist gesetzt sind. Dies ist besonders wichtig, wenn Sie Claude Code in containerisierten oder eingeschränkten Netzwerkumgebungen verwenden.
+Stellen Sie sicher, dass diese URLs in Ihrer Proxy-Konfiguration und Firewall-Regeln auf die Allowlist gesetzt sind. Dies ist besonders wichtig, wenn Sie Claude Code in containerisierten oder eingeschränkten Netzwerkumgebungen verwenden.
+
+[Claude Code im Web](/de/claude-code-on-the-web) und [Code Review](/de/code-review) verbinden sich von der von Anthropic verwalteten Infrastruktur aus mit Ihren Repositories. Wenn Ihre GitHub Enterprise Cloud-Organisation den Zugriff nach IP-Adresse einschränkt, aktivieren Sie [IP-Allowlist-Vererbung für installierte GitHub Apps](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps). Die Claude GitHub App registriert ihre IP-Bereiche, sodass die Aktivierung dieser Einstellung den Zugriff ohne manuelle Konfiguration ermöglicht. Um [die Bereiche stattdessen manuell zu Ihrer Allowlist hinzuzufügen](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address) oder um andere Firewalls zu konfigurieren, siehe [Anthropic API IP-Adressen](https://platform.claude.com/docs/en/api/ip-addresses).
 
 ## Zusätzliche Ressourcen
 
 * [Claude Code-Einstellungen](/de/settings)
-* [Referenz für Umgebungsvariablen](/de/settings#environment-variables)
+* [Referenz für Umgebungsvariablen](/de/env-vars)
 * [Leitfaden zur Fehlerbehebung](/de/troubleshooting)

@@ -90,7 +90,7 @@ Todos os horários são interpretados em seu fuso horário local. Uma expressão
 
 ### Jitter
 
-Para evitar que cada sessão acesse a API no mesmo momento do relógio de parede, o agendador adiciona um pequeno deslocamento determinístico aos tempos de disparo:
+Para evitar que cada sessão atinja a API no mesmo momento de tempo real, o agendador adiciona um pequeno deslocamento determinístico aos tempos de disparo:
 
 * Tarefas recorrentes disparam até 10% de seu período atrasadas, limitadas a 15 minutos. Um trabalho por hora pode disparar em qualquer lugar de `:00` a `:06`.
 * Tarefas únicas agendadas para o topo ou fundo da hora disparam até 90 segundos mais cedo.
@@ -120,7 +120,7 @@ Quando tanto o dia do mês quanto o dia da semana são restritos, uma data corre
 
 ## Desabilitar tarefas agendadas
 
-Defina `CLAUDE_CODE_DISABLE_CRON=1` em seu ambiente para desabilitar o agendador completamente. As ferramentas cron e `/loop` ficam indisponíveis e qualquer tarefa já agendada para de ser acionada. Consulte [Variáveis de ambiente](/pt/settings#environment-variables) para a lista completa de sinalizadores de desabilitação.
+Defina `CLAUDE_CODE_DISABLE_CRON=1` em seu ambiente para desabilitar o agendador completamente. As ferramentas cron e `/loop` ficam indisponíveis e qualquer tarefa já agendada para de ser acionada. Consulte [Variáveis de ambiente](/pt/env-vars) para a lista completa de sinalizadores de desabilitação.
 
 ## Limitações
 

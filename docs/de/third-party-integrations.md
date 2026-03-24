@@ -4,17 +4,28 @@
 
 # Übersicht zur Enterprise-Bereitstellung
 
-> Erfahren Sie, wie Claude Code mit verschiedenen Drittanbieter-Services und Infrastrukturen integriert werden kann, um Enterprise-Bereitstellungsanforderungen zu erfüllen.
+> Erfahren Sie, wie Claude Code mit verschiedenen Drittanbieterdiensten und Infrastrukturen integriert werden kann, um Enterprise-Bereitstellungsanforderungen zu erfüllen.
 
-Diese Seite bietet einen Überblick über verfügbare Bereitstellungsoptionen und hilft Ihnen, die richtige Konfiguration für Ihre Organisation zu wählen.
+Organisationen können Claude Code direkt über Anthropic oder über einen Cloud-Anbieter bereitstellen. Diese Seite hilft Ihnen, die richtige Konfiguration auszuwählen.
 
-## Anbietervergleich
+## Bereitstellungsoptionen vergleichen
+
+Für die meisten Organisationen bieten Claude for Teams oder Claude for Enterprise die beste Erfahrung. Teammitglieder erhalten Zugriff auf sowohl Claude Code als auch Claude im Web mit einem einzigen Abonnement, zentralisierte Abrechnung und ohne erforderliche Infrastruktureinrichtung.
+
+**Claude for Teams** ist Self-Service und umfasst Zusammenarbeitsfunktionen, Admin-Tools und Abrechnungsverwaltung. Am besten für kleinere Teams, die schnell starten möchten.
+
+**Claude for Enterprise** fügt SSO und Domain-Erfassung, rollenbasierte Berechtigungen, Compliance-API-Zugriff und verwaltete Richtlinieneinstellungen für die Bereitstellung von organisationsweiten Claude Code-Konfigurationen hinzu. Am besten für größere Organisationen mit Sicherheits- und Compliance-Anforderungen.
+
+Erfahren Sie mehr über [Team-Pläne](https://support.claude.com/en/articles/9266767-what-is-the-team-plan) und [Enterprise-Pläne](https://support.claude.com/en/articles/9797531-what-is-the-enterprise-plan).
+
+Wenn Ihre Organisation spezifische Infrastrukturanforderungen hat, vergleichen Sie die folgenden Optionen:
 
 <table>
   <thead>
     <tr>
       <th>Funktion</th>
-      <th>Anthropic</th>
+      <th>Claude for Teams/Enterprise</th>
+      <th>Anthropic Console</th>
       <th>Amazon Bedrock</th>
       <th>Google Vertex AI</th>
       <th>Microsoft Foundry</th>
@@ -23,7 +34,26 @@ Diese Seite bietet einen Überblick über verfügbare Bereitstellungsoptionen un
 
   <tbody>
     <tr>
+      <td>Am besten für</td>
+      <td>Die meisten Organisationen (empfohlen)</td>
+      <td>Einzelne Entwickler</td>
+      <td>AWS-native Bereitstellungen</td>
+      <td>GCP-native Bereitstellungen</td>
+      <td>Azure-native Bereitstellungen</td>
+    </tr>
+
+    <tr>
+      <td>Abrechnung</td>
+      <td><strong>Teams:</strong> 150 USD/Platz (Premium) mit PAYG verfügbar<br /><strong>Enterprise:</strong> <a href="https://claude.com/contact-sales?utm_source=claude_code&utm_medium=docs&utm_content=third_party_enterprise">Kontaktieren Sie den Vertrieb</a></td>
+      <td>PAYG</td>
+      <td>PAYG über AWS</td>
+      <td>PAYG über GCP</td>
+      <td>PAYG über Azure</td>
+    </tr>
+
+    <tr>
       <td>Regionen</td>
+      <td>Unterstützte [Länder](https://www.anthropic.com/supported-countries)</td>
       <td>Unterstützte [Länder](https://www.anthropic.com/supported-countries)</td>
       <td>Mehrere AWS [Regionen](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html)</td>
       <td>Mehrere GCP [Regionen](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations)</td>
@@ -31,7 +61,8 @@ Diese Seite bietet einen Überblick über verfügbare Bereitstellungsoptionen un
     </tr>
 
     <tr>
-      <td>Prompt-Caching</td>
+      <td>Prompt caching</td>
+      <td>Standardmäßig aktiviert</td>
       <td>Standardmäßig aktiviert</td>
       <td>Standardmäßig aktiviert</td>
       <td>Standardmäßig aktiviert</td>
@@ -40,6 +71,7 @@ Diese Seite bietet einen Überblick über verfügbare Bereitstellungsoptionen un
 
     <tr>
       <td>Authentifizierung</td>
+      <td>Claude.ai SSO oder E-Mail</td>
       <td>API-Schlüssel</td>
       <td>API-Schlüssel oder AWS-Anmeldedaten</td>
       <td>GCP-Anmeldedaten</td>
@@ -48,15 +80,26 @@ Diese Seite bietet einen Überblick über verfügbare Bereitstellungsoptionen un
 
     <tr>
       <td>Kostenverfolgung</td>
-      <td>Dashboard</td>
+      <td>Nutzungs-Dashboard</td>
+      <td>Nutzungs-Dashboard</td>
       <td>AWS Cost Explorer</td>
       <td>GCP Billing</td>
       <td>Azure Cost Management</td>
     </tr>
 
     <tr>
+      <td>Umfasst Claude im Web</td>
+      <td>Ja</td>
+      <td>Nein</td>
+      <td>Nein</td>
+      <td>Nein</td>
+      <td>Nein</td>
+    </tr>
+
+    <tr>
       <td>Enterprise-Funktionen</td>
-      <td>Teams, Nutzungsüberwachung</td>
+      <td>Teamverwaltung, SSO, Nutzungsüberwachung</td>
+      <td>Keine</td>
       <td>IAM-Richtlinien, CloudTrail</td>
       <td>IAM-Rollen, Cloud Audit Logs</td>
       <td>RBAC-Richtlinien, Azure Monitor</td>
@@ -64,201 +107,156 @@ Diese Seite bietet einen Überblick über verfügbare Bereitstellungsoptionen un
   </tbody>
 </table>
 
-## Cloud-Anbieter
+Wählen Sie eine Bereitstellungsoption aus, um Setupanweisungen anzuzeigen:
 
-<CardGroup cols={3}>
-  <Card title="Amazon Bedrock" icon="aws" href="/de/amazon-bedrock">
-    Nutzen Sie Claude-Modelle über AWS-Infrastruktur mit API-Schlüssel- oder IAM-basierter Authentifizierung und AWS-nativer Überwachung
-  </Card>
+* [Claude for Teams oder Enterprise](/de/authentication#claude-for-teams-or-enterprise)
+* [Anthropic Console](/de/authentication#claude-console-authentication)
+* [Amazon Bedrock](/de/amazon-bedrock)
+* [Google Vertex AI](/de/google-vertex-ai)
+* [Microsoft Foundry](/de/microsoft-foundry)
 
-  <Card title="Google Vertex AI" icon="google" href="/de/google-vertex-ai">
-    Greifen Sie auf Claude-Modelle über Google Cloud Platform mit Enterprise-Sicherheit und Compliance zu
-  </Card>
+## Proxys und Gateways konfigurieren
 
-  <Card title="Microsoft Foundry" icon="microsoft" href="/de/microsoft-foundry">
-    Greifen Sie auf Claude über Azure mit API-Schlüssel- oder Microsoft Entra ID-Authentifizierung und Azure-Abrechnung zu
-  </Card>
-</CardGroup>
+Die meisten Organisationen können einen Cloud-Anbieter direkt ohne zusätzliche Konfiguration nutzen. Möglicherweise müssen Sie jedoch einen Unternehmens-Proxy oder LLM-Gateway konfigurieren, wenn Ihre Organisation spezifische Netzwerk- oder Verwaltungsanforderungen hat. Dies sind unterschiedliche Konfigurationen, die zusammen verwendet werden können:
 
-## Unternehmensinfrastruktur
+* **Unternehmens-Proxy**: Leitet Datenverkehr über einen HTTP/HTTPS-Proxy weiter. Verwenden Sie dies, wenn Ihre Organisation verlangt, dass der gesamte ausgehende Datenverkehr einen Proxy-Server für Sicherheitsüberwachung, Compliance oder Netzwerkrichtliniendurchsetzung durchläuft. Konfigurieren Sie mit den Umgebungsvariablen `HTTPS_PROXY` oder `HTTP_PROXY`. Erfahren Sie mehr in [Enterprise-Netzwerkkonfiguration](/de/network-config).
+* **LLM-Gateway**: Ein Dienst, der sich zwischen Claude Code und dem Cloud-Anbieter befindet, um Authentifizierung und Routing zu verwalten. Verwenden Sie dies, wenn Sie eine zentralisierte Nutzungsverfolgung über Teams, benutzerdefinierte Ratenbegrenzung oder Budgets oder zentralisierte Authentifizierungsverwaltung benötigen. Konfigurieren Sie mit den Umgebungsvariablen `ANTHROPIC_BASE_URL`, `ANTHROPIC_BEDROCK_BASE_URL` oder `ANTHROPIC_VERTEX_BASE_URL`. Erfahren Sie mehr in [LLM-Gateway-Konfiguration](/de/llm-gateway).
 
-<CardGroup cols={2}>
-  <Card title="Enterprise Network" icon="shield" href="/de/network-config">
-    Konfigurieren Sie Claude Code für die Zusammenarbeit mit den Proxy-Servern und SSL/TLS-Anforderungen Ihrer Organisation
-  </Card>
+Die folgenden Beispiele zeigen die Umgebungsvariablen, die in Ihrer Shell oder Shell-Profildatei (`.bashrc`, `.zshrc`) gesetzt werden sollen. Siehe [Einstellungen](/de/settings) für andere Konfigurationsmethoden.
 
-  <Card title="LLM Gateway" icon="server" href="/de/llm-gateway">
-    Stellen Sie zentralisierten Modellzugriff mit Nutzungsverfolgung, Budgetierung und Audit-Protokollierung bereit
-  </Card>
-</CardGroup>
+### Amazon Bedrock
 
-## Konfigurationsübersicht
+<Tabs>
+  <Tab title="Unternehmens-Proxy">
+    Leiten Sie Bedrock-Datenverkehr über Ihren Unternehmens-Proxy weiter, indem Sie die folgenden [Umgebungsvariablen](/de/env-vars) setzen:
 
-Claude Code unterstützt flexible Konfigurationsoptionen, mit denen Sie verschiedene Anbieter und Infrastrukturen kombinieren können:
+    ```bash  theme={null}
+    # Enable Bedrock
+    export CLAUDE_CODE_USE_BEDROCK=1
+    export AWS_REGION=us-east-1
 
-<Note>
-  Verstehen Sie den Unterschied zwischen:
+    # Configure corporate proxy
+    export HTTPS_PROXY='https://proxy.example.com:8080'
+    ```
+  </Tab>
 
-  * **Unternehmens-Proxy**: Ein HTTP/HTTPS-Proxy für die Weiterleitung von Datenverkehr (festgelegt über `HTTPS_PROXY` oder `HTTP_PROXY`)
-  * **LLM Gateway**: Ein Service, der die Authentifizierung verwaltet und anbieterkompatible Endpunkte bereitstellt (festgelegt über `ANTHROPIC_BASE_URL`, `ANTHROPIC_BEDROCK_BASE_URL` oder `ANTHROPIC_VERTEX_BASE_URL`)
+  <Tab title="LLM-Gateway">
+    Leiten Sie Bedrock-Datenverkehr über Ihr LLM-Gateway weiter, indem Sie die folgenden [Umgebungsvariablen](/de/env-vars) setzen:
 
-  Beide Konfigurationen können zusammen verwendet werden.
-</Note>
+    ```bash  theme={null}
+    # Enable Bedrock
+    export CLAUDE_CODE_USE_BEDROCK=1
 
-### Bedrock mit Unternehmens-Proxy verwenden
+    # Configure LLM gateway
+    export ANTHROPIC_BEDROCK_BASE_URL='https://your-llm-gateway.com/bedrock'
+    export CLAUDE_CODE_SKIP_BEDROCK_AUTH=1  # If gateway handles AWS auth
+    ```
+  </Tab>
+</Tabs>
 
-Leiten Sie Bedrock-Datenverkehr über einen Unternehmens-HTTP/HTTPS-Proxy weiter:
+### Microsoft Foundry
 
-```bash  theme={null}
-# Bedrock aktivieren
-export CLAUDE_CODE_USE_BEDROCK=1
-export AWS_REGION=us-east-1
+<Tabs>
+  <Tab title="Unternehmens-Proxy">
+    Leiten Sie Foundry-Datenverkehr über Ihren Unternehmens-Proxy weiter, indem Sie die folgenden [Umgebungsvariablen](/de/env-vars) setzen:
 
-# Unternehmens-Proxy konfigurieren
-export HTTPS_PROXY='https://proxy.example.com:8080'
-```
+    ```bash  theme={null}
+    # Enable Microsoft Foundry
+    export CLAUDE_CODE_USE_FOUNDRY=1
+    export ANTHROPIC_FOUNDRY_RESOURCE=your-resource
+    export ANTHROPIC_FOUNDRY_API_KEY=your-api-key  # Or omit for Entra ID auth
 
-### Bedrock mit LLM Gateway verwenden
+    # Configure corporate proxy
+    export HTTPS_PROXY='https://proxy.example.com:8080'
+    ```
+  </Tab>
 
-Verwenden Sie einen Gateway-Service, der Bedrock-kompatible Endpunkte bereitstellt:
+  <Tab title="LLM-Gateway">
+    Leiten Sie Foundry-Datenverkehr über Ihr LLM-Gateway weiter, indem Sie die folgenden [Umgebungsvariablen](/de/env-vars) setzen:
 
-```bash  theme={null}
-# Bedrock aktivieren
-export CLAUDE_CODE_USE_BEDROCK=1
+    ```bash  theme={null}
+    # Enable Microsoft Foundry
+    export CLAUDE_CODE_USE_FOUNDRY=1
 
-# LLM Gateway konfigurieren
-export ANTHROPIC_BEDROCK_BASE_URL='https://your-llm-gateway.com/bedrock'
-export CLAUDE_CODE_SKIP_BEDROCK_AUTH=1  # Falls Gateway AWS-Authentifizierung verwaltet
-```
+    # Configure LLM gateway
+    export ANTHROPIC_FOUNDRY_BASE_URL='https://your-llm-gateway.com'
+    export CLAUDE_CODE_SKIP_FOUNDRY_AUTH=1  # If gateway handles Azure auth
+    ```
+  </Tab>
+</Tabs>
 
-### Foundry mit Unternehmens-Proxy verwenden
+### Google Vertex AI
 
-Leiten Sie Azure-Datenverkehr über einen Unternehmens-HTTP/HTTPS-Proxy weiter:
+<Tabs>
+  <Tab title="Unternehmens-Proxy">
+    Leiten Sie Vertex AI-Datenverkehr über Ihren Unternehmens-Proxy weiter, indem Sie die folgenden [Umgebungsvariablen](/de/env-vars) setzen:
 
-```bash  theme={null}
-# Microsoft Foundry aktivieren
-export CLAUDE_CODE_USE_FOUNDRY=1
-export ANTHROPIC_FOUNDRY_RESOURCE=your-resource
-export ANTHROPIC_FOUNDRY_API_KEY=your-api-key  # Oder weglassen für Entra ID-Authentifizierung
+    ```bash  theme={null}
+    # Enable Vertex
+    export CLAUDE_CODE_USE_VERTEX=1
+    export CLOUD_ML_REGION=us-east5
+    export ANTHROPIC_VERTEX_PROJECT_ID=your-project-id
 
-# Unternehmens-Proxy konfigurieren
-export HTTPS_PROXY='https://proxy.example.com:8080'
-```
+    # Configure corporate proxy
+    export HTTPS_PROXY='https://proxy.example.com:8080'
+    ```
+  </Tab>
 
-### Foundry mit LLM Gateway verwenden
+  <Tab title="LLM-Gateway">
+    Leiten Sie Vertex AI-Datenverkehr über Ihr LLM-Gateway weiter, indem Sie die folgenden [Umgebungsvariablen](/de/env-vars) setzen:
 
-Verwenden Sie einen Gateway-Service, der Azure-kompatible Endpunkte bereitstellt:
+    ```bash  theme={null}
+    # Enable Vertex
+    export CLAUDE_CODE_USE_VERTEX=1
 
-```bash  theme={null}
-# Microsoft Foundry aktivieren
-export CLAUDE_CODE_USE_FOUNDRY=1
+    # Configure LLM gateway
+    export ANTHROPIC_VERTEX_BASE_URL='https://your-llm-gateway.com/vertex'
+    export CLAUDE_CODE_SKIP_VERTEX_AUTH=1  # If gateway handles GCP auth
+    ```
+  </Tab>
+</Tabs>
 
-# LLM Gateway konfigurieren
-export ANTHROPIC_FOUNDRY_BASE_URL='https://your-llm-gateway.com'
-export CLAUDE_CODE_SKIP_FOUNDRY_AUTH=1  # Falls Gateway Azure-Authentifizierung verwaltet
-```
-
-### Vertex AI mit Unternehmens-Proxy verwenden
-
-Leiten Sie Vertex AI-Datenverkehr über einen Unternehmens-HTTP/HTTPS-Proxy weiter:
-
-```bash  theme={null}
-# Vertex aktivieren
-export CLAUDE_CODE_USE_VERTEX=1
-export CLOUD_ML_REGION=us-east5
-export ANTHROPIC_VERTEX_PROJECT_ID=your-project-id
-
-# Unternehmens-Proxy konfigurieren
-export HTTPS_PROXY='https://proxy.example.com:8080'
-```
-
-### Vertex AI mit LLM Gateway verwenden
-
-Kombinieren Sie Google Vertex AI-Modelle mit einem LLM Gateway für zentralisierte Verwaltung:
-
-```bash  theme={null}
-# Vertex aktivieren
-export CLAUDE_CODE_USE_VERTEX=1
-
-# LLM Gateway konfigurieren
-export ANTHROPIC_VERTEX_BASE_URL='https://your-llm-gateway.com/vertex'
-export CLAUDE_CODE_SKIP_VERTEX_AUTH=1  # Falls Gateway GCP-Authentifizierung verwaltet
-```
-
-### Authentifizierungskonfiguration
-
-Claude Code verwendet `ANTHROPIC_AUTH_TOKEN` für den `Authorization`-Header, wenn erforderlich. Die `SKIP_AUTH`-Flags (`CLAUDE_CODE_SKIP_BEDROCK_AUTH`, `CLAUDE_CODE_SKIP_VERTEX_AUTH`) werden in LLM Gateway-Szenarien verwendet, in denen das Gateway die Anbieter-Authentifizierung verwaltet.
-
-## Wahl der richtigen Bereitstellungskonfiguration
-
-Berücksichtigen Sie diese Faktoren bei der Auswahl Ihres Bereitstellungsansatzes:
-
-### Direkter Anbieter-Zugriff
-
-Am besten für Organisationen, die:
-
-* Das einfachste Setup wünschen
-* Bereits über AWS- oder GCP-Infrastruktur verfügen
-* Anbieter-native Überwachung und Compliance benötigen
-
-### Unternehmens-Proxy
-
-Am besten für Organisationen, die:
-
-* Bereits Anforderungen für Unternehmens-Proxy haben
-* Datenverkehrsüberwachung und Compliance benötigen
-* Alle Datenverkehr über bestimmte Netzwerkpfade leiten müssen
-
-### LLM Gateway
-
-Am besten für Organisationen, die:
-
-* Nutzungsverfolgung über Teams hinweg benötigen
-* Dynamisch zwischen Modellen wechseln möchten
-* Benutzerdefinierte Ratenbegrenzung oder Budgets benötigen
-* Zentralisierte Authentifizierungsverwaltung benötigen
-
-## Debugging
-
-Beim Debuggen Ihrer Bereitstellung:
-
-* Verwenden Sie den `claude /status` [Schrägstrich-Befehl](/de/slash-commands). Dieser Befehl bietet Observability in alle angewendeten Authentifizierungs-, Proxy- und URL-Einstellungen.
-* Setzen Sie die Umgebungsvariable `export ANTHROPIC_LOG=debug`, um Anfragen zu protokollieren.
+<Tip>
+  Verwenden Sie `/status` in Claude Code, um zu überprüfen, ob Ihre Proxy- und Gateway-Konfiguration korrekt angewendet wird.
+</Tip>
 
 ## Best Practices für Organisationen
 
-### 1. Investieren Sie in Dokumentation und Speicher
+### Investieren Sie in Dokumentation und Memory
 
 Wir empfehlen dringend, in Dokumentation zu investieren, damit Claude Code Ihre Codebasis versteht. Organisationen können CLAUDE.md-Dateien auf mehreren Ebenen bereitstellen:
 
-* **Organisationsweit**: Stellen Sie in Systemverzeichnissen wie `/Library/Application Support/ClaudeCode/CLAUDE.md` (macOS) bereit, um unternehmensweite Standards zu setzen
-* **Repository-Ebene**: Erstellen Sie `CLAUDE.md`-Dateien in Repository-Wurzeln mit Projektarchitektur, Build-Befehlen und Beitragsrichtlinien. Checken Sie diese in die Versionskontrolle ein, damit alle Benutzer davon profitieren
+* **Organisationsweit**: Bereitstellen in Systemverzeichnissen wie `/Library/Application Support/ClaudeCode/CLAUDE.md` (macOS) für unternehmensweite Standards
+* **Repository-Ebene**: Erstellen Sie `CLAUDE.md`-Dateien in Repository-Wurzeln mit Projektarchitektur, Build-Befehlen und Beitragsleitlinien. Checken Sie diese in die Versionskontrolle ein, damit alle Benutzer davon profitieren
 
-  [Weitere Informationen](/de/memory).
+Erfahren Sie mehr in [Memory und CLAUDE.md-Dateien](/de/memory).
 
-### 2. Vereinfachen Sie die Bereitstellung
+### Vereinfachen Sie die Bereitstellung
 
 Wenn Sie eine benutzerdefinierte Entwicklungsumgebung haben, stellen wir fest, dass die Schaffung einer „Ein-Klick"-Möglichkeit zur Installation von Claude Code der Schlüssel zum Wachstum der Akzeptanz in einer Organisation ist.
 
-### 3. Beginnen Sie mit gesteuerter Nutzung
+### Beginnen Sie mit gesteuerter Nutzung
 
-Ermutigen Sie neue Benutzer, Claude Code für Codebasis-Q\&A oder bei kleineren Fehlerbehebungen oder Feature-Anfragen zu versuchen. Bitten Sie Claude Code, einen Plan zu erstellen. Überprüfen Sie Claudes Vorschläge und geben Sie Feedback, wenn es falsch ist. Mit der Zeit, wenn Benutzer dieses neue Paradigma besser verstehen, werden sie effektiver darin, Claude Code agentischer laufen zu lassen.
+Ermutigen Sie neue Benutzer, Claude Code für Codebasis-Fragen oder bei kleineren Fehlerbehebungen oder Funktionsanfragen zu versuchen. Bitten Sie Claude Code, einen Plan zu erstellen. Überprüfen Sie Claudes Vorschläge und geben Sie Feedback, wenn es nicht stimmt. Mit der Zeit, wenn Benutzer dieses neue Paradigma besser verstehen, werden sie effektiver darin, Claude Code agentischer laufen zu lassen.
 
-### 4. Konfigurieren Sie Sicherheitsrichtlinien
+### Pinnen Sie Modellversionen für Cloud-Anbieter
 
-Sicherheitsteams können verwaltete Berechtigungen für das konfigurieren, was Claude Code darf und nicht darf, was nicht durch lokale Konfiguration überschrieben werden kann. [Weitere Informationen](/de/security).
+Wenn Sie über [Bedrock](/de/amazon-bedrock), [Vertex AI](/de/google-vertex-ai) oder [Foundry](/de/microsoft-foundry) bereitstellen, pinnen Sie spezifische Modellversionen mit `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL` und `ANTHROPIC_DEFAULT_HAIKU_MODEL`. Ohne Pinning werden Claude Code-Aliase zur neuesten Version aufgelöst, was Benutzer unterbrechen kann, wenn Anthropic ein neues Modell veröffentlicht, das noch nicht in Ihrem Konto aktiviert ist. Siehe [Modellkonfiguration](/de/model-config#pin-models-for-third-party-deployments) für Details.
 
-### 5. Nutzen Sie MCP für Integrationen
+### Konfigurieren Sie Sicherheitsrichtlinien
 
-MCP ist eine großartige Möglichkeit, Claude Code mehr Informationen zu geben, z. B. die Verbindung zu Ticket-Management-Systemen oder Fehlerprotokollen. Wir empfehlen, dass ein zentrales Team MCP-Server konfiguriert und eine `.mcp.json`-Konfiguration in die Codebasis eincheckt, damit alle Benutzer davon profitieren. [Weitere Informationen](/de/mcp).
+Sicherheitsteams können verwaltete Berechtigungen für das konfigurieren, was Claude Code darf und nicht darf, was nicht durch lokale Konfiguration überschrieben werden kann. [Erfahren Sie mehr](/de/security).
 
-Bei Anthropic vertrauen wir Claude Code, um die Entwicklung in jeder Anthropic-Codebasis voranzutreiben. Wir hoffen, dass Sie Claude Code genauso gerne verwenden wie wir.
+### Nutzen Sie MCP für Integrationen
+
+MCP ist eine großartige Möglichkeit, Claude Code mehr Informationen zu geben, z. B. die Verbindung mit Ticketverwaltungssystemen oder Fehlerprotokollen. Wir empfehlen, dass ein zentrales Team MCP-Server konfiguriert und eine `.mcp.json`-Konfiguration in die Codebasis eincheckt, damit alle Benutzer davon profitieren. [Erfahren Sie mehr](/de/mcp).
+
+Bei Anthropic vertrauen wir Claude Code, um die Entwicklung in jeder Anthropic-Codebasis zu unterstützen. Wir hoffen, dass Sie Claude Code genauso gerne verwenden wie wir.
 
 ## Nächste Schritte
 
-* [Amazon Bedrock einrichten](/de/amazon-bedrock) für AWS-native Bereitstellung
-* [Google Vertex AI konfigurieren](/de/google-vertex-ai) für GCP-Bereitstellung
-* [Microsoft Foundry einrichten](/de/microsoft-foundry) für Azure-Bereitstellung
-* [Enterprise Network konfigurieren](/de/network-config) für Netzwerkanforderungen
-* [LLM Gateway bereitstellen](/de/llm-gateway) für Enterprise-Verwaltung
-* [Einstellungen](/de/settings) für Konfigurationsoptionen und Umgebungsvariablen
+Nachdem Sie eine Bereitstellungsoption ausgewählt und den Zugriff für Ihr Team konfiguriert haben:
+
+1. **Rollout für Ihr Team**: Teilen Sie Installationsanweisungen mit und lassen Sie Teammitglieder [Claude Code installieren](/de/setup) und sich mit ihren Anmeldedaten authentifizieren.
+2. **Richten Sie gemeinsame Konfiguration ein**: Erstellen Sie eine [CLAUDE.md-Datei](/de/memory) in Ihren Repositories, um Claude Code dabei zu helfen, Ihre Codebasis und Codierungsstandards zu verstehen.
+3. **Konfigurieren Sie Berechtigungen**: Überprüfen Sie [Sicherheitseinstellungen](/de/security), um zu definieren, was Claude Code in Ihrer Umgebung darf und nicht darf.

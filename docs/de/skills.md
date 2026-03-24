@@ -9,7 +9,7 @@
 Skills erweitern das, was Claude tun kann. Erstellen Sie eine `SKILL.md`-Datei mit Anweisungen, und Claude fügt sie zu seinem Toolkit hinzu. Claude verwendet Skills, wenn sie relevant sind, oder Sie können einen direkt mit `/skill-name` aufrufen.
 
 <Note>
-  Für integrierte Befehle wie `/help` und `/compact` siehe [interaktiver Modus](/de/interactive-mode#built-in-commands).
+  Für integrierte Befehle wie `/help` und `/compact` siehe die [Referenz für integrierte Befehle](/de/commands).
 
   **Benutzerdefinierte Befehle wurden in Skills zusammengeführt.** Eine Datei unter `.claude/commands/deploy.md` und ein Skill unter `.claude/skills/deploy/SKILL.md` erstellen beide `/deploy` und funktionieren auf die gleiche Weise. Ihre vorhandenen `.claude/commands/`-Dateien funktionieren weiterhin. Skills fügen optionale Funktionen hinzu: ein Verzeichnis für unterstützende Dateien, Frontmatter zum [Steuern, wer einen Skill aufruft](#control-who-invokes-a-skill), und die Möglichkeit für Claude, sie automatisch zu laden, wenn sie relevant sind.
 </Note>
@@ -18,25 +18,23 @@ Claude Code Skills folgen dem [Agent Skills](https://agentskills.io) offenen Sta
 
 ## Gebündelte Skills
 
-Gebündelte Skills werden mit Claude Code ausgeliefert und sind in jeder Sitzung verfügbar. Im Gegensatz zu [integrierten Befehlen](/de/interactive-mode#built-in-commands), die direkt feste Logik ausführen, sind gebündelte Skills prompt-basiert: Sie geben Claude ein detailliertes Playbook und lassen es die Arbeit mit seinen Tools orchestrieren. Das bedeutet, dass gebündelte Skills parallele Agenten spawnen, Dateien lesen und sich an Ihre Codebasis anpassen können.
+Gebündelte Skills werden mit Claude Code ausgeliefert und sind in jeder Sitzung verfügbar. Im Gegensatz zu [integrierten Befehlen](/de/commands), die direkt feste Logik ausführen, sind gebündelte Skills prompt-basiert: Sie geben Claude ein detailliertes Playbook und lassen es die Arbeit mit seinen Tools orchestrieren. Das bedeutet, dass gebündelte Skills parallele Agenten spawnen, Dateien lesen und sich an Ihre Codebasis anpassen können.
 
-Sie rufen gebündelte Skills auf die gleiche Weise auf wie jeden anderen Skill: Geben Sie `/` gefolgt vom Skill-Namen ein.
+Sie rufen gebündelte Skills auf die gleiche Weise auf wie jeden anderen Skill: Geben Sie `/` gefolgt vom Skill-Namen ein. In der Tabelle unten zeigt `<arg>` ein erforderliches Argument und `[arg]` ein optionales an.
 
-* **`/simplify`**: überprüft Ihre kürzlich geänderten Dateien auf Code-Wiederverwendung, Qualität und Effizienzprobleme und behebt sie dann. Führen Sie es nach der Implementierung einer Funktion oder Fehlerbehebung aus, um Ihre Arbeit zu bereinigen. Es spawnt drei Review-Agenten parallel (Code-Wiederverwendung, Code-Qualität, Effizienz), aggregiert ihre Erkenntnisse und wendet Fixes an. Übergeben Sie optionalen Text, um sich auf spezifische Bedenken zu konzentrieren: `/simplify focus on memory efficiency`.
-
-* **`/batch <instruction>`**: orchestriert großflächige Änderungen über eine Codebasis parallel. Geben Sie eine Beschreibung der Änderung an und `/batch` recherchiert die Codebasis, zerlegt die Arbeit in 5 bis 30 unabhängige Einheiten und präsentiert einen Plan zur Genehmigung. Nach der Genehmigung spawnt es einen Hintergrund-Agenten pro Einheit, jeweils in einem isolierten [git worktree](/de/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees). Jeder Agent implementiert seine Einheit, führt Tests aus und öffnet einen Pull Request. Erfordert ein Git-Repository. Beispiel: `/batch migrate src/ from Solid to React`.
-
-* **`/debug [description]`**: behebt Probleme in Ihrer aktuellen Claude Code-Sitzung durch Lesen des Sitzungs-Debug-Logs. Beschreiben Sie optional das Problem, um die Analyse zu fokussieren.
-
-* **`/loop [interval] <prompt>`**: führt einen Prompt wiederholt in einem Intervall aus, während die Sitzung offen bleibt. Claude analysiert das Intervall, plant eine wiederkehrende Cron-Aufgabe und bestätigt den Rhythmus. Nützlich zum Abfragen einer Bereitstellung, zum Betreuen eines PR oder zum periodischen Erneut-Ausführen eines anderen Skills. Beispiel: `/loop 5m check if the deploy finished`. Siehe [Prompts nach Zeitplan ausführen](/de/scheduled-tasks).
-
-* **`/claude-api`**: lädt Claude API-Referenzmaterial für die Sprache Ihres Projekts (Python, TypeScript, Java, Go, Ruby, C#, PHP oder cURL) und Agent SDK-Referenz für Python und TypeScript. Behandelt Tool-Verwendung, Streaming, Batches, strukturierte Ausgaben und häufige Fallstricke. Wird auch automatisch aktiviert, wenn Ihr Code `anthropic`, `@anthropic-ai/sdk` oder `claude_agent_sdk` importiert.
+| Skill                       | Zweck                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| :-------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/batch <instruction>`      | Orchestrieren Sie großflächige Änderungen über eine Codebasis hinweg parallel. Recherchiert die Codebasis, zerlegt die Arbeit in 5 bis 30 unabhängige Einheiten und präsentiert einen Plan. Nach Genehmigung spawnt es einen Hintergrund-Agent pro Einheit in einem isolierten [git worktree](/de/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees). Jeder Agent implementiert seine Einheit, führt Tests aus und öffnet einen Pull Request. Erfordert ein Git-Repository. Beispiel: `/batch migrate src/ from Solid to React` |
+| `/claude-api`               | Laden Sie Claude API-Referenzmaterial für die Sprache Ihres Projekts (Python, TypeScript, Java, Go, Ruby, C#, PHP oder cURL) und Agent SDK-Referenz für Python und TypeScript. Behandelt Tool-Nutzung, Streaming, Batches, strukturierte Ausgaben und häufige Fallstricke. Wird auch automatisch aktiviert, wenn Ihr Code `anthropic`, `@anthropic-ai/sdk` oder `claude_agent_sdk` importiert                                                                                                                                                       |
+| `/debug [description]`      | Beheben Sie Probleme in Ihrer aktuellen Claude Code-Sitzung, indem Sie das Sitzungs-Debug-Protokoll lesen. Beschreiben Sie optional das Problem, um die Analyse zu fokussieren                                                                                                                                                                                                                                                                                                                                                                      |
+| `/loop [interval] <prompt>` | Führen Sie einen Prompt wiederholt in einem Intervall aus, während die Sitzung offen bleibt. Nützlich zum Abfragen einer Bereitstellung, Überwachen eines PR oder periodischen Neuausführen eines anderen Skills. Beispiel: `/loop 5m check if the deploy finished`. Siehe [Prompts nach Zeitplan ausführen](/de/scheduled-tasks)                                                                                                                                                                                                                   |
+| `/simplify [focus]`         | Überprüfen Sie Ihre kürzlich geänderten Dateien auf Code-Wiederverwendung, Qualität und Effizienzprobleme und beheben Sie diese. Spawnt drei Review-Agenten parallel, aggregiert ihre Erkenntnisse und wendet Fixes an. Übergeben Sie Text, um sich auf spezifische Bedenken zu konzentrieren: `/simplify focus on memory efficiency`                                                                                                                                                                                                               |
 
 ## Erste Schritte
 
 ### Erstellen Sie Ihren ersten Skill
 
-Dieses Beispiel erstellt einen Skill, der Claude lehrt, Code mit visuellen Diagrammen und Analogien zu erklären. Da er Standard-Frontmatter verwendet, kann Claude ihn automatisch laden, wenn Sie fragen, wie etwas funktioniert, oder Sie können ihn direkt mit `/explain-code` aufrufen.
+Dieses Beispiel erstellt einen Skill, der Claude beibringt, Code mit visuellen Diagrammen und Analogien zu erklären. Da er Standard-Frontmatter verwendet, kann Claude ihn automatisch laden, wenn Sie fragen, wie etwas funktioniert, oder Sie können ihn direkt mit `/explain-code` aufrufen.
 
 <Steps>
   <Step title="Erstellen Sie das Skill-Verzeichnis">
@@ -92,14 +90,14 @@ Dieses Beispiel erstellt einen Skill, der Claude lehrt, Code mit visuellen Diagr
 
 Wo Sie einen Skill speichern, bestimmt, wer ihn verwenden kann:
 
-| Standort    | Pfad                                                          | Gilt für                            |
+| Ort         | Pfad                                                          | Gilt für                            |
 | :---------- | :------------------------------------------------------------ | :---------------------------------- |
 | Unternehmen | Siehe [verwaltete Einstellungen](/de/settings#settings-files) | Alle Benutzer in Ihrer Organisation |
 | Persönlich  | `~/.claude/skills/<skill-name>/SKILL.md`                      | Alle Ihre Projekte                  |
 | Projekt     | `.claude/skills/<skill-name>/SKILL.md`                        | Nur dieses Projekt                  |
 | Plugin      | `<plugin>/skills/<skill-name>/SKILL.md`                       | Wo das Plugin aktiviert ist         |
 
-Wenn Skills auf verschiedenen Ebenen denselben Namen haben, gewinnen Standorte mit höherer Priorität: Unternehmen > Persönlich > Projekt. Plugin-Skills verwenden einen `plugin-name:skill-name`-Namespace, sodass sie nicht mit anderen Ebenen in Konflikt geraten können. Wenn Sie Dateien in `.claude/commands/` haben, funktionieren diese auf die gleiche Weise, aber wenn ein Skill und ein Befehl denselben Namen haben, hat der Skill Vorrang.
+Wenn Skills auf verschiedenen Ebenen denselben Namen haben, gewinnen Orte mit höherer Priorität: Unternehmen > Persönlich > Projekt. Plugin-Skills verwenden einen `plugin-name:skill-name`-Namespace, sodass sie nicht mit anderen Ebenen in Konflikt geraten können. Wenn Sie Dateien in `.claude/commands/` haben, funktionieren diese auf die gleiche Weise, aber wenn ein Skill und ein Befehl denselben Namen haben, hat der Skill Vorrang.
 
 #### Automatische Erkennung aus verschachtelten Verzeichnissen
 
@@ -133,7 +131,7 @@ Skills, die in `.claude/skills/` in Verzeichnissen definiert sind, die über `--
 
 ## Skills konfigurieren
 
-Skills werden durch YAML-Frontmatter oben in `SKILL.md` und den folgenden Markdown-Inhalt konfiguriert.
+Skills werden durch YAML-Frontmatter oben in `SKILL.md` und den Markdown-Inhalt, der folgt, konfiguriert.
 
 ### Arten von Skill-Inhalten
 
@@ -169,7 +167,7 @@ Deploy the application:
 3. Push to the deployment target
 ```
 
-Ihre `SKILL.md` kann alles enthalten, aber das Nachdenken darüber, wie Sie den Skill aufrufen möchten (von Ihnen, von Claude oder von beiden) und wo Sie ihn ausführen möchten (inline oder in einem Subagenten) hilft zu leiten, was Sie einbeziehen. Für komplexe Skills können Sie auch [unterstützende Dateien hinzufügen](#add-supporting-files), um den Hauptskill fokussiert zu halten.
+Ihre `SKILL.md` kann alles enthalten, aber das Nachdenken darüber, wie Sie den Skill aufrufen möchten (von Ihnen, von Claude oder von beiden) und wo Sie ihn ausführen möchten (inline oder in einem Subagent) hilft zu leiten, was Sie einbeziehen. Für komplexe Skills können Sie auch [unterstützende Dateien hinzufügen](#add-supporting-files), um den Hauptskill fokussiert zu halten.
 
 ### Frontmatter-Referenz
 
@@ -197,8 +195,8 @@ Alle Felder sind optional. Nur `description` wird empfohlen, damit Claude weiß,
 | `user-invocable`           | Nein         | Setzen Sie auf `false`, um aus dem `/`-Menü auszublenden. Verwenden Sie für Hintergrundwissen, das Benutzer nicht direkt aufrufen sollten. Standard: `true`.                                                   |
 | `allowed-tools`            | Nein         | Tools, die Claude ohne Genehmigung verwenden kann, wenn dieser Skill aktiv ist.                                                                                                                                |
 | `model`                    | Nein         | Modell, das verwendet werden soll, wenn dieser Skill aktiv ist.                                                                                                                                                |
-| `context`                  | Nein         | Setzen Sie auf `fork`, um in einem verzweigten Subagenten-Kontext ausgeführt zu werden.                                                                                                                        |
-| `agent`                    | Nein         | Welcher Subagenten-Typ verwendet werden soll, wenn `context: fork` gesetzt ist.                                                                                                                                |
+| `context`                  | Nein         | Setzen Sie auf `fork`, um in einem verzweigten Subagent-Kontext ausgeführt zu werden.                                                                                                                          |
+| `agent`                    | Nein         | Welcher Subagent-Typ verwendet werden soll, wenn `context: fork` gesetzt ist.                                                                                                                                  |
 | `hooks`                    | Nein         | Hooks, die auf den Lebenszyklus dieses Skills beschränkt sind. Siehe [Hooks in Skills und Agenten](/de/hooks#hooks-in-skills-and-agents) für das Konfigurationsformat.                                         |
 
 #### Verfügbare String-Substitutionen
@@ -284,12 +282,12 @@ Hier ist, wie die beiden Felder Aufrufe und Kontextladung beeinflussen:
 | `user-invocable: false`          | Nein                | Ja                   | Beschreibung immer im Kontext, vollständiger Skill wird beim Aufrufen geladen      |
 
 <Note>
-  In einer regulären Sitzung werden Skill-Beschreibungen in den Kontext geladen, damit Claude weiß, was verfügbar ist, aber der vollständige Skill-Inhalt wird nur beim Aufrufen geladen. [Subagenten mit vorgeladenen Skills](/de/sub-agents#preload-skills-into-subagents) funktionieren anders: Der vollständige Skill-Inhalt wird beim Start eingespritzt.
+  In einer regulären Sitzung werden Skill-Beschreibungen in den Kontext geladen, damit Claude weiß, was verfügbar ist, aber vollständiger Skill-Inhalt wird nur beim Aufrufen geladen. [Subagenten mit vorgeladenen Skills](/de/sub-agents#preload-skills-into-subagents) funktionieren anders: Der vollständige Skill-Inhalt wird beim Start eingespritzt.
 </Note>
 
 ### Beschränken Sie den Tool-Zugriff
 
-Verwenden Sie das `allowed-tools`-Feld, um zu begrenzen, welche Tools Claude verwenden kann, wenn ein Skill aktiv ist. Dieser Skill erstellt einen Nur-Lese-Modus, in dem Claude Dateien erkunden, aber nicht ändern kann:
+Verwenden Sie das `allowed-tools`-Feld, um zu begrenzen, welche Tools Claude verwenden kann, wenn ein Skill aktiv ist. Dieser Skill erstellt einen schreibgeschützten Modus, in dem Claude Dateien erkunden, aber nicht ändern kann:
 
 ```yaml  theme={null}
 ---
@@ -299,7 +297,7 @@ allowed-tools: Read, Grep, Glob
 ---
 ```
 
-### Übergeben Sie Argumente an Skills
+### Argumente an Skills übergeben
 
 Sowohl Sie als auch Claude können Argumente beim Aufrufen eines Skills übergeben. Argumente sind über den `$ARGUMENTS`-Platzhalter verfügbar.
 
@@ -351,7 +349,7 @@ Preserve all existing behavior and tests.
 
 ## Fortgeschrittene Muster
 
-### Injizieren Sie dynamischen Kontext
+### Dynamischen Kontext einspritzen
 
 Die `!`command\`\`-Syntax führt Shell-Befehle aus, bevor der Skill-Inhalt an Claude gesendet wird. Die Befehlsausgabe ersetzt den Platzhalter, sodass Claude tatsächliche Daten erhält, nicht den Befehl selbst.
 
@@ -387,9 +385,9 @@ Dies ist Vorverarbeitung, nicht etwas, das Claude ausführt. Claude sieht nur da
   Um [erweitertes Denken](/de/common-workflows#use-extended-thinking-thinking-mode) in einem Skill zu aktivieren, fügen Sie das Wort „ultrathink" irgendwo in Ihren Skill-Inhalt ein.
 </Tip>
 
-### Führen Sie Skills in einem Subagenten aus
+### Skills in einem Subagent ausführen
 
-Fügen Sie `context: fork` zu Ihrem Frontmatter hinzu, wenn Sie möchten, dass ein Skill isoliert ausgeführt wird. Der Skill-Inhalt wird zum Prompt, der den Subagenten antreibt. Er hat keinen Zugriff auf Ihren Gesprächsverlauf.
+Fügen Sie `context: fork` zu Ihrem Frontmatter hinzu, wenn Sie möchten, dass ein Skill isoliert ausgeführt wird. Der Skill-Inhalt wird zum Prompt, der den Subagent antreibt. Er hat keinen Zugriff auf Ihren Gesprächsverlauf.
 
 <Warning>
   `context: fork` macht nur Sinn für Skills mit expliziten Anweisungen. Wenn Ihr Skill Richtlinien wie „verwenden Sie diese API-Konventionen" ohne eine Aufgabe enthält, erhält der Subagent die Richtlinien, aber keinen umsetzbaren Prompt, und gibt ohne aussagekräftige Ausgabe zurück.
@@ -397,16 +395,16 @@ Fügen Sie `context: fork` zu Ihrem Frontmatter hinzu, wenn Sie möchten, dass e
 
 Skills und [Subagenten](/de/sub-agents) funktionieren in zwei Richtungen zusammen:
 
-| Ansatz                     | System-Prompt                             | Aufgabe                      | Lädt auch                      |
-| :------------------------- | :---------------------------------------- | :--------------------------- | :----------------------------- |
-| Skill mit `context: fork`  | Vom Agenten-Typ (`Explore`, `Plan`, etc.) | SKILL.md-Inhalt              | CLAUDE.md                      |
-| Subagent mit `skills`-Feld | Markdown-Body des Subagenten              | Claudes Delegationsnachricht | Vorgeladene Skills + CLAUDE.md |
+| Ansatz                     | System-Prompt                           | Aufgabe                      | Lädt auch                      |
+| :------------------------- | :-------------------------------------- | :--------------------------- | :----------------------------- |
+| Skill mit `context: fork`  | Vom Agent-Typ (`Explore`, `Plan`, etc.) | SKILL.md-Inhalt              | CLAUDE.md                      |
+| Subagent mit `skills`-Feld | Subagent-Markdown-Body                  | Claudes Delegationsnachricht | Vorgeladene Skills + CLAUDE.md |
 
-Mit `context: fork` schreiben Sie die Aufgabe in Ihren Skill und wählen einen Agenten-Typ aus, um sie auszuführen. Für das Inverse (Definieren eines benutzerdefinierten Subagenten, der Skills als Referenzmaterial verwendet), siehe [Subagenten](/de/sub-agents#preload-skills-into-subagents).
+Mit `context: fork` schreiben Sie die Aufgabe in Ihren Skill und wählen einen Agent-Typ aus, um sie auszuführen. Für das Inverse (Definieren eines benutzerdefinierten Subagenten, der Skills als Referenzmaterial verwendet), siehe [Subagenten](/de/sub-agents#preload-skills-into-subagents).
 
 #### Beispiel: Research-Skill mit Explore-Agent
 
-Dieser Skill führt Recherchen in einem verzweigten Explore-Agenten aus. Der Skill-Inhalt wird zur Aufgabe, und der Agent bietet schreibgeschützte Tools, die für die Codebase-Erkundung optimiert sind:
+Dieser Skill führt Recherchen in einem verzweigten Explore-Agent aus. Der Skill-Inhalt wird zur Aufgabe, und der Agent bietet schreibgeschützte Tools, die für die Codebase-Erkundung optimiert sind:
 
 ```yaml  theme={null}
 ---
@@ -430,7 +428,7 @@ Wenn dieser Skill ausgeführt wird:
 3. Das `agent`-Feld bestimmt die Ausführungsumgebung (Modell, Tools und Berechtigungen)
 4. Ergebnisse werden zusammengefasst und an Ihr Hauptgespräch zurückgegeben
 
-Das `agent`-Feld gibt an, welche Subagenten-Konfiguration verwendet werden soll. Optionen umfassen integrierte Agenten (`Explore`, `Plan`, `general-purpose`) oder jeden benutzerdefinierten Subagenten aus `.claude/agents/`. Falls weggelassen, wird `general-purpose` verwendet.
+Das `agent`-Feld gibt an, welche Subagent-Konfiguration verwendet werden soll. Optionen umfassen integrierte Agenten (`Explore`, `Plan`, `general-purpose`) oder jeden benutzerdefinierten Subagenten aus `.claude/agents/`. Falls weggelassen, wird `general-purpose` verwendet.
 
 ### Beschränken Sie Claudes Skill-Zugriff
 
@@ -456,7 +454,7 @@ Skill(review-pr *)
 Skill(deploy *)
 ```
 
-Berechtigungssyntax: `Skill(name)` für exakte Übereinstimmung, `Skill(name *)` für Präfix-Übereinstimmung mit beliebigen Argumenten.
+Berechtigungssyntax: `Skill(name)` für exakte Übereinstimmung, `Skill(name *)` für Präfixübereinstimmung mit beliebigen Argumenten.
 
 **Verstecken Sie einzelne Skills**, indem Sie `disable-model-invocation: true` zu ihrem Frontmatter hinzufügen. Dies entfernt den Skill vollständig aus Claudes Kontext.
 
@@ -464,19 +462,19 @@ Berechtigungssyntax: `Skill(name)` für exakte Übereinstimmung, `Skill(name *)`
   Das `user-invocable`-Feld steuert nur die Menüsichtbarkeit, nicht den Skill-Tool-Zugriff. Verwenden Sie `disable-model-invocation: true`, um die programmgesteuerte Aufrufe zu blockieren.
 </Note>
 
-## Teilen Sie Skills
+## Skills teilen
 
-Skills können je nach Ihrem Publikum in verschiedenen Bereichen verteilt werden:
+Skills können je nach Ihrer Zielgruppe in verschiedenen Bereichen verteilt werden:
 
 * **Projekt-Skills**: Committen Sie `.claude/skills/` zur Versionskontrolle
 * **Plugins**: Erstellen Sie ein `skills/`-Verzeichnis in Ihrem [Plugin](/de/plugins)
 * **Verwaltet**: Stellen Sie organisationsweit über [verwaltete Einstellungen](/de/settings#settings-files) bereit
 
-### Generieren Sie visuelle Ausgabe
+### Visuelle Ausgabe generieren
 
 Skills können Scripts in jeder Sprache bündeln und ausführen, was Claude Funktionen gibt, die über das hinausgehen, was in einem einzelnen Prompt möglich ist. Ein leistungsstarkes Muster ist die Generierung visueller Ausgabe: interaktive HTML-Dateien, die in Ihrem Browser geöffnet werden, um Daten zu erkunden, zu debuggen oder Berichte zu erstellen.
 
-Dieses Beispiel erstellt einen Codebase-Explorer: eine interaktive Baumansicht, in der Sie Verzeichnisse erweitern und reduzieren können, Dateigröße auf einen Blick sehen und Dateitypen nach Farbe identifizieren können.
+Dieses Beispiel erstellt einen Codebase-Explorer: eine interaktive Baumansicht, in der Sie Verzeichnisse erweitern und reduzieren, Dateigröße auf einen Blick sehen und Dateitypen nach Farbe identifizieren können.
 
 Erstellen Sie das Skill-Verzeichnis:
 
@@ -503,7 +501,7 @@ Run the visualization script from your project root:
 
 ```bash
 python ~/.claude/skills/codebase-visualizer/scripts/visualize.py .
-```text
+```
 
 This creates `codebase-map.html` in the current directory and opens it in your default browser.
 
@@ -668,7 +666,7 @@ Dieses Muster funktioniert für jede visuelle Ausgabe: Abhängigkeitsgraphen, Te
 Wenn Claude Ihren Skill nicht verwendet, wenn erwartet:
 
 1. Überprüfen Sie, ob die Beschreibung Schlüsselwörter enthält, die Benutzer natürlicherweise sagen würden
-2. Überprüfen Sie, ob der Skill in „What skills are available?" angezeigt wird
+2. Überprüfen Sie, ob der Skill in `What skills are available?` angezeigt wird
 3. Versuchen Sie, Ihre Anfrage umzuformulieren, um die Beschreibung besser zu treffen
 4. Rufen Sie ihn direkt mit `/skill-name` auf, wenn der Skill vom Benutzer aufgerufen werden kann
 
@@ -687,9 +685,9 @@ Um das Limit zu überschreiben, setzen Sie die Umgebungsvariable `SLASH_COMMAND_
 
 ## Verwandte Ressourcen
 
-* **[Subagenten](/de/sub-agents)**: delegieren Sie Aufgaben an spezialisierte Agenten
-* **[Plugins](/de/plugins)**: packen und verteilen Sie Skills mit anderen Erweiterungen
-* **[Hooks](/de/hooks)**: automatisieren Sie Workflows um Tool-Ereignisse
-* **[Memory](/de/memory)**: verwalten Sie CLAUDE.md-Dateien für persistenten Kontext
-* **[Interaktiver Modus](/de/interactive-mode#built-in-commands)**: integrierte Befehle und Shortcuts
-* **[Berechtigungen](/de/permissions)**: steuern Sie Tool- und Skill-Zugriff
+* **[Subagenten](/de/sub-agents)**: Delegieren Sie Aufgaben an spezialisierte Agenten
+* **[Plugins](/de/plugins)**: Packen und verteilen Sie Skills mit anderen Erweiterungen
+* **[Hooks](/de/hooks)**: Automatisieren Sie Workflows um Tool-Ereignisse
+* **[Memory](/de/memory)**: Verwalten Sie CLAUDE.md-Dateien für persistenten Kontext
+* **[Integrierte Befehle](/de/commands)**: Referenz für integrierte `/`-Befehle
+* **[Berechtigungen](/de/permissions)**: Steuern Sie Tool- und Skill-Zugriff

@@ -25,7 +25,7 @@ L'application de bureau a trois onglets :
 Chat et Cowork sont couverts dans les [articles d'assistance Claude Desktop](https://support.claude.com/en/collections/16163169-claude-desktop). Cette page se concentre sur l'onglet **Code**.
 
 <Note>
-  Claude Code nécessite un [abonnement Pro, Max, Teams ou Enterprise](https://claude.com/pricing).
+  Claude Code nécessite un [abonnement Pro, Max, Teams ou Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing).
 </Note>
 
 ## Installer
@@ -46,7 +46,7 @@ Chat et Cowork sont couverts dans les [articles d'assistance Claude Desktop](htt
 
     Pour Windows ARM64, [téléchargez ici](https://claude.ai/api/desktop/win32/arm64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs).
 
-    Linux n'est actuellement pas supporté.
+    Linux n'est pas actuellement supporté.
   </Step>
 
   <Step title="Se connecter">
@@ -54,7 +54,7 @@ Chat et Cowork sont couverts dans les [articles d'assistance Claude Desktop](htt
   </Step>
 
   <Step title="Ouvrir l'onglet Code">
-    Cliquez sur l'onglet **Code** en haut au centre. Si cliquer sur Code vous invite à mettre à niveau, vous devez d'abord [vous abonner à un plan payant](https://claude.com/pricing). S'il vous invite à vous connecter en ligne, complétez la connexion et redémarrez l'application. Si vous voyez une erreur 403, consultez [dépannage de l'authentification](/fr/desktop#403-or-authentication-errors-in-the-code-tab).
+    Cliquez sur l'onglet **Code** en haut au centre. Si cliquer sur Code vous invite à mettre à niveau, vous devez d'abord [vous abonner à un plan payant](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_upgrade). S'il vous invite à vous connecter en ligne, complétez la connexion et redémarrez l'application. Si vous voyez une erreur 403, consultez [dépannage de l'authentification](/fr/desktop#403-or-authentication-errors-in-the-code-tab).
   </Step>
 </Steps>
 
@@ -111,21 +111,21 @@ Vous avez fait votre première modification. Pour la référence complète sur t
 
 **Donner à Claude plus de contexte.** Tapez `@filename` dans la boîte de saisie pour extraire un fichier spécifique dans la conversation, joignez des images et des PDF en utilisant le bouton de pièce jointe, ou glissez-déposez des fichiers directement dans la saisie. Plus Claude a de contexte, meilleurs sont les résultats. Consultez [Ajouter des fichiers et du contexte](/fr/desktop#add-files-and-context-to-prompts).
 
-**Utiliser les skills pour les tâches répétables.** Tapez `/` ou cliquez sur **+** → **Slash commands** pour parcourir les [commandes intégrées](/fr/interactive-mode#built-in-commands), les [skills personnalisés](/fr/skills) et les skills de plugin. Les skills sont des invites réutilisables que vous pouvez invoquer chaque fois que vous en avez besoin, comme des listes de contrôle d'examen de code ou des étapes de déploiement.
+**Utiliser les skills pour les tâches répétables.** Tapez `/` ou cliquez sur **+** → **Slash commands** pour parcourir les [commandes intégrées](/fr/commands), les [skills personnalisés](/fr/skills) et les skills de plugin. Les skills sont des invites réutilisables que vous pouvez invoquer chaque fois que vous en avez besoin, comme des listes de contrôle d'examen de code ou des étapes de déploiement.
 
-**Examiner les modifications avant de valider.** Après que Claude modifie les fichiers, un indicateur `+12 -1` apparaît. Cliquez dessus pour ouvrir la [vue de différence](/fr/desktop#review-changes-with-diff-view), examinez les modifications fichier par fichier et commentez des lignes spécifiques. Claude lit vos commentaires et révise. Cliquez sur **Examiner le code** pour que Claude évalue lui-même les différences et laisse des suggestions en ligne.
+**Examiner les modifications avant de valider.** Après que Claude ait modifié les fichiers, un indicateur `+12 -1` apparaît. Cliquez dessus pour ouvrir la [vue de différence](/fr/desktop#review-changes-with-diff-view), examinez les modifications fichier par fichier et commentez des lignes spécifiques. Claude lit vos commentaires et révise. Cliquez sur **Examiner le code** pour que Claude évalue lui-même les différences et laisse des suggestions en ligne.
 
-**Ajuster le contrôle que vous avez.** Votre [mode de permission](/fr/desktop#choose-a-permission-mode) contrôle l'équilibre. Demander les permissions (par défaut) nécessite une approbation avant chaque modification. Auto accept edits accepte automatiquement les modifications de fichiers pour une itération plus rapide. Plan mode permet à Claude de cartographier une approche sans toucher à aucun fichier, ce qui est utile avant une grande refonte.
+**Ajuster le contrôle que vous avez.** Votre [mode de permission](/fr/desktop#choose-a-permission-mode) contrôle l'équilibre. Demander les permissions (par défaut) nécessite une approbation avant chaque modification. Auto-accepter les modifications accepte automatiquement les modifications de fichiers pour une itération plus rapide. Le mode Plan permet à Claude de cartographier une approche sans toucher à aucun fichier, ce qui est utile avant une grande refonte.
 
-**Ajouter des plugins pour plus de capacités.** Cliquez sur le bouton **+** à côté de la boîte de saisie et sélectionnez **Plugins** pour parcourir et installer des [plugins](/fr/desktop#install-plugins) qui ajoutent des skills, des agents, des MCP servers et plus.
+**Ajouter des plugins pour plus de capacités.** Cliquez sur le bouton **+** à côté de la boîte de saisie et sélectionnez **Plugins** pour parcourir et installer les [plugins](/fr/desktop#install-plugins) qui ajoutent des skills, des agents, des MCP servers et bien plus.
 
 **Prévisualiser votre application.** Cliquez sur la liste déroulante **Preview** pour exécuter votre serveur de développement directement dans le bureau. Claude peut voir l'application en cours d'exécution, tester les points de terminaison, inspecter les journaux et itérer sur ce qu'il voit. Consultez [Prévisualiser votre application](/fr/desktop#preview-your-app).
 
 **Suivre votre demande de tirage.** Après avoir ouvert une PR, Claude Code surveille les résultats des vérifications CI et peut corriger automatiquement les défaillances ou fusionner la PR une fois que toutes les vérifications sont réussies. Consultez [Surveiller l'état de la demande de tirage](/fr/desktop#monitor-pull-request-status).
 
-**Mettre Claude sur un calendrier.** Configurez des [tâches planifiées](/fr/desktop#schedule-recurring-tasks) pour exécuter Claude automatiquement de manière récurrente : un examen de code quotidien chaque matin, un audit de dépendances hebdomadaire ou un briefing qui extrait de vos outils connectés.
+**Mettre Claude sur un calendrier.** Configurez les [tâches planifiées](/fr/desktop#schedule-recurring-tasks) pour exécuter Claude automatiquement de manière récurrente : un examen de code quotidien chaque matin, un audit de dépendances hebdomadaire ou un briefing qui extrait de vos outils connectés.
 
-**Augmenter l'échelle quand vous êtes prêt.** Ouvrez des [sessions parallèles](/fr/desktop#work-in-parallel-with-sessions) à partir de la barre latérale pour travailler sur plusieurs tâches à la fois, chacune dans son propre Git worktree. Envoyez des [travaux de longue durée vers le cloud](/fr/desktop#run-long-running-tasks-remotely) pour qu'ils continuent même si vous fermez l'application, ou [continuez une session sur le web ou dans votre IDE](/fr/desktop#continue-in-another-surface) si une tâche prend plus de temps que prévu. [Connectez des outils externes](/fr/desktop#extend-claude-code) comme GitHub, Slack et Linear pour réunir votre flux de travail.
+**Augmenter l'échelle quand vous êtes prêt.** Ouvrez les [sessions parallèles](/fr/desktop#work-in-parallel-with-sessions) à partir de la barre latérale pour travailler sur plusieurs tâches à la fois, chacune dans son propre Git worktree. Envoyez les [travaux de longue durée vers le cloud](/fr/desktop#run-long-running-tasks-remotely) pour qu'ils continuent même si vous fermez l'application, ou [continuez une session sur le web ou dans votre IDE](/fr/desktop#continue-in-another-surface) si une tâche prend plus de temps que prévu. [Connectez les outils externes](/fr/desktop#extend-claude-code) comme GitHub, Slack et Linear pour réunir votre flux de travail.
 
 ## Venant de la CLI ?
 
@@ -136,4 +136,4 @@ Desktop exécute le même moteur que la CLI avec une interface graphique. Vous p
 * [Utiliser Claude Code Desktop](/fr/desktop) : modes de permission, sessions parallèles, vue de différence, connecteurs et configuration d'entreprise
 * [Dépannage](/fr/desktop#troubleshooting) : solutions aux erreurs courantes et problèmes de configuration
 * [Meilleures pratiques](/fr/best-practices) : conseils pour rédiger des invites efficaces et tirer le meilleur parti de Claude Code
-* [Flux de travail courants](/fr/common-workflows) : tutoriels pour le débogage, la refonte, les tests et plus
+* [Flux de travail courants](/fr/common-workflows) : tutoriels pour le débogage, la refonte, les tests et bien plus

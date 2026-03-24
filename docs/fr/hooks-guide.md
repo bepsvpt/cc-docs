@@ -18,55 +18,45 @@ Pour d'autres façons d'étendre Claude Code, consultez [skills](/fr/skills) pou
 
 ## Configurer votre premier hook
 
-Le moyen le plus rapide de créer un hook est via le menu interactif `/hooks` dans Claude Code. Cette procédure pas à pas crée un hook de notification de bureau, afin que vous soyez alerté chaque fois que Claude attend votre entrée au lieu de regarder le terminal.
+Pour créer un hook, ajoutez un bloc `hooks` à un [fichier de paramètres](#configure-hook-location). Cette procédure crée un hook de notification de bureau, afin que vous soyez alerté chaque fois que Claude attend votre entrée au lieu de regarder le terminal.
 
 <Steps>
-  <Step title="Ouvrir le menu des hooks">
-    Tapez `/hooks` dans le CLI de Claude Code. Vous verrez une liste de tous les événements de hook disponibles, plus une option pour désactiver tous les hooks. Chaque événement correspond à un point du cycle de vie de Claude où vous pouvez exécuter du code personnalisé. Sélectionnez `Notification` pour créer un hook qui se déclenche lorsque Claude a besoin de votre attention.
+  <Step title="Ajouter le hook à vos paramètres">
+    Ouvrez `~/.claude/settings.json` et ajoutez un hook `Notification`. L'exemple ci-dessous utilise `osascript` pour macOS ; consultez [Être notifié lorsque Claude a besoin d'une entrée](#get-notified-when-claude-needs-input) pour les commandes Linux et Windows.
+
+    ```json  theme={null}
+    {
+      "hooks": {
+        "Notification": [
+          {
+            "matcher": "",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'"
+              }
+            ]
+          }
+        ]
+      }
+    }
+    ```
+
+    Si votre fichier de paramètres a déjà une clé `hooks`, fusionnez l'entrée `Notification` plutôt que de remplacer l'objet entier. Vous pouvez également demander à Claude d'écrire le hook pour vous en décrivant ce que vous voulez dans le CLI.
   </Step>
 
-  <Step title="Configurer le matcher">
-    Le menu affiche une liste de matchers, qui filtrent le moment où le hook se déclenche. Définissez le matcher sur `*` pour se déclencher sur tous les types de notifications. Vous pouvez l'affiner plus tard en changeant le matcher en une valeur spécifique comme `permission_prompt` ou `idle_prompt`.
-  </Step>
-
-  <Step title="Ajouter votre commande">
-    Sélectionnez `+ Add new hook…`. Le menu vous demande une commande shell à exécuter lorsque l'événement se déclenche. Les hooks exécutent n'importe quelle commande shell que vous fournissez, vous pouvez donc utiliser l'outil de notification intégré de votre plateforme. Copiez la commande pour votre système d'exploitation :
-
-    <Tabs>
-      <Tab title="macOS">
-        Utilise [`osascript`](https://ss64.com/mac/osascript.html) pour déclencher une notification macOS native via AppleScript :
-
-        ```bash  theme={null}
-        osascript -e 'display notification "Claude Code needs your attention" with title "Claude Code"'
-        ```
-      </Tab>
-
-      <Tab title="Linux">
-        Utilise `notify-send`, qui est pré-installé sur la plupart des bureaux Linux avec un démon de notification :
-
-        ```bash  theme={null}
-        notify-send 'Claude Code' 'Claude Code needs your attention'
-        ```
-      </Tab>
-
-      <Tab title="Windows (PowerShell)">
-        Utilise PowerShell pour afficher une boîte de message native via Windows Forms de .NET :
-
-        ```powershell  theme={null}
-        powershell.exe -Command "[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); [System.Windows.Forms.MessageBox]::Show('Claude Code needs your attention', 'Claude Code')"
-        ```
-      </Tab>
-    </Tabs>
-  </Step>
-
-  <Step title="Choisir un emplacement de stockage">
-    Le menu vous demande où enregistrer la configuration du hook. Sélectionnez `User settings` pour la stocker dans `~/.claude/settings.json`, ce qui applique le hook à tous vos projets. Vous pouvez également choisir `Project settings` pour le limiter au projet actuel. Consultez [Configurer l'emplacement du hook](#configure-hook-location) pour tous les périmètres disponibles.
+  <Step title="Vérifier la configuration">
+    Tapez `/hooks` pour ouvrir le navigateur des hooks. Vous verrez une liste de tous les événements de hook disponibles, avec un nombre à côté de chaque événement qui a des hooks configurés. Sélectionnez `Notification` pour confirmer que votre nouveau hook apparaît dans la liste. La sélection du hook affiche ses détails : l'événement, le matcher, le type, le fichier source et la commande.
   </Step>
 
   <Step title="Tester le hook">
     Appuyez sur `Esc` pour revenir au CLI. Demandez à Claude de faire quelque chose qui nécessite une permission, puis quittez le terminal. Vous devriez recevoir une notification de bureau.
   </Step>
 </Steps>
+
+<Tip>
+  Le menu `/hooks` est en lecture seule. Pour ajouter, modifier ou supprimer des hooks, modifiez votre JSON de paramètres directement ou demandez à Claude de faire la modification.
+</Tip>
 
 ## Ce que vous pouvez automatiser
 
@@ -79,12 +69,13 @@ Chaque exemple inclut un bloc de configuration prêt à l'emploi que vous ajoute
 * [Bloquer les modifications des fichiers protégés](#block-edits-to-protected-files)
 * [Réinjecter le contexte après compaction](#re-inject-context-after-compaction)
 * [Auditer les modifications de configuration](#audit-configuration-changes)
+* [Approuver automatiquement les invites de permission spécifiques](#auto-approve-specific-permission-prompts)
 
 ### Être notifié lorsque Claude a besoin d'une entrée
 
 Recevez une notification de bureau chaque fois que Claude termine son travail et a besoin de votre entrée, afin que vous puissiez passer à d'autres tâches sans vérifier le terminal.
 
-Ce hook utilise l'événement `Notification`, qui se déclenche lorsque Claude attend une entrée ou une permission. Chaque onglet ci-dessous utilise la commande de notification native de la plateforme. Ajoutez ceci à `~/.claude/settings.json`, ou utilisez la [procédure pas à pas interactive](#set-up-your-first-hook) ci-dessus pour le configurer avec `/hooks` :
+Ce hook utilise l'événement `Notification`, qui se déclenche lorsque Claude attend une entrée ou une permission. Chaque onglet ci-dessous utilise la commande de notification native de la plateforme. Ajoutez ceci à `~/.claude/settings.json` :
 
 <Tabs>
   <Tab title="macOS">
@@ -152,7 +143,7 @@ Ce hook utilise l'événement `Notification`, qui se déclenche lorsque Claude a
 
 Exécutez automatiquement [Prettier](https://prettier.io/) sur chaque fichier que Claude modifie, afin que le formatage reste cohérent sans intervention manuelle.
 
-Ce hook utilise l'événement `PostToolUse` avec un matcher `Edit|Write`, il s'exécute donc uniquement après les outils d'édition de fichiers. La commande extrait le chemin du fichier modifié avec [`jq`](https://jqlang.github.io/jq/) et le transmet à Prettier. Ajoutez ceci à `.claude/settings.json` dans la racine de votre projet :
+Ce hook utilise l'événement `PostToolUse` avec un matcher `Edit|Write`, il s'exécute donc uniquement après les outils d'édition de fichiers. La commande extrait le chemin du fichier modifié avec [`jq`](https://jqlang.github.io/jq/) et le transmet à Prettier. Ajoutez ceci à `.claude/settings.json` à la racine de votre projet :
 
 ```json  theme={null}
 {
@@ -178,7 +169,7 @@ Ce hook utilise l'événement `PostToolUse` avec un matcher `Edit|Write`, il s'e
 
 ### Bloquer les modifications des fichiers protégés
 
-Empêchez Claude de modifier les fichiers sensibles comme `.env`, `package-lock.json`, ou n'importe quoi dans `.git/`. Claude reçoit un retour d'information expliquant pourquoi la modification a été bloquée, afin qu'il puisse ajuster son approche.
+Empêchez Claude de modifier les fichiers sensibles comme `.env`, `package-lock.json`, ou n'importe quoi dans `.git/`. Claude reçoit un retour expliquant pourquoi la modification a été bloquée, afin qu'il puisse ajuster son approche.
 
 Cet exemple utilise un fichier de script séparé que le hook appelle. Le script vérifie le chemin du fichier cible par rapport à une liste de modèles protégés et quitte avec le code 2 pour bloquer la modification.
 
@@ -215,7 +206,7 @@ Cet exemple utilise un fichier de script séparé que le hook appelle. Le script
   </Step>
 
   <Step title="Enregistrer le hook">
-    Ajoutez un hook `PreToolUse` à `.claude/settings.json` qui exécute le script avant tout appel d'outil `Edit` ou `Write` :
+    Ajoutez un hook `PreToolUse` à `.claude/settings.json` qui exécute le script avant n'importe quel appel d'outil `Edit` ou `Write` :
 
     ```json  theme={null}
     {
@@ -241,7 +232,7 @@ Cet exemple utilise un fichier de script séparé que le hook appelle. Le script
 
 Lorsque la fenêtre de contexte de Claude se remplit, la compaction résume la conversation pour libérer de l'espace. Cela peut perdre des détails importants. Utilisez un hook `SessionStart` avec un matcher `compact` pour réinjecter le contexte critique après chaque compaction.
 
-Tout texte que votre commande écrit sur stdout est ajouté au contexte de Claude. Cet exemple rappelle à Claude les conventions du projet et le travail récent. Ajoutez ceci à `.claude/settings.json` dans la racine de votre projet :
+Tout texte que votre commande écrit sur stdout est ajouté au contexte de Claude. Cet exemple rappelle à Claude les conventions du projet et le travail récent. Ajoutez ceci à `.claude/settings.json` à la racine de votre projet :
 
 ```json  theme={null}
 {
@@ -265,7 +256,7 @@ Vous pouvez remplacer `echo` par n'importe quelle commande qui produit une sorti
 
 ### Auditer les modifications de configuration
 
-Suivez les modifications des fichiers de paramètres ou de skills pendant une session. L'événement `ConfigChange` se déclenche lorsqu'un processus externe ou un éditeur modifie un fichier de configuration, afin que vous puissiez enregistrer les modifications pour la conformité ou bloquer les modifications non autorisées.
+Suivez quand les fichiers de paramètres ou de skills changent pendant une session. L'événement `ConfigChange` se déclenche lorsqu'un processus externe ou un éditeur modifie un fichier de configuration, afin que vous puissiez enregistrer les modifications pour la conformité ou bloquer les modifications non autorisées.
 
 Cet exemple ajoute chaque modification à un journal d'audit. Ajoutez ceci à `~/.claude/settings.json` :
 
@@ -288,6 +279,54 @@ Cet exemple ajoute chaque modification à un journal d'audit. Ajoutez ceci à `~
 ```
 
 Le matcher filtre par type de configuration : `user_settings`, `project_settings`, `local_settings`, `policy_settings`, ou `skills`. Pour bloquer une modification de prendre effet, quittez avec le code 2 ou retournez `{"decision": "block"}`. Consultez la [référence ConfigChange](/fr/hooks#configchange) pour le schéma d'entrée complet.
+
+### Approuver automatiquement les invites de permission spécifiques
+
+Ignorez la boîte de dialogue d'approbation pour les appels d'outils que vous autorisez toujours. Cet exemple approuve automatiquement `ExitPlanMode`, l'outil que Claude appelle lorsqu'il termine de présenter un plan et demande de procéder, afin que vous ne soyez pas invité à chaque fois qu'un plan est prêt.
+
+Contrairement aux exemples de code de sortie ci-dessus, l'approbation automatique nécessite que votre hook écrive une décision JSON sur stdout. Un hook `PermissionRequest` se déclenche lorsque Claude Code est sur le point d'afficher une boîte de dialogue de permission, et retourner `"behavior": "allow"` y répond en votre nom.
+
+Le matcher limite le hook à `ExitPlanMode` uniquement, afin qu'aucune autre invite ne soit affectée. Ajoutez ceci à `~/.claude/settings.json` :
+
+```json  theme={null}
+{
+  "hooks": {
+    "PermissionRequest": [
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"hookSpecificOutput\": {\"hookEventName\": \"PermissionRequest\", \"decision\": {\"behavior\": \"allow\"}}}'"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Lorsque le hook approuve, Claude Code quitte le mode plan et restaure le mode de permission qui était actif avant que vous entriez en mode plan. La transcription affiche « Allowed by PermissionRequest hook » où la boîte de dialogue aurait apparu. Le chemin du hook garde toujours la conversation actuelle : il ne peut pas effacer le contexte et démarrer une session d'implémentation fraîche comme la boîte de dialogue peut le faire.
+
+Pour définir un mode de permission spécifique à la place, la sortie de votre hook peut inclure un tableau `updatedPermissions` avec une entrée `setMode`. La valeur `mode` est n'importe quel mode de permission comme `default`, `acceptEdits`, ou `bypassPermissions`, et `destination: "session"` l'applique pour la session actuelle uniquement.
+
+Pour basculer la session vers `acceptEdits`, votre hook écrit ce JSON sur stdout :
+
+```json  theme={null}
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PermissionRequest",
+    "decision": {
+      "behavior": "allow",
+      "updatedPermissions": [
+        { "type": "setMode", "mode": "acceptEdits", "destination": "session" }
+      ]
+    }
+  }
+}
+```
+
+Gardez le matcher aussi étroit que possible. Correspondre à `.*` ou laisser le matcher vide approuverait automatiquement chaque invite de permission, y compris les écritures de fichiers et les commandes shell. Consultez la [référence PermissionRequest](/fr/hooks#permissionrequest-decision-control) pour l'ensemble complet des champs de décision.
 
 ## Comment fonctionnent les hooks
 
@@ -320,7 +359,7 @@ Les événements de hook se déclenchent à des points spécifiques du cycle de 
 
 Chaque hook a un `type` qui détermine comment il s'exécute. La plupart des hooks utilisent `"type": "command"`, qui exécute une commande shell. Trois autres types sont disponibles :
 
-* `"type": "http"` : POST les données d'événement vers une URL. Consultez [HTTP hooks](#http-hooks).
+* `"type": "http"` : POST les données d'événement vers une URL. Consultez [Hooks HTTP](#http-hooks).
 * `"type": "prompt"` : évaluation LLM à un seul tour. Consultez [Hooks basés sur des invites](#prompt-based-hooks).
 * `"type": "agent"` : vérification multi-tour avec accès aux outils. Consultez [Hooks basés sur des agents](#agent-based-hooks).
 
@@ -366,7 +405,7 @@ exit 0  # exit 0 = let it proceed
 Le code de sortie détermine ce qui se passe ensuite :
 
 * **Exit 0** : l'action se poursuit. Pour les hooks `UserPromptSubmit` et `SessionStart`, tout ce que vous écrivez sur stdout est ajouté au contexte de Claude.
-* **Exit 2** : l'action est bloquée. Écrivez une raison sur stderr, et Claude la reçoit comme retour d'information afin qu'il puisse s'ajuster.
+* **Exit 2** : l'action est bloquée. Écrivez une raison sur stderr, et Claude la reçoit comme retour afin qu'il puisse s'ajuster.
 * **Tout autre code de sortie** : l'action se poursuit. Stderr est enregistré mais non affiché à Claude. Basculez le mode verbeux avec `Ctrl+O` pour voir ces messages dans la transcription.
 
 #### Sortie JSON structurée
@@ -389,7 +428,7 @@ Par exemple, un hook `PreToolUse` peut refuser un appel d'outil et dire à Claud
 }
 ```
 
-Claude Code lit `permissionDecision` et annule l'appel d'outil, puis renvoie `permissionDecisionReason` à Claude comme retour d'information. Ces trois options sont spécifiques à `PreToolUse` :
+Claude Code lit `permissionDecision` et annule l'appel d'outil, puis renvoie `permissionDecisionReason` à Claude comme retour. Ces trois options sont spécifiques à `PreToolUse` :
 
 * `"allow"` : procéder sans afficher une invite de permission
 * `"deny"` : annuler l'appel d'outil et envoyer la raison à Claude
@@ -515,15 +554,15 @@ L'endroit où vous ajoutez un hook détermine son périmètre :
 | Emplacement                                                | Périmètre                                 | Partageable                              |
 | :--------------------------------------------------------- | :---------------------------------------- | :--------------------------------------- |
 | `~/.claude/settings.json`                                  | Tous vos projets                          | Non, local à votre machine               |
-| `.claude/settings.json`                                    | Projet unique                             | Oui, peut être commité dans le repo      |
+| `.claude/settings.json`                                    | Projet unique                             | Oui, peut être commité au repo           |
 | `.claude/settings.local.json`                              | Projet unique                             | Non, gitignored                          |
 | Paramètres de politique gérés                              | À l'échelle de l'organisation             | Oui, contrôlé par l'administrateur       |
 | [Plugin](/fr/plugins) `hooks/hooks.json`                   | Lorsque le plugin est activé              | Oui, fourni avec le plugin               |
 | [Skill](/fr/skills) ou [agent](/fr/sub-agents) frontmatter | Pendant que le skill ou l'agent est actif | Oui, défini dans le fichier du composant |
 
-Vous pouvez également utiliser le menu [`/hooks`](/fr/hooks#the-hooks-menu) dans Claude Code pour ajouter, supprimer et afficher les hooks de manière interactive. Pour désactiver tous les hooks à la fois, utilisez le bouton bascule en bas du menu `/hooks` ou définissez `"disableAllHooks": true` dans votre fichier de paramètres.
+Exécutez [`/hooks`](/fr/hooks#the-hooks-menu) dans Claude Code pour parcourir tous les hooks configurés regroupés par événement. Pour désactiver tous les hooks à la fois, définissez `"disableAllHooks": true` dans votre fichier de paramètres.
 
-Les hooks ajoutés via le menu `/hooks` prennent effet immédiatement. Si vous modifiez les fichiers de paramètres directement pendant que Claude Code s'exécute, les modifications ne prendront effet que lorsque vous les examinerez dans le menu `/hooks` ou que vous redémarrerez votre session.
+Si vous modifiez les fichiers de paramètres directement pendant que Claude Code s'exécute, l'observateur de fichiers récupère normalement les modifications de hook automatiquement.
 
 ## Hooks basés sur des invites
 
@@ -585,11 +624,11 @@ Utilisez les hooks d'invite lorsque les données d'entrée du hook seules suffis
 
 Pour les options de configuration complètes, consultez [Hooks basés sur des agents](/fr/hooks#agent-based-hooks) dans la référence.
 
-## HTTP hooks
+## Hooks HTTP
 
 Utilisez les hooks `type: "http"` pour POST les données d'événement vers un point de terminaison HTTP au lieu d'exécuter une commande shell. Le point de terminaison reçoit le même JSON qu'un hook de commande recevrait sur stdin, et retourne les résultats via le corps de la réponse HTTP en utilisant le même format JSON.
 
-Les HTTP hooks sont utiles lorsque vous voulez qu'un serveur web, une fonction cloud ou un service externe gère la logique du hook : par exemple, un service d'audit partagé qui enregistre les événements d'utilisation d'outils dans une équipe.
+Les hooks HTTP sont utiles lorsque vous voulez qu'un serveur web, une fonction cloud ou un service externe gère la logique du hook : par exemple, un service d'audit partagé qui enregistre les événements d'utilisation d'outils dans une équipe.
 
 Cet exemple poste chaque utilisation d'outil vers un service de journalisation local :
 
@@ -618,17 +657,13 @@ Le point de terminaison doit retourner un corps de réponse JSON en utilisant le
 
 Les valeurs d'en-tête supportent l'interpolation de variables d'environnement en utilisant la syntaxe `$VAR_NAME` ou `${VAR_NAME}`. Seules les variables listées dans le tableau `allowedEnvVars` sont résolues ; toutes les autres références `$VAR` restent vides.
 
-<Note>
-  Les HTTP hooks doivent être configurés en modifiant directement votre JSON de paramètres. Le menu interactif `/hooks` ne supporte que l'ajout de hooks de commande.
-</Note>
-
-Pour les options de configuration complètes et la gestion des réponses, consultez [HTTP hooks](/fr/hooks#http-hook-fields) dans la référence.
+Pour les options de configuration complètes et la gestion des réponses, consultez [Hooks HTTP](/fr/hooks#http-hook-fields) dans la référence.
 
 ## Limitations et dépannage
 
 ### Limitations
 
-* Les hooks de commande communiquent uniquement via stdout, stderr et les codes de sortie. Ils ne peuvent pas déclencher directement des commandes ou des appels d'outils. Les HTTP hooks communiquent via le corps de la réponse à la place.
+* Les hooks de commande communiquent uniquement via stdout, stderr et les codes de sortie. Ils ne peuvent pas déclencher directement des commandes ou des appels d'outils. Les hooks HTTP communiquent via le corps de la réponse à la place.
 * Le délai d'expiration du hook est de 10 minutes par défaut, configurable par hook avec le champ `timeout` (en secondes).
 * Les hooks `PostToolUse` ne peuvent pas annuler les actions puisque l'outil a déjà été exécuté.
 * Les hooks `PermissionRequest` ne se déclenchent pas en [mode non-interactif](/fr/headless) (`-p`). Utilisez les hooks `PreToolUse` pour les décisions de permission automatisées.
@@ -660,7 +695,7 @@ Vous voyez un message comme « PreToolUse hook error : ... » dans la transcript
 
 Vous avez modifié un fichier de paramètres mais les hooks n'apparaissent pas dans le menu.
 
-* Redémarrez votre session ou ouvrez `/hooks` pour recharger. Les hooks ajoutés via le menu `/hooks` prennent effet immédiatement, mais les modifications manuelles des fichiers nécessitent un rechargement.
+* Les modifications de fichiers sont normalement récupérées automatiquement. Si elles n'ont pas apparues après quelques secondes, l'observateur de fichiers peut avoir manqué la modification : redémarrez votre session pour forcer un rechargement.
 * Vérifiez que votre JSON est valide (les virgules finales et les commentaires ne sont pas autorisés)
 * Confirmez que le fichier de paramètres est au bon emplacement : `.claude/settings.json` pour les hooks de projet, `~/.claude/settings.json` pour les hooks globaux
 

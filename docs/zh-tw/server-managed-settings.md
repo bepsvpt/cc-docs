@@ -11,7 +11,7 @@
 此方法適用於沒有裝置管理基礎設施的組織，或需要為非受管裝置上的使用者管理設定的組織。
 
 <Note>
-  伺服器管理的設定處於公開測試版，適用於 [Claude for Teams](https://claude.com/pricing#team-&-enterprise) 和 [Claude for Enterprise](https://anthropic.com/contact-sales) 客戶。功能可能在正式推出前進行演變。
+  伺服器管理的設定處於公開測試版，適用於 [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) 和 [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise) 客戶。功能可能在正式推出前進行演變。
 </Note>
 
 ## 需求
@@ -41,7 +41,7 @@ Claude Code 支援兩種集中設定方法。伺服器管理的設定從 Anthrop
   </Step>
 
   <Step title="定義您的設定">
-    將您的設定新增為 JSON。支援 [`settings.json` 中提供的所有設定](/zh-TW/settings#available-settings)，包括 [僅限受管的設定](/zh-TW/permissions#managed-only-settings)，例如 `disableBypassPermissionsMode`。
+    將您的設定新增為 JSON。支援 [`settings.json` 中提供的所有設定](/zh-TW/settings#available-settings)，包括[僅限受管的設定](/zh-TW/permissions#managed-only-settings)，例如 `disableBypassPermissionsMode`。
 
     此範例強制執行權限拒絕清單並防止使用者繞過權限：
 
@@ -53,9 +53,9 @@ Claude Code 支援兩種集中設定方法。伺服器管理的設定從 Anthrop
           "Read(./.env)",
           "Read(./.env.*)",
           "Read(./secrets/**)"
-        ]
-      },
-      "disableBypassPermissionsMode": "disable"
+        ],
+        "disableBypassPermissionsMode": "disable"
+      }
     }
     ```
   </Step>
@@ -67,7 +67,7 @@ Claude Code 支援兩種集中設定方法。伺服器管理的設定從 Anthrop
 
 ### 驗證設定傳遞
 
-若要確認設定正在套用，請要求使用者重新啟動 Claude Code。如果設定包含觸發[安全核准對話方塊](#security-approval-dialogs)的設定，使用者會在啟動時看到描述受管設定的提示。您也可以透過讓使用者執行 `/permissions` 來驗證受管權限規則是否有效，以檢視其有效的權限規則。
+若要確認設定正在套用，請要求使用者重新啟動 Claude Code。如果設定包含觸發[安全核准對話方塊](#security-approval-dialogs)的設定，使用者會在啟動時看到描述受管設定的提示。您也可以透過讓使用者執行 `/permissions` 來檢視其有效的權限規則，以驗證受管權限規則是否處於作用中。
 
 ### 存取控制
 
@@ -93,7 +93,7 @@ Claude Code 支援兩種集中設定方法。伺服器管理的設定從 Anthrop
 
 ### 擷取和快取行為
 
-Claude Code 在啟動時從 Anthropic 的伺服器擷取設定，並在活動工作階段期間每小時輪詢更新。
+Claude Code 在啟動時從 Anthropic 的伺服器擷取設定，並在作用中的工作階段期間每小時輪詢一次更新。
 
 **首次啟動而無快取設定：**
 

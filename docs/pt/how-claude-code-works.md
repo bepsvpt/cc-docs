@@ -16,7 +16,7 @@ Quando você dá uma tarefa a Claude, ele trabalha através de três fases: **re
 
 <img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/agentic-loop.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=5f1827dec8539f38adee90ead3a85a38" alt="O loop agentic: Seu prompt leva Claude a reunir contexto, tomar ação, verificar resultados e repetir até que a tarefa seja concluída. Você pode interromper em qualquer ponto." width="720" height="280" data-path="images/agentic-loop.svg" />
 
-O loop se adapta ao que você pede. Uma pergunta sobre sua base de código pode precisar apenas de coleta de contexto. Uma correção de bug passa por todas as três fases repetidamente. Uma refatoração pode envolver verificação extensiva. Claude decide o que cada etapa requer com base no que aprendeu na etapa anterior, encadeando dezenas de ações e se autocorrigindo ao longo do caminho.
+O loop se adapta ao que você pede. Uma pergunta sobre sua base de código pode precisar apenas de coleta de contexto. Uma correção de bug passa por todas as três fases repetidamente. Uma refatoração pode envolver verificação extensiva. Claude decide o que cada etapa requer com base no que aprendeu da etapa anterior, encadeando dezenas de ações e se autocorrigindo ao longo do caminho.
 
 Você também faz parte deste loop. Você pode interromper em qualquer ponto para orientar Claude em uma direção diferente, fornecer contexto adicional ou pedir que tente uma abordagem diferente. Claude trabalha autonomamente, mas permanece responsivo à sua entrada.
 
@@ -32,7 +32,7 @@ Quando este guia diz "Claude escolhe" ou "Claude decide", é o modelo fazendo o 
 
 ### Tools
 
-Tools são o que tornam Claude Code agentic. Sem ferramentas, Claude pode apenas responder com texto. Com ferramentas, Claude pode agir: ler seu código, editar arquivos, executar comandos, pesquisar a web e interagir com serviços externos. Cada uso de ferramenta retorna informações que alimentam o loop, informando a próxima decisão de Claude.
+Ferramentas são o que tornam Claude Code agentic. Sem ferramentas, Claude pode apenas responder com texto. Com ferramentas, Claude pode agir: ler seu código, editar arquivos, executar comandos, pesquisar a web e interagir com serviços externos. Cada uso de ferramenta retorna informações que alimentam o loop, informando a próxima decisão de Claude.
 
 As ferramentas integradas geralmente se enquadram em cinco categorias, cada uma representando um tipo diferente de agência.
 
@@ -44,7 +44,7 @@ As ferramentas integradas geralmente se enquadram em cinco categorias, cada uma 
 | **Web**                    | Pesquisar a web, buscar documentação, procurar mensagens de erro                                                                                                           |
 | **Inteligência de código** | Ver erros de tipo e avisos após edições, pular para definições, encontrar referências (requer [plugins de inteligência de código](/pt/discover-plugins#code-intelligence)) |
 
-Essas são as capacidades principais. Claude também tem ferramentas para gerar subagents, fazer perguntas a você e outras tarefas de orquestração. Consulte [Ferramentas disponíveis para Claude](/pt/settings#tools-available-to-claude) para a lista completa.
+Essas são as capacidades principais. Claude também tem ferramentas para gerar subagents, fazer perguntas a você e outras tarefas de orquestração. Consulte [Ferramentas disponíveis para Claude](/pt/tools-reference) para a lista completa.
 
 Claude escolhe quais ferramentas usar com base em seu prompt e no que aprende ao longo do caminho. Quando você diz "corrigir os testes falhando", Claude pode:
 
@@ -100,7 +100,7 @@ Claude Code salva sua conversa localmente conforme você trabalha. Cada mensagem
 
 ### Trabalhe entre branches
 
-Cada conversa de Claude Code é uma sessão vinculada ao seu diretório atual. Quando você retoma, você vê apenas sessões desse diretório.
+Cada conversa de Claude Code é uma sessão vinculada ao seu diretório atual. Quando você retoma, você só vê sessões desse diretório.
 
 Claude vê os arquivos do seu branch atual. Quando você muda de branch, Claude vê os arquivos do novo branch, mas seu histórico de conversa permanece o mesmo. Claude se lembra do que você discutiu mesmo após mudar de branch.
 
@@ -120,7 +120,7 @@ claude --continue --fork-session
 
 Isso cria um novo ID de sessão enquanto preserva o histórico de conversa até esse ponto. A sessão original permanece inalterada. Como retomar, sessões bifurcadas não herdam permissões com escopo de sessão.
 
-**Mesma sessão em múltiplos terminais**: Se você retomar a mesma sessão em múltiplos terminais, ambos os terminais escrevem no mesmo arquivo de sessão. Mensagens de ambos são intercaladas, como duas pessoas escrevendo no mesmo caderno. Nada se corrompe, mas a conversa fica confusa. Cada terminal vê apenas suas próprias mensagens durante a sessão, mas se você retomar essa sessão mais tarde, verá tudo intercalado. Para trabalho paralelo a partir do mesmo ponto de partida, use `--fork-session` para dar a cada terminal sua própria sessão limpa.
+**Mesma sessão em múltiplos terminais**: Se você retomar a mesma sessão em múltiplos terminais, ambos os terminais escrevem no mesmo arquivo de sessão. Mensagens de ambos ficam intercaladas, como duas pessoas escrevendo no mesmo caderno. Nada se corrompe, mas a conversa fica confusa. Cada terminal vê apenas suas próprias mensagens durante a sessão, mas se você retomar essa sessão mais tarde, verá tudo intercalado. Para trabalho paralelo a partir do mesmo ponto de partida, use `--fork-session` para dar a cada terminal sua própria sessão limpa.
 
 ### A janela de contexto
 
@@ -140,7 +140,7 @@ Além da compactação, você pode usar outros recursos para controlar o que é 
 
 [Skills](/pt/skills) carregam sob demanda. Claude vê descrições de skills no início da sessão, mas o conteúdo completo só carrega quando uma skill é usada. Para skills que você invoca manualmente, defina `disable-model-invocation: true` para manter descrições fora do contexto até que você precise delas.
 
-[Subagents](/pt/sub-agents) obtêm seu próprio contexto fresco, completamente separado de sua conversa principal. Seu trabalho não incha seu contexto. Quando terminado, eles retornam um resumo. Esse isolamento é por que subagents ajudam com sessões longas.
+[Subagents](/pt/sub-agents) obtêm seu próprio contexto fresco, completamente separado de sua conversa principal. Seu trabalho não incha seu contexto. Quando terminado, eles retornam um resumo. Esse isolamento é por que subagents ajudam em sessões longas.
 
 Consulte [custos de contexto](/pt/features-overview#understand-context-costs) para o que cada recurso custa e [reduzir uso de tokens](/pt/costs#reduce-token-usage) para dicas sobre como gerenciar contexto.
 

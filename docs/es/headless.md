@@ -115,7 +115,7 @@ claude -p "Look at my staged changes and create an appropriate commit" \
 La bandera `--allowedTools` utiliza [sintaxis de regla de permiso](/es/settings#permission-rule-syntax). El ` *` final habilita la coincidencia de prefijo, por lo que `Bash(git diff *)` permite cualquier comando que comience con `git diff`. El espacio antes de `*` es importante: sin él, `Bash(git diff*)` también coincidiría con `git diff-index`.
 
 <Note>
-  Las [skills](/es/skills) invocadas por el usuario como `/commit` y los [comandos integrados](/es/interactive-mode#built-in-commands) solo están disponibles en modo interactivo. En modo `-p`, describa la tarea que desea realizar en su lugar.
+  Las [skills](/es/skills) invocadas por el usuario como `/commit` y los [comandos integrados](/es/commands) solo están disponibles en modo interactivo. En modo `-p`, describa la tarea que desea realizar en su lugar.
 </Note>
 
 ### Personalizar el indicador del sistema

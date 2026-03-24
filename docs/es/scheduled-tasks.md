@@ -16,7 +16,7 @@ Las tareas tienen alcance de sesión: viven en el proceso actual de Claude Code 
 
 ## Programar un prompt recurrente con /loop
 
-La [skill agrupada](/es/skills#bundled-skills) `/loop` es la forma más rápida de programar un prompt recurrente. Pase un intervalo opcional y un prompt, y Claude configura un trabajo cron que se dispara en segundo plano mientras la sesión permanece abierta.
+El skill `/loop` [bundled skill](/es/skills#bundled-skills) es la forma más rápida de programar un prompt recurrente. Pase un intervalo opcional y un prompt, y Claude configura un trabajo cron que se ejecuta en segundo plano mientras la sesión permanece abierta.
 
 ```text  theme={null}
 /loop 5m check if the deployment finished and tell me what happened
@@ -44,7 +44,7 @@ El prompt programado puede ser en sí mismo una invocación de comando o skill. 
 /loop 20m /review-pr 1234
 ```
 
-Cada vez que se dispara el trabajo, Claude ejecuta `/review-pr 1234` como si lo hubiera escrito.
+Cada vez que se ejecuta el trabajo, Claude ejecuta `/review-pr 1234` como si lo hubiera escrito.
 
 ## Establecer un recordatorio único
 
@@ -58,7 +58,7 @@ remind me at 3pm to push the release branch
 in 45 minutes, check whether the integration tests passed
 ```
 
-Claude fija la hora de disparo a un minuto y hora específicos usando una expresión cron y confirma cuándo se disparará.
+Claude fija la hora de disparo a un minuto y hora específicos usando una expresión cron y confirma cuándo se ejecutará.
 
 ## Gestionar tareas programadas
 
@@ -76,7 +76,7 @@ Bajo el capó, Claude utiliza estas herramientas:
 
 | Herramienta  | Propósito                                                                                                                        |
 | :----------- | :------------------------------------------------------------------------------------------------------------------------------- |
-| `CronCreate` | Programar una nueva tarea. Acepta una expresión cron de 5 campos, el prompt a ejecutar y si se repite o se dispara una sola vez. |
+| `CronCreate` | Programar una nueva tarea. Acepta una expresión cron de 5 campos, el prompt a ejecutar y si se repite o se ejecuta una sola vez. |
 | `CronList`   | Enumerar todas las tareas programadas con sus IDs, horarios y prompts.                                                           |
 | `CronDelete` | Cancelar una tarea por ID.                                                                                                       |
 
@@ -84,7 +84,7 @@ Cada tarea programada tiene un ID de 8 caracteres que puede pasar a `CronDelete`
 
 ## Cómo se ejecutan las tareas programadas
 
-El programador verifica cada segundo si hay tareas vencidas y las encola con baja prioridad. Un prompt programado se dispara entre sus turnos, no mientras Claude está en medio de una respuesta. Si Claude está ocupado cuando vence una tarea, el prompt espera hasta que termina el turno actual.
+El programador verifica cada segundo si hay tareas vencidas y las encola con baja prioridad. Un prompt programado se ejecuta entre sus turnos, no mientras Claude está en medio de una respuesta. Si Claude está ocupado cuando vence una tarea, el prompt espera hasta que termine el turno actual.
 
 Todos los tiempos se interpretan en su zona horaria local. Una expresión cron como `0 9 * * *` significa las 9am donde está ejecutando Claude Code, no UTC.
 
@@ -92,14 +92,14 @@ Todos los tiempos se interpretan en su zona horaria local. Una expresión cron c
 
 Para evitar que cada sesión golpee la API en el mismo momento de reloj de pared, el programador agrega un pequeño desplazamiento determinista a los tiempos de disparo:
 
-* Las tareas recurrentes se disparan hasta un 10% de su período tarde, limitado a 15 minutos. Un trabajo por hora podría dispararse en cualquier momento desde `:00` hasta `:06`.
-* Las tareas únicas programadas para la parte superior o inferior de la hora se disparan hasta 90 segundos antes.
+* Las tareas recurrentes se ejecutan hasta un 10% de su período tarde, limitado a 15 minutos. Un trabajo por hora podría ejecutarse en cualquier momento desde `:00` hasta `:06`.
+* Las tareas únicas programadas para la parte superior o inferior de la hora se ejecutan hasta 90 segundos antes.
 
 El desplazamiento se deriva del ID de la tarea, por lo que la misma tarea siempre obtiene el mismo desplazamiento. Si el tiempo exacto es importante, elija un minuto que no sea `:00` o `:30`, por ejemplo `3 9 * * *` en lugar de `0 9 * * *`, y el jitter único no se aplicará.
 
 ### Vencimiento de tres días
 
-Las tareas recurrentes expiran automáticamente 3 días después de su creación. La tarea se dispara una última vez y luego se elimina a sí misma. Esto limita cuánto tiempo puede ejecutarse un bucle olvidado. Si necesita que una tarea recurrente dure más tiempo, cancele y recree antes de que expire, o use [tareas programadas de Desktop](/es/desktop#schedule-recurring-tasks) para programación duradera.
+Las tareas recurrentes expiran automáticamente 3 días después de su creación. La tarea se ejecuta una última vez y luego se elimina a sí misma. Esto limita cuánto tiempo puede ejecutarse un bucle olvidado. Si necesita que una tarea recurrente dure más, cancele y recree antes de que expire, o use [tareas programadas de Desktop](/es/desktop#schedule-recurring-tasks) para programación duradera.
 
 ## Referencia de expresión cron
 
@@ -120,14 +120,14 @@ Cuando tanto el día del mes como el día de la semana están restringidos, una 
 
 ## Deshabilitar tareas programadas
 
-Establezca `CLAUDE_CODE_DISABLE_CRON=1` en su entorno para deshabilitar completamente el programador. Las herramientas cron y `/loop` dejan de estar disponibles, y cualquier tarea ya programada deja de dispararse. Consulte [Variables de entorno](/es/settings#environment-variables) para la lista completa de banderas de deshabilitación.
+Establezca `CLAUDE_CODE_DISABLE_CRON=1` en su entorno para deshabilitar completamente el programador. Las herramientas cron y `/loop` dejan de estar disponibles, y cualquier tarea ya programada deja de ejecutarse. Consulte [Variables de entorno](/es/env-vars) para la lista completa de banderas de deshabilitación.
 
 ## Limitaciones
 
 La programación con alcance de sesión tiene limitaciones inherentes:
 
-* Las tareas solo se disparan mientras Claude Code se está ejecutando e inactivo. Cerrar la terminal o dejar que la sesión salga cancela todo.
-* Sin recuperación de disparos perdidos. Si el tiempo programado de una tarea pasa mientras Claude está ocupado en una solicitud de larga duración, se dispara una vez cuando Claude queda inactivo, no una vez por intervalo perdido.
+* Las tareas solo se ejecutan mientras Claude Code está ejecutándose e inactivo. Cerrar la terminal o dejar que la sesión salga cancela todo.
+* Sin recuperación de disparos perdidos. Si el tiempo programado de una tarea pasa mientras Claude está ocupado en una solicitud de larga duración, se ejecuta una vez cuando Claude queda inactivo, no una vez por intervalo perdido.
 * Sin persistencia entre reinicios. Reiniciar Claude Code borra todas las tareas con alcance de sesión.
 
 Para la automatización impulsada por cron que necesita ejecutarse sin supervisión, use un [flujo de trabajo de GitHub Actions](/es/github-actions) con un disparador `schedule`, o [tareas programadas de Desktop](/es/desktop#schedule-recurring-tasks) si desea un flujo de configuración gráfico.

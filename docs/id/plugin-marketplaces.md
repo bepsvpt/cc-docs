@@ -239,7 +239,7 @@ Setelah plugin diklon atau disalin ke mesin lokal, plugin disalin ke cache plugi
 
 ### Jalur relatif
 
-Untuk plugin di repositori yang sama:
+Untuk plugin di repositori yang sama, gunakan jalur yang dimulai dengan `./`:
 
 ```json  theme={null}
 {
@@ -247,6 +247,8 @@ Untuk plugin di repositori yang sama:
   "source": "./plugins/my-plugin"
 }
 ```
+
+Jalur diselesaikan relatif terhadap root marketplace, yang merupakan direktori yang berisi `.claude-plugin/`. Dalam contoh di atas, `./plugins/my-plugin` menunjuk ke `<repo>/plugins/my-plugin`, meskipun `marketplace.json` berada di `<repo>/.claude-plugin/marketplace.json`. Jangan gunakan `../` untuk keluar dari `.claude-plugin/`.
 
 <Note>
   Jalur relatif hanya berfungsi ketika pengguna menambahkan marketplace Anda melalui Git (GitHub, GitLab, atau URL git). Jika pengguna menambahkan marketplace Anda melalui URL langsung ke file `marketplace.json`, jalur relatif tidak akan terselesaikan dengan benar. Untuk distribusi berbasis URL, gunakan sumber GitHub, npm, atau URL git sebagai gantinya. Lihat [Troubleshooting](#plugins-with-relative-paths-fail-in-url-based-marketplaces) untuk detail.
@@ -310,11 +312,11 @@ Anda dapat menyematkan ke branch, tag, atau commit tertentu:
 }
 ```
 
-| Field | Type   | Deskripsi                                                                        |
-| :---- | :----- | :------------------------------------------------------------------------------- |
-| `url` | string | Diperlukan. URL repositori git lengkap (harus berakhir dengan `.git`)            |
-| `ref` | string | Opsional. Branch atau tag Git (default ke branch default repositori)             |
-| `sha` | string | Opsional. SHA commit git 40-karakter penuh untuk menyematkan ke versi yang tepat |
+| Field | Type   | Deskripsi                                                                                                                                                  |
+| :---- | :----- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `url` | string | Diperlukan. URL repositori git lengkap (`https://` atau `git@`). Akhiran `.git` opsional, jadi URL Azure DevOps dan AWS CodeCommit tanpa akhiran berfungsi |
+| `ref` | string | Opsional. Branch atau tag Git (default ke branch default repositori)                                                                                       |
+| `sha` | string | Opsional. SHA commit git 40-karakter penuh untuk menyematkan ke versi yang tepat                                                                           |
 
 ### Subdirektori Git
 
@@ -628,6 +630,10 @@ Izinkan marketplace berbasis filesystem dari direktori tertentu menggunakan penc
 
 Gunakan `".*"` sebagai `pathPattern` untuk mengizinkan jalur filesystem apa pun sambil tetap mengontrol sumber jaringan dengan `hostPattern`.
 
+<Note>
+  `strictKnownMarketplaces` membatasi apa yang dapat ditambahkan pengguna, tetapi tidak mendaftarkan marketplace dengan sendirinya. Untuk membuat marketplace yang diizinkan tersedia secara otomatis tanpa pengguna menjalankan `/plugin marketplace add`, pasangkan dengan [`extraKnownMarketplaces`](/id/settings#extraknownmarketplaces) dalam `managed-settings.json` yang sama. Lihat [Menggunakan keduanya bersama-sama](/id/settings#strictknownmarketplaces).
+</Note>
+
 #### Cara pembatasan bekerja
 
 Pembatasan divalidasi awal dalam proses instalasi plugin, sebelum permintaan jaringan atau operasi filesystem apa pun terjadi. Ini mencegah upaya akses marketplace yang tidak sah.
@@ -772,12 +778,12 @@ Untuk alur kerja pengujian plugin lengkap, lihat [Uji plugin Anda secara lokal](
 
 Jalankan `claude plugin validate .` atau `/plugin validate .` dari direktori marketplace Anda untuk memeriksa masalah. Kesalahan umum:
 
-| Kesalahan                                         | Penyebab                          | Solusi                                                                |
-| :------------------------------------------------ | :-------------------------------- | :-------------------------------------------------------------------- |
-| `File not found: .claude-plugin/marketplace.json` | Manifest hilang                   | Buat `.claude-plugin/marketplace.json` dengan field yang diperlukan   |
-| `Invalid JSON syntax: Unexpected token...`        | Kesalahan sintaks JSON            | Periksa koma yang hilang, koma ekstra, atau string yang tidak dikutip |
-| `Duplicate plugin name "x" found in marketplace`  | Dua plugin berbagi nama yang sama | Berikan setiap plugin nilai `name` yang unik                          |
-| `plugins[0].source: Path traversal not allowed`   | Jalur sumber berisi `..`          | Gunakan jalur relatif terhadap root marketplace tanpa `..`            |
+| Kesalahan                                         | Penyebab                          | Solusi                                                                                             |
+| :------------------------------------------------ | :-------------------------------- | :------------------------------------------------------------------------------------------------- |
+| `File not found: .claude-plugin/marketplace.json` | Manifest hilang                   | Buat `.claude-plugin/marketplace.json` dengan field yang diperlukan                                |
+| `Invalid JSON syntax: Unexpected token...`        | Kesalahan sintaks JSON            | Periksa koma yang hilang, koma ekstra, atau string yang tidak dikutip                              |
+| `Duplicate plugin name "x" found in marketplace`  | Dua plugin berbagi nama yang sama | Berikan setiap plugin nilai `name` yang unik                                                       |
+| `plugins[0].source: Path contains ".."`           | Jalur sumber berisi `..`          | Gunakan jalur relatif terhadap root marketplace tanpa `..`. Lihat [Jalur relatif](#relative-paths) |
 
 **Peringatan** (non-blocking):
 

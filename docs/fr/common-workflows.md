@@ -218,7 +218,7 @@ Supposons que vous souhaitiez utiliser des subagents IA spécialisés pour gére
 
   * Créez des subagents spécifiques au projet dans `.claude/agents/` pour le partage en équipe
   * Utilisez des champs `description` descriptifs pour activer la délégation automatique
-  * Limitez l'accès aux outils à ce que chaque subagent a réellement besoin
+  * Limitez l'accès aux outils à ce dont chaque subagent a réellement besoin
   * Consultez la [documentation des subagents](/fr/sub-agents) pour des exemples détaillés
 </Tip>
 
@@ -226,7 +226,7 @@ Supposons que vous souhaitiez utiliser des subagents IA spécialisés pour gére
 
 ## Utiliser le Plan Mode pour une analyse de code sûre
 
-Plan Mode demande à Claude de créer un plan en analysant la base de code avec des opérations en lecture seule, parfait pour explorer les bases de code, planifier des modifications complexes ou examiner le code en toute sécurité. En Plan Mode, Claude utilise [`AskUserQuestion`](/fr/settings#tools-available-to-claude) pour recueillir les exigences et clarifier vos objectifs avant de proposer un plan.
+Plan Mode demande à Claude de créer un plan en analysant la base de code avec des opérations en lecture seule, parfait pour explorer les bases de code, planifier des modifications complexes ou examiner le code en toute sécurité. En Plan Mode, Claude utilise [`AskUserQuestion`](/fr/tools-reference) pour recueillir les exigences et clarifier vos objectifs avant de proposer un plan.
 
 ### Quand utiliser Plan Mode
 
@@ -331,9 +331,9 @@ Pour une couverture complète, demandez à Claude d'identifier les cas limites q
 
 ***
 
-## Créer des pull requests
+## Créer des demandes de tirage
 
-Vous pouvez créer des pull requests en demandant directement à Claude (« créer une pr pour mes modifications »), ou guider Claude à travers cela étape par étape :
+Vous pouvez créer des demandes de tirage en demandant directement à Claude (« créer une pr pour mes modifications »), ou guider Claude à travers cela étape par étape :
 
 <Steps>
   <Step title="Résumez vos modifications">
@@ -342,7 +342,7 @@ Vous pouvez créer des pull requests en demandant directement à Claude (« cré
     ```
   </Step>
 
-  <Step title="Générez une pull request">
+  <Step title="Générez une demande de tirage">
     ```text  theme={null}
     create a pr
     ```
@@ -504,27 +504,27 @@ Utilisez @ pour inclure rapidement des fichiers ou des répertoires sans attendr
 
 ## Utiliser la réflexion étendue (mode de réflexion)
 
-[La réflexion étendue](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) est activée par défaut, donnant à Claude l'espace pour raisonner sur les problèmes complexes étape par étape avant de répondre. Ce raisonnement est visible en mode verbeux, que vous pouvez activer avec `Ctrl+O`.
+[La réflexion étendue](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) est activée par défaut, donnant à Claude l'espace pour raisonner à travers des problèmes complexes étape par étape avant de répondre. Ce raisonnement est visible en mode verbeux, que vous pouvez activer avec `Ctrl+O`.
 
-De plus, Opus 4.6 introduit le raisonnement adaptatif : au lieu d'un budget de jetons de réflexion fixe, le modèle alloue dynamiquement la réflexion en fonction de votre paramètre [niveau d'effort](/fr/model-config#adjust-effort-level). La réflexion étendue et le raisonnement adaptatif fonctionnent ensemble pour vous donner le contrôle sur la profondeur de la réflexion de Claude avant de répondre.
+De plus, Opus 4.6 et Sonnet 4.6 prennent en charge le raisonnement adaptatif : au lieu d'un budget de jetons de réflexion fixe, le modèle alloue dynamiquement la réflexion en fonction de votre paramètre [niveau d'effort](/fr/model-config#adjust-effort-level). La réflexion étendue et le raisonnement adaptatif fonctionnent ensemble pour vous donner le contrôle sur la profondeur de la réflexion de Claude avant de répondre.
 
 La réflexion étendue est particulièrement précieuse pour les décisions architecturales complexes, les bogues difficiles, la planification de l'implémentation multi-étapes et l'évaluation des compromis entre différentes approches.
 
 <Note>
-  Les phrases comme « think », « think hard » et « think more » sont interprétées comme des instructions d'invite régulières et n'allouent pas de jetons de réflexion.
+  Les phrases comme « think », « think hard » et « think more » sont interprétées comme des instructions de prompt régulières et n'allouent pas de jetons de réflexion.
 </Note>
 
 ### Configurer le mode de réflexion
 
 La réflexion est activée par défaut, mais vous pouvez l'ajuster ou la désactiver.
 
-| Portée                          | Comment configurer                                                                                   | Détails                                                                                                                                                                                                    |
-| ------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Niveau d'effort**             | Ajustez dans `/model` ou définissez [`CLAUDE_CODE_EFFORT_LEVEL`](/fr/settings#environment-variables) | Contrôlez la profondeur de la réflexion pour Opus 4.6 et Sonnet 4.6 : low, medium, high. Consultez [Ajuster le niveau d'effort](/fr/model-config#adjust-effort-level)                                      |
-| **Mot-clé `ultrathink`**        | Incluez « ultrathink » n'importe où dans votre prompt                                                | Définit l'effort à high pour ce tour sur Opus 4.6 et Sonnet 4.6. Utile pour les tâches ponctuelles nécessitant un raisonnement profond sans modifier définitivement votre paramètre d'effort               |
-| **Raccourci de basculement**    | Appuyez sur `Option+T` (macOS) ou `Alt+T` (Windows/Linux)                                            | Basculez la réflexion activée/désactivée pour la session actuelle (tous les modèles). Peut nécessiter une [configuration du terminal](/fr/terminal-config) pour activer les raccourcis de la touche Option |
-| **Défaut global**               | Utilisez `/config` pour basculer le mode de réflexion                                                | Définit votre défaut sur tous les projets (tous les modèles).<br />Enregistré en tant que `alwaysThinkingEnabled` dans `~/.claude/settings.json`                                                           |
-| **Limiter le budget de jetons** | Définissez la variable d'environnement [`MAX_THINKING_TOKENS`](/fr/settings#environment-variables)   | Limitez le budget de réflexion à un nombre spécifique de jetons (ignoré sur Opus 4.6 sauf s'il est défini à 0). Exemple : `export MAX_THINKING_TOKENS=10000`                                               |
+| Portée                          | Comment configurer                                                                                  | Détails                                                                                                                                                                                                    |
+| ------------------------------- | --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Niveau d'effort**             | Exécutez `/effort`, ajustez dans `/model`, ou définissez [`CLAUDE_CODE_EFFORT_LEVEL`](/fr/env-vars) | Contrôlez la profondeur de la réflexion pour Opus 4.6 et Sonnet 4.6. Consultez [Ajuster le niveau d'effort](/fr/model-config#adjust-effort-level)                                                          |
+| **Mot-clé `ultrathink`**        | Incluez « ultrathink » n'importe où dans votre prompt                                               | Définit l'effort à high pour ce tour sur Opus 4.6 et Sonnet 4.6. Utile pour les tâches ponctuelles nécessitant un raisonnement profond sans modifier définitivement votre paramètre d'effort               |
+| **Raccourci de basculement**    | Appuyez sur `Option+T` (macOS) ou `Alt+T` (Windows/Linux)                                           | Basculez la réflexion activée/désactivée pour la session actuelle (tous les modèles). Peut nécessiter une [configuration du terminal](/fr/terminal-config) pour activer les raccourcis de la touche Option |
+| **Défaut global**               | Utilisez `/config` pour basculer le mode de réflexion                                               | Définit votre défaut sur tous les projets (tous les modèles).<br />Enregistré comme `alwaysThinkingEnabled` dans `~/.claude/settings.json`                                                                 |
+| **Limiter le budget de jetons** | Définissez la variable d'environnement [`MAX_THINKING_TOKENS`](/fr/env-vars)                        | Limitez le budget de réflexion à un nombre spécifique de jetons (ignoré sur Opus 4.6 et Sonnet 4.6 sauf s'il est défini à 0). Exemple : `export MAX_THINKING_TOKENS=10000`                                 |
 
 Pour afficher le processus de réflexion de Claude, appuyez sur `Ctrl+O` pour basculer le mode verbeux et voir le raisonnement interne affiché en texte gris italique.
 
@@ -532,11 +532,11 @@ Pour afficher le processus de réflexion de Claude, appuyez sur `Ctrl+O` pour ba
 
 La réflexion étendue contrôle la quantité de raisonnement interne que Claude effectue avant de répondre. Plus de réflexion fournit plus d'espace pour explorer les solutions, analyser les cas limites et corriger les erreurs.
 
-**Avec Opus 4.6**, la réflexion utilise le raisonnement adaptatif : le modèle alloue dynamiquement les jetons de réflexion en fonction du [niveau d'effort](/fr/model-config#adjust-effort-level) que vous sélectionnez (low, medium, high). C'est la façon recommandée d'ajuster le compromis entre la vitesse et la profondeur du raisonnement.
+**Avec Opus 4.6 et Sonnet 4.6**, la réflexion utilise le raisonnement adaptatif : le modèle alloue dynamiquement les jetons de réflexion en fonction du [niveau d'effort](/fr/model-config#adjust-effort-level) que vous sélectionnez. C'est la façon recommandée d'ajuster le compromis entre la vitesse et la profondeur du raisonnement.
 
-**Avec d'autres modèles**, la réflexion utilise un budget fixe de jusqu'à 31 999 jetons de votre budget de sortie. Vous pouvez limiter cela avec la variable d'environnement [`MAX_THINKING_TOKENS`](/fr/settings#environment-variables), ou désactiver complètement la réflexion via `/config` ou le basculement `Option+T`/`Alt+T`.
+**Avec d'autres modèles**, la réflexion utilise un budget fixe de jusqu'à 31 999 jetons de votre budget de sortie. Vous pouvez limiter cela avec la variable d'environnement [`MAX_THINKING_TOKENS`](/fr/env-vars), ou désactiver complètement la réflexion via `/config` ou le basculement `Option+T`/`Alt+T`.
 
-`MAX_THINKING_TOKENS` est ignoré sur Opus 4.6 et Sonnet 4.6, car le raisonnement adaptatif contrôle la profondeur de la réflexion à la place. L'une des exceptions : définir `MAX_THINKING_TOKENS=0` désactive toujours complètement la réflexion sur n'importe quel modèle. Pour désactiver la réflexion adaptative et revenir au budget de réflexion fixe, définissez `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1`. Consultez [variables d'environnement](/fr/settings#environment-variables).
+`MAX_THINKING_TOKENS` est ignoré sur Opus 4.6 et Sonnet 4.6, car le raisonnement adaptatif contrôle la profondeur de la réflexion à la place. L'une des exceptions : définir `MAX_THINKING_TOKENS=0` désactive toujours complètement la réflexion sur n'importe quel modèle. Pour désactiver la réflexion adaptative et revenir au budget de réflexion fixe, définissez `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1`. Consultez [variables d'environnement](/fr/env-vars).
 
 <Warning>
   Vous êtes facturé pour tous les jetons de réflexion utilisés, même si les modèles Claude 4 affichent une réflexion résumée
@@ -550,7 +550,7 @@ Lors du démarrage de Claude Code, vous pouvez reprendre une session précédent
 
 * `claude --continue` continue la conversation la plus récente dans le répertoire actuel
 * `claude --resume` ouvre un sélecteur de conversation ou reprend par nom
-* `claude --from-pr 123` reprend les sessions liées à une pull request spécifique
+* `claude --from-pr 123` reprend les sessions liées à une demande de tirage spécifique
 
 À partir d'une session active, utilisez `/resume` pour basculer vers une conversation différente.
 
@@ -561,8 +561,14 @@ Les sessions sont stockées par répertoire de projet. Le sélecteur `/resume` a
 Donnez aux sessions des noms descriptifs pour les trouver plus tard. C'est une bonne pratique lorsque vous travaillez sur plusieurs tâches ou fonctionnalités.
 
 <Steps>
-  <Step title="Nommez la session actuelle">
-    Utilisez `/rename` pendant une session pour lui donner un nom mémorable :
+  <Step title="Nommez la session au démarrage">
+    Nommez une session au démarrage avec `-n` :
+
+    ```bash  theme={null}
+    claude -n auth-refactor
+    ```
+
+    Ou utilisez `/rename` pendant une session, qui affiche également le nom sur la barre de prompt :
 
     ```text  theme={null}
     /rename auth-refactor
@@ -586,7 +592,7 @@ Donnez aux sessions des noms descriptifs pour les trouver plus tard. C'est une b
   </Step>
 </Steps>
 
-### Utiliser le sélecteur de session
+### Utilisez le sélecteur de session
 
 La commande `/resume` (ou `claude --resume` sans arguments) ouvre un sélecteur de session interactif avec ces fonctionnalités :
 
@@ -608,7 +614,7 @@ La commande `/resume` (ou `claude --resume` sans arguments) ouvre un sélecteur 
 
 Le sélecteur affiche les sessions avec des métadonnées utiles :
 
-* Nom de la session ou invite initiale
+* Nom de la session ou prompt initial
 * Temps écoulé depuis la dernière activité
 * Nombre de messages
 * Branche Git (le cas échéant)
@@ -706,7 +712,7 @@ En savoir plus dans la [documentation officielle de Git worktree](https://git-sc
 
 ### Contrôle de version non-git
 
-L'isolation worktree fonctionne avec git par défaut. Pour d'autres systèmes de contrôle de version comme SVN, Perforce ou Mercurial, configurez les hooks [WorktreeCreate et WorktreeRemove](/fr/hooks#worktreecreate) pour fournir une logique de création et de nettoyage de worktree personnalisée. Lorsqu'ils sont configurés, ces hooks remplacent le comportement git par défaut lorsque vous utilisez `--worktree`.
+L'isolation worktree fonctionne avec git par défaut. Pour d'autres systèmes de contrôle de version comme SVN, Perforce ou Mercurial, configurez les hooks [WorktreeCreate et WorktreeRemove](/fr/hooks#worktreecreate) pour fournir une logique personnalisée de création et de nettoyage des worktrees. Lorsqu'ils sont configurés, ces hooks remplacent le comportement git par défaut lorsque vous utilisez `--worktree`.
 
 Pour la coordination automatisée des sessions parallèles avec des tâches partagées et la messagerie, consultez [équipes d'agents](/fr/agent-teams).
 
@@ -714,66 +720,100 @@ Pour la coordination automatisée des sessions parallèles avec des tâches part
 
 ## Recevez une notification quand Claude a besoin de votre attention
 
-Lorsque vous lancez une tâche longue et que vous basculez vers une autre fenêtre, vous pouvez configurer des notifications de bureau afin de savoir quand Claude se termine ou a besoin de votre entrée. Cela utilise l'événement de hook `Notification` [hook event](/fr/hooks-guide#get-notified-when-claude-needs-input), qui se déclenche chaque fois que Claude attend une permission, est inactif et prêt pour une nouvelle invite, ou complète l'authentification.
+Lorsque vous lancez une tâche longue et que vous basculez vers une autre fenêtre, vous pouvez configurer des notifications de bureau afin de savoir quand Claude se termine ou a besoin de votre entrée. Cela utilise l'événement de hook `Notification` [](/fr/hooks-guide#get-notified-when-claude-needs-input), qui se déclenche chaque fois que Claude attend une permission, est inactif et prêt pour un nouveau prompt, ou complète l'authentification.
 
 <Steps>
-  <Step title="Ouvrez le menu des hooks">
-    Tapez `/hooks` et sélectionnez `Notification` dans la liste des événements.
-  </Step>
-
-  <Step title="Configurez le matcher">
-    Sélectionnez `+ Match all (no filter)` pour se déclencher sur tous les types de notifications. Pour notifier uniquement les événements spécifiques, sélectionnez `+ Add new matcher…` et entrez l'une de ces valeurs :
-
-    | Matcher              | Se déclenche quand                                          |
-    | :------------------- | :---------------------------------------------------------- |
-    | `permission_prompt`  | Claude a besoin que vous approuviez une utilisation d'outil |
-    | `idle_prompt`        | Claude a terminé et attend votre prochaine invite           |
-    | `auth_success`       | L'authentification se termine                               |
-    | `elicitation_dialog` | Claude vous pose une question                               |
-  </Step>
-
-  <Step title="Ajoutez votre commande de notification">
-    Sélectionnez `+ Add new hook…` et entrez la commande pour votre système d'exploitation :
+  <Step title="Ajoutez le hook à vos paramètres">
+    Ouvrez `~/.claude/settings.json` et ajoutez un hook `Notification` qui appelle la commande de notification native de votre plateforme :
 
     <Tabs>
       <Tab title="macOS">
-        Utilise [`osascript`](https://ss64.com/mac/osascript.html) pour déclencher une notification macOS native via AppleScript :
-
-        ```
-        osascript -e 'display notification "Claude Code needs your attention" with title "Claude Code"'
+        ```json  theme={null}
+        {
+          "hooks": {
+            "Notification": [
+              {
+                "matcher": "",
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'"
+                  }
+                ]
+              }
+            ]
+          }
+        }
         ```
       </Tab>
 
       <Tab title="Linux">
-        Utilise `notify-send`, qui est préinstallé sur la plupart des bureaux Linux avec un démon de notification :
-
-        ```
-        notify-send 'Claude Code' 'Claude Code needs your attention'
+        ```json  theme={null}
+        {
+          "hooks": {
+            "Notification": [
+              {
+                "matcher": "",
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "notify-send 'Claude Code' 'Claude Code needs your attention'"
+                  }
+                ]
+              }
+            ]
+          }
+        }
         ```
       </Tab>
 
-      <Tab title="Windows (PowerShell)">
-        Utilise PowerShell pour afficher une boîte de message native via .NET Windows Forms :
-
-        ```
-        powershell.exe -Command "[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); [System.Windows.Forms.MessageBox]::Show('Claude Code needs your attention', 'Claude Code')"
+      <Tab title="Windows">
+        ```json  theme={null}
+        {
+          "hooks": {
+            "Notification": [
+              {
+                "matcher": "",
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "powershell.exe -Command \"[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); [System.Windows.Forms.MessageBox]::Show('Claude Code needs your attention', 'Claude Code')\""
+                  }
+                ]
+              }
+            ]
+          }
+        }
         ```
       </Tab>
     </Tabs>
+
+    Si votre fichier de paramètres a déjà une clé `hooks`, fusionnez l'entrée `Notification` dedans plutôt que de la remplacer. Vous pouvez également demander à Claude d'écrire le hook pour vous en décrivant ce que vous voulez dans l'interface CLI.
   </Step>
 
-  <Step title="Enregistrez dans les paramètres utilisateur">
-    Sélectionnez `User settings` pour appliquer la notification sur tous vos projets.
+  <Step title="Affinez éventuellement le matcher">
+    Par défaut, le hook se déclenche sur tous les types de notifications. Pour se déclencher uniquement pour des événements spécifiques, définissez le champ `matcher` sur l'une de ces valeurs :
+
+    | Matcher              | Se déclenche quand                                          |
+    | :------------------- | :---------------------------------------------------------- |
+    | `permission_prompt`  | Claude a besoin que vous approuviez une utilisation d'outil |
+    | `idle_prompt`        | Claude a terminé et attend votre prochain prompt            |
+    | `auth_success`       | L'authentification se termine                               |
+    | `elicitation_dialog` | Claude vous pose une question                               |
+  </Step>
+
+  <Step title="Vérifiez le hook">
+    Tapez `/hooks` et sélectionnez `Notification` pour confirmer que le hook apparaît. Le sélectionner affiche la commande qui s'exécutera. Pour le tester de bout en bout, demandez à Claude d'exécuter une commande qui nécessite une permission et éloignez-vous du terminal, ou demandez à Claude de déclencher une notification directement.
   </Step>
 </Steps>
 
-Pour la procédure complète avec des exemples de configuration JSON, consultez [Automatiser les flux de travail avec les hooks](/fr/hooks-guide#get-notified-when-claude-needs-input). Pour le schéma d'événement complet et les types de notifications, consultez la [référence Notification](/fr/hooks#notification).
+Pour le schéma d'événement complet et les types de notifications, consultez la [référence Notification](/fr/hooks#notification).
 
 ***
 
 ## Utiliser Claude comme un utilitaire de style unix
 
-### Ajouter Claude à votre processus de vérification
+### Ajoutez Claude à votre processus de vérification
 
 Supposons que vous souhaitiez utiliser Claude Code comme linter ou examinateur de code.
 
@@ -794,7 +834,7 @@ Supposons que vous souhaitiez utiliser Claude Code comme linter ou examinateur d
   Conseils :
 
   * Utilisez Claude pour l'examen automatisé du code dans votre pipeline CI/CD
-  * Personnalisez l'invite pour vérifier les problèmes spécifiques pertinents pour votre projet
+  * Personnalisez le prompt pour vérifier les problèmes spécifiques pertinents pour votre projet
   * Envisagez de créer plusieurs scripts pour différents types de vérification
 </Tip>
 
@@ -837,7 +877,7 @@ Supposons que vous ayez besoin de la sortie de Claude dans un format spécifique
     Cela génère un tableau JSON de messages avec des métadonnées incluant le coût et la durée.
   </Step>
 
-  <Step title="Utilisez le format JSON en streaming">
+  <Step title="Utilisez le format JSON en continu">
     ```bash  theme={null}
     cat log.txt | claude -p 'parse this log file for errors' --output-format stream-json
     ```

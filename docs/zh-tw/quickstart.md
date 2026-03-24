@@ -14,8 +14,8 @@
 
 * 已開啟的終端或命令提示字元
   * 如果您從未使用過終端，請查看[終端指南](/zh-TW/terminal-guide)
-* 一個要使用的程式碼專案
-* 一個 [Claude 訂閱](https://claude.com/pricing)（Pro、Max、Teams 或 Enterprise）、[Claude Console](https://console.anthropic.com/) 帳戶，或透過[支援的雲端提供商](/zh-TW/third-party-integrations)的存取權
+* 一個可以使用的程式碼專案
+* 一個 [Claude 訂閱](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_prereq)（Pro、Max、Teams 或 Enterprise）、[Claude Console](https://console.anthropic.com/) 帳戶，或透過[支援的雲端提供商](/zh-TW/third-party-integrations)存取
 
 <Note>
   本指南涵蓋終端 CLI。Claude Code 也可在[網頁](https://claude.ai/code)、[桌面應用程式](/zh-TW/desktop)、[VS Code](/zh-TW/vs-code) 和 [JetBrains IDE](/zh-TW/jetbrains)、[Slack](/zh-TW/slack) 中使用，以及透過 [GitHub Actions](/zh-TW/github-actions) 和 [GitLab](/zh-TW/gitlab-ci-cd) 進行 CI/CD。請參閱[所有介面](/zh-TW/overview#use-claude-code-everywhere)。
@@ -89,8 +89,8 @@ claude
 
 您可以使用以下任何帳戶類型登入：
 
-* [Claude Pro、Max、Teams 或 Enterprise](https://claude.com/pricing)（推薦）
-* [Claude Console](https://console.anthropic.com/)（具有預付額度的 API 存取）。首次登入時，Console 中會自動為集中式成本追蹤建立一個「Claude Code」工作區。
+* [Claude Pro、Max、Teams 或 Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_login)（推薦）
+* [Claude Console](https://console.anthropic.com/)（具有預付額度的 API 存取）。首次登入時，Console 中會自動建立「Claude Code」工作區以進行集中成本追蹤。
 * [Amazon Bedrock、Google Vertex AI 或 Microsoft Foundry](/zh-TW/third-party-integrations)（企業雲端提供商）
 
 登入後，您的認證將被儲存，您無需再次登入。若要稍後切換帳戶，請使用 `/login` 命令。
@@ -147,7 +147,7 @@ can Claude Code work with Docker?
 ```
 
 <Note>
-  Claude Code 根據需要讀取您的專案檔案。您無需手動新增內容。
+  Claude Code 會根據需要讀取您的專案檔案。您無需手動新增內容。
 </Note>
 
 ## 步驟 5：進行您的第一次程式碼變更
@@ -266,7 +266,7 @@ review my changes and suggest improvements
 | `/help`             | 顯示可用命令         | `/help`                             |
 | `exit` 或 Ctrl+C     | 退出 Claude Code | `exit`                              |
 
-請參閱 [CLI 參考](/zh-TW/cli-reference)以取得完整的命令列表。
+請參閱 [CLI 參考](/zh-TW/cli-reference)以取得完整的命令清單。
 
 ## 初學者的專業提示
 

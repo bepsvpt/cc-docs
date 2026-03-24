@@ -130,7 +130,7 @@ Claude Code esegue il tuo script e invia i [dati di sessione JSON](#available-da
 
 **Quando si aggiorna**
 
-Il tuo script viene eseguito dopo ogni nuovo messaggio dell'assistente, quando cambia la modalità di autorizzazione o quando la modalità vim si attiva/disattiva. Gli aggiornamenti sono debounced a 300ms, il che significa che i cambiamenti rapidi si raggruppano insieme e il tuo script viene eseguito una volta che le cose si stabilizzano. Se un nuovo aggiornamento si attiva mentre il tuo script è ancora in esecuzione, l'esecuzione in corso viene annullata. Se modifichi il tuo script, le modifiche non appariranno fino al prossimo aggiornamento attivato da un'interazione con Claude Code.
+Il tuo script viene eseguito dopo ogni nuovo messaggio dell'assistente, quando cambia la modalità di autorizzazione o quando la modalità vim si attiva/disattiva. Gli aggiornamenti vengono debounced a 300ms, il che significa che i cambiamenti rapidi si raggruppano insieme e il tuo script viene eseguito una volta che le cose si stabilizzano. Se un nuovo aggiornamento si attiva mentre il tuo script è ancora in esecuzione, l'esecuzione in corso viene annullata. Se modifichi il tuo script, le modifiche non appariranno fino al prossimo aggiornamento di Claude Code.
 
 **Cosa può produrre il tuo script**
 
@@ -264,7 +264,7 @@ L'oggetto `current_usage` è `null` prima della prima chiamata API in una sessio
 
 ## Esempi
 
-Questi esempi mostrano modelli comuni di barre di stato. Per usare qualsiasi esempio:
+Questi esempi mostrano modelli comuni della barra di stato. Per usare qualsiasi esempio:
 
 1. Salva lo script in un file come `~/.claude/statusline.sh` (o `.py`/`.js`)
 2. Rendilo eseguibile: `chmod +x ~/.claude/statusline.sh`
@@ -290,13 +290,14 @@ Visualizza il modello corrente e l'utilizzo della finestra di contesto con una b
   MODEL=$(echo "$input" | jq -r '.model.display_name')
   PCT=$(echo "$input" | jq -r '.context_window.used_percentage // 0' | cut -d. -f1)
 
-  # Build progress bar: printf creates spaces, tr replaces with blocks
+  # Build progress bar: printf -v creates a run of spaces, then
+  # ${var// /▓} replaces each space with a block character
   BAR_WIDTH=10
   FILLED=$((PCT * BAR_WIDTH / 100))
   EMPTY=$((BAR_WIDTH - FILLED))
   BAR=""
-  [ "$FILLED" -gt 0 ] && BAR=$(printf "%${FILLED}s" | tr ' ' '▓')
-  [ "$EMPTY" -gt 0 ] && BAR="${BAR}$(printf "%${EMPTY}s" | tr ' ' '░')"
+  [ "$FILLED" -gt 0 ] && printf -v FILL "%${FILLED}s" && BAR="${FILL// /▓}"
+  [ "$EMPTY" -gt 0 ] && printf -v PAD "%${EMPTY}s" && BAR="${BAR}${PAD// /░}"
 
   echo "[$MODEL] $BAR $PCT%"
   ```
@@ -522,7 +523,8 @@ Questo esempio combina diverse tecniche: colori basati su soglie (verde sotto il
   else BAR_COLOR="$GREEN"; fi
 
   FILLED=$((PCT / 10)); EMPTY=$((10 - FILLED))
-  BAR=$(printf "%${FILLED}s" | tr ' ' '█')$(printf "%${EMPTY}s" | tr ' ' '░')
+  printf -v FILL "%${FILLED}s"; printf -v PAD "%${EMPTY}s"
+  BAR="${FILL// /█}${PAD// /░}"
 
   MINS=$((DURATION_MS / 60000)); SECS=$(((DURATION_MS % 60000) / 1000))
 

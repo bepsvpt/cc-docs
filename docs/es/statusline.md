@@ -23,11 +23,11 @@ Aquí hay un ejemplo de una [línea de estado de múltiples líneas](#display-mu
 
 Esta página te guía a través de [configurar una línea de estado básica](#set-up-a-status-line), explica [cómo fluyen los datos](#how-status-lines-work) desde Claude Code a tu script, enumera [todos los campos que puedes mostrar](#available-data), y proporciona [ejemplos listos para usar](#examples) para patrones comunes como estado de git, seguimiento de costos y barras de progreso.
 
-## Configura una línea de estado
+## Configurar una línea de estado
 
 Usa el [comando `/statusline`](#use-the-statusline-command) para que Claude Code genere un script para ti, o [crea manualmente un script](#manually-configure-a-status-line) y agrégalo a tu configuración.
 
-### Usa el comando /statusline
+### Usar el comando /statusline
 
 El comando `/statusline` acepta instrucciones en lenguaje natural que describen lo que deseas mostrar. Claude Code genera un archivo de script en `~/.claude/` y actualiza tu configuración automáticamente:
 
@@ -35,9 +35,9 @@ El comando `/statusline` acepta instrucciones en lenguaje natural que describen 
 /statusline show model name and context percentage with a progress bar
 ```
 
-### Configura manualmente una línea de estado
+### Configurar manualmente una línea de estado
 
-Agrega un campo `statusLine` a tu configuración de usuario (`~/.claude/settings.json`, donde `~` es tu directorio de inicio) o [configuración del proyecto](/es/settings#settings-files). Establece `type` en `"command"` y apunta `command` a una ruta de script o un comando de shell en línea. Para un tutorial completo sobre cómo crear un script, consulta [Construye una línea de estado paso a paso](#build-a-status-line-step-by-step).
+Agrega un campo `statusLine` a tu configuración de usuario (`~/.claude/settings.json`, donde `~` es tu directorio de inicio) o [configuración del proyecto](/es/settings#settings-files). Establece `type` en `"command"` y apunta `command` a una ruta de script o un comando de shell en línea. Para un tutorial completo sobre cómo crear un script, consulta [Construir una línea de estado paso a paso](#build-a-status-line-step-by-step).
 
 ```json  theme={null}
 {
@@ -62,11 +62,11 @@ El campo `command` se ejecuta en un shell, por lo que también puedes usar coman
 
 El campo `padding` opcional agrega espaciado horizontal adicional (en caracteres) al contenido de la línea de estado. Por defecto es `0`. Este relleno se suma al espaciado integrado de la interfaz, por lo que controla la indentación relativa en lugar de la distancia absoluta desde el borde de la terminal.
 
-### Desactiva la línea de estado
+### Desactivar la línea de estado
 
 Ejecuta `/statusline` y pídele que elimine o borre tu línea de estado (por ejemplo, `/statusline delete`, `/statusline clear`, `/statusline remove it`). También puedes eliminar manualmente el campo `statusLine` de tu settings.json.
 
-## Construye una línea de estado paso a paso
+## Construir una línea de estado paso a paso
 
 Este tutorial muestra lo que está sucediendo bajo el capó creando manualmente una línea de estado que muestra el modelo actual, el directorio de trabajo y el porcentaje de uso de la ventana de contexto.
 
@@ -79,7 +79,7 @@ Estos ejemplos usan scripts de Bash, que funcionan en macOS y Linux. En Windows,
 </Frame>
 
 <Steps>
-  <Step title="Crea un script que lea JSON e imprima salida">
+  <Step title="Crear un script que lea JSON e imprima salida">
     Claude Code envía datos JSON a tu script a través de stdin. Este script usa [`jq`](https://jqlang.github.io/jq/), un analizador JSON de línea de comandos que es posible que necesites instalar, para extraer el nombre del modelo, el directorio y el porcentaje de contexto, luego imprime una línea formateada.
 
     Guarda esto en `~/.claude/statusline.sh` (donde `~` es tu directorio de inicio, como `/Users/username` en macOS o `/home/username` en Linux):
@@ -100,7 +100,7 @@ Estos ejemplos usan scripts de Bash, que funcionan en macOS y Linux. En Windows,
     ```
   </Step>
 
-  <Step title="Hazlo ejecutable">
+  <Step title="Hacerlo ejecutable">
     Marca el script como ejecutable para que tu shell pueda ejecutarlo:
 
     ```bash  theme={null}
@@ -108,8 +108,8 @@ Estos ejemplos usan scripts de Bash, que funcionan en macOS y Linux. En Windows,
     ```
   </Step>
 
-  <Step title="Agrega a la configuración">
-    Dile a Claude Code que ejecute tu script como la línea de estado. Agrega esta configuración a `~/.claude/settings.json`, que establece `type` en `"command"` (lo que significa "ejecuta este comando de shell") y apunta `command` a tu script:
+  <Step title="Agregar a la configuración">
+    Dile a Claude Code que ejecute tu script como la línea de estado. Agrega esta configuración a `~/.claude/settings.json`, que establece `type` en `"command"` (lo que significa "ejecutar este comando de shell") y apunta `command` a tu script:
 
     ```json  theme={null}
     {
@@ -290,13 +290,14 @@ Muestra el modelo actual y el uso de la ventana de contexto con una barra de pro
   MODEL=$(echo "$input" | jq -r '.model.display_name')
   PCT=$(echo "$input" | jq -r '.context_window.used_percentage // 0' | cut -d. -f1)
 
-  # Build progress bar: printf creates spaces, tr replaces with blocks
+  # Build progress bar: printf -v creates a run of spaces, then
+  # ${var// /▓} replaces each space with a block character
   BAR_WIDTH=10
   FILLED=$((PCT * BAR_WIDTH / 100))
   EMPTY=$((BAR_WIDTH - FILLED))
   BAR=""
-  [ "$FILLED" -gt 0 ] && BAR=$(printf "%${FILLED}s" | tr ' ' '▓')
-  [ "$EMPTY" -gt 0 ] && BAR="${BAR}$(printf "%${EMPTY}s" | tr ' ' '░')"
+  [ "$FILLED" -gt 0 ] && printf -v FILL "%${FILLED}s" && BAR="${FILL// /▓}"
+  [ "$EMPTY" -gt 0 ] && printf -v PAD "%${EMPTY}s" && BAR="${BAR}${PAD// /░}"
 
   echo "[$MODEL] $BAR $PCT%"
   ```
@@ -340,7 +341,7 @@ Muestra el modelo actual y el uso de la ventana de contexto con una barra de pro
 
 ### Estado de git con colores
 
-Muestra la rama de git con indicadores codificados por colores para archivos preparados y modificados. Este script usa [códigos de escape ANSI](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors) para colores de terminal: `\033[32m` es verde, `\033[33m` es amarillo, y `\033[0m` se reinicia al predeterminado.
+Muestra la rama de git con indicadores codificados por colores para archivos preparados y modificados. Este script usa [códigos de escape ANSI](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors) para colores de terminal: `\033[32m` es verde, `\033[33m` es amarillo, y `\033[0m` restablece al predeterminado.
 
 <Frame>
   <img src="https://mintcdn.com/claude-code/nibzesLaJVh4ydOq/images/statusline-git-context.png?fit=max&auto=format&n=nibzesLaJVh4ydOq&q=85&s=e656f34f90d1d9a1d0e220988914345f" alt="Una línea de estado que muestra modelo, directorio, rama de git e indicadores codificados por colores para archivos preparados y modificados" width="742" height="178" data-path="images/statusline-git-context.png" />
@@ -493,7 +494,7 @@ Cada script formatea el costo como moneda y convierte milisegundos a minutos y s
   ```
 </CodeGroup>
 
-### Muestra múltiples líneas
+### Mostrar múltiples líneas
 
 Tu script puede generar múltiples líneas para crear una pantalla más rica. Cada declaración `echo` produce una fila separada en el área de estado.
 
@@ -522,7 +523,8 @@ Este ejemplo combina varias técnicas: colores basados en umbrales (verde por de
   else BAR_COLOR="$GREEN"; fi
 
   FILLED=$((PCT / 10)); EMPTY=$((10 - FILLED))
-  BAR=$(printf "%${FILLED}s" | tr ' ' '█')$(printf "%${EMPTY}s" | tr ' ' '░')
+  printf -v FILL "%${FILLED}s"; printf -v PAD "%${EMPTY}s"
+  BAR="${FILL// /█}${PAD// /░}"
 
   MINS=$((DURATION_MS / 60000)); SECS=$(((DURATION_MS % 60000) / 1000))
 
@@ -679,7 +681,7 @@ Cada script obtiene la URL remota de git, convierte el formato SSH a HTTPS, y en
   ```
 </CodeGroup>
 
-### Cachea operaciones costosas
+### Cachear operaciones costosas
 
 Tu script de línea de estado se ejecuta frecuentemente durante sesiones activas. Comandos como `git status` o `git diff` pueden ser lentos, especialmente en repositorios grandes. Este ejemplo cachea información de git en un archivo temporal y solo la actualiza cada 5 segundos.
 
@@ -894,7 +896,7 @@ Proyectos comunitarios como [ccstatusline](https://github.com/sirmalloc/ccstatus
 * Verifica que tu terminal admita hipervínculos OSC 8 (iTerm2, Kitty, WezTerm)
 * Terminal.app no admite enlaces clickeables
 * Las sesiones SSH y tmux pueden eliminar secuencias OSC dependiendo de la configuración
-* Si las secuencias de escape aparecen como texto literal como `\e]8;;`, usa `printf '%b'` en lugar de `echo -e` para un manejo de escape más confiable
+* Si las secuencias de escape aparecen como texto literal como `\e]8;;`, usa `printf '%b'` en lugar de `echo -e` para un manejo más confiable de escapes
 
 **Problemas de visualización con secuencias de escape**
 

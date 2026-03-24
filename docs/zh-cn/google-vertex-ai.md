@@ -12,20 +12,20 @@
 
 * 启用了计费的 Google Cloud Platform (GCP) 账户
 * 启用了 Vertex AI API 的 GCP 项目
-* 对所需 Claude 模型的访问权限（例如，Claude Sonnet 4.5）
+* 对所需 Claude 模型的访问权限（例如，Claude Sonnet 4.6）
 * 已安装并配置的 Google Cloud SDK (`gcloud`)
 * 在所需 GCP 区域中分配的配额
 
-## 区域配置
-
-Claude Code 可以与 Vertex AI [全球](https://cloud.google.com/blog/products/ai-machine-learning/global-endpoint-for-claude-models-generally-available-on-vertex-ai)和区域端点一起使用。
-
 <Note>
-  Vertex AI 可能不支持所有区域上的 Claude Code 默认模型。您可能需要切换到[支持的区域或模型](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations#genai-partner-models)。
+  如果您要将 Claude Code 部署给多个用户，请[固定您的模型版本](#5-pin-model-versions)，以防止在 Anthropic 发布新模型时出现中断。
 </Note>
 
+## 区域配置
+
+Claude Code 可以与 Vertex AI [全局](https://cloud.google.com/blog/products/ai-machine-learning/global-endpoint-for-claude-models-generally-available-on-vertex-ai)和区域端点一起使用。
+
 <Note>
-  Vertex AI 可能不支持全球端点上的 Claude Code 默认模型。您可能需要切换到区域端点或[支持的模型](https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-partner-models#supported_models)。
+  Vertex AI 可能不支持 Claude Code 默认模型在所有[区域](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations#genai-partner-models)或[全局端点](https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-partner-models#supported_models)上。您可能需要切换到支持的区域、使用区域端点或指定支持的模型。
 </Note>
 
 ## 设置
@@ -44,11 +44,11 @@ gcloud services enable aiplatform.googleapis.com
 
 ### 2. 请求模型访问权限
 
-请求在 Vertex AI 中访问 Claude 模型：
+请求访问 Vertex AI 中的 Claude 模型：
 
 1. 导航到 [Vertex AI Model Garden](https://console.cloud.google.com/vertex-ai/model-garden)
 2. 搜索"Claude"模型
-3. 请求访问所需的 Claude 模型（例如，Claude Sonnet 4.5）
+3. 请求访问所需的 Claude 模型（例如，Claude Sonnet 4.6）
 4. 等待批准（可能需要 24-48 小时）
 
 ### 3. 配置 GCP 凭证
@@ -85,31 +85,35 @@ export VERTEX_REGION_CLAUDE_4_0_SONNET=us-east5
 export VERTEX_REGION_CLAUDE_4_1_OPUS=europe-west1
 ```
 
-<Note>
-  当您指定 `cache_control` 临时标志时，[prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) 会自动支持。要禁用它，请设置 `DISABLE_PROMPT_CACHING=1`。如需提高速率限制，请联系 Google Cloud 支持。
-</Note>
+当您指定 `cache_control` 临时标志时，[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) 会自动支持。要禁用它，请设置 `DISABLE_PROMPT_CACHING=1`。如需提高速率限制，请联系 Google Cloud 支持。使用 Vertex AI 时，`/login` 和 `/logout` 命令被禁用，因为身份验证通过 Google Cloud 凭证处理。
 
-<Note>
-  使用 Vertex AI 时，`/login` 和 `/logout` 命令被禁用，因为身份验证通过 Google Cloud 凭证处理。
-</Note>
+### 5. 固定模型版本
 
-### 5. 模型配置
+<Warning>
+  为每个部署固定特定的模型版本。如果您使用模型别名（`sonnet`、`opus`、`haiku`）而不固定版本，当 Anthropic 发布更新时，Claude Code 可能会尝试使用在您的 Vertex AI 项目中未启用的较新模型版本，从而破坏现有用户。
+</Warning>
 
-Claude Code 为 Vertex AI 使用这些默认模型：
-
-| 模型类型    | 默认值                          |
-| :------ | :--------------------------- |
-| 主模型     | `claude-sonnet-4-5@20250929` |
-| 小型/快速模型 | `claude-haiku-4-5@20251001`  |
-
-<Note>
-  对于 Vertex AI 用户，Claude Code 不会自动从 Haiku 3.5 升级到 Haiku 4.5。要手动切换到较新的 Haiku 模型，请将 `ANTHROPIC_DEFAULT_HAIKU_MODEL` 环境变量设置为完整模型名称（例如，`claude-haiku-4-5@20251001`）。
-</Note>
-
-要自定义模型：
+将这些环境变量设置为特定的 Vertex AI 模型 ID：
 
 ```bash  theme={null}
-export ANTHROPIC_MODEL='claude-opus-4-1@20250805'
+export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6'
+export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
+export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
+```
+
+有关当前和旧版模型 ID，请参阅[模型概览](https://platform.claude.com/docs/en/about-claude/models/overview)。有关完整的环境变量列表，请参阅[模型配置](/zh-CN/model-config#pin-models-for-third-party-deployments)。
+
+当未设置固定变量时，Claude Code 使用这些默认模型：
+
+| 模型类型    | 默认值                         |
+| :------ | :-------------------------- |
+| 主模型     | `claude-sonnet-4-6`         |
+| 小型/快速模型 | `claude-haiku-4-5@20251001` |
+
+要进一步自定义模型：
+
+```bash  theme={null}
+export ANTHROPIC_MODEL='claude-opus-4-6'
 export ANTHROPIC_SMALL_FAST_MODEL='claude-haiku-4-5@20251001'
 ```
 
@@ -126,16 +130,14 @@ export ANTHROPIC_SMALL_FAST_MODEL='claude-haiku-4-5@20251001'
 有关详细信息，请参阅 [Vertex IAM 文档](https://cloud.google.com/vertex-ai/docs/general/access-control)。
 
 <Note>
-  我们建议为 Claude Code 创建一个专用的 GCP 项目，以简化成本跟踪和访问控制。
+  为 Claude Code 创建专用的 GCP 项目，以简化成本跟踪和访问控制。
 </Note>
 
 ## 1M token context window
 
-Claude Sonnet 4 和 Sonnet 4.5 在 Vertex AI 上支持 [1M token context window](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window)。
+Claude Opus 4.6、Sonnet 4.6、Sonnet 4.5 和 Sonnet 4 在 Vertex AI 上支持 [1M token context window](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window)。当您选择 1M 模型变体时，Claude Code 会自动启用扩展 context window。
 
-<Note>
-  1M token context window 目前处于测试版。要使用扩展的 context window，请在您的 Vertex AI 请求中包含 `context-1m-2025-08-07` 测试版标头。
-</Note>
+要为您固定的模型启用 1M context window，请在模型 ID 后附加 `[1m]`。有关详细信息，请参阅[为第三方部署固定模型](/zh-CN/model-config#pin-models-for-third-party-deployments)。
 
 ## 故障排除
 
@@ -147,7 +149,7 @@ Claude Sonnet 4 和 Sonnet 4.5 在 Vertex AI 上支持 [1M token context window]
 
 * 确认模型在 [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) 中已启用
 * 验证您有权访问指定的区域
-* 如果使用 `CLOUD_ML_REGION=global`，请检查您的模型是否在 [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) 中的"支持的功能"下支持全球端点。对于不支持全球端点的模型，请执行以下任一操作：
+* 如果使用 `CLOUD_ML_REGION=global`，请检查您的模型是否在 [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) 中的"支持的功能"下支持全局端点。对于不支持全局端点的模型，请执行以下任一操作：
   * 通过 `ANTHROPIC_MODEL` 或 `ANTHROPIC_SMALL_FAST_MODEL` 指定支持的模型，或
   * 使用 `VERTEX_REGION_<MODEL_NAME>` 环境变量设置区域端点
 

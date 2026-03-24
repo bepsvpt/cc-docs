@@ -204,7 +204,7 @@ Bestätigen Sie, dass die Binärdatei vorhanden und ausführbar ist:
 ls -la $(which claude)
 ```
 
-Überprüfen Sie unter Linux auf fehlende gemeinsame Bibliotheken. Wenn `ldd` fehlende Bibliotheken anzeigt, müssen Sie möglicherweise Systempakete installieren. Unter Alpine Linux und anderen musl-basierten Distributionen siehe [Alpine Linux-Setup](/de/setup#alpine-linux-and-musl-based-distributions).
+Überprüfen Sie unter Linux auf fehlende gemeinsame Bibliotheken. Wenn `ldd` fehlende Bibliotheken anzeigt, müssen Sie möglicherweise Systempakete installieren. Auf Alpine Linux und anderen musl-basierten Distributionen siehe [Alpine Linux-Setup](/de/setup#alpine-linux-and-musl-based-distributions).
 
 ```bash  theme={null}
 ldd $(which claude) | grep "not found"
@@ -229,7 +229,7 @@ bash: line 1: syntax error near unexpected token `<'
 bash: line 1: `<!DOCTYPE html>'
 ```
 
-Unter PowerShell erscheint das gleiche Problem als:
+In PowerShell erscheint das gleiche Problem als:
 
 ```text  theme={null}
 Invoke-Expression: Missing argument in parameter list.
@@ -237,19 +237,19 @@ Invoke-Expression: Missing argument in parameter list.
 
 Dies bedeutet, dass die Installations-URL eine HTML-Seite statt des Installationsskripts zurückgegeben hat. Wenn die HTML-Seite „App unavailable in region" sagt, ist Claude Code in Ihrem Land nicht verfügbar. Siehe [unterstützte Länder](https://www.anthropic.com/supported-countries).
 
-Andernfalls kann dies aufgrund von Netzwerkproblemen, regionalem Routing oder einer vorübergehenden Dienstunterbrechung geschehen.
+Andernfalls kann dies aufgrund von Netzwerkproblemen, regionalen Routing-Problemen oder einer vorübergehenden Serviceunterbrechung geschehen.
 
 **Lösungen:**
 
 1. **Verwenden Sie eine alternative Installationsmethode**:
 
-   Unter macOS oder Linux installieren Sie über Homebrew:
+   Installieren Sie unter macOS oder Linux über Homebrew:
 
    ```bash  theme={null}
    brew install --cask claude-code
    ```
 
-   Unter Windows installieren Sie über WinGet:
+   Installieren Sie unter Windows über WinGet:
 
    ```powershell  theme={null}
    winget install Anthropic.ClaudeCode
@@ -304,19 +304,19 @@ Fehler wie `curl: (35) TLS connect error`, `schannel: next InitializeSecurityCon
 
 1. **Aktualisieren Sie Ihre System-CA-Zertifikate**:
 
-   Unter Ubuntu/Debian:
+   Auf Ubuntu/Debian:
 
    ```bash  theme={null}
    sudo apt-get update && sudo apt-get install ca-certificates
    ```
 
-   Unter macOS über Homebrew:
+   Auf macOS über Homebrew:
 
    ```bash  theme={null}
    brew install ca-certificates
    ```
 
-2. **Unter Windows aktivieren Sie TLS 1.2** in PowerShell, bevor Sie das Installationsprogramm ausführen:
+2. **Aktivieren Sie unter Windows TLS 1.2** in PowerShell, bevor Sie das Installationsprogramm ausführen:
    ```powershell  theme={null}
    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
    irm https://claude.ai/install.ps1 | iex
@@ -423,7 +423,7 @@ Wenn Sie Claude Code in einem Docker-Container installieren, kann die Installati
 
 **Lösungen:**
 
-1. **Setzen Sie ein Arbeitsverzeichnis**, bevor Sie das Installationsprogramm ausführen. Bei Ausführung von `/` scannt das Installationsprogramm das gesamte Dateisystem, was zu übermäßiger Speichernutzung führt. Das Setzen von `WORKDIR` begrenzt den Scan auf ein kleines Verzeichnis:
+1. **Setzen Sie ein Arbeitsverzeichnis**, bevor Sie das Installationsprogramm ausführen. Wenn es von `/` aus ausgeführt wird, scannt das Installationsprogramm das gesamte Dateisystem, was zu übermäßiger Speichernutzung führt. Das Setzen von `WORKDIR` begrenzt den Scan auf ein kleines Verzeichnis:
    ```dockerfile  theme={null}
    WORKDIR /tmp
    RUN curl -fsSL https://claude.ai/install.sh | bash
@@ -458,9 +458,9 @@ Claude Code unter nativem Windows benötigt [Git für Windows](https://git-scm.c
 
 Wenn Ihr Git an einem anderen Ort installiert ist, finden Sie den Pfad, indem Sie `where.exe git` in PowerShell ausführen, und verwenden Sie den `bin\bash.exe`-Pfad aus diesem Verzeichnis.
 
-### Linux: falscher Binär-Variant installiert (musl/glibc-Nichtübereinstimmung)
+### Linux: Falscher Binär-Variant installiert (musl/glibc-Nichtübereinstimmung)
 
-Wenn Sie nach der Installation Fehler über fehlende gemeinsame Bibliotheken wie `libstdc++.so.6` oder `libgcc_s.so.1` sehen, hat das Installationsprogramm möglicherweise den falschen Binär-Variant für Ihr System heruntergeladen.
+Wenn Sie nach der Installation Fehler über fehlende gemeinsame Bibliotheken wie `libstdc++.so.6` oder `libgcc_s.so.1` sehen, hat das Installationsprogramm möglicherweise die falsche Binär-Variante für Ihr System heruntergeladen.
 
 ```text  theme={null}
 Error loading shared library libstdc++.so.6: No such file or directory
@@ -627,7 +627,7 @@ Wenn Sie `OAuth error: Invalid code. Please make sure the full code was copied` 
 
 **Lösungen:**
 
-* Drücken Sie Enter, um die Anmeldung schnell nach dem Öffnen des Browsers erneut zu versuchen
+* Drücken Sie die Eingabetaste, um die Anmeldung schnell nach dem Öffnen des Browsers zu wiederholen und abzuschließen
 * Geben Sie `c` ein, um die vollständige URL zu kopieren, wenn der Browser nicht automatisch geöffnet wird
 * Wenn Sie eine Remote-/SSH-Sitzung verwenden, kann der Browser auf dem falschen Computer geöffnet werden. Kopieren Sie die im Terminal angezeigte URL und öffnen Sie sie stattdessen in Ihrem lokalen Browser.
 
@@ -660,15 +660,15 @@ Führen Sie `/login` aus, um sich erneut zu authentifizieren. Wenn dies häufig 
 
 Claude Code speichert die Konfiguration an mehreren Orten:
 
-| Datei                         | Zweck                                                                                                                  |
-| :---------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
-| `~/.claude/settings.json`     | Benutzereinstellungen (Berechtigungen, hooks, Modellüberschreibungen)                                                  |
-| `.claude/settings.json`       | Projekteinstellungen (in die Quellcodeverwaltung eingecheckt)                                                          |
-| `.claude/settings.local.json` | Lokale Projekteinstellungen (nicht committed)                                                                          |
-| `~/.claude.json`              | Globaler Status (Design, OAuth, MCP-Server)                                                                            |
-| `.mcp.json`                   | Projekt-MCP-Server (in die Quellcodeverwaltung eingecheckt)                                                            |
-| `managed-mcp.json`            | [Verwaltete MCP-Server](/de/mcp#managed-mcp-configuration)                                                             |
-| Verwaltete Einstellungen      | [Verwaltete Einstellungen](/de/settings#settings-files) (serververwaltet, MDM/OS-Ebenen-Richtlinien oder dateibasiert) |
+| Datei                         | Zweck                                                                                                            |
+| :---------------------------- | :--------------------------------------------------------------------------------------------------------------- |
+| `~/.claude/settings.json`     | Benutzereinstellungen (Berechtigungen, Hooks, Modellüberschreibungen)                                            |
+| `.claude/settings.json`       | Projekteinstellungen (in die Quellcodeverwaltung eingecheckt)                                                    |
+| `.claude/settings.local.json` | Lokale Projekteinstellungen (nicht committed)                                                                    |
+| `~/.claude.json`              | Globaler Status (Design, OAuth, MCP-Server)                                                                      |
+| `.mcp.json`                   | Projekt-MCP-Server (in die Quellcodeverwaltung eingecheckt)                                                      |
+| `managed-mcp.json`            | [Verwaltete MCP-Server](/de/mcp#managed-mcp-configuration)                                                       |
+| Verwaltete Einstellungen      | [Verwaltete Einstellungen](/de/settings#settings-files) (Server-verwaltet, MDM/OS-Richtlinien oder dateibasiert) |
 
 Unter Windows bezieht sich `~` auf Ihr Benutzer-Stammverzeichnis, z. B. `C:\Users\YourName`.
 
@@ -708,7 +708,7 @@ Claude Code ist für die Zusammenarbeit mit den meisten Entwicklungsumgebungen k
 
 Wenn Claude Code nicht reagiert:
 
-1. Drücken Sie Ctrl+C, um zu versuchen, den aktuellen Vorgang abzubrechen
+1. Drücken Sie Strg+C, um zu versuchen, den aktuellen Vorgang abzubrechen
 2. Wenn nicht reagiert, müssen Sie möglicherweise das Terminal schließen und neu starten
 
 ### Such- und Erkennungsprobleme
@@ -732,7 +732,7 @@ apk add ripgrep
 pacman -S ripgrep
 ```
 
-Setzen Sie dann `USE_BUILTIN_RIPGREP=0` in Ihrer [Umgebung](/de/settings#environment-variables).
+Setzen Sie dann `USE_BUILTIN_RIPGREP=0` in Ihrer [Umgebung](/de/env-vars).
 
 ### Langsame oder unvollständige Suchergebnisse auf WSL
 
@@ -748,7 +748,7 @@ Leistungseinbußen beim Lesen von Festplatten beim [Arbeiten über Dateisysteme 
 
 2. **Verschieben Sie das Projekt auf das Linux-Dateisystem**: Stellen Sie sicher, dass sich Ihr Projekt auf dem Linux-Dateisystem (`/home/`) statt auf dem Windows-Dateisystem (`/mnt/c/`) befindet.
 
-3. **Verwenden Sie stattdessen natives Windows**: Erwägen Sie, Claude Code nativ unter Windows statt über WSL auszuführen, um eine bessere Dateisystem-Leistung zu erhalten.
+3. **Verwenden Sie stattdessen natives Windows**: Erwägen Sie, Claude Code nativ unter Windows statt über WSL auszuführen, um eine bessere Dateisystem-Leistung zu erzielen.
 
 ## IDE-Integrationsprobleme
 
@@ -821,7 +821,7 @@ Dies ermöglicht der `Esc`-Taste, Claude Code-Operationen ordnungsgemäß zu unt
 
 ## Markdown-Formatierungsprobleme
 
-Claude Code generiert manchmal Markdown-Dateien mit fehlenden Sprach-Tags auf Code-Zäunen, was sich auf Syntax-Hervorhebung und Lesbarkeit in GitHub, Editoren und Dokumentations-Tools auswirken kann.
+Claude Code generiert manchmal Markdown-Dateien mit fehlenden Sprach-Tags auf Code-Zäunen, was die Syntaxhervorhebung und Lesbarkeit in GitHub, Editoren und Dokumentationswerkzeugen beeinträchtigen kann.
 
 ### Fehlende Sprach-Tags in Code-Blöcken
 
@@ -861,7 +861,7 @@ Wenn generiertes Markdown übermäßige Leerzeilen oder inkonsistente Abstände 
 
 1. **Fordern Sie Formatierungskorrektionen an**: Bitten Sie Claude, „Fix spacing and formatting issues in this markdown file" zu beheben.
 
-2. **Verwenden Sie Formatierungs-Tools**: Richten Sie Hooks ein, um Markdown-Formatierer wie `prettier` oder benutzerdefinierte Formatierungs-Skripte auf generierte Markdown-Dateien auszuführen.
+2. **Verwenden Sie Formatierungswerkzeuge**: Richten Sie Hooks ein, um Markdown-Formatierer wie `prettier` oder benutzerdefinierte Formatierungsskripte auf generierte Markdown-Dateien auszuführen.
 
 3. **Geben Sie Formatierungspräferenzen an**: Fügen Sie Formatierungsanforderungen in Ihre Aufforderungen oder Projekt-[Memory](/de/memory)-Dateien ein.
 

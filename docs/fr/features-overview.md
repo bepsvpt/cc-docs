@@ -41,7 +41,7 @@ Les fonctionnalités vont du contexte toujours actif que Claude voit à chaque s
 | **MCP**                            | Connectez-vous à des services externes                                  | Données ou actions externes                                                                            | Interrogez votre base de données, publiez sur Slack, contrôlez un navigateur                                                |
 | **Hook**                           | Script déterministe qui s'exécute sur des événements                    | Automatisation prévisible, aucun LLM impliqué                                                          | Exécutez ESLint après chaque modification de fichier                                                                        |
 
-**[Plugins](/fr/plugins)** sont la couche d'empaquetage. Un plugin regroupe des skills, des hooks, des subagents et des serveurs MCP dans une seule unité installable. Les skills de plugin sont espacés de noms (comme `/my-plugin:review`) afin que plusieurs plugins puissent coexister. Utilisez les plugins quand vous voulez réutiliser la même configuration sur plusieurs référentiels ou distribuer à d'autres via une **[marketplace](/fr/plugin-marketplaces)**.
+**[Plugins](/fr/plugins)** sont la couche d'empaquetage. Un plugin regroupe des skills, des hooks, des subagents et des serveurs MCP dans une seule unité installable. Les skills de plugin sont espacées de noms (comme `/my-plugin:review`) afin que plusieurs plugins puissent coexister. Utilisez les plugins quand vous voulez réutiliser la même configuration sur plusieurs référentiels ou distribuer à d'autres via une **[marketplace](/fr/plugin-marketplaces)**.
 
 ### Comparer les fonctionnalités similaires
 

@@ -281,7 +281,9 @@ Verwenden Sie das Flag `--plugin-dir`, um Plugins während der Entwicklung zu te
 claude --plugin-dir ./my-plugin
 ```
 
-Wenn Sie Änderungen an Ihrem Plugin vornehmen, führen Sie `/reload-plugins` aus, um die Updates zu übernehmen, ohne neu zu starten. Änderungen an der LSP-Server-Konfiguration erfordern immer noch einen vollständigen Neustart. Testen Sie Ihre Plugin-Komponenten:
+Wenn ein `--plugin-dir`-Plugin denselben Namen wie ein installiertes Marketplace-Plugin hat, hat die lokale Kopie in dieser Sitzung Vorrang. Dies ermöglicht es Ihnen, Änderungen an einem Plugin zu testen, das Sie bereits installiert haben, ohne es zuerst zu deinstallieren. Marketplace-Plugins, die durch verwaltete Einstellungen erzwungen aktiviert sind, sind die einzige Ausnahme und können nicht überschrieben werden.
+
+Wenn Sie Änderungen an Ihrem Plugin vornehmen, führen Sie `/reload-plugins` aus, um die Updates zu übernehmen, ohne neu zu starten. Dies lädt Befehle, Skills, Agents, Hooks, Plugin-MCP-Server und Plugin-LSP-Server neu. Testen Sie Ihre Plugin-Komponenten:
 
 * Versuchen Sie Ihre Skills mit `/plugin-name:skill-name`
 * Überprüfen Sie, dass Agents in `/agents` angezeigt werden

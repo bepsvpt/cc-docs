@@ -12,7 +12,7 @@ L'extension VS Code fournit une interface graphique native pour Claude Code, int
 
 Avec l'extension, vous pouvez examiner et modifier les plans de Claude avant de les accepter, accepter automatiquement les modifications au fur et à mesure qu'elles sont apportées, mentionner des fichiers avec des plages de lignes spécifiques à partir de votre sélection, accéder à l'historique des conversations et ouvrir plusieurs conversations dans des onglets ou des fenêtres séparés.
 
-## Conditions préalables
+## Prérequis
 
 Avant d'installer, assurez-vous que vous avez :
 
@@ -20,7 +20,7 @@ Avant d'installer, assurez-vous que vous avez :
 * Un compte Anthropic (vous vous connecterez lors de la première ouverture de l'extension). Si vous utilisez un fournisseur tiers comme Amazon Bedrock ou Google Vertex AI, consultez plutôt [Utiliser des fournisseurs tiers](#use-third-party-providers).
 
 <Tip>
-  L'extension inclut l'interface de ligne de commande (CLI), à laquelle vous pouvez accéder depuis le terminal intégré de VS Code pour les fonctionnalités avancées. Consultez [Extension VS Code vs. CLI Claude Code](#vs-code-extension-vs-claude-code-cli) pour plus de détails.
+  L'extension inclut le CLI (interface de ligne de commande), auquel vous pouvez accéder à partir du terminal intégré de VS Code pour les fonctionnalités avancées. Consultez [Extension VS Code vs. CLI Claude Code](#vs-code-extension-vs-claude-code-cli) pour plus de détails.
 </Tip>
 
 ## Installer l'extension
@@ -32,7 +32,7 @@ Cliquez sur le lien de votre IDE pour installer directement :
 
 Ou dans VS Code, appuyez sur `Cmd+Shift+X` (Mac) ou `Ctrl+Shift+X` (Windows/Linux) pour ouvrir la vue Extensions, recherchez « Claude Code » et cliquez sur **Installer**.
 
-<Note>Si l'extension n'apparaît pas après l'installation, redémarrez VS Code ou exécutez « Developer: Reload Window » depuis la Palette de commandes.</Note>
+<Note>Si l'extension n'apparaît pas après l'installation, redémarrez VS Code ou exécutez « Developer: Reload Window » à partir de la Palette de commandes.</Note>
 
 ## Commencer
 
@@ -77,7 +77,7 @@ Une fois installée, vous pouvez commencer à utiliser Claude Code via l'interfa
 Pour plus d'idées sur ce que vous pouvez faire avec Claude Code, consultez [Flux de travail courants](/fr/common-workflows).
 
 <Tip>
-  Exécutez « Claude Code: Open Walkthrough » depuis la Palette de commandes pour une visite guidée des bases.
+  Exécutez « Claude Code: Open Walkthrough » à partir de la Palette de commandes pour une visite guidée des bases.
 </Tip>
 
 ## Utiliser la zone de saisie
@@ -99,7 +99,7 @@ Utilisez les mentions @ pour donner à Claude du contexte sur des fichiers ou de
 > What's in @src/components/ (include a trailing slash for folders)
 ```
 
-Pour les grands fichiers PDF, vous pouvez demander à Claude de lire des pages spécifiques au lieu du fichier entier : une seule page, une plage comme les pages 1-10, ou une plage ouverte comme la page 3 et au-delà.
+Pour les grands PDF, vous pouvez demander à Claude de lire des pages spécifiques au lieu du fichier entier : une seule page, une plage comme les pages 1-10, ou une plage ouverte comme la page 3 et au-delà.
 
 Lorsque vous sélectionnez du texte dans l'éditeur, Claude peut voir votre code en surbrillance automatiquement. Le pied de page de la zone de saisie affiche le nombre de lignes sélectionnées. Appuyez sur `Option+K` (Mac) / `Alt+K` (Windows/Linux) pour insérer une mention @ avec le chemin du fichier et les numéros de ligne (par exemple, `@app.ts#5-10`). Cliquez sur l'indicateur de sélection pour basculer si Claude peut voir votre texte en surbrillance - l'icône en forme de barre oblique signifie que la sélection est masquée à Claude.
 
@@ -109,7 +109,7 @@ Vous pouvez également maintenir `Shift` enfoncé tout en faisant glisser des fi
 
 Cliquez sur la liste déroulante en haut du panneau Claude Code pour accéder à votre historique de conversations. Vous pouvez rechercher par mot-clé ou parcourir par heure (Aujourd'hui, Hier, 7 derniers jours, etc.). Cliquez sur n'importe quelle conversation pour la reprendre avec l'historique complet des messages. Survolez une session pour révéler les actions de renommage et de suppression : renommez pour lui donner un titre descriptif, ou supprimez pour la supprimer de la liste. Pour plus d'informations sur la reprise des sessions, consultez [Flux de travail courants](/fr/common-workflows#resume-previous-conversations).
 
-### Reprendre les sessions distantes depuis Claude.ai
+### Reprendre les sessions distantes de Claude.ai
 
 Si vous utilisez [Claude Code sur le web](/fr/claude-code-on-the-web), vous pouvez reprendre ces sessions distantes directement dans VS Code. Cela nécessite de se connecter avec **Claude.ai Subscription**, pas Anthropic Console.
 
@@ -149,7 +149,7 @@ Vous pouvez faire glisser le panneau Claude pour le repositionner n'importe où 
 
 ### Exécuter plusieurs conversations
 
-Utilisez **Ouvrir dans un nouvel onglet** ou **Ouvrir dans une nouvelle fenêtre** depuis la Palette de commandes pour démarrer des conversations supplémentaires. Chaque conversation maintient son propre historique et contexte, vous permettant de travailler sur différentes tâches en parallèle.
+Utilisez **Ouvrir dans un nouvel onglet** ou **Ouvrir dans une nouvelle fenêtre** à partir de la Palette de commandes pour démarrer des conversations supplémentaires. Chaque conversation maintient son propre historique et contexte, vous permettant de travailler sur différentes tâches en parallèle.
 
 Lors de l'utilisation d'onglets, un petit point coloré sur l'icône spark indique l'état : bleu signifie qu'une demande de permission est en attente, orange signifie que Claude a terminé pendant que l'onglet était masqué.
 
@@ -191,14 +191,14 @@ Basculez vers l'onglet **Marchés** pour ajouter ou supprimer des sources de plu
 Après avoir apporté des modifications, une bannière vous invite à redémarrer Claude Code pour appliquer les mises à jour.
 
 <Note>
-  La gestion des plugins dans VS Code utilise les mêmes commandes CLI en arrière-plan. Les plugins et les marchés que vous configurez dans l'extension sont également disponibles dans l'interface CLI, et vice versa.
+  La gestion des plugins dans VS Code utilise les mêmes commandes CLI sous le capot. Les plugins et les marchés que vous configurez dans l'extension sont également disponibles dans le CLI, et vice versa.
 </Note>
 
 Pour plus d'informations sur le système de plugins, consultez [Plugins](/fr/plugins) et [Marchés de plugins](/fr/plugin-marketplaces).
 
 ## Automatiser les tâches du navigateur avec Chrome
 
-Connectez Claude à votre navigateur Chrome pour tester des applications web, déboguer avec des journaux de console et automatiser les flux de travail du navigateur sans quitter VS Code. Cela nécessite l'[extension Claude in Chrome](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) version 1.0.36 ou supérieure.
+Connectez Claude à votre navigateur Chrome pour tester les applications web, déboguer avec les journaux de la console et automatiser les flux de travail du navigateur sans quitter VS Code. Cela nécessite l'extension [Claude in Chrome](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) version 1.0.36 ou supérieure.
 
 Tapez `@browser` dans la zone de saisie suivi de ce que vous voulez que Claude fasse :
 
@@ -239,7 +239,7 @@ Certains raccourcis dépendent du panneau qui est ' actif ' (recevant l'entrée 
 L'extension a deux types de paramètres :
 
 * **Paramètres d'extension** dans VS Code : contrôlent le comportement de l'extension dans VS Code. Ouvrez avec `Cmd+,` (Mac) ou `Ctrl+,` (Windows/Linux), puis allez à Extensions → Claude Code. Vous pouvez également taper `/` et sélectionner **General Config** pour ouvrir les paramètres.
-* **Paramètres Claude Code** dans `~/.claude/settings.json` : partagés entre l'extension et l'interface CLI. Utilisez pour les commandes autorisées, les variables d'environnement, les hooks et les serveurs MCP. Consultez [Paramètres](/fr/settings) pour plus de détails.
+* **Paramètres Claude Code** dans `~/.claude/settings.json` : partagés entre l'extension et le CLI. Utilisez pour les commandes autorisées, les variables d'environnement, les hooks et les serveurs MCP. Consultez [Paramètres](/fr/settings) pour plus de détails.
 
 <Tip>
   Ajoutez `"$schema": "https://json.schemastore.org/claude-code-settings.json"` à votre `settings.json` pour obtenir l'autocomplétion et la validation en ligne pour tous les paramètres disponibles directement dans VS Code.
@@ -265,15 +265,15 @@ L'extension a deux types de paramètres :
 
 ## Extension VS Code vs. CLI Claude Code
 
-Claude Code est disponible à la fois en tant qu'extension VS Code (panneau graphique) et en tant qu'interface CLI (interface de ligne de commande dans le terminal). Certaines fonctionnalités ne sont disponibles que dans l'interface CLI. Si vous avez besoin d'une fonctionnalité CLI uniquement, exécutez `claude` dans le terminal intégré de VS Code.
+Claude Code est disponible à la fois en tant qu'extension VS Code (panneau graphique) et en tant que CLI (interface de ligne de commande dans le terminal). Certaines fonctionnalités ne sont disponibles que dans le CLI. Si vous avez besoin d'une fonctionnalité CLI uniquement, exécutez `claude` dans le terminal intégré de VS Code.
 
-| Fonctionnalité               | CLI                                            | Extension VS Code                                                                                                     |
-| ---------------------------- | ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| Commandes et skills          | [Tous](/fr/interactive-mode#built-in-commands) | Sous-ensemble (tapez `/` pour voir les options disponibles)                                                           |
-| Configuration du serveur MCP | Oui                                            | Partiel (ajouter des serveurs via l'interface CLI ; gérer les serveurs existants avec `/mcp` dans le panneau de chat) |
-| Checkpoints                  | Oui                                            | Oui                                                                                                                   |
-| Raccourci bash `!`           | Oui                                            | Non                                                                                                                   |
-| Complément de tabulation     | Oui                                            | Non                                                                                                                   |
+| Fonctionnalité               | CLI                  | Extension VS Code                                                                                         |
+| ---------------------------- | -------------------- | --------------------------------------------------------------------------------------------------------- |
+| Commandes et skills          | [Tous](/fr/commands) | Sous-ensemble (tapez `/` pour voir les disponibles)                                                       |
+| Configuration du serveur MCP | Oui                  | Partiel (ajouter des serveurs via CLI ; gérer les serveurs existants avec `/mcp` dans le panneau de chat) |
+| Checkpoints                  | Oui                  | Oui                                                                                                       |
+| Raccourci bash `!`           | Oui                  | Non                                                                                                       |
+| Complément de tabulation     | Oui                  | Non                                                                                                       |
 
 ### Rembobiner avec les checkpoints
 
@@ -285,15 +285,15 @@ L'extension VS Code prend en charge les checkpoints, qui suivent les modificatio
 
 Pour tous les détails sur le fonctionnement des checkpoints et leurs limitations, consultez [Checkpointing](/fr/checkpointing).
 
-### Exécuter l'interface CLI dans VS Code
+### Exécuter le CLI dans VS Code
 
-Pour utiliser l'interface CLI tout en restant dans VS Code, ouvrez le terminal intégré (`` Ctrl+` `` sur Windows/Linux ou `` Cmd+` `` sur Mac) et exécutez `claude`. L'interface CLI s'intègre automatiquement à votre IDE pour des fonctionnalités comme l'affichage des diffs et le partage des diagnostics.
+Pour utiliser le CLI tout en restant dans VS Code, ouvrez le terminal intégré (`` Ctrl+` `` sur Windows/Linux ou `` Cmd+` `` sur Mac) et exécutez `claude`. Le CLI s'intègre automatiquement à votre IDE pour des fonctionnalités comme l'affichage des diffs et le partage des diagnostics.
 
 Si vous utilisez un terminal externe, exécutez `/ide` dans Claude Code pour le connecter à VS Code.
 
-### Basculer entre l'extension et l'interface CLI
+### Basculer entre l'extension et le CLI
 
-L'extension et l'interface CLI partagent le même historique de conversations. Pour continuer une conversation d'extension dans l'interface CLI, exécutez `claude --resume` dans le terminal. Cela ouvre un sélecteur interactif où vous pouvez rechercher et sélectionner votre conversation.
+L'extension et le CLI partagent le même historique de conversations. Pour continuer une conversation d'extension dans le CLI, exécutez `claude --resume` dans le terminal. Cela ouvre un sélecteur interactif où vous pouvez rechercher et sélectionner votre conversation.
 
 ### Inclure la sortie du terminal dans les invites
 
@@ -301,7 +301,7 @@ Référencez la sortie du terminal dans vos invites en utilisant `@terminal:name
 
 ### Surveiller les processus en arrière-plan
 
-Lorsque Claude exécute des commandes longues, l'extension affiche la progression dans la barre d'état. Cependant, la visibilité des tâches en arrière-plan est limitée par rapport à l'interface CLI. Pour une meilleure visibilité, demandez à Claude de générer la commande afin que vous puissiez l'exécuter dans le terminal intégré de VS Code.
+Lorsque Claude exécute des commandes longues, l'extension affiche la progression dans la barre d'état. Cependant, la visibilité des tâches en arrière-plan est limitée par rapport au CLI. Pour une meilleure visibilité, demandez à Claude de générer la commande afin que vous puissiez l'exécuter dans le terminal intégré de VS Code.
 
 ### Connecter à des outils externes avec MCP
 
@@ -333,7 +333,7 @@ Claude peut mettre en scène les modifications, écrire des messages de commit e
 
 Lors de la création de demandes de tirage, Claude génère des descriptions basées sur les modifications de code réelles et peut ajouter du contexte sur les tests ou les décisions de mise en œuvre.
 
-### Utiliser les worktrees git pour les tâches parallèles
+### Utiliser les git worktrees pour les tâches parallèles
 
 Utilisez l'indicateur `--worktree` (`-w`) pour démarrer Claude dans un worktree isolé avec ses propres fichiers et branche :
 
@@ -341,7 +341,7 @@ Utilisez l'indicateur `--worktree` (`-w`) pour démarrer Claude dans un worktree
 claude --worktree feature-auth
 ```
 
-Chaque worktree maintient un état de fichier indépendant tout en partageant l'historique git. Cela empêche les instances de Claude d'interférer les unes avec les autres lorsqu'elles travaillent sur différentes tâches. Pour plus de détails, consultez [Exécuter des sessions parallèles avec les worktrees Git](/fr/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees).
+Chaque worktree maintient un état de fichier indépendant tout en partageant l'historique git. Cela empêche les instances de Claude d'interférer les unes avec les autres lorsqu'elles travaillent sur différentes tâches. Pour plus de détails, consultez [Exécuter des sessions Claude Code parallèles avec Git worktrees](/fr/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees).
 
 ## Utiliser des fournisseurs tiers
 
@@ -361,7 +361,7 @@ Par défaut, Claude Code se connecte directement à l'API d'Anthropic. Si votre 
     * [Claude Code sur Google Vertex AI](/fr/google-vertex-ai)
     * [Claude Code sur Microsoft Foundry](/fr/microsoft-foundry)
 
-    Ces guides couvrent la configuration de votre fournisseur dans `~/.claude/settings.json`, ce qui garantit que vos paramètres sont partagés entre l'extension VS Code et l'interface CLI.
+    Ces guides couvrent la configuration de votre fournisseur dans `~/.claude/settings.json`, ce qui garantit que vos paramètres sont partagés entre l'extension VS Code et le CLI.
   </Step>
 </Steps>
 
@@ -379,17 +379,17 @@ Avec les permissions d'édition automatique activées, Claude Code peut modifier
 
 ### L'extension ne s'installe pas
 
-* Assurez-vous que vous avez une version compatible de VS Code (1.98.0 ou supérieure)
+* Assurez-vous que vous avez une version compatible de VS Code (1.98.0 ou ultérieure)
 * Vérifiez que VS Code a la permission d'installer des extensions
-* Essayez d'installer directement depuis la [Place de marché VS Code](https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code)
+* Essayez d'installer directement à partir de la [Place de marché VS Code](https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code)
 
 ### L'icône Spark n'est pas visible
 
 L'icône Spark apparaît dans la **Barre d'outils de l'éditeur** (coin supérieur droit de l'éditeur) lorsque vous avez un fichier ouvert. Si vous ne la voyez pas :
 
 1. **Ouvrir un fichier** : L'icône nécessite qu'un fichier soit ouvert. Avoir juste un dossier ouvert ne suffit pas.
-2. **Vérifier la version de VS Code** : Nécessite 1.98.0 ou supérieure (Aide → À propos)
-3. **Redémarrer VS Code** : Exécutez « Developer: Reload Window » depuis la Palette de commandes
+2. **Vérifier la version de VS Code** : Nécessite 1.98.0 ou supérieur (Aide → À propos)
+3. **Redémarrer VS Code** : Exécutez « Developer: Reload Window » à partir de la Palette de commandes
 4. **Désactiver les extensions conflictuelles** : Désactivez temporairement les autres extensions IA (Cline, Continue, etc.)
 5. **Vérifier la confiance de l'espace de travail** : L'extension ne fonctionne pas en Mode restreint
 
@@ -401,7 +401,7 @@ Si Claude Code ne répond pas à vos invites :
 
 1. **Vérifier votre connexion Internet** : Assurez-vous que vous avez une connexion Internet stable
 2. **Démarrer une nouvelle conversation** : Essayez de démarrer une nouvelle conversation pour voir si le problème persiste
-3. **Essayer l'interface CLI** : Exécutez `claude` depuis le terminal pour voir si vous obtenez des messages d'erreur plus détaillés
+3. **Essayer le CLI** : Exécutez `claude` à partir du terminal pour voir si vous obtenez des messages d'erreur plus détaillés
 
 Si les problèmes persistent, [déposez un problème sur GitHub](https://github.com/anthropics/claude-code/issues) avec des détails sur l'erreur.
 
@@ -426,5 +426,5 @@ Pour une aide supplémentaire, consultez le [guide de dépannage](/fr/troublesho
 Maintenant que vous avez Claude Code configuré dans VS Code :
 
 * [Explorez les flux de travail courants](/fr/common-workflows) pour tirer le meilleur parti de Claude Code
-* [Configurez les serveurs MCP](/fr/mcp) pour étendre les capacités de Claude avec des outils externes. Ajoutez des serveurs en utilisant l'interface CLI, puis gérez-les avec `/mcp` dans le panneau de chat.
-* [Configurez les paramètres Claude Code](/fr/settings) pour personnaliser les commandes autorisées, les hooks et bien d'autres. Ces paramètres sont partagés entre l'extension et l'interface CLI.
+* [Configurez les serveurs MCP](/fr/mcp) pour étendre les capacités de Claude avec des outils externes. Ajoutez des serveurs en utilisant le CLI, puis gérez-les avec `/mcp` dans le panneau de chat.
+* [Configurez les paramètres Claude Code](/fr/settings) pour personnaliser les commandes autorisées, les hooks et bien d'autres. Ces paramètres sont partagés entre l'extension et le CLI.

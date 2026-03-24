@@ -54,7 +54,7 @@ Para proyectos grandes, puede dividir las instrucciones en archivos específicos
 
 ### Configure un CLAUDE.md de proyecto
 
-Un CLAUDE.md de proyecto se puede almacenar en `./CLAUDE.md` o `./.claude/CLAUDE.md`. Cree este archivo y agregue instrucciones que se apliquen a cualquiera que trabaje en el proyecto: comandos de compilación y prueba, estándares de codificación, decisiones arquitectónicas, convenciones de nomenclatura y flujos de trabajo comunes. Estas instrucciones se comparten con su equipo a través del control de versiones, así que enfóquese en estándares a nivel de proyecto en lugar de preferencias personales.
+Un CLAUDE.md de proyecto puede almacenarse en `./CLAUDE.md` o `./.claude/CLAUDE.md`. Cree este archivo y agregue instrucciones que se apliquen a cualquiera que trabaje en el proyecto: comandos de compilación y prueba, estándares de codificación, decisiones arquitectónicas, convenciones de nomenclatura y flujos de trabajo comunes. Estas instrucciones se comparten con su equipo a través del control de versiones, así que enfóquese en estándares a nivel de proyecto en lugar de preferencias personales.
 
 <Tip>
   Ejecute `/init` para generar un CLAUDE.md inicial automáticamente. Claude analiza su base de código y crea un archivo con comandos de compilación, instrucciones de prueba y convenciones de proyecto que descubre. Si ya existe un CLAUDE.md, `/init` sugiere mejoras en lugar de sobrescribirlo. Refine desde allí con instrucciones que Claude no descubriría por sí solo.
@@ -66,12 +66,12 @@ Los archivos CLAUDE.md se cargan en la ventana de contexto al inicio de cada ses
 
 **Tamaño**: apunte a menos de 200 líneas por archivo CLAUDE.md. Los archivos más largos consumen más contexto y reducen la adherencia. Si sus instrucciones están creciendo mucho, divídalas usando [importaciones](#import-additional-files) o archivos [`.claude/rules/`](#organize-rules-with-clauderules).
 
-**Estructura**: use encabezados markdown y viñetas para agrupar instrucciones relacionadas. Claude escanea la estructura de la misma manera que los lectores: las secciones organizadas son más fáciles de seguir que los párrafos densos.
+**Estructura**: use encabezados y viñetas de markdown para agrupar instrucciones relacionadas. Claude escanea la estructura de la misma manera que los lectores: las secciones organizadas son más fáciles de seguir que los párrafos densos.
 
 **Especificidad**: escriba instrucciones que sean lo suficientemente concretas para verificar. Por ejemplo:
 
 * "Usar indentación de 2 espacios" en lugar de "Formatear código correctamente"
-* "Ejecutar `npm test` antes de confirmar" en lugar de "Probar sus cambios"
+* "Ejecutar `npm test` antes de hacer commit" en lugar de "Probar sus cambios"
 * "Los controladores de API viven en `src/api/handlers/`" en lugar de "Mantener los archivos organizados"
 
 **Consistencia**: si dos reglas se contradicen entre sí, Claude puede elegir una arbitrariamente. Revise sus archivos CLAUDE.md, archivos CLAUDE.md anidados en subdirectorios y archivos [`.claude/rules/`](#organize-rules-with-clauderules) periódicamente para eliminar instrucciones desactualizadas o conflictivas. En monorepos, use [`claudeMdExcludes`](#exclude-specific-claudemd-files) para omitir archivos CLAUDE.md de otros equipos que no sean relevantes para su trabajo.
@@ -106,7 +106,7 @@ Para un enfoque más estructurado para organizar instrucciones, consulte [`.clau
 
 ### Cómo se cargan los archivos CLAUDE.md
 
-Claude Code lee los archivos CLAUDE.md caminando hacia arriba en el árbol de directorios desde su directorio de trabajo actual, verificando cada directorio en el camino. Esto significa que si ejecuta Claude Code en `foo/bar/`, carga instrucciones de `foo/bar/CLAUDE.md` y `foo/CLAUDE.md`.
+Claude Code lee los archivos CLAUDE.md caminando hacia arriba en el árbol de directorios desde su directorio de trabajo actual, verificando cada directorio en el camino. Esto significa que si ejecuta Claude Code en `foo/bar/`, carga instrucciones tanto de `foo/bar/CLAUDE.md` como de `foo/CLAUDE.md`.
 
 Claude también descubre archivos CLAUDE.md en subdirectorios bajo su directorio de trabajo actual. En lugar de cargarlos al iniciar, se incluyen cuando Claude lee archivos en esos subdirectorios.
 
@@ -116,7 +116,7 @@ Si trabaja en un monorepo grande donde se recogen archivos CLAUDE.md de otros eq
 
 La bandera `--add-dir` da a Claude acceso a directorios adicionales fuera de su directorio de trabajo principal. De forma predeterminada, los archivos CLAUDE.md de estos directorios no se cargan.
 
-Para cargar también archivos CLAUDE.md de directorios adicionales, incluidos `CLAUDE.md`, `.claude/CLAUDE.md` y `.claude/rules/*.md`, establezca la variable de entorno `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD`:
+Para cargar también archivos CLAUDE.md de directorios adicionales, incluyendo `CLAUDE.md`, `.claude/CLAUDE.md` y `.claude/rules/*.md`, establezca la variable de entorno `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD`:
 
 ```bash  theme={null}
 CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ../shared-config
@@ -127,7 +127,7 @@ CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ../shared-config
 Para proyectos más grandes, puede organizar instrucciones en múltiples archivos usando el directorio `.claude/rules/`. Esto mantiene las instrucciones modulares y más fáciles de mantener para los equipos. Las reglas también pueden ser [limitadas a rutas de archivo específicas](#path-specific-rules), por lo que solo se cargan en contexto cuando Claude trabaja con archivos coincidentes, reduciendo ruido y ahorrando espacio de contexto.
 
 <Note>
-  Las reglas se cargan en contexto cada sesión o cuando se abren archivos coincidentes. Para instrucciones específicas de tareas que no necesitan estar en contexto todo el tiempo, use [skills](/es/skills) en su lugar, que solo se cargan cuando las invoca o cuando Claude determina que son relevantes para su solicitud.
+  Las reglas se cargan en contexto cada sesión o cuando se abren archivos coincidentes. Para instrucciones específicas de tareas que no necesitan estar en contexto todo el tiempo, use [skills](/es/skills) en su lugar, que solo se cargan cuando las invoca o cuando Claude determina que son relevantes para su prompt.
 </Note>
 
 #### Configurar reglas
@@ -167,7 +167,7 @@ Las reglas sin un campo `paths` se cargan incondicionalmente y se aplican a todo
 
 Use patrones glob en el campo `paths` para hacer coincidir archivos por extensión, directorio o cualquier combinación:
 
-| Patrón                 | Coincide                                              |
+| Patrón                 | Coincide con                                          |
 | ---------------------- | ----------------------------------------------------- |
 | `**/*.ts`              | Todos los archivos TypeScript en cualquier directorio |
 | `src/**/*`             | Todos los archivos bajo el directorio `src/`          |
@@ -243,7 +243,7 @@ Este ejemplo excluye un CLAUDE.md de nivel superior y un directorio de reglas de
 }
 ```
 
-Los patrones se comparan contra rutas de archivo absolutas usando sintaxis glob. Puede configurar `claudeMdExcludes` en cualquier [capa de configuración](/es/settings#settings-files): usuario, proyecto, local o política gestionada. Los arreglos se fusionan entre capas.
+Los patrones se comparan contra rutas de archivo absolutas usando sintaxis glob. Puede configurar `claudeMdExcludes` en cualquier [capa de configuración](/es/settings#settings-files): usuario, proyecto, local o política gestionada. Los arrays se fusionan entre capas.
 
 Los archivos CLAUDE.md de política gestionada no pueden ser excluidos. Esto asegura que las instrucciones de toda la organización siempre se apliquen independientemente de la configuración individual.
 
@@ -257,7 +257,7 @@ Auto memory permite que Claude acumule conocimiento entre sesiones sin que usted
 
 ### Habilitar o deshabilitar auto memory
 
-Auto memory está habilitado de forma predeterminada. Para alternarlo, abra `/memory` en una sesión y use el alternador de auto memory, o establezca `autoMemoryEnabled` en la configuración de su proyecto:
+Auto memory está habilitado de forma predeterminada. Para alternarlo, abra `/memory` en una sesión y use el botón de alternancia de auto memory, o establezca `autoMemoryEnabled` en la configuración de su proyecto:
 
 ```json  theme={null}
 {
@@ -291,7 +291,7 @@ El directorio contiene un punto de entrada `MEMORY.md` y archivos de tema opcion
 └── ...                # Cualquier otro archivo de tema que Claude cree
 ```
 
-`MEMORY.md` actúa como un índice del directorio de memoria. Claude lee y escribe archivos en este directorio durante su sesión, usando `MEMORY.md` para realizar un seguimiento de lo que se almacena dónde.
+`MEMORY.md` actúa como un índice del directorio de memoria. Claude lee y escribe archivos en este directorio durante su sesión, usando `MEMORY.md` para mantener un registro de lo que se almacena dónde.
 
 Auto memory es local de la máquina. Todos los worktrees y subdirectorios dentro del mismo repositorio git comparten un directorio de auto memory. Los archivos no se comparten entre máquinas o entornos en la nube.
 
@@ -321,17 +321,19 @@ Estos son los problemas más comunes con CLAUDE.md y auto memory, junto con paso
 
 ### Claude no está siguiendo mi CLAUDE.md
 
-CLAUDE.md es contexto, no cumplimiento. Claude lo lee e intenta seguirlo, pero no hay garantía de cumplimiento estricto, especialmente para instrucciones vagas o conflictivas.
+El contenido de CLAUDE.md se entrega como un mensaje de usuario después del prompt del sistema, no como parte del prompt del sistema en sí. Claude lo lee e intenta seguirlo, pero no hay garantía de cumplimiento estricto, especialmente para instrucciones vagas o conflictivas.
 
 Para depurar:
 
 * Ejecute `/memory` para verificar que sus archivos CLAUDE.md se están cargando. Si un archivo no aparece en la lista, Claude no puede verlo.
 * Verifique que el CLAUDE.md relevante esté en una ubicación que se cargue para su sesión (consulte [Elija dónde colocar los archivos CLAUDE.md](#choose-where-to-put-claudemd-files)).
-* Haga que las instrucciones sean más específicas. "Usar indentación de 2 espacios" funciona mejor que "formatear código bien".
+* Haga instrucciones más específicas. "Usar indentación de 2 espacios" funciona mejor que "formatear código bien".
 * Busque instrucciones conflictivas en archivos CLAUDE.md. Si dos archivos dan orientación diferente para el mismo comportamiento, Claude puede elegir uno arbitrariamente.
 
+Para instrucciones que desea a nivel de prompt del sistema, use [`--append-system-prompt`](/es/cli-reference#system-prompt-flags). Esto debe pasarse en cada invocación, por lo que es más adecuado para scripts y automatización que para uso interactivo.
+
 <Tip>
-  Use el [hook `InstructionsLoaded`](/es/hooks#instructionsloaded) para registrar exactamente qué archivos de instrucciones se cargan, cuándo se cargan y por qué. Esto es útil para depurar reglas específicas de ruta o archivos cargados de forma perezosa en subdirectorios.
+  Use el hook [`InstructionsLoaded`](/es/hooks#instructionsloaded) para registrar exactamente qué archivos de instrucciones se cargan, cuándo se cargan y por qué. Esto es útil para depurar reglas específicas de ruta o archivos cargados perezosamente en subdirectorios.
 </Tip>
 
 ### No sé qué guardó auto memory
@@ -340,7 +342,7 @@ Ejecute `/memory` y seleccione la carpeta de auto memory para examinar lo que Cl
 
 ### Mi CLAUDE.md es demasiado grande
 
-Los archivos de más de 200 líneas consumen más contexto y pueden reducir la adherencia. Mueva contenido detallado a archivos separados referenciados con importaciones `@path` (consulte [Importar archivos adicionales](#import-additional-files)), o divida sus instrucciones en archivos `.claude/rules/`.
+Los archivos de más de 200 líneas consumen más contexto y pueden reducir la adherencia. Mueva contenido detallado a archivos separados referenciados con importaciones `@path` (consulte [Importar archivos adicionales](#import-additional-files)), o divida sus instrucciones entre archivos `.claude/rules/`.
 
 ### Las instrucciones parecen perdidas después de `/compact`
 

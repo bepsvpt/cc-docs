@@ -42,22 +42,23 @@ Jalankan `/terminal-setup` dalam Claude Code untuk secara otomatis mengonfiguras
 
 ### Pengaturan notifikasi
 
-Jangan lewatkan saat Claude menyelesaikan tugas dengan konfigurasi notifikasi yang tepat:
+Ketika Claude selesai bekerja dan menunggu input Anda, Claude mengirimkan acara notifikasi. Anda dapat menampilkan acara ini sebagai notifikasi desktop melalui terminal Anda atau menjalankan logika khusus dengan [hook notifikasi](/id/hooks#notification).
 
-#### Notifikasi sistem iTerm 2
+#### Notifikasi terminal
 
-Untuk peringatan iTerm 2 saat tugas selesai:
+Kitty dan Ghostty mendukung notifikasi desktop tanpa konfigurasi tambahan. iTerm 2 memerlukan pengaturan:
 
-1. Buka iTerm 2 Preferences
-2. Navigasi ke Profiles → Terminal
-3. Aktifkan "Silence bell" dan Filter Alerts → "Send escape sequence-generated alerts"
-4. Atur penundaan notifikasi pilihan Anda
+1. Buka iTerm 2 Settings → Profiles → Terminal
+2. Aktifkan "Notification Center Alerts"
+3. Klik "Filter Alerts" dan centang "Send escape sequence-generated alerts"
 
-Perhatikan bahwa notifikasi ini khusus untuk iTerm 2 dan tidak tersedia di Terminal macOS default.
+Jika notifikasi tidak muncul, verifikasi bahwa aplikasi terminal Anda memiliki izin notifikasi di pengaturan OS Anda.
 
-#### Hook notifikasi khusus
+Terminal lain, termasuk Terminal macOS default, tidak mendukung notifikasi native. Gunakan [hook notifikasi](/id/hooks#notification) sebagai gantinya.
 
-Untuk penanganan notifikasi tingkat lanjut, Anda dapat membuat [hook notifikasi](/id/hooks#notification) untuk menjalankan logika Anda sendiri.
+#### Hook notifikasi
+
+Untuk menambahkan perilaku khusus ketika notifikasi dipicu, seperti memutar suara atau mengirim pesan, konfigurasikan [hook notifikasi](/id/hooks#notification). Hook berjalan bersama notifikasi terminal, bukan sebagai pengganti.
 
 ### Menangani input besar
 

@@ -154,7 +154,7 @@ Anthropic juga memelihara [demo plugins marketplace](https://github.com/anthropi
   </Step>
 
   <Step title="Gunakan plugin baru Anda">
-    Setelah menginstal, perintah plugin segera tersedia. Perintah plugin diberi namespace oleh nama plugin, jadi **commit-commands** menyediakan perintah seperti `/commit-commands:commit`.
+    Setelah menginstal, jalankan `/reload-plugins` untuk mengaktifkan plugin. Perintah plugin diberi namespace oleh nama plugin, jadi **commit-commands** menyediakan perintah seperti `/commit-commands:commit`.
 
     Coba dengan membuat perubahan pada file dan menjalankan:
 
@@ -296,15 +296,13 @@ claude plugin uninstall formatter@your-org --scope project
 
 ### Terapkan perubahan plugin tanpa restart
 
-Saat Anda menginstal, mengaktifkan, atau menonaktifkan plugin selama sesi, beberapa perubahan (seperti perintah dan hook baru) berlaku segera. Yang lain, termasuk pembaruan server LSP, memerlukan restart.
-
-Untuk mengaktifkan semua perubahan plugin yang tertunda tanpa restart, jalankan:
+Saat Anda menginstal, mengaktifkan, atau menonaktifkan plugin selama sesi, jalankan `/reload-plugins` untuk mengambil semua perubahan tanpa restart:
 
 ```shell  theme={null}
 /reload-plugins
 ```
 
-Claude Code memuat ulang semua plugin aktif dan melaporkan apa yang dimuat. Jika ada server LSP yang ditambahkan atau diperbarui, itu akan memberi tahu Anda bahwa server tersebut memerlukan restart untuk berlaku.
+Claude Code memuat ulang semua plugin aktif dan menampilkan hitungan untuk perintah yang dimuat ulang, skills, agen, hooks, server MCP plugin, dan server LSP plugin.
 
 ## Kelola marketplace
 

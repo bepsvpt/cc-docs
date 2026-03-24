@@ -4,7 +4,7 @@
 
 # Révision de code
 
-> Configurez des révisions de PR automatisées qui détectent les erreurs logiques, les vulnérabilités de sécurité et les régressions en utilisant une analyse multi-agents de votre base de code complète
+> Configurez des révisions de PR automatisées qui détectent les erreurs logiques, les vulnérabilités de sécurité et les régressions en utilisant l'analyse multi-agents de votre base de code complète
 
 <Note>
   Code Review est en aperçu de recherche, disponible pour les abonnements [Teams et Enterprise](https://claude.ai/admin-settings/claude-code). Il n'est pas disponible pour les organisations avec [Zero Data Retention](/fr/zero-data-retention) activé.
@@ -25,7 +25,9 @@ Cette page couvre :
 
 ## Comment fonctionnent les révisions
 
-Une fois qu'un administrateur [active Code Review](#set-up-code-review) pour votre organisation, les révisions s'exécutent automatiquement lorsqu'une pull request s'ouvre ou se met à jour. Plusieurs agents analysent le diff et le code environnant en parallèle sur l'infrastructure Anthropic. Chaque agent recherche une classe de problème différente, puis une étape de vérification vérifie les candidats par rapport au comportement réel du code pour filtrer les faux positifs. Les résultats sont dédupliqués, classés par gravité et publiés sous forme de commentaires en ligne sur les lignes spécifiques où les problèmes ont été trouvés. Si aucun problème n'est trouvé, Claude publie un court commentaire de confirmation sur la PR.
+Une fois qu'un administrateur [active Code Review](#set-up-code-review) pour votre organisation, les révisions se déclenchent à l'ouverture d'une PR, à chaque push, ou sur demande manuelle, selon le comportement configuré du référentiel. Commenter `@claude review` [démarre les révisions sur une PR](#manually-trigger-reviews) dans n'importe quel mode.
+
+Lorsqu'une révision s'exécute, plusieurs agents analysent le diff et le code environnant en parallèle sur l'infrastructure Anthropic. Chaque agent recherche une classe de problème différente, puis une étape de vérification vérifie les candidats par rapport au comportement réel du code pour filtrer les faux positifs. Les résultats sont dédupliqués, classés par gravité et publiés sous forme de commentaires en ligne sur les lignes spécifiques où les problèmes ont été trouvés. Si aucun problème n'est trouvé, Claude publie un court commentaire de confirmation sur la PR.
 
 Les révisions s'adaptent en coût à la taille et à la complexité de la PR, se complétant en moyenne en 20 minutes. Les administrateurs peuvent surveiller l'activité de révision et les dépenses via le [tableau de bord analytique](#view-usage).
 
@@ -43,7 +45,7 @@ Les résultats incluent une section de raisonnement étendu réductible que vous
 
 ### Ce que Code Review vérifie
 
-Par défaut, Code Review se concentre sur la correction : les bugs qui cassent la production, pas les préférences de formatage ou la couverture de test manquante. Vous pouvez développer ce qu'il vérifie en [ajoutant des fichiers de guidance](#customize-reviews) à votre référentiel.
+Par défaut, Code Review se concentre sur la correction : les bugs qui cassent la production, pas les préférences de formatage ou la couverture de test manquante. Vous pouvez élargir ce qu'il vérifie en [ajoutant des fichiers de guidance](#customize-reviews) à votre référentiel.
 
 ## Configurer Code Review
 
@@ -55,7 +57,7 @@ Un administrateur active Code Review une fois pour l'organisation et sélectionn
   </Step>
 
   <Step title="Démarrer la configuration">
-    Cliquez sur **Configuration**. Cela commence le flux d'installation de GitHub App.
+    Cliquez sur **Setup**. Cela commence le flux d'installation de GitHub App.
   </Step>
 
   <Step title="Installer la GitHub App Claude">
@@ -69,37 +71,51 @@ Un administrateur active Code Review une fois pour l'organisation et sélectionn
   </Step>
 
   <Step title="Sélectionner les référentiels">
-    Choisissez les référentiels à activer pour Code Review. Si vous ne voyez pas un référentiel, assurez-vous d'avoir donné à la GitHub App Claude l'accès à celui-ci lors de l'installation. Vous pouvez ajouter d'autres référentiels plus tard.
+    Choisissez les référentiels à activer pour Code Review. Si vous ne voyez pas un référentiel, assurez-vous d'avoir donné à la GitHub App Claude l'accès pendant l'installation. Vous pouvez ajouter plus de référentiels plus tard.
   </Step>
 
   <Step title="Définir les déclencheurs de révision par référentiel">
-    Une fois la configuration terminée, la section Code Review affiche vos référentiels dans un tableau. Pour chaque référentiel, utilisez la liste déroulante pour choisir quand les révisions s'exécutent :
+    Une fois la configuration terminée, la section Code Review affiche vos référentiels dans un tableau. Pour chaque référentiel, utilisez la liste déroulante **Review Behavior** pour choisir quand les révisions s'exécutent :
 
-    * **Après la création de PR uniquement** : la révision s'exécute une fois lorsqu'une PR est ouverte ou marquée comme prête pour révision
-    * **Après chaque push vers la branche PR** : la révision s'exécute à chaque push, détectant les nouveaux problèmes au fur et à mesure que la PR évolue et résolvant automatiquement les threads lorsque vous corrigez les problèmes signalés
+    * **Once after PR creation** : la révision s'exécute une fois à l'ouverture d'une PR ou marquée comme prête pour révision
+    * **After every push** : la révision s'exécute à chaque push vers la branche PR, détectant les nouveaux problèmes à mesure que la PR évolue et résolvant automatiquement les threads lorsque vous corrigez les problèmes signalés
+    * **Manual** : les révisions commencent uniquement quand quelqu'un [commente `@claude review` sur une PR](#manually-trigger-reviews) ; les pushes ultérieurs vers cette PR sont ensuite examinés automatiquement
 
-    La révision à chaque push exécute plus de révisions et coûte plus cher. Commencez par la création de PR uniquement et passez à on-push pour les référentiels où vous voulez une couverture continue et un nettoyage automatique des threads.
+    Réviser à chaque push exécute le plus de révisions et coûte le plus cher. Le mode manuel est utile pour les référentiels à fort trafic où vous souhaitez opter pour des PR spécifiques dans la révision, ou pour commencer à réviser vos PR uniquement une fois qu'elles sont prêtes.
   </Step>
 </Steps>
 
-Le tableau des référentiels affiche également le coût moyen par révision pour chaque référentiel en fonction de l'activité récente. Utilisez le menu des actions de ligne pour activer ou désactiver Code Review par référentiel, ou pour supprimer complètement un référentiel.
+Le tableau des référentiels affiche également le coût moyen par révision pour chaque référentiel en fonction de l'activité récente. Utilisez le menu d'actions de ligne pour activer ou désactiver Code Review par référentiel, ou pour supprimer complètement un référentiel.
 
-Pour vérifier la configuration, ouvrez une PR de test. Une exécution de vérification nommée **Claude Code Review** apparaît dans quelques minutes. Si ce n'est pas le cas, confirmez que le référentiel est listé dans vos paramètres d'administration et que la GitHub App Claude y a accès.
+Pour vérifier la configuration, ouvrez une PR de test. Si vous avez choisi un déclencheur automatique, une exécution de vérification nommée **Claude Code Review** apparaît dans quelques minutes. Si vous avez choisi Manual, commentez `@claude review` sur la PR pour démarrer la première révision. Si aucune exécution de vérification n'apparaît, confirmez que le référentiel est listé dans vos paramètres d'administration et que la GitHub App Claude y a accès.
+
+## Déclencher manuellement les révisions
+
+Commentez `@claude review` sur une pull request pour démarrer une révision et opter cette PR dans les révisions déclenchées par push à partir de maintenant. Cela fonctionne quel que soit le déclencheur configuré du référentiel : utilisez-le pour opter pour des PR spécifiques dans la révision en mode Manual, ou pour obtenir une re-révision immédiate dans d'autres modes. De toute façon, les pushes vers cette PR déclenchent des révisions à partir de ce moment.
+
+Pour que le commentaire déclenche une révision :
+
+* Publiez-le comme un commentaire PR de haut niveau, pas un commentaire en ligne sur une ligne de diff
+* Mettez `@claude review` au début du commentaire
+* Vous devez avoir un accès propriétaire, membre ou collaborateur au référentiel
+* La PR doit être ouverte et ne pas être un brouillon
+
+Si une révision s'exécute déjà sur cette PR, la demande est mise en file d'attente jusqu'à ce que la révision en cours se termine. Vous pouvez surveiller la progression via l'exécution de vérification sur la PR.
 
 ## Personnaliser les révisions
 
 Code Review lit deux fichiers de votre référentiel pour guider ce qu'il signale. Les deux s'ajoutent aux vérifications de correction par défaut :
 
-* **`CLAUDE.md`** : instructions de projet partagées que Claude Code utilise pour toutes les tâches, pas seulement les révisions. Utilisez-le lorsque la guidance s'applique également aux sessions Claude Code interactives.
-* **`REVIEW.md`** : guidance réservée à la révision, lue exclusivement lors des révisions de code. Utilisez-le pour les règles qui concernent strictement ce qu'il faut signaler ou ignorer lors de la révision et qui encombreraient votre `CLAUDE.md` général.
+* **`CLAUDE.md`** : instructions de projet partagées que Claude Code utilise pour toutes les tâches, pas seulement les révisions. Utilisez-le quand la guidance s'applique également aux sessions Claude Code interactives.
+* **`REVIEW.md`** : guidance de révision uniquement, lue exclusivement lors des révisions de code. Utilisez-le pour les règles qui concernent strictement ce qu'il faut signaler ou ignorer lors de la révision et qui encombreraient votre `CLAUDE.md` général.
 
 ### CLAUDE.md
 
-Code Review lit vos fichiers `CLAUDE.md` du référentiel et traite les violations nouvellement introduites comme des résultats au niveau nit. Cela fonctionne bidirectionnellement : si votre PR modifie le code d'une manière qui rend une déclaration `CLAUDE.md` obsolète, Claude signale que la documentation doit être mise à jour aussi.
+Code Review lit vos fichiers `CLAUDE.md` du référentiel et traite les violations nouvellement introduites comme des résultats au niveau nit. Cela fonctionne bidirectionnellement : si votre PR modifie le code d'une manière qui rend une déclaration `CLAUDE.md` obsolète, Claude signale que les docs doivent être mises à jour aussi.
 
-Claude lit les fichiers `CLAUDE.md` à chaque niveau de votre hiérarchie de répertoires, de sorte que les règles dans le `CLAUDE.md` d'un sous-répertoire s'appliquent uniquement aux fichiers sous ce chemin. Consultez la [documentation de mémoire](/fr/memory) pour plus d'informations sur le fonctionnement de `CLAUDE.md`.
+Claude lit les fichiers `CLAUDE.md` à chaque niveau de votre hiérarchie de répertoires, donc les règles dans le `CLAUDE.md` d'un sous-répertoire s'appliquent uniquement aux fichiers sous ce chemin. Consultez la [documentation de mémoire](/fr/memory) pour plus d'informations sur le fonctionnement de `CLAUDE.md`.
 
-Pour la guidance spécifique à la révision que vous ne voulez pas appliquer aux sessions Claude Code générales, utilisez [`REVIEW.md`](#review-md) à la place.
+Pour la guidance spécifique à la révision que vous ne souhaitez pas appliquer aux sessions Claude Code générales, utilisez [`REVIEW.md`](#review-md) à la place.
 
 ### REVIEW\.md
 
@@ -113,53 +129,56 @@ Ajoutez un fichier `REVIEW.md` à la racine de votre référentiel pour les règ
 Exemple `REVIEW.md` :
 
 ```markdown  theme={null}
-# Directives de révision de code
+# Code Review Guidelines
 
-## Toujours vérifier
-- Les nouveaux points de terminaison API ont des tests d'intégration correspondants
-- Les migrations de base de données sont rétrocompatibles
-- Les messages d'erreur ne divulguent pas les détails internes aux utilisateurs
+## Always check
+- New API endpoints have corresponding integration tests
+- Database migrations are backward-compatible
+- Error messages don't leak internal details to users
 
 ## Style
-- Préférer les déclarations `match` aux vérifications `isinstance` chaînées
-- Utiliser la journalisation structurée, pas l'interpolation de chaîne f dans les appels de journal
+- Prefer `match` statements over chained `isinstance` checks
+- Use structured logging, not f-string interpolation in log calls
 
-## Ignorer
-- Fichiers générés sous `src/gen/`
-- Modifications de formatage uniquement dans les fichiers `*.lock`
+## Skip
+- Generated files under `src/gen/`
+- Formatting-only changes in `*.lock` files
 ```
 
 Claude découvre automatiquement `REVIEW.md` à la racine du référentiel. Aucune configuration nécessaire.
 
 ## Afficher l'utilisation
 
-Allez à [claude.ai/analytics/code-review](https://claude.ai/analytics/code-review) pour voir l'activité de Code Review dans votre organisation. Le tableau de bord affiche :
+Allez à [claude.ai/analytics/code-review](https://claude.ai/analytics/code-review) pour voir l'activité Code Review dans votre organisation. Le tableau de bord affiche :
 
-| Section                     | Ce qu'il affiche                                                                                                    |
-| :-------------------------- | :------------------------------------------------------------------------------------------------------------------ |
-| PRs révisées                | Nombre quotidien de pull requests révisées sur la plage de temps sélectionnée                                       |
-| Coût hebdomadaire           | Dépenses hebdomadaires sur Code Review                                                                              |
-| Feedback                    | Nombre de commentaires de révision qui ont été résolus automatiquement parce qu'un développeur a résolu le problème |
-| Répartition par référentiel | Comptages par référentiel des PRs révisées et des commentaires résolus                                              |
+| Section              | Ce qu'il affiche                                                                                         |
+| :------------------- | :------------------------------------------------------------------------------------------------------- |
+| PRs reviewed         | Nombre quotidien de pull requests examinées sur la plage de temps sélectionnée                           |
+| Cost weekly          | Dépenses hebdomadaires sur Code Review                                                                   |
+| Feedback             | Nombre de commentaires de révision qui ont été auto-résolus parce qu'un développeur a résolu le problème |
+| Repository breakdown | Comptages par référentiel des PR examinées et des commentaires résolus                                   |
 
 Le tableau des référentiels dans les paramètres d'administration affiche également le coût moyen par révision pour chaque référentiel.
 
 ## Tarification
 
-Code Review est facturé en fonction de l'utilisation des tokens. Les révisions coûtent en moyenne 15 à 25 dollars, s'adaptant à la taille de la PR, à la complexité de la base de code et au nombre de problèmes nécessitant une vérification. L'utilisation de Code Review est facturée séparément via [l'utilisation supplémentaire](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) et ne compte pas par rapport à l'utilisation incluse de votre plan.
+Code Review est facturé en fonction de l'utilisation des tokens. Les révisions coûtent en moyenne 15 à 25 dollars, s'adaptant à la taille de la PR, à la complexité de la base de code et au nombre de problèmes nécessitant une vérification. L'utilisation de Code Review est facturée séparément via [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) et ne compte pas par rapport à l'utilisation incluse de votre plan.
 
 Le déclencheur de révision que vous choisissez affecte le coût total :
 
-* **Après la création de PR uniquement** : s'exécute une fois par PR
-* **Après chaque push** : s'exécute à chaque commit, multipliant le coût par le nombre de pushes
+* **Once after PR creation** : s'exécute une fois par PR
+* **After every push** : s'exécute à chaque push, multipliant le coût par le nombre de pushes
+* **Manual** : aucune révision jusqu'à ce que quelqu'un commente `@claude review` sur une PR
 
-Les coûts apparaissent sur votre facture Anthropic indépendamment du fait que votre organisation utilise AWS Bedrock ou Google Vertex AI pour d'autres fonctionnalités Claude Code. Pour définir un plafond de dépenses mensuelles pour Code Review, allez à [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) et configurez la limite pour le service Claude Code Review.
+Dans n'importe quel mode, commenter `@claude review` [opte la PR dans les révisions déclenchées par push](#manually-trigger-reviews), de sorte que des coûts supplémentaires s'accumulent par push après ce commentaire.
 
-Surveillez les dépenses via le graphique des coûts hebdomadaires dans [analytics](#view-usage) ou la colonne de coût moyen par référentiel dans les paramètres d'administration.
+Les coûts apparaissent sur votre facture Anthropic quel que soit le fait que votre organisation utilise AWS Bedrock ou Google Vertex AI pour d'autres fonctionnalités Claude Code. Pour définir un plafond de dépenses mensuelles pour Code Review, allez à [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) et configurez la limite pour le service Claude Code Review.
+
+Surveillez les dépenses via le graphique de coût hebdomadaire dans [analytics](#view-usage) ou la colonne de coût moyen par référentiel dans les paramètres d'administration.
 
 ## Ressources connexes
 
-Code Review est conçu pour fonctionner aux côtés du reste de Claude Code. Si vous voulez exécuter des révisions localement avant d'ouvrir une PR, avez besoin d'une configuration auto-hébergée ou voulez approfondir la façon dont `CLAUDE.md` façonne le comportement de Claude dans tous les outils, ces pages sont de bonnes prochaines étapes :
+Code Review est conçu pour fonctionner aux côtés du reste de Claude Code. Si vous souhaitez exécuter des révisions localement avant d'ouvrir une PR, avez besoin d'une configuration auto-hébergée, ou souhaitez approfondir la façon dont `CLAUDE.md` façonne le comportement de Claude dans tous les outils, ces pages sont de bons prochains arrêts :
 
 * [Plugins](/fr/discover-plugins) : parcourez la place de marché des plugins, y compris un plugin `code-review` pour exécuter des révisions à la demande localement avant de pousser
 * [GitHub Actions](/fr/github-actions) : exécutez Claude dans vos propres flux de travail GitHub Actions pour une automatisation personnalisée au-delà de la révision de code

@@ -27,7 +27,7 @@
 
 Claude Code で「How is Claude doing this session?」プロンプトが表示されたときに、この調査に応答する場合（「Dismiss」を選択する場合を含む）、数値評価（1、2、3、または dismiss）のみが記録されます。この調査の一部として、会話トランスクリプト、入力、出力、またはその他のセッションデータは収集または保存されません。サムズアップ/ダウンフィードバックまたは `/bug` レポートとは異なり、このセッション品質調査は単純な製品満足度メトリックです。この調査への応答は、データトレーニング設定に影響を与えず、AI モデルをトレーニングするために使用することはできません。
 
-これらの調査を無効にするには、`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` を設定します。サードパーティプロバイダー（Bedrock、Vertex、Foundry）を使用する場合、またはテレメトリが無効になっている場合、調査は自動的に無効になります。
+これらの調査を無効にするには、`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` を設定します。調査は、`DISABLE_TELEMETRY` または `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` が設定されている場合にも無効になります。頻度を制御する代わりに無効にするには、設定ファイルで [`feedbackSurveyRate`](/ja/settings#available-settings) を `0` から `1` の間の確率に設定します。
 
 ### データ保持
 
@@ -86,13 +86,13 @@ Claude Code は、ユーザーのマシンから Sentry に接続して、運用
 
 ## API プロバイダーのデフォルト動作
 
-デフォルトでは、Bedrock、Vertex、または Foundry を使用する場合、すべての非必須トラフィック（エラーレポート、テレメトリ、バグレポート機能、セッション品質調査を含む）を無効にします。`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 環境変数を設定することで、これらすべてを一度にオプトアウトすることもできます。以下は完全なデフォルト動作です：
+デフォルトでは、Bedrock、Vertex、または Foundry を使用する場合、エラーレポート、テレメトリ、およびバグレポートは無効になります。セッション品質調査は例外であり、プロバイダーに関係なく表示されます。`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` を設定することで、調査を含むすべての非必須トラフィックをオプトアウトできます。以下は完全なデフォルト動作です：
 
-| サービス                        | Claude API                                                     | Vertex API                                             | Bedrock API                                             | Foundry API                                             |
-| --------------------------- | -------------------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------- | ------------------------------------------------------- |
-| **Statsig（メトリクス）**          | デフォルトオン。<br />`DISABLE_TELEMETRY=1` で無効にします。                   | デフォルトオフ。<br />`CLAUDE_CODE_USE_VERTEX` は 1 である必要があります。 | デフォルトオフ。<br />`CLAUDE_CODE_USE_BEDROCK` は 1 である必要があります。 | デフォルトオフ。<br />`CLAUDE_CODE_USE_FOUNDRY` は 1 である必要があります。 |
-| **Sentry（エラー）**             | デフォルトオン。<br />`DISABLE_ERROR_REPORTING=1` で無効にします。             | デフォルトオフ。<br />`CLAUDE_CODE_USE_VERTEX` は 1 である必要があります。 | デフォルトオフ。<br />`CLAUDE_CODE_USE_BEDROCK` は 1 である必要があります。 | デフォルトオフ。<br />`CLAUDE_CODE_USE_FOUNDRY` は 1 である必要があります。 |
-| **Claude API（`/bug` レポート）** | デフォルトオン。<br />`DISABLE_BUG_COMMAND=1` で無効にします。                 | デフォルトオフ。<br />`CLAUDE_CODE_USE_VERTEX` は 1 である必要があります。 | デフォルトオフ。<br />`CLAUDE_CODE_USE_BEDROCK` は 1 である必要があります。 | デフォルトオフ。<br />`CLAUDE_CODE_USE_FOUNDRY` は 1 である必要があります。 |
-| **セッション品質調査**               | デフォルトオン。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` で無効にします。 | デフォルトオフ。<br />`CLAUDE_CODE_USE_VERTEX` は 1 である必要があります。 | デフォルトオフ。<br />`CLAUDE_CODE_USE_BEDROCK` は 1 である必要があります。 | デフォルトオフ。<br />`CLAUDE_CODE_USE_FOUNDRY` は 1 である必要があります。 |
+| サービス                        | Claude API                                                     | Vertex API                                                     | Bedrock API                                                    | Foundry API                                                    |
+| --------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- |
+| **Statsig（メトリクス）**          | デフォルトオン。<br />`DISABLE_TELEMETRY=1` で無効にします。                   | デフォルトオフ。<br />`CLAUDE_CODE_USE_VERTEX` は 1 である必要があります。         | デフォルトオフ。<br />`CLAUDE_CODE_USE_BEDROCK` は 1 である必要があります。        | デフォルトオフ。<br />`CLAUDE_CODE_USE_FOUNDRY` は 1 である必要があります。        |
+| **Sentry（エラー）**             | デフォルトオン。<br />`DISABLE_ERROR_REPORTING=1` で無効にします。             | デフォルトオフ。<br />`CLAUDE_CODE_USE_VERTEX` は 1 である必要があります。         | デフォルトオフ。<br />`CLAUDE_CODE_USE_BEDROCK` は 1 である必要があります。        | デフォルトオフ。<br />`CLAUDE_CODE_USE_FOUNDRY` は 1 である必要があります。        |
+| **Claude API（`/bug` レポート）** | デフォルトオン。<br />`DISABLE_BUG_COMMAND=1` で無効にします。                 | デフォルトオフ。<br />`CLAUDE_CODE_USE_VERTEX` は 1 である必要があります。         | デフォルトオフ。<br />`CLAUDE_CODE_USE_BEDROCK` は 1 である必要があります。        | デフォルトオフ。<br />`CLAUDE_CODE_USE_FOUNDRY` は 1 である必要があります。        |
+| **セッション品質調査**               | デフォルトオン。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` で無効にします。 | デフォルトオン。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` で無効にします。 | デフォルトオン。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` で無効にします。 | デフォルトオン。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` で無効にします。 |
 
 すべての環境変数は `settings.json` にチェックインできます（[詳細を読む](/ja/settings)）。

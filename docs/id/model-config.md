@@ -28,9 +28,10 @@ Alias model menyediakan cara yang nyaman untuk memilih pengaturan model tanpa pe
 | **`opus`**       | Menggunakan model Opus terbaru (saat ini Opus 4.6) untuk tugas penalaran kompleks                                                                                          |
 | **`haiku`**      | Menggunakan model Haiku yang cepat dan efisien untuk tugas sederhana                                                                                                       |
 | **`sonnet[1m]`** | Menggunakan Sonnet dengan [jendela konteks 1 juta token](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window) untuk sesi panjang |
+| **`opus[1m]`**   | Menggunakan Opus dengan [jendela konteks 1 juta token](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window) untuk sesi panjang   |
 | **`opusplan`**   | Mode khusus yang menggunakan `opus` selama plan mode, kemudian beralih ke `sonnet` untuk eksekusi                                                                          |
 
-Alias selalu menunjuk ke versi terbaru. Untuk menetapkan ke versi tertentu, gunakan nama model lengkap (misalnya, `claude-opus-4-6`) atau atur variabel lingkungan yang sesuai seperti `ANTHROPIC_DEFAULT_OPUS_MODEL`.
+Alias selalu menunjuk ke versi terbaru. Untuk menetapkan versi tertentu, gunakan nama model lengkap (misalnya, `claude-opus-4-6`) atau atur variabel lingkungan yang sesuai seperti `ANTHROPIC_DEFAULT_OPUS_MODEL`.
 
 ### Mengatur model Anda
 
@@ -85,7 +86,7 @@ Bahkan dengan `availableModels: []`, pengguna masih dapat menggunakan Claude Cod
 Untuk sepenuhnya mengontrol pengalaman model, gunakan `availableModels` bersama dengan pengaturan `model`:
 
 * **availableModels**: membatasi apa yang dapat dialihkan pengguna
-* **model**: menetapkan penggantian model eksplisit, mengambil alih dari Default
+* **model**: menetapkan penggantian model eksplisit, mengambil alih Default
 
 Contoh ini memastikan semua pengguna menjalankan Sonnet 4.6 dan hanya dapat memilih antara Sonnet dan Haiku:
 
@@ -125,52 +126,56 @@ Ini memberi Anda yang terbaik dari kedua dunia: penalaran superior Opus untuk pe
 
 [Tingkat usaha](https://platform.claude.com/docs/en/build-with-claude/effort) mengontrol penalaran adaptif, yang secara dinamis mengalokasikan pemikiran berdasarkan kompleksitas tugas. Usaha lebih rendah lebih cepat dan lebih murah untuk tugas-tugas langsung, sementara usaha lebih tinggi memberikan penalaran lebih dalam untuk masalah kompleks.
 
-Tiga tingkat tersedia: **low**, **medium**, dan **high**. Opus 4.6 default ke medium effort untuk pelanggan Max dan Team.
+Tiga tingkat bertahan di seluruh sesi: **low**, **medium**, dan **high**. Tingkat keempat, **max**, memberikan penalaran paling dalam tanpa batasan pengeluaran token, sehingga respons lebih lambat dan biaya lebih tinggi daripada di `high`. `max` hanya tersedia di Opus 4.6 dan berlaku untuk sesi saat ini tanpa bertahan. Opus 4.6 default ke medium effort untuk pelanggan Max dan Team.
 
 **Mengatur usaha:**
 
+* **`/effort`**: jalankan `/effort low`, `/effort medium`, `/effort high`, atau `/effort max` untuk mengubah tingkat, atau `/effort auto` untuk mengatur ulang ke default model
 * **Dalam `/model`**: gunakan tombol panah kiri/kanan untuk menyesuaikan slider usaha saat memilih model
-* **Variabel lingkungan**: atur `CLAUDE_CODE_EFFORT_LEVEL=low|medium|high`
-* **Pengaturan**: atur `effortLevel` di file pengaturan Anda
+* **Flag `--effort`**: teruskan `low`, `medium`, `high`, atau `max` untuk menetapkan tingkat untuk sesi tunggal saat meluncurkan Claude Code
+* **Variabel lingkungan**: atur `CLAUDE_CODE_EFFORT_LEVEL` ke `low`, `medium`, `high`, `max`, atau `auto`
+* **Pengaturan**: atur `effortLevel` di file pengaturan Anda ke `"low"`, `"medium"`, atau `"high"`
 
-Usaha didukung pada Opus 4.6 dan Sonnet 4.6. Slider usaha muncul dalam `/model` ketika model yang didukung dipilih. Tingkat usaha saat ini juga ditampilkan di sebelah logo dan spinner (misalnya, "with low effort"), sehingga Anda dapat mengkonfirmasi pengaturan mana yang aktif tanpa membuka `/model`.
+Variabel lingkungan mengambil alih, kemudian tingkat yang Anda konfigurasi, kemudian default model.
 
-Untuk menonaktifkan penalaran adaptif pada Opus 4.6 dan Sonnet 4.6 dan kembali ke anggaran pemikiran tetap sebelumnya, atur `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1`. Ketika dinonaktifkan, model ini menggunakan anggaran tetap yang dikendalikan oleh `MAX_THINKING_TOKENS`. Lihat [variabel lingkungan](/id/settings#environment-variables).
+Usaha didukung pada Opus 4.6 dan Sonnet 4.6. Slider usaha muncul dalam `/model` ketika model yang didukung dipilih. Tingkat usaha saat ini juga ditampilkan di sebelah logo dan spinner, misalnya "with low effort", sehingga Anda dapat mengkonfirmasi pengaturan mana yang aktif tanpa membuka `/model`.
+
+Untuk menonaktifkan penalaran adaptif pada Opus 4.6 dan Sonnet 4.6 dan kembali ke anggaran pemikiran tetap sebelumnya, atur `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1`. Ketika dinonaktifkan, model ini menggunakan anggaran tetap yang dikendalikan oleh `MAX_THINKING_TOKENS`. Lihat [variabel lingkungan](/id/env-vars).
 
 ### Konteks diperluas
 
 Opus 4.6 dan Sonnet 4.6 mendukung [jendela konteks 1 juta token](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window) untuk sesi panjang dengan basis kode besar.
 
-<Note>
-  Jendela konteks 1M saat ini dalam beta. Fitur, harga, dan ketersediaan dapat berubah.
-</Note>
+Ketersediaan bervariasi menurut model dan paket. Pada paket Max, Team, dan Enterprise, Opus secara otomatis ditingkatkan ke konteks 1M tanpa konfigurasi tambahan. Ini berlaku untuk kedua kursi Team Standard dan Team Premium.
 
-Konteks diperluas tersedia untuk:
+| Paket                     | Opus 4.6 dengan konteks 1M                                                                                          | Sonnet 4.6 dengan konteks 1M                                                                                        |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Max, Team, dan Enterprise | Disertakan dengan langganan                                                                                         | Memerlukan [penggunaan tambahan](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
+| Pro                       | Memerlukan [penggunaan tambahan](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) | Memerlukan [penggunaan tambahan](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
+| API dan pay-as-you-go     | Akses penuh                                                                                                         | Akses penuh                                                                                                         |
 
-* **Pengguna API dan pay-as-you-go**: akses penuh ke konteks 1M
-* **Pelanggan Pro, Max, Teams, dan Enterprise**: tersedia dengan [penggunaan ekstra](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) diaktifkan
+Untuk menonaktifkan konteks 1M sepenuhnya, atur `CLAUDE_CODE_DISABLE_1M_CONTEXT=1`. Ini menghapus varian model 1M dari pemilih model. Lihat [variabel lingkungan](/id/env-vars).
 
-Untuk menonaktifkan konteks 1M sepenuhnya, atur `CLAUDE_CODE_DISABLE_1M_CONTEXT=1`. Ini menghapus varian model 1M dari pemilih model. Lihat [variabel lingkungan](/id/settings#environment-variables).
-
-Memilih model 1M tidak segera mengubah penagihan. Sesi Anda menggunakan tarif standar hingga melebihi 200K token konteks. Melampaui 200K token, permintaan dikenakan biaya pada [harga konteks panjang](https://platform.claude.com/docs/en/about-claude/pricing#long-context-pricing) dengan [batas laju](https://platform.claude.com/docs/en/api/rate-limits#long-context-rate-limits) khusus. Untuk pelanggan, token melampaui 200K ditagih sebagai penggunaan ekstra daripada melalui langganan.
+Jendela konteks 1M menggunakan harga model standar tanpa premium untuk token di luar 200K. Untuk paket di mana konteks diperluas disertakan dengan langganan Anda, penggunaan tetap tercakup oleh langganan Anda. Untuk paket yang mengakses konteks diperluas melalui penggunaan tambahan, token ditagihkan ke penggunaan tambahan.
 
 Jika akun Anda mendukung konteks 1M, opsi muncul di pemilih model (`/model`) dalam versi terbaru Claude Code. Jika Anda tidak melihatnya, coba mulai ulang sesi Anda.
 
 Anda juga dapat menggunakan akhiran `[1m]` dengan alias model atau nama model lengkap:
 
 ```bash  theme={null}
-# Gunakan alias sonnet[1m]
+# Gunakan alias opus[1m] atau sonnet[1m]
+/model opus[1m]
 /model sonnet[1m]
 
 # Atau tambahkan [1m] ke nama model lengkap
-/model claude-sonnet-4-6[1m]
+/model claude-opus-4-6[1m]
 ```
 
 ## Memeriksa model Anda saat ini
 
 Anda dapat melihat model mana yang sedang Anda gunakan dengan beberapa cara:
 
-1. Dalam [baris status](/id/statusline) (jika dikonfigurasi)
+1. Dalam [status line](/id/statusline) (jika dikonfigurasi)
 2. Dalam `/status`, yang juga menampilkan informasi akun Anda.
 
 ## Variabel lingkungan
@@ -190,7 +195,7 @@ Catatan: `ANTHROPIC_SMALL_FAST_MODEL` sudah usang dan digantikan oleh `ANTHROPIC
 
 Saat menerapkan Claude Code melalui [Bedrock](/id/amazon-bedrock), [Vertex AI](/id/google-vertex-ai), atau [Foundry](/id/microsoft-foundry), tetapkan versi model sebelum meluncurkan ke pengguna.
 
-Tanpa penetapan, Claude Code menggunakan alias model (`sonnet`, `opus`, `haiku`) yang diselesaikan ke versi terbaru. Ketika Anthropic merilis model baru, pengguna yang akunnya tidak memiliki versi baru yang diaktifkan akan rusak secara diam-diam.
+Tanpa penentapan, Claude Code menggunakan alias model (`sonnet`, `opus`, `haiku`) yang diselesaikan ke versi terbaru. Ketika Anthropic merilis model baru, pengguna yang akunnya tidak memiliki versi baru yang diaktifkan akan rusak secara diam-diam.
 
 <Warning>
   Atur ketiga variabel lingkungan model ke ID versi spesifik sebagai bagian dari pengaturan awal Anda. Melewatkan langkah ini berarti pembaruan Claude Code dapat merusak pengguna Anda tanpa tindakan apa pun dari pihak Anda.
@@ -206,6 +211,14 @@ Gunakan variabel lingkungan berikut dengan ID model spesifik versi untuk penyedi
 
 Terapkan pola yang sama untuk `ANTHROPIC_DEFAULT_SONNET_MODEL` dan `ANTHROPIC_DEFAULT_HAIKU_MODEL`. Untuk ID model saat ini dan warisan di semua penyedia, lihat [Ikhtisar Model](https://platform.claude.com/docs/en/about-claude/models/overview). Untuk meningkatkan pengguna ke versi model baru, perbarui variabel lingkungan ini dan terapkan kembali.
 
+Untuk mengaktifkan [konteks diperluas](#extended-context) untuk model yang ditetapkan, tambahkan `[1m]` ke ID model dalam `ANTHROPIC_DEFAULT_OPUS_MODEL` atau `ANTHROPIC_DEFAULT_SONNET_MODEL`:
+
+```bash  theme={null}
+export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6[1m]'
+```
+
+Akhiran `[1m]` menerapkan jendela konteks 1M ke semua penggunaan alias tersebut, termasuk `opusplan`. Claude Code menghapus akhiran sebelum mengirim ID model ke penyedia Anda. Hanya tambahkan `[1m]` ketika model yang mendasar mendukung konteks 1M, seperti Opus 4.6 atau Sonnet 4.6.
+
 <Note>
   Allowlist `settings.availableModels` masih berlaku saat menggunakan penyedia pihak ketiga. Penyaringan cocok pada alias model (`opus`, `sonnet`, `haiku`), bukan ID model spesifik penyedia.
 </Note>
@@ -214,11 +227,11 @@ Terapkan pola yang sama untuk `ANTHROPIC_DEFAULT_SONNET_MODEL` dan `ANTHROPIC_DE
 
 Variabel lingkungan tingkat keluarga di atas mengonfigurasi satu ID model per alias keluarga. Jika Anda perlu memetakan beberapa versi dalam keluarga yang sama ke ID penyedia yang berbeda, gunakan pengaturan `modelOverrides` sebagai gantinya.
 
-`modelOverrides` memetakan ID model Anthropic individual ke string spesifik penyedia yang dikirim Claude Code ke API penyedia Anda. Ketika pengguna memilih model yang dipetakan di pemilih `/model`, Claude Code menggunakan nilai yang dikonfigurasi Anda alih-alih default bawaan.
+`modelOverrides` memetakan ID model Anthropic individual ke string spesifik penyedia yang dikirim Claude Code ke API penyedia Anda. Ketika pengguna memilih model yang dipetakan di pemilih `/model`, Claude Code menggunakan nilai yang Anda konfigurasi alih-alih default bawaan.
 
-Ini memungkinkan administrator enterprise untuk merutekan setiap versi model ke ARN profil inferensi Bedrock spesifik, nama versi Vertex AI, atau nama deployment Foundry untuk tata kelola, alokasi biaya, atau perutean regional.
+Ini memungkinkan administrator enterprise untuk merutekan setiap versi model ke ARN profil inferensi Bedrock tertentu, nama versi Vertex AI, atau nama deployment Foundry untuk tata kelola, alokasi biaya, atau perutean regional.
 
-Atur `modelOverrides` dalam [file pengaturan Anda](/id/settings#settings-files):
+Atur `modelOverrides` dalam [file pengaturan](/id/settings#settings-files) Anda:
 
 ```json  theme={null}
 {
@@ -247,4 +260,4 @@ Claude Code secara otomatis menggunakan [prompt caching](https://platform.claude
 | `DISABLE_PROMPT_CACHING_SONNET` | Atur ke `1` untuk menonaktifkan prompt caching hanya untuk model Sonnet                                |
 | `DISABLE_PROMPT_CACHING_OPUS`   | Atur ke `1` untuk menonaktifkan prompt caching hanya untuk model Opus                                  |
 
-Variabel lingkungan ini memberi Anda kontrol terperinci atas perilaku prompt caching. Pengaturan global `DISABLE_PROMPT_CACHING` mengambil alih pengaturan spesifik model, memungkinkan Anda dengan cepat menonaktifkan semua caching saat diperlukan. Pengaturan per-model berguna untuk kontrol selektif, seperti saat men-debug model tertentu atau bekerja dengan penyedia cloud yang mungkin memiliki implementasi caching yang berbeda.
+Variabel lingkungan ini memberi Anda kontrol terperinci atas perilaku prompt caching. Pengaturan global `DISABLE_PROMPT_CACHING` mengambil alih pengaturan spesifik model, memungkinkan Anda dengan cepat menonaktifkan semua caching saat diperlukan. Pengaturan per-model berguna untuk kontrol selektif, seperti saat men-debug model tertentu atau bekerja dengan penyedia cloud yang mungkin memiliki implementasi caching berbeda.

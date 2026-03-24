@@ -4,14 +4,14 @@
 
 # Configurare le impostazioni gestite dal server (beta pubblico)
 
-> Configurare centralmente Claude Code per la vostra organizzazione tramite impostazioni consegnate dal server, senza richiedere infrastruttura di gestione dei dispositivi.
+> Configurare centralmente Claude Code per la vostra organizzazione tramite impostazioni consegnate dal server, senza richiedere infrastrutture di gestione dei dispositivi.
 
 Le impostazioni gestite dal server consentono agli amministratori di configurare centralmente Claude Code tramite un'interfaccia basata sul web su Claude.ai. I client di Claude Code ricevono automaticamente queste impostazioni quando gli utenti si autenticano con le credenziali della loro organizzazione.
 
-Questo approccio è progettato per le organizzazioni che non dispongono di infrastruttura di gestione dei dispositivi, o che hanno bisogno di gestire le impostazioni per gli utenti su dispositivi non gestiti.
+Questo approccio è progettato per le organizzazioni che non dispongono di infrastrutture di gestione dei dispositivi, o che hanno la necessità di gestire le impostazioni per gli utenti su dispositivi non gestiti.
 
 <Note>
-  Le impostazioni gestite dal server sono in beta pubblico e disponibili per i clienti di [Claude for Teams](https://claude.com/pricing#team-&-enterprise) e [Claude for Enterprise](https://anthropic.com/contact-sales). Le funzionalità potrebbero evolversi prima della disponibilità generale.
+  Le impostazioni gestite dal server sono in beta pubblico e disponibili per i clienti di [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) e [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise). Le funzionalità potrebbero evolversi prima della disponibilità generale.
 </Note>
 
 ## Requisiti
@@ -37,13 +37,13 @@ Se i vostri dispositivi sono registrati in una soluzione MDM o di gestione degli
 
 <Steps>
   <Step title="Aprire la console di amministrazione">
-    In [Claude.ai](https://claude.ai), navigate a **Admin Settings > Claude Code > Managed settings**.
+    In [Claude.ai](https://claude.ai), navigare a **Admin Settings > Claude Code > Managed settings**.
   </Step>
 
   <Step title="Definire le impostazioni">
     Aggiungere la configurazione come JSON. Tutte le [impostazioni disponibili in `settings.json`](/it/settings#available-settings) sono supportate, incluse le [impostazioni solo gestite](/it/permissions#managed-only-settings) come `disableBypassPermissionsMode`.
 
-    Questo esempio applica un elenco di negazione delle autorizzazioni e impedisce agli utenti di aggirare le autorizzazioni:
+    Questo esempio applica un elenco di negazione delle autorizzazioni e impedisce agli utenti di ignorare le autorizzazioni:
 
     ```json  theme={null}
     {
@@ -53,9 +53,9 @@ Se i vostri dispositivi sono registrati in una soluzione MDM o di gestione degli
           "Read(./.env)",
           "Read(./.env.*)",
           "Read(./secrets/**)"
-        ]
-      },
-      "disableBypassPermissionsMode": "disable"
+        ],
+        "disableBypassPermissionsMode": "disable"
+      }
     }
     ```
   </Step>
@@ -83,7 +83,7 @@ Limitare l'accesso al personale di fiducia, poiché le modifiche alle impostazio
 Le impostazioni gestite dal server hanno le seguenti limitazioni durante il periodo beta:
 
 * Le impostazioni si applicano uniformemente a tutti gli utenti dell'organizzazione. Le configurazioni per gruppo non sono ancora supportate.
-* Le [configurazioni MCP server](/it/mcp#managed-mcp-configuration) non possono essere distribuite tramite impostazioni gestite dal server.
+* Le [configurazioni del server MCP](/it/mcp#managed-mcp-configuration) non possono essere distribuite tramite impostazioni gestite dal server.
 
 ## Consegna delle impostazioni
 
@@ -115,7 +115,7 @@ Determinate impostazioni che potrebbero comportare rischi di sicurezza richiedon
 
 * **Impostazioni dei comandi shell**: impostazioni che eseguono comandi shell
 * **Variabili di ambiente personalizzate**: variabili non nell'elenco di sicurezza noto
-* **Configurazioni hook**: qualsiasi definizione di hook
+* **Configurazioni di hook**: qualsiasi definizione di hook
 
 Quando queste impostazioni sono presenti, gli utenti vedono una finestra di dialogo di sicurezza che spiega cosa viene configurato. Gli utenti devono approvare per procedere. Se un utente rifiuta le impostazioni, Claude Code esce.
 
@@ -140,7 +140,7 @@ Gli eventi di audit includono il tipo di azione eseguita, l'account e il disposi
 
 ## Considerazioni sulla sicurezza
 
-Le impostazioni gestite dal server forniscono l'applicazione centralizzata delle politiche, ma operano come un controllo lato client. Su dispositivi non gestiti, gli utenti con accesso amministratore o sudo possono modificare il binario di Claude Code, il filesystem, o la configurazione di rete.
+Le impostazioni gestite dal server forniscono l'applicazione centralizzata dei criteri, ma operano come un controllo lato client. Su dispositivi non gestiti, gli utenti con accesso amministratore o sudo possono modificare il binario di Claude Code, il filesystem, o la configurazione di rete.
 
 | Scenario                                                          | Comportamento                                                                                                                                                    |
 | :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -159,6 +159,6 @@ Per garanzie di applicazione più forti, utilizzare le [impostazioni gestite dal
 Pagine correlate per la gestione della configurazione di Claude Code:
 
 * [Settings](/it/settings): riferimento di configurazione completo incluse tutte le impostazioni disponibili
-* [Endpoint-managed settings](/it/settings#settings-files): impostazioni gestite distribuite ai dispositivi da IT
+* [Endpoint-managed settings](/it/settings#settings-files): impostazioni gestite distribuite ai dispositivi dal reparto IT
 * [Authentication](/it/authentication): configurare l'accesso degli utenti a Claude Code
 * [Security](/it/security): salvaguardie di sicurezza e best practice

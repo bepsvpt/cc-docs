@@ -28,6 +28,7 @@ Les alias de modèle offrent un moyen pratique de sélectionner les paramètres 
 | **`opus`**       | Utilise le dernier modèle Opus (actuellement Opus 4.6) pour les tâches de raisonnement complexe                                                                                               |
 | **`haiku`**      | Utilise le modèle Haiku rapide et efficace pour les tâches simples                                                                                                                            |
 | **`sonnet[1m]`** | Utilise Sonnet avec une [fenêtre de contexte de 1 million de tokens](https://platform.claude.com/docs/fr/build-with-claude/context-windows#1m-token-context-window) pour les sessions longues |
+| **`opus[1m]`**   | Utilise Opus avec une [fenêtre de contexte de 1 million de tokens](https://platform.claude.com/docs/fr/build-with-claude/context-windows#1m-token-context-window) pour les sessions longues   |
 | **`opusplan`**   | Mode spécial qui utilise `opus` pendant le mode plan, puis bascule vers `sonnet` pour l'exécution                                                                                             |
 
 Les alias pointent toujours vers la dernière version. Pour épingler une version spécifique, utilisez le nom de modèle complet (par exemple, `claude-opus-4-6`) ou définissez la variable d'environnement correspondante comme `ANTHROPIC_DEFAULT_OPUS_MODEL`.
@@ -76,7 +77,7 @@ Lorsque `availableModels` est défini, les utilisateurs ne peuvent pas basculer 
 
 ### Comportement du modèle par défaut
 
-L'option Par défaut dans le sélecteur de modèle n'est pas affectée par `availableModels`. Elle reste toujours disponible et représente la valeur par défaut du runtime du système [basée sur le niveau d'abonnement de l'utilisateur](#default-model-setting).
+L'option Par défaut dans le sélecteur de modèle n'est pas affectée par `availableModels`. Elle reste toujours disponible et représente la valeur par défaut du système [basée sur le niveau d'abonnement de l'utilisateur](#default-model-setting).
 
 Même avec `availableModels: []`, les utilisateurs peuvent toujours utiliser Claude Code avec le modèle Par défaut pour leur niveau.
 
@@ -85,7 +86,7 @@ Même avec `availableModels: []`, les utilisateurs peuvent toujours utiliser Cla
 Pour contrôler complètement l'expérience du modèle, utilisez `availableModels` avec le paramètre `model` :
 
 * **availableModels** : restreint ce vers quoi les utilisateurs peuvent basculer
-* **model** : définit le remplacement de modèle explicite, prenant la priorité sur le Par défaut
+* **model** : définit le remplacement de modèle explicite, prenant la priorité sur la valeur Par défaut
 
 Cet exemple garantit que tous les utilisateurs exécutent Sonnet 4.6 et ne peuvent choisir qu'entre Sonnet et Haiku :
 
@@ -123,47 +124,51 @@ Cela vous donne le meilleur des deux mondes : le raisonnement supérieur d'Opus 
 
 ### Ajuster le niveau d'effort
 
-Les [niveaux d'effort](https://platform.claude.com/docs/fr/build-with-claude/effort) contrôlent le raisonnement adaptatif, qui alloue dynamiquement la réflexion en fonction de la complexité de la tâche. Un effort inférieur est plus rapide et moins cher pour les tâches simples, tandis qu'un effort supérieur fournit un raisonnement plus approfondi pour les problèmes complexes.
+Les [niveaux d'effort](https://platform.claude.com/docs/fr/build-with-claude/effort) contrôlent le raisonnement adaptatif, qui alloue dynamiquement la réflexion en fonction de la complexité de la tâche. Un effort inférieur est plus rapide et moins cher pour les tâches simples, tandis qu'un effort supérieur fournit un raisonnement plus profond pour les problèmes complexes.
 
-Trois niveaux sont disponibles : **low**, **medium** et **high**. Opus 4.6 utilise par défaut un effort moyen pour les abonnés Max et Team.
+Trois niveaux persistent entre les sessions : **low**, **medium** et **high**. Un quatrième niveau, **max**, fournit le raisonnement le plus profond sans contrainte sur les dépenses en tokens, donc les réponses sont plus lentes et coûtent plus cher qu'à `high`. `max` est disponible uniquement sur Opus 4.6 et s'applique à la session actuelle sans persister. Opus 4.6 utilise par défaut un effort moyen pour les abonnés Max et Team.
 
 **Définir l'effort :**
 
+* **`/effort`** : exécutez `/effort low`, `/effort medium`, `/effort high` ou `/effort max` pour changer le niveau, ou `/effort auto` pour réinitialiser à la valeur par défaut du modèle
 * **Dans `/model`** : utilisez les touches fléchées gauche/droite pour ajuster le curseur d'effort lors de la sélection d'un modèle
-* **Variable d'environnement** : définissez `CLAUDE_CODE_EFFORT_LEVEL=low|medium|high`
-* **Paramètres** : définissez `effortLevel` dans votre fichier de paramètres
+* **Drapeau `--effort`** : passez `low`, `medium`, `high` ou `max` pour définir le niveau pour une seule session lors du lancement de Claude Code
+* **Variable d'environnement** : définissez `CLAUDE_CODE_EFFORT_LEVEL` sur `low`, `medium`, `high`, `max` ou `auto`
+* **Paramètres** : définissez `effortLevel` dans votre fichier de paramètres sur `"low"`, `"medium"` ou `"high"`
 
-L'effort est pris en charge sur Opus 4.6 et Sonnet 4.6. Le curseur d'effort apparaît dans `/model` lorsqu'un modèle pris en charge est sélectionné. Le niveau d'effort actuel est également affiché à côté du logo et du spinner (par exemple, « with low effort »), afin que vous puissiez confirmer quel paramètre est actif sans ouvrir `/model`.
+La variable d'environnement prend la priorité, puis votre niveau configuré, puis la valeur par défaut du modèle.
 
-Pour désactiver le raisonnement adaptatif sur Opus 4.6 et Sonnet 4.6 et revenir au budget de réflexion fixe précédent, définissez `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1`. Lorsqu'il est désactivé, ces modèles utilisent le budget fixe contrôlé par `MAX_THINKING_TOKENS`. Voir [variables d'environnement](/fr/settings#environment-variables).
+L'effort est pris en charge sur Opus 4.6 et Sonnet 4.6. Le curseur d'effort apparaît dans `/model` lorsqu'un modèle pris en charge est sélectionné. Le niveau d'effort actuel est également affiché à côté du logo et du spinner, par exemple « with low effort », vous pouvez donc confirmer quel paramètre est actif sans ouvrir `/model`.
+
+Pour désactiver le raisonnement adaptatif sur Opus 4.6 et Sonnet 4.6 et revenir au budget de réflexion fixe précédent, définissez `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1`. Lorsqu'il est désactivé, ces modèles utilisent le budget fixe contrôlé par `MAX_THINKING_TOKENS`. Voir [variables d'environnement](/fr/env-vars).
 
 ### Contexte étendu
 
 Opus 4.6 et Sonnet 4.6 prennent en charge une [fenêtre de contexte de 1 million de tokens](https://platform.claude.com/docs/fr/build-with-claude/context-windows#1m-token-context-window) pour les sessions longues avec de grandes bases de code.
 
-<Note>
-  La fenêtre de contexte 1M est actuellement en bêta. Les fonctionnalités, la tarification et la disponibilité peuvent changer.
-</Note>
+La disponibilité varie selon le modèle et le plan. Sur les plans Max, Team et Enterprise, Opus est automatiquement mis à niveau vers un contexte 1M sans configuration supplémentaire. Cela s'applique aux sièges Team Standard et Team Premium.
 
-Le contexte étendu est disponible pour :
+| Plan                            | Opus 4.6 avec contexte 1M                                                                                                     | Sonnet 4.6 avec contexte 1M                                                                                                   |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Max, Team et Enterprise         | Inclus dans l'abonnement                                                                                                      | Nécessite une [utilisation supplémentaire](https://support.claude.com/fr/articles/12429409-extra-usage-for-paid-claude-plans) |
+| Pro                             | Nécessite une [utilisation supplémentaire](https://support.claude.com/fr/articles/12429409-extra-usage-for-paid-claude-plans) | Nécessite une [utilisation supplémentaire](https://support.claude.com/fr/articles/12429409-extra-usage-for-paid-claude-plans) |
+| API et paiement à l'utilisation | Accès complet                                                                                                                 | Accès complet                                                                                                                 |
 
-* **Utilisateurs API et pay-as-you-go** : accès complet au contexte 1M
-* **Abonnés Pro, Max, Teams et Enterprise** : disponible avec [utilisation supplémentaire](https://support.claude.com/fr/articles/12429409-extra-usage-for-paid-claude-plans) activée
+Pour désactiver complètement le contexte 1M, définissez `CLAUDE_CODE_DISABLE_1M_CONTEXT=1`. Cela supprime les variantes de modèle 1M du sélecteur de modèle. Voir [variables d'environnement](/fr/env-vars).
 
-Pour désactiver complètement le contexte 1M, définissez `CLAUDE_CODE_DISABLE_1M_CONTEXT=1`. Cela supprime les variantes de modèle 1M du sélecteur de modèle. Voir [variables d'environnement](/fr/settings#environment-variables).
-
-La sélection d'un modèle 1M ne change pas immédiatement la facturation. Votre session utilise les tarifs standard jusqu'à ce qu'elle dépasse 200K tokens de contexte. Au-delà de 200K tokens, les demandes sont facturées à la [tarification du contexte long](https://platform.claude.com/docs/fr/about-claude/pricing#long-context-pricing) avec des [limites de débit](https://platform.claude.com/docs/fr/api/rate-limits#long-context-rate-limits) dédiées. Pour les abonnés, les tokens au-delà de 200K sont facturés comme utilisation supplémentaire plutôt que par le biais de l'abonnement.
+La fenêtre de contexte 1M utilise la tarification standard du modèle sans prime pour les tokens au-delà de 200 K. Pour les plans où le contexte étendu est inclus dans votre abonnement, l'utilisation reste couverte par votre abonnement. Pour les plans qui accèdent au contexte étendu via une utilisation supplémentaire, les tokens sont facturés à l'utilisation supplémentaire.
 
 Si votre compte prend en charge le contexte 1M, l'option apparaît dans le sélecteur de modèle (`/model`) dans les dernières versions de Claude Code. Si vous ne la voyez pas, essayez de redémarrer votre session.
 
 Vous pouvez également utiliser le suffixe `[1m]` avec les alias de modèle ou les noms de modèle complets :
 
 ```bash  theme={null}
-# Utiliser l'alias sonnet[1m]
+# Utiliser l'alias opus[1m] ou sonnet[1m]
+/model opus[1m]
 /model sonnet[1m]
 
 # Ou ajouter [1m] à un nom de modèle complet
-/model claude-sonnet-4-6[1m]
+/model claude-opus-4-6[1m]
 ```
 
 ## Vérifier votre modèle actuel
@@ -190,7 +195,7 @@ Remarque : `ANTHROPIC_SMALL_FAST_MODEL` est déprécié au profit de `ANTHROPIC_
 
 Lors du déploiement de Claude Code via [Bedrock](/fr/amazon-bedrock), [Vertex AI](/fr/google-vertex-ai) ou [Foundry](/fr/microsoft-foundry), épinglez les versions de modèle avant de les déployer auprès des utilisateurs.
 
-Sans épinglage, Claude Code utilise les alias de modèle (`sonnet`, `opus`, `haiku`) qui se résolvent à la dernière version. Lorsqu'Anthropic publie un nouveau modèle, les utilisateurs dont les comptes n'ont pas la nouvelle version activée échoueront silencieusement.
+Sans épinglage, Claude Code utilise les alias de modèle (`sonnet`, `opus`, `haiku`) qui se résolvent à la dernière version. Lorsqu'Anthropic publie un nouveau modèle, les utilisateurs dont les comptes n'ont pas la nouvelle version activée se cassent silencieusement.
 
 <Warning>
   Définissez les trois variables d'environnement de modèle sur des ID de version spécifiques dans le cadre de votre configuration initiale. Ignorer cette étape signifie qu'une mise à jour de Claude Code peut casser vos utilisateurs sans aucune action de votre part.
@@ -205,6 +210,14 @@ Utilisez les variables d'environnement suivantes avec des ID de modèle spécifi
 | Foundry     | `export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6'`                 |
 
 Appliquez le même modèle pour `ANTHROPIC_DEFAULT_SONNET_MODEL` et `ANTHROPIC_DEFAULT_HAIKU_MODEL`. Pour les ID de modèle actuels et hérités sur tous les fournisseurs, voir [Aperçu des modèles](https://platform.claude.com/docs/fr/about-claude/models/overview). Pour mettre à niveau les utilisateurs vers une nouvelle version de modèle, mettez à jour ces variables d'environnement et redéployez.
+
+Pour activer le [contexte étendu](#extended-context) pour un modèle épinglé, ajoutez `[1m]` à l'ID du modèle dans `ANTHROPIC_DEFAULT_OPUS_MODEL` ou `ANTHROPIC_DEFAULT_SONNET_MODEL` :
+
+```bash  theme={null}
+export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6[1m]'
+```
+
+Le suffixe `[1m]` applique la fenêtre de contexte 1M à toute utilisation de cet alias, y compris `opusplan`. Claude Code supprime le suffixe avant d'envoyer l'ID du modèle à votre fournisseur. N'ajoutez `[1m]` que lorsque le modèle sous-jacent prend en charge le contexte 1M, comme Opus 4.6 ou Sonnet 4.6.
 
 <Note>
   La liste d'autorisation `settings.availableModels` s'applique toujours lors de l'utilisation de fournisseurs tiers. Le filtrage correspond à l'alias de modèle (`opus`, `sonnet`, `haiku`), et non à l'ID de modèle spécifique au fournisseur.
@@ -247,4 +260,4 @@ Claude Code utilise automatiquement la [mise en cache des invites](https://platf
 | `DISABLE_PROMPT_CACHING_SONNET` | Définissez sur `1` pour désactiver la mise en cache des invites pour les modèles Sonnet uniquement                                      |
 | `DISABLE_PROMPT_CACHING_OPUS`   | Définissez sur `1` pour désactiver la mise en cache des invites pour les modèles Opus uniquement                                        |
 
-Ces variables d'environnement vous donnent un contrôle granulaire sur le comportement de la mise en cache des invites. Le paramètre global `DISABLE_PROMPT_CACHING` prend la priorité sur les paramètres spécifiques au modèle, ce qui vous permet de désactiver rapidement toute la mise en cache si nécessaire. Les paramètres par modèle sont utiles pour un contrôle sélectif, par exemple lors du débogage de modèles spécifiques ou du travail avec des fournisseurs cloud qui peuvent avoir des implémentations de mise en cache différentes.
+Ces variables d'environnement vous donnent un contrôle granulaire sur le comportement de la mise en cache des invites. Le paramètre global `DISABLE_PROMPT_CACHING` prend la priorité sur les paramètres spécifiques au modèle, vous permettant de désactiver rapidement toute la mise en cache si nécessaire. Les paramètres par modèle sont utiles pour un contrôle sélectif, par exemple lors du débogage de modèles spécifiques ou du travail avec des fournisseurs cloud qui peuvent avoir des implémentations de mise en cache différentes.

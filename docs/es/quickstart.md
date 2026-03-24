@@ -15,7 +15,7 @@ Asegúrate de tener:
 * Una terminal o símbolo del sistema abiertos
   * Si nunca has usado la terminal antes, consulta la [guía de terminal](/es/terminal-guide)
 * Un proyecto de código con el que trabajar
-* Una [suscripción a Claude](https://claude.com/pricing) (Pro, Max, Teams o Enterprise), una cuenta de [Claude Console](https://console.anthropic.com/), o acceso a través de un [proveedor de nube compatible](/es/third-party-integrations)
+* Una [suscripción a Claude](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_prereq) (Pro, Max, Teams o Enterprise), una cuenta de [Claude Console](https://console.anthropic.com/), o acceso a través de un [proveedor de nube compatible](/es/third-party-integrations)
 
 <Note>
   Esta guía cubre la CLI de terminal. Claude Code también está disponible en la [web](https://claude.ai/code), como una [aplicación de escritorio](/es/desktop), en [VS Code](/es/vs-code) e [IDEs de JetBrains](/es/jetbrains), en [Slack](/es/slack), y en CI/CD con [GitHub Actions](/es/github-actions) y [GitLab](/es/gitlab-ci-cd). Consulta [todas las interfaces](/es/overview#use-claude-code-everywhere).
@@ -89,8 +89,8 @@ claude
 
 Puedes iniciar sesión usando cualquiera de estos tipos de cuenta:
 
-* [Claude Pro, Max, Teams o Enterprise](https://claude.com/pricing) (recomendado)
-* [Claude Console](https://console.anthropic.com/) (acceso a API con créditos prepagados). En el primer inicio de sesión, se crea automáticamente un espacio de trabajo "Claude Code" en la Consola para el seguimiento centralizado de costos.
+* [Claude Pro, Max, Teams o Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_login) (recomendado)
+* [Claude Console](https://console.anthropic.com/) (acceso a API con créditos prepagados). En el primer inicio de sesión, se crea automáticamente un espacio de trabajo "Claude Code" en la Console para el seguimiento centralizado de costos.
 * [Amazon Bedrock, Google Vertex AI o Microsoft Foundry](/es/third-party-integrations) (proveedores de nube empresariales)
 
 Una vez que hayas iniciado sesión, tus credenciales se almacenan y no necesitarás iniciar sesión nuevamente. Para cambiar de cuenta más tarde, usa el comando `/login`.
@@ -162,7 +162,7 @@ Claude Code hará lo siguiente:
 
 1. Encontrará el archivo apropiado
 2. Te mostrará los cambios propuestos
-3. Pedirá tu aprobación
+3. Te pedirá tu aprobación
 4. Realizará la edición
 
 <Note>
@@ -297,11 +297,11 @@ Para más información, consulta [mejores prácticas](/es/best-practices) y [flu
     ```
 
     ```text  theme={null}
-    construye un panel que muestre los productos que nuestros clientes del Reino Unido devuelven con mayor frecuencia
+    construye un panel que muestre los productos que nuestros clientes del Reino Unido devuelven con más frecuencia
     ```
   </Accordion>
 
-  <Accordion title="Ahorra tiempo con atajos">
+  <Accordion title="Ahorra tiempo con atajos de teclado">
     * Presiona `?` para ver todos los atajos de teclado disponibles
     * Usa Tab para completar comandos
     * Presiona ↑ para el historial de comandos

@@ -15,7 +15,7 @@ Stellen Sie sicher, dass Sie folgende Voraussetzungen erfüllen:
 * Ein offenes Terminal oder eine offene Eingabeaufforderung
   * Wenn Sie das Terminal noch nie verwendet haben, lesen Sie den [Terminal-Leitfaden](/de/terminal-guide)
 * Ein Codeprojekt zum Arbeiten
-* Ein [Claude-Abonnement](https://claude.com/pricing) (Pro, Max, Teams oder Enterprise), ein [Claude Console](https://console.anthropic.com/)-Konto oder Zugriff über einen [unterstützten Cloud-Anbieter](/de/third-party-integrations)
+* Ein [Claude-Abonnement](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_prereq) (Pro, Max, Teams oder Enterprise), ein [Claude Console](https://console.anthropic.com/)-Konto oder Zugriff über einen [unterstützten Cloud-Anbieter](/de/third-party-integrations)
 
 <Note>
   Diese Anleitung behandelt die Terminal-CLI. Claude Code ist auch im [Web](https://claude.ai/code) verfügbar, als [Desktop-App](/de/desktop), in [VS Code](/de/vs-code) und [JetBrains IDEs](/de/jetbrains), in [Slack](/de/slack) und in CI/CD mit [GitHub Actions](/de/github-actions) und [GitLab](/de/gitlab-ci-cd). Siehe [alle Schnittstellen](/de/overview#use-claude-code-everywhere).
@@ -89,7 +89,7 @@ claude
 
 Sie können sich mit einem dieser Kontotypen anmelden:
 
-* [Claude Pro, Max, Teams oder Enterprise](https://claude.com/pricing) (empfohlen)
+* [Claude Pro, Max, Teams oder Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_login) (empfohlen)
 * [Claude Console](https://console.anthropic.com/) (API-Zugriff mit Prepaid-Guthaben). Bei der ersten Anmeldung wird automatisch ein „Claude Code"-Arbeitsbereich in der Console erstellt, um die Kosten zentral zu verfolgen.
 * [Amazon Bedrock, Google Vertex AI oder Microsoft Foundry](/de/third-party-integrations) (Enterprise-Cloud-Anbieter)
 
@@ -104,7 +104,7 @@ cd /path/to/your/project
 claude
 ```
 
-Sie sehen den Claude Code-Willkommensbildschirm mit Ihren Sitzungsinformationen, kürzlichen Unterhaltungen und den neuesten Updates. Geben Sie `/help` ein, um verfügbare Befehle anzuzeigen, oder `/resume`, um eine vorherige Unterhaltung fortzusetzen.
+Sie sehen den Claude Code-Willkommensbildschirm mit Ihren Sitzungsinformationen, kürzlichen Gesprächen und den neuesten Updates. Geben Sie `/help` ein, um verfügbare Befehle anzuzeigen, oder `/resume`, um ein vorheriges Gespräch fortzusetzen.
 
 <Tip>
   Nach der Anmeldung (Schritt 2) werden Ihre Anmeldedaten auf Ihrem System gespeichert. Weitere Informationen finden Sie unter [Verwaltung von Anmeldedaten](/de/authentication#credential-management).
@@ -171,7 +171,7 @@ Claude Code wird:
 
 ## Schritt 6: Verwenden Sie Git mit Claude Code
 
-Claude Code macht Git-Operationen gesprächig:
+Claude Code macht Git-Operationen konversativ:
 
 ```text  theme={null}
 what files have I changed?
@@ -254,26 +254,26 @@ review my changes and suggest improvements
 
 Hier sind die wichtigsten Befehle für die tägliche Nutzung:
 
-| Befehl              | Was er tut                                              | Beispiel                            |
-| ------------------- | ------------------------------------------------------- | ----------------------------------- |
-| `claude`            | Interaktiven Modus starten                              | `claude`                            |
-| `claude "task"`     | Eine einmalige Aufgabe ausführen                        | `claude "fix the build error"`      |
-| `claude -p "query"` | Einmalige Abfrage ausführen und dann beenden            | `claude -p "explain this function"` |
-| `claude -c`         | Letzte Unterhaltung im aktuellen Verzeichnis fortsetzen | `claude -c`                         |
-| `claude -r`         | Eine vorherige Unterhaltung fortsetzen                  | `claude -r`                         |
-| `claude commit`     | Einen Git-Commit erstellen                              | `claude commit`                     |
-| `/clear`            | Unterhaltungsverlauf löschen                            | `/clear`                            |
-| `/help`             | Verfügbare Befehle anzeigen                             | `/help`                             |
-| `exit` oder Strg+C  | Claude Code beenden                                     | `exit`                              |
+| Befehl              | Was er tut                                           | Beispiel                            |
+| ------------------- | ---------------------------------------------------- | ----------------------------------- |
+| `claude`            | Interaktiven Modus starten                           | `claude`                            |
+| `claude "task"`     | Eine einmalige Aufgabe ausführen                     | `claude "fix the build error"`      |
+| `claude -p "query"` | Einmalige Abfrage ausführen und dann beenden         | `claude -p "explain this function"` |
+| `claude -c`         | Letztes Gespräch im aktuellen Verzeichnis fortsetzen | `claude -c`                         |
+| `claude -r`         | Ein vorheriges Gespräch fortsetzen                   | `claude -r`                         |
+| `claude commit`     | Einen Git-Commit erstellen                           | `claude commit`                     |
+| `/clear`            | Gesprächsverlauf löschen                             | `/clear`                            |
+| `/help`             | Verfügbare Befehle anzeigen                          | `/help`                             |
+| `exit` oder Ctrl+C  | Claude Code beenden                                  | `exit`                              |
 
 Siehe die [CLI-Referenz](/de/cli-reference) für eine vollständige Liste der Befehle.
 
-## Profitipps für Anfänger
+## Tipps für Anfänger
 
 Weitere Informationen finden Sie unter [Best Practices](/de/best-practices) und [häufige Arbeitsabläufe](/de/common-workflows).
 
 <AccordionGroup>
-  <Accordion title="Seien Sie spezifisch bei Ihren Anfragen">
+  <Accordion title="Seien Sie spezifisch mit Ihren Anfragen">
     Statt: 'Beheben Sie den Fehler"
 
     Versuchen Sie: „Beheben Sie den Login-Fehler, bei dem Benutzer einen leeren Bildschirm sehen, nachdem sie falsche Anmeldedaten eingegeben haben"
@@ -319,14 +319,14 @@ Nachdem Sie die Grundlagen gelernt haben, erkunden Sie erweiterte Funktionen:
   </Card>
 
   <Card title="Best Practices" icon="star" href="/de/best-practices">
-    Erzielen Sie bessere Ergebnisse mit effektivem Prompting und Projektsetup
+    Erzielen Sie bessere Ergebnisse mit effektiven Prompts und Projektsetup
   </Card>
 
   <Card title="Häufige Arbeitsabläufe" icon="graduation-cap" href="/de/common-workflows">
     Schritt-für-Schritt-Anleitungen für häufige Aufgaben
   </Card>
 
-  <Card title="Claude Code erweitern" icon="puzzle-piece" href="/de/features-overview">
+  <Card title="Erweitern Sie Claude Code" icon="puzzle-piece" href="/de/features-overview">
     Passen Sie mit CLAUDE.md, skills, hooks, MCP und mehr an
   </Card>
 </CardGroup>
@@ -335,4 +335,4 @@ Nachdem Sie die Grundlagen gelernt haben, erkunden Sie erweiterte Funktionen:
 
 * **In Claude Code**: Geben Sie `/help` ein oder fragen Sie „how do I..."
 * **Dokumentation**: Sie sind hier! Durchsuchen Sie andere Leitfäden
-* **Community**: Treten Sie unserem [Discord](https://www.anthropic.com/discord) bei, um Tipps und Support zu erhalten
+* **Community**: Treten Sie unserem [Discord](https://www.anthropic.com/discord) bei, um Tipps und Unterstützung zu erhalten

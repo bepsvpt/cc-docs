@@ -6,7 +6,7 @@
 
 > 프록시 서버, 사용자 정의 인증 기관(CA), 상호 전송 계층 보안(mTLS) 인증을 통해 엔터프라이즈 환경에서 Claude Code를 구성합니다.
 
-Claude Code는 환경 변수를 통해 다양한 엔터프라이즈 네트워크 및 보안 구성을 지원합니다. 여기에는 기업 프록시 서버를 통한 트래픽 라우팅, 사용자 정의 인증 기관(CA) 신뢰, 향상된 보안을 위한 상호 전송 계층 보안(mTLS) 인증서를 사용한 인증이 포함됩니다.
+Claude Code는 환경 변수를 통해 다양한 엔터프라이즈 네트워크 및 보안 구성을 지원합니다. 여기에는 회사 프록시 서버를 통한 트래픽 라우팅, 사용자 정의 인증 기관(CA) 신뢰, 향상된 보안을 위한 상호 전송 계층 보안(mTLS) 인증서를 사용한 인증이 포함됩니다.
 
 <Note>
   이 페이지에 표시된 모든 환경 변수는 [`settings.json`](/ko/settings)에서도 구성할 수 있습니다.
@@ -55,7 +55,7 @@ export HTTPS_PROXY=http://username:password@proxy.example.com:8080
 
 ## 사용자 정의 CA 인증서
 
-엔터프라이즈 환경에서 HTTPS 연결을 위해 사용자 정의 CA를 사용하는 경우(프록시를 통하든 직접 API 액세스를 통하든) Claude Code를 구성하여 이를 신뢰하도록 합니다:
+엔터프라이즈 환경에서 HTTPS 연결(프록시를 통하든 직접 API 액세스를 통하든)에 사용자 정의 CA를 사용하는 경우 Claude Code를 구성하여 이를 신뢰하도록 합니다:
 
 ```bash  theme={null}
 export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
@@ -84,10 +84,12 @@ Claude Code는 다음 URL에 대한 액세스가 필요합니다:
 * `claude.ai`: claude.ai 계정 인증
 * `platform.claude.com`: Anthropic Console 계정 인증
 
-프록시 구성 및 방화벽 규칙에서 이러한 URL이 허용 목록에 있는지 확인하십시오. 이는 특히 컨테이너화되거나 제한된 네트워크 환경에서 Claude Code를 사용할 때 중요합니다.
+이러한 URL이 프록시 구성 및 방화벽 규칙에서 허용 목록에 있는지 확인하십시오. 이는 특히 컨테이너화되거나 제한된 네트워크 환경에서 Claude Code를 사용할 때 중요합니다.
+
+[웹의 Claude Code](/ko/claude-code-on-the-web) 및 [Code Review](/ko/code-review)는 Anthropic 관리 인프라에서 리포지토리에 연결합니다. GitHub Enterprise Cloud 조직이 IP 주소로 액세스를 제한하는 경우 [설치된 GitHub Apps에 대한 IP 허용 목록 상속 활성화](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps)를 수행하십시오. Claude GitHub App은 IP 범위를 등록하므로 이 설정을 활성화하면 수동 구성 없이 액세스할 수 있습니다. 대신 [범위를 허용 목록에 수동으로 추가](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address)하거나 다른 방화벽을 구성하려면 [Anthropic API IP 주소](https://platform.claude.com/docs/en/api/ip-addresses)를 참조하십시오.
 
 ## 추가 리소스
 
 * [Claude Code 설정](/ko/settings)
-* [환경 변수 참조](/ko/settings#environment-variables)
+* [환경 변수 참조](/ko/env-vars)
 * [문제 해결 가이드](/ko/troubleshooting)

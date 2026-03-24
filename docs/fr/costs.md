@@ -165,7 +165,7 @@ Votre fichier [CLAUDE.md](/fr/memory) est chargé en contexte au démarrage de l
 
 ### Ajuster la réflexion étendue
 
-La réflexion étendue est activée par défaut avec un budget de 31 999 tokens car elle améliore considérablement les performances sur les tâches complexes de planification et de raisonnement. Cependant, les tokens de réflexion sont facturés comme des tokens de sortie, donc pour les tâches plus simples où un raisonnement approfondi n'est pas nécessaire, vous pouvez réduire les coûts en abaissant le [niveau d'effort](/fr/model-config#adjust-effort-level) dans `/model` pour Opus 4.6, en désactivant la réflexion dans `/config`, ou en abaissant le budget (par exemple, `MAX_THINKING_TOKENS=8000`).
+La réflexion étendue est activée par défaut avec un budget de 31 999 tokens car elle améliore considérablement les performances sur les tâches complexes de planification et de raisonnement. Cependant, les tokens de réflexion sont facturés comme des tokens de sortie, donc pour les tâches plus simples où un raisonnement approfondi n'est pas nécessaire, vous pouvez réduire les coûts en abaissant le [niveau d'effort](/fr/model-config#adjust-effort-level) avec `/effort` ou dans `/model`, en désactivant la réflexion dans `/config`, ou en abaissant le budget (par exemple, `MAX_THINKING_TOKENS=8000`).
 
 ### Déléguer les opérations détaillées aux subagents
 

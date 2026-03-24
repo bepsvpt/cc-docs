@@ -44,7 +44,7 @@ Las herramientas integradas generalmente se dividen en cinco categorías, cada u
 | **Web**                    | Buscar en la web, obtener documentación, buscar mensajes de error                                                                                                                            |
 | **Inteligencia de código** | Ver errores de tipo y advertencias después de ediciones, saltar a definiciones, encontrar referencias (requiere [plugins de inteligencia de código](/es/discover-plugins#code-intelligence)) |
 
-Estas son las capacidades principales. Claude también tiene herramientas para generar subagents, hacerle preguntas y otras tareas de orquestación. Consulte [Herramientas disponibles para Claude](/es/settings#tools-available-to-claude) para la lista completa.
+Estas son las capacidades principales. Claude también tiene herramientas para generar subagents, hacerle preguntas y otras tareas de orquestación. Consulte [Herramientas disponibles para Claude](/es/tools-reference) para la lista completa.
 
 Claude elige qué herramientas usar basándose en su indicación y lo que aprende en el camino. Cuando dice "arreglar las pruebas fallidas", Claude podría:
 
@@ -69,7 +69,7 @@ Cuando ejecuta `claude` en un directorio, Claude Code obtiene acceso a:
 * **Su terminal.** Cualquier comando que pueda ejecutar: herramientas de compilación, git, gestores de paquetes, utilidades del sistema, scripts. Si puede hacerlo desde la línea de comandos, Claude también puede.
 * **Su estado de git.** Rama actual, cambios sin confirmar e historial de confirmaciones recientes.
 * **Su [CLAUDE.md](/es/memory).** Un archivo markdown donde almacena instrucciones específicas del proyecto, convenciones y contexto que Claude debe conocer en cada sesión.
-* **[Memoria automática](/es/memory#auto-memory).** Aprendizajes que Claude guarda automáticamente mientras trabaja, como patrones de proyecto y sus preferencias. Las primeras 200 líneas de MEMORY.md se cargan al inicio de cada sesión.
+* **[Auto memory](/es/memory#auto-memory).** Aprendizajes que Claude guarda automáticamente mientras trabaja, como patrones de proyecto y sus preferencias. Las primeras 200 líneas de MEMORY.md se cargan al inicio de cada sesión.
 * **Extensiones que configure.** [Servidores MCP](/es/mcp) para servicios externos, [skills](/es/skills) para flujos de trabajo, [subagents](/es/sub-agents) para trabajo delegado y [Claude en Chrome](/es/chrome) para interacción del navegador.
 
 Debido a que Claude ve todo su proyecto, puede trabajar en él. Cuando le pide a Claude que "arregle el error de autenticación", busca archivos relevantes, lee múltiples archivos para entender el contexto, realiza ediciones coordinadas en ellos, ejecuta pruebas para verificar la corrección y confirma los cambios si lo solicita. Esto es diferente de los asistentes de código en línea que solo ven el archivo actual.
@@ -85,7 +85,7 @@ Claude Code se ejecuta en tres entornos, cada uno con diferentes compensaciones 
 | Entorno            | Dónde se ejecuta el código                | Caso de uso                                                            |
 | ------------------ | ----------------------------------------- | ---------------------------------------------------------------------- |
 | **Local**          | Su máquina                                | Predeterminado. Acceso completo a sus archivos, herramientas y entorno |
-| **Nube**           | VMs administradas por Anthropic           | Delegar tareas, trabajar en repositorios que no tiene localmente       |
+| **Cloud**          | VMs administradas por Anthropic           | Delegar tareas, trabajar en repositorios que no tiene localmente       |
 | **Control remoto** | Su máquina, controlada desde un navegador | Usar la interfaz web mientras mantiene todo local                      |
 
 ### Interfaces
@@ -96,7 +96,7 @@ Puede acceder a Claude Code a través de la terminal, la [aplicación de escrito
 
 Claude Code guarda su conversación localmente mientras trabaja. Cada mensaje, uso de herramienta y resultado se almacena, lo que permite [rebobinar](#undo-changes-with-checkpoints), [reanudar y bifurcar](#resume-or-fork-sessions) sesiones. Antes de que Claude realice cambios de código, también toma una instantánea de los archivos afectados para que pueda revertir si es necesario.
 
-**Las sesiones son independientes.** Cada nueva sesión comienza con una ventana de contexto nueva, sin el historial de conversación de sesiones anteriores. Claude puede persistir aprendizajes entre sesiones usando [memoria automática](/es/memory#auto-memory), y puede agregar sus propias instrucciones persistentes en [CLAUDE.md](/es/memory).
+**Las sesiones son independientes.** Cada nueva sesión comienza con una ventana de contexto nueva, sin el historial de conversación de sesiones anteriores. Claude puede persistir aprendizajes entre sesiones usando [auto memory](/es/memory#auto-memory), y puede agregar sus propias instrucciones persistentes en [CLAUDE.md](/es/memory).
 
 ### Trabajar entre ramas
 
@@ -124,7 +124,7 @@ Esto crea un nuevo ID de sesión mientras preserva el historial de conversación
 
 ### La ventana de contexto
 
-La ventana de contexto de Claude contiene el historial de conversación, contenidos de archivos, salidas de comandos, [CLAUDE.md](/es/memory), skills cargados e instrucciones del sistema. A medida que trabaja, el contexto se llena. Claude se compacta automáticamente, pero las instrucciones del principio de la conversación pueden perderse. Coloque reglas persistentes en CLAUDE.md y ejecute `/context` para ver qué está usando espacio.
+La ventana de contexto de Claude contiene el historial de su conversación, contenidos de archivos, salidas de comandos, [CLAUDE.md](/es/memory), skills cargadas e instrucciones del sistema. A medida que trabaja, el contexto se llena. Claude se compacta automáticamente, pero las instrucciones del principio de la conversación pueden perderse. Coloque reglas persistentes en CLAUDE.md y ejecute `/context` para ver qué está usando espacio.
 
 #### Cuando el contexto se llena
 
@@ -138,11 +138,11 @@ Ejecute `/context` para ver qué está usando espacio. Los servidores MCP agrega
 
 Más allá de la compactación, puede usar otras características para controlar qué se carga en el contexto.
 
-[Skills](/es/skills) se cargan bajo demanda. Claude ve descripciones de skills al inicio de la sesión, pero el contenido completo solo se carga cuando se usa un skill. Para skills que invoca manualmente, establezca `disable-model-invocation: true` para mantener descripciones fuera del contexto hasta que las necesite.
+[Skills](/es/skills) se cargan bajo demanda. Claude ve descripciones de skills al inicio de la sesión, pero el contenido completo solo se carga cuando se usa una skill. Para skills que invoca manualmente, establezca `disable-model-invocation: true` para mantener descripciones fuera del contexto hasta que las necesite.
 
 [Subagents](/es/sub-agents) obtienen su propio contexto nuevo, completamente separado de su conversación principal. Su trabajo no infla su contexto. Cuando terminan, devuelven un resumen. Este aislamiento es por qué los subagents ayudan con sesiones largas.
 
-Consulte [costos de contexto](/es/features-overview#understand-context-costs) para lo que cuesta cada característica y [reducir uso de tokens](/es/costs#reduce-token-usage) para consejos sobre gestión de contexto.
+Consulte [costos de contexto](/es/features-overview#understand-context-costs) para lo que cuesta cada característica y [reducir el uso de tokens](/es/costs#reduce-token-usage) para consejos sobre cómo gestionar el contexto.
 
 ## Manténgase seguro con checkpoints y permisos
 
@@ -162,7 +162,7 @@ Presione `Shift+Tab` para ciclar a través de modos de permiso:
 * **Auto-aceptar ediciones**: Claude edita archivos sin preguntar, aún pregunta por comandos
 * **Plan Mode**: Claude usa solo herramientas de solo lectura, creando un plan que puede aprobar antes de la ejecución
 
-También puede permitir comandos específicos en `.claude/settings.json` para que Claude no pregunte cada vez. Esto es útil para comandos confiables como `npm test` o `git status`. Los ajustes pueden tener alcance desde políticas de toda la organización hasta preferencias personales. Consulte [Permisos](/es/permissions) para detalles.
+También puede permitir comandos específicos en `.claude/settings.json` para que Claude no pregunte cada vez. Esto es útil para comandos confiables como `npm test` o `git status`. La configuración puede tener alcance desde políticas de toda la organización hasta preferencias personales. Consulte [Permisos](/es/permissions) para detalles.
 
 ***
 
@@ -230,8 +230,8 @@ Para trabajo visual, pegue una captura de pantalla del diseño y pida a Claude q
 Para problemas complejos, separe la investigación de la codificación. Use plan mode (`Shift+Tab` dos veces) para analizar la base de código primero:
 
 ```text  theme={null}
-Leer src/auth/ y entender cómo manejamos sesiones.
-Luego crear un plan para agregar soporte OAuth.
+Lea src/auth/ y entienda cómo manejamos sesiones.
+Luego cree un plan para agregar soporte OAuth.
 ```
 
 Revise el plan, refínelo a través de la conversación, luego deje que Claude implemente. Este enfoque de dos fases produce mejores resultados que saltar directamente al código.
@@ -251,7 +251,7 @@ No necesita especificar qué archivos leer o qué comandos ejecutar. Claude lo d
 
 <CardGroup cols={2}>
   <Card title="Extender con características" icon="puzzle-piece" href="/es/features-overview">
-    Agregar Skills, conexiones MCP y comandos personalizados
+    Agregue Skills, conexiones MCP y comandos personalizados
   </Card>
 
   <Card title="Flujos de trabajo comunes" icon="graduation-cap" href="/es/common-workflows">

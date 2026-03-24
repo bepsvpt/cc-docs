@@ -7,10 +7,10 @@
 > Claude Code で高速モードを切り替えて、Opus 4.6 のレスポンスを高速化します。
 
 <Note>
-  高速モードは[リサーチプレビュー](#research-preview)段階です。機能、価格、および利用可能性はフィードバックに基づいて変更される可能性があります。
+  高速モードは[リサーチプレビュー](#research-preview)段階です。機能、価格設定、および利用可能性はフィードバックに基づいて変更される可能性があります。
 </Note>
 
-高速モードは Claude Opus 4.6 の高速構成で、モデルを 2.5 倍高速化しますが、トークンあたりのコストが高くなります。迅速な反復やライブデバッグなどのインタラクティブな作業で速度が必要な場合は `/fast` でオンにし、コストがレイテンシーより重要な場合はオフにします。
+高速モードは Claude Opus 4.6 の高速構成で、モデルを 2.5 倍高速化しますが、トークンあたりのコストは高くなります。迅速な反復やライブデバッグなどのインタラクティブな作業で速度が必要な場合は `/fast` でオンにし、コストがレイテンシーより重要な場合はオフにします。
 
 高速モードは異なるモデルではありません。同じ Opus 4.6 を使用していますが、コスト効率よりも速度を優先する異なる API 構成です。同じ品質と機能が得られ、レスポンスが高速化されるだけです。
 
@@ -22,21 +22,21 @@
 
 * Claude Code CLI で `/fast` を使用して高速モードをオンにします。Claude Code VS Code Extension でも `/fast` で利用可能です。
 * Opus 4.6 の高速モード価格は \$30/150 MTok から始まります。高速モードは 2 月 16 日午後 11 時 59 分 PT まですべてのプランで 50% 割引で利用可能です。
-* すべての Claude Code ユーザーがサブスクリプションプラン（Pro/Max/Team/Enterprise）および Claude Console で利用可能です。
+* サブスクリプションプラン（Pro/Max/Team/Enterprise）の Claude Code ユーザーと Claude Console のすべてのユーザーが利用可能です。
 * サブスクリプションプラン（Pro/Max/Team/Enterprise）の Claude Code ユーザーの場合、高速モードは追加使用量のみで利用可能であり、サブスクリプションレート制限に含まれていません。
 
-このページでは、[高速モードの切り替え](#toggle-fast-mode)、その[コストのトレードオフ](#understand-the-cost-tradeoff)、[使用時期の判断](#decide-when-to-use-fast-mode)、[要件](#requirements)、[セッションごとのオプトイン](#require-per-session-opt-in)、および[レート制限の処理](#handle-rate-limits)について説明します。
+このページでは、[高速モードの切り替え](#toggle-fast-mode)、[コストのトレードオフ](#understand-the-cost-tradeoff)、[使用時期の判断](#decide-when-to-use-fast-mode)、[要件](#requirements)、[セッションごとのオプトイン](#require-per-session-opt-in)、および[レート制限の処理](#handle-rate-limits)について説明します。
 
 ## 高速モードの切り替え
 
 次のいずれかの方法で高速モードを切り替えます：
 
 * `/fast` と入力して Tab キーを押してオンまたはオフに切り替える
-* ユーザー設定ファイルで `"fastMode": true` を設定する（[/ja/settings](/ja/settings)）
+* [ユーザー設定ファイル](/ja/settings)で `"fastMode": true` を設定する
 
-デフォルトでは、高速モードはセッション間で保持されます。管理者は高速モードを各セッションでリセットするように構成できます。詳細は[セッションごとのオプトインが必要](#require-per-session-opt-in)を参照してください。
+デフォルトでは、高速モードはセッション全体で保持されます。管理者は高速モードを各セッションでリセットするように構成できます。詳細は[セッションごとのオプトインが必要](#require-per-session-opt-in)を参照してください。
 
-最適なコスト効率を得るには、会話の途中で切り替えるのではなく、セッションの開始時に高速モードを有効にしてください。詳細は[コストのトレードオフを理解する](#understand-the-cost-tradeoff)を参照してください。
+最高のコスト効率を得るには、会話の途中で切り替えるのではなく、セッションの開始時に高速モードを有効にします。詳細は[コストのトレードオフを理解する](#understand-the-cost-tradeoff)を参照してください。
 
 高速モードを有効にすると：
 
@@ -45,7 +45,7 @@
 * 高速モードがアクティブな間、プロンプトの横に小さい `↯` アイコンが表示されます
 * いつでも `/fast` を再度実行して、高速モードがオンかオフかを確認できます
 
-`/fast` を再度実行して高速モードを無効にすると、Opus 4.6 に留まります。モデルは以前のモデルに戻りません。別のモデルに切り替えるには、`/model` を使用してください。
+`/fast` を再度実行して高速モードを無効にすると、Opus 4.6 に留まります。モデルは以前のモデルに戻りません。別のモデルに切り替えるには、`/model` を使用します。
 
 ## コストのトレードオフを理解する
 
@@ -58,7 +58,7 @@
 
 高速モードは 1M トークン拡張コンテキストウィンドウと互換性があります。
 
-会話の途中で高速モードに切り替えると、会話コンテキスト全体に対して完全な高速モードキャッシュなし入力トークン価格を支払います。これは最初から高速モードを有効にした場合よりもコストがかかります。
+会話の途中で高速モードに切り替えると、会話コンテキスト全体に対して完全な高速モードキャッシュなし入力トークン価格を支払います。これは最初から高速モードを有効にした場合よりもコストが高くなります。
 
 ## 高速モードの使用時期を判断する
 
@@ -76,7 +76,7 @@
 
 ### 高速モードと努力レベル
 
-高速モードと努力レベルはどちらもレスポンス速度に影響しますが、異なる方法で影響します：
+高速モードと努力レベルはどちらもレスポンス速度に影響しますが、方法が異なります：
 
 | 設定          | 効果                                  |
 | ----------- | ----------------------------------- |
@@ -90,7 +90,7 @@
 高速モードには以下のすべてが必要です：
 
 * **サードパーティクラウドプロバイダーでは利用不可**：高速モードは Amazon Bedrock、Google Vertex AI、または Microsoft Azure Foundry では利用できません。高速モードは Anthropic Console API および追加使用量を使用する Claude サブスクリプションプランで利用可能です。
-* **追加使用量が有効**：アカウントで追加使用量が有効になっている必要があります。これにより、プランに含まれる使用量を超えて請求できます。個人アカウントの場合、[Console 請求設定](https://platform.claude.com/settings/organization/billing)で有効にしてください。Teams および Enterprise の場合、管理者が組織の追加使用量を有効にする必要があります。
+* **追加使用量が有効**：アカウントで追加使用量が有効になっている必要があります。これにより、プランに含まれる使用量を超えて請求できます。個人アカウントの場合、[Console 請求設定](https://platform.claude.com/settings/organization/billing)で有効にします。Teams および Enterprise の場合、管理者が組織の追加使用量を有効にする必要があります。
 
 <Note>
   高速モード使用量は、プランに残りの使用量がある場合でも、追加使用量に直接請求されます。これは、高速モードトークンがプランに含まれる使用量にカウントされず、最初のトークンから高速モード料金で請求されることを意味します。
@@ -106,14 +106,14 @@
 
 管理者は以下で高速モードを有効にできます：
 
-* **Console**（API カスタマー）：[Claude Code 設定](https://platform.claude.com/claude-code/preferences)
+* **Console**（API カスタマー）：[Claude Code preferences](https://platform.claude.com/claude-code/preferences)
 * **Claude AI**（Teams および Enterprise）：[Admin Settings > Claude Code](https://claude.ai/admin-settings/claude-code)
 
-高速モードを完全に無効にするもう 1 つのオプションは、`CLAUDE_CODE_DISABLE_FAST_MODE=1` を設定することです。[環境変数](/ja/settings#environment-variables)を参照してください。
+高速モードを完全に無効にするもう 1 つのオプションは、`CLAUDE_CODE_DISABLE_FAST_MODE=1` を設定することです。[環境変数](/ja/env-vars)を参照してください。
 
 ### セッションごとのオプトインが必要
 
-デフォルトでは、高速モードはセッション間で保持されます：ユーザーが高速モードを有効にすると、将来のセッションでもオンのままです。[Teams](https://claude.com/pricing#team-&-enterprise) または [Enterprise](https://anthropic.com/contact-sales) プランの管理者は、[管理設定](/ja/settings#settings-files)または[サーバー管理設定](/ja/server-managed-settings)で `fastModePerSessionOptIn` を `true` に設定することでこれを防ぐことができます。これにより、各セッションは高速モードがオフで開始され、ユーザーが `/fast` で明示的に有効にする必要があります。
+デフォルトでは、高速モードはセッション全体で保持されます：ユーザーが高速モードを有効にすると、将来のセッションでもオンのままです。[Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise) または [Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise) プランの管理者は、[管理設定](/ja/settings#settings-files)または[サーバー管理設定](/ja/server-managed-settings)で `fastModePerSessionOptIn` を `true` に設定することでこれを防ぐことができます。これにより、各セッションは高速モードがオフで開始され、ユーザーが `/fast` で明示的に有効にする必要があります。
 
 ```json  theme={null}
 {
@@ -132,14 +132,14 @@
 3. 標準速度と価格で作業を続けます
 4. クールダウンが終了すると、高速モードは自動的に再度有効になります
 
-クールダウンを待つ代わりに高速モードを手動で無効にするには、`/fast` を再度実行してください。
+クールダウンを待つ代わりに高速モードを手動で無効にするには、`/fast` を再度実行します。
 
 ## リサーチプレビュー
 
 高速モードはリサーチプレビュー機能です。これは以下を意味します：
 
 * 機能はフィードバックに基づいて変更される可能性があります
-* 利用可能性と価格は変更される可能性があります
+* 利用可能性と価格設定は変更される可能性があります
 * 基盤となる API 構成は進化する可能性があります
 
 通常の Anthropic サポートチャネルを通じて問題またはフィードバックを報告してください。

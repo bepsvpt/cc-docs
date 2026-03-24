@@ -11,7 +11,7 @@ As configurações gerenciadas pelo servidor permitem que administradores config
 Essa abordagem foi projetada para organizações que não possuem infraestrutura de gerenciamento de dispositivos ou precisam gerenciar configurações para usuários em dispositivos não gerenciados.
 
 <Note>
-  As configurações gerenciadas pelo servidor estão em beta público e disponíveis para clientes do [Claude for Teams](https://claude.com/pricing#team-&-enterprise) e [Claude for Enterprise](https://anthropic.com/contact-sales). Os recursos podem evoluir antes da disponibilidade geral.
+  As configurações gerenciadas pelo servidor estão em beta público e disponíveis para clientes do [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) e [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise). Os recursos podem evoluir antes da disponibilidade geral.
 </Note>
 
 ## Requisitos
@@ -22,16 +22,16 @@ Para usar configurações gerenciadas pelo servidor, você precisa de:
 * Claude Code versão 2.1.38 ou posterior para Claude for Teams, ou versão 2.1.30 ou posterior para Claude for Enterprise
 * Acesso de rede a `api.anthropic.com`
 
-## Escolha entre configurações gerenciadas pelo servidor e gerenciadas por endpoint
+## Escolha entre configurações gerenciadas pelo servidor e gerenciadas pelo endpoint
 
-O Claude Code suporta duas abordagens para configuração centralizada. As configurações gerenciadas pelo servidor entregam a configuração dos servidores da Anthropic. As [configurações gerenciadas por endpoint](/pt/settings#settings-files) são implantadas diretamente em dispositivos através de políticas nativas do SO (preferências gerenciadas do macOS, registro do Windows) ou arquivos de configurações gerenciadas.
+O Claude Code suporta duas abordagens para configuração centralizada. As configurações gerenciadas pelo servidor entregam a configuração dos servidores da Anthropic. As [configurações gerenciadas pelo endpoint](/pt/settings#settings-files) são implantadas diretamente em dispositivos através de políticas nativas do SO (preferências gerenciadas do macOS, registro do Windows) ou arquivos de configurações gerenciadas.
 
-| Abordagem                                                                 | Melhor para                                                       | Modelo de segurança                                                                                                                      |
-| :------------------------------------------------------------------------ | :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
-| **Configurações gerenciadas pelo servidor**                               | Organizações sem MDM, ou usuários em dispositivos não gerenciados | Configurações entregues dos servidores da Anthropic no momento da autenticação                                                           |
-| **[Configurações gerenciadas por endpoint](/pt/settings#settings-files)** | Organizações com MDM ou gerenciamento de endpoint                 | Configurações implantadas em dispositivos via perfis de configuração MDM, políticas de registro ou arquivos de configurações gerenciadas |
+| Abordagem                                                                  | Melhor para                                                       | Modelo de segurança                                                                                                                      |
+| :------------------------------------------------------------------------- | :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| **Configurações gerenciadas pelo servidor**                                | Organizações sem MDM, ou usuários em dispositivos não gerenciados | Configurações entregues dos servidores da Anthropic no momento da autenticação                                                           |
+| **[Configurações gerenciadas pelo endpoint](/pt/settings#settings-files)** | Organizações com MDM ou gerenciamento de endpoint                 | Configurações implantadas em dispositivos via perfis de configuração MDM, políticas de registro ou arquivos de configurações gerenciadas |
 
-Se seus dispositivos estão inscritos em uma solução MDM ou gerenciamento de endpoint, as configurações gerenciadas por endpoint fornecem garantias de segurança mais fortes porque o arquivo de configurações pode ser protegido contra modificação do usuário no nível do SO.
+Se seus dispositivos estão inscritos em uma solução MDM ou gerenciamento de endpoint, as configurações gerenciadas pelo endpoint fornecem garantias de segurança mais fortes porque o arquivo de configurações pode ser protegido contra modificação do usuário no nível do SO.
 
 ## Configurar configurações gerenciadas pelo servidor
 
@@ -53,9 +53,9 @@ Se seus dispositivos estão inscritos em uma solução MDM ou gerenciamento de e
           "Read(./.env)",
           "Read(./.env.*)",
           "Read(./secrets/**)"
-        ]
-      },
-      "disableBypassPermissionsMode": "disable"
+        ],
+        "disableBypassPermissionsMode": "disable"
+      }
     }
     ```
   </Step>
@@ -89,7 +89,7 @@ As configurações gerenciadas pelo servidor têm as seguintes limitações dura
 
 ### Precedência de configurações
 
-As configurações gerenciadas pelo servidor e as [configurações gerenciadas por endpoint](/pt/settings#settings-files) ocupam o nível mais alto na [hierarquia de configurações](/pt/settings#settings-precedence) do Claude Code. Nenhum outro nível de configurações pode substituí-las, incluindo argumentos de linha de comando. Quando ambas estão presentes, as configurações gerenciadas pelo servidor têm precedência e as configurações gerenciadas por endpoint não são usadas.
+As configurações gerenciadas pelo servidor e as [configurações gerenciadas pelo endpoint](/pt/settings#settings-files) ocupam o nível mais alto na [hierarquia de configurações](/pt/settings#settings-precedence) do Claude Code. Nenhum outro nível de configurações pode substituí-las, incluindo argumentos de linha de comando. Quando ambas estão presentes, as configurações gerenciadas pelo servidor têm precedência e as configurações gerenciadas pelo endpoint não são usadas.
 
 ### Comportamento de busca e cache
 
@@ -115,7 +115,7 @@ Certas configurações que podem representar riscos de segurança exigem aprova�
 
 * **Configurações de comando shell**: configurações que executam comandos shell
 * **Variáveis de ambiente personalizadas**: variáveis não na lista de permissão segura conhecida
-* **Configurações de hook**: qualquer definição de hook
+* **Configurações de hooks**: qualquer definição de hook
 
 Quando essas configurações estão presentes, os usuários veem uma caixa de diálogo de segurança explicando o que está sendo configurado. Os usuários devem aprovar para prosseguir. Se um usuário rejeitar as configurações, o Claude Code sai.
 
@@ -152,13 +152,13 @@ As configurações gerenciadas pelo servidor fornecem aplicação de política c
 
 Para detectar alterações de configuração em tempo de execução, use [hooks `ConfigChange`](/pt/hooks#configchange) para registrar modificações ou bloquear alterações não autorizadas antes que entrem em vigor.
 
-Para garantias de aplicação mais fortes, use [configurações gerenciadas por endpoint](/pt/settings#settings-files) em dispositivos inscritos em uma solução MDM.
+Para garantias de aplicação mais fortes, use [configurações gerenciadas pelo endpoint](/pt/settings#settings-files) em dispositivos inscritos em uma solução MDM.
 
 ## Veja também
 
 Páginas relacionadas para gerenciar a configuração do Claude Code:
 
 * [Settings](/pt/settings): referência de configuração completa incluindo todas as configurações disponíveis
-* [Configurações gerenciadas por endpoint](/pt/settings#settings-files): configurações gerenciadas implantadas em dispositivos por TI
+* [Configurações gerenciadas pelo endpoint](/pt/settings#settings-files): configurações gerenciadas implantadas em dispositivos por TI
 * [Authentication](/pt/authentication): configure o acesso do usuário ao Claude Code
 * [Security](/pt/security): salvaguardas de segurança e melhores práticas

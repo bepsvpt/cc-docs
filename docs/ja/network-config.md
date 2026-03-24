@@ -6,7 +6,7 @@
 
 > プロキシサーバー、カスタム認証局（CA）、相互 Transport Layer Security（mTLS）認証を使用して、エンタープライズ環境向けに Claude Code を設定します。
 
-Claude Code は、環境変数を通じてさまざまなエンタープライズネットワークおよびセキュリティ設定をサポートしています。これには、企業プロキシサーバーを経由したトラフィックのルーティング、カスタム認証局（CA）の信頼、およびセキュリティ強化のための相互 Transport Layer Security（mTLS）証明書による認証が含まれます。
+Claude Code は、環境変数を通じてさまざまなエンタープライズネットワークおよびセキュリティ設定をサポートしています。これには、企業プロキシサーバーを通じたトラフィックのルーティング、カスタム認証局（CA）の信頼、および強化されたセキュリティのための相互 Transport Layer Security（mTLS）証明書による認証が含まれます。
 
 <Note>
   このページに表示されているすべての環境変数は、[`settings.json`](/ja/settings) でも設定できます。
@@ -84,10 +84,12 @@ Claude Code は以下の URL へのアクセスが必要です。
 * `claude.ai`：claude.ai アカウント用の認証
 * `platform.claude.com`：Anthropic Console アカウント用の認証
 
-これらの URL がプロキシ設定とファイアウォールルールでホワイトリストに登録されていることを確認してください。これは、Claude Code をコンテナ化された環境または制限されたネットワーク環境で使用する場合に特に重要です。
+これらの URL がプロキシ設定とファイアウォールルールでホワイトリストに登録されていることを確認してください。これは、特にコンテナ化された環境または制限されたネットワーク環境で Claude Code を使用する場合に重要です。
+
+[Claude Code on the web](/ja/claude-code-on-the-web) および [Code Review](/ja/code-review) は、Anthropic が管理するインフラストラクチャからリポジトリに接続します。GitHub Enterprise Cloud 組織が IP アドレスによるアクセスを制限している場合は、[インストール済み GitHub Apps の IP 許可リスト継承を有効にします](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps)。Claude GitHub App は IP 範囲を登録するため、この設定を有効にするとマニュアル設定なしでアクセスが可能になります。代わりに[範囲を許可リストに手動で追加する](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address)場合、または他のファイアウォールを設定する場合は、[Anthropic API IP アドレス](https://platform.claude.com/docs/en/api/ip-addresses) を参照してください。
 
 ## その他のリソース
 
 * [Claude Code 設定](/ja/settings)
-* [環境変数リファレンス](/ja/settings#environment-variables)
+* [環境変数リファレンス](/ja/env-vars)
 * [トラブルシューティングガイド](/ja/troubleshooting)

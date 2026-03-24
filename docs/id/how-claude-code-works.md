@@ -16,7 +16,7 @@ Ketika Anda memberikan tugas kepada Claude, Claude bekerja melalui tiga fase: **
 
 <img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/agentic-loop.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=5f1827dec8539f38adee90ead3a85a38" alt="Loop agentic: Prompt Anda mengarah ke Claude mengumpulkan konteks, mengambil tindakan, memverifikasi hasil, dan mengulangi sampai tugas selesai. Anda dapat mengganggu kapan saja." width="720" height="280" data-path="images/agentic-loop.svg" />
 
-Loop beradaptasi dengan apa yang Anda minta. Pertanyaan tentang codebase Anda mungkin hanya memerlukan pengumpulan konteks. Perbaikan bug melakukan siklus melalui ketiga fase berulang kali. Refactor mungkin melibatkan verifikasi ekstensif. Claude memutuskan apa yang setiap langkah butuhkan berdasarkan apa yang dipelajarinya dari langkah sebelumnya, menghubungkan puluhan tindakan bersama-sama dan melakukan koreksi jalur di sepanjang jalan.
+Loop beradaptasi dengan apa yang Anda minta. Pertanyaan tentang codebase Anda mungkin hanya memerlukan pengumpulan konteks. Perbaikan bug melakukan siklus melalui ketiga fase berulang kali. Refactor mungkin melibatkan verifikasi ekstensif. Claude memutuskan apa yang setiap langkah perlukan berdasarkan apa yang dipelajarinya dari langkah sebelumnya, menghubungkan puluhan tindakan bersama-sama dan melakukan koreksi jalur di sepanjang jalan.
 
 Anda juga bagian dari loop ini. Anda dapat mengganggu kapan saja untuk mengarahkan Claude ke arah yang berbeda, memberikan konteks tambahan, atau memintanya mencoba pendekatan yang berbeda. Claude bekerja secara otonom tetapi tetap responsif terhadap input Anda.
 
@@ -36,15 +36,15 @@ Tools adalah apa yang membuat Claude Code agentic. Tanpa tools, Claude hanya dap
 
 Tools bawaan umumnya terbagi menjadi lima kategori, masing-masing mewakili jenis agency yang berbeda.
 
-| Kategori              | Apa yang dapat dilakukan Claude                                                                                                                                            |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **File operations**   | Membaca file, mengedit kode, membuat file baru, mengganti nama dan mengorganisir ulang                                                                                     |
-| **Search**            | Menemukan file berdasarkan pola, mencari konten dengan regex, menjelajahi codebase                                                                                         |
-| **Execution**         | Menjalankan perintah shell, memulai server, menjalankan test, menggunakan git                                                                                              |
-| **Web**               | Mencari web, mengambil dokumentasi, mencari pesan error                                                                                                                    |
-| **Code intelligence** | Melihat error tipe dan peringatan setelah edit, melompat ke definisi, menemukan referensi (memerlukan [code intelligence plugins](/id/discover-plugins#code-intelligence)) |
+| Kategori              | Apa yang dapat dilakukan Claude                                                                                                                                         |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **File operations**   | Membaca file, mengedit kode, membuat file baru, mengganti nama dan mengorganisir ulang                                                                                  |
+| **Search**            | Menemukan file berdasarkan pola, mencari konten dengan regex, menjelajahi codebase                                                                                      |
+| **Execution**         | Menjalankan perintah shell, memulai server, menjalankan test, menggunakan git                                                                                           |
+| **Web**               | Mencari web, mengambil dokumentasi, mencari pesan error                                                                                                                 |
+| **Code intelligence** | Melihat type error dan warning setelah edit, melompat ke definisi, menemukan referensi (memerlukan [code intelligence plugins](/id/discover-plugins#code-intelligence)) |
 
-Ini adalah kemampuan utama. Claude juga memiliki tools untuk spawning subagents, mengajukan pertanyaan kepada Anda, dan tugas orchestration lainnya. Lihat [Tools available to Claude](/id/settings#tools-available-to-claude) untuk daftar lengkap.
+Ini adalah kemampuan utama. Claude juga memiliki tools untuk spawning subagents, mengajukan pertanyaan kepada Anda, dan tugas orchestration lainnya. Lihat [Tools available to Claude](/id/tools-reference) untuk daftar lengkap.
 
 Claude memilih tools mana yang akan digunakan berdasarkan prompt Anda dan apa yang dipelajarinya di sepanjang jalan. Ketika Anda mengatakan "perbaiki test yang gagal," Claude mungkin:
 
@@ -74,7 +74,7 @@ Ketika Anda menjalankan `claude` di direktori, Claude Code mendapatkan akses ke:
 
 Karena Claude melihat seluruh proyek Anda, Claude dapat bekerja di seluruhnya. Ketika Anda meminta Claude untuk "perbaiki bug autentikasi," Claude mencari file yang relevan, membaca beberapa file untuk memahami konteks, membuat edit terkoordinasi di seluruhnya, menjalankan test untuk memverifikasi perbaikan, dan melakukan commit perubahan jika Anda meminta. Ini berbeda dari asisten kode inline yang hanya melihat file saat ini.
 
-## Lingkungan dan antarmuka
+## Lingkungan dan interface
 
 Loop agentic, tools, dan kemampuan yang dijelaskan di atas sama di mana pun Anda menggunakan Claude Code. Apa yang berubah adalah di mana kode dieksekusi dan bagaimana Anda berinteraksi dengannya.
 
@@ -82,45 +82,45 @@ Loop agentic, tools, dan kemampuan yang dijelaskan di atas sama di mana pun Anda
 
 Claude Code berjalan di tiga lingkungan, masing-masing dengan trade-off berbeda untuk di mana kode Anda dieksekusi.
 
-| Lingkungan         | Di mana kode berjalan                 | Use case                                                                    |
-| ------------------ | ------------------------------------- | --------------------------------------------------------------------------- |
-| **Local**          | Mesin Anda                            | Default. Akses penuh ke file, tools, dan lingkungan Anda                    |
-| **Cloud**          | VM yang dikelola Anthropic            | Mendelegasikan tugas, bekerja pada repo yang tidak Anda miliki secara lokal |
-| **Remote Control** | Mesin Anda, dikendalikan dari browser | Gunakan web UI sambil menjaga semuanya tetap lokal                          |
+| Lingkungan         | Di mana kode berjalan              | Use case                                                                    |
+| ------------------ | ---------------------------------- | --------------------------------------------------------------------------- |
+| **Local**          | Mesin Anda                         | Default. Akses penuh ke file, tools, dan lingkungan Anda                    |
+| **Cloud**          | VM yang dikelola Anthropic         | Mendelegasikan tugas, bekerja pada repo yang tidak Anda miliki secara lokal |
+| **Remote Control** | Mesin Anda, dikontrol dari browser | Gunakan web UI sambil menjaga semuanya tetap lokal                          |
 
-### Antarmuka
+### Interface
 
-Anda dapat mengakses Claude Code melalui terminal, [desktop app](/id/desktop), [IDE extensions](/id/ide-integrations), [claude.ai/code](https://claude.ai/code), [Remote Control](/id/remote-control), [Slack](/id/slack), dan [CI/CD pipelines](/id/github-actions). Antarmuka menentukan bagaimana Anda melihat dan berinteraksi dengan Claude, tetapi loop agentic yang mendasarinya identik. Lihat [Use Claude Code everywhere](/id/overview#use-claude-code-everywhere) untuk daftar lengkap.
+Anda dapat mengakses Claude Code melalui terminal, [desktop app](/id/desktop), [IDE extensions](/id/ide-integrations), [claude.ai/code](https://claude.ai/code), [Remote Control](/id/remote-control), [Slack](/id/slack), dan [CI/CD pipelines](/id/github-actions). Interface menentukan bagaimana Anda melihat dan berinteraksi dengan Claude, tetapi loop agentic yang mendasarinya identik. Lihat [Use Claude Code everywhere](/id/overview#use-claude-code-everywhere) untuk daftar lengkap.
 
-## Bekerja dengan sesi
+## Bekerja dengan session
 
-Claude Code menyimpan percakapan Anda secara lokal saat Anda bekerja. Setiap pesan, penggunaan tool, dan hasil disimpan, yang memungkinkan [rewinding](#undo-changes-with-checkpoints), [resuming, dan forking](#resume-or-fork-sessions) sesi. Sebelum Claude membuat perubahan kode, Claude juga membuat snapshot file yang terpengaruh sehingga Anda dapat mengembalikan jika diperlukan.
+Claude Code menyimpan percakapan Anda secara lokal saat Anda bekerja. Setiap pesan, penggunaan tool, dan hasil disimpan, yang memungkinkan [rewinding](#undo-changes-with-checkpoints), [resuming, dan forking](#resume-or-fork-sessions) session. Sebelum Claude membuat perubahan kode, Claude juga membuat snapshot file yang terpengaruh sehingga Anda dapat mengembalikan jika diperlukan.
 
-**Sesi bersifat independen.** Setiap sesi baru dimulai dengan context window segar, tanpa riwayat percakapan dari sesi sebelumnya. Claude dapat mempertahankan pembelajaran di seluruh sesi menggunakan [auto memory](/id/memory#auto-memory), dan Anda dapat menambahkan instruksi persisten Anda sendiri di [CLAUDE.md](/id/memory).
+**Session bersifat independen.** Setiap session baru dimulai dengan context window segar, tanpa riwayat percakapan dari session sebelumnya. Claude dapat mempertahankan pembelajaran di seluruh session menggunakan [auto memory](/id/memory#auto-memory), dan Anda dapat menambahkan instruksi persisten Anda sendiri di [CLAUDE.md](/id/memory).
 
 ### Bekerja di seluruh branch
 
-Setiap percakapan Claude Code adalah sesi yang terikat pada direktori saat ini Anda. Ketika Anda melanjutkan, Anda hanya melihat sesi dari direktori itu.
+Setiap percakapan Claude Code adalah session yang terikat pada direktori saat ini Anda. Ketika Anda melanjutkan, Anda hanya melihat session dari direktori itu.
 
 Claude melihat file branch saat ini Anda. Ketika Anda beralih branch, Claude melihat file branch baru, tetapi riwayat percakapan Anda tetap sama. Claude mengingat apa yang Anda diskusikan bahkan setelah beralih.
 
-Karena sesi terikat pada direktori, Anda dapat menjalankan sesi Claude paralel dengan menggunakan [git worktrees](/id/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees), yang membuat direktori terpisah untuk branch individual.
+Karena session terikat pada direktori, Anda dapat menjalankan session Claude paralel dengan menggunakan [git worktrees](/id/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees), yang membuat direktori terpisah untuk branch individual.
 
-### Resume atau fork sesi
+### Resume atau fork session
 
-Ketika Anda melanjutkan sesi dengan `claude --continue` atau `claude --resume`, Anda melanjutkan dari tempat Anda berhenti menggunakan ID sesi yang sama. Pesan baru ditambahkan ke percakapan yang ada. Riwayat percakapan lengkap Anda dipulihkan, tetapi izin yang dibatasi sesi tidak. Anda perlu menyetujui ulang.
+Ketika Anda melanjutkan session dengan `claude --continue` atau `claude --resume`, Anda melanjutkan dari tempat Anda berhenti menggunakan session ID yang sama. Pesan baru ditambahkan ke percakapan yang ada. Riwayat percakapan lengkap Anda dipulihkan, tetapi izin session-scoped tidak. Anda perlu menyetujui ulang.
 
-<img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/session-continuity.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=fa41d12bfb57579cabfeece907151d30" alt="Kontinuitas sesi: resume melanjutkan sesi yang sama, fork membuat branch baru dengan ID baru." width="560" height="280" data-path="images/session-continuity.svg" />
+<img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/session-continuity.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=fa41d12bfb57579cabfeece907151d30" alt="Kontinuitas session: resume melanjutkan session yang sama, fork membuat branch baru dengan ID baru." width="560" height="280" data-path="images/session-continuity.svg" />
 
-Untuk membuat cabang dan mencoba pendekatan berbeda tanpa mempengaruhi sesi asli, gunakan flag `--fork-session`:
+Untuk membuat cabang dan mencoba pendekatan berbeda tanpa mempengaruhi session asli, gunakan flag `--fork-session`:
 
 ```bash  theme={null}
 claude --continue --fork-session
 ```
 
-Ini membuat ID sesi baru sambil mempertahankan riwayat percakapan hingga titik itu. Sesi asli tetap tidak berubah. Seperti resume, sesi yang di-fork tidak mewarisi izin yang dibatasi sesi.
+Ini membuat session ID baru sambil mempertahankan riwayat percakapan hingga titik itu. Session asli tetap tidak berubah. Seperti resume, session yang di-fork tidak mewarisi izin session-scoped.
 
-**Sesi yang sama di beberapa terminal**: Jika Anda melanjutkan sesi yang sama di beberapa terminal, kedua terminal menulis ke file sesi yang sama. Pesan dari keduanya saling tumpang tindih, seperti dua orang menulis di notebook yang sama. Tidak ada yang rusak, tetapi percakapan menjadi kacau. Setiap terminal hanya melihat pesan miliknya sendiri selama sesi, tetapi jika Anda melanjutkan sesi itu nanti, Anda akan melihat semuanya saling tumpang tindih. Untuk pekerjaan paralel dari titik awal yang sama, gunakan `--fork-session` untuk memberikan setiap terminal sesi bersihnya sendiri.
+**Session yang sama di multiple terminal**: Jika Anda melanjutkan session yang sama di multiple terminal, kedua terminal menulis ke file session yang sama. Pesan dari keduanya saling tumpang tindih, seperti dua orang menulis di notebook yang sama. Tidak ada yang rusak, tetapi percakapan menjadi kacau. Setiap terminal hanya melihat pesan miliknya sendiri selama session, tetapi jika Anda melanjutkan session itu nanti, Anda akan melihat semuanya saling tumpang tindih. Untuk pekerjaan paralel dari titik awal yang sama, gunakan `--fork-session` untuk memberikan setiap terminal session bersihnya sendiri.
 
 ### Context window
 
@@ -138,21 +138,21 @@ Jalankan `/context` untuk melihat apa yang menggunakan ruang. MCP servers menamb
 
 Selain compacting, Anda dapat menggunakan fitur lain untuk mengontrol apa yang dimuat ke dalam konteks.
 
-[Skills](/id/skills) dimuat sesuai permintaan. Claude melihat deskripsi skill di awal sesi, tetapi konten lengkap hanya dimuat ketika skill digunakan. Untuk skill yang Anda panggil secara manual, atur `disable-model-invocation: true` untuk menjaga deskripsi keluar dari konteks sampai Anda membutuhkannya.
+[Skills](/id/skills) dimuat sesuai permintaan. Claude melihat deskripsi skill pada awal session, tetapi konten lengkap hanya dimuat ketika skill digunakan. Untuk skill yang Anda panggil secara manual, atur `disable-model-invocation: true` untuk menjaga deskripsi keluar dari konteks sampai Anda membutuhkannya.
 
-[Subagents](/id/sub-agents) mendapatkan konteks segar mereka sendiri, sepenuhnya terpisah dari percakapan utama Anda. Pekerjaan mereka tidak membengkak konteks Anda. Ketika selesai, mereka mengembalikan ringkasan. Isolasi ini adalah alasan mengapa subagents membantu dengan sesi panjang.
+[Subagents](/id/sub-agents) mendapatkan konteks segar mereka sendiri, sepenuhnya terpisah dari percakapan utama Anda. Pekerjaan mereka tidak membengkak konteks Anda. Ketika selesai, mereka mengembalikan ringkasan. Isolasi ini adalah alasan mengapa subagents membantu dengan session yang panjang.
 
 Lihat [context costs](/id/features-overview#understand-context-costs) untuk apa yang setiap fitur biayai, dan [reduce token usage](/id/costs#reduce-token-usage) untuk tips mengelola konteks.
 
-## Tetap aman dengan checkpoints dan permissions
+## Tetap aman dengan checkpoint dan permission
 
-Claude memiliki dua mekanisme keamanan: checkpoints memungkinkan Anda membatalkan perubahan file, dan permissions mengontrol apa yang dapat dilakukan Claude tanpa bertanya.
+Claude memiliki dua mekanisme keamanan: checkpoint memungkinkan Anda membatalkan perubahan file, dan permission mengontrol apa yang dapat dilakukan Claude tanpa bertanya.
 
-### Batalkan perubahan dengan checkpoints
+### Batalkan perubahan dengan checkpoint
 
-**Setiap edit file dapat dibalikkan.** Sebelum Claude mengedit file apa pun, Claude membuat snapshot konten saat ini. Jika ada yang salah, tekan `Esc` dua kali untuk kembali ke status sebelumnya, atau minta Claude untuk membatalkan.
+**Setiap edit file dapat dikembalikan.** Sebelum Claude mengedit file apa pun, Claude membuat snapshot konten saat ini. Jika ada yang salah, tekan `Esc` dua kali untuk kembali ke state sebelumnya, atau minta Claude untuk membatalkan.
 
-Checkpoints bersifat lokal untuk sesi Anda, terpisah dari git. Mereka hanya mencakup perubahan file. Tindakan yang mempengaruhi sistem jarak jauh (database, API, deployment) tidak dapat di-checkpoint, itulah mengapa Claude bertanya sebelum menjalankan perintah dengan efek samping eksternal.
+Checkpoint bersifat lokal untuk session Anda, terpisah dari git. Mereka hanya mencakup perubahan file. Tindakan yang mempengaruhi sistem remote (database, API, deployment) tidak dapat di-checkpoint, itulah mengapa Claude bertanya sebelum menjalankan perintah dengan efek samping eksternal.
 
 ### Kontrol apa yang dapat dilakukan Claude
 
@@ -162,7 +162,7 @@ Tekan `Shift+Tab` untuk melakukan siklus melalui mode permission:
 * **Auto-accept edits**: Claude mengedit file tanpa bertanya, masih bertanya untuk perintah
 * **Plan mode**: Claude hanya menggunakan tools read-only, membuat rencana yang dapat Anda setujui sebelum eksekusi
 
-Anda juga dapat mengizinkan perintah tertentu di `.claude/settings.json` sehingga Claude tidak bertanya setiap kali. Ini berguna untuk perintah terpercaya seperti `npm test` atau `git status`. Settings dapat dibatasi dari kebijakan organisasi-luas hingga preferensi pribadi. Lihat [Permissions](/id/permissions) untuk detail.
+Anda juga dapat mengizinkan perintah spesifik di `.claude/settings.json` sehingga Claude tidak bertanya setiap kali. Ini berguna untuk perintah terpercaya seperti `npm test` atau `git status`. Settings dapat dibatasi dari kebijakan organisasi-luas hingga preferensi pribadi. Lihat [Permissions](/id/permissions) untuk detail.
 
 ***
 
@@ -204,7 +204,7 @@ Anda dapat mengganggu Claude kapan saja. Jika Claude sedang menuju jalur yang sa
 
 ### Jadilah spesifik di awal
 
-Semakin presisi prompt awal Anda, semakin sedikit koreksi yang Anda butuhkan. Referensikan file tertentu, sebutkan batasan, dan tunjukkan pola contoh.
+Semakin presisi prompt awal Anda, semakin sedikit koreksi yang Anda perlukan. Referensikan file spesifik, sebutkan batasan, dan tunjukkan pola contoh.
 
 ```text  theme={null}
 Alur checkout rusak untuk pengguna dengan kartu yang kadaluarsa.

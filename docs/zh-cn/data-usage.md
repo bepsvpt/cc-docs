@@ -27,7 +27,7 @@
 
 当您在 Claude Code 中看到"Claude 在本次会话中表现如何？"提示时，对此调查的回应（包括选择"关闭"）仅记录您的数字评分（1、2、3 或关闭）。作为此调查的一部分，我们不收集或存储任何对话记录、输入、输出或其他会话数据。与竖起大拇指/竖起大拇指向下反馈或 `/bug` 报告不同，此会话质量调查是一个简单的产品满意度指标。您对此调查的回应不会影响您的数据训练偏好，也不能用于训练我们的 AI 模型。
 
-要禁用这些调查，请设置 `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`。当使用第三方提供商（Bedrock、Vertex、Foundry）或禁用遥测时，调查也会自动禁用。
+要禁用这些调查，请设置 `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`。当设置 `DISABLE_TELEMETRY` 或 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 时，调查也会被禁用。要控制频率而不是禁用，请在您的设置文件中将 [`feedbackSurveyRate`](/zh-CN/settings#available-settings) 设置为 `0` 到 `1` 之间的概率。
 
 ### 数据保留
 
@@ -53,7 +53,7 @@ Anthropic 根据您的账户类型和偏好保留 Claude Code 数据。
 
 ## 数据访问
 
-对于所有第一方用户，您可以了解更多关于为[本地 Claude Code](#local-claude-code-data-flow-and-dependencies) 和[远程 Claude Code](#cloud-execution-data-flow-and-dependencies) 记录的数据。[远程控制](/zh-CN/remote-control)会话遵循本地数据流，因为所有执行都发生在您的机器上。请注意，对于远程 Claude Code，Claude 访问您启动 Claude Code 会话的存储库。Claude 不访问您已连接但未在其中启动会话的存储库。
+对于所有第一方用户，您可以了解更多关于为[本地 Claude Code](#local-claude-code-data-flow-and-dependencies) 和[远程 Claude Code](#cloud-execution-data-flow-and-dependencies) 记录的数据。[Remote Control](/zh-CN/remote-control) 会话遵循本地数据流，因为所有执行都发生在您的机器上。请注意，对于远程 Claude Code，Claude 访问您启动 Claude Code 会话的存储库。Claude 不访问您已连接但未在其中启动会话的存储库。
 
 ## 本地 Claude Code：数据流和依赖关系
 
@@ -86,13 +86,13 @@ Claude Code 从用户的机器连接到 Sentry 以进行操作错误日志记录
 
 ## 按 API 提供商的默认行为
 
-默认情况下，当使用 Bedrock、Vertex 或 Foundry 时，我们禁用所有非必需的流量（包括错误报告、遥测、错误报告功能和会话质量调查）。您也可以通过设置 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 环境变量一次选择退出所有这些。以下是完整的默认行为：
+默认情况下，当使用 Bedrock、Vertex 或 Foundry 时，错误报告、遥测和错误报告被禁用。会话质量调查是例外，无论提供商如何都会出现。您可以通过设置 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 一次选择退出所有非必需的流量，包括调查。以下是完整的默认行为：
 
-| 服务                        | Claude API                                             | Vertex API                                 | Bedrock API                                 | Foundry API                                 |
-| ------------------------- | ------------------------------------------------------ | ------------------------------------------ | ------------------------------------------- | ------------------------------------------- |
-| **Statsig（指标）**           | 默认开启。<br />`DISABLE_TELEMETRY=1` 禁用。                   | 默认关闭。<br />`CLAUDE_CODE_USE_VERTEX` 必须为 1。 | 默认关闭。<br />`CLAUDE_CODE_USE_BEDROCK` 必须为 1。 | 默认关闭。<br />`CLAUDE_CODE_USE_FOUNDRY` 必须为 1。 |
-| **Sentry（错误）**            | 默认开启。<br />`DISABLE_ERROR_REPORTING=1` 禁用。             | 默认关闭。<br />`CLAUDE_CODE_USE_VERTEX` 必须为 1。 | 默认关闭。<br />`CLAUDE_CODE_USE_BEDROCK` 必须为 1。 | 默认关闭。<br />`CLAUDE_CODE_USE_FOUNDRY` 必须为 1。 |
-| **Claude API（`/bug` 报告）** | 默认开启。<br />`DISABLE_BUG_COMMAND=1` 禁用。                 | 默认关闭。<br />`CLAUDE_CODE_USE_VERTEX` 必须为 1。 | 默认关闭。<br />`CLAUDE_CODE_USE_BEDROCK` 必须为 1。 | 默认关闭。<br />`CLAUDE_CODE_USE_FOUNDRY` 必须为 1。 |
-| **会话质量调查**                | 默认开启。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 禁用。 | 默认关闭。<br />`CLAUDE_CODE_USE_VERTEX` 必须为 1。 | 默认关闭。<br />`CLAUDE_CODE_USE_BEDROCK` 必须为 1。 | 默认关闭。<br />`CLAUDE_CODE_USE_FOUNDRY` 必须为 1。 |
+| 服务                        | Claude API                                             | Vertex API                                             | Bedrock API                                            | Foundry API                                            |
+| ------------------------- | ------------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------ |
+| **Statsig（指标）**           | 默认开启。<br />`DISABLE_TELEMETRY=1` 禁用。                   | 默认关闭。<br />`CLAUDE_CODE_USE_VERTEX` 必须为 1。             | 默认关闭。<br />`CLAUDE_CODE_USE_BEDROCK` 必须为 1。            | 默认关闭。<br />`CLAUDE_CODE_USE_FOUNDRY` 必须为 1。            |
+| **Sentry（错误）**            | 默认开启。<br />`DISABLE_ERROR_REPORTING=1` 禁用。             | 默认关闭。<br />`CLAUDE_CODE_USE_VERTEX` 必须为 1。             | 默认关闭。<br />`CLAUDE_CODE_USE_BEDROCK` 必须为 1。            | 默认关闭。<br />`CLAUDE_CODE_USE_FOUNDRY` 必须为 1。            |
+| **Claude API（`/bug` 报告）** | 默认开启。<br />`DISABLE_BUG_COMMAND=1` 禁用。                 | 默认关闭。<br />`CLAUDE_CODE_USE_VERTEX` 必须为 1。             | 默认关闭。<br />`CLAUDE_CODE_USE_BEDROCK` 必须为 1。            | 默认关闭。<br />`CLAUDE_CODE_USE_FOUNDRY` 必须为 1。            |
+| **会话质量调查**                | 默认开启。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 禁用。 | 默认开启。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 禁用。 | 默认开启。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 禁用。 | 默认开启。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 禁用。 |
 
 所有环境变量都可以检查到 `settings.json`（[了解更多](/zh-CN/settings)）。

@@ -281,7 +281,9 @@ Usa la bandera `--plugin-dir` para probar plugins durante el desarrollo. Esto ca
 claude --plugin-dir ./my-plugin
 ```
 
-A medida que hagas cambios en tu plugin, ejecuta `/reload-plugins` para recoger las actualizaciones sin reiniciar. Los cambios en la configuración del servidor LSP aún requieren un reinicio completo. Prueba los componentes de tu plugin:
+Cuando un plugin `--plugin-dir` tiene el mismo nombre que un plugin de marketplace instalado, la copia local tiene prioridad para esa sesión. Esto te permite probar cambios en un plugin que ya tienes instalado sin desinstalarlo primero. Los plugins de marketplace forzados a estar habilitados por configuraciones administradas son la única excepción y no pueden ser anulados.
+
+A medida que hagas cambios en tu plugin, ejecuta `/reload-plugins` para recoger las actualizaciones sin reiniciar. Esto recarga comandos, skills, agentes, hooks, servidores MCP de plugin y servidores LSP de plugin. Prueba los componentes de tu plugin:
 
 * Prueba tus skills con `/plugin-name:skill-name`
 * Verifica que los agentes aparezcan en `/agents`

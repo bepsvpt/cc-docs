@@ -15,7 +15,7 @@ Certifique-se de que você tem:
 * Um terminal ou prompt de comando aberto
   * Se você nunca usou o terminal antes, confira o [guia de terminal](/pt/terminal-guide)
 * Um projeto de código para trabalhar
-* Uma [assinatura Claude](https://claude.com/pricing) (Pro, Max, Teams ou Enterprise), conta do [Claude Console](https://console.anthropic.com/), ou acesso através de um [provedor de nuvem suportado](/pt/third-party-integrations)
+* Uma [assinatura Claude](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_prereq) (Pro, Max, Teams ou Enterprise), conta do [Claude Console](https://console.anthropic.com/), ou acesso através de um [provedor de nuvem suportado](/pt/third-party-integrations)
 
 <Note>
   Este guia cobre o CLI do terminal. Claude Code também está disponível na [web](https://claude.ai/code), como um [aplicativo de desktop](/pt/desktop), em [VS Code](/pt/vs-code) e [IDEs JetBrains](/pt/jetbrains), no [Slack](/pt/slack), e em CI/CD com [GitHub Actions](/pt/github-actions) e [GitLab](/pt/gitlab-ci-cd). Veja [todas as interfaces](/pt/overview#use-claude-code-everywhere).
@@ -89,7 +89,7 @@ claude
 
 Você pode fazer login usando qualquer um destes tipos de conta:
 
-* [Claude Pro, Max, Teams ou Enterprise](https://claude.com/pricing) (recomendado)
+* [Claude Pro, Max, Teams ou Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_login) (recomendado)
 * [Claude Console](https://console.anthropic.com/) (acesso à API com créditos pré-pagos). No primeiro login, um workspace "Claude Code" é criado automaticamente no Console para rastreamento centralizado de custos.
 * [Amazon Bedrock, Google Vertex AI ou Microsoft Foundry](/pt/third-party-integrations) (provedores de nuvem empresariais)
 
@@ -115,35 +115,35 @@ Você verá a tela de boas-vindas do Claude Code com as informações da sua ses
 Vamos começar entendendo sua base de código. Tente um destes comandos:
 
 ```text  theme={null}
-o que este projeto faz?
+what does this project do?
 ```
 
 Claude analisará seus arquivos e fornecerá um resumo. Você também pode fazer perguntas mais específicas:
 
 ```text  theme={null}
-quais tecnologias este projeto usa?
+what technologies does this project use?
 ```
 
 ```text  theme={null}
-onde está o ponto de entrada principal?
+where is the main entry point?
 ```
 
 ```text  theme={null}
-explique a estrutura de pastas
+explain the folder structure
 ```
 
 Você também pode perguntar ao Claude sobre suas próprias capacidades:
 
 ```text  theme={null}
-o que Claude Code pode fazer?
+what can Claude Code do?
 ```
 
 ```text  theme={null}
-como faço para criar skills personalizadas no Claude Code?
+how do I create custom skills in Claude Code?
 ```
 
 ```text  theme={null}
-Claude Code pode trabalhar com Docker?
+can Claude Code work with Docker?
 ```
 
 <Note>
@@ -155,7 +155,7 @@ Claude Code pode trabalhar com Docker?
 Agora vamos fazer Claude Code fazer alguma codificação real. Tente uma tarefa simples:
 
 ```text  theme={null}
-adicione uma função hello world ao arquivo principal
+add a hello world function to the main file
 ```
 
 Claude Code irá:
@@ -174,25 +174,25 @@ Claude Code irá:
 Claude Code torna as operações Git conversacionais:
 
 ```text  theme={null}
-quais arquivos eu alterei?
+what files have I changed?
 ```
 
 ```text  theme={null}
-faça commit das minhas alterações com uma mensagem descritiva
+commit my changes with a descriptive message
 ```
 
 Você também pode solicitar operações Git mais complexas:
 
 ```text  theme={null}
-crie uma nova branch chamada feature/quickstart
+create a new branch called feature/quickstart
 ```
 
 ```text  theme={null}
-mostre-me os últimos 5 commits
+show me the last 5 commits
 ```
 
 ```text  theme={null}
-ajude-me a resolver conflitos de merge
+help me resolve merge conflicts
 ```
 
 ## Passo 7: Corrija um bug ou adicione um recurso
@@ -202,13 +202,13 @@ Claude é proficiente em depuração e implementação de recursos.
 Descreva o que você quer em linguagem natural:
 
 ```text  theme={null}
-adicione validação de entrada ao formulário de registro de usuário
+add input validation to the user registration form
 ```
 
 Ou corrija problemas existentes:
 
 ```text  theme={null}
-há um bug onde os usuários podem enviar formulários vazios - corrija
+there's a bug where users can submit empty forms - fix it
 ```
 
 Claude Code irá:
@@ -225,29 +225,29 @@ Existem várias maneiras de trabalhar com Claude:
 **Refatore código**
 
 ```text  theme={null}
-refatore o módulo de autenticação para usar async/await em vez de callbacks
+refactor the authentication module to use async/await instead of callbacks
 ```
 
 **Escreva testes**
 
 ```text  theme={null}
-escreva testes unitários para as funções da calculadora
+write unit tests for the calculator functions
 ```
 
 **Atualize documentação**
 
 ```text  theme={null}
-atualize o README com instruções de instalação
+update the README with installation instructions
 ```
 
 **Revisão de código**
 
 ```text  theme={null}
-revise minhas alterações e sugira melhorias
+review my changes and suggest improvements
 ```
 
 <Tip>
-  Converse com Claude como você conversaria com um colega prestativo. Descreva o que você quer alcançar, e ele o ajudará a chegar lá.
+  Fale com Claude como você falaria com um colega prestativo. Descreva o que você quer alcançar, e ele o ajudará a chegar lá.
 </Tip>
 
 ## Comandos essenciais
@@ -274,18 +274,18 @@ Para mais, veja [melhores práticas](/pt/best-practices) e [fluxos de trabalho c
 
 <AccordionGroup>
   <Accordion title="Seja específico com seus pedidos">
-    Em vez de: "corrija o bug"
+    Em vez de: "fix the bug"
 
-    Tente: "corrija o bug de login onde os usuários veem uma tela em branco após inserir credenciais incorretas"
+    Tente: "fix the login bug where users see a blank screen after entering wrong credentials"
   </Accordion>
 
   <Accordion title="Use instruções passo a passo">
     Divida tarefas complexas em etapas:
 
     ```text  theme={null}
-    1. crie uma nova tabela de banco de dados para perfis de usuário
-    2. crie um endpoint de API para obter e atualizar perfis de usuário
-    3. construa uma página da web que permita aos usuários ver e editar suas informações
+    1. create a new database table for user profiles
+    2. create an API endpoint to get and update user profiles
+    3. build a webpage that allows users to see and edit their information
     ```
   </Accordion>
 
@@ -293,11 +293,11 @@ Para mais, veja [melhores práticas](/pt/best-practices) e [fluxos de trabalho c
     Antes de fazer alterações, deixe Claude entender seu código:
 
     ```text  theme={null}
-    analise o esquema do banco de dados
+    analyze the database schema
     ```
 
     ```text  theme={null}
-    construa um painel mostrando produtos que são devolvidos com mais frequência por nossos clientes do Reino Unido
+    build a dashboard showing products that are most frequently returned by our UK customers
     ```
   </Accordion>
 
@@ -309,13 +309,13 @@ Para mais, veja [melhores práticas](/pt/best-practices) e [fluxos de trabalho c
   </Accordion>
 </AccordionGroup>
 
-## Próximos passos?
+## Próximos passos
 
 Agora que você aprendeu o básico, explore recursos mais avançados:
 
 <CardGroup cols={2}>
   <Card title="Como Claude Code funciona" icon="microchip" href="/pt/how-claude-code-works">
-    Entenda o loop agentic, ferramentas integradas e como Claude Code interage com seu projeto
+    Entenda o loop agêntico, ferramentas integradas e como Claude Code interage com seu projeto
   </Card>
 
   <Card title="Melhores práticas" icon="star" href="/pt/best-practices">
@@ -333,6 +333,6 @@ Agora que você aprendeu o básico, explore recursos mais avançados:
 
 ## Obtendo ajuda
 
-* **Em Claude Code**: Digite `/help` ou pergunte "como faço para..."
+* **Em Claude Code**: Digite `/help` ou pergunte "how do I..."
 * **Documentação**: Você está aqui! Navegue por outros guias
 * **Comunidade**: Junte-se ao nosso [Discord](https://www.anthropic.com/discord) para dicas e suporte

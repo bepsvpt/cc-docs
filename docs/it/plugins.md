@@ -281,7 +281,9 @@ Usa il flag `--plugin-dir` per testare i plugin durante lo sviluppo. Questo cari
 claude --plugin-dir ./my-plugin
 ```
 
-Man mano che apporti modifiche al tuo plugin, esegui `/reload-plugins` per raccogliere gli aggiornamenti senza riavviare. Le modifiche alla configurazione del server LSP richiedono comunque un riavvio completo. Testa i componenti del tuo plugin:
+Quando un plugin `--plugin-dir` ha lo stesso nome di un plugin marketplace installato, la copia locale ha la precedenza per quella sessione. Questo ti consente di testare le modifiche a un plugin che hai già installato senza disinstallarlo prima. I plugin marketplace forzatamente abilitati dalle impostazioni gestite sono l'unica eccezione e non possono essere sovrascritti.
+
+Man mano che apporti modifiche al tuo plugin, esegui `/reload-plugins` per raccogliere gli aggiornamenti senza riavviare. Questo ricarica comandi, skills, agents, hooks, MCP servers del plugin e LSP servers del plugin. Testa i componenti del tuo plugin:
 
 * Prova i tuoi skill con `/plugin-name:skill-name`
 * Verifica che gli agents appaiano in `/agents`

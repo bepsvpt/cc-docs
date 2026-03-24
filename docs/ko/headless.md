@@ -22,7 +22,7 @@ claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"
 
 ## 기본 사용법
 
-`claude` 명령에 `-p`(또는 `--print`) 플래그를 추가하여 비대화형으로 실행합니다. 모든 [CLI 옵션](/ko/cli-reference)은 `-p`와 함께 작동합니다:
+`-p`(또는 `--print`) 플래그를 모든 `claude` 명령에 추가하여 비대화형으로 실행합니다. 모든 [CLI 옵션](/ko/cli-reference)은 `-p`와 함께 작동합니다:
 
 * `--continue`는 [대화 계속하기](#continue-conversations)용
 * `--allowedTools`는 [도구 자동 승인](#auto-approve-tools)용
@@ -115,7 +115,7 @@ claude -p "Look at my staged changes and create an appropriate commit" \
 `--allowedTools` 플래그는 [권한 규칙 구문](/ko/settings#permission-rule-syntax)을 사용합니다. 뒤의 ` *`는 접두사 일치를 활성화하므로 `Bash(git diff *)`는 `git diff`로 시작하는 모든 명령을 허용합니다. 공백이 중요합니다: 없으면 `Bash(git diff*)`도 `git diff-index`와 일치합니다.
 
 <Note>
-  사용자가 호출한 [skills](/ko/skills)와 같은 `/commit` 및 [기본 제공 명령](/ko/interactive-mode#built-in-commands)은 대화형 모드에서만 사용할 수 있습니다. `-p` 모드에서는 대신 수행하려는 작업을 설명합니다.
+  사용자가 호출한 [skills](/ko/skills)(`/commit` 등) 및 [기본 제공 명령](/ko/commands)은 대화형 모드에서만 사용할 수 있습니다. `-p` 모드에서는 대신 수행하려는 작업을 설명합니다.
 </Note>
 
 ### 시스템 프롬프트 사용자 정의

@@ -22,41 +22,41 @@
 
 ### Allgemeine Steuerelemente
 
-| Tastaturkürzel                                        | Beschreibung                                                                                 | Kontext                                                                                                                                       |
-| :---------------------------------------------------- | :------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Ctrl+C`                                              | Aktuelle Eingabe oder Generierung abbrechen                                                  | Standard-Interrupt                                                                                                                            |
-| `Ctrl+F`                                              | Alle Hintergrund-Agenten beenden. Zweimal innerhalb von 3 Sekunden drücken, um zu bestätigen | Steuerung von Hintergrund-Agenten                                                                                                             |
-| `Ctrl+D`                                              | Claude Code-Sitzung beenden                                                                  | EOF-Signal                                                                                                                                    |
-| `Ctrl+G`                                              | Im Standard-Texteditor öffnen                                                                | Bearbeiten Sie Ihren Prompt oder benutzerdefinierte Antwort in Ihrem Standard-Texteditor                                                      |
-| `Ctrl+L`                                              | Terminal-Bildschirm löschen                                                                  | Behält Gesprächsverlauf bei                                                                                                                   |
-| `Ctrl+O`                                              | Ausführliche Ausgabe umschalten                                                              | Zeigt detaillierte Tool-Nutzung und Ausführung                                                                                                |
-| `Ctrl+R`                                              | Reverse-Suche im Befehlsverlauf                                                              | Durchsuchen Sie vorherige Befehle interaktiv                                                                                                  |
-| `Ctrl+V` oder `Cmd+V` (iTerm2) oder `Alt+V` (Windows) | Bild aus Zwischenablage einfügen                                                             | Fügt ein Bild oder einen Pfad zu einer Bilddatei ein                                                                                          |
-| `Ctrl+B`                                              | Hintergrund-Ausführung von Aufgaben                                                          | Führt Bash-Befehle und Agenten im Hintergrund aus. Tmux-Benutzer drücken zweimal                                                              |
-| `Ctrl+T`                                              | Task-Liste umschalten                                                                        | Zeigen oder verbergen Sie die [Task-Liste](#task-list) im Terminal-Statusbereich                                                              |
-| `Left/Right arrows`                                   | Durch Dialog-Registerkarten navigieren                                                       | Navigieren Sie zwischen Registerkarten in Berechtigungsdialogen und Menüs                                                                     |
-| `Up/Down arrows`                                      | Befehlsverlauf navigieren                                                                    | Rufen Sie vorherige Eingaben ab                                                                                                               |
-| `Esc` + `Esc`                                         | Zurückspulen oder zusammenfassen                                                             | Stellen Sie Code und/oder Konversation auf einen vorherigen Punkt wieder her, oder fassen Sie ab einer ausgewählten Nachricht zusammen        |
-| `Shift+Tab` oder `Alt+M` (einige Konfigurationen)     | Berechtigungsmodi umschalten                                                                 | Wechseln Sie zwischen Auto-Accept Mode, Plan Mode und normalem Modus.                                                                         |
-| `Option+P` (macOS) oder `Alt+P` (Windows/Linux)       | Modell wechseln                                                                              | Wechseln Sie Modelle, ohne Ihren Prompt zu löschen                                                                                            |
-| `Option+T` (macOS) oder `Alt+T` (Windows/Linux)       | Extended Thinking umschalten                                                                 | Aktivieren oder deaktivieren Sie den Extended Thinking-Modus. Führen Sie zuerst `/terminal-setup` aus, um dieses Tastaturkürzel zu aktivieren |
+| Kürzel                                                | Beschreibung                                                                                 | Kontext                                                                                                                               |
+| :---------------------------------------------------- | :------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| `Ctrl+C`                                              | Aktuelle Eingabe oder Generierung abbrechen                                                  | Standard-Interrupt                                                                                                                    |
+| `Ctrl+F`                                              | Alle Hintergrund-Agenten beenden. Zweimal innerhalb von 3 Sekunden drücken, um zu bestätigen | Steuerung von Hintergrund-Agenten                                                                                                     |
+| `Ctrl+D`                                              | Claude Code-Sitzung beenden                                                                  | EOF-Signal                                                                                                                            |
+| `Ctrl+G`                                              | Im Standard-Texteditor öffnen                                                                | Bearbeiten Sie Ihren Prompt oder benutzerdefinierte Antwort in Ihrem Standard-Texteditor                                              |
+| `Ctrl+L`                                              | Terminal-Bildschirm löschen                                                                  | Behält Gesprächsverlauf bei                                                                                                           |
+| `Ctrl+O`                                              | Ausführliche Ausgabe umschalten                                                              | Zeigt detaillierte Tool-Nutzung und Ausführung                                                                                        |
+| `Ctrl+R`                                              | Reverse-Suche im Befehlsverlauf                                                              | Durchsuchen Sie vorherige Befehle interaktiv                                                                                          |
+| `Ctrl+V` oder `Cmd+V` (iTerm2) oder `Alt+V` (Windows) | Bild aus Zwischenablage einfügen                                                             | Fügt ein Bild oder einen Pfad zu einer Bilddatei ein                                                                                  |
+| `Ctrl+B`                                              | Hintergrund-Ausführung von Aufgaben                                                          | Führt Bash-Befehle und Agenten im Hintergrund aus. Tmux-Benutzer drücken zweimal                                                      |
+| `Ctrl+T`                                              | Task-Liste umschalten                                                                        | Zeigen oder verbergen Sie die [Task-Liste](#task-list) im Terminal-Statusbereich                                                      |
+| `Left/Right arrows`                                   | Durch Dialog-Registerkarten navigieren                                                       | Navigieren Sie zwischen Registerkarten in Berechtigungsdialogen und Menüs                                                             |
+| `Up/Down arrows`                                      | Befehlsverlauf navigieren                                                                    | Rufen Sie vorherige Eingaben ab                                                                                                       |
+| `Esc` + `Esc`                                         | Zurückspulen oder zusammenfassen                                                             | Stellen Sie Code und/oder Gespräch auf einen vorherigen Punkt wieder her, oder fassen Sie ab einer ausgewählten Nachricht zusammen    |
+| `Shift+Tab` oder `Alt+M` (einige Konfigurationen)     | Berechtigungsmodi umschalten                                                                 | Wechseln Sie zwischen Auto-Accept Mode, Plan Mode und normalem Modus.                                                                 |
+| `Option+P` (macOS) oder `Alt+P` (Windows/Linux)       | Modell wechseln                                                                              | Wechseln Sie Modelle, ohne Ihren Prompt zu löschen                                                                                    |
+| `Option+T` (macOS) oder `Alt+T` (Windows/Linux)       | Extended Thinking umschalten                                                                 | Aktivieren oder deaktivieren Sie den Extended Thinking-Modus. Führen Sie zuerst `/terminal-setup` aus, um dieses Kürzel zu aktivieren |
 
 ### Textbearbeitung
 
-| Tastaturkürzel          | Beschreibung                           | Kontext                                                                                                                    |
-| :---------------------- | :------------------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
-| `Ctrl+K`                | Bis zum Zeilenende löschen             | Speichert gelöschten Text zum Einfügen                                                                                     |
-| `Ctrl+U`                | Ganze Zeile löschen                    | Speichert gelöschten Text zum Einfügen                                                                                     |
-| `Ctrl+Y`                | Gelöschten Text einfügen               | Fügen Sie Text ein, der mit `Ctrl+K` oder `Ctrl+U` gelöscht wurde                                                          |
-| `Alt+Y` (nach `Ctrl+Y`) | Einfügen-Verlauf durchlaufen           | Nach dem Einfügen können Sie zuvor gelöschten Text durchlaufen. Erfordert [Option als Meta](#keyboard-shortcuts) auf macOS |
-| `Alt+B`                 | Cursor um ein Wort nach hinten bewegen | Wort-Navigation. Erfordert [Option als Meta](#keyboard-shortcuts) auf macOS                                                |
-| `Alt+F`                 | Cursor um ein Wort nach vorne bewegen  | Wort-Navigation. Erfordert [Option als Meta](#keyboard-shortcuts) auf macOS                                                |
+| Kürzel                  | Beschreibung                           | Kontext                                                                                                                         |
+| :---------------------- | :------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
+| `Ctrl+K`                | Bis zum Ende der Zeile löschen         | Speichert gelöschten Text zum Einfügen                                                                                          |
+| `Ctrl+U`                | Ganze Zeile löschen                    | Speichert gelöschten Text zum Einfügen                                                                                          |
+| `Ctrl+Y`                | Gelöschten Text einfügen               | Fügen Sie Text ein, der mit `Ctrl+K` oder `Ctrl+U` gelöscht wurde                                                               |
+| `Alt+Y` (nach `Ctrl+Y`) | Einfügeverlauf durchlaufen             | Nach dem Einfügen können Sie durch zuvor gelöschten Text navigieren. Erfordert [Option als Meta](#keyboard-shortcuts) auf macOS |
+| `Alt+B`                 | Cursor um ein Wort nach hinten bewegen | Wort-Navigation. Erfordert [Option als Meta](#keyboard-shortcuts) auf macOS                                                     |
+| `Alt+F`                 | Cursor um ein Wort nach vorne bewegen  | Wort-Navigation. Erfordert [Option als Meta](#keyboard-shortcuts) auf macOS                                                     |
 
 ### Design und Anzeige
 
-| Tastaturkürzel | Beschreibung                                   | Kontext                                                                                                  |
-| :------------- | :--------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
-| `Ctrl+T`       | Syntax-Hervorhebung für Code-Blöcke umschalten | Funktioniert nur im `/theme`-Auswahlmenü. Steuert, ob Code in Claudes Antworten Syntax-Färbung verwendet |
+| Kürzel   | Beschreibung                                   | Kontext                                                                                                  |
+| :------- | :--------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| `Ctrl+T` | Syntax-Hervorhebung für Code-Blöcke umschalten | Funktioniert nur im `/theme`-Auswahlmenü. Steuert, ob Code in Claudes Antworten Syntax-Färbung verwendet |
 
 <Note>
   Syntax-Hervorhebung ist nur in der nativen Version von Claude Code verfügbar.
@@ -64,10 +64,10 @@
 
 ### Mehrzeilige Eingabe
 
-| Methode          | Tastaturkürzel  | Kontext                                                       |
+| Methode          | Kürzel          | Kontext                                                       |
 | :--------------- | :-------------- | :------------------------------------------------------------ |
 | Schneller Escape | `\` + `Enter`   | Funktioniert in allen Terminals                               |
-| macOS Standard   | `Option+Enter`  | Standard auf macOS                                            |
+| macOS-Standard   | `Option+Enter`  | Standard auf macOS                                            |
 | Shift+Enter      | `Shift+Enter`   | Funktioniert standardmäßig in iTerm2, WezTerm, Ghostty, Kitty |
 | Steuersequenz    | `Ctrl+J`        | Zeilenumbruch-Zeichen für mehrzeilig                          |
 | Einfügemodus     | Direkt einfügen | Für Code-Blöcke, Protokolle                                   |
@@ -78,102 +78,33 @@
 
 ### Schnellbefehle
 
-| Tastaturkürzel | Beschreibung        | Notizen                                                                              |
-| :------------- | :------------------ | :----------------------------------------------------------------------------------- |
-| `/` am Anfang  | Befehl oder Skill   | Siehe [integrierte Befehle](#built-in-commands) und [Skills](/de/skills)             |
-| `!` am Anfang  | Bash-Modus          | Führen Sie Befehle direkt aus und fügen Sie die Ausführungsausgabe zur Sitzung hinzu |
-| `@`            | Dateipfad-Erwähnung | Trigger-Dateipfad-Autovervollständigung                                              |
+| Kürzel        | Beschreibung        | Notizen                                                                              |
+| :------------ | :------------------ | :----------------------------------------------------------------------------------- |
+| `/` am Anfang | Befehl oder Skill   | Siehe [integrierte Befehle](#built-in-commands) und [Skills](/de/skills)             |
+| `!` am Anfang | Bash-Modus          | Führen Sie Befehle direkt aus und fügen Sie die Ausführungsausgabe zur Sitzung hinzu |
+| `@`           | Dateipfad-Erwähnung | Trigger für Dateipfad-Autovervollständigung                                          |
 
 ## Integrierte Befehle
 
-Geben Sie `/` in Claude Code ein, um alle verfügbaren Befehle anzuzeigen, oder geben Sie `/` gefolgt von beliebigen Buchstaben ein, um zu filtern. Nicht alle Befehle sind für jeden Benutzer sichtbar. Einige hängen von Ihrer Plattform, Ihrem Plan oder Ihrer Umgebung ab. Beispielsweise erscheint `/desktop` nur auf macOS und Windows, `/upgrade` und `/privacy-settings` sind nur für Pro- und Max-Pläne verfügbar, und `/terminal-setup` ist verborgen, wenn Ihr Terminal seine Tastenbindungen nativ unterstützt.
+Geben Sie `/` in Claude Code ein, um alle verfügbaren Befehle anzuzeigen, oder geben Sie `/` gefolgt von beliebigen Buchstaben ein, um zu filtern. Das `/`-Menü zeigt sowohl integrierte Befehle als auch [gebündelte Skills](/de/skills#bundled-skills) wie `/simplify`. Nicht alle Befehle sind für jeden Benutzer sichtbar, da einige von Ihrer Plattform oder Ihrem Plan abhängen.
 
-Claude Code wird auch mit [gebündelten Skills](/de/skills#bundled-skills) wie `/simplify`, `/batch` und `/debug` ausgeliefert, die neben integrierten Befehlen angezeigt werden, wenn Sie `/` eingeben. Um Ihre eigenen Befehle zu erstellen, siehe [Skills](/de/skills).
-
-In der folgenden Tabelle gibt `<arg>` ein erforderliches Argument an und `[arg]` ein optionales.
-
-| Befehl                    | Zweck                                                                                                                                                                                                                                                                                           |
-| :------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/add-dir <path>`         | Fügen Sie ein neues Arbeitsverzeichnis zur aktuellen Sitzung hinzu                                                                                                                                                                                                                              |
-| `/agents`                 | Verwalten Sie [Agent](/de/sub-agents)-Konfigurationen                                                                                                                                                                                                                                           |
-| `/btw <question>`         | Stellen Sie eine schnelle [Nebenfrage](#side-questions-with-%2Fbtw), ohne sie zum Gespräch hinzuzufügen                                                                                                                                                                                         |
-| `/chrome`                 | Konfigurieren Sie [Claude in Chrome](/de/chrome)-Einstellungen                                                                                                                                                                                                                                  |
-| `/clear`                  | Löschen Sie den Gesprächsverlauf und geben Sie Kontext frei. Aliase: `/reset`, `/new`                                                                                                                                                                                                           |
-| `/compact [instructions]` | Komprimieren Sie das Gespräch mit optionalen Fokus-Anweisungen                                                                                                                                                                                                                                  |
-| `/config`                 | Öffnen Sie die [Einstellungen](/de/settings)-Schnittstelle, um Design, Modell, [Ausgabestil](/de/output-styles) und andere Einstellungen anzupassen. Alias: `/settings`                                                                                                                         |
-| `/context`                | Visualisieren Sie die aktuelle Kontextnutzung als farbiges Gitter                                                                                                                                                                                                                               |
-| `/copy`                   | Kopieren Sie die letzte Antwort des Assistenten in die Zwischenablage. Wenn Code-Blöcke vorhanden sind, zeigt eine interaktive Auswahl an, um einzelne Blöcke oder die vollständige Antwort auszuwählen                                                                                         |
-| `/cost`                   | Zeigen Sie Token-Nutzungsstatistiken an. Siehe [Kostenverfolgungs-Leitfaden](/de/costs#using-the-cost-command) für abonnementspezifische Details                                                                                                                                                |
-| `/desktop`                | Setzen Sie die aktuelle Sitzung in der Claude Code Desktop-App fort. Nur macOS und Windows. Alias: `/app`                                                                                                                                                                                       |
-| `/diff`                   | Öffnen Sie einen interaktiven Diff-Viewer, der nicht committete Änderungen und Pro-Turn-Diffs anzeigt. Verwenden Sie Links-/Rechts-Pfeile, um zwischen dem aktuellen Git-Diff und einzelnen Claude-Turns zu wechseln, und Auf-/Ab-Pfeile zum Durchsuchen von Dateien                            |
-| `/doctor`                 | Diagnostizieren und überprüfen Sie Ihre Claude Code-Installation und -Einstellungen                                                                                                                                                                                                             |
-| `/exit`                   | Beenden Sie die CLI. Alias: `/quit`                                                                                                                                                                                                                                                             |
-| `/export [filename]`      | Exportieren Sie das aktuelle Gespräch als Klartext. Mit einem Dateinamen wird direkt in diese Datei geschrieben. Ohne öffnet einen Dialog zum Kopieren in die Zwischenablage oder Speichern in einer Datei                                                                                      |
-| `/extra-usage`            | Konfigurieren Sie zusätzliche Nutzung, um weiterzuarbeiten, wenn Ratenlimits erreicht werden                                                                                                                                                                                                    |
-| `/fast [on\|off]`         | Schalten Sie [Fast Mode](/de/fast-mode) ein oder aus                                                                                                                                                                                                                                            |
-| `/feedback [report]`      | Senden Sie Feedback zu Claude Code. Alias: `/bug`                                                                                                                                                                                                                                               |
-| `/fork [name]`            | Erstellen Sie einen Fork des aktuellen Gesprächs an diesem Punkt                                                                                                                                                                                                                                |
-| `/help`                   | Zeigen Sie Hilfe und verfügbare Befehle an                                                                                                                                                                                                                                                      |
-| `/hooks`                  | Verwalten Sie [Hook](/de/hooks)-Konfigurationen für Tool-Ereignisse                                                                                                                                                                                                                             |
-| `/ide`                    | Verwalten Sie IDE-Integrationen und zeigen Sie den Status an                                                                                                                                                                                                                                    |
-| `/init`                   | Initialisieren Sie das Projekt mit `CLAUDE.md`-Leitfaden                                                                                                                                                                                                                                        |
-| `/insights`               | Generieren Sie einen Bericht, der Ihre Claude Code-Sitzungen analysiert, einschließlich Projektbereiche, Interaktionsmuster und Reibungspunkte                                                                                                                                                  |
-| `/install-github-app`     | Richten Sie die [Claude GitHub Actions](/de/github-actions)-App für ein Repository ein. Führt Sie durch die Auswahl eines Repos und die Konfiguration der Integration                                                                                                                           |
-| `/install-slack-app`      | Installieren Sie die Claude Slack-App. Öffnet einen Browser, um den OAuth-Flow abzuschließen                                                                                                                                                                                                    |
-| `/keybindings`            | Öffnen oder erstellen Sie Ihre Tastenbindungs-Konfigurationsdatei                                                                                                                                                                                                                               |
-| `/login`                  | Melden Sie sich bei Ihrem Anthropic-Konto an                                                                                                                                                                                                                                                    |
-| `/logout`                 | Melden Sie sich von Ihrem Anthropic-Konto ab                                                                                                                                                                                                                                                    |
-| `/mcp`                    | Verwalten Sie MCP-Serververbindungen und OAuth-Authentifizierung                                                                                                                                                                                                                                |
-| `/memory`                 | Bearbeiten Sie `CLAUDE.md`-Speicherdateien, aktivieren oder deaktivieren Sie [Auto-Memory](/de/memory#auto-memory), und zeigen Sie Auto-Memory-Einträge an                                                                                                                                      |
-| `/mobile`                 | Zeigen Sie QR-Code zum Herunterladen der Claude Mobile-App an. Aliase: `/ios`, `/android`                                                                                                                                                                                                       |
-| `/model [model]`          | Wählen Sie das KI-Modell aus oder ändern Sie es. Für Modelle, die dies unterstützen, verwenden Sie Links-/Rechts-Pfeile, um [Anstrengungsstufe anzupassen](/de/model-config#adjust-effort-level). Die Änderung wird sofort wirksam, ohne auf die Fertigstellung der aktuellen Antwort zu warten |
-| `/passes`                 | Teilen Sie eine kostenlose Woche Claude Code mit Freunden. Nur sichtbar, wenn Ihr Konto berechtigt ist                                                                                                                                                                                          |
-| `/permissions`            | Zeigen Sie [Berechtigungen](/de/permissions#manage-permissions) an oder aktualisieren Sie sie. Alias: `/allowed-tools`                                                                                                                                                                          |
-| `/plan`                   | Geben Sie den Plan Mode direkt vom Prompt ein                                                                                                                                                                                                                                                   |
-| `/plugin`                 | Verwalten Sie Claude Code [Plugins](/de/plugins)                                                                                                                                                                                                                                                |
-| `/pr-comments [PR]`       | Rufen Sie Kommentare aus einem GitHub Pull Request ab und zeigen Sie sie an. Erkennt automatisch den PR für den aktuellen Branch, oder übergeben Sie eine PR-URL oder -Nummer. Erfordert die `gh` CLI                                                                                           |
-| `/privacy-settings`       | Zeigen Sie Ihre Datenschutzeinstellungen an und aktualisieren Sie sie. Nur für Pro- und Max-Plan-Abonnenten verfügbar                                                                                                                                                                           |
-| `/release-notes`          | Zeigen Sie das vollständige Änderungsprotokoll an, wobei die neueste Version am nächsten zu Ihrem Prompt liegt                                                                                                                                                                                  |
-| `/reload-plugins`         | Laden Sie alle aktiven [Plugins](/de/plugins) neu, um ausstehende Änderungen anzuwenden, ohne neu zu starten. Meldet, was geladen wurde, und notiert alle Änderungen, die einen Neustart erfordern                                                                                              |
-| `/remote-control`         | Machen Sie diese Sitzung für [Remote-Steuerung](/de/remote-control) von claude.ai verfügbar. Alias: `/rc`                                                                                                                                                                                       |
-| `/remote-env`             | Konfigurieren Sie die Standard-Remote-Umgebung für [Teleport-Sitzungen](/de/claude-code-on-the-web#teleport-a-web-session-to-your-terminal)                                                                                                                                                     |
-| `/rename [name]`          | Benennen Sie die aktuelle Sitzung um. Ohne Namen wird automatisch eine aus dem Gesprächsverlauf generiert                                                                                                                                                                                       |
-| `/resume [session]`       | Setzen Sie ein Gespräch nach ID oder Name fort, oder öffnen Sie die Sitzungsauswahl. Alias: `/continue`                                                                                                                                                                                         |
-| `/review`                 | Veraltet. Installieren Sie stattdessen das [`code-review`-Plugin](https://github.com/anthropics/claude-code-marketplace/blob/main/code-review/README.md): `claude plugin install code-review@claude-code-marketplace`                                                                           |
-| `/rewind`                 | Spulen Sie das Gespräch und/oder den Code zu einem vorherigen Punkt zurück, oder fassen Sie ab einer ausgewählten Nachricht zusammen. Siehe [Checkpointing](/de/checkpointing). Alias: `/checkpoint`                                                                                            |
-| `/sandbox`                | Schalten Sie [Sandbox-Modus](/de/sandboxing) um. Nur auf unterstützten Plattformen verfügbar                                                                                                                                                                                                    |
-| `/security-review`        | Analysieren Sie ausstehende Änderungen im aktuellen Branch auf Sicherheitslücken. Überprüft den Git-Diff und identifiziert Risiken wie Injection, Auth-Probleme und Datenexposition                                                                                                             |
-| `/skills`                 | Listet verfügbare [Skills](/de/skills) auf                                                                                                                                                                                                                                                      |
-| `/stats`                  | Visualisieren Sie tägliche Nutzung, Sitzungsverlauf, Streaks und Modelleinstellungen                                                                                                                                                                                                            |
-| `/status`                 | Öffnen Sie die Einstellungen-Schnittstelle (Status-Registerkarte) mit Version, Modell, Konto und Konnektivität                                                                                                                                                                                  |
-| `/statusline`             | Konfigurieren Sie Claude Codes [Status-Zeile](/de/statusline). Beschreiben Sie, was Sie möchten, oder führen Sie ohne Argumente aus, um automatisch von Ihrem Shell-Prompt zu konfigurieren                                                                                                     |
-| `/stickers`               | Bestellen Sie Claude Code-Aufkleber                                                                                                                                                                                                                                                             |
-| `/tasks`                  | Listet und verwaltet Hintergrund-Aufgaben                                                                                                                                                                                                                                                       |
-| `/terminal-setup`         | Konfigurieren Sie Terminal-Tastenbindungen für Shift+Enter und andere Kürzel. Nur in Terminals sichtbar, die dies benötigen, wie VS Code, Alacritty oder Warp                                                                                                                                   |
-| `/theme`                  | Ändern Sie das Farbschema. Umfasst helle und dunkle Varianten, farbenblind-zugängliche (daltonisierte) Designs und ANSI-Designs, die die Farbpalette Ihres Terminals verwenden                                                                                                                  |
-| `/upgrade`                | Öffnen Sie die Upgrade-Seite, um zu einem höheren Plan-Tier zu wechseln                                                                                                                                                                                                                         |
-| `/usage`                  | Zeigen Sie Plan-Nutzungslimits und Ratenlimit-Status an                                                                                                                                                                                                                                         |
-| `/vim`                    | Wechseln Sie zwischen Vim- und Normal-Bearbeitungsmodi                                                                                                                                                                                                                                          |
-
-### MCP-Prompts
-
-MCP-Server können Prompts verfügbar machen, die als Befehle angezeigt werden. Diese verwenden das Format `/mcp__<server>__<prompt>` und werden dynamisch von verbundenen Servern erkannt. Siehe [MCP-Prompts](/de/mcp#use-mcp-prompts-as-commands) für Details.
+Siehe die [Befehls-Referenz](/de/commands) für die vollständige Liste der integrierten Befehle. Um Ihre eigenen Befehle zu erstellen, siehe [Skills](/de/skills).
 
 ## Vim-Editor-Modus
 
-Aktivieren Sie Vim-ähnliche Bearbeitung mit dem `/vim`-Befehl oder konfigurieren Sie dauerhaft über `/config`.
+Aktivieren Sie Vim-ähnliche Bearbeitung mit dem `/vim`-Befehl oder konfigurieren Sie es dauerhaft über `/config`.
 
 ### Modusumschaltung
 
-| Befehl | Aktion                         | Aus Modus |
-| :----- | :----------------------------- | :-------- |
-| `Esc`  | Geben Sie den NORMAL-Modus ein | INSERT    |
-| `i`    | Einfügen vor Cursor            | NORMAL    |
-| `I`    | Einfügen am Anfang der Zeile   | NORMAL    |
-| `a`    | Einfügen nach Cursor           | NORMAL    |
-| `A`    | Einfügen am Ende der Zeile     | NORMAL    |
-| `o`    | Zeile unten öffnen             | NORMAL    |
-| `O`    | Zeile oben öffnen              | NORMAL    |
+| Befehl | Aktion                       | Aus Modus |
+| :----- | :--------------------------- | :-------- |
+| `Esc`  | NORMAL-Modus eingeben        | INSERT    |
+| `i`    | Vor Cursor einfügen          | NORMAL    |
+| `I`    | Am Anfang der Zeile einfügen | NORMAL    |
+| `a`    | Nach Cursor einfügen         | NORMAL    |
+| `A`    | Am Ende der Zeile einfügen   | NORMAL    |
+| `o`    | Zeile unten öffnen           | NORMAL    |
+| `O`    | Zeile oben öffnen            | NORMAL    |
 
 ### Navigation (NORMAL-Modus)
 
@@ -188,7 +119,7 @@ Aktivieren Sie Vim-ähnliche Bearbeitung mit dem `/vim`-Befehl oder konfiguriere
 | `^`             | Erstes Nicht-Leerzeichen-Zeichen                               |
 | `gg`            | Anfang der Eingabe                                             |
 | `G`             | Ende der Eingabe                                               |
-| `f{char}`       | Zur nächsten Vorkommen des Zeichens springen                   |
+| `f{char}`       | Zum nächsten Vorkommen des Zeichens springen                   |
 | `F{char}`       | Zum vorherigen Vorkommen des Zeichens springen                 |
 | `t{char}`       | Direkt vor das nächste Vorkommen des Zeichens springen         |
 | `T{char}`       | Direkt nach das vorherige Vorkommen des Zeichens springen      |
@@ -201,23 +132,23 @@ Aktivieren Sie Vim-ähnliche Bearbeitung mit dem `/vim`-Befehl oder konfiguriere
 
 ### Bearbeitung (NORMAL-Modus)
 
-| Befehl         | Aktion                       |
-| :------------- | :--------------------------- |
-| `x`            | Zeichen löschen              |
-| `dd`           | Zeile löschen                |
-| `D`            | Bis zum Zeilenende löschen   |
-| `dw`/`de`/`db` | Wort löschen/bis Ende/zurück |
-| `cc`           | Zeile ändern                 |
-| `C`            | Bis zum Zeilenende ändern    |
-| `cw`/`ce`/`cb` | Wort ändern/bis Ende/zurück  |
-| `yy`/`Y`       | Zeile yanken (kopieren)      |
-| `yw`/`ye`/`yb` | Wort yanken/bis Ende/zurück  |
-| `p`            | Nach Cursor einfügen         |
-| `P`            | Vor Cursor einfügen          |
-| `>>`           | Zeile einrücken              |
-| `<<`           | Zeile ausrücken              |
-| `J`            | Zeilen verbinden             |
-| `.`            | Letzte Änderung wiederholen  |
+| Befehl         | Aktion                         |
+| :------------- | :----------------------------- |
+| `x`            | Zeichen löschen                |
+| `dd`           | Zeile löschen                  |
+| `D`            | Bis zum Ende der Zeile löschen |
+| `dw`/`de`/`db` | Wort löschen/bis Ende/zurück   |
+| `cc`           | Zeile ändern                   |
+| `C`            | Bis zum Ende der Zeile ändern  |
+| `cw`/`ce`/`cb` | Wort ändern/bis Ende/zurück    |
+| `yy`/`Y`       | Zeile yanken (kopieren)        |
+| `yw`/`ye`/`yb` | Wort yanken/bis Ende/zurück    |
+| `p`            | Nach Cursor einfügen           |
+| `P`            | Vor Cursor einfügen            |
+| `>>`           | Zeile einrücken                |
+| `<<`           | Zeile ausrücken                |
+| `J`            | Zeilen verbinden               |
+| `.`            | Letzte Änderung wiederholen    |
 
 ### Textobjekte (NORMAL-Modus)
 
@@ -238,8 +169,8 @@ Textobjekte funktionieren mit Operatoren wie `d`, `c` und `y`:
 Claude Code verwaltet den Befehlsverlauf für die aktuelle Sitzung:
 
 * Der Eingabeverlauf wird pro Arbeitsverzeichnis gespeichert
-* Der Eingabeverlauf wird zurückgesetzt, wenn Sie `/clear` ausführen, um eine neue Sitzung zu starten. Das vorherige Gesprächs der Sitzung wird beibehalten und kann fortgesetzt werden.
-* Verwenden Sie Auf-/Ab-Pfeile zum Navigieren (siehe Tastaturkürzel oben)
+* Der Eingabeverlauf wird zurückgesetzt, wenn Sie `/clear` ausführen, um eine neue Sitzung zu starten. Das Gespräch der vorherigen Sitzung wird beibehalten und kann fortgesetzt werden.
+* Verwenden Sie die Pfeiltasten nach oben/unten zum Navigieren (siehe Tastaturkürzel oben)
 * **Hinweis**: Verlaufserweiterung (`!`) ist standardmäßig deaktiviert
 
 ### Reverse-Suche mit Ctrl+R
@@ -258,13 +189,13 @@ Drücken Sie `Ctrl+R`, um interaktiv durch Ihren Befehlsverlauf zu suchen:
 
 Die Suche zeigt übereinstimmende Befehle mit dem hervorgehobenen Suchbegriff an, sodass Sie vorherige Eingaben finden und wiederverwenden können.
 
-## Hintergrund-Bash-Befehle
+## Bash-Befehle im Hintergrund
 
 Claude Code unterstützt die Ausführung von Bash-Befehlen im Hintergrund, sodass Sie weiterarbeiten können, während lange laufende Prozesse ausgeführt werden.
 
-### Wie Backgrounding funktioniert
+### Wie Hintergrund-Ausführung funktioniert
 
-Wenn Claude Code einen Befehl im Hintergrund ausführt, führt es den Befehl asynchron aus und gibt sofort eine Hintergrund-Task-ID zurück. Claude Code kann auf neue Prompts reagieren, während der Befehl im Hintergrund weiter ausgeführt wird.
+Wenn Claude Code einen Befehl im Hintergrund ausführt, führt es den Befehl asynchron aus und gibt sofort eine Hintergrund-Task-ID zurück. Claude Code kann auf neue Prompts reagieren, während der Befehl weiterhin im Hintergrund ausgeführt wird.
 
 Um Befehle im Hintergrund auszuführen, können Sie entweder:
 
@@ -274,12 +205,12 @@ Um Befehle im Hintergrund auszuführen, können Sie entweder:
 **Wichtige Funktionen:**
 
 * Die Ausgabe wird gepuffert und Claude kann sie mit dem TaskOutput-Tool abrufen
-* Hintergrund-Tasks haben eindeutige IDs zum Verfolgen und Abrufen von Ausgaben
+* Hintergrund-Tasks haben eindeutige IDs zum Tracking und zur Ausgabebeschaffung
 * Hintergrund-Tasks werden automatisch bereinigt, wenn Claude Code beendet wird
 
-Um alle Hintergrund-Task-Funktionalität zu deaktivieren, setzen Sie die Umgebungsvariable `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` auf `1`. Siehe [Umgebungsvariablen](/de/settings#environment-variables) für Details.
+Um alle Hintergrund-Task-Funktionen zu deaktivieren, setzen Sie die Umgebungsvariable `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` auf `1`. Siehe [Umgebungsvariablen](/de/env-vars) für Details.
 
-**Häufig backgroundete Befehle:**
+**Häufig im Hintergrund ausgeführte Befehle:**
 
 * Build-Tools (webpack, vite, make)
 * Paketmanager (npm, yarn, pnpm)
@@ -301,7 +232,7 @@ Bash-Modus:
 
 * Fügt den Befehl und seine Ausgabe zum Gesprächskontext hinzu
 * Zeigt Echtzeit-Fortschritt und Ausgabe
-* Unterstützt das gleiche `Ctrl+B`-Backgrounding für lange laufende Befehle
+* Unterstützt die gleiche `Ctrl+B`-Hintergrund-Ausführung für lange laufende Befehle
 * Erfordert nicht, dass Claude den Befehl interpretiert oder genehmigt
 * Unterstützt verlaufsbasierte Autovervollständigung: Geben Sie einen Teilbefehl ein und drücken Sie **Tab**, um aus vorherigen `!`-Befehlen im aktuellen Projekt zu vervollständigen
 * Beenden Sie mit `Escape`, `Backspace` oder `Ctrl+U` bei einer leeren Eingabeaufforderung
@@ -310,16 +241,16 @@ Dies ist nützlich für schnelle Shell-Operationen bei Beibehaltung des Gespräc
 
 ## Prompt-Vorschläge
 
-Wenn Sie eine Sitzung zum ersten Mal öffnen, wird ein ausgegrauter Beispielbefehl in der Prompt-Eingabe angezeigt, um Ihnen den Einstieg zu erleichtern. Claude Code wählt dies aus Ihrem Projekt-Git-Verlauf aus, sodass es Dateien widerspiegelt, an denen Sie kürzlich gearbeitet haben.
+Wenn Sie eine Sitzung zum ersten Mal öffnen, wird ein ausgegrautes Beispiel-Befehl in der Eingabeaufforderung angezeigt, um Ihnen den Einstieg zu erleichtern. Claude Code wählt dies aus dem Git-Verlauf Ihres Projekts aus, sodass es die Dateien widerspiegelt, an denen Sie kürzlich gearbeitet haben.
 
-Nach Claudes Antwort werden Vorschläge weiterhin basierend auf Ihrem Gesprächsverlauf angezeigt, z. B. ein Folgenschritt aus einer mehrteiligen Anfrage oder eine natürliche Fortsetzung Ihres Workflows.
+Nachdem Claude antwortet, werden weiterhin Vorschläge basierend auf Ihrem Gesprächsverlauf angezeigt, z. B. ein Folgenschritt aus einer mehrteiligen Anfrage oder eine natürliche Fortsetzung Ihres Workflows.
 
 * Drücken Sie **Tab**, um den Vorschlag zu akzeptieren, oder drücken Sie **Enter**, um zu akzeptieren und einzureichen
 * Beginnen Sie zu tippen, um ihn zu verwerfen
 
 Der Vorschlag wird als Hintergrund-Anfrage ausgeführt, die den Prompt-Cache des übergeordneten Gesprächs wiederverwenden, sodass die zusätzlichen Kosten minimal sind. Claude Code überspringt die Vorschlagsgenerierung, wenn der Cache kalt ist, um unnötige Kosten zu vermeiden.
 
-Vorschläge werden automatisch nach dem ersten Turn eines Gesprächs, im nicht-interaktiven Modus und im Plan Mode übersprungen.
+Vorschläge werden automatisch nach dem ersten Turn eines Gesprächs, im nicht-interaktiven Modus und im Plan-Modus übersprungen.
 
 Um Prompt-Vorschläge vollständig zu deaktivieren, setzen Sie die Umgebungsvariable oder schalten Sie die Einstellung in `/config` um:
 
@@ -335,26 +266,25 @@ Verwenden Sie `/btw`, um eine schnelle Frage zu Ihrer aktuellen Arbeit zu stelle
 /btw what was the name of that config file again?
 ```
 
-Nebenfragen haben vollständige Sichtbarkeit des aktuellen Gesprächs, sodass Sie nach Code fragen können, den Claude bereits gelesen hat, Entscheidungen, die es früher getroffen hat, oder alles andere aus der Sitzung. Die Frage und Antwort sind flüchtig: Sie erscheinen in einer verwerfbaren Überlagerung und treten niemals in den Gesprächsverlauf ein.
+Nebenfragen haben vollständige Sichtbarkeit des aktuellen Gesprächs, sodass Sie Fragen zu Code stellen können, den Claude bereits gelesen hat, Entscheidungen, die es früher getroffen hat, oder alles andere aus der Sitzung. Die Frage und Antwort sind flüchtig: Sie erscheinen in einer verwerfbaren Überlagerung und gelangen niemals in den Gesprächsverlauf.
 
-* **Verfügbar während Claude arbeitet**: Sie können `/btw` ausführen, auch während Claude eine Antwort verarbeitet. Die Nebenfrage wird unabhängig ausgeführt und unterbricht den Hauptturn nicht.
+* **Verfügbar während Claude arbeitet**: Sie können `/btw` auch ausführen, während Claude eine Antwort verarbeitet. Die Nebenfrage wird unabhängig ausgeführt und unterbricht den Hauptturn nicht.
 * **Kein Tool-Zugriff**: Nebenfragen beantworten nur aus dem, was bereits im Kontext ist. Claude kann keine Dateien lesen, Befehle ausführen oder suchen, wenn eine Nebenfrage beantwortet wird.
 * **Einzelne Antwort**: Es gibt keine Folgeversuche. Wenn Sie einen Hin- und Herwechsel benötigen, verwenden Sie stattdessen einen normalen Prompt.
 * **Niedrige Kosten**: Die Nebenfrage verwendet den Prompt-Cache des übergeordneten Gesprächs wieder, sodass die zusätzlichen Kosten minimal sind.
 
 Drücken Sie **Space**, **Enter** oder **Escape**, um die Antwort zu verwerfen und zur Eingabeaufforderung zurückzukehren.
 
-`/btw` ist das Gegenteil eines [Subagenten](/de/sub-agents): Es sieht Ihr vollständiges Gespräch, hat aber keine Tools, während ein Subagent vollständige Tools hat, aber mit einem leeren Kontext beginnt. Verwenden Sie `/btw`, um nach dem zu fragen, was Claude bereits aus dieser Sitzung weiß; verwenden Sie einen Subagenten, um etwas Neues herauszufinden.
+`/btw` ist das Gegenteil eines [subagent](/de/sub-agents): Es sieht Ihr vollständiges Gespräch, hat aber keine Tools, während ein subagent vollständige Tools hat, aber mit einem leeren Kontext beginnt. Verwenden Sie `/btw`, um zu fragen, was Claude bereits aus dieser Sitzung weiß; verwenden Sie einen subagent, um etwas Neues herauszufinden.
 
 ## Task-Liste
 
-Bei der Arbeit an komplexen, mehrstufigen Arbeiten erstellt Claude eine Task-Liste, um den Fortschritt zu verfolgen. Aufgaben werden im Statusbereich Ihres Terminals mit Indikatoren angezeigt, die zeigen, was ausstehend, in Bearbeitung oder abgeschlossen ist.
+Bei der Arbeit an komplexen, mehrstufigen Aufgaben erstellt Claude eine Task-Liste, um den Fortschritt zu verfolgen. Tasks erscheinen im Statusbereich Ihres Terminals mit Indikatoren, die zeigen, was ausstehend, in Bearbeitung oder abgeschlossen ist.
 
-* Drücken Sie `Ctrl+T`, um die Task-Listen-Ansicht umzuschalten. Die Anzeige zeigt bis zu 10 Aufgaben gleichzeitig
-* Um alle Aufgaben anzuzeigen oder zu löschen, fragen Sie Claude direkt: „show me all tasks" oder „clear all tasks"
-* Aufgaben bleiben über Kontext-Komprimierungen hinweg bestehen und helfen Claude, bei größeren Projekten organisiert zu bleiben
+* Drücken Sie `Ctrl+T`, um die Task-Listen-Ansicht umzuschalten. Die Anzeige zeigt bis zu 10 Tasks gleichzeitig
+* Um alle Tasks anzuzeigen oder zu löschen, fragen Sie Claude direkt: „show me all tasks" oder „clear all tasks"
+* Tasks bleiben über Kontext-Kompaktionen hinweg bestehen und helfen Claude, bei größeren Projekten organisiert zu bleiben
 * Um eine Task-Liste über Sitzungen hinweg zu teilen, setzen Sie `CLAUDE_CODE_TASK_LIST_ID`, um ein benanntes Verzeichnis in `~/.claude/tasks/` zu verwenden: `CLAUDE_CODE_TASK_LIST_ID=my-project claude`
-* Um zur vorherigen TODO-Liste zurückzukehren, setzen Sie `CLAUDE_CODE_ENABLE_TASKS=false`.
 
 ## PR-Review-Status
 

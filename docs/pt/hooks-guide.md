@@ -18,55 +18,45 @@ Para outras formas de estender Claude Code, consulte [skills](/pt/skills) para d
 
 ## Configure seu primeiro hook
 
-A forma mais rápida de criar um hook é através do menu interativo `/hooks` no Claude Code. Este passo a passo cria um hook de notificação de desktop, para que você seja alertado sempre que Claude estiver aguardando sua entrada em vez de observar o terminal.
+Para criar um hook, adicione um bloco `hooks` a um [arquivo de configuração](#configure-hook-location). Este passo a passo cria um hook de notificação de desktop, para que você seja alertado sempre que Claude estiver aguardando sua entrada em vez de observar o terminal.
 
 <Steps>
-  <Step title="Abra o menu de hooks">
-    Digite `/hooks` na CLI do Claude Code. Você verá uma lista de todos os eventos de hook disponíveis, mais uma opção para desabilitar todos os hooks. Cada evento corresponde a um ponto no ciclo de vida do Claude onde você pode executar código personalizado. Selecione `Notification` para criar um hook que dispara quando Claude precisa de sua atenção.
+  <Step title="Adicione o hook às suas configurações">
+    Abra `~/.claude/settings.json` e adicione um hook `Notification`. O exemplo abaixo usa `osascript` para macOS; consulte [Receba notificações quando Claude precisa de entrada](#get-notified-when-claude-needs-input) para comandos Linux e Windows.
+
+    ```json  theme={null}
+    {
+      "hooks": {
+        "Notification": [
+          {
+            "matcher": "",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'"
+              }
+            ]
+          }
+        ]
+      }
+    }
+    ```
+
+    Se seu arquivo de configuração já tem uma chave `hooks`, mescle a entrada `Notification` nela em vez de substituir o objeto inteiro. Você também pode pedir ao Claude para escrever o hook para você descrevendo o que deseja na CLI.
   </Step>
 
-  <Step title="Configure o matcher">
-    O menu mostra uma lista de matchers, que filtram quando o hook dispara. Defina o matcher como `*` para disparar em todos os tipos de notificação. Você pode restringi-lo depois alterando o matcher para um valor específico como `permission_prompt` ou `idle_prompt`.
-  </Step>
-
-  <Step title="Adicione seu comando">
-    Selecione `+ Add new hook…`. O menu solicita um comando shell para executar quando o evento dispara. Hooks executam qualquer comando shell que você forneça, então você pode usar a ferramenta de notificação integrada da sua plataforma. Copie o comando para seu SO:
-
-    <Tabs>
-      <Tab title="macOS">
-        Usa [`osascript`](https://ss64.com/mac/osascript.html) para disparar uma notificação nativa do macOS através do AppleScript:
-
-        ```bash  theme={null}
-        osascript -e 'display notification "Claude Code needs your attention" with title "Claude Code"'
-        ```
-      </Tab>
-
-      <Tab title="Linux">
-        Usa `notify-send`, que vem pré-instalado na maioria dos desktops Linux com um daemon de notificação:
-
-        ```bash  theme={null}
-        notify-send 'Claude Code' 'Claude Code needs your attention'
-        ```
-      </Tab>
-
-      <Tab title="Windows (PowerShell)">
-        Usa PowerShell para mostrar uma caixa de mensagem nativa através do Windows Forms do .NET:
-
-        ```powershell  theme={null}
-        powershell.exe -Command "[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); [System.Windows.Forms.MessageBox]::Show('Claude Code needs your attention', 'Claude Code')"
-        ```
-      </Tab>
-    </Tabs>
-  </Step>
-
-  <Step title="Escolha um local de armazenamento">
-    O menu pergunta onde salvar a configuração do hook. Selecione `User settings` para armazená-lo em `~/.claude/settings.json`, que aplica o hook a todos os seus projetos. Você também pode escolher `Project settings` para limitá-lo ao projeto atual. Consulte [Configurar local do hook](#configure-hook-location) para todos os escopos disponíveis.
+  <Step title="Verifique a configuração">
+    Digite `/hooks` para abrir o navegador de hooks. Você verá uma lista de todos os eventos de hook disponíveis, com uma contagem ao lado de cada evento que tem hooks configurados. Selecione `Notification` para confirmar que seu novo hook aparece na lista. Selecionar o hook mostra seus detalhes: o evento, matcher, tipo, arquivo de origem e comando.
   </Step>
 
   <Step title="Teste o hook">
     Pressione `Esc` para retornar à CLI. Peça ao Claude para fazer algo que exija permissão, depois saia do terminal. Você deve receber uma notificação de desktop.
   </Step>
 </Steps>
+
+<Tip>
+  O menu `/hooks` é somente leitura. Para adicionar, modificar ou remover hooks, edite seu JSON de configuração diretamente ou peça ao Claude para fazer a alteração.
+</Tip>
 
 ## O que você pode automatizar
 
@@ -79,12 +69,13 @@ Cada exemplo inclui um bloco de configuração pronto para usar que você adicio
 * [Bloquear edições em arquivos protegidos](#block-edits-to-protected-files)
 * [Re-injetar contexto após compactação](#re-inject-context-after-compaction)
 * [Auditar mudanças de configuração](#audit-configuration-changes)
+* [Aprovar automaticamente prompts de permissão específicos](#auto-approve-specific-permission-prompts)
 
 ### Receba notificações quando Claude precisa de entrada
 
 Receba uma notificação de desktop sempre que Claude terminar de trabalhar e precisar de sua entrada, para que você possa mudar para outras tarefas sem verificar o terminal.
 
-Este hook usa o evento `Notification`, que dispara quando Claude está aguardando entrada ou permissão. Cada aba abaixo usa o comando de notificação nativo da plataforma. Adicione isto a `~/.claude/settings.json`, ou use o [passo a passo interativo](#set-up-your-first-hook) acima para configurá-lo com `/hooks`:
+Este hook usa o evento `Notification`, que dispara quando Claude está aguardando entrada ou permissão. Cada aba abaixo usa o comando de notificação nativo da plataforma. Adicione isto a `~/.claude/settings.json`:
 
 <Tabs>
   <Tab title="macOS">
@@ -289,6 +280,54 @@ Este exemplo anexa cada mudança a um log de auditoria. Adicione isto a `~/.clau
 
 O matcher filtra por tipo de configuração: `user_settings`, `project_settings`, `local_settings`, `policy_settings` ou `skills`. Para bloquear uma mudança de entrar em vigor, saia com código 2 ou retorne `{"decision": "block"}`. Consulte a [referência de ConfigChange](/pt/hooks#configchange) para o esquema de entrada completo.
 
+### Aprovar automaticamente prompts de permissão específicos
+
+Pule o diálogo de aprovação para chamadas de ferramenta que você sempre permite. Este exemplo aprova automaticamente `ExitPlanMode`, a ferramenta que Claude chama quando termina de apresentar um plano e pede para prosseguir, para que você não seja solicitado toda vez que um plano estiver pronto.
+
+Diferentemente dos exemplos de código de saída acima, a aprovação automática exige que seu hook escreva uma decisão JSON para stdout. Um hook `PermissionRequest` dispara quando Claude Code está prestes a mostrar um diálogo de permissão, e retornar `"behavior": "allow"` responde em seu nome.
+
+O matcher restringe o hook apenas a `ExitPlanMode`, para que nenhum outro prompt seja afetado. Adicione isto a `~/.claude/settings.json`:
+
+```json  theme={null}
+{
+  "hooks": {
+    "PermissionRequest": [
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"hookSpecificOutput\": {\"hookEventName\": \"PermissionRequest\", \"decision\": {\"behavior\": \"allow\"}}}'"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Quando o hook aprova, Claude Code sai do modo de plano e restaura qualquer modo de permissão que estava ativo antes de você entrar no modo de plano. A transcrição mostra "Allowed by PermissionRequest hook" onde o diálogo teria aparecido. O caminho do hook sempre mantém a conversa atual: ele não pode limpar contexto e iniciar uma sessão de implementação fresca da forma que o diálogo pode.
+
+Para definir um modo de permissão específico em vez disso, a saída do seu hook pode incluir um array `updatedPermissions` com uma entrada `setMode`. O valor `mode` é qualquer modo de permissão como `default`, `acceptEdits` ou `bypassPermissions`, e `destination: "session"` o aplica apenas para a sessão atual.
+
+Para mudar a sessão para `acceptEdits`, seu hook escreve este JSON para stdout:
+
+```json  theme={null}
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PermissionRequest",
+    "decision": {
+      "behavior": "allow",
+      "updatedPermissions": [
+        { "type": "setMode", "mode": "acceptEdits", "destination": "session" }
+      ]
+    }
+  }
+}
+```
+
+Mantenha o matcher o mais restrito possível. Corresponder a `.*` ou deixar o matcher vazio aprovaria automaticamente cada prompt de permissão, incluindo escritas de arquivo e comandos shell. Consulte a [referência de PermissionRequest](/pt/hooks#permissionrequest-decision-control) para o conjunto completo de campos de decisão.
+
 ## Como hooks funcionam
 
 Eventos de hook disparam em pontos específicos do ciclo de vida do Claude Code. Quando um evento dispara, todos os hooks correspondentes executam em paralelo, e comandos de hook idênticos são automaticamente desduplicados. A tabela abaixo mostra cada evento e quando dispara:
@@ -320,7 +359,7 @@ Eventos de hook disparam em pontos específicos do ciclo de vida do Claude Code.
 
 Cada hook tem um `type` que determina como ele executa. A maioria dos hooks usa `"type": "command"`, que executa um comando shell. Três outros tipos estão disponíveis:
 
-* `"type": "http"`: POST de dados de evento para uma URL. Consulte [HTTP hooks](#http-hooks).
+* `"type": "http"`: POST dados de evento para uma URL. Consulte [HTTP hooks](#http-hooks).
 * `"type": "prompt"`: avaliação LLM de turno único. Consulte [Hooks baseados em prompt](#prompt-based-hooks).
 * `"type": "agent"`: verificação multi-turno com acesso a ferramentas. Consulte [Hooks baseados em agente](#agent-based-hooks).
 
@@ -344,7 +383,7 @@ Cada evento inclui campos comuns como `session_id` e `cwd`, mas cada tipo de eve
 }
 ```
 
-Seu script pode analisar esse JSON e agir em qualquer um desses campos. Hooks `UserPromptSubmit` recebem o texto `prompt` em vez disso, hooks `SessionStart` recebem a `source` (startup, resume, clear, compact) e assim por diante. Consulte [Campos de entrada comuns](/pt/hooks#common-input-fields) na referência para campos compartilhados e a seção de cada evento para esquemas específicos do evento.
+Seu script pode analisar esse JSON e agir em qualquer um desses campos. Hooks `UserPromptSubmit` obtêm o texto `prompt` em vez disso, hooks `SessionStart` obtêm a `source` (startup, resume, clear, compact) e assim por diante. Consulte [Campos de entrada comuns](/pt/hooks#common-input-fields) na referência para campos compartilhados e a seção de cada evento para esquemas específicos do evento.
 
 #### Saída do hook
 
@@ -356,11 +395,11 @@ INPUT=$(cat)
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
 
 if echo "$COMMAND" | grep -q "drop table"; then
-  echo "Blocked: dropping tables is not allowed" >&2  # stderr se torna feedback do Claude
-  exit 2 # exit 2 = bloquear a ação
+  echo "Blocked: dropping tables is not allowed" >&2  // stderr se torna feedback do Claude
+  exit 2 // exit 2 = bloquear a ação
 fi
 
-exit 0  # exit 0 = deixar prosseguir
+exit 0  // exit 0 = deixar prosseguir
 ```
 
 O código de saída determina o que acontece a seguir:
@@ -483,7 +522,7 @@ Alguns exemplos adicionais mostrando matchers em diferentes tipos de evento:
     ```
   </Tab>
 
-  <Tab title="Limpar no final da sessão">
+  <Tab title="Limpar ao final da sessão">
     O evento `SessionEnd` suporta matchers na razão pela qual a sessão terminou. Este hook dispara apenas em `clear` (quando você executa `/clear`), não em saídas normais:
 
     ```json  theme={null}
@@ -521,9 +560,9 @@ Onde você adiciona um hook determina seu escopo:
 | [Plugin](/pt/plugins) `hooks/hooks.json`                    | Quando o plugin está habilitado       | Sim, empacotado com o plugin           |
 | [Skill](/pt/skills) ou [agente](/pt/sub-agents) frontmatter | Enquanto a skill ou agente está ativo | Sim, definido no arquivo do componente |
 
-Você também pode usar o menu [`/hooks`](/pt/hooks#the-hooks-menu) no Claude Code para adicionar, deletar e visualizar hooks interativamente. Para desabilitar todos os hooks de uma vez, use o toggle na parte inferior do menu `/hooks` ou defina `"disableAllHooks": true` no seu arquivo de configuração.
+Execute [`/hooks`](/pt/hooks#the-hooks-menu) no Claude Code para navegar por todos os hooks configurados agrupados por evento. Para desabilitar todos os hooks de uma vez, defina `"disableAllHooks": true` no seu arquivo de configuração.
 
-Hooks adicionados através do menu `/hooks` entram em vigor imediatamente. Se você editar arquivos de configuração diretamente enquanto Claude Code está em execução, as mudanças não entrarão em vigor até que você as revise no menu `/hooks` ou reinicie sua sessão.
+Se você editar arquivos de configuração diretamente enquanto Claude Code está em execução, o observador de arquivo normalmente pega mudanças de hook automaticamente.
 
 ## Hooks baseados em prompt
 
@@ -532,7 +571,7 @@ Para decisões que exigem julgamento em vez de regras determinísticas, use hook
 O único trabalho do modelo é retornar uma decisão sim/não como JSON:
 
 * `"ok": true`: a ação prossegue
-* `"ok": false`: a ação é bloqueada. O `"reason"` do modelo é alimentado de volta ao Claude para que ele possa se ajustar.
+* `"ok": false`: a ação é bloqueada. O `"reason"` do modelo é alimentado de volta ao Claude para que possa se ajustar.
 
 Este exemplo usa um hook `Stop` para perguntar ao modelo se todas as tarefas solicitadas estão completas. Se o modelo retornar `"ok": false`, Claude continua trabalhando e usa o `reason` como sua próxima instrução:
 
@@ -587,7 +626,7 @@ Para opções de configuração completas, consulte [Hooks baseados em agente](/
 
 ## HTTP hooks
 
-Use hooks `type: "http"` para POST de dados de evento para um endpoint HTTP em vez de executar um comando shell. O endpoint recebe o mesmo JSON que um hook de comando receberia em stdin, e retorna resultados através do corpo da resposta HTTP usando o mesmo formato JSON.
+Use hooks `type: "http"` para POST dados de evento para um endpoint HTTP em vez de executar um comando shell. O endpoint recebe o mesmo JSON que um hook de comando receberia em stdin, e retorna resultados através do corpo da resposta HTTP usando o mesmo formato JSON.
 
 HTTP hooks são úteis quando você quer que um servidor web, função em nuvem ou serviço externo manipule a lógica do hook: por exemplo, um serviço de auditoria compartilhado que registra eventos de uso de ferramenta em toda uma equipe.
 
@@ -618,10 +657,6 @@ O endpoint deve retornar um corpo de resposta JSON usando o mesmo [formato de sa
 
 Valores de header suportam interpolação de variável de ambiente usando sintaxe `$VAR_NAME` ou `${VAR_NAME}`. Apenas variáveis listadas no array `allowedEnvVars` são resolvidas; todas as outras referências `$VAR` permanecem vazias.
 
-<Note>
-  HTTP hooks devem ser configurados editando seu JSON de configuração diretamente. O menu interativo `/hooks` suporta apenas adicionar hooks de comando.
-</Note>
-
 Para opções de configuração completas e manipulação de resposta, consulte [HTTP hooks](/pt/hooks#http-hook-fields) na referência.
 
 ## Limitações e solução de problemas
@@ -650,7 +685,7 @@ Você vê uma mensagem como "PreToolUse hook error: ..." na transcrição.
 * Seu script saiu com um código não-zero inesperadamente. Teste-o manualmente canalizando JSON de amostra:
   ```bash  theme={null}
   echo '{"tool_name":"Bash","tool_input":{"command":"ls"}}' | ./my-hook.sh
-  echo $?  # Verifique o código de saída
+  echo $?  // Verifique o código de saída
   ```
 * Se você vir "command not found", use caminhos absolutos ou `$CLAUDE_PROJECT_DIR` para referenciar scripts
 * Se você vir "jq: command not found", instale `jq` ou use Python/Node.js para análise JSON
@@ -660,7 +695,7 @@ Você vê uma mensagem como "PreToolUse hook error: ..." na transcrição.
 
 Você editou um arquivo de configuração mas os hooks não aparecem no menu.
 
-* Reinicie sua sessão ou abra `/hooks` para recarregar. Hooks adicionados através do menu `/hooks` entram em vigor imediatamente, mas edições manuais de arquivo exigem um recarregamento.
+* Edições de arquivo são normalmente capturadas automaticamente. Se não tiverem aparecido após alguns segundos, o observador de arquivo pode ter perdido a mudança: reinicie sua sessão para forçar um recarregamento.
 * Verifique que seu JSON é válido (vírgulas finais e comentários não são permitidos)
 * Confirme que o arquivo de configuração está no local correto: `.claude/settings.json` para hooks de projeto, `~/.claude/settings.json` para hooks globais
 
@@ -674,9 +709,9 @@ Seu script de Stop hook precisa verificar se já acionou uma continuação. Anal
 #!/bin/bash
 INPUT=$(cat)
 if [ "$(echo "$INPUT" | jq -r '.stop_hook_active')" = "true" ]; then
-  exit 0  # Permitir que Claude pare
+  exit 0  // Permitir que Claude pare
 fi
-# ... resto da lógica do seu hook
+// ... resto da lógica do seu hook
 ```
 
 ### Validação JSON falhou

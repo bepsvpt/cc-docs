@@ -77,7 +77,7 @@ claude -p "Extract the main function names from auth.py" \
   ```
 </Tip>
 
-### Diffuser les réponses
+### Réponses en streaming
 
 Utilisez `--output-format stream-json` avec `--verbose` et `--include-partial-messages` pour recevoir les tokens au fur et à mesure qu'ils sont générés. Chaque ligne est un objet JSON représentant un événement :
 
@@ -85,14 +85,14 @@ Utilisez `--output-format stream-json` avec `--verbose` et `--include-partial-me
 claude -p "Explain recursion" --output-format stream-json --verbose --include-partial-messages
 ```
 
-L'exemple suivant utilise [jq](https://jqlang.github.io/jq/) pour filtrer les deltas de texte et afficher uniquement le texte en streaming. Le flag `-r` affiche les chaînes brutes (sans guillemets) et `-j` joint sans sauts de ligne pour que les tokens se diffusent continuellement :
+L'exemple suivant utilise [jq](https://jqlang.github.io/jq/) pour filtrer les deltas de texte et afficher uniquement le texte en streaming. Le flag `-r` affiche les chaînes brutes (sans guillemets) et `-j` joint sans sauts de ligne pour que les tokens se diffusent en continu :
 
 ```bash  theme={null}
 claude -p "Write a poem" --output-format stream-json --verbose --include-partial-messages | \
   jq -rj 'select(.type == "stream_event" and .event.delta.type? == "text_delta") | .event.delta.text'
 ```
 
-Pour le streaming programmatique avec callbacks et objets de message, consultez [Diffuser les réponses en temps réel](https://platform.claude.com/docs/fr/agent-sdk/streaming-output) dans la documentation de l'Agent SDK.
+Pour le streaming programmatique avec callbacks et objets de message, consultez [Réponses en streaming en temps réel](https://platform.claude.com/docs/fr/agent-sdk/streaming-output) dans la documentation de l'Agent SDK.
 
 ### Approuver automatiquement les outils
 
@@ -112,10 +112,10 @@ claude -p "Look at my staged changes and create an appropriate commit" \
   --allowedTools "Bash(git diff *),Bash(git log *),Bash(git status *),Bash(git commit *)"
 ```
 
-Le flag `--allowedTools` utilise la [syntaxe des règles de permission](/fr/settings#permission-rule-syntax). Le ` *` final active la correspondance de préfixe, donc `Bash(git diff *)` autorise n'importe quelle commande commençant par `git diff`. L'espace avant `*` est important : sans lui, `Bash(git diff*)` correspondrait également à `git diff-index`.
+Le flag `--allowedTools` utilise la [syntaxe des règles de permission](/fr/settings#permission-rule-syntax). L'espace ` *` à la fin active la correspondance de préfixe, donc `Bash(git diff *)` autorise n'importe quelle commande commençant par `git diff`. L'espace avant `*` est important : sans lui, `Bash(git diff*)` correspondrait également à `git diff-index`.
 
 <Note>
-  Les [skills](/fr/skills) invoquées par l'utilisateur comme `/commit` et les [commandes intégrées](/fr/interactive-mode#built-in-commands) ne sont disponibles qu'en mode interactif. En mode `-p`, décrivez plutôt la tâche que vous souhaitez accomplir.
+  Les [skills](/fr/skills) invoquées par l'utilisateur comme `/commit` et les [commandes intégrées](/fr/commands) ne sont disponibles qu'en mode interactif. En mode `-p`, décrivez plutôt la tâche que vous souhaitez accomplir.
 </Note>
 
 ### Personnaliser le prompt système

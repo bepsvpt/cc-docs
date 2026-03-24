@@ -6,7 +6,7 @@
 
 > Gunakan Agent SDK untuk menjalankan Claude Code secara programatis dari CLI, Python, atau TypeScript.
 
-[Agent SDK](https://platform.claude.com/docs/id/agent-sdk/overview) memberikan Anda alat yang sama, loop agen, dan manajemen konteks yang mendukung Claude Code. Tersedia sebagai CLI untuk skrip dan CI/CD, atau sebagai paket [Python](https://platform.claude.com/docs/id/agent-sdk/python) dan [TypeScript](https://platform.claude.com/docs/id/agent-sdk/typescript) untuk kontrol programatis penuh.
+[Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview) memberikan Anda alat yang sama, loop agen, dan manajemen konteks yang mendukung Claude Code. Tersedia sebagai CLI untuk skrip dan CI/CD, atau sebagai paket [Python](https://platform.claude.com/docs/en/agent-sdk/python) dan [TypeScript](https://platform.claude.com/docs/en/agent-sdk/typescript) untuk kontrol programatis penuh.
 
 <Note>
   CLI sebelumnya disebut "headless mode." Bendera `-p` dan semua opsi CLI bekerja dengan cara yang sama.
@@ -18,7 +18,7 @@ Untuk menjalankan Claude Code secara programatis dari CLI, berikan `-p` dengan p
 claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"
 ```
 
-Halaman ini mencakup penggunaan Agent SDK melalui CLI (`claude -p`). Untuk paket SDK Python dan TypeScript dengan output terstruktur, callback persetujuan alat, dan objek pesan asli, lihat [dokumentasi Agent SDK lengkap](https://platform.claude.com/docs/id/agent-sdk/overview).
+Halaman ini mencakup penggunaan Agent SDK melalui CLI (`claude -p`). Untuk paket SDK Python dan TypeScript dengan output terstruktur, callback persetujuan alat, dan objek pesan asli, lihat [dokumentasi Agent SDK lengkap](https://platform.claude.com/docs/en/agent-sdk/overview).
 
 ## Penggunaan dasar
 
@@ -92,7 +92,7 @@ claude -p "Write a poem" --output-format stream-json --verbose --include-partial
   jq -rj 'select(.type == "stream_event" and .event.delta.type? == "text_delta") | .event.delta.text'
 ```
 
-Untuk streaming programatis dengan callback dan objek pesan, lihat [Stream responses in real-time](https://platform.claude.com/docs/id/agent-sdk/streaming-output) dalam dokumentasi Agent SDK.
+Untuk streaming programatis dengan callback dan objek pesan, lihat [Stream responses in real-time](https://platform.claude.com/docs/en/agent-sdk/streaming-output) dalam dokumentasi Agent SDK.
 
 ### Persetujuan otomatis alat
 
@@ -115,7 +115,7 @@ claude -p "Look at my staged changes and create an appropriate commit" \
 Bendera `--allowedTools` menggunakan [sintaks aturan izin](/id/settings#permission-rule-syntax). Spasi di akhir ` *` memungkinkan pencocokan awalan, jadi `Bash(git diff *)` memungkinkan perintah apa pun yang dimulai dengan `git diff`. Spasi sebelum `*` penting: tanpanya, `Bash(git diff*)` juga akan cocok dengan `git diff-index`.
 
 <Note>
-  [skills](/id/skills) yang dipanggil pengguna seperti `/commit` dan [perintah bawaan](/id/interactive-mode#built-in-commands) hanya tersedia dalam mode interaktif. Dalam mode `-p`, jelaskan tugas yang ingin Anda capai.
+  [skills](/id/skills) yang dipanggil pengguna seperti `/commit` dan [perintah bawaan](/id/commands) hanya tersedia dalam mode interaktif. Dalam mode `-p`, jelaskan tugas yang ingin Anda capai.
 </Note>
 
 ### Sesuaikan prompt sistem
@@ -128,7 +128,7 @@ gh pr diff "$1" | claude -p \
   --output-format json
 ```
 
-Lihat [system prompt flags](/id/cli-reference#system-prompt-flags) untuk opsi lainnya termasuk `--system-prompt` untuk sepenuhnya mengganti prompt default.
+Lihat [system prompt flags](/id/cli-reference#system-prompt-flags) untuk opsi lebih lanjut termasuk `--system-prompt` untuk sepenuhnya mengganti prompt default.
 
 ### Lanjutkan percakapan
 
@@ -152,7 +152,7 @@ claude -p "Continue that review" --resume "$session_id"
 
 ## Langkah berikutnya
 
-* [Agent SDK quickstart](https://platform.claude.com/docs/id/agent-sdk/quickstart): bangun agen pertama Anda dengan Python atau TypeScript
+* [Agent SDK quickstart](https://platform.claude.com/docs/en/agent-sdk/quickstart): bangun agen pertama Anda dengan Python atau TypeScript
 * [CLI reference](/id/cli-reference): semua bendera dan opsi CLI
 * [GitHub Actions](/id/github-actions): gunakan Agent SDK dalam alur kerja GitHub
 * [GitLab CI/CD](/id/gitlab-ci-cd): gunakan Agent SDK dalam pipeline GitLab

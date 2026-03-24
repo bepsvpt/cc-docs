@@ -239,7 +239,7 @@ Plugin 源告诉 Claude Code 在你的 marketplace 中列出的每个单独 plug
 
 ### 相对路径
 
-对于同一存储库中的 plugins：
+对于同一存储库中的 plugins，使用以 `./` 开头的路径：
 
 ```json  theme={null}
 {
@@ -247,6 +247,8 @@ Plugin 源告诉 Claude Code 在你的 marketplace 中列出的每个单独 plug
   "source": "./plugins/my-plugin"
 }
 ```
+
+路径相对于 marketplace 根目录解析，即包含 `.claude-plugin/` 的目录。在上面的示例中，`./plugins/my-plugin` 指向 `<repo>/plugins/my-plugin`，即使 `marketplace.json` 位于 `<repo>/.claude-plugin/marketplace.json`。不要使用 `../` 来爬出 `.claude-plugin/`。
 
 <Note>
   相对路径仅在用户通过 Git（GitHub、GitLab 或 git URL）添加你的 marketplace 时有效。如果用户通过直接 URL 添加你的 marketplace 到 `marketplace.json` 文件，相对路径将无法正确解析。对于基于 URL 的分发，请改用 GitHub、npm 或 git URL 源。有关详细信息，请参阅[故障排除](#plugins-with-relative-paths-fail-in-url-based-marketplaces)。
@@ -310,11 +312,11 @@ Plugin 源告诉 Claude Code 在你的 marketplace 中列出的每个单独 plug
 }
 ```
 
-| 字段    | 类型     | 描述                                |
-| :---- | :----- | :-------------------------------- |
-| `url` | string | 必需。完整的 git 存储库 URL（必须以 `.git` 结尾） |
-| `ref` | string | 可选。Git 分支或标签（默认为存储库默认分支）          |
-| `sha` | string | 可选。完整的 40 字符 git 提交 SHA 以固定到精确版本  |
+| 字段    | 类型     | 描述                                                                                                   |
+| :---- | :----- | :--------------------------------------------------------------------------------------------------- |
+| `url` | string | 必需。完整的 git 存储库 URL（`https://` 或 `git@`）。`.git` 后缀是可选的，所以 Azure DevOps 和 AWS CodeCommit URL 不带后缀也可以工作 |
+| `ref` | string | 可选。Git 分支或标签（默认为存储库默认分支）                                                                             |
+| `sha` | string | 可选。完整的 40 字符 git 提交 SHA 以固定到精确版本                                                                     |
 
 ### Git 子目录
 
@@ -628,6 +630,10 @@ export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 
 使用 `".*"` 作为 `pathPattern` 来允许任何文件系统路径，同时仍然使用 `hostPattern` 控制网络源。
 
+<Note>
+  `strictKnownMarketplaces` 限制用户可以添加的内容，但不会自行注册 marketplaces。要使允许的 marketplaces 自动可用而无需用户运行 `/plugin marketplace add`，请在同一 `managed-settings.json` 中将其与 [`extraKnownMarketplaces`](/zh-CN/settings#extraknownmarketplaces) 配对。见[同时使用两者](/zh-CN/settings#strictknownmarketplaces)。
+</Note>
+
 #### 限制如何工作
 
 限制在 plugin 安装过程的早期进行验证，在任何网络请求或文件系统操作之前。这可以防止未授权的 marketplace 访问尝试。
@@ -772,12 +778,12 @@ claude plugin validate .
 
 从你的 marketplace 目录运行 `claude plugin validate .` 或 `/plugin validate .` 来检查问题。常见错误：
 
-| 错误                                                | 原因                 | 解决方案                                       |
-| :------------------------------------------------ | :----------------- | :----------------------------------------- |
-| `File not found: .claude-plugin/marketplace.json` | 缺少 manifest        | 使用必需字段创建 `.claude-plugin/marketplace.json` |
-| `Invalid JSON syntax: Unexpected token...`        | JSON 语法错误          | 检查缺少的逗号、多余的逗号或未引用的字符串                      |
-| `Duplicate plugin name "x" found in marketplace`  | 两个 plugins 共享相同的名称 | 给每个 plugin 一个唯一的 `name` 值                  |
-| `plugins[0].source: Path traversal not allowed`   | 源路径包含 `..`         | 使用相对于 marketplace 根目录的路径，不包含 `..`          |
+| 错误                                                | 原因                 | 解决方案                                                       |
+| :------------------------------------------------ | :----------------- | :--------------------------------------------------------- |
+| `File not found: .claude-plugin/marketplace.json` | 缺少 manifest        | 使用必需字段创建 `.claude-plugin/marketplace.json`                 |
+| `Invalid JSON syntax: Unexpected token...`        | JSON 语法错误          | 检查缺少的逗号、多余的逗号或未引用的字符串                                      |
+| `Duplicate plugin name "x" found in marketplace`  | 两个 plugins 共享相同的名称 | 给每个 plugin 一个唯一的 `name` 值                                  |
+| `plugins[0].source: Path contains ".."`           | 源路径包含 `..`         | 使用相对于 marketplace 根目录的路径，不包含 `..`。见[相对路径](#relative-paths) |
 
 **警告**（非阻止）：
 

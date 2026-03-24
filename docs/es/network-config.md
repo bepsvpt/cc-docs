@@ -16,7 +16,7 @@ Claude Code admite varias configuraciones de red y seguridad empresarial a trav�
 
 ### Variables de entorno
 
-Claude Code respeta las variables de entorno proxy estándar:
+Claude Code respeta las variables de entorno de proxy estándar:
 
 ```bash  theme={null}
 # Proxy HTTPS (recomendado)
@@ -86,8 +86,10 @@ Claude Code requiere acceso a las siguientes URL:
 
 Asegúrese de que estas URL estén en la lista blanca en su configuración de proxy y reglas de firewall. Esto es especialmente importante cuando se utiliza Claude Code en entornos de red restringidos o en contenedores.
 
+[Claude Code en la web](/es/claude-code-on-the-web) y [Code Review](/es/code-review) se conectan a sus repositorios desde infraestructura administrada por Anthropic. Si su organización de GitHub Enterprise Cloud restringe el acceso por dirección IP, habilite [herencia de lista de permitidos de IP para aplicaciones de GitHub instaladas](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps). La aplicación de GitHub de Claude registra sus rangos de IP, por lo que habilitar esta configuración permite el acceso sin configuración manual. Para [agregar los rangos a su lista de permitidos manualmente](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address) en su lugar, o para configurar otros firewalls, consulte [direcciones IP de la API de Anthropic](https://platform.claude.com/docs/en/api/ip-addresses).
+
 ## Recursos adicionales
 
 * [Configuración de Claude Code](/es/settings)
-* [Referencia de variables de entorno](/es/settings#environment-variables)
+* [Referencia de variables de entorno](/es/env-vars)
 * [Guía de solución de problemas](/es/troubleshooting)

@@ -6,7 +6,7 @@
 
 > Используйте Agent SDK для программного запуска Claude Code из CLI, Python или TypeScript.
 
-[Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview) предоставляет вам те же инструменты, цикл агента и управление контекстом, которые питают Claude Code. Он доступен как CLI для скриптов и CI/CD, или как пакеты [Python](https://platform.claude.com/docs/en/agent-sdk/python) и [TypeScript](https://platform.claude.com/docs/en/agent-sdk/typescript) для полного программного управления.
+[Agent SDK](https://platform.claude.com/docs/ru/agent-sdk/overview) предоставляет вам те же инструменты, цикл агента и управление контекстом, которые питают Claude Code. Он доступен как CLI для скриптов и CI/CD, или как пакеты [Python](https://platform.claude.com/docs/ru/agent-sdk/python) и [TypeScript](https://platform.claude.com/docs/ru/agent-sdk/typescript) для полного программного управления.
 
 <Note>
   CLI ранее назывался "headless mode". Флаг `-p` и все параметры CLI работают так же.
@@ -18,7 +18,7 @@
 claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"
 ```
 
-На этой странице рассматривается использование Agent SDK через CLI (`claude -p`). Для пакетов Python и TypeScript SDK со структурированными выходами, обратными вызовами одобрения инструментов и собственными объектами сообщений см. [полную документацию Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview).
+На этой странице рассматривается использование Agent SDK через CLI (`claude -p`). Для пакетов Python и TypeScript SDK со структурированными выходами, обратными вызовами одобрения инструментов и собственными объектами сообщений см. [полную документацию Agent SDK](https://platform.claude.com/docs/ru/agent-sdk/overview).
 
 ## Базовое использование
 
@@ -36,23 +36,23 @@ claude -p "What does the auth module do?"
 
 ## Примеры
 
-Эти примеры выделяют общие шаблоны CLI.
+Эти примеры выделяют общие паттерны CLI.
 
 ### Получение структурированного вывода
 
 Используйте `--output-format` для управления тем, как возвращаются ответы:
 
 * `text` (по умолчанию): простой текстовый вывод
-* `json`: структурированный JSON с результатом, ID сеанса и метаданными
+* `json`: структурированный JSON с результатом, ID сессии и метаданными
 * `stream-json`: JSON с разделением по строкам для потоковой передачи в реальном времени
 
-Этот пример возвращает сводку проекта в виде JSON с метаданными сеанса, с текстовым результатом в поле `result`:
+Этот пример возвращает сводку проекта в виде JSON с метаданными сессии, с текстовым результатом в поле `result`:
 
 ```bash  theme={null}
 claude -p "Summarize this project" --output-format json
 ```
 
-Чтобы получить вывод, соответствующий определённой схеме, используйте `--output-format json` с `--json-schema` и определением [JSON Schema](https://json-schema.org/). Ответ включает метаданные о запросе (ID сеанса, использование и т. д.) со структурированным выводом в поле `structured_output`.
+Чтобы получить вывод, соответствующий определённой схеме, используйте `--output-format json` с `--json-schema` и определением [JSON Schema](https://json-schema.org/). Ответ включает метаданные о запросе (ID сессии, использование и т.д.) со структурированным выводом в поле `structured_output`.
 
 Этот пример извлекает имена функций и возвращает их как массив строк:
 
@@ -63,7 +63,7 @@ claude -p "Extract the main function names from auth.py" \
 ```
 
 <Tip>
-  Используйте инструмент, такой как [jq](https://jqlang.github.io/jq/), для анализа ответа и извлечения определённых полей:
+  Используйте инструмент вроде [jq](https://jqlang.github.io/jq/) для анализа ответа и извлечения определённых полей:
 
   ```bash  theme={null}
   # Extract the text result
@@ -79,7 +79,7 @@ claude -p "Extract the main function names from auth.py" \
 
 ### Потоковая передача ответов
 
-Используйте `--output-format stream-json` с `--verbose` и `--include-partial-messages` для получения токенов по мере их создания. Каждая строка — это объект JSON, представляющий событие:
+Используйте `--output-format stream-json` с `--verbose` и `--include-partial-messages` для получения токенов по мере их генерации. Каждая строка — это объект JSON, представляющий событие:
 
 ```bash  theme={null}
 claude -p "Explain recursion" --output-format stream-json --verbose --include-partial-messages
@@ -92,7 +92,7 @@ claude -p "Write a poem" --output-format stream-json --verbose --include-partial
   jq -rj 'select(.type == "stream_event" and .event.delta.type? == "text_delta") | .event.delta.text'
 ```
 
-Для программной потоковой передачи с обратными вызовами и объектами сообщений см. [Stream responses in real-time](https://platform.claude.com/docs/en/agent-sdk/streaming-output) в документации Agent SDK.
+Для программной потоковой передачи с обратными вызовами и объектами сообщений см. [Stream responses in real-time](https://platform.claude.com/docs/ru/agent-sdk/streaming-output) в документации Agent SDK.
 
 ### Автоматическое одобрение инструментов
 
@@ -115,12 +115,12 @@ claude -p "Look at my staged changes and create an appropriate commit" \
 Флаг `--allowedTools` использует [синтаксис правил разрешений](/ru/settings#permission-rule-syntax). Завершающий ` *` включает сопоставление префиксов, поэтому `Bash(git diff *)` разрешает любую команду, начинающуюся с `git diff`. Пробел перед `*` важен: без него `Bash(git diff*)` также совпадал бы с `git diff-index`.
 
 <Note>
-  Вызываемые пользователем [skills](/ru/skills) такие как `/commit` и [встроенные команды](/ru/interactive-mode#built-in-commands) доступны только в интерактивном режиме. В режиме `-p` опишите задачу, которую вы хотите выполнить.
+  Вызываемые пользователем [skills](/ru/skills) вроде `/commit` и [встроенные команды](/ru/commands) доступны только в интерактивном режиме. В режиме `-p` опишите задачу, которую вы хотите выполнить.
 </Note>
 
 ### Настройка системного запроса
 
-Используйте `--append-system-prompt` для добавления инструкций при сохранении поведения Claude Code по умолчанию. Этот пример передаёт diff PR в Claude и инструктирует его проверить наличие уязвимостей безопасности:
+Используйте `--append-system-prompt` для добавления инструкций при сохранении поведения Claude Code по умолчанию. Этот пример передаёт diff PR в Claude и инструктирует его проверить на уязвимости безопасности:
 
 ```bash  theme={null}
 gh pr diff "$1" | claude -p \
@@ -132,7 +132,7 @@ gh pr diff "$1" | claude -p \
 
 ### Продолжение разговоров
 
-Используйте `--continue` для продолжения самого последнего разговора или `--resume` с ID сеанса для продолжения определённого разговора. Этот пример запускает проверку, а затем отправляет дополнительные запросы:
+Используйте `--continue` для продолжения самого последнего разговора или `--resume` с ID сессии для продолжения определённого разговора. Этот пример запускает проверку, а затем отправляет дополнительные запросы:
 
 ```bash  theme={null}
 # First request
@@ -143,7 +143,7 @@ claude -p "Now focus on the database queries" --continue
 claude -p "Generate a summary of all issues found" --continue
 ```
 
-Если вы запускаете несколько разговоров, захватите ID сеанса для возобновления определённого:
+Если вы запускаете несколько разговоров, захватите ID сессии для возобновления определённого:
 
 ```bash  theme={null}
 session_id=$(claude -p "Start a review" --output-format json | jq -r '.session_id')
@@ -152,7 +152,7 @@ claude -p "Continue that review" --resume "$session_id"
 
 ## Следующие шаги
 
-* [Agent SDK quickstart](https://platform.claude.com/docs/en/agent-sdk/quickstart): создайте своего первого агента с помощью Python или TypeScript
+* [Agent SDK quickstart](https://platform.claude.com/docs/ru/agent-sdk/quickstart): создайте своего первого агента с помощью Python или TypeScript
 * [CLI reference](/ru/cli-reference): все флаги и параметры CLI
 * [GitHub Actions](/ru/github-actions): используйте Agent SDK в рабочих процессах GitHub
 * [GitLab CI/CD](/ru/gitlab-ci-cd): используйте Agent SDK в конвейерах GitLab

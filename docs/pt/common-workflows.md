@@ -6,7 +6,7 @@
 
 > Guias passo a passo para explorar bases de código, corrigir bugs, refatorar, testar e outras tarefas cotidianas com Claude Code.
 
-Esta página cobre fluxos de trabalho práticos para desenvolvimento cotidiano: explorar código desconhecido, depuração, refatoração, escrita de testes, criação de PRs e gerenciamento de sessões. Cada seção inclui exemplos de prompts que você pode adaptar aos seus próprios projetos. Para padrões e dicas de nível superior, consulte [Melhores práticas](/pt/best-practices).
+Esta página aborda fluxos de trabalho práticos para desenvolvimento cotidiano: explorar código desconhecido, depuração, refatoração, escrita de testes, criação de PRs e gerenciamento de sessões. Cada seção inclui exemplos de prompts que você pode adaptar aos seus próprios projetos. Para padrões e dicas de nível superior, consulte [Melhores práticas](/pt/best-practices).
 
 ## Entender novas bases de código
 
@@ -117,7 +117,7 @@ Suponha que você tenha encontrado uma mensagem de erro e precise encontrar e co
 <Tip>
   Dicas:
 
-  * Diga ao Claude o comando para reproduzir o problema e obter um rastreamento de pilha
+  * Diga ao Claude o comando para reproduzir o problema e obtenha um rastreamento de pilha
   * Mencione quaisquer etapas para reproduzir o erro
   * Deixe Claude saber se o erro é intermitente ou consistente
 </Tip>
@@ -226,7 +226,7 @@ Suponha que você queira usar subagents de IA especializados para lidar com tare
 
 ## Usar Plan Mode para análise segura de código
 
-Plan Mode instrui Claude a criar um plano analisando a base de código com operações somente leitura, perfeito para explorar bases de código, planejar alterações complexas ou revisar código com segurança. Em Plan Mode, Claude usa [`AskUserQuestion`](/pt/settings#tools-available-to-claude) para reunir requisitos e esclarecer seus objetivos antes de propor um plano.
+Plan Mode instrui Claude a criar um plano analisando a base de código com operações somente leitura, perfeito para explorar bases de código, planejar alterações complexas ou revisar código com segurança. Em Plan Mode, Claude usa [`AskUserQuestion`](/pt/tools-reference) para reunir requisitos e esclarecer seus objetivos antes de propor um plano.
 
 ### Quando usar Plan Mode
 
@@ -409,7 +409,7 @@ Suponha que você precise trabalhar com imagens em sua base de código e queira 
   <Step title="Adicione uma imagem à conversa">
     Você pode usar qualquer um destes métodos:
 
-    1. Arraste e solte uma imagem na janela Claude Code
+    1. Arraste e solte uma imagem na janela do Claude Code
     2. Copie uma imagem e cole-a no CLI com ctrl+v (Não use cmd+v)
     3. Forneça um caminho de imagem ao Claude. Por exemplo, "Analyze this image: /path/to/your/image.png"
   </Step>
@@ -504,9 +504,9 @@ Use @ para incluir rapidamente arquivos ou diretórios sem esperar que Claude os
 
 ## Usar pensamento estendido (thinking mode)
 
-[Pensamento estendido](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) é ativado por padrão, dando ao Claude espaço para raciocinar através de problemas complexos passo a passo antes de responder. Este raciocínio é visível em modo verboso, que você pode alternar com `Ctrl+O`.
+[Pensamento estendido](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) é ativado por padrão, dando ao Claude espaço para raciocinar através de problemas complexos passo a passo antes de responder. Este raciocínio é visível em modo verboso, que você pode ativar com `Ctrl+O`.
 
-Além disso, Opus 4.6 introduz raciocínio adaptativo: em vez de um orçamento de token de pensamento fixo, o modelo aloca dinamicamente pensamento com base em sua configuração de [nível de esforço](/pt/model-config#adjust-effort-level). Pensamento estendido e raciocínio adaptativo trabalham juntos para lhe dar controle sobre o quão profundamente Claude raciocina antes de responder.
+Além disso, Opus 4.6 e Sonnet 4.6 suportam raciocínio adaptativo: em vez de um orçamento de token de pensamento fixo, o modelo aloca dinamicamente pensamento com base em sua configuração de [nível de esforço](/pt/model-config#adjust-effort-level). Pensamento estendido e raciocínio adaptativo trabalham juntos para lhe dar controle sobre o quão profundamente Claude raciocina antes de responder.
 
 Pensamento estendido é particularmente valioso para decisões arquitetônicas complexas, bugs desafiadores, planejamento de implementação multi-etapa e avaliação de compensações entre diferentes abordagens.
 
@@ -518,13 +518,13 @@ Pensamento estendido é particularmente valioso para decisões arquitetônicas c
 
 Pensamento é ativado por padrão, mas você pode ajustá-lo ou desativá-lo.
 
-| Escopo                         | Como configurar                                                                               | Detalhes                                                                                                                                                                             |
-| ------------------------------ | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Nível de esforço**           | Ajuste em `/model` ou defina [`CLAUDE_CODE_EFFORT_LEVEL`](/pt/settings#environment-variables) | Controle a profundidade de pensamento para Opus 4.6 e Sonnet 4.6: baixo, médio, alto. Consulte [Ajustar nível de esforço](/pt/model-config#adjust-effort-level)                      |
-| **Palavra-chave `ultrathink`** | Inclua "ultrathink" em qualquer lugar em seu prompt                                           | Define esforço para alto para esse turno em Opus 4.6 e Sonnet 4.6. Útil para tarefas únicas que requerem raciocínio profundo sem alterar permanentemente sua configuração de esforço |
-| **Atalho de alternância**      | Pressione `Option+T` (macOS) ou `Alt+T` (Windows/Linux)                                       | Alterne pensamento ligado/desligado para a sessão atual (todos os modelos). Pode exigir [configuração de terminal](/pt/terminal-config) para ativar atalhos de tecla Option          |
-| **Padrão global**              | Use `/config` para alternar thinking mode                                                     | Define seu padrão em todos os projetos (todos os modelos).<br />Salvo como `alwaysThinkingEnabled` em `~/.claude/settings.json`                                                      |
-| **Limitar orçamento de token** | Defina a variável de ambiente [`MAX_THINKING_TOKENS`](/pt/settings#environment-variables)     | Limite o orçamento de pensamento para um número específico de tokens (ignorado em Opus 4.6 a menos que definido como 0). Exemplo: `export MAX_THINKING_TOKENS=10000`                 |
+| Escopo                         | Como configurar                                                                             | Detalhes                                                                                                                                                                             |
+| ------------------------------ | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Nível de esforço**           | Execute `/effort`, ajuste em `/model`, ou defina [`CLAUDE_CODE_EFFORT_LEVEL`](/pt/env-vars) | Controle a profundidade de pensamento para Opus 4.6 e Sonnet 4.6. Consulte [Ajustar nível de esforço](/pt/model-config#adjust-effort-level)                                          |
+| **Palavra-chave `ultrathink`** | Inclua "ultrathink" em qualquer lugar em seu prompt                                         | Define esforço para alto para esse turno em Opus 4.6 e Sonnet 4.6. Útil para tarefas únicas que requerem raciocínio profundo sem alterar permanentemente sua configuração de esforço |
+| **Atalho de alternância**      | Pressione `Option+T` (macOS) ou `Alt+T` (Windows/Linux)                                     | Alterne pensamento ligado/desligado para a sessão atual (todos os modelos). Pode exigir [configuração de terminal](/pt/terminal-config) para ativar atalhos de tecla Option          |
+| **Padrão global**              | Use `/config` para alternar thinking mode                                                   | Define seu padrão em todos os projetos (todos os modelos).<br />Salvo como `alwaysThinkingEnabled` em `~/.claude/settings.json`                                                      |
+| **Limitar orçamento de token** | Defina a variável de ambiente [`MAX_THINKING_TOKENS`](/pt/env-vars)                         | Limite o orçamento de pensamento para um número específico de tokens (ignorado em Opus 4.6 e Sonnet 4.6 a menos que definido como 0). Exemplo: `export MAX_THINKING_TOKENS=10000`    |
 
 Para visualizar o processo de pensamento do Claude, pressione `Ctrl+O` para alternar o modo verboso e veja o raciocínio interno exibido como texto em itálico cinzento.
 
@@ -532,11 +532,11 @@ Para visualizar o processo de pensamento do Claude, pressione `Ctrl+O` para alte
 
 Pensamento estendido controla quanto raciocínio interno Claude realiza antes de responder. Mais pensamento fornece mais espaço para explorar soluções, analisar casos extremos e autocorrigir erros.
 
-**Com Opus 4.6**, pensamento usa raciocínio adaptativo: o modelo aloca dinamicamente tokens de pensamento com base no [nível de esforço](/pt/model-config#adjust-effort-level) que você seleciona (baixo, médio, alto). Esta é a forma recomendada de ajustar a compensação entre velocidade e profundidade de raciocínio.
+**Com Opus 4.6 e Sonnet 4.6**, pensamento usa raciocínio adaptativo: o modelo aloca dinamicamente tokens de pensamento com base no [nível de esforço](/pt/model-config#adjust-effort-level) que você seleciona. Esta é a forma recomendada de ajustar a compensação entre velocidade e profundidade de raciocínio.
 
-**Com outros modelos**, pensamento usa um orçamento fixo de até 31.999 tokens do seu orçamento de saída. Você pode limitar isso com a variável de ambiente [`MAX_THINKING_TOKENS`](/pt/settings#environment-variables), ou desativar pensamento inteiramente via `/config` ou a alternância `Option+T`/`Alt+T`.
+**Com modelos mais antigos**, pensamento usa um orçamento fixo de até 31.999 tokens do seu orçamento de saída. Você pode limitar isso com a variável de ambiente [`MAX_THINKING_TOKENS`](/pt/env-vars), ou desativar pensamento inteiramente via `/config` ou a alternância `Option+T`/`Alt+T`.
 
-`MAX_THINKING_TOKENS` é ignorado em Opus 4.6 e Sonnet 4.6, já que raciocínio adaptativo controla a profundidade de pensamento. A única exceção: definir `MAX_THINKING_TOKENS=0` ainda desativa pensamento inteiramente em qualquer modelo. Para desativar raciocínio adaptativo e reverter para o orçamento de pensamento fixo, defina `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1`. Consulte [variáveis de ambiente](/pt/settings#environment-variables).
+`MAX_THINKING_TOKENS` é ignorado em Opus 4.6 e Sonnet 4.6, já que raciocínio adaptativo controla a profundidade de pensamento. A única exceção: definir `MAX_THINKING_TOKENS=0` ainda desativa pensamento inteiramente em qualquer modelo. Para desativar pensamento adaptativo e reverter para o orçamento de pensamento fixo, defina `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1`. Consulte [variáveis de ambiente](/pt/env-vars).
 
 <Warning>
   Você é cobrado por todos os tokens de pensamento usados, mesmo que modelos Claude 4 mostrem pensamento resumido
@@ -561,8 +561,14 @@ As sessões são armazenadas por diretório de projeto. O seletor `/resume` most
 Dê nomes descritivos às sessões para encontrá-las mais tarde. Esta é uma prática recomendada ao trabalhar em múltiplas tarefas ou recursos.
 
 <Steps>
-  <Step title="Nomeie a sessão atual">
-    Use `/rename` durante uma sessão para dar a ela um nome memorável:
+  <Step title="Nomeie a sessão">
+    Nomeie uma sessão na inicialização com `-n`:
+
+    ```bash  theme={null}
+    claude -n auth-refactor
+    ```
+
+    Ou use `/rename` durante uma sessão, que também mostra o nome na barra de prompt:
 
     ```text  theme={null}
     /rename auth-refactor
@@ -630,7 +636,7 @@ Sessões bifurcadas (criadas com `/rewind` ou `--fork-session`) são agrupadas s
 
   1. **Armazenamento de Conversa**: Todas as conversas são automaticamente salvas localmente com seu histórico de mensagens completo
   2. **Desserialização de Mensagem**: Ao retomar, todo o histórico de mensagens é restaurado para manter contexto
-  3. **Estado da Ferramenta**: O uso de ferramentas e resultados da conversa anterior são preservados
+  3. **Estado de Ferramenta**: O uso de ferramenta e resultados da conversa anterior são preservados
   4. **Restauração de Contexto**: A conversa retoma com todo o contexto anterior intacto
 </Tip>
 
@@ -638,7 +644,7 @@ Sessões bifurcadas (criadas com `/rewind` ou `--fork-session`) são agrupadas s
 
 ## Executar sessões paralelas de Claude Code com Git worktrees
 
-Ao trabalhar em múltiplas tarefas ao mesmo tempo, você precisa que cada sessão Claude tenha sua própria cópia da base de código para que as alterações não colidam. Git worktrees resolvem isso criando diretórios de trabalho separados que cada um tem seus próprios arquivos e branch, enquanto compartilham o mesmo histórico de repositório e conexões remotas. Isso significa que você pode ter Claude trabalhando em um recurso em um worktree enquanto corrige um bug em outro, sem que nenhuma sessão interfira com a outra.
+Ao trabalhar em múltiplas tarefas ao mesmo tempo, você precisa que cada sessão do Claude tenha sua própria cópia da base de código para que as alterações não colidam. Git worktrees resolvem isso criando diretórios de trabalho separados que cada um tem seus próprios arquivos e branch, enquanto compartilham o mesmo histórico de repositório e conexões remotas. Isso significa que você pode ter Claude trabalhando em um recurso em um worktree enquanto corrige um bug em outro, sem que nenhuma sessão interfira com a outra.
 
 Use a flag `--worktree` (`-w`) para criar um worktree isolado e iniciar Claude nele. O valor que você passa se torna o nome do diretório worktree e nome do branch:
 
@@ -668,12 +674,12 @@ Subagents também podem usar isolamento de worktree para trabalhar em paralelo s
 
 ### Limpeza de worktree
 
-Quando você sai de uma sessão worktree, Claude lida com limpeza com base em se você fez alterações:
+Quando você sai de uma sessão de worktree, Claude lida com limpeza com base em se você fez alterações:
 
 * **Sem alterações**: o worktree e seu branch são removidos automaticamente
 * **Alterações ou commits existem**: Claude o solicita para manter ou remover o worktree. Manter preserva o diretório e branch para que você possa retornar mais tarde. Remover exclui o diretório worktree e seu branch, descartando todas as alterações não confirmadas e commits
 
-Para limpar worktrees fora de uma sessão Claude, use [gerenciamento manual de worktree](#manage-worktrees-manually).
+Para limpar worktrees fora de uma sessão do Claude, use [gerenciamento manual de worktree](#manage-worktrees-manually).
 
 <Tip>
   Adicione `.claude/worktrees/` ao seu `.gitignore` para evitar que o conteúdo do worktree apareça como arquivos não rastreados em seu repositório principal.
@@ -706,7 +712,7 @@ Saiba mais na [documentação oficial de Git worktree](https://git-scm.com/docs/
 
 ### Controle de versão não-git
 
-Isolamento de worktree funciona com git por padrão. Para outros sistemas de controle de versão como SVN, Perforce ou Mercurial, configure [hooks WorktreeCreate e WorktreeRemove](/pt/hooks#worktreecreate) para fornecer lógica personalizada de criação e limpeza de worktree. Quando configurados, esses hooks substituem o comportamento padrão de git quando você usa `--worktree`.
+Isolamento de worktree funciona com git por padrão. Para outros sistemas de controle de versão como SVN, Perforce ou Mercurial, configure [hooks WorktreeCreate e WorktreeRemove](/pt/hooks#worktreecreate) para fornecer lógica personalizada de criação e limpeza de worktree. Quando configurados, esses hooks substituem o comportamento padrão do git quando você usa `--worktree`.
 
 Para coordenação automatizada de sessões paralelas com tarefas compartilhadas e mensagens, consulte [equipes de agentes](/pt/agent-teams).
 
@@ -714,15 +720,79 @@ Para coordenação automatizada de sessões paralelas com tarefas compartilhadas
 
 ## Obtenha notificações quando Claude precisa de sua atenção
 
-Quando você inicia uma tarefa de longa duração e muda para outra janela, você pode configurar notificações de desktop para saber quando Claude termina ou precisa de sua entrada. Isso usa o evento `Notification` [hook](/pt/hooks-guide#get-notified-when-claude-needs-input), que dispara sempre que Claude está esperando permissão, ocioso e pronto para um novo prompt, ou completando autenticação.
+Quando você inicia uma tarefa de longa duração e muda para outra janela, você pode configurar notificações de desktop para saber quando Claude termina ou precisa de sua entrada. Isso usa o evento de hook `Notification` [hook event](/pt/hooks-guide#get-notified-when-claude-needs-input), que dispara sempre que Claude está esperando permissão, ocioso e pronto para um novo prompt, ou completando autenticação.
 
 <Steps>
-  <Step title="Abra o menu de hooks">
-    Digite `/hooks` e selecione `Notification` da lista de eventos.
+  <Step title="Adicione o hook às suas configurações">
+    Abra `~/.claude/settings.json` e adicione um hook `Notification` que chama o comando de notificação nativa da sua plataforma:
+
+    <Tabs>
+      <Tab title="macOS">
+        ```json  theme={null}
+        {
+          "hooks": {
+            "Notification": [
+              {
+                "matcher": "",
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+        ```
+      </Tab>
+
+      <Tab title="Linux">
+        ```json  theme={null}
+        {
+          "hooks": {
+            "Notification": [
+              {
+                "matcher": "",
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "notify-send 'Claude Code' 'Claude Code needs your attention'"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+        ```
+      </Tab>
+
+      <Tab title="Windows">
+        ```json  theme={null}
+        {
+          "hooks": {
+            "Notification": [
+              {
+                "matcher": "",
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "powershell.exe -Command \"[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); [System.Windows.Forms.MessageBox]::Show('Claude Code needs your attention', 'Claude Code')\""
+                  }
+                ]
+              }
+            ]
+          }
+        }
+        ```
+      </Tab>
+    </Tabs>
+
+    Se seu arquivo de configurações já tiver uma chave `hooks`, mescle a entrada `Notification` nela em vez de sobrescrever. Você também pode pedir ao Claude para escrever o hook para você descrevendo o que você quer no CLI.
   </Step>
 
-  <Step title="Configure o matcher">
-    Selecione `+ Match all (no filter)` para disparar em todos os tipos de notificação. Para notificar apenas para eventos específicos, selecione `+ Add new matcher…` e insira um destes valores:
+  <Step title="Opcionalmente, estreite o matcher">
+    Por padrão, o hook dispara em todos os tipos de notificação. Para disparar apenas para eventos específicos, defina o campo `matcher` para um destes valores:
 
     | Matcher              | Dispara quando                                      |
     | :------------------- | :-------------------------------------------------- |
@@ -732,52 +802,22 @@ Quando você inicia uma tarefa de longa duração e muda para outra janela, voc�
     | `elicitation_dialog` | Claude está fazendo uma pergunta                    |
   </Step>
 
-  <Step title="Adicione seu comando de notificação">
-    Selecione `+ Add new hook…` e insira o comando para seu SO:
-
-    <Tabs>
-      <Tab title="macOS">
-        Usa [`osascript`](https://ss64.com/mac/osascript.html) para disparar uma notificação macOS nativa através de AppleScript:
-
-        ```
-        osascript -e 'display notification "Claude Code needs your attention" with title "Claude Code"'
-        ```
-      </Tab>
-
-      <Tab title="Linux">
-        Usa `notify-send`, que é pré-instalado na maioria dos desktops Linux com um daemon de notificação:
-
-        ```
-        notify-send 'Claude Code' 'Claude Code needs your attention'
-        ```
-      </Tab>
-
-      <Tab title="Windows (PowerShell)">
-        Usa PowerShell para mostrar uma caixa de mensagem nativa através do .NET Windows Forms:
-
-        ```
-        powershell.exe -Command "[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); [System.Windows.Forms.MessageBox]::Show('Claude Code needs your attention', 'Claude Code')"
-        ```
-      </Tab>
-    </Tabs>
-  </Step>
-
-  <Step title="Salve nas configurações do usuário">
-    Selecione `User settings` para aplicar a notificação em todos os seus projetos.
+  <Step title="Verifique o hook">
+    Digite `/hooks` e selecione `Notification` para confirmar que o hook aparece. Selecioná-lo mostra o comando que será executado. Para testá-lo de ponta a ponta, peça ao Claude para executar um comando que requer permissão e mude para longe do terminal, ou peça ao Claude para disparar uma notificação diretamente.
   </Step>
 </Steps>
 
-Para o passo a passo completo com exemplos de configuração JSON, consulte [Automatizar fluxos de trabalho com hooks](/pt/hooks-guide#get-notified-when-claude-needs-input). Para o esquema de evento completo e tipos de notificação, consulte a [referência de Notificação](/pt/hooks#notification).
+Para o esquema de evento completo e tipos de notificação, consulte a [referência de Notificação](/pt/hooks#notification).
 
 ***
 
-## Use Claude como um utilitário estilo unix
+## Usar Claude como um utilitário estilo unix
 
 ### Adicione Claude ao seu processo de verificação
 
 Suponha que você queira usar Claude Code como um linter ou revisor de código.
 
-**Adicione Claude ao seu script de build:**
+**Adicione Claude ao seu script de compilação:**
 
 ```json  theme={null}
 // package.json
@@ -802,7 +842,7 @@ Suponha que você queira usar Claude Code como um linter ou revisor de código.
 
 Suponha que você queira canalizar dados para Claude e obter dados de volta em um formato estruturado.
 
-**Canalize dados através de Claude:**
+**Canalize dados através do Claude:**
 
 ```bash  theme={null}
 cat build-error.txt | claude -p 'concisely explain the root cause of this build error' > output.txt
@@ -842,7 +882,7 @@ Suponha que você precise da saída do Claude em um formato específico, especia
     cat log.txt | claude -p 'parse this log file for errors' --output-format stream-json
     ```
 
-    Isso produz uma série de objetos JSON em tempo real conforme Claude processa a solicitação. Cada mensagem é um objeto JSON válido, mas a saída inteira não é JSON válida se concatenada.
+    Isso produz uma série de objetos JSON em tempo real conforme Claude processa a solicitação. Cada mensagem é um objeto JSON válido, mas a saída inteira não é JSON válido se concatenado.
   </Step>
 </Steps>
 
@@ -893,7 +933,7 @@ what are the limitations of Claude Code?
 <Tip>
   Dicas:
 
-  * Claude sempre tem acesso à documentação mais recente de Claude Code, independentemente da versão que você está usando
+  * Claude sempre tem acesso à documentação mais recente do Claude Code, independentemente da versão que você está usando
   * Faça perguntas específicas para obter respostas detalhadas
   * Claude pode explicar recursos complexos como integração MCP, configurações empresariais e fluxos de trabalho avançados
 </Tip>

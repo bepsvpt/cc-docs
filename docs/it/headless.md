@@ -115,12 +115,12 @@ claude -p "Look at my staged changes and create an appropriate commit" \
 Il flag `--allowedTools` utilizza la [sintassi delle regole di autorizzazione](/it/settings#permission-rule-syntax). Lo spazio finale ` *` abilita la corrispondenza dei prefissi, quindi `Bash(git diff *)` consente qualsiasi comando che inizia con `git diff`. Lo spazio prima di `*` è importante: senza di esso, `Bash(git diff*)` corrisponderebbe anche a `git diff-index`.
 
 <Note>
-  Le [skills](/it/skills) richiamate dall'utente come `/commit` e i [comandi incorporati](/it/interactive-mode#built-in-commands) sono disponibili solo in modalità interattiva. In modalità `-p`, descrivi invece l'attività che desideri completare.
+  Le [skills](/it/skills) richiamate dall'utente come `/commit` e i [comandi incorporati](/it/commands) sono disponibili solo in modalità interattiva. In modalità `-p`, descrivi invece l'attività che desideri completare.
 </Note>
 
 ### Personalizzare il prompt di sistema
 
-Utilizza `--append-system-prompt` per aggiungere istruzioni mantenendo il comportamento predefinito di Claude Code. Questo esempio invia un diff PR a Claude e gli istruisce di esaminarlo per le vulnerabilità di sicurezza:
+Utilizza `--append-system-prompt` per aggiungere istruzioni mantenendo il comportamento predefinito di Claude Code. Questo esempio invia un diff PR a Claude e gli istruisce di esaminarlo per vulnerabilità di sicurezza:
 
 ```bash  theme={null}
 gh pr diff "$1" | claude -p \

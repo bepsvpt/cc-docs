@@ -11,7 +11,7 @@ Serververwaltete Einstellungen ermöglichen es Administratoren, Claude Code zent
 Dieser Ansatz ist für Organisationen konzipiert, die keine Geräteverwaltungsinfrastruktur haben oder Einstellungen für Benutzer auf nicht verwalteten Geräten verwalten müssen.
 
 <Note>
-  Serververwaltete Einstellungen befinden sich in der öffentlichen Beta und sind für [Claude for Teams](https://claude.com/pricing#team-&-enterprise) und [Claude for Enterprise](https://anthropic.com/contact-sales) Kunden verfügbar. Funktionen können sich vor der allgemeinen Verfügbarkeit noch ändern.
+  Serververwaltete Einstellungen befinden sich in der öffentlichen Beta und sind für [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) und [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise) Kunden verfügbar. Funktionen können sich vor der allgemeinen Verfügbarkeit noch ändern.
 </Note>
 
 ## Anforderungen
@@ -26,10 +26,10 @@ Um serververwaltete Einstellungen zu verwenden, benötigen Sie:
 
 Claude Code unterstützt zwei Ansätze für zentralisierte Konfiguration. Serververwaltete Einstellungen liefern Konfiguration von Anthropics Servern. [Endpunktverwaltete Einstellungen](/de/settings#settings-files) werden direkt auf Geräten über native Betriebssystemrichtlinien (macOS verwaltete Einstellungen, Windows-Registrierung) oder verwaltete Einstellungsdateien bereitgestellt.
 
-| Ansatz                                                              | Am besten für                                                       | Sicherheitsmodell                                                                                                                             |
-| :------------------------------------------------------------------ | :------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Serververwaltete Einstellungen**                                  | Organisationen ohne MDM oder Benutzer auf nicht verwalteten Geräten | Einstellungen werden von Anthropics Servern zum Authentifizierungszeitpunkt bereitgestellt                                                    |
-| **[Endpunktverwaltete Einstellungen](/de/settings#settings-files)** | Organisationen mit MDM oder Endpunktverwaltung                      | Einstellungen werden auf Geräten über MDM-Konfigurationsprofile, Registrierungsrichtlinien oder verwaltete Einstellungsdateien bereitgestellt |
+| Ansatz                                                              | Am besten geeignet für                                              | Sicherheitsmodell                                                                                                                                  |
+| :------------------------------------------------------------------ | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Serververwaltete Einstellungen**                                  | Organisationen ohne MDM oder Benutzer auf nicht verwalteten Geräten | Einstellungen, die von Anthropics Servern zum Authentifizierungszeitpunkt bereitgestellt werden                                                    |
+| **[Endpunktverwaltete Einstellungen](/de/settings#settings-files)** | Organisationen mit MDM oder Endpunktverwaltung                      | Einstellungen, die auf Geräten über MDM-Konfigurationsprofile, Registrierungsrichtlinien oder verwaltete Einstellungsdateien bereitgestellt werden |
 
 Wenn Ihre Geräte in einer MDM- oder Endpunktverwaltungslösung registriert sind, bieten endpunktverwaltete Einstellungen stärkere Sicherheitsgarantien, da die Einstellungsdatei auf Betriebssystemebene vor Benutzermodifikationen geschützt werden kann.
 
@@ -53,9 +53,9 @@ Wenn Ihre Geräte in einer MDM- oder Endpunktverwaltungslösung registriert sind
           "Read(./.env)",
           "Read(./.env.*)",
           "Read(./secrets/**)"
-        ]
-      },
-      "disableBypassPermissionsMode": "disable"
+        ],
+        "disableBypassPermissionsMode": "disable"
+      }
     }
     ```
   </Step>
@@ -82,7 +82,7 @@ Beschränken Sie den Zugriff auf vertrauenswürdiges Personal, da Einstellungsä
 
 Serververwaltete Einstellungen haben während der Beta-Phase die folgenden Einschränkungen:
 
-* Einstellungen gelten einheitlich für alle Benutzer in der Organisation. Pro-Gruppen-Konfigurationen werden noch nicht unterstützt.
+* Einstellungen gelten einheitlich für alle Benutzer in der Organisation. Konfigurationen pro Gruppe werden noch nicht unterstützt.
 * [MCP-Serverkonfigurationen](/de/mcp#managed-mcp-configuration) können nicht über serververwaltete Einstellungen verteilt werden.
 
 ## Einstellungsbereitstellung

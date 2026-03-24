@@ -42,22 +42,23 @@ Claude Code 내에서 `/terminal-setup`을 실행하여 VS Code, Alacritty, Zed 
 
 ### 알림 설정
 
-적절한 알림 구성으로 Claude가 작업을 완료할 때 놓치지 마세요:
+Claude가 작업을 완료하고 입력을 기다릴 때 알림 이벤트를 발생시킵니다. 이 이벤트를 터미널을 통한 데스크톱 알림으로 표시하거나 [알림 훅](/ko/hooks#notification)을 사용하여 사용자 정의 로직을 실행할 수 있습니다.
 
-#### iTerm 2 시스템 알림
+#### 터미널 알림
 
-작업 완료 시 iTerm 2 알림의 경우:
+Kitty 및 Ghostty는 추가 구성 없이 데스크톱 알림을 지원합니다. iTerm 2는 설정이 필요합니다:
 
-1. iTerm 2 환경설정 열기
-2. 프로필 → 터미널로 이동
-3. "Silence bell" 활성화 및 필터 알림 → "이스케이프 시퀀스 생성 알림 전송"
-4. 선호하는 알림 지연 설정
+1. iTerm 2 설정 → 프로필 → 터미널 열기
+2. "Notification Center Alerts" 활성화
+3. "Filter Alerts"를 클릭하고 "Send escape sequence-generated alerts" 확인
 
-이러한 알림은 iTerm 2에만 해당되며 기본 macOS 터미널에서는 사용할 수 없습니다.
+알림이 나타나지 않으면 터미널 앱이 OS 설정에서 알림 권한을 가지고 있는지 확인하세요.
 
-#### 사용자 정의 알림 훅
+기본 macOS 터미널을 포함한 다른 터미널은 기본 알림을 지원하지 않습니다. 대신 [알림 훅](/ko/hooks#notification)을 사용하세요.
 
-고급 알림 처리의 경우 [알림 훅](/ko/hooks#notification)을 만들어 자신의 로직을 실행할 수 있습니다.
+#### 알림 훅
+
+소리 재생 또는 메시지 전송과 같이 알림이 발생할 때 사용자 정의 동작을 추가하려면 [알림 훅](/ko/hooks#notification)을 구성하세요. 훅은 터미널 알림과 함께 실행되며 대체가 아닙니다.
 
 ### 큰 입력 처리
 

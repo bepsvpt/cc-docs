@@ -54,7 +54,7 @@ claude -p "Summarize this project" --output-format json
 
 若要取得符合特定結構描述的輸出，請使用 `--output-format json` 搭配 `--json-schema` 和 [JSON Schema](https://json-schema.org/) 定義。回應包含關於請求的中繼資料（工作階段 ID、使用情況等），結構化輸出在 `structured_output` 欄位中。
 
-此範例從 auth.py 提取函式名稱並將其傳回為字串陣列：
+此範例從 auth.py 提取函式名稱並將其作為字串陣列傳回：
 
 ```bash  theme={null}
 claude -p "Extract the main function names from auth.py" \
@@ -79,13 +79,13 @@ claude -p "Extract the main function names from auth.py" \
 
 ### 串流回應
 
-使用 `--output-format stream-json` 搭配 `--verbose` 和 `--include-partial-messages` 以在產生權杖時接收它們。每一行都是代表事件的 JSON 物件：
+使用 `--output-format stream-json` 搭配 `--verbose` 和 `--include-partial-messages` 以在產生令牌時接收它們。每一行都是代表事件的 JSON 物件：
 
 ```bash  theme={null}
 claude -p "Explain recursion" --output-format stream-json --verbose --include-partial-messages
 ```
 
-下列範例使用 [jq](https://jqlang.github.io/jq/) 篩選文字差異並僅顯示串流文字。`-r` 旗標輸出原始字串（無引號），`-j` 不使用換行符號進行聯結，以便權杖連續串流：
+下列範例使用 [jq](https://jqlang.github.io/jq/) 篩選文字差異並僅顯示串流文字。`-r` 旗標輸出原始字串（無引號），`-j` 不帶換行符號的聯結，因此令牌會連續串流：
 
 ```bash  theme={null}
 claude -p "Write a poem" --output-format stream-json --verbose --include-partial-messages | \
@@ -115,7 +115,7 @@ claude -p "Look at my staged changes and create an appropriate commit" \
 `--allowedTools` 旗標使用 [權限規則語法](/zh-TW/settings#permission-rule-syntax)。尾部的 ` *` 啟用前綴匹配，因此 `Bash(git diff *)` 允許任何以 `git diff` 開頭的命令。空格在 `*` 之前很重要：沒有它，`Bash(git diff*)` 也會符合 `git diff-index`。
 
 <Note>
-  使用者叫用的 [skills](/zh-TW/skills) 如 `/commit` 和 [內建命令](/zh-TW/interactive-mode#built-in-commands) 僅在互動模式中可用。在 `-p` 模式中，改為描述您想要完成的任務。
+  使用者叫用的 [skills](/zh-TW/skills) 如 `/commit` 和 [內建命令](/zh-TW/commands) 僅在互動模式中可用。在 `-p` 模式中，改為描述您想要完成的任務。
 </Note>
 
 ### 自訂系統提示

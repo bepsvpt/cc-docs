@@ -6,7 +6,7 @@
 
 > Installa Claude Code su desktop e avvia la tua prima sessione di codifica
 
-L'app desktop ti offre Claude Code con un'interfaccia grafica: revisione visiva dei diff, anteprima live dell'app, monitoraggio dei PR di GitHub con merge automatico, sessioni parallele con isolamento Git worktree, attività pianificate e la possibilità di eseguire attività in remoto. Non è richiesto il terminale.
+L'app desktop ti offre Claude Code con un'interfaccia grafica: revisione visiva dei diff, anteprima live dell'app, monitoraggio dei PR di GitHub con merge automatico, sessioni parallele con isolamento Git worktree, attività pianificate e la possibilità di eseguire attività in remoto. Non è richiesto alcun terminale.
 
 Questa pagina illustra l'installazione dell'app e l'avvio della tua prima sessione. Se sei già configurato, consulta [Usa Claude Code Desktop](/it/desktop) per il riferimento completo.
 
@@ -19,13 +19,13 @@ Questa pagina illustra l'installazione dell'app e l'avvio della tua prima sessio
 L'app desktop ha tre schede:
 
 * **Chat**: Conversazione generale senza accesso ai file, simile a claude.ai.
-* **Cowork**: Un agente autonomo in background che lavora su attività in una VM cloud con il suo ambiente. Può funzionare indipendentemente mentre fai altro.
+* **Cowork**: Un agente autonomo in background che lavora su attività in una VM cloud con il suo ambiente. Può funzionare indipendentemente mentre tu fai altro.
 * **Code**: Un assistente di codifica interattivo con accesso diretto ai tuoi file locali. Rivedi e approvi ogni modifica in tempo reale.
 
 Chat e Cowork sono trattati negli [articoli di supporto di Claude Desktop](https://support.claude.com/en/collections/16163169-claude-desktop). Questa pagina si concentra sulla scheda **Code**.
 
 <Note>
-  Claude Code richiede un [abbonamento Pro, Max, Teams o Enterprise](https://claude.com/pricing).
+  Claude Code richiede un [abbonamento Pro, Max, Teams o Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing).
 </Note>
 
 ## Installa
@@ -54,7 +54,7 @@ Chat e Cowork sono trattati negli [articoli di supporto di Claude Desktop](https
   </Step>
 
   <Step title="Apri la scheda Code">
-    Fai clic sulla scheda **Code** al centro in alto. Se facendo clic su Code ti viene chiesto di eseguire l'upgrade, devi prima [sottoscrivere un piano a pagamento](https://claude.com/pricing). Se ti viene chiesto di accedere online, completa l'accesso e riavvia l'app. Se vedi un errore 403, consulta [risoluzione dei problemi di autenticazione](/it/desktop#403-or-authentication-errors-in-the-code-tab).
+    Fai clic sulla scheda **Code** al centro in alto. Se facendo clic su Code ti viene chiesto di eseguire l'upgrade, devi prima [sottoscrivere un piano a pagamento](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_upgrade). Se ti viene chiesto di accedere online, completa l'accesso e riavvia l'app. Se vedi un errore 403, consulta [risoluzione dei problemi di autenticazione](/it/desktop#403-or-authentication-errors-in-the-code-tab).
   </Step>
 </Steps>
 
@@ -89,7 +89,7 @@ Con la scheda Code aperta, scegli un progetto e dai a Claude qualcosa da fare.
     * `Add tests for the main function`
     * `Create a CLAUDE.md with instructions for this codebase`
 
-    Una [sessione](/it/desktop#work-in-parallel-with-sessions) è una conversazione con Claude sul tuo codice. Ogni sessione traccia il suo proprio contesto e le sue modifiche, quindi puoi lavorare su più attività senza che si interferiscano a vicenda.
+    Una [sessione](/it/desktop#work-in-parallel-with-sessions) è una conversazione con Claude sul tuo codice. Ogni sessione tiene traccia del suo contesto e delle sue modifiche, quindi puoi lavorare su più attività senza che si interferiscano a vicenda.
   </Step>
 
   <Step title="Rivedi e accetta le modifiche">
@@ -111,7 +111,7 @@ Hai fatto la tua prima modifica. Per il riferimento completo su tutto ciò che D
 
 **Dai a Claude più contesto.** Digita `@filename` nella casella di prompt per inserire un file specifico nella conversazione, allega immagini e PDF utilizzando il pulsante di allegato, o trascina e rilascia i file direttamente nel prompt. Più contesto ha Claude, migliori sono i risultati. Consulta [Aggiungi file e contesto](/it/desktop#add-files-and-context-to-prompts).
 
-**Usa skills per attività ripetibili.** Digita `/` o fai clic su **+** → **Slash commands** per sfogliare [comandi incorporati](/it/interactive-mode#built-in-commands), [skills personalizzate](/it/skills) e skills dei plugin. Le skills sono prompt riutilizzabili che puoi invocare quando ne hai bisogno, come liste di controllo per la revisione del codice o passaggi di distribuzione.
+**Usa skills per attività ripetibili.** Digita `/` o fai clic su **+** → **Slash commands** per sfogliare [comandi incorporati](/it/commands), [skills personalizzate](/it/skills) e skills di plugin. Le skills sono prompt riutilizzabili che puoi invocare quando ne hai bisogno, come liste di controllo per la revisione del codice o passaggi di distribuzione.
 
 **Rivedi le modifiche prima di eseguire il commit.** Dopo che Claude modifica i file, appare un indicatore `+12 -1`. Fai clic su di esso per aprire la [visualizzazione diff](/it/desktop#review-changes-with-diff-view), rivedi le modifiche file per file e commenta righe specifiche. Claude legge i tuoi commenti e revisionali. Fai clic su **Review code** per far valutare a Claude i diff stessi e lasciare suggerimenti inline.
 

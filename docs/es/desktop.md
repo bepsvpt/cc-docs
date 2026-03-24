@@ -13,7 +13,7 @@ Desktop añade estas capacidades además de la experiencia estándar de Claude C
 * [Revisión visual de diferencias](#review-changes-with-diff-view) con comentarios en línea
 * [Vista previa de aplicación en vivo](#preview-your-app) con servidores de desarrollo
 * [Monitoreo de PR de GitHub](#monitor-pull-request-status) con corrección automática y fusión automática
-* [Sesiones paralelas](#work-in-parallel-with-sessions) con aislamiento automático de Git worktree
+* [Sesiones paralelas](#work-in-parallel-with-sessions) con aislamiento automático de Git worktrees
 * [Tareas programadas](#schedule-recurring-tasks) que ejecutan Claude en un horario recurrente
 * [Conectores](#connect-external-tools) para GitHub, Slack, Linear y más
 * Entornos locales, [SSH](#ssh-sessions) y [en la nube](#run-long-running-tasks-remotely)
@@ -26,7 +26,7 @@ Esta página cubre [trabajar con código](#work-with-code), [gestionar sesiones]
 
 ## Iniciar una sesión
 
-Antes de enviar su primer mensaje, configure cuatro cosas en el área de indicaciones:
+Antes de enviar su primer mensaje, configure cuatro cosas en el área de solicitud:
 
 * **Entorno**: elija dónde se ejecuta Claude. Seleccione **Local** para su máquina, **Remote** para sesiones en la nube alojadas por Anthropic, o una [**conexión SSH**](#ssh-sessions) para una máquina remota que usted administra. Consulte [configuración del entorno](#environment-configuration).
 * **Carpeta del proyecto**: seleccione la carpeta o repositorio en el que Claude trabaja. Para sesiones remotas, puede agregar [múltiples repositorios](#run-long-running-tasks-remotely).
@@ -39,18 +39,18 @@ Escriba su tarea y presione **Enter** para comenzar. Cada sesión rastrea su pro
 
 Proporcione a Claude el contexto correcto, controle cuánto hace por su cuenta y revise lo que cambió.
 
-### Usar el cuadro de indicaciones
+### Usar el cuadro de solicitud
 
 Escriba lo que desea que Claude haga y presione **Enter** para enviar. Claude lee los archivos de su proyecto, realiza cambios y ejecuta comandos según su [modo de permisos](#choose-a-permission-mode). Puede interrumpir a Claude en cualquier momento: haga clic en el botón de parada o escriba su corrección y presione **Enter**. Claude detiene lo que está haciendo y se ajusta según su entrada.
 
-El botón **+** junto al cuadro de indicaciones le da acceso a adjuntos de archivos, [skills](#use-skills), [conectores](#connect-external-tools) y [plugins](#install-plugins).
+El botón **+** junto al cuadro de solicitud le da acceso a archivos adjuntos, [skills](#use-skills), [conectores](#connect-external-tools) y [plugins](#install-plugins).
 
-### Agregar archivos y contexto a las indicaciones
+### Agregar archivos y contexto a las solicitudes
 
-El cuadro de indicaciones admite dos formas de traer contexto externo:
+El cuadro de solicitud admite dos formas de traer contexto externo:
 
 * **Archivos @mention**: escriba `@` seguido de un nombre de archivo para agregar un archivo al contexto de la conversación. Claude puede entonces leer y hacer referencia a ese archivo.
-* **Adjuntar archivos**: adjunte imágenes, PDF y otros archivos a su indicación usando el botón de adjuntos, o arrastre y suelte archivos directamente en la indicación. Esto es útil para compartir capturas de pantalla de errores, maquetas de diseño o documentos de referencia.
+* **Adjuntar archivos**: adjunte imágenes, PDF y otros archivos a su solicitud usando el botón de adjuntos, o arrastre y suelte archivos directamente en la solicitud. Esto es útil para compartir capturas de pantalla de errores, maquetas de diseño o documentos de referencia.
 
 ### Elegir un modo de permisos
 
@@ -115,7 +115,7 @@ Después de abrir una solicitud de extracción, aparece una barra de estado de C
 * **Auto-fix**: cuando está habilitado, Claude intenta automáticamente corregir verificaciones de CI fallidas leyendo la salida de falla e iterando.
 * **Auto-merge**: cuando está habilitado, Claude fusiona el PR una vez que todas las verificaciones pasan. El método de fusión es squash. Auto-merge debe estar [habilitado en la configuración de su repositorio de GitHub](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-auto-merge-for-pull-requests-in-your-repository) para que esto funcione.
 
-Use los controles **Auto-fix** y **Auto-merge** en la barra de estado de CI para habilitar cualquiera de las opciones. Claude Code también envía una notificación de escritorio cuando CI finaliza.
+Use los controles deslizantes **Auto-fix** y **Auto-merge** en la barra de estado de CI para habilitar cualquiera de las opciones. Claude Code también envía una notificación de escritorio cuando CI finaliza.
 
 <Note>
   El monitoreo de PR requiere que la [CLI de GitHub (`gh`)](https://cli.github.com/) esté instalada y autenticada en su máquina. Si `gh` no está instalado, Desktop le solicita que lo instale la primera vez que intente crear un PR.
@@ -129,7 +129,7 @@ Cada sesión es una conversación independiente con su propio contexto y cambios
 
 Haga clic en **+ New session** en la barra lateral para trabajar en múltiples tareas en paralelo. Para repositorios de Git, cada sesión obtiene su propia copia aislada de su proyecto usando [Git worktrees](/es/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees), por lo que los cambios en una sesión no afectan otras sesiones hasta que los confirme.
 
-Los worktrees se almacenan en `<project-root>/.claude/worktrees/` de forma predeterminada. Puede cambiar esto a un directorio personalizado en Configuración → Claude Code bajo "Worktree location". También puede establecer un prefijo de rama que se anteponga a cada nombre de rama de worktree, lo que es útil para mantener las ramas creadas por Claude organizadas. Para eliminar un worktree cuando haya terminado, pase el cursor sobre la sesión en la barra lateral y haga clic en el icono de archivo.
+Los worktrees se almacenan en `<project-root>/.claude/worktrees/` de forma predeterminada. Puede cambiar esto a un directorio personalizado en Configuración → Claude Code bajo "Worktree location". También puede establecer un prefijo de rama que se antepone a cada nombre de rama de worktree, lo que es útil para mantener las ramas creadas por Claude organizadas. Para eliminar un worktree cuando haya terminado, pase el cursor sobre la sesión en la barra lateral y haga clic en el icono de archivo.
 
 <Note>
   El aislamiento de sesión requiere [Git](https://git-scm.com/downloads). La mayoría de las Macs incluyen Git de forma predeterminada. Ejecute `git --version` en Terminal para verificar. En Windows, Git es necesario para que la pestaña Code funcione: [descargue Git para Windows](https://git-scm.com/downloads/win), instálelo y reinicie la aplicación. Si encuentra errores de Git, intente una sesión de Cowork para ayudar a solucionar problemas de su configuración.
@@ -158,9 +158,9 @@ Conecte servicios externos, agregue flujos de trabajo reutilizables, personalice
 
 ### Conectar herramientas externas
 
-Para sesiones locales y [SSH](#ssh-sessions), haga clic en el botón **+** junto al cuadro de indicaciones y seleccione **Connectors** para agregar integraciones como Google Calendar, Slack, GitHub, Linear, Notion y más. Puede agregar conectores antes o durante una sesión. Los conectores no están disponibles para sesiones remotas.
+Para sesiones locales y [SSH](#ssh-sessions), haga clic en el botón **+** junto al cuadro de solicitud y seleccione **Connectors** para agregar integraciones como Google Calendar, Slack, GitHub, Linear, Notion y más. Puede agregar conectores antes o durante una sesión. Los conectores no están disponibles para sesiones remotas.
 
-Para administrar o desconectar conectores, vaya a Configuración → Connectors en la aplicación de escritorio, o seleccione **Manage connectors** desde el menú Connectors en el cuadro de indicaciones.
+Para administrar o desconectar conectores, vaya a Configuración → Connectors en la aplicación de escritorio, o seleccione **Manage connectors** desde el menú Connectors en el cuadro de solicitud.
 
 Una vez conectado, Claude puede leer su calendario, enviar mensajes, crear problemas e interactuar con sus herramientas directamente. Puede preguntarle a Claude qué conectores están configurados en su sesión.
 
@@ -168,13 +168,13 @@ Los conectores son [MCP servers](/es/mcp) con un flujo de configuración gráfic
 
 ### Usar skills
 
-[Skills](/es/skills) extienden lo que Claude puede hacer. Claude los carga automáticamente cuando son relevantes, o puede invocar uno directamente: escriba `/` en el cuadro de indicaciones o haga clic en el botón **+** y seleccione **Slash commands** para ver lo que está disponible. Esto incluye [comandos integrados](/es/interactive-mode#built-in-commands), sus [skills personalizados](/es/skills#create-custom-skills), skills del proyecto desde su base de código y skills de cualquier [plugin instalado](/es/plugins). Seleccione uno y aparecerá resaltado en el campo de entrada. Escriba su tarea después de él y envíe como de costumbre.
+[Skills](/es/skills) extienden lo que Claude puede hacer. Claude los carga automáticamente cuando son relevantes, o puede invocar uno directamente: escriba `/` en el cuadro de solicitud o haga clic en el botón **+** y seleccione **Slash commands** para ver lo que está disponible. Esto incluye [comandos integrados](/es/commands), sus [skills personalizados](/es/skills#create-custom-skills), skills del proyecto desde su base de código y skills de cualquier [plugin instalado](/es/plugins). Seleccione uno y aparecerá resaltado en el campo de entrada. Escriba su tarea después de él y envíe como de costumbre.
 
 ### Instalar plugins
 
 [Plugins](/es/plugins) son paquetes reutilizables que agregan skills, agents, hooks, MCP servers y configuraciones LSP a Claude Code. Puede instalar plugins desde la aplicación de escritorio sin usar la terminal.
 
-Para sesiones locales y [SSH](#ssh-sessions), haga clic en el botón **+** junto al cuadro de indicaciones y seleccione **Plugins** para ver sus plugins instalados y sus comandos. Para agregar un plugin, seleccione **Add plugin** del submenú para abrir el navegador de plugins, que muestra plugins disponibles desde sus [marketplaces](/es/plugin-marketplaces) configurados incluyendo el marketplace oficial de Anthropic. Seleccione **Manage plugins** para habilitar, deshabilitar o desinstalar plugins.
+Para sesiones locales y [SSH](#ssh-sessions), haga clic en el botón **+** junto al cuadro de solicitud y seleccione **Plugins** para ver sus plugins instalados y sus comandos. Para agregar un plugin, seleccione **Add plugin** del submenú para abrir el navegador de plugins, que muestra plugins disponibles desde sus [marketplaces](/es/plugin-marketplaces) configurados incluyendo el marketplace oficial de Anthropic. Seleccione **Manage plugins** para habilitar, deshabilitar o desinstalar plugins.
 
 Los plugins pueden estar limitados a su cuenta de usuario, un proyecto específico o solo locales. Los plugins no están disponibles para sesiones remotas. Para la referencia completa de plugins incluyendo crear sus propios plugins, consulte [plugins](/es/plugins).
 
@@ -243,7 +243,7 @@ Use `program` cuando tenga un script independiente que desee ejecutar con `node`
 El campo `autoPort` controla qué sucede cuando su puerto preferido ya está en uso:
 
 * **`true`**: Claude encuentra y usa un puerto libre automáticamente. Adecuado para la mayoría de servidores de desarrollo.
-* **`false`**: Claude falla con un error. Use esto cuando su servidor debe usar un puerto específico, como para devoluciones de llamada de OAuth o listas de permitidos de CORS.
+* **`false`**: Claude falla con un error. Use esto cuando su servidor debe usar un puerto específico, como para devoluciones de llamada OAuth o listas de permitidos CORS.
 * **No establecido (predeterminado)**: Claude pregunta si el servidor necesita ese puerto exacto, luego guarda su respuesta.
 
 Cuando Claude elige un puerto diferente, pasa el puerto asignado a su servidor a través de la variable de entorno `PORT`.
@@ -326,23 +326,23 @@ Las tareas programadas inician una nueva sesión local automáticamente en una h
 Las tareas se ejecutan en su máquina, por lo que la aplicación de escritorio debe estar abierta y su computadora despierta para que se ejecuten. Consulte [Cómo se ejecutan las tareas programadas](#how-scheduled-tasks-run) para obtener detalles sobre ejecuciones perdidas y comportamiento de recuperación.
 
 <Note>
-  De forma predeterminada, las tareas programadas se ejecutan contra cualquier estado en el que se encuentre su directorio de trabajo, incluyendo cambios no confirmados. Habilite el control de worktree en la entrada de indicaciones para dar a cada ejecución su propio Git worktree aislado, de la misma manera que [sesiones paralelas](#work-in-parallel-with-sessions) funcionan.
+  De forma predeterminada, las tareas programadas se ejecutan contra cualquier estado en el que se encuentre su directorio de trabajo, incluyendo cambios no confirmados. Habilite el control deslizante de worktree en la entrada de solicitud para dar a cada ejecución su propio worktree de Git aislado, de la misma manera que [sesiones paralelas](#work-in-parallel-with-sessions) funcionan.
 </Note>
 
 Para crear una tarea programada, haga clic en **Schedule** en la barra lateral, luego **+ New task**. Configure estos campos:
 
-| Campo       | Descripción                                                                                                                                                                                                                                                                       |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Name        | Identificador para la tarea. Se convierte a kebab-case en minúsculas y se usa como nombre de carpeta en disco. Debe ser único en todas sus tareas.                                                                                                                                |
-| Description | Resumen corto mostrado en la lista de tareas.                                                                                                                                                                                                                                     |
-| Prompt      | Las instrucciones enviadas a Claude cuando se ejecuta la tarea. Escriba esto de la misma manera que escribiría cualquier mensaje en el cuadro de indicaciones. La entrada de indicaciones también incluye controles para modelo, modo de permisos, carpeta de trabajo y worktree. |
-| Frequency   | Con qué frecuencia se ejecuta la tarea. Consulte [opciones de frecuencia](#frequency-options) a continuación.                                                                                                                                                                     |
+| Campo       | Descripción                                                                                                                                                                                                                                                                 |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Name        | Identificador para la tarea. Se convierte a kebab-case en minúsculas y se usa como nombre de carpeta en disco. Debe ser único en todas sus tareas.                                                                                                                          |
+| Description | Resumen corto mostrado en la lista de tareas.                                                                                                                                                                                                                               |
+| Prompt      | Las instrucciones enviadas a Claude cuando se ejecuta la tarea. Escriba esto de la misma manera que escribiría cualquier mensaje en el cuadro de solicitud. La entrada de solicitud también incluye controles para modelo, modo de permisos, carpeta de trabajo y worktree. |
+| Frequency   | Con qué frecuencia se ejecuta la tarea. Consulte [opciones de frecuencia](#frequency-options) a continuación.                                                                                                                                                               |
 
 También puede crear una tarea describiendo lo que desea en cualquier sesión. Por ejemplo, "configurar una revisión de código diaria que se ejecute cada mañana a las 9am."
 
 ### Opciones de frecuencia
 
-* **Manual**: sin horario, solo se ejecuta cuando hace clic en **Run now**. Útil para guardar una indicación que activa bajo demanda
+* **Manual**: sin horario, solo se ejecuta cuando hace clic en **Run now**. Útil para guardar una solicitud que activa bajo demanda
 * **Hourly**: se ejecuta cada hora. Cada tarea obtiene un desplazamiento fijo de hasta 10 minutos desde la parte superior de la hora para escalonar el tráfico de API
 * **Daily**: muestra un selector de hora, por defecto a las 9:00 AM hora local
 * **Weekdays**: igual que Daily pero omite sábado y domingo
@@ -354,7 +354,7 @@ Para intervalos que el selector no ofrece (cada 15 minutos, primer día de cada 
 
 Las tareas programadas se ejecutan localmente en su máquina. Desktop verifica el horario cada minuto mientras la aplicación está abierta e inicia una sesión nueva cuando una tarea vence, independientemente de cualquier sesión manual que tenga abierta. Cada tarea obtiene un retraso fijo de hasta 10 minutos después de la hora programada para escalonar el tráfico de API. El retraso es determinista: la misma tarea siempre comienza en el mismo desplazamiento.
 
-Cuando se ejecuta una tarea, obtiene una notificación de escritorio y aparece una nueva sesión bajo una sección **Scheduled** en la barra lateral. Ábrala para ver qué hizo Claude, revisar cambios o responder a avisos de permisos. La sesión funciona como cualquier otra: Claude puede editar archivos, ejecutar comandos, crear confirmaciones y abrir solicitudes de extracción.
+Cuando se ejecuta una tarea, obtiene una notificación de escritorio y aparece una nueva sesión bajo una sección **Scheduled** en la barra lateral. Ábrala para ver qué hizo Claude, revisar cambios o responder a solicitudes de permisos. La sesión funciona como cualquier otra: Claude puede editar archivos, ejecutar comandos, crear confirmaciones y abrir solicitudes de extracción.
 
 Las tareas solo se ejecutan mientras la aplicación de escritorio está en ejecución y su computadora está despierta. Si su computadora se duerme durante una hora programada, la ejecución se omite. Para evitar el sueño inactivo, habilite **Keep computer awake** en Configuración bajo **Desktop app → General**. Cerrar la tapa del portátil aún lo pone a dormir.
 
@@ -362,13 +362,13 @@ Las tareas solo se ejecutan mientras la aplicación de escritorio está en ejecu
 
 Cuando la aplicación se inicia o su computadora se despierta, Desktop verifica si cada tarea perdió alguna ejecución en los últimos siete días. Si lo hizo, Desktop inicia exactamente una ejecución de recuperación para la hora más recientemente perdida y descarta cualquier cosa más antigua. Una tarea diaria que perdió seis días se ejecuta una vez al despertar. Desktop muestra una notificación cuando comienza una ejecución de recuperación.
 
-Tenga esto en cuenta al escribir indicaciones. Una tarea programada para las 9am podría ejecutarse a las 11pm si su computadora estuvo dormida todo el día. Si el tiempo es importante, agregue protecciones a la indicación misma, por ejemplo: "Solo revise las confirmaciones de hoy. Si es después de las 5pm, omita la revisión y solo publique un resumen de lo que se perdió."
+Tenga esto en cuenta al escribir solicitudes. Una tarea programada para las 9am podría ejecutarse a las 11pm si su computadora estuvo dormida todo el día. Si el tiempo es importante, agregue protecciones a la solicitud misma, por ejemplo: "Solo revise las confirmaciones de hoy. Si es después de las 5pm, omita la revisión y solo publique un resumen de lo que se perdió."
 
 ### Permisos para tareas programadas
 
 Cada tarea tiene su propio modo de permisos, que establece al crear o editar la tarea. Las reglas de permitir de `~/.claude/settings.json` también se aplican a sesiones de tareas programadas. Si una tarea se ejecuta en modo Ask y necesita ejecutar una herramienta para la que no tiene permiso, la ejecución se detiene hasta que la apruebe. La sesión permanece abierta en la barra lateral para que pueda responder más tarde.
 
-Para evitar detenciones, haga clic en **Run now** después de crear una tarea, observe los avisos de permisos y seleccione "always allow" para cada uno. Las ejecuciones futuras de esa tarea aprueban automáticamente las mismas herramientas sin solicitar. Puede revisar y revocar estas aprobaciones desde la página de detalles de la tarea.
+Para evitar detenciones, haga clic en **Run now** después de crear una tarea, observe solicitudes de permisos y seleccione "always allow" para cada una. Las ejecuciones futuras de esa tarea aprueban automáticamente las mismas herramientas sin solicitar. Puede revisar y revocar estas aprobaciones desde la página de detalles de la tarea.
 
 ### Gestionar tareas programadas
 
@@ -376,14 +376,14 @@ Haga clic en una tarea en la lista **Schedule** para abrir su página de detalle
 
 * **Run now**: inicie la tarea inmediatamente sin esperar la próxima hora programada
 * **Toggle repeats**: pause o reanude ejecuciones programadas sin eliminar la tarea
-* **Edit**: cambie la indicación, frecuencia, carpeta u otras configuraciones
-* **Review history**: vea cada ejecución anterior, incluyendo las que se omitieron porque su computadora estaba dormida
+* **Edit**: cambie la solicitud, frecuencia, carpeta u otras configuraciones
+* **Review history**: vea cada ejecución pasada, incluyendo las que se omitieron porque su computadora estaba dormida
 * **Review allowed permissions**: vea y revoque aprobaciones de herramientas guardadas para esta tarea desde el panel **Always allowed**
 * **Delete**: elimine la tarea y archive todas las sesiones que creó
 
 También puede gestionar tareas pidiendo a Claude en cualquier sesión de Desktop. Por ejemplo, "pause my dependency-audit task", "delete the standup-prep task" o "show me my scheduled tasks."
 
-Para editar la indicación de una tarea en disco, abra `~/.claude/scheduled-tasks/<task-name>/SKILL.md` (o bajo [`CLAUDE_CONFIG_DIR`](/es/settings#environment-variables) si está establecido). El archivo usa frontmatter YAML para `name` y `description`, con la indicación como cuerpo. Los cambios surten efecto en la próxima ejecución. El horario, carpeta, modelo y estado habilitado no están en este archivo: cámbielos a través del formulario Edit o pídale a Claude.
+Para editar la solicitud de una tarea en disco, abra `~/.claude/scheduled-tasks/<task-name>/SKILL.md` (o bajo [`CLAUDE_CONFIG_DIR`](/es/env-vars) si está establecido). El archivo usa frontmatter YAML para `name` y `description`, con la solicitud como cuerpo. Los cambios surten efecto en la próxima ejecución. El horario, carpeta, modelo y estado habilitado no están en este archivo: cámbielos a través del formulario Edit o pídale a Claude.
 
 ## Configuración del entorno
 
@@ -395,13 +395,13 @@ El entorno que elige al [iniciar una sesión](#start-a-session) determina dónde
 
 ### Sesiones locales
 
-Las sesiones locales heredan variables de entorno de su shell. Si necesita variables adicionales, establézcalas en su perfil de shell, como `~/.zshrc` o `~/.bashrc`, y reinicie la aplicación de escritorio. Consulte [variables de entorno](/es/settings#environment-variables) para la lista completa de variables admitidas.
+Las sesiones locales heredan variables de entorno de su shell. Si necesita variables adicionales, establézcalas en su perfil de shell, como `~/.zshrc` o `~/.bashrc`, y reinicie la aplicación de escritorio. Consulte [variables de entorno](/es/env-vars) para la lista completa de variables compatibles.
 
 [Extended thinking](/es/common-workflows#use-extended-thinking-thinking-mode) está habilitado de forma predeterminada, lo que mejora el rendimiento en tareas de razonamiento complejo pero usa tokens adicionales. Para deshabilitar el pensamiento por completo, establezca `MAX_THINKING_TOKENS=0` en su perfil de shell. En Opus, `MAX_THINKING_TOKENS` se ignora excepto para `0` porque el razonamiento adaptativo controla la profundidad del pensamiento en su lugar.
 
 ### Sesiones remotas
 
-Las sesiones remotas continúan en segundo plano incluso si cierra la aplicación. El uso cuenta hacia los [límites de su plan de suscripción](/es/costs) sin cargos de computación separados.
+Las sesiones remotas continúan en segundo plano incluso si cierra la aplicación. El uso cuenta hacia los límites de su [plan de suscripción](/es/costs) sin cargos de computación separados.
 
 Puede crear entornos en la nube personalizados con diferentes niveles de acceso a la red y variables de entorno. Seleccione el menú desplegable de entorno al iniciar una sesión remota y elija **Add environment**. Consulte [entornos en la nube](/es/claude-code-on-the-web#cloud-environment) para obtener detalles sobre la configuración del acceso a la red y variables de entorno.
 
@@ -428,8 +428,8 @@ Las organizaciones en planes Teams o Enterprise pueden gestionar el comportamien
 
 Estas configuraciones se configuran a través de la [consola de configuración de administración](https://claude.ai/admin-settings/claude-code):
 
-* **Habilitar o deshabilitar la pestaña Code**: controle si los usuarios de su organización pueden acceder a Claude Code en la aplicación de escritorio
-* **Deshabilitar modo Bypass permissions**: evite que los usuarios de su organización habiliten el modo bypass permissions
+* **Habilitar o deshabilitar la pestaña Code**: controle si los usuarios en su organización pueden acceder a Claude Code en la aplicación de escritorio
+* **Deshabilitar modo Bypass permissions**: evite que los usuarios en su organización habiliten el modo bypass permissions
 * **Deshabilitar Claude Code en la web**: habilite o deshabilite sesiones remotas para su organización
 
 ### Configuración administrada
@@ -472,12 +472,12 @@ Para la referencia completa de configuración empresarial, consulte la [guía de
 
 ## ¿Viene de la CLI?
 
-Si ya usa la CLI de Claude Code, Desktop ejecuta el mismo motor subyacente con una interfaz gráfica. Puede ejecutar ambos simultáneamente en la misma máquina, incluso en el mismo proyecto. Cada uno mantiene un historial de sesión separado, pero comparten configuración y memoria del proyecto a través de archivos CLAUDE.md.
+Si ya usa la CLI de Claude Code, Desktop ejecuta el mismo motor subyacente con una interfaz gráfica. Puede ejecutar ambos simultáneamente en la misma máquina, incluso en el mismo proyecto. Cada uno mantiene historial de sesión separado, pero comparten configuración y memoria del proyecto a través de archivos CLAUDE.md.
 
 Para mover una sesión de CLI a Desktop, ejecute `/desktop` en la terminal. Claude guarda su sesión y la abre en la aplicación de escritorio, luego sale de la CLI. Este comando está disponible solo en macOS y Windows.
 
 <Tip>
-  Cuándo usar Desktop vs CLI: use Desktop cuando desee revisión visual de diferencias, adjuntos de archivos o gestión de sesiones en una barra lateral. Use la CLI cuando necesite scripting, automatización, proveedores de terceros o prefiera un flujo de trabajo de terminal.
+  Cuándo usar Desktop vs CLI: use Desktop cuando desee revisión visual de diferencias, archivos adjuntos o gestión de sesiones en una barra lateral. Use la CLI cuando necesite scripting, automatización, proveedores de terceros o prefiera un flujo de trabajo de terminal.
 </Tip>
 
 ### Equivalentes de banderas de CLI
@@ -492,10 +492,10 @@ Esta tabla muestra el equivalente de la aplicación de escritorio para banderas 
 | `--dangerously-skip-permissions`          | Modo Bypass permissions. Habilite en Configuración → Claude Code → "Allow bypass permissions mode". Los administradores empresariales pueden deshabilitar esta configuración. |
 | `--add-dir`                               | agregue múltiples repositorios con el botón **+** en sesiones remotas                                                                                                         |
 | `--allowedTools`, `--disallowedTools`     | no disponible en Desktop                                                                                                                                                      |
-| `--verbose`                               | no disponible. Verifique los registros del sistema: Console.app en macOS, Event Viewer → Windows Logs → Application en Windows                                                |
+| `--verbose`                               | no disponible. Verifique registros del sistema: Console.app en macOS, Event Viewer → Windows Logs → Application en Windows                                                    |
 | `--print`, `--output-format`              | no disponible. Desktop es solo interactivo.                                                                                                                                   |
 | Variable de entorno `ANTHROPIC_MODEL`     | menú desplegable de modelo junto al botón de envío                                                                                                                            |
-| Variable de entorno `MAX_THINKING_TOKENS` | establezca en el perfil de shell; se aplica a sesiones locales. Consulte [configuración del entorno](#environment-configuration).                                             |
+| Variable de entorno `MAX_THINKING_TOKENS` | establezca en perfil de shell; se aplica a sesiones locales. Consulte [configuración del entorno](#environment-configuration).                                                |
 
 ### Configuración compartida
 
@@ -523,7 +523,7 @@ Esta tabla compara capacidades principales entre la CLI y Desktop. Para una list
 | [MCP servers](/es/mcp)                                  | configurar en archivos de configuración                   | UI de Connectors para sesiones locales y SSH, o archivos de configuración                          |
 | [Plugins](/es/plugins)                                  | comando `/plugin`                                         | UI del administrador de plugins                                                                    |
 | Archivos @mention                                       | basado en texto                                           | con autocompletado                                                                                 |
-| Adjuntos de archivos                                    | no disponible                                             | imágenes, PDF                                                                                      |
+| Archivos adjuntos                                       | no disponible                                             | imágenes, PDF                                                                                      |
 | Aislamiento de sesión                                   | bandera [`--worktree`](/es/cli-reference)                 | worktrees automáticos                                                                              |
 | Múltiples sesiones                                      | terminales separadas                                      | pestañas de barra lateral                                                                          |
 | Tareas recurrentes                                      | trabajos cron, tuberías de CI                             | [tareas programadas](#schedule-recurring-tasks)                                                    |
@@ -535,7 +535,7 @@ Las siguientes características están disponibles solo en la CLI o extensión d
 
 * **Proveedores de terceros**: Desktop se conecta directamente a la API de Anthropic. Use la [CLI](/es/quickstart) con Bedrock, Vertex o Foundry en su lugar.
 * **Linux**: la aplicación de escritorio está disponible solo en macOS y Windows.
-* **Sugerencias de código en línea**: Desktop no proporciona sugerencias de estilo autocompletado. Funciona a través de indicaciones conversacionales y cambios de código explícitos.
+* **Sugerencias de código en línea**: Desktop no proporciona sugerencias de estilo autocompletado. Funciona a través de solicitudes conversacionales y cambios de código explícitos.
 * **Equipos de agentes**: la orquestación de múltiples agentes está disponible a través de la [CLI](/es/agent-teams) y [Agent SDK](/es/headless), no en Desktop.
 
 ## Solución de problemas
@@ -564,11 +564,11 @@ Si la aplicación se abre pero muestra una pantalla en blanco o sin respuesta:
 
 1. Reinicie la aplicación.
 2. Verifique si hay actualizaciones pendientes. La aplicación se actualiza automáticamente al iniciar.
-3. En Windows, verifique el Visor de eventos para registros de bloqueo bajo **Windows Logs → Application**.
+3. En Windows, verifique Event Viewer para registros de bloqueo bajo **Windows Logs → Application**.
 
 ### "Failed to load session"
 
-Si ve `Failed to load session`, la carpeta seleccionada puede que ya no exista, un repositorio de Git puede requerir Git LFS que no está instalado, o los permisos de archivo pueden impedir el acceso. Intente seleccionar una carpeta diferente o reinicie la aplicación.
+Si ve `Failed to load session`, la carpeta seleccionada puede no existir más, un repositorio de Git puede requerir Git LFS que no está instalado, o los permisos de archivo pueden impedir el acceso. Intente seleccionar una carpeta diferente o reinicie la aplicación.
 
 ### La sesión no encuentra herramientas instaladas
 
@@ -582,12 +582,12 @@ Si ve "Git LFS is required by this repository but is not installed," instale Git
 
 ### Los MCP servers no funcionan en Windows
 
-Si los controles de MCP server no responden o los servidores no se conectan en Windows, verifique que el servidor esté configurado correctamente en su configuración, reinicie la aplicación, verifique que el proceso del servidor se esté ejecutando en el Administrador de tareas y revise los registros del servidor para errores de conexión.
+Si los controles deslizantes de MCP server no responden o los servidores no se conectan en Windows, verifique que el servidor esté configurado correctamente en su configuración, reinicie la aplicación, verifique que el proceso del servidor se esté ejecutando en Task Manager y revise los registros del servidor para errores de conexión.
 
 ### La aplicación no se cierra
 
 * **macOS**: presione Cmd+Q. Si la aplicación no responde, use Force Quit con Cmd+Option+Esc, seleccione Claude y haga clic en Force Quit.
-* **Windows**: use el Administrador de tareas con Ctrl+Shift+Esc para finalizar el proceso de Claude.
+* **Windows**: use Task Manager con Ctrl+Shift+Esc para finalizar el proceso de Claude.
 
 ### Problemas específicos de Windows
 

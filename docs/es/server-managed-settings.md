@@ -4,14 +4,14 @@
 
 # Configurar la configuración administrada por servidor (beta pública)
 
-> Configure centralmente Claude Code para su organización a través de configuración entregada por servidor, sin requerir infraestructura de administración de dispositivos.
+> Configure Claude Code centralmente para su organización a través de configuración entregada por servidor, sin requerir infraestructura de administración de dispositivos.
 
-La configuración administrada por servidor permite a los administradores configurar centralmente Claude Code a través de una interfaz basada en web en Claude.ai. Los clientes de Claude Code reciben automáticamente estas configuraciones cuando los usuarios se autentican con sus credenciales organizacionales.
+La configuración administrada por servidor permite a los administradores configurar Claude Code centralmente a través de una interfaz basada en web en Claude.ai. Los clientes de Claude Code reciben automáticamente estas configuraciones cuando los usuarios se autentican con sus credenciales organizacionales.
 
 Este enfoque está diseñado para organizaciones que no tienen infraestructura de administración de dispositivos implementada, o que necesitan administrar configuraciones para usuarios en dispositivos no administrados.
 
 <Note>
-  La configuración administrada por servidor está en beta pública y disponible para clientes de [Claude for Teams](https://claude.com/pricing#team-&-enterprise) y [Claude for Enterprise](https://anthropic.com/contact-sales). Las características pueden evolucionar antes de la disponibilidad general.
+  La configuración administrada por servidor está en beta pública y disponible para clientes de [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) y [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise). Las características pueden evolucionar antes de la disponibilidad general.
 </Note>
 
 ## Requisitos
@@ -22,16 +22,16 @@ Para usar la configuración administrada por servidor, necesita:
 * Claude Code versión 2.1.38 o posterior para Claude for Teams, o versión 2.1.30 o posterior para Claude for Enterprise
 * Acceso de red a `api.anthropic.com`
 
-## Elegir entre configuración administrada por servidor y administrada por punto final
+## Elegir entre configuración administrada por servidor y administrada por endpoint
 
-Claude Code admite dos enfoques para la configuración centralizada. La configuración administrada por servidor entrega la configuración desde los servidores de Anthropic. La [configuración administrada por punto final](/es/settings#settings-files) se implementa directamente en dispositivos a través de políticas nativas del sistema operativo (preferencias administradas de macOS, registro de Windows) o archivos de configuración administrados.
+Claude Code admite dos enfoques para la configuración centralizada. La configuración administrada por servidor entrega la configuración desde los servidores de Anthropic. La [configuración administrada por endpoint](/es/settings#settings-files) se implementa directamente en dispositivos a través de políticas nativas del sistema operativo (preferencias administradas de macOS, registro de Windows) o archivos de configuración administrados.
 
-| Enfoque                                                                       | Mejor para                                                          | Modelo de seguridad                                                                                                                                   |
-| :---------------------------------------------------------------------------- | :------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Configuración administrada por servidor**                                   | Organizaciones sin MDM, o usuarios en dispositivos no administrados | Configuración entregada desde los servidores de Anthropic en el momento de la autenticación                                                           |
-| **[Configuración administrada por punto final](/es/settings#settings-files)** | Organizaciones con MDM o administración de puntos finales           | Configuración implementada en dispositivos a través de perfiles de configuración MDM, políticas de registro o archivos de configuración administrados |
+| Enfoque                                                                    | Mejor para                                                          | Modelo de seguridad                                                                                                                                   |
+| :------------------------------------------------------------------------- | :------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Configuración administrada por servidor**                                | Organizaciones sin MDM, o usuarios en dispositivos no administrados | Configuración entregada desde los servidores de Anthropic en el momento de la autenticación                                                           |
+| **[Configuración administrada por endpoint](/es/settings#settings-files)** | Organizaciones con MDM o administración de endpoint                 | Configuración implementada en dispositivos a través de perfiles de configuración MDM, políticas de registro o archivos de configuración administrados |
 
-Si sus dispositivos están inscritos en una solución MDM o de administración de puntos finales, la configuración administrada por punto final proporciona garantías de seguridad más sólidas porque el archivo de configuración puede protegerse de la modificación del usuario a nivel del sistema operativo.
+Si sus dispositivos están inscritos en una solución MDM o de administración de endpoint, la configuración administrada por endpoint proporciona garantías de seguridad más sólidas porque el archivo de configuración puede protegerse de la modificación del usuario a nivel del sistema operativo.
 
 ## Configurar la configuración administrada por servidor
 
@@ -53,9 +53,9 @@ Si sus dispositivos están inscritos en una solución MDM o de administración d
           "Read(./.env)",
           "Read(./.env.*)",
           "Read(./secrets/**)"
-        ]
-      },
-      "disableBypassPermissionsMode": "disable"
+        ],
+        "disableBypassPermissionsMode": "disable"
+      }
     }
     ```
   </Step>
@@ -89,7 +89,7 @@ La configuración administrada por servidor tiene las siguientes limitaciones du
 
 ### Precedencia de configuración
 
-La configuración administrada por servidor y la [configuración administrada por punto final](/es/settings#settings-files) ocupan el nivel más alto en la [jerarquía de configuración](/es/settings#settings-precedence) de Claude Code. Ningún otro nivel de configuración puede anularlas, incluidos los argumentos de línea de comandos. Cuando ambas están presentes, la configuración administrada por servidor tiene prioridad y la configuración administrada por punto final no se utiliza.
+La configuración administrada por servidor y la [configuración administrada por endpoint](/es/settings#settings-files) ocupan el nivel más alto en la [jerarquía de configuración](/es/settings#settings-precedence) de Claude Code. Ningún otro nivel de configuración puede anularlas, incluidos los argumentos de línea de comandos. Cuando ambas están presentes, la configuración administrada por servidor tiene prioridad y la configuración administrada por endpoint no se utiliza.
 
 ### Comportamiento de obtención y almacenamiento en caché
 
@@ -130,7 +130,7 @@ La configuración administrada por servidor requiere una conexión directa a `ap
 * Amazon Bedrock
 * Google Vertex AI
 * Microsoft Foundry
-* Puntos finales de API personalizados a través de `ANTHROPIC_BASE_URL` o [puertas de enlace LLM](/es/llm-gateway)
+* Endpoints de API personalizados a través de `ANTHROPIC_BASE_URL` o [puertas de enlace LLM](/es/llm-gateway)
 
 ## Registro de auditoría
 
@@ -152,7 +152,7 @@ La configuración administrada por servidor proporciona aplicación de política
 
 Para detectar cambios de configuración en tiempo de ejecución, use [hooks `ConfigChange`](/es/hooks#configchange) para registrar modificaciones o bloquear cambios no autorizados antes de que surtan efecto.
 
-Para garantías de aplicación más sólidas, use la [configuración administrada por punto final](/es/settings#settings-files) en dispositivos inscritos en una solución MDM.
+Para garantías de aplicación más sólidas, use la [configuración administrada por endpoint](/es/settings#settings-files) en dispositivos inscritos en una solución MDM.
 
 ## Ver también
 

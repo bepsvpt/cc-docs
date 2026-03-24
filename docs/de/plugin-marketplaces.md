@@ -239,7 +239,7 @@ Sobald ein Plugin geklont oder auf den lokalen Computer kopiert wird, wird es in
 
 ### Relative Pfade
 
-Für Plugins im selben Repository:
+Für Plugins im selben Repository verwenden Sie einen Pfad, der mit `./` beginnt:
 
 ```json  theme={null}
 {
@@ -247,6 +247,8 @@ Für Plugins im selben Repository:
   "source": "./plugins/my-plugin"
 }
 ```
+
+Pfade werden relativ zum Marktplatz-Root aufgelöst, das ist das Verzeichnis, das `.claude-plugin/` enthält. Im obigen Beispiel verweist `./plugins/my-plugin` auf `<repo>/plugins/my-plugin`, obwohl `marketplace.json` unter `<repo>/.claude-plugin/marketplace.json` lebt. Verwenden Sie nicht `../`, um aus `.claude-plugin/` herauszuklettern.
 
 <Note>
   Relative Pfade funktionieren nur, wenn Benutzer Ihren Marktplatz über Git hinzufügen (GitHub, GitLab oder Git-URL). Wenn Benutzer Ihren Marktplatz über eine direkte URL zur `marketplace.json`-Datei hinzufügen, werden relative Pfade nicht korrekt aufgelöst. Verwenden Sie für URL-basierte Verteilung stattdessen GitHub-, npm- oder Git-URL-Quellen. Siehe [Fehlerbehebung](#plugins-with-relative-paths-fail-in-url-based-marketplaces) für Details.
@@ -310,11 +312,11 @@ Sie können an einen bestimmten Branch, Tag oder Commit anheften:
 }
 ```
 
-| Feld  | Typ    | Beschreibung                                                                            |
-| :---- | :----- | :-------------------------------------------------------------------------------------- |
-| `url` | string | Erforderlich. Vollständige Git-Repository-URL (muss mit `.git` enden)                   |
-| `ref` | string | Optional. Git-Branch oder Tag (Standard: Standard-Branch des Repositories)              |
-| `sha` | string | Optional. Vollständiger 40-stelliger Git-Commit-SHA zum Anheften an eine exakte Version |
+| Feld  | Typ    | Beschreibung                                                                                                                                                                      |
+| :---- | :----- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `url` | string | Erforderlich. Vollständige Git-Repository-URL (`https://` oder `git@`). Das `.git`-Suffix ist optional, daher funktionieren Azure DevOps- und AWS CodeCommit-URLs ohne das Suffix |
+| `ref` | string | Optional. Git-Branch oder Tag (Standard: Standard-Branch des Repositories)                                                                                                        |
+| `sha` | string | Optional. Vollständiger 40-stelliger Git-Commit-SHA zum Anheften an eine exakte Version                                                                                           |
 
 ### Git-Unterverzeichnisse
 
@@ -628,6 +630,10 @@ Dateisystem-basierte Marktplätze aus einem bestimmten Verzeichnis mit Regex-Mus
 
 Verwenden Sie `".*"` als `pathPattern`, um jeden Dateisystempfad zuzulassen und gleichzeitig Netzwerkquellen mit `hostPattern` zu steuern.
 
+<Note>
+  `strictKnownMarketplaces` schränkt ein, was Benutzer hinzufügen können, registriert aber nicht selbst Marktplätze. Um zulässige Marktplätze automatisch verfügbar zu machen, ohne dass Benutzer `/plugin marketplace add` ausführen müssen, kombinieren Sie es mit [`extraKnownMarketplaces`](/de/settings#extraknownmarketplaces) in derselben `managed-settings.json`. Siehe [Beide zusammen verwenden](/de/settings#strictknownmarketplaces).
+</Note>
+
 #### Wie Einschränkungen funktionieren
 
 Einschränkungen werden früh im Plugin-Installationsprozess validiert, bevor Netzwerkanfragen oder Dateisystemoperationen auftreten. Dies verhindert unbefugte Marktplatz-Zugriffversuche.
@@ -772,12 +778,12 @@ Für vollständige Plugin-Test-Workflows siehe [Testen Sie Ihre Plugins lokal](/
 
 Führen Sie `claude plugin validate .` oder `/plugin validate .` aus Ihrem Marktplatz-Verzeichnis aus, um auf Probleme zu überprüfen. Häufige Fehler:
 
-| Fehler                                            | Ursache                             | Lösung                                                                             |
-| :------------------------------------------------ | :---------------------------------- | :--------------------------------------------------------------------------------- |
-| `File not found: .claude-plugin/marketplace.json` | Fehlendes Manifest                  | Erstellen Sie `.claude-plugin/marketplace.json` mit erforderlichen Feldern         |
-| `Invalid JSON syntax: Unexpected token...`        | JSON-Syntaxfehler                   | Überprüfen Sie auf fehlende Kommas, zusätzliche Kommas oder nicht zitierte Strings |
-| `Duplicate plugin name "x" found in marketplace`  | Zwei Plugins teilen denselben Namen | Geben Sie jedem Plugin einen eindeutigen `name`-Wert                               |
-| `plugins[0].source: Path traversal not allowed`   | Quellpfad enthält `..`              | Verwenden Sie Pfade relativ zum Marktplatz-Root ohne `..`                          |
+| Fehler                                            | Ursache                             | Lösung                                                                                             |
+| :------------------------------------------------ | :---------------------------------- | :------------------------------------------------------------------------------------------------- |
+| `File not found: .claude-plugin/marketplace.json` | Fehlendes Manifest                  | Erstellen Sie `.claude-plugin/marketplace.json` mit erforderlichen Feldern                         |
+| `Invalid JSON syntax: Unexpected token...`        | JSON-Syntaxfehler                   | Überprüfen Sie auf fehlende Kommas, zusätzliche Kommas oder nicht zitierte Strings                 |
+| `Duplicate plugin name "x" found in marketplace`  | Zwei Plugins teilen denselben Namen | Geben Sie jedem Plugin einen eindeutigen `name`-Wert                                               |
+| `plugins[0].source: Path contains ".."`           | Quellpfad enthält `..`              | Verwenden Sie Pfade relativ zum Marktplatz-Root ohne `..`. Siehe [Relative Pfade](#relative-paths) |
 
 **Warnungen** (nicht blockierend):
 

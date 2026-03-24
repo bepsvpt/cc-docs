@@ -7,7 +7,7 @@
 > Claude Code에서 빠른 모드를 전환하여 더 빠른 Opus 4.6 응답을 받습니다.
 
 <Note>
-  빠른 모드는 [연구 미리보기](#research-preview) 상태입니다. 피드백에 따라 기능, 가격 책정 및 가용성이 변경될 수 있습니다.
+  빠른 모드는 [연구 미리보기](#research-preview)입니다. 피드백에 따라 기능, 가격 책정 및 가용성이 변경될 수 있습니다.
 </Note>
 
 빠른 모드는 Claude Opus 4.6을 위한 고속 구성으로, 토큰당 더 높은 비용으로 모델을 2.5배 빠르게 만듭니다. 빠른 반복이나 라이브 디버깅과 같은 대화형 작업에서 속도가 필요할 때 `/fast`로 켜고, 비용이 지연 시간보다 중요할 때 끕니다.
@@ -21,11 +21,11 @@
 알아야 할 사항:
 
 * Claude Code CLI에서 `/fast`를 사용하여 빠른 모드를 전환합니다. Claude Code VS Code 확장 프로그램에서도 `/fast`를 통해 사용할 수 있습니다.
-* Opus 4.6의 빠른 모드 가격은 \$30/150 MTok부터 시작합니다. 빠른 모드는 2월 16일 태평양 표준시 오후 11:59까지 모든 요금제에 대해 50% 할인으로 제공됩니다.
+* Opus 4.6의 빠른 모드 가격은 \$30/150 MTok부터 시작합니다. 빠른 모드는 2월 16일 오후 11:59(PT)까지 모든 요금제에 대해 50% 할인으로 제공됩니다.
 * 구독 요금제(Pro/Max/Team/Enterprise)의 모든 Claude Code 사용자 및 Claude Console에서 사용할 수 있습니다.
 * 구독 요금제(Pro/Max/Team/Enterprise)의 Claude Code 사용자의 경우, 빠른 모드는 추가 사용을 통해서만 사용 가능하며 구독 요금제 사용량 제한에 포함되지 않습니다.
 
-이 페이지에서는 [빠른 모드 전환](#toggle-fast-mode), [비용 트레이드오프](#understand-the-cost-tradeoff), [빠른 모드 사용 시기](#decide-when-to-use-fast-mode), [요구사항](#requirements), [세션별 옵트인](#require-per-session-opt-in) 및 [속도 제한 처리](#handle-rate-limits)에 대해 설명합니다.
+이 페이지에서는 [빠른 모드 전환](#toggle-fast-mode), [비용 트레이드오프](#understand-the-cost-tradeoff), [빠른 모드 사용 시기](#decide-when-to-use-fast-mode), [요구사항](#requirements), [세션별 옵트인](#require-per-session-opt-in) 및 [속도 제한 처리](#handle-rate-limits)를 다룹니다.
 
 ## 빠른 모드 전환
 
@@ -42,7 +42,7 @@
 
 * 다른 모델을 사용 중인 경우 Claude Code가 자동으로 Opus 4.6으로 전환됩니다
 * 확인 메시지가 표시됩니다: "Fast mode ON"
-* 빠른 모드가 활성화된 동안 프롬프트 옆에 작은 `↯` 아이콘이 나타납니다
+* 빠른 모드가 활성화되어 있는 동안 프롬프트 옆에 작은 `↯` 아이콘이 나타납니다
 * 언제든지 `/fast`를 다시 실행하여 빠른 모드가 켜져 있는지 꺼져 있는지 확인합니다
 
 `/fast`를 다시 실행하여 빠른 모드를 비활성화하면 Opus 4.6에 유지됩니다. 모델이 이전 모델로 되돌아가지 않습니다. 다른 모델로 전환하려면 `/model`을 사용합니다.
@@ -109,11 +109,11 @@
 * **Console** (API 고객): [Claude Code 기본 설정](https://platform.claude.com/claude-code/preferences)
 * **Claude AI** (Teams 및 Enterprise): [관리자 설정 > Claude Code](https://claude.ai/admin-settings/claude-code)
 
-빠른 모드를 완전히 비활성화하는 또 다른 옵션은 `CLAUDE_CODE_DISABLE_FAST_MODE=1`을 설정하는 것입니다. [환경 변수](/ko/settings#environment-variables)를 참조합니다.
+빠른 모드를 완전히 비활성화하는 또 다른 옵션은 `CLAUDE_CODE_DISABLE_FAST_MODE=1`을 설정하는 것입니다. [환경 변수](/ko/env-vars)를 참조합니다.
 
 ### 세션별 옵트인 필요
 
-기본적으로 빠른 모드는 세션 간에 유지됩니다: 사용자가 빠른 모드를 활성화하면 향후 세션에서도 켜져 있습니다. [Teams](https://claude.com/pricing#team-&-enterprise) 또는 [Enterprise](https://anthropic.com/contact-sales) 요금제의 관리자는 [관리되는 설정](/ko/settings#settings-files) 또는 [서버 관리 설정](/ko/server-managed-settings)에서 `fastModePerSessionOptIn`을 `true`로 설정하여 이를 방지할 수 있습니다. 이로 인해 각 세션이 빠른 모드가 꺼진 상태로 시작되며, 사용자가 `/fast`로 명시적으로 활성화해야 합니다.
+기본적으로 빠른 모드는 세션 간에 유지됩니다: 사용자가 빠른 모드를 활성화하면 향후 세션에서도 켜져 있습니다. [Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise) 또는 [Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise) 요금제의 관리자는 [관리되는 설정](/ko/settings#settings-files) 또는 [서버 관리 설정](/ko/server-managed-settings)에서 `fastModePerSessionOptIn`을 `true`로 설정하여 이를 방지할 수 있습니다. 이로 인해 각 세션이 빠른 모드가 꺼진 상태로 시작되며, 사용자가 `/fast`로 명시적으로 활성화해야 합니다.
 
 ```json  theme={null}
 {
@@ -121,7 +121,7 @@
 }
 ```
 
-이는 사용자가 여러 동시 세션을 실행하는 조직에서 비용을 제어하는 데 유용합니다. 사용자는 속도가 필요할 때 `/fast`로 빠른 모드를 활성화할 수 있지만 각 새 세션의 시작 시 재설정됩니다. 사용자의 빠른 모드 기본 설정은 여전히 저장되므로 이 설정을 제거하면 기본 지속 동작이 복원됩니다.
+이는 사용자가 여러 동시 세션을 실행하는 조직에서 비용을 제어하는 데 유용합니다. 사용자는 속도가 필요할 때 `/fast`로 빠른 모드를 활성화할 수 있지만 새 세션이 시작될 때마다 재설정됩니다. 사용자의 빠른 모드 기본 설정은 여전히 저장되므로 이 설정을 제거하면 기본 지속 동작이 복원됩니다.
 
 ## 속도 제한 처리
 

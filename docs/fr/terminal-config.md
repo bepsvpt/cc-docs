@@ -42,22 +42,23 @@ Exécutez `/terminal-setup` dans Claude Code pour configurer automatiquement Maj
 
 ### Configuration des notifications
 
-Ne manquez jamais quand Claude termine une tâche avec une configuration de notification appropriée :
+Lorsque Claude termine son travail et attend votre entrée, il déclenche un événement de notification. Vous pouvez afficher cet événement comme une notification de bureau via votre terminal ou exécuter une logique personnalisée avec des [hooks de notification](/fr/hooks#notification).
 
-#### Notifications système iTerm 2
+#### Notifications du terminal
 
-Pour les alertes iTerm 2 lorsque les tâches se terminent :
+Kitty et Ghostty prennent en charge les notifications de bureau sans configuration supplémentaire. iTerm 2 nécessite une configuration :
 
-1. Ouvrez les Préférences iTerm 2
-2. Accédez à Profils → Terminal
-3. Activez « Silence bell » et Filtrer les alertes → « Envoyer les alertes générées par la séquence d'échappement »
-4. Définissez votre délai de notification préféré
+1. Ouvrez les Paramètres iTerm 2 → Profils → Terminal
+2. Activez « Notification Center Alerts »
+3. Cliquez sur « Filter Alerts » et cochez « Send escape sequence-generated alerts »
 
-Notez que ces notifications sont spécifiques à iTerm 2 et ne sont pas disponibles dans le Terminal macOS par défaut.
+Si les notifications n'apparaissent pas, vérifiez que votre application de terminal dispose des autorisations de notification dans les paramètres de votre système d'exploitation.
 
-#### Hooks de notification personnalisés
+Les autres terminaux, y compris le Terminal macOS par défaut, ne prennent pas en charge les notifications natives. Utilisez plutôt des [hooks de notification](/fr/hooks#notification).
 
-Pour une gestion avancée des notifications, vous pouvez créer des [hooks de notification](/fr/hooks#notification) pour exécuter votre propre logique.
+#### Hooks de notification
+
+Pour ajouter un comportement personnalisé lorsque les notifications se déclenchent, comme jouer un son ou envoyer un message, configurez un [hook de notification](/fr/hooks#notification). Les hooks s'exécutent aux côtés des notifications du terminal, pas en remplacement.
 
 ### Gestion des entrées volumineuses
 

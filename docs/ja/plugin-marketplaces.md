@@ -239,7 +239,7 @@
 
 ### 相対パス
 
-同じリポジトリ内のプラグインの場合：
+同じリポジトリ内のプラグインの場合、`./` で始まるパスを使用します。
 
 ```json  theme={null}
 {
@@ -247,6 +247,8 @@
   "source": "./plugins/my-plugin"
 }
 ```
+
+パスはマーケットプレイスルート（`.claude-plugin/` を含むディレクトリ）に相対的に解決されます。上記の例では、`./plugins/my-plugin` は `<repo>/plugins/my-plugin` を指します。`marketplace.json` は `<repo>/.claude-plugin/marketplace.json` に存在していても同じです。`../` を使用して `.claude-plugin/` から抜け出さないでください。
 
 <Note>
   相対パスは、ユーザーが Git（GitHub、GitLab、または Git URL）経由でマーケットプレイスを追加する場合にのみ機能します。ユーザーが `marketplace.json` ファイルへの直接 URL でマーケットプレイスを追加する場合、相対パスは正しく解決されません。URL ベースの配布の場合は、GitHub、npm、または Git URL ソースを使用してください。詳細については、[トラブルシューティング](#plugins-with-relative-paths-fail-in-url-based-marketplaces)を参照してください。
@@ -310,11 +312,11 @@
 }
 ```
 
-| フィールド | タイプ    | 説明                                         |
-| :---- | :----- | :----------------------------------------- |
-| `url` | string | 必須。完全な Git リポジトリ URL（`.git` で終わる必要があります）   |
-| `ref` | string | オプション。Git ブランチまたはタグ（デフォルトはリポジトリのデフォルトブランチ） |
-| `sha` | string | オプション。完全な 40 文字の Git コミット SHA で正確なバージョンに固定 |
+| フィールド | タイプ    | 説明                                                                                                                     |
+| :---- | :----- | :--------------------------------------------------------------------------------------------------------------------- |
+| `url` | string | 必須。完全な Git リポジトリ URL（`https://` または `git@`）。`.git` サフィックスはオプションなので、Azure DevOps と AWS CodeCommit の URL（サフィックスなし）が機能します |
+| `ref` | string | オプション。Git ブランチまたはタグ（デフォルトはリポジトリのデフォルトブランチ）                                                                             |
+| `sha` | string | オプション。完全な 40 文字の Git コミット SHA で正確なバージョンに固定                                                                             |
 
 ### Git サブディレクトリ
 
@@ -627,6 +629,10 @@ add コマンドの完全な範囲（GitHub、Git URL、ローカルパス、リ
 ```
 
 `pathPattern` として `".*"` を使用して、ネットワークソースを `hostPattern` で制御しながら、任意のファイルシステムパスを許可します。
+
+<Note>
+  `strictKnownMarketplaces` はユーザーが追加できるものを制限しますが、マーケットプレイスを自動的に登録しません。許可されたマーケットプレイスをユーザーが `/plugin marketplace add` を実行せずに自動的に利用可能にするには、同じ `managed-settings.json` で [`extraKnownMarketplaces`](/ja/settings#extraknownmarketplaces) と組み合わせます。[両方を一緒に使用する](/ja/settings#strictknownmarketplaces)を参照してください。
+</Note>
 
 #### 制限の仕組み
 

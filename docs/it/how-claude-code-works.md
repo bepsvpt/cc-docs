@@ -6,13 +6,13 @@
 
 > Comprendi il ciclo agentico, gli strumenti integrati e come Claude Code interagisce con il tuo progetto.
 
-Claude Code è un assistente agentico che funziona nel tuo terminale. Sebbene eccella nella programmazione, può aiutarti con qualsiasi cosa tu possa fare dalla riga di comando: scrivere documentazione, eseguire build, cercare file, ricercare argomenti e altro ancora.
+Claude Code è un assistente agentico che funziona nel tuo terminale. Sebbene eccella nella programmazione, può aiutarti con qualsiasi cosa tu possa fare dalla riga di comando: scrivere documentazione, eseguire build, cercare file, ricercare argomenti e molto altro.
 
 Questa guida copre l'architettura principale, le capacità integrate e [suggerimenti per lavorare efficacemente](#work-effectively-with-claude-code). Per procedure dettagliate, consulta [Flussi di lavoro comuni](/it/common-workflows). Per funzionalità di estensibilità come skills, MCP e hooks, consulta [Estendi Claude Code](/it/features-overview).
 
 ## Il ciclo agentico
 
-Quando dai a Claude un compito, lavora attraverso tre fasi: **raccogliere contesto**, **intraprendere azioni** e **verificare i risultati**. Queste fasi si mescolano insieme. Claude utilizza strumenti durante tutto il processo, sia cercando file per comprendere il tuo codice, modificando per apportare modifiche, o eseguendo test per verificare il suo lavoro.
+Quando dai a Claude un compito, lavora attraverso tre fasi: **raccogliere contesto**, **intraprendere azioni** e **verificare i risultati**. Queste fasi si mescolano insieme. Claude utilizza strumenti durante tutto il processo, sia cercando file per comprendere il tuo codice, modificando per apportare cambiamenti, o eseguendo test per verificare il suo lavoro.
 
 <img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/agentic-loop.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=5f1827dec8539f38adee90ead3a85a38" alt="Il ciclo agentico: il tuo prompt porta Claude a raccogliere contesto, intraprendere azioni, verificare i risultati e ripetere fino al completamento dell'attività. Puoi interrompere in qualsiasi momento." width="720" height="280" data-path="images/agentic-loop.svg" />
 
@@ -44,7 +44,7 @@ Gli strumenti integrati generalmente rientrano in cinque categorie, ognuna rappr
 | **Web**                     | Cercare il web, recuperare documentazione, cercare messaggi di errore                                                                                                                  |
 | **Intelligenza del codice** | Vedere errori di tipo e avvisi dopo le modifiche, saltare alle definizioni, trovare riferimenti (richiede [plugin di intelligenza del codice](/it/discover-plugins#code-intelligence)) |
 
-Queste sono le capacità principali. Claude ha anche strumenti per generare subagents, farti domande e altri compiti di orchestrazione. Consulta [Strumenti disponibili per Claude](/it/settings#tools-available-to-claude) per l'elenco completo.
+Queste sono le capacità principali. Claude ha anche strumenti per generare subagents, farti domande e altri compiti di orchestrazione. Consulta [Strumenti disponibili per Claude](/it/tools-reference) per l'elenco completo.
 
 Claude sceglie quali strumenti utilizzare in base al tuo prompt e a quello che impara lungo il percorso. Quando dici "correggi i test falliti", Claude potrebbe:
 
@@ -57,7 +57,7 @@ Claude sceglie quali strumenti utilizzare in base al tuo prompt e a quello che i
 
 Ogni utilizzo di uno strumento fornisce a Claude nuove informazioni che informano il passaggio successivo. Questo è il ciclo agentico in azione.
 
-**Estensione delle capacità di base:** Gli strumenti integrati sono la fondazione. Puoi estendere ciò che Claude sa con [skills](/it/skills), connetterti a servizi esterni con [MCP](/it/mcp), automatizzare flussi di lavoro con [hooks](/it/hooks) e delegare compiti a [subagents](/it/sub-agents). Queste estensioni formano un livello sopra il ciclo agentico principale. Consulta [Estendi Claude Code](/it/features-overview) per una guida sulla scelta dell'estensione giusta per le tue esigenze.
+**Estensione delle capacità di base:** Gli strumenti integrati sono la fondazione. Puoi estendere quello che Claude sa con [skills](/it/skills), connetterti a servizi esterni con [MCP](/it/mcp), automatizzare flussi di lavoro con [hooks](/it/hooks) e delegare compiti a [subagents](/it/sub-agents). Queste estensioni formano un livello sopra il ciclo agentico principale. Consulta [Estendi Claude Code](/it/features-overview) per una guida sulla scelta dell'estensione giusta per le tue esigenze.
 
 ## A cosa Claude può accedere
 

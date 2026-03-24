@@ -154,7 +154,7 @@ Anthropic também mantém um [marketplace de plugins de demonstração](https://
   </Step>
 
   <Step title="Use seu novo plugin">
-    Após instalar, os comandos do plugin estão imediatamente disponíveis. Comandos de plugin são nomeados com namespace pelo nome do plugin, então **commit-commands** fornece comandos como `/commit-commands:commit`.
+    Após instalar, execute `/reload-plugins` para ativar o plugin. Comandos de plugin são nomeados com namespace pelo nome do plugin, então **commit-commands** fornece comandos como `/commit-commands:commit`.
 
     Experimente fazendo uma mudança em um arquivo e executando:
 
@@ -296,15 +296,13 @@ claude plugin uninstall formatter@your-org --scope project
 
 ### Aplique mudanças de plugin sem reiniciar
 
-Quando você instala, habilita ou desabilita plugins durante uma sessão, algumas mudanças (como novos comandos e hooks) entram em efeito imediatamente. Outras, incluindo atualizações de servidor LSP, requerem uma reinicialização.
-
-Para ativar todas as mudanças de plugin pendentes sem reiniciar, execute:
+Quando você instala, habilita ou desabilita plugins durante uma sessão, execute `/reload-plugins` para ativar todas as mudanças sem reiniciar:
 
 ```shell  theme={null}
 /reload-plugins
 ```
 
-Claude Code recarrega todos os plugins ativos e relata o que foi carregado. Se quaisquer servidores LSP foram adicionados ou atualizados, ele informará que esses requerem uma reinicialização para entrar em efeito.
+Claude Code recarrega todos os plugins ativos e mostra contagens para comandos recarregados, skills, agentes, hooks, MCP servers de plugin e servidores LSP de plugin.
 
 ## Gerencie marketplaces
 

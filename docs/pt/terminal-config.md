@@ -18,7 +18,7 @@ Você tem várias opções para inserir quebras de linha no Claude Code:
 
 * **Escape rápido**: Digite `\` seguido de Enter para criar uma nova linha
 * **Shift+Enter**: Funciona imediatamente no iTerm2, WezTerm, Ghostty e Kitty
-* **Atalho de teclado**: Configure uma associação de tecla para inserir uma nova linha em outros terminais
+* **Atalho de teclado**: Configure um atalho de teclado para inserir uma nova linha em outros terminais
 
 **Configure Shift+Enter para outros terminais**
 
@@ -42,22 +42,23 @@ Execute `/terminal-setup` dentro do Claude Code para configurar automaticamente 
 
 ### Configuração de notificações
 
-Nunca perca quando Claude completa uma tarefa com configuração adequada de notificações:
+Quando Claude termina de trabalhar e está aguardando sua entrada, ele dispara um evento de notificação. Você pode exibir este evento como uma notificação de desktop através do seu terminal ou executar lógica personalizada com [hooks de notificação](/pt/hooks#notification).
 
-#### Notificações do sistema iTerm 2
+#### Notificações do terminal
 
-Para alertas do iTerm 2 quando as tarefas são concluídas:
+Kitty e Ghostty suportam notificações de desktop sem configuração adicional. iTerm 2 requer configuração:
 
-1. Abra Preferências do iTerm 2
-2. Navegue até Perfis → Terminal
-3. Ative "Silence bell" e Filtrar Alertas → "Enviar alertas gerados por sequência de escape"
-4. Defina seu atraso de notificação preferido
+1. Abra Configurações do iTerm 2 → Perfis → Terminal
+2. Ative "Notification Center Alerts"
+3. Clique em "Filter Alerts" e marque "Send escape sequence-generated alerts"
 
-Observe que essas notificações são específicas do iTerm 2 e não estão disponíveis no Terminal padrão do macOS.
+Se as notificações não estiverem aparecendo, verifique se seu aplicativo de terminal tem permissões de notificação nas configurações do seu sistema operacional.
 
-#### Hooks de notificação personalizados
+Outros terminais, incluindo o Terminal padrão do macOS, não suportam notificações nativas. Use [hooks de notificação](/pt/hooks#notification) em vez disso.
 
-Para tratamento avançado de notificações, você pode criar [hooks de notificação](/pt/hooks#notification) para executar sua própria lógica.
+#### Hooks de notificação
+
+Para adicionar comportamento personalizado quando as notificações são disparadas, como reproduzir um som ou enviar uma mensagem, configure um [hook de notificação](/pt/hooks#notification). Os hooks são executados junto com as notificações do terminal, não como uma substituição.
 
 ### Tratamento de entradas grandes
 
@@ -69,7 +70,7 @@ Ao trabalhar com código extenso ou instruções longas:
 
 ### Modo Vim
 
-Claude Code suporta um subconjunto de associações de teclas Vim que podem ser ativadas com `/vim` ou configuradas via `/config`.
+Claude Code suporta um subconjunto de atalhos de teclado Vim que podem ser ativados com `/vim` ou configurados via `/config`.
 
 O subconjunto suportado inclui:
 

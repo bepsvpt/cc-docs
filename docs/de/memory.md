@@ -20,7 +20,7 @@ Diese Seite behandelt folgende Themen:
 
 ## CLAUDE.md vs. Auto-Memory
 
-Claude Code hat zwei komplementäre Speichersysteme. Beide werden zu Beginn jeder Konversation geladen. Claude behandelt sie als Kontext, nicht als erzwungene Konfiguration. Je spezifischer und prägnanter Ihre Anweisungen sind, desto konsistenter folgt Claude ihnen.
+Claude Code hat zwei komplementäre Memory-Systeme. Beide werden zu Beginn jeder Konversation geladen. Claude behandelt sie als Kontext, nicht als erzwungene Konfiguration. Je spezifischer und prägnanter Ihre Anweisungen sind, desto konsistenter folgt Claude ihnen.
 
 |                     | CLAUDE.md-Dateien                               | Auto-Memory                                                           |
 | :------------------ | :---------------------------------------------- | :-------------------------------------------------------------------- |
@@ -30,7 +30,7 @@ Claude Code hat zwei komplementäre Speichersysteme. Beide werden zu Beginn jede
 | **Geladen in**      | Jede Sitzung                                    | Jede Sitzung (erste 200 Zeilen)                                       |
 | **Verwenden für**   | Coding-Standards, Workflows, Projektarchitektur | Build-Befehle, Debugging-Erkenntnisse, Vorlieben, die Claude entdeckt |
 
-Verwenden Sie CLAUDE.md-Dateien, wenn Sie Claudes Verhalten lenken möchten. Auto-Memory lässt Claude aus Ihren Korrektionen lernen, ohne manuelle Arbeit.
+Verwenden Sie CLAUDE.md-Dateien, wenn Sie Claudes Verhalten lenken möchten. Auto-Memory lässt Claude aus Ihren Korrektionen lernen, ohne manuelle Anstrengung.
 
 Subagents können auch ihre eigene Auto-Memory pflegen. Weitere Informationen finden Sie unter [Subagent-Konfiguration](/de/sub-agents#enable-persistent-memory).
 
@@ -50,7 +50,7 @@ CLAUDE.md-Dateien können sich an mehreren Orten befinden, jeder mit einem ander
 
 CLAUDE.md-Dateien in der Verzeichnishierarchie über dem Arbeitsverzeichnis werden beim Start vollständig geladen. CLAUDE.md-Dateien in Unterverzeichnissen werden bei Bedarf geladen, wenn Claude Dateien in diesen Verzeichnissen liest. Weitere Informationen finden Sie unter [Wie CLAUDE.md-Dateien geladen werden](#how-claudemd-files-load).
 
-Bei großen Projekten können Sie Anweisungen in themaspezifische Dateien aufteilen, indem Sie [Projektregeln](#organize-rules-with-clauderules) verwenden. Regeln ermöglichen es Ihnen, Anweisungen auf bestimmte Dateitypen oder Unterverzeichnisse zu beschränken.
+Für große Projekte können Sie Anweisungen in themaspezifische Dateien aufteilen, indem Sie [Projektregeln](#organize-rules-with-clauderules) verwenden. Regeln ermöglichen es Ihnen, Anweisungen auf bestimmte Dateitypen oder Unterverzeichnisse zu beschränken.
 
 ### Richten Sie eine Projekt-CLAUDE.md ein
 
@@ -124,7 +124,7 @@ CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ../shared-config
 
 ### Organisieren Sie Regeln mit `.claude/rules/`
 
-Bei größeren Projekten können Sie Anweisungen in mehrere Dateien mit dem Verzeichnis `.claude/rules/` organisieren. Dies hält Anweisungen modular und leichter für Teams zu pflegen. Regeln können auch [auf bestimmte Dateipfade beschränkt werden](#path-specific-rules), sodass sie nur in den Kontext geladen werden, wenn Claude mit übereinstimmenden Dateien arbeitet, was Rauschen reduziert und Kontextraum spart.
+Für größere Projekte können Sie Anweisungen in mehrere Dateien mit dem Verzeichnis `.claude/rules/` organisieren. Dies hält Anweisungen modular und leichter für Teams zu pflegen. Regeln können auch [auf bestimmte Dateipfade beschränkt werden](#path-specific-rules), sodass sie nur in den Kontext geladen werden, wenn Claude mit übereinstimmenden Dateien arbeitet, was Rauschen reduziert und Kontextraum spart.
 
 <Note>
   Regeln werden in jeder Sitzung oder beim Öffnen übereinstimmender Dateien in den Kontext geladen. Für aufgabenspezifische Anweisungen, die nicht ständig im Kontext sein müssen, verwenden Sie stattdessen [skills](/de/skills), die nur geladen werden, wenn Sie sie aufrufen oder wenn Claude bestimmt, dass sie für Ihren Prompt relevant sind.
@@ -132,7 +132,7 @@ Bei größeren Projekten können Sie Anweisungen in mehrere Dateien mit dem Verz
 
 #### Richten Sie Regeln ein
 
-Platzieren Sie Markdown-Dateien im Verzeichnis `.claude/rules/` Ihres Projekts. Jede Datei sollte ein Thema abdecken, mit einem aussagekräftigen Dateinamen wie `testing.md` oder `api-design.md`. Alle `.md`-Dateien werden rekursiv entdeckt, sodass Sie Regeln in Unterverzeichnisse wie `frontend/` oder `backend/` organisieren können:
+Platzieren Sie Markdown-Dateien im Verzeichnis `.claude/rules/` Ihres Projekts. Jede Datei sollte ein Thema abdecken, mit einem beschreibenden Dateinamen wie `testing.md` oder `api-design.md`. Alle `.md`-Dateien werden rekursiv entdeckt, sodass Sie Regeln in Unterverzeichnisse wie `frontend/` oder `backend/` organisieren können:
 
 ```text  theme={null}
 your-project/
@@ -171,7 +171,7 @@ Verwenden Sie Glob-Muster im Feld `paths`, um Dateien nach Erweiterung, Verzeich
 | ---------------------- | ------------------------------------------------- |
 | `**/*.ts`              | Alle TypeScript-Dateien in jedem Verzeichnis      |
 | `src/**/*`             | Alle Dateien unter dem Verzeichnis `src/`         |
-| `*.md`                 | Markdown-Dateien im Projektstammverzeichnis       |
+| `*.md`                 | Markdown-Dateien im Projektstamm                  |
 | `src/components/*.tsx` | React-Komponenten in einem bestimmten Verzeichnis |
 
 Sie können mehrere Muster angeben und Klammer-Expansion verwenden, um mehrere Erweiterungen in einem Muster zu vergleichen:
@@ -214,7 +214,7 @@ Für Organisationen, die Claude Code über Teams bereitstellen, können Sie Anwe
 
 #### Stellen Sie organisationsweite CLAUDE.md bereit
 
-Organisationen können eine zentral verwaltete CLAUDE.md bereitstellen, die für alle Benutzer auf einem Computer gilt. Diese Datei kann durch individuelle Einstellungen nicht ausgeschlossen werden.
+Organisationen können eine zentral verwaltete CLAUDE.md bereitstellen, die für alle Benutzer auf einem Computer gilt. Diese Datei kann nicht durch individuelle Einstellungen ausgeschlossen werden.
 
 <Steps>
   <Step title="Erstellen Sie die Datei am Ort der verwalteten Richtlinie">
@@ -245,7 +245,7 @@ Dieses Beispiel schließt eine CLAUDE.md auf oberster Ebene und ein Regelverzeic
 
 Muster werden mit Glob-Syntax gegen absolute Dateipfade abgeglichen. Sie können `claudeMdExcludes` auf jeder [Einstellungsebene](/de/settings#settings-files) konfigurieren: Benutzer, Projekt, lokal oder verwaltete Richtlinie. Arrays werden über Ebenen hinweg zusammengeführt.
 
-Verwaltete Richtlinie CLAUDE.md-Dateien können nicht ausgeschlossen werden. Dies stellt sicher, dass organisationsweite Anweisungen unabhängig von individuellen Einstellungen immer gelten.
+CLAUDE.md-Dateien mit verwalteter Richtlinie können nicht ausgeschlossen werden. Dies stellt sicher, dass organisationsweite Anweisungen unabhängig von individuellen Einstellungen immer gelten.
 
 ## Auto-Memory
 
@@ -269,7 +269,7 @@ Um Auto-Memory über eine Umgebungsvariable zu deaktivieren, setzen Sie `CLAUDE_
 
 ### Speicherort
 
-Jedes Projekt erhält sein eigenes Speicherverzeichnis unter `~/.claude/projects/<project>/memory/`. Der Pfad `<project>` wird aus dem Git-Repository abgeleitet, sodass alle Worktrees und Unterverzeichnisse innerhalb desselben Repos ein Auto-Memory-Verzeichnis teilen. Außerhalb eines Git-Repos wird stattdessen das Projektstammverzeichnis verwendet.
+Jedes Projekt erhält sein eigenes Memory-Verzeichnis unter `~/.claude/projects/<project>/memory/`. Der Pfad `<project>` wird aus dem Git-Repository abgeleitet, sodass alle Worktrees und Unterverzeichnisse innerhalb desselben Repos ein Auto-Memory-Verzeichnis teilen. Außerhalb eines Git-Repos wird stattdessen das Projektstammverzeichnis verwendet.
 
 Um Auto-Memory an einem anderen Ort zu speichern, setzen Sie `autoMemoryDirectory` in Ihren Benutzer- oder lokalen Einstellungen:
 
@@ -287,11 +287,11 @@ Das Verzeichnis enthält einen `MEMORY.md`-Einstiegspunkt und optionale Themadat
 ~/.claude/projects/<project>/memory/
 ├── MEMORY.md          # Prägnanter Index, geladen in jede Sitzung
 ├── debugging.md       # Detaillierte Notizen zu Debugging-Mustern
-├── api-conventions.md # API-Designentscheidungen
+├── api-conventions.md # API-Design-Entscheidungen
 └── ...                # Alle anderen Themadateien, die Claude erstellt
 ```
 
-`MEMORY.md` fungiert als Index des Speicherverzeichnisses. Claude liest und schreibt Dateien in diesem Verzeichnis während Ihrer Sitzung und verwendet `MEMORY.md`, um den Überblick zu behalten, was wo gespeichert ist.
+`MEMORY.md` fungiert als Index des Memory-Verzeichnisses. Claude liest und schreibt Dateien in diesem Verzeichnis während Ihrer Sitzung und verwendet `MEMORY.md`, um den Überblick zu behalten, was wo gespeichert ist.
 
 Auto-Memory ist maschinenlokal. Alle Worktrees und Unterverzeichnisse innerhalb desselben Git-Repositories teilen ein Auto-Memory-Verzeichnis. Dateien werden nicht über Maschinen oder Cloud-Umgebungen hinweg geteilt.
 
@@ -303,35 +303,37 @@ Diese 200-Zeilen-Grenze gilt nur für `MEMORY.md`. CLAUDE.md-Dateien werden unab
 
 Themadateien wie `debugging.md` oder `patterns.md` werden nicht beim Start geladen. Claude liest sie bei Bedarf mit seinen Standard-Datei-Tools, wenn es die Informationen benötigt.
 
-Claude liest und schreibt Speicherdateien während Ihrer Sitzung. Wenn Sie „Writing memory" oder „Recalled memory" in der Claude Code-Schnittstelle sehen, aktualisiert oder liest Claude aktiv aus `~/.claude/projects/<project>/memory/`.
+Claude liest und schreibt Memory-Dateien während Ihrer Sitzung. Wenn Sie „Writing memory" oder „Recalled memory" in der Claude Code-Schnittstelle sehen, aktualisiert oder liest Claude aktiv aus `~/.claude/projects/<project>/memory/`.
 
-### Überprüfen und bearbeiten Sie Ihr Speicher
+### Überprüfen und bearbeiten Sie Ihr Memory
 
-Auto-Memory-Dateien sind einfaches Markdown, das Sie jederzeit bearbeiten oder löschen können. Führen Sie [`/memory`](#view-and-edit-with-memory) aus, um Speicherdateien aus einer Sitzung heraus zu durchsuchen und zu öffnen.
+Auto-Memory-Dateien sind einfaches Markdown, das Sie jederzeit bearbeiten oder löschen können. Führen Sie [`/memory`](#view-and-edit-with-memory) aus, um Memory-Dateien innerhalb einer Sitzung zu durchsuchen und zu öffnen.
 
-## Anzeigen und bearbeiten mit `/memory`
+## Anzeigen und Bearbeiten mit `/memory`
 
 Der Befehl `/memory` listet alle CLAUDE.md- und Regelsdateien auf, die in Ihrer aktuellen Sitzung geladen sind, ermöglicht es Ihnen, Auto-Memory ein- oder auszuschalten, und bietet einen Link zum Öffnen des Auto-Memory-Ordners. Wählen Sie eine beliebige Datei aus, um sie in Ihrem Editor zu öffnen.
 
 Wenn Sie Claude bitten, sich etwas zu merken, wie „immer pnpm verwenden, nicht npm" oder „denken Sie daran, dass die API-Tests eine lokale Redis-Instanz erfordern", speichert Claude es in Auto-Memory. Um Anweisungen stattdessen zu CLAUDE.md hinzuzufügen, bitten Sie Claude direkt, wie „fügen Sie dies zu CLAUDE.md hinzu", oder bearbeiten Sie die Datei selbst über `/memory`.
 
-## Fehlerbehebung bei Speicherproblemen
+## Fehlerbehebung bei Memory-Problemen
 
 Dies sind die häufigsten Probleme mit CLAUDE.md und Auto-Memory, zusammen mit Schritten zum Debuggen.
 
 ### Claude folgt meiner CLAUDE.md nicht
 
-CLAUDE.md ist Kontext, keine Erzwingung. Claude liest es und versucht, ihm zu folgen, aber es gibt keine Garantie für strikte Einhaltung, besonders bei vagen oder widersprüchlichen Anweisungen.
+CLAUDE.md-Inhalte werden als Benutzernachricht nach dem System-Prompt bereitgestellt, nicht als Teil des System-Prompts selbst. Claude liest ihn und versucht, ihm zu folgen, aber es gibt keine Garantie für strikte Einhaltung, besonders bei vagen oder widersprüchlichen Anweisungen.
 
 Zum Debuggen:
 
 * Führen Sie `/memory` aus, um zu überprüfen, dass Ihre CLAUDE.md-Dateien geladen werden. Wenn eine Datei nicht aufgelistet ist, kann Claude sie nicht sehen.
 * Überprüfen Sie, dass die relevante CLAUDE.md an einem Ort ist, der für Ihre Sitzung geladen wird (siehe [Wählen Sie, wo Sie CLAUDE.md-Dateien ablegen](#choose-where-to-put-claudemd-files)).
-* Machen Sie Anweisungen spezifischer. „Verwenden Sie 2-Leerzeichen-Einrückung" funktioniert besser als „Formatieren Sie Code schön".
+* Machen Sie Anweisungen spezifischer. „Verwenden Sie 2-Leerzeichen-Einrückung" funktioniert besser als „formatieren Sie Code schön".
 * Suchen Sie nach widersprüchlichen Anweisungen über CLAUDE.md-Dateien hinweg. Wenn zwei Dateien unterschiedliche Anleitungen für das gleiche Verhalten geben, kann Claude eine willkürlich auswählen.
 
+Für Anweisungen, die Sie auf System-Prompt-Ebene haben möchten, verwenden Sie [`--append-system-prompt`](/de/cli-reference#system-prompt-flags). Dies muss bei jeder Invokation übergeben werden, daher ist es besser für Skripte und Automatisierung als für interaktive Nutzung geeignet.
+
 <Tip>
-  Verwenden Sie den [`InstructionsLoaded`-Hook](/de/hooks#instructionsloaded), um genau zu protokollieren, welche Anweisungsdateien geladen sind, wann sie geladen werden und warum. Dies ist nützlich zum Debuggen pfadspezifischer Regeln oder träge geladener Dateien in Unterverzeichnissen.
+  Verwenden Sie den [`InstructionsLoaded`-Hook](/de/hooks#instructionsloaded), um genau zu protokollieren, welche Anweisungsdateien geladen sind, wann sie geladen werden und warum. Dies ist nützlich zum Debuggen von pfadspezifischen Regeln oder Lazy-Loading-Dateien in Unterverzeichnissen.
 </Tip>
 
 ### Ich weiß nicht, was Auto-Memory gespeichert hat
@@ -351,6 +353,6 @@ Weitere Informationen finden Sie unter [Schreiben Sie effektive Anweisungen](#wr
 ## Verwandte Ressourcen
 
 * [Skills](/de/skills): Verpacken Sie wiederholbare Workflows, die bei Bedarf geladen werden
-* [Einstellungen](/de/settings): Konfigurieren Sie das Claude Code-Verhalten mit Einstellungsdateien
+* [Einstellungen](/de/settings): Konfigurieren Sie Claude Code-Verhalten mit Einstellungsdateien
 * [Verwalten Sie Sitzungen](/de/sessions): Verwalten Sie Kontext, setzen Sie Konversationen fort und führen Sie parallele Sitzungen aus
-* [Subagent-Speicher](/de/sub-agents#enable-persistent-memory): Lassen Sie Subagents ihre eigene Auto-Memory pflegen
+* [Subagent-Memory](/de/sub-agents#enable-persistent-memory): Lassen Sie Subagents ihre eigene Auto-Memory pflegen

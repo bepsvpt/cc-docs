@@ -239,7 +239,7 @@ Una vez que un plugin se clona o copia en la máquina local, se copia en el cach
 
 ### Rutas relativas
 
-Para plugins en el mismo repositorio:
+Para plugins en el mismo repositorio, use una ruta que comience con `./`:
 
 ```json  theme={null}
 {
@@ -247,6 +247,8 @@ Para plugins en el mismo repositorio:
   "source": "./plugins/my-plugin"
 }
 ```
+
+Las rutas se resuelven relativas a la raíz del marketplace, que es el directorio que contiene `.claude-plugin/`. En el ejemplo anterior, `./plugins/my-plugin` apunta a `<repo>/plugins/my-plugin`, aunque `marketplace.json` vive en `<repo>/.claude-plugin/marketplace.json`. No use `../` para salir de `.claude-plugin/`.
 
 <Note>
   Las rutas relativas solo funcionan cuando los usuarios agregan su marketplace a través de Git (GitHub, GitLab o URL de git). Si los usuarios agregan su marketplace a través de una URL directa al archivo `marketplace.json`, las rutas relativas no se resolverán correctamente. Para distribución basada en URL, use fuentes de GitHub, npm o URL de git en su lugar. Consulte [Solución de problemas](#plugins-with-relative-paths-fail-in-url-based-marketplaces) para obtener detalles.
@@ -310,11 +312,11 @@ Puede fijar a una rama, etiqueta o commit específico:
 }
 ```
 
-| Campo | Tipo   | Descripción                                                                              |
-| :---- | :----- | :--------------------------------------------------------------------------------------- |
-| `url` | string | Requerido. URL completa del repositorio de git (debe terminar con `.git`)                |
-| `ref` | string | Opcional. Rama o etiqueta de Git (por defecto es la rama predeterminada del repositorio) |
-| `sha` | string | Opcional. SHA de commit de git completo de 40 caracteres para fijar a una versión exacta |
+| Campo | Tipo   | Descripción                                                                                                                                                                      |
+| :---- | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `url` | string | Requerido. URL completa del repositorio de git (`https://` o `git@`). El sufijo `.git` es opcional, por lo que las URLs de Azure DevOps y AWS CodeCommit sin el sufijo funcionan |
+| `ref` | string | Opcional. Rama o etiqueta de Git (por defecto es la rama predeterminada del repositorio)                                                                                         |
+| `sha` | string | Opcional. SHA de commit de git completo de 40 caracteres para fijar a una versión exacta                                                                                         |
 
 ### Subdirectorios de Git
 
@@ -628,6 +630,10 @@ Permitir marketplaces basados en sistema de archivos desde un directorio especí
 
 Use `".*"` como `pathPattern` para permitir cualquier ruta del sistema de archivos mientras aún controla fuentes de red con `hostPattern`.
 
+<Note>
+  `strictKnownMarketplaces` restringe lo que los usuarios pueden agregar, pero no registra marketplaces por sí solo. Para hacer que los marketplaces permitidos estén disponibles automáticamente sin que los usuarios ejecuten `/plugin marketplace add`, emparéjelo con [`extraKnownMarketplaces`](/es/settings#extraknownmarketplaces) en el mismo `managed-settings.json`. Consulte [Usar ambos juntos](/es/settings#strictknownmarketplaces).
+</Note>
+
 #### Cómo funcionan las restricciones
 
 Las restricciones se validan temprano en el proceso de instalación de plugins, antes de cualquier solicitud de red u operación del sistema de archivos. Esto previene intentos de acceso no autorizado a marketplaces.
@@ -772,12 +778,12 @@ Para flujos de trabajo completos de prueba de plugins, consulte [Pruebe sus plug
 
 Ejecute `claude plugin validate .` o `/plugin validate .` desde su directorio de marketplace para verificar problemas. Errores comunes:
 
-| Error                                             | Causa                                 | Solución                                                      |
-| :------------------------------------------------ | :------------------------------------ | :------------------------------------------------------------ |
-| `File not found: .claude-plugin/marketplace.json` | Manifiesto faltante                   | Cree `.claude-plugin/marketplace.json` con campos requeridos  |
-| `Invalid JSON syntax: Unexpected token...`        | Error de sintaxis JSON                | Verifique comas faltantes, comas extra o cadenas sin comillas |
-| `Duplicate plugin name "x" found in marketplace`  | Dos plugins comparten el mismo nombre | Dé a cada plugin un valor `name` único                        |
-| `plugins[0].source: Path traversal not allowed`   | La ruta de fuente contiene `..`       | Use rutas relativas a la raíz del marketplace sin `..`        |
+| Error                                             | Causa                                 | Solución                                                                                            |
+| :------------------------------------------------ | :------------------------------------ | :-------------------------------------------------------------------------------------------------- |
+| `File not found: .claude-plugin/marketplace.json` | Manifiesto faltante                   | Cree `.claude-plugin/marketplace.json` con campos requeridos                                        |
+| `Invalid JSON syntax: Unexpected token...`        | Error de sintaxis JSON                | Verifique comas faltantes, comas extra o cadenas sin comillas                                       |
+| `Duplicate plugin name "x" found in marketplace`  | Dos plugins comparten el mismo nombre | Dé a cada plugin un valor `name` único                                                              |
+| `plugins[0].source: Path contains ".."`           | La ruta de fuente contiene `..`       | Use rutas relativas a la raíz del marketplace sin `..`. Consulte [Rutas relativas](#relative-paths) |
 
 **Advertencias** (no bloqueantes):
 

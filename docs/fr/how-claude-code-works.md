@@ -6,7 +6,7 @@
 
 > Comprenez la boucle agentive, les outils intégrés et comment Claude Code interagit avec votre projet.
 
-Claude Code est un assistant agentif qui s'exécute dans votre terminal. Bien qu'il excelle dans la programmation, il peut vous aider pour tout ce que vous pouvez faire depuis la ligne de commande : rédiger de la documentation, exécuter des builds, rechercher des fichiers, faire des recherches sur des sujets, et bien plus.
+Claude Code est un assistant agentif qui s'exécute dans votre terminal. Bien qu'il excelle dans la programmation, il peut vous aider pour tout ce que vous pouvez faire à partir de la ligne de commande : rédiger de la documentation, exécuter des builds, rechercher des fichiers, faire des recherches sur des sujets, et bien plus.
 
 Ce guide couvre l'architecture centrale, les capacités intégrées, et [des conseils pour travailler efficacement avec Claude Code](#work-effectively-with-claude-code). Pour des procédures pas à pas, consultez [Workflows courants](/fr/common-workflows). Pour les fonctionnalités d'extensibilité comme les skills, MCP et hooks, consultez [Étendre Claude Code](/fr/features-overview).
 
@@ -20,13 +20,13 @@ La boucle s'adapte à ce que vous demandez. Une question sur votre base de code 
 
 Vous faites également partie de cette boucle. Vous pouvez interrompre à tout moment pour orienter Claude dans une direction différente, fournir un contexte supplémentaire, ou lui demander d'essayer une approche différente. Claude fonctionne de manière autonome mais reste réactif à votre contribution.
 
-La boucle agentive est alimentée par deux composants : [les modèles](#models) qui raisonnent et [les outils](#tools) qui agissent. Claude Code sert de **harnais agentif** autour de Claude : il fournit les outils, la gestion du contexte, et l'environnement d'exécution qui transforment un modèle de langage en un agent de programmation capable.
+La boucle agentive est alimentée par deux composants : [les modèles](#models) qui raisonnent et [les outils](#tools) qui agissent. Claude Code sert de **harnais agentif** autour de Claude : il fournit les outils, la gestion du contexte, et l'environnement d'exécution qui transforment un modèle de langage en un agent de codage capable.
 
 ### Modèles
 
 Claude Code utilise les modèles Claude pour comprendre votre code et raisonner sur les tâches. Claude peut lire du code dans n'importe quel langage, comprendre comment les composants se connectent, et déterminer ce qui doit changer pour accomplir votre objectif. Pour les tâches complexes, il divise le travail en étapes, les exécute, et s'ajuste en fonction de ce qu'il apprend.
 
-[Plusieurs modèles](/fr/model-config) sont disponibles avec des compromis différents. Sonnet gère bien la plupart des tâches de programmation. Opus fournit un raisonnement plus fort pour les décisions architecturales complexes. Basculez avec `/model` pendant une session ou commencez avec `claude --model <name>`.
+[Plusieurs modèles](/fr/model-config) sont disponibles avec des compromis différents. Sonnet gère bien la plupart des tâches de codage. Opus fournit un raisonnement plus fort pour les décisions architecturales complexes. Basculez avec `/model` pendant une session ou commencez avec `claude --model <name>`.
 
 Lorsque ce guide dit « Claude choisit » ou « Claude décide », c'est le modèle qui effectue le raisonnement.
 
@@ -44,7 +44,7 @@ Les outils intégrés se divisent généralement en cinq catégories, chacune re
 | **Web**                         | Rechercher sur le web, récupérer de la documentation, rechercher des messages d'erreur                                                                                                                      |
 | **Intelligence du code**        | Voir les erreurs de type et les avertissements après les éditions, accéder aux définitions, trouver les références (nécessite [les plugins d'intelligence du code](/fr/discover-plugins#code-intelligence)) |
 
-Ce sont les capacités principales. Claude dispose également d'outils pour générer des subagents, vous poser des questions, et d'autres tâches d'orchestration. Consultez [Outils disponibles pour Claude](/fr/settings#tools-available-to-claude) pour la liste complète.
+Ce sont les capacités principales. Claude dispose également d'outils pour générer des subagents, vous poser des questions, et d'autres tâches d'orchestration. Consultez [Outils disponibles pour Claude](/fr/tools-reference) pour la liste complète.
 
 Claude choisit les outils à utiliser en fonction de votre prompt et de ce qu'il apprend en cours de route. Lorsque vous dites « corriger les tests qui échouent », Claude pourrait :
 
@@ -66,10 +66,10 @@ Ce guide se concentre sur le terminal. Claude Code s'exécute également dans [V
 Lorsque vous exécutez `claude` dans un répertoire, Claude Code accède à :
 
 * **Votre projet.** Les fichiers de votre répertoire et sous-répertoires, plus les fichiers ailleurs avec votre permission.
-* **Votre terminal.** N'importe quelle commande que vous pourriez exécuter : outils de build, git, gestionnaires de paquets, utilitaires système, scripts. Si vous pouvez le faire depuis la ligne de commande, Claude aussi.
+* **Votre terminal.** N'importe quelle commande que vous pourriez exécuter : outils de build, git, gestionnaires de paquets, utilitaires système, scripts. Si vous pouvez le faire à partir de la ligne de commande, Claude aussi.
 * **Votre état git.** La branche actuelle, les modifications non validées, et l'historique récent des commits.
 * **Votre [CLAUDE.md](/fr/memory).** Un fichier markdown où vous stockez les instructions spécifiques au projet, les conventions, et le contexte que Claude devrait connaître à chaque session.
-* **[La mémoire automatique](/fr/memory#auto-memory).** Les apprentissages que Claude sauvegarde automatiquement au fur et à mesure que vous travaillez, comme les motifs de projet et vos préférences. Les 200 premières lignes de MEMORY.md sont chargées au début de chaque session.
+* **[Mémoire automatique](/fr/memory#auto-memory).** Les apprentissages que Claude sauvegarde automatiquement au fur et à mesure que vous travaillez, comme les motifs de projet et vos préférences. Les 200 premières lignes de MEMORY.md sont chargées au début de chaque session.
 * **Les extensions que vous configurez.** [Les serveurs MCP](/fr/mcp) pour les services externes, [les skills](/fr/skills) pour les workflows, [les subagents](/fr/sub-agents) pour le travail délégué, et [Claude dans Chrome](/fr/chrome) pour l'interaction avec le navigateur.
 
 Parce que Claude voit votre projet entier, il peut travailler à travers celui-ci. Lorsque vous demandez à Claude de « corriger le bug d'authentification », il recherche les fichiers pertinents, lit plusieurs fichiers pour comprendre le contexte, effectue des éditions coordonnées à travers eux, exécute des tests pour vérifier la correction, et valide les modifications si vous le demandez. C'est différent des assistants de code en ligne qui ne voient que le fichier actuel.
@@ -82,15 +82,15 @@ La boucle agentive, les outils, et les capacités décrites ci-dessus sont les m
 
 Claude Code s'exécute dans trois environnements, chacun avec des compromis différents pour l'endroit où votre code s'exécute.
 
-| Environnement           | Où le code s'exécute                          | Cas d'usage                                                                  |
-| ----------------------- | --------------------------------------------- | ---------------------------------------------------------------------------- |
-| **Local**               | Votre machine                                 | Par défaut. Accès complet à vos fichiers, outils, et environnement           |
-| **Cloud**               | VMs gérées par Anthropic                      | Déléguer des tâches, travailler sur des repos que vous n'avez pas localement |
-| **Contrôle à distance** | Votre machine, contrôlée depuis un navigateur | Utiliser l'interface web tout en gardant tout local                          |
+| Environnement           | Où le code s'exécute                              | Cas d'usage                                                                  |
+| ----------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------- |
+| **Local**               | Votre machine                                     | Par défaut. Accès complet à vos fichiers, outils, et environnement           |
+| **Cloud**               | VMs gérées par Anthropic                          | Déléguer des tâches, travailler sur des repos que vous n'avez pas localement |
+| **Contrôle à distance** | Votre machine, contrôlée à partir d'un navigateur | Utiliser l'interface web tout en gardant tout local                          |
 
 ### Interfaces
 
-Vous pouvez accéder à Claude Code via le terminal, [l'application de bureau](/fr/desktop), [les extensions IDE](/fr/ide-integrations), [claude.ai/code](https://claude.ai/code), [Contrôle à distance](/fr/remote-control), [Slack](/fr/slack), et [les pipelines CI/CD](/fr/github-actions). L'interface détermine comment vous voyez et interagissez avec Claude, mais la boucle agentive sous-jacente est identique. Consultez [Utiliser Claude Code partout](/fr/overview#use-claude-code-everywhere) pour la liste complète.
+Vous pouvez accéder à Claude Code via le terminal, l'[application de bureau](/fr/desktop), [les extensions IDE](/fr/ide-integrations), [claude.ai/code](https://claude.ai/code), [Contrôle à distance](/fr/remote-control), [Slack](/fr/slack), et [les pipelines CI/CD](/fr/github-actions). L'interface détermine comment vous voyez et interagissez avec Claude, mais la boucle agentive sous-jacente est identique. Consultez [Utiliser Claude Code partout](/fr/overview#use-claude-code-everywhere) pour la liste complète.
 
 ## Travailler avec les sessions
 
@@ -162,7 +162,7 @@ Appuyez sur `Shift+Tab` pour parcourir les modes de permission :
 * **Auto-accepter les éditions** : Claude édite les fichiers sans demander, demande toujours pour les commandes
 * **Plan Mode** : Claude utilise uniquement les outils en lecture seule, créant un plan que vous pouvez approuver avant l'exécution
 
-Vous pouvez également autoriser des commandes spécifiques dans `.claude/settings.json` afin que Claude ne demande pas à chaque fois. C'est utile pour les commandes de confiance comme `npm test` ou `git status`. Les paramètres peuvent être scoped des politiques à l'échelle de l'organisation jusqu'aux préférences personnelles. Consultez [Permissions](/fr/permissions) pour plus de détails.
+Vous pouvez également autoriser des commandes spécifiques dans `.claude/settings.json` afin que Claude ne demande pas à chaque fois. C'est utile pour les commandes de confiance comme `npm test` ou `git status`. Les paramètres peuvent être scoped à partir des politiques à l'échelle de l'organisation jusqu'aux préférences personnelles. Consultez [Permissions](/fr/permissions) pour plus de détails.
 
 ***
 
@@ -227,7 +227,7 @@ Pour le travail visuel, collez une capture d'écran de la conception et demandez
 
 ### Explorer avant d'implémenter
 
-Pour les problèmes complexes, séparez la recherche de la programmation. Utilisez le plan mode (`Shift+Tab` deux fois) pour analyser d'abord la base de code :
+Pour les problèmes complexes, séparez la recherche du codage. Utilisez le plan mode (`Shift+Tab` deux fois) pour analyser d'abord la base de code :
 
 ```text  theme={null}
 Lire src/auth/ et comprendre comment nous gérons les sessions.

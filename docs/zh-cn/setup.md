@@ -2,29 +2,38 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# 设置 Claude Code
+# 高级设置
 
-> 在您的开发机器上安装、认证和开始使用 Claude Code。
+> Claude Code 的系统要求、特定平台安装、版本管理和卸载。
+
+本页面涵盖系统要求、特定平台安装详情、更新和卸载。有关首次会话的引导式演练，请参阅[快速入门](/zh-CN/quickstart)。如果您从未使用过终端，请参阅[终端指南](/zh-CN/terminal-guide)。
 
 ## 系统要求
 
+Claude Code 在以下平台和配置上运行：
+
 * **操作系统**：
   * macOS 13.0+
-  * Windows 10 1809+ 或 Windows Server 2019+（[查看设置说明](#platform-specific-setup)）
+  * Windows 10 1809+ 或 Windows Server 2019+
   * Ubuntu 20.04+
   * Debian 10+
-  * Alpine Linux 3.19+（[需要额外依赖](#platform-specific-setup)）
+  * Alpine Linux 3.19+
 * **硬件**：4 GB+ RAM
-* **网络**：需要互联网连接（查看[网络配置](/zh-CN/network-config#network-access-requirements)）
-* **Shell**：在 Bash 或 Zsh 中效果最佳
-* **位置**：[Anthropic 支持的国家](https://www.anthropic.com/supported-countries)
+* **网络**：需要互联网连接。请参阅[网络配置](/zh-CN/network-config#network-access-requirements)。
+* **Shell**：Bash、Zsh、PowerShell 或 CMD。在 Windows 上，需要 [Git for Windows](https://git-scm.com/downloads/win)。
+* **位置**：[Anthropic 支持的国家/地区](https://www.anthropic.com/supported-countries)
 
-### 额外依赖
+### 其他依赖项
 
-* **ripgrep**：通常包含在 Claude Code 中。如果搜索失败，请查看[搜索故障排除](/zh-CN/troubleshooting#search-and-discovery-issues)。
-* **[Node.js 18+](https://nodejs.org/en/download)**：仅在[已弃用的 npm 安装](#npm-installation-deprecated)中需要
+* **ripgrep**：通常包含在 Claude Code 中。如果搜索失败，请参阅[搜索故障排除](/zh-CN/troubleshooting#search-and-discovery-issues)。
 
-## 安装
+## 安装 Claude Code
+
+<Tip>
+  更喜欢图形界面？[桌面应用](/zh-CN/desktop-quickstart)让您无需使用终端即可使用 Claude Code。下载适用于 [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) 或 [Windows](https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs) 的版本。
+
+  初次使用终端？请参阅[终端指南](/zh-CN/terminal-guide)获取分步说明。
+</Tip>
 
 To install Claude Code, use one of the following methods:
 
@@ -76,49 +85,136 @@ To install Claude Code, use one of the following methods:
   </Tab>
 </Tabs>
 
-安装过程完成后，导航到您的项目并启动 Claude Code：
+安装完成后，在您要使用的项目中打开终端并启动 Claude Code：
 
 ```bash  theme={null}
-cd your-awesome-project
 claude
 ```
 
-如果您在安装过程中遇到任何问题，请查阅[故障排除指南](/zh-CN/troubleshooting)。
+如果在安装过程中遇到任何问题，请参阅[故障排除指南](/zh-CN/troubleshooting)。
 
-<Tip>
-  安装后运行 `claude doctor` 以检查您的安装类型和版本。
-</Tip>
+### 在 Windows 上设置
 
-### 平台特定设置
+Windows 上的 Claude Code 需要 [Git for Windows](https://git-scm.com/downloads/win) 或 WSL。您可以从 PowerShell、CMD 或 Git Bash 启动 `claude`。Claude Code 在内部使用 Git Bash 来运行命令。您无需以管理员身份运行 PowerShell。
 
-**Windows**：本地运行 Claude Code（需要 [Git Bash](https://git-scm.com/downloads/win)）或在 WSL 中运行。支持 WSL 1 和 WSL 2，但 WSL 1 支持有限，不支持 Bash 工具沙箱等功能。
+**选项 1：使用 Git Bash 的原生 Windows**
 
-**Alpine Linux 和其他基于 musl/uClibc 的发行版**：
+安装 [Git for Windows](https://git-scm.com/downloads/win)，然后从 PowerShell 或 CMD 运行安装命令。
 
-Alpine 和其他基于 musl/uClibc 的发行版上的本地安装程序需要 `libgcc`、`libstdc++` 和 `ripgrep`。使用您的发行版的包管理器安装这些，然后设置 `USE_BUILTIN_RIPGREP=0`。
+如果 Claude Code 找不到您的 Git Bash 安装，请在您的 [settings.json 文件](/zh-CN/settings)中设置路径：
 
-在 Alpine 上：
+```json  theme={null}
+{
+  "env": {
+    "CLAUDE_CODE_GIT_BASH_PATH": "C:\\Program Files\\Git\\bin\\bash.exe"
+  }
+}
+```
+
+**选项 2：WSL**
+
+支持 WSL 1 和 WSL 2。WSL 2 支持[沙箱](/zh-CN/sandboxing)以增强安全性。WSL 1 不支持沙箱。
+
+### Alpine Linux 和基于 musl 的发行版
+
+Alpine 和其他基于 musl/uClibc 的发行版上的原生安装程序需要 `libgcc`、`libstdc++` 和 `ripgrep`。使用您的发行版的包管理器安装这些，然后设置 `USE_BUILTIN_RIPGREP=0`。
+
+此示例在 Alpine 上安装所需的包：
 
 ```bash  theme={null}
 apk add libgcc libstdc++ ripgrep
 ```
 
-### 认证
+然后在您的 [`settings.json`](/zh-CN/settings#available-settings) 文件中将 `USE_BUILTIN_RIPGREP` 设置为 `0`：
 
-#### 对于个人用户
+```json  theme={null}
+{
+  "env": {
+    "USE_BUILTIN_RIPGREP": "0"
+  }
+}
+```
 
-1. **Claude Pro 或 Max 计划**（推荐）：订阅 Claude 的 [Pro 或 Max 计划](https://claude.ai/pricing)，获得统一订阅，包括 Claude Code 和网页版 Claude。在一个地方管理您的账户，并使用您的 Claude.ai 账户登录。
-2. **Claude Console**：通过 [Claude Console](https://console.anthropic.com) 连接并完成 OAuth 流程。需要在 Anthropic Console 中有活跃的账单。"Claude Code" 工作区会自动创建用于使用情况跟踪和成本管理。您无法为 Claude Code 工作区创建 API 密钥；它专门用于 Claude Code 使用。
+## 验证您的安装
 
-#### 对于团队和组织
+安装后，确认 Claude Code 正常工作：
 
-1. **Claude for Teams 或 Enterprise**（推荐）：订阅 [Claude for Teams](https://claude.com/pricing#team-&-enterprise) 或 [Claude for Enterprise](https://anthropic.com/contact-sales)，获得集中账单、团队管理以及对 Claude Code 和网页版 Claude 的访问权限。团队成员使用其 Claude.ai 账户登录。
-2. **Claude Console 团队账单**：设置共享的 [Claude Console](https://console.anthropic.com) 组织，使用团队账单。邀请团队成员并分配角色以进行使用情况跟踪。
-3. **云提供商**：配置 Claude Code 以使用 [Amazon Bedrock、Google Vertex AI 或 Microsoft Foundry](/zh-CN/third-party-integrations)，以便与您现有的云基础设施进行部署。
+```bash  theme={null}
+claude --version
+```
+
+要更详细地检查您的安装和配置，请运行 [`claude doctor`](/zh-CN/troubleshooting#get-more-help)：
+
+```bash  theme={null}
+claude doctor
+```
+
+## 身份验证
+
+Claude Code 需要 Pro、Max、Teams、Enterprise 或 Console 账户。免费的 Claude.ai 计划不包括 Claude Code 访问权限。您也可以通过第三方 API 提供商（如 [Amazon Bedrock](/zh-CN/amazon-bedrock)、[Google Vertex AI](/zh-CN/google-vertex-ai) 或 [Microsoft Foundry](/zh-CN/microsoft-foundry)）使用 Claude Code。
+
+安装后，通过运行 `claude` 并按照浏览器提示登录。有关所有账户类型和团队设置选项，请参阅[身份验证](/zh-CN/authentication)。
+
+## 更新 Claude Code
+
+原生安装会在后台自动更新。您可以[配置发布渠道](#configure-release-channel)来控制您是立即接收更新还是按延迟的稳定计划接收更新，或者[完全禁用自动更新](#disable-auto-updates)。Homebrew 和 WinGet 安装需要手动更新。
+
+### 自动更新
+
+Claude Code 在启动时和运行时定期检查更新。更新在后台下载和安装，然后在您下次启动 Claude Code 时生效。
+
+<Note>
+  Homebrew 和 WinGet 安装不会自动更新。使用 `brew upgrade claude-code` 或 `winget upgrade Anthropic.ClaudeCode` 手动更新。
+
+  **已知问题**：Claude Code 可能会在新版本在这些包管理器中可用之前通知您有更新。如果升级失败，请稍候后重试。
+
+  Homebrew 在升级后会在磁盘上保留旧版本。定期运行 `brew cleanup claude-code` 以回收磁盘空间。
+</Note>
+
+### 配置发布渠道
+
+使用 `autoUpdatesChannel` 设置控制 Claude Code 为自动更新和 `claude update` 遵循的发布渠道：
+
+* `"latest"`，默认值：在新功能发布后立即接收
+* `"stable"`：使用通常约一周前的版本，跳过有重大回归的发布
+
+通过 `/config` → **自动更新渠道**配置此项，或将其添加到您的 [settings.json 文件](/zh-CN/settings)：
+
+```json  theme={null}
+{
+  "autoUpdatesChannel": "stable"
+}
+```
+
+对于企业部署，您可以使用[托管设置](/zh-CN/permissions#managed-settings)在整个组织中强制执行一致的发布渠道。
+
+### 禁用自动更新
+
+在您的 [`settings.json`](/zh-CN/settings#available-settings) 文件的 `env` 键中将 `DISABLE_AUTOUPDATER` 设置为 `"1"`：
+
+```json  theme={null}
+{
+  "env": {
+    "DISABLE_AUTOUPDATER": "1"
+  }
+}
+```
+
+### 手动更新
+
+要立即应用更新而不等待下一次后台检查，请运行：
+
+```bash  theme={null}
+claude update
+```
+
+## 高级安装选项
+
+这些选项用于版本固定、从 npm 迁移和验证二进制完整性。
 
 ### 安装特定版本
 
-本地安装程序接受特定版本号或发布渠道（`latest` 或 `stable`）。您在安装时选择的渠道将成为自动更新的默认渠道。有关更多信息，请查看[配置发布渠道](#configure-release-channel)。
+原生安装程序接受特定版本号或发布渠道（`latest` 或 `stable`）。您在安装时选择的渠道将成为自动更新的默认值。有关更多信息，请参阅[配置发布渠道](#configure-release-channel)。
 
 要安装最新版本（默认）：
 
@@ -186,121 +282,72 @@ apk add libgcc libstdc++ ripgrep
   </Tab>
 </Tabs>
 
-### 二进制完整性和代码签名
+### 已弃用的 npm 安装
 
-* 所有平台的 SHA256 校验和发布在发布清单中，目前位于 `https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/{VERSION}/manifest.json`（示例：将 `{VERSION}` 替换为 `2.0.30`）
-* 签名的二进制文件分发给以下平台：
-  * macOS：由 "Anthropic PBC" 签名并由 Apple 公证
-  * Windows：由 "Anthropic, PBC" 签名
+npm 安装已弃用。原生安装程序更快，不需要依赖项，并在后台自动更新。尽可能使用[原生安装](#install-claude-code)方法。
 
-## NPM 安装（已弃用）
+#### 从 npm 迁移到原生
 
-NPM 安装已弃用。尽可能使用[本地安装](#installation)方法。要将现有 npm 安装迁移到本地，请运行 `claude install`。
+如果您之前使用 npm 安装了 Claude Code，请切换到原生安装程序：
 
-**全局 npm 安装**
+```bash  theme={null}
+# 安装原生二进制文件
+curl -fsSL https://claude.ai/install.sh | bash
 
-```sh  theme={null}
+# 删除旧的 npm 安装
+npm uninstall -g @anthropic-ai/claude-code
+```
+
+您也可以从现有的 npm 安装运行 `claude install` 来在其旁边安装原生二进制文件，然后删除 npm 版本。
+
+#### 使用 npm 安装
+
+如果您因兼容性原因需要 npm 安装，您必须安装 [Node.js 18+](https://nodejs.org/en/download)。全局安装该包：
+
+```bash  theme={null}
 npm install -g @anthropic-ai/claude-code
 ```
 
 <Warning>
-  不要使用 `sudo npm install -g`，因为这可能导致权限问题和安全风险。
-  如果您遇到权限错误，请查看[故障排除权限错误](/zh-CN/troubleshooting#command-not-found-claude-or-permission-errors)以获取推荐的解决方案。
+  不要使用 `sudo npm install -g`，因为这可能导致权限问题和安全风险。如果遇到权限错误，请参阅[故障排除权限错误](/zh-CN/troubleshooting#permission-errors-during-installation)。
 </Warning>
 
-## Windows 设置
+### 二进制完整性和代码签名
 
-**选项 1：WSL 中的 Claude Code**
+您可以使用 SHA256 校验和和代码签名来验证 Claude Code 二进制文件的完整性。
 
-* 支持 WSL 1 和 WSL 2
-* WSL 2 支持[沙箱](/zh-CN/sandboxing)以增强安全性。WSL 1 不支持沙箱。
-
-**选项 2：使用 Git Bash 在本地 Windows 上运行 Claude Code**
-
-* 需要 [Git for Windows](https://git-scm.com/downloads/win)
-* 对于便携式 Git 安装，指定您的 `bash.exe` 的路径：
-  ```powershell  theme={null}
-  $env:CLAUDE_CODE_GIT_BASH_PATH="C:\Program Files\Git\bin\bash.exe"
-  ```
-
-## 更新 Claude Code
-
-### 自动更新
-
-Claude Code 会自动保持最新状态，以确保您拥有最新的功能和安全修复。
-
-* **更新检查**：在启动时和运行时定期执行
-* **更新过程**：在后台自动下载和安装
-* **通知**：安装更新时您会看到通知
-* **应用更新**：更新在您下次启动 Claude Code 时生效
-
-<Note>
-  Homebrew 和 WinGet 安装不会自动更新。使用 `brew upgrade claude-code` 或 `winget upgrade Anthropic.ClaudeCode` 手动更新。
-
-  **已知问题**：Claude Code 可能会在新版本在这些包管理器中可用之前通知您有更新。如果升级失败，请稍候后重试。
-</Note>
-
-### 配置发布渠道
-
-使用 `autoUpdatesChannel` 设置配置 Claude Code 为自动更新和 `claude update` 遵循的发布渠道：
-
-* `"latest"`（默认）：在新功能发布后立即接收
-* `"stable"`：使用通常约一周前的版本，跳过有重大回归的发布
-
-通过 `/config` → **自动更新渠道**配置此项，或将其添加到您的 [settings.json 文件](/zh-CN/settings)：
-
-```json  theme={null}
-{
-  "autoUpdatesChannel": "stable"
-}
-```
-
-对于企业部署，您可以使用[托管设置](/zh-CN/settings#settings-files)在整个组织中强制执行一致的发布渠道。
-
-### 禁用自动更新
-
-在您的 shell 或 [settings.json 文件](/zh-CN/settings)中设置 `DISABLE_AUTOUPDATER` 环境变量：
-
-```bash  theme={null}
-export DISABLE_AUTOUPDATER=1
-```
-
-### 手动更新
-
-```bash  theme={null}
-claude update
-```
+* 所有平台的 SHA256 校验和发布在 `https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/{VERSION}/manifest.json` 的发布清单中。将 `{VERSION}` 替换为版本号，例如 `2.0.30`。
+* 签名的二进制文件分发用于以下平台：
+  * **macOS**：由"Anthropic PBC"签名并由 Apple 公证
+  * **Windows**：由"Anthropic, PBC"签名
 
 ## 卸载 Claude Code
 
-如果您需要卸载 Claude Code，请按照您的安装方法的说明进行操作。
+要删除 Claude Code，请按照您的安装方法的说明进行操作。
 
-### 本地安装
+### 原生安装
 
 删除 Claude Code 二进制文件和版本文件：
 
-**macOS、Linux、WSL：**
+<Tabs>
+  <Tab title="macOS、Linux、WSL">
+    ```bash  theme={null}
+    rm -f ~/.local/bin/claude
+    rm -rf ~/.local/share/claude
+    ```
+  </Tab>
 
-```bash  theme={null}
-rm -f ~/.local/bin/claude
-rm -rf ~/.local/share/claude
-```
-
-**Windows PowerShell：**
-
-```powershell  theme={null}
-Remove-Item -Path "$env:USERPROFILE\.local\bin\claude.exe" -Force
-Remove-Item -Path "$env:USERPROFILE\.local\share\claude" -Recurse -Force
-```
-
-**Windows CMD：**
-
-```batch  theme={null}
-del "%USERPROFILE%\.local\bin\claude.exe"
-rmdir /s /q "%USERPROFILE%\.local\share\claude"
-```
+  <Tab title="Windows PowerShell">
+    ```powershell  theme={null}
+    Remove-Item -Path "$env:USERPROFILE\.local\bin\claude.exe" -Force
+    Remove-Item -Path "$env:USERPROFILE\.local\share\claude" -Recurse -Force
+    ```
+  </Tab>
+</Tabs>
 
 ### Homebrew 安装
+
+删除 Homebrew cask：
 
 ```bash  theme={null}
 brew uninstall --cask claude-code
@@ -308,17 +355,21 @@ brew uninstall --cask claude-code
 
 ### WinGet 安装
 
+删除 WinGet 包：
+
 ```powershell  theme={null}
 winget uninstall Anthropic.ClaudeCode
 ```
 
-### NPM 安装
+### npm
+
+删除全局 npm 包：
 
 ```bash  theme={null}
 npm uninstall -g @anthropic-ai/claude-code
 ```
 
-### 清理配置文件（可选）
+### 删除配置文件
 
 <Warning>
   删除配置文件将删除您的所有设置、允许的工具、MCP 服务器配置和会话历史记录。
@@ -326,38 +377,28 @@ npm uninstall -g @anthropic-ai/claude-code
 
 要删除 Claude Code 设置和缓存数据：
 
-**macOS、Linux、WSL：**
+<Tabs>
+  <Tab title="macOS、Linux、WSL">
+    ```bash  theme={null}
+    # 删除用户设置和状态
+    rm -rf ~/.claude
+    rm ~/.claude.json
 
-```bash  theme={null}
-# 删除用户设置和状态
-rm -rf ~/.claude
-rm ~/.claude.json
+    # 删除特定于项目的设置（从您的项目目录运行）
+    rm -rf .claude
+    rm -f .mcp.json
+    ```
+  </Tab>
 
-# 删除项目特定设置（从您的项目目录运行）
-rm -rf .claude
-rm -f .mcp.json
-```
+  <Tab title="Windows PowerShell">
+    ```powershell  theme={null}
+    # 删除用户设置和状态
+    Remove-Item -Path "$env:USERPROFILE\.claude" -Recurse -Force
+    Remove-Item -Path "$env:USERPROFILE\.claude.json" -Force
 
-**Windows PowerShell：**
-
-```powershell  theme={null}
-# 删除用户设置和状态
-Remove-Item -Path "$env:USERPROFILE\.claude" -Recurse -Force
-Remove-Item -Path "$env:USERPROFILE\.claude.json" -Force
-
-# 删除项目特定设置（从您的项目目录运行）
-Remove-Item -Path ".claude" -Recurse -Force
-Remove-Item -Path ".mcp.json" -Force
-```
-
-**Windows CMD：**
-
-```batch  theme={null}
-REM 删除用户设置和状态
-rmdir /s /q "%USERPROFILE%\.claude"
-del "%USERPROFILE%\.claude.json"
-
-REM 删除项目特定设置（从您的项目目录运行）
-rmdir /s /q ".claude"
-del ".mcp.json"
-```
+    # 删除特定于项目的设置（从您的项目目录运行）
+    Remove-Item -Path ".claude" -Recurse -Force
+    Remove-Item -Path ".mcp.json" -Force
+    ```
+  </Tab>
+</Tabs>

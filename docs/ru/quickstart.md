@@ -15,10 +15,10 @@
 * Открытый терминал или командная строка
   * Если вы никогда раньше не использовали терминал, ознакомьтесь с [руководством по терминалу](/ru/terminal-guide)
 * Проект кода для работы
-* [Подписка Claude](https://claude.com/pricing) (Pro, Max, Teams или Enterprise), учётная запись [Claude Console](https://console.anthropic.com/) или доступ через [поддерживаемого облачного провайдера](/ru/third-party-integrations)
+* [Подписка Claude](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_prereq) (Pro, Max, Teams или Enterprise), учётная запись [Claude Console](https://console.anthropic.com/) или доступ через [поддерживаемого облачного провайдера](/ru/third-party-integrations)
 
 <Note>
-  Это руководство охватывает CLI терминала. Claude Code также доступен в [веб-версии](https://claude.ai/code), как [настольное приложение](/ru/desktop), в [VS Code](/ru/vs-code) и [JetBrains IDEs](/ru/jetbrains), в [Slack](/ru/slack) и в CI/CD с [GitHub Actions](/ru/github-actions) и [GitLab](/ru/gitlab-ci-cd). Смотрите [все интерфейсы](/ru/overview#use-claude-code-everywhere).
+  Это руководство охватывает CLI терминала. Claude Code также доступен в [веб-версии](https://claude.ai/code), как [настольное приложение](/ru/desktop), в [VS Code](/ru/vs-code) и [JetBrains IDE](/ru/jetbrains), в [Slack](/ru/slack) и в CI/CD с [GitHub Actions](/ru/github-actions) и [GitLab](/ru/gitlab-ci-cd). Смотрите [все интерфейсы](/ru/overview#use-claude-code-everywhere).
 </Note>
 
 ## Шаг 1: Установите Claude Code
@@ -89,8 +89,8 @@ claude
 
 Вы можете войти, используя любой из этих типов учётных записей:
 
-* [Claude Pro, Max, Teams или Enterprise](https://claude.com/pricing) (рекомендуется)
-* [Claude Console](https://console.anthropic.com/) (доступ к API с предоплаченными кредитами). При первом входе в Console автоматически создаётся рабочее пространство "Claude Code" для централизованного отслеживания затрат.
+* [Claude Pro, Max, Teams или Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_login) (рекомендуется)
+* [Claude Console](https://console.anthropic.com/) (доступ к API с предоплаченными кредитами). При первом входе рабочее пространство "Claude Code" автоматически создаётся в Console для централизованного отслеживания затрат.
 * [Amazon Bedrock, Google Vertex AI или Microsoft Foundry](/ru/third-party-integrations) (облачные провайдеры для предприятий)
 
 После входа ваши учётные данные сохраняются, и вам не нужно будет входить снова. Чтобы позже переключиться на другую учётную запись, используйте команду `/login`.
@@ -152,7 +152,7 @@ can Claude Code work with Docker?
 
 ## Шаг 5: Сделайте своё первое изменение кода
 
-Теперь давайте заставим Claude Code выполнить реальное кодирование. Попробуйте простую задачу:
+Теперь давайте заставим Claude Code выполнить некоторое реальное кодирование. Попробуйте простую задачу:
 
 ```text  theme={null}
 add a hello world function to the main file
@@ -166,7 +166,7 @@ Claude Code будет:
 4. Сделать редактирование
 
 <Note>
-  Claude Code всегда просит разрешение перед изменением файлов. Вы можете одобрить отдельные изменения или включить режим "Accept all" для сеанса.
+  Claude Code всегда просит разрешение перед изменением файлов. Вы можете одобрить отдельные изменения или включить режим "Принять всё" для сеанса.
 </Note>
 
 ## Шаг 6: Используйте Git с Claude Code
@@ -315,7 +315,7 @@ review my changes and suggest improvements
 
 <CardGroup cols={2}>
   <Card title="Как работает Claude Code" icon="microchip" href="/ru/how-claude-code-works">
-    Поймите цикл агента, встроенные инструменты и то, как Claude Code взаимодействует с вашим проектом
+    Поймите агентский цикл, встроенные инструменты и то, как Claude Code взаимодействует с вашим проектом
   </Card>
 
   <Card title="Лучшие практики" icon="star" href="/ru/best-practices">

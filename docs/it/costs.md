@@ -165,7 +165,7 @@ Il tuo file [CLAUDE.md](/it/memory) viene caricato nel contesto all'inizio della
 
 ### Regola il pensiero esteso
 
-Il pensiero esteso è abilitato per impostazione predefinita con un budget di 31.999 token perché migliora significativamente le prestazioni su compiti complessi di pianificazione e ragionamento. Tuttavia, i token di pensiero vengono fatturati come token di output, quindi per compiti più semplici dove il ragionamento profondo non è necessario, puoi ridurre i costi abbassando il [livello di sforzo](/it/model-config#adjust-effort-level) in `/model` per Opus 4.6, disabilitando il pensiero in `/config`, o abbassando il budget (ad esempio, `MAX_THINKING_TOKENS=8000`).
+Il pensiero esteso è abilitato per impostazione predefinita con un budget di 31.999 token perché migliora significativamente le prestazioni su compiti complessi di pianificazione e ragionamento. Tuttavia, i token di pensiero vengono fatturati come token di output, quindi per compiti più semplici dove il ragionamento profondo non è necessario, puoi ridurre i costi abbassando il [livello di sforzo](/it/model-config#adjust-effort-level) con `/effort` o in `/model`, disabilitando il pensiero in `/config`, o abbassando il budget (ad esempio, `MAX_THINKING_TOKENS=8000`).
 
 ### Delega le operazioni dettagliate ai subagent
 
@@ -183,7 +183,7 @@ Richieste vaghe come "migliora questa codebase" attivano una scansione ampia. Ri
 
 Per lavori più lunghi o complessi, queste abitudini aiutano a evitare token sprecati andando nella direzione sbagliata:
 
-* **Utilizza plan mode per compiti complessi**: Premi Shift+Tab per entrare in [plan mode](/it/common-workflows#use-plan-mode-for-safe-code-analysis) prima dell'implementazione. Claude esplora la codebase e propone un approccio per la tua approvazione, prevenendo il rielaborazione costosa quando la direzione iniziale è sbagliata.
+* **Utilizza plan mode per compiti complessi**: Premi Shift+Tab per entrare in [plan mode](/it/common-workflows#use-plan-mode-for-safe-code-analysis) prima dell'implementazione. Claude esplora la codebase e propone un approccio per la tua approvazione, prevenendo la rielaborazione costosa quando la direzione iniziale è sbagliata.
 * **Correggi la rotta presto**: Se Claude inizia a andare nella direzione sbagliata, premi Escape per fermarti immediatamente. Utilizza `/rewind` o doppio tocco Escape per ripristinare la conversazione e il codice a un checkpoint precedente.
 * **Fornisci target di verifica**: Includi casi di test, incolla screenshot o definisci l'output previsto nel tuo prompt. Quando Claude può verificare il suo lavoro, cattura i problemi prima che tu debba richiedere correzioni.
 * **Testa in modo incrementale**: Scrivi un file, testalo, quindi continua. Questo cattura i problemi presto quando sono economici da risolvere.

@@ -165,7 +165,7 @@ Ihre [CLAUDE.md](/de/memory)-Datei wird beim Sitzungsstart in den Kontext gelade
 
 ### Passen Sie das erweiterte Denken an
 
-Erweitertes Denken ist standardmäßig mit einem Budget von 31.999 Token aktiviert, da es die Leistung bei komplexen Planungs- und Denkaufgaben erheblich verbessert. Thinking-Token werden jedoch als Output-Token abgerechnet, daher können Sie für einfachere Aufgaben, bei denen tiefes Denken nicht erforderlich ist, Kosten reduzieren, indem Sie die [Anstrengungsstufe](/de/model-config#adjust-effort-level) in `/model` für Opus 4.6 senken, Denken in `/config` deaktivieren oder das Budget senken (z. B. `MAX_THINKING_TOKENS=8000`).
+Erweitertes Denken ist standardmäßig mit einem Budget von 31.999 Token aktiviert, da es die Leistung bei komplexen Planungs- und Denkaufgaben erheblich verbessert. Thinking-Token werden jedoch als Output-Token abgerechnet, daher können Sie für einfachere Aufgaben, bei denen tiefes Denken nicht erforderlich ist, Kosten reduzieren, indem Sie die [Anstrengungsstufe](/de/model-config#adjust-effort-level) mit `/effort` senken oder in `/model`, Denken in `/config` deaktivieren oder das Budget senken (z. B. `MAX_THINKING_TOKENS=8000`).
 
 ### Delegieren Sie ausführliche Operationen an Subagents
 
@@ -185,7 +185,7 @@ Für längere oder komplexere Arbeiten helfen diese Gewohnheiten, verschwendete 
 
 * **Verwenden Sie Plan Mode für komplexe Aufgaben**: Drücken Sie Shift+Tab, um [Plan Mode](/de/common-workflows#use-plan-mode-for-safe-code-analysis) vor der Implementierung zu betreten. Claude erkundet die Codebasis und schlägt einen Ansatz zur Genehmigung vor, was teure Überarbeitungen verhindert, wenn die anfängliche Richtung falsch ist.
 * **Korrigieren Sie den Kurs früh**: Wenn Claude in die falsche Richtung geht, drücken Sie Escape, um sofort zu stoppen. Verwenden Sie `/rewind` oder doppeltippen Sie Escape, um das Gespräch und den Code zu einem vorherigen Checkpoint wiederherzustellen.
-* **Geben Sie Verifizierungsziele an**: Fügen Sie Testfälle ein, fügen Sie Screenshots ein oder definieren Sie erwartete Ausgabe in Ihrem Prompt. Wenn Claude seine eigene Arbeit verifizieren kann, erkennt es Probleme, bevor Sie Korrekturen anfordern müssen.
+* **Geben Sie Verifizierungsziele an**: Fügen Sie Testfälle ein, fügen Sie Screenshots ein oder definieren Sie erwartete Ausgabe in Ihrem Prompt. Wenn Claude seine eigene Arbeit verifizieren kann, erkennt es Probleme, bevor Sie Korrektionen anfordern müssen.
 * **Testen Sie schrittweise**: Schreiben Sie eine Datei, testen Sie sie, dann fahren Sie fort. Dies erkennt Probleme früh, wenn sie billig zu beheben sind.
 
 ## Hintergrund-Token-Nutzung

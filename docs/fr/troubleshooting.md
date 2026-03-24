@@ -14,23 +14,23 @@
 
 Trouvez le message d'erreur ou le symptôme que vous rencontrez :
 
-| Ce que vous voyez                                                                | Solution                                                                                                                |
-| :------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------- |
-| `command not found: claude` ou `'claude' is not recognized`                      | [Corriger votre PATH](#command-not-found-claude-after-installation)                                                     |
-| `syntax error near unexpected token '<'`                                         | [Le script d'installation retourne du HTML](#install-script-returns-html-instead-of-a-shell-script)                     |
-| `curl: (56) Failure writing output to destination`                               | [Télécharger le script d'abord, puis l'exécuter](#curl-56-failure-writing-output-to-destination)                        |
-| `Killed` pendant l'installation sur Linux                                        | [Ajouter de l'espace d'échange pour les serveurs à faible mémoire](#install-killed-on-low-memory-linux-servers)         |
-| `TLS connect error` ou `SSL/TLS secure channel`                                  | [Mettre à jour les certificats CA](#tls-or-ssl-connection-errors)                                                       |
-| `Failed to fetch version` ou impossible d'atteindre le serveur de téléchargement | [Vérifier la connectivité réseau et les paramètres proxy](#check-network-connectivity)                                  |
-| `irm is not recognized` ou `&& is not valid`                                     | [Utiliser la bonne commande pour votre shell](#windows-irm-or--not-recognized)                                          |
-| `Claude Code on Windows requires git-bash`                                       | [Installer ou configurer Git Bash](#windows-claude-code-on-windows-requires-git-bash)                                   |
-| `Error loading shared library`                                                   | [Mauvaise variante binaire pour votre système](#linux-wrong-binary-variant-installed-muslglibc-mismatch)                |
-| `Illegal instruction` sur Linux                                                  | [Incompatibilité d'architecture](#illegal-instruction-on-linux)                                                         |
-| `dyld: cannot load` ou `Abort trap` sur macOS                                    | [Incompatibilité binaire](#dyld-cannot-load-on-macos)                                                                   |
-| `Invoke-Expression: Missing argument in parameter list`                          | [Le script d'installation retourne du HTML](#install-script-returns-html-instead-of-a-shell-script)                     |
-| `App unavailable in region`                                                      | Claude Code n'est pas disponible dans votre pays. Voir [pays supportés](https://www.anthropic.com/supported-countries). |
-| `unable to get local issuer certificate`                                         | [Configurer les certificats CA d'entreprise](#tls-or-ssl-connection-errors)                                             |
-| `OAuth error` ou `403 Forbidden`                                                 | [Corriger l'authentification](#authentication-issues)                                                                   |
+| Ce que vous voyez                                                                | Solution                                                                                                                    |
+| :------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
+| `command not found: claude` ou `'claude' is not recognized`                      | [Corriger votre PATH](#command-not-found-claude-after-installation)                                                         |
+| `syntax error near unexpected token '<'`                                         | [Le script d'installation retourne du HTML](#install-script-returns-html-instead-of-a-shell-script)                         |
+| `curl: (56) Failure writing output to destination`                               | [Télécharger le script d'abord, puis l'exécuter](#curl-56-failure-writing-output-to-destination)                            |
+| `Killed` pendant l'installation sur Linux                                        | [Ajouter de l'espace d'échange pour les serveurs à faible mémoire](#install-killed-on-low-memory-linux-servers)             |
+| `TLS connect error` ou `SSL/TLS secure channel`                                  | [Mettre à jour les certificats CA](#tls-or-ssl-connection-errors)                                                           |
+| `Failed to fetch version` ou impossible d'atteindre le serveur de téléchargement | [Vérifier la connectivité réseau et les paramètres proxy](#check-network-connectivity)                                      |
+| `irm is not recognized` ou `&& is not valid`                                     | [Utiliser la bonne commande pour votre shell](#windows-irm-or--not-recognized)                                              |
+| `Claude Code on Windows requires git-bash`                                       | [Installer ou configurer Git Bash](#windows-claude-code-on-windows-requires-git-bash)                                       |
+| `Error loading shared library`                                                   | [Mauvaise variante binaire pour votre système](#linux-wrong-binary-variant-installed-muslglibc-mismatch)                    |
+| `Illegal instruction` sur Linux                                                  | [Incompatibilité d'architecture](#illegal-instruction-on-linux)                                                             |
+| `dyld: cannot load` ou `Abort trap` sur macOS                                    | [Incompatibilité binaire](#dyld-cannot-load-on-macos)                                                                       |
+| `Invoke-Expression: Missing argument in parameter list`                          | [Le script d'installation retourne du HTML](#install-script-returns-html-instead-of-a-shell-script)                         |
+| `App unavailable in region`                                                      | Claude Code n'est pas disponible dans votre pays. Voir les [pays supportés](https://www.anthropic.com/supported-countries). |
+| `unable to get local issuer certificate`                                         | [Configurer les certificats CA d'entreprise](#tls-or-ssl-connection-errors)                                                 |
+| `OAuth error` ou `403 Forbidden`                                                 | [Corriger l'authentification](#authentication-issues)                                                                       |
 
 Si votre problème n'est pas listé, suivez ces étapes de diagnostic.
 
@@ -119,7 +119,7 @@ Vérifiez si le répertoire d'installation est dans votre PATH en listant vos en
     echo %PATH% | findstr /i "local\bin"
     ```
 
-    S'il n'y a pas de sortie, ouvrez Paramètres système, allez à Variables d'environnement, et ajoutez `%USERPROFILE%\.local\bin` à votre variable PATH utilisateur. Redémarrez votre terminal.
+    S'il n'y a pas de sortie, ouvrez les Paramètres système, allez à Variables d'environnement, et ajoutez `%USERPROFILE%\.local\bin` à votre variable PATH utilisateur. Redémarrez votre terminal.
 
     Vérifiez que la correction a fonctionné :
 
@@ -235,7 +235,7 @@ Sur PowerShell, le même problème apparaît comme :
 Invoke-Expression: Missing argument in parameter list.
 ```
 
-Cela signifie que l'URL d'installation a retourné une page HTML au lieu du script d'installation. Si la page HTML dit « App unavailable in region », Claude Code n'est pas disponible dans votre pays. Voir [pays supportés](https://www.anthropic.com/supported-countries).
+Cela signifie que l'URL d'installation a retourné une page HTML au lieu du script d'installation. Si la page HTML dit « App unavailable in region », Claude Code n'est pas disponible dans votre pays. Voir les [pays supportés](https://www.anthropic.com/supported-countries).
 
 Sinon, cela peut se produire en raison de problèmes réseau, de routage régional, ou d'une interruption de service temporaire.
 
@@ -255,7 +255,7 @@ Sinon, cela peut se produire en raison de problèmes réseau, de routage région
    winget install Anthropic.ClaudeCode
    ```
 
-2. **Réessayer après quelques minutes** : le problème est souvent temporaire. Attendez et réessayez la commande originale.
+2. **Réessayez après quelques minutes** : le problème est souvent temporaire. Attendez et réessayez la commande originale.
 
 ### `command not found: claude` après l'installation
 
@@ -272,7 +272,7 @@ Cela signifie que le répertoire d'installation n'est pas dans le chemin de rech
 
 ### `curl: (56) Failure writing output to destination`
 
-La commande `curl ... | bash` télécharge le script et le transmet directement à Bash pour exécution via un pipe (`|`). Cette erreur signifie que la connexion s'est interrompue avant que le script ne soit complètement téléchargé. Les causes courantes incluent les interruptions réseau, le téléchargement étant bloqué en cours de flux, ou les limites de ressources système.
+La commande `curl ... | bash` télécharge le script et le transmet directement à Bash pour exécution en utilisant un pipe (`|`). Cette erreur signifie que la connexion s'est interrompue avant que le script ne soit complètement téléchargé. Les causes courantes incluent les interruptions réseau, le téléchargement étant bloqué en cours de flux, ou les limites de ressources système.
 
 **Solutions :**
 
@@ -282,7 +282,7 @@ La commande `curl ... | bash` télécharge le script et le transmet directement 
    ```
    Si la commande se termine silencieusement, votre connexion est correcte et le problème est probablement intermittent. Réessayez la commande d'installation. Si vous voyez une erreur, votre réseau bloque peut-être le téléchargement.
 
-2. **Essayer une méthode d'installation alternative** :
+2. **Essayez une méthode d'installation alternative** :
 
    Sur macOS ou Linux :
 
@@ -322,7 +322,7 @@ Les erreurs comme `curl: (35) TLS connect error`, `schannel: next InitializeSecu
    irm https://claude.ai/install.ps1 | iex
    ```
 
-3. **Vérifier l'interférence du proxy ou du pare-feu** : les proxies d'entreprise qui effectuent l'inspection TLS peuvent causer ces erreurs, y compris `unable to get local issuer certificate`. Définissez `NODE_EXTRA_CA_CERTS` sur votre bundle de certificat CA d'entreprise :
+3. **Vérifiez l'interférence du proxy ou du pare-feu** : les proxies d'entreprise qui effectuent l'inspection TLS peuvent causer ces erreurs, y compris `unable to get local issuer certificate`. Définissez `NODE_EXTRA_CA_CERTS` sur votre bundle de certificat CA d'entreprise :
    ```bash  theme={null}
    export NODE_EXTRA_CA_CERTS=/path/to/corporate-ca.pem
    ```
@@ -334,7 +334,7 @@ L'installateur n'a pas pu atteindre le serveur de téléchargement. Cela signifi
 
 **Solutions :**
 
-1. **Tester la connectivité directement** :
+1. **Testez la connectivité directement** :
    ```bash  theme={null}
    curl -sI https://storage.googleapis.com
    ```
@@ -413,9 +413,9 @@ Le tueur OOM Linux a terminé le processus car le système a manqué de mémoire
    curl -fsSL https://claude.ai/install.sh | bash
    ```
 
-2. **Fermer d'autres processus** pour libérer de la mémoire avant d'installer.
+2. **Fermez les autres processus** pour libérer de la mémoire avant d'installer.
 
-3. **Utiliser une instance plus grande** si possible. Claude Code nécessite au moins 4 Go de RAM.
+3. **Utilisez une instance plus grande** si possible. Claude Code nécessite au moins 4 Go de RAM.
 
 ### L'installation se fige dans Docker
 
@@ -423,13 +423,13 @@ Lors de l'installation de Claude Code dans un conteneur Docker, l'installation e
 
 **Solutions :**
 
-1. **Définir un répertoire de travail** avant d'exécuter l'installateur. Lorsqu'il est exécuté depuis `/`, l'installateur analyse l'ensemble du système de fichiers, ce qui provoque une utilisation excessive de la mémoire. Définir `WORKDIR` limite l'analyse à un petit répertoire :
+1. **Définir un répertoire de travail** avant d'exécuter l'installateur. Lorsqu'il est exécuté depuis `/`, l'installateur analyse l'ensemble du système de fichiers, ce qui provoque une utilisation excessive de la mémoire. La définition de `WORKDIR` limite l'analyse à un petit répertoire :
    ```dockerfile  theme={null}
    WORKDIR /tmp
    RUN curl -fsSL https://claude.ai/install.sh | bash
    ```
 
-2. **Augmenter les limites de mémoire Docker** si vous utilisez Docker Desktop :
+2. **Augmentez les limites de mémoire Docker** si vous utilisez Docker Desktop :
    ```bash  theme={null}
    docker build --memory=4g .
    ```
@@ -470,7 +470,7 @@ Cela peut se produire sur les systèmes basés sur glibc qui ont des paquets de 
 
 **Solutions :**
 
-1. **Vérifier quelle libc votre système utilise** :
+1. **Vérifiez quelle libc votre système utilise** :
    ```bash  theme={null}
    ldd /bin/ls | head -1
    ```
@@ -493,13 +493,13 @@ bash: line 142: 2238232 Illegal instruction    "$binary_path" install ${TARGET:+
 
 **Solutions :**
 
-1. **Vérifier votre architecture** :
+1. **Vérifiez votre architecture** :
    ```bash  theme={null}
    uname -m
    ```
    `x86_64` signifie 64 bits Intel/AMD, `aarch64` signifie ARM64. Si le binaire ne correspond pas, [déposez un problème GitHub](https://github.com/anthropics/claude-code/issues) avec la sortie.
 
-2. **Essayer une méthode d'installation alternative** pendant que le problème d'architecture est résolu :
+2. **Essayez une méthode d'installation alternative** pendant que le problème d'architecture est résolu :
    ```bash  theme={null}
    brew install --cask claude-code
    ```
@@ -515,11 +515,11 @@ Abort trap: 6
 
 **Solutions :**
 
-1. **Vérifier votre version macOS** : Claude Code nécessite macOS 13.0 ou ultérieur. Ouvrez le menu Apple et sélectionnez À propos de ce Mac pour vérifier votre version.
+1. **Vérifiez votre version macOS** : Claude Code nécessite macOS 13.0 ou ultérieur. Ouvrez le menu Apple et sélectionnez À propos de ce Mac pour vérifier votre version.
 
-2. **Mettre à jour macOS** si vous êtes sur une version antérieure. Le binaire utilise des commandes de chargement que les versions macOS antérieures ne supportent pas.
+2. **Mettez à jour macOS** si vous êtes sur une version antérieure. Le binaire utilise des commandes de chargement que les versions macOS antérieures ne supportent pas.
 
-3. **Essayer Homebrew** comme méthode d'installation alternative :
+3. **Essayez Homebrew** comme méthode d'installation alternative :
    ```bash  theme={null}
    brew install --cask claude-code
    ```
@@ -528,28 +528,28 @@ Abort trap: 6
 
 Vous pourriez rencontrer les problèmes suivants dans WSL :
 
-**Problèmes de détection d'OS/plateforme** : si vous recevez une erreur pendant l'installation, WSL utilise peut-être npm Windows. Essayez :
+**Problèmes de détection d'OS/plateforme** : si vous recevez une erreur pendant l'installation, WSL peut utiliser npm Windows. Essayez :
 
 * Exécutez `npm config set os linux` avant l'installation
 * Installez avec `npm install -g @anthropic-ai/claude-code --force --no-os-check`. N'utilisez pas `sudo`.
 
-**Erreurs Node non trouvé** : si vous voyez `exec: node: not found` lors de l'exécution de `claude`, votre environnement WSL utilise peut-être une installation Windows de Node.js. Vous pouvez confirmer cela avec `which npm` et `which node`, qui devraient pointer vers des chemins Linux commençant par `/usr/` plutôt que `/mnt/c/`. Pour corriger cela, essayez d'installer Node via le gestionnaire de paquets de votre distribution Linux ou via [`nvm`](https://github.com/nvm-sh/nvm).
+**Erreurs Node non trouvé** : si vous voyez `exec: node: not found` lors de l'exécution de `claude`, votre environnement WSL peut utiliser une installation Windows de Node.js. Vous pouvez confirmer cela avec `which npm` et `which node`, qui devraient pointer vers des chemins Linux commençant par `/usr/` plutôt que `/mnt/c/`. Pour corriger cela, essayez d'installer Node via le gestionnaire de paquets de votre distribution Linux ou via [`nvm`](https://github.com/nvm-sh/nvm).
 
 **Conflits de version nvm** : si vous avez nvm installé à la fois dans WSL et Windows, vous pouvez rencontrer des conflits de version lors du changement de versions Node dans WSL. Cela se produit car WSL importe le PATH Windows par défaut, ce qui amène Windows nvm/npm à prendre la priorité sur l'installation WSL.
 
-Vous pouvez identifier ce problème en :
+Vous pouvez identifier ce problème par :
 
-* Exécutant `which npm` et `which node` - s'ils pointent vers des chemins Windows (commençant par `/mnt/c/`), les versions Windows sont utilisées
-* Rencontrant une fonctionnalité cassée après le changement de versions Node avec nvm dans WSL
+* L'exécution de `which npm` et `which node` - s'ils pointent vers des chemins Windows (commençant par `/mnt/c/`), les versions Windows sont utilisées
+* L'expérience de fonctionnalités cassées après le changement de versions Node avec nvm dans WSL
 
 Pour résoudre ce problème, corrigez votre PATH Linux pour assurer que les versions Linux node/npm prennent la priorité :
 
-**Solution principale : Assurer que nvm est correctement chargé dans votre shell**
+**Solution principale : Assurez-vous que nvm est correctement chargé dans votre shell**
 
-La cause la plus courante est que nvm n'est pas chargé dans les shells non-interactifs. Ajoutez ce qui suit à votre fichier de configuration shell (`~/.bashrc`, `~/.zshrc`, etc.) :
+La cause la plus courante est que nvm n'est pas chargé dans les shells non interactifs. Ajoutez ce qui suit à votre fichier de configuration shell (`~/.bashrc`, `~/.zshrc`, etc.) :
 
 ```bash  theme={null}
-# Load nvm if it exists
+# Charger nvm s'il existe
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
@@ -563,7 +563,7 @@ source ~/.nvm/nvm.sh
 
 **Alternative : Ajuster l'ordre du PATH**
 
-Si nvm est correctement chargé mais les chemins Windows prennent toujours la priorité, vous pouvez explicitement préfixer vos chemins Linux au PATH dans votre configuration shell :
+Si nvm est correctement chargé mais que les chemins Windows prennent toujours la priorité, vous pouvez explicitement préfixer vos chemins Linux au PATH dans votre configuration shell :
 
 ```bash  theme={null}
 export PATH="$HOME/.nvm/versions/node/$(node -v)/bin:$PATH"
@@ -609,7 +609,7 @@ Ces sections traitent des échecs de connexion, des problèmes de jetons et du c
 
 ### Invites de permission répétées
 
-Si vous vous trouvez à approuver à plusieurs reprises les mêmes commandes, vous pouvez autoriser des outils spécifiques à s'exécuter sans approbation en utilisant la commande `/permissions`. Voir [Documentation des permissions](/fr/permissions#manage-permissions).
+Si vous vous trouvez à approuver à plusieurs reprises les mêmes commandes, vous pouvez autoriser des outils spécifiques à s'exécuter sans approbation en utilisant la commande `/permissions`. Voir la [documentation Permissions](/fr/permissions#manage-permissions).
 
 ### Problèmes d'authentification
 
@@ -623,7 +623,7 @@ Si le navigateur ne s'ouvre pas automatiquement pendant la connexion, appuyez su
 
 ### Erreur OAuth : Code invalide
 
-Si vous voyez `OAuth error: Invalid code. Please make sure the full code was copied`, le code de connexion a expiré ou a été tronqué lors de la copie-collage.
+Si vous voyez `OAuth error: Invalid code. Please make sure the full code was copied`, le code de connexion a expiré ou a été tronqué lors du copier-coller.
 
 **Solutions :**
 
@@ -641,7 +641,7 @@ Si vous voyez `API Error: 403 {"error":{"type":"forbidden","message":"Request no
 
 ### La connexion OAuth échoue dans WSL2
 
-La connexion basée sur navigateur dans WSL2 peut échouer si WSL ne peut pas ouvrir votre navigateur Windows. Définissez la variable d'environnement `BROWSER` :
+La connexion basée sur le navigateur dans WSL2 peut échouer si WSL ne peut pas ouvrir votre navigateur Windows. Définissez la variable d'environnement `BROWSER` :
 
 ```bash  theme={null}
 export BROWSER="/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
@@ -654,7 +654,7 @@ Ou copiez l'URL manuellement : lorsque l'invite de connexion apparaît, appuyez 
 
 Si Claude Code vous demande de vous connecter à nouveau après une session, votre jeton OAuth a peut-être expiré.
 
-Exécutez `/login` pour vous réauthentifier. Si cela se produit fréquemment, vérifiez que votre horloge système est exacte, car la validation des jetons dépend des horodatages corrects.
+Exécutez `/login` pour vous réauthentifier. Si cela se produit fréquemment, vérifiez que votre horloge système est exacte, car la validation du jeton dépend des horodatages corrects.
 
 ## Emplacements des fichiers de configuration
 
@@ -713,7 +713,7 @@ Si Claude Code semble ne pas répondre :
 
 ### Problèmes de recherche et de découverte
 
-Si l'outil Search, les mentions `@file`, les agents personnalisés et les skills personnalisés ne fonctionnent pas, installez le système `ripgrep` :
+Si l'outil Search, les mentions `@file`, les agents personnalisés et les compétences personnalisées ne fonctionnent pas, installez le système `ripgrep` :
 
 ```bash  theme={null}
 # macOS (Homebrew)  
@@ -732,7 +732,7 @@ apk add ripgrep
 pacman -S ripgrep
 ```
 
-Puis définissez `USE_BUILTIN_RIPGREP=0` dans votre [environnement](/fr/settings#environment-variables).
+Puis définissez `USE_BUILTIN_RIPGREP=0` dans votre [environnement](/fr/env-vars).
 
 ### Résultats de recherche lents ou incomplets sur WSL
 
@@ -756,7 +756,7 @@ Si Claude Code ne se connecte pas à votre IDE ou se comporte de manière inatte
 
 ### IDE JetBrains non détecté sur WSL2
 
-Si vous utilisez Claude Code sur WSL2 avec des IDE JetBrains et recevez des erreurs « No available IDEs detected », cela est probablement dû à la configuration réseau de WSL2 ou au pare-feu Windows bloquant la connexion.
+Si vous utilisez Claude Code sur WSL2 avec les IDE JetBrains et obtenez des erreurs « No available IDEs detected », cela est probablement dû à la configuration réseau de WSL2 ou au pare-feu Windows bloquant la connexion.
 
 #### Modes de mise en réseau WSL2
 
@@ -859,7 +859,7 @@ Si le markdown généré a des lignes vides excessives ou un espacement incohér
 
 **Solutions :**
 
-1. **Demander des corrections de formatage** : demandez « Fix spacing and formatting issues in this markdown file. »
+1. **Demander des corrections de formatage** : demandez à Claude de « Fix spacing and formatting issues in this markdown file. »
 
 2. **Utiliser des outils de formatage** : configurez des hooks pour exécuter des formateurs markdown comme `prettier` ou des scripts de formatage personnalisés sur les fichiers markdown générés.
 
@@ -869,7 +869,7 @@ Si le markdown généré a des lignes vides excessives ou un espacement incohér
 
 Pour minimiser les problèmes de formatage :
 
-* **Être explicite dans les demandes** : demandez « properly formatted markdown with language-tagged code blocks »
+* **Être explicite dans les demandes** : demandez du « properly formatted markdown with language-tagged code blocks »
 * **Utiliser les conventions de projet** : documentez votre style markdown préféré dans [`CLAUDE.md`](/fr/memory)
 * **Configurer des hooks de validation** : utilisez des hooks de post-traitement pour vérifier et corriger automatiquement les problèmes de formatage courants
 
@@ -886,5 +886,5 @@ Si vous rencontrez des problèmes non couverts ici :
    * Erreurs de configuration du serveur MCP
    * Problèmes de configuration des liaisons de touches
    * Avertissements d'utilisation du contexte (fichiers CLAUDE.md volumineux, utilisation élevée de jetons MCP, règles de permission inaccessibles)
-   * Erreurs de chargement des plugins et agents
+   * Erreurs de chargement des plugins et des agents
 4. Demandez directement à Claude ses capacités et fonctionnalités - Claude a un accès intégré à sa documentation

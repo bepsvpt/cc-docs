@@ -34,7 +34,7 @@ Wenn dieser Leitfaden sagt „Claude wählt" oder „Claude entscheidet", ist es
 
 Tools sind das, was Claude Code agentengesteuert macht. Ohne Tools kann Claude nur mit Text antworten. Mit Tools kann Claude handeln: Ihren Code lesen, Dateien bearbeiten, Befehle ausführen, das Web durchsuchen und mit externen Diensten interagieren. Jede Tool-Nutzung gibt Informationen zurück, die in die Schleife fließen und Claudes nächste Entscheidung informieren.
 
-Die integrierten Tools fallen im Allgemeinen in fünf Kategorien, von denen jede eine andere Art von Agentur darstellt.
+Die integrierten Tools fallen im Allgemeinen in fünf Kategorien, die jeweils eine andere Art von Agentur darstellen.
 
 | Kategorie            | Was Claude tun kann                                                                                                                                                          |
 | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -44,7 +44,7 @@ Die integrierten Tools fallen im Allgemeinen in fünf Kategorien, von denen jede
 | **Web**              | Das Web durchsuchen, Dokumentation abrufen, Fehlermeldungen nachschlagen                                                                                                     |
 | **Code-Intelligenz** | Typfehler und Warnungen nach Bearbeitungen sehen, zu Definitionen springen, Referenzen finden (erfordert [Code-Intelligenz-Plugins](/de/discover-plugins#code-intelligence)) |
 
-Dies sind die primären Funktionen. Claude hat auch Tools zum Spawnen von subagents, zum Stellen von Fragen und für andere Orchestrierungsaufgaben. Siehe [Tools verfügbar für Claude](/de/settings#tools-available-to-claude) für die vollständige Liste.
+Dies sind die primären Funktionen. Claude hat auch Tools zum Spawnen von subagents, zum Stellen von Fragen und für andere Orchestrierungsaufgaben. Siehe [Tools verfügbar für Claude](/de/tools-reference) für die vollständige Liste.
 
 Claude wählt basierend auf Ihrer Eingabeaufforderung und dem, was er unterwegs lernt, aus, welche Tools er verwenden soll. Wenn Sie sagen „beheben Sie die fehlgeschlagenen Tests", könnte Claude:
 
@@ -57,7 +57,7 @@ Claude wählt basierend auf Ihrer Eingabeaufforderung und dem, was er unterwegs 
 
 Jede Tool-Nutzung gibt Claude neue Informationen, die den nächsten Schritt informieren. Dies ist die agentengesteuerte Schleife in Aktion.
 
-**Erweitern der Basisfunktionen:** Die integrierten Tools sind die Grundlage. Sie können das, was Claude weiß, mit [skills](/de/skills) erweitern, sich mit externen Diensten mit [MCP](/de/mcp) verbinden, Workflows mit [hooks](/de/hooks) automatisieren und Aufgaben an [subagents](/de/sub-agents) delegieren. Diese Erweiterungen bilden eine Schicht auf der Kernschleife der Agentur. Siehe [Claude Code erweitern](/de/features-overview) für Anleitung zur Auswahl der richtigen Erweiterung für Ihre Anforderungen.
+**Erweitern der Basisfunktionen:** Die integrierten Tools sind die Grundlage. Sie können das, was Claude weiß, mit [skills](/de/skills) erweitern, sich mit externen Diensten mit [MCP](/de/mcp) verbinden, Workflows mit [hooks](/de/hooks) automatisieren und Aufgaben an [subagents](/de/sub-agents) delegieren. Diese Erweiterungen bilden eine Schicht auf der Grundlage der agentengesteuerten Schleife. Siehe [Claude Code erweitern](/de/features-overview) für Anleitung zur Auswahl der richtigen Erweiterung für Ihre Anforderungen.
 
 ## Worauf Claude zugreifen kann
 
@@ -76,13 +76,13 @@ Da Claude Ihr gesamtes Projekt sieht, kann er darin arbeiten. Wenn Sie Claude bi
 
 ## Umgebungen und Schnittstellen
 
-Die agentengesteuerte Schleife, Tools und Funktionen, die oben beschrieben sind, sind überall dort gleich, wo Sie Claude Code verwenden. Was sich ändert, ist, wo der Code ausgeführt wird und wie Sie damit interagieren.
+Die agentengesteuerte Schleife, Tools und Funktionen, die oben beschrieben sind, sind überall gleich, wo Sie Claude Code verwenden. Was sich ändert, ist, wo der Code ausgeführt wird und wie Sie damit interagieren.
 
 ### Ausführungsumgebungen
 
-Claude Code läuft in drei Umgebungen, von denen jede unterschiedliche Kompromisse für die Ausführung Ihres Codes bietet.
+Claude Code läuft in drei Umgebungen, jede mit unterschiedlichen Kompromissen für die Ausführung Ihres Codes.
 
-| Umgebung           | Wo Code ausgeführt wird                   | Anwendungsfall                                                       |
+| Umgebung           | Wo Code läuft                             | Anwendungsfall                                                       |
 | ------------------ | ----------------------------------------- | -------------------------------------------------------------------- |
 | **Lokal**          | Ihr Computer                              | Standard. Vollständiger Zugriff auf Ihre Dateien, Tools und Umgebung |
 | **Cloud**          | Von Anthropic verwaltete VMs              | Aufgaben auslagern, an Repos arbeiten, die Sie nicht lokal haben     |
@@ -94,9 +94,9 @@ Sie können auf Claude Code über das Terminal, die [Desktop-App](/de/desktop), 
 
 ## Mit Sitzungen arbeiten
 
-Claude Code speichert Ihre Konversation lokal, während Sie arbeiten. Jede Nachricht, Tool-Nutzung und jedes Ergebnis wird gespeichert, was [Zurückspulen](#undo-changes-with-checkpoints), [Fortsetzen und Verzweigen](#resume-or-fork-sessions) von Sitzungen ermöglicht. Bevor Claude Code-Änderungen vornimmt, erstellt es auch einen Snapshot der betroffenen Dateien, damit Sie bei Bedarf zurückrollen können.
+Claude Code speichert Ihre Konversation lokal, während Sie arbeiten. Jede Nachricht, Tool-Nutzung und jedes Ergebnis wird gespeichert, was [Zurückspulen](#undo-changes-with-checkpoints), [Fortsetzen und Verzweigen](#resume-or-fork-sessions) von Sitzungen ermöglicht. Bevor Claude Code-Änderungen vornimmt, erstellt er auch einen Snapshot der betroffenen Dateien, damit Sie bei Bedarf zurückrollen können.
 
-**Sitzungen sind unabhängig.** Jede neue Sitzung beginnt mit einem frischen context window, ohne die Konversationshistorie aus vorherigen Sitzungen. Claude kann Erkenntnisse über Sitzungen hinweg mit [Auto-Speicher](/de/memory#auto-memory) beibehalten, und Sie können Ihre eigenen persistenten Anweisungen in [CLAUDE.md](/de/memory) hinzufügen.
+**Sitzungen sind unabhängig.** Jede neue Sitzung beginnt mit einem frischen Kontextfenster, ohne die Konversationshistorie aus vorherigen Sitzungen. Claude kann Erkenntnisse über Sitzungen hinweg mit [Auto-Speicher](/de/memory#auto-memory) beibehalten, und Sie können Ihre eigenen persistenten Anweisungen in [CLAUDE.md](/de/memory) hinzufügen.
 
 ### Über Branches arbeiten
 
@@ -108,7 +108,7 @@ Da Sitzungen an Verzeichnisse gebunden sind, können Sie parallele Claude-Sitzun
 
 ### Sitzungen fortsetzen oder verzweigen
 
-Wenn Sie eine Sitzung mit `claude --continue` oder `claude --resume` fortsetzen, setzen Sie dort fort, wo Sie aufgehört haben, und verwenden dieselbe Sitzungs-ID. Neue Nachrichten werden an die bestehende Konversation angehängt. Ihre vollständige Konversationshistorie wird wiederhergestellt, aber sitzungsspezifische Berechtigungen nicht. Sie müssen diese erneut genehmigen.
+Wenn Sie eine Sitzung mit `claude --continue` oder `claude --resume` fortsetzen, setzen Sie dort fort, wo Sie aufgehört haben, mit derselben Sitzungs-ID. Neue Nachrichten werden an die bestehende Konversation angehängt. Ihre vollständige Konversationshistorie wird wiederhergestellt, aber sitzungsspezifische Berechtigungen nicht. Sie müssen diese erneut genehmigen.
 
 <img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/session-continuity.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=fa41d12bfb57579cabfeece907151d30" alt="Sitzungskontinuität: Fortsetzen setzt dieselbe Sitzung fort, Verzweigung erstellt einen neuen Branch mit einer neuen ID." width="560" height="280" data-path="images/session-continuity.svg" />
 
@@ -120,11 +120,11 @@ claude --continue --fork-session
 
 Dies erstellt eine neue Sitzungs-ID, während die Konversationshistorie bis zu diesem Punkt beibehalten wird. Die ursprüngliche Sitzung bleibt unverändert. Wie beim Fortsetzen erben verzweigte Sitzungen keine sitzungsspezifischen Berechtigungen.
 
-**Dieselbe Sitzung in mehreren Terminals**: Wenn Sie dieselbe Sitzung in mehreren Terminals fortsetzen, schreiben beide Terminals in dieselbe Sitzungsdatei. Nachrichten von beiden werden verschachtelt, wie zwei Personen, die in dasselbe Notizbuch schreiben. Nichts wird beschädigt, aber die Konversation wird durcheinander. Jedes Terminal sieht während der Sitzung nur seine eigenen Nachrichten, aber wenn Sie diese Sitzung später fortsetzen, sehen Sie alles verschachtelt. Für parallele Arbeit vom selben Ausgangspunkt verwenden Sie `--fork-session`, um jedem Terminal seine eigene saubere Sitzung zu geben.
+**Dieselbe Sitzung in mehreren Terminals**: Wenn Sie dieselbe Sitzung in mehreren Terminals fortsetzen, schreiben beide Terminals in dieselbe Sitzungsdatei. Nachrichten von beiden werden verschachtelt, wie zwei Personen, die in dasselbe Notizbuch schreiben. Nichts wird beschädigt, aber die Konversation wird durcheinander. Jedes Terminal sieht nur seine eigenen Nachrichten während der Sitzung, aber wenn Sie diese Sitzung später fortsetzen, sehen Sie alles verschachtelt. Für parallele Arbeit vom selben Ausgangspunkt verwenden Sie `--fork-session`, um jedem Terminal seine eigene saubere Sitzung zu geben.
 
-### Das context window
+### Das Kontextfenster
 
-Claudes context window enthält Ihre Konversationshistorie, Dateiinhalte, Befehlsausgaben, [CLAUDE.md](/de/memory), geladene skills und Systemanweisungen. Während Sie arbeiten, füllt sich der Kontext. Claude komprimiert automatisch, aber Anweisungen von früh in der Konversation können verloren gehen. Legen Sie persistente Regeln in CLAUDE.md ab, und führen Sie `/context` aus, um zu sehen, was Platz verbraucht.
+Claudes Kontextfenster enthält Ihre Konversationshistorie, Dateiinhalte, Befehlsausgaben, [CLAUDE.md](/de/memory), geladene skills und Systemanweisungen. Während Sie arbeiten, füllt sich der Kontext. Claude komprimiert automatisch, aber Anweisungen von früh in der Konversation können verloren gehen. Legen Sie persistente Regeln in CLAUDE.md ab, und führen Sie `/context` aus, um zu sehen, was Platz verbraucht.
 
 #### Wenn der Kontext voll wird
 
@@ -212,7 +212,7 @@ Der Checkout-Fluss ist für Benutzer mit abgelaufenen Karten unterbrochen.
 Schreiben Sie zuerst einen fehlgeschlagenen Test, dann beheben Sie ihn.
 ```
 
-Vage Eingabeaufforderungen funktionieren, aber Sie werden mehr Zeit mit Lenkung verbringen. Spezifische Eingabeaufforderungen wie die obige sind oft beim ersten Versuch erfolgreich.
+Vage Eingabeaufforderungen funktionieren, aber Sie werden mehr Zeit mit Lenkung verbringen. Spezifische Eingabeaufforderungen wie die obige gelingen oft beim ersten Versuch.
 
 ### Geben Sie Claude etwas zum Überprüfen
 

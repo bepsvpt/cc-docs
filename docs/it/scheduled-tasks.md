@@ -16,7 +16,7 @@ Le attività hanno ambito di sessione: vivono nel processo Claude Code corrente 
 
 ## Pianificare un prompt ricorrente con /loop
 
-Lo skill bundled `/loop` [bundled skill](/it/skills#bundled-skills) è il modo più rapido per pianificare un prompt ricorrente. Passare un intervallo facoltativo e un prompt, e Claude configura un processo cron che si attiva in background mentre la sessione rimane aperta.
+Lo [skill bundled](/it/skills#bundled-skills) `/loop` è il modo più rapido per pianificare un prompt ricorrente. Passare un intervallo facoltativo e un prompt, e Claude configura un processo cron che si attiva in background mentre la sessione rimane aperta.
 
 ```text  theme={null}
 /loop 5m check if the deployment finished and tell me what happened
@@ -34,7 +34,7 @@ Gli intervalli sono facoltativi. È possibile iniziare con essi, terminarli o om
 | Trailing `every` clause | `/loop check the build every 2 hours` | ogni 2 ore                 |
 | No interval             | `/loop check the build`               | predefinito ogni 10 minuti |
 
-Le unità supportate sono `s` per i secondi, `m` per i minuti, `h` per le ore e `d` per i giorni. I secondi vengono arrotondati al minuto più vicino poiché cron ha una granularità di un minuto. Gli intervalli che non si dividono uniformemente nella loro unità, come `7m` o `90m`, vengono arrotondati all'intervallo più pulito e Claude ti dice quale ha scelto.
+Le unità supportate sono `s` per secondi, `m` per minuti, `h` per ore e `d` per giorni. I secondi vengono arrotondati al minuto più vicino poiché cron ha una granularità di un minuto. Gli intervalli che non si dividono uniformemente nella loro unità, come `7m` o `90m`, vengono arrotondati all'intervallo più pulito e Claude ti dice quale ha scelto.
 
 ### Eseguire un ciclo su un altro comando
 
@@ -114,20 +114,20 @@ Le attività ricorrenti scadono automaticamente 3 giorni dopo la creazione. L'at
 | `0 9 * * 1-5`  | Giorni feriali alle 9 del mattino locale |
 | `30 14 15 3 *` | 15 marzo alle 14:30 locale               |
 
-Il giorno della settimana utilizza `0` o `7` per domenica fino a `6` per sabato. La sintassi estesa come `L`, `W`, `?` e gli alias dei nomi come `MON` o `JAN` non sono supportati.
+Day-of-week utilizza `0` o `7` per domenica fino a `6` per sabato. La sintassi estesa come `L`, `W`, `?` e gli alias dei nomi come `MON` o `JAN` non sono supportati.
 
-Quando sia il giorno del mese che il giorno della settimana sono vincolati, una data corrisponde se uno dei campi corrisponde. Questo segue la semantica standard di vixie-cron.
+Quando sia day-of-month che day-of-week sono vincolati, una data corrisponde se uno dei campi corrisponde. Questo segue la semantica standard di vixie-cron.
 
 ## Disabilitare le attività pianificate
 
-Impostare `CLAUDE_CODE_DISABLE_CRON=1` nel tuo ambiente per disabilitare completamente lo scheduler. Gli strumenti cron e `/loop` diventano non disponibili e tutte le attività già pianificate smettono di attivarsi. Vedere [Variabili di ambiente](/it/settings#environment-variables) per l'elenco completo dei flag di disabilitazione.
+Impostare `CLAUDE_CODE_DISABLE_CRON=1` nel tuo ambiente per disabilitare completamente lo scheduler. Gli strumenti cron e `/loop` diventano non disponibili e tutte le attività già pianificate smettono di attivarsi. Vedere [Variabili di ambiente](/it/env-vars) per l'elenco completo dei flag di disabilitazione.
 
 ## Limitazioni
 
 La pianificazione con ambito di sessione ha vincoli intrinseci:
 
 * Le attività si attivano solo mentre Claude Code è in esecuzione e inattivo. La chiusura del terminale o l'uscita dalla sessione annulla tutto.
-* Nessun recupero per i fuochi mancati. Se il tempo pianificato di un'attività passa mentre Claude è occupato in una richiesta a lunga esecuzione, si attiva una volta quando Claude diventa inattivo, non una volta per ogni intervallo mancato.
+* Nessun recupero per attivazioni perse. Se l'ora pianificata di un'attività passa mentre Claude è occupato in una richiesta a lunga esecuzione, si attiva una sola volta quando Claude diventa inattivo, non una volta per ogni intervallo perso.
 * Nessuna persistenza tra i riavvii. Il riavvio di Claude Code cancella tutte le attività con ambito di sessione.
 
 Per l'automazione basata su cron che deve essere eseguita senza supervisione, utilizza un [flusso di lavoro GitHub Actions](/it/github-actions) con un trigger `schedule`, oppure [Attività pianificate Desktop](/it/desktop#schedule-recurring-tasks) se desideri un flusso di configurazione grafico.

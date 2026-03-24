@@ -239,7 +239,7 @@ Una volta che un plugin viene clonato o copiato nella macchina locale, viene cop
 
 ### Percorsi relativi
 
-Per i plugin nello stesso repository:
+Per i plugin nello stesso repository, usa un percorso che inizia con `./`:
 
 ```json  theme={null}
 {
@@ -247,6 +247,8 @@ Per i plugin nello stesso repository:
   "source": "./plugins/my-plugin"
 }
 ```
+
+I percorsi si risolvono relativamente alla radice del marketplace, che è la directory contenente `.claude-plugin/`. Nell'esempio sopra, `./plugins/my-plugin` punta a `<repo>/plugins/my-plugin`, anche se `marketplace.json` si trova in `<repo>/.claude-plugin/marketplace.json`. Non usare `../` per uscire da `.claude-plugin/`.
 
 <Note>
   I percorsi relativi funzionano solo quando gli utenti aggiungono il tuo marketplace tramite Git (GitHub, GitLab o URL git). Se gli utenti aggiungono il tuo marketplace tramite un URL diretto al file `marketplace.json`, i percorsi relativi non si risolveranno correttamente. Per la distribuzione basata su URL, usa invece GitHub, npm o fonti URL git. Vedi [Troubleshooting](#plugins-with-relative-paths-fail-in-url-based-marketplaces) per i dettagli.
@@ -310,11 +312,11 @@ Puoi fissare a un branch, tag o commit specifico:
 }
 ```
 
-| Campo | Tipo   | Descrizione                                                                             |
-| :---- | :----- | :-------------------------------------------------------------------------------------- |
-| `url` | string | Obbligatorio. URL completo del repository git (deve terminare con `.git`)               |
-| `ref` | string | Opzionale. Branch o tag Git (predefinito al branch predefinito del repository)          |
-| `sha` | string | Opzionale. SHA del commit git completo a 40 caratteri per fissare a una versione esatta |
+| Campo | Tipo   | Descrizione                                                                                                                                                                       |
+| :---- | :----- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `url` | string | Obbligatorio. URL completo del repository git (`https://` o `git@`). Il suffisso `.git` è opzionale, quindi gli URL di Azure DevOps e AWS CodeCommit senza il suffisso funzionano |
+| `ref` | string | Opzionale. Branch o tag Git (predefinito al branch predefinito del repository)                                                                                                    |
+| `sha` | string | Opzionale. SHA del commit git completo a 40 caratteri per fissare a una versione esatta                                                                                           |
 
 ### Sottodirectory Git
 
@@ -628,6 +630,10 @@ Consenti marketplace basati su filesystem da una directory specifica utilizzando
 
 Usa `".*"` come `pathPattern` per consentire qualsiasi percorso del filesystem controllando comunque le fonti di rete con `hostPattern`.
 
+<Note>
+  `strictKnownMarketplaces` limita ciò che gli utenti possono aggiungere, ma non registra i marketplace di per sé. Per rendere i marketplace consentiti disponibili automaticamente senza che gli utenti eseguano `/plugin marketplace add`, abbinalo a [`extraKnownMarketplaces`](/it/settings#extraknownmarketplaces) nello stesso `managed-settings.json`. Vedi [Usare entrambi insieme](/it/settings#strictknownmarketplaces).
+</Note>
+
 #### Come funzionano le restrizioni
 
 Le restrizioni vengono convalidate all'inizio del processo di installazione del plugin, prima di qualsiasi richiesta di rete o operazione del filesystem. Ciò impedisce i tentativi di accesso non autorizzato al marketplace.
@@ -772,12 +778,12 @@ Per i flussi di lavoro di test completi dei plugin, vedi [Testa i tuoi plugin lo
 
 Esegui `claude plugin validate .` o `/plugin validate .` dalla directory del tuo marketplace per verificare i problemi. Errori comuni:
 
-| Errore                                            | Causa                                 | Soluzione                                                                 |
-| :------------------------------------------------ | :------------------------------------ | :------------------------------------------------------------------------ |
-| `File not found: .claude-plugin/marketplace.json` | Manifest mancante                     | Crea `.claude-plugin/marketplace.json` con i campi obbligatori            |
-| `Invalid JSON syntax: Unexpected token...`        | Errore di sintassi JSON               | Controlla le virgole mancanti, le virgole extra o le stringhe non quotate |
-| `Duplicate plugin name "x" found in marketplace`  | Due plugin condividono lo stesso nome | Dai a ogni plugin un valore `name` univoco                                |
-| `plugins[0].source: Path traversal not allowed`   | Il percorso di fonte contiene `..`    | Usa percorsi relativi alla radice del marketplace senza `..`              |
+| Errore                                            | Causa                                 | Soluzione                                                                                               |
+| :------------------------------------------------ | :------------------------------------ | :------------------------------------------------------------------------------------------------------ |
+| `File not found: .claude-plugin/marketplace.json` | Manifest mancante                     | Crea `.claude-plugin/marketplace.json` con i campi obbligatori                                          |
+| `Invalid JSON syntax: Unexpected token...`        | Errore di sintassi JSON               | Controlla le virgole mancanti, le virgole extra o le stringhe non quotate                               |
+| `Duplicate plugin name "x" found in marketplace`  | Due plugin condividono lo stesso nome | Dai a ogni plugin un valore `name` univoco                                                              |
+| `plugins[0].source: Path contains ".."`           | Il percorso di fonte contiene `..`    | Usa percorsi relativi alla radice del marketplace senza `..`. Vedi [Percorsi relativi](#relative-paths) |
 
 **Avvisi** (non bloccanti):
 

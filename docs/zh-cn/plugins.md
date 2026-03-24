@@ -281,7 +281,9 @@ LSP（Language Server Protocol）插件为 Claude 提供实时代码智能。如
 claude --plugin-dir ./my-plugin
 ```
 
-当你对插件进行更改时，运行 `/reload-plugins` 以获取更新，无需重新启动。对 LSP server 配置的更改仍需要完全重新启动。测试你的插件组件：
+当 `--plugin-dir` 插件与已安装的市场插件同名时，本地副本在该会话中优先。这让你可以测试已安装的插件的更改，而无需先卸载它。由托管设置强制启用的市场插件是唯一的例外，无法被覆盖。
+
+当你对插件进行更改时，运行 `/reload-plugins` 以获取更新，无需重新启动。这会重新加载命令、skills、agents、hooks、插件 MCP servers 和插件 LSP servers。测试你的插件组件：
 
 * 使用 `/plugin-name:skill-name` 尝试你的 skills
 * 检查 agents 是否出现在 `/agents` 中

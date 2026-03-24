@@ -9,7 +9,7 @@
 Skills estendem o que Claude pode fazer. Crie um arquivo `SKILL.md` com instruções, e Claude o adiciona ao seu kit de ferramentas. Claude usa skills quando relevante, ou você pode invocar uma diretamente com `/skill-name`.
 
 <Note>
-  Para comandos integrados como `/help` e `/compact`, consulte [modo interativo](/pt/interactive-mode#built-in-commands).
+  Para comandos integrados como `/help` e `/compact`, consulte a [referência de comandos integrados](/pt/commands).
 
   **Comandos personalizados foram mesclados em skills.** Um arquivo em `.claude/commands/deploy.md` e uma skill em `.claude/skills/deploy/SKILL.md` ambos criam `/deploy` e funcionam da mesma forma. Seus arquivos `.claude/commands/` existentes continuam funcionando. Skills adicionam recursos opcionais: um diretório para arquivos de suporte, frontmatter para [controlar se você ou Claude invoca eles](#control-who-invokes-a-skill), e a capacidade de Claude carregá-los automaticamente quando relevante.
 </Note>
@@ -18,19 +18,17 @@ Skills do Claude Code seguem o padrão aberto [Agent Skills](https://agentskills
 
 ## Skills agrupadas
 
-Skills agrupadas são fornecidas com Claude Code e estão disponíveis em cada sessão. Diferentemente de [comandos integrados](/pt/interactive-mode#built-in-commands), que executam lógica fixa diretamente, skills agrupadas são baseadas em prompt: elas dão ao Claude um manual detalhado e deixam que ele orquestre o trabalho usando suas ferramentas. Isso significa que skills agrupadas podem gerar agentes paralelos, ler arquivos e se adaptar ao seu codebase.
+Skills agrupadas são fornecidas com Claude Code e estão disponíveis em cada sessão. Diferentemente dos [comandos integrados](/pt/commands), que executam lógica fixa diretamente, skills agrupadas são baseadas em prompt: elas dão ao Claude um manual detalhado e deixam que ele orquestre o trabalho usando suas ferramentas. Isso significa que skills agrupadas podem gerar agentes paralelos, ler arquivos e se adaptar ao seu codebase.
 
-Você invoca skills agrupadas da mesma forma que qualquer outra skill: digite `/` seguido do nome da skill.
+Você invoca skills agrupadas da mesma forma que qualquer outra skill: digite `/` seguido do nome da skill. Na tabela abaixo, `<arg>` indica um argumento obrigatório e `[arg]` indica um opcional.
 
-* **`/simplify`**: revisa seus arquivos recentemente alterados para problemas de reutilização de código, qualidade e eficiência, depois os corrige. Execute após implementar um recurso ou correção de bug para limpar seu trabalho. Ele gera três agentes de revisão em paralelo (reutilização de código, qualidade de código, eficiência), agrega suas descobertas e aplica correções. Passe texto opcional para focar em preocupações específicas: `/simplify focus on memory efficiency`.
-
-* **`/batch <instruction>`**: orquestra mudanças em larga escala em um codebase em paralelo. Forneça uma descrição da mudança e `/batch` pesquisa o codebase, decompõe o trabalho em 5 a 30 unidades independentes e apresenta um plano para sua aprovação. Uma vez aprovado, ele gera um agente de fundo por unidade, cada um em um [git worktree](/pt/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) isolado. Cada agente implementa sua unidade, executa testes e abre um pull request. Requer um repositório git. Exemplo: `/batch migrate src/ from Solid to React`.
-
-* **`/debug [description]`**: soluciona problemas de sua sessão atual do Claude Code lendo o log de debug da sessão. Opcionalmente descreva o problema para focar a análise.
-
-* **`/loop [interval] <prompt>`**: executa um prompt repetidamente em um intervalo enquanto a sessão permanece aberta. Claude analisa o intervalo, agenda uma tarefa cron recorrente e confirma a cadência. Útil para pesquisar uma implantação, cuidar de um PR ou executar periodicamente outra skill. Exemplo: `/loop 5m check if the deploy finished`. Consulte [Executar prompts em um cronograma](/pt/scheduled-tasks).
-
-* **`/claude-api`**: carrega material de referência da API Claude para a linguagem do seu projeto (Python, TypeScript, Java, Go, Ruby, C#, PHP ou cURL) e referência do Agent SDK para Python e TypeScript. Cobre uso de ferramentas, streaming, lotes, saídas estruturadas e armadilhas comuns. Também ativa automaticamente quando seu código importa `anthropic`, `@anthropic-ai/sdk` ou `claude_agent_sdk`.
+| Skill                       | Propósito                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| :-------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/batch <instruction>`      | Orquestre mudanças em larga escala em um codebase em paralelo. Pesquisa o codebase, decompõe o trabalho em 5 a 30 unidades independentes e apresenta um plano. Uma vez aprovado, gera um agente de fundo por unidade em um [git worktree](/pt/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) isolado. Cada agente implementa sua unidade, executa testes e abre um pull request. Requer um repositório git. Exemplo: `/batch migrate src/ from Solid to React` |
+| `/claude-api`               | Carregue material de referência da API Claude para a linguagem do seu projeto (Python, TypeScript, Java, Go, Ruby, C#, PHP, ou cURL) e referência do Agent SDK para Python e TypeScript. Cobre uso de ferramentas, streaming, batches, saídas estruturadas e armadilhas comuns. Também ativa automaticamente quando seu código importa `anthropic`, `@anthropic-ai/sdk`, ou `claude_agent_sdk`                                                                                         |
+| `/debug [description]`      | Solucione problemas de sua sessão atual do Claude Code lendo o log de debug da sessão. Opcionalmente descreva o problema para focar a análise                                                                                                                                                                                                                                                                                                                                          |
+| `/loop [interval] <prompt>` | Execute um prompt repetidamente em um intervalo enquanto a sessão permanece aberta. Útil para pesquisar uma implantação, cuidar de um PR, ou executar periodicamente outra skill. Exemplo: `/loop 5m check if the deploy finished`. Consulte [Executar prompts em um cronograma](/pt/scheduled-tasks)                                                                                                                                                                                  |
+| `/simplify [focus]`         | Revise seus arquivos recentemente alterados para reutilização de código, qualidade e problemas de eficiência, depois corrija-os. Gera três agentes de revisão em paralelo, agrega suas descobertas e aplica correções. Passe texto para focar em preocupações específicas: `/simplify focus on memory efficiency`                                                                                                                                                                      |
 
 ## Começando
 
@@ -99,7 +97,7 @@ Onde você armazena uma skill determina quem pode usá-la:
 | Projeto     | `.claude/skills/<skill-name>/SKILL.md`                            | Apenas este projeto                  |
 | Plugin      | `<plugin>/skills/<skill-name>/SKILL.md`                           | Onde o plugin está habilitado        |
 
-Quando skills compartilham o mesmo nome em diferentes níveis, localizações de prioridade mais alta vencem: enterprise > pessoal > projeto. Skills de plugin usam um namespace `plugin-name:skill-name`, então não podem conflitar com outros níveis. Se você tiver arquivos em `.claude/commands/`, eles funcionam da mesma forma, mas se uma skill e um comando compartilham o mesmo nome, a skill tem precedência.
+Quando skills compartilham o mesmo nome em diferentes níveis, localizações de maior prioridade vencem: enterprise > pessoal > projeto. Skills de plugin usam um namespace `plugin-name:skill-name`, então não podem conflitar com outros níveis. Se você tem arquivos em `.claude/commands/`, eles funcionam da mesma forma, mas se uma skill e um comando compartilham o mesmo nome, a skill tem precedência.
 
 #### Descoberta automática de diretórios aninhados
 
@@ -109,15 +107,15 @@ Cada skill é um diretório com `SKILL.md` como ponto de entrada:
 
 ```text  theme={null}
 my-skill/
-├── SKILL.md           # Main instructions (required)
-├── template.md        # Template for Claude to fill in
+├── SKILL.md           # Instruções principais (obrigatório)
+├── template.md        # Template para Claude preencher
 ├── examples/
-│   └── sample.md      # Example output showing expected format
+│   └── sample.md      # Exemplo de saída mostrando formato esperado
 └── scripts/
-    └── validate.sh    # Script Claude can execute
+    └── validate.sh    # Script que Claude pode executar
 ```
 
-O `SKILL.md` contém as instruções principais e é obrigatório. Outros arquivos são opcionais e permitem que você construa skills mais poderosas: templates para Claude preencher, saídas de exemplo mostrando o formato esperado, scripts que Claude pode executar ou documentação de referência detalhada. Referencie esses arquivos de seu `SKILL.md` para que Claude saiba o que cada arquivo contém e quando carregá-lo. Consulte [Adicionar arquivos de suporte](#add-supporting-files) para mais detalhes.
+O `SKILL.md` contém as instruções principais e é obrigatório. Outros arquivos são opcionais e permitem que você construa skills mais poderosas: templates para Claude preencher, exemplos de saída mostrando o formato esperado, scripts que Claude pode executar, ou documentação de referência detalhada. Referencie esses arquivos de seu `SKILL.md` para que Claude saiba o que cada arquivo contém e quando carregá-lo. Consulte [Adicione arquivos de suporte](#add-supporting-files) para mais detalhes.
 
 <Note>
   Arquivos em `.claude/commands/` ainda funcionam e suportam o mesmo [frontmatter](#frontmatter-reference). Skills são recomendadas já que suportam recursos adicionais como arquivos de suporte.
@@ -125,7 +123,7 @@ O `SKILL.md` contém as instruções principais e é obrigatório. Outros arquiv
 
 #### Skills de diretórios adicionais
 
-Skills definidas em `.claude/skills/` dentro de diretórios adicionados via `--add-dir` são carregadas automaticamente e detectadas por mudança ao vivo, então você pode editá-las durante uma sessão sem reiniciar.
+Skills definidas em `.claude/skills/` dentro de diretórios adicionados via `--add-dir` são carregadas automaticamente e detectadas por detecção de mudança ao vivo, então você pode editá-las durante uma sessão sem reiniciar.
 
 <Note>
   Arquivos CLAUDE.md de diretórios `--add-dir` não são carregados por padrão. Para carregá-los, defina `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1`. Consulte [Carregar de diretórios adicionais](/pt/memory#load-from-additional-directories).
@@ -169,7 +167,7 @@ Deploy the application:
 3. Push to the deployment target
 ```
 
-Seu `SKILL.md` pode conter qualquer coisa, mas pensar em como você quer que a skill seja invocada (por você, por Claude ou ambos) e onde você quer que seja executada (inline ou em um subagent) ajuda a guiar o que incluir. Para skills complexas, você também pode [adicionar arquivos de suporte](#add-supporting-files) para manter a skill principal focada.
+Seu `SKILL.md` pode conter qualquer coisa, mas pensar em como você quer que a skill seja invocada (por você, por Claude, ou ambos) e onde você quer que seja executada (inline ou em um subagent) ajuda a guiar o que incluir. Para skills complexas, você também pode [adicionar arquivos de suporte](#add-supporting-files) para manter a skill principal focada.
 
 ### Referência de frontmatter
 
@@ -192,7 +190,7 @@ Todos os campos são opcionais. Apenas `description` é recomendado para que Cla
 | :------------------------- | :---------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `name`                     | Não         | Nome de exibição para a skill. Se omitido, usa o nome do diretório. Apenas letras minúsculas, números e hífens (máximo 64 caracteres).                                      |
 | `description`              | Recomendado | O que a skill faz e quando usá-la. Claude usa isso para decidir quando aplicar a skill. Se omitido, usa o primeiro parágrafo do conteúdo markdown.                          |
-| `argument-hint`            | Não         | Dica mostrada durante autocompletar para indicar argumentos esperados. Exemplo: `[issue-number]` ou `[filename] [format]`.                                                  |
+| `argument-hint`            | Não         | Dica mostrada durante autocomplete para indicar argumentos esperados. Exemplo: `[issue-number]` ou `[filename] [format]`.                                                   |
 | `disable-model-invocation` | Não         | Defina como `true` para evitar que Claude carregue automaticamente esta skill. Use para fluxos de trabalho que você quer disparar manualmente com `/name`. Padrão: `false`. |
 | `user-invocable`           | Não         | Defina como `false` para ocultar do menu `/`. Use para conhecimento de fundo que usuários não devem invocar diretamente. Padrão: `true`.                                    |
 | `allowed-tools`            | Não         | Ferramentas que Claude pode usar sem pedir permissão quando esta skill está ativa.                                                                                          |
@@ -210,7 +208,7 @@ Skills suportam substituição de string para valores dinâmicos no conteúdo da
 | `$ARGUMENTS`           | Todos os argumentos passados ao invocar a skill. Se `$ARGUMENTS` não estiver presente no conteúdo, argumentos são anexados como `ARGUMENTS: <value>`.                                                                                                                                                |
 | `$ARGUMENTS[N]`        | Acesse um argumento específico por índice baseado em 0, como `$ARGUMENTS[0]` para o primeiro argumento.                                                                                                                                                                                              |
 | `$N`                   | Abreviação para `$ARGUMENTS[N]`, como `$0` para o primeiro argumento ou `$1` para o segundo.                                                                                                                                                                                                         |
-| `${CLAUDE_SESSION_ID}` | O ID da sessão atual. Útil para logging, criação de arquivos específicos da sessão ou correlação de saída de skill com sessões.                                                                                                                                                                      |
+| `${CLAUDE_SESSION_ID}` | O ID da sessão atual. Útil para logging, criação de arquivos específicos da sessão, ou correlação de saída de skill com sessões.                                                                                                                                                                     |
 | `${CLAUDE_SKILL_DIR}`  | O diretório contendo o arquivo `SKILL.md` da skill. Para skills de plugin, este é o subdiretório da skill dentro do plugin, não a raiz do plugin. Use isso em comandos de injeção bash para referenciar scripts ou arquivos agrupados com a skill, independentemente do diretório de trabalho atual. |
 
 **Exemplo usando substituições:**
@@ -226,17 +224,17 @@ Log the following to logs/${CLAUDE_SESSION_ID}.log:
 $ARGUMENTS
 ```
 
-### Adicionar arquivos de suporte
+### Adicione arquivos de suporte
 
-Skills podem incluir múltiplos arquivos em seu diretório. Isso mantém `SKILL.md` focado no essencial enquanto deixa Claude acessar material de referência detalhado apenas quando necessário. Documentos de referência grandes, especificações de API ou coleções de exemplos não precisam carregar em contexto toda vez que a skill é executada.
+Skills podem incluir múltiplos arquivos em seu diretório. Isso mantém `SKILL.md` focado no essencial enquanto deixa Claude acessar material de referência detalhado apenas quando necessário. Documentos de referência grandes, especificações de API, ou coleções de exemplos não precisam carregar em contexto toda vez que a skill é executada.
 
 ```text  theme={null}
 my-skill/
-├── SKILL.md (required - overview and navigation)
-├── reference.md (detailed API docs - loaded when needed)
-├── examples.md (usage examples - loaded when needed)
+├── SKILL.md (obrigatório - visão geral e navegação)
+├── reference.md (documentação de API detalhada - carregada quando necessário)
+├── examples.md (exemplos de uso - carregados quando necessário)
 └── scripts/
-    └── helper.py (utility script - executed, not loaded)
+    └── helper.py (script utilitário - executado, não carregado)
 ```
 
 Referencie arquivos de suporte de `SKILL.md` para que Claude saiba o que cada arquivo contém e quando carregá-lo:
@@ -252,9 +250,9 @@ Referencie arquivos de suporte de `SKILL.md` para que Claude saiba o que cada ar
 
 ### Controle quem invoca uma skill
 
-Por padrão, você e Claude podem invocar qualquer skill. Você pode digitar `/skill-name` para invocá-la diretamente, e Claude pode carregá-la automaticamente quando relevante para sua conversa. Dois campos de frontmatter permitem que você restrinja isso:
+Por padrão, tanto você quanto Claude podem invocar qualquer skill. Você pode digitar `/skill-name` para invocá-la diretamente, e Claude pode carregá-la automaticamente quando relevante para sua conversa. Dois campos de frontmatter permitem que você restrinja isso:
 
-* **`disable-model-invocation: true`**: Apenas você pode invocar a skill. Use isso para fluxos de trabalho com efeitos colaterais ou que você quer controlar o tempo, como `/commit`, `/deploy` ou `/send-slack-message`. Você não quer que Claude decida fazer deploy porque seu código parece pronto.
+* **`disable-model-invocation: true`**: Apenas você pode invocar a skill. Use isso para fluxos de trabalho com efeitos colaterais ou que você quer controlar o tempo, como `/commit`, `/deploy`, ou `/send-slack-message`. Você não quer que Claude decida fazer deploy porque seu código parece pronto.
 
 * **`user-invocable: false`**: Apenas Claude pode invocar a skill. Use isso para conhecimento de fundo que não é acionável como um comando. Uma skill `legacy-system-context` explica como um sistema antigo funciona. Claude deve saber disso quando relevante, mas `/legacy-system-context` não é uma ação significativa para usuários tomarem.
 
@@ -284,7 +282,7 @@ Aqui está como os dois campos afetam invocação e carregamento de contexto:
 | `user-invocable: false`          | Não               | Sim                 | Descrição sempre em contexto, skill completa carrega quando invocada |
 
 <Note>
-  Em uma sessão regular, descrições de skill são carregadas em contexto para que Claude saiba o que está disponível, mas conteúdo de skill completo apenas carrega quando invocado. [Subagents com skills pré-carregadas](/pt/sub-agents#preload-skills-into-subagents) funcionam diferentemente: o conteúdo de skill completo é injetado na inicialização.
+  Em uma sessão regular, descrições de skills são carregadas em contexto para que Claude saiba o que está disponível, mas conteúdo completo de skill apenas carrega quando invocado. [Subagents com skills pré-carregadas](/pt/sub-agents#preload-skills-into-subagents) funcionam diferentemente: o conteúdo completo da skill é injetado na inicialização.
 </Note>
 
 ### Restrinja acesso a ferramentas
@@ -301,7 +299,7 @@ allowed-tools: Read, Grep, Glob
 
 ### Passe argumentos para skills
 
-Você e Claude podem passar argumentos ao invocar uma skill. Argumentos estão disponíveis via placeholder `$ARGUMENTS`.
+Tanto você quanto Claude podem passar argumentos ao invocar uma skill. Argumentos estão disponíveis via placeholder `$ARGUMENTS`.
 
 Esta skill corrige um problema do GitHub por número. O placeholder `$ARGUMENTS` é substituído por qualquer coisa que siga o nome da skill:
 
@@ -337,7 +335,7 @@ Migrate the $ARGUMENTS[0] component from $ARGUMENTS[1] to $ARGUMENTS[2].
 Preserve all existing behavior and tests.
 ```
 
-Executar `/migrate-component SearchBar React Vue` substitui `$ARGUMENTS[0]` com `SearchBar`, `$ARGUMENTS[1]` com `React` e `$ARGUMENTS[2]` com `Vue`. A mesma skill usando a abreviação `$N`:
+Executar `/migrate-component SearchBar React Vue` substitui `$ARGUMENTS[0]` com `SearchBar`, `$ARGUMENTS[1]` com `React`, e `$ARGUMENTS[2]` com `Vue`. A mesma skill usando a abreviação `$N`:
 
 ```yaml  theme={null}
 ---
@@ -353,7 +351,7 @@ Preserve all existing behavior and tests.
 
 ### Injete contexto dinâmico
 
-A sintaxe `!`command\`\` executa comandos shell antes do conteúdo da skill ser enviado ao Claude. A saída do comando substitui o placeholder, para que Claude receba dados reais, não o comando em si.
+A sintaxe `!`command\`\` executa comandos shell antes do conteúdo da skill ser enviado para Claude. A saída do comando substitui o placeholder, para que Claude receba dados reais, não o comando em si.
 
 Esta skill resume um pull request buscando dados de PR ao vivo com o GitHub CLI. Os comandos `!`gh pr diff\`\` e outros são executados primeiro, e sua saída é inserida no prompt:
 
@@ -379,12 +377,12 @@ Quando esta skill é executada:
 
 1. Cada `!`command\`\` é executado imediatamente (antes de Claude ver qualquer coisa)
 2. A saída substitui o placeholder no conteúdo da skill
-3. Claude recebe o prompt totalmente renderizado com dados de PR reais
+3. Claude recebe o prompt totalmente renderizado com dados reais de PR
 
 Isto é pré-processamento, não algo que Claude executa. Claude apenas vê o resultado final.
 
 <Tip>
-  Para habilitar [pensamento estendido](/pt/common-workflows#use-extended-thinking-thinking-mode) em uma skill, inclua a palavra "ultrathink" em qualquer lugar no conteúdo da sua skill.
+  Para habilitar [pensamento estendido](/pt/common-workflows#use-extended-thinking-thinking-mode) em uma skill, inclua a palavra "ultrathink" em qualquer lugar no conteúdo de sua skill.
 </Tip>
 
 ### Execute skills em um subagent
@@ -392,14 +390,14 @@ Isto é pré-processamento, não algo que Claude executa. Claude apenas vê o re
 Adicione `context: fork` ao seu frontmatter quando você quer que uma skill seja executada em isolamento. O conteúdo da skill se torna o prompt que dirige o subagent. Ele não terá acesso ao seu histórico de conversa.
 
 <Warning>
-  `context: fork` apenas faz sentido para skills com instruções explícitas. Se sua skill contém diretrizes como "use estas convenções de API" sem uma tarefa, o subagent recebe as diretrizes mas nenhum prompt acionável e retorna sem saída significativa.
+  `context: fork` apenas faz sentido para skills com instruções explícitas. Se sua skill contém diretrizes como "use estas convenções de API" sem uma tarefa, o subagent recebe as diretrizes mas nenhum prompt acionável, e retorna sem saída significativa.
 </Warning>
 
 Skills e [subagents](/pt/sub-agents) trabalham juntos em duas direções:
 
 | Abordagem                   | Prompt do sistema                          | Tarefa                          | Também carrega                    |
 | :-------------------------- | :----------------------------------------- | :------------------------------ | :-------------------------------- |
-| Skill com `context: fork`   | Do tipo de agent (`Explore`, `Plan`, etc.) | Conteúdo SKILL.md               | CLAUDE.md                         |
+| Skill com `context: fork`   | Do tipo de agent (`Explore`, `Plan`, etc.) | Conteúdo de SKILL.md            | CLAUDE.md                         |
 | Subagent com campo `skills` | Corpo markdown do subagent                 | Mensagem de delegação do Claude | Skills pré-carregadas + CLAUDE.md |
 
 Com `context: fork`, você escreve a tarefa em sua skill e escolhe um tipo de agent para executá-la. Para o inverso (definir um subagent personalizado que usa skills como material de referência), consulte [Subagents](/pt/sub-agents#preload-skills-into-subagents).
@@ -476,9 +474,9 @@ Skills podem ser distribuídas em diferentes escopos dependendo do seu público:
 
 Skills podem agrupar e executar scripts em qualquer linguagem, dando ao Claude capacidades além do que é possível em um único prompt. Um padrão poderoso é gerar saída visual: arquivos HTML interativos que abrem em seu navegador para explorar dados, depurar ou criar relatórios.
 
-Este exemplo cria um explorador de codebase: uma visualização de árvore interativa onde você pode expandir e recolher diretórios, ver tamanhos de arquivo em um relance e identificar tipos de arquivo por cor.
+Este exemplo cria um explorador de codebase: uma visualização de árvore interativa onde você pode expandir e recolher diretórios, ver tamanhos de arquivo em um relance, e identificar tipos de arquivo por cor.
 
-Crie o diretório Skill:
+Crie o diretório da Skill:
 
 ```bash  theme={null}
 mkdir -p ~/.claude/skills/codebase-visualizer/scripts
@@ -503,7 +501,7 @@ Run the visualization script from your project root:
 
 ```bash
 python ~/.claude/skills/codebase-visualizer/scripts/visualize.py .
-```text
+```
 
 This creates `codebase-map.html` in the current directory and opens it in your default browser.
 
@@ -515,7 +513,7 @@ This creates `codebase-map.html` in the current directory and opens it in your d
 - **Directory totals**: Shows aggregate size of each folder
 ````
 
-Crie `~/.claude/skills/codebase-visualizer/scripts/visualize.py`. Este script varre uma árvore de diretório e gera um arquivo HTML autossuficiente com:
+Crie `~/.claude/skills/codebase-visualizer/scripts/visualize.py`. Este script varre uma árvore de diretório e gera um arquivo HTML auto-contido com:
 
 * Uma **barra lateral de resumo** mostrando contagem de arquivos, contagem de diretórios, tamanho total e número de tipos de arquivo
 * Um **gráfico de barras** dividindo o codebase por tipo de arquivo (top 8 por tamanho)
@@ -657,9 +655,9 @@ if __name__ == '__main__':
     webbrowser.open(f'file://{out.absolute()}')
 ```
 
-Para testar, abra Claude Code em qualquer projeto e peça "Visualize this codebase." Claude executa o script, gera `codebase-map.html` e abre em seu navegador.
+Para testar, abra Claude Code em qualquer projeto e peça "Visualize this codebase." Claude executa o script, gera `codebase-map.html`, e abre em seu navegador.
 
-Este padrão funciona para qualquer saída visual: gráficos de dependência, relatórios de cobertura de testes, documentação de API ou visualizações de esquema de banco de dados. O script agrupado faz o trabalho pesado enquanto Claude lida com orquestração.
+Este padrão funciona para qualquer saída visual: gráficos de dependência, relatórios de cobertura de testes, documentação de API, ou visualizações de esquema de banco de dados. O script agrupado faz o trabalho pesado enquanto Claude lida com orquestração.
 
 ## Solução de problemas
 
@@ -670,26 +668,26 @@ Se Claude não usa sua skill quando esperado:
 1. Verifique se a descrição inclui palavras-chave que usuários naturalmente diriam
 2. Verifique se a skill aparece em `What skills are available?`
 3. Tente reformular sua solicitação para corresponder mais de perto à descrição
-4. Invoque-a diretamente com `/skill-name` se a skill for invocável pelo usuário
+4. Invoque-a diretamente com `/skill-name` se a skill é invocável pelo usuário
 
 ### Skill dispara muito frequentemente
 
 Se Claude usa sua skill quando você não quer:
 
 1. Torne a descrição mais específica
-2. Adicione `disable-model-invocation: true` se você apenas quer invocação manual
+2. Adicione `disable-model-invocation: true` se você quer apenas invocação manual
 
 ### Claude não vê todas as minhas skills
 
-Descrições de skill são carregadas em contexto para que Claude saiba o que está disponível. Se você tiver muitas skills, elas podem exceder o orçamento de caracteres. O orçamento escala dinamicamente em 2% da janela de contexto, com fallback de 16.000 caracteres. Execute `/context` para verificar um aviso sobre skills excluídas.
+Descrições de skills são carregadas em contexto para que Claude saiba o que está disponível. Se você tem muitas skills, elas podem exceder o orçamento de caracteres. O orçamento escala dinamicamente em 2% da janela de contexto, com fallback de 16.000 caracteres. Execute `/context` para verificar um aviso sobre skills excluídas.
 
-Para substituir o limite, defina a variável de ambiente `SLASH_COMMAND_TOOL_CHAR_BUDGET`.
+Para sobrescrever o limite, defina a variável de ambiente `SLASH_COMMAND_TOOL_CHAR_BUDGET`.
 
 ## Recursos relacionados
 
-* **[Subagents](/pt/sub-agents)**: delegue tarefas a agents especializados
+* **[Subagents](/pt/sub-agents)**: delegue tarefas para agents especializados
 * **[Plugins](/pt/plugins)**: empacote e distribua skills com outras extensões
 * **[Hooks](/pt/hooks)**: automatize fluxos de trabalho em torno de eventos de ferramentas
 * **[Memory](/pt/memory)**: gerencie arquivos CLAUDE.md para contexto persistente
-* **[Modo interativo](/pt/interactive-mode#built-in-commands)**: comandos integrados e atalhos
+* **[Comandos integrados](/pt/commands)**: referência para comandos `/` integrados
 * **[Permissões](/pt/permissions)**: controle acesso a ferramentas e skills

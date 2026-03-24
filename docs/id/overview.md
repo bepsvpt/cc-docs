@@ -10,7 +10,7 @@ Claude Code adalah asisten pengkodean bertenaga AI yang membantu Anda membangun 
 
 ## Memulai
 
-Pilih lingkungan Anda untuk memulai. Sebagian besar permukaan memerlukan [langganan Claude](https://claude.com/pricing) atau akun [Konsol Anthropic](https://console.anthropic.com/). Terminal CLI dan VS Code juga mendukung [penyedia pihak ketiga](/id/third-party-integrations).
+Pilih lingkungan Anda untuk memulai. Sebagian besar permukaan memerlukan akun [langganan Claude](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=overview_pricing) atau [Konsol Anthropic](https://console.anthropic.com/). CLI Terminal dan VS Code juga mendukung [penyedia pihak ketiga](/id/third-party-integrations).
 
 <Tabs>
   <Tab title="Terminal">
@@ -91,7 +91,7 @@ Pilih lingkungan Anda untuk memulai. Sebagian besar permukaan memerlukan [langga
     [Mulai dengan VS Code →](/id/vs-code#get-started)
   </Tab>
 
-  <Tab title="Aplikasi desktop">
+  <Tab title="Desktop app">
     Aplikasi mandiri untuk menjalankan Claude Code di luar IDE atau terminal Anda. Tinjau diff secara visual, jalankan beberapa sesi berdampingan, jadwalkan tugas berulang, dan mulai sesi cloud.
 
     Unduh dan instal:
@@ -100,7 +100,7 @@ Pilih lingkungan Anda untuk memulai. Sebagian besar permukaan memerlukan [langga
     * [Windows](https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs) (x64)
     * [Windows ARM64](https://claude.ai/api/desktop/win32/arm64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs) (hanya sesi jarak jauh)
 
-    Setelah menginstal, luncurkan Claude, masuk, dan klik tab **Code** untuk mulai pengkodean. [Langganan berbayar](https://claude.com/pricing) diperlukan.
+    Setelah menginstal, luncurkan Claude, masuk, dan klik tab **Code** untuk mulai pengkodean. [Langganan berbayar](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=overview_desktop_pricing) diperlukan.
 
     [Pelajari lebih lanjut tentang aplikasi desktop →](/id/desktop-quickstart)
   </Tab>
@@ -116,7 +116,7 @@ Pilih lingkungan Anda untuk memulai. Sebagian besar permukaan memerlukan [langga
   <Tab title="JetBrains">
     Plugin untuk IntelliJ IDEA, PyCharm, WebStorm, dan IDE JetBrains lainnya dengan tampilan diff interaktif dan berbagi konteks seleksi.
 
-    Instal [plugin Claude Code](https://plugins.jetbrains.com/plugin/27310-claude-code-beta-) dari Marketplace JetBrains dan mulai ulang IDE Anda.
+    Instal [plugin Claude Code](https://plugins.jetbrains.com/plugin/27310-claude-code-beta-) dari JetBrains Marketplace dan mulai ulang IDE Anda.
 
     [Mulai dengan JetBrains →](/id/jetbrains)
   </Tab>
@@ -152,21 +152,21 @@ Berikut adalah beberapa cara Anda dapat menggunakan Claude Code:
   </Accordion>
 
   <Accordion title="Hubungkan alat Anda dengan MCP" icon="plug">
-    [Model Context Protocol (MCP)](/id/mcp) adalah standar terbuka untuk menghubungkan alat AI ke sumber data eksternal. Dengan MCP, Claude Code dapat membaca dokumen desain Anda di Google Drive, memperbarui tiket di Jira, menarik data dari Slack, atau menggunakan alat kustom Anda sendiri.
+    [Model Context Protocol (MCP)](/id/mcp) adalah standar terbuka untuk menghubungkan alat AI ke sumber data eksternal. Dengan MCP, Claude Code dapat membaca dokumen desain Anda di Google Drive, memperbarui tiket di Jira, menarik data dari Slack, atau menggunakan alat khusus Anda sendiri.
   </Accordion>
 
   <Accordion title="Sesuaikan dengan instruksi, skills, dan hooks" icon="sliders">
     [`CLAUDE.md`](/id/memory) adalah file markdown yang Anda tambahkan ke root proyek Anda yang dibaca Claude Code di awal setiap sesi. Gunakan untuk menetapkan standar pengkodean, keputusan arsitektur, perpustakaan pilihan, dan daftar periksa tinjauan. Claude juga membangun [memori otomatis](/id/memory#auto-memory) saat bekerja, menyimpan pembelajaran seperti perintah build dan wawasan debugging di seluruh sesi tanpa Anda menulis apa pun.
 
-    Buat [perintah kustom](/id/skills) untuk mengemas alur kerja yang dapat diulang yang dapat dibagikan tim Anda, seperti `/review-pr` atau `/deploy-staging`.
+    Buat [perintah khusus](/id/skills) untuk mengemas alur kerja yang dapat diulang yang dapat dibagikan tim Anda, seperti `/review-pr` atau `/deploy-staging`.
 
     [Hooks](/id/hooks) memungkinkan Anda menjalankan perintah shell sebelum atau sesudah tindakan Claude Code, seperti pemformatan otomatis setelah setiap pengeditan file atau menjalankan lint sebelum commit.
   </Accordion>
 
-  <Accordion title="Jalankan tim agen dan bangun agen kustom" icon="users">
+  <Accordion title="Jalankan tim agen dan bangun agen khusus" icon="users">
     Spawn [beberapa agen Claude Code](/id/sub-agents) yang bekerja pada bagian berbeda dari tugas secara bersamaan. Agen utama mengoordinasikan pekerjaan, menetapkan subtask, dan menggabungkan hasil.
 
-    Untuk alur kerja yang sepenuhnya kustom, [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview) memungkinkan Anda membangun agen Anda sendiri yang didukung oleh alat dan kemampuan Claude Code, dengan kontrol penuh atas orkestrasi, akses alat, dan izin.
+    Untuk alur kerja yang sepenuhnya khusus, [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview) memungkinkan Anda membangun agen Anda sendiri yang didukung oleh alat dan kemampuan Claude Code, dengan kontrol penuh atas orkestrasi, akses alat, dan izin.
   </Accordion>
 
   <Accordion title="Pipa, skrip, dan otomatisasi dengan CLI" icon="terminal">
@@ -189,7 +189,7 @@ Berikut adalah beberapa cara Anda dapat menggunakan Claude Code:
   <Accordion title="Bekerja dari mana saja" icon="globe">
     Sesi tidak terikat pada satu permukaan. Pindahkan pekerjaan antar lingkungan saat konteks Anda berubah:
 
-    * Tinggalkan meja Anda dan terus bekerja dari ponsel Anda atau browser apa pun dengan [Remote Control](/id/remote-control)
+    * Tinggalkan meja Anda dan terus bekerja dari ponsel atau browser apa pun dengan [Remote Control](/id/remote-control)
     * Mulai tugas yang berjalan lama di [web](/id/claude-code-on-the-web) atau [aplikasi iOS](https://apps.apple.com/app/claude-by-anthropic/id6473753684), kemudian tariknya ke terminal Anda dengan `/teleport`
     * Serahkan sesi terminal ke [aplikasi Desktop](/id/desktop) dengan `/desktop` untuk tinjauan diff visual
     * Rute tugas dari obrolan tim: sebutkan `@Claude` di [Slack](/id/slack) dengan laporan bug dan dapatkan pull request kembali
@@ -202,15 +202,15 @@ Setiap permukaan terhubung ke mesin Claude Code yang mendasar yang sama, jadi fi
 
 Selain lingkungan [Terminal](/id/quickstart), [VS Code](/id/vs-code), [JetBrains](/id/jetbrains), [Desktop](/id/desktop), dan [Web](/id/claude-code-on-the-web) di atas, Claude Code terintegrasi dengan alur kerja CI/CD, obrolan, dan browser:
 
-| Saya ingin...                                             | Opsi terbaik                                                                                                              |
-| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Lanjutkan sesi lokal dari ponsel atau perangkat lain saya | [Remote Control](/id/remote-control)                                                                                      |
-| Mulai tugas secara lokal, lanjutkan di mobile             | [Web](/id/claude-code-on-the-web) atau [aplikasi Claude iOS](https://apps.apple.com/app/claude-by-anthropic/id6473753684) |
-| Otomatisasi tinjauan PR dan triase masalah                | [GitHub Actions](/id/github-actions) atau [GitLab CI/CD](/id/gitlab-ci-cd)                                                |
-| Dapatkan tinjauan kode otomatis di setiap PR              | [GitHub Code Review](/id/code-review)                                                                                     |
-| Rute laporan bug dari Slack ke pull request               | [Slack](/id/slack)                                                                                                        |
-| Debug aplikasi web langsung                               | [Chrome](/id/chrome)                                                                                                      |
-| Bangun agen kustom untuk alur kerja Anda sendiri          | [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview)                                                       |
+| Saya ingin...                                        | Opsi terbaik                                                                                                              |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Lanjutkan sesi lokal dari ponsel atau perangkat lain | [Remote Control](/id/remote-control)                                                                                      |
+| Mulai tugas secara lokal, lanjutkan di mobile        | [Web](/id/claude-code-on-the-web) atau [aplikasi Claude iOS](https://apps.apple.com/app/claude-by-anthropic/id6473753684) |
+| Otomatisasi tinjauan PR dan triase masalah           | [GitHub Actions](/id/github-actions) atau [GitLab CI/CD](/id/gitlab-ci-cd)                                                |
+| Dapatkan tinjauan kode otomatis di setiap PR         | [GitHub Code Review](/id/code-review)                                                                                     |
+| Rute laporan bug dari Slack ke pull request          | [Slack](/id/slack)                                                                                                        |
+| Debug aplikasi web langsung                          | [Chrome](/id/chrome)                                                                                                      |
+| Bangun agen khusus untuk alur kerja Anda sendiri     | [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview)                                                       |
 
 ## Langkah berikutnya
 

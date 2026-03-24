@@ -12,7 +12,7 @@
   Se preferisci evitare completamente il terminale, l'[app Claude Code Desktop](/it/desktop-quickstart) ti consente di installare e utilizzare Claude Code tramite un'interfaccia grafica. Scaricala per [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) o [Windows](https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs) e inizia a programmare senza alcuna configurazione da riga di comando.
 </Tip>
 
-Trova il messaggio di errore o il sintomo che stai riscontrando:
+Trova il messaggio di errore o il sintomo che stai vedendo:
 
 | Cosa vedi                                                                 | Soluzione                                                                                                            |
 | :------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------- |
@@ -392,7 +392,7 @@ Installing Claude Code native build latest...
 bash: line 142: 34803 Killed    "$binary_path" install ${TARGET:+"$TARGET"}
 ```
 
-Il killer OOM di Linux ha terminato il processo perché il sistema ha esaurito la memoria. Claude Code richiede almeno 4 GB di RAM disponibile.
+L'OOM killer di Linux ha terminato il processo perché il sistema ha esaurito la memoria. Claude Code richiede almeno 4 GB di RAM disponibile.
 
 **Soluzioni:**
 
@@ -561,7 +561,7 @@ Oppure esegui direttamente nella tua sessione corrente:
 source ~/.nvm/nvm.sh
 ```
 
-**Alternativa: regola l'ordine di PATH**
+**Alternativa: regola l'ordine del PATH**
 
 Se nvm è correttamente caricato ma i percorsi di Windows hanno ancora priorità, puoi esplicitamente anteporre i tuoi percorsi Linux a PATH nella configurazione della tua shell:
 
@@ -575,7 +575,7 @@ export PATH="$HOME/.nvm/versions/node/$(node -v)/bin:$PATH"
 
 ### Configurazione sandbox WSL2
 
-Il [Sandboxing](/it/sandboxing) è supportato su WSL2 ma richiede l'installazione di pacchetti aggiuntivi. Se vedi un errore come "Sandbox requires socat and bubblewrap" quando esegui `/sandbox`, installa le dipendenze:
+Il [sandboxing](/it/sandboxing) è supportato su WSL2 ma richiede l'installazione di pacchetti aggiuntivi. Se vedi un errore come "Sandbox requires socat and bubblewrap" quando esegui `/sandbox`, installa le dipendenze:
 
 <Tabs>
   <Tab title="Ubuntu/Debian">
@@ -609,7 +609,7 @@ Queste sezioni affrontano i fallimenti di accesso, i problemi di token e il comp
 
 ### Prompt di permesso ripetuti
 
-Se ti trovi a dover approvare ripetutamente gli stessi comandi, puoi consentire a strumenti specifici di essere eseguiti senza approvazione utilizzando il comando `/permissions`. Vedi [Documentazione Permissions](/it/permissions#manage-permissions).
+Se ti trovi a dover approvare ripetutamente gli stessi comandi, puoi consentire a strumenti specifici di essere eseguiti senza approvazione utilizzando il comando `/permissions`. Vedi [documentazione Permissions](/it/permissions#manage-permissions).
 
 ### Problemi di autenticazione
 
@@ -732,7 +732,7 @@ apk add ripgrep
 pacman -S ripgrep
 ```
 
-Quindi imposta `USE_BUILTIN_RIPGREP=0` nel tuo [ambiente](/it/settings#environment-variables).
+Quindi imposta `USE_BUILTIN_RIPGREP=0` nel tuo [ambiente](/it/env-vars).
 
 ### Risultati di ricerca lenti o incompleti su WSL
 
@@ -760,7 +760,7 @@ Se stai usando Claude Code su WSL2 con IDE JetBrains e ricevi errori "No availab
 
 #### Modalità di rete WSL2
 
-WSL2 utilizza il networking NAT per impostazione predefinita, il che può impedire il rilevamento dell'IDE. Hai due opzioni:
+WSL2 utilizza la rete NAT per impostazione predefinita, che può impedire il rilevamento dell'IDE. Hai due opzioni:
 
 **Opzione 1: Configura Windows Firewall** (consigliato)
 
@@ -778,7 +778,7 @@ WSL2 utilizza il networking NAT per impostazione predefinita, il che può impedi
 
 3. Riavvia sia il tuo IDE che Claude Code
 
-**Opzione 2: Passa al networking con mirroring**
+**Opzione 2: Passa alla rete con mirroring**
 
 Aggiungi a `.wslconfig` nella tua directory utente di Windows:
 
@@ -800,12 +800,12 @@ Per ulteriori suggerimenti di configurazione di JetBrains, vedi la [guida IDE Je
 Se stai riscontrando problemi di integrazione IDE su Windows, [crea un problema](https://github.com/anthropics/claude-code/issues) con le seguenti informazioni:
 
 * Tipo di ambiente: Windows nativo (Git Bash) o WSL1/WSL2
-* Modalità di rete WSL, se applicabile: NAT o mirroring
+* Modalità di rete WSL, se applicabile: NAT o mirrored
 * Nome e versione dell'IDE
 * Versione dell'estensione/plugin di Claude Code
 * Tipo di shell: Bash, Zsh, PowerShell, ecc.
 
-### Il tasto Esc non funziona nei terminali IDE JetBrains
+### Il tasto Escape non funziona nei terminali IDE JetBrains
 
 Se stai usando Claude Code nei terminali JetBrains e il tasto `Esc` non interrompe l'agente come previsto, questo è probabilmente dovuto a uno scontro di scorciatoie da tastiera con i tasti di scelta rapida predefiniti di JetBrains.
 

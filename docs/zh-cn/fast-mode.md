@@ -10,7 +10,7 @@
   快速模式处于[研究预览](#research-preview)阶段。该功能、定价和可用性可能会根据反馈而改变。
 </Note>
 
-快速模式是 Claude Opus 4.6 的高速配置，使模型速度提高 2.5 倍，但每个令牌的成本更高。当您需要快速进行交互式工作（如快速迭代或实时调试）时，使用 `/fast` 切换它打开，当成本比延迟更重要时，将其切换关闭。
+快速模式是 Claude Opus 4.6 的高速配置，使模型速度提高 2.5 倍，但每个令牌的成本更高。当您需要速度进行交互式工作（如快速迭代或实时调试）时，使用 `/fast` 将其打开，当成本比延迟更重要时，将其关闭。
 
 快速模式不是一个不同的模型。它使用相同的 Opus 4.6，但采用不同的 API 配置，优先考虑速度而不是成本效率。您获得相同的质量和功能，只是响应速度更快。
 
@@ -22,7 +22,7 @@
 
 * 使用 `/fast` 在 Claude Code CLI 中切换快速模式。也可通过 Claude Code VS Code 扩展中的 `/fast` 使用。
 * Opus 4.6 快速模式定价从 \$30/150 MTok 开始。快速模式在所有计划上享受 50% 折扣，直到太平洋时间 2 月 16 日晚上 11:59。
-* 可供订阅计划（Pro/Max/Team/Enterprise）上的所有 Claude Code 用户和 Claude Console 使用。
+* 可供订阅计划（Pro/Max/Team/Enterprise）上的所有 Claude Code 用户和 Claude 控制台使用。
 * 对于订阅计划（Pro/Max/Team/Enterprise）上的 Claude Code 用户，快速模式仅通过额外使用提供，不包含在订阅速率限制中。
 
 本页涵盖如何[切换快速模式](#toggle-fast-mode)、其[成本权衡](#understand-the-cost-tradeoff)、[何时使用](#decide-when-to-use-fast-mode)、[要求](#requirements)、[每个会话选择加入](#require-per-session-opt-in)和[速率限制行为](#handle-rate-limits)。
@@ -31,7 +31,7 @@
 
 通过以下任一方式切换快速模式：
 
-* 输入 `/fast` 并按 Tab 键切换打开或关闭
+* 输入 `/fast` 并按 Tab 键打开或关闭
 * 在您的[用户设置文件](/zh-CN/settings)中设置 `"fastMode": true`
 
 默认情况下，快速模式在会话之间保持。管理员可以配置快速模式在每个会话时重置。有关详细信息，请参阅[要求每个会话选择加入](#require-per-session-opt-in)。
@@ -42,10 +42,10 @@
 
 * 如果您使用的是不同的模型，Claude Code 会自动切换到 Opus 4.6
 * 您将看到确认消息："Fast mode ON"
-* 快速模式活跃时，提示旁边会出现一个小的 `↯` 图标
+* 快速模式处于活动状态时，提示旁边会出现一个小的 `↯` 图标
 * 随时再次运行 `/fast` 以检查快速模式是否打开或关闭
 
-使用 `/fast` 再次禁用快速模式时，您仍然保持在 Opus 4.6 上。模型不会恢复到您之前的模型。要切换到不同的模型，请使用 `/model`。
+当您再次使用 `/fast` 禁用快速模式时，您仍然保持在 Opus 4.6 上。模型不会恢复到您之前的模型。要切换到不同的模型，请使用 `/model`。
 
 ## 了解成本权衡
 
@@ -89,11 +89,11 @@
 
 快速模式需要以下所有条件：
 
-* **第三方云提供商上不可用**：快速模式在 Amazon Bedrock、Google Vertex AI 或 Microsoft Azure Foundry 上不可用。快速模式可通过 Anthropic Console API 和使用额外使用的 Claude 订阅计划获得。
-* **启用额外使用**：您的账户必须启用额外使用，这允许在您的计划包含的使用之外进行计费。对于个人账户，在您的 [Console 计费设置](https://platform.claude.com/settings/organization/billing)中启用此功能。对于团队和企业，管理员必须为组织启用额外使用。
+* **第三方云提供商上不可用**：快速模式在 Amazon Bedrock、Google Vertex AI 或 Microsoft Azure Foundry 上不可用。快速模式可通过 Anthropic 控制台 API 和使用额外使用的 Claude 订阅计划获得。
+* **启用额外使用**：您的账户必须启用额外使用，这允许在您的计划包含的使用量之外进行计费。对于个人账户，在您的[控制台计费设置](https://platform.claude.com/settings/organization/billing)中启用此功能。对于团队和企业，管理员必须为组织启用额外使用。
 
 <Note>
-  快速模式使用直接计入额外使用，即使您的计划上还有剩余使用。这意味着快速模式令牌不计入您的计划包含的使用，并从第一个令牌开始按快速模式费率收费。
+  快速模式使用直接计入额外使用，即使您的计划上还有剩余使用量。这意味着快速模式令牌不计入您的计划包含的使用量，并从第一个令牌开始按快速模式费率收费。
 </Note>
 
 * **团队和企业的管理员启用**：快速模式默认对团队和企业组织禁用。管理员必须明确[启用快速模式](#enable-fast-mode-for-your-organization)，用户才能访问它。
@@ -106,14 +106,14 @@
 
 管理员可以在以下位置启用快速模式：
 
-* **Console**（API 客户）：[Claude Code 偏好设置](https://platform.claude.com/claude-code/preferences)
+* **控制台**（API 客户）：[Claude Code 偏好设置](https://platform.claude.com/claude-code/preferences)
 * **Claude AI**（团队和企业）：[管理员设置 > Claude Code](https://claude.ai/admin-settings/claude-code)
 
-另一个完全禁用快速模式的选项是设置 `CLAUDE_CODE_DISABLE_FAST_MODE=1`。请参阅[环境变量](/zh-CN/settings#environment-variables)。
+另一个完全禁用快速模式的选项是设置 `CLAUDE_CODE_DISABLE_FAST_MODE=1`。请参阅[环境变量](/zh-CN/env-vars)。
 
 ### 要求每个会话选择加入
 
-默认情况下，快速模式在会话之间保持：如果用户启用快速模式，它在未来的会话中保持打开。[团队](https://claude.com/pricing#team-&-enterprise)或[企业](https://anthropic.com/contact-sales)计划上的管理员可以通过在[托管设置](/zh-CN/settings#settings-files)或[服务器托管设置](/zh-CN/server-managed-settings)中将 `fastModePerSessionOptIn` 设置为 `true` 来防止这种情况。这会导致每个会话以快速模式关闭开始，要求用户使用 `/fast` 明确启用它。
+默认情况下，快速模式在会话之间保持：如果用户启用快速模式，它会在未来的会话中保持打开。[团队](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise)或[企业](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise)计划上的管理员可以通过在[托管设置](/zh-CN/settings#settings-files)或[服务器托管设置](/zh-CN/server-managed-settings)中将 `fastModePerSessionOptIn` 设置为 `true` 来防止这种情况。这会导致每个会话以快速模式关闭开始，要求用户使用 `/fast` 明确启用它。
 
 ```json  theme={null}
 {
@@ -121,7 +121,7 @@
 }
 ```
 
-这对于在用户运行多个并发会话的组织中控制成本很有用。用户在需要速度时仍然可以使用 `/fast` 启用快速模式，但它在每个新会话开始时重置。用户的快速模式偏好仍然被保存，因此删除此设置会恢复默认的持久行为。
+这对于在用户运行多个并发会话的组织中控制成本很有用。用户在需要速度时仍然可以使用 `/fast` 启用快速模式，但它会在每个新会话开始时重置。用户的快速模式偏好仍然被保存，因此删除此设置会恢复默认的持久行为。
 
 ## 处理速率限制
 

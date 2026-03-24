@@ -11,7 +11,7 @@ Les paramètres gérés par le serveur permettent aux administrateurs de configu
 Cette approche est conçue pour les organisations qui n'ont pas d'infrastructure de gestion des appareils en place, ou qui ont besoin de gérer les paramètres pour les utilisateurs sur des appareils non gérés.
 
 <Note>
-  Les paramètres gérés par le serveur sont en bêta publique et disponibles pour les clients [Claude for Teams](https://claude.com/pricing#team-&-enterprise) et [Claude for Enterprise](https://anthropic.com/contact-sales). Les fonctionnalités peuvent évoluer avant la disponibilité générale.
+  Les paramètres gérés par le serveur sont en bêta publique et disponibles pour les clients [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) et [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise). Les fonctionnalités peuvent évoluer avant la disponibilité générale.
 </Note>
 
 ## Conditions requises
@@ -20,13 +20,13 @@ Pour utiliser les paramètres gérés par le serveur, vous avez besoin de :
 
 * Un plan Claude for Teams ou Claude for Enterprise
 * Claude Code version 2.1.38 ou ultérieure pour Claude for Teams, ou version 2.1.30 ou ultérieure pour Claude for Enterprise
-* Accès réseau à `api.anthropic.com`
+* Un accès réseau à `api.anthropic.com`
 
 ## Choisir entre les paramètres gérés par le serveur et gérés par le point de terminaison
 
 Claude Code prend en charge deux approches pour la configuration centralisée. Les paramètres gérés par le serveur livrent la configuration à partir des serveurs d'Anthropic. Les [paramètres gérés par le point de terminaison](/fr/settings#settings-files) sont déployés directement sur les appareils via des stratégies natives du système d'exploitation (préférences gérées macOS, registre Windows) ou des fichiers de paramètres gérés.
 
-| Approche                                                                        | Idéale pour                                                         | Modèle de sécurité                                                                                                                         |
+| Approche                                                                        | Idéal pour                                                          | Modèle de sécurité                                                                                                                         |
 | :------------------------------------------------------------------------------ | :------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------- |
 | **Paramètres gérés par le serveur**                                             | Organisations sans MDM, ou utilisateurs sur des appareils non gérés | Paramètres livrés à partir des serveurs d'Anthropic au moment de l'authentification                                                        |
 | **[Paramètres gérés par le point de terminaison](/fr/settings#settings-files)** | Organisations avec MDM ou gestion des points de terminaison         | Paramètres déployés sur les appareils via des profils de configuration MDM, des stratégies de registre ou des fichiers de paramètres gérés |
@@ -53,9 +53,9 @@ Si vos appareils sont inscrits dans une solution MDM ou de gestion des points de
           "Read(./.env)",
           "Read(./.env.*)",
           "Read(./secrets/**)"
-        ]
-      },
-      "disableBypassPermissionsMode": "disable"
+        ],
+        "disableBypassPermissionsMode": "disable"
+      }
     }
     ```
   </Step>
@@ -140,7 +140,7 @@ Les événements d'audit incluent le type d'action effectuée, le compte et l'ap
 
 ## Considérations de sécurité
 
-Les paramètres gérés par le serveur offrent une application centralisée des stratégies, mais ils fonctionnent comme un contrôle côté client. Sur les appareils non gérés, les utilisateurs ayant un accès administrateur ou sudo peuvent modifier le binaire Claude Code, le système de fichiers ou la configuration réseau.
+Les paramètres gérés par le serveur fournissent une application de stratégie centralisée, mais ils fonctionnent comme un contrôle côté client. Sur les appareils non gérés, les utilisateurs ayant un accès administrateur ou sudo peuvent modifier le binaire Claude Code, le système de fichiers ou la configuration réseau.
 
 | Scénario                                                            | Comportement                                                                                                                                            |
 | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------ |

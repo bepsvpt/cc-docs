@@ -6,9 +6,7 @@
 
 > Erfahren Sie, wie Sie OpenTelemetry für Claude Code aktivieren und konfigurieren.
 
-Claude Code unterstützt OpenTelemetry (OTel) Metriken und Ereignisse für Überwachung und Observability.
-
-Alle Metriken sind Zeitreihendaten, die über das Standard-Metriken-Protokoll von OpenTelemetry exportiert werden, und Ereignisse werden über das Logs/Events-Protokoll von OpenTelemetry exportiert. Es liegt in der Verantwortung des Benutzers, sicherzustellen, dass seine Metriken- und Logs-Backends ordnungsgemäß konfiguriert sind und dass die Aggregationsgranularität seine Überwachungsanforderungen erfüllt.
+Verfolgen Sie die Nutzung, Kosten und Toolaktivität von Claude Code in Ihrer Organisation, indem Sie Telemetriedaten über OpenTelemetry (OTel) exportieren. Claude Code exportiert Metriken als Zeitreihendaten über das Standard-Metriken-Protokoll und Ereignisse über das Logs/Events-Protokoll. Konfigurieren Sie Ihre Metriken- und Logs-Backends, um Ihre Überwachungsanforderungen zu erfüllen.
 
 ## Schnellstart
 
@@ -56,8 +54,8 @@ Beispiel für verwaltete Einstellungskonfiguration:
     "OTEL_METRICS_EXPORTER": "otlp",
     "OTEL_LOGS_EXPORTER": "otlp",
     "OTEL_EXPORTER_OTLP_PROTOCOL": "grpc",
-    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://collector.company.com:4317",
-    "OTEL_EXPORTER_OTLP_HEADERS": "Authorization=Bearer company-token"
+    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://collector.example.com:4317",
+    "OTEL_EXPORTER_OTLP_HEADERS": "Authorization=Bearer example-token"
   }
 }
 ```
@@ -70,24 +68,26 @@ Beispiel für verwaltete Einstellungskonfiguration:
 
 ### Allgemeine Konfigurationsvariablen
 
-| Umgebungsvariable                               | Beschreibung                                                                       | Beispielwerte                        |
-| ----------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------ |
-| `CLAUDE_CODE_ENABLE_TELEMETRY`                  | Aktiviert die Telemetrieerfassung (erforderlich)                                   | `1`                                  |
-| `OTEL_METRICS_EXPORTER`                         | Metriken-Exporter-Typ(en) (kommagetrennt)                                          | `console`, `otlp`, `prometheus`      |
-| `OTEL_LOGS_EXPORTER`                            | Logs/Events-Exporter-Typ(en) (kommagetrennt)                                       | `console`, `otlp`                    |
-| `OTEL_EXPORTER_OTLP_PROTOCOL`                   | Protokoll für OTLP-Exporter (alle Signale)                                         | `grpc`, `http/json`, `http/protobuf` |
-| `OTEL_EXPORTER_OTLP_ENDPOINT`                   | OTLP-Collector-Endpunkt (alle Signale)                                             | `http://localhost:4317`              |
-| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`           | Protokoll für Metriken (überschreibt allgemein)                                    | `grpc`, `http/json`, `http/protobuf` |
-| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`           | OTLP-Metriken-Endpunkt (überschreibt allgemein)                                    | `http://localhost:4318/v1/metrics`   |
-| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`              | Protokoll für Logs (überschreibt allgemein)                                        | `grpc`, `http/json`, `http/protobuf` |
-| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`              | OTLP-Logs-Endpunkt (überschreibt allgemein)                                        | `http://localhost:4318/v1/logs`      |
-| `OTEL_EXPORTER_OTLP_HEADERS`                    | Authentifizierungsheader für OTLP                                                  | `Authorization=Bearer token`         |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`         | Client-Schlüssel für mTLS-Authentifizierung                                        | Pfad zur Client-Schlüsseldatei       |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE` | Client-Zertifikat für mTLS-Authentifizierung                                       | Pfad zur Client-Zertifikatsdatei     |
-| `OTEL_METRIC_EXPORT_INTERVAL`                   | Exportintervall in Millisekunden (Standard: 60000)                                 | `5000`, `60000`                      |
-| `OTEL_LOGS_EXPORT_INTERVAL`                     | Logs-Exportintervall in Millisekunden (Standard: 5000)                             | `1000`, `10000`                      |
-| `OTEL_LOG_USER_PROMPTS`                         | Aktiviert die Protokollierung von Benutzer-Prompt-Inhalten (Standard: deaktiviert) | `1` zum Aktivieren                   |
-| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`   | Intervall zum Aktualisieren dynamischer Header (Standard: 1740000ms / 29 Minuten)  | `900000`                             |
+| Umgebungsvariable                                   | Beschreibung                                                                                                                        | Beispielwerte                        |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | Aktiviert die Telemetrieerfassung (erforderlich)                                                                                    | `1`                                  |
+| `OTEL_METRICS_EXPORTER`                             | Metriken-Exporter-Typ(en), kommagetrennt                                                                                            | `console`, `otlp`, `prometheus`      |
+| `OTEL_LOGS_EXPORTER`                                | Logs/Events-Exporter-Typ(en), kommagetrennt                                                                                         | `console`, `otlp`                    |
+| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | Protokoll für OTLP-Exporter, gilt für alle Signale                                                                                  | `grpc`, `http/json`, `http/protobuf` |
+| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | OTLP-Collector-Endpunkt für alle Signale                                                                                            | `http://localhost:4317`              |
+| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | Protokoll für Metriken, überschreibt allgemeine Einstellung                                                                         | `grpc`, `http/json`, `http/protobuf` |
+| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | OTLP-Metriken-Endpunkt, überschreibt allgemeine Einstellung                                                                         | `http://localhost:4318/v1/metrics`   |
+| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | Protokoll für Logs, überschreibt allgemeine Einstellung                                                                             | `grpc`, `http/json`, `http/protobuf` |
+| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | OTLP-Logs-Endpunkt, überschreibt allgemeine Einstellung                                                                             | `http://localhost:4318/v1/logs`      |
+| `OTEL_EXPORTER_OTLP_HEADERS`                        | Authentifizierungsheader für OTLP                                                                                                   | `Authorization=Bearer token`         |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | Client-Schlüssel für mTLS-Authentifizierung                                                                                         | Pfad zur Client-Schlüsseldatei       |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | Client-Zertifikat für mTLS-Authentifizierung                                                                                        | Pfad zur Client-Zertifikatsdatei     |
+| `OTEL_METRIC_EXPORT_INTERVAL`                       | Exportintervall in Millisekunden (Standard: 60000)                                                                                  | `5000`, `60000`                      |
+| `OTEL_LOGS_EXPORT_INTERVAL`                         | Logs-Exportintervall in Millisekunden (Standard: 5000)                                                                              | `1000`, `10000`                      |
+| `OTEL_LOG_USER_PROMPTS`                             | Aktiviert die Protokollierung von Benutzer-Prompt-Inhalten (Standard: deaktiviert)                                                  | `1` zum Aktivieren                   |
+| `OTEL_LOG_TOOL_DETAILS`                             | Aktiviert die Protokollierung von MCP-Server-/Tool-Namen und Skill-Namen in Tool-Ereignissen (Standard: deaktiviert)                | `1` zum Aktivieren                   |
+| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | Metriken-Temporalitätspräferenz (Standard: `delta`). Setzen Sie auf `cumulative`, wenn Ihr Backend kumulative Temporalität erwartet | `delta`, `cumulative`                |
+| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | Intervall zum Aktualisieren dynamischer Header (Standard: 1740000ms / 29 Minuten)                                                   | `900000`                             |
 
 ### Metriken-Kardinalitätskontrolle
 
@@ -148,7 +148,7 @@ Diese benutzerdefinierten Attribute werden in alle Metriken und Ereignisse einbe
 <Warning>
   **Wichtige Formatierungsanforderungen für OTEL\_RESOURCE\_ATTRIBUTES:**
 
-  Die Umgebungsvariable `OTEL_RESOURCE_ATTRIBUTES` folgt der [W3C Baggage-Spezifikation](https://www.w3.org/TR/baggage/), die strenge Formatierungsanforderungen hat:
+  Die Umgebungsvariable `OTEL_RESOURCE_ATTRIBUTES` verwendet kommagetrennte Schlüssel=Wert-Paare mit strikten Formatierungsanforderungen:
 
   * **Keine Leerzeichen erlaubt**: Werte dürfen keine Leerzeichen enthalten. Zum Beispiel ist `user.organizationName=My Company` ungültig
   * **Format**: Muss kommagetrennte Schlüssel=Wert-Paare sein: `key1=value1,key2=value2`
@@ -173,6 +173,8 @@ Diese benutzerdefinierten Attribute werden in alle Metriken und Ereignisse einbe
 </Warning>
 
 ### Beispielkonfigurationen
+
+Setzen Sie diese Umgebungsvariablen vor dem Ausführen von `claude`. Jeder Block zeigt eine vollständige Konfiguration für einen anderen Exporter oder ein anderes Bereitstellungsszenario:
 
 ```bash  theme={null}
 # Console-Debugging (1-Sekunden-Intervalle)
@@ -200,9 +202,9 @@ export CLAUDE_CODE_ENABLE_TELEMETRY=1
 export OTEL_METRICS_EXPORTER=otlp
 export OTEL_LOGS_EXPORTER=otlp
 export OTEL_EXPORTER_OTLP_METRICS_PROTOCOL=http/protobuf
-export OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://metrics.company.com:4318
+export OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://metrics.example.com:4318
 export OTEL_EXPORTER_OTLP_LOGS_PROTOCOL=grpc
-export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://logs.company.com:4317
+export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://logs.example.com:4317
 
 # Nur Metriken (keine Ereignisse/Logs)
 export CLAUDE_CODE_ENABLE_TELEMETRY=1
@@ -223,13 +225,15 @@ export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
 
 Alle Metriken und Ereignisse teilen diese Standardattribute:
 
-| Attribut            | Beschreibung                                                        | Gesteuert durch                                      |
-| ------------------- | ------------------------------------------------------------------- | ---------------------------------------------------- |
-| `session.id`        | Eindeutige Sitzungskennung                                          | `OTEL_METRICS_INCLUDE_SESSION_ID` (Standard: true)   |
-| `app.version`       | Aktuelle Claude Code-Version                                        | `OTEL_METRICS_INCLUDE_VERSION` (Standard: false)     |
-| `organization.id`   | Organisations-UUID (wenn authentifiziert)                           | Immer enthalten, wenn verfügbar                      |
-| `user.account_uuid` | Konto-UUID (wenn authentifiziert)                                   | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (Standard: true) |
-| `terminal.type`     | Terminal-Typ (zum Beispiel `iTerm.app`, `vscode`, `cursor`, `tmux`) | Immer enthalten, wenn erkannt                        |
+| Attribut            | Beschreibung                                                                 | Gesteuert durch                                      |
+| ------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `session.id`        | Eindeutige Sitzungskennung                                                   | `OTEL_METRICS_INCLUDE_SESSION_ID` (Standard: true)   |
+| `app.version`       | Aktuelle Claude Code-Version                                                 | `OTEL_METRICS_INCLUDE_VERSION` (Standard: false)     |
+| `organization.id`   | Organisations-UUID (wenn authentifiziert)                                    | Immer enthalten, wenn verfügbar                      |
+| `user.account_uuid` | Konto-UUID (wenn authentifiziert)                                            | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (Standard: true) |
+| `user.id`           | Anonyme Geräte-/Installationskennung, generiert pro Claude Code-Installation | Immer enthalten                                      |
+| `user.email`        | E-Mail-Adresse des Benutzers (wenn über OAuth authentifiziert)               | Immer enthalten, wenn verfügbar                      |
+| `terminal.type`     | Terminal-Typ, wie `iTerm.app`, `vscode`, `cursor` oder `tmux`                | Immer enthalten, wenn erkannt                        |
 
 ### Metriken
 
@@ -247,6 +251,8 @@ Claude Code exportiert die folgenden Metriken:
 | `claude_code.active_time.total`       | Gesamte aktive Zeit in Sekunden                                       | s       |
 
 ### Metrik-Details
+
+Jede Metrik enthält die oben aufgeführten Standardattribute. Metriken mit zusätzlichen kontextspezifischen Attributen werden nachfolgend vermerkt.
 
 #### Sitzungszähler
 
@@ -288,7 +294,7 @@ Wird nach jeder API-Anfrage erhöht.
 **Attribute**:
 
 * Alle [Standardattribute](#standardattribute)
-* `model`: Modellkennung (zum Beispiel "claude-sonnet-4-5-20250929")
+* `model`: Modellkennung (zum Beispiel "claude-sonnet-4-6")
 
 #### Token-Zähler
 
@@ -298,7 +304,7 @@ Wird nach jeder API-Anfrage erhöht.
 
 * Alle [Standardattribute](#standardattribute)
 * `type`: (`"input"`, `"output"`, `"cacheRead"`, `"cacheCreation"`)
-* `model`: Modellkennung (zum Beispiel "claude-sonnet-4-5-20250929")
+* `model`: Modellkennung (zum Beispiel "claude-sonnet-4-6")
 
 #### Code-Edit-Tool-Entscheidungszähler
 
@@ -307,21 +313,37 @@ Wird erhöht, wenn der Benutzer die Verwendung des Edit-, Write- oder NotebookEd
 **Attribute**:
 
 * Alle [Standardattribute](#standardattribute)
-* `tool`: Toolname (`"Edit"`, `"Write"`, `"NotebookEdit"`)
+* `tool_name`: Tool-Name (`"Edit"`, `"Write"`, `"NotebookEdit"`)
 * `decision`: Benutzerentscheidung (`"accept"`, `"reject"`)
-* `language`: Programmiersprache der bearbeiteten Datei (zum Beispiel `"TypeScript"`, `"Python"`, `"JavaScript"`, `"Markdown"`). Gibt `"unknown"` für nicht erkannte Dateierweiterungen zurück.
+* `source`: Entscheidungsquelle - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` oder `"user_reject"`
+* `language`: Programmiersprache der bearbeiteten Datei, wie `"TypeScript"`, `"Python"`, `"JavaScript"` oder `"Markdown"`. Gibt `"unknown"` für nicht erkannte Dateierweiterungen zurück.
 
 #### Aktive-Zeit-Zähler
 
-Verfolgt die tatsächliche Zeit, die aktiv Claude Code verwendet wird (nicht Leerlaufzeit). Diese Metrik wird während Benutzerinteraktionen wie dem Eingeben von Prompts oder dem Empfangen von Antworten erhöht.
+Verfolgt die tatsächliche Zeit, die aktiv Claude Code verwendet wird, ohne Leerlaufzeit. Diese Metrik wird während Benutzerinteraktionen (Eingabe, Lesen von Antworten) und während CLI-Verarbeitung (Tool-Ausführung, KI-Antwortgenerierung) erhöht.
 
 **Attribute**:
 
 * Alle [Standardattribute](#standardattribute)
+* `type`: `"user"` für Tastaturinteraktionen, `"cli"` für Tool-Ausführung und KI-Antworten
 
 ### Ereignisse
 
 Claude Code exportiert die folgenden Ereignisse über OpenTelemetry Logs/Events (wenn `OTEL_LOGS_EXPORTER` konfiguriert ist):
+
+#### Ereigniskorrelationsattribute
+
+Wenn ein Benutzer einen Prompt einreicht, kann Claude Code mehrere API-Aufrufe tätigen und mehrere Tools ausführen. Das Attribut `prompt.id` ermöglicht es Ihnen, alle diese Ereignisse an den einzelnen Prompt zu binden, der sie ausgelöst hat.
+
+| Attribut    | Beschreibung                                                                                                                 |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `prompt.id` | UUID v4-Kennung, die alle Ereignisse verknüpft, die während der Verarbeitung eines einzelnen Benutzer-Prompts erzeugt werden |
+
+Um alle Aktivitäten zu verfolgen, die durch einen einzelnen Prompt ausgelöst werden, filtern Sie Ihre Ereignisse nach einem bestimmten `prompt.id`-Wert. Dies gibt das user\_prompt-Ereignis, alle api\_request-Ereignisse und alle tool\_result-Ereignisse zurück, die während der Verarbeitung dieses Prompts aufgetreten sind.
+
+<Note>
+  `prompt.id` ist absichtlich aus Metriken ausgeschlossen, da jeder Prompt eine eindeutige ID generiert, was zu einer ständig wachsenden Anzahl von Zeitreihen führen würde. Verwenden Sie es nur für Ereignisanalyse und Audit-Trails.
+</Note>
 
 #### Benutzer-Prompt-Ereignis
 
@@ -334,6 +356,7 @@ Protokolliert, wenn ein Benutzer einen Prompt einreicht.
 * Alle [Standardattribute](#standardattribute)
 * `event.name`: `"user_prompt"`
 * `event.timestamp`: ISO 8601-Zeitstempel
+* `event.sequence`: monoton steigende Zähler zur Sortierung von Ereignissen innerhalb einer Sitzung
 * `prompt_length`: Länge des Prompts
 * `prompt`: Prompt-Inhalt (standardmäßig geschwärzt, aktivieren Sie mit `OTEL_LOG_USER_PROMPTS=1`)
 
@@ -348,14 +371,19 @@ Protokolliert, wenn ein Tool die Ausführung abgeschlossen hat.
 * Alle [Standardattribute](#standardattribute)
 * `event.name`: `"tool_result"`
 * `event.timestamp`: ISO 8601-Zeitstempel
+* `event.sequence`: monoton steigende Zähler zur Sortierung von Ereignissen innerhalb einer Sitzung
 * `tool_name`: Name des Tools
 * `success`: `"true"` oder `"false"`
 * `duration_ms`: Ausführungszeit in Millisekunden
 * `error`: Fehlermeldung (falls fehlgeschlagen)
-* `decision`: Entweder `"accept"` oder `"reject"`
-* `source`: Entscheidungsquelle - `"config"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` oder `"user_reject"`
+* `decision_type`: Entweder `"accept"` oder `"reject"`
+* `decision_source`: Entscheidungsquelle - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` oder `"user_reject"`
+* `tool_result_size_bytes`: Größe des Tool-Ergebnisses in Bytes
+* `mcp_server_scope`: MCP-Server-Scope-Kennung (für MCP-Tools)
 * `tool_parameters`: JSON-Zeichenkette mit Tool-spezifischen Parametern (falls verfügbar)
-  * Für Bash-Tool: enthält `bash_command`, `full_command`, `timeout`, `description`, `sandbox`
+  * Für Bash-Tool: enthält `bash_command`, `full_command`, `timeout`, `description`, `dangerouslyDisableSandbox` und `git_commit_id` (der Commit-SHA, wenn ein `git commit`-Befehl erfolgreich ist)
+  * Für MCP-Tools (wenn `OTEL_LOG_TOOL_DETAILS=1`): enthält `mcp_server_name`, `mcp_tool_name`
+  * Für Skill-Tool (wenn `OTEL_LOG_TOOL_DETAILS=1`): enthält `skill_name`
 
 #### API-Anfrage-Ereignis
 
@@ -368,13 +396,15 @@ Protokolliert für jede API-Anfrage an Claude.
 * Alle [Standardattribute](#standardattribute)
 * `event.name`: `"api_request"`
 * `event.timestamp`: ISO 8601-Zeitstempel
-* `model`: Verwendetes Modell (zum Beispiel "claude-sonnet-4-5-20250929")
+* `event.sequence`: monoton steigende Zähler zur Sortierung von Ereignissen innerhalb einer Sitzung
+* `model`: Verwendetes Modell (zum Beispiel "claude-sonnet-4-6")
 * `cost_usd`: Geschätzte Kosten in USD
 * `duration_ms`: Anfragedauer in Millisekunden
 * `input_tokens`: Anzahl der Eingabe-Token
 * `output_tokens`: Anzahl der Ausgabe-Token
 * `cache_read_tokens`: Anzahl der aus dem Cache gelesenen Token
 * `cache_creation_tokens`: Anzahl der Token, die für die Cache-Erstellung verwendet werden
+* `speed`: `"fast"` oder `"normal"`, was angibt, ob der schnelle Modus aktiv war
 
 #### API-Fehler-Ereignis
 
@@ -387,11 +417,13 @@ Protokolliert, wenn eine API-Anfrage an Claude fehlschlägt.
 * Alle [Standardattribute](#standardattribute)
 * `event.name`: `"api_error"`
 * `event.timestamp`: ISO 8601-Zeitstempel
-* `model`: Verwendetes Modell (zum Beispiel "claude-sonnet-4-5-20250929")
+* `event.sequence`: monoton steigende Zähler zur Sortierung von Ereignissen innerhalb einer Sitzung
+* `model`: Verwendetes Modell (zum Beispiel "claude-sonnet-4-6")
 * `error`: Fehlermeldung
-* `status_code`: HTTP-Statuscode (falls zutreffend)
+* `status_code`: HTTP-Statuscode als Zeichenkette oder `"undefined"` für Nicht-HTTP-Fehler
 * `duration_ms`: Anfragedauer in Millisekunden
 * `attempt`: Versuchsnummer (für wiederholte Anfragen)
+* `speed`: `"fast"` oder `"normal"`, was angibt, ob der schnelle Modus aktiv war
 
 #### Tool-Entscheidungs-Ereignis
 
@@ -404,13 +436,14 @@ Protokolliert, wenn eine Tool-Berechtigungsentscheidung getroffen wird (akzeptie
 * Alle [Standardattribute](#standardattribute)
 * `event.name`: `"tool_decision"`
 * `event.timestamp`: ISO 8601-Zeitstempel
+* `event.sequence`: monoton steigende Zähler zur Sortierung von Ereignissen innerhalb einer Sitzung
 * `tool_name`: Name des Tools (zum Beispiel "Read", "Edit", "Write", "NotebookEdit")
 * `decision`: Entweder `"accept"` oder `"reject"`
-* `source`: Entscheidungsquelle - `"config"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` oder `"user_reject"`
+* `source`: Entscheidungsquelle - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` oder `"user_reject"`
 
 ## Interpretation von Metriken- und Ereignisdaten
 
-Die von Claude Code exportierten Metriken bieten wertvolle Einblicke in Nutzungsmuster und Produktivität. Hier sind einige häufige Visualisierungen und Analysen, die Sie erstellen können:
+Die exportierten Metriken und Ereignisse unterstützen eine Reihe von Analysen:
 
 ### Nutzungsüberwachung
 
@@ -489,11 +522,13 @@ Alle Metriken und Ereignisse werden mit den folgenden Ressourcenattributen expor
 
 Für einen umfassenden Leitfaden zur Messung der Kapitalrendite für Claude Code, einschließlich Telemetrie-Setup, Kostenanalyse, Produktivitätsmetriken und automatisierter Berichterstattung, siehe den [Claude Code ROI Measurement Guide](https://github.com/anthropics/claude-code-monitoring-guide). Dieses Repository bietet einsatzbereite Docker Compose-Konfigurationen, Prometheus- und OpenTelemetry-Setups sowie Vorlagen zur Generierung von Produktivitätsberichten, die in Tools wie Linear integriert sind.
 
-## Sicherheits-/Datenschutzüberlegungen
+## Sicherheit und Datenschutz
 
 * Telemetrie ist opt-in und erfordert explizite Konfiguration
-* Vertrauliche Informationen wie API-Schlüssel oder Dateiinhalte werden niemals in Metriken oder Ereignisse einbezogen
-* Benutzer-Prompt-Inhalte werden standardmäßig geschwärzt - nur die Prompt-Länge wird aufgezeichnet. Um Benutzer-Prompt-Protokollierung zu aktivieren, setzen Sie `OTEL_LOG_USER_PROMPTS=1`
+* Rohe Dateiinhalte und Code-Snippets sind nicht in Metriken oder Ereignissen enthalten. Tool-Ausführungsereignisse enthalten Bash-Befehle und Dateipfade im Feld `tool_parameters`, das möglicherweise vertrauliche Werte enthält. Wenn Ihre Befehle möglicherweise Geheimnisse enthalten, konfigurieren Sie Ihr Telemetrie-Backend, um `tool_parameters` zu filtern oder zu schwärzen
+* Wenn über OAuth authentifiziert, ist `user.email` in Telemetrie-Attributen enthalten. Wenn dies ein Problem für Ihre Organisation darstellt, arbeiten Sie mit Ihrem Telemetrie-Backend zusammen, um dieses Feld zu filtern oder zu schwärzen
+* Benutzer-Prompt-Inhalte werden standardmäßig nicht erfasst. Nur die Prompt-Länge wird aufgezeichnet. Um Benutzer-Prompt-Inhalte einzubeziehen, setzen Sie `OTEL_LOG_USER_PROMPTS=1`
+* MCP-Server-/Tool-Namen und Skill-Namen werden standardmäßig nicht protokolliert, da sie benutzerspezifische Konfigurationen offenbaren können. Um sie einzubeziehen, setzen Sie `OTEL_LOG_TOOL_DETAILS=1`
 
 ## Überwachung von Claude Code auf Amazon Bedrock
 

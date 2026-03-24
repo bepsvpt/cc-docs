@@ -21,7 +21,7 @@ Voici un exemple d'une [barre de statut multi-lignes](#display-multiple-lines) q
   <img src="https://mintcdn.com/claude-code/nibzesLaJVh4ydOq/images/statusline-multiline.png?fit=max&auto=format&n=nibzesLaJVh4ydOq&q=85&s=60f11387658acc9ff75158ae85f2ac87" alt="Une barre de statut multi-lignes affichant le nom du modèle, le répertoire, la branche git sur la première ligne, et une barre de progression d'utilisation du contexte avec le coût et la durée sur la deuxième ligne" width="776" height="212" data-path="images/statusline-multiline.png" />
 </Frame>
 
-Cette page vous guide à travers [la configuration d'une barre de statut basique](#set-up-a-status-line), explique [comment les données circulent](#how-status-lines-work) de Claude Code vers votre script, liste [tous les champs que vous pouvez afficher](#available-data), et fournit [des exemples prêts à l'emploi](#examples) pour les modèles courants comme l'état git, le suivi des coûts et les barres de progression.
+Cette page vous guide à travers [la configuration d'une barre de statut basique](#set-up-a-status-line), explique [comment les données circulent](#how-status-lines-work) de Claude Code à votre script, liste [tous les champs que vous pouvez afficher](#available-data), et fournit [des exemples prêts à l'emploi](#examples) pour les modèles courants comme l'état git, le suivi des coûts et les barres de progression.
 
 ## Configurer une barre de statut
 
@@ -130,7 +130,7 @@ Claude Code exécute votre script et envoie les [données de session JSON](#avai
 
 **Quand elle se met à jour**
 
-Votre script s'exécute après chaque nouveau message d'assistant, quand le mode de permission change, ou quand le mode vim bascule. Les mises à jour sont débogées à 300 ms, ce qui signifie que les changements rapides se regroupent et votre script s'exécute une fois que les choses se stabilisent. Si une nouvelle mise à jour se déclenche pendant que votre script s'exécute toujours, l'exécution en cours est annulée. Si vous modifiez votre script, les modifications n'apparaîtront pas avant que votre prochaine interaction avec Claude Code ne déclenche une mise à jour.
+Votre script s'exécute après chaque nouveau message d'assistant, quand le mode de permission change, ou quand le mode vim bascule. Les mises à jour sont débogées à 300 ms, ce qui signifie que les changements rapides se regroupent et votre script s'exécute une fois que les choses se stabilisent. Si une nouvelle mise à jour se déclenche pendant que votre script s'exécute encore, l'exécution en cours est annulée. Si vous modifiez votre script, les modifications n'apparaîtront pas avant que votre prochaine interaction avec Claude Code ne déclenche une mise à jour.
 
 **Ce que votre script peut afficher**
 
@@ -290,13 +290,14 @@ Affiche le modèle actuel et l'utilisation de la fenêtre de contexte avec une b
   MODEL=$(echo "$input" | jq -r '.model.display_name')
   PCT=$(echo "$input" | jq -r '.context_window.used_percentage // 0' | cut -d. -f1)
 
-  # Build progress bar: printf creates spaces, tr replaces with blocks
+  # Build progress bar: printf -v creates a run of spaces, then
+  # ${var// /▓} replaces each space with a block character
   BAR_WIDTH=10
   FILLED=$((PCT * BAR_WIDTH / 100))
   EMPTY=$((BAR_WIDTH - FILLED))
   BAR=""
-  [ "$FILLED" -gt 0 ] && BAR=$(printf "%${FILLED}s" | tr ' ' '▓')
-  [ "$EMPTY" -gt 0 ] && BAR="${BAR}$(printf "%${EMPTY}s" | tr ' ' '░')"
+  [ "$FILLED" -gt 0 ] && printf -v FILL "%${FILLED}s" && BAR="${FILL// /▓}"
+  [ "$EMPTY" -gt 0 ] && printf -v PAD "%${EMPTY}s" && BAR="${BAR}${PAD// /░}"
 
   echo "[$MODEL] $BAR $PCT%"
   ```
@@ -522,7 +523,8 @@ Cet exemple combine plusieurs techniques : couleurs basées sur des seuils (vert
   else BAR_COLOR="$GREEN"; fi
 
   FILLED=$((PCT / 10)); EMPTY=$((10 - FILLED))
-  BAR=$(printf "%${FILLED}s" | tr ' ' '█')$(printf "%${EMPTY}s" | tr ' ' '░')
+  printf -v FILL "%${FILLED}s"; printf -v PAD "%${EMPTY}s"
+  BAR="${FILL// /█}${PAD// /░}"
 
   MINS=$((DURATION_MS / 60000)); SECS=$(((DURATION_MS % 60000) / 1000))
 
@@ -875,7 +877,7 @@ Les projets communautaires comme [ccstatusline](https://github.com/sirmalloc/ccs
 * Exécutez votre script manuellement pour vérifier qu'il produit une sortie
 * Si `disableAllHooks` est défini sur `true` dans vos paramètres, la barre de statut est également désactivée. Supprimez ce paramètre ou définissez-le sur `false` pour le réactiver.
 * Exécutez `claude --debug` pour enregistrer le code de sortie et stderr de la première invocation de barre de statut dans une session
-* Demandez à Claude de lire votre fichier de paramètres et d'exécuter la commande `statusLine` directement pour faire surface aux erreurs
+* Demandez à Claude de lire votre fichier de paramètres et d'exécuter la commande `statusLine` directement pour afficher les erreurs
 
 **La barre de statut affiche `--` ou des valeurs vides**
 
@@ -898,19 +900,19 @@ Les projets communautaires comme [ccstatusline](https://github.com/sirmalloc/ccs
 
 **Problèmes d'affichage avec les séquences d'échappement**
 
-* Les séquences d'échappement complexes (couleurs ANSI, liens OSC 8) peuvent occasionnellement causer une sortie corrompue si elles chevauchent d'autres mises à jour UI
+* Les séquences d'échappement complexes (couleurs ANSI, liens OSC 8) peuvent occasionnellement causer une sortie brouillée si elles chevauchent d'autres mises à jour UI
 * Si vous voyez du texte corrompu, essayez de simplifier votre script en sortie en texte brut
 * Les barres de statut multi-lignes avec codes d'échappement sont plus sujettes aux problèmes de rendu que le texte brut sur une seule ligne
 
 **Erreurs de script ou blocages**
 
 * Les scripts qui se terminent avec des codes non nuls ou ne produisent aucune sortie font que la barre de statut devient vide
-* Les scripts lents bloquent la barre de statut de la mise à jour jusqu'à ce qu'ils se terminent. Gardez les scripts rapides pour éviter une sortie obsolète.
+* Les scripts lents bloquent la barre de statut de se mettre à jour jusqu'à ce qu'ils se terminent. Gardez les scripts rapides pour éviter une sortie obsolète.
 * Si une nouvelle mise à jour se déclenche pendant qu'un script lent s'exécute, le script en cours est annulé
 * Testez votre script indépendamment avec une entrée fictive avant de le configurer
 
 **Les notifications partagent la ligne de la barre de statut**
 
-* Les notifications système comme les erreurs du serveur MCP, les mises à jour automatiques et les avertissements de jetons s'affichent sur le côté droit de la même ligne que votre barre de statut
+* Les notifications système comme les erreurs de serveur MCP, les mises à jour automatiques et les avertissements de jetons s'affichent sur le côté droit de la même ligne que votre barre de statut
 * L'activation du mode verbeux ajoute un compteur de jetons à cette zone
 * Sur les terminaux étroits, ces notifications peuvent tronquer votre sortie de barre de statut

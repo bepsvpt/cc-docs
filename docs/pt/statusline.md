@@ -15,10 +15,10 @@ As linhas de status são úteis quando você:
 * Trabalha em várias sessões e precisa distingui-las
 * Quer que a ramificação git e o status estejam sempre visíveis
 
-Aqui está um exemplo de uma [linha de status com múltiplas linhas](#display-multiple-lines) que exibe informações do git na primeira linha e uma barra de contexto codificada por cores na segunda.
+Aqui está um exemplo de uma [linha de status de múltiplas linhas](#display-multiple-lines) que exibe informações do git na primeira linha e uma barra de contexto codificada por cores na segunda.
 
 <Frame>
-  <img src="https://mintcdn.com/claude-code/nibzesLaJVh4ydOq/images/statusline-multiline.png?fit=max&auto=format&n=nibzesLaJVh4ydOq&q=85&s=60f11387658acc9ff75158ae85f2ac87" alt="Uma linha de status com múltiplas linhas mostrando nome do modelo, diretório, ramificação git na primeira linha, e uma barra de progresso de uso de contexto com custo e duração na segunda linha" width="776" height="212" data-path="images/statusline-multiline.png" />
+  <img src="https://mintcdn.com/claude-code/nibzesLaJVh4ydOq/images/statusline-multiline.png?fit=max&auto=format&n=nibzesLaJVh4ydOq&q=85&s=60f11387658acc9ff75158ae85f2ac87" alt="Uma linha de status de múltiplas linhas mostrando nome do modelo, diretório, ramificação git na primeira linha, e uma barra de progresso de uso de contexto com custo e duração na segunda linha" width="776" height="212" data-path="images/statusline-multiline.png" />
 </Frame>
 
 Esta página orienta você sobre [configurar uma linha de status básica](#set-up-a-status-line), explica [como os dados fluem](#how-status-lines-work) do Claude Code para seu script, lista [todos os campos que você pode exibir](#available-data) e fornece [exemplos prontos para usar](#examples) para padrões comuns como status do git, rastreamento de custos e barras de progresso.
@@ -130,11 +130,11 @@ O Claude Code executa seu script e envia [dados de sessão JSON](#available-data
 
 **Quando é atualizado**
 
-Seu script é executado após cada nova mensagem do assistente, quando o modo de permissão muda ou quando o vim mode alterna. As atualizações são debounced em 300ms, significando que mudanças rápidas são agrupadas e seu script é executado uma vez que as coisas se estabilizam. Se uma nova atualização for acionada enquanto seu script ainda está em execução, a execução em andamento é cancelada. Se você editar seu script, as alterações não aparecerão até que sua próxima interação com o Claude Code acione uma atualização.
+Seu script é executado após cada nova mensagem do assistente, quando o modo de permissão muda ou quando o modo vim alterna. As atualizações são debounced em 300ms, significando que mudanças rápidas são agrupadas e seu script é executado uma vez que as coisas se estabilizam. Se uma nova atualização for acionada enquanto seu script ainda está em execução, a execução em andamento é cancelada. Se você editar seu script, as alterações não aparecerão até que sua próxima interação com o Claude Code acione uma atualização.
 
 **O que seu script pode exibir**
 
-* **Múltiplas linhas**: cada declaração `echo` ou `print` é exibida como uma linha separada. Consulte o [exemplo com múltiplas linhas](#display-multiple-lines).
+* **Múltiplas linhas**: cada instrução `echo` ou `print` é exibida como uma linha separada. Consulte o [exemplo de múltiplas linhas](#display-multiple-lines).
 * **Cores**: use [códigos de escape ANSI](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors) como `\033[32m` para verde (o terminal deve suportá-los). Consulte o [exemplo de status do git](#git-status-with-colors).
 * **Links**: use [sequências de escape OSC 8](https://en.wikipedia.org/wiki/ANSI_escape_code#OSC) para tornar o texto clicável (Cmd+clique no macOS, Ctrl+clique no Windows/Linux). Requer um terminal que suporte hiperlinks como iTerm2, Kitty ou WezTerm. Consulte o [exemplo de links clicáveis](#clickable-links).
 
@@ -153,7 +153,7 @@ O Claude Code envia os seguintes campos JSON para seu script via stdin:
 | `cost.total_duration_ms`                                                  | Tempo total decorrido desde o início da sessão, em milissegundos                                                                                                                                        |
 | `cost.total_api_duration_ms`                                              | Tempo total gasto aguardando respostas de API em milissegundos                                                                                                                                          |
 | `cost.total_lines_added`, `cost.total_lines_removed`                      | Linhas de código alteradas                                                                                                                                                                              |
-| `context_window.total_input_tokens`, `context_window.total_output_tokens` | Contagens cumulativas de tokens em toda a sessão                                                                                                                                                        |
+| `context_window.total_input_tokens`, `context_window.total_output_tokens` | Contagens de tokens cumulativas em toda a sessão                                                                                                                                                        |
 | `context_window.context_window_size`                                      | Tamanho máximo da janela de contexto em tokens. 200000 por padrão, ou 1000000 para modelos com contexto estendido.                                                                                      |
 | `context_window.used_percentage`                                          | Porcentagem pré-calculada da janela de contexto usada                                                                                                                                                   |
 | `context_window.remaining_percentage`                                     | Porcentagem pré-calculada da janela de contexto restante                                                                                                                                                |
@@ -163,7 +163,7 @@ O Claude Code envia os seguintes campos JSON para seu script via stdin:
 | `transcript_path`                                                         | Caminho para o arquivo de transcrição de conversa                                                                                                                                                       |
 | `version`                                                                 | Versão do Claude Code                                                                                                                                                                                   |
 | `output_style.name`                                                       | Nome do estilo de saída atual                                                                                                                                                                           |
-| `vim.mode`                                                                | Modo vim atual (`NORMAL` ou `INSERT`) quando [vim mode](/pt/interactive-mode#vim-editor-mode) está habilitado                                                                                           |
+| `vim.mode`                                                                | Modo vim atual (`NORMAL` ou `INSERT`) quando [modo vim](/pt/interactive-mode#vim-editor-mode) está habilitado                                                                                           |
 | `agent.name`                                                              | Nome do agente ao executar com a flag `--agent` ou configurações de agente configuradas                                                                                                                 |
 | `worktree.name`                                                           | Nome da worktree ativa. Presente apenas durante sessões `--worktree`                                                                                                                                    |
 | `worktree.path`                                                           | Caminho absoluto para o diretório da worktree                                                                                                                                                           |
@@ -230,7 +230,7 @@ O Claude Code envia os seguintes campos JSON para seu script via stdin:
 
   **Campos que podem estar ausentes** (não presentes em JSON):
 
-  * `vim`: aparece apenas quando vim mode está habilitado
+  * `vim`: aparece apenas quando o modo vim está habilitado
   * `agent`: aparece apenas ao executar com a flag `--agent` ou configurações de agente configuradas
   * `worktree`: aparece apenas durante sessões `--worktree`. Quando presente, `branch` e `original_branch` também podem estar ausentes para worktrees baseadas em hook
 
@@ -270,7 +270,7 @@ Estes exemplos mostram padrões comuns de linha de status. Para usar qualquer ex
 2. Torne-o executável: `chmod +x ~/.claude/statusline.sh`
 3. Adicione o caminho às suas [configurações](#manually-configure-a-status-line)
 
-Os exemplos Bash usam [`jq`](https://jqlang.github.io/jq/) para analisar JSON. Python e Node.js têm análise JSON integrada.
+Os exemplos de Bash usam [`jq`](https://jqlang.github.io/jq/) para analisar JSON. Python e Node.js têm análise JSON integrada.
 
 ### Uso da janela de contexto
 
@@ -290,13 +290,14 @@ Exiba o modelo atual e o uso da janela de contexto com uma barra de progresso vi
   MODEL=$(echo "$input" | jq -r '.model.display_name')
   PCT=$(echo "$input" | jq -r '.context_window.used_percentage // 0' | cut -d. -f1)
 
-  # Build progress bar: printf creates spaces, tr replaces with blocks
+  # Build progress bar: printf -v creates a run of spaces, then
+  # ${var// /▓} replaces each space with a block character
   BAR_WIDTH=10
   FILLED=$((PCT * BAR_WIDTH / 100))
   EMPTY=$((BAR_WIDTH - FILLED))
   BAR=""
-  [ "$FILLED" -gt 0 ] && BAR=$(printf "%${FILLED}s" | tr ' ' '▓')
-  [ "$EMPTY" -gt 0 ] && BAR="${BAR}$(printf "%${EMPTY}s" | tr ' ' '░')"
+  [ "$FILLED" -gt 0 ] && printf -v FILL "%${FILLED}s" && BAR="${FILL// /▓}"
+  [ "$EMPTY" -gt 0 ] && printf -v PAD "%${EMPTY}s" && BAR="${BAR}${PAD// /░}"
 
   echo "[$MODEL] $BAR $PCT%"
   ```
@@ -495,13 +496,13 @@ Cada script formata o custo como moeda e converte milissegundos em minutos e seg
 
 ### Exibir múltiplas linhas
 
-Seu script pode exibir múltiplas linhas para criar uma exibição mais rica. Cada declaração `echo` produz uma linha separada na área de status.
+Seu script pode exibir múltiplas linhas para criar uma exibição mais rica. Cada instrução `echo` produz uma linha separada na área de status.
 
 <Frame>
-  <img src="https://mintcdn.com/claude-code/nibzesLaJVh4ydOq/images/statusline-multiline.png?fit=max&auto=format&n=nibzesLaJVh4ydOq&q=85&s=60f11387658acc9ff75158ae85f2ac87" alt="Uma linha de status com múltiplas linhas mostrando nome do modelo, diretório, ramificação git na primeira linha, e uma barra de progresso de uso de contexto com custo e duração na segunda linha" width="776" height="212" data-path="images/statusline-multiline.png" />
+  <img src="https://mintcdn.com/claude-code/nibzesLaJVh4ydOq/images/statusline-multiline.png?fit=max&auto=format&n=nibzesLaJVh4ydOq&q=85&s=60f11387658acc9ff75158ae85f2ac87" alt="Uma linha de status de múltiplas linhas mostrando nome do modelo, diretório, ramificação git na primeira linha, e uma barra de progresso de uso de contexto com custo e duração na segunda linha" width="776" height="212" data-path="images/statusline-multiline.png" />
 </Frame>
 
-Este exemplo combina várias técnicas: cores baseadas em limite (verde abaixo de 70%, amarelo 70-89%, vermelho 90%+), uma barra de progresso e informações de ramificação git. Cada declaração `print` ou `echo` cria uma linha separada:
+Este exemplo combina várias técnicas: cores baseadas em limite (verde abaixo de 70%, amarelo 70-89%, vermelho 90%+), uma barra de progresso e informações de ramificação git. Cada instrução `print` ou `echo` cria uma linha separada:
 
 <CodeGroup>
   ```bash Bash theme={null}
@@ -522,7 +523,8 @@ Este exemplo combina várias técnicas: cores baseadas em limite (verde abaixo d
   else BAR_COLOR="$GREEN"; fi
 
   FILLED=$((PCT / 10)); EMPTY=$((10 - FILLED))
-  BAR=$(printf "%${FILLED}s" | tr ' ' '█')$(printf "%${EMPTY}s" | tr ' ' '░')
+  printf -v FILL "%${FILLED}s"; printf -v PAD "%${EMPTY}s"
+  BAR="${FILL// /█}${PAD// /░}"
 
   MINS=$((DURATION_MS / 60000)); SECS=$(((DURATION_MS % 60000) / 1000))
 
@@ -871,7 +873,7 @@ Projetos comunitários como [ccstatusline](https://github.com/sirmalloc/ccstatus
 **Linha de status não aparecendo**
 
 * Verifique se seu script é executável: `chmod +x ~/.claude/statusline.sh`
-* Verifique se seu script imprime para stdout, não stderr
+* Verifique se seu script produz saída para stdout, não stderr
 * Execute seu script manualmente para verificar se produz saída
 * Se `disableAllHooks` estiver definido como `true` em suas configurações, a linha de status também será desabilitada. Remova esta configuração ou defina-a como `false` para reabilitar.
 * Execute `claude --debug` para registrar o código de saída e stderr da primeira invocação de linha de status em uma sessão
@@ -900,7 +902,7 @@ Projetos comunitários como [ccstatusline](https://github.com/sirmalloc/ccstatus
 
 * Sequências de escape complexas (cores ANSI, links OSC 8) podem ocasionalmente causar saída corrompida se se sobrepuserem com outras atualizações da interface
 * Se você vir texto corrompido, tente simplificar seu script para saída de texto simples
-* Linhas de status com múltiplas linhas com códigos de escape são mais propensas a problemas de renderização do que texto simples de linha única
+* Linhas de status de múltiplas linhas com códigos de escape são mais propensas a problemas de renderização do que texto simples de linha única
 
 **Erros de script ou travamentos**
 
@@ -913,4 +915,4 @@ Projetos comunitários como [ccstatusline](https://github.com/sirmalloc/ccstatus
 
 * Notificações do sistema como erros de servidor MCP, atualizações automáticas e avisos de token são exibidas no lado direito da mesma linha que sua linha de status
 * Habilitar modo verbose adiciona um contador de tokens a esta área
-* Em terminais estreitos, essas notificações podem truncar a saída da sua linha de status
+* Em terminais estreitos, essas notificações podem truncar sua saída de linha de status

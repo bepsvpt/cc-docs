@@ -395,7 +395,7 @@ O en línea en `plugin.json`:
 
 **Características de MCP de plugins**:
 
-* **Ciclo de vida automático**: Los servidores se inician cuando el plugin se habilita, pero debe reiniciar Claude Code para aplicar cambios en el servidor MCP (habilitación o deshabilitación)
+* **Ciclo de vida automático**: Al iniciar la sesión, los servidores de los plugins habilitados se conectan automáticamente. Si habilita o deshabilita un plugin durante una sesión, ejecute `/reload-plugins` para conectar o desconectar sus servidores MCP
 * **Variables de entorno**: Use `${CLAUDE_PLUGIN_ROOT}` para rutas relativas al plugin
 * **Acceso a variables de entorno del usuario**: Acceso a las mismas variables de entorno que los servidores configurados manualmente
 * **Múltiples tipos de transporte**: Soporte para transportes stdio, SSE e HTTP (el soporte de transporte puede variar según el servidor)
@@ -944,6 +944,19 @@ Esto es particularmente útil cuando se trabaja con servidores MCP que:
   Si frecuentemente encuentra advertencias de salida con servidores MCP específicos, considere aumentar el límite o configurar el servidor para paginar o filtrar sus respuestas.
 </Warning>
 
+## Responder a solicitudes de elicitación de MCP
+
+Los servidores MCP pueden solicitar entrada estructurada de usted durante una tarea usando elicitación. Cuando un servidor necesita información que no puede obtener por sí solo, Claude Code muestra un diálogo interactivo y pasa su respuesta de vuelta al servidor. No se requiere configuración de su parte: los diálogos de elicitación aparecen automáticamente cuando un servidor los solicita.
+
+Los servidores pueden solicitar entrada de dos formas:
+
+* **Modo de formulario**: Claude Code muestra un diálogo con campos de formulario definidos por el servidor (por ejemplo, un indicador de nombre de usuario y contraseña). Complete los campos y envíe.
+* **Modo de URL**: Claude Code abre una URL del navegador para autenticación o aprobación. Complete el flujo en el navegador, luego confirme en la CLI.
+
+Para responder automáticamente a solicitudes de elicitación sin mostrar un diálogo, use el [hook `Elicitation`](/es/hooks#Elicitation).
+
+Si está construyendo un servidor MCP que usa elicitación, vea la [especificación de elicitación de MCP](https://modelcontextprotocol.io/docs/learn/client-concepts#elicitation) para detalles de protocolo y ejemplos de esquema.
+
 ## Usar recursos MCP
 
 Los servidores MCP pueden exponer recursos que puede referenciar usando menciones @, similar a cómo referencia archivos.
@@ -1010,16 +1023,17 @@ Agregue instrucciones claras y descriptivas del servidor que expliquen:
 
 ### Configurar búsqueda de herramientas
 
-La búsqueda de herramientas se ejecuta en modo automático de forma predeterminada, lo que significa que se activa solo cuando las definiciones de sus herramientas MCP exceden el umbral de contexto. Si tiene pocas herramientas, se cargan normalmente sin búsqueda de herramientas. Esta característica requiere modelos que admitan bloques `tool_reference`: Sonnet 4 y posterior, u Opus 4 y posterior. Los modelos Haiku no admiten búsqueda de herramientas.
+La búsqueda de herramientas está habilitada por defecto: las herramientas MCP se difieren y se descubren bajo demanda. Cuando `ANTHROPIC_BASE_URL` apunta a un host que no es de primera parte, la búsqueda de herramientas está deshabilitada por defecto porque la mayoría de los proxies no reenvían bloques `tool_reference`. Establezca `ENABLE_TOOL_SEARCH` explícitamente si su proxy lo hace. Esta característica requiere modelos que admitan bloques `tool_reference`: Sonnet 4 y posterior, u Opus 4 y posterior. Los modelos Haiku no admiten búsqueda de herramientas.
 
 Controle el comportamiento de búsqueda de herramientas con la variable de entorno `ENABLE_TOOL_SEARCH`:
 
-| Valor      | Comportamiento                                                                             |
-| :--------- | :----------------------------------------------------------------------------------------- |
-| `auto`     | Se activa cuando las herramientas MCP exceden el 10% del contexto (predeterminado)         |
-| `auto:<N>` | Se activa en umbral personalizado, donde `<N>` es un porcentaje (p. ej., `auto:5` para 5%) |
-| `true`     | Siempre habilitado                                                                         |
-| `false`    | Deshabilitado, todas las herramientas MCP cargadas de antemano                             |
+| Valor            | Comportamiento                                                                                          |
+| :--------------- | :------------------------------------------------------------------------------------------------------ |
+| (sin establecer) | Habilitado por defecto. Deshabilitado cuando `ANTHROPIC_BASE_URL` es un host que no es de primera parte |
+| `true`           | Siempre habilitado, incluyendo para `ANTHROPIC_BASE_URL` que no es de primera parte                     |
+| `auto`           | Se activa cuando las herramientas MCP exceden el 10% del contexto                                       |
+| `auto:<N>`       | Se activa en umbral personalizado, donde `<N>` es un porcentaje (p. ej., `auto:5` para 5%)              |
+| `false`          | Deshabilitado, todas las herramientas MCP cargadas de antemano                                          |
 
 ```bash  theme={null}
 # Usar un umbral personalizado del 5%

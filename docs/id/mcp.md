@@ -395,7 +395,7 @@ Atau inline dalam `plugin.json`:
 
 **Fitur MCP plugin**:
 
-* **Siklus hidup otomatis**: Server dimulai ketika plugin diaktifkan, tetapi Anda harus memulai ulang Claude Code untuk menerapkan perubahan server MCP (mengaktifkan atau menonaktifkan)
+* **Siklus hidup otomatis**: Pada startup sesi, server untuk plugin yang diaktifkan terhubung secara otomatis. Jika Anda mengaktifkan atau menonaktifkan plugin selama sesi, jalankan `/reload-plugins` untuk menghubungkan atau memutuskan server MCP-nya
 * **Variabel lingkungan**: Gunakan `${CLAUDE_PLUGIN_ROOT}` untuk jalur relatif plugin
 * **Akses lingkungan pengguna**: Akses ke variabel lingkungan yang sama seperti server yang dikonfigurasi secara manual
 * **Jenis transport berganda**: Dukungan transport stdio, SSE, dan HTTP (dukungan transport dapat bervariasi menurut server)
@@ -944,6 +944,19 @@ Ini sangat berguna saat bekerja dengan server MCP yang:
   Jika Anda sering mengalami peringatan output dengan server MCP tertentu, pertimbangkan untuk meningkatkan batas atau mengonfigurasi server untuk membuat halaman atau memfilter responsnya.
 </Warning>
 
+## Tanggapi permintaan elicitasi MCP
+
+Server MCP dapat meminta input terstruktur dari Anda di tengah tugas menggunakan elicitasi. Ketika server memerlukan informasi yang tidak dapat diperolehnya sendiri, Claude Code menampilkan dialog interaktif dan meneruskan respons Anda kembali ke server. Tidak ada konfigurasi yang diperlukan di pihak Anda: dialog elicitasi muncul secara otomatis ketika server memintanya.
+
+Server dapat meminta input dengan dua cara:
+
+* **Mode formulir**: Claude Code menampilkan dialog dengan field formulir yang ditentukan oleh server (misalnya, prompt nama pengguna dan kata sandi). Isi field dan kirim.
+* **Mode URL**: Claude Code membuka URL browser untuk autentikasi atau persetujuan. Selesaikan alur di browser, kemudian konfirmasi di CLI.
+
+Untuk merespons otomatis permintaan elicitasi tanpa menampilkan dialog, gunakan [hook `Elicitation`](/id/hooks#elicitation).
+
+Jika Anda membangun server MCP yang menggunakan elicitasi, lihat [spesifikasi elicitasi MCP](https://modelcontextprotocol.io/docs/learn/client-concepts#elicitation) untuk detail protokol dan contoh skema.
+
 ## Gunakan sumber daya MCP
 
 Server MCP dapat mengekspos sumber daya yang dapat Anda referensikan menggunakan penyebutan @, mirip dengan cara Anda mereferensikan file.
@@ -1010,16 +1023,17 @@ Tambahkan instruksi server yang jelas dan deskriptif yang menjelaskan:
 
 ### Konfigurasi pencarian alat
 
-Pencarian alat berjalan dalam mode otomatis secara default, artinya diaktifkan hanya ketika definisi alat MCP Anda melebihi ambang batas konteks. Jika Anda memiliki beberapa alat, mereka dimuat secara normal tanpa pencarian alat. Fitur ini memerlukan model yang mendukung blok `tool_reference`: Sonnet 4 dan lebih baru, atau Opus 4 dan lebih baru. Model Haiku tidak mendukung pencarian alat.
+Pencarian alat diaktifkan secara default: alat MCP ditangguhkan dan ditemukan sesuai permintaan. Ketika `ANTHROPIC_BASE_URL` menunjuk ke host non-pihak pertama, pencarian alat dinonaktifkan secara default karena sebagian besar proxy tidak meneruskan blok `tool_reference`. Atur `ENABLE_TOOL_SEARCH` secara eksplisit jika proxy Anda melakukannya. Fitur ini memerlukan model yang mendukung blok `tool_reference`: Sonnet 4 dan lebih baru, atau Opus 4 dan lebih baru. Model Haiku tidak mendukung pencarian alat.
 
 Kontrol perilaku pencarian alat dengan variabel lingkungan `ENABLE_TOOL_SEARCH`:
 
-| Nilai      | Perilaku                                                                                           |
-| :--------- | :------------------------------------------------------------------------------------------------- |
-| `auto`     | Diaktifkan ketika alat MCP melebihi 10% konteks (default)                                          |
-| `auto:<N>` | Diaktifkan pada ambang batas khusus, di mana `<N>` adalah persentase (misalnya, `auto:5` untuk 5%) |
-| `true`     | Selalu diaktifkan                                                                                  |
-| `false`    | Dinonaktifkan, semua alat MCP dimuat sebelumnya                                                    |
+| Nilai          | Perilaku                                                                                           |
+| :------------- | :------------------------------------------------------------------------------------------------- |
+| (tidak diatur) | Diaktifkan secara default. Dinonaktifkan ketika `ANTHROPIC_BASE_URL` adalah host non-pihak pertama |
+| `true`         | Selalu diaktifkan, termasuk untuk `ANTHROPIC_BASE_URL` non-pihak pertama                           |
+| `auto`         | Diaktifkan ketika alat MCP melebihi 10% konteks                                                    |
+| `auto:<N>`     | Diaktifkan pada ambang batas khusus, di mana `<N>` adalah persentase (misalnya, `auto:5` untuk 5%) |
+| `false`        | Dinonaktifkan, semua alat MCP dimuat sebelumnya                                                    |
 
 ```bash  theme={null}
 # Gunakan ambang batas khusus 5%

@@ -42,22 +42,23 @@ Führen Sie `/terminal-setup` in Claude Code aus, um Shift+Enter automatisch fü
 
 ### Benachrichtigungseinrichtung
 
-Verpassen Sie nie, wenn Claude eine Aufgabe mit ordnungsgemäßer Benachrichtigungskonfiguration abschließt:
+Wenn Claude die Arbeit abgeschlossen hat und auf Ihre Eingabe wartet, wird ein Benachrichtigungsereignis ausgelöst. Sie können dieses Ereignis als Desktop-Benachrichtigung über Ihr Terminal anzeigen oder benutzerdefinierte Logik mit [Benachrichtigungshooks](/de/hooks#notification) ausführen.
 
-#### iTerm 2 Systembenachrichtigungen
+#### Terminal-Benachrichtigungen
 
-Für iTerm 2 Benachrichtigungen, wenn Aufgaben abgeschlossen sind:
+Kitty und Ghostty unterstützen Desktop-Benachrichtigungen ohne zusätzliche Konfiguration. iTerm 2 erfordert Setup:
 
-1. Öffnen Sie iTerm 2 Einstellungen
-2. Navigieren Sie zu Profile → Terminal
-3. Aktivieren Sie „Silence bell" und Filter Alerts → „Send escape sequence-generated alerts"
-4. Stellen Sie Ihre bevorzugte Benachrichtigungsverzögerung ein
+1. Öffnen Sie iTerm 2 Einstellungen → Profile → Terminal
+2. Aktivieren Sie „Notification Center Alerts"
+3. Klicken Sie auf „Filter Alerts" und aktivieren Sie „Send escape sequence-generated alerts"
 
-Beachten Sie, dass diese Benachrichtigungen spezifisch für iTerm 2 sind und im Standard-macOS-Terminal nicht verfügbar sind.
+Wenn Benachrichtigungen nicht angezeigt werden, überprüfen Sie, ob Ihre Terminalanwendung in Ihren Betriebssystemeinstellungen Benachrichtigungsberechtigungen hat.
 
-#### Benutzerdefinierte Benachrichtigungshooks
+Andere Terminals, einschließlich des Standard-macOS-Terminals, unterstützen keine nativen Benachrichtigungen. Verwenden Sie stattdessen [Benachrichtigungshooks](/de/hooks#notification).
 
-Für erweiterte Benachrichtigungsbehandlung können Sie [Benachrichtigungshooks](/de/hooks#notification) erstellen, um Ihre eigene Logik auszuführen.
+#### Benachrichtigungshooks
+
+Um benutzerdefiniertes Verhalten hinzuzufügen, wenn Benachrichtigungen ausgelöst werden, z. B. das Abspielen eines Sounds oder das Senden einer Nachricht, konfigurieren Sie einen [Benachrichtigungshook](/de/hooks#notification). Hooks werden neben Terminal-Benachrichtigungen ausgeführt, nicht als Ersatz.
 
 ### Umgang mit großen Eingaben
 

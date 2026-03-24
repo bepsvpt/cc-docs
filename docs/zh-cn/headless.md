@@ -9,7 +9,7 @@
 [Agent SDK](https://platform.claude.com/docs/zh-CN/agent-sdk/overview) 为您提供了与 Claude Code 相同的工具、agent 循环和上下文管理。它可作为 CLI 用于脚本和 CI/CD，或作为 [Python](https://platform.claude.com/docs/zh-CN/agent-sdk/python) 和 [TypeScript](https://platform.claude.com/docs/zh-CN/agent-sdk/typescript) 包供完整的编程控制。
 
 <Note>
-  CLI 之前称为"headless mode"。`-p` 标志和所有 CLI 选项的工作方式相同。
+  CLI 之前被称为"headless mode"。`-p` 标志和所有 CLI 选项的工作方式相同。
 </Note>
 
 要从 CLI 以编程方式运行 Claude Code，请使用 `-p` 传递您的提示和任何 [CLI 选项](/zh-CN/cli-reference)：
@@ -18,7 +18,7 @@
 claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"
 ```
 
-本页面介绍通过 CLI (`claude -p`) 使用 Agent SDK。对于具有结构化输出、工具批准回调和本机消息对象的 Python 和 TypeScript SDK 包，请参阅 [完整 Agent SDK 文档](https://platform.claude.com/docs/zh-CN/agent-sdk/overview)。
+本页面涵盖通过 CLI (`claude -p`) 使用 Agent SDK。对于具有结构化输出、工具批准回调和原生消息对象的 Python 和 TypeScript SDK 包，请参阅 [完整 Agent SDK 文档](https://platform.claude.com/docs/zh-CN/agent-sdk/overview)。
 
 ## 基本用法
 
@@ -52,7 +52,7 @@ claude -p "What does the auth module do?"
 claude -p "Summarize this project" --output-format json
 ```
 
-要获得符合特定架构的输出，请使用 `--output-format json` 与 `--json-schema` 和 [JSON Schema](https://json-schema.org/) 定义。响应包括有关请求的元数据（会话 ID、使用情况等），结构化输出在 `structured_output` 字段中。
+要获得符合特定架构的输出，请使用 `--output-format json` 与 `--json-schema` 和 [JSON Schema](https://json-schema.org/) 定义。响应包括关于请求的元数据（会话 ID、使用情况等），结构化输出在 `structured_output` 字段中。
 
 此示例从 auth.py 中提取函数名称并将其作为字符串数组返回：
 
@@ -92,7 +92,7 @@ claude -p "Write a poem" --output-format stream-json --verbose --include-partial
   jq -rj 'select(.type == "stream_event" and .event.delta.type? == "text_delta") | .event.delta.text'
 ```
 
-有关具有回调和消息对象的编程流式传输，请参阅 Agent SDK 文档中的 [实时流式传输响应](https://platform.claude.com/docs/zh-CN/agent-sdk/streaming-output)。
+对于具有回调和消息对象的编程流式传输，请参阅 Agent SDK 文档中的 [实时流式传输响应](https://platform.claude.com/docs/zh-CN/agent-sdk/streaming-output)。
 
 ### 自动批准工具
 
@@ -115,7 +115,7 @@ claude -p "Look at my staged changes and create an appropriate commit" \
 `--allowedTools` 标志使用 [权限规则语法](/zh-CN/settings#permission-rule-syntax)。尾部的 ` *` 启用前缀匹配，因此 `Bash(git diff *)` 允许任何以 `git diff` 开头的命令。空格在 `*` 之前很重要：没有它，`Bash(git diff*)` 也会匹配 `git diff-index`。
 
 <Note>
-  用户调用的 [skills](/zh-CN/skills) 如 `/commit` 和 [内置命令](/zh-CN/interactive-mode#built-in-commands) 仅在交互模式中可用。在 `-p` 模式中，改为描述您想要完成的任务。
+  用户调用的 [skills](/zh-CN/skills) 如 `/commit` 和 [内置命令](/zh-CN/commands) 仅在交互模式下可用。在 `-p` 模式下，改为描述您想要完成的任务。
 </Note>
 
 ### 自定义系统提示

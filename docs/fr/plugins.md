@@ -281,7 +281,9 @@ Utilisez le drapeau `--plugin-dir` pour tester les plugins pendant le développe
 claude --plugin-dir ./my-plugin
 ```
 
-À mesure que vous apportez des modifications à votre plugin, exécutez `/reload-plugins` pour récupérer les mises à jour sans redémarrer. Les modifications de la configuration du serveur LSP nécessitent toujours un redémarrage complet. Testez vos composants de plugin :
+Quand un plugin `--plugin-dir` a le même nom qu'un plugin marketplace installé, la copie locale prend la priorité pour cette session. Cela vous permet de tester les modifications d'un plugin que vous avez déjà installé sans le désinstaller d'abord. Les plugins marketplace forcément activés par les paramètres gérés sont la seule exception et ne peuvent pas être remplacés.
+
+À mesure que vous apportez des modifications à votre plugin, exécutez `/reload-plugins` pour récupérer les mises à jour sans redémarrer. Cela recharge les commandes, les skills, les agents, les hooks, les serveurs MCP du plugin et les serveurs LSP du plugin. Testez vos composants de plugin :
 
 * Essayez vos skills avec `/plugin-name:skill-name`
 * Vérifiez que les agents apparaissent dans `/agents`

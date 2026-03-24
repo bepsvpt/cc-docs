@@ -16,11 +16,11 @@ Halaman ini mencakup cara untuk:
 * [Menulis dan mengorganisir file CLAUDE.md](#claudemd-files)
 * [Membatasi aturan ke tipe file tertentu](#organize-rules-with-clauderules) dengan `.claude/rules/`
 * [Mengonfigurasi auto memory](#auto-memory) agar Claude membuat catatan secara otomatis
-* [Memecahkan masalah](#troubleshoot-memory-issues) ketika instruksi tidak diikuti
+* [Troubleshoot](#troubleshoot-memory-issues) ketika instruksi tidak diikuti
 
 ## CLAUDE.md vs auto memory
 
-Claude Code memiliki dua sistem memori yang saling melengkapi. Keduanya dimuat di awal setiap percakapan. Claude memperlakukan mereka sebagai konteks, bukan konfigurasi yang ditegakkan. Semakin spesifik dan ringkas instruksi Anda, semakin konsisten Claude mengikutinya.
+Claude Code memiliki dua sistem memori yang saling melengkapi. Keduanya dimuat di awal setiap percakapan. Claude memperlakukan mereka sebagai konteks, bukan konfigurasi yang diberlakukan. Semakin spesifik dan ringkas instruksi Anda, semakin konsisten Claude mengikutinya.
 
 |                           | File CLAUDE.md                                    | Auto memory                                                       |
 | :------------------------ | :------------------------------------------------ | :---------------------------------------------------------------- |
@@ -62,7 +62,7 @@ CLAUDE.md proyek dapat disimpan di `./CLAUDE.md` atau `./.claude/CLAUDE.md`. Bua
 
 ### Tulis instruksi yang efektif
 
-File CLAUDE.md dimuat ke dalam context window di awal setiap sesi, mengonsumsi token bersama percakapan Anda. Karena mereka adalah konteks daripada konfigurasi yang ditegakkan, cara Anda menulis instruksi mempengaruhi seberapa andal Claude mengikutinya. Instruksi yang spesifik, ringkas, dan terstruktur dengan baik bekerja paling baik.
+File CLAUDE.md dimuat ke dalam context window di awal setiap sesi, mengonsumsi token bersama percakapan Anda. Karena mereka adalah konteks daripada konfigurasi yang diberlakukan, cara Anda menulis instruksi mempengaruhi seberapa andal Claude mengikutinya. Instruksi yang spesifik, ringkas, dan terstruktur dengan baik bekerja paling baik.
 
 **Ukuran**: targetkan di bawah 200 baris per file CLAUDE.md. File yang lebih panjang mengonsumsi lebih banyak konteks dan mengurangi kepatuhan. Jika instruksi Anda berkembang besar, pisahkan menggunakan [impor](#import-additional-files) atau file [`.claude/rules/`](#organize-rules-with-clauderules).
 
@@ -174,7 +174,7 @@ Gunakan pola glob di bidang `paths` untuk mencocokkan file berdasarkan ekstensi,
 | `*.md`                 | File Markdown di root proyek               |
 | `src/components/*.tsx` | Komponen React di direktori tertentu       |
 
-Anda dapat menentukan beberapa pola dan menggunakan ekspansi kurung untuk mencocokkan beberapa ekstensi dalam satu pola:
+Anda dapat menentukan beberapa pola dan menggunakan ekspansi brace untuk mencocokkan beberapa ekstensi dalam satu pola:
 
 ```markdown  theme={null}
 ---
@@ -185,9 +185,9 @@ paths:
 ---
 ```
 
-#### Bagikan aturan lintas proyek dengan symlink
+#### Bagikan aturan lintas proyek dengan symlinks
 
-Direktori `.claude/rules/` mendukung symlink, jadi Anda dapat mempertahankan set aturan bersama dan menautkannya ke beberapa proyek. Symlink diselesaikan dan dimuat secara normal, dan symlink melingkar terdeteksi dan ditangani dengan anggun.
+Direktori `.claude/rules/` mendukung symlinks, jadi Anda dapat mempertahankan set aturan bersama dan menautkannya ke beberapa proyek. Symlinks diselesaikan dan dimuat secara normal, dan symlinks melingkar terdeteksi dan ditangani dengan anggun.
 
 Contoh ini menautkan direktori bersama dan file individual:
 
@@ -311,17 +311,17 @@ File auto memory adalah markdown biasa yang dapat Anda edit atau hapus kapan saj
 
 ## Lihat dan edit dengan `/memory`
 
-Perintah `/memory` mencantumkan semua file CLAUDE.md dan rules yang dimuat dalam sesi saat ini, memungkinkan Anda mengalihkan auto memory on atau off, dan menyediakan tautan untuk membuka folder auto memory. Pilih file apa pun untuk membukanya di editor Anda.
+Perintah `/memory` mencantumkan semua file CLAUDE.md dan rules yang dimuat dalam sesi saat ini, memungkinkan Anda mengalihkan auto memory aktif atau mati, dan menyediakan tautan untuk membuka folder auto memory. Pilih file apa pun untuk membukanya di editor Anda.
 
 Ketika Anda meminta Claude untuk mengingat sesuatu, seperti "selalu gunakan pnpm, bukan npm" atau "ingat bahwa tes API memerlukan instans Redis lokal," Claude menyimpannya ke auto memory. Untuk menambahkan instruksi ke CLAUDE.md sebagai gantinya, minta Claude secara langsung, seperti "tambahkan ini ke CLAUDE.md," atau edit file sendiri melalui `/memory`.
 
-## Memecahkan masalah memori
+## Troubleshoot masalah memori
 
 Ini adalah masalah paling umum dengan CLAUDE.md dan auto memory, bersama dengan langkah-langkah untuk men-debug mereka.
 
 ### Claude tidak mengikuti CLAUDE.md saya
 
-CLAUDE.md adalah konteks, bukan penegakan. Claude membacanya dan mencoba mengikutinya, tetapi tidak ada jaminan kepatuhan ketat, terutama untuk instruksi yang samar atau bertentangan.
+Konten CLAUDE.md disampaikan sebagai pesan pengguna setelah prompt sistem, bukan sebagai bagian dari prompt sistem itu sendiri. Claude membacanya dan mencoba mengikutinya, tetapi tidak ada jaminan kepatuhan ketat, terutama untuk instruksi yang samar atau bertentangan.
 
 Untuk men-debug:
 
@@ -330,17 +330,19 @@ Untuk men-debug:
 * Buat instruksi lebih spesifik. "Gunakan indentasi 2 spasi" bekerja lebih baik daripada "format kode dengan baik."
 * Cari instruksi yang bertentangan di seluruh file CLAUDE.md. Jika dua file memberikan panduan berbeda untuk perilaku yang sama, Claude mungkin memilih satu secara sembarangan.
 
+Untuk instruksi yang Anda inginkan di tingkat prompt sistem, gunakan [`--append-system-prompt`](/id/cli-reference#system-prompt-flags). Ini harus dilewatkan setiap invokasi, jadi lebih cocok untuk skrip dan otomasi daripada penggunaan interaktif.
+
 <Tip>
-  Gunakan hook [`InstructionsLoaded`](/id/hooks#instructionsloaded) untuk mencatat dengan tepat file instruksi mana yang dimuat, kapan mereka dimuat, dan mengapa. Ini berguna untuk men-debug aturan khusus jalur atau file yang dimuat malas di subdirektori.
+  Gunakan [hook `InstructionsLoaded`](/id/hooks#instructionsloaded) untuk mencatat dengan tepat file instruksi mana yang dimuat, kapan mereka dimuat, dan mengapa. Ini berguna untuk men-debug aturan khusus jalur atau file yang dimuat malas di subdirektori.
 </Tip>
 
 ### Saya tidak tahu apa yang disimpan auto memory
 
-Jalankan `/memory` dan pilih folder auto memory untuk menelusuri apa yang Claude simpan. Semuanya adalah markdown biasa yang dapat Anda baca, edit, atau hapus.
+Jalankan `/memory` dan pilih folder auto memory untuk menelusuri apa yang telah disimpan Claude. Semuanya adalah markdown biasa yang dapat Anda baca, edit, atau hapus.
 
 ### CLAUDE.md saya terlalu besar
 
-File di atas 200 baris mengonsumsi lebih banyak konteks dan dapat mengurangi kepatuhan. Pindahkan konten terperinci ke file terpisah yang direferensikan dengan impor `@path` (lihat [Impor file tambahan](#import-additional-files)), atau pisahkan instruksi Anda di seluruh file [`.claude/rules/`](#organize-rules-with-clauderules).
+File di atas 200 baris mengonsumsi lebih banyak konteks dan dapat mengurangi kepatuhan. Pindahkan konten terperinci ke file terpisah yang direferensikan dengan impor `@path` (lihat [Impor file tambahan](#import-additional-files)), atau pisahkan instruksi Anda di seluruh file `.claude/rules/`.
 
 ### Instruksi tampak hilang setelah `/compact`
 

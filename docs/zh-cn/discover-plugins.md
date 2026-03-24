@@ -154,7 +154,7 @@ Anthropic 还维护一个[演示插件市场](https://github.com/anthropics/clau
   </Step>
 
   <Step title="使用您的新插件">
-    安装后，插件的命令立即可用。插件命令由插件名称命名空间，因此 **commit-commands** 提供诸如 `/commit-commands:commit` 之类的命令。
+    安装后，运行 `/reload-plugins` 以激活插件。插件命令由插件名称命名空间，因此 **commit-commands** 提供诸如 `/commit-commands:commit` 之类的命令。
 
     通过对文件进行更改并运行来尝试：
 
@@ -296,15 +296,13 @@ claude plugin uninstall formatter@your-org --scope project
 
 ### 应用插件更改而不重启
 
-当您在会话期间安装、启用或禁用插件时，某些更改（如新命令和 hooks）会立即生效。其他更改（包括 LSP 服务器更新）需要重启。
-
-要激活所有待处理的插件更改而不重启，请运行：
+当您在会话期间安装、启用或禁用插件时，运行 `/reload-plugins` 以在不重启的情况下获取所有更改：
 
 ```shell  theme={null}
 /reload-plugins
 ```
 
-Claude Code 重新加载所有活跃插件并报告加载的内容。如果添加或更新了任何 LSP 服务器，它会让您知道这些需要重启才能生效。
+Claude Code 重新加载所有活跃插件，并显示重新加载的命令、skills、agents、hooks、插件 MCP servers 和插件 LSP servers 的计数。
 
 ## 管理市场
 

@@ -6,37 +6,35 @@
 
 > Buat, kelola, dan bagikan skills untuk memperluas kemampuan Claude di Claude Code. Termasuk perintah kustom dan skills bundel.
 
-Skills memperluas apa yang dapat dilakukan Claude. Buat file `SKILL.md` dengan instruksi, dan Claude menambahkannya ke toolkit-nya. Claude menggunakan skills ketika relevan, atau Anda dapat menginvokasinya secara langsung dengan `/skill-name`.
+Skills memperluas apa yang dapat dilakukan Claude. Buat file `SKILL.md` dengan instruksi, dan Claude menambahkannya ke toolkit-nya. Claude menggunakan skills saat relevan, atau Anda dapat menginvokasinya secara langsung dengan `/skill-name`.
 
 <Note>
-  Untuk perintah bawaan seperti `/help` dan `/compact`, lihat [mode interaktif](/id/interactive-mode#built-in-commands).
+  Untuk perintah bawaan seperti `/help` dan `/compact`, lihat [referensi perintah bawaan](/id/commands).
 
-  **Perintah kustom telah digabungkan ke dalam skills.** File di `.claude/commands/deploy.md` dan skill di `.claude/skills/deploy/SKILL.md` keduanya membuat `/deploy` dan bekerja dengan cara yang sama. File `.claude/commands/` yang ada tetap berfungsi. Skills menambahkan fitur opsional: direktori untuk file pendukung, frontmatter untuk [mengontrol apakah Anda atau Claude menginvokasinya](#control-who-invokes-a-skill), dan kemampuan bagi Claude untuk memuatnya secara otomatis ketika relevan.
+  **Perintah kustom telah digabungkan ke dalam skills.** File di `.claude/commands/deploy.md` dan skill di `.claude/skills/deploy/SKILL.md` keduanya membuat `/deploy` dan bekerja dengan cara yang sama. File `.claude/commands/` yang ada tetap berfungsi. Skills menambahkan fitur opsional: direktori untuk file pendukung, frontmatter untuk [mengontrol apakah Anda atau Claude menginvokasinya](#control-who-invokes-a-skill), dan kemampuan bagi Claude untuk memuatnya secara otomatis saat relevan.
 </Note>
 
 Skills Claude Code mengikuti standar terbuka [Agent Skills](https://agentskills.io), yang bekerja di berbagai alat AI. Claude Code memperluas standar dengan fitur tambahan seperti [kontrol invokasi](#control-who-invokes-a-skill), [eksekusi subagent](#run-skills-in-a-subagent), dan [injeksi konteks dinamis](#inject-dynamic-context).
 
 ## Skills bundel
 
-Skills bundel dikirim dengan Claude Code dan tersedia di setiap sesi. Tidak seperti [perintah bawaan](/id/interactive-mode#built-in-commands), yang menjalankan logika tetap secara langsung, skills bundel berbasis prompt: mereka memberikan Claude playbook terperinci dan membiarkannya mengorkestrasi pekerjaan menggunakan tools-nya. Ini berarti skills bundel dapat menelurkan agen paralel, membaca file, dan beradaptasi dengan codebase Anda.
+Skills bundel dikirim dengan Claude Code dan tersedia di setiap sesi. Tidak seperti [perintah bawaan](/id/commands), yang menjalankan logika tetap secara langsung, skills bundel berbasis prompt: mereka memberikan Claude playbook terperinci dan membiarkannya mengorkestrasi pekerjaan menggunakan tools-nya. Ini berarti skills bundel dapat menelurkan agen paralel, membaca file, dan beradaptasi dengan codebase Anda.
 
-Anda menginvokasinya skills bundel dengan cara yang sama seperti skill lainnya: ketik `/` diikuti dengan nama skill.
+Anda menginvokasinya skills bundel dengan cara yang sama seperti skill lainnya: ketik `/` diikuti dengan nama skill. Dalam tabel di bawah, `<arg>` menunjukkan argumen yang diperlukan dan `[arg]` menunjukkan argumen opsional.
 
-* **`/simplify`**: meninjau file yang baru-baru ini diubah untuk masalah penggunaan kembali kode, kualitas, dan efisiensi, kemudian memperbaikinya. Jalankan setelah mengimplementasikan fitur atau perbaikan bug untuk membersihkan pekerjaan Anda. Ini menelurkan tiga agen review secara paralel (penggunaan kembali kode, kualitas kode, efisiensi), mengagregasi temuan mereka, dan menerapkan perbaikan. Lewatkan teks opsional untuk fokus pada kekhawatiran tertentu: `/simplify focus on memory efficiency`.
-
-* **`/batch <instruction>`**: mengorkestrasi perubahan skala besar di seluruh codebase secara paralel. Berikan deskripsi perubahan dan `/batch` meneliti codebase, menguraikan pekerjaan menjadi 5 hingga 30 unit independen, dan menyajikan rencana untuk persetujuan Anda. Setelah disetujui, ia menelurkan satu agen latar belakang per unit, masing-masing dalam [git worktree](/id/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) yang terisolasi. Setiap agen mengimplementasikan unitnya, menjalankan tes, dan membuka pull request. Memerlukan repositori git. Contoh: `/batch migrate src/ from Solid to React`.
-
-* **`/debug [description]`**: memecahkan masalah sesi Claude Code Anda saat ini dengan membaca log debug sesi. Secara opsional jelaskan masalahnya untuk fokus analisis.
-
-* **`/loop [interval] <prompt>`**: menjalankan prompt berulang kali pada interval sambil sesi tetap terbuka. Claude menguraikan interval, menjadwalkan tugas cron berulang, dan mengonfirmasi ritme. Berguna untuk polling deployment, mengasuh PR, atau menjalankan kembali skill lain secara berkala. Contoh: `/loop 5m check if the deploy finished`. Lihat [Jalankan prompt sesuai jadwal](/id/scheduled-tasks).
-
-* **`/claude-api`**: memuat materi referensi Claude API untuk bahasa proyek Anda (Python, TypeScript, Java, Go, Ruby, C#, PHP, atau cURL) dan referensi Agent SDK untuk Python dan TypeScript. Mencakup tool use, streaming, batches, structured outputs, dan pitfalls umum. Juga diaktifkan secara otomatis ketika kode Anda mengimpor `anthropic`, `@anthropic-ai/sdk`, atau `claude_agent_sdk`.
+| Skill                       | Tujuan                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| :-------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/batch <instruction>`      | Mengorkestrasi perubahan skala besar di seluruh codebase secara paralel. Meneliti codebase, menguraikan pekerjaan menjadi 5 hingga 30 unit independen, dan menyajikan rencana. Setelah disetujui, menelurkan satu agen latar belakang per unit dalam [git worktree](/id/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) yang terisolasi. Setiap agen mengimplementasikan unitnya, menjalankan tes, dan membuka pull request. Memerlukan repositori git. Contoh: `/batch migrate src/ from Solid to React` |
+| `/claude-api`               | Muat materi referensi Claude API untuk bahasa proyek Anda (Python, TypeScript, Java, Go, Ruby, C#, PHP, atau cURL) dan referensi Agent SDK untuk Python dan TypeScript. Mencakup tool use, streaming, batches, structured outputs, dan pitfalls umum. Juga diaktifkan secara otomatis saat kode Anda mengimpor `anthropic`, `@anthropic-ai/sdk`, atau `claude_agent_sdk`                                                                                                                                                         |
+| `/debug [description]`      | Troubleshoot sesi Claude Code Anda saat ini dengan membaca log debug sesi. Secara opsional jelaskan masalahnya untuk fokus analisis                                                                                                                                                                                                                                                                                                                                                                                              |
+| `/loop [interval] <prompt>` | Jalankan prompt berulang kali pada interval saat sesi tetap terbuka. Berguna untuk polling deployment, babysitting PR, atau menjalankan kembali skill lain secara berkala. Contoh: `/loop 5m check if the deploy finished`. Lihat [Jalankan prompts pada jadwal](/id/scheduled-tasks)                                                                                                                                                                                                                                            |
+| `/simplify [focus]`         | Tinjau file yang baru-baru ini diubah untuk masalah penggunaan kembali kode, kualitas, dan efisiensi, kemudian perbaiki. Menelurkan tiga agen review secara paralel, mengagregasi temuan mereka, dan menerapkan perbaikan. Lewatkan teks untuk fokus pada kekhawatiran spesifik: `/simplify focus on memory efficiency`                                                                                                                                                                                                          |
 
 ## Memulai
 
 ### Buat skill pertama Anda
 
-Contoh ini membuat skill yang mengajarkan Claude menjelaskan kode menggunakan diagram visual dan analogi. Karena menggunakan frontmatter default, Claude dapat memuatnya secara otomatis ketika Anda bertanya bagaimana sesuatu bekerja, atau Anda dapat menginvokasinya secara langsung dengan `/explain-code`.
+Contoh ini membuat skill yang mengajarkan Claude menjelaskan kode menggunakan diagram visual dan analogi. Karena menggunakan frontmatter default, Claude dapat memuatnya secara otomatis saat Anda bertanya bagaimana sesuatu bekerja, atau Anda dapat menginvokasinya secara langsung dengan `/explain-code`.
 
 <Steps>
   <Step title="Buat direktori skill">
@@ -48,34 +46,34 @@ Contoh ini membuat skill yang mengajarkan Claude menjelaskan kode menggunakan di
   </Step>
 
   <Step title="Tulis SKILL.md">
-    Setiap skill memerlukan file `SKILL.md` dengan dua bagian: frontmatter YAML (antara penanda `---`) yang memberi tahu Claude kapan menggunakan skill, dan konten markdown dengan instruksi yang diikuti Claude ketika skill diinvokasinya. Bidang `name` menjadi `/slash-command`, dan `description` membantu Claude memutuskan kapan memuatnya secara otomatis.
+    Setiap skill memerlukan file `SKILL.md` dengan dua bagian: frontmatter YAML (antara penanda `---`) yang memberi tahu Claude kapan menggunakan skill, dan konten markdown dengan instruksi yang diikuti Claude saat skill diinvokasinya. Bidang `name` menjadi `/slash-command`, dan `description` membantu Claude memutuskan kapan memuatnya secara otomatis.
 
     Buat `~/.claude/skills/explain-code/SKILL.md`:
 
     ```yaml  theme={null}
     ---
     name: explain-code
-    description: Menjelaskan kode dengan diagram visual dan analogi. Gunakan saat menjelaskan cara kerja kode, mengajar tentang codebase, atau ketika pengguna bertanya "bagaimana cara kerjanya?"
+    description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
     ---
 
-    Saat menjelaskan kode, selalu sertakan:
+    When explaining code, always include:
 
-    1. **Mulai dengan analogi**: Bandingkan kode dengan sesuatu dari kehidupan sehari-hari
-    2. **Gambar diagram**: Gunakan ASCII art untuk menunjukkan alur, struktur, atau hubungan
-    3. **Jelajahi kode**: Jelaskan langkah demi langkah apa yang terjadi
-    4. **Sorot gotcha**: Apa kesalahan umum atau kesalahpahaman?
+    1. **Start with an analogy**: Compare the code to something from everyday life
+    2. **Draw a diagram**: Use ASCII art to show the flow, structure, or relationships
+    3. **Walk through the code**: Explain step-by-step what happens
+    4. **Highlight a gotcha**: What's a common mistake or misconception?
 
-    Jaga penjelasan tetap percakapan. Untuk konsep kompleks, gunakan beberapa analogi.
+    Keep explanations conversational. For complex concepts, use multiple analogies.
     ```
   </Step>
 
   <Step title="Uji skill">
     Anda dapat mengujinya dengan dua cara:
 
-    **Biarkan Claude menginvokasinya secara otomatis** dengan bertanya sesuatu yang cocok dengan deskripsi:
+    **Biarkan Claude menginvokasinya secara otomatis** dengan menanyakan sesuatu yang cocok dengan deskripsi:
 
     ```text  theme={null}
-    Bagaimana cara kerja kode ini?
+    How does this code work?
     ```
 
     **Atau invokasinya secara langsung** dengan nama skill:
@@ -84,7 +82,7 @@ Contoh ini membuat skill yang mengajarkan Claude menjelaskan kode menggunakan di
     /explain-code src/auth/login.ts
     ```
 
-    Baik cara mana pun, Claude harus menyertakan analogi dan diagram ASCII dalam penjelasannya.
+    Baik cara apa pun, Claude harus menyertakan analogi dan diagram ASCII dalam penjelasannya.
   </Step>
 </Steps>
 
@@ -103,29 +101,29 @@ Ketika skills berbagi nama yang sama di berbagai level, lokasi prioritas lebih t
 
 #### Penemuan otomatis dari direktori bersarang
 
-Ketika Anda bekerja dengan file di subdirektori, Claude Code secara otomatis menemukan skills dari direktori `.claude/skills/` bersarang. Misalnya, jika Anda mengedit file di `packages/frontend/`, Claude Code juga mencari skills di `packages/frontend/.claude/skills/`. Ini mendukung pengaturan monorepo di mana paket memiliki skills mereka sendiri.
+Saat Anda bekerja dengan file di subdirektori, Claude Code secara otomatis menemukan skills dari direktori `.claude/skills/` bersarang. Misalnya, jika Anda mengedit file di `packages/frontend/`, Claude Code juga mencari skills di `packages/frontend/.claude/skills/`. Ini mendukung pengaturan monorepo di mana paket memiliki skills mereka sendiri.
 
 Setiap skill adalah direktori dengan `SKILL.md` sebagai titik masuk:
 
 ```text  theme={null}
 my-skill/
-├── SKILL.md           # Instruksi utama (diperlukan)
-├── template.md        # Template untuk Claude isi
+├── SKILL.md           # Main instructions (required)
+├── template.md        # Template for Claude to fill in
 ├── examples/
-│   └── sample.md      # Contoh output menunjukkan format yang diharapkan
+│   └── sample.md      # Example output showing expected format
 └── scripts/
-    └── validate.sh    # Script Claude dapat jalankan
+    └── validate.sh    # Script Claude can execute
 ```
 
-`SKILL.md` berisi instruksi utama dan diperlukan. File lainnya opsional dan memungkinkan Anda membangun skills yang lebih kuat: template untuk Claude isi, contoh output menunjukkan format yang diharapkan, script Claude dapat jalankan, atau dokumentasi referensi terperinci. Referensikan file pendukung ini dari `SKILL.md` Anda sehingga Claude tahu apa yang mereka berisi dan kapan memuatnya. Lihat [Tambahkan file pendukung](#add-supporting-files) untuk detail lebih lanjut.
+`SKILL.md` berisi instruksi utama dan diperlukan. File lainnya opsional dan memungkinkan Anda membangun skills yang lebih kuat: template untuk diisi Claude, contoh output yang menunjukkan format yang diharapkan, script yang dapat dijalankan Claude, atau dokumentasi referensi terperinci. Referensikan file pendukung dari `SKILL.md` Anda sehingga Claude tahu apa yang mereka berisi dan kapan memuatnya. Lihat [Tambahkan file pendukung](#add-supporting-files) untuk detail lebih lanjut.
 
 <Note>
-  File di `.claude/commands/` masih bekerja dan mendukung [frontmatter](#frontmatter-reference) yang sama. Skills direkomendasikan karena mendukung fitur tambahan seperti file pendukung.
+  File di `.claude/commands/` masih berfungsi dan mendukung [frontmatter](#frontmatter-reference) yang sama. Skills direkomendasikan karena mendukung fitur tambahan seperti file pendukung.
 </Note>
 
 #### Skills dari direktori tambahan
 
-Skills yang didefinisikan di `.claude/skills/` dalam direktori yang ditambahkan melalui `--add-dir` dimuat secara otomatis dan diambil oleh deteksi perubahan langsung, jadi Anda dapat mengeditnya selama sesi tanpa memulai ulang.
+Skills yang didefinisikan di `.claude/skills/` dalam direktori yang ditambahkan melalui `--add-dir` dimuat secara otomatis dan diambil oleh deteksi perubahan langsung, sehingga Anda dapat mengeditnya selama sesi tanpa memulai ulang.
 
 <Note>
   File CLAUDE.md dari direktori `--add-dir` tidak dimuat secara default. Untuk memuatnya, atur `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1`. Lihat [Muat dari direktori tambahan](/id/memory#load-from-additional-directories).
@@ -137,39 +135,39 @@ Skills dikonfigurasi melalui frontmatter YAML di bagian atas `SKILL.md` dan kont
 
 ### Jenis konten skill
 
-File skill dapat berisi instruksi apa pun, tetapi memikirkan tentang cara Anda ingin menginvokasinya membantu memandu apa yang harus disertakan:
+File skill dapat berisi instruksi apa pun, tetapi memikirkan bagaimana Anda ingin menginvokasinya membantu memandu apa yang harus disertakan:
 
 **Konten referensi** menambahkan pengetahuan yang diterapkan Claude pada pekerjaan Anda saat ini. Konvensi, pola, panduan gaya, pengetahuan domain. Konten ini berjalan inline sehingga Claude dapat menggunakannya bersama konteks percakapan Anda.
 
 ```yaml  theme={null}
 ---
 name: api-conventions
-description: Pola desain API untuk codebase ini
+description: API design patterns for this codebase
 ---
 
-Saat menulis endpoint API:
-- Gunakan konvensi penamaan RESTful
-- Kembalikan format kesalahan yang konsisten
-- Sertakan validasi permintaan
+When writing API endpoints:
+- Use RESTful naming conventions
+- Return consistent error formats
+- Include request validation
 ```
 
-**Konten tugas** memberikan Claude instruksi langkah demi langkah untuk tindakan tertentu, seperti deployment, commit, atau pembuatan kode. Ini sering kali tindakan yang ingin Anda invokasinya secara langsung dengan `/skill-name` daripada membiarkan Claude memutuskan kapan menjalankannya. Tambahkan `disable-model-invocation: true` untuk mencegah Claude memicunya secara otomatis.
+**Konten tugas** memberikan Claude instruksi langkah demi langkah untuk tindakan spesifik, seperti deployment, commit, atau pembuatan kode. Ini sering kali tindakan yang ingin Anda invokasinya secara langsung dengan `/skill-name` daripada membiarkan Claude memutuskan kapan menjalankannya. Tambahkan `disable-model-invocation: true` untuk mencegah Claude memicunya secara otomatis.
 
 ```yaml  theme={null}
 ---
 name: deploy
-description: Deployment aplikasi ke produksi
+description: Deploy the application to production
 context: fork
 disable-model-invocation: true
 ---
 
-Deployment aplikasi:
-1. Jalankan test suite
-2. Build aplikasi
-3. Push ke target deployment
+Deploy the application:
+1. Run the test suite
+2. Build the application
+3. Push to the deployment target
 ```
 
-`SKILL.md` Anda dapat berisi apa pun, tetapi memikirkan tentang cara Anda ingin skill diinvokasinya (oleh Anda, oleh Claude, atau keduanya) dan di mana Anda ingin menjalankannya (inline atau di subagent) membantu memandu apa yang harus disertakan. Untuk skills kompleks, Anda juga dapat [menambahkan file pendukung](#add-supporting-files) untuk menjaga skill utama tetap fokus.
+`SKILL.md` Anda dapat berisi apa pun, tetapi memikirkan bagaimana Anda ingin skill diinvokasinya (oleh Anda, oleh Claude, atau keduanya) dan di mana Anda ingin menjalankannya (inline atau di subagent) membantu memandu apa yang harus disertakan. Untuk skills kompleks, Anda juga dapat [menambahkan file pendukung](#add-supporting-files) untuk menjaga skill utama tetap fokus.
 
 ### Referensi frontmatter
 
@@ -178,12 +176,12 @@ Selain konten markdown, Anda dapat mengonfigurasi perilaku skill menggunakan bid
 ```yaml  theme={null}
 ---
 name: my-skill
-description: Apa yang dilakukan skill ini
+description: What this skill does
 disable-model-invocation: true
 allowed-tools: Read, Grep
 ---
 
-Instruksi skill Anda di sini...
+Your skill instructions here...
 ```
 
 Semua bidang opsional. Hanya `description` yang direkomendasikan sehingga Claude tahu kapan menggunakan skill.
@@ -192,92 +190,92 @@ Semua bidang opsional. Hanya `description` yang direkomendasikan sehingga Claude
 | :------------------------- | :--------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `name`                     | Tidak            | Nama tampilan untuk skill. Jika dihilangkan, menggunakan nama direktori. Huruf kecil, angka, dan tanda hubung saja (maks 64 karakter).                                             |
 | `description`              | Direkomendasikan | Apa yang dilakukan skill dan kapan menggunakannya. Claude menggunakan ini untuk memutuskan kapan menerapkan skill. Jika dihilangkan, menggunakan paragraf pertama konten markdown. |
-| `argument-hint`            | Tidak            | Petunjuk ditampilkan selama autocomplete untuk menunjukkan argumen yang diharapkan. Contoh: `[issue-number]` atau `[filename] [format]`.                                           |
-| `disable-model-invocation` | Tidak            | Atur ke `true` untuk mencegah Claude memuatnya secara otomatis. Gunakan untuk alur kerja yang ingin Anda picu secara manual dengan `/name`. Default: `false`.                      |
+| `argument-hint`            | Tidak            | Petunjuk yang ditampilkan selama autocomplete untuk menunjukkan argumen yang diharapkan. Contoh: `[issue-number]` atau `[filename] [format]`.                                      |
+| `disable-model-invocation` | Tidak            | Atur ke `true` untuk mencegah Claude memuat skill ini secara otomatis. Gunakan untuk workflow yang ingin Anda picu secara manual dengan `/name`. Default: `false`.                 |
 | `user-invocable`           | Tidak            | Atur ke `false` untuk menyembunyikan dari menu `/`. Gunakan untuk pengetahuan latar belakang yang tidak boleh diinvokasinya pengguna secara langsung. Default: `true`.             |
-| `allowed-tools`            | Tidak            | Tools yang dapat digunakan Claude tanpa meminta izin ketika skill ini aktif.                                                                                                       |
-| `model`                    | Tidak            | Model yang digunakan ketika skill ini aktif.                                                                                                                                       |
+| `allowed-tools`            | Tidak            | Tools yang dapat digunakan Claude tanpa meminta izin saat skill ini aktif.                                                                                                         |
+| `model`                    | Tidak            | Model yang digunakan saat skill ini aktif.                                                                                                                                         |
 | `context`                  | Tidak            | Atur ke `fork` untuk menjalankan dalam konteks subagent yang di-fork.                                                                                                              |
-| `agent`                    | Tidak            | Jenis subagent mana yang digunakan ketika `context: fork` diatur.                                                                                                                  |
-| `hooks`                    | Tidak            | Hooks yang dibatasi pada siklus hidup skill ini. Lihat [Hooks dalam skills dan agents](/id/hooks#hooks-in-skills-and-agents) untuk format konfigurasi.                             |
+| `agent`                    | Tidak            | Jenis subagent mana yang digunakan saat `context: fork` diatur.                                                                                                                    |
+| `hooks`                    | Tidak            | Hooks yang dibatasi pada lifecycle skill ini. Lihat [Hooks dalam skills dan agents](/id/hooks#hooks-in-skills-and-agents) untuk format konfigurasi.                                |
 
 #### Substitusi string yang tersedia
 
 Skills mendukung substitusi string untuk nilai dinamis dalam konten skill:
 
-| Variabel               | Deskripsi                                                                                                                                                                                                                                                                            |
-| :--------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `$ARGUMENTS`           | Semua argumen yang dilewatkan saat menginvokasinya skill. Jika `$ARGUMENTS` tidak ada dalam konten, argumen ditambahkan sebagai `ARGUMENTS: <value>`.                                                                                                                                |
-| `$ARGUMENTS[N]`        | Akses argumen tertentu berdasarkan indeks berbasis 0, seperti `$ARGUMENTS[0]` untuk argumen pertama.                                                                                                                                                                                 |
-| `$N`                   | Singkat untuk `$ARGUMENTS[N]`, seperti `$0` untuk argumen pertama atau `$1` untuk argumen kedua.                                                                                                                                                                                     |
-| `${CLAUDE_SESSION_ID}` | ID sesi saat ini. Berguna untuk logging, membuat file khusus sesi, atau menghubungkan output skill dengan sesi.                                                                                                                                                                      |
-| `${CLAUDE_SKILL_DIR}`  | Direktori yang berisi file `SKILL.md` skill. Untuk skills plugin, ini adalah subdirektori skill dalam plugin, bukan root plugin. Gunakan ini dalam perintah injeksi bash untuk mereferensikan script atau file yang disertakan dengan skill, terlepas dari direktori kerja saat ini. |
+| Variabel               | Deskripsi                                                                                                                                                                                                                                                                         |
+| :--------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `$ARGUMENTS`           | Semua argumen yang dilewatkan saat menginvokasinya skill. Jika `$ARGUMENTS` tidak ada dalam konten, argumen ditambahkan sebagai `ARGUMENTS: <value>`.                                                                                                                             |
+| `$ARGUMENTS[N]`        | Akses argumen spesifik berdasarkan indeks berbasis 0, seperti `$ARGUMENTS[0]` untuk argumen pertama.                                                                                                                                                                              |
+| `$N`                   | Singkat untuk `$ARGUMENTS[N]`, seperti `$0` untuk argumen pertama atau `$1` untuk argumen kedua.                                                                                                                                                                                  |
+| `${CLAUDE_SESSION_ID}` | ID sesi saat ini. Berguna untuk logging, membuat file khusus sesi, atau mengkorelasikan output skill dengan sesi.                                                                                                                                                                 |
+| `${CLAUDE_SKILL_DIR}`  | Direktori yang berisi file `SKILL.md` skill. Untuk skills plugin, ini adalah subdirektori skill dalam plugin, bukan root plugin. Gunakan ini dalam perintah injeksi bash untuk mereferensikan script atau file yang dikemas dengan skill, terlepas dari direktori kerja saat ini. |
 
 **Contoh menggunakan substitusi:**
 
 ```yaml  theme={null}
 ---
 name: session-logger
-description: Log aktivitas untuk sesi ini
+description: Log activity for this session
 ---
 
-Log berikut ke logs/${CLAUDE_SESSION_ID}.log:
+Log the following to logs/${CLAUDE_SESSION_ID}.log:
 
 $ARGUMENTS
 ```
 
 ### Tambahkan file pendukung
 
-Skills dapat menyertakan beberapa file di direktorinya. Ini menjaga `SKILL.md` fokus pada hal-hal penting sambil membiarkan Claude mengakses materi referensi terperinci hanya saat diperlukan. Dokumen referensi besar, spesifikasi API, atau koleksi contoh tidak perlu dimuat ke dalam konteks setiap kali skill berjalan.
+Skills dapat menyertakan beberapa file di direktorinya. Ini menjaga `SKILL.md` tetap fokus pada hal-hal penting sambil membiarkan Claude mengakses materi referensi terperinci hanya saat diperlukan. Dokumen referensi besar, spesifikasi API, atau koleksi contoh tidak perlu dimuat ke dalam konteks setiap kali skill berjalan.
 
 ```text  theme={null}
 my-skill/
-├── SKILL.md (diperlukan - gambaran umum dan navigasi)
-├── reference.md (dokumen API terperinci - dimuat saat diperlukan)
-├── examples.md (contoh penggunaan - dimuat saat diperlukan)
+├── SKILL.md (required - overview and navigation)
+├── reference.md (detailed API docs - loaded when needed)
+├── examples.md (usage examples - loaded when needed)
 └── scripts/
-    └── helper.py (script utilitas - dijalankan, tidak dimuat)
+    └── helper.py (utility script - executed, not loaded)
 ```
 
 Referensikan file pendukung dari `SKILL.md` Anda sehingga Claude tahu apa yang berisi setiap file dan kapan memuatnya:
 
 ```markdown  theme={null}
-## Sumber daya tambahan
+## Additional resources
 
-- Untuk detail API lengkap, lihat [reference.md](reference.md)
-- Untuk contoh penggunaan, lihat [examples.md](examples.md)
+- For complete API details, see [reference.md](reference.md)
+- For usage examples, see [examples.md](examples.md)
 ```
 
 <Tip>Jaga `SKILL.md` di bawah 500 baris. Pindahkan materi referensi terperinci ke file terpisah.</Tip>
 
 ### Kontrol siapa yang menginvokasinya skill
 
-Secara default, baik Anda maupun Claude dapat menginvokasinya skill apa pun. Anda dapat mengetik `/skill-name` untuk menginvokasinya secara langsung, dan Claude dapat memuatnya secara otomatis ketika relevan dengan percakapan Anda. Dua bidang frontmatter memungkinkan Anda membatasi ini:
+Secara default, baik Anda maupun Claude dapat menginvokasinya skill apa pun. Anda dapat mengetik `/skill-name` untuk menginvokasinya secara langsung, dan Claude dapat memuatnya secara otomatis saat relevan dengan percakapan Anda. Dua bidang frontmatter memungkinkan Anda membatasi ini:
 
-* **`disable-model-invocation: true`**: Hanya Anda yang dapat menginvokasinya skill. Gunakan ini untuk alur kerja dengan efek samping atau yang ingin Anda kontrol waktunya, seperti `/commit`, `/deploy`, atau `/send-slack-message`. Anda tidak ingin Claude memutuskan untuk deploy karena kode Anda terlihat siap.
+* **`disable-model-invocation: true`**: Hanya Anda yang dapat menginvokasinya skill. Gunakan ini untuk workflow dengan efek samping atau yang ingin Anda kontrol waktu, seperti `/commit`, `/deploy`, atau `/send-slack-message`. Anda tidak ingin Claude memutuskan untuk deploy karena kode Anda terlihat siap.
 
-* **`user-invocable: false`**: Hanya Claude yang dapat menginvokasinya skill. Gunakan ini untuk pengetahuan latar belakang yang tidak dapat ditindaklanjuti sebagai perintah. Skill `legacy-system-context` menjelaskan cara kerja sistem lama. Claude harus tahu ini ketika relevan, tetapi `/legacy-system-context` bukan tindakan bermakna bagi pengguna untuk diambil.
+* **`user-invocable: false`**: Hanya Claude yang dapat menginvokasinya skill. Gunakan ini untuk pengetahuan latar belakang yang tidak dapat ditindaklanjuti sebagai perintah. Skill `legacy-system-context` menjelaskan bagaimana sistem lama bekerja. Claude harus tahu ini saat relevan, tetapi `/legacy-system-context` bukan tindakan yang bermakna bagi pengguna untuk diambil.
 
 Contoh ini membuat skill deploy yang hanya dapat Anda picu. Bidang `disable-model-invocation: true` mencegah Claude menjalankannya secara otomatis:
 
 ```yaml  theme={null}
 ---
 name: deploy
-description: Deployment aplikasi ke produksi
+description: Deploy the application to production
 disable-model-invocation: true
 ---
 
-Deployment $ARGUMENTS ke produksi:
+Deploy $ARGUMENTS to production:
 
-1. Jalankan test suite
-2. Build aplikasi
-3. Push ke target deployment
-4. Verifikasi deployment berhasil
+1. Run the test suite
+2. Build the application
+3. Push to the deployment target
+4. Verify the deployment succeeded
 ```
 
-Berikut adalah cara dua bidang mempengaruhi invokasi dan pemuatan konteks:
+Berikut adalah bagaimana dua bidang mempengaruhi invokasi dan pemuatan konteks:
 
-| Frontmatter                      | Anda dapat menginvokasinya | Claude dapat menginvokasinya | Kapan dimuat ke dalam konteks                                               |
+| Frontmatter                      | Anda dapat menginvokasinya | Claude dapat menginvokasinya | Saat dimuat ke dalam konteks                                                |
 | :------------------------------- | :------------------------- | :--------------------------- | :-------------------------------------------------------------------------- |
 | (default)                        | Ya                         | Ya                           | Deskripsi selalu dalam konteks, skill penuh dimuat saat diinvokasinya       |
 | `disable-model-invocation: true` | Ya                         | Tidak                        | Deskripsi tidak dalam konteks, skill penuh dimuat saat Anda menginvokasinya |
@@ -289,12 +287,12 @@ Berikut adalah cara dua bidang mempengaruhi invokasi dan pemuatan konteks:
 
 ### Batasi akses tool
 
-Gunakan bidang `allowed-tools` untuk membatasi tools mana yang dapat digunakan Claude ketika skill aktif. Skill ini membuat mode baca-saja di mana Claude dapat menjelajahi file tetapi tidak memodifikasinya:
+Gunakan bidang `allowed-tools` untuk membatasi tools mana yang dapat digunakan Claude saat skill aktif. Skill ini membuat mode baca-saja di mana Claude dapat menjelajahi file tetapi tidak memodifikasinya:
 
 ```yaml  theme={null}
 ---
 name: safe-reader
-description: Baca file tanpa membuat perubahan
+description: Read files without making changes
 allowed-tools: Read, Grep, Glob
 ---
 ```
@@ -308,20 +306,20 @@ Skill ini memperbaiki masalah GitHub berdasarkan nomor. Placeholder `$ARGUMENTS`
 ```yaml  theme={null}
 ---
 name: fix-issue
-description: Perbaiki masalah GitHub
+description: Fix a GitHub issue
 disable-model-invocation: true
 ---
 
-Perbaiki masalah GitHub $ARGUMENTS mengikuti standar coding kami.
+Fix GitHub issue $ARGUMENTS following our coding standards.
 
-1. Baca deskripsi masalah
-2. Pahami persyaratan
-3. Implementasikan perbaikan
-4. Tulis tes
-5. Buat commit
+1. Read the issue description
+2. Understand the requirements
+3. Implement the fix
+4. Write tests
+5. Create a commit
 ```
 
-Ketika Anda menjalankan `/fix-issue 123`, Claude menerima "Perbaiki masalah GitHub 123 mengikuti standar coding kami..."
+Saat Anda menjalankan `/fix-issue 123`, Claude menerima "Fix GitHub issue 123 following our coding standards..."
 
 Jika Anda menginvokasinya skill dengan argumen tetapi skill tidak menyertakan `$ARGUMENTS`, Claude Code menambahkan `ARGUMENTS: <your input>` ke akhir konten skill sehingga Claude masih melihat apa yang Anda ketik.
 
@@ -330,52 +328,52 @@ Untuk mengakses argumen individual berdasarkan posisi, gunakan `$ARGUMENTS[N]` a
 ```yaml  theme={null}
 ---
 name: migrate-component
-description: Migrasikan komponen dari satu framework ke framework lain
+description: Migrate a component from one framework to another
 ---
 
-Migrasikan komponen $ARGUMENTS[0] dari $ARGUMENTS[1] ke $ARGUMENTS[2].
-Pertahankan semua perilaku dan tes yang ada.
+Migrate the $ARGUMENTS[0] component from $ARGUMENTS[1] to $ARGUMENTS[2].
+Preserve all existing behavior and tests.
 ```
 
-Menjalankan `/migrate-component SearchBar React Vue` mengganti `$ARGUMENTS[0]` dengan `SearchBar`, `$ARGUMENTS[1]` dengan `React`, dan `$ARGUMENTS[2]` dengan `Vue`. Skill yang sama menggunakan singkat `$N`:
+Menjalankan `/migrate-component SearchBar React Vue` mengganti `$ARGUMENTS[0]` dengan `SearchBar`, `$ARGUMENTS[1]` dengan `React`, dan `$ARGUMENTS[2]` dengan `Vue`. Skill yang sama menggunakan shorthand `$N`:
 
 ```yaml  theme={null}
 ---
 name: migrate-component
-description: Migrasikan komponen dari satu framework ke framework lain
+description: Migrate a component from one framework to another
 ---
 
-Migrasikan komponen $0 dari $1 ke $2.
-Pertahankan semua perilaku dan tes yang ada.
+Migrate the $0 component from $1 to $2.
+Preserve all existing behavior and tests.
 ```
 
 ## Pola lanjutan
 
 ### Injeksi konteks dinamis
 
-Sintaks `!`command\`\` menjalankan perintah shell sebelum konten skill dikirim ke Claude. Output perintah mengganti placeholder, jadi Claude menerima data aktual, bukan perintah itu sendiri.
+Sintaks `!`command\`\` menjalankan perintah shell sebelum konten skill dikirim ke Claude. Output perintah mengganti placeholder, sehingga Claude menerima data aktual, bukan perintah itu sendiri.
 
 Skill ini merangkum pull request dengan mengambil data PR langsung dengan GitHub CLI. Perintah `!`gh pr diff\`\` dan lainnya berjalan terlebih dahulu, dan output mereka dimasukkan ke dalam prompt:
 
 ```yaml  theme={null}
 ---
 name: pr-summary
-description: Rangkum perubahan dalam pull request
+description: Summarize changes in a pull request
 context: fork
 agent: Explore
 allowed-tools: Bash(gh *)
 ---
 
-## Konteks pull request
+## Pull request context
 - PR diff: !`gh pr diff`
-- Komentar PR: !`gh pr view --comments`
-- File yang diubah: !`gh pr diff --name-only`
+- PR comments: !`gh pr view --comments`
+- Changed files: !`gh pr diff --name-only`
 
-## Tugas Anda
-Rangkum pull request ini...
+## Your task
+Summarize this pull request...
 ```
 
-Ketika skill ini berjalan:
+Saat skill ini berjalan:
 
 1. Setiap `!`command\`\` dijalankan segera (sebelum Claude melihat apa pun)
 2. Output mengganti placeholder dalam konten skill
@@ -389,20 +387,20 @@ Ini adalah preprocessing, bukan sesuatu yang dijalankan Claude. Claude hanya mel
 
 ### Jalankan skills dalam subagent
 
-Tambahkan `context: fork` ke frontmatter Anda ketika Anda ingin skill berjalan dalam isolasi. Konten skill menjadi prompt yang mendorong subagent. Ini tidak akan memiliki akses ke riwayat percakapan Anda.
+Tambahkan `context: fork` ke frontmatter Anda saat Anda ingin skill berjalan dalam isolasi. Konten skill menjadi prompt yang mendorong subagent. Ini tidak akan memiliki akses ke riwayat percakapan Anda.
 
 <Warning>
-  `context: fork` hanya masuk akal untuk skills dengan instruksi eksplisit. Jika skill Anda berisi pedoman seperti "gunakan konvensi API ini" tanpa tugas, subagent menerima pedoman tetapi tidak ada prompt yang dapat ditindaklanjuti, dan kembali tanpa output bermakna.
+  `context: fork` hanya masuk akal untuk skills dengan instruksi eksplisit. Jika skill Anda berisi panduan seperti "gunakan konvensi API ini" tanpa tugas, subagent menerima panduan tetapi tidak ada prompt yang dapat ditindaklanjuti, dan kembali tanpa output yang bermakna.
 </Warning>
 
 Skills dan [subagents](/id/sub-agents) bekerja bersama dalam dua arah:
 
-| Pendekatan                      | System prompt                             | Tugas                 | Juga memuat                               |
-| :------------------------------ | :---------------------------------------- | :-------------------- | :---------------------------------------- |
-| Skill dengan `context: fork`    | Dari jenis agent (`Explore`, `Plan`, dll) | Konten SKILL.md       | CLAUDE.md                                 |
-| Subagent dengan bidang `skills` | Badan markdown subagent                   | Pesan delegasi Claude | Skills yang dimuat sebelumnya + CLAUDE.md |
+| Pendekatan                      | System prompt                            | Tugas                 | Juga memuat                               |
+| :------------------------------ | :--------------------------------------- | :-------------------- | :---------------------------------------- |
+| Skill dengan `context: fork`    | Dari jenis agen (`Explore`, `Plan`, dll) | Konten SKILL.md       | CLAUDE.md                                 |
+| Subagent dengan bidang `skills` | Badan markdown subagent                  | Pesan delegasi Claude | Skills yang dimuat sebelumnya + CLAUDE.md |
 
-Dengan `context: fork`, Anda menulis tugas dalam skill Anda dan memilih jenis agent untuk menjalankannya. Untuk kebalikannya (mendefinisikan subagent kustom yang menggunakan skills sebagai materi referensi), lihat [Subagents](/id/sub-agents#preload-skills-into-subagents).
+Dengan `context: fork`, Anda menulis tugas dalam skill Anda dan memilih jenis agen untuk menjalankannya. Untuk kebalikannya (mendefinisikan subagent kustom yang menggunakan skills sebagai materi referensi), lihat [Subagents](/id/sub-agents#preload-skills-into-subagents).
 
 #### Contoh: Skill penelitian menggunakan agen Explore
 
@@ -411,22 +409,22 @@ Skill ini menjalankan penelitian dalam agen Explore yang di-fork. Konten skill m
 ```yaml  theme={null}
 ---
 name: deep-research
-description: Teliti topik secara menyeluruh
+description: Research a topic thoroughly
 context: fork
 agent: Explore
 ---
 
-Teliti $ARGUMENTS secara menyeluruh:
+Research $ARGUMENTS thoroughly:
 
-1. Temukan file relevan menggunakan Glob dan Grep
-2. Baca dan analisis kode
-3. Rangkum temuan dengan referensi file tertentu
+1. Find relevant files using Glob and Grep
+2. Read and analyze the code
+3. Summarize findings with specific file references
 ```
 
-Ketika skill ini berjalan:
+Saat skill ini berjalan:
 
 1. Konteks terisolasi baru dibuat
-2. Subagent menerima konten skill sebagai promptnya ("Teliti \$ARGUMENTS secara menyeluruh...")
+2. Subagent menerima konten skill sebagai promptnya ("Research \$ARGUMENTS thoroughly...")
 3. Bidang `agent` menentukan lingkungan eksekusi (model, tools, dan izin)
 4. Hasil dirangkum dan dikembalikan ke percakapan utama Anda
 
@@ -434,25 +432,25 @@ Bidang `agent` menentukan konfigurasi subagent mana yang digunakan. Opsi termasu
 
 ### Batasi akses skill Claude
 
-Secara default, Claude dapat menginvokasinya skill apa pun yang tidak memiliki `disable-model-invocation: true` diatur. Skills yang mendefinisikan `allowed-tools` memberikan Claude akses ke tools tersebut tanpa persetujuan per-penggunaan ketika skill aktif. Pengaturan [izin](/id/permissions) Anda masih mengatur perilaku persetujuan baseline untuk semua tools lainnya. Perintah bawaan seperti `/compact` dan `/init` tidak tersedia melalui tool Skill.
+Secara default, Claude dapat menginvokasinya skill apa pun yang tidak memiliki `disable-model-invocation: true` diatur. Skills yang mendefinisikan `allowed-tools` memberikan Claude akses ke tools tersebut tanpa persetujuan per-penggunaan saat skill aktif. Pengaturan [izin](/id/permissions) Anda masih mengatur perilaku persetujuan baseline untuk semua tools lainnya. Perintah bawaan seperti `/compact` dan `/init` tidak tersedia melalui tool Skill.
 
 Tiga cara untuk mengontrol skills mana yang dapat diinvokasinya Claude:
 
-**Nonaktifkan semua skills** dengan menolak tool Skill dalam `/permissions`:
+**Nonaktifkan semua skills** dengan menolak tool Skill di `/permissions`:
 
 ```text  theme={null}
-# Tambahkan ke aturan penolakan:
+# Add to deny rules:
 Skill
 ```
 
-**Izinkan atau tolak skills tertentu** menggunakan [aturan izin](/id/permissions):
+**Izinkan atau tolak skills spesifik** menggunakan [aturan izin](/id/permissions):
 
 ```text  theme={null}
-# Izinkan hanya skills tertentu
+# Allow only specific skills
 Skill(commit)
 Skill(review-pr *)
 
-# Tolak skills tertentu
+# Deny specific skills
 Skill(deploy *)
 ```
 
@@ -461,16 +459,16 @@ Sintaks izin: `Skill(name)` untuk kecocokan tepat, `Skill(name *)` untuk kecocok
 **Sembunyikan skills individual** dengan menambahkan `disable-model-invocation: true` ke frontmatter mereka. Ini menghapus skill dari konteks Claude sepenuhnya.
 
 <Note>
-  Bidang `user-invocable` hanya mengontrol visibilitas menu, bukan akses tool Skill. Gunakan `disable-model-invocation: true` untuk memblokir invokasi pemrograman.
+  Bidang `user-invocable` hanya mengontrol visibilitas menu, bukan akses tool Skill. Gunakan `disable-model-invocation: true` untuk memblokir invokasi programatik.
 </Note>
 
 ## Bagikan skills
 
 Skills dapat didistribusikan pada cakupan berbeda tergantung pada audiens Anda:
 
-* **Skills proyek**: Commit `.claude/skills/` ke kontrol versi
+* **Skills proyek**: Commit `.claude/skills/` ke version control
 * **Plugins**: Buat direktori `skills/` dalam [plugin](/id/plugins) Anda
-* **Terkelola**: Deployment di seluruh organisasi melalui [pengaturan terkelola](/id/settings#settings-files)
+* **Terkelola**: Terapkan di seluruh organisasi melalui [pengaturan terkelola](/id/settings#settings-files)
 
 ### Hasilkan output visual
 
@@ -484,48 +482,48 @@ Buat direktori Skill:
 mkdir -p ~/.claude/skills/codebase-visualizer/scripts
 ```
 
-Buat `~/.claude/skills/codebase-visualizer/SKILL.md`. Deskripsi memberi tahu Claude kapan mengaktifkan Skill ini, dan instruksi memberi tahu Claude untuk menjalankan script bundel:
+Buat `~/.claude/skills/codebase-visualizer/SKILL.md`. Deskripsi memberi tahu Claude kapan mengaktifkan Skill ini, dan instruksi memberi tahu Claude untuk menjalankan script yang dikemas:
 
 ````yaml  theme={null}
 ---
 name: codebase-visualizer
-description: Hasilkan visualisasi pohon interaktif yang dapat diciutkan dari codebase Anda. Gunakan saat menjelajahi repo baru, memahami struktur proyek, atau mengidentifikasi file besar.
+description: Generate an interactive collapsible tree visualization of your codebase. Use when exploring a new repo, understanding project structure, or identifying large files.
 allowed-tools: Bash(python *)
 ---
 
 # Codebase Visualizer
 
-Hasilkan tampilan pohon HTML interaktif yang menunjukkan struktur file proyek Anda dengan direktori yang dapat diciutkan.
+Generate an interactive HTML tree view that shows your project's file structure with collapsible directories.
 
-## Penggunaan
+## Usage
 
-Jalankan script visualisasi dari root proyek Anda:
+Run the visualization script from your project root:
 
 ```bash
 python ~/.claude/skills/codebase-visualizer/scripts/visualize.py .
 ```text
 
-Ini membuat `codebase-map.html` di direktori saat ini dan membukanya di browser default Anda.
+This creates `codebase-map.html` in the current directory and opens it in your default browser.
 
-## Apa yang ditampilkan visualisasi
+## What the visualization shows
 
-- **Direktori yang dapat diciutkan**: Klik folder untuk memperluas/menciutkan
-- **Ukuran file**: Ditampilkan di sebelah setiap file
-- **Warna**: Warna berbeda untuk jenis file berbeda
-- **Total direktori**: Menunjukkan ukuran agregat setiap folder
+- **Collapsible directories**: Click folders to expand/collapse
+- **File sizes**: Displayed next to each file
+- **Colors**: Different colors for different file types
+- **Directory totals**: Shows aggregate size of each folder
 ````
 
-Buat `~/.claude/skills/codebase-visualizer/scripts/visualize.py`. Script ini memindai pohon direktori dan menghasilkan file HTML mandiri dengan:
+Buat `~/.claude/skills/codebase-visualizer/scripts/visualize.py`. Script ini memindai pohon direktori dan menghasilkan file HTML yang mandiri dengan:
 
-* **Sidebar ringkasan** menampilkan jumlah file, jumlah direktori, ukuran total, dan jumlah jenis file
-* **Bagan batang** memecah codebase berdasarkan jenis file (8 teratas berdasarkan ukuran)
+* **Sidebar ringkasan** yang menunjukkan jumlah file, jumlah direktori, ukuran total, dan jumlah jenis file
+* **Bagan batang** yang memecah codebase berdasarkan jenis file (8 teratas berdasarkan ukuran)
 * **Pohon yang dapat diciutkan** di mana Anda dapat memperluas dan menciutkan direktori, dengan indikator jenis file berkode warna
 
-Script memerlukan Python tetapi hanya menggunakan library bawaan, jadi tidak ada paket untuk diinstal:
+Script memerlukan Python tetapi hanya menggunakan library bawaan, jadi tidak ada paket yang perlu diinstal:
 
 ```python expandable theme={null}
 #!/usr/bin/env python3
-"""Hasilkan visualisasi pohon interaktif yang dapat diciutkan dari codebase."""
+"""Generate an interactive collapsible tree visualization of a codebase."""
 
 import json
 import sys
@@ -657,9 +655,9 @@ if __name__ == '__main__':
     webbrowser.open(f'file://{out.absolute()}')
 ```
 
-Untuk menguji, buka Claude Code di proyek apa pun dan tanya "Visualisasi codebase ini." Claude menjalankan script, menghasilkan `codebase-map.html`, dan membukanya di browser Anda.
+Untuk menguji, buka Claude Code di proyek apa pun dan tanyakan "Visualize this codebase." Claude menjalankan script, menghasilkan `codebase-map.html`, dan membukanya di browser Anda.
 
-Pola ini bekerja untuk output visual apa pun: grafik dependensi, laporan cakupan tes, dokumentasi API, atau visualisasi skema database. Script bundel melakukan pekerjaan berat sementara Claude menangani orkestrasi.
+Pola ini bekerja untuk output visual apa pun: grafik ketergantungan, laporan cakupan tes, dokumentasi API, atau visualisasi skema database. Script yang dikemas melakukan pekerjaan berat sementara Claude menangani orkestrasi.
 
 ## Troubleshooting
 
@@ -668,7 +666,7 @@ Pola ini bekerja untuk output visual apa pun: grafik dependensi, laporan cakupan
 Jika Claude tidak menggunakan skill Anda saat diharapkan:
 
 1. Periksa deskripsi mencakup kata kunci yang akan dikatakan pengguna secara alami
-2. Verifikasi skill muncul dalam `What skills are available?`
+2. Verifikasi skill muncul di `What skills are available?`
 3. Coba rephrase permintaan Anda agar lebih cocok dengan deskripsi
 4. Invokasinya secara langsung dengan `/skill-name` jika skill dapat diinvokasinya pengguna
 
@@ -689,7 +687,7 @@ Untuk mengganti batas, atur variabel lingkungan `SLASH_COMMAND_TOOL_CHAR_BUDGET`
 
 * **[Subagents](/id/sub-agents)**: delegasikan tugas ke agen khusus
 * **[Plugins](/id/plugins)**: paket dan distribusikan skills dengan ekstensi lainnya
-* **[Hooks](/id/hooks)**: otomatisasi alur kerja di sekitar peristiwa tool
+* **[Hooks](/id/hooks)**: otomatisasi workflow di sekitar peristiwa tool
 * **[Memory](/id/memory)**: kelola file CLAUDE.md untuk konteks persisten
-* **[Mode interaktif](/id/interactive-mode#built-in-commands)**: perintah bawaan dan pintasan
+* **[Built-in commands](/id/commands)**: referensi untuk perintah `/` bawaan
 * **[Permissions](/id/permissions)**: kontrol akses tool dan skill

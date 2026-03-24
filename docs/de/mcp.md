@@ -395,7 +395,7 @@ Oder inline in `plugin.json`:
 
 **Plugin-MCP-Funktionen**:
 
-* **Automatischer Lebenszyklus**: Server starten, wenn das Plugin aktiviert wird, aber Sie müssen Claude Code neu starten, um MCP-Server-Änderungen anzuwenden (Aktivierung oder Deaktivierung)
+* **Automatischer Lebenszyklus**: Bei Sitzungsstart verbinden sich Server für aktivierte Plugins automatisch. Wenn Sie ein Plugin während einer Sitzung aktivieren oder deaktivieren, führen Sie `/reload-plugins` aus, um seine MCP-Server zu verbinden oder zu trennen
 * **Umgebungsvariablen**: Verwenden Sie `${CLAUDE_PLUGIN_ROOT}` für Plugin-relative Pfade
 * **Zugriff auf Benutzerumgebung**: Zugriff auf die gleichen Umgebungsvariablen wie manuell konfigurierte Server
 * **Mehrere Transporttypen**: Unterstützung für Stdio-, SSE- und HTTP-Transporte (die Transportunterstützung kann je nach Server variieren)
@@ -944,6 +944,19 @@ Dies ist besonders nützlich bei der Arbeit mit MCP-Servern, die:
   Wenn Sie häufig Ausgabewarnungen bei bestimmten MCP-Servern erhalten, erwägen Sie, das Limit zu erhöhen oder den Server so zu konfigurieren, dass er seine Antworten paginiert oder filtert.
 </Warning>
 
+## Auf MCP-Elicitierungsanfragen reagieren
+
+MCP-Server können während einer Aufgabe strukturierte Eingaben von Ihnen anfordern, indem sie Elicitierung verwenden. Wenn ein Server Informationen benötigt, die er nicht selbst abrufen kann, zeigt Claude Code einen interaktiven Dialog an und leitet Ihre Antwort an den Server weiter. Auf Ihrer Seite ist keine Konfiguration erforderlich: Elicitierungs-Dialoge erscheinen automatisch, wenn ein Server sie anfordert.
+
+Server können Eingaben auf zwei Arten anfordern:
+
+* **Formularmodus**: Claude Code zeigt einen Dialog mit Formularfeldern an, die vom Server definiert werden (zum Beispiel eine Eingabeaufforderung für Benutzername und Passwort). Füllen Sie die Felder aus und senden Sie sie ab.
+* **URL-Modus**: Claude Code öffnet eine Browser-URL für Authentifizierung oder Genehmigung. Führen Sie den Ablauf im Browser durch und bestätigen Sie dann in der CLI.
+
+Um automatisch auf Elicitierungsanfragen ohne Dialog zu reagieren, verwenden Sie den [`Elicitation`-Hook](/de/hooks#Elicitation).
+
+Wenn Sie einen MCP-Server erstellen, der Elicitierung verwendet, siehe die [MCP-Elicitierungs-Spezifikation](https://modelcontextprotocol.io/docs/learn/client-concepts#elicitation) für Protokolldetails und Schema-Beispiele.
+
 ## MCP-Ressourcen verwenden
 
 MCP-Server können Ressourcen verfügbar machen, auf die Sie mit @-Erwähnungen verweisen können, ähnlich wie Sie auf Dateien verweisen.
@@ -1000,7 +1013,7 @@ Claude Code aktiviert die Tool-Suche automatisch, wenn Ihre MCP-Tool-Beschreibun
 
 ### Für MCP-Server-Autoren
 
-Wenn Sie einen MCP-Server erstellen, wird das Feld für Server-Anweisungen mit aktivierter Tool-Suche nützlicher. Server-Anweisungen helfen Claude zu verstehen, wann nach Ihren Tools gesucht werden soll, ähnlich wie [skills](/de/skills) funktionieren.
+Wenn Sie einen MCP-Server erstellen, wird das Feld für Server-Anweisungen mit aktivierter Tool-Suche nützlicher. Server-Anweisungen helfen Claude zu verstehen, wann nach Ihren Tools gesucht werden soll, ähnlich wie [Skills](/de/skills) funktionieren.
 
 Fügen Sie klare, aussagekräftige Server-Anweisungen hinzu, die erklären:
 
@@ -1010,16 +1023,17 @@ Fügen Sie klare, aussagekräftige Server-Anweisungen hinzu, die erklären:
 
 ### Konfigurieren Sie die Tool-Suche
 
-Die Tool-Suche wird standardmäßig im Auto-Modus ausgeführt, was bedeutet, dass sie nur aktiviert wird, wenn Ihre MCP-Tool-Definitionen die Kontextschwelle überschreiten. Wenn Sie nur wenige Tools haben, werden sie normal ohne Tool-Suche geladen. Diese Funktion erfordert Modelle, die `tool_reference`-Blöcke unterstützen: Sonnet 4 und später oder Opus 4 und später. Haiku-Modelle unterstützen die Tool-Suche nicht.
+Die Tool-Suche ist standardmäßig aktiviert: MCP-Tools werden aufgeschoben und bei Bedarf entdeckt. Wenn `ANTHROPIC_BASE_URL` auf einen Host von Drittanbietern verweist, ist die Tool-Suche standardmäßig deaktiviert, da die meisten Proxys `tool_reference`-Blöcke nicht weiterleiten. Legen Sie `ENABLE_TOOL_SEARCH` explizit fest, wenn Ihr Proxy dies tut. Diese Funktion erfordert Modelle, die `tool_reference`-Blöcke unterstützen: Sonnet 4 und später oder Opus 4 und später. Haiku-Modelle unterstützen die Tool-Suche nicht.
 
 Steuern Sie das Verhalten der Tool-Suche mit der Umgebungsvariablen `ENABLE_TOOL_SEARCH`:
 
-| Wert       | Verhalten                                                                                            |
-| :--------- | :--------------------------------------------------------------------------------------------------- |
-| `auto`     | Aktiviert, wenn MCP-Tools 10 % des Kontexts überschreiten (Standard)                                 |
-| `auto:<N>` | Aktiviert bei benutzerdefinierter Schwelle, wobei `<N>` ein Prozentsatz ist (z. B. `auto:5` für 5 %) |
-| `true`     | Immer aktiviert                                                                                      |
-| `false`    | Deaktiviert, alle MCP-Tools werden vorab geladen                                                     |
+| Wert            | Verhalten                                                                                            |
+| :-------------- | :--------------------------------------------------------------------------------------------------- |
+| (nicht gesetzt) | Standardmäßig aktiviert. Deaktiviert, wenn `ANTHROPIC_BASE_URL` ein Host von Drittanbietern ist      |
+| `true`          | Immer aktiviert, auch für `ANTHROPIC_BASE_URL` von Drittanbietern                                    |
+| `auto`          | Aktiviert, wenn MCP-Tools 10 % des Kontexts überschreiten                                            |
+| `auto:<N>`      | Aktiviert bei benutzerdefinierter Schwelle, wobei `<N>` ein Prozentsatz ist (z. B. `auto:5` für 5 %) |
+| `false`         | Deaktiviert, alle MCP-Tools werden vorab geladen                                                     |
 
 ```bash  theme={null}
 # Verwenden Sie eine benutzerdefinierte 5%-Schwelle

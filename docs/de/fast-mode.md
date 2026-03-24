@@ -21,28 +21,28 @@ Der Schnellmodus ist kein anderes Modell. Er verwendet denselben Opus 4.6 mit ei
 Was Sie wissen sollten:
 
 * Verwenden Sie `/fast`, um den Schnellmodus in Claude Code CLI ein- oder auszuschalten. Auch über `/fast` in der Claude Code VS Code Extension verfügbar.
-* Die Preisgestaltung für Schnellmodus auf Opus 4.6 beginnt bei \$30/150 MTok. Der Schnellmodus ist bis 23:59 Uhr PT am 16. Februar mit 50 % Rabatt für alle Pläne verfügbar.
-* Verfügbar für alle Claude Code-Benutzer auf Abonnementplänen (Pro/Max/Team/Enterprise) und Claude Console.
-* Für Claude Code-Benutzer auf Abonnementplänen (Pro/Max/Team/Enterprise) ist der Schnellmodus nur über zusätzliche Nutzung verfügbar und nicht in den Abonnement-Ratenlimits enthalten.
+* Die Preisgestaltung für den Schnellmodus auf Opus 4.6 beginnt bei \$30/150 MTok. Der Schnellmodus ist bis 23:59 Uhr PT am 16. Februar mit 50 % Rabatt für alle Pläne verfügbar.
+* Verfügbar für alle Claude Code-Benutzer mit Abonnementplänen (Pro/Max/Team/Enterprise) und Claude Console.
+* Für Claude Code-Benutzer mit Abonnementplänen (Pro/Max/Team/Enterprise) ist der Schnellmodus nur über zusätzliche Nutzung verfügbar und nicht in den Abonnement-Ratenlimits enthalten.
 
-Diese Seite behandelt, wie Sie [Schnellmodus umschalten](#toggle-fast-mode), seine [Kostenabwägung](#understand-the-cost-tradeoff), [wann Sie ihn verwenden](#decide-when-to-use-fast-mode), [Anforderungen](#requirements), [Opt-in pro Sitzung](#require-per-session-opt-in) und [Ratenlimit-Verhalten](#handle-rate-limits).
+Diese Seite behandelt, wie Sie [den Schnellmodus aktivieren](#toggle-fast-mode), seine [Kostenabwägung](#understand-the-cost-tradeoff), [wann Sie ihn verwenden](#decide-when-to-use-fast-mode), [Anforderungen](#requirements), [Opt-in pro Sitzung](#require-per-session-opt-in) und [Ratenlimit-Verhalten](#handle-rate-limits).
 
-## Schnellmodus umschalten
+## Schnellmodus aktivieren
 
-Schalten Sie den Schnellmodus auf eine dieser Weisen um:
+Aktivieren Sie den Schnellmodus auf eine dieser Weisen:
 
 * Geben Sie `/fast` ein und drücken Sie Tab, um ihn ein- oder auszuschalten
 * Setzen Sie `"fastMode": true` in Ihrer [Benutzereinstellungsdatei](/de/settings)
 
-Standardmäßig bleibt der Schnellmodus über Sitzungen hinweg erhalten. Administratoren können den Schnellmodus so konfigurieren, dass er sich bei jeder Sitzung zurückgesetzt wird. Siehe [Opt-in pro Sitzung erforderlich](#require-per-session-opt-in) für Details.
+Standardmäßig bleibt der Schnellmodus über Sitzungen hinweg erhalten. Administratoren können den Schnellmodus so konfigurieren, dass er sich bei jeder Sitzung zurückgesetzt wird. Weitere Informationen finden Sie unter [Opt-in pro Sitzung erforderlich](#require-per-session-opt-in).
 
-Für die beste Kosteneffizienz aktivieren Sie den Schnellmodus am Anfang einer Sitzung, anstatt ihn mitten in einem Gespräch zu wechseln. Siehe [Kostenabwägung verstehen](#understand-the-cost-tradeoff) für Details.
+Für die beste Kosteneffizienz aktivieren Sie den Schnellmodus am Anfang einer Sitzung, anstatt ihn mitten in einem Gespräch zu wechseln. Weitere Informationen finden Sie unter [Kostenabwägung verstehen](#understand-the-cost-tradeoff).
 
 Wenn Sie den Schnellmodus aktivieren:
 
 * Wenn Sie sich auf einem anderen Modell befinden, wechselt Claude Code automatisch zu Opus 4.6
 * Sie sehen eine Bestätigungsmeldung: „Fast mode ON"
-* Ein kleines `↯`-Symbol erscheint neben der Eingabeaufforderung, während der Schnellmodus aktiv ist
+* Ein kleines `↯`-Symbol wird neben der Eingabeaufforderung angezeigt, während der Schnellmodus aktiv ist
 * Führen Sie `/fast` jederzeit erneut aus, um zu überprüfen, ob der Schnellmodus aktiviert oder deaktiviert ist
 
 Wenn Sie den Schnellmodus mit `/fast` erneut deaktivieren, bleiben Sie auf Opus 4.6. Das Modell wird nicht auf Ihr vorheriges Modell zurückgesetzt. Um zu einem anderen Modell zu wechseln, verwenden Sie `/model`.
@@ -78,7 +78,7 @@ Der Standardmodus ist besser für:
 
 Der Schnellmodus und die Anstrengungsstufe beeinflussen beide die Antwortgeschwindigkeit, aber auf unterschiedliche Weise:
 
-| Einstellung                      | Effekt                                                                                            |
+| Einstellung                      | Auswirkung                                                                                        |
 | -------------------------------- | ------------------------------------------------------------------------------------------------- |
 | **Schnellmodus**                 | Gleiche Modellqualität, niedrigere Latenz, höhere Kosten                                          |
 | **Niedrigere Anstrengungsstufe** | Weniger Denkzeit, schnellere Antworten, möglicherweise niedrigere Qualität bei komplexen Aufgaben |
@@ -109,11 +109,11 @@ Administratoren können den Schnellmodus aktivieren in:
 * **Console** (API-Kunden): [Claude Code-Einstellungen](https://platform.claude.com/claude-code/preferences)
 * **Claude AI** (Teams und Enterprise): [Admin-Einstellungen > Claude Code](https://claude.ai/admin-settings/claude-code)
 
-Eine weitere Option zum vollständigen Deaktivieren des Schnellmodus ist das Setzen von `CLAUDE_CODE_DISABLE_FAST_MODE=1`. Siehe [Umgebungsvariablen](/de/settings#environment-variables).
+Eine weitere Option zum vollständigen Deaktivieren des Schnellmodus ist das Setzen von `CLAUDE_CODE_DISABLE_FAST_MODE=1`. Siehe [Umgebungsvariablen](/de/env-vars).
 
 ### Opt-in pro Sitzung erforderlich
 
-Standardmäßig bleibt der Schnellmodus über Sitzungen hinweg erhalten: Wenn ein Benutzer den Schnellmodus aktiviert, bleibt er in zukünftigen Sitzungen aktiviert. Administratoren auf [Teams](https://claude.com/pricing#team-&-enterprise)- oder [Enterprise](https://anthropic.com/contact-sales)-Plänen können dies verhindern, indem sie `fastModePerSessionOptIn` in [verwalteten Einstellungen](/de/settings#settings-files) oder [servergesteuerten Einstellungen](/de/server-managed-settings) auf `true` setzen. Dies führt dazu, dass jede Sitzung mit deaktiviertem Schnellmodus beginnt und Benutzer ihn explizit mit `/fast` aktivieren müssen.
+Standardmäßig bleibt der Schnellmodus über Sitzungen hinweg erhalten: Wenn ein Benutzer den Schnellmodus aktiviert, bleibt er in zukünftigen Sitzungen aktiviert. Administratoren in [Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise)- oder [Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise)-Plänen können dies verhindern, indem sie `fastModePerSessionOptIn` in [verwalteten Einstellungen](/de/settings#settings-files) oder [servergesteuerten Einstellungen](/de/server-managed-settings) auf `true` setzen. Dies führt dazu, dass jede Sitzung mit deaktiviertem Schnellmodus beginnt und Benutzer ihn explizit mit `/fast` aktivieren müssen.
 
 ```json  theme={null}
 {
@@ -128,7 +128,7 @@ Dies ist nützlich zur Kostenkontrolle in Organisationen, in denen Benutzer mehr
 Der Schnellmodus hat separate Ratenlimits vom Standard-Opus 4.6. Wenn Sie das Ratenlimit des Schnellmodus erreichen oder keine zusätzlichen Nutzungsguthaben mehr haben:
 
 1. Der Schnellmodus fällt automatisch auf Standard-Opus 4.6 zurück
-2. Das `↯`-Symbol wird grau, um eine Abkühlung anzuzeigen
+2. Das `↯`-Symbol wird grau, um die Abkühlung anzuzeigen
 3. Sie arbeiten weiterhin mit Standard-Geschwindigkeit und -Preisen
 4. Wenn die Abkühlung abläuft, wird der Schnellmodus automatisch wieder aktiviert
 
@@ -148,4 +148,4 @@ Melden Sie Probleme oder Feedback über Ihre üblichen Anthropic-Supportkanäle.
 
 * [Modellkonfiguration](/de/model-config): Wechseln Sie Modelle und passen Sie Anstrengungsstufen an
 * [Kosten effektiv verwalten](/de/costs): Verfolgen Sie die Token-Nutzung und reduzieren Sie Kosten
-* [Statusleisten-Konfiguration](/de/statusline): Zeigen Sie Modell- und Kontextinformationen an
+* [Statuszeilen-Konfiguration](/de/statusline): Zeigen Sie Modell- und Kontextinformationen an

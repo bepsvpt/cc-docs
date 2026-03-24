@@ -15,7 +15,7 @@ Assurez-vous que vous avez :
 * Un terminal ou une invite de commande ouvert
   * Si vous n'avez jamais utilisé le terminal auparavant, consultez le [guide du terminal](/fr/terminal-guide)
 * Un projet de code avec lequel travailler
-* Un [abonnement Claude](https://claude.com/pricing) (Pro, Max, Teams ou Enterprise), un compte [Claude Console](https://console.anthropic.com/), ou un accès via un [fournisseur cloud pris en charge](/fr/third-party-integrations)
+* Un [abonnement Claude](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_prereq) (Pro, Max, Teams ou Enterprise), un compte [Claude Console](https://console.anthropic.com/), ou un accès via un [fournisseur cloud pris en charge](/fr/third-party-integrations)
 
 <Note>
   Ce guide couvre le CLI du terminal. Claude Code est également disponible sur le [web](https://claude.ai/code), en tant qu'[application de bureau](/fr/desktop), dans [VS Code](/fr/vs-code) et [les IDE JetBrains](/fr/jetbrains), dans [Slack](/fr/slack), et en CI/CD avec [GitHub Actions](/fr/github-actions) et [GitLab](/fr/gitlab-ci-cd). Voir [toutes les interfaces](/fr/overview#use-claude-code-everywhere).
@@ -89,11 +89,11 @@ claude
 
 Vous pouvez vous connecter en utilisant l'un de ces types de compte :
 
-* [Claude Pro, Max, Teams ou Enterprise](https://claude.com/pricing) (recommandé)
+* [Claude Pro, Max, Teams ou Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_login) (recommandé)
 * [Claude Console](https://console.anthropic.com/) (accès API avec crédits prépayés). Lors de la première connexion, un espace de travail « Claude Code » est automatiquement créé dans la Console pour un suivi centralisé des coûts.
 * [Amazon Bedrock, Google Vertex AI ou Microsoft Foundry](/fr/third-party-integrations) (fournisseurs cloud d'entreprise)
 
-Une fois connecté, vos identifiants sont stockés et vous n'aurez pas besoin de vous reconnecter. Pour changer de compte ultérieurement, utilisez la commande `/login`.
+Une fois connecté, vos identifiants sont stockés et vous n'aurez pas besoin de vous reconnecter. Pour changer de compte plus tard, utilisez la commande `/login`.
 
 ## Étape 3 : Démarrer votre première session
 
@@ -247,7 +247,7 @@ review my changes and suggest improvements
 ```
 
 <Tip>
-  Parlez à Claude comme vous le feriez avec un collègue utile. Décrivez ce que vous voulez réaliser, et il vous aidera à y parvenir.
+  Parlez à Claude comme vous le feriez avec un collègue utile. Décrivez ce que vous voulez réaliser, et il vous aidera à y arriver.
 </Tip>
 
 ## Commandes essentielles

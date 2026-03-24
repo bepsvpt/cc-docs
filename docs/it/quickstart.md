@@ -15,7 +15,7 @@ Assicurati di avere:
 * Un terminale o un prompt dei comandi aperto
   * Se non hai mai utilizzato il terminale prima, consulta la [guida del terminale](/it/terminal-guide)
 * Un progetto di codice con cui lavorare
-* Un [abbonamento Claude](https://claude.com/pricing) (Pro, Max, Teams o Enterprise), un account [Claude Console](https://console.anthropic.com/) o accesso tramite un [provider cloud supportato](/it/third-party-integrations)
+* Un [abbonamento Claude](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_prereq) (Pro, Max, Teams o Enterprise), un account [Claude Console](https://console.anthropic.com/) o accesso tramite un [provider cloud supportato](/it/third-party-integrations)
 
 <Note>
   Questa guida copre il CLI del terminale. Claude Code è disponibile anche sul [web](https://claude.ai/code), come [app desktop](/it/desktop), in [VS Code](/it/vs-code) e [IDE JetBrains](/it/jetbrains), in [Slack](/it/slack) e in CI/CD con [GitHub Actions](/it/github-actions) e [GitLab](/it/gitlab-ci-cd). Vedi [tutte le interfacce](/it/overview#use-claude-code-everywhere).
@@ -79,7 +79,7 @@ Claude Code richiede un account per essere utilizzato. Quando avvii una sessione
 
 ```bash  theme={null}
 claude
-# Ti verrà richiesto di accedere al primo utilizzo
+# Ti verrà chiesto di effettuare l'accesso al primo utilizzo
 ```
 
 ```bash  theme={null}
@@ -89,7 +89,7 @@ claude
 
 Puoi accedere utilizzando uno di questi tipi di account:
 
-* [Claude Pro, Max, Teams o Enterprise](https://claude.com/pricing) (consigliato)
+* [Claude Pro, Max, Teams o Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_login) (consigliato)
 * [Claude Console](https://console.anthropic.com/) (accesso API con crediti prepagati). Al primo accesso, uno spazio di lavoro "Claude Code" viene creato automaticamente nella Console per il tracciamento centralizzato dei costi.
 * [Amazon Bedrock, Google Vertex AI o Microsoft Foundry](/it/third-party-integrations) (provider cloud aziendali)
 
@@ -107,7 +107,7 @@ claude
 Vedrai la schermata di benvenuto di Claude Code con le informazioni della tua sessione, le conversazioni recenti e gli ultimi aggiornamenti. Digita `/help` per i comandi disponibili o `/resume` per continuare una conversazione precedente.
 
 <Tip>
-  Dopo aver effettuato l'accesso (Passaggio 2), le tue credenziali vengono archiviate nel tuo sistema. Scopri di più in [Gestione delle credenziali](/it/authentication#credential-management).
+  Dopo aver effettuato l'accesso (Passaggio 2), le tue credenziali vengono archiviate sul tuo sistema. Scopri di più in [Gestione delle credenziali](/it/authentication#credential-management).
 </Tip>
 
 ## Passaggio 4: Fai la tua prima domanda
@@ -115,35 +115,35 @@ Vedrai la schermata di benvenuto di Claude Code con le informazioni della tua se
 Iniziamo con la comprensione della tua base di codice. Prova uno di questi comandi:
 
 ```text  theme={null}
-what does this project do?
+cosa fa questo progetto?
 ```
 
 Claude analizzerà i tuoi file e fornirà un riepilogo. Puoi anche fare domande più specifiche:
 
 ```text  theme={null}
-what technologies does this project use?
+quali tecnologie utilizza questo progetto?
 ```
 
 ```text  theme={null}
-where is the main entry point?
+dov'è il punto di ingresso principale?
 ```
 
 ```text  theme={null}
-explain the folder structure
+spiega la struttura delle cartelle
 ```
 
 Puoi anche chiedere a Claude informazioni sulle sue stesse capacità:
 
 ```text  theme={null}
-what can Claude Code do?
+cosa può fare Claude Code?
 ```
 
 ```text  theme={null}
-how do I create custom skills in Claude Code?
+come creo skill personalizzate in Claude Code?
 ```
 
 ```text  theme={null}
-can Claude Code work with Docker?
+Claude Code può funzionare con Docker?
 ```
 
 <Note>
@@ -155,7 +155,7 @@ can Claude Code work with Docker?
 Ora facciamo in modo che Claude Code faccia un po' di codifica vera. Prova un'attività semplice:
 
 ```text  theme={null}
-add a hello world function to the main file
+aggiungi una funzione hello world al file principale
 ```
 
 Claude Code farà:
@@ -166,7 +166,7 @@ Claude Code farà:
 4. Effettuare la modifica
 
 <Note>
-  Claude Code chiede sempre il permesso prima di modificare i file. Puoi approvare le singole modifiche o abilitare la modalità "Accetta tutto" per una sessione.
+  Claude Code chiede sempre il permesso prima di modificare i file. Puoi approvare i singoli cambiamenti o abilitare la modalità "Accetta tutto" per una sessione.
 </Note>
 
 ## Passaggio 6: Usa Git con Claude Code
@@ -174,25 +174,25 @@ Claude Code farà:
 Claude Code rende le operazioni Git conversazionali:
 
 ```text  theme={null}
-what files have I changed?
+quali file ho modificato?
 ```
 
 ```text  theme={null}
-commit my changes with a descriptive message
+esegui il commit delle mie modifiche con un messaggio descrittivo
 ```
 
 Puoi anche richiedere operazioni Git più complesse:
 
 ```text  theme={null}
-create a new branch called feature/quickstart
+crea un nuovo branch chiamato feature/quickstart
 ```
 
 ```text  theme={null}
-show me the last 5 commits
+mostrami gli ultimi 5 commit
 ```
 
 ```text  theme={null}
-help me resolve merge conflicts
+aiutami a risolvere i conflitti di merge
 ```
 
 ## Passaggio 7: Correggi un bug o aggiungi una funzionalità
@@ -202,13 +202,13 @@ Claude è abile nel debug e nell'implementazione di funzionalità.
 Descrivi quello che vuoi in linguaggio naturale:
 
 ```text  theme={null}
-add input validation to the user registration form
+aggiungi la convalida dell'input al modulo di registrazione dell'utente
 ```
 
 O correggi i problemi esistenti:
 
 ```text  theme={null}
-there's a bug where users can submit empty forms - fix it
+c'è un bug in cui gli utenti possono inviare moduli vuoti - correggilo
 ```
 
 Claude Code farà:
@@ -225,29 +225,29 @@ Ci sono diversi modi per lavorare con Claude:
 **Refactoring del codice**
 
 ```text  theme={null}
-refactor the authentication module to use async/await instead of callbacks
+refactorizza il modulo di autenticazione per utilizzare async/await invece di callback
 ```
 
 **Scrivi test**
 
 ```text  theme={null}
-write unit tests for the calculator functions
+scrivi unit test per le funzioni della calcolatrice
 ```
 
 **Aggiorna la documentazione**
 
 ```text  theme={null}
-update the README with installation instructions
+aggiorna il README con le istruzioni di installazione
 ```
 
 **Revisione del codice**
 
 ```text  theme={null}
-review my changes and suggest improvements
+rivedi le mie modifiche e suggerisci miglioramenti
 ```
 
 <Tip>
-  Parla a Claude come faresti con un collega disponibile. Descrivi quello che vuoi ottenere e ti aiuterà a raggiungerlo.
+  Parla a Claude come faresti con un collega utile. Descrivi quello che vuoi ottenere e ti aiuterà a raggiungerlo.
 </Tip>
 
 ## Comandi essenziali
@@ -262,7 +262,7 @@ Ecco i comandi più importanti per l'uso quotidiano:
 | `claude -c`         | Continua la conversazione più recente nella directory corrente | `claude -c`                         |
 | `claude -r`         | Riprendi una conversazione precedente                          | `claude -r`                         |
 | `claude commit`     | Crea un commit Git                                             | `claude commit`                     |
-| `/clear`            | Cancella la cronologia delle conversazioni                     | `/clear`                            |
+| `/clear`            | Cancella la cronologia della conversazione                     | `/clear`                            |
 | `/help`             | Mostra i comandi disponibili                                   | `/help`                             |
 | `exit` o Ctrl+C     | Esci da Claude Code                                            | `exit`                              |
 
@@ -274,18 +274,18 @@ Per ulteriori informazioni, vedi [best practices](/it/best-practices) e [flussi 
 
 <AccordionGroup>
   <Accordion title="Sii specifico con le tue richieste">
-    Invece di: "fix the bug"
+    Invece di: "correggi il bug"
 
-    Prova: "fix the login bug where users see a blank screen after entering wrong credentials"
+    Prova: "correggi il bug di accesso in cui gli utenti vedono una schermata vuota dopo aver inserito credenziali errate"
   </Accordion>
 
   <Accordion title="Usa istruzioni passo dopo passo">
     Suddividi i compiti complessi in passaggi:
 
     ```text  theme={null}
-    1. create a new database table for user profiles
-    2. create an API endpoint to get and update user profiles
-    3. build a webpage that allows users to see and edit their information
+    1. crea una nuova tabella di database per i profili utente
+    2. crea un endpoint API per ottenere e aggiornare i profili utente
+    3. costruisci una pagina web che consenta agli utenti di visualizzare e modificare le loro informazioni
     ```
   </Accordion>
 
@@ -293,11 +293,11 @@ Per ulteriori informazioni, vedi [best practices](/it/best-practices) e [flussi 
     Prima di apportare modifiche, lascia che Claude comprenda il tuo codice:
 
     ```text  theme={null}
-    analyze the database schema
+    analizza lo schema del database
     ```
 
     ```text  theme={null}
-    build a dashboard showing products that are most frequently returned by our UK customers
+    costruisci una dashboard che mostra i prodotti che vengono restituiti più frequentemente dai nostri clienti nel Regno Unito
     ```
   </Accordion>
 
@@ -305,7 +305,7 @@ Per ulteriori informazioni, vedi [best practices](/it/best-practices) e [flussi 
     * Premi `?` per vedere tutte le scorciatoie da tastiera disponibili
     * Usa Tab per il completamento dei comandi
     * Premi ↑ per la cronologia dei comandi
-    * Digita `/` per vedere tutti i comandi e le skills
+    * Digita `/` per vedere tutti i comandi e le skill
   </Accordion>
 </AccordionGroup>
 
@@ -333,6 +333,6 @@ Ora che hai imparato le nozioni di base, esplora funzionalità più avanzate:
 
 ## Ottenere aiuto
 
-* **In Claude Code**: Digita `/help` o chiedi "how do I..."
+* **In Claude Code**: Digita `/help` o chiedi "come faccio a..."
 * **Documentazione**: Sei qui! Sfoglia altre guide
 * **Community**: Unisciti al nostro [Discord](https://www.anthropic.com/discord) per suggerimenti e supporto
