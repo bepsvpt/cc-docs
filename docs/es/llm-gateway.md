@@ -47,9 +47,15 @@ Si has configurado nombres de modelo personalizados en tu puerta de enlace, util
 
 ## Configuración de LiteLLM
 
-<Note>
+<Warning>
+  Las versiones 1.82.7 y 1.82.8 de LiteLLM PyPI fueron comprometidas con malware que roba credenciales. No instales estas versiones. Si ya las has instalado:
+
+  * Elimina el paquete
+  * Rota todas las credenciales en los sistemas afectados
+  * Sigue los pasos de remediación en [BerriAI/litellm#24518](https://github.com/BerriAI/litellm/issues/24518)
+
   LiteLLM es un servicio proxy de terceros. Anthropic no respalda, mantiene ni audita la seguridad o funcionalidad de LiteLLM. Esta guía se proporciona con fines informativos y puede quedar obsoleta. Úsala bajo tu propio criterio.
-</Note>
+</Warning>
 
 ### Requisitos previos
 

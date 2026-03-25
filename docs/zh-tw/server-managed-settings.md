@@ -41,7 +41,7 @@ Claude Code 支援兩種集中設定方法。伺服器管理的設定從 Anthrop
   </Step>
 
   <Step title="定義您的設定">
-    將您的設定新增為 JSON。支援 [`settings.json` 中提供的所有設定](/zh-TW/settings#available-settings)，包括[僅限受管的設定](/zh-TW/permissions#managed-only-settings)，例如 `disableBypassPermissionsMode`。
+    將您的設定新增為 JSON。支援 [`settings.json` 中提供的所有設定](/zh-TW/settings#available-settings)，包括 [hooks](/zh-TW/hooks)、[環境變數](/zh-TW/env-vars) 和[僅限受管的設定](/zh-TW/permissions#managed-only-settings)，例如 `allowManagedPermissionRulesOnly`。
 
     此範例強制執行權限拒絕清單並防止使用者繞過權限：
 
@@ -58,6 +58,41 @@ Claude Code 支援兩種集中設定方法。伺服器管理的設定從 Anthrop
       }
     }
     ```
+
+    Hooks 使用與 `settings.json` 中相同的格式。
+
+    此範例在整個組織中的每次檔案編輯後執行稽核指令碼：
+
+    ```json  theme={null}
+    {
+      "hooks": {
+        "PostToolUse": [
+          {
+            "matcher": "Edit|Write",
+            "hooks": [
+              { "type": "command", "command": "/usr/local/bin/audit-edit.sh" }
+            ]
+          }
+        ]
+      }
+    }
+    ```
+
+    若要設定 [auto mode](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode) 分類器，使其知道您的組織信任哪些儲存庫、儲存桶和網域：
+
+    ```json  theme={null}
+    {
+      "autoMode": {
+        "environment": [
+          "Source control: github.example.com/acme-corp and all repos under it",
+          "Trusted cloud buckets: s3://acme-build-artifacts, gs://acme-ml-datasets",
+          "Trusted internal domains: *.corp.example.com"
+        ]
+      }
+    }
+    ```
+
+    因為 hooks 執行 shell 命令，使用者在套用前會看到[安全核准對話方塊](#security-approval-dialogs)。請參閱[設定 auto mode 分類器](/zh-TW/permissions#configure-the-auto-mode-classifier)，了解 `autoMode` 項目如何影響分類器阻止的內容，以及關於 `allow` 和 `soft_deny` 欄位的重要警告。
   </Step>
 
   <Step title="儲存並部署">

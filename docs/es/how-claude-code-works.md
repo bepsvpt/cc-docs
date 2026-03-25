@@ -124,7 +124,7 @@ Esto crea un nuevo ID de sesión mientras preserva el historial de conversación
 
 ### La ventana de contexto
 
-La ventana de contexto de Claude contiene el historial de su conversación, contenidos de archivos, salidas de comandos, [CLAUDE.md](/es/memory), skills cargadas e instrucciones del sistema. A medida que trabaja, el contexto se llena. Claude se compacta automáticamente, pero las instrucciones del principio de la conversación pueden perderse. Coloque reglas persistentes en CLAUDE.md y ejecute `/context` para ver qué está usando espacio.
+La ventana de contexto de Claude contiene el historial de su conversación, contenidos de archivos, salidas de comandos, [CLAUDE.md](/es/memory), [auto memory](/es/memory#auto-memory), skills cargadas e instrucciones del sistema. A medida que trabaja, el contexto se llena. Claude se compacta automáticamente, pero las instrucciones del principio de la conversación pueden perderse. Coloque reglas persistentes en CLAUDE.md y ejecute `/context` para ver qué está usando espacio.
 
 #### Cuando el contexto se llena
 
@@ -161,6 +161,7 @@ Presione `Shift+Tab` para ciclar a través de modos de permiso:
 * **Predeterminado**: Claude pregunta antes de ediciones de archivo y comandos de shell
 * **Auto-aceptar ediciones**: Claude edita archivos sin preguntar, aún pregunta por comandos
 * **Plan Mode**: Claude usa solo herramientas de solo lectura, creando un plan que puede aprobar antes de la ejecución
+* **Auto mode**: Claude evalúa todas las acciones con verificaciones de seguridad en segundo plano. Actualmente una vista previa de investigación
 
 También puede permitir comandos específicos en `.claude/settings.json` para que Claude no pregunte cada vez. Esto es útil para comandos confiables como `npm test` o `git status`. La configuración puede tener alcance desde políticas de toda la organización hasta preferencias personales. Consulte [Permisos](/es/permissions) para detalles.
 

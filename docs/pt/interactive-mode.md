@@ -22,24 +22,24 @@
 
 ### Controles gerais
 
-| Atalho                                            | Descrição                                                                                     | Contexto                                                                                                     |
-| :------------------------------------------------ | :-------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------- |
-| `Ctrl+C`                                          | Cancelar entrada ou geração atual                                                             | Interrupção padrão                                                                                           |
-| `Ctrl+F`                                          | Encerrar todos os agentes em segundo plano. Pressione duas vezes em 3 segundos para confirmar | Controle de agente em segundo plano                                                                          |
-| `Ctrl+D`                                          | Sair da sessão do Claude Code                                                                 | Sinal EOF                                                                                                    |
-| `Ctrl+G`                                          | Abrir no editor de texto padrão                                                               | Edite seu prompt ou resposta personalizada no seu editor de texto padrão                                     |
-| `Ctrl+L`                                          | Limpar tela do terminal                                                                       | Mantém histórico de conversa                                                                                 |
-| `Ctrl+O`                                          | Alternar saída detalhada                                                                      | Mostra uso e execução de ferramentas detalhados                                                              |
-| `Ctrl+R`                                          | Pesquisa reversa no histórico de comandos                                                     | Pesquise através de comandos anteriores interativamente                                                      |
-| `Ctrl+V` ou `Cmd+V` (iTerm2) ou `Alt+V` (Windows) | Colar imagem da área de transferência                                                         | Cola uma imagem ou caminho para um arquivo de imagem                                                         |
-| `Ctrl+B`                                          | Tarefas em execução em segundo plano                                                          | Coloca comandos bash e agentes em segundo plano. Usuários de Tmux pressione duas vezes                       |
-| `Ctrl+T`                                          | Alternar lista de tarefas                                                                     | Mostrar ou ocultar a [lista de tarefas](#task-list) na área de status do terminal                            |
-| `Left/Right arrows`                               | Ciclar através de abas de diálogo                                                             | Navegue entre abas em diálogos de permissão e menus                                                          |
-| `Up/Down arrows`                                  | Navegar histórico de comandos                                                                 | Recuperar entradas anteriores                                                                                |
-| `Esc` + `Esc`                                     | Retroceder ou resumir                                                                         | Restaurar código e/ou conversa para um ponto anterior, ou resumir a partir de uma mensagem selecionada       |
-| `Shift+Tab` ou `Alt+M` (algumas configurações)    | Alternar modos de permissão                                                                   | Alternar entre Auto-Accept Mode, Plan Mode e modo normal.                                                    |
-| `Option+P` (macOS) ou `Alt+P` (Windows/Linux)     | Alternar modelo                                                                               | Alternar modelos sem limpar seu prompt                                                                       |
-| `Option+T` (macOS) ou `Alt+T` (Windows/Linux)     | Alternar pensamento estendido                                                                 | Ativar ou desativar modo de pensamento estendido. Execute `/terminal-setup` primeiro para ativar este atalho |
+| Atalho                                            | Descrição                                                                                     | Contexto                                                                                                                                                                     |
+| :------------------------------------------------ | :-------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+C`                                          | Cancelar entrada ou geração atual                                                             | Interrupção padrão                                                                                                                                                           |
+| `Ctrl+F`                                          | Encerrar todos os agentes em segundo plano. Pressione duas vezes em 3 segundos para confirmar | Controle de agente em segundo plano                                                                                                                                          |
+| `Ctrl+D`                                          | Sair da sessão do Claude Code                                                                 | Sinal EOF                                                                                                                                                                    |
+| `Ctrl+G`                                          | Abrir no editor de texto padrão                                                               | Edite seu prompt ou resposta personalizada no seu editor de texto padrão                                                                                                     |
+| `Ctrl+L`                                          | Limpar tela do terminal                                                                       | Mantém histórico de conversa                                                                                                                                                 |
+| `Ctrl+O`                                          | Alternar saída detalhada                                                                      | Mostra uso e execução de ferramentas detalhados. Também expande chamadas de leitura e pesquisa do MCP, que se contraem para uma única linha como "Queried slack" por padrão  |
+| `Ctrl+R`                                          | Pesquisa reversa no histórico de comandos                                                     | Pesquise através de comandos anteriores interativamente                                                                                                                      |
+| `Ctrl+V` ou `Cmd+V` (iTerm2) ou `Alt+V` (Windows) | Colar imagem da área de transferência                                                         | Cola uma imagem ou caminho para um arquivo de imagem                                                                                                                         |
+| `Ctrl+B`                                          | Tarefas em execução em segundo plano                                                          | Coloca comandos bash e agentes em segundo plano. Usuários de Tmux pressione duas vezes                                                                                       |
+| `Ctrl+T`                                          | Alternar lista de tarefas                                                                     | Mostrar ou ocultar a [lista de tarefas](#task-list) na área de status do terminal                                                                                            |
+| `Left/Right arrows`                               | Ciclar através de abas de diálogo                                                             | Navegue entre abas em diálogos de permissão e menus                                                                                                                          |
+| `Up/Down arrows`                                  | Navegar histórico de comandos                                                                 | Recuperar entradas anteriores                                                                                                                                                |
+| `Esc` + `Esc`                                     | Retroceder ou resumir                                                                         | Restaurar código e/ou conversa para um ponto anterior, ou resumir a partir de uma mensagem selecionada                                                                       |
+| `Shift+Tab` ou `Alt+M` (algumas configurações)    | Alternar modos de permissão                                                                   | Alternar entre `default`, `acceptEdits`, `plan` e qualquer modo que você tenha ativado, como `auto` ou `bypassPermissions`. Veja [modos de permissão](/pt/permission-modes). |
+| `Option+P` (macOS) ou `Alt+P` (Windows/Linux)     | Alternar modelo                                                                               | Alternar modelos sem limpar seu prompt                                                                                                                                       |
+| `Option+T` (macOS) ou `Alt+T` (Windows/Linux)     | Alternar pensamento estendido                                                                 | Ativar ou desativar modo de pensamento estendido. Execute `/terminal-setup` primeiro para ativar este atalho                                                                 |
 
 ### Edição de texto
 
@@ -83,6 +83,12 @@
 | `/` no início | Comando ou skill             | Veja [comandos integrados](#built-in-commands) e [skills](/pt/skills) |
 | `!` no início | Modo Bash                    | Execute comandos diretamente e adicione saída de execução à sessão    |
 | `@`           | Menção de caminho de arquivo | Ativar preenchimento automático de caminho de arquivo                 |
+
+### Entrada de voz
+
+| Atalho         | Descrição            | Notas                                                                                                                                                                |
+| :------------- | :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Manter `Space` | Ditação push-to-talk | Requer que [ditação de voz](/pt/voice-dictation) esteja ativada. A transcrição é inserida no cursor. [Reatribuível](/pt/voice-dictation#rebind-the-push-to-talk-key) |
 
 ## Comandos integrados
 
@@ -207,6 +213,7 @@ Para executar comandos em segundo plano, você pode:
 * A saída é armazenada em buffer e Claude pode recuperá-la usando a ferramenta TaskOutput
 * Tarefas em segundo plano têm IDs únicos para rastreamento e recuperação de saída
 * Tarefas em segundo plano são limpas automaticamente quando Claude Code sai
+* Tarefas em segundo plano são automaticamente encerradas se a saída exceder 5GB, com uma nota em stderr explicando o motivo
 
 Para desabilitar toda a funcionalidade de tarefa em segundo plano, defina a variável de ambiente `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` para `1`. Veja [Variáveis de ambiente](/pt/env-vars) para detalhes.
 

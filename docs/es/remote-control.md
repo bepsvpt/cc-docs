@@ -7,7 +7,7 @@
 > Continúe una sesión local de Claude Code desde su teléfono, tableta o cualquier navegador usando Remote Control. Funciona con claude.ai/code y la aplicación móvil de Claude.
 
 <Note>
-  Remote Control está disponible en todos los planes. Los administradores de Team y Enterprise deben habilitar primero Claude Code en [configuración de administración](https://claude.ai/admin-settings/claude-code).
+  Remote Control está disponible en todos los planes. En Team y Enterprise, está deshabilitado de forma predeterminada hasta que un administrador habilite el botón de alternancia de Remote Control en [configuración de administración de Claude Code](https://claude.ai/admin-settings/claude-code).
 </Note>
 
 Remote Control conecta [claude.ai/code](https://claude.ai/code) o la aplicación Claude para [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) y [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude) a una sesión de Claude Code que se ejecuta en su máquina. Inicie una tarea en su escritorio y luego continúela desde su teléfono en el sofá o desde un navegador en otra computadora.
@@ -30,7 +30,7 @@ Esta página cubre la configuración, cómo iniciar y conectarse a sesiones, y c
 
 Antes de usar Remote Control, confirme que su entorno cumple con estas condiciones:
 
-* **Suscripción**: disponible en planes Pro, Max, Team y Enterprise. Los administradores de Team y Enterprise deben habilitar primero Claude Code en [configuración de administración](https://claude.ai/admin-settings/claude-code). Las claves API no son compatibles.
+* **Suscripción**: disponible en planes Pro, Max, Team y Enterprise. Las claves API no son compatibles. En Team y Enterprise, un administrador debe habilitar primero el botón de alternancia de Remote Control en [configuración de administración de Claude Code](https://claude.ai/admin-settings/claude-code).
 * **Autenticación**: ejecute `claude` y use `/login` para iniciar sesión a través de claude.ai si aún no lo ha hecho.
 * **Confianza del espacio de trabajo**: ejecute `claude` en su directorio de proyecto al menos una vez para aceptar el diálogo de confianza del espacio de trabajo.
 
@@ -100,7 +100,14 @@ Una vez que una sesión de Remote Control está activa, tiene varias formas de c
 * **Escanee el código QR** que se muestra junto a la URL de la sesión para abrirlo directamente en la aplicación Claude. Con `claude remote-control`, presione la barra espaciadora para alternar la visualización del código QR.
 * **Abra [claude.ai/code](https://claude.ai/code) o la aplicación Claude** y encuentre la sesión por nombre en la lista de sesiones. Las sesiones de Remote Control muestran un icono de computadora con un punto de estado verde cuando están en línea.
 
-La sesión remota toma su nombre del argumento `--name` (o el nombre pasado a `/remote-control`), su último mensaje, su valor `/rename`, o "Remote Control session" si no hay historial de conversación. Si el entorno ya tiene una sesión activa, se le preguntará si desea continuarla o iniciar una nueva.
+El título de la sesión remota se elige en este orden:
+
+1. El nombre que pasó a `--name`, `--remote-control`, o `/remote-control`
+2. El título que estableció con `/rename`
+3. El último mensaje significativo en el historial de conversación existente
+4. Su primer mensaje una vez que envíe uno
+
+Si el entorno ya tiene una sesión activa, se le preguntará si desea continuarla o iniciar una nueva.
 
 Si aún no tiene la aplicación Claude, use el comando `/mobile` dentro de Claude Code para mostrar un código QR de descarga para [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) o [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude).
 
@@ -128,9 +135,56 @@ Use Remote Control cuando esté en medio del trabajo local y desee continuar des
 * **La terminal debe permanecer abierta**: Remote Control se ejecuta como un proceso local. Si cierra la terminal o detiene el proceso `claude`, la sesión finaliza. Ejecute `claude remote-control` nuevamente para iniciar una nueva.
 * **Interrupción de red extendida**: si su máquina está despierta pero no puede alcanzar la red durante más de aproximadamente 10 minutos, la sesión agota el tiempo de espera y el proceso se cierra. Ejecute `claude remote-control` nuevamente para iniciar una nueva sesión.
 
+## Solución de problemas
+
+### "Remote Control is not yet enabled for your account"
+
+La verificación de elegibilidad puede fallar con ciertas variables de entorno presentes:
+
+* `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` o `DISABLE_TELEMETRY`: desactívelas e intente de nuevo.
+* `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, o `CLAUDE_CODE_USE_FOUNDRY`: Remote Control requiere autenticación de claude.ai y no funciona con proveedores de terceros.
+
+Si ninguno de estos está configurado, ejecute `/logout` luego `/login` para actualizar.
+
+### "Remote Control is disabled by your organization's policy"
+
+Este error tiene tres causas distintas. Ejecute `/status` primero para ver qué método de inicio de sesión y suscripción está usando.
+
+* **Está autenticado con una clave API o cuenta de Console**: Remote Control requiere OAuth de claude.ai. Ejecute `/login` y elija la opción de claude.ai. Si `ANTHROPIC_API_KEY` está configurado en su entorno, desactívelo.
+* **Su administrador de Team o Enterprise no lo ha habilitado**: Remote Control está deshabilitado de forma predeterminada en estos planes. Un administrador puede habilitarlo en [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code) activando el botón de alternancia **Remote Control**. Esta es una configuración de organización del lado del servidor, no una clave de [configuración administrada](/es/permissions#managed-only-settings).
+* **El botón de alternancia del administrador está atenuado**: su organización tiene una configuración de retención de datos o cumplimiento que es incompatible con Remote Control. Esto no se puede cambiar desde el panel de administración. Póngase en contacto con el soporte de Anthropic para discutir opciones.
+
+### "Remote credentials fetch failed"
+
+Claude Code no pudo obtener una credencial de corta duración de la API de Anthropic para establecer la conexión. Vuelva a ejecutar con `--verbose` para ver el error completo:
+
+```bash  theme={null}
+claude remote-control --verbose
+```
+
+Causas comunes:
+
+* No ha iniciado sesión: ejecute `claude` y use `/login` para autenticarse con su cuenta de claude.ai. La autenticación con clave API no es compatible con Remote Control.
+* Problema de red o proxy: un firewall o proxy puede estar bloqueando la solicitud HTTPS saliente. Remote Control requiere acceso a la API de Anthropic en el puerto 443.
+* Error en la creación de sesión: si también ve `Session creation failed — see debug log`, el error ocurrió antes en la configuración. Verifique que su suscripción esté activa.
+
+## Elija el enfoque correcto
+
+Claude Code offers several ways to work when you're not at your terminal. They differ in what triggers the work, where Claude runs, and how much you need to set up.
+
+|                                                | Trigger                                                                                        | Claude runs on                                                                                                   | Setup                                                                                                                                | Best for                                                      |
+| :--------------------------------------------- | :--------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------ |
+| [Dispatch](/en/desktop#sessions-from-dispatch) | Message a task from the Claude mobile app                                                      | Your machine (Desktop)                                                                                           | [Pair the mobile app with Desktop](https://support.claude.com/en/articles/13947068)                                                  | Delegating work while you're away, minimal setup              |
+| [Remote Control](/en/remote-control)           | Drive a running session from [claude.ai/code](https://claude.ai/code) or the Claude mobile app | Your machine (CLI or VS Code)                                                                                    | Run `claude remote-control`                                                                                                          | Steering in-progress work from another device                 |
+| [Channels](/en/channels)                       | Push events from a chat app like Telegram or Discord, or your own server                       | Your machine (CLI)                                                                                               | [Install a channel plugin](/en/channels#quickstart) or [build your own](/en/channels-reference)                                      | Reacting to external events like CI failures or chat messages |
+| [Slack](/en/slack)                             | Mention `@Claude` in a team channel                                                            | Anthropic cloud                                                                                                  | [Install the Slack app](/en/slack#setting-up-claude-code-in-slack) with [Claude Code on the web](/en/claude-code-on-the-web) enabled | PRs and reviews from team chat                                |
+| [Scheduled tasks](/en/scheduled-tasks)         | Set a schedule                                                                                 | [CLI](/en/scheduled-tasks), [Desktop](/en/desktop#schedule-recurring-tasks), or [cloud](/en/web-scheduled-tasks) | Pick a frequency                                                                                                                     | Recurring automation like daily reviews                       |
+
 ## Recursos relacionados
 
 * [Claude Code en la web](/es/claude-code-on-the-web): ejecute sesiones en entornos en la nube administrados por Anthropic en lugar de en su máquina
+* [Channels](/es/channels): reenvíe Telegram o Discord a una sesión para que Claude reaccione a los mensajes mientras está fuera
+* [Dispatch](/es/desktop#sessions-from-dispatch): envíe un mensaje de una tarea desde su teléfono y puede generar una sesión de Desktop para manejarla
 * [Autenticación](/es/authentication): configure `/login` y administre credenciales para claude.ai
 * [Referencia de CLI](/es/cli-reference): lista completa de banderas y comandos incluyendo `claude remote-control`
 * [Seguridad](/es/security): cómo las sesiones de Remote Control se ajustan al modelo de seguridad de Claude Code

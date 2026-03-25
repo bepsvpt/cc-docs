@@ -124,7 +124,7 @@ Dies erstellt eine neue Sitzungs-ID, während die Konversationshistorie bis zu d
 
 ### Das Kontextfenster
 
-Claudes Kontextfenster enthält Ihre Konversationshistorie, Dateiinhalte, Befehlsausgaben, [CLAUDE.md](/de/memory), geladene skills und Systemanweisungen. Während Sie arbeiten, füllt sich der Kontext. Claude komprimiert automatisch, aber Anweisungen von früh in der Konversation können verloren gehen. Legen Sie persistente Regeln in CLAUDE.md ab, und führen Sie `/context` aus, um zu sehen, was Platz verbraucht.
+Claudes Kontextfenster enthält Ihre Konversationshistorie, Dateiinhalte, Befehlsausgaben, [CLAUDE.md](/de/memory), [Auto-Speicher](/de/memory#auto-memory), geladene skills und Systemanweisungen. Während Sie arbeiten, füllt sich der Kontext. Claude komprimiert automatisch, aber Anweisungen von früh in der Konversation können verloren gehen. Legen Sie persistente Regeln in CLAUDE.md ab, und führen Sie `/context` aus, um zu sehen, was Platz verbraucht.
 
 #### Wenn der Kontext voll wird
 
@@ -161,6 +161,7 @@ Drücken Sie `Shift+Tab`, um durch die Berechtigungsmodi zu wechseln:
 * **Standard**: Claude fragt vor Dateibearbeitungen und Shell-Befehlen
 * **Auto-accept edits**: Claude bearbeitet Dateien ohne zu fragen, fragt aber immer noch nach Befehlen
 * **Plan Mode**: Claude verwendet nur schreibgeschützte Tools und erstellt einen Plan, den Sie vor der Ausführung genehmigen können
+* **Auto Mode**: Claude bewertet alle Aktionen mit Hintergrund-Sicherheitsprüfungen. Derzeit eine Forschungsvorschau
 
 Sie können auch spezifische Befehle in `.claude/settings.json` zulassen, damit Claude nicht jedes Mal fragt. Dies ist nützlich für vertrauenswürdige Befehle wie `npm test` oder `git status`. Einstellungen können von organisationsweiten Richtlinien bis zu persönlichen Vorlieben reichen. Siehe [Berechtigungen](/de/permissions) für Details.
 

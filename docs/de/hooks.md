@@ -18,7 +18,7 @@ Hooks werden an bestimmten Punkten während einer Claude Code-Sitzung ausgelöst
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/2YzYcIR7V1VggfgF/images/hooks-lifecycle.svg?fit=max&auto=format&n=2YzYcIR7V1VggfgF&q=85&s=3004e6c5dc95c4fe7fa3eb40fdc4176c" alt="Hook-Lebenszyklus-Diagramm, das die Abfolge von Hooks von SessionStart durch die agentengesteuerte Schleife (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCompleted) bis PostCompact und SessionEnd zeigt, mit Elicitation und ElicitationResult verschachtelt in MCP-Tool-Ausführung und WorktreeCreate, WorktreeRemove, Notification, ConfigChange und InstructionsLoaded als eigenständige asynchrone Ereignisse" width="520" height="1100" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/2YzYcIR7V1VggfgF/images/hooks-lifecycle.svg?fit=max&auto=format&n=2YzYcIR7V1VggfgF&q=85&s=3004e6c5dc95c4fe7fa3eb40fdc4176c" alt="Hook-Lebenszyklus-Diagramm, das die Abfolge von Hooks von SessionStart durch die agentengesteuerte Schleife (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCompleted) bis Stop oder StopFailure, TeammateIdle, PreCompact, PostCompact und SessionEnd zeigt, mit Elicitation und ElicitationResult verschachtelt in MCP-Tool-Ausführung und WorktreeCreate, WorktreeRemove, Notification, ConfigChange und InstructionsLoaded als eigenständige asynchrone Ereignisse" width="520" height="1100" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
@@ -166,17 +166,21 @@ Weitere Informationen zur Auflösung von Einstellungsdateien finden Sie unter [E
 
 Das Feld `matcher` ist eine Regex-Zeichenkette, die filtert, wann Hooks ausgelöst werden. Verwenden Sie `"*"`, `""` oder lassen Sie `matcher` ganz weg, um alle Vorkommen zu treffen. Jeder Ereignistyp passt auf ein anderes Feld:
 
-| Ereignis                                                                                                              | Worauf der Matcher filtert          | Beispiel-Matcher-Werte                                                             |
-| :-------------------------------------------------------------------------------------------------------------------- | :---------------------------------- | :--------------------------------------------------------------------------------- |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                                                | Tool-Name                           | `Bash`, `Edit\|Write`, `mcp__.*`                                                   |
-| `SessionStart`                                                                                                        | Wie die Sitzung gestartet wurde     | `startup`, `resume`, `clear`, `compact`                                            |
-| `SessionEnd`                                                                                                          | Warum die Sitzung endete            | `clear`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`     |
-| `Notification`                                                                                                        | Benachrichtigungstyp                | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`           |
-| `SubagentStart`                                                                                                       | Agent-Typ                           | `Bash`, `Explore`, `Plan` oder benutzerdefinierte Agent-Namen                      |
-| `PreCompact`                                                                                                          | Was die Komprimierung ausgelöst hat | `manual`, `auto`                                                                   |
-| `SubagentStop`                                                                                                        | Agent-Typ                           | gleiche Werte wie `SubagentStart`                                                  |
-| `ConfigChange`                                                                                                        | Konfigurationsquelle                | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills` |
-| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `InstructionsLoaded` | Keine Matcher-Unterstützung         | wird immer bei jedem Auftreten ausgelöst                                           |
+| Ereignis                                                                                        | Worauf der Matcher filtert          | Beispiel-Matcher-Werte                                                                                                    |
+| :---------------------------------------------------------------------------------------------- | :---------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                          | Tool-Name                           | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `SessionStart`                                                                                  | Wie die Sitzung gestartet wurde     | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `SessionEnd`                                                                                    | Warum die Sitzung endete            | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
+| `Notification`                                                                                  | Benachrichtigungstyp                | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
+| `SubagentStart`                                                                                 | Agent-Typ                           | `Bash`, `Explore`, `Plan` oder benutzerdefinierte Agent-Namen                                                             |
+| `PreCompact`, `PostCompact`                                                                     | Was die Komprimierung ausgelöst hat | `manual`, `auto`                                                                                                          |
+| `SubagentStop`                                                                                  | Agent-Typ                           | gleiche Werte wie `SubagentStart`                                                                                         |
+| `ConfigChange`                                                                                  | Konfigurationsquelle                | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
+| `StopFailure`                                                                                   | Fehlertyp                           | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                            | Ladegrund                           | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `Elicitation`                                                                                   | MCP-Server-Name                     | Ihre konfigurierten MCP-Server-Namen                                                                                      |
+| `ElicitationResult`                                                                             | MCP-Server-Name                     | gleiche Werte wie `Elicitation`                                                                                           |
+| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | Keine Matcher-Unterstützung         | wird immer bei jedem Auftreten ausgelöst                                                                                  |
 
 Der Matcher ist ein Regex, daher passt `Edit|Write` zu beiden Tools und `Notebook.*` passt zu jedem Tool, das mit Notebook beginnt. Der Matcher wird gegen ein Feld aus der [JSON-Eingabe](#hook-input-and-output) ausgeführt, die Claude Code an Ihren Hook über stdin sendet. Für Tool-Ereignisse ist dieses Feld `tool_name`. Jeder Abschnitt [Hook-Ereignis](#hook-events) listet den vollständigen Satz von Matcher-Werten und das Eingabeschema für dieses Ereignis auf.
 
@@ -200,7 +204,7 @@ Dieses Beispiel führt ein Linting-Skript nur aus, wenn Claude eine Datei schrei
 }
 ```
 
-`UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` und `InstructionsLoaded` unterstützen keine Matcher und werden immer bei jedem Auftreten ausgelöst. Wenn Sie ein `matcher`-Feld zu diesen Ereignissen hinzufügen, wird es stillschweigend ignoriert.
+`UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate` und `WorktreeRemove` unterstützen keine Matcher und werden immer bei jedem Auftreten ausgelöst. Wenn Sie ein `matcher`-Feld zu diesen Ereignissen hinzufügen, wird es stillschweigend ignoriert.
 
 #### MCP-Tools abgleichen
 
@@ -330,7 +334,8 @@ Alle passenden Hooks werden parallel ausgeführt, und identische Handler werden 
 Verwenden Sie Umgebungsvariablen, um Hook-Skripte relativ zum Projekt- oder Plugin-Root zu referenzieren, unabhängig vom Arbeitsverzeichnis, wenn der Hook ausgeführt wird:
 
 * `$CLAUDE_PROJECT_DIR`: das Projekt-Root. In Anführungszeichen setzen, um Pfade mit Leerzeichen zu handhaben.
-* `${CLAUDE_PLUGIN_ROOT}`: das Root-Verzeichnis des Plugins, für Skripte, die mit einem [Plugin](/de/plugins) gebündelt sind.
+* `${CLAUDE_PLUGIN_ROOT}`: das Root-Verzeichnis des Plugins, für Skripte, die mit einem [Plugin](/de/plugins) gebündelt sind. Ändert sich bei jedem Plugin-Update.
+* `${CLAUDE_PLUGIN_DATA}`: das [persistente Datenverzeichnis](/de/plugins-reference#persistent-data-directory) des Plugins, für Abhängigkeiten und Zustand, die Plugin-Updates überstehen sollten.
 
 <Tabs>
   <Tab title="Projekt-Skripte">
@@ -442,13 +447,13 @@ Command-Hooks erhalten JSON-Daten über stdin und kommunizieren Ergebnisse über
 
 Alle Hook-Ereignisse erhalten diese Felder als JSON, zusätzlich zu ereignisspezifischen Feldern, die in jedem Abschnitt [Hook-Ereignis](#hook-events) dokumentiert sind. Für Command-Hooks kommt diese JSON über stdin an. Für HTTP-Hooks kommt sie als POST-Request-Body an.
 
-| Feld              | Beschreibung                                                                                                                                     |
-| :---------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `session_id`      | Aktuelle Sitzungs-ID                                                                                                                             |
-| `transcript_path` | Pfad zur Gesprächs-JSON                                                                                                                          |
-| `cwd`             | Aktuelles Arbeitsverzeichnis, wenn der Hook aufgerufen wird                                                                                      |
-| `permission_mode` | Aktueller [Berechtigungsmodus](/de/permissions#permission-modes): `"default"`, `"plan"`, `"acceptEdits"`, `"dontAsk"` oder `"bypassPermissions"` |
-| `hook_event_name` | Name des ausgelösten Ereignisses                                                                                                                 |
+| Feld              | Beschreibung                                                                                                                                                                                                                                                   |
+| :---------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `session_id`      | Aktuelle Sitzungs-ID                                                                                                                                                                                                                                           |
+| `transcript_path` | Pfad zur Gesprächs-JSON                                                                                                                                                                                                                                        |
+| `cwd`             | Aktuelles Arbeitsverzeichnis, wenn der Hook aufgerufen wird                                                                                                                                                                                                    |
+| `permission_mode` | Aktueller [Berechtigungsmodus](/de/permissions#permission-modes): `"default"`, `"plan"`, `"acceptEdits"`, `"auto"`, `"dontAsk"` oder `"bypassPermissions"`. Nicht alle Ereignisse erhalten dieses Feld: siehe jedes Ereignis-JSON-Beispiel unten, um zu prüfen |
+| `hook_event_name` | Name des ausgelösten Ereignisses                                                                                                                                                                                                                               |
 
 Wenn mit `--agent` oder innerhalb eines Subagenten ausgeführt, sind zwei zusätzliche Felder enthalten:
 
@@ -514,6 +519,7 @@ Exit-Code 2 ist die Art, wie ein Hook signalisiert „Stopp, mach das nicht." Di
 | `TeammateIdle`       | Ja                     | Verhindert, dass der Teammate untätig wird (Teammate arbeitet weiter)            |
 | `TaskCompleted`      | Ja                     | Verhindert, dass die Aufgabe als abgeschlossen markiert wird                     |
 | `ConfigChange`       | Ja                     | Blockiert die Konfigurationsänderung von der Anwendung (außer `policy_settings`) |
+| `StopFailure`        | Nein                   | Ausgabe und Exit-Code werden ignoriert                                           |
 | `PostToolUse`        | Nein                   | Zeigt stderr Claude an (Tool wurde bereits ausgeführt)                           |
 | `PostToolUseFailure` | Nein                   | Zeigt stderr Claude an (Tool ist bereits fehlgeschlagen)                         |
 | `Notification`       | Nein                   | Zeigt stderr nur dem Benutzer an                                                 |
@@ -573,16 +579,16 @@ Um Claude unabhängig vom Ereignistyp vollständig zu stoppen:
 
 Nicht jedes Ereignis unterstützt das Blockieren oder Steuern des Verhaltens durch JSON. Die Ereignisse, die dies tun, verwenden jeweils einen anderen Satz von Feldern, um diese Entscheidung auszudrücken. Verwenden Sie diese Tabelle als schnelle Referenz, bevor Sie einen Hook schreiben:
 
-| Ereignisse                                                                            | Entscheidungsmuster              | Schlüsselfelder                                                                                                                                                                      |
-| :------------------------------------------------------------------------------------ | :------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange   | Top-Level `decision`             | `decision: "block"`, `reason`                                                                                                                                                        |
-| TeammateIdle, TaskCompleted                                                           | Exit-Code oder `continue: false` | Exit-Code 2 blockiert die Aktion mit stderr-Feedback. JSON `{"continue": false, "stopReason": "..."}` stoppt auch den Teammate vollständig, was dem `Stop`-Hook-Verhalten entspricht |
-| PreToolUse                                                                            | `hookSpecificOutput`             | `permissionDecision` (allow/deny/ask), `permissionDecisionReason`                                                                                                                    |
-| PermissionRequest                                                                     | `hookSpecificOutput`             | `decision.behavior` (allow/deny)                                                                                                                                                     |
-| WorktreeCreate                                                                        | stdout-Pfad                      | Hook gibt absoluten Pfad zum erstellten Worktree aus. Nicht-Null-Exit schlägt die Erstellung fehl                                                                                    |
-| Elicitation                                                                           | `hookSpecificOutput`             | `action` (accept/decline/cancel), `content` (Formularfeldwerte für accept)                                                                                                           |
-| ElicitationResult                                                                     | `hookSpecificOutput`             | `action` (accept/decline/cancel), `content` (Formularfeldwerte überschreiben)                                                                                                        |
-| WorktreeRemove, Notification, SessionEnd, PreCompact, PostCompact, InstructionsLoaded | Keine                            | Keine Entscheidungskontrolle. Wird für Nebenwirkungen wie Protokollierung oder Bereinigung verwendet                                                                                 |
+| Ereignisse                                                                                         | Entscheidungsmuster              | Schlüsselfelder                                                                                                                                                                      |
+| :------------------------------------------------------------------------------------------------- | :------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange                | Top-Level `decision`             | `decision: "block"`, `reason`                                                                                                                                                        |
+| TeammateIdle, TaskCompleted                                                                        | Exit-Code oder `continue: false` | Exit-Code 2 blockiert die Aktion mit stderr-Feedback. JSON `{"continue": false, "stopReason": "..."}` stoppt auch den Teammate vollständig, was dem `Stop`-Hook-Verhalten entspricht |
+| PreToolUse                                                                                         | `hookSpecificOutput`             | `permissionDecision` (allow/deny/ask), `permissionDecisionReason`                                                                                                                    |
+| PermissionRequest                                                                                  | `hookSpecificOutput`             | `decision.behavior` (allow/deny)                                                                                                                                                     |
+| WorktreeCreate                                                                                     | stdout-Pfad                      | Hook gibt absoluten Pfad zum erstellten Worktree aus. Nicht-Null-Exit schlägt die Erstellung fehl                                                                                    |
+| Elicitation                                                                                        | `hookSpecificOutput`             | `action` (accept/decline/cancel), `content` (Formularfeldwerte für accept)                                                                                                           |
+| ElicitationResult                                                                                  | `hookSpecificOutput`             | `action` (accept/decline/cancel), `content` (Formularfeldwerte überschreiben)                                                                                                        |
+| WorktreeRemove, Notification, SessionEnd, PreCompact, PostCompact, InstructionsLoaded, StopFailure | Keine                            | Keine Entscheidungskontrolle. Wird für Nebenwirkungen wie Protokollierung oder Bereinigung verwendet                                                                                 |
 
 Hier sind Beispiele für jedes Muster in Aktion:
 
@@ -661,7 +667,6 @@ Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten S
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
-  "permission_mode": "default",
   "hook_event_name": "SessionStart",
   "source": "startup",
   "model": "claude-sonnet-4-6"
@@ -732,27 +737,26 @@ Alle Variablen, die in diese Datei geschrieben werden, sind in allen nachfolgend
 
 Wird ausgelöst, wenn eine `CLAUDE.md`- oder `.claude/rules/*.md`-Datei in den Kontext geladen wird. Dieses Ereignis wird beim Sitzungsstart für eifrig geladene Dateien ausgelöst und später erneut, wenn Dateien träge geladen werden, zum Beispiel wenn Claude auf ein Unterverzeichnis zugreift, das eine verschachtelte `CLAUDE.md` enthält, oder wenn bedingte Regeln mit `paths:`-Frontmatter passen. Der Hook unterstützt keine Blockierung oder Entscheidungskontrolle. Er wird asynchron zu Beobachtungszwecken ausgeführt.
 
-InstructionsLoaded unterstützt keine Matcher und wird bei jedem Ladevorgang ausgelöst.
+Der Matcher wird gegen `load_reason` ausgeführt. Verwenden Sie zum Beispiel `"matcher": "session_start"`, um nur für Dateien zu feuern, die beim Sitzungsstart geladen werden, oder `"matcher": "path_glob_match|nested_traversal"`, um nur für träge Ladevorgänge zu feuern.
 
 #### InstructionsLoaded-Eingabe
 
 Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten InstructionsLoaded-Hooks diese Felder:
 
-| Feld                | Beschreibung                                                                                                               |
-| :------------------ | :------------------------------------------------------------------------------------------------------------------------- |
-| `file_path`         | Absoluter Pfad zur Anweisungsdatei, die geladen wurde                                                                      |
-| `memory_type`       | Umfang der Datei: `"User"`, `"Project"`, `"Local"` oder `"Managed"`                                                        |
-| `load_reason`       | Warum die Datei geladen wurde: `"session_start"`, `"nested_traversal"`, `"path_glob_match"` oder `"include"`               |
-| `globs`             | Pfad-Glob-Muster aus dem `paths:`-Frontmatter der Datei, falls vorhanden. Nur für `path_glob_match`-Ladevorgänge vorhanden |
-| `trigger_file_path` | Pfad zur Datei, deren Zugriff diesen Ladevorgang ausgelöst hat, für träge Ladevorgänge                                     |
-| `parent_file_path`  | Pfad zur übergeordneten Anweisungsdatei, die diese eingebunden hat, für `include`-Ladevorgänge                             |
+| Feld                | Beschreibung                                                                                                                                                                                                                                |
+| :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `file_path`         | Absoluter Pfad zur Anweisungsdatei, die geladen wurde                                                                                                                                                                                       |
+| `memory_type`       | Umfang der Datei: `"User"`, `"Project"`, `"Local"` oder `"Managed"`                                                                                                                                                                         |
+| `load_reason`       | Warum die Datei geladen wurde: `"session_start"`, `"nested_traversal"`, `"path_glob_match"`, `"include"` oder `"compact"`. Der Wert `"compact"` wird ausgelöst, wenn Anweisungsdateien nach einem Komprimierungsereignis neu geladen werden |
+| `globs`             | Pfad-Glob-Muster aus dem `paths:`-Frontmatter der Datei, falls vorhanden. Nur für `path_glob_match`-Ladevorgänge vorhanden                                                                                                                  |
+| `trigger_file_path` | Pfad zur Datei, deren Zugriff diesen Ladevorgang ausgelöst hat, für träge Ladevorgänge                                                                                                                                                      |
+| `parent_file_path`  | Pfad zur übergeordneten Anweisungsdatei, die diese eingebunden hat, für `include`-Ladevorgänge                                                                                                                                              |
 
 ```json  theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../transcript.jsonl",
   "cwd": "/Users/my-project",
-  "permission_mode": "default",
   "hook_event_name": "InstructionsLoaded",
   "file_path": "/Users/my-project/CLAUDE.md",
   "memory_type": "Project",
@@ -924,12 +928,12 @@ Spawnt einen [Subagenten](/de/sub-agents).
 
 `PreToolUse`-Hooks können steuern, ob ein Tool-Aufruf fortgesetzt wird. Im Gegensatz zu anderen Hooks, die ein Top-Level-Feld `decision` verwenden, gibt PreToolUse seine Entscheidung in einem `hookSpecificOutput`-Objekt zurück. Dies gibt ihm reichere Kontrolle: drei Ergebnisse (zulassen, verweigern oder fragen) plus die Möglichkeit, die Tool-Eingabe vor der Ausführung zu ändern.
 
-| Feld                       | Beschreibung                                                                                                                                                                        |
-| :------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `permissionDecision`       | `"allow"` umgeht das Berechtigungssystem, `"deny"` verhindert den Tool-Aufruf, `"ask"` fordert den Benutzer zur Bestätigung auf                                                     |
-| `permissionDecisionReason` | Für `"allow"` und `"ask"`, dem Benutzer angezeigt, aber nicht Claude. Für `"deny"`, Claude angezeigt                                                                                |
-| `updatedInput`             | Ändert die Tool-Eingabeparameter vor der Ausführung. Kombinieren Sie mit `"allow"`, um automatisch zu genehmigen, oder mit `"ask"`, um die geänderte Eingabe dem Benutzer zu zeigen |
-| `additionalContext`        | Zeichenkette, die zu Claudes Kontext vor der Tool-Ausführung hinzugefügt wird                                                                                                       |
+| Feld                       | Beschreibung                                                                                                                                                                                                                                     |
+| :------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `permissionDecision`       | `"allow"` umgeht das Berechtigungssystem, `"deny"` verhindert den Tool-Aufruf, `"ask"` fordert den Benutzer zur Bestätigung auf. [Deny- und Ask-Regeln](/de/permissions#manage-permissions) gelten weiterhin, wenn ein Hook `"allow"` zurückgibt |
+| `permissionDecisionReason` | Für `"allow"` und `"ask"`, dem Benutzer angezeigt, aber nicht Claude. Für `"deny"`, Claude angezeigt                                                                                                                                             |
+| `updatedInput`             | Ändert die Tool-Eingabeparameter vor der Ausführung. Kombinieren Sie mit `"allow"`, um automatisch zu genehmigen, oder mit `"ask"`, um die geänderte Eingabe dem Benutzer zu zeigen                                                              |
+| `additionalContext`        | Zeichenkette, die zu Claudes Kontext vor der Tool-Ausführung hinzugefügt wird                                                                                                                                                                    |
 
 Wenn ein Hook `"ask"` zurückgibt, enthält der dem Benutzer angezeigte Berechtigungsprompt ein Label, das angibt, woher der Hook stammt: zum Beispiel `[User]`, `[Project]`, `[Plugin]` oder `[Local]`. Dies hilft Benutzern zu verstehen, welche Konfigurationsquelle eine Bestätigung anfordert.
 
@@ -1179,7 +1183,6 @@ Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten N
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
-  "permission_mode": "default",
   "hook_event_name": "Notification",
   "message": "Claude needs your permission to use Bash",
   "title": "Permission needed",
@@ -1206,7 +1209,6 @@ Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten S
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
-  "permission_mode": "default",
   "hook_event_name": "SubagentStart",
   "agent_id": "agent-abc123",
   "agent_type": "Explore"
@@ -1255,7 +1257,7 @@ SubagentStop-Hooks verwenden das gleiche Entscheidungskontrollformat wie [Stop-H
 
 ### Stop
 
-Wird ausgeführt, wenn der Haupt-Claude Code-Agent fertig mit der Antwort ist. Wird nicht ausgeführt, wenn der Stopp durch eine Benutzerunterbrechung verursacht wurde.
+Wird ausgeführt, wenn der Haupt-Claude Code-Agent fertig mit der Antwort ist. Wird nicht ausgeführt, wenn der Stopp durch eine Benutzerunterbrechung verursacht wurde. API-Fehler lösen stattdessen [StopFailure](#stopfailure) aus.
 
 #### Stop-Eingabe
 
@@ -1288,6 +1290,34 @@ Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten S
   "reason": "Must be provided when Claude is blocked from stopping"
 }
 ```
+
+### StopFailure
+
+Wird stattdessen von [Stop](#stop) ausgeführt, wenn die Runde aufgrund eines API-Fehlers endet. Ausgabe und Exit-Code werden ignoriert. Verwenden Sie dies, um Fehler zu protokollieren, Warnungen zu senden oder Wiederherstellungsmaßnahmen zu ergreifen, wenn Claude aufgrund von Ratenlimits, Authentifizierungsproblemen oder anderen API-Fehlern keine Antwort abschließen kann.
+
+#### StopFailure-Eingabe
+
+Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten StopFailure-Hooks `error`, optionales `error_details` und optionales `last_assistant_message`. Das Feld `error` identifiziert den Fehlertyp und wird zum Filtern von Matchern verwendet.
+
+| Feld                     | Beschreibung                                                                                                                                                                                                                                                         |
+| :----------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `error`                  | Fehlertyp: `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens` oder `unknown`                                                                                                                             |
+| `error_details`          | Zusätzliche Details zum Fehler, falls verfügbar                                                                                                                                                                                                                      |
+| `last_assistant_message` | Der gerenderte Fehlertext, der in der Konversation angezeigt wird. Im Gegensatz zu `Stop` und `SubagentStop`, wo dieses Feld Claudes Gesprächsausgabe enthält, enthält es für `StopFailure` die API-Fehlerzeichenkette selbst, wie `"API Error: Rate limit reached"` |
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "cwd": "/Users/...",
+  "hook_event_name": "StopFailure",
+  "error": "rate_limit",
+  "error_details": "429 Too Many Requests",
+  "last_assistant_message": "API Error: Rate limit reached"
+}
+```
+
+StopFailure-Hooks haben keine Entscheidungskontrolle. Sie werden nur zu Benachrichtigungs- und Protokollierungszwecken ausgeführt.
 
 ### TeammateIdle
 
@@ -1436,7 +1466,6 @@ Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten C
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
-  "permission_mode": "default",
   "hook_event_name": "ConfigChange",
   "source": "project_settings",
   "file_path": "/Users/.../my-project/.claude/settings.json"
@@ -1567,7 +1596,6 @@ Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten P
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
-  "permission_mode": "default",
   "hook_event_name": "PreCompact",
   "trigger": "manual",
   "custom_instructions": ""
@@ -1594,7 +1622,6 @@ Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten P
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
-  "permission_mode": "default",
   "hook_event_name": "PostCompact",
   "trigger": "manual",
   "compact_summary": "Summary of the compacted conversation..."
@@ -1612,6 +1639,7 @@ Das Feld `reason` in der Hook-Eingabe gibt an, warum die Sitzung endete:
 | Grund                         | Beschreibung                                                  |
 | :---------------------------- | :------------------------------------------------------------ |
 | `clear`                       | Sitzung mit `/clear`-Befehl gelöscht                          |
+| `resume`                      | Sitzung über interaktives `/resume` gewechselt                |
 | `logout`                      | Benutzer hat sich abgemeldet                                  |
 | `prompt_input_exit`           | Benutzer hat beendet, während die Prompt-Eingabe sichtbar war |
 | `bypass_permissions_disabled` | Bypass-Berechtigungsmodus wurde deaktiviert                   |
@@ -1626,7 +1654,6 @@ Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten S
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
-  "permission_mode": "default",
   "hook_event_name": "SessionEnd",
   "reason": "other"
 }
@@ -1634,7 +1661,7 @@ Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten S
 
 SessionEnd-Hooks haben keine Entscheidungskontrolle. Sie können die Sitzungsbeendigung nicht blockieren, können aber Bereinigungsaufgaben durchführen.
 
-SessionEnd-Hooks haben ein Standard-Timeout von 1,5 Sekunden. Dies gilt sowohl für den Sitzungsausstieg als auch für `/clear`. Wenn Ihre Hooks mehr Zeit benötigen, setzen Sie die Umgebungsvariable `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` auf einen höheren Wert in Millisekunden. Jede Pro-Hook-Einstellung `timeout` wird auch durch diesen Wert begrenzt.
+SessionEnd-Hooks haben ein Standard-Timeout von 1,5 Sekunden. Dies gilt sowohl für den Sitzungsausstieg als auch für `/clear` und das Wechseln von Sitzungen über interaktives `/resume`. Wenn Ihre Hooks mehr Zeit benötigen, setzen Sie die Umgebungsvariable `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` auf einen höheren Wert in Millisekunden. Jede Pro-Hook-Einstellung `timeout` wird auch durch diesen Wert begrenzt.
 
 ```bash  theme={null}
 CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
@@ -1782,6 +1809,7 @@ Ereignisse, die nur `type: "command"`-Hooks unterstützen:
 * `PreCompact`
 * `SessionEnd`
 * `SessionStart`
+* `StopFailure`
 * `SubagentStart`
 * `TeammateIdle`
 * `WorktreeCreate`
@@ -1799,7 +1827,7 @@ Anstatt einen Bash-Befehl auszuführen, Prompt-basierte Hooks:
 
 Setzen Sie `type` auf `"prompt"` und geben Sie eine `prompt`-Zeichenkette anstelle eines `command` an. Verwenden Sie den Platzhalter `$ARGUMENTS`, um die Hook-Eingabedaten in Ihren Prompt-Text einzufügen. Claude Code sendet den kombinierten Prompt und die Eingabe an ein schnelles Claude-Modell, das eine JSON-Entscheidung zurückgibt.
 
-Dieser `Stop`-Hook fragt das LLM, ob Claude stoppen sollte, bevor es fertig ist:
+Dieser `Stop`-Hook fragt das LLM, ob Claude stoppen sollte:
 
 ```json  theme={null}
 {

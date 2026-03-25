@@ -98,7 +98,7 @@ Contoh ini membuat marketplace dengan satu plugin: skill `/quality-review` untuk
     Pilih beberapa kode di editor Anda dan jalankan perintah baru Anda.
 
     ```shell  theme={null}
-    /review
+    /quality-review
     ```
   </Step>
 </Steps>
@@ -157,7 +157,7 @@ Setiap entri plugin memerlukan minimal `name` dan `source` (di mana mengambilnya
 | `plugins` | array  | Daftar plugin yang tersedia                                                                                                                                              | Lihat di bawah |
 
 <Note>
-  **Nama yang dicadangkan**: Nama marketplace berikut dicadangkan untuk penggunaan resmi Anthropic dan tidak dapat digunakan oleh marketplace pihak ketiga: `claude-code-marketplace`, `claude-code-plugins`, `claude-plugins-official`, `anthropic-marketplace`, `anthropic-plugins`, `agent-skills`, `life-sciences`. Nama yang meniru marketplace resmi (seperti `official-claude-plugins` atau `anthropic-tools-v2`) juga diblokir.
+  **Nama yang dicadangkan**: Nama marketplace berikut dicadangkan untuk penggunaan resmi Anthropic dan tidak dapat digunakan oleh marketplace pihak ketiga: `claude-code-marketplace`, `claude-code-plugins`, `claude-plugins-official`, `anthropic-marketplace`, `anthropic-plugins`, `agent-skills`, `knowledge-work-plugins`, `life-sciences`. Nama yang meniru marketplace resmi (seperti `official-claude-plugins` atau `anthropic-tools-v2`) juga diblokir.
 </Note>
 
 ### Field pemilik
@@ -219,14 +219,13 @@ Plugin sources memberitahu Claude Code di mana mengambil setiap plugin individua
 
 Setelah plugin diklon atau disalin ke mesin lokal, plugin disalin ke cache plugin lokal yang diversi di `~/.claude/plugins/cache`.
 
-| Source        | Type                                | Fields                                      | Catatan                                                                                         |
-| ------------- | ----------------------------------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Relative path | `string` (misalnya `"./my-plugin"`) | —                                           | Direktori lokal dalam repo marketplace. Harus dimulai dengan `./`                               |
-| `github`      | object                              | `repo`, `ref?`, `sha?`                      |                                                                                                 |
-| `url`         | object                              | `url` (harus berakhir .git), `ref?`, `sha?` | Sumber URL Git                                                                                  |
-| `git-subdir`  | object                              | `url`, `path`, `ref?`, `sha?`               | Subdirektori dalam repo git. Mengklon secara sparse untuk meminimalkan bandwidth untuk monorepo |
-| `npm`         | object                              | `package`, `version?`, `registry?`          | Dipasang via `npm install`                                                                      |
-| `pip`         | object                              | `package`, `version?`, `registry?`          | Dipasang via pip                                                                                |
+| Source        | Type                                | Fields                             | Catatan                                                                                         |
+| ------------- | ----------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Relative path | `string` (misalnya `"./my-plugin"`) | none                               | Direktori lokal dalam repo marketplace. Harus dimulai dengan `./`                               |
+| `github`      | object                              | `repo`, `ref?`, `sha?`             |                                                                                                 |
+| `url`         | object                              | `url`, `ref?`, `sha?`              | Sumber URL Git                                                                                  |
+| `git-subdir`  | object                              | `url`, `path`, `ref?`, `sha?`      | Subdirektori dalam repo git. Mengklon secara sparse untuk meminimalkan bandwidth untuk monorepo |
+| `npm`         | object                              | `package`, `version?`, `registry?` | Dipasang via `npm install`                                                                      |
 
 <Note>
   **Marketplace sources vs plugin sources**: Ini adalah konsep berbeda yang mengontrol hal berbeda.
@@ -458,7 +457,7 @@ Contoh ini menunjukkan entri plugin menggunakan banyak field opsional, termasuk 
 Hal-hal penting untuk diperhatikan:
 
 * **`commands` dan `agents`**: Anda dapat menentukan beberapa direktori atau file individual. Jalur relatif terhadap root plugin.
-* **`${CLAUDE_PLUGIN_ROOT}`**: Gunakan variabel ini dalam hooks dan config MCP server untuk mereferensikan file dalam direktori instalasi plugin. Ini diperlukan karena plugin disalin ke lokasi cache saat dipasang.
+* **`${CLAUDE_PLUGIN_ROOT}`**: Gunakan variabel ini dalam hooks dan config MCP server untuk mereferensikan file dalam direktori instalasi plugin. Ini diperlukan karena plugin disalin ke lokasi cache saat dipasang. Untuk dependensi atau state yang harus bertahan pembaruan plugin, gunakan [`${CLAUDE_PLUGIN_DATA}`](/id/plugins-reference#persistent-data-directory) sebagai gantinya.
 * **`strict: false`**: Karena ini diatur ke false, plugin tidak memerlukan `plugin.json` sendiri. Entri marketplace mendefinisikan semuanya. Lihat [Strict mode](#strict-mode) di bawah.
 
 ### Strict mode
@@ -557,6 +556,32 @@ Anda juga dapat menentukan plugin mana yang harus diaktifkan secara default:
 ```
 
 Untuk opsi konfigurasi lengkap, lihat [Plugin settings](/id/settings#plugin-settings).
+
+### Pra-isi plugin untuk container
+
+Untuk image container dan lingkungan CI, Anda dapat pra-isi direktori plugin saat waktu build sehingga Claude Code dimulai dengan marketplace dan plugin yang sudah tersedia, tanpa mengklon apa pun saat runtime. Atur variabel lingkungan `CLAUDE_CODE_PLUGIN_SEED_DIR` untuk menunjuk ke direktori ini.
+
+Untuk melapisi beberapa direktori seed, pisahkan jalur dengan `:` di Unix atau `;` di Windows. Claude Code mencari setiap direktori secara berurutan, dan seed pertama yang berisi marketplace atau cache plugin yang diberikan menang.
+
+Direktori seed mencerminkan struktur `~/.claude/plugins`:
+
+```
+$CLAUDE_CODE_PLUGIN_SEED_DIR/
+  known_marketplaces.json
+  marketplaces/<name>/...
+  cache/<marketplace>/<plugin>/<version>/...
+```
+
+Cara paling sederhana untuk membangun direktori seed adalah menjalankan Claude Code sekali selama image build, memasang plugin yang Anda butuhkan, kemudian menyalin direktori `~/.claude/plugins` yang dihasilkan ke image Anda dan menunjuk `CLAUDE_CODE_PLUGIN_SEED_DIR` ke sana.
+
+Saat startup, Claude Code mendaftarkan marketplace yang ditemukan di `known_marketplaces.json` seed ke dalam konfigurasi utama, dan menggunakan cache plugin yang ditemukan di bawah `cache/` di tempat tanpa mengklon ulang. Ini berfungsi dalam mode interaktif dan mode non-interaktif dengan flag `-p`.
+
+Detail perilaku:
+
+* **Read-only**: direktori seed tidak pernah ditulis. Pembaruan otomatis dinonaktifkan untuk marketplace seed karena git pull akan gagal di filesystem read-only.
+* **Entri seed mengambil prioritas**: marketplace yang dideklarasikan dalam seed menimpa entri yang cocok apa pun dalam konfigurasi pengguna di setiap startup. Untuk opt out dari plugin seed, gunakan `/plugin disable` daripada menghapus marketplace.
+* **Resolusi jalur**: Claude Code menemukan konten marketplace dengan menyelidiki `$CLAUDE_CODE_PLUGIN_SEED_DIR/marketplaces/<name>/` saat runtime, bukan dengan mempercayai jalur yang disimpan di dalam JSON seed. Ini berarti seed berfungsi dengan benar bahkan ketika dipasang di jalur berbeda dari tempat dibangun.
+* **Komposisi dengan pengaturan**: jika `extraKnownMarketplaces` atau `enabledPlugins` mendeklarasikan marketplace yang sudah ada di seed, Claude Code menggunakan salinan seed alih-alih mengklon.
 
 ### Pembatasan marketplace yang dikelola
 
@@ -771,24 +796,27 @@ Untuk alur kerja pengujian plugin lengkap, lihat [Uji plugin Anda secara lokal](
 
 * Verifikasi URL marketplace dapat diakses
 * Periksa bahwa `.claude-plugin/marketplace.json` ada di jalur yang ditentukan
-* Pastikan sintaks JSON valid menggunakan `claude plugin validate` atau `/plugin validate`
+* Pastikan sintaks JSON valid dan frontmatter terbentuk dengan baik menggunakan `claude plugin validate` atau `/plugin validate`
 * Untuk repositori pribadi, konfirmasi Anda memiliki izin akses
 
 ### Kesalahan validasi marketplace
 
-Jalankan `claude plugin validate .` atau `/plugin validate .` dari direktori marketplace Anda untuk memeriksa masalah. Kesalahan umum:
+Jalankan `claude plugin validate .` atau `/plugin validate .` dari direktori marketplace Anda untuk memeriksa masalah. Validator memeriksa `plugin.json`, frontmatter skill/agent/command, dan `hooks/hooks.json` untuk kesalahan sintaks dan skema. Kesalahan umum:
 
-| Kesalahan                                         | Penyebab                          | Solusi                                                                                             |
-| :------------------------------------------------ | :-------------------------------- | :------------------------------------------------------------------------------------------------- |
-| `File not found: .claude-plugin/marketplace.json` | Manifest hilang                   | Buat `.claude-plugin/marketplace.json` dengan field yang diperlukan                                |
-| `Invalid JSON syntax: Unexpected token...`        | Kesalahan sintaks JSON            | Periksa koma yang hilang, koma ekstra, atau string yang tidak dikutip                              |
-| `Duplicate plugin name "x" found in marketplace`  | Dua plugin berbagi nama yang sama | Berikan setiap plugin nilai `name` yang unik                                                       |
-| `plugins[0].source: Path contains ".."`           | Jalur sumber berisi `..`          | Gunakan jalur relatif terhadap root marketplace tanpa `..`. Lihat [Jalur relatif](#relative-paths) |
+| Kesalahan                                         | Penyebab                                               | Solusi                                                                                                          |
+| :------------------------------------------------ | :----------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- |
+| `File not found: .claude-plugin/marketplace.json` | Manifest hilang                                        | Buat `.claude-plugin/marketplace.json` dengan field yang diperlukan                                             |
+| `Invalid JSON syntax: Unexpected token...`        | Kesalahan sintaks JSON dalam marketplace.json          | Periksa koma yang hilang, koma ekstra, atau string yang tidak dikutip                                           |
+| `Duplicate plugin name "x" found in marketplace`  | Dua plugin berbagi nama yang sama                      | Berikan setiap plugin nilai `name` yang unik                                                                    |
+| `plugins[0].source: Path contains ".."`           | Jalur sumber berisi `..`                               | Gunakan jalur relatif terhadap root marketplace tanpa `..`. Lihat [Jalur relatif](#relative-paths)              |
+| `YAML frontmatter failed to parse: ...`           | YAML tidak valid dalam file skill, agent, atau command | Perbaiki sintaks YAML dalam blok frontmatter. Saat runtime file ini dimuat tanpa metadata.                      |
+| `Invalid JSON syntax: ...` (hooks.json)           | `hooks/hooks.json` yang tidak terbentuk dengan baik    | Perbaiki sintaks JSON. `hooks/hooks.json` yang tidak terbentuk dengan baik mencegah seluruh plugin dari dimuat. |
 
 **Peringatan** (non-blocking):
 
 * `Marketplace has no plugins defined`: tambahkan setidaknya satu plugin ke array `plugins`
 * `No marketplace description provided`: tambahkan `metadata.description` untuk membantu pengguna memahami marketplace Anda
+* `Plugin name "x" is not kebab-case`: nama plugin berisi huruf besar, spasi, atau karakter khusus. Ubah nama menjadi huruf kecil, digit, dan tanda hubung saja (misalnya, `my-plugin`). Claude Code menerima bentuk lain, tetapi sinkronisasi marketplace Claude.ai menolaknya.
 
 ### Kegagalan instalasi plugin
 

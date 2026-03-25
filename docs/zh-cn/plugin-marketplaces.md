@@ -98,7 +98,7 @@
     在编辑器中选择一些代码并运行你的新命令。
 
     ```shell  theme={null}
-    /review
+    /quality-review
     ```
   </Step>
 </Steps>
@@ -157,7 +157,7 @@
 | `plugins` | array  | 可用 plugins 列表                                                                                               | 见下文            |
 
 <Note>
-  **保留名称**：以下 marketplace 名称为 Anthropic 官方使用保留，第三方 marketplaces 无法使用：`claude-code-marketplace`、`claude-code-plugins`、`claude-plugins-official`、`anthropic-marketplace`、`anthropic-plugins`、`agent-skills`、`life-sciences`。冒充官方 marketplaces 的名称（如 `official-claude-plugins` 或 `anthropic-tools-v2`）也被阻止。
+  **保留名称**：以下 marketplace 名称为 Anthropic 官方使用保留，第三方 marketplaces 无法使用：`claude-code-marketplace`、`claude-code-plugins`、`claude-plugins-official`、`anthropic-marketplace`、`anthropic-plugins`、`agent-skills`、`knowledge-work-plugins`、`life-sciences`。冒充官方 marketplaces 的名称（如 `official-claude-plugins` 或 `anthropic-tools-v2`）也被阻止。
 </Note>
 
 ### 所有者字段
@@ -223,10 +223,9 @@ Plugin 源告诉 Claude Code 在你的 marketplace 中列出的每个单独 plug
 | ------------ | ---------------------------- | -------------------------------- | --------------------------------------- |
 | 相对路径         | `string`（例如 `"./my-plugin"`） | —                                | marketplace repo 中的本地目录。必须以 `./` 开头     |
 | `github`     | object                       | `repo`、`ref?`、`sha?`             |                                         |
-| `url`        | object                       | `url`（必须以 .git 结尾）、`ref?`、`sha?` | Git URL 源                               |
+| `url`        | object                       | `url`、`ref?`、`sha?`              | Git URL 源                               |
 | `git-subdir` | object                       | `url`、`path`、`ref?`、`sha?`       | git repo 中的子目录。稀疏克隆以最小化大型 monorepos 的带宽 |
 | `npm`        | object                       | `package`、`version?`、`registry?` | 通过 `npm install` 安装                     |
-| `pip`        | object                       | `package`、`version?`、`registry?` | 通过 pip 安装                               |
 
 <Note>
   **Marketplace 源与 plugin 源**：这些是控制不同事物的不同概念。
@@ -458,7 +457,7 @@ Plugin 源告诉 Claude Code 在你的 marketplace 中列出的每个单独 plug
 需要注意的关键事项：
 
 * **`commands` 和 `agents`**：你可以指定多个目录或单个文件。路径相对于 plugin 根目录。
-* **`${CLAUDE_PLUGIN_ROOT}`**：在 hooks 和 MCP server 配置中使用此变量来引用 plugin 安装目录中的文件。这是必要的，因为 plugins 在安装时被复制到缓存位置。
+* **`${CLAUDE_PLUGIN_ROOT}`**：在 hooks 和 MCP server 配置中使用此变量来引用 plugin 安装目录中的文件。这是必要的，因为 plugins 在安装时被复制到缓存位置。对于应该在 plugin 更新后保留的依赖项或状态，请改用 [`${CLAUDE_PLUGIN_DATA}`](/zh-CN/plugins-reference#persistent-data-directory)。
 * **`strict: false`**：由于这设置为 false，plugin 不需要自己的 `plugin.json`。marketplace 条目定义了一切。见下面的 [Strict 模式](#strict-mode)。
 
 ### Strict 模式
@@ -557,6 +556,32 @@ export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 ```
 
 有关完整的配置选项，请参阅 [Plugin 设置](/zh-CN/settings#plugin-settings)。
+
+### 为容器预填充 plugins
+
+对于容器镜像和 CI 环境，你可以在构建时预填充 plugins 目录，以便 Claude Code 启动时已经有 marketplaces 和 plugins 可用，无需在运行时克隆任何内容。设置 `CLAUDE_CODE_PLUGIN_SEED_DIR` 环境变量以指向此目录。
+
+要分层多个种子目录，请在 Unix 上用 `:` 分隔路径，或在 Windows 上用 `;` 分隔。Claude Code 按顺序搜索每个目录，第一个包含给定 marketplace 或 plugin 缓存的种子获胜。
+
+种子目录镜像 `~/.claude/plugins` 的结构：
+
+```
+$CLAUDE_CODE_PLUGIN_SEED_DIR/
+  known_marketplaces.json
+  marketplaces/<name>/...
+  cache/<marketplace>/<plugin>/<version>/...
+```
+
+构建种子目录的最简单方法是在镜像构建期间运行 Claude Code 一次，安装你需要的 plugins，然后将生成的 `~/.claude/plugins` 目录复制到你的镜像中，并将 `CLAUDE_CODE_PLUGIN_SEED_DIR` 指向它。
+
+在启动时，Claude Code 将种子的 `known_marketplaces.json` 中找到的 marketplaces 注册到主配置中，并使用在 `cache/` 下找到的 plugin 缓存，而无需重新克隆。这在交互模式和使用 `-p` 标志的非交互模式中都有效。
+
+行为详情：
+
+* **只读**：种子目录永远不会被写入。由于 git pull 会在只读文件系统上失败，种子 marketplaces 的自动更新被禁用。
+* **种子条目优先**：在每次启动时，种子中声明的 marketplaces 会覆盖用户配置中的任何匹配条目。要选择退出种子 plugin，请使用 `/plugin disable` 而不是删除 marketplace。
+* **路径解析**：Claude Code 通过在运行时探测 `$CLAUDE_CODE_PLUGIN_SEED_DIR/marketplaces/<name>/` 来定位 marketplace 内容，而不是信任存储在种子 JSON 内的路径。这意味着即使在与构建时不同的路径上挂载，种子也能正确工作。
+* **与设置组合**：如果 `extraKnownMarketplaces` 或 `enabledPlugins` 声明的 marketplace 已经存在于种子中，Claude Code 使用种子副本而不是克隆。
 
 ### 托管 marketplace 限制
 
@@ -771,24 +796,27 @@ claude plugin validate .
 
 * 验证 marketplace URL 是否可访问
 * 检查 `.claude-plugin/marketplace.json` 是否存在于指定路径
-* 使用 `claude plugin validate` 或 `/plugin validate` 确保 JSON 语法有效
+* 使用 `claude plugin validate` 或 `/plugin validate` 确保 JSON 语法有效且 frontmatter 格式正确
 * 对于私有存储库，确认你有访问权限
 
 ### Marketplace 验证错误
 
-从你的 marketplace 目录运行 `claude plugin validate .` 或 `/plugin validate .` 来检查问题。常见错误：
+从你的 marketplace 目录运行 `claude plugin validate .` 或 `/plugin validate .` 来检查问题。验证器检查 `plugin.json`、skill/agent/command frontmatter 和 `hooks/hooks.json` 的语法和架构错误。常见错误：
 
-| 错误                                                | 原因                 | 解决方案                                                       |
-| :------------------------------------------------ | :----------------- | :--------------------------------------------------------- |
-| `File not found: .claude-plugin/marketplace.json` | 缺少 manifest        | 使用必需字段创建 `.claude-plugin/marketplace.json`                 |
-| `Invalid JSON syntax: Unexpected token...`        | JSON 语法错误          | 检查缺少的逗号、多余的逗号或未引用的字符串                                      |
-| `Duplicate plugin name "x" found in marketplace`  | 两个 plugins 共享相同的名称 | 给每个 plugin 一个唯一的 `name` 值                                  |
-| `plugins[0].source: Path contains ".."`           | 源路径包含 `..`         | 使用相对于 marketplace 根目录的路径，不包含 `..`。见[相对路径](#relative-paths) |
+| 错误                                                | 原因                                 | 解决方案                                                       |
+| :------------------------------------------------ | :--------------------------------- | :--------------------------------------------------------- |
+| `File not found: .claude-plugin/marketplace.json` | 缺少 manifest                        | 使用必需字段创建 `.claude-plugin/marketplace.json`                 |
+| `Invalid JSON syntax: Unexpected token...`        | JSON 语法错误                          | 检查缺少的逗号、多余的逗号或未引用的字符串                                      |
+| `Duplicate plugin name "x" found in marketplace`  | 两个 plugins 共享相同的名称                 | 给每个 plugin 一个唯一的 `name` 值                                  |
+| `plugins[0].source: Path contains ".."`           | 源路径包含 `..`                         | 使用相对于 marketplace 根目录的路径，不包含 `..`。见[相对路径](#relative-paths) |
+| `YAML frontmatter failed to parse: ...`           | skill、agent 或 command 文件中的 YAML 无效 | 修复 frontmatter 块中的 YAML 语法。在运行时，此文件加载时不带元数据。               |
+| `Invalid JSON syntax: ...`（hooks.json）            | 格式错误的 `hooks/hooks.json`           | 修复 JSON 语法。格式错误的 `hooks/hooks.json` 会阻止整个 plugin 加载。       |
 
 **警告**（非阻止）：
 
 * `Marketplace has no plugins defined`：将至少一个 plugin 添加到 `plugins` 数组
 * `No marketplace description provided`：添加 `metadata.description` 以帮助用户理解你的 marketplace
+* `Plugin name "x" is not kebab-case`：plugin 名称包含大写字母、空格或特殊字符。重命名为仅包含小写字母、数字和连字符（例如，`my-plugin`）。Claude Code 接受其他形式，但 Claude.ai marketplace 同步会拒绝它们。
 
 ### Plugin 安装失败
 

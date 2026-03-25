@@ -202,21 +202,16 @@ Anda dapat menempatkan file CLAUDE.md di beberapa lokasi:
 ### Konfigurasi izin
 
 <Tip>
-  Gunakan `/permissions` untuk allowlist perintah aman atau `/sandbox` untuk isolasi tingkat OS. Ini mengurangi gangguan sambil membuat Anda tetap mengendalikan.
+  Gunakan [auto mode](/id/permission-modes#eliminate-prompts-with-auto-mode) untuk membiarkan classifier menangani persetujuan, `/permissions` untuk allowlist perintah spesifik, atau `/sandbox` untuk isolasi tingkat OS. Masing-masing mengurangi gangguan sambil membuat Anda tetap mengendalikan.
 </Tip>
 
-Secara default, Claude Code meminta izin untuk tindakan yang mungkin memodifikasi sistem Anda: penulisan file, perintah Bash, alat MCP, dll. Ini aman tetapi membosankan. Setelah persetujuan kesepuluh Anda tidak benar-benar meninjau lagi, Anda hanya mengklik. Ada dua cara untuk mengurangi gangguan ini:
+Secara default, Claude Code meminta izin untuk tindakan yang mungkin memodifikasi sistem Anda: penulisan file, perintah Bash, alat MCP, dll. Ini aman tetapi membosankan. Setelah persetujuan kesepuluh Anda tidak benar-benar meninjau lagi, Anda hanya mengklik. Ada tiga cara untuk mengurangi gangguan ini:
 
-* **Allowlist izin**: izinkan alat spesifik yang Anda tahu aman (seperti `npm run lint` atau `git commit`)
+* **Auto mode**: model classifier terpisah meninjau perintah dan memblokir hanya apa yang terlihat berisiko: eskalasi cakupan, infrastruktur yang tidak dikenal, atau tindakan yang didorong konten bermusuhan. Terbaik ketika Anda mempercayai arah umum tugas tetapi tidak ingin mengklik setiap langkah
+* **Allowlist izin**: izinkan alat spesifik yang Anda tahu aman, seperti `npm run lint` atau `git commit`
 * **Sandboxing**: aktifkan isolasi tingkat OS yang membatasi akses sistem file dan jaringan, memungkinkan Claude bekerja lebih bebas dalam batas yang ditentukan
 
-Alternatifnya, gunakan `--dangerously-skip-permissions` untuk melewati semua pemeriksaan izin untuk alur kerja yang terkandung seperti memperbaiki kesalahan lint atau menghasilkan boilerplate.
-
-<Warning>
-  Membiarkan Claude menjalankan perintah arbitrer dapat menghasilkan kehilangan data, kerusakan sistem, atau exfiltrasi data melalui prompt injection. Hanya gunakan `--dangerously-skip-permissions` di sandbox tanpa akses internet.
-</Warning>
-
-Baca lebih lanjut tentang [mengonfigurasi izin](/id/permissions) dan [mengaktifkan sandboxing](/id/sandboxing).
+Baca lebih lanjut tentang [permission modes](/id/permission-modes), [permission rules](/id/permissions), dan [sandboxing](/id/sandboxing).
 
 ### Gunakan alat CLI
 
@@ -244,7 +239,7 @@ Dengan [server MCP](/id/mcp), Anda dapat meminta Claude untuk mengimplementasika
 
 [Hooks](/id/hooks-guide) menjalankan skrip secara otomatis pada titik tertentu dalam alur kerja Claude. Tidak seperti instruksi CLAUDE.md yang bersifat penasihat, hooks bersifat deterministik dan menjamin tindakan terjadi.
 
-Claude dapat menulis hooks untuk Anda. Coba prompt seperti *"Tulis hook yang menjalankan eslint setelah setiap pengeditan file"* atau *"Tulis hook yang memblokir penulisan ke folder migrasi."* Jalankan `/hooks` untuk konfigurasi interaktif, atau edit `.claude/settings.json` secara langsung.
+Claude dapat menulis hooks untuk Anda. Coba prompt seperti *"Tulis hook yang menjalankan eslint setelah setiap pengeditan file"* atau *"Tulis hook yang memblokir penulisan ke folder migrasi."* Edit `.claude/settings.json` secara langsung untuk mengonfigurasi hooks dengan tangan, dan jalankan `/hooks` untuk menjelajahi apa yang dikonfigurasi.
 
 ### Buat skills
 
@@ -319,7 +314,7 @@ Beri tahu Claude untuk menggunakan subagent secara eksplisit: *"Gunakan subagent
 ### Instal plugins
 
 <Tip>
-  Jalankan `/plugin` untuk menjelajahi marketplace. Plugin menambahkan skills, alat, dan integrasi tanpa konfigurasi.
+  Jalankan `/plugin` untuk menjelajahi marketplace. Plugins menambahkan skills, alat, dan integrasi tanpa konfigurasi.
 </Tip>
 
 [Plugins](/id/plugins) menggabungkan skills, hooks, subagent, dan server MCP menjadi satu unit yang dapat diinstal dari komunitas dan Anthropic. Jika Anda bekerja dengan bahasa yang diketik, instal [plugin code intelligence](/id/discover-plugins#code-intelligence) untuk memberikan Claude navigasi simbol presisi dan deteksi kesalahan otomatis setelah pengeditan.
@@ -539,6 +534,16 @@ claude -p "<your prompt>" --output-format json | your_command
 ```
 
 Gunakan `--verbose` untuk debugging selama pengembangan, dan matikan dalam produksi.
+
+### Jalankan secara otonom dengan auto mode
+
+Untuk eksekusi tanpa gangguan dengan pemeriksaan keamanan latar belakang, gunakan [auto mode](/id/permission-modes#eliminate-prompts-with-auto-mode). Model classifier meninjau perintah sebelum dijalankan, memblokir eskalasi cakupan, infrastruktur yang tidak dikenal, dan tindakan yang didorong konten bermusuhan sambil membiarkan pekerjaan rutin berjalan tanpa prompt.
+
+```bash  theme={null}
+claude --permission-mode auto -p "fix all lint errors"
+```
+
+Untuk run non-interaktif dengan bendera `-p`, auto mode membatalkan jika classifier secara berulang memblokir tindakan, karena tidak ada pengguna untuk kembali. Lihat [kapan auto mode kembali](/id/permission-modes#when-auto-mode-falls-back) untuk ambang batas.
 
 ***
 

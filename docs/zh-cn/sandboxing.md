@@ -124,7 +124,7 @@ Claude Code 提供两种沙箱模式：
   "sandbox": {
     "enabled": true,
     "filesystem": {
-      "allowWrite": ["~/.kube", "//tmp/build"]
+      "allowWrite": ["~/.kube", "/tmp/build"]
     }
   }
 }
@@ -132,18 +132,35 @@ Claude Code 提供两种沙箱模式：
 
 这些路径在操作系统级别强制执行，因此在沙箱内运行的所有命令（包括其子进程）都尊重它们。当工具需要对特定位置的写入访问时，这是推荐的方法，而不是使用 `excludedCommands` 将工具从沙箱中排除。
 
-当在多个 [settings scopes](/zh-CN/settings#settings-precedence) 中定义 `allowWrite`（或 `denyWrite`/`denyRead`）时，数组被**合并**，这意味着来自每个范围的路径被组合，而不是替换。例如，如果托管设置允许写入 `//opt/company-tools`，用户在其个人设置中添加 `~/.kube`，则两个路径都包含在最终沙箱配置中。这意味着用户和项目可以扩展列表而无需复制或覆盖由更高优先级范围设置的路径。
+当在多个 [settings scopes](/zh-CN/settings#settings-precedence) 中定义 `allowWrite`（或 `denyWrite`/`denyRead`/`allowRead`）时，数组被**合并**，这意味着来自每个范围的路径被组合，而不是替换。例如，如果托管设置允许写入 `/opt/company-tools`，用户在其个人设置中添加 `~/.kube`，则两个路径都包含在最终沙箱配置中。这意味着用户和项目可以扩展列表而无需复制或覆盖由更高优先级范围设置的路径。
 
 路径前缀控制路径的解析方式：
 
-| 前缀        | 含义             | 示例                                |
-| :-------- | :------------- | :-------------------------------- |
-| `//`      | 从文件系统根目录的绝对路径  | `//tmp/build` 变为 `/tmp/build`     |
-| `~/`      | 相对于主目录         | `~/.kube` 变为 `$HOME/.kube`        |
-| `/`       | 相对于设置文件的目录     | `/build` 变为 `$SETTINGS_DIR/build` |
-| `./` 或无前缀 | 相对路径（由沙箱运行时解析） | `./output`                        |
+| 前缀        | 含义                                  | 示例                                            |
+| :-------- | :---------------------------------- | :-------------------------------------------- |
+| `/`       | 从文件系统根目录的绝对路径                       | `/tmp/build` 保持 `/tmp/build`                  |
+| `~/`      | 相对于主目录                              | `~/.kube` 变为 `$HOME/.kube`                    |
+| `./` 或无前缀 | 相对于项目设置的项目根目录，或相对于用户设置的 `~/.claude` | 项目设置中的 `./output` 解析为 `<project-root>/output` |
 
-您也可以使用 `sandbox.filesystem.denyWrite` 和 `sandbox.filesystem.denyRead` 拒绝写入或读取访问。这些与来自 `Edit(...)` 和 `Read(...)` 权限规则的任何路径合并。
+较旧的 `//path` 前缀用于绝对路径仍然有效。如果您之前使用单斜杠 `/path` 期望项目相对解析，请切换到 `./path`。此语法与 [Read and Edit](/zh-CN/permissions#read-and-edit) 权限规则不同，后者使用 `//path` 表示绝对路径，`/path` 表示项目相对路径。沙箱文件系统路径使用标准约定：`/tmp/build` 是绝对路径。
+
+您也可以使用 `sandbox.filesystem.denyWrite` 和 `sandbox.filesystem.denyRead` 拒绝写入或读取访问。这些与来自 `Edit(...)` 和 `Read(...)` 权限规则的任何路径合并。要重新允许读取被拒绝区域内的特定路径，请使用 `sandbox.filesystem.allowRead`，它优先于 `denyRead`。当在托管设置中启用 `allowManagedReadPathsOnly` 时，仅尊重托管 `allowRead` 条目；用户、项目和本地 `allowRead` 条目被忽略。
+
+例如，要阻止从整个主目录读取，同时仍允许从当前项目读取，请将此添加到您的项目的 `.claude/settings.json`：
+
+```json  theme={null}
+{
+  "sandbox": {
+    "enabled": true,
+    "filesystem": {
+      "denyRead": ["~/"],
+      "allowRead": ["."]
+    }
+  }
+}
+```
+
+`allowRead` 中的 `.` 解析为项目根目录，因为此配置位于项目设置中。如果您将相同的配置放在 `~/.claude/settings.json` 中，`.` 将解析为 `~/.claude`，项目文件将保持被 `denyRead` 规则阻止。
 
 <Tip>
   并非所有命令都与沙箱开箱即用兼容。一些可能帮助您充分利用沙箱的注意事项：
@@ -227,6 +244,7 @@ Claude Code 提供两种沙箱模式：
 
 * 使用 `sandbox.filesystem.allowWrite` 向工作目录外的路径授予子进程写入访问权限
 * 使用 `sandbox.filesystem.denyWrite` 和 `sandbox.filesystem.denyRead` 阻止子进程访问特定路径
+* 使用 `sandbox.filesystem.allowRead` 重新允许读取被拒绝区域内的特定路径
 * 使用 `Read` 和 `Edit` 拒绝规则阻止访问特定文件或目录
 * 使用 `WebFetch` 允许/拒绝规则控制域名访问
 * 使用沙箱 `allowedDomains` 控制 Bash 命令可以到达的域名
@@ -288,6 +306,13 @@ npx @anthropic-ai/sandbox-runtime <command-to-sandbox>
 * **性能开销**：最小，但某些文件系统操作可能稍慢
 * **兼容性**：某些需要特定系统访问模式的工具可能需要配置调整，或者甚至可能需要在沙箱外运行
 * **平台支持**：支持 macOS、Linux 和 WSL2。不支持 WSL1。计划支持原生 Windows。
+
+## 沙箱不涵盖的内容
+
+沙箱隔离 Bash 子进程。其他工具在不同的边界下运行：
+
+* **内置文件工具**：Read、Edit 和 Write 直接使用权限系统，而不是通过沙箱运行。请参阅 [permissions](/zh-CN/permissions)。
+* **桌面上的计算机使用**：当 Claude 在 macOS 上打开应用程序并控制您的屏幕时，它在您的实际桌面上运行，而不是在隔离的环境中。每个应用程序的权限提示控制每个应用程序。请参阅 [computer use](/zh-CN/desktop#let-claude-use-your-computer)。
 
 ## 另请参阅
 

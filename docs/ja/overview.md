@@ -173,10 +173,10 @@ Claude Code を使用できるいくつかの方法を紹介します：
     Claude Code は構成可能で Unix 哲学に従います。ログをパイプで渡し、CI で実行するか、他のツールと連鎖させます：
 
     ```bash  theme={null}
-    # ログを監視してアラートを取得
-    tail -f app.log | claude -p "Slack me if you see any anomalies"
+    # 最近のログ出力を分析する
+    tail -200 app.log | claude -p "Slack me if you see any anomalies"
 
-    # CI で翻訳を自動化
+    # CI で翻訳を自動化する
     claude -p "translate new strings into French and raise a PR for review"
 
     # ファイル全体でバルク操作
@@ -186,10 +186,19 @@ Claude Code を使用できるいくつかの方法を紹介します：
     すべてのコマンドとフラグのセットについては [CLI リファレンス](/ja/cli-reference) を参照してください。
   </Accordion>
 
+  <Accordion title="定期的なタスクをスケジュール設定する" icon="clock">
+    繰り返される作業を自動化するためにスケジュールで Claude を実行します：朝の PR レビュー、夜間の CI 障害分析、週次の依存関係監査、または PR マージ後のドキュメント同期。
+
+    * [クラウドスケジュール済みタスク](/ja/web-scheduled-tasks) は Anthropic が管理するインフラストラクチャで実行されるため、コンピューターがオフの場合でも実行し続けます。Web、デスクトップアプリ、または CLI で `/schedule` を実行して作成します。
+    * [デスクトップスケジュール済みタスク](/ja/desktop#schedule-recurring-tasks) はマシン上で実行され、ローカルファイルとツールに直接アクセスできます
+    * [`/loop`](/ja/scheduled-tasks) は CLI セッション内でプロンプトを繰り返し、クイックポーリングを行います
+  </Accordion>
+
   <Accordion title="どこからでも作業する" icon="globe">
     セッションは単一のサーフェスに限定されません。コンテキストが変わるにつれて、環境間で作業を移動します：
 
     * デスクから離れて、電話または [リモートコントロール](/ja/remote-control) を使用した任意のブラウザから作業を続けます
+    * [Dispatch](/ja/desktop#sessions-from-dispatch) にメッセージを送信して、電話からタスクを送信し、作成されたデスクトップセッションを開きます
     * [Web](/ja/claude-code-on-the-web) または [iOS アプリ](https://apps.apple.com/app/claude-by-anthropic/id6473753684) で長時間実行されるタスクを開始し、`/teleport` でターミナルにプルします
     * ターミナルセッションを [デスクトップアプリ](/ja/desktop) に `/desktop` で渡して、視覚的な差分確認を行います
     * チームチャットからタスクをルーティング：[Slack](/ja/slack) で `@Claude` にメンションしてバグレポートを送信し、プルリクエストを取得します
@@ -202,15 +211,17 @@ Claude Code を使用できるいくつかの方法を紹介します：
 
 上記の [Terminal](/ja/quickstart)、[VS Code](/ja/vs-code)、[JetBrains](/ja/jetbrains)、[Desktop](/ja/desktop)、[Web](/ja/claude-code-on-the-web) 環境を超えて、Claude Code は CI/CD、チャット、ブラウザワークフローと統合します：
 
-| 実現したいこと                         | 最適なオプション                                                                                                            |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| ローカルセッションを電話または別のデバイスから続行する     | [リモートコントロール](/ja/remote-control)                                                                                    |
-| ローカルでタスクを開始し、モバイルで続行する          | [Web](/ja/claude-code-on-the-web) または [Claude iOS アプリ](https://apps.apple.com/app/claude-by-anthropic/id6473753684) |
-| PR レビューと問題トリアージを自動化する           | [GitHub Actions](/ja/github-actions) または [GitLab CI/CD](/ja/gitlab-ci-cd)                                           |
-| すべての PR で自動コードレビューを取得する         | [GitHub Code Review](/ja/code-review)                                                                               |
-| Slack からプルリクエストへバグレポートをルーティングする | [Slack](/ja/slack)                                                                                                  |
-| ライブ Web アプリケーションをデバッグする         | [Chrome](/ja/chrome)                                                                                                |
-| 独自のワークフロー用のカスタムエージェントを構築する      | [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview)                                                 |
+| 実現したいこと                                             | 最適なオプション                                                                                                            |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| ローカルセッションを電話または別のデバイスから続行する                         | [リモートコントロール](/ja/remote-control)                                                                                    |
+| Telegram、Discord、または独自の webhook からセッションにイベントをプッシュする | [チャネル](/ja/channels)                                                                                                |
+| ローカルでタスクを開始し、モバイルで続行する                              | [Web](/ja/claude-code-on-the-web) または [Claude iOS アプリ](https://apps.apple.com/app/claude-by-anthropic/id6473753684) |
+| 定期的なスケジュールで Claude を実行する                            | [クラウドスケジュール済みタスク](/ja/web-scheduled-tasks) または [デスクトップスケジュール済みタスク](/ja/desktop#schedule-recurring-tasks)            |
+| PR レビューと問題トリアージを自動化する                               | [GitHub Actions](/ja/github-actions) または [GitLab CI/CD](/ja/gitlab-ci-cd)                                           |
+| すべての PR で自動コードレビューを取得する                             | [GitHub Code Review](/ja/code-review)                                                                               |
+| Slack からプルリクエストへバグレポートをルーティングする                     | [Slack](/ja/slack)                                                                                                  |
+| ライブ Web アプリケーションをデバッグする                             | [Chrome](/ja/chrome)                                                                                                |
+| 独自のワークフロー用のカスタムエージェントを構築する                          | [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview)                                                 |
 
 ## 次のステップ
 

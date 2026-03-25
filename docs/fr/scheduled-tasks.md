@@ -10,9 +10,29 @@
   Les tâches planifiées nécessitent Claude Code v2.1.72 ou version ultérieure. Vérifiez votre version avec `claude --version`.
 </Note>
 
-Les tâches planifiées permettent à Claude de réexécuter automatiquement un prompt à intervalles réguliers. Utilisez-les pour interroger un déploiement, surveiller une PR, vérifier une compilation longue ou vous rappeler de faire quelque chose plus tard dans la session.
+Les tâches planifiées permettent à Claude de réexécuter automatiquement un prompt à intervalles réguliers. Utilisez-les pour interroger un déploiement, surveiller une PR, vérifier une compilation longue ou vous rappeler de faire quelque chose plus tard dans la session. Pour réagir aux événements au fur et à mesure qu'ils se produisent au lieu d'interroger, consultez [Channels](/fr/channels) : votre CI peut pousser l'échec directement dans la session.
 
-Les tâches sont limitées à la session : elles vivent dans le processus Claude Code actuel et disparaissent lorsque vous quittez. Pour une planification durable qui survit aux redémarrages et s'exécute sans session de terminal active, consultez [Tâches planifiées sur le bureau](/fr/desktop#schedule-recurring-tasks) ou [GitHub Actions](/fr/github-actions).
+Les tâches sont limitées à la session : elles vivent dans le processus Claude Code actuel et disparaissent lorsque vous quittez. Pour une planification durable qui survit aux redémarrages, utilisez les tâches planifiées [Cloud](/fr/web-scheduled-tasks) ou [Desktop](/fr/desktop#schedule-recurring-tasks), ou [GitHub Actions](/fr/github-actions).
+
+## Comparer les options de planification
+
+Claude Code offers three ways to schedule recurring work:
+
+|                            | [Cloud](/en/web-scheduled-tasks) | [Desktop](/en/desktop#schedule-recurring-tasks) | [`/loop`](/en/scheduled-tasks) |
+| :------------------------- | :------------------------------- | :---------------------------------------------- | :----------------------------- |
+| Runs on                    | Anthropic cloud                  | Your machine                                    | Your machine                   |
+| Requires machine on        | No                               | Yes                                             | Yes                            |
+| Requires open session      | No                               | No                                              | Yes                            |
+| Persistent across restarts | Yes                              | Yes                                             | No (session-scoped)            |
+| Access to local files      | No (fresh clone)                 | Yes                                             | Yes                            |
+| MCP servers                | Connectors configured per task   | [Config files](/en/mcp) and connectors          | Inherits from session          |
+| Permission prompts         | No (runs autonomously)           | Configurable per task                           | Inherits from session          |
+| Customizable schedule      | Via `/schedule` in the CLI       | Yes                                             | Yes                            |
+| Minimum interval           | 1 hour                           | 1 minute                                        | 1 minute                       |
+
+<Tip>
+  Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
+</Tip>
 
 ## Planifier un prompt récurrent avec /loop
 
@@ -99,7 +119,7 @@ Le décalage est dérivé de l'ID de la tâche, donc la même tâche obtient tou
 
 ### Expiration de trois jours
 
-Les tâches récurrentes expirent automatiquement 3 jours après leur création. La tâche s'exécute une dernière fois, puis se supprime. Cela limite la durée pendant laquelle une boucle oubliée peut s'exécuter. Si vous avez besoin qu'une tâche récurrente dure plus longtemps, annulez et recréez-la avant son expiration, ou utilisez [Tâches planifiées sur le bureau](/fr/desktop#schedule-recurring-tasks) pour une planification durable.
+Les tâches récurrentes expirent automatiquement 3 jours après leur création. La tâche s'exécute une dernière fois, puis se supprime. Cela limite la durée pendant laquelle une boucle oubliée peut s'exécuter. Si vous avez besoin qu'une tâche récurrente dure plus longtemps, annulez et recréez-la avant son expiration, ou utilisez [Tâches planifiées sur le cloud](/fr/web-scheduled-tasks) ou [Tâches planifiées sur le bureau](/fr/desktop#schedule-recurring-tasks) pour une planification durable.
 
 ## Référence d'expression cron
 
@@ -130,4 +150,8 @@ La planification limitée à la session a des contraintes inhérentes :
 * Pas de rattrapage pour les exécutions manquées. Si l'heure planifiée d'une tâche passe pendant que Claude est occupé par une demande longue, elle s'exécute une fois quand Claude devient inactif, pas une fois par intervalle manqué.
 * Pas de persistance entre les redémarrages. Le redémarrage de Claude Code efface toutes les tâches limitées à la session.
 
-Pour l'automatisation pilotée par cron qui doit s'exécuter sans surveillance, utilisez un [flux de travail GitHub Actions](/fr/github-actions) avec un déclencheur `schedule`, ou [Tâches planifiées sur le bureau](/fr/desktop#schedule-recurring-tasks) si vous voulez un flux de configuration graphique.
+Pour l'automatisation pilotée par cron qui doit s'exécuter sans surveillance :
+
+* [Tâches planifiées sur le cloud](/fr/web-scheduled-tasks) : s'exécutent sur l'infrastructure gérée par Anthropic
+* [GitHub Actions](/fr/github-actions) : utilisez un déclencheur `schedule` dans CI
+* [Tâches planifiées sur le bureau](/fr/desktop#schedule-recurring-tasks) : s'exécutent localement sur votre machine

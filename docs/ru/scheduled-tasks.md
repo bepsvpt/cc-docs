@@ -10,9 +10,29 @@
   Запланированные задачи требуют Claude Code v2.1.72 или более поздней версии. Проверьте вашу версию с помощью `claude --version`.
 </Note>
 
-Запланированные задачи позволяют Claude автоматически повторно запускать подсказку через определённый интервал. Используйте их для опроса развёртывания, контроля pull request, проверки долгоживущей сборки или напоминания себе о чём-то позже в сеансе.
+Запланированные задачи позволяют Claude автоматически повторно запускать подсказку через определённый интервал. Используйте их для опроса развёртывания, контроля pull request, проверки долгоживущей сборки или напоминания себе о чём-то позже в сеансе. Чтобы реагировать на события по мере их возникновения вместо опроса, см. [Channels](/ru/channels): ваш CI может отправить сбой непосредственно в сеанс.
 
-Задачи привязаны к сеансу: они существуют в текущем процессе Claude Code и исчезают при выходе. Для долговечного планирования, которое сохраняется при перезагрузке и работает без активного сеанса терминала, см. [Запланированные задачи Desktop](/ru/desktop#schedule-recurring-tasks) или [GitHub Actions](/ru/github-actions).
+Задачи привязаны к сеансу: они существуют в текущем процессе Claude Code и исчезают при выходе. Для долговечного планирования, которое сохраняется при перезагрузке, используйте [Cloud](/ru/web-scheduled-tasks) или [Desktop](/ru/desktop#schedule-recurring-tasks) запланированные задачи, или [GitHub Actions](/ru/github-actions).
+
+## Сравните варианты планирования
+
+Claude Code offers three ways to schedule recurring work:
+
+|                            | [Cloud](/en/web-scheduled-tasks) | [Desktop](/en/desktop#schedule-recurring-tasks) | [`/loop`](/en/scheduled-tasks) |
+| :------------------------- | :------------------------------- | :---------------------------------------------- | :----------------------------- |
+| Runs on                    | Anthropic cloud                  | Your machine                                    | Your machine                   |
+| Requires machine on        | No                               | Yes                                             | Yes                            |
+| Requires open session      | No                               | No                                              | Yes                            |
+| Persistent across restarts | Yes                              | Yes                                             | No (session-scoped)            |
+| Access to local files      | No (fresh clone)                 | Yes                                             | Yes                            |
+| MCP servers                | Connectors configured per task   | [Config files](/en/mcp) and connectors          | Inherits from session          |
+| Permission prompts         | No (runs autonomously)           | Configurable per task                           | Inherits from session          |
+| Customizable schedule      | Via `/schedule` in the CLI       | Yes                                             | Yes                            |
+| Minimum interval           | 1 hour                           | 1 minute                                        | 1 minute                       |
+
+<Tip>
+  Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
+</Tip>
 
 ## Запланируйте повторяющуюся подсказку с помощью /loop
 
@@ -99,7 +119,7 @@ cancel the deploy check job
 
 ### Истечение через три дня
 
-Повторяющиеся задачи автоматически истекают через 3 дня после создания. Задача срабатывает в последний раз, а затем удаляет себя. Это ограничивает, как долго может работать забытый цикл. Если вам нужна повторяющаяся задача, которая длится дольше, отмените и пересоздайте её перед истечением срока, или используйте [Запланированные задачи Desktop](/ru/desktop#schedule-recurring-tasks) для долговечного планирования.
+Повторяющиеся задачи автоматически истекают через 3 дня после создания. Задача срабатывает в последний раз, а затем удаляет себя. Это ограничивает, как долго может работать забытый цикл. Если вам нужна повторяющаяся задача, которая длится дольше, отмените и пересоздайте её перед истечением срока, или используйте [Cloud запланированные задачи](/ru/web-scheduled-tasks) или [Desktop запланированные задачи](/ru/desktop#schedule-recurring-tasks) для долговечного планирования.
 
 ## Справочник выражений cron
 
@@ -130,4 +150,8 @@ cancel the deploy check job
 * Нет наверстывания пропущенных срабатываний. Если запланированное время задачи проходит, пока Claude занят долгоживущим запросом, она срабатывает один раз, когда Claude становится свободным, а не один раз за каждый пропущенный интервал.
 * Нет сохранения при перезагрузке. Перезагрузка Claude Code очищает все задачи, привязанные к сеансу.
 
-Для автоматизации, управляемой cron, которая должна работать без присмотра, используйте [рабочий процесс GitHub Actions](/ru/github-actions) с триггером `schedule`, или [Запланированные задачи Desktop](/ru/desktop#schedule-recurring-tasks), если вам нужен графический поток настройки.
+Для автоматизации, управляемой cron, которая должна работать без присмотра:
+
+* [Cloud запланированные задачи](/ru/web-scheduled-tasks): запуск на инфраструктуре, управляемой Anthropic
+* [GitHub Actions](/ru/github-actions): используйте триггер `schedule` в CI
+* [Desktop запланированные задачи](/ru/desktop#schedule-recurring-tasks): запуск локально на вашей машине

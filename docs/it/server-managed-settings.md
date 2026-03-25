@@ -41,7 +41,7 @@ Se i vostri dispositivi sono registrati in una soluzione MDM o di gestione degli
   </Step>
 
   <Step title="Definire le impostazioni">
-    Aggiungere la configurazione come JSON. Tutte le [impostazioni disponibili in `settings.json`](/it/settings#available-settings) sono supportate, incluse le [impostazioni solo gestite](/it/permissions#managed-only-settings) come `disableBypassPermissionsMode`.
+    Aggiungere la configurazione come JSON. Tutte le [impostazioni disponibili in `settings.json`](/it/settings#available-settings) sono supportate, inclusi [hooks](/it/hooks), [variabili di ambiente](/it/env-vars), e [impostazioni solo gestite](/it/permissions#managed-only-settings) come `allowManagedPermissionRulesOnly`.
 
     Questo esempio applica un elenco di negazione delle autorizzazioni e impedisce agli utenti di ignorare le autorizzazioni:
 
@@ -58,6 +58,41 @@ Se i vostri dispositivi sono registrati in una soluzione MDM o di gestione degli
       }
     }
     ```
+
+    Gli hook utilizzano lo stesso formato di `settings.json`.
+
+    Questo esempio esegue uno script di audit dopo ogni modifica di file in tutta l'organizzazione:
+
+    ```json  theme={null}
+    {
+      "hooks": {
+        "PostToolUse": [
+          {
+            "matcher": "Edit|Write",
+            "hooks": [
+              { "type": "command", "command": "/usr/local/bin/audit-edit.sh" }
+            ]
+          }
+        ]
+      }
+    }
+    ```
+
+    Per configurare il classificatore della [modalità auto](/it/permission-modes#eliminate-prompts-with-auto-mode) in modo che conosca quali repository, bucket e domini la vostra organizzazione ritiene affidabili:
+
+    ```json  theme={null}
+    {
+      "autoMode": {
+        "environment": [
+          "Source control: github.example.com/acme-corp and all repos under it",
+          "Trusted cloud buckets: s3://acme-build-artifacts, gs://acme-ml-datasets",
+          "Trusted internal domains: *.corp.example.com"
+        ]
+      }
+    }
+    ```
+
+    Poiché gli hook eseguono comandi shell, gli utenti vedono una [finestra di dialogo di approvazione della sicurezza](#security-approval-dialogs) prima che vengano applicati. Vedere [Configurare il classificatore della modalità auto](/it/permissions#configure-the-auto-mode-classifier) per come le voci `autoMode` influenzano ciò che il classificatore blocca e avvertimenti importanti sui campi `allow` e `soft_deny`.
   </Step>
 
   <Step title="Salvare e distribuire">

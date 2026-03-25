@@ -10,9 +10,29 @@
   排程任務需要 Claude Code v2.1.72 或更新版本。使用 `claude --version` 檢查您的版本。
 </Note>
 
-排程任務讓 Claude 按間隔自動重新執行提示。使用它們來輪詢部署、監督 PR、檢查長時間執行的建置，或在工作階段稍後提醒自己執行某些操作。
+排程任務讓 Claude 按間隔自動重新執行提示。使用它們來輪詢部署、監督 PR、檢查長時間執行的建置，或在工作階段稍後提醒自己執行某些操作。若要改為對事件發生時做出反應而不是輪詢，請參閱 [Channels](/zh-TW/channels)：您的 CI 可以直接將失敗推送到工作階段中。
 
-任務的範圍限於工作階段：它們存在於目前的 Claude Code 程序中，當您退出時就會消失。如需在重新啟動後仍能持續且無需活躍終端工作階段即可執行的持久排程，請參閱 [Desktop 排程任務](/zh-TW/desktop#schedule-recurring-tasks) 或 [GitHub Actions](/zh-TW/github-actions)。
+任務的範圍限於工作階段：它們存在於目前的 Claude Code 程序中，當您退出時就會消失。如需在重新啟動後仍能持續的持久排程，請使用 [Cloud](/zh-TW/web-scheduled-tasks) 或 [Desktop](/zh-TW/desktop#schedule-recurring-tasks) 排程任務，或 [GitHub Actions](/zh-TW/github-actions)。
+
+## 比較排程選項
+
+Claude Code offers three ways to schedule recurring work:
+
+|                            | [Cloud](/en/web-scheduled-tasks) | [Desktop](/en/desktop#schedule-recurring-tasks) | [`/loop`](/en/scheduled-tasks) |
+| :------------------------- | :------------------------------- | :---------------------------------------------- | :----------------------------- |
+| Runs on                    | Anthropic cloud                  | Your machine                                    | Your machine                   |
+| Requires machine on        | No                               | Yes                                             | Yes                            |
+| Requires open session      | No                               | No                                              | Yes                            |
+| Persistent across restarts | Yes                              | Yes                                             | No (session-scoped)            |
+| Access to local files      | No (fresh clone)                 | Yes                                             | Yes                            |
+| MCP servers                | Connectors configured per task   | [Config files](/en/mcp) and connectors          | Inherits from session          |
+| Permission prompts         | No (runs autonomously)           | Configurable per task                           | Inherits from session          |
+| Customizable schedule      | Via `/schedule` in the CLI       | Yes                                             | Yes                            |
+| Minimum interval           | 1 hour                           | 1 minute                                        | 1 minute                       |
+
+<Tip>
+  Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
+</Tip>
 
 ## 使用 /loop 排程重複執行的提示
 
@@ -99,7 +119,7 @@ cancel the deploy check job
 
 ### 三天過期
 
-重複執行的任務在建立後 3 天自動過期。任務最後執行一次，然後刪除自己。這限制了被遺忘的迴圈可以執行多長時間。如果您需要重複執行的任務持續更長時間，請在過期前取消並重新建立它，或使用 [Desktop 排程任務](/zh-TW/desktop#schedule-recurring-tasks) 進行持久排程。
+重複執行的任務在建立後 3 天自動過期。任務最後執行一次，然後刪除自己。這限制了被遺忘的迴圈可以執行多長時間。如果您需要重複執行的任務持續更長時間，請在過期前取消並重新建立它，或使用 [Cloud 排程任務](/zh-TW/web-scheduled-tasks) 或 [Desktop 排程任務](/zh-TW/desktop#schedule-recurring-tasks) 進行持久排程。
 
 ## Cron 表達式參考
 
@@ -130,4 +150,8 @@ cancel the deploy check job
 * 沒有錯過執行的追趕。如果任務的排程時間在 Claude 忙於長時間執行的請求時經過，它會在 Claude 變為閒置時執行一次，而不是每個錯過的間隔執行一次。
 * 沒有跨重新啟動的持久性。重新啟動 Claude Code 會清除所有工作階段範圍的任務。
 
-對於需要無人值守執行的 cron 驅動自動化，請使用具有 `schedule` 觸發器的 [GitHub Actions 工作流程](/zh-TW/github-actions)，或如果您想要圖形化設定流程，請使用 [Desktop 排程任務](/zh-TW/desktop#schedule-recurring-tasks)。
+對於需要無人值守執行的 cron 驅動自動化：
+
+* [Cloud 排程任務](/zh-TW/web-scheduled-tasks)：在 Anthropic 管理的基礎設施上執行
+* [GitHub Actions](/zh-TW/github-actions)：在 CI 中使用 `schedule` 觸發器
+* [Desktop 排程任務](/zh-TW/desktop#schedule-recurring-tasks)：在您的機器上本地執行

@@ -47,9 +47,15 @@ Jika Anda telah mengonfigurasi nama model khusus di gateway Anda, gunakan variab
 
 ## Konfigurasi LiteLLM
 
-<Note>
+<Warning>
+  Versi PyPI LiteLLM 1.82.7 dan 1.82.8 dikompromikan dengan malware pencuri kredensial. Jangan instal versi ini. Jika Anda telah menginstalnya:
+
+  * Hapus paket
+  * Putar semua kredensial pada sistem yang terpengaruh
+  * Ikuti langkah remediasi dalam [BerriAI/litellm#24518](https://github.com/BerriAI/litellm/issues/24518)
+
   LiteLLM adalah layanan proxy pihak ketiga. Anthropic tidak mendukung, memelihara, atau mengaudit keamanan atau fungsionalitas LiteLLM. Panduan ini disediakan untuk tujuan informasi dan mungkin menjadi ketinggalan zaman. Gunakan atas kebijakan Anda sendiri.
-</Note>
+</Warning>
 
 ### Prasyarat
 

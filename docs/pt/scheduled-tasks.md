@@ -10,13 +10,33 @@
   Tarefas agendadas requerem Claude Code v2.1.72 ou posterior. Verifique sua versão com `claude --version`.
 </Note>
 
-Tarefas agendadas permitem que Claude execute novamente um prompt automaticamente em um intervalo. Use-as para pesquisar uma implantação, cuidar de um PR, verificar uma compilação de longa duração ou lembrar-se de fazer algo mais tarde na sessão.
+Tarefas agendadas permitem que Claude execute novamente um prompt automaticamente em um intervalo. Use-as para pesquisar uma implantação, cuidar de um PR, verificar uma compilação de longa duração ou lembrar-se de fazer algo mais tarde na sessão. Para reagir a eventos conforme eles acontecem em vez de pesquisar, consulte [Channels](/pt/channels): seu CI pode enviar a falha para a sessão diretamente.
 
-As tarefas têm escopo de sessão: elas vivem no processo atual do Claude Code e desaparecem quando você sai. Para agendamento durável que sobreviva a reinicializações e seja executado sem uma sessão de terminal ativa, consulte [tarefas agendadas do Desktop](/pt/desktop#schedule-recurring-tasks) ou [GitHub Actions](/pt/github-actions).
+As tarefas têm escopo de sessão: elas vivem no processo atual do Claude Code e desaparecem quando você sai. Para agendamento durável que sobreviva a reinicializações, use [Cloud](/pt/web-scheduled-tasks) ou [Desktop](/pt/desktop#schedule-recurring-tasks) tarefas agendadas, ou [GitHub Actions](/pt/github-actions).
+
+## Compare opções de agendamento
+
+Claude Code offers three ways to schedule recurring work:
+
+|                            | [Cloud](/en/web-scheduled-tasks) | [Desktop](/en/desktop#schedule-recurring-tasks) | [`/loop`](/en/scheduled-tasks) |
+| :------------------------- | :------------------------------- | :---------------------------------------------- | :----------------------------- |
+| Runs on                    | Anthropic cloud                  | Your machine                                    | Your machine                   |
+| Requires machine on        | No                               | Yes                                             | Yes                            |
+| Requires open session      | No                               | No                                              | Yes                            |
+| Persistent across restarts | Yes                              | Yes                                             | No (session-scoped)            |
+| Access to local files      | No (fresh clone)                 | Yes                                             | Yes                            |
+| MCP servers                | Connectors configured per task   | [Config files](/en/mcp) and connectors          | Inherits from session          |
+| Permission prompts         | No (runs autonomously)           | Configurable per task                           | Inherits from session          |
+| Customizable schedule      | Via `/schedule` in the CLI       | Yes                                             | Yes                            |
+| Minimum interval           | 1 hour                           | 1 minute                                        | 1 minute                       |
+
+<Tip>
+  Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
+</Tip>
 
 ## Agendar um prompt recorrente com /loop
 
-A [skill agrupada](/pt/skills#bundled-skills) `/loop` é a maneira mais rápida de agendar um prompt recorrente. Passe um intervalo opcional e um prompt, e Claude configura um trabalho cron que é acionado em segundo plano enquanto a sessão permanece aberta.
+A skill agrupada `/loop` [bundled skill](/pt/skills#bundled-skills) é a maneira mais rápida de agendar um prompt recorrente. Passe um intervalo opcional e um prompt, e Claude configura um trabalho cron que é acionado em segundo plano enquanto a sessão permanece aberta.
 
 ```text  theme={null}
 /loop 5m check if the deployment finished and tell me what happened
@@ -99,7 +119,7 @@ O deslocamento é derivado do ID da tarefa, portanto a mesma tarefa sempre obté
 
 ### Expiração de três dias
 
-Tarefas recorrentes expiram automaticamente 3 dias após a criação. A tarefa é acionada uma última vez e depois se deleta. Isso limita quanto tempo um loop esquecido pode ser executado. Se você precisar que uma tarefa recorrente dure mais tempo, cancele e recrie-a antes de expirar, ou use [tarefas agendadas do Desktop](/pt/desktop#schedule-recurring-tasks) para agendamento durável.
+Tarefas recorrentes expiram automaticamente 3 dias após a criação. A tarefa é acionada uma última vez e depois se deleta. Isso limita quanto tempo um loop esquecido pode ser executado. Se você precisar que uma tarefa recorrente dure mais tempo, cancele e recrie-a antes de expirar, ou use [tarefas agendadas do Cloud](/pt/web-scheduled-tasks) ou [tarefas agendadas do Desktop](/pt/desktop#schedule-recurring-tasks) para agendamento durável.
 
 ## Referência de expressão cron
 
@@ -130,4 +150,8 @@ O agendamento com escopo de sessão tem limitações inerentes:
 * Sem recuperação para disparos perdidos. Se o tempo agendado de uma tarefa passar enquanto Claude está ocupado em uma solicitação de longa duração, ela dispara uma vez quando Claude fica ocioso, não uma vez por intervalo perdido.
 * Sem persistência entre reinicializações. Reiniciar Claude Code limpa todas as tarefas com escopo de sessão.
 
-Para automação orientada por cron que precisa ser executada sem supervisão, use um [fluxo de trabalho do GitHub Actions](/pt/github-actions) com um gatilho `schedule`, ou [tarefas agendadas do Desktop](/pt/desktop#schedule-recurring-tasks) se você quiser um fluxo de configuração gráfico.
+Para automação orientada por cron que precisa ser executada sem supervisão:
+
+* [Tarefas agendadas do Cloud](/pt/web-scheduled-tasks): executadas na infraestrutura gerenciada pela Anthropic
+* [GitHub Actions](/pt/github-actions): use um gatilho `schedule` em CI
+* [Tarefas agendadas do Desktop](/pt/desktop#schedule-recurring-tasks): executadas localmente em sua máquina

@@ -4,19 +4,39 @@
 
 # スケジュールに従ってプロンプトを実行する
 
-> /loop とcron スケジューリングツールを使用して、Claude Code セッション内でプロンプトを繰り返し実行したり、ステータスをポーリングしたり、1 回限りのリマインダーを設定したりします。
+> /loop と cron スケジューリングツールを使用して、Claude Code セッション内でプロンプトを繰り返し実行したり、ステータスをポーリングしたり、1 回限りのリマインダーを設定したりします。
 
 <Note>
   スケジュール済みタスクには Claude Code v2.1.72 以降が必要です。`claude --version` でバージョンを確認してください。
 </Note>
 
-スケジュール済みタスクを使用すると、Claude は一定の間隔でプロンプトを自動的に再実行できます。デプロイメントをポーリングしたり、PR を監視したり、長時間実行されるビルドをチェックバックしたり、後でセッション内で何かを実行するようにリマインダーを設定したりするために使用します。
+スケジュール済みタスクを使用すると、Claude は一定の間隔でプロンプトを自動的に再実行できます。デプロイメントをポーリングしたり、PR を監視したり、長時間実行されるビルドをチェックバックしたり、後でセッション内で何かを実行するようにリマインダーを設定したりするために使用します。イベントが発生したときにポーリングする代わりに反応するには、[Channels](/ja/channels) を参照してください。CI はセッションに直接失敗をプッシュできます。
 
-タスクはセッションスコープです。現在の Claude Code プロセスに存在し、終了すると消えます。再起動後も存在し、アクティブなターミナルセッションなしで実行される永続的なスケジューリングについては、[Desktop スケジュール済みタスク](/ja/desktop#schedule-recurring-tasks)または [GitHub Actions](/ja/github-actions) を参照してください。
+タスクはセッションスコープです。現在の Claude Code プロセスに存在し、終了すると消えます。再起動後も存在する永続的なスケジューリングについては、[Cloud](/ja/web-scheduled-tasks) または [Desktop](/ja/desktop#schedule-recurring-tasks) スケジュール済みタスク、または [GitHub Actions](/ja/github-actions) を使用してください。
+
+## スケジューリングオプションを比較する
+
+Claude Code offers three ways to schedule recurring work:
+
+|                            | [Cloud](/en/web-scheduled-tasks) | [Desktop](/en/desktop#schedule-recurring-tasks) | [`/loop`](/en/scheduled-tasks) |
+| :------------------------- | :------------------------------- | :---------------------------------------------- | :----------------------------- |
+| Runs on                    | Anthropic cloud                  | Your machine                                    | Your machine                   |
+| Requires machine on        | No                               | Yes                                             | Yes                            |
+| Requires open session      | No                               | No                                              | Yes                            |
+| Persistent across restarts | Yes                              | Yes                                             | No (session-scoped)            |
+| Access to local files      | No (fresh clone)                 | Yes                                             | Yes                            |
+| MCP servers                | Connectors configured per task   | [Config files](/en/mcp) and connectors          | Inherits from session          |
+| Permission prompts         | No (runs autonomously)           | Configurable per task                           | Inherits from session          |
+| Customizable schedule      | Via `/schedule` in the CLI       | Yes                                             | Yes                            |
+| Minimum interval           | 1 hour                           | 1 minute                                        | 1 minute                       |
+
+<Tip>
+  Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
+</Tip>
 
 ## /loop で定期的なプロンプトをスケジュールする
 
-`/loop` [バンドルスキル](/ja/skills#bundled-skills)は、定期的なプロンプトをスケジュールする最速の方法です。オプションの間隔とプロンプトを渡すと、Claude はバックグラウンドで実行される cron ジョブをセットアップし、セッションは開いたままになります。
+`/loop` [バンドルスキル](/ja/skills#bundled-skills) は、定期的なプロンプトをスケジュールする最速の方法です。オプションの間隔とプロンプトを渡すと、Claude はバックグラウンドで実行される cron ジョブをセットアップし、セッションは開いたままになります。
 
 ```text  theme={null}
 /loop 5m check if the deployment finished and tell me what happened
@@ -99,7 +119,7 @@ cancel the deploy check job
 
 ### 3 日間の有効期限
 
-定期的なタスクは作成後 3 日で自動的に期限切れになります。タスクは最後に 1 回実行され、その後自身を削除します。これにより、忘れられたループが実行できる期間が制限されます。定期的なタスクをより長く続ける必要がある場合は、期限切れになる前にキャンセルして再作成するか、永続的なスケジューリングのために [Desktop スケジュール済みタスク](/ja/desktop#schedule-recurring-tasks) を使用してください。
+定期的なタスクは作成後 3 日で自動的に期限切れになります。タスクは最後に 1 回実行され、その後自身を削除します。これにより、忘れられたループが実行できる期間が制限されます。定期的なタスクをより長く続ける必要がある場合は、期限切れになる前にキャンセルして再作成するか、永続的なスケジューリングのために [Cloud スケジュール済みタスク](/ja/web-scheduled-tasks) または [Desktop スケジュール済みタスク](/ja/desktop#schedule-recurring-tasks) を使用してください。
 
 ## Cron 式リファレンス
 
@@ -130,4 +150,8 @@ cancel the deploy check job
 * 見落とされた火災のキャッチアップはありません。タスクのスケジュール済み時間が Claude が長時間実行されるリクエストでビジーの間に経過した場合、Claude がアイドル状態になったときに 1 回実行され、見落とされた間隔ごとに 1 回ではありません。
 * 再起動間での永続性はありません。Claude Code を再起動すると、すべてのセッションスコープのタスクがクリアされます。
 
-無人で実行する必要がある cron 駆動オートメーションの場合は、`schedule` トリガーを使用した [GitHub Actions ワークフロー](/ja/github-actions)を使用するか、グラフィカルセットアップフローが必要な場合は [Desktop スケジュール済みタスク](/ja/desktop#schedule-recurring-tasks) を使用してください。
+無人で実行する必要がある cron 駆動オートメーションの場合は、以下を使用してください。
+
+* [Cloud スケジュール済みタスク](/ja/web-scheduled-tasks)：Anthropic 管理インフラストラクチャで実行
+* [GitHub Actions](/ja/github-actions)：CI で `schedule` トリガーを使用
+* [Desktop スケジュール済みタスク](/ja/desktop#schedule-recurring-tasks)：マシン上でローカルに実行

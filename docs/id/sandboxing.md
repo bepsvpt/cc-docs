@@ -124,7 +124,7 @@ Secara default, perintah sandboxed hanya dapat menulis ke direktori kerja saat i
   "sandbox": {
     "enabled": true,
     "filesystem": {
-      "allowWrite": ["~/.kube", "//tmp/build"]
+      "allowWrite": ["~/.kube", "/tmp/build"]
     }
   }
 }
@@ -132,18 +132,35 @@ Secara default, perintah sandboxed hanya dapat menulis ke direktori kerja saat i
 
 Jalur ini diberlakukan pada tingkat OS, sehingga semua perintah yang berjalan di dalam sandbox, termasuk proses anak mereka, menghormatinya. Ini adalah pendekatan yang direkomendasikan ketika alat memerlukan akses tulis ke lokasi tertentu, daripada mengecualikan alat dari sandbox sepenuhnya dengan `excludedCommands`.
 
-Ketika `allowWrite` (atau `denyWrite`/`denyRead`) didefinisikan dalam beberapa [cakupan pengaturan](/id/settings#settings-precedence), array **digabungkan**, artinya jalur dari setiap cakupan digabungkan, bukan diganti. Misalnya, jika pengaturan terkelola memungkinkan penulisan ke `//opt/company-tools` dan pengguna menambahkan `~/.kube` dalam pengaturan pribadi mereka, kedua jalur disertakan dalam konfigurasi sandbox akhir. Ini berarti pengguna dan proyek dapat memperluas daftar tanpa menduplikasi atau menimpa jalur yang ditetapkan oleh cakupan prioritas lebih tinggi.
+Ketika `allowWrite` (atau `denyWrite`/`denyRead`/`allowRead`) didefinisikan dalam beberapa [cakupan pengaturan](/id/settings#settings-precedence), array **digabungkan**, artinya jalur dari setiap cakupan digabungkan, bukan diganti. Misalnya, jika pengaturan terkelola memungkinkan penulisan ke `/opt/company-tools` dan pengguna menambahkan `~/.kube` dalam pengaturan pribadi mereka, kedua jalur disertakan dalam konfigurasi sandbox akhir. Ini berarti pengguna dan proyek dapat memperluas daftar tanpa menduplikasi atau menimpa jalur yang ditetapkan oleh cakupan prioritas lebih tinggi.
 
 Awalan jalur mengontrol bagaimana jalur diselesaikan:
 
-| Awalan                 | Arti                                              | Contoh                                 |
-| :--------------------- | :------------------------------------------------ | :------------------------------------- |
-| `//`                   | Jalur absolut dari akar filesystem                | `//tmp/build` menjadi `/tmp/build`     |
-| `~/`                   | Relatif terhadap direktori home                   | `~/.kube` menjadi `$HOME/.kube`        |
-| `/`                    | Relatif terhadap direktori file pengaturan        | `/build` menjadi `$SETTINGS_DIR/build` |
-| `./` atau tanpa awalan | Jalur relatif (diselesaikan oleh runtime sandbox) | `./output`                             |
+| Awalan                 | Arti                                                                                                | Contoh                                                                           |
+| :--------------------- | :-------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------- |
+| `/`                    | Jalur absolut dari akar filesystem                                                                  | `/tmp/build` tetap `/tmp/build`                                                  |
+| `~/`                   | Relatif terhadap direktori home                                                                     | `~/.kube` menjadi `$HOME/.kube`                                                  |
+| `./` atau tanpa awalan | Relatif terhadap akar proyek untuk pengaturan proyek, atau ke `~/.claude` untuk pengaturan pengguna | `./output` dalam `.claude/settings.json` diselesaikan ke `<project-root>/output` |
 
-Anda juga dapat menolak akses tulis atau baca menggunakan `sandbox.filesystem.denyWrite` dan `sandbox.filesystem.denyRead`. Ini digabungkan dengan jalur apa pun dari aturan izin `Edit(...)` dan `Read(...)`.
+Awalan `//path` yang lebih lama untuk jalur absolut masih berfungsi. Jika Anda sebelumnya menggunakan `/path` tunggal mengharapkan resolusi relatif proyek, beralih ke `./path`. Sintaks ini berbeda dari [aturan izin Read dan Edit](/id/permissions#read-and-edit), yang menggunakan `//path` untuk absolut dan `/path` untuk relatif proyek. Jalur filesystem sandbox menggunakan konvensi standar: `/tmp/build` adalah jalur absolut.
+
+Anda juga dapat menolak akses tulis atau baca menggunakan `sandbox.filesystem.denyWrite` dan `sandbox.filesystem.denyRead`. Ini digabungkan dengan jalur apa pun dari aturan izin `Edit(...)` dan `Read(...)`. Untuk mengizinkan kembali pembacaan jalur tertentu dalam wilayah yang ditolak, gunakan `sandbox.filesystem.allowRead`, yang mengambil alih `denyRead`. Ketika `allowManagedReadPathsOnly` diaktifkan dalam pengaturan terkelola, hanya entri `allowRead` terkelola yang dihormati; entri `allowRead` pengguna, proyek, dan lokal diabaikan.
+
+Misalnya, untuk memblokir pembacaan dari seluruh direktori home sambil tetap memungkinkan pembacaan dari proyek saat ini, tambahkan ini ke `.claude/settings.json` proyek Anda:
+
+```json  theme={null}
+{
+  "sandbox": {
+    "enabled": true,
+    "filesystem": {
+      "denyRead": ["~/"],
+      "allowRead": ["."]
+    }
+  }
+}
+```
+
+`.` dalam `allowRead` diselesaikan ke akar proyek karena konfigurasi ini berada dalam pengaturan proyek. Jika Anda menempatkan konfigurasi yang sama dalam `~/.claude/settings.json`, `.` akan diselesaikan ke `~/.claude` sebagai gantinya, dan file proyek akan tetap diblokir oleh aturan `denyRead`.
 
 <Tip>
   Tidak semua perintah kompatibel dengan sandboxing langsung. Beberapa catatan yang mungkin membantu Anda memanfaatkan sandbox sebaik-baiknya:
@@ -227,6 +244,7 @@ Pembatasan filesystem dan jaringan dikonfigurasi melalui pengaturan sandbox dan 
 
 * Gunakan `sandbox.filesystem.allowWrite` untuk memberikan akses tulis subprocess ke jalur di luar direktori kerja
 * Gunakan `sandbox.filesystem.denyWrite` dan `sandbox.filesystem.denyRead` untuk memblokir akses subprocess ke jalur tertentu
+* Gunakan `sandbox.filesystem.allowRead` untuk mengizinkan kembali pembacaan jalur tertentu dalam wilayah yang ditolak
 * Gunakan aturan tolak `Read` dan `Edit` untuk memblokir akses ke file atau direktori tertentu
 * Gunakan aturan izin/tolak `WebFetch` untuk mengontrol akses domain
 * Gunakan `allowedDomains` sandbox untuk mengontrol domain mana yang dapat dijangkau perintah Bash
@@ -288,6 +306,13 @@ Untuk detail implementasi dan kode sumber, kunjungi [repositori GitHub](https://
 * **Overhead kinerja**: Minimal, tetapi beberapa operasi filesystem mungkin sedikit lebih lambat
 * **Kompatibilitas**: Beberapa alat yang memerlukan pola akses sistem tertentu mungkin memerlukan penyesuaian konfigurasi, atau bahkan mungkin perlu dijalankan di luar sandbox
 * **Dukungan platform**: Mendukung macOS, Linux, dan WSL2. WSL1 tidak didukung. Dukungan Windows asli sedang direncanakan.
+
+## Apa yang sandboxing tidak mencakup
+
+Sandbox mengisolasi subprocess Bash. Alat lain beroperasi di bawah batas yang berbeda:
+
+* **Alat file bawaan**: Read, Edit, dan Write menggunakan sistem izin secara langsung daripada berjalan melalui sandbox. Lihat [izin](/id/permissions).
+* **Penggunaan komputer di Desktop**: ketika Claude membuka aplikasi dan mengontrol layar Anda di macOS, itu berjalan di desktop aktual Anda daripada di lingkungan terisolasi. Prompt izin per-aplikasi membatasi setiap aplikasi. Lihat [penggunaan komputer](/id/desktop#let-claude-use-your-computer).
 
 ## Lihat juga
 

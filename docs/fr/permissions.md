@@ -30,19 +30,22 @@ Les règles sont évaluées dans l'ordre : **deny -> ask -> allow**. La premièr
 
 ## Modes d'autorisation
 
-Claude Code prend en charge plusieurs modes d'autorisation qui contrôlent la façon dont les outils sont approuvés. Définissez le `defaultMode` dans vos [fichiers de paramètres](/fr/settings#settings-files) :
+Claude Code prend en charge plusieurs modes d'autorisation qui contrôlent la façon dont les outils sont approuvés. Consultez [Modes d'autorisation](/fr/permission-modes) pour savoir quand utiliser chacun. Définissez le `defaultMode` dans vos [fichiers de paramètres](/fr/settings#settings-files) :
 
-| Mode                | Description                                                                                                          |
-| :------------------ | :------------------------------------------------------------------------------------------------------------------- |
-| `default`           | Comportement standard : demande une autorisation à la première utilisation de chaque outil                           |
-| `acceptEdits`       | Accepte automatiquement les autorisations d'édition de fichiers pour la session                                      |
-| `plan`              | Plan Mode : Claude peut analyser mais pas modifier les fichiers ou exécuter les commandes                            |
-| `dontAsk`           | Refuse automatiquement les outils sauf s'ils sont pré-approuvés via `/permissions` ou les règles `permissions.allow` |
-| `bypassPermissions` | Ignore tous les invites d'autorisation (nécessite un environnement sûr, voir l'avertissement ci-dessous)             |
+| Mode                | Description                                                                                                                                                                                      |
+| :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `default`           | Comportement standard : demande une autorisation à la première utilisation de chaque outil                                                                                                       |
+| `acceptEdits`       | Accepte automatiquement les autorisations d'édition de fichiers pour la session                                                                                                                  |
+| `plan`              | Plan Mode : Claude peut analyser mais pas modifier les fichiers ou exécuter les commandes                                                                                                        |
+| `auto`              | Approuve automatiquement les appels d'outils avec des vérifications de sécurité en arrière-plan qui vérifient que les actions s'alignent avec votre demande. Actuellement un aperçu de recherche |
+| `dontAsk`           | Refuse automatiquement les outils sauf s'ils sont pré-approuvés via `/permissions` ou les règles `permissions.allow`                                                                             |
+| `bypassPermissions` | Ignore les invites d'autorisation sauf pour les écritures dans les répertoires protégés (voir l'avertissement ci-dessous)                                                                        |
 
 <Warning>
-  Le mode `bypassPermissions` désactive tous les contrôles d'autorisation. Utilisez-le uniquement dans des environnements isolés comme les conteneurs ou les machines virtuelles où Claude Code ne peut pas causer de dommages. Les administrateurs peuvent empêcher ce mode en définissant `disableBypassPermissionsMode` sur `"disable"` dans les [paramètres gérés](#managed-settings).
+  Le mode `bypassPermissions` ignore les invites d'autorisation. Les écritures dans les répertoires `.git`, `.claude`, `.vscode` et `.idea` demandent toujours une confirmation pour éviter la corruption accidentelle de l'état du référentiel et de la configuration locale. Les écritures dans `.claude/commands`, `.claude/agents` et `.claude/skills` sont exemptées et ne demandent pas, car Claude écrit régulièrement là lors de la création de skills, de subagents et de commandes. Utilisez ce mode uniquement dans des environnements isolés comme les conteneurs ou les machines virtuelles où Claude Code ne peut pas causer de dommages. Les administrateurs peuvent empêcher ce mode en définissant `disableBypassPermissionsMode` sur `"disable"` dans les [paramètres gérés](#managed-settings).
 </Warning>
+
+Pour empêcher le mode `bypassPermissions` ou `auto` d'être utilisé, définissez `permissions.disableBypassPermissionsMode` ou `disableAutoMode` sur `"disable"` dans n'importe quel [fichier de paramètres](/fr/settings#settings-files). Ces paramètres sont particulièrement utiles dans les [paramètres gérés](#managed-settings) où ils ne peuvent pas être remplacés.
 
 ## Syntaxe des règles d'autorisation
 
@@ -111,6 +114,8 @@ Lorsque `*` apparaît à la fin avec un espace avant (comme `Bash(ls *)`), il ap
   Claude Code est conscient des opérateurs shell (comme `&&`) donc une règle de correspondance de préfixe comme `Bash(safe-cmd *)` ne lui donnera pas la permission d'exécuter la commande `safe-cmd && other-cmd`.
 </Tip>
 
+Lorsque vous approuvez une commande composée avec « Oui, ne pas demander à nouveau », Claude Code enregistre une règle séparée pour chaque sous-commande qui nécessite une approbation, plutôt qu'une seule règle pour la chaîne complète. Par exemple, approuver `git status && npm test` enregistre une règle pour `npm test`, donc les invocations futures de `npm test` sont reconnues indépendamment de ce qui précède le `&&`. Les sous-commandes comme `cd` dans un sous-répertoire génèrent leur propre règle Read pour ce chemin. Jusqu'à 5 règles peuvent être enregistrées pour une seule commande composée.
+
 <Warning>
   Les modèles d'autorisation Bash qui tentent de contraindre les arguments de commande sont fragiles. Par exemple, `Bash(curl http://github.com/ *)` a l'intention de restreindre curl aux URL GitHub, mais ne correspondra pas aux variations comme :
 
@@ -133,6 +138,10 @@ Lorsque `*` apparaît à la fin avec un espace avant (comme `Bash(ls *)`), il ap
 
 Les règles `Edit` s'appliquent à tous les outils intégrés qui éditent les fichiers. Claude fait un effort raisonnable pour appliquer les règles `Read` à tous les outils intégrés qui lisent les fichiers comme Grep et Glob.
 
+<Warning>
+  Les règles de refus Read et Edit s'appliquent aux outils de fichiers intégrés de Claude, pas aux sous-processus Bash. Une règle de refus `Read(./.env)` bloque l'outil Read mais n'empêche pas `cat .env` dans Bash. Pour une application au niveau du système d'exploitation qui bloque tous les processus d'accéder à un chemin, [activez le sandbox](/fr/sandboxing).
+</Warning>
+
 Les règles Read et Edit suivent toutes deux la spécification [gitignore](https://git-scm.com/docs/gitignore) avec quatre types de modèles distincts :
 
 | Modèle             | Signification                                                  | Exemple                          | Correspond                       |
@@ -145,6 +154,8 @@ Les règles Read et Edit suivent toutes deux la spécification [gitignore](https
 <Warning>
   Un modèle comme `/Users/alice/file` n'est PAS un chemin absolu. Il est relatif à la racine du projet. Utilisez `//Users/alice/file` pour les chemins absolus.
 </Warning>
+
+Sur Windows, les chemins sont normalisés en forme POSIX avant la correspondance. `C:\Users\alice` devient `/c/Users/alice`, donc utilisez `//c/**/.env` pour correspondre aux fichiers `.env` n'importe où sur ce lecteur. Pour correspondre sur tous les lecteurs, utilisez `//**/.env`.
 
 Exemples :
 
@@ -187,7 +198,11 @@ Ajoutez ces règles au tableau `deny` dans vos paramètres ou utilisez l'indicat
 
 ## Étendre les autorisations avec des hooks
 
-Les [hooks Claude Code](/fr/hooks-guide) fournissent un moyen d'enregistrer des commandes shell personnalisées pour effectuer l'évaluation des autorisations à l'exécution. Lorsque Claude Code effectue un appel d'outil, les hooks PreToolUse s'exécutent avant le système d'autorisation, et la sortie du hook peut déterminer s'il faut approuver ou refuser l'appel d'outil à la place du système d'autorisation.
+Les [hooks Claude Code](/fr/hooks-guide) fournissent un moyen d'enregistrer des commandes shell personnalisées pour effectuer l'évaluation des autorisations à l'exécution. Lorsque Claude Code effectue un appel d'outil, les hooks PreToolUse s'exécutent avant l'invite d'autorisation. La sortie du hook peut refuser l'appel d'outil, forcer une invite ou ignorer l'invite pour laisser l'appel se poursuivre.
+
+Ignorer l'invite ne contourne pas les règles d'autorisation. Les règles de refus et de demande sont toujours évaluées après qu'un hook retourne `"allow"`, donc une règle de refus correspondante bloque toujours l'appel. Cela préserve la précédence de refus en premier décrite dans [Gérer les autorisations](#manage-permissions), y compris les règles de refus définies dans les paramètres gérés.
+
+Un hook de blocage prend également la priorité sur les règles d'autorisation. Un hook qui se termine avec le code 2 arrête l'appel d'outil avant que les règles d'autorisation ne soient évaluées, donc le blocage s'applique même lorsqu'une règle d'autorisation permettrait autrement l'appel. Pour exécuter toutes les commandes Bash sans invites sauf pour quelques-unes que vous voulez bloquer, ajoutez `"Bash"` à votre liste d'autorisation et enregistrez un hook PreToolUse qui rejette ces commandes spécifiques. Consultez [Bloquer les éditions des fichiers protégés](/fr/hooks-guide#block-edits-to-protected-files) pour un script de hook que vous pouvez adapter.
 
 ## Répertoires de travail
 
@@ -215,22 +230,132 @@ Utilisez les deux pour une défense en profondeur :
 
 ## Paramètres gérés
 
-Pour les organisations qui ont besoin d'un contrôle centralisé sur la configuration de Claude Code, les administrateurs peuvent déployer des paramètres gérés qui ne peuvent pas être remplacés par les paramètres utilisateur ou projet. Ces paramètres de politique suivent le même format que les fichiers de paramètres réguliers et peuvent être livrés via des politiques MDM/au niveau du système d'exploitation, des fichiers de paramètres gérés ou des [paramètres gérés par le serveur](/fr/server-managed-settings). Voir [fichiers de paramètres](/fr/settings#settings-files) pour les mécanismes de livraison et les emplacements de fichiers.
+Pour les organisations qui ont besoin d'un contrôle centralisé sur la configuration de Claude Code, les administrateurs peuvent déployer des paramètres gérés qui ne peuvent pas être remplacés par les paramètres utilisateur ou projet. Ces paramètres de politique suivent le même format que les fichiers de paramètres réguliers et peuvent être livrés via des politiques MDM/au niveau du système d'exploitation, des fichiers de paramètres gérés ou des [paramètres gérés par le serveur](/fr/server-managed-settings). Consultez [fichiers de paramètres](/fr/settings#settings-files) pour les mécanismes de livraison et les emplacements de fichiers.
 
 ### Paramètres gérés uniquement
 
 Certains paramètres ne sont efficaces que dans les paramètres gérés :
 
-| Paramètre                                 | Description                                                                                                                                                                                                                                                                                     |
-| :---------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `disableBypassPermissionsMode`            | Définissez sur `"disable"` pour empêcher le mode `bypassPermissions` et l'indicateur `--dangerously-skip-permissions`                                                                                                                                                                           |
-| `allowManagedPermissionRulesOnly`         | Lorsque `true`, empêche les paramètres utilisateur et projet de définir les règles d'autorisation `allow`, `ask` ou `deny`. Seules les règles dans les paramètres gérés s'appliquent                                                                                                            |
-| `allowManagedHooksOnly`                   | Lorsque `true`, empêche le chargement des hooks utilisateur, projet et plugin. Seuls les hooks gérés et les hooks SDK sont autorisés                                                                                                                                                            |
-| `allowManagedMcpServersOnly`              | Lorsque `true`, seuls les `allowedMcpServers` des paramètres gérés sont respectés. `deniedMcpServers` fusionne toujours à partir de toutes les sources. Voir [Configuration MCP gérée](/fr/mcp#managed-mcp-configuration)                                                                       |
-| `blockedMarketplaces`                     | Liste de blocage des sources de marketplace. Les sources bloquées sont vérifiées avant le téléchargement, elles ne touchent donc jamais le système de fichiers. Voir [restrictions de marketplace gérées](/fr/plugin-marketplaces#managed-marketplace-restrictions)                             |
-| `sandbox.network.allowManagedDomainsOnly` | Lorsque `true`, seuls les `allowedDomains` et les règles d'autorisation `WebFetch(domain:...)` des paramètres gérés sont respectés. Les domaines non autorisés sont bloqués automatiquement sans inviter l'utilisateur. Les domaines refusés fusionnent toujours à partir de toutes les sources |
-| `strictKnownMarketplaces`                 | Contrôle quels marketplaces de plugins les utilisateurs peuvent ajouter. Voir [restrictions de marketplace gérées](/fr/plugin-marketplaces#managed-marketplace-restrictions)                                                                                                                    |
-| `allow_remote_sessions`                   | Lorsque `true`, permet aux utilisateurs de démarrer [Remote Control](/fr/remote-control) et les [sessions web](/fr/claude-code-on-the-web). Par défaut `true`. Définissez sur `false` pour empêcher l'accès aux sessions distantes                                                              |
+| Paramètre                                      | Description                                                                                                                                                                                                                                                                                     |
+| :--------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `allowManagedPermissionRulesOnly`              | Lorsque `true`, empêche les paramètres utilisateur et projet de définir les règles d'autorisation `allow`, `ask` ou `deny`. Seules les règles dans les paramètres gérés s'appliquent                                                                                                            |
+| `allowManagedHooksOnly`                        | Lorsque `true`, empêche le chargement des hooks utilisateur, projet et plugin. Seuls les hooks gérés et les hooks SDK sont autorisés                                                                                                                                                            |
+| `allowManagedMcpServersOnly`                   | Lorsque `true`, seuls les `allowedMcpServers` des paramètres gérés sont respectés. `deniedMcpServers` fusionne toujours à partir de toutes les sources. Consultez [Configuration MCP gérée](/fr/mcp#managed-mcp-configuration)                                                                  |
+| `blockedMarketplaces`                          | Liste de blocage des sources de marketplace. Les sources bloquées sont vérifiées avant le téléchargement, elles ne touchent donc jamais le système de fichiers. Consultez [restrictions de marketplace gérées](/fr/plugin-marketplaces#managed-marketplace-restrictions)                        |
+| `sandbox.network.allowManagedDomainsOnly`      | Lorsque `true`, seuls les `allowedDomains` et les règles d'autorisation `WebFetch(domain:...)` des paramètres gérés sont respectés. Les domaines non autorisés sont bloqués automatiquement sans inviter l'utilisateur. Les domaines refusés fusionnent toujours à partir de toutes les sources |
+| `sandbox.filesystem.allowManagedReadPathsOnly` | Lorsque `true`, seuls les chemins `allowRead` des paramètres gérés sont respectés. Les entrées `allowRead` des paramètres utilisateur, projet et local sont ignorées                                                                                                                            |
+| `strictKnownMarketplaces`                      | Contrôle quels marketplaces de plugins les utilisateurs peuvent ajouter. Consultez [restrictions de marketplace gérées](/fr/plugin-marketplaces#managed-marketplace-restrictions)                                                                                                               |
+
+<Note>
+  L'accès à [Remote Control](/fr/remote-control) et aux [sessions web](/fr/claude-code-on-the-web) n'est pas contrôlé par une clé de paramètres gérés. Sur les plans Team et Enterprise, un administrateur active ou désactive ces fonctionnalités dans les [paramètres d'administration Claude Code](https://claude.ai/admin-settings/claude-code).
+</Note>
+
+## Configurer le classificateur du mode auto
+
+Le [mode auto](/fr/permission-modes#eliminate-prompts-with-auto-mode) utilise un modèle de classificateur pour décider si chaque action est sûre à exécuter sans inviter. Par défaut, il ne fait confiance qu'au répertoire de travail et, s'il est présent, aux remotes du référentiel actuel. Les actions comme pousser vers l'organisation de contrôle de source de votre entreprise ou écrire dans un bucket cloud d'équipe seront bloquées comme exfiltration de données potentielle. Le bloc de paramètres `autoMode` vous permet de dire au classificateur quelle infrastructure votre organisation approuve.
+
+Le classificateur lit `autoMode` à partir des paramètres utilisateur, `.claude/settings.local.json` et des paramètres gérés. Il ne lit pas à partir des paramètres de projet partagés dans `.claude/settings.json`, car un référentiel archivé pourrait autrement injecter ses propres règles d'autorisation.
+
+| Portée                        | Fichier                       | Utiliser pour                                              |
+| :---------------------------- | :---------------------------- | :--------------------------------------------------------- |
+| Un développeur                | `~/.claude/settings.json`     | Infrastructure approuvée personnelle                       |
+| Un projet, un développeur     | `.claude/settings.local.json` | Buckets ou services approuvés par projet, gitignored       |
+| À l'échelle de l'organisation | Paramètres gérés              | Infrastructure approuvée appliquée à tous les développeurs |
+
+Les entrées de chaque portée sont combinées. Un développeur peut étendre `environment`, `allow` et `soft_deny` avec des entrées personnelles mais ne peut pas supprimer les entrées que les paramètres gérés fournissent. Parce que les règles d'autorisation agissent comme des exceptions aux règles de blocage à l'intérieur du classificateur, une entrée `allow` ajoutée par un développeur peut remplacer une entrée `soft_deny` d'organisation : la combinaison est additive, pas une limite de politique dure. Si vous avez besoin d'une règle que les développeurs ne peuvent pas contourner, utilisez plutôt `permissions.deny` dans les paramètres gérés, qui bloque les actions avant que le classificateur ne soit consulté.
+
+### Définir l'infrastructure approuvée
+
+Pour la plupart des organisations, `autoMode.environment` est le seul champ que vous devez définir. Il dit au classificateur quels référentiels, buckets et domaines sont approuvés, sans toucher aux règles de blocage et d'autorisation intégrées. Le classificateur utilise `environment` pour décider ce que signifie « externe » : toute destination non listée est une cible d'exfiltration potentielle.
+
+```json  theme={null}
+{
+  "autoMode": {
+    "environment": [
+      "Source control: github.example.com/acme-corp and all repos under it",
+      "Trusted cloud buckets: s3://acme-build-artifacts, gs://acme-ml-datasets",
+      "Trusted internal domains: *.corp.example.com, api.internal.example.com",
+      "Key internal services: Jenkins at ci.example.com, Artifactory at artifacts.example.com"
+    ]
+  }
+}
+```
+
+Les entrées sont en prose, pas en regex ou en modèles d'outils. Le classificateur les lit comme des règles en langage naturel. Écrivez-les comme vous décririez votre infrastructure à un nouvel ingénieur. Une section d'environnement approfondie couvre :
+
+* **Organisation** : le nom de votre entreprise et ce pour quoi Claude Code est principalement utilisé, comme le développement logiciel, l'automatisation de l'infrastructure ou l'ingénierie des données
+* **Contrôle de source** : chaque organisation GitHub, GitLab ou Bitbucket vers laquelle vos développeurs poussent
+* **Fournisseurs cloud et buckets approuvés** : noms de buckets ou préfixes que Claude devrait pouvoir lire et écrire
+* **Domaines internes approuvés** : noms d'hôtes pour les API, tableaux de bord et services à l'intérieur de votre réseau, comme `*.internal.example.com`
+* **Services internes clés** : CI, registres d'artefacts, index de packages internes, outils d'incident
+* **Contexte supplémentaire** : contraintes d'industrie réglementée, infrastructure multi-locataire ou exigences de conformité qui affectent ce que le classificateur devrait traiter comme risqué
+
+Un modèle de démarrage utile : remplissez les champs entre crochets et supprimez les lignes qui ne s'appliquent pas :
+
+```json  theme={null}
+{
+  "autoMode": {
+    "environment": [
+      "Organization: {COMPANY_NAME}. Primary use: {PRIMARY_USE_CASE, e.g. software development, infrastructure automation}",
+      "Source control: {SOURCE_CONTROL, e.g. GitHub org github.example.com/acme-corp}",
+      "Cloud provider(s): {CLOUD_PROVIDERS, e.g. AWS, GCP, Azure}",
+      "Trusted cloud buckets: {TRUSTED_BUCKETS, e.g. s3://acme-builds, gs://acme-datasets}",
+      "Trusted internal domains: {TRUSTED_DOMAINS, e.g. *.internal.example.com, api.example.com}",
+      "Key internal services: {SERVICES, e.g. Jenkins at ci.example.com, Artifactory at artifacts.example.com}",
+      "Additional context: {EXTRA, e.g. regulated industry, multi-tenant infrastructure, compliance requirements}"
+    ]
+  }
+}
+```
+
+Plus le contexte spécifique que vous donnez, mieux le classificateur peut distinguer les opérations internes de routine des tentatives d'exfiltration.
+
+Vous n'avez pas besoin de tout remplir à la fois. Un déploiement raisonnable : commencez par les paramètres par défaut et ajoutez votre organisation de contrôle de source et vos services internes clés, ce qui résout les faux positifs les plus courants comme pousser vers vos propres référentiels. Ajoutez ensuite les domaines approuvés et les buckets cloud. Remplissez le reste à mesure que les blocages se produisent.
+
+### Remplacer les règles de blocage et d'autorisation
+
+Deux champs supplémentaires vous permettent de remplacer les listes de règles intégrées du classificateur : `autoMode.soft_deny` contrôle ce qui est bloqué, et `autoMode.allow` contrôle quelles exceptions s'appliquent. Chacun est un tableau de descriptions en prose, lu comme des règles en langage naturel.
+
+À l'intérieur du classificateur, la précédence est : les règles `soft_deny` bloquent d'abord, puis les règles `allow` remplacent comme exceptions, puis l'intention explicite de l'utilisateur remplace les deux. Si le message de l'utilisateur décrit directement et spécifiquement l'action exacte que Claude est sur le point d'entreprendre, le classificateur l'autorise même si une règle `soft_deny` correspond. Les demandes générales ne comptent pas : demander à Claude de « nettoyer le référentiel » n'autorise pas un force-push, mais demander à Claude de « force-push cette branche » le fait.
+
+Pour assouplir : supprimez les règles de `soft_deny` lorsque les paramètres par défaut bloquent quelque chose que votre pipeline protège déjà avec l'examen des PR, CI ou les environnements de staging, ou ajoutez à `allow` lorsque le classificateur signale à plusieurs reprises un modèle de routine que les exceptions par défaut ne couvrent pas. Pour renforcer : ajoutez à `soft_deny` pour les risques spécifiques à votre environnement que les paramètres par défaut manquent, ou supprimez de `allow` pour maintenir une exception par défaut aux règles de blocage. Dans tous les cas, exécutez `claude auto-mode defaults` pour obtenir les listes par défaut complètes, puis copiez et modifiez : ne commencez jamais par une liste vide.
+
+```json  theme={null}
+{
+  "autoMode": {
+    "environment": [
+      "Source control: github.example.com/acme-corp and all repos under it"
+    ],
+    "allow": [
+      "Deploying to the staging namespace is allowed: staging is isolated from production and resets nightly",
+      "Writing to s3://acme-scratch/ is allowed: ephemeral bucket with a 7-day lifecycle policy"
+    ],
+    "soft_deny": [
+      "Never run database migrations outside the migrations CLI, even against dev databases",
+      "Never modify files under infra/terraform/prod/: production infrastructure changes go through the review workflow",
+      "...copy full default soft_deny list here first, then add your rules..."
+    ]
+  }
+}
+```
+
+<Danger>
+  Définir `allow` ou `soft_deny` remplace la liste par défaut entière pour cette section. Si vous définissez `soft_deny` avec une seule entrée, chaque règle de blocage intégrée est supprimée : force push, exfiltration de données, `curl | bash`, déploiements de production et toutes les autres règles de blocage par défaut deviennent autorisés. Pour personnaliser en toute sécurité, exécutez `claude auto-mode defaults` pour imprimer les règles intégrées, copiez-les dans votre fichier de paramètres, puis examinez chaque règle par rapport à votre propre pipeline et tolérance au risque. Supprimez uniquement les règles pour les risques que votre infrastructure atténue déjà.
+</Danger>
+
+Les trois sections sont évaluées indépendamment, donc définir `environment` seul laisse les listes `allow` et `soft_deny` par défaut intactes.
+
+### Inspecter les paramètres par défaut et votre configuration effective
+
+Parce que définir `allow` ou `soft_deny` remplace les paramètres par défaut, commencez toute personnalisation en copiant les listes par défaut complètes. Trois sous-commandes CLI vous aident à inspecter et valider :
+
+```bash  theme={null}
+claude auto-mode defaults  # the built-in environment, allow, and soft_deny rules
+claude auto-mode config    # what the classifier actually uses: your settings where set, defaults otherwise
+claude auto-mode critique  # get AI feedback on your custom allow and soft_deny rules
+```
+
+Enregistrez la sortie de `claude auto-mode defaults` dans un fichier, modifiez les listes pour correspondre à votre politique et collez le résultat dans votre fichier de paramètres. Après l'enregistrement, exécutez `claude auto-mode config` pour confirmer que les règles effectives sont ce que vous attendez. Si vous avez écrit des règles personnalisées, `claude auto-mode critique` les examine et signale les entrées qui sont ambiguës, redondantes ou susceptibles de causer des faux positifs.
 
 ## Précédence des paramètres
 

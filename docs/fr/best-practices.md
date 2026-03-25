@@ -202,21 +202,16 @@ Vous pouvez placer les fichiers CLAUDE.md dans plusieurs emplacements :
 ### Configurez les permissions
 
 <Tip>
-  Utilisez `/permissions` pour autoriser les commandes sûres ou `/sandbox` pour l'isolation au niveau du système d'exploitation. Cela réduit les interruptions tout en vous gardant en contrôle.
+  Utilisez [mode auto](/fr/permission-modes#eliminate-prompts-with-auto-mode) pour laisser un classificateur gérer les approbations, `/permissions` pour autoriser les commandes spécifiques, ou `/sandbox` pour l'isolation au niveau du système d'exploitation. Chacun réduit les interruptions tout en vous gardant en contrôle.
 </Tip>
 
-Par défaut, Claude Code demande une permission pour les actions qui pourraient modifier votre système : écritures de fichiers, commandes Bash, outils MCP, etc. C'est sûr mais fastidieux. Après la dixième approbation, vous ne révisez vraiment plus, vous cliquez simplement. Il y a deux façons de réduire ces interruptions :
+Par défaut, Claude Code demande une permission pour les actions qui pourraient modifier votre système : écritures de fichiers, commandes Bash, outils MCP, etc. C'est sûr mais fastidieux. Après la dixième approbation, vous ne révisez vraiment plus, vous cliquez simplement. Il y a trois façons de réduire ces interruptions :
 
-* **Listes blanches de permissions** : permettre des outils spécifiques que vous savez être sûrs (comme `npm run lint` ou `git commit`)
+* **Mode auto** : un modèle classificateur séparé examine les commandes et bloque uniquement ce qui semble risqué : escalade de portée, infrastructure inconnue ou actions motivées par du contenu hostile. Meilleur lorsque vous faites confiance à la direction générale d'une tâche mais que vous ne voulez pas cliquer à chaque étape
+* **Listes blanches de permissions** : permettre des outils spécifiques que vous savez être sûrs, comme `npm run lint` ou `git commit`
 * **Sandboxing** : activer l'isolation au niveau du système d'exploitation qui restreint l'accès au système de fichiers et au réseau, permettant à Claude de travailler plus librement dans des limites définies
 
-Alternativement, utilisez `--dangerously-skip-permissions` pour contourner tous les contrôles de permission pour les flux de travail contenus comme corriger les erreurs de lint ou générer du code passe-partout.
-
-<Warning>
-  Laisser Claude exécuter des commandes arbitraires peut entraîner une perte de données, une corruption du système ou une exfiltration de données via injection de prompt. Utilisez uniquement `--dangerously-skip-permissions` dans un sandbox sans accès à Internet.
-</Warning>
-
-En savoir plus sur [la configuration des permissions](/fr/permissions) et [l'activation du sandboxing](/fr/sandboxing).
+Lisez plus sur [les modes de permission](/fr/permission-modes), [les règles de permission](/fr/permissions) et [le sandboxing](/fr/sandboxing).
 
 ### Utilisez les outils CLI
 
@@ -244,7 +239,7 @@ Avec les [serveurs MCP](/fr/mcp), vous pouvez demander à Claude d'implémenter 
 
 Les [hooks](/fr/hooks-guide) exécutent automatiquement les scripts à des points spécifiques du flux de travail de Claude. Contrairement aux instructions CLAUDE.md qui sont consultatives, les hooks sont déterministes et garantissent que l'action se produit.
 
-Claude peut écrire des hooks pour vous. Essayez des invites comme *« Écrire un hook qui exécute eslint après chaque édition de fichier »* ou *« Écrire un hook qui bloque les écritures dans le dossier migrations. »* Exécutez `/hooks` pour la configuration interactive, ou modifiez `.claude/settings.json` directement.
+Claude peut écrire des hooks pour vous. Essayez des invites comme *« Écrire un hook qui exécute eslint après chaque édition de fichier »* ou *« Écrire un hook qui bloque les écritures dans le dossier migrations. »* Modifiez `.claude/settings.json` directement pour configurer les hooks à la main, et exécutez `/hooks` pour parcourir ce qui est configuré.
 
 ### Créez des skills
 
@@ -539,6 +534,16 @@ claude -p "<your prompt>" --output-format json | your_command
 ```
 
 Utilisez `--verbose` pour le débogage pendant le développement, et désactivez-le en production.
+
+### Exécutez de manière autonome avec le mode auto
+
+Pour une exécution ininterrompue avec des vérifications de sécurité en arrière-plan, utilisez [mode auto](/fr/permission-modes#eliminate-prompts-with-auto-mode). Un modèle classificateur examine les commandes avant qu'elles ne s'exécutent, bloquant l'escalade de portée, l'infrastructure inconnue et les actions motivées par du contenu hostile tout en laissant le travail de routine se dérouler sans invites.
+
+```bash  theme={null}
+claude --permission-mode auto -p "fix all lint errors"
+```
+
+Pour les exécutions non interactives avec l'indicateur `-p`, le mode auto abandonne si le classificateur bloque à plusieurs reprises les actions, puisqu'il n'y a pas d'utilisateur pour se replier. Consultez [quand le mode auto se replie](/fr/permission-modes#when-auto-mode-falls-back) pour les seuils.
 
 ***
 

@@ -4,7 +4,7 @@
 
 # Utiliser Claude Code Desktop
 
-> Tirez le meilleur parti de Claude Code Desktop : sessions parallèles avec isolation Git, examen visuel des différences, aperçus d'applications, surveillance des PR, modes de permission, connecteurs et configuration d'entreprise.
+> Tirez le meilleur parti de Claude Code Desktop : utilisation informatique, sessions Dispatch depuis votre téléphone, sessions parallèles avec isolation Git, examen visuel des différences, aperçus d'applications, surveillance des PR, connecteurs et configuration d'entreprise.
 
 L'onglet Code dans l'application Claude Desktop vous permet d'utiliser Claude Code via une interface graphique au lieu du terminal.
 
@@ -12,8 +12,10 @@ Desktop ajoute ces capacités à l'expérience standard de Claude Code :
 
 * [Examen visuel des différences](#review-changes-with-diff-view) avec commentaires en ligne
 * [Aperçu d'application en direct](#preview-your-app) avec serveurs de développement
+* [Utilisation informatique](#let-claude-use-your-computer) pour ouvrir des applications et contrôler votre écran sur macOS
 * [Surveillance des PR GitHub](#monitor-pull-request-status) avec correction automatique et fusion automatique
 * [Sessions parallèles](#work-in-parallel-with-sessions) avec isolation automatique des Git worktrees
+* [Dispatch](#sessions-from-dispatch) intégration : envoyez une tâche depuis votre téléphone, obtenez une session ici
 * [Tâches planifiées](#schedule-recurring-tasks) qui exécutent Claude selon un calendrier récurrent
 * [Connecteurs](#connect-external-tools) pour GitHub, Slack, Linear et bien d'autres
 * Environnements locaux, [SSH](#ssh-sessions) et [cloud](#run-long-running-tasks-remotely)
@@ -22,7 +24,7 @@ Desktop ajoute ces capacités à l'expérience standard de Claude Code :
   Nouveau sur Desktop ? Commencez par [Démarrer](/fr/desktop-quickstart) pour installer l'application et effectuer votre première modification.
 </Tip>
 
-Cette page couvre [travailler avec le code](#work-with-code), [gérer les sessions](#manage-sessions), [étendre Claude Code](#extend-claude-code), [tâches planifiées](#schedule-recurring-tasks) et [configuration](#environment-configuration). Elle inclut également une [comparaison CLI](#coming-from-the-cli) et [dépannage](#troubleshooting).
+Cette page couvre [travailler avec le code](#work-with-code), [utilisation informatique](#let-claude-use-your-computer), [gérer les sessions](#manage-sessions), [étendre Claude Code](#extend-claude-code), [tâches planifiées](#schedule-recurring-tasks) et [configuration](#environment-configuration). Elle inclut également une [comparaison CLI](#coming-from-the-cli) et [dépannage](#troubleshooting).
 
 ## Démarrer une session
 
@@ -56,14 +58,15 @@ La zone de prompt supporte deux façons d'apporter du contexte externe :
 
 Les modes de permission contrôlent le niveau d'autonomie de Claude pendant une session : s'il demande avant de modifier des fichiers, d'exécuter des commandes ou les deux. Vous pouvez changer de mode à tout moment en utilisant le sélecteur de mode à côté du bouton d'envoi. Commencez par Demander les permissions pour voir exactement ce que Claude fait, puis passez à Accepter automatiquement les modifications ou Plan mode à mesure que vous vous sentez à l'aise.
 
-| Mode                                           | Clé de paramètres   | Comportement                                                                                                                                                                                                                                                                                                                                                         |
-| ---------------------------------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Demander les permissions**                   | `default`           | Claude demande avant de modifier des fichiers ou d'exécuter des commandes. Vous voyez une différence et pouvez accepter ou rejeter chaque modification. Recommandé pour les nouveaux utilisateurs.                                                                                                                                                                   |
-| **Accepter automatiquement les modifications** | `acceptEdits`       | Claude accepte automatiquement les modifications de fichiers mais demande toujours avant d'exécuter les commandes du terminal. Utilisez ceci quand vous faites confiance aux modifications de fichiers et voulez une itération plus rapide.                                                                                                                          |
-| **Plan mode**                                  | `plan`              | Claude analyse votre code et crée un plan sans modifier les fichiers ou exécuter les commandes. Bon pour les tâches complexes où vous voulez examiner l'approche en premier.                                                                                                                                                                                         |
-| **Contourner les permissions**                 | `bypassPermissions` | Claude s'exécute sans aucune invite de permission, équivalent à `--dangerously-skip-permissions` dans la CLI. Activez dans vos Paramètres → Claude Code sous « Autoriser le mode de contournement des permissions ». Utilisez uniquement dans les conteneurs sandboxés ou les machines virtuelles. Les administrateurs d'entreprise peuvent désactiver cette option. |
+| Mode                                           | Clé de paramètres   | Comportement                                                                                                                                                                                                                                                                                                                                                                                          |
+| ---------------------------------------------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Demander les permissions**                   | `default`           | Claude demande avant de modifier des fichiers ou d'exécuter des commandes. Vous voyez une différence et pouvez accepter ou rejeter chaque modification. Recommandé pour les nouveaux utilisateurs.                                                                                                                                                                                                    |
+| **Accepter automatiquement les modifications** | `acceptEdits`       | Claude accepte automatiquement les modifications de fichiers mais demande toujours avant d'exécuter les commandes du terminal. Utilisez ceci quand vous faites confiance aux modifications de fichiers et voulez une itération plus rapide.                                                                                                                                                           |
+| **Plan mode**                                  | `plan`              | Claude analyse votre code et crée un plan sans modifier les fichiers ou exécuter les commandes. Bon pour les tâches complexes où vous voulez examiner l'approche en premier.                                                                                                                                                                                                                          |
+| **Auto**                                       | `auto`              | Claude exécute toutes les actions avec des vérifications de sécurité en arrière-plan qui vérifient l'alignement avec votre demande. Réduit les invites de permission tout en maintenant la surveillance. Actuellement un aperçu de recherche. Disponible sur les plans Team (Enterprise en cours de déploiement). Nécessite Claude Sonnet 4.6 ou Opus 4.6. Activez dans vos Paramètres → Claude Code. |
+| **Contourner les permissions**                 | `bypassPermissions` | Claude s'exécute sans aucune invite de permission, équivalent à `--dangerously-skip-permissions` dans la CLI. Activez dans vos Paramètres → Claude Code sous « Autoriser le mode de contournement des permissions ». Utilisez uniquement dans les conteneurs sandboxés ou les machines virtuelles. Les administrateurs d'entreprise peuvent désactiver cette option.                                  |
 
-Le mode de permission `dontAsk` est disponible uniquement dans la [CLI](/fr/permissions#permission-modes).
+Le mode de permission `dontAsk` est disponible uniquement dans la [CLI](/fr/permission-modes#allow-only-pre-approved-tools-with-dontask-mode).
 
 <Tip title="Bonne pratique">
   Commencez les tâches complexes en Plan mode pour que Claude trace une approche avant de faire des modifications. Une fois que vous approuvez le plan, passez à Accepter automatiquement les modifications ou Demander les permissions pour l'exécuter. Voir [explorer d'abord, puis planifier, puis coder](/fr/best-practices#explore-first-then-plan-then-code) pour plus d'informations sur ce flux de travail.
@@ -121,9 +124,62 @@ Utilisez les bascules **Correction automatique** et **Fusion automatique** dans 
   La surveillance des PR nécessite que la [CLI GitHub (`gh`)](https://cli.github.com/) soit installée et authentifiée sur votre machine. Si `gh` n'est pas installée, Desktop vous invite à l'installer la première fois que vous essayez de créer une PR.
 </Note>
 
+## Laisser Claude utiliser votre ordinateur
+
+L'utilisation informatique permet à Claude d'ouvrir vos applications, de contrôler votre écran et de travailler directement sur votre machine comme vous le feriez. Demandez à Claude de tester une application native dans le simulateur iOS, d'interagir avec un outil de bureau qui n'a pas de CLI, ou d'automatiser quelque chose qui ne fonctionne que via une GUI.
+
+<Note>
+  L'utilisation informatique est un aperçu de recherche sur macOS qui nécessite un plan Pro ou Max. Elle n'est pas disponible sur les plans Team ou Enterprise. L'application Claude Desktop doit être en cours d'exécution.
+</Note>
+
+L'utilisation informatique est désactivée par défaut. [Activez-la dans Paramètres](#enable-computer-use) et accordez les permissions macOS requises avant que Claude puisse contrôler votre écran.
+
+<Warning>
+  Contrairement à l'[outil Bash sandboxé](/fr/sandboxing), l'utilisation informatique s'exécute sur votre vrai bureau avec accès à tout ce que vous approuvez. Claude vérifie chaque action et signale les injections de prompt potentielles du contenu à l'écran, mais la limite de confiance est différente. Voir le [guide de sécurité de l'utilisation informatique](https://support.claude.com/en/articles/14128542) pour les meilleures pratiques.
+</Warning>
+
+### Quand l'utilisation informatique s'applique
+
+Claude a plusieurs façons d'interagir avec une application ou un service, et l'utilisation informatique est la plus large et la plus lente. Il essaie d'abord l'outil le plus précis :
+
+* Si vous avez un [connecteur](#connect-external-tools) pour un service, Claude utilise le connecteur.
+* Si la tâche est une commande shell, Claude utilise Bash.
+* Si la tâche est du travail de navigateur et que vous avez [Claude dans Chrome](/fr/chrome) configuré, Claude utilise cela.
+* Si aucun de ceux-ci ne s'applique, Claude utilise l'utilisation informatique.
+
+Les [niveaux d'accès par application](#app-permissions) renforcent ceci : les navigateurs sont limités à la lecture seule, et les terminaux et IDE à clic uniquement, guidant Claude vers l'outil dédié même quand l'utilisation informatique est active. Le contrôle d'écran est réservé aux choses que rien d'autre ne peut atteindre, comme les applications natives, les panneaux de contrôle matériel, le simulateur iOS ou les outils propriétaires sans API.
+
+### Activer l'utilisation informatique
+
+L'utilisation informatique est désactivée par défaut. Si vous demandez à Claude de faire quelque chose qui en a besoin alors qu'elle est désactivée, Claude vous dit qu'il pourrait faire la tâche si vous activez l'utilisation informatique dans Paramètres. Pour l'activer, ouvrez **Paramètres > Application de bureau > Général** et basculez **Utilisation informatique** sur Activé. Avant que le basculement prenne effet, vous devez accorder deux permissions système macOS :
+
+* **Accessibilité** : permet à Claude de cliquer, taper et faire défiler
+* **Enregistrement d'écran** : permet à Claude de voir ce qui est sur votre écran
+
+La page Paramètres affiche l'état actuel de chaque permission. Si l'une est refusée, cliquez sur le badge pour ouvrir le volet Paramètres système pertinent.
+
+### Permissions d'application
+
+La première fois que Claude doit utiliser une application, une invite apparaît dans votre session. Cliquez sur **Autoriser pour cette session** ou **Refuser**. Les approbations durent pour la session actuelle, ou 30 minutes dans les [sessions générées par Dispatch](#sessions-from-dispatch).
+
+L'invite affiche également quel niveau de contrôle Claude obtient pour cette application. Ces niveaux sont fixés par catégorie d'application et ne peuvent pas être modifiés :
+
+| Niveau           | Ce que Claude peut faire                                                    | S'applique à                        |
+| :--------------- | :-------------------------------------------------------------------------- | :---------------------------------- |
+| Lecture seule    | Voir l'application dans les captures d'écran                                | Navigateurs, plateformes de trading |
+| Clic uniquement  | Cliquer et faire défiler, mais pas taper ou utiliser les raccourcis clavier | Terminaux, IDE                      |
+| Contrôle complet | Cliquer, taper, glisser et utiliser les raccourcis clavier                  | Tout le reste                       |
+
+Les applications avec une large portée comme Terminal, Finder et Paramètres système affichent un avertissement supplémentaire dans l'invite pour que vous sachiez ce que l'approbation accorde.
+
+Vous pouvez configurer deux paramètres dans **Paramètres > Application de bureau > Général** :
+
+* **Applications refusées** : ajoutez des applications ici pour les rejeter sans demander. Claude peut toujours affecter une application refusée indirectement via des actions dans une application autorisée, mais il ne peut pas interagir directement avec l'application refusée.
+* **Afficher les applications quand Claude a terminé** : tandis que Claude travaille, vos autres fenêtres sont masquées pour qu'il n'interagisse qu'avec l'application approuvée. Quand Claude a terminé, les fenêtres masquées sont restaurées sauf si vous désactivez ce paramètre.
+
 ## Gérer les sessions
 
-Chaque session est une conversation indépendante avec son propre contexte et ses propres modifications. Vous pouvez exécuter plusieurs sessions en parallèle ou envoyer du travail vers le cloud.
+Chaque session est une conversation indépendante avec son propre contexte et ses propres modifications. Vous pouvez exécuter plusieurs sessions en parallèle, envoyer du travail vers le cloud ou laisser Dispatch démarrer des sessions pour vous depuis votre téléphone.
 
 ### Travailler en parallèle avec les sessions
 
@@ -152,13 +208,27 @@ Le menu **Continuer dans**, accessible à partir de l'icône VS Code en bas à d
 * **Claude Code sur le Web** : envoie votre session locale pour continuer à s'exécuter à distance. Desktop pousse votre branche, génère un résumé de la conversation et crée une nouvelle session distante avec le contexte complet. Vous pouvez ensuite choisir d'archiver la session locale ou de la conserver. Ceci nécessite un arbre de travail propre et n'est pas disponible pour les sessions SSH.
 * **Votre IDE** : ouvre votre projet dans un IDE supporté au répertoire de travail actuel.
 
+### Sessions depuis Dispatch
+
+[Dispatch](https://support.claude.com/en/articles/13947068) est une conversation persistante avec Claude qui vit dans l'onglet [Cowork](https://claude.com/product/cowork#dispatch-and-computer-use). Vous envoyez un message à Dispatch avec une tâche, et il décide comment la gérer.
+
+Une tâche peut devenir une session Code de deux façons : vous en demandez une directement, comme ' ouvrir une session Claude Code et corriger le bug de connexion ', ou Dispatch décide que la tâche est du travail de développement et en génère une automatiquement. Les tâches qui routent généralement vers Code incluent la correction de bugs, la mise à jour des dépendances, l'exécution de tests ou l'ouverture de demandes de tirage. La recherche, l'édition de documents et le travail sur feuille de calcul restent dans Cowork.
+
+De toute façon, la session Code apparaît dans la barre latérale de l'onglet Code avec un badge **Dispatch**. Vous recevez une notification push sur votre téléphone quand elle se termine ou a besoin de votre approbation.
+
+Si vous avez [l'utilisation informatique](#let-claude-use-your-computer) activée, les sessions Code générées par Dispatch peuvent l'utiliser aussi. Les approbations d'application dans ces sessions expirent après 30 minutes et re-demandent, plutôt que de durer la session complète comme les sessions Code régulières.
+
+Pour la configuration, l'appairage et les paramètres Dispatch, voir l'[article d'aide Dispatch](https://support.claude.com/en/articles/13947068). Dispatch nécessite un plan Pro ou Max et n'est pas disponible sur les plans Team ou Enterprise.
+
+Dispatch est l'une de plusieurs façons de travailler avec Claude quand vous êtes loin de votre terminal. Voir [Plateformes et intégrations](/fr/platforms#work-when-you-are-away-from-your-terminal) pour le comparer avec Remote Control, Channels, Slack et les tâches planifiées.
+
 ## Étendre Claude Code
 
 Connectez les services externes, ajoutez des flux de travail réutilisables, personnalisez le comportement de Claude et configurez les serveurs d'aperçu.
 
 ### Connecter les outils externes
 
-Pour les sessions locales et [SSH](#ssh-sessions), cliquez sur le bouton **+** à côté de la zone de prompt et sélectionnez **Connecteurs** pour ajouter des intégrations comme Google Calendar, Slack, GitHub, Linear, Notion et bien d'autres. Vous pouvez ajouter des connecteurs avant ou pendant une session. Les connecteurs ne sont pas disponibles pour les sessions distantes.
+Pour les sessions locales et [SSH](#ssh-sessions), cliquez sur le bouton **+** à côté de la zone de prompt et sélectionnez **Connecteurs** pour ajouter des intégrations comme Google Calendar, Slack, GitHub, Linear, Notion et bien d'autres. Vous pouvez ajouter des connecteurs avant ou pendant une session. Le bouton **+** n'est pas disponible dans les sessions distantes, mais les [tâches planifiées](/fr/web-scheduled-tasks) configurent les connecteurs au moment de la création de la tâche.
 
 Pour gérer ou déconnecter les connecteurs, allez à Paramètres → Connecteurs dans l'application de bureau, ou sélectionnez **Gérer les connecteurs** à partir du menu Connecteurs dans la zone de prompt.
 
@@ -321,15 +391,42 @@ Ces configurations montrent les configurations courantes pour différents types 
 
 ## Planifier les tâches récurrentes
 
-Les tâches planifiées démarrent une nouvelle session locale automatiquement à une heure et une fréquence que vous choisissez. Utilisez-les pour le travail récurrent comme les examens de code quotidiens, les vérifications de mise à jour des dépendances ou les briefings matinaux qui tirent de votre calendrier et de votre boîte de réception.
+Par défaut, les tâches planifiées démarrent une nouvelle session automatiquement à une heure et une fréquence que vous choisissez. Utilisez-les pour le travail récurrent comme les examens de code quotidiens, les vérifications de mise à jour des dépendances ou les briefings matinaux qui tirent de votre calendrier et de votre boîte de réception.
 
-Les tâches s'exécutent sur votre machine, donc l'application de bureau doit être ouverte et votre ordinateur éveillé pour qu'elles se déclenchent. Voir [Comment les tâches planifiées s'exécutent](#how-scheduled-tasks-run) pour les détails sur les exécutions manquées et le comportement de rattrapage.
+### Comparer les options de planification
+
+Claude Code offers three ways to schedule recurring work:
+
+|                            | [Cloud](/en/web-scheduled-tasks) | [Desktop](/en/desktop#schedule-recurring-tasks) | [`/loop`](/en/scheduled-tasks) |
+| :------------------------- | :------------------------------- | :---------------------------------------------- | :----------------------------- |
+| Runs on                    | Anthropic cloud                  | Your machine                                    | Your machine                   |
+| Requires machine on        | No                               | Yes                                             | Yes                            |
+| Requires open session      | No                               | No                                              | Yes                            |
+| Persistent across restarts | Yes                              | Yes                                             | No (session-scoped)            |
+| Access to local files      | No (fresh clone)                 | Yes                                             | Yes                            |
+| MCP servers                | Connectors configured per task   | [Config files](/en/mcp) and connectors          | Inherits from session          |
+| Permission prompts         | No (runs autonomously)           | Configurable per task                           | Inherits from session          |
+| Customizable schedule      | Via `/schedule` in the CLI       | Yes                                             | Yes                            |
+| Minimum interval           | 1 hour                           | 1 minute                                        | 1 minute                       |
+
+<Tip>
+  Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
+</Tip>
+
+La page Planifier supporte deux types de tâches :
+
+* **Tâches locales** : s'exécutent sur votre machine. Elles ont un accès direct à vos fichiers et outils locaux, mais l'application de bureau doit être ouverte et votre ordinateur éveillé pour qu'elles s'exécutent.
+* **Tâches distantes** : s'exécutent sur l'infrastructure cloud gérée par Anthropic. Elles continuent de s'exécuter même quand votre ordinateur est éteint, mais fonctionnent contre un clone frais de votre référentiel plutôt que votre checkout local.
+
+Les deux types apparaissent dans la même grille de tâches. Cliquez sur **Nouvelle tâche** pour choisir quel type créer. Le reste de cette section couvre les tâches locales ; pour les tâches distantes, voir [Tâches planifiées cloud](/fr/web-scheduled-tasks).
+
+Voir [Comment les tâches planifiées s'exécutent](#how-scheduled-tasks-run) pour les détails sur les exécutions manquées et le comportement de rattrapage pour les tâches locales.
 
 <Note>
-  Par défaut, les tâches planifiées s'exécutent contre l'état dans lequel se trouve votre répertoire de travail, y compris les modifications non validées. Activez le basculement worktree dans l'entrée de prompt pour donner à chaque exécution son propre Git worktree isolé, de la même manière que [les sessions parallèles](#work-in-parallel-with-sessions) fonctionnent.
+  Par défaut, les tâches planifiées locales s'exécutent contre l'état dans lequel se trouve votre répertoire de travail, y compris les modifications non validées. Activez le basculement worktree dans l'entrée de prompt pour donner à chaque exécution son propre Git worktree isolé, de la même manière que [les sessions parallèles](#work-in-parallel-with-sessions) fonctionnent.
 </Note>
 
-Pour créer une tâche planifiée, cliquez sur **Planifier** dans la barre latérale, puis **+ Nouvelle tâche**. Configurez ces champs :
+Pour créer une tâche planifiée locale, cliquez sur **Planifier** dans la barre latérale, cliquez sur **Nouvelle tâche** et choisissez **Nouvelle tâche locale**. Configurez ces champs :
 
 | Champ       | Description                                                                                                                                                                                                                                                                                  |
 | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -352,11 +449,11 @@ Pour les intervalles que le sélecteur n'offre pas (toutes les 15 minutes, premi
 
 ### Comment les tâches planifiées s'exécutent
 
-Les tâches planifiées s'exécutent localement sur votre machine. Desktop vérifie le calendrier chaque minute tandis que l'application est ouverte et démarre une session fraîche quand une tâche est due, indépendamment de toute session manuelle que vous avez ouverte. Chaque tâche obtient un délai fixe de jusqu'à 10 minutes après l'heure planifiée pour échelonner le trafic API. Le délai est déterministe : la même tâche démarre toujours au même décalage.
+Les tâches planifiées locales s'exécutent sur votre machine. Desktop vérifie le calendrier chaque minute tandis que l'application est ouverte et démarre une session fraîche quand une tâche est due, indépendamment de toute session manuelle que vous avez ouverte. Chaque tâche obtient un délai fixe de jusqu'à 10 minutes après l'heure planifiée pour échelonner le trafic API. Le délai est déterministe : la même tâche démarre toujours au même décalage.
 
 Quand une tâche se déclenche, vous recevez une notification de bureau et une nouvelle session apparaît sous une section **Planifiée** dans la barre latérale. Ouvrez-la pour voir ce que Claude a fait, examiner les modifications ou répondre aux invites de permission. La session fonctionne comme n'importe quelle autre : Claude peut modifier des fichiers, exécuter des commandes, créer des validations et ouvrir des demandes de tirage.
 
-Les tâches s'exécutent uniquement tandis que l'application de bureau est en cours d'exécution et votre ordinateur est éveillé. Si votre ordinateur dort pendant une heure planifiée, l'exécution est ignorée. Pour empêcher le sommeil inactif, activez **Garder l'ordinateur éveillé** dans Paramètres sous **Application de bureau → Général**. Fermer le couvercle de l'ordinateur portable le met toujours en sommeil.
+Les tâches s'exécutent uniquement tandis que l'application de bureau est en cours d'exécution et votre ordinateur est éveillé. Si votre ordinateur dort pendant une heure planifiée, l'exécution est ignorée. Pour empêcher le sommeil inactif, activez **Garder l'ordinateur éveillé** dans Paramètres sous **Application de bureau → Général**. Fermer le couvercle de l'ordinateur portable le met toujours en sommeil. Pour les tâches qui doivent s'exécuter même quand votre ordinateur est éteint, utilisez une [tâche distante](/fr/web-scheduled-tasks) à la place.
 
 ### Exécutions manquées
 
@@ -428,19 +525,22 @@ Les organisations sur les plans Teams ou Enterprise peuvent gérer le comporteme
 
 Ces paramètres sont configurés via la [console de paramètres d'administration](https://claude.ai/admin-settings/claude-code) :
 
-* **Activer ou désactiver l'onglet Code** : contrôlez si les utilisateurs de votre organisation peuvent accéder à Claude Code dans l'application de bureau
+* **Code dans le bureau** : contrôlez si les utilisateurs de votre organisation peuvent accéder à Claude Code dans l'application de bureau
+* **Code sur le web** : activez ou désactivez les [sessions web](/fr/claude-code-on-the-web) pour votre organisation
+* **Remote Control** : activez ou désactivez [Remote Control](/fr/remote-control) pour votre organisation
 * **Désactiver le mode Contourner les permissions** : empêchez les utilisateurs de votre organisation d'activer le mode de contournement des permissions
-* **Désactiver Claude Code sur le web** : activez ou désactivez les sessions distantes pour votre organisation
 
 ### Paramètres gérés
 
 Les paramètres gérés remplacent les paramètres du projet et de l'utilisateur et s'appliquent quand Desktop génère des sessions CLI. Vous pouvez définir ces clés dans le fichier [paramètres gérés](/fr/settings#settings-precedence) de votre organisation ou les pousser à distance via la console d'administration.
 
-| Clé                            | Description                                                                                                                                                                              |
-| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `disableBypassPermissionsMode` | définissez sur `"disable"` pour empêcher les utilisateurs d'activer le mode de contournement des permissions. Voir [paramètres gérés uniquement](/fr/permissions#managed-only-settings). |
+| Clé                                        | Description                                                                                                                                                                                                          |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `permissions.disableBypassPermissionsMode` | définissez sur `"disable"` pour empêcher les utilisateurs d'activer le mode de contournement des permissions.                                                                                                        |
+| `disableAutoMode`                          | définissez sur `"disable"` pour empêcher les utilisateurs d'activer le mode [Auto](/fr/permission-modes#eliminate-prompts-with-auto-mode). Supprime Auto du sélecteur de mode. Également accepté sous `permissions`. |
+| `autoMode`                                 | personnalisez ce que le classificateur du mode auto fait confiance et bloque dans votre organisation. Voir [Configurer le classificateur du mode auto](/fr/permissions#configure-the-auto-mode-classifier).          |
 
-Pour la liste complète des paramètres gérés uniquement, y compris `allowManagedPermissionRulesOnly` et `allowManagedHooksOnly`, voir [paramètres gérés uniquement](/fr/permissions#managed-only-settings).
+`permissions.disableBypassPermissionsMode` et `disableAutoMode` fonctionnent également dans les paramètres utilisateur et projet, mais les placer dans les paramètres gérés empêche les utilisateurs de les remplacer. `autoMode` est lu à partir des paramètres utilisateur, `.claude/settings.local.json` et des paramètres gérés, mais pas à partir du `.claude/settings.json` coché : un référentiel cloné ne peut pas injecter ses propres règles de classificateur. Pour la liste complète des paramètres gérés uniquement, y compris `allowManagedPermissionRulesOnly` et `allowManagedHooksOnly`, voir [paramètres gérés uniquement](/fr/permissions#managed-only-settings).
 
 Les paramètres gérés distants téléchargés via la console d'administration s'appliquent actuellement uniquement aux sessions CLI et IDE. Pour les restrictions spécifiques à Desktop, utilisez les contrôles de la console d'administration ci-dessus.
 
@@ -515,19 +615,21 @@ Desktop et CLI lisent les mêmes fichiers de configuration, donc votre configura
 
 Ce tableau compare les capacités principales entre la CLI et Desktop. Pour une liste complète des drapeaux CLI, voir la [référence CLI](/fr/cli-reference).
 
-| Fonctionnalité                                     | CLI                                                       | Desktop                                                                                                                         |
-| -------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Modes de permission                                | tous les modes y compris `dontAsk`                        | Demander les permissions, Accepter automatiquement les modifications, Plan mode et Contourner les permissions via Paramètres    |
-| `--dangerously-skip-permissions`                   | Drapeau CLI                                               | Mode Contourner les permissions. Activez dans Paramètres → Claude Code → « Autoriser le mode de contournement des permissions » |
-| [Fournisseurs tiers](/fr/third-party-integrations) | Bedrock, Vertex, Foundry                                  | non disponible. Desktop se connecte directement à l'API d'Anthropic.                                                            |
-| [Serveurs MCP](/fr/mcp)                            | configurer dans les fichiers de paramètres                | Interface utilisateur Connecteurs pour les sessions locales et SSH, ou fichiers de paramètres                                   |
-| [Plugins](/fr/plugins)                             | Commande `/plugin`                                        | Interface utilisateur du gestionnaire de plugins                                                                                |
-| Fichiers @mention                                  | basé sur le texte                                         | avec autocomplétion                                                                                                             |
-| Pièces jointes de fichiers                         | non disponible                                            | images, PDF                                                                                                                     |
-| Isolation des sessions                             | Drapeau [`--worktree`](/fr/cli-reference)                 | worktrees automatiques                                                                                                          |
-| Sessions multiples                                 | terminaux séparés                                         | onglets de barre latérale                                                                                                       |
-| Tâches récurrentes                                 | tâches cron, pipelines CI                                 | [tâches planifiées](#schedule-recurring-tasks)                                                                                  |
-| Scripts et automatisation                          | [`--print`](/fr/cli-reference), [Agent SDK](/fr/headless) | non disponible                                                                                                                  |
+| Fonctionnalité                                     | CLI                                                       | Desktop                                                                                                                            |
+| -------------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Modes de permission                                | Tous les modes y compris `dontAsk`                        | Demander les permissions, Accepter automatiquement les modifications, Plan mode, Auto et Contourner les permissions via Paramètres |
+| `--dangerously-skip-permissions`                   | Drapeau CLI                                               | Mode Contourner les permissions. Activez dans Paramètres → Claude Code → « Autoriser le mode de contournement des permissions »    |
+| [Fournisseurs tiers](/fr/third-party-integrations) | Bedrock, Vertex, Foundry                                  | Non disponible. Desktop se connecte directement à l'API d'Anthropic.                                                               |
+| [Serveurs MCP](/fr/mcp)                            | Configurer dans les fichiers de paramètres                | Interface utilisateur Connecteurs pour les sessions locales et SSH, ou fichiers de paramètres                                      |
+| [Plugins](/fr/plugins)                             | Commande `/plugin`                                        | Interface utilisateur du gestionnaire de plugins                                                                                   |
+| Fichiers @mention                                  | Basé sur le texte                                         | Avec autocomplétion                                                                                                                |
+| Pièces jointes de fichiers                         | Non disponible                                            | Images, PDF                                                                                                                        |
+| Isolation des sessions                             | Drapeau [`--worktree`](/fr/cli-reference)                 | Worktrees automatiques                                                                                                             |
+| Sessions multiples                                 | Terminaux séparés                                         | Onglets de barre latérale                                                                                                          |
+| Tâches récurrentes                                 | Tâches cron, pipelines CI                                 | [Tâches planifiées](#schedule-recurring-tasks)                                                                                     |
+| Utilisation informatique                           | Non disponible                                            | [Contrôle d'application et d'écran](#let-claude-use-your-computer) sur macOS                                                       |
+| Intégration Dispatch                               | Non disponible                                            | [Sessions Dispatch](#sessions-from-dispatch) dans la barre latérale                                                                |
+| Scripts et automatisation                          | [`--print`](/fr/cli-reference), [Agent SDK](/fr/headless) | Non disponible                                                                                                                     |
 
 ### Ce qui n'est pas disponible dans Desktop
 

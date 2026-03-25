@@ -22,24 +22,24 @@
 
 ### Kontrol umum
 
-| Pintasan                                              | Deskripsi                                                                           | Konteks                                                                                                                             |
-| :---------------------------------------------------- | :---------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------- |
-| `Ctrl+C`                                              | Batalkan input atau generasi saat ini                                               | Interupsi standar                                                                                                                   |
-| `Ctrl+F`                                              | Matikan semua agen latar belakang. Tekan dua kali dalam 3 detik untuk mengonfirmasi | Kontrol agen latar belakang                                                                                                         |
-| `Ctrl+D`                                              | Keluar dari sesi Claude Code                                                        | Sinyal EOF                                                                                                                          |
-| `Ctrl+G`                                              | Buka di editor teks default                                                         | Edit prompt atau respons kustom Anda di editor teks default                                                                         |
-| `Ctrl+L`                                              | Bersihkan layar terminal                                                            | Menjaga riwayat percakapan                                                                                                          |
-| `Ctrl+O`                                              | Alihkan output verbose                                                              | Menampilkan penggunaan dan eksekusi alat yang terperinci                                                                            |
-| `Ctrl+R`                                              | Pencarian riwayat perintah terbalik                                                 | Cari melalui perintah sebelumnya secara interaktif                                                                                  |
-| `Ctrl+V` atau `Cmd+V` (iTerm2) atau `Alt+V` (Windows) | Tempel gambar dari clipboard                                                        | Menempel gambar atau jalur ke file gambar                                                                                           |
-| `Ctrl+B`                                              | Tugas yang berjalan di latar belakang                                               | Menjalankan perintah bash dan agen di latar belakang. Pengguna Tmux tekan dua kali                                                  |
-| `Ctrl+T`                                              | Alihkan daftar tugas                                                                | Tampilkan atau sembunyikan [daftar tugas](#task-list) di area status terminal                                                       |
-| `Left/Right arrows`                                   | Siklus melalui tab dialog                                                           | Navigasi antar tab dalam dialog izin dan menu                                                                                       |
-| `Up/Down arrows`                                      | Navigasi riwayat perintah                                                           | Ingat kembali input sebelumnya                                                                                                      |
-| `Esc` + `Esc`                                         | Putar ulang atau ringkas                                                            | Kembalikan kode dan/atau percakapan ke titik sebelumnya, atau ringkas dari pesan yang dipilih                                       |
-| `Shift+Tab` atau `Alt+M` (beberapa konfigurasi)       | Alihkan mode izin                                                                   | Beralih antara Auto-Accept Mode, Plan Mode, dan mode normal.                                                                        |
-| `Option+P` (macOS) atau `Alt+P` (Windows/Linux)       | Alihkan model                                                                       | Alihkan model tanpa menghapus prompt Anda                                                                                           |
-| `Option+T` (macOS) atau `Alt+T` (Windows/Linux)       | Alihkan pemikiran yang diperluas                                                    | Aktifkan atau nonaktifkan mode pemikiran yang diperluas. Jalankan `/terminal-setup` terlebih dahulu untuk mengaktifkan pintasan ini |
+| Pintasan                                              | Deskripsi                                                                           | Konteks                                                                                                                                                                           |
+| :---------------------------------------------------- | :---------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+C`                                              | Batalkan input atau generasi saat ini                                               | Interupsi standar                                                                                                                                                                 |
+| `Ctrl+F`                                              | Matikan semua agen latar belakang. Tekan dua kali dalam 3 detik untuk mengonfirmasi | Kontrol agen latar belakang                                                                                                                                                       |
+| `Ctrl+D`                                              | Keluar dari sesi Claude Code                                                        | Sinyal EOF                                                                                                                                                                        |
+| `Ctrl+G`                                              | Buka di editor teks default                                                         | Edit prompt atau respons kustom Anda di editor teks default                                                                                                                       |
+| `Ctrl+L`                                              | Bersihkan layar terminal                                                            | Menjaga riwayat percakapan                                                                                                                                                        |
+| `Ctrl+O`                                              | Alihkan output verbose                                                              | Menampilkan penggunaan dan eksekusi alat yang terperinci. Juga memperluas panggilan baca dan pencarian MCP, yang runtuh menjadi satu baris seperti "Queried slack" secara default |
+| `Ctrl+R`                                              | Pencarian riwayat perintah terbalik                                                 | Cari melalui perintah sebelumnya secara interaktif                                                                                                                                |
+| `Ctrl+V` atau `Cmd+V` (iTerm2) atau `Alt+V` (Windows) | Tempel gambar dari clipboard                                                        | Menempel gambar atau jalur ke file gambar                                                                                                                                         |
+| `Ctrl+B`                                              | Tugas yang berjalan di latar belakang                                               | Menjalankan perintah bash dan agen di latar belakang. Pengguna Tmux tekan dua kali                                                                                                |
+| `Ctrl+T`                                              | Alihkan daftar tugas                                                                | Tampilkan atau sembunyikan [daftar tugas](#task-list) di area status terminal                                                                                                     |
+| `Left/Right arrows`                                   | Siklus melalui tab dialog                                                           | Navigasi antar tab dalam dialog izin dan menu                                                                                                                                     |
+| `Up/Down arrows`                                      | Navigasi riwayat perintah                                                           | Ingat kembali input sebelumnya                                                                                                                                                    |
+| `Esc` + `Esc`                                         | Putar ulang atau ringkas                                                            | Kembalikan kode dan/atau percakapan ke titik sebelumnya, atau ringkas dari pesan yang dipilih                                                                                     |
+| `Shift+Tab` atau `Alt+M` (beberapa konfigurasi)       | Alihkan mode izin                                                                   | Beralih antara `default`, `acceptEdits`, `plan`, dan mode apa pun yang telah Anda aktifkan, seperti `auto` atau `bypassPermissions`. Lihat [mode izin](/id/permission-modes).     |
+| `Option+P` (macOS) atau `Alt+P` (Windows/Linux)       | Alihkan model                                                                       | Alihkan model tanpa menghapus prompt Anda                                                                                                                                         |
+| `Option+T` (macOS) atau `Alt+T` (Windows/Linux)       | Alihkan pemikiran yang diperluas                                                    | Aktifkan atau nonaktifkan mode pemikiran yang diperluas. Jalankan `/terminal-setup` terlebih dahulu untuk mengaktifkan pintasan ini                                               |
 
 ### Pengeditan teks
 
@@ -83,6 +83,12 @@
 | `/` di awal | Perintah atau skill   | Lihat [perintah bawaan](#built-in-commands) dan [skills](/id/skills)    |
 | `!` di awal | Mode Bash             | Jalankan perintah secara langsung dan tambahkan output eksekusi ke sesi |
 | `@`         | Penyebutan jalur file | Picu pelengkapan otomatis jalur file                                    |
+
+### Input suara
+
+| Pintasan      | Deskripsi              | Catatan                                                                                                                                                             |
+| :------------ | :--------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Tahan `Space` | Dictation push-to-talk | Memerlukan [voice dictation](/id/voice-dictation) untuk diaktifkan. Transkrip disisipkan di kursor. [Dapat diubah](/id/voice-dictation#rebind-the-push-to-talk-key) |
 
 ## Perintah bawaan
 
@@ -207,6 +213,7 @@ Untuk menjalankan perintah di latar belakang, Anda dapat:
 * Output disimpan dalam buffer dan Claude dapat mengambilnya menggunakan alat TaskOutput
 * Tugas latar belakang memiliki ID unik untuk pelacakan dan pengambilan output
 * Tugas latar belakang dibersihkan secara otomatis ketika Claude Code keluar
+* Tugas latar belakang secara otomatis dihentikan jika output melebihi 5GB, dengan catatan di stderr yang menjelaskan alasannya
 
 Untuk menonaktifkan semua fungsionalitas tugas latar belakang, atur variabel lingkungan `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` ke `1`. Lihat [Variabel lingkungan](/id/env-vars) untuk detail.
 

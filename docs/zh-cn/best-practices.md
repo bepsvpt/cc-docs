@@ -202,21 +202,16 @@ See @README.md for project overview and @package.json for available npm commands
 ### 配置权限
 
 <Tip>
-  使用 `/permissions` 来允许列表安全命令或 `/sandbox` 用于操作系统级隔离。这减少了中断，同时让你保持控制。
+  使用 [auto mode](/zh-CN/permission-modes#eliminate-prompts-with-auto-mode) 让分类器处理批准，使用 `/permissions` 来允许列表特定命令，或使用 `/sandbox` 进行操作系统级隔离。每种方式都减少中断，同时让你保持控制。
 </Tip>
 
-默认情况下，Claude Code 请求可能修改你的系统的操作的权限：文件写入、Bash 命令、MCP 工具等。这是安全的但繁琐。在第十次批准后，你不是真的在审查，你只是点击通过。有两种方式来减少这些中断：
+默认情况下，Claude Code 请求可能修改你的系统的操作的权限：文件写入、Bash 命令、MCP 工具等。这是安全的但繁琐。在第十次批准后，你不是真的在审查，你只是点击通过。有三种方式来减少这些中断：
 
-* **权限允许列表**：允许你知道是安全的特定工具（如 `npm run lint` 或 `git commit`）
+* **Auto mode**：一个单独的分类器模型审查命令并仅阻止看起来有风险的东西：范围升级、未知基础设施或由敌对内容驱动的操作。最适合当你信任任务的总体方向但不想点击通过每一步时
+* **权限允许列表**：允许你知道是安全的特定工具，如 `npm run lint` 或 `git commit`
 * **沙箱**：启用操作系统级隔离，限制文件系统和网络访问，允许 Claude 在定义的边界内更自由地工作
 
-或者，使用 `--dangerously-skip-permissions` 来绕过所有权限检查，用于包含的工作流，如修复 lint 错误或生成样板。
-
-<Warning>
-  让 Claude 运行任意命令可能导致数据丢失、系统损坏或通过提示注入进行数据渗透。仅在没有互联网访问的沙箱中使用 `--dangerously-skip-permissions`。
-</Warning>
-
-阅读更多关于 [配置权限](/zh-CN/permissions) 和 [启用沙箱](/zh-CN/sandboxing)。
+阅读更多关于 [权限模式](/zh-CN/permission-modes)、[权限规则](/zh-CN/permissions) 和 [沙箱](/zh-CN/sandboxing)。
 
 ### 使用 CLI 工具
 
@@ -244,7 +239,7 @@ Claude 也有效地学习它不知道的 CLI 工具。尝试像 `Use 'foo-cli-to
 
 [Hooks](/zh-CN/hooks-guide) 在 Claude 工作流中的特定点自动运行脚本。与 CLAUDE.md 指令不同，hooks 是确定性的，保证操作发生。
 
-Claude 可以为你编写 hooks。尝试像 *"编写一个在每次文件编辑后运行 eslint 的 hook"* 或 *"编写一个阻止写入迁移文件夹的 hook"* 这样的提示。运行 `/hooks` 进行交互式配置，或直接编辑 `.claude/settings.json`。
+Claude 可以为你编写 hooks。尝试像 *"编写一个在每次文件编辑后运行 eslint 的 hook"* 或 *"编写一个阻止写入迁移文件夹的 hook"* 这样的提示。编辑 `.claude/settings.json` 直接配置 hooks，并运行 `/hooks` 来浏览配置的内容。
 
 ### 创建 skills
 
@@ -393,7 +388,7 @@ Keep interviewing until we've covered everything, then write a complete spec to 
   在不相关的任务之间频繁运行 `/clear` 来重置 context。
 </Tip>
 
-当你接近 context 限制时，Claude Code 会自动压缩对话历史，这保留了重要的代码和决策，同时释放空间。
+Claude Code 在你接近 context 限制时自动压缩对话历史，这保留了重要的代码和决策，同时释放空间。
 
 在长会话中，Claude 的 context window 可能会充满无关的对话、文件内容和命令。这可能会降低性能，有时会分散 Claude 的注意力。
 
@@ -539,6 +534,16 @@ claude -p "<your prompt>" --output-format json | your_command
 ```
 
 在开发期间使用 `--verbose` 进行调试，在生产中关闭它。
+
+### 使用 auto mode 自主运行
+
+为了不间断的执行和后台安全检查，使用 [auto mode](/zh-CN/permission-modes#eliminate-prompts-with-auto-mode)。分类器模型在命令运行前审查它们，阻止范围升级、未知基础设施和由敌对内容驱动的操作，同时让常规工作无提示进行。
+
+```bash  theme={null}
+claude --permission-mode auto -p "fix all lint errors"
+```
+
+对于使用 `-p` 标志的非交互运行，如果分类器重复阻止操作，auto mode 会中止，因为没有用户可以回退到。请参阅 [auto mode 何时回退](/zh-CN/permission-modes#when-auto-mode-falls-back) 了解阈值。
 
 ***
 

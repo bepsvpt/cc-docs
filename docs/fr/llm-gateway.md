@@ -22,13 +22,13 @@ Pour qu'une passerelle LLM fonctionne avec Claude Code, elle doit répondre aux 
 
 La passerelle doit exposer aux clients au moins l'un des formats API suivants :
 
-1. **Anthropic Messages**: `/v1/messages`, `/v1/messages/count_tokens`
+1. **Anthropic Messages** : `/v1/messages`, `/v1/messages/count_tokens`
    * Doit transférer les en-têtes de requête : `anthropic-beta`, `anthropic-version`
 
-2. **Bedrock InvokeModel**: `/invoke`, `/invoke-with-response-stream`
+2. **Bedrock InvokeModel** : `/invoke`, `/invoke-with-response-stream`
    * Doit préserver les champs du corps de la requête : `anthropic_beta`, `anthropic_version`
 
-3. **Vertex rawPredict**: `:rawPredict`, `:streamRawPredict`, `/count-tokens:rawPredict`
+3. **Vertex rawPredict** : `:rawPredict`, `:streamRawPredict`, `/count-tokens:rawPredict`
    * Doit transférer les en-têtes de requête : `anthropic-beta`, `anthropic-version`
 
 L'absence de transfert d'en-têtes ou la non-préservation des champs du corps peut entraîner une réduction des fonctionnalités ou l'impossibilité d'utiliser les fonctionnalités de Claude Code.
@@ -47,9 +47,15 @@ Si vous avez configuré des noms de modèles personnalisés dans votre passerell
 
 ## Configuration de LiteLLM
 
-<Note>
+<Warning>
+  Les versions PyPI de LiteLLM 1.82.7 et 1.82.8 ont été compromises avec un malware voleur d'identifiants. N'installez pas ces versions. Si vous les avez déjà installées :
+
+  * Supprimez le paquet
+  * Renouvelez tous les identifiants sur les systèmes affectés
+  * Suivez les étapes de correction dans [BerriAI/litellm#24518](https://github.com/BerriAI/litellm/issues/24518)
+
   LiteLLM est un service proxy tiers. Anthropic n'approuve pas, ne maintient pas et n'audite pas la sécurité ou les fonctionnalités de LiteLLM. Ce guide est fourni à titre informatif et peut devenir obsolète. À utiliser à votre discrétion.
-</Note>
+</Warning>
 
 ### Conditions préalables
 

@@ -202,21 +202,16 @@ Sie können CLAUDE.md-Dateien an mehreren Orten platzieren:
 ### Konfigurieren Sie Berechtigungen
 
 <Tip>
-  Verwenden Sie `/permissions`, um sichere Befehle auf die Whitelist zu setzen, oder `/sandbox` für Isolation auf Betriebssystemebene. Dies reduziert Unterbrechungen, während Sie die Kontrolle behalten.
+  Verwenden Sie [Auto Mode](/de/permission-modes#eliminate-prompts-with-auto-mode), um einen Klassifizierer die Genehmigungen handhaben zu lassen, `/permissions`, um spezifische Befehle auf die Whitelist zu setzen, oder `/sandbox` für Isolation auf Betriebssystemebene. Jede reduziert Unterbrechungen, während Sie die Kontrolle behalten.
 </Tip>
 
-Standardmäßig fordert Claude Code Berechtigung für Aktionen an, die Ihr System ändern könnten: Dateischreibvorgänge, Bash-Befehle, MCP-Tools usw. Dies ist sicher, aber mühsam. Nach der zehnten Genehmigung überprüfen Sie nicht wirklich mehr, Sie klicken einfach durch. Es gibt zwei Möglichkeiten, diese Unterbrechungen zu reduzieren:
+Standardmäßig fordert Claude Code Berechtigung für Aktionen an, die Ihr System ändern könnten: Dateischreibvorgänge, Bash-Befehle, MCP-Tools usw. Dies ist sicher, aber mühsam. Nach der zehnten Genehmigung überprüfen Sie nicht wirklich mehr, Sie klicken einfach durch. Es gibt drei Möglichkeiten, diese Unterbrechungen zu reduzieren:
 
-* **Berechtigungs-Whitelists**: erlauben Sie spezifische Tools, die Sie kennen und die sicher sind (wie `npm run lint` oder `git commit`)
+* **Auto Mode**: ein separates Klassifizierer-Modell überprüft Befehle und blockiert nur das, was riskant aussieht: Scope-Eskalation, unbekannte Infrastruktur oder feindselige-Inhalts-getriebene Aktionen. Am besten, wenn Sie der allgemeinen Richtung einer Aufgabe vertrauen, aber nicht jeden Schritt durchklicken möchten
+* **Berechtigungs-Whitelists**: erlauben Sie spezifische Tools, die Sie kennen und die sicher sind, wie `npm run lint` oder `git commit`
 * **Sandboxing**: aktivieren Sie Isolation auf Betriebssystemebene, die Dateisystem- und Netzwerkzugriff einschränkt und Claude ermöglicht, freier innerhalb definierter Grenzen zu arbeiten
 
-Alternativ verwenden Sie `--dangerously-skip-permissions`, um alle Berechtigungsprüfungen für enthaltene Workflows wie das Beheben von Lint-Fehlern oder das Generieren von Boilerplate zu umgehen.
-
-<Warning>
-  Das Zulassen, dass Claude beliebige Befehle ausführt, kann zu Datenverlust, Systemkorruption oder Datenexfiltration durch Prompt-Injection führen. Verwenden Sie `--dangerously-skip-permissions` nur in einer Sandbox ohne Internetzugang.
-</Warning>
-
-Lesen Sie mehr über [Konfigurieren von Berechtigungen](/de/permissions) und [Aktivieren von Sandboxing](/de/sandboxing).
+Lesen Sie mehr über [Berechtigungsmodi](/de/permission-modes), [Berechtigungsregeln](/de/permissions) und [Sandboxing](/de/sandboxing).
 
 ### Verwenden Sie CLI-Tools
 
@@ -244,7 +239,7 @@ Mit [MCP-Servern](/de/mcp) können Sie Claude bitten, Funktionen von Issue-Track
 
 [Hooks](/de/hooks-guide) führen Skripte automatisch an bestimmten Punkten in Claudes Workflow aus. Im Gegensatz zu CLAUDE.md-Anweisungen, die beratend sind, sind Hooks deterministisch und garantieren, dass die Aktion stattfindet.
 
-Claude kann Hooks für Sie schreiben. Versuchen Sie Prompts wie *„Schreibe einen Hook, der eslint nach jeder Dateibearbeitung ausführt"* oder *„Schreibe einen Hook, der Schreibvorgänge in den Migrations-Ordner blockiert."* Führen Sie `/hooks` für interaktive Konfiguration aus, oder bearbeiten Sie `.claude/settings.json` direkt.
+Claude kann Hooks für Sie schreiben. Versuchen Sie Prompts wie *„Schreibe einen Hook, der eslint nach jeder Dateibearbeitung ausführt"* oder *„Schreibe einen Hook, der Schreibvorgänge in den Migrations-Ordner blockiert."* Bearbeiten Sie `.claude/settings.json` direkt, um Hooks von Hand zu konfigurieren, und führen Sie `/hooks` aus, um zu durchsuchen, was konfiguriert ist.
 
 ### Erstellen Sie Skills
 
@@ -539,6 +534,16 @@ claude -p "<your prompt>" --output-format json | your_command
 ```
 
 Verwenden Sie `--verbose` zum Debuggen während der Entwicklung und schalten Sie es in der Produktion aus.
+
+### Führen Sie autonom mit Auto Mode aus
+
+Für ununterbrochene Ausführung mit Hintergrund-Sicherheitsprüfungen verwenden Sie [Auto Mode](/de/permission-modes#eliminate-prompts-with-auto-mode). Ein Klassifizierer-Modell überprüft Befehle vor ihrer Ausführung, blockiert Scope-Eskalation, unbekannte Infrastruktur und feindselige-Inhalts-getriebene Aktionen, während es Routinearbeit ohne Prompts durchlaufen lässt.
+
+```bash  theme={null}
+claude --permission-mode auto -p "fix all lint errors"
+```
+
+Für nicht-interaktive Läufe mit dem `-p`-Flag bricht Auto Mode ab, wenn der Klassifizierer Aktionen wiederholt blockiert, da es keinen Benutzer gibt, auf den man zurückfallen kann. Siehe [wenn Auto Mode zurückfällt](/de/permission-modes#when-auto-mode-falls-back) für Schwellenwerte.
 
 ***
 

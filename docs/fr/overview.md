@@ -173,23 +173,32 @@ Voici quelques-unes des façons dont vous pouvez utiliser Claude Code :
     Claude Code est composable et suit la philosophie Unix. Canalisez les journaux dedans, exécutez-le en CI ou chaînez-le avec d'autres outils :
 
     ```bash  theme={null}
-    # Monitor logs and get alerted
-    tail -f app.log | claude -p "Slack me if you see any anomalies"
+    # Analyser la sortie récente des journaux
+    tail -200 app.log | claude -p "Slack me if you see any anomalies"
 
-    # Automate translations in CI
+    # Automatiser les traductions en CI
     claude -p "translate new strings into French and raise a PR for review"
 
-    # Bulk operations across files
+    # Opérations en masse sur les fichiers
     git diff main --name-only | claude -p "review these changed files for security issues"
     ```
 
     Consultez la [référence CLI](/fr/cli-reference) pour l'ensemble complet des commandes et des drapeaux.
   </Accordion>
 
+  <Accordion title="Planifier des tâches récurrentes" icon="clock">
+    Exécutez Claude selon un calendrier pour automatiser le travail qui se répète : examens de PR le matin, analyse des défaillances CI pendant la nuit, audits de dépendances hebdomadaires ou synchronisation des documents après la fusion des PR.
+
+    * Les [tâches planifiées cloud](/fr/web-scheduled-tasks) s'exécutent sur l'infrastructure gérée par Anthropic, elles continuent donc à s'exécuter même quand votre ordinateur est éteint. Créez-les à partir du web, de l'application de bureau ou en exécutant `/schedule` dans le CLI.
+    * Les [tâches planifiées de bureau](/fr/desktop#schedule-recurring-tasks) s'exécutent sur votre machine, avec un accès direct à vos fichiers et outils locaux
+    * [`/loop`](/fr/scheduled-tasks) répète une invite dans une session CLI pour un sondage rapide
+  </Accordion>
+
   <Accordion title="Travailler de n'importe où" icon="globe">
     Les sessions ne sont pas liées à une seule surface. Déplacez le travail entre les environnements à mesure que votre contexte change :
 
     * Éloignez-vous de votre bureau et continuez à travailler depuis votre téléphone ou n'importe quel navigateur avec [Contrôle à distance](/fr/remote-control)
+    * Envoyez un message à [Dispatch](/fr/desktop#sessions-from-dispatch) une tâche depuis votre téléphone et ouvrez la session de bureau qu'il crée
     * Lancez une tâche longue sur le [web](/fr/claude-code-on-the-web) ou l'[application iOS](https://apps.apple.com/app/claude-by-anthropic/id6473753684), puis tirez-la dans votre terminal avec `/teleport`
     * Remettez une session de terminal à l'[application de bureau](/fr/desktop) avec `/desktop` pour un examen visuel des diffs
     * Acheminez les tâches depuis le chat d'équipe : mentionnez `@Claude` dans [Slack](/fr/slack) avec un rapport de bogue et récupérez une demande de tirage
@@ -202,15 +211,17 @@ Chaque surface se connecte au même moteur Claude Code sous-jacent, donc vos fic
 
 Au-delà des environnements [Terminal](/fr/quickstart), [VS Code](/fr/vs-code), [JetBrains](/fr/jetbrains), [Desktop](/fr/desktop) et [Web](/fr/claude-code-on-the-web) ci-dessus, Claude Code s'intègre avec les flux de travail CI/CD, chat et navigateur :
 
-| Je veux...                                                             | Meilleure option                                                                                                           |
-| ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Continuer une session locale depuis mon téléphone ou un autre appareil | [Contrôle à distance](/fr/remote-control)                                                                                  |
-| Démarrer une tâche localement, continuer sur mobile                    | [Web](/fr/claude-code-on-the-web) ou [application Claude iOS](https://apps.apple.com/app/claude-by-anthropic/id6473753684) |
-| Automatiser les examens de PR et le triage des problèmes               | [GitHub Actions](/fr/github-actions) ou [GitLab CI/CD](/fr/gitlab-ci-cd)                                                   |
-| Obtenir un examen automatique du code sur chaque PR                    | [Examen du code GitHub](/fr/code-review)                                                                                   |
-| Acheminer les rapports de bogues de Slack vers les demandes de tirage  | [Slack](/fr/slack)                                                                                                         |
-| Déboguer les applications web en direct                                | [Chrome](/fr/chrome)                                                                                                       |
-| Créer des agents personnalisés pour vos propres flux de travail        | [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview)                                                        |
+| Je veux...                                                                           | Meilleure option                                                                                                           |
+| ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| Continuer une session locale depuis mon téléphone ou un autre appareil               | [Contrôle à distance](/fr/remote-control)                                                                                  |
+| Envoyer des événements de Telegram, Discord ou mes propres webhooks dans une session | [Canaux](/fr/channels)                                                                                                     |
+| Démarrer une tâche localement, continuer sur mobile                                  | [Web](/fr/claude-code-on-the-web) ou [application Claude iOS](https://apps.apple.com/app/claude-by-anthropic/id6473753684) |
+| Exécuter Claude selon un calendrier récurrent                                        | [Tâches planifiées cloud](/fr/web-scheduled-tasks) ou [Tâches planifiées de bureau](/fr/desktop#schedule-recurring-tasks)  |
+| Automatiser les examens de PR et le triage des problèmes                             | [GitHub Actions](/fr/github-actions) ou [GitLab CI/CD](/fr/gitlab-ci-cd)                                                   |
+| Obtenir un examen automatique du code sur chaque PR                                  | [Examen du code GitHub](/fr/code-review)                                                                                   |
+| Acheminer les rapports de bogues de Slack vers les demandes de tirage                | [Slack](/fr/slack)                                                                                                         |
+| Déboguer les applications web en direct                                              | [Chrome](/fr/chrome)                                                                                                       |
+| Créer des agents personnalisés pour vos propres flux de travail                      | [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview)                                                        |
 
 ## Étapes suivantes
 

@@ -173,23 +173,32 @@ Claude Code — это AI-помощник по кодированию, кото
     Claude Code является составным и следует философии Unix. Передавайте в него логи, запускайте его в CI или объединяйте его с другими инструментами:
 
     ```bash  theme={null}
-    # Monitor logs and get alerted
-    tail -f app.log | claude -p "Slack me if you see any anomalies"
+    # Анализируйте недавний вывод логов
+    tail -200 app.log | claude -p "Slack me if you see any anomalies"
 
-    # Automate translations in CI
+    # Автоматизируйте переводы в CI
     claude -p "translate new strings into French and raise a PR for review"
 
-    # Bulk operations across files
+    # Массовые операции по файлам
     git diff main --name-only | claude -p "review these changed files for security issues"
     ```
 
     Смотрите [CLI reference](/ru/cli-reference) для полного набора команд и флагов.
   </Accordion>
 
+  <Accordion title="Планируйте повторяющиеся задачи" icon="clock">
+    Запускайте Claude по расписанию для автоматизации работы, которая повторяется: утренние проверки PR, анализ сбоев CI в ночное время, еженедельные аудиты зависимостей или синхронизация документов после слияния PR.
+
+    * [Облачные запланированные задачи](/ru/web-scheduled-tasks) работают на инфраструктуре, управляемой Anthropic, поэтому они продолжают работать даже когда ваш компьютер выключен. Создавайте их из веб-версии, приложения Desktop или запустив `/schedule` в CLI.
+    * [Запланированные задачи Desktop](/ru/desktop#schedule-recurring-tasks) работают на вашей машине с прямым доступом к вашим локальным файлам и инструментам
+    * [`/loop`](/ru/scheduled-tasks) повторяет подсказку в сеансе CLI для быстрого опроса
+  </Accordion>
+
   <Accordion title="Работайте откуда угодно" icon="globe">
     Сеансы не привязаны к одной поверхности. Перемещайте работу между средами по мере изменения вашего контекста:
 
     * Отойдите от своего стола и продолжайте работать со своего телефона или любого браузера с помощью [Remote Control](/ru/remote-control)
+    * Отправьте сообщение [Dispatch](/ru/desktop#sessions-from-dispatch) с задачей со своего телефона и откройте сеанс Desktop, который он создает
     * Запустите долгоживущую задачу в [веб-версии](/ru/claude-code-on-the-web) или [приложении iOS](https://apps.apple.com/app/claude-by-anthropic/id6473753684), затем перенесите ее в свой терминал с помощью `/teleport`
     * Передайте сеанс терминала в [приложение Desktop](/ru/desktop) с помощью `/desktop` для визуального просмотра различий
     * Маршрутизируйте задачи из командного чата: упомяните `@Claude` в [Slack](/ru/slack) с отчетом об ошибке и получите pull request обратно
@@ -202,15 +211,17 @@ Claude Code — это AI-помощник по кодированию, кото
 
 Помимо сред [Terminal](/ru/quickstart), [VS Code](/ru/vs-code), [JetBrains](/ru/jetbrains), [Desktop](/ru/desktop) и [Web](/ru/claude-code-on-the-web) выше, Claude Code интегрируется с CI/CD, чатом и рабочими процессами браузера:
 
-| Я хочу...                                                                   | Лучший вариант                                                                                                             |
-| --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Продолжить локальный сеанс со своего телефона или другого устройства        | [Remote Control](/ru/remote-control)                                                                                       |
-| Начать задачу локально, продолжить на мобильном                             | [Web](/ru/claude-code-on-the-web) или [приложение Claude iOS](https://apps.apple.com/app/claude-by-anthropic/id6473753684) |
-| Автоматизировать проверки PR и сортировку проблем                           | [GitHub Actions](/ru/github-actions) или [GitLab CI/CD](/ru/gitlab-ci-cd)                                                  |
-| Получить автоматическую проверку кода на каждый PR                          | [GitHub Code Review](/ru/code-review)                                                                                      |
-| Маршрутизировать отчеты об ошибках из Slack в pull requests                 | [Slack](/ru/slack)                                                                                                         |
-| Отладить живые веб-приложения                                               | [Chrome](/ru/chrome)                                                                                                       |
-| Создавайте пользовательских агентов для ваших собственных рабочих процессов | [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview)                                                        |
+| Я хочу...                                                                    | Лучший вариант                                                                                                                        |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Продолжить локальный сеанс со своего телефона или другого устройства         | [Remote Control](/ru/remote-control)                                                                                                  |
+| Отправить события из Telegram, Discord или моих собственных webhooks в сеанс | [Channels](/ru/channels)                                                                                                              |
+| Начать задачу локально, продолжить на мобильном                              | [Web](/ru/claude-code-on-the-web) или [приложение Claude iOS](https://apps.apple.com/app/claude-by-anthropic/id6473753684)            |
+| Запустить Claude по расписанию                                               | [Облачные запланированные задачи](/ru/web-scheduled-tasks) или [Запланированные задачи Desktop](/ru/desktop#schedule-recurring-tasks) |
+| Автоматизировать проверки PR и сортировку проблем                            | [GitHub Actions](/ru/github-actions) или [GitLab CI/CD](/ru/gitlab-ci-cd)                                                             |
+| Получить автоматическую проверку кода на каждый PR                           | [GitHub Code Review](/ru/code-review)                                                                                                 |
+| Маршрутизировать отчеты об ошибках из Slack в pull requests                  | [Slack](/ru/slack)                                                                                                                    |
+| Отладить живые веб-приложения                                                | [Chrome](/ru/chrome)                                                                                                                  |
+| Создавайте пользовательских агентов для ваших собственных рабочих процессов  | [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview)                                                                   |
 
 ## Следующие шаги
 

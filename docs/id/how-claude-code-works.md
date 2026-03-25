@@ -124,7 +124,7 @@ Ini membuat session ID baru sambil mempertahankan riwayat percakapan hingga titi
 
 ### Context window
 
-Context window Claude menampung riwayat percakapan Anda, konten file, output perintah, [CLAUDE.md](/id/memory), skill yang dimuat, dan instruksi sistem. Saat Anda bekerja, konteks terisi. Claude melakukan compacting secara otomatis, tetapi instruksi dari awal percakapan dapat hilang. Letakkan aturan persisten di CLAUDE.md, dan jalankan `/context` untuk melihat apa yang menggunakan ruang.
+Context window Claude menampung riwayat percakapan Anda, konten file, output perintah, [CLAUDE.md](/id/memory), [auto memory](/id/memory#auto-memory), skill yang dimuat, dan instruksi sistem. Saat Anda bekerja, konteks terisi. Claude melakukan compacting secara otomatis, tetapi instruksi dari awal percakapan dapat hilang. Letakkan aturan persisten di CLAUDE.md, dan jalankan `/context` untuk melihat apa yang menggunakan ruang.
 
 #### Ketika context terisi
 
@@ -161,6 +161,7 @@ Tekan `Shift+Tab` untuk melakukan siklus melalui mode permission:
 * **Default**: Claude bertanya sebelum edit file dan perintah shell
 * **Auto-accept edits**: Claude mengedit file tanpa bertanya, masih bertanya untuk perintah
 * **Plan mode**: Claude hanya menggunakan tools read-only, membuat rencana yang dapat Anda setujui sebelum eksekusi
+* **Auto mode**: Claude mengevaluasi semua tindakan dengan pemeriksaan keamanan latar belakang. Saat ini preview penelitian
 
 Anda juga dapat mengizinkan perintah spesifik di `.claude/settings.json` sehingga Claude tidak bertanya setiap kali. Ini berguna untuk perintah terpercaya seperti `npm test` atau `git status`. Settings dapat dibatasi dari kebijakan organisasi-luas hingga preferensi pribadi. Lihat [Permissions](/id/permissions) untuk detail.
 

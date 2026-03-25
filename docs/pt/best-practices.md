@@ -202,21 +202,16 @@ Você pode colocar arquivos CLAUDE.md em vários locais:
 ### Configure permissões
 
 <Tip>
-  Use `/permissions` para colocar na lista de permissões comandos seguros ou `/sandbox` para isolamento em nível de SO. Isso reduz interrupções enquanto mantém você no controle.
+  Use [auto mode](/pt/permission-modes#eliminate-prompts-with-auto-mode) para deixar um classificador lidar com aprovações, `/permissions` para colocar na lista de permissões comandos específicos, ou `/sandbox` para isolamento em nível de SO. Cada um reduz interrupções enquanto mantém você no controle.
 </Tip>
 
-Por padrão, Claude Code solicita permissão para ações que podem modificar seu sistema: gravações de arquivo, comandos Bash, ferramentas MCP, etc. Isso é seguro mas tedioso. Após a décima aprovação você realmente não está revisando mais, você está apenas clicando. Existem duas maneiras de reduzir essas interrupções:
+Por padrão, Claude Code solicita permissão para ações que podem modificar seu sistema: gravações de arquivo, comandos Bash, ferramentas MCP, etc. Isso é seguro mas tedioso. Após a décima aprovação você realmente não está revisando mais, você está apenas clicando. Existem três maneiras de reduzir essas interrupções:
 
-* **Listas de permissões**: permita ferramentas específicas que você sabe que são seguras (como `npm run lint` ou `git commit`)
+* **Auto mode**: um modelo classificador separado revisa comandos e bloqueia apenas o que parece arriscado: escalação de escopo, infraestrutura desconhecida ou ações impulsionadas por conteúdo hostil. Melhor quando você confia na direção geral de uma tarefa mas não quer clicar em cada passo
+* **Listas de permissões**: permita ferramentas específicas que você sabe que são seguras, como `npm run lint` ou `git commit`
 * **Sandboxing**: ative isolamento em nível de SO que restringe acesso ao sistema de arquivos e rede, permitindo Claude trabalhar mais livremente dentro de limites definidos
 
-Alternativamente, use `--dangerously-skip-permissions` para contornar todas as verificações de permissão para fluxos de trabalho contidos como corrigir erros de lint ou gerar boilerplate.
-
-<Warning>
-  Deixar Claude executar comandos arbitrários pode resultar em perda de dados, corrupção do sistema ou exfiltração de dados via injeção de prompt. Use `--dangerously-skip-permissions` apenas em um sandbox sem acesso à internet.
-</Warning>
-
-Leia mais sobre [configuring permissions](/pt/permissions) e [enabling sandboxing](/pt/sandboxing).
+Leia mais sobre [permission modes](/pt/permission-modes), [permission rules](/pt/permissions) e [sandboxing](/pt/sandboxing).
 
 ### Use ferramentas CLI
 
@@ -244,7 +239,7 @@ Com [MCP servers](/pt/mcp), você pode pedir ao Claude para implementar recursos
 
 [Hooks](/pt/hooks-guide) executam scripts automaticamente em pontos específicos do fluxo de trabalho do Claude. Diferentemente de instruções CLAUDE.md que são consultivas, hooks são determinísticos e garantem que a ação aconteça.
 
-Claude pode escrever hooks para você. Tente prompts como *"Write a hook that runs eslint after every file edit"* ou *"Write a hook that blocks writes to the migrations folder."* Execute `/hooks` para configuração interativa, ou edite `.claude/settings.json` diretamente.
+Claude pode escrever hooks para você. Tente prompts como *"Write a hook that runs eslint after every file edit"* ou *"Write a hook that blocks writes to the migrations folder."* Edite `.claude/settings.json` diretamente para configurar hooks manualmente, e execute `/hooks` para navegar o que está configurado.
 
 ### Crie skills
 
@@ -539,6 +534,16 @@ claude -p "<your prompt>" --output-format json | your_command
 ```
 
 Use `--verbose` para depuração durante desenvolvimento e desligue em produção.
+
+### Execute autonomamente com auto mode
+
+Para execução ininterrupta com verificações de segurança em background, use [auto mode](/pt/permission-modes#eliminate-prompts-with-auto-mode). Um modelo classificador revisa comandos antes de serem executados, bloqueando escalação de escopo, infraestrutura desconhecida e ações impulsionadas por conteúdo hostil enquanto deixa trabalho rotineiro prosseguir sem prompts.
+
+```bash  theme={null}
+claude --permission-mode auto -p "fix all lint errors"
+```
+
+Para execuções não-interativas com a flag `-p`, auto mode aborta se o classificador repetidamente bloqueia ações, já que não há usuário para recorrer. Veja [when auto mode falls back](/pt/permission-modes#when-auto-mode-falls-back) para limites.
 
 ***
 

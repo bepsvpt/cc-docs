@@ -124,7 +124,7 @@ Cela crée un nouvel ID de session tout en préservant l'historique de conversat
 
 ### La fenêtre de contexte
 
-La fenêtre de contexte de Claude contient votre historique de conversation, le contenu des fichiers, les sorties de commande, [CLAUDE.md](/fr/memory), les skills chargés, et les instructions système. Au fur et à mesure que vous travaillez, le contexte se remplit. Claude compacte automatiquement, mais les instructions du début de la conversation peuvent être perdues. Mettez les règles persistantes dans CLAUDE.md, et exécutez `/context` pour voir ce qui utilise l'espace.
+La fenêtre de contexte de Claude contient votre historique de conversation, le contenu des fichiers, les sorties de commande, [CLAUDE.md](/fr/memory), [la mémoire automatique](/fr/memory#auto-memory), les skills chargés, et les instructions système. Au fur et à mesure que vous travaillez, le contexte se remplit. Claude compacte automatiquement, mais les instructions du début de la conversation peuvent être perdues. Mettez les règles persistantes dans CLAUDE.md, et exécutez `/context` pour voir ce qui utilise l'espace.
 
 #### Lorsque le contexte se remplit
 
@@ -161,6 +161,7 @@ Appuyez sur `Shift+Tab` pour parcourir les modes de permission :
 * **Par défaut** : Claude demande avant les éditions de fichiers et les commandes shell
 * **Auto-accepter les éditions** : Claude édite les fichiers sans demander, demande toujours pour les commandes
 * **Plan Mode** : Claude utilise uniquement les outils en lecture seule, créant un plan que vous pouvez approuver avant l'exécution
+* **Mode Auto** : Claude évalue toutes les actions avec des vérifications de sécurité en arrière-plan. Actuellement une préversion de recherche
 
 Vous pouvez également autoriser des commandes spécifiques dans `.claude/settings.json` afin que Claude ne demande pas à chaque fois. C'est utile pour les commandes de confiance comme `npm test` ou `git status`. Les paramètres peuvent être scoped à partir des politiques à l'échelle de l'organisation jusqu'aux préférences personnelles. Consultez [Permissions](/fr/permissions) pour plus de détails.
 

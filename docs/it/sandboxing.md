@@ -124,7 +124,7 @@ Per impostazione predefinita, i comandi sandboxati possono scrivere solo nella d
   "sandbox": {
     "enabled": true,
     "filesystem": {
-      "allowWrite": ["~/.kube", "//tmp/build"]
+      "allowWrite": ["~/.kube", "/tmp/build"]
     }
   }
 }
@@ -132,18 +132,35 @@ Per impostazione predefinita, i comandi sandboxati possono scrivere solo nella d
 
 Questi percorsi sono applicati a livello del sistema operativo, quindi tutti i comandi in esecuzione all'interno della sandbox, inclusi i loro processi figlio, li rispettano. Questo è l'approccio consigliato quando uno strumento ha bisogno di accesso in scrittura a una posizione specifica, piuttosto che escludere completamente lo strumento dalla sandbox con `excludedCommands`.
 
-Quando `allowWrite` (o `denyWrite`/`denyRead`) è definito in più [ambiti di impostazioni](/it/settings#settings-precedence), gli array sono **uniti**, il che significa che i percorsi da ogni ambito sono combinati, non sostituiti. Ad esempio, se le impostazioni gestite consentono scritture in `//opt/company-tools` e un utente aggiunge `~/.kube` nelle sue impostazioni personali, entrambi i percorsi sono inclusi nella configurazione finale della sandbox. Ciò significa che gli utenti e i progetti possono estendere l'elenco senza duplicare o sovrascrivere i percorsi impostati da ambiti con priorità più alta.
+Quando `allowWrite` (o `denyWrite`/`denyRead`/`allowRead`) è definito in più [ambiti di impostazioni](/it/settings#settings-precedence), gli array sono **uniti**, il che significa che i percorsi da ogni ambito sono combinati, non sostituiti. Ad esempio, se le impostazioni gestite consentono scritture in `/opt/company-tools` e un utente aggiunge `~/.kube` nelle sue impostazioni personali, entrambi i percorsi sono inclusi nella configurazione finale della sandbox. Ciò significa che gli utenti e i progetti possono estendere l'elenco senza duplicare o sovrascrivere i percorsi impostati da ambiti con priorità più alta.
 
 I prefissi di percorso controllano come i percorsi vengono risolti:
 
-| Prefisso               | Significato                                           | Esempio                                |
-| :--------------------- | :---------------------------------------------------- | :------------------------------------- |
-| `//`                   | Percorso assoluto dalla radice del filesystem         | `//tmp/build` diventa `/tmp/build`     |
-| `~/`                   | Relativo alla directory home                          | `~/.kube` diventa `$HOME/.kube`        |
-| `/`                    | Relativo alla directory del file di impostazioni      | `/build` diventa `$SETTINGS_DIR/build` |
-| `./` o nessun prefisso | Percorso relativo (risolto dal runtime della sandbox) | `./output`                             |
+| Prefisso               | Significato                                                                                                         | Esempio                                                                     |
+| :--------------------- | :------------------------------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------- |
+| `/`                    | Percorso assoluto dalla radice del filesystem                                                                       | `/tmp/build` rimane `/tmp/build`                                            |
+| `~/`                   | Relativo alla directory home                                                                                        | `~/.kube` diventa `$HOME/.kube`                                             |
+| `./` o nessun prefisso | Relativo alla radice del progetto per le impostazioni del progetto, o a `~/.claude` per le impostazioni dell'utente | `./output` in `.claude/settings.json` si risolve in `<project-root>/output` |
 
-È inoltre possibile negare l'accesso in scrittura o lettura utilizzando `sandbox.filesystem.denyWrite` e `sandbox.filesystem.denyRead`. Questi vengono uniti con qualsiasi percorso dalle regole di autorizzazione `Edit(...)` e `Read(...)`.
+Il prefisso precedente `//path` per i percorsi assoluti funziona ancora. Se in precedenza hai utilizzato `/path` aspettandoti una risoluzione relativa al progetto, passa a `./path`. Questa sintassi differisce dalle [regole di autorizzazione Read e Edit](/it/permissions#read-and-edit), che utilizzano `//path` per assoluto e `/path` per relativo al progetto. I percorsi del filesystem della sandbox utilizzano convenzioni standard: `/tmp/build` è un percorso assoluto.
+
+È inoltre possibile negare l'accesso in scrittura o lettura utilizzando `sandbox.filesystem.denyWrite` e `sandbox.filesystem.denyRead`. Questi vengono uniti con qualsiasi percorso dalle regole di autorizzazione `Edit(...)` e `Read(...)`. Per ri-consentire la lettura di percorsi specifici all'interno di una regione `denyRead`, utilizza `sandbox.filesystem.allowRead`, che ha la precedenza su `denyRead`. Quando `allowManagedReadPathsOnly` è abilitato nelle impostazioni gestite, solo le voci `allowRead` gestite sono rispettate; le voci `allowRead` dell'utente, del progetto e locali vengono ignorate.
+
+Ad esempio, per bloccare la lettura dall'intera directory home consentendo comunque letture dal progetto corrente, aggiungi questo al `.claude/settings.json` del tuo progetto:
+
+```json  theme={null}
+{
+  "sandbox": {
+    "enabled": true,
+    "filesystem": {
+      "denyRead": ["~/"],
+      "allowRead": ["."]
+    }
+  }
+}
+```
+
+Il `.` in `allowRead` si risolve nella radice del progetto perché questa configurazione si trova nelle impostazioni del progetto. Se hai posizionato la stessa configurazione in `~/.claude/settings.json`, `.` si risolverebbe in `~/.claude` invece, e i file del progetto rimarrebbero bloccati dalla regola `denyRead`.
 
 <Tip>
   Non tutti i comandi sono compatibili con il sandboxing subito. Alcuni appunti che potrebbero aiutarti a ottenere il massimo dalla sandbox:
@@ -227,6 +244,7 @@ Le restrizioni di filesystem e rete sono configurate sia tramite le impostazioni
 
 * Utilizza `sandbox.filesystem.allowWrite` per concedere l'accesso in scrittura dei sottoprocessi a percorsi al di fuori della directory di lavoro
 * Utilizza `sandbox.filesystem.denyWrite` e `sandbox.filesystem.denyRead` per bloccare l'accesso dei sottoprocessi a percorsi specifici
+* Utilizza `sandbox.filesystem.allowRead` per ri-consentire la lettura di percorsi specifici all'interno di una regione `denyRead`
 * Utilizza le regole di negazione `Read` e `Edit` per bloccare l'accesso a file o directory specifici
 * Utilizza le regole di consentimento/negazione `WebFetch` per controllare l'accesso al dominio
 * Utilizza la sandbox `allowedDomains` per controllare quali domini i comandi Bash possono raggiungere
@@ -288,6 +306,13 @@ Per i dettagli di implementazione e il codice sorgente, visita il [repository Gi
 * **Overhead di prestazioni**: Minimo, ma alcune operazioni del filesystem potrebbero essere leggermente più lente
 * **Compatibilità**: Alcuni strumenti che richiedono modelli di accesso al sistema specifici potrebbero necessitare di regolazioni di configurazione, o potrebbero anche dover essere eseguiti al di fuori della sandbox
 * **Supporto della piattaforma**: Supporta macOS, Linux e WSL2. WSL1 non è supportato. Il supporto nativo di Windows è pianificato.
+
+## Cosa il sandboxing non copre
+
+La sandbox isola i sottoprocessi Bash. Altri strumenti operano sotto confini diversi:
+
+* **Strumenti di file integrati**: Read, Edit e Write utilizzano il sistema di autorizzazione direttamente piuttosto che eseguire attraverso la sandbox. Vedi [autorizzazioni](/it/permissions).
+* **Utilizzo del computer su Desktop**: quando Claude apre app e controlla lo schermo su macOS, viene eseguito sul tuo desktop effettivo piuttosto che in un ambiente isolato. I prompt di autorizzazione per app gating ogni applicazione. Vedi [utilizzo del computer](/it/desktop#let-claude-use-your-computer).
 
 ## Vedi anche
 

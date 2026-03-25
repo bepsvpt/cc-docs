@@ -4,7 +4,7 @@
 
 # Ikhtisar Claude Code
 
-> Claude Code adalah alat pengkodean agentic yang membaca basis kode Anda, mengedit file, menjalankan perintah, dan terintegrasi dengan alat pengembangan Anda. Tersedia di terminal, IDE, aplikasi desktop, dan browser Anda.
+> Claude Code adalah alat pengkodean agentic yang membaca basis kode Anda, mengedit file, menjalankan perintah, dan terintegrasi dengan alat pengembangan Anda. Tersedia di terminal, IDE, aplikasi desktop, dan browser.
 
 Claude Code adalah asisten pengkodean bertenaga AI yang membantu Anda membangun fitur, memperbaiki bug, dan mengotomatisasi tugas pengembangan. Ini memahami seluruh basis kode Anda dan dapat bekerja di berbagai file dan alat untuk menyelesaikan pekerjaan.
 
@@ -173,23 +173,32 @@ Berikut adalah beberapa cara Anda dapat menggunakan Claude Code:
     Claude Code dapat dikomposisi dan mengikuti filosofi Unix. Pipa log ke dalamnya, jalankan di CI, atau rantai dengan alat lain:
 
     ```bash  theme={null}
-    # Monitor logs and get alerted
-    tail -f app.log | claude -p "Slack me if you see any anomalies"
+    # Analisis keluaran log terbaru
+    tail -200 app.log | claude -p "Slack me if you see any anomalies"
 
-    # Automate translations in CI
+    # Otomatisasi terjemahan di CI
     claude -p "translate new strings into French and raise a PR for review"
 
-    # Bulk operations across files
+    # Operasi massal di seluruh file
     git diff main --name-only | claude -p "review these changed files for security issues"
     ```
 
     Lihat [referensi CLI](/id/cli-reference) untuk set lengkap perintah dan flag.
   </Accordion>
 
+  <Accordion title="Jadwalkan tugas berulang" icon="clock">
+    Jalankan Claude sesuai jadwal untuk mengotomatisasi pekerjaan yang berulang: tinjauan PR pagi, analisis kegagalan CI semalam, audit dependensi mingguan, atau sinkronisasi dokumen setelah PR digabung.
+
+    * [Tugas terjadwal cloud](/id/web-scheduled-tasks) berjalan pada infrastruktur yang dikelola Anthropic, jadi mereka terus berjalan bahkan ketika komputer Anda mati. Buatnya dari web, aplikasi Desktop, atau dengan menjalankan `/schedule` di CLI.
+    * [Tugas terjadwal desktop](/id/desktop#schedule-recurring-tasks) berjalan di mesin Anda, dengan akses langsung ke file dan alat lokal Anda
+    * [`/loop`](/id/scheduled-tasks) mengulangi prompt dalam sesi CLI untuk polling cepat
+  </Accordion>
+
   <Accordion title="Bekerja dari mana saja" icon="globe">
     Sesi tidak terikat pada satu permukaan. Pindahkan pekerjaan antar lingkungan saat konteks Anda berubah:
 
     * Tinggalkan meja Anda dan terus bekerja dari ponsel atau browser apa pun dengan [Remote Control](/id/remote-control)
+    * Kirim pesan [Dispatch](/id/desktop#sessions-from-dispatch) tugas dari ponsel Anda dan buka sesi Desktop yang dibuatnya
     * Mulai tugas yang berjalan lama di [web](/id/claude-code-on-the-web) atau [aplikasi iOS](https://apps.apple.com/app/claude-by-anthropic/id6473753684), kemudian tariknya ke terminal Anda dengan `/teleport`
     * Serahkan sesi terminal ke [aplikasi Desktop](/id/desktop) dengan `/desktop` untuk tinjauan diff visual
     * Rute tugas dari obrolan tim: sebutkan `@Claude` di [Slack](/id/slack) dengan laporan bug dan dapatkan pull request kembali
@@ -202,15 +211,17 @@ Setiap permukaan terhubung ke mesin Claude Code yang mendasar yang sama, jadi fi
 
 Selain lingkungan [Terminal](/id/quickstart), [VS Code](/id/vs-code), [JetBrains](/id/jetbrains), [Desktop](/id/desktop), dan [Web](/id/claude-code-on-the-web) di atas, Claude Code terintegrasi dengan alur kerja CI/CD, obrolan, dan browser:
 
-| Saya ingin...                                        | Opsi terbaik                                                                                                              |
-| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Lanjutkan sesi lokal dari ponsel atau perangkat lain | [Remote Control](/id/remote-control)                                                                                      |
-| Mulai tugas secara lokal, lanjutkan di mobile        | [Web](/id/claude-code-on-the-web) atau [aplikasi Claude iOS](https://apps.apple.com/app/claude-by-anthropic/id6473753684) |
-| Otomatisasi tinjauan PR dan triase masalah           | [GitHub Actions](/id/github-actions) atau [GitLab CI/CD](/id/gitlab-ci-cd)                                                |
-| Dapatkan tinjauan kode otomatis di setiap PR         | [GitHub Code Review](/id/code-review)                                                                                     |
-| Rute laporan bug dari Slack ke pull request          | [Slack](/id/slack)                                                                                                        |
-| Debug aplikasi web langsung                          | [Chrome](/id/chrome)                                                                                                      |
-| Bangun agen khusus untuk alur kerja Anda sendiri     | [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview)                                                       |
+| Saya ingin...                                                                | Opsi terbaik                                                                                                              |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Lanjutkan sesi lokal dari ponsel atau perangkat lain                         | [Remote Control](/id/remote-control)                                                                                      |
+| Dorong acara dari Telegram, Discord, atau webhook saya sendiri ke dalam sesi | [Channels](/id/channels)                                                                                                  |
+| Mulai tugas secara lokal, lanjutkan di mobile                                | [Web](/id/claude-code-on-the-web) atau [aplikasi Claude iOS](https://apps.apple.com/app/claude-by-anthropic/id6473753684) |
+| Jalankan Claude sesuai jadwal berulang                                       | [Tugas terjadwal cloud](/id/web-scheduled-tasks) atau [Tugas terjadwal desktop](/id/desktop#schedule-recurring-tasks)     |
+| Otomatisasi tinjauan PR dan triase masalah                                   | [GitHub Actions](/id/github-actions) atau [GitLab CI/CD](/id/gitlab-ci-cd)                                                |
+| Dapatkan tinjauan kode otomatis di setiap PR                                 | [GitHub Code Review](/id/code-review)                                                                                     |
+| Rute laporan bug dari Slack ke pull request                                  | [Slack](/id/slack)                                                                                                        |
+| Debug aplikasi web langsung                                                  | [Chrome](/id/chrome)                                                                                                      |
+| Bangun agen khusus untuk alur kerja Anda sendiri                             | [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview)                                                       |
 
 ## Langkah berikutnya
 

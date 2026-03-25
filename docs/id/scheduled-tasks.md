@@ -10,9 +10,29 @@
   Tugas terjadwal memerlukan Claude Code v2.1.72 atau lebih baru. Periksa versi Anda dengan `claude --version`.
 </Note>
 
-Tugas terjadwal memungkinkan Claude menjalankan kembali prompt secara otomatis pada interval tertentu. Gunakan untuk polling deployment, mengawasi PR, memeriksa build yang berjalan lama, atau mengingatkan diri sendiri untuk melakukan sesuatu nanti dalam sesi.
+Tugas terjadwal memungkinkan Claude menjalankan kembali prompt secara otomatis pada interval tertentu. Gunakan untuk polling deployment, mengawasi PR, memeriksa build yang berjalan lama, atau mengingatkan diri sendiri untuk melakukan sesuatu nanti dalam sesi. Untuk bereaksi terhadap peristiwa saat terjadi daripada polling, lihat [Channels](/id/channels): CI Anda dapat mendorong kegagalan ke dalam sesi secara langsung.
 
-Tugas bersifat session-scoped: mereka hidup dalam proses Claude Code saat ini dan hilang saat Anda keluar. Untuk penjadwalan yang tahan lama yang bertahan setelah restart dan berjalan tanpa sesi terminal aktif, lihat [Desktop scheduled tasks](/id/desktop#schedule-recurring-tasks) atau [GitHub Actions](/id/github-actions).
+Tugas bersifat session-scoped: mereka hidup dalam proses Claude Code saat ini dan hilang saat Anda keluar. Untuk penjadwalan yang tahan lama yang bertahan setelah restart, gunakan tugas terjadwal [Cloud](/id/web-scheduled-tasks) atau [Desktop](/id/desktop#schedule-recurring-tasks), atau [GitHub Actions](/id/github-actions).
+
+## Bandingkan opsi penjadwalan
+
+Claude Code offers three ways to schedule recurring work:
+
+|                            | [Cloud](/en/web-scheduled-tasks) | [Desktop](/en/desktop#schedule-recurring-tasks) | [`/loop`](/en/scheduled-tasks) |
+| :------------------------- | :------------------------------- | :---------------------------------------------- | :----------------------------- |
+| Runs on                    | Anthropic cloud                  | Your machine                                    | Your machine                   |
+| Requires machine on        | No                               | Yes                                             | Yes                            |
+| Requires open session      | No                               | No                                              | Yes                            |
+| Persistent across restarts | Yes                              | Yes                                             | No (session-scoped)            |
+| Access to local files      | No (fresh clone)                 | Yes                                             | Yes                            |
+| MCP servers                | Connectors configured per task   | [Config files](/en/mcp) and connectors          | Inherits from session          |
+| Permission prompts         | No (runs autonomously)           | Configurable per task                           | Inherits from session          |
+| Customizable schedule      | Via `/schedule` in the CLI       | Yes                                             | Yes                            |
+| Minimum interval           | 1 hour                           | 1 minute                                        | 1 minute                       |
+
+<Tip>
+  Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
+</Tip>
 
 ## Jadwalkan prompt berulang dengan /loop
 
@@ -99,7 +119,7 @@ Offset berasal dari ID tugas, jadi tugas yang sama selalu mendapatkan offset yan
 
 ### Kedaluwarsa tiga hari
 
-Tugas berulang secara otomatis kedaluwarsa 3 hari setelah pembuatan. Tugas berjalan satu kali terakhir, kemudian menghapus dirinya sendiri. Ini membatasi berapa lama loop yang terlupakan dapat berjalan. Jika Anda memerlukan tugas berulang untuk bertahan lebih lama, batalkan dan buat ulang sebelum kedaluwarsa, atau gunakan [Desktop scheduled tasks](/id/desktop#schedule-recurring-tasks) untuk penjadwalan yang tahan lama.
+Tugas berulang secara otomatis kedaluwarsa 3 hari setelah pembuatan. Tugas berjalan satu kali terakhir, kemudian menghapus dirinya sendiri. Ini membatasi berapa lama loop yang terlupakan dapat berjalan. Jika Anda memerlukan tugas berulang untuk bertahan lebih lama, batalkan dan buat ulang sebelum kedaluwarsa, atau gunakan [Cloud scheduled tasks](/id/web-scheduled-tasks) atau [Desktop scheduled tasks](/id/desktop#schedule-recurring-tasks) untuk penjadwalan yang tahan lama.
 
 ## Referensi ekspresi cron
 
@@ -130,4 +150,8 @@ Penjadwalan session-scoped memiliki batasan yang melekat:
 * Tidak ada catch-up untuk fire yang terlewat. Jika waktu terjadwal tugas berlalu saat Claude sibuk dengan permintaan yang berjalan lama, itu berjalan sekali saat Claude menjadi idle, bukan sekali per interval yang terlewat.
 * Tidak ada persistensi di seluruh restart. Memulai ulang Claude Code menghapus semua tugas session-scoped.
 
-Untuk otomasi yang didorong cron yang perlu berjalan tanpa pengawasan, gunakan [GitHub Actions workflow](/id/github-actions) dengan trigger `schedule`, atau [Desktop scheduled tasks](/id/desktop#schedule-recurring-tasks) jika Anda menginginkan alur pengaturan grafis.
+Untuk otomasi yang didorong cron yang perlu berjalan tanpa pengawasan:
+
+* [Cloud scheduled tasks](/id/web-scheduled-tasks): berjalan pada infrastruktur yang dikelola Anthropic
+* [GitHub Actions](/id/github-actions): gunakan trigger `schedule` dalam CI
+* [Desktop scheduled tasks](/id/desktop#schedule-recurring-tasks): berjalan secara lokal di mesin Anda

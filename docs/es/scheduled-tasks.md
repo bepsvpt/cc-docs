@@ -10,9 +10,29 @@
   Las tareas programadas requieren Claude Code v2.1.72 o posterior. Verifique su versión con `claude --version`.
 </Note>
 
-Las tareas programadas permiten que Claude vuelva a ejecutar un prompt automáticamente en un intervalo. Úselas para sondear una implementación, supervisar un PR, verificar una compilación de larga duración o recordarse a sí mismo que debe hacer algo más adelante en la sesión.
+Las tareas programadas permiten que Claude vuelva a ejecutar un prompt automáticamente en un intervalo. Úselas para sondear una implementación, supervisar un PR, verificar una compilación de larga duración o recordarse a sí mismo que debe hacer algo más adelante en la sesión. Para reaccionar a eventos a medida que ocurren en lugar de sondear, consulte [Channels](/es/channels): su CI puede insertar el error directamente en la sesión.
 
-Las tareas tienen alcance de sesión: viven en el proceso actual de Claude Code y desaparecen cuando sale. Para la programación duradera que sobrevive a los reinicios y se ejecuta sin una sesión de terminal activa, consulte [tareas programadas de Desktop](/es/desktop#schedule-recurring-tasks) o [GitHub Actions](/es/github-actions).
+Las tareas tienen alcance de sesión: viven en el proceso actual de Claude Code y desaparecen cuando sale. Para la programación duradera que sobrevive a los reinicios, utilice tareas programadas de [Cloud](/es/web-scheduled-tasks) o [Desktop](/es/desktop#schedule-recurring-tasks), o [GitHub Actions](/es/github-actions).
+
+## Comparar opciones de programación
+
+Claude Code offers three ways to schedule recurring work:
+
+|                            | [Cloud](/en/web-scheduled-tasks) | [Desktop](/en/desktop#schedule-recurring-tasks) | [`/loop`](/en/scheduled-tasks) |
+| :------------------------- | :------------------------------- | :---------------------------------------------- | :----------------------------- |
+| Runs on                    | Anthropic cloud                  | Your machine                                    | Your machine                   |
+| Requires machine on        | No                               | Yes                                             | Yes                            |
+| Requires open session      | No                               | No                                              | Yes                            |
+| Persistent across restarts | Yes                              | Yes                                             | No (session-scoped)            |
+| Access to local files      | No (fresh clone)                 | Yes                                             | Yes                            |
+| MCP servers                | Connectors configured per task   | [Config files](/en/mcp) and connectors          | Inherits from session          |
+| Permission prompts         | No (runs autonomously)           | Configurable per task                           | Inherits from session          |
+| Customizable schedule      | Via `/schedule` in the CLI       | Yes                                             | Yes                            |
+| Minimum interval           | 1 hour                           | 1 minute                                        | 1 minute                       |
+
+<Tip>
+  Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
+</Tip>
 
 ## Programar un prompt recurrente con /loop
 
@@ -99,7 +119,7 @@ El desplazamiento se deriva del ID de la tarea, por lo que la misma tarea siempr
 
 ### Vencimiento de tres días
 
-Las tareas recurrentes expiran automáticamente 3 días después de su creación. La tarea se ejecuta una última vez y luego se elimina a sí misma. Esto limita cuánto tiempo puede ejecutarse un bucle olvidado. Si necesita que una tarea recurrente dure más, cancele y recree antes de que expire, o use [tareas programadas de Desktop](/es/desktop#schedule-recurring-tasks) para programación duradera.
+Las tareas recurrentes expiran automáticamente 3 días después de su creación. La tarea se ejecuta una última vez y luego se elimina a sí misma. Esto limita cuánto tiempo puede ejecutarse un bucle olvidado. Si necesita que una tarea recurrente dure más, cancele y recree antes de que expire, o utilice [tareas programadas de Cloud](/es/web-scheduled-tasks) o [tareas programadas de Desktop](/es/desktop#schedule-recurring-tasks) para programación duradera.
 
 ## Referencia de expresión cron
 
@@ -130,4 +150,8 @@ La programación con alcance de sesión tiene limitaciones inherentes:
 * Sin recuperación de disparos perdidos. Si el tiempo programado de una tarea pasa mientras Claude está ocupado en una solicitud de larga duración, se ejecuta una vez cuando Claude queda inactivo, no una vez por intervalo perdido.
 * Sin persistencia entre reinicios. Reiniciar Claude Code borra todas las tareas con alcance de sesión.
 
-Para la automatización impulsada por cron que necesita ejecutarse sin supervisión, use un [flujo de trabajo de GitHub Actions](/es/github-actions) con un disparador `schedule`, o [tareas programadas de Desktop](/es/desktop#schedule-recurring-tasks) si desea un flujo de configuración gráfico.
+Para la automatización impulsada por cron que necesita ejecutarse sin supervisión:
+
+* [Tareas programadas de Cloud](/es/web-scheduled-tasks): se ejecutan en infraestructura administrada por Anthropic
+* [GitHub Actions](/es/github-actions): utilice un disparador `schedule` en CI
+* [Tareas programadas de Desktop](/es/desktop#schedule-recurring-tasks): se ejecutan localmente en su máquina

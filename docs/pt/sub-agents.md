@@ -78,7 +78,7 @@ Além desses subagentes integrados, você pode criar os seus próprios com promp
 
 Subagentes são definidos em arquivos Markdown com frontmatter YAML. Você pode [criá-los manualmente](#write-subagent-files) ou usar o comando `/agents`.
 
-Este passo a passo o guia através da criação de um subagente no nível do usuário com o comando `/agent`. O subagente revisa código e sugere melhorias para a base de código.
+Este passo a passo o guia através da criação de um subagente no nível do usuário com o comando `/agents`. O subagente revisa código e sugere melhorias para a base de código.
 
 <Steps>
   <Step title="Abrir a interface de subagentes">
@@ -89,8 +89,8 @@ Este passo a passo o guia através da criação de um subagente no nível do usu
     ```
   </Step>
 
-  <Step title="Criar um novo agente no nível do usuário">
-    Selecione **Create new agent**, depois escolha **User-level**. Isso salva o subagente em `~/.claude/agents/` para que esteja disponível em todos os seus projetos.
+  <Step title="Escolher um local">
+    Selecione **Create new agent**, depois escolha **Personal**. Isso salva o subagente em `~/.claude/agents/` para que esteja disponível em todos os seus projetos.
   </Step>
 
   <Step title="Gerar com Claude">
@@ -102,7 +102,7 @@ Este passo a passo o guia através da criação de um subagente no nível do usu
     each issue, show the current code, and provide an improved version.
     ```
 
-    Claude gera o prompt de sistema e a configuração. Pressione `e` para abri-lo no seu editor se quiser personalizá-lo.
+    Claude gera o identificador, descrição e prompt de sistema para você.
   </Step>
 
   <Step title="Selecionar ferramentas">
@@ -117,8 +117,12 @@ Este passo a passo o guia através da criação de um subagente no nível do usu
     Escolha uma cor de fundo para o subagente. Isso ajuda você a identificar qual subagente está sendo executado na interface do usuário.
   </Step>
 
+  <Step title="Configurar memória">
+    Selecione **User scope** para dar ao subagente um [diretório de memória persistente](#enable-persistent-memory) em `~/.claude/agent-memory/`. O subagente usa isso para acumular insights entre conversas, como padrões de base de código e problemas recorrentes. Selecione **None** se você não quiser que o subagente persista aprendizados.
+  </Step>
+
   <Step title="Salvar e testar">
-    Salve o subagente. Ele está disponível imediatamente (sem necessidade de reiniciar). Teste-o:
+    Revise o resumo de configuração. Pressione `s` ou `Enter` para salvar, ou pressione `e` para salvar e editar o arquivo em seu editor. O subagente está disponível imediatamente. Teste-o:
 
     ```text  theme={null}
     Use the code-improver agent to suggest improvements in this project
@@ -180,7 +184,7 @@ claude --agents '{
 }'
 ```
 
-O flag `--agents` aceita JSON com os mesmos campos de [frontmatter](#supported-frontmatter-fields) que subagentes baseados em arquivo: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills` e `memory`. Use `prompt` para o prompt de sistema, equivalente ao corpo markdown em subagentes baseados em arquivo.
+O flag `--agents` aceita JSON com os mesmos campos de [frontmatter](#supported-frontmatter-fields) que subagentes baseados em arquivo: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `memory`, `effort`, `background` e `isolation`. Use `prompt` para o prompt de sistema, equivalente ao corpo markdown em subagentes baseados em arquivo.
 
 **Subagentes de plugin** vêm de [plugins](/pt/plugins) que você instalou. Eles aparecem em `/agents` junto com seus subagentes personalizados. Veja a [referência de componentes de plugin](/pt/plugins-reference#agents) para detalhes sobre como criar subagentes de plugin.
 
@@ -247,16 +251,27 @@ Você pode controlar o que subagentes podem fazer através de acesso a ferrament
 
 Subagentes podem usar qualquer uma das [ferramentas internas](/pt/tools-reference) do Claude Code. Por padrão, subagentes herdam todas as ferramentas da conversa principal, incluindo ferramentas MCP.
 
-Para restringir ferramentas, use o campo `tools` (lista de permissões) ou campo `disallowedTools` (lista de negação):
+Para restringir ferramentas, use o campo `tools` (lista de permissões) ou campo `disallowedTools` (lista de negação). Este exemplo usa `tools` para permitir exclusivamente Read, Grep, Glob e Bash. O subagente não pode editar arquivos, escrever arquivos ou usar qualquer ferramenta MCP:
 
 ```yaml  theme={null}
 ---
 name: safe-researcher
 description: Research agent with restricted capabilities
 tools: Read, Grep, Glob, Bash
+---
+```
+
+Este exemplo usa `disallowedTools` para herdar todas as ferramentas da conversa principal exceto Write e Edit. O subagente mantém Bash, ferramentas MCP e tudo mais:
+
+```yaml  theme={null}
+---
+name: no-writes
+description: Inherits every tool except file writes
 disallowedTools: Write, Edit
 ---
 ```
+
+Se ambos forem definidos, `disallowedTools` é aplicado primeiro, depois `tools` é resolvido contra o pool restante. Uma ferramenta listada em ambos é removida.
 
 #### Restringir quais subagentes podem ser gerados
 
@@ -311,21 +326,21 @@ Para manter um MCP server fora da conversa principal inteiramente e evitar que s
 
 #### Modos de permissão
 
-O campo `permissionMode` controla como o subagente lida com prompts de permissão. Subagentes herdam o contexto de permissão da conversa principal mas podem sobrescrever o modo.
+O campo `permissionMode` controla como o subagente lida com prompts de permissão. Subagentes herdam o contexto de permissão da conversa principal e podem sobrescrever o modo, exceto quando o modo pai tem precedência conforme descrito abaixo.
 
 | Mode                | Behavior                                                                                |
 | :------------------ | :-------------------------------------------------------------------------------------- |
 | `default`           | Verificação de permissão padrão com prompts                                             |
 | `acceptEdits`       | Auto-aceitar edições de arquivo                                                         |
 | `dontAsk`           | Auto-negar prompts de permissão (ferramentas explicitamente permitidas ainda funcionam) |
-| `bypassPermissions` | Pular todas as verificações de permissão                                                |
+| `bypassPermissions` | Pular prompts de permissão                                                              |
 | `plan`              | Plan mode (exploração somente leitura)                                                  |
 
 <Warning>
-  Use `bypassPermissions` com cuidado. Ele pula todas as verificações de permissão, permitindo que o subagente execute qualquer operação sem aprovação.
+  Use `bypassPermissions` com cuidado. Ele pula prompts de permissão, permitindo que o subagente execute operações sem aprovação. Escritas em diretórios `.git`, `.claude`, `.vscode` e `.idea` ainda solicitam confirmação, exceto para `.claude/commands`, `.claude/agents` e `.claude/skills`. Veja [modos de permissão](/pt/permission-modes#skip-all-checks-with-bypasspermissions-mode) para detalhes.
 </Warning>
 
-Se o pai usar `bypassPermissions`, isso tem precedência e não pode ser sobrescrito.
+Se o pai usar `bypassPermissions`, isso tem precedência e não pode ser sobrescrito. Se o pai usar [auto mode](/pt/permission-modes#eliminate-prompts-with-auto-mode), o subagente herda auto mode e qualquer `permissionMode` em seu frontmatter é ignorado: o classificador avalia as chamadas de ferramentas do subagente com as mesmas regras de bloqueio e permissão que a sessão pai.
 
 #### Pré-carregar skills em subagentes
 
@@ -380,7 +395,7 @@ Quando memória está habilitada:
 
 ##### Dicas de memória persistente
 
-* `user` é o escopo padrão recomendado. Use `project` ou `local` quando o conhecimento do subagente é apenas relevante para uma base de código específica.
+* `project` é o escopo padrão recomendado. Ele torna o conhecimento do subagente compartilhável via controle de versão. Use `user` quando o conhecimento do subagente é amplamente aplicável entre projetos, ou `local` quando o conhecimento não deve ser verificado no controle de versão.
 * Peça ao subagente para consultar sua memória antes de começar o trabalho: "Review this PR, and check your memory for patterns you've seen before."
 * Peça ao subagente para atualizar sua memória após completar uma tarefa: "Now that you're done, save what you learned to your memory." Ao longo do tempo, isso constrói uma base de conhecimento que torna o subagente mais eficaz.
 * Inclua instruções de memória diretamente no arquivo markdown do subagente para que ele mantenha proativamente sua própria base de conhecimento:
@@ -534,12 +549,52 @@ Veja [Hooks](/pt/hooks) para o formato de configuração de hook completo.
 
 Claude delega automaticamente tarefas baseado na descrição da tarefa em sua solicitação, no campo `description` em configurações de subagente e no contexto atual. Para encorajar delegação proativa, inclua frases como "use proactively" no campo description do seu subagente.
 
-Você também pode solicitar um subagente específico explicitamente:
+### Invocar subagentes explicitamente
+
+Quando delegação automática não é suficiente, você pode solicitar um subagente você mesmo. Três padrões escalam de uma sugestão única para um padrão padrão em toda a sessão:
+
+* **Linguagem natural**: nomeie o subagente em seu prompt; Claude decide se deve delegar
+* **@-mention**: garante que o subagente seja executado para uma tarefa
+* **Em toda a sessão**: toda a sessão usa o prompt de sistema, restrições de ferramentas e modelo do subagente via flag `--agent` ou configuração `agent`
+
+Para linguagem natural, não há sintaxe especial. Nomeie o subagente e Claude normalmente delega:
 
 ```text  theme={null}
 Use the test-runner subagent to fix failing tests
 Have the code-reviewer subagent look at my recent changes
 ```
+
+**@-mention o subagente.** Digite `@` e escolha o subagente do typeahead, da mesma forma que você @-menciona arquivos. Isso garante que esse subagente específico seja executado em vez de deixar a escolha para Claude:
+
+```text  theme={null}
+@"code-reviewer (agent)" look at the auth changes
+```
+
+Sua mensagem completa ainda vai para Claude, que escreve o prompt de tarefa do subagente baseado no que você pediu. O @-mention controla qual subagente Claude invoca, não qual prompt ele recebe.
+
+Subagentes fornecidos por um [plugin](/pt/plugins) habilitado aparecem no typeahead como `<plugin-name>:<agent-name>`. Você também pode digitar a menção manualmente sem usar o picker: `@agent-<name>` para subagentes locais, ou `@agent-<plugin-name>:<agent-name>` para subagentes de plugin.
+
+**Execute toda a sessão como um subagente.** Passe [`--agent <name>`](/pt/cli-reference) para iniciar uma sessão onde a thread principal em si assume o prompt de sistema, restrições de ferramentas e modelo do subagente:
+
+```bash  theme={null}
+claude --agent code-reviewer
+```
+
+O prompt de sistema do subagente substitui completamente o prompt de sistema padrão do Claude Code, da mesma forma que [`--system-prompt`](/pt/cli-reference) faz. Arquivos `CLAUDE.md` e memória de projeto ainda carregam através do fluxo de mensagem normal. O nome do agente aparece como `@<name>` no cabeçalho de inicialização para que você possa confirmar que está ativo.
+
+Isso funciona com subagentes integrados e personalizados, e a escolha persiste quando você retoma a sessão.
+
+Para um subagente fornecido por plugin, passe o nome com escopo: `claude --agent <plugin-name>:<agent-name>`.
+
+Para torná-lo o padrão para cada sessão em um projeto, defina `agent` em `.claude/settings.json`:
+
+```json  theme={null}
+{
+  "agent": "code-reviewer"
+}
+```
+
+O flag CLI sobrescreve a configuração se ambos estiverem presentes.
 
 ### Executar subagentes em foreground ou background
 
@@ -548,7 +603,7 @@ Subagentes podem ser executados em foreground (bloqueante) ou background (concor
 * **Subagentes em foreground** bloqueiam a conversa principal até completar. Prompts de permissão e perguntas de esclarecimento (como [`AskUserQuestion`](/pt/tools-reference)) são passados para você.
 * **Subagentes em background** são executados concorrentemente enquanto você continua trabalhando. Antes de iniciar, Claude Code solicita quaisquer permissões de ferramentas que o subagente precisará, garantindo que ele tenha as aprovações necessárias antecipadamente. Uma vez em execução, o subagente herda essas permissões e auto-nega qualquer coisa não pré-aprovada. Se um subagente em background precisa fazer perguntas de esclarecimento, essa chamada de ferramenta falha mas o subagente continua.
 
-Se um subagente em background falha devido a permissões ausentes, você pode [retomá-lo](#resume-subagents) em foreground para tentar novamente com prompts interativos.
+Se um subagente em background falha devido a permissões ausentes, você pode iniciar um novo subagente em foreground com a mesma tarefa para tentar novamente com prompts interativos.
 
 Claude decide se deve executar subagentes em foreground ou background baseado na tarefa. Você também pode:
 
@@ -622,7 +677,7 @@ Cada invocação de subagente cria uma nova instância com contexto fresco. Para
 
 Subagentes retomados retêm seu histórico de conversa completo, incluindo todas as chamadas de ferramentas anteriores, resultados e raciocínio. O subagente continua exatamente de onde parou em vez de começar do zero.
 
-Quando um subagente completa, Claude recebe seu ID de agente. Para retomar um subagente, peça a Claude para continuar o trabalho anterior:
+Quando um subagente completa, Claude recebe seu ID de agente. Claude usa a ferramenta `SendMessage` com o ID do agente como campo `to` para retomá-lo. Para retomar um subagente, peça a Claude para continuar o trabalho anterior:
 
 ```text  theme={null}
 Use the code-reviewer subagent to review the authentication module
@@ -631,6 +686,8 @@ Use the code-reviewer subagent to review the authentication module
 Continue that code review and now analyze the authorization logic
 [Claude resumes the subagent with full context from previous conversation]
 ```
+
+Se um subagente parado recebe um `SendMessage`, ele auto-retoma em background sem exigir uma nova invocação de `Agent`.
 
 Você também pode pedir a Claude pelo ID do agente se quiser referenciá-lo explicitamente, ou encontrar IDs nos arquivos de transcrição em `~/.claude/projects/{project}/{sessionId}/subagents/`. Cada transcrição é armazenada como `agent-{agentId}.jsonl`.
 

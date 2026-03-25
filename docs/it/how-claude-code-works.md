@@ -124,7 +124,7 @@ Questo crea un nuovo ID di sessione preservando la cronologia della conversazion
 
 ### La finestra di contesto
 
-La finestra di contesto di Claude contiene la cronologia della tua conversazione, i contenuti dei file, gli output dei comandi, [CLAUDE.md](/it/memory), le skills caricate e le istruzioni di sistema. Man mano che lavori, il contesto si riempie. Claude compatta automaticamente, ma le istruzioni dall'inizio della conversazione possono andare perse. Metti le regole persistenti in CLAUDE.md ed esegui `/context` per vedere cosa sta usando lo spazio.
+La finestra di contesto di Claude contiene la cronologia della tua conversazione, i contenuti dei file, gli output dei comandi, [CLAUDE.md](/it/memory), [auto memory](/it/memory#auto-memory), le skills caricate e le istruzioni di sistema. Man mano che lavori, il contesto si riempie. Claude compatta automaticamente, ma le istruzioni dall'inizio della conversazione possono andare perse. Metti le regole persistenti in CLAUDE.md ed esegui `/context` per vedere cosa sta usando lo spazio.
 
 #### Quando il contesto si riempie
 
@@ -161,6 +161,7 @@ Premi `Shift+Tab` per scorrere le modalità di permesso:
 * **Predefinito**: Claude chiede prima delle modifiche ai file e dei comandi shell
 * **Auto-accept edits**: Claude modifica i file senza chiedere, chiede ancora per i comandi
 * **Plan mode**: Claude utilizza solo strumenti di sola lettura, creando un piano che puoi approvare prima dell'esecuzione
+* **Auto mode**: Claude valuta tutte le azioni con controlli di sicurezza in background. Attualmente un'anteprima di ricerca
 
 Puoi anche consentire comandi specifici in `.claude/settings.json` in modo che Claude non chieda ogni volta. Questo è utile per comandi affidabili come `npm test` o `git status`. Le impostazioni possono essere scoped da politiche a livello di organizzazione fino alle preferenze personali. Consulta [Permessi](/it/permissions) per i dettagli.
 

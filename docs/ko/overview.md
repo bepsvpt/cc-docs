@@ -173,23 +173,32 @@ Claude Code를 사용할 수 있는 몇 가지 방법은 다음과 같습니다:
     Claude Code는 구성 가능하며 Unix 철학을 따릅니다. 로그를 파이프하고, CI에서 실행하거나, 다른 도구와 연결합니다:
 
     ```bash  theme={null}
-    # Monitor logs and get alerted
-    tail -f app.log | claude -p "Slack me if you see any anomalies"
+    # 최근 로그 출력 분석
+    tail -200 app.log | claude -p "Slack me if you see any anomalies"
 
-    # Automate translations in CI
+    # CI에서 번역 자동화
     claude -p "translate new strings into French and raise a PR for review"
 
-    # Bulk operations across files
+    # 파일 전체에 걸친 대량 작업
     git diff main --name-only | claude -p "review these changed files for security issues"
     ```
 
     전체 명령 및 플래그 세트는 [CLI 참조](/ko/cli-reference)를 참조하세요.
   </Accordion>
 
+  <Accordion title="반복되는 작업 예약" icon="clock">
+    Claude를 일정에 따라 실행하여 반복되는 작업을 자동화합니다: 아침 PR 검토, 야간 CI 실패 분석, 주간 종속성 감사 또는 PR 병합 후 문서 동기화.
+
+    * [클라우드 예약된 작업](/ko/web-scheduled-tasks)은 Anthropic 관리 인프라에서 실행되므로 컴퓨터가 꺼져 있어도 계속 실행됩니다. 웹, 데스크톱 앱에서 생성하거나 CLI에서 `/schedule`을 실행하여 생성합니다.
+    * [데스크톱 예약된 작업](/ko/desktop#schedule-recurring-tasks)은 머신에서 실행되며 로컬 파일 및 도구에 직접 액세스할 수 있습니다
+    * [`/loop`](/ko/scheduled-tasks)는 빠른 폴링을 위해 CLI 세션 내에서 프롬프트를 반복합니다
+  </Accordion>
+
   <Accordion title="어디서나 작업" icon="globe">
     세션은 단일 환경에 연결되지 않습니다. 컨텍스트가 변경되면 환경 간에 작업을 이동합니다:
 
     * 책상에서 떠나 [원격 제어](/ko/remote-control)를 사용하여 휴대폰이나 모든 브라우저에서 계속 작업합니다
+    * [Dispatch](/ko/desktop#sessions-from-dispatch)에 휴대폰에서 작업을 메시지로 보내고 생성되는 데스크톱 세션을 엽니다
     * [웹](/ko/claude-code-on-the-web) 또는 [iOS 앱](https://apps.apple.com/app/claude-by-anthropic/id6473753684)에서 오래 실행되는 작업을 시작한 다음 `/teleport`를 사용하여 터미널로 가져옵니다
     * 터미널 세션을 [데스크톱 앱](/ko/desktop)으로 `/desktop`을 사용하여 시각적 diff 검토를 위해 전달합니다
     * 팀 채팅에서 작업을 라우팅합니다: [Slack](/ko/slack)에서 `@Claude`를 언급하고 버그 보고서를 포함하면 풀 요청을 다시 받습니다
@@ -202,15 +211,17 @@ Claude Code를 사용할 수 있는 몇 가지 방법은 다음과 같습니다:
 
 위의 [Terminal](/ko/quickstart), [VS Code](/ko/vs-code), [JetBrains](/ko/jetbrains), [Desktop](/ko/desktop) 및 [Web](/ko/claude-code-on-the-web) 환경 외에도 Claude Code는 CI/CD, 채팅 및 브라우저 워크플로우와 통합됩니다:
 
-| 원하는 것                     | 최적의 옵션                                                                                                         |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| 휴대폰이나 다른 기기에서 로컬 세션 계속하기  | [원격 제어](/ko/remote-control)                                                                                    |
-| 로컬에서 작업 시작, 모바일에서 계속      | [웹](/ko/claude-code-on-the-web) 또는 [Claude iOS 앱](https://apps.apple.com/app/claude-by-anthropic/id6473753684) |
-| PR 검토 및 이슈 분류 자동화         | [GitHub Actions](/ko/github-actions) 또는 [GitLab CI/CD](/ko/gitlab-ci-cd)                                       |
-| 모든 PR에서 자동 코드 검토 받기       | [GitHub Code Review](/ko/code-review)                                                                          |
-| Slack의 버그 보고서를 풀 요청으로 라우팅 | [Slack](/ko/slack)                                                                                             |
-| 라이브 웹 애플리케이션 디버깅          | [Chrome](/ko/chrome)                                                                                           |
-| 자신의 워크플로우를 위한 커스텀 에이전트 구축 | [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview)                                            |
+| 원하는 것                                     | 최적의 옵션                                                                                                         |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| 휴대폰이나 다른 기기에서 로컬 세션 계속하기                  | [원격 제어](/ko/remote-control)                                                                                    |
+| Telegram, Discord 또는 자신의 웹훅에서 세션으로 이벤트 푸시 | [Channels](/ko/channels)                                                                                       |
+| 로컬에서 작업 시작, 모바일에서 계속                      | [웹](/ko/claude-code-on-the-web) 또는 [Claude iOS 앱](https://apps.apple.com/app/claude-by-anthropic/id6473753684) |
+| Claude를 반복 일정에 따라 실행                      | [클라우드 예약된 작업](/ko/web-scheduled-tasks) 또는 [데스크톱 예약된 작업](/ko/desktop#schedule-recurring-tasks)                  |
+| PR 검토 및 이슈 분류 자동화                         | [GitHub Actions](/ko/github-actions) 또는 [GitLab CI/CD](/ko/gitlab-ci-cd)                                       |
+| 모든 PR에서 자동 코드 검토 받기                       | [GitHub Code Review](/ko/code-review)                                                                          |
+| Slack의 버그 보고서를 풀 요청으로 라우팅                 | [Slack](/ko/slack)                                                                                             |
+| 라이브 웹 애플리케이션 디버깅                          | [Chrome](/ko/chrome)                                                                                           |
+| 자신의 워크플로우를 위한 커스텀 에이전트 구축                 | [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview)                                            |
 
 ## 다음 단계
 

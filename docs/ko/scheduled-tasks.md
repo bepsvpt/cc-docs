@@ -10,9 +10,29 @@
   스케줄된 작업을 사용하려면 Claude Code v2.1.72 이상이 필요합니다. `claude --version`으로 버전을 확인하세요.
 </Note>
 
-스케줄된 작업을 사용하면 Claude가 일정한 간격으로 프롬프트를 자동으로 다시 실행할 수 있습니다. 배포를 폴링하거나, PR을 감시하거나, 오래 실행되는 빌드를 확인하거나, 나중에 세션에서 무언가를 하도록 자신에게 알림을 설정하는 데 사용합니다.
+스케줄된 작업을 사용하면 Claude가 일정한 간격으로 프롬프트를 자동으로 다시 실행할 수 있습니다. 배포를 폴링하거나, PR을 감시하거나, 오래 실행되는 빌드를 확인하거나, 나중에 세션에서 무언가를 하도록 자신에게 알림을 설정하는 데 사용합니다. 이벤트가 발생할 때 폴링하는 대신 반응하려면 [Channels](/ko/channels)를 참조하세요. CI가 실패를 세션에 직접 푸시할 수 있습니다.
 
-작업은 세션 범위입니다. 현재 Claude Code 프로세스에 존재하며 종료할 때 사라집니다. 재시작을 견디고 활성 터미널 세션 없이 실행되는 지속적인 스케줄링의 경우 [Desktop 스케줄된 작업](/ko/desktop#schedule-recurring-tasks) 또는 [GitHub Actions](/ko/github-actions)를 참조하세요.
+작업은 세션 범위입니다. 현재 Claude Code 프로세스에 존재하며 종료할 때 사라집니다. 재시작을 견디고 활성 터미널 세션 없이 실행되는 지속적인 스케줄링의 경우 [Cloud](/ko/web-scheduled-tasks) 또는 [Desktop](/ko/desktop#schedule-recurring-tasks) 스케줄된 작업을 사용하거나 [GitHub Actions](/ko/github-actions)를 참조하세요.
+
+## 스케줄링 옵션 비교하기
+
+Claude Code offers three ways to schedule recurring work:
+
+|                            | [Cloud](/en/web-scheduled-tasks) | [Desktop](/en/desktop#schedule-recurring-tasks) | [`/loop`](/en/scheduled-tasks) |
+| :------------------------- | :------------------------------- | :---------------------------------------------- | :----------------------------- |
+| Runs on                    | Anthropic cloud                  | Your machine                                    | Your machine                   |
+| Requires machine on        | No                               | Yes                                             | Yes                            |
+| Requires open session      | No                               | No                                              | Yes                            |
+| Persistent across restarts | Yes                              | Yes                                             | No (session-scoped)            |
+| Access to local files      | No (fresh clone)                 | Yes                                             | Yes                            |
+| MCP servers                | Connectors configured per task   | [Config files](/en/mcp) and connectors          | Inherits from session          |
+| Permission prompts         | No (runs autonomously)           | Configurable per task                           | Inherits from session          |
+| Customizable schedule      | Via `/schedule` in the CLI       | Yes                                             | Yes                            |
+| Minimum interval           | 1 hour                           | 1 minute                                        | 1 minute                       |
+
+<Tip>
+  Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
+</Tip>
 
 ## /loop로 반복 프롬프트 스케줄하기
 
@@ -99,7 +119,7 @@ cancel the deploy check job
 
 ### 3일 만료
 
-반복 작업은 생성 후 3일 후 자동으로 만료됩니다. 작업은 마지막으로 한 번 실행된 후 자신을 삭제합니다. 이는 잊혀진 루프가 실행될 수 있는 기간을 제한합니다. 반복 작업이 더 오래 지속되어야 하는 경우 만료되기 전에 취소하고 다시 만들거나 지속적인 스케줄링을 위해 [Desktop 스케줄된 작업](/ko/desktop#schedule-recurring-tasks)을 사용합니다.
+반복 작업은 생성 후 3일 후 자동으로 만료됩니다. 작업은 마지막으로 한 번 실행된 후 자신을 삭제합니다. 이는 잊혀진 루프가 실행될 수 있는 기간을 제한합니다. 반복 작업이 더 오래 지속되어야 하는 경우 만료되기 전에 취소하고 다시 만들거나 지속적인 스케줄링을 위해 [Cloud 스케줄된 작업](/ko/web-scheduled-tasks) 또는 [Desktop 스케줄된 작업](/ko/desktop#schedule-recurring-tasks)을 사용합니다.
 
 ## Cron 표현식 참조
 
@@ -130,4 +150,8 @@ cancel the deploy check job
 * 놓친 실행에 대한 추적 없음. 작업의 스케줄된 시간이 Claude가 오래 실행되는 요청에 바쁠 때 지나가면 Claude가 유휴 상태가 될 때 한 번 실행되며, 놓친 각 간격마다 한 번씩 실행되지 않습니다.
 * 재시작 간 지속성 없음. Claude Code를 다시 시작하면 모든 세션 범위 작업이 지워집니다.
 
-무인으로 실행해야 하는 cron 기반 자동화의 경우 `schedule` 트리거가 있는 [GitHub Actions 워크플로우](/ko/github-actions)를 사용하거나, 그래픽 설정 흐름을 원하는 경우 [Desktop 스케줄된 작업](/ko/desktop#schedule-recurring-tasks)을 사용합니다.
+무인으로 실행해야 하는 cron 기반 자동화의 경우:
+
+* [Cloud 스케줄된 작업](/ko/web-scheduled-tasks): Anthropic 관리 인프라에서 실행
+* [GitHub Actions](/ko/github-actions): CI에서 `schedule` 트리거 사용
+* [Desktop 스케줄된 작업](/ko/desktop#schedule-recurring-tasks): 머신에서 로컬로 실행

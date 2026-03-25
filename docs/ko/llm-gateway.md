@@ -47,9 +47,15 @@ Gateway에서 사용자 정의 모델 이름을 구성한 경우 [모델 구성]
 
 ## LiteLLM 구성
 
-<Note>
+<Warning>
+  LiteLLM PyPI 버전 1.82.7 및 1.82.8은 자격 증명 탈취 악성코드로 손상되었습니다. 이 버전들을 설치하지 마십시오. 이미 설치한 경우:
+
+  * 패키지 제거
+  * 영향을 받은 시스템의 모든 자격 증명 회전
+  * [BerriAI/litellm#24518](https://github.com/BerriAI/litellm/issues/24518)의 복구 단계 따르기
+
   LiteLLM은 제3자 프록시 서비스입니다. Anthropic은 LiteLLM의 보안 또는 기능을 보증, 유지 관리 또는 감사하지 않습니다. 이 가이드는 정보 제공 목적으로 제공되며 오래될 수 있습니다. 자신의 판단에 따라 사용하십시오.
-</Note>
+</Warning>
 
 ### 필수 조건
 

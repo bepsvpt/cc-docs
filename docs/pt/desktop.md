@@ -4,7 +4,7 @@
 
 # Use Claude Code Desktop
 
-> Aproveite ao máximo o Claude Code Desktop: sessões paralelas com isolamento Git, revisão visual de diff, visualizações de aplicativos, monitoramento de PR, modos de permissão, conectores e configuração corporativa.
+> Aproveite ao máximo o Claude Code Desktop: computer use, Dispatch sessions do seu telefone, sessões paralelas com isolamento Git, revisão visual de diff, visualizações de aplicativos, monitoramento de PR, conectores e configuração corporativa.
 
 A aba Code dentro do aplicativo Claude Desktop permite que você use Claude Code através de uma interface gráfica em vez do terminal.
 
@@ -12,8 +12,10 @@ O Desktop adiciona essas capacidades à experiência padrão do Claude Code:
 
 * [Revisão visual de diff](#review-changes-with-diff-view) com comentários inline
 * [Visualização ao vivo do aplicativo](#preview-your-app) com servidores de desenvolvimento
+* [Computer use](#let-claude-use-your-computer) para abrir aplicativos e controlar sua tela no macOS
 * [Monitoramento de GitHub PR](#monitor-pull-request-status) com correção automática e mesclagem automática
 * [Sessões paralelas](#work-in-parallel-with-sessions) com isolamento automático de Git worktree
+* [Dispatch](#sessions-from-dispatch) integration: envie uma tarefa do seu telefone, obtenha uma sessão aqui
 * [Tarefas agendadas](#schedule-recurring-tasks) que executam Claude em um cronograma recorrente
 * [Conectores](#connect-external-tools) para GitHub, Slack, Linear e muito mais
 * Ambientes locais, [SSH](#ssh-sessions) e [nuvem](#run-long-running-tasks-remotely)
@@ -22,7 +24,7 @@ O Desktop adiciona essas capacidades à experiência padrão do Claude Code:
   Novo no Desktop? Comece com [Primeiros passos](/pt/desktop-quickstart) para instalar o aplicativo e fazer sua primeira edição.
 </Tip>
 
-Esta página cobre [trabalhar com código](#work-with-code), [gerenciar sessões](#manage-sessions), [estender Claude Code](#extend-claude-code), [tarefas agendadas](#schedule-recurring-tasks) e [configuração](#environment-configuration). Também inclui uma [comparação CLI](#coming-from-the-cli) e [solução de problemas](#troubleshooting).
+Esta página cobre [trabalhar com código](#work-with-code), [computer use](#let-claude-use-your-computer), [gerenciar sessões](#manage-sessions), [estender Claude Code](#extend-claude-code), [tarefas agendadas](#schedule-recurring-tasks) e [configuração](#environment-configuration). Também inclui uma [comparação CLI](#coming-from-the-cli) e [solução de problemas](#troubleshooting).
 
 ## Iniciar uma sessão
 
@@ -56,14 +58,15 @@ A caixa de prompt suporta duas maneiras de trazer contexto externo:
 
 Os modos de permissão controlam quanto de autonomia Claude tem durante uma sessão: se ele pergunta antes de editar arquivos, executar comandos ou ambos. Você pode alternar modos a qualquer momento usando o seletor de modo ao lado do botão enviar. Comece com Pedir permissões para ver exatamente o que Claude faz, depois mude para Auto aceitar edições ou Plan mode conforme você fica confortável.
 
-| Modo                     | Chave de configuração | Comportamento                                                                                                                                                                                                                                                                               |
-| ------------------------ | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Pedir permissões**     | `default`             | Claude pergunta antes de editar arquivos ou executar comandos. Você vê um diff e pode aceitar ou rejeitar cada alteração. Recomendado para novos usuários.                                                                                                                                  |
-| **Auto aceitar edições** | `acceptEdits`         | Claude aceita automaticamente edições de arquivo, mas ainda pergunta antes de executar comandos de terminal. Use isso quando você confia em alterações de arquivo e quer iteração mais rápida.                                                                                              |
-| **Plan mode**            | `plan`                | Claude analisa seu código e cria um plano sem modificar arquivos ou executar comandos. Bom para tarefas complexas onde você quer revisar a abordagem primeiro.                                                                                                                              |
-| **Bypass permissions**   | `bypassPermissions`   | Claude é executado sem nenhum prompt de permissão, equivalente a `--dangerously-skip-permissions` no CLI. Ative em Configurações → Claude Code em "Permitir modo bypass permissions". Use apenas em containers ou VMs sandboxed. Administradores corporativos podem desabilitar essa opção. |
+| Modo                     | Chave de configuração | Comportamento                                                                                                                                                                                                                                                                                                                                       |
+| ------------------------ | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Pedir permissões**     | `default`             | Claude pergunta antes de editar arquivos ou executar comandos. Você vê um diff e pode aceitar ou rejeitar cada alteração. Recomendado para novos usuários.                                                                                                                                                                                          |
+| **Auto aceitar edições** | `acceptEdits`         | Claude aceita automaticamente edições de arquivo, mas ainda pergunta antes de executar comandos de terminal. Use isso quando você confia em alterações de arquivo e quer iteração mais rápida.                                                                                                                                                      |
+| **Plan mode**            | `plan`                | Claude analisa seu código e cria um plano sem modificar arquivos ou executar comandos. Bom para tarefas complexas onde você quer revisar a abordagem primeiro.                                                                                                                                                                                      |
+| **Auto**                 | `auto`                | Claude executa todas as ações com verificações de segurança em segundo plano que verificam o alinhamento com sua solicitação. Reduz prompts de permissão mantendo supervisão. Atualmente uma visualização de pesquisa. Disponível em planos Team (Enterprise em breve). Requer Claude Sonnet 4.6 ou Opus 4.6. Ative em Configurações → Claude Code. |
+| **Bypass permissions**   | `bypassPermissions`   | Claude é executado sem nenhum prompt de permissão, equivalente a `--dangerously-skip-permissions` no CLI. Ative em Configurações → Claude Code em "Permitir modo bypass permissions". Use apenas em containers ou VMs sandboxed. Administradores corporativos podem desabilitar essa opção.                                                         |
 
-O modo de permissão `dontAsk` está disponível apenas no [CLI](/pt/permissions#permission-modes).
+O modo de permissão `dontAsk` está disponível apenas no [CLI](/pt/permission-modes#allow-only-pre-approved-tools-with-dontask-mode).
 
 <Tip title="Melhor prática">
   Comece tarefas complexas em Plan mode para que Claude mapeie uma abordagem antes de fazer alterações. Depois de aprovar o plano, mude para Auto aceitar edições ou Pedir permissões para executá-lo. Veja [explorar primeiro, depois planejar, depois codificar](/pt/best-practices#explore-first-then-plan-then-code) para mais sobre esse fluxo de trabalho.
@@ -121,9 +124,62 @@ Use os toggles **Auto-fix** e **Auto-merge** na barra de status de CI para ativa
   O monitoramento de PR requer que o [GitHub CLI (`gh`)](https://cli.github.com/) esteja instalado e autenticado em sua máquina. Se `gh` não estiver instalado, Desktop o solicita a instalar na primeira vez que você tentar criar um PR.
 </Note>
 
+## Deixar Claude usar seu computador
+
+Computer use permite que Claude abra seus aplicativos, controle sua tela e trabalhe diretamente em sua máquina da forma como você faria. Peça a Claude para testar um aplicativo nativo no simulador iOS, interagir com uma ferramenta de desktop que não tem CLI ou automatizar algo que só funciona através de uma GUI.
+
+<Note>
+  Computer use é uma visualização de pesquisa no macOS que requer um plano Pro ou Max. Não está disponível em planos Team ou Enterprise. O aplicativo Claude Desktop deve estar em execução.
+</Note>
+
+Computer use está desativado por padrão. [Ative-o em Configurações](#enable-computer-use) e conceda as permissões macOS necessárias antes que Claude possa controlar sua tela.
+
+<Warning>
+  Diferentemente da [ferramenta Bash sandboxed](/pt/sandboxing), computer use é executado em seu desktop real com acesso a tudo que você aprova. Claude verifica cada ação e sinaliza possível injeção de prompt do conteúdo na tela, mas o limite de confiança é diferente. Veja o [guia de segurança de computer use](https://support.claude.com/en/articles/14128542) para melhores práticas.
+</Warning>
+
+### Quando computer use se aplica
+
+Claude tem várias maneiras de interagir com um aplicativo ou serviço, e computer use é a mais ampla e lenta. Ele tenta a ferramenta mais precisa primeiro:
+
+* Se você tem um [connector](#connect-external-tools) para um serviço, Claude usa o connector.
+* Se a tarefa é um comando shell, Claude usa Bash.
+* Se a tarefa é trabalho de navegador e você tem [Claude no Chrome](/pt/chrome) configurado, Claude usa isso.
+* Se nenhum desses se aplica, Claude usa computer use.
+
+Os [níveis de acesso por aplicativo](#app-permissions) reforçam isso: navegadores são limitados a apenas visualização, e terminais e IDEs a apenas clique, direcionando Claude para a ferramenta dedicada mesmo quando computer use está ativo. O controle de tela é reservado para coisas que nada mais pode alcançar, como aplicativos nativos, painéis de controle de hardware, o simulador iOS ou ferramentas proprietárias sem uma API.
+
+### Ativar computer use
+
+Computer use está desativado por padrão. Se você pedir a Claude para fazer algo que precisa disso enquanto está desativado, Claude diz que poderia fazer a tarefa se você ativar computer use em Configurações. Para ativar, abra **Configurações > Aplicativo Desktop > Geral** e alterne **Computer use** ligado. Antes do toggle entrar em efeito, você precisa conceder duas permissões do sistema macOS:
+
+* **Acessibilidade**: permite que Claude clique, digite e role
+* **Gravação de Tela**: permite que Claude veja o que está em sua tela
+
+A página de Configurações mostra o status atual de cada permissão. Se alguma for negada, clique no badge para abrir o painel de Configurações do Sistema relevante.
+
+### Permissões de aplicativo
+
+A primeira vez que Claude precisa usar um aplicativo, um prompt aparece em sua sessão. Clique em **Permitir para esta sessão** ou **Negar**. As aprovações duram para a sessão atual, ou 30 minutos em [sessões geradas por Dispatch](#sessions-from-dispatch).
+
+O prompt também mostra que nível de controle Claude obtém para esse aplicativo. Esses níveis são fixos por categoria de aplicativo e não podem ser alterados:
+
+| Nível               | O que Claude pode fazer                                    | Se aplica a                            |
+| :------------------ | :--------------------------------------------------------- | :------------------------------------- |
+| Apenas visualização | Ver o aplicativo em capturas de tela                       | Navegadores, plataformas de negociação |
+| Apenas clique       | Clicar e rolar, mas não digitar ou usar atalhos de teclado | Terminais, IDEs                        |
+| Controle total      | Clicar, digitar, arrastar e usar atalhos de teclado        | Tudo mais                              |
+
+Aplicativos com alcance amplo como Terminal, Finder e Configurações do Sistema mostram um aviso extra no prompt para que você saiba o que aprovar concede.
+
+Você pode configurar duas configurações em **Configurações > Aplicativo Desktop > Geral**:
+
+* **Aplicativos negados**: adicione aplicativos aqui para rejeitá-los sem solicitar. Claude ainda pode afetar um aplicativo negado indiretamente através de ações em um aplicativo permitido, mas não pode interagir com o aplicativo negado diretamente.
+* **Mostrar aplicativos quando Claude termina**: enquanto Claude está trabalhando, suas outras janelas são ocultadas para que ele interaja apenas com o aplicativo aprovado. Quando Claude termina, as janelas ocultas são restauradas a menos que você desative essa configuração.
+
 ## Gerenciar sessões
 
-Cada sessão é uma conversa independente com seu próprio contexto e alterações. Você pode executar múltiplas sessões em paralelo ou enviar trabalho para a nuvem.
+Cada sessão é uma conversa independente com seu próprio contexto e alterações. Você pode executar múltiplas sessões em paralelo, enviar trabalho para a nuvem ou deixar Dispatch iniciar sessões para você do seu telefone.
 
 ### Trabalhar em paralelo com sessões
 
@@ -152,13 +208,27 @@ O menu **Continue in**, acessível do ícone VS Code no canto inferior direito d
 * **Claude Code na Web**: envia sua sessão local para continuar executando remotamente. Desktop envia seu branch, gera um resumo da conversa e cria uma nova sessão remota com o contexto completo. Você pode então escolher arquivar a sessão local ou mantê-la. Isso requer uma árvore de trabalho limpa e não está disponível para sessões SSH.
 * **Seu IDE**: abre seu projeto em um IDE suportado no diretório de trabalho atual.
 
+### Sessões do Dispatch
+
+[Dispatch](https://support.claude.com/en/articles/13947068) é uma conversa persistente com Claude que vive na aba [Cowork](https://claude.com/product/cowork#dispatch-and-computer-use). Você envia uma mensagem ao Dispatch com uma tarefa, e ele decide como lidar com ela.
+
+Uma tarefa pode acabar como uma sessão de Code de duas maneiras: você pede uma diretamente, como "abra uma sessão Claude Code e corrija o bug de login", ou Dispatch decide que a tarefa é trabalho de desenvolvimento e gera uma por conta própria. Tarefas que normalmente são roteadas para Code incluem corrigir bugs, atualizar dependências, executar testes ou abrir pull requests. Pesquisa, edição de documentos e trabalho em planilhas ficam em Cowork.
+
+De qualquer forma, a sessão de Code aparece na barra lateral da aba Code com um badge **Dispatch**. Você recebe uma notificação push em seu telefone quando termina ou precisa de sua aprovação.
+
+Se você tem [computer use](#let-claude-use-your-computer) ativado, sessões de Code geradas por Dispatch também podem usá-lo. As aprovações de aplicativo nessas sessões expiram após 30 minutos e solicitam novamente, em vez de durarem a sessão completa como sessões de Code regulares.
+
+Para configuração, emparelhamento e configurações de Dispatch, veja o [artigo de ajuda do Dispatch](https://support.claude.com/en/articles/13947068). Dispatch requer um plano Pro ou Max e não está disponível em planos Team ou Enterprise.
+
+Dispatch é uma de várias maneiras de trabalhar com Claude quando você está longe de seu terminal. Veja [Plataformas e integrações](/pt/platforms#work-when-you-are-away-from-your-terminal) para compará-lo com Remote Control, Channels, Slack e tarefas agendadas.
+
 ## Estender Claude Code
 
 Conecte serviços externos, adicione fluxos de trabalho reutilizáveis, customize o comportamento de Claude e configure servidores de visualização.
 
 ### Conectar ferramentas externas
 
-Para sessões locais e [SSH](#ssh-sessions), clique no botão **+** ao lado da caixa de prompt e selecione **Connectors** para adicionar integrações como Google Calendar, Slack, GitHub, Linear, Notion e muito mais. Você pode adicionar conectores antes ou durante uma sessão. Conectores não estão disponíveis para sessões remotas.
+Para sessões locais e [SSH](#ssh-sessions), clique no botão **+** ao lado da caixa de prompt e selecione **Connectors** para adicionar integrações como Google Calendar, Slack, GitHub, Linear, Notion e muito mais. Você pode adicionar conectores antes ou durante uma sessão. O botão **+** não está disponível em sessões remotas, mas [tarefas agendadas](/pt/web-scheduled-tasks) configuram conectores no momento da criação da tarefa.
 
 Para gerenciar ou desconectar conectores, vá para Configurações → Connectors no aplicativo desktop, ou selecione **Manage connectors** no menu Connectors na caixa de prompt.
 
@@ -321,15 +391,42 @@ Essas configurações mostram setups comuns para diferentes tipos de projeto:
 
 ## Agendar tarefas recorrentes
 
-Tarefas agendadas iniciam uma nova sessão local automaticamente em um horário e frequência que você escolhe. Use-as para trabalho recorrente como revisões de código diárias, verificações de atualização de dependência ou briefings matinais que puxam de seu calendário e caixa de entrada.
+Por padrão, tarefas agendadas iniciam uma nova sessão automaticamente em um horário e frequência que você escolhe. Use-as para trabalho recorrente como revisões de código diárias, verificações de atualização de dependência ou briefings matinais que puxam de seu calendário e caixa de entrada.
 
-Tarefas são executadas em sua máquina, então o aplicativo desktop deve estar aberto e seu computador acordado para que elas disparem. Veja [Como tarefas agendadas são executadas](#how-scheduled-tasks-run) para detalhes sobre execuções perdidas e comportamento de recuperação.
+### Comparar opções de agendamento
+
+Claude Code offers three ways to schedule recurring work:
+
+|                            | [Cloud](/en/web-scheduled-tasks) | [Desktop](/en/desktop#schedule-recurring-tasks) | [`/loop`](/en/scheduled-tasks) |
+| :------------------------- | :------------------------------- | :---------------------------------------------- | :----------------------------- |
+| Runs on                    | Anthropic cloud                  | Your machine                                    | Your machine                   |
+| Requires machine on        | No                               | Yes                                             | Yes                            |
+| Requires open session      | No                               | No                                              | Yes                            |
+| Persistent across restarts | Yes                              | Yes                                             | No (session-scoped)            |
+| Access to local files      | No (fresh clone)                 | Yes                                             | Yes                            |
+| MCP servers                | Connectors configured per task   | [Config files](/en/mcp) and connectors          | Inherits from session          |
+| Permission prompts         | No (runs autonomously)           | Configurable per task                           | Inherits from session          |
+| Customizable schedule      | Via `/schedule` in the CLI       | Yes                                             | Yes                            |
+| Minimum interval           | 1 hour                           | 1 minute                                        | 1 minute                       |
+
+<Tip>
+  Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
+</Tip>
+
+A página Schedule suporta dois tipos de tarefas:
+
+* **Tarefas locais**: são executadas em sua máquina. Elas têm acesso direto aos seus arquivos e ferramentas locais, mas o aplicativo desktop deve estar aberto e seu computador acordado para que elas sejam executadas.
+* **Tarefas remotas**: são executadas na infraestrutura em nuvem gerenciada pela Anthropic. Elas continuam em execução mesmo quando seu computador está desligado, mas funcionam contra um clone fresco de seu repositório em vez de seu checkout local.
+
+Ambos os tipos aparecem na mesma grade de tarefas. Clique em **New task** para escolher qual tipo criar. O resto desta seção cobre tarefas locais; para tarefas remotas, veja [Tarefas agendadas em nuvem](/pt/web-scheduled-tasks).
+
+Veja [Como tarefas agendadas são executadas](#how-scheduled-tasks-run) para detalhes sobre execuções perdidas e comportamento de recuperação para tarefas locais.
 
 <Note>
-  Por padrão, tarefas agendadas são executadas contra qualquer estado em que seu diretório de trabalho esteja, incluindo alterações não commitadas. Ative o toggle worktree na entrada de prompt para dar a cada execução seu próprio Git worktree isolado, da mesma forma que [sessões paralelas](#work-in-parallel-with-sessions) funcionam.
+  Por padrão, tarefas agendadas locais são executadas contra qualquer estado em que seu diretório de trabalho esteja, incluindo alterações não commitadas. Ative o toggle worktree na entrada de prompt para dar a cada execução seu próprio Git worktree isolado, da mesma forma que [sessões paralelas](#work-in-parallel-with-sessions) funcionam.
 </Note>
 
-Para criar uma tarefa agendada, clique em **Schedule** na barra lateral, depois **+ New task**. Configure esses campos:
+Para criar uma tarefa agendada local, clique em **Schedule** na barra lateral, clique em **New task** e escolha **New local task**. Configure esses campos:
 
 | Campo       | Descrição                                                                                                                                                                                                                                                    |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -352,11 +449,11 @@ Para intervalos que o seletor não oferece (a cada 15 minutos, primeiro de cada 
 
 ### How scheduled tasks run
 
-Tarefas agendadas são executadas localmente em sua máquina. Desktop verifica o cronograma a cada minuto enquanto o aplicativo está aberto e inicia uma sessão fresca quando uma tarefa é devida, independente de qualquer sessão manual que você tenha aberta. Cada tarefa obtém um atraso fixo de até 10 minutos após o horário agendado para escalonar tráfego de API. O atraso é determinístico: a mesma tarefa sempre inicia no mesmo deslocamento.
+Tarefas agendadas locais são executadas em sua máquina. Desktop verifica o cronograma a cada minuto enquanto o aplicativo está aberto e inicia uma sessão fresca quando uma tarefa é devida, independente de qualquer sessão manual que você tenha aberta. Cada tarefa obtém um atraso fixo de até 10 minutos após o horário agendado para escalonar tráfego de API. O atraso é determinístico: a mesma tarefa sempre inicia no mesmo deslocamento.
 
 Quando uma tarefa dispara, você recebe uma notificação de desktop e uma nova sessão aparece em uma seção **Scheduled** na barra lateral. Abra-a para ver o que Claude fez, revise alterações ou responda a prompts de permissão. A sessão funciona como qualquer outra: Claude pode editar arquivos, executar comandos, criar commits e abrir pull requests.
 
-Tarefas apenas são executadas enquanto o aplicativo desktop está em execução e seu computador está acordado. Se seu computador dorme durante um horário agendado, a execução é pulada. Para evitar sono ocioso, ative **Keep computer awake** em Configurações em **Desktop app → General**. Fechar a tampa do laptop ainda o coloca em sono.
+Tarefas apenas são executadas enquanto o aplicativo desktop está em execução e seu computador está acordado. Se seu computador dorme durante um horário agendado, a execução é pulada. Para evitar sono ocioso, ative **Keep computer awake** em Configurações em **Desktop app → General**. Fechar a tampa do laptop ainda o coloca em sono. Para tarefas que precisam ser executadas mesmo quando seu computador está desligado, use uma [tarefa remota](/pt/web-scheduled-tasks) em vez disso.
 
 ### Missed runs
 
@@ -428,19 +525,22 @@ Organizações em planos Teams ou Enterprise podem gerenciar o comportamento do 
 
 Essas configurações são configuradas através do [console de configurações de administração](https://claude.ai/admin-settings/claude-code):
 
-* **Ativar ou desativar a aba Code**: controle se usuários em sua organização podem acessar Claude Code no aplicativo desktop
+* **Code no desktop**: controle se usuários em sua organização podem acessar Claude Code no aplicativo desktop
+* **Code na web**: ative ou desative [sessões web](/pt/claude-code-on-the-web) para sua organização
+* **Remote Control**: ative ou desative [Remote Control](/pt/remote-control) para sua organização
 * **Desabilitar modo Bypass permissions**: impeça usuários em sua organização de ativar o modo bypass permissions
-* **Desabilitar Claude Code na web**: ative ou desative sessões remotas para sua organização
 
 ### Managed settings
 
 Configurações gerenciadas sobrescrevem configurações de projeto e usuário e se aplicam quando Desktop gera sessões CLI. Você pode definir essas chaves no arquivo de [configurações gerenciadas](/pt/settings#settings-precedence) de sua organização ou enviá-las remotamente através do console de administração.
 
-| Chave                          | Descrição                                                                                                                                                   |
-| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `disableBypassPermissionsMode` | defina como `"disable"` para impedir usuários de ativar o modo Bypass permissions. Veja [configurações gerenciadas](/pt/permissions#managed-only-settings). |
+| Chave                                      | Descrição                                                                                                                                                                                     |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `permissions.disableBypassPermissionsMode` | defina como `"disable"` para impedir usuários de ativar o modo Bypass permissions.                                                                                                            |
+| `disableAutoMode`                          | defina como `"disable"` para impedir usuários de ativar o modo [Auto](/pt/permission-modes#eliminate-prompts-with-auto-mode). Remove Auto do seletor de modo. Também aceito em `permissions`. |
+| `autoMode`                                 | customize o que o classificador de modo auto confia e bloqueia em sua organização. Veja [Configurar o classificador de modo auto](/pt/permissions#configure-the-auto-mode-classifier).        |
 
-Para a lista completa de configurações apenas gerenciadas incluindo `allowManagedPermissionRulesOnly` e `allowManagedHooksOnly`, veja [configurações apenas gerenciadas](/pt/permissions#managed-only-settings).
+`permissions.disableBypassPermissionsMode` e `disableAutoMode` também funcionam em configurações de usuário e projeto, mas colocá-los em configurações gerenciadas impede que usuários os sobrescrevam. `autoMode` é lido de configurações de usuário, `.claude/settings.local.json` e configurações gerenciadas, mas não de `.claude/settings.json` verificado: um repo clonado não pode injetar suas próprias regras de classificador. Para a lista completa de configurações apenas gerenciadas incluindo `allowManagedPermissionRulesOnly` e `allowManagedHooksOnly`, veja [configurações apenas gerenciadas](/pt/permissions#managed-only-settings).
 
 Configurações gerenciadas remotas enviadas através do console de administração atualmente se aplicam apenas a sessões CLI e IDE. Para restrições específicas do Desktop, use os controles do console de administração acima.
 
@@ -517,17 +617,19 @@ Esta tabela compara capacidades principais entre CLI e Desktop. Para uma lista c
 
 | Recurso                                                 | CLI                                                       | Desktop                                                                                            |
 | ------------------------------------------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| Modos de permissão                                      | todos os modos incluindo `dontAsk`                        | Pedir permissões, Auto aceitar edições, Plan mode e Bypass permissions via Configurações           |
+| Modos de permissão                                      | Todos os modos incluindo `dontAsk`                        | Pedir permissões, Auto aceitar edições, Plan mode, Auto e Bypass permissions via Configurações     |
 | `--dangerously-skip-permissions`                        | Flag CLI                                                  | Modo Bypass permissions. Ative em Configurações → Claude Code → "Permitir modo bypass permissions" |
-| [Provedores de terceiros](/pt/third-party-integrations) | Bedrock, Vertex, Foundry                                  | não disponível. Desktop se conecta diretamente à API da Anthropic.                                 |
-| [MCP servers](/pt/mcp)                                  | configure em arquivos de configuração                     | UI de Connectors para sessões locais e SSH, ou arquivos de configuração                            |
-| [Plugins](/pt/plugins)                                  | comando `/plugin`                                         | UI do gerenciador de plugins                                                                       |
-| @mention de arquivos                                    | baseado em texto                                          | com autocompletar                                                                                  |
-| Anexos de arquivo                                       | não disponível                                            | imagens, PDFs                                                                                      |
-| Isolamento de sessão                                    | flag [`--worktree`](/pt/cli-reference)                    | worktrees automáticos                                                                              |
-| Múltiplas sessões                                       | terminais separados                                       | abas na barra lateral                                                                              |
-| Tarefas recorrentes                                     | cron jobs, pipelines CI                                   | [tarefas agendadas](#schedule-recurring-tasks)                                                     |
-| Scripting e automação                                   | [`--print`](/pt/cli-reference), [Agent SDK](/pt/headless) | não disponível                                                                                     |
+| [Provedores de terceiros](/pt/third-party-integrations) | Bedrock, Vertex, Foundry                                  | Não disponível. Desktop se conecta diretamente à API da Anthropic.                                 |
+| [MCP servers](/pt/mcp)                                  | Configure em arquivos de configuração                     | UI de Connectors para sessões locais e SSH, ou arquivos de configuração                            |
+| [Plugins](/pt/plugins)                                  | Comando `/plugin`                                         | UI do gerenciador de plugins                                                                       |
+| @mention de arquivos                                    | Baseado em texto                                          | Com autocompletar                                                                                  |
+| Anexos de arquivo                                       | Não disponível                                            | Imagens, PDFs                                                                                      |
+| Isolamento de sessão                                    | Flag [`--worktree`](/pt/cli-reference)                    | Worktrees automáticos                                                                              |
+| Múltiplas sessões                                       | Terminais separados                                       | Abas na barra lateral                                                                              |
+| Tarefas recorrentes                                     | Cron jobs, pipelines CI                                   | [Tarefas agendadas](#schedule-recurring-tasks)                                                     |
+| Computer use                                            | Não disponível                                            | [Controle de aplicativo e tela](#let-claude-use-your-computer) no macOS                            |
+| Integração Dispatch                                     | Não disponível                                            | [Sessões Dispatch](#sessions-from-dispatch) na barra lateral                                       |
+| Scripting e automação                                   | [`--print`](/pt/cli-reference), [Agent SDK](/pt/headless) | Não disponível                                                                                     |
 
 ### What's not available in Desktop
 

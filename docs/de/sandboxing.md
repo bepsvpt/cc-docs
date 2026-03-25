@@ -124,7 +124,7 @@ Standardmäßig können Sandbox-Befehle nur in das aktuelle Arbeitsverzeichnis s
   "sandbox": {
     "enabled": true,
     "filesystem": {
-      "allowWrite": ["~/.kube", "//tmp/build"]
+      "allowWrite": ["~/.kube", "/tmp/build"]
     }
   }
 }
@@ -132,18 +132,35 @@ Standardmäßig können Sandbox-Befehle nur in das aktuelle Arbeitsverzeichnis s
 
 Diese Pfade werden auf OS-Ebene durchgesetzt, daher respektieren alle Befehle, die innerhalb der Sandbox ausgeführt werden, einschließlich ihrer Kindprozesse, diese. Dies ist der empfohlene Ansatz, wenn ein Tool Schreibzugriff auf einen bestimmten Ort benötigt, anstatt das Tool mit `excludedCommands` vollständig aus der Sandbox auszuschließen.
 
-Wenn `allowWrite` (oder `denyWrite`/`denyRead`) in mehreren [Einstellungs-Scopes](/de/settings#settings-precedence) definiert ist, werden die Arrays **zusammengeführt**, was bedeutet, dass Pfade aus jedem Scope kombiniert werden, nicht ersetzt. Wenn beispielsweise verwaltete Einstellungen Schreibvorgänge zu `//opt/company-tools` zulassen und ein Benutzer `~/.kube` in seinen persönlichen Einstellungen hinzufügt, sind beide Pfade in der endgültigen Sandbox-Konfiguration enthalten. Dies bedeutet, dass Benutzer und Projekte die Liste erweitern können, ohne Pfade zu duplizieren oder zu überschreiben, die durch höher priorisierte Scopes gesetzt sind.
+Wenn `allowWrite` (oder `denyWrite`/`denyRead`/`allowRead`) in mehreren [Einstellungs-Scopes](/de/settings#settings-precedence) definiert ist, werden die Arrays **zusammengeführt**, was bedeutet, dass Pfade aus jedem Scope kombiniert werden, nicht ersetzt. Wenn beispielsweise verwaltete Einstellungen Schreibvorgänge zu `/opt/company-tools` zulassen und ein Benutzer `~/.kube` in seinen persönlichen Einstellungen hinzufügt, sind beide Pfade in der endgültigen Sandbox-Konfiguration enthalten. Dies bedeutet, dass Benutzer und Projekte die Liste erweitern können, ohne Pfade zu duplizieren oder zu überschreiben, die durch höher priorisierte Scopes gesetzt sind.
 
 Pfad-Präfixe steuern, wie Pfade aufgelöst werden:
 
-| Präfix                | Bedeutung                                        | Beispiel                               |
-| :-------------------- | :----------------------------------------------- | :------------------------------------- |
-| `//`                  | Absoluter Pfad vom Dateisystem-Root              | `//tmp/build` wird zu `/tmp/build`     |
-| `~/`                  | Relativ zum Home-Verzeichnis                     | `~/.kube` wird zu `$HOME/.kube`        |
-| `/`                   | Relativ zum Verzeichnis der Einstellungsdatei    | `/build` wird zu `$SETTINGS_DIR/build` |
-| `./` oder kein Präfix | Relativer Pfad (aufgelöst durch Sandbox-Runtime) | `./output`                             |
+| Präfix                | Bedeutung                                                                                         | Beispiel                                                              |
+| :-------------------- | :------------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------- |
+| `/`                   | Absoluter Pfad vom Dateisystem-Root                                                               | `/tmp/build` bleibt `/tmp/build`                                      |
+| `~/`                  | Relativ zum Home-Verzeichnis                                                                      | `~/.kube` wird zu `$HOME/.kube`                                       |
+| `./` oder kein Präfix | Relativ zum Projekt-Root für Projekt-Einstellungen oder zu `~/.claude` für Benutzer-Einstellungen | `./output` in `.claude/settings.json` wird zu `<project-root>/output` |
 
-Sie können auch Schreib- oder Lesezugriff mit `sandbox.filesystem.denyWrite` und `sandbox.filesystem.denyRead` blockieren. Diese werden mit allen Pfaden aus `Edit(...)` und `Read(...)` Genehmigungsregeln zusammengeführt.
+Das ältere `//path`-Präfix für absolute Pfade funktioniert immer noch. Wenn Sie zuvor `/path` erwartet haben, um projekt-relativ aufgelöst zu werden, wechseln Sie zu `./path`. Diese Syntax unterscheidet sich von [Read- und Edit-Genehmigungsregeln](/de/permissions#read-and-edit), die `//path` für absolut und `/path` für projekt-relativ verwenden. Sandbox-Dateisystem-Pfade verwenden Standard-Konventionen: `/tmp/build` ist ein absoluter Pfad.
+
+Sie können auch Schreib- oder Lesezugriff mit `sandbox.filesystem.denyWrite` und `sandbox.filesystem.denyRead` blockieren. Diese werden mit allen Pfaden aus `Edit(...)` und `Read(...)` Genehmigungsregeln zusammengeführt. Um Lesezugriff auf spezifische Pfade innerhalb einer blockierten Region erneut zuzulassen, verwenden Sie `sandbox.filesystem.allowRead`, das Vorrang vor `denyRead` hat. Wenn `allowManagedReadPathsOnly` in verwalteten Einstellungen aktiviert ist, werden nur verwaltete `allowRead`-Einträge respektiert; Benutzer-, Projekt- und lokale `allowRead`-Einträge werden ignoriert.
+
+Um beispielsweise das Lesen aus dem gesamten Home-Verzeichnis zu blockieren und gleichzeitig Lesevorgänge aus dem aktuellen Projekt zuzulassen, fügen Sie dies zu Ihrer Projekt-Datei `.claude/settings.json` hinzu:
+
+```json  theme={null}
+{
+  "sandbox": {
+    "enabled": true,
+    "filesystem": {
+      "denyRead": ["~/"],
+      "allowRead": ["."]
+    }
+  }
+}
+```
+
+Das `.` in `allowRead` wird zum Projekt-Root aufgelöst, da diese Konfiguration in Projekt-Einstellungen lebt. Wenn Sie die gleiche Konfiguration in `~/.claude/settings.json` platzieren würden, würde `.` stattdessen zu `~/.claude` aufgelöst, und Projektdateien würden durch die `denyRead`-Regel blockiert bleiben.
 
 <Tip>
   Nicht alle Befehle sind sofort mit Sandboxing kompatibel. Einige Hinweise, die Ihnen helfen können, das Beste aus der Sandbox herauszuholen:
@@ -201,7 +218,7 @@ Wenn Claude Code versucht, auf Netzwerk-Ressourcen außerhalb der Sandbox zuzugr
 2. Sie erhalten eine sofortige Benachrichtigung
 3. Sie können wählen zu:
    * Die Anfrage verweigern
-   * Sie einmal zulassen
+   * Sie einmal zuzulassen
    * Ihre Sandbox-Konfiguration aktualisieren, um sie dauerhaft zuzulassen
 
 ## Sicherheitsbeschränkungen
@@ -227,6 +244,7 @@ Dateisystem- und Netzwerk-Einschränkungen werden sowohl durch Sandbox-Einstellu
 
 * Verwenden Sie `sandbox.filesystem.allowWrite`, um Subprozess-Schreibzugriff auf Pfade außerhalb des Arbeitsverzeichnisses zu gewähren
 * Verwenden Sie `sandbox.filesystem.denyWrite` und `sandbox.filesystem.denyRead`, um Subprozess-Zugriff auf spezifische Pfade zu blockieren
+* Verwenden Sie `sandbox.filesystem.allowRead`, um Lesezugriff auf spezifische Pfade innerhalb einer `denyRead`-Region erneut zuzulassen
 * Verwenden Sie `Read` und `Edit` Deny-Regeln, um Zugriff auf spezifische Dateien oder Verzeichnisse zu blockieren
 * Verwenden Sie `WebFetch` Allow/Deny-Regeln, um Domain-Zugriff zu steuern
 * Verwenden Sie Sandbox `allowedDomains`, um zu steuern, auf welche Domains Bash-Befehle zugreifen können
@@ -288,6 +306,13 @@ Für Implementierungsdetails und Quellcode besuchen Sie das [GitHub-Repository](
 * **Performance-Overhead**: Minimal, aber einige Dateisystem-Operationen können leicht langsamer sein
 * **Kompatibilität**: Einige Tools, die spezifische System-Zugriffsmuster erfordern, benötigen möglicherweise Konfigurationsanpassungen oder müssen sogar außerhalb der Sandbox ausgeführt werden
 * **Plattform-Unterstützung**: Unterstützt macOS, Linux und WSL2. WSL1 wird nicht unterstützt. Native Windows-Unterstützung ist geplant.
+
+## Was Sandboxing nicht abdeckt
+
+Die Sandbox isoliert Bash-Subprozesse. Andere Tools funktionieren unter verschiedenen Grenzen:
+
+* **Integrierte Datei-Tools**: Read, Edit und Write verwenden das Genehmigungssystem direkt, anstatt durch die Sandbox zu laufen. Siehe [Genehmigungen](/de/permissions).
+* **Computer-Nutzung auf Desktop**: Wenn Claude Apps öffnet und Ihren Bildschirm auf macOS steuert, läuft es auf Ihrem tatsächlichen Desktop, anstatt in einer isolierten Umgebung. Pro-App-Genehmigungseingaben kontrollieren jede Anwendung. Siehe [Computer-Nutzung](/de/desktop#let-claude-use-your-computer).
 
 ## Siehe auch
 

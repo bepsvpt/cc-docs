@@ -124,7 +124,7 @@ Claude Code 提供兩種沙箱模式：
   "sandbox": {
     "enabled": true,
     "filesystem": {
-      "allowWrite": ["~/.kube", "//tmp/build"]
+      "allowWrite": ["~/.kube", "/tmp/build"]
     }
   }
 }
@@ -132,18 +132,35 @@ Claude Code 提供兩種沙箱模式：
 
 這些路徑在作業系統級別強制執行，因此在沙箱內運行的所有命令（包括其子流程）都尊重它們。當工具需要對特定位置的寫入存取時，這是推薦的方法，而不是使用 `excludedCommands` 將工具排除在沙箱外。
 
-當在多個 [settings scopes](/zh-TW/settings#settings-precedence) 中定義 `allowWrite`（或 `denyWrite`/`denyRead`）時，陣列被**合併**，這意味著來自每個範圍的路徑被組合，而不是被替換。例如，如果受管設定允許寫入 `//opt/company-tools`，而使用者在其個人設定中新增 `~/.kube`，則兩個路徑都包含在最終沙箱配置中。這意味著使用者和專案可以擴展清單而無需複製或覆蓋由更高優先級範圍設定的路徑。
+當在多個 [settings scopes](/zh-TW/settings#settings-precedence) 中定義 `allowWrite`（或 `denyWrite`/`denyRead`/`allowRead`）時，陣列被**合併**，這意味著來自每個範圍的路徑被組合，而不是被替換。例如，如果受管設定允許寫入 `/opt/company-tools`，而使用者在其個人設定中新增 `~/.kube`，則兩個路徑都包含在最終沙箱配置中。這意味著使用者和專案可以擴展清單而無需複製或覆蓋由更高優先級範圍設定的路徑。
 
 路徑前綴控制路徑的解析方式：
 
-| 前綴        | 含義             | 範例                                |
-| :-------- | :------------- | :-------------------------------- |
-| `//`      | 從檔案系統根目錄的絕對路徑  | `//tmp/build` 變成 `/tmp/build`     |
-| `~/`      | 相對於主目錄         | `~/.kube` 變成 `$HOME/.kube`        |
-| `/`       | 相對於設定檔案的目錄     | `/build` 變成 `$SETTINGS_DIR/build` |
-| `./` 或無前綴 | 相對路徑（由沙箱執行時解析） | `./output`                        |
+| 前綴        | 含義                                    | 範例                                                                |
+| :-------- | :------------------------------------ | :---------------------------------------------------------------- |
+| `/`       | 從檔案系統根目錄的絕對路徑                         | `/tmp/build` 保持 `/tmp/build`                                      |
+| `~/`      | 相對於主目錄                                | `~/.kube` 變成 `$HOME/.kube`                                        |
+| `./` 或無前綴 | 相對於專案設定的專案根目錄，或相對於 `~/.claude` 的使用者設定 | `.claude/settings.json` 中的 `./output` 解析為 `<project-root>/output` |
 
-您也可以使用 `sandbox.filesystem.denyWrite` 和 `sandbox.filesystem.denyRead` 拒絕寫入或讀取存取。這些與來自 `Edit(...)` 和 `Read(...)` 權限規則的任何路徑合併。
+較舊的 `//path` 前綴用於絕對路徑仍然有效。如果您之前使用單斜線 `/path` 期望專案相對解析，請切換到 `./path`。此語法與 [Read and Edit](/zh-TW/permissions#read-and-edit) 權限規則不同，後者使用 `//path` 表示絕對路徑，`/path` 表示專案相對路徑。沙箱檔案系統路徑使用標準慣例：`/tmp/build` 是絕對路徑。
+
+您也可以使用 `sandbox.filesystem.denyWrite` 和 `sandbox.filesystem.denyRead` 拒絕寫入或讀取存取。這些與來自 `Edit(...)` 和 `Read(...)` 權限規則的任何路徑合併。要重新允許讀取 `denyRead` 區域內的特定路徑，請使用 `sandbox.filesystem.allowRead`，它優先於 `denyRead`。當在受管設定中啟用 `allowManagedReadPathsOnly` 時，只有受管 `allowRead` 項目被尊重；使用者、專案和本地 `allowRead` 項目被忽略。
+
+例如，要阻止從整個主目錄讀取，同時仍允許從目前專案讀取，請將此新增到您的專案的 `.claude/settings.json`：
+
+```json  theme={null}
+{
+  "sandbox": {
+    "enabled": true,
+    "filesystem": {
+      "denyRead": ["~/"],
+      "allowRead": ["."]
+    }
+  }
+}
+```
+
+`allowRead` 中的 `.` 解析為專案根目錄，因為此配置位於專案設定中。如果您將相同的配置放在 `~/.claude/settings.json` 中，`.` 將解析為 `~/.claude`，專案檔案將保持被 `denyRead` 規則阻止。
 
 <Tip>
   並非所有命令都與沙箱化開箱即用相容。一些可能幫助您充分利用沙箱的注意事項：
@@ -227,6 +244,7 @@ Claude Code 提供兩種沙箱模式：
 
 * 使用 `sandbox.filesystem.allowWrite` 授予子流程對工作目錄外路徑的寫入存取
 * 使用 `sandbox.filesystem.denyWrite` 和 `sandbox.filesystem.denyRead` 阻止子流程對特定路徑的存取
+* 使用 `sandbox.filesystem.allowRead` 重新允許讀取 `denyRead` 區域內的特定路徑
 * 使用 `Read` 和 `Edit` 拒絕規則阻止對特定檔案或目錄的存取
 * 使用 `WebFetch` 允許/拒絕規則控制域名存取
 * 使用沙箱 `allowedDomains` 控制 Bash 命令可以到達的域名
@@ -288,6 +306,13 @@ npx @anthropic-ai/sandbox-runtime <command-to-sandbox>
 * **效能開銷**：最小，但某些檔案系統操作可能稍慢
 * **相容性**：某些需要特定系統存取模式的工具可能需要配置調整，或甚至可能需要在沙箱外運行
 * **平台支援**：支援 macOS、Linux 和 WSL2。不支援 WSL1。計劃提供原生 Windows 支援。
+
+## 沙箱化不涵蓋的內容
+
+沙箱隔離 Bash 子流程。其他工具在不同的邊界下運作：
+
+* **內建檔案工具**：Read、Edit 和 Write 直接使用權限系統，而不是通過沙箱運行。請參閱 [permissions](/zh-TW/permissions)。
+* **桌面上的電腦使用**：當 Claude 在 macOS 上打開應用程式並控制您的螢幕時，它在您的實際桌面上運行，而不是在隔離環境中。每個應用程式的權限提示控制每個應用程式。請參閱 [computer use](/zh-TW/desktop#let-claude-use-your-computer)。
 
 ## 另請參閱
 

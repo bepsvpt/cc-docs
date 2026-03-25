@@ -41,7 +41,7 @@ Wenn Ihre Geräte in einer MDM- oder Endpunktverwaltungslösung registriert sind
   </Step>
 
   <Step title="Definieren Sie Ihre Einstellungen">
-    Fügen Sie Ihre Konfiguration als JSON hinzu. Alle [in `settings.json` verfügbaren Einstellungen](/de/settings#available-settings) werden unterstützt, einschließlich [nur verwaltete Einstellungen](/de/permissions#managed-only-settings) wie `disableBypassPermissionsMode`.
+    Fügen Sie Ihre Konfiguration als JSON hinzu. Alle [in `settings.json` verfügbaren Einstellungen](/de/settings#available-settings) werden unterstützt, einschließlich [hooks](/de/hooks), [Umgebungsvariablen](/de/env-vars) und [nur verwaltete Einstellungen](/de/permissions#managed-only-settings) wie `allowManagedPermissionRulesOnly`.
 
     Dieses Beispiel erzwingt eine Berechtigungsverweigerungsliste und verhindert, dass Benutzer Berechtigungen umgehen:
 
@@ -58,6 +58,41 @@ Wenn Ihre Geräte in einer MDM- oder Endpunktverwaltungslösung registriert sind
       }
     }
     ```
+
+    Hooks verwenden das gleiche Format wie in `settings.json`.
+
+    Dieses Beispiel führt ein Audit-Skript nach jeder Dateibearbeitung in der gesamten Organisation aus:
+
+    ```json  theme={null}
+    {
+      "hooks": {
+        "PostToolUse": [
+          {
+            "matcher": "Edit|Write",
+            "hooks": [
+              { "type": "command", "command": "/usr/local/bin/audit-edit.sh" }
+            ]
+          }
+        ]
+      }
+    }
+    ```
+
+    Um den [Auto-Modus](/de/permission-modes#eliminate-prompts-with-auto-mode) Klassifizierer zu konfigurieren, damit er weiß, welche Repos, Buckets und Domains Ihre Organisation vertraut:
+
+    ```json  theme={null}
+    {
+      "autoMode": {
+        "environment": [
+          "Source control: github.example.com/acme-corp and all repos under it",
+          "Trusted cloud buckets: s3://acme-build-artifacts, gs://acme-ml-datasets",
+          "Trusted internal domains: *.corp.example.com"
+        ]
+      }
+    }
+    ```
+
+    Da Hooks Shell-Befehle ausführen, sehen Benutzer einen [Sicherheitsgenehmigungsdialog](#security-approval-dialogs), bevor sie angewendet werden. Siehe [Konfigurieren Sie den Auto-Modus Klassifizierer](/de/permissions#configure-the-auto-mode-classifier), um zu erfahren, wie die `autoMode` Einträge beeinflussen, was der Klassifizierer blockiert, und wichtige Warnungen zu den Feldern `allow` und `soft_deny`.
   </Step>
 
   <Step title="Speichern und bereitstellen">

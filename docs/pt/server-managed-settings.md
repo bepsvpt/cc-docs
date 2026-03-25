@@ -41,7 +41,7 @@ Se seus dispositivos estão inscritos em uma solução MDM ou gerenciamento de e
   </Step>
 
   <Step title="Definir suas configurações">
-    Adicione sua configuração como JSON. Todas as [configurações disponíveis em `settings.json`](/pt/settings#available-settings) são suportadas, incluindo [configurações apenas gerenciadas](/pt/permissions#managed-only-settings) como `disableBypassPermissionsMode`.
+    Adicione sua configuração como JSON. Todas as [configurações disponíveis em `settings.json`](/pt/settings#available-settings) são suportadas, incluindo [hooks](/pt/hooks), [variáveis de ambiente](/pt/env-vars) e [configurações apenas gerenciadas](/pt/permissions#managed-only-settings) como `allowManagedPermissionRulesOnly`.
 
     Este exemplo impõe uma lista de negação de permissões e impede que os usuários ignorem as permissões:
 
@@ -58,6 +58,41 @@ Se seus dispositivos estão inscritos em uma solução MDM ou gerenciamento de e
       }
     }
     ```
+
+    Hooks usam o mesmo formato que em `settings.json`.
+
+    Este exemplo executa um script de auditoria após cada edição de arquivo em toda a organização:
+
+    ```json  theme={null}
+    {
+      "hooks": {
+        "PostToolUse": [
+          {
+            "matcher": "Edit|Write",
+            "hooks": [
+              { "type": "command", "command": "/usr/local/bin/audit-edit.sh" }
+            ]
+          }
+        ]
+      }
+    }
+    ```
+
+    Para configurar o classificador do [modo automático](/pt/permission-modes#eliminate-prompts-with-auto-mode) para que ele saiba quais repositórios, buckets e domínios sua organização confia:
+
+    ```json  theme={null}
+    {
+      "autoMode": {
+        "environment": [
+          "Source control: github.example.com/acme-corp and all repos under it",
+          "Trusted cloud buckets: s3://acme-build-artifacts, gs://acme-ml-datasets",
+          "Trusted internal domains: *.corp.example.com"
+        ]
+      }
+    }
+    ```
+
+    Como hooks executam comandos shell, os usuários veem uma [caixa de diálogo de aprovação de segurança](#security-approval-dialogs) antes de serem aplicados. Veja [Configurar o classificador do modo automático](/pt/permissions#configure-the-auto-mode-classifier) para saber como as entradas `autoMode` afetam o que o classificador bloqueia e avisos importantes sobre os campos `allow` e `soft_deny`.
   </Step>
 
   <Step title="Salvar e implantar">

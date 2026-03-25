@@ -41,7 +41,7 @@ Jika perangkat Anda terdaftar dalam solusi MDM atau manajemen endpoint, pengatur
   </Step>
 
   <Step title="Tentukan pengaturan Anda">
-    Tambahkan konfigurasi Anda sebagai JSON. Semua [pengaturan yang tersedia di `settings.json`](/id/settings#available-settings) didukung, termasuk [pengaturan yang hanya dikelola](/id/permissions#managed-only-settings) seperti `disableBypassPermissionsMode`.
+    Tambahkan konfigurasi Anda sebagai JSON. Semua [pengaturan yang tersedia di `settings.json`](/id/settings#available-settings) didukung, termasuk [hooks](/id/hooks), [variabel lingkungan](/id/env-vars), dan [pengaturan yang hanya dikelola](/id/permissions#managed-only-settings) seperti `allowManagedPermissionRulesOnly`.
 
     Contoh ini memberlakukan daftar penolakan izin dan mencegah pengguna dari melewati izin:
 
@@ -58,6 +58,41 @@ Jika perangkat Anda terdaftar dalam solusi MDM atau manajemen endpoint, pengatur
       }
     }
     ```
+
+    Hooks menggunakan format yang sama seperti di `settings.json`.
+
+    Contoh ini menjalankan skrip audit setelah setiap pengeditan file di seluruh organisasi:
+
+    ```json  theme={null}
+    {
+      "hooks": {
+        "PostToolUse": [
+          {
+            "matcher": "Edit|Write",
+            "hooks": [
+              { "type": "command", "command": "/usr/local/bin/audit-edit.sh" }
+            ]
+          }
+        ]
+      }
+    }
+    ```
+
+    Untuk mengonfigurasi pengklasifikasi [mode otomatis](/id/permission-modes#eliminate-prompts-with-auto-mode) sehingga mengetahui repositori, bucket, dan domain mana yang dipercaya organisasi Anda:
+
+    ```json  theme={null}
+    {
+      "autoMode": {
+        "environment": [
+          "Source control: github.example.com/acme-corp and all repos under it",
+          "Trusted cloud buckets: s3://acme-build-artifacts, gs://acme-ml-datasets",
+          "Trusted internal domains: *.corp.example.com"
+        ]
+      }
+    }
+    ```
+
+    Karena hooks menjalankan perintah shell, pengguna melihat [dialog persetujuan keamanan](#security-approval-dialogs) sebelum diterapkan. Lihat [Konfigurasi pengklasifikasi mode otomatis](/id/permissions#configure-the-auto-mode-classifier) untuk cara entri `autoMode` mempengaruhi apa yang diblokir pengklasifikasi dan peringatan penting tentang bidang `allow` dan `soft_deny`.
   </Step>
 
   <Step title="Simpan dan terapkan">

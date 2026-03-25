@@ -124,7 +124,7 @@ claude --continue --fork-session
 
 ### 上下文視窗
 
-Claude 的上下文視窗保存您的對話歷史、檔案內容、命令輸出、[CLAUDE.md](/zh-TW/memory)、載入的 skills 和系統指示。當您工作時，上下文會填滿。Claude 會自動壓縮，但對話早期的指示可能會丟失。將持久規則放在 CLAUDE.md 中，並執行 `/context` 以查看什麼在使用空間。
+Claude 的上下文視窗保存您的對話歷史、檔案內容、命令輸出、[CLAUDE.md](/zh-TW/memory)、[自動記憶](/zh-TW/memory#auto-memory)、載入的 skills 和系統指示。當您工作時，上下文會填滿。Claude 會自動壓縮，但對話早期的指示可能會丟失。將持久規則放在 CLAUDE.md 中，並執行 `/context` 以查看什麼在使用空間。
 
 #### 當上下文填滿時
 
@@ -161,6 +161,7 @@ Claude 有兩個安全機制：檢查點讓您撤銷檔案變更，許可控制 
 * **預設**：Claude 在檔案編輯和 shell 命令之前詢問
 * **自動接受編輯**：Claude 編輯檔案而不詢問，仍然詢問命令
 * **Plan Mode**：Claude 僅使用唯讀工具，建立您可以在執行前批准的計畫
+* **Auto mode**：Claude 使用背景安全檢查評估所有操作。目前是研究預覽
 
 您也可以在 `.claude/settings.json` 中允許特定命令，以便 Claude 不會每次都詢問。這對於受信任的命令（如 `npm test` 或 `git status`）很有用。設定可以從組織範圍的政策範圍到個人偏好。請參閱[許可](/zh-TW/permissions)以取得詳細資訊。
 

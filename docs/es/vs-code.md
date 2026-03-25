@@ -85,7 +85,7 @@ Para más ideas sobre lo que puede hacer con Claude Code, consulte [Flujos de tr
 El cuadro de mensaje admite varias características:
 
 * **Modos de permiso**: haga clic en el indicador de modo en la parte inferior del cuadro de mensaje para cambiar de modo. En modo normal, Claude solicita permiso antes de cada acción. En Plan Mode, Claude describe lo que hará y espera aprobación antes de realizar cambios. VS Code abre automáticamente el plan como un documento markdown completo donde puede agregar comentarios en línea para dar retroalimentación antes de que Claude comience. En modo de aceptación automática, Claude realiza ediciones sin preguntar. Establezca el valor predeterminado en la configuración de VS Code en `claudeCode.initialPermissionMode`.
-* **Menú de comandos**: haga clic en `/` o escriba `/` para abrir el menú de comandos. Las opciones incluyen adjuntar archivos, cambiar modelos, alternar pensamiento extendido y ver uso del plan (`/usage`). La sección Personalizar proporciona acceso a MCP servers, hooks, memoria, permisos y plugins. Los elementos con un icono de terminal se abren en la terminal integrada.
+* **Menú de comandos**: haga clic en `/` o escriba `/` para abrir el menú de comandos. Las opciones incluyen adjuntar archivos, cambiar modelos, alternar pensamiento extendido, ver uso del plan (`/usage`) e iniciar una sesión de [Control remoto](/es/remote-control) (`/remote-control`). La sección Personalizar proporciona acceso a MCP servers, hooks, memoria, permisos y plugins. Los elementos con un icono de terminal se abren en la terminal integrada.
 * **Indicador de contexto**: el cuadro de mensaje muestra cuánto de la ventana de contexto de Claude está utilizando. Claude se compacta automáticamente cuando es necesario, o puede ejecutar `/compact` manualmente.
 * **Pensamiento extendido**: permite que Claude dedique más tiempo a razonar sobre problemas complejos. Actívelo a través del menú de comandos (`/`). Consulte [Pensamiento extendido](/es/common-workflows#usar-pensamiento-extendido-thinking-mode) para obtener más detalles.
 * **Entrada multilínea**: presione `Shift+Enter` para agregar una nueva línea sin enviar. Esto también funciona en la entrada de texto libre "Otro" de los diálogos de preguntas.
@@ -107,7 +107,7 @@ También puede mantener presionado `Shift` mientras arrastra archivos al cuadro 
 
 ### Reanudar conversaciones pasadas
 
-Haga clic en el menú desplegable en la parte superior del panel de Claude Code para acceder al historial de conversaciones. Puede buscar por palabra clave o examinar por tiempo (Hoy, Ayer, Últimos 7 días, etc.). Haga clic en cualquier conversación para reanudarla con el historial de mensajes completo. Pase el cursor sobre una sesión para revelar acciones de cambio de nombre y eliminación: cambie el nombre para darle un título descriptivo, o elimine para borrarlo de la lista. Para más información sobre cómo reanudar sesiones, consulte [Flujos de trabajo comunes](/es/common-workflows#reanudar-conversaciones-anteriores).
+Haga clic en el menú desplegable en la parte superior del panel de Claude Code para acceder al historial de conversaciones. Puede buscar por palabra clave o examinar por tiempo (Hoy, Ayer, Últimos 7 días, etc.). Haga clic en cualquier conversación para reanudarla con el historial de mensajes completo. Las nuevas sesiones reciben títulos generados por IA basados en su primer mensaje. Pase el cursor sobre una sesión para revelar acciones de cambio de nombre y eliminación: cambie el nombre para darle un título descriptivo, o elimine para borrarlo de la lista. Para más información sobre cómo reanudar sesiones, consulte [Flujos de trabajo comunes](/es/common-workflows#reanudar-conversaciones-anteriores).
 
 ### Reanudar sesiones remotas desde Claude.ai
 
@@ -247,21 +247,21 @@ La extensión tiene dos tipos de configuración:
 
 ### Configuración de extensión
 
-| Configuración                     | Predeterminado | Descripción                                                                                                                               |
-| --------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `selectedModel`                   | `default`      | Modelo para nuevas conversaciones. Cambie por sesión con `/model`.                                                                        |
-| `useTerminal`                     | `false`        | Lanzar Claude en modo terminal en lugar de panel gráfico                                                                                  |
-| `initialPermissionMode`           | `default`      | Controla mensajes de aprobación: `default` (preguntar cada vez), `plan`, `acceptEdits` o `bypassPermissions`                              |
-| `preferredLocation`               | `panel`        | Dónde se abre Claude: `sidebar` (derecha) o `panel` (nueva pestaña)                                                                       |
-| `autosave`                        | `true`         | Guardar archivos automáticamente antes de que Claude los lea o escriba                                                                    |
-| `useCtrlEnterToSend`              | `false`        | Usar Ctrl/Cmd+Enter en lugar de Enter para enviar mensajes                                                                                |
-| `enableNewConversationShortcut`   | `true`         | Habilitar Cmd/Ctrl+N para iniciar una nueva conversación                                                                                  |
-| `hideOnboarding`                  | `false`        | Ocultar la lista de verificación de incorporación (icono de gorro de graduación)                                                          |
-| `respectGitIgnore`                | `true`         | Excluir patrones de .gitignore de búsquedas de archivos                                                                                   |
-| `environmentVariables`            | `[]`           | Establecer variables de entorno para el proceso de Claude. Use la configuración de Claude Code en su lugar para configuración compartida. |
-| `disableLoginPrompt`              | `false`        | Omitir mensajes de autenticación (para configuraciones de proveedores de terceros)                                                        |
-| `allowDangerouslySkipPermissions` | `false`        | Omitir todos los mensajes de permiso. **Use con extrema precaución.**                                                                     |
-| `claudeProcessWrapper`            | -              | Ruta ejecutable utilizada para lanzar el proceso de Claude                                                                                |
+| Configuración                     | Predeterminado | Descripción                                                                                                                                                                                                                                                                                                                      |
+| --------------------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `selectedModel`                   | `default`      | Modelo para nuevas conversaciones. Cambie por sesión con `/model`.                                                                                                                                                                                                                                                               |
+| `useTerminal`                     | `false`        | Lanzar Claude en modo terminal en lugar de panel gráfico                                                                                                                                                                                                                                                                         |
+| `initialPermissionMode`           | `default`      | Controla mensajes de aprobación para nuevas conversaciones: `default`, `plan`, `acceptEdits`, `auto` o `bypassPermissions`. Consulte [modos de permiso](/es/permission-modes).                                                                                                                                                   |
+| `preferredLocation`               | `panel`        | Dónde se abre Claude: `sidebar` (derecha) o `panel` (nueva pestaña)                                                                                                                                                                                                                                                              |
+| `autosave`                        | `true`         | Guardar archivos automáticamente antes de que Claude los lea o escriba                                                                                                                                                                                                                                                           |
+| `useCtrlEnterToSend`              | `false`        | Usar Ctrl/Cmd+Enter en lugar de Enter para enviar mensajes                                                                                                                                                                                                                                                                       |
+| `enableNewConversationShortcut`   | `true`         | Habilitar Cmd/Ctrl+N para iniciar una nueva conversación                                                                                                                                                                                                                                                                         |
+| `hideOnboarding`                  | `false`        | Ocultar la lista de verificación de incorporación (icono de gorro de graduación)                                                                                                                                                                                                                                                 |
+| `respectGitIgnore`                | `true`         | Excluir patrones de .gitignore de búsquedas de archivos                                                                                                                                                                                                                                                                          |
+| `environmentVariables`            | `[]`           | Establecer variables de entorno para el proceso de Claude. Use la configuración de Claude Code en su lugar para configuración compartida.                                                                                                                                                                                        |
+| `disableLoginPrompt`              | `false`        | Omitir mensajes de autenticación (para configuraciones de proveedores de terceros)                                                                                                                                                                                                                                               |
+| `allowDangerouslySkipPermissions` | `false`        | Agrega permisos [Auto](/es/permission-modes#eliminate-prompts-with-auto-mode) y Bypass a la selector de modo. Auto requiere un plan de equipo y Claude Sonnet 4.6 u Opus 4.6, por lo que la opción puede permanecer no disponible incluso con este toggle activado. Use permisos Bypass solo en sandboxes sin acceso a Internet. |
+| `claudeProcessWrapper`            | -              | Ruta ejecutable utilizada para lanzar el proceso de Claude                                                                                                                                                                                                                                                                       |
 
 ## Extensión de VS Code frente a CLI de Claude Code
 
@@ -374,6 +374,27 @@ Con permisos de edición automática habilitados, Claude Code puede modificar ar
 * Habilite [Modo restringido de VS Code](https://code.visualstudio.com/docs/editor/workspace-trust#_restricted-mode) para espacios de trabajo no confiables
 * Use el modo de aprobación manual en lugar de aceptación automática para ediciones
 * Revise cuidadosamente los cambios antes de aceptarlos
+
+### El servidor MCP IDE integrado
+
+Cuando la extensión está activa, ejecuta un servidor MCP local al que la CLI se conecta automáticamente. Así es como la CLI abre diffs en el visor de diffs nativo de VS Code, lee su selección actual para menciones `@` y, cuando está trabajando en un notebook de Jupyter, le pide a VS Code que ejecute celdas.
+
+El servidor se llama `ide` y está oculto de `/mcp` porque no hay nada que configurar. Sin embargo, si su organización utiliza un hook `PreToolUse` para permitir herramientas MCP, necesitará saber que existe.
+
+**Transporte y autenticación.** El servidor se vincula a `127.0.0.1` en un puerto alto aleatorio y no es accesible desde otras máquinas. Cada activación de extensión genera un token de autenticación aleatorio nuevo que la CLI debe presentar para conectarse. El token se escribe en un archivo de bloqueo bajo `~/.claude/ide/` con permisos `0600` en un directorio `0700`, por lo que solo el usuario que ejecuta VS Code puede leerlo.
+
+**Herramientas expuestas al modelo.** El servidor aloja una docena de herramientas, pero solo dos son visibles para el modelo. El resto son RPC internas que la CLI usa para su propia interfaz de usuario (abrir diffs, leer selecciones, guardar archivos) y se filtran antes de que la lista de herramientas llegue a Claude.
+
+| Nombre de herramienta (como se ve en hooks) | Qué hace                                                                                                                                          | ¿Escribe? |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| `mcp__ide__getDiagnostics`                  | Devuelve diagnósticos del servidor de lenguaje: los errores y advertencias en el panel Problemas de VS Code. Opcionalmente limitado a un archivo. | No        |
+| `mcp__ide__executeCode`                     | Ejecuta código Python en el kernel del notebook de Jupyter activo. Consulte el flujo de confirmación a continuación.                              | Sí        |
+
+**La ejecución de Jupyter siempre pregunta primero.** `mcp__ide__executeCode` no puede ejecutar nada silenciosamente. En cada llamada, el código se inserta como una nueva celda al final del notebook activo, VS Code lo desplaza a la vista y una Quick Pick nativa le pregunta si **Ejecutar** o **Cancelar**. Cancelar (o descartar la selección con `Esc`) devuelve un error a Claude y nada se ejecuta. La herramienta también se niega rotundamente cuando no hay un notebook activo, cuando la extensión de Jupyter (`ms-toolsai.jupyter`) no está instalada, o cuando el kernel no es Python.
+
+<Note>
+  La confirmación de Quick Pick es separada de los hooks `PreToolUse`. Una entrada de lista de permitidos para `mcp__ide__executeCode` permite que Claude *proponga* ejecutar una celda; la Quick Pick dentro de VS Code es lo que permite que *realmente* se ejecute.
+</Note>
 
 ## Solucionar problemas comunes
 

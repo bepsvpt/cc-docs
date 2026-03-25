@@ -47,9 +47,15 @@ Wenn Sie benutzerdefinierte Modellnamen in Ihrem Gateway konfiguriert haben, ver
 
 ## LiteLLM-Konfiguration
 
-<Note>
+<Warning>
+  LiteLLM PyPI-Versionen 1.82.7 und 1.82.8 wurden mit Malware zum Diebstahl von Anmeldedaten kompromittiert. Installieren Sie diese Versionen nicht. Wenn Sie diese bereits installiert haben:
+
+  * Entfernen Sie das Paket
+  * Rotieren Sie alle Anmeldedaten auf betroffenen Systemen
+  * Folgen Sie den Abhilfeschritten in [BerriAI/litellm#24518](https://github.com/BerriAI/litellm/issues/24518)
+
   LiteLLM ist ein Drittanbieter-Proxy-Service. Anthropic befürwortet, wartet oder prüft nicht die Sicherheit oder Funktionalität von LiteLLM. Diese Anleitung wird zu Informationszwecken bereitgestellt und kann veraltet werden. Verwenden Sie sie nach eigenem Ermessen.
-</Note>
+</Warning>
 
 ### Voraussetzungen
 

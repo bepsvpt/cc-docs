@@ -1,5 +1,586 @@
 # Documentation Changes
 
+## 2026-03-25
+
+202 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Best Practices für Claude Code** (`best-practices.md`): 16 lines added, 11 removed
+  - New section: "### Führen Sie autonom mit Auto Mode aus"
+- **CLI-Referenz** (`cli-reference.md`): 75 lines added, 70 removed
+- **Claude Code Desktop verwenden** (`desktop.md`): 139 lines added, 37 removed
+  - New section: "## Lassen Sie Claude Ihren Computer verwenden"
+  - New section: "### Wann Computernutzung anwendbar ist"
+  - New section: "### Aktivieren Sie Computernutzung"
+  - New section: "### App-Berechtigungen"
+  - New section: "### Sitzungen von Dispatch"
+- **Hooks-Referenz** (`hooks.md`): 85 lines added, 57 removed
+  - New section: "### StopFailure"
+  - New section: "#### StopFailure-Eingabe"
+- **So funktioniert Claude Code** (`how-claude-code-works.md`): 2 lines added, 1 removed
+- **Interaktiver Modus** (`interactive-mode.md`): 26 lines added, 19 removed
+  - New section: "### Spracheingabe"
+- **LLM-Gateway-Konfiguration** (`llm-gateway.md`): 8 lines added, 2 removed
+- **Claude Code Übersicht** (`overview.md`): 24 lines added, 13 removed
+  - New section: "# Analysieren Sie aktuelle Log-Ausgabe"
+  - New section: "# Automatisieren Sie Übersetzungen in CI"
+  - New section: "# Massenoperationen über Dateien hinweg"
+- **Berechtigungen konfigurieren** (`permissions.md`): 147 lines added, 22 removed
+  - New section: "### Agent (Subagents)"
+  - New section: "## Konfigurieren Sie den Auto-Mode-Klassifizierer"
+  - New section: "### Definieren Sie vertrauenswürdige Infrastruktur"
+  - New section: "### Überschreiben Sie die Block- und Allow-Regeln"
+  - New section: "### Überprüfen Sie die Standardeinstellungen und Ihre effektive Konfiguration"
+- **Erstellen und Verteilen eines Plugin-Marktplatzes** (`plugin-marketplaces.md`): 47 lines added, 19 removed
+  - New section: "### Plugins für Container vorab ausfüllen"
+- **Lokale Sitzungen von jedem Gerät aus mit Remote Control fortsetzen** (`remote-control.md`): 57 lines added, 3 removed
+  - New section: "## Fehlerbehebung"
+  - New section: "### 'Remote Control ist für Ihr Konto noch nicht aktiviert""
+  - New section: "### „Remote Control ist durch die Richtlinie Ihrer Organisation deaktiviert""
+  - New section: "### „Remote credentials fetch failed""
+  - New section: "## Wählen Sie den richtigen Ansatz"
+- **Sandboxing** (`sandboxing.md`): 35 lines added, 10 removed
+  - New section: "## Was Sandboxing nicht abdeckt"
+- **Prompts nach Zeitplan ausführen** (`scheduled-tasks.md`): 32 lines added, 8 removed
+  - New section: "## Vergleichen Sie Planungsoptionen"
+- **Serververwaltete Einstellungen konfigurieren (öffentliche Beta)** (`server-managed-settings.md`): 36 lines added, 1 removed
+- **Claude Code-Einstellungen** (`settings.md`): 77 lines added, 33 removed
+  - New section: "### Globale Konfigurationseinstellungen"
+- **Benutzerdefinierte Subagenten erstellen** (`sub-agents.md`): 73 lines added, 15 removed
+  - New section: "### Rufen Sie Subagenten explizit auf"
+
+### English
+
+
+**Modified**
+
+- **Best Practices for Claude Code** (`best-practices.md`): 15 lines added, 10 removed
+  - New section: "### Run autonomously with auto mode"
+- **Changelog** (`changelog.md`): 79 lines added, 0 removed
+- **CLI reference** (`cli-reference.md`): 4 lines added, 2 removed
+- **Use Claude Code Desktop** (`desktop.md`): 17 lines added, 14 removed
+- **Hooks reference** (`hooks.md`): 7 lines added, 7 removed
+- **How Claude Code works** (`how-claude-code-works.md`): 1 lines added, 0 removed
+- **Interactive mode** (`interactive-mode.md`): 18 lines added, 18 removed
+- **Customize keyboard shortcuts** (`keybindings.md`): 5 lines added, 4 removed
+- **LLM gateway configuration** (`llm-gateway.md`): 8 lines added, 2 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 49 lines added, 5 removed
+  - New section: "### Use dynamic headers for custom authentication"
+- **Claude Code overview** (`overview.md`): 11 lines added, 11 removed
+- **Configure permissions** (`permissions.md`): 118 lines added, 9 removed
+  - New section: "## Configure the auto mode classifier"
+  - New section: "### Define trusted infrastructure"
+  - New section: "### Override the block and allow rules"
+  - New section: "### Inspect the defaults and your effective config"
+- **Quickstart** (`quickstart.md`): 608 lines added, 0 removed
+- **Continue local sessions from any device with Remote Control** (`remote-control.md`): 1 lines added, 1 removed
+- **Configure server-managed settings (public beta)** (`server-managed-settings.md`): 16 lines added, 2 removed
+- **Claude Code settings** (`settings.md`): 59 lines added, 57 removed
+- **Create custom subagents** (`sub-agents.md`): 3 lines added, 3 removed
+- **Use Claude Code in VS Code** (`vs-code.md`): 15 lines added, 15 removed
+
+### Español
+
+
+**Modified**
+
+- **Mejores prácticas para Claude Code** (`best-practices.md`): 16 lines added, 11 removed
+  - New section: "### Ejecutar autónomamente con modo automático"
+- **Referencia de CLI** (`cli-reference.md`): 75 lines added, 70 removed
+- **Usar Claude Code Desktop** (`desktop.md`): 145 lines added, 43 removed
+  - New section: "## Permitir que Claude use su computadora"
+  - New section: "### Cuándo se aplica el uso de computadora"
+  - New section: "### Habilitar el uso de computadora"
+  - New section: "### Permisos de aplicación"
+  - New section: "### Sesiones desde Dispatch"
+- **Referencia de hooks** (`hooks.md`): 85 lines added, 57 removed
+  - New section: "### StopFailure"
+  - New section: "#### Entrada de StopFailure"
+- **Cómo funciona Claude Code** (`how-claude-code-works.md`): 2 lines added, 1 removed
+- **Modo interactivo** (`interactive-mode.md`): 25 lines added, 18 removed
+  - New section: "### Entrada de voz"
+- **Configuración de la puerta de enlace LLM** (`llm-gateway.md`): 8 lines added, 2 removed
+- **Descripción general de Claude Code** (`overview.md`): 24 lines added, 13 removed
+  - New section: "# Analiza la salida de registros recientes"
+  - New section: "# Automatiza traducciones en CI"
+  - New section: "# Operaciones en masa en archivos"
+- **Configurar permisos** (`permissions.md`): 146 lines added, 21 removed
+  - New section: "## Configurar el clasificador del modo auto"
+  - New section: "### Definir infraestructura confiable"
+  - New section: "### Anular las reglas de bloqueo y permiso"
+  - New section: "### Inspeccionar los valores predeterminados y su configuración efectiva"
+- **Crear y distribuir un marketplace de plugins** (`plugin-marketplaces.md`): 47 lines added, 19 removed
+  - New section: "### Precargar plugins para contenedores"
+- **Continúe sesiones locales desde cualquier dispositivo con Remote Control** (`remote-control.md`): 57 lines added, 3 removed
+  - New section: "## Solución de problemas"
+  - New section: "### "Remote Control is not yet enabled for your account""
+  - New section: "### "Remote Control is disabled by your organization's policy""
+  - New section: "### "Remote credentials fetch failed""
+  - New section: "## Elija el enfoque correcto"
+- **Sandboxing** (`sandboxing.md`): 34 lines added, 9 removed
+  - New section: "## Lo que el sandboxing no cubre"
+- **Ejecutar prompts en un horario** (`scheduled-tasks.md`): 28 lines added, 4 removed
+  - New section: "## Comparar opciones de programación"
+- **Configurar la configuración administrada por servidor (beta pública)** (`server-managed-settings.md`): 36 lines added, 1 removed
+- **Configuración de Claude Code** (`settings.md`): 126 lines added, 82 removed
+  - New section: "### Configuración de config global"
+- **Crear subagentes personalizados** (`sub-agents.md`): 70 lines added, 15 removed
+  - New section: "### Invocar subagentes explícitamente"
+- **Usar Claude Code en VS Code** (`vs-code.md`): 38 lines added, 17 removed
+  - New section: "### El servidor MCP IDE integrado"
+
+### Français
+
+
+**Modified**
+
+- **Meilleures pratiques pour Claude Code** (`best-practices.md`): 16 lines added, 11 removed
+  - New section: "### Exécutez de manière autonome avec le mode auto"
+- **Référence CLI** (`cli-reference.md`): 75 lines added, 70 removed
+- **Utiliser Claude Code Desktop** (`desktop.md`): 138 lines added, 36 removed
+  - New section: "## Laisser Claude utiliser votre ordinateur"
+  - New section: "### Quand l'utilisation informatique s'applique"
+  - New section: "### Activer l'utilisation informatique"
+  - New section: "### Permissions d'application"
+  - New section: "### Sessions depuis Dispatch"
+- **Référence des hooks** (`hooks.md`): 84 lines added, 56 removed
+  - New section: "### StopFailure"
+  - New section: "#### Entrée StopFailure"
+- **Comment fonctionne Claude Code** (`how-claude-code-works.md`): 2 lines added, 1 removed
+- **Mode interactif** (`interactive-mode.md`): 25 lines added, 18 removed
+  - New section: "### Entrée vocale"
+- **Configuration de la passerelle LLM** (`llm-gateway.md`): 11 lines added, 5 removed
+- **Aperçu de Claude Code** (`overview.md`): 24 lines added, 13 removed
+  - New section: "# Analyser la sortie récente des journaux"
+  - New section: "# Automatiser les traductions en CI"
+  - New section: "# Opérations en masse sur les fichiers"
+- **Configurer les autorisations** (`permissions.md`): 146 lines added, 21 removed
+  - New section: "## Configurer le classificateur du mode auto"
+  - New section: "### Définir l'infrastructure approuvée"
+  - New section: "### Remplacer les règles de blocage et d'autorisation"
+  - New section: "### Inspecter les paramètres par défaut et votre configuration effective"
+- **Créer et distribuer une place de marché de plugins** (`plugin-marketplaces.md`): 47 lines added, 19 removed
+  - New section: "### Pré-remplir les plugins pour les conteneurs"
+- **Continuer les sessions locales depuis n'importe quel appareil avec Remote Control** (`remote-control.md`): 57 lines added, 3 removed
+  - New section: "## Dépannage"
+  - New section: "### « Remote Control is not yet enabled for your account »"
+  - New section: "### « Remote Control is disabled by your organization's policy »"
+  - New section: "### « Remote credentials fetch failed »"
+  - New section: "## Choisir la bonne approche"
+- **Sandboxing** (`sandboxing.md`): 34 lines added, 9 removed
+  - New section: "## Ce que le sandboxing ne couvre pas"
+- **Exécuter des prompts selon un calendrier** (`scheduled-tasks.md`): 28 lines added, 4 removed
+  - New section: "## Comparer les options de planification"
+- **Configurer les paramètres gérés par le serveur (bêta publique)** (`server-managed-settings.md`): 36 lines added, 1 removed
+- **Paramètres Claude Code** (`settings.md`): 78 lines added, 34 removed
+  - New section: "### Paramètres de configuration globale"
+- **Créer des sous-agents personnalisés** (`sub-agents.md`): 73 lines added, 15 removed
+  - New section: "### Invoquer les sous-agents explicitement"
+- **Utiliser Claude Code dans VS Code** (`vs-code.md`): 38 lines added, 17 removed
+  - New section: "### Le serveur MCP IDE intégré"
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Praktik Terbaik untuk Claude Code** (`best-practices.md`): 17 lines added, 12 removed
+  - New section: "### Jalankan secara otonom dengan auto mode"
+- **Referensi CLI** (`cli-reference.md`): 76 lines added, 71 removed
+- **Gunakan Claude Code Desktop** (`desktop.md`): 138 lines added, 36 removed
+  - New section: "## Biarkan Claude menggunakan komputer Anda"
+  - New section: "### Kapan penggunaan komputer berlaku"
+  - New section: "### Aktifkan penggunaan komputer"
+  - New section: "### Izin aplikasi"
+  - New section: "### Sesi dari Dispatch"
+- **Referensi hooks** (`hooks.md`): 85 lines added, 57 removed
+  - New section: "### StopFailure"
+  - New section: "#### Input StopFailure"
+- **Cara Kerja Claude Code** (`how-claude-code-works.md`): 2 lines added, 1 removed
+- **Mode interaktif** (`interactive-mode.md`): 25 lines added, 18 removed
+  - New section: "### Input suara"
+- **Konfigurasi LLM gateway** (`llm-gateway.md`): 8 lines added, 2 removed
+- **Ikhtisar Claude Code** (`overview.md`): 25 lines added, 14 removed
+  - New section: "# Analisis keluaran log terbaru"
+  - New section: "# Otomatisasi terjemahan di CI"
+  - New section: "# Operasi massal di seluruh file"
+- **Konfigurasi izin** (`permissions.md`): 145 lines added, 20 removed
+  - New section: "## Konfigurasi pengklasifikasi mode auto"
+  - New section: "### Tentukan infrastruktur terpercaya"
+  - New section: "### Timpa aturan blokir dan allow"
+  - New section: "### Periksa default dan konfigurasi efektif Anda"
+- **Buat dan distribusikan marketplace plugin** (`plugin-marketplaces.md`): 47 lines added, 19 removed
+  - New section: "### Pra-isi plugin untuk container"
+- **Lanjutkan sesi lokal dari perangkat apa pun dengan Remote Control** (`remote-control.md`): 57 lines added, 3 removed
+  - New section: "## Pemecahan masalah"
+  - New section: "### "Remote Control belum diaktifkan untuk akun Anda""
+  - New section: "### "Remote Control dinonaktifkan oleh kebijakan organisasi Anda""
+  - New section: "### "Remote credentials fetch failed""
+  - New section: "## Pilih pendekatan yang tepat"
+- **Sandboxing** (`sandboxing.md`): 34 lines added, 9 removed
+  - New section: "## Apa yang sandboxing tidak mencakup"
+- **Jalankan prompt sesuai jadwal** (`scheduled-tasks.md`): 28 lines added, 4 removed
+  - New section: "## Bandingkan opsi penjadwalan"
+- **Konfigurasi pengaturan yang dikelola server (beta publik)** (`server-managed-settings.md`): 36 lines added, 1 removed
+- **Pengaturan Claude Code** (`settings.md`): 132 lines added, 88 removed
+  - New section: "### Pengaturan konfigurasi global"
+- **Buat subagent khusus** (`sub-agents.md`): 70 lines added, 14 removed
+  - New section: "### Panggil subagent secara eksplisit"
+- **Gunakan Claude Code di VS Code** (`vs-code.md`): 38 lines added, 17 removed
+  - New section: "### Server MCP IDE bawaan"
+
+### Italiano
+
+
+**Modified**
+
+- **Best Practices per Claude Code** (`best-practices.md`): 16 lines added, 11 removed
+  - New section: "### Eseguite autonomamente con auto mode"
+- **Riferimento CLI** (`cli-reference.md`): 75 lines added, 70 removed
+- **Usa Claude Code Desktop** (`desktop.md`): 139 lines added, 37 removed
+  - New section: "## Lascia che Claude usi il tuo computer"
+  - New section: "### Quando si applica l'utilizzo del computer"
+  - New section: "### Abilita l'utilizzo del computer"
+  - New section: "### Permessi delle app"
+  - New section: "### Sessioni da Dispatch"
+- **Riferimento dei hooks** (`hooks.md`): 85 lines added, 57 removed
+  - New section: "### StopFailure"
+  - New section: "#### Input di StopFailure"
+- **Come funziona Claude Code** (`how-claude-code-works.md`): 2 lines added, 1 removed
+- **Modalità interattiva** (`interactive-mode.md`): 25 lines added, 18 removed
+  - New section: "### Input vocale"
+- **Configurazione del gateway LLM** (`llm-gateway.md`): 8 lines added, 2 removed
+- **Panoramica di Claude Code** (`overview.md`): 24 lines added, 13 removed
+  - New section: "# Analizza l'output dei log recenti"
+  - New section: "# Automatizza le traduzioni in CI"
+  - New section: "# Operazioni in blocco su file"
+- **Configurare le autorizzazioni** (`permissions.md`): 150 lines added, 25 removed
+  - New section: "## Configurare il classificatore della modalità auto"
+  - New section: "### Definire l'infrastruttura affidabile"
+  - New section: "### Ignorare le regole di blocco e allow"
+  - New section: "### Ispezionare i valori predefiniti e la tua configurazione effettiva"
+- **Creare e distribuire un marketplace di plugin** (`plugin-marketplaces.md`): 47 lines added, 19 removed
+  - New section: "### Pre-popola plugin per i container"
+- **Continua le sessioni locali da qualsiasi dispositivo con Remote Control** (`remote-control.md`): 57 lines added, 3 removed
+  - New section: "## Risoluzione dei problemi"
+  - New section: "### "Remote Control is not yet enabled for your account""
+  - New section: "### "Remote Control is disabled by your organization's policy""
+  - New section: "### "Remote credentials fetch failed""
+  - New section: "## Scegli l'approccio giusto"
+- **Sandboxing** (`sandboxing.md`): 34 lines added, 9 removed
+  - New section: "## Cosa il sandboxing non copre"
+- **Eseguire prompt in base a una pianificazione** (`scheduled-tasks.md`): 38 lines added, 14 removed
+  - New section: "## Confrontare le opzioni di pianificazione"
+- **Configurare le impostazioni gestite dal server (beta pubblico)** (`server-managed-settings.md`): 36 lines added, 1 removed
+- **Impostazioni di Claude Code** (`settings.md`): 126 lines added, 82 removed
+  - New section: "### Impostazioni di configurazione globale"
+- **Creare subagent personalizzati** (`sub-agents.md`): 71 lines added, 15 removed
+  - New section: "### Invoca i subagent esplicitamente"
+- **Usa Claude Code in VS Code** (`vs-code.md`): 41 lines added, 20 removed
+  - New section: "### Il server IDE MCP incorporato"
+
+### 日本語
+
+
+**Modified**
+
+- **Claude Code のベストプラクティス** (`best-practices.md`): 15 lines added, 10 removed
+  - New section: "### auto mode で自律的に実行する"
+- **CLI リファレンス** (`cli-reference.md`): 75 lines added, 70 removed
+- **Claude Code Desktop を使用する** (`desktop.md`): 127 lines added, 25 removed
+  - New section: "## Claude にコンピュータを使用させる"
+  - New section: "### コンピュータ使用が適用される場合"
+  - New section: "### コンピュータ使用を有効にする"
+  - New section: "### アプリ権限"
+  - New section: "### Dispatch からのセッション"
+- **Hooks リファレンス** (`hooks.md`): 91 lines added, 63 removed
+  - New section: "### StopFailure"
+  - New section: "#### StopFailure 入力"
+- **Claude Code の仕組み** (`how-claude-code-works.md`): 4 lines added, 3 removed
+- **インタラクティブモード** (`interactive-mode.md`): 25 lines added, 18 removed
+  - New section: "### 音声入力"
+- **LLM gateway設定** (`llm-gateway.md`): 15 lines added, 9 removed
+- **Claude Code の概要** (`overview.md`): 23 lines added, 12 removed
+  - New section: "# 最近のログ出力を分析する"
+  - New section: "# CI で翻訳を自動化する"
+- **権限を設定する** (`permissions.md`): 139 lines added, 14 removed
+  - New section: "## auto モード分類器を設定する"
+  - New section: "### 信頼できるインフラストラクチャを定義する"
+  - New section: "### ブロックルールと allow ルールをオーバーライドする"
+  - New section: "### デフォルトと有効な設定を検査する"
+- **プラグインマーケットプレイスの作成と配布** (`plugin-marketplaces.md`): 46 lines added, 18 removed
+  - New section: "### コンテナ用にプラグインを事前入力する"
+- **任意のデバイスからローカルセッションを続行する Remote Control** (`remote-control.md`): 57 lines added, 3 removed
+  - New section: "## トラブルシューティング"
+  - New section: "### 「Remote Control はまだアカウントで有効になっていません」"
+  - New section: "### 「Remote Control は組織のポリシーで無効になっています」"
+  - New section: "### 「リモート認証情報の取得に失敗しました」"
+  - New section: "## 適切なアプローチを選択する"
+- **サンドボックス** (`sandboxing.md`): 34 lines added, 9 removed
+  - New section: "## サンドボックス化がカバーしていないもの"
+- **スケジュールに従ってプロンプトを実行する** (`scheduled-tasks.md`): 30 lines added, 6 removed
+  - New section: "## スケジューリングオプションを比較する"
+- **サーバー管理設定を構成する（パブリックベータ版）** (`server-managed-settings.md`): 36 lines added, 1 removed
+- **Claude Code の設定** (`settings.md`): 132 lines added, 88 removed
+  - New section: "### グローバル構成設定"
+- **カスタムサブエージェントの作成** (`sub-agents.md`): 72 lines added, 14 removed
+  - New section: "### サブエージェントを明示的に呼び出す"
+- **VS Code で Claude Code を使用する** (`vs-code.md`): 38 lines added, 17 removed
+  - New section: "### 組み込み IDE MCP サーバー"
+
+### 한국어
+
+
+**Modified**
+
+- **Claude Code 모범 사례** (`best-practices.md`): 15 lines added, 10 removed
+  - New section: "### auto mode로 자율적으로 실행하기"
+- **CLI 참조** (`cli-reference.md`): 75 lines added, 70 removed
+- **Claude Code Desktop 사용하기** (`desktop.md`): 126 lines added, 24 removed
+  - New section: "## Claude가 컴퓨터를 사용하도록 하기"
+  - New section: "### 컴퓨터 사용이 적용되는 경우"
+  - New section: "### 컴퓨터 사용 활성화하기"
+  - New section: "### 앱 권한"
+  - New section: "### Dispatch에서 세션"
+- **Hooks 참조** (`hooks.md`): 84 lines added, 56 removed
+  - New section: "### StopFailure"
+  - New section: "#### StopFailure 입력"
+- **Claude Code의 작동 방식** (`how-claude-code-works.md`): 2 lines added, 1 removed
+- **대화형 모드** (`interactive-mode.md`): 26 lines added, 19 removed
+  - New section: "### 음성 입력"
+- **LLM gateway 구성** (`llm-gateway.md`): 8 lines added, 2 removed
+- **Claude Code 개요** (`overview.md`): 24 lines added, 13 removed
+  - New section: "# 최근 로그 출력 분석"
+  - New section: "# CI에서 번역 자동화"
+  - New section: "# 파일 전체에 걸친 대량 작업"
+- **권한 구성** (`permissions.md`): 139 lines added, 14 removed
+  - New section: "## 자동 모드 분류기 구성"
+  - New section: "### 신뢰할 수 있는 인프라 정의"
+  - New section: "### 차단 및 allow 규칙 재정의"
+  - New section: "### 기본값 및 효과적인 구성 검사"
+- **플러그인 마켓플레이스 생성 및 배포** (`plugin-marketplaces.md`): 46 lines added, 18 removed
+  - New section: "### 컨테이너에 대한 플러그인 사전 채우기"
+- **모든 기기에서 로컬 세션 계속하기 (Remote Control)** (`remote-control.md`): 57 lines added, 3 removed
+  - New section: "## 문제 해결"
+  - New section: "### "Remote Control이 아직 계정에 대해 활성화되지 않았습니다""
+  - New section: "### "Remote Control이 조직의 정책에 의해 비활성화되었습니다""
+  - New section: "### "원격 자격 증명 가져오기 실패""
+  - New section: "## 올바른 접근 방식 선택"
+- **샌드박싱** (`sandboxing.md`): 34 lines added, 9 removed
+  - New section: "## 샌드박싱이 다루지 않는 것"
+- **일정에 따라 프롬프트 실행하기** (`scheduled-tasks.md`): 28 lines added, 4 removed
+  - New section: "## 스케줄링 옵션 비교하기"
+- **Claude Code 설정** (`settings.md`): 132 lines added, 88 removed
+  - New section: "### 전역 구성 설정"
+- **사용자 정의 subagent 만들기** (`sub-agents.md`): 72 lines added, 16 removed
+  - New section: "### Subagent를 명시적으로 호출"
+- **VS Code에서 Claude Code 사용하기** (`vs-code.md`): 38 lines added, 17 removed
+  - New section: "### 기본 제공 IDE MCP 서버"
+
+### Português
+
+
+**Modified**
+
+- **Melhores práticas para Claude Code** (`best-practices.md`): 16 lines added, 11 removed
+  - New section: "### Execute autonomamente com auto mode"
+- **Referência de CLI** (`cli-reference.md`): 76 lines added, 71 removed
+- **Use Claude Code Desktop** (`desktop.md`): 135 lines added, 33 removed
+  - New section: "## Deixar Claude usar seu computador"
+  - New section: "### Quando computer use se aplica"
+  - New section: "### Ativar computer use"
+  - New section: "### Permissões de aplicativo"
+  - New section: "### Sessões do Dispatch"
+- **Como Claude Code funciona** (`how-claude-code-works.md`): 2 lines added, 1 removed
+- **Modo interativo** (`interactive-mode.md`): 25 lines added, 18 removed
+  - New section: "### Entrada de voz"
+- **Configuração do gateway LLM** (`llm-gateway.md`): 8 lines added, 2 removed
+- **Visão geral do Claude Code** (`overview.md`): 24 lines added, 13 removed
+  - New section: "# Analise a saída de log recente"
+  - New section: "# Automatize traduções em CI"
+  - New section: "# Operações em massa em arquivos"
+- **Configurar permissões** (`permissions.md`): 145 lines added, 20 removed
+  - New section: "## Configurar o classificador do modo auto"
+  - New section: "### Definir infraestrutura confiável"
+  - New section: "### Substituir as regras de bloqueio e allow"
+  - New section: "### Inspecionar os padrões e sua configuração efetiva"
+- **Criar e distribuir um marketplace de plugins** (`plugin-marketplaces.md`): 47 lines added, 19 removed
+  - New section: "### Pré-popular plugins para containers"
+- **Continue sessões locais de qualquer dispositivo com Remote Control** (`remote-control.md`): 57 lines added, 3 removed
+  - New section: "## Solução de problemas"
+  - New section: "### "Remote Control is not yet enabled for your account""
+  - New section: "### "Remote Control is disabled by your organization's policy""
+  - New section: "### "Remote credentials fetch failed""
+  - New section: "## Escolha a abordagem correta"
+- **Sandboxing** (`sandboxing.md`): 34 lines added, 9 removed
+  - New section: "## O que o sandboxing não cobre"
+- **Executar prompts em um cronograma** (`scheduled-tasks.md`): 29 lines added, 5 removed
+  - New section: "## Compare opções de agendamento"
+- **Configurar configurações gerenciadas pelo servidor (beta público)** (`server-managed-settings.md`): 36 lines added, 1 removed
+- **Configurações do Claude Code** (`settings.md`): 132 lines added, 88 removed
+  - New section: "### Configurações de config global"
+- **Criar subagentes personalizados** (`sub-agents.md`): 72 lines added, 15 removed
+  - New section: "### Invocar subagentes explicitamente"
+- **Use Claude Code in VS Code** (`vs-code.md`): 38 lines added, 17 removed
+  - New section: "### The built-in IDE MCP server"
+
+### Русский
+
+
+**Modified**
+
+- **Лучшие практики для Claude Code** (`best-practices.md`): 16 lines added, 11 removed
+  - New section: "### Запустите автономно с auto mode"
+- **Справочник CLI** (`cli-reference.md`): 75 lines added, 70 removed
+- **Использование Claude Code Desktop** (`desktop.md`): 136 lines added, 34 removed
+  - New section: "## Позвольте Claude использовать ваш компьютер"
+  - New section: "### Когда применяется использование компьютера"
+  - New section: "### Включение использования компьютера"
+  - New section: "### Разрешения приложений"
+  - New section: "### Сеансы из Dispatch"
+- **Справочник по hooks** (`hooks.md`): 85 lines added, 57 removed
+  - New section: "### StopFailure"
+  - New section: "#### StopFailure input"
+- **Как работает Claude Code** (`how-claude-code-works.md`): 2 lines added, 1 removed
+- **Интерактивный режим** (`interactive-mode.md`): 25 lines added, 18 removed
+  - New section: "### Голосовой ввод"
+- **Конфигурация LLM gateway** (`llm-gateway.md`): 8 lines added, 2 removed
+- **Обзор Claude Code** (`overview.md`): 24 lines added, 13 removed
+  - New section: "# Анализируйте недавний вывод логов"
+  - New section: "# Автоматизируйте переводы в CI"
+  - New section: "# Массовые операции по файлам"
+- **Настройка разрешений** (`permissions.md`): 145 lines added, 20 removed
+  - New section: "## Настройка классификатора режима auto"
+  - New section: "### Определение доверенной инфраструктуры"
+  - New section: "### Переопределение правил блокировки и разрешения"
+  - New section: "### Проверка значений по умолчанию и вашей эффективной конфигурации"
+- **Создание и распространение marketplace плагинов** (`plugin-marketplaces.md`): 47 lines added, 19 removed
+  - New section: "### Предварительное заполнение плагинов для контейнеров"
+- **Продолжайте локальные сеансы с любого устройства с помощью Remote Control** (`remote-control.md`): 57 lines added, 3 removed
+  - New section: "## Устранение неполадок"
+  - New section: "### "Remote Control is not yet enabled for your account""
+  - New section: "### "Remote Control is disabled by your organization's policy""
+  - New section: "### "Remote credentials fetch failed""
+  - New section: "## Выберите правильный подход"
+- **Sandboxing** (`sandboxing.md`): 34 lines added, 9 removed
+  - New section: "## Что sandboxing не охватывает"
+- **Запуск подсказок по расписанию** (`scheduled-tasks.md`): 28 lines added, 4 removed
+  - New section: "## Сравните варианты планирования"
+- **Настройка параметров, управляемых сервером (открытая бета)** (`server-managed-settings.md`): 39 lines added, 4 removed
+- **Параметры Claude Code** (`settings.md`): 77 lines added, 33 removed
+  - New section: "### Параметры глобальной конфигурации"
+- **Создание пользовательских subagents** (`sub-agents.md`): 75 lines added, 17 removed
+  - New section: "### Явно вызывайте subagents"
+- **Использование Claude Code в VS Code** (`vs-code.md`): 38 lines added, 17 removed
+  - New section: "### Встроенный IDE MCP server"
+
+### 简体中文
+
+
+**Modified**
+
+- **Claude Code 最佳实践** (`best-practices.md`): 17 lines added, 12 removed
+  - New section: "### 使用 auto mode 自主运行"
+- **CLI 参考** (`cli-reference.md`): 75 lines added, 70 removed
+- **使用 Claude Code Desktop** (`desktop.md`): 139 lines added, 37 removed
+  - New section: "## 让 Claude 使用你的计算机"
+  - New section: "### 何时应用计算机使用"
+  - New section: "### 启用计算机使用"
+  - New section: "### 应用权限"
+  - New section: "### 来自 Dispatch 的会话"
+- **Hooks 参考** (`hooks.md`): 92 lines added, 64 removed
+  - New section: "### StopFailure"
+  - New section: "#### StopFailure 输入"
+- **Claude Code 如何工作** (`how-claude-code-works.md`): 2 lines added, 1 removed
+- **交互模式** (`interactive-mode.md`): 25 lines added, 18 removed
+  - New section: "### 语音输入"
+- **LLM gateway 配置** (`llm-gateway.md`): 8 lines added, 2 removed
+- **Claude Code 概述** (`overview.md`): 24 lines added, 13 removed
+  - New section: "# 分析最近的日志输出"
+  - New section: "# 在 CI 中自动化翻译"
+  - New section: "# 跨文件的批量操作"
+- **配置权限** (`permissions.md`): 143 lines added, 18 removed
+  - New section: "## 配置自动模式分类器"
+  - New section: "### 定义信任的基础设施"
+  - New section: "### 覆盖阻止和 allow 规则"
+  - New section: "### 检查默认值和您的有效配置"
+- **创建和分发 plugin marketplace** (`plugin-marketplaces.md`): 41 lines added, 13 removed
+  - New section: "### 为容器预填充 plugins"
+- **使用 Remote Control 从任何设备继续本地会话** (`remote-control.md`): 57 lines added, 3 removed
+  - New section: "## 故障排除"
+  - New section: "### "Remote Control 尚未为您的账户启用""
+  - New section: "### "Remote Control 被您的组织的策略禁用""
+  - New section: "### "Remote credentials fetch failed""
+  - New section: "## 选择正确的方法"
+- **Sandboxing** (`sandboxing.md`): 34 lines added, 9 removed
+  - New section: "## 沙箱不涵盖的内容"
+- **按计划运行提示词** (`scheduled-tasks.md`): 28 lines added, 4 removed
+  - New section: "## 比较调度选项"
+- **配置服务器管理的设置（公开测试版）** (`server-managed-settings.md`): 37 lines added, 2 removed
+- **Claude Code 设置** (`settings.md`): 126 lines added, 82 removed
+  - New section: "### 全局配置设置"
+- **创建自定义 subagents** (`sub-agents.md`): 71 lines added, 15 removed
+  - New section: "### 显式调用 subagents"
+- **在 VS Code 中使用 Claude Code** (`vs-code.md`): 38 lines added, 17 removed
+  - New section: "### 内置 IDE MCP server"
+
+### 繁體中文
+
+
+**Modified**
+
+- **Claude Code 最佳實踐** (`best-practices.md`): 16 lines added, 11 removed
+  - New section: "### 使用 auto mode 自主運行"
+- **CLI 參考** (`cli-reference.md`): 75 lines added, 70 removed
+- **使用 Claude Code Desktop** (`desktop.md`): 138 lines added, 36 removed
+  - New section: "## 讓 Claude 使用您的電腦"
+  - New section: "### 何時應用電腦使用"
+  - New section: "### 啟用電腦使用"
+  - New section: "### 應用程式權限"
+  - New section: "### 來自 Dispatch 的會話"
+- **Hooks 參考** (`hooks.md`): 91 lines added, 63 removed
+  - New section: "### StopFailure"
+  - New section: "#### StopFailure 輸入"
+- **Claude Code 如何運作** (`how-claude-code-works.md`): 2 lines added, 1 removed
+- **互動模式** (`interactive-mode.md`): 27 lines added, 20 removed
+  - New section: "### 語音輸入"
+- **LLM gateway 配置** (`llm-gateway.md`): 8 lines added, 2 removed
+- **Claude Code 概述** (`overview.md`): 24 lines added, 13 removed
+  - New section: "# 分析最近的日誌輸出"
+  - New section: "# 在 CI 中自動化翻譯"
+  - New section: "# 跨檔案的大量操作"
+- **設定權限** (`permissions.md`): 139 lines added, 14 removed
+  - New section: "## 設定 auto mode 分類器"
+  - New section: "### 定義信任的基礎設施"
+  - New section: "### 覆蓋 block 和 allow 規則"
+  - New section: "### 檢查預設值和您的有效設定"
+- **建立並分發 plugin marketplace** (`plugin-marketplaces.md`): 42 lines added, 14 removed
+  - New section: "### 為容器預先填充 plugin"
+- **使用 Remote Control 從任何裝置繼續本地會話** (`remote-control.md`): 57 lines added, 3 removed
+  - New section: "## 疑難排解"
+  - New section: "### 「Remote Control 尚未為您的帳戶啟用」"
+  - New section: "### 「Remote Control 已被您的組織政策停用」"
+  - New section: "### 「Remote credentials fetch failed」"
+  - New section: "## 選擇正確的方法"
+- **Sandboxing** (`sandboxing.md`): 34 lines added, 9 removed
+  - New section: "## 沙箱化不涵蓋的內容"
+- **按排程執行提示** (`scheduled-tasks.md`): 28 lines added, 4 removed
+  - New section: "## 比較排程選項"
+- **設定伺服器管理的設定 (公開測試版)** (`server-managed-settings.md`): 36 lines added, 1 removed
+- **Claude Code 設定** (`settings.md`): 132 lines added, 88 removed
+  - New section: "### 全域設定設定"
+- **建立自訂 subagents** (`sub-agents.md`): 72 lines added, 16 removed
+  - New section: "### 明確呼叫 subagents"
+- **在 VS Code 中使用 Claude Code** (`vs-code.md`): 38 lines added, 17 removed
+  - New section: "### 內建 IDE MCP server"
+
+---
+
 ## 2026-03-24
 
 432 pages modified

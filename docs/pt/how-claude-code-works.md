@@ -124,7 +124,7 @@ Isso cria um novo ID de sessão enquanto preserva o histórico de conversa até 
 
 ### A janela de contexto
 
-A janela de contexto de Claude contém seu histórico de conversa, conteúdo de arquivos, saídas de comando, [CLAUDE.md](/pt/memory), skills carregadas e instruções do sistema. Conforme você trabalha, o contexto se enche. Claude compacta automaticamente, mas instruções do início da conversa podem ser perdidas. Coloque regras persistentes em CLAUDE.md e execute `/context` para ver o que está usando espaço.
+A janela de contexto de Claude contém seu histórico de conversa, conteúdo de arquivos, saídas de comando, [CLAUDE.md](/pt/memory), [auto memory](/pt/memory#auto-memory), skills carregadas e instruções do sistema. Conforme você trabalha, o contexto se enche. Claude compacta automaticamente, mas instruções do início da conversa podem ser perdidas. Coloque regras persistentes em CLAUDE.md e execute `/context` para ver o que está usando espaço.
 
 #### Quando o contexto se enche
 
@@ -161,6 +161,7 @@ Pressione `Shift+Tab` para percorrer os modos de permissão:
 * **Padrão**: Claude pergunta antes de edições de arquivo e comandos shell
 * **Auto-aceitar edições**: Claude edita arquivos sem perguntar, ainda pergunta por comandos
 * **Plan Mode**: Claude usa apenas ferramentas somente leitura, criando um plano que você pode aprovar antes da execução
+* **Auto mode**: Claude avalia todas as ações com verificações de segurança em segundo plano. Atualmente uma visualização de pesquisa
 
 Você também pode permitir comandos específicos em `.claude/settings.json` para que Claude não pergunte cada vez. Isso é útil para comandos confiáveis como `npm test` ou `git status`. As configurações podem ser escopo de políticas em toda a organização até preferências pessoais. Consulte [Permissões](/pt/permissions) para detalhes.
 

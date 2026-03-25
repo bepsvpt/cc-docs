@@ -89,8 +89,8 @@ Panduan ini memandu Anda melalui pembuatan subagent tingkat pengguna dengan peri
     ```
   </Step>
 
-  <Step title="Buat agen tingkat pengguna baru">
-    Pilih **Create new agent**, kemudian pilih **User-level**. Ini menyimpan subagent ke `~/.claude/agents/` sehingga tersedia di semua proyek Anda.
+  <Step title="Pilih lokasi">
+    Pilih **Create new agent**, kemudian pilih **Personal**. Ini menyimpan subagent ke `~/.claude/agents/` sehingga tersedia di semua proyek Anda.
   </Step>
 
   <Step title="Hasilkan dengan Claude">
@@ -102,7 +102,7 @@ Panduan ini memandu Anda melalui pembuatan subagent tingkat pengguna dengan peri
     each issue, show the current code, and provide an improved version.
     ```
 
-    Claude menghasilkan prompt sistem dan konfigurasi. Tekan `e` untuk membukanya di editor Anda jika Anda ingin menyesuaikannya.
+    Claude menghasilkan pengenal, deskripsi, dan prompt sistem untuk Anda.
   </Step>
 
   <Step title="Pilih alat">
@@ -117,8 +117,12 @@ Panduan ini memandu Anda melalui pembuatan subagent tingkat pengguna dengan peri
     Pilih warna latar belakang untuk subagent. Ini membantu Anda mengidentifikasi subagent mana yang berjalan di UI.
   </Step>
 
+  <Step title="Konfigurasi memori">
+    Pilih **User scope** untuk memberikan subagent [direktori memori persisten](#enable-persistent-memory) di `~/.claude/agent-memory/`. Subagent menggunakan ini untuk mengumpulkan wawasan di seluruh percakapan, seperti pola basis kode dan masalah berulang. Pilih **None** jika Anda tidak ingin subagent mempertahankan pembelajaran.
+  </Step>
+
   <Step title="Simpan dan coba">
-    Simpan subagent. Tersedia segera (tidak perlu restart). Coba:
+    Tinjau ringkasan konfigurasi. Tekan `s` atau `Enter` untuk menyimpan, atau tekan `e` untuk menyimpan dan mengedit file di editor Anda. Subagent tersedia segera. Coba:
 
     ```text  theme={null}
     Use the code-improver agent to suggest improvements in this project
@@ -180,7 +184,7 @@ claude --agents '{
 }'
 ```
 
-Flag `--agents` menerima JSON dengan [frontmatter](#supported-frontmatter-fields) yang sama bidang file-based subagent: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, dan `memory`. Gunakan `prompt` untuk prompt sistem, setara dengan badan markdown dalam subagent berbasis file.
+Flag `--agents` menerima JSON dengan [frontmatter](#supported-frontmatter-fields) yang sama bidang file-based subagent: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `memory`, `effort`, `background`, dan `isolation`. Gunakan `prompt` untuk prompt sistem, setara dengan badan markdown dalam subagent berbasis file.
 
 **Subagent plugin** berasal dari [plugins](/id/plugins) yang telah Anda instal. Mereka muncul di `/agents` bersama subagent khusus Anda. Lihat [referensi komponen plugin](/id/plugins-reference#agents) untuk detail tentang membuat subagent plugin.
 
@@ -228,6 +232,7 @@ Bidang berikut dapat digunakan dalam frontmatter YAML. Hanya `name` dan `descrip
 | `hooks`           | Tidak      | [Lifecycle hooks](#define-hooks-for-subagents) yang dibatasi pada subagent ini                                                                                                                                                                                                                        |
 | `memory`          | Tidak      | [Cakupan memori persisten](#enable-persistent-memory): `user`, `project`, atau `local`. Memungkinkan pembelajaran lintas sesi                                                                                                                                                                         |
 | `background`      | Tidak      | Atur ke `true` untuk selalu menjalankan subagent ini sebagai [background task](#run-subagents-in-foreground-or-background). Default: `false`                                                                                                                                                          |
+| `effort`          | Tidak      | Tingkat usaha ketika subagent ini aktif. Menimpa tingkat usaha sesi. Default: mewarisi dari sesi. Opsi: `low`, `medium`, `high`, `max` (Opus 4.6 saja)                                                                                                                                                |
 | `isolation`       | Tidak      | Atur ke `worktree` untuk menjalankan subagent dalam [git worktree](/id/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) sementara, memberikannya salinan repositori yang terisolasi. Worktree secara otomatis dibersihkan jika subagent tidak membuat perubahan                 |
 
 ### Pilih model
@@ -247,16 +252,27 @@ Anda dapat mengontrol apa yang dapat dilakukan subagent melalui akses alat, mode
 
 Subagent dapat menggunakan salah satu [alat internal](/id/tools-reference) Claude Code. Secara default, subagent mewarisi semua alat dari percakapan utama, termasuk alat MCP.
 
-Untuk membatasi alat, gunakan bidang `tools` (allowlist) atau bidang `disallowedTools` (denylist):
+Untuk membatasi alat, gunakan bidang `tools` (allowlist) atau bidang `disallowedTools` (denylist). Contoh ini menggunakan `tools` untuk secara eksklusif mengizinkan Read, Grep, Glob, dan Bash. Subagent tidak dapat mengedit file, menulis file, atau menggunakan alat MCP apa pun:
 
 ```yaml  theme={null}
 ---
 name: safe-researcher
 description: Research agent with restricted capabilities
 tools: Read, Grep, Glob, Bash
+---
+```
+
+Contoh ini menggunakan `disallowedTools` untuk mewarisi setiap alat dari percakapan utama kecuali Write dan Edit. Subagent menyimpan Bash, alat MCP, dan semuanya yang lain:
+
+```yaml  theme={null}
+---
+name: no-writes
+description: Inherits every tool except file writes
 disallowedTools: Write, Edit
 ---
 ```
+
+Jika keduanya diatur, `disallowedTools` diterapkan terlebih dahulu, kemudian `tools` diselesaikan terhadap kumpulan yang tersisa. Alat yang tercantum di keduanya dihapus.
 
 #### Batasi subagent mana yang dapat dihasilkan
 
@@ -311,21 +327,21 @@ Untuk menjaga MCP server di luar percakapan utama sepenuhnya dan menghindari des
 
 #### Mode izin
 
-Bidang `permissionMode` mengontrol bagaimana subagent menangani prompt izin. Subagent mewarisi konteks izin dari percakapan utama tetapi dapat menimpa mode.
+Bidang `permissionMode` mengontrol bagaimana subagent menangani prompt izin. Subagent mewarisi konteks izin dari percakapan utama dan dapat menimpa mode, kecuali ketika mode induk mengambil alih seperti yang dijelaskan di bawah.
 
 | Mode                | Perilaku                                                                      |
 | :------------------ | :---------------------------------------------------------------------------- |
 | `default`           | Pemeriksaan izin standar dengan prompt                                        |
 | `acceptEdits`       | Auto-terima edit file                                                         |
 | `dontAsk`           | Auto-tolak prompt izin (alat yang secara eksplisit diizinkan masih berfungsi) |
-| `bypassPermissions` | Lewati semua pemeriksaan izin                                                 |
+| `bypassPermissions` | Lewati prompt izin                                                            |
 | `plan`              | Plan mode (eksplorasi hanya-baca)                                             |
 
 <Warning>
-  Gunakan `bypassPermissions` dengan hati-hati. Ini melewati semua pemeriksaan izin, memungkinkan subagent untuk menjalankan operasi apa pun tanpa persetujuan.
+  Gunakan `bypassPermissions` dengan hati-hati. Ini melewati prompt izin, memungkinkan subagent untuk menjalankan operasi tanpa persetujuan. Penulisan ke direktori `.git`, `.claude`, `.vscode`, dan `.idea` masih meminta konfirmasi, kecuali untuk `.claude/commands`, `.claude/agents`, dan `.claude/skills`. Lihat [permission modes](/id/permission-modes#skip-all-checks-with-bypasspermissions-mode) untuk detail.
 </Warning>
 
-Jika induk menggunakan `bypassPermissions`, ini mengambil alih dan tidak dapat ditimpa.
+Jika induk menggunakan `bypassPermissions`, ini mengambil alih dan tidak dapat ditimpa. Jika induk menggunakan [auto mode](/id/permission-modes#eliminate-prompts-with-auto-mode), subagent mewarisi auto mode dan `permissionMode` apa pun dalam frontmatternya diabaikan: pengklasifikasi mengevaluasi panggilan alat subagent dengan aturan blok dan izin yang sama dengan sesi induk.
 
 #### Preload skills ke dalam subagent
 
@@ -380,7 +396,7 @@ Ketika memori diaktifkan:
 
 ##### Tips memori persisten
 
-* `user` adalah cakupan default yang direkomendasikan. Gunakan `project` atau `local` ketika pengetahuan subagent hanya relevan untuk basis kode tertentu.
+* `project` adalah cakupan default yang direkomendasikan. Ini membuat pengetahuan subagent dapat dibagikan melalui kontrol versi. Gunakan `user` ketika pengetahuan subagent berlaku secara luas di seluruh proyek, atau `local` ketika pengetahuan tidak boleh diperiksa ke dalam kontrol versi.
 * Minta subagent untuk berkonsultasi dengan memorinya sebelum memulai pekerjaan: "Review PR ini, dan periksa memori Anda untuk pola yang telah Anda lihat sebelumnya."
 * Minta subagent untuk memperbarui memorinya setelah menyelesaikan tugas: "Sekarang setelah Anda selesai, simpan apa yang Anda pelajari ke memori Anda." Seiring waktu, ini membangun basis pengetahuan yang membuat subagent lebih efektif.
 * Sertakan instruksi memori langsung dalam file markdown subagent sehingga secara proaktif mempertahankan basis pengetahuannya sendiri:
@@ -534,12 +550,52 @@ Lihat [Hooks](/id/hooks) untuk format konfigurasi hook lengkap.
 
 Claude secara otomatis mendelegasikan tugas berdasarkan deskripsi tugas dalam permintaan Anda, bidang `description` dalam konfigurasi subagent, dan konteks saat ini. Untuk mendorong delegasi proaktif, sertakan frasa seperti "use proactively" dalam bidang deskripsi subagent Anda.
 
-Anda juga dapat meminta subagent tertentu secara eksplisit:
+### Panggil subagent secara eksplisit
+
+Ketika delegasi otomatis tidak cukup, Anda dapat meminta subagent sendiri. Tiga pola meningkat dari saran satu kali ke default sesi-lebar:
+
+* **Bahasa alami**: sebutkan subagent dalam prompt Anda; Claude memutuskan apakah akan mendelegasikan
+* **@-mention**: menjamin subagent berjalan untuk satu tugas
+* **Sesi-lebar**: seluruh sesi menggunakan prompt sistem subagent, pembatasan alat, dan model melalui flag `--agent` atau pengaturan `agent`
+
+Untuk bahasa alami, tidak ada sintaks khusus. Sebutkan subagent dan Claude biasanya mendelegasikan:
 
 ```text  theme={null}
 Use the test-runner subagent to fix failing tests
 Have the code-reviewer subagent look at my recent changes
 ```
+
+**@-mention subagent.** Ketik `@` dan pilih subagent dari typeahead, dengan cara yang sama Anda @-mention file. Ini memastikan subagent tertentu berjalan daripada meninggalkan pilihan kepada Claude:
+
+```text  theme={null}
+@"code-reviewer (agent)" look at the auth changes
+```
+
+Pesan lengkap Anda masih pergi ke Claude, yang menulis prompt tugas subagent berdasarkan apa yang Anda minta. @-mention mengontrol subagent mana yang Claude panggil, bukan prompt apa yang diterima.
+
+Subagent yang disediakan oleh [plugin](/id/plugins) yang diaktifkan muncul di typeahead sebagai `<plugin-name>:<agent-name>`. Anda juga dapat mengetik mention secara manual tanpa menggunakan picker: `@agent-<name>` untuk subagent lokal, atau `@agent-<plugin-name>:<agent-name>` untuk subagent plugin.
+
+**Jalankan seluruh sesi sebagai subagent.** Lewatkan [`--agent <name>`](/id/cli-reference) untuk memulai sesi di mana thread utama itu sendiri mengambil prompt sistem subagent, pembatasan alat, dan model:
+
+```bash  theme={null}
+claude --agent code-reviewer
+```
+
+Prompt sistem subagent menggantikan prompt sistem Claude Code default sepenuhnya, dengan cara yang sama [`--system-prompt`](/id/cli-reference) melakukannya. File `CLAUDE.md` dan memori proyek masih dimuat melalui aliran pesan normal. Nama agen muncul sebagai `@<name>` di header startup sehingga Anda dapat mengonfirmasi itu aktif.
+
+Ini berfungsi dengan subagent bawaan dan khusus, dan pilihan bertahan ketika Anda melanjutkan sesi.
+
+Untuk subagent yang disediakan plugin, lewatkan nama yang dibatasi: `claude --agent <plugin-name>:<agent-name>`.
+
+Untuk menjadikannya default untuk setiap sesi dalam proyek, atur `agent` dalam `.claude/settings.json`:
+
+```json  theme={null}
+{
+  "agent": "code-reviewer"
+}
+```
+
+Flag CLI menimpa pengaturan jika keduanya ada.
 
 ### Jalankan subagent di foreground atau background
 
@@ -548,7 +604,7 @@ Subagent dapat berjalan di foreground (blocking) atau background (concurrent):
 * **Subagent foreground** memblokir percakapan utama sampai selesai. Prompt izin dan pertanyaan klarifikasi (seperti [`AskUserQuestion`](/id/tools-reference)) dilewatkan kepada Anda.
 * **Subagent background** berjalan secara bersamaan sementara Anda terus bekerja. Sebelum diluncurkan, Claude Code meminta izin alat apa pun yang akan dibutuhkan subagent, memastikan ia memiliki persetujuan yang diperlukan di muka. Setelah berjalan, subagent mewarisi izin ini dan auto-menolak apa pun yang tidak pra-disetujui. Jika subagent background perlu mengajukan pertanyaan klarifikasi, panggilan alat itu gagal tetapi subagent terus.
 
-Jika subagent background gagal karena izin yang hilang, Anda dapat [melanjutkannya](#resume-subagents) di foreground untuk mencoba lagi dengan prompt interaktif.
+Jika subagent background gagal karena izin yang hilang, Anda dapat memulai subagent foreground baru dengan tugas yang sama untuk mencoba lagi dengan prompt interaktif.
 
 Claude memutuskan apakah akan menjalankan subagent di foreground atau background berdasarkan tugas. Anda juga dapat:
 
@@ -622,7 +678,7 @@ Setiap invokasi subagent membuat instance baru dengan konteks segar. Untuk melan
 
 Subagent yang dilanjutkan mempertahankan riwayat percakapan lengkap mereka, termasuk semua panggilan alat sebelumnya, hasil, dan penalaran. Subagent melanjutkan tepat di mana ia berhenti daripada memulai segar.
 
-Ketika subagent selesai, Claude menerima ID agennya. Untuk melanjutkan subagent, minta Claude untuk melanjutkan pekerjaan sebelumnya:
+Ketika subagent selesai, Claude menerima ID agennya. Claude menggunakan alat `SendMessage` dengan ID agen sebagai bidang `to` untuk melanjutkannya. Untuk melanjutkan subagent, minta Claude untuk melanjutkan pekerjaan sebelumnya:
 
 ```text  theme={null}
 Use the code-reviewer subagent to review the authentication module

@@ -47,9 +47,15 @@ gateway 必須向客戶端公開以下至少一種 API 格式：
 
 ## LiteLLM 配置
 
-<Note>
+<Warning>
+  LiteLLM PyPI 版本 1.82.7 和 1.82.8 被盜竊憑證的惡意軟體破壞。請勿安裝這些版本。如果您已經安裝了它們：
+
+  * 移除該軟體包
+  * 輪換受影響系統上的所有憑證
+  * 按照 [BerriAI/litellm#24518](https://github.com/BerriAI/litellm/issues/24518) 中的補救步驟進行操作
+
   LiteLLM 是第三方代理服務。Anthropic 不認可、維護或審計 LiteLLM 的安全性或功能。本指南僅供參考，可能會過時。請自行決定是否使用。
-</Note>
+</Warning>
 
 ### 先決條件
 

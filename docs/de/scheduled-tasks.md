@@ -10,9 +10,29 @@
   Geplante Aufgaben erfordern Claude Code v2.1.72 oder später. Überprüfen Sie Ihre Version mit `claude --version`.
 </Note>
 
-Geplante Aufgaben ermöglichen es Claude, einen Prompt automatisch in regelmäßigen Abständen erneut auszuführen. Verwenden Sie sie, um eine Bereitstellung abzurufen, einen PR zu überwachen, einen langwierigen Build zu überprüfen oder sich später in der Sitzung an etwas zu erinnern.
+Geplante Aufgaben ermöglichen es Claude, einen Prompt automatisch in regelmäßigen Abständen erneut auszuführen. Verwenden Sie sie, um eine Bereitstellung abzurufen, einen PR zu überwachen, einen langwierigen Build zu überprüfen oder sich später in der Sitzung an etwas zu erinnern. Um auf Ereignisse zu reagieren, während sie geschehen, anstatt abzurufen, siehe [Kanäle](/de/channels): Ihr CI kann den Fehler direkt in die Sitzung übertragen.
 
-Aufgaben sind sitzungsbezogen: Sie existieren im aktuellen Claude Code-Prozess und sind weg, wenn Sie beenden. Für dauerhafte Planung, die Neustarts übersteht und ohne aktive Terminalsitzung läuft, siehe [Desktop-geplante Aufgaben](/de/desktop#schedule-recurring-tasks) oder [GitHub Actions](/de/github-actions).
+Aufgaben sind sitzungsbezogen: Sie existieren im aktuellen Claude Code-Prozess und sind weg, wenn Sie beenden. Für dauerhafte Planung, die Neustarts übersteht, verwenden Sie [Cloud](/de/web-scheduled-tasks) oder [Desktop](/de/desktop#schedule-recurring-tasks) geplante Aufgaben, oder [GitHub Actions](/de/github-actions).
+
+## Vergleichen Sie Planungsoptionen
+
+Claude Code offers three ways to schedule recurring work:
+
+|                            | [Cloud](/en/web-scheduled-tasks) | [Desktop](/en/desktop#schedule-recurring-tasks) | [`/loop`](/en/scheduled-tasks) |
+| :------------------------- | :------------------------------- | :---------------------------------------------- | :----------------------------- |
+| Runs on                    | Anthropic cloud                  | Your machine                                    | Your machine                   |
+| Requires machine on        | No                               | Yes                                             | Yes                            |
+| Requires open session      | No                               | No                                              | Yes                            |
+| Persistent across restarts | Yes                              | Yes                                             | No (session-scoped)            |
+| Access to local files      | No (fresh clone)                 | Yes                                             | Yes                            |
+| MCP servers                | Connectors configured per task   | [Config files](/en/mcp) and connectors          | Inherits from session          |
+| Permission prompts         | No (runs autonomously)           | Configurable per task                           | Inherits from session          |
+| Customizable schedule      | Via `/schedule` in the CLI       | Yes                                             | Yes                            |
+| Minimum interval           | 1 hour                           | 1 minute                                        | 1 minute                       |
+
+<Tip>
+  Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
+</Tip>
 
 ## Planen Sie einen wiederkehrenden Prompt mit /loop
 
@@ -92,14 +112,14 @@ Alle Zeiten werden in Ihrer lokalen Zeitzone interpretiert. Ein Cron-Ausdruck wi
 
 Um zu vermeiden, dass jede Sitzung die API zum gleichen Wanduhrzeitpunkt trifft, fügt der Scheduler einen kleinen deterministischen Offset zu Ausführungszeiten hinzu:
 
-* Wiederkehrende Aufgaben läuft bis zu 10% ihrer Periode zu spät, begrenzt auf 15 Minuten. Ein stündlicher Job könnte überall von `:00` bis `:06` laufen.
-* Einmalige Aufgaben, die für die Ober- oder Unterseite der Stunde geplant sind, läuft bis zu 90 Sekunden früh.
+* Wiederkehrende Aufgaben laufen bis zu 10% ihrer Periode zu spät, begrenzt auf 15 Minuten. Ein stündlicher Job könnte überall von `:00` bis `:06` laufen.
+* Einmalige Aufgaben, die für die Ober- oder Unterseite der Stunde geplant sind, laufen bis zu 90 Sekunden früh.
 
 Der Offset wird von der Aufgaben-ID abgeleitet, daher erhält die gleiche Aufgabe immer den gleichen Offset. Wenn genaue Zeitangaben wichtig sind, wählen Sie eine Minute, die nicht `:00` oder `:30` ist, zum Beispiel `3 9 * * *` statt `0 9 * * *`, und der einmalige Jitter wird nicht angewendet.
 
 ### Ablauf nach drei Tagen
 
-Wiederkehrende Aufgaben verfallen automatisch 3 Tage nach der Erstellung. Die Aufgabe läuft ein letztes Mal, dann löscht sie sich selbst. Dies begrenzt, wie lange eine vergessene Schleife laufen kann. Wenn Sie benötigen, dass eine wiederkehrende Aufgabe länger dauert, stornieren und erstellen Sie sie neu, bevor sie abläuft, oder verwenden Sie [Desktop-geplante Aufgaben](/de/desktop#schedule-recurring-tasks) für dauerhafte Planung.
+Wiederkehrende Aufgaben verfallen automatisch 3 Tage nach der Erstellung. Die Aufgabe läuft ein letztes Mal, dann löscht sie sich selbst. Dies begrenzt, wie lange eine vergessene Schleife laufen kann. Wenn Sie benötigen, dass eine wiederkehrende Aufgabe länger dauert, stornieren und erstellen Sie sie neu, bevor sie abläuft, oder verwenden Sie [Cloud-geplante Aufgaben](/de/web-scheduled-tasks) oder [Desktop-geplante Aufgaben](/de/desktop#schedule-recurring-tasks) für dauerhafte Planung.
 
 ## Cron-Ausdrucksreferenz
 
@@ -120,14 +140,18 @@ Wenn sowohl der Tag des Monats als auch der Wochentag eingeschränkt sind, stimm
 
 ## Deaktivieren Sie geplante Aufgaben
 
-Setzen Sie `CLAUDE_CODE_DISABLE_CRON=1` in Ihrer Umgebung, um den Scheduler vollständig zu deaktivieren. Die Cron-Tools und `/loop` werden nicht verfügbar, und alle bereits geplanten Aufgaben stoppen das Läufen. Siehe [Umgebungsvariablen](/de/env-vars) für die vollständige Liste der Deaktivierungsflags.
+Setzen Sie `CLAUDE_CODE_DISABLE_CRON=1` in Ihrer Umgebung, um den Scheduler vollständig zu deaktivieren. Die Cron-Tools und `/loop` werden nicht verfügbar, und alle bereits geplanten Aufgaben stoppen das Laufen. Siehe [Umgebungsvariablen](/de/env-vars) für die vollständige Liste der Deaktivierungsflags.
 
 ## Einschränkungen
 
 Die sitzungsbezogene Planung hat inhärente Einschränkungen:
 
-* Aufgaben läuft nur, während Claude Code läuft und untätig ist. Das Schließen des Terminals oder das Beenden der Sitzung storniert alles.
+* Aufgaben laufen nur, während Claude Code läuft und untätig ist. Das Schließen des Terminals oder das Beenden der Sitzung storniert alles.
 * Kein Aufholen für verpasste Läufe. Wenn die geplante Zeit einer Aufgabe verstreicht, während Claude mit einer langwierigen Anfrage beschäftigt ist, läuft sie einmal, wenn Claude untätig wird, nicht einmal pro verpasstem Intervall.
 * Keine Persistenz über Neustarts hinweg. Das Neustarten von Claude Code löscht alle sitzungsbezogenen Aufgaben.
 
-Für Cron-gesteuerte Automatisierung, die unbeaufsichtigt laufen muss, verwenden Sie einen [GitHub Actions-Workflow](/de/github-actions) mit einem `schedule`-Trigger, oder [Desktop-geplante Aufgaben](/de/desktop#schedule-recurring-tasks), wenn Sie einen grafischen Setup-Ablauf möchten.
+Für Cron-gesteuerte Automatisierung, die unbeaufsichtigt laufen muss:
+
+* [Cloud-geplante Aufgaben](/de/web-scheduled-tasks): Laufen auf von Anthropic verwalteter Infrastruktur
+* [GitHub Actions](/de/github-actions): Verwenden Sie einen `schedule`-Trigger in CI
+* [Desktop-geplante Aufgaben](/de/desktop#schedule-recurring-tasks): Laufen lokal auf Ihrem Computer

@@ -202,21 +202,16 @@ See @README.md for project overview and @package.json for available npm commands
 ### 配置權限
 
 <Tip>
-  使用 `/permissions` 將安全命令列入白名單或使用 `/sandbox` 進行操作系統級隔離。這減少了中斷，同時讓您保持控制。
+  使用 [auto mode](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode) 讓分類器處理批准，使用 `/permissions` 將特定命令列入白名單，或使用 `/sandbox` 進行操作系統級隔離。每種方式都減少了中斷，同時讓您保持控制。
 </Tip>
 
-默認情況下，Claude Code 請求可能修改您的系統的操作的權限：文件寫入、Bash 命令、MCP 工具等。這是安全的但很繁瑣。在第十次批准後，您實際上不是在審查，而是在點擊。有兩種方法可以減少這些中斷：
+默認情況下，Claude Code 請求可能修改您的系統的操作的權限：文件寫入、Bash 命令、MCP 工具等。這是安全的但很繁瑣。在第十次批准後，您實際上不是在審查，而是在點擊。有三種方法可以減少這些中斷：
 
-* **權限白名單**：允許您知道安全的特定工具（如 `npm run lint` 或 `git commit`）
+* **Auto mode**：一個單獨的分類器模型審查命令並僅阻止看起來有風險的內容：範圍升級、未知基礎設施或由敵對內容驅動的操作。最適合當您信任任務的總體方向但不想點擊每一步時
+* **權限白名單**：允許您知道安全的特定工具，如 `npm run lint` 或 `git commit`
 * **沙箱**：啟用操作系統級隔離，限制文件系統和網絡訪問，允許 Claude 在定義的邊界內更自由地工作
 
-或者，使用 `--dangerously-skip-permissions` 繞過所有權限檢查以進行包含的工作流，如修復 lint 錯誤或生成樣板。
-
-<Warning>
-  讓 Claude 運行任意命令可能導致數據丟失、系統損壞或通過提示注入進行數據滲漏。僅在沒有互聯網訪問的沙箱中使用 `--dangerously-skip-permissions`。
-</Warning>
-
-閱讀更多關於 [配置權限](/zh-TW/permissions) 和 [啟用沙箱](/zh-TW/sandboxing)。
+閱讀更多關於 [permission modes](/zh-TW/permission-modes)、[permission rules](/zh-TW/permissions) 和 [sandboxing](/zh-TW/sandboxing)。
 
 ### 使用 CLI 工具
 
@@ -244,7 +239,7 @@ Claude 也很擅長學習它不知道的 CLI 工具。嘗試像 `Use 'foo-cli-to
 
 [Hooks](/zh-TW/hooks-guide) 在 Claude 工作流中的特定點自動運行腳本。與建議性的 CLAUDE.md 指令不同，hooks 是確定性的，保證操作發生。
 
-Claude 可以為您編寫 hooks。嘗試像 *「編寫一個在每次文件編輯後運行 eslint 的 hook」* 或 *「編寫一個阻止寫入遷移文件夾的 hook。」* 這樣的提示。運行 `/hooks` 進行交互式配置，或直接編輯 `.claude/settings.json`。
+Claude 可以為您編寫 hooks。嘗試像 *「編寫一個在每次文件編輯後運行 eslint 的 hook」* 或 *「編寫一個阻止寫入遷移文件夾的 hook。」* 這樣的提示。編輯 `.claude/settings.json` 直接配置 hooks，並運行 `/hooks` 瀏覽已配置的內容。
 
 ### 創建 skills
 
@@ -539,6 +534,16 @@ claude -p "<your prompt>" --output-format json | your_command
 ```
 
 在開發期間使用 `--verbose` 進行調試，在生產中關閉它。
+
+### 使用 auto mode 自主運行
+
+對於不間斷的執行和背景安全檢查，使用 [auto mode](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode)。分類器模型在命令運行前審查它們，阻止範圍升級、未知基礎設施和由敵對內容驅動的操作，同時讓常規工作無提示進行。
+
+```bash  theme={null}
+claude --permission-mode auto -p "fix all lint errors"
+```
+
+對於使用 `-p` 標誌的非交互運行，如果分類器重複阻止操作，auto mode 會中止，因為沒有用戶可以回退到。請參閱 [auto mode 何時回退](/zh-TW/permission-modes#when-auto-mode-falls-back) 以了解閾值。
 
 ***
 
