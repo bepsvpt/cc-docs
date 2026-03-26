@@ -51,7 +51,7 @@ Die Schaltfläche **+** neben dem Eingabefeld gibt Ihnen Zugriff auf Dateianhän
 
 Das Eingabefeld unterstützt zwei Möglichkeiten, um externen Kontext einzubinden:
 
-* **@mention-Dateien**: Geben Sie `@` gefolgt von einem Dateinamen ein, um eine Datei zum Gesprächskontext hinzuzufügen. Claude kann diese Datei dann lesen und referenzieren.
+* **@mention-Dateien**: Geben Sie `@` gefolgt von einem Dateinamen ein, um eine Datei zum Gesprächskontext hinzuzufügen. Claude kann diese Datei dann lesen und referenzieren. @mention ist nicht in Remote-Sitzungen verfügbar.
 * **Dateien anhängen**: Hängen Sie Bilder, PDFs und andere Dateien an Ihre Eingabe an, indem Sie die Schaltfläche „Anhängen" verwenden, oder ziehen Sie Dateien direkt in die Eingabe. Dies ist nützlich zum Teilen von Screenshots von Fehlern, Design-Mockups oder Referenzdokumenten.
 
 ### Wählen Sie einen Berechtigungsmodus
@@ -622,7 +622,7 @@ Diese Tabelle vergleicht Kernfunktionen zwischen CLI und Desktop. Für eine voll
 | [Drittanbieter-Provider](/de/third-party-integrations) | Bedrock, Vertex, Foundry                                  | nicht verfügbar. Desktop verbindet sich direkt mit Anthropics API.                                                           |
 | [MCP-Server](/de/mcp)                                  | in Einstellungsdateien konfigurieren                      | Konnektoren-UI für lokale und SSH-Sitzungen oder Einstellungsdateien                                                         |
 | [Plugins](/de/plugins)                                 | `/plugin`-Befehl                                          | Plugin-Manager-UI                                                                                                            |
-| @mention-Dateien                                       | textbasiert                                               | mit Autovervollständigung                                                                                                    |
+| @mention-Dateien                                       | textbasiert                                               | mit Autovervollständigung; lokale und SSH-Sitzungen nur                                                                      |
 | Dateianhänge                                           | nicht verfügbar                                           | Bilder, PDFs                                                                                                                 |
 | Sitzungsisolation                                      | [`--worktree`](/de/cli-reference)-Flag                    | automatische Worktrees                                                                                                       |
 | Mehrere Sitzungen                                      | separate Terminals                                        | Seitenleisten-Tabs                                                                                                           |

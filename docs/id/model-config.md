@@ -126,7 +126,13 @@ Ini memberi Anda yang terbaik dari kedua dunia: penalaran superior Opus untuk pe
 
 [Tingkat usaha](https://platform.claude.com/docs/en/build-with-claude/effort) mengontrol penalaran adaptif, yang secara dinamis mengalokasikan pemikiran berdasarkan kompleksitas tugas. Usaha lebih rendah lebih cepat dan lebih murah untuk tugas-tugas langsung, sementara usaha lebih tinggi memberikan penalaran lebih dalam untuk masalah kompleks.
 
-Tiga tingkat bertahan di seluruh sesi: **low**, **medium**, dan **high**. Tingkat keempat, **max**, memberikan penalaran paling dalam tanpa batasan pengeluaran token, sehingga respons lebih lambat dan biaya lebih tinggi daripada di `high`. `max` hanya tersedia di Opus 4.6 dan berlaku untuk sesi saat ini tanpa bertahan. Opus 4.6 default ke medium effort untuk pelanggan Max dan Team.
+Tiga tingkat bertahan di seluruh sesi: **low**, **medium**, dan **high**. Tingkat keempat, **max**, memberikan penalaran paling dalam tanpa batasan pengeluaran token, sehingga respons lebih lambat dan biaya lebih tinggi daripada di `high`. `max` hanya tersedia di Opus 4.6 dan tidak bertahan di seluruh sesi kecuali melalui variabel lingkungan `CLAUDE_CODE_EFFORT_LEVEL`.
+
+Opus 4.6 dan Sonnet 4.6 default ke medium effort. Ini berlaku untuk semua penyedia, termasuk Bedrock, Vertex AI, dan akses API langsung.
+
+Medium adalah tingkat yang direkomendasikan untuk sebagian besar tugas coding: ini menyeimbangkan kecepatan dan kedalaman penalaran, dan tingkat yang lebih tinggi dapat menyebabkan model untuk overthink pekerjaan rutin. Cadangkan `high` atau `max` untuk tugas yang benar-benar mendapat manfaat dari penalaran lebih dalam, seperti masalah debugging yang sulit atau keputusan arsitektur kompleks.
+
+Untuk penalaran mendalam sekali tanpa mengubah pengaturan sesi Anda, sertakan "ultrathink" dalam prompt Anda untuk memicu high effort untuk giliran itu.
 
 **Mengatur usaha:**
 
@@ -135,8 +141,9 @@ Tiga tingkat bertahan di seluruh sesi: **low**, **medium**, dan **high**. Tingka
 * **Flag `--effort`**: teruskan `low`, `medium`, `high`, atau `max` untuk menetapkan tingkat untuk sesi tunggal saat meluncurkan Claude Code
 * **Variabel lingkungan**: atur `CLAUDE_CODE_EFFORT_LEVEL` ke `low`, `medium`, `high`, `max`, atau `auto`
 * **Pengaturan**: atur `effortLevel` di file pengaturan Anda ke `"low"`, `"medium"`, atau `"high"`
+* **Skill dan subagent frontmatter**: atur `effort` dalam file markdown [skill](/id/skills#frontmatter-reference) atau [subagent](/id/sub-agents#supported-frontmatter-fields) untuk mengganti tingkat usaha ketika skill atau subagent itu berjalan
 
-Variabel lingkungan mengambil alih, kemudian tingkat yang Anda konfigurasi, kemudian default model.
+Variabel lingkungan mengambil alih semua metode lain, kemudian tingkat yang Anda konfigurasi, kemudian default model. Usaha frontmatter berlaku ketika skill atau subagent itu aktif, mengganti tingkat sesi tetapi bukan variabel lingkungan.
 
 Usaha didukung pada Opus 4.6 dan Sonnet 4.6. Slider usaha muncul dalam `/model` ketika model yang didukung dipilih. Tingkat usaha saat ini juga ditampilkan di sebelah logo dan spinner, misalnya "with low effort", sehingga Anda dapat mengkonfirmasi pengaturan mana yang aktif tanpa membuka `/model`.
 
@@ -177,6 +184,22 @@ Anda dapat melihat model mana yang sedang Anda gunakan dengan beberapa cara:
 
 1. Dalam [status line](/id/statusline) (jika dikonfigurasi)
 2. Dalam `/status`, yang juga menampilkan informasi akun Anda.
+
+## Tambahkan opsi model kustom
+
+Gunakan `ANTHROPIC_CUSTOM_MODEL_OPTION` untuk menambahkan satu entri kustom ke pemilih `/model` tanpa mengganti alias bawaan. Ini berguna untuk deployment gateway LLM atau pengujian ID model yang tidak tercantum Claude Code secara default.
+
+Contoh ini menetapkan ketiga variabel untuk membuat deployment Opus yang dirutekan gateway dapat dipilih:
+
+```bash  theme={null}
+export ANTHROPIC_CUSTOM_MODEL_OPTION="my-gateway/claude-opus-4-6"
+export ANTHROPIC_CUSTOM_MODEL_OPTION_NAME="Opus via Gateway"
+export ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION="Custom deployment routed through the internal LLM gateway"
+```
+
+Entri kustom muncul di bagian bawah pemilih `/model`. `ANTHROPIC_CUSTOM_MODEL_OPTION_NAME` dan `ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION` bersifat opsional. Jika dihilangkan, ID model digunakan sebagai nama dan deskripsi default ke `Custom model (<model-id>)`.
+
+Claude Code melewati validasi untuk ID model yang ditetapkan dalam `ANTHROPIC_CUSTOM_MODEL_OPTION`, sehingga Anda dapat menggunakan string apa pun yang diterima endpoint API Anda.
 
 ## Variabel lingkungan
 

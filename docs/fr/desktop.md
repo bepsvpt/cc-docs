@@ -51,7 +51,7 @@ Le bouton **+** à côté de la zone de prompt vous donne accès aux pièces joi
 
 La zone de prompt supporte deux façons d'apporter du contexte externe :
 
-* **Fichiers @mention** : tapez `@` suivi d'un nom de fichier pour ajouter un fichier au contexte de la conversation. Claude peut alors lire et référencer ce fichier.
+* **Fichiers @mention** : tapez `@` suivi d'un nom de fichier pour ajouter un fichier au contexte de la conversation. Claude peut alors lire et référencer ce fichier. @mention n'est pas disponible dans les sessions distantes.
 * **Joindre des fichiers** : joignez des images, des PDF et d'autres fichiers à votre prompt en utilisant le bouton de pièce jointe, ou glissez-déposez les fichiers directement dans le prompt. Ceci est utile pour partager des captures d'écran de bugs, des maquettes de conception ou des documents de référence.
 
 ### Choisir un mode de permission
@@ -622,7 +622,7 @@ Ce tableau compare les capacités principales entre la CLI et Desktop. Pour une 
 | [Fournisseurs tiers](/fr/third-party-integrations) | Bedrock, Vertex, Foundry                                  | Non disponible. Desktop se connecte directement à l'API d'Anthropic.                                                               |
 | [Serveurs MCP](/fr/mcp)                            | Configurer dans les fichiers de paramètres                | Interface utilisateur Connecteurs pour les sessions locales et SSH, ou fichiers de paramètres                                      |
 | [Plugins](/fr/plugins)                             | Commande `/plugin`                                        | Interface utilisateur du gestionnaire de plugins                                                                                   |
-| Fichiers @mention                                  | Basé sur le texte                                         | Avec autocomplétion                                                                                                                |
+| Fichiers @mention                                  | Basé sur le texte                                         | Avec autocomplétion ; sessions locales et SSH uniquement                                                                           |
 | Pièces jointes de fichiers                         | Non disponible                                            | Images, PDF                                                                                                                        |
 | Isolation des sessions                             | Drapeau [`--worktree`](/fr/cli-reference)                 | Worktrees automatiques                                                                                                             |
 | Sessions multiples                                 | Terminaux séparés                                         | Onglets de barre latérale                                                                                                          |

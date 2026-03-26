@@ -234,6 +234,31 @@ Algunos atajos de teclado dependen de qué panel esté "enfocado" (recibiendo en
 | Show Logs                  | -                                                        | Ver registros de depuración de la extensión                                                  |
 | Logout                     | -                                                        | Cerrar sesión de su cuenta de Anthropic                                                      |
 
+### Lanzar una pestaña de VS Code desde otras herramientas
+
+La extensión registra un controlador URI en `vscode://anthropic.claude-code/open`. Úselo para abrir una nueva pestaña de Claude Code desde su propia herramienta: un alias de shell, un marcador de navegador, o cualquier script que pueda abrir una URL. Si VS Code no está ejecutándose, abrir la URL lo lanza primero. Si VS Code ya está ejecutándose, la URL se abre en la ventana que está actualmente enfocada.
+
+Invoque el controlador con el abridor de URL de su sistema operativo. En macOS:
+
+```bash  theme={null}
+open "vscode://anthropic.claude-code/open"
+```
+
+Use `xdg-open` en Linux o `start` en Windows.
+
+El controlador acepta dos parámetros de consulta opcionales:
+
+| Parámetro | Descripción                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `prompt`  | Texto para rellenar previamente en el cuadro de mensaje. Debe estar codificado en URL. El mensaje se rellena previamente pero no se envía automáticamente.                                                                                                                                                                                                                                                                   |
+| `session` | Un ID de sesión para reanudar en lugar de iniciar una nueva conversación. La sesión debe pertenecer al espacio de trabajo actualmente abierto en VS Code. Si la sesión no se encuentra, se inicia una conversación nueva. Si la sesión ya está abierta en una pestaña, esa pestaña se enfoca. Para capturar un ID de sesión mediante programación, consulte [Continuar conversaciones](/es/headless#continue-conversations). |
+
+Por ejemplo, para abrir una pestaña rellenada previamente con "review my changes":
+
+```text  theme={null}
+vscode://anthropic.claude-code/open?prompt=review%20my%20changes
+```
+
 ## Configurar ajustes
 
 La extensión tiene dos tipos de configuración:

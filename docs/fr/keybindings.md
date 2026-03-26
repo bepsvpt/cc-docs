@@ -99,12 +99,14 @@ Actions disponibles dans le contexte `Chat` :
 | Action                | Par défaut                  | Description                       |
 | :-------------------- | :-------------------------- | :-------------------------------- |
 | `chat:cancel`         | Échappement                 | Annuler l'entrée actuelle         |
+| `chat:killAgents`     | Ctrl+X Ctrl+K               | Arrêter tous les agents de fond   |
 | `chat:cycleMode`      | Maj+Tab\*                   | Cycler les modes de permission    |
 | `chat:modelPicker`    | Cmd+P / Meta+P              | Ouvrir le sélecteur de modèle     |
+| `chat:fastMode`       | Meta+O                      | Basculer le mode rapide           |
 | `chat:thinkingToggle` | Cmd+T / Meta+T              | Basculer la réflexion étendue     |
 | `chat:submit`         | Entrée                      | Soumettre le message              |
 | `chat:undo`           | Ctrl+\_                     | Annuler la dernière action        |
-| `chat:externalEditor` | Ctrl+G                      | Ouvrir dans un éditeur externe    |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E       | Ouvrir dans un éditeur externe    |
 | `chat:stash`          | Ctrl+S                      | Mettre en cache l'invite actuelle |
 | `chat:imagePaste`     | Ctrl+V (Alt+V sous Windows) | Coller une image                  |
 
@@ -283,6 +285,14 @@ Actions disponibles dans le contexte `Settings` :
 | `settings:search` | /          | Entrer en mode de recherche                                      |
 | `settings:retry`  | R          | Réessayer de charger les données d'utilisation (en cas d'erreur) |
 
+### Actions vocales
+
+Actions disponibles dans le contexte `Chat` lorsque la [dictée vocale](/fr/voice-dictation) est activée :
+
+| Action             | Par défaut | Description                      |
+| :----------------- | :--------- | :------------------------------- |
+| `voice:pushToTalk` | Espace     | Maintenez pour dicter une invite |
+
 ## Syntaxe des séquences de touches
 
 ### Modificateurs
@@ -347,10 +357,11 @@ Définissez une action sur `null` pour délier un raccourci par défaut :
 
 Ces raccourcis ne peuvent pas être reliés :
 
-| Raccourci | Raison                               |
-| :-------- | :----------------------------------- |
-| Ctrl+C    | Interruption/annulation codée en dur |
-| Ctrl+D    | Sortie codée en dur                  |
+| Raccourci | Raison                                                       |
+| :-------- | :----------------------------------------------------------- |
+| Ctrl+C    | Interruption/annulation codée en dur                         |
+| Ctrl+D    | Sortie codée en dur                                          |
+| Ctrl+M    | Identique à Entrée dans les terminaux (les deux envoient CR) |
 
 ## Conflits de terminal
 

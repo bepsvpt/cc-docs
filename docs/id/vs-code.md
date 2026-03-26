@@ -234,6 +234,31 @@ Beberapa pintasan tergantung pada panel mana yang "focused" (menerima input keyb
 | Show Logs                  | -                                                        | Lihat log debug ekstensi                                                       |
 | Logout                     | -                                                        | Keluar dari akun Anthropic Anda                                                |
 
+### Luncurkan tab VS Code dari alat lain
+
+Ekstensi mendaftarkan URI handler di `vscode://anthropic.claude-code/open`. Gunakan untuk membuka tab Claude Code baru dari tooling Anda sendiri: alias shell, bookmarklet browser, atau script apa pun yang dapat membuka URL. Jika VS Code belum berjalan, membuka URL meluncurkannya terlebih dahulu. Jika VS Code sudah berjalan, URL terbuka di jendela mana pun yang saat ini difokuskan.
+
+Panggil handler dengan pembuka URL sistem operasi Anda. Di macOS:
+
+```bash  theme={null}
+open "vscode://anthropic.claude-code/open"
+```
+
+Gunakan `xdg-open` di Linux atau `start` di Windows.
+
+Handler menerima dua parameter query opsional:
+
+| Parameter | Deskripsi                                                                                                                                                                                                                                                                                                                                                                |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `prompt`  | Teks untuk pre-fill di kotak prompt. Harus URL-encoded. Prompt di-pre-fill tetapi tidak dikirim secara otomatis.                                                                                                                                                                                                                                                         |
+| `session` | ID sesi untuk dilanjutkan alih-alih memulai percakapan baru. Sesi harus milik workspace yang saat ini terbuka di VS Code. Jika sesi tidak ditemukan, percakapan segar dimulai sebagai gantinya. Jika sesi sudah terbuka di tab, tab tersebut difokuskan. Untuk menangkap ID sesi secara terprogram, lihat [Continue conversations](/id/headless#continue-conversations). |
+
+Misalnya, untuk membuka tab yang di-pre-fill dengan "review my changes":
+
+```text  theme={null}
+vscode://anthropic.claude-code/open?prompt=review%20my%20changes
+```
+
 ## Konfigurasi pengaturan
 
 Ekstensi memiliki dua jenis pengaturan:

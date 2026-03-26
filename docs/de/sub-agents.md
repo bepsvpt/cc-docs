@@ -184,7 +184,7 @@ claude --agents '{
 }'
 ```
 
-Das `--agents`-Flag akzeptiert JSON mit denselben [Frontmatter](#supported-frontmatter-fields)-Feldern wie dateibasierte Subagenten: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `memory`, `effort`, `background` und `isolation`. Verwenden Sie `prompt` für den Systemprompt, äquivalent zum Markdown-Body in dateibasierten Subagenten.
+Das `--agents`-Flag akzeptiert JSON mit denselben [Frontmatter](#supported-frontmatter-fields)-Feldern wie dateibasierte Subagenten: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `initialPrompt`, `memory`, `effort`, `background` und `isolation`. Verwenden Sie `prompt` für den Systemprompt, äquivalent zum Markdown-Body in dateibasierten Subagenten.
 
 **Plugin-Subagenten** stammen von [Plugins](/de/plugins), die Sie installiert haben. Sie erscheinen in `/agents` neben Ihren benutzerdefinierten Subagenten. Siehe die [Plugin-Komponenten-Referenz](/de/plugins-reference#agents) für Details zum Erstellen von Plugin-Subagenten.
 
@@ -234,6 +234,7 @@ Die folgenden Felder können im YAML-Frontmatter verwendet werden. Nur `name` un
 | `background`      | Nein         | Auf `true` setzen, um diesen Subagenten immer als [Hintergrundaufgabe](#run-subagents-in-foreground-or-background) auszuführen. Standard: `false`                                                                                                                                                                                 |
 | `effort`          | Nein         | Aufwandsstufe, wenn dieser Subagent aktiv ist. Überschreibt die Aufwandsstufe der Sitzung. Standard: erbt von Sitzung. Optionen: `low`, `medium`, `high`, `max` (nur Opus 4.6)                                                                                                                                                    |
 | `isolation`       | Nein         | Auf `worktree` setzen, um den Subagenten in einem temporären [Git-Worktree](/de/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) auszuführen, was ihm eine isolierte Kopie des Repositorys gibt. Der Worktree wird automatisch bereinigt, wenn der Subagent keine Änderungen vornimmt                       |
+| `initialPrompt`   | Nein         | Auto-eingereicht als der erste Benutzer-Turn, wenn dieser Agent als Hauptsitzungs-Agent läuft (über `--agent` oder die `agent`-Einstellung). [Befehle](/de/commands) und [Skills](/de/skills) werden verarbeitet. Vorangestellt zu jedem vom Benutzer bereitgestellten Prompt                                                     |
 
 ### Wählen Sie ein Modell
 
@@ -243,6 +244,13 @@ Das `model`-Feld steuert, welches [KI-Modell](/de/model-config) der Subagent ver
 * **Vollständige Modell-ID**: Verwenden Sie eine vollständige Modell-ID wie `claude-opus-4-6` oder `claude-sonnet-4-6`. Akzeptiert dieselben Werte wie das `--model`-Flag
 * **inherit**: Verwenden Sie dasselbe Modell wie die Hauptkonversation
 * **Weggelassen**: Wenn nicht angegeben, wird standardmäßig `inherit` verwendet (verwendet dasselbe Modell wie die Hauptkonversation)
+
+Wenn Claude einen Subagenten aufruft, kann es auch einen `model`-Parameter für diese spezifische Invokation übergeben. Claude Code löst das Modell des Subagenten in dieser Reihenfolge auf:
+
+1. Die Umgebungsvariable [`CLAUDE_CODE_SUBAGENT_MODEL`](/de/model-config#environment-variables), falls gesetzt
+2. Der `model`-Parameter pro Invokation
+3. Das `model`-Frontmatter der Subagenten-Definition
+4. Das Modell der Hauptkonversation
 
 ### Kontrollieren Sie Subagenten-Fähigkeiten
 

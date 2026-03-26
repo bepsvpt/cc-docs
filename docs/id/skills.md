@@ -26,7 +26,7 @@ Anda menginvokasinya skills bundel dengan cara yang sama seperti skill lainnya: 
 | :-------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/batch <instruction>`      | Mengorkestrasi perubahan skala besar di seluruh codebase secara paralel. Meneliti codebase, menguraikan pekerjaan menjadi 5 hingga 30 unit independen, dan menyajikan rencana. Setelah disetujui, menelurkan satu agen latar belakang per unit dalam [git worktree](/id/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) yang terisolasi. Setiap agen mengimplementasikan unitnya, menjalankan tes, dan membuka pull request. Memerlukan repositori git. Contoh: `/batch migrate src/ from Solid to React` |
 | `/claude-api`               | Muat materi referensi Claude API untuk bahasa proyek Anda (Python, TypeScript, Java, Go, Ruby, C#, PHP, atau cURL) dan referensi Agent SDK untuk Python dan TypeScript. Mencakup tool use, streaming, batches, structured outputs, dan pitfalls umum. Juga diaktifkan secara otomatis saat kode Anda mengimpor `anthropic`, `@anthropic-ai/sdk`, atau `claude_agent_sdk`                                                                                                                                                         |
-| `/debug [description]`      | Troubleshoot sesi Claude Code Anda saat ini dengan membaca log debug sesi. Secara opsional jelaskan masalahnya untuk fokus analisis                                                                                                                                                                                                                                                                                                                                                                                              |
+| `/debug [description]`      | Aktifkan debug logging untuk sesi saat ini dan troubleshoot masalah dengan membaca log debug sesi. Debug logging dimatikan secara default kecuali Anda memulai dengan `claude --debug`, jadi menjalankan `/debug` di tengah sesi mulai menangkap log dari titik itu ke depan. Secara opsional jelaskan masalahnya untuk fokus analisis                                                                                                                                                                                           |
 | `/loop [interval] <prompt>` | Jalankan prompt berulang kali pada interval saat sesi tetap terbuka. Berguna untuk polling deployment, babysitting PR, atau menjalankan kembali skill lain secara berkala. Contoh: `/loop 5m check if the deploy finished`. Lihat [Jalankan prompts pada jadwal](/id/scheduled-tasks)                                                                                                                                                                                                                                            |
 | `/simplify [focus]`         | Tinjau file yang baru-baru ini diubah untuk masalah penggunaan kembali kode, kualitas, dan efisiensi, kemudian perbaiki. Menelurkan tiga agen review secara paralel, mengagregasi temuan mereka, dan menerapkan perbaikan. Lewatkan teks untuk fokus pada kekhawatiran spesifik: `/simplify focus on memory efficiency`                                                                                                                                                                                                          |
 
@@ -186,18 +186,19 @@ Your skill instructions here...
 
 Semua bidang opsional. Hanya `description` yang direkomendasikan sehingga Claude tahu kapan menggunakan skill.
 
-| Bidang                     | Diperlukan       | Deskripsi                                                                                                                                                                          |
-| :------------------------- | :--------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`                     | Tidak            | Nama tampilan untuk skill. Jika dihilangkan, menggunakan nama direktori. Huruf kecil, angka, dan tanda hubung saja (maks 64 karakter).                                             |
-| `description`              | Direkomendasikan | Apa yang dilakukan skill dan kapan menggunakannya. Claude menggunakan ini untuk memutuskan kapan menerapkan skill. Jika dihilangkan, menggunakan paragraf pertama konten markdown. |
-| `argument-hint`            | Tidak            | Petunjuk yang ditampilkan selama autocomplete untuk menunjukkan argumen yang diharapkan. Contoh: `[issue-number]` atau `[filename] [format]`.                                      |
-| `disable-model-invocation` | Tidak            | Atur ke `true` untuk mencegah Claude memuat skill ini secara otomatis. Gunakan untuk workflow yang ingin Anda picu secara manual dengan `/name`. Default: `false`.                 |
-| `user-invocable`           | Tidak            | Atur ke `false` untuk menyembunyikan dari menu `/`. Gunakan untuk pengetahuan latar belakang yang tidak boleh diinvokasinya pengguna secara langsung. Default: `true`.             |
-| `allowed-tools`            | Tidak            | Tools yang dapat digunakan Claude tanpa meminta izin saat skill ini aktif.                                                                                                         |
-| `model`                    | Tidak            | Model yang digunakan saat skill ini aktif.                                                                                                                                         |
-| `context`                  | Tidak            | Atur ke `fork` untuk menjalankan dalam konteks subagent yang di-fork.                                                                                                              |
-| `agent`                    | Tidak            | Jenis subagent mana yang digunakan saat `context: fork` diatur.                                                                                                                    |
-| `hooks`                    | Tidak            | Hooks yang dibatasi pada lifecycle skill ini. Lihat [Hooks dalam skills dan agents](/id/hooks#hooks-in-skills-and-agents) untuk format konfigurasi.                                |
+| Bidang                     | Diperlukan       | Deskripsi                                                                                                                                                                                  |
+| :------------------------- | :--------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`                     | Tidak            | Nama tampilan untuk skill. Jika dihilangkan, menggunakan nama direktori. Huruf kecil, angka, dan tanda hubung saja (maks 64 karakter).                                                     |
+| `description`              | Direkomendasikan | Apa yang dilakukan skill dan kapan menggunakannya. Claude menggunakan ini untuk memutuskan kapan menerapkan skill. Jika dihilangkan, menggunakan paragraf pertama konten markdown.         |
+| `argument-hint`            | Tidak            | Petunjuk yang ditampilkan selama autocomplete untuk menunjukkan argumen yang diharapkan. Contoh: `[issue-number]` atau `[filename] [format]`.                                              |
+| `disable-model-invocation` | Tidak            | Atur ke `true` untuk mencegah Claude memuat skill ini secara otomatis. Gunakan untuk workflow yang ingin Anda picu secara manual dengan `/name`. Default: `false`.                         |
+| `user-invocable`           | Tidak            | Atur ke `false` untuk menyembunyikan dari menu `/`. Gunakan untuk pengetahuan latar belakang yang tidak boleh diinvokasinya pengguna secara langsung. Default: `true`.                     |
+| `allowed-tools`            | Tidak            | Tools yang dapat digunakan Claude tanpa meminta izin saat skill ini aktif.                                                                                                                 |
+| `model`                    | Tidak            | Model yang digunakan saat skill ini aktif.                                                                                                                                                 |
+| `effort`                   | Tidak            | [Effort level](/id/model-config#adjust-effort-level) saat skill ini aktif. Mengganti effort level sesi. Default: mewarisi dari sesi. Opsi: `low`, `medium`, `high`, `max` (Opus 4.6 saja). |
+| `context`                  | Tidak            | Atur ke `fork` untuk menjalankan dalam konteks subagent yang di-fork.                                                                                                                      |
+| `agent`                    | Tidak            | Jenis subagent mana yang digunakan saat `context: fork` diatur.                                                                                                                            |
+| `hooks`                    | Tidak            | Hooks yang dibatasi pada lifecycle skill ini. Lihat [Hooks dalam skills dan agents](/id/hooks#hooks-in-skills-and-agents) untuk format konfigurasi.                                        |
 
 #### Substitusi string yang tersedia
 
@@ -351,9 +352,9 @@ Preserve all existing behavior and tests.
 
 ### Injeksi konteks dinamis
 
-Sintaks `!`command\`\` menjalankan perintah shell sebelum konten skill dikirim ke Claude. Output perintah mengganti placeholder, sehingga Claude menerima data aktual, bukan perintah itu sendiri.
+Sintaks `` !`<command>` `` menjalankan perintah shell sebelum konten skill dikirim ke Claude. Output perintah mengganti placeholder, sehingga Claude menerima data aktual, bukan perintah itu sendiri.
 
-Skill ini merangkum pull request dengan mengambil data PR langsung dengan GitHub CLI. Perintah `!`gh pr diff\`\` dan lainnya berjalan terlebih dahulu, dan output mereka dimasukkan ke dalam prompt:
+Skill ini merangkum pull request dengan mengambil data PR langsung dengan GitHub CLI. Perintah `` !`gh pr diff` `` dan lainnya berjalan terlebih dahulu, dan output mereka dimasukkan ke dalam prompt:
 
 ```yaml  theme={null}
 ---
@@ -375,7 +376,7 @@ Summarize this pull request...
 
 Saat skill ini berjalan:
 
-1. Setiap `!`command\`\` dijalankan segera (sebelum Claude melihat apa pun)
+1. Setiap `` !`<command>` `` dijalankan segera (sebelum Claude melihat apa pun)
 2. Output mengganti placeholder dalam konten skill
 3. Claude menerima prompt yang sepenuhnya dirender dengan data PR aktual
 
@@ -501,7 +502,7 @@ Run the visualization script from your project root:
 
 ```bash
 python ~/.claude/skills/codebase-visualizer/scripts/visualize.py .
-```text
+```
 
 This creates `codebase-map.html` in the current directory and opens it in your default browser.
 

@@ -184,7 +184,7 @@ claude --agents '{
 }'
 ```
 
-Le drapeau `--agents` accepte JSON avec les mêmes champs de [frontmatter](#supported-frontmatter-fields) que les sous-agents basés sur fichier : `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `memory`, `effort`, `background` et `isolation`. Utilisez `prompt` pour l'invite système, équivalent au corps markdown dans les sous-agents basés sur fichier.
+Le drapeau `--agents` accepte JSON avec les mêmes champs de [frontmatter](#supported-frontmatter-fields) que les sous-agents basés sur fichier : `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `initialPrompt`, `memory`, `effort`, `background` et `isolation`. Utilisez `prompt` pour l'invite système, équivalent au corps markdown dans les sous-agents basés sur fichier.
 
 **Les sous-agents de plugin** proviennent des [plugins](/fr/plugins) que vous avez installés. Ils apparaissent dans `/agents` aux côtés de vos sous-agents personnalisés. Consultez la [référence des composants de plugin](/fr/plugins-reference#agents) pour plus de détails sur la création de sous-agents de plugin.
 
@@ -234,6 +234,7 @@ Les champs suivants peuvent être utilisés dans le frontmatter YAML. Seuls `nam
 | `background`      | Non         | Définir sur `true` pour toujours exécuter ce sous-agent en tant que [tâche d'arrière-plan](#run-subagents-in-foreground-or-background). Par défaut : `false`                                                                                                                                                             |
 | `effort`          | Non         | Niveau d'effort lorsque ce sous-agent est actif. Remplace le niveau d'effort de la session. Par défaut : hérite de la session. Options : `low`, `medium`, `high`, `max` (Opus 4.6 uniquement)                                                                                                                            |
 | `isolation`       | Non         | Définir sur `worktree` pour exécuter le sous-agent dans un [git worktree](/fr/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) temporaire, ce qui lui donne une copie isolée du référentiel. Le worktree est automatiquement nettoyé si le sous-agent n'apporte aucune modification                |
+| `initialPrompt`   | Non         | Auto-soumis comme le premier tour utilisateur lorsque cet agent s'exécute en tant qu'agent de session principal (via `--agent` ou le paramètre `agent`). Les [commandes](/fr/commands) et les [skills](/fr/skills) sont traitées. Préfixé à tout invite fourni par l'utilisateur                                         |
 
 ### Choisir un modèle
 
@@ -243,6 +244,13 @@ Le champ `model` contrôle quel [modèle IA](/fr/model-config) le sous-agent uti
 * **ID de modèle complet** : Utilisez un ID de modèle complet tel que `claude-opus-4-6` ou `claude-sonnet-4-6`. Accepte les mêmes valeurs que le drapeau `--model`
 * **inherit** : Utilisez le même modèle que la conversation principale
 * **Omis** : S'il n'est pas spécifié, par défaut `inherit` (utilise le même modèle que la conversation principale)
+
+Lorsque Claude invoque un sous-agent, il peut également passer un paramètre `model` pour cette invocation spécifique. Claude Code résout le modèle du sous-agent dans cet ordre :
+
+1. La variable d'environnement [`CLAUDE_CODE_SUBAGENT_MODEL`](/fr/model-config#environment-variables), si elle est définie
+2. Le paramètre `model` par invocation
+3. Le frontmatter `model` de la définition du sous-agent
+4. Le modèle de la conversation principale
 
 ### Contrôler les capacités des sous-agents
 

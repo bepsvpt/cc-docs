@@ -51,7 +51,7 @@ Tombol **+** di sebelah kotak prompt memberi Anda akses ke lampiran file, [skill
 
 Kotak prompt mendukung dua cara untuk membawa konteks eksternal:
 
-* **File @mention**: ketik `@` diikuti dengan nama file untuk menambahkan file ke konteks percakapan. Claude kemudian dapat membaca dan mereferensikan file tersebut.
+* **File @mention**: ketik `@` diikuti dengan nama file untuk menambahkan file ke konteks percakapan. Claude kemudian dapat membaca dan mereferensikan file tersebut. @mention tidak tersedia di sesi jarak jauh.
 * **Lampirkan file**: lampirkan gambar, PDF, dan file lainnya ke prompt Anda menggunakan tombol lampiran, atau seret dan lepas file langsung ke prompt. Ini berguna untuk berbagi tangkapan layar bug, mockup desain, atau dokumen referensi.
 
 ### Pilih mode izin
@@ -622,7 +622,7 @@ Tabel ini membandingkan kemampuan inti antara CLI dan Desktop. Untuk daftar leng
 | [Penyedia pihak ketiga](/id/third-party-integrations) | Bedrock, Vertex, Foundry                                  | tidak tersedia. Desktop terhubung langsung ke API Anthropic.                             |
 | [MCP servers](/id/mcp)                                | konfigurasikan di file pengaturan                         | UI Konektor untuk sesi lokal dan SSH, atau file pengaturan                               |
 | [Plugins](/id/plugins)                                | perintah `/plugin`                                        | UI pengelola plugin                                                                      |
-| File @mention                                         | berbasis teks                                             | dengan autocomplete                                                                      |
+| File @mention                                         | berbasis teks                                             | dengan autocomplete; sesi lokal dan SSH saja                                             |
 | Lampiran file                                         | tidak tersedia                                            | gambar, PDF                                                                              |
 | Isolasi sesi                                          | flag [`--worktree`](/id/cli-reference)                    | worktrees otomatis                                                                       |
 | Beberapa sesi                                         | terminal terpisah                                         | tab sidebar                                                                              |

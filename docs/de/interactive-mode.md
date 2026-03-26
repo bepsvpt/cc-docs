@@ -25,13 +25,13 @@
 | Kürzel                                                | Beschreibung                                                                                 | Kontext                                                                                                                                                                                 |
 | :---------------------------------------------------- | :------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Ctrl+C`                                              | Aktuelle Eingabe oder Generierung abbrechen                                                  | Standard-Interrupt                                                                                                                                                                      |
-| `Ctrl+F`                                              | Alle Hintergrund-Agenten beenden. Zweimal innerhalb von 3 Sekunden drücken, um zu bestätigen | Steuerung von Hintergrund-Agenten                                                                                                                                                       |
+| `Ctrl+X Ctrl+K`                                       | Alle Hintergrund-Agenten beenden. Zweimal innerhalb von 3 Sekunden drücken, um zu bestätigen | Steuerung von Hintergrund-Agenten                                                                                                                                                       |
 | `Ctrl+D`                                              | Claude Code-Sitzung beenden                                                                  | EOF-Signal                                                                                                                                                                              |
-| `Ctrl+G`                                              | Im Standard-Texteditor öffnen                                                                | Bearbeiten Sie Ihren Prompt oder benutzerdefinierte Antwort in Ihrem Standard-Texteditor                                                                                                |
+| `Ctrl+G` oder `Ctrl+X Ctrl+E`                         | Im Standard-Texteditor öffnen                                                                | Bearbeiten Sie Ihren Prompt oder benutzerdefinierte Antwort in Ihrem Standard-Texteditor. `Ctrl+X Ctrl+E` ist die readline-native Bindung                                               |
 | `Ctrl+L`                                              | Terminal-Bildschirm löschen                                                                  | Behält Gesprächsverlauf bei                                                                                                                                                             |
 | `Ctrl+O`                                              | Ausführliche Ausgabe umschalten                                                              | Zeigt detaillierte Tool-Nutzung und Ausführung. Erweitert auch MCP-Lese- und Suchaufrufe, die standardmäßig zu einer einzelnen Zeile wie „Queried slack" zusammengefasst werden         |
 | `Ctrl+R`                                              | Reverse-Suche im Befehlsverlauf                                                              | Durchsuchen Sie vorherige Befehle interaktiv                                                                                                                                            |
-| `Ctrl+V` oder `Cmd+V` (iTerm2) oder `Alt+V` (Windows) | Bild aus Zwischenablage einfügen                                                             | Fügt ein Bild oder einen Pfad zu einer Bilddatei ein                                                                                                                                    |
+| `Ctrl+V` oder `Cmd+V` (iTerm2) oder `Alt+V` (Windows) | Bild aus Zwischenablage einfügen                                                             | Fügt einen `[Image #N]`-Chip an der Cursor-Position ein, sodass Sie ihn positionell in Ihrem Prompt referenzieren können                                                                |
 | `Ctrl+B`                                              | Hintergrund-Ausführung von Aufgaben                                                          | Führt Bash-Befehle und Agenten im Hintergrund aus. Tmux-Benutzer drücken zweimal                                                                                                        |
 | `Ctrl+T`                                              | Task-Liste umschalten                                                                        | Zeigen oder verbergen Sie die [Task-Liste](#task-list) im Terminal-Statusbereich                                                                                                        |
 | `Left/Right arrows`                                   | Durch Dialog-Registerkarten navigieren                                                       | Navigieren Sie zwischen Registerkarten in Berechtigungsdialogen und Menüs                                                                                                               |
@@ -40,6 +40,7 @@
 | `Shift+Tab` oder `Alt+M` (einige Konfigurationen)     | Berechtigungsmodi umschalten                                                                 | Wechseln Sie zwischen `default`, `acceptEdits`, `plan` und allen Modi, die Sie aktiviert haben, z. B. `auto` oder `bypassPermissions`. Siehe [Berechtigungsmodi](/de/permission-modes). |
 | `Option+P` (macOS) oder `Alt+P` (Windows/Linux)       | Modell wechseln                                                                              | Wechseln Sie Modelle, ohne Ihren Prompt zu löschen                                                                                                                                      |
 | `Option+T` (macOS) oder `Alt+T` (Windows/Linux)       | Extended Thinking umschalten                                                                 | Aktivieren oder deaktivieren Sie den Extended Thinking-Modus. Führen Sie zuerst `/terminal-setup` aus, um dieses Kürzel zu aktivieren                                                   |
+| `Option+O` (macOS) oder `Alt+O` (Windows/Linux)       | Schnellmodus umschalten                                                                      | Aktivieren oder deaktivieren Sie den [Schnellmodus](/de/fast-mode)                                                                                                                      |
 
 ### Textbearbeitung
 
@@ -83,6 +84,15 @@
 | `/` am Anfang | Befehl oder Skill   | Siehe [integrierte Befehle](#built-in-commands) und [Skills](/de/skills)             |
 | `!` am Anfang | Bash-Modus          | Führen Sie Befehle direkt aus und fügen Sie die Ausführungsausgabe zur Sitzung hinzu |
 | `@`           | Dateipfad-Erwähnung | Trigger für Dateipfad-Autovervollständigung                                          |
+
+### Transkript-Viewer
+
+Wenn der Transkript-Viewer offen ist (umgeschaltet mit `Ctrl+O`), sind diese Kürzel verfügbar. `Ctrl+E` kann über [`transcript:toggleShowAll`](/de/keybindings) neu zugewiesen werden.
+
+| Kürzel               | Beschreibung                                                                                                                                                |
+| :------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+E`             | Alle Inhalte anzeigen umschalten                                                                                                                            |
+| `q`, `Ctrl+C`, `Esc` | Transkript-Ansicht beenden. `Ctrl+C` und `Esc` können über [`transcript:exit`](/de/keybindings) neu zugewiesen werden; `q` kann nicht neu zugewiesen werden |
 
 ### Spracheingabe
 
@@ -210,7 +220,7 @@ Um Befehle im Hintergrund auszuführen, können Sie entweder:
 
 **Wichtige Funktionen:**
 
-* Die Ausgabe wird gepuffert und Claude kann sie mit dem TaskOutput-Tool abrufen
+* Die Ausgabe wird in eine Datei geschrieben und Claude kann sie mit dem Read-Tool abrufen
 * Hintergrund-Tasks haben eindeutige IDs zum Tracking und zur Ausgabebeschaffung
 * Hintergrund-Tasks werden automatisch bereinigt, wenn Claude Code beendet wird
 * Hintergrund-Tasks werden automatisch beendet, wenn die Ausgabe 5 GB überschreitet, mit einem Hinweis in stderr, der erklärt, warum

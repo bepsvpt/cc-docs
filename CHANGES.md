@@ -1,5 +1,490 @@
 # Documentation Changes
 
+## 2026-03-26
+
+206 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **CLI-Referenz** (`cli-reference.md`): 18 lines added, 17 removed
+- **Claude Code Desktop verwenden** (`desktop.md`): 2 lines added, 2 removed
+- **Automatisieren Sie Workflows mit Hooks** (`hooks-guide.md`): 95 lines added, 42 removed
+  - New section: "### Umgebung neu laden, wenn sich Verzeichnis oder Dateien ändern"
+  - New section: "# ... Rest Ihrer Hook-Logik"
+- **Hooks-Referenz** (`hooks.md`): 129 lines added, 52 removed
+  - New section: "### CwdChanged"
+  - New section: "#### CwdChanged-Eingabe"
+  - New section: "#### CwdChanged-Ausgabe"
+  - New section: "### FileChanged"
+  - New section: "#### FileChanged-Eingabe"
+- **Interaktiver Modus** (`interactive-mode.md`): 14 lines added, 4 removed
+  - New section: "### Transkript-Viewer"
+- **Tastaturkürzel anpassen** (`keybindings.md`): 16 lines added, 5 removed
+  - New section: "### Sprach-Aktionen"
+- **Claude Code mit Tools über MCP verbinden** (`mcp.md`): 56 lines added, 7 removed
+  - New section: "### Push-Nachrichten mit Kanälen"
+  - New section: "### Verwenden Sie dynamische Header für benutzerdefinierte Authentifizierung"
+- **Wie Claude sich Ihr Projekt merkt** (`memory.md`): 40 lines added, 10 removed
+  - New section: "### AGENTS.md"
+- **Modellkonfiguration** (`model-config.md`): 25 lines added, 2 removed
+  - New section: "## Benutzerdefinierte Modelloption hinzufügen"
+- **Überwachung** (`monitoring-usage.md`): 43 lines added, 36 removed
+- **Plugins-Referenz** (`plugins-reference.md`): 147 lines added, 31 removed
+  - New section: "### Benutzerkonfiguration"
+  - New section: "### Kanäle"
+  - New section: "#### Persistentes Datenverzeichnis"
+- **Schnellstart** (`quickstart.md`): 608 lines added, 0 removed
+- **Sandboxing** (`sandboxing.md`): 2 lines added, 0 removed
+- **Claude Code-Einstellungen** (`settings.md`): 67 lines added, 58 removed
+- **Claude mit Skills erweitern** (`skills.md`): 17 lines added, 16 removed
+- **Benutzerdefinierte Subagenten erstellen** (`sub-agents.md`): 9 lines added, 1 removed
+
+### English
+
+
+**Modified**
+
+- **Changelog** (`changelog.md`): 43 lines added, 0 removed
+- **CLI reference** (`cli-reference.md`): 18 lines added, 17 removed
+- **Built-in commands** (`commands.md`): 67 lines added, 67 removed
+- **Environment variables** (`env-vars.md`): 119 lines added, 107 removed
+- **Extend Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 88 lines added, 39 removed
+  - New section: "### Reload environment when directory or files change"
+- **Hooks reference** (`hooks.md`): 168 lines added, 63 removed
+  - New section: "### CwdChanged"
+  - New section: "#### CwdChanged input"
+  - New section: "#### CwdChanged output"
+  - New section: "### FileChanged"
+  - New section: "#### FileChanged input"
+- **Interactive mode** (`interactive-mode.md`): 14 lines added, 4 removed
+  - New section: "### Transcript viewer"
+- **Customize keyboard shortcuts** (`keybindings.md`): 22 lines added, 18 removed
+- **How Claude remembers your project** (`memory.md`): 19 lines added, 5 removed
+  - New section: "### AGENTS.md"
+- **Model configuration** (`model-config.md`): 42 lines added, 1 removed
+  - New section: "### Customize pinned model display and capabilities"
+- **Monitoring** (`monitoring-usage.md`): 3 lines added, 2 removed
+- **Plugins reference** (`plugins-reference.md`): 95 lines added, 45 removed
+  - New section: "### User configuration"
+  - New section: "### Channels"
+- **Create plugins** (`plugins.md`): 1 lines added, 1 removed
+- **Sandboxing** (`sandboxing.md`): 2 lines added, 0 removed
+- **Claude Code settings** (`settings.md`): 67 lines added, 57 removed
+- **Advanced setup** (`setup.md`): 7 lines added, 5 removed
+- **Extend Claude with skills** (`skills.md`): 15 lines added, 14 removed
+- **Create custom subagents** (`sub-agents.md`): 9 lines added, 1 removed
+- **Tools reference** (`tools-reference.md`): 38 lines added, 1 removed
+  - New section: "## PowerShell tool"
+  - New section: "### Enable the PowerShell tool"
+  - New section: "### Shell selection in settings, hooks, and skills"
+  - New section: "### Preview limitations"
+- **Use Claude Code in VS Code** (`vs-code.md`): 25 lines added, 0 removed
+  - New section: "### Launch a VS Code tab from other tools"
+
+### Español
+
+
+**Modified**
+
+- **Referencia de CLI** (`cli-reference.md`): 18 lines added, 17 removed
+- **Usar Claude Code Desktop** (`desktop.md`): 2 lines added, 2 removed
+- **Automatizar flujos de trabajo con hooks** (`hooks-guide.md`): 94 lines added, 39 removed
+  - New section: "### Recarga el entorno cuando el directorio o los archivos cambian"
+- **Referencia de hooks** (`hooks.md`): 129 lines added, 52 removed
+  - New section: "### CwdChanged"
+  - New section: "#### Entrada de CwdChanged"
+  - New section: "#### Salida de CwdChanged"
+  - New section: "### FileChanged"
+  - New section: "#### Entrada de FileChanged"
+- **Modo interactivo** (`interactive-mode.md`): 17 lines added, 7 removed
+  - New section: "### Visor de transcripción"
+- **Personalizar atajos de teclado** (`keybindings.md`): 26 lines added, 15 removed
+  - New section: "### Acciones de voz"
+- **Conectar Claude Code a herramientas mediante MCP** (`mcp.md`): 56 lines added, 7 removed
+  - New section: "### Mensajes push con canales"
+  - New section: "### Usar encabezados dinámicos para autenticación personalizada"
+- **Cómo Claude recuerda su proyecto** (`memory.md`): 39 lines added, 9 removed
+  - New section: "### AGENTS.md"
+- **Configuración del modelo** (`model-config.md`): 25 lines added, 2 removed
+  - New section: "## Agregar una opción de modelo personalizado"
+- **Monitoreo** (`monitoring-usage.md`): 43 lines added, 36 removed
+- **Referencia de plugins** (`plugins-reference.md`): 150 lines added, 34 removed
+  - New section: "### Configuración del usuario"
+  - New section: "### Canales"
+  - New section: "#### Directorio de datos persistente"
+- **Inicio rápido** (`quickstart.md`): 660 lines added, 52 removed
+  - New section: "## Paso 2: Inicie sesión en su cuenta"
+  - New section: "# Se le pedirá que inicie sesión en el primer uso"
+  - New section: "# Siga las indicaciones para iniciar sesión con su cuenta"
+  - New section: "## Paso 3: Inicie su primera sesión"
+  - New section: "## Paso 4: Haga su primera pregunta"
+- **Sandboxing** (`sandboxing.md`): 2 lines added, 0 removed
+- **Configuración de Claude Code** (`settings.md`): 10 lines added, 2 removed
+- **Ampliar Claude con skills** (`skills.md`): 18 lines added, 17 removed
+- **Crear subagentes personalizados** (`sub-agents.md`): 10 lines added, 1 removed
+- **Usar Claude Code en VS Code** (`vs-code.md`): 25 lines added, 0 removed
+  - New section: "### Lanzar una pestaña de VS Code desde otras herramientas"
+
+### Français
+
+
+**Modified**
+
+- **Référence CLI** (`cli-reference.md`): 18 lines added, 17 removed
+- **Utiliser Claude Code Desktop** (`desktop.md`): 2 lines added, 2 removed
+- **Automatiser les workflows avec les hooks** (`hooks-guide.md`): 91 lines added, 36 removed
+  - New section: "### Recharger l'environnement lorsque le répertoire ou les fichiers changent"
+- **Référence des hooks** (`hooks.md`): 129 lines added, 52 removed
+  - New section: "### CwdChanged"
+  - New section: "#### Entrée CwdChanged"
+  - New section: "#### Sortie CwdChanged"
+  - New section: "### FileChanged"
+  - New section: "#### Entrée FileChanged"
+- **Mode interactif** (`interactive-mode.md`): 17 lines added, 7 removed
+  - New section: "### Visionneuse de transcription"
+- **Personnaliser les raccourcis clavier** (`keybindings.md`): 16 lines added, 5 removed
+  - New section: "### Actions vocales"
+- **Connecter Claude Code aux outils via MCP** (`mcp.md`): 57 lines added, 8 removed
+  - New section: "### Pousser des messages avec des canaux"
+  - New section: "### Utiliser des en-têtes dynamiques pour l'authentification personnalisée"
+- **Comment Claude se souvient de votre projet** (`memory.md`): 35 lines added, 5 removed
+  - New section: "### AGENTS.md"
+- **Configuration du modèle** (`model-config.md`): 25 lines added, 2 removed
+  - New section: "## Ajouter une option de modèle personnalisé"
+- **Surveillance** (`monitoring-usage.md`): 43 lines added, 36 removed
+- **Référence des plugins** (`plugins-reference.md`): 150 lines added, 34 removed
+  - New section: "### Configuration utilisateur"
+  - New section: "### Canaux"
+  - New section: "#### Répertoire de données persistantes"
+- **Démarrage rapide** (`quickstart.md`): 608 lines added, 0 removed
+- **Sandboxing** (`sandboxing.md`): 2 lines added, 0 removed
+- **Paramètres Claude Code** (`settings.md`): 10 lines added, 2 removed
+- **Étendre Claude avec des skills** (`skills.md`): 18 lines added, 17 removed
+- **Créer des sous-agents personnalisés** (`sub-agents.md`): 9 lines added, 1 removed
+- **Utiliser Claude Code dans VS Code** (`vs-code.md`): 26 lines added, 1 removed
+  - New section: "### Lancer un onglet VS Code à partir d'autres outils"
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Referensi CLI** (`cli-reference.md`): 18 lines added, 17 removed
+- **Gunakan Claude Code Desktop** (`desktop.md`): 2 lines added, 2 removed
+- **Otomatisasi alur kerja dengan hooks** (`hooks-guide.md`): 92 lines added, 37 removed
+  - New section: "### Muat ulang lingkungan ketika direktori atau file berubah"
+- **Referensi hooks** (`hooks.md`): 129 lines added, 52 removed
+  - New section: "### CwdChanged"
+  - New section: "#### Input CwdChanged"
+  - New section: "#### Output CwdChanged"
+  - New section: "### FileChanged"
+  - New section: "#### Input FileChanged"
+- **Mode interaktif** (`interactive-mode.md`): 14 lines added, 4 removed
+  - New section: "### Penampil transkrip"
+- **Sesuaikan pintasan keyboard** (`keybindings.md`): 26 lines added, 15 removed
+  - New section: "### Tindakan suara"
+- **Hubungkan Claude Code ke alat melalui MCP** (`mcp.md`): 56 lines added, 7 removed
+  - New section: "### Dorong pesan dengan saluran"
+  - New section: "### Gunakan header dinamis untuk autentikasi khusus"
+- **Bagaimana Claude mengingat proyek Anda** (`memory.md`): 39 lines added, 9 removed
+  - New section: "### AGENTS.md"
+- **Konfigurasi model** (`model-config.md`): 25 lines added, 2 removed
+  - New section: "## Tambahkan opsi model kustom"
+- **Pemantauan** (`monitoring-usage.md`): 24 lines added, 17 removed
+- **Referensi Plugins** (`plugins-reference.md`): 150 lines added, 34 removed
+  - New section: "### User configuration"
+  - New section: "### Channels"
+  - New section: "#### Direktori data persisten"
+- **Panduan Cepat** (`quickstart.md`): 609 lines added, 1 removed
+- **Sandboxing** (`sandboxing.md`): 2 lines added, 0 removed
+- **Pengaturan Claude Code** (`settings.md`): 87 lines added, 78 removed
+- **Perluas Claude dengan skills** (`skills.md`): 18 lines added, 17 removed
+- **Buat subagent khusus** (`sub-agents.md`): 9 lines added, 1 removed
+- **Gunakan Claude Code di VS Code** (`vs-code.md`): 25 lines added, 0 removed
+  - New section: "### Luncurkan tab VS Code dari alat lain"
+
+### Italiano
+
+
+**Modified**
+
+- **Riferimento CLI** (`cli-reference.md`): 18 lines added, 17 removed
+- **Usa Claude Code Desktop** (`desktop.md`): 2 lines added, 2 removed
+- **Automatizzare i flussi di lavoro con hooks** (`hooks-guide.md`): 92 lines added, 37 removed
+  - New section: "### Ricaricare l'ambiente quando la directory o i file cambiano"
+- **Riferimento dei hooks** (`hooks.md`): 129 lines added, 52 removed
+  - New section: "### CwdChanged"
+  - New section: "#### Input di CwdChanged"
+  - New section: "#### Output di CwdChanged"
+  - New section: "### FileChanged"
+  - New section: "#### Input di FileChanged"
+- **Modalità interattiva** (`interactive-mode.md`): 15 lines added, 5 removed
+  - New section: "### Visualizzatore di trascrizione"
+- **Personalizzare le scorciatoie da tastiera** (`keybindings.md`): 26 lines added, 15 removed
+  - New section: "### Azioni vocali"
+- **Connetti Claude Code ai tuoi strumenti tramite MCP** (`mcp.md`): 56 lines added, 7 removed
+  - New section: "### Invia messaggi con canali"
+  - New section: "### Utilizza intestazioni dinamiche per l'autenticazione personalizzata"
+- **Come Claude ricorda il tuo progetto** (`memory.md`): 35 lines added, 5 removed
+  - New section: "### AGENTS.md"
+- **Configurazione del modello** (`model-config.md`): 26 lines added, 3 removed
+  - New section: "## Aggiungere un'opzione di modello personalizzato"
+- **Monitoraggio** (`monitoring-usage.md`): 43 lines added, 36 removed
+- **Riferimento dei plugin** (`plugins-reference.md`): 151 lines added, 35 removed
+  - New section: "### Configurazione utente"
+  - New section: "### Canali"
+  - New section: "#### Directory di dati persistenti"
+- **Guida rapida** (`quickstart.md`): 608 lines added, 0 removed
+- **Sandboxing** (`sandboxing.md`): 2 lines added, 0 removed
+- **Impostazioni di Claude Code** (`settings.md`): 68 lines added, 59 removed
+- **Estendi Claude con skills** (`skills.md`): 18 lines added, 17 removed
+- **Creare subagent personalizzati** (`sub-agents.md`): 9 lines added, 1 removed
+- **Usa Claude Code in VS Code** (`vs-code.md`): 25 lines added, 0 removed
+  - New section: "### Avvia una scheda VS Code da altri strumenti"
+
+### 日本語
+
+
+**Modified**
+
+- **CLI リファレンス** (`cli-reference.md`): 18 lines added, 17 removed
+- **Claude Code Desktop を使用する** (`desktop.md`): 3 lines added, 3 removed
+- **hooks でワークフローを自動化する** (`hooks-guide.md`): 89 lines added, 36 removed
+  - New section: "### ディレクトリまたはファイルが変更されたときに環境をリロードする"
+- **Hooks リファレンス** (`hooks.md`): 136 lines added, 59 removed
+  - New section: "### CwdChanged"
+  - New section: "#### CwdChanged 入力"
+  - New section: "#### CwdChanged 出力"
+  - New section: "### FileChanged"
+  - New section: "#### FileChanged 入力"
+- **インタラクティブモード** (`interactive-mode.md`): 15 lines added, 5 removed
+  - New section: "### トランスクリプトビューア"
+- **キーボードショートカットのカスタマイズ** (`keybindings.md`): 26 lines added, 15 removed
+  - New section: "### 音声アクション"
+- **MCP を使用して Claude Code をツールに接続する** (`mcp.md`): 58 lines added, 9 removed
+  - New section: "### チャネルでメッセージをプッシュする"
+  - New section: "### カスタム認証用の動的ヘッダーを使用する"
+  - New section: "## MCP 応答要求に対応する"
+- **Claude があなたのプロジェクトを記憶する方法** (`memory.md`): 31 lines added, 1 removed
+  - New section: "### AGENTS.md"
+- **モデル設定** (`model-config.md`): 25 lines added, 2 removed
+  - New section: "## カスタムモデルオプションの追加"
+- **監視** (`monitoring-usage.md`): 25 lines added, 18 removed
+- **プラグインリファレンス** (`plugins-reference.md`): 147 lines added, 31 removed
+  - New section: "### ユーザー設定"
+  - New section: "### チャネル"
+  - New section: "#### 永続データディレクトリ"
+- **クイックスタート** (`quickstart.md`): 608 lines added, 0 removed
+- **サンドボックス** (`sandboxing.md`): 2 lines added, 0 removed
+- **Claude Code の設定** (`settings.md`): 10 lines added, 2 removed
+- **スキルで Claude を拡張する** (`skills.md`): 17 lines added, 16 removed
+- **カスタムサブエージェントの作成** (`sub-agents.md`): 18 lines added, 10 removed
+- **VS Code で Claude Code を使用する** (`vs-code.md`): 25 lines added, 0 removed
+  - New section: "### 他のツールから VS Code タブを起動する"
+
+### 한국어
+
+
+**Modified**
+
+- **CLI 참조** (`cli-reference.md`): 18 lines added, 17 removed
+- **Claude Code Desktop 사용하기** (`desktop.md`): 1 lines added, 1 removed
+- **hooks를 사용하여 워크플로우 자동화** (`hooks-guide.md`): 91 lines added, 36 removed
+  - New section: "### 디렉토리 또는 파일이 변경될 때 환경 다시 로드"
+- **Hooks 참조** (`hooks.md`): 129 lines added, 52 removed
+  - New section: "### CwdChanged"
+  - New section: "#### CwdChanged 입력"
+  - New section: "#### CwdChanged 출력"
+  - New section: "### FileChanged"
+  - New section: "#### FileChanged 입력"
+- **대화형 모드** (`interactive-mode.md`): 14 lines added, 4 removed
+  - New section: "### 트랜스크립트 뷰어"
+- **키보드 단축키 사용자 정의** (`keybindings.md`): 26 lines added, 15 removed
+  - New section: "### 음성 작업"
+- **MCP를 통해 Claude Code를 도구에 연결하기** (`mcp.md`): 56 lines added, 7 removed
+  - New section: "### 채널을 사용한 메시지 푸시"
+  - New section: "### 사용자 정의 헤더를 사용한 동적 인증"
+- **Claude가 프로젝트를 기억하는 방법** (`memory.md`): 31 lines added, 1 removed
+  - New section: "### AGENTS.md"
+- **모델 구성** (`model-config.md`): 25 lines added, 2 removed
+  - New section: "## 사용자 정의 모델 옵션 추가"
+- **모니터링** (`monitoring-usage.md`): 24 lines added, 17 removed
+- **플러그인 참조** (`plugins-reference.md`): 147 lines added, 31 removed
+  - New section: "### 사용자 구성"
+  - New section: "### 채널"
+  - New section: "#### 영구 데이터 디렉토리"
+- **빠른 시작** (`quickstart.md`): 608 lines added, 0 removed
+- **샌드박싱** (`sandboxing.md`): 2 lines added, 0 removed
+- **Claude Code 설정** (`settings.md`): 10 lines added, 2 removed
+- **Claude를 skills로 확장하기** (`skills.md`): 18 lines added, 17 removed
+- **사용자 정의 subagent 만들기** (`sub-agents.md`): 9 lines added, 1 removed
+- **VS Code에서 Claude Code 사용하기** (`vs-code.md`): 25 lines added, 0 removed
+  - New section: "### 다른 도구에서 VS Code 탭 시작"
+
+### Português
+
+
+**Modified**
+
+- **Referência de CLI** (`cli-reference.md`): 18 lines added, 17 removed
+- **Use Claude Code Desktop** (`desktop.md`): 2 lines added, 2 removed
+- **Automatizar fluxos de trabalho com hooks** (`hooks-guide.md`): 98 lines added, 43 removed
+  - New section: "### Recarregar ambiente quando diretório ou arquivos mudam"
+  - New section: "# ... resto da lógica do seu hook"
+- **Referência de hooks** (`hooks.md`): 186 lines added, 81 removed
+  - New section: "### StopFailure"
+  - New section: "#### Entrada de StopFailure"
+  - New section: "### CwdChanged"
+  - New section: "#### Entrada de CwdChanged"
+  - New section: "#### Saída de CwdChanged"
+- **Modo interativo** (`interactive-mode.md`): 14 lines added, 4 removed
+  - New section: "### Visualizador de transcrição"
+- **Personalizar atalhos de teclado** (`keybindings.md`): 26 lines added, 15 removed
+  - New section: "### Ações de voz"
+- **Conectar Claude Code a ferramentas via MCP** (`mcp.md`): 56 lines added, 7 removed
+  - New section: "### Enviar mensagens com canais"
+  - New section: "### Usar cabeçalhos dinâmicos para autenticação personalizada"
+- **Como Claude se lembra do seu projeto** (`memory.md`): 39 lines added, 9 removed
+  - New section: "### AGENTS.md"
+- **Configuração de modelo** (`model-config.md`): 26 lines added, 3 removed
+  - New section: "## Adicionar uma opção de modelo personalizado"
+- **Monitoramento** (`monitoring-usage.md`): 43 lines added, 36 removed
+- **Referência de plugins** (`plugins-reference.md`): 150 lines added, 34 removed
+  - New section: "### Configuração do usuário"
+  - New section: "### Canais"
+  - New section: "#### Diretório de dados persistente"
+- **Guia de Início Rápido** (`quickstart.md`): 608 lines added, 0 removed
+- **Configurações do Claude Code** (`settings.md`): 67 lines added, 58 removed
+- **Estenda Claude com skills** (`skills.md`): 17 lines added, 16 removed
+- **Criar subagentes personalizados** (`sub-agents.md`): 10 lines added, 1 removed
+- **Use Claude Code in VS Code** (`vs-code.md`): 25 lines added, 0 removed
+  - New section: "### Launch a VS Code tab from other tools"
+
+### Русский
+
+
+**Modified**
+
+- **Справочник CLI** (`cli-reference.md`): 18 lines added, 17 removed
+- **Использование Claude Code Desktop** (`desktop.md`): 2 lines added, 2 removed
+- **Автоматизация рабочих процессов с помощью hooks** (`hooks-guide.md`): 98 lines added, 43 removed
+  - New section: "### Перезагрузка окружения при изменении каталога или файлов"
+  - New section: "# ... остальная логика вашего hook"
+- **Справочник по hooks** (`hooks.md`): 130 lines added, 53 removed
+  - New section: "### CwdChanged"
+  - New section: "#### CwdChanged input"
+  - New section: "#### CwdChanged output"
+  - New section: "### FileChanged"
+  - New section: "#### FileChanged input"
+- **Интерактивный режим** (`interactive-mode.md`): 14 lines added, 4 removed
+  - New section: "### Просмотр транскрипции"
+- **Настройка сочетаний клавиш** (`keybindings.md`): 17 lines added, 6 removed
+  - New section: "### Действия голоса"
+- **Подключите Claude Code к инструментам через MCP** (`mcp.md`): 56 lines added, 7 removed
+  - New section: "### Отправка сообщений через каналы"
+  - New section: "### Используйте динамические заголовки для пользовательской аутентификации"
+- **Как Claude запоминает ваш проект** (`memory.md`): 42 lines added, 12 removed
+  - New section: "### AGENTS.md"
+- **Конфигурация модели** (`model-config.md`): 25 lines added, 2 removed
+  - New section: "## Добавление пользовательского варианта модели"
+- **Мониторинг** (`monitoring-usage.md`): 43 lines added, 36 removed
+- **Справочник по плагинам** (`plugins-reference.md`): 148 lines added, 32 removed
+  - New section: "### Конфигурация пользователя"
+  - New section: "### Каналы"
+  - New section: "#### Каталог постоянных данных"
+- **Быстрый старт** (`quickstart.md`): 608 lines added, 0 removed
+- **Sandboxing** (`sandboxing.md`): 2 lines added, 0 removed
+- **Параметры Claude Code** (`settings.md`): 67 lines added, 58 removed
+- **Расширьте Claude с помощью skills** (`skills.md`): 17 lines added, 16 removed
+- **Создание пользовательских subagents** (`sub-agents.md`): 9 lines added, 1 removed
+- **Использование Claude Code в VS Code** (`vs-code.md`): 25 lines added, 0 removed
+  - New section: "### Запуск вкладки VS Code из других инструментов"
+
+### 简体中文
+
+
+**Modified**
+
+- **CLI 参考** (`cli-reference.md`): 18 lines added, 17 removed
+- **使用 Claude Code Desktop** (`desktop.md`): 1 lines added, 1 removed
+- **使用 hooks 自动化工作流** (`hooks-guide.md`): 98 lines added, 43 removed
+  - New section: "### 当目录或文件更改时重新加载环境"
+- **Hooks 参考** (`hooks.md`): 129 lines added, 52 removed
+  - New section: "### CwdChanged"
+  - New section: "#### CwdChanged 输入"
+  - New section: "#### CwdChanged 输出"
+  - New section: "### FileChanged"
+  - New section: "#### FileChanged 输入"
+- **交互模式** (`interactive-mode.md`): 14 lines added, 4 removed
+  - New section: "### 转录查看器"
+- **自定义快捷键** (`keybindings.md`): 17 lines added, 6 removed
+  - New section: "### 语音操作"
+- **通过 MCP 将 Claude Code 连接到工具** (`mcp.md`): 56 lines added, 7 removed
+  - New section: "### 使用频道推送消息"
+  - New section: "### 使用动态标头进行自定义身份验证"
+- **Claude 如何记住你的项目** (`memory.md`): 31 lines added, 1 removed
+  - New section: "### AGENTS.md"
+- **模型配置** (`model-config.md`): 25 lines added, 2 removed
+  - New section: "## 添加自定义模型选项"
+- **监控** (`monitoring-usage.md`): 24 lines added, 17 removed
+- **Plugins 参考** (`plugins-reference.md`): 147 lines added, 31 removed
+  - New section: "### 用户配置"
+  - New section: "### Channels"
+  - New section: "#### 持久数据目录"
+- **快速开始** (`quickstart.md`): 608 lines added, 0 removed
+- **Sandboxing** (`sandboxing.md`): 2 lines added, 0 removed
+- **Claude Code 设置** (`settings.md`): 11 lines added, 2 removed
+- **使用 skills 扩展 Claude** (`skills.md`): 18 lines added, 17 removed
+- **创建自定义 subagents** (`sub-agents.md`): 11 lines added, 1 removed
+- **在 VS Code 中使用 Claude Code** (`vs-code.md`): 25 lines added, 0 removed
+  - New section: "### 从其他工具启动 VS Code 选项卡"
+
+### 繁體中文
+
+
+**Modified**
+
+- **CLI 參考** (`cli-reference.md`): 18 lines added, 17 removed
+- **使用 Claude Code Desktop** (`desktop.md`): 1 lines added, 1 removed
+- **使用 hooks 自動化工作流程** (`hooks-guide.md`): 89 lines added, 36 removed
+  - New section: "### 當目錄或檔案變更時重新載入環境"
+- **Hooks 參考** (`hooks.md`): 135 lines added, 58 removed
+  - New section: "### CwdChanged"
+  - New section: "#### CwdChanged 輸入"
+  - New section: "#### CwdChanged 輸出"
+  - New section: "### FileChanged"
+  - New section: "#### FileChanged 輸入"
+- **互動模式** (`interactive-mode.md`): 14 lines added, 4 removed
+  - New section: "### 文字記錄檢視器"
+- **自訂鍵盤快捷鍵** (`keybindings.md`): 17 lines added, 6 removed
+  - New section: "### 語音動作"
+- **透過 MCP 將 Claude Code 連接到工具** (`mcp.md`): 56 lines added, 7 removed
+  - New section: "### 使用 channels 推送訊息"
+  - New section: "### 使用動態標頭進行自訂驗證"
+- **Claude 如何記住您的專案** (`memory.md`): 35 lines added, 5 removed
+  - New section: "### AGENTS.md"
+- **模型配置** (`model-config.md`): 25 lines added, 2 removed
+  - New section: "## 新增自訂模型選項"
+- **監控** (`monitoring-usage.md`): 24 lines added, 17 removed
+- **Plugins 參考** (`plugins-reference.md`): 147 lines added, 31 removed
+  - New section: "### User configuration"
+  - New section: "### Channels"
+  - New section: "#### 持久資料目錄"
+- **快速入門** (`quickstart.md`): 608 lines added, 0 removed
+- **Sandboxing** (`sandboxing.md`): 2 lines added, 0 removed
+- **Claude Code 設定** (`settings.md`): 11 lines added, 2 removed
+- **使用 skills 擴展 Claude** (`skills.md`): 16 lines added, 15 removed
+- **建立自訂 subagents** (`sub-agents.md`): 10 lines added, 2 removed
+- **在 VS Code 中使用 Claude Code** (`vs-code.md`): 26 lines added, 1 removed
+  - New section: "### 從其他工具啟動 VS Code 標籤"
+
+---
+
 ## 2026-03-25
 
 202 pages modified

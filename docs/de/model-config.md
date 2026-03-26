@@ -126,7 +126,13 @@ Dies gibt Ihnen das Beste aus beiden Welten: Opus's überlegenes Reasoning für 
 
 [Aufwandsniveaus](https://platform.claude.com/docs/de/build-with-claude/effort) steuern adaptives Reasoning, das das Denken dynamisch basierend auf der Aufgabenkomplexität zuordnet. Niedrigerer Aufwand ist schneller und günstiger für unkomplizierte Aufgaben, während höherer Aufwand tieferes Reasoning für komplexe Probleme bietet.
 
-Drei Ebenen bleiben über Sitzungen hinweg erhalten: **low**, **medium** und **high**. Eine vierte Ebene, **max**, bietet das tiefste Reasoning ohne Einschränkung bei der Token-Ausgabe, daher sind Antworten langsamer und kosten mehr als bei `high`. `max` ist nur auf Opus 4.6 verfügbar und gilt für die aktuelle Sitzung ohne Persistierung. Opus 4.6 hat standardmäßig mittleren Aufwand für Max- und Team-Abonnenten.
+Drei Ebenen bleiben über Sitzungen hinweg erhalten: **low**, **medium** und **high**. Eine vierte Ebene, **max**, bietet das tiefste Reasoning ohne Einschränkung bei der Token-Ausgabe, daher sind Antworten langsamer und kosten mehr als bei `high`. `max` ist nur auf Opus 4.6 verfügbar und bleibt nicht über Sitzungen hinweg erhalten, außer durch die `CLAUDE_CODE_EFFORT_LEVEL`-Umgebungsvariable.
+
+Opus 4.6 und Sonnet 4.6 haben standardmäßig mittleren Aufwand. Dies gilt für alle Anbieter, einschließlich Bedrock, Vertex AI und direktem API-Zugriff.
+
+Medium ist die empfohlene Ebene für die meisten Codierungsaufgaben: Sie bietet ein Gleichgewicht zwischen Geschwindigkeit und Reasoning-Tiefe, und höhere Ebenen können dazu führen, dass das Modell Routinearbeiten überdenkt. Reservieren Sie `high` oder `max` für Aufgaben, die wirklich von tieferem Reasoning profitieren, wie z. B. schwierige Debugging-Probleme oder komplexe Architekturentscheidungen.
+
+Für einmaliges tiefes Reasoning ohne Änderung Ihrer Sitzungseinstellung fügen Sie „ultrathink" in Ihren Prompt ein, um hohen Aufwand für diesen Durchgang auszulösen.
 
 **Aufwand einstellen:**
 
@@ -135,8 +141,9 @@ Drei Ebenen bleiben über Sitzungen hinweg erhalten: **low**, **medium** und **h
 * **`--effort`-Flag**: Übergeben Sie `low`, `medium`, `high` oder `max`, um die Ebene für eine einzelne Sitzung beim Starten von Claude Code festzulegen
 * **Umgebungsvariable**: Setzen Sie `CLAUDE_CODE_EFFORT_LEVEL` auf `low`, `medium`, `high`, `max` oder `auto`
 * **Einstellungen**: Setzen Sie `effortLevel` in Ihrer Einstellungsdatei auf `"low"`, `"medium"` oder `"high"`
+* **Skill- und Subagent-Frontmatter**: Setzen Sie `effort` in einer [Skill](/de/skills#frontmatter-reference)- oder [Subagent](/de/sub-agents#supported-frontmatter-fields)-Markdown-Datei, um das Aufwandsniveau zu überschreiben, wenn dieser Skill oder Subagent ausgeführt wird
 
-Die Umgebungsvariable hat Vorrang, dann Ihre konfigurierte Ebene, dann der Modellstandard.
+Die Umgebungsvariable hat Vorrang vor allen anderen Methoden, dann Ihre konfigurierte Ebene, dann der Modellstandard. Frontmatter-Aufwand gilt, wenn dieser Skill oder Subagent aktiv ist, und überschreibt die Sitzungsebene, aber nicht die Umgebungsvariable.
 
 Der Aufwand wird auf Opus 4.6 und Sonnet 4.6 unterstützt. Der Aufwand-Schieberegler erscheint in `/model`, wenn ein unterstütztes Modell ausgewählt ist. Das aktuelle Aufwandsniveau wird auch neben dem Logo und dem Spinner angezeigt, z. B. „with low effort", damit Sie bestätigen können, welche Einstellung aktiv ist, ohne `/model` zu öffnen.
 
@@ -177,6 +184,22 @@ Sie können sehen, welches Modell Sie derzeit verwenden, auf mehrere Arten:
 
 1. In der [Statuszeile](/de/statusline) (falls konfiguriert)
 2. In `/status`, das auch Ihre Kontoinformationen anzeigt.
+
+## Benutzerdefinierte Modelloption hinzufügen
+
+Verwenden Sie `ANTHROPIC_CUSTOM_MODEL_OPTION`, um einen einzelnen benutzerdefinierten Eintrag zur `/model`-Auswahl hinzuzufügen, ohne die integrierten Aliase zu ersetzen. Dies ist nützlich für LLM-Gateway-Bereitstellungen oder zum Testen von Modell-IDs, die Claude Code standardmäßig nicht auflistet.
+
+Dieses Beispiel setzt alle drei Variablen, um eine Gateway-gesteuerte Opus-Bereitstellung auswählbar zu machen:
+
+```bash  theme={null}
+export ANTHROPIC_CUSTOM_MODEL_OPTION="my-gateway/claude-opus-4-6"
+export ANTHROPIC_CUSTOM_MODEL_OPTION_NAME="Opus via Gateway"
+export ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION="Custom deployment routed through the internal LLM gateway"
+```
+
+Der benutzerdefinierte Eintrag erscheint am unteren Ende der `/model`-Auswahl. `ANTHROPIC_CUSTOM_MODEL_OPTION_NAME` und `ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION` sind optional. Wenn weggelassen, wird die Modell-ID als Name verwendet und die Beschreibung wird standardmäßig auf `Custom model (<model-id>)` gesetzt.
+
+Claude Code überspringt die Validierung für die Modell-ID, die in `ANTHROPIC_CUSTOM_MODEL_OPTION` gesetzt ist, daher können Sie jeden String verwenden, den Ihr API-Endpunkt akzeptiert.
 
 ## Umgebungsvariablen
 

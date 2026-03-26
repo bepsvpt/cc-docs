@@ -13,7 +13,7 @@ Ogni sessione di Claude Code inizia con una finestra di contesto nuova. Due mecc
 
 Questa pagina spiega come:
 
-* [Scrivere e organizzare file CLAUDE.md](#claudemd-files)
+* [Scrivere e organizzare file CLAUDE.md](#claude-md-files)
 * [Limitare le regole a tipi di file specifici](#organize-rules-with-clauderules) con `.claude/rules/`
 * [Configurare la memoria automatica](#auto-memory) in modo che Claude prenda note automaticamente
 * [Risolvere i problemi](#troubleshoot-memory-issues) quando le istruzioni non vengono seguite
@@ -48,7 +48,7 @@ I file CLAUDE.md possono trovarsi in diversi percorsi, ognuno con un ambito dive
 | **Istruzioni di progetto** | `./CLAUDE.md` o `./.claude/CLAUDE.md`                                                                                                                                 | Istruzioni condivise dal team per il progetto           | Architettura del progetto, standard di codifica, flussi di lavoro comuni        | Membri del team tramite controllo del codice sorgente |
 | **Istruzioni utente**      | `~/.claude/CLAUDE.md`                                                                                                                                                 | Preferenze personali per tutti i progetti               | Preferenze di stile del codice, scorciatoie di strumenti personali              | Solo tu (tutti i progetti)                            |
 
-I file CLAUDE.md nella gerarchia di directory sopra la directory di lavoro vengono caricati completamente all'avvio. I file CLAUDE.md nelle sottodirectory vengono caricati su richiesta quando Claude legge i file in quelle directory. Vedi [Come vengono caricati i file CLAUDE.md](#how-claudemd-files-load) per l'ordine di risoluzione completo.
+I file CLAUDE.md nella gerarchia di directory sopra la directory di lavoro vengono caricati completamente all'avvio. I file CLAUDE.md nelle sottodirectory vengono caricati su richiesta quando Claude legge i file in quelle directory. Vedi [Come vengono caricati i file CLAUDE.md](#how-claude-md-files-load) per l'ordine di risoluzione completo.
 
 Per i progetti di grandi dimensioni, puoi suddividere le istruzioni in file specifici per argomento utilizzando [regole di progetto](#organize-rules-with-clauderules). Le regole ti consentono di limitare le istruzioni a tipi di file specifici o sottodirectory.
 
@@ -58,6 +58,8 @@ Un CLAUDE.md di progetto può essere archiviato in `./CLAUDE.md` o `./.claude/CL
 
 <Tip>
   Esegui `/init` per generare automaticamente un CLAUDE.md iniziale. Claude analizza la tua base di codice e crea un file con comandi di compilazione, istruzioni di test e convenzioni di progetto che scopre. Se esiste già un CLAUDE.md, `/init` suggerisce miglioramenti piuttosto che sovrascriverlo. Perfezionalo da lì con istruzioni che Claude non scoprirebbe da solo.
+
+  Imposta `CLAUDE_CODE_NEW_INIT=true` per abilitare un flusso interattivo multi-fase. `/init` chiede quali artefatti configurare: file CLAUDE.md, skills e hooks. Quindi esplora la tua base di codice con un subagent, colma le lacune tramite domande di follow-up e presenta una proposta revisionabile prima di scrivere qualsiasi file.
 </Tip>
 
 ### Scrivi istruzioni efficaci
@@ -74,7 +76,7 @@ I file CLAUDE.md vengono caricati nella finestra di contesto all'inizio di ogni 
 * "Esegui `npm test` prima di eseguire il commit" invece di "Testa le tue modifiche"
 * "I gestori API si trovano in `src/api/handlers/`" invece di "Mantieni i file organizzati"
 
-**Coerenza**: se due regole si contraddicono a vicenda, Claude potrebbe sceglierne una arbitrariamente. Rivedi periodicamente i tuoi file CLAUDE.md, i file CLAUDE.md annidati nelle sottodirectory e i file [`.claude/rules/`](#organize-rules-with-clauderules) per rimuovere istruzioni obsolete o conflittuali. Nei monorepo, usa [`claudeMdExcludes`](#exclude-specific-claudemd-files) per saltare i file CLAUDE.md di altri team che non sono rilevanti per il tuo lavoro.
+**Coerenza**: se due regole si contraddicono a vicenda, Claude potrebbe sceglierne una arbitrariamente. Rivedi periodicamente i tuoi file CLAUDE.md, i file CLAUDE.md annidati nelle sottodirectory e i file [`.claude/rules/`](#organize-rules-with-clauderules) per rimuovere istruzioni obsolete o conflittuali. Nei monorepo, usa [`claudeMdExcludes`](#exclude-specific-claude-md-files) per saltare i file CLAUDE.md di altri team che non sono rilevanti per il tuo lavoro.
 
 ### Importa file aggiuntivi
 
@@ -104,13 +106,27 @@ Per le preferenze personali che non vuoi archiviare, importa un file dalla tua h
 
 Per un approccio più strutturato all'organizzazione delle istruzioni, vedi [`.claude/rules/`](#organize-rules-with-clauderules).
 
+### AGENTS.md
+
+Claude Code legge `CLAUDE.md`, non `AGENTS.md`. Se il tuo repository utilizza già `AGENTS.md` per altri agenti di codifica, crea un `CLAUDE.md` che lo importa in modo che entrambi gli strumenti leggano le stesse istruzioni senza duplicarle. Puoi anche aggiungere istruzioni specifiche di Claude Code sotto l'importazione. Claude carica il file importato all'inizio della sessione, quindi aggiunge il resto:
+
+```markdown CLAUDE.md theme={null}
+@AGENTS.md
+
+## Claude Code
+
+Usa plan mode per le modifiche in `src/billing/`.
+```
+
 ### Come vengono caricati i file CLAUDE.md
 
 Claude Code legge i file CLAUDE.md camminando verso l'alto nell'albero delle directory dalla tua directory di lavoro corrente, controllando ogni directory lungo il percorso. Ciò significa che se esegui Claude Code in `foo/bar/`, carica le istruzioni sia da `foo/bar/CLAUDE.md` che da `foo/CLAUDE.md`.
 
 Claude scopre anche i file CLAUDE.md nelle sottodirectory sotto la tua directory di lavoro corrente. Invece di caricarli all'avvio, vengono inclusi quando Claude legge i file in quelle sottodirectory.
 
-Se lavori in un grande monorepo dove i file CLAUDE.md di altri team vengono raccolti, usa [`claudeMdExcludes`](#exclude-specific-claudemd-files) per saltarli.
+Se lavori in un grande monorepo dove i file CLAUDE.md di altri team vengono raccolti, usa [`claudeMdExcludes`](#exclude-specific-claude-md-files) per saltarli.
+
+I commenti HTML a livello di blocco (`<!-- maintainer notes -->`) nei file CLAUDE.md vengono rimossi prima che il contenuto venga iniettato nel contesto di Claude. Usali per lasciare note per i manutentori umani senza spendere token di contesto su di essi. I commenti all'interno dei blocchi di codice vengono preservati. Quando apri un file CLAUDE.md direttamente con lo strumento Read, i commenti rimangono visibili.
 
 #### Carica da directory aggiuntive
 
@@ -228,6 +244,20 @@ Le organizzazioni possono distribuire un CLAUDE.md gestito centralmente che si a
   </Step>
 </Steps>
 
+Un CLAUDE.md gestito e [impostazioni gestite](/it/settings#settings-files) servono a scopi diversi. Usa le impostazioni per l'applicazione tecnica e CLAUDE.md per la guida comportamentale:
+
+| Preoccupazione                                         | Configura in                                                  |
+| :----------------------------------------------------- | :------------------------------------------------------------ |
+| Blocca strumenti, comandi o percorsi di file specifici | Impostazioni gestite: `permissions.deny`                      |
+| Applica l'isolamento sandbox                           | Impostazioni gestite: `sandbox.enabled`                       |
+| Variabili di ambiente e routing del provider API       | Impostazioni gestite: `env`                                   |
+| Metodo di autenticazione e blocco dell'organizzazione  | Impostazioni gestite: `forceLoginMethod`, `forceLoginOrgUUID` |
+| Linee guida di stile del codice e qualità              | CLAUDE.md gestito                                             |
+| Promemoria sulla gestione dei dati e conformità        | CLAUDE.md gestito                                             |
+| Istruzioni comportamentali per Claude                  | CLAUDE.md gestito                                             |
+
+Le regole delle impostazioni vengono applicate dal client indipendentemente da ciò che Claude decide di fare. Le istruzioni CLAUDE.md modellano il comportamento di Claude ma non sono un livello di applicazione rigido.
+
 #### Escludi file CLAUDE.md specifici
 
 Nei grandi monorepo, i file CLAUDE.md antenati possono contenere istruzioni che non sono rilevanti per il tuo lavoro. L'impostazione `claudeMdExcludes` ti consente di saltare file specifici per percorso o modello glob.
@@ -326,7 +356,7 @@ Il contenuto di CLAUDE.md viene consegnato come messaggio utente dopo il prompt 
 Per eseguire il debug:
 
 * Esegui `/memory` per verificare che i tuoi file CLAUDE.md vengono caricati. Se un file non è elencato, Claude non può vederlo.
-* Verifica che il CLAUDE.md rilevante si trovi in una posizione che viene caricata per la tua sessione (vedi [Scegli dove mettere i file CLAUDE.md](#choose-where-to-put-claudemd-files)).
+* Verifica che il CLAUDE.md rilevante si trovi in una posizione che viene caricata per la tua sessione (vedi [Scegli dove mettere i file CLAUDE.md](#choose-where-to-put-claude-md-files)).
 * Rendi le istruzioni più specifiche. "Usa indentazione a 2 spazi" funziona meglio di "formatta il codice bene".
 * Cerca istruzioni conflittuali tra i file CLAUDE.md. Se due file danno una guida diversa per lo stesso comportamento, Claude potrebbe sceglierne una arbitrariamente.
 

@@ -26,7 +26,7 @@ Sie rufen gebündelte Skills auf die gleiche Weise auf wie jeden anderen Skill: 
 | :-------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/batch <instruction>`      | Orchestrieren Sie großflächige Änderungen über eine Codebasis hinweg parallel. Recherchiert die Codebasis, zerlegt die Arbeit in 5 bis 30 unabhängige Einheiten und präsentiert einen Plan. Nach Genehmigung spawnt es einen Hintergrund-Agent pro Einheit in einem isolierten [git worktree](/de/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees). Jeder Agent implementiert seine Einheit, führt Tests aus und öffnet einen Pull Request. Erfordert ein Git-Repository. Beispiel: `/batch migrate src/ from Solid to React` |
 | `/claude-api`               | Laden Sie Claude API-Referenzmaterial für die Sprache Ihres Projekts (Python, TypeScript, Java, Go, Ruby, C#, PHP oder cURL) und Agent SDK-Referenz für Python und TypeScript. Behandelt Tool-Nutzung, Streaming, Batches, strukturierte Ausgaben und häufige Fallstricke. Wird auch automatisch aktiviert, wenn Ihr Code `anthropic`, `@anthropic-ai/sdk` oder `claude_agent_sdk` importiert                                                                                                                                                       |
-| `/debug [description]`      | Beheben Sie Probleme in Ihrer aktuellen Claude Code-Sitzung, indem Sie das Sitzungs-Debug-Protokoll lesen. Beschreiben Sie optional das Problem, um die Analyse zu fokussieren                                                                                                                                                                                                                                                                                                                                                                      |
+| `/debug [description]`      | Aktivieren Sie Debug-Protokollierung für die aktuelle Sitzung und beheben Sie Probleme durch Lesen des Sitzungs-Debug-Protokolls. Debug-Protokollierung ist standardmäßig deaktiviert, es sei denn, Sie haben mit `claude --debug` gestartet, daher startet die Ausführung von `/debug` während einer Sitzung die Erfassung von Protokollen ab diesem Punkt. Beschreiben Sie optional das Problem, um die Analyse zu fokussieren                                                                                                                    |
 | `/loop [interval] <prompt>` | Führen Sie einen Prompt wiederholt in einem Intervall aus, während die Sitzung offen bleibt. Nützlich zum Abfragen einer Bereitstellung, Überwachen eines PR oder periodischen Neuausführen eines anderen Skills. Beispiel: `/loop 5m check if the deploy finished`. Siehe [Prompts nach Zeitplan ausführen](/de/scheduled-tasks)                                                                                                                                                                                                                   |
 | `/simplify [focus]`         | Überprüfen Sie Ihre kürzlich geänderten Dateien auf Code-Wiederverwendung, Qualität und Effizienzprobleme und beheben Sie diese. Spawnt drei Review-Agenten parallel, aggregiert ihre Erkenntnisse und wendet Fixes an. Übergeben Sie Text, um sich auf spezifische Bedenken zu konzentrieren: `/simplify focus on memory efficiency`                                                                                                                                                                                                               |
 
@@ -186,18 +186,19 @@ Your skill instructions here...
 
 Alle Felder sind optional. Nur `description` wird empfohlen, damit Claude weiß, wann der Skill verwendet werden soll.
 
-| Feld                       | Erforderlich | Beschreibung                                                                                                                                                                                                   |
-| :------------------------- | :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`                     | Nein         | Anzeigename für den Skill. Falls weggelassen, wird der Verzeichnisname verwendet. Nur Kleinbuchstaben, Zahlen und Bindestriche (max. 64 Zeichen).                                                              |
-| `description`              | Empfohlen    | Was der Skill tut und wann er verwendet werden soll. Claude verwendet dies, um zu entscheiden, wann der Skill angewendet werden soll. Falls weggelassen, wird der erste Absatz des Markdown-Inhalts verwendet. |
-| `argument-hint`            | Nein         | Hinweis, der während der Autovervollständigung angezeigt wird, um erwartete Argumente anzuzeigen. Beispiel: `[issue-number]` oder `[filename] [format]`.                                                       |
-| `disable-model-invocation` | Nein         | Setzen Sie auf `true`, um zu verhindern, dass Claude diesen Skill automatisch lädt. Verwenden Sie für Workflows, die Sie manuell mit `/name` auslösen möchten. Standard: `false`.                              |
-| `user-invocable`           | Nein         | Setzen Sie auf `false`, um aus dem `/`-Menü auszublenden. Verwenden Sie für Hintergrundwissen, das Benutzer nicht direkt aufrufen sollten. Standard: `true`.                                                   |
-| `allowed-tools`            | Nein         | Tools, die Claude ohne Genehmigung verwenden kann, wenn dieser Skill aktiv ist.                                                                                                                                |
-| `model`                    | Nein         | Modell, das verwendet werden soll, wenn dieser Skill aktiv ist.                                                                                                                                                |
-| `context`                  | Nein         | Setzen Sie auf `fork`, um in einem verzweigten Subagent-Kontext ausgeführt zu werden.                                                                                                                          |
-| `agent`                    | Nein         | Welcher Subagent-Typ verwendet werden soll, wenn `context: fork` gesetzt ist.                                                                                                                                  |
-| `hooks`                    | Nein         | Hooks, die auf den Lebenszyklus dieses Skills beschränkt sind. Siehe [Hooks in Skills und Agenten](/de/hooks#hooks-in-skills-and-agents) für das Konfigurationsformat.                                         |
+| Feld                       | Erforderlich | Beschreibung                                                                                                                                                                                                                |
+| :------------------------- | :----------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`                     | Nein         | Anzeigename für den Skill. Falls weggelassen, wird der Verzeichnisname verwendet. Nur Kleinbuchstaben, Zahlen und Bindestriche (max. 64 Zeichen).                                                                           |
+| `description`              | Empfohlen    | Was der Skill tut und wann er verwendet werden soll. Claude verwendet dies, um zu entscheiden, wann der Skill angewendet werden soll. Falls weggelassen, wird der erste Absatz des Markdown-Inhalts verwendet.              |
+| `argument-hint`            | Nein         | Hinweis, der während der Autovervollständigung angezeigt wird, um erwartete Argumente anzuzeigen. Beispiel: `[issue-number]` oder `[filename] [format]`.                                                                    |
+| `disable-model-invocation` | Nein         | Setzen Sie auf `true`, um zu verhindern, dass Claude diesen Skill automatisch lädt. Verwenden Sie für Workflows, die Sie manuell mit `/name` auslösen möchten. Standard: `false`.                                           |
+| `user-invocable`           | Nein         | Setzen Sie auf `false`, um aus dem `/`-Menü auszublenden. Verwenden Sie für Hintergrundwissen, das Benutzer nicht direkt aufrufen sollten. Standard: `true`.                                                                |
+| `allowed-tools`            | Nein         | Tools, die Claude ohne Genehmigung verwenden kann, wenn dieser Skill aktiv ist.                                                                                                                                             |
+| `model`                    | Nein         | Modell, das verwendet werden soll, wenn dieser Skill aktiv ist.                                                                                                                                                             |
+| `effort`                   | Nein         | [Anstrengungsstufe](/de/model-config#adjust-effort-level) wenn dieser Skill aktiv ist. Überschreibt die Anstrengungsstufe der Sitzung. Standard: erbt von Sitzung. Optionen: `low`, `medium`, `high`, `max` (nur Opus 4.6). |
+| `context`                  | Nein         | Setzen Sie auf `fork`, um in einem verzweigten Subagent-Kontext ausgeführt zu werden.                                                                                                                                       |
+| `agent`                    | Nein         | Welcher Subagent-Typ verwendet werden soll, wenn `context: fork` gesetzt ist.                                                                                                                                               |
+| `hooks`                    | Nein         | Hooks, die auf den Lebenszyklus dieses Skills beschränkt sind. Siehe [Hooks in Skills und Agenten](/de/hooks#hooks-in-skills-and-agents) für das Konfigurationsformat.                                                      |
 
 #### Verfügbare String-Substitutionen
 
@@ -351,9 +352,9 @@ Preserve all existing behavior and tests.
 
 ### Dynamischen Kontext einspritzen
 
-Die `!`command\`\`-Syntax führt Shell-Befehle aus, bevor der Skill-Inhalt an Claude gesendet wird. Die Befehlsausgabe ersetzt den Platzhalter, sodass Claude tatsächliche Daten erhält, nicht den Befehl selbst.
+Die `` !`<command>` `` Syntax führt Shell-Befehle aus, bevor der Skill-Inhalt an Claude gesendet wird. Die Befehlsausgabe ersetzt den Platzhalter, sodass Claude tatsächliche Daten erhält, nicht den Befehl selbst.
 
-Dieser Skill fasst einen Pull Request zusammen, indem er Live-PR-Daten mit der GitHub CLI abruft. Die `!`gh pr diff\`\`- und andere Befehle werden zuerst ausgeführt, und ihre Ausgabe wird in den Prompt eingefügt:
+Dieser Skill fasst einen Pull Request zusammen, indem er Live-PR-Daten mit der GitHub CLI abruft. Die `` !`gh pr diff` `` und andere Befehle werden zuerst ausgeführt, und ihre Ausgabe wird in den Prompt eingefügt:
 
 ```yaml  theme={null}
 ---
@@ -375,7 +376,7 @@ Summarize this pull request...
 
 Wenn dieser Skill ausgeführt wird:
 
-1. Jeder `!`command\`\` wird sofort ausgeführt (bevor Claude etwas sieht)
+1. Jeder `` !`<command>` `` wird sofort ausgeführt (bevor Claude etwas sieht)
 2. Die Ausgabe ersetzt den Platzhalter im Skill-Inhalt
 3. Claude erhält den vollständig gerenderten Prompt mit tatsächlichen PR-Daten
 

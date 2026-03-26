@@ -58,10 +58,16 @@ Plugins dapat menyediakan subagents khusus untuk tugas-tugas tertentu yang dapat
 ---
 name: agent-name
 description: Apa yang agent ini spesialisasikan dan kapan Claude harus memanggilnya
+model: sonnet
+effort: medium
+maxTurns: 20
+disallowedTools: Write, Edit
 ---
 
 Prompt sistem terperinci untuk agent yang menjelaskan peran, keahlian, dan perilakunya.
 ```
+
+Plugin agents mendukung field frontmatter `name`, `description`, `model`, `effort`, `maxTurns`, `tools`, `disallowedTools`, `skills`, `memory`, `background`, dan `isolation`. Satu-satunya nilai `isolation` yang valid adalah `"worktree"`. Untuk alasan keamanan, `hooks`, `mcpServers`, dan `permissionMode` tidak didukung untuk agents yang dikirim plugin.
 
 **Titik integrasi**:
 
@@ -100,28 +106,41 @@ Plugins dapat menyediakan event handlers yang merespons peristiwa Claude Code se
 }
 ```
 
-**Event yang tersedia**:
+Plugin hooks merespons peristiwa lifecycle yang sama seperti [hooks yang ditentukan pengguna](/id/hooks):
 
-* `PreToolUse`: Sebelum Claude menggunakan alat apa pun
-* `PostToolUse`: Setelah Claude berhasil menggunakan alat apa pun
-* `PostToolUseFailure`: Setelah eksekusi alat Claude gagal
-* `PermissionRequest`: Saat dialog izin ditampilkan
-* `UserPromptSubmit`: Saat pengguna mengirimkan prompt
-* `Notification`: Saat Claude Code mengirim notifikasi
-* `Stop`: Saat Claude mencoba berhenti
-* `SubagentStart`: Saat subagent dimulai
-* `SubagentStop`: Saat subagent mencoba berhenti
-* `SessionStart`: Di awal sesi
-* `SessionEnd`: Di akhir sesi
-* `TeammateIdle`: Saat rekan tim tim agent akan menjadi idle
-* `TaskCompleted`: Saat tugas ditandai sebagai selesai
-* `PreCompact`: Sebelum riwayat percakapan dikompres
+| Event                | When it fires                                                                                                                                          |
+| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SessionStart`       | When a session begins or resumes                                                                                                                       |
+| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                                                                   |
+| `PreToolUse`         | Before a tool call executes. Can block it                                                                                                              |
+| `PermissionRequest`  | When a permission dialog appears                                                                                                                       |
+| `PostToolUse`        | After a tool call succeeds                                                                                                                             |
+| `PostToolUseFailure` | After a tool call fails                                                                                                                                |
+| `Notification`       | When Claude Code sends a notification                                                                                                                  |
+| `SubagentStart`      | When a subagent is spawned                                                                                                                             |
+| `SubagentStop`       | When a subagent finishes                                                                                                                               |
+| `Stop`               | When Claude finishes responding                                                                                                                        |
+| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
+| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
+| `TaskCompleted`      | When a task is being marked as completed                                                                                                               |
+| `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
+| `ConfigChange`       | When a configuration file changes during a session                                                                                                     |
+| `CwdChanged`         | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
+| `FileChanged`        | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
+| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
+| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
+| `PreCompact`         | Before context compaction                                                                                                                              |
+| `PostCompact`        | After context compaction completes                                                                                                                     |
+| `Elicitation`        | When an MCP server requests user input during a tool call                                                                                              |
+| `ElicitationResult`  | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
+| `SessionEnd`         | When a session terminates                                                                                                                              |
 
 **Tipe hook**:
 
-* `command`: Jalankan perintah shell atau script
-* `prompt`: Evaluasi prompt dengan LLM (menggunakan placeholder `$ARGUMENTS` untuk konteks)
-* `agent`: Jalankan verifier agentic dengan alat untuk tugas verifikasi kompleks
+* `command`: jalankan perintah shell atau scripts
+* `http`: kirim JSON event sebagai POST request ke URL
+* `prompt`: evaluasi prompt dengan LLM (menggunakan placeholder `$ARGUMENTS` untuk konteks)
+* `agent`: jalankan verifier agentic dengan tools untuk tugas verifikasi kompleks
 
 ### MCP servers
 
@@ -326,6 +345,51 @@ Nama ini digunakan untuk namespacing komponen. Misalnya, di UI, agent `agent-cre
 | `mcpServers`   | string\|array\|object | Jalur konfigurasi MCP atau konfigurasi inline                                                                                                               | `"./my-extra-mcp-config.json"`           |
 | `outputStyles` | string\|array         | File/direktori gaya output tambahan                                                                                                                         | `"./styles/"`                            |
 | `lspServers`   | string\|array\|object | Konfigurasi [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) untuk intelijen kode (buka definisi, temukan referensi, dll.) | `"./.lsp.json"`                          |
+| `userConfig`   | object                | Nilai yang dapat dikonfigurasi pengguna yang diminta saat enable. Lihat [User configuration](#user-configuration)                                           | Lihat di bawah                           |
+| `channels`     | array                 | Deklarasi channel untuk message injection (Telegram, Slack, Discord style). Lihat [Channels](#channels)                                                     | Lihat di bawah                           |
+
+### User configuration
+
+Field `userConfig` mendeklarasikan nilai yang Claude Code minta dari pengguna saat plugin diaktifkan. Gunakan ini daripada memerlukan pengguna untuk mengedit `settings.json` secara manual.
+
+```json  theme={null}
+{
+  "userConfig": {
+    "api_endpoint": {
+      "description": "Endpoint API tim Anda",
+      "sensitive": false
+    },
+    "api_token": {
+      "description": "Token autentikasi API",
+      "sensitive": true
+    }
+  }
+}
+```
+
+Kunci harus berupa pengenal yang valid. Setiap nilai tersedia untuk substitusi sebagai `${user_config.KEY}` di konfigurasi MCP dan LSP server, perintah hook, dan (hanya untuk nilai non-sensitif) konten skill dan agent. Nilai juga diekspor ke subprocess plugin sebagai variabel lingkungan `CLAUDE_PLUGIN_OPTION_<KEY>`.
+
+Nilai non-sensitif disimpan di `settings.json` di bawah `pluginConfigs[<plugin-id>].options`. Nilai sensitif masuk ke keychain sistem (atau `~/.claude/.credentials.json` di mana keychain tidak tersedia). Penyimpanan keychain dibagikan dengan token OAuth dan memiliki batas total sekitar 2 KB, jadi jaga nilai sensitif tetap kecil.
+
+### Channels
+
+Field `channels` memungkinkan plugin mendeklarasikan satu atau lebih message channels yang menyuntikkan konten ke dalam percakapan. Setiap channel mengikat ke MCP server yang disediakan plugin.
+
+```json  theme={null}
+{
+  "channels": [
+    {
+      "server": "telegram",
+      "userConfig": {
+        "bot_token": { "description": "Token bot Telegram", "sensitive": true },
+        "owner_id": { "description": "ID pengguna Telegram Anda", "sensitive": false }
+      }
+    }
+  ]
+}
+```
+
+Field `server` diperlukan dan harus cocok dengan kunci di `mcpServers` plugin. Field `userConfig` per-channel opsional menggunakan skema yang sama dengan field tingkat atas, memungkinkan plugin meminta token bot atau ID pemilik saat plugin diaktifkan.
 
 ### Aturan perilaku jalur
 
@@ -353,7 +417,11 @@ Nama ini digunakan untuk namespacing komponen. Misalnya, di UI, agent `agent-cre
 
 ### Variabel lingkungan
 
-**`${CLAUDE_PLUGIN_ROOT}`**: Berisi jalur absolut ke direktori plugin Anda. Gunakan ini di hooks, MCP servers, dan scripts untuk memastikan jalur yang benar terlepas dari lokasi instalasi.
+Claude Code menyediakan dua variabel untuk mereferensikan jalur plugin. Keduanya disubstitusi inline di mana pun mereka muncul dalam konten skill, konten agent, perintah hook, dan konfigurasi MCP atau LSP server. Keduanya juga diekspor sebagai variabel lingkungan ke proses hook dan subprocess MCP atau LSP server.
+
+**`${CLAUDE_PLUGIN_ROOT}`**: jalur absolut ke direktori instalasi plugin Anda. Gunakan ini untuk mereferensikan scripts, binaries, dan file konfigurasi yang disertakan dengan plugin. Jalur ini berubah saat plugin diperbarui, jadi file yang Anda tulis di sini tidak bertahan setelah update.
+
+**`${CLAUDE_PLUGIN_DATA}`**: direktori persisten untuk state plugin yang bertahan setelah updates. Gunakan ini untuk dependensi yang dipasang seperti `node_modules` atau Python virtual environments, kode yang dihasilkan, caches, dan file lainnya yang harus bertahan di seluruh versi plugin. Direktori dibuat secara otomatis pertama kali variabel ini direferensikan.
 
 ```json  theme={null}
 {
@@ -371,6 +439,51 @@ Nama ini digunakan untuk namespacing komponen. Misalnya, di UI, agent `agent-cre
   }
 }
 ```
+
+#### Direktori data persisten
+
+Direktori `${CLAUDE_PLUGIN_DATA}` diselesaikan ke `~/.claude/plugins/data/{id}/`, di mana `{id}` adalah pengenal plugin dengan karakter di luar `a-z`, `A-Z`, `0-9`, `_`, dan `-` diganti dengan `-`. Untuk plugin yang dipasang sebagai `formatter@my-marketplace`, direktorinya adalah `~/.claude/plugins/data/formatter-my-marketplace/`.
+
+Penggunaan umum adalah memasang dependensi bahasa sekali dan menggunakannya kembali di seluruh sesi dan update plugin. Karena direktori data bertahan lebih lama dari versi plugin tunggal, pemeriksaan keberadaan direktori saja tidak dapat mendeteksi saat update mengubah manifest dependensi plugin. Pola yang direkomendasikan membandingkan manifest yang disertakan terhadap salinan di direktori data dan memasang ulang saat mereka berbeda.
+
+Hook `SessionStart` ini memasang `node_modules` pada run pertama dan lagi kapan pun update plugin menyertakan `package.json` yang berubah:
+
+```json  theme={null}
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "diff -q \"${CLAUDE_PLUGIN_ROOT}/package.json\" \"${CLAUDE_PLUGIN_DATA}/package.json\" >/dev/null 2>&1 || (cd \"${CLAUDE_PLUGIN_DATA}\" && cp \"${CLAUDE_PLUGIN_ROOT}/package.json\" . && npm install) || rm -f \"${CLAUDE_PLUGIN_DATA}/package.json\""
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+`diff` keluar nonzero saat salinan yang disimpan hilang atau berbeda dari yang disertakan, mencakup run pertama dan updates yang mengubah dependensi. Jika `npm install` gagal, trailing `rm` menghapus manifest yang disalin sehingga sesi berikutnya mencoba lagi.
+
+Scripts yang disertakan di `${CLAUDE_PLUGIN_ROOT}` kemudian dapat berjalan terhadap `node_modules` yang persisten:
+
+```json  theme={null}
+{
+  "mcpServers": {
+    "routines": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/server.js"],
+      "env": {
+        "NODE_PATH": "${CLAUDE_PLUGIN_DATA}/node_modules"
+      }
+    }
+  }
+}
+```
+
+Direktori data dihapus secara otomatis saat Anda menghapus plugin dari cakupan terakhir di mana itu dipasang. Antarmuka `/plugin` menunjukkan ukuran direktori dan meminta sebelum menghapus. CLI menghapus secara default; teruskan [`--keep-data`](#plugin-uninstall) untuk mempertahankannya.
 
 ***
 
@@ -508,12 +621,15 @@ claude plugin uninstall <plugin> [options]
 
 **Opsi:**
 
-| Opsi                  | Deskripsi                                           | Default |
-| :-------------------- | :-------------------------------------------------- | :------ |
-| `-s, --scope <scope>` | Hapus dari cakupan: `user`, `project`, atau `local` | `user`  |
-| `-h, --help`          | Tampilkan bantuan untuk perintah                    |         |
+| Opsi                  | Deskripsi                                                                 | Default |
+| :-------------------- | :------------------------------------------------------------------------ | :------ |
+| `-s, --scope <scope>` | Hapus dari cakupan: `user`, `project`, atau `local`                       | `user`  |
+| `--keep-data`         | Pertahankan [direktori data persisten](#persistent-data-directory) plugin |         |
+| `-h, --help`          | Tampilkan bantuan untuk perintah                                          |         |
 
 **Alias:** `remove`, `rm`
+
+Secara default, menghapus dari cakupan terakhir yang tersisa juga menghapus direktori `${CLAUDE_PLUGIN_DATA}` plugin. Gunakan `--keep-data` untuk mempertahankannya, misalnya saat memasang ulang setelah menguji versi baru.
 
 ### plugin enable
 
@@ -578,7 +694,7 @@ claude plugin update <plugin> [options]
 
 ### Perintah debugging
 
-Gunakan `claude --debug` (atau `/debug` dalam TUI) untuk melihat detail loading plugin:
+Gunakan `claude --debug` untuk melihat detail loading plugin:
 
 Ini menunjukkan:
 
@@ -589,14 +705,14 @@ Ini menunjukkan:
 
 ### Masalah umum
 
-| Masalah                             | Penyebab                       | Solusi                                                                          |
-| :---------------------------------- | :----------------------------- | :------------------------------------------------------------------------------ |
-| Plugin tidak dimuat                 | `plugin.json` tidak valid      | Validasi sintaks JSON dengan `claude plugin validate` atau `/plugin validate`   |
-| Commands tidak muncul               | Struktur direktori salah       | Pastikan `commands/` di root, bukan di `.claude-plugin/`                        |
-| Hooks tidak aktif                   | Script tidak dapat dieksekusi  | Jalankan `chmod +x script.sh`                                                   |
-| MCP server gagal                    | `${CLAUDE_PLUGIN_ROOT}` hilang | Gunakan variabel untuk semua jalur plugin                                       |
-| Kesalahan jalur                     | Jalur absolut digunakan        | Semua jalur harus relatif dan dimulai dengan `./`                               |
-| LSP `Executable not found in $PATH` | Language server tidak dipasang | Pasang biner (misalnya, `npm install -g typescript-language-server typescript`) |
+| Masalah                             | Penyebab                       | Solusi                                                                                                                                                                             |
+| :---------------------------------- | :----------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Plugin tidak dimuat                 | `plugin.json` tidak valid      | Jalankan `claude plugin validate` atau `/plugin validate` untuk memeriksa `plugin.json`, frontmatter skill/agent/command, dan `hooks/hooks.json` untuk kesalahan sintaks dan skema |
+| Commands tidak muncul               | Struktur direktori salah       | Pastikan `commands/` di root, bukan di `.claude-plugin/`                                                                                                                           |
+| Hooks tidak aktif                   | Script tidak dapat dieksekusi  | Jalankan `chmod +x script.sh`                                                                                                                                                      |
+| MCP server gagal                    | `${CLAUDE_PLUGIN_ROOT}` hilang | Gunakan variabel untuk semua jalur plugin                                                                                                                                          |
+| Kesalahan jalur                     | Jalur absolut digunakan        | Semua jalur harus relatif dan dimulai dengan `./`                                                                                                                                  |
+| LSP `Executable not found in $PATH` | Language server tidak dipasang | Pasang biner (misalnya, `npm install -g typescript-language-server typescript`)                                                                                                    |
 
 ### Contoh pesan kesalahan
 
@@ -625,7 +741,7 @@ Ini menunjukkan:
 
 1. Verifikasi nama event benar (case-sensitive): `PostToolUse`, bukan `postToolUse`
 2. Periksa pola matcher cocok dengan alat Anda: `"matcher": "Write|Edit"` untuk operasi file
-3. Konfirmkan tipe hook valid: `command`, `prompt`, atau `agent`
+3. Konfirmkan tipe hook valid: `command`, `http`, `prompt`, atau `agent`
 
 ### Troubleshooting MCP server
 

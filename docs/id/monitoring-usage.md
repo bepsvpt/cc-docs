@@ -85,7 +85,7 @@ Contoh konfigurasi pengaturan terkelola:
 | `OTEL_METRIC_EXPORT_INTERVAL`                       | Interval ekspor dalam milidetik (default: 60000)                                                                              | `5000`, `60000`                      |
 | `OTEL_LOGS_EXPORT_INTERVAL`                         | Interval ekspor log dalam milidetik (default: 5000)                                                                           | `1000`, `10000`                      |
 | `OTEL_LOG_USER_PROMPTS`                             | Aktifkan pencatatan konten prompt pengguna (default: dinonaktifkan)                                                           | `1` untuk mengaktifkan               |
-| `OTEL_LOG_TOOL_DETAILS`                             | Aktifkan pencatatan nama server MCP/alat dan nama skill dalam acara alat (default: dinonaktifkan)                             | `1` untuk mengaktifkan               |
+| `OTEL_LOG_TOOL_DETAILS`                             | Aktifkan pencatatan argumen input alat, nama server MCP/alat, dan nama skill dalam acara alat (default: dinonaktifkan)        | `1` untuk mengaktifkan               |
 | `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | Preferensi temporalitas metrik (default: `delta`). Atur ke `cumulative` jika backend Anda mengharapkan temporalitas kumulatif | `delta`, `cumulative`                |
 | `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | Interval untuk menyegarkan header dinamis (default: 1740000ms / 29 menit)                                                     | `900000`                             |
 
@@ -93,11 +93,11 @@ Contoh konfigurasi pengaturan terkelola:
 
 Variabel lingkungan berikut mengontrol atribut mana yang disertakan dalam metrik untuk mengelola kardinalitas:
 
-| Variabel Lingkungan                 | Deskripsi                                        | Nilai Default | Contoh untuk Menonaktifkan |
-| ----------------------------------- | ------------------------------------------------ | ------------- | -------------------------- |
-| `OTEL_METRICS_INCLUDE_SESSION_ID`   | Sertakan atribut session.id dalam metrik         | `true`        | `false`                    |
-| `OTEL_METRICS_INCLUDE_VERSION`      | Sertakan atribut app.version dalam metrik        | `false`       | `true`                     |
-| `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` | Sertakan atribut user.account\_uuid dalam metrik | `true`        | `false`                    |
+| Variabel Lingkungan                 | Deskripsi                                                             | Nilai Default | Contoh untuk Menonaktifkan |
+| ----------------------------------- | --------------------------------------------------------------------- | ------------- | -------------------------- |
+| `OTEL_METRICS_INCLUDE_SESSION_ID`   | Sertakan atribut session.id dalam metrik                              | `true`        | `false`                    |
+| `OTEL_METRICS_INCLUDE_VERSION`      | Sertakan atribut app.version dalam metrik                             | `false`       | `true`                     |
+| `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` | Sertakan atribut user.account\_uuid dan user.account\_id dalam metrik | `true`        | `false`                    |
 
 Variabel-variabel ini membantu mengontrol kardinalitas metrik, yang mempengaruhi persyaratan penyimpanan dan kinerja kueri di backend metrik Anda. Kardinalitas yang lebih rendah umumnya berarti kinerja yang lebih baik dan biaya penyimpanan yang lebih rendah tetapi data yang kurang granular untuk analisis.
 
@@ -225,15 +225,21 @@ export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
 
 Semua metrik dan acara berbagi atribut standar ini:
 
-| Atribut             | Deskripsi                                                                         | Dikendalikan Oleh                                   |
-| ------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------- |
-| `session.id`        | Pengidentifikasi sesi unik                                                        | `OTEL_METRICS_INCLUDE_SESSION_ID` (default: true)   |
-| `app.version`       | Versi Claude Code saat ini                                                        | `OTEL_METRICS_INCLUDE_VERSION` (default: false)     |
-| `organization.id`   | UUID organisasi (saat diautentikasi)                                              | Selalu disertakan saat tersedia                     |
-| `user.account_uuid` | UUID akun (saat diautentikasi)                                                    | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (default: true) |
-| `user.id`           | Pengidentifikasi perangkat/instalasi anonim, dihasilkan per instalasi Claude Code | Selalu disertakan                                   |
-| `user.email`        | Alamat email pengguna (saat diautentikasi melalui OAuth)                          | Selalu disertakan saat tersedia                     |
-| `terminal.type`     | Jenis terminal, seperti `iTerm.app`, `vscode`, `cursor`, atau `tmux`              | Selalu disertakan saat terdeteksi                   |
+| Atribut             | Deskripsi                                                                                                              | Dikendalikan Oleh                                   |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| `session.id`        | Pengidentifikasi sesi unik                                                                                             | `OTEL_METRICS_INCLUDE_SESSION_ID` (default: true)   |
+| `app.version`       | Versi Claude Code saat ini                                                                                             | `OTEL_METRICS_INCLUDE_VERSION` (default: false)     |
+| `organization.id`   | UUID organisasi (saat diautentikasi)                                                                                   | Selalu disertakan saat tersedia                     |
+| `user.account_uuid` | UUID akun (saat diautentikasi)                                                                                         | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (default: true) |
+| `user.account_id`   | ID akun dalam format yang ditandai sesuai dengan API admin Anthropic (saat diautentikasi), seperti `user_01BWBeN28...` | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (default: true) |
+| `user.id`           | Pengidentifikasi perangkat/instalasi anonim, dihasilkan per instalasi Claude Code                                      | Selalu disertakan                                   |
+| `user.email`        | Alamat email pengguna (saat diautentikasi melalui OAuth)                                                               | Selalu disertakan saat tersedia                     |
+| `terminal.type`     | Jenis terminal, seperti `iTerm.app`, `vscode`, `cursor`, atau `tmux`                                                   | Selalu disertakan saat terdeteksi                   |
+
+Acara juga menyertakan atribut berikut. Ini tidak pernah dilampirkan pada metrik karena akan menyebabkan kardinalitas tak terbatas:
+
+* `prompt.id`: UUID yang menghubungkan prompt pengguna dengan semua acara berikutnya hingga prompt berikutnya. Lihat [Atribut korelasi acara](#event-correlation-attributes).
+* `workspace.host_paths`: direktori ruang kerja host yang dipilih di aplikasi desktop, sebagai array string
 
 ### Metrik
 
@@ -384,6 +390,7 @@ Dicatat saat alat menyelesaikan eksekusi.
   * Untuk alat Bash: mencakup `bash_command`, `full_command`, `timeout`, `description`, `dangerouslyDisableSandbox`, dan `git_commit_id` (SHA komit, saat perintah `git commit` berhasil)
   * Untuk alat MCP (saat `OTEL_LOG_TOOL_DETAILS=1`): mencakup `mcp_server_name`, `mcp_tool_name`
   * Untuk alat Skill (saat `OTEL_LOG_TOOL_DETAILS=1`): mencakup `skill_name`
+* `tool_input` (saat `OTEL_LOG_TOOL_DETAILS=1`): Argumen alat yang diserialisasi JSON. Nilai individual di atas 512 karakter dipotong, dan muatan penuh dibatasi hingga \~4 K karakter. Berlaku untuk semua alat termasuk alat MCP.
 
 #### Acara permintaan API
 
@@ -473,7 +480,7 @@ Peringatan umum untuk dipertimbangkan:
 * Konsumsi token yang tidak biasa
 * Volume sesi tinggi dari pengguna tertentu
 
-Semua metrik dapat disegmentasikan berdasarkan `user.account_uuid`, `organization.id`, `session.id`, `model`, dan `app.version`.
+Semua metrik dapat disegmentasikan berdasarkan `user.account_uuid`, `user.account_id`, `organization.id`, `session.id`, `model`, dan `app.version`.
 
 ### Analisis acara
 
@@ -528,7 +535,7 @@ Untuk panduan komprehensif tentang mengukur pengembalian investasi untuk Claude 
 * Konten file mentah dan cuplikan kode tidak disertakan dalam metrik atau acara. Acara eksekusi alat mencakup perintah bash dan jalur file di bidang `tool_parameters`, yang mungkin berisi nilai sensitif. Jika perintah Anda mungkin menyertakan rahasia, konfigurasikan backend telemetri Anda untuk memfilter atau menyunting `tool_parameters`
 * Saat diautentikasi melalui OAuth, `user.email` disertakan dalam atribut telemetri. Jika ini menjadi perhatian bagi organisasi Anda, bekerja dengan backend telemetri Anda untuk memfilter atau menyunting bidang ini
 * Konten prompt pengguna tidak dikumpulkan secara default. Hanya panjang prompt yang dicatat. Untuk menyertakan konten prompt, atur `OTEL_LOG_USER_PROMPTS=1`
-* Nama server MCP/alat dan nama skill tidak dicatat secara default karena dapat mengungkapkan konfigurasi khusus pengguna. Untuk menyertakannya, atur `OTEL_LOG_TOOL_DETAILS=1`
+* Argumen input alat tidak dicatat secara default. Untuk menyertakannya, atur `OTEL_LOG_TOOL_DETAILS=1`. Saat diaktifkan, acara `tool_result` menyertakan nama server MCP/alat dan nama skill ditambah atribut `tool_input` dengan jalur file, URL, pola pencarian, dan argumen lainnya. Nilai individual di atas 512 karakter dipotong dan total dibatasi hingga \~4 K karakter, tetapi argumen mungkin masih berisi nilai sensitif. Konfigurasikan backend telemetri Anda untuk memfilter atau menyunting `tool_input` sesuai kebutuhan
 
 ## Memantau Claude Code di Amazon Bedrock
 

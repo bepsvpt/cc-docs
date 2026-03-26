@@ -58,10 +58,16 @@ Plugins 可以提供專門的 subagents，用於 Claude 在適當時自動叫用
 ---
 name: agent-name
 description: What this agent specializes in and when Claude should invoke it
+model: sonnet
+effort: medium
+maxTurns: 20
+disallowedTools: Write, Edit
 ---
 
 Detailed system prompt for the agent describing its role, expertise, and behavior.
 ```
+
+Plugin agents 支援 `name`、`description`、`model`、`effort`、`maxTurns`、`tools`、`disallowedTools`、`skills`、`memory`、`background` 和 `isolation` frontmatter 欄位。唯一有效的 `isolation` 值是 `"worktree"`。出於安全原因，plugin 提供的 agents 不支援 `hooks`、`mcpServers` 和 `permissionMode`。
 
 **整合點**：
 
@@ -100,26 +106,39 @@ Plugins 可以提供事件處理程式，自動回應 Claude Code 事件。
 }
 ```
 
-**可用事件**：
+Plugin hooks 回應與 [user-defined hooks](/zh-TW/hooks) 相同的生命週期事件：
 
-* `PreToolUse`：Claude 使用任何工具之前
-* `PostToolUse`：Claude 成功使用任何工具之後
-* `PostToolUseFailure`：Claude 工具執行失敗之後
-* `PermissionRequest`：顯示權限對話框時
-* `UserPromptSubmit`：使用者提交提示時
-* `Notification`：Claude Code 傳送通知時
-* `Stop`：Claude 嘗試停止時
-* `SubagentStart`：subagent 啟動時
-* `SubagentStop`：subagent 嘗試停止時
-* `SessionStart`：在工作階段開始時
-* `SessionEnd`：在工作階段結束時
-* `TeammateIdle`：agent 團隊隊友即將閒置時
-* `TaskCompleted`：任務被標記為已完成時
-* `PreCompact`：對話歷史記錄被壓縮之前
+| Event                | When it fires                                                                                                                                          |
+| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SessionStart`       | When a session begins or resumes                                                                                                                       |
+| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                                                                   |
+| `PreToolUse`         | Before a tool call executes. Can block it                                                                                                              |
+| `PermissionRequest`  | When a permission dialog appears                                                                                                                       |
+| `PostToolUse`        | After a tool call succeeds                                                                                                                             |
+| `PostToolUseFailure` | After a tool call fails                                                                                                                                |
+| `Notification`       | When Claude Code sends a notification                                                                                                                  |
+| `SubagentStart`      | When a subagent is spawned                                                                                                                             |
+| `SubagentStop`       | When a subagent finishes                                                                                                                               |
+| `Stop`               | When Claude finishes responding                                                                                                                        |
+| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
+| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
+| `TaskCompleted`      | When a task is being marked as completed                                                                                                               |
+| `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
+| `ConfigChange`       | When a configuration file changes during a session                                                                                                     |
+| `CwdChanged`         | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
+| `FileChanged`        | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
+| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
+| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
+| `PreCompact`         | Before context compaction                                                                                                                              |
+| `PostCompact`        | After context compaction completes                                                                                                                     |
+| `Elicitation`        | When an MCP server requests user input during a tool call                                                                                              |
+| `ElicitationResult`  | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
+| `SessionEnd`         | When a session terminates                                                                                                                              |
 
 **Hook 類型**：
 
 * `command`：執行 shell 命令或指令碼
+* `http`：將事件 JSON 作為 POST 請求傳送到 URL
 * `prompt`：使用 LLM 評估提示（使用 `$ARGUMENTS` 佔位符表示上下文）
 * `agent`：執行具有工具的 agentic 驗證器以進行複雜驗證任務
 
@@ -326,6 +345,51 @@ manifest 是選用的。如果省略，Claude Code 會自動探索 [預設位置
 | `mcpServers`   | string\|array\|object | MCP 設定路徑或內聯設定                                                                                            | `"./my-extra-mcp-config.json"`        |
 | `outputStyles` | string\|array         | 其他輸出樣式檔案/目錄                                                                                              | `"./styles/"`                         |
 | `lspServers`   | string\|array\|object | [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) 設定，用於程式碼智慧（前往定義、尋找參考等） | `"./.lsp.json"`                       |
+| `userConfig`   | object                | 在啟用時提示使用者的使用者可設定值。請參閱 [User configuration](#user-configuration)                                          | 請參閱下方                                 |
+| `channels`     | array                 | 訊息注入的頻道宣告（Telegram、Slack、Discord 風格）。請參閱 [Channels](#channels)                                           | 請參閱下方                                 |
+
+### User configuration
+
+`userConfig` 欄位宣告 Claude Code 在啟用 plugin 時提示使用者的值。使用此方法而不是要求使用者手動編輯 `settings.json`。
+
+```json  theme={null}
+{
+  "userConfig": {
+    "api_endpoint": {
+      "description": "Your team's API endpoint",
+      "sensitive": false
+    },
+    "api_token": {
+      "description": "API authentication token",
+      "sensitive": true
+    }
+  }
+}
+```
+
+金鑰必須是有效的識別碼。每個值都可用於在 MCP 和 LSP server 設定、hook 命令中替換為 `${user_config.KEY}`，以及（僅適用於非敏感值）skill 和 agent 內容。值也會匯出到 plugin 子程序作為 `CLAUDE_PLUGIN_OPTION_<KEY>` 環境變數。
+
+非敏感值儲存在 `settings.json` 中的 `pluginConfigs[<plugin-id>].options` 下。敏感值進入系統鑰匙圈（或在鑰匙圈不可用的地方進入 `~/.claude/.credentials.json`）。鑰匙圈儲存與 OAuth 令牌共享，總限制約為 2 KB，因此請保持敏感值較小。
+
+### Channels
+
+`channels` 欄位讓 plugin 宣告一個或多個訊息頻道，將內容注入對話中。每個頻道繫結到 plugin 提供的 MCP server。
+
+```json  theme={null}
+{
+  "channels": [
+    {
+      "server": "telegram",
+      "userConfig": {
+        "bot_token": { "description": "Telegram bot token", "sensitive": true },
+        "owner_id": { "description": "Your Telegram user ID", "sensitive": false }
+      }
+    }
+  ]
+}
+```
+
+`server` 欄位是必需的，必須與 plugin 的 `mcpServers` 中的金鑰相符。選用的每個頻道 `userConfig` 使用與頂層欄位相同的架構，讓 plugin 在啟用 plugin 時提示輸入機器人令牌或擁有者 ID。
 
 ### 路徑行為規則
 
@@ -353,7 +417,11 @@ manifest 是選用的。如果省略，Claude Code 會自動探索 [預設位置
 
 ### 環境變數
 
-**`${CLAUDE_PLUGIN_ROOT}`**：包含 plugin 目錄的絕對路徑。在 hooks、MCP servers 和指令碼中使用此變數，以確保無論安裝位置如何都能使用正確的路徑。
+Claude Code 提供兩個變數用於參考 plugin 路徑。兩者都在 skill 內容、agent 內容、hook 命令以及 MCP 或 LSP server 設定中出現的任何地方內聯替換。兩者也會匯出為環境變數到 hook 程序和 MCP 或 LSP server 子程序。
+
+**`${CLAUDE_PLUGIN_ROOT}`**：plugin 安裝目錄的絕對路徑。使用此方法參考與 plugin 捆綁的指令碼、二進位檔和設定檔。此路徑在 plugin 更新時會變更，因此您在此處寫入的檔案不會在更新後保留。
+
+**`${CLAUDE_PLUGIN_DATA}`**：用於在更新後保留的 plugin 狀態的持久目錄。使用此方法用於已安裝的依賴項，例如 `node_modules` 或 Python 虛擬環境、生成的程式碼、快取和任何應在 plugin 版本之間保留的其他檔案。首次參考此變數時會自動建立目錄。
 
 ```json  theme={null}
 {
@@ -371,6 +439,51 @@ manifest 是選用的。如果省略，Claude Code 會自動探索 [預設位置
   }
 }
 ```
+
+#### 持久資料目錄
+
+`${CLAUDE_PLUGIN_DATA}` 目錄解析為 `~/.claude/plugins/data/{id}/`，其中 `{id}` 是 plugin 識別碼，其中 `a-z`、`A-Z`、`0-9`、`_` 和 `-` 以外的字元被替換為 `-`。對於安裝為 `formatter@my-marketplace` 的 plugin，目錄是 `~/.claude/plugins/data/formatter-my-marketplace/`。
+
+常見用途是一次安裝語言依賴項並在工作階段和 plugin 更新中重複使用它們。因為資料目錄的壽命超過任何單一 plugin 版本，僅檢查目錄存在無法偵測更新何時變更 plugin 的依賴項清單。建議的模式是比較捆綁的清單與資料目錄中的副本，並在它們不同時重新安裝。
+
+此 `SessionStart` hook 在第一次執行時安裝 `node_modules`，並在 plugin 更新包含變更的 `package.json` 時再次安裝：
+
+```json  theme={null}
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "diff -q \"${CLAUDE_PLUGIN_ROOT}/package.json\" \"${CLAUDE_PLUGIN_DATA}/package.json\" >/dev/null 2>&1 || (cd \"${CLAUDE_PLUGIN_DATA}\" && cp \"${CLAUDE_PLUGIN_ROOT}/package.json\" . && npm install) || rm -f \"${CLAUDE_PLUGIN_DATA}/package.json\""
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+`diff` 在儲存的副本遺失或與捆綁的副本不同時以非零值退出，涵蓋第一次執行和依賴項變更更新。如果 `npm install` 失敗，尾部 `rm` 會移除複製的清單，以便下一個工作階段重試。
+
+捆綁在 `${CLAUDE_PLUGIN_ROOT}` 中的指令碼可以針對保留的 `node_modules` 執行：
+
+```json  theme={null}
+{
+  "mcpServers": {
+    "routines": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/server.js"],
+      "env": {
+        "NODE_PATH": "${CLAUDE_PLUGIN_DATA}/node_modules"
+      }
+    }
+  }
+}
+```
+
+當您從最後一個安裝 plugin 的範圍卸載 plugin 時，資料目錄會自動刪除。`/plugin` 介面顯示目錄大小並在刪除前提示。CLI 預設刪除；傳遞 [`--keep-data`](#plugin-uninstall) 以保留它。
 
 ***
 
@@ -508,12 +621,15 @@ claude plugin uninstall <plugin> [options]
 
 **選項：**
 
-| 選項                    | 描述                               | 預設     |
-| :-------------------- | :------------------------------- | :----- |
-| `-s, --scope <scope>` | 從範圍卸載：`user`、`project` 或 `local` | `user` |
-| `-h, --help`          | 顯示命令說明                           |        |
+| 選項                    | 描述                                                                  | 預設     |
+| :-------------------- | :------------------------------------------------------------------ | :----- |
+| `-s, --scope <scope>` | 從範圍卸載：`user`、`project` 或 `local`                                    | `user` |
+| `--keep-data`         | 保留 plugin 的 [persistent data directory](#persistent-data-directory) |        |
+| `-h, --help`          | 顯示命令說明                                                              |        |
 
 **別名：** `remove`、`rm`
+
+預設情況下，從最後一個剩餘範圍卸載也會刪除 plugin 的 `${CLAUDE_PLUGIN_DATA}` 目錄。使用 `--keep-data` 保留它，例如在測試新版本後重新安裝時。
 
 ### plugin enable
 
@@ -578,7 +694,7 @@ claude plugin update <plugin> [options]
 
 ### 偵錯命令
 
-使用 `claude --debug`（或 TUI 中的 `/debug`）查看 plugin 載入詳細資訊：
+使用 `claude --debug` 查看 plugin 載入詳細資訊：
 
 這會顯示：
 
@@ -589,14 +705,14 @@ claude plugin update <plugin> [options]
 
 ### 常見問題
 
-| 問題                                  | 原因                         | 解決方案                                                              |
-| :---------------------------------- | :------------------------- | :---------------------------------------------------------------- |
-| Plugin 未載入                          | 無效的 `plugin.json`          | 使用 `claude plugin validate` 或 `/plugin validate` 驗證 JSON 語法       |
-| 命令未出現                               | 目錄結構錯誤                     | 確保 `commands/` 在根目錄，而不是在 `.claude-plugin/` 中                      |
-| Hooks 未觸發                           | 指令碼不可執行                    | 執行 `chmod +x script.sh`                                           |
-| MCP server 失敗                       | 缺少 `${CLAUDE_PLUGIN_ROOT}` | 對所有 plugin 路徑使用變數                                                 |
-| 路徑錯誤                                | 使用了絕對路徑                    | 所有路徑必須是相對的，並以 `./` 開頭                                             |
-| LSP `Executable not found in $PATH` | 未安裝語言伺服器                   | 安裝二進位檔（例如 `npm install -g typescript-language-server typescript`） |
+| 問題                                  | 原因                         | 解決方案                                                                                                                            |
+| :---------------------------------- | :------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
+| Plugin 未載入                          | 無效的 `plugin.json`          | 執行 `claude plugin validate` 或 `/plugin validate` 檢查 `plugin.json`、skill/agent/command frontmatter 和 `hooks/hooks.json` 的語法和架構錯誤 |
+| 命令未出現                               | 目錄結構錯誤                     | 確保 `commands/` 在根目錄，而不是在 `.claude-plugin/` 中                                                                                    |
+| Hooks 未觸發                           | 指令碼不可執行                    | 執行 `chmod +x script.sh`                                                                                                         |
+| MCP server 失敗                       | 缺少 `${CLAUDE_PLUGIN_ROOT}` | 對所有 plugin 路徑使用變數                                                                                                               |
+| 路徑錯誤                                | 使用了絕對路徑                    | 所有路徑必須是相對的，並以 `./` 開頭                                                                                                           |
+| LSP `Executable not found in $PATH` | 未安裝語言伺服器                   | 安裝二進位檔（例如 `npm install -g typescript-language-server typescript`）                                                               |
 
 ### 範例錯誤訊息
 
@@ -625,7 +741,7 @@ claude plugin update <plugin> [options]
 
 1. 驗證事件名稱是否正確（區分大小寫）：`PostToolUse`，而不是 `postToolUse`
 2. 檢查匹配器模式是否與您的工具相符：`"matcher": "Write|Edit"` 用於檔案操作
-3. 確認 hook 類型有效：`command`、`prompt` 或 `agent`
+3. 確認 hook 類型有效：`command`、`http`、`prompt` 或 `agent`
 
 ### MCP server 疑難排解
 

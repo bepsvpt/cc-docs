@@ -223,6 +223,7 @@ Mit verbundenen MCP-Servern können Sie Claude Code auffordern:
 * **Datenbanken abfragen**: „Finde E-Mail-Adressen von 10 zufälligen Benutzern, die die Funktion ENG-4521 verwendet haben, basierend auf unserer PostgreSQL-Datenbank."
 * **Designs integrieren**: „Aktualisiere unsere Standard-E-Mail-Vorlage basierend auf den neuen Figma-Designs, die in Slack gepostet wurden"
 * **Workflows automatisieren**: „Erstelle Gmail-Entwürfe, die diese 10 Benutzer zu einer Feedback-Sitzung zur neuen Funktion einladen."
+* **Auf externe Ereignisse reagieren**: Ein MCP-Server kann auch als [Kanal](/de/channels) fungieren, der Nachrichten in Ihre Sitzung pusht, sodass Claude auf Telegram-Nachrichten, Discord-Chats oder Webhook-Ereignisse reagiert, während Sie weg sind.
 
 ## Beliebte MCP-Server
 
@@ -328,6 +329,10 @@ claude mcp remove github
 
 Claude Code unterstützt MCP-`list_changed`-Benachrichtigungen, die es MCP-Servern ermöglichen, ihre verfügbaren Tools, Prompts und Ressourcen dynamisch zu aktualisieren, ohne dass Sie die Verbindung trennen und erneut verbinden müssen. Wenn ein MCP-Server eine `list_changed`-Benachrichtigung sendet, aktualisiert Claude Code automatisch die verfügbaren Funktionen von diesem Server.
 
+### Push-Nachrichten mit Kanälen
+
+Ein MCP-Server kann auch Nachrichten direkt in Ihre Sitzung pushen, sodass Claude auf externe Ereignisse wie CI-Ergebnisse, Überwachungswarnungen oder Chat-Nachrichten reagieren kann. Um dies zu aktivieren, deklariert Ihr Server die Funktion `claude/channel` und Sie aktivieren sie mit dem Flag `--channels` beim Start. Siehe [Kanäle](/de/channels), um einen offiziell unterstützten Kanal zu verwenden, oder [Kanäle-Referenz](/de/channels-reference), um Ihren eigenen zu erstellen.
+
 <Tip>
   Tipps:
 
@@ -369,11 +374,13 @@ In `.mcp.json` im Plugin-Root:
 
 ```json  theme={null}
 {
-  "database-tools": {
-    "command": "${CLAUDE_PLUGIN_ROOT}/servers/db-server",
-    "args": ["--config", "${CLAUDE_PLUGIN_ROOT}/config.json"],
-    "env": {
-      "DB_URL": "${DB_URL}"
+  "mcpServers": {
+    "database-tools": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/servers/db-server",
+      "args": ["--config", "${CLAUDE_PLUGIN_ROOT}/config.json"],
+      "env": {
+        "DB_URL": "${DB_URL}"
+      }
     }
   }
 }
@@ -396,7 +403,7 @@ Oder inline in `plugin.json`:
 **Plugin-MCP-Funktionen**:
 
 * **Automatischer Lebenszyklus**: Bei Sitzungsstart verbinden sich Server für aktivierte Plugins automatisch. Wenn Sie ein Plugin während einer Sitzung aktivieren oder deaktivieren, führen Sie `/reload-plugins` aus, um seine MCP-Server zu verbinden oder zu trennen
-* **Umgebungsvariablen**: Verwenden Sie `${CLAUDE_PLUGIN_ROOT}` für Plugin-relative Pfade
+* **Umgebungsvariablen**: Verwenden Sie `${CLAUDE_PLUGIN_ROOT}` für gebündelte Plugin-Dateien und `${CLAUDE_PLUGIN_DATA}` für [persistente Daten](/de/plugins-reference#persistent-data-directory), die Plugin-Updates überstehen
 * **Zugriff auf Benutzerumgebung**: Zugriff auf die gleichen Umgebungsvariablen wie manuell konfigurierte Server
 * **Mehrere Transporttypen**: Unterstützung für Stdio-, SSE- und HTTP-Transporte (die Transportunterstützung kann je nach Server variieren)
 
@@ -669,7 +676,7 @@ claude mcp add --transport http \
 
 ### Verwenden Sie vorkonfigurierte OAuth-Anmeldedaten
 
-Einige MCP-Server unterstützen keine automatische OAuth-Einrichtung. Wenn Sie einen Fehler wie „Incompatible auth server: does not support dynamic client registration" sehen, erfordert der Server vorkonfigurierte Anmeldedaten. Registrieren Sie zunächst eine OAuth-App über das Entwicklerportal des Servers und geben Sie dann die Anmeldedaten beim Hinzufügen des Servers an.
+Einige MCP-Server unterstützen keine automatische OAuth-Einrichtung über Dynamic Client Registration. Wenn Sie einen Fehler wie „Incompatible auth server: does not support dynamic client registration" sehen, erfordert der Server vorkonfigurierte Anmeldedaten. Claude Code unterstützt auch Server, die ein Client ID Metadata Document (CIMD) anstelle von Dynamic Client Registration verwenden, und erkennt diese automatisch. Wenn die automatische Erkennung fehlschlägt, registrieren Sie zunächst eine OAuth-App über das Entwicklerportal des Servers und geben Sie dann die Anmeldedaten beim Hinzufügen des Servers an.
 
 <Steps>
   <Step title="Registrieren Sie eine OAuth-App beim Server">
@@ -759,6 +766,48 @@ Legen Sie `authServerMetadataUrl` im Objekt `oauth` der Konfiguration Ihres Serv
 ```
 
 Die URL muss `https://` verwenden. Diese Option erfordert Claude Code v2.1.64 oder später.
+
+### Verwenden Sie dynamische Header für benutzerdefinierte Authentifizierung
+
+Wenn Ihr MCP-Server ein anderes Authentifizierungsschema verwendet als OAuth (wie Kerberos, kurzlebige Token oder ein internes SSO), verwenden Sie `headersHelper`, um Request-Header zur Verbindungszeit zu generieren. Claude Code führt den Befehl aus und fügt seine Ausgabe in die Verbindungs-Header ein.
+
+```json  theme={null}
+{
+  "mcpServers": {
+    "internal-api": {
+      "type": "http",
+      "url": "https://mcp.internal.example.com",
+      "headersHelper": "/opt/bin/get-mcp-auth-headers.sh"
+    }
+  }
+}
+```
+
+Der Befehl kann auch inline sein:
+
+```json  theme={null}
+{
+  "mcpServers": {
+    "internal-api": {
+      "type": "http",
+      "url": "https://mcp.internal.example.com",
+      "headersHelper": "echo '{\"Authorization\": \"Bearer '\"$(get-token)\"'\"}'"
+    }
+  }
+}
+```
+
+**Anforderungen:**
+
+* Der Befehl muss ein JSON-Objekt mit String-Schlüssel-Wert-Paaren auf stdout schreiben
+* Der Befehl wird in einer Shell mit einem 10-Sekunden-Timeout ausgeführt
+* Dynamische Header überschreiben alle statischen `headers` mit dem gleichen Namen
+
+Der Helper wird bei jeder Verbindung neu ausgeführt (beim Sitzungsstart und bei Wiederverbindung). Es gibt kein Caching, daher ist Ihr Skript für jede Token-Wiederverwendung verantwortlich.
+
+<Note>
+  `headersHelper` führt beliebige Shell-Befehle aus. Wenn es auf Projekt- oder lokalem Bereich definiert ist, wird es nur nach Ihrer Zustimmung zum Workspace-Trust-Dialog ausgeführt.
+</Note>
 
 ## MCP-Server aus JSON-Konfiguration hinzufügen
 

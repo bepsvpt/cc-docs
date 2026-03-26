@@ -223,6 +223,7 @@ Com servidores MCP conectados, você pode pedir ao Claude Code para:
 * **Consultar bancos de dados**: "Encontre emails de 10 usuários aleatórios que usaram o recurso ENG-4521, com base no nosso banco de dados PostgreSQL."
 * **Integrar designs**: "Atualize nosso modelo de email padrão com base nos novos designs do Figma que foram postados no Slack"
 * **Automatizar fluxos de trabalho**: "Crie rascunhos do Gmail convidando esses 10 usuários para uma sessão de feedback sobre o novo recurso."
+* **Reagir a eventos externos**: Um servidor MCP também pode atuar como um [canal](/pt/channels) que envia mensagens para sua sessão, para que Claude reaja a mensagens do Telegram, chats do Discord ou eventos de webhook enquanto você está ausente.
 
 ## Servidores MCP populares
 
@@ -328,6 +329,10 @@ claude mcp remove github
 
 Claude Code suporta notificações MCP `list_changed`, permitindo que servidores MCP atualizem dinamicamente suas ferramentas, prompts e recursos disponíveis sem exigir que você se desconecte e reconecte. Quando um servidor MCP envia uma notificação `list_changed`, Claude Code atualiza automaticamente as capacidades disponíveis desse servidor.
 
+### Enviar mensagens com canais
+
+Um servidor MCP também pode enviar mensagens diretamente para sua sessão para que Claude possa reagir a eventos externos como resultados de CI, alertas de monitoramento ou mensagens de chat. Para habilitar isso, seu servidor declara a capacidade `claude/channel` e você a ativa com a flag `--channels` na inicialização. Veja [Canais](/pt/channels) para usar um canal oficialmente suportado, ou [Referência de canais](/pt/channels-reference) para construir o seu próprio.
+
 <Tip>
   Dicas:
 
@@ -369,11 +374,13 @@ Em `.mcp.json` na raiz do plugin:
 
 ```json  theme={null}
 {
-  "database-tools": {
-    "command": "${CLAUDE_PLUGIN_ROOT}/servers/db-server",
-    "args": ["--config", "${CLAUDE_PLUGIN_ROOT}/config.json"],
-    "env": {
-      "DB_URL": "${DB_URL}"
+  "mcpServers": {
+    "database-tools": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/servers/db-server",
+      "args": ["--config", "${CLAUDE_PLUGIN_ROOT}/config.json"],
+      "env": {
+        "DB_URL": "${DB_URL}"
+      }
     }
   }
 }
@@ -396,7 +403,7 @@ Ou inline em `plugin.json`:
 **Recursos de MCP de plugin**:
 
 * **Ciclo de vida automático**: Na inicialização da sessão, os servidores para plugins habilitados se conectam automaticamente. Se você habilitar ou desabilitar um plugin durante uma sessão, execute `/reload-plugins` para conectar ou desconectar seus servidores MCP
-* **Variáveis de ambiente**: Use `${CLAUDE_PLUGIN_ROOT}` para caminhos relativos ao plugin
+* **Variáveis de ambiente**: Use `${CLAUDE_PLUGIN_ROOT}` para arquivos agrupados do plugin e `${CLAUDE_PLUGIN_DATA}` para [estado persistente](/pt/plugins-reference#persistent-data-directory) que sobrevive a atualizações de plugins
 * **Acesso a variáveis de ambiente do usuário**: Acesso às mesmas variáveis de ambiente que servidores configurados manualmente
 * **Múltiplos tipos de transporte**: Suporte para transportes stdio, SSE e HTTP (o suporte de transporte pode variar por servidor)
 
@@ -669,7 +676,7 @@ claude mcp add --transport http \
 
 ### Usar credenciais OAuth pré-configuradas
 
-Alguns servidores MCP não suportam configuração automática de OAuth. Se você vir um erro como "Incompatible auth server: does not support dynamic client registration," o servidor requer credenciais pré-configuradas. Registre um aplicativo OAuth através do portal do desenvolvedor do servidor primeiro, depois forneça as credenciais ao adicionar o servidor.
+Alguns servidores MCP não suportam configuração automática de OAuth via Registro Dinâmico de Cliente. Se você vir um erro como "Incompatible auth server: does not support dynamic client registration," o servidor requer credenciais pré-configuradas. Claude Code também suporta servidores que usam um Documento de Metadados de ID do Cliente (CIMD) em vez de Registro Dinâmico de Cliente, e descobre esses automaticamente. Se a descoberta automática falhar, registre um aplicativo OAuth através do portal do desenvolvedor do servidor primeiro, depois forneça as credenciais ao adicionar o servidor.
 
 <Steps>
   <Step title="Registre um aplicativo OAuth com o servidor">
@@ -759,6 +766,48 @@ Defina `authServerMetadataUrl` no objeto `oauth` da configuração do seu servid
 ```
 
 A URL deve usar `https://`. Esta opção requer Claude Code v2.1.64 ou posterior.
+
+### Usar cabeçalhos dinâmicos para autenticação personalizada
+
+Se seu servidor MCP usar um esquema de autenticação diferente de OAuth (como Kerberos, tokens de curta duração ou um SSO interno), use `headersHelper` para gerar cabeçalhos de solicitação no momento da conexão. Claude Code executa o comando e mescla sua saída nos cabeçalhos de conexão.
+
+```json  theme={null}
+{
+  "mcpServers": {
+    "internal-api": {
+      "type": "http",
+      "url": "https://mcp.internal.example.com",
+      "headersHelper": "/opt/bin/get-mcp-auth-headers.sh"
+    }
+  }
+}
+```
+
+O comando também pode ser inline:
+
+```json  theme={null}
+{
+  "mcpServers": {
+    "internal-api": {
+      "type": "http",
+      "url": "https://mcp.internal.example.com",
+      "headersHelper": "echo '{\"Authorization\": \"Bearer '\"$(get-token)\"'\"}'"
+    }
+  }
+}
+```
+
+**Requisitos:**
+
+* O comando deve escrever um objeto JSON de pares chave-valor de string para stdout
+* O comando é executado em um shell com um tempo limite de 10 segundos
+* Cabeçalhos dinâmicos substituem qualquer `headers` estático com o mesmo nome
+
+O auxiliar é executado novamente em cada conexão (no início da sessão e ao reconectar). Não há cache, então seu script é responsável por qualquer reutilização de token.
+
+<Note>
+  `headersHelper` executa comandos shell arbitrários. Quando definido no escopo de projeto ou local, ele só é executado após você aceitar o diálogo de confiança do espaço de trabalho.
+</Note>
 
 ## Adicionar servidores MCP de configuração JSON
 

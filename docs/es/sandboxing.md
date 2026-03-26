@@ -97,6 +97,8 @@ Puede habilitar el sandboxing ejecutando el comando `/sandbox`:
 
 Esto abre un menú donde puede elegir entre modos de sandbox. Si faltan dependencias requeridas (como `bubblewrap` o `socat` en Linux), el menú muestra instrucciones de instalación para su plataforma.
 
+De forma predeterminada, si el sandbox no puede iniciarse (dependencias faltantes, plataforma no compatible o restricciones de plataforma), Claude Code muestra una advertencia y ejecuta comandos sin sandboxing. Para hacer que esto sea un error grave en su lugar, configure [`sandbox.failIfUnavailable`](/es/settings#sandbox-settings) a `true`. Esto está destinado a implementaciones administradas que requieren sandboxing como una puerta de seguridad.
+
 ### Modos de sandbox
 
 Claude Code ofrece dos modos de sandbox:

@@ -25,13 +25,13 @@
 | Atajo                                           | Descripción                                                                          | Contexto                                                                                                                                                                                          |
 | :---------------------------------------------- | :----------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `Ctrl+C`                                        | Cancelar entrada o generación actual                                                 | Interrupción estándar                                                                                                                                                                             |
-| `Ctrl+F`                                        | Terminar todos los agentes de fondo. Presione dos veces en 3 segundos para confirmar | Control de agentes de fondo                                                                                                                                                                       |
+| `Ctrl+X Ctrl+K`                                 | Terminar todos los agentes de fondo. Presione dos veces en 3 segundos para confirmar | Control de agentes de fondo                                                                                                                                                                       |
 | `Ctrl+D`                                        | Salir de la sesión de Claude Code                                                    | Señal EOF                                                                                                                                                                                         |
-| `Ctrl+G`                                        | Abrir en el editor de texto predeterminado                                           | Edite su indicación o respuesta personalizada en su editor de texto predeterminado                                                                                                                |
+| `Ctrl+G` o `Ctrl+X Ctrl+E`                      | Abrir en el editor de texto predeterminado                                           | Edite su indicación o respuesta personalizada en su editor de texto predeterminado. `Ctrl+X Ctrl+E` es el enlace nativo de readline                                                               |
 | `Ctrl+L`                                        | Limpiar pantalla de terminal                                                         | Mantiene el historial de conversación                                                                                                                                                             |
 | `Ctrl+O`                                        | Alternar salida detallada                                                            | Muestra el uso y la ejecución detallada de herramientas. También expande las llamadas de lectura y búsqueda de MCP, que se contraen a una sola línea como "Queried slack" de forma predeterminada |
 | `Ctrl+R`                                        | Búsqueda inversa del historial de comandos                                           | Buscar a través de comandos anteriores de forma interactiva                                                                                                                                       |
-| `Ctrl+V` o `Cmd+V` (iTerm2) o `Alt+V` (Windows) | Pegar imagen desde el portapapeles                                                   | Pega una imagen o ruta a un archivo de imagen                                                                                                                                                     |
+| `Ctrl+V` o `Cmd+V` (iTerm2) o `Alt+V` (Windows) | Pegar imagen desde el portapapeles                                                   | Inserta un chip `[Image #N]` en el cursor para que pueda hacer referencia a él posicionalmente en su indicación                                                                                   |
 | `Ctrl+B`                                        | Tareas en ejecución de fondo                                                         | Coloca comandos bash y agentes en segundo plano. Los usuarios de Tmux presionan dos veces                                                                                                         |
 | `Ctrl+T`                                        | Alternar lista de tareas                                                             | Mostrar u ocultar la [lista de tareas](#task-list) en el área de estado de la terminal                                                                                                            |
 | `Flechas izquierda/derecha`                     | Ciclar a través de pestañas de diálogo                                               | Navegar entre pestañas en diálogos de permisos y menús                                                                                                                                            |
@@ -40,6 +40,7 @@
 | `Shift+Tab` o `Alt+M` (algunas configuraciones) | Ciclar modos de permiso                                                              | Ciclar a través de `default`, `acceptEdits`, `plan` y cualquier modo que haya habilitado, como `auto` o `bypassPermissions`. Consulte [modos de permiso](/es/permission-modes).                   |
 | `Option+P` (macOS) o `Alt+P` (Windows/Linux)    | Cambiar modelo                                                                       | Cambiar modelos sin borrar su indicación                                                                                                                                                          |
 | `Option+T` (macOS) o `Alt+T` (Windows/Linux)    | Alternar pensamiento extendido                                                       | Habilitar o deshabilitar el modo de pensamiento extendido. Ejecute `/terminal-setup` primero para habilitar este atajo                                                                            |
+| `Option+O` (macOS) o `Alt+O` (Windows/Linux)    | Alternar modo rápido                                                                 | Habilitar o deshabilitar [modo rápido](/es/fast-mode)                                                                                                                                             |
 
 ### Edición de texto
 
@@ -84,11 +85,20 @@
 | `!` al inicio | Modo Bash                  | Ejecutar comandos directamente y agregar la salida de ejecución a la sesión |
 | `@`           | Mención de ruta de archivo | Activar autocompletado de ruta de archivo                                   |
 
+### Visor de transcripción
+
+Cuando el visor de transcripción está abierto (alternado con `Ctrl+O`), estos atajos están disponibles. `Ctrl+E` se puede reasignar a través de [`transcript:toggleShowAll`](/es/keybindings).
+
+| Atajo                | Descripción                                                                                                                                          |
+| :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+E`             | Alternar mostrar todo el contenido                                                                                                                   |
+| `q`, `Ctrl+C`, `Esc` | Salir de la vista de transcripción. `Ctrl+C` y `Esc` se pueden reasignar a través de [`transcript:exit`](/es/keybindings); `q` no se puede reasignar |
+
 ### Entrada de voz
 
-| Atajo                         | Descripción                   | Notas                                                                                                                                                                       |
-| :---------------------------- | :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Mantener presionado `Espacio` | Dictado de pulsar para hablar | Requiere que [dictado de voz](/es/voice-dictation) esté habilitado. La transcripción se inserta en el cursor. [Rebindable](/es/voice-dictation#rebind-the-push-to-talk-key) |
+| Atajo                         | Descripción                   | Notas                                                                                                                                                                        |
+| :---------------------------- | :---------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mantener presionado `Espacio` | Dictado de pulsar para hablar | Requiere que [dictado de voz](/es/voice-dictation) esté habilitado. La transcripción se inserta en el cursor. [Reasignable](/es/voice-dictation#rebind-the-push-to-talk-key) |
 
 ## Comandos integrados
 
@@ -210,7 +220,7 @@ Para ejecutar comandos en segundo plano, puede:
 
 **Características clave:**
 
-* La salida se almacena en búfer y Claude puede recuperarla usando la herramienta TaskOutput
+* La salida se escribe en un archivo y Claude puede recuperarla usando la herramienta Read
 * Las tareas de fondo tienen ID únicos para el seguimiento y la recuperación de salida
 * Las tareas de fondo se limpian automáticamente cuando Claude Code sale
 * Las tareas de fondo se terminan automáticamente si la salida excede 5GB, con una nota en stderr explicando por qué

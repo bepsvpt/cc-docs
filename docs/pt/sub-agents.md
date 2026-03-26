@@ -184,7 +184,7 @@ claude --agents '{
 }'
 ```
 
-O flag `--agents` aceita JSON com os mesmos campos de [frontmatter](#supported-frontmatter-fields) que subagentes baseados em arquivo: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `memory`, `effort`, `background` e `isolation`. Use `prompt` para o prompt de sistema, equivalente ao corpo markdown em subagentes baseados em arquivo.
+O flag `--agents` aceita JSON com os mesmos campos de [frontmatter](#supported-frontmatter-fields) que subagentes baseados em arquivo: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `initialPrompt`, `memory`, `effort`, `background` e `isolation`. Use `prompt` para o prompt de sistema, equivalente ao corpo markdown em subagentes baseados em arquivo.
 
 **Subagentes de plugin** vêm de [plugins](/pt/plugins) que você instalou. Eles aparecem em `/agents` junto com seus subagentes personalizados. Veja a [referência de componentes de plugin](/pt/plugins-reference#agents) para detalhes sobre como criar subagentes de plugin.
 
@@ -232,7 +232,9 @@ Os seguintes campos podem ser usados no frontmatter YAML. Apenas `name` e `descr
 | `hooks`           | No       | [Lifecycle hooks](#define-hooks-for-subagents) com escopo para este subagente                                                                                                                                                                                                                                |
 | `memory`          | No       | [Escopo de memória persistente](#enable-persistent-memory): `user`, `project`, ou `local`. Habilita aprendizado entre sessões                                                                                                                                                                                |
 | `background`      | No       | Defina como `true` para sempre executar este subagente como uma [tarefa em background](#run-subagents-in-foreground-or-background). Padrão: `false`                                                                                                                                                          |
+| `effort`          | No       | Nível de esforço quando este subagente está ativo. Sobrescreve o nível de esforço da sessão. Padrão: herda da sessão. Opções: `low`, `medium`, `high`, `max` (apenas Opus 4.6)                                                                                                                               |
 | `isolation`       | No       | Defina como `worktree` para executar o subagente em um [git worktree](/pt/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) temporário, dando-lhe uma cópia isolada do repositório. O worktree é automaticamente limpo se o subagente não fizer alterações                              |
+| `initialPrompt`   | No       | Auto-enviado como o primeiro turno do usuário quando este agente é executado como o agente da sessão principal (via `--agent` ou a configuração `agent`). [Comandos](/pt/commands) e [skills](/pt/skills) são processados. Preposto a qualquer prompt fornecido pelo usuário                                 |
 
 ### Escolher um modelo
 
@@ -242,6 +244,13 @@ O campo `model` controla qual [modelo de IA](/pt/model-config) o subagente usa:
 * **ID de modelo completo**: Use um ID de modelo completo como `claude-opus-4-6` ou `claude-sonnet-4-6`. Aceita os mesmos valores que o flag `--model`
 * **inherit**: Use o mesmo modelo que a conversa principal
 * **Omitido**: Se não especificado, padrão é `inherit` (usa o mesmo modelo que a conversa principal)
+
+Quando Claude invoca um subagente, ele também pode passar um parâmetro `model` para essa invocação específica. Claude Code resolve o modelo do subagente nesta ordem:
+
+1. A variável de ambiente [`CLAUDE_CODE_SUBAGENT_MODEL`](/pt/model-config#environment-variables), se definida
+2. O parâmetro `model` por invocação
+3. O frontmatter `model` da definição do subagente
+4. O modelo da conversa principal
 
 ### Controlar capacidades do subagente
 

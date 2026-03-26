@@ -25,13 +25,13 @@
 | Atalho                                            | Descrição                                                                                     | Contexto                                                                                                                                                                     |
 | :------------------------------------------------ | :-------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Ctrl+C`                                          | Cancelar entrada ou geração atual                                                             | Interrupção padrão                                                                                                                                                           |
-| `Ctrl+F`                                          | Encerrar todos os agentes em segundo plano. Pressione duas vezes em 3 segundos para confirmar | Controle de agente em segundo plano                                                                                                                                          |
+| `Ctrl+X Ctrl+K`                                   | Encerrar todos os agentes em segundo plano. Pressione duas vezes em 3 segundos para confirmar | Controle de agente em segundo plano                                                                                                                                          |
 | `Ctrl+D`                                          | Sair da sessão do Claude Code                                                                 | Sinal EOF                                                                                                                                                                    |
-| `Ctrl+G`                                          | Abrir no editor de texto padrão                                                               | Edite seu prompt ou resposta personalizada no seu editor de texto padrão                                                                                                     |
+| `Ctrl+G` ou `Ctrl+X Ctrl+E`                       | Abrir no editor de texto padrão                                                               | Edite seu prompt ou resposta personalizada no seu editor de texto padrão. `Ctrl+X Ctrl+E` é a ligação nativa do readline                                                     |
 | `Ctrl+L`                                          | Limpar tela do terminal                                                                       | Mantém histórico de conversa                                                                                                                                                 |
 | `Ctrl+O`                                          | Alternar saída detalhada                                                                      | Mostra uso e execução de ferramentas detalhados. Também expande chamadas de leitura e pesquisa do MCP, que se contraem para uma única linha como "Queried slack" por padrão  |
 | `Ctrl+R`                                          | Pesquisa reversa no histórico de comandos                                                     | Pesquise através de comandos anteriores interativamente                                                                                                                      |
-| `Ctrl+V` ou `Cmd+V` (iTerm2) ou `Alt+V` (Windows) | Colar imagem da área de transferência                                                         | Cola uma imagem ou caminho para um arquivo de imagem                                                                                                                         |
+| `Ctrl+V` ou `Cmd+V` (iTerm2) ou `Alt+V` (Windows) | Colar imagem da área de transferência                                                         | Insere um chip `[Image #N]` no cursor para que você possa referenciá-lo posicionalmente no seu prompt                                                                        |
 | `Ctrl+B`                                          | Tarefas em execução em segundo plano                                                          | Coloca comandos bash e agentes em segundo plano. Usuários de Tmux pressione duas vezes                                                                                       |
 | `Ctrl+T`                                          | Alternar lista de tarefas                                                                     | Mostrar ou ocultar a [lista de tarefas](#task-list) na área de status do terminal                                                                                            |
 | `Left/Right arrows`                               | Ciclar através de abas de diálogo                                                             | Navegue entre abas em diálogos de permissão e menus                                                                                                                          |
@@ -40,6 +40,7 @@
 | `Shift+Tab` ou `Alt+M` (algumas configurações)    | Alternar modos de permissão                                                                   | Alternar entre `default`, `acceptEdits`, `plan` e qualquer modo que você tenha ativado, como `auto` ou `bypassPermissions`. Veja [modos de permissão](/pt/permission-modes). |
 | `Option+P` (macOS) ou `Alt+P` (Windows/Linux)     | Alternar modelo                                                                               | Alternar modelos sem limpar seu prompt                                                                                                                                       |
 | `Option+T` (macOS) ou `Alt+T` (Windows/Linux)     | Alternar pensamento estendido                                                                 | Ativar ou desativar modo de pensamento estendido. Execute `/terminal-setup` primeiro para ativar este atalho                                                                 |
+| `Option+O` (macOS) ou `Alt+O` (Windows/Linux)     | Alternar modo rápido                                                                          | Ativar ou desativar [modo rápido](/pt/fast-mode)                                                                                                                             |
 
 ### Edição de texto
 
@@ -83,6 +84,15 @@
 | `/` no início | Comando ou skill             | Veja [comandos integrados](#built-in-commands) e [skills](/pt/skills) |
 | `!` no início | Modo Bash                    | Execute comandos diretamente e adicione saída de execução à sessão    |
 | `@`           | Menção de caminho de arquivo | Ativar preenchimento automático de caminho de arquivo                 |
+
+### Visualizador de transcrição
+
+Quando o visualizador de transcrição está aberto (alternado com `Ctrl+O`), estes atalhos estão disponíveis. `Ctrl+E` pode ser reatribuído via [`transcript:toggleShowAll`](/pt/keybindings).
+
+| Atalho               | Descrição                                                                                                                                     |
+| :------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+E`             | Alternar mostrar todo o conteúdo                                                                                                              |
+| `q`, `Ctrl+C`, `Esc` | Sair da visualização de transcrição. `Ctrl+C` e `Esc` podem ser reatribuídos via [`transcript:exit`](/pt/keybindings); `q` não é reatribuível |
 
 ### Entrada de voz
 
@@ -210,7 +220,7 @@ Para executar comandos em segundo plano, você pode:
 
 **Recursos principais:**
 
-* A saída é armazenada em buffer e Claude pode recuperá-la usando a ferramenta TaskOutput
+* A saída é escrita em um arquivo e Claude pode recuperá-la usando a ferramenta Read
 * Tarefas em segundo plano têm IDs únicos para rastreamento e recuperação de saída
 * Tarefas em segundo plano são limpas automaticamente quando Claude Code sai
 * Tarefas em segundo plano são automaticamente encerradas se a saída exceder 5GB, com uma nota em stderr explicando o motivo

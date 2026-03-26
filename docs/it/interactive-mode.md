@@ -25,13 +25,13 @@
 | Scorciatoia                                     | Descrizione                                                                              | Contesto                                                                                                                                                                                                    |
 | :---------------------------------------------- | :--------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Ctrl+C`                                        | Annulla l'input corrente o la generazione                                                | Interruzione standard                                                                                                                                                                                       |
-| `Ctrl+F`                                        | Termina tutti gli agenti in background. Premere due volte entro 3 secondi per confermare | Controllo agente in background                                                                                                                                                                              |
+| `Ctrl+X Ctrl+K`                                 | Termina tutti gli agenti in background. Premere due volte entro 3 secondi per confermare | Controllo agente in background                                                                                                                                                                              |
 | `Ctrl+D`                                        | Esci dalla sessione di Claude Code                                                       | Segnale EOF                                                                                                                                                                                                 |
-| `Ctrl+G`                                        | Apri nell'editor di testo predefinito                                                    | Modifica il vostro prompt o la risposta personalizzata nell'editor di testo predefinito                                                                                                                     |
+| `Ctrl+G` o `Ctrl+X Ctrl+E`                      | Apri nell'editor di testo predefinito                                                    | Modifica il vostro prompt o la risposta personalizzata nell'editor di testo predefinito. `Ctrl+X Ctrl+E` è il binding nativo di readline                                                                    |
 | `Ctrl+L`                                        | Cancella lo schermo del terminale                                                        | Mantiene la cronologia della conversazione                                                                                                                                                                  |
 | `Ctrl+O`                                        | Attiva/disattiva l'output dettagliato                                                    | Mostra l'utilizzo e l'esecuzione dettagliati degli strumenti. Inoltre espande le chiamate di lettura e ricerca MCP, che si compattano in una singola riga come "Queried slack" per impostazione predefinita |
 | `Ctrl+R`                                        | Ricerca inversa nella cronologia dei comandi                                             | Cerca i comandi precedenti in modo interattivo                                                                                                                                                              |
-| `Ctrl+V` o `Cmd+V` (iTerm2) o `Alt+V` (Windows) | Incolla immagine dagli appunti                                                           | Incolla un'immagine o un percorso a un file immagine                                                                                                                                                        |
+| `Ctrl+V` o `Cmd+V` (iTerm2) o `Alt+V` (Windows) | Incolla immagine dagli appunti                                                           | Inserisce un chip `[Image #N]` al cursore in modo da poter farvi riferimento posizionalmente nel vostro prompt                                                                                              |
 | `Ctrl+B`                                        | Attività in esecuzione in background                                                     | Esegue i comandi bash e gli agenti in background. Gli utenti Tmux premono due volte                                                                                                                         |
 | `Ctrl+T`                                        | Attiva/disattiva l'elenco delle attività                                                 | Mostra o nascondi l'[elenco delle attività](#task-list) nell'area di stato del terminale                                                                                                                    |
 | `Frecce sinistra/destra`                        | Cicla attraverso le schede della finestra di dialogo                                     | Naviga tra le schede nelle finestre di dialogo dei permessi e nei menu                                                                                                                                      |
@@ -40,6 +40,7 @@
 | `Shift+Tab` o `Alt+M` (alcune configurazioni)   | Cicla le modalità di permesso                                                            | Cicla attraverso `default`, `acceptEdits`, `plan` e qualsiasi modalità abilitata, come `auto` o `bypassPermissions`. Vedere [modalità di permesso](/it/permission-modes).                                   |
 | `Option+P` (macOS) o `Alt+P` (Windows/Linux)    | Cambia modello                                                                           | Cambia modelli senza cancellare il vostro prompt                                                                                                                                                            |
 | `Option+T` (macOS) o `Alt+T` (Windows/Linux)    | Attiva/disattiva il pensiero esteso                                                      | Abilita o disabilita la modalità di pensiero esteso. Eseguire prima `/terminal-setup` per abilitare questa scorciatoia                                                                                      |
+| `Option+O` (macOS) o `Alt+O` (Windows/Linux)    | Attiva/disattiva la modalità veloce                                                      | Abilita o disabilita la [modalità veloce](/it/fast-mode)                                                                                                                                                    |
 
 ### Modifica del testo
 
@@ -83,6 +84,15 @@
 | `/` all'inizio | Comando o skill                | Vedere [comandi integrati](#built-in-commands) e [skills](/it/skills)         |
 | `!` all'inizio | Modalità Bash                  | Esegui i comandi direttamente e aggiungi l'output di esecuzione alla sessione |
 | `@`            | Menzione del percorso del file | Attiva l'autocompletamento del percorso del file                              |
+
+### Visualizzatore di trascrizione
+
+Quando il visualizzatore di trascrizione è aperto (attivato con `Ctrl+O`), queste scorciatoie sono disponibili. `Ctrl+E` può essere riassegnato tramite [`transcript:toggleShowAll`](/it/keybindings).
+
+| Scorciatoia          | Descrizione                                                                                                                                                      |
+| :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+E`             | Attiva/disattiva mostra tutto il contenuto                                                                                                                       |
+| `q`, `Ctrl+C`, `Esc` | Esci dalla visualizzazione della trascrizione. `Ctrl+C` e `Esc` possono essere riassegnati tramite [`transcript:exit`](/it/keybindings); `q` non è riassegnabile |
 
 ### Input vocale
 
@@ -210,7 +220,7 @@ Per eseguire i comandi in background, potete:
 
 **Caratteristiche principali:**
 
-* L'output viene memorizzato nel buffer e Claude può recuperarlo utilizzando lo strumento TaskOutput
+* L'output viene scritto in un file e Claude può recuperarlo utilizzando lo strumento Read
 * Le attività in background hanno ID univoci per il tracciamento e il recupero dell'output
 * Le attività in background vengono pulite automaticamente quando Claude Code esce
 * Le attività in background vengono terminate automaticamente se l'output supera 5GB, con una nota in stderr che spiega il motivo
@@ -257,7 +267,7 @@ Dopo che Claude risponde, i suggerimenti continuano ad apparire in base alla vos
 
 Il suggerimento viene eseguito come una richiesta in background che riutilizza la cache del prompt della conversazione padre, quindi il costo aggiuntivo è minimo. Claude Code salta la generazione di suggerimenti quando la cache è fredda per evitare costi inutili.
 
-I suggerimenti vengono automaticamente saltati dopo il primo turno di una conversazione, in modalità non interattiva e in plan mode.
+I suggerimenti vengono automaticamente saltati dopo il primo turno di una conversazione, in modalità non interattiva e in Plan Mode.
 
 Per disabilitare completamente i suggerimenti di prompt, impostare la variabile di ambiente o attivare/disattivare l'impostazione in `/config`:
 

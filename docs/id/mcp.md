@@ -223,6 +223,7 @@ Dengan server MCP yang terhubung, Anda dapat meminta Claude Code untuk:
 * **Menanyakan database**: "Temukan email 10 pengguna acak yang menggunakan fitur ENG-4521, berdasarkan database PostgreSQL kami."
 * **Mengintegrasikan desain**: "Perbarui template email standar kami berdasarkan desain Figma baru yang diposting di Slack"
 * **Mengotomatisasi alur kerja**: "Buat draf Gmail mengundang 10 pengguna ini ke sesi umpan balik tentang fitur baru."
+* **Bereaksi terhadap peristiwa eksternal**: Server MCP juga dapat bertindak sebagai [saluran](/id/channels) yang mendorong pesan ke dalam sesi Anda, sehingga Claude bereaksi terhadap pesan Telegram, obrolan Discord, atau peristiwa webhook saat Anda sedang pergi.
 
 ## Server MCP populer
 
@@ -328,6 +329,10 @@ claude mcp remove github
 
 Claude Code mendukung notifikasi `list_changed` MCP, memungkinkan server MCP untuk secara dinamis memperbarui alat, prompt, dan sumber daya yang tersedia tanpa memerlukan Anda untuk memutuskan dan menghubungkan kembali. Ketika server MCP mengirim notifikasi `list_changed`, Claude Code secara otomatis menyegarkan kemampuan yang tersedia dari server tersebut.
 
+### Dorong pesan dengan saluran
+
+Server MCP juga dapat mendorong pesan langsung ke dalam sesi Anda sehingga Claude dapat bereaksi terhadap peristiwa eksternal seperti hasil CI, peringatan pemantauan, atau pesan obrolan. Untuk mengaktifkan ini, server Anda mendeklarasikan kemampuan `claude/channel` dan Anda memilihnya dengan flag `--channels` saat startup. Lihat [Saluran](/id/channels) untuk menggunakan saluran yang didukung secara resmi, atau [Referensi saluran](/id/channels-reference) untuk membangun saluran Anda sendiri.
+
 <Tip>
   Tips:
 
@@ -369,11 +374,13 @@ Dalam `.mcp.json` di root plugin:
 
 ```json  theme={null}
 {
-  "database-tools": {
-    "command": "${CLAUDE_PLUGIN_ROOT}/servers/db-server",
-    "args": ["--config", "${CLAUDE_PLUGIN_ROOT}/config.json"],
-    "env": {
-      "DB_URL": "${DB_URL}"
+  "mcpServers": {
+    "database-tools": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/servers/db-server",
+      "args": ["--config", "${CLAUDE_PLUGIN_ROOT}/config.json"],
+      "env": {
+        "DB_URL": "${DB_URL}"
+      }
     }
   }
 }
@@ -396,7 +403,7 @@ Atau inline dalam `plugin.json`:
 **Fitur MCP plugin**:
 
 * **Siklus hidup otomatis**: Pada startup sesi, server untuk plugin yang diaktifkan terhubung secara otomatis. Jika Anda mengaktifkan atau menonaktifkan plugin selama sesi, jalankan `/reload-plugins` untuk menghubungkan atau memutuskan server MCP-nya
-* **Variabel lingkungan**: Gunakan `${CLAUDE_PLUGIN_ROOT}` untuk jalur relatif plugin
+* **Variabel lingkungan**: gunakan `${CLAUDE_PLUGIN_ROOT}` untuk file plugin bundel dan `${CLAUDE_PLUGIN_DATA}` untuk [status persisten](/id/plugins-reference#persistent-data-directory) yang bertahan pembaruan plugin
 * **Akses lingkungan pengguna**: Akses ke variabel lingkungan yang sama seperti server yang dikonfigurasi secara manual
 * **Jenis transport berganda**: Dukungan transport stdio, SSE, dan HTTP (dukungan transport dapat bervariasi menurut server)
 
@@ -669,7 +676,7 @@ claude mcp add --transport http \
 
 ### Gunakan kredensial OAuth yang telah dikonfigurasi sebelumnya
 
-Beberapa server MCP tidak mendukung pengaturan OAuth otomatis. Jika Anda melihat kesalahan seperti "Incompatible auth server: does not support dynamic client registration," server memerlukan kredensial yang telah dikonfigurasi sebelumnya. Daftarkan aplikasi OAuth melalui portal pengembang server terlebih dahulu, kemudian berikan kredensial saat menambahkan server.
+Beberapa server MCP tidak mendukung pengaturan OAuth otomatis melalui Dynamic Client Registration. Jika Anda melihat kesalahan seperti "Incompatible auth server: does not support dynamic client registration," server memerlukan kredensial yang telah dikonfigurasi sebelumnya. Claude Code juga mendukung server yang menggunakan Client ID Metadata Document (CIMD) alih-alih Dynamic Client Registration, dan menemukan ini secara otomatis. Jika penemuan otomatis gagal, daftarkan aplikasi OAuth melalui portal pengembang server terlebih dahulu, kemudian berikan kredensial saat menambahkan server.
 
 <Steps>
   <Step title="Daftarkan aplikasi OAuth dengan server">
@@ -759,6 +766,48 @@ Atur `authServerMetadataUrl` dalam objek `oauth` dari konfigurasi server Anda di
 ```
 
 URL harus menggunakan `https://`. Opsi ini memerlukan Claude Code v2.1.64 atau lebih baru.
+
+### Gunakan header dinamis untuk autentikasi khusus
+
+Jika server MCP Anda menggunakan skema autentikasi selain OAuth (seperti Kerberos, token berumur pendek, atau SSO internal), gunakan `headersHelper` untuk menghasilkan header permintaan pada waktu koneksi. Claude Code menjalankan perintah dan menggabungkan outputnya ke dalam header koneksi.
+
+```json  theme={null}
+{
+  "mcpServers": {
+    "internal-api": {
+      "type": "http",
+      "url": "https://mcp.internal.example.com",
+      "headersHelper": "/opt/bin/get-mcp-auth-headers.sh"
+    }
+  }
+}
+```
+
+Perintah juga dapat inline:
+
+```json  theme={null}
+{
+  "mcpServers": {
+    "internal-api": {
+      "type": "http",
+      "url": "https://mcp.internal.example.com",
+      "headersHelper": "echo '{\"Authorization\": \"Bearer '\"$(get-token)\"'\"}'"
+    }
+  }
+}
+```
+
+**Persyaratan:**
+
+* Perintah harus menulis objek JSON dari pasangan kunci-nilai string ke stdout
+* Perintah berjalan dalam shell dengan waktu tunggu 10 detik
+* Header dinamis mengganti `headers` statis apa pun dengan nama yang sama
+
+Helper berjalan segar pada setiap koneksi (pada startup sesi dan pada reconnect). Tidak ada caching, jadi skrip Anda bertanggung jawab untuk penggunaan kembali token apa pun.
+
+<Note>
+  `headersHelper` mengeksekusi perintah shell arbitrer. Ketika ditentukan pada cakupan proyek atau lokal, itu hanya berjalan setelah Anda menerima dialog kepercayaan ruang kerja.
+</Note>
 
 ## Tambahkan server MCP dari konfigurasi JSON
 

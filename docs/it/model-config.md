@@ -117,7 +117,7 @@ Claude Code potrebbe eseguire automaticamente il fallback a Sonnet se si raggiun
 
 L'alias del modello `opusplan` fornisce un approccio ibrido automatizzato:
 
-* **In modalità piano** - Utilizza `opus` per il ragionamento complesso e le decisioni architettoniche
+* **In Plan Mode** - Utilizza `opus` per il ragionamento complesso e le decisioni architettoniche
 * **In modalità esecuzione** - Passa automaticamente a `sonnet` per la generazione di codice e l'implementazione
 
 Questo ti dà il meglio di entrambi i mondi: il ragionamento superiore di Opus per la pianificazione e l'efficienza di Sonnet per l'esecuzione.
@@ -126,7 +126,13 @@ Questo ti dà il meglio di entrambi i mondi: il ragionamento superiore di Opus p
 
 I [livelli di sforzo](https://platform.claude.com/docs/it/build-with-claude/effort) controllano il ragionamento adattivo, che alloca dinamicamente il pensiero in base alla complessità dell'attività. Lo sforzo inferiore è più veloce ed economico per attività semplici, mentre lo sforzo superiore fornisce un ragionamento più profondo per problemi complessi.
 
-Tre livelli persistono tra le sessioni: **low**, **medium** e **high**. Un quarto livello, **max**, fornisce il ragionamento più profondo senza vincoli sulla spesa di token, quindi le risposte sono più lente e costano più di `high`. `max` è disponibile solo su Opus 4.6 e si applica alla sessione corrente senza persistere. Opus 4.6 per impostazione predefinita utilizza uno sforzo medio per gli abbonati Max e Team.
+Tre livelli persistono tra le sessioni: **low**, **medium** e **high**. Un quarto livello, **max**, fornisce il ragionamento più profondo senza vincoli sulla spesa di token, quindi le risposte sono più lente e costano più di `high`. `max` è disponibile solo su Opus 4.6 e non persiste tra le sessioni tranne tramite la variabile di ambiente `CLAUDE_CODE_EFFORT_LEVEL`.
+
+Opus 4.6 e Sonnet 4.6 per impostazione predefinita utilizzano uno sforzo medio. Questo si applica a tutti i provider, inclusi Bedrock, Vertex AI e l'accesso diretto all'API.
+
+Il livello medio è consigliato per la maggior parte delle attività di codifica: bilancia velocità e profondità di ragionamento, e i livelli superiori possono causare al modello di pensare troppo al lavoro di routine. Riservare `high` o `max` per attività che traggono genuinamente vantaggio da un ragionamento più profondo, come problemi di debug difficili o decisioni architettoniche complesse.
+
+Per un ragionamento profondo una tantum senza modificare l'impostazione della sessione, includere "ultrathink" nel prompt per attivare uno sforzo elevato per quel turno.
 
 **Impostazione dello sforzo:**
 
@@ -135,8 +141,9 @@ Tre livelli persistono tra le sessioni: **low**, **medium** e **high**. Un quart
 * **Flag `--effort`**: passare `low`, `medium`, `high` o `max` per impostare il livello per una singola sessione quando si avvia Claude Code
 * **Variabile di ambiente**: impostare `CLAUDE_CODE_EFFORT_LEVEL` su `low`, `medium`, `high`, `max` o `auto`
 * **Impostazioni**: impostare `effortLevel` nel file delle impostazioni su `"low"`, `"medium"` o `"high"`
+* **Frontmatter di skill e subagent**: impostare `effort` in un file markdown di [skill](/it/skills#frontmatter-reference) o [subagent](/it/sub-agents#supported-frontmatter-fields) per sovrascrivere il livello di sforzo quando quella skill o subagent viene eseguita
 
-La variabile di ambiente ha la precedenza, quindi il livello configurato, quindi il valore predefinito del modello.
+La variabile di ambiente ha la precedenza su tutti gli altri metodi, quindi il livello configurato, quindi il valore predefinito del modello. Lo sforzo del frontmatter si applica quando quella skill o subagent è attiva, sovrascrivendo il livello della sessione ma non la variabile di ambiente.
 
 Lo sforzo è supportato su Opus 4.6 e Sonnet 4.6. Il cursore dello sforzo appare in `/model` quando è selezionato un modello supportato. Il livello di sforzo corrente viene visualizzato anche accanto al logo e al spinner, ad esempio "with low effort", in modo da poter confermare quale impostazione è attiva senza aprire `/model`.
 
@@ -177,6 +184,22 @@ Se l'account supporta il contesto 1M, l'opzione appare nel selettore di modelli 
 
 1. Nella [riga di stato](/it/statusline) (se configurata)
 2. In `/status`, che visualizza anche le informazioni dell'account.
+
+## Aggiungere un'opzione di modello personalizzato
+
+Utilizzare `ANTHROPIC_CUSTOM_MODEL_OPTION` per aggiungere una singola voce personalizzata al selettore `/model` senza sostituire gli alias incorporati. Questo è utile per distribuzioni di gateway LLM o per testare ID di modello che Claude Code non elenca per impostazione predefinita.
+
+Questo esempio imposta tutte e tre le variabili per rendere selezionabile una distribuzione Opus instradata tramite gateway:
+
+```bash  theme={null}
+export ANTHROPIC_CUSTOM_MODEL_OPTION="my-gateway/claude-opus-4-6"
+export ANTHROPIC_CUSTOM_MODEL_OPTION_NAME="Opus via Gateway"
+export ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION="Custom deployment routed through the internal LLM gateway"
+```
+
+La voce personalizzata appare in fondo al selettore `/model`. `ANTHROPIC_CUSTOM_MODEL_OPTION_NAME` e `ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION` sono facoltativi. Se omessi, l'ID del modello viene utilizzato come nome e la descrizione per impostazione predefinita è `Custom model (<model-id>)`.
+
+Claude Code salta la convalida per l'ID del modello impostato in `ANTHROPIC_CUSTOM_MODEL_OPTION`, quindi è possibile utilizzare qualsiasi stringa che l'endpoint API accetta.
 
 ## Variabili di ambiente
 

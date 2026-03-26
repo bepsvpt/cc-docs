@@ -126,7 +126,13 @@ Esto le da lo mejor de ambos mundos: el razonamiento superior de Opus para la pl
 
 [Los niveles de esfuerzo](https://platform.claude.com/docs/es/build-with-claude/effort) controlan el razonamiento adaptativo, que asigna dinámicamente el pensamiento basado en la complejidad de la tarea. El esfuerzo menor es más rápido y económico para tareas directas, mientras que el esfuerzo mayor proporciona un razonamiento más profundo para problemas complejos.
 
-Tres niveles persisten entre sesiones: **low**, **medium** y **high**. Un cuarto nivel, **max**, proporciona el razonamiento más profundo sin restricción en el gasto de tokens, por lo que las respuestas son más lentas y cuestan más que en `high`. `max` está disponible solo en Opus 4.6 y se aplica a la sesión actual sin persistir. Opus 4.6 tiene un esfuerzo medio predeterminado para suscriptores de Max y Team.
+Tres niveles persisten entre sesiones: **low**, **medium** y **high**. Un cuarto nivel, **max**, proporciona el razonamiento más profundo sin restricción en el gasto de tokens, por lo que las respuestas son más lentas y cuestan más que en `high`. `max` está disponible solo en Opus 4.6 y no persiste entre sesiones excepto a través de la variable de entorno `CLAUDE_CODE_EFFORT_LEVEL`.
+
+Opus 4.6 y Sonnet 4.6 tienen un esfuerzo medio predeterminado. Esto se aplica a todos los proveedores, incluidos Bedrock, Vertex AI y acceso directo a API.
+
+Medium es el nivel recomendado para la mayoría de tareas de codificación: equilibra velocidad y profundidad de razonamiento, y los niveles más altos pueden hacer que el modelo piense demasiado en el trabajo rutinario. Reserve `high` o `max` para tareas que genuinamente se benefician de un razonamiento más profundo, como problemas de depuración difíciles o decisiones arquitectónicas complejas.
+
+Para un razonamiento profundo único sin cambiar su configuración de sesión, incluya "ultrathink" en su indicación para activar esfuerzo alto para ese turno.
 
 **Configurar esfuerzo:**
 
@@ -135,8 +141,9 @@ Tres niveles persisten entre sesiones: **low**, **medium** y **high**. Un cuarto
 * **Bandera `--effort`**: pase `low`, `medium`, `high` o `max` para establecer el nivel para una única sesión al iniciar Claude Code
 * **Variable de entorno**: establezca `CLAUDE_CODE_EFFORT_LEVEL` en `low`, `medium`, `high`, `max` o `auto`
 * **Configuración**: establezca `effortLevel` en su archivo de configuración en `"low"`, `"medium"` o `"high"`
+* **Frontmatter de skill y subagent**: establezca `effort` en un archivo markdown de [skill](/es/skills#frontmatter-reference) o [subagent](/es/sub-agents#supported-frontmatter-fields) para anular el nivel de esfuerzo cuando ese skill o subagent se ejecuta
 
-La variable de entorno tiene precedencia, luego su nivel configurado, luego el valor predeterminado del modelo.
+La variable de entorno tiene precedencia sobre todos los demás métodos, luego su nivel configurado, luego el valor predeterminado del modelo. El esfuerzo de frontmatter se aplica cuando ese skill o subagent está activo, anulando el nivel de sesión pero no la variable de entorno.
 
 El esfuerzo es compatible con Opus 4.6 y Sonnet 4.6. El control deslizante de esfuerzo aparece en `/model` cuando se selecciona un modelo compatible. El nivel de esfuerzo actual también se muestra junto al logotipo y al indicador, por ejemplo "with low effort", para que pueda confirmar qué configuración está activa sin abrir `/model`.
 
@@ -177,6 +184,22 @@ Puede ver qué modelo está utilizando actualmente de varias formas:
 
 1. En [línea de estado](/es/statusline) (si está configurada)
 2. En `/status`, que también muestra la información de su cuenta.
+
+## Agregar una opción de modelo personalizado
+
+Utilice `ANTHROPIC_CUSTOM_MODEL_OPTION` para agregar una única entrada personalizada al selector `/model` sin reemplazar los alias integrados. Esto es útil para implementaciones de puerta de enlace LLM o prueba de IDs de modelo que Claude Code no enumera de forma predeterminada.
+
+Este ejemplo establece las tres variables para hacer que una implementación de Opus enrutada por puerta de enlace sea seleccionable:
+
+```bash  theme={null}
+export ANTHROPIC_CUSTOM_MODEL_OPTION="my-gateway/claude-opus-4-6"
+export ANTHROPIC_CUSTOM_MODEL_OPTION_NAME="Opus via Gateway"
+export ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION="Custom deployment routed through the internal LLM gateway"
+```
+
+La entrada personalizada aparece en la parte inferior del selector `/model`. `ANTHROPIC_CUSTOM_MODEL_OPTION_NAME` y `ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION` son opcionales. Si se omiten, el ID de modelo se utiliza como nombre y la descripción tiene como valor predeterminado `Custom model (<model-id>)`.
+
+Claude Code omite la validación para el ID de modelo establecido en `ANTHROPIC_CUSTOM_MODEL_OPTION`, por lo que puede utilizar cualquier cadena que su punto final de API acepte.
 
 ## Variables de entorno
 

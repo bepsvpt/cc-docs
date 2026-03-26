@@ -58,10 +58,16 @@ skills/
 ---
 name: agent-name
 description: このエージェントが専門とする内容と、Claude がそれを呼び出すべき時期
+model: sonnet
+effort: medium
+maxTurns: 20
+disallowedTools: Write, Edit
 ---
 
 エージェントの役割、専門知識、動作を説明する詳細なシステムプロンプト。
 ```
+
+プラグインエージェントは `name`、`description`、`model`、`effort`、`maxTurns`、`tools`、`disallowedTools`、`skills`、`memory`、`background`、`isolation` frontmatter フィールドをサポートしています。唯一の有効な `isolation` 値は `"worktree"` です。セキュリティ上の理由から、`hooks`、`mcpServers`、`permissionMode` はプラグイン提供のエージェントではサポートされていません。
 
 **統合ポイント**:
 
@@ -100,26 +106,39 @@ description: このエージェントが専門とする内容と、Claude がそ
 }
 ```
 
-**利用可能なイベント**:
+プラグイン hooks は[ユーザー定義 hooks](/ja/hooks)と同じライフサイクルイベントに応答します:
 
-* `PreToolUse`: Claude がツールを使用する前
-* `PostToolUse`: Claude がツールを正常に使用した後
-* `PostToolUseFailure`: Claude ツール実行が失敗した後
-* `PermissionRequest`: パーミッションダイアログが表示されるとき
-* `UserPromptSubmit`: ユーザーがプロンプトを送信するとき
-* `Notification`: Claude Code が通知を送信するとき
-* `Stop`: Claude が停止を試みるとき
-* `SubagentStart`: subagent が開始されるとき
-* `SubagentStop`: subagent が停止を試みるとき
-* `SessionStart`: セッションの開始時
-* `SessionEnd`: セッションの終了時
-* `TeammateIdle`: エージェントチームのチームメイトがアイドル状態になろうとしているとき
-* `TaskCompleted`: タスクが完了としてマークされているとき
-* `PreCompact`: 会話履歴がコンパクト化される前
+| Event                | When it fires                                                                                                                                          |
+| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SessionStart`       | When a session begins or resumes                                                                                                                       |
+| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                                                                   |
+| `PreToolUse`         | Before a tool call executes. Can block it                                                                                                              |
+| `PermissionRequest`  | When a permission dialog appears                                                                                                                       |
+| `PostToolUse`        | After a tool call succeeds                                                                                                                             |
+| `PostToolUseFailure` | After a tool call fails                                                                                                                                |
+| `Notification`       | When Claude Code sends a notification                                                                                                                  |
+| `SubagentStart`      | When a subagent is spawned                                                                                                                             |
+| `SubagentStop`       | When a subagent finishes                                                                                                                               |
+| `Stop`               | When Claude finishes responding                                                                                                                        |
+| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
+| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
+| `TaskCompleted`      | When a task is being marked as completed                                                                                                               |
+| `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
+| `ConfigChange`       | When a configuration file changes during a session                                                                                                     |
+| `CwdChanged`         | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
+| `FileChanged`        | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
+| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
+| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
+| `PreCompact`         | Before context compaction                                                                                                                              |
+| `PostCompact`        | After context compaction completes                                                                                                                     |
+| `Elicitation`        | When an MCP server requests user input during a tool call                                                                                              |
+| `ElicitationResult`  | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
+| `SessionEnd`         | When a session terminates                                                                                                                              |
 
 **Hook タイプ**:
 
 * `command`: シェルコマンドまたはスクリプトを実行
+* `http`: イベント JSON を URL への POST リクエストとして送信
 * `prompt`: LLM でプロンプトを評価（コンテキストの `$ARGUMENTS` プレースホルダーを使用）
 * `agent`: 複雑な検証タスク用のツール付き agentic verifier を実行
 
@@ -326,6 +345,51 @@ LSP 統合は以下を提供します:
 | `mcpServers`   | string\|array\|object | MCP 設定パスまたはインライン設定                                                                                                  | `"./my-extra-mcp-config.json"`          |
 | `outputStyles` | string\|array         | 追加の出力スタイルファイル/ディレクトリ                                                                                                | `"./styles/"`                           |
 | `lspServers`   | string\|array\|object | [Language Server Protocol](https://microsoft.github.io/language-server-protocol/)コード インテリジェンス用の設定（定義へのジャンプ、参照の検索など） | `"./.lsp.json"`                         |
+| `userConfig`   | object                | ユーザー設定可能な値は有効化時にプロンプトされます。[ユーザー設定](#user-configuration)を参照してください                                                    | 下記を参照                                   |
+| `channels`     | array                 | メッセージ注入用のチャネル宣言（Telegram、Slack、Discord スタイル）。[チャネル](#channels)を参照してください                                             | 下記を参照                                   |
+
+### ユーザー設定
+
+`userConfig` フィールドは、プラグインが有効になったときに Claude Code がユーザーにプロンプトする値を宣言します。ユーザーに `settings.json` を手動で編集させる代わりにこれを使用してください。
+
+```json  theme={null}
+{
+  "userConfig": {
+    "api_endpoint": {
+      "description": "Your team's API endpoint",
+      "sensitive": false
+    },
+    "api_token": {
+      "description": "API authentication token",
+      "sensitive": true
+    }
+  }
+}
+```
+
+キーは有効な識別子である必要があります。各値は MCP および LSP サーバー設定、hook コマンド、および（機密でない値のみ）skill およびエージェントコンテンツで `${user_config.KEY}` として置換可能です。値はプラグインサブプロセスに `CLAUDE_PLUGIN_OPTION_<KEY>` 環境変数としてもエクスポートされます。
+
+機密でない値は `settings.json` の `pluginConfigs[<plugin-id>].options` に保存されます。機密値はシステムキーチェーン（またはキーチェーンが利用できない場合は `~/.claude/.credentials.json`）に移動します。キーチェーンストレージは OAuth トークンと共有され、約 2 KB の合計制限があるため、機密値は小さく保ってください。
+
+### チャネル
+
+`channels` フィールドを使用すると、プラグインは 1 つ以上のメッセージチャネルを宣言して、会話にコンテンツを注入できます。各チャネルはプラグインが提供する MCP サーバーにバインドされます。
+
+```json  theme={null}
+{
+  "channels": [
+    {
+      "server": "telegram",
+      "userConfig": {
+        "bot_token": { "description": "Telegram bot token", "sensitive": true },
+        "owner_id": { "description": "Your Telegram user ID", "sensitive": false }
+      }
+    }
+  ]
+}
+```
+
+`server` フィールドは必須で、プラグインの `mcpServers` のキーと一致する必要があります。オプションのチャネルごとの `userConfig` はトップレベルフィールドと同じスキーマを使用し、プラグインがプラグイン有効化時にボットトークンまたはオーナー ID をプロンプトできるようにします。
 
 ### パス動作ルール
 
@@ -353,7 +417,11 @@ LSP 統合は以下を提供します:
 
 ### 環境変数
 
-**`${CLAUDE_PLUGIN_ROOT}`**: プラグインディレクトリへの絶対パスを含みます。hooks、MCP servers、スクリプトでこれを使用して、インストール場所に関係なく正しいパスを確保してください。
+Claude Code は、プラグインパスを参照するための 2 つの変数を提供します。どちらも skill コンテンツ、エージェントコンテンツ、hook コマンド、MCP または LSP サーバー設定に表示される場所にインラインで置換されます。どちらも hook プロセスおよび MCP または LSP サーバーサブプロセスに環境変数としてエクスポートされます。
+
+**`${CLAUDE_PLUGIN_ROOT}`**: プラグインのインストールディレクトリへの絶対パス。プラグインにバンドルされたスクリプト、バイナリ、設定ファイルを参照するために使用します。このパスはプラグインが更新されると変更されるため、ここに書き込むファイルは更新後に保持されません。
+
+**`${CLAUDE_PLUGIN_DATA}`**: 更新後も保持される永続ディレクトリ。`node_modules` または Python 仮想環境などのインストール済み依存関係、生成されたコード、キャッシュ、およびプラグインバージョン全体で保持する必要があるその他のファイルに使用します。このディレクトリは、この変数が最初に参照されるときに自動的に作成されます。
 
 ```json  theme={null}
 {
@@ -371,6 +439,51 @@ LSP 統合は以下を提供します:
   }
 }
 ```
+
+#### 永続データディレクトリ
+
+`${CLAUDE_PLUGIN_DATA}` ディレクトリは `~/.claude/plugins/data/{id}/` に解決されます。ここで `{id}` はプラグイン識別子で、`a-z`、`A-Z`、`0-9`、`_`、`-` 以外の文字が `-` に置き換えられます。`formatter@my-marketplace` としてインストールされたプラグインの場合、ディレクトリは `~/.claude/plugins/data/formatter-my-marketplace/` です。
+
+一般的な使用法は、言語依存関係を 1 回インストールしてセッションとプラグイン更新全体で再利用することです。データディレクトリは単一のプラグインバージョンより長く存在するため、ディレクトリ存在チェックだけでは、更新がプラグインの依存関係マニフェストを変更したときを検出できません。推奨パターンはバンドルされたマニフェストをデータディレクトリのコピーと比較し、異なる場合は再インストールします。
+
+この `SessionStart` hook は最初の実行時に `node_modules` をインストールし、プラグイン更新に変更された `package.json` が含まれるたびに再度インストールします:
+
+```json  theme={null}
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "diff -q \"${CLAUDE_PLUGIN_ROOT}/package.json\" \"${CLAUDE_PLUGIN_DATA}/package.json\" >/dev/null 2>&1 || (cd \"${CLAUDE_PLUGIN_DATA}\" && cp \"${CLAUDE_PLUGIN_ROOT}/package.json\" . && npm install) || rm -f \"${CLAUDE_PLUGIN_DATA}/package.json\""
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+`diff` は保存されたコピーが不足しているか、バンドルされたコピーと異なる場合にゼロ以外で終了し、最初の実行と依存関係変更更新の両方をカバーします。`npm install` が失敗した場合、末尾の `rm` はコピーされたマニフェストを削除して、次のセッションが再試行します。
+
+`${CLAUDE_PLUGIN_ROOT}` にバンドルされたスクリプトは、永続化された `node_modules` に対して実行できます:
+
+```json  theme={null}
+{
+  "mcpServers": {
+    "routines": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/server.js"],
+      "env": {
+        "NODE_PATH": "${CLAUDE_PLUGIN_DATA}/node_modules"
+      }
+    }
+  }
+}
+```
+
+データディレクトリは、インストールされている最後のスコープからプラグインをアンインストールするときに自動的に削除されます。`/plugin` インターフェイスはディレクトリサイズを表示し、削除前にプロンプトします。CLI はデフォルトで削除します。[`--keep-data`](#plugin-uninstall)を渡して保持します。
 
 ***
 
@@ -508,12 +621,15 @@ claude plugin uninstall <plugin> [options]
 
 **オプション:**
 
-| オプション                 | 説明                                           | デフォルト  |
-| :-------------------- | :------------------------------------------- | :----- |
-| `-s, --scope <scope>` | スコープからアンインストール: `user`、`project`、または `local` | `user` |
-| `-h, --help`          | コマンドのヘルプを表示                                  |        |
+| オプション                 | 説明                                                 | デフォルト  |
+| :-------------------- | :------------------------------------------------- | :----- |
+| `-s, --scope <scope>` | スコープからアンインストール: `user`、`project`、または `local`       | `user` |
+| `--keep-data`         | プラグインの[永続データディレクトリ](#persistent-data-directory)を保持 |        |
+| `-h, --help`          | コマンドのヘルプを表示                                        |        |
 
 **エイリアス:** `remove`、`rm`
+
+デフォルトでは、最後に残っているスコープからアンインストールすると、プラグインの `${CLAUDE_PLUGIN_DATA}` ディレクトリも削除されます。たとえば、新しいバージョンをテストした後に再インストールする場合は、`--keep-data` を使用して保持します。
 
 ### plugin enable
 
@@ -578,7 +694,7 @@ claude plugin update <plugin> [options]
 
 ### デバッグコマンド
 
-`claude --debug`（または TUI 内の `/debug`）を使用してプラグイン読み込みの詳細を確認します:
+`claude --debug` を使用してプラグイン読み込みの詳細を確認します:
 
 これは以下を表示します:
 
@@ -589,14 +705,14 @@ claude plugin update <plugin> [options]
 
 ### 一般的な問題
 
-| 問題                                  | 原因                          | 解決策                                                                    |
-| :---------------------------------- | :-------------------------- | :--------------------------------------------------------------------- |
-| プラグインが読み込まれない                       | 無効な `plugin.json`           | `claude plugin validate` または `/plugin validate` で JSON 構文を検証           |
-| コマンドが表示されない                         | ディレクトリ構造が間違っている             | `commands/` がルートにあることを確認。`.claude-plugin/` 内ではない                       |
-| Hooks が発火しない                        | スクリプトが実行可能でない               | `chmod +x script.sh` を実行                                               |
-| MCP サーバーが失敗                         | `${CLAUDE_PLUGIN_ROOT}` が不足 | すべてのプラグインパスに変数を使用                                                      |
-| パスエラー                               | 絶対パスが使用されている                | すべてのパスは相対的で `./` で始まる必要があります                                           |
-| LSP `Executable not found in $PATH` | 言語サーバーがインストールされていない         | バイナリをインストール（例: `npm install -g typescript-language-server typescript`） |
+| 問題                                  | 原因                          | 解決策                                                                                                                            |
+| :---------------------------------- | :-------------------------- | :----------------------------------------------------------------------------------------------------------------------------- |
+| プラグインが読み込まれない                       | 無効な `plugin.json`           | `claude plugin validate` または `/plugin validate` で `plugin.json`、skill/agent/command frontmatter、`hooks/hooks.json` の構文とスキーマを確認 |
+| コマンドが表示されない                         | ディレクトリ構造が間違っている             | `commands/` がルートにあることを確認。`.claude-plugin/` 内ではない                                                                               |
+| Hooks が発火しない                        | スクリプトが実行可能でない               | `chmod +x script.sh` を実行                                                                                                       |
+| MCP サーバーが失敗                         | `${CLAUDE_PLUGIN_ROOT}` が不足 | すべてのプラグインパスに変数を使用                                                                                                              |
+| パスエラー                               | 絶対パスが使用されている                | すべてのパスは相対的で `./` で始まる必要があります                                                                                                   |
+| LSP `Executable not found in $PATH` | 言語サーバーがインストールされていない         | バイナリをインストール（例: `npm install -g typescript-language-server typescript`）                                                         |
 
 ### エラーメッセージの例
 
@@ -625,7 +741,7 @@ claude plugin update <plugin> [options]
 
 1. イベント名が正しいことを確認（大文字小文字を区別）: `PostToolUse`、`postToolUse` ではない
 2. マッチャーパターンがツールと一致することを確認: ファイル操作の場合 `"matcher": "Write|Edit"`
-3. hook タイプが有効であることを確認: `command`、`prompt`、または `agent`
+3. hook タイプが有効であることを確認: `command`、`http`、`prompt`、または `agent`
 
 ### MCP サーバートラブルシューティング
 

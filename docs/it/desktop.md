@@ -51,7 +51,7 @@ Il pulsante **+** accanto alla casella del prompt ti dà accesso agli allegati d
 
 La casella del prompt supporta due modi per portare contesto esterno:
 
-* **@mention file**: digita `@` seguito da un nome di file per aggiungere un file al contesto della conversazione. Claude può quindi leggere e fare riferimento a quel file.
+* **@mention file**: digita `@` seguito da un nome di file per aggiungere un file al contesto della conversazione. Claude può quindi leggere e fare riferimento a quel file. @mention non è disponibile nelle sessioni remote.
 * **Allega file**: allega immagini, PDF e altri file al tuo prompt usando il pulsante di allegato, o trascina e rilascia i file direttamente nel prompt. Questo è utile per condividere screenshot di bug, mockup di design o documenti di riferimento.
 
 ### Scegli una modalità di autorizzazione
@@ -622,7 +622,7 @@ Questa tabella confronta le capacità principali tra CLI e Desktop. Per un elenc
 | [Provider di terze parti](/it/third-party-integrations) | Bedrock, Vertex, Foundry                                  | non disponibile. Desktop si connette direttamente all'API di Anthropic.                                             |
 | [MCP servers](/it/mcp)                                  | configura nei file di impostazioni                        | UI Connectors per sessioni locali e SSH, o file di impostazioni                                                     |
 | [Plugins](/it/plugins)                                  | comando `/plugin`                                         | UI gestore plugin                                                                                                   |
-| @mention file                                           | basato su testo                                           | con autocomplete                                                                                                    |
+| @mention file                                           | basato su testo                                           | con autocomplete; sessioni locali e SSH solo                                                                        |
 | Allegati di file                                        | non disponibile                                           | immagini, PDF                                                                                                       |
 | Isolamento della sessione                               | flag [`--worktree`](/it/cli-reference)                    | worktree automatici                                                                                                 |
 | Sessioni multiple                                       | terminali separati                                        | schede della barra laterale                                                                                         |

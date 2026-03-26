@@ -85,7 +85,7 @@ claude
 | `OTEL_METRIC_EXPORT_INTERVAL`                       | 导出间隔（毫秒）（默认：60000）                                  | `5000`、`60000`                     |
 | `OTEL_LOGS_EXPORT_INTERVAL`                         | 日志导出间隔（毫秒）（默认：5000）                                 | `1000`、`10000`                     |
 | `OTEL_LOG_USER_PROMPTS`                             | 启用用户提示内容的日志记录（默认：禁用）                                | `1` 启用                             |
-| `OTEL_LOG_TOOL_DETAILS`                             | 启用在工具事件中记录 MCP 服务器/工具名称和技能名称（默认：禁用）                 | `1` 启用                             |
+| `OTEL_LOG_TOOL_DETAILS`                             | 启用在工具事件中记录工具输入参数、MCP 服务器/工具名称和技能名称（默认：禁用）           | `1` 启用                             |
 | `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | 指标时间性偏好（默认：`delta`）。如果您的后端期望累积时间性，请设置为 `cumulative` | `delta`、`cumulative`               |
 | `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | 刷新动态标头的间隔（默认：1740000ms / 29 分钟）                     | `900000`                           |
 
@@ -93,11 +93,11 @@ claude
 
 以下环境变量控制指标中包含哪些属性以管理基数：
 
-| 环境变量                                | 描述                           | 默认值     | 禁用示例    |
-| ----------------------------------- | ---------------------------- | ------- | ------- |
-| `OTEL_METRICS_INCLUDE_SESSION_ID`   | 在指标中包含 session.id 属性         | `true`  | `false` |
-| `OTEL_METRICS_INCLUDE_VERSION`      | 在指标中包含 app.version 属性        | `false` | `true`  |
-| `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` | 在指标中包含 user.account\_uuid 属性 | `true`  | `false` |
+| 环境变量                                | 描述                                              | 默认值     | 禁用示例    |
+| ----------------------------------- | ----------------------------------------------- | ------- | ------- |
+| `OTEL_METRICS_INCLUDE_SESSION_ID`   | 在指标中包含 session.id 属性                            | `true`  | `false` |
+| `OTEL_METRICS_INCLUDE_VERSION`      | 在指标中包含 app.version 属性                           | `false` | `true`  |
+| `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` | 在指标中包含 user.account\_uuid 和 user.account\_id 属性 | `true`  | `false` |
 
 这些变量有助于控制指标的基数，这会影响指标后端中的存储要求和查询性能。较低的基数通常意味着更好的性能和更低的存储成本，但分析的数据粒度较低。
 
@@ -225,15 +225,21 @@ export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
 
 所有指标和事件共享这些标准属性：
 
-| 属性                  | 描述                                             | 控制方式                                         |
-| ------------------- | ---------------------------------------------- | -------------------------------------------- |
-| `session.id`        | 唯一的会话标识符                                       | `OTEL_METRICS_INCLUDE_SESSION_ID`（默认：true）   |
-| `app.version`       | 当前 Claude Code 版本                              | `OTEL_METRICS_INCLUDE_VERSION`（默认：false）     |
-| `organization.id`   | 组织 UUID（已认证时）                                  | 可用时始终包含                                      |
-| `user.account_uuid` | 账户 UUID（已认证时）                                  | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID`（默认：true） |
-| `user.id`           | 匿名设备/安装标识符，按 Claude Code 安装生成                  | 始终包含                                         |
-| `user.email`        | 用户电子邮件地址（通过 OAuth 认证时）                         | 可用时始终包含                                      |
-| `terminal.type`     | 终端类型，例如 `iTerm.app`、`vscode`、`cursor` 或 `tmux` | 检测到时始终包含                                     |
+| 属性                  | 描述                                                              | 控制方式                                         |
+| ------------------- | --------------------------------------------------------------- | -------------------------------------------- |
+| `session.id`        | 唯一的会话标识符                                                        | `OTEL_METRICS_INCLUDE_SESSION_ID`（默认：true）   |
+| `app.version`       | 当前 Claude Code 版本                                               | `OTEL_METRICS_INCLUDE_VERSION`（默认：false）     |
+| `organization.id`   | 组织 UUID（已认证时）                                                   | 可用时始终包含                                      |
+| `user.account_uuid` | 账户 UUID（已认证时）                                                   | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID`（默认：true） |
+| `user.account_id`   | 账户 ID，采用与 Anthropic 管理 API 匹配的标记格式（已认证时），例如 `user_01BWBeN28...` | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID`（默认：true） |
+| `user.id`           | 匿名设备/安装标识符，按 Claude Code 安装生成                                   | 始终包含                                         |
+| `user.email`        | 用户电子邮件地址（通过 OAuth 认证时）                                          | 可用时始终包含                                      |
+| `terminal.type`     | 终端类型，例如 `iTerm.app`、`vscode`、`cursor` 或 `tmux`                  | 检测到时始终包含                                     |
+
+事件另外包含以下属性。这些永远不会附加到指标，因为它们会导致无限基数：
+
+* `prompt.id`：UUID 将用户提示与所有后续事件关联到下一个提示。请参阅 [事件关联属性](#event-correlation-attributes)。
+* `workspace.host_paths`：在桌面应用中选择的主机工作区目录，作为字符串数组
 
 ### 指标
 
@@ -384,6 +390,7 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
   * 对于 Bash 工具：包括 `bash_command`、`full_command`、`timeout`、`description`、`dangerouslyDisableSandbox` 和 `git_commit_id`（git commit 命令成功时的提交 SHA）
   * 对于 MCP 工具（当 `OTEL_LOG_TOOL_DETAILS=1` 时）：包括 `mcp_server_name`、`mcp_tool_name`
   * 对于 Skill 工具（当 `OTEL_LOG_TOOL_DETAILS=1` 时）：包括 `skill_name`
+* `tool_input`（当 `OTEL_LOG_TOOL_DETAILS=1` 时）：JSON 序列化的工具参数。超过 512 个字符的单个值被截断，完整有效负载限制为约 4 K 字符。适用于所有工具，包括 MCP 工具。
 
 #### API 请求事件
 
@@ -473,7 +480,7 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * 异常的令牌消耗
 * 来自特定用户的高会话量
 
-所有指标都可以按 `user.account_uuid`、`organization.id`、`session.id`、`model` 和 `app.version` 进行分段。
+所有指标都可以按 `user.account_uuid`、`user.account_id`、`organization.id`、`session.id`、`model` 和 `app.version` 进行分段。
 
 ### 事件分析
 
@@ -528,7 +535,7 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * 原始文件内容和代码片段不包含在指标或事件中。工具执行事件在 `tool_parameters` 字段中包含 bash 命令和文件路径，这可能包含敏感值。如果您的命令可能包含机密，请配置您的遥测后端以过滤或编辑 `tool_parameters`
 * 通过 OAuth 认证时，`user.email` 包含在遥测属性中。如果这对您的组织是一个问题，请与您的遥测后端合作以过滤或编辑此字段
 * 默认情况下不收集用户提示内容。仅记录提示长度。要包含提示内容，请设置 `OTEL_LOG_USER_PROMPTS=1`
-* 默认情况下不记录 MCP 服务器/工具名称和技能名称，因为它们可能会泄露用户特定的配置。要包含它们，请设置 `OTEL_LOG_TOOL_DETAILS=1`
+* 默认情况下不记录工具输入参数。要包含它们，请设置 `OTEL_LOG_TOOL_DETAILS=1`。启用后，`tool_result` 事件包含 MCP 服务器/工具名称和技能名称，以及包含文件路径、URL、搜索模式和其他参数的 `tool_input` 属性。超过 512 个字符的单个值被截断，总数限制为约 4 K 字符，但参数仍可能包含敏感值。根据需要配置您的遥测后端以过滤或编辑 `tool_input`
 
 ## 在 Amazon Bedrock 上监控 Claude Code
 

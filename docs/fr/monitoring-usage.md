@@ -68,36 +68,36 @@ Exemple de configuration des paramètres gérés :
 
 ### Variables de configuration courantes
 
-| Variable d'environnement                            | Description                                                                                                                                    | Exemples de valeurs                         |
-| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | Active la collecte de télémétrie (obligatoire)                                                                                                 | `1`                                         |
-| `OTEL_METRICS_EXPORTER`                             | Types d'exportateur de métriques, séparés par des virgules                                                                                     | `console`, `otlp`, `prometheus`             |
-| `OTEL_LOGS_EXPORTER`                                | Types d'exportateur de journaux/événements, séparés par des virgules                                                                           | `console`, `otlp`                           |
-| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | Protocole pour l'exportateur OTLP, s'applique à tous les signaux                                                                               | `grpc`, `http/json`, `http/protobuf`        |
-| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | Point de terminaison du collecteur OTLP pour tous les signaux                                                                                  | `http://localhost:4317`                     |
-| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | Protocole pour les métriques, remplace le paramètre général                                                                                    | `grpc`, `http/json`, `http/protobuf`        |
-| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | Point de terminaison des métriques OTLP, remplace le paramètre général                                                                         | `http://localhost:4318/v1/metrics`          |
-| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | Protocole pour les journaux, remplace le paramètre général                                                                                     | `grpc`, `http/json`, `http/protobuf`        |
-| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | Point de terminaison des journaux OTLP, remplace le paramètre général                                                                          | `http://localhost:4318/v1/logs`             |
-| `OTEL_EXPORTER_OTLP_HEADERS`                        | En-têtes d'authentification pour OTLP                                                                                                          | `Authorization=Bearer token`                |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | Clé client pour l'authentification mTLS                                                                                                        | Chemin vers le fichier de clé client        |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | Certificat client pour l'authentification mTLS                                                                                                 | Chemin vers le fichier de certificat client |
-| `OTEL_METRIC_EXPORT_INTERVAL`                       | Intervalle d'export en millisecondes (par défaut : 60000)                                                                                      | `5000`, `60000`                             |
-| `OTEL_LOGS_EXPORT_INTERVAL`                         | Intervalle d'export des journaux en millisecondes (par défaut : 5000)                                                                          | `1000`, `10000`                             |
-| `OTEL_LOG_USER_PROMPTS`                             | Activer la journalisation du contenu des invites utilisateur (par défaut : désactivé)                                                          | `1` pour activer                            |
-| `OTEL_LOG_TOOL_DETAILS`                             | Activer la journalisation des noms de serveur MCP/outil et des noms de compétences dans les événements d'outil (par défaut : désactivé)        | `1` pour activer                            |
-| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | Préférence de temporalité des métriques (par défaut : `delta`). Définissez sur `cumulative` si votre backend attend une temporalité cumulative | `delta`, `cumulative`                       |
-| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | Intervalle d'actualisation des en-têtes dynamiques (par défaut : 1740000ms / 29 minutes)                                                       | `900000`                                    |
+| Variable d'environnement                            | Description                                                                                                                                                             | Exemples de valeurs                         |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | Active la collecte de télémétrie (obligatoire)                                                                                                                          | `1`                                         |
+| `OTEL_METRICS_EXPORTER`                             | Types d'exportateur de métriques, séparés par des virgules                                                                                                              | `console`, `otlp`, `prometheus`             |
+| `OTEL_LOGS_EXPORTER`                                | Types d'exportateur de journaux/événements, séparés par des virgules                                                                                                    | `console`, `otlp`                           |
+| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | Protocole pour l'exportateur OTLP, s'applique à tous les signaux                                                                                                        | `grpc`, `http/json`, `http/protobuf`        |
+| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | Point de terminaison du collecteur OTLP pour tous les signaux                                                                                                           | `http://localhost:4317`                     |
+| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | Protocole pour les métriques, remplace le paramètre général                                                                                                             | `grpc`, `http/json`, `http/protobuf`        |
+| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | Point de terminaison des métriques OTLP, remplace le paramètre général                                                                                                  | `http://localhost:4318/v1/metrics`          |
+| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | Protocole pour les journaux, remplace le paramètre général                                                                                                              | `grpc`, `http/json`, `http/protobuf`        |
+| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | Point de terminaison des journaux OTLP, remplace le paramètre général                                                                                                   | `http://localhost:4318/v1/logs`             |
+| `OTEL_EXPORTER_OTLP_HEADERS`                        | En-têtes d'authentification pour OTLP                                                                                                                                   | `Authorization=Bearer token`                |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | Clé client pour l'authentification mTLS                                                                                                                                 | Chemin vers le fichier de clé client        |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | Certificat client pour l'authentification mTLS                                                                                                                          | Chemin vers le fichier de certificat client |
+| `OTEL_METRIC_EXPORT_INTERVAL`                       | Intervalle d'export en millisecondes (par défaut : 60000)                                                                                                               | `5000`, `60000`                             |
+| `OTEL_LOGS_EXPORT_INTERVAL`                         | Intervalle d'export des journaux en millisecondes (par défaut : 5000)                                                                                                   | `1000`, `10000`                             |
+| `OTEL_LOG_USER_PROMPTS`                             | Activer la journalisation du contenu des invites utilisateur (par défaut : désactivé)                                                                                   | `1` pour activer                            |
+| `OTEL_LOG_TOOL_DETAILS`                             | Activer la journalisation des arguments d'entrée d'outil, des noms de serveur MCP/outil et des noms de compétences dans les événements d'outil (par défaut : désactivé) | `1` pour activer                            |
+| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | Préférence de temporalité des métriques (par défaut : `delta`). Définissez sur `cumulative` si votre backend attend une temporalité cumulative                          | `delta`, `cumulative`                       |
+| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | Intervalle d'actualisation des en-têtes dynamiques (par défaut : 1740000ms / 29 minutes)                                                                                | `900000`                                    |
 
 ### Contrôle de la cardinalité des métriques
 
 Les variables d'environnement suivantes contrôlent les attributs inclus dans les métriques pour gérer la cardinalité :
 
-| Variable d'environnement            | Description                                              | Valeur par défaut | Exemple pour désactiver |
-| ----------------------------------- | -------------------------------------------------------- | ----------------- | ----------------------- |
-| `OTEL_METRICS_INCLUDE_SESSION_ID`   | Inclure l'attribut session.id dans les métriques         | `true`            | `false`                 |
-| `OTEL_METRICS_INCLUDE_VERSION`      | Inclure l'attribut app.version dans les métriques        | `false`           | `true`                  |
-| `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` | Inclure l'attribut user.account\_uuid dans les métriques | `true`            | `false`                 |
+| Variable d'environnement            | Description                                                                     | Valeur par défaut | Exemple pour désactiver |
+| ----------------------------------- | ------------------------------------------------------------------------------- | ----------------- | ----------------------- |
+| `OTEL_METRICS_INCLUDE_SESSION_ID`   | Inclure l'attribut session.id dans les métriques                                | `true`            | `false`                 |
+| `OTEL_METRICS_INCLUDE_VERSION`      | Inclure l'attribut app.version dans les métriques                               | `false`           | `true`                  |
+| `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` | Inclure les attributs user.account\_uuid et user.account\_id dans les métriques | `true`            | `false`                 |
 
 Ces variables aident à contrôler la cardinalité des métriques, ce qui affecte les exigences de stockage et les performances des requêtes dans votre backend de métriques. Une cardinalité plus faible signifie généralement de meilleures performances et des coûts de stockage plus bas, mais des données moins granulaires pour l'analyse.
 
@@ -225,15 +225,21 @@ export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
 
 Toutes les métriques et tous les événements partagent ces attributs standard :
 
-| Attribut            | Description                                                                         | Contrôlé par                                            |
-| ------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `session.id`        | Identifiant de session unique                                                       | `OTEL_METRICS_INCLUDE_SESSION_ID` (par défaut : true)   |
-| `app.version`       | Version actuelle de Claude Code                                                     | `OTEL_METRICS_INCLUDE_VERSION` (par défaut : false)     |
-| `organization.id`   | UUID de l'organisation (si authentifié)                                             | Toujours inclus si disponible                           |
-| `user.account_uuid` | UUID du compte (si authentifié)                                                     | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (par défaut : true) |
-| `user.id`           | Identifiant anonyme d'appareil/installation, généré par installation de Claude Code | Toujours inclus                                         |
-| `user.email`        | Adresse e-mail de l'utilisateur (si authentifié via OAuth)                          | Toujours inclus si disponible                           |
-| `terminal.type`     | Type de terminal, tel que `iTerm.app`, `vscode`, `cursor`, ou `tmux`                | Toujours inclus si détecté                              |
+| Attribut            | Description                                                                                                                  | Contrôlé par                                            |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `session.id`        | Identifiant de session unique                                                                                                | `OTEL_METRICS_INCLUDE_SESSION_ID` (par défaut : true)   |
+| `app.version`       | Version actuelle de Claude Code                                                                                              | `OTEL_METRICS_INCLUDE_VERSION` (par défaut : false)     |
+| `organization.id`   | UUID de l'organisation (si authentifié)                                                                                      | Toujours inclus si disponible                           |
+| `user.account_uuid` | UUID du compte (si authentifié)                                                                                              | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (par défaut : true) |
+| `user.account_id`   | ID du compte au format balisé correspondant aux API d'administration Anthropic (si authentifié), tel que `user_01BWBeN28...` | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (par défaut : true) |
+| `user.id`           | Identifiant anonyme d'appareil/installation, généré par installation de Claude Code                                          | Toujours inclus                                         |
+| `user.email`        | Adresse e-mail de l'utilisateur (si authentifié via OAuth)                                                                   | Toujours inclus si disponible                           |
+| `terminal.type`     | Type de terminal, tel que `iTerm.app`, `vscode`, `cursor`, ou `tmux`                                                         | Toujours inclus si détecté                              |
+
+Les événements incluent en outre les attributs suivants. Ceux-ci ne sont jamais attachés aux métriques car ils causeraient une cardinalité non bornée :
+
+* `prompt.id` : UUID corrélant une invite utilisateur avec tous les événements suivants jusqu'à l'invite suivante. Voir [Attributs de corrélation d'événements](#event-correlation-attributes).
+* `workspace.host_paths` : répertoires d'espace de travail hôte sélectionnés dans l'application de bureau, sous forme de tableau de chaînes
 
 ### Métriques
 
@@ -384,6 +390,7 @@ Enregistré lorsqu'un outil termine son exécution.
   * Pour l'outil Bash : inclut `bash_command`, `full_command`, `timeout`, `description`, `dangerouslyDisableSandbox`, et `git_commit_id` (le SHA du commit, lorsqu'une commande `git commit` réussit)
   * Pour les outils MCP (lorsque `OTEL_LOG_TOOL_DETAILS=1`) : inclut `mcp_server_name`, `mcp_tool_name`
   * Pour l'outil Skill (lorsque `OTEL_LOG_TOOL_DETAILS=1`) : inclut `skill_name`
+* `tool_input` (lorsque `OTEL_LOG_TOOL_DETAILS=1`) : Arguments d'outil sérialisés en JSON. Les valeurs individuelles dépassant 512 caractères sont tronquées, et la charge utile complète est limitée à environ 4 K caractères. S'applique à tous les outils, y compris les outils MCP.
 
 #### Événement de demande d'API
 
@@ -473,7 +480,7 @@ Les alertes courantes à considérer :
 * Consommation de jetons inhabituelle
 * Volume de session élevé d'utilisateurs spécifiques
 
-Toutes les métriques peuvent être segmentées par `user.account_uuid`, `organization.id`, `session.id`, `model`, et `app.version`.
+Toutes les métriques peuvent être segmentées par `user.account_uuid`, `user.account_id`, `organization.id`, `session.id`, `model`, et `app.version`.
 
 ### Analyse des événements
 
@@ -528,7 +535,7 @@ Pour un guide complet sur la mesure du retour sur investissement pour Claude Cod
 * Les contenus de fichiers bruts et les extraits de code ne sont pas inclus dans les métriques ou les événements. Les événements d'exécution d'outils incluent les commandes bash et les chemins de fichiers dans le champ `tool_parameters`, qui peuvent contenir des valeurs sensibles. Si vos commandes peuvent inclure des secrets, configurez votre backend de télémétrie pour filtrer ou masquer `tool_parameters`
 * Lorsqu'authentifié via OAuth, `user.email` est inclus dans les attributs de télémétrie. Si cela pose un problème pour votre organisation, travaillez avec votre backend de télémétrie pour filtrer ou masquer ce champ
 * Le contenu des invites utilisateur n'est pas collecté par défaut. Seule la longueur de l'invite est enregistrée. Pour inclure le contenu de l'invite, définissez `OTEL_LOG_USER_PROMPTS=1`
-* Les noms de serveur MCP/outil et les noms de compétences ne sont pas enregistrés par défaut car ils peuvent révéler des configurations spécifiques à l'utilisateur. Pour les inclure, définissez `OTEL_LOG_TOOL_DETAILS=1`
+* Les arguments d'entrée d'outil ne sont pas enregistrés par défaut. Pour les inclure, définissez `OTEL_LOG_TOOL_DETAILS=1`. Lorsqu'activé, les événements `tool_result` incluent les noms de serveur MCP/outil et les noms de compétences plus un attribut `tool_input` avec les chemins de fichiers, les URL, les modèles de recherche et d'autres arguments. Les valeurs individuelles dépassant 512 caractères sont tronquées et le total est limité à environ 4 K caractères, mais les arguments peuvent toujours contenir des valeurs sensibles. Configurez votre backend de télémétrie pour filtrer ou masquer `tool_input` selon les besoins
 
 ## Surveiller Claude Code sur Amazon Bedrock
 

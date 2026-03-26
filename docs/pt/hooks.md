@@ -18,36 +18,38 @@ Hooks disparam em pontos específicos durante uma sessão do Claude Code. Quando
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/2YzYcIR7V1VggfgF/images/hooks-lifecycle.svg?fit=max&auto=format&n=2YzYcIR7V1VggfgF&q=85&s=3004e6c5dc95c4fe7fa3eb40fdc4176c" alt="Diagrama do ciclo de vida do hook mostrando a sequência de hooks de SessionStart através do loop agentic (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCompleted) até PostCompact e SessionEnd, com Elicitation e ElicitationResult aninhados dentro da execução de ferramenta MCP e WorktreeCreate, WorktreeRemove, Notification, ConfigChange e InstructionsLoaded como eventos assíncronos independentes" width="520" height="1100" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/JCMefyZyaJwkJgv-/images/hooks-lifecycle.svg?fit=max&auto=format&n=JCMefyZyaJwkJgv-&q=85&s=f004f3fc7324fa2a4630e8d6559cf6dd" alt="Diagrama do ciclo de vida do hook mostrando a sequência de hooks de SessionStart através do loop agentic (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCompleted) até Stop ou StopFailure, TeammateIdle, PreCompact, PostCompact e SessionEnd, com Elicitation e ElicitationResult aninhados dentro da execução de ferramenta MCP e WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged e FileChanged como eventos assíncronos independentes" width="520" height="1100" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
 A tabela abaixo resume quando cada evento dispara. A seção [Eventos de hook](#hook-events) documenta o esquema de entrada completo e as opções de controle de decisão para cada um.
 
-| Event                | When it fires                                                                                                                                  |
-| :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SessionStart`       | When a session begins or resumes                                                                                                               |
-| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                                                           |
-| `PreToolUse`         | Before a tool call executes. Can block it                                                                                                      |
-| `PermissionRequest`  | When a permission dialog appears                                                                                                               |
-| `PostToolUse`        | After a tool call succeeds                                                                                                                     |
-| `PostToolUseFailure` | After a tool call fails                                                                                                                        |
-| `Notification`       | When Claude Code sends a notification                                                                                                          |
-| `SubagentStart`      | When a subagent is spawned                                                                                                                     |
-| `SubagentStop`       | When a subagent finishes                                                                                                                       |
-| `Stop`               | When Claude finishes responding                                                                                                                |
-| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                       |
-| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                             |
-| `TaskCompleted`      | When a task is being marked as completed                                                                                                       |
-| `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session |
-| `ConfigChange`       | When a configuration file changes during a session                                                                                             |
-| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                    |
-| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                                                           |
-| `PreCompact`         | Before context compaction                                                                                                                      |
-| `PostCompact`        | After context compaction completes                                                                                                             |
-| `Elicitation`        | When an MCP server requests user input during a tool call                                                                                      |
-| `ElicitationResult`  | After a user responds to an MCP elicitation, before the response is sent back to the server                                                    |
-| `SessionEnd`         | When a session terminates                                                                                                                      |
+| Event                | When it fires                                                                                                                                          |
+| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SessionStart`       | When a session begins or resumes                                                                                                                       |
+| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                                                                   |
+| `PreToolUse`         | Before a tool call executes. Can block it                                                                                                              |
+| `PermissionRequest`  | When a permission dialog appears                                                                                                                       |
+| `PostToolUse`        | After a tool call succeeds                                                                                                                             |
+| `PostToolUseFailure` | After a tool call fails                                                                                                                                |
+| `Notification`       | When Claude Code sends a notification                                                                                                                  |
+| `SubagentStart`      | When a subagent is spawned                                                                                                                             |
+| `SubagentStop`       | When a subagent finishes                                                                                                                               |
+| `Stop`               | When Claude finishes responding                                                                                                                        |
+| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
+| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
+| `TaskCompleted`      | When a task is being marked as completed                                                                                                               |
+| `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
+| `ConfigChange`       | When a configuration file changes during a session                                                                                                     |
+| `CwdChanged`         | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
+| `FileChanged`        | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
+| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
+| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
+| `PreCompact`         | Before context compaction                                                                                                                              |
+| `PostCompact`        | After context compaction completes                                                                                                                     |
+| `Elicitation`        | When an MCP server requests user input during a tool call                                                                                              |
+| `ElicitationResult`  | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
+| `SessionEnd`         | When a session terminates                                                                                                                              |
 
 ### Como um hook é resolvido
 
@@ -166,17 +168,23 @@ Para detalhes sobre resolução de arquivo de configurações, consulte [configu
 
 O campo `matcher` é uma string regex que filtra quando hooks disparam. Use `"*"`, `""` ou omita `matcher` inteiramente para corresponder a todas as ocorrências. Cada tipo de evento corresponde em um campo diferente:
 
-| Evento                                                                                                                | O que o matcher filtra      | Valores de matcher de exemplo                                                      |
-| :-------------------------------------------------------------------------------------------------------------------- | :-------------------------- | :--------------------------------------------------------------------------------- |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                                                | nome da ferramenta          | `Bash`, `Edit\|Write`, `mcp__.*`                                                   |
-| `SessionStart`                                                                                                        | como a sessão começou       | `startup`, `resume`, `clear`, `compact`                                            |
-| `SessionEnd`                                                                                                          | por que a sessão terminou   | `clear`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`     |
-| `Notification`                                                                                                        | tipo de notificação         | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`           |
-| `SubagentStart`                                                                                                       | tipo de agente              | `Bash`, `Explore`, `Plan` ou nomes de agentes personalizados                       |
-| `PreCompact`                                                                                                          | o que acionou a compactação | `manual`, `auto`                                                                   |
-| `SubagentStop`                                                                                                        | tipo de agente              | mesmos valores que `SubagentStart`                                                 |
-| `ConfigChange`                                                                                                        | fonte de configuração       | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills` |
-| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `InstructionsLoaded` | sem suporte a matcher       | sempre dispara em cada ocorrência                                                  |
+| Evento                                                                                          | O que o matcher filtra                         | Valores de matcher de exemplo                                                                                             |
+| :---------------------------------------------------------------------------------------------- | :--------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                          | nome da ferramenta                             | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `SessionStart`                                                                                  | como a sessão começou                          | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `SessionEnd`                                                                                    | por que a sessão terminou                      | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
+| `Notification`                                                                                  | tipo de notificação                            | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
+| `SubagentStart`                                                                                 | tipo de agente                                 | `Bash`, `Explore`, `Plan` ou nomes de agentes personalizados                                                              |
+| `PreCompact`, `PostCompact`                                                                     | o que acionou a compactação                    | `manual`, `auto`                                                                                                          |
+| `SubagentStop`                                                                                  | tipo de agente                                 | mesmos valores que `SubagentStart`                                                                                        |
+| `ConfigChange`                                                                                  | fonte de configuração                          | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
+| `CwdChanged`                                                                                    | sem suporte a matcher                          | sempre dispara em cada mudança de diretório                                                                               |
+| `FileChanged`                                                                                   | nome do arquivo (basename do arquivo alterado) | `.envrc`, `.env`, qualquer nome de arquivo que você queira monitorar                                                      |
+| `StopFailure`                                                                                   | tipo de erro                                   | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                            | razão de carregamento                          | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `Elicitation`                                                                                   | nome do servidor MCP                           | seus nomes de servidor MCP configurados                                                                                   |
+| `ElicitationResult`                                                                             | nome do servidor MCP                           | mesmos valores que `Elicitation`                                                                                          |
+| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | sem suporte a matcher                          | sempre dispara em cada ocorrência                                                                                         |
 
 O matcher é uma regex, então `Edit|Write` corresponde a qualquer ferramenta e `Notebook.*` corresponde a qualquer ferramenta começando com Notebook. O matcher executa contra um campo da [entrada JSON](#hook-input-and-output) que o Claude Code envia para seu hook em stdin. Para eventos de ferramenta, esse campo é `tool_name`. Cada seção [evento de hook](#hook-events) lista o conjunto completo de valores de matcher e o esquema de entrada para esse evento.
 
@@ -200,7 +208,7 @@ Este exemplo executa um script de linting apenas quando Claude escreve ou edita 
 }
 ```
 
-`UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` e `InstructionsLoaded` não suportam matchers e sempre disparam em cada ocorrência. Se você adicionar um campo `matcher` a esses eventos, ele é silenciosamente ignorado.
+`UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` e `CwdChanged` não suportam matchers e sempre disparam em cada ocorrência. Se você adicionar um campo `matcher` a esses eventos, ele é silenciosamente ignorado.
 
 #### Corresponder ferramentas MCP
 
@@ -330,7 +338,8 @@ Todos os hooks correspondentes executam em paralelo, e manipuladores idênticos 
 Use variáveis de ambiente para referenciar scripts de hook relativos à raiz do projeto ou plugin, independentemente do diretório de trabalho quando o hook executa:
 
 * `$CLAUDE_PROJECT_DIR`: a raiz do projeto. Envolva em aspas para lidar com caminhos com espaços.
-* `${CLAUDE_PLUGIN_ROOT}`: o diretório raiz do plugin, para scripts agrupados com um [plugin](/pt/plugins).
+* `${CLAUDE_PLUGIN_ROOT}`: o diretório raiz do plugin, para scripts agrupados com um [plugin](/pt/plugins). Muda em cada atualização de plugin.
+* `${CLAUDE_PLUGIN_DATA}`: o [diretório de dados persistentes](/pt/plugins-reference#persistent-data-directory) do plugin, para dependências e estado que devem sobreviver a atualizações de plugin.
 
 <Tabs>
   <Tab title="Scripts de projeto">
@@ -442,13 +451,13 @@ Hooks de comando recebem dados JSON via stdin e comunicam resultados através de
 
 Todos os eventos de hook recebem esses campos como JSON, além de campos específicos do evento documentados em cada seção [evento de hook](#hook-events). Para hooks de comando, este JSON chega via stdin. Para hooks HTTP, chega como corpo da solicitação POST.
 
-| Campo             | Descrição                                                                                                                                 |
-| :---------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
-| `session_id`      | Identificador de sessão atual                                                                                                             |
-| `transcript_path` | Caminho para JSON de conversa                                                                                                             |
-| `cwd`             | Diretório de trabalho atual quando o hook é invocado                                                                                      |
-| `permission_mode` | [Modo de permissão](/pt/permissions#permission-modes) atual: `"default"`, `"plan"`, `"acceptEdits"`, `"dontAsk"` ou `"bypassPermissions"` |
-| `hook_event_name` | Nome do evento que disparou                                                                                                               |
+| Campo             | Descrição                                                                                                                                                                                                                                                |
+| :---------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `session_id`      | Identificador de sessão atual                                                                                                                                                                                                                            |
+| `transcript_path` | Caminho para JSON de conversa                                                                                                                                                                                                                            |
+| `cwd`             | Diretório de trabalho atual quando o hook é invocado                                                                                                                                                                                                     |
+| `permission_mode` | [Modo de permissão](/pt/permissions#permission-modes) atual: `"default"`, `"plan"`, `"acceptEdits"`, `"auto"`, `"dontAsk"` ou `"bypassPermissions"`. Nem todos os eventos recebem este campo: consulte cada exemplo JSON de evento abaixo para verificar |
+| `hook_event_name` | Nome do evento que disparou                                                                                                                                                                                                                              |
 
 Ao executar com `--agent` ou dentro de um subagente, dois campos adicionais são incluídos:
 
@@ -514,12 +523,15 @@ Código de saída 2 é a forma de um hook sinalizar "pare, não faça isso". O e
 | `TeammateIdle`       | Sim            | Previne o colega de ficar ocioso (colega continua trabalhando)                    |
 | `TaskCompleted`      | Sim            | Previne a tarefa de ser marcada como concluída                                    |
 | `ConfigChange`       | Sim            | Bloqueia a mudança de configuração de entrar em efeito (exceto `policy_settings`) |
+| `StopFailure`        | Não            | Saída e código de saída são ignorados                                             |
 | `PostToolUse`        | Não            | Mostra stderr ao Claude (ferramenta já executou)                                  |
 | `PostToolUseFailure` | Não            | Mostra stderr ao Claude (ferramenta já falhou)                                    |
 | `Notification`       | Não            | Mostra stderr apenas ao usuário                                                   |
 | `SubagentStart`      | Não            | Mostra stderr apenas ao usuário                                                   |
 | `SessionStart`       | Não            | Mostra stderr apenas ao usuário                                                   |
 | `SessionEnd`         | Não            | Mostra stderr apenas ao usuário                                                   |
+| `CwdChanged`         | Não            | Mostra stderr apenas ao usuário                                                   |
+| `FileChanged`        | Não            | Mostra stderr apenas ao usuário                                                   |
 | `PreCompact`         | Não            | Mostra stderr apenas ao usuário                                                   |
 | `PostCompact`        | Não            | Mostra stderr apenas ao usuário                                                   |
 | `Elicitation`        | Sim            | Nega a elicitação                                                                 |
@@ -573,16 +585,16 @@ Para parar Claude inteiramente independentemente do tipo de evento:
 
 Nem todo evento suporta bloqueio ou controle de comportamento através de JSON. Os eventos que fazem cada um usam um conjunto diferente de campos para expressar essa decisão. Use esta tabela como referência rápida antes de escrever um hook:
 
-| Eventos                                                                               | Padrão de decisão                    | Campos-chave                                                                                                                                                                                |
-| :------------------------------------------------------------------------------------ | :----------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange   | `decision` de nível superior         | `decision: "block"`, `reason`                                                                                                                                                               |
-| TeammateIdle, TaskCompleted                                                           | Código de saída ou `continue: false` | Código de saída 2 bloqueia a ação com feedback de stderr. JSON `{"continue": false, "stopReason": "..."}` também para o colega inteiramente, correspondendo ao comportamento do hook `Stop` |
-| PreToolUse                                                                            | `hookSpecificOutput`                 | `permissionDecision` (allow/deny/ask), `permissionDecisionReason`                                                                                                                           |
-| PermissionRequest                                                                     | `hookSpecificOutput`                 | `decision.behavior` (allow/deny)                                                                                                                                                            |
-| WorktreeCreate                                                                        | caminho stdout                       | Hook imprime caminho absoluto para worktree criado. Saída não-zero falha na criação                                                                                                         |
-| Elicitation                                                                           | `hookSpecificOutput`                 | `action` (accept/decline/cancel), `content` (valores de campo de formulário para accept)                                                                                                    |
-| ElicitationResult                                                                     | `hookSpecificOutput`                 | `action` (accept/decline/cancel), `content` (valores de campo de formulário override)                                                                                                       |
-| WorktreeRemove, Notification, SessionEnd, PreCompact, PostCompact, InstructionsLoaded | Nenhum                               | Sem controle de decisão. Usado para efeitos colaterais como logging ou limpeza                                                                                                              |
+| Eventos                                                                                                                     | Padrão de decisão                    | Campos-chave                                                                                                                                                                                |
+| :-------------------------------------------------------------------------------------------------------------------------- | :----------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange                                         | `decision` de nível superior         | `decision: "block"`, `reason`                                                                                                                                                               |
+| TeammateIdle, TaskCompleted                                                                                                 | Código de saída ou `continue: false` | Código de saída 2 bloqueia a ação com feedback de stderr. JSON `{"continue": false, "stopReason": "..."}` também para o colega inteiramente, correspondendo ao comportamento do hook `Stop` |
+| PreToolUse                                                                                                                  | `hookSpecificOutput`                 | `permissionDecision` (allow/deny/ask), `permissionDecisionReason`                                                                                                                           |
+| PermissionRequest                                                                                                           | `hookSpecificOutput`                 | `decision.behavior` (allow/deny)                                                                                                                                                            |
+| WorktreeCreate                                                                                                              | caminho stdout                       | Hook imprime caminho absoluto para worktree criado. Saída não-zero falha na criação                                                                                                         |
+| Elicitation                                                                                                                 | `hookSpecificOutput`                 | `action` (accept/decline/cancel), `content` (valores de campo de formulário para accept)                                                                                                    |
+| ElicitationResult                                                                                                           | `hookSpecificOutput`                 | `action` (accept/decline/cancel), `content` (valores de campo de formulário override)                                                                                                       |
+| WorktreeRemove, Notification, SessionEnd, PreCompact, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged | Nenhum                               | Sem controle de decisão. Usado para efeitos colaterais como logging ou limpeza                                                                                                              |
 
 Aqui estão exemplos de cada padrão em ação:
 
@@ -661,7 +673,6 @@ Além dos [campos de entrada comuns](#common-input-fields), hooks SessionStart r
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
-  "permission_mode": "default",
   "hook_event_name": "SessionStart",
   "source": "startup",
   "model": "claude-sonnet-4-6"
@@ -725,34 +736,33 @@ exit 0
 Qualquer variável escrita para este arquivo estará disponível em todos os comandos Bash subsequentes que o Claude Code executa durante a sessão.
 
 <Note>
-  `CLAUDE_ENV_FILE` está disponível para hooks SessionStart. Outros tipos de hook não têm acesso a esta variável.
+  `CLAUDE_ENV_FILE` está disponível para SessionStart, [CwdChanged](#cwdchanged) e [FileChanged](#filechanged) hooks. Outros tipos de hook não têm acesso a esta variável.
 </Note>
 
 ### InstructionsLoaded
 
 Dispara quando um arquivo `CLAUDE.md` ou `.claude/rules/*.md` é carregado em contexto. Este evento dispara na inicialização da sessão para arquivos carregados com entusiasmo e novamente mais tarde quando arquivos são carregados preguiçosamente, por exemplo quando Claude acessa um subdiretório que contém um `CLAUDE.md` aninhado ou quando regras condicionais com frontmatter `paths:` correspondem. O hook não suporta bloqueio ou controle de decisão. Executa assincronamente para fins de observabilidade.
 
-InstructionsLoaded não suporta matchers e dispara em cada ocorrência de carregamento.
+O matcher executa contra `load_reason`. Por exemplo, use `"matcher": "session_start"` para disparar apenas para arquivos carregados na inicialização da sessão, ou `"matcher": "path_glob_match|nested_traversal"` para disparar apenas para carregamentos preguiçosos.
 
 #### Entrada de InstructionsLoaded
 
 Além dos [campos de entrada comuns](#common-input-fields), hooks InstructionsLoaded recebem esses campos:
 
-| Campo               | Descrição                                                                                                                      |
-| :------------------ | :----------------------------------------------------------------------------------------------------------------------------- |
-| `file_path`         | Caminho absoluto para o arquivo de instrução que foi carregado                                                                 |
-| `memory_type`       | Escopo do arquivo: `"User"`, `"Project"`, `"Local"` ou `"Managed"`                                                             |
-| `load_reason`       | Por que o arquivo foi carregado: `"session_start"`, `"nested_traversal"`, `"path_glob_match"` ou `"include"`                   |
-| `globs`             | Padrões de glob de caminho do frontmatter `paths:` do arquivo, se houver. Presente apenas para carregamentos `path_glob_match` |
-| `trigger_file_path` | Caminho para o arquivo cujo acesso acionou este carregamento, para carregamentos preguiçosos                                   |
-| `parent_file_path`  | Caminho para o arquivo de instrução pai que incluiu este, para carregamentos `include`                                         |
+| Campo               | Descrição                                                                                                                                                                                                                           |
+| :------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `file_path`         | Caminho absoluto para o arquivo de instrução que foi carregado                                                                                                                                                                      |
+| `memory_type`       | Escopo do arquivo: `"User"`, `"Project"`, `"Local"` ou `"Managed"`                                                                                                                                                                  |
+| `load_reason`       | Por que o arquivo foi carregado: `"session_start"`, `"nested_traversal"`, `"path_glob_match"`, `"include"` ou `"compact"`. O valor `"compact"` dispara quando arquivos de instrução são re-carregados após um evento de compactação |
+| `globs`             | Padrões de glob de caminho do frontmatter `paths:` do arquivo, se houver. Presente apenas para carregamentos `path_glob_match`                                                                                                      |
+| `trigger_file_path` | Caminho para o arquivo cujo acesso acionou este carregamento, para carregamentos preguiçosos                                                                                                                                        |
+| `parent_file_path`  | Caminho para o arquivo de instrução pai que incluiu este, para carregamentos `include`                                                                                                                                              |
 
 ```json  theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../transcript.jsonl",
   "cwd": "/Users/my-project",
-  "permission_mode": "default",
   "hook_event_name": "InstructionsLoaded",
   "file_path": "/Users/my-project/CLAUDE.md",
   "memory_type": "Project",
@@ -924,12 +934,12 @@ Gera um [subagente](/pt/sub-agents).
 
 Hooks `PreToolUse` podem controlar se uma chamada de ferramenta prossegue. Diferentemente de outros hooks que usam um campo `decision` de nível superior, PreToolUse retorna sua decisão dentro de um objeto `hookSpecificOutput`. Isso oferece controle mais rico: três resultados (permitir, negar ou pedir) além da capacidade de modificar entrada de ferramenta antes da execução.
 
-| Campo                      | Descrição                                                                                                                                                                  |
-| :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `permissionDecision`       | `"allow"` ignora o sistema de permissão, `"deny"` previne a chamada da ferramenta, `"ask"` solicita ao usuário confirmar                                                   |
-| `permissionDecisionReason` | Para `"allow"` e `"ask"`, mostrado ao usuário mas não ao Claude. Para `"deny"`, mostrado ao Claude                                                                         |
-| `updatedInput`             | Modifica os parâmetros de entrada da ferramenta antes da execução. Combine com `"allow"` para aprovação automática ou `"ask"` para mostrar a entrada modificada ao usuário |
-| `additionalContext`        | String adicionada ao contexto de Claude antes da ferramenta executar                                                                                                       |
+| Campo                      | Descrição                                                                                                                                                                                                                                     |
+| :------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `permissionDecision`       | `"allow"` ignora o prompt de permissão. `"deny"` previne a chamada da ferramenta. `"ask"` solicita ao usuário confirmar. [Regras de negação e pergunta](/pt/permissions#manage-permissions) ainda se aplicam quando um hook retorna `"allow"` |
+| `permissionDecisionReason` | Para `"allow"` e `"ask"`, mostrado ao usuário mas não ao Claude. Para `"deny"`, mostrado ao Claude                                                                                                                                            |
+| `updatedInput`             | Modifica os parâmetros de entrada da ferramenta antes da execução. Combine com `"allow"` para aprovação automática ou `"ask"` para mostrar a entrada modificada ao usuário                                                                    |
+| `additionalContext`        | String adicionada ao contexto de Claude antes da ferramenta executar                                                                                                                                                                          |
 
 Quando um hook retorna `"ask"`, o diálogo de permissão exibido ao usuário inclui um rótulo identificando de onde o hook veio: por exemplo, `[User]`, `[Project]`, `[Plugin]` ou `[Local]`. Isso ajuda os usuários a entender qual fonte de configuração está solicitando confirmação.
 
@@ -1179,7 +1189,6 @@ Além dos [campos de entrada comuns](#common-input-fields), hooks Notification r
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
-  "permission_mode": "default",
   "hook_event_name": "Notification",
   "message": "Claude needs your permission to use Bash",
   "title": "Permission needed",
@@ -1206,7 +1215,6 @@ Além dos [campos de entrada comuns](#common-input-fields), hooks SubagentStart 
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
-  "permission_mode": "default",
   "hook_event_name": "SubagentStart",
   "agent_id": "agent-abc123",
   "agent_type": "Explore"
@@ -1255,7 +1263,7 @@ Hooks SubagentStop usam o mesmo formato de controle de decisão que [hooks Stop]
 
 ### Stop
 
-Executa quando o agente Claude Code principal terminou de responder. Não executa se a parada ocorreu devido a uma interrupção do usuário.
+Executa quando o agente Claude Code principal terminou de responder. Não executa se a parada ocorreu devido a uma interrupção do usuário. Erros de API disparam [StopFailure](#stopfailure) em vez disso.
 
 #### Entrada de Stop
 
@@ -1288,6 +1296,34 @@ Hooks `Stop` e `SubagentStop` podem controlar se Claude continua. Além dos [cam
   "reason": "Must be provided when Claude is blocked from stopping"
 }
 ```
+
+### StopFailure
+
+Executa em vez de [Stop](#stop) quando o turno termina devido a um erro de API. Saída e código de saída são ignorados. Use isso para registrar falhas, enviar alertas ou tomar ações de recuperação quando Claude não consegue completar uma resposta devido a limites de taxa, problemas de autenticação ou outros erros de API.
+
+#### Entrada de StopFailure
+
+Além dos [campos de entrada comuns](#common-input-fields), hooks StopFailure recebem `error`, `error_details` opcional e `last_assistant_message` opcional. O campo `error` identifica o tipo de erro e é usado para filtragem de matcher.
+
+| Campo                    | Descrição                                                                                                                                                                                                                                             |
+| :----------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `error`                  | Tipo de erro: `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens` ou `unknown`                                                                                                             |
+| `error_details`          | Detalhes adicionais sobre o erro, quando disponível                                                                                                                                                                                                   |
+| `last_assistant_message` | O texto de erro renderizado mostrado na conversa. Diferentemente de `Stop` e `SubagentStop`, onde este campo contém a saída conversacional de Claude, para `StopFailure` contém a string de erro da API em si, como `"API Error: Rate limit reached"` |
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "cwd": "/Users/...",
+  "hook_event_name": "StopFailure",
+  "error": "rate_limit",
+  "error_details": "429 Too Many Requests",
+  "last_assistant_message": "API Error: Rate limit reached"
+}
+```
+
+Hooks StopFailure não têm controle de decisão. Eles executam apenas para fins de notificação e logging.
 
 ### TeammateIdle
 
@@ -1436,7 +1472,6 @@ Além dos [campos de entrada comuns](#common-input-fields), hooks ConfigChange r
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
-  "permission_mode": "default",
   "hook_event_name": "ConfigChange",
   "source": "project_settings",
   "file_path": "/Users/.../my-project/.claude/settings.json"
@@ -1460,6 +1495,75 @@ Hooks ConfigChange podem bloquear mudanças de configuração de entrar em efeit
 ```
 
 Mudanças `policy_settings` não podem ser bloqueadas. Hooks ainda disparam para fontes `policy_settings`, então você pode usá-los para logging de auditoria, mas qualquer decisão de bloqueio é ignorada. Isso garante que configurações gerenciadas por empresa sempre entrem em efeito.
+
+### CwdChanged
+
+Executa quando o diretório de trabalho muda durante uma sessão, por exemplo quando Claude executa um comando `cd`. Use isso para reagir a mudanças de diretório: recarregar variáveis de ambiente, ativar toolchains específicas do projeto ou executar scripts de configuração automaticamente. Emparelha com [FileChanged](#filechanged) para ferramentas como [direnv](https://direnv.net/) que gerenciam ambiente por diretório.
+
+Hooks CwdChanged têm acesso a `CLAUDE_ENV_FILE`. Variáveis escritas para esse arquivo persistem em comandos Bash subsequentes para a sessão, assim como em [hooks SessionStart](#persist-environment-variables). Apenas hooks `type: "command"` são suportados.
+
+CwdChanged não suporta matchers e dispara em cada mudança de diretório.
+
+#### Entrada de CwdChanged
+
+Além dos [campos de entrada comuns](#common-input-fields), hooks CwdChanged recebem `old_cwd` e `new_cwd`.
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../transcript.jsonl",
+  "cwd": "/Users/my-project/src",
+  "hook_event_name": "CwdChanged",
+  "old_cwd": "/Users/my-project",
+  "new_cwd": "/Users/my-project/src"
+}
+```
+
+#### Saída de CwdChanged
+
+Além dos [campos de saída JSON](#json-output) disponíveis para todos os hooks, hooks CwdChanged podem retornar `watchPaths` para definir dinamicamente quais caminhos de arquivo [FileChanged](#filechanged) monitora:
+
+| Campo        | Descrição                                                                                                                                                                                                                                   |
+| :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `watchPaths` | Array de caminhos absolutos. Substitui a lista de monitoramento dinâmica atual (caminhos de sua configuração `matcher` são sempre monitorados). Retornar um array vazio limpa a lista dinâmica, que é típico ao entrar em um novo diretório |
+
+Hooks CwdChanged não têm controle de decisão. Eles não podem bloquear a mudança de diretório.
+
+### FileChanged
+
+Executa quando um arquivo monitorado muda no disco. O campo `matcher` em sua configuração de hook controla quais nomes de arquivo monitorar: é uma lista separada por pipe de basenames (nomes de arquivo sem caminhos de diretório, por exemplo `".envrc|.env"`). O mesmo valor `matcher` também é usado para filtrar quais hooks executam quando um arquivo muda, correspondendo contra o basename do arquivo alterado. Útil para recarregar variáveis de ambiente quando arquivos de configuração do projeto são modificados.
+
+Hooks FileChanged têm acesso a `CLAUDE_ENV_FILE`. Variáveis escritas para esse arquivo persistem em comandos Bash subsequentes para a sessão, assim como em [hooks SessionStart](#persist-environment-variables). Apenas hooks `type: "command"` são suportados.
+
+#### Entrada de FileChanged
+
+Além dos [campos de entrada comuns](#common-input-fields), hooks FileChanged recebem `file_path` e `event`.
+
+| Campo       | Descrição                                                                                                   |
+| :---------- | :---------------------------------------------------------------------------------------------------------- |
+| `file_path` | Caminho absoluto para o arquivo que mudou                                                                   |
+| `event`     | O que aconteceu: `"change"` (arquivo modificado), `"add"` (arquivo criado) ou `"unlink"` (arquivo deletado) |
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../transcript.jsonl",
+  "cwd": "/Users/my-project",
+  "hook_event_name": "FileChanged",
+  "file_path": "/Users/my-project/.envrc",
+  "event": "change"
+}
+```
+
+#### Saída de FileChanged
+
+Além dos [campos de saída JSON](#json-output) disponíveis para todos os hooks, hooks FileChanged podem retornar `watchPaths` para atualizar dinamicamente quais caminhos de arquivo são monitorados:
+
+| Campo        | Descrição                                                                                                                                                                                                                                                  |
+| :----------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `watchPaths` | Array de caminhos absolutos. Substitui a lista de monitoramento dinâmica atual (caminhos de sua configuração `matcher` são sempre monitorados). Use isso quando seu script de hook descobre arquivos adicionais para monitorar baseado no arquivo alterado |
+
+Hooks FileChanged não têm controle de decisão. Eles não podem bloquear a mudança de arquivo de ocorrer.
 
 ### WorktreeCreate
 
@@ -1567,7 +1671,6 @@ Além dos [campos de entrada comuns](#common-input-fields), hooks PreCompact rec
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
-  "permission_mode": "default",
   "hook_event_name": "PreCompact",
   "trigger": "manual",
   "custom_instructions": ""
@@ -1594,7 +1697,6 @@ Além dos [campos de entrada comuns](#common-input-fields), hooks PostCompact re
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
-  "permission_mode": "default",
   "hook_event_name": "PostCompact",
   "trigger": "manual",
   "compact_summary": "Summary of the compacted conversation..."
@@ -1612,6 +1714,7 @@ O campo `reason` na entrada do hook indica por que a sessão terminou:
 | Razão                         | Descrição                                              |
 | :---------------------------- | :----------------------------------------------------- |
 | `clear`                       | Sessão limpa com comando `/clear`                      |
+| `resume`                      | Sessão alternada via `/resume` interativo              |
 | `logout`                      | Usuário fez logout                                     |
 | `prompt_input_exit`           | Usuário saiu enquanto entrada de prompt estava visível |
 | `bypass_permissions_disabled` | Modo de permissões de bypass foi desabilitado          |
@@ -1626,7 +1729,6 @@ Além dos [campos de entrada comuns](#common-input-fields), hooks SessionEnd rec
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
-  "permission_mode": "default",
   "hook_event_name": "SessionEnd",
   "reason": "other"
 }
@@ -1634,7 +1736,7 @@ Além dos [campos de entrada comuns](#common-input-fields), hooks SessionEnd rec
 
 Hooks SessionEnd não têm controle de decisão. Eles não podem bloquear terminação de sessão mas podem executar tarefas de limpeza.
 
-Hooks SessionEnd têm um timeout padrão de 1,5 segundos. Isso se aplica tanto à saída de sessão quanto a `/clear`. Se seus hooks precisarem de mais tempo, defina a variável de ambiente `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` para um valor mais alto em milissegundos. Qualquer configuração de `timeout` por hook também é limitada por este valor.
+Hooks SessionEnd têm um timeout padrão de 1,5 segundos. Isso se aplica tanto à saída de sessão quanto a `/clear` e alternância de sessões via `/resume` interativo. Se seus hooks precisarem de mais tempo, defina a variável de ambiente `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` para um valor mais alto em milissegundos. Qualquer configuração de `timeout` por hook também é limitada por este valor.
 
 ```bash  theme={null}
 CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
@@ -1774,14 +1876,17 @@ Eventos que suportam todos os quatro tipos de hook (`command`, `http`, `prompt` 
 Eventos que apenas suportam hooks `type: "command"`:
 
 * `ConfigChange`
+* `CwdChanged`
 * `Elicitation`
 * `ElicitationResult`
+* `FileChanged`
 * `InstructionsLoaded`
 * `Notification`
 * `PostCompact`
 * `PreCompact`
 * `SessionEnd`
 * `SessionStart`
+* `StopFailure`
 * `SubagentStart`
 * `TeammateIdle`
 * `WorktreeCreate`

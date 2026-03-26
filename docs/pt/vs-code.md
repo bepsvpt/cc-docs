@@ -234,6 +234,31 @@ Alguns atalhos dependem de qual painel está "focused" (recebendo entrada de tec
 | Show Logs                  | -                                                        | Visualize logs de depuração da extensão                                              |
 | Logout                     | -                                                        | Saia de sua conta Anthropic                                                          |
 
+### Launch a VS Code tab from other tools
+
+A extensão registra um manipulador de URI em `vscode://anthropic.claude-code/open`. Use-o para abrir uma nova aba Claude Code a partir de suas próprias ferramentas: um alias de shell, um bookmarklet de navegador ou qualquer script que possa abrir uma URL. Se VS Code não estiver já em execução, abrir a URL o inicia primeiro. Se VS Code já estiver em execução, a URL abre na janela que está atualmente focada.
+
+Invoque o manipulador com o abridor de URL do seu sistema operacional. No macOS:
+
+```bash  theme={null}
+open "vscode://anthropic.claude-code/open"
+```
+
+Use `xdg-open` no Linux ou `start` no Windows.
+
+O manipulador aceita dois parâmetros de consulta opcionais:
+
+| Parameter | Description                                                                                                                                                                                                                                                                                                                                                                                                    |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `prompt`  | Texto para pré-preenchimento na caixa de prompt. Deve ser codificado em URL. O prompt é pré-preenchido mas não enviado automaticamente.                                                                                                                                                                                                                                                                        |
+| `session` | Um ID de sessão para retomar em vez de iniciar uma nova conversa. A sessão deve pertencer ao espaço de trabalho atualmente aberto no VS Code. Se a sessão não for encontrada, uma conversa nova é iniciada em vez disso. Se a sessão já estiver aberta em uma aba, essa aba é focada. Para capturar um ID de sessão programaticamente, consulte [Continue conversations](/pt/headless#continue-conversations). |
+
+Por exemplo, para abrir uma aba pré-preenchida com "review my changes":
+
+```text  theme={null}
+vscode://anthropic.claude-code/open?prompt=review%20my%20changes
+```
+
 ## Configure settings
 
 A extensão tem dois tipos de configurações:

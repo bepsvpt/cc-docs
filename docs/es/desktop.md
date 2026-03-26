@@ -51,7 +51,7 @@ El botón **+** junto al cuadro de solicitud le da acceso a archivos adjuntos, [
 
 El cuadro de solicitud admite dos formas de traer contexto externo:
 
-* **Archivos @mention**: escriba `@` seguido de un nombre de archivo para agregar un archivo al contexto de la conversación. Claude puede entonces leer y hacer referencia a ese archivo.
+* **Archivos @mention**: escriba `@` seguido de un nombre de archivo para agregar un archivo al contexto de la conversación. Claude puede entonces leer y hacer referencia a ese archivo. @mention no está disponible en sesiones remotas.
 * **Adjuntar archivos**: adjunte imágenes, PDF y otros archivos a su solicitud usando el botón de adjuntos, o arrastre y suelte archivos directamente en la solicitud. Esto es útil para compartir capturas de pantalla de errores, maquetas de diseño o documentos de referencia.
 
 ### Elegir un modo de permisos
@@ -622,7 +622,7 @@ Esta tabla compara capacidades principales entre la CLI y Desktop. Para una list
 | [Proveedores de terceros](/es/third-party-integrations) | Bedrock, Vertex, Foundry                                  | No disponible. Desktop se conecta directamente a la API de Anthropic.                              |
 | [MCP servers](/es/mcp)                                  | Configurar en archivos de configuración                   | UI de Connectors para sesiones locales y SSH, o archivos de configuración                          |
 | [Plugins](/es/plugins)                                  | Comando `/plugin`                                         | UI del administrador de plugins                                                                    |
-| Archivos @mention                                       | Basado en texto                                           | Con autocompletado                                                                                 |
+| Archivos @mention                                       | Basado en texto                                           | Con autocompletado; sesiones locales y SSH solamente                                               |
 | Archivos adjuntos                                       | No disponible                                             | Imágenes, PDF                                                                                      |
 | Aislamiento de sesión                                   | Bandera [`--worktree`](/es/cli-reference)                 | Worktrees automáticos                                                                              |
 | Múltiples sesiones                                      | Terminales separadas                                      | Pestañas de barra lateral                                                                          |

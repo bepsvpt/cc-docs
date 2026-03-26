@@ -51,7 +51,7 @@ O botão **+** ao lado da caixa de prompt oferece acesso a anexos de arquivo, [s
 
 A caixa de prompt suporta duas maneiras de trazer contexto externo:
 
-* **@mention de arquivos**: digite `@` seguido de um nome de arquivo para adicionar um arquivo ao contexto da conversa. Claude pode então ler e referenciar esse arquivo.
+* **@mention de arquivos**: digite `@` seguido de um nome de arquivo para adicionar um arquivo ao contexto da conversa. Claude pode então ler e referenciar esse arquivo. @mention não está disponível em sessões remotas.
 * **Anexar arquivos**: anexe imagens, PDFs e outros arquivos ao seu prompt usando o botão de anexo, ou arraste e solte arquivos diretamente no prompt. Isso é útil para compartilhar capturas de tela de bugs, mockups de design ou documentos de referência.
 
 ### Escolher um modo de permissão
@@ -622,7 +622,7 @@ Esta tabela compara capacidades principais entre CLI e Desktop. Para uma lista c
 | [Provedores de terceiros](/pt/third-party-integrations) | Bedrock, Vertex, Foundry                                  | Não disponível. Desktop se conecta diretamente à API da Anthropic.                                 |
 | [MCP servers](/pt/mcp)                                  | Configure em arquivos de configuração                     | UI de Connectors para sessões locais e SSH, ou arquivos de configuração                            |
 | [Plugins](/pt/plugins)                                  | Comando `/plugin`                                         | UI do gerenciador de plugins                                                                       |
-| @mention de arquivos                                    | Baseado em texto                                          | Com autocompletar                                                                                  |
+| @mention de arquivos                                    | Baseado em texto                                          | Com autocompletar; sessões locais e SSH apenas                                                     |
 | Anexos de arquivo                                       | Não disponível                                            | Imagens, PDFs                                                                                      |
 | Isolamento de sessão                                    | Flag [`--worktree`](/pt/cli-reference)                    | Worktrees automáticos                                                                              |
 | Múltiplas sessões                                       | Terminais separados                                       | Abas na barra lateral                                                                              |

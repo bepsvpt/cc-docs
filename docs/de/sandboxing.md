@@ -97,6 +97,8 @@ Sie können Sandboxing durch Ausführung des `/sandbox`-Befehls aktivieren:
 
 Dies öffnet ein Menü, in dem Sie zwischen Sandbox-Modi wählen können. Wenn erforderliche Abhängigkeiten fehlen (wie `bubblewrap` oder `socat` auf Linux), zeigt das Menü Installationsanweisungen für Ihre Plattform an.
 
+Standardmäßig zeigt Claude Code eine Warnung an und führt Befehle ohne Sandboxing aus, wenn die Sandbox nicht gestartet werden kann (fehlende Abhängigkeiten, nicht unterstützte Plattform oder Plattformbeschränkungen). Um dies stattdessen zu einem Hard Failure zu machen, setzen Sie [`sandbox.failIfUnavailable`](/de/settings#sandbox-settings) auf `true`. Dies ist für verwaltete Bereitstellungen vorgesehen, die Sandboxing als Sicherheits-Gate erfordern.
+
 ### Sandbox-Modi
 
 Claude Code bietet zwei Sandbox-Modi:

@@ -13,8 +13,8 @@ Jede Claude Code-Sitzung beginnt mit einem frischen Context Window. Zwei Mechani
 
 Diese Seite behandelt folgende Themen:
 
-* [CLAUDE.md-Dateien schreiben und organisieren](#claudemd-dateien)
-* [Regeln auf bestimmte Dateitypen beschränken](#organize-rules-with-clauderules) mit `.claude/rules/`
+* [CLAUDE.md-Dateien schreiben und organisieren](#claude-md-files)
+* [Regeln auf bestimmte Dateitypen beschränken](#organize-rules-with-claude/rules/) mit `.claude/rules/`
 * [Auto-Memory konfigurieren](#auto-memory), damit Claude automatisch Notizen macht
 * [Fehlerbehebung](#troubleshoot-memory-issues), wenn Anweisungen nicht befolgt werden
 
@@ -48,9 +48,9 @@ CLAUDE.md-Dateien können sich an mehreren Orten befinden, jeder mit einem ander
 | **Projektanweisungen**    | `./CLAUDE.md` oder `./.claude/CLAUDE.md`                                                                                                                                | Team-gemeinsame Anweisungen für das Projekt             | Projektarchitektur, Coding-Standards, häufige Workflows                         | Team-Mitglieder über Versionskontrolle |
 | **Benutzeranweisungen**   | `~/.claude/CLAUDE.md`                                                                                                                                                   | Persönliche Vorlieben für alle Projekte                 | Code-Styling-Vorlieben, persönliche Tooling-Shortcuts                           | Nur Sie (alle Projekte)                |
 
-CLAUDE.md-Dateien in der Verzeichnishierarchie über dem Arbeitsverzeichnis werden beim Start vollständig geladen. CLAUDE.md-Dateien in Unterverzeichnissen werden bei Bedarf geladen, wenn Claude Dateien in diesen Verzeichnissen liest. Weitere Informationen finden Sie unter [Wie CLAUDE.md-Dateien geladen werden](#how-claudemd-files-load).
+CLAUDE.md-Dateien in der Verzeichnishierarchie über dem Arbeitsverzeichnis werden beim Start vollständig geladen. CLAUDE.md-Dateien in Unterverzeichnissen werden bei Bedarf geladen, wenn Claude Dateien in diesen Verzeichnissen liest. Weitere Informationen finden Sie unter [Wie CLAUDE.md-Dateien geladen werden](#how-claude-md-files-load).
 
-Für große Projekte können Sie Anweisungen in themaspezifische Dateien aufteilen, indem Sie [Projektregeln](#organize-rules-with-clauderules) verwenden. Regeln ermöglichen es Ihnen, Anweisungen auf bestimmte Dateitypen oder Unterverzeichnisse zu beschränken.
+Für große Projekte können Sie Anweisungen in themaspezifische Dateien aufteilen, indem Sie [Projektregeln](#organize-rules-with-claude/rules/) verwenden. Regeln ermöglichen es Ihnen, Anweisungen auf bestimmte Dateitypen oder Unterverzeichnisse zu beschränken.
 
 ### Richten Sie eine Projekt-CLAUDE.md ein
 
@@ -58,13 +58,15 @@ Eine Projekt-CLAUDE.md kann entweder in `./CLAUDE.md` oder `./.claude/CLAUDE.md`
 
 <Tip>
   Führen Sie `/init` aus, um automatisch eine Start-CLAUDE.md zu generieren. Claude analysiert Ihre Codebasis und erstellt eine Datei mit Build-Befehlen, Test-Anweisungen und Projektkonventionen, die es entdeckt. Wenn bereits eine CLAUDE.md vorhanden ist, schlägt `/init` Verbesserungen vor, statt sie zu überschreiben. Verfeinern Sie sie von dort aus mit Anweisungen, die Claude nicht selbst entdecken würde.
+
+  Setzen Sie `CLAUDE_CODE_NEW_INIT=true`, um einen interaktiven mehrstufigen Ablauf zu aktivieren. `/init` fragt, welche Artefakte eingerichtet werden sollen: CLAUDE.md-Dateien, Skills und Hooks. Es erkundet dann Ihre Codebasis mit einem Subagent, füllt Lücken durch Folgefragen aus und präsentiert einen überprüfbaren Vorschlag, bevor Dateien geschrieben werden.
 </Tip>
 
 ### Schreiben Sie effektive Anweisungen
 
 CLAUDE.md-Dateien werden zu Beginn jeder Sitzung in das Context Window geladen und verbrauchen Token zusammen mit Ihrer Konversation. Da sie Kontext statt erzwungene Konfiguration sind, beeinflusst die Art, wie Sie Anweisungen schreiben, wie zuverlässig Claude ihnen folgt. Spezifische, prägnante, gut strukturierte Anweisungen funktionieren am besten.
 
-**Größe**: Ziel unter 200 Zeilen pro CLAUDE.md-Datei. Längere Dateien verbrauchen mehr Kontext und reduzieren die Einhaltung. Wenn Ihre Anweisungen zu groß werden, teilen Sie sie mit [Importen](#import-additional-files) oder [`.claude/rules/`](#organize-rules-with-clauderules)-Dateien auf.
+**Größe**: Ziel unter 200 Zeilen pro CLAUDE.md-Datei. Längere Dateien verbrauchen mehr Kontext und reduzieren die Einhaltung. Wenn Ihre Anweisungen zu groß werden, teilen Sie sie mit [Importen](#import-additional-files) oder [`.claude/rules/`](#organize-rules-with-claude/rules/)-Dateien auf.
 
 **Struktur**: Verwenden Sie Markdown-Header und Aufzählungszeichen, um verwandte Anweisungen zu gruppieren. Claude scannt die Struktur genauso wie Leser: organisierte Abschnitte sind leichter zu befolgen als dichte Absätze.
 
@@ -74,7 +76,7 @@ CLAUDE.md-Dateien werden zu Beginn jeder Sitzung in das Context Window geladen u
 * „Führen Sie `npm test` vor dem Commit aus" statt „Testen Sie Ihre Änderungen"
 * „API-Handler befinden sich in `src/api/handlers/`" statt „Halten Sie Dateien organisiert"
 
-**Konsistenz**: Wenn zwei Regeln sich widersprechen, kann Claude eine willkürlich auswählen. Überprüfen Sie Ihre CLAUDE.md-Dateien, verschachtelte CLAUDE.md-Dateien in Unterverzeichnissen und [`.claude/rules/`](#organize-rules-with-clauderules) regelmäßig, um veraltete oder widersprüchliche Anweisungen zu entfernen. In Monorepos verwenden Sie [`claudeMdExcludes`](#exclude-specific-claudemd-files), um CLAUDE.md-Dateien von anderen Teams zu überspringen, die für Ihre Arbeit nicht relevant sind.
+**Konsistenz**: Wenn zwei Regeln sich widersprechen, kann Claude eine willkürlich auswählen. Überprüfen Sie Ihre CLAUDE.md-Dateien, verschachtelte CLAUDE.md-Dateien in Unterverzeichnissen und [`.claude/rules/`](#organize-rules-with-claude/rules/) regelmäßig, um veraltete oder widersprüchliche Anweisungen zu entfernen. In Monorepos verwenden Sie [`claudeMdExcludes`](#exclude-specific-claude-md-files), um CLAUDE.md-Dateien von anderen Teams zu überspringen, die für Ihre Arbeit nicht relevant sind.
 
 ### Importieren Sie zusätzliche Dateien
 
@@ -102,7 +104,19 @@ Für persönliche Vorlieben, die Sie nicht einchecken möchten, importieren Sie 
   Wenn Claude Code zum ersten Mal externe Importe in einem Projekt antrifft, zeigt es einen Genehmigungsdialog an, der die Dateien auflistet. Wenn Sie ablehnen, bleiben die Importe deaktiviert und der Dialog wird nicht erneut angezeigt.
 </Warning>
 
-Für einen strukturierteren Ansatz zur Organisation von Anweisungen siehe [`.claude/rules/`](#organize-rules-with-clauderules).
+Für einen strukturierteren Ansatz zur Organisation von Anweisungen siehe [`.claude/rules/`](#organize-rules-with-claude/rules/).
+
+### AGENTS.md
+
+Claude Code liest `CLAUDE.md`, nicht `AGENTS.md`. Wenn Ihr Repository bereits `AGENTS.md` für andere Coding-Agenten verwendet, erstellen Sie eine `CLAUDE.md`, die es importiert, damit beide Tools die gleichen Anweisungen lesen, ohne sie zu duplizieren. Sie können auch Claude-spezifische Anweisungen unter dem Import hinzufügen. Claude lädt die importierte Datei beim Sitzungsstart und hängt dann den Rest an:
+
+```markdown CLAUDE.md theme={null}
+@AGENTS.md
+
+## Claude Code
+
+Verwenden Sie Plan Mode für Änderungen unter `src/billing/`.
+```
 
 ### Wie CLAUDE.md-Dateien geladen werden
 
@@ -110,7 +124,9 @@ Claude Code liest CLAUDE.md-Dateien, indem es die Verzeichnisstruktur von Ihrem 
 
 Claude entdeckt auch CLAUDE.md-Dateien in Unterverzeichnissen unter Ihrem aktuellen Arbeitsverzeichnis. Statt sie beim Start zu laden, werden sie eingebunden, wenn Claude Dateien in diesen Unterverzeichnissen liest.
 
-Wenn Sie in einem großen Monorepo arbeiten, in dem CLAUDE.md-Dateien anderer Teams aufgegriffen werden, verwenden Sie [`claudeMdExcludes`](#exclude-specific-claudemd-files), um sie zu überspringen.
+Wenn Sie in einem großen Monorepo arbeiten, in dem CLAUDE.md-Dateien anderer Teams aufgegriffen werden, verwenden Sie [`claudeMdExcludes`](#exclude-specific-claude-md-files), um sie zu überspringen.
+
+Block-Level-HTML-Kommentare (`<!-- maintainer notes -->`) in CLAUDE.md-Dateien werden vor der Injektion in Claudes Kontext entfernt. Verwenden Sie sie, um Notizen für menschliche Betreuer zu hinterlassen, ohne Kontext-Token darauf zu verschwenden. Kommentare innerhalb von Code-Blöcken werden beibehalten. Wenn Sie eine CLAUDE.md-Datei direkt mit dem Read-Tool öffnen, bleiben Kommentare sichtbar.
 
 #### Laden aus zusätzlichen Verzeichnissen
 
@@ -127,7 +143,7 @@ CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ../shared-config
 Für größere Projekte können Sie Anweisungen in mehrere Dateien mit dem Verzeichnis `.claude/rules/` organisieren. Dies hält Anweisungen modular und leichter für Teams zu pflegen. Regeln können auch [auf bestimmte Dateipfade beschränkt werden](#path-specific-rules), sodass sie nur in den Kontext geladen werden, wenn Claude mit übereinstimmenden Dateien arbeitet, was Rauschen reduziert und Kontextraum spart.
 
 <Note>
-  Regeln werden in jeder Sitzung oder beim Öffnen übereinstimmender Dateien in den Kontext geladen. Für aufgabenspezifische Anweisungen, die nicht ständig im Kontext sein müssen, verwenden Sie stattdessen [skills](/de/skills), die nur geladen werden, wenn Sie sie aufrufen oder wenn Claude bestimmt, dass sie für Ihren Prompt relevant sind.
+  Regeln werden in jeder Sitzung oder beim Öffnen übereinstimmender Dateien in den Kontext geladen. Für aufgabenspezifische Anweisungen, die nicht ständig im Kontext sein müssen, verwenden Sie stattdessen [Skills](/de/skills), die nur geladen werden, wenn Sie sie aufrufen oder wenn Claude bestimmt, dass sie für Ihren Prompt relevant sind.
 </Note>
 
 #### Richten Sie Regeln ein
@@ -228,6 +244,20 @@ Organisationen können eine zentral verwaltete CLAUDE.md bereitstellen, die für
   </Step>
 </Steps>
 
+Eine verwaltete CLAUDE.md und [verwaltete Einstellungen](/de/settings#settings-files) dienen unterschiedlichen Zwecken. Verwenden Sie Einstellungen für technische Durchsetzung und CLAUDE.md für Verhaltensanleitung:
+
+| Anliegen                                                | Konfigurieren in                                                  |
+| :------------------------------------------------------ | :---------------------------------------------------------------- |
+| Blockieren Sie bestimmte Tools, Befehle oder Dateipfade | Verwaltete Einstellungen: `permissions.deny`                      |
+| Erzwingen Sie Sandbox-Isolation                         | Verwaltete Einstellungen: `sandbox.enabled`                       |
+| Umgebungsvariablen und API-Provider-Routing             | Verwaltete Einstellungen: `env`                                   |
+| Authentifizierungsmethode und Organisationssperre       | Verwaltete Einstellungen: `forceLoginMethod`, `forceLoginOrgUUID` |
+| Code-Style und Qualitätsrichtlinien                     | Verwaltete CLAUDE.md                                              |
+| Datenbehandlung und Compliance-Erinnerungen             | Verwaltete CLAUDE.md                                              |
+| Verhaltensanweisungen für Claude                        | Verwaltete CLAUDE.md                                              |
+
+Einstellungsregeln werden vom Client unabhängig davon durchgesetzt, was Claude entscheidet zu tun. CLAUDE.md-Anweisungen prägen Claudes Verhalten, sind aber keine harte Durchsetzungsebene.
+
 #### Schließen Sie bestimmte CLAUDE.md-Dateien aus
 
 In großen Monorepos können Vorgänger-CLAUDE.md-Dateien Anweisungen enthalten, die für Ihre Arbeit nicht relevant sind. Die Einstellung `claudeMdExcludes` ermöglicht es Ihnen, bestimmte Dateien nach Pfad oder Glob-Muster zu überspringen.
@@ -326,7 +356,7 @@ CLAUDE.md-Inhalte werden als Benutzernachricht nach dem System-Prompt bereitgest
 Zum Debuggen:
 
 * Führen Sie `/memory` aus, um zu überprüfen, dass Ihre CLAUDE.md-Dateien geladen werden. Wenn eine Datei nicht aufgelistet ist, kann Claude sie nicht sehen.
-* Überprüfen Sie, dass die relevante CLAUDE.md an einem Ort ist, der für Ihre Sitzung geladen wird (siehe [Wählen Sie, wo Sie CLAUDE.md-Dateien ablegen](#choose-where-to-put-claudemd-files)).
+* Überprüfen Sie, dass die relevante CLAUDE.md an einem Ort ist, der für Ihre Sitzung geladen wird (siehe [Wählen Sie, wo Sie CLAUDE.md-Dateien ablegen](#choose-where-to-put-claude-md-files)).
 * Machen Sie Anweisungen spezifischer. „Verwenden Sie 2-Leerzeichen-Einrückung" funktioniert besser als „formatieren Sie Code schön".
 * Suchen Sie nach widersprüchlichen Anweisungen über CLAUDE.md-Dateien hinweg. Wenn zwei Dateien unterschiedliche Anleitungen für das gleiche Verhalten geben, kann Claude eine willkürlich auswählen.
 

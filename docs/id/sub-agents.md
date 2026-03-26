@@ -184,7 +184,7 @@ claude --agents '{
 }'
 ```
 
-Flag `--agents` menerima JSON dengan [frontmatter](#supported-frontmatter-fields) yang sama bidang file-based subagent: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `memory`, `effort`, `background`, dan `isolation`. Gunakan `prompt` untuk prompt sistem, setara dengan badan markdown dalam subagent berbasis file.
+Flag `--agents` menerima JSON dengan [frontmatter](#supported-frontmatter-fields) yang sama bidang file-based subagent: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `initialPrompt`, `memory`, `effort`, `background`, dan `isolation`. Gunakan `prompt` untuk prompt sistem, setara dengan badan markdown dalam subagent berbasis file.
 
 **Subagent plugin** berasal dari [plugins](/id/plugins) yang telah Anda instal. Mereka muncul di `/agents` bersama subagent khusus Anda. Lihat [referensi komponen plugin](/id/plugins-reference#agents) untuk detail tentang membuat subagent plugin.
 
@@ -234,6 +234,7 @@ Bidang berikut dapat digunakan dalam frontmatter YAML. Hanya `name` dan `descrip
 | `background`      | Tidak      | Atur ke `true` untuk selalu menjalankan subagent ini sebagai [background task](#run-subagents-in-foreground-or-background). Default: `false`                                                                                                                                                          |
 | `effort`          | Tidak      | Tingkat usaha ketika subagent ini aktif. Menimpa tingkat usaha sesi. Default: mewarisi dari sesi. Opsi: `low`, `medium`, `high`, `max` (Opus 4.6 saja)                                                                                                                                                |
 | `isolation`       | Tidak      | Atur ke `worktree` untuk menjalankan subagent dalam [git worktree](/id/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) sementara, memberikannya salinan repositori yang terisolasi. Worktree secara otomatis dibersihkan jika subagent tidak membuat perubahan                 |
+| `initialPrompt`   | Tidak      | Auto-submitted sebagai putaran pengguna pertama ketika agen ini berjalan sebagai agen sesi utama (melalui `--agent` atau pengaturan `agent`). [Commands](/id/commands) dan [skills](/id/skills) diproses. Ditambahkan di depan prompt yang disediakan pengguna apa pun                                |
 
 ### Pilih model
 
@@ -243,6 +244,13 @@ Bidang `model` mengontrol [model AI](/id/model-config) mana yang digunakan subag
 * **ID model lengkap**: Gunakan ID model lengkap seperti `claude-opus-4-6` atau `claude-sonnet-4-6`. Menerima nilai yang sama dengan flag `--model`
 * **inherit**: Gunakan model yang sama dengan percakapan utama
 * **Dihilangkan**: Jika tidak ditentukan, default ke `inherit` (menggunakan model yang sama dengan percakapan utama)
+
+Ketika Claude memanggil subagent, Claude juga dapat melewatkan parameter `model` untuk invokasi spesifik itu. Claude Code menyelesaikan model subagent dalam urutan ini:
+
+1. Variabel lingkungan [`CLAUDE_CODE_SUBAGENT_MODEL`](/id/model-config#environment-variables), jika diatur
+2. Parameter `model` per-invokasi
+3. Frontmatter `model` definisi subagent
+4. Model percakapan utama
 
 ### Kontrol kemampuan subagent
 

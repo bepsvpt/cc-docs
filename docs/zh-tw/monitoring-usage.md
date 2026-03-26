@@ -85,7 +85,7 @@ claude
 | `OTEL_METRIC_EXPORT_INTERVAL`                       | 匯出間隔（毫秒）（預設：60000）                                  | `5000`、`60000`                     |
 | `OTEL_LOGS_EXPORT_INTERVAL`                         | 日誌匯出間隔（毫秒）（預設：5000）                                 | `1000`、`10000`                     |
 | `OTEL_LOG_USER_PROMPTS`                             | 啟用使用者提示內容的日誌記錄（預設：停用）                               | `1` 以啟用                            |
-| `OTEL_LOG_TOOL_DETAILS`                             | 啟用在工具事件中記錄 MCP 伺服器/工具名稱和技能名稱（預設：停用）                 | `1` 以啟用                            |
+| `OTEL_LOG_TOOL_DETAILS`                             | 啟用在工具事件中記錄工具輸入引數、MCP 伺服器/工具名稱和技能名稱（預設：停用）           | `1` 以啟用                            |
 | `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | 指標時間性偏好（預設：`delta`）。如果您的後端期望累積時間性，請設定為 `cumulative` | `delta`、`cumulative`               |
 | `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | 重新整理動態標頭的間隔（預設：1740000ms / 29 分鐘）                   | `900000`                           |
 
@@ -93,11 +93,11 @@ claude
 
 以下環境變數控制指標中包含哪些屬性以管理基數：
 
-| 環境變數                                | 描述                           | 預設值     | 停用範例    |
-| ----------------------------------- | ---------------------------- | ------- | ------- |
-| `OTEL_METRICS_INCLUDE_SESSION_ID`   | 在指標中包含 session.id 屬性         | `true`  | `false` |
-| `OTEL_METRICS_INCLUDE_VERSION`      | 在指標中包含 app.version 屬性        | `false` | `true`  |
-| `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` | 在指標中包含 user.account\_uuid 屬性 | `true`  | `false` |
+| 環境變數                                | 描述                                              | 預設值     | 停用範例    |
+| ----------------------------------- | ----------------------------------------------- | ------- | ------- |
+| `OTEL_METRICS_INCLUDE_SESSION_ID`   | 在指標中包含 session.id 屬性                            | `true`  | `false` |
+| `OTEL_METRICS_INCLUDE_VERSION`      | 在指標中包含 app.version 屬性                           | `false` | `true`  |
+| `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` | 在指標中包含 user.account\_uuid 和 user.account\_id 屬性 | `true`  | `false` |
 
 這些變數有助於控制指標的基數，這會影響指標後端中的儲存需求和查詢效能。較低的基數通常意味著更好的效能和更低的儲存成本，但分析的資料粒度較低。
 
@@ -225,15 +225,21 @@ export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
 
 所有指標和事件共享這些標準屬性：
 
-| 屬性                  | 描述                                              | 控制者                                          |
-| ------------------- | ----------------------------------------------- | -------------------------------------------- |
-| `session.id`        | 唯一的工作階段識別碼                                      | `OTEL_METRICS_INCLUDE_SESSION_ID`（預設：true）   |
-| `app.version`       | 目前的 Claude Code 版本                              | `OTEL_METRICS_INCLUDE_VERSION`（預設：false）     |
-| `organization.id`   | 組織 UUID（已驗證時）                                   | 可用時始終包含                                      |
-| `user.account_uuid` | 帳戶 UUID（已驗證時）                                   | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID`（預設：true） |
-| `user.id`           | 匿名裝置/安裝識別碼，每個 Claude Code 安裝產生一次                | 始終包含                                         |
-| `user.email`        | 使用者電子郵件地址（透過 OAuth 驗證時）                         | 可用時始終包含                                      |
-| `terminal.type`     | 終端機類型，例如 `iTerm.app`、`vscode`、`cursor` 或 `tmux` | 偵測到時始終包含                                     |
+| 屬性                  | 描述                                                             | 控制者                                          |
+| ------------------- | -------------------------------------------------------------- | -------------------------------------------- |
+| `session.id`        | 唯一的工作階段識別碼                                                     | `OTEL_METRICS_INCLUDE_SESSION_ID`（預設：true）   |
+| `app.version`       | 目前的 Claude Code 版本                                             | `OTEL_METRICS_INCLUDE_VERSION`（預設：false）     |
+| `organization.id`   | 組織 UUID（已驗證時）                                                  | 可用時始終包含                                      |
+| `user.account_uuid` | 帳戶 UUID（已驗證時）                                                  | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID`（預設：true） |
+| `user.account_id`   | 帳戶 ID（採用標籤格式，符合 Anthropic 管理 API），例如 `user_01BWBeN28...`（已驗證時） | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID`（預設：true） |
+| `user.id`           | 匿名裝置/安裝識別碼，每個 Claude Code 安裝產生一次                               | 始終包含                                         |
+| `user.email`        | 使用者電子郵件地址（透過 OAuth 驗證時）                                        | 可用時始終包含                                      |
+| `terminal.type`     | 終端機類型，例如 `iTerm.app`、`vscode`、`cursor` 或 `tmux`                | 偵測到時始終包含                                     |
+
+事件另外包含以下屬性。這些永遠不會附加到指標，因為它們會導致無限制的基數：
+
+* `prompt.id`：UUID 將使用者提示與所有後續事件關聯到下一個提示。請參閱[事件關聯屬性](#event-correlation-attributes)。
+* `workspace.host_paths`：在桌面應用程式中選擇的主機工作區目錄，作為字串陣列
 
 ### 指標
 
@@ -384,6 +390,7 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
   * 對於 Bash 工具：包括 `bash_command`、`full_command`、`timeout`、`description`、`dangerouslyDisableSandbox` 和 `git_commit_id`（git commit 命令成功時的提交 SHA）
   * 對於 MCP 工具（當 `OTEL_LOG_TOOL_DETAILS=1` 時）：包括 `mcp_server_name`、`mcp_tool_name`
   * 對於 Skill 工具（當 `OTEL_LOG_TOOL_DETAILS=1` 時）：包括 `skill_name`
+* `tool_input`（當 `OTEL_LOG_TOOL_DETAILS=1` 時）：JSON 序列化的工具引數。超過 512 個字元的個別值會被截斷，整個承載的上限約為 4 K 字元。適用於所有工具，包括 MCP 工具。
 
 #### API 請求事件
 
@@ -473,7 +480,7 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * 異常的權杖消耗
 * 來自特定使用者的高工作階段量
 
-所有指標都可以按 `user.account_uuid`、`organization.id`、`session.id`、`model` 和 `app.version` 進行分段。
+所有指標都可以按 `user.account_uuid`、`user.account_id`、`organization.id`、`session.id`、`model` 和 `app.version` 進行分段。
 
 ### 事件分析
 
@@ -528,7 +535,7 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * 原始檔案內容和程式碼片段不包含在指標或事件中。工具執行事件在 `tool_parameters` 欄位中包含 bash 命令和檔案路徑，這可能包含敏感值。如果您的命令可能包含機密，請配置您的遙測後端以篩選或編輯 `tool_parameters`
 * 透過 OAuth 驗證時，`user.email` 包含在遙測屬性中。如果這對您的組織是個問題，請與您的遙測後端合作以篩選或編輯此欄位
 * 預設不收集使用者提示內容。僅記錄提示長度。若要包含提示內容，請設定 `OTEL_LOG_USER_PROMPTS=1`
-* 預設不記錄 MCP 伺服器/工具名稱和技能名稱，因為它們可能會洩露使用者特定的配置。若要包含它們，請設定 `OTEL_LOG_TOOL_DETAILS=1`
+* 工具輸入引數預設不記錄。若要包含它們，請設定 `OTEL_LOG_TOOL_DETAILS=1`。啟用時，`tool_result` 事件包含 MCP 伺服器/工具名稱和技能名稱，以及包含檔案路徑、URL、搜尋模式和其他引數的 `tool_input` 屬性。超過 512 個字元的個別值會被截斷，總計上限約為 4 K 字元，但引數仍可能包含敏感值。根據需要配置您的遙測後端以篩選或編輯 `tool_input`
 
 ## 在 Amazon Bedrock 上監控 Claude Code
 

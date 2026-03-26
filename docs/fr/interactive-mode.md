@@ -25,13 +25,13 @@
 | Raccourci                                         | Description                                                                                   | Contexte                                                                                                                                                                                        |
 | :------------------------------------------------ | :-------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Ctrl+C`                                          | Annuler l'entrée ou la génération actuelle                                                    | Interruption standard                                                                                                                                                                           |
-| `Ctrl+F`                                          | Arrêter tous les agents en arrière-plan. Appuyez deux fois dans les 3 secondes pour confirmer | Contrôle des agents en arrière-plan                                                                                                                                                             |
+| `Ctrl+X Ctrl+K`                                   | Arrêter tous les agents en arrière-plan. Appuyez deux fois dans les 3 secondes pour confirmer | Contrôle des agents en arrière-plan                                                                                                                                                             |
 | `Ctrl+D`                                          | Quitter la session Claude Code                                                                | Signal EOF                                                                                                                                                                                      |
-| `Ctrl+G`                                          | Ouvrir dans l'éditeur de texte par défaut                                                     | Modifiez votre invite ou réponse personnalisée dans votre éditeur de texte par défaut                                                                                                           |
+| `Ctrl+G` ou `Ctrl+X Ctrl+E`                       | Ouvrir dans l'éditeur de texte par défaut                                                     | Modifiez votre invite ou réponse personnalisée dans votre éditeur de texte par défaut. `Ctrl+X Ctrl+E` est la liaison readline native                                                           |
 | `Ctrl+L`                                          | Effacer l'écran du terminal                                                                   | Conserve l'historique de la conversation                                                                                                                                                        |
 | `Ctrl+O`                                          | Basculer la sortie détaillée                                                                  | Affiche l'utilisation détaillée des outils et l'exécution. Développe également les appels de lecture et de recherche MCP, qui se réduisent à une seule ligne comme « Queried slack » par défaut |
 | `Ctrl+R`                                          | Recherche inversée dans l'historique des commandes                                            | Recherchez les commandes précédentes de manière interactive                                                                                                                                     |
-| `Ctrl+V` ou `Cmd+V` (iTerm2) ou `Alt+V` (Windows) | Coller une image du presse-papiers                                                            | Colle une image ou un chemin vers un fichier image                                                                                                                                              |
+| `Ctrl+V` ou `Cmd+V` (iTerm2) ou `Alt+V` (Windows) | Coller une image du presse-papiers                                                            | Insère une puce `[Image #N]` au curseur afin que vous puissiez la référencer positionnellement dans votre invite                                                                                |
 | `Ctrl+B`                                          | Tâches en arrière-plan                                                                        | Met en arrière-plan les commandes bash et les agents. Les utilisateurs Tmux appuyez deux fois                                                                                                   |
 | `Ctrl+T`                                          | Basculer la liste des tâches                                                                  | Afficher ou masquer la [liste des tâches](#task-list) dans la zone d'état du terminal                                                                                                           |
 | `Flèches gauche/droite`                           | Parcourir les onglets de dialogue                                                             | Naviguez entre les onglets dans les dialogues de permission et les menus                                                                                                                        |
@@ -40,6 +40,7 @@
 | `Shift+Tab` ou `Alt+M` (certaines configurations) | Basculer les modes de permission                                                              | Basculer entre `default`, `acceptEdits`, `plan` et tous les modes que vous avez activés, comme `auto` ou `bypassPermissions`. Consultez [modes de permission](/fr/permission-modes).            |
 | `Option+P` (macOS) ou `Alt+P` (Windows/Linux)     | Changer de modèle                                                                             | Changez de modèles sans effacer votre invite                                                                                                                                                    |
 | `Option+T` (macOS) ou `Alt+T` (Windows/Linux)     | Basculer la réflexion étendue                                                                 | Activez ou désactivez le mode de réflexion étendue. Exécutez d'abord `/terminal-setup` pour activer ce raccourci                                                                                |
+| `Option+O` (macOS) ou `Alt+O` (Windows/Linux)     | Basculer le mode rapide                                                                       | Activez ou désactivez le [mode rapide](/fr/fast-mode)                                                                                                                                           |
 
 ### Édition de texte
 
@@ -84,11 +85,20 @@
 | `!` au début | Mode Bash                    | Exécutez les commandes directement et ajoutez la sortie d'exécution à la session    |
 | `@`          | Mention de chemin de fichier | Déclencher l'autocomplétion du chemin de fichier                                    |
 
+### Visionneuse de transcription
+
+Lorsque la visionneuse de transcription est ouverte (basculée avec `Ctrl+O`), ces raccourcis sont disponibles. `Ctrl+E` peut être réaffecté via [`transcript:toggleShowAll`](/fr/keybindings).
+
+| Raccourci            | Description                                                                                                                                      |
+| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+E`             | Basculer afficher tout le contenu                                                                                                                |
+| `q`, `Ctrl+C`, `Esc` | Quitter la vue de transcription. `Ctrl+C` et `Esc` peuvent être réaffectés via [`transcript:exit`](/fr/keybindings) ; `q` n'est pas réaffectable |
+
 ### Entrée vocale
 
-| Raccourci          | Description         | Notes                                                                                                                                                                   |
-| :----------------- | :------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Maintenir `Espace` | Dictée push-to-talk | Nécessite que la [dictée vocale](/fr/voice-dictation) soit activée. La transcription s'insère au curseur. [Rebindable](/fr/voice-dictation#rebind-the-push-to-talk-key) |
+| Raccourci          | Description         | Notes                                                                                                                                                                     |
+| :----------------- | :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Maintenir `Espace` | Dictée push-to-talk | Nécessite que la [dictée vocale](/fr/voice-dictation) soit activée. La transcription s'insère au curseur. [Réaffectable](/fr/voice-dictation#rebind-the-push-to-talk-key) |
 
 ## Commandes intégrées
 
@@ -210,7 +220,7 @@ Pour exécuter les commandes en arrière-plan, vous pouvez soit :
 
 **Caractéristiques clés :**
 
-* La sortie est mise en mémoire tampon et Claude peut la récupérer à l'aide de l'outil TaskOutput
+* La sortie est écrite dans un fichier et Claude peut la récupérer à l'aide de l'outil Read
 * Les tâches en arrière-plan ont des ID uniques pour le suivi et la récupération de la sortie
 * Les tâches en arrière-plan sont automatiquement nettoyées lorsque Claude Code se ferme
 * Les tâches en arrière-plan sont automatiquement terminées si la sortie dépasse 5 Go, avec une note dans stderr expliquant pourquoi

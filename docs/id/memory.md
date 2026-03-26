@@ -13,8 +13,8 @@ Setiap sesi Claude Code dimulai dengan context window yang segar. Dua mekanisme 
 
 Halaman ini mencakup cara untuk:
 
-* [Menulis dan mengorganisir file CLAUDE.md](#claudemd-files)
-* [Membatasi aturan ke tipe file tertentu](#organize-rules-with-clauderules) dengan `.claude/rules/`
+* [Menulis dan mengorganisir file CLAUDE.md](#claude-md-files)
+* [Membatasi aturan ke tipe file tertentu](#organize-rules-with-claude/rules/) dengan `.claude/rules/`
 * [Mengonfigurasi auto memory](#auto-memory) agar Claude membuat catatan secara otomatis
 * [Troubleshoot](#troubleshoot-memory-issues) ketika instruksi tidak diikuti
 
@@ -48,9 +48,9 @@ File CLAUDE.md dapat berada di beberapa lokasi, masing-masing dengan cakupan yan
 | **Instruksi proyek**    | `./CLAUDE.md` atau `./.claude/CLAUDE.md`                                                                                                                                | Instruksi bersama tim untuk proyek                           | Arsitektur proyek, standar pengkodean, alur kerja umum                   | Anggota tim melalui kontrol sumber |
 | **Instruksi pengguna**  | `~/.claude/CLAUDE.md`                                                                                                                                                   | Preferensi pribadi untuk semua proyek                        | Preferensi gaya kode, pintasan alat pribadi                              | Hanya Anda (semua proyek)          |
 
-File CLAUDE.md dalam hierarki direktori di atas direktori kerja dimuat sepenuhnya saat peluncuran. File CLAUDE.md di subdirektori dimuat sesuai permintaan ketika Claude membaca file di direktori tersebut. Lihat [Bagaimana file CLAUDE.md dimuat](#how-claudemd-files-load) untuk urutan resolusi lengkap.
+File CLAUDE.md dalam hierarki direktori di atas direktori kerja dimuat sepenuhnya saat peluncuran. File CLAUDE.md di subdirektori dimuat sesuai permintaan ketika Claude membaca file di direktori tersebut. Lihat [Bagaimana file CLAUDE.md dimuat](#how-claude-md-files-load) untuk urutan resolusi lengkap.
 
-Untuk proyek besar, Anda dapat memecah instruksi menjadi file khusus topik menggunakan [aturan proyek](#organize-rules-with-clauderules). Aturan memungkinkan Anda membatasi instruksi ke tipe file atau subdirektori tertentu.
+Untuk proyek besar, Anda dapat memecah instruksi menjadi file khusus topik menggunakan [aturan proyek](#organize-rules-with-claude/rules/). Aturan memungkinkan Anda membatasi instruksi ke tipe file atau subdirektori tertentu.
 
 ### Siapkan CLAUDE.md proyek
 
@@ -58,13 +58,15 @@ CLAUDE.md proyek dapat disimpan di `./CLAUDE.md` atau `./.claude/CLAUDE.md`. Bua
 
 <Tip>
   Jalankan `/init` untuk menghasilkan CLAUDE.md awal secara otomatis. Claude menganalisis basis kode Anda dan membuat file dengan perintah build, instruksi test, dan konvensi proyek yang ditemukannya. Jika CLAUDE.md sudah ada, `/init` menyarankan perbaikan daripada menimpanya. Perbaiki dari sana dengan instruksi yang Claude tidak akan temukan sendiri.
+
+  Atur `CLAUDE_CODE_NEW_INIT=true` untuk mengaktifkan alur multi-fase interaktif. `/init` menanyakan artefak mana yang akan diatur: file CLAUDE.md, skills, dan hooks. Kemudian mengeksplorasi basis kode Anda dengan subagent, mengisi celah melalui pertanyaan lanjutan, dan menyajikan proposal yang dapat ditinjau sebelum menulis file apa pun.
 </Tip>
 
 ### Tulis instruksi yang efektif
 
 File CLAUDE.md dimuat ke dalam context window di awal setiap sesi, mengonsumsi token bersama percakapan Anda. Karena mereka adalah konteks daripada konfigurasi yang diberlakukan, cara Anda menulis instruksi mempengaruhi seberapa andal Claude mengikutinya. Instruksi yang spesifik, ringkas, dan terstruktur dengan baik bekerja paling baik.
 
-**Ukuran**: targetkan di bawah 200 baris per file CLAUDE.md. File yang lebih panjang mengonsumsi lebih banyak konteks dan mengurangi kepatuhan. Jika instruksi Anda berkembang besar, pisahkan menggunakan [impor](#import-additional-files) atau file [`.claude/rules/`](#organize-rules-with-clauderules).
+**Ukuran**: targetkan di bawah 200 baris per file CLAUDE.md. File yang lebih panjang mengonsumsi lebih banyak konteks dan mengurangi kepatuhan. Jika instruksi Anda berkembang besar, pisahkan menggunakan [impor](#import-additional-files) atau file [`.claude/rules/`](#organize-rules-with-claude/rules/).
 
 **Struktur**: gunakan header markdown dan bullet untuk mengelompokkan instruksi terkait. Claude memindai struktur dengan cara yang sama seperti pembaca: bagian yang terorganisir lebih mudah diikuti daripada paragraf padat.
 
@@ -74,7 +76,7 @@ File CLAUDE.md dimuat ke dalam context window di awal setiap sesi, mengonsumsi t
 * "Jalankan `npm test` sebelum commit" daripada "Uji perubahan Anda"
 * "Handler API berada di `src/api/handlers/`" daripada "Jaga file tetap terorganisir"
 
-**Konsistensi**: jika dua aturan saling bertentangan, Claude mungkin memilih satu secara sembarangan. Tinjau file CLAUDE.md Anda, file CLAUDE.md bersarang di subdirektori, dan file [`.claude/rules/`](#organize-rules-with-clauderules) secara berkala untuk menghapus instruksi yang ketinggalan zaman atau bertentangan. Dalam monorepo, gunakan [`claudeMdExcludes`](#exclude-specific-claudemd-files) untuk melewati file CLAUDE.md dari tim lain yang tidak relevan dengan pekerjaan Anda.
+**Konsistensi**: jika dua aturan saling bertentangan, Claude mungkin memilih satu secara sembarangan. Tinjau file CLAUDE.md Anda, file CLAUDE.md bersarang di subdirektori, dan file [`.claude/rules/`](#organize-rules-with-claude/rules/) secara berkala untuk menghapus instruksi yang ketinggalan zaman atau bertentangan. Dalam monorepo, gunakan [`claudeMdExcludes`](#exclude-specific-claude-md-files) untuk melewati file CLAUDE.md dari tim lain yang tidak relevan dengan pekerjaan Anda.
 
 ### Impor file tambahan
 
@@ -102,7 +104,19 @@ Untuk preferensi pribadi yang tidak ingin Anda periksa, impor file dari direktor
   Pertama kali Claude Code menemukan impor eksternal dalam proyek, itu menampilkan dialog persetujuan yang mencantumkan file. Jika Anda menolak, impor tetap dinonaktifkan dan dialog tidak muncul lagi.
 </Warning>
 
-Untuk pendekatan yang lebih terstruktur untuk mengorganisir instruksi, lihat [`.claude/rules/`](#organize-rules-with-clauderules).
+Untuk pendekatan yang lebih terstruktur untuk mengorganisir instruksi, lihat [`.claude/rules/`](#organize-rules-with-claude/rules/).
+
+### AGENTS.md
+
+Claude Code membaca `CLAUDE.md`, bukan `AGENTS.md`. Jika repositori Anda sudah menggunakan `AGENTS.md` untuk agen pengkodean lain, buat `CLAUDE.md` yang mengimpornya sehingga kedua alat membaca instruksi yang sama tanpa menduplikasinya. Anda juga dapat menambahkan instruksi khusus Claude di bawah impor. Claude memuat file yang diimpor saat awal sesi, kemudian menambahkan sisanya:
+
+```markdown CLAUDE.md theme={null}
+@AGENTS.md
+
+## Claude Code
+
+Gunakan plan mode untuk perubahan di bawah `src/billing/`.
+```
 
 ### Bagaimana file CLAUDE.md dimuat
 
@@ -110,7 +124,9 @@ Claude Code membaca file CLAUDE.md dengan berjalan naik pohon direktori dari dir
 
 Claude juga menemukan file CLAUDE.md di subdirektori di bawah direktori kerja saat ini. Alih-alih memuatnya saat peluncuran, mereka disertakan ketika Claude membaca file di subdirektori tersebut.
 
-Jika Anda bekerja di monorepo besar di mana file CLAUDE.md tim lain diambil, gunakan [`claudeMdExcludes`](#exclude-specific-claudemd-files) untuk melewatinya.
+Jika Anda bekerja di monorepo besar di mana file CLAUDE.md tim lain diambil, gunakan [`claudeMdExcludes`](#exclude-specific-claude-md-files) untuk melewatinya.
+
+Komentar HTML tingkat blok (`<!-- maintainer notes -->`) dalam file CLAUDE.md dihapus sebelum konten disuntikkan ke dalam konteks Claude. Gunakan mereka untuk meninggalkan catatan bagi pengelola manusia tanpa menghabiskan token konteks pada mereka. Komentar di dalam blok kode dipertahankan. Ketika Anda membuka file CLAUDE.md secara langsung dengan alat Read, komentar tetap terlihat.
 
 #### Muat dari direktori tambahan
 
@@ -228,6 +244,20 @@ Organisasi dapat menerapkan CLAUDE.md yang dikelola secara terpusat yang berlaku
   </Step>
 </Steps>
 
+CLAUDE.md yang dikelola dan [pengaturan terkelola](/id/settings#settings-files) melayani tujuan yang berbeda. Gunakan pengaturan untuk penegakan teknis dan CLAUDE.md untuk panduan perilaku:
+
+| Kekhawatiran                                    | Konfigurasi dalam                                             |
+| :---------------------------------------------- | :------------------------------------------------------------ |
+| Blokir alat, perintah, atau jalur file tertentu | Pengaturan terkelola: `permissions.deny`                      |
+| Paksakan isolasi sandbox                        | Pengaturan terkelola: `sandbox.enabled`                       |
+| Variabel lingkungan dan perutean penyedia API   | Pengaturan terkelola: `env`                                   |
+| Metode autentikasi dan kunci organisasi         | Pengaturan terkelola: `forceLoginMethod`, `forceLoginOrgUUID` |
+| Panduan gaya kode dan kualitas                  | CLAUDE.md terkelola                                           |
+| Pengingat penanganan data dan kepatuhan         | CLAUDE.md terkelola                                           |
+| Instruksi perilaku untuk Claude                 | CLAUDE.md terkelola                                           |
+
+Aturan pengaturan diberlakukan oleh klien terlepas dari apa yang Claude putuskan untuk dilakukan. Instruksi CLAUDE.md membentuk perilaku Claude tetapi bukan lapisan penegakan keras.
+
 #### Kecualikan file CLAUDE.md tertentu
 
 Dalam monorepo besar, file CLAUDE.md leluhur mungkin berisi instruksi yang tidak relevan dengan pekerjaan Anda. Pengaturan `claudeMdExcludes` memungkinkan Anda melewati file tertentu berdasarkan jalur atau pola glob.
@@ -326,7 +356,7 @@ Konten CLAUDE.md disampaikan sebagai pesan pengguna setelah prompt sistem, bukan
 Untuk men-debug:
 
 * Jalankan `/memory` untuk memverifikasi file CLAUDE.md Anda dimuat. Jika file tidak terdaftar, Claude tidak dapat melihatnya.
-* Periksa bahwa CLAUDE.md yang relevan berada di lokasi yang dimuat untuk sesi Anda (lihat [Pilih di mana menempatkan file CLAUDE.md](#choose-where-to-put-claudemd-files)).
+* Periksa bahwa CLAUDE.md yang relevan berada di lokasi yang dimuat untuk sesi Anda (lihat [Pilih di mana menempatkan file CLAUDE.md](#choose-where-to-put-claude-md-files)).
 * Buat instruksi lebih spesifik. "Gunakan indentasi 2 spasi" bekerja lebih baik daripada "format kode dengan baik."
 * Cari instruksi yang bertentangan di seluruh file CLAUDE.md. Jika dua file memberikan panduan berbeda untuk perilaku yang sama, Claude mungkin memilih satu secara sembarangan.
 

@@ -26,7 +26,7 @@ Claude Code skills 遵循 [Agent Skills](https://agentskills.io) 開放標準，
 | :-------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/batch <instruction>`      | 在平行中跨程式碼庫協調大規模變更。研究程式碼庫，將工作分解為 5 到 30 個獨立單位，並呈現計畫。獲得批准後，在隔離的 [git worktree](/zh-TW/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) 中為每個單位生成一個背景代理。每個代理實現其單位、執行測試並開啟拉取請求。需要 git 存放庫。範例：`/batch migrate src/ from Solid to React` |
 | `/claude-api`               | 為您的專案語言（Python、TypeScript、Java、Go、Ruby、C# 或 cURL）載入 Claude API 參考資料，以及 Python 和 TypeScript 的 Agent SDK 參考。涵蓋工具使用、串流、批次、結構化輸出和常見陷阱。當您的程式碼匯入 `anthropic`、`@anthropic-ai/sdk` 或 `claude_agent_sdk` 時也會自動啟動                                                |
-| `/debug [description]`      | 透過讀取工作階段偵錯日誌來排查您目前的 Claude Code 工作階段。可選擇描述問題以聚焦分析                                                                                                                                                                                                      |
+| `/debug [description]`      | 啟用目前工作階段的偵錯記錄，並透過讀取工作階段偵錯日誌來排查問題。偵錯記錄預設為關閉，除非您使用 `claude --debug` 啟動，因此在工作階段中途執行 `/debug` 會從該點開始捕獲日誌。可選擇描述問題以聚焦分析                                                                                                                                      |
 | `/loop [interval] <prompt>` | 在工作階段保持開啟時按間隔重複執行提示。適用於輪詢部署、監督拉取請求或定期重新執行另一個 skill。範例：`/loop 5m check if the deploy finished`。請參閱[按排程執行提示](/zh-TW/scheduled-tasks)                                                                                                                     |
 | `/simplify [focus]`         | 檢查您最近變更的檔案以尋找程式碼重用、品質和效率問題，然後修復它們。在平行中生成三個審查代理，彙總其發現並應用修復。傳遞文字以聚焦於特定關注點：`/simplify focus on memory efficiency`                                                                                                                                         |
 
@@ -186,18 +186,19 @@ Your skill instructions here...
 
 所有欄位都是可選的。建議只使用 `description`，以便 Claude 知道何時使用該 skill。
 
-| 欄位                         | 必需 | 描述                                                                                                |
-| :------------------------- | :- | :------------------------------------------------------------------------------------------------ |
-| `name`                     | 否  | Skill 的顯示名稱。如果省略，使用目錄名稱。僅限小寫字母、數字和連字號（最多 64 個字元）。                                                 |
-| `description`              | 建議 | Skill 的功能以及何時使用它。Claude 使用此來決定何時應用該 skill。如果省略，使用 markdown 內容的第一段。                                |
-| `argument-hint`            | 否  | 自動完成期間顯示的提示，指示預期的引數。範例：`[issue-number]` 或 `[filename] [format]`。                                  |
-| `disable-model-invocation` | 否  | 設定為 `true` 以防止 Claude 自動載入此 skill。用於您想使用 `/name` 手動觸發的工作流程。預設值：`false`。                           |
-| `user-invocable`           | 否  | 設定為 `false` 以從 `/` 功能表中隱藏。用於使用者不應直接叫用的背景知識。預設值：`true`。                                            |
-| `allowed-tools`            | 否  | 當此 skill 處於作用中時，Claude 可以使用而無需詢問許可的工具。                                                            |
-| `model`                    | 否  | 當此 skill 處於作用中時要使用的模型。                                                                            |
-| `context`                  | 否  | 設定為 `fork` 以在分叉的 subagent 上下文中執行。                                                                 |
-| `agent`                    | 否  | 當設定 `context: fork` 時要使用的 subagent 類型。                                                            |
-| `hooks`                    | 否  | 限定於此 skill 生命週期的 hooks。請參閱 [Skills 和代理中的 Hooks](/zh-TW/hooks#hooks-in-skills-and-agents) 以取得設定格式。 |
+| 欄位                         | 必需 | 描述                                                                                                                                  |
+| :------------------------- | :- | :---------------------------------------------------------------------------------------------------------------------------------- |
+| `name`                     | 否  | Skill 的顯示名稱。如果省略，使用目錄名稱。僅限小寫字母、數字和連字號（最多 64 個字元）。                                                                                   |
+| `description`              | 建議 | Skill 的功能以及何時使用它。Claude 使用此來決定何時應用該 skill。如果省略，使用 markdown 內容的第一段。                                                                  |
+| `argument-hint`            | 否  | 自動完成期間顯示的提示，指示預期的引數。範例：`[issue-number]` 或 `[filename] [format]`。                                                                    |
+| `disable-model-invocation` | 否  | 設定為 `true` 以防止 Claude 自動載入此 skill。用於您想使用 `/name` 手動觸發的工作流程。預設值：`false`。                                                             |
+| `user-invocable`           | 否  | 設定為 `false` 以從 `/` 功能表中隱藏。用於使用者不應直接叫用的背景知識。預設值：`true`。                                                                              |
+| `allowed-tools`            | 否  | 當此 skill 處於作用中時，Claude 可以使用而無需詢問許可的工具。                                                                                              |
+| `model`                    | 否  | 當此 skill 處於作用中時要使用的模型。                                                                                                              |
+| `effort`                   | 否  | 當此 skill 處於作用中時的[努力級別](/zh-TW/model-config#adjust-effort-level)。覆蓋工作階段努力級別。預設值：繼承自工作階段。選項：`low`、`medium`、`high`、`max`（僅限 Opus 4.6）。 |
+| `context`                  | 否  | 設定為 `fork` 以在分叉的 subagent 上下文中執行。                                                                                                   |
+| `agent`                    | 否  | 當設定 `context: fork` 時要使用的 subagent 類型。                                                                                              |
+| `hooks`                    | 否  | 限定於此 skill 生命週期的 hooks。請參閱 [Skills 和代理中的 Hooks](/zh-TW/hooks#hooks-in-skills-and-agents) 以取得設定格式。                                   |
 
 #### 可用的字串替換
 
@@ -351,7 +352,7 @@ Preserve all existing behavior and tests.
 
 ### 注入動態上下文
 
-`` !`command` `` 語法在將 skill 內容傳送給 Claude 之前執行 shell 命令。命令輸出替換預留位置，因此 Claude 會收到實際資料，而不是命令本身。
+`` !`<command>` `` 語法在將 skill 內容傳送給 Claude 之前執行 shell 命令。命令輸出替換預留位置，因此 Claude 會收到實際資料，而不是命令本身。
 
 此 skill 透過使用 GitHub CLI 擷取即時 PR 資料來總結拉取請求。`` !`gh pr diff` `` 和其他命令首先執行，其輸出會插入到提示中：
 
@@ -375,7 +376,7 @@ Summarize this pull request...
 
 當此 skill 執行時：
 
-1. 每個 `` !`command` `` 立即執行（在 Claude 看到任何內容之前）
+1. 每個 `` !`<command>` `` 立即執行（在 Claude 看到任何內容之前）
 2. 輸出替換 skill 內容中的預留位置
 3. Claude 收到具有實際 PR 資料的完全呈現的提示
 

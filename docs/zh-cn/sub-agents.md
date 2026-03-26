@@ -184,7 +184,7 @@ claude --agents '{
 }'
 ```
 
-`--agents` 标志接受 JSON，具有与基于文件的 subagents 相同的 [frontmatter](#supported-frontmatter-fields) 字段：`description`、`prompt`、`tools`、`disallowedTools`、`model`、`permissionMode`、`mcpServers`、`hooks`、`maxTurns`、`skills`、`memory`、`effort`、`background` 和 `isolation`。对系统提示使用 `prompt`，等同于基于文件的 subagents 中的 markdown 正文。
+`--agents` 标志接受 JSON，具有与基于文件的 subagents 相同的 [frontmatter](#supported-frontmatter-fields) 字段：`description`、`prompt`、`tools`、`disallowedTools`、`model`、`permissionMode`、`mcpServers`、`hooks`、`maxTurns`、`skills`、`initialPrompt`、`memory`、`effort`、`background` 和 `isolation`。对系统提示使用 `prompt`，等同于基于文件的 subagents 中的 markdown 正文。
 
 **Plugin subagents** 来自您已安装的 [plugins](/zh-CN/plugins)。它们与您的自定义 subagents 一起出现在 `/agents` 中。有关创建 plugin subagents 的详细信息，请参阅 [plugin 组件参考](/zh-CN/plugins-reference#agents)。
 
@@ -234,6 +234,7 @@ Frontmatter 定义了 subagent 的元数据和配置。正文成为指导 subage
 | `background`      | No       | 设置为 `true` 以始终将此 subagent 作为 [background task](#run-subagents-in-foreground-or-background) 运行。默认：`false`                                                                      |
 | `effort`          | No       | 此 subagent 活跃时的努力级别。覆盖会话努力级别。默认：从会话继承。选项：`low`、`medium`、`high`、`max`（仅 Opus 4.6）                                                                                              |
 | `isolation`       | No       | 设置为 `worktree` 以在临时 [git worktree](/zh-CN/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) 中运行 subagent，为其提供存储库的隔离副本。如果 subagent 不进行任何更改，worktree 会自动清理 |
+| `initialPrompt`   | No       | 当此代理作为主会话代理运行时（通过 `--agent` 或 `agent` 设置），自动提交为第一个用户轮次。[Commands](/zh-CN/commands) 和 [skills](/zh-CN/skills) 被处理。前置于任何用户提供的提示                                                 |
 
 ### 选择模型
 
@@ -243,6 +244,13 @@ Frontmatter 定义了 subagent 的元数据和配置。正文成为指导 subage
 * **Full model ID**: 使用完整的模型 ID，如 `claude-opus-4-6` 或 `claude-sonnet-4-6`。接受与 `--model` 标志相同的值
 * **inherit**: 使用与主对话相同的模型
 * **Omitted**: 如果未指定，默认为 `inherit`（使用与主对话相同的模型）
+
+当 Claude 调用 subagent 时，它也可以为该特定调用传递 `model` 参数。Claude Code 按以下顺序解析 subagent 的模型：
+
+1. [`CLAUDE_CODE_SUBAGENT_MODEL`](/zh-CN/model-config#environment-variables) 环境变量，如果设置
+2. 每次调用的 `model` 参数
+3. Subagent 定义的 `model` frontmatter
+4. 主对话的模型
 
 ### 控制 subagent 能力
 
@@ -687,6 +695,8 @@ Use the code-reviewer subagent to review the authentication module
 Continue that code review and now analyze the authorization logic
 [Claude resumes the subagent with full context from previous conversation]
 ```
+
+如果停止的 subagent 接收 `SendMessage`，它会在后台自动恢复，无需新的 `Agent` 调用。
 
 您也可以要求 Claude 提供代理 ID，如果您想明确引用它，或在 `~/.claude/projects/{project}/{sessionId}/subagents/` 的转录文件中找到 ID。每个转录存储为 `agent-{agentId}.jsonl`。
 

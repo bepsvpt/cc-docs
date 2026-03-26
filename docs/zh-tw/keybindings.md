@@ -29,7 +29,7 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 ```json  theme={null}
 {
   "$schema": "https://www.schemastore.org/claude-code-keybindings.json",
-  "$docs": "https://code.claude.com/docs/en/keybindings",
+  "$docs": "https://code.claude.com/docs/zh-TW/keybindings",
   "bindings": [
     {
       "context": "Chat",
@@ -99,12 +99,14 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 | 動作                    | 預設值                       | 說明        |
 | :-------------------- | :------------------------ | :-------- |
 | `chat:cancel`         | Escape                    | 取消目前輸入    |
+| `chat:killAgents`     | Ctrl+X Ctrl+K             | 終止所有背景代理  |
 | `chat:cycleMode`      | Shift+Tab\*               | 循環權限模式    |
 | `chat:modelPicker`    | Cmd+P / Meta+P            | 開啟模型選擇器   |
+| `chat:fastMode`       | Meta+O                    | 切換快速模式    |
 | `chat:thinkingToggle` | Cmd+T / Meta+T            | 切換延伸思考    |
 | `chat:submit`         | Enter                     | 提交訊息      |
 | `chat:undo`           | Ctrl+\_                   | 復原上一個動作   |
-| `chat:externalEditor` | Ctrl+G                    | 在外部編輯器中開啟 |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | 在外部編輯器中開啟 |
 | `chat:stash`          | Ctrl+S                    | 暫存目前提示    |
 | `chat:imagePaste`     | Ctrl+V (Windows 上為 Alt+V) | 貼上影像      |
 
@@ -283,6 +285,14 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 | `settings:search` | /   | 進入搜尋模式           |
 | `settings:retry`  | R   | 重試載入使用量資料（發生錯誤時） |
 
+### 語音動作
+
+在啟用[語音聽寫](/zh-TW/voice-dictation)時，在 `Chat` 上下文中可用的動作：
+
+| 動作                 | 預設值   | 說明      |
+| :----------------- | :---- | :------ |
+| `voice:pushToTalk` | Space | 按住以聽寫提示 |
+
 ## 按鍵組合語法
 
 ### 修飾鍵
@@ -347,10 +357,11 @@ ctrl+k ctrl+s   按 Ctrl+K，放開，然後按 Ctrl+S
 
 這些快捷鍵無法重新繫結：
 
-| 快捷鍵    | 原因        |
-| :----- | :-------- |
-| Ctrl+C | 硬編碼的中斷/取消 |
-| Ctrl+D | 硬編碼的結束    |
+| 快捷鍵    | 原因                        |
+| :----- | :------------------------ |
+| Ctrl+C | 硬編碼的中斷/取消                 |
+| Ctrl+D | 硬編碼的結束                    |
+| Ctrl+M | 與終端機中的 Enter 相同（兩者都傳送 CR） |
 
 ## 終端機衝突
 

@@ -26,7 +26,7 @@ Claude Code skills는 [Agent Skills](https://agentskills.io) 개방형 표준을
 | :-------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/batch <instruction>`      | 코드베이스 전체에서 대규모 변경을 병렬로 조율합니다. 코드베이스를 조사하고, 작업을 5\~30개의 독립적인 단위로 분해하고, 계획을 제시합니다. 승인되면 각 단위당 하나의 백그라운드 에이전트를 격리된 [git worktree](/ko/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees)에서 생성합니다. 각 에이전트는 자신의 단위를 구현하고, 테스트를 실행하고, pull request를 엽니다. git 저장소가 필요합니다. 예: `/batch migrate src/ from Solid to React` |
 | `/claude-api`               | 프로젝트의 언어(Python, TypeScript, Java, Go, Ruby, C#, PHP 또는 cURL)에 대한 Claude API 참조 자료와 Python 및 TypeScript에 대한 Agent SDK 참조를 로드합니다. 도구 사용, 스트리밍, 배치, 구조화된 출력 및 일반적인 함정을 다룹니다. 또한 코드가 `anthropic`, `@anthropic-ai/sdk` 또는 `claude_agent_sdk`를 가져올 때 자동으로 활성화됩니다.                                                                        |
-| `/debug [description]`      | 세션 디버그 로그를 읽어 현재 Claude Code 세션을 문제 해결합니다. 선택적으로 문제를 설명하여 분석에 초점을 맞춥니다.                                                                                                                                                                                                                                                             |
+| `/debug [description]`      | 현재 세션에 대해 디버그 로깅을 활성화하고 세션 디버그 로그를 읽어 문제를 해결합니다. 디버그 로깅은 `claude --debug`로 시작하지 않는 한 기본적으로 꺼져 있으므로, 세션 중간에 `/debug`를 실행하면 그 시점부터 로그 캡처를 시작합니다. 선택적으로 문제를 설명하여 분석에 초점을 맞춥니다.                                                                                                                                                         |
 | `/loop [interval] <prompt>` | 세션이 열려 있는 동안 프롬프트를 간격에 따라 반복적으로 실행합니다. 배포를 폴링하거나, PR을 감시하거나, 다른 skill을 주기적으로 다시 실행하는 데 유용합니다. 예: `/loop 5m check if the deploy finished`. [일정에 따라 프롬프트 실행](/ko/scheduled-tasks)을 참조하세요.                                                                                                                                             |
 | `/simplify [focus]`         | 최근에 변경된 파일에서 코드 재사용, 품질 및 효율성 문제를 검토한 후 수정합니다. 3개의 검토 에이전트를 병렬로 생성하고, 결과를 집계하고, 수정 사항을 적용합니다. 특정 관심사에 초점을 맞추기 위해 텍스트를 전달합니다: `/simplify focus on memory efficiency`                                                                                                                                                                 |
 
@@ -186,18 +186,19 @@ Your skill instructions here...
 
 모든 필드는 선택적입니다. Claude가 skill을 언제 사용할지 알 수 있도록 `description`만 권장됩니다.
 
-| 필드                         | 필수  | 설명                                                                                                            |
-| :------------------------- | :-- | :------------------------------------------------------------------------------------------------------------ |
-| `name`                     | 아니오 | skill의 표시 이름. 생략하면 디렉토리 이름을 사용합니다. 소문자, 숫자 및 하이픈만 사용 가능(최대 64자).                                              |
-| `description`              | 권장  | skill이 무엇을 하는지, 언제 사용할지. Claude는 이를 사용하여 skill을 자동으로 적용할 시기를 결정합니다. 생략하면 markdown 콘텐츠의 첫 번째 단락을 사용합니다.        |
-| `argument-hint`            | 아니오 | 예상 인수를 나타내기 위해 자동 완성 중에 표시되는 힌트. 예: `[issue-number]` 또는 `[filename] [format]`.                                |
-| `disable-model-invocation` | 아니오 | Claude가 이 skill을 자동으로 로드하는 것을 방지하려면 `true`로 설정합니다. `/name`으로 수동으로 트리거하려는 워크플로우에 사용합니다. 기본값: `false`.          |
-| `user-invocable`           | 아니오 | `/` 메뉴에서 숨기려면 `false`로 설정합니다. 사용자가 직접 호출하지 않아야 하는 배경 지식에 사용합니다. 기본값: `true`.                                  |
-| `allowed-tools`            | 아니오 | 이 skill이 활성화되었을 때 Claude가 권한을 요청하지 않고 사용할 수 있는 도구.                                                            |
-| `model`                    | 아니오 | 이 skill이 활성화되었을 때 사용할 모델.                                                                                     |
-| `context`                  | 아니오 | forked subagent 컨텍스트에서 실행하려면 `fork`로 설정합니다.                                                                   |
-| `agent`                    | 아니오 | `context: fork`가 설정되었을 때 사용할 subagent 유형.                                                                     |
-| `hooks`                    | 아니오 | 이 skill의 라이프사이클에 범위가 지정된 hooks. 구성 형식은 [Skills 및 agents의 Hooks](/ko/hooks#hooks-in-skills-and-agents)를 참조하세요. |
+| 필드                         | 필수  | 설명                                                                                                                                                    |
+| :------------------------- | :-- | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`                     | 아니오 | skill의 표시 이름. 생략하면 디렉토리 이름을 사용합니다. 소문자, 숫자 및 하이픈만 사용 가능(최대 64자).                                                                                      |
+| `description`              | 권장  | skill이 무엇을 하는지, 언제 사용할지. Claude는 이를 사용하여 skill을 자동으로 적용할 시기를 결정합니다. 생략하면 markdown 콘텐츠의 첫 번째 단락을 사용합니다.                                                |
+| `argument-hint`            | 아니오 | 예상 인수를 나타내기 위해 자동 완성 중에 표시되는 힌트. 예: `[issue-number]` 또는 `[filename] [format]`.                                                                        |
+| `disable-model-invocation` | 아니오 | Claude가 이 skill을 자동으로 로드하는 것을 방지하려면 `true`로 설정합니다. `/name`으로 수동으로 트리거하려는 워크플로우에 사용합니다. 기본값: `false`.                                                  |
+| `user-invocable`           | 아니오 | `/` 메뉴에서 숨기려면 `false`로 설정합니다. 사용자가 직접 호출하지 않아야 하는 배경 지식에 사용합니다. 기본값: `true`.                                                                          |
+| `allowed-tools`            | 아니오 | 이 skill이 활성화되었을 때 Claude가 권한을 요청하지 않고 사용할 수 있는 도구.                                                                                                    |
+| `model`                    | 아니오 | 이 skill이 활성화되었을 때 사용할 모델.                                                                                                                             |
+| `effort`                   | 아니오 | [노력 수준](/ko/model-config#adjust-effort-level) - 이 skill이 활성화되었을 때. 세션 노력 수준을 재정의합니다. 기본값: 세션에서 상속. 옵션: `low`, `medium`, `high`, `max` (Opus 4.6만 해당). |
+| `context`                  | 아니오 | forked subagent 컨텍스트에서 실행하려면 `fork`로 설정합니다.                                                                                                           |
+| `agent`                    | 아니오 | `context: fork`가 설정되었을 때 사용할 subagent 유형.                                                                                                             |
+| `hooks`                    | 아니오 | 이 skill의 라이프사이클에 범위가 지정된 hooks. 구성 형식은 [Skills 및 agents의 Hooks](/ko/hooks#hooks-in-skills-and-agents)를 참조하세요.                                         |
 
 #### 사용 가능한 문자열 치환
 
@@ -351,9 +352,9 @@ Preserve all existing behavior and tests.
 
 ### 동적 컨텍스트 주입
 
-`!`command\`\` 구문은 skill 콘텐츠가 Claude로 전송되기 전에 shell 명령어를 실행합니다. 명령어 출력이 플레이스홀더를 대체하므로 Claude는 명령어 자체가 아닌 실제 데이터를 받습니다.
+`` !`<command>` `` 구문은 skill 콘텐츠가 Claude로 전송되기 전에 shell 명령어를 실행합니다. 명령어 출력이 플레이스홀더를 대체하므로 Claude는 명령어 자체가 아닌 실제 데이터를 받습니다.
 
-이 skill은 GitHub CLI를 사용하여 라이브 PR 데이터를 가져와 pull request를 요약합니다. `!`gh pr diff\`\` 및 기타 명령어가 먼저 실행되고, 출력이 프롬프트에 삽입됩니다:
+이 skill은 GitHub CLI를 사용하여 라이브 PR 데이터를 가져와 pull request를 요약합니다. `` !`gh pr diff` `` 및 기타 명령어가 먼저 실행되고, 출력이 프롬프트에 삽입됩니다:
 
 ```yaml  theme={null}
 ---
@@ -375,7 +376,7 @@ Summarize this pull request...
 
 이 skill이 실행될 때:
 
-1. 각 `!`command\`\`가 즉시 실행됩니다(Claude가 보기 전에).
+1. 각 `` !`<command>` ``가 즉시 실행됩니다(Claude가 보기 전에).
 2. 출력이 skill 콘텐츠의 플레이스홀더를 대체합니다.
 3. Claude는 실제 PR 데이터가 있는 완전히 렌더링된 프롬프트를 받습니다.
 
@@ -501,7 +502,7 @@ Run the visualization script from your project root:
 
 ```bash
 python ~/.claude/skills/codebase-visualizer/scripts/visualize.py .
-```text
+```
 
 This creates `codebase-map.html` in the current directory and opens it in your default browser.
 

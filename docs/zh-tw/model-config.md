@@ -126,7 +126,13 @@ claude --model opus
 
 [努力等級](https://platform.claude.com/docs/en/build-with-claude/effort)控制自適應推理，根據任務複雜性動態分配思考。較低的努力對於直接的任務更快且更便宜，而較高的努力為複雜問題提供更深入的推理。
 
-三個等級在會話中持續存在：**low**、**medium** 和 **high**。第四個等級 **max** 提供最深入的推理，對 token 支出沒有限制，因此回應速度較慢且成本高於 `high`。`max` 僅在 Opus 4.6 上可用，適用於目前會話而不持續。Opus 4.6 對於 Max 和 Team 訂閱者預設為中等努力。
+三個等級在會話中持續存在：**low**、**medium** 和 **high**。第四個等級 **max** 提供最深入的推理，對 token 支出沒有限制，因此回應速度較慢且成本高於 `high`。`max` 僅在 Opus 4.6 上可用，除了透過 `CLAUDE_CODE_EFFORT_LEVEL` 環境變數外，不會在會話間持續。
+
+Opus 4.6 和 Sonnet 4.6 預設為中等努力。這適用於所有提供者，包括 Bedrock、Vertex AI 和直接 API 存取。
+
+中等是大多數編碼任務的推薦等級：它平衡了速度和推理深度，較高的等級可能會導致模型過度思考日常工作。保留 `high` 或 `max` 用於真正受益於更深入推理的任務，例如困難的除錯問題或複雜的架構決策。
+
+對於一次性的深入推理而不改變您的會話設定，在您的提示中包含「ultrathink」以觸發該輪的高努力。
 
 **設定努力：**
 
@@ -135,8 +141,9 @@ claude --model opus
 * **`--effort` 旗標**：在啟動 Claude Code 時傳遞 `low`、`medium`、`high` 或 `max` 以為單一會話設定等級
 * **環境變數**：設定 `CLAUDE_CODE_EFFORT_LEVEL` 為 `low`、`medium`、`high`、`max` 或 `auto`
 * **設定**：在設定檔中設定 `effortLevel` 為 `"low"`、`"medium"` 或 `"high"`
+* **Skill 和 subagent frontmatter**：在 [skill](/zh-TW/skills#frontmatter-reference) 或 [subagent](/zh-TW/sub-agents#supported-frontmatter-fields) markdown 檔案中設定 `effort` 以在該 skill 或 subagent 執行時覆蓋努力等級
 
-環境變數優先，然後是您配置的等級，然後是模型預設值。
+環境變數優先於所有其他方法，然後是您配置的等級，然後是模型預設值。Frontmatter 努力在該 skill 或 subagent 活動時適用，覆蓋會話等級但不覆蓋環境變數。
 
 Opus 4.6 和 Sonnet 4.6 支援努力。當選擇支援的模型時，努力滑塊會出現在 `/model` 中。目前的努力等級也會顯示在標誌和微調器旁邊，例如「with low effort」，因此您可以確認哪個設定處於活動狀態，而無需開啟 `/model`。
 
@@ -177,6 +184,22 @@ Opus 4.6 和 Sonnet 4.6 支援[100 萬個 token 的 context window](https://plat
 
 1. 在[狀態行](/zh-TW/statusline)中（如果已配置）
 2. 在 `/status` 中，它也會顯示您的帳戶資訊。
+
+## 新增自訂模型選項
+
+使用 `ANTHROPIC_CUSTOM_MODEL_OPTION` 將單一自訂項目新增到 `/model` 選擇器，而無需取代內建別名。這對於 LLM 閘道部署或測試 Claude Code 預設不列出的模型 ID 很有用。
+
+此範例設定所有三個變數以使閘道路由的 Opus 部署可選擇：
+
+```bash  theme={null}
+export ANTHROPIC_CUSTOM_MODEL_OPTION="my-gateway/claude-opus-4-6"
+export ANTHROPIC_CUSTOM_MODEL_OPTION_NAME="Opus via Gateway"
+export ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION="Custom deployment routed through the internal LLM gateway"
+```
+
+自訂項目出現在 `/model` 選擇器的底部。`ANTHROPIC_CUSTOM_MODEL_OPTION_NAME` 和 `ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION` 是可選的。如果省略，模型 ID 會用作名稱，描述預設為 `Custom model (<model-id>)`。
+
+Claude Code 會跳過在 `ANTHROPIC_CUSTOM_MODEL_OPTION` 中設定的模型 ID 的驗證，因此您可以使用您的 API 端點接受的任何字串。
 
 ## 環境變數
 

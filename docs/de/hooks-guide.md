@@ -69,6 +69,7 @@ Jedes Beispiel enthält einen einsatzbereiten Konfigurationsblock, den Sie einer
 * [Bearbeitungen geschützter Dateien blockieren](#block-edits-to-protected-files)
 * [Kontext nach Komprimierung erneut injizieren](#re-inject-context-after-compaction)
 * [Konfigurationsänderungen prüfen](#audit-configuration-changes)
+* [Umgebung neu laden, wenn sich Verzeichnis oder Dateien ändern](#reload-environment-when-directory-or-files-change)
 * [Bestimmte Berechtigungsaufforderungen automatisch genehmigen](#auto-approve-specific-permission-prompts)
 
 ### Benachrichtigung erhalten, wenn Claude Eingaben benötigt
@@ -280,6 +281,51 @@ Dieses Beispiel hängt jede Änderung an ein Audit-Protokoll an. Fügen Sie dies
 
 Der Matcher filtert nach Konfigurationstyp: `user_settings`, `project_settings`, `local_settings`, `policy_settings` oder `skills`. Um eine Änderung zu blockieren, beenden Sie mit Code 2 oder geben Sie `{"decision": "block"}` zurück. Siehe die [ConfigChange-Referenz](/de/hooks#configchange) für das vollständige Eingabe-Schema.
 
+### Umgebung neu laden, wenn sich Verzeichnis oder Dateien ändern
+
+Einige Projekte setzen unterschiedliche Umgebungsvariablen je nachdem, in welchem Verzeichnis Sie sich befinden. Tools wie [direnv](https://direnv.net/) tun dies automatisch in Ihrer Shell, aber Claudes Bash-Tool übernimmt diese Änderungen nicht automatisch.
+
+Ein `CwdChanged`-Hook behebt dies: Er wird jedes Mal ausgeführt, wenn Claude das Verzeichnis wechselt, sodass Sie die korrekten Variablen für den neuen Speicherort neu laden können. Der Hook schreibt die aktualisierten Werte in `CLAUDE_ENV_FILE`, die Claude Code vor jedem Bash-Befehl anwendet. Fügen Sie dies zu `~/.claude/settings.json` hinzu:
+
+```json  theme={null}
+{
+  "hooks": {
+    "CwdChanged": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "direnv export bash >> \"$CLAUDE_ENV_FILE\""
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Um auf bestimmte Dateien statt auf jeden Verzeichniswechsel zu reagieren, verwenden Sie `FileChanged` mit einem `matcher`, der die zu überwachenden Dateinamen auflistet (durch Pipe getrennt). Der `matcher` konfiguriert sowohl, welche Dateien zu überwachen sind, als auch filtert, welche Hooks ausgeführt werden. Dieses Beispiel überwacht `.envrc` und `.env` auf Änderungen im aktuellen Verzeichnis:
+
+```json  theme={null}
+{
+  "hooks": {
+    "FileChanged": [
+      {
+        "matcher": ".envrc|.env",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "direnv export bash >> \"$CLAUDE_ENV_FILE\""
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Siehe die [CwdChanged](/de/hooks#cwdchanged)- und [FileChanged](/de/hooks#filechanged)-Referenzeinträge für Eingabe-Schemas, `watchPaths`-Ausgabe und `CLAUDE_ENV_FILE`-Details.
+
 ### Bestimmte Berechtigungsaufforderungen automatisch genehmigen
 
 Überspringen Sie den Genehmigungsdialog für Tool-Aufrufe, die Sie immer zulassen. Dieses Beispiel genehmigt automatisch `ExitPlanMode`, das Tool, das Claude aufruft, wenn es fertig ist, einen Plan zu präsentieren und fragt, ob es fortfahren soll, sodass Sie nicht jedes Mal aufgefordert werden, wenn ein Plan bereit ist.
@@ -332,30 +378,32 @@ Halten Sie den Matcher so eng wie möglich. Das Abgleichen von `.*` oder das Las
 
 Hook-Events werden an bestimmten Lebenszykluspunkten in Claude Code ausgelöst. Wenn ein Event ausgelöst wird, werden alle übereinstimmenden Hooks parallel ausgeführt, und identische Hook-Befehle werden automatisch dedupliziert. Die folgende Tabelle zeigt jedes Event und wann es ausgelöst wird:
 
-| Event                | When it fires                                                                                                                                  |
-| :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SessionStart`       | When a session begins or resumes                                                                                                               |
-| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                                                           |
-| `PreToolUse`         | Before a tool call executes. Can block it                                                                                                      |
-| `PermissionRequest`  | When a permission dialog appears                                                                                                               |
-| `PostToolUse`        | After a tool call succeeds                                                                                                                     |
-| `PostToolUseFailure` | After a tool call fails                                                                                                                        |
-| `Notification`       | When Claude Code sends a notification                                                                                                          |
-| `SubagentStart`      | When a subagent is spawned                                                                                                                     |
-| `SubagentStop`       | When a subagent finishes                                                                                                                       |
-| `Stop`               | When Claude finishes responding                                                                                                                |
-| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                       |
-| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                             |
-| `TaskCompleted`      | When a task is being marked as completed                                                                                                       |
-| `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session |
-| `ConfigChange`       | When a configuration file changes during a session                                                                                             |
-| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                    |
-| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                                                           |
-| `PreCompact`         | Before context compaction                                                                                                                      |
-| `PostCompact`        | After context compaction completes                                                                                                             |
-| `Elicitation`        | When an MCP server requests user input during a tool call                                                                                      |
-| `ElicitationResult`  | After a user responds to an MCP elicitation, before the response is sent back to the server                                                    |
-| `SessionEnd`         | When a session terminates                                                                                                                      |
+| Event                | When it fires                                                                                                                                          |
+| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SessionStart`       | When a session begins or resumes                                                                                                                       |
+| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                                                                   |
+| `PreToolUse`         | Before a tool call executes. Can block it                                                                                                              |
+| `PermissionRequest`  | When a permission dialog appears                                                                                                                       |
+| `PostToolUse`        | After a tool call succeeds                                                                                                                             |
+| `PostToolUseFailure` | After a tool call fails                                                                                                                                |
+| `Notification`       | When Claude Code sends a notification                                                                                                                  |
+| `SubagentStart`      | When a subagent is spawned                                                                                                                             |
+| `SubagentStop`       | When a subagent finishes                                                                                                                               |
+| `Stop`               | When Claude finishes responding                                                                                                                        |
+| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
+| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
+| `TaskCompleted`      | When a task is being marked as completed                                                                                                               |
+| `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
+| `ConfigChange`       | When a configuration file changes during a session                                                                                                     |
+| `CwdChanged`         | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
+| `FileChanged`        | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
+| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
+| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
+| `PreCompact`         | Before context compaction                                                                                                                              |
+| `PostCompact`        | After context compaction completes                                                                                                                     |
+| `Elicitation`        | When an MCP server requests user input during a tool call                                                                                              |
+| `ElicitationResult`  | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
+| `SessionEnd`         | When a session terminates                                                                                                                              |
 
 Jeder Hook hat einen `type`, der bestimmt, wie er ausgeführt wird. Die meisten Hooks verwenden `"type": "command"`, was einen Shell-Befehl ausführt. Drei weitere Typen sind verfügbar:
 
@@ -395,11 +443,11 @@ INPUT=$(cat)
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
 
 if echo "$COMMAND" | grep -q "drop table"; then
-  echo "Blocked: dropping tables is not allowed" >&2  // stderr wird zu Claudes Feedback
-  exit 2 // exit 2 = Aktion blockieren
+  echo "Blocked: dropping tables is not allowed" >&2  # stderr wird zu Claudes Feedback
+  exit 2 # exit 2 = Aktion blockieren
 fi
 
-exit 0  // exit 0 = fortfahren
+exit 0  # exit 0 = fortfahren
 ```
 
 Der Exit-Code bestimmt, was als nächstes passiert:
@@ -461,17 +509,22 @@ Der `"Edit|Write"`-Matcher ist ein Regex-Muster, das den Tool-Namen abgleicht. D
 
 Jeder Event-Typ gleicht ein bestimmtes Feld ab. Matcher unterstützen exakte Strings und Regex-Muster:
 
-| Event                                                                                           | Worauf der Matcher filtert          | Beispiel-Matcher-Werte                                                             |
-| :---------------------------------------------------------------------------------------------- | :---------------------------------- | :--------------------------------------------------------------------------------- |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                          | Tool-Name                           | `Bash`, `Edit\|Write`, `mcp__.*`                                                   |
-| `SessionStart`                                                                                  | wie die Sitzung gestartet wurde     | `startup`, `resume`, `clear`, `compact`                                            |
-| `SessionEnd`                                                                                    | warum die Sitzung endete            | `clear`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`     |
-| `Notification`                                                                                  | Benachrichtigungstyp                | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`           |
-| `SubagentStart`                                                                                 | Agent-Typ                           | `Bash`, `Explore`, `Plan` oder benutzerdefinierte Agent-Namen                      |
-| `PreCompact`                                                                                    | was die Komprimierung ausgelöst hat | `manual`, `auto`                                                                   |
-| `SubagentStop`                                                                                  | Agent-Typ                           | gleiche Werte wie `SubagentStart`                                                  |
-| `ConfigChange`                                                                                  | Konfigurationsquelle                | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills` |
-| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | keine Matcher-Unterstützung         | wird immer bei jedem Auftreten ausgelöst                                           |
+| Event                                                                                                         | Worauf der Matcher filtert                 | Beispiel-Matcher-Werte                                                                                                    |
+| :------------------------------------------------------------------------------------------------------------ | :----------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                                        | Tool-Name                                  | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `SessionStart`                                                                                                | wie die Sitzung gestartet wurde            | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `SessionEnd`                                                                                                  | warum die Sitzung endete                   | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
+| `Notification`                                                                                                | Benachrichtigungstyp                       | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
+| `SubagentStart`                                                                                               | Agent-Typ                                  | `Bash`, `Explore`, `Plan` oder benutzerdefinierte Agent-Namen                                                             |
+| `PreCompact`, `PostCompact`                                                                                   | was die Komprimierung ausgelöst hat        | `manual`, `auto`                                                                                                          |
+| `SubagentStop`                                                                                                | Agent-Typ                                  | gleiche Werte wie `SubagentStart`                                                                                         |
+| `ConfigChange`                                                                                                | Konfigurationsquelle                       | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
+| `StopFailure`                                                                                                 | Fehlertyp                                  | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                          | Ladegrund                                  | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `Elicitation`                                                                                                 | MCP-Servername                             | Ihre konfigurierten MCP-Servernamen                                                                                       |
+| `ElicitationResult`                                                                                           | MCP-Servername                             | gleiche Werte wie `Elicitation`                                                                                           |
+| `FileChanged`                                                                                                 | Dateiname (Basisname der geänderten Datei) | `.envrc`, `.env`, jeder Dateiname, den Sie überwachen möchten                                                             |
+| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged` | keine Matcher-Unterstützung                | wird immer bei jedem Auftreten ausgelöst                                                                                  |
 
 Ein paar weitere Beispiele, die Matcher auf verschiedene Event-Typen zeigen:
 
@@ -667,7 +720,7 @@ Für vollständige Konfigurationsoptionen und Response-Handling siehe [HTTP-Hook
 * Hook-Timeout beträgt standardmäßig 10 Minuten, konfigurierbar pro Hook mit dem Feld `timeout` (in Sekunden).
 * `PostToolUse`-Hooks können Aktionen nicht rückgängig machen, da das Tool bereits ausgeführt wurde.
 * `PermissionRequest`-Hooks werden nicht im [nicht-interaktiven Modus](/de/headless) (`-p`) ausgelöst. Verwenden Sie stattdessen `PreToolUse`-Hooks für automatisierte Berechtigungsentscheidungen.
-* `Stop`-Hooks werden ausgelöst, wenn Claude antwortet, nicht nur bei Aufgabenabschluss. Sie werden nicht bei Benutzerunterbrechungen ausgelöst.
+* `Stop`-Hooks werden ausgelöst, wenn Claude antwortet, nicht nur bei Aufgabenabschluss. Sie werden nicht bei Benutzerunterbrechungen ausgelöst. API-Fehler lösen stattdessen [StopFailure](/de/hooks#stopfailure) aus.
 
 ### Hook wird nicht ausgelöst
 
@@ -685,7 +738,7 @@ Sie sehen eine Meldung wie "PreToolUse hook error: ..." im Transkript.
 * Ihr Skript wurde unerwartet mit einem Nicht-Null-Code beendet. Testen Sie es manuell, indem Sie Beispiel-JSON pipen:
   ```bash  theme={null}
   echo '{"tool_name":"Bash","tool_input":{"command":"ls"}}' | ./my-hook.sh
-  echo $?  // Überprüfen Sie den Exit-Code
+  echo $?  # Überprüfen Sie den Exit-Code
   ```
 * Wenn Sie "command not found" sehen, verwenden Sie absolute Pfade oder `$CLAUDE_PROJECT_DIR`, um Skripte zu referenzieren
 * Wenn Sie "jq: command not found" sehen, installieren Sie `jq` oder verwenden Sie Python/Node.js zum Parsen von JSON
@@ -709,9 +762,9 @@ Ihr Stop-Hook-Skript muss überprüfen, ob es bereits eine Fortsetzung ausgelös
 #!/bin/bash
 INPUT=$(cat)
 if [ "$(echo "$INPUT" | jq -r '.stop_hook_active')" = "true" ]; then
-  exit 0  // Erlauben Sie Claude zu stoppen
+  exit 0  # Erlauben Sie Claude zu stoppen
 fi
-// ... Rest Ihrer Hook-Logik
+# ... Rest Ihrer Hook-Logik
 ```
 
 ### JSON-Validierung fehlgeschlagen

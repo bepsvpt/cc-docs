@@ -184,7 +184,7 @@ claude --agents '{
 }'
 ```
 
-`--agents` 標誌接受 JSON，具有與基於檔案的 subagents 相同的 [frontmatter](#supported-frontmatter-fields) 欄位：`description`、`prompt`、`tools`、`disallowedTools`、`model`、`permissionMode`、`mcpServers`、`hooks`、`maxTurns`、`skills`、`memory`、`effort`、`background` 和 `isolation`。使用 `prompt` 作為系統提示，等同於基於檔案的 subagents 中的 markdown 主體。
+`--agents` 標誌接受 JSON，具有與基於檔案的 subagents 相同的 [frontmatter](#supported-frontmatter-fields) 欄位：`description`、`prompt`、`tools`、`disallowedTools`、`model`、`permissionMode`、`mcpServers`、`hooks`、`maxTurns`、`skills`、`initialPrompt`、`memory`、`effort`、`background` 和 `isolation`。使用 `prompt` 作為系統提示，等同於基於檔案的 subagents 中的 markdown 主體。
 
 **外掛程式 subagents** 來自您已安裝的 [plugins](/zh-TW/plugins)。它們與您的自訂 subagents 一起出現在 `/agents` 中。請參閱 [外掛程式元件參考](/zh-TW/plugins-reference#agents) 以了解建立外掛程式 subagents 的詳細資訊。
 
@@ -234,6 +234,7 @@ Frontmatter 定義 subagent 的中繼資料和配置。主體成為指導 subage
 | `background`      | No       | 設定為 `true` 以始終將此 subagent 作為 [background task](#run-subagents-in-foreground-or-background) 執行。預設：`false`                                                                      |
 | `effort`          | No       | 此 subagent 活動時的努力程度。覆蓋工作階段努力程度。預設：從工作階段繼承。選項：`low`、`medium`、`high`、`max`（僅 Opus 4.6）                                                                                          |
 | `isolation`       | No       | 設定為 `worktree` 以在臨時 [git worktree](/zh-TW/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) 中執行 subagent，為其提供儲存庫的隔離副本。如果 subagent 不進行任何更改，worktree 會自動清理 |
+| `initialPrompt`   | No       | 當此代理作為主工作階段代理執行時（透過 `--agent` 或 `agent` 設定），自動提交為第一個使用者轉數。[Commands](/zh-TW/commands) 和 [skills](/zh-TW/skills) 會被處理。前置於任何使用者提供的提示                                            |
 
 ### 選擇模型
 
@@ -243,6 +244,13 @@ Frontmatter 定義 subagent 的中繼資料和配置。主體成為指導 subage
 * **Full model ID**：使用完整模型 ID，例如 `claude-opus-4-6` 或 `claude-sonnet-4-6`。接受與 `--model` 標誌相同的值
 * **inherit**：使用與主要對話相同的模型
 * **Omitted**：如果未指定，預設為 `inherit`（使用與主要對話相同的模型）
+
+當 Claude 呼叫 subagent 時，它也可以為該特定呼叫傳遞 `model` 參數。Claude Code 按此順序解析 subagent 的模型：
+
+1. [`CLAUDE_CODE_SUBAGENT_MODEL`](/zh-TW/model-config#environment-variables) 環境變數（如果設定）
+2. 每次呼叫的 `model` 參數
+3. Subagent 定義的 `model` frontmatter
+4. 主要對話的模型
 
 ### 控制 subagent 功能
 
@@ -396,7 +404,7 @@ patterns, conventions, and recurring issues you discover.
 
 ##### 持久記憶提示
 
-* `project` 是建議的預設範圍。當 subagent 的知識在所有專案中廣泛適用時使用 `user`，或當知識不應簽入版本控制時使用 `local`。
+* `project` 是建議的預設範圍。它使 subagent 知識可透過版本控制共享。當 subagent 的知識在所有專案中廣泛適用時使用 `user`，或當知識不應簽入版本控制時使用 `local`。
 * 要求 subagent 在開始工作前查閱其記憶："Review this PR, and check your memory for patterns you've seen before."
 * 要求 subagent 在完成任務後更新其記憶："Now that you're done, save what you learned to your memory." 隨著時間的推移，這會建立一個知識庫，使 subagent 更有效。
 * 直接在 subagent 的 markdown 檔案中包括記憶說明，以便它主動維護自己的知識庫：

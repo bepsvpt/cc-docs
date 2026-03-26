@@ -234,12 +234,37 @@ Certains raccourcis dépendent du panneau qui est ' actif ' (recevant l'entrée 
 | Show Logs                  | -                                                        | Afficher les journaux de débogage de l'extension                                               |
 | Logout                     | -                                                        | Se déconnecter de votre compte Anthropic                                                       |
 
+### Lancer un onglet VS Code à partir d'autres outils
+
+L'extension enregistre un gestionnaire URI à `vscode://anthropic.claude-code/open`. Utilisez-le pour ouvrir un nouvel onglet Claude Code à partir de vos propres outils : un alias shell, un signet de navigateur ou tout script capable d'ouvrir une URL. Si VS Code n'est pas déjà en cours d'exécution, l'ouverture de l'URL le lance d'abord. Si VS Code est déjà en cours d'exécution, l'URL s'ouvre dans la fenêtre actuellement active.
+
+Invoquez le gestionnaire avec l'ouvreur d'URL de votre système d'exploitation. Sur macOS :
+
+```bash  theme={null}
+open "vscode://anthropic.claude-code/open"
+```
+
+Utilisez `xdg-open` sur Linux ou `start` sur Windows.
+
+Le gestionnaire accepte deux paramètres de requête optionnels :
+
+| Paramètre | Description                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `prompt`  | Texte à pré-remplir dans la zone de saisie. Doit être codé en URL. L'invite est pré-remplie mais non soumise automatiquement.                                                                                                                                                                                                                                                                                                                       |
+| `session` | Un ID de session à reprendre au lieu de démarrer une nouvelle conversation. La session doit appartenir à l'espace de travail actuellement ouvert dans VS Code. Si la session n'est pas trouvée, une conversation nouvelle commence à la place. Si la session est déjà ouverte dans un onglet, cet onglet est actif. Pour capturer un ID de session par programmation, consultez [Continuer les conversations](/fr/headless#continue-conversations). |
+
+Par exemple, pour ouvrir un onglet pré-rempli avec « review my changes » :
+
+```text  theme={null}
+vscode://anthropic.claude-code/open?prompt=review%20my%20changes
+```
+
 ## Configurer les paramètres
 
 L'extension a deux types de paramètres :
 
 * **Paramètres d'extension** dans VS Code : contrôlent le comportement de l'extension dans VS Code. Ouvrez avec `Cmd+,` (Mac) ou `Ctrl+,` (Windows/Linux), puis allez à Extensions → Claude Code. Vous pouvez également taper `/` et sélectionner **General Config** pour ouvrir les paramètres.
-* **Paramètres Claude Code** dans `~/.claude/settings.json` : partagés entre l'extension et le CLI. Utilisez pour les commandes autorisées, les variables d'environnement, les hooks et les serveurs MCP. Consultez [Paramètres](/fr/settings) pour plus de détails.
+* **Paramètres Claude Code** dans `~/.claude/settings.json` : partagés entre l'extension et CLI. Utilisez pour les commandes autorisées, les variables d'environnement, les hooks et les serveurs MCP. Consultez [Paramètres](/fr/settings) pour plus de détails.
 
 <Tip>
   Ajoutez `"$schema": "https://json.schemastore.org/claude-code-settings.json"` à votre `settings.json` pour obtenir l'autocomplétion et la validation en ligne pour tous les paramètres disponibles directement dans VS Code.

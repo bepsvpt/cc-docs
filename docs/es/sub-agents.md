@@ -184,7 +184,7 @@ claude --agents '{
 }'
 ```
 
-La bandera `--agents` acepta JSON con los mismos campos de [frontmatter](#supported-frontmatter-fields) que los subagentes basados en archivos: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `memory`, `effort`, `background` e `isolation`. Use `prompt` para el mensaje del sistema, equivalente al cuerpo markdown en subagentes basados en archivos.
+La bandera `--agents` acepta JSON con los mismos campos de [frontmatter](#supported-frontmatter-fields) que los subagentes basados en archivos: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `initialPrompt`, `memory`, `effort`, `background` e `isolation`. Use `prompt` para el mensaje del sistema, equivalente al cuerpo markdown en subagentes basados en archivos.
 
 **Los subagentes de plugin** provienen de [plugins](/es/plugins) que ha instalado. Aparecen en `/agents` junto a sus subagentes personalizados. Consulte la [referencia de componentes de plugin](/es/plugins-reference#agents) para obtener detalles sobre la creación de subagentes de plugin.
 
@@ -232,7 +232,9 @@ Los siguientes campos se pueden usar en el frontmatter YAML. Solo `name` y `desc
 | `hooks`           | No        | [Hooks de ciclo de vida](#define-hooks-for-subagents) limitados a este subagente                                                                                                                                                                                                                                                     |
 | `memory`          | No        | [Alcance de memoria persistente](#enable-persistent-memory): `user`, `project`, o `local`. Habilita aprendizaje entre sesiones                                                                                                                                                                                                       |
 | `background`      | No        | Establecer en `true` para ejecutar siempre este subagente como una [tarea de fondo](#run-subagents-in-foreground-or-background). Por defecto: `false`                                                                                                                                                                                |
+| `effort`          | No        | Nivel de esfuerzo cuando este subagente está activo. Anula el nivel de esfuerzo de la sesión. Por defecto: hereda de la sesión. Opciones: `low`, `medium`, `high`, `max` (solo Opus 4.6)                                                                                                                                             |
 | `isolation`       | No        | Establecer en `worktree` para ejecutar el subagente en un [git worktree](/es/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) temporal, dándole una copia aislada del repositorio. El worktree se limpia automáticamente si el subagente no realiza cambios                                                    |
+| `initialPrompt`   | No        | Se envía automáticamente como el primer turno de usuario cuando este agente se ejecuta como el agente de sesión principal (a través de `--agent` o la configuración `agent`). Se procesan [comandos](/es/commands) y [skills](/es/skills). Se antepone a cualquier mensaje proporcionado por el usuario                              |
 
 ### Elegir un modelo
 
@@ -242,6 +244,13 @@ El campo `model` controla qué [modelo de IA](/es/model-config) usa el subagente
 * **ID de modelo completo**: Use un ID de modelo completo como `claude-opus-4-6` o `claude-sonnet-4-6`. Acepta los mismos valores que la bandera `--model`
 * **inherit**: Use el mismo modelo que la conversación principal
 * **Omitido**: Si no se especifica, por defecto es `inherit` (usa el mismo modelo que la conversación principal)
+
+Cuando Claude invoca un subagente, también puede pasar un parámetro `model` para esa invocación específica. Claude Code resuelve el modelo del subagente en este orden:
+
+1. La variable de entorno [`CLAUDE_CODE_SUBAGENT_MODEL`](/es/model-config#environment-variables), si está establecida
+2. El parámetro `model` por invocación
+3. El frontmatter `model` de la definición del subagente
+4. El modelo de la conversación principal
 
 ### Controlar capacidades de subagentes
 

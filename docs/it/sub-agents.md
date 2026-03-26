@@ -184,7 +184,7 @@ claude --agents '{
 }'
 ```
 
-Il flag `--agents` accetta JSON con gli stessi campi [frontmatter](#supported-frontmatter-fields) dei subagent basati su file: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `memory`, `effort`, `background` e `isolation`. Usa `prompt` per il prompt di sistema, equivalente al corpo markdown nei subagent basati su file.
+Il flag `--agents` accetta JSON con gli stessi campi [frontmatter](#supported-frontmatter-fields) dei subagent basati su file: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `initialPrompt`, `memory`, `effort`, `background` e `isolation`. Usa `prompt` per il prompt di sistema, equivalente al corpo markdown nei subagent basati su file.
 
 I **subagent plugin** provengono da [plugins](/it/plugins) che hai installato. Appaiono in `/agents` insieme ai tuoi subagent personalizzati. Consulta il [riferimento dei componenti plugin](/it/plugins-reference#agents) per i dettagli sulla creazione di subagent plugin.
 
@@ -234,6 +234,7 @@ I seguenti campi possono essere utilizzati nel frontmatter YAML. Solo `name` e `
 | `background`      | No       | Imposta su `true` per eseguire sempre questo subagent come [background task](#run-subagents-in-foreground-or-background). Predefinito: `false`                                                                                                                                                                 |
 | `effort`          | No       | Livello di sforzo quando questo subagent è attivo. Sostituisce il livello di sforzo della sessione. Predefinito: eredita dalla sessione. Opzioni: `low`, `medium`, `high`, `max` (solo Opus 4.6)                                                                                                               |
 | `isolation`       | No       | Imposta su `worktree` per eseguire il subagent in un [git worktree](/it/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) temporaneo, dandogli una copia isolata del repository. Il worktree viene automaticamente pulito se il subagent non apporta modifiche                            |
+| `initialPrompt`   | No       | Auto-inviato come primo turno utente quando questo agente viene eseguito come agente della sessione principale (tramite `--agent` o l'impostazione `agent`). [Commands](/it/commands) e [skills](/it/skills) vengono elaborati. Anteposto a qualsiasi prompt fornito dall'utente                               |
 
 ### Scegli un modello
 
@@ -243,6 +244,13 @@ Il campo `model` controlla quale [modello AI](/it/model-config) utilizza il suba
 * **ID modello completo**: Usa un ID modello completo come `claude-opus-4-6` o `claude-sonnet-4-6`. Accetta gli stessi valori del flag `--model`
 * **inherit**: Usa lo stesso modello della conversazione principale
 * **Omesso**: Se non specificato, predefinito a `inherit` (usa lo stesso modello della conversazione principale)
+
+Quando Claude invoca un subagent, può anche passare un parametro `model` per quella specifica invocazione. Claude Code risolve il modello del subagent in questo ordine:
+
+1. La variabile di ambiente [`CLAUDE_CODE_SUBAGENT_MODEL`](/it/model-config#environment-variables), se impostata
+2. Il parametro `model` per invocazione
+3. Il frontmatter `model` della definizione del subagent
+4. Il modello della conversazione principale
 
 ### Controlla le capacità del subagent
 

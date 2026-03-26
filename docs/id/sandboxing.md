@@ -97,6 +97,8 @@ Anda dapat mengaktifkan sandboxing dengan menjalankan perintah `/sandbox`:
 
 Ini membuka menu di mana Anda dapat memilih antara mode sandbox. Jika dependensi yang diperlukan hilang (seperti `bubblewrap` atau `socat` di Linux), menu menampilkan instruksi instalasi untuk platform Anda.
 
+Secara default, jika sandbox tidak dapat dimulai (dependensi yang hilang, platform yang tidak didukung, atau pembatasan platform), Claude Code menampilkan peringatan dan menjalankan perintah tanpa sandboxing. Untuk menjadikan ini kegagalan keras sebagai gantinya, atur [`sandbox.failIfUnavailable`](/id/settings#sandbox-settings) ke `true`. Ini dimaksudkan untuk penyebaran terkelola yang memerlukan sandboxing sebagai gerbang keamanan.
+
 ### Mode sandbox
 
 Claude Code menawarkan dua mode sandbox:

@@ -97,6 +97,8 @@ Su **Linux e WSL2**, installa prima i pacchetti richiesti:
 
 Questo apre un menu in cui è possibile scegliere tra le modalità sandbox. Se le dipendenze richieste sono mancanti (come `bubblewrap` o `socat` su Linux), il menu visualizza le istruzioni di installazione per la piattaforma.
 
+Per impostazione predefinita, se la sandbox non può avviarsi (dipendenze mancanti, piattaforma non supportata o restrizioni della piattaforma), Claude Code mostra un avviso ed esegue i comandi senza sandboxing. Per rendere questo un errore grave, imposta [`sandbox.failIfUnavailable`](/it/settings#sandbox-settings) su `true`. Questo è destinato a distribuzioni gestite che richiedono il sandboxing come gate di sicurezza.
+
 ### Modalità sandbox
 
 Claude Code offre due modalità sandbox:

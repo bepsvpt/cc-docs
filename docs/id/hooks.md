@@ -18,36 +18,38 @@ Hooks dijalankan pada titik-titik tertentu selama sesi Claude Code. Ketika event
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/2YzYcIR7V1VggfgF/images/hooks-lifecycle.svg?fit=max&auto=format&n=2YzYcIR7V1VggfgF&q=85&s=3004e6c5dc95c4fe7fa3eb40fdc4176c" alt="Diagram siklus hidup hook menunjukkan urutan hooks dari SessionStart melalui loop agentic (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCompleted) ke Stop atau StopFailure, TeammateIdle, PreCompact, PostCompact, dan SessionEnd, dengan Elicitation dan ElicitationResult bersarang di dalam eksekusi MCP tool dan WorktreeCreate, WorktreeRemove, Notification, ConfigChange, dan InstructionsLoaded sebagai event asinkron mandiri" width="520" height="1100" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/JCMefyZyaJwkJgv-/images/hooks-lifecycle.svg?fit=max&auto=format&n=JCMefyZyaJwkJgv-&q=85&s=f004f3fc7324fa2a4630e8d6559cf6dd" alt="Diagram siklus hidup hook menunjukkan urutan hooks dari SessionStart melalui loop agentic (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCompleted) ke Stop atau StopFailure, TeammateIdle, PreCompact, PostCompact, dan SessionEnd, dengan Elicitation dan ElicitationResult bersarang di dalam eksekusi MCP tool dan WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged, dan FileChanged sebagai event asinkron mandiri" width="520" height="1100" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
 Tabel di bawah merangkum kapan setiap event dijalankan. Bagian [Hook events](#hook-events) mendokumentasikan skema input lengkap dan opsi kontrol keputusan untuk masing-masing.
 
-| Event                | When it fires                                                                                                                                  |
-| :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SessionStart`       | When a session begins or resumes                                                                                                               |
-| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                                                           |
-| `PreToolUse`         | Before a tool call executes. Can block it                                                                                                      |
-| `PermissionRequest`  | When a permission dialog appears                                                                                                               |
-| `PostToolUse`        | After a tool call succeeds                                                                                                                     |
-| `PostToolUseFailure` | After a tool call fails                                                                                                                        |
-| `Notification`       | When Claude Code sends a notification                                                                                                          |
-| `SubagentStart`      | When a subagent is spawned                                                                                                                     |
-| `SubagentStop`       | When a subagent finishes                                                                                                                       |
-| `Stop`               | When Claude finishes responding                                                                                                                |
-| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                       |
-| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                             |
-| `TaskCompleted`      | When a task is being marked as completed                                                                                                       |
-| `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session |
-| `ConfigChange`       | When a configuration file changes during a session                                                                                             |
-| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                    |
-| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                                                           |
-| `PreCompact`         | Before context compaction                                                                                                                      |
-| `PostCompact`        | After context compaction completes                                                                                                             |
-| `Elicitation`        | When an MCP server requests user input during a tool call                                                                                      |
-| `ElicitationResult`  | After a user responds to an MCP elicitation, before the response is sent back to the server                                                    |
-| `SessionEnd`         | When a session terminates                                                                                                                      |
+| Event                | When it fires                                                                                                                                          |
+| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SessionStart`       | When a session begins or resumes                                                                                                                       |
+| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                                                                   |
+| `PreToolUse`         | Before a tool call executes. Can block it                                                                                                              |
+| `PermissionRequest`  | When a permission dialog appears                                                                                                                       |
+| `PostToolUse`        | After a tool call succeeds                                                                                                                             |
+| `PostToolUseFailure` | After a tool call fails                                                                                                                                |
+| `Notification`       | When Claude Code sends a notification                                                                                                                  |
+| `SubagentStart`      | When a subagent is spawned                                                                                                                             |
+| `SubagentStop`       | When a subagent finishes                                                                                                                               |
+| `Stop`               | When Claude finishes responding                                                                                                                        |
+| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
+| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
+| `TaskCompleted`      | When a task is being marked as completed                                                                                                               |
+| `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
+| `ConfigChange`       | When a configuration file changes during a session                                                                                                     |
+| `CwdChanged`         | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
+| `FileChanged`        | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
+| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
+| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
+| `PreCompact`         | Before context compaction                                                                                                                              |
+| `PostCompact`        | After context compaction completes                                                                                                                     |
+| `Elicitation`        | When an MCP server requests user input during a tool call                                                                                              |
+| `ElicitationResult`  | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
+| `SessionEnd`         | When a session terminates                                                                                                                              |
 
 ### Bagaimana hook diselesaikan
 
@@ -166,21 +168,23 @@ Untuk detail tentang resolusi file pengaturan, lihat [settings](/id/settings). A
 
 Bidang `matcher` adalah string regex yang memfilter kapan hooks dijalankan. Gunakan `"*"`, `""`, atau hilangkan `matcher` sepenuhnya untuk mencocokkan semua kemunculan. Setiap tipe event mencocokkan pada bidang yang berbeda:
 
-| Event                                                                                           | Apa yang difilter matcher  | Contoh nilai matcher                                                                                                      |
-| :---------------------------------------------------------------------------------------------- | :------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                          | nama tool                  | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
-| `SessionStart`                                                                                  | bagaimana sesi dimulai     | `startup`, `resume`, `clear`, `compact`                                                                                   |
-| `SessionEnd`                                                                                    | mengapa sesi berakhir      | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                  | tipe notifikasi            | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                 | tipe agent                 | `Bash`, `Explore`, `Plan`, atau nama agent kustom                                                                         |
-| `PreCompact`, `PostCompact`                                                                     | apa yang memicu compaction | `manual`, `auto`                                                                                                          |
-| `SubagentStop`                                                                                  | tipe agent                 | nilai yang sama seperti `SubagentStart`                                                                                   |
-| `ConfigChange`                                                                                  | sumber konfigurasi         | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
-| `StopFailure`                                                                                   | tipe kesalahan             | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                            | alasan load                | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
-| `Elicitation`                                                                                   | nama server MCP            | nama server MCP yang dikonfigurasi Anda                                                                                   |
-| `ElicitationResult`                                                                             | nama server MCP            | nilai yang sama seperti `Elicitation`                                                                                     |
-| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | tidak ada dukungan matcher | selalu dijalankan pada setiap kemunculan                                                                                  |
+| Event                                                                                           | Apa yang difilter matcher                   | Contoh nilai matcher                                                                                                      |
+| :---------------------------------------------------------------------------------------------- | :------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                          | nama tool                                   | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `SessionStart`                                                                                  | bagaimana sesi dimulai                      | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `SessionEnd`                                                                                    | mengapa sesi berakhir                       | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
+| `Notification`                                                                                  | tipe notifikasi                             | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
+| `SubagentStart`                                                                                 | tipe agent                                  | `Bash`, `Explore`, `Plan`, atau nama agent kustom                                                                         |
+| `PreCompact`, `PostCompact`                                                                     | apa yang memicu compaction                  | `manual`, `auto`                                                                                                          |
+| `SubagentStop`                                                                                  | tipe agent                                  | nilai yang sama seperti `SubagentStart`                                                                                   |
+| `ConfigChange`                                                                                  | sumber konfigurasi                          | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
+| `CwdChanged`                                                                                    | tidak ada dukungan matcher                  | selalu dijalankan pada setiap perubahan direktori                                                                         |
+| `FileChanged`                                                                                   | nama file (basename dari file yang berubah) | `.envrc`, `.env`, nama file apa pun yang ingin Anda pantau                                                                |
+| `StopFailure`                                                                                   | tipe kesalahan                              | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                            | alasan load                                 | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `Elicitation`                                                                                   | nama server MCP                             | nama server MCP yang dikonfigurasi Anda                                                                                   |
+| `ElicitationResult`                                                                             | nama server MCP                             | nilai yang sama seperti `Elicitation`                                                                                     |
+| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | tidak ada dukungan matcher                  | selalu dijalankan pada setiap kemunculan                                                                                  |
 
 Matcher adalah regex, jadi `Edit|Write` mencocokkan salah satu tool dan `Notebook.*` mencocokkan tool apa pun yang dimulai dengan Notebook. Matcher dijalankan terhadap bidang dari [JSON input](#hook-input-and-output) yang Claude Code kirimkan ke hook Anda di stdin. Untuk tool events, bidang itu adalah `tool_name`. Setiap bagian [hook event](#hook-events) mencantumkan set lengkap nilai matcher dan skema input untuk event itu.
 
@@ -204,7 +208,7 @@ Contoh ini menjalankan skrip linting hanya ketika Claude menulis atau mengedit f
 }
 ```
 
-`UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, dan `InstructionsLoaded` tidak mendukung matchers dan selalu dijalankan pada setiap kemunculan. Jika Anda menambahkan bidang `matcher` ke event ini, itu akan diabaikan secara diam-diam.
+`UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, dan `CwdChanged` tidak mendukung matchers dan selalu dijalankan pada setiap kemunculan. Jika Anda menambahkan bidang `matcher` ke event ini, itu akan diabaikan secara diam-diam.
 
 #### Cocokkan MCP tools
 
@@ -526,6 +530,8 @@ Kode keluar 2 adalah cara hook menandakan "berhenti, jangan lakukan ini." Efekny
 | `SubagentStart`      | Tidak           | Menampilkan stderr ke pengguna saja                                      |
 | `SessionStart`       | Tidak           | Menampilkan stderr ke pengguna saja                                      |
 | `SessionEnd`         | Tidak           | Menampilkan stderr ke pengguna saja                                      |
+| `CwdChanged`         | Tidak           | Menampilkan stderr ke pengguna saja                                      |
+| `FileChanged`        | Tidak           | Menampilkan stderr ke pengguna saja                                      |
 | `PreCompact`         | Tidak           | Menampilkan stderr ke pengguna saja                                      |
 | `PostCompact`        | Tidak           | Menampilkan stderr ke pengguna saja                                      |
 | `Elicitation`        | Ya              | Menolak elicitation                                                      |
@@ -579,16 +585,16 @@ Untuk menghentikan Claude sepenuhnya terlepas dari tipe event:
 
 Tidak setiap event mendukung pemblokiran atau kontrol perilaku melalui JSON. Events yang melakukannya masing-masing menggunakan set bidang yang berbeda untuk mengekspresikan keputusan itu. Gunakan tabel ini sebagai referensi cepat sebelum menulis hook:
 
-| Events                                                                                             | Pola keputusan                     | Bidang kunci                                                                                                                                                                        |
-| :------------------------------------------------------------------------------------------------- | :--------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange                | Top-level `decision`               | `decision: "block"`, `reason`                                                                                                                                                       |
-| TeammateIdle, TaskCompleted                                                                        | Kode keluar atau `continue: false` | Kode keluar 2 memblokir tindakan dengan umpan balik stderr. JSON `{"continue": false, "stopReason": "..."}` juga menghentikan teammate sepenuhnya, mencocokkan perilaku hook `Stop` |
-| PreToolUse                                                                                         | `hookSpecificOutput`               | `permissionDecision` (allow/deny/ask), `permissionDecisionReason`                                                                                                                   |
-| PermissionRequest                                                                                  | `hookSpecificOutput`               | `decision.behavior` (allow/deny)                                                                                                                                                    |
-| WorktreeCreate                                                                                     | stdout path                        | Hook mencetak path absolut ke worktree yang dibuat. Exit non-zero gagal membuat                                                                                                     |
-| Elicitation                                                                                        | `hookSpecificOutput`               | `action` (accept/decline/cancel), `content` (nilai field form untuk accept)                                                                                                         |
-| ElicitationResult                                                                                  | `hookSpecificOutput`               | `action` (accept/decline/cancel), `content` (nilai field form override)                                                                                                             |
-| WorktreeRemove, Notification, SessionEnd, PreCompact, PostCompact, InstructionsLoaded, StopFailure | Tidak ada                          | Tidak ada kontrol keputusan. Digunakan untuk efek samping seperti logging atau cleanup                                                                                              |
+| Events                                                                                                                      | Pola keputusan                     | Bidang kunci                                                                                                                                                                        |
+| :-------------------------------------------------------------------------------------------------------------------------- | :--------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange                                         | Top-level `decision`               | `decision: "block"`, `reason`                                                                                                                                                       |
+| TeammateIdle, TaskCompleted                                                                                                 | Kode keluar atau `continue: false` | Kode keluar 2 memblokir tindakan dengan umpan balik stderr. JSON `{"continue": false, "stopReason": "..."}` juga menghentikan teammate sepenuhnya, mencocokkan perilaku hook `Stop` |
+| PreToolUse                                                                                                                  | `hookSpecificOutput`               | `permissionDecision` (allow/deny/ask), `permissionDecisionReason`                                                                                                                   |
+| PermissionRequest                                                                                                           | `hookSpecificOutput`               | `decision.behavior` (allow/deny)                                                                                                                                                    |
+| WorktreeCreate                                                                                                              | stdout path                        | Hook mencetak path absolut ke worktree yang dibuat. Exit non-zero gagal membuat                                                                                                     |
+| Elicitation                                                                                                                 | `hookSpecificOutput`               | `action` (accept/decline/cancel), `content` (nilai field form untuk accept)                                                                                                         |
+| ElicitationResult                                                                                                           | `hookSpecificOutput`               | `action` (accept/decline/cancel), `content` (nilai field form override)                                                                                                             |
+| WorktreeRemove, Notification, SessionEnd, PreCompact, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged | Tidak ada                          | Tidak ada kontrol keputusan. Digunakan untuk efek samping seperti logging atau cleanup                                                                                              |
 
 Berikut adalah contoh setiap pola dalam aksi:
 
@@ -730,7 +736,7 @@ exit 0
 Variabel apa pun yang ditulis ke file ini akan tersedia dalam semua perintah Bash berikutnya yang dijalankan Claude Code selama sesi.
 
 <Note>
-  `CLAUDE_ENV_FILE` tersedia untuk SessionStart hooks. Tipe hook lainnya tidak memiliki akses ke variabel ini.
+  `CLAUDE_ENV_FILE` tersedia untuk SessionStart, [CwdChanged](#cwdchanged), dan [FileChanged](#filechanged) hooks. Tipe hook lainnya tidak memiliki akses ke variabel ini.
 </Note>
 
 ### InstructionsLoaded
@@ -1490,6 +1496,75 @@ ConfigChange hooks dapat memblokir perubahan konfigurasi dari berlaku. Gunakan k
 
 Perubahan `policy_settings` tidak dapat diblokir. Hooks masih dijalankan untuk sumber `policy_settings`, jadi Anda dapat menggunakannya untuk audit logging, tetapi keputusan blocking apa pun diabaikan. Ini memastikan pengaturan yang dikelola enterprise selalu berlaku.
 
+### CwdChanged
+
+Dijalankan ketika direktori kerja berubah selama sesi, misalnya ketika Claude menjalankan perintah `cd`. Gunakan ini untuk bereaksi terhadap perubahan direktori: muat ulang variabel lingkungan, aktifkan toolchains khusus proyek, atau jalankan skrip setup secara otomatis. Berpasangan dengan [FileChanged](#filechanged) untuk tools seperti [direnv](https://direnv.net/) yang mengelola lingkungan per-direktori.
+
+CwdChanged hooks memiliki akses ke `CLAUDE_ENV_FILE`. Variabel yang ditulis ke file itu bertahan ke perintah Bash berikutnya untuk sesi, sama seperti dalam [SessionStart hooks](#persist-environment-variables). Hanya hooks `type: "command"` yang didukung.
+
+CwdChanged tidak mendukung matchers dan dijalankan pada setiap perubahan direktori.
+
+#### Input CwdChanged
+
+Selain [bidang input umum](#common-input-fields), CwdChanged hooks menerima `old_cwd` dan `new_cwd`.
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../transcript.jsonl",
+  "cwd": "/Users/my-project/src",
+  "hook_event_name": "CwdChanged",
+  "old_cwd": "/Users/my-project",
+  "new_cwd": "/Users/my-project/src"
+}
+```
+
+#### Output CwdChanged
+
+Selain [bidang output JSON](#json-output) yang tersedia untuk semua hooks, CwdChanged hooks dapat mengembalikan `watchPaths` untuk secara dinamis menetapkan path file mana yang [FileChanged](#filechanged) pantau:
+
+| Bidang       | Deskripsi                                                                                                                                                                                                          |
+| :----------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `watchPaths` | Array path absolut. Menggantikan daftar watch dinamis saat ini (path dari konfigurasi `matcher` Anda selalu dipantau). Mengembalikan array kosong menghapus daftar dinamis, yang khas saat memasuki direktori baru |
+
+CwdChanged hooks tidak memiliki kontrol keputusan. Mereka tidak dapat memblokir perubahan direktori.
+
+### FileChanged
+
+Dijalankan ketika file yang dipantau berubah di disk. Bidang `matcher` dalam konfigurasi hook Anda mengontrol nama file mana yang dipantau: itu adalah daftar yang dipisahkan pipe dari basenames (nama file tanpa path direktori, misalnya `".envrc|.env"`). Nilai `matcher` yang sama juga digunakan untuk memfilter hooks mana yang dijalankan ketika file berubah, mencocokkan terhadap basename dari file yang berubah. Berguna untuk memuat ulang variabel lingkungan ketika file konfigurasi proyek dimodifikasi.
+
+FileChanged hooks memiliki akses ke `CLAUDE_ENV_FILE`. Variabel yang ditulis ke file itu bertahan ke perintah Bash berikutnya untuk sesi, sama seperti dalam [SessionStart hooks](#persist-environment-variables). Hanya hooks `type: "command"` yang didukung.
+
+#### Input FileChanged
+
+Selain [bidang input umum](#common-input-fields), FileChanged hooks menerima `file_path` dan `event`.
+
+| Bidang      | Deskripsi                                                                                               |
+| :---------- | :------------------------------------------------------------------------------------------------------ |
+| `file_path` | Path absolut ke file yang berubah                                                                       |
+| `event`     | Apa yang terjadi: `"change"` (file dimodifikasi), `"add"` (file dibuat), atau `"unlink"` (file dihapus) |
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../transcript.jsonl",
+  "cwd": "/Users/my-project",
+  "hook_event_name": "FileChanged",
+  "file_path": "/Users/my-project/.envrc",
+  "event": "change"
+}
+```
+
+#### Output FileChanged
+
+Selain [bidang output JSON](#json-output) yang tersedia untuk semua hooks, FileChanged hooks dapat mengembalikan `watchPaths` untuk secara dinamis memperbarui path file mana yang dipantau:
+
+| Bidang       | Deskripsi                                                                                                                                                                                                                      |
+| :----------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `watchPaths` | Array path absolut. Menggantikan daftar watch dinamis saat ini (path dari konfigurasi `matcher` Anda selalu dipantau). Gunakan ini ketika skrip hook Anda menemukan file tambahan untuk dipantau berdasarkan file yang berubah |
+
+FileChanged hooks tidak memiliki kontrol keputusan. Mereka tidak dapat memblokir perubahan file dari terjadi.
+
 ### WorktreeCreate
 
 Ketika Anda menjalankan `claude --worktree` atau [subagent menggunakan `isolation: "worktree"`](/id/sub-agents#choose-the-subagent-scope), Claude Code membuat salinan kerja terisolasi menggunakan `git worktree`. Jika Anda mengonfigurasi hook WorktreeCreate, itu menggantikan perilaku git default, memungkinkan Anda menggunakan sistem kontrol versi berbeda seperti SVN, Perforce, atau Mercurial.
@@ -1801,8 +1876,10 @@ Events yang mendukung semua empat tipe hook (`command`, `http`, `prompt`, dan `a
 Events yang hanya mendukung hooks `type: "command"`:
 
 * `ConfigChange`
+* `CwdChanged`
 * `Elicitation`
 * `ElicitationResult`
+* `FileChanged`
 * `InstructionsLoaded`
 * `Notification`
 * `PostCompact`

@@ -58,10 +58,16 @@ Les plugins peuvent fournir des subagents spécialisés pour des tâches spécif
 ---
 name: agent-name
 description: Ce dans quoi cet agent se spécialise et quand Claude devrait l'invoquer
+model: sonnet
+effort: medium
+maxTurns: 20
+disallowedTools: Write, Edit
 ---
 
 Invite système détaillée pour l'agent décrivant son rôle, son expertise et son comportement.
 ```
+
+Les agents de plugin prennent en charge les champs frontmatter `name`, `description`, `model`, `effort`, `maxTurns`, `tools`, `disallowedTools`, `skills`, `memory`, `background` et `isolation`. La seule valeur `isolation` valide est `"worktree"`. Pour des raisons de sécurité, `hooks`, `mcpServers` et `permissionMode` ne sont pas pris en charge pour les agents fournis par les plugins.
 
 **Points d'intégration** :
 
@@ -100,28 +106,41 @@ Les plugins peuvent fournir des gestionnaires d'événements qui répondent auto
 }
 ```
 
-**Événements disponibles** :
+Les hooks de plugin répondent aux mêmes événements de cycle de vie que les [hooks définis par l'utilisateur](/fr/hooks) :
 
-* `PreToolUse` : Avant que Claude utilise un outil
-* `PostToolUse` : Après que Claude utilise avec succès un outil
-* `PostToolUseFailure` : Après l'échec de l'exécution d'un outil par Claude
-* `PermissionRequest` : Quand une boîte de dialogue de permission est affichée
-* `UserPromptSubmit` : Quand l'utilisateur soumet une invite
-* `Notification` : Quand Claude Code envoie des notifications
-* `Stop` : Quand Claude tente d'arrêter
-* `SubagentStart` : Quand un subagent est démarré
-* `SubagentStop` : Quand un subagent tente d'arrêter
-* `SessionStart` : Au début des sessions
-* `SessionEnd` : À la fin des sessions
-* `TeammateIdle` : Quand un coéquipier d'une équipe d'agents est sur le point de devenir inactif
-* `TaskCompleted` : Quand une tâche est marquée comme complétée
-* `PreCompact` : Avant que l'historique de conversation soit compacté
+| Event                | When it fires                                                                                                                                          |
+| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SessionStart`       | When a session begins or resumes                                                                                                                       |
+| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                                                                   |
+| `PreToolUse`         | Before a tool call executes. Can block it                                                                                                              |
+| `PermissionRequest`  | When a permission dialog appears                                                                                                                       |
+| `PostToolUse`        | After a tool call succeeds                                                                                                                             |
+| `PostToolUseFailure` | After a tool call fails                                                                                                                                |
+| `Notification`       | When Claude Code sends a notification                                                                                                                  |
+| `SubagentStart`      | When a subagent is spawned                                                                                                                             |
+| `SubagentStop`       | When a subagent finishes                                                                                                                               |
+| `Stop`               | When Claude finishes responding                                                                                                                        |
+| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
+| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
+| `TaskCompleted`      | When a task is being marked as completed                                                                                                               |
+| `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
+| `ConfigChange`       | When a configuration file changes during a session                                                                                                     |
+| `CwdChanged`         | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
+| `FileChanged`        | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
+| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
+| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
+| `PreCompact`         | Before context compaction                                                                                                                              |
+| `PostCompact`        | After context compaction completes                                                                                                                     |
+| `Elicitation`        | When an MCP server requests user input during a tool call                                                                                              |
+| `ElicitationResult`  | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
+| `SessionEnd`         | When a session terminates                                                                                                                              |
 
 **Types de hooks** :
 
-* `command` : Exécuter des commandes shell ou des scripts
-* `prompt` : Évaluer une invite avec un LLM (utilise l'espace réservé `$ARGUMENTS` pour le contexte)
-* `agent` : Exécuter un vérificateur agentic avec des outils pour les tâches de vérification complexes
+* `command` : exécuter des commandes shell ou des scripts
+* `http` : envoyer l'événement JSON en tant que requête POST à une URL
+* `prompt` : évaluer une invite avec un LLM (utilise l'espace réservé `$ARGUMENTS` pour le contexte)
+* `agent` : exécuter un vérificateur agentic avec des outils pour les tâches de vérification complexes
 
 ### Serveurs MCP
 
@@ -326,6 +345,51 @@ Ce nom est utilisé pour l'espace de noms des composants. Par exemple, dans l'in
 | `mcpServers`   | string\|array\|object | Chemins de configuration MCP ou configuration en ligne                                                                                                                             | `"./my-extra-mcp-config.json"`         |
 | `outputStyles` | string\|array         | Fichiers/répertoires de styles de sortie supplémentaires                                                                                                                           | `"./styles/"`                          |
 | `lspServers`   | string\|array\|object | Configurations [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) pour l'intelligence de code (aller à la définition, trouver les références, etc.) | `"./.lsp.json"`                        |
+| `userConfig`   | object                | Valeurs configurables par l'utilisateur demandées au moment de l'activation. Consultez [Configuration utilisateur](#user-configuration)                                            | Voir ci-dessous                        |
+| `channels`     | array                 | Déclarations de canaux pour l'injection de messages (style Telegram, Slack, Discord). Consultez [Canaux](#channels)                                                                | Voir ci-dessous                        |
+
+### Configuration utilisateur
+
+Le champ `userConfig` déclare les valeurs que Claude Code demande à l'utilisateur lors de l'activation du plugin. Utilisez ceci au lieu d'exiger que les utilisateurs modifient manuellement `settings.json`.
+
+```json  theme={null}
+{
+  "userConfig": {
+    "api_endpoint": {
+      "description": "Le point de terminaison API de votre équipe",
+      "sensitive": false
+    },
+    "api_token": {
+      "description": "Jeton d'authentification API",
+      "sensitive": true
+    }
+  }
+}
+```
+
+Les clés doivent être des identifiants valides. Chaque valeur est disponible pour la substitution en tant que `${user_config.KEY}` dans les configurations de serveurs MCP et LSP, les commandes de hook, et (pour les valeurs non sensibles uniquement) le contenu des skills et des agents. Les valeurs sont également exportées vers les sous-processus du plugin en tant que variables d'environnement `CLAUDE_PLUGIN_OPTION_<KEY>`.
+
+Les valeurs non sensibles sont stockées dans `settings.json` sous `pluginConfigs[<plugin-id>].options`. Les valeurs sensibles vont au trousseau système (ou `~/.claude/.credentials.json` où le trousseau n'est pas disponible). Le stockage du trousseau est partagé avec les jetons OAuth et a une limite totale d'environ 2 KB, donc gardez les valeurs sensibles petites.
+
+### Canaux
+
+Le champ `channels` permet à un plugin de déclarer un ou plusieurs canaux de messages qui injectent du contenu dans la conversation. Chaque canal se lie à un serveur MCP que le plugin fournit.
+
+```json  theme={null}
+{
+  "channels": [
+    {
+      "server": "telegram",
+      "userConfig": {
+        "bot_token": { "description": "Jeton de bot Telegram", "sensitive": true },
+        "owner_id": { "description": "Votre ID utilisateur Telegram", "sensitive": false }
+      }
+    }
+  ]
+}
+```
+
+Le champ `server` est obligatoire et doit correspondre à une clé dans les `mcpServers` du plugin. Le `userConfig` optionnel par canal utilise le même schéma que le champ de niveau supérieur, permettant au plugin de demander des jetons de bot ou des ID de propriétaire lors de l'activation du plugin.
 
 ### Règles de comportement des chemins
 
@@ -353,7 +417,11 @@ Ce nom est utilisé pour l'espace de noms des composants. Par exemple, dans l'in
 
 ### Variables d'environnement
 
-**`${CLAUDE_PLUGIN_ROOT}`** : Contient le chemin absolu de votre répertoire de plugin. Utilisez ceci dans les hooks, les serveurs MCP et les scripts pour assurer les chemins corrects indépendamment de l'emplacement d'installation.
+Claude Code fournit deux variables pour référencer les chemins des plugins. Les deux sont substituées en ligne partout où elles apparaissent dans le contenu des skills, le contenu des agents, les commandes de hook, et les configurations des serveurs MCP ou LSP. Les deux sont également exportées en tant que variables d'environnement vers les processus de hook et les sous-processus des serveurs MCP ou LSP.
+
+**`${CLAUDE_PLUGIN_ROOT}`** : le chemin absolu du répertoire d'installation de votre plugin. Utilisez ceci pour référencer les scripts, les binaires et les fichiers de configuration fournis avec le plugin. Ce chemin change quand le plugin se met à jour, donc les fichiers que vous écrivez ici ne survivent pas à une mise à jour.
+
+**`${CLAUDE_PLUGIN_DATA}`** : un répertoire persistant pour l'état du plugin qui survit aux mises à jour. Utilisez ceci pour les dépendances installées telles que `node_modules` ou les environnements virtuels Python, le code généré, les caches et tous les autres fichiers qui doivent persister entre les versions du plugin. Le répertoire est créé automatiquement la première fois que cette variable est référencée.
 
 ```json  theme={null}
 {
@@ -371,6 +439,51 @@ Ce nom est utilisé pour l'espace de noms des composants. Par exemple, dans l'in
   }
 }
 ```
+
+#### Répertoire de données persistantes
+
+Le répertoire `${CLAUDE_PLUGIN_DATA}` se résout en `~/.claude/plugins/data/{id}/`, où `{id}` est l'identifiant du plugin avec les caractères en dehors de `a-z`, `A-Z`, `0-9`, `_` et `-` remplacés par `-`. Pour un plugin installé en tant que `formatter@my-marketplace`, le répertoire est `~/.claude/plugins/data/formatter-my-marketplace/`.
+
+Un usage courant est d'installer les dépendances de langage une fois et de les réutiliser entre les sessions et les mises à jour du plugin. Parce que le répertoire de données survit à n'importe quelle version unique du plugin, une vérification de l'existence du répertoire seul ne peut pas détecter quand une mise à jour change le manifeste de dépendance du plugin. Le motif recommandé compare le manifeste fourni par rapport à une copie dans le répertoire de données et réinstalle quand ils diffèrent.
+
+Ce hook `SessionStart` installe `node_modules` à la première exécution et à nouveau chaque fois qu'une mise à jour du plugin inclut un `package.json` modifié :
+
+```json  theme={null}
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "diff -q \"${CLAUDE_PLUGIN_ROOT}/package.json\" \"${CLAUDE_PLUGIN_DATA}/package.json\" >/dev/null 2>&1 || (cd \"${CLAUDE_PLUGIN_DATA}\" && cp \"${CLAUDE_PLUGIN_ROOT}/package.json\" . && npm install) || rm -f \"${CLAUDE_PLUGIN_DATA}/package.json\""
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Le `diff` sort avec un code non nul quand la copie stockée est manquante ou diffère de celle fournie, couvrant à la fois la première exécution et les mises à jour changeant les dépendances. Si `npm install` échoue, le `rm` final supprime le manifeste copié pour que la session suivante réessaie.
+
+Les scripts fournis dans `${CLAUDE_PLUGIN_ROOT}` peuvent ensuite s'exécuter contre les `node_modules` persistants :
+
+```json  theme={null}
+{
+  "mcpServers": {
+    "routines": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/server.js"],
+      "env": {
+        "NODE_PATH": "${CLAUDE_PLUGIN_DATA}/node_modules"
+      }
+    }
+  }
+}
+```
+
+Le répertoire de données est supprimé automatiquement quand vous désinstallez le plugin de la dernière portée où il est installé. L'interface `/plugin` affiche la taille du répertoire et demande une confirmation avant la suppression. La CLI supprime par défaut ; passez [`--keep-data`](#plugin-uninstall) pour le conserver.
 
 ***
 
@@ -508,12 +621,15 @@ claude plugin uninstall <plugin> [options]
 
 **Options :**
 
-| Option                | Description                                               | Par défaut |
-| :-------------------- | :-------------------------------------------------------- | :--------- |
-| `-s, --scope <scope>` | Désinstaller de la portée : `user`, `project`, ou `local` | `user`     |
-| `-h, --help`          | Afficher l'aide pour la commande                          |            |
+| Option                | Description                                                                             | Par défaut |
+| :-------------------- | :-------------------------------------------------------------------------------------- | :--------- |
+| `-s, --scope <scope>` | Désinstaller de la portée : `user`, `project`, ou `local`                               | `user`     |
+| `--keep-data`         | Conserver le [répertoire de données persistantes](#persistent-data-directory) du plugin |            |
+| `-h, --help`          | Afficher l'aide pour la commande                                                        |            |
 
 **Alias :** `remove`, `rm`
+
+Par défaut, la désinstallation de la dernière portée restante supprime également le répertoire `${CLAUDE_PLUGIN_DATA}` du plugin. Utilisez `--keep-data` pour le conserver, par exemple lors de la réinstallation après le test d'une nouvelle version.
 
 ### plugin enable
 
@@ -578,7 +694,7 @@ claude plugin update <plugin> [options]
 
 ### Commandes de débogage
 
-Utilisez `claude --debug` (ou `/debug` dans le TUI) pour voir les détails du chargement des plugins :
+Utilisez `claude --debug` pour voir les détails du chargement des plugins :
 
 Cela affiche :
 
@@ -589,14 +705,14 @@ Cela affiche :
 
 ### Problèmes courants
 
-| Problème                            | Cause                              | Solution                                                                                   |
-| :---------------------------------- | :--------------------------------- | :----------------------------------------------------------------------------------------- |
-| Plugin ne se charge pas             | `plugin.json` invalide             | Validez la syntaxe JSON avec `claude plugin validate` ou `/plugin validate`                |
-| Les commandes n'apparaissent pas    | Structure de répertoire incorrecte | Assurez-vous que `commands/` est à la racine, pas dans `.claude-plugin/`                   |
-| Les hooks ne se déclenchent pas     | Le script n'est pas exécutable     | Exécutez `chmod +x script.sh`                                                              |
-| Le serveur MCP échoue               | `${CLAUDE_PLUGIN_ROOT}` manquant   | Utilisez la variable pour tous les chemins de plugin                                       |
-| Erreurs de chemin                   | Chemins absolus utilisés           | Tous les chemins doivent être relatifs et commencer par `./`                               |
-| LSP `Executable not found in $PATH` | Serveur de langage non installé    | Installez le binaire (par exemple, `npm install -g typescript-language-server typescript`) |
+| Problème                            | Cause                              | Solution                                                                                                                                                                                       |
+| :---------------------------------- | :--------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Plugin ne se charge pas             | `plugin.json` invalide             | Exécutez `claude plugin validate` ou `/plugin validate` pour vérifier `plugin.json`, le frontmatter des skills/agents/commandes et `hooks/hooks.json` pour les erreurs de syntaxe et de schéma |
+| Les commandes n'apparaissent pas    | Structure de répertoire incorrecte | Assurez-vous que `commands/` est à la racine, pas dans `.claude-plugin/`                                                                                                                       |
+| Les hooks ne se déclenchent pas     | Le script n'est pas exécutable     | Exécutez `chmod +x script.sh`                                                                                                                                                                  |
+| Le serveur MCP échoue               | `${CLAUDE_PLUGIN_ROOT}` manquant   | Utilisez la variable pour tous les chemins de plugin                                                                                                                                           |
+| Erreurs de chemin                   | Chemins absolus utilisés           | Tous les chemins doivent être relatifs et commencer par `./`                                                                                                                                   |
+| LSP `Executable not found in $PATH` | Serveur de langage non installé    | Installez le binaire (par exemple, `npm install -g typescript-language-server typescript`)                                                                                                     |
 
 ### Exemples de messages d'erreur
 
@@ -625,7 +741,7 @@ Cela affiche :
 
 1. Vérifiez que le nom de l'événement est correct (sensible à la casse) : `PostToolUse`, pas `postToolUse`
 2. Vérifiez que le motif de correspondance correspond à vos outils : `"matcher": "Write|Edit"` pour les opérations de fichier
-3. Confirmez que le type de hook est valide : `command`, `prompt`, ou `agent`
+3. Confirmez que le type de hook est valide : `command`, `http`, `prompt`, ou `agent`
 
 ### Dépannage du serveur MCP
 

@@ -96,17 +96,19 @@ Tindakan untuk menavigasi riwayat perintah:
 
 Tindakan yang tersedia dalam konteks `Chat`:
 
-| Tindakan              | Default                   | Deskripsi                        |
-| :-------------------- | :------------------------ | :------------------------------- |
-| `chat:cancel`         | Escape                    | Batalkan input saat ini          |
-| `chat:cycleMode`      | Shift+Tab\*               | Mode izin siklus                 |
-| `chat:modelPicker`    | Cmd+P / Meta+P            | Buka pemilih model               |
-| `chat:thinkingToggle` | Cmd+T / Meta+T            | Alihkan pemikiran yang diperluas |
-| `chat:submit`         | Enter                     | Kirim pesan                      |
-| `chat:undo`           | Ctrl+\_                   | Batalkan tindakan terakhir       |
-| `chat:externalEditor` | Ctrl+G                    | Buka di editor eksternal         |
-| `chat:stash`          | Ctrl+S                    | Simpan prompt saat ini           |
-| `chat:imagePaste`     | Ctrl+V (Alt+V di Windows) | Tempel gambar                    |
+| Tindakan              | Default                   | Deskripsi                         |
+| :-------------------- | :------------------------ | :-------------------------------- |
+| `chat:cancel`         | Escape                    | Batalkan input saat ini           |
+| `chat:killAgents`     | Ctrl+X Ctrl+K             | Matikan semua agen latar belakang |
+| `chat:cycleMode`      | Shift+Tab\*               | Mode izin siklus                  |
+| `chat:modelPicker`    | Cmd+P / Meta+P            | Buka pemilih model                |
+| `chat:fastMode`       | Meta+O                    | Alihkan mode cepat                |
+| `chat:thinkingToggle` | Cmd+T / Meta+T            | Alihkan pemikiran yang diperluas  |
+| `chat:submit`         | Enter                     | Kirim pesan                       |
+| `chat:undo`           | Ctrl+\_                   | Batalkan tindakan terakhir        |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Buka di editor eksternal          |
+| `chat:stash`          | Ctrl+S                    | Simpan prompt saat ini            |
+| `chat:imagePaste`     | Ctrl+V (Alt+V di Windows) | Tempel gambar                     |
 
 \*Di Windows tanpa mode VT (Node \<24.2.0/\<22.17.0, Bun \<1.2.23), default ke Meta+M.
 
@@ -283,6 +285,14 @@ Tindakan yang tersedia dalam konteks `Settings`:
 | `settings:search` | /       | Masuk mode pencarian                                     |
 | `settings:retry`  | R       | Coba muat ulang data penggunaan (saat terjadi kesalahan) |
 
+### Tindakan suara
+
+Tindakan yang tersedia dalam konteks `Chat` ketika [dikte suara](/id/voice-dictation) diaktifkan:
+
+| Tindakan           | Default | Deskripsi                   |
+| :----------------- | :------ | :-------------------------- |
+| `voice:pushToTalk` | Space   | Tahan untuk mendikte prompt |
+
 ## Sintaks keystroke
 
 ### Pengubah
@@ -347,10 +357,11 @@ Atur tindakan ke `null` untuk membatalkan ikatan pintasan default:
 
 Pintasan ini tidak dapat diikat ulang:
 
-| Pintasan | Alasan                                |
-| :------- | :------------------------------------ |
-| Ctrl+C   | Interrupt/cancel yang dikodekan keras |
-| Ctrl+D   | Exit yang dikodekan keras             |
+| Pintasan | Alasan                                                  |
+| :------- | :------------------------------------------------------ |
+| Ctrl+C   | Interrupt/cancel yang dikodekan keras                   |
+| Ctrl+D   | Exit yang dikodekan keras                               |
+| Ctrl+M   | Identik dengan Enter di terminal (keduanya mengirim CR) |
 
 ## Konflik terminal
 

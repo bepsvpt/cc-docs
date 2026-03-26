@@ -99,12 +99,14 @@ Aktionen verfügbar im `Chat`-Kontext:
 | Aktion                | Standard                     | Beschreibung                           |
 | :-------------------- | :--------------------------- | :------------------------------------- |
 | `chat:cancel`         | Escape                       | Aktuelle Eingabe abbrechen             |
+| `chat:killAgents`     | Ctrl+X Ctrl+K                | Alle Hintergrund-Agenten beenden       |
 | `chat:cycleMode`      | Shift+Tab\*                  | Berechtigungsmodi durchlaufen          |
 | `chat:modelPicker`    | Cmd+P / Meta+P               | Modell-Picker öffnen                   |
+| `chat:fastMode`       | Meta+O                       | Schnellmodus umschalten                |
 | `chat:thinkingToggle` | Cmd+T / Meta+T               | Erweitertes Denken umschalten          |
 | `chat:submit`         | Enter                        | Nachricht senden                       |
 | `chat:undo`           | Ctrl+\_                      | Letzte Aktion rückgängig machen        |
-| `chat:externalEditor` | Ctrl+G                       | In externem Editor öffnen              |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E        | In externem Editor öffnen              |
 | `chat:stash`          | Ctrl+S                       | Aktuelle Eingabeaufforderung speichern |
 | `chat:imagePaste`     | Ctrl+V (Alt+V unter Windows) | Bild einfügen                          |
 
@@ -283,6 +285,14 @@ Aktionen verfügbar im `Settings`-Kontext:
 | `settings:search` | /        | Suchmodus aktivieren                 |
 | `settings:retry`  | R        | Nutzungsdaten neu laden (bei Fehler) |
 
+### Sprach-Aktionen
+
+Aktionen verfügbar im `Chat`-Kontext, wenn [Sprachdiktat](/de/voice-dictation) aktiviert ist:
+
+| Aktion             | Standard  | Beschreibung                                                  |
+| :----------------- | :-------- | :------------------------------------------------------------ |
+| `voice:pushToTalk` | Leertaste | Halten Sie gedrückt, um eine Eingabeaufforderung zu diktieren |
+
 ## Tastenkombinations-Syntax
 
 ### Modifizierer
@@ -347,10 +357,11 @@ Setzen Sie eine Aktion auf `null`, um ein Standardkürzel aufzuheben:
 
 Diese Kürzel können nicht neu gebunden werden:
 
-| Kürzel | Grund                           |
-| :----- | :------------------------------ |
-| Ctrl+C | Hardcodierter Interrupt/Abbruch |
-| Ctrl+D | Hardcodierter Ausstieg          |
+| Kürzel | Grund                                              |
+| :----- | :------------------------------------------------- |
+| Ctrl+C | Hardcodierter Interrupt/Abbruch                    |
+| Ctrl+D | Hardcodierter Ausstieg                             |
+| Ctrl+M | Identisch mit Enter in Terminals (beide senden CR) |
 
 ## Terminal-Konflikte
 

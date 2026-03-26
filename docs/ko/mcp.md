@@ -223,6 +223,7 @@ MCP 서버가 연결되면 Claude Code에 다음을 요청할 수 있습니다:
 * **데이터베이스 쿼리**: "PostgreSQL 데이터베이스를 기반으로 기능 ENG-4521을 사용한 무작위 사용자 10명의 이메일을 찾으세요."
 * **디자인 통합**: "Slack에 게시된 새로운 Figma 디자인을 기반으로 표준 이메일 템플릿을 업데이트하세요."
 * **워크플로우 자동화**: "이 10명의 사용자를 새로운 기능에 대한 피드백 세션에 초대하는 Gmail 초안을 생성하세요."
+* **외부 이벤트에 반응**: MCP 서버는 [채널](/ko/channels)로도 작동할 수 있으며, 세션에 메시지를 푸시하므로 Claude는 자리를 비운 동안 Telegram 메시지, Discord 채팅 또는 webhook 이벤트에 반응할 수 있습니다.
 
 ## 인기 있는 MCP 서버
 
@@ -326,6 +327,10 @@ claude mcp remove github
 
 Claude Code는 MCP `list_changed` 알림을 지원하므로 MCP 서버가 연결을 끊었다가 다시 연결할 필요 없이 사용 가능한 도구, 프롬프트 및 리소스를 동적으로 업데이트할 수 있습니다. MCP 서버가 `list_changed` 알림을 보내면 Claude Code는 해당 서버에서 사용 가능한 기능을 자동으로 새로 고칩니다.
 
+### 채널을 사용한 메시지 푸시
+
+MCP 서버는 또한 메시지를 세션에 직접 푸시할 수 있으므로 Claude는 CI 결과, 모니터링 경고 또는 채팅 메시지와 같은 외부 이벤트에 반응할 수 있습니다. 이를 활성화하려면 서버가 `claude/channel` 기능을 선언하고 시작 시 `--channels` 플래그로 옵트인합니다. 공식적으로 지원되는 채널을 사용하려면 [채널](/ko/channels)을 참조하거나, 자신만의 채널을 구축하려면 [채널 참조](/ko/channels-reference)를 참조하세요.
+
 <Tip>
   팁:
 
@@ -367,11 +372,13 @@ Claude Code는 MCP `list_changed` 알림을 지원하므로 MCP 서버가 연결
 
 ```json  theme={null}
 {
-  "database-tools": {
-    "command": "${CLAUDE_PLUGIN_ROOT}/servers/db-server",
-    "args": ["--config", "${CLAUDE_PLUGIN_ROOT}/config.json"],
-    "env": {
-      "DB_URL": "${DB_URL}"
+  "mcpServers": {
+    "database-tools": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/servers/db-server",
+      "args": ["--config", "${CLAUDE_PLUGIN_ROOT}/config.json"],
+      "env": {
+        "DB_URL": "${DB_URL}"
+      }
     }
   }
 }
@@ -394,7 +401,7 @@ Claude Code는 MCP `list_changed` 알림을 지원하므로 MCP 서버가 연결
 **플러그인 MCP 기능**:
 
 * **자동 라이프사이클**: 세션 시작 시 활성화된 플러그인의 서버가 자동으로 연결됩니다. 세션 중에 플러그인을 활성화하거나 비활성화하면 `/reload-plugins`를 실행하여 MCP 서버를 연결하거나 연결 해제합니다
-* **환경 변수**: 플러그인 상대 경로에 `${CLAUDE_PLUGIN_ROOT}` 사용
+* **환경 변수**: 번들된 플러그인 파일에 `${CLAUDE_PLUGIN_ROOT}` 사용 및 플러그인 업데이트를 유지하는 [지속적인 상태](/ko/plugins-reference#persistent-data-directory)에 `${CLAUDE_PLUGIN_DATA}` 사용
 * **사용자 환경 액세스**: 수동으로 구성된 서버와 동일한 환경 변수에 액세스
 * **여러 전송 유형**: stdio, SSE 및 HTTP 전송 지원 (전송 지원은 서버에 따라 다를 수 있음)
 
@@ -667,7 +674,7 @@ claude mcp add --transport http \
 
 ### 사전 구성된 OAuth 자격 증명 사용
 
-일부 MCP 서버는 자동 OAuth 설정을 지원하지 않습니다. "Incompatible auth server: does not support dynamic client registration"과 같은 오류가 표시되면 서버에 사전 구성된 자격 증명이 필요합니다. 먼저 서버의 개발자 포털을 통해 OAuth 앱을 등록한 다음 서버를 추가할 때 자격 증명을 제공합니다.
+일부 MCP 서버는 자동 OAuth 설정을 지원하지 않습니다. "Incompatible auth server: does not support dynamic client registration"과 같은 오류가 표시되면 서버에 사전 구성된 자격 증명이 필요합니다. Claude Code는 또한 동적 클라이언트 등록 대신 클라이언트 ID 메타데이터 문서 (CIMD)를 사용하는 서버를 지원하며 자동으로 검색합니다. 자동 검색이 실패하면 먼저 서버의 개발자 포털을 통해 OAuth 앱을 등록한 다음 서버를 추가할 때 자격 증명을 제공합니다.
 
 <Steps>
   <Step title="서버로 OAuth 앱 등록">
@@ -757,6 +764,48 @@ MCP 서버가 표준 OAuth 메타데이터 엔드포인트 (`/.well-known/oauth-
 ```
 
 URL은 `https://`를 사용해야 합니다. 이 옵션은 Claude Code v2.1.64 이상이 필요합니다.
+
+### 사용자 정의 헤더를 사용한 동적 인증
+
+MCP 서버가 OAuth (예: Kerberos, 단기 토큰 또는 내부 SSO)가 아닌 다른 인증 체계를 사용하는 경우 `headersHelper`를 사용하여 연결 시간에 요청 헤더를 생성합니다. Claude Code는 명령을 실행하고 출력을 연결 헤더에 병합합니다.
+
+```json  theme={null}
+{
+  "mcpServers": {
+    "internal-api": {
+      "type": "http",
+      "url": "https://mcp.internal.example.com",
+      "headersHelper": "/opt/bin/get-mcp-auth-headers.sh"
+    }
+  }
+}
+```
+
+명령은 인라인일 수도 있습니다:
+
+```json  theme={null}
+{
+  "mcpServers": {
+    "internal-api": {
+      "type": "http",
+      "url": "https://mcp.internal.example.com",
+      "headersHelper": "echo '{\"Authorization\": \"Bearer '\"$(get-token)\"'\"}'"
+    }
+  }
+}
+```
+
+**요구 사항:**
+
+* 명령은 JSON 객체의 문자열 키-값 쌍을 stdout에 작성해야 합니다
+* 명령은 10초 시간 초과를 사용하여 셸에서 실행됩니다
+* 동적 헤더는 동일한 이름의 정적 `headers`를 재정의합니다
+
+헬퍼는 각 연결 (세션 시작 및 재연결 시)에서 새로 실행됩니다. 캐싱이 없으므로 스크립트는 토큰 재사용을 담당합니다.
+
+<Note>
+  `headersHelper`는 임의의 셸 명령을 실행합니다. 프로젝트 또는 로컬 범위에서 정의될 때 작업 공간 신뢰 대화 상자를 수락한 후에만 실행됩니다.
+</Note>
 
 ## JSON 구성에서 MCP 서버 추가
 

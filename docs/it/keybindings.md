@@ -96,17 +96,19 @@ Azioni per navigare nella cronologia dei comandi:
 
 Azioni disponibili nel contesto `Chat`:
 
-| Azione                | Predefinito               | Descrizione                         |
-| :-------------------- | :------------------------ | :---------------------------------- |
-| `chat:cancel`         | Escape                    | Annulla l'input corrente            |
-| `chat:cycleMode`      | Shift+Tab\*               | Cicla le modalità di permesso       |
-| `chat:modelPicker`    | Cmd+P / Meta+P            | Apri il selezionatore di modelli    |
-| `chat:thinkingToggle` | Cmd+T / Meta+T            | Attiva/disattiva il pensiero esteso |
-| `chat:submit`         | Invio                     | Invia il messaggio                  |
-| `chat:undo`           | Ctrl+\_                   | Annulla l'ultima azione             |
-| `chat:externalEditor` | Ctrl+G                    | Apri nell'editor esterno            |
-| `chat:stash`          | Ctrl+S                    | Nascondi il prompt corrente         |
-| `chat:imagePaste`     | Ctrl+V (Alt+V su Windows) | Incolla immagine                    |
+| Azione                | Predefinito               | Descrizione                            |
+| :-------------------- | :------------------------ | :------------------------------------- |
+| `chat:cancel`         | Escape                    | Annulla l'input corrente               |
+| `chat:killAgents`     | Ctrl+X Ctrl+K             | Termina tutti gli agenti in background |
+| `chat:cycleMode`      | Shift+Tab\*               | Cicla le modalità di permesso          |
+| `chat:modelPicker`    | Cmd+P / Meta+P            | Apri il selezionatore di modelli       |
+| `chat:fastMode`       | Meta+O                    | Attiva/disattiva la modalità veloce    |
+| `chat:thinkingToggle` | Cmd+T / Meta+T            | Attiva/disattiva il pensiero esteso    |
+| `chat:submit`         | Invio                     | Invia il messaggio                     |
+| `chat:undo`           | Ctrl+\_                   | Annulla l'ultima azione                |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Apri nell'editor esterno               |
+| `chat:stash`          | Ctrl+S                    | Nascondi il prompt corrente            |
+| `chat:imagePaste`     | Ctrl+V (Alt+V su Windows) | Incolla immagine                       |
 
 \*Su Windows senza modalità VT (Node \<24.2.0/\<22.17.0, Bun \<1.2.23), il valore predefinito è Meta+M.
 
@@ -283,6 +285,14 @@ Azioni disponibili nel contesto `Settings`:
 | `settings:search` | /           | Entra in modalità di ricerca                              |
 | `settings:retry`  | R           | Riprova a caricare i dati di utilizzo (in caso di errore) |
 
+### Azioni vocali
+
+Azioni disponibili nel contesto `Chat` quando la [dettatura vocale](/it/voice-dictation) è abilitata:
+
+| Azione             | Predefinito | Descrizione                         |
+| :----------------- | :---------- | :---------------------------------- |
+| `voice:pushToTalk` | Spazio      | Tieni premuto per dettare un prompt |
+
 ## Sintassi delle sequenze di tasti
 
 ### Modificatori
@@ -347,10 +357,11 @@ Impostare un'azione su `null` per annullare l'associazione di una scorciatoia pr
 
 Queste scorciatoie non possono essere riassociate:
 
-| Scorciatoia | Motivo                           |
-| :---------- | :------------------------------- |
-| Ctrl+C      | Interrupt/annullamento hardcoded |
-| Ctrl+D      | Uscita hardcoded                 |
+| Scorciatoia | Motivo                                               |
+| :---------- | :--------------------------------------------------- |
+| Ctrl+C      | Interrupt/annullamento hardcoded                     |
+| Ctrl+D      | Uscita hardcoded                                     |
+| Ctrl+M      | Identico a Invio nei terminali (entrambi inviano CR) |
 
 ## Conflitti del terminale
 

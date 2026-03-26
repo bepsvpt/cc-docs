@@ -96,17 +96,19 @@ Ações para navegar no histórico de comandos:
 
 Ações disponíveis no contexto `Chat`:
 
-| Ação                  | Padrão                    | Descrição                     |
-| :-------------------- | :------------------------ | :---------------------------- |
-| `chat:cancel`         | Escape                    | Cancelar entrada atual        |
-| `chat:cycleMode`      | Shift+Tab\*               | Ciclar modos de permissão     |
-| `chat:modelPicker`    | Cmd+P / Meta+P            | Abrir seletor de modelo       |
-| `chat:thinkingToggle` | Cmd+T / Meta+T            | Alternar pensamento estendido |
-| `chat:submit`         | Enter                     | Enviar mensagem               |
-| `chat:undo`           | Ctrl+\_                   | Desfazer última ação          |
-| `chat:externalEditor` | Ctrl+G                    | Abrir em editor externo       |
-| `chat:stash`          | Ctrl+S                    | Guardar prompt atual          |
-| `chat:imagePaste`     | Ctrl+V (Alt+V no Windows) | Colar imagem                  |
+| Ação                  | Padrão                    | Descrição                                  |
+| :-------------------- | :------------------------ | :----------------------------------------- |
+| `chat:cancel`         | Escape                    | Cancelar entrada atual                     |
+| `chat:killAgents`     | Ctrl+X Ctrl+K             | Encerrar todos os agentes em segundo plano |
+| `chat:cycleMode`      | Shift+Tab\*               | Ciclar modos de permissão                  |
+| `chat:modelPicker`    | Cmd+P / Meta+P            | Abrir seletor de modelo                    |
+| `chat:fastMode`       | Meta+O                    | Alternar modo rápido                       |
+| `chat:thinkingToggle` | Cmd+T / Meta+T            | Alternar pensamento estendido              |
+| `chat:submit`         | Enter                     | Enviar mensagem                            |
+| `chat:undo`           | Ctrl+\_                   | Desfazer última ação                       |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Abrir em editor externo                    |
+| `chat:stash`          | Ctrl+S                    | Guardar prompt atual                       |
+| `chat:imagePaste`     | Ctrl+V (Alt+V no Windows) | Colar imagem                               |
 
 \*No Windows sem modo VT (Node \<24.2.0/\<22.17.0, Bun \<1.2.23), o padrão é Meta+M.
 
@@ -283,6 +285,14 @@ Ações disponíveis no contexto `Settings`:
 | `settings:search` | /      | Entrar no modo de busca                                  |
 | `settings:retry`  | R      | Tentar novamente carregar dados de uso (em caso de erro) |
 
+### Ações de voz
+
+Ações disponíveis no contexto `Chat` quando a [ditação por voz](/pt/voice-dictation) está ativada:
+
+| Ação               | Padrão | Descrição                                 |
+| :----------------- | :----- | :---------------------------------------- |
+| `voice:pushToTalk` | Space  | Mantenha pressionado para ditar um prompt |
+
 ## Sintaxe de sequência de teclas
 
 ### Modificadores
@@ -347,10 +357,11 @@ Defina uma ação como `null` para desvinculá-la de um atalho padrão:
 
 Estes atalhos não podem ser revinculados:
 
-| Atalho | Motivo                              |
-| :----- | :---------------------------------- |
-| Ctrl+C | Interrupção/cancelamento codificado |
-| Ctrl+D | Saída codificada                    |
+| Atalho | Motivo                                          |
+| :----- | :---------------------------------------------- |
+| Ctrl+C | Interrupção/cancelamento codificado             |
+| Ctrl+D | Saída codificada                                |
+| Ctrl+M | Idêntico a Enter em terminais (ambos enviam CR) |
 
 ## Conflitos de terminal
 

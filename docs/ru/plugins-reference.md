@@ -58,17 +58,23 @@ skills/
 ---
 name: agent-name
 description: Что специализирует этот агент и когда Claude должен его вызвать
+model: sonnet
+effort: medium
+maxTurns: 20
+disallowedTools: Write, Edit
 ---
 
 Подробное системное приглашение для агента, описывающее его роль, опыт и поведение.
 ```
+
+Плагины agents поддерживают поля frontmatter `name`, `description`, `model`, `effort`, `maxTurns`, `tools`, `disallowedTools`, `skills`, `memory`, `background` и `isolation`. Единственное допустимое значение `isolation` — это `"worktree"`. По соображениям безопасности `hooks`, `mcpServers` и `permissionMode` не поддерживаются для agents, поставляемых с плагинами.
 
 **Точки интеграции**:
 
 * Агенты появляются в интерфейсе `/agents`
 * Claude может вызывать агентов автоматически на основе контекста задачи
 * Агенты могут быть вызваны вручную пользователями
-* Плагины агентов работают наряду со встроенными агентами Claude
+* Плагины agents работают наряду со встроенными agents Claude
 
 Для полной информации смотрите [Subagents](/ru/sub-agents).
 
@@ -100,26 +106,39 @@ description: Что специализирует этот агент и когд
 }
 ```
 
-**Доступные события**:
+Плагины hooks реагируют на те же события жизненного цикла, что и [определённые пользователем hooks](/ru/hooks):
 
-* `PreToolUse`: Перед использованием Claude любого инструмента
-* `PostToolUse`: После успешного использования Claude любого инструмента
-* `PostToolUseFailure`: После сбоя выполнения инструмента Claude
-* `PermissionRequest`: Когда отображается диалог разрешения
-* `UserPromptSubmit`: Когда пользователь отправляет приглашение
-* `Notification`: Когда Claude Code отправляет уведомления
-* `Stop`: Когда Claude пытается остановиться
-* `SubagentStart`: Когда запускается subagent
-* `SubagentStop`: Когда subagent пытается остановиться
-* `SessionStart`: В начале сеансов
-* `SessionEnd`: В конце сеансов
-* `TeammateIdle`: Когда товарищ команды агента собирается перейти в режим ожидания
-* `TaskCompleted`: Когда задача отмечается как завершённая
-* `PreCompact`: Перед сжатием истории разговора
+| Event                | When it fires                                                                                                                                          |
+| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SessionStart`       | When a session begins or resumes                                                                                                                       |
+| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                                                                   |
+| `PreToolUse`         | Before a tool call executes. Can block it                                                                                                              |
+| `PermissionRequest`  | When a permission dialog appears                                                                                                                       |
+| `PostToolUse`        | After a tool call succeeds                                                                                                                             |
+| `PostToolUseFailure` | After a tool call fails                                                                                                                                |
+| `Notification`       | When Claude Code sends a notification                                                                                                                  |
+| `SubagentStart`      | When a subagent is spawned                                                                                                                             |
+| `SubagentStop`       | When a subagent finishes                                                                                                                               |
+| `Stop`               | When Claude finishes responding                                                                                                                        |
+| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
+| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
+| `TaskCompleted`      | When a task is being marked as completed                                                                                                               |
+| `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
+| `ConfigChange`       | When a configuration file changes during a session                                                                                                     |
+| `CwdChanged`         | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
+| `FileChanged`        | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
+| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
+| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
+| `PreCompact`         | Before context compaction                                                                                                                              |
+| `PostCompact`        | After context compaction completes                                                                                                                     |
+| `Elicitation`        | When an MCP server requests user input during a tool call                                                                                              |
+| `ElicitationResult`  | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
+| `SessionEnd`         | When a session terminates                                                                                                                              |
 
 **Типы hook**:
 
 * `command`: Выполнение команд оболочки или скриптов
+* `http`: Отправка JSON события как POST запроса на URL
 * `prompt`: Оценка приглашения с помощью LLM (использует заполнитель `$ARGUMENTS` для контекста)
 * `agent`: Запуск проверки агента с инструментами для сложных задач проверки
 
@@ -326,6 +345,51 @@ description: Что специализирует этот агент и когд
 | `mcpServers`   | string\|array\|object | Пути конфигурации MCP или встроенная конфигурация                                                                                                                                   | `"./my-extra-mcp-config.json"`          |
 | `outputStyles` | string\|array         | Дополнительные файлы/каталоги стилей вывода                                                                                                                                         | `"./styles/"`                           |
 | `lspServers`   | string\|array\|object | Конфигурации [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) для интеллектуальной информации о коде (переход к определению, поиск ссылок и т. д.) | `"./.lsp.json"`                         |
+| `userConfig`   | object                | Значения, настраиваемые пользователем, запрашиваемые при включении. Смотрите [Конфигурация пользователя](#user-configuration)                                                       | Смотрите ниже                           |
+| `channels`     | array                 | Объявления каналов для внедрения сообщений (стиль Telegram, Slack, Discord). Смотрите [Каналы](#channels)                                                                           | Смотрите ниже                           |
+
+### Конфигурация пользователя
+
+Поле `userConfig` объявляет значения, которые Claude Code запрашивает у пользователя при включении плагина. Используйте это вместо требования пользователям вручную редактировать `settings.json`.
+
+```json  theme={null}
+{
+  "userConfig": {
+    "api_endpoint": {
+      "description": "Your team's API endpoint",
+      "sensitive": false
+    },
+    "api_token": {
+      "description": "API authentication token",
+      "sensitive": true
+    }
+  }
+}
+```
+
+Ключи должны быть допустимыми идентификаторами. Каждое значение доступно для подстановки как `${user_config.KEY}` в конфигурациях серверов MCP и LSP, командах hooks и (только для нечувствительных значений) в содержимом skills и agents. Значения также экспортируются в подпроцессы плагина как переменные окружения `CLAUDE_PLUGIN_OPTION_<KEY>`.
+
+Нечувствительные значения хранятся в `settings.json` под `pluginConfigs[<plugin-id>].options`. Чувствительные значения переходят в системный keychain (или `~/.claude/.credentials.json`, где keychain недоступен). Хранилище keychain общее с OAuth токенами и имеет приблизительный лимит 2 КБ, поэтому держите чувствительные значения небольшими.
+
+### Каналы
+
+Поле `channels` позволяет плагину объявить один или несколько каналов сообщений, которые внедряют содержимое в разговор. Каждый канал привязывается к серверу MCP, который предоставляет плагин.
+
+```json  theme={null}
+{
+  "channels": [
+    {
+      "server": "telegram",
+      "userConfig": {
+        "bot_token": { "description": "Telegram bot token", "sensitive": true },
+        "owner_id": { "description": "Your Telegram user ID", "sensitive": false }
+      }
+    }
+  ]
+}
+```
+
+Поле `server` обязательно и должно соответствовать ключу в `mcpServers` плагина. Опциональный `userConfig` для каждого канала использует ту же схему, что и поле верхнего уровня, позволяя плагину запрашивать токены ботов или ID владельцев при включении плагина.
 
 ### Правила поведения пути
 
@@ -353,7 +417,11 @@ description: Что специализирует этот агент и когд
 
 ### Переменные окружения
 
-**`${CLAUDE_PLUGIN_ROOT}`**: Содержит абсолютный путь к каталогу вашего плагина. Используйте это в hooks, серверах MCP и скриптах, чтобы обеспечить правильные пути независимо от местоположения установки.
+Claude Code предоставляет две переменные для ссылки на пути плагина. Обе подставляются встроенно везде, где они появляются в содержимом skills, содержимом agents, командах hooks и конфигурациях серверов MCP или LSP. Обе также экспортируются как переменные окружения в процессы hooks и подпроцессы серверов MCP или LSP.
+
+**`${CLAUDE_PLUGIN_ROOT}`**: абсолютный путь к каталогу установки вашего плагина. Используйте это для ссылки на скрипты, двоичные файлы и файлы конфигурации, поставляемые с плагином. Этот путь изменяется при обновлении плагина, поэтому файлы, которые вы пишете здесь, не сохраняются при обновлении.
+
+**`${CLAUDE_PLUGIN_DATA}`**: постоянный каталог для состояния плагина, который сохраняется при обновлениях. Используйте это для установленных зависимостей, таких как `node_modules` или виртуальные окружения Python, сгенерированный код, кэши и любые другие файлы, которые должны сохраняться между версиями плагина. Каталог создаётся автоматически при первом обращении к этой переменной.
 
 ```json  theme={null}
 {
@@ -371,6 +439,51 @@ description: Что специализирует этот агент и когд
   }
 }
 ```
+
+#### Каталог постоянных данных
+
+Каталог `${CLAUDE_PLUGIN_DATA}` разрешается в `~/.claude/plugins/data/{id}/`, где `{id}` — это идентификатор плагина с символами вне `a-z`, `A-Z`, `0-9`, `_` и `-`, заменённые на `-`. Для плагина, установленного как `formatter@my-marketplace`, каталог — это `~/.claude/plugins/data/formatter-my-marketplace/`.
+
+Распространённое использование — установка языковых зависимостей один раз и их повторное использование в сеансах и обновлениях плагина. Поскольку каталог данных пережидает любую отдельную версию плагина, проверка только существования каталога не может обнаружить, когда обновление изменяет манифест зависимостей плагина. Рекомендуемый паттерн сравнивает поставляемый манифест с копией в каталоге данных и переустанавливает при различиях.
+
+Этот hook `SessionStart` устанавливает `node_modules` при первом запуске и снова всякий раз, когда обновление плагина включает изменённый `package.json`:
+
+```json  theme={null}
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "diff -q \"${CLAUDE_PLUGIN_ROOT}/package.json\" \"${CLAUDE_PLUGIN_DATA}/package.json\" >/dev/null 2>&1 || (cd \"${CLAUDE_PLUGIN_DATA}\" && cp \"${CLAUDE_PLUGIN_ROOT}/package.json\" . && npm install) || rm -f \"${CLAUDE_PLUGIN_DATA}/package.json\""
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+`diff` выходит с ненулевым кодом, когда сохранённая копия отсутствует или отличается от поставляемой, охватывая как первый запуск, так и обновления, изменяющие зависимости. Если `npm install` не удаётся, завершающий `rm` удаляет скопированный манифест, чтобы следующий сеанс повторил попытку.
+
+Скрипты, поставляемые в `${CLAUDE_PLUGIN_ROOT}`, затем могут работать с сохранённым `node_modules`:
+
+```json  theme={null}
+{
+  "mcpServers": {
+    "routines": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/server.js"],
+      "env": {
+        "NODE_PATH": "${CLAUDE_PLUGIN_DATA}/node_modules"
+      }
+    }
+  }
+}
+```
+
+Каталог данных удаляется автоматически при удалении плагина из последней области, где он установлен. Интерфейс `/plugin` показывает размер каталога и запрашивает перед удалением. CLI удаляет по умолчанию; передайте [`--keep-data`](#plugin-uninstall) для сохранения.
 
 ***
 
@@ -508,12 +621,15 @@ claude plugin uninstall <plugin> [options]
 
 **Опции:**
 
-| Опция                 | Описание                                          | По умолчанию |
-| :-------------------- | :------------------------------------------------ | :----------- |
-| `-s, --scope <scope>` | Удалить из области: `user`, `project` или `local` | `user`       |
-| `-h, --help`          | Отобразить справку для команды                    |              |
+| Опция                 | Описание                                                                  | По умолчанию |
+| :-------------------- | :------------------------------------------------------------------------ | :----------- |
+| `-s, --scope <scope>` | Удалить из области: `user`, `project` или `local`                         | `user`       |
+| `--keep-data`         | Сохранить [каталог постоянных данных](#persistent-data-directory) плагина |              |
+| `-h, --help`          | Отобразить справку для команды                                            |              |
 
 **Псевдонимы:** `remove`, `rm`
+
+По умолчанию удаление из последней оставшейся области также удаляет каталог `${CLAUDE_PLUGIN_DATA}` плагина. Используйте `--keep-data` для сохранения, например при переустановке после тестирования новой версии.
 
 ### plugin enable
 
@@ -578,7 +694,7 @@ claude plugin update <plugin> [options]
 
 ### Команды отладки
 
-Используйте `claude --debug` (или `/debug` в TUI) для просмотра деталей загрузки плагина:
+Используйте `claude --debug` для просмотра деталей загрузки плагина:
 
 Это показывает:
 
@@ -589,14 +705,14 @@ claude plugin update <plugin> [options]
 
 ### Распространённые проблемы
 
-| Проблема                            | Причина                             | Решение                                                                                     |
-| :---------------------------------- | :---------------------------------- | :------------------------------------------------------------------------------------------ |
-| Плагин не загружается               | Неверный `plugin.json`              | Проверьте синтаксис JSON с помощью `claude plugin validate` или `/plugin validate`          |
-| Команды не отображаются             | Неправильная структура каталога     | Убедитесь, что `commands/` находится в корне, а не в `.claude-plugin/`                      |
-| Hooks не срабатывают                | Скрипт не исполняемый               | Запустите `chmod +x script.sh`                                                              |
-| Сервер MCP не работает              | Отсутствует `${CLAUDE_PLUGIN_ROOT}` | Используйте переменную для всех путей плагина                                               |
-| Ошибки пути                         | Используются абсолютные пути        | Все пути должны быть относительными и начинаться с `./`                                     |
-| LSP `Executable not found in $PATH` | Языковой сервер не установлен       | Установите двоичный файл (например, `npm install -g typescript-language-server typescript`) |
+| Проблема                            | Причина                             | Решение                                                                                                                                                                   |
+| :---------------------------------- | :---------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Плагин не загружается               | Неверный `plugin.json`              | Запустите `claude plugin validate` или `/plugin validate` для проверки `plugin.json`, frontmatter skills/agents/commands и `hooks/hooks.json` на синтаксис и ошибки схемы |
+| Команды не отображаются             | Неправильная структура каталога     | Убедитесь, что `commands/` находится в корне, а не в `.claude-plugin/`                                                                                                    |
+| Hooks не срабатывают                | Скрипт не исполняемый               | Запустите `chmod +x script.sh`                                                                                                                                            |
+| Сервер MCP не работает              | Отсутствует `${CLAUDE_PLUGIN_ROOT}` | Используйте переменную для всех путей плагина                                                                                                                             |
+| Ошибки пути                         | Используются абсолютные пути        | Все пути должны быть относительными и начинаться с `./`                                                                                                                   |
+| LSP `Executable not found in $PATH` | Языковой сервер не установлен       | Установите двоичный файл (например, `npm install -g typescript-language-server typescript`)                                                                               |
 
 ### Примеры сообщений об ошибках
 
@@ -625,7 +741,7 @@ claude plugin update <plugin> [options]
 
 1. Проверьте, что имя события правильное (чувствительно к регистру): `PostToolUse`, а не `postToolUse`
 2. Проверьте, что шаблон сопоставления соответствует вашим инструментам: `"matcher": "Write|Edit"` для операций с файлами
-3. Подтвердите, что тип hook действителен: `command`, `prompt` или `agent`
+3. Подтвердите, что тип hook действителен: `command`, `http`, `prompt` или `agent`
 
 ### Устранение неполадок сервера MCP
 

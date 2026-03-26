@@ -234,6 +234,31 @@ Alcuni scorciatoie dipendono da quale pannello è "focalizzato" (riceve input da
 | Show Logs                  | -                                                        | Visualizza i log di debug dell'estensione                                                          |
 | Logout                     | -                                                        | Esci dal tuo account Anthropic                                                                     |
 
+### Avvia una scheda VS Code da altri strumenti
+
+L'estensione registra un gestore URI in `vscode://anthropic.claude-code/open`. Usalo per aprire una nuova scheda Claude Code dal tuo strumento: un alias shell, un bookmarklet del browser o qualsiasi script che possa aprire un URL. Se VS Code non è già in esecuzione, l'apertura dell'URL lo avvia prima. Se VS Code è già in esecuzione, l'URL si apre nella finestra attualmente focalizzata.
+
+Richiama il gestore con l'opener URL del tuo sistema operativo. Su macOS:
+
+```bash  theme={null}
+open "vscode://anthropic.claude-code/open"
+```
+
+Usa `xdg-open` su Linux o `start` su Windows.
+
+Il gestore accetta due parametri di query facoltativi:
+
+| Parametro | Descrizione                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `prompt`  | Testo per pre-compilare nella casella dei prompt. Deve essere codificato in URL. Il prompt è pre-compilato ma non inviato automaticamente.                                                                                                                                                                                                                                                                                                          |
+| `session` | Un ID di sessione da riprendere invece di avviare una nuova conversazione. La sessione deve appartenere all'area di lavoro attualmente aperta in VS Code. Se la sessione non viene trovata, viene avviata una conversazione nuova. Se la sessione è già aperta in una scheda, quella scheda viene focalizzata. Per acquisire un ID di sessione a livello di programmazione, consulta [Continua conversazioni](/it/headless#continue-conversations). |
+
+Ad esempio, per aprire una scheda pre-compilata con "review my changes":
+
+```text  theme={null}
+vscode://anthropic.claude-code/open?prompt=review%20my%20changes
+```
+
 ## Configura le impostazioni
 
 L'estensione ha due tipi di impostazioni:
