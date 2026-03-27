@@ -188,7 +188,7 @@ Setiap fitur memiliki strategi pemuatan dan biaya konteks yang berbeda:
 
 Setiap fitur dimuat pada titik berbeda dalam sesi Anda. Tab di bawah menjelaskan kapan masing-masing dimuat dan apa yang masuk ke konteks.
 
-<img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/context-loading.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=729b5b634ba831d1d64772c6c9485b30" alt="Pemuatan konteks: CLAUDE.md dan MCP dimuat saat awal sesi dan tetap di setiap permintaan. Skills memuat deskripsi di awal, konten penuh saat invokasi. Subagents mendapat konteks terisolasi. Hooks berjalan secara eksternal." width="720" height="410" data-path="images/context-loading.svg" />
+<img src="https://mintcdn.com/claude-code/6yTCYq1p37ZB8-CQ/images/context-loading.svg?fit=max&auto=format&n=6yTCYq1p37ZB8-CQ&q=85&s=5a58ce953a35a2412892015e2ad6cb67" alt="Pemuatan konteks: CLAUDE.md dan MCP dimuat saat awal sesi dan tetap di setiap permintaan. Skills memuat deskripsi di awal, konten penuh saat invokasi. Subagents mendapat konteks terisolasi. Hooks berjalan secara eksternal." width="720" height="410" data-path="images/context-loading.svg" />
 
 <Tabs>
   <Tab title="CLAUDE.md">

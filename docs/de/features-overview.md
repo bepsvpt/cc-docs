@@ -188,7 +188,7 @@ Jede Funktion hat eine andere Ladestrategie und Kontextkosten:
 
 Jede Funktion wird an verschiedenen Punkten in Ihrer Sitzung geladen. Die folgenden Registerkarten erklären, wann jede geladen wird und was in den Kontext geht.
 
-<img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/context-loading.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=729b5b634ba831d1d64772c6c9485b30" alt="Kontextladung: CLAUDE.md und MCP werden beim Sitzungsstart geladen und bleiben in jeder Anfrage. Skills laden Beschreibungen beim Start, vollständigen Inhalt bei Aufruf. Subagents erhalten isolierten Kontext. Hooks laufen extern." width="720" height="410" data-path="images/context-loading.svg" />
+<img src="https://mintcdn.com/claude-code/6yTCYq1p37ZB8-CQ/images/context-loading.svg?fit=max&auto=format&n=6yTCYq1p37ZB8-CQ&q=85&s=5a58ce953a35a2412892015e2ad6cb67" alt="Kontextladung: CLAUDE.md und MCP werden beim Sitzungsstart geladen und bleiben in jeder Anfrage. Skills laden Beschreibungen beim Start, vollständigen Inhalt bei Aufruf. Subagents erhalten isolierten Kontext. Hooks laufen extern." width="720" height="410" data-path="images/context-loading.svg" />
 
 <Tabs>
   <Tab title="CLAUDE.md">

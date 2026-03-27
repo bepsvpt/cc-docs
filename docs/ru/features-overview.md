@@ -188,7 +188,7 @@ Claude Code объединяет модель, которая рассуждае
 
 Каждая функция загружается в разные точки вашей сессии. Вкладки ниже объясняют, когда загружается каждая и что входит в контекст.
 
-<img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/context-loading.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=729b5b634ba831d1d64772c6c9485b30" alt="Загрузка контекста: CLAUDE.md и MCP загружаются в начале сессии и остаются в каждом запросе. Skills загружают описания в начале, полный контент при вызове. Subagents получают изолированный контекст. Hooks работают внешне." width="720" height="410" data-path="images/context-loading.svg" />
+<img src="https://mintcdn.com/claude-code/6yTCYq1p37ZB8-CQ/images/context-loading.svg?fit=max&auto=format&n=6yTCYq1p37ZB8-CQ&q=85&s=5a58ce953a35a2412892015e2ad6cb67" alt="Загрузка контекста: CLAUDE.md и MCP загружаются в начале сессии и остаются в каждом запросе. Skills загружают описания в начале, полный контент при вызове. Subagents получают изолированный контекст. Hooks работают внешне." width="720" height="410" data-path="images/context-loading.svg" />
 
 <Tabs>
   <Tab title="CLAUDE.md">

@@ -188,7 +188,7 @@ Claude Code 结合了一个能够推理代码的模型和[内置工具](/zh-CN/h
 
 每个功能在会话的不同点加载。下面的选项卡解释了每个功能何时加载以及什么进入上下文。
 
-<img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/context-loading.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=729b5b634ba831d1d64772c6c9485b30" alt="上下文加载：CLAUDE.md 和 MCP 在会话开始时加载并保留在每个请求中。Skills 在启动时加载描述，在调用时加载完整内容。Subagents 获得隔离的上下文。Hooks 外部运行。" width="720" height="410" data-path="images/context-loading.svg" />
+<img src="https://mintcdn.com/claude-code/6yTCYq1p37ZB8-CQ/images/context-loading.svg?fit=max&auto=format&n=6yTCYq1p37ZB8-CQ&q=85&s=5a58ce953a35a2412892015e2ad6cb67" alt="上下文加载：CLAUDE.md 和 MCP 在会话开始时加载并保留在每个请求中。Skills 在启动时加载描述，在调用时加载完整内容。Subagents 获得隔离的上下文。Hooks 外部运行。" width="720" height="410" data-path="images/context-loading.svg" />
 
 <Tabs>
   <Tab title="CLAUDE.md">

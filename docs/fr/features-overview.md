@@ -188,7 +188,7 @@ Chaque fonctionnalité a une stratégie de chargement et un coût de contexte di
 
 Chaque fonctionnalité se charge à différents points de votre session. Les onglets ci-dessous expliquent quand chacune se charge et ce qui entre dans le contexte.
 
-<img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/context-loading.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=729b5b634ba831d1d64772c6c9485b30" alt="Chargement du contexte : CLAUDE.md et MCP se chargent au début de la session et restent dans chaque requête. Les skills chargent les descriptions au démarrage, le contenu complet à l'invocation. Les subagents obtiennent un contexte isolé. Les hooks s'exécutent en externe." width="720" height="410" data-path="images/context-loading.svg" />
+<img src="https://mintcdn.com/claude-code/6yTCYq1p37ZB8-CQ/images/context-loading.svg?fit=max&auto=format&n=6yTCYq1p37ZB8-CQ&q=85&s=5a58ce953a35a2412892015e2ad6cb67" alt="Chargement du contexte : CLAUDE.md et MCP se chargent au début de la session et restent dans chaque requête. Les skills chargent les descriptions au démarrage, le contenu complet à l'invocation. Les subagents obtiennent un contexte isolé. Les hooks s'exécutent en externe." width="720" height="410" data-path="images/context-loading.svg" />
 
 <Tabs>
   <Tab title="CLAUDE.md">

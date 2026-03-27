@@ -18,7 +18,7 @@ Les hooks se déclenchent à des points spécifiques pendant une session Claude 
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/JCMefyZyaJwkJgv-/images/hooks-lifecycle.svg?fit=max&auto=format&n=JCMefyZyaJwkJgv-&q=85&s=f004f3fc7324fa2a4630e8d6559cf6dd" alt="Diagramme du cycle de vie des hooks montrant la séquence des hooks de SessionStart à travers la boucle agentique (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCompleted) jusqu'à Stop ou StopFailure, TeammateIdle, PreCompact, PostCompact et SessionEnd, avec Elicitation et ElicitationResult imbriqués dans l'exécution de l'outil MCP et WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged et FileChanged comme événements asynchrones autonomes" width="520" height="1100" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/1wr0LPds6lVWZkQB/images/hooks-lifecycle.svg?fit=max&auto=format&n=1wr0LPds6lVWZkQB&q=85&s=53a826e7bb64c6bff5f867506c0530ad" alt="Diagramme du cycle de vie des hooks montrant la séquence des hooks de SessionStart à travers la boucle agentique (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCompleted) jusqu'à Stop ou StopFailure, TeammateIdle, PreCompact, PostCompact et SessionEnd, avec Elicitation et ElicitationResult imbriqués dans l'exécution de l'outil MCP et WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged et FileChanged comme événements asynchrones autonomes" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
@@ -35,10 +35,11 @@ Le tableau ci-dessous résume le moment où chaque événement se déclenche. La
 | `Notification`       | When Claude Code sends a notification                                                                                                                  |
 | `SubagentStart`      | When a subagent is spawned                                                                                                                             |
 | `SubagentStop`       | When a subagent finishes                                                                                                                               |
+| `TaskCreated`        | When a task is being created via `TaskCreate`                                                                                                          |
+| `TaskCompleted`      | When a task is being marked as completed                                                                                                               |
 | `Stop`               | When Claude finishes responding                                                                                                                        |
 | `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
 | `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
-| `TaskCompleted`      | When a task is being marked as completed                                                                                                               |
 | `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
 | `ConfigChange`       | When a configuration file changes during a session                                                                                                     |
 | `CwdChanged`         | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |

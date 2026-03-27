@@ -188,7 +188,7 @@ Cada recurso tem uma estratégia de carregamento e custo de contexto diferentes:
 
 Cada recurso carrega em diferentes pontos em sua sessão. As abas abaixo explicam quando cada um carrega e o que entra em contexto.
 
-<img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/context-loading.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=729b5b634ba831d1d64772c6c9485b30" alt="Carregamento de contexto: CLAUDE.md e MCP carregam no início da sessão e permanecem em cada requisição. Skills carregam descrições no início, conteúdo completo na invocação. Subagents obtêm contexto isolado. Hooks são executados externamente." width="720" height="410" data-path="images/context-loading.svg" />
+<img src="https://mintcdn.com/claude-code/6yTCYq1p37ZB8-CQ/images/context-loading.svg?fit=max&auto=format&n=6yTCYq1p37ZB8-CQ&q=85&s=5a58ce953a35a2412892015e2ad6cb67" alt="Carregamento de contexto: CLAUDE.md e MCP carregam no início da sessão e permanecem em cada requisição. Skills carregam descrições no início, conteúdo completo na invocação. Subagents obtêm contexto isolado. Hooks são executados externamente." width="720" height="410" data-path="images/context-loading.svg" />
 
 <Tabs>
   <Tab title="CLAUDE.md">

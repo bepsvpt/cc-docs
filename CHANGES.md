@@ -1,5 +1,164 @@
 # Documentation Changes
 
+## 2026-03-27
+
+68 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Claude Code erweitern** (`features-overview.md`): 1 lines added, 1 removed
+- **Automatisieren Sie Workflows mit Hooks** (`hooks-guide.md`): 2 lines added, 1 removed
+- **Hooks-Referenz** (`hooks.md`): 3 lines added, 2 removed
+- **Plugins-Referenz** (`plugins-reference.md`): 2 lines added, 1 removed
+
+### English
+
+
+**Modified**
+
+- **Orchestrate teams of Claude Code sessions** (`agent-teams.md`): 2 lines added, 1 removed
+- **Best Practices for Claude Code** (`best-practices.md`): 1 lines added, 1 removed
+- **Changelog** (`changelog.md`): 33 lines added, 0 removed
+- **Claude Code on the web** (`claude-code-on-the-web.md`): 25 lines added, 1 removed
+  - New section: "## Auto-fix pull requests"
+  - New section: "### How Claude responds to PR activity"
+- **Code Review** (`code-review.md`): 37 lines added, 7 removed
+  - New section: "### Check run output"
+- **Common workflows** (`common-workflows.md`): 14 lines added, 0 removed
+  - New section: "### Copy gitignored files to worktrees"
+- **Manage costs effectively** (`costs.md`): 2 lines added, 3 removed
+- **Use Claude Code Desktop** (`desktop.md`): 2 lines added, 0 removed
+- **Environment variables** (`env-vars.md`): 2 lines added, 1 removed
+- **Extend Claude Code** (`features-overview.md`): 5 lines added, 5 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 18 lines added, 17 removed
+- **Hooks reference** (`hooks.md`): 135 lines added, 77 removed
+  - New section: "### TaskCreated"
+  - New section: "#### TaskCreated input"
+  - New section: "#### TaskCreated decision control"
+  - New section: "### TaskCompleted"
+  - New section: "#### TaskCompleted input"
+- **How Claude Code works** (`how-claude-code-works.md`): 4 lines added, 2 removed
+- **Interactive mode** (`interactive-mode.md`): 8 lines added, 8 removed
+- **Customize keyboard shortcuts** (`keybindings.md`): 33 lines added, 13 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 7 lines added, 6 removed
+- **How Claude remembers your project** (`memory.md`): 4 lines added, 4 removed
+- **Monitoring** (`monitoring-usage.md`): 26 lines added, 26 removed
+- **Configure permissions** (`permissions.md`): 10 lines added, 9 removed
+- **Plugins reference** (`plugins-reference.md`): 2 lines added, 1 removed
+- **Continue local sessions from any device with Remote Control** (`remote-control.md`): 12 lines added, 0 removed
+  - New section: "### "Remote Control requires a claude.ai subscription""
+  - New section: "### "Remote Control requires a full-scope login token""
+  - New section: "### "Unable to determine your organization for Remote Control eligibility""
+- **Advanced setup** (`setup.md`): 5 lines added, 5 removed
+- **Extend Claude with skills** (`skills.md`): 15 lines added, 14 removed
+- **Create custom subagents** (`sub-agents.md`): 2 lines added, 2 removed
+
+### Español
+
+
+**Modified**
+
+- **Extender Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Automatizar flujos de trabajo con hooks** (`hooks-guide.md`): 2 lines added, 1 removed
+- **Referencia de hooks** (`hooks.md`): 3 lines added, 2 removed
+- **Referencia de plugins** (`plugins-reference.md`): 2 lines added, 1 removed
+
+### Français
+
+
+**Modified**
+
+- **Étendre Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Automatiser les workflows avec les hooks** (`hooks-guide.md`): 2 lines added, 1 removed
+- **Référence des hooks** (`hooks.md`): 3 lines added, 2 removed
+- **Référence des plugins** (`plugins-reference.md`): 2 lines added, 1 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Perluas Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Otomatisasi alur kerja dengan hooks** (`hooks-guide.md`): 2 lines added, 1 removed
+- **Referensi hooks** (`hooks.md`): 3 lines added, 2 removed
+- **Referensi Plugins** (`plugins-reference.md`): 2 lines added, 1 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Estendi Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Automatizzare i flussi di lavoro con hooks** (`hooks-guide.md`): 2 lines added, 1 removed
+- **Riferimento dei hooks** (`hooks.md`): 3 lines added, 2 removed
+- **Riferimento dei plugin** (`plugins-reference.md`): 2 lines added, 1 removed
+
+### 日本語
+
+
+**Modified**
+
+- **Claude Code を拡張する** (`features-overview.md`): 1 lines added, 1 removed
+- **hooks でワークフローを自動化する** (`hooks-guide.md`): 2 lines added, 1 removed
+- **Hooks リファレンス** (`hooks.md`): 3 lines added, 2 removed
+- **プラグインリファレンス** (`plugins-reference.md`): 2 lines added, 1 removed
+
+### 한국어
+
+
+**Modified**
+
+- **Claude Code 확장하기** (`features-overview.md`): 1 lines added, 1 removed
+- **hooks를 사용하여 워크플로우 자동화** (`hooks-guide.md`): 2 lines added, 1 removed
+- **Hooks 참조** (`hooks.md`): 3 lines added, 2 removed
+- **플러그인 참조** (`plugins-reference.md`): 2 lines added, 1 removed
+
+### Português
+
+
+**Modified**
+
+- **Estender Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Automatizar fluxos de trabalho com hooks** (`hooks-guide.md`): 2 lines added, 1 removed
+- **Referência de hooks** (`hooks.md`): 3 lines added, 2 removed
+- **Referência de plugins** (`plugins-reference.md`): 2 lines added, 1 removed
+
+### Русский
+
+
+**Modified**
+
+- **Расширение Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Автоматизация рабочих процессов с помощью hooks** (`hooks-guide.md`): 2 lines added, 1 removed
+- **Справочник по hooks** (`hooks.md`): 3 lines added, 2 removed
+- **Справочник по плагинам** (`plugins-reference.md`): 2 lines added, 1 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **扩展 Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **使用 hooks 自动化工作流** (`hooks-guide.md`): 2 lines added, 1 removed
+- **Hooks 参考** (`hooks.md`): 3 lines added, 2 removed
+- **Plugins 参考** (`plugins-reference.md`): 2 lines added, 1 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **擴展 Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **使用 hooks 自動化工作流程** (`hooks-guide.md`): 2 lines added, 1 removed
+- **Hooks 參考** (`hooks.md`): 3 lines added, 2 removed
+- **Plugins 參考** (`plugins-reference.md`): 2 lines added, 1 removed
+
+---
+
 ## 2026-03-26
 
 206 pages modified

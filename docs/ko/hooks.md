@@ -18,7 +18,7 @@ Hook은 Claude Code 세션 중 특정 지점에서 실행됩니다. 이벤트가
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/JCMefyZyaJwkJgv-/images/hooks-lifecycle.svg?fit=max&auto=format&n=JCMefyZyaJwkJgv-&q=85&s=f004f3fc7324fa2a4630e8d6559cf6dd" alt="SessionStart에서 에이전트 루프를 거쳐 SessionEnd까지의 hook 시퀀스를 보여주는 hook 수명 주기 다이어그램 (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCompleted), PostCompact 및 SessionEnd, Elicitation 및 ElicitationResult는 MCP 도구 실행 내에 중첩되고 WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded는 독립적인 비동기 이벤트" width="520" height="1100" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/1wr0LPds6lVWZkQB/images/hooks-lifecycle.svg?fit=max&auto=format&n=1wr0LPds6lVWZkQB&q=85&s=53a826e7bb64c6bff5f867506c0530ad" alt="SessionStart에서 에이전트 루프를 거쳐 SessionEnd까지의 hook 시퀀스를 보여주는 hook 수명 주기 다이어그램 (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCompleted), PostCompact 및 SessionEnd, Elicitation 및 ElicitationResult는 MCP 도구 실행 내에 중첩되고 WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded는 독립적인 비동기 이벤트" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
@@ -35,10 +35,11 @@ Hook은 Claude Code 세션 중 특정 지점에서 실행됩니다. 이벤트가
 | `Notification`       | When Claude Code sends a notification                                                                                                                  |
 | `SubagentStart`      | When a subagent is spawned                                                                                                                             |
 | `SubagentStop`       | When a subagent finishes                                                                                                                               |
+| `TaskCreated`        | When a task is being created via `TaskCreate`                                                                                                          |
+| `TaskCompleted`      | When a task is being marked as completed                                                                                                               |
 | `Stop`               | When Claude finishes responding                                                                                                                        |
 | `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
 | `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
-| `TaskCompleted`      | When a task is being marked as completed                                                                                                               |
 | `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
 | `ConfigChange`       | When a configuration file changes during a session                                                                                                     |
 | `CwdChanged`         | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |

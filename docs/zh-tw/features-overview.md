@@ -188,7 +188,7 @@ Claude Code 結合了一個能夠推理您程式碼的模型與[內建工具](/z
 
 每個功能在您的會話中的不同點載入。下面的選項卡說明每個功能何時載入以及什麼進入上下文。
 
-<img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/context-loading.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=729b5b634ba831d1d64772c6c9485b30" alt="上下文載入：CLAUDE.md 和 MCP 在會話開始時載入並保留在每個請求中。Skills 在啟動時載入描述，在調用時載入完整內容。Subagents 獲得隔離的上下文。Hooks 外部運行。" width="720" height="410" data-path="images/context-loading.svg" />
+<img src="https://mintcdn.com/claude-code/6yTCYq1p37ZB8-CQ/images/context-loading.svg?fit=max&auto=format&n=6yTCYq1p37ZB8-CQ&q=85&s=5a58ce953a35a2412892015e2ad6cb67" alt="上下文載入：CLAUDE.md 和 MCP 在會話開始時載入並保留在每個請求中。Skills 在啟動時載入描述，在調用時載入完整內容。Subagents 獲得隔離的上下文。Hooks 外部運行。" width="720" height="410" data-path="images/context-loading.svg" />
 
 <Tabs>
   <Tab title="CLAUDE.md">
