@@ -1,5 +1,31 @@
 # Documentation Changes
 
+## 2026-03-28
+
+11 pages modified
+
+
+### English
+
+
+**Modified**
+
+- **Orchestrate teams of Claude Code sessions** (`agent-teams.md`): 1 lines added, 1 removed
+- **Changelog** (`changelog.md`): 29 lines added, 0 removed
+- **CLI reference** (`cli-reference.md`): 1 lines added, 0 removed
+- **Common workflows** (`common-workflows.md`): 12 lines added, 2 removed
+- **Environment variables** (`env-vars.md`): 1 lines added, 1 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 33 lines added, 0 removed
+  - New section: "#### Filter by tool name and arguments with the `if` field"
+- **Hooks reference** (`hooks.md`): 41 lines added, 20 removed
+  - New section: "##### AskUserQuestion"
+- **Interactive mode** (`interactive-mode.md`): 0 lines added, 4 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 17 lines added, 8 removed
+- **Monitoring** (`monitoring-usage.md`): 25 lines added, 25 removed
+- **Claude Code settings** (`settings.md`): 70 lines added, 66 removed
+
+---
+
 ## 2026-03-27
 
 68 pages modified
