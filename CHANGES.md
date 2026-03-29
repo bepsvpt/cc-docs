@@ -1,5 +1,25 @@
 # Documentation Changes
 
+## 2026-03-29
+
+6 pages modified
+
+
+### English
+
+
+**Modified**
+
+- **Data usage** (`data-usage.md`): 1 lines added, 1 removed
+- **Environment variables** (`env-vars.md`): 2 lines added, 2 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 10 lines added, 0 removed
+- **Customize keyboard shortcuts** (`keybindings.md`): 2 lines added, 2 removed
+- **LLM gateway configuration** (`llm-gateway.md`): 8 lines added, 0 removed
+- **Extend Claude with skills** (`skills.md`): 4 lines added, 4 removed
+  - New section: "### Skill descriptions are cut short"
+
+---
+
 ## 2026-03-28
 
 11 pages modified
