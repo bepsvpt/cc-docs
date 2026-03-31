@@ -18,7 +18,7 @@ Los hooks se activan en puntos específicos durante una sesión de Claude Code. 
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/1wr0LPds6lVWZkQB/images/hooks-lifecycle.svg?fit=max&auto=format&n=1wr0LPds6lVWZkQB&q=85&s=53a826e7bb64c6bff5f867506c0530ad" alt="Diagrama del ciclo de vida de hooks que muestra la secuencia de hooks desde SessionStart a través del bucle agentico (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCompleted) hasta Stop o StopFailure, TeammateIdle, PreCompact, PostCompact y SessionEnd, con Elicitation y ElicitationResult anidados dentro de la ejecución de herramientas MCP y WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged y FileChanged como eventos asincronos independientes" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/1wr0LPds6lVWZkQB/images/hooks-lifecycle.svg?fit=max&auto=format&n=1wr0LPds6lVWZkQB&q=85&s=53a826e7bb64c6bff5f867506c0530ad" alt="Diagrama del ciclo de vida de hooks que muestra la secuencia de hooks desde SessionStart a través del bucle agentico (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCreated, TaskCompleted) hasta Stop o StopFailure, TeammateIdle, PreCompact, PostCompact y SessionEnd, con Elicitation y ElicitationResult anidados dentro de la ejecución de herramientas MCP y WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged y FileChanged como eventos asincronos independientes" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
@@ -54,7 +54,7 @@ La tabla a continuación resume cuándo se activa cada evento. La sección [Hook
 
 ### Cómo se resuelve un hook
 
-Para ver cómo encajan estas piezas, considere este hook `PreToolUse` que bloquea comandos de shell destructivos. El hook ejecuta `block-rm.sh` antes de cada llamada a la herramienta Bash:
+Para ver cómo encajan estas piezas, considere este hook `PreToolUse` que bloquea comandos de shell destructivos. El `matcher` se reduce a llamadas a herramientas Bash y la condición `if` se reduce aún más a comandos que comienzan con `rm`, por lo que `block-rm.sh` solo se genera cuando ambos filtros coinciden:
 
 ```json  theme={null}
 {
@@ -65,7 +65,8 @@ Para ver cómo encajan estas piezas, considere este hook `PreToolUse` que bloque
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/block-rm.sh"
+            "if": "Bash(rm *)",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-rm.sh"
           }
         ]
       }
@@ -97,7 +98,7 @@ fi
 Ahora suponga que Claude Code decide ejecutar `Bash "rm -rf /tmp/build"`. Esto es lo que sucede:
 
 <Frame>
-  <img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/hook-resolution.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=ad667ee6d86ab2276aa48a4e73e220df" alt="Flujo de resolución de hooks: se activa el evento PreToolUse, el matcher verifica la coincidencia de Bash, se ejecuta el controlador de hooks, el resultado se devuelve a Claude Code" width="780" height="290" data-path="images/hook-resolution.svg" />
+  <img src="https://mintcdn.com/claude-code/-tYw1BD_DEqfyyOZ/images/hook-resolution.svg?fit=max&auto=format&n=-tYw1BD_DEqfyyOZ&q=85&s=c73ebc1eeda2037570427d7af1e0a891" alt="Flujo de resolución de hooks: se activa el evento PreToolUse, el matcher verifica la coincidencia de Bash, la condición if verifica la coincidencia de Bash(rm *), se ejecuta el controlador de hooks, el resultado se devuelve a Claude Code" width="930" height="290" data-path="images/hook-resolution.svg" />
 </Frame>
 
 <Steps>
@@ -110,11 +111,15 @@ Ahora suponga que Claude Code decide ejecutar `Bash "rm -rf /tmp/build"`. Esto e
   </Step>
 
   <Step title="El matcher verifica">
-    El matcher `"Bash"` coincide con el nombre de la herramienta, por lo que se ejecuta `block-rm.sh`. Si omite el matcher o usa `"*"`, el hook se ejecuta en cada ocurrencia del evento. Los hooks solo se omiten cuando se define un matcher y no coincide.
+    El matcher `"Bash"` coincide con el nombre de la herramienta, por lo que se activa este grupo de hooks. Si omite el matcher o usa `"*"`, el grupo se activa en cada ocurrencia del evento.
+  </Step>
+
+  <Step title="La condición if verifica">
+    La condición `if` `"Bash(rm *)"` coincide porque el comando comienza con `rm`, por lo que se genera este controlador. Si el comando hubiera sido `npm test`, la verificación `if` habría fallado y `block-rm.sh` nunca se habría ejecutado, evitando la sobrecarga de generación de procesos. El campo `if` es opcional; sin él, cada controlador en el grupo coincidente se ejecuta.
   </Step>
 
   <Step title="Se ejecuta el controlador de hooks">
-    El script extrae `"rm -rf /tmp/build"` de la entrada y encuentra `rm -rf`, por lo que imprime una decisión en stdout:
+    El script inspecciona el comando completo y encuentra `rm -rf`, por lo que imprime una decisión en stdout:
 
     ```json  theme={null}
     {
@@ -126,7 +131,7 @@ Ahora suponga que Claude Code decide ejecutar `Bash "rm -rf /tmp/build"`. Esto e
     }
     ```
 
-    Si el comando hubiera sido seguro (como `npm test`), el script habría alcanzado `exit 0` en su lugar, lo que le dice a Claude Code que permita la llamada a la herramienta sin más acciones.
+    Si el comando hubiera sido una variante más segura de `rm` como `rm file.txt`, el script habría alcanzado `exit 0` en su lugar, lo que le dice a Claude Code que permita la llamada a la herramienta sin más acciones.
   </Step>
 
   <Step title="Claude Code actúa sobre el resultado">
@@ -169,23 +174,23 @@ Para obtener detalles sobre la resolución de archivos de configuración, consul
 
 El campo `matcher` es una cadena regex que filtra cuándo se activan los hooks. Use `"*"`, `""` u omita `matcher` completamente para coincidir con todas las ocurrencias. Cada tipo de evento coincide en un campo diferente:
 
-| Evento                                                                                          | En qué filtra el matcher                          | Valores de matcher de ejemplo                                                                                             |
-| :---------------------------------------------------------------------------------------------- | :------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                          | nombre de la herramienta                          | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
-| `SessionStart`                                                                                  | cómo comenzó la sesión                            | `startup`, `resume`, `clear`, `compact`                                                                                   |
-| `SessionEnd`                                                                                    | por qué terminó la sesión                         | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                  | tipo de notificación                              | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                 | tipo de agente                                    | `Bash`, `Explore`, `Plan` o nombres de agentes personalizados                                                             |
-| `PreCompact`, `PostCompact`                                                                     | qué desencadenó la compactación                   | `manual`, `auto`                                                                                                          |
-| `SubagentStop`                                                                                  | tipo de agente                                    | los mismos valores que `SubagentStart`                                                                                    |
-| `ConfigChange`                                                                                  | fuente de configuración                           | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
-| `CwdChanged`                                                                                    | sin soporte de matcher                            | siempre se activa en cada cambio de directorio                                                                            |
-| `FileChanged`                                                                                   | nombre de archivo (basename del archivo cambiado) | `.envrc`, `.env`, cualquier nombre de archivo que desee monitorear                                                        |
-| `StopFailure`                                                                                   | tipo de error                                     | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                            | razón de carga                                    | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
-| `Elicitation`                                                                                   | nombre del servidor MCP                           | sus nombres de servidor MCP configurados                                                                                  |
-| `ElicitationResult`                                                                             | nombre del servidor MCP                           | los mismos valores que `Elicitation`                                                                                      |
-| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | sin soporte de matcher                            | siempre se activa en cada ocurrencia                                                                                      |
+| Evento                                                                                                         | En qué filtra el matcher                          | Valores de matcher de ejemplo                                                                                             |
+| :------------------------------------------------------------------------------------------------------------- | :------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                                         | nombre de la herramienta                          | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `SessionStart`                                                                                                 | cómo comenzó la sesión                            | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `SessionEnd`                                                                                                   | por qué terminó la sesión                         | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
+| `Notification`                                                                                                 | tipo de notificación                              | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
+| `SubagentStart`                                                                                                | tipo de agente                                    | `Bash`, `Explore`, `Plan` o nombres de agentes personalizados                                                             |
+| `PreCompact`, `PostCompact`                                                                                    | qué desencadenó la compactación                   | `manual`, `auto`                                                                                                          |
+| `SubagentStop`                                                                                                 | tipo de agente                                    | los mismos valores que `SubagentStart`                                                                                    |
+| `ConfigChange`                                                                                                 | fuente de configuración                           | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
+| `CwdChanged`                                                                                                   | sin soporte de matcher                            | siempre se activa en cada cambio de directorio                                                                            |
+| `FileChanged`                                                                                                  | nombre de archivo (basename del archivo cambiado) | `.envrc`, `.env`, cualquier nombre de archivo que desee monitorear                                                        |
+| `StopFailure`                                                                                                  | tipo de error                                     | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                           | razón de carga                                    | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `Elicitation`                                                                                                  | nombre del servidor MCP                           | sus nombres de servidor MCP configurados                                                                                  |
+| `ElicitationResult`                                                                                            | nombre del servidor MCP                           | los mismos valores que `Elicitation`                                                                                      |
+| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | sin soporte de matcher                            | siempre se activa en cada ocurrencia                                                                                      |
 
 El matcher es un regex, por lo que `Edit|Write` coincide con cualquiera de las herramientas y `Notebook.*` coincide con cualquier herramienta que comience con Notebook. El matcher se ejecuta contra un campo de la [entrada JSON](#hook-input-and-output) que Claude Code envía a su hook en stdin. Para eventos de herramientas, ese campo es `tool_name`. Cada sección [hook event](#hook-events) enumera el conjunto completo de valores de matcher y el esquema de entrada para ese evento.
 
@@ -209,7 +214,9 @@ Este ejemplo ejecuta un script de linting solo cuando Claude escribe o edita un 
 }
 ```
 
-`UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` y `CwdChanged` no admiten matchers y siempre se activan en cada ocurrencia. Si agrega un campo `matcher` a estos eventos, se ignora silenciosamente.
+`UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` y `CwdChanged` no admiten matchers y siempre se activan en cada ocurrencia. Si agrega un campo `matcher` a estos eventos, se ignora silenciosamente.
+
+Para eventos de herramientas, puede filtrar más estrechamente estableciendo el campo [`if`](#common-fields) en controladores de hooks individuales. `if` utiliza [sintaxis de regla de permiso](/es/permissions) para coincidir con el nombre de la herramienta y los argumentos juntos, por lo que `"Bash(git *)"` se ejecuta solo para comandos `git` y `"Edit(*.ts)"` se ejecuta solo para archivos TypeScript.
 
 #### Coincidir herramientas MCP
 
@@ -268,21 +275,23 @@ Cada objeto en el array `hooks` interno es un controlador de hook: el comando de
 
 Estos campos se aplican a todos los tipos de hooks:
 
-| Campo           | Requerido | Descripción                                                                                                                                                      |
-| :-------------- | :-------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`          | sí        | `"command"`, `"http"`, `"prompt"` o `"agent"`                                                                                                                    |
-| `timeout`       | no        | Segundos antes de cancelar. Valores predeterminados: 600 para comando, 30 para prompt, 60 para agente                                                            |
-| `statusMessage` | no        | Mensaje de spinner personalizado mostrado mientras se ejecuta el hook                                                                                            |
-| `once`          | no        | Si es `true`, se ejecuta solo una vez por sesión y luego se elimina. Solo skills, no agentes. Consulte [Hooks in skills and agents](#hooks-in-skills-and-agents) |
+| Campo           | Requerido | Descripción                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| :-------------- | :-------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`          | sí        | `"command"`, `"http"`, `"prompt"` o `"agent"`                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `if`            | no        | Sintaxis de regla de permiso para filtrar cuándo se ejecuta este hook, como `"Bash(git *)"` o `"Edit(*.ts)"`. El hook solo se genera si la llamada a herramienta coincide con el patrón. Solo se evalúa en eventos de herramientas: `PreToolUse`, `PostToolUse`, `PostToolUseFailure` y `PermissionRequest`. En otros eventos, un hook con `if` establecido nunca se ejecuta. Utiliza la misma sintaxis que [reglas de permiso](/es/permissions) |
+| `timeout`       | no        | Segundos antes de cancelar. Valores predeterminados: 600 para comando, 30 para prompt, 60 para agente                                                                                                                                                                                                                                                                                                                                            |
+| `statusMessage` | no        | Mensaje de spinner personalizado mostrado mientras se ejecuta el hook                                                                                                                                                                                                                                                                                                                                                                            |
+| `once`          | no        | Si es `true`, se ejecuta solo una vez por sesión y luego se elimina. Solo skills, no agentes. Consulte [Hooks in skills and agents](#hooks-in-skills-and-agents)                                                                                                                                                                                                                                                                                 |
 
 #### Campos de comando hook
 
 Además de los [campos comunes](#common-fields), los hooks de comando aceptan estos campos:
 
-| Campo     | Requerido | Descripción                                                                                                                  |
-| :-------- | :-------- | :--------------------------------------------------------------------------------------------------------------------------- |
-| `command` | sí        | Comando de shell a ejecutar                                                                                                  |
-| `async`   | no        | Si es `true`, se ejecuta en segundo plano sin bloquear. Consulte [Run hooks in the background](#run-hooks-in-the-background) |
+| Campo     | Requerido | Descripción                                                                                                                                                                                                                                                    |
+| :-------- | :-------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `command` | sí        | Comando de shell a ejecutar                                                                                                                                                                                                                                    |
+| `async`   | no        | Si es `true`, se ejecuta en segundo plano sin bloquear. Consulte [Run hooks in the background](#run-hooks-in-the-background)                                                                                                                                   |
+| `shell`   | no        | Shell a usar para este hook. Acepta `"bash"` (predeterminado) o `"powershell"`. Establecer `"powershell"` ejecuta el comando a través de PowerShell en Windows. No requiere `CLAUDE_CODE_USE_POWERSHELL_TOOL` ya que los hooks generan PowerShell directamente |
 
 #### Campos de hook HTTP
 
@@ -450,7 +459,7 @@ Los hooks de comando reciben datos JSON a través de stdin y comunican resultado
 
 ### Campos de entrada comunes
 
-Todos los eventos de hook reciben estos campos como JSON, además de campos específicos del evento documentados en cada sección [hook event](#hook-events). Para hooks de comando, este JSON llega a través de stdin. Para hooks HTTP, llega como el cuerpo de la solicitud POST.
+Los eventos de hook reciben estos campos como JSON, además de campos específicos del evento documentados en cada sección [hook event](#hook-events). Para hooks de comando, este JSON llega a través de stdin. Para hooks HTTP, llega como el cuerpo de la solicitud POST.
 
 | Campo             | Descripción                                                                                                                                                                                                                                                    |
 | :---------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -522,6 +531,7 @@ El código de salida 2 es la forma en que un hook señala "detente, no hagas est
 | `Stop`               | Sí               | Evita que Claude se detenga, continúa la conversación                               |
 | `SubagentStop`       | Sí               | Evita que el subagente se detenga                                                   |
 | `TeammateIdle`       | Sí               | Evita que el compañero se quede inactivo (el compañero continúa trabajando)         |
+| `TaskCreated`        | Sí               | Revierte la creación de la tarea                                                    |
 | `TaskCompleted`      | Sí               | Evita que la tarea se marque como completada                                        |
 | `ConfigChange`       | Sí               | Bloquea que el cambio de configuración tenga efecto (excepto `policy_settings`)     |
 | `StopFailure`        | No               | La salida y el código de salida se ignoran                                          |
@@ -589,10 +599,10 @@ No todos los eventos admiten bloqueo o control de comportamiento a través de JS
 | Eventos                                                                                                                     | Patrón de decisión                   | Campos clave                                                                                                                                                                                                            |
 | :-------------------------------------------------------------------------------------------------------------------------- | :----------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange                                         | `decision` de nivel superior         | `decision: "block"`, `reason`                                                                                                                                                                                           |
-| TeammateIdle, TaskCompleted                                                                                                 | Código de salida o `continue: false` | El código de salida 2 bloquea la acción con retroalimentación de stderr. JSON `{"continue": false, "stopReason": "..."}` también detiene al compañero completamente, coincidiendo con el comportamiento del hook `Stop` |
+| TeammateIdle, TaskCreated, TaskCompleted                                                                                    | Código de salida o `continue: false` | El código de salida 2 bloquea la acción con retroalimentación de stderr. JSON `{"continue": false, "stopReason": "..."}` también detiene al compañero completamente, coincidiendo con el comportamiento del hook `Stop` |
 | PreToolUse                                                                                                                  | `hookSpecificOutput`                 | `permissionDecision` (allow/deny/ask), `permissionDecisionReason`                                                                                                                                                       |
 | PermissionRequest                                                                                                           | `hookSpecificOutput`                 | `decision.behavior` (allow/deny)                                                                                                                                                                                        |
-| WorktreeCreate                                                                                                              | ruta stdout                          | El hook imprime la ruta absoluta del worktree creado. La salida que no es cero falla la creación                                                                                                                        |
+| WorktreeCreate                                                                                                              | ruta stdout                          | El hook imprime la ruta en stdout; el hook HTTP devuelve `hookSpecificOutput.worktreePath`. El fallo del hook o la ruta faltante falla la creación                                                                      |
 | Elicitation                                                                                                                 | `hookSpecificOutput`                 | `action` (accept/decline/cancel), `content` (valores de campo de formulario para accept)                                                                                                                                |
 | ElicitationResult                                                                                                           | `hookSpecificOutput`                 | `action` (accept/decline/cancel), `content` (valores de campo de formulario override)                                                                                                                                   |
 | WorktreeRemove, Notification, SessionEnd, PreCompact, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged | Ninguno                              | Sin control de decisión. Se usa para efectos secundarios como registro o limpieza                                                                                                                                       |
@@ -830,7 +840,7 @@ Para bloquear un prompt, devuelva un objeto JSON con `decision` establecido en `
 
 ### PreToolUse
 
-Se ejecuta después de que Claude crea parámetros de herramienta y antes de procesar la llamada a herramienta. Coincide en el nombre de la herramienta: `Bash`, `Edit`, `Write`, `Read`, `Glob`, `Grep`, `Agent`, `WebFetch`, `WebSearch` y cualquier [nombre de herramienta MCP](#match-mcp-tools).
+Se ejecuta después de que Claude crea parámetros de herramienta y antes de procesar la llamada a herramienta. Coincide en el nombre de la herramienta: `Bash`, `Edit`, `Write`, `Read`, `Glob`, `Grep`, `Agent`, `WebFetch`, `WebSearch`, `AskUserQuestion`, `ExitPlanMode` y cualquier [nombre de herramienta MCP](#match-mcp-tools).
 
 Use [PreToolUse decision control](#pretooluse-decision-control) para permitir, denegar o pedir permiso para usar la herramienta.
 
@@ -931,16 +941,25 @@ Genera un [subagente](/es/sub-agents).
 | `subagent_type` | string | `"Explore"`                | Tipo de agente especializado a usar                    |
 | `model`         | string | `"sonnet"`                 | Alias de modelo opcional para anular el predeterminado |
 
-#### Control de decisión de PreToolUse
+##### AskUserQuestion
+
+Hace al usuario una a cuatro preguntas de opción múltiple.
+
+| Campo       | Tipo   | Ejemplo                                                                                                            | Descripción                                                                                                                                                                                                                                       |
+| :---------- | :----- | :----------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `questions` | array  | `[{"question": "Which framework?", "header": "Framework", "options": [{"label": "React"}], "multiSelect": false}]` | Preguntas a presentar, cada una con una cadena `question`, `header` corto, array `options` y bandera `multiSelect` opcional                                                                                                                       |
+| `answers`   | object | `{"Which framework?": "React"}`                                                                                    | Opcional. Asigna texto de pregunta a la etiqueta de opción seleccionada. Las respuestas de selección múltiple unen etiquetas con comas. Claude no establece este campo; suministrarlo a través de `updatedInput` para responder programáticamente |
+
+#### PreToolUse decision control
 
 Los hooks `PreToolUse` pueden controlar si procede una llamada a herramienta. A diferencia de otros hooks que usan un campo `decision` de nivel superior, PreToolUse devuelve su decisión dentro de un objeto `hookSpecificOutput`. Esto le da control más rico: tres resultados (permitir, denegar o preguntar) más la capacidad de modificar la entrada de la herramienta antes de la ejecución.
 
-| Campo                      | Descripción                                                                                                                                                                                                                               |
-| :------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `permissionDecision`       | `"allow"` omite el sistema de permisos, `"deny"` evita la llamada a herramienta, `"ask"` solicita al usuario que confirme. Las reglas [Deny and ask](/es/permissions#manage-permissions) aún se aplican cuando un hook devuelve `"allow"` |
-| `permissionDecisionReason` | Para `"allow"` y `"ask"`, se muestra al usuario pero no a Claude. Para `"deny"`, se muestra a Claude                                                                                                                                      |
-| `updatedInput`             | Modifica los parámetros de entrada de la herramienta antes de la ejecución. Combinar con `"allow"` para aprobación automática, o `"ask"` para mostrar la entrada modificada al usuario                                                    |
-| `additionalContext`        | Cadena agregada al contexto de Claude antes de que se ejecute la herramienta                                                                                                                                                              |
+| Campo                      | Descripción                                                                                                                                                                                                                                                                                   |
+| :------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `permissionDecision`       | `"allow"` omite el sistema de permisos. `"deny"` evita la llamada a herramienta. `"ask"` solicita al usuario que confirme. Las reglas [Deny and ask](/es/permissions#manage-permissions) aún se aplican cuando un hook devuelve `"allow"`                                                     |
+| `permissionDecisionReason` | Para `"allow"` y `"ask"`, se muestra al usuario pero no a Claude. Para `"deny"`, se muestra a Claude                                                                                                                                                                                          |
+| `updatedInput`             | Modifica los parámetros de entrada de la herramienta antes de la ejecución. Reemplaza el objeto de entrada completo, así que incluya campos sin cambios junto con los modificados. Combinar con `"allow"` para aprobación automática, o `"ask"` para mostrar la entrada modificada al usuario |
+| `additionalContext`        | Cadena agregada al contexto de Claude antes de que se ejecute la herramienta                                                                                                                                                                                                                  |
 
 Cuando un hook devuelve `"ask"`, el diálogo de permiso mostrado al usuario incluye una etiqueta que identifica de dónde proviene el hook: por ejemplo, `[User]`, `[Project]`, `[Plugin]` o `[Local]`. Esto ayuda a los usuarios a entender qué fuente de configuración está solicitando confirmación.
 
@@ -957,6 +976,8 @@ Cuando un hook devuelve `"ask"`, el diálogo de permiso mostrado al usuario incl
   }
 }
 ```
+
+`AskUserQuestion` y `ExitPlanMode` requieren interacción del usuario y normalmente se bloquean en [modo no interactivo](/es/headless) con la bandera `-p`. Devolver `permissionDecision: "allow"` junto con `updatedInput` satisface ese requisito: el hook lee la entrada de la herramienta desde stdin, recopila la respuesta a través de su propia interfaz de usuario y la devuelve en `updatedInput` para que la herramienta se ejecute sin solicitar. Devolver `"allow"` solo no es suficiente para estas herramientas. Para `AskUserQuestion`, repita el array `questions` original y agregue un objeto [`answers`](#askuserquestion) que asigne el texto de cada pregunta a la respuesta elegida.
 
 <Note>
   PreToolUse anteriormente usaba campos `decision` y `reason` de nivel superior, pero estos están deprecados para este evento. Use `hookSpecificOutput.permissionDecision` y `hookSpecificOutput.permissionDecisionReason` en su lugar. Los valores deprecados `"approve"` y `"block"` se asignan a `"allow"` y `"deny"` respectivamente. Otros eventos como PostToolUse y Stop continúan usando `decision` y `reason` de nivel superior como su formato actual.
@@ -1000,13 +1021,13 @@ Los hooks PermissionRequest reciben campos `tool_name` y `tool_input` como los h
 
 Los hooks `PermissionRequest` pueden permitir o denegar solicitudes de permiso. Además de los [campos de salida JSON](#json-output) disponibles para todos los hooks, su script de hook puede devolver un objeto `decision` con estos campos específicos del evento:
 
-| Campo                | Descripción                                                                                                                                                                          |
-| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `behavior`           | `"allow"` otorga el permiso, `"deny"` lo deniega                                                                                                                                     |
-| `updatedInput`       | Solo para `"allow"`: modifica los parámetros de entrada de la herramienta antes de la ejecución                                                                                      |
-| `updatedPermissions` | Solo para `"allow"`: array de [entradas de actualización de permiso](#permission-update-entries) a aplicar, como agregar una regla de permiso o cambiar el modo de permiso de sesión |
-| `message`            | Solo para `"deny"`: le dice a Claude por qué se denegó el permiso                                                                                                                    |
-| `interrupt`          | Solo para `"deny"`: si es `true`, detiene a Claude                                                                                                                                   |
+| Campo                | Descripción                                                                                                                                                                                            |
+| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `behavior`           | `"allow"` otorga el permiso, `"deny"` lo deniega                                                                                                                                                       |
+| `updatedInput`       | Solo para `"allow"`: modifica los parámetros de entrada de la herramienta antes de la ejecución. Reemplaza el objeto de entrada completo, así que incluya campos sin cambios junto con los modificados |
+| `updatedPermissions` | Solo para `"allow"`: array de [entradas de actualización de permiso](#permission-update-entries) a aplicar, como agregar una regla de permiso o cambiar el modo de permiso de sesión                   |
+| `message`            | Solo para `"deny"`: le dice a Claude por qué se denegó el permiso                                                                                                                                      |
+| `interrupt`          | Solo para `"deny"`: si es `true`, detiene a Claude                                                                                                                                                     |
 
 ```json  theme={null}
 {
@@ -1262,6 +1283,117 @@ Además de los [campos de entrada comunes](#common-input-fields), los hooks Suba
 
 Los hooks SubagentStop usan el mismo formato de control de decisión que los [hooks Stop](#stop-decision-control).
 
+### TaskCreated
+
+Se ejecuta cuando se está creando una tarea a través de la herramienta `TaskCreate`. Use esto para aplicar convenciones de nomenclatura, requerir descripciones de tareas o evitar que se creen ciertas tareas.
+
+Cuando un hook `TaskCreated` sale con código 2, la tarea no se crea y el mensaje de stderr se devuelve al modelo como retroalimentación. Para detener al compañero completamente en lugar de re-ejecutarlo, devuelva JSON con `{"continue": false, "stopReason": "..."}`. Los hooks TaskCreated no admiten matchers y se activan en cada ocurrencia.
+
+#### Entrada de TaskCreated
+
+Además de los [campos de entrada comunes](#common-input-fields), los hooks TaskCreated reciben `task_id`, `task_subject` y opcionalmente `task_description`, `teammate_name` y `team_name`.
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "cwd": "/Users/...",
+  "permission_mode": "default",
+  "hook_event_name": "TaskCreated",
+  "task_id": "task-001",
+  "task_subject": "Implement user authentication",
+  "task_description": "Add login and signup endpoints",
+  "teammate_name": "implementer",
+  "team_name": "my-project"
+}
+```
+
+| Campo              | Descripción                                                 |
+| :----------------- | :---------------------------------------------------------- |
+| `task_id`          | Identificador de la tarea que se está creando               |
+| `task_subject`     | Título de la tarea                                          |
+| `task_description` | Descripción detallada de la tarea. Puede estar ausente      |
+| `teammate_name`    | Nombre del compañero que crea la tarea. Puede estar ausente |
+| `team_name`        | Nombre del equipo. Puede estar ausente                      |
+
+#### Control de decisión de TaskCreated
+
+Los hooks TaskCreated admiten dos formas de controlar la creación de tareas:
+
+* **Código de salida 2**: la tarea no se crea y el mensaje de stderr se devuelve al modelo como retroalimentación.
+* **JSON `{"continue": false, "stopReason": "..."}`**: detiene al compañero completamente, coincidiendo con el comportamiento del hook `Stop`. El `stopReason` se muestra al usuario.
+
+Este ejemplo bloquea tareas cujos asuntos no siguen el formato requerido:
+
+```bash  theme={null}
+#!/bin/bash
+INPUT=$(cat)
+TASK_SUBJECT=$(echo "$INPUT" | jq -r '.task_subject')
+
+if [[ ! "$TASK_SUBJECT" =~ ^\[TICKET-[0-9]+\] ]]; then
+  echo "Task subject must start with a ticket number, e.g. '[TICKET-123] Add feature'" >&2
+  exit 2
+fi
+
+exit 0
+```
+
+### TaskCompleted
+
+Se ejecuta cuando una tarea está siendo marcada como completada. Esto se activa en dos situaciones: cuando cualquier agente marca explícitamente una tarea como completada a través de la herramienta TaskUpdate, o cuando un compañero de [equipo de agentes](/es/agent-teams) termina su turno con tareas en progreso. Use esto para aplicar criterios de finalización como pasar pruebas o verificaciones de lint antes de que una tarea pueda cerrarse.
+
+Cuando un hook `TaskCompleted` sale con código 2, la tarea no se marca como completada y el mensaje de stderr se devuelve al modelo como retroalimentación. Para detener al compañero completamente en lugar de re-ejecutarlo, devuelva JSON con `{"continue": false, "stopReason": "..."}`. Los hooks TaskCompleted no admiten matchers y se activan en cada ocurrencia.
+
+#### Entrada de TaskCompleted
+
+Además de los [campos de entrada comunes](#common-input-fields), los hooks TaskCompleted reciben `task_id`, `task_subject` y opcionalmente `task_description`, `teammate_name` y `team_name`.
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "cwd": "/Users/...",
+  "permission_mode": "default",
+  "hook_event_name": "TaskCompleted",
+  "task_id": "task-001",
+  "task_subject": "Implement user authentication",
+  "task_description": "Add login and signup endpoints",
+  "teammate_name": "implementer",
+  "team_name": "my-project"
+}
+```
+
+| Campo              | Descripción                                                     |
+| :----------------- | :-------------------------------------------------------------- |
+| `task_id`          | Identificador de la tarea que se está completando               |
+| `task_subject`     | Título de la tarea                                              |
+| `task_description` | Descripción detallada de la tarea. Puede estar ausente          |
+| `teammate_name`    | Nombre del compañero que completa la tarea. Puede estar ausente |
+| `team_name`        | Nombre del equipo. Puede estar ausente                          |
+
+#### Control de decisión de TaskCompleted
+
+Los hooks TaskCompleted admiten dos formas de controlar la finalización de tareas:
+
+* **Código de salida 2**: la tarea no se marca como completada y el mensaje de stderr se devuelve al modelo como retroalimentación.
+* **JSON `{"continue": false, "stopReason": "..."}`**: detiene al compañero completamente, coincidiendo con el comportamiento del hook `Stop`. El `stopReason` se muestra al usuario.
+
+Este ejemplo ejecuta pruebas y bloquea la finalización de tareas si fallan:
+
+```bash  theme={null}
+#!/bin/bash
+INPUT=$(cat)
+TASK_SUBJECT=$(echo "$INPUT" | jq -r '.task_subject')
+
+# Ejecute el conjunto de pruebas
+if ! npm test 2>&1; then
+  echo "Tests not passing. Fix failing tests before completing: $TASK_SUBJECT" >&2
+  exit 2
+fi
+
+exit 0
+```
+
 ### Stop
 
 Se ejecuta cuando el agente principal de Claude Code ha terminado de responder. No se ejecuta si la detención ocurrió debido a una interrupción del usuario. Los errores de API activan [StopFailure](#stopfailure) en su lugar.
@@ -1367,62 +1499,6 @@ Este ejemplo verifica que exista un artefacto de compilación antes de permitir 
 
 if [ ! -f "./dist/output.js" ]; then
   echo "Build artifact missing. Run the build before stopping." >&2
-  exit 2
-fi
-
-exit 0
-```
-
-### TaskCompleted
-
-Se ejecuta cuando una tarea está siendo marcada como completada. Esto se activa en dos situaciones: cuando cualquier agente marca explícitamente una tarea como completada a través de la herramienta TaskUpdate, o cuando un compañero de [equipo de agentes](/es/agent-teams) termina su turno con tareas en progreso. Use esto para aplicar criterios de finalización como pasar pruebas o verificaciones de lint antes de que una tarea pueda cerrarse.
-
-Cuando un hook `TaskCompleted` sale con código 2, la tarea no se marca como completada y el mensaje de stderr se devuelve al modelo como retroalimentación. Para detener al compañero completamente en lugar de re-ejecutarlo, devuelva JSON con `{"continue": false, "stopReason": "..."}`. Los hooks TaskCompleted no admiten matchers y se activan en cada ocurrencia.
-
-#### Entrada de TaskCompleted
-
-Además de los [campos de entrada comunes](#common-input-fields), los hooks TaskCompleted reciben `task_id`, `task_subject` y opcionalmente `task_description`, `teammate_name` y `team_name`.
-
-```json  theme={null}
-{
-  "session_id": "abc123",
-  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
-  "cwd": "/Users/...",
-  "permission_mode": "default",
-  "hook_event_name": "TaskCompleted",
-  "task_id": "task-001",
-  "task_subject": "Implement user authentication",
-  "task_description": "Add login and signup endpoints",
-  "teammate_name": "implementer",
-  "team_name": "my-project"
-}
-```
-
-| Campo              | Descripción                                                     |
-| :----------------- | :-------------------------------------------------------------- |
-| `task_id`          | Identificador de la tarea que se está completando               |
-| `task_subject`     | Título de la tarea                                              |
-| `task_description` | Descripción detallada de la tarea. Puede estar ausente          |
-| `teammate_name`    | Nombre del compañero que completa la tarea. Puede estar ausente |
-| `team_name`        | Nombre del equipo. Puede estar ausente                          |
-
-#### Control de decisión de TaskCompleted
-
-Los hooks TaskCompleted admiten dos formas de controlar la finalización de tareas:
-
-* **Código de salida 2**: la tarea no se marca como completada y el mensaje de stderr se devuelve al modelo como retroalimentación.
-* **JSON `{"continue": false, "stopReason": "..."}`**: detiene al compañero completamente, coincidiendo con el comportamiento del hook `Stop`. El `stopReason` se muestra al usuario.
-
-Este ejemplo ejecuta pruebas y bloquea la finalización de tareas si fallan:
-
-```bash  theme={null}
-#!/bin/bash
-INPUT=$(cat)
-TASK_SUBJECT=$(echo "$INPUT" | jq -r '.task_subject')
-
-# Ejecute el conjunto de pruebas
-if ! npm test 2>&1; then
-  echo "Tests not passing. Fix failing tests before completing: $TASK_SUBJECT" >&2
   exit 2
 fi
 
@@ -1570,7 +1646,9 @@ Los hooks FileChanged no tienen control de decisión. No pueden bloquear el camb
 
 Cuando ejecuta `claude --worktree` o un [subagente usa `isolation: "worktree"`](/es/sub-agents#choose-the-subagent-scope), Claude Code crea una copia de trabajo aislada usando `git worktree`. Si configura un hook WorktreeCreate, reemplaza el comportamiento predeterminado de git, permitiéndole usar un sistema de control de versiones diferente como SVN, Perforce o Mercurial.
 
-El hook debe imprimir la ruta absoluta al directorio de worktree creado en stdout. Claude Code usa esta ruta como el directorio de trabajo para la sesión aislada.
+Debido a que el hook reemplaza el comportamiento predeterminado completamente, [`.worktreeinclude`](/es/common-workflows#copy-gitignored-files-to-worktrees) no se procesa. Si necesita copiar archivos de configuración local como `.env` en el nuevo worktree, hágalo dentro de su script de hook.
+
+El hook debe devolver la ruta absoluta al directorio de worktree creado. Claude Code usa esta ruta como el directorio de trabajo para la sesión aislada. Los hooks de comando la imprimen en stdout; los hooks HTTP la devuelven a través de `hookSpecificOutput.worktreePath`.
 
 Este ejemplo crea una copia de trabajo SVN e imprime la ruta para que Claude Code la use. Reemplace la URL del repositorio con la suya:
 
@@ -1609,15 +1687,18 @@ Además de los [campos de entrada comunes](#common-input-fields), los hooks Work
 
 #### Salida de WorktreeCreate
 
-El hook debe imprimir la ruta absoluta al directorio de worktree creado en stdout. Si el hook falla o no produce salida, la creación de worktree falla con un error.
+Los hooks WorktreeCreate no usan el modelo de decisión de permitir/bloquear estándar. En su lugar, el éxito o fallo del hook determina el resultado. El hook debe devolver la ruta absoluta al directorio de worktree creado:
 
-Los hooks WorktreeCreate no usan el modelo de decisión de permitir/bloquear estándar. En su lugar, el éxito o fallo del hook determina el resultado. Solo se admiten hooks `type: "command"`.
+* **Hooks de comando** (`type: "command"`): imprimen la ruta en stdout.
+* **Hooks HTTP** (`type: "http"`): devuelven `{ "hookSpecificOutput": { "hookEventName": "WorktreeCreate", "worktreePath": "/absolute/path" } }` en el cuerpo de la respuesta.
+
+Si el hook falla o no produce ruta, la creación de worktree falla con un error.
 
 ### WorktreeRemove
 
 La contraparte de limpieza de [WorktreeCreate](#worktreecreate). Este hook se activa cuando se está eliminando un worktree, ya sea cuando sale de una sesión `--worktree` y elige eliminarlo, o cuando un subagente con `isolation: "worktree"` finaliza. Para worktrees basados en git, Claude maneja la limpieza automáticamente con `git worktree remove`. Si configuró un hook WorktreeCreate para un sistema de control de versiones que no es git, emparéjelo con un hook WorktreeRemove para manejar la limpieza. Sin uno, el directorio de worktree se deja en el disco.
 
-Claude Code pasa la ruta que WorktreeCreate imprimió en stdout como `worktree_path` en la entrada del hook. Este ejemplo lee esa ruta y elimina el directorio:
+Claude Code pasa la ruta devuelta por WorktreeCreate como `worktree_path` en la entrada del hook. Este ejemplo lee esa ruta y elimina el directorio:
 
 ```json  theme={null}
 {
@@ -1650,7 +1731,7 @@ Además de los [campos de entrada comunes](#common-input-fields), los hooks Work
 }
 ```
 
-Los hooks WorktreeRemove no tienen control de decisión. No pueden bloquear la eliminación de worktree pero pueden realizar tareas de limpieza como eliminar estado de control de versiones o archivar cambios. Los fallos de hook se registran solo en modo de depuración. Solo se admiten hooks `type: "command"`.
+Los hooks WorktreeRemove no tienen control de decisión. No pueden bloquear la eliminación de worktree pero pueden realizar tareas de limpieza como eliminar estado de control de versiones o archivar cambios. Los fallos de hook se registran solo en modo de depuración.
 
 ### PreCompact
 
@@ -1872,9 +1953,10 @@ Eventos que admiten los cuatro tipos de hooks (`command`, `http`, `prompt` y `ag
 * `Stop`
 * `SubagentStop`
 * `TaskCompleted`
+* `TaskCreated`
 * `UserPromptSubmit`
 
-Eventos que solo admiten hooks `type: "command"`:
+Eventos que admiten hooks `command` y `http` pero no `prompt` o `agent`:
 
 * `ConfigChange`
 * `CwdChanged`
@@ -1886,12 +1968,13 @@ Eventos que solo admiten hooks `type: "command"`:
 * `PostCompact`
 * `PreCompact`
 * `SessionEnd`
-* `SessionStart`
 * `StopFailure`
 * `SubagentStart`
 * `TeammateIdle`
 * `WorktreeCreate`
 * `WorktreeRemove`
+
+`SessionStart` solo admite hooks `command`.
 
 ### Cómo funcionan los hooks basados en prompts
 
@@ -2114,7 +2197,7 @@ Los hooks asincronos tienen varias restricciones en comparación con los hooks s
 * Solo los hooks `type: "command"` admiten `async`. Los hooks basados en prompts no pueden ejecutarse de forma asincrónica.
 * Los hooks asincronos no pueden bloquear llamadas a herramientas o devolver decisiones. En el momento en que se completa el hook, la acción desencadenante ya ha procedido.
 * La salida del hook se entrega en el siguiente turno de conversación. Si la sesión está inactiva, la respuesta espera hasta la siguiente interacción del usuario.
-* Cada ejecución crea un proceso de fondo separado. No hay deduplicación en múltiples activaciones del mismo hook asincrónico.
+* Cada ejecución crea un proceso de fondo separado. No hay dedu plicación en múltiples activaciones del mismo hook asincrónico.
 
 ## Consideraciones de seguridad
 
@@ -2138,16 +2221,15 @@ Tenga en cuenta estas prácticas al escribir hooks:
 
 ## Depurar hooks
 
-Ejecute `claude --debug` para ver detalles de ejecución de hooks, incluyendo qué hooks coincidieron, sus códigos de salida y salida. Alterne el modo detallado con `Ctrl+O` para ver el progreso del hook en la transcripción.
+Ejecute `claude --debug` para ver detalles de ejecución de hooks, incluyendo qué hooks coincidieron, sus códigos de salida y salida.
 
 ```text  theme={null}
 [DEBUG] Executing hooks for PostToolUse:Write
-[DEBUG] Getting matching hook commands for PostToolUse with query: Write
-[DEBUG] Found 1 hook matchers in settings
-[DEBUG] Matched 1 hooks for query "Write"
 [DEBUG] Found 1 hook commands to execute
 [DEBUG] Executing hook command: <Your command> with timeout 600000ms
 [DEBUG] Hook command completed with status 0: <Your stdout>
 ```
+
+Para obtener detalles de coincidencia de hooks más granulares, establezca `CLAUDE_CODE_DEBUG_LOG_LEVEL=verbose` para ver líneas de registro adicionales como recuentos de matchers de hooks y coincidencia de consultas.
 
 Para solucionar problemas comunes como hooks que no se activan, bucles infinitos de hooks Stop o errores de configuración, consulte [Limitations and troubleshooting](/es/hooks-guide#limitations-and-troubleshooting) en la guía.

@@ -10,7 +10,7 @@
   웹에서 Claude Code는 현재 연구 미리보기 상태입니다.
 </Note>
 
-## Claude Code on the web란 무엇입니까?
+## 웹에서 Claude Code란 무엇입니까?
 
 웹에서 Claude Code를 사용하면 개발자가 Claude 앱에서 Claude Code를 시작할 수 있습니다. 이는 다음과 같은 경우에 완벽합니다:
 
@@ -24,7 +24,7 @@ Claude Code는 [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753
 
 `--remote`를 사용하여 [터미널에서 웹으로 새 작업을 시작](#from-terminal-to-web)하거나, [웹 세션을 터미널로 텔레포트](#from-web-to-terminal)하여 로컬에서 계속할 수 있습니다. 클라우드 인프라 대신 자신의 머신에서 Claude Code를 실행하면서 웹 인터페이스를 사용하려면 [Remote Control](/ko/remote-control)을 참조하세요.
 
-## Claude Code on the web을 누가 사용할 수 있습니까?
+## 웹에서 Claude Code를 누가 사용할 수 있습니까?
 
 웹에서 Claude Code는 연구 미리보기로 다음에 사용 가능합니다:
 
@@ -35,12 +35,28 @@ Claude Code는 [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753
 
 ## 시작하기
 
+브라우저 또는 터미널에서 웹에서 Claude Code를 설정합니다.
+
+### 브라우저에서
+
 1. [claude.ai/code](https://claude.ai/code) 방문
 2. GitHub 계정 연결
 3. 저장소에 Claude GitHub 앱 설치
 4. 기본 환경 선택
 5. 코딩 작업 제출
 6. diff 보기에서 변경 사항 검토, 주석으로 반복, pull request 생성
+
+### 터미널에서
+
+Claude Code 내에서 `/web-setup`을 실행하여 로컬 `gh` CLI 자격 증명을 사용하여 GitHub를 연결합니다. 이 명령은 `gh auth token`을 웹에서 Claude Code로 동기화하고, 기본 클라우드 환경을 생성하고, 완료되면 브라우저에서 claude.ai/code를 엽니다.
+
+이 경로는 `gh` CLI가 설치되고 `gh auth login`으로 인증되어야 합니다. `gh`를 사용할 수 없으면 `/web-setup`이 claude.ai/code를 열어 브라우저에서 GitHub를 연결할 수 있습니다.
+
+`gh` 자격 증명은 Claude에 복제 및 푸시 액세스를 제공하므로 기본 세션의 경우 GitHub 앱을 건너뛸 수 있습니다. 자동 수정을 원하는 경우 나중에 앱을 설치합니다. 자동 수정은 앱을 사용하여 PR 웹훅을 수신합니다.
+
+<Note>
+  Team 및 Enterprise 관리자는 [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code)의 Quick web setup 토글을 사용하여 터미널 설정을 비활성화할 수 있습니다.
+</Note>
 
 ## 작동 방식
 
@@ -67,6 +83,30 @@ diff 보기에서 다음을 수행할 수 있습니다:
 
 이를 통해 draft PR을 생성하거나 GitHub로 전환하지 않고도 여러 라운드의 피드백을 통해 변경 사항을 개선할 수 있습니다.
 
+## 자동 수정 pull request
+
+Claude는 pull request를 감시하고 CI 실패 및 검토 주석에 자동으로 응답할 수 있습니다. Claude는 PR의 GitHub 활동을 구독하고, 검사가 실패하거나 검토자가 주석을 남기면 Claude가 조사하고 명확한 수정이 있으면 푸시합니다.
+
+<Note>
+  자동 수정을 위해서는 Claude GitHub 앱이 저장소에 설치되어야 합니다. 아직 설치하지 않았으면 [GitHub 앱 페이지](https://github.com/apps/claude)에서 설치하거나 [설정](#getting-started) 중에 메시지가 표시될 때 설치합니다.
+</Note>
+
+PR이 어디에서 왔는지와 어떤 기기를 사용하는지에 따라 자동 수정을 켜는 방법은 몇 가지가 있습니다:
+
+* **웹에서 Claude Code로 생성된 PR**: CI 상태 표시줄을 열고 **Auto-fix**를 선택합니다
+* **모바일 앱에서**: Claude에 PR을 자동 수정하도록 지시합니다. 예를 들어 "watch this PR and fix any CI failures or review comments"
+* **기존 PR**: PR URL을 세션에 붙여넣고 Claude에 자동 수정하도록 지시합니다
+
+### Claude가 PR 활동에 응답하는 방식
+
+자동 수정이 활성화되면 Claude는 새 검토 주석 및 CI 검사 실패를 포함한 PR의 GitHub 이벤트를 수신합니다. 각 이벤트에 대해 Claude는 조사하고 진행 방식을 결정합니다:
+
+* **명확한 수정**: Claude가 수정에 확신하고 이전 지침과 충돌하지 않으면 Claude가 변경을 수행하고, 푸시하고, 세션에서 수행한 작업을 설명합니다
+* **모호한 요청**: 검토자의 주석을 여러 방식으로 해석할 수 있거나 아키텍처적으로 중요한 사항이 포함되면 Claude가 행동하기 전에 확인합니다
+* **중복 또는 조치 불필요 이벤트**: 이벤트가 중복이거나 변경이 필요 없으면 Claude가 세션에서 이를 기록하고 계속합니다
+
+Claude는 GitHub의 검토 주석 스레드에 회신할 수 있습니다. 이러한 회신은 GitHub 계정을 사용하여 게시되므로 사용자 이름 아래에 나타나지만 각 회신은 Claude Code에서 온 것으로 표시되어 검토자가 에이전트에 의해 작성되었으며 직접 작성되지 않았음을 알 수 있습니다.
+
 ## 웹과 터미널 간 작업 이동
 
 터미널에서 웹으로 새 작업을 시작하거나 웹 세션을 터미널로 가져와 로컬에서 계속할 수 있습니다. 웹 세션은 노트북을 닫아도 유지되며 Claude 모바일 앱을 포함한 어디서나 모니터링할 수 있습니다.
@@ -87,13 +127,13 @@ claude --remote "Fix the authentication bug in src/auth/login.ts"
 
 #### 원격 작업 팁
 
-**로컬에서 계획하고 원격으로 실행**: 복잡한 작업의 경우 Claude를 plan mode에서 시작하여 접근 방식을 협력한 다음 작업을 웹으로 보냅니다:
+**로컬에서 계획하고 원격으로 실행**: 복잡한 작업의 경우 Claude를 Plan Mode에서 시작하여 접근 방식을 협력한 다음 작업을 웹으로 보냅니다:
 
 ```bash  theme={null}
 claude --permission-mode plan
 ```
 
-Plan mode에서 Claude는 파일만 읽고 코드베이스를 탐색할 수 있습니다. 계획에 만족하면 자율 실행을 위해 원격 세션을 시작합니다:
+Plan Mode에서 Claude는 파일만 읽고 코드베이스를 탐색할 수 있습니다. 계획에 만족하면 자율 실행을 위해 원격 세션을 시작합니다:
 
 ```bash  theme={null}
 claude --remote "Execute the migration plan in docs/migration-plan.md"
@@ -148,6 +188,10 @@ Max 및 Pro 계정의 경우 두 가지 가시성 옵션은 **Private** 및 **Pu
 공유하기 전에 민감한 내용이 있는지 세션을 확인합니다. 세션에는 개인 GitHub 저장소의 코드 및 자격 증명이 포함될 수 있습니다. 저장소 액세스 확인은 기본적으로 활성화되지 않습니다.
 
 Settings > Claude Code > Sharing settings로 이동하여 저장소 액세스 확인을 활성화하거나 공유 세션에서 이름을 숨길 수 있습니다.
+
+## 반복 작업 예약
+
+Claude를 반복 일정에 따라 실행하여 일일 PR 검토, 종속성 감사 및 CI 실패 분석과 같은 작업을 자동화합니다. 전체 가이드는 [웹에서 작업 예약](/ko/web-scheduled-tasks)을 참조하세요.
 
 ## 세션 관리
 
@@ -644,7 +688,7 @@ SessionStart hooks는 `CLAUDE_ENV_FILE` 환경 변수에 지정된 파일에 쓰
 ## 제한 사항
 
 * **저장소 인증**: 웹에서 로컬로 세션을 이동할 때 동일한 계정으로 인증된 경우에만 가능합니다
-* **플랫폼 제한**: 웹에서 Claude Code는 GitHub에서 호스팅되는 코드에서만 작동합니다. GitLab 및 기타 비 GitHub 저장소는 클라우드 세션에서 사용할 수 없습니다
+* **플랫폼 제한**: 웹에서 Claude Code는 GitHub에서 호스팅되는 코드에서만 작동합니다. 자체 호스팅 [GitHub Enterprise Server](/ko/github-enterprise-server) 인스턴스는 Teams 및 Enterprise 플랜에서 지원됩니다. GitLab 및 기타 비 GitHub 저장소는 클라우드 세션에서 사용할 수 없습니다
 
 ## 모범 사례
 

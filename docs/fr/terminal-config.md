@@ -35,10 +35,14 @@ Exécutez `/terminal-setup` dans Claude Code pour configurer automatiquement Maj
 1. Ouvrez Paramètres → Profils → Clavier
 2. Cochez « Utiliser Option comme touche Meta »
 
-**Pour le terminal iTerm2 et VS Code :**
+**Pour iTerm2 :**
 
 1. Ouvrez Paramètres → Profils → Touches
 2. Sous Général, définissez la touche Option gauche/droite sur « Esc+ »
+
+**Pour le terminal VS Code :**
+
+Définissez `"terminal.integrated.macOptionIsMeta": true` dans les paramètres de VS Code.
 
 ### Configuration des notifications
 
@@ -54,11 +58,23 @@ Kitty et Ghostty prennent en charge les notifications de bureau sans configurati
 
 Si les notifications n'apparaissent pas, vérifiez que votre application de terminal dispose des autorisations de notification dans les paramètres de votre système d'exploitation.
 
+Lorsque vous exécutez Claude Code dans tmux, les notifications et la [barre de progression du terminal](/fr/settings#global-config-settings) ne parviennent au terminal externe, tel que iTerm2, Kitty ou Ghostty, que si vous activez le passthrough dans votre configuration tmux :
+
+```
+set -g allow-passthrough on
+```
+
+Sans ce paramètre, tmux intercepte les séquences d'échappement et elles ne parviennent pas à l'application de terminal.
+
 Les autres terminaux, y compris le Terminal macOS par défaut, ne prennent pas en charge les notifications natives. Utilisez plutôt des [hooks de notification](/fr/hooks#notification).
 
 #### Hooks de notification
 
 Pour ajouter un comportement personnalisé lorsque les notifications se déclenchent, comme jouer un son ou envoyer un message, configurez un [hook de notification](/fr/hooks#notification). Les hooks s'exécutent aux côtés des notifications du terminal, pas en remplacement.
+
+### Réduire le scintillement et l'utilisation de la mémoire
+
+Si vous voyez du scintillement lors de longues sessions, ou si votre position de défilement du terminal saute vers le haut pendant que Claude travaille, essayez le [rendu en plein écran](/fr/fullscreen). Il utilise un chemin de rendu alternatif qui maintient la mémoire stable et ajoute le support de la souris. Activez-le avec `CLAUDE_CODE_NO_FLICKER=1`.
 
 ### Gestion des entrées volumineuses
 
@@ -70,7 +86,7 @@ Lorsque vous travaillez avec du code étendu ou des instructions longues :
 
 ### Mode Vim
 
-Claude Code supporte un sous-ensemble de liaisons de clavier Vim qui peut être activé avec `/vim` ou configuré via `/config`.
+Claude Code supporte un sous-ensemble de liaisons de clavier Vim qui peut être activé avec `/vim` ou configuré via `/config`. Pour définir le mode directement dans votre fichier de configuration, définissez la clé de configuration globale [`editorMode`](/fr/settings#global-config-settings) sur `"vim"` dans `~/.claude.json`.
 
 Le sous-ensemble supporté inclut :
 

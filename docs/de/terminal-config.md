@@ -35,10 +35,14 @@ Führen Sie `/terminal-setup` in Claude Code aus, um Shift+Enter automatisch fü
 1. Öffnen Sie Einstellungen → Profile → Tastatur
 2. Aktivieren Sie „Option als Meta-Taste verwenden"
 
-**Für iTerm2 und VS Code Terminal:**
+**Für iTerm2:**
 
 1. Öffnen Sie Einstellungen → Profile → Tasten
 2. Stellen Sie unter Allgemein die linke/rechte Optionstaste auf „Esc+" ein
+
+**Für VS Code-Terminal:**
+
+Stellen Sie `"terminal.integrated.macOptionIsMeta": true` in den VS Code-Einstellungen ein.
 
 ### Benachrichtigungseinrichtung
 
@@ -54,11 +58,23 @@ Kitty und Ghostty unterstützen Desktop-Benachrichtigungen ohne zusätzliche Kon
 
 Wenn Benachrichtigungen nicht angezeigt werden, überprüfen Sie, ob Ihre Terminalanwendung in Ihren Betriebssystemeinstellungen Benachrichtigungsberechtigungen hat.
 
+Wenn Claude Code in tmux ausgeführt wird, erreichen Benachrichtigungen und die [Terminal-Fortschrittsleiste](/de/settings#global-config-settings) nur das äußere Terminal, z. B. iTerm2, Kitty oder Ghostty, wenn Sie Passthrough in Ihrer tmux-Konfiguration aktivieren:
+
+```
+set -g allow-passthrough on
+```
+
+Ohne diese Einstellung werden die Escape-Sequenzen von tmux abgefangen und erreichen die Terminalanwendung nicht.
+
 Andere Terminals, einschließlich des Standard-macOS-Terminals, unterstützen keine nativen Benachrichtigungen. Verwenden Sie stattdessen [Benachrichtigungshooks](/de/hooks#notification).
 
 #### Benachrichtigungshooks
 
 Um benutzerdefiniertes Verhalten hinzuzufügen, wenn Benachrichtigungen ausgelöst werden, z. B. das Abspielen eines Sounds oder das Senden einer Nachricht, konfigurieren Sie einen [Benachrichtigungshook](/de/hooks#notification). Hooks werden neben Terminal-Benachrichtigungen ausgeführt, nicht als Ersatz.
+
+### Flimmern und Speichernutzung reduzieren
+
+Wenn Sie während langer Sitzungen Flimmern sehen oder Ihre Terminal-Scroll-Position springt nach oben, während Claude arbeitet, versuchen Sie [Vollbildrendering](/de/fullscreen). Es verwendet einen alternativen Rendering-Pfad, der den Speicher flach hält und Mausunterstützung hinzufügt. Aktivieren Sie es mit `CLAUDE_CODE_NO_FLICKER=1`.
 
 ### Umgang mit großen Eingaben
 
@@ -70,7 +86,7 @@ Bei der Arbeit mit umfangreichem Code oder langen Anweisungen:
 
 ### Vim-Modus
 
-Claude Code unterstützt eine Teilmenge von Vim-Tastenkombinationen, die mit `/vim` aktiviert oder über `/config` konfiguriert werden können.
+Claude Code unterstützt eine Teilmenge von Vim-Tastenkombinationen, die mit `/vim` aktiviert oder über `/config` konfiguriert werden können. Um den Modus direkt in Ihrer Konfigurationsdatei festzulegen, stellen Sie den globalen Konfigurationsschlüssel [`editorMode`](/de/settings#global-config-settings) auf `"vim"` in `~/.claude.json` ein.
 
 Die unterstützte Teilmenge umfasst:
 

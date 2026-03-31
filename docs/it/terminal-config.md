@@ -35,10 +35,14 @@ Esegui `/terminal-setup` all'interno di Claude Code per configurare automaticame
 1. Apri Impostazioni → Profili → Tastiera
 2. Seleziona "Usa Option come Meta Key"
 
-**Per il terminale iTerm2 e VS Code:**
+**Per iTerm2:**
 
 1. Apri Impostazioni → Profili → Tasti
 2. In Generale, imposta il tasto Option sinistro/destro su "Esc+"
+
+**Per il terminale VS Code:**
+
+Imposta `"terminal.integrated.macOptionIsMeta": true` nelle impostazioni di VS Code.
 
 ### Configurazione delle notifiche
 
@@ -54,11 +58,23 @@ Kitty e Ghostty supportano le notifiche desktop senza configurazione aggiuntiva.
 
 Se le notifiche non vengono visualizzate, verifica che l'applicazione del tuo terminale abbia i permessi di notifica nelle impostazioni del tuo sistema operativo.
 
+Quando esegui Claude Code all'interno di tmux, le notifiche e la [barra di avanzamento del terminale](/it/settings#global-config-settings) raggiungono il terminale esterno, come iTerm2, Kitty o Ghostty, solo se abiliti il passthrough nella tua configurazione di tmux:
+
+```
+set -g allow-passthrough on
+```
+
+Senza questa impostazione, tmux intercetta le sequenze di escape e non raggiungono l'applicazione del terminale.
+
 Altri terminali, incluso il Terminal predefinito di macOS, non supportano le notifiche native. Utilizza invece gli [hook di notifica](/it/hooks#notification).
 
 #### Hook di notifica
 
 Per aggiungere un comportamento personalizzato quando le notifiche vengono attivate, come riprodurre un suono o inviare un messaggio, configura un [hook di notifica](/it/hooks#notification). Gli hook vengono eseguiti insieme alle notifiche del terminale, non come sostituzione.
+
+### Riduci lo sfarfallio e l'utilizzo della memoria
+
+Se vedi sfarfallio durante sessioni lunghe, o la posizione di scorrimento del tuo terminale salta in alto mentre Claude sta lavorando, prova il [rendering a schermo intero](/it/fullscreen). Utilizza un percorso di rendering alternativo che mantiene la memoria piatta e aggiunge il supporto del mouse. Abilitalo con `CLAUDE_CODE_NO_FLICKER=1`.
 
 ### Gestione di input di grandi dimensioni
 
@@ -70,7 +86,7 @@ Quando lavori con codice esteso o istruzioni lunghe:
 
 ### Modalità Vim
 
-Claude Code supporta un sottoinsieme di scorciatoie da tastiera Vim che può essere abilitato con `/vim` o configurato tramite `/config`.
+Claude Code supporta un sottoinsieme di scorciatoie da tastiera Vim che può essere abilitato con `/vim` o configurato tramite `/config`. Per impostare la modalità direttamente nel tuo file di configurazione, imposta la chiave di configurazione globale [`editorMode`](/it/settings#global-config-settings) su `"vim"` in `~/.claude.json`.
 
 Il sottoinsieme supportato include:
 

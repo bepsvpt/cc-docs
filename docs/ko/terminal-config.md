@@ -35,10 +35,14 @@ Claude Code 내에서 `/terminal-setup`을 실행하여 VS Code, Alacritty, Zed 
 1. 설정 → 프로필 → 키보드 열기
 2. "Option을 Meta 키로 사용" 확인
 
-**iTerm2 및 VS Code 터미널의 경우:**
+**iTerm2의 경우:**
 
 1. 설정 → 프로필 → 키 열기
 2. 일반에서 왼쪽/오른쪽 Option 키를 "Esc+"로 설정
+
+**VS Code 터미널의 경우:**
+
+VS Code 설정에서 `"terminal.integrated.macOptionIsMeta": true`를 설정합니다.
 
 ### 알림 설정
 
@@ -54,11 +58,23 @@ Kitty 및 Ghostty는 추가 구성 없이 데스크톱 알림을 지원합니다
 
 알림이 나타나지 않으면 터미널 앱이 OS 설정에서 알림 권한을 가지고 있는지 확인하세요.
 
+Claude Code를 tmux 내에서 실행할 때 알림 및 [터미널 진행률 표시줄](/ko/settings#global-config-settings)은 tmux 구성에서 통과를 활성화한 경우에만 iTerm2, Kitty 또는 Ghostty와 같은 외부 터미널에 도달합니다:
+
+```
+set -g allow-passthrough on
+```
+
+이 설정이 없으면 tmux가 이스케이프 시퀀스를 가로채고 터미널 애플리케이션에 도달하지 않습니다.
+
 기본 macOS 터미널을 포함한 다른 터미널은 기본 알림을 지원하지 않습니다. 대신 [알림 훅](/ko/hooks#notification)을 사용하세요.
 
 #### 알림 훅
 
 소리 재생 또는 메시지 전송과 같이 알림이 발생할 때 사용자 정의 동작을 추가하려면 [알림 훅](/ko/hooks#notification)을 구성하세요. 훅은 터미널 알림과 함께 실행되며 대체가 아닙니다.
+
+### 깜박임 및 메모리 사용량 감소
+
+긴 세션 중에 깜박임이 보이거나 Claude가 작업 중일 때 터미널 스크롤 위치가 맨 위로 점프하면 [전체 화면 렌더링](/ko/fullscreen)을 시도하세요. 메모리를 평탄하게 유지하고 마우스 지원을 추가하는 대체 렌더링 경로를 사용합니다. `CLAUDE_CODE_NO_FLICKER=1`로 활성화합니다.
 
 ### 큰 입력 처리
 
@@ -70,7 +86,7 @@ Kitty 및 Ghostty는 추가 구성 없이 데스크톱 알림을 지원합니다
 
 ### Vim 모드
 
-Claude Code는 `/vim`으로 활성화하거나 `/config`를 통해 구성할 수 있는 Vim 키 바인딩의 부분 집합을 지원합니다.
+Claude Code는 `/vim`으로 활성화하거나 `/config`를 통해 구성할 수 있는 Vim 키 바인딩의 부분 집합을 지원합니다. 구성 파일에서 모드를 직접 설정하려면 `~/.claude.json`에서 [`editorMode`](/ko/settings#global-config-settings) 전역 구성 키를 `"vim"`으로 설정합니다.
 
 지원되는 부분 집합에는 다음이 포함됩니다:
 

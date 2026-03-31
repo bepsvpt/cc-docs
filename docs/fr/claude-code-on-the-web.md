@@ -35,12 +35,28 @@ Claude Code sur le web est disponible en aperçu de recherche pour :
 
 ## Démarrage
 
+Configurez Claude Code sur le web depuis le navigateur ou depuis votre terminal.
+
+### Depuis le navigateur
+
 1. Visitez [claude.ai/code](https://claude.ai/code)
 2. Connectez votre compte GitHub
 3. Installez l'application Claude GitHub dans vos référentiels
 4. Sélectionnez votre environnement par défaut
 5. Soumettez votre tâche de codage
 6. Examinez les modifications en vue diff, itérez avec des commentaires, puis créez une demande de tirage
+
+### Depuis le terminal
+
+Exécutez `/web-setup` dans Claude Code pour connecter GitHub en utilisant vos identifiants CLI `gh` locaux. La commande synchronise votre `gh auth token` vers Claude Code sur le web, crée un environnement cloud par défaut, et ouvre claude.ai/code dans votre navigateur lorsqu'elle se termine.
+
+Ce chemin nécessite que le CLI `gh` soit installé et authentifié avec `gh auth login`. Si `gh` n'est pas disponible, `/web-setup` ouvre claude.ai/code pour que vous puissiez connecter GitHub depuis le navigateur à la place.
+
+Vos identifiants `gh` donnent à Claude l'accès pour cloner et pousser, vous pouvez donc ignorer l'application GitHub pour les sessions de base. Installez l'application plus tard si vous souhaitez [Auto-fix](#auto-fix-pull-requests), qui utilise l'application pour recevoir les webhooks PR.
+
+<Note>
+  Les administrateurs Team et Enterprise peuvent désactiver la configuration du terminal avec le bouton bascule Quick web setup sur [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code).
+</Note>
 
 ## Comment ça marche
 
@@ -66,6 +82,30 @@ Lorsque Claude apporte des modifications aux fichiers, un indicateur de statisti
 * Continuer à itérer avec Claude en fonction de ce que vous voyez
 
 Cela vous permet d'affiner les modifications à travers plusieurs cycles de rétroaction sans créer de PR de brouillon ni basculer vers GitHub.
+
+## Correction automatique des demandes de tirage
+
+Claude peut surveiller une demande de tirage et répondre automatiquement aux défaillances CI et aux commentaires d'examen. Claude s'abonne à l'activité GitHub sur la PR, et lorsqu'une vérification échoue ou qu'un examinateur laisse un commentaire, Claude enquête et pousse une correction si elle est claire.
+
+<Note>
+  Auto-fix nécessite que l'application Claude GitHub soit installée sur votre référentiel. Si vous ne l'avez pas déjà fait, installez-la depuis la [page de l'application GitHub](https://github.com/apps/claude) ou lorsque vous y êtes invité lors de la [configuration](#getting-started).
+</Note>
+
+Il existe plusieurs façons d'activer auto-fix selon d'où provient la PR et quel appareil vous utilisez :
+
+* **PR créées dans Claude Code sur le web** : ouvrez la barre d'état CI et sélectionnez **Auto-fix**
+* **Depuis l'application mobile** : dites à Claude de corriger automatiquement la PR, par exemple « regardez cette PR et corrigez les défaillances CI ou les commentaires d'examen »
+* **Toute PR existante** : collez l'URL de la PR dans une session et dites à Claude de la corriger automatiquement
+
+### Comment Claude répond à l'activité PR
+
+Lorsque auto-fix est actif, Claude reçoit les événements GitHub pour la PR, y compris les nouveaux commentaires d'examen et les défaillances de vérification CI. Pour chaque événement, Claude enquête et décide comment procéder :
+
+* **Corrections claires** : si Claude est confiant dans une correction et qu'elle n'entre pas en conflit avec les instructions antérieures, Claude apporte la modification, la pousse et explique ce qui a été fait dans la session
+* **Demandes ambiguës** : si le commentaire d'un examinateur peut être interprété de plusieurs façons ou implique quelque chose d'architecturalement significatif, Claude vous demande avant d'agir
+* **Événements en double ou sans action** : si un événement est un doublon ou ne nécessite aucune modification, Claude le note dans la session et continue
+
+Claude peut répondre aux fils de commentaires d'examen sur GitHub dans le cadre de leur résolution. Ces réponses sont publiées en utilisant votre compte GitHub, elles apparaissent donc sous votre nom d'utilisateur, mais chaque réponse est étiquetée comme provenant de Claude Code pour que les examinateurs sachent qu'elle a été écrite par l'agent et non par vous directement.
 
 ## Déplacer les tâches entre le web et le terminal
 
@@ -148,6 +188,10 @@ Pour les comptes Max et Pro, les deux options de visibilité sont **Privé** et 
 Vérifiez votre session pour le contenu sensible avant de la partager. Les sessions peuvent contenir du code et des identifiants provenant de référentiels GitHub privés. La vérification de l'accès au référentiel n'est pas activée par défaut.
 
 Activez la vérification de l'accès au référentiel et/ou retenez votre nom de vos sessions partagées en accédant à Paramètres > Claude Code > Paramètres de partage.
+
+## Planifier les tâches récurrentes
+
+Exécutez Claude selon un calendrier récurrent pour automatiser le travail comme les examens PR quotidiens, les audits de dépendances et l'analyse des défaillances CI. Consultez [Planifier les tâches sur le web](/fr/web-scheduled-tasks) pour le guide complet.
 
 ## Gestion des sessions
 
@@ -644,7 +688,7 @@ Claude Code sur le web partage les limites de débit avec tous les autres usages
 ## Limitations
 
 * **Authentification du référentiel** : Vous ne pouvez déplacer les sessions du web vers le local que lorsque vous êtes authentifié au même compte
-* **Restrictions de plateforme** : Claude Code sur le web ne fonctionne qu'avec le code hébergé sur GitHub. Les référentiels non-GitHub comme GitLab ne peuvent pas être utilisés avec les sessions cloud
+* **Restrictions de plateforme** : Claude Code sur le web ne fonctionne qu'avec le code hébergé sur GitHub. Les instances [GitHub Enterprise Server](/fr/github-enterprise-server) auto-hébergées sont prises en charge pour les plans Teams et Enterprise. GitLab et les autres référentiels non-GitHub ne peuvent pas être utilisés avec les sessions cloud
 
 ## Meilleures pratiques
 

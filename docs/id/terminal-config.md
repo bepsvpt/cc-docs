@@ -35,10 +35,14 @@ Jalankan `/terminal-setup` dalam Claude Code untuk secara otomatis mengonfiguras
 1. Buka Settings → Profiles → Keyboard
 2. Centang "Use Option as Meta Key"
 
-**Untuk iTerm2 dan terminal VS Code:**
+**Untuk iTerm2:**
 
 1. Buka Settings → Profiles → Keys
 2. Di bawah General, atur Left/Right Option key ke "Esc+"
+
+**Untuk terminal VS Code:**
+
+Atur `"terminal.integrated.macOptionIsMeta": true` dalam pengaturan VS Code.
 
 ### Pengaturan notifikasi
 
@@ -54,11 +58,23 @@ Kitty dan Ghostty mendukung notifikasi desktop tanpa konfigurasi tambahan. iTerm
 
 Jika notifikasi tidak muncul, verifikasi bahwa aplikasi terminal Anda memiliki izin notifikasi di pengaturan OS Anda.
 
+Ketika menjalankan Claude Code di dalam tmux, notifikasi dan [bilah kemajuan terminal](/id/settings#global-config-settings) hanya mencapai terminal luar, seperti iTerm2, Kitty, atau Ghostty, jika Anda mengaktifkan passthrough dalam konfigurasi tmux Anda:
+
+```
+set -g allow-passthrough on
+```
+
+Tanpa pengaturan ini, tmux mengintersepsi urutan escape dan mereka tidak mencapai aplikasi terminal.
+
 Terminal lain, termasuk Terminal macOS default, tidak mendukung notifikasi native. Gunakan [hook notifikasi](/id/hooks#notification) sebagai gantinya.
 
 #### Hook notifikasi
 
 Untuk menambahkan perilaku khusus ketika notifikasi dipicu, seperti memutar suara atau mengirim pesan, konfigurasikan [hook notifikasi](/id/hooks#notification). Hook berjalan bersama notifikasi terminal, bukan sebagai pengganti.
+
+### Kurangi flicker dan penggunaan memori
+
+Jika Anda melihat flicker selama sesi panjang, atau posisi scroll terminal Anda melompat ke atas saat Claude sedang bekerja, coba [rendering fullscreen](/id/fullscreen). Ini menggunakan jalur rendering alternatif yang menjaga memori tetap datar dan menambahkan dukungan mouse. Aktifkan dengan `CLAUDE_CODE_NO_FLICKER=1`.
 
 ### Menangani input besar
 
@@ -70,7 +86,7 @@ Saat bekerja dengan kode ekstensif atau instruksi panjang:
 
 ### Mode Vim
 
-Claude Code mendukung subset keybinding Vim yang dapat diaktifkan dengan `/vim` atau dikonfigurasi melalui `/config`.
+Claude Code mendukung subset keybinding Vim yang dapat diaktifkan dengan `/vim` atau dikonfigurasi melalui `/config`. Untuk mengatur mode langsung dalam file konfigurasi Anda, atur kunci konfigurasi global [`editorMode`](/id/settings#global-config-settings) ke `"vim"` dalam `~/.claude.json`.
 
 Subset yang didukung mencakup:
 

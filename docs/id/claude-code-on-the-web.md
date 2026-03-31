@@ -35,6 +35,10 @@ Claude Code di web tersedia dalam pratinjau penelitian untuk:
 
 ## Memulai
 
+Siapkan Claude Code di web dari browser atau dari terminal Anda.
+
+### Dari browser
+
 1. Kunjungi [claude.ai/code](https://claude.ai/code)
 2. Hubungkan akun GitHub Anda
 3. Instal aplikasi Claude GitHub di repositori Anda
@@ -42,12 +46,24 @@ Claude Code di web tersedia dalam pratinjau penelitian untuk:
 5. Kirimkan tugas pengkodean Anda
 6. Tinjau perubahan dalam tampilan diff, ulangi dengan komentar, kemudian buat pull request
 
+### Dari terminal
+
+Jalankan `/web-setup` di dalam Claude Code untuk menghubungkan GitHub menggunakan kredensial CLI `gh` lokal Anda. Perintah ini menyinkronkan `gh auth token` Anda ke Claude Code di web, membuat lingkungan cloud default, dan membuka claude.ai/code di browser Anda saat selesai.
+
+Jalur ini memerlukan CLI `gh` untuk diinstal dan diautentikasi dengan `gh auth login`. Jika `gh` tidak tersedia, `/web-setup` membuka claude.ai/code sehingga Anda dapat menghubungkan GitHub dari browser sebagai gantinya.
+
+Kredensial `gh` Anda memberikan Claude akses untuk mengkloning dan mendorong, sehingga Anda dapat melewati Aplikasi GitHub untuk sesi dasar. Instal Aplikasi nanti jika Anda menginginkan [Auto-fix](#auto-fix-pull-requests), yang menggunakan Aplikasi untuk menerima webhook PR.
+
+<Note>
+  Admin Team dan Enterprise dapat menonaktifkan penyiapan terminal dengan toggle Quick web setup di [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code).
+</Note>
+
 ## Cara kerjanya
 
 Ketika Anda memulai tugas di Claude Code di web:
 
 1. **Kloning repositori**: Repositori Anda dikloning ke mesin virtual yang dikelola Anthropic
-2. **Penyiapan lingkungan**: Claude menyiapkan lingkungan cloud yang aman dengan kode Anda, kemudian menjalankan [skrip setup Anda](#setup-scripts) jika dikonfigurasi
+2. **Penyiapan lingkungan**: Claude menyiapkan lingkungan cloud yang aman dengan kode Anda, kemudian menjalankan [skrip setup](#setup-scripts) Anda jika dikonfigurasi
 3. **Konfigurasi jaringan**: Akses internet dikonfigurasi berdasarkan pengaturan Anda
 4. **Eksekusi tugas**: Claude menganalisis kode, membuat perubahan, menjalankan tes, dan memeriksa pekerjaannya
 5. **Penyelesaian**: Anda diberitahu ketika selesai dan dapat membuat PR dengan perubahan
@@ -66,6 +82,30 @@ Dari tampilan diff, Anda dapat:
 * Terus mengulangi dengan Claude berdasarkan apa yang Anda lihat
 
 Ini memungkinkan Anda menyempurnakan perubahan melalui beberapa putaran umpan balik tanpa membuat PR draft atau beralih ke GitHub.
+
+## Auto-fix pull requests
+
+Claude dapat memantau pull request dan secara otomatis merespons kegagalan CI dan komentar ulasan. Claude berlangganan aktivitas GitHub di PR, dan ketika pemeriksaan gagal atau pengulas meninggalkan komentar, Claude menyelidiki dan mendorong perbaikan jika ada yang jelas.
+
+<Note>
+  Auto-fix memerlukan Aplikasi Claude GitHub untuk diinstal di repositori Anda. Jika Anda belum melakukannya, instal dari [halaman Aplikasi GitHub](https://github.com/apps/claude) atau saat diminta selama [penyiapan](#getting-started).
+</Note>
+
+Ada beberapa cara untuk mengaktifkan auto-fix tergantung di mana PR berasal dan perangkat apa yang Anda gunakan:
+
+* **PR yang dibuat di Claude Code di web**: buka bilah status CI dan pilih **Auto-fix**
+* **Dari aplikasi mobile**: beri tahu Claude untuk auto-fix PR, misalnya "watch this PR and fix any CI failures or review comments"
+* **PR yang ada**: tempel URL PR ke sesi dan beri tahu Claude untuk auto-fix
+
+### Bagaimana Claude merespons aktivitas PR
+
+Ketika auto-fix aktif, Claude menerima acara GitHub untuk PR termasuk komentar ulasan baru dan kegagalan pemeriksaan CI. Untuk setiap acara, Claude menyelidiki dan memutuskan cara melanjutkan:
+
+* **Perbaikan yang jelas**: jika Claude yakin dengan perbaikan dan tidak bertentangan dengan instruksi sebelumnya, Claude membuat perubahan, mendorongnya, dan menjelaskan apa yang dilakukan dalam sesi
+* **Permintaan yang ambigu**: jika komentar pengulas dapat diinterpretasikan dengan beberapa cara atau melibatkan sesuatu yang secara arsitektur signifikan, Claude bertanya kepada Anda sebelum bertindak
+* **Acara duplikat atau tanpa tindakan**: jika acara adalah duplikat atau tidak memerlukan perubahan, Claude mencatatnya dalam sesi dan melanjutkan
+
+Claude dapat membalas utas komentar ulasan di GitHub sebagai bagian dari penyelesaiannya. Balasan ini diposting menggunakan akun GitHub Anda, sehingga muncul di bawah nama pengguna Anda, tetapi setiap balasan diberi label sebagai berasal dari Claude Code sehingga pengulas tahu itu ditulis oleh agen dan bukan oleh Anda secara langsung.
 
 ## Memindahkan tugas antara web dan terminal
 
@@ -148,6 +188,10 @@ Untuk akun Max dan Pro, dua opsi visibilitas adalah **Private** dan **Public**. 
 Periksa sesi Anda untuk konten sensitif sebelum berbagi. Sesi dapat berisi kode dan kredensial dari repositori GitHub pribadi. Verifikasi akses repositori tidak diaktifkan secara default.
 
 Aktifkan verifikasi akses repositori dan/atau tahan nama Anda dari sesi bersama Anda dengan membuka Settings > Claude Code > Sharing settings.
+
+## Jadwalkan tugas berulang
+
+Jalankan Claude pada jadwal berulang untuk mengotomatisasi pekerjaan seperti ulasan PR harian, audit dependensi, dan analisis kegagalan CI. Lihat [Schedule tasks on the web](/id/web-scheduled-tasks) untuk panduan lengkap.
 
 ## Mengelola sesi
 
@@ -338,7 +382,7 @@ SessionStart hooks dapat mempertahankan variabel lingkungan untuk perintah Bash 
 
 #### Batasan manajemen dependensi
 
-* **Hooks api untuk semua sesi**: SessionStart hooks berjalan di lingkungan lokal dan jarak jauh. Tidak ada konfigurasi hook untuk membatasi hook hanya ke sesi jarak jauh. Untuk melewati eksekusi lokal, periksa variabel lingkungan `CLAUDE_CODE_REMOTE` dalam skrip Anda seperti yang ditunjukkan di atas.
+* **Hooks berjalan untuk semua sesi**: SessionStart hooks berjalan di lingkungan lokal dan jarak jauh. Tidak ada konfigurasi hook untuk membatasi hook hanya ke sesi jarak jauh. Untuk melewati eksekusi lokal, periksa variabel lingkungan `CLAUDE_CODE_REMOTE` dalam skrip Anda seperti yang ditunjukkan di atas.
 * **Memerlukan akses jaringan**: Perintah install memerlukan akses jaringan untuk menjangkau registri paket. Jika lingkungan Anda dikonfigurasi dengan akses "No internet", hooks ini akan gagal. Gunakan akses jaringan "Limited" (default) atau "Full". [Daftar putih default](#default-allowed-domains) mencakup registri umum seperti npm, PyPI, RubyGems, dan crates.io.
 * **Kompatibilitas proxy**: Semua lalu lintas keluar di lingkungan jarak jauh melewati [security proxy](#security-proxy). Beberapa pengelola paket tidak bekerja dengan benar dengan proxy ini. Bun adalah contoh yang diketahui.
 * **Berjalan pada setiap awal sesi**: Hooks berjalan setiap kali sesi dimulai atau dilanjutkan, menambah latensi startup. Jaga skrip install tetap cepat dengan memeriksa apakah dependensi sudah ada sebelum menginstal ulang.
@@ -644,7 +688,7 @@ Claude Code di web berbagi batas laju dengan semua penggunaan Claude dan Claude 
 ## Batasan
 
 * **Autentikasi repositori**: Anda hanya dapat memindahkan sesi dari web ke lokal saat Anda diautentikasi ke akun yang sama
-* **Pembatasan platform**: Claude Code di web hanya bekerja dengan kode yang dihosting di GitHub. Repositori GitLab dan non-GitHub lainnya tidak dapat digunakan dengan sesi cloud
+* **Pembatasan platform**: Claude Code di web hanya bekerja dengan kode yang dihosting di GitHub. Instans [GitHub Enterprise Server](/id/github-enterprise-server) yang di-host sendiri didukung untuk rencana Teams dan Enterprise. Repositori GitLab dan non-GitHub lainnya tidak dapat digunakan dengan sesi cloud
 
 ## Praktik terbaik
 

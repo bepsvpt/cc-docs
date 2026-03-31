@@ -1,5 +1,263 @@
 # Documentation Changes
 
+## 2026-03-31
+
+51 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Claude Code im Web** (`claude-code-on-the-web.md`): 45 lines added, 1 removed
+  - New section: "### Vom Browser"
+  - New section: "### Vom Terminal"
+  - New section: "## Auto-fix Pull Requests"
+  - New section: "### Wie Claude auf PR-Aktivität reagiert"
+  - New section: "## Planen Sie wiederkehrende Aufgaben"
+- **Hooks-Referenz** (`hooks.md`): 216 lines added, 111 removed
+  - New section: "##### AskUserQuestion"
+  - New section: "### TaskCreated"
+  - New section: "#### TaskCreated-Eingabe"
+  - New section: "#### TaskCreated-Entscheidungskontrolle"
+  - New section: "### TaskCompleted"
+- **Optimieren Sie Ihr Terminal-Setup** (`terminal-config.md`): 18 lines added, 2 removed
+  - New section: "### Flimmern und Speichernutzung reduzieren"
+
+### English
+
+
+**Modified**
+
+- **Orchestrate teams of Claude Code sessions** (`agent-teams.md`): 16 lines added, 0 removed
+  - New section: "### Use subagent definitions for teammates"
+- **Changelog** (`changelog.md`): 48 lines added, 0 removed
+- **Use Claude Code with Chrome (beta)** (`chrome.md`): 1 lines added, 0 removed
+- **Claude Code on the web** (`claude-code-on-the-web.md`): 17 lines added, 1 removed
+  - New section: "### From the browser"
+  - New section: "### From the terminal"
+- **CLI reference** (`cli-reference.md`): 4 lines added, 4 removed
+- **Code Review** (`code-review.md`): 23 lines added, 2 removed
+  - New section: "## Troubleshooting"
+  - New section: "### Retrigger a failed or timed-out review"
+  - New section: "### Find issues that aren't showing as inline comments"
+- **Use Claude Code Desktop** (`desktop.md`): 29 lines added, 13 removed
+- **Development containers** (`devcontainer.md`): 2 lines added, 2 removed
+- **Environment variables** (`env-vars.md`): 3 lines added, 0 removed
+- **Hooks reference** (`hooks.md`): 4 lines added, 5 removed
+- **Model configuration** (`model-config.md`): 14 lines added, 6 removed
+- **Enterprise network configuration** (`network-config.md`): 2 lines added, 0 removed
+- **Create and distribute a plugin marketplace** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **Sandboxing** (`sandboxing.md`): 1 lines added, 1 removed
+- **Claude Code settings** (`settings.md`): 1 lines added, 1 removed
+- **Create custom subagents** (`sub-agents.md`): 2 lines added, 0 removed
+- **Optimize your terminal setup** (`terminal-config.md`): 4 lines added, 0 removed
+  - New section: "### Reduce flicker and memory usage"
+- **Use Claude Code in VS Code** (`vs-code.md`): 15 lines added, 15 removed
+
+### Español
+
+
+**Modified**
+
+- **Claude Code en la web** (`claude-code-on-the-web.md`): 45 lines added, 1 removed
+  - New section: "### Desde el navegador"
+  - New section: "### Desde el terminal"
+  - New section: "## Correcciones automáticas de solicitudes de extracción"
+  - New section: "### Cómo Claude responde a la actividad de PR"
+  - New section: "## Programar tareas recurrentes"
+- **Referencia de hooks** (`hooks.md`): 203 lines added, 121 removed
+  - New section: "##### AskUserQuestion"
+  - New section: "#### PreToolUse decision control"
+  - New section: "### TaskCreated"
+  - New section: "#### Entrada de TaskCreated"
+  - New section: "#### Control de decisión de TaskCreated"
+- **Optimiza tu configuración de terminal** (`terminal-config.md`): 18 lines added, 2 removed
+  - New section: "### Reducir parpadeo y uso de memoria"
+
+### Français
+
+
+**Modified**
+
+- **Claude Code sur le web** (`claude-code-on-the-web.md`): 45 lines added, 1 removed
+  - New section: "### Depuis le navigateur"
+  - New section: "### Depuis le terminal"
+  - New section: "## Correction automatique des demandes de tirage"
+  - New section: "### Comment Claude répond à l'activité PR"
+  - New section: "## Planifier les tâches récurrentes"
+- **Référence des hooks** (`hooks.md`): 190 lines added, 110 removed
+  - New section: "##### AskUserQuestion"
+  - New section: "### TaskCreated"
+  - New section: "#### Entrée TaskCreated"
+  - New section: "#### Contrôle de décision TaskCreated"
+  - New section: "### TaskCompleted"
+- **Optimisez votre configuration de terminal** (`terminal-config.md`): 18 lines added, 2 removed
+  - New section: "### Réduire le scintillement et l'utilisation de la mémoire"
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Claude Code di web** (`claude-code-on-the-web.md`): 47 lines added, 3 removed
+  - New section: "### Dari browser"
+  - New section: "### Dari terminal"
+  - New section: "## Auto-fix pull requests"
+  - New section: "### Bagaimana Claude merespons aktivitas PR"
+  - New section: "## Jadwalkan tugas berulang"
+- **Referensi hooks** (`hooks.md`): 200 lines added, 118 removed
+  - New section: "##### AskUserQuestion"
+  - New section: "### TaskCreated"
+  - New section: "#### Input TaskCreated"
+  - New section: "#### Kontrol keputusan TaskCreated"
+  - New section: "### TaskCompleted"
+- **Optimalkan pengaturan terminal Anda** (`terminal-config.md`): 18 lines added, 2 removed
+  - New section: "### Kurangi flicker dan penggunaan memori"
+
+### Italiano
+
+
+**Modified**
+
+- **Claude Code sul web** (`claude-code-on-the-web.md`): 47 lines added, 3 removed
+  - New section: "### Dal browser"
+  - New section: "### Dal terminale"
+  - New section: "## Correzione automatica delle pull request"
+  - New section: "### Come Claude risponde all'attività PR"
+  - New section: "## Pianifica attività ricorrenti"
+- **Riferimento dei hooks** (`hooks.md`): 194 lines added, 114 removed
+  - New section: "##### AskUserQuestion"
+  - New section: "#### PreToolUse decision control"
+  - New section: "### TaskCreated"
+  - New section: "#### Input di TaskCreated"
+  - New section: "#### Controllo della decisione di TaskCreated"
+- **Ottimizza la configurazione del tuo terminale** (`terminal-config.md`): 18 lines added, 2 removed
+  - New section: "### Riduci lo sfarfallio e l'utilizzo della memoria"
+
+### 日本語
+
+
+**Modified**
+
+- **ウェブ上の Claude Code** (`claude-code-on-the-web.md`): 45 lines added, 1 removed
+  - New section: "### ブラウザから"
+  - New section: "### ターミナルから"
+  - New section: "## Auto-fix プルリクエスト"
+  - New section: "### Claude が PR アクティビティにどのように応答するか"
+  - New section: "## ウェブ上で定期的なタスクをスケジュールする"
+- **Hooks リファレンス** (`hooks.md`): 211 lines added, 106 removed
+  - New section: "##### AskUserQuestion"
+  - New section: "### TaskCreated"
+  - New section: "#### TaskCreated 入力"
+  - New section: "#### TaskCreated 決定制御"
+  - New section: "### TaskCompleted"
+- **ターミナルセットアップを最適化する** (`terminal-config.md`): 18 lines added, 2 removed
+  - New section: "### ちらつきとメモリ使用量を削減する"
+
+### 한국어
+
+
+**Modified**
+
+- **웹에서 Claude Code 사용하기** (`claude-code-on-the-web.md`): 49 lines added, 5 removed
+  - New section: "## 웹에서 Claude Code란 무엇입니까?"
+  - New section: "## 웹에서 Claude Code를 누가 사용할 수 있습니까?"
+  - New section: "### 브라우저에서"
+  - New section: "### 터미널에서"
+  - New section: "## 자동 수정 pull request"
+- **Hooks 참조** (`hooks.md`): 220 lines added, 117 removed
+  - New section: "##### AskUserQuestion"
+  - New section: "### TaskCreated"
+  - New section: "#### TaskCreated 입력"
+  - New section: "#### TaskCreated 결정 제어"
+  - New section: "### TaskCompleted"
+- **터미널 설정 최적화** (`terminal-config.md`): 18 lines added, 2 removed
+  - New section: "### 깜박임 및 메모리 사용량 감소"
+
+### Português
+
+
+**Modified**
+
+- **Claude Code na web** (`claude-code-on-the-web.md`): 46 lines added, 2 removed
+  - New section: "### A partir do navegador"
+  - New section: "### A partir do terminal"
+  - New section: "## Corrigir automaticamente pull requests"
+  - New section: "### Como Claude responde à atividade de PR"
+  - New section: "## Agendar tarefas recorrentes"
+- **Referência de hooks** (`hooks.md`): 193 lines added, 113 removed
+  - New section: "##### AskUserQuestion"
+  - New section: "### TaskCreated"
+  - New section: "#### Entrada de TaskCreated"
+  - New section: "#### Controle de decisão de TaskCreated"
+  - New section: "### TaskCompleted"
+- **Otimize sua configuração de terminal** (`terminal-config.md`): 18 lines added, 2 removed
+  - New section: "### Reduza cintilação e uso de memória"
+
+### Русский
+
+
+**Modified**
+
+- **Claude Code в веб-интерфейсе** (`claude-code-on-the-web.md`): 45 lines added, 1 removed
+  - New section: "### Из браузера"
+  - New section: "### Из терминала"
+  - New section: "## Auto-fix pull requests"
+  - New section: "### Как Claude реагирует на активность PR"
+  - New section: "## Планирование повторяющихся задач"
+- **Справочник по hooks** (`hooks.md`): 192 lines added, 110 removed
+  - New section: "#### Match MCP tools"
+  - New section: "#### Common fields"
+  - New section: "### Reference scripts by path"
+  - New section: "### Disable or remove hooks"
+  - New section: "##### AskUserQuestion"
+- **Оптимизируйте настройку вашего терминала** (`terminal-config.md`): 18 lines added, 2 removed
+  - New section: "### Уменьшение мерцания и использования памяти"
+
+### 简体中文
+
+
+**Modified**
+
+- **Claude Code on the web** (`claude-code-on-the-web.md`): 45 lines added, 1 removed
+  - New section: "### 从浏览器"
+  - New section: "### 从终端"
+  - New section: "## 自动修复拉取请求"
+  - New section: "### Claude 如何响应 PR 活动"
+  - New section: "## 计划定期任务"
+- **Hooks 参考** (`hooks.md`): 213 lines added, 108 removed
+  - New section: "##### AskUserQuestion"
+  - New section: "### TaskCreated"
+  - New section: "#### TaskCreated 输入"
+  - New section: "#### TaskCreated 决定控制"
+  - New section: "### TaskCompleted"
+- **优化您的终端设置** (`terminal-config.md`): 18 lines added, 2 removed
+  - New section: "### 减少闪烁和内存使用"
+
+### 繁體中文
+
+
+**Modified**
+
+- **Claude Code 網頁版** (`claude-code-on-the-web.md`): 45 lines added, 1 removed
+  - New section: "### 從瀏覽器"
+  - New section: "### 從終端"
+  - New section: "## 自動修復拉取請求"
+  - New section: "### Claude 如何回應 PR 活動"
+  - New section: "## 排程定期任務"
+- **Hooks 參考** (`hooks.md`): 214 lines added, 109 removed
+  - New section: "##### AskUserQuestion"
+  - New section: "### TaskCreated"
+  - New section: "#### TaskCreated 輸入"
+  - New section: "#### TaskCreated 決定控制"
+  - New section: "### TaskCompleted"
+- **優化您的終端機設置** (`terminal-config.md`): 18 lines added, 2 removed
+  - New section: "### 減少閃爍和記憶體使用"
+
+---
+
 ## 2026-03-29
 
 6 pages modified

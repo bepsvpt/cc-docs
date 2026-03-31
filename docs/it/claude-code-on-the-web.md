@@ -35,12 +35,28 @@ Claude Code sul web è disponibile in anteprima di ricerca per:
 
 ## Iniziare
 
+Configura Claude Code sul web dal browser o dal tuo terminale.
+
+### Dal browser
+
 1. Visita [claude.ai/code](https://claude.ai/code)
 2. Connetti il tuo account GitHub
 3. Installa l'app Claude GitHub nei tuoi repository
 4. Seleziona il tuo ambiente predefinito
 5. Invia la tua attività di codifica
 6. Rivedi le modifiche nella vista diff, itera con commenti, quindi crea una pull request
+
+### Dal terminale
+
+Esegui `/web-setup` all'interno di Claude Code per connettere GitHub utilizzando le credenziali locali della tua CLI `gh`. Il comando sincronizza il tuo `gh auth token` a Claude Code sul web, crea un ambiente cloud predefinito e apre claude.ai/code nel tuo browser al termine.
+
+Questo percorso richiede che la CLI `gh` sia installata e autenticata con `gh auth login`. Se `gh` non è disponibile, `/web-setup` apre claude.ai/code in modo che tu possa connettere GitHub dal browser.
+
+Le tue credenziali `gh` danno a Claude accesso al clone e al push, quindi puoi saltare l'app GitHub per le sessioni di base. Installa l'app in seguito se desideri [Auto-fix](#auto-fix-pull-requests), che utilizza l'app per ricevere webhook PR.
+
+<Note>
+  Gli amministratori di Team e Enterprise possono disabilitare la configurazione del terminale con l'interruttore Quick web setup su [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code).
+</Note>
 
 ## Come funziona
 
@@ -67,6 +83,30 @@ Dalla vista diff, puoi:
 
 Questo ti consente di perfezionare le modifiche attraverso più round di feedback senza creare PR bozza o passare a GitHub.
 
+## Correzione automatica delle pull request
+
+Claude può monitorare una pull request e rispondere automaticamente ai fallimenti CI e ai commenti di revisione. Claude si iscrive all'attività GitHub sulla PR e, quando un controllo fallisce o un revisore lascia un commento, Claude indaga e invia una correzione se una è chiara.
+
+<Note>
+  Auto-fix richiede che l'app Claude GitHub sia installata nel tuo repository. Se non l'hai già fatto, installala dalla [pagina dell'app GitHub](https://github.com/apps/claude) o quando richiesto durante la [configurazione](#getting-started).
+</Note>
+
+Ci sono alcuni modi per attivare auto-fix a seconda da dove proviene la PR e quale dispositivo stai utilizzando:
+
+* **PR create in Claude Code sul web**: apri la barra di stato CI e seleziona **Auto-fix**
+* **Dall'app mobile**: dì a Claude di correggere automaticamente la PR, ad esempio "guarda questa PR e correggi eventuali fallimenti CI o commenti di revisione"
+* **Qualsiasi PR esistente**: incolla l'URL della PR in una sessione e dì a Claude di correggerla automaticamente
+
+### Come Claude risponde all'attività PR
+
+Quando auto-fix è attivo, Claude riceve eventi GitHub per la PR inclusi nuovi commenti di revisione e fallimenti di controllo CI. Per ogni evento, Claude indaga e decide come procedere:
+
+* **Correzioni chiare**: se Claude è sicuro di una correzione e non entra in conflitto con le istruzioni precedenti, Claude apporta la modifica, la invia e spiega cosa è stato fatto nella sessione
+* **Richieste ambigue**: se il commento di un revisore potrebbe essere interpretato in più modi o coinvolge qualcosa di architettonicamente significativo, Claude ti chiede prima di agire
+* **Eventi duplicati o senza azione**: se un evento è un duplicato o non richiede modifiche, Claude lo annota nella sessione e continua
+
+Claude potrebbe rispondere ai thread di commenti di revisione su GitHub come parte della loro risoluzione. Queste risposte vengono pubblicate utilizzando il tuo account GitHub, quindi appaiono sotto il tuo nome utente, ma ogni risposta è etichettata come proveniente da Claude Code in modo che i revisori sappiano che è stata scritta dall'agente e non da te direttamente.
+
 ## Spostamento di attività tra web e terminale
 
 Puoi avviare nuove attività sul web dal tuo terminale, oppure estrarre sessioni web nel tuo terminale per continuare localmente. Le sessioni web persistono anche se chiudi il tuo laptop e puoi monitorarle da qualsiasi luogo, inclusa l'app mobile Claude.
@@ -87,13 +127,13 @@ Questo crea una nuova sessione web su claude.ai. L'attività viene eseguita nel 
 
 #### Suggerimenti per attività remote
 
-**Pianifica localmente, esegui da remoto**: Per attività complesse, avvia Claude in plan mode per collaborare sull'approccio, quindi invia il lavoro al web:
+**Pianifica localmente, esegui da remoto**: Per attività complesse, avvia Claude in Plan Mode per collaborare sull'approccio, quindi invia il lavoro al web:
 
 ```bash  theme={null}
 claude --permission-mode plan
 ```
 
-In plan mode, Claude può solo leggere file ed esplorare la base di codice. Una volta soddisfatto del piano, avvia una sessione remota per l'esecuzione autonoma:
+In Plan Mode, Claude può solo leggere file ed esplorare la base di codice. Una volta soddisfatto del piano, avvia una sessione remota per l'esecuzione autonoma:
 
 ```bash  theme={null}
 claude --remote "Execute the migration plan in docs/migration-plan.md"
@@ -148,6 +188,10 @@ Per gli account Max e Pro, le due opzioni di visibilità sono **Private** e **Pu
 Controlla la tua sessione per contenuti sensibili prima di condividere. Le sessioni possono contenere codice e credenziali da repository GitHub privati. La verifica dell'accesso al repository non è abilitata per impostazione predefinita.
 
 Abilita la verifica dell'accesso al repository e/o nascondi il tuo nome dalle tue sessioni condivise andando su Impostazioni > Claude Code > Impostazioni di condivisione.
+
+## Pianifica attività ricorrenti
+
+Esegui Claude su una pianificazione ricorrente per automatizzare il lavoro come revisioni PR giornaliere, audit delle dipendenze e analisi dei fallimenti CI. Vedi [Pianifica attività sul web](/it/web-scheduled-tasks) per la guida completa.
 
 ## Gestione delle sessioni
 
@@ -644,7 +688,7 @@ Claude Code sul web condivide i limiti di velocità con tutti gli altri utilizzi
 ## Limitazioni
 
 * **Autenticazione del repository**: Puoi spostare sessioni da web a locale solo quando sei autenticato allo stesso account
-* **Restrizioni della piattaforma**: Claude Code sul web funziona solo con codice ospitato in GitHub. I repository non GitHub come GitLab non possono essere utilizzati con sessioni cloud
+* **Restrizioni della piattaforma**: Claude Code sul web funziona solo con codice ospitato in GitHub. Le istanze self-hosted di [GitHub Enterprise Server](/it/github-enterprise-server) sono supportate per i piani Teams e Enterprise. GitLab e altri repository non GitHub non possono essere utilizzati con sessioni cloud
 
 ## Migliori pratiche
 

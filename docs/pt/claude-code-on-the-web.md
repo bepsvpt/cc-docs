@@ -35,12 +35,28 @@ Claude Code na web está disponível em visualização de pesquisa para:
 
 ## Começando
 
+Configure Claude Code na web a partir do navegador ou do seu terminal.
+
+### A partir do navegador
+
 1. Visite [claude.ai/code](https://claude.ai/code)
 2. Conecte sua conta GitHub
 3. Instale o aplicativo Claude GitHub em seus repositórios
 4. Selecione seu ambiente padrão
 5. Envie sua tarefa de codificação
 6. Revise as alterações na visualização de diff, itere com comentários e crie um pull request
+
+### A partir do terminal
+
+Execute `/web-setup` dentro de Claude Code para conectar GitHub usando suas credenciais locais de CLI `gh`. O comando sincroniza seu `gh auth token` para Claude Code na web, cria um ambiente em nuvem padrão e abre claude.ai/code em seu navegador quando termina.
+
+Este caminho requer que o CLI `gh` esteja instalado e autenticado com `gh auth login`. Se `gh` não estiver disponível, `/web-setup` abre claude.ai/code para que você possa conectar GitHub a partir do navegador.
+
+Suas credenciais `gh` dão a Claude acesso para clonar e enviar, para que você possa pular o aplicativo GitHub para sessões básicas. Instale o aplicativo mais tarde se quiser [Auto-fix](#auto-fix-pull-requests), que usa o aplicativo para receber webhooks de PR.
+
+<Note>
+  Administradores de Team e Enterprise podem desabilitar a configuração de terminal com o toggle Quick web setup em [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code).
+</Note>
 
 ## Como funciona
 
@@ -67,6 +83,30 @@ Na visualização de diff, você pode:
 
 Isso permite que você refine as alterações através de múltiplas rodadas de feedback sem criar PRs de rascunho ou alternar para GitHub.
 
+## Corrigir automaticamente pull requests
+
+Claude pode observar um pull request e responder automaticamente a falhas de CI e comentários de revisão. Claude se inscreve na atividade do GitHub no PR e, quando uma verificação falha ou um revisor deixa um comentário, Claude investiga e envia uma correção se uma for clara.
+
+<Note>
+  Auto-fix requer que o aplicativo Claude GitHub esteja instalado em seu repositório. Se você ainda não fez isso, instale-o a partir da [página do aplicativo GitHub](https://github.com/apps/claude) ou quando solicitado durante a [configuração](#getting-started).
+</Note>
+
+Existem algumas maneiras de ativar auto-fix dependendo de onde o PR veio e qual dispositivo você está usando:
+
+* **PRs criados em Claude Code na web**: abra a barra de status de CI e selecione **Auto-fix**
+* **A partir do aplicativo móvel**: diga a Claude para corrigir automaticamente o PR, por exemplo "watch this PR and fix any CI failures or review comments"
+* **Qualquer PR existente**: cole a URL do PR em uma sessão e diga a Claude para corrigir automaticamente
+
+### Como Claude responde à atividade de PR
+
+Quando auto-fix está ativo, Claude recebe eventos do GitHub para o PR incluindo novos comentários de revisão e falhas de verificação de CI. Para cada evento, Claude investiga e decide como proceder:
+
+* **Correções claras**: se Claude está confiante em uma correção e ela não entra em conflito com instruções anteriores, Claude faz a alteração, envia e explica o que foi feito na sessão
+* **Solicitações ambíguas**: se um comentário de revisor pode ser interpretado de múltiplas maneiras ou envolve algo arquitetonicamente significativo, Claude pergunta a você antes de agir
+* **Eventos duplicados ou sem ação**: se um evento é duplicado ou não requer alteração, Claude o anota na sessão e continua
+
+Claude pode responder a threads de comentários de revisão no GitHub como parte da resolução deles. Essas respostas são postadas usando sua conta GitHub, então aparecem sob seu nome de usuário, mas cada resposta é rotulada como vindo de Claude Code para que os revisores saibam que foi escrita pelo agente e não por você diretamente.
+
 ## Movendo tarefas entre web e terminal
 
 Você pode iniciar novas tarefas na web a partir do seu terminal ou puxar sessões da web para seu terminal para continuar localmente. As sessões da web persistem mesmo se você fechar seu laptop, e você pode monitorá-las de qualquer lugar, incluindo o aplicativo móvel Claude.
@@ -87,7 +127,7 @@ Isso cria uma nova sessão da web em claude.ai. A tarefa é executada na nuvem e
 
 #### Dicas para tarefas remotas
 
-**Planeje localmente, execute remotamente**: Para tarefas complexas, inicie Claude em plan mode para colaborar na abordagem e depois envie o trabalho para a web:
+**Planeje localmente, execute remotamente**: Para tarefas complexas, inicie Claude em Plan Mode para colaborar na abordagem e depois envie o trabalho para a web:
 
 ```bash  theme={null}
 claude --permission-mode plan
@@ -148,6 +188,10 @@ Para contas Max e Pro, as duas opções de visibilidade são **Private** e **Pub
 Verifique sua sessão para conteúdo sensível antes de compartilhar. As sessões podem conter código e credenciais de repositórios GitHub privados. A verificação de acesso ao repositório não é ativada por padrão.
 
 Ative a verificação de acesso ao repositório e/ou retenha seu nome de suas sessões compartilhadas acessando Settings > Claude Code > Sharing settings.
+
+## Agendar tarefas recorrentes
+
+Execute Claude em um cronograma recorrente para automatizar trabalho como revisões diárias de PR, auditorias de dependência e análise de falhas de CI. Consulte [Schedule tasks on the web](/pt/web-scheduled-tasks) para o guia completo.
 
 ## Gerenciando sessões
 
@@ -644,7 +688,7 @@ Claude Code na web compartilha limites de taxa com todo o outro uso de Claude e 
 ## Limitações
 
 * **Autenticação de repositório**: Você pode apenas mover sessões de web para local quando está autenticado na mesma conta
-* **Restrições de plataforma**: Claude Code na web funciona apenas com código hospedado no GitHub. Repositórios GitLab e outros não-GitHub não podem ser usados com sessões em nuvem
+* **Restrições de plataforma**: Claude Code na web funciona apenas com código hospedado no GitHub. Instâncias [GitHub Enterprise Server](/pt/github-enterprise-server) auto-hospedadas são suportadas para planos Teams e Enterprise. GitLab e outros repositórios não-GitHub não podem ser usados com sessões em nuvem
 
 ## Melhores práticas
 

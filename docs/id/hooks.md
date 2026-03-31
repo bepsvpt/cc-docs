@@ -18,7 +18,7 @@ Hooks dijalankan pada titik-titik tertentu selama sesi Claude Code. Ketika event
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/1wr0LPds6lVWZkQB/images/hooks-lifecycle.svg?fit=max&auto=format&n=1wr0LPds6lVWZkQB&q=85&s=53a826e7bb64c6bff5f867506c0530ad" alt="Diagram siklus hidup hook menunjukkan urutan hooks dari SessionStart melalui loop agentic (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCompleted) ke Stop atau StopFailure, TeammateIdle, PreCompact, PostCompact, dan SessionEnd, dengan Elicitation dan ElicitationResult bersarang di dalam eksekusi MCP tool dan WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged, dan FileChanged sebagai event asinkron mandiri" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/1wr0LPds6lVWZkQB/images/hooks-lifecycle.svg?fit=max&auto=format&n=1wr0LPds6lVWZkQB&q=85&s=53a826e7bb64c6bff5f867506c0530ad" alt="Diagram siklus hidup hook menunjukkan urutan hooks dari SessionStart melalui loop agentic (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCreated, TaskCompleted) ke Stop atau StopFailure, TeammateIdle, PreCompact, PostCompact, dan SessionEnd, dengan Elicitation dan ElicitationResult bersarang di dalam eksekusi MCP tool dan WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged, dan FileChanged sebagai event asinkron mandiri" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
@@ -54,7 +54,7 @@ Tabel di bawah merangkum kapan setiap event dijalankan. Bagian [Hook events](#ho
 
 ### Bagaimana hook diselesaikan
 
-Untuk melihat bagaimana potongan-potongan ini cocok bersama, pertimbangkan hook `PreToolUse` ini yang memblokir perintah shell yang merusak. Hook menjalankan `block-rm.sh` sebelum setiap pemanggilan tool Bash:
+Untuk melihat bagaimana potongan-potongan ini cocok bersama, pertimbangkan hook `PreToolUse` ini yang memblokir perintah shell yang merusak. `matcher` mempersempit ke pemanggilan tool Bash dan kondisi `if` mempersempit lebih lanjut ke perintah yang dimulai dengan `rm`, jadi `block-rm.sh` hanya spawn ketika kedua filter cocok:
 
 ```json  theme={null}
 {
@@ -65,7 +65,8 @@ Untuk melihat bagaimana potongan-potongan ini cocok bersama, pertimbangkan hook 
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/block-rm.sh"
+            "if": "Bash(rm *)",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-rm.sh"
           }
         ]
       }
@@ -97,7 +98,7 @@ fi
 Sekarang anggaplah Claude Code memutuskan untuk menjalankan `Bash "rm -rf /tmp/build"`. Inilah yang terjadi:
 
 <Frame>
-  <img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/hook-resolution.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=ad667ee6d86ab2276aa48a4e73e220df" alt="Alur resolusi hook: event PreToolUse dijalankan, matcher memeriksa kecocokan Bash, handler hook dijalankan, hasil dikembalikan ke Claude Code" width="780" height="290" data-path="images/hook-resolution.svg" />
+  <img src="https://mintcdn.com/claude-code/-tYw1BD_DEqfyyOZ/images/hook-resolution.svg?fit=max&auto=format&n=-tYw1BD_DEqfyyOZ&q=85&s=c73ebc1eeda2037570427d7af1e0a891" alt="Alur resolusi hook: event PreToolUse dijalankan, matcher memeriksa kecocokan Bash, kondisi if memeriksa kecocokan Bash(rm *), handler hook dijalankan, hasil dikembalikan ke Claude Code" width="930" height="290" data-path="images/hook-resolution.svg" />
 </Frame>
 
 <Steps>
@@ -110,11 +111,15 @@ Sekarang anggaplah Claude Code memutuskan untuk menjalankan `Bash "rm -rf /tmp/b
   </Step>
 
   <Step title="Matcher memeriksa">
-    Matcher `"Bash"` cocok dengan nama tool, jadi `block-rm.sh` dijalankan. Jika Anda menghilangkan matcher atau menggunakan `"*"`, hook dijalankan pada setiap kemunculan event. Hooks hanya dilewati ketika matcher didefinisikan dan tidak cocok.
+    Matcher `"Bash"` cocok dengan nama tool, jadi grup hook ini diaktifkan. Jika Anda menghilangkan matcher atau menggunakan `"*"`, grup diaktifkan pada setiap kemunculan event.
+  </Step>
+
+  <Step title="Kondisi if memeriksa">
+    Kondisi `if` `"Bash(rm *)"` cocok karena perintah dimulai dengan `rm`, jadi handler ini spawn. Jika perintah telah `npm test`, pemeriksaan `if` akan gagal dan `block-rm.sh` tidak akan pernah dijalankan, menghindari overhead spawn proses. Bidang `if` bersifat opsional; tanpanya, setiap handler dalam grup yang cocok dijalankan.
   </Step>
 
   <Step title="Handler hook dijalankan">
-    Skrip mengekstrak `"rm -rf /tmp/build"` dari input dan menemukan `rm -rf`, jadi itu mencetak keputusan ke stdout:
+    Skrip memeriksa perintah lengkap dan menemukan `rm -rf`, jadi itu mencetak keputusan ke stdout:
 
     ```json  theme={null}
     {
@@ -126,7 +131,7 @@ Sekarang anggaplah Claude Code memutuskan untuk menjalankan `Bash "rm -rf /tmp/b
     }
     ```
 
-    Jika perintah telah aman (seperti `npm test`), skrip akan mencapai `exit 0` sebagai gantinya, yang memberitahu Claude Code untuk mengizinkan pemanggilan tool tanpa tindakan lebih lanjut.
+    Jika perintah telah menjadi varian `rm` yang lebih aman seperti `rm file.txt`, skrip akan mencapai `exit 0` sebagai gantinya, yang memberitahu Claude Code untuk mengizinkan pemanggilan tool tanpa tindakan lebih lanjut.
   </Step>
 
   <Step title="Claude Code bertindak atas hasil">
@@ -169,23 +174,23 @@ Untuk detail tentang resolusi file pengaturan, lihat [settings](/id/settings). A
 
 Bidang `matcher` adalah string regex yang memfilter kapan hooks dijalankan. Gunakan `"*"`, `""`, atau hilangkan `matcher` sepenuhnya untuk mencocokkan semua kemunculan. Setiap tipe event mencocokkan pada bidang yang berbeda:
 
-| Event                                                                                           | Apa yang difilter matcher                   | Contoh nilai matcher                                                                                                      |
-| :---------------------------------------------------------------------------------------------- | :------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                          | nama tool                                   | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
-| `SessionStart`                                                                                  | bagaimana sesi dimulai                      | `startup`, `resume`, `clear`, `compact`                                                                                   |
-| `SessionEnd`                                                                                    | mengapa sesi berakhir                       | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                  | tipe notifikasi                             | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                 | tipe agent                                  | `Bash`, `Explore`, `Plan`, atau nama agent kustom                                                                         |
-| `PreCompact`, `PostCompact`                                                                     | apa yang memicu compaction                  | `manual`, `auto`                                                                                                          |
-| `SubagentStop`                                                                                  | tipe agent                                  | nilai yang sama seperti `SubagentStart`                                                                                   |
-| `ConfigChange`                                                                                  | sumber konfigurasi                          | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
-| `CwdChanged`                                                                                    | tidak ada dukungan matcher                  | selalu dijalankan pada setiap perubahan direktori                                                                         |
-| `FileChanged`                                                                                   | nama file (basename dari file yang berubah) | `.envrc`, `.env`, nama file apa pun yang ingin Anda pantau                                                                |
-| `StopFailure`                                                                                   | tipe kesalahan                              | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                            | alasan load                                 | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
-| `Elicitation`                                                                                   | nama server MCP                             | nama server MCP yang dikonfigurasi Anda                                                                                   |
-| `ElicitationResult`                                                                             | nama server MCP                             | nilai yang sama seperti `Elicitation`                                                                                     |
-| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | tidak ada dukungan matcher                  | selalu dijalankan pada setiap kemunculan                                                                                  |
+| Event                                                                                                          | Apa yang difilter matcher                   | Contoh nilai matcher                                                                                                      |
+| :------------------------------------------------------------------------------------------------------------- | :------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                                         | nama tool                                   | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `SessionStart`                                                                                                 | bagaimana sesi dimulai                      | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `SessionEnd`                                                                                                   | mengapa sesi berakhir                       | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
+| `Notification`                                                                                                 | tipe notifikasi                             | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
+| `SubagentStart`                                                                                                | tipe agent                                  | `Bash`, `Explore`, `Plan`, atau nama agent kustom                                                                         |
+| `PreCompact`, `PostCompact`                                                                                    | apa yang memicu compaction                  | `manual`, `auto`                                                                                                          |
+| `SubagentStop`                                                                                                 | tipe agent                                  | nilai yang sama seperti `SubagentStart`                                                                                   |
+| `ConfigChange`                                                                                                 | sumber konfigurasi                          | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
+| `CwdChanged`                                                                                                   | tidak ada dukungan matcher                  | selalu dijalankan pada setiap perubahan direktori                                                                         |
+| `FileChanged`                                                                                                  | nama file (basename dari file yang berubah) | `.envrc`, `.env`, nama file apa pun yang ingin Anda pantau                                                                |
+| `StopFailure`                                                                                                  | tipe kesalahan                              | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                           | alasan load                                 | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `Elicitation`                                                                                                  | nama server MCP                             | nama server MCP yang dikonfigurasi Anda                                                                                   |
+| `ElicitationResult`                                                                                            | nama server MCP                             | nilai yang sama seperti `Elicitation`                                                                                     |
+| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | tidak ada dukungan matcher                  | selalu dijalankan pada setiap kemunculan                                                                                  |
 
 Matcher adalah regex, jadi `Edit|Write` mencocokkan salah satu tool dan `Notebook.*` mencocokkan tool apa pun yang dimulai dengan Notebook. Matcher dijalankan terhadap bidang dari [JSON input](#hook-input-and-output) yang Claude Code kirimkan ke hook Anda di stdin. Untuk tool events, bidang itu adalah `tool_name`. Setiap bagian [hook event](#hook-events) mencantumkan set lengkap nilai matcher dan skema input untuk event itu.
 
@@ -209,7 +214,9 @@ Contoh ini menjalankan skrip linting hanya ketika Claude menulis atau mengedit f
 }
 ```
 
-`UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, dan `CwdChanged` tidak mendukung matchers dan selalu dijalankan pada setiap kemunculan. Jika Anda menambahkan bidang `matcher` ke event ini, itu akan diabaikan secara diam-diam.
+`UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, dan `CwdChanged` tidak mendukung matchers dan selalu dijalankan pada setiap kemunculan. Jika Anda menambahkan bidang `matcher` ke event ini, itu akan diabaikan secara diam-diam.
+
+Untuk tool events, Anda dapat memfilter lebih sempit dengan menetapkan bidang [`if`](#common-fields) pada handler hook individual. `if` menggunakan [sintaks aturan izin](/id/permissions) untuk mencocokkan terhadap nama tool dan argumen bersama-sama, jadi `"Bash(git *)"` dijalankan hanya untuk perintah `git` dan `"Edit(*.ts)"` dijalankan hanya untuk file TypeScript.
 
 #### Cocokkan MCP tools
 
@@ -268,21 +275,23 @@ Setiap objek dalam array `hooks` inner adalah hook handler: perintah shell, endp
 
 Bidang-bidang ini berlaku untuk semua tipe hook:
 
-| Bidang          | Diperlukan | Deskripsi                                                                                                                                                   |
-| :-------------- | :--------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`          | ya         | `"command"`, `"http"`, `"prompt"`, atau `"agent"`                                                                                                           |
-| `timeout`       | tidak      | Detik sebelum membatalkan. Default: 600 untuk command, 30 untuk prompt, 60 untuk agent                                                                      |
-| `statusMessage` | tidak      | Pesan spinner kustom ditampilkan saat hook dijalankan                                                                                                       |
-| `once`          | tidak      | Jika `true`, dijalankan hanya sekali per sesi kemudian dihapus. Hanya skills, bukan agents. Lihat [Hooks in skills and agents](#hooks-in-skills-and-agents) |
+| Bidang          | Diperlukan | Deskripsi                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| :-------------- | :--------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`          | ya         | `"command"`, `"http"`, `"prompt"`, atau `"agent"`                                                                                                                                                                                                                                                                                                                                                                                         |
+| `if`            | tidak      | Sintaks aturan izin untuk memfilter kapan hook ini dijalankan, seperti `"Bash(git *)"` atau `"Edit(*.ts)"`. Hook hanya spawn jika pemanggilan tool cocok dengan pola. Hanya dievaluasi pada tool events: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, dan `PermissionRequest`. Pada event lain, hook dengan `if` yang ditetapkan tidak akan pernah dijalankan. Menggunakan sintaks yang sama seperti [aturan izin](/id/permissions) |
+| `timeout`       | tidak      | Detik sebelum membatalkan. Default: 600 untuk command, 30 untuk prompt, 60 untuk agent                                                                                                                                                                                                                                                                                                                                                    |
+| `statusMessage` | tidak      | Pesan spinner kustom ditampilkan saat hook dijalankan                                                                                                                                                                                                                                                                                                                                                                                     |
+| `once`          | tidak      | Jika `true`, dijalankan hanya sekali per sesi kemudian dihapus. Hanya skills, bukan agents. Lihat [Hooks in skills and agents](#hooks-in-skills-and-agents)                                                                                                                                                                                                                                                                               |
 
 #### Bidang command hook
 
 Selain [bidang umum](#common-fields), command hooks menerima bidang-bidang ini:
 
-| Bidang    | Diperlukan | Deskripsi                                                                                                                    |
-| :-------- | :--------- | :--------------------------------------------------------------------------------------------------------------------------- |
-| `command` | ya         | Perintah shell untuk dijalankan                                                                                              |
-| `async`   | tidak      | Jika `true`, dijalankan di latar belakang tanpa memblokir. Lihat [Run hooks in the background](#run-hooks-in-the-background) |
+| Bidang    | Diperlukan | Deskripsi                                                                                                                                                                                                                                                             |
+| :-------- | :--------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `command` | ya         | Perintah shell untuk dijalankan                                                                                                                                                                                                                                       |
+| `async`   | tidak      | Jika `true`, dijalankan di latar belakang tanpa memblokir. Lihat [Run hooks in the background](#run-hooks-in-the-background)                                                                                                                                          |
+| `shell`   | tidak      | Shell untuk digunakan untuk hook ini. Menerima `"bash"` (default) atau `"powershell"`. Menetapkan `"powershell"` menjalankan perintah melalui PowerShell di Windows. Tidak memerlukan `CLAUDE_CODE_USE_POWERSHELL_TOOL` karena hooks spawn PowerShell secara langsung |
 
 #### Bidang HTTP hook
 
@@ -522,6 +531,7 @@ Kode keluar 2 adalah cara hook menandakan "berhenti, jangan lakukan ini." Efekny
 | `Stop`               | Ya              | Mencegah Claude berhenti, melanjutkan percakapan                         |
 | `SubagentStop`       | Ya              | Mencegah subagent berhenti                                               |
 | `TeammateIdle`       | Ya              | Mencegah teammate menjadi idle (teammate terus bekerja)                  |
+| `TaskCreated`        | Ya              | Membatalkan pembuatan tugas                                              |
 | `TaskCompleted`      | Ya              | Mencegah tugas ditandai sebagai selesai                                  |
 | `ConfigChange`       | Ya              | Memblokir perubahan konfigurasi dari berlaku (kecuali `policy_settings`) |
 | `StopFailure`        | Tidak           | Output dan kode keluar diabaikan                                         |
@@ -589,10 +599,10 @@ Tidak setiap event mendukung pemblokiran atau kontrol perilaku melalui JSON. Eve
 | Events                                                                                                                      | Pola keputusan                     | Bidang kunci                                                                                                                                                                        |
 | :-------------------------------------------------------------------------------------------------------------------------- | :--------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange                                         | Top-level `decision`               | `decision: "block"`, `reason`                                                                                                                                                       |
-| TeammateIdle, TaskCompleted                                                                                                 | Kode keluar atau `continue: false` | Kode keluar 2 memblokir tindakan dengan umpan balik stderr. JSON `{"continue": false, "stopReason": "..."}` juga menghentikan teammate sepenuhnya, mencocokkan perilaku hook `Stop` |
+| TeammateIdle, TaskCreated, TaskCompleted                                                                                    | Kode keluar atau `continue: false` | Kode keluar 2 memblokir tindakan dengan umpan balik stderr. JSON `{"continue": false, "stopReason": "..."}` juga menghentikan teammate sepenuhnya, mencocokkan perilaku hook `Stop` |
 | PreToolUse                                                                                                                  | `hookSpecificOutput`               | `permissionDecision` (allow/deny/ask), `permissionDecisionReason`                                                                                                                   |
 | PermissionRequest                                                                                                           | `hookSpecificOutput`               | `decision.behavior` (allow/deny)                                                                                                                                                    |
-| WorktreeCreate                                                                                                              | stdout path                        | Hook mencetak path absolut ke worktree yang dibuat. Exit non-zero gagal membuat                                                                                                     |
+| WorktreeCreate                                                                                                              | path return                        | Command hook mencetak path di stdout; HTTP hook mengembalikan `hookSpecificOutput.worktreePath`. Kegagalan hook atau path yang hilang gagal membuat                                 |
 | Elicitation                                                                                                                 | `hookSpecificOutput`               | `action` (accept/decline/cancel), `content` (nilai field form untuk accept)                                                                                                         |
 | ElicitationResult                                                                                                           | `hookSpecificOutput`               | `action` (accept/decline/cancel), `content` (nilai field form override)                                                                                                             |
 | WorktreeRemove, Notification, SessionEnd, PreCompact, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged | Tidak ada                          | Tidak ada kontrol keputusan. Digunakan untuk efek samping seperti logging atau cleanup                                                                                              |
@@ -830,7 +840,7 @@ Untuk memblokir prompt, kembalikan objek JSON dengan `decision` diatur ke `"bloc
 
 ### PreToolUse
 
-Dijalankan setelah Claude membuat parameter tool dan sebelum memproses pemanggilan tool. Cocok pada nama tool: `Bash`, `Edit`, `Write`, `Read`, `Glob`, `Grep`, `Agent`, `WebFetch`, `WebSearch`, dan nama [MCP tool](#match-mcp-tools) apa pun.
+Dijalankan setelah Claude membuat parameter tool dan sebelum memproses pemanggilan tool. Cocok pada nama tool: `Bash`, `Edit`, `Write`, `Read`, `Glob`, `Grep`, `Agent`, `WebFetch`, `WebSearch`, `AskUserQuestion`, `ExitPlanMode`, dan nama [MCP tool](#match-mcp-tools) apa pun.
 
 Gunakan [PreToolUse decision control](#pretooluse-decision-control) untuk mengizinkan, menolak, atau meminta izin untuk menggunakan tool.
 
@@ -931,16 +941,25 @@ Spawn [subagent](/id/sub-agents).
 | `subagent_type` | string | `"Explore"`                | Tipe agent khusus untuk digunakan          |
 | `model`         | string | `"sonnet"`                 | Alias model opsional untuk menimpa default |
 
+##### AskUserQuestion
+
+Mengajukan pertanyaan multiple-choice satu hingga empat kepada pengguna.
+
+| Bidang      | Tipe   | Contoh                                                                                                             | Deskripsi                                                                                                                                                                                                                   |
+| :---------- | :----- | :----------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `questions` | array  | `[{"question": "Which framework?", "header": "Framework", "options": [{"label": "React"}], "multiSelect": false}]` | Pertanyaan untuk disajikan, masing-masing dengan string `question`, `header` pendek, array `options`, dan flag `multiSelect` opsional                                                                                       |
+| `answers`   | object | `{"Which framework?": "React"}`                                                                                    | Opsional. Memetakan teks pertanyaan ke label opsi yang dipilih. Jawaban multi-select menggabungkan label dengan koma. Claude tidak menetapkan bidang ini; sediakan melalui `updatedInput` untuk menjawab secara programatis |
+
 #### Kontrol keputusan PreToolUse
 
 Hooks `PreToolUse` dapat mengontrol apakah pemanggilan tool dilanjutkan. Tidak seperti hooks lain yang menggunakan bidang `decision` tingkat atas, PreToolUse mengembalikan keputusannya di dalam objek `hookSpecificOutput`. Ini memberikannya kontrol yang lebih kaya: tiga hasil (izinkan, tolak, atau tanya) ditambah kemampuan untuk memodifikasi input tool sebelum eksekusi.
 
-| Bidang                     | Deskripsi                                                                                                                                                                                                                     |
-| :------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `permissionDecision`       | `"allow"` melewati sistem izin, `"deny"` mencegah pemanggilan tool, `"ask"` meminta pengguna untuk mengkonfirmasi. [Deny and ask rules](/id/permissions#manage-permissions) masih berlaku ketika hook mengembalikan `"allow"` |
-| `permissionDecisionReason` | Untuk `"allow"` dan `"ask"`, ditampilkan ke pengguna tetapi bukan Claude. Untuk `"deny"`, ditampilkan ke Claude                                                                                                               |
-| `updatedInput`             | Memodifikasi parameter input tool sebelum eksekusi. Gabungkan dengan `"allow"` untuk persetujuan otomatis, atau `"ask"` untuk menampilkan input yang dimodifikasi ke pengguna                                                 |
-| `additionalContext`        | String ditambahkan ke konteks Claude sebelum tool dijalankan                                                                                                                                                                  |
+| Bidang                     | Deskripsi                                                                                                                                                                                                                                                                          |
+| :------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `permissionDecision`       | `"allow"` melewati prompt izin. `"deny"` mencegah pemanggilan tool. `"ask"` meminta pengguna untuk mengkonfirmasi. [Deny and ask rules](/id/permissions#manage-permissions) masih berlaku ketika hook mengembalikan `"allow"`                                                      |
+| `permissionDecisionReason` | Untuk `"allow"` dan `"ask"`, ditampilkan ke pengguna tetapi bukan Claude. Untuk `"deny"`, ditampilkan ke Claude                                                                                                                                                                    |
+| `updatedInput`             | Memodifikasi parameter input tool sebelum eksekusi. Menggantikan seluruh objek input, jadi sertakan bidang yang tidak berubah bersama yang dimodifikasi. Gabungkan dengan `"allow"` untuk persetujuan otomatis, atau `"ask"` untuk menampilkan input yang dimodifikasi ke pengguna |
+| `additionalContext`        | String ditambahkan ke konteks Claude sebelum tool dijalankan                                                                                                                                                                                                                       |
 
 Ketika hook mengembalikan `"ask"`, dialog izin yang ditampilkan kepada pengguna mencakup label yang mengidentifikasi dari mana hook berasal: misalnya, `[User]`, `[Project]`, `[Plugin]`, atau `[Local]`. Ini membantu pengguna memahami sumber konfigurasi mana yang meminta konfirmasi.
 
@@ -957,6 +976,8 @@ Ketika hook mengembalikan `"ask"`, dialog izin yang ditampilkan kepada pengguna 
   }
 }
 ```
+
+`AskUserQuestion` dan `ExitPlanMode` memerlukan interaksi pengguna dan biasanya memblokir dalam [mode non-interaktif](/id/headless) dengan flag `-p`. Mengembalikan `permissionDecision: "allow"` bersama dengan `updatedInput` memenuhi persyaratan itu: hook membaca input tool dari stdin, mengumpulkan jawaban melalui UI Anda sendiri, dan mengembalikannya dalam `updatedInput` sehingga tool dijalankan tanpa meminta. Mengembalikan `"allow"` saja tidak cukup untuk tools ini. Untuk `AskUserQuestion`, kembalikan array `questions` asli dan tambahkan objek [`answers`](#askuserquestion) yang memetakan teks setiap pertanyaan ke jawaban yang dipilih.
 
 <Note>
   PreToolUse sebelumnya menggunakan bidang `decision` dan `reason` tingkat atas, tetapi ini sudah usang untuk event ini. Gunakan `hookSpecificOutput.permissionDecision` dan `hookSpecificOutput.permissionDecisionReason` sebagai gantinya. Nilai usang `"approve"` dan `"block"` memetakan ke `"allow"` dan `"deny"` masing-masing. Events lain seperti PostToolUse dan Stop terus menggunakan `decision` dan `reason` tingkat atas sebagai format saat ini mereka.
@@ -1000,13 +1021,13 @@ PermissionRequest hooks menerima bidang `tool_name` dan `tool_input` seperti Pre
 
 Hooks `PermissionRequest` dapat mengizinkan atau menolak permintaan izin. Selain [bidang output JSON](#json-output) yang tersedia untuk semua hooks, skrip hook Anda dapat mengembalikan objek `decision` dengan bidang spesifik event ini:
 
-| Bidang               | Deskripsi                                                                                                                                                                |
-| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `behavior`           | `"allow"` memberikan izin, `"deny"` menolaknya                                                                                                                           |
-| `updatedInput`       | Untuk `"allow"` saja: memodifikasi parameter input tool sebelum eksekusi                                                                                                 |
-| `updatedPermissions` | Untuk `"allow"` saja: array dari [permission update entries](#permission-update-entries) untuk diterapkan, seperti menambahkan aturan allow atau mengubah mode izin sesi |
-| `message`            | Untuk `"deny"` saja: memberitahu Claude mengapa izin ditolak                                                                                                             |
-| `interrupt`          | Untuk `"deny"` saja: jika `true`, menghentikan Claude                                                                                                                    |
+| Bidang               | Deskripsi                                                                                                                                                                     |
+| :------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `behavior`           | `"allow"` memberikan izin, `"deny"` menolaknya                                                                                                                                |
+| `updatedInput`       | Untuk `"allow"` saja: memodifikasi parameter input tool sebelum eksekusi. Menggantikan seluruh objek input, jadi sertakan bidang yang tidak berubah bersama yang dimodifikasi |
+| `updatedPermissions` | Untuk `"allow"` saja: array dari [permission update entries](#permission-update-entries) untuk diterapkan, seperti menambahkan aturan allow atau mengubah mode izin sesi      |
+| `message`            | Untuk `"deny"` saja: memberitahu Claude mengapa izin ditolak                                                                                                                  |
+| `interrupt`          | Untuk `"deny"` saja: jika `true`, menghentikan Claude                                                                                                                         |
 
 ```json  theme={null}
 {
@@ -1262,6 +1283,117 @@ Selain [bidang input umum](#common-input-fields), SubagentStop hooks menerima `s
 
 SubagentStop hooks menggunakan format kontrol keputusan yang sama seperti [Stop hooks](#stop-decision-control).
 
+### TaskCreated
+
+Dijalankan ketika tugas sedang dibuat melalui tool `TaskCreate`. Gunakan ini untuk menegakkan konvensi penamaan, memerlukan deskripsi tugas, atau mencegah tugas tertentu dari dibuat.
+
+Ketika hook `TaskCreated` keluar dengan kode 2, tugas tidak dibuat dan pesan stderr diumpankan kembali ke model sebagai umpan balik. Untuk menghentikan teammate sepenuhnya alih-alih menjalankannya kembali, kembalikan JSON dengan `{"continue": false, "stopReason": "..."}`. TaskCreated hooks tidak mendukung matchers dan dijalankan pada setiap kemunculan.
+
+#### Input TaskCreated
+
+Selain [bidang input umum](#common-input-fields), TaskCreated hooks menerima `task_id`, `task_subject`, dan secara opsional `task_description`, `teammate_name`, dan `team_name`.
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "cwd": "/Users/...",
+  "permission_mode": "default",
+  "hook_event_name": "TaskCreated",
+  "task_id": "task-001",
+  "task_subject": "Implement user authentication",
+  "task_description": "Add login and signup endpoints",
+  "teammate_name": "implementer",
+  "team_name": "my-project"
+}
+```
+
+| Bidang             | Deskripsi                                           |
+| :----------------- | :-------------------------------------------------- |
+| `task_id`          | Pengenal tugas yang sedang dibuat                   |
+| `task_subject`     | Judul tugas                                         |
+| `task_description` | Deskripsi detail tugas. Mungkin tidak ada           |
+| `teammate_name`    | Nama teammate yang membuat tugas. Mungkin tidak ada |
+| `team_name`        | Nama team. Mungkin tidak ada                        |
+
+#### Kontrol keputusan TaskCreated
+
+TaskCreated hooks mendukung dua cara untuk mengontrol pembuatan tugas:
+
+* **Kode keluar 2**: tugas tidak dibuat dan pesan stderr diumpankan kembali ke model sebagai umpan balik.
+* **JSON `{"continue": false, "stopReason": "..."}`**: menghentikan teammate sepenuhnya, mencocokkan perilaku hook `Stop`. `stopReason` ditampilkan ke pengguna.
+
+Contoh ini memblokir tugas yang subjeknya tidak mengikuti format yang diperlukan:
+
+```bash  theme={null}
+#!/bin/bash
+INPUT=$(cat)
+TASK_SUBJECT=$(echo "$INPUT" | jq -r '.task_subject')
+
+if [[ ! "$TASK_SUBJECT" =~ ^\[TICKET-[0-9]+\] ]]; then
+  echo "Task subject must start with a ticket number, e.g. '[TICKET-123] Add feature'" >&2
+  exit 2
+fi
+
+exit 0
+```
+
+### TaskCompleted
+
+Dijalankan ketika tugas sedang ditandai sebagai selesai. Ini dijalankan dalam dua situasi: ketika agent apa pun secara eksplisit menandai tugas sebagai selesai melalui tool TaskUpdate, atau ketika [agent team](/id/agent-teams) teammate menyelesaikan giliran dengan tugas yang sedang berlangsung. Gunakan ini untuk menegakkan kriteria penyelesaian seperti passing tests atau lint checks sebelum tugas dapat ditutup.
+
+Ketika hook `TaskCompleted` keluar dengan kode 2, tugas tidak ditandai sebagai selesai dan pesan stderr diumpankan kembali ke model sebagai umpan balik. Untuk menghentikan teammate sepenuhnya alih-alih menjalankannya kembali, kembalikan JSON dengan `{"continue": false, "stopReason": "..."}`. TaskCompleted hooks tidak mendukung matchers dan dijalankan pada setiap kemunculan.
+
+#### Input TaskCompleted
+
+Selain [bidang input umum](#common-input-fields), TaskCompleted hooks menerima `task_id`, `task_subject`, dan secara opsional `task_description`, `teammate_name`, dan `team_name`.
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "cwd": "/Users/...",
+  "permission_mode": "default",
+  "hook_event_name": "TaskCompleted",
+  "task_id": "task-001",
+  "task_subject": "Implement user authentication",
+  "task_description": "Add login and signup endpoints",
+  "teammate_name": "implementer",
+  "team_name": "my-project"
+}
+```
+
+| Bidang             | Deskripsi                                                 |
+| :----------------- | :-------------------------------------------------------- |
+| `task_id`          | Pengenal tugas yang sedang diselesaikan                   |
+| `task_subject`     | Judul tugas                                               |
+| `task_description` | Deskripsi detail tugas. Mungkin tidak ada                 |
+| `teammate_name`    | Nama teammate yang menyelesaikan tugas. Mungkin tidak ada |
+| `team_name`        | Nama team. Mungkin tidak ada                              |
+
+#### Kontrol keputusan TaskCompleted
+
+TaskCompleted hooks mendukung dua cara untuk mengontrol penyelesaian tugas:
+
+* **Kode keluar 2**: tugas tidak ditandai sebagai selesai dan pesan stderr diumpankan kembali ke model sebagai umpan balik.
+* **JSON `{"continue": false, "stopReason": "..."}`**: menghentikan teammate sepenuhnya, mencocokkan perilaku hook `Stop`. `stopReason` ditampilkan ke pengguna.
+
+Contoh ini menjalankan tests dan memblokir penyelesaian tugas jika gagal:
+
+```bash  theme={null}
+#!/bin/bash
+INPUT=$(cat)
+TASK_SUBJECT=$(echo "$INPUT" | jq -r '.task_subject')
+
+# Jalankan test suite
+if ! npm test 2>&1; then
+  echo "Tests not passing. Fix failing tests before completing: $TASK_SUBJECT" >&2
+  exit 2
+fi
+
+exit 0
+```
+
 ### Stop
 
 Dijalankan ketika agent Claude Code utama telah selesai merespons. Tidak dijalankan jika penghentian terjadi karena interupsi pengguna. Kesalahan API menjalankan [StopFailure](#stopfailure) sebagai gantinya.
@@ -1367,62 +1499,6 @@ Contoh ini memeriksa bahwa artefak build ada sebelum mengizinkan teammate menjad
 
 if [ ! -f "./dist/output.js" ]; then
   echo "Build artifact missing. Run the build before stopping." >&2
-  exit 2
-fi
-
-exit 0
-```
-
-### TaskCompleted
-
-Dijalankan ketika tugas sedang ditandai sebagai selesai. Ini dijalankan dalam dua situasi: ketika agent apa pun secara eksplisit menandai tugas sebagai selesai melalui tool TaskUpdate, atau ketika [agent team](/id/agent-teams) teammate menyelesaikan giliran dengan tugas yang sedang berlangsung. Gunakan ini untuk menegakkan kriteria penyelesaian seperti passing tests atau lint checks sebelum tugas dapat ditutup.
-
-Ketika hook `TaskCompleted` keluar dengan kode 2, tugas tidak ditandai sebagai selesai dan pesan stderr diumpankan kembali ke model sebagai umpan balik. Untuk menghentikan teammate sepenuhnya alih-alih menjalankannya kembali, kembalikan JSON dengan `{"continue": false, "stopReason": "..."}`. TaskCompleted hooks tidak mendukung matchers dan dijalankan pada setiap kemunculan.
-
-#### Input TaskCompleted
-
-Selain [bidang input umum](#common-input-fields), TaskCompleted hooks menerima `task_id`, `task_subject`, dan secara opsional `task_description`, `teammate_name`, dan `team_name`.
-
-```json  theme={null}
-{
-  "session_id": "abc123",
-  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
-  "cwd": "/Users/...",
-  "permission_mode": "default",
-  "hook_event_name": "TaskCompleted",
-  "task_id": "task-001",
-  "task_subject": "Implement user authentication",
-  "task_description": "Add login and signup endpoints",
-  "teammate_name": "implementer",
-  "team_name": "my-project"
-}
-```
-
-| Bidang             | Deskripsi                                                 |
-| :----------------- | :-------------------------------------------------------- |
-| `task_id`          | Pengenal tugas yang sedang diselesaikan                   |
-| `task_subject`     | Judul tugas                                               |
-| `task_description` | Deskripsi detail tugas. Mungkin tidak ada                 |
-| `teammate_name`    | Nama teammate yang menyelesaikan tugas. Mungkin tidak ada |
-| `team_name`        | Nama team. Mungkin tidak ada                              |
-
-#### Kontrol keputusan TaskCompleted
-
-TaskCompleted hooks mendukung dua cara untuk mengontrol penyelesaian tugas:
-
-* **Kode keluar 2**: tugas tidak ditandai sebagai selesai dan pesan stderr diumpankan kembali ke model sebagai umpan balik.
-* **JSON `{"continue": false, "stopReason": "..."}`**: menghentikan teammate sepenuhnya, mencocokkan perilaku hook `Stop`. `stopReason` ditampilkan ke pengguna.
-
-Contoh ini menjalankan tests dan memblokir penyelesaian tugas jika gagal:
-
-```bash  theme={null}
-#!/bin/bash
-INPUT=$(cat)
-TASK_SUBJECT=$(echo "$INPUT" | jq -r '.task_subject')
-
-# Jalankan test suite
-if ! npm test 2>&1; then
-  echo "Tests not passing. Fix failing tests before completing: $TASK_SUBJECT" >&2
   exit 2
 fi
 
@@ -1570,7 +1646,9 @@ FileChanged hooks tidak memiliki kontrol keputusan. Mereka tidak dapat memblokir
 
 Ketika Anda menjalankan `claude --worktree` atau [subagent menggunakan `isolation: "worktree"`](/id/sub-agents#choose-the-subagent-scope), Claude Code membuat salinan kerja terisolasi menggunakan `git worktree`. Jika Anda mengonfigurasi hook WorktreeCreate, itu menggantikan perilaku git default, memungkinkan Anda menggunakan sistem kontrol versi berbeda seperti SVN, Perforce, atau Mercurial.
 
-Hook harus mencetak path absolut ke direktori worktree yang dibuat di stdout. Claude Code menggunakan path ini sebagai direktori kerja untuk sesi terisolasi.
+Karena hook menggantikan perilaku default sepenuhnya, [`.worktreeinclude`](/id/common-workflows#copy-gitignored-files-to-worktrees) tidak diproses. Jika Anda perlu menyalin file konfigurasi lokal seperti `.env` ke worktree baru, lakukan di dalam skrip hook Anda.
+
+Hook harus mengembalikan path absolut ke direktori worktree yang dibuat. Claude Code menggunakan path ini sebagai direktori kerja untuk sesi terisolasi. Command hooks mencetaknya di stdout; HTTP hooks mengembalikannya melalui `hookSpecificOutput.worktreePath`.
 
 Contoh ini membuat salinan kerja SVN dan mencetak path untuk Claude Code gunakan. Ganti URL repositori dengan milik Anda sendiri:
 
@@ -1609,15 +1687,18 @@ Selain [bidang input umum](#common-input-fields), WorktreeCreate hooks menerima 
 
 #### Output WorktreeCreate
 
-Hook harus mencetak path absolut ke direktori worktree yang dibuat di stdout. Jika hook gagal atau tidak menghasilkan output, pembuatan worktree gagal dengan kesalahan.
+WorktreeCreate hooks tidak menggunakan model keputusan allow/block standar. Sebaliknya, kesuksesan atau kegagalan hook menentukan hasil. Hook harus mengembalikan path absolut ke direktori worktree yang dibuat:
 
-WorktreeCreate hooks tidak menggunakan model keputusan allow/block standar. Sebaliknya, kesuksesan atau kegagalan hook menentukan hasil. Hanya hooks `type: "command"` yang didukung.
+* **Command hooks** (`type: "command"`): cetak path di stdout.
+* **HTTP hooks** (`type: "http"`): kembalikan `{ "hookSpecificOutput": { "hookEventName": "WorktreeCreate", "worktreePath": "/absolute/path" } }` dalam badan respons.
+
+Jika hook gagal atau tidak menghasilkan path, pembuatan worktree gagal dengan kesalahan.
 
 ### WorktreeRemove
 
 Pasangan cleanup untuk [WorktreeCreate](#worktreecreate). Hook ini dijalankan ketika worktree sedang dihapus, baik ketika Anda keluar dari sesi `--worktree` dan memilih untuk menghapusnya, atau ketika subagent dengan `isolation: "worktree"` selesai. Untuk worktrees berbasis git, Claude menangani cleanup secara otomatis dengan `git worktree remove`. Jika Anda mengonfigurasi hook WorktreeCreate untuk sistem kontrol versi non-git, pasangkan dengan hook WorktreeRemove untuk menangani cleanup. Tanpanya, direktori worktree ditinggalkan di disk.
 
-Claude Code meneruskan path yang WorktreeCreate cetak di stdout sebagai `worktree_path` dalam input hook. Contoh ini membaca path itu dan menghapus direktori:
+Claude Code meneruskan path yang dikembalikan oleh WorktreeCreate sebagai `worktree_path` dalam input hook. Contoh ini membaca path itu dan menghapus direktori:
 
 ```json  theme={null}
 {
@@ -1650,7 +1731,7 @@ Selain [bidang input umum](#common-input-fields), WorktreeRemove hooks menerima 
 }
 ```
 
-WorktreeRemove hooks tidak memiliki kontrol keputusan. Mereka tidak dapat memblokir penghapusan worktree tetapi dapat melakukan tugas cleanup seperti menghapus status kontrol versi atau mengarsipkan perubahan. Kegagalan hook dicatat dalam mode debug saja. Hanya hooks `type: "command"` yang didukung.
+WorktreeRemove hooks tidak memiliki kontrol keputusan. Mereka tidak dapat memblokir penghapusan worktree tetapi dapat melakukan tugas cleanup seperti menghapus status kontrol versi atau mengarsipkan perubahan. Kegagalan hook dicatat dalam mode debug saja.
 
 ### PreCompact
 
@@ -1872,9 +1953,10 @@ Events yang mendukung semua empat tipe hook (`command`, `http`, `prompt`, dan `a
 * `Stop`
 * `SubagentStop`
 * `TaskCompleted`
+* `TaskCreated`
 * `UserPromptSubmit`
 
-Events yang hanya mendukung hooks `type: "command"`:
+Events yang mendukung hooks `command` dan `http` tetapi bukan `prompt` atau `agent`:
 
 * `ConfigChange`
 * `CwdChanged`
@@ -1886,12 +1968,13 @@ Events yang hanya mendukung hooks `type: "command"`:
 * `PostCompact`
 * `PreCompact`
 * `SessionEnd`
-* `SessionStart`
 * `StopFailure`
 * `SubagentStart`
 * `TeammateIdle`
 * `WorktreeCreate`
 * `WorktreeRemove`
+
+`SessionStart` mendukung hanya hooks `command`.
 
 ### Bagaimana prompt-based hooks bekerja
 
@@ -2138,16 +2221,15 @@ Ingat praktik-praktik ini saat menulis hooks:
 
 ## Debug hooks
 
-Jalankan `claude --debug` untuk melihat detail eksekusi hook, termasuk hooks mana yang cocok, kode keluar mereka, dan output. Toggle mode verbose dengan `Ctrl+O` untuk melihat kemajuan hook dalam transkrip.
+Jalankan `claude --debug` untuk melihat detail eksekusi hook, termasuk hooks mana yang cocok, kode keluar mereka, dan output.
 
 ```text  theme={null}
 [DEBUG] Executing hooks for PostToolUse:Write
-[DEBUG] Getting matching hook commands for PostToolUse with query: Write
-[DEBUG] Found 1 hook matchers in settings
-[DEBUG] Matched 1 hooks for query "Write"
 [DEBUG] Found 1 hook commands to execute
 [DEBUG] Executing hook command: <Your command> with timeout 600000ms
 [DEBUG] Hook command completed with status 0: <Your stdout>
 ```
+
+Untuk granularitas yang lebih halus pada detail pencocokan hook, atur `CLAUDE_CODE_DEBUG_LOG_LEVEL=verbose` untuk melihat baris log tambahan seperti jumlah matcher hook dan pencocokan query.
 
 Untuk troubleshooting masalah umum seperti hooks tidak dijalankan, infinite Stop hook loops, atau kesalahan konfigurasi, lihat [Limitations and troubleshooting](/id/hooks-guide#limitations-and-troubleshooting) dalam panduan.

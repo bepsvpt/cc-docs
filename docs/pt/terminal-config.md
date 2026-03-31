@@ -35,10 +35,14 @@ Execute `/terminal-setup` dentro do Claude Code para configurar automaticamente 
 1. Abra Configurações → Perfis → Teclado
 2. Marque "Usar Option como Meta Key"
 
-**Para terminal iTerm2 e VS Code:**
+**Para iTerm2:**
 
 1. Abra Configurações → Perfis → Teclas
 2. Em Geral, defina a tecla Option Esquerda/Direita como "Esc+"
+
+**Para terminal VS Code:**
+
+Defina `"terminal.integrated.macOptionIsMeta": true` nas configurações do VS Code.
 
 ### Configuração de notificações
 
@@ -54,11 +58,23 @@ Kitty e Ghostty suportam notificações de desktop sem configuração adicional.
 
 Se as notificações não estiverem aparecendo, verifique se seu aplicativo de terminal tem permissões de notificação nas configurações do seu sistema operacional.
 
+Ao executar Claude Code dentro do tmux, notificações e a [barra de progresso do terminal](/pt/settings#global-config-settings) apenas alcançam o terminal externo, como iTerm2, Kitty ou Ghostty, se você ativar passthrough na sua configuração do tmux:
+
+```
+set -g allow-passthrough on
+```
+
+Sem esta configuração, tmux intercepta as sequências de escape e elas não alcançam a aplicação de terminal.
+
 Outros terminais, incluindo o Terminal padrão do macOS, não suportam notificações nativas. Use [hooks de notificação](/pt/hooks#notification) em vez disso.
 
 #### Hooks de notificação
 
 Para adicionar comportamento personalizado quando as notificações são disparadas, como reproduzir um som ou enviar uma mensagem, configure um [hook de notificação](/pt/hooks#notification). Os hooks são executados junto com as notificações do terminal, não como uma substituição.
+
+### Reduza cintilação e uso de memória
+
+Se você vir cintilação durante sessões longas, ou sua posição de rolagem do terminal pular para o topo enquanto Claude está trabalhando, tente [renderização em tela cheia](/pt/fullscreen). Ela usa um caminho de renderização alternativo que mantém a memória plana e adiciona suporte a mouse. Ative-a com `CLAUDE_CODE_NO_FLICKER=1`.
 
 ### Tratamento de entradas grandes
 
@@ -70,7 +86,7 @@ Ao trabalhar com código extenso ou instruções longas:
 
 ### Modo Vim
 
-Claude Code suporta um subconjunto de atalhos de teclado Vim que podem ser ativados com `/vim` ou configurados via `/config`.
+Claude Code suporta um subconjunto de atalhos de teclado Vim que podem ser ativados com `/vim` ou configurados via `/config`. Para definir o modo diretamente no seu arquivo de configuração, defina a chave de configuração global [`editorMode`](/pt/settings#global-config-settings) como `"vim"` em `~/.claude.json`.
 
 O subconjunto suportado inclui:
 
