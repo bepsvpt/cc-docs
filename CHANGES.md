@@ -1,5 +1,52 @@
 # Documentation Changes
 
+## 2026-04-01
+
+22 pages modified
+
+
+### English
+
+
+**Modified**
+
+- **Claude Code on Amazon Bedrock** (`amazon-bedrock.md`): 11 lines added, 0 removed
+  - New section: "# Optional: Override the Bedrock endpoint URL for custom endpoints or gateways"
+  - New section: "# export ANTHROPIC_BEDROCK_BASE_URL=https://bedrock-runtime.us-east-1.amazonaws.com"
+  - New section: "### Authentication loop with SSO and corporate proxies"
+  - New section: "### Region issues"
+- **Changelog** (`changelog.md`): 30 lines added, 19 removed
+- **Claude Code on the web** (`claude-code-on-the-web.md`): 4 lines added, 0 removed
+- **CLI reference** (`cli-reference.md`): 62 lines added, 59 removed
+- **Built-in commands** (`commands.md`): 2 lines added, 2 removed
+- **Manage costs effectively** (`costs.md`): 1 lines added, 1 removed
+- **Discover and install prebuilt plugins through marketplaces** (`discover-plugins.md`): 4 lines added, 4 removed
+- **Environment variables** (`env-vars.md`): 76 lines added, 14 removed
+- **Extend Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Claude Code on Google Vertex AI** (`google-vertex-ai.md`): 8 lines added, 9 removed
+  - New section: "# Optional: Override the Vertex endpoint URL for custom endpoints or gateways"
+  - New section: "# export ANTHROPIC_VERTEX_BASE_URL=https://aiplatform.googleapis.com"
+  - New section: "# When CLOUD_ML_REGION=global, override region for models that don't support global endpoints"
+- **Automate workflows with hooks** (`hooks-guide.md`): 10 lines added, 1 removed
+  - New section: "### Hooks and permission modes"
+- **Interactive mode** (`interactive-mode.md`): 1 lines added, 1 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 2 lines added, 2 removed
+- **How Claude remembers your project** (`memory.md`): 1 lines added, 1 removed
+- **Configure permissions** (`permissions.md`): 26 lines added, 4 removed
+  - New section: "### Additional directories grant file access, not configuration"
+- **Sandboxing** (`sandboxing.md`): 1 lines added, 1 removed
+- **Configure server-managed settings (public beta)** (`server-managed-settings.md`): 12 lines added, 3 removed
+  - New section: "### Managed-only settings"
+- **Claude Code settings** (`settings.md`): 51 lines added, 50 removed
+- **Extend Claude with skills** (`skills.md`): 3 lines added, 1 removed
+- **Create custom subagents** (`sub-agents.md`): 5 lines added, 1 removed
+- **Optimize your terminal setup** (`terminal-config.md`): 1 lines added, 0 removed
+- **Tools reference** (`tools-reference.md`): 64 lines added, 35 removed
+  - New section: "## LSP tool behavior"
+  - New section: "## Check which tools are available"
+
+---
+
 ## 2026-03-31
 
 51 pages modified
