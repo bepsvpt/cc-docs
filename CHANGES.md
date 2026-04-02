@@ -1,5 +1,184 @@
 # Documentation Changes
 
+## 2026-04-02
+
+93 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Automatisieren Sie Workflows mit Hooks** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Hooks-Referenz** (`hooks.md`): 2 lines added, 1 removed
+- **Claude Code Übersicht** (`overview.md`): 2 lines added, 0 removed
+- **Plugins-Referenz** (`plugins-reference.md`): 1 lines added, 0 removed
+- **Schnellstart** (`quickstart.md`): 2 lines added, 0 removed
+- **Erweiterte Einrichtung** (`setup.md`): 2 lines added, 0 removed
+
+### English
+
+
+**Modified**
+
+- **Claude Code on Amazon Bedrock** (`amazon-bedrock.md`): 12 lines added, 5 removed
+  - New section: "## 1M token context window"
+- **Changelog** (`changelog.md`): 22 lines added, 0 removed
+- **CLI reference** (`cli-reference.md`): 81 lines added, 81 removed
+- **Built-in commands** (`commands.md`): 2 lines added, 2 removed
+- **Common workflows** (`common-workflows.md`): 2 lines added, 2 removed
+- **Discover and install prebuilt plugins through marketplaces** (`discover-plugins.md`): 1 lines added, 1 removed
+- **Environment variables** (`env-vars.md`): 1 lines added, 0 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 2 lines added, 2 removed
+- **Claude Code on Google Vertex AI** (`google-vertex-ai.md`): 5 lines added, 5 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 6 lines added, 3 removed
+- **Hooks reference** (`hooks.md`): 142 lines added, 46 removed
+  - New section: "#### Defer a tool call for later"
+  - New section: "### PermissionDenied"
+  - New section: "#### PermissionDenied input"
+  - New section: "#### PermissionDenied decision control"
+- **How Claude Code works** (`how-claude-code-works.md`): 1 lines added, 1 removed
+- **Interactive mode** (`interactive-mode.md`): 1 lines added, 0 removed
+- **Model configuration** (`model-config.md`): 2 lines added, 1 removed
+- **Enterprise network configuration** (`network-config.md`): 3 lines added, 3 removed
+- **Output styles** (`output-styles.md`): 7 lines added, 2 removed
+- **Claude Code overview** (`overview.md`): 2 lines added, 0 removed
+- **Configure permissions** (`permissions.md`): 8 lines added, 2 removed
+  - New section: "## Review auto mode denials"
+- **Create and distribute a plugin marketplace** (`plugin-marketplaces.md`): 4 lines added, 0 removed
+- **Plugins reference** (`plugins-reference.md`): 1 lines added, 0 removed
+- **Create plugins** (`plugins.md`): 0 lines added, 1 removed
+- **Quickstart** (`quickstart.md`): 2 lines added, 0 removed
+- **Run prompts on a schedule** (`scheduled-tasks.md`): 2 lines added, 2 removed
+  - New section: "### Seven-day expiry"
+- **Claude Code settings** (`settings.md`): 60 lines added, 59 removed
+- **Advanced setup** (`setup.md`): 92 lines added, 10 removed
+- **Create custom subagents** (`sub-agents.md`): 42 lines added, 38 removed
+- **Tools reference** (`tools-reference.md`): 36 lines added, 36 removed
+
+### Español
+
+
+**Modified**
+
+- **Automatizar flujos de trabajo con hooks** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Referencia de hooks** (`hooks.md`): 2 lines added, 1 removed
+- **Descripción general de Claude Code** (`overview.md`): 2 lines added, 0 removed
+- **Referencia de plugins** (`plugins-reference.md`): 1 lines added, 0 removed
+- **Inicio rápido** (`quickstart.md`): 2 lines added, 0 removed
+- **Configuración avanzada** (`setup.md`): 2 lines added, 0 removed
+
+### Français
+
+
+**Modified**
+
+- **Automatiser les workflows avec les hooks** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Référence des hooks** (`hooks.md`): 2 lines added, 1 removed
+- **Aperçu de Claude Code** (`overview.md`): 2 lines added, 0 removed
+- **Référence des plugins** (`plugins-reference.md`): 1 lines added, 0 removed
+- **Démarrage rapide** (`quickstart.md`): 2 lines added, 0 removed
+- **Configuration avancée** (`setup.md`): 2 lines added, 0 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Otomatisasi alur kerja dengan hooks** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Referensi hooks** (`hooks.md`): 2 lines added, 1 removed
+- **Ikhtisar Claude Code** (`overview.md`): 2 lines added, 0 removed
+- **Referensi Plugins** (`plugins-reference.md`): 1 lines added, 0 removed
+- **Panduan Cepat** (`quickstart.md`): 2 lines added, 0 removed
+- **Pengaturan lanjutan** (`setup.md`): 2 lines added, 0 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Automatizzare i flussi di lavoro con hooks** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Riferimento dei hooks** (`hooks.md`): 2 lines added, 1 removed
+- **Panoramica di Claude Code** (`overview.md`): 2 lines added, 0 removed
+- **Riferimento dei plugin** (`plugins-reference.md`): 1 lines added, 0 removed
+- **Guida rapida** (`quickstart.md`): 2 lines added, 0 removed
+- **Configurazione avanzata** (`setup.md`): 2 lines added, 0 removed
+
+### 日本語
+
+
+**Modified**
+
+- **hooks でワークフローを自動化する** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Hooks リファレンス** (`hooks.md`): 2 lines added, 1 removed
+- **Claude Code の概要** (`overview.md`): 2 lines added, 0 removed
+- **プラグインリファレンス** (`plugins-reference.md`): 1 lines added, 0 removed
+- **クイックスタート** (`quickstart.md`): 2 lines added, 0 removed
+- **高度なセットアップ** (`setup.md`): 2 lines added, 0 removed
+
+### 한국어
+
+
+**Modified**
+
+- **hooks를 사용하여 워크플로우 자동화** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Hooks 참조** (`hooks.md`): 2 lines added, 1 removed
+- **Claude Code 개요** (`overview.md`): 2 lines added, 0 removed
+- **플러그인 참조** (`plugins-reference.md`): 1 lines added, 0 removed
+- **빠른 시작** (`quickstart.md`): 2 lines added, 0 removed
+- **고급 설정** (`setup.md`): 2 lines added, 0 removed
+
+### Português
+
+
+**Modified**
+
+- **Automatizar fluxos de trabalho com hooks** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Referência de hooks** (`hooks.md`): 2 lines added, 1 removed
+- **Visão geral do Claude Code** (`overview.md`): 2 lines added, 0 removed
+- **Referência de plugins** (`plugins-reference.md`): 1 lines added, 0 removed
+- **Guia de Início Rápido** (`quickstart.md`): 2 lines added, 0 removed
+- **Configuração avançada** (`setup.md`): 2 lines added, 0 removed
+
+### Русский
+
+
+**Modified**
+
+- **Автоматизация рабочих процессов с помощью hooks** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Справочник по hooks** (`hooks.md`): 2 lines added, 1 removed
+- **Обзор Claude Code** (`overview.md`): 2 lines added, 0 removed
+- **Справочник по плагинам** (`plugins-reference.md`): 1 lines added, 0 removed
+- **Быстрый старт** (`quickstart.md`): 2 lines added, 0 removed
+- **Расширенная настройка** (`setup.md`): 2 lines added, 0 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **使用 hooks 自动化工作流** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Hooks 参考** (`hooks.md`): 2 lines added, 1 removed
+- **Claude Code 概述** (`overview.md`): 2 lines added, 0 removed
+- **Plugins 参考** (`plugins-reference.md`): 1 lines added, 0 removed
+- **快速开始** (`quickstart.md`): 2 lines added, 0 removed
+- **高级设置** (`setup.md`): 2 lines added, 0 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **使用 hooks 自動化工作流程** (`hooks-guide.md`): 1 lines added, 0 removed
+- **Hooks 參考** (`hooks.md`): 2 lines added, 1 removed
+- **Claude Code 概述** (`overview.md`): 2 lines added, 0 removed
+- **Plugins 參考** (`plugins-reference.md`): 1 lines added, 0 removed
+- **快速入門** (`quickstart.md`): 2 lines added, 0 removed
+- **進階設定** (`setup.md`): 2 lines added, 0 removed
+
+---
+
 ## 2026-04-01
 
 22 pages modified
