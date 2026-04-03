@@ -43,7 +43,7 @@ Si sus dispositivos están inscritos en una solución MDM o de administración d
   <Step title="Definir su configuración">
     Agregue su configuración como JSON. Todas las [configuraciones disponibles en `settings.json`](/es/settings#available-settings) son compatibles, incluidos [hooks](/es/hooks), [variables de entorno](/es/env-vars) y [configuraciones solo administradas](/es/permissions#managed-only-settings) como `allowManagedPermissionRulesOnly`.
 
-    Este ejemplo aplica una lista de denegación de permisos e impide que los usuarios omitan permisos:
+    Este ejemplo aplica una lista de denegación de permisos, impide que los usuarios omitan permisos y restringe las reglas de permisos a las definidas en la configuración administrada:
 
     ```json  theme={null}
     {
@@ -55,7 +55,8 @@ Si sus dispositivos están inscritos en una solución MDM o de administración d
           "Read(./secrets/**)"
         ],
         "disableBypassPermissionsMode": "disable"
-      }
+      },
+      "allowManagedPermissionRulesOnly": true
     }
     ```
 
@@ -113,6 +114,10 @@ Los siguientes roles pueden administrar la configuración administrada por servi
 
 Restrinja el acceso al personal de confianza, ya que los cambios de configuración se aplican a todos los usuarios de la organización.
 
+### Configuraciones solo administradas
+
+La mayoría de las [claves de configuración](/es/settings#available-settings) funcionan en cualquier ámbito. Un puñado de claves solo se leen de la configuración administrada y no tienen efecto cuando se colocan en archivos de configuración de usuario o proyecto. Consulte [configuraciones solo administradas](/es/permissions#managed-only-settings) para obtener la lista completa. Cualquier configuración que no esté en esa lista aún puede colocarse en la configuración administrada y tiene la precedencia más alta.
+
 ### Limitaciones actuales
 
 La configuración administrada por servidor tiene las siguientes limitaciones durante el período beta:
@@ -124,7 +129,11 @@ La configuración administrada por servidor tiene las siguientes limitaciones du
 
 ### Precedencia de configuración
 
-La configuración administrada por servidor y la [configuración administrada por endpoint](/es/settings#settings-files) ocupan el nivel más alto en la [jerarquía de configuración](/es/settings#settings-precedence) de Claude Code. Ningún otro nivel de configuración puede anularlas, incluidos los argumentos de línea de comandos. Cuando ambas están presentes, la configuración administrada por servidor tiene prioridad y la configuración administrada por endpoint no se utiliza.
+La configuración administrada por servidor y la [configuración administrada por endpoint](/es/settings#settings-files) ocupan el nivel más alto en la [jerarquía de configuración](/es/settings#settings-precedence) de Claude Code. Ningún otro nivel de configuración puede anularlas, incluidos los argumentos de línea de comandos.
+
+Dentro del nivel administrado, la primera fuente que entrega una configuración no vacía gana. La configuración administrada por servidor se verifica primero, luego la configuración administrada por endpoint. Las fuentes no se fusionan: si la configuración administrada por servidor entrega alguna clave, la configuración administrada por endpoint se ignora completamente. Si la configuración administrada por servidor no entrega nada, se aplica la configuración administrada por endpoint.
+
+Si borra su configuración administrada por servidor en la consola de administración con la intención de volver a una política plist administrada por endpoint o de registro, tenga en cuenta que la [configuración en caché](#fetch-and-caching-behavior) persiste en máquinas cliente hasta la siguiente obtención exitosa. Ejecute `/status` para ver qué fuente administrada está activa.
 
 ### Comportamiento de obtención y almacenamiento en caché
 

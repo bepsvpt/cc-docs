@@ -30,22 +30,22 @@ As regras são avaliadas em ordem: **deny -> ask -> allow**. A primeira regra co
 
 ## Modos de permissão
 
-Claude Code suporta vários modos de permissão que controlam como as ferramentas são aprovadas. Veja [Modos de permissão](/pt/permission-modes) para quando usar cada um. Defina o `defaultMode` em seus [arquivos de configuração](/pt/settings#settings-files):
+Claude Code suporta vários modos de permissão que controlam como as ferramentas são aprovadas. Veja [Permission modes](/pt/permission-modes) para quando usar cada um. Defina o `defaultMode` em seus [arquivos de configuração](/pt/settings#settings-files):
 
 | Modo                | Descrição                                                                                                                                                                                       |
 | :------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `default`           | Comportamento padrão: solicita permissão no primeiro uso de cada ferramenta                                                                                                                     |
-| `acceptEdits`       | Aceita automaticamente permissões de edição de arquivo para a sessão                                                                                                                            |
+| `acceptEdits`       | Aceita automaticamente permissões de edição de arquivo para a sessão, exceto escritas em diretórios protegidos                                                                                  |
 | `plan`              | Plan Mode: Claude pode analisar mas não modificar arquivos ou executar comandos                                                                                                                 |
 | `auto`              | Aprova automaticamente chamadas de ferramentas com verificações de segurança em segundo plano que verificam se as ações se alinham com sua solicitação. Atualmente uma visualização de pesquisa |
 | `dontAsk`           | Nega automaticamente ferramentas a menos que pré-aprovadas via `/permissions` ou regras `permissions.allow`                                                                                     |
 | `bypassPermissions` | Ignora prompts de permissão exceto para escritas em diretórios protegidos (veja aviso abaixo)                                                                                                   |
 
 <Warning>
-  O modo `bypassPermissions` ignora prompts de permissão. Escritas em diretórios `.git`, `.claude`, `.vscode` e `.idea` ainda solicitam confirmação para evitar corrupção acidental do estado do repositório e configuração local. Escritas em `.claude/commands`, `.claude/agents` e `.claude/skills` são isentas e não solicitam, porque Claude rotineiramente escreve lá ao criar skills, subagents e comandos. Use este modo apenas em ambientes isolados como contêineres ou VMs onde Claude Code não pode causar danos. Administradores podem impedir este modo definindo `disableBypassPermissionsMode` como `"disable"` em [configurações gerenciadas](#managed-settings).
+  O modo `bypassPermissions` ignora prompts de permissão. Escritas em diretórios `.git`, `.claude`, `.vscode`, `.idea` e `.husky` ainda solicitam confirmação para evitar corrupção acidental do estado do repositório, configuração do editor e git hooks. Escritas em `.claude/commands`, `.claude/agents` e `.claude/skills` são isentas e não solicitam, porque Claude rotineiramente escreve lá ao criar skills, subagents e comandos. Use este modo apenas em ambientes isolados como contêineres ou VMs onde Claude Code não pode causar danos. Administradores podem impedir este modo definindo `permissions.disableBypassPermissionsMode` como `"disable"` em [configurações gerenciadas](#managed-settings).
 </Warning>
 
-Para evitar que o modo `bypassPermissions` ou `auto` seja usado, defina `permissions.disableBypassPermissionsMode` ou `disableAutoMode` como `"disable"` em qualquer [arquivo de configuração](/pt/settings#settings-files). Estes são mais úteis em [configurações gerenciadas](#managed-settings) onde não podem ser substituídos.
+Para evitar que o modo `bypassPermissions` ou `auto` seja usado, defina `permissions.disableBypassPermissionsMode` ou `permissions.disableAutoMode` como `"disable"` em qualquer [arquivo de configuração](/pt/settings#settings-files). Estes são mais úteis em [configurações gerenciadas](#managed-settings) onde não podem ser substituídos.
 
 ## Sintaxe de regra de permissão
 
@@ -214,6 +214,24 @@ Por padrão, Claude tem acesso a arquivos no diretório onde foi iniciado. Você
 
 Arquivos em diretórios adicionais seguem as mesmas regras de permissão do diretório de trabalho original: eles se tornam legíveis sem prompts, e as permissões de edição de arquivo seguem o modo de permissão atual.
 
+### Diretórios adicionais concedem acesso a arquivos, não configuração
+
+Adicionar um diretório estende onde Claude pode ler e editar arquivos. Não faz desse diretório uma raiz de configuração completa: a maioria da configuração `.claude/` não é descoberta de diretórios adicionais, embora alguns tipos sejam carregados como exceções.
+
+Os seguintes tipos de configuração são carregados de diretórios `--add-dir`:
+
+| Configuração                                        | Carregado de `--add-dir`                                                     |
+| :-------------------------------------------------- | :--------------------------------------------------------------------------- |
+| [Skills](/pt/skills) em `.claude/skills/`           | Sim, com recarga ao vivo                                                     |
+| Configurações de plugin em `.claude/settings.json`  | Apenas `enabledPlugins` e `extraKnownMarketplaces`                           |
+| Arquivos [CLAUDE.md](/pt/memory) e `.claude/rules/` | Apenas quando `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` está definido |
+
+Tudo mais, incluindo subagents, comandos, estilos de saída, hooks e outras configurações, é descoberto apenas do diretório de trabalho atual e seus pais, seu diretório de usuário em `~/.claude/` e configurações gerenciadas. Para compartilhar essa configuração entre projetos, use uma destas abordagens:
+
+* **Configuração em nível de usuário**: coloque arquivos em `~/.claude/agents/`, `~/.claude/output-styles/` ou `~/.claude/settings.json` para torná-los disponíveis em cada projeto
+* **Plugins**: empacote e distribua configuração como um [plugin](/pt/plugins) que as equipes podem instalar
+* **Inicie do diretório de configuração**: execute Claude Code do diretório contendo a configuração `.claude/` que você deseja
+
 ## Como as permissões interagem com sandboxing
 
 Permissões e [sandboxing](/pt/sandboxing) são camadas de segurança complementares:
@@ -234,21 +252,32 @@ Para organizações que precisam de controle centralizado sobre a configuração
 
 ### Configurações apenas gerenciadas
 
-Algumas configurações são efetivas apenas em configurações gerenciadas:
+As seguintes configurações são lidas apenas de configurações gerenciadas. Colocá-las em arquivos de configuração de usuário ou projeto não tem efeito.
 
-| Configuração                                   | Descrição                                                                                                                                                                                                                                                        |
-| :--------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `allowManagedPermissionRulesOnly`              | Quando `true`, impede que configurações de usuário e projeto definam regras de permissão `allow`, `ask` ou `deny`. Apenas regras em configurações gerenciadas se aplicam                                                                                         |
-| `allowManagedHooksOnly`                        | Quando `true`, impede o carregamento de hooks de usuário, projeto e plugin. Apenas hooks gerenciados e hooks SDK são permitidos                                                                                                                                  |
-| `allowManagedMcpServersOnly`                   | Quando `true`, apenas `allowedMcpServers` de configurações gerenciadas são respeitados. `deniedMcpServers` ainda se mescla de todas as fontes. Veja [Configuração MCP gerenciada](/pt/mcp#managed-mcp-configuration)                                             |
-| `blockedMarketplaces`                          | Lista de bloqueio de fontes de marketplace. Fontes bloqueadas são verificadas antes do download, portanto nunca tocam o sistema de arquivos. Veja [restrições de marketplace gerenciadas](/pt/plugin-marketplaces#managed-marketplace-restrictions)              |
-| `sandbox.network.allowManagedDomainsOnly`      | Quando `true`, apenas `allowedDomains` e regras allow `WebFetch(domain:...)` de configurações gerenciadas são respeitados. Domínios não permitidos são bloqueados automaticamente sem solicitar ao usuário. Domínios negados ainda se mesclam de todas as fontes |
-| `sandbox.filesystem.allowManagedReadPathsOnly` | Quando `true`, apenas caminhos `allowRead` de configurações gerenciadas são respeitados. Entradas `allowRead` de configurações de usuário, projeto e local são ignoradas                                                                                         |
-| `strictKnownMarketplaces`                      | Controla quais marketplaces de plugin os usuários podem adicionar. Veja [restrições de marketplace gerenciadas](/pt/plugin-marketplaces#managed-marketplace-restrictions)                                                                                        |
+| Configuração                                   | Descrição                                                                                                                                                                                                                                                                                 |
+| :--------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `allowedChannelPlugins`                        | Lista de permissão de plugins de canal que podem enviar mensagens. Substitui a lista de permissão padrão da Anthropic quando definida. Requer `channelsEnabled: true`. Veja [Restringir quais plugins de canal podem ser executados](/pt/channels#restrict-which-channel-plugins-can-run) |
+| `allowManagedHooksOnly`                        | Quando `true`, impede o carregamento de hooks de usuário, projeto e plugin. Apenas hooks gerenciados e hooks SDK são permitidos                                                                                                                                                           |
+| `allowManagedMcpServersOnly`                   | Quando `true`, apenas `allowedMcpServers` de configurações gerenciadas são respeitados. `deniedMcpServers` ainda se mescla de todas as fontes. Veja [Configuração MCP gerenciada](/pt/mcp#managed-mcp-configuration)                                                                      |
+| `allowManagedPermissionRulesOnly`              | Quando `true`, impede que configurações de usuário e projeto definam regras de permissão `allow`, `ask` ou `deny`. Apenas regras em configurações gerenciadas se aplicam                                                                                                                  |
+| `blockedMarketplaces`                          | Lista de bloqueio de fontes de marketplace. Fontes bloqueadas são verificadas antes do download, portanto nunca tocam o sistema de arquivos. Veja [restrições de marketplace gerenciadas](/pt/plugin-marketplaces#managed-marketplace-restrictions)                                       |
+| `channelsEnabled`                              | Permitir [channels](/pt/channels) para usuários Team e Enterprise. Não definido ou `false` bloqueia entrega de mensagem de canal independentemente do que os usuários passam para `--channels`                                                                                            |
+| `pluginTrustMessage`                           | Mensagem personalizada anexada ao aviso de confiança de plugin mostrado antes da instalação                                                                                                                                                                                               |
+| `sandbox.filesystem.allowManagedReadPathsOnly` | Quando `true`, apenas caminhos `filesystem.allowRead` de configurações gerenciadas são respeitados. `denyRead` ainda se mescla de todas as fontes                                                                                                                                         |
+| `sandbox.network.allowManagedDomainsOnly`      | Quando `true`, apenas `allowedDomains` e regras allow `WebFetch(domain:...)` de configurações gerenciadas são respeitados. Domínios não permitidos são bloqueados automaticamente sem solicitar ao usuário. Domínios negados ainda se mesclam de todas as fontes                          |
+| `strictKnownMarketplaces`                      | Controla quais marketplaces de plugin os usuários podem adicionar. Veja [restrições de marketplace gerenciadas](/pt/plugin-marketplaces#managed-marketplace-restrictions)                                                                                                                 |
+
+`disableBypassPermissionsMode` é tipicamente colocado em configurações gerenciadas para impor política organizacional, mas funciona de qualquer escopo. Um usuário pode defini-lo em suas próprias configurações para se bloquear do modo bypass.
 
 <Note>
   O acesso a [Remote Control](/pt/remote-control) e [sessões web](/pt/claude-code-on-the-web) não é controlado por uma chave de configurações gerenciadas. Em planos Team e Enterprise, um admin ativa ou desativa esses recursos em [configurações de admin do Claude Code](https://claude.ai/admin-settings/claude-code).
 </Note>
+
+## Revisar negações do modo auto
+
+Quando o [modo auto](/pt/permission-modes#eliminate-prompts-with-auto-mode) nega uma chamada de ferramenta, uma notificação aparece e a ação negada é registrada em `/permissions` sob a aba Recently denied. Pressione `r` em uma ação negada para marcá-la para retry: quando você sair do diálogo, Claude Code envia uma mensagem dizendo ao modelo que pode tentar novamente essa chamada de ferramenta e retoma a conversa.
+
+Para reagir a negações programaticamente, use o hook [`PermissionDenied`](/pt/hooks#permissiondenied).
 
 ## Configurar o classificador do modo auto
 
@@ -377,8 +406,8 @@ Este [repositório](https://github.com/anthropics/claude-code/tree/main/examples
 
 ## Veja também
 
-* [Configurações](/pt/settings): referência de configuração completa incluindo a tabela de configurações de permissão
+* [Settings](/pt/settings): referência de configuração completa incluindo a tabela de configurações de permissão
 * [Sandboxing](/pt/sandboxing): isolamento de rede e sistema de arquivos em nível de SO para comandos Bash
-* [Autenticação](/pt/authentication): configure o acesso do usuário ao Claude Code
-* [Segurança](/pt/security): salvaguardas de segurança e melhores práticas
+* [Authentication](/pt/authentication): configure o acesso do usuário ao Claude Code
+* [Security](/pt/security): salvaguardas de segurança e melhores práticas
 * [Hooks](/pt/hooks-guide): automatize fluxos de trabalho e estenda avaliação de permissão

@@ -43,7 +43,7 @@ Claude Code 支持两种集中配置方法。服务器管理的设置从 Anthrop
   <Step title="定义您的设置">
     将您的配置添加为 JSON。支持 [`settings.json` 中可用的所有设置](/zh-CN/settings#available-settings)，包括 [hooks](/zh-CN/hooks)、[环境变量](/zh-CN/env-vars) 和[仅限托管的设置](/zh-CN/permissions#managed-only-settings)，如 `allowManagedPermissionRulesOnly`。
 
-    此示例强制执行权限拒绝列表并防止用户绕过权限：
+    此示例强制执行权限拒绝列表，防止用户绕过权限，并将权限规则限制为在托管设置中定义的规则：
 
     ```json  theme={null}
     {
@@ -55,7 +55,8 @@ Claude Code 支持两种集中配置方法。服务器管理的设置从 Anthrop
           "Read(./secrets/**)"
         ],
         "disableBypassPermissionsMode": "disable"
-      }
+      },
+      "allowManagedPermissionRulesOnly": true
     }
     ```
 
@@ -113,6 +114,10 @@ Claude Code 支持两种集中配置方法。服务器管理的设置从 Anthrop
 
 限制对受信任人员的访问，因为设置更改适用于组织中的所有用户。
 
+### 仅限托管的设置
+
+大多数[设置键](/zh-CN/settings#available-settings)可在任何范围内工作。少数几个键仅从托管设置中读取，当放置在用户或项目设置文件中时无效。有关完整列表，请参阅[仅限托管的设置](/zh-CN/permissions#managed-only-settings)。任何不在该列表上的设置仍然可以放置在托管设置中，并具有最高优先级。
+
 ### 当前限制
 
 服务器管理的设置在测试版期间有以下限制：
@@ -124,7 +129,11 @@ Claude Code 支持两种集中配置方法。服务器管理的设置从 Anthrop
 
 ### 设置优先级
 
-服务器管理的设置和[端点管理的设置](/zh-CN/settings#settings-files)都占据 Claude Code [设置层次结构](/zh-CN/settings#settings-precedence)中的最高层。没有其他设置级别可以覆盖它们，包括命令行参数。当两者都存在时，服务器管理的设置优先，端点管理的设置不被使用。
+服务器管理的设置和[端点管理的设置](/zh-CN/settings#settings-files)都占据 Claude Code [设置层次结构](/zh-CN/settings#settings-precedence)中的最高层。没有其他设置级别可以覆盖它们，包括命令行参数。
+
+在托管层内，首先传递非空配置的源获胜。首先检查服务器管理的设置，然后检查端点管理的设置。源不合并：如果服务器管理的设置传递任何键，端点管理的设置将被完全忽略。如果服务器管理的设置不传递任何内容，端点管理的设置将应用。
+
+如果您清除管理控制台中的服务器管理配置，意图回退到端点管理的 plist 或注册表策略，请注意[缓存的设置](#fetch-and-caching-behavior)在客户端机器上持久化，直到下次成功获取。运行 `/status` 查看哪个托管源处于活动状态。
 
 ### 获取和缓存行为
 

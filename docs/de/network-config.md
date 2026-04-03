@@ -86,7 +86,14 @@ Claude Code benötigt Zugriff auf die folgenden URLs:
 
 Stellen Sie sicher, dass diese URLs in Ihrer Proxy-Konfiguration und Firewall-Regeln auf die Allowlist gesetzt sind. Dies ist besonders wichtig, wenn Sie Claude Code in containerisierten oder eingeschränkten Netzwerkumgebungen verwenden.
 
+Der native Installer und Aktualisierungsprüfungen erfordern auch die folgenden URLs. Setzen Sie beide auf die Allowlist, da der Installer und der Auto-Updater von `storage.googleapis.com` abrufen, während Plugin-Downloads `downloads.claude.ai` verwenden. Wenn Sie Claude Code über npm installieren oder Ihre eigene Binärverteilung verwalten, benötigen Endbenutzer möglicherweise keinen Zugriff:
+
+* `storage.googleapis.com`: Download-Bucket für die Claude Code-Binärdatei und den Auto-Updater
+* `downloads.claude.ai`: CDN, das das Installationsskript, Versionszeiger, Manifeste, Signaturschlüssel und ausführbare Plugin-Dateien hostet
+
 [Claude Code im Web](/de/claude-code-on-the-web) und [Code Review](/de/code-review) verbinden sich von der von Anthropic verwalteten Infrastruktur aus mit Ihren Repositories. Wenn Ihre GitHub Enterprise Cloud-Organisation den Zugriff nach IP-Adresse einschränkt, aktivieren Sie [IP-Allowlist-Vererbung für installierte GitHub Apps](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps). Die Claude GitHub App registriert ihre IP-Bereiche, sodass die Aktivierung dieser Einstellung den Zugriff ohne manuelle Konfiguration ermöglicht. Um [die Bereiche stattdessen manuell zu Ihrer Allowlist hinzuzufügen](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address) oder um andere Firewalls zu konfigurieren, siehe [Anthropic API IP-Adressen](https://platform.claude.com/docs/en/api/ip-addresses).
+
+Für selbstgehostete [GitHub Enterprise Server](/de/github-enterprise-server)-Instanzen hinter einer Firewall müssen Sie die gleichen [Anthropic API IP-Adressen](https://platform.claude.com/docs/en/api/ip-addresses) auf die Allowlist setzen, damit die Anthropic-Infrastruktur Ihren GHES-Host erreichen kann, um Repositories zu klonen und Review-Kommentare zu posten.
 
 ## Zusätzliche Ressourcen
 

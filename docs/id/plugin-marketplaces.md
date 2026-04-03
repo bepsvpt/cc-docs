@@ -557,6 +557,10 @@ Anda juga dapat menentukan plugin mana yang harus diaktifkan secara default:
 
 Untuk opsi konfigurasi lengkap, lihat [Plugin settings](/id/settings#plugin-settings).
 
+<Note>
+  Jika Anda menggunakan sumber `directory` atau `file` lokal dengan jalur relatif, jalur diselesaikan terhadap checkout utama repositori Anda. Ketika Anda menjalankan Claude Code dari git worktree, jalur masih menunjuk ke checkout utama, jadi semua worktrees berbagi lokasi marketplace yang sama. Status marketplace disimpan sekali per pengguna di `~/.claude/plugins/known_marketplaces.json`, bukan per proyek.
+</Note>
+
 ### Pra-isi plugin untuk container
 
 Untuk image container dan lingkungan CI, Anda dapat pra-isi direktori plugin saat waktu build sehingga Claude Code dimulai dengan marketplace dan plugin yang sudah tersedia, tanpa mengklon apa pun saat runtime. Atur variabel lingkungan `CLAUDE_CODE_PLUGIN_SEED_DIR` untuk menunjuk ke direktori ini.
@@ -627,7 +631,7 @@ Izinkan marketplace tertentu saja:
 }
 ```
 
-Izinkan semua marketplace dari server git internal menggunakan pencocokan pola regex pada host:
+Izinkan semua marketplace dari server git internal menggunakan pencocokan pola regex pada host. Ini adalah pendekatan yang direkomendasikan untuk [GitHub Enterprise Server](/id/github-enterprise-server#plugin-marketplaces-on-ghes) atau instance GitLab yang dihosting sendiri:
 
 ```json  theme={null}
 {
@@ -849,7 +853,21 @@ Untuk pembaruan otomatis latar belakang:
 * Untuk GitLab, pastikan token memiliki setidaknya scope `read_repository`
 * Verifikasi token belum kedaluwarsa
 
-### Operasi Git habis waktu
+### Marketplace updates fail in offline environments
+
+**Gejala**: Marketplace `git pull` gagal dan Claude Code menghapus cache yang ada, menyebabkan plugin menjadi tidak tersedia.
+
+**Penyebab**: Secara default, ketika `git pull` gagal, Claude Code menghapus klon yang sudah usang dan mencoba mengklon ulang. Di lingkungan offline atau airgapped, mengklon ulang gagal dengan cara yang sama, meninggalkan direktori marketplace kosong.
+
+**Solusi**: Atur `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` untuk menyimpan cache yang ada ketika pull gagal alih-alih menghapusnya:
+
+```bash  theme={null}
+export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
+```
+
+Dengan variabel ini diatur, Claude Code mempertahankan klon marketplace yang sudah usang pada kegagalan `git pull` dan terus menggunakan status terakhir yang diketahui baik. Untuk deployment yang sepenuhnya offline di mana repositori tidak akan pernah dapat dijangkau, gunakan [`CLAUDE_CODE_PLUGIN_SEED_DIR`](#pre-populate-plugins-for-containers) untuk pra-isi direktori plugin saat waktu build sebagai gantinya.
+
+### Git operations time out
 
 **Gejala**: Instalasi plugin atau pembaruan marketplace gagal dengan kesalahan timeout seperti "Git clone timed out after 120s" atau "Git pull timed out after 120s".
 
@@ -861,7 +879,7 @@ Untuk pembaruan otomatis latar belakang:
 export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000  # 5 minutes
 ```
 
-### Plugin dengan jalur relatif gagal di marketplace berbasis URL
+### Plugins with relative paths fail in URL-based marketplaces
 
 **Gejala**: Menambahkan marketplace melalui URL (seperti `https://example.com/marketplace.json`), tetapi plugin dengan sumber jalur relatif seperti `"./plugins/my-plugin"` gagal dipasang dengan kesalahan "path not found".
 
@@ -875,7 +893,7 @@ export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000  # 5 minutes
   ```
 * **Gunakan marketplace berbasis Git**: Host marketplace Anda di repositori Git dan tambahkan dengan URL git. Marketplace berbasis Git mengklon seluruh repositori, membuat jalur relatif berfungsi dengan benar.
 
-### File tidak ditemukan setelah instalasi
+### Files not found after installation
 
 **Gejala**: Plugin dipasang tetapi referensi ke file gagal, terutama file di luar direktori plugin
 

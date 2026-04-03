@@ -27,7 +27,7 @@ Claude Code tiene dos sistemas de memoria complementarios. Ambos se cargan al in
 | **Quién lo escribe** | Usted                                                                    | Claude                                                                               |
 | **Qué contiene**     | Instrucciones y reglas                                                   | Aprendizajes y patrones                                                              |
 | **Alcance**          | Proyecto, usuario u organización                                         | Por worktree                                                                         |
-| **Se carga en**      | Cada sesión                                                              | Cada sesión (primeras 200 líneas)                                                    |
+| **Se carga en**      | Cada sesión                                                              | Cada sesión (primeras 200 líneas o 25KB)                                             |
 | **Usar para**        | Estándares de codificación, flujos de trabajo, arquitectura del proyecto | Comandos de compilación, información de depuración, preferencias que Claude descubre |
 
 Use archivos CLAUDE.md cuando quiera guiar el comportamiento de Claude. Auto memory permite que Claude aprenda de sus correcciones sin esfuerzo manual.
@@ -59,12 +59,12 @@ Un CLAUDE.md de proyecto puede almacenarse en `./CLAUDE.md` o `./.claude/CLAUDE.
 <Tip>
   Ejecute `/init` para generar un CLAUDE.md inicial automáticamente. Claude analiza su base de código y crea un archivo con comandos de compilación, instrucciones de prueba y convenciones de proyecto que descubre. Si ya existe un CLAUDE.md, `/init` sugiere mejoras en lugar de sobrescribirlo. Refine desde allí con instrucciones que Claude no descubriría por sí solo.
 
-  Establezca `CLAUDE_CODE_NEW_INIT=true` para habilitar un flujo interactivo de múltiples fases. `/init` pregunta qué artefactos configurar: archivos CLAUDE.md, skills y hooks. Luego explora su base de código con un subagent, llena los vacíos mediante preguntas de seguimiento y presenta una propuesta revisable antes de escribir cualquier archivo.
+  Establezca `CLAUDE_CODE_NEW_INIT=1` para habilitar un flujo interactivo de múltiples fases. `/init` pregunta qué artefactos configurar: archivos CLAUDE.md, skills y hooks. Luego explora su base de código con un subagent, llena los vacíos mediante preguntas de seguimiento y presenta una propuesta revisable antes de escribir cualquier archivo.
 </Tip>
 
 ### Escriba instrucciones efectivas
 
-Los archivos CLAUDE.md se cargan en la ventana de contexto al inicio de cada sesión, consumiendo tokens junto con su conversación. Debido a que son contexto en lugar de configuración forzada, cómo escribe las instrucciones afecta qué tan confiablemente Claude las sigue. Las instrucciones específicas, concisas y bien estructuradas funcionan mejor.
+Los archivos CLAUDE.md se cargan en la ventana de contexto al inicio de cada sesión, consumiendo tokens junto con su conversación. La [visualización de la ventana de contexto](/es/context-window) muestra dónde se carga CLAUDE.md en relación con el resto del contexto de inicio. Debido a que son contexto en lugar de configuración forzada, cómo escribe las instrucciones afecta qué tan confiablemente Claude las sigue. Las instrucciones específicas, concisas y bien estructuradas funcionan mejor.
 
 **Tamaño**: apunte a menos de 200 líneas por archivo CLAUDE.md. Los archivos más largos consumen más contexto y reducen la adherencia. Si sus instrucciones están creciendo mucho, divídalas usando [importaciones](#import-additional-files) o archivos [`.claude/rules/`](#organize-rules-with-claude/rules/).
 
@@ -327,9 +327,9 @@ Auto memory es local de la máquina. Todos los worktrees y subdirectorios dentro
 
 ### Cómo funciona
 
-Las primeras 200 líneas de `MEMORY.md` se cargan al inicio de cada conversación. El contenido más allá de la línea 200 no se carga al inicio de la sesión. Claude mantiene `MEMORY.md` conciso moviendo notas detalladas a archivos de tema separados.
+Las primeras 200 líneas de `MEMORY.md`, o los primeros 25KB, lo que sea menor, se cargan al inicio de cada conversación. El contenido más allá de ese umbral no se carga al inicio de la sesión. Claude mantiene `MEMORY.md` conciso moviendo notas detalladas a archivos de tema separados.
 
-Este límite de 200 líneas se aplica solo a `MEMORY.md`. Los archivos CLAUDE.md se cargan completamente independientemente de la longitud, aunque los archivos más cortos producen mejor adherencia.
+Este límite se aplica solo a `MEMORY.md`. Los archivos CLAUDE.md se cargan completamente independientemente de la longitud, aunque los archivos más cortos producen mejor adherencia.
 
 Los archivos de tema como `debugging.md` o `patterns.md` no se cargan al iniciar. Claude los lee bajo demanda usando sus herramientas de archivo estándar cuando necesita la información.
 

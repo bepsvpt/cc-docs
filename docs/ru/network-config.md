@@ -86,7 +86,14 @@ Claude Code требует доступ к следующим URL:
 
 Убедитесь, что эти URL добавлены в белый список в конфигурации прокси и правилах брандмауэра. Это особенно важно при использовании Claude Code в контейнеризованных или ограниченных сетевых средах.
 
+Встроенный установщик и проверки обновлений также требуют доступ к следующим URL. Добавьте оба в белый список, так как установщик и автоматический обновляющий модуль загружают из `storage.googleapis.com`, а загрузки плагинов используют `downloads.claude.ai`. Если вы устанавливаете Claude Code через npm или управляете собственным распределением бинарных файлов, конечным пользователям может не потребоваться доступ:
+
+* `storage.googleapis.com`: бакет загрузок для бинарного файла Claude Code и автоматического обновляющего модуля
+* `downloads.claude.ai`: CDN, размещающий скрипт установки, указатели версий, манифесты, ключи подписи и исполняемые файлы плагинов
+
 [Claude Code в веб-версии](/ru/claude-code-on-the-web) и [Code Review](/ru/code-review) подключаются к вашим репозиториям из управляемой Anthropic инфраструктуры. Если ваша организация GitHub Enterprise Cloud ограничивает доступ по IP-адресу, включите [наследование списка разрешенных IP для установленных GitHub Apps](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps). GitHub App Claude регистрирует свои диапазоны IP, поэтому включение этого параметра позволяет получить доступ без ручной конфигурации. Чтобы [добавить диапазоны в список разрешенных вручную](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address) вместо этого, или для настройки других брандмауэров, см. [IP-адреса Anthropic API](https://platform.claude.com/docs/en/api/ip-addresses).
+
+Для самостоятельно размещаемых экземпляров [GitHub Enterprise Server](/ru/github-enterprise-server) за брандмауэром добавьте в белый список те же [IP-адреса Anthropic API](https://platform.claude.com/docs/en/api/ip-addresses), чтобы инфраструктура Anthropic могла достичь вашего хоста GHES для клонирования репозиториев и публикации комментариев к рецензиям.
 
 ## Дополнительные ресурсы
 

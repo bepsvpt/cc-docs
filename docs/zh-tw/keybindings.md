@@ -51,7 +51,7 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 | `Global`          | 在應用程式的任何地方適用         |
 | `Chat`            | 主聊天輸入區域              |
 | `Autocomplete`    | 自動完成選單已開啟            |
-| `Settings`        | 設定選單（僅限 Escape 關閉）   |
+| `Settings`        | 設定選單                 |
 | `Confirmation`    | 權限和確認對話框             |
 | `Tabs`            | 標籤導覽元件               |
 | `Help`            | 說明選單可見               |
@@ -59,7 +59,7 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 | `HistorySearch`   | 歷史記錄搜尋模式 (Ctrl+R)    |
 | `Task`            | 背景工作正在執行             |
 | `ThemePicker`     | 主題選擇器對話框             |
-| `Attachments`     | 影像/附件欄導覽             |
+| `Attachments`     | 影像附件導覽在選擇對話框中        |
 | `Footer`          | 頁尾指示器導覽（工作、團隊、差異）    |
 | `MessageSelector` | 回溯和摘要對話框訊息選擇         |
 | `DiffDialog`      | 差異檢視器導覽              |
@@ -79,6 +79,7 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 | :--------------------- | :----- | :------------- |
 | `app:interrupt`        | Ctrl+C | 取消目前操作         |
 | `app:exit`             | Ctrl+D | 結束 Claude Code |
+| `app:redraw`           | Ctrl+L | 重新繪製螢幕         |
 | `app:toggleTodos`      | Ctrl+T | 切換工作清單可見性      |
 | `app:toggleTranscript` | Ctrl+O | 切換詳細文字記錄       |
 
@@ -105,7 +106,8 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 | `chat:fastMode`       | Meta+O                    | 切換快速模式    |
 | `chat:thinkingToggle` | Cmd+T / Meta+T            | 切換延伸思考    |
 | `chat:submit`         | Enter                     | 提交訊息      |
-| `chat:undo`           | Ctrl+\_                   | 復原上一個動作   |
+| `chat:newline`        | (未繫結)                     | 插入換行符而不提交 |
+| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | 復原上一個動作   |
 | `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | 在外部編輯器中開啟 |
 | `chat:stash`          | Ctrl+S                    | 暫存目前提示    |
 | `chat:imagePaste`     | Ctrl+V (Windows 上為 Alt+V) | 貼上影像      |
@@ -135,6 +137,7 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 | `confirm:next`              | Down      | 下一個選項  |
 | `confirm:nextField`         | Tab       | 下一個欄位  |
 | `confirm:previousField`     | (未繫結)     | 上一個欄位  |
+| `confirm:toggle`            | Space     | 切換選擇   |
 | `confirm:cycleMode`         | Shift+Tab | 循環權限模式 |
 | `confirm:toggleExplanation` | Ctrl+E    | 切換權限說明 |
 
@@ -150,10 +153,10 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 
 在 `Transcript` 上下文中可用的動作：
 
-| 動作                         | 預設值            | 說明       |
-| :------------------------- | :------------- | :------- |
-| `transcript:toggleShowAll` | Ctrl+E         | 切換顯示所有內容 |
-| `transcript:exit`          | Ctrl+C, Escape | 結束文字記錄檢視 |
+| 動作                         | 預設值               | 說明       |
+| :------------------------- | :---------------- | :------- |
+| `transcript:toggleShowAll` | Ctrl+E            | 切換顯示所有內容 |
+| `transcript:exit`          | q, Ctrl+C, Escape | 結束文字記錄檢視 |
 
 ### 歷史記錄搜尋動作
 
@@ -208,18 +211,20 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 | `attachments:next`     | Right             | 下一個附件   |
 | `attachments:previous` | Left              | 上一個附件   |
 | `attachments:remove`   | Backspace, Delete | 移除選定的附件 |
-| `attachments:exit`     | Down, Escape      | 結束附件欄   |
+| `attachments:exit`     | Down, Escape      | 結束附件導覽  |
 
 ### 頁尾動作
 
 在 `Footer` 上下文中可用的動作：
 
-| 動作                      | 預設值    | 說明        |
-| :---------------------- | :----- | :-------- |
-| `footer:next`           | Right  | 下一個頁尾項目   |
-| `footer:previous`       | Left   | 上一個頁尾項目   |
-| `footer:openSelected`   | Enter  | 開啟選定的頁尾項目 |
-| `footer:clearSelection` | Escape | 清除頁尾選擇    |
+| 動作                      | 預設值    | 說明                |
+| :---------------------- | :----- | :---------------- |
+| `footer:next`           | Right  | 下一個頁尾項目           |
+| `footer:previous`       | Left   | 上一個頁尾項目           |
+| `footer:up`             | Up     | 在頁尾中向上導覽（在頂部取消選擇） |
+| `footer:down`           | Down   | 在頁尾中向下導覽          |
+| `footer:openSelected`   | Enter  | 開啟選定的頁尾項目         |
+| `footer:clearSelection` | Escape | 清除頁尾選擇            |
 
 ### 訊息選擇器動作
 
@@ -280,10 +285,11 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 
 在 `Settings` 上下文中可用的動作：
 
-| 動作                | 預設值 | 說明               |
-| :---------------- | :-- | :--------------- |
-| `settings:search` | /   | 進入搜尋模式           |
-| `settings:retry`  | R   | 重試載入使用量資料（發生錯誤時） |
+| 動作                | 預設值   | 說明                          |
+| :---------------- | :---- | :-------------------------- |
+| `settings:search` | /     | 進入搜尋模式                      |
+| `settings:retry`  | R     | 重試載入使用量資料（發生錯誤時）            |
+| `settings:close`  | Enter | 儲存變更並關閉配置面板。Escape 會捨棄變更並關閉 |
 
 ### 語音動作
 
@@ -352,6 +358,25 @@ ctrl+k ctrl+s   按 Ctrl+K，放開，然後按 Ctrl+S
   ]
 }
 ```
+
+這也適用於和弦繫結。取消繫結共享前綴的每個和弦會釋放該前綴以用作單一鍵繫結：
+
+```json  theme={null}
+{
+  "bindings": [
+    {
+      "context": "Chat",
+      "bindings": {
+        "ctrl+x ctrl+k": null,
+        "ctrl+x ctrl+e": null,
+        "ctrl+x": "chat:newline"
+      }
+    }
+  ]
+}
+```
+
+如果您取消繫結前綴上的某些但不是全部和弦，按下前綴仍會進入和弦等待模式以進行剩餘的繫結。
 
 ## 保留的快捷鍵
 

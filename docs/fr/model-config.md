@@ -23,7 +23,8 @@ Les alias de modèle offrent un moyen pratique de sélectionner les paramètres 
 
 | Alias de modèle  | Comportement                                                                                                                                                                                  |
 | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`default`**    | Paramètre de modèle recommandé, selon votre type de compte                                                                                                                                    |
+| **`default`**    | Valeur spéciale qui efface tout remplacement de modèle et revient au modèle recommandé pour votre type de compte. N'est pas en soi un alias de modèle                                         |
+| **`best`**       | Utilise le modèle disponible le plus capable, actuellement équivalent à `opus`                                                                                                                |
 | **`sonnet`**     | Utilise le dernier modèle Sonnet (actuellement Sonnet 4.6) pour les tâches de codage quotidiennes                                                                                             |
 | **`opus`**       | Utilise le dernier modèle Opus (actuellement Opus 4.6) pour les tâches de raisonnement complexe                                                                                               |
 | **`haiku`**      | Utilise le modèle Haiku rapide et efficace pour les tâches simples                                                                                                                            |
@@ -83,19 +84,27 @@ Même avec `availableModels: []`, les utilisateurs peuvent toujours utiliser Cla
 
 ### Contrôler le modèle sur lequel les utilisateurs s'exécutent
 
-Pour contrôler complètement l'expérience du modèle, utilisez `availableModels` avec le paramètre `model` :
+Le paramètre `model` est une sélection initiale, pas une application. Il définit quel modèle est actif au démarrage d'une session, mais les utilisateurs peuvent toujours ouvrir `/model` et choisir Par défaut, qui se résout au système par défaut pour leur niveau indépendamment de ce que `model` est défini.
 
-* **availableModels** : restreint ce vers quoi les utilisateurs peuvent basculer
-* **model** : définit le remplacement de modèle explicite, prenant la priorité sur la valeur Par défaut
+Pour contrôler complètement l'expérience du modèle, combinez trois paramètres :
 
-Cet exemple garantit que tous les utilisateurs exécutent Sonnet 4.6 et ne peuvent choisir qu'entre Sonnet et Haiku :
+* **`availableModels`** : restreint les modèles nommés vers lesquels les utilisateurs peuvent basculer
+* **`model`** : définit la sélection de modèle initiale au démarrage d'une session
+* **`ANTHROPIC_DEFAULT_SONNET_MODEL`** / **`ANTHROPIC_DEFAULT_OPUS_MODEL`** / **`ANTHROPIC_DEFAULT_HAIKU_MODEL`** : contrôlent ce vers quoi l'option Par défaut et les alias `sonnet`, `opus` et `haiku` se résolvent
+
+Cet exemple démarre les utilisateurs sur Sonnet 4.5, limite le sélecteur à Sonnet et Haiku, et épingle Par défaut pour se résoudre à Sonnet 4.5 plutôt qu'à la dernière version :
 
 ```json  theme={null}
 {
-  "model": "sonnet",
-  "availableModels": ["sonnet", "haiku"]
+  "model": "claude-sonnet-4-5",
+  "availableModels": ["claude-sonnet-4-5", "haiku"],
+  "env": {
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-5"
+  }
 }
 ```
+
+Sans le bloc `env`, un utilisateur qui sélectionne Par défaut dans le sélecteur obtiendrait la dernière version de Sonnet, contournant l'épinglage de version dans `model` et `availableModels`.
 
 ### Comportement de fusion
 
@@ -245,6 +254,41 @@ Le suffixe `[1m]` applique la fenêtre de contexte 1M à toute utilisation de ce
 <Note>
   La liste d'autorisation `settings.availableModels` s'applique toujours lors de l'utilisation de fournisseurs tiers. Le filtrage correspond à l'alias de modèle (`opus`, `sonnet`, `haiku`), et non à l'ID de modèle spécifique au fournisseur.
 </Note>
+
+### Personnaliser l'affichage et les capacités du modèle épinglé
+
+Lorsque vous épinglez un modèle sur un fournisseur tiers, l'ID spécifique au fournisseur apparaît tel quel dans le sélecteur `/model` et Claude Code peut ne pas reconnaître les fonctionnalités que le modèle prend en charge. Vous pouvez remplacer le nom d'affichage et déclarer les capacités avec des variables d'environnement complémentaires pour chaque modèle épinglé.
+
+Ces variables ne prennent effet que sur les fournisseurs tiers tels que Bedrock, Vertex AI et Foundry. Elles n'ont aucun effet lors de l'utilisation directe de l'API Anthropic.
+
+| Variable d'environnement                              | Description                                                                                                                                |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_NAME`                   | Nom d'affichage pour le modèle Opus épinglé dans le sélecteur `/model`. Par défaut, l'ID du modèle lorsqu'il n'est pas défini              |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION`            | Description d'affichage pour le modèle Opus épinglé dans le sélecteur `/model`. Par défaut, `Custom Opus model` lorsqu'il n'est pas défini |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES` | Liste séparée par des virgules des capacités que le modèle Opus épinglé prend en charge                                                    |
+
+Les mêmes suffixes `_NAME`, `_DESCRIPTION` et `_SUPPORTED_CAPABILITIES` sont disponibles pour `ANTHROPIC_DEFAULT_SONNET_MODEL` et `ANTHROPIC_DEFAULT_HAIKU_MODEL`.
+
+Claude Code active les fonctionnalités comme les [niveaux d'effort](#adjust-effort-level) et la [réflexion étendue](/fr/common-workflows#use-extended-thinking-thinking-mode) en faisant correspondre l'ID du modèle à des modèles connus. Les ID spécifiques au fournisseur tels que les ARN Bedrock ou les noms de déploiement personnalisés ne correspondent souvent pas à ces modèles, laissant les fonctionnalités prises en charge désactivées. Définissez `_SUPPORTED_CAPABILITIES` pour indiquer à Claude Code les fonctionnalités que le modèle prend réellement en charge :
+
+| Valeur de capacité     | Active                                                                                                |
+| ---------------------- | ----------------------------------------------------------------------------------------------------- |
+| `effort`               | [Niveaux d'effort](#adjust-effort-level) et la commande `/effort`                                     |
+| `max_effort`           | Le niveau d'effort `max`                                                                              |
+| `thinking`             | [Réflexion étendue](/fr/common-workflows#use-extended-thinking-thinking-mode)                         |
+| `adaptive_thinking`    | Raisonnement adaptatif qui alloue dynamiquement la réflexion en fonction de la complexité de la tâche |
+| `interleaved_thinking` | Réflexion entre les appels d'outils                                                                   |
+
+Lorsque `_SUPPORTED_CAPABILITIES` est défini, les capacités listées sont activées et les capacités non listées sont désactivées pour le modèle épinglé correspondant. Lorsque la variable n'est pas définie, Claude Code revient à la détection intégrée basée sur l'ID du modèle.
+
+Cet exemple épingle Opus à un ARN de modèle personnalisé Bedrock, définit un nom convivial et déclare ses capacités :
+
+```bash  theme={null}
+export ANTHROPIC_DEFAULT_OPUS_MODEL='arn:aws:bedrock:us-east-1:123456789012:custom-model/abc'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_NAME='Opus via Bedrock'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION='Opus 4.6 routed through a Bedrock custom endpoint'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES='effort,max_effort,thinking,adaptive_thinking,interleaved_thinking'
+```
 
 ### Remplacer les ID de modèle par version
 

@@ -51,7 +51,7 @@ Cada bloco de vinculação especifica um **contexto** onde as vinculações se a
 | `Global`          | Aplica-se em qualquer lugar do aplicativo                 |
 | `Chat`            | Área principal de entrada de chat                         |
 | `Autocomplete`    | Menu de autocompletar está aberto                         |
-| `Settings`        | Menu de configurações (dismiss apenas com escape)         |
+| `Settings`        | Menu de configurações                                     |
 | `Confirmation`    | Diálogos de permissão e confirmação                       |
 | `Tabs`            | Componentes de navegação de abas                          |
 | `Help`            | Menu de ajuda está visível                                |
@@ -59,7 +59,7 @@ Cada bloco de vinculação especifica um **contexto** onde as vinculações se a
 | `HistorySearch`   | Modo de busca de histórico (Ctrl+R)                       |
 | `Task`            | Tarefa em segundo plano está em execução                  |
 | `ThemePicker`     | Diálogo do seletor de tema                                |
-| `Attachments`     | Navegação da barra de imagem/anexo                        |
+| `Attachments`     | Navegação de anexo de imagem em diálogos de seleção       |
 | `Footer`          | Navegação do indicador de rodapé (tarefas, equipes, diff) |
 | `MessageSelector` | Seleção de mensagem do diálogo de retrocesso e resumo     |
 | `DiffDialog`      | Navegação do visualizador de diff                         |
@@ -79,6 +79,7 @@ Ações disponíveis no contexto `Global`:
 | :--------------------- | :----- | :---------------------------------------- |
 | `app:interrupt`        | Ctrl+C | Cancelar operação atual                   |
 | `app:exit`             | Ctrl+D | Sair do Claude Code                       |
+| `app:redraw`           | Ctrl+L | Redesenhar a tela                         |
 | `app:toggleTodos`      | Ctrl+T | Alternar visibilidade da lista de tarefas |
 | `app:toggleTranscript` | Ctrl+O | Alternar transcrição detalhada            |
 
@@ -105,7 +106,8 @@ Ações disponíveis no contexto `Chat`:
 | `chat:fastMode`       | Meta+O                    | Alternar modo rápido                       |
 | `chat:thinkingToggle` | Cmd+T / Meta+T            | Alternar pensamento estendido              |
 | `chat:submit`         | Enter                     | Enviar mensagem                            |
-| `chat:undo`           | Ctrl+\_                   | Desfazer última ação                       |
+| `chat:newline`        | (desvinculado)            | Inserir uma nova linha sem enviar          |
+| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | Desfazer última ação                       |
 | `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Abrir em editor externo                    |
 | `chat:stash`          | Ctrl+S                    | Guardar prompt atual                       |
 | `chat:imagePaste`     | Ctrl+V (Alt+V no Windows) | Colar imagem                               |
@@ -135,6 +137,7 @@ Ações disponíveis no contexto `Confirmation`:
 | `confirm:next`              | Down           | Próxima opção                    |
 | `confirm:nextField`         | Tab            | Próximo campo                    |
 | `confirm:previousField`     | (desvinculado) | Campo anterior                   |
+| `confirm:toggle`            | Space          | Alternar seleção                 |
 | `confirm:cycleMode`         | Shift+Tab      | Ciclar modos de permissão        |
 | `confirm:toggleExplanation` | Ctrl+E         | Alternar explicação de permissão |
 
@@ -150,10 +153,10 @@ Ações disponíveis no contexto `Confirmation` para diálogos de permissão:
 
 Ações disponíveis no contexto `Transcript`:
 
-| Ação                       | Padrão         | Descrição                           |
-| :------------------------- | :------------- | :---------------------------------- |
-| `transcript:toggleShowAll` | Ctrl+E         | Alternar mostrar todo o conteúdo    |
-| `transcript:exit`          | Ctrl+C, Escape | Sair da visualização de transcrição |
+| Ação                       | Padrão            | Descrição                           |
+| :------------------------- | :---------------- | :---------------------------------- |
+| `transcript:toggleShowAll` | Ctrl+E            | Alternar mostrar todo o conteúdo    |
+| `transcript:exit`          | q, Ctrl+C, Escape | Sair da visualização de transcrição |
 
 ### Ações de busca de histórico
 
@@ -203,23 +206,25 @@ Ações disponíveis no contexto `Tabs`:
 
 Ações disponíveis no contexto `Attachments`:
 
-| Ação                   | Padrão            | Descrição                 |
-| :--------------------- | :---------------- | :------------------------ |
-| `attachments:next`     | Right             | Próximo anexo             |
-| `attachments:previous` | Left              | Anexo anterior            |
-| `attachments:remove`   | Backspace, Delete | Remover anexo selecionado |
-| `attachments:exit`     | Down, Escape      | Sair da barra de anexos   |
+| Ação                   | Padrão            | Descrição                   |
+| :--------------------- | :---------------- | :-------------------------- |
+| `attachments:next`     | Right             | Próximo anexo               |
+| `attachments:previous` | Left              | Anexo anterior              |
+| `attachments:remove`   | Backspace, Delete | Remover anexo selecionado   |
+| `attachments:exit`     | Down, Escape      | Sair da navegação de anexos |
 
 ### Ações de rodapé
 
 Ações disponíveis no contexto `Footer`:
 
-| Ação                    | Padrão | Descrição                        |
-| :---------------------- | :----- | :------------------------------- |
-| `footer:next`           | Right  | Próximo item do rodapé           |
-| `footer:previous`       | Left   | Item anterior do rodapé          |
-| `footer:openSelected`   | Enter  | Abrir item do rodapé selecionado |
-| `footer:clearSelection` | Escape | Limpar seleção do rodapé         |
+| Ação                    | Padrão | Descrição                                          |
+| :---------------------- | :----- | :------------------------------------------------- |
+| `footer:next`           | Right  | Próximo item do rodapé                             |
+| `footer:previous`       | Left   | Item anterior do rodapé                            |
+| `footer:up`             | Up     | Navegar para cima no rodapé (desseleciona no topo) |
+| `footer:down`           | Down   | Navegar para baixo no rodapé                       |
+| `footer:openSelected`   | Enter  | Abrir item do rodapé selecionado                   |
+| `footer:clearSelection` | Escape | Limpar seleção do rodapé                           |
 
 ### Ações do seletor de mensagem
 
@@ -280,10 +285,11 @@ Ações disponíveis no contexto `Plugin`:
 
 Ações disponíveis no contexto `Settings`:
 
-| Ação              | Padrão | Descrição                                                |
-| :---------------- | :----- | :------------------------------------------------------- |
-| `settings:search` | /      | Entrar no modo de busca                                  |
-| `settings:retry`  | R      | Tentar novamente carregar dados de uso (em caso de erro) |
+| Ação              | Padrão | Descrição                                                                               |
+| :---------------- | :----- | :-------------------------------------------------------------------------------------- |
+| `settings:search` | /      | Entrar no modo de busca                                                                 |
+| `settings:retry`  | R      | Tentar novamente carregar dados de uso (em caso de erro)                                |
+| `settings:close`  | Enter  | Salvar alterações e fechar o painel de configuração. Escape descarta alterações e fecha |
 
 ### Ações de voz
 
@@ -352,6 +358,25 @@ Defina uma ação como `null` para desvinculá-la de um atalho padrão:
   ]
 }
 ```
+
+Isso também funciona para vinculações de acordes. Desvinculando cada acorde que compartilha um prefixo libera esse prefixo para uso como uma vinculação de tecla única:
+
+```json  theme={null}
+{
+  "bindings": [
+    {
+      "context": "Chat",
+      "bindings": {
+        "ctrl+x ctrl+k": null,
+        "ctrl+x ctrl+e": null,
+        "ctrl+x": "chat:newline"
+      }
+    }
+  ]
+}
+```
+
+Se você desvinculá alguns, mas não todos os acordes em um prefixo, pressionar o prefixo ainda entra no modo de espera de acorde para as vinculações restantes.
 
 ## Atalhos reservados
 

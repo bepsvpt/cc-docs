@@ -6,7 +6,7 @@
 
 > Saiba como ativar e configurar OpenTelemetry para Claude Code.
 
-Rastreie o uso, custos e atividade de ferramentas do Claude Code em toda a sua organização exportando dados de telemetria através do OpenTelemetry (OTel). Claude Code exporta métricas como dados de série temporal via protocolo de métricas padrão, e eventos via protocolo de logs/eventos. Configure seus backends de métricas e logs para corresponder aos seus requisitos de monitoramento.
+Rastreie o uso, custos e atividade de ferramentas do Claude Code em toda a sua organização exportando dados de telemetria através do OpenTelemetry (OTel). Claude Code exporta métricas como dados de série temporal via protocolo de métricas padrão, eventos via protocolo de logs/eventos e, opcionalmente, rastreamentos distribuídos via [protocolo de rastreamentos](#traces-beta). Configure seus backends de métricas, logs e rastreamentos para corresponder aos seus requisitos de monitoramento.
 
 ## Início rápido
 
@@ -17,8 +17,8 @@ Configure OpenTelemetry usando variáveis de ambiente:
 export CLAUDE_CODE_ENABLE_TELEMETRY=1
 
 # 2. Escolher exportadores (ambos são opcionais - configure apenas o que você precisa)
-export OTEL_METRICS_EXPORTER=otlp       # Opções: otlp, prometheus, console
-export OTEL_LOGS_EXPORTER=otlp          # Opções: otlp, console
+export OTEL_METRICS_EXPORTER=otlp       # Opções: otlp, prometheus, console, none
+export OTEL_LOGS_EXPORTER=otlp          # Opções: otlp, console, none
 
 # 3. Configurar endpoint OTLP (para exportador OTLP)
 export OTEL_EXPORTER_OTLP_PROTOCOL=grpc
@@ -68,26 +68,27 @@ Exemplo de configuração de configurações gerenciadas:
 
 ### Variáveis de configuração comuns
 
-| Variável de Ambiente                                | Descrição                                                                                                                                               | Valores de Exemplo                             |
-| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | Ativa coleta de telemetria (obrigatório)                                                                                                                | `1`                                            |
-| `OTEL_METRICS_EXPORTER`                             | Tipos de exportador de métricas, separados por vírgula                                                                                                  | `console`, `otlp`, `prometheus`                |
-| `OTEL_LOGS_EXPORTER`                                | Tipos de exportador de logs/eventos, separados por vírgula                                                                                              | `console`, `otlp`                              |
-| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | Protocolo para exportador OTLP, aplica-se a todos os sinais                                                                                             | `grpc`, `http/json`, `http/protobuf`           |
-| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | Endpoint do coletor OTLP para todos os sinais                                                                                                           | `http://localhost:4317`                        |
-| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | Protocolo para métricas, substitui configuração geral                                                                                                   | `grpc`, `http/json`, `http/protobuf`           |
-| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | Endpoint de métricas OTLP, substitui configuração geral                                                                                                 | `http://localhost:4318/v1/metrics`             |
-| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | Protocolo para logs, substitui configuração geral                                                                                                       | `grpc`, `http/json`, `http/protobuf`           |
-| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | Endpoint de logs OTLP, substitui configuração geral                                                                                                     | `http://localhost:4318/v1/logs`                |
-| `OTEL_EXPORTER_OTLP_HEADERS`                        | Cabeçalhos de autenticação para OTLP                                                                                                                    | `Authorization=Bearer token`                   |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | Chave do cliente para autenticação mTLS                                                                                                                 | Caminho para arquivo de chave do cliente       |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | Certificado do cliente para autenticação mTLS                                                                                                           | Caminho para arquivo de certificado do cliente |
-| `OTEL_METRIC_EXPORT_INTERVAL`                       | Intervalo de exportação em milissegundos (padrão: 60000)                                                                                                | `5000`, `60000`                                |
-| `OTEL_LOGS_EXPORT_INTERVAL`                         | Intervalo de exportação de logs em milissegundos (padrão: 5000)                                                                                         | `1000`, `10000`                                |
-| `OTEL_LOG_USER_PROMPTS`                             | Ativar registro de conteúdo de prompt do usuário (padrão: desativado)                                                                                   | `1` para ativar                                |
-| `OTEL_LOG_TOOL_DETAILS`                             | Ativar registro de argumentos de entrada de ferramenta, nomes de servidor MCP/ferramenta e nomes de skill em eventos de ferramenta (padrão: desativado) | `1` para ativar                                |
-| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | Preferência de temporalidade de métricas (padrão: `delta`). Defina como `cumulative` se seu backend espera temporalidade cumulativa                     | `delta`, `cumulative`                          |
-| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | Intervalo para atualizar cabeçalhos dinâmicos (padrão: 1740000ms / 29 minutos)                                                                          | `900000`                                       |
+| Variável de Ambiente                                | Descrição                                                                                                                                                                                                    | Valores de Exemplo                             |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------- |
+| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | Ativa coleta de telemetria (obrigatório)                                                                                                                                                                     | `1`                                            |
+| `OTEL_METRICS_EXPORTER`                             | Tipos de exportador de métricas, separados por vírgula. Use `none` para desativar                                                                                                                            | `console`, `otlp`, `prometheus`, `none`        |
+| `OTEL_LOGS_EXPORTER`                                | Tipos de exportador de logs/eventos, separados por vírgula. Use `none` para desativar                                                                                                                        | `console`, `otlp`, `none`                      |
+| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | Protocolo para exportador OTLP, aplica-se a todos os sinais                                                                                                                                                  | `grpc`, `http/json`, `http/protobuf`           |
+| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | Endpoint do coletor OTLP para todos os sinais                                                                                                                                                                | `http://localhost:4317`                        |
+| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | Protocolo para métricas, substitui configuração geral                                                                                                                                                        | `grpc`, `http/json`, `http/protobuf`           |
+| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | Endpoint de métricas OTLP, substitui configuração geral                                                                                                                                                      | `http://localhost:4318/v1/metrics`             |
+| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | Protocolo para logs, substitui configuração geral                                                                                                                                                            | `grpc`, `http/json`, `http/protobuf`           |
+| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | Endpoint de logs OTLP, substitui configuração geral                                                                                                                                                          | `http://localhost:4318/v1/logs`                |
+| `OTEL_EXPORTER_OTLP_HEADERS`                        | Cabeçalhos de autenticação para OTLP                                                                                                                                                                         | `Authorization=Bearer token`                   |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | Chave do cliente para autenticação mTLS                                                                                                                                                                      | Caminho para arquivo de chave do cliente       |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | Certificado do cliente para autenticação mTLS                                                                                                                                                                | Caminho para arquivo de certificado do cliente |
+| `OTEL_METRIC_EXPORT_INTERVAL`                       | Intervalo de exportação em milissegundos (padrão: 60000)                                                                                                                                                     | `5000`, `60000`                                |
+| `OTEL_LOGS_EXPORT_INTERVAL`                         | Intervalo de exportação de logs em milissegundos (padrão: 5000)                                                                                                                                              | `1000`, `10000`                                |
+| `OTEL_LOG_USER_PROMPTS`                             | Ativar registro de conteúdo de prompt do usuário (padrão: desativado)                                                                                                                                        | `1` para ativar                                |
+| `OTEL_LOG_TOOL_DETAILS`                             | Ativar registro de parâmetros de ferramenta e argumentos de entrada em eventos de ferramenta: comandos Bash, nomes de servidor MCP e ferramenta, nomes de skill e entrada de ferramenta (padrão: desativado) | `1` para ativar                                |
+| `OTEL_LOG_TOOL_CONTENT`                             | Ativar registro de conteúdo de entrada e saída de ferramenta em eventos de span (padrão: desativado). Requer [rastreamento](#traces-beta). O conteúdo é truncado em 60 KB                                    | `1` para ativar                                |
+| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | Preferência de temporalidade de métricas (padrão: `delta`). Defina como `cumulative` se seu backend espera temporalidade cumulativa                                                                          | `delta`, `cumulative`                          |
+| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | Intervalo para atualizar cabeçalhos dinâmicos (padrão: 1740000ms / 29 minutos)                                                                                                                               | `900000`                                       |
 
 ### Controle de cardinalidade de métricas
 
@@ -100,6 +101,22 @@ As seguintes variáveis de ambiente controlam quais atributos são incluídos na
 | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` | Incluir atributos user.account\_uuid e user.account\_id em métricas | `true`       | `false`                |
 
 Essas variáveis ajudam a controlar a cardinalidade das métricas, o que afeta os requisitos de armazenamento e o desempenho de consultas no seu backend de métricas. Cardinalidade mais baixa geralmente significa melhor desempenho e custos de armazenamento mais baixos, mas dados menos granulares para análise.
+
+### Rastreamentos (beta)
+
+O rastreamento distribuído exporta spans que vinculam cada prompt do usuário às solicitações de API e execuções de ferramentas que ele dispara, para que você possa visualizar uma solicitação completa como um único rastreamento no seu backend de rastreamento.
+
+O rastreamento está desativado por padrão. Para ativá-lo, defina tanto `CLAUDE_CODE_ENABLE_TELEMETRY=1` quanto `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`, depois defina `OTEL_TRACES_EXPORTER` para escolher para onde os spans são enviados. Os rastreamentos reutilizam a [configuração OTLP comum](#variáveis-de-configuração-comuns) para endpoint, protocolo e cabeçalhos.
+
+| Variável de Ambiente                  | Descrição                                                                                   | Valores de Exemplo                   |
+| ------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------ |
+| `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA` | Ativar rastreamento de span (obrigatório). `ENABLE_ENHANCED_TELEMETRY_BETA` também é aceito | `1`                                  |
+| `OTEL_TRACES_EXPORTER`                | Tipos de exportador de rastreamentos, separados por vírgula. Use `none` para desativar      | `console`, `otlp`, `none`            |
+| `OTEL_EXPORTER_OTLP_TRACES_PROTOCOL`  | Protocolo para rastreamentos, substitui `OTEL_EXPORTER_OTLP_PROTOCOL`                       | `grpc`, `http/json`, `http/protobuf` |
+| `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`  | Endpoint de rastreamentos OTLP, substitui `OTEL_EXPORTER_OTLP_ENDPOINT`                     | `http://localhost:4318/v1/traces`    |
+| `OTEL_TRACES_EXPORT_INTERVAL`         | Intervalo de exportação de lote de span em milissegundos (padrão: 5000)                     | `1000`, `10000`                      |
+
+Os spans reduzem o texto do prompt do usuário e o conteúdo da ferramenta por padrão. Defina `OTEL_LOG_USER_PROMPTS=1` e `OTEL_LOG_TOOL_CONTENT=1` para incluí-los.
 
 ### Cabeçalhos dinâmicos
 
@@ -386,10 +403,10 @@ Registrado quando uma ferramenta conclui a execução.
 * `decision_source`: Fonte de decisão - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, ou `"user_reject"`
 * `tool_result_size_bytes`: Tamanho do resultado da ferramenta em bytes
 * `mcp_server_scope`: Identificador de escopo do servidor MCP (para ferramentas MCP)
-* `tool_parameters`: String JSON contendo parâmetros específicos da ferramenta (quando disponível)
+* `tool_parameters` (quando `OTEL_LOG_TOOL_DETAILS=1`): String JSON contendo parâmetros específicos da ferramenta:
   * Para ferramenta Bash: inclui `bash_command`, `full_command`, `timeout`, `description`, `dangerouslyDisableSandbox`, e `git_commit_id` (o SHA do commit, quando um comando `git commit` é bem-sucedido)
-  * Para ferramentas MCP (quando `OTEL_LOG_TOOL_DETAILS=1`): inclui `mcp_server_name`, `mcp_tool_name`
-  * Para ferramenta Skill (quando `OTEL_LOG_TOOL_DETAILS=1`): inclui `skill_name`
+  * Para ferramentas MCP: inclui `mcp_server_name`, `mcp_tool_name`
+  * Para ferramenta Skill: inclui `skill_name`
 * `tool_input` (quando `OTEL_LOG_TOOL_DETAILS=1`): Argumentos de ferramenta serializados em JSON. Valores individuais com mais de 512 caracteres são truncados, e a carga útil completa é limitada a \~4 K caracteres. Aplica-se a todas as ferramentas, incluindo ferramentas MCP.
 
 #### Evento de solicitação de API
@@ -497,7 +514,7 @@ Os dados de eventos fornecem insights detalhados sobre interações do Claude Co
 
 ## Considerações de backend
 
-Sua escolha de backends de métricas e logs determina os tipos de análises que você pode realizar:
+Sua escolha de backends de métricas, logs e rastreamentos determina os tipos de análises que você pode realizar:
 
 ### Para métricas
 
@@ -510,6 +527,13 @@ Sua escolha de backends de métricas e logs determina os tipos de análises que 
 * **Sistemas de agregação de logs (por exemplo, Elasticsearch, Loki)**: Busca de texto completo, análise de logs
 * **Armazenamentos colunares (por exemplo, ClickHouse)**: Análise de eventos estruturados
 * **Plataformas de observabilidade completas (por exemplo, Honeycomb, Datadog)**: Correlação entre métricas e eventos
+
+### Para rastreamentos
+
+Escolha um backend que suporte armazenamento de rastreamento distribuído e correlação de span:
+
+* **Sistemas de rastreamento distribuído (por exemplo, Jaeger, Zipkin, Grafana Tempo)**: Visualização de span, waterfalls de solicitação, análise de latência
+* **Plataformas de observabilidade completas (por exemplo, Honeycomb, Datadog)**: Busca de rastreamento e correlação com métricas e logs
 
 Para organizações que exigem métricas de Usuário Ativo Diário/Semanal/Mensal (DAU/WAU/MAU), considere backends que suportam consultas eficientes de valor único.
 
@@ -532,10 +556,11 @@ Para um guia abrangente sobre como medir o retorno sobre investimento para Claud
 ## Segurança e privacidade
 
 * A telemetria é opt-in e requer configuração explícita
-* Conteúdos de arquivo brutos e trechos de código não são incluídos em métricas ou eventos. Eventos de execução de ferramentas incluem comandos bash e caminhos de arquivo no campo `tool_parameters`, que podem conter valores sensíveis. Se seus comandos podem incluir segredos, configure seu backend de telemetria para filtrar ou reduzir `tool_parameters`
+* Conteúdos de arquivo brutos e trechos de código não são incluídos em métricas ou eventos. Os spans de rastreamento são um caminho de dados separado: veja o ponto `OTEL_LOG_TOOL_CONTENT` abaixo
 * Quando autenticado via OAuth, `user.email` é incluído em atributos de telemetria. Se isso for uma preocupação para sua organização, trabalhe com seu backend de telemetria para filtrar ou reduzir este campo
 * O conteúdo do prompt do usuário não é coletado por padrão. Apenas o comprimento do prompt é registrado. Para incluir conteúdo do prompt, defina `OTEL_LOG_USER_PROMPTS=1`
-* Argumentos de entrada de ferramenta não são registrados por padrão. Para incluí-los, defina `OTEL_LOG_TOOL_DETAILS=1`. Quando ativado, eventos `tool_result` incluem nomes de servidor MCP/ferramenta e nomes de skill mais um atributo `tool_input` com caminhos de arquivo, URLs, padrões de busca e outros argumentos. Valores individuais com mais de 512 caracteres são truncados e o total é limitado a \~4 K caracteres, mas os argumentos ainda podem conter valores sensíveis. Configure seu backend de telemetria para filtrar ou reduzir `tool_input` conforme necessário
+* Argumentos de entrada de ferramenta e parâmetros não são registrados por padrão. Para incluí-los, defina `OTEL_LOG_TOOL_DETAILS=1`. Quando ativado, eventos `tool_result` incluem um atributo `tool_parameters` com comandos Bash, nomes de servidor MCP e ferramenta, e nomes de skill, mais um atributo `tool_input` com caminhos de arquivo, URLs, padrões de busca e outros argumentos. Valores individuais com mais de 512 caracteres são truncados e o total é limitado a \~4 K caracteres, mas os argumentos ainda podem conter valores sensíveis. Configure seu backend de telemetria para filtrar ou reduzir esses atributos conforme necessário
+* O conteúdo de entrada e saída de ferramenta não é registrado em spans de rastreamento por padrão. Para incluí-lo, defina `OTEL_LOG_TOOL_CONTENT=1`. Quando ativado, eventos de span incluem conteúdo completo de entrada e saída de ferramenta truncado em 60 KB por span. Isso pode incluir conteúdos de arquivo brutos de resultados da ferramenta Read e saída de comando Bash. Configure seu backend de telemetria para filtrar ou reduzir esses atributos conforme necessário
 
 ## Monitorar Claude Code no Amazon Bedrock
 

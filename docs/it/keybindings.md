@@ -51,7 +51,7 @@ Ogni blocco di binding specifica un **contesto** dove si applicano i binding:
 | `Global`          | Si applica ovunque nell'app                                                    |
 | `Chat`            | Area di input della chat principale                                            |
 | `Autocomplete`    | Menu di autocompletamento è aperto                                             |
-| `Settings`        | Menu delle impostazioni (chiusura solo con escape)                             |
+| `Settings`        | Menu delle impostazioni                                                        |
 | `Confirmation`    | Dialoghi di permesso e conferma                                                |
 | `Tabs`            | Componenti di navigazione delle schede                                         |
 | `Help`            | Menu della guida è visibile                                                    |
@@ -59,7 +59,7 @@ Ogni blocco di binding specifica un **contesto** dove si applicano i binding:
 | `HistorySearch`   | Modalità di ricerca nella cronologia (Ctrl+R)                                  |
 | `Task`            | Attività in background in esecuzione                                           |
 | `ThemePicker`     | Dialogo di selezione del tema                                                  |
-| `Attachments`     | Navigazione della barra immagini/allegati                                      |
+| `Attachments`     | Navigazione degli allegati nei dialoghi di selezione                           |
 | `Footer`          | Navigazione dell'indicatore di piè di pagina (attività, team, diff)            |
 | `MessageSelector` | Selezione dei messaggi nella finestra di dialogo di riavvolgimento e riepilogo |
 | `DiffDialog`      | Navigazione del visualizzatore diff                                            |
@@ -79,6 +79,7 @@ Azioni disponibili nel contesto `Global`:
 | :--------------------- | :---------- | :-------------------------------------------------------- |
 | `app:interrupt`        | Ctrl+C      | Annulla l'operazione corrente                             |
 | `app:exit`             | Ctrl+D      | Esci da Claude Code                                       |
+| `app:redraw`           | Ctrl+L      | Ridisegna lo schermo                                      |
 | `app:toggleTodos`      | Ctrl+T      | Attiva/disattiva la visibilità dell'elenco delle attività |
 | `app:toggleTranscript` | Ctrl+O      | Attiva/disattiva la trascrizione dettagliata              |
 
@@ -105,7 +106,8 @@ Azioni disponibili nel contesto `Chat`:
 | `chat:fastMode`       | Meta+O                    | Attiva/disattiva la modalità veloce    |
 | `chat:thinkingToggle` | Cmd+T / Meta+T            | Attiva/disattiva il pensiero esteso    |
 | `chat:submit`         | Invio                     | Invia il messaggio                     |
-| `chat:undo`           | Ctrl+\_                   | Annulla l'ultima azione                |
+| `chat:newline`        | (non associato)           | Inserisci una nuova riga senza inviare |
+| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | Annulla l'ultima azione                |
 | `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Apri nell'editor esterno               |
 | `chat:stash`          | Ctrl+S                    | Nascondi il prompt corrente            |
 | `chat:imagePaste`     | Ctrl+V (Alt+V su Windows) | Incolla immagine                       |
@@ -135,6 +137,7 @@ Azioni disponibili nel contesto `Confirmation`:
 | `confirm:next`              | Giù             | Opzione successiva                           |
 | `confirm:nextField`         | Tab             | Campo successivo                             |
 | `confirm:previousField`     | (non associato) | Campo precedente                             |
+| `confirm:toggle`            | Spazio          | Attiva/disattiva la selezione                |
 | `confirm:cycleMode`         | Shift+Tab       | Cicla le modalità di permesso                |
 | `confirm:toggleExplanation` | Ctrl+E          | Attiva/disattiva la spiegazione del permesso |
 
@@ -150,10 +153,10 @@ Azioni disponibili nel contesto `Confirmation` per i dialoghi di permesso:
 
 Azioni disponibili nel contesto `Transcript`:
 
-| Azione                     | Predefinito    | Descrizione                                               |
-| :------------------------- | :------------- | :-------------------------------------------------------- |
-| `transcript:toggleShowAll` | Ctrl+E         | Attiva/disattiva la visualizzazione di tutto il contenuto |
-| `transcript:exit`          | Ctrl+C, Escape | Esci dalla visualizzazione della trascrizione             |
+| Azione                     | Predefinito       | Descrizione                                               |
+| :------------------------- | :---------------- | :-------------------------------------------------------- |
+| `transcript:toggleShowAll` | Ctrl+E            | Attiva/disattiva la visualizzazione di tutto il contenuto |
+| `transcript:exit`          | q, Ctrl+C, Escape | Esci dalla visualizzazione della trascrizione             |
 
 ### Azioni di ricerca nella cronologia
 
@@ -203,23 +206,25 @@ Azioni disponibili nel contesto `Tabs`:
 
 Azioni disponibili nel contesto `Attachments`:
 
-| Azione                 | Predefinito     | Descrizione                     |
-| :--------------------- | :-------------- | :------------------------------ |
-| `attachments:next`     | Destra          | Allegato successivo             |
-| `attachments:previous` | Sinistra        | Allegato precedente             |
-| `attachments:remove`   | Backspace, Canc | Rimuovi l'allegato selezionato  |
-| `attachments:exit`     | Giù, Escape     | Esci dalla barra degli allegati |
+| Azione                 | Predefinito     | Descrizione                           |
+| :--------------------- | :-------------- | :------------------------------------ |
+| `attachments:next`     | Destra          | Allegato successivo                   |
+| `attachments:previous` | Sinistra        | Allegato precedente                   |
+| `attachments:remove`   | Backspace, Canc | Rimuovi l'allegato selezionato        |
+| `attachments:exit`     | Giù, Escape     | Esci dalla navigazione degli allegati |
 
 ### Azioni del piè di pagina
 
 Azioni disponibili nel contesto `Footer`:
 
-| Azione                  | Predefinito | Descrizione                                   |
-| :---------------------- | :---------- | :-------------------------------------------- |
-| `footer:next`           | Destra      | Elemento del piè di pagina successivo         |
-| `footer:previous`       | Sinistra    | Elemento del piè di pagina precedente         |
-| `footer:openSelected`   | Invio       | Apri l'elemento del piè di pagina selezionato |
-| `footer:clearSelection` | Escape      | Cancella la selezione del piè di pagina       |
+| Azione                  | Predefinito | Descrizione                                                 |
+| :---------------------- | :---------- | :---------------------------------------------------------- |
+| `footer:next`           | Destra      | Elemento del piè di pagina successivo                       |
+| `footer:previous`       | Sinistra    | Elemento del piè di pagina precedente                       |
+| `footer:up`             | Su          | Naviga verso l'alto nel piè di pagina (deseleziona in alto) |
+| `footer:down`           | Giù         | Naviga verso il basso nel piè di pagina                     |
+| `footer:openSelected`   | Invio       | Apri l'elemento del piè di pagina selezionato               |
+| `footer:clearSelection` | Escape      | Cancella la selezione del piè di pagina                     |
 
 ### Azioni del selezionatore di messaggi
 
@@ -280,10 +285,11 @@ Azioni disponibili nel contesto `Plugin`:
 
 Azioni disponibili nel contesto `Settings`:
 
-| Azione            | Predefinito | Descrizione                                               |
-| :---------------- | :---------- | :-------------------------------------------------------- |
-| `settings:search` | /           | Entra in modalità di ricerca                              |
-| `settings:retry`  | R           | Riprova a caricare i dati di utilizzo (in caso di errore) |
+| Azione            | Predefinito | Descrizione                                                                                    |
+| :---------------- | :---------- | :--------------------------------------------------------------------------------------------- |
+| `settings:search` | /           | Entra in modalità di ricerca                                                                   |
+| `settings:retry`  | R           | Riprova a caricare i dati di utilizzo (in caso di errore)                                      |
+| `settings:close`  | Invio       | Salva le modifiche e chiudi il pannello di configurazione. Escape scarta le modifiche e chiude |
 
 ### Azioni vocali
 
@@ -317,7 +323,7 @@ ctrl+shift+c    Più modificatori
 
 Una lettera maiuscola autonoma implica Shift. Ad esempio, `K` è equivalente a `shift+k`. Questo è utile per i binding in stile vim dove i tasti maiuscoli e minuscoli hanno significati diversi.
 
-Le lettere maiuscole con modificatori (ad es. `ctrl+K`) sono trattate come stilistiche e **non** implicano Shift — `ctrl+K` è lo stesso di `ctrl+k`.
+Le lettere maiuscole con modificatori (ad es. `ctrl+K`) sono trattate come stilistiche e **non** implicano Shift: `ctrl+K` è lo stesso di `ctrl+k`.
 
 ### Accordi
 
@@ -352,6 +358,25 @@ Impostare un'azione su `null` per annullare l'associazione di una scorciatoia pr
   ]
 }
 ```
+
+Questo funziona anche per i binding degli accordi. Annullare l'associazione di ogni accordo che condivide un prefisso libera quel prefisso per l'uso come binding a tasto singolo:
+
+```json  theme={null}
+{
+  "bindings": [
+    {
+      "context": "Chat",
+      "bindings": {
+        "ctrl+x ctrl+k": null,
+        "ctrl+x ctrl+e": null,
+        "ctrl+x": "chat:newline"
+      }
+    }
+  ]
+}
+```
+
+Se annulli l'associazione di alcuni ma non di tutti gli accordi su un prefisso, premere il prefisso entra comunque in modalità di attesa degli accordi per i binding rimanenti.
 
 ## Scorciatoie riservate
 

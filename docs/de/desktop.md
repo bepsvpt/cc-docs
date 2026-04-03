@@ -58,13 +58,13 @@ Das Eingabefeld unterstützt zwei Möglichkeiten, um externen Kontext einzubinde
 
 Berechtigungsmodi kontrollieren, wie viel Autonomie Claude während einer Sitzung hat: ob es vor dem Bearbeiten von Dateien, dem Ausführen von Befehlen oder beidem fragt. Sie können Modi jederzeit mit dem Moduswahlschalter neben der Schaltfläche „Senden" wechseln. Beginnen Sie mit „Berechtigungen erfragen", um genau zu sehen, was Claude tut, und wechseln Sie dann zu „Bearbeitungen automatisch akzeptieren" oder „Plan Mode", wenn Sie sich wohler fühlen.
 
-| Modus                                     | Einstellungsschlüssel | Verhalten                                                                                                                                                                                                                                                                                                                                                                                       |
-| ----------------------------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Berechtigungen erfragen**               | `default`             | Claude fragt vor dem Bearbeiten von Dateien oder dem Ausführen von Befehlen. Sie sehen einen Diff und können jede Änderung akzeptieren oder ablehnen. Empfohlen für neue Benutzer.                                                                                                                                                                                                              |
-| **Bearbeitungen automatisch akzeptieren** | `acceptEdits`         | Claude akzeptiert Dateibearbeitungen automatisch, fragt aber immer noch vor dem Ausführen von Terminal-Befehlen. Verwenden Sie dies, wenn Sie Dateiänderungen vertrauen und schnellere Iterationen wünschen.                                                                                                                                                                                    |
-| **Plan Mode**                             | `plan`                | Claude analysiert Ihren Code und erstellt einen Plan, ohne Dateien zu ändern oder Befehle auszuführen. Gut für komplexe Aufgaben, bei denen Sie den Ansatz zuerst überprüfen möchten.                                                                                                                                                                                                           |
-| **Auto**                                  | `auto`                | Claude führt alle Aktionen mit Hintergrund-Sicherheitsprüfungen aus, die die Ausrichtung mit Ihrer Anfrage überprüfen. Reduziert Berechtigungsaufforderungen bei Beibehaltung der Überwachung. Derzeit eine Forschungsvorschau. Verfügbar in Team-Plänen (Enterprise wird in Kürze eingeführt). Erfordert Claude Sonnet 4.6 oder Opus 4.6. Aktivieren Sie in Ihren Einstellungen → Claude Code. |
-| **Berechtigungen umgehen**                | `bypassPermissions`   | Claude läuft ohne Berechtigungsaufforderungen, äquivalent zu `--dangerously-skip-permissions` in der CLI. Aktivieren Sie dies in Ihren Einstellungen → Claude Code unter „Bypass-Berechtigungsmodus zulassen". Verwenden Sie dies nur in sandboxierten Containern oder VMs. Enterprise-Administratoren können diese Option deaktivieren.                                                        |
+| Modus                                     | Einstellungsschlüssel | Verhalten                                                                                                                                                                                                                                                                                                                                                                 |
+| ----------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Berechtigungen erfragen**               | `default`             | Claude fragt vor dem Bearbeiten von Dateien oder dem Ausführen von Befehlen. Sie sehen einen Diff und können jede Änderung akzeptieren oder ablehnen. Empfohlen für neue Benutzer.                                                                                                                                                                                        |
+| **Bearbeitungen automatisch akzeptieren** | `acceptEdits`         | Claude akzeptiert Dateibearbeitungen automatisch, fragt aber immer noch vor dem Ausführen von Terminal-Befehlen. Verwenden Sie dies, wenn Sie Dateiänderungen vertrauen und schnellere Iterationen wünschen.                                                                                                                                                              |
+| **Plan Mode**                             | `plan`                | Claude analysiert Ihren Code und erstellt einen Plan, ohne Dateien zu ändern oder Befehle auszuführen. Gut für komplexe Aufgaben, bei denen Sie den Ansatz zuerst überprüfen möchten.                                                                                                                                                                                     |
+| **Auto**                                  | `auto`                | Claude führt alle Aktionen mit Hintergrund-Sicherheitsprüfungen aus, die die Ausrichtung mit Ihrer Anfrage überprüfen. Reduziert Berechtigungsaufforderungen bei Beibehaltung der Überwachung. Derzeit eine Forschungsvorschau. Verfügbar in Team- und Enterprise-Plänen. Erfordert Claude Sonnet 4.6 oder Opus 4.6. Aktivieren Sie in Ihren Einstellungen → Claude Code. |
+| **Berechtigungen umgehen**                | `bypassPermissions`   | Claude läuft ohne Berechtigungsaufforderungen, äquivalent zu `--dangerously-skip-permissions` in der CLI. Aktivieren Sie dies in Ihren Einstellungen → Claude Code unter „Bypass-Berechtigungsmodus zulassen". Verwenden Sie dies nur in sandboxierten Containern oder VMs. Enterprise-Administratoren können diese Option deaktivieren.                                  |
 
 Der Berechtigungsmodus `dontAsk` ist nur in der [CLI](/de/permission-modes#allow-only-pre-approved-tools-with-dontask-mode) verfügbar.
 
@@ -151,12 +151,28 @@ Die [Pro-App-Zugriffsstufen](#app-permissions) verstärken dies: Browser sind au
 
 ### Aktivieren Sie Computernutzung
 
-Computernutzung ist standardmäßig deaktiviert. Wenn Sie Claude bitten, etwas zu tun, das es benötigt, während es deaktiviert ist, teilt Claude Ihnen mit, dass es die Aufgabe tun könnte, wenn Sie Computernutzung in Einstellungen aktivieren. Um es zu aktivieren, öffnen Sie **Einstellungen > Desktop-App > Allgemein** und schalten Sie **Computernutzung** ein. Bevor der Umschalter wirksam wird, müssen Sie zwei macOS-Systemberechtigungen gewähren:
+Computernutzung ist standardmäßig deaktiviert. Wenn Sie Claude bitten, etwas zu tun, das es benötigt, während es deaktiviert ist, teilt Claude Ihnen mit, dass es die Aufgabe tun könnte, wenn Sie Computernutzung in Einstellungen aktivieren.
 
-* **Barrierefreiheit**: ermöglicht Claude, zu klicken, zu tippen und zu scrollen
-* **Bildschirmaufzeichnung**: ermöglicht Claude, zu sehen, was auf Ihrem Bildschirm ist
+<Steps>
+  <Step title="Aktualisieren Sie die Desktop-App">
+    Stellen Sie sicher, dass Sie die neueste Version von Claude Desktop haben. Laden Sie herunter oder aktualisieren Sie unter [claude.com/download](https://claude.com/download), und starten Sie die App neu.
+  </Step>
 
-Die Einstellungsseite zeigt den aktuellen Status jeder Berechtigung. Wenn eine verweigert wird, klicken Sie auf das Badge, um den relevanten Systemeinstellungsbereich zu öffnen.
+  <Step title="Schalten Sie den Umschalter ein">
+    Gehen Sie in der Desktop-App zu **Einstellungen > Allgemein** (unter **Desktop-App**). Suchen Sie den Umschalter **Computernutzung** und schalten Sie ihn ein.
+
+    Wenn Sie den Umschalter nicht sehen, bestätigen Sie, dass Sie macOS mit einem Pro- oder Max-Plan verwenden, und aktualisieren und starten Sie die App neu.
+  </Step>
+
+  <Step title="Gewähren Sie macOS-Berechtigungen">
+    Bevor der Umschalter wirksam wird, müssen Sie zwei macOS-Systemberechtigungen gewähren:
+
+    * **Barrierefreiheit**: ermöglicht Claude, zu klicken, zu tippen und zu scrollen
+    * **Bildschirmaufzeichnung**: ermöglicht Claude, zu sehen, was auf Ihrem Bildschirm ist
+
+    Die Einstellungsseite zeigt den aktuellen Status jeder Berechtigung. Wenn eine verweigert wird, klicken Sie auf das Badge, um den relevanten Systemeinstellungsbereich zu öffnen.
+  </Step>
+</Steps>
 
 ### App-Berechtigungen
 
@@ -172,7 +188,7 @@ Die Eingabeaufforderung zeigt auch, welche Kontrollebene Claude für diese App e
 
 Apps mit großer Reichweite wie Terminal, Finder und Systemeinstellungen zeigen eine zusätzliche Warnung in der Eingabeaufforderung, damit Sie wissen, was das Genehmigen gewährt.
 
-Sie können zwei Einstellungen in **Einstellungen > Desktop-App > Allgemein** konfigurieren:
+Sie können zwei Einstellungen in **Einstellungen > Allgemein** (unter **Desktop-App**) konfigurieren:
 
 * **Abgelehnte Apps**: Fügen Sie Apps hier hinzu, um sie ohne Aufforderung abzulehnen. Claude kann eine abgelehnte App indirekt durch Aktionen in einer zulässigen App beeinflussen, kann aber nicht direkt mit der abgelehnen App interagieren.
 * **Apps anzeigen, wenn Claude fertig ist**: Während Claude arbeitet, werden Ihre anderen Fenster ausgeblendet, damit es nur mit der genehmigten App interagiert. Wenn Claude fertig ist, werden ausgeblendete Fenster wiederhergestellt, es sei denn, Sie deaktivieren diese Einstellung.
@@ -185,7 +201,9 @@ Jede Sitzung ist ein unabhängiges Gespräch mit eigenem Kontext und Änderungen
 
 Klicken Sie auf **+ Neue Sitzung** in der Seitenleiste, um an mehreren Aufgaben parallel zu arbeiten. Für Git-Repositories erhält jede Sitzung ihre eigene isolierte Kopie Ihres Projekts mit [Git Worktrees](/de/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees), sodass Änderungen in einer Sitzung andere Sitzungen nicht beeinflussen, bis Sie sie committen.
 
-Worktrees werden standardmäßig in `<project-root>/.claude/worktrees/` gespeichert. Sie können dies in Einstellungen → Claude Code unter „Worktree-Speicherort" in ein benutzerdefiniertes Verzeichnis ändern. Sie können auch ein Branch-Präfix festlegen, das jedem Worktree-Branch-Namen vorangestellt wird, was nützlich ist, um von Claude erstellte Branches organisiert zu halten. Um einen Worktree zu entfernen, wenn Sie fertig sind, fahren Sie mit der Maus über die Sitzung in der Seitenleiste und klicken Sie auf das Archiv-Symbol.
+Worktrees werden standardmäßig in `<project-root>/.claude/worktrees/` gespeichert. Sie können dies in Einstellungen → Claude Code unter 'Worktree-Speicherort" in ein benutzerdefiniertes Verzeichnis ändern. Sie können auch ein Branch-Präfix festlegen, das jedem Worktree-Branch-Namen vorangestellt wird, was nützlich ist, um von Claude erstellte Branches organisiert zu halten. Um einen Worktree zu entfernen, wenn Sie fertig sind, fahren Sie mit der Maus über die Sitzung in der Seitenleiste und klicken Sie auf das Archiv-Symbol.
+
+Um gitignorierte Dateien wie `.env` in neue Worktrees einzubeziehen, erstellen Sie eine [`.worktreeinclude`-Datei](/de/common-workflows#copy-gitignored-files-to-worktrees) in Ihrem Projektstammverzeichnis.
 
 <Note>
   Die Sitzungsisolation erfordert [Git](https://git-scm.com/downloads). Die meisten Macs enthalten Git standardmäßig. Führen Sie `git --version` im Terminal aus, um zu überprüfen. Unter Windows ist Git erforderlich, damit die Registerkarte „Code" funktioniert: [Laden Sie Git für Windows herunter](https://git-scm.com/downloads/win), installieren Sie es und starten Sie die App neu. Wenn Sie auf Git-Fehler stoßen, versuchen Sie eine Cowork-Sitzung, um Ihr Setup zu beheben.
@@ -627,7 +645,7 @@ Diese Tabelle vergleicht Kernfunktionen zwischen CLI und Desktop. Für eine voll
 | Sitzungsisolation                                      | [`--worktree`](/de/cli-reference)-Flag                    | automatische Worktrees                                                                                                       |
 | Mehrere Sitzungen                                      | separate Terminals                                        | Seitenleisten-Tabs                                                                                                           |
 | Wiederkehrende Aufgaben                                | Cron-Jobs, CI-Pipelines                                   | [geplante Aufgaben](#schedule-recurring-tasks)                                                                               |
-| Computernutzung                                        | nicht verfügbar                                           | [App- und Bildschirmsteuerung](#let-claude-use-your-computer) auf macOS                                                      |
+| Computernutzung                                        | [Aktivieren über `/mcp`](/de/computer-use) auf macOS      | [App- und Bildschirmsteuerung](#let-claude-use-your-computer) auf macOS                                                      |
 | Dispatch-Integration                                   | nicht verfügbar                                           | [Dispatch-Sitzungen](#sessions-from-dispatch) in der Seitenleiste                                                            |
 | Scripting und Automatisierung                          | [`--print`](/de/cli-reference), [Agent SDK](/de/headless) | nicht verfügbar                                                                                                              |
 

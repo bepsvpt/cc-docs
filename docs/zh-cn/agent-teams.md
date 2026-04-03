@@ -101,7 +101,7 @@ Agent teams 支持两种显示模式：
   `tmux` 在某些操作系统上有已知限制，传统上在 macOS 上效果最好。在 iTerm2 中使用 `tmux -CC` 是进入 `tmux` 的建议入口点。
 </Note>
 
-默认值是 `"auto"`，如果你已经在 tmux 会话中运行，则使用分割窗格，否则使用 in-process。`"tmux"` 设置启用分割窗格模式，并根据你的终端自动检测是使用 tmux 还是 iTerm2。要覆盖，在你的 [settings.json](/zh-CN/settings) 中设置 `teammateMode`：
+默认值是 `"auto"`，如果你已经在 tmux 会话中运行，则使用分割窗格，否则使用 in-process。`"tmux"` 设置启用分割窗格模式，并根据你的终端自动检测是使用 tmux 还是 iTerm2。要覆盖，在你的 [全局配置](/zh-CN/settings#global-config-settings) 中的 `~/.claude.json` 设置 `teammateMode`：
 
 ```json  theme={null}
 {
@@ -186,9 +186,10 @@ Clean up the team
 
 ### 使用 hooks 强制质量门
 
-使用 [hooks](/zh-CN/hooks) 在队友完成工作或任务完成时强制执行规则：
+使用 [hooks](/zh-CN/hooks) 在队友完成工作或任务创建或完成时强制执行规则：
 
 * [`TeammateIdle`](/zh-CN/hooks#teammateidle)：当队友即将空闲时运行。以代码 2 退出以发送反馈并保持队友工作。
+* [`TaskCreated`](/zh-CN/hooks#taskcreated)：当任务被创建时运行。以代码 2 退出以防止创建并发送反馈。
 * [`TaskCompleted`](/zh-CN/hooks#taskcompleted)：当任务被标记为完成时运行。以代码 2 退出以防止完成并发送反馈。
 
 ## Agent teams 如何工作
@@ -224,7 +225,23 @@ Agent team 由以下部分组成：
 * **Team config**：`~/.claude/teams/{team-name}/config.json`
 * **Task list**：`~/.claude/tasks/{team-name}/`
 
+Claude Code 在你创建团队时自动生成这两个，并在队友加入、空闲或离开时更新它们。团队配置保存运行时状态，例如会话 ID 和 tmux 窗格 ID，所以不要手动编辑它或预先编写它：你的更改会在下一次状态更新时被覆盖。
+
+要定义可重用的队友角色，请改用 [subagent 定义](#use-subagent-definitions-for-teammates)。
+
 团队配置包含一个 `members` 数组，其中包含每个队友的名称、代理 ID 和代理类型。队友可以读取此文件以发现其他团队成员。
+
+没有项目级别的团队配置等效项。项目目录中的 `.claude/teams/teams.json` 之类的文件不被识别为配置；Claude 将其视为普通文件。
+
+### 为队友使用 subagent 定义
+
+生成队友时，你可以引用来自任何 [subagent 范围](/zh-CN/sub-agents#choose-the-subagent-scope) 的 [subagent](/zh-CN/sub-agents) 类型：项目、用户、插件或 CLI 定义。队友继承该 subagent 的系统提示、工具和模型。这让你定义一个角色一次，例如安全审查员或测试运行器，并将其同时重用为委派的 subagent 和 agent team 队友。
+
+要使用 subagent 定义，在要求 Claude 生成队友时按名称提及它：
+
+```text  theme={null}
+Spawn a teammate using the security-reviewer agent type to audit the auth module.
+```
 
 ### 权限
 

@@ -46,26 +46,26 @@ Cet exemple lie `Ctrl+E` pour ouvrir un éditeur externe dans le contexte de cha
 
 Chaque bloc de liaison spécifie un **contexte** où les liaisons s'appliquent :
 
-| Contexte          | Description                                                        |
-| :---------------- | :----------------------------------------------------------------- |
-| `Global`          | S'applique partout dans l'application                              |
-| `Chat`            | Zone de saisie de chat principale                                  |
-| `Autocomplete`    | Le menu d'autocomplétion est ouvert                                |
-| `Settings`        | Menu des paramètres (fermeture par échappement uniquement)         |
-| `Confirmation`    | Dialogues de permission et de confirmation                         |
-| `Tabs`            | Composants de navigation par onglets                               |
-| `Help`            | Le menu d'aide est visible                                         |
-| `Transcript`      | Visionneuse de transcription                                       |
-| `HistorySearch`   | Mode de recherche d'historique (Ctrl+R)                            |
-| `Task`            | Une tâche de fond est en cours d'exécution                         |
-| `ThemePicker`     | Dialogue du sélecteur de thème                                     |
-| `Attachments`     | Navigation de la barre d'image/pièce jointe                        |
-| `Footer`          | Navigation de l'indicateur de pied de page (tâches, équipes, diff) |
-| `MessageSelector` | Sélection de message du dialogue de rembobinage et de résumé       |
-| `DiffDialog`      | Navigation de la visionneuse de diff                               |
-| `ModelPicker`     | Niveau d'effort du sélecteur de modèle                             |
-| `Select`          | Composants génériques de sélection/liste                           |
-| `Plugin`          | Dialogue du plugin (parcourir, découvrir, gérer)                   |
+| Contexte          | Description                                                           |
+| :---------------- | :-------------------------------------------------------------------- |
+| `Global`          | S'applique partout dans l'application                                 |
+| `Chat`            | Zone de saisie de chat principale                                     |
+| `Autocomplete`    | Le menu d'autocomplétion est ouvert                                   |
+| `Settings`        | Menu des paramètres                                                   |
+| `Confirmation`    | Dialogues de permission et de confirmation                            |
+| `Tabs`            | Composants de navigation par onglets                                  |
+| `Help`            | Le menu d'aide est visible                                            |
+| `Transcript`      | Visionneuse de transcription                                          |
+| `HistorySearch`   | Mode de recherche d'historique (Ctrl+R)                               |
+| `Task`            | Une tâche de fond est en cours d'exécution                            |
+| `ThemePicker`     | Dialogue du sélecteur de thème                                        |
+| `Attachments`     | Navigation de la pièce jointe d'image dans les dialogues de sélection |
+| `Footer`          | Navigation de l'indicateur de pied de page (tâches, équipes, diff)    |
+| `MessageSelector` | Sélection de message du dialogue de rembobinage et de résumé          |
+| `DiffDialog`      | Navigation de la visionneuse de diff                                  |
+| `ModelPicker`     | Niveau d'effort du sélecteur de modèle                                |
+| `Select`          | Composants génériques de sélection/liste                              |
+| `Plugin`          | Dialogue du plugin (parcourir, découvrir, gérer)                      |
 
 ## Actions disponibles
 
@@ -79,6 +79,7 @@ Actions disponibles dans le contexte `Global` :
 | :--------------------- | :--------- | :-------------------------------------------- |
 | `app:interrupt`        | Ctrl+C     | Annuler l'opération en cours                  |
 | `app:exit`             | Ctrl+D     | Quitter Claude Code                           |
+| `app:redraw`           | Ctrl+L     | Redessiner l'écran                            |
 | `app:toggleTodos`      | Ctrl+T     | Basculer la visibilité de la liste des tâches |
 | `app:toggleTranscript` | Ctrl+O     | Basculer la transcription détaillée           |
 
@@ -96,19 +97,20 @@ Actions pour naviguer dans l'historique des commandes :
 
 Actions disponibles dans le contexte `Chat` :
 
-| Action                | Par défaut                  | Description                       |
-| :-------------------- | :-------------------------- | :-------------------------------- |
-| `chat:cancel`         | Échappement                 | Annuler l'entrée actuelle         |
-| `chat:killAgents`     | Ctrl+X Ctrl+K               | Arrêter tous les agents de fond   |
-| `chat:cycleMode`      | Maj+Tab\*                   | Cycler les modes de permission    |
-| `chat:modelPicker`    | Cmd+P / Meta+P              | Ouvrir le sélecteur de modèle     |
-| `chat:fastMode`       | Meta+O                      | Basculer le mode rapide           |
-| `chat:thinkingToggle` | Cmd+T / Meta+T              | Basculer la réflexion étendue     |
-| `chat:submit`         | Entrée                      | Soumettre le message              |
-| `chat:undo`           | Ctrl+\_                     | Annuler la dernière action        |
-| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E       | Ouvrir dans un éditeur externe    |
-| `chat:stash`          | Ctrl+S                      | Mettre en cache l'invite actuelle |
-| `chat:imagePaste`     | Ctrl+V (Alt+V sous Windows) | Coller une image                  |
+| Action                | Par défaut                  | Description                               |
+| :-------------------- | :-------------------------- | :---------------------------------------- |
+| `chat:cancel`         | Échappement                 | Annuler l'entrée actuelle                 |
+| `chat:killAgents`     | Ctrl+X Ctrl+K               | Arrêter tous les agents de fond           |
+| `chat:cycleMode`      | Maj+Tab\*                   | Cycler les modes de permission            |
+| `chat:modelPicker`    | Cmd+P / Meta+P              | Ouvrir le sélecteur de modèle             |
+| `chat:fastMode`       | Meta+O                      | Basculer le mode rapide                   |
+| `chat:thinkingToggle` | Cmd+T / Meta+T              | Basculer la réflexion étendue             |
+| `chat:submit`         | Entrée                      | Soumettre le message                      |
+| `chat:newline`        | (non lié)                   | Insérer une nouvelle ligne sans soumettre |
+| `chat:undo`           | Ctrl+\_, Ctrl+Maj+-         | Annuler la dernière action                |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E       | Ouvrir dans un éditeur externe            |
+| `chat:stash`          | Ctrl+S                      | Mettre en cache l'invite actuelle         |
+| `chat:imagePaste`     | Ctrl+V (Alt+V sous Windows) | Coller une image                          |
 
 \*Sous Windows sans mode VT (Node \<24.2.0/\<22.17.0, Bun \<1.2.23), la valeur par défaut est Meta+M.
 
@@ -135,6 +137,7 @@ Actions disponibles dans le contexte `Confirmation` :
 | `confirm:next`              | Bas            | Option suivante                      |
 | `confirm:nextField`         | Tab            | Champ suivant                        |
 | `confirm:previousField`     | (non lié)      | Champ précédent                      |
+| `confirm:toggle`            | Espace         | Basculer la sélection                |
 | `confirm:cycleMode`         | Maj+Tab        | Cycler les modes de permission       |
 | `confirm:toggleExplanation` | Ctrl+E         | Basculer l'explication de permission |
 
@@ -150,10 +153,10 @@ Actions disponibles dans le contexte `Confirmation` pour les dialogues de permis
 
 Actions disponibles dans le contexte `Transcript` :
 
-| Action                     | Par défaut          | Description                             |
-| :------------------------- | :------------------ | :-------------------------------------- |
-| `transcript:toggleShowAll` | Ctrl+E              | Basculer l'affichage de tout le contenu |
-| `transcript:exit`          | Ctrl+C, Échappement | Quitter la vue de transcription         |
+| Action                     | Par défaut             | Description                             |
+| :------------------------- | :--------------------- | :-------------------------------------- |
+| `transcript:toggleShowAll` | Ctrl+E                 | Basculer l'affichage de tout le contenu |
+| `transcript:exit`          | q, Ctrl+C, Échappement | Quitter la vue de transcription         |
 
 ### Actions de recherche d'historique
 
@@ -203,23 +206,25 @@ Actions disponibles dans le contexte `Tabs` :
 
 Actions disponibles dans le contexte `Attachments` :
 
-| Action                 | Par défaut                | Description                            |
-| :--------------------- | :------------------------ | :------------------------------------- |
-| `attachments:next`     | Droite                    | Pièce jointe suivante                  |
-| `attachments:previous` | Gauche                    | Pièce jointe précédente                |
-| `attachments:remove`   | Retour arrière, Supprimer | Supprimer la pièce jointe sélectionnée |
-| `attachments:exit`     | Bas, Échappement          | Quitter la barre de pièces jointes     |
+| Action                 | Par défaut                | Description                              |
+| :--------------------- | :------------------------ | :--------------------------------------- |
+| `attachments:next`     | Droite                    | Pièce jointe suivante                    |
+| `attachments:previous` | Gauche                    | Pièce jointe précédente                  |
+| `attachments:remove`   | Retour arrière, Supprimer | Supprimer la pièce jointe sélectionnée   |
+| `attachments:exit`     | Bas, Échappement          | Quitter la navigation des pièces jointes |
 
 ### Actions de pied de page
 
 Actions disponibles dans le contexte `Footer` :
 
-| Action                  | Par défaut  | Description                                  |
-| :---------------------- | :---------- | :------------------------------------------- |
-| `footer:next`           | Droite      | Élément de pied de page suivant              |
-| `footer:previous`       | Gauche      | Élément de pied de page précédent            |
-| `footer:openSelected`   | Entrée      | Ouvrir l'élément de pied de page sélectionné |
-| `footer:clearSelection` | Échappement | Effacer la sélection du pied de page         |
+| Action                  | Par défaut  | Description                                                        |
+| :---------------------- | :---------- | :----------------------------------------------------------------- |
+| `footer:next`           | Droite      | Élément de pied de page suivant                                    |
+| `footer:previous`       | Gauche      | Élément de pied de page précédent                                  |
+| `footer:up`             | Haut        | Naviguer vers le haut dans le pied de page (désélectionne en haut) |
+| `footer:down`           | Bas         | Naviguer vers le bas dans le pied de page                          |
+| `footer:openSelected`   | Entrée      | Ouvrir l'élément de pied de page sélectionné                       |
+| `footer:clearSelection` | Échappement | Effacer la sélection du pied de page                               |
 
 ### Actions du sélecteur de message
 
@@ -280,10 +285,11 @@ Actions disponibles dans le contexte `Plugin` :
 
 Actions disponibles dans le contexte `Settings` :
 
-| Action            | Par défaut | Description                                                      |
-| :---------------- | :--------- | :--------------------------------------------------------------- |
-| `settings:search` | /          | Entrer en mode de recherche                                      |
-| `settings:retry`  | R          | Réessayer de charger les données d'utilisation (en cas d'erreur) |
+| Action            | Par défaut | Description                                                                                                        |
+| :---------------- | :--------- | :----------------------------------------------------------------------------------------------------------------- |
+| `settings:search` | /          | Entrer en mode de recherche                                                                                        |
+| `settings:retry`  | R          | Réessayer de charger les données d'utilisation (en cas d'erreur)                                                   |
+| `settings:close`  | Entrée     | Enregistrer les modifications et fermer le panneau de configuration. Échappement annule les modifications et ferme |
 
 ### Actions vocales
 
@@ -352,6 +358,25 @@ Définissez une action sur `null` pour délier un raccourci par défaut :
   ]
 }
 ```
+
+Cela fonctionne également pour les liaisons d'accords. Délier tous les accords qui partagent un préfixe libère ce préfixe pour une utilisation comme liaison à touche unique :
+
+```json  theme={null}
+{
+  "bindings": [
+    {
+      "context": "Chat",
+      "bindings": {
+        "ctrl+x ctrl+k": null,
+        "ctrl+x ctrl+e": null,
+        "ctrl+x": "chat:newline"
+      }
+    }
+  ]
+}
+```
+
+Si vous déliez certains accords mais pas tous sur un préfixe, appuyer sur le préfixe entre toujours en mode d'attente d'accord pour les liaisons restantes.
 
 ## Raccourcis réservés
 

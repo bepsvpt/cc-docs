@@ -557,6 +557,10 @@ export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 
 有关完整的配置选项，请参阅 [Plugin 设置](/zh-CN/settings#plugin-settings)。
 
+<Note>
+  如果你使用带有相对路径的本地 `directory` 或 `file` 源，路径将相对于你的存储库的主检出解析。当你从 git worktree 运行 Claude Code 时，路径仍然指向主检出，所以所有 worktrees 共享相同的 marketplace 位置。Marketplace 状态存储一次每个用户在 `~/.claude/plugins/known_marketplaces.json` 中，而不是每个项目。
+</Note>
+
 ### 为容器预填充 plugins
 
 对于容器镜像和 CI 环境，你可以在构建时预填充 plugins 目录，以便 Claude Code 启动时已经有 marketplaces 和 plugins 可用，无需在运行时克隆任何内容。设置 `CLAUDE_CODE_PLUGIN_SEED_DIR` 环境变量以指向此目录。
@@ -627,7 +631,7 @@ $CLAUDE_CODE_PLUGIN_SEED_DIR/
 }
 ```
 
-使用主机上的正则表达式模式匹配允许来自内部 git 服务器的所有 marketplaces：
+使用主机上的正则表达式模式匹配允许来自内部 git 服务器的所有 marketplaces。这是 [GitHub Enterprise Server](/zh-CN/github-enterprise-server#plugin-marketplaces-on-ghes) 或自托管 GitLab 实例的推荐方法：
 
 ```json  theme={null}
 {
@@ -848,6 +852,20 @@ claude plugin validate .
 * 对于 GitHub，确保令牌对私有存储库具有 `repo` 范围
 * 对于 GitLab，确保令牌至少具有 `read_repository` 范围
 * 验证令牌未过期
+
+### Marketplace 更新在离线环境中失败
+
+**症状**：Marketplace `git pull` 失败，Claude Code 清除现有缓存，导致 plugins 变得不可用。
+
+**原因**：默认情况下，当 `git pull` 失败时，Claude Code 会删除陈旧的克隆并尝试重新克隆。在离线或隔离的环境中，重新克隆以相同的方式失败，导致 marketplace 目录为空。
+
+**解决方案**：设置 `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` 以在拉取失败时保留现有缓存，而不是清除它：
+
+```bash  theme={null}
+export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
+```
+
+设置此变量后，Claude Code 在 `git pull` 失败时保留陈旧的 marketplace 克隆，并继续使用最后已知的良好状态。对于存储库永远无法访问的完全离线部署，请改用 [`CLAUDE_CODE_PLUGIN_SEED_DIR`](#pre-populate-plugins-for-containers) 在构建时预填充 plugins 目录。
 
 ### Git 操作超时
 

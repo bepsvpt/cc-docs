@@ -86,7 +86,14 @@ Claude Code는 다음 URL에 대한 액세스가 필요합니다:
 
 이러한 URL이 프록시 구성 및 방화벽 규칙에서 허용 목록에 있는지 확인하십시오. 이는 특히 컨테이너화되거나 제한된 네트워크 환경에서 Claude Code를 사용할 때 중요합니다.
 
+네이티브 설치 관리자 및 업데이트 확인도 다음 URL이 필요합니다. 설치 관리자 및 자동 업데이터는 `storage.googleapis.com`에서 가져오고 플러그인 다운로드는 `downloads.claude.ai`를 사용하므로 둘 다 허용 목록에 추가하십시오. npm을 통해 Claude Code를 설치하거나 자신의 바이너리 배포를 관리하는 경우 최종 사용자는 액세스가 필요하지 않을 수 있습니다:
+
+* `storage.googleapis.com`: Claude Code 바이너리 및 자동 업데이터용 다운로드 버킷
+* `downloads.claude.ai`: 설치 스크립트, 버전 포인터, 매니페스트, 서명 키 및 플러그인 실행 파일을 호스팅하는 CDN
+
 [웹의 Claude Code](/ko/claude-code-on-the-web) 및 [Code Review](/ko/code-review)는 Anthropic 관리 인프라에서 리포지토리에 연결합니다. GitHub Enterprise Cloud 조직이 IP 주소로 액세스를 제한하는 경우 [설치된 GitHub Apps에 대한 IP 허용 목록 상속 활성화](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps)를 수행하십시오. Claude GitHub App은 IP 범위를 등록하므로 이 설정을 활성화하면 수동 구성 없이 액세스할 수 있습니다. 대신 [범위를 허용 목록에 수동으로 추가](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address)하거나 다른 방화벽을 구성하려면 [Anthropic API IP 주소](https://platform.claude.com/docs/en/api/ip-addresses)를 참조하십시오.
+
+자체 호스팅 [GitHub Enterprise Server](/ko/github-enterprise-server) 인스턴스가 방화벽 뒤에 있는 경우 동일한 [Anthropic API IP 주소](https://platform.claude.com/docs/en/api/ip-addresses)를 허용 목록에 추가하여 Anthropic 인프라가 GHES 호스트에 도달하여 리포지토리를 복제하고 검토 의견을 게시할 수 있도록 합니다.
 
 ## 추가 리소스
 

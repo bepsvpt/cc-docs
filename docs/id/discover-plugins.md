@@ -28,12 +28,12 @@ Anggap saja seperti menambahkan app store: menambahkan toko memberi Anda akses u
 
 ## Official Anthropic marketplace
 
-Official Anthropic marketplace (`claude-plugins-official`) secara otomatis tersedia saat Anda memulai Claude Code. Jalankan `/plugin` dan buka tab **Discover** untuk menjelajahi apa yang tersedia.
+Official Anthropic marketplace (`claude-plugins-official`) secara otomatis tersedia saat Anda memulai Claude Code. Jalankan `/plugin` dan buka tab **Discover** untuk menjelajahi apa yang tersedia, atau lihat katalog di [claude.com/plugins](https://claude.com/plugins).
 
-Untuk menginstal plugin dari official marketplace:
+Untuk menginstal plugin dari official marketplace, gunakan `/plugin install <name>@claude-plugins-official`. Misalnya, untuk menginstal integrasi GitHub:
 
 ```shell  theme={null}
-/plugin install plugin-name@claude-plugins-official
+/plugin install github@claude-plugins-official
 ```
 
 <Note>
@@ -302,7 +302,7 @@ Saat Anda menginstal, mengaktifkan, atau menonaktifkan plugin selama sesi, jalan
 /reload-plugins
 ```
 
-Claude Code memuat ulang semua plugin aktif dan menampilkan hitungan untuk perintah yang dimuat ulang, skills, agen, hooks, server MCP plugin, dan server LSP plugin.
+Claude Code memuat ulang semua plugin aktif dan menampilkan hitungan untuk plugin, skills, agen, hooks, server MCP plugin, dan server LSP plugin.
 
 ## Kelola marketplace
 
@@ -358,11 +358,11 @@ Official Anthropic marketplace memiliki auto-update diaktifkan secara default. M
 
 Untuk menonaktifkan semua pembaruan otomatis sepenuhnya untuk Claude Code dan semua plugin, atur variabel lingkungan `DISABLE_AUTOUPDATER`. Lihat [Auto updates](/id/setup#auto-updates) untuk detail.
 
-Untuk menjaga plugin auto-updates tetap diaktifkan sambil menonaktifkan Claude Code auto-updates, atur `FORCE_AUTOUPDATE_PLUGINS=true` bersama dengan `DISABLE_AUTOUPDATER`:
+Untuk menjaga plugin auto-updates tetap diaktifkan sambil menonaktifkan Claude Code auto-updates, atur `FORCE_AUTOUPDATE_PLUGINS=1` bersama dengan `DISABLE_AUTOUPDATER`:
 
-```shell  theme={null}
-export DISABLE_AUTOUPDATER=true
-export FORCE_AUTOUPDATE_PLUGINS=true
+```bash  theme={null}
+export DISABLE_AUTOUPDATER=1
+export FORCE_AUTOUPDATE_PLUGINS=1
 ```
 
 Ini berguna saat Anda ingin mengelola pembaruan Claude Code secara manual tetapi masih menerima pembaruan plugin otomatis.
@@ -398,7 +398,7 @@ Plugin dan marketplace adalah komponen yang sangat dipercaya yang dapat menjalan
 
 Jika Anda melihat "unknown command" atau perintah `/plugin` tidak muncul:
 
-1. **Periksa versi Anda**: Jalankan `claude --version`. Plugin memerlukan versi 1.0.33 atau lebih baru.
+1. **Periksa versi Anda**: Jalankan `claude --version` untuk melihat apa yang diinstal.
 2. **Perbarui Claude Code**:
    * **Homebrew**: `brew upgrade claude-code`
    * **npm**: `npm update -g @anthropic-ai/claude-code`

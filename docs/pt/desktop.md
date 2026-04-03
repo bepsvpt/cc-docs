@@ -58,13 +58,13 @@ A caixa de prompt suporta duas maneiras de trazer contexto externo:
 
 Os modos de permissão controlam quanto de autonomia Claude tem durante uma sessão: se ele pergunta antes de editar arquivos, executar comandos ou ambos. Você pode alternar modos a qualquer momento usando o seletor de modo ao lado do botão enviar. Comece com Pedir permissões para ver exatamente o que Claude faz, depois mude para Auto aceitar edições ou Plan mode conforme você fica confortável.
 
-| Modo                     | Chave de configuração | Comportamento                                                                                                                                                                                                                                                                                                                                       |
-| ------------------------ | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Pedir permissões**     | `default`             | Claude pergunta antes de editar arquivos ou executar comandos. Você vê um diff e pode aceitar ou rejeitar cada alteração. Recomendado para novos usuários.                                                                                                                                                                                          |
-| **Auto aceitar edições** | `acceptEdits`         | Claude aceita automaticamente edições de arquivo, mas ainda pergunta antes de executar comandos de terminal. Use isso quando você confia em alterações de arquivo e quer iteração mais rápida.                                                                                                                                                      |
-| **Plan mode**            | `plan`                | Claude analisa seu código e cria um plano sem modificar arquivos ou executar comandos. Bom para tarefas complexas onde você quer revisar a abordagem primeiro.                                                                                                                                                                                      |
-| **Auto**                 | `auto`                | Claude executa todas as ações com verificações de segurança em segundo plano que verificam o alinhamento com sua solicitação. Reduz prompts de permissão mantendo supervisão. Atualmente uma visualização de pesquisa. Disponível em planos Team (Enterprise em breve). Requer Claude Sonnet 4.6 ou Opus 4.6. Ative em Configurações → Claude Code. |
-| **Bypass permissions**   | `bypassPermissions`   | Claude é executado sem nenhum prompt de permissão, equivalente a `--dangerously-skip-permissions` no CLI. Ative em Configurações → Claude Code em "Permitir modo bypass permissions". Use apenas em containers ou VMs sandboxed. Administradores corporativos podem desabilitar essa opção.                                                         |
+| Modo                     | Chave de configuração | Comportamento                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------ | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Pedir permissões**     | `default`             | Claude pergunta antes de editar arquivos ou executar comandos. Você vê um diff e pode aceitar ou rejeitar cada alteração. Recomendado para novos usuários.                                                                                                                                                                                      |
+| **Auto aceitar edições** | `acceptEdits`         | Claude aceita automaticamente edições de arquivo, mas ainda pergunta antes de executar comandos de terminal. Use isso quando você confia em alterações de arquivo e quer iteração mais rápida.                                                                                                                                                  |
+| **Plan mode**            | `plan`                | Claude analisa seu código e cria um plano sem modificar arquivos ou executar comandos. Bom para tarefas complexas onde você quer revisar a abordagem primeiro.                                                                                                                                                                                  |
+| **Auto**                 | `auto`                | Claude executa todas as ações com verificações de segurança em segundo plano que verificam o alinhamento com sua solicitação. Reduz prompts de permissão mantendo supervisão. Atualmente uma visualização de pesquisa. Disponível em planos Team, Enterprise e API. Requer Claude Sonnet 4.6 ou Opus 4.6. Ative em Configurações → Claude Code. |
+| **Bypass permissions**   | `bypassPermissions`   | Claude é executado sem nenhum prompt de permissão, equivalente a `--dangerously-skip-permissions` no CLI. Ative em Configurações → Claude Code em "Permitir modo bypass permissions". Use apenas em containers ou VMs sandboxed. Administradores corporativos podem desabilitar essa opção.                                                     |
 
 O modo de permissão `dontAsk` está disponível apenas no [CLI](/pt/permission-modes#allow-only-pre-approved-tools-with-dontask-mode).
 
@@ -151,12 +151,28 @@ Os [níveis de acesso por aplicativo](#app-permissions) reforçam isso: navegado
 
 ### Ativar computer use
 
-Computer use está desativado por padrão. Se você pedir a Claude para fazer algo que precisa disso enquanto está desativado, Claude diz que poderia fazer a tarefa se você ativar computer use em Configurações. Para ativar, abra **Configurações > Aplicativo Desktop > Geral** e alterne **Computer use** ligado. Antes do toggle entrar em efeito, você precisa conceder duas permissões do sistema macOS:
+Computer use está desativado por padrão. Se você pedir a Claude para fazer algo que precisa disso enquanto está desativado, Claude diz que poderia fazer a tarefa se você ativar computer use em Configurações.
 
-* **Acessibilidade**: permite que Claude clique, digite e role
-* **Gravação de Tela**: permite que Claude veja o que está em sua tela
+<Steps>
+  <Step title="Atualizar o aplicativo desktop">
+    Certifique-se de que você tem a versão mais recente do Claude Desktop. Baixe ou atualize em [claude.com/download](https://claude.com/download), depois reinicie o aplicativo.
+  </Step>
 
-A página de Configurações mostra o status atual de cada permissão. Se alguma for negada, clique no badge para abrir o painel de Configurações do Sistema relevante.
+  <Step title="Ativar o toggle">
+    No aplicativo desktop, vá para **Configurações > Geral** (em **Aplicativo Desktop**). Encontre o toggle **Computer use** e ative-o.
+
+    Se você não vir o toggle, confirme que você está em macOS com um plano Pro ou Max, depois atualize e reinicie o aplicativo.
+  </Step>
+
+  <Step title="Conceder permissões macOS">
+    Antes do toggle entrar em efeito, conceda duas permissões do sistema macOS:
+
+    * **Acessibilidade**: permite que Claude clique, digite e role
+    * **Gravação de Tela**: permite que Claude veja o que está em sua tela
+
+    A página de Configurações mostra o status atual de cada permissão. Se alguma for negada, clique no badge para abrir o painel de Configurações do Sistema relevante.
+  </Step>
+</Steps>
 
 ### Permissões de aplicativo
 
@@ -172,7 +188,7 @@ O prompt também mostra que nível de controle Claude obtém para esse aplicativ
 
 Aplicativos com alcance amplo como Terminal, Finder e Configurações do Sistema mostram um aviso extra no prompt para que você saiba o que aprovar concede.
 
-Você pode configurar duas configurações em **Configurações > Aplicativo Desktop > Geral**:
+Você pode configurar duas configurações em **Configurações > Geral** (em **Aplicativo Desktop**):
 
 * **Aplicativos negados**: adicione aplicativos aqui para rejeitá-los sem solicitar. Claude ainda pode afetar um aplicativo negado indiretamente através de ações em um aplicativo permitido, mas não pode interagir com o aplicativo negado diretamente.
 * **Mostrar aplicativos quando Claude termina**: enquanto Claude está trabalhando, suas outras janelas são ocultadas para que ele interaja apenas com o aplicativo aprovado. Quando Claude termina, as janelas ocultas são restauradas a menos que você desative essa configuração.
@@ -186,6 +202,8 @@ Cada sessão é uma conversa independente com seu próprio contexto e alteraçõ
 Clique em **+ New session** na barra lateral para trabalhar em múltiplas tarefas em paralelo. Para repositórios Git, cada sessão obtém sua própria cópia isolada do seu projeto usando [Git worktrees](/pt/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees), para que alterações em uma sessão não afetem outras sessões até que você as faça commit.
 
 Worktrees são armazenadas em `<project-root>/.claude/worktrees/` por padrão. Você pode alterar isso para um diretório personalizado em Configurações → Claude Code em "Worktree location". Você também pode definir um prefixo de branch que é adicionado a cada nome de branch worktree, o que é útil para manter branches criadas por Claude organizadas. Para remover um worktree quando terminar, passe o mouse sobre a sessão na barra lateral e clique no ícone de arquivo.
+
+Para incluir arquivos gitignored como `.env` em novos worktrees, crie um [arquivo `.worktreeinclude`](/pt/common-workflows#copy-gitignored-files-to-worktrees) na raiz do seu projeto.
 
 <Note>
   O isolamento de sessão requer [Git](https://git-scm.com/downloads). A maioria dos Macs inclui Git por padrão. Execute `git --version` no Terminal para verificar. No Windows, Git é necessário para a aba Code funcionar: [baixe Git para Windows](https://git-scm.com/downloads/win), instale-o e reinicie o aplicativo. Se você encontrar erros de Git, tente uma sessão Cowork para ajudar a solucionar problemas de sua configuração.
@@ -627,7 +645,7 @@ Esta tabela compara capacidades principais entre CLI e Desktop. Para uma lista c
 | Isolamento de sessão                                    | Flag [`--worktree`](/pt/cli-reference)                    | Worktrees automáticos                                                                              |
 | Múltiplas sessões                                       | Terminais separados                                       | Abas na barra lateral                                                                              |
 | Tarefas recorrentes                                     | Cron jobs, pipelines CI                                   | [Tarefas agendadas](#schedule-recurring-tasks)                                                     |
-| Computer use                                            | Não disponível                                            | [Controle de aplicativo e tela](#let-claude-use-your-computer) no macOS                            |
+| Computer use                                            | [Ativar via `/mcp`](/pt/computer-use) em macOS            | [Controle de aplicativo e tela](#let-claude-use-your-computer) em macOS                            |
 | Integração Dispatch                                     | Não disponível                                            | [Sessões Dispatch](#sessions-from-dispatch) na barra lateral                                       |
 | Scripting e automação                                   | [`--print`](/pt/cli-reference), [Agent SDK](/pt/headless) | Não disponível                                                                                     |
 

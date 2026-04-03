@@ -18,7 +18,7 @@ Les hooks se déclenchent à des points spécifiques pendant une session Claude 
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/WLZtXlltXc8aIoIM/images/hooks-lifecycle.svg?fit=max&auto=format&n=WLZtXlltXc8aIoIM&q=85&s=6a0bf67eeb570a96e36b564721fa2a93" alt="Diagramme du cycle de vie des hooks montrant la séquence des hooks de SessionStart à travers la boucle agentique (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCreated, TaskCompleted) jusqu'à Stop ou StopFailure, TeammateIdle, PreCompact, PostCompact et SessionEnd, avec Elicitation et ElicitationResult imbriqués dans l'exécution de l'outil MCP et WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged et FileChanged comme événements asynchrones autonomes" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/WLZtXlltXc8aIoIM/images/hooks-lifecycle.svg?fit=max&auto=format&n=WLZtXlltXc8aIoIM&q=85&s=6a0bf67eeb570a96e36b564721fa2a93" alt="Diagramme du cycle de vie des hooks montrant la séquence des hooks de SessionStart à travers la boucle agentique (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCreated, TaskCompleted) jusqu'à Stop ou StopFailure, TeammateIdle, PreCompact, PostCompact et SessionEnd, avec Elicitation et ElicitationResult imbriqués dans l'exécution de l'outil MCP, PermissionDenied comme branche latérale de PermissionRequest pour les refus en mode auto, et WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged et FileChanged comme événements asynchrones autonomes" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
@@ -177,7 +177,7 @@ Le champ `matcher` est une chaîne regex qui filtre quand les hooks se déclench
 
 | Événement                                                                                                      | Ce que le matcher filtre                     | Exemples de valeurs de matcher                                                                                            |
 | :------------------------------------------------------------------------------------------------------------- | :------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                                         | nom de l'outil                               | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                     | nom de l'outil                               | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
 | `SessionStart`                                                                                                 | comment la session a démarré                 | `startup`, `resume`, `clear`, `compact`                                                                                   |
 | `SessionEnd`                                                                                                   | pourquoi la session s'est terminée           | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
 | `Notification`                                                                                                 | type de notification                         | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
@@ -221,7 +221,7 @@ Pour les événements d'outil, vous pouvez filtrer plus étroitement en définis
 
 #### Correspondre aux outils MCP
 
-Les outils du serveur [MCP](/fr/mcp) apparaissent comme des outils réguliers dans les événements d'outil (`PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`), vous pouvez donc les faire correspondre de la même manière que tout autre nom d'outil.
+Les outils du serveur [MCP](/fr/mcp) apparaissent comme des outils réguliers dans les événements d'outil (`PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`), vous pouvez donc les faire correspondre de la même manière que tout autre nom d'outil.
 
 Les outils MCP suivent le modèle de nommage `mcp__<server>__<tool>`, par exemple :
 
@@ -276,13 +276,13 @@ Chaque objet du tableau `hooks` interne est un gestionnaire de hook : la command
 
 Ces champs s'appliquent à tous les types de hooks :
 
-| Champ           | Requis | Description                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| :-------------- | :----- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`          | oui    | `"command"`, `"http"`, `"prompt"` ou `"agent"`                                                                                                                                                                                                                                                                                                                                                                                                            |
-| `if`            | non    | Syntaxe de règle de permission pour filtrer quand ce hook s'exécute, comme `"Bash(git *)"` ou `"Edit(*.ts)"`. Le hook ne s'exécute que si l'appel d'outil correspond au modèle. Évalué uniquement sur les événements d'outil : `PreToolUse`, `PostToolUse`, `PostToolUseFailure` et `PermissionRequest`. Sur les autres événements, un hook avec `if` défini ne s'exécute jamais. Utilise la même syntaxe que les [règles de permission](/fr/permissions) |
-| `timeout`       | non    | Secondes avant annulation. Valeurs par défaut : 600 pour command, 30 pour prompt, 60 pour agent                                                                                                                                                                                                                                                                                                                                                           |
-| `statusMessage` | non    | Message de spinner personnalisé affiché pendant l'exécution du hook                                                                                                                                                                                                                                                                                                                                                                                       |
-| `once`          | non    | Si `true`, s'exécute une seule fois par session puis est supprimé. Skills uniquement, pas agents. Consultez [Hooks dans les skills et agents](#hooks-in-skills-and-agents)                                                                                                                                                                                                                                                                                |
+| Champ           | Requis | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| :-------------- | :----- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`          | oui    | `"command"`, `"http"`, `"prompt"` ou `"agent"`                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `if`            | non    | Syntaxe de règle de permission pour filtrer quand ce hook s'exécute, comme `"Bash(git *)"` ou `"Edit(*.ts)"`. Le hook ne s'exécute que si l'appel d'outil correspond au modèle. Évalué uniquement sur les événements d'outil : `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest` et `PermissionDenied`. Sur les autres événements, un hook avec `if` défini ne s'exécute jamais. Utilise la même syntaxe que les [règles de permission](/fr/permissions) |
+| `timeout`       | non    | Secondes avant annulation. Valeurs par défaut : 600 pour command, 30 pour prompt, 60 pour agent                                                                                                                                                                                                                                                                                                                                                                               |
+| `statusMessage` | non    | Message de spinner personnalisé affiché pendant l'exécution du hook                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `once`          | non    | Si `true`, s'exécute une seule fois par session puis est supprimé. Skills uniquement, pas agents. Consultez [Hooks dans les skills et agents](#hooks-in-skills-and-agents)                                                                                                                                                                                                                                                                                                    |
 
 #### Champs des hooks de commande
 
@@ -524,33 +524,34 @@ exit 0  # Succès : l'appel d'outil procède
 
 Le code de sortie 2 est la façon dont un hook signale « arrêtez, ne faites pas cela ». L'effet dépend de l'événement, car certains événements représentent des actions qui peuvent être bloquées (comme un appel d'outil qui ne s'est pas encore produit) et d'autres représentent des choses qui se sont déjà produites ou ne peuvent pas être empêchées.
 
-| Événement de hook    | Peut bloquer ? | Ce qui se passe sur exit 2                                                        |
-| :------------------- | :------------- | :-------------------------------------------------------------------------------- |
-| `PreToolUse`         | Oui            | Bloque l'appel d'outil                                                            |
-| `PermissionRequest`  | Oui            | Refuse la permission                                                              |
-| `UserPromptSubmit`   | Oui            | Bloque le traitement du prompt et efface le prompt                                |
-| `Stop`               | Oui            | Empêche Claude de s'arrêter, continue la conversation                             |
-| `SubagentStop`       | Oui            | Empêche le subagent de s'arrêter                                                  |
-| `TeammateIdle`       | Oui            | Empêche le coéquipier de devenir inactif (le coéquipier continue de travailler)   |
-| `TaskCreated`        | Oui            | Annule la création de la tâche                                                    |
-| `TaskCompleted`      | Oui            | Empêche la tâche d'être marquée comme complétée                                   |
-| `ConfigChange`       | Oui            | Bloque la modification de configuration de prendre effet (sauf `policy_settings`) |
-| `StopFailure`        | Non            | La sortie et le code de sortie sont ignorés                                       |
-| `PostToolUse`        | Non            | Affiche stderr à Claude (l'outil a déjà s'exécuté)                                |
-| `PostToolUseFailure` | Non            | Affiche stderr à Claude (l'outil a déjà échoué)                                   |
-| `Notification`       | Non            | Affiche stderr à l'utilisateur uniquement                                         |
-| `SubagentStart`      | Non            | Affiche stderr à l'utilisateur uniquement                                         |
-| `SessionStart`       | Non            | Affiche stderr à l'utilisateur uniquement                                         |
-| `SessionEnd`         | Non            | Affiche stderr à l'utilisateur uniquement                                         |
-| `CwdChanged`         | Non            | Affiche stderr à l'utilisateur uniquement                                         |
-| `FileChanged`        | Non            | Affiche stderr à l'utilisateur uniquement                                         |
-| `PreCompact`         | Non            | Affiche stderr à l'utilisateur uniquement                                         |
-| `PostCompact`        | Non            | Affiche stderr à l'utilisateur uniquement                                         |
-| `Elicitation`        | Oui            | Refuse l'élicitation                                                              |
-| `ElicitationResult`  | Oui            | Bloque la réponse (l'action devient decline)                                      |
-| `WorktreeCreate`     | Oui            | Tout code de sortie non-zéro provoque l'échec de la création du worktree          |
-| `WorktreeRemove`     | Non            | Les défaillances sont enregistrées en mode debug uniquement                       |
-| `InstructionsLoaded` | Non            | Le code de sortie est ignoré                                                      |
+| Événement de hook    | Peut bloquer ? | Ce qui se passe sur exit 2                                                                                                                                 |
+| :------------------- | :------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PreToolUse`         | Oui            | Bloque l'appel d'outil                                                                                                                                     |
+| `PermissionRequest`  | Oui            | Refuse la permission                                                                                                                                       |
+| `UserPromptSubmit`   | Oui            | Bloque le traitement du prompt et efface le prompt                                                                                                         |
+| `Stop`               | Oui            | Empêche Claude de s'arrêter, continue la conversation                                                                                                      |
+| `SubagentStop`       | Oui            | Empêche le subagent de s'arrêter                                                                                                                           |
+| `TeammateIdle`       | Oui            | Empêche le coéquipier de devenir inactif (le coéquipier continue de travailler)                                                                            |
+| `TaskCreated`        | Oui            | Annule la création de la tâche                                                                                                                             |
+| `TaskCompleted`      | Oui            | Empêche la tâche d'être marquée comme complétée                                                                                                            |
+| `ConfigChange`       | Oui            | Bloque la modification de configuration de prendre effet (sauf `policy_settings`)                                                                          |
+| `StopFailure`        | Non            | La sortie et le code de sortie sont ignorés                                                                                                                |
+| `PostToolUse`        | Non            | Affiche stderr à Claude (l'outil a déjà s'exécuté)                                                                                                         |
+| `PostToolUseFailure` | Non            | Affiche stderr à Claude (l'outil a déjà échoué)                                                                                                            |
+| `PermissionDenied`   | Non            | Le code de sortie et stderr sont ignorés (refus déjà survenu). Utilisez JSON `hookSpecificOutput.retry: true` pour indiquer au modèle qu'il peut réessayer |
+| `Notification`       | Non            | Affiche stderr à l'utilisateur uniquement                                                                                                                  |
+| `SubagentStart`      | Non            | Affiche stderr à l'utilisateur uniquement                                                                                                                  |
+| `SessionStart`       | Non            | Affiche stderr à l'utilisateur uniquement                                                                                                                  |
+| `SessionEnd`         | Non            | Affiche stderr à l'utilisateur uniquement                                                                                                                  |
+| `CwdChanged`         | Non            | Affiche stderr à l'utilisateur uniquement                                                                                                                  |
+| `FileChanged`        | Non            | Affiche stderr à l'utilisateur uniquement                                                                                                                  |
+| `PreCompact`         | Non            | Affiche stderr à l'utilisateur uniquement                                                                                                                  |
+| `PostCompact`        | Non            | Affiche stderr à l'utilisateur uniquement                                                                                                                  |
+| `Elicitation`        | Oui            | Refuse l'élicitation                                                                                                                                       |
+| `ElicitationResult`  | Oui            | Bloque la réponse (l'action devient decline)                                                                                                               |
+| `WorktreeCreate`     | Oui            | Tout code de sortie non-zéro provoque l'échec de la création du worktree                                                                                   |
+| `WorktreeRemove`     | Non            | Les défaillances sont enregistrées en mode debug uniquement                                                                                                |
+| `InstructionsLoaded` | Non            | Le code de sortie est ignoré                                                                                                                               |
 
 ### Gestion des réponses HTTP
 
@@ -601,8 +602,9 @@ Tous les événements ne supportent pas le blocage ou le contrôle du comporteme
 | :-------------------------------------------------------------------------------------------------------------------------- | :---------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange                                         | `decision` au niveau supérieur      | `decision: "block"`, `reason`                                                                                                                                                                           |
 | TeammateIdle, TaskCreated, TaskCompleted                                                                                    | Code de sortie ou `continue: false` | Le code de sortie 2 bloque l'action avec commentaires stderr. JSON `{"continue": false, "stopReason": "..."}` arrête également complètement le coéquipier, correspondant au comportement du hook `Stop` |
-| PreToolUse                                                                                                                  | `hookSpecificOutput`                | `permissionDecision` (allow/deny/ask), `permissionDecisionReason`                                                                                                                                       |
+| PreToolUse                                                                                                                  | `hookSpecificOutput`                | `permissionDecision` (allow/deny/ask/defer), `permissionDecisionReason`                                                                                                                                 |
 | PermissionRequest                                                                                                           | `hookSpecificOutput`                | `decision.behavior` (allow/deny)                                                                                                                                                                        |
+| PermissionDenied                                                                                                            | `hookSpecificOutput`                | `retry: true` indique au modèle qu'il peut réessayer l'appel d'outil refusé                                                                                                                             |
 | WorktreeCreate                                                                                                              | chemin stdout                       | Le hook imprime le chemin absolu du worktree créé. La sortie non-zéro échoue la création                                                                                                                |
 | Elicitation                                                                                                                 | `hookSpecificOutput`                | `action` (accept/decline/cancel), `content` (valeurs des champs de formulaire pour accept)                                                                                                              |
 | ElicitationResult                                                                                                           | `hookSpecificOutput`                | `action` (accept/decline/cancel), `content` (valeurs des champs de formulaire override)                                                                                                                 |
@@ -623,7 +625,7 @@ Voici des exemples de chaque modèle en action :
   </Tab>
 
   <Tab title="PreToolUse">
-    Utilise `hookSpecificOutput` pour un contrôle plus riche : autoriser, refuser ou escalader à l'utilisateur. Vous pouvez également modifier l'entrée de l'outil avant son exécution ou injecter du contexte supplémentaire pour Claude. Consultez [Contrôle de décision PreToolUse](#pretooluse-decision-control) pour l'ensemble complet des options.
+    Utilise `hookSpecificOutput` pour un contrôle plus riche : autoriser, refuser, demander ou différer. Vous pouvez également modifier l'entrée de l'outil avant son exécution ou injecter du contexte supplémentaire pour Claude. Consultez [Contrôle de décision PreToolUse](#pretooluse-decision-control) pour l'ensemble complet des options.
 
     ```json  theme={null}
     {
@@ -843,7 +845,7 @@ Pour bloquer un prompt, retournez un objet JSON avec `decision` défini à `"blo
 
 S'exécute après que Claude crée les paramètres de l'outil et avant le traitement de l'appel d'outil. Correspond au nom de l'outil : `Bash`, `Edit`, `Write`, `Read`, `Glob`, `Grep`, `Agent`, `WebFetch`, `WebSearch`, `AskUserQuestion`, `ExitPlanMode` et tout [nom d'outil MCP](#match-mcp-tools).
 
-Utilisez [Contrôle de décision PreToolUse](#pretooluse-decision-control) pour autoriser, refuser ou demander la permission d'utiliser l'outil.
+Utilisez [Contrôle de décision PreToolUse](#pretooluse-decision-control) pour autoriser, refuser, demander ou différer l'appel d'outil.
 
 #### Entrée PreToolUse
 
@@ -953,16 +955,18 @@ Pose à l'utilisateur une à quatre questions à choix multiples.
 
 #### Contrôle de décision PreToolUse
 
-Les hooks `PreToolUse` peuvent contrôler si un appel d'outil procède. Contrairement aux autres hooks qui utilisent un champ `decision` au niveau supérieur, PreToolUse retourne sa décision à l'intérieur d'un objet `hookSpecificOutput`. Cela lui donne un contrôle plus riche : trois résultats (autoriser, refuser ou demander) plus la capacité de modifier l'entrée de l'outil avant l'exécution.
+Les hooks `PreToolUse` peuvent contrôler si un appel d'outil procède. Contrairement aux autres hooks qui utilisent un champ `decision` au niveau supérieur, PreToolUse retourne sa décision à l'intérieur d'un objet `hookSpecificOutput`. Cela lui donne un contrôle plus riche : quatre résultats (autoriser, refuser, demander ou différer) plus la capacité de modifier l'entrée de l'outil avant l'exécution.
 
-| Champ                      | Description                                                                                                                                                                                                                                                                       |
-| :------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `permissionDecision`       | `"allow"` contourne le système de permission, `"deny"` empêche l'appel d'outil, `"ask"` demande à l'utilisateur de confirmer. Les règles [Deny and ask](/fr/permissions#manage-permissions) s'appliquent toujours lorsqu'un hook retourne `"allow"`                               |
-| `permissionDecisionReason` | Pour `"allow"` et `"ask"`, affiché à l'utilisateur mais pas à Claude. Pour `"deny"`, affiché à Claude                                                                                                                                                                             |
-| `updatedInput`             | Modifie les paramètres d'entrée de l'outil avant l'exécution. Remplace l'objet d'entrée entier, donc incluez les champs inchangés aux côtés des champs modifiés. Combinez avec `"allow"` pour approuver automatiquement ou `"ask"` pour montrer l'entrée modifiée à l'utilisateur |
-| `additionalContext`        | Chaîne ajoutée au contexte de Claude avant l'exécution de l'outil                                                                                                                                                                                                                 |
+| Champ                      | Description                                                                                                                                                                                                                                                                                                                     |
+| :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `permissionDecision`       | `"allow"` contourne le système de permission, `"deny"` empêche l'appel d'outil, `"ask"` demande à l'utilisateur de confirmer, `"defer"` sort gracieusement afin que l'outil puisse être repris plus tard. Les règles [Deny and ask](/fr/permissions#manage-permissions) s'appliquent toujours lorsqu'un hook retourne `"allow"` |
+| `permissionDecisionReason` | Pour `"allow"` et `"ask"`, affiché à l'utilisateur mais pas à Claude. Pour `"deny"`, affiché à Claude. Pour `"defer"`, ignoré                                                                                                                                                                                                   |
+| `updatedInput`             | Modifie les paramètres d'entrée de l'outil avant l'exécution. Remplace l'objet d'entrée entier, donc incluez les champs inchangés aux côtés des champs modifiés. Combinez avec `"allow"` pour approuver automatiquement ou `"ask"` pour montrer l'entrée modifiée à l'utilisateur. Pour `"defer"`, ignoré                       |
+| `additionalContext`        | Chaîne ajoutée au contexte de Claude avant l'exécution de l'outil. Pour `"defer"`, ignoré                                                                                                                                                                                                                                       |
 
 Lorsqu'un hook retourne `"ask"`, le dialogue de permission affiché à l'utilisateur inclut un libellé identifiant d'où provient le hook : par exemple, `[User]`, `[Project]`, `[Plugin]` ou `[Local]`. Cela aide les utilisateurs à comprendre quelle source de configuration demande une confirmation.
+
+Lorsque plusieurs hooks PreToolUse retournent des décisions différentes, la précédence est `deny` > `defer` > `ask` > `allow`.
 
 ```json  theme={null}
 {
@@ -983,6 +987,48 @@ Lorsqu'un hook retourne `"ask"`, le dialogue de permission affiché à l'utilisa
 <Note>
   PreToolUse utilisait auparavant les champs `decision` et `reason` au niveau supérieur, mais ceux-ci sont dépréciés pour cet événement. Utilisez `hookSpecificOutput.permissionDecision` et `hookSpecificOutput.permissionDecisionReason` à la place. Les valeurs dépréciées `"approve"` et `"block"` correspondent à `"allow"` et `"deny"` respectivement. Les autres événements comme PostToolUse et Stop continuent d'utiliser `decision` et `reason` au niveau supérieur comme format actuel.
 </Note>
+
+#### Différer un appel d'outil pour plus tard
+
+`"defer"` est pour les intégrations qui exécutent `claude -p` en tant que sous-processus et lisent sa sortie JSON, comme une application Agent SDK ou une interface utilisateur personnalisée construite sur Claude Code. Il permet à ce processus appelant de mettre en pause Claude à un appel d'outil, de collecter l'entrée via sa propre interface et de reprendre où il s'était arrêté. Claude Code honore cette valeur uniquement en [mode non-interactif](/fr/headless) avec le drapeau `-p`. Dans les sessions interactives, il enregistre un avertissement et ignore le résultat du hook.
+
+<Note>
+  La valeur `defer` nécessite Claude Code v2.1.89 ou ultérieur. Les versions antérieures ne la reconnaissent pas et l'outil procède à travers le flux de permission normal.
+</Note>
+
+L'outil `AskUserQuestion` est le cas typique : Claude veut poser une question à l'utilisateur, mais il n'y a pas de terminal pour répondre. Le cycle aller-retour fonctionne comme ceci :
+
+1. Claude appelle `AskUserQuestion`. Le hook `PreToolUse` se déclenche.
+2. Le hook retourne `permissionDecision: "defer"`. L'outil ne s'exécute pas. Le processus quitte avec `stop_reason: "tool_deferred"` et l'appel d'outil en attente préservé dans la transcription.
+3. Le processus appelant lit `deferred_tool_use` du résultat SDK, affiche la question dans sa propre interface utilisateur et attend une réponse.
+4. Le processus appelant exécute `claude -p --resume <session-id>`. Le même appel d'outil déclenche `PreToolUse` à nouveau.
+5. Le hook retourne `permissionDecision: "allow"` avec la réponse dans `updatedInput`. L'outil s'exécute et Claude continue.
+
+Le champ `deferred_tool_use` porte l'`id`, le `name` et l'`input` de l'outil. L'`input` est les paramètres que Claude a générés pour l'appel d'outil, capturés avant l'exécution :
+
+```json  theme={null}
+{
+  "type": "result",
+  "subtype": "success",
+  "stop_reason": "tool_deferred",
+  "session_id": "abc123",
+  "deferred_tool_use": {
+    "id": "toolu_01abc",
+    "name": "AskUserQuestion",
+    "input": { "questions": [{ "question": "Which framework?", "header": "Framework", "options": [{"label": "React"}, {"label": "Vue"}], "multiSelect": false }] }
+  }
+}
+```
+
+Il n'y a pas de délai d'expiration ou de limite de tentatives. La session reste sur le disque jusqu'à ce que vous la repreniez. Si la réponse n'est pas prête lorsque vous reprenez, le hook peut retourner `"defer"` à nouveau et le processus quitte de la même manière. Le processus appelant contrôle quand casser la boucle en retournant finalement `"allow"` ou `"deny"` du hook.
+
+`"defer"` ne fonctionne que lorsque Claude fait un seul appel d'outil dans le tour. Si Claude fait plusieurs appels d'outil à la fois, `"defer"` est ignoré avec un avertissement et l'outil procède à travers le flux de permission normal. La contrainte existe car la reprise ne peut réexécuter qu'un seul outil : il n'y a aucun moyen de différer un appel d'une batch sans laisser les autres non résolus.
+
+Si l'outil différé n'est plus disponible lorsque vous reprenez, le processus quitte avec `stop_reason: "tool_deferred_unavailable"` et `is_error: true` avant que le hook ne se déclenche. Cela se produit lorsqu'un serveur MCP qui a fourni l'outil n'est pas connecté pour la session reprise. La charge utile `deferred_tool_use` est toujours incluse afin que vous puissiez identifier quel outil a disparu.
+
+<Warning>
+  `--resume` ne restaure pas le mode de permission de la session antérieure. Passez le même drapeau `--permission-mode` lors de la reprise qui était actif lorsque l'outil a été différé. Claude Code enregistre un avertissement si les modes diffèrent.
+</Warning>
 
 ### PermissionRequest
 
@@ -1169,6 +1215,52 @@ Les hooks `PostToolUseFailure` peuvent fournir du contexte à Claude après l'é
   }
 }
 ```
+
+### PermissionDenied
+
+S'exécute lorsque le classificateur du [mode auto](/fr/permission-modes#eliminate-prompts-with-auto-mode) refuse un appel d'outil. Ce hook ne se déclenche que en mode auto : il ne s'exécute pas lorsque vous refusez manuellement un dialogue de permission, lorsqu'un hook `PreToolUse` bloque un appel ou lorsqu'une règle `deny` correspond. Utilisez-le pour enregistrer les refus du classificateur, ajuster la configuration ou indiquer au modèle qu'il peut réessayer l'appel d'outil.
+
+Correspond au nom de l'outil, mêmes valeurs que PreToolUse.
+
+#### Entrée PermissionDenied
+
+En plus des [champs d'entrée communs](#common-input-fields), les hooks PermissionDenied reçoivent `tool_name`, `tool_input`, `tool_use_id` et `reason`.
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "cwd": "/Users/...",
+  "permission_mode": "auto",
+  "hook_event_name": "PermissionDenied",
+  "tool_name": "Bash",
+  "tool_input": {
+    "command": "rm -rf /tmp/build",
+    "description": "Clean build directory"
+  },
+  "tool_use_id": "toolu_01ABC123...",
+  "reason": "Auto mode denied: command targets a path outside the project"
+}
+```
+
+| Champ    | Description                                                                |
+| :------- | :------------------------------------------------------------------------- |
+| `reason` | L'explication du classificateur pour pourquoi l'appel d'outil a été refusé |
+
+#### Contrôle de décision PermissionDenied
+
+Les hooks PermissionDenied peuvent indiquer au modèle qu'il peut réessayer l'appel d'outil refusé. Retournez un objet JSON avec `hookSpecificOutput.retry` défini à `true` :
+
+```json  theme={null}
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PermissionDenied",
+    "retry": true
+  }
+}
+```
+
+Lorsque `retry` est `true`, Claude Code ajoute un message à la conversation indiquant au modèle qu'il peut réessayer l'appel d'outil. Le refus lui-même n'est pas inversé. Si votre hook ne retourne pas JSON ou retourne `retry: false`, le refus tient et le modèle reçoit le message de rejet original.
 
 ### Notification
 
@@ -1819,7 +1911,7 @@ En plus des [champs d'entrée communs](#common-input-fields), les hooks SessionE
 
 Les hooks SessionEnd n'ont pas de contrôle de décision. Ils ne peuvent pas bloquer la terminaison de session mais peuvent effectuer des tâches de nettoyage.
 
-Les hooks SessionEnd ont un délai d'expiration par défaut de 1,5 secondes. Cela s'applique à la sortie de session, à `/clear` et au basculement de sessions via `/resume` interactif. Si vos hooks ont besoin de plus de temps, définissez la variable d'environnement `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` à une valeur plus élevée en millisecondes. Tout paramètre `timeout` par hook est également limité par cette valeur.
+Les hooks SessionEnd ont un délai d'expiration par défaut de 1,5 secondes. Cela s'applique à la sortie de session, à `/clear`et au basculement de sessions via `/resume` interactif. Si vos hooks ont besoin de plus de temps, définissez la variable d'environnement `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` à une valeur plus élevée en millisecondes. Tout paramètre `timeout` par hook est également limité par cette valeur.
 
 ```bash  theme={null}
 CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
@@ -1966,6 +2058,7 @@ Les événements qui supportent les hooks `command` et `http` mais pas `prompt` 
 * `FileChanged`
 * `InstructionsLoaded`
 * `Notification`
+* `PermissionDenied`
 * `PostCompact`
 * `PreCompact`
 * `SessionEnd`

@@ -45,7 +45,6 @@ Quickstart ini memandu Anda melalui pembuatan plugin dengan skill kustom. Anda a
 ### Prasyarat
 
 * Claude Code [diinstal dan diautentikasi](/id/quickstart#step-1-install-claude-code)
-* Claude Code versi 1.0.33 atau lebih baru (jalankan `claude --version` untuk memeriksa)
 
 <Note>
   Jika Anda tidak melihat perintah `/plugin`, perbarui Claude Code ke versi terbaru. Lihat [Troubleshooting](/id/troubleshooting) untuk instruksi upgrade.
@@ -131,7 +130,7 @@ Quickstart ini memandu Anda melalui pembuatan plugin dengan skill kustom. Anda a
     Anda akan melihat Claude merespons dengan salam. Jalankan `/help` untuk melihat skill Anda terdaftar di bawah namespace plugin.
 
     <Note>
-      **Mengapa namespace?** Plugin skills selalu diberi namespace (seperti `/greet:hello`) untuk mencegah konflik ketika beberapa plugins memiliki skills dengan nama yang sama.
+      **Mengapa namespace?** Plugin skills selalu diberi namespace (seperti `/my-first-plugin:hello`) untuk mencegah konflik ketika beberapa plugins memiliki skills dengan nama yang sama.
 
       Untuk mengubah awalan namespace, perbarui field `name` di `plugin.json`.
     </Note>
@@ -283,7 +282,7 @@ claude --plugin-dir ./my-plugin
 
 Ketika plugin `--plugin-dir` memiliki nama yang sama dengan plugin marketplace yang diinstal, salinan lokal mengambil prioritas untuk sesi itu. Ini memungkinkan Anda menguji perubahan pada plugin yang sudah Anda instal tanpa mencopot pemasangannya terlebih dahulu. Plugin marketplace yang dipaksa diaktifkan oleh managed settings adalah satu-satunya pengecualian dan tidak dapat ditimpa.
 
-Saat Anda membuat perubahan pada plugin Anda, jalankan `/reload-plugins` untuk mengambil pembaruan tanpa memulai ulang. Ini memuat ulang commands, skills, agents, hooks, plugin MCP servers, dan plugin LSP servers. Uji komponen plugin Anda:
+Saat Anda membuat perubahan pada plugin Anda, jalankan `/reload-plugins` untuk mengambil pembaruan tanpa memulai ulang. Ini memuat ulang plugins, skills, agents, hooks, plugin MCP servers, dan plugin LSP servers. Uji komponen plugin Anda:
 
 * Coba skills Anda dengan `/plugin-name:skill-name`
 * Periksa bahwa agents muncul di `/agents`

@@ -51,7 +51,7 @@ Cada bloque de vinculación especifica un **contexto** donde se aplican los ataj
 | `Global`          | Se aplica en todas partes de la aplicación                       |
 | `Chat`            | Área principal de entrada de chat                                |
 | `Autocomplete`    | Menú de autocompletado está abierto                              |
-| `Settings`        | Menú de configuración (cierre solo con escape)                   |
+| `Settings`        | Menú de configuración                                            |
 | `Confirmation`    | Diálogos de permiso y confirmación                               |
 | `Tabs`            | Componentes de navegación de pestañas                            |
 | `Help`            | Menú de ayuda es visible                                         |
@@ -59,7 +59,7 @@ Cada bloque de vinculación especifica un **contexto** donde se aplican los ataj
 | `HistorySearch`   | Modo de búsqueda de historial (Ctrl+R)                           |
 | `Task`            | Tarea de fondo está en ejecución                                 |
 | `ThemePicker`     | Diálogo de selector de tema                                      |
-| `Attachments`     | Navegación de barra de imagen/adjunto                            |
+| `Attachments`     | Navegación de adjunto de imagen en diálogos de selección         |
 | `Footer`          | Navegación de indicador de pie de página (tareas, equipos, diff) |
 | `MessageSelector` | Selección de mensaje de diálogo de rebobinado y resumen          |
 | `DiffDialog`      | Navegación del visor de diff                                     |
@@ -79,6 +79,7 @@ Acciones disponibles en el contexto `Global`:
 | :--------------------- | :------------- | :-------------------------------------- |
 | `app:interrupt`        | Ctrl+C         | Cancelar operación actual               |
 | `app:exit`             | Ctrl+D         | Salir de Claude Code                    |
+| `app:redraw`           | Ctrl+L         | Redibujar la pantalla                   |
 | `app:toggleTodos`      | Ctrl+T         | Alternar visibilidad de lista de tareas |
 | `app:toggleTranscript` | Ctrl+O         | Alternar transcripción detallada        |
 
@@ -96,19 +97,20 @@ Acciones para navegar por el historial de comandos:
 
 Acciones disponibles en el contexto `Chat`:
 
-| Acción                | Predeterminado            | Descripción                      |
-| :-------------------- | :------------------------ | :------------------------------- |
-| `chat:cancel`         | Escape                    | Cancelar entrada actual          |
-| `chat:killAgents`     | Ctrl+X Ctrl+K             | Matar todos los agentes de fondo |
-| `chat:cycleMode`      | Shift+Tab\*               | Ciclar modos de permiso          |
-| `chat:modelPicker`    | Cmd+P / Meta+P            | Abrir selector de modelo         |
-| `chat:fastMode`       | Meta+O                    | Alternar modo rápido             |
-| `chat:thinkingToggle` | Cmd+T / Meta+T            | Alternar pensamiento extendido   |
-| `chat:submit`         | Enter                     | Enviar mensaje                   |
-| `chat:undo`           | Ctrl+\_                   | Deshacer última acción           |
-| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Abrir en editor externo          |
-| `chat:stash`          | Ctrl+S                    | Guardar indicación actual        |
-| `chat:imagePaste`     | Ctrl+V (Alt+V en Windows) | Pegar imagen                     |
+| Acción                | Predeterminado            | Descripción                         |
+| :-------------------- | :------------------------ | :---------------------------------- |
+| `chat:cancel`         | Escape                    | Cancelar entrada actual             |
+| `chat:killAgents`     | Ctrl+X Ctrl+K             | Matar todos los agentes de fondo    |
+| `chat:cycleMode`      | Shift+Tab\*               | Ciclar modos de permiso             |
+| `chat:modelPicker`    | Cmd+P / Meta+P            | Abrir selector de modelo            |
+| `chat:fastMode`       | Meta+O                    | Alternar modo rápido                |
+| `chat:thinkingToggle` | Cmd+T / Meta+T            | Alternar pensamiento extendido      |
+| `chat:submit`         | Enter                     | Enviar mensaje                      |
+| `chat:newline`        | (sin vincular)            | Insertar una nueva línea sin enviar |
+| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | Deshacer última acción              |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Abrir en editor externo             |
+| `chat:stash`          | Ctrl+S                    | Guardar indicación actual           |
+| `chat:imagePaste`     | Ctrl+V (Alt+V en Windows) | Pegar imagen                        |
 
 \*En Windows sin modo VT (Node \<24.2.0/\<22.17.0, Bun \<1.2.23), el valor predeterminado es Meta+M.
 
@@ -135,6 +137,7 @@ Acciones disponibles en el contexto `Confirmation`:
 | `confirm:next`              | Abajo          | Siguiente opción                |
 | `confirm:nextField`         | Tab            | Siguiente campo                 |
 | `confirm:previousField`     | (sin vincular) | Campo anterior                  |
+| `confirm:toggle`            | Espacio        | Alternar selección              |
 | `confirm:cycleMode`         | Shift+Tab      | Ciclar modos de permiso         |
 | `confirm:toggleExplanation` | Ctrl+E         | Alternar explicación de permiso |
 
@@ -150,10 +153,10 @@ Acciones disponibles en el contexto `Confirmation` para diálogos de permiso:
 
 Acciones disponibles en el contexto `Transcript`:
 
-| Acción                     | Predeterminado | Descripción                        |
-| :------------------------- | :------------- | :--------------------------------- |
-| `transcript:toggleShowAll` | Ctrl+E         | Alternar mostrar todo el contenido |
-| `transcript:exit`          | Ctrl+C, Escape | Salir de vista de transcripción    |
+| Acción                     | Predeterminado    | Descripción                        |
+| :------------------------- | :---------------- | :--------------------------------- |
+| `transcript:toggleShowAll` | Ctrl+E            | Alternar mostrar todo el contenido |
+| `transcript:exit`          | q, Ctrl+C, Escape | Salir de vista de transcripción    |
 
 ### Acciones de búsqueda de historial
 
@@ -203,23 +206,25 @@ Acciones disponibles en el contexto `Tabs`:
 
 Acciones disponibles en el contexto `Attachments`:
 
-| Acción                 | Predeterminado      | Descripción                   |
-| :--------------------- | :------------------ | :---------------------------- |
-| `attachments:next`     | Derecha             | Siguiente adjunto             |
-| `attachments:previous` | Izquierda           | Adjunto anterior              |
-| `attachments:remove`   | Retroceso, Suprimir | Eliminar adjunto seleccionado |
-| `attachments:exit`     | Abajo, Escape       | Salir de barra de adjuntos    |
+| Acción                 | Predeterminado      | Descripción                     |
+| :--------------------- | :------------------ | :------------------------------ |
+| `attachments:next`     | Derecha             | Siguiente adjunto               |
+| `attachments:previous` | Izquierda           | Adjunto anterior                |
+| `attachments:remove`   | Retroceso, Suprimir | Eliminar adjunto seleccionado   |
+| `attachments:exit`     | Abajo, Escape       | Salir de navegación de adjuntos |
 
 ### Acciones de pie de página
 
 Acciones disponibles en el contexto `Footer`:
 
-| Acción                  | Predeterminado | Descripción                                  |
-| :---------------------- | :------------- | :------------------------------------------- |
-| `footer:next`           | Derecha        | Siguiente elemento de pie de página          |
-| `footer:previous`       | Izquierda      | Elemento de pie de página anterior           |
-| `footer:openSelected`   | Enter          | Abrir elemento de pie de página seleccionado |
-| `footer:clearSelection` | Escape         | Limpiar selección de pie de página           |
+| Acción                  | Predeterminado | Descripción                                                               |
+| :---------------------- | :------------- | :------------------------------------------------------------------------ |
+| `footer:next`           | Derecha        | Siguiente elemento de pie de página                                       |
+| `footer:previous`       | Izquierda      | Elemento de pie de página anterior                                        |
+| `footer:up`             | Arriba         | Navegar hacia arriba en pie de página (deselecciona en la parte superior) |
+| `footer:down`           | Abajo          | Navegar hacia abajo en pie de página                                      |
+| `footer:openSelected`   | Enter          | Abrir elemento de pie de página seleccionado                              |
+| `footer:clearSelection` | Escape         | Limpiar selección de pie de página                                        |
 
 ### Acciones del selector de mensajes
 
@@ -280,10 +285,11 @@ Acciones disponibles en el contexto `Plugin`:
 
 Acciones disponibles en el contexto `Settings`:
 
-| Acción            | Predeterminado | Descripción                                         |
-| :---------------- | :------------- | :-------------------------------------------------- |
-| `settings:search` | /              | Entrar en modo de búsqueda                          |
-| `settings:retry`  | R              | Reintentar carga de datos de uso (en caso de error) |
+| Acción            | Predeterminado | Descripción                                                                          |
+| :---------------- | :------------- | :----------------------------------------------------------------------------------- |
+| `settings:search` | /              | Entrar en modo de búsqueda                                                           |
+| `settings:retry`  | R              | Reintentar carga de datos de uso (en caso de error)                                  |
+| `settings:close`  | Enter          | Guardar cambios y cerrar el panel de configuración. Escape descarta cambios y cierra |
 
 ### Acciones de voz
 
@@ -317,7 +323,7 @@ ctrl+shift+c    Múltiples modificadores
 
 Una letra mayúscula independiente implica Shift. Por ejemplo, `K` es equivalente a `shift+k`. Esto es útil para atajos de estilo vim donde las teclas mayúsculas y minúsculas tienen significados diferentes.
 
-Las letras mayúsculas con modificadores (por ejemplo, `ctrl+K`) se tratan como estilísticas y **no** implican Shift — `ctrl+K` es lo mismo que `ctrl+k`.
+Las letras mayúsculas con modificadores (por ejemplo, `ctrl+K`) se tratan como estilísticas y **no** implican Shift: `ctrl+K` es lo mismo que `ctrl+k`.
 
 ### Acordes
 
@@ -352,6 +358,25 @@ Establezca una acción en `null` para desvinculación de un atajo predeterminado
   ]
 }
 ```
+
+Esto también funciona para vinculaciones de acordes. Desvinculación de cada acorde que comparte un prefijo libera ese prefijo para su uso como una vinculación de tecla única:
+
+```json  theme={null}
+{
+  "bindings": [
+    {
+      "context": "Chat",
+      "bindings": {
+        "ctrl+x ctrl+k": null,
+        "ctrl+x ctrl+e": null,
+        "ctrl+x": "chat:newline"
+      }
+    }
+  ]
+}
+```
+
+Si desvincula algunos pero no todos los acordes en un prefijo, presionar el prefijo aún entra en modo de espera de acorde para las vinculaciones restantes.
 
 ## Atajos reservados
 

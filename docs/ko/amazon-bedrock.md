@@ -116,6 +116,9 @@ export AWS_REGION=us-east-1  # 또는 선호하는 지역
 
 # 선택 사항: 소형/빠른 모델(Haiku)의 지역 재정의
 export ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION=us-west-2
+
+# 선택 사항: 사용자 정의 엔드포인트 또는 게이트웨이를 위한 Bedrock 엔드포인트 URL 재정의
+# export ANTHROPIC_BEDROCK_BASE_URL=https://bedrock-runtime.us-east-1.amazonaws.com
 ```
 
 Claude Code에 대해 Bedrock을 활성화할 때 다음을 염두에 두십시오:
@@ -142,17 +145,17 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='us.anthropic.claude-haiku-4-5-20251001-v1:
 
 고정 변수가 설정되지 않은 경우 Claude Code는 이러한 기본 모델을 사용합니다:
 
-| 모델 유형    | 기본값                                           |
-| :------- | :-------------------------------------------- |
-| 기본 모델    | `global.anthropic.claude-sonnet-4-6`          |
-| 소형/빠른 모델 | `us.anthropic.claude-haiku-4-5-20251001-v1:0` |
+| 모델 유형    | 기본값                                            |
+| :------- | :--------------------------------------------- |
+| 기본 모델    | `us.anthropic.claude-sonnet-4-5-20250929-v1:0` |
+| 소형/빠른 모델 | `us.anthropic.claude-haiku-4-5-20251001-v1:0`  |
 
 모델을 추가로 사용자 정의하려면 다음 방법 중 하나를 사용하십시오:
 
 ```bash  theme={null}
 # 추론 프로필 ID 사용
 export ANTHROPIC_MODEL='global.anthropic.claude-sonnet-4-6'
-export ANTHROPIC_SMALL_FAST_MODEL='us.anthropic.claude-haiku-4-5-20251001-v1:0'
+export ANTHROPIC_DEFAULT_HAIKU_MODEL='us.anthropic.claude-haiku-4-5-20251001-v1:0'
 
 # 애플리케이션 추론 프로필 ARN 사용
 export ANTHROPIC_MODEL='arn:aws:bedrock:us-east-2:your-account-id:application-inference-profile/your-model-id'
@@ -229,6 +232,12 @@ Claude Code에 필요한 권한이 있는 IAM 정책을 만드십시오:
   비용 추적 및 액세스 제어를 단순화하기 위해 Claude Code용 전용 AWS 계정을 만드십시오.
 </Note>
 
+## 1M 토큰 컨텍스트 윈도우
+
+Claude Opus 4.6 및 Sonnet 4.6은 Amazon Bedrock에서 [1M 토큰 컨텍스트 윈도우](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window)를 지원합니다. Claude Code는 1M 모델 변형을 선택할 때 확장된 컨텍스트 윈도우를 자동으로 활성화합니다.
+
+고정된 모델에 대해 1M 컨텍스트 윈도우를 활성화하려면 모델 ID에 `[1m]`을 추가하십시오. 자세한 내용은 [타사 배포를 위한 모델 고정](/ko/model-config#pin-models-for-third-party-deployments)을 참조하십시오.
+
 ## AWS Guardrails
 
 [Amazon Bedrock Guardrails](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html)를 사용하면 Claude Code에 대한 콘텐츠 필터링을 구현할 수 있습니다. [Amazon Bedrock 콘솔](https://console.aws.amazon.com/bedrock/)에서 Guardrail을 만들고 버전을 게시한 다음 Guardrail 헤더를 [설정 파일](/ko/settings)에 추가하십시오. 교차 지역 추론 프로필을 사용하는 경우 Guardrail에서 교차 지역 추론을 활성화하십시오.
@@ -244,6 +253,14 @@ Claude Code에 필요한 권한이 있는 IAM 정책을 만드십시오:
 ```
 
 ## 문제 해결
+
+### SSO 및 회사 프록시를 사용한 인증 루프
+
+AWS SSO를 사용할 때 브라우저 탭이 반복적으로 생성되면 [설정 파일](/ko/settings)에서 `awsAuthRefresh` 설정을 제거하십시오. 이는 회사 VPN 또는 TLS 검사 프록시가 SSO 브라우저 흐름을 중단할 때 발생할 수 있습니다. Claude Code는 중단된 연결을 인증 실패로 취급하고 `awsAuthRefresh`를 다시 실행하여 무한 루프를 발생시킵니다.
+
+네트워크 환경이 자동 브라우저 기반 SSO 흐름을 방해하는 경우 `awsAuthRefresh`에 의존하는 대신 Claude Code를 시작하기 전에 `aws sso login`을 수동으로 사용하십시오.
+
+### 지역 문제
 
 지역 문제가 발생하는 경우:
 

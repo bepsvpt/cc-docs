@@ -86,7 +86,14 @@ Claude Code nécessite l'accès aux URL suivantes :
 
 Assurez-vous que ces URL sont autorisées dans votre configuration proxy et vos règles de pare-feu. C'est particulièrement important lors de l'utilisation de Claude Code dans des environnements réseau conteneurisés ou restreints.
 
+L'installateur natif et les vérifications de mise à jour nécessitent également les URL suivantes. Autorisez les deux, car l'installateur et la mise à jour automatique téléchargent depuis `storage.googleapis.com` tandis que les téléchargements de plugins utilisent `downloads.claude.ai`. Si vous installez Claude Code via npm ou gérez votre propre distribution binaire, les utilisateurs finaux n'auront peut-être pas besoin d'accès :
+
+* `storage.googleapis.com` : compartiment de téléchargement pour le binaire Claude Code et la mise à jour automatique
+* `downloads.claude.ai` : CDN hébergeant le script d'installation, les pointeurs de version, les manifestes, les clés de signature et les exécutables de plugins
+
 [Claude Code sur le web](/fr/claude-code-on-the-web) et [Code Review](/fr/code-review) se connectent à vos référentiels à partir de l'infrastructure gérée par Anthropic. Si votre organisation GitHub Enterprise Cloud restreint l'accès par adresse IP, activez [l'héritage de la liste d'autorisation IP pour les applications GitHub installées](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps). L'application GitHub Claude enregistre ses plages d'adresses IP, donc l'activation de ce paramètre permet l'accès sans configuration manuelle. Pour [ajouter les plages à votre liste d'autorisation manuellement](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address) à la place, ou pour configurer d'autres pare-feu, consultez les [adresses IP de l'API Anthropic](https://platform.claude.com/docs/en/api/ip-addresses).
+
+Pour les instances [GitHub Enterprise Server](/fr/github-enterprise-server) auto-hébergées derrière un pare-feu, autorisez les mêmes [adresses IP de l'API Anthropic](https://platform.claude.com/docs/en/api/ip-addresses) afin que l'infrastructure Anthropic puisse accéder à votre hôte GHES pour cloner les référentiels et publier les commentaires d'examen.
 
 ## Ressources supplémentaires
 

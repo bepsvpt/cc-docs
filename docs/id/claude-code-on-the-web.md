@@ -107,6 +107,10 @@ Ketika auto-fix aktif, Claude menerima acara GitHub untuk PR termasuk komentar u
 
 Claude dapat membalas utas komentar ulasan di GitHub sebagai bagian dari penyelesaiannya. Balasan ini diposting menggunakan akun GitHub Anda, sehingga muncul di bawah nama pengguna Anda, tetapi setiap balasan diberi label sebagai berasal dari Claude Code sehingga pengulas tahu itu ditulis oleh agen dan bukan oleh Anda secara langsung.
 
+<Warning>
+  Jika repositori Anda menggunakan otomasi yang dipicu komentar seperti Atlantis, Terraform Cloud, atau GitHub Actions kustom yang berjalan pada acara `issue_comment`, ketahui bahwa balasan Claude dapat memicu alur kerja tersebut. Tinjau otomasi repositori Anda sebelum mengaktifkan auto-fix, dan pertimbangkan untuk menonaktifkan auto-fix untuk repositori di mana komentar PR dapat menerapkan infrastruktur atau menjalankan operasi istimewa.
+</Warning>
+
 ## Memindahkan tugas antara web dan terminal
 
 Anda dapat memulai tugas baru di web dari terminal Anda, atau menarik sesi web ke terminal Anda untuk melanjutkan secara lokal. Sesi web bertahan bahkan jika Anda menutup laptop Anda, dan Anda dapat memantaunya dari mana saja termasuk aplikasi mobile Claude.

@@ -22,10 +22,11 @@ Existem dois estilos de saída integrados adicionais focados em ensiná-lo sobre
 
 Os estilos de saída modificam diretamente o prompt do sistema do Claude Code.
 
-* Todos os estilos de saída excluem instruções para saída eficiente (como responder de forma concisa).
 * Os estilos de saída personalizados excluem instruções para codificação (como verificar código com testes), a menos que `keep-coding-instructions` seja verdadeiro.
 * Todos os estilos de saída têm suas próprias instruções personalizadas adicionadas ao final do prompt do sistema.
 * Todos os estilos de saída acionam lembretes para Claude aderir às instruções do estilo de saída durante a conversa.
+
+O uso de tokens depende do estilo. Adicionar instruções ao prompt do sistema aumenta os tokens de entrada, embora o prompt caching reduza esse custo após a primeira solicitação em uma sessão. Os estilos integrados Explanatory e Learning produzem respostas mais longas que Default por design, o que aumenta os tokens de saída. Para estilos personalizados, o uso de tokens de saída depende do que suas instruções dizem ao Claude para produzir.
 
 ## Altere seu estilo de saída
 

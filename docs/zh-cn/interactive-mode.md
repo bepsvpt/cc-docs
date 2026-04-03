@@ -11,11 +11,11 @@
 <Note>
   键盘快捷键可能因平台和终端而异。按 `?` 查看您的环境中可用的快捷键。
 
-  **macOS 用户**：Option/Alt 键快捷键（`Alt+B`、`Alt+F`、`Alt+Y`、`Alt+M`、`Alt+P`）需要在终端中将 Option 配置为 Meta：
+  **macOS 用户**：Option/Alt 键快捷键（`Alt+B`、`Alt+F`、`Alt+Y`、`Alt+M`、`Alt+P`、`Alt+T`）需要在终端中将 Option 配置为 Meta：
 
   * **iTerm2**：设置 → 配置文件 → 键 → 将左/右 Option 键设置为"Esc+"
   * **Terminal.app**：设置 → 配置文件 → 键盘 → 勾选"使用 Option 作为 Meta 键"
-  * **VS Code**：设置 → 配置文件 → 键 → 将左/右 Option 键设置为"Esc+"
+  * **VS Code**：设置 `"terminal.integrated.macOptionIsMeta": true` 在 VS Code 设置中
 
   有关详细信息，请参阅[终端配置](/zh-CN/terminal-config)。
 </Note>
@@ -28,7 +28,7 @@
 | `Ctrl+X Ctrl+K`                              | 终止所有后台代理。在 3 秒内按两次以确认 | 后台代理控制                                                                                                             |
 | `Ctrl+D`                                     | 退出 Claude Code 会话     | EOF 信号                                                                                                             |
 | `Ctrl+G` 或 `Ctrl+X Ctrl+E`                   | 在默认文本编辑器中打开           | 在默认文本编辑器中编辑您的提示或自定义响应。`Ctrl+X Ctrl+E` 是 readline 原生绑定                                                              |
-| `Ctrl+L`                                     | 清除终端屏幕                | 保留对话历史                                                                                                             |
+| `Ctrl+L`                                     | 重绘屏幕                  | 重新绘制当前 UI 而不清除对话历史                                                                                                 |
 | `Ctrl+O`                                     | 切换详细输出                | 显示详细的工具使用和执行情况。还会展开 MCP 读取和搜索调用，这些调用默认会折叠为单行，如"Queried slack"                                                      |
 | `Ctrl+R`                                     | 反向搜索命令历史              | 交互式搜索以前的命令                                                                                                         |
 | `Ctrl+V` 或 `Cmd+V`（iTerm2）或 `Alt+V`（Windows） | 从剪贴板粘贴图像              | 在光标处插入 `[Image #N]` 芯片，以便您可以在提示中按位置引用它                                                                             |
@@ -39,7 +39,7 @@
 | `Esc` + `Esc`                                | 回退或总结                 | 将代码和/或对话恢复到上一个点，或从选定的消息进行总结                                                                                        |
 | `Shift+Tab` 或 `Alt+M`（某些配置）                  | 循环权限模式                | 在 `default`、`acceptEdits`、`plan` 和您启用的任何模式（如 `auto` 或 `bypassPermissions`）之间循环。请参阅[权限模式](/zh-CN/permission-modes)。 |
 | `Option+P`（macOS）或 `Alt+P`（Windows/Linux）    | 切换模型                  | 在不清除提示的情况下切换模型                                                                                                     |
-| `Option+T`（macOS）或 `Alt+T`（Windows/Linux）    | 切换扩展思考                | 启用或禁用扩展思考模式。首先运行 `/terminal-setup` 以启用此快捷键                                                                         |
+| `Option+T`（macOS）或 `Alt+T`（Windows/Linux）    | 切换扩展思考                | 启用或禁用扩展思考模式。在 macOS 上，配置您的终端以发送 Option 作为 Meta，以便此快捷键工作                                                            |
 | `Option+O`（macOS）或 `Alt+O`（Windows/Linux）    | 切换快速模式                | 启用或禁用[快速模式](/zh-CN/fast-mode)                                                                                      |
 
 ### 文本编辑
@@ -47,7 +47,7 @@
 | 快捷键                    | 描述          | 上下文                                                                |
 | :--------------------- | :---------- | :----------------------------------------------------------------- |
 | `Ctrl+K`               | 删除到行尾       | 存储已删除的文本以供粘贴                                                       |
-| `Ctrl+U`               | 删除整行        | 存储已删除的文本以供粘贴                                                       |
+| `Ctrl+U`               | 从光标删除到行首    | 存储已删除的文本以供粘贴。重复以清除多行输入中的多行                                         |
 | `Ctrl+Y`               | 粘贴已删除的文本    | 粘贴用 `Ctrl+K` 或 `Ctrl+U` 删除的文本                                      |
 | `Alt+Y`（在 `Ctrl+Y` 之后） | 循环粘贴历史      | 粘贴后，循环浏览以前删除的文本。在 macOS 上需要[将 Option 作为 Meta](#keyboard-shortcuts) |
 | `Alt+B`                | 将光标向后移动一个单词 | 单词导航。在 macOS 上需要[将 Option 作为 Meta](#keyboard-shortcuts)            |
@@ -58,10 +58,6 @@
 | 快捷键      | 描述           | 上下文                                           |
 | :------- | :----------- | :-------------------------------------------- |
 | `Ctrl+T` | 切换代码块的语法突出显示 | 仅在 `/theme` 选择器菜单内工作。控制 Claude 响应中的代码是否使用语法着色 |
-
-<Note>
-  语法突出显示仅在 Claude Code 的原生构建中可用。
-</Note>
 
 ### 多行输入
 
@@ -89,10 +85,10 @@
 
 当转录查看器打开时（使用 `Ctrl+O` 切换），这些快捷键可用。`Ctrl+E` 可以通过 [`transcript:toggleShowAll`](/zh-CN/keybindings) 重新绑定。
 
-| 快捷键                | 描述                                                                                   |
-| :----------------- | :----------------------------------------------------------------------------------- |
-| `Ctrl+E`           | 切换显示所有内容                                                                             |
-| `q`、`Ctrl+C`、`Esc` | 退出转录视图。`Ctrl+C` 和 `Esc` 可以通过 [`transcript:exit`](/zh-CN/keybindings) 重新绑定；`q` 不可重新绑定 |
+| 快捷键                | 描述                                                            |
+| :----------------- | :------------------------------------------------------------ |
+| `Ctrl+E`           | 切换显示所有内容                                                      |
+| `q`、`Ctrl+C`、`Esc` | 退出转录视图。所有三个都可以通过 [`transcript:exit`](/zh-CN/keybindings) 重新绑定 |
 
 ### 语音输入
 
@@ -253,6 +249,7 @@ Bash 模式：
 * 不需要 Claude 解释或批准命令
 * 支持基于历史的自动完成：键入部分命令并按 **Tab** 以从当前项目中的上一个 `!` 命令完成
 * 使用 `Escape`、`Backspace` 或在空提示上使用 `Ctrl+U` 退出
+* 将以 `!` 开头的文本粘贴到空提示中会自动进入 bash 模式，与键入的 `!` 行为相匹配
 
 这对于快速 shell 操作同时保持对话上下文很有用。
 
@@ -262,7 +259,7 @@ Bash 模式：
 
 Claude 响应后，建议会根据您的对话历史继续出现，例如多部分请求的后续步骤或工作流的自然延续。
 
-* 按 **Tab** 接受建议，或按 **Enter** 接受并提交
+* 按 **Tab** 或 **Right arrow** 接受建议，或按 **Enter** 接受并提交
 * 开始输入以关闭它
 
 建议作为后台请求运行，该请求重用父对话的提示缓存，因此额外成本最小。当缓存冷时，Claude Code 会跳过建议生成以避免不必要的成本。

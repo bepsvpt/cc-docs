@@ -144,32 +144,36 @@ Claude Code запускает ваш скрипт и передаёт [данн
 
 Claude Code отправляет следующие поля JSON в ваш скрипт через stdin:
 
-| Поле                                                                      | Описание                                                                                                                                                                                             |
-| ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `model.id`, `model.display_name`                                          | Текущий идентификатор модели и отображаемое имя                                                                                                                                                      |
-| `cwd`, `workspace.current_dir`                                            | Текущий рабочий каталог. Оба поля содержат одно и то же значение; `workspace.current_dir` предпочтительнее для согласованности с `workspace.project_dir`.                                            |
-| `workspace.project_dir`                                                   | Каталог, в котором был запущен Claude Code, который может отличаться от `cwd`, если рабочий каталог изменяется во время сеанса                                                                       |
-| `cost.total_cost_usd`                                                     | Общая стоимость сеанса в USD                                                                                                                                                                         |
-| `cost.total_duration_ms`                                                  | Общее реальное время с момента начала сеанса в миллисекундах                                                                                                                                         |
-| `cost.total_api_duration_ms`                                              | Общее время, потраченное на ожидание ответов API в миллисекундах                                                                                                                                     |
-| `cost.total_lines_added`, `cost.total_lines_removed`                      | Строки кода, которые были изменены                                                                                                                                                                   |
-| `context_window.total_input_tokens`, `context_window.total_output_tokens` | Совокупные подсчёты токенов во всём сеансе                                                                                                                                                           |
-| `context_window.context_window_size`                                      | Максимальный размер контекстного окна в токенах. По умолчанию 200000 или 1000000 для моделей с расширенным контекстом.                                                                               |
-| `context_window.used_percentage`                                          | Предварительно рассчитанный процент использованного контекстного окна                                                                                                                                |
-| `context_window.remaining_percentage`                                     | Предварительно рассчитанный процент оставшегося контекстного окна                                                                                                                                    |
-| `context_window.current_usage`                                            | Подсчёты токенов из последнего вызова API, описанные в [полях контекстного окна](#context-window-fields)                                                                                             |
-| `exceeds_200k_tokens`                                                     | Превышает ли общее количество токенов (входные, кэшированные и выходные токены в сумме) из последнего ответа API 200k. Это фиксированный порог независимо от фактического размера контекстного окна. |
-| `session_id`                                                              | Уникальный идентификатор сеанса                                                                                                                                                                      |
-| `transcript_path`                                                         | Путь к файлу стенограммы разговора                                                                                                                                                                   |
-| `version`                                                                 | Версия Claude Code                                                                                                                                                                                   |
-| `output_style.name`                                                       | Имя текущего стиля вывода                                                                                                                                                                            |
-| `vim.mode`                                                                | Текущий режим vim (`NORMAL` или `INSERT`), когда [режим vim](/ru/interactive-mode#vim-editor-mode) включен                                                                                           |
-| `agent.name`                                                              | Имя агента при запуске с флагом `--agent` или настроенными параметрами агента                                                                                                                        |
-| `worktree.name`                                                           | Имя активного worktree. Присутствует только во время сеансов `--worktree`                                                                                                                            |
-| `worktree.path`                                                           | Абсолютный путь к каталогу worktree                                                                                                                                                                  |
-| `worktree.branch`                                                         | Имя ветки Git для worktree (например, `"worktree-my-feature"`). Отсутствует для worktrees на основе hooks                                                                                            |
-| `worktree.original_cwd`                                                   | Каталог, в котором находился Claude перед входом в worktree                                                                                                                                          |
-| `worktree.original_branch`                                                | Ветка Git, проверенная перед входом в worktree. Отсутствует для worktrees на основе hooks                                                                                                            |
+| Поле                                                                             | Описание                                                                                                                                                                                             |
+| -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `model.id`, `model.display_name`                                                 | Текущий идентификатор модели и отображаемое имя                                                                                                                                                      |
+| `cwd`, `workspace.current_dir`                                                   | Текущий рабочий каталог. Оба поля содержат одно и то же значение; `workspace.current_dir` предпочтительнее для согласованности с `workspace.project_dir`.                                            |
+| `workspace.project_dir`                                                          | Каталог, в котором был запущен Claude Code, который может отличаться от `cwd`, если рабочий каталог изменяется во время сеанса                                                                       |
+| `workspace.added_dirs`                                                           | Дополнительные каталоги, добавленные через `/add-dir` или `--add-dir`. Пустой массив, если ничего не было добавлено                                                                                  |
+| `cost.total_cost_usd`                                                            | Общая стоимость сеанса в USD                                                                                                                                                                         |
+| `cost.total_duration_ms`                                                         | Общее реальное время с момента начала сеанса в миллисекундах                                                                                                                                         |
+| `cost.total_api_duration_ms`                                                     | Общее время, потраченное на ожидание ответов API в миллисекундах                                                                                                                                     |
+| `cost.total_lines_added`, `cost.total_lines_removed`                             | Строки кода, которые были изменены                                                                                                                                                                   |
+| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | Совокупные подсчёты токенов во всём сеансе                                                                                                                                                           |
+| `context_window.context_window_size`                                             | Максимальный размер контекстного окна в токенах. По умолчанию 200000 или 1000000 для моделей с расширенным контекстом.                                                                               |
+| `context_window.used_percentage`                                                 | Предварительно рассчитанный процент использованного контекстного окна                                                                                                                                |
+| `context_window.remaining_percentage`                                            | Предварительно рассчитанный процент оставшегося контекстного окна                                                                                                                                    |
+| `context_window.current_usage`                                                   | Подсчёты токенов из последнего вызова API, описанные в [полях контекстного окна](#context-window-fields)                                                                                             |
+| `exceeds_200k_tokens`                                                            | Превышает ли общее количество токенов (входные, кэшированные и выходные токены в сумме) из последнего ответа API 200k. Это фиксированный порог независимо от фактического размера контекстного окна. |
+| `rate_limits.five_hour.used_percentage`, `rate_limits.seven_day.used_percentage` | Процент лимита скорости за 5 часов или 7 дней, потреблённый от 0 до 100                                                                                                                              |
+| `rate_limits.five_hour.resets_at`, `rate_limits.seven_day.resets_at`             | Секунды эпохи Unix, когда окно лимита скорости за 5 часов или 7 дней сбрасывается                                                                                                                    |
+| `session_id`                                                                     | Уникальный идентификатор сеанса                                                                                                                                                                      |
+| `session_name`                                                                   | Пользовательское имя сеанса, установленное с флагом `--name` или `/rename`. Отсутствует, если пользовательское имя не было установлено                                                               |
+| `transcript_path`                                                                | Путь к файлу стенограммы разговора                                                                                                                                                                   |
+| `version`                                                                        | Версия Claude Code                                                                                                                                                                                   |
+| `output_style.name`                                                              | Имя текущего стиля вывода                                                                                                                                                                            |
+| `vim.mode`                                                                       | Текущий режим vim (`NORMAL` или `INSERT`), когда [режим vim](/ru/interactive-mode#vim-editor-mode) включен                                                                                           |
+| `agent.name`                                                                     | Имя агента при запуске с флагом `--agent` или настроенными параметрами агента                                                                                                                        |
+| `worktree.name`                                                                  | Имя активного worktree. Присутствует только во время сеансов `--worktree`                                                                                                                            |
+| `worktree.path`                                                                  | Абсолютный путь к каталогу worktree                                                                                                                                                                  |
+| `worktree.branch`                                                                | Имя ветки Git для worktree (например, `"worktree-my-feature"`). Отсутствует для worktrees на основе hooks                                                                                            |
+| `worktree.original_cwd`                                                          | Каталог, в котором находился Claude перед входом в worktree                                                                                                                                          |
+| `worktree.original_branch`                                                       | Ветка Git, проверенная перед входом в worktree. Отсутствует для worktrees на основе hooks                                                                                                            |
 
 <Accordion title="Полная схема JSON">
   Ваша команда строки состояния получает эту структуру JSON через stdin:
@@ -178,6 +182,7 @@ Claude Code отправляет следующие поля JSON в ваш ск
   {
     "cwd": "/current/working/directory",
     "session_id": "abc123...",
+    "session_name": "my-session",
     "transcript_path": "/path/to/transcript.jsonl",
     "model": {
       "id": "claude-opus-4-6",
@@ -185,9 +190,10 @@ Claude Code отправляет следующие поля JSON в ваш ск
     },
     "workspace": {
       "current_dir": "/current/working/directory",
-      "project_dir": "/original/project/directory"
+      "project_dir": "/original/project/directory",
+      "added_dirs": []
     },
-    "version": "1.0.80",
+    "version": "2.1.90",
     "output_style": {
       "name": "default"
     },
@@ -212,6 +218,16 @@ Claude Code отправляет следующие поля JSON в ваш ск
       }
     },
     "exceeds_200k_tokens": false,
+    "rate_limits": {
+      "five_hour": {
+        "used_percentage": 23.5,
+        "resets_at": 1738425600
+      },
+      "seven_day": {
+        "used_percentage": 41.2,
+        "resets_at": 1738857600
+      }
+    },
     "vim": {
       "mode": "NORMAL"
     },
@@ -230,9 +246,11 @@ Claude Code отправляет следующие поля JSON в ваш ск
 
   **Поля, которые могут отсутствовать** (не присутствуют в JSON):
 
+  * `session_name`: появляется только когда пользовательское имя было установлено с `--name` или `/rename`
   * `vim`: появляется только когда режим vim включен
   * `agent`: появляется только при запуске с флагом `--agent` или настроенными параметрами агента
   * `worktree`: появляется только во время сеансов `--worktree`. Когда присутствует, `branch` и `original_branch` также могут отсутствовать для worktrees на основе hooks
+  * `rate_limits`: появляется только для подписчиков Claude.ai (Pro/Max) после первого ответа API в сеансе. Каждое окно (`five_hour`, `seven_day`) может быть независимо отсутствующим. Используйте `jq -r '.rate_limits.five_hour.used_percentage // empty'` для корректной обработки отсутствия.
 
   **Поля, которые могут быть `null`**:
 
@@ -681,6 +699,72 @@ Claude Code отправляет следующие поля JSON в ваш ск
   ```
 </CodeGroup>
 
+### Использование лимита скорости
+
+Отобразите использование лимита скорости подписки Claude.ai в строке состояния. Объект `rate_limits` содержит `five_hour` (5-часовое скользящее окно) и `seven_day` (еженедельное) окна. Каждое окно предоставляет `used_percentage` (0-100) и `resets_at` (секунды эпохи Unix, когда окно сбрасывается).
+
+Это поле присутствует только для подписчиков Claude.ai (Pro/Max) после первого ответа API. Каждый скрипт корректно обрабатывает отсутствующее поле:
+
+<CodeGroup>
+  ```bash Bash theme={null}
+  #!/bin/bash
+  input=$(cat)
+
+  MODEL=$(echo "$input" | jq -r '.model.display_name')
+  # "// empty" produces no output when rate_limits is absent
+  FIVE_H=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
+  WEEK=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
+
+  LIMITS=""
+  [ -n "$FIVE_H" ] && LIMITS="5h: $(printf '%.0f' "$FIVE_H")%"
+  [ -n "$WEEK" ] && LIMITS="${LIMITS:+$LIMITS }7d: $(printf '%.0f' "$WEEK")%"
+
+  [ -n "$LIMITS" ] && echo "[$MODEL] | $LIMITS" || echo "[$MODEL]"
+  ```
+
+  ```python Python theme={null}
+  #!/usr/bin/env python3
+  import json, sys
+
+  data = json.load(sys.stdin)
+  model = data['model']['display_name']
+
+  parts = []
+  rate = data.get('rate_limits', {})
+  five_h = rate.get('five_hour', {}).get('used_percentage')
+  week = rate.get('seven_day', {}).get('used_percentage')
+
+  if five_h is not None:
+      parts.append(f"5h: {five_h:.0f}%")
+  if week is not None:
+      parts.append(f"7d: {week:.0f}%")
+
+  if parts:
+      print(f"[{model}] | {' '.join(parts)}")
+  else:
+      print(f"[{model}]")
+  ```
+
+  ```javascript Node.js theme={null}
+  #!/usr/bin/env node
+  let input = '';
+  process.stdin.on('data', chunk => input += chunk);
+  process.stdin.on('end', () => {
+      const data = JSON.parse(input);
+      const model = data.model.display_name;
+
+      const parts = [];
+      const fiveH = data.rate_limits?.five_hour?.used_percentage;
+      const week = data.rate_limits?.seven_day?.used_percentage;
+
+      if (fiveH != null) parts.push(`5h: ${Math.round(fiveH)}%`);
+      if (week != null) parts.push(`7d: ${Math.round(week)}%`);
+
+      console.log(parts.length ? `[${model}] | ${parts.join(' ')}` : `[${model}]`);
+  });
+  ```
+</CodeGroup>
+
 ### Кэширование дорогостоящих операций
 
 Ваш скрипт строки состояния запускается часто во время активных сеансов. Команды, такие как `git status` или `git diff`, могут быть медленными, особенно в больших репозиториях. Этот пример кэширует информацию git во временный файл и обновляет её только каждые 5 секунд.
@@ -910,6 +994,11 @@ Claude Code отправляет следующие поля JSON в ваш ск
 * Медленные скрипты блокируют обновление строки состояния до их завершения. Держите скрипты быстрыми, чтобы избежать устаревшего вывода.
 * Если новое обновление срабатывает, пока медленный скрипт работает, выполнение скрипта отменяется
 * Протестируйте ваш скрипт независимо с макетными входными данными перед его настройкой
+
+**Требуется доверие рабочей области**
+
+* Команда строки состояния запускается только если вы приняли диалог доверия рабочей области для текущего каталога. Поскольку `statusLine` выполняет команду оболочки, она требует того же принятия доверия, что и hooks и другие параметры, выполняющие оболочку.
+* Если доверие не принято, вы увидите уведомление `statusline skipped · restart to fix` вместо вывода вашей строки состояния. Перезагрузите Claude Code и примите запрос доверия, чтобы включить его.
 
 **Уведомления делят строку состояния**
 

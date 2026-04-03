@@ -71,19 +71,18 @@ export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=global
 export ANTHROPIC_VERTEX_PROJECT_ID=YOUR-PROJECT-ID
 
+# Опционально: переопределите URL конечной точки Vertex для пользовательских конечных точек или шлюзов
+# export ANTHROPIC_VERTEX_BASE_URL=https://aiplatform.googleapis.com
+
 # Опционально: отключите кэширование запросов, если необходимо
 export DISABLE_PROMPT_CACHING=1
 
-# Когда CLOUD_ML_REGION=global, переопределите регион для неподдерживаемых моделей
-export VERTEX_REGION_CLAUDE_3_5_HAIKU=us-east5
-
-# Опционально: переопределите регионы для других конкретных моделей
-export VERTEX_REGION_CLAUDE_3_5_SONNET=us-east5
-export VERTEX_REGION_CLAUDE_3_7_SONNET=us-east5
-export VERTEX_REGION_CLAUDE_4_0_OPUS=europe-west1
-export VERTEX_REGION_CLAUDE_4_0_SONNET=us-east5
-export VERTEX_REGION_CLAUDE_4_1_OPUS=europe-west1
+# Когда CLOUD_ML_REGION=global, переопределите регион для моделей, которые не поддерживают глобальные конечные точки
+export VERTEX_REGION_CLAUDE_HAIKU_4_5=us-east5
+export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 ```
+
+Каждая версия модели имеет свою переменную `VERTEX_REGION_CLAUDE_*`. Полный список см. в [справочнике переменных окружения](/ru/env-vars). Проверьте [Vertex Model Garden](https://console.cloud.google.com/vertex-ai/model-garden), чтобы определить, какие модели поддерживают глобальные конечные точки в сравнении с региональными только.
 
 [Кэширование запросов](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) автоматически поддерживается при указании флага `cache_control` ephemeral. Чтобы отключить его, установите `DISABLE_PROMPT_CACHING=1`. Для повышенных лимитов скорости обратитесь в поддержку Google Cloud. При использовании Vertex AI команды `/login` и `/logout` отключены, так как аутентификация обрабатывается через учетные данные Google Cloud.
 
@@ -114,7 +113,7 @@ Claude Code использует эти модели по умолчанию, к
 
 ```bash  theme={null}
 export ANTHROPIC_MODEL='claude-opus-4-6'
-export ANTHROPIC_SMALL_FAST_MODEL='claude-haiku-4-5@20251001'
+export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
 ```
 
 ## Конфигурация IAM
@@ -150,7 +149,7 @@ Claude Opus 4.6, Sonnet 4.6, Sonnet 4.5 и Sonnet 4 поддерживают [к
 * Подтвердите, что модель включена в [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden)
 * Проверьте, что у вас есть доступ к указанному региону
 * Если вы используете `CLOUD_ML_REGION=global`, проверьте, что ваши модели поддерживают глобальные конечные точки в [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) в разделе "Supported features". Для моделей, которые не поддерживают глобальные конечные точки, либо:
-  * Укажите поддерживаемую модель через `ANTHROPIC_MODEL` или `ANTHROPIC_SMALL_FAST_MODEL`, либо
+  * Укажите поддерживаемую модель через `ANTHROPIC_MODEL` или `ANTHROPIC_DEFAULT_HAIKU_MODEL`, либо
   * Установите региональную конечную точку, используя переменные окружения `VERTEX_REGION_<MODEL_NAME>`
 
 Если вы столкнулись с ошибками 429:

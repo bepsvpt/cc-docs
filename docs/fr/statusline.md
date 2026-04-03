@@ -144,32 +144,36 @@ Votre script s'exécute après chaque nouveau message d'assistant, quand le mode
 
 Claude Code envoie les champs JSON suivants à votre script via stdin :
 
-| Champ                                                                     | Description                                                                                                                                                                                                         |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `model.id`, `model.display_name`                                          | Identifiant du modèle actuel et nom d'affichage                                                                                                                                                                     |
-| `cwd`, `workspace.current_dir`                                            | Répertoire de travail actuel. Les deux champs contiennent la même valeur ; `workspace.current_dir` est préféré pour la cohérence avec `workspace.project_dir`.                                                      |
-| `workspace.project_dir`                                                   | Répertoire où Claude Code a été lancé, qui peut différer de `cwd` si le répertoire de travail change pendant une session                                                                                            |
-| `cost.total_cost_usd`                                                     | Coût total de la session en USD                                                                                                                                                                                     |
-| `cost.total_duration_ms`                                                  | Temps écoulé total depuis le début de la session, en millisecondes                                                                                                                                                  |
-| `cost.total_api_duration_ms`                                              | Temps total passé à attendre les réponses API en millisecondes                                                                                                                                                      |
-| `cost.total_lines_added`, `cost.total_lines_removed`                      | Lignes de code modifiées                                                                                                                                                                                            |
-| `context_window.total_input_tokens`, `context_window.total_output_tokens` | Comptages de jetons cumulatifs dans la session                                                                                                                                                                      |
-| `context_window.context_window_size`                                      | Taille maximale de la fenêtre de contexte en jetons. 200 000 par défaut, ou 1 000 000 pour les modèles avec contexte étendu.                                                                                        |
-| `context_window.used_percentage`                                          | Pourcentage pré-calculé de fenêtre de contexte utilisée                                                                                                                                                             |
-| `context_window.remaining_percentage`                                     | Pourcentage pré-calculé de fenêtre de contexte restante                                                                                                                                                             |
-| `context_window.current_usage`                                            | Comptages de jetons du dernier appel API, décrits dans [champs de fenêtre de contexte](#context-window-fields)                                                                                                      |
-| `exceeds_200k_tokens`                                                     | Si le comptage total de jetons (jetons d'entrée, de cache et de sortie combinés) de la réponse API la plus récente dépasse 200 k. C'est un seuil fixe indépendamment de la taille réelle de la fenêtre de contexte. |
-| `session_id`                                                              | Identifiant de session unique                                                                                                                                                                                       |
-| `transcript_path`                                                         | Chemin vers le fichier de transcription de conversation                                                                                                                                                             |
-| `version`                                                                 | Version de Claude Code                                                                                                                                                                                              |
-| `output_style.name`                                                       | Nom du style de sortie actuel                                                                                                                                                                                       |
-| `vim.mode`                                                                | Mode vim actuel (`NORMAL` ou `INSERT`) quand le [mode vim](/fr/interactive-mode#vim-editor-mode) est activé                                                                                                         |
-| `agent.name`                                                              | Nom de l'agent lors de l'exécution avec l'indicateur `--agent` ou les paramètres d'agent configurés                                                                                                                 |
-| `worktree.name`                                                           | Nom du worktree actif. Présent uniquement pendant les sessions `--worktree`                                                                                                                                         |
-| `worktree.path`                                                           | Chemin absolu vers le répertoire du worktree                                                                                                                                                                        |
-| `worktree.branch`                                                         | Nom de la branche git pour le worktree (par exemple, `"worktree-my-feature"`). Absent pour les worktrees basés sur des hooks                                                                                        |
-| `worktree.original_cwd`                                                   | Le répertoire dans lequel Claude se trouvait avant d'entrer dans le worktree                                                                                                                                        |
-| `worktree.original_branch`                                                | Branche git extraite avant d'entrer dans le worktree. Absent pour les worktrees basés sur des hooks                                                                                                                 |
+| Champ                                                                            | Description                                                                                                                                                                                                         |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `model.id`, `model.display_name`                                                 | Identifiant du modèle actuel et nom d'affichage                                                                                                                                                                     |
+| `cwd`, `workspace.current_dir`                                                   | Répertoire de travail actuel. Les deux champs contiennent la même valeur ; `workspace.current_dir` est préféré pour la cohérence avec `workspace.project_dir`.                                                      |
+| `workspace.project_dir`                                                          | Répertoire où Claude Code a été lancé, qui peut différer de `cwd` si le répertoire de travail change pendant une session                                                                                            |
+| `workspace.added_dirs`                                                           | Répertoires supplémentaires ajoutés via `/add-dir` ou `--add-dir`. Tableau vide si aucun n'a été ajouté                                                                                                             |
+| `cost.total_cost_usd`                                                            | Coût total de la session en USD                                                                                                                                                                                     |
+| `cost.total_duration_ms`                                                         | Temps écoulé total depuis le début de la session, en millisecondes                                                                                                                                                  |
+| `cost.total_api_duration_ms`                                                     | Temps total passé à attendre les réponses API en millisecondes                                                                                                                                                      |
+| `cost.total_lines_added`, `cost.total_lines_removed`                             | Lignes de code modifiées                                                                                                                                                                                            |
+| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | Comptages de jetons cumulatifs dans la session                                                                                                                                                                      |
+| `context_window.context_window_size`                                             | Taille maximale de la fenêtre de contexte en jetons. 200 000 par défaut, ou 1 000 000 pour les modèles avec contexte étendu.                                                                                        |
+| `context_window.used_percentage`                                                 | Pourcentage pré-calculé de fenêtre de contexte utilisée                                                                                                                                                             |
+| `context_window.remaining_percentage`                                            | Pourcentage pré-calculé de fenêtre de contexte restante                                                                                                                                                             |
+| `context_window.current_usage`                                                   | Comptages de jetons du dernier appel API, décrits dans [champs de fenêtre de contexte](#context-window-fields)                                                                                                      |
+| `exceeds_200k_tokens`                                                            | Si le comptage total de jetons (jetons d'entrée, de cache et de sortie combinés) de la réponse API la plus récente dépasse 200 k. C'est un seuil fixe indépendamment de la taille réelle de la fenêtre de contexte. |
+| `rate_limits.five_hour.used_percentage`, `rate_limits.seven_day.used_percentage` | Pourcentage de la limite de débit de 5 heures ou 7 jours consommée, de 0 à 100                                                                                                                                      |
+| `rate_limits.five_hour.resets_at`, `rate_limits.seven_day.resets_at`             | Secondes d'époque Unix quand la fenêtre de limite de débit de 5 heures ou 7 jours se réinitialise                                                                                                                   |
+| `session_id`                                                                     | Identifiant de session unique                                                                                                                                                                                       |
+| `session_name`                                                                   | Nom de session personnalisé défini avec l'indicateur `--name` ou `/rename`. Absent si aucun nom personnalisé n'a été défini                                                                                         |
+| `transcript_path`                                                                | Chemin vers le fichier de transcription de conversation                                                                                                                                                             |
+| `version`                                                                        | Version de Claude Code                                                                                                                                                                                              |
+| `output_style.name`                                                              | Nom du style de sortie actuel                                                                                                                                                                                       |
+| `vim.mode`                                                                       | Mode vim actuel (`NORMAL` ou `INSERT`) quand le [mode vim](/fr/interactive-mode#vim-editor-mode) est activé                                                                                                         |
+| `agent.name`                                                                     | Nom de l'agent lors de l'exécution avec l'indicateur `--agent` ou les paramètres d'agent configurés                                                                                                                 |
+| `worktree.name`                                                                  | Nom du worktree actif. Présent uniquement pendant les sessions `--worktree`                                                                                                                                         |
+| `worktree.path`                                                                  | Chemin absolu vers le répertoire du worktree                                                                                                                                                                        |
+| `worktree.branch`                                                                | Nom de la branche git pour le worktree (par exemple, `"worktree-my-feature"`). Absent pour les worktrees basés sur des hooks                                                                                        |
+| `worktree.original_cwd`                                                          | Le répertoire dans lequel Claude se trouvait avant d'entrer dans le worktree                                                                                                                                        |
+| `worktree.original_branch`                                                       | Branche git extraite avant d'entrer dans le worktree. Absent pour les worktrees basés sur des hooks                                                                                                                 |
 
 <Accordion title="Schéma JSON complet">
   Votre commande de barre de statut reçoit cette structure JSON via stdin :
@@ -178,6 +182,7 @@ Claude Code envoie les champs JSON suivants à votre script via stdin :
   {
     "cwd": "/current/working/directory",
     "session_id": "abc123...",
+    "session_name": "my-session",
     "transcript_path": "/path/to/transcript.jsonl",
     "model": {
       "id": "claude-opus-4-6",
@@ -185,9 +190,10 @@ Claude Code envoie les champs JSON suivants à votre script via stdin :
     },
     "workspace": {
       "current_dir": "/current/working/directory",
-      "project_dir": "/original/project/directory"
+      "project_dir": "/original/project/directory",
+      "added_dirs": []
     },
-    "version": "1.0.80",
+    "version": "2.1.90",
     "output_style": {
       "name": "default"
     },
@@ -212,6 +218,16 @@ Claude Code envoie les champs JSON suivants à votre script via stdin :
       }
     },
     "exceeds_200k_tokens": false,
+    "rate_limits": {
+      "five_hour": {
+        "used_percentage": 23.5,
+        "resets_at": 1738425600
+      },
+      "seven_day": {
+        "used_percentage": 41.2,
+        "resets_at": 1738857600
+      }
+    },
     "vim": {
       "mode": "NORMAL"
     },
@@ -230,9 +246,11 @@ Claude Code envoie les champs JSON suivants à votre script via stdin :
 
   **Champs qui peuvent être absents** (non présents dans JSON) :
 
+  * `session_name` : apparaît uniquement quand un nom personnalisé a été défini avec `--name` ou `/rename`
   * `vim` : apparaît uniquement quand le mode vim est activé
   * `agent` : apparaît uniquement lors de l'exécution avec l'indicateur `--agent` ou les paramètres d'agent configurés
   * `worktree` : apparaît uniquement pendant les sessions `--worktree`. Quand présent, `branch` et `original_branch` peuvent aussi être absents pour les worktrees basés sur des hooks
+  * `rate_limits` : apparaît uniquement pour les abonnés Claude.ai (Pro/Max) après la première réponse API dans la session. Chaque fenêtre (`five_hour`, `seven_day`) peut être indépendamment absente. Utilisez `jq -r '.rate_limits.five_hour.used_percentage // empty'` pour gérer l'absence avec élégance.
 
   **Champs qui peuvent être `null`** :
 
@@ -681,6 +699,72 @@ Chaque script obtient l'URL du dépôt distant, convertit le format SSH en HTTPS
   ```
 </CodeGroup>
 
+### Utilisation des limites de débit
+
+Affiche l'utilisation des limites de débit d'abonnement Claude.ai dans la barre de statut. L'objet `rate_limits` contient `five_hour` (fenêtre glissante de 5 heures) et `seven_day` (fenêtres hebdomadaires). Chaque fenêtre fournit `used_percentage` (0-100) et `resets_at` (secondes d'époque Unix quand la fenêtre se réinitialise).
+
+Ce champ n'est présent que pour les abonnés Claude.ai (Pro/Max) après la première réponse API. Chaque script gère le champ absent avec élégance :
+
+<CodeGroup>
+  ```bash Bash theme={null}
+  #!/bin/bash
+  input=$(cat)
+
+  MODEL=$(echo "$input" | jq -r '.model.display_name')
+  # "// empty" produces no output when rate_limits is absent
+  FIVE_H=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
+  WEEK=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
+
+  LIMITS=""
+  [ -n "$FIVE_H" ] && LIMITS="5h: $(printf '%.0f' "$FIVE_H")%"
+  [ -n "$WEEK" ] && LIMITS="${LIMITS:+$LIMITS }7d: $(printf '%.0f' "$WEEK")%"
+
+  [ -n "$LIMITS" ] && echo "[$MODEL] | $LIMITS" || echo "[$MODEL]"
+  ```
+
+  ```python Python theme={null}
+  #!/usr/bin/env python3
+  import json, sys
+
+  data = json.load(sys.stdin)
+  model = data['model']['display_name']
+
+  parts = []
+  rate = data.get('rate_limits', {})
+  five_h = rate.get('five_hour', {}).get('used_percentage')
+  week = rate.get('seven_day', {}).get('used_percentage')
+
+  if five_h is not None:
+      parts.append(f"5h: {five_h:.0f}%")
+  if week is not None:
+      parts.append(f"7d: {week:.0f}%")
+
+  if parts:
+      print(f"[{model}] | {' '.join(parts)}")
+  else:
+      print(f"[{model}]")
+  ```
+
+  ```javascript Node.js theme={null}
+  #!/usr/bin/env node
+  let input = '';
+  process.stdin.on('data', chunk => input += chunk);
+  process.stdin.on('end', () => {
+      const data = JSON.parse(input);
+      const model = data.model.display_name;
+
+      const parts = [];
+      const fiveH = data.rate_limits?.five_hour?.used_percentage;
+      const week = data.rate_limits?.seven_day?.used_percentage;
+
+      if (fiveH != null) parts.push(`5h: ${Math.round(fiveH)}%`);
+      if (week != null) parts.push(`7d: ${Math.round(week)}%`);
+
+      console.log(parts.length ? `[${model}] | ${parts.join(' ')}` : `[${model}]`);
+  });
+  ```
+</CodeGroup>
+
 ### Mettre en cache les opérations coûteuses
 
 Votre script de barre de statut s'exécute fréquemment pendant les sessions actives. Les commandes comme `git status` ou `git diff` peuvent être lentes, surtout dans les grands dépôts. Cet exemple met en cache les informations git dans un fichier temporaire et ne les actualise que toutes les 5 secondes.
@@ -903,6 +987,11 @@ Les projets communautaires comme [ccstatusline](https://github.com/sirmalloc/ccs
 * Les séquences d'échappement complexes (couleurs ANSI, liens OSC 8) peuvent occasionnellement causer une sortie brouillée si elles chevauchent d'autres mises à jour UI
 * Si vous voyez du texte corrompu, essayez de simplifier votre script en sortie en texte brut
 * Les barres de statut multi-lignes avec codes d'échappement sont plus sujettes aux problèmes de rendu que le texte brut sur une seule ligne
+
+**Confiance de l'espace de travail requise**
+
+* La commande de barre de statut s'exécute uniquement si vous avez accepté la boîte de dialogue de confiance de l'espace de travail pour le répertoire actuel. Parce que `statusLine` exécute une commande shell, elle nécessite la même acceptation de confiance que les hooks et autres paramètres exécutant des shells.
+* Si la confiance n'est pas acceptée, vous verrez la notification `statusline skipped · restart to fix` au lieu de votre sortie de barre de statut. Redémarrez Claude Code et acceptez l'invite de confiance pour l'activer.
 
 **Erreurs de script ou blocages**
 

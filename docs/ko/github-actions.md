@@ -586,11 +586,11 @@ Claude Code Action v1은 통합 파라미터로 구성을 단순화합니다:
                   github_token: ${{ steps.app-token.outputs.token }}
                   trigger_phrase: "@claude"
                   use_vertex: "true"
-                  claude_args: '--model claude-sonnet-4@20250514 --max-turns 10'
+                  claude_args: '--model claude-sonnet-4-5@20250929 --max-turns 10'
                 env:
                   ANTHROPIC_VERTEX_PROJECT_ID: ${{ steps.auth.outputs.project_id }}
                   CLOUD_ML_REGION: us-east5
-                  VERTEX_REGION_CLAUDE_3_7_SONNET: us-east5
+                  VERTEX_REGION_CLAUDE_4_5_SONNET: us-east5
         ```
 
         <Tip>
@@ -647,7 +647,7 @@ claude_args: "--max-turns 5 --model claude-sonnet-4-6 --mcp-config /path/to/conf
 * `--max-turns`: 최대 대화 턴 (기본값: 10)
 * `--model`: 사용할 모델 (예: `claude-sonnet-4-6`)
 * `--mcp-config`: MCP 구성 경로
-* `--allowed-tools`: 허용된 도구의 쉼표로 구분된 목록
+* `--allowedTools`: 허용된 도구의 쉼표로 구분된 목록. `--allowed-tools` 별칭도 작동합니다.
 * `--debug`: 디버그 출력 활성화
 
 ### 대체 통합 방법

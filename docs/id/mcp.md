@@ -498,6 +498,8 @@ Pilih cakupan Anda berdasarkan:
 
 Konfigurasi server MCP mengikuti hierarki prioritas yang jelas. Ketika server dengan nama yang sama ada di berbagai cakupan, sistem menyelesaikan konflik dengan memprioritaskan server dengan cakupan lokal terlebih dahulu, diikuti oleh server dengan cakupan proyek, dan akhirnya server dengan cakupan pengguna. Desain ini memastikan bahwa konfigurasi pribadi dapat mengganti yang dibagikan jika diperlukan.
 
+Jika server dikonfigurasi baik secara lokal maupun melalui [konektor claude.ai](#use-mcp-servers-from-claude-ai), konfigurasi lokal mengambil prioritas dan entri konektor dilewati.
+
 ### Ekspansi variabel lingkungan dalam `.mcp.json`
 
 Claude Code mendukung ekspansi variabel lingkungan dalam file `.mcp.json`, memungkinkan tim untuk berbagi konfigurasi sambil mempertahankan fleksibilitas untuk jalur spesifik mesin dan nilai sensitif seperti kunci API.
@@ -747,7 +749,7 @@ Beberapa server MCP tidak mendukung pengaturan OAuth otomatis melalui Dynamic Cl
 
 ### Ganti penemuan metadata OAuth
 
-Jika server MCP Anda mengembalikan kesalahan pada endpoint metadata OAuth standar (`/.well-known/oauth-authorization-server`) tetapi mengekspos endpoint OIDC yang berfungsi, Anda dapat memberi tahu Claude Code untuk mengambil metadata OAuth langsung dari URL yang Anda tentukan, melewati rantai penemuan standar.
+Jika endpoint metadata OAuth standar server MCP Anda mengembalikan kesalahan tetapi server mengekspos endpoint OIDC yang berfungsi, Anda dapat mengarahkan Claude Code ke URL metadata tertentu untuk melewati rantai penemuan standar. Secara default, Claude Code pertama kali memeriksa Protected Resource Metadata RFC 9728 di `/.well-known/oauth-protected-resource`, kemudian kembali ke metadata server otorisasi RFC 8414 di `/.well-known/oauth-authorization-server`.
 
 Atur `authServerMetadataUrl` dalam objek `oauth` dari konfigurasi server Anda di `.mcp.json`:
 
@@ -804,6 +806,15 @@ Perintah juga dapat inline:
 * Header dinamis mengganti `headers` statis apa pun dengan nama yang sama
 
 Helper berjalan segar pada setiap koneksi (pada startup sesi dan pada reconnect). Tidak ada caching, jadi skrip Anda bertanggung jawab untuk penggunaan kembali token apa pun.
+
+Claude Code menetapkan variabel lingkungan ini saat menjalankan helper:
+
+| Variabel                      | Nilai           |
+| :---------------------------- | :-------------- |
+| `CLAUDE_CODE_MCP_SERVER_NAME` | nama server MCP |
+| `CLAUDE_CODE_MCP_SERVER_URL`  | URL server MCP  |
+
+Gunakan ini untuk menulis satu skrip helper yang melayani beberapa server MCP.
 
 <Note>
   `headersHelper` mengeksekusi perintah shell arbitrer. Ketika ditentukan pada cakupan proyek atau lokal, itu hanya berjalan setelah Anda menerima dialog kepercayaan ruang kerja.
@@ -1049,16 +1060,13 @@ Server MCP dapat mengekspos sumber daya yang dapat Anda referensikan menggunakan
 
 ## Skala dengan Pencarian Alat MCP
 
-Ketika Anda memiliki banyak server MCP yang dikonfigurasi, definisi alat dapat mengonsumsi sebagian besar jendela konteks Anda. Pencarian Alat MCP menyelesaikan ini dengan memuat alat secara dinamis sesuai permintaan alih-alih memuat semuanya sebelumnya.
+Pencarian Alat menjaga penggunaan konteks MCP tetap rendah dengan menunda definisi alat sampai Claude membutuhkannya. Hanya nama alat yang dimuat saat startup sesi, jadi menambahkan lebih banyak server MCP memiliki dampak minimal pada jendela konteks Anda.
 
 ### Cara kerjanya
 
-Claude Code secara otomatis mengaktifkan Pencarian Alat ketika deskripsi alat MCP Anda akan mengonsumsi lebih dari 10% jendela konteks. Anda dapat [menyesuaikan ambang batas ini](#configure-tool-search) atau menonaktifkan pencarian alat sepenuhnya. Ketika dipicu:
+Pencarian Alat diaktifkan secara default. Alat MCP ditangguhkan daripada dimuat ke konteks sebelumnya, dan Claude menggunakan alat pencarian untuk menemukan yang relevan saat tugas membutuhkannya. Hanya alat yang benar-benar digunakan Claude yang memasuki konteks. Dari perspektif Anda, alat MCP bekerja persis seperti sebelumnya.
 
-1. Alat MCP ditangguhkan daripada dimuat ke konteks sebelumnya
-2. Claude menggunakan alat pencarian untuk menemukan alat MCP yang relevan saat diperlukan
-3. Hanya alat yang benar-benar dibutuhkan Claude yang dimuat ke konteks
-4. Alat MCP terus bekerja persis seperti sebelumnya dari perspektif Anda
+Jika Anda lebih suka pemuatan berbasis ambang batas, atur `ENABLE_TOOL_SEARCH=auto` untuk memuat skema sebelumnya ketika mereka cocok dalam 10% jendela konteks dan hanya menunda overflow. Lihat [Konfigurasi pencarian alat](#configure-tool-search) untuk semua opsi.
 
 ### Untuk penulis server MCP
 
@@ -1070,19 +1078,21 @@ Tambahkan instruksi server yang jelas dan deskriptif yang menjelaskan:
 * Kapan Claude harus mencari alat Anda
 * Kemampuan utama yang disediakan server Anda
 
+Claude Code memotong deskripsi alat dan instruksi server pada 2KB masing-masing. Jaga agar ringkas untuk menghindari pemotongan, dan letakkan detail penting di dekat awal.
+
 ### Konfigurasi pencarian alat
 
 Pencarian alat diaktifkan secara default: alat MCP ditangguhkan dan ditemukan sesuai permintaan. Ketika `ANTHROPIC_BASE_URL` menunjuk ke host non-pihak pertama, pencarian alat dinonaktifkan secara default karena sebagian besar proxy tidak meneruskan blok `tool_reference`. Atur `ENABLE_TOOL_SEARCH` secara eksplisit jika proxy Anda melakukannya. Fitur ini memerlukan model yang mendukung blok `tool_reference`: Sonnet 4 dan lebih baru, atau Opus 4 dan lebih baru. Model Haiku tidak mendukung pencarian alat.
 
 Kontrol perilaku pencarian alat dengan variabel lingkungan `ENABLE_TOOL_SEARCH`:
 
-| Nilai          | Perilaku                                                                                           |
-| :------------- | :------------------------------------------------------------------------------------------------- |
-| (tidak diatur) | Diaktifkan secara default. Dinonaktifkan ketika `ANTHROPIC_BASE_URL` adalah host non-pihak pertama |
-| `true`         | Selalu diaktifkan, termasuk untuk `ANTHROPIC_BASE_URL` non-pihak pertama                           |
-| `auto`         | Diaktifkan ketika alat MCP melebihi 10% konteks                                                    |
-| `auto:<N>`     | Diaktifkan pada ambang batas khusus, di mana `<N>` adalah persentase (misalnya, `auto:5` untuk 5%) |
-| `false`        | Dinonaktifkan, semua alat MCP dimuat sebelumnya                                                    |
+| Nilai          | Perilaku                                                                                                                                           |
+| :------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (tidak diatur) | Semua alat MCP ditangguhkan dan dimuat sesuai permintaan. Kembali ke pemuatan sebelumnya ketika `ANTHROPIC_BASE_URL` adalah host non-pihak pertama |
+| `true`         | Semua alat MCP ditangguhkan, termasuk untuk `ANTHROPIC_BASE_URL` non-pihak pertama                                                                 |
+| `auto`         | Mode ambang batas: alat dimuat sebelumnya jika cocok dalam 10% jendela konteks, ditangguhkan sebaliknya                                            |
+| `auto:<N>`     | Mode ambang batas dengan persentase khusus, di mana `<N>` adalah 0-100 (misalnya, `auto:5` untuk 5%)                                               |
+| `false`        | Semua alat MCP dimuat sebelumnya, tidak ada penundaan                                                                                              |
 
 ```bash  theme={null}
 # Gunakan ambang batas khusus 5%
@@ -1094,12 +1104,12 @@ ENABLE_TOOL_SEARCH=false claude
 
 Atau atur nilai dalam [field `env` settings.json](/id/settings#available-settings) Anda.
 
-Anda juga dapat menonaktifkan alat MCPSearch secara khusus menggunakan pengaturan `disallowedTools`:
+Anda juga dapat menonaktifkan alat ToolSearch secara khusus:
 
 ```json  theme={null}
 {
   "permissions": {
-    "deny": ["MCPSearch"]
+    "deny": ["ToolSearch"]
   }
 }
 ```

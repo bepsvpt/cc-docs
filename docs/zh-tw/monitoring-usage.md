@@ -6,7 +6,7 @@
 
 > 了解如何為 Claude Code 啟用和配置 OpenTelemetry。
 
-透過 OpenTelemetry (OTel) 匯出遙測資料，追蹤 Claude Code 在整個組織中的使用情況、成本和工具活動。Claude Code 透過標準指標協議匯出指標作為時間序列資料，並透過日誌/事件協議匯出事件。配置您的指標和日誌後端以符合您的監控需求。
+透過 OpenTelemetry (OTel) 匯出遙測資料，追蹤 Claude Code 在整個組織中的使用情況、成本和工具活動。Claude Code 透過標準指標協議匯出指標作為時間序列資料、透過日誌/事件協議匯出事件，以及可選地透過[追蹤協議](#traces-beta)匯出分散式追蹤。配置您的指標、日誌和追蹤後端以符合您的監控需求。
 
 ## 快速開始
 
@@ -17,8 +17,8 @@
 export CLAUDE_CODE_ENABLE_TELEMETRY=1
 
 # 2. 選擇匯出器（兩者都是可選的 - 僅配置您需要的）
-export OTEL_METRICS_EXPORTER=otlp       # 選項：otlp、prometheus、console
-export OTEL_LOGS_EXPORTER=otlp          # 選項：otlp、console
+export OTEL_METRICS_EXPORTER=otlp       # 選項：otlp、prometheus、console、none
+export OTEL_LOGS_EXPORTER=otlp          # 選項：otlp、console、none
 
 # 3. 配置 OTLP 端點（用於 OTLP 匯出器）
 export OTEL_EXPORTER_OTLP_PROTOCOL=grpc
@@ -68,26 +68,27 @@ claude
 
 ### 常見配置變數
 
-| 環境變數                                                | 描述                                                  | 範例值                                |
-| --------------------------------------------------- | --------------------------------------------------- | ---------------------------------- |
-| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | 啟用遙測收集（必需）                                          | `1`                                |
-| `OTEL_METRICS_EXPORTER`                             | 指標匯出器類型（逗號分隔）                                       | `console`、`otlp`、`prometheus`      |
-| `OTEL_LOGS_EXPORTER`                                | 日誌/事件匯出器類型（逗號分隔）                                    | `console`、`otlp`                   |
-| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | OTLP 匯出器的協議（所有訊號）                                   | `grpc`、`http/json`、`http/protobuf` |
-| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | OTLP 收集器端點（所有訊號）                                    | `http://localhost:4317`            |
-| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | 指標協議（覆蓋一般設定）                                        | `grpc`、`http/json`、`http/protobuf` |
-| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | OTLP 指標端點（覆蓋一般設定）                                   | `http://localhost:4318/v1/metrics` |
-| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | 日誌協議（覆蓋一般設定）                                        | `grpc`、`http/json`、`http/protobuf` |
-| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | OTLP 日誌端點（覆蓋一般設定）                                   | `http://localhost:4318/v1/logs`    |
-| `OTEL_EXPORTER_OTLP_HEADERS`                        | OTLP 的身份驗證標頭                                        | `Authorization=Bearer token`       |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | mTLS 身份驗證的用戶端金鑰                                     | 用戶端金鑰檔案的路徑                         |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | mTLS 身份驗證的用戶端憑證                                     | 用戶端憑證檔案的路徑                         |
-| `OTEL_METRIC_EXPORT_INTERVAL`                       | 匯出間隔（毫秒）（預設：60000）                                  | `5000`、`60000`                     |
-| `OTEL_LOGS_EXPORT_INTERVAL`                         | 日誌匯出間隔（毫秒）（預設：5000）                                 | `1000`、`10000`                     |
-| `OTEL_LOG_USER_PROMPTS`                             | 啟用使用者提示內容的日誌記錄（預設：停用）                               | `1` 以啟用                            |
-| `OTEL_LOG_TOOL_DETAILS`                             | 啟用在工具事件中記錄工具輸入引數、MCP 伺服器/工具名稱和技能名稱（預設：停用）           | `1` 以啟用                            |
-| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | 指標時間性偏好（預設：`delta`）。如果您的後端期望累積時間性，請設定為 `cumulative` | `delta`、`cumulative`               |
-| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | 重新整理動態標頭的間隔（預設：1740000ms / 29 分鐘）                   | `900000`                           |
+| 環境變數                                                | 描述                                                               | 範例值                                  |
+| --------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------ |
+| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | 啟用遙測收集（必需）                                                       | `1`                                  |
+| `OTEL_METRICS_EXPORTER`                             | 指標匯出器類型，逗號分隔。使用 `none` 以停用                                       | `console`、`otlp`、`prometheus`、`none` |
+| `OTEL_LOGS_EXPORTER`                                | 日誌/事件匯出器類型，逗號分隔。使用 `none` 以停用                                    | `console`、`otlp`、`none`              |
+| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | OTLP 匯出器的協議，適用於所有訊號                                              | `grpc`、`http/json`、`http/protobuf`   |
+| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | 所有訊號的 OTLP 收集器端點                                                 | `http://localhost:4317`              |
+| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | 指標協議，覆蓋一般設定                                                      | `grpc`、`http/json`、`http/protobuf`   |
+| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | OTLP 指標端點，覆蓋一般設定                                                 | `http://localhost:4318/v1/metrics`   |
+| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | 日誌協議，覆蓋一般設定                                                      | `grpc`、`http/json`、`http/protobuf`   |
+| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | OTLP 日誌端點，覆蓋一般設定                                                 | `http://localhost:4318/v1/logs`      |
+| `OTEL_EXPORTER_OTLP_HEADERS`                        | OTLP 的身份驗證標頭                                                     | `Authorization=Bearer token`         |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | mTLS 身份驗證的用戶端金鑰                                                  | 用戶端金鑰檔案的路徑                           |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | mTLS 身份驗證的用戶端憑證                                                  | 用戶端憑證檔案的路徑                           |
+| `OTEL_METRIC_EXPORT_INTERVAL`                       | 匯出間隔（毫秒）（預設：60000）                                               | `5000`、`60000`                       |
+| `OTEL_LOGS_EXPORT_INTERVAL`                         | 日誌匯出間隔（毫秒）（預設：5000）                                              | `1000`、`10000`                       |
+| `OTEL_LOG_USER_PROMPTS`                             | 啟用使用者提示內容的日誌記錄（預設：停用）                                            | `1` 以啟用                              |
+| `OTEL_LOG_TOOL_DETAILS`                             | 啟用在工具事件中記錄工具參數和輸入引數的日誌：Bash 命令、MCP 伺服器和工具名稱、技能名稱和工具輸入（預設：停用）     | `1` 以啟用                              |
+| `OTEL_LOG_TOOL_CONTENT`                             | 啟用在跨度事件中記錄工具輸入和輸出內容的日誌（預設：停用）。需要[追蹤](#traces-beta)。內容在 60 KB 處截斷 | `1` 以啟用                              |
+| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | 指標時間性偏好（預設：`delta`）。如果您的後端期望累積時間性，請設定為 `cumulative`              | `delta`、`cumulative`                 |
+| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | 重新整理動態標頭的間隔（預設：1740000ms / 29 分鐘）                                | `900000`                             |
 
 ### 指標基數控制
 
@@ -100,6 +101,22 @@ claude
 | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` | 在指標中包含 user.account\_uuid 和 user.account\_id 屬性 | `true`  | `false` |
 
 這些變數有助於控制指標的基數，這會影響指標後端中的儲存需求和查詢效能。較低的基數通常意味著更好的效能和更低的儲存成本，但分析的資料粒度較低。
+
+### Traces (beta)
+
+分散式追蹤匯出跨度，將每個使用者提示連結到它觸發的 API 請求和工具執行，因此您可以在追蹤後端中將完整請求檢視為單個追蹤。
+
+追蹤預設為關閉。若要啟用它，請同時設定 `CLAUDE_CODE_ENABLE_TELEMETRY=1` 和 `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`，然後設定 `OTEL_TRACES_EXPORTER` 以選擇跨度的傳送位置。追蹤重複使用[常見 OTLP 配置](#common-configuration-variables)以取得端點、協議和標頭。
+
+| 環境變數                                  | 描述                                              | 範例值                                |
+| ------------------------------------- | ----------------------------------------------- | ---------------------------------- |
+| `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA` | 啟用跨度追蹤（必需）。也接受 `ENABLE_ENHANCED_TELEMETRY_BETA` | `1`                                |
+| `OTEL_TRACES_EXPORTER`                | 追蹤匯出器類型，逗號分隔。使用 `none` 以停用                      | `console`、`otlp`、`none`            |
+| `OTEL_EXPORTER_OTLP_TRACES_PROTOCOL`  | 追蹤協議，覆蓋 `OTEL_EXPORTER_OTLP_PROTOCOL`           | `grpc`、`http/json`、`http/protobuf` |
+| `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`  | OTLP 追蹤端點，覆蓋 `OTEL_EXPORTER_OTLP_ENDPOINT`      | `http://localhost:4318/v1/traces`  |
+| `OTEL_TRACES_EXPORT_INTERVAL`         | 跨度批次匯出間隔（毫秒）（預設：5000）                           | `1000`、`10000`                     |
+
+跨度預設會編輯使用者提示文字和工具內容。設定 `OTEL_LOG_USER_PROMPTS=1` 和 `OTEL_LOG_TOOL_CONTENT=1` 以包含它們。
 
 ### 動態標頭
 
@@ -386,10 +403,10 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * `decision_source`：決定來源 - `"config"`、`"hook"`、`"user_permanent"`、`"user_temporary"`、`"user_abort"` 或 `"user_reject"`
 * `tool_result_size_bytes`：工具結果的大小（位元組）
 * `mcp_server_scope`：MCP 伺服器範圍識別碼（用於 MCP 工具）
-* `tool_parameters`：包含工具特定參數的 JSON 字串（如果可用）
+* `tool_parameters`（當 `OTEL_LOG_TOOL_DETAILS=1` 時）：包含工具特定參數的 JSON 字串：
   * 對於 Bash 工具：包括 `bash_command`、`full_command`、`timeout`、`description`、`dangerouslyDisableSandbox` 和 `git_commit_id`（git commit 命令成功時的提交 SHA）
-  * 對於 MCP 工具（當 `OTEL_LOG_TOOL_DETAILS=1` 時）：包括 `mcp_server_name`、`mcp_tool_name`
-  * 對於 Skill 工具（當 `OTEL_LOG_TOOL_DETAILS=1` 時）：包括 `skill_name`
+  * 對於 MCP 工具：包括 `mcp_server_name`、`mcp_tool_name`
+  * 對於 Skill 工具：包括 `skill_name`
 * `tool_input`（當 `OTEL_LOG_TOOL_DETAILS=1` 時）：JSON 序列化的工具引數。超過 512 個字元的個別值會被截斷，整個承載的上限約為 4 K 字元。適用於所有工具，包括 MCP 工具。
 
 #### API 請求事件
@@ -497,7 +514,7 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 
 ## 後端考量
 
-您選擇的指標和日誌後端決定了您可以執行的分析類型：
+您選擇的指標、日誌和追蹤後端決定了您可以執行的分析類型：
 
 ### 對於指標
 
@@ -510,6 +527,13 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * **日誌聚合系統（例如，Elasticsearch、Loki）**：全文搜尋、日誌分析
 * **欄式存儲（例如，ClickHouse）**：結構化事件分析
 * **功能完整的可觀測性平台（例如，Honeycomb、Datadog）**：指標和事件之間的關聯
+
+### 對於追蹤
+
+選擇支援分散式追蹤儲存和跨度關聯的後端：
+
+* **分散式追蹤系統（例如，Jaeger、Zipkin、Grafana Tempo）**：跨度視覺化、請求瀑布圖、延遲分析
+* **功能完整的可觀測性平台（例如，Honeycomb、Datadog）**：追蹤搜尋和與指標和日誌的關聯
 
 對於需要日活躍使用者/週活躍使用者/月活躍使用者 (DAU/WAU/MAU) 指標的組織，請考慮支援高效唯一值查詢的後端。
 
@@ -532,10 +556,11 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 ## 安全性和隱私
 
 * 遙測是選擇加入的，需要明確配置
-* 原始檔案內容和程式碼片段不包含在指標或事件中。工具執行事件在 `tool_parameters` 欄位中包含 bash 命令和檔案路徑，這可能包含敏感值。如果您的命令可能包含機密，請配置您的遙測後端以篩選或編輯 `tool_parameters`
+* 原始檔案內容和程式碼片段不包含在指標或事件中。追蹤跨度是單獨的資料路徑：請參閱下面的 `OTEL_LOG_TOOL_CONTENT` 項目
 * 透過 OAuth 驗證時，`user.email` 包含在遙測屬性中。如果這對您的組織是個問題，請與您的遙測後端合作以篩選或編輯此欄位
 * 預設不收集使用者提示內容。僅記錄提示長度。若要包含提示內容，請設定 `OTEL_LOG_USER_PROMPTS=1`
-* 工具輸入引數預設不記錄。若要包含它們，請設定 `OTEL_LOG_TOOL_DETAILS=1`。啟用時，`tool_result` 事件包含 MCP 伺服器/工具名稱和技能名稱，以及包含檔案路徑、URL、搜尋模式和其他引數的 `tool_input` 屬性。超過 512 個字元的個別值會被截斷，總計上限約為 4 K 字元，但引數仍可能包含敏感值。根據需要配置您的遙測後端以篩選或編輯 `tool_input`
+* 工具輸入引數和參數預設不記錄。若要包含它們，請設定 `OTEL_LOG_TOOL_DETAILS=1`。啟用時，`tool_result` 事件包含 `tool_parameters` 屬性，其中包含 Bash 命令、MCP 伺服器和工具名稱以及技能名稱，以及包含檔案路徑、URL、搜尋模式和其他引數的 `tool_input` 屬性。超過 512 個字元的個別值會被截斷，總計上限約為 4 K 字元，但引數仍可能包含敏感值。根據需要配置您的遙測後端以篩選或編輯這些屬性
+* 工具輸入和輸出內容預設不在追蹤跨度中記錄。若要包含它，請設定 `OTEL_LOG_TOOL_CONTENT=1`。啟用時，跨度事件包含完整工具輸入和輸出內容，在每個跨度處截斷 60 KB。這可以包含來自 Read 工具結果的原始檔案內容和 Bash 命令輸出。根據需要配置您的遙測後端以篩選或編輯這些屬性
 
 ## 在 Amazon Bedrock 上監控 Claude Code
 

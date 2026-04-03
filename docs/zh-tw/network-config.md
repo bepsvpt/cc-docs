@@ -86,7 +86,14 @@ Claude Code 需要存取以下 URL：
 
 確保這些 URL 在您的代理設定和防火牆規則中被列入允許清單。這在容器化或受限網路環境中使用 Claude Code 時特別重要。
 
+原生安裝程式和更新檢查也需要以下 URL。請將兩者都列入允許清單，因為安裝程式和自動更新程式從 `storage.googleapis.com` 擷取，而外掛程式下載使用 `downloads.claude.ai`。如果您透過 npm 安裝 Claude Code 或管理自己的二進位分發，終端使用者可能不需要存取：
+
+* `storage.googleapis.com`：Claude Code 二進位檔和自動更新程式的下載儲存庫
+* `downloads.claude.ai`：CDN 託管安裝指令碼、版本指標、資訊清單、簽署金鑰和外掛程式可執行檔
+
 [Claude Code on the web](/zh-TW/claude-code-on-the-web) 和 [Code Review](/zh-TW/code-review) 從 Anthropic 管理的基礎設施連線到您的儲存庫。如果您的 GitHub Enterprise Cloud 組織按 IP 位址限制存取，請啟用[已安裝 GitHub Apps 的 IP 允許清單繼承](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps)。Claude GitHub App 會註冊其 IP 範圍，因此啟用此設定可允許存取而無需手動設定。若要[手動將範圍新增到允許清單](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address)，或設定其他防火牆，請參閱 [Anthropic API IP 位址](https://platform.claude.com/docs/en/api/ip-addresses)。
+
+對於防火牆後的自託管 [GitHub Enterprise Server](/zh-TW/github-enterprise-server) 執行個體，請將相同的 [Anthropic API IP 位址](https://platform.claude.com/docs/en/api/ip-addresses) 列入允許清單，以便 Anthropic 基礎設施可以連線到您的 GHES 主機以複製儲存庫並發佈審查評論。
 
 ## 其他資源
 

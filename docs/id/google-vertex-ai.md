@@ -71,19 +71,18 @@ export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=global
 export ANTHROPIC_VERTEX_PROJECT_ID=YOUR-PROJECT-ID
 
+# Opsional: Timpa URL titik akhir Vertex untuk titik akhir kustom atau gateway
+# export ANTHROPIC_VERTEX_BASE_URL=https://aiplatform.googleapis.com
+
 # Opsional: Nonaktifkan prompt caching jika diperlukan
 export DISABLE_PROMPT_CACHING=1
 
-# Ketika CLOUD_ML_REGION=global, timpa wilayah untuk model yang tidak didukung
-export VERTEX_REGION_CLAUDE_3_5_HAIKU=us-east5
-
-# Opsional: Timpa wilayah untuk model spesifik lainnya
-export VERTEX_REGION_CLAUDE_3_5_SONNET=us-east5
-export VERTEX_REGION_CLAUDE_3_7_SONNET=us-east5
-export VERTEX_REGION_CLAUDE_4_0_OPUS=europe-west1
-export VERTEX_REGION_CLAUDE_4_0_SONNET=us-east5
-export VERTEX_REGION_CLAUDE_4_1_OPUS=europe-west1
+# Ketika CLOUD_ML_REGION=global, timpa wilayah untuk model yang tidak mendukung titik akhir global
+export VERTEX_REGION_CLAUDE_HAIKU_4_5=us-east5
+export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 ```
+
+Setiap versi model memiliki variabel `VERTEX_REGION_CLAUDE_*` sendiri. Lihat [referensi variabel lingkungan](/id/env-vars) untuk daftar lengkap. Periksa [Vertex Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) untuk menentukan model mana yang mendukung titik akhir global versus regional saja.
 
 [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) didukung secara otomatis ketika Anda menentukan flag ephemeral `cache_control`. Untuk menonaktifkannya, atur `DISABLE_PROMPT_CACHING=1`. Untuk batas laju yang lebih tinggi, hubungi dukungan Google Cloud. Saat menggunakan Vertex AI, perintah `/login` dan `/logout` dinonaktifkan karena autentikasi ditangani melalui kredensial Google Cloud.
 
@@ -114,7 +113,7 @@ Untuk menyesuaikan model lebih lanjut:
 
 ```bash  theme={null}
 export ANTHROPIC_MODEL='claude-opus-4-6'
-export ANTHROPIC_SMALL_FAST_MODEL='claude-haiku-4-5@20251001'
+export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
 ```
 
 ## Konfigurasi IAM
@@ -150,7 +149,7 @@ Jika Anda mengalami kesalahan "model not found" 404:
 * Konfirmasi model diaktifkan di [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden)
 * Verifikasi Anda memiliki akses ke wilayah yang ditentukan
 * Jika menggunakan `CLOUD_ML_REGION=global`, periksa bahwa model Anda mendukung titik akhir global di [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) di bawah "Supported features". Untuk model yang tidak mendukung titik akhir global, baik:
-  * Tentukan model yang didukung melalui `ANTHROPIC_MODEL` atau `ANTHROPIC_SMALL_FAST_MODEL`, atau
+  * Tentukan model yang didukung melalui `ANTHROPIC_MODEL` atau `ANTHROPIC_DEFAULT_HAIKU_MODEL`, atau
   * Atur titik akhir regional menggunakan variabel lingkungan `VERTEX_REGION_<MODEL_NAME>`
 
 Jika Anda mengalami kesalahan 429:

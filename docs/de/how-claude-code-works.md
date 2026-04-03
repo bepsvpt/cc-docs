@@ -69,7 +69,7 @@ Wenn Sie `claude` in einem Verzeichnis ausführen, erhält Claude Code Zugriff a
 * **Ihr Terminal.** Jeden Befehl, den Sie ausführen könnten: Build-Tools, git, Paketmanager, Systemdienstprogramme, Skripte. Wenn Sie es von der Befehlszeile aus tun können, kann Claude es auch.
 * **Ihren git-Status.** Aktueller Branch, nicht committete Änderungen und aktuelle Commit-Historie.
 * **Ihre [CLAUDE.md](/de/memory).** Eine Markdown-Datei, in der Sie projektspezifische Anweisungen, Konventionen und Kontext speichern, den Claude jede Sitzung kennen sollte.
-* **[Auto-Speicher](/de/memory#auto-memory).** Erkenntnisse, die Claude automatisch speichert, während Sie arbeiten, wie Projektmuster und Ihre Vorlieben. Die ersten 200 Zeilen von MEMORY.md werden zu Beginn jeder Sitzung geladen.
+* **[Auto-Speicher](/de/memory#auto-memory).** Erkenntnisse, die Claude automatisch speichert, während Sie arbeiten, wie Projektmuster und Ihre Vorlieben. Die ersten 200 Zeilen oder 25 KB von MEMORY.md, je nachdem, was zuerst kommt, werden zu Beginn jeder Sitzung geladen.
 * **Erweiterungen, die Sie konfigurieren.** [MCP-Server](/de/mcp) für externe Dienste, [skills](/de/skills) für Workflows, [subagents](/de/sub-agents) für delegierte Arbeit und [Claude in Chrome](/de/chrome) für Browser-Interaktion.
 
 Da Claude Ihr gesamtes Projekt sieht, kann er darin arbeiten. Wenn Sie Claude bitten, „den Authentifizierungsfehler zu beheben", sucht er nach relevanten Dateien, liest mehrere Dateien, um den Kontext zu verstehen, nimmt koordinierte Bearbeitungen vor, führt Tests aus, um die Behebung zu überprüfen, und committed die Änderungen, wenn Sie es fragen. Dies unterscheidet sich von Inline-Code-Assistenten, die nur die aktuelle Datei sehen.
@@ -90,7 +90,7 @@ Claude Code läuft in drei Umgebungen, jede mit unterschiedlichen Kompromissen f
 
 ### Schnittstellen
 
-Sie können auf Claude Code über das Terminal, die [Desktop-App](/de/desktop), [IDE-Erweiterungen](/de/ide-integrations), [claude.ai/code](https://claude.ai/code), [Remote Control](/de/remote-control), [Slack](/de/slack) und [CI/CD-Pipelines](/de/github-actions) zugreifen. Die Schnittstelle bestimmt, wie Sie Claude sehen und damit interagieren, aber die zugrunde liegende agentengesteuerte Schleife ist identisch. Siehe [Claude Code überall verwenden](/de/overview#use-claude-code-everywhere) für die vollständige Liste.
+Sie können auf Claude Code über das Terminal, die [Desktop-App](/de/desktop), [IDE-Erweiterungen](/de/vs-code), [claude.ai/code](https://claude.ai/code), [Remote Control](/de/remote-control), [Slack](/de/slack) und [CI/CD-Pipelines](/de/github-actions) zugreifen. Die Schnittstelle bestimmt, wie Sie Claude sehen und damit interagieren, aber die zugrunde liegende agentengesteuerte Schleife ist identisch. Siehe [Claude Code überall verwenden](/de/overview#use-claude-code-everywhere) für die vollständige Liste.
 
 ## Mit Sitzungen arbeiten
 
@@ -126,13 +126,15 @@ Dies erstellt eine neue Sitzungs-ID, während die Konversationshistorie bis zu d
 
 Claudes Kontextfenster enthält Ihre Konversationshistorie, Dateiinhalte, Befehlsausgaben, [CLAUDE.md](/de/memory), [Auto-Speicher](/de/memory#auto-memory), geladene skills und Systemanweisungen. Während Sie arbeiten, füllt sich der Kontext. Claude komprimiert automatisch, aber Anweisungen von früh in der Konversation können verloren gehen. Legen Sie persistente Regeln in CLAUDE.md ab, und führen Sie `/context` aus, um zu sehen, was Platz verbraucht.
 
+Für eine interaktive Anleitung zu dem, was geladen wird und wann, siehe [Erkunden Sie das Kontextfenster](/de/context-window).
+
 #### Wenn der Kontext voll wird
 
 Claude Code verwaltet den Kontext automatisch, wenn Sie sich dem Limit nähern. Es löscht zuerst ältere Tool-Ausgaben, dann fasst die Konversation zusammen, falls erforderlich. Ihre Anfragen und wichtige Code-Snippets werden beibehalten; detaillierte Anweisungen von früh in der Konversation können verloren gehen. Legen Sie persistente Regeln in CLAUDE.md ab, anstatt sich auf die Konversationshistorie zu verlassen.
 
 Um zu kontrollieren, was während der Komprimierung beibehalten wird, fügen Sie einen Abschnitt „Compact Instructions" zu CLAUDE.md hinzu oder führen Sie `/compact` mit einem Fokus aus (wie `/compact focus on the API changes`).
 
-Führen Sie `/context` aus, um zu sehen, was Platz verbraucht. MCP-Server fügen Tool-Definitionen zu jeder Anfrage hinzu, daher können einige wenige Server erheblichen Kontext verbrauchen, bevor Sie mit der Arbeit beginnen. Führen Sie `/mcp` aus, um die Kosten pro Server zu überprüfen.
+Führen Sie `/context` aus, um zu sehen, was Platz verbraucht. MCP-Tool-Definitionen werden standardmäßig aufgeschoben und bei Bedarf über [Tool-Suche](/de/mcp#scale-with-mcp-tool-search) geladen, daher verbrauchen nur Tool-Namen Kontext, bis Claude ein bestimmtes Tool verwendet. Führen Sie `/mcp` aus, um die Kosten pro Server zu überprüfen.
 
 #### Kontext mit skills und subagents verwalten
 

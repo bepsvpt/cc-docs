@@ -101,7 +101,7 @@ I team di agenti supportano due modalità di visualizzazione:
   `tmux` ha limitazioni note su certi sistemi operativi e tradizionalmente funziona meglio su macOS. Utilizzare `tmux -CC` in iTerm2 è il punto di ingresso suggerito in `tmux`.
 </Note>
 
-L'impostazione predefinita è `"auto"`, che utilizza split panes se state già eseguendo all'interno di una sessione tmux, e in-process altrimenti. L'impostazione `"tmux"` abilita la modalità split-pane e rileva automaticamente se utilizzare tmux o iTerm2 in base al vostro terminale. Per sovrascrivere, impostate `teammateMode` nel vostro [settings.json](/it/settings):
+L'impostazione predefinita è `"auto"`, che utilizza split panes se state già eseguendo all'interno di una sessione tmux, e in-process altrimenti. L'impostazione `"tmux"` abilita la modalità split-pane e rileva automaticamente se utilizzare tmux o iTerm2 in base al vostro terminale. Per sovrascrivere, impostate `teammateMode` nel vostro [global config](/it/settings#global-config-settings) a `~/.claude.json`:
 
 ```json  theme={null}
 {
@@ -186,9 +186,10 @@ Questo rimuove le risorse del team condivise. Quando il lead esegue la pulizia, 
 
 ### Applicare quality gate con hooks
 
-Utilizzate [hooks](/it/hooks) per applicare regole quando i compagni di team finiscono il lavoro o le attività si completano:
+Utilizzate [hooks](/it/hooks) per applicare regole quando i compagni di team finiscono il lavoro o le attività vengono create o completate:
 
 * [`TeammateIdle`](/it/hooks#teammateidle): viene eseguito quando un compagno di team sta per andare inattivo. Uscite con codice 2 per inviare feedback e mantenere il compagno di team al lavoro.
+* [`TaskCreated`](/it/hooks#taskcreated): viene eseguito quando un'attività sta per essere creata. Uscite con codice 2 per prevenire la creazione e inviare feedback.
 * [`TaskCompleted`](/it/hooks#taskcompleted): viene eseguito quando un'attività sta per essere contrassegnata come completata. Uscite con codice 2 per prevenire il completamento e inviare feedback.
 
 ## Come funzionano i team di agenti
@@ -224,7 +225,23 @@ I team e le attività sono archiviati localmente:
 * **Configurazione del team**: `~/.claude/teams/{team-name}/config.json`
 * **Elenco di attività**: `~/.claude/tasks/{team-name}/`
 
+Claude Code genera entrambi automaticamente quando create un team e li aggiorna mentre i compagni di team si uniscono, vanno inattivi o se ne vanno. La configurazione del team contiene lo stato di runtime come gli ID di sessione e gli ID dei riquadri tmux, quindi non modificatela manualmente o pre-autorizzatela: le vostre modifiche vengono sovrascritte al prossimo aggiornamento dello stato.
+
+Per definire ruoli di compagni di team riutilizzabili, utilizzate invece [definizioni di subagent](#use-subagent-definitions-for-teammates).
+
 La configurazione del team contiene un array `members` con il nome di ogni compagno di team, l'ID dell'agente e il tipo di agente. I compagni di team possono leggere questo file per scoprire altri membri del team.
+
+Non esiste un equivalente a livello di progetto della configurazione del team. Un file come `.claude/teams/teams.json` nella vostra directory di progetto non è riconosciuto come configurazione; Claude lo tratta come un file ordinario.
+
+### Utilizzare definizioni di subagent per i compagni di team
+
+Quando generate un compagno di team, potete fare riferimento a un tipo di [subagent](/it/sub-agents) da qualsiasi [ambito di subagent](/it/sub-agents#choose-the-subagent-scope): progetto, utente, plugin o definito da CLI. Il compagno di team eredita il prompt di sistema, gli strumenti e il modello di quel subagent. Questo vi permette di definire un ruolo una volta, come un security-reviewer o test-runner, e riutilizzarlo sia come subagent delegato che come compagno di team di un team di agenti.
+
+Per utilizzare una definizione di subagent, menzionatela per nome quando chiedete a Claude di generare il compagno di team:
+
+```text  theme={null}
+Genera un compagno di team utilizzando il tipo di agente security-reviewer per controllare il modulo di autenticazione.
+```
 
 ### Permessi
 

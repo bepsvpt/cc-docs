@@ -45,7 +45,6 @@ Claude Code는 사용자 정의 skills, agents, hooks를 추가하는 두 가지
 ### 필수 조건
 
 * Claude Code [설치 및 인증](/ko/quickstart#step-1-install-claude-code)
-* Claude Code 버전 1.0.33 이상 (`claude --version`을 실행하여 확인)
 
 <Note>
   `/plugin` 명령이 보이지 않으면 Claude Code를 최신 버전으로 업데이트하세요. 업그레이드 지침은 [문제 해결](/ko/troubleshooting)을 참조하세요.
@@ -131,7 +130,7 @@ Claude Code는 사용자 정의 skills, agents, hooks를 추가하는 두 가지
     Claude가 인사말로 응답하는 것을 볼 수 있습니다. `/help`를 실행하여 플러그인 네임스페이스 아래에 나열된 skill을 확인하세요.
 
     <Note>
-      **네임스페이싱이 필요한 이유?** 플러그인 skills는 항상 네임스페이스가 지정됩니다 (예: `/greet:hello`). 여러 플러그인이 동일한 이름의 skills를 가질 때 충돌을 방지합니다.
+      **네임스페이싱이 필요한 이유?** 플러그인 skills는 항상 네임스페이스가 지정됩니다 (예: `/my-first-plugin:hello`). 여러 플러그인이 동일한 이름의 skills를 가질 때 충돌을 방지합니다.
 
       네임스페이스 접두사를 변경하려면 `plugin.json`의 `name` 필드를 업데이트하세요.
     </Note>
@@ -283,7 +282,7 @@ claude --plugin-dir ./my-plugin
 
 `--plugin-dir` 플러그인이 설치된 마켓플레이스 플러그인과 동일한 이름을 가진 경우 로컬 복사본이 해당 세션에 우선합니다. 이를 통해 먼저 제거하지 않고도 이미 설치한 플러그인의 변경 사항을 테스트할 수 있습니다. 관리 설정에 의해 강제로 활성화된 마켓플레이스 플러그인은 유일한 예외이며 재정의할 수 없습니다.
 
-플러그인을 변경할 때 `/reload-plugins`를 실행하여 다시 시작하지 않고 업데이트를 적용합니다. 이는 명령, skills, agents, hooks, 플러그인 MCP servers, 플러그인 LSP servers를 다시 로드합니다. 플러그인 구성 요소를 테스트합니다:
+플러그인을 변경할 때 `/reload-plugins`를 실행하여 다시 시작하지 않고 업데이트를 적용합니다. 이는 플러그인, skills, agents, hooks, 플러그인 MCP servers, 플러그인 LSP servers를 다시 로드합니다. 플러그인 구성 요소를 테스트합니다:
 
 * `/plugin-name:skill-name`으로 skills를 시도해보세요
 * agents가 `/agents`에 나타나는지 확인하세요

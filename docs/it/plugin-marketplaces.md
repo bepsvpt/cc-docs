@@ -557,6 +557,10 @@ Puoi anche specificare quali plugin devono essere abilitati per impostazione pre
 
 Per le opzioni di configurazione complete, vedi [Plugin settings](/it/settings#plugin-settings).
 
+<Note>
+  Se usi una fonte locale `directory` o `file` con un percorso relativo, il percorso si risolve rispetto al checkout principale del tuo repository. Quando esegui Claude Code da un git worktree, il percorso punta ancora al checkout principale, quindi tutti i worktree condividono la stessa posizione del marketplace. Lo stato del marketplace viene archiviato una volta per utente in `~/.claude/plugins/known_marketplaces.json`, non per progetto.
+</Note>
+
 ### Pre-popola plugin per i container
 
 Per le immagini container e gli ambienti CI, puoi pre-popolare una directory di plugin al momento della compilazione in modo che Claude Code si avvii con marketplace e plugin già disponibili, senza clonare nulla al runtime. Imposta la variabile di ambiente `CLAUDE_CODE_PLUGIN_SEED_DIR` per puntare a questa directory.
@@ -627,7 +631,7 @@ Consenti solo marketplace specifici:
 }
 ```
 
-Consenti tutti i marketplace da un server git interno utilizzando la corrispondenza del modello regex sull'host:
+Consenti tutti i marketplace da un server git interno utilizzando la corrispondenza del modello regex sull'host. Questo è l'approccio consigliato per [GitHub Enterprise Server](/it/github-enterprise-server#plugin-marketplaces-on-ghes) o istanze GitLab self-hosted:
 
 ```json  theme={null}
 {

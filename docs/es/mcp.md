@@ -498,6 +498,8 @@ Seleccione su alcance basándose en:
 
 Las configuraciones de servidores MCP siguen una jerarquía de precedencia clara. Cuando existen servidores con el mismo nombre en múltiples alcances, el sistema resuelve conflictos priorizando primero los servidores con alcance local, seguidos por los servidores con alcance de proyecto y finalmente los servidores con alcance de usuario. Este diseño asegura que las configuraciones personales puedan anular las compartidas cuando sea necesario.
 
+Si un servidor está configurado tanto localmente como a través de un [conector de claude.ai](#use-mcp-servers-from-claude-ai), la configuración local tiene precedencia y la entrada del conector se omite.
+
 ### Expansión de variables de entorno en `.mcp.json`
 
 Claude Code admite la expansión de variables de entorno en archivos `.mcp.json`, permitiendo que los equipos compartan configuraciones mientras mantienen flexibilidad para rutas específicas de máquinas y valores sensibles como claves API.
@@ -747,7 +749,7 @@ Algunos servidores MCP no admiten configuración automática de OAuth mediante R
 
 ### Anular el descubrimiento de metadatos de OAuth
 
-Si su servidor MCP devuelve errores en el punto final de metadatos de OAuth estándar (`/.well-known/oauth-authorization-server`) pero expone un punto final OIDC funcional, puede indicarle a Claude Code que obtenga metadatos de OAuth directamente desde una URL que especifique, omitiendo la cadena de descubrimiento estándar.
+Si su servidor MCP devuelve errores en los puntos finales de metadatos de OAuth estándar, pero expone un punto final OIDC funcional, puede indicarle a Claude Code que obtenga metadatos de OAuth directamente desde una URL que especifique, omitiendo la cadena de descubrimiento estándar. De forma predeterminada, Claude Code primero verifica los Metadatos de Recursos Protegidos RFC 9728 en `/.well-known/oauth-protected-resource`, luego recurre a los metadatos del servidor de autorización RFC 8414 en `/.well-known/oauth-authorization-server`.
 
 Establezca `authServerMetadataUrl` en el objeto `oauth` de la configuración de su servidor en `.mcp.json`:
 
@@ -804,6 +806,15 @@ El comando también puede ser en línea:
 * Los encabezados dinámicos anulan cualquier `headers` estático con el mismo nombre
 
 El ayudante se ejecuta nuevamente en cada conexión (al iniciar la sesión y al reconectar). No hay almacenamiento en caché, por lo que su script es responsable de cualquier reutilización de tokens.
+
+Claude Code establece estas variables de entorno al ejecutar el ayudante:
+
+| Variable                      | Valor                      |
+| :---------------------------- | :------------------------- |
+| `CLAUDE_CODE_MCP_SERVER_NAME` | el nombre del servidor MCP |
+| `CLAUDE_CODE_MCP_SERVER_URL`  | la URL del servidor MCP    |
+
+Use estas para escribir un único script de ayudante que sirva múltiples servidores MCP.
 
 <Note>
   `headersHelper` ejecuta comandos de shell arbitrarios. Cuando se define en alcance de proyecto o local, solo se ejecuta después de que acepte el diálogo de confianza del espacio de trabajo.
@@ -1049,16 +1060,13 @@ Los servidores MCP pueden exponer recursos que puede referenciar usando mencione
 
 ## Escalar con MCP Tool Search
 
-Cuando tiene muchos servidores MCP configurados, las definiciones de herramientas pueden consumir una porción significativa de su ventana de contexto. MCP Tool Search resuelve esto cargando herramientas bajo demanda en lugar de precargarlas todas.
+Tool Search mantiene el uso de contexto MCP bajo al diferir las definiciones de herramientas hasta que Claude las necesite. Solo los nombres de herramientas se cargan al iniciar la sesión, por lo que agregar más servidores MCP tiene un impacto mínimo en su ventana de contexto.
 
 ### Cómo funciona
 
-Claude Code habilita automáticamente Tool Search cuando las descripciones de sus herramientas MCP consumirían más del 10% de la ventana de contexto. Puede [ajustar este umbral](#configure-tool-search) o desactivar completamente la búsqueda de herramientas. Cuando se activa:
+Tool Search está habilitado de forma predeterminada. Las herramientas MCP se difieren en lugar de cargarse en el contexto de antemano, y Claude usa una herramienta de búsqueda para descubrir las relevantes cuando una tarea las necesita. Solo las herramientas que Claude realmente usa entran en el contexto. Desde su perspectiva, las herramientas MCP funcionan exactamente como antes.
 
-1. Las herramientas MCP se difieren en lugar de cargarse en el contexto de antemano
-2. Claude usa una herramienta de búsqueda para descubrir herramientas MCP relevantes cuando sea necesario
-3. Solo se cargan en el contexto las herramientas que Claude realmente necesita
-4. Las herramientas MCP continúan funcionando exactamente como antes desde su perspectiva
+Si prefiere carga basada en umbral, establezca `ENABLE_TOOL_SEARCH=auto` para cargar esquemas de antemano cuando se ajusten dentro del 10% de la ventana de contexto y diferir solo el desbordamiento. Vea [Configurar búsqueda de herramientas](#configure-tool-search) para todas las opciones.
 
 ### Para autores de servidores MCP
 
@@ -1070,19 +1078,21 @@ Agregue instrucciones claras y descriptivas del servidor que expliquen:
 * Cuándo Claude debe buscar sus herramientas
 * Capacidades clave que proporciona su servidor
 
+Claude Code trunca descripciones de herramientas e instrucciones del servidor en 2KB cada una. Manténgalas concisas para evitar truncamiento, y ponga detalles críticos cerca del inicio.
+
 ### Configurar búsqueda de herramientas
 
-La búsqueda de herramientas está habilitada por defecto: las herramientas MCP se difieren y se descubren bajo demanda. Cuando `ANTHROPIC_BASE_URL` apunta a un host que no es de primera parte, la búsqueda de herramientas está deshabilitada por defecto porque la mayoría de los proxies no reenvían bloques `tool_reference`. Establezca `ENABLE_TOOL_SEARCH` explícitamente si su proxy lo hace. Esta característica requiere modelos que admitan bloques `tool_reference`: Sonnet 4 y posterior, u Opus 4 y posterior. Los modelos Haiku no admiten búsqueda de herramientas.
+Tool Search está habilitado de forma predeterminada: las herramientas MCP se difieren y se descubren bajo demanda. Cuando `ANTHROPIC_BASE_URL` apunta a un host que no es de primera parte, Tool Search está deshabilitado de forma predeterminada porque la mayoría de los proxies no reenvían bloques `tool_reference`. Establezca `ENABLE_TOOL_SEARCH` explícitamente si su proxy lo hace. Esta característica requiere modelos que admitan bloques `tool_reference`: Sonnet 4 y posterior, u Opus 4 y posterior. Los modelos Haiku no admiten búsqueda de herramientas.
 
 Controle el comportamiento de búsqueda de herramientas con la variable de entorno `ENABLE_TOOL_SEARCH`:
 
-| Valor            | Comportamiento                                                                                          |
-| :--------------- | :------------------------------------------------------------------------------------------------------ |
-| (sin establecer) | Habilitado por defecto. Deshabilitado cuando `ANTHROPIC_BASE_URL` es un host que no es de primera parte |
-| `true`           | Siempre habilitado, incluyendo para `ANTHROPIC_BASE_URL` que no es de primera parte                     |
-| `auto`           | Se activa cuando las herramientas MCP exceden el 10% del contexto                                       |
-| `auto:<N>`       | Se activa en umbral personalizado, donde `<N>` es un porcentaje (p. ej., `auto:5` para 5%)              |
-| `false`          | Deshabilitado, todas las herramientas MCP cargadas de antemano                                          |
+| Valor            | Comportamiento                                                                                                                                              |
+| :--------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (sin establecer) | Todas las herramientas MCP diferidas y cargadas bajo demanda. Recurre a carga de antemano cuando `ANTHROPIC_BASE_URL` es un host que no es de primera parte |
+| `true`           | Todas las herramientas MCP diferidas, incluyendo para `ANTHROPIC_BASE_URL` que no es de primera parte                                                       |
+| `auto`           | Modo de umbral: las herramientas se cargan de antemano si se ajustan dentro del 10% de la ventana de contexto, diferidas de lo contrario                    |
+| `auto:<N>`       | Modo de umbral con un porcentaje personalizado, donde `<N>` es 0-100 (p. ej., `auto:5` para 5%)                                                             |
+| `false`          | Todas las herramientas MCP cargadas de antemano, sin diferimiento                                                                                           |
 
 ```bash  theme={null}
 # Usar un umbral personalizado del 5%
@@ -1094,12 +1104,12 @@ ENABLE_TOOL_SEARCH=false claude
 
 O establezca el valor en su [campo `env` de settings.json](/es/settings#available-settings).
 
-También puede desactivar la herramienta MCPSearch específicamente usando la configuración `disallowedTools`:
+También puede desactivar la herramienta `ToolSearch` específicamente:
 
 ```json  theme={null}
 {
   "permissions": {
-    "deny": ["MCPSearch"]
+    "deny": ["ToolSearch"]
   }
 }
 ```

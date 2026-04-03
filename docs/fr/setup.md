@@ -30,7 +30,7 @@ Claude Code s'exécute sur les plateformes et configurations suivantes :
 ## Installer Claude Code
 
 <Tip>
-  Préférez une interface graphique ? L'[application de bureau](/fr/desktop-quickstart) vous permet d'utiliser Claude Code sans le terminal. Téléchargez-la pour [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) ou [Windows](https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs).
+  Préférez une interface graphique ? L'[application de bureau](/fr/desktop-quickstart) vous permet d'utiliser Claude Code sans le terminal. Téléchargez-la pour [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) ou [Windows](https://claude.com/download?utm_source=claude_code\&utm_medium=docs).
 
   Nouveau sur le terminal ? Consultez le [guide du terminal](/fr/terminal-guide) pour des instructions étape par étape.
 </Tip>
@@ -113,6 +113,8 @@ Si Claude Code ne trouve pas votre installation de Git Bash, définissez le chem
 }
 ```
 
+Claude Code peut également exécuter PowerShell nativement sur Windows en tant qu'aperçu d'opt-in. Consultez [outil PowerShell](/fr/tools-reference#powershell-tool) pour la configuration et les limitations.
+
 **Option 2 : WSL**
 
 WSL 1 et WSL 2 sont tous deux supportés. WSL 2 supporte le [sandboxing](/fr/sandboxing) pour une sécurité renforcée. WSL 1 ne supporte pas le sandboxing.
@@ -153,7 +155,7 @@ claude doctor
 
 ## S'authentifier
 
-Claude Code nécessite un compte Pro, Max, Teams, Enterprise ou Console. Le plan gratuit Claude.ai n'inclut pas l'accès à Claude Code. Vous pouvez également utiliser Claude Code avec un fournisseur d'API tiers comme [Amazon Bedrock](/fr/amazon-bedrock), [Google Vertex AI](/fr/google-vertex-ai) ou [Microsoft Foundry](/fr/microsoft-foundry).
+Claude Code nécessite un compte Pro, Max, Team, Enterprise ou Console. Le plan gratuit Claude.ai n'inclut pas l'accès à Claude Code. Vous pouvez également utiliser Claude Code avec un fournisseur d'API tiers comme [Amazon Bedrock](/fr/amazon-bedrock), [Google Vertex AI](/fr/google-vertex-ai) ou [Microsoft Foundry](/fr/microsoft-foundry).
 
 Après l'installation, connectez-vous en exécutant `claude` et en suivant les invites du navigateur. Consultez [Authentification](/fr/authentication) pour tous les types de comptes et les options de configuration d'équipe.
 
@@ -267,19 +269,19 @@ Pour installer un numéro de version spécifique :
 <Tabs>
   <Tab title="macOS, Linux, WSL">
     ```bash  theme={null}
-    curl -fsSL https://claude.ai/install.sh | bash -s 1.0.58
+    curl -fsSL https://claude.ai/install.sh | bash -s 2.1.89
     ```
   </Tab>
 
   <Tab title="Windows PowerShell">
     ```powershell  theme={null}
-    & ([scriptblock]::Create((irm https://claude.ai/install.ps1))) 1.0.58
+    & ([scriptblock]::Create((irm https://claude.ai/install.ps1))) 2.1.89
     ```
   </Tab>
 
   <Tab title="Windows CMD">
     ```batch  theme={null}
-    curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd 1.0.58 && del install.cmd
+    curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd 2.1.89 && del install.cmd
     ```
   </Tab>
 </Tabs>
@@ -316,12 +318,92 @@ npm install -g @anthropic-ai/claude-code
 
 ### Intégrité des binaires et signature du code
 
-Vous pouvez vérifier l'intégrité des binaires Claude Code à l'aide des sommes de contrôle SHA256 et des signatures de code.
+Chaque version publie un `manifest.json` contenant les sommes de contrôle SHA256 pour chaque binaire de plateforme. Le manifeste est signé avec une clé GPG Anthropic, donc vérifier la signature sur le manifeste vérifie transitivement chaque binaire qu'il répertorie.
 
-* Les sommes de contrôle SHA256 pour toutes les plateformes sont publiées dans les manifestes de version à `https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/{VERSION}/manifest.json`. Remplacez `{VERSION}` par un numéro de version tel que `2.0.30`.
-* Les binaires signés sont distribués pour les plateformes suivantes :
-  * **macOS** : signé par ' Anthropic PBC ' et notarié par Apple
-  * **Windows** : signé par ' Anthropic, PBC '
+#### Vérifier la signature du manifeste
+
+Les étapes 1 à 3 nécessitent un shell POSIX avec `gpg` et `curl`. Sur Windows, exécutez-les dans Git Bash ou WSL. L'étape 4 inclut une option PowerShell.
+
+<Steps>
+  <Step title="Télécharger et importer la clé publique">
+    La clé de signature de version est publiée à une URL fixe.
+
+    ```bash  theme={null}
+    curl -fsSL https://downloads.claude.ai/keys/claude-code.asc | gpg --import
+    ```
+
+    Afficher l'empreinte digitale de la clé importée.
+
+    ```bash  theme={null}
+    gpg --fingerprint security@anthropic.com
+    ```
+
+    Confirmez que la sortie inclut cette empreinte digitale :
+
+    ```text  theme={null}
+    31DD DE24 DDFA B679 F42D  7BD2 BAA9 29FF 1A7E CACE
+    ```
+  </Step>
+
+  <Step title="Télécharger le manifeste et la signature">
+    Définissez `VERSION` sur la version que vous souhaitez vérifier.
+
+    ```bash  theme={null}
+    REPO=https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases
+    VERSION=2.1.89
+    curl -fsSLO "$REPO/$VERSION/manifest.json"
+    curl -fsSLO "$REPO/$VERSION/manifest.json.sig"
+    ```
+  </Step>
+
+  <Step title="Vérifier la signature">
+    Vérifiez la signature détachée par rapport au manifeste.
+
+    ```bash  theme={null}
+    gpg --verify manifest.json.sig manifest.json
+    ```
+
+    Un résultat valide signale `Good signature from "Anthropic Claude Code Release Signing <security@anthropic.com>"`.
+
+    `gpg` imprime également `WARNING: This key is not certified with a trusted signature!` pour toute clé nouvellement importée. C'est attendu. La ligne `Good signature` confirme que la vérification cryptographique a réussi. La comparaison d'empreinte digitale à l'étape 1 confirme que la clé elle-même est authentique.
+  </Step>
+
+  <Step title="Vérifier le binaire par rapport au manifeste">
+    Comparez la somme de contrôle SHA256 de votre binaire téléchargé avec la valeur répertoriée sous `platforms.<platform>.checksum` dans `manifest.json`.
+
+    <Tabs>
+      <Tab title="Linux">
+        ```bash  theme={null}
+        sha256sum claude
+        ```
+      </Tab>
+
+      <Tab title="macOS">
+        ```bash  theme={null}
+        shasum -a 256 claude
+        ```
+      </Tab>
+
+      <Tab title="Windows PowerShell">
+        ```powershell  theme={null}
+        (Get-FileHash claude.exe -Algorithm SHA256).Hash.ToLower()
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+</Steps>
+
+<Note>
+  Les signatures de manifeste sont disponibles pour les versions à partir de `2.1.89`. Les versions antérieures publient les sommes de contrôle dans `manifest.json` sans signature détachée.
+</Note>
+
+#### Signatures de code de plateforme
+
+En plus du manifeste signé, les binaires individuels portent des signatures de code natives de plateforme où supportées.
+
+* **macOS** : signé par « Anthropic PBC » et notarié par Apple. Vérifiez avec `codesign --verify --verbose ./claude`.
+* **Windows** : signé par « Anthropic, PBC ». Vérifiez avec `Get-AuthenticodeSignature .\claude.exe`.
+* **Linux** : utilisez la signature de manifeste ci-dessus pour vérifier l'intégrité. Les binaires Linux ne sont pas individuellement signés en code.
 
 ## Désinstaller Claude Code
 

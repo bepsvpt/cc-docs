@@ -101,7 +101,7 @@ teammate on UX, one on technical architecture, one playing devil's advocate.
   `tmux`는 특정 운영 체제에서 알려진 제한 사항이 있으며 전통적으로 macOS에서 가장 잘 작동합니다. iTerm2에서 `tmux -CC`를 사용하는 것이 `tmux`로의 권장 진입점입니다.
 </Note>
 
-기본값은 `"auto"`이며, 이미 tmux 세션 내에서 실행 중이면 분할 창을 사용하고, 그렇지 않으면 in-process를 사용합니다. `"tmux"` 설정은 분할 창 모드를 활성화하고 터미널에 따라 tmux 또는 iTerm2를 사용할지 자동으로 감지합니다. 재정의하려면 [settings.json](/ko/settings)에서 `teammateMode`를 설정합니다:
+기본값은 `"auto"`이며, 이미 tmux 세션 내에서 실행 중이면 분할 창을 사용하고, 그렇지 않으면 in-process를 사용합니다. `"tmux"` 설정은 분할 창 모드를 활성화하고 터미널에 따라 tmux 또는 iTerm2를 사용할지 자동으로 감지합니다. 재정의하려면 [전역 구성](/ko/settings#global-config-settings)에서 `~/.claude.json`의 `teammateMode`를 설정합니다:
 
 ```json  theme={null}
 {
@@ -186,9 +186,10 @@ Clean up the team
 
 ### hooks로 품질 게이트 적용
 
-[hooks](/ko/hooks)를 사용하여 팀원들이 작업을 마치거나 작업이 완료될 때 규칙을 적용합니다:
+[hooks](/ko/hooks)를 사용하여 팀원들이 작업을 마치거나 작업이 생성되거나 완료될 때 규칙을 적용합니다:
 
 * [`TeammateIdle`](/ko/hooks#teammateidle): 팀원이 유휴 상태가 되려고 할 때 실행됩니다. 종료 코드 2로 종료하여 피드백을 보내고 팀원을 계속 작동하게 합니다.
+* [`TaskCreated`](/ko/hooks#taskcreated): 작업이 생성될 때 실행됩니다. 종료 코드 2로 종료하여 생성을 방지하고 피드백을 보냅니다.
 * [`TaskCompleted`](/ko/hooks#taskcompleted): 작업이 완료로 표시될 때 실행됩니다. 종료 코드 2로 종료하여 완료를 방지하고 피드백을 보냅니다.
 
 ## 에이전트 팀이 어떻게 작동하는지
@@ -224,7 +225,23 @@ Clean up the team
 * **팀 구성**: `~/.claude/teams/{team-name}/config.json`
 * **작업 목록**: `~/.claude/tasks/{team-name}/`
 
+Claude Code는 팀을 만들 때 이 둘을 자동으로 생성하고 팀원들이 참여하거나, 유휴 상태가 되거나, 떠날 때 업데이트합니다. 팀 구성은 세션 ID 및 tmux 창 ID와 같은 런타임 상태를 보유하므로, 수동으로 편집하거나 사전 작성하지 마십시오: 다음 상태 업데이트에서 변경 사항이 덮어씌워집니다.
+
+재사용 가능한 팀원 역할을 정의하려면, 대신 [subagent 정의 사용](#use-subagent-definitions-for-teammates)을 사용합니다.
+
 팀 구성에는 각 팀원의 이름, 에이전트 ID, 에이전트 유형이 있는 `members` 배열이 포함됩니다. 팀원들은 이 파일을 읽어 다른 팀 멤버를 발견할 수 있습니다.
+
+프로젝트 수준의 팀 구성 동등물은 없습니다. 프로젝트 디렉토리의 `.claude/teams/teams.json`과 같은 파일은 구성으로 인식되지 않습니다. Claude는 이를 일반 파일로 취급합니다.
+
+### 팀원을 위해 subagent 정의 사용
+
+팀원을 생성할 때, 프로젝트, 사용자, 플러그인, 또는 CLI 정의 등 모든 [subagent 범위](/ko/sub-agents#choose-the-subagent-scope)의 [subagent](/ko/sub-agents) 유형을 참조할 수 있습니다. 팀원은 해당 subagent의 시스템 프롬프트, 도구, 모델을 상속합니다. 이를 통해 보안 검토자 또는 테스트 실행자와 같은 역할을 한 번 정의하고 위임된 subagent와 에이전트 팀 팀원 모두로 재사용할 수 있습니다.
+
+subagent 정의를 사용하려면, Claude에게 팀원을 생성하도록 요청할 때 이름으로 언급합니다:
+
+```text  theme={null}
+Spawn a teammate using the security-reviewer agent type to audit the auth module.
+```
 
 ### 권한
 

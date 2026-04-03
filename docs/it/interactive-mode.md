@@ -11,11 +11,11 @@
 <Note>
   Le scorciatoie da tastiera possono variare a seconda della piattaforma e del terminale. Premere `?` per visualizzare le scorciatoie disponibili per il vostro ambiente.
 
-  **Utenti macOS**: Le scorciatoie con il tasto Option/Alt (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`) richiedono la configurazione di Option come Meta nel vostro terminale:
+  **Utenti macOS**: Le scorciatoie con il tasto Option/Alt (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`, `Alt+T`) richiedono la configurazione di Option come Meta nel vostro terminale:
 
   * **iTerm2**: impostazioni → Profili → Tasti → impostare il tasto Option sinistro/destro su "Esc+"
   * **Terminal.app**: impostazioni → Profili → Tastiera → selezionare "Usa Option come Meta Key"
-  * **VS Code**: impostazioni → Profili → Tasti → impostare il tasto Option sinistro/destro su "Esc+"
+  * **VS Code**: impostare `"terminal.integrated.macOptionIsMeta": true` nelle impostazioni di VS Code
 
   Vedere [Configurazione del terminale](/it/terminal-config) per i dettagli.
 </Note>
@@ -28,7 +28,7 @@
 | `Ctrl+X Ctrl+K`                                 | Termina tutti gli agenti in background. Premere due volte entro 3 secondi per confermare | Controllo agente in background                                                                                                                                                                              |
 | `Ctrl+D`                                        | Esci dalla sessione di Claude Code                                                       | Segnale EOF                                                                                                                                                                                                 |
 | `Ctrl+G` o `Ctrl+X Ctrl+E`                      | Apri nell'editor di testo predefinito                                                    | Modifica il vostro prompt o la risposta personalizzata nell'editor di testo predefinito. `Ctrl+X Ctrl+E` è il binding nativo di readline                                                                    |
-| `Ctrl+L`                                        | Cancella lo schermo del terminale                                                        | Mantiene la cronologia della conversazione                                                                                                                                                                  |
+| `Ctrl+L`                                        | Ridisegna lo schermo                                                                     | Ridipinge l'interfaccia utente corrente senza cancellare la cronologia della conversazione                                                                                                                  |
 | `Ctrl+O`                                        | Attiva/disattiva l'output dettagliato                                                    | Mostra l'utilizzo e l'esecuzione dettagliati degli strumenti. Inoltre espande le chiamate di lettura e ricerca MCP, che si compattano in una singola riga come "Queried slack" per impostazione predefinita |
 | `Ctrl+R`                                        | Ricerca inversa nella cronologia dei comandi                                             | Cerca i comandi precedenti in modo interattivo                                                                                                                                                              |
 | `Ctrl+V` o `Cmd+V` (iTerm2) o `Alt+V` (Windows) | Incolla immagine dagli appunti                                                           | Inserisce un chip `[Image #N]` al cursore in modo da poter farvi riferimento posizionalmente nel vostro prompt                                                                                              |
@@ -39,7 +39,7 @@
 | `Esc` + `Esc`                                   | Riavvolgi o riassumi                                                                     | Ripristina il codice e/o la conversazione a un punto precedente, o riassumi da un messaggio selezionato                                                                                                     |
 | `Shift+Tab` o `Alt+M` (alcune configurazioni)   | Cicla le modalità di permesso                                                            | Cicla attraverso `default`, `acceptEdits`, `plan` e qualsiasi modalità abilitata, come `auto` o `bypassPermissions`. Vedere [modalità di permesso](/it/permission-modes).                                   |
 | `Option+P` (macOS) o `Alt+P` (Windows/Linux)    | Cambia modello                                                                           | Cambia modelli senza cancellare il vostro prompt                                                                                                                                                            |
-| `Option+T` (macOS) o `Alt+T` (Windows/Linux)    | Attiva/disattiva il pensiero esteso                                                      | Abilita o disabilita la modalità di pensiero esteso. Eseguire prima `/terminal-setup` per abilitare questa scorciatoia                                                                                      |
+| `Option+T` (macOS) o `Alt+T` (Windows/Linux)    | Attiva/disattiva il pensiero esteso                                                      | Abilita o disabilita la modalità di pensiero esteso. Su macOS, configurare il vostro terminale per inviare Option come Meta affinché questa scorciatoia funzioni                                            |
 | `Option+O` (macOS) o `Alt+O` (Windows/Linux)    | Attiva/disattiva la modalità veloce                                                      | Abilita o disabilita la [modalità veloce](/it/fast-mode)                                                                                                                                                    |
 
 ### Modifica del testo
@@ -47,7 +47,7 @@
 | Scorciatoia             | Descrizione                               | Contesto                                                                                                                            |
 | :---------------------- | :---------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------- |
 | `Ctrl+K`                | Elimina fino alla fine della riga         | Memorizza il testo eliminato per l'incollamento                                                                                     |
-| `Ctrl+U`                | Elimina l'intera riga                     | Memorizza il testo eliminato per l'incollamento                                                                                     |
+| `Ctrl+U`                | Elimina dal cursore all'inizio della riga | Memorizza il testo eliminato per l'incollamento. Ripetere per cancellare su più righe nell'input multilinea                         |
 | `Ctrl+Y`                | Incolla il testo eliminato                | Incolla il testo eliminato con `Ctrl+K` o `Ctrl+U`                                                                                  |
 | `Alt+Y` (dopo `Ctrl+Y`) | Cicla la cronologia degli incollamenti    | Dopo l'incollamento, cicla attraverso il testo precedentemente eliminato. Richiede [Option come Meta](#keyboard-shortcuts) su macOS |
 | `Alt+B`                 | Sposta il cursore indietro di una parola  | Navigazione per parole. Richiede [Option come Meta](#keyboard-shortcuts) su macOS                                                   |
@@ -58,10 +58,6 @@
 | Scorciatoia | Descrizione                                                              | Contesto                                                                                                                                         |
 | :---------- | :----------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Ctrl+T`    | Attiva/disattiva l'evidenziazione della sintassi per i blocchi di codice | Funziona solo all'interno del menu di selezione `/theme`. Controlla se il codice nelle risposte di Claude utilizza la colorazione della sintassi |
-
-<Note>
-  L'evidenziazione della sintassi è disponibile solo nella build nativa di Claude Code.
-</Note>
 
 ### Input multilinea
 
@@ -89,10 +85,10 @@
 
 Quando il visualizzatore di trascrizione è aperto (attivato con `Ctrl+O`), queste scorciatoie sono disponibili. `Ctrl+E` può essere riassegnato tramite [`transcript:toggleShowAll`](/it/keybindings).
 
-| Scorciatoia          | Descrizione                                                                                                                                                      |
-| :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Ctrl+E`             | Attiva/disattiva mostra tutto il contenuto                                                                                                                       |
-| `q`, `Ctrl+C`, `Esc` | Esci dalla visualizzazione della trascrizione. `Ctrl+C` e `Esc` possono essere riassegnati tramite [`transcript:exit`](/it/keybindings); `q` non è riassegnabile |
+| Scorciatoia          | Descrizione                                                                                                                        |
+| :------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+E`             | Attiva/disattiva mostra tutto il contenuto                                                                                         |
+| `q`, `Ctrl+C`, `Esc` | Esci dalla visualizzazione della trascrizione. Tutti e tre possono essere riassegnati tramite [`transcript:exit`](/it/keybindings) |
 
 ### Input vocale
 
@@ -253,6 +249,7 @@ Modalità Bash:
 * Non richiede a Claude di interpretare o approvare il comando
 * Supporta l'autocompletamento basato sulla cronologia: digitate un comando parziale e premete **Tab** per completare dai comandi `!` precedenti nel progetto corrente
 * Esci con `Escape`, `Backspace` o `Ctrl+U` su un prompt vuoto
+* Incollare il testo che inizia con `!` in un prompt vuoto entra automaticamente in modalità bash, corrispondendo al comportamento digitato `!`
 
 Questo è utile per le operazioni shell rapide mantenendo il contesto della conversazione.
 
@@ -262,7 +259,7 @@ Quando aprite una sessione per la prima volta, un comando di esempio in grigio a
 
 Dopo che Claude risponde, i suggerimenti continuano ad apparire in base alla vostra cronologia di conversazione, come un passaggio di follow-up da una richiesta in più parti o una continuazione naturale del vostro flusso di lavoro.
 
-* Premete **Tab** per accettare il suggerimento, oppure premete **Enter** per accettare e inviare
+* Premete **Tab** o **Freccia destra** per accettare il suggerimento, oppure premete **Enter** per accettare e inviare
 * Iniziate a digitare per dismissarlo
 
 Il suggerimento viene eseguito come una richiesta in background che riutilizza la cache del prompt della conversazione padre, quindi il costo aggiuntivo è minimo. Claude Code salta la generazione di suggerimenti quando la cache è fredda per evitare costi inutili.

@@ -69,7 +69,7 @@ Ketika Anda menjalankan `claude` di direktori, Claude Code mendapatkan akses ke:
 * **Terminal Anda.** Perintah apa pun yang dapat Anda jalankan: build tools, git, package managers, system utilities, scripts. Jika Anda dapat melakukannya dari command line, Claude juga dapat.
 * **Status git Anda.** Branch saat ini, perubahan yang belum di-commit, dan riwayat commit terbaru.
 * **[CLAUDE.md](/id/memory) Anda.** File markdown tempat Anda menyimpan instruksi khusus proyek, konvensi, dan konteks yang harus diketahui Claude setiap sesi.
-* **[Auto memory](/id/memory#auto-memory).** Pembelajaran yang disimpan Claude secara otomatis saat Anda bekerja, seperti pola proyek dan preferensi Anda. 200 baris pertama MEMORY.md dimuat di awal setiap sesi.
+* **[Auto memory](/id/memory#auto-memory).** Pembelajaran yang disimpan Claude secara otomatis saat Anda bekerja, seperti pola proyek dan preferensi Anda. 200 baris pertama atau 25KB MEMORY.md, mana pun yang lebih dulu, dimuat di awal setiap sesi.
 * **Ekstensi yang Anda konfigurasi.** [MCP servers](/id/mcp) untuk layanan eksternal, [skills](/id/skills) untuk workflow, [subagents](/id/sub-agents) untuk pekerjaan yang didelegasikan, dan [Claude in Chrome](/id/chrome) untuk interaksi browser.
 
 Karena Claude melihat seluruh proyek Anda, Claude dapat bekerja di seluruhnya. Ketika Anda meminta Claude untuk "perbaiki bug autentikasi," Claude mencari file yang relevan, membaca beberapa file untuk memahami konteks, membuat edit terkoordinasi di seluruhnya, menjalankan test untuk memverifikasi perbaikan, dan melakukan commit perubahan jika Anda meminta. Ini berbeda dari asisten kode inline yang hanya melihat file saat ini.
@@ -90,7 +90,7 @@ Claude Code berjalan di tiga lingkungan, masing-masing dengan trade-off berbeda 
 
 ### Interface
 
-Anda dapat mengakses Claude Code melalui terminal, [desktop app](/id/desktop), [IDE extensions](/id/ide-integrations), [claude.ai/code](https://claude.ai/code), [Remote Control](/id/remote-control), [Slack](/id/slack), dan [CI/CD pipelines](/id/github-actions). Interface menentukan bagaimana Anda melihat dan berinteraksi dengan Claude, tetapi loop agentic yang mendasarinya identik. Lihat [Use Claude Code everywhere](/id/overview#use-claude-code-everywhere) untuk daftar lengkap.
+Anda dapat mengakses Claude Code melalui terminal, [desktop app](/id/desktop), [IDE extensions](/id/vs-code), [claude.ai/code](https://claude.ai/code), [Remote Control](/id/remote-control), [Slack](/id/slack), dan [CI/CD pipelines](/id/github-actions). Interface menentukan bagaimana Anda melihat dan berinteraksi dengan Claude, tetapi loop agentic yang mendasarinya identik. Lihat [Use Claude Code everywhere](/id/overview#use-claude-code-everywhere) untuk daftar lengkap.
 
 ## Bekerja dengan session
 
@@ -126,13 +126,15 @@ Ini membuat session ID baru sambil mempertahankan riwayat percakapan hingga titi
 
 Context window Claude menampung riwayat percakapan Anda, konten file, output perintah, [CLAUDE.md](/id/memory), [auto memory](/id/memory#auto-memory), skill yang dimuat, dan instruksi sistem. Saat Anda bekerja, konteks terisi. Claude melakukan compacting secara otomatis, tetapi instruksi dari awal percakapan dapat hilang. Letakkan aturan persisten di CLAUDE.md, dan jalankan `/context` untuk melihat apa yang menggunakan ruang.
 
+Untuk panduan interaktif tentang apa yang dimuat dan kapan, lihat [Explore the context window](/id/context-window).
+
 #### Ketika context terisi
 
 Claude Code mengelola konteks secara otomatis saat Anda mendekati batas. Claude menghapus output tool yang lebih lama terlebih dahulu, kemudian merangkum percakapan jika diperlukan. Permintaan Anda dan snippet kode kunci dipertahankan; instruksi terperinci dari awal percakapan mungkin hilang. Letakkan aturan persisten di CLAUDE.md daripada mengandalkan riwayat percakapan.
 
 Untuk mengontrol apa yang dipertahankan selama compacting, tambahkan bagian "Compact Instructions" ke CLAUDE.md atau jalankan `/compact` dengan fokus (seperti `/compact focus on the API changes`).
 
-Jalankan `/context` untuk melihat apa yang menggunakan ruang. MCP servers menambahkan definisi tool ke setiap permintaan, jadi beberapa server dapat mengonsumsi konteks yang signifikan sebelum Anda mulai bekerja. Jalankan `/mcp` untuk memeriksa biaya per-server.
+Jalankan `/context` untuk melihat apa yang menggunakan ruang. Definisi tool MCP ditunda secara default dan dimuat sesuai permintaan melalui [tool search](/id/mcp#scale-with-mcp-tool-search), jadi hanya nama tool yang mengonsumsi konteks sampai Claude menggunakan tool spesifik. Jalankan `/mcp` untuk memeriksa biaya per-server.
 
 #### Kelola konteks dengan skills dan subagents
 

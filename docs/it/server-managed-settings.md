@@ -43,7 +43,7 @@ Se i vostri dispositivi sono registrati in una soluzione MDM o di gestione degli
   <Step title="Definire le impostazioni">
     Aggiungere la configurazione come JSON. Tutte le [impostazioni disponibili in `settings.json`](/it/settings#available-settings) sono supportate, inclusi [hooks](/it/hooks), [variabili di ambiente](/it/env-vars), e [impostazioni solo gestite](/it/permissions#managed-only-settings) come `allowManagedPermissionRulesOnly`.
 
-    Questo esempio applica un elenco di negazione delle autorizzazioni e impedisce agli utenti di ignorare le autorizzazioni:
+    Questo esempio applica un elenco di negazione delle autorizzazioni, impedisce agli utenti di ignorare le autorizzazioni e limita le regole di autorizzazione a quelle definite nelle impostazioni gestite:
 
     ```json  theme={null}
     {
@@ -55,7 +55,8 @@ Se i vostri dispositivi sono registrati in una soluzione MDM o di gestione degli
           "Read(./secrets/**)"
         ],
         "disableBypassPermissionsMode": "disable"
-      }
+      },
+      "allowManagedPermissionRulesOnly": true
     }
     ```
 
@@ -113,6 +114,10 @@ I seguenti ruoli possono gestire le impostazioni gestite dal server:
 
 Limitare l'accesso al personale di fiducia, poiché le modifiche alle impostazioni si applicano a tutti gli utenti dell'organizzazione.
 
+### Impostazioni solo gestite
+
+La maggior parte delle [chiavi di impostazioni](/it/settings#available-settings) funzionano in qualsiasi ambito. Un numero limitato di chiavi viene letto solo dalle impostazioni gestite e non ha alcun effetto quando posizionato nei file di impostazioni dell'utente o del progetto. Vedere [impostazioni solo gestite](/it/permissions#managed-only-settings) per l'elenco completo. Qualsiasi impostazione non in tale elenco può comunque essere posizionata nelle impostazioni gestite e ha la precedenza più alta.
+
 ### Limitazioni attuali
 
 Le impostazioni gestite dal server hanno le seguenti limitazioni durante il periodo beta:
@@ -124,7 +129,11 @@ Le impostazioni gestite dal server hanno le seguenti limitazioni durante il peri
 
 ### Precedenza delle impostazioni
 
-Le impostazioni gestite dal server e le [impostazioni gestite dall'endpoint](/it/settings#settings-files) occupano entrambe il livello più alto nella [gerarchia delle impostazioni](/it/settings#settings-precedence) di Claude Code. Nessun altro livello di impostazioni può sostituirle, inclusi gli argomenti della riga di comando. Quando entrambe sono presenti, le impostazioni gestite dal server hanno la precedenza e le impostazioni gestite dall'endpoint non vengono utilizzate.
+Le impostazioni gestite dal server e le [impostazioni gestite dall'endpoint](/it/settings#settings-files) occupano entrambe il livello più alto nella [gerarchia delle impostazioni](/it/settings#settings-precedence) di Claude Code. Nessun altro livello di impostazioni può sostituirle, inclusi gli argomenti della riga di comando.
+
+All'interno del livello gestito, la prima fonte che fornisce una configurazione non vuota vince. Le impostazioni gestite dal server vengono controllate per prime, quindi le impostazioni gestite dall'endpoint. Le fonti non si uniscono: se le impostazioni gestite dal server forniscono qualsiasi chiave, le impostazioni gestite dall'endpoint vengono ignorate completamente. Se le impostazioni gestite dal server non forniscono nulla, le impostazioni gestite dall'endpoint si applicano.
+
+Se cancellate la configurazione gestita dal server nella console di amministrazione con l'intenzione di tornare a una plist gestita dall'endpoint o a una politica del registro, tenete presente che le [impostazioni memorizzate nella cache](#fetch-and-caching-behavior) persistono sulle macchine client fino al prossimo recupero riuscito. Eseguite `/status` per vedere quale fonte gestita è attiva.
 
 ### Comportamento di recupero e caching
 

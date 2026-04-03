@@ -23,7 +23,8 @@ Os aliases de modelo fornecem uma maneira conveniente de selecionar configuraç�
 
 | Alias de modelo  | Comportamento                                                                                                                                                                    |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`default`**    | Configuração de modelo recomendada, dependendo do tipo de sua conta                                                                                                              |
+| **`default`**    | Valor especial que limpa qualquer substituição de modelo e reverte para o modelo recomendado para seu tipo de conta. Não é em si um alias de modelo                              |
+| **`best`**       | Usa o modelo mais capaz disponível, atualmente equivalente a `opus`                                                                                                              |
 | **`sonnet`**     | Usa o modelo Sonnet mais recente (atualmente Sonnet 4.6) para tarefas de codificação diária                                                                                      |
 | **`opus`**       | Usa o modelo Opus mais recente (atualmente Opus 4.6) para tarefas de raciocínio complexo                                                                                         |
 | **`haiku`**      | Usa o modelo Haiku rápido e eficiente para tarefas simples                                                                                                                       |
@@ -83,19 +84,27 @@ Mesmo com `availableModels: []`, os usuários ainda podem usar Claude Code com o
 
 ### Controlar o modelo em que os usuários executam
 
-Para controlar totalmente a experiência do modelo, use `availableModels` junto com a configuração `model`:
+A configuração `model` é uma seleção inicial, não uma imposição. Ela define qual modelo está ativo quando uma sessão é iniciada, mas os usuários ainda podem abrir `/model` e escolher Padrão, que se resolve para o padrão do sistema para seu nível, independentemente do que `model` está definido.
 
-* **availableModels**: restringe para o que os usuários podem alternar
-* **model**: define a substituição de modelo explícita, tendo precedência sobre o Padrão
+Para controlar totalmente a experiência do modelo, combine três configurações:
 
-Este exemplo garante que todos os usuários executem Sonnet 4.6 e possam escolher apenas entre Sonnet e Haiku:
+* **`availableModels`**: restringe para quais modelos nomeados os usuários podem alternar
+* **`model`**: define a seleção de modelo inicial quando uma sessão é iniciada
+* **`ANTHROPIC_DEFAULT_SONNET_MODEL`** / **`ANTHROPIC_DEFAULT_OPUS_MODEL`** / **`ANTHROPIC_DEFAULT_HAIKU_MODEL`**: controlam para o que a opção Padrão e os aliases `sonnet`, `opus` e `haiku` se resolvem
+
+Este exemplo inicia os usuários em Sonnet 4.5, limita o seletor a Sonnet e Haiku, e fixa Padrão para se resolver em Sonnet 4.5 em vez da versão mais recente:
 
 ```json  theme={null}
 {
-  "model": "sonnet",
-  "availableModels": ["sonnet", "haiku"]
+  "model": "claude-sonnet-4-5",
+  "availableModels": ["claude-sonnet-4-5", "haiku"],
+  "env": {
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-5"
+  }
 }
 ```
+
+Sem o bloco `env`, um usuário que seleciona Padrão no seletor obteria a versão mais recente do Sonnet, contornando a fixação de versão em `model` e `availableModels`.
 
 ### Comportamento de mesclagem
 
@@ -245,6 +254,41 @@ O sufixo `[1m]` aplica a janela de contexto 1M a todo o uso desse alias, incluin
 <Note>
   A lista de permissões `settings.availableModels` ainda se aplica ao usar provedores de terceiros. A filtragem corresponde ao alias de modelo (`opus`, `sonnet`, `haiku`), não ao ID de modelo específico do provedor.
 </Note>
+
+### Personalizar exibição e capacidades do modelo fixado
+
+Quando você fixa um modelo em um provedor de terceiros, o ID específico do provedor aparece como está no seletor `/model` e Claude Code pode não reconhecer quais recursos o modelo suporta. Você pode substituir o nome de exibição e declarar capacidades com variáveis de ambiente complementares para cada modelo fixado.
+
+Essas variáveis só têm efeito em provedores de terceiros, como Bedrock, Vertex AI e Foundry. Elas não têm efeito ao usar a API Anthropic diretamente.
+
+| Variável de ambiente                                  | Descrição                                                                                                                |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_NAME`                   | Nome de exibição para o modelo Opus fixado no seletor `/model`. Padrão para o ID do modelo quando não definido           |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION`            | Descrição de exibição para o modelo Opus fixado no seletor `/model`. Padrão para `Custom Opus model` quando não definido |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES` | Lista separada por vírgulas de capacidades que o modelo Opus fixado suporta                                              |
+
+Os mesmos sufixos `_NAME`, `_DESCRIPTION` e `_SUPPORTED_CAPABILITIES` estão disponíveis para `ANTHROPIC_DEFAULT_SONNET_MODEL` e `ANTHROPIC_DEFAULT_HAIKU_MODEL`.
+
+Claude Code habilita recursos como [níveis de esforço](#adjust-effort-level) e [pensamento estendido](/pt/common-workflows#use-extended-thinking-thinking-mode) correspondendo o ID do modelo contra padrões conhecidos. IDs específicos do provedor, como ARNs Bedrock ou nomes de implantação personalizados, geralmente não correspondem a esses padrões, deixando recursos suportados desabilitados. Defina `_SUPPORTED_CAPABILITIES` para informar ao Claude Code quais recursos o modelo realmente suporta:
+
+| Valor de capacidade    | Habilita                                                                                      |
+| ---------------------- | --------------------------------------------------------------------------------------------- |
+| `effort`               | [Níveis de esforço](#adjust-effort-level) e o comando `/effort`                               |
+| `max_effort`           | O nível de esforço `max`                                                                      |
+| `thinking`             | [Pensamento estendido](/pt/common-workflows#use-extended-thinking-thinking-mode)              |
+| `adaptive_thinking`    | Raciocínio adaptativo que aloca dinamicamente o pensamento com base na complexidade da tarefa |
+| `interleaved_thinking` | Pensamento entre chamadas de ferramenta                                                       |
+
+Quando `_SUPPORTED_CAPABILITIES` é definido, as capacidades listadas são habilitadas e as capacidades não listadas são desabilitadas para o modelo fixado correspondente. Quando a variável não está definida, Claude Code volta para detecção integrada baseada no ID do modelo.
+
+Este exemplo fixa Opus para um ARN de modelo personalizado Bedrock, define um nome amigável e declara suas capacidades:
+
+```bash  theme={null}
+export ANTHROPIC_DEFAULT_OPUS_MODEL='arn:aws:bedrock:us-east-1:123456789012:custom-model/abc'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_NAME='Opus via Bedrock'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION='Opus 4.6 routed through a Bedrock custom endpoint'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES='effort,max_effort,thinking,adaptive_thinking,interleaved_thinking'
+```
 
 ### Substituir IDs de modelo por versão
 

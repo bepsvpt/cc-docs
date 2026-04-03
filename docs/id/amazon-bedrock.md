@@ -116,6 +116,9 @@ export AWS_REGION=us-east-1  # atau wilayah pilihan Anda
 
 # Opsional: Ganti wilayah untuk model kecil/cepat (Haiku)
 export ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION=us-west-2
+
+# Opsional: Ganti URL endpoint Bedrock untuk endpoint khusus atau gateway
+# export ANTHROPIC_BEDROCK_BASE_URL=https://bedrock-runtime.us-east-1.amazonaws.com
 ```
 
 Saat mengaktifkan Bedrock untuk Claude Code, perhatikan hal berikut:
@@ -142,17 +145,17 @@ Variabel ini menggunakan ID profil inferensi lintas wilayah (dengan awalan `us.`
 
 Claude Code menggunakan model default ini ketika tidak ada variabel pinning yang diatur:
 
-| Jenis model       | Nilai default                                 |
-| :---------------- | :-------------------------------------------- |
-| Model utama       | `global.anthropic.claude-sonnet-4-6`          |
-| Model kecil/cepat | `us.anthropic.claude-haiku-4-5-20251001-v1:0` |
+| Jenis model       | Nilai default                                  |
+| :---------------- | :--------------------------------------------- |
+| Model utama       | `us.anthropic.claude-sonnet-4-5-20250929-v1:0` |
+| Model kecil/cepat | `us.anthropic.claude-haiku-4-5-20251001-v1:0`  |
 
 Untuk menyesuaikan model lebih lanjut, gunakan salah satu metode berikut:
 
 ```bash  theme={null}
 # Menggunakan ID profil inferensi
 export ANTHROPIC_MODEL='global.anthropic.claude-sonnet-4-6'
-export ANTHROPIC_SMALL_FAST_MODEL='us.anthropic.claude-haiku-4-5-20251001-v1:0'
+export ANTHROPIC_DEFAULT_HAIKU_MODEL='us.anthropic.claude-haiku-4-5-20251001-v1:0'
 
 # Menggunakan ARN profil inferensi aplikasi
 export ANTHROPIC_MODEL='arn:aws:bedrock:us-east-2:your-account-id:application-inference-profile/your-model-id'
@@ -180,6 +183,12 @@ Contoh ini memetakan tiga versi Opus ke ARN yang berbeda sehingga pengguna dapat
 ```
 
 Ketika pengguna memilih salah satu versi ini di `/model`, Claude Code memanggil Bedrock dengan ARN yang dipetakan. Versi tanpa override kembali ke ID model Bedrock bawaan atau profil inferensi yang cocok yang ditemukan saat startup. Lihat [Override model IDs per version](/id/model-config#override-model-ids-per-version) untuk detail tentang bagaimana override berinteraksi dengan `availableModels` dan pengaturan model lainnya.
+
+## Jendela konteks token 1M
+
+Claude Opus 4.6 dan Sonnet 4.6 mendukung [jendela konteks token 1M](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window) di Amazon Bedrock. Claude Code secara otomatis mengaktifkan jendela konteks yang diperluas ketika Anda memilih varian model 1M.
+
+Untuk mengaktifkan jendela konteks 1M untuk model yang Anda pin, tambahkan `[1m]` ke ID model. Lihat [Pin models for third-party deployments](/id/model-config#pin-models-for-third-party-deployments) untuk detail.
 
 ## Konfigurasi IAM
 
@@ -244,6 +253,14 @@ Contoh konfigurasi:
 ```
 
 ## Pemecahan Masalah
+
+### Loop autentikasi dengan SSO dan proxy perusahaan
+
+Jika tab browser muncul berulang kali saat menggunakan AWS SSO, hapus pengaturan `awsAuthRefresh` dari [file pengaturan](/id/settings) Anda. Ini dapat terjadi ketika VPN perusahaan atau proxy inspeksi TLS mengganggu alur browser SSO. Claude Code memperlakukan koneksi yang terputus sebagai kegagalan autentikasi, menjalankan kembali `awsAuthRefresh`, dan loop tanpa batas.
+
+Jika lingkungan jaringan Anda mengganggu alur SSO berbasis browser otomatis, gunakan `aws sso login` secara manual sebelum memulai Claude Code alih-alih mengandalkan `awsAuthRefresh`.
+
+### Masalah wilayah
 
 Jika Anda mengalami masalah wilayah:
 

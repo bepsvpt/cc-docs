@@ -586,11 +586,11 @@ Sebelum menyiapkan Claude Code GitHub Actions dengan penyedia cloud, Anda memerl
                   github_token: ${{ steps.app-token.outputs.token }}
                   trigger_phrase: "@claude"
                   use_vertex: "true"
-                  claude_args: '--model claude-sonnet-4@20250514 --max-turns 10'
+                  claude_args: '--model claude-sonnet-4-5@20250929 --max-turns 10'
                 env:
                   ANTHROPIC_VERTEX_PROJECT_ID: ${{ steps.auth.outputs.project_id }}
                   CLOUD_ML_REGION: us-east5
-                  VERTEX_REGION_CLAUDE_3_7_SONNET: us-east5
+                  VERTEX_REGION_CLAUDE_4_5_SONNET: us-east5
         ```
 
         <Tip>
@@ -647,7 +647,7 @@ Argumen umum:
 * `--max-turns`: Maksimum conversation turns (default: 10)
 * `--model`: Model yang digunakan (misalnya, `claude-sonnet-4-6`)
 * `--mcp-config`: Path ke konfigurasi MCP
-* `--allowed-tools`: Daftar tools yang diizinkan dipisahkan koma
+* `--allowedTools`: Daftar tools yang diizinkan dipisahkan koma. Alias `--allowed-tools` juga berfungsi.
 * `--debug`: Aktifkan output debug
 
 ### Metode integrasi alternatif

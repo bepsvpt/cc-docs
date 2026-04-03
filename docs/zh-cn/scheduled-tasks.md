@@ -117,9 +117,9 @@ cancel the deploy check job
 
 偏移是从任务 ID 派生的，所以相同的任务总是获得相同的偏移。如果精确的时间很重要，选择不是 `:00` 或 `:30` 的分钟，例如 `3 9 * * *` 而不是 `0 9 * * *`，一次性抖动将不适用。
 
-### 三天过期
+### 七天过期
 
-重复任务在创建后 3 天自动过期。任务最后触发一次，然后删除自己。这限制了被遗忘的循环可以运行多长时间。如果您需要重复任务持续更长时间，请在过期前取消并重新创建它，或使用 [Cloud 计划任务](/zh-CN/web-scheduled-tasks) 或 [Desktop 计划任务](/zh-CN/desktop#schedule-recurring-tasks) 进行持久调度。
+重复任务在创建后 7 天自动过期。任务最后触发一次，然后删除自己。这限制了被遗忘的循环可以运行多长时间。如果您需要重复任务持续更长时间，请在过期前取消并重新创建它，或使用 [Cloud 计划任务](/zh-CN/web-scheduled-tasks) 或 [Desktop 计划任务](/zh-CN/desktop#schedule-recurring-tasks) 进行持久调度。
 
 ## Cron 表达式参考
 

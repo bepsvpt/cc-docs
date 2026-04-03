@@ -146,7 +146,7 @@ Claude Code 提供两种沙箱模式：
 
 较旧的 `//path` 前缀用于绝对路径仍然有效。如果您之前使用单斜杠 `/path` 期望项目相对解析，请切换到 `./path`。此语法与 [Read and Edit](/zh-CN/permissions#read-and-edit) 权限规则不同，后者使用 `//path` 表示绝对路径，`/path` 表示项目相对路径。沙箱文件系统路径使用标准约定：`/tmp/build` 是绝对路径。
 
-您也可以使用 `sandbox.filesystem.denyWrite` 和 `sandbox.filesystem.denyRead` 拒绝写入或读取访问。这些与来自 `Edit(...)` 和 `Read(...)` 权限规则的任何路径合并。要重新允许读取被拒绝区域内的特定路径，请使用 `sandbox.filesystem.allowRead`，它优先于 `denyRead`。当在托管设置中启用 `allowManagedReadPathsOnly` 时，仅尊重托管 `allowRead` 条目；用户、项目和本地 `allowRead` 条目被忽略。
+您也可以使用 `sandbox.filesystem.denyWrite` 和 `sandbox.filesystem.denyRead` 拒绝写入或读取访问。这些与来自 `Edit(...)` 和 `Read(...)` 权限规则的任何路径合并。要重新允许读取被拒绝区域内的特定路径，请使用 `sandbox.filesystem.allowRead`，它优先于 `denyRead`。当在托管设置中启用 `allowManagedReadPathsOnly` 时，仅尊重托管 `allowRead` 条目；用户、项目和本地 `allowRead` 条目被忽略。`denyRead` 仍然从所有来源合并。
 
 例如，要阻止从整个主目录读取，同时仍允许从当前项目读取，请将此添加到您的项目的 `.claude/settings.json`：
 
@@ -314,7 +314,7 @@ npx @anthropic-ai/sandbox-runtime <command-to-sandbox>
 沙箱隔离 Bash 子进程。其他工具在不同的边界下运行：
 
 * **内置文件工具**：Read、Edit 和 Write 直接使用权限系统，而不是通过沙箱运行。请参阅 [permissions](/zh-CN/permissions)。
-* **桌面上的计算机使用**：当 Claude 在 macOS 上打开应用程序并控制您的屏幕时，它在您的实际桌面上运行，而不是在隔离的环境中。每个应用程序的权限提示控制每个应用程序。请参阅 [computer use](/zh-CN/desktop#let-claude-use-your-computer)。
+* **计算机使用**：当 Claude 在 macOS 上打开应用程序并控制您的屏幕时，它在您的实际桌面上运行，而不是在隔离的环境中。每个应用程序的权限提示控制每个应用程序。请参阅 [CLI 中的计算机使用](/zh-CN/computer-use) 或 [Desktop 中的计算机使用](/zh-CN/desktop#let-claude-use-your-computer)。
 
 ## 另请参阅
 

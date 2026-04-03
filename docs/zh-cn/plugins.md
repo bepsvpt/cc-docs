@@ -45,7 +45,6 @@ Claude Code 支持两种方式来添加自定义 skills、agents 和 hooks：
 ### 前置条件
 
 * Claude Code [已安装并已认证](/zh-CN/quickstart#step-1-install-claude-code)
-* Claude Code 版本 1.0.33 或更高版本（运行 `claude --version` 检查）
 
 <Note>
   如果你没有看到 `/plugin` 命令，请将 Claude Code 更新到最新版本。有关升级说明，请参阅[故障排除](/zh-CN/troubleshooting)。
@@ -131,7 +130,7 @@ Claude Code 支持两种方式来添加自定义 skills、agents 和 hooks：
     你将看到 Claude 用问候语回应。运行 `/help` 以查看你的 skill 在插件命名空间下列出。
 
     <Note>
-      **为什么要命名空间？** 插件 skills 总是命名空间化的（如 `/greet:hello`），以防止多个插件具有相同名称的 skills 时发生冲突。
+      **为什么要命名空间？** 插件 skills 总是命名空间化的（如 `/my-first-plugin:hello`），以防止多个插件具有相同名称的 skills 时发生冲突。
 
       要更改命名空间前缀，请更新 `plugin.json` 中的 `name` 字段。
     </Note>
@@ -283,7 +282,7 @@ claude --plugin-dir ./my-plugin
 
 当 `--plugin-dir` 插件与已安装的市场插件同名时，本地副本在该会话中优先。这让你可以测试已安装的插件的更改，而无需先卸载它。由托管设置强制启用的市场插件是唯一的例外，无法被覆盖。
 
-当你对插件进行更改时，运行 `/reload-plugins` 以获取更新，无需重新启动。这会重新加载命令、skills、agents、hooks、插件 MCP servers 和插件 LSP servers。测试你的插件组件：
+当你对插件进行更改时，运行 `/reload-plugins` 以获取更新，无需重新启动。这会重新加载 plugins、skills、agents、hooks、插件 MCP servers 和插件 LSP servers。测试你的插件组件：
 
 * 使用 `/plugin-name:skill-name` 尝试你的 skills
 * 检查 agents 是否出现在 `/agents` 中

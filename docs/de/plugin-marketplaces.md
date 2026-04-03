@@ -557,6 +557,10 @@ Sie können auch angeben, welche Plugins standardmäßig aktiviert sein sollen:
 
 Für vollständige Konfigurationsoptionen siehe [Plugin-Einstellungen](/de/settings#plugin-settings).
 
+<Note>
+  Wenn Sie eine lokale `directory`- oder `file`-Quelle mit einem relativen Pfad verwenden, wird der Pfad gegen den Haupt-Checkout Ihres Repositories aufgelöst. Wenn Sie Claude Code aus einem Git Worktree ausführen, verweist der Pfad immer noch auf den Haupt-Checkout, sodass alle Worktrees denselben Marktplatz-Speicherort teilen. Der Marktplatz-Status wird einmal pro Benutzer in `~/.claude/plugins/known_marketplaces.json` gespeichert, nicht pro Projekt.
+</Note>
+
 ### Plugins für Container vorab ausfüllen
 
 Für Container-Images und CI-Umgebungen können Sie ein Plugins-Verzeichnis zur Build-Zeit vorab ausfüllen, damit Claude Code mit bereits verfügbaren Marktplätzen und Plugins startet, ohne zur Laufzeit etwas zu klonen. Legen Sie die Umgebungsvariable `CLAUDE_CODE_PLUGIN_SEED_DIR` fest, um auf dieses Verzeichnis zu verweisen.
@@ -627,7 +631,7 @@ Nur bestimmte Marktplätze zulassen:
 }
 ```
 
-Alle Marktplätze von einem internen Git-Server mit Regex-Musterabgleich auf dem Host zulassen:
+Alle Marktplätze von einem internen Git-Server mit Regex-Musterabgleich auf dem Host zulassen. Dies ist der empfohlene Ansatz für [GitHub Enterprise Server](/de/github-enterprise-server#plugin-marketplaces-on-ghes) oder selbstgehostete GitLab-Instanzen:
 
 ```json  theme={null}
 {
@@ -848,6 +852,20 @@ Für Hintergrund-Auto-Updates:
 * Überprüfen Sie für GitHub, dass das Token den `repo`-Scope für private Repositories hat
 * Überprüfen Sie für GitLab, dass das Token mindestens den `read_repository`-Scope hat
 * Überprüfen Sie, dass das Token nicht abgelaufen ist
+
+### Marktplatz-Updates schlagen in Offline-Umgebungen fehl
+
+**Symptome**: Marktplatz `git pull` schlägt fehl und Claude Code löscht den vorhandenen Cache, wodurch Plugins nicht mehr verfügbar werden.
+
+**Ursache**: Standardmäßig entfernt Claude Code den veralteten Klon und versucht erneut zu klonen, wenn ein `git pull` fehlschlägt. In Offline- oder Airgapped-Umgebungen schlägt das erneute Klonen auf die gleiche Weise fehl, wodurch das Marktplatz-Verzeichnis leer bleibt.
+
+**Lösung**: Legen Sie `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` fest, um den vorhandenen Cache beizubehalten, wenn der Pull fehlschlägt, anstatt ihn zu löschen:
+
+```bash  theme={null}
+export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
+```
+
+Mit dieser Variable gesetzt behält Claude Code den veralteten Marktplatz-Klon bei `git pull`-Fehler bei und verwendet weiterhin den letzten bekannten guten Status. Verwenden Sie für vollständig Offline-Bereitstellungen, bei denen das Repository nie erreichbar sein wird, stattdessen [`CLAUDE_CODE_PLUGIN_SEED_DIR`](#pre-populate-plugins-for-containers), um das Plugins-Verzeichnis zur Build-Zeit vorab auszufüllen.
 
 ### Git-Operationen zeitüberschreitung
 

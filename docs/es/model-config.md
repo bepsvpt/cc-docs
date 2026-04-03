@@ -23,7 +23,8 @@ Los alias de modelo proporcionan una forma conveniente de seleccionar configurac
 
 | Alias de modelo  | Comportamiento                                                                                                                                                                         |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`default`**    | Configuración de modelo recomendada, según el tipo de cuenta                                                                                                                           |
+| **`default`**    | Valor especial que borra cualquier anulación de modelo y revierte al modelo recomendado para su tipo de cuenta. No es en sí mismo un alias de modelo                                   |
+| **`best`**       | Utiliza el modelo disponible más capaz, actualmente equivalente a `opus`                                                                                                               |
 | **`sonnet`**     | Utiliza el último modelo Sonnet (actualmente Sonnet 4.6) para tareas de codificación diaria                                                                                            |
 | **`opus`**       | Utiliza el último modelo Opus (actualmente Opus 4.6) para tareas de razonamiento complejo                                                                                              |
 | **`haiku`**      | Utiliza el modelo Haiku rápido y eficiente para tareas simples                                                                                                                         |
@@ -83,19 +84,27 @@ Incluso con `availableModels: []`, los usuarios aún pueden usar Claude Code con
 
 ### Controlar el modelo en el que se ejecutan los usuarios
 
-Para controlar completamente la experiencia del modelo, utilice `availableModels` junto con la configuración `model`:
+La configuración de `model` es una selección inicial, no una aplicación. Establece qué modelo está activo cuando comienza una sesión, pero los usuarios aún pueden abrir `/model` y elegir Predeterminado, que se resuelve al valor predeterminado del sistema para su nivel independientemente de lo que esté configurado en `model`.
 
-* **availableModels**: restringe a qué pueden cambiar los usuarios
-* **model**: establece la anulación de modelo explícita, tomando precedencia sobre el Predeterminado
+Para controlar completamente la experiencia del modelo, combine tres configuraciones:
 
-Este ejemplo asegura que todos los usuarios ejecuten Sonnet 4.6 y solo puedan elegir entre Sonnet y Haiku:
+* **`availableModels`**: restringe a qué modelos nombrados pueden cambiar los usuarios
+* **`model`**: establece la selección de modelo inicial cuando comienza una sesión
+* **`ANTHROPIC_DEFAULT_SONNET_MODEL`** / **`ANTHROPIC_DEFAULT_OPUS_MODEL`** / **`ANTHROPIC_DEFAULT_HAIKU_MODEL`**: controlan a qué se resuelven la opción Predeterminado y los alias `sonnet`, `opus` y `haiku`
+
+Este ejemplo inicia a los usuarios en Sonnet 4.5, limita el selector a Sonnet y Haiku, y fija Predeterminado para que se resuelva a Sonnet 4.5 en lugar de la versión más reciente:
 
 ```json  theme={null}
 {
-  "model": "sonnet",
-  "availableModels": ["sonnet", "haiku"]
+  "model": "claude-sonnet-4-5",
+  "availableModels": ["claude-sonnet-4-5", "haiku"],
+  "env": {
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-5"
+  }
 }
 ```
+
+Sin el bloque `env`, un usuario que seleccione Predeterminado en el selector obtendría la versión más reciente de Sonnet, omitiendo el fijación de versión en `model` y `availableModels`.
 
 ### Comportamiento de fusión
 
@@ -245,6 +254,41 @@ El sufijo `[1m]` aplica la ventana de contexto de 1M a todo el uso de ese alias,
 <Note>
   La lista de permitidos `settings.availableModels` aún se aplica cuando se utilizan proveedores de terceros. El filtrado coincide con el alias de modelo (`opus`, `sonnet`, `haiku`), no con el ID de modelo específico del proveedor.
 </Note>
+
+### Personalizar la visualización y capacidades del modelo fijo
+
+Cuando fija un modelo en un proveedor de terceros, el ID específico del proveedor aparece tal cual en el selector `/model` y Claude Code puede no reconocer qué características admite el modelo. Puede anular el nombre de visualización y declarar capacidades con variables de entorno complementarias para cada modelo fijo.
+
+Estas variables solo tienen efecto en proveedores de terceros como Bedrock, Vertex AI y Foundry. No tienen efecto cuando se utiliza la API de Anthropic directamente.
+
+| Variable de entorno                                   | Descripción                                                                                                                                 |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_NAME`                   | Nombre de visualización para el modelo Opus fijo en el selector `/model`. Por defecto al ID de modelo cuando no está configurado            |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION`            | Descripción de visualización para el modelo Opus fijo en el selector `/model`. Por defecto a `Custom Opus model` cuando no está configurado |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES` | Lista separada por comas de capacidades que admite el modelo Opus fijo                                                                      |
+
+Los mismos sufijos `_NAME`, `_DESCRIPTION` y `_SUPPORTED_CAPABILITIES` están disponibles para `ANTHROPIC_DEFAULT_SONNET_MODEL` y `ANTHROPIC_DEFAULT_HAIKU_MODEL`.
+
+Claude Code habilita características como [niveles de esfuerzo](#adjust-effort-level) y [pensamiento extendido](/es/common-workflows#use-extended-thinking-thinking-mode) haciendo coincidir el ID de modelo con patrones conocidos. Los IDs específicos del proveedor como ARNs de Bedrock o nombres de implementación personalizados a menudo no coinciden con estos patrones, dejando las características compatibles deshabilitadas. Establezca `_SUPPORTED_CAPABILITIES` para indicar a Claude Code qué características admite realmente el modelo:
+
+| Valor de capacidad     | Habilita                                                                                             |
+| ---------------------- | ---------------------------------------------------------------------------------------------------- |
+| `effort`               | [Niveles de esfuerzo](#adjust-effort-level) y el comando `/effort`                                   |
+| `max_effort`           | El nivel de esfuerzo `max`                                                                           |
+| `thinking`             | [Pensamiento extendido](/es/common-workflows#use-extended-thinking-thinking-mode)                    |
+| `adaptive_thinking`    | Razonamiento adaptativo que asigna dinámicamente el pensamiento basado en la complejidad de la tarea |
+| `interleaved_thinking` | Pensamiento entre llamadas de herramientas                                                           |
+
+Cuando se establece `_SUPPORTED_CAPABILITIES`, las capacidades enumeradas se habilitan y las capacidades no enumeradas se deshabilitan para el modelo fijo coincidente. Cuando la variable no está configurada, Claude Code vuelve a la detección integrada basada en el ID de modelo.
+
+Este ejemplo fija Opus a un ARN de modelo personalizado de Bedrock, establece un nombre amigable y declara sus capacidades:
+
+```bash  theme={null}
+export ANTHROPIC_DEFAULT_OPUS_MODEL='arn:aws:bedrock:us-east-1:123456789012:custom-model/abc'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_NAME='Opus via Bedrock'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION='Opus 4.6 routed through a Bedrock custom endpoint'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES='effort,max_effort,thinking,adaptive_thinking,interleaved_thinking'
+```
 
 ### Anular IDs de modelo por versión
 

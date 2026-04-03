@@ -123,7 +123,9 @@ my-skill/
 
 #### Skills dari direktori tambahan
 
-Skills yang didefinisikan di `.claude/skills/` dalam direktori yang ditambahkan melalui `--add-dir` dimuat secara otomatis dan diambil oleh deteksi perubahan langsung, sehingga Anda dapat mengeditnya selama sesi tanpa memulai ulang.
+Bendera `--add-dir` [memberikan akses file](/id/permissions#additional-directories-grant-file-access-not-configuration) daripada penemuan konfigurasi, tetapi skills adalah pengecualian: `.claude/skills/` dalam direktori yang ditambahkan dimuat secara otomatis dan diambil oleh deteksi perubahan langsung, sehingga Anda dapat mengedit skills tersebut selama sesi tanpa memulai ulang.
+
+Konfigurasi `.claude/` lainnya seperti subagents, perintah, dan gaya output tidak dimuat dari direktori tambahan. Lihat [tabel pengecualian](/id/permissions#additional-directories-grant-file-access-not-configuration) untuk daftar lengkap apa yang dimuat dan tidak dimuat, serta cara yang direkomendasikan untuk berbagi konfigurasi di seluruh proyek.
 
 <Note>
   File CLAUDE.md dari direktori `--add-dir` tidak dimuat secara default. Untuk memuatnya, atur `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1`. Lihat [Muat dari direktori tambahan](/id/memory#load-from-additional-directories).
@@ -178,7 +180,7 @@ Selain konten markdown, Anda dapat mengonfigurasi perilaku skill menggunakan bid
 name: my-skill
 description: What this skill does
 disable-model-invocation: true
-allowed-tools: Read, Grep
+allowed-tools: Read Grep
 ---
 
 Your skill instructions here...
@@ -186,19 +188,21 @@ Your skill instructions here...
 
 Semua bidang opsional. Hanya `description` yang direkomendasikan sehingga Claude tahu kapan menggunakan skill.
 
-| Bidang                     | Diperlukan       | Deskripsi                                                                                                                                                                                  |
-| :------------------------- | :--------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`                     | Tidak            | Nama tampilan untuk skill. Jika dihilangkan, menggunakan nama direktori. Huruf kecil, angka, dan tanda hubung saja (maks 64 karakter).                                                     |
-| `description`              | Direkomendasikan | Apa yang dilakukan skill dan kapan menggunakannya. Claude menggunakan ini untuk memutuskan kapan menerapkan skill. Jika dihilangkan, menggunakan paragraf pertama konten markdown.         |
-| `argument-hint`            | Tidak            | Petunjuk yang ditampilkan selama autocomplete untuk menunjukkan argumen yang diharapkan. Contoh: `[issue-number]` atau `[filename] [format]`.                                              |
-| `disable-model-invocation` | Tidak            | Atur ke `true` untuk mencegah Claude memuat skill ini secara otomatis. Gunakan untuk workflow yang ingin Anda picu secara manual dengan `/name`. Default: `false`.                         |
-| `user-invocable`           | Tidak            | Atur ke `false` untuk menyembunyikan dari menu `/`. Gunakan untuk pengetahuan latar belakang yang tidak boleh diinvokasinya pengguna secara langsung. Default: `true`.                     |
-| `allowed-tools`            | Tidak            | Tools yang dapat digunakan Claude tanpa meminta izin saat skill ini aktif.                                                                                                                 |
-| `model`                    | Tidak            | Model yang digunakan saat skill ini aktif.                                                                                                                                                 |
-| `effort`                   | Tidak            | [Effort level](/id/model-config#adjust-effort-level) saat skill ini aktif. Mengganti effort level sesi. Default: mewarisi dari sesi. Opsi: `low`, `medium`, `high`, `max` (Opus 4.6 saja). |
-| `context`                  | Tidak            | Atur ke `fork` untuk menjalankan dalam konteks subagent yang di-fork.                                                                                                                      |
-| `agent`                    | Tidak            | Jenis subagent mana yang digunakan saat `context: fork` diatur.                                                                                                                            |
-| `hooks`                    | Tidak            | Hooks yang dibatasi pada lifecycle skill ini. Lihat [Hooks dalam skills dan agents](/id/hooks#hooks-in-skills-and-agents) untuk format konfigurasi.                                        |
+| Bidang                     | Diperlukan       | Deskripsi                                                                                                                                                                                                                                                                                                                      |
+| :------------------------- | :--------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`                     | Tidak            | Nama tampilan untuk skill. Jika dihilangkan, menggunakan nama direktori. Huruf kecil, angka, dan tanda hubung saja (maks 64 karakter).                                                                                                                                                                                         |
+| `description`              | Direkomendasikan | Apa yang dilakukan skill dan kapan menggunakannya. Claude menggunakan ini untuk memutuskan kapan menerapkan skill. Jika dihilangkan, menggunakan paragraf pertama konten markdown. Depankan kasus penggunaan utama: deskripsi lebih panjang dari 250 karakter dipotong dalam daftar skill untuk mengurangi penggunaan konteks. |
+| `argument-hint`            | Tidak            | Petunjuk yang ditampilkan selama autocomplete untuk menunjukkan argumen yang diharapkan. Contoh: `[issue-number]` atau `[filename] [format]`.                                                                                                                                                                                  |
+| `disable-model-invocation` | Tidak            | Atur ke `true` untuk mencegah Claude memuat skill ini secara otomatis. Gunakan untuk workflow yang ingin Anda picu secara manual dengan `/name`. Default: `false`.                                                                                                                                                             |
+| `user-invocable`           | Tidak            | Atur ke `false` untuk menyembunyikan dari menu `/`. Gunakan untuk pengetahuan latar belakang yang tidak boleh diinvokasinya pengguna secara langsung. Default: `true`.                                                                                                                                                         |
+| `allowed-tools`            | Tidak            | Tools yang dapat digunakan Claude tanpa meminta izin saat skill ini aktif. Menerima string yang dipisahkan spasi atau daftar YAML.                                                                                                                                                                                             |
+| `model`                    | Tidak            | Model yang digunakan saat skill ini aktif.                                                                                                                                                                                                                                                                                     |
+| `effort`                   | Tidak            | [Effort level](/id/model-config#adjust-effort-level) saat skill ini aktif. Mengganti effort level sesi. Default: mewarisi dari sesi. Opsi: `low`, `medium`, `high`, `max` (Opus 4.6 saja).                                                                                                                                     |
+| `context`                  | Tidak            | Atur ke `fork` untuk menjalankan dalam konteks subagent yang di-fork.                                                                                                                                                                                                                                                          |
+| `agent`                    | Tidak            | Jenis subagent mana yang digunakan saat `context: fork` diatur.                                                                                                                                                                                                                                                                |
+| `hooks`                    | Tidak            | Hooks yang dibatasi pada lifecycle skill ini. Lihat [Hooks dalam skills dan agents](/id/hooks#hooks-in-skills-and-agents) untuk format konfigurasi.                                                                                                                                                                            |
+| `paths`                    | Tidak            | Pola glob yang membatasi kapan skill ini diaktifkan. Menerima string yang dipisahkan koma atau daftar YAML. Ketika diatur, Claude memuat skill secara otomatis hanya saat bekerja dengan file yang cocok dengan pola. Menggunakan format yang sama seperti [aturan khusus path](/id/memory#path-specific-rules).               |
+| `shell`                    | Tidak            | Shell yang digunakan untuk blok `` !`command` `` dalam skill ini. Menerima `bash` (default) atau `powershell`. Mengatur `powershell` menjalankan perintah shell inline melalui PowerShell di Windows. Memerlukan `CLAUDE_CODE_USE_POWERSHELL_TOOL=1`.                                                                          |
 
 #### Substitusi string yang tersedia
 
@@ -294,7 +298,7 @@ Gunakan bidang `allowed-tools` untuk membatasi tools mana yang dapat digunakan C
 ---
 name: safe-reader
 description: Read files without making changes
-allowed-tools: Read, Grep, Glob
+allowed-tools: Read Grep Glob
 ---
 ```
 
@@ -678,11 +682,11 @@ Jika Claude menggunakan skill Anda saat Anda tidak menginginkannya:
 1. Buat deskripsi lebih spesifik
 2. Tambahkan `disable-model-invocation: true` jika Anda hanya menginginkan invokasi manual
 
-### Claude tidak melihat semua skills saya
+### Deskripsi skill dipotong pendek
 
-Deskripsi skill dimuat ke dalam konteks sehingga Claude tahu apa yang tersedia. Jika Anda memiliki banyak skills, mereka mungkin melebihi anggaran karakter. Anggaran diskalakan secara dinamis pada 2% dari jendela konteks, dengan fallback 16.000 karakter. Jalankan `/context` untuk memeriksa peringatan tentang skills yang dikecualikan.
+Deskripsi skill dimuat ke dalam konteks sehingga Claude tahu apa yang tersedia. Semua nama skill selalu disertakan, tetapi jika Anda memiliki banyak skills, deskripsi diperpendek agar sesuai dengan anggaran karakter, yang dapat menghilangkan kata kunci yang dibutuhkan Claude untuk mencocokkan permintaan Anda. Anggaran diskalakan secara dinamis pada 1% dari jendela konteks, dengan fallback 8.000 karakter.
 
-Untuk mengganti batas, atur variabel lingkungan `SLASH_COMMAND_TOOL_CHAR_BUDGET`.
+Untuk menaikkan batas, atur variabel lingkungan `SLASH_COMMAND_TOOL_CHAR_BUDGET`. Atau potong deskripsi di sumbernya: depankan kasus penggunaan utama, karena setiap entri dibatasi pada 250 karakter terlepas dari anggaran.
 
 ## Sumber daya terkait
 

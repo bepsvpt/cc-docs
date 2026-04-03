@@ -107,6 +107,10 @@ Quando auto-fix está ativo, Claude recebe eventos do GitHub para o PR incluindo
 
 Claude pode responder a threads de comentários de revisão no GitHub como parte da resolução deles. Essas respostas são postadas usando sua conta GitHub, então aparecem sob seu nome de usuário, mas cada resposta é rotulada como vindo de Claude Code para que os revisores saibam que foi escrita pelo agente e não por você diretamente.
 
+<Warning>
+  Se seu repositório usa automação acionada por comentário, como Atlantis, Terraform Cloud ou GitHub Actions personalizadas que são executadas em eventos `issue_comment`, esteja ciente de que as respostas de Claude podem acionar esses fluxos de trabalho. Revise a automação de seu repositório antes de ativar auto-fix e considere desabilitar auto-fix para repositórios onde um comentário de PR pode implantar infraestrutura ou executar operações privilegiadas.
+</Warning>
+
 ## Movendo tarefas entre web e terminal
 
 Você pode iniciar novas tarefas na web a partir do seu terminal ou puxar sessões da web para seu terminal para continuar localmente. As sessões da web persistem mesmo se você fechar seu laptop, e você pode monitorá-las de qualquer lugar, incluindo o aplicativo móvel Claude.

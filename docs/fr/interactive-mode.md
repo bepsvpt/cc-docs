@@ -11,11 +11,11 @@
 <Note>
   Les raccourcis clavier peuvent varier selon la plateforme et le terminal. Appuyez sur `?` pour voir les raccourcis disponibles pour votre environnement.
 
-  **Utilisateurs macOS** : Les raccourcis de la touche Option/Alt (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`) nécessitent de configurer Option en tant que Meta dans votre terminal :
+  **Utilisateurs macOS** : Les raccourcis de la touche Option/Alt (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`, `Alt+T`) nécessitent de configurer Option en tant que Meta dans votre terminal :
 
   * **iTerm2** : paramètres → Profils → Touches → définir la touche Option gauche/droite sur « Esc+ »
   * **Terminal.app** : paramètres → Profils → Clavier → cocher « Utiliser Option comme touche Meta »
-  * **VS Code** : paramètres → Profils → Touches → définir la touche Option gauche/droite sur « Esc+ »
+  * **VS Code** : définir `"terminal.integrated.macOptionIsMeta": true` dans les paramètres VS Code
 
   Consultez [Configuration du terminal](/fr/terminal-config) pour plus de détails.
 </Note>
@@ -28,7 +28,7 @@
 | `Ctrl+X Ctrl+K`                                   | Arrêter tous les agents en arrière-plan. Appuyez deux fois dans les 3 secondes pour confirmer | Contrôle des agents en arrière-plan                                                                                                                                                             |
 | `Ctrl+D`                                          | Quitter la session Claude Code                                                                | Signal EOF                                                                                                                                                                                      |
 | `Ctrl+G` ou `Ctrl+X Ctrl+E`                       | Ouvrir dans l'éditeur de texte par défaut                                                     | Modifiez votre invite ou réponse personnalisée dans votre éditeur de texte par défaut. `Ctrl+X Ctrl+E` est la liaison readline native                                                           |
-| `Ctrl+L`                                          | Effacer l'écran du terminal                                                                   | Conserve l'historique de la conversation                                                                                                                                                        |
+| `Ctrl+L`                                          | Redessiner l'écran                                                                            | Repeint l'interface utilisateur actuelle sans effacer l'historique de la conversation                                                                                                           |
 | `Ctrl+O`                                          | Basculer la sortie détaillée                                                                  | Affiche l'utilisation détaillée des outils et l'exécution. Développe également les appels de lecture et de recherche MCP, qui se réduisent à une seule ligne comme « Queried slack » par défaut |
 | `Ctrl+R`                                          | Recherche inversée dans l'historique des commandes                                            | Recherchez les commandes précédentes de manière interactive                                                                                                                                     |
 | `Ctrl+V` ou `Cmd+V` (iTerm2) ou `Alt+V` (Windows) | Coller une image du presse-papiers                                                            | Insère une puce `[Image #N]` au curseur afin que vous puissiez la référencer positionnellement dans votre invite                                                                                |
@@ -39,29 +39,25 @@
 | `Esc` + `Esc`                                     | Rembobiner ou résumer                                                                         | Restaurer le code et/ou la conversation à un point antérieur, ou résumer à partir d'un message sélectionné                                                                                      |
 | `Shift+Tab` ou `Alt+M` (certaines configurations) | Basculer les modes de permission                                                              | Basculer entre `default`, `acceptEdits`, `plan` et tous les modes que vous avez activés, comme `auto` ou `bypassPermissions`. Consultez [modes de permission](/fr/permission-modes).            |
 | `Option+P` (macOS) ou `Alt+P` (Windows/Linux)     | Changer de modèle                                                                             | Changez de modèles sans effacer votre invite                                                                                                                                                    |
-| `Option+T` (macOS) ou `Alt+T` (Windows/Linux)     | Basculer la réflexion étendue                                                                 | Activez ou désactivez le mode de réflexion étendue. Exécutez d'abord `/terminal-setup` pour activer ce raccourci                                                                                |
+| `Option+T` (macOS) ou `Alt+T` (Windows/Linux)     | Basculer la réflexion étendue                                                                 | Activez ou désactivez le mode de réflexion étendue. Sur macOS, configurez votre terminal pour envoyer Option en tant que Meta pour que ce raccourci fonctionne                                  |
 | `Option+O` (macOS) ou `Alt+O` (Windows/Linux)     | Basculer le mode rapide                                                                       | Activez ou désactivez le [mode rapide](/fr/fast-mode)                                                                                                                                           |
 
 ### Édition de texte
 
-| Raccourci                | Description                             | Contexte                                                                                                                 |
-| :----------------------- | :-------------------------------------- | :----------------------------------------------------------------------------------------------------------------------- |
-| `Ctrl+K`                 | Supprimer jusqu'à la fin de la ligne    | Stocke le texte supprimé pour le collage                                                                                 |
-| `Ctrl+U`                 | Supprimer la ligne entière              | Stocke le texte supprimé pour le collage                                                                                 |
-| `Ctrl+Y`                 | Coller le texte supprimé                | Collez le texte supprimé avec `Ctrl+K` ou `Ctrl+U`                                                                       |
-| `Alt+Y` (après `Ctrl+Y`) | Parcourir l'historique du collage       | Après le collage, parcourez le texte précédemment supprimé. Nécessite [Option comme Meta](#keyboard-shortcuts) sur macOS |
-| `Alt+B`                  | Déplacer le curseur d'un mot en arrière | Navigation par mot. Nécessite [Option comme Meta](#keyboard-shortcuts) sur macOS                                         |
-| `Alt+F`                  | Déplacer le curseur d'un mot en avant   | Navigation par mot. Nécessite [Option comme Meta](#keyboard-shortcuts) sur macOS                                         |
+| Raccourci                | Description                               | Contexte                                                                                                                 |
+| :----------------------- | :---------------------------------------- | :----------------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+K`                 | Supprimer jusqu'à la fin de la ligne      | Stocke le texte supprimé pour le collage                                                                                 |
+| `Ctrl+U`                 | Supprimer du curseur au début de la ligne | Stocke le texte supprimé pour le collage. Répétez pour effacer sur plusieurs lignes dans une entrée multiligne           |
+| `Ctrl+Y`                 | Coller le texte supprimé                  | Collez le texte supprimé avec `Ctrl+K` ou `Ctrl+U`                                                                       |
+| `Alt+Y` (après `Ctrl+Y`) | Parcourir l'historique du collage         | Après le collage, parcourez le texte précédemment supprimé. Nécessite [Option comme Meta](#keyboard-shortcuts) sur macOS |
+| `Alt+B`                  | Déplacer le curseur d'un mot en arrière   | Navigation par mot. Nécessite [Option comme Meta](#keyboard-shortcuts) sur macOS                                         |
+| `Alt+F`                  | Déplacer le curseur d'un mot en avant     | Navigation par mot. Nécessite [Option comme Meta](#keyboard-shortcuts) sur macOS                                         |
 
 ### Thème et affichage
 
 | Raccourci | Description                                              | Contexte                                                                                                                                   |
 | :-------- | :------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------- |
 | `Ctrl+T`  | Basculer la coloration syntaxique pour les blocs de code | Fonctionne uniquement dans le menu du sélecteur `/theme`. Contrôle si le code dans les réponses de Claude utilise la coloration syntaxique |
-
-<Note>
-  La coloration syntaxique n'est disponible que dans la version native de Claude Code.
-</Note>
 
 ### Entrée multiligne
 
@@ -89,10 +85,10 @@
 
 Lorsque la visionneuse de transcription est ouverte (basculée avec `Ctrl+O`), ces raccourcis sont disponibles. `Ctrl+E` peut être réaffecté via [`transcript:toggleShowAll`](/fr/keybindings).
 
-| Raccourci            | Description                                                                                                                                      |
-| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Ctrl+E`             | Basculer afficher tout le contenu                                                                                                                |
-| `q`, `Ctrl+C`, `Esc` | Quitter la vue de transcription. `Ctrl+C` et `Esc` peuvent être réaffectés via [`transcript:exit`](/fr/keybindings) ; `q` n'est pas réaffectable |
+| Raccourci            | Description                                                                                                 |
+| :------------------- | :---------------------------------------------------------------------------------------------------------- |
+| `Ctrl+E`             | Basculer afficher tout le contenu                                                                           |
+| `q`, `Ctrl+C`, `Esc` | Quitter la vue de transcription. Les trois peuvent être réaffectés via [`transcript:exit`](/fr/keybindings) |
 
 ### Entrée vocale
 
@@ -253,6 +249,7 @@ Mode Bash :
 * Ne nécessite pas que Claude interprète ou approuve la commande
 * Prend en charge l'autocomplétion basée sur l'historique : tapez une commande partielle et appuyez sur **Tab** pour compléter à partir des commandes `!` précédentes du projet actuel
 * Quittez avec `Échap`, `Retour arrière` ou `Ctrl+U` sur une invite vide
+* Coller du texte commençant par `!` dans une invite vide entre en mode bash automatiquement, correspondant au comportement du texte tapé `!`
 
 Ceci est utile pour les opérations shell rapides tout en maintenant le contexte de la conversation.
 
@@ -262,7 +259,7 @@ Lorsque vous ouvrez une session pour la première fois, une commande d'exemple g
 
 Après la réponse de Claude, les suggestions continuent à apparaître en fonction de votre historique de conversation, comme une étape de suivi d'une demande en plusieurs parties ou une continuation naturelle de votre flux de travail.
 
-* Appuyez sur **Tab** pour accepter la suggestion, ou appuyez sur **Entrée** pour accepter et soumettre
+* Appuyez sur **Tab** ou **Flèche droite** pour accepter la suggestion, ou appuyez sur **Entrée** pour accepter et soumettre
 * Commencez à taper pour la rejeter
 
 La suggestion s'exécute en tant que demande en arrière-plan qui réutilise le cache d'invite de la conversation parent, le coût supplémentaire est donc minimal. Claude Code ignore la génération de suggestions lorsque le cache est froid pour éviter les coûts inutiles.

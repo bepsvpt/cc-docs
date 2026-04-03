@@ -23,7 +23,8 @@
 
 | 模型别名             | 行为                                                                                                                               |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| **`default`**    | 推荐的模型设置，取决于您的账户类型                                                                                                                |
+| **`default`**    | 特殊值，清除任何模型覆盖并恢复到您的账户类型推荐的模型。本身不是模型别名                                                                                             |
+| **`best`**       | 使用最强大的可用模型，当前等同于 `opus`                                                                                                          |
 | **`sonnet`**     | 使用最新的 Sonnet 模型（当前为 Sonnet 4.6）用于日常编码任务                                                                                          |
 | **`opus`**       | 使用最新的 Opus 模型（当前为 Opus 4.6）用于复杂推理任务                                                                                              |
 | **`haiku`**      | 使用快速高效的 Haiku 模型用于简单任务                                                                                                           |
@@ -83,19 +84,27 @@ claude --model opus
 
 ### 控制用户运行的模型
 
-要完全控制模型体验，请将 `availableModels` 与 `model` 设置一起使用：
+`model` 设置是初始选择，而不是强制执行。它设置会话启动时哪个模型处于活跃状态，但用户仍然可以打开 `/model` 并选择"默认"，这会解析为其层级的系统默认值，无论 `model` 设置为什么。
 
-* **availableModels**：限制用户可以切换到的内容
-* **model**：设置显式模型覆盖，优先于默认值
+要完全控制模型体验，请结合三个设置：
 
-此示例确保所有用户运行 Sonnet 4.6，并且只能在 Sonnet 和 Haiku 之间选择：
+* **`availableModels`**：限制用户可以切换到的命名模型
+* **`model`**：设置会话启动时的初始模型选择
+* **`ANTHROPIC_DEFAULT_SONNET_MODEL`** / **`ANTHROPIC_DEFAULT_OPUS_MODEL`** / **`ANTHROPIC_DEFAULT_HAIKU_MODEL`**：控制"默认"选项和 `sonnet`、`opus` 和 `haiku` 别名解析为什么
+
+此示例在 Sonnet 4.5 上启动用户，将选择器限制为 Sonnet 和 Haiku，并将"默认"固定为解析为 Sonnet 4.5 而不是最新版本：
 
 ```json  theme={null}
 {
-  "model": "sonnet",
-  "availableModels": ["sonnet", "haiku"]
+  "model": "claude-sonnet-4-5",
+  "availableModels": ["claude-sonnet-4-5", "haiku"],
+  "env": {
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-5"
+  }
 }
 ```
+
+没有 `env` 块，在选择器中选择"默认"的用户会获得最新的 Sonnet 版本，绕过 `model` 和 `availableModels` 中的版本固定。
 
 ### 合并行为
 
@@ -245,6 +254,41 @@ export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6[1m]'
 <Note>
   使用第三方提供商时，`settings.availableModels` 允许列表仍然适用。过滤与模型别名（`opus`、`sonnet`、`haiku`）匹配，而不是提供商特定的模型 ID。
 </Note>
+
+### 自定义固定模型显示和功能
+
+当您在第三方提供商上固定模型时，提供商特定的 ID 在 `/model` 选择器中按原样显示，Claude Code 可能无法识别模型支持的功能。您可以使用每个固定模型的伴随环境变量覆盖显示名称并声明功能。
+
+这些变量仅在第三方提供商（如 Bedrock、Vertex AI 和 Foundry）上生效。在直接使用 Anthropic API 时无效。
+
+| 环境变量                                                  | 描述                                                         |
+| ----------------------------------------------------- | ---------------------------------------------------------- |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_NAME`                   | 固定 Opus 模型在 `/model` 选择器中的显示名称。未设置时默认为模型 ID                |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION`            | 固定 Opus 模型在 `/model` 选择器中的显示描述。未设置时默认为 `Custom Opus model` |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES` | 固定 Opus 模型支持的功能的逗号分隔列表                                     |
+
+相同的 `_NAME`、`_DESCRIPTION` 和 `_SUPPORTED_CAPABILITIES` 后缀可用于 `ANTHROPIC_DEFAULT_SONNET_MODEL` 和 `ANTHROPIC_DEFAULT_HAIKU_MODEL`。
+
+Claude Code 通过将模型 ID 与已知模式匹配来启用[工作量级别](#adjust-effort-level)和[扩展思考](/zh-CN/common-workflows#use-extended-thinking-thinking-mode)等功能。提供商特定的 ID（如 Bedrock ARN 或自定义部署名称）通常与这些模式不匹配，导致支持的功能被禁用。设置 `_SUPPORTED_CAPABILITIES` 以告诉 Claude Code 模型实际支持的功能：
+
+| 功能值                    | 启用                                                                  |
+| ---------------------- | ------------------------------------------------------------------- |
+| `effort`               | [工作量级别](#adjust-effort-level)和 `/effort` 命令                         |
+| `max_effort`           | `max` 工作量级别                                                         |
+| `thinking`             | [扩展思考](/zh-CN/common-workflows#use-extended-thinking-thinking-mode) |
+| `adaptive_thinking`    | 根据任务复杂性动态分配思考的自适应推理                                                 |
+| `interleaved_thinking` | 工具调用之间的思考                                                           |
+
+设置 `_SUPPORTED_CAPABILITIES` 时，列出的功能对匹配的固定模型启用，未列出的功能被禁用。未设置变量时，Claude Code 回退到基于模型 ID 的内置检测。
+
+此示例将 Opus 固定到 Bedrock 自定义模型 ARN，设置友好名称，并声明其功能：
+
+```bash  theme={null}
+export ANTHROPIC_DEFAULT_OPUS_MODEL='arn:aws:bedrock:us-east-1:123456789012:custom-model/abc'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_NAME='Opus via Bedrock'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION='Opus 4.6 routed through a Bedrock custom endpoint'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES='effort,max_effort,thinking,adaptive_thinking,interleaved_thinking'
+```
 
 ### 按版本覆盖模型 ID
 

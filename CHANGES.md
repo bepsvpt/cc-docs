@@ -1,5 +1,868 @@
 # Documentation Changes
 
+## 2026-04-03
+
+383 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Orchestrieren Sie Teams von Claude Code-Sitzungen** (`agent-teams.md`): 19 lines added, 2 removed
+  - New section: "### Verwenden Sie Subagent-Definitionen für Teammates"
+- **Claude Code auf Amazon Bedrock** (`amazon-bedrock.md`): 22 lines added, 5 removed
+  - New section: "# Optional: Bedrock-Endpunkt-URL für benutzerdefinierte Endpunkte oder Gateways überschreiben"
+  - New section: "# export ANTHROPIC_BEDROCK_BASE_URL=https://bedrock-runtime.us-east-1.amazonaws.com"
+  - New section: "## 1M Token-Kontextfenster"
+  - New section: "### Authentifizierungsschleife mit SSO und Unternehmens-Proxys"
+  - New section: "### Regionsprobleme"
+- **Claude Code im Web** (`claude-code-on-the-web.md`): 4 lines added, 0 removed
+- **CLI-Referenz** (`cli-reference.md`): 16 lines added, 12 removed
+- **Code Review** (`code-review.md`): 61 lines added, 10 removed
+  - New section: "### Check-Run-Ausgabe"
+  - New section: "## Fehlerbehebung"
+  - New section: "### Auslösen einer fehlgeschlagenen oder abgelaufenen Überprüfung erneut"
+  - New section: "### Finden Sie Probleme, die nicht als Inline-Kommentare angezeigt werden"
+- **Häufige Workflows** (`common-workflows.md`): 62 lines added, 17 removed
+  - New section: "### Kopieren Sie gitignorierte Dateien zu Worktrees"
+  - New section: "## Führen Sie Claude nach einem Zeitplan aus"
+- **Claude Code Desktop verwenden** (`desktop.md`): 32 lines added, 14 removed
+- **Entdecken und installieren Sie vorgefertigte Plugins über Marktplätze** (`discover-plugins.md`): 9 lines added, 9 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 3 lines added, 3 removed
+- **Claude Code auf Google Vertex AI** (`google-vertex-ai.md`): 15 lines added, 16 removed
+  - New section: "# Optional: Überschreiben Sie die Vertex-Endpunkt-URL für benutzerdefinierte Endpunkte oder Gateways"
+  - New section: "# export ANTHROPIC_VERTEX_BASE_URL=https://aiplatform.googleapis.com"
+  - New section: "# Wenn CLOUD_ML_REGION=global, überschreiben Sie die Region für Modelle, die keine globalen Endpunkte unterstützen"
+- **Automatisieren Sie Workflows mit Hooks** (`hooks-guide.md`): 80 lines added, 24 removed
+  - New section: "#### Hooks mit dem Feld `if` nach Tool-Name und Argumenten filtern"
+  - New section: "### Hooks und Berechtigungsmodi"
+- **Hooks-Referenz** (`hooks.md`): 140 lines added, 47 removed
+  - New section: "#### Ein Tool-Aufruf verschieben"
+  - New section: "### PermissionDenied"
+  - New section: "#### PermissionDenied-Eingabe"
+  - New section: "#### PermissionDenied-Entscheidungskontrolle"
+- **So funktioniert Claude Code** (`how-claude-code-works.md`): 5 lines added, 3 removed
+- **Interaktiver Modus** (`interactive-mode.md`): 18 lines added, 21 removed
+- **Tastaturkürzel anpassen** (`keybindings.md`): 44 lines added, 19 removed
+- **Claude Code mit Tools über MCP verbinden** (`mcp.md`): 26 lines added, 16 removed
+- **Wie Claude sich Ihr Projekt merkt** (`memory.md`): 5 lines added, 5 removed
+- **Modellkonfiguration** (`model-config.md`): 51 lines added, 7 removed
+  - New section: "### Anpassung der Anzeige und Funktionen des fixierten Modells"
+- **Überwachung** (`monitoring-usage.md`): 54 lines added, 29 removed
+  - New section: "### Traces (Beta)"
+  - New section: "### Für Traces"
+- **Enterprise-Netzwerkkonfiguration** (`network-config.md`): 7 lines added, 0 removed
+- **Ausgabestile** (`output-styles.md`): 2 lines added, 1 removed
+- **Berechtigungen konfigurieren** (`permissions.md`): 42 lines added, 13 removed
+  - New section: "### Zusätzliche Verzeichnisse gewähren Dateizugriff, keine Konfiguration"
+  - New section: "## Überprüfen Sie Auto-Mode-Ablehnungen"
+- **Erstellen und Verteilen eines Plugin-Marktplatzes** (`plugin-marketplaces.md`): 19 lines added, 1 removed
+  - New section: "### Marktplatz-Updates schlagen in Offline-Umgebungen fehl"
+- **Plugins erstellen** (`plugins.md`): 2 lines added, 3 removed
+- **Sandboxing** (`sandboxing.md`): 2 lines added, 2 removed
+- **Prompts nach Zeitplan ausführen** (`scheduled-tasks.md`): 2 lines added, 2 removed
+  - New section: "### Ablauf nach sieben Tagen"
+- **Serververwaltete Einstellungen konfigurieren (öffentliche Beta)** (`server-managed-settings.md`): 12 lines added, 3 removed
+  - New section: "### Nur verwaltete Einstellungen"
+- **Claude Code-Einstellungen** (`settings.md`): 81 lines added, 74 removed
+- **Erweiterte Einrichtung** (`setup.md`): 91 lines added, 9 removed
+  - New section: "#### Manifest-Signatur überprüfen"
+  - New section: "#### Plattform-Code-Signaturen"
+- **Claude mit Skills erweitern** (`skills.md`): 23 lines added, 19 removed
+  - New section: "### Skill-Beschreibungen werden gekürzt"
+- **Passen Sie Ihre Statuszeile an** (`statusline.md`): 117 lines added, 28 removed
+  - New section: "### Ratenlimit-Nutzung"
+- **Benutzerdefinierte Subagenten erstellen** (`sub-agents.md`): 47 lines added, 37 removed
+
+### English
+
+
+**Modified**
+
+- **Claude Code on Amazon Bedrock** (`amazon-bedrock.md`): 1 lines added, 0 removed
+- **Track team usage with analytics** (`analytics.md`): 6 lines added, 6 removed
+  - New section: "## Access analytics for Team and Enterprise"
+- **Best Practices for Claude Code** (`best-practices.md`): 1 lines added, 0 removed
+- **Changelog** (`changelog.md`): 16 lines added, 0 removed
+- **Use Claude Code with Chrome (beta)** (`chrome.md`): 1 lines added, 1 removed
+- **Claude Code on the web** (`claude-code-on-the-web.md`): 3 lines added, 3 removed
+  - New section: "#### Sharing from an Enterprise or Team account"
+- **Code Review** (`code-review.md`): 1 lines added, 1 removed
+- **Built-in commands** (`commands.md`): 1 lines added, 0 removed
+- **Common workflows** (`common-workflows.md`): 4 lines added, 2 removed
+- **Get started with the desktop app** (`desktop-quickstart.md`): 3 lines added, 3 removed
+- **Use Claude Code Desktop** (`desktop.md`): 14 lines added, 14 removed
+- **Environment variables** (`env-vars.md`): 1 lines added, 0 removed
+- **Speed up responses with fast mode** (`fast-mode.md`): 4 lines added, 4 removed
+- **Interactive mode** (`interactive-mode.md`): 8 lines added, 8 removed
+- **Customize keyboard shortcuts** (`keybindings.md`): 13 lines added, 10 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 17 lines added, 2 removed
+  - New section: "### Override result size per tool"
+- **How Claude remembers your project** (`memory.md`): 18 lines added, 11 removed
+- **Monitoring** (`monitoring-usage.md`): 28 lines added, 3 removed
+  - New section: "### Traces (beta)"
+  - New section: "### For traces"
+- **Claude Code overview** (`overview.md`): 3 lines added, 3 removed
+- **Configure permissions** (`permissions.md`): 4 lines added, 2 removed
+- **Create and distribute a plugin marketplace** (`plugin-marketplaces.md`): 142 lines added, 9 removed
+  - New section: "## Manage marketplaces from the CLI"
+  - New section: "### Plugin marketplace add"
+  - New section: "### Plugin marketplace list"
+  - New section: "### Plugin marketplace remove"
+  - New section: "### Plugin marketplace update"
+- **Plugins reference** (`plugins-reference.md`): 15 lines added, 12 removed
+- **Create plugins** (`plugins.md`): 1 lines added, 0 removed
+- **Quickstart** (`quickstart.md`): 3 lines added, 4 removed
+- **Sandboxing** (`sandboxing.md`): 3 lines added, 3 removed
+- **Claude Code settings** (`settings.md`): 5 lines added, 5 removed
+- **Advanced setup** (`setup.md`): 11 lines added, 11 removed
+- **Extend Claude with skills** (`skills.md`): 3 lines added, 3 removed
+- **Claude Code in Slack** (`slack.md`): 2 lines added, 2 removed
+- **Customize your status line** (`statusline.md`): 7 lines added, 2 removed
+- **Create custom subagents** (`sub-agents.md`): 9 lines added, 9 removed
+- **Troubleshooting** (`troubleshooting.md`): 4 lines added, 4 removed
+
+### Español
+
+
+**Modified**
+
+- **Orquestar equipos de sesiones de Claude Code** (`agent-teams.md`): 20 lines added, 3 removed
+  - New section: "### Usar definiciones de subagents para compañeros de equipo"
+- **Claude Code en Amazon Bedrock** (`amazon-bedrock.md`): 22 lines added, 5 removed
+  - New section: "# Optional: Override the Bedrock endpoint URL for custom endpoints or gateways"
+  - New section: "# export ANTHROPIC_BEDROCK_BASE_URL=https://bedrock-runtime.us-east-1.amazonaws.com"
+  - New section: "## Ventana de contexto de 1M de tokens"
+  - New section: "### Bucle de autenticación con SSO y proxies corporativos"
+  - New section: "### Problemas de región"
+- **Claude Code en la web** (`claude-code-on-the-web.md`): 4 lines added, 0 removed
+- **Referencia de CLI** (`cli-reference.md`): 18 lines added, 14 removed
+- **Code Review** (`code-review.md`): 61 lines added, 10 removed
+  - New section: "### Salida de ejecución de verificación"
+  - New section: "## Solución de problemas"
+  - New section: "### Reactivar una revisión fallida o agotada por tiempo"
+  - New section: "### Encontrar problemas que no se muestran como comentarios en línea"
+- **Flujos de trabajo comunes** (`common-workflows.md`): 64 lines added, 19 removed
+  - New section: "## Usar pensamiento extendido (Thinking Mode)"
+  - New section: "### Configurar Thinking Mode"
+  - New section: "### Copiar archivos ignorados por git a worktrees"
+  - New section: "## Ejecutar Claude en un horario"
+- **Usar Claude Code Desktop** (`desktop.md`): 31 lines added, 13 removed
+- **Descubra e instale plugins pregenerados a través de mercados** (`discover-plugins.md`): 9 lines added, 9 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 3 lines added, 3 removed
+- **Claude Code en Google Vertex AI** (`google-vertex-ai.md`): 10 lines added, 11 removed
+  - New section: "# Opcional: Anular la URL del punto final de Vertex para puntos finales personalizados o puertas de enlace"
+  - New section: "# export ANTHROPIC_VERTEX_BASE_URL=https://aiplatform.googleapis.com"
+  - New section: "# Cuando CLOUD_ML_REGION=global, anule la región para modelos que no admiten puntos finales globales"
+- **Automatizar flujos de trabajo con hooks** (`hooks-guide.md`): 70 lines added, 18 removed
+  - New section: "#### Filtra por nombre de herramienta y argumentos con el campo `if`"
+  - New section: "### Hooks y modos de permiso"
+- **Referencia de hooks** (`hooks.md`): 145 lines added, 50 removed
+  - New section: "#### Diferir una llamada a herramienta para más tarde"
+  - New section: "### PermissionDenied"
+  - New section: "#### Entrada de PermissionDenied"
+  - New section: "#### Control de decisión de PermissionDenied"
+- **Cómo funciona Claude Code** (`how-claude-code-works.md`): 5 lines added, 3 removed
+- **Modo interactivo** (`interactive-mode.md`): 18 lines added, 21 removed
+- **Personalizar atajos de teclado** (`keybindings.md`): 61 lines added, 36 removed
+- **Conectar Claude Code a herramientas mediante MCP** (`mcp.md`): 27 lines added, 17 removed
+- **Cómo Claude recuerda su proyecto** (`memory.md`): 5 lines added, 5 removed
+- **Configuración del modelo** (`model-config.md`): 51 lines added, 7 removed
+  - New section: "### Personalizar la visualización y capacidades del modelo fijo"
+- **Monitoreo** (`monitoring-usage.md`): 54 lines added, 29 removed
+  - New section: "### Trazas (beta)"
+  - New section: "### Para trazas"
+- **Configuración de red empresarial** (`network-config.md`): 7 lines added, 0 removed
+- **Estilos de salida** (`output-styles.md`): 2 lines added, 1 removed
+- **Configurar permisos** (`permissions.md`): 54 lines added, 25 removed
+  - New section: "### Los directorios adicionales otorgan acceso a archivos, no configuración"
+  - New section: "## Revisar denegaciones del modo auto"
+- **Crear y distribuir un marketplace de plugins** (`plugin-marketplaces.md`): 19 lines added, 1 removed
+  - New section: "### Las actualizaciones del marketplace fallan en entornos sin conexión"
+- **Crear plugins** (`plugins.md`): 2 lines added, 3 removed
+- **Sandboxing** (`sandboxing.md`): 2 lines added, 2 removed
+- **Ejecutar prompts en un horario** (`scheduled-tasks.md`): 2 lines added, 2 removed
+  - New section: "### Vencimiento de siete días"
+- **Configurar la configuración administrada por servidor (beta pública)** (`server-managed-settings.md`): 12 lines added, 3 removed
+  - New section: "### Configuraciones solo administradas"
+- **Configuración de Claude Code** (`settings.md`): 81 lines added, 73 removed
+- **Configuración avanzada** (`setup.md`): 92 lines added, 10 removed
+  - New section: "#### Verificar la firma del manifiesto"
+  - New section: "#### Firmas de código de plataforma"
+- **Ampliar Claude con skills** (`skills.md`): 23 lines added, 19 removed
+  - New section: "### Las descripciones de skills se cortan"
+- **Personaliza tu línea de estado** (`statusline.md`): 117 lines added, 28 removed
+  - New section: "### Uso de límite de velocidad"
+- **Crear subagentes personalizados** (`sub-agents.md`): 49 lines added, 37 removed
+
+### Français
+
+
+**Modified**
+
+- **Orchestrer des équipes de sessions Claude Code** (`agent-teams.md`): 19 lines added, 2 removed
+  - New section: "### Utiliser les définitions de subagents pour les coéquipiers"
+- **Claude Code sur Amazon Bedrock** (`amazon-bedrock.md`): 22 lines added, 5 removed
+  - New section: "# Optional: Override the Bedrock endpoint URL for custom endpoints or gateways"
+  - New section: "# export ANTHROPIC_BEDROCK_BASE_URL=https://bedrock-runtime.us-east-1.amazonaws.com"
+  - New section: "## Fenêtre de contexte de 1M de jetons"
+  - New section: "### Boucle d'authentification avec SSO et proxies d'entreprise"
+  - New section: "### Problèmes de région"
+- **Référence CLI** (`cli-reference.md`): 16 lines added, 12 removed
+- **Révision de code** (`code-review.md`): 61 lines added, 10 removed
+  - New section: "### Sortie de l'exécution de vérification"
+  - New section: "## Dépannage"
+  - New section: "### Redéclencher une révision échouée ou expirée"
+  - New section: "### Trouver les problèmes qui ne s'affichent pas comme des commentaires en ligne"
+- **Flux de travail courants** (`common-workflows.md`): 62 lines added, 17 removed
+  - New section: "### Copier les fichiers ignorés par git vers les worktrees"
+  - New section: "## Exécuter Claude selon un calendrier"
+- **Utiliser Claude Code Desktop** (`desktop.md`): 33 lines added, 15 removed
+- **Découvrir et installer des plugins prédéfinis via les marketplaces** (`discover-plugins.md`): 9 lines added, 9 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 3 lines added, 3 removed
+- **Claude Code sur Google Vertex AI** (`google-vertex-ai.md`): 14 lines added, 15 removed
+  - New section: "# Optionnel : Remplacez l'URL du point de terminaison Vertex pour les points de terminaison personnalisés ou les passerelles"
+  - New section: "# export ANTHROPIC_VERTEX_BASE_URL=https://aiplatform.googleapis.com"
+  - New section: "# Quand CLOUD_ML_REGION=global, remplacez la région pour les modèles qui ne prennent pas en charge les points de terminaison globaux"
+- **Automatiser les workflows avec les hooks** (`hooks-guide.md`): 72 lines added, 18 removed
+  - New section: "#### Filtrer par nom d'outil et arguments avec le champ `if`"
+  - New section: "### Hooks et modes de permission"
+- **Référence des hooks** (`hooks.md`): 141 lines added, 48 removed
+  - New section: "#### Différer un appel d'outil pour plus tard"
+  - New section: "### PermissionDenied"
+  - New section: "#### Entrée PermissionDenied"
+  - New section: "#### Contrôle de décision PermissionDenied"
+- **Comment fonctionne Claude Code** (`how-claude-code-works.md`): 5 lines added, 3 removed
+- **Mode interactif** (`interactive-mode.md`): 18 lines added, 21 removed
+- **Personnaliser les raccourcis clavier** (`keybindings.md`): 78 lines added, 53 removed
+- **Connecter Claude Code aux outils via MCP** (`mcp.md`): 26 lines added, 16 removed
+- **Comment Claude se souvient de votre projet** (`memory.md`): 5 lines added, 5 removed
+- **Configuration du modèle** (`model-config.md`): 51 lines added, 7 removed
+  - New section: "### Personnaliser l'affichage et les capacités du modèle épinglé"
+- **Surveillance** (`monitoring-usage.md`): 54 lines added, 29 removed
+  - New section: "### Traces (bêta)"
+  - New section: "### Pour les traces"
+- **Configuration réseau d'entreprise** (`network-config.md`): 7 lines added, 0 removed
+- **Styles de sortie** (`output-styles.md`): 2 lines added, 1 removed
+- **Configurer les autorisations** (`permissions.md`): 42 lines added, 13 removed
+  - New section: "### Les répertoires supplémentaires accordent l'accès aux fichiers, pas la configuration"
+  - New section: "## Examiner les refus du mode auto"
+- **Créer et distribuer une place de marché de plugins** (`plugin-marketplaces.md`): 19 lines added, 1 removed
+  - New section: "### Les mises à jour de la place de marché échouent dans les environnements hors ligne"
+- **Créer des plugins** (`plugins.md`): 2 lines added, 3 removed
+- **Sandboxing** (`sandboxing.md`): 2 lines added, 2 removed
+- **Exécuter des prompts selon un calendrier** (`scheduled-tasks.md`): 2 lines added, 2 removed
+  - New section: "### Expiration de sept jours"
+- **Configurer les paramètres gérés par le serveur (bêta publique)** (`server-managed-settings.md`): 12 lines added, 3 removed
+  - New section: "### Paramètres réservés à la gestion"
+- **Paramètres Claude Code** (`settings.md`): 81 lines added, 73 removed
+- **Configuration avancée** (`setup.md`): 92 lines added, 10 removed
+  - New section: "#### Vérifier la signature du manifeste"
+  - New section: "#### Signatures de code de plateforme"
+- **Étendre Claude avec des skills** (`skills.md`): 23 lines added, 19 removed
+  - New section: "### Les descriptions de skills sont coupées court"
+- **Personnalisez votre barre de statut** (`statusline.md`): 117 lines added, 28 removed
+  - New section: "### Utilisation des limites de débit"
+- **Créer des sous-agents personnalisés** (`sub-agents.md`): 47 lines added, 37 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Koordinasikan tim Claude Code sessions** (`agent-teams.md`): 19 lines added, 2 removed
+  - New section: "### Gunakan subagent definitions untuk rekan tim"
+- **Claude Code di Amazon Bedrock** (`amazon-bedrock.md`): 22 lines added, 5 removed
+  - New section: "# Opsional: Ganti URL endpoint Bedrock untuk endpoint khusus atau gateway"
+  - New section: "# export ANTHROPIC_BEDROCK_BASE_URL=https://bedrock-runtime.us-east-1.amazonaws.com"
+  - New section: "## Jendela konteks token 1M"
+  - New section: "### Loop autentikasi dengan SSO dan proxy perusahaan"
+  - New section: "### Masalah wilayah"
+- **Claude Code di web** (`claude-code-on-the-web.md`): 4 lines added, 0 removed
+- **Referensi CLI** (`cli-reference.md`): 32 lines added, 28 removed
+- **Code Review** (`code-review.md`): 61 lines added, 10 removed
+  - New section: "### Output jalankan pemeriksaan"
+  - New section: "## Memicu ulasan secara manual"
+  - New section: "## Pemecahan masalah"
+  - New section: "### Picu ulang ulasan yang gagal atau habis waktu"
+  - New section: "### Temukan masalah yang tidak ditampilkan sebagai komentar sebaris"
+- **Alur kerja umum** (`common-workflows.md`): 55 lines added, 10 removed
+  - New section: "### Salin file yang diabaikan git ke worktrees"
+  - New section: "## Jalankan Claude pada jadwal"
+- **Gunakan Claude Code Desktop** (`desktop.md`): 31 lines added, 13 removed
+- **Temukan dan instal plugin yang sudah dibuat melalui marketplace** (`discover-plugins.md`): 9 lines added, 9 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 3 lines added, 3 removed
+- **Claude Code di Google Vertex AI** (`google-vertex-ai.md`): 10 lines added, 11 removed
+  - New section: "# Opsional: Timpa URL titik akhir Vertex untuk titik akhir kustom atau gateway"
+  - New section: "# export ANTHROPIC_VERTEX_BASE_URL=https://aiplatform.googleapis.com"
+  - New section: "# Ketika CLOUD_ML_REGION=global, timpa wilayah untuk model yang tidak mendukung titik akhir global"
+- **Otomatisasi alur kerja dengan hooks** (`hooks-guide.md`): 72 lines added, 18 removed
+  - New section: "#### Filter berdasarkan nama alat dan argumen dengan bidang `if`"
+  - New section: "### Hooks dan mode izin"
+- **Referensi hooks** (`hooks.md`): 142 lines added, 47 removed
+  - New section: "#### Tunda pemanggilan tool untuk nanti"
+  - New section: "### PermissionDenied"
+  - New section: "#### Input PermissionDenied"
+  - New section: "#### Kontrol keputusan PermissionDenied"
+- **Cara Kerja Claude Code** (`how-claude-code-works.md`): 5 lines added, 3 removed
+- **Mode interaktif** (`interactive-mode.md`): 11 lines added, 14 removed
+- **Sesuaikan pintasan keyboard** (`keybindings.md`): 79 lines added, 54 removed
+- **Hubungkan Claude Code ke alat melalui MCP** (`mcp.md`): 26 lines added, 16 removed
+- **Bagaimana Claude mengingat proyek Anda** (`memory.md`): 5 lines added, 5 removed
+- **Konfigurasi model** (`model-config.md`): 51 lines added, 7 removed
+  - New section: "### Sesuaikan tampilan dan kemampuan model yang ditetapkan"
+- **Pemantauan** (`monitoring-usage.md`): 54 lines added, 29 removed
+  - New section: "### Traces (beta)"
+  - New section: "### Untuk traces"
+- **Konfigurasi jaringan enterprise** (`network-config.md`): 7 lines added, 0 removed
+- **Output styles** (`output-styles.md`): 6 lines added, 2 removed
+- **Konfigurasi izin** (`permissions.md`): 44 lines added, 15 removed
+  - New section: "### Direktori tambahan memberikan akses file, bukan konfigurasi"
+  - New section: "## Tinjau penolakan mode auto"
+- **Buat dan distribusikan marketplace plugin** (`plugin-marketplaces.md`): 22 lines added, 4 removed
+  - New section: "### Marketplace updates fail in offline environments"
+  - New section: "### Git operations time out"
+  - New section: "### Plugins with relative paths fail in URL-based marketplaces"
+  - New section: "### Files not found after installation"
+- **Buat plugins** (`plugins.md`): 2 lines added, 3 removed
+- **Sandboxing** (`sandboxing.md`): 1 lines added, 1 removed
+- **Jalankan prompt sesuai jadwal** (`scheduled-tasks.md`): 2 lines added, 2 removed
+  - New section: "### Kedaluwarsa tujuh hari"
+- **Konfigurasi pengaturan yang dikelola server (beta publik)** (`server-managed-settings.md`): 12 lines added, 3 removed
+  - New section: "### Pengaturan yang hanya dikelola"
+- **Pengaturan Claude Code** (`settings.md`): 81 lines added, 74 removed
+- **Pengaturan lanjutan** (`setup.md`): 92 lines added, 10 removed
+  - New section: "#### Verifikasi tanda tangan manifes"
+  - New section: "#### Tanda tangan kode platform"
+- **Perluas Claude dengan skills** (`skills.md`): 23 lines added, 19 removed
+  - New section: "### Deskripsi skill dipotong pendek"
+- **Sesuaikan baris status Anda** (`statusline.md`): 117 lines added, 28 removed
+  - New section: "### Penggunaan batas laju"
+- **Buat subagent khusus** (`sub-agents.md`): 51 lines added, 41 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Orchestrare team di sessioni Claude Code** (`agent-teams.md`): 19 lines added, 2 removed
+  - New section: "### Utilizzare definizioni di subagent per i compagni di team"
+- **Claude Code su Amazon Bedrock** (`amazon-bedrock.md`): 22 lines added, 5 removed
+  - New section: "# Facoltativo: Sovrascrivi l'URL dell'endpoint Bedrock per endpoint personalizzati o gateway"
+  - New section: "# export ANTHROPIC_BEDROCK_BASE_URL=https://bedrock-runtime.us-east-1.amazonaws.com"
+  - New section: "## Finestra di contesto da 1M token"
+  - New section: "### Loop di autenticazione con SSO e proxy aziendali"
+  - New section: "### Problemi di regione"
+- **Claude Code sul web** (`claude-code-on-the-web.md`): 4 lines added, 0 removed
+- **Riferimento CLI** (`cli-reference.md`): 33 lines added, 29 removed
+- **Code Review** (`code-review.md`): 60 lines added, 9 removed
+  - New section: "### Output del check run"
+  - New section: "## Risoluzione dei problemi"
+  - New section: "### Riattiva una revisione non riuscita o scaduta"
+  - New section: "### Trova problemi che non vengono visualizzati come commenti inline"
+- **Flussi di lavoro comuni** (`common-workflows.md`): 63 lines added, 18 removed
+  - New section: "## Utilizzare il pensiero esteso (Thinking Mode)"
+  - New section: "### Configurare Thinking Mode"
+  - New section: "### Copiare file ignorati da git nei worktree"
+  - New section: "## Eseguire Claude su una pianificazione"
+- **Usa Claude Code Desktop** (`desktop.md`): 30 lines added, 12 removed
+- **Scopri e installa plugin precostruiti tramite marketplace** (`discover-plugins.md`): 9 lines added, 9 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 3 lines added, 3 removed
+- **Claude Code su Google Vertex AI** (`google-vertex-ai.md`): 14 lines added, 15 removed
+  - New section: "# Facoltativo: Esegui l'override dell'URL dell'endpoint Vertex per endpoint personalizzati o gateway"
+  - New section: "# export ANTHROPIC_VERTEX_BASE_URL=https://aiplatform.googleapis.com"
+  - New section: "# Quando CLOUD_ML_REGION=global, esegui l'override della regione per i modelli che non supportano endpoint globali"
+- **Automatizzare i flussi di lavoro con hooks** (`hooks-guide.md`): 74 lines added, 20 removed
+  - New section: "#### Filtrare per nome dello strumento e argomenti con il campo `if`"
+  - New section: "### Hooks e modalità di autorizzazione"
+- **Riferimento dei hooks** (`hooks.md`): 167 lines added, 47 removed
+  - New section: "#### Rinviare una chiamata dello strumento per dopo"
+  - New section: "### PermissionDenied"
+  - New section: "#### Input di PermissionDenied"
+  - New section: "#### Controllo della decisione di PermissionDenied"
+  - New section: "## Strumento Windows PowerShell"
+- **Come funziona Claude Code** (`how-claude-code-works.md`): 6 lines added, 4 removed
+- **Modalità interattiva** (`interactive-mode.md`): 11 lines added, 14 removed
+- **Personalizzare le scorciatoie da tastiera** (`keybindings.md`): 49 lines added, 24 removed
+- **Connetti Claude Code ai tuoi strumenti tramite MCP** (`mcp.md`): 30 lines added, 20 removed
+  - New section: "### Configura tool search"
+  - New section: "# Disabilita completamente tool search"
+- **Come Claude ricorda il tuo progetto** (`memory.md`): 10 lines added, 10 removed
+- **Configurazione del modello** (`model-config.md`): 52 lines added, 8 removed
+  - New section: "### Personalizzare la visualizzazione e le capacità del modello fissato"
+- **Monitoraggio** (`monitoring-usage.md`): 54 lines added, 29 removed
+  - New section: "### Tracce (beta)"
+  - New section: "### Per tracce"
+- **Configurazione di rete aziendale** (`network-config.md`): 8 lines added, 1 removed
+- **Output styles** (`output-styles.md`): 7 lines added, 2 removed
+- **Configurare le autorizzazioni** (`permissions.md`): 43 lines added, 14 removed
+  - New section: "### Le directory aggiuntive concedono l'accesso ai file, non la configurazione"
+  - New section: "## Esaminare i rifiuti della modalità auto"
+- **Creare e distribuire un marketplace di plugin** (`plugin-marketplaces.md`): 5 lines added, 1 removed
+- **Creare plugin** (`plugins.md`): 2 lines added, 3 removed
+- **Sandboxing** (`sandboxing.md`): 2 lines added, 2 removed
+- **Eseguire prompt in base a una pianificazione** (`scheduled-tasks.md`): 2 lines added, 2 removed
+  - New section: "### Scadenza di sette giorni"
+- **Configurare le impostazioni gestite dal server (beta pubblico)** (`server-managed-settings.md`): 12 lines added, 3 removed
+  - New section: "### Impostazioni solo gestite"
+- **Impostazioni di Claude Code** (`settings.md`): 81 lines added, 74 removed
+- **Configurazione avanzata** (`setup.md`): 92 lines added, 10 removed
+  - New section: "#### Verificare la firma del manifest"
+  - New section: "#### Firme del codice della piattaforma"
+- **Estendi Claude con skills** (`skills.md`): 24 lines added, 20 removed
+  - New section: "### Le descrizioni delle skills vengono tagliate"
+- **Personalizza la tua barra di stato** (`statusline.md`): 117 lines added, 28 removed
+  - New section: "### Utilizzo del limite di velocità"
+- **Creare subagent personalizzati** (`sub-agents.md`): 194 lines added, 182 removed
+  - New section: "## Quickstart: crea il suo primo subagent"
+  - New section: "## Configuri i subagent"
+  - New section: "### Usi il comando /agents"
+  - New section: "### Scelga l'ambito del subagent"
+  - New section: "### Scriva file subagent"
+
+### 日本語
+
+
+**Modified**
+
+- **Claude Code セッションのチームを調整する** (`agent-teams.md`): 19 lines added, 2 removed
+  - New section: "### チームメンバーに subagent 定義を使用する"
+- **Amazon Bedrock 上の Claude Code** (`amazon-bedrock.md`): 22 lines added, 5 removed
+  - New section: "# オプション：カスタムエンドポイントまたはゲートウェイ用に Bedrock エンドポイント URL をオーバーライド"
+  - New section: "# export ANTHROPIC_BEDROCK_BASE_URL=https://bedrock-runtime.us-east-1.amazonaws.com"
+  - New section: "## 1M トークンコンテキストウィンドウ"
+  - New section: "### SSO と企業プロキシでの認証ループ"
+  - New section: "### リージョンの問題"
+- **ウェブ上の Claude Code** (`claude-code-on-the-web.md`): 4 lines added, 0 removed
+- **CLI リファレンス** (`cli-reference.md`): 32 lines added, 28 removed
+- **Code Review** (`code-review.md`): 61 lines added, 10 removed
+  - New section: "### チェック実行出力"
+  - New section: "## トラブルシューティング"
+  - New section: "### 失敗またはタイムアウトしたレビューを再トリガーする"
+  - New section: "### インラインコメントとして表示されていない問題を見つける"
+- **一般的なワークフロー** (`common-workflows.md`): 60 lines added, 15 removed
+  - New section: "### Worktree に gitignored ファイルをコピーする"
+  - New section: "## Claude をスケジュールで実行する"
+  - New section: "## Claude にその機能について質問する"
+- **Claude Code Desktop を使用する** (`desktop.md`): 33 lines added, 15 removed
+- **マーケットプレイスから事前構築されたプラグインを発見してインストールする** (`discover-plugins.md`): 9 lines added, 9 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 3 lines added, 3 removed
+- **Google Vertex AI 上の Claude Code** (`google-vertex-ai.md`): 15 lines added, 16 removed
+  - New section: "# オプション：カスタムエンドポイントまたはゲートウェイ用に Vertex エンドポイント URL をオーバーライドする"
+  - New section: "# export ANTHROPIC_VERTEX_BASE_URL=https://aiplatform.googleapis.com"
+  - New section: "# CLOUD_ML_REGION=global の場合、グローバルエンドポイントをサポートしていないモデルのリージョンをオーバーライドする"
+- **hooks でワークフローを自動化する** (`hooks-guide.md`): 69 lines added, 17 removed
+  - New section: "#### `if` フィールドでツール名と引数でフィルタリングする"
+  - New section: "### Hooks と許可モード"
+- **Hooks リファレンス** (`hooks.md`): 149 lines added, 54 removed
+  - New section: "#### ツール呼び出しを後で再開するために遅延"
+  - New section: "### PermissionDenied"
+  - New section: "#### PermissionDenied 入力"
+  - New section: "#### PermissionDenied 決定制御"
+- **Claude Code の仕組み** (`how-claude-code-works.md`): 5 lines added, 3 removed
+- **インタラクティブモード** (`interactive-mode.md`): 11 lines added, 14 removed
+- **キーボードショートカットのカスタマイズ** (`keybindings.md`): 48 lines added, 23 removed
+- **MCP を使用して Claude Code をツールに接続する** (`mcp.md`): 26 lines added, 16 removed
+- **Claude があなたのプロジェクトを記憶する方法** (`memory.md`): 5 lines added, 5 removed
+- **モデル設定** (`model-config.md`): 51 lines added, 7 removed
+  - New section: "### ピン留めされたモデルの表示と機能のカスタマイズ"
+- **監視** (`monitoring-usage.md`): 68 lines added, 43 removed
+  - New section: "### トレース (ベータ)"
+  - New section: "### トレースの場合"
+- **エンタープライズネットワーク設定** (`network-config.md`): 7 lines added, 0 removed
+- **出力スタイル** (`output-styles.md`): 2 lines added, 1 removed
+- **権限を設定する** (`permissions.md`): 37 lines added, 14 removed
+  - New section: "### 追加ディレクトリはファイルアクセスを許可し、設定ではありません"
+- **プラグインマーケットプレイスの作成と配布** (`plugin-marketplaces.md`): 20 lines added, 2 removed
+  - New section: "### オフライン環境でマーケットプレイス更新が失敗する"
+- **プラグインを作成する** (`plugins.md`): 1 lines added, 2 removed
+- **サンドボックス** (`sandboxing.md`): 1 lines added, 1 removed
+- **スケジュールに従ってプロンプトを実行する** (`scheduled-tasks.md`): 2 lines added, 2 removed
+  - New section: "### 7 日間の有効期限"
+- **サーバー管理設定を構成する（パブリックベータ版）** (`server-managed-settings.md`): 10 lines added, 3 removed
+  - New section: "### 管理専用設定"
+- **Claude Code の設定** (`settings.md`): 82 lines added, 73 removed
+- **高度なセットアップ** (`setup.md`): 92 lines added, 10 removed
+  - New section: "#### マニフェスト署名を検証"
+  - New section: "#### プラットフォームコード署名"
+- **スキルで Claude を拡張する** (`skills.md`): 23 lines added, 19 removed
+  - New section: "### スキルの説明が短縮される"
+- **ステータスラインをカスタマイズする** (`statusline.md`): 117 lines added, 28 removed
+  - New section: "### レート制限の使用状況"
+- **カスタムサブエージェントの作成** (`sub-agents.md`): 29 lines added, 19 removed
+
+### 한국어
+
+
+**Modified**
+
+- **Claude Code 세션 팀 조율하기** (`agent-teams.md`): 19 lines added, 2 removed
+  - New section: "### 팀원을 위해 subagent 정의 사용"
+- **Amazon Bedrock의 Claude Code** (`amazon-bedrock.md`): 22 lines added, 5 removed
+  - New section: "# 선택 사항: 사용자 정의 엔드포인트 또는 게이트웨이를 위한 Bedrock 엔드포인트 URL 재정의"
+  - New section: "# export ANTHROPIC_BEDROCK_BASE_URL=https://bedrock-runtime.us-east-1.amazonaws.com"
+  - New section: "## 1M 토큰 컨텍스트 윈도우"
+  - New section: "### SSO 및 회사 프록시를 사용한 인증 루프"
+  - New section: "### 지역 문제"
+- **웹에서 Claude Code 사용하기** (`claude-code-on-the-web.md`): 6 lines added, 2 removed
+- **CLI 참조** (`cli-reference.md`): 87 lines added, 83 removed
+- **Code Review** (`code-review.md`): 59 lines added, 8 removed
+  - New section: "### 확인 실행 출력"
+  - New section: "## 문제 해결"
+  - New section: "### 실패하거나 시간 초과된 검토 재트리거"
+  - New section: "### 인라인 댓글로 표시되지 않는 문제 찾기"
+- **일반적인 워크플로우** (`common-workflows.md`): 59 lines added, 14 removed
+  - New section: "### Worktree에 gitignored 파일 복사하기"
+  - New section: "## Claude를 일정에 따라 실행하기"
+- **Claude Code Desktop 사용하기** (`desktop.md`): 29 lines added, 13 removed
+- **마켓플레이스를 통해 미리 빌드된 플러그인 발견 및 설치** (`discover-plugins.md`): 9 lines added, 9 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 3 lines added, 3 removed
+- **Google Vertex AI에서 Claude Code 사용하기** (`google-vertex-ai.md`): 10 lines added, 11 removed
+  - New section: "# 선택사항: 사용자 정의 엔드포인트 또는 게이트웨이를 위해 Vertex 엔드포인트 URL 재정의"
+  - New section: "# export ANTHROPIC_VERTEX_BASE_URL=https://aiplatform.googleapis.com"
+  - New section: "# CLOUD_ML_REGION=global일 때, 전역 엔드포인트를 지원하지 않는 모델의 지역 재정의"
+- **hooks를 사용하여 워크플로우 자동화** (`hooks-guide.md`): 76 lines added, 24 removed
+  - New section: "#### 도구 이름 및 인수로 `if` 필드를 사용하여 필터링"
+  - New section: "### Hooks 및 권한 모드"
+- **Hooks 참조** (`hooks.md`): 138 lines added, 47 removed
+  - New section: "#### 도구 호출을 나중에 재개하도록 연기"
+  - New section: "### PermissionDenied"
+  - New section: "#### PermissionDenied 입력"
+  - New section: "#### PermissionDenied 결정 제어"
+- **Claude Code의 작동 방식** (`how-claude-code-works.md`): 5 lines added, 3 removed
+- **대화형 모드** (`interactive-mode.md`): 14 lines added, 17 removed
+- **키보드 단축키 사용자 정의** (`keybindings.md`): 48 lines added, 23 removed
+- **MCP를 통해 Claude Code를 도구에 연결하기** (`mcp.md`): 26 lines added, 16 removed
+- **Claude가 프로젝트를 기억하는 방법** (`memory.md`): 4 lines added, 4 removed
+- **모델 구성** (`model-config.md`): 52 lines added, 8 removed
+  - New section: "### 고정된 모델 표시 및 기능 사용자 정의"
+- **모니터링** (`monitoring-usage.md`): 54 lines added, 29 removed
+  - New section: "### 추적 (베타)"
+  - New section: "### 추적의 경우"
+- **엔터프라이즈 네트워크 구성** (`network-config.md`): 7 lines added, 0 removed
+- **출력 스타일** (`output-styles.md`): 2 lines added, 1 removed
+- **권한 구성** (`permissions.md`): 41 lines added, 12 removed
+  - New section: "### 추가 디렉토리는 파일 액세스를 부여하며, 구성은 아닙니다"
+  - New section: "## 자동 모드 거부 검토"
+- **플러그인 마켓플레이스 생성 및 배포** (`plugin-marketplaces.md`): 19 lines added, 1 removed
+  - New section: "### 마켓플레이스 업데이트가 오프라인 환경에서 실패합니다"
+- **플러그인 만들기** (`plugins.md`): 2 lines added, 3 removed
+- **샌드박싱** (`sandboxing.md`): 1 lines added, 1 removed
+- **일정에 따라 프롬프트 실행하기** (`scheduled-tasks.md`): 2 lines added, 2 removed
+  - New section: "### 7일 만료"
+- **서버 관리 설정 구성(공개 베타)** (`server-managed-settings.md`): 47 lines added, 3 removed
+  - New section: "### 관리 전용 설정"
+- **Claude Code 설정** (`settings.md`): 81 lines added, 73 removed
+- **고급 설정** (`setup.md`): 92 lines added, 10 removed
+  - New section: "#### 매니페스트 서명 확인"
+  - New section: "#### 플랫폼 코드 서명"
+- **Claude를 skills로 확장하기** (`skills.md`): 23 lines added, 19 removed
+  - New section: "### Skill 설명이 잘림"
+- **상태 표시줄 사용자 정의** (`statusline.md`): 117 lines added, 28 removed
+  - New section: "### 속도 제한 사용량"
+- **사용자 정의 subagent 만들기** (`sub-agents.md`): 32 lines added, 22 removed
+
+### Português
+
+
+**Modified**
+
+- **Orquestre equipes de sessões Claude Code** (`agent-teams.md`): 20 lines added, 3 removed
+  - New section: "### Usar definições de subagent para companheiros de equipe"
+- **Claude Code no Amazon Bedrock** (`amazon-bedrock.md`): 22 lines added, 5 removed
+  - New section: "# Opcional: Substituir a URL do endpoint Bedrock para endpoints personalizados ou gateways"
+  - New section: "# export ANTHROPIC_BEDROCK_BASE_URL=https://bedrock-runtime.us-east-1.amazonaws.com"
+  - New section: "## Janela de contexto de 1M de tokens"
+  - New section: "### Loop de autenticação com SSO e proxies corporativos"
+  - New section: "### Problemas de região"
+- **Claude Code na web** (`claude-code-on-the-web.md`): 4 lines added, 0 removed
+- **Referência de CLI** (`cli-reference.md`): 32 lines added, 28 removed
+- **Code Review** (`code-review.md`): 62 lines added, 11 removed
+  - New section: "### Saída de execução de verificação"
+  - New section: "## Acionando revisões manualmente"
+  - New section: "## Troubleshooting"
+  - New section: "### Retrigger uma revisão falhada ou com tempo limite excedido"
+  - New section: "### Encontrar problemas que não aparecem como comentários inline"
+- **Fluxos de trabalho comuns** (`common-workflows.md`): 61 lines added, 16 removed
+  - New section: "### Copiar arquivos gitignored para worktrees"
+  - New section: "## Executar Claude em um cronograma"
+- **Use Claude Code Desktop** (`desktop.md`): 31 lines added, 13 removed
+- **Descubra e instale plugins pré-construídos através de marketplaces** (`discover-plugins.md`): 9 lines added, 9 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 3 lines added, 3 removed
+- **Claude Code no Google Vertex AI** (`google-vertex-ai.md`): 14 lines added, 15 removed
+  - New section: "# Opcional: Substituir a URL do endpoint Vertex para endpoints personalizados ou gateways"
+  - New section: "# export ANTHROPIC_VERTEX_BASE_URL=https://aiplatform.googleapis.com"
+  - New section: "# Quando CLOUD_ML_REGION=global, substituir região para modelos que não suportam endpoints globais"
+- **Automatizar fluxos de trabalho com hooks** (`hooks-guide.md`): 77 lines added, 23 removed
+  - New section: "#### Filtrar por nome de ferramenta e argumentos com o campo `if`"
+  - New section: "### Hooks e modos de permissão"
+- **Referência de hooks** (`hooks.md`): 167 lines added, 47 removed
+  - New section: "#### Adiar uma chamada de ferramenta para mais tarde"
+  - New section: "### PermissionDenied"
+  - New section: "#### Entrada de PermissionDenied"
+  - New section: "#### Controle de decisão de PermissionDenied"
+  - New section: "## Ferramenta Windows PowerShell"
+- **Como Claude Code funciona** (`how-claude-code-works.md`): 5 lines added, 3 removed
+- **Modo interativo** (`interactive-mode.md`): 18 lines added, 21 removed
+- **Personalizar atalhos de teclado** (`keybindings.md`): 48 lines added, 23 removed
+- **Conectar Claude Code a ferramentas via MCP** (`mcp.md`): 27 lines added, 17 removed
+- **Como Claude se lembra do seu projeto** (`memory.md`): 5 lines added, 5 removed
+- **Configuração de modelo** (`model-config.md`): 51 lines added, 7 removed
+  - New section: "### Personalizar exibição e capacidades do modelo fixado"
+- **Monitoramento** (`monitoring-usage.md`): 54 lines added, 29 removed
+  - New section: "### Rastreamentos (beta)"
+  - New section: "### Para rastreamentos"
+- **Configuração de rede empresarial** (`network-config.md`): 8 lines added, 1 removed
+- **Estilos de saída** (`output-styles.md`): 2 lines added, 1 removed
+- **Configurar permissões** (`permissions.md`): 46 lines added, 17 removed
+  - New section: "### Diretórios adicionais concedem acesso a arquivos, não configuração"
+  - New section: "## Revisar negações do modo auto"
+- **Criar e distribuir um marketplace de plugins** (`plugin-marketplaces.md`): 20 lines added, 2 removed
+  - New section: "### Atualizações de marketplace falham em ambientes offline"
+- **Criar plugins** (`plugins.md`): 2 lines added, 3 removed
+- **Sandboxing** (`sandboxing.md`): 4 lines added, 2 removed
+- **Executar prompts em um cronograma** (`scheduled-tasks.md`): 3 lines added, 3 removed
+  - New section: "### Expiração de sete dias"
+- **Configurar configurações gerenciadas pelo servidor (beta público)** (`server-managed-settings.md`): 12 lines added, 3 removed
+  - New section: "### Configurações apenas gerenciadas"
+- **Configurações do Claude Code** (`settings.md`): 81 lines added, 74 removed
+- **Configuração avançada** (`setup.md`): 92 lines added, 10 removed
+  - New section: "#### Verificar a assinatura do manifesto"
+  - New section: "#### Assinaturas de código de plataforma"
+- **Estenda Claude com skills** (`skills.md`): 23 lines added, 19 removed
+  - New section: "### Descrições de skills são cortadas"
+- **Personalize sua linha de status** (`statusline.md`): 117 lines added, 28 removed
+  - New section: "### Uso de limite de taxa"
+- **Criar subagentes personalizados** (`sub-agents.md`): 47 lines added, 37 removed
+
+### Русский
+
+
+**Modified**
+
+- **Координируйте команды сеансов Claude Code** (`agent-teams.md`): 20 lines added, 3 removed
+  - New section: "### Использование определений subagent для товарищей по команде"
+- **Claude Code на Amazon Bedrock** (`amazon-bedrock.md`): 22 lines added, 5 removed
+  - New section: "# Optional: Override the Bedrock endpoint URL for custom endpoints or gateways"
+  - New section: "# export ANTHROPIC_BEDROCK_BASE_URL=https://bedrock-runtime.us-east-1.amazonaws.com"
+  - New section: "## Окно контекста 1M токенов"
+  - New section: "### Цикл аутентификации с SSO и корпоративными прокси"
+  - New section: "### Проблемы с регионом"
+- **Claude Code в веб-интерфейсе** (`claude-code-on-the-web.md`): 4 lines added, 0 removed
+- **Справочник CLI** (`cli-reference.md`): 16 lines added, 12 removed
+- **Code Review** (`code-review.md`): 61 lines added, 10 removed
+  - New section: "### Вывод проверки"
+  - New section: "## Устранение неполадок"
+  - New section: "### Повторный запуск сбойной или истёкшей по времени проверки"
+  - New section: "### Найти проблемы, которые не отображаются как встроенные комментарии"
+- **Распространённые рабочие процессы** (`common-workflows.md`): 64 lines added, 19 removed
+  - New section: "## Использование расширенного мышления (Thinking Mode)"
+  - New section: "### Настройка Thinking Mode"
+  - New section: "### Копирование файлов, игнорируемых gitignore, в worktrees"
+  - New section: "## Запуск Claude по расписанию"
+- **Использование Claude Code Desktop** (`desktop.md`): 31 lines added, 13 removed
+- **Откройте и установите готовые плагины через маркетплейсы** (`discover-plugins.md`): 71 lines added, 71 removed
+  - New section: "### Code intelligence"
+  - New section: "#### Что Claude получает от плагинов code intelligence"
+  - New section: "### External integrations"
+  - New section: "### Development workflows"
+  - New section: "### Output styles"
+- **Claude Code GitHub Actions** (`github-actions.md`): 3 lines added, 3 removed
+- **Claude Code на Google Vertex AI** (`google-vertex-ai.md`): 10 lines added, 11 removed
+  - New section: "# Опционально: переопределите URL конечной точки Vertex для пользовательских конечных точек или шлюзов"
+  - New section: "# export ANTHROPIC_VERTEX_BASE_URL=https://aiplatform.googleapis.com"
+  - New section: "# Когда CLOUD_ML_REGION=global, переопределите регион для моделей, которые не поддерживают глобальные конечные точки"
+- **Автоматизация рабочих процессов с помощью hooks** (`hooks-guide.md`): 71 lines added, 17 removed
+  - New section: "#### Фильтрация по имени инструмента и аргументам с помощью поля `if`"
+  - New section: "### Hooks и режимы разрешений"
+- **Справочник по hooks** (`hooks.md`): 163 lines added, 47 removed
+  - New section: "#### Defer a tool call for later"
+  - New section: "### PermissionDenied"
+  - New section: "#### PermissionDenied input"
+  - New section: "#### PermissionDenied decision control"
+  - New section: "## Windows PowerShell tool"
+- **Как работает Claude Code** (`how-claude-code-works.md`): 5 lines added, 3 removed
+- **Интерактивный режим** (`interactive-mode.md`): 11 lines added, 14 removed
+- **Настройка сочетаний клавиш** (`keybindings.md`): 48 lines added, 23 removed
+- **Подключите Claude Code к инструментам через MCP** (`mcp.md`): 30 lines added, 20 removed
+  - New section: "### Настройте tool search"
+  - New section: "# Полностью отключите tool search"
+- **Как Claude запоминает ваш проект** (`memory.md`): 10 lines added, 10 removed
+- **Конфигурация модели** (`model-config.md`): 24 lines added, 15 removed
+- **Мониторинг** (`monitoring-usage.md`): 54 lines added, 29 removed
+  - New section: "### Трассировки (beta)"
+  - New section: "### Для трассировок"
+- **Конфигурация сети для предприятия** (`network-config.md`): 7 lines added, 0 removed
+- **Output styles** (`output-styles.md`): 2 lines added, 1 removed
+- **Настройка разрешений** (`permissions.md`): 42 lines added, 13 removed
+  - New section: "### Дополнительные каталоги предоставляют доступ к файлам, а не конфигурацию"
+  - New section: "## Просмотр отклонений режима auto"
+- **Создание и распространение marketplace плагинов** (`plugin-marketplaces.md`): 19 lines added, 1 removed
+  - New section: "### Обновления marketplace не работают в автономных средах"
+- **Создание plugins** (`plugins.md`): 2 lines added, 3 removed
+- **Sandboxing** (`sandboxing.md`): 2 lines added, 2 removed
+- **Запуск подсказок по расписанию** (`scheduled-tasks.md`): 2 lines added, 2 removed
+  - New section: "### Истечение через семь дней"
+- **Настройка параметров, управляемых сервером (открытая бета)** (`server-managed-settings.md`): 12 lines added, 3 removed
+  - New section: "### Параметры только для управления"
+- **Параметры Claude Code** (`settings.md`): 81 lines added, 74 removed
+- **Расширенная настройка** (`setup.md`): 93 lines added, 11 removed
+  - New section: "#### Проверка подписи манифеста"
+  - New section: "#### Подписи кода платформы"
+- **Расширьте Claude с помощью skills** (`skills.md`): 23 lines added, 19 removed
+  - New section: "### Описания skills обрезаны"
+- **Настройка строки состояния** (`statusline.md`): 117 lines added, 28 removed
+  - New section: "### Использование лимита скорости"
+- **Создание пользовательских subagents** (`sub-agents.md`): 51 lines added, 41 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **协调 Claude Code 会话团队** (`agent-teams.md`): 19 lines added, 2 removed
+  - New section: "### 为队友使用 subagent 定义"
+- **Amazon Bedrock 上的 Claude Code** (`amazon-bedrock.md`): 22 lines added, 5 removed
+  - New section: "# 可选：覆盖 Bedrock 端点 URL 以用于自定义端点或网关"
+  - New section: "# export ANTHROPIC_BEDROCK_BASE_URL=https://bedrock-runtime.us-east-1.amazonaws.com"
+  - New section: "## 1M 令牌上下文窗口"
+  - New section: "### 使用 SSO 和企业代理的身份验证循环"
+  - New section: "### 区域问题"
+- **Claude Code on the web** (`claude-code-on-the-web.md`): 4 lines added, 0 removed
+- **CLI 参考** (`cli-reference.md`): 32 lines added, 28 removed
+- **Code Review** (`code-review.md`): 59 lines added, 8 removed
+  - New section: "### 检查运行输出"
+  - New section: "## 故障排除"
+  - New section: "### 重新触发失败或超时的审查"
+  - New section: "### 查找未显示为内联评论的问题"
+- **常见工作流程** (`common-workflows.md`): 60 lines added, 15 removed
+  - New section: "### 复制 gitignored 文件到 worktrees"
+  - New section: "## 按计划运行 Claude"
+- **使用 Claude Code Desktop** (`desktop.md`): 25 lines added, 7 removed
+- **通过市场发现和安装预构建插件** (`discover-plugins.md`): 8 lines added, 8 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 3 lines added, 3 removed
+- **Google Vertex AI 上的 Claude Code** (`google-vertex-ai.md`): 14 lines added, 15 removed
+  - New section: "# 可选：为自定义端点或网关覆盖 Vertex 端点 URL"
+  - New section: "# export ANTHROPIC_VERTEX_BASE_URL=https://aiplatform.googleapis.com"
+  - New section: "# 当 CLOUD_ML_REGION=global 时，为不支持全局端点的模型覆盖区域"
+- **使用 hooks 自动化工作流** (`hooks-guide.md`): 72 lines added, 20 removed
+  - New section: "#### 使用 `if` 字段按工具名称和参数过滤"
+  - New section: "### Hooks 和权限模式"
+  - New section: "# ... 你的 hook 逻辑的其余部分"
+- **Hooks 参考** (`hooks.md`): 142 lines added, 47 removed
+  - New section: "#### 延迟工具调用以供稍后使用"
+  - New section: "### PermissionDenied"
+  - New section: "#### PermissionDenied 输入"
+  - New section: "#### PermissionDenied 决定控制"
+- **Claude Code 如何工作** (`how-claude-code-works.md`): 5 lines added, 3 removed
+- **交互模式** (`interactive-mode.md`): 11 lines added, 14 removed
+- **自定义快捷键** (`keybindings.md`): 61 lines added, 36 removed
+- **通过 MCP 将 Claude Code 连接到工具** (`mcp.md`): 27 lines added, 17 removed
+- **Claude 如何记住你的项目** (`memory.md`): 5 lines added, 5 removed
+- **模型配置** (`model-config.md`): 51 lines added, 7 removed
+  - New section: "### 自定义固定模型显示和功能"
+- **监控** (`monitoring-usage.md`): 54 lines added, 29 removed
+  - New section: "### Traces（测试版）"
+  - New section: "### 对于跟踪"
+- **企业网络配置** (`network-config.md`): 7 lines added, 0 removed
+- **输出样式** (`output-styles.md`): 2 lines added, 1 removed
+- **配置权限** (`permissions.md`): 42 lines added, 13 removed
+  - New section: "### 其他目录授予文件访问权限，而不是配置"
+  - New section: "## 审查自动模式拒绝"
+- **创建和分发 plugin marketplace** (`plugin-marketplaces.md`): 19 lines added, 1 removed
+  - New section: "### Marketplace 更新在离线环境中失败"
+- **创建插件** (`plugins.md`): 2 lines added, 3 removed
+- **Sandboxing** (`sandboxing.md`): 2 lines added, 2 removed
+- **按计划运行提示词** (`scheduled-tasks.md`): 2 lines added, 2 removed
+  - New section: "### 七天过期"
+- **配置服务器管理的设置（公开测试版）** (`server-managed-settings.md`): 12 lines added, 3 removed
+  - New section: "### 仅限托管的设置"
+- **Claude Code 设置** (`settings.md`): 81 lines added, 74 removed
+- **高级设置** (`setup.md`): 92 lines added, 10 removed
+  - New section: "#### 验证清单签名"
+  - New section: "#### 平台代码签名"
+- **使用 skills 扩展 Claude** (`skills.md`): 23 lines added, 19 removed
+  - New section: "### Skill 描述被截断"
+- **自定义你的状态行** (`statusline.md`): 117 lines added, 28 removed
+  - New section: "### 速率限制使用情况"
+- **创建自定义 subagents** (`sub-agents.md`): 32 lines added, 22 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **協調 Claude Code 工作階段團隊** (`agent-teams.md`): 19 lines added, 2 removed
+  - New section: "### 為隊友使用 subagent 定義"
+- **Amazon Bedrock 上的 Claude Code** (`amazon-bedrock.md`): 22 lines added, 5 removed
+  - New section: "# 選用：覆寫 Bedrock 端點 URL 以用於自訂端點或閘道"
+  - New section: "# export ANTHROPIC_BEDROCK_BASE_URL=https://bedrock-runtime.us-east-1.amazonaws.com"
+  - New section: "## 1M 權杖內容視窗"
+  - New section: "### 使用 SSO 和公司代理的驗證迴圈"
+  - New section: "### 區域問題"
+- **Claude Code 網頁版** (`claude-code-on-the-web.md`): 4 lines added, 0 removed
+- **CLI 參考** (`cli-reference.md`): 37 lines added, 33 removed
+- **Code Review** (`code-review.md`): 59 lines added, 8 removed
+  - New section: "### 檢查運行輸出"
+  - New section: "## 故障排除"
+  - New section: "### 重新觸發失敗或超時的審查"
+  - New section: "### 查找未顯示為內聯評論的問題"
+- **常見工作流程** (`common-workflows.md`): 62 lines added, 17 removed
+  - New section: "### 複製 gitignored 檔案到 worktrees"
+  - New section: "## 在排程上執行 Claude"
+- **使用 Claude Code Desktop** (`desktop.md`): 32 lines added, 12 removed
+- **透過市場探索和安裝預建外掛程式** (`discover-plugins.md`): 9 lines added, 9 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 3 lines added, 3 removed
+- **Google Vertex AI 上的 Claude Code** (`google-vertex-ai.md`): 14 lines added, 15 removed
+  - New section: "# 選用：覆寫 Vertex 端點 URL 以用於自訂端點或閘道"
+  - New section: "# export ANTHROPIC_VERTEX_BASE_URL=https://aiplatform.googleapis.com"
+  - New section: "# 當 CLOUD_ML_REGION=global 時，覆寫不支援全球端點的模型的區域"
+- **使用 hooks 自動化工作流程** (`hooks-guide.md`): 79 lines added, 25 removed
+  - New section: "#### 使用 `if` 欄位按工具名稱和引數篩選"
+  - New section: "### Hooks 和權限模式"
+  - New section: "# ... 您的 hook 邏輯的其餘部分"
+  - New section: "# 在 ~/.zshrc 或 ~/.bashrc 中"
+- **Hooks 參考** (`hooks.md`): 143 lines added, 48 removed
+  - New section: "#### 延遲工具呼叫以供稍後使用"
+  - New section: "### PermissionDenied"
+  - New section: "#### PermissionDenied 輸入"
+  - New section: "#### PermissionDenied 決定控制"
+- **Claude Code 如何運作** (`how-claude-code-works.md`): 5 lines added, 3 removed
+- **互動模式** (`interactive-mode.md`): 11 lines added, 14 removed
+- **自訂鍵盤快捷鍵** (`keybindings.md`): 43 lines added, 18 removed
+- **透過 MCP 將 Claude Code 連接到工具** (`mcp.md`): 26 lines added, 16 removed
+- **Claude 如何記住您的專案** (`memory.md`): 5 lines added, 5 removed
+- **模型配置** (`model-config.md`): 19 lines added, 10 removed
+- **監控** (`monitoring-usage.md`): 54 lines added, 29 removed
+  - New section: "### Traces (beta)"
+  - New section: "### 對於追蹤"
+- **企業網路設定** (`network-config.md`): 7 lines added, 0 removed
+- **輸出樣式** (`output-styles.md`): 2 lines added, 1 removed
+- **設定權限** (`permissions.md`): 52 lines added, 23 removed
+  - New section: "### 其他目錄授予檔案存取權，而非設定"
+  - New section: "## 檢視 auto mode 拒絕"
+- **建立並分發 plugin marketplace** (`plugin-marketplaces.md`): 19 lines added, 1 removed
+  - New section: "### Marketplace 更新在離線環境中失敗"
+- **建立 plugins** (`plugins.md`): 2 lines added, 3 removed
+- **Sandboxing** (`sandboxing.md`): 2 lines added, 2 removed
+- **按排程執行提示** (`scheduled-tasks.md`): 2 lines added, 2 removed
+  - New section: "### 七天過期"
+- **設定伺服器管理的設定 (公開測試版)** (`server-managed-settings.md`): 12 lines added, 3 removed
+  - New section: "### 僅限受管的設定"
+- **Claude Code 設定** (`settings.md`): 81 lines added, 74 removed
+- **進階設定** (`setup.md`): 92 lines added, 10 removed
+  - New section: "#### 驗證資訊清單簽名"
+  - New section: "#### 平台程式碼簽名"
+- **使用 skills 擴展 Claude** (`skills.md`): 23 lines added, 19 removed
+  - New section: "### Skill 描述被截斷"
+- **自訂您的狀態列** (`statusline.md`): 117 lines added, 28 removed
+  - New section: "### 速率限制使用情況"
+- **建立自訂 subagents** (`sub-agents.md`): 33 lines added, 21 removed
+
+---
+
 ## 2026-04-02
 
 93 pages modified

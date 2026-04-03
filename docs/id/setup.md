@@ -30,7 +30,7 @@ Claude Code berjalan pada platform dan konfigurasi berikut:
 ## Instal Claude Code
 
 <Tip>
-  Lebih suka antarmuka grafis? [Aplikasi Desktop](/id/desktop-quickstart) memungkinkan Anda menggunakan Claude Code tanpa terminal. Unduh untuk [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) atau [Windows](https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs).
+  Lebih suka antarmuka grafis? [Aplikasi Desktop](/id/desktop-quickstart) memungkinkan Anda menggunakan Claude Code tanpa terminal. Unduh untuk [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) atau [Windows](https://claude.com/download?utm_source=claude_code\&utm_medium=docs).
 
   Baru mengenal terminal? Lihat [panduan terminal](/id/terminal-guide) untuk instruksi langkah demi langkah.
 </Tip>
@@ -113,6 +113,8 @@ Jika Claude Code tidak dapat menemukan instalasi Git Bash Anda, atur jalur di [f
 }
 ```
 
+Claude Code juga dapat menjalankan PowerShell secara native di Windows sebagai pratinjau opt-in. Lihat [PowerShell tool](/id/tools-reference#powershell-tool) untuk pengaturan dan batasan.
+
 **Opsi 2: WSL**
 
 Baik WSL 1 maupun WSL 2 didukung. WSL 2 mendukung [sandboxing](/id/sandboxing) untuk keamanan yang ditingkatkan. WSL 1 tidak mendukung sandboxing.
@@ -153,7 +155,7 @@ claude doctor
 
 ## Autentikasi
 
-Claude Code memerlukan akun Pro, Max, Teams, Enterprise, atau Console. Paket Claude.ai gratis tidak termasuk akses Claude Code. Anda juga dapat menggunakan Claude Code dengan penyedia API pihak ketiga seperti [Amazon Bedrock](/id/amazon-bedrock), [Google Vertex AI](/id/google-vertex-ai), atau [Microsoft Foundry](/id/microsoft-foundry).
+Claude Code memerlukan akun Pro, Max, Team, Enterprise, atau Console. Paket Claude.ai gratis tidak termasuk akses Claude Code. Anda juga dapat menggunakan Claude Code dengan penyedia API pihak ketiga seperti [Amazon Bedrock](/id/amazon-bedrock), [Google Vertex AI](/id/google-vertex-ai), atau [Microsoft Foundry](/id/microsoft-foundry).
 
 Setelah menginstal, masuk dengan menjalankan `claude` dan mengikuti petunjuk browser. Lihat [Autentikasi](/id/authentication) untuk semua jenis akun dan opsi pengaturan tim.
 
@@ -267,19 +269,19 @@ Untuk menginstal nomor versi tertentu:
 <Tabs>
   <Tab title="macOS, Linux, WSL">
     ```bash  theme={null}
-    curl -fsSL https://claude.ai/install.sh | bash -s 1.0.58
+    curl -fsSL https://claude.ai/install.sh | bash -s 2.1.89
     ```
   </Tab>
 
   <Tab title="Windows PowerShell">
     ```powershell  theme={null}
-    & ([scriptblock]::Create((irm https://claude.ai/install.ps1))) 1.0.58
+    & ([scriptblock]::Create((irm https://claude.ai/install.ps1))) 2.1.89
     ```
   </Tab>
 
   <Tab title="Windows CMD">
     ```batch  theme={null}
-    curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd 1.0.58 && del install.cmd
+    curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd 2.1.89 && del install.cmd
     ```
   </Tab>
 </Tabs>
@@ -316,12 +318,92 @@ npm install -g @anthropic-ai/claude-code
 
 ### Integritas biner dan penandatanganan kode
 
-Anda dapat memverifikasi integritas biner Claude Code menggunakan checksum SHA256 dan tanda tangan kode.
+Setiap rilis menerbitkan `manifest.json` yang berisi checksum SHA256 untuk setiap biner platform. Manifes ditandatangani dengan kunci GPG Anthropic, jadi memverifikasi tanda tangan pada manifes secara transitif memverifikasi setiap biner yang tercantum.
 
-* Checksum SHA256 untuk semua platform dipublikasikan dalam manifes rilis di `https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/{VERSION}/manifest.json`. Ganti `{VERSION}` dengan nomor versi seperti `2.0.30`.
-* Biner yang ditandatangani didistribusikan untuk platform berikut:
-  * **macOS**: ditandatangani oleh "Anthropic PBC" dan dinotarisi oleh Apple
-  * **Windows**: ditandatangani oleh "Anthropic, PBC"
+#### Verifikasi tanda tangan manifes
+
+Langkah-langkah 1-3 memerlukan shell POSIX dengan `gpg` dan `curl`. Di Windows, jalankan di Git Bash atau WSL. Langkah 4 mencakup opsi PowerShell.
+
+<Steps>
+  <Step title="Unduh dan impor kunci publik">
+    Kunci penandatanganan rilis dipublikasikan di URL tetap.
+
+    ```bash  theme={null}
+    curl -fsSL https://downloads.claude.ai/keys/claude-code.asc | gpg --import
+    ```
+
+    Tampilkan sidik jari kunci yang diimpor.
+
+    ```bash  theme={null}
+    gpg --fingerprint security@anthropic.com
+    ```
+
+    Konfirmasi output mencakup sidik jari ini:
+
+    ```text  theme={null}
+    31DD DE24 DDFA B679 F42D  7BD2 BAA9 29FF 1A7E CACE
+    ```
+  </Step>
+
+  <Step title="Unduh manifes dan tanda tangan">
+    Atur `VERSION` ke rilis yang ingin Anda verifikasi.
+
+    ```bash  theme={null}
+    REPO=https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases
+    VERSION=2.1.89
+    curl -fsSLO "$REPO/$VERSION/manifest.json"
+    curl -fsSLO "$REPO/$VERSION/manifest.json.sig"
+    ```
+  </Step>
+
+  <Step title="Verifikasi tanda tangan">
+    Verifikasi tanda tangan terpisah terhadap manifes.
+
+    ```bash  theme={null}
+    gpg --verify manifest.json.sig manifest.json
+    ```
+
+    Hasil yang valid melaporkan `Good signature from "Anthropic Claude Code Release Signing <security@anthropic.com>"`.
+
+    `gpg` juga mencetak `WARNING: This key is not certified with a trusted signature!` untuk kunci yang baru diimpor. Ini diharapkan. Baris `Good signature` mengkonfirmasi pemeriksaan kriptografi lulus. Perbandingan sidik jari di Langkah 1 mengkonfirmasi kunci itu sendiri asli.
+  </Step>
+
+  <Step title="Periksa biner terhadap manifes">
+    Bandingkan checksum SHA256 biner yang diunduh dengan nilai yang tercantum di bawah `platforms.<platform>.checksum` di `manifest.json`.
+
+    <Tabs>
+      <Tab title="Linux">
+        ```bash  theme={null}
+        sha256sum claude
+        ```
+      </Tab>
+
+      <Tab title="macOS">
+        ```bash  theme={null}
+        shasum -a 256 claude
+        ```
+      </Tab>
+
+      <Tab title="Windows PowerShell">
+        ```powershell  theme={null}
+        (Get-FileHash claude.exe -Algorithm SHA256).Hash.ToLower()
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+</Steps>
+
+<Note>
+  Tanda tangan manifes tersedia untuk rilis dari `2.1.89` ke depan. Rilis sebelumnya menerbitkan checksum di `manifest.json` tanpa tanda tangan terpisah.
+</Note>
+
+#### Tanda tangan kode platform
+
+Selain manifes yang ditandatangani, biner individual membawa tanda tangan kode native platform di mana didukung.
+
+* **macOS**: ditandatangani oleh "Anthropic PBC" dan dinotarisi oleh Apple. Verifikasi dengan `codesign --verify --verbose ./claude`.
+* **Windows**: ditandatangani oleh "Anthropic, PBC". Verifikasi dengan `Get-AuthenticodeSignature .\claude.exe`.
+* **Linux**: gunakan tanda tangan manifes di atas untuk memverifikasi integritas. Biner Linux tidak ditandatangani kode secara individual.
 
 ## Hapus instalasi Claude Code
 

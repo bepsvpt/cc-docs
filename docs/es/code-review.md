@@ -14,14 +14,16 @@ Code Review analiza sus solicitudes de extracción de GitHub y publica hallazgos
 
 Los hallazgos se etiquetan por severidad y no aprueban ni bloquean su PR, por lo que los flujos de trabajo de revisión existentes permanecen intactos. Puede ajustar lo que Claude marca agregando un archivo `CLAUDE.md` o `REVIEW.md` a su repositorio.
 
-Para ejecutar Claude en su propia infraestructura de CI en lugar de este servicio administrado, consulte [GitHub Actions](/es/github-actions) o [GitLab CI/CD](/es/gitlab-ci-cd).
+Para ejecutar Claude en su propia infraestructura de CI en lugar de este servicio administrado, consulte [GitHub Actions](/es/github-actions) o [GitLab CI/CD](/es/gitlab-ci-cd). Para repositorios en una instancia de GitHub autohospedada, consulte [GitHub Enterprise Server](/es/github-enterprise-server).
 
 Esta página cubre:
 
 * [Cómo funcionan las revisiones](#how-reviews-work)
 * [Configuración](#set-up-code-review)
-* [Personalización de revisiones](#customize-reviews) con `CLAUDE.md` y `REVIEW.md`
+* [Disparar revisiones manualmente](#manually-trigger-reviews) con `@claude review` y `@claude review once`
+* [Personalizar revisiones](#customize-reviews) con `CLAUDE.md` y `REVIEW.md`
 * [Precios](#pricing)
+* [Solución de problemas](#troubleshooting) ejecuciones fallidas y comentarios faltantes
 
 ## Cómo funcionan las revisiones
 
@@ -37,11 +39,31 @@ Cada hallazgo se etiqueta con un nivel de severidad:
 
 | Marcador | Severidad    | Significado                                                                  |
 | :------- | :----------- | :--------------------------------------------------------------------------- |
-| 🔴       | Normal       | Un error que debe corregirse antes de fusionar                               |
+| 🔴       | Importante   | Un error que debe corregirse antes de fusionar                               |
 | 🟡       | Nit          | Un problema menor, vale la pena corregir pero no bloqueante                  |
 | 🟣       | Preexistente | Un error que existe en la base de código pero no fue introducido por este PR |
 
 Los hallazgos incluyen una sección de razonamiento extendido contraíble que puede expandir para entender por qué Claude marcó el problema y cómo verificó el problema.
+
+### Salida de ejecución de verificación
+
+Más allá de los comentarios de revisión en línea, cada revisión completa la ejecución de verificación **Claude Code Review** que aparece junto a sus verificaciones de CI. Expanda su enlace **Details** para ver un resumen de cada hallazgo en un solo lugar, ordenado por severidad:
+
+| Severidad     | Archivo:Línea             | Problema                                                                                                |
+| ------------- | ------------------------- | ------------------------------------------------------------------------------------------------------- |
+| 🔴 Importante | `src/auth/session.ts:142` | La actualización de token corre una carrera con el cierre de sesión, dejando sesiones obsoletas activas |
+| 🟡 Nit        | `src/auth/session.ts:88`  | `parseExpiry` devuelve silenciosamente 0 en entrada malformada                                          |
+
+Cada hallazgo también aparece como una anotación en la pestaña **Files changed**, marcado directamente en las líneas de diff relevantes. Los hallazgos importantes se representan con un marcador rojo, los nits con una advertencia amarilla y los errores preexistentes con un aviso gris. Las anotaciones y la tabla de severidad se escriben en la ejecución de verificación independientemente de los comentarios de revisión en línea, por lo que permanecen disponibles incluso si GitHub rechaza un comentario en línea en una línea que se movió.
+
+La ejecución de verificación siempre se completa con una conclusión neutral para que nunca bloquee la fusión a través de reglas de protección de rama. Si desea bloquear fusiones en hallazgos de Code Review, lea el desglose de severidad de la salida de ejecución de verificación en su propio CI. La última línea del texto de Details es un comentario legible por máquina que su flujo de trabajo puede analizar con `gh` y jq:
+
+```bash  theme={null}
+gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \
+  --jq '.output.text | split("bughunter-severity: ")[1] | split(" -->")[0] | fromjson'
+```
+
+Esto devuelve un objeto JSON con conteos por severidad, por ejemplo `{"normal": 2, "nit": 1, "pre_existing": 0}`. La clave `normal` contiene el conteo de hallazgos Importantes; un valor distinto de cero significa que Claude encontró al menos un error que vale la pena corregir antes de fusionar.
 
 ### Qué verifica Code Review
 
@@ -79,7 +101,7 @@ Un administrador habilita Code Review una vez para la organización y selecciona
 
     * **Once after PR creation**: la revisión se ejecuta una vez cuando se abre un PR o se marca como listo para revisión
     * **After every push**: la revisión se ejecuta en cada push a la rama del PR, detectando nuevos problemas a medida que el PR evoluciona y resolviendo automáticamente los hilos cuando corrige problemas marcados
-    * **Manual**: las revisiones comienzan solo cuando alguien [comenta `@claude review` en un PR](#manually-trigger-reviews); los push posteriores a ese PR se revisan automáticamente
+    * **Manual**: las revisiones comienzan solo cuando alguien [comenta `@claude review` o `@claude review once` en un PR](#manually-trigger-reviews); `@claude review` también suscribe el PR a revisiones en push posteriores
 
     Revisar en cada push ejecuta la mayoría de revisiones y cuesta más. El modo manual es útil para repositorios de alto tráfico donde desea optar por revisión en PR específicos, o para comenzar a revisar sus PR solo cuando estén listos.
   </Step>
@@ -91,14 +113,23 @@ Para verificar la configuración, abra un PR de prueba. Si eligió un disparador
 
 ## Disparar revisiones manualmente
 
-Comente `@claude review` en una solicitud de extracción para iniciar una revisión y optar ese PR en revisiones activadas por push en adelante. Esto funciona independientemente del disparador configurado del repositorio: úselo para optar por PR específicos en revisión en modo Manual, u obtener una re-revisión inmediata en otros modos. De cualquier forma, los push a ese PR activan revisiones a partir de entonces.
+Dos comandos de comentario inician una revisión bajo demanda. Ambos funcionan independientemente del disparador configurado del repositorio, por lo que puede usarlos para optar por PR específicos en revisión en modo Manual o para obtener una re-revisión inmediata en otros modos.
 
-Para que el comentario active una revisión:
+| Comando               | Lo que hace                                                                      |
+| :-------------------- | :------------------------------------------------------------------------------- |
+| `@claude review`      | Inicia una revisión y suscribe el PR a revisiones activadas por push en adelante |
+| `@claude review once` | Inicia una única revisión sin suscribir el PR a push futuros                     |
+
+Use `@claude review once` cuando desee comentarios sobre el estado actual de un PR pero no desee que cada push posterior incurra en una revisión. Esto es útil para PR de larga duración con push frecuentes, o cuando desea una segunda opinión única sin cambiar el comportamiento de revisión del PR.
+
+Para que cualquiera de los comandos active una revisión:
 
 * Publíquelo como un comentario de PR de nivel superior, no un comentario en línea en una línea de diff
-* Ponga `@claude review` al inicio del comentario
+* Ponga el comando al inicio del comentario, con `once` en la misma línea si está usando la forma de un solo disparo
 * Debe tener acceso de propietario, miembro o colaborador al repositorio
-* El PR debe estar abierto y no ser un borrador
+* El PR debe estar abierto
+
+A diferencia de los disparadores automáticos, los disparadores manuales se ejecutan en PR de borrador, ya que una solicitud explícita señala que desea la revisión ahora independientemente del estado de borrador.
 
 Si una revisión ya se está ejecutando en ese PR, la solicitud se pone en cola hasta que se complete la revisión en progreso. Puede monitorear el progreso a través de la ejecución de verificación en el PR.
 
@@ -162,7 +193,7 @@ La tabla de repositorios en la configuración de administrador también muestra 
 
 ## Precios
 
-Code Review se factura según el uso de tokens. Las revisiones promedian \$15-25, escalando con el tamaño del PR, la complejidad de la base de código y cuántos problemas requieren verificación. El uso de Code Review se factura por separado a través de [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) y no cuenta contra el uso incluido de su plan.
+Code Review se factura según el uso de tokens. Cada revisión promedia \$15-25 en costo, escalando con el tamaño del PR, la complejidad de la base de código y cuántos problemas requieren verificación. El uso de Code Review se factura por separado a través de [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) y no cuenta contra el uso incluido de su plan.
 
 El disparador de revisión que elija afecta el costo total:
 
@@ -170,11 +201,31 @@ El disparador de revisión que elija afecta el costo total:
 * **After every push**: se ejecuta en cada push, multiplicando el costo por el número de push
 * **Manual**: sin revisiones hasta que alguien comente `@claude review` en un PR
 
-En cualquier modo, comentar `@claude review` [opta el PR en revisiones activadas por push](#manually-trigger-reviews), por lo que se acumula costo adicional por push después de ese comentario.
+En cualquier modo, comentar `@claude review` [opta el PR en revisiones activadas por push](#manually-trigger-reviews), por lo que se acumula costo adicional por push después de ese comentario. Para ejecutar una única revisión sin suscribirse a push futuros, comente `@claude review once` en su lugar.
 
 Los costos aparecen en su factura de Anthropic independientemente de si su organización usa AWS Bedrock o Google Vertex AI para otras características de Claude Code. Para establecer un límite de gasto mensual para Code Review, vaya a [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) y configure el límite para el servicio Claude Code Review.
 
 Monitoree el gasto a través del gráfico de costo semanal en [analytics](#view-usage) o la columna de costo promedio por repositorio en la configuración de administrador.
+
+## Solución de problemas
+
+Las ejecuciones de revisión son de mejor esfuerzo. Una ejecución fallida nunca bloquea su PR, pero tampoco se reintenta por sí sola. Esta sección cubre cómo recuperarse de una ejecución fallida y dónde buscar cuando la ejecución de verificación reporta problemas que no puede encontrar.
+
+### Reactivar una revisión fallida o agotada por tiempo
+
+Cuando la infraestructura de revisión golpea un error interno o excede su límite de tiempo, la ejecución de verificación se completa con un título de **Code review encountered an error** o **Code review timed out**. La conclusión sigue siendo neutral, por lo que nada bloquea su fusión, pero no se publican hallazgos.
+
+Para ejecutar la revisión nuevamente, comente `@claude review once` en el PR. Esto inicia una revisión nueva sin suscribir el PR a push futuros. Si el PR ya está suscrito a revisiones activadas por push, hacer push de un nuevo commit también inicia una nueva revisión.
+
+El botón **Re-run** en la pestaña Checks de GitHub no reactiva Code Review. Use el comando de comentario o un nuevo push en su lugar.
+
+### Encontrar problemas que no se muestran como comentarios en línea
+
+Si el título de la ejecución de verificación dice que se encontraron problemas pero no ve comentarios de revisión en línea en el diff, busque en estas otras ubicaciones donde se muestran los hallazgos:
+
+* **Check run Details**: haga clic en **Details** junto a la verificación Claude Code Review en la pestaña Checks. La tabla de severidad enumera cada hallazgo con su archivo, línea y resumen independientemente de si el comentario en línea fue aceptado.
+* **Files changed annotations**: abra la pestaña **Files changed** en el PR. Los hallazgos se representan como anotaciones adjuntas directamente a las líneas de diff, separadas de los comentarios de revisión.
+* **Review body**: si hizo push al PR mientras se ejecutaba una revisión, algunos hallazgos pueden hacer referencia a líneas que ya no existen en el diff actual. Esos aparecen bajo un encabezado **Additional findings** en el texto del cuerpo de revisión en lugar de como comentarios en línea.
 
 ## Recursos relacionados
 

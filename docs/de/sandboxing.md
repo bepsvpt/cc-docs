@@ -146,7 +146,7 @@ Pfad-Präfixe steuern, wie Pfade aufgelöst werden:
 
 Das ältere `//path`-Präfix für absolute Pfade funktioniert immer noch. Wenn Sie zuvor `/path` erwartet haben, um projekt-relativ aufgelöst zu werden, wechseln Sie zu `./path`. Diese Syntax unterscheidet sich von [Read- und Edit-Genehmigungsregeln](/de/permissions#read-and-edit), die `//path` für absolut und `/path` für projekt-relativ verwenden. Sandbox-Dateisystem-Pfade verwenden Standard-Konventionen: `/tmp/build` ist ein absoluter Pfad.
 
-Sie können auch Schreib- oder Lesezugriff mit `sandbox.filesystem.denyWrite` und `sandbox.filesystem.denyRead` blockieren. Diese werden mit allen Pfaden aus `Edit(...)` und `Read(...)` Genehmigungsregeln zusammengeführt. Um Lesezugriff auf spezifische Pfade innerhalb einer blockierten Region erneut zuzulassen, verwenden Sie `sandbox.filesystem.allowRead`, das Vorrang vor `denyRead` hat. Wenn `allowManagedReadPathsOnly` in verwalteten Einstellungen aktiviert ist, werden nur verwaltete `allowRead`-Einträge respektiert; Benutzer-, Projekt- und lokale `allowRead`-Einträge werden ignoriert.
+Sie können auch Schreib- oder Lesezugriff mit `sandbox.filesystem.denyWrite` und `sandbox.filesystem.denyRead` blockieren. Diese werden mit allen Pfaden aus `Edit(...)` und `Read(...)` Genehmigungsregeln zusammengeführt. Um Lesezugriff auf spezifische Pfade innerhalb einer blockierten Region erneut zuzulassen, verwenden Sie `sandbox.filesystem.allowRead`, das Vorrang vor `denyRead` hat. Wenn `allowManagedReadPathsOnly` in verwalteten Einstellungen aktiviert ist, werden nur verwaltete `allowRead`-Einträge respektiert; Benutzer-, Projekt- und lokale `allowRead`-Einträge werden ignoriert. `denyRead` wird immer noch aus allen Quellen zusammengeführt.
 
 Um beispielsweise das Lesen aus dem gesamten Home-Verzeichnis zu blockieren und gleichzeitig Lesevorgänge aus dem aktuellen Projekt zuzulassen, fügen Sie dies zu Ihrer Projekt-Datei `.claude/settings.json` hinzu:
 
@@ -314,7 +314,7 @@ Für Implementierungsdetails und Quellcode besuchen Sie das [GitHub-Repository](
 Die Sandbox isoliert Bash-Subprozesse. Andere Tools funktionieren unter verschiedenen Grenzen:
 
 * **Integrierte Datei-Tools**: Read, Edit und Write verwenden das Genehmigungssystem direkt, anstatt durch die Sandbox zu laufen. Siehe [Genehmigungen](/de/permissions).
-* **Computer-Nutzung auf Desktop**: Wenn Claude Apps öffnet und Ihren Bildschirm auf macOS steuert, läuft es auf Ihrem tatsächlichen Desktop, anstatt in einer isolierten Umgebung. Pro-App-Genehmigungseingaben kontrollieren jede Anwendung. Siehe [Computer-Nutzung](/de/desktop#let-claude-use-your-computer).
+* **Computer-Nutzung**: Wenn Claude Apps öffnet und Ihren Bildschirm auf macOS steuert, läuft es auf Ihrem tatsächlichen Desktop, anstatt in einer isolierten Umgebung. Pro-App-Genehmigungseingaben kontrollieren jede Anwendung. Siehe [Computer-Nutzung in der CLI](/de/computer-use) oder [Computer-Nutzung auf Desktop](/de/desktop#let-claude-use-your-computer).
 
 ## Siehe auch
 

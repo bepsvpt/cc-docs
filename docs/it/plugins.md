@@ -45,7 +45,6 @@ Questo quickstart ti guida attraverso la creazione di un plugin con uno skill pe
 ### Prerequisiti
 
 * Claude Code [installato e autenticato](/it/quickstart#step-1-install-claude-code)
-* Claude Code versione 1.0.33 o successiva (esegui `claude --version` per verificare)
 
 <Note>
   Se non vedi il comando `/plugin`, aggiorna Claude Code all'ultima versione. Vedi [Troubleshooting](/it/troubleshooting) per le istruzioni di aggiornamento.
@@ -131,7 +130,7 @@ Questo quickstart ti guida attraverso la creazione di un plugin con uno skill pe
     Vedrai Claude rispondere con un saluto. Esegui `/help` per vedere il tuo skill elencato sotto il namespace del plugin.
 
     <Note>
-      **Perché il namespace?** Gli skill del plugin hanno sempre il namespace (come `/greet:hello`) per prevenire conflitti quando più plugin hanno skill con lo stesso nome.
+      **Perché il namespace?** Gli skill del plugin hanno sempre il namespace (come `/my-first-plugin:hello`) per prevenire conflitti quando più plugin hanno skill con lo stesso nome.
 
       Per cambiare il prefisso del namespace, aggiorna il campo `name` in `plugin.json`.
     </Note>
@@ -283,7 +282,7 @@ claude --plugin-dir ./my-plugin
 
 Quando un plugin `--plugin-dir` ha lo stesso nome di un plugin marketplace installato, la copia locale ha la precedenza per quella sessione. Questo ti consente di testare le modifiche a un plugin che hai già installato senza disinstallarlo prima. I plugin marketplace forzatamente abilitati dalle impostazioni gestite sono l'unica eccezione e non possono essere sovrascritti.
 
-Man mano che apporti modifiche al tuo plugin, esegui `/reload-plugins` per raccogliere gli aggiornamenti senza riavviare. Questo ricarica comandi, skills, agents, hooks, MCP servers del plugin e LSP servers del plugin. Testa i componenti del tuo plugin:
+Man mano che apporti modifiche al tuo plugin, esegui `/reload-plugins` per raccogliere gli aggiornamenti senza riavviare. Questo ricarica plugin, skills, agents, hooks, MCP servers del plugin e LSP servers del plugin. Testa i componenti del tuo plugin:
 
 * Prova i tuoi skill con `/plugin-name:skill-name`
 * Verifica che gli agents appaiano in `/agents`

@@ -97,6 +97,8 @@ Você pode habilitar o sandboxing executando o comando `/sandbox`:
 
 Isso abre um menu onde você pode escolher entre modos de sandbox. Se as dependências necessárias estiverem faltando (como `bubblewrap` ou `socat` no Linux), o menu exibe instruções de instalação para sua plataforma.
 
+Por padrão, se o sandbox não conseguir iniciar (dependências ausentes, plataforma não suportada ou restrições de plataforma), Claude Code exibe um aviso e executa comandos sem sandboxing. Para tornar isso uma falha difícil em vez disso, defina [`sandbox.failIfUnavailable`](/pt/settings#sandbox-settings) como `true`. Isso é destinado a implantações gerenciadas que exigem sandboxing como um portão de segurança.
+
 ### Modos de sandbox
 
 Claude Code oferece dois modos de sandbox:
@@ -144,7 +146,7 @@ Prefixos de caminho controlam como os caminhos são resolvidos:
 
 O prefixo anterior `//path` para caminhos absolutos ainda funciona. Se você usou anteriormente `/path` esperando resolução relativa ao projeto, mude para `./path`. Esta sintaxe difere das [regras de permissão Read e Edit](/pt/permissions#read-and-edit), que usam `//path` para absoluto e `/path` para relativo ao projeto. Os caminhos do sistema de arquivos do sandbox usam convenções padrão: `/tmp/build` é um caminho absoluto.
 
-Você também pode negar acesso de escrita ou leitura usando `sandbox.filesystem.denyWrite` e `sandbox.filesystem.denyRead`. Estes são mesclados com quaisquer caminhos das regras de permissão `Edit(...)` e `Read(...)`. Para permitir novamente a leitura de caminhos específicos dentro de uma região negada, use `sandbox.filesystem.allowRead`, que tem precedência sobre `denyRead`. Quando `allowManagedReadPathsOnly` está habilitado em configurações gerenciadas, apenas entradas `allowRead` gerenciadas são respeitadas; entradas `allowRead` de usuário, projeto e local são ignoradas.
+Você também pode negar acesso de escrita ou leitura usando `sandbox.filesystem.denyWrite` e `sandbox.filesystem.denyRead`. Estes são mesclados com quaisquer caminhos das regras de permissão `Edit(...)` e `Read(...)`. Para permitir novamente a leitura de caminhos específicos dentro de uma região negada, use `sandbox.filesystem.allowRead`, que tem precedência sobre `denyRead`. Quando `allowManagedReadPathsOnly` está habilitado em configurações gerenciadas, apenas entradas `allowRead` gerenciadas são respeitadas; entradas `allowRead` de usuário, projeto e local são ignoradas. `denyRead` ainda é mesclado de todas as fontes.
 
 Por exemplo, para bloquear a leitura de todo o diretório home enquanto ainda permite leituras do projeto atual, adicione isto ao `.claude/settings.json` do seu projeto:
 
@@ -312,7 +314,7 @@ Para detalhes de implementação e código-fonte, visite o [repositório GitHub]
 O sandbox isola subprocessos Bash. Outras ferramentas operam sob limites diferentes:
 
 * **Ferramentas de arquivo integradas**: Read, Edit e Write usam o sistema de permissão diretamente em vez de serem executadas através do sandbox. Veja [permissões](/pt/permissions).
-* **Uso de computador no Desktop**: quando Claude abre aplicativos e controla sua tela no macOS, ele é executado em seu desktop real em vez de em um ambiente isolado. Prompts de permissão por aplicativo controlam cada aplicativo. Veja [uso de computador](/pt/desktop#let-claude-use-your-computer).
+* **Uso de computador**: quando Claude abre aplicativos e controla sua tela no macOS, ele é executado em seu desktop real em vez de em um ambiente isolado. Prompts de permissão por aplicativo controlam cada aplicativo. Veja [uso de computador no CLI](/pt/computer-use) ou [uso de computador no Desktop](/pt/desktop#let-claude-use-your-computer).
 
 ## Veja também
 

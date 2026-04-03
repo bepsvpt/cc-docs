@@ -97,6 +97,16 @@ Hook ini menggunakan acara `Notification`, yang aktif ketika Claude menunggu inp
       }
     }
     ```
+
+    <Accordion title="Jika tidak ada notifikasi yang muncul">
+      `osascript` merutekan notifikasi melalui aplikasi Script Editor bawaan. Jika Script Editor tidak memiliki izin notifikasi, perintah gagal diam-diam, dan macOS tidak akan meminta Anda untuk memberikannya. Jalankan ini di Terminal sekali untuk membuat Script Editor muncul di pengaturan notifikasi Anda:
+
+      ```bash  theme={null}
+      osascript -e 'display notification "test"'
+      ```
+
+      Tidak ada yang akan muncul dulu. Buka **System Settings > Notifications**, temukan **Script Editor** dalam daftar, dan aktifkan **Allow Notifications**. Jalankan perintah lagi untuk mengonfirmasi notifikasi uji muncul.
+    </Accordion>
   </Tab>
 
   <Tab title="Linux">
@@ -407,6 +417,8 @@ Acara hook aktif pada titik-titik siklus hidup spesifik di Claude Code. Ketika a
 | `ElicitationResult`  | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
 | `SessionEnd`         | When a session terminates                                                                                                                              |
 
+Ketika beberapa hook cocok, masing-masing mengembalikan hasilnya sendiri. Untuk keputusan, Claude Code memilih jawaban yang paling ketat. Hook `PreToolUse` yang mengembalikan `deny` membatalkan panggilan alat tidak peduli apa yang dikembalikan yang lain. Satu hook yang mengembalikan `ask` memaksa prompt izin bahkan jika sisanya mengembalikan `allow`. Teks dari `additionalContext` disimpan dari setiap hook dan diteruskan ke Claude bersama-sama.
+
 Setiap hook memiliki `type` yang menentukan cara menjalankannya. Sebagian besar hooks menggunakan `"type": "command"`, yang menjalankan perintah shell. Tiga jenis lain tersedia:
 
 * `"type": "http"`: POST data acara ke URL. Lihat [HTTP hooks](#http-hooks).
@@ -478,11 +490,13 @@ Misalnya, hook `PreToolUse` dapat menolak panggilan alat dan memberi tahu Claude
 }
 ```
 
-Claude Code membaca `permissionDecision` dan membatalkan panggilan alat, kemudian memberi makan `permissionDecisionReason` kembali ke Claude sebagai umpan balik. Tiga opsi ini spesifik untuk `PreToolUse`:
+Dengan `"deny"`, Claude Code membatalkan panggilan alat dan memberi makan `permissionDecisionReason` kembali ke Claude. Nilai `permissionDecision` ini spesifik untuk `PreToolUse`:
 
 * `"allow"`: lanjutkan tanpa menampilkan prompt izin interaktif. Aturan deny dan ask, termasuk daftar deny yang dikelola perusahaan, masih berlaku
 * `"deny"`: batalkan panggilan alat dan kirim alasan ke Claude
 * `"ask"`: tampilkan prompt izin kepada pengguna seperti biasa
+
+Nilai keempat, `"defer"`, tersedia dalam [non-interactive mode](/id/headless) dengan flag `-p`. Ini keluar dari proses dengan panggilan alat yang dipertahankan sehingga pembungkus Agent SDK dapat mengumpulkan input dan melanjutkan. Lihat [Defer a tool call for later](/id/hooks#defer-a-tool-call-for-later) dalam referensi.
 
 Mengembalikan `"allow"` melewati prompt interaktif tetapi tidak mengesampingkan [aturan izin](/id/permissions#manage-permissions). Jika aturan deny cocok dengan panggilan alat, panggilan diblokir bahkan ketika hook Anda mengembalikan `"allow"`. Jika aturan ask cocok, pengguna masih diminta. Ini berarti aturan deny dari cakupan pengaturan apa pun, termasuk [pengaturan terkelola](/id/settings#settings-files), selalu mengambil alih persetujuan hook.
 
@@ -513,22 +527,22 @@ Matcher `"Edit|Write"` adalah pola regex yang cocok dengan nama alat. Hook hanya
 
 Setiap jenis acara cocok pada bidang spesifik. Matchers mendukung string tepat dan pola regex:
 
-| Acara                                                                                                         | Apa yang difilter matcher              | Contoh nilai matcher                                                                                                      |
-| :------------------------------------------------------------------------------------------------------------ | :------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                                        | nama alat                              | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
-| `SessionStart`                                                                                                | cara sesi dimulai                      | `startup`, `resume`, `clear`, `compact`                                                                                   |
-| `SessionEnd`                                                                                                  | mengapa sesi berakhir                  | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                                | jenis notifikasi                       | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                               | jenis agen                             | `Bash`, `Explore`, `Plan`, atau nama agen khusus                                                                          |
-| `PreCompact`, `PostCompact`                                                                                   | apa yang memicu compaction             | `manual`, `auto`                                                                                                          |
-| `SubagentStop`                                                                                                | jenis agen                             | nilai yang sama seperti `SubagentStart`                                                                                   |
-| `ConfigChange`                                                                                                | sumber konfigurasi                     | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
-| `StopFailure`                                                                                                 | jenis kesalahan                        | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                                          | alasan pemuatan                        | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
-| `Elicitation`                                                                                                 | nama server MCP                        | nama server MCP yang dikonfigurasi Anda                                                                                   |
-| `ElicitationResult`                                                                                           | nama server MCP                        | nilai yang sama seperti `Elicitation`                                                                                     |
-| `FileChanged`                                                                                                 | nama file (basename file yang berubah) | `.envrc`, `.env`, nama file apa pun yang ingin Anda pantau                                                                |
-| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged` | tidak ada dukungan matcher             | selalu aktif pada setiap kemunculan                                                                                       |
+| Acara                                                                                                                        | Apa yang difilter matcher              | Contoh nilai matcher                                                                                                      |
+| :--------------------------------------------------------------------------------------------------------------------------- | :------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                   | nama alat                              | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `SessionStart`                                                                                                               | cara sesi dimulai                      | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `SessionEnd`                                                                                                                 | mengapa sesi berakhir                  | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
+| `Notification`                                                                                                               | jenis notifikasi                       | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
+| `SubagentStart`                                                                                                              | jenis agen                             | `Bash`, `Explore`, `Plan`, atau nama agen khusus                                                                          |
+| `PreCompact`, `PostCompact`                                                                                                  | apa yang memicu compaction             | `manual`, `auto`                                                                                                          |
+| `SubagentStop`                                                                                                               | jenis agen                             | nilai yang sama seperti `SubagentStart`                                                                                   |
+| `ConfigChange`                                                                                                               | sumber konfigurasi                     | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
+| `StopFailure`                                                                                                                | jenis kesalahan                        | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                                         | alasan pemuatan                        | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `Elicitation`                                                                                                                | nama server MCP                        | nama server MCP yang dikonfigurasi Anda                                                                                   |
+| `ElicitationResult`                                                                                                          | nama server MCP                        | nilai yang sama seperti `Elicitation`                                                                                     |
+| `FileChanged`                                                                                                                | nama file (basename file yang berubah) | `.envrc`, `.env`, nama file apa pun yang ingin Anda pantau                                                                |
+| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged` | tidak ada dukungan matcher             | selalu aktif pada setiap kemunculan                                                                                       |
 
 Beberapa contoh lagi menunjukkan matchers pada jenis acara berbeda:
 
@@ -603,6 +617,39 @@ Beberapa contoh lagi menunjukkan matchers pada jenis acara berbeda:
 </Tabs>
 
 Untuk sintaks matcher lengkap, lihat [Hooks reference](/id/hooks#configuration).
+
+#### Filter berdasarkan nama alat dan argumen dengan bidang `if`
+
+<Note>
+  Bidang `if` memerlukan Claude Code v2.1.85 atau lebih baru. Versi sebelumnya mengabaikannya dan menjalankan hook pada setiap panggilan yang cocok.
+</Note>
+
+Bidang `if` menggunakan [sintaks aturan izin](/id/permissions) untuk memfilter hooks berdasarkan nama alat dan argumen bersama-sama, sehingga proses hook hanya muncul ketika panggilan alat cocok. Ini melampaui `matcher`, yang memfilter pada tingkat grup berdasarkan nama alat saja.
+
+Misalnya, untuk menjalankan hook hanya ketika Claude menggunakan perintah `git` daripada semua perintah Bash:
+
+```json  theme={null}
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git *)",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check-git-policy.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Proses hook hanya muncul ketika perintah Bash dimulai dengan `git`. Perintah Bash lainnya melewati handler ini sepenuhnya. Bidang `if` menerima pola yang sama seperti aturan izin: `"Bash(git *)"`, `"Edit(*.ts)"`, dan seterusnya. Untuk mencocokkan beberapa nama alat, gunakan handler terpisah masing-masing dengan nilai `if` sendiri, atau cocokkan pada tingkat `matcher` di mana alternasi pipa didukung.
+
+`if` hanya bekerja pada acara alat: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, dan `PermissionDenied`. Menambahkannya ke acara lain mencegah hook dari berjalan.
 
 ### Konfigurasi lokasi hook
 
@@ -720,11 +767,18 @@ Untuk opsi konfigurasi lengkap dan penanganan respons, lihat [HTTP hooks](/id/ho
 
 ### Keterbatasan
 
-* Hook perintah berkomunikasi melalui stdout, stderr, dan kode keluar saja. Mereka tidak dapat memicu perintah atau panggilan alat secara langsung. HTTP hooks berkomunikasi melalui badan respons sebagai gantinya.
+* Hook perintah berkomunikasi melalui stdout, stderr, dan kode keluar saja. Mereka tidak dapat memicu perintah `/` atau panggilan alat secara langsung. Teks yang dikembalikan melalui `additionalContext` disuntikkan sebagai pengingat sistem yang Claude baca sebagai teks biasa. HTTP hooks berkomunikasi melalui badan respons sebagai gantinya.
 * Timeout hook adalah 10 menit secara default, dapat dikonfigurasi per hook dengan bidang `timeout` (dalam detik).
 * Hook `PostToolUse` tidak dapat membatalkan tindakan karena alat sudah dieksekusi.
 * Hook `PermissionRequest` tidak aktif dalam [non-interactive mode](/id/headless) (`-p`). Gunakan hook `PreToolUse` untuk keputusan izin otomatis.
 * Hook `Stop` aktif kapan pun Claude selesai merespons, bukan hanya pada penyelesaian tugas. Mereka tidak aktif pada interupsi pengguna. Kesalahan API menjalankan [StopFailure](/id/hooks#stopfailure) sebagai gantinya.
+* Ketika beberapa hook PreToolUse mengembalikan [`updatedInput`](/id/hooks#pretooluse) untuk menulis ulang argumen alat, yang terakhir selesai menang. Karena hooks berjalan secara paralel, urutannya tidak deterministik. Hindari memiliki lebih dari satu hook memodifikasi input alat yang sama.
+
+### Hooks dan mode izin
+
+Hook PreToolUse aktif sebelum pemeriksaan mode izin apa pun. Hook yang mengembalikan `permissionDecision: "deny"` memblokir alat bahkan dalam mode `bypassPermissions` atau dengan `--dangerously-skip-permissions`. Ini memungkinkan Anda menegakkan kebijakan yang pengguna tidak dapat lewati dengan mengubah mode izin mereka.
+
+Kebalikannya tidak benar: hook yang mengembalikan `"allow"` tidak melewati aturan deny dari pengaturan. Hooks dapat mengetatkan pembatasan tetapi tidak melonggarkan mereka melampaui apa yang aturan izin izinkan.
 
 ### Hook tidak aktif
 

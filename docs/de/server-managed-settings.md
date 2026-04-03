@@ -43,7 +43,7 @@ Wenn Ihre Geräte in einer MDM- oder Endpunktverwaltungslösung registriert sind
   <Step title="Definieren Sie Ihre Einstellungen">
     Fügen Sie Ihre Konfiguration als JSON hinzu. Alle [in `settings.json` verfügbaren Einstellungen](/de/settings#available-settings) werden unterstützt, einschließlich [hooks](/de/hooks), [Umgebungsvariablen](/de/env-vars) und [nur verwaltete Einstellungen](/de/permissions#managed-only-settings) wie `allowManagedPermissionRulesOnly`.
 
-    Dieses Beispiel erzwingt eine Berechtigungsverweigerungsliste und verhindert, dass Benutzer Berechtigungen umgehen:
+    Dieses Beispiel erzwingt eine Berechtigungsverweigerungsliste, verhindert, dass Benutzer Berechtigungen umgehen, und beschränkt Berechtigungsregeln auf diejenigen, die in verwalteten Einstellungen definiert sind:
 
     ```json  theme={null}
     {
@@ -55,7 +55,8 @@ Wenn Ihre Geräte in einer MDM- oder Endpunktverwaltungslösung registriert sind
           "Read(./secrets/**)"
         ],
         "disableBypassPermissionsMode": "disable"
-      }
+      },
+      "allowManagedPermissionRulesOnly": true
     }
     ```
 
@@ -113,6 +114,10 @@ Die folgenden Rollen können serververwaltete Einstellungen verwalten:
 
 Beschränken Sie den Zugriff auf vertrauenswürdiges Personal, da Einstellungsänderungen für alle Benutzer in der Organisation gelten.
 
+### Nur verwaltete Einstellungen
+
+Die meisten [Einstellungsschlüssel](/de/settings#available-settings) funktionieren in jedem Bereich. Eine Handvoll Schlüssel werden nur aus verwalteten Einstellungen gelesen und haben keine Auswirkung, wenn sie in Benutzer- oder Projekteinstellungsdateien platziert werden. Siehe [nur verwaltete Einstellungen](/de/permissions#managed-only-settings) für die vollständige Liste. Jede Einstellung, die nicht auf dieser Liste steht, kann immer noch in verwalteten Einstellungen platziert werden und hat die höchste Priorität.
+
 ### Aktuelle Einschränkungen
 
 Serververwaltete Einstellungen haben während der Beta-Phase die folgenden Einschränkungen:
@@ -124,7 +129,11 @@ Serververwaltete Einstellungen haben während der Beta-Phase die folgenden Einsc
 
 ### Einstellungspriorität
 
-Serververwaltete Einstellungen und [endpunktverwaltete Einstellungen](/de/settings#settings-files) nehmen beide die höchste Ebene in der Claude Code [Einstellungshierarchie](/de/settings#settings-precedence) ein. Keine andere Einstellungsebene kann sie überschreiben, einschließlich Befehlszeilenargumenten. Wenn beide vorhanden sind, haben serververwaltete Einstellungen Vorrang und endpunktverwaltete Einstellungen werden nicht verwendet.
+Serververwaltete Einstellungen und [endpunktverwaltete Einstellungen](/de/settings#settings-files) nehmen beide die höchste Ebene in der Claude Code [Einstellungshierarchie](/de/settings#settings-precedence) ein. Keine andere Einstellungsebene kann sie überschreiben, einschließlich Befehlszeilenargumenten.
+
+Innerhalb der verwalteten Ebene gewinnt die erste Quelle, die eine nicht leere Konfiguration liefert. Serververwaltete Einstellungen werden zuerst überprüft, dann endpunktverwaltete Einstellungen. Quellen werden nicht zusammengeführt: Wenn serververwaltete Einstellungen überhaupt Schlüssel liefern, werden endpunktverwaltete Einstellungen vollständig ignoriert. Wenn serververwaltete Einstellungen nichts liefern, gelten endpunktverwaltete Einstellungen.
+
+Wenn Sie Ihre serververwaltete Konfiguration in der Admin-Konsole mit der Absicht löschen, auf eine endpunktverwaltete plist oder Registrierungsrichtlinie zurückzugreifen, beachten Sie, dass [zwischengespeicherte Einstellungen](#fetch-and-caching-behavior) auf Client-Maschinen bestehen bleiben, bis der nächste erfolgreiche Abruf erfolgt. Führen Sie `/status` aus, um zu sehen, welche verwaltete Quelle aktiv ist.
 
 ### Abruf- und Caching-Verhalten
 

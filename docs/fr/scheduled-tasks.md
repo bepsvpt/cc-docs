@@ -117,9 +117,9 @@ Pour éviter que chaque session ne frappe l'API au même moment mural, le planif
 
 Le décalage est dérivé de l'ID de la tâche, donc la même tâche obtient toujours le même décalage. Si le timing exact est important, choisissez une minute qui n'est pas `:00` ou `:30`, par exemple `3 9 * * *` au lieu de `0 9 * * *`, et la gigue ponctuelle ne s'appliquera pas.
 
-### Expiration de trois jours
+### Expiration de sept jours
 
-Les tâches récurrentes expirent automatiquement 3 jours après leur création. La tâche s'exécute une dernière fois, puis se supprime. Cela limite la durée pendant laquelle une boucle oubliée peut s'exécuter. Si vous avez besoin qu'une tâche récurrente dure plus longtemps, annulez et recréez-la avant son expiration, ou utilisez [Tâches planifiées sur le cloud](/fr/web-scheduled-tasks) ou [Tâches planifiées sur le bureau](/fr/desktop#schedule-recurring-tasks) pour une planification durable.
+Les tâches récurrentes expirent automatiquement 7 jours après leur création. La tâche s'exécute une dernière fois, puis se supprime. Cela limite la durée pendant laquelle une boucle oubliée peut s'exécuter. Si vous avez besoin qu'une tâche récurrente dure plus longtemps, annulez et recréez-la avant son expiration, ou utilisez [Tâches planifiées sur le cloud](/fr/web-scheduled-tasks) ou [Tâches planifiées sur le bureau](/fr/desktop#schedule-recurring-tasks) pour une planification durable.
 
 ## Référence d'expression cron
 

@@ -31,14 +31,18 @@ codebase dan cara Claude beroperasi:
 
 Output styles secara langsung memodifikasi system prompt Claude Code.
 
-* Semua output styles mengecualikan instruksi untuk output yang efisien (seperti
-  merespons secara ringkas).
 * Custom output styles mengecualikan instruksi untuk coding (seperti memverifikasi kode
   dengan tes), kecuali `keep-coding-instructions` bernilai true.
 * Semua output styles memiliki instruksi kustom mereka sendiri yang ditambahkan ke akhir
   system prompt.
 * Semua output styles memicu pengingat bagi Claude untuk mematuhi instruksi output style
   selama percakapan.
+
+Penggunaan token tergantung pada style. Menambahkan instruksi ke system prompt
+meningkatkan input tokens, meskipun prompt caching mengurangi biaya ini setelah permintaan pertama
+dalam sesi. Built-in Explanatory dan Learning styles menghasilkan respons yang lebih panjang
+daripada Default secara desain, yang meningkatkan output tokens. Untuk custom styles,
+penggunaan output tokens tergantung pada apa yang instruksi Anda katakan kepada Claude untuk diproduksi.
 
 ## Ubah output style Anda
 

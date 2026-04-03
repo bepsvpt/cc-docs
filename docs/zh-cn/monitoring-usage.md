@@ -6,7 +6,7 @@
 
 > 了解如何为 Claude Code 启用和配置 OpenTelemetry。
 
-通过 OpenTelemetry (OTel) 导出遥测数据，跨组织跟踪 Claude Code 使用情况、成本和工具活动。Claude Code 通过标准指标协议导出指标作为时间序列数据，通过日志/事件协议导出事件。配置您的指标和日志后端以满足您的监控要求。
+通过 OpenTelemetry (OTel) 导出遥测数据，跨组织跟踪 Claude Code 使用情况、成本和工具活动。Claude Code 通过标准指标协议导出指标作为时间序列数据，通过日志/事件协议导出事件，以及可选地通过 [traces 协议](#traces-beta) 导出分布式跟踪。配置您的指标、日志和跟踪后端以满足您的监控要求。
 
 ## 快速开始
 
@@ -17,8 +17,8 @@
 export CLAUDE_CODE_ENABLE_TELEMETRY=1
 
 # 2. 选择导出器（两者都是可选的 - 仅配置您需要的）
-export OTEL_METRICS_EXPORTER=otlp       # 选项：otlp、prometheus、console
-export OTEL_LOGS_EXPORTER=otlp          # 选项：otlp、console
+export OTEL_METRICS_EXPORTER=otlp       # 选项：otlp、prometheus、console、none
+export OTEL_LOGS_EXPORTER=otlp          # 选项：otlp、console、none
 
 # 3. 配置 OTLP 端点（用于 OTLP 导出器）
 export OTEL_EXPORTER_OTLP_PROTOCOL=grpc
@@ -68,26 +68,27 @@ claude
 
 ### 常见配置变量
 
-| 环境变量                                                | 描述                                                  | 示例值                                |
-| --------------------------------------------------- | --------------------------------------------------- | ---------------------------------- |
-| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | 启用遥测收集（必需）                                          | `1`                                |
-| `OTEL_METRICS_EXPORTER`                             | 指标导出器类型（逗号分隔）                                       | `console`、`otlp`、`prometheus`      |
-| `OTEL_LOGS_EXPORTER`                                | 日志/事件导出器类型（逗号分隔）                                    | `console`、`otlp`                   |
-| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | OTLP 导出器的协议（所有信号）                                   | `grpc`、`http/json`、`http/protobuf` |
-| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | OTLP 收集器端点（所有信号）                                    | `http://localhost:4317`            |
-| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | 指标协议（覆盖常规设置）                                        | `grpc`、`http/json`、`http/protobuf` |
-| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | OTLP 指标端点（覆盖常规设置）                                   | `http://localhost:4318/v1/metrics` |
-| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | 日志协议（覆盖常规设置）                                        | `grpc`、`http/json`、`http/protobuf` |
-| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | OTLP 日志端点（覆盖常规设置）                                   | `http://localhost:4318/v1/logs`    |
-| `OTEL_EXPORTER_OTLP_HEADERS`                        | OTLP 的身份验证标头                                        | `Authorization=Bearer token`       |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | mTLS 身份验证的客户端密钥                                     | 客户端密钥文件的路径                         |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | mTLS 身份验证的客户端证书                                     | 客户端证书文件的路径                         |
-| `OTEL_METRIC_EXPORT_INTERVAL`                       | 导出间隔（毫秒）（默认：60000）                                  | `5000`、`60000`                     |
-| `OTEL_LOGS_EXPORT_INTERVAL`                         | 日志导出间隔（毫秒）（默认：5000）                                 | `1000`、`10000`                     |
-| `OTEL_LOG_USER_PROMPTS`                             | 启用用户提示内容的日志记录（默认：禁用）                                | `1` 启用                             |
-| `OTEL_LOG_TOOL_DETAILS`                             | 启用在工具事件中记录工具输入参数、MCP 服务器/工具名称和技能名称（默认：禁用）           | `1` 启用                             |
-| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | 指标时间性偏好（默认：`delta`）。如果您的后端期望累积时间性，请设置为 `cumulative` | `delta`、`cumulative`               |
-| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | 刷新动态标头的间隔（默认：1740000ms / 29 分钟）                     | `900000`                           |
+| 环境变量                                                | 描述                                                                      | 示例值                                  |
+| --------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------ |
+| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | 启用遥测收集（必需）                                                              | `1`                                  |
+| `OTEL_METRICS_EXPORTER`                             | 指标导出器类型，逗号分隔。使用 `none` 禁用                                               | `console`、`otlp`、`prometheus`、`none` |
+| `OTEL_LOGS_EXPORTER`                                | 日志/事件导出器类型，逗号分隔。使用 `none` 禁用                                            | `console`、`otlp`、`none`              |
+| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | OTLP 导出器的协议，适用于所有信号                                                     | `grpc`、`http/json`、`http/protobuf`   |
+| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | 所有信号的 OTLP 收集器端点                                                        | `http://localhost:4317`              |
+| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | 指标协议，覆盖常规设置                                                             | `grpc`、`http/json`、`http/protobuf`   |
+| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | OTLP 指标端点，覆盖常规设置                                                        | `http://localhost:4318/v1/metrics`   |
+| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | 日志协议，覆盖常规设置                                                             | `grpc`、`http/json`、`http/protobuf`   |
+| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | OTLP 日志端点，覆盖常规设置                                                        | `http://localhost:4318/v1/logs`      |
+| `OTEL_EXPORTER_OTLP_HEADERS`                        | OTLP 的身份验证标头                                                            | `Authorization=Bearer token`         |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | mTLS 身份验证的客户端密钥                                                         | 客户端密钥文件的路径                           |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | mTLS 身份验证的客户端证书                                                         | 客户端证书文件的路径                           |
+| `OTEL_METRIC_EXPORT_INTERVAL`                       | 导出间隔（毫秒）（默认：60000）                                                      | `5000`、`60000`                       |
+| `OTEL_LOGS_EXPORT_INTERVAL`                         | 日志导出间隔（毫秒）（默认：5000）                                                     | `1000`、`10000`                       |
+| `OTEL_LOG_USER_PROMPTS`                             | 启用用户提示内容的日志记录（默认：禁用）                                                    | `1` 启用                               |
+| `OTEL_LOG_TOOL_DETAILS`                             | 启用在工具事件中记录工具参数和输入参数：Bash 命令、MCP 服务器和工具名称、技能名称和工具输入（默认：禁用）               | `1` 启用                               |
+| `OTEL_LOG_TOOL_CONTENT`                             | 启用在 span 事件中记录工具输入和输出内容（默认：禁用）。需要 [tracing](#traces-beta)。内容在 60 KB 处截断 | `1` 启用                               |
+| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | 指标时间性偏好（默认：`delta`）。如果您的后端期望累积时间性，请设置为 `cumulative`                     | `delta`、`cumulative`                 |
+| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | 刷新动态标头的间隔（默认：1740000ms / 29 分钟）                                         | `900000`                             |
 
 ### 指标基数控制
 
@@ -100,6 +101,22 @@ claude
 | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` | 在指标中包含 user.account\_uuid 和 user.account\_id 属性 | `true`  | `false` |
 
 这些变量有助于控制指标的基数，这会影响指标后端中的存储要求和查询性能。较低的基数通常意味着更好的性能和更低的存储成本，但分析的数据粒度较低。
+
+### Traces（测试版）
+
+分布式跟踪导出 span，将每个用户提示链接到它触发的 API 请求和工具执行，因此您可以在跟踪后端中将完整请求视为单个 trace。
+
+跟踪默认关闭。要启用它，请同时设置 `CLAUDE_CODE_ENABLE_TELEMETRY=1` 和 `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`，然后设置 `OTEL_TRACES_EXPORTER` 以选择 span 的发送位置。Traces 重用 [常见 OTLP 配置](#common-configuration-variables) 用于端点、协议和标头。
+
+| 环境变量                                  | 描述                                                  | 示例值                                |
+| ------------------------------------- | --------------------------------------------------- | ---------------------------------- |
+| `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA` | 启用 span 跟踪（必需）。也接受 `ENABLE_ENHANCED_TELEMETRY_BETA` | `1`                                |
+| `OTEL_TRACES_EXPORTER`                | Traces 导出器类型，逗号分隔。使用 `none` 禁用                      | `console`、`otlp`、`none`            |
+| `OTEL_EXPORTER_OTLP_TRACES_PROTOCOL`  | Traces 协议，覆盖 `OTEL_EXPORTER_OTLP_PROTOCOL`          | `grpc`、`http/json`、`http/protobuf` |
+| `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`  | OTLP traces 端点，覆盖 `OTEL_EXPORTER_OTLP_ENDPOINT`     | `http://localhost:4318/v1/traces`  |
+| `OTEL_TRACES_EXPORT_INTERVAL`         | Span 批量导出间隔（毫秒）（默认：5000）                            | `1000`、`10000`                     |
+
+Spans 默认编辑用户提示文本和工具内容。设置 `OTEL_LOG_USER_PROMPTS=1` 和 `OTEL_LOG_TOOL_CONTENT=1` 以包含它们。
 
 ### 动态标头
 
@@ -386,10 +403,10 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * `decision_source`：决策来源 - `"config"`、`"hook"`、`"user_permanent"`、`"user_temporary"`、`"user_abort"` 或 `"user_reject"`
 * `tool_result_size_bytes`：工具结果的大小（字节）
 * `mcp_server_scope`：MCP 服务器范围标识符（用于 MCP 工具）
-* `tool_parameters`：包含工具特定参数的 JSON 字符串（如果可用）
+* `tool_parameters`（当 `OTEL_LOG_TOOL_DETAILS=1` 时）：包含工具特定参数的 JSON 字符串：
   * 对于 Bash 工具：包括 `bash_command`、`full_command`、`timeout`、`description`、`dangerouslyDisableSandbox` 和 `git_commit_id`（git commit 命令成功时的提交 SHA）
-  * 对于 MCP 工具（当 `OTEL_LOG_TOOL_DETAILS=1` 时）：包括 `mcp_server_name`、`mcp_tool_name`
-  * 对于 Skill 工具（当 `OTEL_LOG_TOOL_DETAILS=1` 时）：包括 `skill_name`
+  * 对于 MCP 工具：包括 `mcp_server_name`、`mcp_tool_name`
+  * 对于 Skill 工具：包括 `skill_name`
 * `tool_input`（当 `OTEL_LOG_TOOL_DETAILS=1` 时）：JSON 序列化的工具参数。超过 512 个字符的单个值被截断，完整有效负载限制为约 4 K 字符。适用于所有工具，包括 MCP 工具。
 
 #### API 请求事件
@@ -497,7 +514,7 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 
 ## 后端考虑事项
 
-您选择的指标和日志后端决定了您可以执行的分析类型：
+您选择的指标、日志和跟踪后端决定了您可以执行的分析类型：
 
 ### 对于指标
 
@@ -510,6 +527,13 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * **日志聚合系统（例如，Elasticsearch、Loki）**：全文搜索、日志分析
 * **列式存储（例如，ClickHouse）**：结构化事件分析
 * **全功能可观测性平台（例如，Honeycomb、Datadog）**：指标和事件之间的关联
+
+### 对于跟踪
+
+选择支持分布式跟踪存储和 span 关联的后端：
+
+* **分布式跟踪系统（例如，Jaeger、Zipkin、Grafana Tempo）**：Span 可视化、请求瀑布、延迟分析
+* **全功能可观测性平台（例如，Honeycomb、Datadog）**：跟踪搜索和与指标和日志的关联
 
 对于需要日活跃用户/周活跃用户/月活跃用户 (DAU/WAU/MAU) 指标的组织，请考虑支持高效唯一值查询的后端。
 
@@ -532,10 +556,11 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 ## 安全和隐私
 
 * 遥测是可选的，需要显式配置
-* 原始文件内容和代码片段不包含在指标或事件中。工具执行事件在 `tool_parameters` 字段中包含 bash 命令和文件路径，这可能包含敏感值。如果您的命令可能包含机密，请配置您的遥测后端以过滤或编辑 `tool_parameters`
+* 原始文件内容和代码片段不包含在指标或事件中。Trace spans 是一个单独的数据路径：请参阅下面的 `OTEL_LOG_TOOL_CONTENT` 项目符号
 * 通过 OAuth 认证时，`user.email` 包含在遥测属性中。如果这对您的组织是一个问题，请与您的遥测后端合作以过滤或编辑此字段
 * 默认情况下不收集用户提示内容。仅记录提示长度。要包含提示内容，请设置 `OTEL_LOG_USER_PROMPTS=1`
-* 默认情况下不记录工具输入参数。要包含它们，请设置 `OTEL_LOG_TOOL_DETAILS=1`。启用后，`tool_result` 事件包含 MCP 服务器/工具名称和技能名称，以及包含文件路径、URL、搜索模式和其他参数的 `tool_input` 属性。超过 512 个字符的单个值被截断，总数限制为约 4 K 字符，但参数仍可能包含敏感值。根据需要配置您的遥测后端以过滤或编辑 `tool_input`
+* 默认情况下不记录工具输入参数。要包含它们，请设置 `OTEL_LOG_TOOL_DETAILS=1`。启用后，`tool_result` 事件包含 `tool_parameters` 属性，其中包含 Bash 命令、MCP 服务器和工具名称、技能名称，以及包含文件路径、URL、搜索模式和其他参数的 `tool_input` 属性。超过 512 个字符的单个值被截断，总数限制为约 4 K 字符，但参数仍可能包含敏感值。根据需要配置您的遥测后端以过滤或编辑这些属性
+* 默认情况下，trace spans 中不记录工具输入和输出内容。要包含它，请设置 `OTEL_LOG_TOOL_CONTENT=1`。启用后，span 事件包含完整的工具输入和输出内容，在每个 span 处截断为 60 KB。这可能包括 Read 工具结果中的原始文件内容和 Bash 命令输出。根据需要配置您的遥测后端以过滤或编辑这些属性
 
 ## 在 Amazon Bedrock 上监控 Claude Code
 

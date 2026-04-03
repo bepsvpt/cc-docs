@@ -28,12 +28,12 @@ Piénselo como agregar una tienda de aplicaciones: agregar la tienda le da acces
 
 ## Mercado oficial de Anthropic
 
-El mercado oficial de Anthropic (`claude-plugins-official`) está disponible automáticamente cuando inicia Claude Code. Ejecute `/plugin` y vaya a la pestaña **Discover** para explorar lo que está disponible.
+El mercado oficial de Anthropic (`claude-plugins-official`) está disponible automáticamente cuando inicia Claude Code. Ejecute `/plugin` y vaya a la pestaña **Discover** para explorar lo que está disponible, o vea el catálogo en [claude.com/plugins](https://claude.com/plugins).
 
-Para instalar un plugin del mercado oficial:
+Para instalar un plugin del mercado oficial, use `/plugin install <name>@claude-plugins-official`. Por ejemplo, para instalar la integración de GitHub:
 
 ```shell  theme={null}
-/plugin install plugin-name@claude-plugins-official
+/plugin install github@claude-plugins-official
 ```
 
 <Note>
@@ -302,7 +302,7 @@ Cuando instala, habilita o deshabilita plugins durante una sesión, ejecute `/re
 /reload-plugins
 ```
 
-Claude Code recarga todos los plugins activos y muestra conteos para comandos recargados, skills, agentes, hooks, servidores MCP de plugins y servidores LSP de plugins.
+Claude Code recarga todos los plugins activos y muestra conteos para plugins, skills, agentes, hooks, servidores MCP de plugins y servidores LSP de plugins.
 
 ## Administrar mercados
 
@@ -358,11 +358,11 @@ Los mercados oficiales de Anthropic tienen la actualización automática habilit
 
 Para deshabilitar todas las actualizaciones automáticas completamente tanto para Claude Code como para todos los plugins, establezca la variable de entorno `DISABLE_AUTOUPDATER`. Consulte [Actualizaciones automáticas](/es/setup#auto-updates) para obtener detalles.
 
-Para mantener las actualizaciones automáticas de plugins habilitadas mientras se deshabilitan las actualizaciones automáticas de Claude Code, establezca `FORCE_AUTOUPDATE_PLUGINS=true` junto con `DISABLE_AUTOUPDATER`:
+Para mantener las actualizaciones automáticas de plugins habilitadas mientras se deshabilitan las actualizaciones automáticas de Claude Code, establezca `FORCE_AUTOUPDATE_PLUGINS=1` junto con `DISABLE_AUTOUPDATER`:
 
-```shell  theme={null}
-export DISABLE_AUTOUPDATER=true
-export FORCE_AUTOUPDATE_PLUGINS=true
+```bash  theme={null}
+export DISABLE_AUTOUPDATER=1
+export FORCE_AUTOUPDATE_PLUGINS=1
 ```
 
 Esto es útil cuando desea administrar las actualizaciones de Claude Code manualmente pero aún recibir actualizaciones automáticas de plugins.
@@ -398,7 +398,7 @@ Los plugins y mercados son componentes altamente confiables que pueden ejecutar 
 
 Si ve "unknown command" o el comando `/plugin` no aparece:
 
-1. **Verifique su versión**: Ejecute `claude --version`. Los plugins requieren la versión 1.0.33 o posterior.
+1. **Verifique su versión**: Ejecute `claude --version` para ver qué está instalado.
 2. **Actualice Claude Code**:
    * **Homebrew**: `brew upgrade claude-code`
    * **npm**: `npm update -g @anthropic-ai/claude-code`

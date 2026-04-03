@@ -117,9 +117,9 @@ Untuk menghindari setiap sesi mengenai API pada momen dinding jam yang sama, pen
 
 Offset berasal dari ID tugas, jadi tugas yang sama selalu mendapatkan offset yang sama. Jika waktu yang tepat penting, pilih menit yang bukan `:00` atau `:30`, misalnya `3 9 * * *` daripada `0 9 * * *`, dan jitter sekali jalan tidak akan berlaku.
 
-### Kedaluwarsa tiga hari
+### Kedaluwarsa tujuh hari
 
-Tugas berulang secara otomatis kedaluwarsa 3 hari setelah pembuatan. Tugas berjalan satu kali terakhir, kemudian menghapus dirinya sendiri. Ini membatasi berapa lama loop yang terlupakan dapat berjalan. Jika Anda memerlukan tugas berulang untuk bertahan lebih lama, batalkan dan buat ulang sebelum kedaluwarsa, atau gunakan [Cloud scheduled tasks](/id/web-scheduled-tasks) atau [Desktop scheduled tasks](/id/desktop#schedule-recurring-tasks) untuk penjadwalan yang tahan lama.
+Tugas berulang secara otomatis kedaluwarsa 7 hari setelah pembuatan. Tugas berjalan satu kali terakhir, kemudian menghapus dirinya sendiri. Ini membatasi berapa lama loop yang terlupakan dapat berjalan. Jika Anda memerlukan tugas berulang untuk bertahan lebih lama, batalkan dan buat ulang sebelum kedaluwarsa, atau gunakan [Cloud scheduled tasks](/id/web-scheduled-tasks) atau [Desktop scheduled tasks](/id/desktop#schedule-recurring-tasks) untuk penjadwalan yang tahan lama.
 
 ## Referensi ekspresi cron
 

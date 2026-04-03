@@ -586,11 +586,11 @@ Bevor Sie Claude Code GitHub Actions mit Cloud-Providern einrichten, benötigen 
                   github_token: ${{ steps.app-token.outputs.token }}
                   trigger_phrase: "@claude"
                   use_vertex: "true"
-                  claude_args: '--model claude-sonnet-4@20250514 --max-turns 10'
+                  claude_args: '--model claude-sonnet-4-5@20250929 --max-turns 10'
                 env:
                   ANTHROPIC_VERTEX_PROJECT_ID: ${{ steps.auth.outputs.project_id }}
                   CLOUD_ML_REGION: us-east5
-                  VERTEX_REGION_CLAUDE_3_7_SONNET: us-east5
+                  VERTEX_REGION_CLAUDE_4_5_SONNET: us-east5
         ```
 
         <Tip>
@@ -647,7 +647,7 @@ Häufige Argumente:
 * `--max-turns`: Maximale Gesprächs-Turns (Standard: 10)
 * `--model`: Zu verwendendes Modell (zum Beispiel `claude-sonnet-4-6`)
 * `--mcp-config`: Pfad zur MCP-Konfiguration
-* `--allowed-tools`: Komma-getrennte Liste zulässiger Tools
+* `--allowedTools`: Komma-getrennte Liste zulässiger Tools. Der Alias `--allowed-tools` funktioniert auch.
 * `--debug`: Debug-Ausgabe aktivieren
 
 ### Alternative Integrationsmethoden

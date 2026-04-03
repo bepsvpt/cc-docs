@@ -97,6 +97,16 @@ Este hook usa o evento `Notification`, que dispara quando Claude está aguardand
       }
     }
     ```
+
+    <Accordion title="Se nenhuma notificação aparecer">
+      `osascript` roteia notificações através do aplicativo Script Editor integrado. Se o Script Editor não tiver permissão de notificação, o comando falha silenciosamente e macOS não solicitará que você o conceda. Execute isto no Terminal uma vez para fazer o Script Editor aparecer em suas configurações de notificação:
+
+      ```bash  theme={null}
+      osascript -e 'display notification "test"'
+      ```
+
+      Nada aparecerá ainda. Abra **System Settings > Notifications**, encontre **Script Editor** na lista e ative **Allow Notifications**. Execute o comando novamente para confirmar que a notificação de teste aparece.
+    </Accordion>
   </Tab>
 
   <Tab title="Linux">
@@ -407,6 +417,8 @@ Eventos de hook disparam em pontos específicos do ciclo de vida do Claude Code.
 | `ElicitationResult`  | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
 | `SessionEnd`         | When a session terminates                                                                                                                              |
 
+Quando múltiplos hooks correspondem, cada um retorna seu próprio resultado. Para decisões, Claude Code escolhe a resposta mais restritiva. Um hook `PreToolUse` retornando `deny` cancela a chamada de ferramenta não importa o que os outros retornem. Um hook retornando `ask` força o prompt de permissão mesmo se o resto retornar `allow`. Texto de `additionalContext` é mantido de cada hook e passado ao Claude junto.
+
 Cada hook tem um `type` que determina como ele executa. A maioria dos hooks usa `"type": "command"`, que executa um comando shell. Três outros tipos estão disponíveis:
 
 * `"type": "http"`: POST dados de evento para uma URL. Consulte [HTTP hooks](#http-hooks).
@@ -445,11 +457,11 @@ INPUT=$(cat)
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
 
 if echo "$COMMAND" | grep -q "drop table"; then
-  echo "Blocked: dropping tables is not allowed" >&2  # stderr se torna feedback do Claude
-  exit 2 # exit 2 = bloquear a ação
+  echo "Blocked: dropping tables is not allowed" >&2  // stderr se torna feedback do Claude
+  exit 2 // exit 2 = bloquear a ação
 fi
 
-exit 0  # exit 0 = deixar prosseguir
+exit 0  // exit 0 = deixar prosseguir
 ```
 
 O código de saída determina o que acontece a seguir:
@@ -484,6 +496,8 @@ Claude Code lê `permissionDecision` e cancela a chamada de ferramenta, depois a
 * `"deny"`: cancelar a chamada de ferramenta e enviar o motivo ao Claude
 * `"ask"`: mostrar o prompt de permissão ao usuário normalmente
 
+Um quarto valor, `"defer"`, está disponível em [modo não-interativo](/pt/headless) com a flag `-p`. Ele sai do processo com a chamada de ferramenta preservada para que um wrapper do Agent SDK possa coletar entrada e retomar. Consulte [Adiar uma chamada de ferramenta para depois](/pt/hooks#defer-a-tool-call-for-later) na referência.
+
 Retornar `"allow"` pula o prompt interativo mas não substitui [regras de permissão](/pt/permissions#manage-permissions). Se uma regra de negação corresponder à chamada de ferramenta, a chamada é bloqueada mesmo quando seu hook retorna `"allow"`. Se uma regra de pedido corresponder, o usuário ainda é solicitado. Isto significa que regras de negação de qualquer escopo de configuração, incluindo [configurações gerenciadas](/pt/settings#settings-files), sempre têm precedência sobre aprovações de hook.
 
 Outros eventos usam padrões de decisão diferentes. Por exemplo, hooks `PostToolUse` e `Stop` usam um campo `decision: "block"` de nível superior, enquanto `PermissionRequest` usa `hookSpecificOutput.decision.behavior`. Consulte a [tabela de resumo](/pt/hooks#decision-control) na referência para uma análise completa por evento.
@@ -513,22 +527,22 @@ O matcher `"Edit|Write"` é um padrão regex que corresponde ao nome da ferramen
 
 Cada tipo de evento corresponde a um campo específico. Matchers suportam strings exatas e padrões regex:
 
-| Evento                                                                                                        | O que o matcher filtra                         | Valores de matcher de exemplo                                                                                             |
-| :------------------------------------------------------------------------------------------------------------ | :--------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                                        | nome da ferramenta                             | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
-| `SessionStart`                                                                                                | como a sessão começou                          | `startup`, `resume`, `clear`, `compact`                                                                                   |
-| `SessionEnd`                                                                                                  | por que a sessão terminou                      | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                                | tipo de notificação                            | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                               | tipo de agente                                 | `Bash`, `Explore`, `Plan` ou nomes de agentes personalizados                                                              |
-| `PreCompact`, `PostCompact`                                                                                   | o que acionou a compactação                    | `manual`, `auto`                                                                                                          |
-| `SubagentStop`                                                                                                | tipo de agente                                 | mesmos valores que `SubagentStart`                                                                                        |
-| `ConfigChange`                                                                                                | fonte de configuração                          | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
-| `StopFailure`                                                                                                 | tipo de erro                                   | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                                          | motivo de carregamento                         | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
-| `Elicitation`                                                                                                 | nome do servidor MCP                           | seus nomes de servidor MCP configurados                                                                                   |
-| `ElicitationResult`                                                                                           | nome do servidor MCP                           | mesmos valores que `Elicitation`                                                                                          |
-| `FileChanged`                                                                                                 | nome do arquivo (basename do arquivo alterado) | `.envrc`, `.env`, qualquer nome de arquivo que você queira observar                                                       |
-| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged` | sem suporte a matcher                          | sempre dispara em cada ocorrência                                                                                         |
+| Evento                                                                                                                       | O que o matcher filtra                         | Valores de matcher de exemplo                                                                                             |
+| :--------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                   | nome da ferramenta                             | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `SessionStart`                                                                                                               | como a sessão começou                          | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `SessionEnd`                                                                                                                 | por que a sessão terminou                      | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
+| `Notification`                                                                                                               | tipo de notificação                            | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
+| `SubagentStart`                                                                                                              | tipo de agente                                 | `Bash`, `Explore`, `Plan` ou nomes de agentes personalizados                                                              |
+| `PreCompact`, `PostCompact`                                                                                                  | o que acionou a compactação                    | `manual`, `auto`                                                                                                          |
+| `SubagentStop`                                                                                                               | tipo de agente                                 | mesmos valores que `SubagentStart`                                                                                        |
+| `ConfigChange`                                                                                                               | fonte de configuração                          | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
+| `StopFailure`                                                                                                                | tipo de erro                                   | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                                         | motivo de carregamento                         | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `Elicitation`                                                                                                                | nome do servidor MCP                           | seus nomes de servidor MCP configurados                                                                                   |
+| `ElicitationResult`                                                                                                          | nome do servidor MCP                           | mesmos valores que `Elicitation`                                                                                          |
+| `FileChanged`                                                                                                                | nome do arquivo (basename do arquivo alterado) | `.envrc`, `.env`, qualquer nome de arquivo que você queira observar                                                       |
+| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged` | sem suporte a matcher                          | sempre dispara em cada ocorrência                                                                                         |
 
 Alguns exemplos adicionais mostrando matchers em diferentes tipos de evento:
 
@@ -603,6 +617,39 @@ Alguns exemplos adicionais mostrando matchers em diferentes tipos de evento:
 </Tabs>
 
 Para sintaxe completa de matcher, consulte a [referência de Hooks](/pt/hooks#configuration).
+
+#### Filtrar por nome de ferramenta e argumentos com o campo `if`
+
+<Note>
+  O campo `if` requer Claude Code v2.1.85 ou posterior. Versões anteriores o ignoram e executam o hook em cada chamada correspondida.
+</Note>
+
+O campo `if` usa [sintaxe de regra de permissão](/pt/permissions) para filtrar hooks por nome de ferramenta e argumentos juntos, para que o processo do hook apenas seja gerado quando a chamada de ferramenta corresponder. Isto vai além de `matcher`, que filtra no nível do grupo apenas por nome de ferramenta.
+
+Por exemplo, para executar um hook apenas quando Claude usa comandos `git` em vez de todos os comandos Bash:
+
+```json  theme={null}
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git *)",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check-git-policy.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+O processo do hook apenas é gerado quando o comando Bash começa com `git`. Outros comandos Bash pulam este manipulador inteiramente. O campo `if` aceita os mesmos padrões que regras de permissão: `"Bash(git *)"`, `"Edit(*.ts)"` e assim por diante. Para corresponder múltiplos nomes de ferramenta, use manipuladores separados cada um com seu próprio valor `if`, ou corresponda no nível `matcher` onde alternação de pipe é suportada.
+
+`if` funciona apenas em eventos de ferramenta: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest` e `PermissionDenied`. Adicioná-lo a qualquer outro evento impede o hook de executar.
 
 ### Configurar local do hook
 
@@ -720,11 +767,18 @@ Para opções de configuração completas e manipulação de resposta, consulte 
 
 ### Limitações
 
-* Hooks de comando se comunicam apenas através de stdout, stderr e códigos de saída. Eles não podem disparar comandos ou chamadas de ferramenta diretamente. HTTP hooks se comunicam através do corpo da resposta em vez disso.
+* Hooks de comando se comunicam apenas através de stdout, stderr e códigos de saída. Eles não podem disparar comandos `/` ou chamadas de ferramenta. Texto retornado via `additionalContext` é injetado como um lembrete do sistema que Claude lê como texto simples. HTTP hooks se comunicam através do corpo da resposta em vez disso.
 * O timeout do hook é 10 minutos por padrão, configurável por hook com o campo `timeout` (em segundos).
 * Hooks `PostToolUse` não podem desfazer ações já que a ferramenta já foi executada.
 * Hooks `PermissionRequest` não disparam em [modo não-interativo](/pt/headless) (`-p`). Use hooks `PreToolUse` para decisões de permissão automatizadas.
 * Hooks `Stop` disparam sempre que Claude termina de responder, não apenas na conclusão de tarefas. Eles não disparam em interrupções do usuário. Erros de API disparam [StopFailure](/pt/hooks#stopfailure) em vez disso.
+* Quando múltiplos hooks PreToolUse retornam [`updatedInput`](/pt/hooks#pretooluse) para reescrever argumentos de uma ferramenta, o último a terminar vence. Como hooks executam em paralelo, a ordem é não-determinística. Evite ter mais de um hook modificando a entrada da mesma ferramenta.
+
+### Hooks e modos de permissão
+
+Hooks PreToolUse disparam antes de qualquer verificação de modo de permissão. Um hook que retorna `permissionDecision: "deny"` bloqueia a ferramenta mesmo em modo `bypassPermissions` ou com `--dangerously-skip-permissions`. Isto permite que você aplique política que usuários não podem contornar mudando seu modo de permissão.
+
+O inverso não é verdadeiro: um hook retornando `"allow"` não contorna regras de negação de configurações. Hooks podem apertar restrições mas não afrouxá-las além do que regras de permissão permitem.
 
 ### Hook não dispara
 
@@ -742,7 +796,7 @@ Você vê uma mensagem como "PreToolUse hook error: ..." na transcrição.
 * Seu script saiu com um código não-zero inesperadamente. Teste-o manualmente canalizando JSON de amostra:
   ```bash  theme={null}
   echo '{"tool_name":"Bash","tool_input":{"command":"ls"}}' | ./my-hook.sh
-  echo $?  # Verifique o código de saída
+  echo $?  // Verifique o código de saída
   ```
 * Se você vir "command not found", use caminhos absolutos ou `$CLAUDE_PROJECT_DIR` para referenciar scripts
 * Se você vir "jq: command not found", instale `jq` ou use Python/Node.js para análise JSON
@@ -766,9 +820,9 @@ Seu script de Stop hook precisa verificar se já acionou uma continuação. Anal
 #!/bin/bash
 INPUT=$(cat)
 if [ "$(echo "$INPUT" | jq -r '.stop_hook_active')" = "true" ]; then
-  exit 0  # Permitir que Claude pare
+  exit 0  // Permitir que Claude pare
 fi
-# ... resto da lógica do seu hook
+// ... resto da lógica do seu hook
 ```
 
 ### Validação JSON falhou

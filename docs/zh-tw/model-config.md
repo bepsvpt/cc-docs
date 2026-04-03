@@ -23,13 +23,14 @@
 
 | 模型別名             | 行為                                                                                                                                                |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`default`**    | 推薦的模型設定，取決於您的帳戶類型                                                                                                                                 |
+| **`default`**    | 特殊值，可清除任何模型覆蓋並還原為您帳戶類型的推薦模型。本身不是模型別名                                                                                                              |
+| **`best`**       | 使用最強大的可用模型，目前相當於 `opus`                                                                                                                           |
 | **`sonnet`**     | 使用最新的 Sonnet 模型（目前為 Sonnet 4.6）進行日常編碼任務                                                                                                           |
 | **`opus`**       | 使用最新的 Opus 模型（目前為 Opus 4.6）進行複雜推理任務                                                                                                               |
 | **`haiku`**      | 使用快速高效的 Haiku 模型進行簡單任務                                                                                                                            |
 | **`sonnet[1m]`** | 使用 Sonnet 搭配[100 萬個 token 的 context window](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window)進行長時間會話 |
 | **`opus[1m]`**   | 使用 Opus 搭配[100 萬個 token 的 context window](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window)進行長時間會話   |
-| **`opusplan`**   | 特殊模式，在計畫模式期間使用 `opus`，然後在執行時切換到 `sonnet`                                                                                                          |
+| **`opusplan`**   | 特殊模式，在 Plan Mode 期間使用 `opus`，然後在執行時切換到 `sonnet`                                                                                                   |
 
 別名始終指向最新版本。若要固定到特定版本，請使用完整模型名稱（例如 `claude-opus-4-6`）或設定相應的環境變數，如 `ANTHROPIC_DEFAULT_OPUS_MODEL`。
 
@@ -83,23 +84,31 @@ claude --model opus
 
 ### 控制使用者執行的模型
 
-若要完全控制模型體驗，請將 `availableModels` 與 `model` 設定一起使用：
+`model` 設定是初始選擇，而非強制執行。它設定會話啟動時哪個模型處於活動狀態，但使用者仍然可以開啟 `/model` 並選擇「預設」，這會解析為其層級的系統預設值，無論 `model` 設定為何。
 
-* **availableModels**：限制使用者可以切換到的內容
-* **model**：設定明確的模型覆蓋，優先於預設值
+若要完全控制模型體驗，請結合三個設定：
 
-此範例確保所有使用者執行 Sonnet 4.6，並且只能在 Sonnet 和 Haiku 之間選擇：
+* **`availableModels`**：限制使用者可以切換到的具名模型
+* **`model`**：設定會話啟動時的初始模型選擇
+* **`ANTHROPIC_DEFAULT_SONNET_MODEL`** / **`ANTHROPIC_DEFAULT_OPUS_MODEL`** / **`ANTHROPIC_DEFAULT_HAIKU_MODEL`**：控制「預設」選項以及 `sonnet`、`opus` 和 `haiku` 別名解析為什麼
+
+此範例在 Sonnet 4.5 上啟動使用者，將選擇器限制為 Sonnet 和 Haiku，並將「預設」固定為解析為 Sonnet 4.5 而不是最新版本：
 
 ```json  theme={null}
 {
-  "model": "sonnet",
-  "availableModels": ["sonnet", "haiku"]
+  "model": "claude-sonnet-4-5",
+  "availableModels": ["claude-sonnet-4-5", "haiku"],
+  "env": {
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-5"
+  }
 }
 ```
 
+沒有 `env` 區塊，在選擇器中選擇「預設」的使用者會獲得最新的 Sonnet 版本，繞過 `model` 和 `availableModels` 中的版本固定。
+
 ### 合併行為
 
-當 `availableModels` 在多個層級設定時（例如使用者設定和專案設定），陣列會被合併並去重。若要強制執行嚴格的允許清單，請在受管理或政策設定中設定 `availableModels`，這具有最高優先順序。
+當 `availableModels` 在多個層級設定時，例如使用者設定和專案設定，陣列會被合併並去重。若要強制執行嚴格的允許清單，請在受管理或政策設定中設定 `availableModels`，這具有最高優先順序。
 
 ## 特殊模型行為
 
@@ -117,7 +126,7 @@ claude --model opus
 
 `opusplan` 模型別名提供了一種自動化的混合方法：
 
-* **在計畫模式中** - 使用 `opus` 進行複雜推理和架構決策
+* **在 Plan Mode 中** - 使用 `opus` 進行複雜推理和架構決策
 * **在執行模式中** - 自動切換到 `sonnet` 進行程式碼生成和實現
 
 這為您提供了兩全其美的方案：Opus 優越的推理能力用於計畫，Sonnet 的效率用於執行。

@@ -86,7 +86,14 @@ Claude Code memerlukan akses ke URL berikut:
 
 Pastikan URL ini diizinkan dalam konfigurasi proxy dan aturan firewall Anda. Ini sangat penting ketika menggunakan Claude Code di lingkungan jaringan terkontainer atau terbatas.
 
+Penginstal asli dan pemeriksaan pembaruan juga memerlukan URL berikut. Izinkan keduanya, karena penginstal dan pembaruan otomatis mengambil dari `storage.googleapis.com` sementara unduhan plugin menggunakan `downloads.claude.ai`. Jika Anda menginstal Claude Code melalui npm atau mengelola distribusi biner Anda sendiri, pengguna akhir mungkin tidak memerlukan akses:
+
+* `storage.googleapis.com`: bucket unduhan untuk biner Claude Code dan pembaruan otomatis
+* `downloads.claude.ai`: CDN yang menghosting skrip instalasi, penunjuk versi, manifes, kunci penandatanganan, dan file yang dapat dieksekusi plugin
+
 [Claude Code di web](/id/claude-code-on-the-web) dan [Code Review](/id/code-review) terhubung ke repositori Anda dari infrastruktur yang dikelola Anthropic. Jika organisasi GitHub Enterprise Cloud Anda membatasi akses berdasarkan alamat IP, aktifkan [pewarisan daftar izin IP untuk GitHub Apps yang diinstal](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps). Claude GitHub App mendaftarkan rentang IP-nya, jadi mengaktifkan pengaturan ini memungkinkan akses tanpa konfigurasi manual. Untuk [menambahkan rentang ke daftar izin Anda secara manual](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address) sebagai gantinya, atau untuk mengonfigurasi firewall lainnya, lihat [Alamat IP API Anthropic](https://platform.claude.com/docs/en/api/ip-addresses).
+
+Untuk instans [GitHub Enterprise Server](/id/github-enterprise-server) yang dihosting sendiri di belakang firewall, izinkan daftar [Alamat IP API Anthropic](https://platform.claude.com/docs/en/api/ip-addresses) yang sama sehingga infrastruktur Anthropic dapat menjangkau host GHES Anda untuk mengkloning repositori dan memposting komentar tinjauan.
 
 ## Sumber daya tambahan
 

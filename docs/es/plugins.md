@@ -45,7 +45,6 @@ Este inicio rápido te guía a través de la creación de un plugin con un skill
 ### Requisitos previos
 
 * Claude Code [instalado y autenticado](/es/quickstart#step-1-install-claude-code)
-* Claude Code versión 1.0.33 o posterior (ejecuta `claude --version` para verificar)
 
 <Note>
   Si no ves el comando `/plugin`, actualiza Claude Code a la última versión. Consulta [Troubleshooting](/es/troubleshooting) para obtener instrucciones de actualización.
@@ -131,7 +130,7 @@ Este inicio rápido te guía a través de la creación de un plugin con un skill
     Verás que Claude responde con un saludo. Ejecuta `/help` para ver tu skill listado bajo el espacio de nombres del plugin.
 
     <Note>
-      **¿Por qué espacios de nombres?** Los skills de plugin siempre tienen espacios de nombres (como `/greet:hello`) para prevenir conflictos cuando múltiples plugins tienen skills con el mismo nombre.
+      **¿Por qué espacios de nombres?** Los skills de plugin siempre tienen espacios de nombres (como `/my-first-plugin:hello`) para prevenir conflictos cuando múltiples plugins tienen skills con el mismo nombre.
 
       Para cambiar el prefijo del espacio de nombres, actualiza el campo `name` en `plugin.json`.
     </Note>
@@ -283,7 +282,7 @@ claude --plugin-dir ./my-plugin
 
 Cuando un plugin `--plugin-dir` tiene el mismo nombre que un plugin de marketplace instalado, la copia local tiene prioridad para esa sesión. Esto te permite probar cambios en un plugin que ya tienes instalado sin desinstalarlo primero. Los plugins de marketplace forzados a estar habilitados por configuraciones administradas son la única excepción y no pueden ser anulados.
 
-A medida que hagas cambios en tu plugin, ejecuta `/reload-plugins` para recoger las actualizaciones sin reiniciar. Esto recarga comandos, skills, agentes, hooks, servidores MCP de plugin y servidores LSP de plugin. Prueba los componentes de tu plugin:
+A medida que hagas cambios en tu plugin, ejecuta `/reload-plugins` para recoger las actualizaciones sin reiniciar. Esto recarga plugins, skills, agentes, hooks, servidores MCP de plugin y servidores LSP de plugin. Prueba los componentes de tu plugin:
 
 * Prueba tus skills con `/plugin-name:skill-name`
 * Verifica que los agentes aparezcan en `/agents`

@@ -144,32 +144,36 @@ Skrip Anda berjalan setelah setiap pesan asisten baru, ketika mode izin berubah,
 
 Claude Code mengirim bidang JSON berikut ke skrip Anda melalui stdin:
 
-| Bidang                                                                    | Deskripsi                                                                                                                                                                                 |
-| ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `model.id`, `model.display_name`                                          | Pengidentifikasi model saat ini dan nama tampilan                                                                                                                                         |
-| `cwd`, `workspace.current_dir`                                            | Direktori kerja saat ini. Kedua bidang berisi nilai yang sama; `workspace.current_dir` lebih disukai untuk konsistensi dengan `workspace.project_dir`.                                    |
-| `workspace.project_dir`                                                   | Direktori tempat Claude Code diluncurkan, yang mungkin berbeda dari `cwd` jika direktori kerja berubah selama sesi                                                                        |
-| `cost.total_cost_usd`                                                     | Total biaya sesi dalam USD                                                                                                                                                                |
-| `cost.total_duration_ms`                                                  | Total waktu dinding jam sejak sesi dimulai, dalam milidetik                                                                                                                               |
-| `cost.total_api_duration_ms`                                              | Total waktu yang dihabiskan menunggu respons API dalam milidetik                                                                                                                          |
-| `cost.total_lines_added`, `cost.total_lines_removed`                      | Baris kode yang diubah                                                                                                                                                                    |
-| `context_window.total_input_tokens`, `context_window.total_output_tokens` | Jumlah token kumulatif di seluruh sesi                                                                                                                                                    |
-| `context_window.context_window_size`                                      | Ukuran jendela konteks maksimum dalam token. 200000 secara default, atau 1000000 untuk model dengan konteks diperpanjang.                                                                 |
-| `context_window.used_percentage`                                          | Persentase jendela konteks yang digunakan yang telah dihitung sebelumnya                                                                                                                  |
-| `context_window.remaining_percentage`                                     | Persentase jendela konteks yang tersisa yang telah dihitung sebelumnya                                                                                                                    |
-| `context_window.current_usage`                                            | Jumlah token dari panggilan API terakhir, dijelaskan dalam [bidang jendela konteks](#context-window-fields)                                                                               |
-| `exceeds_200k_tokens`                                                     | Apakah jumlah token total (input, cache, dan output token digabungkan) dari respons API terbaru melebihi 200k. Ini adalah ambang batas tetap terlepas dari ukuran jendela konteks aktual. |
-| `session_id`                                                              | Pengidentifikasi sesi unik                                                                                                                                                                |
-| `transcript_path`                                                         | Jalur ke file transkrip percakapan                                                                                                                                                        |
-| `version`                                                                 | Versi Claude Code                                                                                                                                                                         |
-| `output_style.name`                                                       | Nama gaya output saat ini                                                                                                                                                                 |
-| `vim.mode`                                                                | Mode vim saat ini (`NORMAL` atau `INSERT`) ketika [vim mode](/id/interactive-mode#vim-editor-mode) diaktifkan                                                                             |
-| `agent.name`                                                              | Nama agen saat menjalankan dengan bendera `--agent` atau pengaturan agen dikonfigurasi                                                                                                    |
-| `worktree.name`                                                           | Nama worktree aktif. Hadir hanya selama sesi `--worktree`                                                                                                                                 |
-| `worktree.path`                                                           | Jalur absolut ke direktori worktree                                                                                                                                                       |
-| `worktree.branch`                                                         | Nama cabang Git untuk worktree (misalnya, `"worktree-my-feature"`). Tidak ada untuk worktree berbasis hook                                                                                |
-| `worktree.original_cwd`                                                   | Direktori tempat Claude berada sebelum memasuki worktree                                                                                                                                  |
-| `worktree.original_branch`                                                | Cabang Git yang diperiksa sebelum memasuki worktree. Tidak ada untuk worktree berbasis hook                                                                                               |
+| Bidang                                                                           | Deskripsi                                                                                                                                                                                 |
+| -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `model.id`, `model.display_name`                                                 | Pengidentifikasi model saat ini dan nama tampilan                                                                                                                                         |
+| `cwd`, `workspace.current_dir`                                                   | Direktori kerja saat ini. Kedua bidang berisi nilai yang sama; `workspace.current_dir` lebih disukai untuk konsistensi dengan `workspace.project_dir`.                                    |
+| `workspace.project_dir`                                                          | Direktori tempat Claude Code diluncurkan, yang mungkin berbeda dari `cwd` jika direktori kerja berubah selama sesi                                                                        |
+| `workspace.added_dirs`                                                           | Direktori tambahan yang ditambahkan melalui `/add-dir` atau `--add-dir`. Array kosong jika tidak ada yang telah ditambahkan                                                               |
+| `cost.total_cost_usd`                                                            | Total biaya sesi dalam USD                                                                                                                                                                |
+| `cost.total_duration_ms`                                                         | Total waktu dinding jam sejak sesi dimulai, dalam milidetik                                                                                                                               |
+| `cost.total_api_duration_ms`                                                     | Total waktu yang dihabiskan menunggu respons API dalam milidetik                                                                                                                          |
+| `cost.total_lines_added`, `cost.total_lines_removed`                             | Baris kode yang diubah                                                                                                                                                                    |
+| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | Jumlah token kumulatif di seluruh sesi                                                                                                                                                    |
+| `context_window.context_window_size`                                             | Ukuran jendela konteks maksimum dalam token. 200000 secara default, atau 1000000 untuk model dengan konteks diperpanjang.                                                                 |
+| `context_window.used_percentage`                                                 | Persentase jendela konteks yang digunakan yang telah dihitung sebelumnya                                                                                                                  |
+| `context_window.remaining_percentage`                                            | Persentase jendela konteks yang tersisa yang telah dihitung sebelumnya                                                                                                                    |
+| `context_window.current_usage`                                                   | Jumlah token dari panggilan API terakhir, dijelaskan dalam [bidang jendela konteks](#context-window-fields)                                                                               |
+| `exceeds_200k_tokens`                                                            | Apakah jumlah token total (input, cache, dan output token digabungkan) dari respons API terbaru melebihi 200k. Ini adalah ambang batas tetap terlepas dari ukuran jendela konteks aktual. |
+| `rate_limits.five_hour.used_percentage`, `rate_limits.seven_day.used_percentage` | Persentase batas laju 5 jam atau 7 hari yang dikonsumsi, dari 0 hingga 100                                                                                                                |
+| `rate_limits.five_hour.resets_at`, `rate_limits.seven_day.resets_at`             | Detik epoch Unix ketika jendela batas laju 5 jam atau 7 hari direset                                                                                                                      |
+| `session_id`                                                                     | Pengidentifikasi sesi unik                                                                                                                                                                |
+| `session_name`                                                                   | Nama sesi khusus yang ditetapkan dengan bendera `--name` atau `/rename`. Tidak ada jika tidak ada nama khusus yang telah ditetapkan                                                       |
+| `transcript_path`                                                                | Jalur ke file transkrip percakapan                                                                                                                                                        |
+| `version`                                                                        | Versi Claude Code                                                                                                                                                                         |
+| `output_style.name`                                                              | Nama gaya output saat ini                                                                                                                                                                 |
+| `vim.mode`                                                                       | Mode vim saat ini (`NORMAL` atau `INSERT`) ketika [vim mode](/id/interactive-mode#vim-editor-mode) diaktifkan                                                                             |
+| `agent.name`                                                                     | Nama agen saat menjalankan dengan bendera `--agent` atau pengaturan agen dikonfigurasi                                                                                                    |
+| `worktree.name`                                                                  | Nama worktree aktif. Hadir hanya selama sesi `--worktree`                                                                                                                                 |
+| `worktree.path`                                                                  | Jalur absolut ke direktori worktree                                                                                                                                                       |
+| `worktree.branch`                                                                | Nama cabang Git untuk worktree (misalnya, `"worktree-my-feature"`). Tidak ada untuk worktree berbasis hook                                                                                |
+| `worktree.original_cwd`                                                          | Direktori tempat Claude berada sebelum memasuki worktree                                                                                                                                  |
+| `worktree.original_branch`                                                       | Cabang Git yang diperiksa sebelum memasuki worktree. Tidak ada untuk worktree berbasis hook                                                                                               |
 
 <Accordion title="Skema JSON lengkap">
   Perintah baris status Anda menerima struktur JSON ini melalui stdin:
@@ -178,6 +182,7 @@ Claude Code mengirim bidang JSON berikut ke skrip Anda melalui stdin:
   {
     "cwd": "/current/working/directory",
     "session_id": "abc123...",
+    "session_name": "my-session",
     "transcript_path": "/path/to/transcript.jsonl",
     "model": {
       "id": "claude-opus-4-6",
@@ -185,9 +190,10 @@ Claude Code mengirim bidang JSON berikut ke skrip Anda melalui stdin:
     },
     "workspace": {
       "current_dir": "/current/working/directory",
-      "project_dir": "/original/project/directory"
+      "project_dir": "/original/project/directory",
+      "added_dirs": []
     },
-    "version": "1.0.80",
+    "version": "2.1.90",
     "output_style": {
       "name": "default"
     },
@@ -212,6 +218,16 @@ Claude Code mengirim bidang JSON berikut ke skrip Anda melalui stdin:
       }
     },
     "exceeds_200k_tokens": false,
+    "rate_limits": {
+      "five_hour": {
+        "used_percentage": 23.5,
+        "resets_at": 1738425600
+      },
+      "seven_day": {
+        "used_percentage": 41.2,
+        "resets_at": 1738857600
+      }
+    },
     "vim": {
       "mode": "NORMAL"
     },
@@ -230,9 +246,11 @@ Claude Code mengirim bidang JSON berikut ke skrip Anda melalui stdin:
 
   **Bidang yang mungkin tidak ada** (tidak ada dalam JSON):
 
+  * `session_name`: muncul hanya ketika nama khusus telah ditetapkan dengan `--name` atau `/rename`
   * `vim`: muncul hanya ketika vim mode diaktifkan
   * `agent`: muncul hanya saat menjalankan dengan bendera `--agent` atau pengaturan agen dikonfigurasi
   * `worktree`: muncul hanya selama sesi `--worktree`. Ketika ada, `branch` dan `original_branch` juga mungkin tidak ada untuk worktree berbasis hook
+  * `rate_limits`: muncul hanya untuk pelanggan Claude.ai (Pro/Max) setelah respons API pertama dalam sesi. Setiap jendela (`five_hour`, `seven_day`) mungkin secara independen tidak ada. Gunakan `jq -r '.rate_limits.five_hour.used_percentage // empty'` untuk menangani ketiadaan dengan anggun.
 
   **Bidang yang mungkin `null`**:
 
@@ -681,6 +699,72 @@ Setiap skrip mendapatkan URL remote git, mengonversi format SSH ke HTTPS, dan me
   ```
 </CodeGroup>
 
+### Penggunaan batas laju
+
+Tampilkan penggunaan batas laju langganan Claude.ai dalam baris status. Objek `rate_limits` berisi `five_hour` (jendela bergulir 5 jam) dan `seven_day` (jendela mingguan). Setiap jendela menyediakan `used_percentage` (0-100) dan `resets_at` (detik epoch Unix ketika jendela direset).
+
+Bidang ini hanya ada untuk pelanggan Claude.ai (Pro/Max) setelah respons API pertama. Setiap skrip menangani bidang yang tidak ada dengan anggun:
+
+<CodeGroup>
+  ```bash Bash theme={null}
+  #!/bin/bash
+  input=$(cat)
+
+  MODEL=$(echo "$input" | jq -r '.model.display_name')
+  # "// empty" produces no output when rate_limits is absent
+  FIVE_H=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
+  WEEK=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
+
+  LIMITS=""
+  [ -n "$FIVE_H" ] && LIMITS="5h: $(printf '%.0f' "$FIVE_H")%"
+  [ -n "$WEEK" ] && LIMITS="${LIMITS:+$LIMITS }7d: $(printf '%.0f' "$WEEK")%"
+
+  [ -n "$LIMITS" ] && echo "[$MODEL] | $LIMITS" || echo "[$MODEL]"
+  ```
+
+  ```python Python theme={null}
+  #!/usr/bin/env python3
+  import json, sys
+
+  data = json.load(sys.stdin)
+  model = data['model']['display_name']
+
+  parts = []
+  rate = data.get('rate_limits', {})
+  five_h = rate.get('five_hour', {}).get('used_percentage')
+  week = rate.get('seven_day', {}).get('used_percentage')
+
+  if five_h is not None:
+      parts.append(f"5h: {five_h:.0f}%")
+  if week is not None:
+      parts.append(f"7d: {week:.0f}%")
+
+  if parts:
+      print(f"[{model}] | {' '.join(parts)}")
+  else:
+      print(f"[{model}]")
+  ```
+
+  ```javascript Node.js theme={null}
+  #!/usr/bin/env node
+  let input = '';
+  process.stdin.on('data', chunk => input += chunk);
+  process.stdin.on('end', () => {
+      const data = JSON.parse(input);
+      const model = data.model.display_name;
+
+      const parts = [];
+      const fiveH = data.rate_limits?.five_hour?.used_percentage;
+      const week = data.rate_limits?.seven_day?.used_percentage;
+
+      if (fiveH != null) parts.push(`5h: ${Math.round(fiveH)}%`);
+      if (week != null) parts.push(`7d: ${Math.round(week)}%`);
+
+      console.log(parts.length ? `[${model}] | ${parts.join(' ')}` : `[${model}]`);
+  });
+  ```
+</CodeGroup>
+
 ### Cache operasi yang mahal
 
 Skrip baris status Anda berjalan sering selama sesi aktif. Perintah seperti `git status` atau `git diff` dapat lambat, terutama di repositori besar. Contoh ini menyimpan informasi git ke file temp dan hanya menyegarkannya setiap 5 detik.
@@ -916,3 +1000,8 @@ Proyek komunitas seperti [ccstatusline](https://github.com/sirmalloc/ccstatuslin
 * Notifikasi sistem seperti kesalahan server MCP, pembaruan otomatis, dan peringatan token ditampilkan di sisi kanan baris yang sama dengan baris status Anda
 * Mengaktifkan mode verbose menambahkan penghitung token ke area ini
 * Di terminal sempit, notifikasi ini mungkin memotong output baris status Anda
+
+**Kepercayaan ruang kerja diperlukan**
+
+* Perintah baris status hanya berjalan jika Anda telah menerima dialog kepercayaan ruang kerja untuk direktori saat ini. Karena `statusLine` mengeksekusi perintah shell, itu memerlukan penerimaan kepercayaan yang sama seperti hooks dan pengaturan lain yang mengeksekusi shell.
+* Jika kepercayaan tidak diterima, Anda akan melihat notifikasi `statusline skipped · restart to fix` alih-alih output baris status Anda. Mulai ulang Claude Code dan terima prompt kepercayaan untuk mengaktifkannya.

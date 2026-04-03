@@ -30,22 +30,22 @@ Aturan dievaluasi secara berurutan: **deny -> ask -> allow**. Aturan pertama yan
 
 ## Mode izin
 
-Claude Code mendukung beberapa mode izin yang mengontrol bagaimana alat disetujui. Lihat [Mode izin](/id/permission-modes) untuk mengetahui kapan menggunakan masing-masing. Atur `defaultMode` dalam [file pengaturan](/id/settings#settings-files) Anda:
+Claude Code mendukung beberapa mode izin yang mengontrol bagaimana alat disetujui. Lihat [Permission modes](/id/permission-modes) untuk mengetahui kapan menggunakan masing-masing. Atur `defaultMode` dalam [file pengaturan](/id/settings#settings-files) Anda:
 
 | Mode                | Deskripsi                                                                                                                                                                      |
 | :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `default`           | Perilaku standar: meminta izin pada penggunaan pertama setiap alat                                                                                                             |
-| `acceptEdits`       | Secara otomatis menerima izin edit file untuk sesi                                                                                                                             |
+| `acceptEdits`       | Secara otomatis menerima izin edit file untuk sesi, kecuali penulisan ke direktori yang dilindungi                                                                             |
 | `plan`              | Plan Mode: Claude dapat menganalisis tetapi tidak memodifikasi file atau menjalankan perintah                                                                                  |
 | `auto`              | Secara otomatis menyetujui panggilan alat dengan pemeriksaan keamanan latar belakang yang memverifikasi tindakan selaras dengan permintaan Anda. Saat ini pratinjau penelitian |
 | `dontAsk`           | Secara otomatis menolak alat kecuali pra-disetujui melalui `/permissions` atau aturan `permissions.allow`                                                                      |
 | `bypassPermissions` | Melewati prompt izin kecuali untuk penulisan ke direktori yang dilindungi (lihat peringatan di bawah)                                                                          |
 
 <Warning>
-  Mode `bypassPermissions` melewati prompt izin. Penulisan ke direktori `.git`, `.claude`, `.vscode`, dan `.idea` masih meminta konfirmasi untuk mencegah kerusakan tidak disengaja pada status repositori dan konfigurasi lokal. Penulisan ke `.claude/commands`, `.claude/agents`, dan `.claude/skills` dikecualikan dan tidak meminta, karena Claude secara rutin menulis di sana saat membuat skills, subagents, dan commands. Hanya gunakan mode ini di lingkungan terisolasi seperti kontainer atau VM tempat Claude Code tidak dapat menyebabkan kerusakan. Administrator dapat mencegah mode ini dengan mengatur `disableBypassPermissionsMode` ke `"disable"` dalam [pengaturan terkelola](#managed-settings).
+  Mode `bypassPermissions` melewati prompt izin. Penulisan ke direktori `.git`, `.claude`, `.vscode`, `.idea`, dan `.husky` masih meminta konfirmasi untuk mencegah kerusakan tidak disengaja pada status repositori, konfigurasi editor, dan git hooks. Penulisan ke `.claude/commands`, `.claude/agents`, dan `.claude/skills` dikecualikan dan tidak meminta, karena Claude secara rutin menulis di sana saat membuat skills, subagents, dan commands. Hanya gunakan mode ini di lingkungan terisolasi seperti kontainer atau VM tempat Claude Code tidak dapat menyebabkan kerusakan. Administrator dapat mencegah mode ini dengan mengatur `permissions.disableBypassPermissionsMode` ke `"disable"` dalam [pengaturan terkelola](#managed-settings).
 </Warning>
 
-Untuk mencegah `bypassPermissions` atau mode `auto` digunakan, atur `permissions.disableBypassPermissionsMode` atau `disableAutoMode` ke `"disable"` dalam [file pengaturan](/id/settings#settings-files) apa pun. Ini paling berguna dalam [pengaturan terkelola](#managed-settings) di mana mereka tidak dapat ditimpa.
+Untuk mencegah `bypassPermissions` atau mode `auto` digunakan, atur `permissions.disableBypassPermissionsMode` atau `permissions.disableAutoMode` ke `"disable"` dalam [file pengaturan](/id/settings#settings-files) apa pun. Ini paling berguna dalam [pengaturan terkelola](#managed-settings) di mana mereka tidak dapat ditimpa.
 
 ## Sintaks aturan izin
 
@@ -202,7 +202,7 @@ Tambahkan aturan ini ke array `deny` dalam pengaturan Anda atau gunakan flag CLI
 
 Melewati prompt tidak melewati aturan izin. Aturan deny dan ask masih dievaluasi setelah hook mengembalikan `"allow"`, jadi aturan deny yang cocok masih memblokir panggilan. Ini mempertahankan prioritas deny-first yang dijelaskan dalam [Kelola izin](#manage-permissions), termasuk aturan deny yang ditetapkan dalam pengaturan terkelola.
 
-Hook pemblokiran juga memiliki prioritas atas aturan allow. Hook yang keluar dengan kode 2 menghentikan panggilan alat sebelum aturan izin dievaluasi, jadi blokir berlaku bahkan ketika aturan allow akan membiarkan panggilan berlanjut. Untuk menjalankan semua perintah Bash tanpa prompt kecuali untuk beberapa yang ingin Anda blokir, tambahkan `"Bash"` ke daftar allow Anda dan daftarkan hook PreToolUse yang menolak perintah tertentu itu. Lihat [Blokir edit ke file yang dilindungi](/id/hooks-guide#block-edits-to-protected-files) untuk skrip hook yang dapat Anda sesuaikan.
+Hook pemblokiran juga memiliki prioritas atas aturan allow. Hook yang keluar dengan kode 2 menghentikan panggilan alat sebelum aturan izin dievaluasi, jadi blokir berlaku bahkan ketika aturan allow akan membiarkan panggilan berlanjut. Untuk menjalankan semua perintah Bash tanpa prompt kecuali untuk beberapa yang ingin Anda blokir, tambahkan `"Bash"` ke daftar allow Anda dan daftarkan hook PreToolUse yang menolak perintah tertentu itu. Lihat [Block edits to protected files](/id/hooks-guide#block-edits-to-protected-files) untuk skrip hook yang dapat Anda sesuaikan.
 
 ## Direktori kerja
 
@@ -213,6 +213,24 @@ Secara default, Claude memiliki akses ke file di direktori tempat diluncurkan. A
 * **Konfigurasi persisten**: tambahkan ke `additionalDirectories` dalam [file pengaturan](/id/settings#settings-files)
 
 File di direktori tambahan mengikuti aturan izin yang sama dengan direktori kerja asli: mereka menjadi dapat dibaca tanpa prompt, dan izin edit file mengikuti mode izin saat ini.
+
+### Direktori tambahan memberikan akses file, bukan konfigurasi
+
+Menambahkan direktori memperluas tempat Claude dapat membaca dan mengedit file. Ini tidak membuat direktori itu akar konfigurasi penuh: sebagian besar konfigurasi `.claude/` tidak ditemukan dari direktori tambahan, meskipun beberapa jenis dimuat sebagai pengecualian.
+
+Jenis konfigurasi berikut dimuat dari direktori `--add-dir`:
+
+| Konfigurasi                                       | Dimuat dari `--add-dir`                                              |
+| :------------------------------------------------ | :------------------------------------------------------------------- |
+| [Skills](/id/skills) di `.claude/skills/`         | Ya, dengan live reload                                               |
+| Pengaturan plugin di `.claude/settings.json`      | `enabledPlugins` dan `extraKnownMarketplaces` saja                   |
+| File [CLAUDE.md](/id/memory) dan `.claude/rules/` | Hanya ketika `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` diatur |
+
+Segalanya yang lain, termasuk subagents, commands, output styles, hooks, dan pengaturan lainnya, ditemukan hanya dari direktori kerja saat ini dan induknya, direktori pengguna Anda di `~/.claude/`, dan pengaturan terkelola. Untuk berbagi konfigurasi itu di seluruh proyek, gunakan salah satu pendekatan ini:
+
+* **Konfigurasi tingkat pengguna**: tempatkan file di `~/.claude/agents/`, `~/.claude/output-styles/`, atau `~/.claude/settings.json` untuk membuatnya tersedia di setiap proyek
+* **Plugins**: paket dan distribusikan konfigurasi sebagai [plugin](/id/plugins) yang dapat diinstal tim
+* **Luncurkan dari direktori konfigurasi**: jalankan Claude Code dari direktori yang berisi konfigurasi `.claude/` yang ingin Anda gunakan
 
 ## Bagaimana izin berinteraksi dengan sandboxing
 
@@ -234,21 +252,32 @@ Untuk organisasi yang memerlukan kontrol terpusat atas konfigurasi Claude Code, 
 
 ### Pengaturan khusus terkelola
 
-Beberapa pengaturan hanya efektif dalam pengaturan terkelola:
+Beberapa pengaturan hanya efektif dalam pengaturan terkelola. Menempatkan mereka dalam file pengaturan pengguna atau proyek tidak memiliki efek.
 
 | Pengaturan                                     | Deskripsi                                                                                                                                                                                                                                                 |
 | :--------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `allowManagedPermissionRulesOnly`              | Ketika `true`, mencegah pengaturan pengguna dan proyek dari mendefinisikan aturan izin `allow`, `ask`, atau `deny`. Hanya aturan dalam pengaturan terkelola yang berlaku                                                                                  |
+| `allowedChannelPlugins`                        | Daftar izin plugin saluran yang dapat mendorong pesan. Menggantikan daftar izin Anthropic default saat diatur. Memerlukan `channelsEnabled: true`. Lihat [Restrict which channel plugins can run](/id/channels#restrict-which-channel-plugins-can-run)    |
 | `allowManagedHooksOnly`                        | Ketika `true`, mencegah pemuatan hook pengguna, proyek, dan plugin. Hanya hook terkelola dan hook SDK yang diizinkan                                                                                                                                      |
-| `allowManagedMcpServersOnly`                   | Ketika `true`, hanya `allowedMcpServers` dari pengaturan terkelola yang dihormati. `deniedMcpServers` masih digabung dari semua sumber. Lihat [Konfigurasi MCP terkelola](/id/mcp#managed-mcp-configuration)                                              |
-| `blockedMarketplaces`                          | Daftar blokir sumber marketplace. Sumber yang diblokir diperiksa sebelum mengunduh, jadi mereka tidak pernah menyentuh sistem file. Lihat [pembatasan marketplace terkelola](/id/plugin-marketplaces#managed-marketplace-restrictions)                    |
+| `allowManagedMcpServersOnly`                   | Ketika `true`, hanya `allowedMcpServers` dari pengaturan terkelola yang dihormati. `deniedMcpServers` masih digabung dari semua sumber. Lihat [Managed MCP configuration](/id/mcp#managed-mcp-configuration)                                              |
+| `allowManagedPermissionRulesOnly`              | Ketika `true`, mencegah pengaturan pengguna dan proyek dari mendefinisikan aturan izin `allow`, `ask`, atau `deny`. Hanya aturan dalam pengaturan terkelola yang berlaku                                                                                  |
+| `blockedMarketplaces`                          | Daftar blokir sumber marketplace. Sumber yang diblokir diperiksa sebelum mengunduh, jadi mereka tidak pernah menyentuh sistem file. Lihat [managed marketplace restrictions](/id/plugin-marketplaces#managed-marketplace-restrictions)                    |
+| `channelsEnabled`                              | Izinkan [channels](/id/channels) untuk pengguna Team dan Enterprise. Tidak diatur atau `false` memblokir pengiriman pesan saluran terlepas dari apa yang dilewatkan pengguna ke `--channels`                                                              |
+| `pluginTrustMessage`                           | Pesan kustom ditambahkan ke peringatan kepercayaan plugin yang ditampilkan sebelum instalasi                                                                                                                                                              |
+| `sandbox.filesystem.allowManagedReadPathsOnly` | Ketika `true`, hanya jalur `filesystem.allowRead` dari pengaturan terkelola yang dihormati. `denyRead` masih digabung dari semua sumber                                                                                                                   |
 | `sandbox.network.allowManagedDomainsOnly`      | Ketika `true`, hanya `allowedDomains` dan aturan allow `WebFetch(domain:...)` dari pengaturan terkelola yang dihormati. Domain yang tidak diizinkan diblokir secara otomatis tanpa meminta pengguna. Domain yang ditolak masih digabung dari semua sumber |
-| `sandbox.filesystem.allowManagedReadPathsOnly` | Ketika `true`, hanya jalur `allowRead` dari pengaturan terkelola yang dihormati. Entri `allowRead` dari pengaturan pengguna, proyek, dan lokal diabaikan                                                                                                  |
-| `strictKnownMarketplaces`                      | Mengontrol marketplace plugin mana yang dapat ditambahkan pengguna. Lihat [pembatasan marketplace terkelola](/id/plugin-marketplaces#managed-marketplace-restrictions)                                                                                    |
+| `strictKnownMarketplaces`                      | Mengontrol marketplace plugin mana yang dapat ditambahkan pengguna. Lihat [managed marketplace restrictions](/id/plugin-marketplaces#managed-marketplace-restrictions)                                                                                    |
+
+`disableBypassPermissionsMode` biasanya ditempatkan dalam pengaturan terkelola untuk memberlakukan kebijakan organisasi, tetapi berfungsi dari cakupan apa pun. Pengguna dapat mengaturnya dalam pengaturan mereka sendiri untuk mengunci diri mereka sendiri dari mode bypass.
 
 <Note>
   Akses ke [Remote Control](/id/remote-control) dan [sesi web](/id/claude-code-on-the-web) tidak dikendalikan oleh kunci pengaturan terkelola. Pada paket Team dan Enterprise, admin mengaktifkan atau menonaktifkan fitur ini dalam [pengaturan admin Claude Code](https://claude.ai/admin-settings/claude-code).
 </Note>
+
+## Tinjau penolakan mode auto
+
+Ketika [mode auto](/id/permission-modes#eliminate-prompts-with-auto-mode) menolak panggilan alat, notifikasi muncul dan tindakan yang ditolak dicatat dalam `/permissions` di bawah tab Recently denied. Tekan `r` pada tindakan yang ditolak untuk menandainya untuk retry: ketika Anda keluar dari dialog, Claude Code mengirim pesan memberi tahu model bahwa mungkin dapat mencoba ulang panggilan alat itu dan melanjutkan percakapan.
+
+Untuk bereaksi terhadap penolakan secara terprogram, gunakan [hook `PermissionDenied`](/id/hooks#permissiondenied).
 
 ## Konfigurasi pengklasifikasi mode auto
 
@@ -377,8 +406,8 @@ Jika izin diizinkan dalam pengaturan pengguna tetapi ditolak dalam pengaturan pr
 
 ## Lihat juga
 
-* [Pengaturan](/id/settings): referensi konfigurasi lengkap termasuk tabel pengaturan izin
+* [Settings](/id/settings): referensi konfigurasi lengkap termasuk tabel pengaturan izin
 * [Sandboxing](/id/sandboxing): isolasi sistem file dan jaringan tingkat OS untuk perintah Bash
-* [Autentikasi](/id/authentication): atur akses pengguna ke Claude Code
-* [Keamanan](/id/security): perlindungan keamanan dan praktik terbaik
-* [Hook](/id/hooks-guide): otomatisasi alur kerja dan perluas evaluasi izin
+* [Authentication](/id/authentication): atur akses pengguna ke Claude Code
+* [Security](/id/security): perlindungan keamanan dan praktik terbaik
+* [Hooks](/id/hooks-guide): otomatisasi alur kerja dan perluas evaluasi izin

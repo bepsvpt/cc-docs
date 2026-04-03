@@ -45,7 +45,6 @@ Claude Code 支援兩種方式來新增自訂 skills、agents 和 hooks：
 ### 先決條件
 
 * Claude Code [已安裝並驗證](/zh-TW/quickstart#step-1-install-claude-code)
-* Claude Code 版本 1.0.33 或更新版本（執行 `claude --version` 以檢查）
 
 <Note>
   如果您沒有看到 `/plugin` 命令，請將 Claude Code 更新到最新版本。如需升級說明，請參閱 [Troubleshooting](/zh-TW/troubleshooting)。
@@ -131,7 +130,7 @@ Claude Code 支援兩種方式來新增自訂 skills、agents 和 hooks：
     您將看到 Claude 以問候語回應。執行 `/help` 以查看您的 skill 列在 plugin 命名空間下。
 
     <Note>
-      **為什麼要命名空間？** Plugin skills 始終被命名空間化（例如 `/greet:hello`），以防止多個 plugins 具有相同名稱的 skills 時發生衝突。
+      **為什麼要命名空間？** Plugin skills 始終被命名空間化（例如 `/my-first-plugin:hello`），以防止多個 plugins 具有相同名稱的 skills 時發生衝突。
 
       若要變更命名空間前綴，請更新 `plugin.json` 中的 `name` 欄位。
     </Note>
@@ -283,7 +282,7 @@ claude --plugin-dir ./my-plugin
 
 當 `--plugin-dir` plugin 與已安裝的市場 plugin 具有相同名稱時，本地副本在該工作階段中優先。這讓您可以測試已安裝的 plugin 的變更，而無需先卸載它。由受管設定強制啟用的市場 plugins 是唯一的例外，無法被覆蓋。
 
-當您對 plugin 進行變更時，執行 `/reload-plugins` 以取得更新，無需重新啟動。這會重新載入命令、skills、agents、hooks、plugin MCP servers 和 plugin LSP servers。測試您的 plugin 元件：
+當您對 plugin 進行變更時，執行 `/reload-plugins` 以取得更新，無需重新啟動。這會重新載入 plugins、skills、agents、hooks、plugin MCP servers 和 plugin LSP servers。測試您的 plugin 元件：
 
 * 使用 `/plugin-name:skill-name` 嘗試您的 skills
 * 檢查 agents 是否出現在 `/agents` 中

@@ -23,7 +23,8 @@ Modellaliase bieten eine bequeme Möglichkeit, Modelleinstellungen auszuwählen,
 
 | Modellalias      | Verhalten                                                                                                                                                                      |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **`default`**    | Empfohlene Modelleinstellung, abhängig von Ihrem Kontotyp                                                                                                                      |
+| **`default`**    | Spezieller Wert, der jede Modellüberschreibung löscht und auf das empfohlene Modell für Ihren Kontotyp zurückgesetzt wird. Ist selbst kein Modellalias                         |
+| **`best`**       | Verwendet das leistungsfähigste verfügbare Modell, derzeit gleichwertig mit `opus`                                                                                             |
 | **`sonnet`**     | Verwendet das neueste Sonnet-Modell (derzeit Sonnet 4.6) für tägliche Codierungsaufgaben                                                                                       |
 | **`opus`**       | Verwendet das neueste Opus-Modell (derzeit Opus 4.6) für komplexe Reasoning-Aufgaben                                                                                           |
 | **`haiku`**      | Verwendet das schnelle und effiziente Haiku-Modell für einfache Aufgaben                                                                                                       |
@@ -83,19 +84,27 @@ Auch mit `availableModels: []` können Benutzer Claude Code weiterhin mit dem St
 
 ### Kontrollieren Sie das Modell, auf dem Benutzer ausgeführt werden
 
-Um die Modellerfahrung vollständig zu kontrollieren, verwenden Sie `availableModels` zusammen mit der `model`-Einstellung:
+Die `model`-Einstellung ist eine anfängliche Auswahl, keine Erzwingung. Sie legt fest, welches Modell aktiv ist, wenn eine Sitzung startet, aber Benutzer können weiterhin `/model` öffnen und „Standard" auswählen, das unabhängig davon auf den Systemstandard für ihren Tier aufgelöst wird, was `model` gesetzt ist.
 
-* **availableModels**: schränkt ein, worauf Benutzer wechseln können
-* **model**: setzt die explizite Modellüberschreibung, die Vorrang vor dem Standard hat
+Um die Modellerfahrung vollständig zu kontrollieren, kombinieren Sie drei Einstellungen:
 
-Dieses Beispiel stellt sicher, dass alle Benutzer Sonnet 4.6 ausführen und nur zwischen Sonnet und Haiku wählen können:
+* **`availableModels`**: schränkt ein, worauf Benutzer wechseln können
+* **`model`**: legt die anfängliche Modellauswahl fest, wenn eine Sitzung startet
+* **`ANTHROPIC_DEFAULT_SONNET_MODEL`** / **`ANTHROPIC_DEFAULT_OPUS_MODEL`** / **`ANTHROPIC_DEFAULT_HAIKU_MODEL`**: steuern, worauf sich die Option „Standard" und die Aliase `sonnet`, `opus` und `haiku` auflösen
+
+Dieses Beispiel startet Benutzer auf Sonnet 4.5, begrenzt die Auswahl auf Sonnet und Haiku und fixiert „Standard" auf Sonnet 4.5 statt auf die neueste Version:
 
 ```json  theme={null}
 {
-  "model": "sonnet",
-  "availableModels": ["sonnet", "haiku"]
+  "model": "claude-sonnet-4-5",
+  "availableModels": ["claude-sonnet-4-5", "haiku"],
+  "env": {
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-5"
+  }
 }
 ```
+
+Ohne den `env`-Block würde ein Benutzer, der „Standard" in der Auswahl auswählt, die neueste Sonnet-Version erhalten und damit die Versionsfixierung in `model` und `availableModels` umgehen.
 
 ### Merge-Verhalten
 
@@ -271,6 +280,41 @@ Schlüssel müssen Anthropic-Modell-IDs sein, wie in der [Modellübersicht](http
 Überschreibungen ersetzen die integrierten Modell-IDs, die jeden Eintrag in der `/model`-Auswahl unterstützen. Bei Bedrock haben Überschreibungen Vorrang vor allen Inference-Profilen, die Claude Code beim Start automatisch erkennt. Werte, die Sie direkt über `ANTHROPIC_MODEL`, `--model` oder die `ANTHROPIC_DEFAULT_*_MODEL`-Umgebungsvariablen bereitstellen, werden unverändert an den Anbieter übergeben und werden nicht durch `modelOverrides` transformiert.
 
 `modelOverrides` funktioniert zusammen mit `availableModels`. Die Zulassungsliste wird gegen die Anthropic-Modell-ID ausgewertet, nicht gegen den Überschreibungswert, daher ein Eintrag wie `"opus"` in `availableModels` stimmt weiterhin überein, auch wenn Opus-Versionen ARNs zugeordnet sind.
+
+### Anpassung der Anzeige und Funktionen des fixierten Modells
+
+Wenn Sie ein Modell bei einem Drittanbieter fixieren, erscheint die anbieterspezifische ID in der `/model`-Auswahl und Claude Code erkennt möglicherweise nicht, welche Funktionen das Modell unterstützt. Sie können den Anzeigenamen und die deklarierten Funktionen mit Begleit-Umgebungsvariablen für jedes fixierte Modell überschreiben.
+
+Diese Variablen wirken sich nur auf Drittanbieter wie Bedrock, Vertex AI und Foundry aus. Sie haben keine Auswirkung bei direkter Verwendung der Anthropic API.
+
+| Umgebungsvariable                                     | Beschreibung                                                                                                                     |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_NAME`                   | Anzeigename für das fixierte Opus-Modell in der `/model`-Auswahl. Standardmäßig die Modell-ID, wenn nicht gesetzt                |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION`            | Anzeige-Beschreibung für das fixierte Opus-Modell in der `/model`-Auswahl. Standardmäßig `Custom Opus model`, wenn nicht gesetzt |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES` | Komma-getrennte Liste der Funktionen, die das fixierte Opus-Modell unterstützt                                                   |
+
+Die gleichen `_NAME`-, `_DESCRIPTION`- und `_SUPPORTED_CAPABILITIES`-Suffixe sind für `ANTHROPIC_DEFAULT_SONNET_MODEL` und `ANTHROPIC_DEFAULT_HAIKU_MODEL` verfügbar.
+
+Claude Code aktiviert Funktionen wie [Aufwandsniveaus](#adjust-effort-level) und [erweitertes Denken](/de/common-workflows#use-extended-thinking-thinking-mode) durch Abgleich der Modell-ID mit bekannten Mustern. Anbieterspezifische IDs wie Bedrock-ARNs oder benutzerdefinierte Bereitstellungsnamen stimmen oft nicht mit diesen Mustern überein, wodurch unterstützte Funktionen deaktiviert bleiben. Setzen Sie `_SUPPORTED_CAPABILITIES`, um Claude Code mitzuteilen, welche Funktionen das Modell tatsächlich unterstützt:
+
+| Funktionswert          | Aktiviert                                                                                    |
+| ---------------------- | -------------------------------------------------------------------------------------------- |
+| `effort`               | [Aufwandsniveaus](#adjust-effort-level) und der `/effort`-Befehl                             |
+| `max_effort`           | Das `max`-Aufwandsniveau                                                                     |
+| `thinking`             | [Erweitertes Denken](/de/common-workflows#use-extended-thinking-thinking-mode)               |
+| `adaptive_thinking`    | Adaptives Reasoning, das das Denken dynamisch basierend auf der Aufgabenkomplexität zuordnet |
+| `interleaved_thinking` | Denken zwischen Tool-Aufrufen                                                                |
+
+Wenn `_SUPPORTED_CAPABILITIES` gesetzt ist, werden aufgelistete Funktionen aktiviert und nicht aufgelistete Funktionen werden für das entsprechende fixierte Modell deaktiviert. Wenn die Variable nicht gesetzt ist, greift Claude Code auf die integrierte Erkennung basierend auf der Modell-ID zurück.
+
+Dieses Beispiel fixiert Opus auf ein benutzerdefiniertes Bedrock-Modell-ARN, setzt einen benutzerfreundlichen Namen und deklariert seine Funktionen:
+
+```bash  theme={null}
+export ANTHROPIC_DEFAULT_OPUS_MODEL='arn:aws:bedrock:us-east-1:123456789012:custom-model/abc'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_NAME='Opus via Bedrock'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION='Opus 4.6 routed through a Bedrock custom endpoint'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES='effort,max_effort,thinking,adaptive_thinking,interleaved_thinking'
+```
 
 ### Prompt-Caching-Konfiguration
 

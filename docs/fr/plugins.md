@@ -45,7 +45,6 @@ Ce démarrage rapide vous guide dans la création d'un plugin avec un skill pers
 ### Prérequis
 
 * Claude Code [installé et authentifié](/fr/quickstart#step-1-install-claude-code)
-* Claude Code version 1.0.33 ou ultérieure (exécutez `claude --version` pour vérifier)
 
 <Note>
   Si vous ne voyez pas la commande `/plugin`, mettez à jour Claude Code vers la dernière version. Consultez [Dépannage](/fr/troubleshooting) pour les instructions de mise à niveau.
@@ -131,7 +130,7 @@ Ce démarrage rapide vous guide dans la création d'un plugin avec un skill pers
     Vous verrez Claude répondre avec un salut. Exécutez `/help` pour voir votre skill listé sous l'espace de noms du plugin.
 
     <Note>
-      **Pourquoi l'espace de noms ?** Les skills des plugins sont toujours avec espace de noms (comme `/greet:hello`) pour prévenir les conflits quand plusieurs plugins ont des skills avec le même nom.
+      **Pourquoi l'espace de noms ?** Les skills des plugins sont toujours avec espace de noms (comme `/my-first-plugin:hello`) pour prévenir les conflits quand plusieurs plugins ont des skills avec le même nom.
 
       Pour changer le préfixe d'espace de noms, mettez à jour le champ `name` dans `plugin.json`.
     </Note>
@@ -283,7 +282,7 @@ claude --plugin-dir ./my-plugin
 
 Quand un plugin `--plugin-dir` a le même nom qu'un plugin marketplace installé, la copie locale prend la priorité pour cette session. Cela vous permet de tester les modifications d'un plugin que vous avez déjà installé sans le désinstaller d'abord. Les plugins marketplace forcément activés par les paramètres gérés sont la seule exception et ne peuvent pas être remplacés.
 
-À mesure que vous apportez des modifications à votre plugin, exécutez `/reload-plugins` pour récupérer les mises à jour sans redémarrer. Cela recharge les commandes, les skills, les agents, les hooks, les serveurs MCP du plugin et les serveurs LSP du plugin. Testez vos composants de plugin :
+À mesure que vous apportez des modifications à votre plugin, exécutez `/reload-plugins` pour récupérer les mises à jour sans redémarrer. Cela recharge les plugins, les skills, les agents, les hooks, les serveurs MCP du plugin et les serveurs LSP du plugin. Testez vos composants de plugin :
 
 * Essayez vos skills avec `/plugin-name:skill-name`
 * Vérifiez que les agents apparaissent dans `/agents`

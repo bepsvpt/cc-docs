@@ -14,7 +14,7 @@ Ogni sessione di Claude Code inizia con una finestra di contesto nuova. Due mecc
 Questa pagina spiega come:
 
 * [Scrivere e organizzare file CLAUDE.md](#claude-md-files)
-* [Limitare le regole a tipi di file specifici](#organize-rules-with-clauderules) con `.claude/rules/`
+* [Limitare le regole a tipi di file specifici](#organize-rules-with-claude/rules/) con `.claude/rules/`
 * [Configurare la memoria automatica](#auto-memory) in modo che Claude prenda note automaticamente
 * [Risolvere i problemi](#troubleshoot-memory-issues) quando le istruzioni non vengono seguite
 
@@ -27,7 +27,7 @@ Claude Code ha due sistemi di memoria complementari. Entrambi vengono caricati a
 | **Chi lo scrive** | Tu                                                                | Claude                                                                           |
 | **Cosa contiene** | Istruzioni e regole                                               | Apprendimenti e modelli                                                          |
 | **Ambito**        | Progetto, utente o organizzazione                                 | Per worktree                                                                     |
-| **Caricato in**   | Ogni sessione                                                     | Ogni sessione (prime 200 righe)                                                  |
+| **Caricato in**   | Ogni sessione                                                     | Ogni sessione (prime 200 righe o 25KB)                                           |
 | **Usare per**     | Standard di codifica, flussi di lavoro, architettura del progetto | Comandi di compilazione, approfondimenti sul debug, preferenze che Claude scopre |
 
 Usa file CLAUDE.md quando vuoi guidare il comportamento di Claude. La memoria automatica consente a Claude di imparare dalle tue correzioni senza sforzo manuale.
@@ -50,7 +50,7 @@ I file CLAUDE.md possono trovarsi in diversi percorsi, ognuno con un ambito dive
 
 I file CLAUDE.md nella gerarchia di directory sopra la directory di lavoro vengono caricati completamente all'avvio. I file CLAUDE.md nelle sottodirectory vengono caricati su richiesta quando Claude legge i file in quelle directory. Vedi [Come vengono caricati i file CLAUDE.md](#how-claude-md-files-load) per l'ordine di risoluzione completo.
 
-Per i progetti di grandi dimensioni, puoi suddividere le istruzioni in file specifici per argomento utilizzando [regole di progetto](#organize-rules-with-clauderules). Le regole ti consentono di limitare le istruzioni a tipi di file specifici o sottodirectory.
+Per i progetti di grandi dimensioni, puoi suddividere le istruzioni in file specifici per argomento utilizzando [regole di progetto](#organize-rules-with-claude/rules/). Le regole ti consentono di limitare le istruzioni a tipi di file specifici o sottodirectory.
 
 ### Configura un CLAUDE.md di progetto
 
@@ -59,14 +59,14 @@ Un CLAUDE.md di progetto può essere archiviato in `./CLAUDE.md` o `./.claude/CL
 <Tip>
   Esegui `/init` per generare automaticamente un CLAUDE.md iniziale. Claude analizza la tua base di codice e crea un file con comandi di compilazione, istruzioni di test e convenzioni di progetto che scopre. Se esiste già un CLAUDE.md, `/init` suggerisce miglioramenti piuttosto che sovrascriverlo. Perfezionalo da lì con istruzioni che Claude non scoprirebbe da solo.
 
-  Imposta `CLAUDE_CODE_NEW_INIT=true` per abilitare un flusso interattivo multi-fase. `/init` chiede quali artefatti configurare: file CLAUDE.md, skills e hooks. Quindi esplora la tua base di codice con un subagent, colma le lacune tramite domande di follow-up e presenta una proposta revisionabile prima di scrivere qualsiasi file.
+  Imposta `CLAUDE_CODE_NEW_INIT=1` per abilitare un flusso interattivo multi-fase. `/init` chiede quali artefatti configurare: file CLAUDE.md, skills e hooks. Quindi esplora la tua base di codice con un subagent, colma le lacune tramite domande di follow-up e presenta una proposta revisionabile prima di scrivere qualsiasi file.
 </Tip>
 
 ### Scrivi istruzioni efficaci
 
-I file CLAUDE.md vengono caricati nella finestra di contesto all'inizio di ogni sessione, consumando token insieme alla tua conversazione. Poiché sono contesto piuttosto che configurazione forzata, il modo in cui scrivi le istruzioni influisce su quanto affidabilmente Claude le segue. Le istruzioni specifiche, concise e ben strutturate funzionano meglio.
+I file CLAUDE.md vengono caricati nella finestra di contesto all'inizio di ogni sessione, consumando token insieme alla tua conversazione. La [visualizzazione della finestra di contesto](/it/context-window) mostra dove CLAUDE.md si carica rispetto al resto del contesto di avvio. Poiché sono contesto piuttosto che configurazione forzata, il modo in cui scrivi le istruzioni influisce su quanto affidabilmente Claude le segue. Le istruzioni specifiche, concise e ben strutturate funzionano meglio.
 
-**Dimensione**: punta a meno di 200 righe per file CLAUDE.md. I file più lunghi consumano più contesto e riducono l'aderenza. Se le tue istruzioni stanno crescendo molto, dividile usando [importazioni](#import-additional-files) o file [`.claude/rules/`](#organize-rules-with-clauderules).
+**Dimensione**: punta a meno di 200 righe per file CLAUDE.md. I file più lunghi consumano più contesto e riducono l'aderenza. Se le tue istruzioni stanno crescendo molto, dividile usando [importazioni](#import-additional-files) o file [`.claude/rules/`](#organize-rules-with-claude/rules/).
 
 **Struttura**: usa intestazioni e punti elenco markdown per raggruppare le istruzioni correlate. Claude scansiona la struttura nello stesso modo in cui i lettori lo fanno: le sezioni organizzate sono più facili da seguire rispetto ai paragrafi densi.
 
@@ -76,7 +76,7 @@ I file CLAUDE.md vengono caricati nella finestra di contesto all'inizio di ogni 
 * "Esegui `npm test` prima di eseguire il commit" invece di "Testa le tue modifiche"
 * "I gestori API si trovano in `src/api/handlers/`" invece di "Mantieni i file organizzati"
 
-**Coerenza**: se due regole si contraddicono a vicenda, Claude potrebbe sceglierne una arbitrariamente. Rivedi periodicamente i tuoi file CLAUDE.md, i file CLAUDE.md annidati nelle sottodirectory e i file [`.claude/rules/`](#organize-rules-with-clauderules) per rimuovere istruzioni obsolete o conflittuali. Nei monorepo, usa [`claudeMdExcludes`](#exclude-specific-claude-md-files) per saltare i file CLAUDE.md di altri team che non sono rilevanti per il tuo lavoro.
+**Coerenza**: se due regole si contraddicono a vicenda, Claude potrebbe sceglierne una arbitrariamente. Rivedi periodicamente i tuoi file CLAUDE.md, i file CLAUDE.md annidati nelle sottodirectory e i file [`.claude/rules/`](#organize-rules-with-claude/rules/) per rimuovere istruzioni obsolete o conflittuali. Nei monorepo, usa [`claudeMdExcludes`](#exclude-specific-claude-md-files) per saltare i file CLAUDE.md di altri team che non sono rilevanti per il tuo lavoro.
 
 ### Importa file aggiuntivi
 
@@ -104,7 +104,7 @@ Per le preferenze personali che non vuoi archiviare, importa un file dalla tua h
   La prima volta che Claude Code incontra importazioni esterne in un progetto, mostra una finestra di dialogo di approvazione che elenca i file. Se rifiuti, le importazioni rimangono disabilitate e la finestra di dialogo non appare di nuovo.
 </Warning>
 
-Per un approccio più strutturato all'organizzazione delle istruzioni, vedi [`.claude/rules/`](#organize-rules-with-clauderules).
+Per un approccio più strutturato all'organizzazione delle istruzioni, vedi [`.claude/rules/`](#organize-rules-with-claude/rules/).
 
 ### AGENTS.md
 
@@ -327,9 +327,9 @@ La memoria automatica è locale alla macchina. Tutti i worktrees e le sottodirec
 
 ### Come funziona
 
-Le prime 200 righe di `MEMORY.md` vengono caricate all'inizio di ogni conversazione. Il contenuto oltre la riga 200 non viene caricato all'inizio della sessione. Claude mantiene `MEMORY.md` conciso spostando le note dettagliate in file di argomento separati.
+Le prime 200 righe di `MEMORY.md`, o i primi 25KB, a seconda di quale viene raggiunto per primo, vengono caricate all'inizio di ogni conversazione. Il contenuto oltre quella soglia non viene caricato all'inizio della sessione. Claude mantiene `MEMORY.md` conciso spostando le note dettagliate in file di argomento separati.
 
-Questo limite di 200 righe si applica solo a `MEMORY.md`. I file CLAUDE.md vengono caricati completamente indipendentemente dalla lunghezza, anche se i file più brevi producono una migliore aderenza.
+Questo limite si applica solo a `MEMORY.md`. I file CLAUDE.md vengono caricati completamente indipendentemente dalla lunghezza, anche se i file più brevi producono una migliore aderenza.
 
 I file di argomento come `debugging.md` o `patterns.md` non vengono caricati all'avvio. Claude li legge su richiesta usando i suoi strumenti di file standard quando ha bisogno delle informazioni.
 

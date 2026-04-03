@@ -117,9 +117,9 @@ Per evitare che ogni sessione colpisca l'API nello stesso momento del muro, lo s
 
 L'offset è derivato dall'ID dell'attività, quindi la stessa attività ottiene sempre lo stesso offset. Se il timing esatto è importante, scegliete un minuto che non sia `:00` o `:30`, ad esempio `3 9 * * *` invece di `0 9 * * *`, e il jitter una tantum non si applicherà.
 
-### Scadenza di tre giorni
+### Scadenza di sette giorni
 
-Le attività ricorrenti scadono automaticamente 3 giorni dopo la creazione. L'attività si attiva un'ultima volta, quindi si elimina. Questo limita il tempo di esecuzione di un ciclo dimenticato. Se avete bisogno che un'attività ricorrente duri più a lungo, annullate e ricreate prima che scada, oppure utilizzate [Attività pianificate Cloud](/it/web-scheduled-tasks) o [Attività pianificate Desktop](/it/desktop#schedule-recurring-tasks) per la pianificazione durevole.
+Le attività ricorrenti scadono automaticamente 7 giorni dopo la creazione. L'attività si attiva un'ultima volta, quindi si elimina. Questo limita il tempo di esecuzione di un ciclo dimenticato. Se avete bisogno che un'attività ricorrente duri più a lungo, annullate e ricreate prima che scada, oppure utilizzate [Attività pianificate Cloud](/it/web-scheduled-tasks) o [Attività pianificate Desktop](/it/desktop#schedule-recurring-tasks) per la pianificazione durevole.
 
 ## Riferimento dell'espressione cron
 

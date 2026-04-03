@@ -557,6 +557,10 @@ export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 
 전체 구성 옵션은 [플러그인 설정](/ko/settings#plugin-settings)을 참조하세요.
 
+<Note>
+  로컬 `directory` 또는 `file` 소스를 상대 경로와 함께 사용하는 경우 경로는 저장소의 주 체크아웃에 대해 해석됩니다. git worktree에서 Claude Code를 실행할 때 경로는 여전히 주 체크아웃을 가리키므로 모든 worktree가 동일한 마켓플레이스 위치를 공유합니다. 마켓플레이스 상태는 프로젝트당이 아니라 사용자당 한 번 `~/.claude/plugins/known_marketplaces.json`에 저장됩니다.
+</Note>
+
 ### 컨테이너에 대한 플러그인 사전 채우기
 
 컨테이너 이미지 및 CI 환경의 경우 빌드 시간에 플러그인 디렉터리를 사전 채우므로 Claude Code가 런타임에 아무것도 복제하지 않고도 마켓플레이스 및 플러그인이 이미 사용 가능한 상태로 시작됩니다. `CLAUDE_CODE_PLUGIN_SEED_DIR` 환경 변수를 이 디렉터리를 가리키도록 설정합니다.
@@ -627,7 +631,7 @@ $CLAUDE_CODE_PLUGIN_SEED_DIR/
 }
 ```
 
-호스트에 대한 정규식 패턴 일치를 사용하여 내부 git 서버의 모든 마켓플레이스 허용:
+호스트에 대한 정규식 패턴 일치를 사용하여 내부 git 서버의 모든 마켓플레이스 허용. 이는 [GitHub Enterprise Server](/ko/github-enterprise-server#plugin-marketplaces-on-ghes) 또는 자체 호스팅 GitLab 인스턴스에 권장되는 방법입니다:
 
 ```json  theme={null}
 {
@@ -848,6 +852,20 @@ claude plugin validate .
 * GitHub의 경우 토큰에 개인 저장소에 대한 `repo` 범위가 있는지 확인합니다
 * GitLab의 경우 토큰에 최소한 `read_repository` 범위가 있는지 확인합니다
 * 토큰이 만료되지 않았는지 확인합니다
+
+### 마켓플레이스 업데이트가 오프라인 환경에서 실패합니다
+
+**증상**: 마켓플레이스 `git pull`이 실패하고 Claude Code가 기존 캐시를 삭제하여 플러그인을 사용할 수 없게 됩니다.
+
+**원인**: 기본적으로 `git pull`이 실패하면 Claude Code는 오래된 복제본을 제거하고 다시 복제를 시도합니다. 오프라인 또는 에어갭 환경에서 다시 복제가 동일한 방식으로 실패하여 마켓플레이스 디렉터리가 비어 있게 됩니다.
+
+**해결책**: `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1`을 설정하여 pull이 실패할 때 기존 캐시를 삭제하는 대신 유지합니다:
+
+```bash  theme={null}
+export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
+```
+
+이 변수가 설정되면 Claude Code는 `git pull` 실패 시 오래된 마켓플레이스 복제본을 유지하고 마지막으로 알려진 좋은 상태를 계속 사용합니다. 저장소에 절대 도달할 수 없는 완전히 오프라인 배포의 경우 대신 [`CLAUDE_CODE_PLUGIN_SEED_DIR`](#pre-populate-plugins-for-containers)을 사용하여 빌드 시간에 플러그인 디렉터리를 사전 채웁니다.
 
 ### Git 작업 시간 초과
 

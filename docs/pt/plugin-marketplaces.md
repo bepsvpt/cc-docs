@@ -207,7 +207,7 @@ Cada entrada de plugin no array `plugins` descreve um plugin e onde encontrá-lo
 
 | Campo        | Tipo           | Descrição                                                            |
 | :----------- | :------------- | :------------------------------------------------------------------- |
-| `commands`   | string\|array  | Caminhos personalizados para arquivos ou diretórios de comando       |
+| `commands`   | string\|array  | Caminhos personalizados para arquivos ou diretórios de command       |
 | `agents`     | string\|array  | Caminhos personalizados para arquivos de agent                       |
 | `hooks`      | string\|object | Configuração de hooks personalizada ou caminho para arquivo de hooks |
 | `mcpServers` | string\|object | Configurações de MCP server ou caminho para config de MCP            |
@@ -557,6 +557,10 @@ Você também pode especificar quais plugins devem ser habilitados por padrão:
 
 Para opções de configuração completas, veja [Plugin settings](/pt/settings#plugin-settings).
 
+<Note>
+  Se você usar uma fonte local `directory` ou `file` com um caminho relativo, o caminho é resolvido contra o checkout principal do seu repositório. Quando você executa Claude Code de um git worktree, o caminho ainda aponta para o checkout principal, então todos os worktrees compartilham o mesmo local de marketplace. O estado do marketplace é armazenado uma vez por usuário em `~/.claude/plugins/known_marketplaces.json`, não por projeto.
+</Note>
+
 ### Pré-popular plugins para containers
 
 Para imagens de container e ambientes CI, você pode pré-popular um diretório de plugins no tempo de construção para que Claude Code inicie com marketplaces e plugins já disponíveis, sem clonar nada em tempo de execução. Defina a variável de ambiente `CLAUDE_CODE_PLUGIN_SEED_DIR` para apontar para este diretório.
@@ -627,7 +631,7 @@ Permitir apenas marketplaces específicos:
 }
 ```
 
-Permitir todos os marketplaces de um servidor git interno usando correspondência de padrão regex no host:
+Permitir todos os marketplaces de um servidor git interno usando correspondência de padrão regex no host. Esta é a abordagem recomendada para [GitHub Enterprise Server](/pt/github-enterprise-server#plugin-marketplaces-on-ghes) ou instâncias GitLab auto-hospedadas:
 
 ```json  theme={null}
 {
@@ -848,6 +852,20 @@ Para atualizações automáticas em segundo plano:
 * Para GitHub, garanta que o token tem o escopo `repo` para repositórios privados
 * Para GitLab, garanta que o token tem pelo menos escopo `read_repository`
 * Verifique se o token não expirou
+
+### Atualizações de marketplace falham em ambientes offline
+
+**Sintomas**: `git pull` do marketplace falha e Claude Code limpa o cache existente, causando plugins ficarem indisponíveis.
+
+**Causa**: Por padrão, quando um `git pull` falha, Claude Code remove o clone obsoleto e tenta re-clonar. Em ambientes offline ou airgapped, re-clonar falha da mesma forma, deixando o diretório de marketplace vazio.
+
+**Solução**: Defina `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` para manter o cache existente quando o pull falhar em vez de limpá-lo:
+
+```bash  theme={null}
+export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
+```
+
+Com esta variável definida, Claude Code retém o clone obsoleto do marketplace em falha de `git pull` e continua usando o último estado conhecido como bom. Para implantações totalmente offline onde o repositório nunca será alcançável, use [`CLAUDE_CODE_PLUGIN_SEED_DIR`](#pre-populate-plugins-for-containers) para pré-popular o diretório de plugins no tempo de construção em vez disso.
 
 ### Operações Git expiram
 

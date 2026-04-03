@@ -58,13 +58,13 @@ Claude가 수행할 작업을 입력하고 **Enter**를 눌러 보냅니다. Cla
 
 권한 모드는 세션 중에 Claude가 가질 자율성을 제어합니다: 파일 편집, 명령 실행 또는 둘 다 전에 묻는지 여부입니다. 전송 버튼 옆의 모드 선택기를 사용하여 언제든지 모드를 전환할 수 있습니다. Claude가 수행하는 작업을 정확히 보기 위해 권한 요청으로 시작한 다음, 편하면 자동 수락 편집 또는 Plan mode로 이동합니다.
 
-| 모드            | 설정 키                | 동작                                                                                                                                                                                                        |
-| ------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **권한 요청**     | `default`           | Claude는 파일을 편집하거나 명령을 실행하기 전에 요청합니다. diff를 보고 각 변경 사항을 수락하거나 거부할 수 있습니다. 새 사용자에게 권장됩니다.                                                                                                                   |
-| **자동 수락 편집**  | `acceptEdits`       | Claude는 파일 편집을 자동으로 수락하지만 터미널 명령 실행 전에는 여전히 요청합니다. 파일 변경을 신뢰하고 더 빠른 반복을 원할 때 사용합니다.                                                                                                                       |
-| **Plan mode** | `plan`              | Claude는 코드를 분석하고 파일을 수정하거나 명령을 실행하지 않고 계획을 만듭니다. 먼저 접근 방식을 검토하려는 복잡한 작업에 좋습니다.                                                                                                                            |
-| **Auto**      | `auto`              | Claude는 요청과의 정렬을 확인하는 백그라운드 안전 검사를 통해 모든 작업을 실행합니다. 감시를 유지하면서 권한 프롬프트를 줄입니다. 현재 연구 미리보기입니다. Team 계획에서 사용 가능합니다 (Enterprise는 곧 출시). Claude Sonnet 4.6 또는 Opus 4.6이 필요합니다. Settings → Claude Code에서 활성화합니다. |
-| **권한 무시**     | `bypassPermissions` | Claude는 권한 프롬프트 없이 실행되며, CLI의 `--dangerously-skip-permissions`와 동일합니다. Settings → Claude Code에서 "권한 무시 모드 허용"에서 활성화합니다. 샌드박스 컨테이너 또는 VM에서만 사용합니다. 엔터프라이즈 관리자는 이 옵션을 비활성화할 수 있습니다.                         |
+| 모드            | 설정 키                | 동작                                                                                                                                                                                                      |
+| ------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **권한 요청**     | `default`           | Claude는 파일을 편집하거나 명령을 실행하기 전에 요청합니다. diff를 보고 각 변경 사항을 수락하거나 거부할 수 있습니다. 새 사용자에게 권장됩니다.                                                                                                                 |
+| **자동 수락 편집**  | `acceptEdits`       | Claude는 파일 편집을 자동으로 수락하지만 터미널 명령 실행 전에는 여전히 요청합니다. 파일 변경을 신뢰하고 더 빠른 반복을 원할 때 사용합니다.                                                                                                                     |
+| **Plan mode** | `plan`              | Claude는 코드를 분석하고 파일을 수정하거나 명령을 실행하지 않고 계획을 만듭니다. 먼저 접근 방식을 검토하려는 복잡한 작업에 좋습니다.                                                                                                                          |
+| **Auto**      | `auto`              | Claude는 요청과의 정렬을 확인하는 백그라운드 안전 검사를 통해 모든 작업을 실행합니다. 감시를 유지하면서 권한 프롬프트를 줄입니다. 현재 연구 미리보기입니다. Team, Enterprise, API 계획에서 사용 가능합니다. Claude Sonnet 4.6 또는 Opus 4.6이 필요합니다. Settings → Claude Code에서 활성화합니다. |
+| **권한 무시**     | `bypassPermissions` | Claude는 권한 프롬프트 없이 실행되며, CLI의 `--dangerously-skip-permissions`와 동일합니다. Settings → Claude Code에서 "권한 무시 모드 허용"에서 활성화합니다. 샌드박스 컨테이너 또는 VM에서만 사용합니다. 엔터프라이즈 관리자는 이 옵션을 비활성화할 수 있습니다.                       |
 
 `dontAsk` 권한 모드는 [CLI](/ko/permission-modes#allow-only-pre-approved-tools-with-dontask-mode)에서만 사용 가능합니다.
 
@@ -151,12 +151,28 @@ Claude는 앱 또는 서비스와 상호작용하는 여러 방법을 가지고 
 
 ### 컴퓨터 사용 활성화하기
 
-컴퓨터 사용은 기본적으로 꺼져 있습니다. Claude가 필요한 작업을 하도록 요청하는데 꺼져 있으면 Claude는 Settings에서 컴퓨터 사용을 활성화하면 작업을 수행할 수 있다고 알려줍니다. 활성화하려면 **Settings > Desktop app > General**을 열고 **Computer use**를 켭니다. 토글이 적용되기 전에 두 가지 macOS 시스템 권한을 부여해야 합니다:
+컴퓨터 사용은 기본적으로 꺼져 있습니다. Claude가 필요한 작업을 하도록 요청하는데 꺼져 있으면 Claude는 Settings에서 컴퓨터 사용을 활성화하면 작업을 수행할 수 있다고 알려줍니다.
 
-* **Accessibility**: Claude가 클릭, 입력, 스크롤할 수 있게 합니다
-* **Screen Recording**: Claude가 화면에 있는 것을 볼 수 있게 합니다
+<Steps>
+  <Step title="데스크톱 앱 업데이트">
+    최신 버전의 Claude Desktop이 있는지 확인합니다. [claude.com/download](https://claude.com/download)에서 다운로드하거나 업데이트한 다음 앱을 다시 시작합니다.
+  </Step>
 
-Settings 페이지는 각 권한의 현재 상태를 표시합니다. 둘 중 하나가 거부되면 배지를 클릭하여 관련 System Settings 창을 엽니다.
+  <Step title="토글 켜기">
+    데스크톱 앱에서 **Settings > General** (**Desktop app** 아래)로 이동합니다. **Computer use** 토글을 찾아 켭니다.
+
+    토글이 보이지 않으면 macOS에서 Pro 또는 Max 계획을 사용하고 있는지 확인한 다음 업데이트하고 앱을 다시 시작합니다.
+  </Step>
+
+  <Step title="macOS 권한 부여">
+    토글이 적용되기 전에 두 가지 macOS 시스템 권한을 부여합니다:
+
+    * **Accessibility**: Claude가 클릭, 입력, 스크롤할 수 있게 합니다
+    * **Screen Recording**: Claude가 화면에 있는 것을 볼 수 있게 합니다
+
+    Settings 페이지는 각 권한의 현재 상태를 표시합니다. 둘 중 하나가 거부되면 배지를 클릭하여 관련 System Settings 창을 엽니다.
+  </Step>
+</Steps>
 
 ### 앱 권한
 
@@ -172,7 +188,7 @@ Claude가 처음 앱을 사용해야 할 때 세션에 프롬프트가 나타납
 
 Terminal, Finder, System Settings와 같이 광범위한 영향을 미치는 앱은 승인이 부여하는 것을 알 수 있도록 프롬프트에 추가 경고를 표시합니다.
 
-**Settings > Desktop app > General**에서 두 가지 설정을 구성할 수 있습니다:
+**Settings > General** (**Desktop app** 아래)에서 두 가지 설정을 구성할 수 있습니다:
 
 * **Denied apps**: 프롬프트 없이 거부하려면 여기에 앱을 추가합니다. Claude는 허용된 앱의 작업을 통해 거부된 앱에 간접적으로 영향을 미칠 수 있지만 거부된 앱과 직접 상호작용할 수 없습니다.
 * **Unhide apps when Claude finishes**: Claude가 작업하는 동안 다른 창이 숨겨져 승인된 앱하고만 상호작용합니다. Claude가 완료되면 이 설정을 끄지 않는 한 숨겨진 창이 복원됩니다.
@@ -627,7 +643,7 @@ Desktop과 CLI는 동일한 구성 파일을 읽으므로 설정이 이월됩니
 | 세션 격리                                                 | [`--worktree`](/ko/cli-reference) 플래그                     | 자동 worktrees                                              |
 | 여러 세션                                                 | 별도 터미널                                                    | 사이드바 탭                                                    |
 | 반복 작업                                                 | cron 작업, CI 파이프라인                                         | [예약된 작업](#schedule-recurring-tasks)                       |
-| 컴퓨터 사용                                                | 사용할 수 없음                                                  | macOS의 [앱 및 화면 제어](#let-claude-use-your-computer)         |
+| 컴퓨터 사용                                                | macOS에서 [MCP를 통해 활성화](/ko/computer-use)                   | macOS의 [앱 및 화면 제어](#let-claude-use-your-computer)         |
 | Dispatch 통합                                           | 사용할 수 없음                                                  | 사이드바의 [Dispatch 세션](#sessions-from-dispatch)              |
 | 스크립팅 및 자동화                                            | [`--print`](/ko/cli-reference), [Agent SDK](/ko/headless) | 사용할 수 없음                                                  |
 

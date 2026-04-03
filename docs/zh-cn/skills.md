@@ -123,7 +123,9 @@ my-skill/
 
 #### 来自其他目录的 skills
 
-在通过 `--add-dir` 添加的目录中的 `.claude/skills/` 中定义的 skills 会自动加载并由实时更改检测拾取，因此你可以在会话期间编辑它们而无需重新启动。
+`--add-dir` 标志[授予文件访问权限](/zh-CN/permissions#additional-directories-grant-file-access-not-configuration)而不是配置发现，但 skills 是一个例外：添加目录中的 `.claude/skills/` 会自动加载并由实时更改检测拾取，因此你可以在会话期间编辑这些 skills 而无需重新启动。
+
+其他 `.claude/` 配置（如 subagents、命令和输出样式）不会从其他目录加载。有关加载和不加载的完整列表以及跨项目共享配置的推荐方式，请参阅[例外表](/zh-CN/permissions#additional-directories-grant-file-access-not-configuration)。
 
 <Note>
   来自 `--add-dir` 目录的 CLAUDE.md 文件默认不加载。要加载它们，请设置 `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1`。请参阅[从其他目录加载](/zh-CN/memory#load-from-additional-directories)。
@@ -178,7 +180,7 @@ Deploy the application:
 name: my-skill
 description: What this skill does
 disable-model-invocation: true
-allowed-tools: Read, Grep
+allowed-tools: Read Grep
 ---
 
 Your skill instructions here...
@@ -186,19 +188,21 @@ Your skill instructions here...
 
 所有字段都是可选的。建议使用 `description`，以便 Claude 知道何时使用该 skill。
 
-| 字段                         | 必需 | 描述                                                                                                                                |
-| :------------------------- | :- | :-------------------------------------------------------------------------------------------------------------------------------- |
-| `name`                     | 否  | Skill 的显示名称。如果省略，使用目录名称。仅小写字母、数字和连字符（最多 64 个字符）。                                                                                  |
-| `description`              | 推荐 | Skill 的功能以及何时使用它。Claude 使用它来决定何时应用该 skill。如果省略，使用 markdown 内容的第一段。                                                                |
-| `argument-hint`            | 否  | 自动完成期间显示的提示，指示预期的参数。示例：`[issue-number]` 或 `[filename] [format]`。                                                                  |
-| `disable-model-invocation` | 否  | 设置为 `true` 以防止 Claude 自动加载此 skill。用于你想使用 `/name` 手动触发的工作流。默认值：`false`。                                                            |
-| `user-invocable`           | 否  | 设置为 `false` 以从 `/` 菜单中隐藏。用于用户不应直接调用的背景知识。默认值：`true`。                                                                              |
-| `allowed-tools`            | 否  | 当此 skill 处于活动状态时，Claude 可以使用而无需请求权限的工具。                                                                                           |
-| `model`                    | 否  | 当此 skill 处于活动状态时要使用的模型。                                                                                                           |
-| `effort`                   | 否  | 当此 skill 处于活动状态时的[工作量级别](/zh-CN/model-config#adjust-effort-level)。覆盖会话工作量级别。默认值：继承自会话。选项：`low`、`medium`、`high`、`max`（仅 Opus 4.6）。 |
-| `context`                  | 否  | 设置为 `fork` 以在分叉的 subagent 上下文中运行。                                                                                                 |
-| `agent`                    | 否  | 当设置 `context: fork` 时要使用的 subagent 类型。                                                                                            |
-| `hooks`                    | 否  | 限定于此 skill 生命周期的 hooks。有关配置格式，请参阅 [Skills 和代理中的 Hooks](/zh-CN/hooks#hooks-in-skills-and-agents)。                                  |
+| 字段                         | 必需 | 描述                                                                                                                                                               |
+| :------------------------- | :- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`                     | 否  | Skill 的显示名称。如果省略，使用目录名称。仅小写字母、数字和连字符（最多 64 个字符）。                                                                                                                 |
+| `description`              | 推荐 | Skill 的功能以及何时使用它。Claude 使用它来决定何时应用该 skill。如果省略，使用 markdown 内容的第一段。前置关键用例，因为每个条目在技能列表中被截断为 250 个字符以减少上下文使用。                                                       |
+| `argument-hint`            | 否  | 自动完成期间显示的提示，指示预期的参数。示例：`[issue-number]` 或 `[filename] [format]`。                                                                                                 |
+| `disable-model-invocation` | 否  | 设置为 `true` 以防止 Claude 自动加载此 skill。用于你想使用 `/name` 手动触发的工作流。默认值：`false`。                                                                                           |
+| `user-invocable`           | 否  | 设置为 `false` 以从 `/` 菜单中隐藏。用于用户不应直接调用的背景知识。默认值：`true`。                                                                                                             |
+| `allowed-tools`            | 否  | 当此 skill 处于活动状态时，Claude 可以使用而无需请求权限的工具。接受空格分隔的字符串或 YAML 列表。                                                                                                      |
+| `model`                    | 否  | 当此 skill 处于活动状态时要使用的模型。                                                                                                                                          |
+| `effort`                   | 否  | 当此 skill 处于活动状态时的[工作量级别](/zh-CN/model-config#adjust-effort-level)。覆盖会话工作量级别。默认值：继承自会话。选项：`low`、`medium`、`high`、`max`（仅 Opus 4.6）。                                |
+| `context`                  | 否  | 设置为 `fork` 以在分叉的 subagent 上下文中运行。                                                                                                                                |
+| `agent`                    | 否  | 当设置 `context: fork` 时要使用的 subagent 类型。                                                                                                                           |
+| `hooks`                    | 否  | 限定于此 skill 生命周期的 hooks。有关配置格式，请参阅 [Skills 和代理中的 Hooks](/zh-CN/hooks#hooks-in-skills-and-agents)。                                                                 |
+| `paths`                    | 否  | Glob 模式，限制何时激活此 skill。接受逗号分隔的字符串或 YAML 列表。设置后，Claude 仅在处理与模式匹配的文件时自动加载该 skill。使用与[路径特定规则](/zh-CN/memory#path-specific-rules)相同的格式。                               |
+| `shell`                    | 否  | 用于此 skill 中 `` !`command` `` 块的 shell。接受 `bash`（默认）或 `powershell`。设置 `powershell` 在 Windows 上通过 PowerShell 运行内联 shell 命令。需要 `CLAUDE_CODE_USE_POWERSHELL_TOOL=1`。 |
 
 #### 可用的字符串替换
 
@@ -294,7 +298,7 @@ Deploy $ARGUMENTS to production:
 ---
 name: safe-reader
 description: Read files without making changes
-allowed-tools: Read, Grep, Glob
+allowed-tools: Read Grep Glob
 ---
 ```
 
@@ -678,11 +682,11 @@ if __name__ == '__main__':
 1. 使描述更具体
 2. 如果你只想手动调用，添加 `disable-model-invocation: true`
 
-### Claude 看不到我的所有 skills
+### Skill 描述被截断
 
-Skill 描述被加载到上下文中，以便 Claude 知道什么可用。如果你有许多 skills，它们可能会超过字符预算。预算在上下文窗口的 2% 处动态扩展，回退为 16,000 个字符。运行 `/context` 以检查有关排除的 skills 的警告。
+Skill 描述被加载到上下文中，以便 Claude 知道什么可用。所有 skill 名称始终包括，但如果你有许多 skills，描述会被缩短以适应字符预算，这可能会删除 Claude 需要匹配你的请求的关键字。预算在上下文窗口的 1% 处动态扩展，回退为 8,000 个字符。
 
-要覆盖限制，设置 `SLASH_COMMAND_TOOL_CHAR_BUDGET` 环境变量。
+要提高限制，设置 `SLASH_COMMAND_TOOL_CHAR_BUDGET` 环境变量。或在源处修剪描述：前置关键用例，因为每个条目被限制为 250 个字符，无论预算如何。
 
 ## 相关资源
 

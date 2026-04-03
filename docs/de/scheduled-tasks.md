@@ -117,9 +117,9 @@ Um zu vermeiden, dass jede Sitzung die API zum gleichen Wanduhrzeitpunkt trifft,
 
 Der Offset wird von der Aufgaben-ID abgeleitet, daher erhält die gleiche Aufgabe immer den gleichen Offset. Wenn genaue Zeitangaben wichtig sind, wählen Sie eine Minute, die nicht `:00` oder `:30` ist, zum Beispiel `3 9 * * *` statt `0 9 * * *`, und der einmalige Jitter wird nicht angewendet.
 
-### Ablauf nach drei Tagen
+### Ablauf nach sieben Tagen
 
-Wiederkehrende Aufgaben verfallen automatisch 3 Tage nach der Erstellung. Die Aufgabe läuft ein letztes Mal, dann löscht sie sich selbst. Dies begrenzt, wie lange eine vergessene Schleife laufen kann. Wenn Sie benötigen, dass eine wiederkehrende Aufgabe länger dauert, stornieren und erstellen Sie sie neu, bevor sie abläuft, oder verwenden Sie [Cloud-geplante Aufgaben](/de/web-scheduled-tasks) oder [Desktop-geplante Aufgaben](/de/desktop#schedule-recurring-tasks) für dauerhafte Planung.
+Wiederkehrende Aufgaben verfallen automatisch 7 Tage nach der Erstellung. Die Aufgabe läuft ein letztes Mal, dann löscht sie sich selbst. Dies begrenzt, wie lange eine vergessene Schleife laufen kann. Wenn Sie benötigen, dass eine wiederkehrende Aufgabe länger dauert, stornieren und erstellen Sie sie neu, bevor sie abläuft, oder verwenden Sie [Cloud-geplante Aufgaben](/de/web-scheduled-tasks) oder [Desktop-geplante Aufgaben](/de/desktop#schedule-recurring-tasks) für dauerhafte Planung.
 
 ## Cron-Ausdrucksreferenz
 

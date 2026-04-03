@@ -101,7 +101,7 @@ Les équipes d'agents supportent deux modes d'affichage :
   `tmux` a des limitations connues sur certains systèmes d'exploitation et fonctionne traditionnellement mieux sur macOS. L'utilisation de `tmux -CC` dans iTerm2 est le point d'entrée suggéré dans `tmux`.
 </Note>
 
-La valeur par défaut est `"auto"`, qui utilise les volets divisés si vous êtes déjà en train de s'exécuter dans une session tmux, et in-process sinon. Le paramètre `"tmux"` active le mode volets divisés et détecte automatiquement s'il faut utiliser tmux ou iTerm2 en fonction de votre terminal. Pour remplacer, définissez `teammateMode` dans votre [settings.json](/fr/settings) :
+La valeur par défaut est `"auto"`, qui utilise les volets divisés si vous êtes déjà en train de s'exécuter dans une session tmux, et in-process sinon. Le paramètre `"tmux"` active le mode volets divisés et détecte automatiquement s'il faut utiliser tmux ou iTerm2 en fonction de votre terminal. Pour remplacer, définissez `teammateMode` dans votre [configuration globale](/fr/settings#global-config-settings) à `~/.claude.json` :
 
 ```json  theme={null}
 {
@@ -186,9 +186,10 @@ Cela supprime les ressources d'équipe partagées. Lorsque le chef exécute le n
 
 ### Appliquer des portes de qualité avec des hooks
 
-Utilisez les [hooks](/fr/hooks) pour appliquer des règles lorsque les coéquipiers terminent le travail ou que les tâches se complètent :
+Utilisez les [hooks](/fr/hooks) pour appliquer des règles lorsque les coéquipiers terminent le travail ou que les tâches sont créées ou complétées :
 
 * [`TeammateIdle`](/fr/hooks#teammateidle) : s'exécute lorsqu'un coéquipier est sur le point de devenir inactif. Quittez avec le code 2 pour envoyer des commentaires et garder le coéquipier au travail.
+* [`TaskCreated`](/fr/hooks#taskcreated) : s'exécute lorsqu'une tâche est en cours de création. Quittez avec le code 2 pour empêcher la création et envoyer des commentaires.
 * [`TaskCompleted`](/fr/hooks#taskcompleted) : s'exécute lorsqu'une tâche est marquée comme complète. Quittez avec le code 2 pour empêcher la complétion et envoyer des commentaires.
 
 ## Comment fonctionnent les équipes d'agents
@@ -224,7 +225,23 @@ Les équipes et les tâches sont stockées localement :
 * **Configuration d'équipe** : `~/.claude/teams/{team-name}/config.json`
 * **Liste de tâches** : `~/.claude/tasks/{team-name}/`
 
+Claude Code génère automatiquement ces deux éléments lorsque vous créez une équipe et les met à jour à mesure que les coéquipiers rejoignent, deviennent inactifs ou partent. La configuration d'équipe contient l'état d'exécution tel que les ID de session et les ID de volet tmux, donc ne l'éditez pas à la main ou ne la pré-créez pas : vos modifications sont écrasées lors de la prochaine mise à jour d'état.
+
+Pour définir des rôles de coéquipiers réutilisables, utilisez plutôt les [définitions de subagents](#use-subagent-definitions-for-teammates).
+
 La configuration d'équipe contient un tableau `members` avec le nom de chaque coéquipier, l'ID d'agent et le type d'agent. Les coéquipiers peuvent lire ce fichier pour découvrir les autres membres de l'équipe.
+
+Il n'y a pas d'équivalent au niveau du projet de la configuration d'équipe. Un fichier comme `.claude/teams/teams.json` dans votre répertoire de projet n'est pas reconnu comme configuration ; Claude le traite comme un fichier ordinaire.
+
+### Utiliser les définitions de subagents pour les coéquipiers
+
+Lors de la génération d'un coéquipier, vous pouvez référencer un type de [subagent](/fr/sub-agents) de n'importe quelle [portée de subagent](/fr/sub-agents#choose-the-subagent-scope) : projet, utilisateur, plugin ou défini par CLI. Le coéquipier hérite du système prompt, des outils et du modèle de ce subagent. Cela vous permet de définir un rôle une fois, comme un examinateur de sécurité ou un exécuteur de tests, et de le réutiliser à la fois comme subagent délégué et comme coéquipier d'équipe d'agents.
+
+Pour utiliser une définition de subagent, mentionnez-la par nom lorsque vous demandez à Claude de générer le coéquipier :
+
+```text  theme={null}
+Générez un coéquipier utilisant le type d'agent security-reviewer pour auditer le module d'authentification.
+```
 
 ### Permissions
 

@@ -22,10 +22,11 @@ Il existe deux styles de sortie intégrés supplémentaires axés sur vous ensei
 
 Les styles de sortie modifient directement l'invite système de Claude Code.
 
-* Tous les styles de sortie excluent les instructions pour une sortie efficace (comme répondre de manière concise).
 * Les styles de sortie personnalisés excluent les instructions de codage (comme la vérification du code avec des tests), sauf si `keep-coding-instructions` est true.
 * Tous les styles de sortie ont leurs propres instructions personnalisées ajoutées à la fin de l'invite système.
 * Tous les styles de sortie déclenchent des rappels pour que Claude adhère aux instructions du style de sortie pendant la conversation.
+
+L'utilisation des tokens dépend du style. L'ajout d'instructions à l'invite système augmente les tokens d'entrée, bien que la mise en cache des invites réduise ce coût après la première requête d'une session. Les styles Explanatory et Learning intégrés produisent des réponses plus longues que Default par conception, ce qui augmente les tokens de sortie. Pour les styles personnalisés, l'utilisation des tokens de sortie dépend de ce que vos instructions demandent à Claude de produire.
 
 ## Modifier votre style de sortie
 

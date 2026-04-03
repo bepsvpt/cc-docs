@@ -27,7 +27,7 @@ Claude Code memiliki dua sistem memori yang saling melengkapi. Keduanya dimuat d
 | **Siapa yang menulisnya** | Anda                                              | Claude                                                            |
 | **Apa yang dikandungnya** | Instruksi dan aturan                              | Pembelajaran dan pola                                             |
 | **Cakupan**               | Proyek, pengguna, atau organisasi                 | Per working tree                                                  |
-| **Dimuat ke dalam**       | Setiap sesi                                       | Setiap sesi (200 baris pertama)                                   |
+| **Dimuat ke dalam**       | Setiap sesi                                       | Setiap sesi (200 baris pertama atau 25KB)                         |
 | **Gunakan untuk**         | Standar pengkodean, alur kerja, arsitektur proyek | Perintah build, wawasan debugging, preferensi yang Claude temukan |
 
 Gunakan file CLAUDE.md ketika Anda ingin memandu perilaku Claude. Auto memory memungkinkan Claude belajar dari koreksi Anda tanpa usaha manual.
@@ -59,12 +59,12 @@ CLAUDE.md proyek dapat disimpan di `./CLAUDE.md` atau `./.claude/CLAUDE.md`. Bua
 <Tip>
   Jalankan `/init` untuk menghasilkan CLAUDE.md awal secara otomatis. Claude menganalisis basis kode Anda dan membuat file dengan perintah build, instruksi test, dan konvensi proyek yang ditemukannya. Jika CLAUDE.md sudah ada, `/init` menyarankan perbaikan daripada menimpanya. Perbaiki dari sana dengan instruksi yang Claude tidak akan temukan sendiri.
 
-  Atur `CLAUDE_CODE_NEW_INIT=true` untuk mengaktifkan alur multi-fase interaktif. `/init` menanyakan artefak mana yang akan diatur: file CLAUDE.md, skills, dan hooks. Kemudian mengeksplorasi basis kode Anda dengan subagent, mengisi celah melalui pertanyaan lanjutan, dan menyajikan proposal yang dapat ditinjau sebelum menulis file apa pun.
+  Atur `CLAUDE_CODE_NEW_INIT=1` untuk mengaktifkan alur multi-fase interaktif. `/init` menanyakan artefak mana yang akan diatur: file CLAUDE.md, skills, dan hooks. Kemudian mengeksplorasi basis kode Anda dengan subagent, mengisi celah melalui pertanyaan lanjutan, dan menyajikan proposal yang dapat ditinjau sebelum menulis file apa pun.
 </Tip>
 
 ### Tulis instruksi yang efektif
 
-File CLAUDE.md dimuat ke dalam context window di awal setiap sesi, mengonsumsi token bersama percakapan Anda. Karena mereka adalah konteks daripada konfigurasi yang diberlakukan, cara Anda menulis instruksi mempengaruhi seberapa andal Claude mengikutinya. Instruksi yang spesifik, ringkas, dan terstruktur dengan baik bekerja paling baik.
+File CLAUDE.md dimuat ke dalam context window di awal setiap sesi, mengonsumsi token bersama percakapan Anda. [Visualisasi context window](/id/context-window) menunjukkan di mana CLAUDE.md dimuat relatif terhadap sisa startup context. Karena mereka adalah konteks daripada konfigurasi yang diberlakukan, cara Anda menulis instruksi mempengaruhi seberapa andal Claude mengikutinya. Instruksi yang spesifik, ringkas, dan terstruktur dengan baik bekerja paling baik.
 
 **Ukuran**: targetkan di bawah 200 baris per file CLAUDE.md. File yang lebih panjang mengonsumsi lebih banyak konteks dan mengurangi kepatuhan. Jika instruksi Anda berkembang besar, pisahkan menggunakan [impor](#import-additional-files) atau file [`.claude/rules/`](#organize-rules-with-claude/rules/).
 
@@ -327,9 +327,9 @@ Auto memory adalah mesin-lokal. Semua worktrees dan subdirektori dalam repositor
 
 ### Bagaimana cara kerjanya
 
-200 baris pertama `MEMORY.md` dimuat di awal setiap percakapan. Konten di luar baris 200 tidak dimuat saat awal sesi. Claude membuat `MEMORY.md` ringkas dengan memindahkan catatan terperinci ke file topik terpisah.
+200 baris pertama `MEMORY.md`, atau 25KB pertama, mana pun yang lebih dulu, dimuat di awal setiap percakapan. Konten di luar batas itu tidak dimuat saat awal sesi. Claude membuat `MEMORY.md` ringkas dengan memindahkan catatan terperinci ke file topik terpisah.
 
-Batas 200 baris ini hanya berlaku untuk `MEMORY.md`. File CLAUDE.md dimuat sepenuhnya terlepas dari panjangnya, meskipun file yang lebih pendek menghasilkan kepatuhan yang lebih baik.
+Batas ini hanya berlaku untuk `MEMORY.md`. File CLAUDE.md dimuat sepenuhnya terlepas dari panjangnya, meskipun file yang lebih pendek menghasilkan kepatuhan yang lebih baik.
 
 File topik seperti `debugging.md` atau `patterns.md` tidak dimuat saat startup. Claude membacanya sesuai permintaan menggunakan alat file standarnya ketika membutuhkan informasi.
 

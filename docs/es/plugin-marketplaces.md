@@ -557,6 +557,10 @@ También puede especificar qué plugins deben estar habilitados de forma predete
 
 Para opciones de configuración completas, consulte [Configuración de plugins](/es/settings#plugin-settings).
 
+<Note>
+  Si usa una fuente local `directory` o `file` con una ruta relativa, la ruta se resuelve contra el checkout principal de su repositorio. Cuando ejecuta Claude Code desde un git worktree, la ruta aún apunta al checkout principal, por lo que todos los worktrees comparten la misma ubicación de marketplace. El estado del marketplace se almacena una vez por usuario en `~/.claude/plugins/known_marketplaces.json`, no por proyecto.
+</Note>
+
 ### Precargar plugins para contenedores
 
 Para imágenes de contenedor y entornos de CI, puede precargar un directorio de plugins en tiempo de compilación para que Claude Code comience con marketplaces y plugins ya disponibles, sin clonar nada en tiempo de ejecución. Establezca la variable de entorno `CLAUDE_CODE_PLUGIN_SEED_DIR` para apuntar a este directorio.
@@ -627,7 +631,7 @@ Permitir solo marketplaces específicos:
 }
 ```
 
-Permitir todos los marketplaces desde un servidor git interno usando coincidencia de patrón regex en el host:
+Permitir todos los marketplaces desde un servidor git interno usando coincidencia de patrón regex en el host. Este es el enfoque recomendado para [GitHub Enterprise Server](/es/github-enterprise-server#plugin-marketplaces-on-ghes) o instancias de GitLab autohospedadas:
 
 ```json  theme={null}
 {
@@ -848,6 +852,20 @@ Para actualizaciones automáticas en segundo plano:
 * Para GitHub, asegúrese de que el token tiene el alcance `repo` para repositorios privados
 * Para GitLab, asegúrese de que el token tiene al menos alcance `read_repository`
 * Verifique que el token no haya expirado
+
+### Las actualizaciones del marketplace fallan en entornos sin conexión
+
+**Síntomas**: El `git pull` del marketplace falla y Claude Code borra el caché existente, causando que los plugins se vuelvan no disponibles.
+
+**Causa**: Por defecto, cuando un `git pull` falla, Claude Code elimina el clon obsoleto e intenta re-clonar. En entornos sin conexión o aislados, el re-clonado falla de la misma manera, dejando el directorio del marketplace vacío.
+
+**Solución**: Establezca `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` para mantener el caché existente cuando el pull falla en lugar de borrarlo:
+
+```bash  theme={null}
+export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
+```
+
+Con esta variable establecida, Claude Code retiene el clon obsoleto del marketplace en fallo de `git pull` y continúa usando el último estado conocido bueno. Para implementaciones completamente sin conexión donde el repositorio nunca será alcanzable, use [`CLAUDE_CODE_PLUGIN_SEED_DIR`](#pre-populate-plugins-for-containers) para precargar el directorio de plugins en tiempo de compilación en su lugar.
 
 ### Las operaciones de Git agotan el tiempo de espera
 

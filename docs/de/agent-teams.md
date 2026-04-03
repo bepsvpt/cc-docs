@@ -101,7 +101,7 @@ Agent-Teams unterstützen zwei Anzeigemodi:
   `tmux` hat bekannte Einschränkungen auf bestimmten Betriebssystemen und funktioniert traditionell am besten auf macOS. Die Verwendung von `tmux -CC` in iTerm2 ist der empfohlene Einstiegspunkt in `tmux`.
 </Note>
 
-Der Standard ist `"auto"`, der Split Panes verwendet, wenn Sie bereits in einer tmux-Sitzung ausgeführt werden, und ansonsten In-Process. Die Einstellung `"tmux"` aktiviert den Split-Pane-Modus und erkennt automatisch, ob tmux oder iTerm2 basierend auf Ihrem Terminal verwendet werden soll. Um zu überschreiben, setzen Sie `teammateMode` in Ihrer [settings.json](/de/settings):
+Der Standard ist `"auto"`, der Split Panes verwendet, wenn Sie bereits in einer tmux-Sitzung ausgeführt werden, und ansonsten In-Process. Die Einstellung `"tmux"` aktiviert den Split-Pane-Modus und erkennt automatisch, ob tmux oder iTerm2 basierend auf Ihrem Terminal verwendet werden soll. Um zu überschreiben, setzen Sie `teammateMode` in Ihrer [globalen Konfiguration](/de/settings#global-config-settings) unter `~/.claude.json`:
 
 ```json  theme={null}
 {
@@ -186,9 +186,10 @@ Dies entfernt die gemeinsamen Teamressourcen. Wenn der Lead die Bereinigung ausf
 
 ### Erzwingen Sie Qualitätsgates mit hooks
 
-Verwenden Sie [hooks](/de/hooks), um Regeln durchzusetzen, wenn Teammates ihre Arbeit abschließen oder Aufgaben abgeschlossen werden:
+Verwenden Sie [hooks](/de/hooks), um Regeln durchzusetzen, wenn Teammates ihre Arbeit abschließen oder Aufgaben erstellt oder abgeschlossen werden:
 
 * [`TeammateIdle`](/de/hooks#teammateidle): wird ausgeführt, wenn ein Teammate im Begriff ist, untätig zu werden. Beenden Sie mit Code 2, um Feedback zu senden und den Teammate weiterarbeiten zu lassen.
+* [`TaskCreated`](/de/hooks#taskcreated): wird ausgeführt, wenn eine Aufgabe erstellt wird. Beenden Sie mit Code 2, um die Erstellung zu verhindern und Feedback zu senden.
 * [`TaskCompleted`](/de/hooks#taskcompleted): wird ausgeführt, wenn eine Aufgabe als abgeschlossen markiert wird. Beenden Sie mit Code 2, um die Fertigstellung zu verhindern und Feedback zu senden.
 
 ## Wie Agent-Teams funktionieren
@@ -224,7 +225,23 @@ Teams und Aufgaben werden lokal gespeichert:
 * **Team-Konfiguration**: `~/.claude/teams/{team-name}/config.json`
 * **Aufgabenliste**: `~/.claude/tasks/{team-name}/`
 
+Claude Code generiert beide automatisch, wenn Sie ein Team erstellen, und aktualisiert sie, wenn Teammates beitreten, untätig werden oder gehen. Die Team-Konfiguration enthält Laufzeitzustand wie Session-IDs und tmux-Pane-IDs, also bearbeiten Sie sie nicht von Hand oder verfassen Sie sie nicht im Voraus: Ihre Änderungen werden beim nächsten Zustandsupdate überschrieben.
+
+Um wiederverwendbare Teammate-Rollen zu definieren, verwenden Sie stattdessen [Subagent-Definitionen](#use-subagent-definitions-for-teammates).
+
 Die Team-Konfiguration enthält ein `members`-Array mit dem Namen, der Agent-ID und dem Agent-Typ jedes Teammates. Teammates können diese Datei lesen, um andere Teammitglieder zu entdecken.
+
+Es gibt kein Projekt-Level-Äquivalent der Team-Konfiguration. Eine Datei wie `.claude/teams/teams.json` in Ihrem Projektverzeichnis wird nicht als Konfiguration erkannt; Claude behandelt sie als gewöhnliche Datei.
+
+### Verwenden Sie Subagent-Definitionen für Teammates
+
+Beim Erzeugen eines Teammates können Sie einen [Subagent](/de/sub-agents)-Typ aus jedem [Subagent-Bereich](/de/sub-agents#choose-the-subagent-scope) referenzieren: Projekt, Benutzer, Plugin oder CLI-definiert. Der Teammate erbt den System-Prompt, die Tools und das Modell dieses Subagents. Dies ermöglicht es Ihnen, eine Rolle einmal zu definieren, wie z. B. einen Security-Reviewer oder Test-Runner, und sie sowohl als delegierter Subagent als auch als Agent-Team-Teammate wiederzuverwenden.
+
+Um eine Subagent-Definition zu verwenden, erwähnen Sie sie nach Name, wenn Sie Claude auffordern, den Teammate zu erzeugen:
+
+```text  theme={null}
+Spawn a teammate using the security-reviewer agent type to audit the auth module.
+```
 
 ### Berechtigungen
 

@@ -30,7 +30,7 @@ Claude Code 在以下平台和配置上運行：
 ## 安裝 Claude Code
 
 <Tip>
-  偏好圖形介面？[桌面應用程式](/zh-TW/desktop-quickstart)讓您無需終端機即可使用 Claude Code。下載適用於 [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) 或 [Windows](https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs) 的版本。
+  偏好圖形介面？[桌面應用程式](/zh-TW/desktop-quickstart)讓您無需終端機即可使用 Claude Code。下載適用於 [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) 或 [Windows](https://claude.com/download?utm_source=claude_code\&utm_medium=docs) 的版本。
 
   初次使用終端機？請參閱[終端機指南](/zh-TW/terminal-guide)以取得逐步說明。
 </Tip>
@@ -113,6 +113,8 @@ Windows 上的 Claude Code 需要 [Git for Windows](https://git-scm.com/download
 }
 ```
 
+Claude Code 也可以在 Windows 上以選擇加入預覽的方式原生執行 PowerShell。請參閱 [PowerShell tool](/zh-TW/tools-reference#powershell-tool) 以了解設定和限制。
+
 **選項 2：WSL**
 
 支援 WSL 1 和 WSL 2。WSL 2 支援[沙箱](/zh-TW/sandboxing)以增強安全性。WSL 1 不支援沙箱。
@@ -153,7 +155,7 @@ claude doctor
 
 ## 驗證身份
 
-Claude Code 需要 Pro、Max、Teams、Enterprise 或 Console 帳戶。免費的 Claude.ai 方案不包括 Claude Code 存取權。您也可以透過第三方 API 提供者（如 [Amazon Bedrock](/zh-TW/amazon-bedrock)、[Google Vertex AI](/zh-TW/google-vertex-ai) 或 [Microsoft Foundry](/zh-TW/microsoft-foundry)）使用 Claude Code。
+Claude Code 需要 Pro、Max、Team、Enterprise 或 Console 帳戶。免費的 Claude.ai 方案不包括 Claude Code 存取權。您也可以透過第三方 API 提供者（如 [Amazon Bedrock](/zh-TW/amazon-bedrock)、[Google Vertex AI](/zh-TW/google-vertex-ai) 或 [Microsoft Foundry](/zh-TW/microsoft-foundry)）使用 Claude Code。
 
 安裝後，執行 `claude` 並按照瀏覽器提示登入。請參閱[驗證](/zh-TW/authentication)以了解所有帳戶類型和團隊設定選項。
 
@@ -267,19 +269,19 @@ claude update
 <Tabs>
   <Tab title="macOS、Linux、WSL">
     ```bash  theme={null}
-    curl -fsSL https://claude.ai/install.sh | bash -s 1.0.58
+    curl -fsSL https://claude.ai/install.sh | bash -s 2.1.89
     ```
   </Tab>
 
   <Tab title="Windows PowerShell">
     ```powershell  theme={null}
-    & ([scriptblock]::Create((irm https://claude.ai/install.ps1))) 1.0.58
+    & ([scriptblock]::Create((irm https://claude.ai/install.ps1))) 2.1.89
     ```
   </Tab>
 
   <Tab title="Windows CMD">
     ```batch  theme={null}
-    curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd 1.0.58 && del install.cmd
+    curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd 2.1.89 && del install.cmd
     ```
   </Tab>
 </Tabs>
@@ -316,12 +318,92 @@ npm install -g @anthropic-ai/claude-code
 
 ### 二進位檔案完整性和程式碼簽署
 
-您可以使用 SHA256 校驗和和程式碼簽名驗證 Claude Code 二進位檔案的完整性。
+每個發佈都會發佈一個 `manifest.json`，其中包含每個平台二進位檔案的 SHA256 校驗和。該資訊清單使用 Anthropic GPG 金鑰簽署，因此驗證資訊清單上的簽名可以傳遞地驗證它列出的每個二進位檔案。
 
-* 所有平台的 SHA256 校驗和發佈在 `https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/{VERSION}/manifest.json` 的發佈資訊清單中。將 `{VERSION}` 替換為版本號，例如 `2.0.30`。
-* 簽署的二進位檔案分佈在以下平台上：
-  * **macOS**：由'Anthropic PBC'簽署並由 Apple 公證
-  * **Windows**：由'Anthropic, PBC'簽署
+#### 驗證資訊清單簽名
+
+步驟 1-3 需要具有 `gpg` 和 `curl` 的 POSIX shell。在 Windows 上，在 Git Bash 或 WSL 中執行它們。步驟 4 包括 PowerShell 選項。
+
+<Steps>
+  <Step title="下載並匯入公開金鑰">
+    發佈簽署金鑰發佈在固定 URL。
+
+    ```bash  theme={null}
+    curl -fsSL https://downloads.claude.ai/keys/claude-code.asc | gpg --import
+    ```
+
+    顯示匯入金鑰的指紋。
+
+    ```bash  theme={null}
+    gpg --fingerprint security@anthropic.com
+    ```
+
+    確認輸出包含此指紋：
+
+    ```text  theme={null}
+    31DD DE24 DDFA B679 F42D  7BD2 BAA9 29FF 1A7E CACE
+    ```
+  </Step>
+
+  <Step title="下載資訊清單和簽名">
+    將 `VERSION` 設定為您要驗證的發佈。
+
+    ```bash  theme={null}
+    REPO=https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases
+    VERSION=2.1.89
+    curl -fsSLO "$REPO/$VERSION/manifest.json"
+    curl -fsSLO "$REPO/$VERSION/manifest.json.sig"
+    ```
+  </Step>
+
+  <Step title="驗證簽名">
+    驗證分離的簽名對比資訊清單。
+
+    ```bash  theme={null}
+    gpg --verify manifest.json.sig manifest.json
+    ```
+
+    有效的結果報告 `Good signature from "Anthropic Claude Code Release Signing <security@anthropic.com>"`。
+
+    `gpg` 也會為任何新匯入的金鑰列印 `WARNING: This key is not certified with a trusted signature!`。這是預期的。`Good signature` 行確認密碼檢查已通過。第 1 步中的指紋比較確認金鑰本身是真實的。
+  </Step>
+
+  <Step title="根據資訊清單檢查二進位檔案">
+    將您下載的二進位檔案的 SHA256 校驗和與 `manifest.json` 中 `platforms.<platform>.checksum` 下列出的值進行比較。
+
+    <Tabs>
+      <Tab title="Linux">
+        ```bash  theme={null}
+        sha256sum claude
+        ```
+      </Tab>
+
+      <Tab title="macOS">
+        ```bash  theme={null}
+        shasum -a 256 claude
+        ```
+      </Tab>
+
+      <Tab title="Windows PowerShell">
+        ```powershell  theme={null}
+        (Get-FileHash claude.exe -Algorithm SHA256).Hash.ToLower()
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+</Steps>
+
+<Note>
+  資訊清單簽名適用於 `2.1.89` 及以後的發佈。較早的發佈在 `manifest.json` 中發佈校驗和，但沒有分離的簽名。
+</Note>
+
+#### 平台程式碼簽名
+
+除了簽署的資訊清單外，個別二進位檔案在支援的地方還帶有平台原生程式碼簽名。
+
+* **macOS**：由「Anthropic PBC」簽署並由 Apple 公證。使用 `codesign --verify --verbose ./claude` 驗證。
+* **Windows**：由「Anthropic, PBC」簽署。使用 `Get-AuthenticodeSignature .\claude.exe` 驗證。
+* **Linux**：使用上面的資訊清單簽名來驗證完整性。Linux 二進位檔案不是單獨程式碼簽署的。
 
 ## 卸載 Claude Code
 

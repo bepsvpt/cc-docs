@@ -43,7 +43,7 @@ Claude Code 支援兩種集中設定方法。伺服器管理的設定從 Anthrop
   <Step title="定義您的設定">
     將您的設定新增為 JSON。支援 [`settings.json` 中提供的所有設定](/zh-TW/settings#available-settings)，包括 [hooks](/zh-TW/hooks)、[環境變數](/zh-TW/env-vars) 和[僅限受管的設定](/zh-TW/permissions#managed-only-settings)，例如 `allowManagedPermissionRulesOnly`。
 
-    此範例強制執行權限拒絕清單並防止使用者繞過權限：
+    此範例強制執行權限拒絕清單，防止使用者繞過權限，並將權限規則限制為在受管設定中定義的規則：
 
     ```json  theme={null}
     {
@@ -55,7 +55,8 @@ Claude Code 支援兩種集中設定方法。伺服器管理的設定從 Anthrop
           "Read(./secrets/**)"
         ],
         "disableBypassPermissionsMode": "disable"
-      }
+      },
+      "allowManagedPermissionRulesOnly": true
     }
     ```
 
@@ -113,6 +114,10 @@ Claude Code 支援兩種集中設定方法。伺服器管理的設定從 Anthrop
 
 限制對受信任人員的存取，因為設定變更會套用到組織中的所有使用者。
 
+### 僅限受管的設定
+
+大多數[設定金鑰](/zh-TW/settings#available-settings)可在任何範圍中運作。少數金鑰只能從受管設定中讀取，在放置於使用者或專案設定檔中時無效。請參閱[僅限受管的設定](/zh-TW/permissions#managed-only-settings)以取得完整清單。任何不在該清單上的設定仍然可以放置在受管設定中，並具有最高優先順序。
+
 ### 目前的限制
 
 伺服器管理的設定在測試版期間有以下限制：
@@ -124,7 +129,11 @@ Claude Code 支援兩種集中設定方法。伺服器管理的設定從 Anthrop
 
 ### 設定優先順序
 
-伺服器管理的設定和[端點管理的設定](/zh-TW/settings#settings-files)都佔據 Claude Code [設定階層](/zh-TW/settings#settings-precedence)中的最高層級。沒有其他設定層級可以覆蓋它們，包括命令列引數。當兩者都存在時，伺服器管理的設定優先，端點管理的設定不會被使用。
+伺服器管理的設定和[端點管理的設定](/zh-TW/settings#settings-files)都佔據 Claude Code [設定階層](/zh-TW/settings#settings-precedence)中的最高層級。沒有其他設定層級可以覆蓋它們，包括命令列引數。
+
+在受管層級內，第一個傳遞非空設定的來源會獲勝。伺服器管理的設定會先檢查，然後是端點管理的設定。來源不會合併：如果伺服器管理的設定傳遞任何金鑰，端點管理的設定會被完全忽略。如果伺服器管理的設定不傳遞任何內容，端點管理的設定會套用。
+
+如果您在管理員主控台中清除伺服器管理的設定，意圖回退到端點管理的 plist 或登錄原則，請注意[快取的設定](#fetch-and-caching-behavior)會在用戶端機器上持續存在，直到下次成功擷取。執行 `/status` 以查看哪個受管來源處於作用中。
 
 ### 擷取和快取行為
 

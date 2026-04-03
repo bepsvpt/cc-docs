@@ -43,7 +43,7 @@ Se seus dispositivos estão inscritos em uma solução MDM ou gerenciamento de e
   <Step title="Definir suas configurações">
     Adicione sua configuração como JSON. Todas as [configurações disponíveis em `settings.json`](/pt/settings#available-settings) são suportadas, incluindo [hooks](/pt/hooks), [variáveis de ambiente](/pt/env-vars) e [configurações apenas gerenciadas](/pt/permissions#managed-only-settings) como `allowManagedPermissionRulesOnly`.
 
-    Este exemplo impõe uma lista de negação de permissões e impede que os usuários ignorem as permissões:
+    Este exemplo impõe uma lista de negação de permissões, impede que os usuários ignorem as permissões e restringe as regras de permissão àquelas definidas nas configurações gerenciadas:
 
     ```json  theme={null}
     {
@@ -55,7 +55,8 @@ Se seus dispositivos estão inscritos em uma solução MDM ou gerenciamento de e
           "Read(./secrets/**)"
         ],
         "disableBypassPermissionsMode": "disable"
-      }
+      },
+      "allowManagedPermissionRulesOnly": true
     }
     ```
 
@@ -113,6 +114,10 @@ Os seguintes papéis podem gerenciar configurações gerenciadas pelo servidor:
 
 Restrinja o acesso a pessoal confiável, pois as alterações de configurações se aplicam a todos os usuários da organização.
 
+### Configurações apenas gerenciadas
+
+A maioria das [chaves de configurações](/pt/settings#available-settings) funciona em qualquer escopo. Um punhado de chaves são lidas apenas de configurações gerenciadas e não têm efeito quando colocadas em arquivos de configurações de usuário ou projeto. Veja [configurações apenas gerenciadas](/pt/permissions#managed-only-settings) para a lista completa. Qualquer configuração não nessa lista ainda pode ser colocada em configurações gerenciadas e tem a precedência mais alta.
+
 ### Limitações atuais
 
 As configurações gerenciadas pelo servidor têm as seguintes limitações durante o período beta:
@@ -124,7 +129,11 @@ As configurações gerenciadas pelo servidor têm as seguintes limitações dura
 
 ### Precedência de configurações
 
-As configurações gerenciadas pelo servidor e as [configurações gerenciadas pelo endpoint](/pt/settings#settings-files) ocupam o nível mais alto na [hierarquia de configurações](/pt/settings#settings-precedence) do Claude Code. Nenhum outro nível de configurações pode substituí-las, incluindo argumentos de linha de comando. Quando ambas estão presentes, as configurações gerenciadas pelo servidor têm precedência e as configurações gerenciadas pelo endpoint não são usadas.
+As configurações gerenciadas pelo servidor e as [configurações gerenciadas pelo endpoint](/pt/settings#settings-files) ocupam o nível mais alto na [hierarquia de configurações](/pt/settings#settings-precedence) do Claude Code. Nenhum outro nível de configurações pode substituí-las, incluindo argumentos de linha de comando.
+
+Dentro do nível gerenciado, a primeira fonte que entrega uma configuração não vazia vence. As configurações gerenciadas pelo servidor são verificadas primeiro, depois as configurações gerenciadas pelo endpoint. As fontes não se mesclam: se as configurações gerenciadas pelo servidor entregarem qualquer chave, as configurações gerenciadas pelo endpoint são ignoradas completamente. Se as configurações gerenciadas pelo servidor não entregarem nada, as configurações gerenciadas pelo endpoint se aplicam.
+
+Se você limpar sua configuração gerenciada pelo servidor no console de administração com a intenção de voltar a uma plist gerenciada pelo endpoint ou política de registro, esteja ciente de que [configurações em cache](#fetch-and-caching-behavior) persistem em máquinas cliente até a próxima busca bem-sucedida. Execute `/status` para ver qual fonte gerenciada está ativa.
 
 ### Comportamento de busca e cache
 

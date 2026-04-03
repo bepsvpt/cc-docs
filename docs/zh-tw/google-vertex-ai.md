@@ -71,19 +71,18 @@ export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=global
 export ANTHROPIC_VERTEX_PROJECT_ID=YOUR-PROJECT-ID
 
+# 選用：覆寫 Vertex 端點 URL 以用於自訂端點或閘道
+# export ANTHROPIC_VERTEX_BASE_URL=https://aiplatform.googleapis.com
+
 # 選用：如需要，停用 prompt caching
 export DISABLE_PROMPT_CACHING=1
 
-# 當 CLOUD_ML_REGION=global 時，覆寫不支援模型的區域
-export VERTEX_REGION_CLAUDE_3_5_HAIKU=us-east5
-
-# 選用：覆寫其他特定模型的區域
-export VERTEX_REGION_CLAUDE_3_5_SONNET=us-east5
-export VERTEX_REGION_CLAUDE_3_7_SONNET=us-east5
-export VERTEX_REGION_CLAUDE_4_0_OPUS=europe-west1
-export VERTEX_REGION_CLAUDE_4_0_SONNET=us-east5
-export VERTEX_REGION_CLAUDE_4_1_OPUS=europe-west1
+# 當 CLOUD_ML_REGION=global 時，覆寫不支援全球端點的模型的區域
+export VERTEX_REGION_CLAUDE_HAIKU_4_5=us-east5
+export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 ```
+
+每個模型版本都有其自己的 `VERTEX_REGION_CLAUDE_*` 變數。如需完整清單，請參閱[環境變數參考](/zh-TW/env-vars)。檢查 [Vertex Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) 以確定哪些模型支援全球端點與僅限區域端點。
 
 當您指定 `cache_control` 暫時旗標時，[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) 會自動支援。若要停用它，請設定 `DISABLE_PROMPT_CACHING=1`。如需提高速率限制，請聯絡 Google Cloud 支援。使用 Vertex AI 時，`/login` 和 `/logout` 命令會被停用，因為驗證是透過 Google Cloud 認證處理的。
 
@@ -105,16 +104,16 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
 
 未設定固定變數時，Claude Code 使用這些預設模型：
 
-| 模型類型    | 預設值                         |
-| :------ | :-------------------------- |
-| 主要模型    | `claude-sonnet-4-6`         |
-| 小型/快速模型 | `claude-haiku-4-5@20251001` |
+| 模型類型    | 預設值                          |
+| :------ | :--------------------------- |
+| 主要模型    | `claude-sonnet-4-5@20250929` |
+| 小型/快速模型 | `claude-haiku-4-5@20251001`  |
 
 若要進一步自訂模型：
 
 ```bash  theme={null}
 export ANTHROPIC_MODEL='claude-opus-4-6'
-export ANTHROPIC_SMALL_FAST_MODEL='claude-haiku-4-5@20251001'
+export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
 ```
 
 ## IAM 設定
@@ -150,7 +149,7 @@ Claude Opus 4.6、Sonnet 4.6、Sonnet 4.5 和 Sonnet 4 在 Vertex AI 上支援 [
 * 確認模型在 [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) 中已啟用
 * 驗證您有權存取指定的區域
 * 如果使用 `CLOUD_ML_REGION=global`，請檢查您的模型是否在 [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) 中的「支援的功能」下支援全球端點。對於不支援全球端點的模型，請執行下列其中一項：
-  * 透過 `ANTHROPIC_MODEL` 或 `ANTHROPIC_SMALL_FAST_MODEL` 指定支援的模型，或
+  * 透過 `ANTHROPIC_MODEL` 或 `ANTHROPIC_DEFAULT_HAIKU_MODEL` 指定支援的模型，或
   * 使用 `VERTEX_REGION_<MODEL_NAME>` 環境變數設定區域端點
 
 如果您遇到 429 錯誤：

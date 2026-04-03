@@ -11,11 +11,11 @@
 <Note>
   Los atajos de teclado pueden variar según la plataforma y la terminal. Presione `?` para ver los atajos disponibles en su entorno.
 
-  **Usuarios de macOS**: Los atajos de la tecla Option/Alt (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`) requieren configurar Option como Meta en su terminal:
+  **Usuarios de macOS**: Los atajos de la tecla Option/Alt (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`, `Alt+T`) requieren configurar Option como Meta en su terminal:
 
   * **iTerm2**: configuración → Perfiles → Teclas → establecer la tecla Option izquierda/derecha en "Esc+"
   * **Terminal.app**: configuración → Perfiles → Teclado → marcar "Usar Option como tecla Meta"
-  * **VS Code**: configuración → Perfiles → Teclas → establecer la tecla Option izquierda/derecha en "Esc+"
+  * **VS Code**: establecer `"terminal.integrated.macOptionIsMeta": true` en la configuración de VS Code
 
   Consulte [Configuración de terminal](/es/terminal-config) para obtener más detalles.
 </Note>
@@ -28,7 +28,7 @@
 | `Ctrl+X Ctrl+K`                                 | Terminar todos los agentes de fondo. Presione dos veces en 3 segundos para confirmar | Control de agentes de fondo                                                                                                                                                                       |
 | `Ctrl+D`                                        | Salir de la sesión de Claude Code                                                    | Señal EOF                                                                                                                                                                                         |
 | `Ctrl+G` o `Ctrl+X Ctrl+E`                      | Abrir en el editor de texto predeterminado                                           | Edite su indicación o respuesta personalizada en su editor de texto predeterminado. `Ctrl+X Ctrl+E` es el enlace nativo de readline                                                               |
-| `Ctrl+L`                                        | Limpiar pantalla de terminal                                                         | Mantiene el historial de conversación                                                                                                                                                             |
+| `Ctrl+L`                                        | Redibujar la pantalla                                                                | Repinta la interfaz de usuario actual sin borrar el historial de conversación                                                                                                                     |
 | `Ctrl+O`                                        | Alternar salida detallada                                                            | Muestra el uso y la ejecución detallada de herramientas. También expande las llamadas de lectura y búsqueda de MCP, que se contraen a una sola línea como "Queried slack" de forma predeterminada |
 | `Ctrl+R`                                        | Búsqueda inversa del historial de comandos                                           | Buscar a través de comandos anteriores de forma interactiva                                                                                                                                       |
 | `Ctrl+V` o `Cmd+V` (iTerm2) o `Alt+V` (Windows) | Pegar imagen desde el portapapeles                                                   | Inserta un chip `[Image #N]` en el cursor para que pueda hacer referencia a él posicionalmente en su indicación                                                                                   |
@@ -39,29 +39,25 @@
 | `Esc` + `Esc`                                   | Rebobinar o resumir                                                                  | Restaurar código y/o conversación a un punto anterior, o resumir desde un mensaje seleccionado                                                                                                    |
 | `Shift+Tab` o `Alt+M` (algunas configuraciones) | Ciclar modos de permiso                                                              | Ciclar a través de `default`, `acceptEdits`, `plan` y cualquier modo que haya habilitado, como `auto` o `bypassPermissions`. Consulte [modos de permiso](/es/permission-modes).                   |
 | `Option+P` (macOS) o `Alt+P` (Windows/Linux)    | Cambiar modelo                                                                       | Cambiar modelos sin borrar su indicación                                                                                                                                                          |
-| `Option+T` (macOS) o `Alt+T` (Windows/Linux)    | Alternar pensamiento extendido                                                       | Habilitar o deshabilitar el modo de pensamiento extendido. Ejecute `/terminal-setup` primero para habilitar este atajo                                                                            |
+| `Option+T` (macOS) o `Alt+T` (Windows/Linux)    | Alternar pensamiento extendido                                                       | Habilitar o deshabilitar el modo de pensamiento extendido. En macOS, configure su terminal para enviar Option como Meta para que este atajo funcione                                              |
 | `Option+O` (macOS) o `Alt+O` (Windows/Linux)    | Alternar modo rápido                                                                 | Habilitar o deshabilitar [modo rápido](/es/fast-mode)                                                                                                                                             |
 
 ### Edición de texto
 
-| Atajo                         | Descripción                             | Contexto                                                                                                                       |
-| :---------------------------- | :-------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------- |
-| `Ctrl+K`                      | Eliminar hasta el final de la línea     | Almacena el texto eliminado para pegarlo                                                                                       |
-| `Ctrl+U`                      | Eliminar línea completa                 | Almacena el texto eliminado para pegarlo                                                                                       |
-| `Ctrl+Y`                      | Pegar texto eliminado                   | Pegar texto eliminado con `Ctrl+K` o `Ctrl+U`                                                                                  |
-| `Alt+Y` (después de `Ctrl+Y`) | Ciclar historial de pegado              | Después de pegar, ciclar a través del texto eliminado anteriormente. Requiere [Option como Meta](#keyboard-shortcuts) en macOS |
-| `Alt+B`                       | Mover cursor una palabra hacia atrás    | Navegación de palabras. Requiere [Option como Meta](#keyboard-shortcuts) en macOS                                              |
-| `Alt+F`                       | Mover cursor una palabra hacia adelante | Navegación de palabras. Requiere [Option como Meta](#keyboard-shortcuts) en macOS                                              |
+| Atajo                         | Descripción                                          | Contexto                                                                                                                       |
+| :---------------------------- | :--------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+K`                      | Eliminar hasta el final de la línea                  | Almacena el texto eliminado para pegarlo                                                                                       |
+| `Ctrl+U`                      | Eliminar desde el cursor hasta el inicio de la línea | Almacena el texto eliminado para pegarlo. Repita para borrar en múltiples líneas en entrada multilínea                         |
+| `Ctrl+Y`                      | Pegar texto eliminado                                | Pegar texto eliminado con `Ctrl+K` o `Ctrl+U`                                                                                  |
+| `Alt+Y` (después de `Ctrl+Y`) | Ciclar historial de pegado                           | Después de pegar, ciclar a través del texto eliminado anteriormente. Requiere [Option como Meta](#keyboard-shortcuts) en macOS |
+| `Alt+B`                       | Mover cursor una palabra hacia atrás                 | Navegación de palabras. Requiere [Option como Meta](#keyboard-shortcuts) en macOS                                              |
+| `Alt+F`                       | Mover cursor una palabra hacia adelante              | Navegación de palabras. Requiere [Option como Meta](#keyboard-shortcuts) en macOS                                              |
 
 ### Tema y visualización
 
 | Atajo    | Descripción                                           | Contexto                                                                                                                       |
 | :------- | :---------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------- |
 | `Ctrl+T` | Alternar resaltado de sintaxis para bloques de código | Solo funciona dentro del menú del selector `/theme`. Controla si el código en las respuestas de Claude usa colores de sintaxis |
-
-<Note>
-  El resaltado de sintaxis solo está disponible en la compilación nativa de Claude Code.
-</Note>
 
 ### Entrada multilínea
 
@@ -89,10 +85,10 @@
 
 Cuando el visor de transcripción está abierto (alternado con `Ctrl+O`), estos atajos están disponibles. `Ctrl+E` se puede reasignar a través de [`transcript:toggleShowAll`](/es/keybindings).
 
-| Atajo                | Descripción                                                                                                                                          |
-| :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Ctrl+E`             | Alternar mostrar todo el contenido                                                                                                                   |
-| `q`, `Ctrl+C`, `Esc` | Salir de la vista de transcripción. `Ctrl+C` y `Esc` se pueden reasignar a través de [`transcript:exit`](/es/keybindings); `q` no se puede reasignar |
+| Atajo                | Descripción                                                                                                       |
+| :------------------- | :---------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+E`             | Alternar mostrar todo el contenido                                                                                |
+| `q`, `Ctrl+C`, `Esc` | Salir de la vista de transcripción. Los tres se pueden reasignar a través de [`transcript:exit`](/es/keybindings) |
 
 ### Entrada de voz
 
@@ -253,6 +249,7 @@ Modo Bash:
 * No requiere que Claude interprete o apruebe el comando
 * Admite autocompletado basado en historial: escriba un comando parcial y presione **Tab** para completar desde comandos `!` anteriores en el proyecto actual
 * Salir con `Escape`, `Backspace` o `Ctrl+U` en un indicador vacío
+* Pegar texto que comienza con `!` en un indicador vacío entra automáticamente en modo bash, coincidiendo con el comportamiento de `!` escrito
 
 Esto es útil para operaciones rápidas de shell mientras se mantiene el contexto de la conversación.
 
@@ -262,7 +259,7 @@ Cuando abre una sesión por primera vez, aparece un comando de ejemplo atenuado 
 
 Después de que Claude responde, las sugerencias continúan apareciendo según su historial de conversación, como un paso de seguimiento de una solicitud de varias partes o una continuación natural de su flujo de trabajo.
 
-* Presione **Tab** para aceptar la sugerencia, o presione **Enter** para aceptar y enviar
+* Presione **Tab** o **Flecha derecha** para aceptar la sugerencia, o presione **Enter** para aceptar y enviar
 * Comience a escribir para descartarla
 
 La sugerencia se ejecuta como una solicitud de fondo que reutiliza el caché de indicación de la conversación principal, por lo que el costo adicional es mínimo. Claude Code omite la generación de sugerencias cuando el caché está frío para evitar costos innecesarios.

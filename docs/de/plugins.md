@@ -45,7 +45,6 @@ Dieser Schnellstart führt Sie durch die Erstellung eines Plugins mit einem benu
 ### Voraussetzungen
 
 * Claude Code [installiert und authentifiziert](/de/quickstart#step-1-install-claude-code)
-* Claude Code Version 1.0.33 oder später (führen Sie `claude --version` aus, um zu überprüfen)
 
 <Note>
   Wenn Sie den Befehl `/plugin` nicht sehen, aktualisieren Sie Claude Code auf die neueste Version. Siehe [Troubleshooting](/de/troubleshooting) für Upgrade-Anweisungen.
@@ -131,7 +130,7 @@ Dieser Schnellstart führt Sie durch die Erstellung eines Plugins mit einem benu
     Sie sehen Claude mit einer Begrüßung antworten. Führen Sie `/help` aus, um Ihren Skill unter dem Plugin-Namespace aufgelistet zu sehen.
 
     <Note>
-      **Warum Namespacing?** Plugin-Skills sind immer mit Namespace versehen (wie `/greet:hello`), um Konflikte zu vermeiden, wenn mehrere Plugins Skills mit demselben Namen haben.
+      **Warum Namespacing?** Plugin-Skills sind immer mit Namespace versehen (wie `/my-first-plugin:hello`), um Konflikte zu vermeiden, wenn mehrere Plugins Skills mit demselben Namen haben.
 
       Um das Namespace-Präfix zu ändern, aktualisieren Sie das Feld `name` in `plugin.json`.
     </Note>
@@ -283,7 +282,7 @@ claude --plugin-dir ./my-plugin
 
 Wenn ein `--plugin-dir`-Plugin denselben Namen wie ein installiertes Marketplace-Plugin hat, hat die lokale Kopie in dieser Sitzung Vorrang. Dies ermöglicht es Ihnen, Änderungen an einem Plugin zu testen, das Sie bereits installiert haben, ohne es zuerst zu deinstallieren. Marketplace-Plugins, die durch verwaltete Einstellungen erzwungen aktiviert sind, sind die einzige Ausnahme und können nicht überschrieben werden.
 
-Wenn Sie Änderungen an Ihrem Plugin vornehmen, führen Sie `/reload-plugins` aus, um die Updates zu übernehmen, ohne neu zu starten. Dies lädt Befehle, Skills, Agents, Hooks, Plugin-MCP-Server und Plugin-LSP-Server neu. Testen Sie Ihre Plugin-Komponenten:
+Wenn Sie Änderungen an Ihrem Plugin vornehmen, führen Sie `/reload-plugins` aus, um die Updates zu übernehmen, ohne neu zu starten. Dies lädt Plugins, Skills, Agents, Hooks, Plugin-MCP-Server und Plugin-LSP-Server neu. Testen Sie Ihre Plugin-Komponenten:
 
 * Versuchen Sie Ihre Skills mit `/plugin-name:skill-name`
 * Überprüfen Sie, dass Agents in `/agents` angezeigt werden

@@ -22,10 +22,11 @@ Es gibt zwei zusätzliche integrierte Ausgabestile, die sich auf das Unterrichte
 
 Ausgabestile ändern direkt die Systemaufforderung von Claude Code.
 
-* Alle Ausgabestile schließen Anweisungen für effiziente Ausgabe aus (z. B. prägnante Antworten).
 * Benutzerdefinierte Ausgabestile schließen Anweisungen zum Codieren aus (z. B. Überprüfung von Code mit Tests), es sei denn, `keep-coding-instructions` ist true.
 * Alle Ausgabestile haben ihre eigenen benutzerdefinierten Anweisungen am Ende der Systemaufforderung hinzugefügt.
 * Alle Ausgabestile lösen Erinnerungen für Claude aus, um die Ausgabestil-Anweisungen während des Gesprächs einzuhalten.
+
+Die Tokennutzung hängt vom Stil ab. Das Hinzufügen von Anweisungen zur Systemaufforderung erhöht die Eingabe-Token, obwohl Prompt Caching diese Kosten nach der ersten Anfrage in einer Sitzung reduziert. Die integrierten Explanatory- und Learning-Stile erzeugen absichtlich längere Antworten als Standard, was die Ausgabe-Token erhöht. Bei benutzerdefinierten Stilen hängt die Tokennutzung für die Ausgabe davon ab, was Ihre Anweisungen Claude zu produzieren sagen.
 
 ## Ändern Sie Ihren Ausgabestil
 

@@ -146,7 +146,7 @@ Les préfixes de chemin contrôlent la façon dont les chemins sont résolus :
 
 Le préfixe plus ancien `//path` pour les chemins absolus fonctionne toujours. Si vous aviez précédemment utilisé un seul slash `/path` en s'attendant à une résolution relative au projet, passez à `./path`. Cette syntaxe diffère des [règles de permission Read et Edit](/fr/permissions#read-and-edit), qui utilisent `//path` pour absolu et `/path` pour relatif au projet. Les chemins du système de fichiers du sandbox utilisent les conventions standard : `/tmp/build` est un chemin absolu.
 
-Vous pouvez également refuser l'accès en écriture ou en lecture en utilisant `sandbox.filesystem.denyWrite` et `sandbox.filesystem.denyRead`. Ceux-ci sont fusionnés avec tous les chemins des règles de permission `Edit(...)` et `Read(...)`. Pour réautoriser la lecture de chemins spécifiques dans une région refusée, utilisez `sandbox.filesystem.allowRead`, qui a priorité sur `denyRead`. Lorsque `allowManagedReadPathsOnly` est activé dans les paramètres gérés, seules les entrées `allowRead` gérées sont respectées ; les entrées `allowRead` utilisateur, projet et local sont ignorées.
+Vous pouvez également refuser l'accès en écriture ou en lecture en utilisant `sandbox.filesystem.denyWrite` et `sandbox.filesystem.denyRead`. Ceux-ci sont fusionnés avec tous les chemins des règles de permission `Edit(...)` et `Read(...)`. Pour réautoriser la lecture de chemins spécifiques dans une région refusée, utilisez `sandbox.filesystem.allowRead`, qui a priorité sur `denyRead`. Lorsque `allowManagedReadPathsOnly` est activé dans les paramètres gérés, seules les entrées `allowRead` gérées sont respectées ; les entrées `allowRead` utilisateur, projet et local sont ignorées. `denyRead` est toujours fusionné à partir de toutes les sources.
 
 Par exemple, pour bloquer la lecture de l'ensemble du répertoire personnel tout en autorisant les lectures du projet actuel, ajoutez ceci au `.claude/settings.json` de votre projet :
 
@@ -314,7 +314,7 @@ Pour les détails d'implémentation et le code source, visitez le [référentiel
 Le sandbox isole les sous-processus Bash. Les autres outils fonctionnent sous des limites différentes :
 
 * **Outils de fichiers intégrés** : Read, Edit et Write utilisent le système de permissions directement plutôt que de s'exécuter via le sandbox. Consultez [permissions](/fr/permissions).
-* **Utilisation de l'ordinateur sur le bureau** : Lorsque Claude ouvre des applications et contrôle votre écran sur macOS, il s'exécute sur votre bureau réel plutôt que dans un environnement isolé. Les invites de permission par application contrôlent chaque application. Consultez [utilisation de l'ordinateur](/fr/desktop#let-claude-use-your-computer).
+* **Utilisation de l'ordinateur** : Lorsque Claude ouvre des applications et contrôle votre écran sur macOS, il s'exécute sur votre bureau réel plutôt que dans un environnement isolé. Les invites de permission par application contrôlent chaque application. Consultez [utilisation de l'ordinateur dans la CLI](/fr/computer-use) ou [utilisation de l'ordinateur dans Desktop](/fr/desktop#let-claude-use-your-computer).
 
 ## Voir aussi
 

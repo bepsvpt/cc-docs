@@ -58,13 +58,13 @@ Kotak prompt mendukung dua cara untuk membawa konteks eksternal:
 
 Mode izin mengontrol berapa banyak otonomi yang dimiliki Claude selama sesi: apakah itu meminta izin sebelum mengedit file, menjalankan perintah, atau keduanya. Anda dapat beralih mode kapan saja menggunakan pemilih mode di sebelah tombol kirim. Mulai dengan Minta izin untuk melihat dengan tepat apa yang dilakukan Claude, kemudian pindah ke Terima edit otomatis atau Mode Rencana saat Anda merasa nyaman.
 
-| Mode                     | Kunci Pengaturan    | Perilaku                                                                                                                                                                                                                                                                                                                                                                           |
-| ------------------------ | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Minta izin**           | `default`           | Claude meminta izin sebelum mengedit file atau menjalankan perintah. Anda melihat diff dan dapat menerima atau menolak setiap perubahan. Direkomendasikan untuk pengguna baru.                                                                                                                                                                                                     |
-| **Terima edit otomatis** | `acceptEdits`       | Claude secara otomatis menerima edit file tetapi masih meminta izin sebelum menjalankan perintah terminal. Gunakan ini ketika Anda mempercayai perubahan file dan menginginkan iterasi yang lebih cepat.                                                                                                                                                                           |
-| **Mode Rencana**         | `plan`              | Claude menganalisis kode Anda dan membuat rencana tanpa memodifikasi file atau menjalankan perintah. Bagus untuk tugas kompleks di mana Anda ingin meninjau pendekatan terlebih dahulu.                                                                                                                                                                                            |
-| **Auto**                 | `auto`              | Claude mengeksekusi semua tindakan dengan pemeriksaan keamanan latar belakang yang memverifikasi keselarasan dengan permintaan Anda. Mengurangi prompt izin sambil mempertahankan pengawasan. Saat ini pratinjau penelitian. Tersedia di rencana Team (Enterprise akan segera diluncurkan). Memerlukan Claude Sonnet 4.6 atau Opus 4.6. Aktifkan di Pengaturan Anda → Claude Code. |
-| **Lewati izin**          | `bypassPermissions` | Claude berjalan tanpa prompt izin apa pun, setara dengan `--dangerously-skip-permissions` di CLI. Aktifkan di Pengaturan Anda → Claude Code di bawah "Izinkan mode lewati izin". Hanya gunakan ini di kontainer atau VM yang disandbox. Admin enterprise dapat menonaktifkan opsi ini.                                                                                             |
+| Mode                     | Kunci Pengaturan    | Perilaku                                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------ | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Minta izin**           | `default`           | Claude meminta izin sebelum mengedit file atau menjalankan perintah. Anda melihat diff dan dapat menerima atau menolak setiap perubahan. Direkomendasikan untuk pengguna baru.                                                                                                                                                                                     |
+| **Terima edit otomatis** | `acceptEdits`       | Claude secara otomatis menerima edit file tetapi masih meminta izin sebelum menjalankan perintah terminal. Gunakan ini ketika Anda mempercayai perubahan file dan menginginkan iterasi yang lebih cepat.                                                                                                                                                           |
+| **Mode Rencana**         | `plan`              | Claude menganalisis kode Anda dan membuat rencana tanpa memodifikasi file atau menjalankan perintah. Bagus untuk tugas kompleks di mana Anda ingin meninjau pendekatan terlebih dahulu.                                                                                                                                                                            |
+| **Auto**                 | `auto`              | Claude mengeksekusi semua tindakan dengan pemeriksaan keamanan latar belakang yang memverifikasi keselarasan dengan permintaan Anda. Mengurangi prompt izin sambil mempertahankan pengawasan. Saat ini pratinjau penelitian. Tersedia di rencana Team, Enterprise, dan API. Memerlukan Claude Sonnet 4.6 atau Opus 4.6. Aktifkan di Pengaturan Anda → Claude Code. |
+| **Lewati izin**          | `bypassPermissions` | Claude berjalan tanpa prompt izin apa pun, setara dengan `--dangerously-skip-permissions` di CLI. Aktifkan di Pengaturan Anda → Claude Code di bawah "Izinkan mode lewati izin". Hanya gunakan ini di kontainer atau VM yang disandbox. Admin enterprise dapat menonaktifkan opsi ini.                                                                             |
 
 Mode izin `dontAsk` hanya tersedia di [CLI](/id/permission-modes#allow-only-pre-approved-tools-with-dontask-mode).
 
@@ -151,12 +151,28 @@ Claude memiliki beberapa cara untuk berinteraksi dengan aplikasi atau layanan, d
 
 ### Aktifkan penggunaan komputer
 
-Penggunaan komputer dimatikan secara default. Jika Anda meminta Claude melakukan sesuatu yang membutuhkannya saat dimatikan, Claude memberi tahu Anda bahwa itu dapat melakukan tugas jika Anda mengaktifkan penggunaan komputer di Pengaturan. Untuk mengaktifkannya, buka **Pengaturan > Aplikasi Desktop > Umum** dan alihkan **Penggunaan komputer** ke aktif. Sebelum toggle berlaku, Anda perlu memberikan dua izin sistem macOS:
+Penggunaan komputer dimatikan secara default. Jika Anda meminta Claude melakukan sesuatu yang membutuhkannya saat dimatikan, Claude memberi tahu Anda bahwa itu dapat melakukan tugas jika Anda mengaktifkan penggunaan komputer di Pengaturan.
 
-* **Aksesibilitas**: memungkinkan Claude mengklik, mengetik, dan menggulir
-* **Perekaman Layar**: memungkinkan Claude melihat apa yang ada di layar Anda
+<Steps>
+  <Step title="Perbarui aplikasi desktop">
+    Pastikan Anda memiliki versi terbaru Claude Desktop. Unduh atau perbarui di [claude.com/download](https://claude.com/download), kemudian mulai ulang aplikasi.
+  </Step>
 
-Halaman Pengaturan menunjukkan status saat ini dari setiap izin. Jika salah satu ditolak, klik badge untuk membuka pane System Settings yang relevan.
+  <Step title="Aktifkan toggle">
+    Di aplikasi desktop, buka **Pengaturan > Umum** (di bawah **Aplikasi desktop**). Temukan toggle **Penggunaan komputer** dan aktifkan.
+
+    Jika Anda tidak melihat toggle, konfirmasi Anda menggunakan macOS dengan rencana Pro atau Max, kemudian perbarui dan mulai ulang aplikasi.
+  </Step>
+
+  <Step title="Berikan izin macOS">
+    Sebelum toggle berlaku, berikan dua izin sistem macOS:
+
+    * **Aksesibilitas**: memungkinkan Claude mengklik, mengetik, dan menggulir
+    * **Perekaman Layar**: memungkinkan Claude melihat apa yang ada di layar Anda
+
+    Halaman Pengaturan menunjukkan status saat ini dari setiap izin. Jika salah satu ditolak, klik badge untuk membuka pane System Settings yang relevan.
+  </Step>
+</Steps>
 
 ### Izin aplikasi
 
@@ -172,7 +188,7 @@ Prompt juga menunjukkan tingkat kontrol apa yang diperoleh Claude untuk aplikasi
 
 Aplikasi dengan jangkauan luas seperti Terminal, Finder, dan System Settings menampilkan peringatan tambahan di prompt sehingga Anda tahu apa yang disetujui.
 
-Anda dapat mengonfigurasi dua pengaturan di **Pengaturan > Aplikasi Desktop > Umum**:
+Anda dapat mengonfigurasi dua pengaturan di **Pengaturan > Umum** (di bawah **Aplikasi desktop**):
 
 * **Aplikasi yang ditolak**: tambahkan aplikasi di sini untuk menolaknya tanpa meminta. Claude mungkin masih mempengaruhi aplikasi yang ditolak secara tidak langsung melalui tindakan di aplikasi yang diizinkan, tetapi tidak dapat berinteraksi dengan aplikasi yang ditolak secara langsung.
 * **Tampilkan aplikasi ketika Claude selesai**: saat Claude bekerja, jendela lain Anda disembunyikan sehingga hanya berinteraksi dengan aplikasi yang disetujui. Ketika Claude selesai, jendela yang disembunyikan dipulihkan kecuali Anda mematikan pengaturan ini.
@@ -186,6 +202,8 @@ Setiap sesi adalah percakapan independen dengan konteks dan perubahannya sendiri
 Klik **+ Sesi Baru** di sidebar untuk bekerja pada beberapa tugas secara paralel. Untuk repositori Git, setiap sesi mendapatkan salinan proyek Anda yang terisolasi menggunakan [Git worktrees](/id/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees), sehingga perubahan dalam satu sesi tidak mempengaruhi sesi lain sampai Anda melakukan commit.
 
 Worktrees disimpan di `<project-root>/.claude/worktrees/` secara default. Anda dapat mengubah ini ke direktori kustom di Pengaturan → Claude Code di bawah "Lokasi Worktree". Anda juga dapat mengatur awalan cabang yang ditambahkan ke setiap nama cabang worktree, yang berguna untuk menjaga cabang yang dibuat Claude tetap terorganisir. Untuk menghapus worktree ketika selesai, arahkan ke sesi di sidebar dan klik ikon arsip.
+
+Untuk menyertakan file yang diabaikan git seperti `.env` di worktree baru, buat file [`.worktreeinclude`](/id/common-workflows#copy-gitignored-files-to-worktrees) di root proyek Anda.
 
 <Note>
   Isolasi sesi memerlukan [Git](https://git-scm.com/downloads). Sebagian besar Mac menyertakan Git secara default. Jalankan `git --version` di Terminal untuk memeriksa. Di Windows, Git diperlukan agar tab Code berfungsi: [unduh Git untuk Windows](https://git-scm.com/downloads/win), pasang, dan mulai ulang aplikasi. Jika Anda mengalami kesalahan Git, coba sesi Cowork untuk membantu memecahkan masalah setup Anda.
@@ -627,7 +645,7 @@ Tabel ini membandingkan kemampuan inti antara CLI dan Desktop. Untuk daftar leng
 | Isolasi sesi                                          | flag [`--worktree`](/id/cli-reference)                    | worktrees otomatis                                                                       |
 | Beberapa sesi                                         | terminal terpisah                                         | tab sidebar                                                                              |
 | Tugas berulang                                        | cron jobs, pipeline CI                                    | [tugas terjadwal](#schedule-recurring-tasks)                                             |
-| Penggunaan komputer                                   | tidak tersedia                                            | [Kontrol aplikasi dan layar](#let-claude-use-your-computer) di macOS                     |
+| Penggunaan komputer                                   | [Aktifkan melalui `/mcp`](/id/computer-use) di macOS      | [Kontrol aplikasi dan layar](#let-claude-use-your-computer) di macOS                     |
 | Integrasi Dispatch                                    | tidak tersedia                                            | [Sesi Dispatch](#sessions-from-dispatch) di sidebar                                      |
 | Scripting dan otomasi                                 | [`--print`](/id/cli-reference), [Agent SDK](/id/headless) | tidak tersedia                                                                           |
 

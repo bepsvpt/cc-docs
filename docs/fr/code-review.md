@@ -14,14 +14,16 @@ Code Review analyse vos pull requests GitHub et publie les résultats sous forme
 
 Les résultats sont étiquetés par gravité et n'approuvent ni ne bloquent votre PR, de sorte que les flux de travail d'examen existants restent intacts. Vous pouvez affiner ce que Claude signale en ajoutant un fichier `CLAUDE.md` ou `REVIEW.md` à votre référentiel.
 
-Pour exécuter Claude dans votre propre infrastructure CI au lieu de ce service géré, consultez [GitHub Actions](/fr/github-actions) ou [GitLab CI/CD](/fr/gitlab-ci-cd).
+Pour exécuter Claude dans votre propre infrastructure CI au lieu de ce service géré, consultez [GitHub Actions](/fr/github-actions) ou [GitLab CI/CD](/fr/gitlab-ci-cd). Pour les référentiels sur une instance GitHub auto-hébergée, consultez [GitHub Enterprise Server](/fr/github-enterprise-server).
 
 Cette page couvre :
 
 * [Comment fonctionnent les révisions](#how-reviews-work)
 * [Configuration](#set-up-code-review)
+* [Déclenchement manuel des révisions](#manually-trigger-reviews) avec `@claude review` et `@claude review once`
 * [Personnalisation des révisions](#customize-reviews) avec `CLAUDE.md` et `REVIEW.md`
 * [Tarification](#pricing)
+* [Dépannage](#troubleshooting) des exécutions échouées et des commentaires manquants
 
 ## Comment fonctionnent les révisions
 
@@ -37,11 +39,31 @@ Chaque résultat est étiqueté avec un niveau de gravité :
 
 | Marqueur | Gravité     | Signification                                                                  |
 | :------- | :---------- | :----------------------------------------------------------------------------- |
-| 🔴       | Normal      | Un bug qui devrait être corrigé avant la fusion                                |
+| 🔴       | Important   | Un bug qui devrait être corrigé avant la fusion                                |
 | 🟡       | Nit         | Un problème mineur, utile à corriger mais non bloquant                         |
 | 🟣       | Préexistant | Un bug qui existe dans la base de code mais n'a pas été introduit par cette PR |
 
 Les résultats incluent une section de raisonnement étendu réductible que vous pouvez développer pour comprendre pourquoi Claude a signalé le problème et comment il a vérifié le problème.
+
+### Sortie de l'exécution de vérification
+
+Au-delà des commentaires de révision en ligne, chaque révision remplit l'exécution de vérification **Claude Code Review** qui apparaît aux côtés de vos vérifications CI. Développez son lien **Details** pour voir un résumé de chaque résultat en un seul endroit, trié par gravité :
+
+| Gravité      | Fichier:Ligne             | Problème                                                                                                   |
+| ------------ | ------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| 🔴 Important | `src/auth/session.ts:142` | L'actualisation du token entre en concurrence avec la déconnexion, laissant les sessions obsolètes actives |
+| 🟡 Nit       | `src/auth/session.ts:88`  | `parseExpiry` retourne silencieusement 0 sur une entrée malformée                                          |
+
+Chaque résultat apparaît également comme une annotation dans l'onglet **Files changed**, marqué directement sur les lignes de diff pertinentes. Les résultats importants s'affichent avec un marqueur rouge, les nits avec un avertissement jaune, et les bugs préexistants avec un avis gris. Les annotations et le tableau de gravité sont écrits dans l'exécution de vérification indépendamment des commentaires de révision en ligne, de sorte qu'ils restent disponibles même si GitHub rejette un commentaire en ligne sur une ligne qui a bougé.
+
+L'exécution de vérification se termine toujours avec une conclusion neutre, de sorte qu'elle ne bloque jamais la fusion via les règles de protection de branche. Si vous souhaitez conditionner les fusions aux résultats de Code Review, lisez la répartition de gravité à partir de la sortie de l'exécution de vérification dans votre propre CI. La dernière ligne du texte Details est un commentaire lisible par machine que votre flux de travail peut analyser avec `gh` et jq :
+
+```bash  theme={null}
+gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \
+  --jq '.output.text | split("bughunter-severity: ")[1] | split(" -->")[0] | fromjson'
+```
+
+Cela retourne un objet JSON avec des comptages par gravité, par exemple `{"normal": 2, "nit": 1, "pre_existing": 0}`. La clé `normal` contient le nombre de résultats importants ; une valeur non nulle signifie que Claude a trouvé au moins un bug à corriger avant la fusion.
 
 ### Ce que Code Review vérifie
 
@@ -79,7 +101,7 @@ Un administrateur active Code Review une fois pour l'organisation et sélectionn
 
     * **Once after PR creation** : la révision s'exécute une fois à l'ouverture d'une PR ou marquée comme prête pour révision
     * **After every push** : la révision s'exécute à chaque push vers la branche PR, détectant les nouveaux problèmes à mesure que la PR évolue et résolvant automatiquement les threads lorsque vous corrigez les problèmes signalés
-    * **Manual** : les révisions commencent uniquement quand quelqu'un [commente `@claude review` sur une PR](#manually-trigger-reviews) ; les pushes ultérieurs vers cette PR sont ensuite examinés automatiquement
+    * **Manual** : les révisions commencent uniquement quand quelqu'un [commente `@claude review` ou `@claude review once` sur une PR](#manually-trigger-reviews) ; `@claude review` abonne également la PR aux révisions lors des pushes ultérieurs
 
     Réviser à chaque push exécute le plus de révisions et coûte le plus cher. Le mode manuel est utile pour les référentiels à fort trafic où vous souhaitez opter pour des PR spécifiques dans la révision, ou pour commencer à réviser vos PR uniquement une fois qu'elles sont prêtes.
   </Step>
@@ -91,14 +113,23 @@ Pour vérifier la configuration, ouvrez une PR de test. Si vous avez choisi un d
 
 ## Déclencher manuellement les révisions
 
-Commentez `@claude review` sur une pull request pour démarrer une révision et opter cette PR dans les révisions déclenchées par push à partir de maintenant. Cela fonctionne quel que soit le déclencheur configuré du référentiel : utilisez-le pour opter pour des PR spécifiques dans la révision en mode Manual, ou pour obtenir une re-révision immédiate dans d'autres modes. De toute façon, les pushes vers cette PR déclenchent des révisions à partir de ce moment.
+Deux commandes de commentaire démarrent une révision à la demande. Les deux fonctionnent quel que soit le déclencheur configuré du référentiel, de sorte que vous pouvez les utiliser pour opter pour des PR spécifiques dans la révision en mode Manual ou pour obtenir une re-révision immédiate dans d'autres modes.
 
-Pour que le commentaire déclenche une révision :
+| Commande              | Ce qu'elle fait                                                                                |
+| :-------------------- | :--------------------------------------------------------------------------------------------- |
+| `@claude review`      | Démarre une révision et abonne la PR aux révisions déclenchées par push à partir de maintenant |
+| `@claude review once` | Démarre une seule révision sans abonner la PR aux pushes futurs                                |
 
-* Publiez-le comme un commentaire PR de haut niveau, pas un commentaire en ligne sur une ligne de diff
-* Mettez `@claude review` au début du commentaire
+Utilisez `@claude review once` quand vous souhaitez des commentaires sur l'état actuel d'une PR mais ne souhaitez pas que chaque push ultérieur entraîne une révision. Cela est utile pour les PR longues avec des pushes fréquents, ou quand vous souhaitez un deuxième avis ponctuel sans modifier le comportement de révision de la PR.
+
+Pour que l'une ou l'autre commande déclenche une révision :
+
+* Publiez-la comme un commentaire PR de haut niveau, pas un commentaire en ligne sur une ligne de diff
+* Mettez la commande au début du commentaire, avec `once` sur la même ligne si vous utilisez la forme ponctuelle
 * Vous devez avoir un accès propriétaire, membre ou collaborateur au référentiel
-* La PR doit être ouverte et ne pas être un brouillon
+* La PR doit être ouverte
+
+Contrairement aux déclencheurs automatiques, les déclencheurs manuels s'exécutent sur les PR brouillon, car une demande explicite signale que vous souhaitez la révision maintenant quel que soit le statut de brouillon.
 
 Si une révision s'exécute déjà sur cette PR, la demande est mise en file d'attente jusqu'à ce que la révision en cours se termine. Vous pouvez surveiller la progression via l'exécution de vérification sur la PR.
 
@@ -162,7 +193,7 @@ Le tableau des référentiels dans les paramètres d'administration affiche éga
 
 ## Tarification
 
-Code Review est facturé en fonction de l'utilisation des tokens. Les révisions coûtent en moyenne 15 à 25 dollars, s'adaptant à la taille de la PR, à la complexité de la base de code et au nombre de problèmes nécessitant une vérification. L'utilisation de Code Review est facturée séparément via [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) et ne compte pas par rapport à l'utilisation incluse de votre plan.
+Code Review est facturé en fonction de l'utilisation des tokens. Chaque révision coûte en moyenne 15 à 25 dollars, s'adaptant à la taille de la PR, à la complexité de la base de code et au nombre de problèmes nécessitant une vérification. L'utilisation de Code Review est facturée séparément via [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) et ne compte pas par rapport à l'utilisation incluse de votre plan.
 
 Le déclencheur de révision que vous choisissez affecte le coût total :
 
@@ -170,11 +201,31 @@ Le déclencheur de révision que vous choisissez affecte le coût total :
 * **After every push** : s'exécute à chaque push, multipliant le coût par le nombre de pushes
 * **Manual** : aucune révision jusqu'à ce que quelqu'un commente `@claude review` sur une PR
 
-Dans n'importe quel mode, commenter `@claude review` [opte la PR dans les révisions déclenchées par push](#manually-trigger-reviews), de sorte que des coûts supplémentaires s'accumulent par push après ce commentaire.
+Dans n'importe quel mode, commenter `@claude review` [opte la PR dans les révisions déclenchées par push](#manually-trigger-reviews), de sorte que des coûts supplémentaires s'accumulent par push après ce commentaire. Pour exécuter une seule révision sans abonner à des pushes futurs, commentez `@claude review once` à la place.
 
 Les coûts apparaissent sur votre facture Anthropic quel que soit le fait que votre organisation utilise AWS Bedrock ou Google Vertex AI pour d'autres fonctionnalités Claude Code. Pour définir un plafond de dépenses mensuelles pour Code Review, allez à [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) et configurez la limite pour le service Claude Code Review.
 
 Surveillez les dépenses via le graphique de coût hebdomadaire dans [analytics](#view-usage) ou la colonne de coût moyen par référentiel dans les paramètres d'administration.
+
+## Dépannage
+
+Les exécutions de révision sont au mieux. Une exécution échouée ne bloque jamais votre PR, mais elle ne se réessaye pas non plus d'elle-même. Cette section couvre comment récupérer d'une exécution échouée et où chercher quand l'exécution de vérification signale des problèmes que vous ne pouvez pas trouver.
+
+### Redéclencher une révision échouée ou expirée
+
+Quand l'infrastructure de révision rencontre une erreur interne ou dépasse sa limite de temps, l'exécution de vérification se termine avec un titre de **Code review encountered an error** ou **Code review timed out**. La conclusion est toujours neutre, de sorte que rien ne bloque votre fusion, mais aucun résultat n'est publié.
+
+Pour exécuter la révision à nouveau, commentez `@claude review once` sur la PR. Cela démarre une révision fraîche sans abonner la PR aux pushes futurs. Si la PR est déjà abonnée aux révisions déclenchées par push, pousser un nouveau commit démarre également une nouvelle révision.
+
+Le bouton **Re-run** dans l'onglet Checks de GitHub ne redéclenche pas Code Review. Utilisez la commande de commentaire ou un nouveau push à la place.
+
+### Trouver les problèmes qui ne s'affichent pas comme des commentaires en ligne
+
+Si le titre de l'exécution de vérification dit que des problèmes ont été trouvés mais que vous ne voyez pas de commentaires de révision en ligne sur le diff, cherchez dans ces autres emplacements où les résultats sont surfacés :
+
+* **Check run Details** : cliquez sur **Details** à côté de la vérification Claude Code Review dans l'onglet Checks. Le tableau de gravité liste chaque résultat avec son fichier, sa ligne et son résumé quel que soit le fait que le commentaire en ligne ait été accepté.
+* **Files changed annotations** : ouvrez l'onglet **Files changed** sur la PR. Les résultats s'affichent comme des annotations attachées directement aux lignes de diff, séparées des commentaires de révision.
+* **Review body** : si vous avez poussé vers la PR pendant qu'une révision s'exécutait, certains résultats peuvent référencer des lignes qui n'existent plus dans le diff actuel. Ceux-ci apparaissent sous un titre **Additional findings** dans le texte du corps de révision plutôt que comme des commentaires en ligne.
 
 ## Ressources connexes
 

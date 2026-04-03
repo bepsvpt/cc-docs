@@ -280,6 +280,8 @@ How should we handle database migration?
 
 <Tip>Appuyez sur `Ctrl+G` pour ouvrir le plan dans votre éditeur de texte par défaut, où vous pouvez le modifier directement avant que Claude ne procède.</Tip>
 
+Lorsque vous acceptez un plan, Claude nomme automatiquement la session à partir du contenu du plan. Le nom apparaît sur la barre de prompt et dans le sélecteur de session. Si vous avez déjà défini un nom avec `--name` ou `/rename`, accepter un plan ne le remplacera pas.
+
 ### Configurer Plan Mode par défaut
 
 ```json  theme={null}
@@ -518,13 +520,13 @@ La réflexion étendue est particulièrement précieuse pour les décisions arch
 
 La réflexion est activée par défaut, mais vous pouvez l'ajuster ou la désactiver.
 
-| Portée                          | Comment configurer                                                                                  | Détails                                                                                                                                                                                                    |
-| ------------------------------- | --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Niveau d'effort**             | Exécutez `/effort`, ajustez dans `/model`, ou définissez [`CLAUDE_CODE_EFFORT_LEVEL`](/fr/env-vars) | Contrôlez la profondeur de la réflexion pour Opus 4.6 et Sonnet 4.6. Consultez [Ajuster le niveau d'effort](/fr/model-config#adjust-effort-level)                                                          |
-| **Mot-clé `ultrathink`**        | Incluez « ultrathink » n'importe où dans votre prompt                                               | Définit l'effort à high pour ce tour sur Opus 4.6 et Sonnet 4.6. Utile pour les tâches ponctuelles nécessitant un raisonnement profond sans modifier définitivement votre paramètre d'effort               |
-| **Raccourci de basculement**    | Appuyez sur `Option+T` (macOS) ou `Alt+T` (Windows/Linux)                                           | Basculez la réflexion activée/désactivée pour la session actuelle (tous les modèles). Peut nécessiter une [configuration du terminal](/fr/terminal-config) pour activer les raccourcis de la touche Option |
-| **Défaut global**               | Utilisez `/config` pour basculer le mode de réflexion                                               | Définit votre défaut sur tous les projets (tous les modèles).<br />Enregistré comme `alwaysThinkingEnabled` dans `~/.claude/settings.json`                                                                 |
-| **Limiter le budget de jetons** | Définissez la variable d'environnement [`MAX_THINKING_TOKENS`](/fr/env-vars)                        | Limitez le budget de réflexion à un nombre spécifique de jetons (ignoré sur Opus 4.6 et Sonnet 4.6 sauf s'il est défini à 0). Exemple : `export MAX_THINKING_TOKENS=10000`                                 |
+| Portée                          | Comment configurer                                                                                  | Détails                                                                                                                                                                                                        |
+| ------------------------------- | --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Niveau d'effort**             | Exécutez `/effort`, ajustez dans `/model`, ou définissez [`CLAUDE_CODE_EFFORT_LEVEL`](/fr/env-vars) | Contrôlez la profondeur de la réflexion pour Opus 4.6 et Sonnet 4.6. Consultez [Ajuster le niveau d'effort](/fr/model-config#adjust-effort-level)                                                              |
+| **Mot-clé `ultrathink`**        | Incluez « ultrathink » n'importe où dans votre prompt                                               | Définit l'effort à high pour ce tour sur Opus 4.6 et Sonnet 4.6. Utile pour les tâches ponctuelles nécessitant un raisonnement profond sans modifier définitivement votre paramètre d'effort                   |
+| **Raccourci de basculement**    | Appuyez sur `Option+T` (macOS) ou `Alt+T` (Windows/Linux)                                           | Basculez la réflexion activée/désactivée pour la session actuelle (tous les modèles). Peut nécessiter une [configuration du terminal](/fr/terminal-config) pour activer les raccourcis de la touche Option     |
+| **Défaut global**               | Utilisez `/config` pour basculer le mode de réflexion                                               | Définit votre défaut sur tous les projets (tous les modèles).<br />Enregistré comme `alwaysThinkingEnabled` dans `~/.claude/settings.json`                                                                     |
+| **Limiter le budget de jetons** | Définissez la variable d'environnement [`MAX_THINKING_TOKENS`](/fr/env-vars)                        | Limitez le budget de réflexion à un nombre spécifique de jetons. Sur Opus 4.6 et Sonnet 4.6, seul `0` s'applique sauf si le raisonnement adaptatif est désactivé. Exemple : `export MAX_THINKING_TOKENS=10000` |
 
 Pour afficher le processus de réflexion de Claude, appuyez sur `Ctrl+O` pour basculer le mode verbeux et voir le raisonnement interne affiché en texte gris italique.
 
@@ -534,12 +536,12 @@ La réflexion étendue contrôle la quantité de raisonnement interne que Claude
 
 **Avec Opus 4.6 et Sonnet 4.6**, la réflexion utilise le raisonnement adaptatif : le modèle alloue dynamiquement les jetons de réflexion en fonction du [niveau d'effort](/fr/model-config#adjust-effort-level) que vous sélectionnez. C'est la façon recommandée d'ajuster le compromis entre la vitesse et la profondeur du raisonnement.
 
-**Avec d'autres modèles**, la réflexion utilise un budget fixe de jusqu'à 31 999 jetons de votre budget de sortie. Vous pouvez limiter cela avec la variable d'environnement [`MAX_THINKING_TOKENS`](/fr/env-vars), ou désactiver complètement la réflexion via `/config` ou le basculement `Option+T`/`Alt+T`.
+**Avec d'autres modèles**, la réflexion utilise un budget fixe de jetons tiré de votre allocation de sortie. Le budget varie selon le modèle ; consultez [`MAX_THINKING_TOKENS`](/fr/env-vars) pour les plafonds par modèle. Vous pouvez limiter le budget avec cette variable d'environnement, ou désactiver complètement la réflexion via `/config` ou le basculement `Option+T`/`Alt+T`.
 
-`MAX_THINKING_TOKENS` est ignoré sur Opus 4.6 et Sonnet 4.6, car le raisonnement adaptatif contrôle la profondeur de la réflexion à la place. L'une des exceptions : définir `MAX_THINKING_TOKENS=0` désactive toujours complètement la réflexion sur n'importe quel modèle. Pour désactiver la réflexion adaptative et revenir au budget de réflexion fixe, définissez `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1`. Consultez [variables d'environnement](/fr/env-vars).
+Sur Opus 4.6 et Sonnet 4.6, le [raisonnement adaptatif](/fr/model-config#adjust-effort-level) contrôle la profondeur de la réflexion, donc `MAX_THINKING_TOKENS` ne s'applique que lorsqu'il est défini à `0` pour désactiver la réflexion, ou lorsque `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` revient à ces modèles au budget fixe. Consultez [variables d'environnement](/fr/env-vars).
 
 <Warning>
-  Vous êtes facturé pour tous les jetons de réflexion utilisés, même si les modèles Claude 4 affichent une réflexion résumée
+  Vous êtes facturé pour tous les jetons de réflexion utilisés, même si les résumés de réflexion sont redactés. En mode interactif, la réflexion apparaît comme un stub réduit par défaut. Définissez `showThinkingSummaries: true` dans `settings.json` pour afficher les résumés complets.
 </Warning>
 
 ***
@@ -554,7 +556,7 @@ Lors du démarrage de Claude Code, vous pouvez reprendre une session précédent
 
 À partir d'une session active, utilisez `/resume` pour basculer vers une conversation différente.
 
-Les sessions sont stockées par répertoire de projet. Le sélecteur `/resume` affiche les sessions du même référentiel git, y compris les worktrees.
+Les sessions sont stockées par répertoire de projet. Le sélecteur `/resume` affiche les sessions interactives du même référentiel git, y compris les worktrees. Les sessions créées par `claude -p` ou les invocations SDK n'apparaissent pas dans le sélecteur, mais vous pouvez toujours en reprendre une en passant son ID de session directement à `claude --resume <session-id>`.
 
 ### Nommez vos sessions
 
@@ -619,7 +621,7 @@ Le sélecteur affiche les sessions avec des métadonnées utiles :
 * Nombre de messages
 * Branche Git (le cas échéant)
 
-Les sessions bifurquées (créées avec `/rewind` ou `--fork-session`) sont groupées ensemble sous leur session racine, ce qui facilite la recherche de conversations connexes.
+Les sessions bifurquées (créées avec `/branch`, `/rewind`, ou `--fork-session`) sont groupées ensemble sous leur session racine, ce qui facilite la recherche de conversations connexes.
 
 <Tip>
   Conseils :
@@ -664,7 +666,17 @@ Si vous omettez le nom, Claude en génère un automatiquement :
 claude --worktree
 ```
 
-Les worktrees sont créés à `<repo>/.claude/worktrees/<name>` et se ramifient à partir de la branche distante par défaut. La branche worktree est nommée `worktree-<name>`.
+Les worktrees sont créés à `<repo>/.claude/worktrees/<name>` et se ramifient à partir de la branche distante par défaut, qui est celle vers laquelle `origin/HEAD` pointe. La branche worktree est nommée `worktree-<name>`.
+
+La branche de base n'est pas configurable via un drapeau ou un paramètre Claude Code. `origin/HEAD` est une référence stockée dans votre répertoire `.git` local que Git a définie une fois lorsque vous avez cloné. Si la branche par défaut du référentiel change plus tard sur GitHub ou GitLab, votre `origin/HEAD` local continue de pointer vers l'ancienne, et les worktrees se ramifieront à partir de là. Pour resynchroniser votre référence locale avec ce que le distant considère actuellement comme son défaut :
+
+```bash  theme={null}
+git remote set-head origin -a
+```
+
+C'est une commande Git standard qui met à jour uniquement votre répertoire `.git` local. Rien sur le serveur distant ne change. Si vous souhaitez que les worktrees se basent sur une branche spécifique plutôt que sur le défaut du distant, définissez-le explicitement avec `git remote set-head origin your-branch-name`.
+
+Pour un contrôle total sur la façon dont les worktrees sont créés, y compris le choix d'une base différente par invocation, configurez un hook [WorktreeCreate](/fr/hooks#worktreecreate). Le hook remplace complètement la logique `git worktree` par défaut de Claude Code, afin que vous puissiez récupérer et vous ramifier à partir de la ref dont vous avez besoin.
 
 Vous pouvez également demander à Claude de « travailler dans un worktree » ou « démarrer un worktree » pendant une session, et il en créera un automatiquement.
 
@@ -684,6 +696,20 @@ Pour nettoyer les worktrees en dehors d'une session Claude, utilisez la [gestion
 <Tip>
   Ajoutez `.claude/worktrees/` à votre `.gitignore` pour empêcher le contenu des worktrees d'apparaître comme des fichiers non suivis dans votre référentiel principal.
 </Tip>
+
+### Copier les fichiers ignorés par git vers les worktrees
+
+Les worktrees Git sont des checkouts frais, donc ils n'incluent pas les fichiers non suivis comme `.env` ou `.env.local` de votre référentiel principal. Pour copier automatiquement ces fichiers lorsque Claude crée un worktree, ajoutez un fichier `.worktreeinclude` à la racine de votre projet.
+
+Le fichier utilise la syntaxe `.gitignore` pour lister les fichiers à copier. Seuls les fichiers qui correspondent à un modèle et qui sont également ignorés par git sont copiés, donc les fichiers suivis ne sont jamais dupliqués.
+
+```text .worktreeinclude theme={null}
+.env
+.env.local
+config/secrets.json
+```
+
+Cela s'applique aux worktrees créés avec `--worktree`, aux worktrees des subagents et aux sessions parallèles dans l'[application de bureau](/fr/desktop#work-in-parallel-with-sessions).
 
 ### Gérer les worktrees manuellement
 
@@ -712,7 +738,7 @@ En savoir plus dans la [documentation officielle de Git worktree](https://git-sc
 
 ### Contrôle de version non-git
 
-L'isolation worktree fonctionne avec git par défaut. Pour d'autres systèmes de contrôle de version comme SVN, Perforce ou Mercurial, configurez les hooks [WorktreeCreate et WorktreeRemove](/fr/hooks#worktreecreate) pour fournir une logique personnalisée de création et de nettoyage des worktrees. Lorsqu'ils sont configurés, ces hooks remplacent le comportement git par défaut lorsque vous utilisez `--worktree`.
+L'isolation worktree fonctionne avec git par défaut. Pour d'autres systèmes de contrôle de version comme SVN, Perforce ou Mercurial, configurez les hooks [WorktreeCreate et WorktreeRemove](/fr/hooks#worktreecreate) pour fournir une logique personnalisée de création et de nettoyage des worktrees. Lorsqu'ils sont configurés, ces hooks remplacent le comportement git par défaut lorsque vous utilisez `--worktree`, donc [`.worktreeinclude`](#copy-gitignored-files-to-worktrees) n'est pas traité. Copiez les fichiers de configuration locaux à l'intérieur de votre script de hook à la place.
 
 Pour la coordination automatisée des sessions parallèles avec des tâches partagées et la messagerie, consultez [équipes d'agents](/fr/agent-teams).
 
@@ -853,7 +879,7 @@ cat build-error.txt | claude -p 'concisely explain the root cause of this build 
 
   * Utilisez les tuyaux pour intégrer Claude dans les scripts shell existants
   * Combinez avec d'autres outils Unix pour des flux de travail puissants
-  * Envisagez d'utiliser --output-format pour une sortie structurée
+  * Envisagez d'utiliser `--output-format` pour une sortie structurée
 </Tip>
 
 ### Contrôler le format de sortie
@@ -896,6 +922,25 @@ Supposons que vous ayez besoin de la sortie de Claude dans un format spécifique
 
 ***
 
+## Exécuter Claude selon un calendrier
+
+Supposons que vous souhaitiez que Claude gère une tâche automatiquement de manière récurrente, comme examiner les PR ouvertes chaque matin, auditer les dépendances chaque semaine ou vérifier les échecs CI pendant la nuit.
+
+Choisissez une option de planification en fonction de l'endroit où vous souhaitez que la tâche s'exécute :
+
+| Option                                                                  | Où elle s'exécute                          | Idéale pour                                                                                                                                                          |
+| :---------------------------------------------------------------------- | :----------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Tâches planifiées dans le cloud](/fr/web-scheduled-tasks)              | Infrastructure gérée par Anthropic         | Les tâches qui doivent s'exécuter même quand votre ordinateur est éteint. Configurez sur [claude.ai/code](https://claude.ai/code).                                   |
+| [Tâches planifiées sur le bureau](/fr/desktop#schedule-recurring-tasks) | Votre machine, via l'application de bureau | Les tâches qui ont besoin d'un accès direct aux fichiers locaux, aux outils ou aux modifications non validées.                                                       |
+| [GitHub Actions](/fr/github-actions)                                    | Votre pipeline CI                          | Les tâches liées aux événements du référentiel comme les PR ouvertes, ou les calendriers cron qui doivent vivre aux côtés de votre configuration de flux de travail. |
+| [`/loop`](/fr/scheduled-tasks)                                          | La session CLI actuelle                    | L'interrogation rapide pendant qu'une session est ouverte. Les tâches sont annulées quand vous quittez.                                                              |
+
+<Tip>
+  Lors de la rédaction de prompts pour les tâches planifiées, soyez explicite sur ce que signifie le succès et ce qu'il faut faire avec les résultats. La tâche s'exécute de manière autonome, elle ne peut donc pas poser de questions de clarification. Par exemple : ' Examinez les PR ouvertes étiquetées `needs-review`, laissez des commentaires en ligne sur les problèmes et publiez un résumé dans le canal Slack `#eng-reviews`. '
+</Tip>
+
+***
+
 ## Demandez à Claude ses capacités
 
 Claude a un accès intégré à sa documentation et peut répondre à des questions sur ses propres fonctionnalités et limitations.
@@ -927,7 +972,7 @@ what are the limitations of Claude Code?
 ```
 
 <Note>
-  Claude fournit des réponses basées sur la documentation à ces questions. Pour des exemples exécutables et des démonstrations pratiques, consultez les sections de flux de travail spécifiques ci-dessus.
+  Claude fournit des réponses basées sur la documentation à ces questions. Pour des démonstrations pratiques, exécutez `/powerup` pour des leçons interactives avec des démos animées, ou consultez les sections de flux de travail spécifiques ci-dessus.
 </Note>
 
 <Tip>
@@ -956,6 +1001,6 @@ what are the limitations of Claude Code?
   </Card>
 
   <Card title="Implémentation de référence" icon="code" href="https://github.com/anthropics/claude-code/tree/main/.devcontainer">
-    Clonez notre implémentation de référence du conteneur de développement
+    Clonez l'implémentation de référence du conteneur de développement
   </Card>
 </CardGroup>

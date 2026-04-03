@@ -123,7 +123,9 @@ Le `SKILL.md` contient les instructions principales et est obligatoire. Les autr
 
 #### Skills à partir de répertoires supplémentaires
 
-Les skills définies dans `.claude/skills/` dans les répertoires ajoutés via `--add-dir` sont chargées automatiquement et détectées par la détection de changement en direct, donc vous pouvez les modifier pendant une session sans redémarrer.
+Le drapeau `--add-dir` [accorde l'accès aux fichiers](/fr/permissions#additional-directories-grant-file-access-not-configuration) plutôt que la découverte de configuration, mais les skills sont une exception : `.claude/skills/` dans un répertoire ajouté est chargé automatiquement et détecté par la détection de changement en direct, donc vous pouvez modifier ces skills pendant une session sans redémarrer.
+
+Les autres configurations `.claude/` comme les subagents, les commandes et les styles de sortie ne sont pas chargées à partir de répertoires supplémentaires. Voir le [tableau des exceptions](/fr/permissions#additional-directories-grant-file-access-not-configuration) pour la liste complète de ce qui est et n'est pas chargé, et les façons recommandées de partager la configuration entre les projets.
 
 <Note>
   Les fichiers CLAUDE.md des répertoires `--add-dir` ne sont pas chargés par défaut. Pour les charger, définissez `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1`. Voir [Charger à partir de répertoires supplémentaires](/fr/memory#load-from-additional-directories).
@@ -178,7 +180,7 @@ Au-delà du contenu markdown, vous pouvez configurer le comportement de la skill
 name: my-skill
 description: What this skill does
 disable-model-invocation: true
-allowed-tools: Read, Grep
+allowed-tools: Read Grep
 ---
 
 Your skill instructions here...
@@ -186,19 +188,21 @@ Your skill instructions here...
 
 Tous les champs sont optionnels. Seul `description` est recommandé pour que Claude sache quand utiliser la skill.
 
-| Champ                      | Obligatoire | Description                                                                                                                                                                                                                         |
-| :------------------------- | :---------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`                     | Non         | Nom d'affichage pour la skill. S'il est omis, utilise le nom du répertoire. Lettres minuscules, chiffres et tirets uniquement (max 64 caractères).                                                                                  |
-| `description`              | Recommandé  | Ce que fait la skill et quand l'utiliser. Claude utilise ceci pour décider quand appliquer la skill. S'il est omis, utilise le premier paragraphe du contenu markdown.                                                              |
-| `argument-hint`            | Non         | Indice affiché lors de l'autocomplétion pour indiquer les arguments attendus. Exemple : `[issue-number]` ou `[filename] [format]`.                                                                                                  |
-| `disable-model-invocation` | Non         | Définissez à `true` pour empêcher Claude de charger automatiquement cette skill. Utilisez pour les workflows que vous voulez déclencher manuellement avec `/name`. Par défaut : `false`.                                            |
-| `user-invocable`           | Non         | Définissez à `false` pour masquer du menu `/`. Utilisez pour les connaissances de base que les utilisateurs ne devraient pas invoquer directement. Par défaut : `true`.                                                             |
-| `allowed-tools`            | Non         | Outils que Claude peut utiliser sans demander la permission quand cette skill est active.                                                                                                                                           |
-| `model`                    | Non         | Modèle à utiliser quand cette skill est active.                                                                                                                                                                                     |
-| `effort`                   | Non         | [Niveau d'effort](/fr/model-config#adjust-effort-level) quand cette skill est active. Remplace le niveau d'effort de la session. Par défaut : hérite de la session. Options : `low`, `medium`, `high`, `max` (Opus 4.6 uniquement). |
-| `context`                  | Non         | Définissez à `fork` pour exécuter dans un contexte de subagent forké.                                                                                                                                                               |
-| `agent`                    | Non         | Quel type de subagent utiliser quand `context: fork` est défini.                                                                                                                                                                    |
-| `hooks`                    | Non         | Hooks limités au cycle de vie de cette skill. Voir [Hooks dans les skills et les agents](/fr/hooks#hooks-in-skills-and-agents) pour le format de configuration.                                                                     |
+| Champ                      | Obligatoire | Description                                                                                                                                                                                                                                                                                                                                               |
+| :------------------------- | :---------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`                     | Non         | Nom d'affichage pour la skill. S'il est omis, utilise le nom du répertoire. Lettres minuscules, chiffres et tirets uniquement (max 64 caractères).                                                                                                                                                                                                        |
+| `description`              | Recommandé  | Ce que fait la skill et quand l'utiliser. Claude utilise ceci pour décider quand appliquer la skill. S'il est omis, utilise le premier paragraphe du contenu markdown. Les descriptions plus longues que 250 caractères sont tronquées dans la liste des skills pour réduire l'utilisation du contexte.                                                   |
+| `argument-hint`            | Non         | Indice affiché lors de l'autocomplétion pour indiquer les arguments attendus. Exemple : `[issue-number]` ou `[filename] [format]`.                                                                                                                                                                                                                        |
+| `disable-model-invocation` | Non         | Définissez à `true` pour empêcher Claude de charger automatiquement cette skill. Utilisez pour les workflows que vous voulez déclencher manuellement avec `/name`. Par défaut : `false`.                                                                                                                                                                  |
+| `user-invocable`           | Non         | Définissez à `false` pour masquer du menu `/`. Utilisez pour les connaissances de base que les utilisateurs ne devraient pas invoquer directement. Par défaut : `true`.                                                                                                                                                                                   |
+| `allowed-tools`            | Non         | Outils que Claude peut utiliser sans demander la permission quand cette skill est active. Accepte une chaîne séparée par des espaces ou une liste YAML.                                                                                                                                                                                                   |
+| `model`                    | Non         | Modèle à utiliser quand cette skill est active.                                                                                                                                                                                                                                                                                                           |
+| `effort`                   | Non         | [Niveau d'effort](/fr/model-config#adjust-effort-level) quand cette skill est active. Remplace le niveau d'effort de la session. Par défaut : hérite de la session. Options : `low`, `medium`, `high`, `max` (Opus 4.6 uniquement).                                                                                                                       |
+| `context`                  | Non         | Définissez à `fork` pour exécuter dans un contexte de subagent forké.                                                                                                                                                                                                                                                                                     |
+| `agent`                    | Non         | Quel type de subagent utiliser quand `context: fork` est défini.                                                                                                                                                                                                                                                                                          |
+| `hooks`                    | Non         | Hooks limités au cycle de vie de cette skill. Voir [Hooks dans les skills et les agents](/fr/hooks#hooks-in-skills-and-agents) pour le format de configuration.                                                                                                                                                                                           |
+| `paths`                    | Non         | Modèles Glob qui limitent quand cette skill est activée. Accepte une chaîne séparée par des virgules ou une liste YAML. Quand défini, Claude charge la skill automatiquement uniquement quand vous travaillez avec des fichiers correspondant aux modèles. Utilise le même format que les [règles spécifiques au chemin](/fr/memory#path-specific-rules). |
+| `shell`                    | Non         | Shell à utiliser pour les blocs `` !`command` `` dans cette skill. Accepte `bash` (par défaut) ou `powershell`. Définir `powershell` exécute les commandes shell en ligne via PowerShell sur Windows. Nécessite `CLAUDE_CODE_USE_POWERSHELL_TOOL=1`.                                                                                                      |
 
 #### Substitutions de chaîne disponibles
 
@@ -294,7 +298,7 @@ Utilisez le champ `allowed-tools` pour limiter les outils que Claude peut utilis
 ---
 name: safe-reader
 description: Read files without making changes
-allowed-tools: Read, Grep, Glob
+allowed-tools: Read Grep Glob
 ---
 ```
 
@@ -678,11 +682,11 @@ Si Claude utilise votre skill quand vous ne le voulez pas :
 1. Rendez la description plus spécifique
 2. Ajoutez `disable-model-invocation: true` si vous voulez uniquement l'invocation manuelle
 
-### Claude ne voit pas toutes mes skills
+### Les descriptions de skills sont coupées court
 
-Les descriptions de skills sont chargées dans le contexte pour que Claude sache ce qui est disponible. Si vous avez beaucoup de skills, elles peuvent dépasser le budget de caractères. Le budget s'adapte dynamiquement à 2 % de la fenêtre de contexte, avec un repli de 16 000 caractères. Exécutez `/context` pour vérifier un avertissement concernant les skills exclues.
+Les descriptions de skills sont chargées dans le contexte pour que Claude sache ce qui est disponible. Tous les noms de skills sont toujours inclus, mais si vous avez beaucoup de skills, les descriptions sont raccourcies pour tenir dans le budget de caractères, ce qui peut supprimer les mots-clés dont Claude a besoin pour correspondre à votre demande. Le budget s'adapte dynamiquement à 1 % de la fenêtre de contexte, avec un repli de 8 000 caractères.
 
-Pour remplacer la limite, définissez la variable d'environnement `SLASH_COMMAND_TOOL_CHAR_BUDGET`.
+Pour augmenter la limite, définissez la variable d'environnement `SLASH_COMMAND_TOOL_CHAR_BUDGET`. Ou raccourcissez les descriptions à la source : mettez en avant le cas d'utilisation clé, puisque chaque entrée est limitée à 250 caractères indépendamment du budget.
 
 ## Ressources connexes
 

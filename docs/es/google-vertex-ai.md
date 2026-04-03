@@ -71,19 +71,18 @@ export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=global
 export ANTHROPIC_VERTEX_PROJECT_ID=YOUR-PROJECT-ID
 
+# Opcional: Anular la URL del punto final de Vertex para puntos finales personalizados o puertas de enlace
+# export ANTHROPIC_VERTEX_BASE_URL=https://aiplatform.googleapis.com
+
 # Opcional: Deshabilitar el almacenamiento en caché de indicaciones si es necesario
 export DISABLE_PROMPT_CACHING=1
 
-# Cuando CLOUD_ML_REGION=global, anule la región para modelos no compatibles
-export VERTEX_REGION_CLAUDE_3_5_HAIKU=us-east5
-
-# Opcional: Anular regiones para otros modelos específicos
-export VERTEX_REGION_CLAUDE_3_5_SONNET=us-east5
-export VERTEX_REGION_CLAUDE_3_7_SONNET=us-east5
-export VERTEX_REGION_CLAUDE_4_0_OPUS=europe-west1
-export VERTEX_REGION_CLAUDE_4_0_SONNET=us-east5
-export VERTEX_REGION_CLAUDE_4_1_OPUS=europe-west1
+# Cuando CLOUD_ML_REGION=global, anule la región para modelos que no admiten puntos finales globales
+export VERTEX_REGION_CLAUDE_HAIKU_4_5=us-east5
+export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 ```
+
+Cada versión de modelo tiene su propia variable `VERTEX_REGION_CLAUDE_*`. Consulte la [referencia de variables de entorno](/es/env-vars) para obtener la lista completa. Verifique [Vertex Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) para determinar qué modelos admiten puntos finales globales frente a solo regionales.
 
 [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) se admite automáticamente cuando especifica la bandera efímera `cache_control`. Para deshabilitarlo, establezca `DISABLE_PROMPT_CACHING=1`. Para límites de velocidad elevados, póngase en contacto con el soporte de Google Cloud. Al usar Vertex AI, los comandos `/login` y `/logout` están deshabilitados ya que la autenticación se maneja a través de credenciales de Google Cloud.
 
@@ -114,7 +113,7 @@ Para personalizar aún más los modelos:
 
 ```bash  theme={null}
 export ANTHROPIC_MODEL='claude-opus-4-6'
-export ANTHROPIC_SMALL_FAST_MODEL='claude-haiku-4-5@20251001'
+export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
 ```
 
 ## Configuración de IAM
@@ -150,7 +149,7 @@ Si encuentra errores "modelo no encontrado" 404:
 * Confirme que el modelo está habilitado en [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden)
 * Verifique que tenga acceso a la región especificada
 * Si utiliza `CLOUD_ML_REGION=global`, verifique que sus modelos admitan puntos finales globales en [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) en "Características compatibles". Para modelos que no admiten puntos finales globales, ya sea:
-  * Especifique un modelo compatible a través de `ANTHROPIC_MODEL` o `ANTHROPIC_SMALL_FAST_MODEL`, o
+  * Especifique un modelo compatible a través de `ANTHROPIC_MODEL` o `ANTHROPIC_DEFAULT_HAIKU_MODEL`, o
   * Establezca un punto final regional usando variables de entorno `VERTEX_REGION_<MODEL_NAME>`
 
 Si encuentra errores 429:

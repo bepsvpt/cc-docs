@@ -51,7 +51,7 @@ Jeder Binding-Block gibt einen **Kontext** an, in dem die Bindings gelten:
 | `Global`          | Gilt überall in der App                                   |
 | `Chat`            | Haupteingabebereich für Chat                              |
 | `Autocomplete`    | Autovervollständigungsmenü ist offen                      |
-| `Settings`        | Einstellungsmenü (nur Escape zum Schließen)               |
+| `Settings`        | Einstellungsmenü                                          |
 | `Confirmation`    | Berechtigungs- und Bestätigungsdialoge                    |
 | `Tabs`            | Tab-Navigationskomponenten                                |
 | `Help`            | Hilfemenü ist sichtbar                                    |
@@ -59,7 +59,7 @@ Jeder Binding-Block gibt einen **Kontext** an, in dem die Bindings gelten:
 | `HistorySearch`   | Verlaufssuchmodus (Ctrl+R)                                |
 | `Task`            | Hintergrundaufgabe wird ausgeführt                        |
 | `ThemePicker`     | Design-Picker-Dialog                                      |
-| `Attachments`     | Navigationsleiste für Bilder/Anhänge                      |
+| `Attachments`     | Bildanhang-Navigation in Auswahldialogen                  |
 | `Footer`          | Fußzeilen-Indikator-Navigation (Aufgaben, Teams, Diff)    |
 | `MessageSelector` | Nachrichtenauswahl für Rewind- und Zusammenfassungsdialog |
 | `DiffDialog`      | Diff-Viewer-Navigation                                    |
@@ -79,6 +79,7 @@ Aktionen verfügbar im `Global`-Kontext:
 | :--------------------- | :------- | :---------------------------------------- |
 | `app:interrupt`        | Ctrl+C   | Aktuelle Operation abbrechen              |
 | `app:exit`             | Ctrl+D   | Claude Code beenden                       |
+| `app:redraw`           | Ctrl+L   | Bildschirm neu zeichnen                   |
 | `app:toggleTodos`      | Ctrl+T   | Sichtbarkeit der Aufgabenliste umschalten |
 | `app:toggleTranscript` | Ctrl+O   | Ausführliches Transkript umschalten       |
 
@@ -105,7 +106,8 @@ Aktionen verfügbar im `Chat`-Kontext:
 | `chat:fastMode`       | Meta+O                       | Schnellmodus umschalten                |
 | `chat:thinkingToggle` | Cmd+T / Meta+T               | Erweitertes Denken umschalten          |
 | `chat:submit`         | Enter                        | Nachricht senden                       |
-| `chat:undo`           | Ctrl+\_                      | Letzte Aktion rückgängig machen        |
+| `chat:newline`        | (nicht gebunden)             | Zeilenumbruch einfügen, ohne zu senden |
+| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-        | Letzte Aktion rückgängig machen        |
 | `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E        | In externem Editor öffnen              |
 | `chat:stash`          | Ctrl+S                       | Aktuelle Eingabeaufforderung speichern |
 | `chat:imagePaste`     | Ctrl+V (Alt+V unter Windows) | Bild einfügen                          |
@@ -135,6 +137,7 @@ Aktionen verfügbar im `Confirmation`-Kontext:
 | `confirm:next`              | Unten            | Nächste Option                    |
 | `confirm:nextField`         | Tab              | Nächstes Feld                     |
 | `confirm:previousField`     | (nicht gebunden) | Vorheriges Feld                   |
+| `confirm:toggle`            | Leertaste        | Auswahl umschalten                |
 | `confirm:cycleMode`         | Shift+Tab        | Berechtigungsmodi durchlaufen     |
 | `confirm:toggleExplanation` | Ctrl+E           | Berechtigungserklärung umschalten |
 
@@ -150,10 +153,10 @@ Aktionen verfügbar im `Confirmation`-Kontext für Berechtigungsdialoge:
 
 Aktionen verfügbar im `Transcript`-Kontext:
 
-| Aktion                     | Standard       | Beschreibung                     |
-| :------------------------- | :------------- | :------------------------------- |
-| `transcript:toggleShowAll` | Ctrl+E         | Alle Inhalte anzeigen umschalten |
-| `transcript:exit`          | Ctrl+C, Escape | Transkript-Ansicht beenden       |
+| Aktion                     | Standard          | Beschreibung                     |
+| :------------------------- | :---------------- | :------------------------------- |
+| `transcript:toggleShowAll` | Ctrl+E            | Alle Inhalte anzeigen umschalten |
+| `transcript:exit`          | q, Ctrl+C, Escape | Transkript-Ansicht beenden       |
 
 ### Verlaufssuch-Aktionen
 
@@ -208,18 +211,20 @@ Aktionen verfügbar im `Attachments`-Kontext:
 | `attachments:next`     | Rechts             | Nächster Anhang               |
 | `attachments:previous` | Links              | Vorheriger Anhang             |
 | `attachments:remove`   | Rücktaste, Löschen | Ausgewählten Anhang entfernen |
-| `attachments:exit`     | Unten, Escape      | Anhang-Leiste beenden         |
+| `attachments:exit`     | Unten, Escape      | Anhang-Navigation beenden     |
 
 ### Fußzeilen-Aktionen
 
 Aktionen verfügbar im `Footer`-Kontext:
 
-| Aktion                  | Standard | Beschreibung                          |
-| :---------------------- | :------- | :------------------------------------ |
-| `footer:next`           | Rechts   | Nächstes Fußzeilen-Element            |
-| `footer:previous`       | Links    | Vorheriges Fußzeilen-Element          |
-| `footer:openSelected`   | Enter    | Ausgewähltes Fußzeilen-Element öffnen |
-| `footer:clearSelection` | Escape   | Fußzeilen-Auswahl löschen             |
+| Aktion                  | Standard | Beschreibung                                                 |
+| :---------------------- | :------- | :----------------------------------------------------------- |
+| `footer:next`           | Rechts   | Nächstes Fußzeilen-Element                                   |
+| `footer:previous`       | Links    | Vorheriges Fußzeilen-Element                                 |
+| `footer:up`             | Oben     | In der Fußzeile nach oben navigieren (Auswahl oben aufheben) |
+| `footer:down`           | Unten    | In der Fußzeile nach unten navigieren                        |
+| `footer:openSelected`   | Enter    | Ausgewähltes Fußzeilen-Element öffnen                        |
+| `footer:clearSelection` | Escape   | Fußzeilen-Auswahl löschen                                    |
 
 ### Nachrichtenauswahl-Aktionen
 
@@ -280,10 +285,11 @@ Aktionen verfügbar im `Plugin`-Kontext:
 
 Aktionen verfügbar im `Settings`-Kontext:
 
-| Aktion            | Standard | Beschreibung                         |
-| :---------------- | :------- | :----------------------------------- |
-| `settings:search` | /        | Suchmodus aktivieren                 |
-| `settings:retry`  | R        | Nutzungsdaten neu laden (bei Fehler) |
+| Aktion            | Standard | Beschreibung                                                                                    |
+| :---------------- | :------- | :---------------------------------------------------------------------------------------------- |
+| `settings:search` | /        | Suchmodus aktivieren                                                                            |
+| `settings:retry`  | R        | Nutzungsdaten neu laden (bei Fehler)                                                            |
+| `settings:close`  | Enter    | Änderungen speichern und Konfigurationspanel schließen. Escape verwirft Änderungen und schließt |
 
 ### Sprach-Aktionen
 
@@ -317,7 +323,7 @@ ctrl+shift+c    Mehrere Modifizierer
 
 Ein eigenständiger Großbuchstabe impliziert Umschalt. Zum Beispiel ist `K` gleichbedeutend mit `shift+k`. Dies ist nützlich für Vim-ähnliche Bindings, bei denen Groß- und Kleinbuchstaben unterschiedliche Bedeutungen haben.
 
-Großbuchstaben mit Modifizierern (z. B. `ctrl+K`) werden als stilistisch behandelt und implizieren **nicht** Umschalt — `ctrl+K` ist dasselbe wie `ctrl+k`.
+Großbuchstaben mit Modifizierern (z. B. `ctrl+K`) werden als stilistisch behandelt und implizieren **nicht** Umschalt: `ctrl+K` ist dasselbe wie `ctrl+k`.
 
 ### Akkorde
 
@@ -352,6 +358,25 @@ Setzen Sie eine Aktion auf `null`, um ein Standardkürzel aufzuheben:
   ]
 }
 ```
+
+Dies funktioniert auch für Akkord-Bindings. Das Aufheben aller Akkorde, die ein Präfix teilen, gibt dieses Präfix für die Verwendung als Single-Key-Binding frei:
+
+```json  theme={null}
+{
+  "bindings": [
+    {
+      "context": "Chat",
+      "bindings": {
+        "ctrl+x ctrl+k": null,
+        "ctrl+x ctrl+e": null,
+        "ctrl+x": "chat:newline"
+      }
+    }
+  ]
+}
+```
+
+Wenn Sie einige, aber nicht alle Akkorde auf einem Präfix aufheben, führt das Drücken des Präfix immer noch in den Akkord-Wartmodus für die verbleibenden Bindings ein.
 
 ## Reservierte Kürzel
 

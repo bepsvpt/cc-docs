@@ -116,6 +116,9 @@ export AWS_REGION=us-east-1  # or your preferred region
 
 # Optional: Override the region for the small/fast model (Haiku)
 export ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION=us-west-2
+
+# Optional: Override the Bedrock endpoint URL for custom endpoints or gateways
+# export ANTHROPIC_BEDROCK_BASE_URL=https://bedrock-runtime.us-east-1.amazonaws.com
 ```
 
 При включении Bedrock для Claude Code имейте в виду следующее:
@@ -142,17 +145,17 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='us.anthropic.claude-haiku-4-5-20251001-v1:
 
 Claude Code использует эти модели по умолчанию, когда переменные закрепления не установлены:
 
-| Тип модели           | Значение по умолчанию                         |
-| :------------------- | :-------------------------------------------- |
-| Основная модель      | `global.anthropic.claude-sonnet-4-6`          |
-| Малая/быстрая модель | `us.anthropic.claude-haiku-4-5-20251001-v1:0` |
+| Тип модели           | Значение по умолчанию                          |
+| :------------------- | :--------------------------------------------- |
+| Основная модель      | `us.anthropic.claude-sonnet-4-5-20250929-v1:0` |
+| Малая/быстрая модель | `us.anthropic.claude-haiku-4-5-20251001-v1:0`  |
 
 Для дальнейшей настройки моделей используйте один из этих методов:
 
 ```bash  theme={null}
 # Using inference profile ID
 export ANTHROPIC_MODEL='global.anthropic.claude-sonnet-4-6'
-export ANTHROPIC_SMALL_FAST_MODEL='us.anthropic.claude-haiku-4-5-20251001-v1:0'
+export ANTHROPIC_DEFAULT_HAIKU_MODEL='us.anthropic.claude-haiku-4-5-20251001-v1:0'
 
 # Using application inference profile ARN
 export ANTHROPIC_MODEL='arn:aws:bedrock:us-east-2:your-account-id:application-inference-profile/your-model-id'
@@ -229,6 +232,12 @@ export DISABLE_PROMPT_CACHING=1
   Создайте выделенную учетную запись AWS для Claude Code, чтобы упростить отслеживание затрат и контроль доступа.
 </Note>
 
+## Окно контекста 1M токенов
+
+Claude Opus 4.6 и Sonnet 4.6 поддерживают [окно контекста 1M токенов](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window) на Amazon Bedrock. Claude Code автоматически включает расширенное окно контекста при выборе варианта модели 1M.
+
+Чтобы включить окно контекста 1M для вашей закрепленной модели, добавьте `[1m]` к ID модели. См. [Pin models for third-party deployments](/ru/model-config#pin-models-for-third-party-deployments) для получения подробной информации.
+
 ## AWS Guardrails
 
 [Amazon Bedrock Guardrails](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html) позволяют вам реализовать фильтрацию контента для Claude Code. Создайте Guardrail в [консоли Amazon Bedrock](https://console.aws.amazon.com/bedrock/), опубликуйте версию, затем добавьте заголовки Guardrail в ваш [файл параметров](/ru/settings). Включите Cross-Region inference на вашем Guardrail, если вы используете профили вывода между регионами.
@@ -244,6 +253,14 @@ export DISABLE_PROMPT_CACHING=1
 ```
 
 ## Устранение неполадок
+
+### Цикл аутентификации с SSO и корпоративными прокси
+
+Если вкладки браузера открываются повторно при использовании AWS SSO, удалите параметр `awsAuthRefresh` из вашего [файла параметров](/ru/settings). Это может произойти, когда корпоративные VPN или прокси-серверы с проверкой TLS прерывают браузерный поток SSO. Claude Code рассматривает прерванное соединение как ошибку аутентификации, повторно запускает `awsAuthRefresh` и зацикливается бесконечно.
+
+Если ваша сетевая среда мешает автоматическим браузерным потокам SSO, используйте `aws sso login` вручную перед запуском Claude Code вместо того, чтобы полагаться на `awsAuthRefresh`.
+
+### Проблемы с регионом
 
 Если вы столкнулись с проблемами региона:
 

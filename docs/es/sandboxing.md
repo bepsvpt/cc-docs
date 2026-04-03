@@ -146,7 +146,7 @@ Los prefijos de ruta controlan cómo se resuelven las rutas:
 
 El prefijo anterior `//path` para rutas absolutas sigue funcionando. Si anteriormente usó `/path` esperando resolución relativa al proyecto, cambie a `./path`. Esta sintaxis difiere de las [reglas de permiso Read y Edit](/es/permissions#read-and-edit), que usan `//path` para absoluto y `/path` para relativo al proyecto. Las rutas del sistema de archivos del sandbox usan convenciones estándar: `/tmp/build` es una ruta absoluta.
 
-También puede denegar acceso de escritura o lectura usando `sandbox.filesystem.denyWrite` y `sandbox.filesystem.denyRead`. Estos se fusionan con cualquier ruta de las reglas de permiso `Edit(...)` y `Read(...)`. Para permitir nuevamente la lectura de rutas específicas dentro de una región denegada, use `sandbox.filesystem.allowRead`, que tiene prioridad sobre `denyRead`. Cuando `allowManagedReadPathsOnly` está habilitado en la configuración administrada, solo se respetan las entradas `allowRead` administradas; las entradas `allowRead` de usuario, proyecto y local se ignoran.
+También puede denegar acceso de escritura o lectura usando `sandbox.filesystem.denyWrite` y `sandbox.filesystem.denyRead`. Estos se fusionan con cualquier ruta de las reglas de permiso `Edit(...)` y `Read(...)`. Para permitir nuevamente la lectura de rutas específicas dentro de una región denegada, use `sandbox.filesystem.allowRead`, que tiene prioridad sobre `denyRead`. Cuando `allowManagedReadPathsOnly` está habilitado en la configuración administrada, solo se respetan las entradas `allowRead` administradas; las entradas `allowRead` de usuario, proyecto y local se ignoran. `denyRead` sigue fusionándose desde todas las fuentes.
 
 Por ejemplo, para bloquear la lectura de todo el directorio de inicio mientras aún se permite la lectura del proyecto actual, agregue esto al `.claude/settings.json` de su proyecto:
 
@@ -314,7 +314,7 @@ Para detalles de implementación y código fuente, visite el [repositorio de Git
 El sandbox aísla subprocesos Bash. Otras herramientas operan bajo límites diferentes:
 
 * **Herramientas de archivo integradas**: Read, Edit y Write usan el sistema de permisos directamente en lugar de ejecutarse a través del sandbox. Consulte [permisos](/es/permissions).
-* **Uso de computadora en Desktop**: Cuando Claude abre aplicaciones y controla su pantalla en macOS, se ejecuta en su escritorio real en lugar de en un entorno aislado. Los mensajes de permiso por aplicación controlan cada aplicación. Consulte [uso de computadora](/es/desktop#let-claude-use-your-computer).
+* **Uso de computadora**: Cuando Claude abre aplicaciones y controla su pantalla en macOS, se ejecuta en su escritorio real en lugar de en un entorno aislado. Los mensajes de permiso por aplicación controlan cada aplicación. Consulte [uso de computadora en CLI](/es/computer-use) o [uso de computadora en Desktop](/es/desktop#let-claude-use-your-computer).
 
 ## Ver también
 

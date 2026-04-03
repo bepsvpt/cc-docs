@@ -498,6 +498,8 @@ Wählen Sie Ihren Bereich basierend auf:
 
 MCP-Server-Konfigurationen folgen einer klaren Vorranghierarchie. Wenn Server mit dem gleichen Namen auf mehreren Bereichen vorhanden sind, löst das System Konflikte durch Priorisierung lokal begrenzter Server zuerst, gefolgt von projektbegrenzten Servern und schließlich benutzerbegrenzten Servern. Dieses Design stellt sicher, dass persönliche Konfigurationen gemeinsame Konfigurationen bei Bedarf überschreiben können.
 
+Wenn ein Server sowohl lokal als auch über einen [Claude.ai-Connector](#use-mcp-servers-from-claude-ai) konfiguriert ist, hat die lokale Konfiguration Vorrang und der Connector-Eintrag wird übersprungen.
+
 ### Umgebungsvariablen-Erweiterung in `.mcp.json`
 
 Claude Code unterstützt die Umgebungsvariablen-Erweiterung in `.mcp.json`-Dateien, die es Teams ermöglicht, Konfigurationen zu teilen und gleichzeitig Flexibilität für maschinenspezifische Pfade und vertrauliche Werte wie API-Schlüssel zu bewahren.
@@ -747,7 +749,7 @@ Einige MCP-Server unterstützen keine automatische OAuth-Einrichtung über Dynam
 
 ### Überschreiben Sie die OAuth-Metadaten-Erkennung
 
-Wenn Ihr MCP-Server Fehler auf dem Standard-OAuth-Metadaten-Endpunkt (`/.well-known/oauth-authorization-server`) zurückgibt, aber einen funktionierenden OIDC-Endpunkt verfügbar macht, können Sie Claude Code anweisen, OAuth-Metadaten direkt von einer URL zu abrufen, die Sie angeben, und die Standard-Erkennungskette zu umgehen.
+Wenn Ihr MCP-Server Fehler auf den Standard-OAuth-Metadaten-Endpunkten zurückgibt, aber einen funktionierenden OIDC-Endpunkt verfügbar macht, können Sie Claude Code auf eine bestimmte Metadaten-URL verweisen, um die Standard-Erkennungskette zu umgehen. Standardmäßig überprüft Claude Code zunächst RFC 9728 Protected Resource Metadata unter `/.well-known/oauth-protected-resource` und fällt dann auf RFC 8414 Authorization Server Metadata unter `/.well-known/oauth-authorization-server` zurück.
 
 Legen Sie `authServerMetadataUrl` im Objekt `oauth` der Konfiguration Ihres Servers in `.mcp.json` fest:
 
@@ -804,6 +806,15 @@ Der Befehl kann auch inline sein:
 * Dynamische Header überschreiben alle statischen `headers` mit dem gleichen Namen
 
 Der Helper wird bei jeder Verbindung neu ausgeführt (beim Sitzungsstart und bei Wiederverbindung). Es gibt kein Caching, daher ist Ihr Skript für jede Token-Wiederverwendung verantwortlich.
+
+Claude Code setzt diese Umgebungsvariablen beim Ausführen des Helpers:
+
+| Variable                      | Wert                     |
+| :---------------------------- | :----------------------- |
+| `CLAUDE_CODE_MCP_SERVER_NAME` | der Name des MCP-Servers |
+| `CLAUDE_CODE_MCP_SERVER_URL`  | die URL des MCP-Servers  |
+
+Verwenden Sie diese, um ein einzelnes Helper-Skript zu schreiben, das mehrere MCP-Server bedient.
 
 <Note>
   `headersHelper` führt beliebige Shell-Befehle aus. Wenn es auf Projekt- oder lokalem Bereich definiert ist, wird es nur nach Ihrer Zustimmung zum Workspace-Trust-Dialog ausgeführt.
@@ -1049,16 +1060,13 @@ MCP-Server können Ressourcen verfügbar machen, auf die Sie mit @-Erwähnungen 
 
 ## Mit MCP-Tool-Suche skalieren
 
-Wenn Sie viele MCP-Server konfiguriert haben, können Tool-Definitionen einen erheblichen Teil Ihres Kontextfensters verbrauchen. MCP-Tool-Suche löst dies, indem Tools bei Bedarf dynamisch geladen werden, anstatt sie alle vorab zu laden.
+Die Tool-Suche hält die MCP-Kontextnutzung niedrig, indem Tool-Definitionen aufgeschoben werden, bis Claude sie benötigt. Nur Tool-Namen werden beim Sitzungsstart geladen, daher hat das Hinzufügen weiterer MCP-Server minimale Auswirkungen auf Ihr Kontextfenster.
 
 ### Wie es funktioniert
 
-Claude Code aktiviert die Tool-Suche automatisch, wenn Ihre MCP-Tool-Beschreibungen mehr als 10 % des Kontextfensters verbrauchen würden. Sie können [diese Schwelle anpassen](#configure-tool-search) oder die Tool-Suche vollständig deaktivieren. Wenn ausgelöst:
+Die Tool-Suche ist standardmäßig aktiviert. MCP-Tools werden aufgeschoben, anstatt sie vorab in den Kontext zu laden, und Claude verwendet ein Such-Tool, um relevante Tools zu entdecken, wenn eine Aufgabe sie benötigt. Nur die Tools, die Claude tatsächlich verwendet, gelangen in den Kontext. Aus Ihrer Perspektive funktionieren MCP-Tools genau wie zuvor.
 
-1. MCP-Tools werden aufgeschoben, anstatt sie vorab in den Kontext zu laden
-2. Claude verwendet ein Such-Tool, um relevante MCP-Tools bei Bedarf zu entdecken
-3. Nur die Tools, die Claude tatsächlich benötigt, werden in den Kontext geladen
-4. MCP-Tools funktionieren aus Ihrer Perspektive genau wie zuvor
+Wenn Sie schwellenwertbasiertes Laden bevorzugen, setzen Sie `ENABLE_TOOL_SEARCH=auto`, um Schemas vorab zu laden, wenn sie in 10 % des Kontextfensters passen, und verschieben Sie nur den Überschuss. Siehe [Tool-Suche konfigurieren](#configure-tool-search) für alle Optionen.
 
 ### Für MCP-Server-Autoren
 
@@ -1070,19 +1078,21 @@ Fügen Sie klare, aussagekräftige Server-Anweisungen hinzu, die erklären:
 * Wann Claude nach Ihren Tools suchen sollte
 * Wichtige Funktionen, die Ihr Server bietet
 
+Claude Code schneidet Tool-Beschreibungen und Server-Anweisungen bei 2 KB ab. Halten Sie sie prägnant, um Kürzungen zu vermeiden, und platzieren Sie kritische Details am Anfang.
+
 ### Konfigurieren Sie die Tool-Suche
 
 Die Tool-Suche ist standardmäßig aktiviert: MCP-Tools werden aufgeschoben und bei Bedarf entdeckt. Wenn `ANTHROPIC_BASE_URL` auf einen Host von Drittanbietern verweist, ist die Tool-Suche standardmäßig deaktiviert, da die meisten Proxys `tool_reference`-Blöcke nicht weiterleiten. Legen Sie `ENABLE_TOOL_SEARCH` explizit fest, wenn Ihr Proxy dies tut. Diese Funktion erfordert Modelle, die `tool_reference`-Blöcke unterstützen: Sonnet 4 und später oder Opus 4 und später. Haiku-Modelle unterstützen die Tool-Suche nicht.
 
 Steuern Sie das Verhalten der Tool-Suche mit der Umgebungsvariablen `ENABLE_TOOL_SEARCH`:
 
-| Wert            | Verhalten                                                                                            |
-| :-------------- | :--------------------------------------------------------------------------------------------------- |
-| (nicht gesetzt) | Standardmäßig aktiviert. Deaktiviert, wenn `ANTHROPIC_BASE_URL` ein Host von Drittanbietern ist      |
-| `true`          | Immer aktiviert, auch für `ANTHROPIC_BASE_URL` von Drittanbietern                                    |
-| `auto`          | Aktiviert, wenn MCP-Tools 10 % des Kontexts überschreiten                                            |
-| `auto:<N>`      | Aktiviert bei benutzerdefinierter Schwelle, wobei `<N>` ein Prozentsatz ist (z. B. `auto:5` für 5 %) |
-| `false`         | Deaktiviert, alle MCP-Tools werden vorab geladen                                                     |
+| Wert            | Verhalten                                                                                                                                              |
+| :-------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (nicht gesetzt) | Alle MCP-Tools werden aufgeschoben und bei Bedarf geladen. Fällt auf das Laden vorab zurück, wenn `ANTHROPIC_BASE_URL` ein Host von Drittanbietern ist |
+| `true`          | Alle MCP-Tools werden aufgeschoben, auch für `ANTHROPIC_BASE_URL` von Drittanbietern                                                                   |
+| `auto`          | Schwellenmodus: Tools werden vorab geladen, wenn sie in 10 % des Kontextfensters passen, andernfalls aufgeschoben                                      |
+| `auto:<N>`      | Schwellenmodus mit benutzerdefiniertem Prozentsatz, wobei `<N>` 0-100 ist (z. B. `auto:5` für 5 %)                                                     |
+| `false`         | Alle MCP-Tools werden vorab geladen, keine Verschiebung                                                                                                |
 
 ```bash  theme={null}
 # Verwenden Sie eine benutzerdefinierte 5%-Schwelle
@@ -1094,12 +1104,12 @@ ENABLE_TOOL_SEARCH=false claude
 
 Oder legen Sie den Wert im Feld `env` Ihrer [settings.json](/de/settings#available-settings) fest.
 
-Sie können das MCPSearch-Tool auch spezifisch mit der Einstellung `disallowedTools` deaktivieren:
+Sie können das `ToolSearch`-Tool auch spezifisch deaktivieren:
 
 ```json  theme={null}
 {
   "permissions": {
-    "deny": ["MCPSearch"]
+    "deny": ["ToolSearch"]
   }
 }
 ```

@@ -23,13 +23,14 @@ Gli alias dei modelli forniscono un modo conveniente per selezionare le impostaz
 
 | Alias del modello | Comportamento                                                                                                                                                                           |
 | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`default`**     | Impostazione del modello consigliata, a seconda del tipo di account                                                                                                                     |
+| **`default`**     | Valore speciale che cancella qualsiasi override del modello e ripristina il modello consigliato per il tipo di account. Non è di per sé un alias del modello                            |
+| **`best`**        | Utilizza il modello più capace disponibile, attualmente equivalente a `opus`                                                                                                            |
 | **`sonnet`**      | Utilizza il modello Sonnet più recente (attualmente Sonnet 4.6) per le attività di codifica quotidiane                                                                                  |
 | **`opus`**        | Utilizza il modello Opus più recente (attualmente Opus 4.6) per attività di ragionamento complesso                                                                                      |
 | **`haiku`**       | Utilizza il modello Haiku veloce ed efficiente per attività semplici                                                                                                                    |
 | **`sonnet[1m]`**  | Utilizza Sonnet con una [finestra di contesto di 1 milione di token](https://platform.claude.com/docs/it/build-with-claude/context-windows#1m-token-context-window) per sessioni lunghe |
 | **`opus[1m]`**    | Utilizza Opus con una [finestra di contesto di 1 milione di token](https://platform.claude.com/docs/it/build-with-claude/context-windows#1m-token-context-window) per sessioni lunghe   |
-| **`opusplan`**    | Modalità speciale che utilizza `opus` durante la modalità piano, quindi passa a `sonnet` per l'esecuzione                                                                               |
+| **`opusplan`**    | Modalità speciale che utilizza `opus` durante la Plan Mode, quindi passa a `sonnet` per l'esecuzione                                                                                    |
 
 Gli alias puntano sempre alla versione più recente. Per fissare una versione specifica, utilizzare il nome del modello completo (ad esempio, `claude-opus-4-6`) o impostare la variabile di ambiente corrispondente come `ANTHROPIC_DEFAULT_OPUS_MODEL`.
 
@@ -83,19 +84,27 @@ Anche con `availableModels: []`, gli utenti possono comunque utilizzare Claude C
 
 ### Controllare il modello su cui gli utenti eseguono
 
-Per controllare completamente l'esperienza del modello, utilizzare `availableModels` insieme all'impostazione `model`:
+L'impostazione `model` è una selezione iniziale, non un'applicazione. Imposta quale modello è attivo quando una sessione inizia, ma gli utenti possono comunque aprire `/model` e scegliere Predefinito, che si risolve nel valore predefinito del sistema per il loro livello indipendentemente da ciò che `model` è impostato.
 
-* **availableModels**: limita a cosa gli utenti possono passare
-* **model**: imposta l'override esplicito del modello, che ha la precedenza sul Predefinito
+Per controllare completamente l'esperienza del modello, combinare tre impostazioni:
 
-Questo esempio garantisce che tutti gli utenti eseguano Sonnet 4.6 e possono scegliere solo tra Sonnet e Haiku:
+* **`availableModels`**: limita a quali modelli denominati gli utenti possono passare
+* **`model`**: imposta la selezione del modello iniziale quando una sessione inizia
+* **`ANTHROPIC_DEFAULT_SONNET_MODEL`** / **`ANTHROPIC_DEFAULT_OPUS_MODEL`** / **`ANTHROPIC_DEFAULT_HAIKU_MODEL`**: controllano a cosa si risolvono l'opzione Predefinito e gli alias `sonnet`, `opus` e `haiku`
+
+Questo esempio avvia gli utenti su Sonnet 4.5, limita il selettore a Sonnet e Haiku, e fissa Predefinito per risolversi a Sonnet 4.5 piuttosto che alla versione più recente:
 
 ```json  theme={null}
 {
-  "model": "sonnet",
-  "availableModels": ["sonnet", "haiku"]
+  "model": "claude-sonnet-4-5",
+  "availableModels": ["claude-sonnet-4-5", "haiku"],
+  "env": {
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-5"
+  }
 }
 ```
+
+Senza il blocco `env`, un utente che seleziona Predefinito nel selettore otterrebbe la versione Sonnet più recente, bypassando il pin di versione in `model` e `availableModels`.
 
 ### Comportamento di unione
 
@@ -245,6 +254,41 @@ Il suffisso `[1m]` applica la finestra di contesto 1M a tutto l'utilizzo di quel
 <Note>
   L'elenco di autorizzazione `settings.availableModels` si applica comunque quando si utilizzano provider di terze parti. Il filtraggio corrisponde all'alias del modello (`opus`, `sonnet`, `haiku`), non all'ID del modello specifico del provider.
 </Note>
+
+### Personalizzare la visualizzazione e le capacità del modello fissato
+
+Quando si fissa un modello su un provider di terze parti, l'ID specifico del provider appare così com'è nel selettore `/model` e Claude Code potrebbe non riconoscere quali funzionalità il modello supporta. È possibile sovrascrivere il nome di visualizzazione e dichiarare le capacità con variabili di ambiente complementari per ogni modello fissato.
+
+Queste variabili hanno effetto solo su provider di terze parti come Bedrock, Vertex AI e Foundry. Non hanno effetto quando si utilizza l'API Anthropic direttamente.
+
+| Variabile di ambiente                                 | Descrizione                                                                                                                                              |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_NAME`                   | Nome di visualizzazione per il modello Opus fissato nel selettore `/model`. Per impostazione predefinita l'ID del modello quando non impostato           |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION`            | Descrizione di visualizzazione per il modello Opus fissato nel selettore `/model`. Per impostazione predefinita `Custom Opus model` quando non impostato |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES` | Elenco separato da virgole delle capacità che il modello Opus fissato supporta                                                                           |
+
+Gli stessi suffissi `_NAME`, `_DESCRIPTION` e `_SUPPORTED_CAPABILITIES` sono disponibili per `ANTHROPIC_DEFAULT_SONNET_MODEL` e `ANTHROPIC_DEFAULT_HAIKU_MODEL`.
+
+Claude Code abilita funzionalità come [livelli di sforzo](#adjust-effort-level) e [extended thinking](/it/common-workflows#use-extended-thinking-thinking-mode) abbinando l'ID del modello rispetto a modelli noti. Gli ID specifici del provider come ARN Bedrock o nomi di distribuzione personalizzati spesso non corrispondono a questi modelli, lasciando le funzionalità supportate disabilitate. Impostare `_SUPPORTED_CAPABILITIES` per dire a Claude Code quali funzionalità il modello effettivamente supporta:
+
+| Valore di capacità     | Abilita                                                                                           |
+| ---------------------- | ------------------------------------------------------------------------------------------------- |
+| `effort`               | [Livelli di sforzo](#adjust-effort-level) e il comando `/effort`                                  |
+| `max_effort`           | Il livello di sforzo `max`                                                                        |
+| `thinking`             | [Extended thinking](/it/common-workflows#use-extended-thinking-thinking-mode)                     |
+| `adaptive_thinking`    | Ragionamento adattivo che alloca dinamicamente il pensiero in base alla complessità dell'attività |
+| `interleaved_thinking` | Pensiero tra le chiamate di strumento                                                             |
+
+Quando `_SUPPORTED_CAPABILITIES` è impostato, le capacità elencate sono abilitate e le capacità non elencate sono disabilitate per il modello fissato corrispondente. Quando la variabile non è impostata, Claude Code ricade sulla rilevazione incorporata basata sull'ID del modello.
+
+Questo esempio fissa Opus a un ARN di modello personalizzato Bedrock, imposta un nome amichevole e dichiara le sue capacità:
+
+```bash  theme={null}
+export ANTHROPIC_DEFAULT_OPUS_MODEL='arn:aws:bedrock:us-east-1:123456789012:custom-model/abc'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_NAME='Opus via Bedrock'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION='Opus 4.6 routed through a Bedrock custom endpoint'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES='effort,max_effort,thinking,adaptive_thinking,interleaved_thinking'
+```
 
 ### Eseguire l'override degli ID di modello per versione
 

@@ -12,7 +12,7 @@
 
 Tarefas agendadas permitem que Claude execute novamente um prompt automaticamente em um intervalo. Use-as para pesquisar uma implantação, cuidar de um PR, verificar uma compilação de longa duração ou lembrar-se de fazer algo mais tarde na sessão. Para reagir a eventos conforme eles acontecem em vez de pesquisar, consulte [Channels](/pt/channels): seu CI pode enviar a falha para a sessão diretamente.
 
-As tarefas têm escopo de sessão: elas vivem no processo atual do Claude Code e desaparecem quando você sai. Para agendamento durável que sobreviva a reinicializações, use [Cloud](/pt/web-scheduled-tasks) ou [Desktop](/pt/desktop#schedule-recurring-tasks) tarefas agendadas, ou [GitHub Actions](/pt/github-actions).
+As tarefas têm escopo de sessão: elas vivem no processo atual do Claude Code e desaparecem quando você sai. Para agendamento durável que sobreviva a reinicializações, use tarefas agendadas do [Cloud](/pt/web-scheduled-tasks) ou [Desktop](/pt/desktop#schedule-recurring-tasks), ou [GitHub Actions](/pt/github-actions).
 
 ## Compare opções de agendamento
 
@@ -117,9 +117,9 @@ Para evitar que cada sessão atinja a API no mesmo momento de tempo real, o agen
 
 O deslocamento é derivado do ID da tarefa, portanto a mesma tarefa sempre obtém o mesmo deslocamento. Se o tempo exato for importante, escolha um minuto que não seja `:00` ou `:30`, por exemplo `3 9 * * *` em vez de `0 9 * * *`, e o jitter único não será aplicado.
 
-### Expiração de três dias
+### Expiração de sete dias
 
-Tarefas recorrentes expiram automaticamente 3 dias após a criação. A tarefa é acionada uma última vez e depois se deleta. Isso limita quanto tempo um loop esquecido pode ser executado. Se você precisar que uma tarefa recorrente dure mais tempo, cancele e recrie-a antes de expirar, ou use [tarefas agendadas do Cloud](/pt/web-scheduled-tasks) ou [tarefas agendadas do Desktop](/pt/desktop#schedule-recurring-tasks) para agendamento durável.
+Tarefas recorrentes expiram automaticamente 7 dias após a criação. A tarefa é acionada uma última vez e depois se deleta. Isso limita quanto tempo um loop esquecido pode ser executado. Se você precisar que uma tarefa recorrente dure mais tempo, cancele e recrie-a antes de expirar, ou use tarefas agendadas do [Cloud](/pt/web-scheduled-tasks) ou tarefas agendadas do [Desktop](/pt/desktop#schedule-recurring-tasks) para agendamento durável.
 
 ## Referência de expressão cron
 

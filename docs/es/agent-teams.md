@@ -30,7 +30,7 @@ Esta página cubre:
 Los equipos de agentes son más efectivos para tareas donde la exploración paralela agrega valor real. Vea [ejemplos de casos de uso](#use-case-examples) para escenarios completos. Los casos de uso más sólidos son:
 
 * **Investigación y revisión**: múltiples compañeros de equipo pueden investigar diferentes aspectos de un problema simultáneamente, luego compartir y desafiar los hallazgos de los demás
-* **Nuevos módulos o características**: los compañeros de equipo pueden poseer cada una una pieza separada sin pisarse mutuamente
+* **Nuevos módulos o características**: los compañeros de equipo pueden poseer cada uno una pieza separada sin pisarse mutuamente
 * **Depuración con hipótesis competidoras**: los compañeros de equipo prueban diferentes teorías en paralelo y convergen en la respuesta más rápidamente
 * **Coordinación entre capas**: cambios que abarcan frontend, backend y pruebas, cada uno propiedad de un compañero de equipo diferente
 
@@ -102,7 +102,7 @@ Los equipos de agentes admiten dos modos de visualización:
   `tmux` tiene limitaciones conocidas en ciertos sistemas operativos y tradicionalmente funciona mejor en macOS. Usar `tmux -CC` en iTerm2 es el punto de entrada sugerido en `tmux`.
 </Note>
 
-El valor predeterminado es `"auto"`, que usa paneles divididos si ya está ejecutándose dentro de una sesión tmux, y en proceso de lo contrario. La configuración `"tmux"` habilita el modo de panel dividido y detecta automáticamente si usar tmux o iTerm2 según su terminal. Para anular, configure `teammateMode` en su [settings.json](/es/settings):
+El valor predeterminado es `"auto"`, que usa paneles divididos si ya está ejecutándose dentro de una sesión tmux, y en proceso de lo contrario. La configuración `"tmux"` habilita el modo de panel dividido y detecta automáticamente si usar tmux o iTerm2 según su terminal. Para anular, configure `teammateMode` en su [configuración global](/es/settings#global-config-settings) en `~/.claude.json`:
 
 ```json  theme={null}
 {
@@ -187,9 +187,10 @@ Esto elimina los recursos compartidos del equipo. Cuando el líder ejecuta la li
 
 ### Aplicar puertas de calidad con hooks
 
-Use [hooks](/es/hooks) para aplicar reglas cuando los compañeros de equipo terminen el trabajo o las tareas se completen:
+Use [hooks](/es/hooks) para aplicar reglas cuando los compañeros de equipo terminen el trabajo o las tareas se creen o completen:
 
 * [`TeammateIdle`](/es/hooks#teammateidle): se ejecuta cuando un compañero de equipo está a punto de quedarse inactivo. Salga con código 2 para enviar retroalimentación y mantener al compañero de equipo trabajando.
+* [`TaskCreated`](/es/hooks#taskcreated): se ejecuta cuando una tarea está siendo creada. Salga con código 2 para prevenir la creación y enviar retroalimentación.
 * [`TaskCompleted`](/es/hooks#taskcompleted): se ejecuta cuando una tarea está siendo marcada como completada. Salga con código 2 para prevenir la finalización y enviar retroalimentación.
 
 ## Cómo funcionan los equipos de agentes
@@ -225,7 +226,23 @@ Los equipos y tareas se almacenan localmente:
 * **Configuración del equipo**: `~/.claude/teams/{team-name}/config.json`
 * **Lista de tareas**: `~/.claude/tasks/{team-name}/`
 
+Claude Code genera ambos automáticamente cuando crea un equipo y los actualiza a medida que los compañeros de equipo se unen, se quedan inactivos o se van. La configuración del equipo contiene estado de tiempo de ejecución como IDs de sesión e IDs de panel tmux, así que no la edite manualmente ni la pre-autorice: sus cambios se sobrescriben en la siguiente actualización de estado.
+
+Para definir roles de compañeros de equipo reutilizables, use [definiciones de subagents](#use-subagent-definitions-for-teammates) en su lugar.
+
 La configuración del equipo contiene un array `members` con el nombre de cada compañero de equipo, ID de agente y tipo de agente. Los compañeros de equipo pueden leer este archivo para descubrir otros miembros del equipo.
+
+No hay equivalente a nivel de proyecto de la configuración del equipo. Un archivo como `.claude/teams/teams.json` en su directorio de proyecto no se reconoce como configuración; Claude lo trata como un archivo ordinario.
+
+### Usar definiciones de subagents para compañeros de equipo
+
+Al generar un compañero de equipo, puede hacer referencia a un tipo de [subagent](/es/sub-agents) de cualquier [alcance de subagent](/es/sub-agents#choose-the-subagent-scope): proyecto, usuario, plugin o definido por CLI. El compañero de equipo hereda el indicador del sistema, herramientas y modelo de ese subagent. Esto le permite definir un rol una vez, como un revisor de seguridad o ejecutor de pruebas, y reutilizarlo tanto como un subagent delegado como un compañero de equipo de equipo de agentes.
+
+Para usar una definición de subagent, mencione por nombre cuando le pida a Claude que genere el compañero de equipo:
+
+```text  theme={null}
+Genera un compañero de equipo usando el tipo de agente security-reviewer para auditar el módulo de autenticación.
+```
 
 ### Permisos
 

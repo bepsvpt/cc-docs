@@ -280,6 +280,8 @@ How should we handle database migration?
 
 <Tip>Tekan `Ctrl+G` untuk membuka rencana di editor teks default Anda, di mana Anda dapat mengeditnya secara langsung sebelum Claude melanjutkan.</Tip>
 
+Ketika Anda menerima rencana, Claude secara otomatis memberi nama sesi dari konten rencana. Nama muncul di bilah prompt dan di pemilih sesi. Jika Anda telah menetapkan nama dengan `--name` atau `/rename`, menerima rencana tidak akan menimpanya.
+
 ### Konfigurasikan Plan Mode sebagai default
 
 ```json  theme={null}
@@ -524,7 +526,7 @@ Thinking diaktifkan secara default, tetapi Anda dapat menyesuaikan atau menonakt
 | **Kata kunci `ultrathink`** | Sertakan "ultrathink" di mana saja dalam prompt Anda                                            | Menetapkan effort ke high untuk giliran itu pada Opus 4.6 dan Sonnet 4.6. Berguna untuk tugas sekali jadi yang memerlukan penalaran mendalam tanpa mengubah pengaturan effort Anda secara permanen |
 | **Pintasan toggle**         | Tekan `Option+T` (macOS) atau `Alt+T` (Windows/Linux)                                           | Toggle thinking on/off untuk sesi saat ini (semua model). Mungkin memerlukan [konfigurasi terminal](/id/terminal-config) untuk mengaktifkan pintasan tombol Option                                 |
 | **Default global**          | Gunakan `/config` untuk toggle thinking mode                                                    | Menetapkan default Anda di semua proyek (semua model).<br />Disimpan sebagai `alwaysThinkingEnabled` di `~/.claude/settings.json`                                                                  |
-| **Batasi anggaran token**   | Atur variabel lingkungan [`MAX_THINKING_TOKENS`](/id/env-vars)                                  | Batasi anggaran thinking ke jumlah token tertentu (diabaikan pada Opus 4.6 dan Sonnet 4.6 kecuali diatur ke 0). Contoh: `export MAX_THINKING_TOKENS=10000`                                         |
+| **Batasi anggaran token**   | Atur variabel lingkungan [`MAX_THINKING_TOKENS`](/id/env-vars)                                  | Batasi anggaran thinking ke jumlah token tertentu. Pada Opus 4.6 dan Sonnet 4.6, hanya `0` berlaku kecuali adaptive reasoning dinonaktifkan. Contoh: `export MAX_THINKING_TOKENS=10000`            |
 
 Untuk melihat proses thinking Claude, tekan `Ctrl+O` untuk toggle verbose mode dan lihat penalaran internal ditampilkan sebagai teks italic abu-abu.
 
@@ -534,12 +536,12 @@ Extended thinking mengontrol berapa banyak penalaran internal yang dilakukan Cla
 
 **Dengan Opus 4.6 dan Sonnet 4.6**, thinking menggunakan adaptive reasoning: model secara dinamis mengalokasikan token thinking berdasarkan [effort level](/id/model-config#adjust-effort-level) yang Anda pilih. Ini adalah cara yang direkomendasikan untuk menyesuaikan trade-off antara kecepatan dan kedalaman penalaran.
 
-**Dengan model lama**, thinking menggunakan anggaran tetap hingga 31.999 token dari anggaran output Anda. Anda dapat membatasinya dengan variabel lingkungan [`MAX_THINKING_TOKENS`](/id/env-vars), atau menonaktifkan thinking sepenuhnya melalui `/config` atau toggle `Option+T`/`Alt+T`.
+**Dengan model lama**, thinking menggunakan anggaran token tetap yang diambil dari alokasi output Anda. Anggaran bervariasi menurut model; lihat [`MAX_THINKING_TOKENS`](/id/env-vars) untuk batas per-model. Anda dapat membatasinya dengan variabel lingkungan itu, atau menonaktifkan thinking sepenuhnya melalui `/config` atau toggle `Option+T`/`Alt+T`.
 
-`MAX_THINKING_TOKENS` diabaikan pada Opus 4.6 dan Sonnet 4.6, karena adaptive reasoning mengontrol kedalaman thinking sebagai gantinya. Satu pengecualian: mengatur `MAX_THINKING_TOKENS=0` masih menonaktifkan thinking sepenuhnya pada model apa pun. Untuk menonaktifkan adaptive thinking dan kembali ke anggaran thinking tetap, atur `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1`. Lihat [variabel lingkungan](/id/env-vars).
+Pada Opus 4.6 dan Sonnet 4.6, [adaptive reasoning](/id/model-config#adjust-effort-level) mengontrol kedalaman thinking, jadi `MAX_THINKING_TOKENS` hanya berlaku ketika diatur ke `0` untuk menonaktifkan thinking, atau ketika `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` mengembalikan model ini ke anggaran tetap. Lihat [variabel lingkungan](/id/env-vars).
 
 <Warning>
-  Anda dikenakan biaya untuk semua token thinking yang digunakan, meskipun model Claude 4 menampilkan thinking yang diringkas
+  Anda dikenakan biaya untuk semua token thinking yang digunakan bahkan ketika ringkasan thinking dihilangkan. Dalam mode interaktif, thinking muncul sebagai stub yang diruntuhkan secara default. Atur `showThinkingSummaries: true` di `settings.json` untuk menampilkan ringkasan lengkap.
 </Warning>
 
 ***
@@ -554,7 +556,7 @@ Saat memulai Claude Code, Anda dapat melanjutkan sesi sebelumnya:
 
 Dari dalam sesi aktif, gunakan `/resume` untuk beralih ke percakapan berbeda.
 
-Sesi disimpan per direktori proyek. Pemilih `/resume` menampilkan sesi dari repositori git yang sama, termasuk worktrees.
+Sesi disimpan per direktori proyek. Pemilih `/resume` menampilkan sesi interaktif dari repositori git yang sama, termasuk worktrees. Sesi yang dibuat oleh `claude -p` atau invokasi SDK tidak muncul di pemilih, tetapi Anda masih dapat melanjutkan satu dengan meneruskan ID sesinya langsung ke `claude --resume <session-id>`.
 
 ### Beri nama sesi Anda
 
@@ -619,7 +621,7 @@ Pemilih menampilkan sesi dengan metadata yang membantu:
 * Jumlah pesan
 * Cabang Git (jika berlaku)
 
-Sesi yang di-fork (dibuat dengan `/rewind` atau `--fork-session`) dikelompokkan bersama di bawah sesi root mereka, memudahkan menemukan percakapan terkait.
+Sesi yang di-fork (dibuat dengan `/branch`, `/rewind`, atau `--fork-session`) dikelompokkan bersama di bawah sesi root mereka, memudahkan menemukan percakapan terkait.
 
 <Tip>
   Tips:
@@ -664,7 +666,17 @@ Jika Anda menghilangkan nama, Claude secara otomatis menghasilkan nama acak:
 claude --worktree
 ```
 
-Worktrees dibuat di `<repo>/.claude/worktrees/<name>` dan bercabang dari cabang remote default. Cabang worktree dinamai `worktree-<name>`.
+Worktrees dibuat di `<repo>/.claude/worktrees/<name>` dan bercabang dari cabang remote default, yang merupakan tempat `origin/HEAD` menunjuk. Cabang worktree dinamai `worktree-<name>`.
+
+Cabang dasar tidak dapat dikonfigurasi melalui flag atau pengaturan Claude Code. `origin/HEAD` adalah referensi yang disimpan di direktori `.git` lokal Anda yang Git atur sekali saat Anda mengkloning. Jika cabang default repositori berubah nanti di GitHub atau GitLab, `origin/HEAD` lokal Anda terus menunjuk ke yang lama, dan worktrees akan bercabang dari sana. Untuk menyinkronkan ulang referensi lokal Anda dengan apa pun yang dianggap remote sebagai default saat ini:
+
+```bash  theme={null}
+git remote set-head origin -a
+```
+
+Ini adalah perintah Git standar yang hanya memperbarui direktori `.git` lokal Anda. Tidak ada yang berubah di server remote. Jika Anda ingin worktrees bercabang dari cabang tertentu daripada default remote, atur secara eksplisit dengan `git remote set-head origin your-branch-name`.
+
+Untuk kontrol penuh atas cara worktrees dibuat, termasuk memilih base yang berbeda per invokasi, konfigurasikan hook [WorktreeCreate](/id/hooks#worktreecreate). Hook menggantikan logika `git worktree` default Claude Code sepenuhnya, jadi Anda dapat mengambil dan bercabang dari ref apa pun yang Anda butuhkan.
 
 Anda juga dapat meminta Claude untuk "work in a worktree" atau "start a worktree" selama sesi, dan itu akan membuat satu secara otomatis.
 
@@ -684,6 +696,20 @@ Untuk membersihkan worktrees di luar sesi Claude, gunakan [manajemen worktree ma
 <Tip>
   Tambahkan `.claude/worktrees/` ke `.gitignore` Anda untuk mencegah konten worktree muncul sebagai file yang tidak dilacak dalam repositori utama Anda.
 </Tip>
+
+### Salin file yang diabaikan git ke worktrees
+
+Git worktrees adalah checkout segar, jadi mereka tidak menyertakan file yang tidak dilacak seperti `.env` atau `.env.local` dari repositori utama Anda. Untuk secara otomatis menyalin file ini ketika Claude membuat worktree, tambahkan file `.worktreeinclude` ke root proyek Anda.
+
+File menggunakan sintaks `.gitignore` untuk mencantumkan file mana yang akan disalin. Hanya file yang cocok dengan pola dan juga diabaikan yang disalin, jadi file yang dilacak tidak pernah diduplikasi.
+
+```text .worktreeinclude theme={null}
+.env
+.env.local
+config/secrets.json
+```
+
+Ini berlaku untuk worktrees yang dibuat dengan `--worktree`, worktrees subagent, dan sesi paralel di [aplikasi desktop](/id/desktop#work-in-parallel-with-sessions).
 
 ### Kelola worktrees secara manual
 
@@ -712,7 +738,7 @@ Pelajari lebih lanjut di [dokumentasi Git worktree resmi](https://git-scm.com/do
 
 ### Kontrol versi non-git
 
-Isolasi worktree bekerja dengan git secara default. Untuk sistem kontrol versi lain seperti SVN, Perforce, atau Mercurial, konfigurasikan [hook WorktreeCreate dan WorktreeRemove](/id/hooks#worktreecreate) untuk menyediakan logika pembuatan dan pembersihan worktree kustom. Ketika dikonfigurasi, hook ini menggantikan perilaku git default saat Anda menggunakan `--worktree`.
+Isolasi worktree bekerja dengan git secara default. Untuk sistem kontrol versi lain seperti SVN, Perforce, atau Mercurial, konfigurasikan [hook WorktreeCreate dan WorktreeRemove](/id/hooks#worktreecreate) untuk menyediakan logika pembuatan dan pembersihan worktree kustom. Ketika dikonfigurasi, hook ini menggantikan perilaku git default saat Anda menggunakan `--worktree`, jadi [`.worktreeinclude`](#copy-gitignored-files-to-worktrees) tidak diproses. Salin file konfigurasi lokal apa pun di dalam skrip hook Anda sebagai gantinya.
 
 Untuk koordinasi otomatis sesi paralel dengan tugas bersama dan pesan, lihat [agent teams](/id/agent-teams).
 
@@ -853,7 +879,7 @@ cat build-error.txt | claude -p 'concisely explain the root cause of this build 
 
   * Gunakan pipe untuk mengintegrasikan Claude ke dalam skrip shell yang ada
   * Gabungkan dengan alat Unix lain untuk alur kerja yang kuat
-  * Pertimbangkan menggunakan --output-format untuk output terstruktur
+  * Pertimbangkan menggunakan `--output-format` untuk output terstruktur
 </Tip>
 
 ### Kontrol format output
@@ -896,6 +922,25 @@ Misalkan Anda memerlukan output Claude dalam format tertentu, terutama saat meng
 
 ***
 
+## Jalankan Claude pada jadwal
+
+Misalkan Anda ingin Claude menangani tugas secara otomatis secara berulang, seperti meninjau PR terbuka setiap pagi, mengaudit dependensi mingguan, atau memeriksa kegagalan CI semalam.
+
+Pilih opsi penjadwalan berdasarkan tempat Anda ingin tugas berjalan:
+
+| Opsi                                                            | Tempat berjalan                       | Terbaik untuk                                                                                                                     |
+| :-------------------------------------------------------------- | :------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------- |
+| [Cloud scheduled tasks](/id/web-scheduled-tasks)                | Infrastruktur yang dikelola Anthropic | Tugas yang harus berjalan bahkan ketika komputer Anda mati. Konfigurasikan di [claude.ai/code](https://claude.ai/code).           |
+| [Desktop scheduled tasks](/id/desktop#schedule-recurring-tasks) | Mesin Anda, melalui aplikasi desktop  | Tugas yang memerlukan akses langsung ke file lokal, alat, atau perubahan yang tidak dilakukan.                                    |
+| [GitHub Actions](/id/github-actions)                            | Pipeline CI Anda                      | Tugas yang terikat pada event repo seperti PR yang dibuka, atau jadwal cron yang harus hidup bersama konfigurasi alur kerja Anda. |
+| [`/loop`](/id/scheduled-tasks)                                  | Sesi CLI saat ini                     | Polling cepat saat sesi terbuka. Tugas dibatalkan saat Anda keluar.                                                               |
+
+<Tip>
+  Saat menulis prompt untuk tugas terjadwal, jelaskan apa yang terlihat seperti kesuksesan dan apa yang harus dilakukan dengan hasil. Tugas berjalan secara otonom, jadi tidak dapat mengajukan pertanyaan klarifikasi. Misalnya: "Review open PRs labeled `needs-review`, leave inline comments on any issues, and post a summary in the `#eng-reviews` Slack channel."
+</Tip>
+
+***
+
 ## Tanyakan Claude tentang kemampuannya
 
 Claude memiliki akses bawaan ke dokumentasinya dan dapat menjawab pertanyaan tentang fitur dan keterbatasannya sendiri.
@@ -927,7 +972,7 @@ what are the limitations of Claude Code?
 ```
 
 <Note>
-  Claude memberikan jawaban berbasis dokumentasi untuk pertanyaan-pertanyaan ini. Untuk contoh yang dapat dieksekusi dan demonstrasi langsung, lihat bagian alur kerja spesifik di atas.
+  Claude memberikan jawaban berbasis dokumentasi untuk pertanyaan-pertanyaan ini. Untuk demonstrasi langsung, jalankan `/powerup` untuk pelajaran interaktif dengan demo animasi, atau lihat bagian alur kerja spesifik di atas.
 </Note>
 
 <Tip>

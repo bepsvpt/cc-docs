@@ -11,11 +11,11 @@
 <Note>
   Tastaturkürzel können je nach Plattform und Terminal variieren. Drücken Sie `?`, um die verfügbaren Kürzel für Ihre Umgebung anzuzeigen.
 
-  **macOS-Benutzer**: Option/Alt-Tastenkürzel (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`) erfordern die Konfiguration von Option als Meta in Ihrem Terminal:
+  **macOS-Benutzer**: Option/Alt-Tastenkürzel (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`, `Alt+T`) erfordern die Konfiguration von Option als Meta in Ihrem Terminal:
 
   * **iTerm2**: Einstellungen → Profile → Keys → Left/Right Option key auf „Esc+" setzen
   * **Terminal.app**: Einstellungen → Profile → Keyboard → „Use Option as Meta Key" aktivieren
-  * **VS Code**: Einstellungen → Profile → Keys → Left/Right Option key auf „Esc+" setzen
+  * **VS Code**: `"terminal.integrated.macOptionIsMeta": true` in VS Code-Einstellungen setzen
 
   Weitere Informationen finden Sie unter [Terminal-Konfiguration](/de/terminal-config).
 </Note>
@@ -28,7 +28,7 @@
 | `Ctrl+X Ctrl+K`                                       | Alle Hintergrund-Agenten beenden. Zweimal innerhalb von 3 Sekunden drücken, um zu bestätigen | Steuerung von Hintergrund-Agenten                                                                                                                                                       |
 | `Ctrl+D`                                              | Claude Code-Sitzung beenden                                                                  | EOF-Signal                                                                                                                                                                              |
 | `Ctrl+G` oder `Ctrl+X Ctrl+E`                         | Im Standard-Texteditor öffnen                                                                | Bearbeiten Sie Ihren Prompt oder benutzerdefinierte Antwort in Ihrem Standard-Texteditor. `Ctrl+X Ctrl+E` ist die readline-native Bindung                                               |
-| `Ctrl+L`                                              | Terminal-Bildschirm löschen                                                                  | Behält Gesprächsverlauf bei                                                                                                                                                             |
+| `Ctrl+L`                                              | Bildschirm neu zeichnen                                                                      | Zeichnet die aktuelle Benutzeroberfläche neu, ohne den Gesprächsverlauf zu löschen                                                                                                      |
 | `Ctrl+O`                                              | Ausführliche Ausgabe umschalten                                                              | Zeigt detaillierte Tool-Nutzung und Ausführung. Erweitert auch MCP-Lese- und Suchaufrufe, die standardmäßig zu einer einzelnen Zeile wie „Queried slack" zusammengefasst werden         |
 | `Ctrl+R`                                              | Reverse-Suche im Befehlsverlauf                                                              | Durchsuchen Sie vorherige Befehle interaktiv                                                                                                                                            |
 | `Ctrl+V` oder `Cmd+V` (iTerm2) oder `Alt+V` (Windows) | Bild aus Zwischenablage einfügen                                                             | Fügt einen `[Image #N]`-Chip an der Cursor-Position ein, sodass Sie ihn positionell in Ihrem Prompt referenzieren können                                                                |
@@ -39,29 +39,25 @@
 | `Esc` + `Esc`                                         | Zurückspulen oder zusammenfassen                                                             | Stellen Sie Code und/oder Gespräch auf einen vorherigen Punkt wieder her, oder fassen Sie ab einer ausgewählten Nachricht zusammen                                                      |
 | `Shift+Tab` oder `Alt+M` (einige Konfigurationen)     | Berechtigungsmodi umschalten                                                                 | Wechseln Sie zwischen `default`, `acceptEdits`, `plan` und allen Modi, die Sie aktiviert haben, z. B. `auto` oder `bypassPermissions`. Siehe [Berechtigungsmodi](/de/permission-modes). |
 | `Option+P` (macOS) oder `Alt+P` (Windows/Linux)       | Modell wechseln                                                                              | Wechseln Sie Modelle, ohne Ihren Prompt zu löschen                                                                                                                                      |
-| `Option+T` (macOS) oder `Alt+T` (Windows/Linux)       | Extended Thinking umschalten                                                                 | Aktivieren oder deaktivieren Sie den Extended Thinking-Modus. Führen Sie zuerst `/terminal-setup` aus, um dieses Kürzel zu aktivieren                                                   |
+| `Option+T` (macOS) oder `Alt+T` (Windows/Linux)       | Extended Thinking umschalten                                                                 | Aktivieren oder deaktivieren Sie den Extended Thinking-Modus. Konfigurieren Sie auf macOS Ihr Terminal, um Option als Meta zu senden, damit dieses Kürzel funktioniert                  |
 | `Option+O` (macOS) oder `Alt+O` (Windows/Linux)       | Schnellmodus umschalten                                                                      | Aktivieren oder deaktivieren Sie den [Schnellmodus](/de/fast-mode)                                                                                                                      |
 
 ### Textbearbeitung
 
-| Kürzel                  | Beschreibung                           | Kontext                                                                                                                         |
-| :---------------------- | :------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
-| `Ctrl+K`                | Bis zum Ende der Zeile löschen         | Speichert gelöschten Text zum Einfügen                                                                                          |
-| `Ctrl+U`                | Ganze Zeile löschen                    | Speichert gelöschten Text zum Einfügen                                                                                          |
-| `Ctrl+Y`                | Gelöschten Text einfügen               | Fügen Sie Text ein, der mit `Ctrl+K` oder `Ctrl+U` gelöscht wurde                                                               |
-| `Alt+Y` (nach `Ctrl+Y`) | Einfügeverlauf durchlaufen             | Nach dem Einfügen können Sie durch zuvor gelöschten Text navigieren. Erfordert [Option als Meta](#keyboard-shortcuts) auf macOS |
-| `Alt+B`                 | Cursor um ein Wort nach hinten bewegen | Wort-Navigation. Erfordert [Option als Meta](#keyboard-shortcuts) auf macOS                                                     |
-| `Alt+F`                 | Cursor um ein Wort nach vorne bewegen  | Wort-Navigation. Erfordert [Option als Meta](#keyboard-shortcuts) auf macOS                                                     |
+| Kürzel                  | Beschreibung                            | Kontext                                                                                                                         |
+| :---------------------- | :-------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
+| `Ctrl+K`                | Bis zum Ende der Zeile löschen          | Speichert gelöschten Text zum Einfügen                                                                                          |
+| `Ctrl+U`                | Vom Cursor bis zum Zeilenanfang löschen | Speichert gelöschten Text zum Einfügen. Wiederholen Sie, um über Zeilen in mehrzeiliger Eingabe zu löschen                      |
+| `Ctrl+Y`                | Gelöschten Text einfügen                | Fügen Sie Text ein, der mit `Ctrl+K` oder `Ctrl+U` gelöscht wurde                                                               |
+| `Alt+Y` (nach `Ctrl+Y`) | Einfügeverlauf durchlaufen              | Nach dem Einfügen können Sie durch zuvor gelöschten Text navigieren. Erfordert [Option als Meta](#keyboard-shortcuts) auf macOS |
+| `Alt+B`                 | Cursor um ein Wort nach hinten bewegen  | Wort-Navigation. Erfordert [Option als Meta](#keyboard-shortcuts) auf macOS                                                     |
+| `Alt+F`                 | Cursor um ein Wort nach vorne bewegen   | Wort-Navigation. Erfordert [Option als Meta](#keyboard-shortcuts) auf macOS                                                     |
 
 ### Design und Anzeige
 
 | Kürzel   | Beschreibung                                   | Kontext                                                                                                  |
 | :------- | :--------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
 | `Ctrl+T` | Syntax-Hervorhebung für Code-Blöcke umschalten | Funktioniert nur im `/theme`-Auswahlmenü. Steuert, ob Code in Claudes Antworten Syntax-Färbung verwendet |
-
-<Note>
-  Syntax-Hervorhebung ist nur in der nativen Version von Claude Code verfügbar.
-</Note>
 
 ### Mehrzeilige Eingabe
 
@@ -89,10 +85,10 @@
 
 Wenn der Transkript-Viewer offen ist (umgeschaltet mit `Ctrl+O`), sind diese Kürzel verfügbar. `Ctrl+E` kann über [`transcript:toggleShowAll`](/de/keybindings) neu zugewiesen werden.
 
-| Kürzel               | Beschreibung                                                                                                                                                |
-| :------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Ctrl+E`             | Alle Inhalte anzeigen umschalten                                                                                                                            |
-| `q`, `Ctrl+C`, `Esc` | Transkript-Ansicht beenden. `Ctrl+C` und `Esc` können über [`transcript:exit`](/de/keybindings) neu zugewiesen werden; `q` kann nicht neu zugewiesen werden |
+| Kürzel               | Beschreibung                                                                                                 |
+| :------------------- | :----------------------------------------------------------------------------------------------------------- |
+| `Ctrl+E`             | Alle Inhalte anzeigen umschalten                                                                             |
+| `q`, `Ctrl+C`, `Esc` | Transkript-Ansicht beenden. Alle drei können über [`transcript:exit`](/de/keybindings) neu zugewiesen werden |
 
 ### Spracheingabe
 
@@ -253,6 +249,7 @@ Bash-Modus:
 * Erfordert nicht, dass Claude den Befehl interpretiert oder genehmigt
 * Unterstützt verlaufsbasierte Autovervollständigung: Geben Sie einen Teilbefehl ein und drücken Sie **Tab**, um aus vorherigen `!`-Befehlen im aktuellen Projekt zu vervollständigen
 * Beenden Sie mit `Escape`, `Backspace` oder `Ctrl+U` bei einer leeren Eingabeaufforderung
+* Das Einfügen von Text, der mit `!` beginnt, in eine leere Eingabeaufforderung aktiviert automatisch den Bash-Modus und entspricht dem eingegebenen `!`-Verhalten
 
 Dies ist nützlich für schnelle Shell-Operationen bei Beibehaltung des Gesprächskontexts.
 
@@ -262,7 +259,7 @@ Wenn Sie eine Sitzung zum ersten Mal öffnen, wird ein ausgegrautes Beispiel-Bef
 
 Nachdem Claude antwortet, werden weiterhin Vorschläge basierend auf Ihrem Gesprächsverlauf angezeigt, z. B. ein Folgenschritt aus einer mehrteiligen Anfrage oder eine natürliche Fortsetzung Ihres Workflows.
 
-* Drücken Sie **Tab**, um den Vorschlag zu akzeptieren, oder drücken Sie **Enter**, um zu akzeptieren und einzureichen
+* Drücken Sie **Tab** oder **Rechts-Pfeil**, um den Vorschlag zu akzeptieren, oder drücken Sie **Enter**, um zu akzeptieren und einzureichen
 * Beginnen Sie zu tippen, um ihn zu verwerfen
 
 Der Vorschlag wird als Hintergrund-Anfrage ausgeführt, die den Prompt-Cache des übergeordneten Gesprächs wiederverwenden, sodass die zusätzlichen Kosten minimal sind. Claude Code überspringt die Vorschlagsgenerierung, wenn der Cache kalt ist, um unnötige Kosten zu vermeiden.

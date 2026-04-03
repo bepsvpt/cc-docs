@@ -69,7 +69,7 @@ Cuando ejecuta `claude` en un directorio, Claude Code obtiene acceso a:
 * **Su terminal.** Cualquier comando que pueda ejecutar: herramientas de compilación, git, gestores de paquetes, utilidades del sistema, scripts. Si puede hacerlo desde la línea de comandos, Claude también puede.
 * **Su estado de git.** Rama actual, cambios sin confirmar e historial de confirmaciones recientes.
 * **Su [CLAUDE.md](/es/memory).** Un archivo markdown donde almacena instrucciones específicas del proyecto, convenciones y contexto que Claude debe conocer en cada sesión.
-* **[Auto memory](/es/memory#auto-memory).** Aprendizajes que Claude guarda automáticamente mientras trabaja, como patrones de proyecto y sus preferencias. Las primeras 200 líneas de MEMORY.md se cargan al inicio de cada sesión.
+* **[Auto memory](/es/memory#auto-memory).** Aprendizajes que Claude guarda automáticamente mientras trabaja, como patrones de proyecto y sus preferencias. Las primeras 200 líneas o 25KB de MEMORY.md, lo que sea menor, se cargan al inicio de cada sesión.
 * **Extensiones que configure.** [Servidores MCP](/es/mcp) para servicios externos, [skills](/es/skills) para flujos de trabajo, [subagents](/es/sub-agents) para trabajo delegado y [Claude en Chrome](/es/chrome) para interacción del navegador.
 
 Debido a que Claude ve todo su proyecto, puede trabajar en él. Cuando le pide a Claude que "arregle el error de autenticación", busca archivos relevantes, lee múltiples archivos para entender el contexto, realiza ediciones coordinadas en ellos, ejecuta pruebas para verificar la corrección y confirma los cambios si lo solicita. Esto es diferente de los asistentes de código en línea que solo ven el archivo actual.
@@ -90,7 +90,7 @@ Claude Code se ejecuta en tres entornos, cada uno con diferentes compensaciones 
 
 ### Interfaces
 
-Puede acceder a Claude Code a través de la terminal, la [aplicación de escritorio](/es/desktop), [extensiones de IDE](/es/ide-integrations), [claude.ai/code](https://claude.ai/code), [Control remoto](/es/remote-control), [Slack](/es/slack) y [canalizaciones CI/CD](/es/github-actions). La interfaz determina cómo ve e interactúa con Claude, pero el bucle agentico subyacente es idéntico. Consulte [Usar Claude Code en todas partes](/es/overview#use-claude-code-everywhere) para la lista completa.
+Puede acceder a Claude Code a través de la terminal, la [aplicación de escritorio](/es/desktop), [extensiones de IDE](/es/vs-code), [claude.ai/code](https://claude.ai/code), [Control remoto](/es/remote-control), [Slack](/es/slack) y [canalizaciones CI/CD](/es/github-actions). La interfaz determina cómo ve e interactúa con Claude, pero el bucle agentico subyacente es idéntico. Consulte [Usar Claude Code en todas partes](/es/overview#use-claude-code-everywhere) para la lista completa.
 
 ## Trabajar con sesiones
 
@@ -126,13 +126,15 @@ Esto crea un nuevo ID de sesión mientras preserva el historial de conversación
 
 La ventana de contexto de Claude contiene el historial de su conversación, contenidos de archivos, salidas de comandos, [CLAUDE.md](/es/memory), [auto memory](/es/memory#auto-memory), skills cargadas e instrucciones del sistema. A medida que trabaja, el contexto se llena. Claude se compacta automáticamente, pero las instrucciones del principio de la conversación pueden perderse. Coloque reglas persistentes en CLAUDE.md y ejecute `/context` para ver qué está usando espacio.
 
+Para un recorrido interactivo de qué se carga y cuándo, consulte [Explorar la ventana de contexto](/es/context-window).
+
 #### Cuando el contexto se llena
 
 Claude Code gestiona el contexto automáticamente a medida que se acerca al límite. Primero borra salidas de herramientas más antiguas, luego resume la conversación si es necesario. Sus solicitudes y fragmentos de código clave se preservan; las instrucciones detalladas del principio de la conversación pueden perderse. Coloque reglas persistentes en CLAUDE.md en lugar de depender del historial de conversación.
 
 Para controlar qué se preserva durante la compactación, agregue una sección "Compact Instructions" a CLAUDE.md o ejecute `/compact` con un enfoque (como `/compact focus on the API changes`).
 
-Ejecute `/context` para ver qué está usando espacio. Los servidores MCP agregan definiciones de herramientas a cada solicitud, por lo que algunos servidores pueden consumir contexto significativo antes de que comience a trabajar. Ejecute `/mcp` para verificar costos por servidor.
+Ejecute `/context` para ver qué está usando espacio. Las definiciones de herramientas MCP se difieren por defecto y se cargan bajo demanda a través de [búsqueda de herramientas](/es/mcp#scale-with-mcp-tool-search), por lo que solo los nombres de herramientas consumen contexto hasta que Claude use una herramienta específica. Ejecute `/mcp` para verificar costos por servidor.
 
 #### Gestionar contexto con skills y subagents
 

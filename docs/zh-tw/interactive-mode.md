@@ -11,11 +11,11 @@
 <Note>
   鍵盤快捷鍵可能因平台和終端而異。按 `?` 查看您環境中可用的快捷鍵。
 
-  **macOS 使用者**：Option/Alt 鍵快捷鍵（`Alt+B`、`Alt+F`、`Alt+Y`、`Alt+M`、`Alt+P`）需要在終端中將 Option 配置為 Meta：
+  **macOS 使用者**：Option/Alt 鍵快捷鍵（`Alt+B`、`Alt+F`、`Alt+Y`、`Alt+M`、`Alt+P`、`Alt+T`）需要在終端中將 Option 配置為 Meta：
 
   * **iTerm2**：設定 → Profiles → Keys → 將 Left/Right Option 鍵設定為「Esc+」
   * **Terminal.app**：設定 → Profiles → Keyboard → 勾選「Use Option as Meta Key」
-  * **VS Code**：設定 → Profiles → Keys → 將 Left/Right Option 鍵設定為「Esc+」
+  * **VS Code**：在 VS Code 設定中設定 `"terminal.integrated.macOptionIsMeta": true`
 
   詳見[終端配置](/zh-TW/terminal-config)。
 </Note>
@@ -28,7 +28,7 @@
 | `Ctrl+X Ctrl+K`                              | 終止所有背景代理。在 3 秒內按兩次以確認 | 背景代理控制                                                                                                             |
 | `Ctrl+D`                                     | 退出 Claude Code 會話     | EOF 信號                                                                                                             |
 | `Ctrl+G` 或 `Ctrl+X Ctrl+E`                   | 在預設文字編輯器中開啟           | 在預設文字編輯器中編輯您的提示或自訂回應。`Ctrl+X Ctrl+E` 是 readline 原生繫結                                                               |
-| `Ctrl+L`                                     | 清除終端螢幕                | 保留對話歷史                                                                                                             |
+| `Ctrl+L`                                     | 重繪螢幕                  | 重新繪製目前的 UI，不清除對話歷史                                                                                                 |
 | `Ctrl+O`                                     | 切換詳細輸出                | 顯示詳細的工具使用和執行情況。也會展開 MCP 讀取和搜尋呼叫，預設情況下會摺疊為單行，例如「Queried slack」                                                      |
 | `Ctrl+R`                                     | 反向搜尋命令歷史              | 以互動方式搜尋先前的命令                                                                                                       |
 | `Ctrl+V` 或 `Cmd+V`（iTerm2）或 `Alt+V`（Windows） | 從剪貼簿貼上影像              | 在游標處插入 `[Image #N]` 晶片，以便您可以在提示中按位置參考它                                                                             |
@@ -39,7 +39,7 @@
 | `Esc` + `Esc`                                | 回溯或摘要                 | 將程式碼和/或對話恢復到先前的點，或從選定的訊息進行摘要                                                                                       |
 | `Shift+Tab` 或 `Alt+M`（某些配置）                  | 循環權限模式                | 在 `default`、`acceptEdits`、`plan` 和您啟用的任何模式（例如 `auto` 或 `bypassPermissions`）之間循環。詳見[權限模式](/zh-TW/permission-modes)。 |
 | `Option+P`（macOS）或 `Alt+P`（Windows/Linux）    | 切換模型                  | 在不清除提示的情況下切換模型                                                                                                     |
-| `Option+T`（macOS）或 `Alt+T`（Windows/Linux）    | 切換擴展思考                | 啟用或停用擴展思考模式。首先執行 `/terminal-setup` 以啟用此快捷鍵                                                                         |
+| `Option+T`（macOS）或 `Alt+T`（Windows/Linux）    | 切換擴展思考                | 啟用或停用擴展思考模式。在 macOS 上，配置您的終端以傳送 Option 作為 Meta，此快捷鍵才能運作                                                            |
 | `Option+O`（macOS）或 `Alt+O`（Windows/Linux）    | 切換快速模式                | 啟用或停用[快速模式](/zh-TW/fast-mode)                                                                                      |
 
 ### 文字編輯
@@ -47,7 +47,7 @@
 | 快捷鍵                    | 說明          | 上下文                                                                 |
 | :--------------------- | :---------- | :------------------------------------------------------------------ |
 | `Ctrl+K`               | 刪除到行尾       | 儲存已刪除的文字以供貼上                                                        |
-| `Ctrl+U`               | 刪除整行        | 儲存已刪除的文字以供貼上                                                        |
+| `Ctrl+U`               | 從游標刪除到行首    | 儲存已刪除的文字以供貼上。重複以清除多行輸入中的行                                           |
 | `Ctrl+Y`               | 貼上已刪除的文字    | 貼上使用 `Ctrl+K` 或 `Ctrl+U` 刪除的文字                                      |
 | `Alt+Y`（在 `Ctrl+Y` 之後） | 循環貼上歷史      | 貼上後，循環瀏覽先前刪除的文字。在 macOS 上需要[將 Option 設定為 Meta](#keyboard-shortcuts) |
 | `Alt+B`                | 將游標向後移動一個單字 | 單字導航。在 macOS 上需要[將 Option 設定為 Meta](#keyboard-shortcuts)            |
@@ -58,10 +58,6 @@
 | 快捷鍵      | 說明             | 上下文                                            |
 | :------- | :------------- | :--------------------------------------------- |
 | `Ctrl+T` | 切換程式碼區塊的語法醒目提示 | 僅在 `/theme` 選擇器選單內有效。控制 Claude 回應中的程式碼是否使用語法著色 |
-
-<Note>
-  語法醒目提示僅在 Claude Code 的原生版本中可用。
-</Note>
 
 ### 多行輸入
 
@@ -89,10 +85,10 @@
 
 當文字記錄檢視器開啟時（使用 `Ctrl+O` 切換），這些快捷鍵可用。`Ctrl+E` 可以透過 [`transcript:toggleShowAll`](/zh-TW/keybindings) 重新繫結。
 
-| 快捷鍵                | 說明                                                                                     |
-| :----------------- | :------------------------------------------------------------------------------------- |
-| `Ctrl+E`           | 切換顯示所有內容                                                                               |
-| `q`、`Ctrl+C`、`Esc` | 退出文字記錄檢視。`Ctrl+C` 和 `Esc` 可以透過 [`transcript:exit`](/zh-TW/keybindings) 重新繫結；`q` 不可重新繫結 |
+| 快捷鍵                | 說明                                                              |
+| :----------------- | :-------------------------------------------------------------- |
+| `Ctrl+E`           | 切換顯示所有內容                                                        |
+| `q`、`Ctrl+C`、`Esc` | 退出文字記錄檢視。所有三個都可以透過 [`transcript:exit`](/zh-TW/keybindings) 重新繫結 |
 
 ### 語音輸入
 
@@ -253,6 +249,7 @@ Bash 模式：
 * 不需要 Claude 解釋或批准命令
 * 支援基於歷史的自動完成：輸入部分命令並按 **Tab** 以從目前專案中的先前 `!` 命令完成
 * 使用 `Escape`、`Backspace` 或在空提示上使用 `Ctrl+U` 退出
+* 將以 `!` 開頭的貼上文字貼到空提示中會自動進入 bash 模式，符合輸入的 `!` 行為
 
 這對於快速 shell 操作同時維護對話上下文很有用。
 
@@ -262,7 +259,7 @@ Bash 模式：
 
 Claude 回應後，建議會根據您的對話歷史繼續出現，例如多部分請求的後續步驟或工作流程的自然延續。
 
-* 按 **Tab** 以接受建議，或按 **Enter** 以接受並提交
+* 按 **Tab** 或 **Right arrow** 以接受建議，或按 **Enter** 以接受並提交
 * 開始輸入以關閉它
 
 建議作為背景請求執行，該請求重複使用父對話的提示快取，因此額外成本最少。當快取冷時，Claude Code 會跳過建議生成以避免不必要的成本。

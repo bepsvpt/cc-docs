@@ -586,11 +586,11 @@ Claude Code Action v1 使用统一参数简化了配置：
                   github_token: ${{ steps.app-token.outputs.token }}
                   trigger_phrase: "@claude"
                   use_vertex: "true"
-                  claude_args: '--model claude-sonnet-4@20250514 --max-turns 10'
+                  claude_args: '--model claude-sonnet-4-5@20250929 --max-turns 10'
                 env:
                   ANTHROPIC_VERTEX_PROJECT_ID: ${{ steps.auth.outputs.project_id }}
                   CLOUD_ML_REGION: us-east5
-                  VERTEX_REGION_CLAUDE_3_7_SONNET: us-east5
+                  VERTEX_REGION_CLAUDE_4_5_SONNET: us-east5
         ```
 
         <Tip>
@@ -647,7 +647,7 @@ claude_args: "--max-turns 5 --model claude-sonnet-4-6 --mcp-config /path/to/conf
 * `--max-turns`：最大对话轮数（默认：10）
 * `--model`：要使用的模型（例如，`claude-sonnet-4-6`）
 * `--mcp-config`：MCP 配置的路径
-* `--allowed-tools`：允许的工具的逗号分隔列表
+* `--allowedTools`：允许的工具的逗号分隔列表。`--allowed-tools` 别名也可以使用。
 * `--debug`：启用调试输出
 
 ### 替代集成方法

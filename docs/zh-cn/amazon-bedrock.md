@@ -116,6 +116,9 @@ export AWS_REGION=us-east-1  # 或您首选的区域
 
 # 可选：覆盖小型/快速模型 (Haiku) 的区域
 export ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION=us-west-2
+
+# 可选：覆盖 Bedrock 端点 URL 以用于自定义端点或网关
+# export ANTHROPIC_BEDROCK_BASE_URL=https://bedrock-runtime.us-east-1.amazonaws.com
 ```
 
 为 Claude Code 启用 Bedrock 时，请记住以下几点：
@@ -142,17 +145,17 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='us.anthropic.claude-haiku-4-5-20251001-v1:
 
 当未设置固定变量时，Claude Code 使用这些默认模型：
 
-| 模型类型    | 默认值                                           |
-| :------ | :-------------------------------------------- |
-| 主模型     | `global.anthropic.claude-sonnet-4-6`          |
-| 小型/快速模型 | `us.anthropic.claude-haiku-4-5-20251001-v1:0` |
+| 模型类型    | 默认值                                            |
+| :------ | :--------------------------------------------- |
+| 主模型     | `us.anthropic.claude-sonnet-4-5-20250929-v1:0` |
+| 小型/快速模型 | `us.anthropic.claude-haiku-4-5-20251001-v1:0`  |
 
 要进一步自定义模型，请使用以下方法之一：
 
 ```bash  theme={null}
 # 使用推理配置文件 ID
 export ANTHROPIC_MODEL='global.anthropic.claude-sonnet-4-6'
-export ANTHROPIC_SMALL_FAST_MODEL='us.anthropic.claude-haiku-4-5-20251001-v1:0'
+export ANTHROPIC_DEFAULT_HAIKU_MODEL='us.anthropic.claude-haiku-4-5-20251001-v1:0'
 
 # 使用应用推理配置文件 ARN
 export ANTHROPIC_MODEL='arn:aws:bedrock:us-east-2:your-account-id:application-inference-profile/your-model-id'
@@ -229,6 +232,12 @@ export DISABLE_PROMPT_CACHING=1
   为 Claude Code 创建一个专用的 AWS 账户，以简化成本跟踪和访问控制。
 </Note>
 
+## 1M 令牌上下文窗口
+
+Claude Opus 4.6 和 Sonnet 4.6 在 Amazon Bedrock 上支持 [1M 令牌上下文窗口](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window)。当您选择 1M 模型变体时，Claude Code 会自动启用扩展上下文窗口。
+
+要为您固定的模型启用 1M 上下文窗口，请在模型 ID 后附加 `[1m]`。请参阅[为第三方部署固定模型](/zh-CN/model-config#pin-models-for-third-party-deployments)了解详情。
+
 ## AWS Guardrails
 
 [Amazon Bedrock Guardrails](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html) 让您为 Claude Code 实现内容过滤。在 [Amazon Bedrock 控制台](https://console.aws.amazon.com/bedrock/)中创建 Guardrail，发布一个版本，然后将 Guardrail 标头添加到您的[设置文件](/zh-CN/settings)。如果您使用跨区域推理配置文件，请在您的 Guardrail 上启用跨区域推理。
@@ -244,6 +253,14 @@ export DISABLE_PROMPT_CACHING=1
 ```
 
 ## 故障排除
+
+### 使用 SSO 和企业代理的身份验证循环
+
+如果在使用 AWS SSO 时浏览器标签页反复生成，请从您的[设置文件](/zh-CN/settings)中删除 `awsAuthRefresh` 设置。这可能发生在企业 VPN 或 TLS 检查代理中断 SSO 浏览器流时。Claude Code 将中断的连接视为身份验证失败，重新运行 `awsAuthRefresh`，并无限循环。
+
+如果您的网络环境干扰自动基于浏览器的 SSO 流，请在启动 Claude Code 之前手动使用 `aws sso login`，而不是依赖 `awsAuthRefresh`。
+
+### 区域问题
 
 如果您遇到区域问题：
 

@@ -31,14 +31,19 @@ codebase e su come Claude opera:
 
 Gli output styles modificano direttamente il prompt di sistema di Claude Code.
 
-* Tutti gli output styles escludono istruzioni per un output efficiente (come
-  rispondere in modo conciso).
 * Gli output styles personalizzati escludono istruzioni per la codifica (come la verifica del codice
   con i test), a meno che `keep-coding-instructions` non sia true.
 * Tutti gli output styles hanno le loro istruzioni personalizzate aggiunte alla fine del
   prompt di sistema.
 * Tutti gli output styles attivano promemoria affinché Claude aderisca alle istruzioni
   dell'output style durante la conversazione.
+
+L'utilizzo dei token dipende dallo stile. L'aggiunta di istruzioni al prompt di sistema
+aumenta i token di input, anche se il prompt caching riduce questo costo dopo la prima
+richiesta in una sessione. Gli output styles integrati Explanatory e Learning producono
+risposte più lunghe rispetto a Default per progettazione, il che aumenta i token di output. Per
+gli stili personalizzati, l'utilizzo dei token di output dipende da ciò che le vostre istruzioni dicono a Claude
+di produrre.
 
 ## Cambiare il vostro output style
 

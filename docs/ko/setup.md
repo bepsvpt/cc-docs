@@ -30,7 +30,7 @@ Claude Code는 다음 플랫폼 및 구성에서 실행됩니다:
 ## Claude Code 설치
 
 <Tip>
-  그래픽 인터페이스를 선호하시나요? [Desktop 앱](/ko/desktop-quickstart)을 사용하면 터미널 없이 Claude Code를 사용할 수 있습니다. [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) 또는 [Windows](https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs)용으로 다운로드하세요.
+  그래픽 인터페이스를 선호하시나요? [Desktop 앱](/ko/desktop-quickstart)을 사용하면 터미널 없이 Claude Code를 사용할 수 있습니다. [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) 또는 [Windows](https://claude.com/download?utm_source=claude_code\&utm_medium=docs)용으로 다운로드하세요.
 
   터미널이 처음이신가요? 단계별 지침은 [터미널 가이드](/ko/terminal-guide)를 참조하세요.
 </Tip>
@@ -113,6 +113,8 @@ Claude Code가 Git Bash 설치를 찾을 수 없으면 [settings.json 파일](/k
 }
 ```
 
+Claude Code는 또한 Windows에서 PowerShell을 기본적으로 실행할 수 있으며 옵트인 미리보기로 제공됩니다. 설정 및 제한사항은 [PowerShell 도구](/ko/tools-reference#powershell-tool)를 참조하세요.
+
 **옵션 2: WSL**
 
 WSL 1과 WSL 2 모두 지원됩니다. WSL 2는 향상된 보안을 위해 [샌드박싱](/ko/sandboxing)을 지원합니다. WSL 1은 샌드박싱을 지원하지 않습니다.
@@ -153,7 +155,7 @@ claude doctor
 
 ## 인증
 
-Claude Code는 Pro, Max, Teams, Enterprise 또는 Console 계정이 필요합니다. 무료 Claude.ai 플랜에는 Claude Code 액세스가 포함되지 않습니다. [Amazon Bedrock](/ko/amazon-bedrock), [Google Vertex AI](/ko/google-vertex-ai) 또는 [Microsoft Foundry](/ko/microsoft-foundry)와 같은 타사 API 제공자와 함께 Claude Code를 사용할 수도 있습니다.
+Claude Code는 Pro, Max, Team, Enterprise 또는 Console 계정이 필요합니다. 무료 Claude.ai 플랜에는 Claude Code 액세스가 포함되지 않습니다. [Amazon Bedrock](/ko/amazon-bedrock), [Google Vertex AI](/ko/google-vertex-ai) 또는 [Microsoft Foundry](/ko/microsoft-foundry)와 같은 타사 API 제공자와 함께 Claude Code를 사용할 수도 있습니다.
 
 설치 후 `claude`를 실행하고 브라우저 프롬프트를 따라 로그인하세요. 모든 계정 유형 및 팀 설정 옵션은 [인증](/ko/authentication)을 참조하세요.
 
@@ -267,19 +269,19 @@ claude update
 <Tabs>
   <Tab title="macOS, Linux, WSL">
     ```bash  theme={null}
-    curl -fsSL https://claude.ai/install.sh | bash -s 1.0.58
+    curl -fsSL https://claude.ai/install.sh | bash -s 2.1.89
     ```
   </Tab>
 
   <Tab title="Windows PowerShell">
     ```powershell  theme={null}
-    & ([scriptblock]::Create((irm https://claude.ai/install.ps1))) 1.0.58
+    & ([scriptblock]::Create((irm https://claude.ai/install.ps1))) 2.1.89
     ```
   </Tab>
 
   <Tab title="Windows CMD">
     ```batch  theme={null}
-    curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd 1.0.58 && del install.cmd
+    curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd 2.1.89 && del install.cmd
     ```
   </Tab>
 </Tabs>
@@ -316,12 +318,92 @@ npm install -g @anthropic-ai/claude-code
 
 ### 바이너리 무결성 및 코드 서명
 
-SHA256 체크섬 및 코드 서명을 사용하여 Claude Code 바이너리의 무결성을 확인할 수 있습니다.
+각 릴리스는 모든 플랫폼 바이너리에 대한 SHA256 체크섬을 포함하는 `manifest.json`을 게시합니다. 매니페스트는 Anthropic GPG 키로 서명되므로 매니페스트의 서명을 확인하면 이것이 나열하는 모든 바이너리를 전이적으로 확인합니다.
 
-* 모든 플랫폼의 SHA256 체크섬은 `https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/{VERSION}/manifest.json`의 릴리스 매니페스트에 게시됩니다. `{VERSION}`을 `2.0.30`과 같은 버전 번호로 바꾸세요.
-* 서명된 바이너리는 다음 플랫폼에 배포됩니다:
-  * **macOS**: "Anthropic PBC"에서 서명하고 Apple에서 공증
-  * **Windows**: "Anthropic, PBC"에서 서명
+#### 매니페스트 서명 확인
+
+다음 단계 1-3에는 `gpg` 및 `curl`이 있는 POSIX 셸이 필요합니다. Windows에서는 Git Bash 또는 WSL에서 실행하세요. 4단계에는 PowerShell 옵션이 포함됩니다.
+
+<Steps>
+  <Step title="공개 키 다운로드 및 가져오기">
+    릴리스 서명 키는 고정 URL에 게시됩니다.
+
+    ```bash  theme={null}
+    curl -fsSL https://downloads.claude.ai/keys/claude-code.asc | gpg --import
+    ```
+
+    가져온 키의 지문을 표시합니다.
+
+    ```bash  theme={null}
+    gpg --fingerprint security@anthropic.com
+    ```
+
+    출력에 이 지문이 포함되어 있는지 확인하세요:
+
+    ```text  theme={null}
+    31DD DE24 DDFA B679 F42D  7BD2 BAA9 29FF 1A7E CACE
+    ```
+  </Step>
+
+  <Step title="매니페스트 및 서명 다운로드">
+    `VERSION`을 확인하려는 릴리스로 설정하세요.
+
+    ```bash  theme={null}
+    REPO=https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases
+    VERSION=2.1.89
+    curl -fsSLO "$REPO/$VERSION/manifest.json"
+    curl -fsSLO "$REPO/$VERSION/manifest.json.sig"
+    ```
+  </Step>
+
+  <Step title="서명 확인">
+    매니페스트에 대해 분리된 서명을 확인합니다.
+
+    ```bash  theme={null}
+    gpg --verify manifest.json.sig manifest.json
+    ```
+
+    유효한 결과는 `Good signature from "Anthropic Claude Code Release Signing <security@anthropic.com>"`을 보고합니다.
+
+    `gpg`는 또한 새로 가져온 키에 대해 `WARNING: This key is not certified with a trusted signature!`을 인쇄합니다. 이는 예상된 것입니다. `Good signature` 줄은 암호화 확인이 통과했음을 확인합니다. 1단계의 지문 비교는 키 자체가 진정함을 확인합니다.
+  </Step>
+
+  <Step title="바이너리를 매니페스트와 비교">
+    다운로드한 바이너리의 SHA256 체크섬을 `manifest.json`의 `platforms.<platform>.checksum` 아래에 나열된 값과 비교합니다.
+
+    <Tabs>
+      <Tab title="Linux">
+        ```bash  theme={null}
+        sha256sum claude
+        ```
+      </Tab>
+
+      <Tab title="macOS">
+        ```bash  theme={null}
+        shasum -a 256 claude
+        ```
+      </Tab>
+
+      <Tab title="Windows PowerShell">
+        ```powershell  theme={null}
+        (Get-FileHash claude.exe -Algorithm SHA256).Hash.ToLower()
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+</Steps>
+
+<Note>
+  매니페스트 서명은 `2.1.89` 이상의 릴리스에 사용 가능합니다. 이전 릴리스는 분리된 서명 없이 `manifest.json`에 체크섬을 게시합니다.
+</Note>
+
+#### 플랫폼 코드 서명
+
+서명된 매니페스트 외에도 개별 바이너리는 지원되는 플랫폼에서 플랫폼 기본 코드 서명을 수행합니다.
+
+* **macOS**: "Anthropic PBC"에서 서명하고 Apple에서 공증합니다. `codesign --verify --verbose ./claude`로 확인하세요.
+* **Windows**: "Anthropic, PBC"에서 서명합니다. `Get-AuthenticodeSignature .\claude.exe`로 확인하세요.
+* **Linux**: 위의 매니페스트 서명을 사용하여 무결성을 확인하세요. Linux 바이너리는 개별적으로 코드 서명되지 않습니다.
 
 ## Claude Code 제거
 

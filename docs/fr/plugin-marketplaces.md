@@ -557,6 +557,10 @@ Vous pouvez également spécifier quels plugins doivent être activés par défa
 
 Pour les options de configuration complètes, consultez [Paramètres des plugins](/fr/settings#plugin-settings).
 
+<Note>
+  Si vous utilisez une source `directory` ou `file` locale avec un chemin relatif, le chemin se résout par rapport au checkout principal de votre dépôt. Lorsque vous exécutez Claude Code à partir d'une worktree git, le chemin pointe toujours vers le checkout principal, donc toutes les worktrees partagent le même emplacement de place de marché. L'état de la place de marché est stocké une fois par utilisateur dans `~/.claude/plugins/known_marketplaces.json`, pas par projet.
+</Note>
+
 ### Pré-remplir les plugins pour les conteneurs
 
 Pour les images de conteneur et les environnements CI, vous pouvez pré-remplir un répertoire de plugins au moment de la construction afin que Claude Code démarre avec des places de marché et des plugins déjà disponibles, sans rien cloner au moment de l'exécution. Définissez la variable d'environnement `CLAUDE_CODE_PLUGIN_SEED_DIR` pour pointer vers ce répertoire.
@@ -627,7 +631,7 @@ Autoriser uniquement les places de marché spécifiques :
 }
 ```
 
-Autoriser toutes les places de marché d'un serveur git interne en utilisant la correspondance de motif regex sur l'hôte :
+Autoriser toutes les places de marché d'un serveur git interne en utilisant la correspondance de motif regex sur l'hôte. C'est l'approche recommandée pour [GitHub Enterprise Server](/fr/github-enterprise-server#plugin-marketplaces-on-ghes) ou les instances GitLab auto-hébergées :
 
 ```json  theme={null}
 {
@@ -848,6 +852,20 @@ Pour les mises à jour automatiques en arrière-plan :
 * Pour GitHub, assurez-vous que le jeton a la portée `repo` pour les dépôts privés
 * Pour GitLab, assurez-vous que le jeton a au moins la portée `read_repository`
 * Vérifiez que le jeton n'a pas expiré
+
+### Les mises à jour de la place de marché échouent dans les environnements hors ligne
+
+**Symptômes** : Le `git pull` de la place de marché échoue et Claude Code efface le cache existant, rendant les plugins indisponibles.
+
+**Cause** : Par défaut, lorsqu'un `git pull` échoue, Claude Code supprime le clone obsolète et tente de re-cloner. Dans les environnements hors ligne ou isolés, le re-clonage échoue de la même manière, laissant le répertoire de la place de marché vide.
+
+**Solution** : Définissez `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` pour conserver le cache existant lorsque le pull échoue au lieu de l'effacer :
+
+```bash  theme={null}
+export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
+```
+
+Avec cette variable définie, Claude Code conserve le clone obsolète de la place de marché en cas d'échec de `git pull` et continue d'utiliser le dernier état connu bon. Pour les déploiements entièrement hors ligne où le dépôt ne sera jamais accessible, utilisez [`CLAUDE_CODE_PLUGIN_SEED_DIR`](#pre-populate-plugins-for-containers) pour pré-remplir le répertoire des plugins au moment de la construction à la place.
 
 ### Les opérations Git expirent
 

@@ -71,19 +71,18 @@ export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=global
 export ANTHROPIC_VERTEX_PROJECT_ID=YOUR-PROJECT-ID
 
+# Optionnel : Remplacez l'URL du point de terminaison Vertex pour les points de terminaison personnalisés ou les passerelles
+# export ANTHROPIC_VERTEX_BASE_URL=https://aiplatform.googleapis.com
+
 # Optionnel : Désactivez la mise en cache des invites si nécessaire
 export DISABLE_PROMPT_CACHING=1
 
-# Quand CLOUD_ML_REGION=global, remplacez la région pour les modèles non pris en charge
-export VERTEX_REGION_CLAUDE_3_5_HAIKU=us-east5
-
-# Optionnel : Remplacez les régions pour d'autres modèles spécifiques
-export VERTEX_REGION_CLAUDE_3_5_SONNET=us-east5
-export VERTEX_REGION_CLAUDE_3_7_SONNET=us-east5
-export VERTEX_REGION_CLAUDE_4_0_OPUS=europe-west1
-export VERTEX_REGION_CLAUDE_4_0_SONNET=us-east5
-export VERTEX_REGION_CLAUDE_4_1_OPUS=europe-west1
+# Quand CLOUD_ML_REGION=global, remplacez la région pour les modèles qui ne prennent pas en charge les points de terminaison globaux
+export VERTEX_REGION_CLAUDE_HAIKU_4_5=us-east5
+export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 ```
+
+Chaque version de modèle a sa propre variable `VERTEX_REGION_CLAUDE_*`. Consultez la [référence des variables d'environnement](/fr/env-vars) pour la liste complète. Vérifiez [Vertex Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) pour déterminer quels modèles prennent en charge les points de terminaison globaux par rapport aux points de terminaison régionaux uniquement.
 
 [La mise en cache des invites](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) est automatiquement prise en charge lorsque vous spécifiez l'indicateur éphémère `cache_control`. Pour la désactiver, définissez `DISABLE_PROMPT_CACHING=1`. Pour des limites de débit accrues, contactez le support Google Cloud. Lors de l'utilisation de Vertex AI, les commandes `/login` et `/logout` sont désactivées car l'authentification est gérée via les identifiants Google Cloud.
 
@@ -105,16 +104,16 @@ Pour les ID de modèle actuels et hérités, consultez [Aperçu des modèles](ht
 
 Claude Code utilise ces modèles par défaut lorsqu'aucune variable d'épinglage n'est définie :
 
-| Type de modèle      | Valeur par défaut           |
-| :------------------ | :-------------------------- |
-| Modèle principal    | `claude-sonnet-4-6`         |
-| Modèle petit/rapide | `claude-haiku-4-5@20251001` |
+| Type de modèle      | Valeur par défaut            |
+| :------------------ | :--------------------------- |
+| Modèle principal    | `claude-sonnet-4-5@20250929` |
+| Modèle petit/rapide | `claude-haiku-4-5@20251001`  |
 
 Pour personnaliser davantage les modèles :
 
 ```bash  theme={null}
 export ANTHROPIC_MODEL='claude-opus-4-6'
-export ANTHROPIC_SMALL_FAST_MODEL='claude-haiku-4-5@20251001'
+export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
 ```
 
 ## Configuration IAM
@@ -150,7 +149,7 @@ Si vous rencontrez des erreurs « modèle non trouvé » 404 :
 * Confirmez que le modèle est activé dans [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden)
 * Vérifiez que vous avez accès à la région spécifiée
 * Si vous utilisez `CLOUD_ML_REGION=global`, vérifiez que vos modèles prennent en charge les points de terminaison globaux dans [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) sous « Fonctionnalités prises en charge ». Pour les modèles qui ne prennent pas en charge les points de terminaison globaux, soit :
-  * Spécifiez un modèle pris en charge via `ANTHROPIC_MODEL` ou `ANTHROPIC_SMALL_FAST_MODEL`, soit
+  * Spécifiez un modèle pris en charge via `ANTHROPIC_MODEL` ou `ANTHROPIC_DEFAULT_HAIKU_MODEL`, soit
   * Définissez un point de terminaison régional à l'aide des variables d'environnement `VERTEX_REGION_<MODEL_NAME>`
 
 Si vous rencontrez des erreurs 429 :

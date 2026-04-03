@@ -117,9 +117,9 @@ Para evitar que cada sesión golpee la API en el mismo momento de reloj de pared
 
 El desplazamiento se deriva del ID de la tarea, por lo que la misma tarea siempre obtiene el mismo desplazamiento. Si el tiempo exacto es importante, elija un minuto que no sea `:00` o `:30`, por ejemplo `3 9 * * *` en lugar de `0 9 * * *`, y el jitter único no se aplicará.
 
-### Vencimiento de tres días
+### Vencimiento de siete días
 
-Las tareas recurrentes expiran automáticamente 3 días después de su creación. La tarea se ejecuta una última vez y luego se elimina a sí misma. Esto limita cuánto tiempo puede ejecutarse un bucle olvidado. Si necesita que una tarea recurrente dure más, cancele y recree antes de que expire, o utilice [tareas programadas de Cloud](/es/web-scheduled-tasks) o [tareas programadas de Desktop](/es/desktop#schedule-recurring-tasks) para programación duradera.
+Las tareas recurrentes expiran automáticamente 7 días después de su creación. La tarea se ejecuta una última vez y luego se elimina a sí misma. Esto limita cuánto tiempo puede ejecutarse un bucle olvidado. Si necesita que una tarea recurrente dure más, cancele y recree antes de que expire, o utilice [tareas programadas de Cloud](/es/web-scheduled-tasks) o [tareas programadas de Desktop](/es/desktop#schedule-recurring-tasks) para programación duradera.
 
 ## Referencia de expresión cron
 

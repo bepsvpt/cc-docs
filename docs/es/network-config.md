@@ -86,7 +86,14 @@ Claude Code requiere acceso a las siguientes URL:
 
 Asegúrese de que estas URL estén en la lista blanca en su configuración de proxy y reglas de firewall. Esto es especialmente importante cuando se utiliza Claude Code en entornos de red restringidos o en contenedores.
 
+El instalador nativo y las comprobaciones de actualización también requieren las siguientes URL. Agregue ambas a la lista blanca, ya que el instalador y el actualizador automático descargan desde `storage.googleapis.com` mientras que las descargas de plugins utilizan `downloads.claude.ai`. Si instala Claude Code a través de npm o administra su propia distribución binaria, es posible que los usuarios finales no necesiten acceso:
+
+* `storage.googleapis.com`: depósito de descarga para el binario de Claude Code y el actualizador automático
+* `downloads.claude.ai`: CDN que aloja el script de instalación, punteros de versión, manifiestos, claves de firma y ejecutables de plugins
+
 [Claude Code en la web](/es/claude-code-on-the-web) y [Code Review](/es/code-review) se conectan a sus repositorios desde infraestructura administrada por Anthropic. Si su organización de GitHub Enterprise Cloud restringe el acceso por dirección IP, habilite [herencia de lista de permitidos de IP para aplicaciones de GitHub instaladas](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps). La aplicación de GitHub de Claude registra sus rangos de IP, por lo que habilitar esta configuración permite el acceso sin configuración manual. Para [agregar los rangos a su lista de permitidos manualmente](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address) en su lugar, o para configurar otros firewalls, consulte [direcciones IP de la API de Anthropic](https://platform.claude.com/docs/en/api/ip-addresses).
+
+Para instancias de [GitHub Enterprise Server](/es/github-enterprise-server) autohospedadas detrás de un firewall, agregue a la lista blanca las mismas [direcciones IP de la API de Anthropic](https://platform.claude.com/docs/en/api/ip-addresses) para que la infraestructura de Anthropic pueda acceder a su host GHES para clonar repositorios y publicar comentarios de revisión.
 
 ## Recursos adicionales
 

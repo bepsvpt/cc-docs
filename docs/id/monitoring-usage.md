@@ -6,7 +6,7 @@
 
 > Pelajari cara mengaktifkan dan mengonfigurasi OpenTelemetry untuk Claude Code.
 
-Lacak penggunaan Claude Code, biaya, dan aktivitas alat di seluruh organisasi Anda dengan mengekspor data telemetri melalui OpenTelemetry (OTel). Claude Code mengekspor metrik sebagai data deret waktu melalui protokol metrik standar, dan acara melalui protokol log/acara. Konfigurasikan backend metrik dan log Anda agar sesuai dengan persyaratan pemantauan Anda.
+Lacak penggunaan Claude Code, biaya, dan aktivitas alat di seluruh organisasi Anda dengan mengekspor data telemetri melalui OpenTelemetry (OTel). Claude Code mengekspor metrik sebagai data deret waktu melalui protokol metrik standar, acara melalui protokol log/acara, dan secara opsional distributed traces melalui [protokol traces](#traces-beta). Konfigurasikan backend metrik, log, dan traces Anda agar sesuai dengan persyaratan pemantauan Anda.
 
 ## Mulai cepat
 
@@ -17,8 +17,8 @@ Konfigurasikan OpenTelemetry menggunakan variabel lingkungan:
 export CLAUDE_CODE_ENABLE_TELEMETRY=1
 
 # 2. Pilih pengekspor (keduanya bersifat opsional - konfigurasikan hanya yang Anda butuhkan)
-export OTEL_METRICS_EXPORTER=otlp       # Opsi: otlp, prometheus, console
-export OTEL_LOGS_EXPORTER=otlp          # Opsi: otlp, console
+export OTEL_METRICS_EXPORTER=otlp       # Opsi: otlp, prometheus, console, none
+export OTEL_LOGS_EXPORTER=otlp          # Opsi: otlp, console, none
 
 # 3. Konfigurasikan titik akhir OTLP (untuk pengekspor OTLP)
 export OTEL_EXPORTER_OTLP_PROTOCOL=grpc
@@ -68,26 +68,27 @@ Contoh konfigurasi pengaturan terkelola:
 
 ### Variabel konfigurasi umum
 
-| Variabel Lingkungan                                 | Deskripsi                                                                                                                     | Nilai Contoh                         |
-| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | Mengaktifkan pengumpulan telemetri (diperlukan)                                                                               | `1`                                  |
-| `OTEL_METRICS_EXPORTER`                             | Jenis pengekspor metrik, dipisahkan koma                                                                                      | `console`, `otlp`, `prometheus`      |
-| `OTEL_LOGS_EXPORTER`                                | Jenis pengekspor log/acara, dipisahkan koma                                                                                   | `console`, `otlp`                    |
-| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | Protokol untuk pengekspor OTLP, berlaku untuk semua sinyal                                                                    | `grpc`, `http/json`, `http/protobuf` |
-| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | Titik akhir pengumpul OTLP untuk semua sinyal                                                                                 | `http://localhost:4317`              |
-| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | Protokol untuk metrik, menimpa pengaturan umum                                                                                | `grpc`, `http/json`, `http/protobuf` |
-| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | Titik akhir metrik OTLP, menimpa pengaturan umum                                                                              | `http://localhost:4318/v1/metrics`   |
-| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | Protokol untuk log, menimpa pengaturan umum                                                                                   | `grpc`, `http/json`, `http/protobuf` |
-| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | Titik akhir log OTLP, menimpa pengaturan umum                                                                                 | `http://localhost:4318/v1/logs`      |
-| `OTEL_EXPORTER_OTLP_HEADERS`                        | Header autentikasi untuk OTLP                                                                                                 | `Authorization=Bearer token`         |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | Kunci klien untuk autentikasi mTLS                                                                                            | Jalur ke file kunci klien            |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | Sertifikat klien untuk autentikasi mTLS                                                                                       | Jalur ke file sertifikat klien       |
-| `OTEL_METRIC_EXPORT_INTERVAL`                       | Interval ekspor dalam milidetik (default: 60000)                                                                              | `5000`, `60000`                      |
-| `OTEL_LOGS_EXPORT_INTERVAL`                         | Interval ekspor log dalam milidetik (default: 5000)                                                                           | `1000`, `10000`                      |
-| `OTEL_LOG_USER_PROMPTS`                             | Aktifkan pencatatan konten prompt pengguna (default: dinonaktifkan)                                                           | `1` untuk mengaktifkan               |
-| `OTEL_LOG_TOOL_DETAILS`                             | Aktifkan pencatatan argumen input alat, nama server MCP/alat, dan nama skill dalam acara alat (default: dinonaktifkan)        | `1` untuk mengaktifkan               |
-| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | Preferensi temporalitas metrik (default: `delta`). Atur ke `cumulative` jika backend Anda mengharapkan temporalitas kumulatif | `delta`, `cumulative`                |
-| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | Interval untuk menyegarkan header dinamis (default: 1740000ms / 29 menit)                                                     | `900000`                             |
+| Variabel Lingkungan                                 | Deskripsi                                                                                                                                                           | Nilai Contoh                            |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | Mengaktifkan pengumpulan telemetri (diperlukan)                                                                                                                     | `1`                                     |
+| `OTEL_METRICS_EXPORTER`                             | Jenis pengekspor metrik, dipisahkan koma. Gunakan `none` untuk menonaktifkan                                                                                        | `console`, `otlp`, `prometheus`, `none` |
+| `OTEL_LOGS_EXPORTER`                                | Jenis pengekspor log/acara, dipisahkan koma. Gunakan `none` untuk menonaktifkan                                                                                     | `console`, `otlp`, `none`               |
+| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | Protokol untuk pengekspor OTLP, berlaku untuk semua sinyal                                                                                                          | `grpc`, `http/json`, `http/protobuf`    |
+| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | Titik akhir pengumpul OTLP untuk semua sinyal                                                                                                                       | `http://localhost:4317`                 |
+| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | Protokol untuk metrik, menimpa pengaturan umum                                                                                                                      | `grpc`, `http/json`, `http/protobuf`    |
+| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | Titik akhir metrik OTLP, menimpa pengaturan umum                                                                                                                    | `http://localhost:4318/v1/metrics`      |
+| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | Protokol untuk log, menimpa pengaturan umum                                                                                                                         | `grpc`, `http/json`, `http/protobuf`    |
+| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | Titik akhir log OTLP, menimpa pengaturan umum                                                                                                                       | `http://localhost:4318/v1/logs`         |
+| `OTEL_EXPORTER_OTLP_HEADERS`                        | Header autentikasi untuk OTLP                                                                                                                                       | `Authorization=Bearer token`            |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | Kunci klien untuk autentikasi mTLS                                                                                                                                  | Jalur ke file kunci klien               |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | Sertifikat klien untuk autentikasi mTLS                                                                                                                             | Jalur ke file sertifikat klien          |
+| `OTEL_METRIC_EXPORT_INTERVAL`                       | Interval ekspor dalam milidetik (default: 60000)                                                                                                                    | `5000`, `60000`                         |
+| `OTEL_LOGS_EXPORT_INTERVAL`                         | Interval ekspor log dalam milidetik (default: 5000)                                                                                                                 | `1000`, `10000`                         |
+| `OTEL_LOG_USER_PROMPTS`                             | Aktifkan pencatatan konten prompt pengguna (default: dinonaktifkan)                                                                                                 | `1` untuk mengaktifkan                  |
+| `OTEL_LOG_TOOL_DETAILS`                             | Aktifkan pencatatan parameter alat dan argumen input dalam acara alat: perintah Bash, nama server MCP dan alat, nama skill, dan input alat (default: dinonaktifkan) | `1` untuk mengaktifkan                  |
+| `OTEL_LOG_TOOL_CONTENT`                             | Aktifkan pencatatan konten input dan output alat dalam acara span (default: dinonaktifkan). Memerlukan [tracing](#traces-beta). Konten dipotong pada 60 KB          | `1` untuk mengaktifkan                  |
+| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | Preferensi temporalitas metrik (default: `delta`). Atur ke `cumulative` jika backend Anda mengharapkan temporalitas kumulatif                                       | `delta`, `cumulative`                   |
+| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | Interval untuk menyegarkan header dinamis (default: 1740000ms / 29 menit)                                                                                           | `900000`                                |
 
 ### Kontrol kardinalitas metrik
 
@@ -100,6 +101,22 @@ Variabel lingkungan berikut mengontrol atribut mana yang disertakan dalam metrik
 | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` | Sertakan atribut user.account\_uuid dan user.account\_id dalam metrik | `true`        | `false`                    |
 
 Variabel-variabel ini membantu mengontrol kardinalitas metrik, yang mempengaruhi persyaratan penyimpanan dan kinerja kueri di backend metrik Anda. Kardinalitas yang lebih rendah umumnya berarti kinerja yang lebih baik dan biaya penyimpanan yang lebih rendah tetapi data yang kurang granular untuk analisis.
+
+### Traces (beta)
+
+Distributed tracing mengekspor spans yang menghubungkan setiap prompt pengguna ke permintaan API dan eksekusi alat yang dipicunya, sehingga Anda dapat melihat permintaan lengkap sebagai satu trace di backend tracing Anda.
+
+Tracing dimatikan secara default. Untuk mengaktifkannya, atur `CLAUDE_CODE_ENABLE_TELEMETRY=1` dan `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`, kemudian atur `OTEL_TRACES_EXPORTER` untuk memilih tempat spans dikirim. Traces menggunakan kembali [konfigurasi OTLP umum](#common-configuration-variables) untuk titik akhir, protokol, dan header.
+
+| Variabel Lingkungan                   | Deskripsi                                                                          | Nilai Contoh                         |
+| ------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------ |
+| `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA` | Aktifkan span tracing (diperlukan). `ENABLE_ENHANCED_TELEMETRY_BETA` juga diterima | `1`                                  |
+| `OTEL_TRACES_EXPORTER`                | Jenis pengekspor traces, dipisahkan koma. Gunakan `none` untuk menonaktifkan       | `console`, `otlp`, `none`            |
+| `OTEL_EXPORTER_OTLP_TRACES_PROTOCOL`  | Protokol untuk traces, menimpa `OTEL_EXPORTER_OTLP_PROTOCOL`                       | `grpc`, `http/json`, `http/protobuf` |
+| `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`  | Titik akhir traces OTLP, menimpa `OTEL_EXPORTER_OTLP_ENDPOINT`                     | `http://localhost:4318/v1/traces`    |
+| `OTEL_TRACES_EXPORT_INTERVAL`         | Interval ekspor batch span dalam milidetik (default: 5000)                         | `1000`, `10000`                      |
+
+Spans menyunting teks prompt pengguna dan konten alat secara default. Atur `OTEL_LOG_USER_PROMPTS=1` dan `OTEL_LOG_TOOL_CONTENT=1` untuk menyertakannya.
 
 ### Header dinamis
 
@@ -386,10 +403,10 @@ Dicatat saat alat menyelesaikan eksekusi.
 * `decision_source`: Sumber keputusan - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, atau `"user_reject"`
 * `tool_result_size_bytes`: Ukuran hasil alat dalam byte
 * `mcp_server_scope`: Pengidentifikasi cakupan server MCP (untuk alat MCP)
-* `tool_parameters`: String JSON yang berisi parameter khusus alat (saat tersedia)
+* `tool_parameters` (saat `OTEL_LOG_TOOL_DETAILS=1`): String JSON yang berisi parameter khusus alat:
   * Untuk alat Bash: mencakup `bash_command`, `full_command`, `timeout`, `description`, `dangerouslyDisableSandbox`, dan `git_commit_id` (SHA komit, saat perintah `git commit` berhasil)
-  * Untuk alat MCP (saat `OTEL_LOG_TOOL_DETAILS=1`): mencakup `mcp_server_name`, `mcp_tool_name`
-  * Untuk alat Skill (saat `OTEL_LOG_TOOL_DETAILS=1`): mencakup `skill_name`
+  * Untuk alat MCP: mencakup `mcp_server_name`, `mcp_tool_name`
+  * Untuk alat Skill: mencakup `skill_name`
 * `tool_input` (saat `OTEL_LOG_TOOL_DETAILS=1`): Argumen alat yang diserialisasi JSON. Nilai individual di atas 512 karakter dipotong, dan muatan penuh dibatasi hingga \~4 K karakter. Berlaku untuk semua alat termasuk alat MCP.
 
 #### Acara permintaan API
@@ -497,7 +514,7 @@ Data acara memberikan wawasan terperinci tentang interaksi Claude Code:
 
 ## Pertimbangan backend
 
-Pilihan backend metrik dan log Anda menentukan jenis analisis yang dapat Anda lakukan:
+Pilihan backend metrik, log, dan traces Anda menentukan jenis analisis yang dapat Anda lakukan:
 
 ### Untuk metrik
 
@@ -510,6 +527,13 @@ Pilihan backend metrik dan log Anda menentukan jenis analisis yang dapat Anda la
 * **Sistem agregasi log (misalnya, Elasticsearch, Loki)**: Pencarian teks lengkap, analisis log
 * **Toko kolumnar (misalnya, ClickHouse)**: Analisis acara terstruktur
 * **Platform observabilitas lengkap (misalnya, Honeycomb, Datadog)**: Korelasi antara metrik dan acara
+
+### Untuk traces
+
+Pilih backend yang mendukung penyimpanan distributed trace dan korelasi span:
+
+* **Sistem distributed tracing (misalnya, Jaeger, Zipkin, Grafana Tempo)**: Visualisasi span, request waterfalls, analisis latensi
+* **Platform observabilitas lengkap (misalnya, Honeycomb, Datadog)**: Pencarian trace dan korelasi dengan metrik dan log
 
 Untuk organisasi yang memerlukan metrik Pengguna Aktif Harian/Mingguan/Bulanan (DAU/WAU/MAU), pertimbangkan backend yang mendukung kueri nilai unik yang efisien.
 
@@ -532,10 +556,11 @@ Untuk panduan komprehensif tentang mengukur pengembalian investasi untuk Claude 
 ## Keamanan dan privasi
 
 * Telemetri adalah opt-in dan memerlukan konfigurasi eksplisit
-* Konten file mentah dan cuplikan kode tidak disertakan dalam metrik atau acara. Acara eksekusi alat mencakup perintah bash dan jalur file di bidang `tool_parameters`, yang mungkin berisi nilai sensitif. Jika perintah Anda mungkin menyertakan rahasia, konfigurasikan backend telemetri Anda untuk memfilter atau menyunting `tool_parameters`
+* Konten file mentah dan cuplikan kode tidak disertakan dalam metrik atau acara. Trace spans adalah jalur data terpisah: lihat poin `OTEL_LOG_TOOL_CONTENT` di bawah
 * Saat diautentikasi melalui OAuth, `user.email` disertakan dalam atribut telemetri. Jika ini menjadi perhatian bagi organisasi Anda, bekerja dengan backend telemetri Anda untuk memfilter atau menyunting bidang ini
 * Konten prompt pengguna tidak dikumpulkan secara default. Hanya panjang prompt yang dicatat. Untuk menyertakan konten prompt, atur `OTEL_LOG_USER_PROMPTS=1`
-* Argumen input alat tidak dicatat secara default. Untuk menyertakannya, atur `OTEL_LOG_TOOL_DETAILS=1`. Saat diaktifkan, acara `tool_result` menyertakan nama server MCP/alat dan nama skill ditambah atribut `tool_input` dengan jalur file, URL, pola pencarian, dan argumen lainnya. Nilai individual di atas 512 karakter dipotong dan total dibatasi hingga \~4 K karakter, tetapi argumen mungkin masih berisi nilai sensitif. Konfigurasikan backend telemetri Anda untuk memfilter atau menyunting `tool_input` sesuai kebutuhan
+* Argumen input alat dan parameter tidak dicatat secara default. Untuk menyertakannya, atur `OTEL_LOG_TOOL_DETAILS=1`. Saat diaktifkan, acara `tool_result` menyertakan atribut `tool_parameters` dengan perintah Bash, nama server MCP dan alat, dan nama skill, ditambah atribut `tool_input` dengan jalur file, URL, pola pencarian, dan argumen lainnya. Nilai individual di atas 512 karakter dipotong dan total dibatasi hingga \~4 K karakter, tetapi argumen mungkin masih berisi nilai sensitif. Konfigurasikan backend telemetri Anda untuk memfilter atau menyunting atribut ini sesuai kebutuhan
+* Konten input dan output alat tidak dicatat dalam trace spans secara default. Untuk menyertakannya, atur `OTEL_LOG_TOOL_CONTENT=1`. Saat diaktifkan, acara span menyertakan konten input dan output alat lengkap dipotong pada 60 KB per span. Ini dapat mencakup konten file mentah dari hasil alat Read dan output perintah Bash. Konfigurasikan backend telemetri Anda untuk memfilter atau menyunting atribut ini sesuai kebutuhan
 
 ## Memantau Claude Code di Amazon Bedrock
 

@@ -46,26 +46,26 @@ Contoh ini mengikat `Ctrl+E` untuk membuka editor eksternal dalam konteks chat, 
 
 Setiap blok binding menentukan **konteks** di mana binding berlaku:
 
-| Konteks           | Deskripsi                                     |
-| :---------------- | :-------------------------------------------- |
-| `Global`          | Berlaku di mana saja dalam aplikasi           |
-| `Chat`            | Area input chat utama                         |
-| `Autocomplete`    | Menu penyelesaian otomatis terbuka            |
-| `Settings`        | Menu pengaturan (dismiss hanya dengan escape) |
-| `Confirmation`    | Dialog izin dan konfirmasi                    |
-| `Tabs`            | Komponen navigasi tab                         |
-| `Help`            | Menu bantuan terlihat                         |
-| `Transcript`      | Penampil transkrip                            |
-| `HistorySearch`   | Mode pencarian riwayat (Ctrl+R)               |
-| `Task`            | Tugas latar belakang sedang berjalan          |
-| `ThemePicker`     | Dialog pemilih tema                           |
-| `Attachments`     | Navigasi bilah gambar/lampiran                |
-| `Footer`          | Navigasi indikator footer (tugas, tim, diff)  |
-| `MessageSelector` | Pemilihan pesan dialog rewind dan ringkasan   |
-| `DiffDialog`      | Navigasi penampil diff                        |
-| `ModelPicker`     | Tingkat upaya pemilih model                   |
-| `Select`          | Komponen select/list generik                  |
-| `Plugin`          | Dialog plugin (jelajahi, temukan, kelola)     |
+| Konteks           | Deskripsi                                    |
+| :---------------- | :------------------------------------------- |
+| `Global`          | Berlaku di mana saja dalam aplikasi          |
+| `Chat`            | Area input chat utama                        |
+| `Autocomplete`    | Menu penyelesaian otomatis terbuka           |
+| `Settings`        | Menu pengaturan                              |
+| `Confirmation`    | Dialog izin dan konfirmasi                   |
+| `Tabs`            | Komponen navigasi tab                        |
+| `Help`            | Menu bantuan terlihat                        |
+| `Transcript`      | Penampil transkrip                           |
+| `HistorySearch`   | Mode pencarian riwayat (Ctrl+R)              |
+| `Task`            | Tugas latar belakang sedang berjalan         |
+| `ThemePicker`     | Dialog pemilih tema                          |
+| `Attachments`     | Navigasi lampiran gambar dalam dialog pilih  |
+| `Footer`          | Navigasi indikator footer (tugas, tim, diff) |
+| `MessageSelector` | Pemilihan pesan dialog rewind dan ringkasan  |
+| `DiffDialog`      | Navigasi penampil diff                       |
+| `ModelPicker`     | Tingkat upaya pemilih model                  |
+| `Select`          | Komponen select/list generik                 |
+| `Plugin`          | Dialog plugin (jelajahi, temukan, kelola)    |
 
 ## Tindakan yang tersedia
 
@@ -79,6 +79,7 @@ Tindakan yang tersedia dalam konteks `Global`:
 | :--------------------- | :------ | :------------------------------- |
 | `app:interrupt`        | Ctrl+C  | Batalkan operasi saat ini        |
 | `app:exit`             | Ctrl+D  | Keluar dari Claude Code          |
+| `app:redraw`           | Ctrl+L  | Gambar ulang layar               |
 | `app:toggleTodos`      | Ctrl+T  | Alihkan visibilitas daftar tugas |
 | `app:toggleTranscript` | Ctrl+O  | Alihkan transkrip verbose        |
 
@@ -96,19 +97,20 @@ Tindakan untuk menavigasi riwayat perintah:
 
 Tindakan yang tersedia dalam konteks `Chat`:
 
-| Tindakan              | Default                   | Deskripsi                         |
-| :-------------------- | :------------------------ | :-------------------------------- |
-| `chat:cancel`         | Escape                    | Batalkan input saat ini           |
-| `chat:killAgents`     | Ctrl+X Ctrl+K             | Matikan semua agen latar belakang |
-| `chat:cycleMode`      | Shift+Tab\*               | Mode izin siklus                  |
-| `chat:modelPicker`    | Cmd+P / Meta+P            | Buka pemilih model                |
-| `chat:fastMode`       | Meta+O                    | Alihkan mode cepat                |
-| `chat:thinkingToggle` | Cmd+T / Meta+T            | Alihkan pemikiran yang diperluas  |
-| `chat:submit`         | Enter                     | Kirim pesan                       |
-| `chat:undo`           | Ctrl+\_                   | Batalkan tindakan terakhir        |
-| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Buka di editor eksternal          |
-| `chat:stash`          | Ctrl+S                    | Simpan prompt saat ini            |
-| `chat:imagePaste`     | Ctrl+V (Alt+V di Windows) | Tempel gambar                     |
+| Tindakan              | Default                   | Deskripsi                          |
+| :-------------------- | :------------------------ | :--------------------------------- |
+| `chat:cancel`         | Escape                    | Batalkan input saat ini            |
+| `chat:killAgents`     | Ctrl+X Ctrl+K             | Matikan semua agen latar belakang  |
+| `chat:cycleMode`      | Shift+Tab\*               | Mode izin siklus                   |
+| `chat:modelPicker`    | Cmd+P / Meta+P            | Buka pemilih model                 |
+| `chat:fastMode`       | Meta+O                    | Alihkan mode cepat                 |
+| `chat:thinkingToggle` | Cmd+T / Meta+T            | Alihkan pemikiran yang diperluas   |
+| `chat:submit`         | Enter                     | Kirim pesan                        |
+| `chat:newline`        | (unbound)                 | Sisipkan baris baru tanpa mengirim |
+| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | Batalkan tindakan terakhir         |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Buka di editor eksternal           |
+| `chat:stash`          | Ctrl+S                    | Simpan prompt saat ini             |
+| `chat:imagePaste`     | Ctrl+V (Alt+V di Windows) | Tempel gambar                      |
 
 \*Di Windows tanpa mode VT (Node \<24.2.0/\<22.17.0, Bun \<1.2.23), default ke Meta+M.
 
@@ -135,6 +137,7 @@ Tindakan yang tersedia dalam konteks `Confirmation`:
 | `confirm:next`              | Down      | Opsi berikutnya         |
 | `confirm:nextField`         | Tab       | Bidang berikutnya       |
 | `confirm:previousField`     | (unbound) | Bidang sebelumnya       |
+| `confirm:toggle`            | Space     | Alihkan pilihan         |
 | `confirm:cycleMode`         | Shift+Tab | Mode izin siklus        |
 | `confirm:toggleExplanation` | Ctrl+E    | Alihkan penjelasan izin |
 
@@ -150,10 +153,10 @@ Tindakan yang tersedia dalam konteks `Confirmation` untuk dialog izin:
 
 Tindakan yang tersedia dalam konteks `Transcript`:
 
-| Tindakan                   | Default        | Deskripsi                      |
-| :------------------------- | :------------- | :----------------------------- |
-| `transcript:toggleShowAll` | Ctrl+E         | Alihkan tampilkan semua konten |
-| `transcript:exit`          | Ctrl+C, Escape | Keluar dari tampilan transkrip |
+| Tindakan                   | Default           | Deskripsi                      |
+| :------------------------- | :---------------- | :----------------------------- |
+| `transcript:toggleShowAll` | Ctrl+E            | Alihkan tampilkan semua konten |
+| `transcript:exit`          | q, Ctrl+C, Escape | Keluar dari tampilan transkrip |
 
 ### Tindakan pencarian riwayat
 
@@ -203,23 +206,25 @@ Tindakan yang tersedia dalam konteks `Tabs`:
 
 Tindakan yang tersedia dalam konteks `Attachments`:
 
-| Tindakan               | Default           | Deskripsi                   |
-| :--------------------- | :---------------- | :-------------------------- |
-| `attachments:next`     | Right             | Lampiran berikutnya         |
-| `attachments:previous` | Left              | Lampiran sebelumnya         |
-| `attachments:remove`   | Backspace, Delete | Hapus lampiran yang dipilih |
-| `attachments:exit`     | Down, Escape      | Keluar dari bilah lampiran  |
+| Tindakan               | Default           | Deskripsi                     |
+| :--------------------- | :---------------- | :---------------------------- |
+| `attachments:next`     | Right             | Lampiran berikutnya           |
+| `attachments:previous` | Left              | Lampiran sebelumnya           |
+| `attachments:remove`   | Backspace, Delete | Hapus lampiran yang dipilih   |
+| `attachments:exit`     | Down, Escape      | Keluar dari navigasi lampiran |
 
 ### Tindakan footer
 
 Tindakan yang tersedia dalam konteks `Footer`:
 
-| Tindakan                | Default | Deskripsi                     |
-| :---------------------- | :------ | :---------------------------- |
-| `footer:next`           | Right   | Item footer berikutnya        |
-| `footer:previous`       | Left    | Item footer sebelumnya        |
-| `footer:openSelected`   | Enter   | Buka item footer yang dipilih |
-| `footer:clearSelection` | Escape  | Hapus pilihan footer          |
+| Tindakan                | Default | Deskripsi                                                |
+| :---------------------- | :------ | :------------------------------------------------------- |
+| `footer:next`           | Right   | Item footer berikutnya                                   |
+| `footer:previous`       | Left    | Item footer sebelumnya                                   |
+| `footer:up`             | Up      | Navigasi ke atas dalam footer (batalkan pilihan di atas) |
+| `footer:down`           | Down    | Navigasi ke bawah dalam footer                           |
+| `footer:openSelected`   | Enter   | Buka item footer yang dipilih                            |
+| `footer:clearSelection` | Escape  | Hapus pilihan footer                                     |
 
 ### Tindakan pemilih pesan
 
@@ -280,10 +285,11 @@ Tindakan yang tersedia dalam konteks `Plugin`:
 
 Tindakan yang tersedia dalam konteks `Settings`:
 
-| Tindakan          | Default | Deskripsi                                                |
-| :---------------- | :------ | :------------------------------------------------------- |
-| `settings:search` | /       | Masuk mode pencarian                                     |
-| `settings:retry`  | R       | Coba muat ulang data penggunaan (saat terjadi kesalahan) |
+| Tindakan          | Default | Deskripsi                                                                              |
+| :---------------- | :------ | :------------------------------------------------------------------------------------- |
+| `settings:search` | /       | Masuk mode pencarian                                                                   |
+| `settings:retry`  | R       | Coba muat ulang data penggunaan (saat terjadi kesalahan)                               |
+| `settings:close`  | Enter   | Simpan perubahan dan tutup panel konfigurasi. Escape membatalkan perubahan dan menutup |
 
 ### Tindakan suara
 
@@ -317,7 +323,7 @@ ctrl+shift+c    Pengubah ganda
 
 Huruf besar yang berdiri sendiri menyiratkan Shift. Sebagai contoh, `K` setara dengan `shift+k`. Ini berguna untuk binding gaya vim di mana kunci huruf besar dan kecil memiliki arti berbeda.
 
-Huruf besar dengan pengubah (misalnya, `ctrl+K`) diperlakukan sebagai gaya dan **tidak** menyiratkan Shift — `ctrl+K` sama dengan `ctrl+k`.
+Huruf besar dengan pengubah (misalnya, `ctrl+K`) diperlakukan sebagai gaya dan **tidak** menyiratkan Shift: `ctrl+K` sama dengan `ctrl+k`.
 
 ### Chord
 
@@ -352,6 +358,25 @@ Atur tindakan ke `null` untuk membatalkan ikatan pintasan default:
   ]
 }
 ```
+
+Ini juga berfungsi untuk binding chord. Membatalkan setiap chord yang berbagi awalan membebaskan awalan itu untuk digunakan sebagai binding tombol tunggal:
+
+```json  theme={null}
+{
+  "bindings": [
+    {
+      "context": "Chat",
+      "bindings": {
+        "ctrl+x ctrl+k": null,
+        "ctrl+x ctrl+e": null,
+        "ctrl+x": "chat:newline"
+      }
+    }
+  ]
+}
+```
+
+Jika Anda membatalkan beberapa tetapi tidak semua chord pada awalan, menekan awalan masih memasuki mode chord-wait untuk binding yang tersisa.
 
 ## Pintasan yang dicadangkan
 

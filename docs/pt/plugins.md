@@ -45,7 +45,6 @@ Este início rápido o guia através da criação de um plugin com um skill pers
 ### Pré-requisitos
 
 * Claude Code [instalado e autenticado](/pt/quickstart#step-1-install-claude-code)
-* Claude Code versão 1.0.33 ou posterior (execute `claude --version` para verificar)
 
 <Note>
   Se você não vir o comando `/plugin`, atualize Claude Code para a versão mais recente. Veja [Troubleshooting](/pt/troubleshooting) para instruções de atualização.
@@ -131,7 +130,7 @@ Este início rápido o guia através da criação de um plugin com um skill pers
     Você verá Claude responder com uma saudação. Execute `/help` para ver seu skill listado sob o namespace do plugin.
 
     <Note>
-      **Por que namespacing?** Plugin skills são sempre com namespace (como `/greet:hello`) para prevenir conflitos quando múltiplos plugins têm skills com o mesmo nome.
+      **Por que namespacing?** Plugin skills são sempre com namespace (como `/my-first-plugin:hello`) para prevenir conflitos quando múltiplos plugins têm skills com o mesmo nome.
 
       Para mudar o prefixo de namespace, atualize o campo `name` em `plugin.json`.
     </Note>
@@ -283,7 +282,7 @@ claude --plugin-dir ./my-plugin
 
 Quando um plugin `--plugin-dir` tem o mesmo nome que um plugin marketplace instalado, a cópia local tem precedência para essa sessão. Isso permite que você teste mudanças em um plugin que você já tem instalado sem desinstalá-lo primeiro. Plugins marketplace forçadamente habilitados por configurações gerenciadas são a única exceção e não podem ser substituídos.
 
-Conforme você faz mudanças no seu plugin, execute `/reload-plugins` para pegar as atualizações sem reiniciar. Isso recarrega comandos, skills, agents, hooks, MCP servers do plugin e LSP servers do plugin. Teste seus componentes de plugin:
+Conforme você faz mudanças no seu plugin, execute `/reload-plugins` para pegar as atualizações sem reiniciar. Isso recarrega plugins, skills, agents, hooks, MCP servers do plugin e LSP servers do plugin. Teste seus componentes de plugin:
 
 * Tente seus skills com `/plugin-name:skill-name`
 * Verifique que agents aparecem em `/agents`

@@ -43,7 +43,7 @@ Si vos appareils sont inscrits dans une solution MDM ou de gestion des points de
   <Step title="Définir vos paramètres">
     Ajoutez votre configuration en JSON. Tous les [paramètres disponibles dans `settings.json`](/fr/settings#available-settings) sont pris en charge, y compris les [hooks](/fr/hooks), les [variables d'environnement](/fr/env-vars) et les [paramètres réservés à la gestion](/fr/permissions#managed-only-settings) comme `allowManagedPermissionRulesOnly`.
 
-    Cet exemple applique une liste de refus de permissions et empêche les utilisateurs de contourner les permissions :
+    Cet exemple applique une liste de refus de permissions, empêche les utilisateurs de contourner les permissions et restreint les règles de permission à celles définies dans les paramètres gérés :
 
     ```json  theme={null}
     {
@@ -55,7 +55,8 @@ Si vos appareils sont inscrits dans une solution MDM ou de gestion des points de
           "Read(./secrets/**)"
         ],
         "disableBypassPermissionsMode": "disable"
-      }
+      },
+      "allowManagedPermissionRulesOnly": true
     }
     ```
 
@@ -113,6 +114,10 @@ Les rôles suivants peuvent gérer les paramètres gérés par le serveur :
 
 Limitez l'accès au personnel de confiance, car les modifications de paramètres s'appliquent à tous les utilisateurs de l'organisation.
 
+### Paramètres réservés à la gestion
+
+La plupart des [clés de paramètres](/fr/settings#available-settings) fonctionnent dans n'importe quel domaine. Une poignée de clés ne sont lues que dans les paramètres gérés et n'ont aucun effet lorsqu'elles sont placées dans les fichiers de paramètres utilisateur ou projet. Consultez [paramètres réservés à la gestion](/fr/permissions#managed-only-settings) pour la liste complète. Tout paramètre ne figurant pas sur cette liste peut toujours être placé dans les paramètres gérés et prend la plus haute priorité.
+
 ### Limitations actuelles
 
 Les paramètres gérés par le serveur ont les limitations suivantes pendant la période bêta :
@@ -124,7 +129,11 @@ Les paramètres gérés par le serveur ont les limitations suivantes pendant la 
 
 ### Précédence des paramètres
 
-Les paramètres gérés par le serveur et les [paramètres gérés par le point de terminaison](/fr/settings#settings-files) occupent tous deux le niveau le plus élevé dans la [hiérarchie des paramètres](/fr/settings#settings-precedence) de Claude Code. Aucun autre niveau de paramètres ne peut les remplacer, y compris les arguments de ligne de commande. Lorsque les deux sont présents, les paramètres gérés par le serveur ont la priorité et les paramètres gérés par le point de terminaison ne sont pas utilisés.
+Les paramètres gérés par le serveur et les [paramètres gérés par le point de terminaison](/fr/settings#settings-files) occupent tous deux le niveau le plus élevé dans la [hiérarchie des paramètres](/fr/settings#settings-precedence) de Claude Code. Aucun autre niveau de paramètres ne peut les remplacer, y compris les arguments de ligne de commande.
+
+Au sein du niveau géré, la première source qui livre une configuration non vide gagne. Les paramètres gérés par le serveur sont vérifiés en premier, puis les paramètres gérés par le point de terminaison. Les sources ne fusionnent pas : si les paramètres gérés par le serveur livrent des clés, les paramètres gérés par le point de terminaison sont complètement ignorés. Si les paramètres gérés par le serveur ne livrent rien, les paramètres gérés par le point de terminaison s'appliquent.
+
+Si vous effacez votre configuration de paramètres gérés par le serveur dans la console d'administration avec l'intention de revenir à une stratégie plist ou registre gérée par le point de terminaison, sachez que les [paramètres en cache](#fetch-and-caching-behavior) persistent sur les machines clientes jusqu'à la prochaine récupération réussie. Exécutez `/status` pour voir quelle source gérée est active.
 
 ### Comportement de récupération et de mise en cache
 

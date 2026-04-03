@@ -71,21 +71,20 @@ export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=global
 export ANTHROPIC_VERTEX_PROJECT_ID=YOUR-PROJECT-ID
 
+# Optional: Überschreiben Sie die Vertex-Endpunkt-URL für benutzerdefinierte Endpunkte oder Gateways
+# export ANTHROPIC_VERTEX_BASE_URL=https://aiplatform.googleapis.com
+
 # Optional: Deaktivieren Sie Prompt Caching bei Bedarf
 export DISABLE_PROMPT_CACHING=1
 
-# Wenn CLOUD_ML_REGION=global, überschreiben Sie die Region für nicht unterstützte Modelle
-export VERTEX_REGION_CLAUDE_3_5_HAIKU=us-east5
-
-# Optional: Überschreiben Sie Regionen für andere spezifische Modelle
-export VERTEX_REGION_CLAUDE_3_5_SONNET=us-east5
-export VERTEX_REGION_CLAUDE_3_7_SONNET=us-east5
-export VERTEX_REGION_CLAUDE_4_0_OPUS=europe-west1
-export VERTEX_REGION_CLAUDE_4_0_SONNET=us-east5
-export VERTEX_REGION_CLAUDE_4_1_OPUS=europe-west1
+# Wenn CLOUD_ML_REGION=global, überschreiben Sie die Region für Modelle, die keine globalen Endpunkte unterstützen
+export VERTEX_REGION_CLAUDE_HAIKU_4_5=us-east5
+export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 ```
 
-[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) wird automatisch unterstützt, wenn Sie das Flag `cache_control` ephemeral angeben. Um es zu deaktivieren, legen Sie `DISABLE_PROMPT_CACHING=1` fest. Für erhöhte Ratenlimits wenden Sie sich an den Google Cloud-Support. Bei Verwendung von Vertex AI sind die Befehle `/login` und `/logout` deaktiviert, da die Authentifizierung über Google Cloud-Anmeldedaten erfolgt.
+Jede Modellversion hat ihre eigene `VERTEX_REGION_CLAUDE_*`-Variable. Siehe die [Referenz für Umgebungsvariablen](/de/env-vars) für die vollständige Liste. Überprüfen Sie [Vertex Model Garden](https://console.cloud.google.com/vertex-ai/model-garden), um zu bestimmen, welche Modelle globale Endpunkte versus nur regionale Endpunkte unterstützen.
+
+[Prompt Caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) wird automatisch unterstützt, wenn Sie das Flag `cache_control` ephemeral angeben. Um es zu deaktivieren, legen Sie `DISABLE_PROMPT_CACHING=1` fest. Für erhöhte Ratenlimits wenden Sie sich an den Google Cloud-Support. Bei Verwendung von Vertex AI sind die Befehle `/login` und `/logout` deaktiviert, da die Authentifizierung über Google Cloud-Anmeldedaten erfolgt.
 
 ### 5. Modellversionen fixieren
 
@@ -105,16 +104,16 @@ Aktuelle und ältere Modell-IDs finden Sie unter [Modellübersicht](https://plat
 
 Claude Code verwendet diese Standardmodelle, wenn keine Fixierungsvariablen gesetzt sind:
 
-| Modelltyp                | Standardwert                |
-| :----------------------- | :-------------------------- |
-| Primäres Modell          | `claude-sonnet-4-6`         |
-| Kleines/schnelles Modell | `claude-haiku-4-5@20251001` |
+| Modelltyp                | Standardwert                 |
+| :----------------------- | :--------------------------- |
+| Primäres Modell          | `claude-sonnet-4-5@20250929` |
+| Kleines/schnelles Modell | `claude-haiku-4-5@20251001`  |
 
 Um Modelle weiter anzupassen:
 
 ```bash  theme={null}
 export ANTHROPIC_MODEL='claude-opus-4-6'
-export ANTHROPIC_SMALL_FAST_MODEL='claude-haiku-4-5@20251001'
+export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
 ```
 
 ## IAM-Konfiguration
@@ -150,7 +149,7 @@ Wenn Sie auf Fehler „Modell nicht gefunden" 404 stoßen:
 * Bestätigen Sie, dass das Modell im [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) aktiviert ist
 * Überprüfen Sie, dass Sie Zugriff auf die angegebene Region haben
 * Wenn Sie `CLOUD_ML_REGION=global` verwenden, überprüfen Sie, dass Ihre Modelle globale Endpunkte im [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) unter „Unterstützte Funktionen" unterstützen. Für Modelle, die globale Endpunkte nicht unterstützen, können Sie entweder:
-  * Ein unterstütztes Modell über `ANTHROPIC_MODEL` oder `ANTHROPIC_SMALL_FAST_MODEL` angeben, oder
+  * Ein unterstütztes Modell über `ANTHROPIC_MODEL` oder `ANTHROPIC_DEFAULT_HAIKU_MODEL` angeben, oder
   * Einen regionalen Endpunkt mit `VERTEX_REGION_<MODEL_NAME>`-Umgebungsvariablen festlegen
 
 Wenn Sie auf 429-Fehler stoßen:

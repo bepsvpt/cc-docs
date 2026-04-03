@@ -18,7 +18,7 @@ Hooks dijalankan pada titik-titik tertentu selama sesi Claude Code. Ketika event
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/WLZtXlltXc8aIoIM/images/hooks-lifecycle.svg?fit=max&auto=format&n=WLZtXlltXc8aIoIM&q=85&s=6a0bf67eeb570a96e36b564721fa2a93" alt="Diagram siklus hidup hook menunjukkan urutan hooks dari SessionStart melalui loop agentic (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCreated, TaskCompleted) ke Stop atau StopFailure, TeammateIdle, PreCompact, PostCompact, dan SessionEnd, dengan Elicitation dan ElicitationResult bersarang di dalam eksekusi MCP tool dan WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged, dan FileChanged sebagai event asinkron mandiri" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/WLZtXlltXc8aIoIM/images/hooks-lifecycle.svg?fit=max&auto=format&n=WLZtXlltXc8aIoIM&q=85&s=6a0bf67eeb570a96e36b564721fa2a93" alt="Diagram siklus hidup hook menunjukkan urutan hooks dari SessionStart melalui loop agentic (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCreated, TaskCompleted) ke Stop atau StopFailure, TeammateIdle, PreCompact, PostCompact, dan SessionEnd, dengan Elicitation dan ElicitationResult bersarang di dalam eksekusi MCP tool, PermissionDenied sebagai cabang samping dari PermissionRequest untuk penolakan mode otomatis, dan WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged, dan FileChanged sebagai event asinkron mandiri" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
@@ -177,7 +177,7 @@ Bidang `matcher` adalah string regex yang memfilter kapan hooks dijalankan. Guna
 
 | Event                                                                                                          | Apa yang difilter matcher                   | Contoh nilai matcher                                                                                                      |
 | :------------------------------------------------------------------------------------------------------------- | :------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`                                         | nama tool                                   | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                     | nama tool                                   | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
 | `SessionStart`                                                                                                 | bagaimana sesi dimulai                      | `startup`, `resume`, `clear`, `compact`                                                                                   |
 | `SessionEnd`                                                                                                   | mengapa sesi berakhir                       | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
 | `Notification`                                                                                                 | tipe notifikasi                             | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
@@ -221,7 +221,7 @@ Untuk tool events, Anda dapat memfilter lebih sempit dengan menetapkan bidang [`
 
 #### Cocokkan MCP tools
 
-Tool server [MCP](/id/mcp) muncul sebagai tool reguler dalam tool events (`PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`), jadi Anda dapat mencocokkannya dengan cara yang sama seperti Anda mencocokkan nama tool lainnya.
+Tool server [MCP](/id/mcp) muncul sebagai tool reguler dalam tool events (`PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`), jadi Anda dapat mencocokkannya dengan cara yang sama seperti Anda mencocokkan nama tool lainnya.
 
 MCP tools mengikuti pola penamaan `mcp__<server>__<tool>`, misalnya:
 
@@ -276,13 +276,13 @@ Setiap objek dalam array `hooks` inner adalah hook handler: perintah shell, endp
 
 Bidang-bidang ini berlaku untuk semua tipe hook:
 
-| Bidang          | Diperlukan | Deskripsi                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| :-------------- | :--------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`          | ya         | `"command"`, `"http"`, `"prompt"`, atau `"agent"`                                                                                                                                                                                                                                                                                                                                                                                         |
-| `if`            | tidak      | Sintaks aturan izin untuk memfilter kapan hook ini dijalankan, seperti `"Bash(git *)"` atau `"Edit(*.ts)"`. Hook hanya spawn jika pemanggilan tool cocok dengan pola. Hanya dievaluasi pada tool events: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, dan `PermissionRequest`. Pada event lain, hook dengan `if` yang ditetapkan tidak akan pernah dijalankan. Menggunakan sintaks yang sama seperti [aturan izin](/id/permissions) |
-| `timeout`       | tidak      | Detik sebelum membatalkan. Default: 600 untuk command, 30 untuk prompt, 60 untuk agent                                                                                                                                                                                                                                                                                                                                                    |
-| `statusMessage` | tidak      | Pesan spinner kustom ditampilkan saat hook dijalankan                                                                                                                                                                                                                                                                                                                                                                                     |
-| `once`          | tidak      | Jika `true`, dijalankan hanya sekali per sesi kemudian dihapus. Hanya skills, bukan agents. Lihat [Hooks in skills and agents](#hooks-in-skills-and-agents)                                                                                                                                                                                                                                                                               |
+| Bidang          | Diperlukan | Deskripsi                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| :-------------- | :--------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `type`          | ya         | `"command"`, `"http"`, `"prompt"`, atau `"agent"`                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `if`            | tidak      | Sintaks aturan izin untuk memfilter kapan hook ini dijalankan, seperti `"Bash(git *)"` atau `"Edit(*.ts)"`. Hook hanya spawn jika pemanggilan tool cocok dengan pola. Hanya dievaluasi pada tool events: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, dan `PermissionDenied`. Pada event lain, hook dengan `if` yang ditetapkan tidak akan pernah dijalankan. Menggunakan sintaks yang sama seperti [aturan izin](/id/permissions) |
+| `timeout`       | tidak      | Detik sebelum membatalkan. Default: 600 untuk command, 30 untuk prompt, 60 untuk agent                                                                                                                                                                                                                                                                                                                                                                        |
+| `statusMessage` | tidak      | Pesan spinner kustom ditampilkan saat hook dijalankan                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `once`          | tidak      | Jika `true`, dijalankan hanya sekali per sesi kemudian dihapus. Hanya skills, bukan agents. Lihat [Hooks in skills and agents](#hooks-in-skills-and-agents)                                                                                                                                                                                                                                                                                                   |
 
 #### Bidang command hook
 
@@ -524,33 +524,34 @@ exit 0  # Success: tool call proceeds
 
 Kode keluar 2 adalah cara hook menandakan "berhenti, jangan lakukan ini." Efeknya tergantung pada event, karena beberapa event mewakili tindakan yang dapat diblokir (seperti pemanggilan tool yang belum terjadi) dan yang lain mewakili hal-hal yang sudah terjadi atau tidak dapat dicegah.
 
-| Hook event           | Dapat diblokir? | Apa yang terjadi pada exit 2                                             |
-| :------------------- | :-------------- | :----------------------------------------------------------------------- |
-| `PreToolUse`         | Ya              | Memblokir pemanggilan tool                                               |
-| `PermissionRequest`  | Ya              | Menolak izin                                                             |
-| `UserPromptSubmit`   | Ya              | Memblokir pemrosesan prompt dan menghapus prompt                         |
-| `Stop`               | Ya              | Mencegah Claude berhenti, melanjutkan percakapan                         |
-| `SubagentStop`       | Ya              | Mencegah subagent berhenti                                               |
-| `TeammateIdle`       | Ya              | Mencegah teammate menjadi idle (teammate terus bekerja)                  |
-| `TaskCreated`        | Ya              | Membatalkan pembuatan tugas                                              |
-| `TaskCompleted`      | Ya              | Mencegah tugas ditandai sebagai selesai                                  |
-| `ConfigChange`       | Ya              | Memblokir perubahan konfigurasi dari berlaku (kecuali `policy_settings`) |
-| `StopFailure`        | Tidak           | Output dan kode keluar diabaikan                                         |
-| `PostToolUse`        | Tidak           | Menampilkan stderr ke Claude (tool sudah dijalankan)                     |
-| `PostToolUseFailure` | Tidak           | Menampilkan stderr ke Claude (tool sudah gagal)                          |
-| `Notification`       | Tidak           | Menampilkan stderr ke pengguna saja                                      |
-| `SubagentStart`      | Tidak           | Menampilkan stderr ke pengguna saja                                      |
-| `SessionStart`       | Tidak           | Menampilkan stderr ke pengguna saja                                      |
-| `SessionEnd`         | Tidak           | Menampilkan stderr ke pengguna saja                                      |
-| `CwdChanged`         | Tidak           | Menampilkan stderr ke pengguna saja                                      |
-| `FileChanged`        | Tidak           | Menampilkan stderr ke pengguna saja                                      |
-| `PreCompact`         | Tidak           | Menampilkan stderr ke pengguna saja                                      |
-| `PostCompact`        | Tidak           | Menampilkan stderr ke pengguna saja                                      |
-| `Elicitation`        | Ya              | Menolak elicitation                                                      |
-| `ElicitationResult`  | Ya              | Memblokir respons (tindakan menjadi decline)                             |
-| `WorktreeCreate`     | Ya              | Kode keluar non-zero apa pun menyebabkan pembuatan worktree gagal        |
-| `WorktreeRemove`     | Tidak           | Kegagalan dicatat dalam mode debug saja                                  |
-| `InstructionsLoaded` | Tidak           | Kode keluar diabaikan                                                    |
+| Hook event           | Dapat diblokir? | Apa yang terjadi pada exit 2                                                                                                                             |
+| :------------------- | :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PreToolUse`         | Ya              | Memblokir pemanggilan tool                                                                                                                               |
+| `PermissionRequest`  | Ya              | Menolak izin                                                                                                                                             |
+| `UserPromptSubmit`   | Ya              | Memblokir pemrosesan prompt dan menghapus prompt                                                                                                         |
+| `Stop`               | Ya              | Mencegah Claude berhenti, melanjutkan percakapan                                                                                                         |
+| `SubagentStop`       | Ya              | Mencegah subagent berhenti                                                                                                                               |
+| `TeammateIdle`       | Ya              | Mencegah teammate menjadi idle (teammate terus bekerja)                                                                                                  |
+| `TaskCreated`        | Ya              | Membatalkan pembuatan tugas                                                                                                                              |
+| `TaskCompleted`      | Ya              | Mencegah tugas ditandai sebagai selesai                                                                                                                  |
+| `ConfigChange`       | Ya              | Memblokir perubahan konfigurasi dari berlaku (kecuali `policy_settings`)                                                                                 |
+| `StopFailure`        | Tidak           | Output dan kode keluar diabaikan                                                                                                                         |
+| `PostToolUse`        | Tidak           | Menampilkan stderr ke Claude (tool sudah dijalankan)                                                                                                     |
+| `PostToolUseFailure` | Tidak           | Menampilkan stderr ke Claude (tool sudah gagal)                                                                                                          |
+| `PermissionDenied`   | Tidak           | Kode keluar dan stderr diabaikan (penolakan sudah terjadi). Gunakan JSON `hookSpecificOutput.retry: true` untuk memberitahu model itu dapat mencoba lagi |
+| `Notification`       | Tidak           | Menampilkan stderr ke pengguna saja                                                                                                                      |
+| `SubagentStart`      | Tidak           | Menampilkan stderr ke pengguna saja                                                                                                                      |
+| `SessionStart`       | Tidak           | Menampilkan stderr ke pengguna saja                                                                                                                      |
+| `SessionEnd`         | Tidak           | Menampilkan stderr ke pengguna saja                                                                                                                      |
+| `CwdChanged`         | Tidak           | Menampilkan stderr ke pengguna saja                                                                                                                      |
+| `FileChanged`        | Tidak           | Menampilkan stderr ke pengguna saja                                                                                                                      |
+| `PreCompact`         | Tidak           | Menampilkan stderr ke pengguna saja                                                                                                                      |
+| `PostCompact`        | Tidak           | Menampilkan stderr ke pengguna saja                                                                                                                      |
+| `Elicitation`        | Ya              | Menolak elicitation                                                                                                                                      |
+| `ElicitationResult`  | Ya              | Memblokir respons (tindakan menjadi decline)                                                                                                             |
+| `WorktreeCreate`     | Ya              | Kode keluar non-zero apa pun menyebabkan pembuatan worktree gagal                                                                                        |
+| `WorktreeRemove`     | Tidak           | Kegagalan dicatat dalam mode debug saja                                                                                                                  |
+| `InstructionsLoaded` | Tidak           | Kode keluar diabaikan                                                                                                                                    |
 
 ### Penanganan respons HTTP
 
@@ -573,6 +574,8 @@ Kode keluar memungkinkan Anda mengizinkan atau memblokir, tetapi output JSON mem
 </Note>
 
 Stdout hook Anda harus berisi hanya objek JSON. Jika profil shell Anda mencetak teks saat startup, itu dapat mengganggu parsing JSON. Lihat [JSON validation failed](/id/hooks-guide#json-validation-failed) dalam panduan troubleshooting.
+
+Hook output yang disuntikkan ke dalam konteks (`additionalContext`, `systemMessage`, atau plain stdout) dibatasi pada 10.000 karakter. Output yang melebihi batas ini disimpan ke file dan diganti dengan pratinjau dan path file, dengan cara yang sama seperti hasil tool besar ditangani.
 
 Objek JSON mendukung tiga jenis bidang:
 
@@ -601,8 +604,9 @@ Tidak setiap event mendukung pemblokiran atau kontrol perilaku melalui JSON. Eve
 | :-------------------------------------------------------------------------------------------------------------------------- | :--------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange                                         | Top-level `decision`               | `decision: "block"`, `reason`                                                                                                                                                       |
 | TeammateIdle, TaskCreated, TaskCompleted                                                                                    | Kode keluar atau `continue: false` | Kode keluar 2 memblokir tindakan dengan umpan balik stderr. JSON `{"continue": false, "stopReason": "..."}` juga menghentikan teammate sepenuhnya, mencocokkan perilaku hook `Stop` |
-| PreToolUse                                                                                                                  | `hookSpecificOutput`               | `permissionDecision` (allow/deny/ask), `permissionDecisionReason`                                                                                                                   |
+| PreToolUse                                                                                                                  | `hookSpecificOutput`               | `permissionDecision` (allow/deny/ask/defer), `permissionDecisionReason`                                                                                                             |
 | PermissionRequest                                                                                                           | `hookSpecificOutput`               | `decision.behavior` (allow/deny)                                                                                                                                                    |
+| PermissionDenied                                                                                                            | `hookSpecificOutput`               | `retry: true` memberitahu model itu dapat mencoba lagi pemanggilan tool yang ditolak                                                                                                |
 | WorktreeCreate                                                                                                              | path return                        | Command hook mencetak path di stdout; HTTP hook mengembalikan `hookSpecificOutput.worktreePath`. Kegagalan hook atau path yang hilang gagal membuat                                 |
 | Elicitation                                                                                                                 | `hookSpecificOutput`               | `action` (accept/decline/cancel), `content` (nilai field form untuk accept)                                                                                                         |
 | ElicitationResult                                                                                                           | `hookSpecificOutput`               | `action` (accept/decline/cancel), `content` (nilai field form override)                                                                                                             |
@@ -623,7 +627,7 @@ Berikut adalah contoh setiap pola dalam aksi:
   </Tab>
 
   <Tab title="PreToolUse">
-    Menggunakan `hookSpecificOutput` untuk kontrol yang lebih kaya: izinkan, tolak, atau tingkatkan ke pengguna. Anda juga dapat memodifikasi input tool sebelum dijalankan atau menyuntikkan konteks tambahan untuk Claude. Lihat [PreToolUse decision control](#pretooluse-decision-control) untuk set lengkap opsi.
+    Menggunakan `hookSpecificOutput` untuk kontrol yang lebih kaya: izinkan, tolak, tanya, atau tunda. Anda juga dapat memodifikasi input tool sebelum dijalankan atau menyuntikkan konteks tambahan untuk Claude. Lihat [PreToolUse decision control](#pretooluse-decision-control) untuk set lengkap opsi.
 
     ```json  theme={null}
     {
@@ -843,7 +847,7 @@ Untuk memblokir prompt, kembalikan objek JSON dengan `decision` diatur ke `"bloc
 
 Dijalankan setelah Claude membuat parameter tool dan sebelum memproses pemanggilan tool. Cocok pada nama tool: `Bash`, `Edit`, `Write`, `Read`, `Glob`, `Grep`, `Agent`, `WebFetch`, `WebSearch`, `AskUserQuestion`, `ExitPlanMode`, dan nama [MCP tool](#match-mcp-tools) apa pun.
 
-Gunakan [PreToolUse decision control](#pretooluse-decision-control) untuk mengizinkan, menolak, atau meminta izin untuk menggunakan tool.
+Gunakan [PreToolUse decision control](#pretooluse-decision-control) untuk mengizinkan, menolak, menanyakan, atau menunda pemanggilan tool.
 
 #### Input PreToolUse
 
@@ -953,14 +957,16 @@ Mengajukan pertanyaan multiple-choice satu hingga empat kepada pengguna.
 
 #### Kontrol keputusan PreToolUse
 
-Hooks `PreToolUse` dapat mengontrol apakah pemanggilan tool dilanjutkan. Tidak seperti hooks lain yang menggunakan bidang `decision` tingkat atas, PreToolUse mengembalikan keputusannya di dalam objek `hookSpecificOutput`. Ini memberikannya kontrol yang lebih kaya: tiga hasil (izinkan, tolak, atau tanya) ditambah kemampuan untuk memodifikasi input tool sebelum eksekusi.
+Hooks `PreToolUse` dapat mengontrol apakah pemanggilan tool dilanjutkan. Tidak seperti hooks lain yang menggunakan bidang `decision` tingkat atas, PreToolUse mengembalikan keputusannya di dalam objek `hookSpecificOutput`. Ini memberikannya kontrol yang lebih kaya: empat hasil (izinkan, tolak, tanya, atau tunda) ditambah kemampuan untuk memodifikasi input tool sebelum eksekusi.
 
-| Bidang                     | Deskripsi                                                                                                                                                                                                                                                                          |
-| :------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `permissionDecision`       | `"allow"` melewati prompt izin. `"deny"` mencegah pemanggilan tool. `"ask"` meminta pengguna untuk mengkonfirmasi. [Deny and ask rules](/id/permissions#manage-permissions) masih berlaku ketika hook mengembalikan `"allow"`                                                      |
-| `permissionDecisionReason` | Untuk `"allow"` dan `"ask"`, ditampilkan ke pengguna tetapi bukan Claude. Untuk `"deny"`, ditampilkan ke Claude                                                                                                                                                                    |
-| `updatedInput`             | Memodifikasi parameter input tool sebelum eksekusi. Menggantikan seluruh objek input, jadi sertakan bidang yang tidak berubah bersama yang dimodifikasi. Gabungkan dengan `"allow"` untuk persetujuan otomatis, atau `"ask"` untuk menampilkan input yang dimodifikasi ke pengguna |
-| `additionalContext`        | String ditambahkan ke konteks Claude sebelum tool dijalankan                                                                                                                                                                                                                       |
+| Bidang                     | Deskripsi                                                                                                                                                                                                                                                                                                      |
+| :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `permissionDecision`       | `"allow"` melewati prompt izin. `"deny"` mencegah pemanggilan tool. `"ask"` meminta pengguna untuk mengkonfirmasi. `"defer"` keluar dengan baik sehingga tool dapat dilanjutkan nanti. [Deny and ask rules](/id/permissions#manage-permissions) masih berlaku ketika hook mengembalikan `"allow"`              |
+| `permissionDecisionReason` | Untuk `"allow"` dan `"ask"`, ditampilkan ke pengguna tetapi bukan Claude. Untuk `"deny"`, ditampilkan ke Claude. Untuk `"defer"`, diabaikan                                                                                                                                                                    |
+| `updatedInput`             | Memodifikasi parameter input tool sebelum eksekusi. Menggantikan seluruh objek input, jadi sertakan bidang yang tidak berubah bersama yang dimodifikasi. Gabungkan dengan `"allow"` untuk persetujuan otomatis, atau `"ask"` untuk menampilkan input yang dimodifikasi ke pengguna. Untuk `"defer"`, diabaikan |
+| `additionalContext`        | String ditambahkan ke konteks Claude sebelum tool dijalankan. Untuk `"defer"`, diabaikan                                                                                                                                                                                                                       |
+
+Ketika beberapa PreToolUse hooks mengembalikan keputusan berbeda, prioritas adalah `deny` > `defer` > `ask` > `allow`.
 
 Ketika hook mengembalikan `"ask"`, dialog izin yang ditampilkan kepada pengguna mencakup label yang mengidentifikasi dari mana hook berasal: misalnya, `[User]`, `[Project]`, `[Plugin]`, atau `[Local]`. Ini membantu pengguna memahami sumber konfigurasi mana yang meminta konfirmasi.
 
@@ -983,6 +989,48 @@ Ketika hook mengembalikan `"ask"`, dialog izin yang ditampilkan kepada pengguna 
 <Note>
   PreToolUse sebelumnya menggunakan bidang `decision` dan `reason` tingkat atas, tetapi ini sudah usang untuk event ini. Gunakan `hookSpecificOutput.permissionDecision` dan `hookSpecificOutput.permissionDecisionReason` sebagai gantinya. Nilai usang `"approve"` dan `"block"` memetakan ke `"allow"` dan `"deny"` masing-masing. Events lain seperti PostToolUse dan Stop terus menggunakan `decision` dan `reason` tingkat atas sebagai format saat ini mereka.
 </Note>
+
+#### Tunda pemanggilan tool untuk nanti
+
+`"defer"` adalah untuk integrasi yang menjalankan `claude -p` sebagai subprocess dan membaca output JSON-nya, seperti aplikasi Agent SDK atau UI kustom yang dibangun di atas Claude Code. Ini memungkinkan proses pemanggil itu menjeda Claude pada pemanggilan tool, mengumpulkan input melalui antarmuka miliknya sendiri, dan melanjutkan di mana ia berhenti. Claude Code menghormati nilai ini hanya dalam [mode non-interaktif](/id/headless) dengan flag `-p`. Dalam sesi interaktif itu mencatat peringatan dan mengabaikan hasil hook.
+
+<Note>
+  Nilai `defer` memerlukan Claude Code v2.1.89 atau lebih baru. Versi sebelumnya tidak mengenalinya dan tool melanjutkan melalui alur izin normal.
+</Note>
+
+Tool `AskUserQuestion` adalah kasus tipikal: Claude ingin menanyakan sesuatu kepada pengguna, tetapi tidak ada terminal untuk menjawab. Perjalanan bolak-balik bekerja seperti ini:
+
+1. Claude memanggil `AskUserQuestion`. Hook `PreToolUse` dijalankan.
+2. Hook mengembalikan `permissionDecision: "defer"`. Tool tidak dijalankan. Proses keluar dengan `stop_reason: "tool_deferred"` dan pemanggilan tool yang tertunda dipertahankan dalam transkrip.
+3. Proses pemanggil membaca `deferred_tool_use` dari hasil SDK, menampilkan pertanyaan di UI miliknya sendiri, dan menunggu jawaban.
+4. Proses pemanggil menjalankan `claude -p --resume <session-id>`. Pemanggilan tool yang sama menjalankan `PreToolUse` lagi.
+5. Hook mengembalikan `permissionDecision: "allow"` dengan jawaban dalam `updatedInput`. Tool dijalankan dan Claude melanjutkan.
+
+Bidang `deferred_tool_use` membawa `id`, `name`, dan `input` tool. `input` adalah parameter yang Claude hasilkan untuk pemanggilan tool, ditangkap sebelum eksekusi:
+
+```json  theme={null}
+{
+  "type": "result",
+  "subtype": "success",
+  "stop_reason": "tool_deferred",
+  "session_id": "abc123",
+  "deferred_tool_use": {
+    "id": "toolu_01abc",
+    "name": "AskUserQuestion",
+    "input": { "questions": [{ "question": "Which framework?", "header": "Framework", "options": [{"label": "React"}, {"label": "Vue"}], "multiSelect": false }] }
+  }
+}
+```
+
+Tidak ada timeout atau batas retry. Sesi tetap di disk sampai Anda melanjutkannya. Jika jawaban tidak siap saat Anda melanjutkan, hook dapat mengembalikan `"defer"` lagi dan proses keluar dengan cara yang sama. Proses pemanggil mengontrol kapan harus memecah loop dengan akhirnya mengembalikan `"allow"` atau `"deny"` dari hook.
+
+`"defer"` hanya bekerja ketika Claude membuat satu pemanggilan tool dalam giliran. Jika Claude membuat beberapa pemanggilan tool sekaligus, `"defer"` diabaikan dengan peringatan dan tool melanjutkan melalui alur izin normal. Batasan ada karena resume hanya dapat menjalankan kembali satu tool: tidak ada cara untuk menunda satu pemanggilan dari batch tanpa meninggalkan yang lain tidak terselesaikan.
+
+Jika tool yang ditunda tidak lagi tersedia saat Anda melanjutkan, proses keluar dengan `stop_reason: "tool_deferred_unavailable"` dan `is_error: true` sebelum hook dijalankan. Ini terjadi ketika server MCP yang menyediakan tool tidak terhubung untuk sesi yang dilanjutkan. Payload `deferred_tool_use` masih disertakan sehingga Anda dapat mengidentifikasi tool mana yang hilang.
+
+<Warning>
+  `--resume` tidak mengembalikan mode izin dari sesi sebelumnya. Teruskan flag `--permission-mode` yang sama pada resume yang aktif saat tool ditunda. Claude Code mencatat peringatan jika mode berbeda.
+</Warning>
 
 ### PermissionRequest
 
@@ -1169,6 +1217,52 @@ Hooks `PostToolUseFailure` dapat memberikan konteks ke Claude setelah kegagalan 
   }
 }
 ```
+
+### PermissionDenied
+
+Dijalankan ketika pengklasifikasi [mode otomatis](/id/permission-modes#eliminate-prompts-with-auto-mode) menolak pemanggilan tool. Hook ini hanya dijalankan dalam mode otomatis: itu tidak dijalankan ketika Anda secara manual menolak dialog izin, ketika hook `PreToolUse` memblokir pemanggilan, atau ketika aturan `deny` cocok. Gunakan untuk mencatat penolakan pengklasifikasi, menyesuaikan konfigurasi, atau memberitahu model itu dapat mencoba lagi pemanggilan tool.
+
+Cocok pada nama tool, nilai yang sama seperti PreToolUse.
+
+#### Input PermissionDenied
+
+Selain [bidang input umum](#common-input-fields), PermissionDenied hooks menerima `tool_name`, `tool_input`, `tool_use_id`, dan `reason`.
+
+```json  theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "cwd": "/Users/...",
+  "permission_mode": "auto",
+  "hook_event_name": "PermissionDenied",
+  "tool_name": "Bash",
+  "tool_input": {
+    "command": "rm -rf /tmp/build",
+    "description": "Clean build directory"
+  },
+  "tool_use_id": "toolu_01ABC123...",
+  "reason": "Auto mode denied: command targets a path outside the project"
+}
+```
+
+| Bidang   | Deskripsi                                                           |
+| :------- | :------------------------------------------------------------------ |
+| `reason` | Penjelasan pengklasifikasi tentang mengapa pemanggilan tool ditolak |
+
+#### Kontrol keputusan PermissionDenied
+
+PermissionDenied hooks dapat memberitahu model itu dapat mencoba lagi pemanggilan tool yang ditolak. Kembalikan objek JSON dengan `hookSpecificOutput.retry` diatur ke `true`:
+
+```json  theme={null}
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PermissionDenied",
+    "retry": true
+  }
+}
+```
+
+Ketika `retry` adalah `true`, Claude Code menambahkan pesan ke percakapan memberitahu model itu dapat mencoba lagi pemanggilan tool. Penolakan itu sendiri tidak dibatalkan. Jika hook Anda tidak mengembalikan JSON, atau mengembalikan `retry: false`, penolakan tetap dan model menerima pesan penolakan asli.
 
 ### Notification
 
@@ -1966,6 +2060,7 @@ Events yang mendukung hooks `command` dan `http` tetapi bukan `prompt` atau `age
 * `FileChanged`
 * `InstructionsLoaded`
 * `Notification`
+* `PermissionDenied`
 * `PostCompact`
 * `PreCompact`
 * `SessionEnd`

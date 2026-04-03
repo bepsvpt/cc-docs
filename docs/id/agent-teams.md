@@ -101,7 +101,7 @@ Tim agent mendukung dua mode tampilan:
   `tmux` memiliki keterbatasan yang diketahui pada sistem operasi tertentu dan secara tradisional bekerja paling baik di macOS. Menggunakan `tmux -CC` di iTerm2 adalah entrypoint yang disarankan ke `tmux`.
 </Note>
 
-Default adalah `"auto"`, yang menggunakan split panes jika Anda sudah berjalan di dalam session tmux, dan in-process sebaliknya. Pengaturan `"tmux"` mengaktifkan mode split-pane dan auto-detects apakah akan menggunakan tmux atau iTerm2 berdasarkan terminal Anda. Untuk mengganti, atur `teammateMode` di [settings.json](/id/settings) Anda:
+Default adalah `"auto"`, yang menggunakan split panes jika Anda sudah berjalan di dalam session tmux, dan in-process sebaliknya. Pengaturan `"tmux"` mengaktifkan mode split-pane dan auto-detects apakah akan menggunakan tmux atau iTerm2 berdasarkan terminal Anda. Untuk mengganti, atur `teammateMode` di [global config](/id/settings#global-config-settings) Anda di `~/.claude.json`:
 
 ```json  theme={null}
 {
@@ -186,9 +186,10 @@ Ini menghapus sumber daya tim bersama. Ketika lead menjalankan cleanup, ia memer
 
 ### Terapkan quality gates dengan hooks
 
-Gunakan [hooks](/id/hooks) untuk menerapkan aturan ketika rekan tim menyelesaikan pekerjaan atau tugas selesai:
+Gunakan [hooks](/id/hooks) untuk menerapkan aturan ketika rekan tim menyelesaikan pekerjaan atau tugas dibuat atau diselesaikan:
 
 * [`TeammateIdle`](/id/hooks#teammateidle): berjalan ketika rekan tim akan idle. Keluar dengan kode 2 untuk mengirim umpan balik dan membuat rekan tim tetap bekerja.
+* [`TaskCreated`](/id/hooks#taskcreated): berjalan ketika tugas sedang dibuat. Keluar dengan kode 2 untuk mencegah pembuatan dan mengirim umpan balik.
 * [`TaskCompleted`](/id/hooks#taskcompleted): berjalan ketika tugas ditandai selesai. Keluar dengan kode 2 untuk mencegah penyelesaian dan mengirim umpan balik.
 
 ## Bagaimana tim agent bekerja
@@ -224,7 +225,23 @@ Tim dan tugas disimpan secara lokal:
 * **Konfigurasi tim**: `~/.claude/teams/{team-name}/config.json`
 * **Daftar tugas**: `~/.claude/tasks/{team-name}/`
 
+Claude Code menghasilkan keduanya secara otomatis ketika Anda membuat tim dan memperbarui mereka saat rekan tim bergabung, idle, atau pergi. Konfigurasi tim menyimpan status runtime seperti session IDs dan tmux pane IDs, jadi jangan mengeditnya dengan tangan atau pre-author: perubahan Anda ditimpa pada update status berikutnya.
+
+Untuk mendefinisikan peran rekan tim yang dapat digunakan kembali, gunakan [subagent definitions](#use-subagent-definitions-for-teammates) sebagai gantinya.
+
 Konfigurasi tim berisi array `members` dengan nama setiap rekan tim, agent ID, dan tipe agent. Rekan tim dapat membaca file ini untuk menemukan anggota tim lainnya.
+
+Tidak ada padanan tingkat proyek dari konfigurasi tim. File seperti `.claude/teams/teams.json` di direktori proyek Anda tidak dikenali sebagai konfigurasi; Claude memperlakukannya sebagai file biasa.
+
+### Gunakan subagent definitions untuk rekan tim
+
+Ketika menelurkan rekan tim, Anda dapat mereferensikan tipe [subagent](/id/sub-agents) dari [subagent scope](/id/sub-agents#choose-the-subagent-scope) apa pun: proyek, pengguna, plugin, atau CLI-defined. Rekan tim mewarisi system prompt, tools, dan model subagent itu. Ini memungkinkan Anda mendefinisikan peran sekali, seperti security-reviewer atau test-runner, dan menggunakannya kembali baik sebagai subagent yang didelegasikan maupun sebagai rekan tim agent team.
+
+Untuk menggunakan subagent definition, sebutkan berdasarkan nama ketika meminta Claude untuk menelurkan rekan tim:
+
+```text  theme={null}
+Hasilkan rekan tim menggunakan tipe agent security-reviewer untuk mengaudit modul auth.
+```
 
 ### Izin
 

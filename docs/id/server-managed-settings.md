@@ -43,7 +43,7 @@ Jika perangkat Anda terdaftar dalam solusi MDM atau manajemen endpoint, pengatur
   <Step title="Tentukan pengaturan Anda">
     Tambahkan konfigurasi Anda sebagai JSON. Semua [pengaturan yang tersedia di `settings.json`](/id/settings#available-settings) didukung, termasuk [hooks](/id/hooks), [variabel lingkungan](/id/env-vars), dan [pengaturan yang hanya dikelola](/id/permissions#managed-only-settings) seperti `allowManagedPermissionRulesOnly`.
 
-    Contoh ini memberlakukan daftar penolakan izin dan mencegah pengguna dari melewati izin:
+    Contoh ini memberlakukan daftar penolakan izin, mencegah pengguna dari melewati izin, dan membatasi aturan izin hanya pada yang ditentukan dalam pengaturan terkelola:
 
     ```json  theme={null}
     {
@@ -55,7 +55,8 @@ Jika perangkat Anda terdaftar dalam solusi MDM atau manajemen endpoint, pengatur
           "Read(./secrets/**)"
         ],
         "disableBypassPermissionsMode": "disable"
-      }
+      },
+      "allowManagedPermissionRulesOnly": true
     }
     ```
 
@@ -113,6 +114,10 @@ Peran berikut dapat mengelola pengaturan yang dikelola server:
 
 Batasi akses ke personel terpercaya, karena perubahan pengaturan berlaku untuk semua pengguna dalam organisasi.
 
+### Pengaturan yang hanya dikelola
+
+Sebagian besar [kunci pengaturan](/id/settings#available-settings) bekerja dalam cakupan apa pun. Segelintir kunci hanya dibaca dari pengaturan terkelola dan tidak berpengaruh ketika ditempatkan dalam file pengaturan pengguna atau proyek. Lihat [pengaturan yang hanya dikelola](/id/permissions#managed-only-settings) untuk daftar lengkap. Pengaturan apa pun yang tidak ada dalam daftar itu masih dapat ditempatkan dalam pengaturan terkelola dan memiliki prioritas tertinggi.
+
 ### Batasan saat ini
 
 Pengaturan yang dikelola server memiliki batasan berikut selama periode beta:
@@ -124,7 +129,11 @@ Pengaturan yang dikelola server memiliki batasan berikut selama periode beta:
 
 ### Prioritas pengaturan
 
-Pengaturan yang dikelola server dan [pengaturan yang dikelola endpoint](/id/settings#settings-files) keduanya menempati tingkat tertinggi dalam [hierarki pengaturan](/id/settings#settings-precedence) Claude Code. Tidak ada tingkat pengaturan lain yang dapat menggantinya, termasuk argumen baris perintah. Ketika keduanya ada, pengaturan yang dikelola server memiliki prioritas dan pengaturan yang dikelola endpoint tidak digunakan.
+Pengaturan yang dikelola server dan [pengaturan yang dikelola endpoint](/id/settings#settings-files) keduanya menempati tingkat tertinggi dalam [hierarki pengaturan](/id/settings#settings-precedence) Claude Code. Tidak ada tingkat pengaturan lain yang dapat menggantinya, termasuk argumen baris perintah.
+
+Dalam tingkat terkelola, sumber pertama yang mengirimkan konfigurasi non-kosong menang. Pengaturan yang dikelola server diperiksa terlebih dahulu, kemudian pengaturan yang dikelola endpoint. Sumber tidak digabungkan: jika pengaturan yang dikelola server mengirimkan kunci apa pun, pengaturan yang dikelola endpoint sepenuhnya diabaikan. Jika pengaturan yang dikelola server tidak mengirimkan apa pun, pengaturan yang dikelola endpoint berlaku.
+
+Jika Anda menghapus konfigurasi pengaturan yang dikelola server di konsol admin dengan tujuan untuk kembali ke plist yang dikelola endpoint atau kebijakan registri, perhatikan bahwa [pengaturan yang di-cache](#fetch-and-caching-behavior) bertahan pada mesin klien hingga pengambilan berikutnya yang berhasil. Jalankan `/status` untuk melihat sumber terkelola mana yang aktif.
 
 ### Perilaku pengambilan dan caching
 

@@ -557,6 +557,10 @@ export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 
 有關完整的配置選項，請參閱 [Plugin settings](/zh-TW/settings#plugin-settings)。
 
+<Note>
+  如果您使用具有相對路徑的本機 `directory` 或 `file` 來源，路徑會針對您的儲存庫的主要簽出進行解析。當您從 git worktree 執行 Claude Code 時，路徑仍然指向主要簽出，因此所有 worktree 共享相同的 marketplace 位置。Marketplace 狀態每個使用者儲存一次在 `~/.claude/plugins/known_marketplaces.json` 中，而不是每個專案。
+</Note>
+
 ### 為容器預先填充 plugin
 
 對於容器映像和 CI 環境，您可以在建置時預先填充 plugin 目錄，以便 Claude Code 啟動時已有 marketplace 和 plugin 可用，無需在執行時複製任何內容。設定 `CLAUDE_CODE_PLUGIN_SEED_DIR` 環境變數以指向此目錄。
@@ -627,7 +631,7 @@ $CLAUDE_CODE_PLUGIN_SEED_DIR/
 }
 ```
 
-使用主機上的正規表達式模式匹配允許來自內部 git 伺服器的所有 marketplace：
+使用主機上的正規表達式模式匹配允許來自內部 git 伺服器的所有 marketplace。這是 [GitHub Enterprise Server](/zh-TW/github-enterprise-server#plugin-marketplaces-on-ghes) 或自託管 GitLab 執行個體的推薦方法：
 
 ```json  theme={null}
 {
@@ -848,6 +852,20 @@ claude plugin validate .
 * 對於 GitHub，確保令牌對私人儲存庫具有 `repo` 範圍
 * 對於 GitLab，確保令牌至少具有 `read_repository` 範圍
 * 驗證令牌未過期
+
+### Marketplace 更新在離線環境中失敗
+
+**症狀**：Marketplace `git pull` 失敗，Claude Code 清除現有快取，導致 plugin 變得不可用。
+
+**原因**：預設情況下，當 `git pull` 失敗時，Claude Code 會移除過時的複製並嘗試重新複製。在離線或隔離環境中，重新複製以相同方式失敗，導致 marketplace 目錄為空。
+
+**解決方案**：設定 `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` 以在拉取失敗時保留現有快取，而不是清除它：
+
+```bash  theme={null}
+export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
+```
+
+設定此變數後，Claude Code 在 `git pull` 失敗時保留過時的 marketplace 複製，並繼續使用最後已知的良好狀態。對於儲存庫永遠無法到達的完全離線部署，請改用 [`CLAUDE_CODE_PLUGIN_SEED_DIR`](#pre-populate-plugins-for-containers) 在建置時預先填充 plugin 目錄。
 
 ### Git 操作逾時
 

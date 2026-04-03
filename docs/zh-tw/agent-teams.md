@@ -101,7 +101,7 @@ Agent teams 支援兩種顯示模式：
   `tmux` 在某些作業系統上有已知限制，傳統上在 macOS 上效果最佳。在 iTerm2 中使用 `tmux -CC` 是進入 `tmux` 的建議入口點。
 </Note>
 
-預設值是 `"auto"`，如果您已在 tmux 工作階段內運行，則使用分割窗格，否則使用 in-process。`"tmux"` 設定啟用分割窗格模式，並根據您的終端自動偵測是否使用 tmux 或 iTerm2。若要覆蓋，請在 [settings.json](/zh-TW/settings) 中設定 `teammateMode`：
+預設值是 `"auto"`，如果您已在 tmux 工作階段內運行，則使用分割窗格，否則使用 in-process。`"tmux"` 設定啟用分割窗格模式，並根據您的終端自動偵測是否使用 tmux 或 iTerm2。若要覆蓋，請在 [global config](/zh-TW/settings#global-config-settings) 的 `~/.claude.json` 中設定 `teammateMode`：
 
 ```json  theme={null}
 {
@@ -186,9 +186,10 @@ Clean up the team
 
 ### 使用 hooks 強制執行品質閘門
 
-使用 [hooks](/zh-TW/hooks) 在隊友完成工作或任務完成時強制執行規則：
+使用 [hooks](/zh-TW/hooks) 在隊友完成工作或任務建立或完成時強制執行規則：
 
 * [`TeammateIdle`](/zh-TW/hooks#teammateidle)：當隊友即將閒置時運行。以代碼 2 退出以發送反饋並保持隊友工作。
+* [`TaskCreated`](/zh-TW/hooks#taskcreated)：當任務正在建立時運行。以代碼 2 退出以防止建立並發送反饋。
 * [`TaskCompleted`](/zh-TW/hooks#taskcompleted)：當任務被標記為完成時運行。以代碼 2 退出以防止完成並發送反饋。
 
 ## Agent teams 如何工作
@@ -224,7 +225,23 @@ Agent team 由以下部分組成：
 * **Team config**：`~/.claude/teams/{team-name}/config.json`
 * **Task list**：`~/.claude/tasks/{team-name}/`
 
+Claude Code 在您建立團隊時自動生成這兩者，並在隊友加入、閒置或離開時更新它們。團隊配置保存運行時狀態，例如工作階段 ID 和 tmux 窗格 ID，因此不要手動編輯或預先編寫它：您的變更會在下次狀態更新時被覆蓋。
+
+若要定義可重複使用的隊友角色，請改用 [subagent 定義](#use-subagent-definitions-for-teammates)。
+
 團隊配置包含一個 `members` 陣列，其中包含每個隊友的名稱、代理 ID 和代理類型。隊友可以讀取此檔案以發現其他團隊成員。
+
+沒有專案級別的團隊配置等效項。您專案目錄中的 `.claude/teams/teams.json` 之類的檔案不被識別為配置；Claude 將其視為普通檔案。
+
+### 為隊友使用 subagent 定義
+
+生成隊友時，您可以參考來自任何 [subagent 範圍](/zh-TW/sub-agents#choose-the-subagent-scope)的 [subagent](/zh-TW/sub-agents) 類型：專案、使用者、plugin 或 CLI 定義。隊友繼承該 subagent 的系統提示、工具和模型。這讓您定義一個角色一次，例如安全審查者或測試執行者，並將其同時重複使用為委派的 subagent 和 agent team 隊友。
+
+若要使用 subagent 定義，在要求 Claude 生成隊友時按名稱提及它：
+
+```text  theme={null}
+Spawn a teammate using the security-reviewer agent type to audit the auth module.
+```
 
 ### 權限
 

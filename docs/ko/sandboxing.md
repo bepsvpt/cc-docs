@@ -146,7 +146,7 @@ Claude Code는 두 가지 샌드박스 모드를 제공합니다:
 
 더 오래된 `//path` 접두사는 절대 경로용으로 여전히 작동합니다. 이전에 프로젝트 상대 해석을 기대하면서 단일 슬래시 `/path`를 사용했다면 `./path`로 전환하세요. 이 구문은 절대 경로에 `//path`를 사용하고 프로젝트 상대에 `/path`를 사용하는 [Read 및 Edit 권한 규칙](/ko/permissions#read-and-edit)과 다릅니다. 샌드박스 파일시스템 경로는 표준 규칙을 사용합니다: `/tmp/build`는 절대 경로입니다.
 
-`sandbox.filesystem.denyWrite` 및 `sandbox.filesystem.denyRead`를 사용하여 쓰기 또는 읽기 액세스를 거부할 수도 있습니다. 이들은 `Edit(...)` 및 `Read(...)` 권한 규칙의 모든 경로와 병합됩니다. 거부된 영역 내에서 특정 경로 읽기를 다시 허용하려면 `denyRead`보다 우선하는 `sandbox.filesystem.allowRead`를 사용합니다. `allowManagedReadPathsOnly`가 관리 설정에서 활성화되면 관리 `allowRead` 항목만 존중되고 사용자, 프로젝트 및 로컬 `allowRead` 항목은 무시됩니다.
+`sandbox.filesystem.denyWrite` 및 `sandbox.filesystem.denyRead`를 사용하여 쓰기 또는 읽기 액세스를 거부할 수도 있습니다. 이들은 `Edit(...)` 및 `Read(...)` 권한 규칙의 모든 경로와 병합됩니다. 거부된 영역 내에서 특정 경로 읽기를 다시 허용하려면 `denyRead`보다 우선하는 `sandbox.filesystem.allowRead`를 사용합니다. `allowManagedReadPathsOnly`가 관리 설정에서 활성화되면 관리 `allowRead` 항목만 존중되고 사용자, 프로젝트 및 로컬 `allowRead` 항목은 무시됩니다. `denyRead`는 여전히 모든 소스에서 병합됩니다.
 
 예를 들어 홈 디렉토리 전체에서의 읽기를 차단하면서도 현재 프로젝트에서의 읽기를 허용하려면 프로젝트의 `.claude/settings.json`에 다음을 추가합니다:
 

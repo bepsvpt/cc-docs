@@ -146,7 +146,7 @@ I prefissi di percorso controllano come i percorsi vengono risolti:
 
 Il prefisso precedente `//path` per i percorsi assoluti funziona ancora. Se in precedenza hai utilizzato `/path` aspettandoti una risoluzione relativa al progetto, passa a `./path`. Questa sintassi differisce dalle [regole di autorizzazione Read e Edit](/it/permissions#read-and-edit), che utilizzano `//path` per assoluto e `/path` per relativo al progetto. I percorsi del filesystem della sandbox utilizzano convenzioni standard: `/tmp/build` è un percorso assoluto.
 
-È inoltre possibile negare l'accesso in scrittura o lettura utilizzando `sandbox.filesystem.denyWrite` e `sandbox.filesystem.denyRead`. Questi vengono uniti con qualsiasi percorso dalle regole di autorizzazione `Edit(...)` e `Read(...)`. Per ri-consentire la lettura di percorsi specifici all'interno di una regione `denyRead`, utilizza `sandbox.filesystem.allowRead`, che ha la precedenza su `denyRead`. Quando `allowManagedReadPathsOnly` è abilitato nelle impostazioni gestite, solo le voci `allowRead` gestite sono rispettate; le voci `allowRead` dell'utente, del progetto e locali vengono ignorate.
+È inoltre possibile negare l'accesso in scrittura o lettura utilizzando `sandbox.filesystem.denyWrite` e `sandbox.filesystem.denyRead`. Questi vengono uniti con qualsiasi percorso dalle regole di autorizzazione `Edit(...)` e `Read(...)`. Per ri-consentire la lettura di percorsi specifici all'interno di una regione `denyRead`, utilizza `sandbox.filesystem.allowRead`, che ha la precedenza su `denyRead`. Quando `allowManagedReadPathsOnly` è abilitato nelle impostazioni gestite, solo le voci `allowRead` gestite sono rispettate; le voci `allowRead` dell'utente, del progetto e locali vengono ignorate. `denyRead` continua a unirsi da tutte le fonti.
 
 Ad esempio, per bloccare la lettura dall'intera directory home consentendo comunque letture dal progetto corrente, aggiungi questo al `.claude/settings.json` del tuo progetto:
 
@@ -314,7 +314,7 @@ Per i dettagli di implementazione e il codice sorgente, visita il [repository Gi
 La sandbox isola i sottoprocessi Bash. Altri strumenti operano sotto confini diversi:
 
 * **Strumenti di file integrati**: Read, Edit e Write utilizzano il sistema di autorizzazione direttamente piuttosto che eseguire attraverso la sandbox. Vedi [autorizzazioni](/it/permissions).
-* **Utilizzo del computer su Desktop**: quando Claude apre app e controlla lo schermo su macOS, viene eseguito sul tuo desktop effettivo piuttosto che in un ambiente isolato. I prompt di autorizzazione per app gating ogni applicazione. Vedi [utilizzo del computer](/it/desktop#let-claude-use-your-computer).
+* **Utilizzo del computer**: quando Claude apre app e controlla lo schermo su macOS, viene eseguito sul tuo desktop effettivo piuttosto che in un ambiente isolato. I prompt di autorizzazione per app gating ogni applicazione. Vedi [utilizzo del computer nella CLI](/it/computer-use) o [utilizzo del computer in Desktop](/it/desktop#let-claude-use-your-computer).
 
 ## Vedi anche
 
