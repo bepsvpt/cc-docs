@@ -1,5 +1,139 @@
 # Documentation Changes
 
+## 2026-04-04
+
+50 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Claude Code Desktop verwenden** (`desktop.md`): 11 lines added, 11 removed
+- **Lokale Sitzungen von jedem Gerät aus mit Remote Control fortsetzen** (`remote-control.md`): 7 lines added, 7 removed
+- **Prompts nach Zeitplan ausführen** (`scheduled-tasks.md`): 11 lines added, 11 removed
+- **Claude Code in VS Code verwenden** (`vs-code.md`): 137 lines added, 91 removed
+  - New section: "## Erweiterung installieren"
+  - New section: "### Referenzdateien und Ordner"
+  - New section: "### Starten Sie eine VS Code-Registerkarte von anderen Tools aus"
+  - New section: "### Erweiterungseinstellungen"
+  - New section: "### Verwenden Sie Git worktrees für parallele Aufgaben"
+
+### English
+
+
+**Modified**
+
+- **Orchestrate teams of Claude Code sessions** (`agent-teams.md`): 9 lines added, 1 removed
+- **Claude Code on Amazon Bedrock** (`amazon-bedrock.md`): 6 lines added, 4 removed
+- **Changelog** (`changelog.md`): 24 lines added, 0 removed
+- **Claude Code on the web** (`claude-code-on-the-web.md`): 2 lines added, 0 removed
+- **Built-in commands** (`commands.md`): 1 lines added, 0 removed
+- **Common workflows** (`common-workflows.md`): 6 lines added, 6 removed
+- **Get started with the desktop app** (`desktop-quickstart.md`): 23 lines added, 27 removed
+- **Use Claude Code Desktop** (`desktop.md`): 3 lines added, 96 removed
+- **Environment variables** (`env-vars.md`): 1 lines added, 2 removed
+- **Run Claude Code programmatically** (`headless.md`): 6 lines added, 0 removed
+- **Legal and compliance** (`legal-and-compliance.md`): 1 lines added, 1 removed
+- **Claude Code overview** (`overview.md`): 12 lines added, 12 removed
+- **Continue local sessions from any device with Remote Control** (`remote-control.md`): 9 lines added, 7 removed
+- **Run prompts on a schedule** (`scheduled-tasks.md`): 14 lines added, 14 removed
+- **Create custom subagents** (`sub-agents.md`): 1 lines added, 1 removed
+- **Use Claude Code in VS Code** (`vs-code.md`): 15 lines added, 15 removed
+
+### Español
+
+
+**Modified**
+
+- **Usar Claude Code Desktop** (`desktop.md`): 11 lines added, 11 removed
+- **Continúe sesiones locales desde cualquier dispositivo con Remote Control** (`remote-control.md`): 7 lines added, 7 removed
+- **Ejecutar prompts en un horario** (`scheduled-tasks.md`): 11 lines added, 11 removed
+
+### Français
+
+
+**Modified**
+
+- **Utiliser Claude Code Desktop** (`desktop.md`): 11 lines added, 11 removed
+- **Continuer les sessions locales depuis n'importe quel appareil avec Remote Control** (`remote-control.md`): 7 lines added, 7 removed
+- **Exécuter des prompts selon un calendrier** (`scheduled-tasks.md`): 11 lines added, 11 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Gunakan Claude Code Desktop** (`desktop.md`): 11 lines added, 11 removed
+- **Lanjutkan sesi lokal dari perangkat apa pun dengan Remote Control** (`remote-control.md`): 7 lines added, 7 removed
+- **Jalankan prompt sesuai jadwal** (`scheduled-tasks.md`): 11 lines added, 11 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Usa Claude Code Desktop** (`desktop.md`): 11 lines added, 11 removed
+- **Continua le sessioni locali da qualsiasi dispositivo con Remote Control** (`remote-control.md`): 7 lines added, 7 removed
+- **Eseguire prompt in base a una pianificazione** (`scheduled-tasks.md`): 11 lines added, 11 removed
+
+### 日本語
+
+
+**Modified**
+
+- **Claude Code Desktop を使用する** (`desktop.md`): 11 lines added, 11 removed
+- **任意のデバイスからローカルセッションを続行する Remote Control** (`remote-control.md`): 7 lines added, 7 removed
+- **スケジュールに従ってプロンプトを実行する** (`scheduled-tasks.md`): 11 lines added, 11 removed
+
+### 한국어
+
+
+**Modified**
+
+- **Claude Code Desktop 사용하기** (`desktop.md`): 11 lines added, 11 removed
+- **모든 기기에서 로컬 세션 계속하기 (Remote Control)** (`remote-control.md`): 7 lines added, 7 removed
+- **일정에 따라 프롬프트 실행하기** (`scheduled-tasks.md`): 11 lines added, 11 removed
+
+### Português
+
+
+**Modified**
+
+- **Use Claude Code Desktop** (`desktop.md`): 11 lines added, 11 removed
+- **Continue sessões locais de qualquer dispositivo com Remote Control** (`remote-control.md`): 7 lines added, 7 removed
+- **Executar prompts em um cronograma** (`scheduled-tasks.md`): 11 lines added, 11 removed
+
+### Русский
+
+
+**Modified**
+
+- **Использование Claude Code Desktop** (`desktop.md`): 11 lines added, 11 removed
+- **Продолжайте локальные сеансы с любого устройства с помощью Remote Control** (`remote-control.md`): 7 lines added, 7 removed
+- **Запуск подсказок по расписанию** (`scheduled-tasks.md`): 11 lines added, 11 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **使用 Claude Code Desktop** (`desktop.md`): 11 lines added, 11 removed
+- **使用 Remote Control 从任何设备继续本地会话** (`remote-control.md`): 7 lines added, 7 removed
+- **按计划运行提示词** (`scheduled-tasks.md`): 11 lines added, 11 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **使用 Claude Code Desktop** (`desktop.md`): 11 lines added, 11 removed
+- **使用 Remote Control 從任何裝置繼續本地會話** (`remote-control.md`): 7 lines added, 7 removed
+- **按排程執行提示** (`scheduled-tasks.md`): 11 lines added, 11 removed
+
+---
+
 ## 2026-04-03
 
 383 pages modified
