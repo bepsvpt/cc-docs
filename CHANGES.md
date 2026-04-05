@@ -1,5 +1,35 @@
 # Documentation Changes
 
+## 2026-04-05
+
+15 pages modified
+
+
+### English
+
+
+**Modified**
+
+- **Claude Code on Amazon Bedrock** (`amazon-bedrock.md`): 11 lines added, 0 removed
+  - New section: "## Set up with the interactive wizard"
+- **CLI reference** (`cli-reference.md`): 63 lines added, 62 removed
+- **Built-in commands** (`commands.md`): 4 lines added, 3 removed
+- **Data usage** (`data-usage.md`): 1 lines added, 1 removed
+- **Environment variables** (`env-vars.md`): 1 lines added, 0 removed
+- **Interactive mode** (`interactive-mode.md`): 1 lines added, 1 removed
+- **Customize keyboard shortcuts** (`keybindings.md`): 1 lines added, 1 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 5 lines added, 3 removed
+- **Configure permissions** (`permissions.md`): 1 lines added, 0 removed
+- **Continue local sessions from any device with Remote Control** (`remote-control.md`): 11 lines added, 8 removed
+- **Configure server-managed settings (public beta)** (`server-managed-settings.md`): 23 lines added, 7 removed
+  - New section: "### Enforce fail-closed startup"
+- **Claude Code settings** (`settings.md`): 3 lines added, 1 removed
+- **Extend Claude with skills** (`skills.md`): 14 lines added, 1 removed
+- **Optimize your terminal setup** (`terminal-config.md`): 1 lines added, 1 removed
+- **Troubleshooting** (`troubleshooting.md`): 2 lines added, 0 removed
+
+---
+
 ## 2026-04-04
 
 50 pages modified
