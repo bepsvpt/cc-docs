@@ -1,5 +1,43 @@
 # Documentation Changes
 
+## 2026-04-08
+
+17 pages modified
+
+
+### English
+
+
+**Modified**
+
+- **Claude Code on Amazon Bedrock** (`amazon-bedrock.md`): 80 lines added, 0 removed
+  - New section: "## Use the Mantle endpoint"
+  - New section: "### Enable Mantle"
+  - New section: "### Select a Mantle model"
+  - New section: "### Run Mantle alongside the Invoke API"
+  - New section: "### Route Mantle through a gateway"
+- **Changelog** (`changelog.md`): 28 lines added, 0 removed
+- **Code Review** (`code-review.md`): 6 lines added, 0 removed
+  - New section: "### Rate and reply to findings"
+- **Common workflows** (`common-workflows.md`): 1 lines added, 1 removed
+- **Data usage** (`data-usage.md`): 1 lines added, 1 removed
+- **Environment variables** (`env-vars.md`): 8 lines added, 5 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 5 lines added, 3 removed
+- **Hooks reference** (`hooks.md`): 11 lines added, 5 removed
+- **How Claude Code works** (`how-claude-code-works.md`): 1 lines added, 1 removed
+- **Interactive mode** (`interactive-mode.md`): 1 lines added, 1 removed
+- **Customize keyboard shortcuts** (`keybindings.md`): 8 lines added, 7 removed
+- **Model configuration** (`model-config.md`): 7 lines added, 3 removed
+  - New section: "### Mantle model IDs"
+- **Output styles** (`output-styles.md`): 2 lines added, 1 removed
+- **Plugins reference** (`plugins-reference.md`): 3 lines added, 0 removed
+- **Create plugins** (`plugins.md`): 6 lines added, 6 removed
+- **Troubleshooting** (`troubleshooting.md`): 24 lines added, 0 removed
+  - New section: "### Model not found or not accessible"
+- **Use Claude Code in VS Code** (`vs-code.md`): 2 lines added, 0 removed
+
+---
+
 ## 2026-04-05
 
 15 pages modified
