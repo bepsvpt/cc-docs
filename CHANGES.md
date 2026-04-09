@@ -1,5 +1,54 @@
 # Documentation Changes
 
+## 2026-04-09
+
+27 pages modified
+
+
+### English
+
+
+**Modified**
+
+- **Authentication** (`authentication.md`): 2 lines added, 0 removed
+- **Changelog** (`changelog.md`): 53 lines added, 0 removed
+- **Use Claude Code on the web** (`claude-code-on-the-web.md`): 576 lines added, 547 removed
+  - New section: "# Use Claude Code on the web"
+  - New section: "## GitHub authentication options"
+  - New section: "## The cloud environment"
+  - New section: "### What's available in cloud sessions"
+  - New section: "### Installed tools"
+- **CLI reference** (`cli-reference.md`): 3 lines added, 3 removed
+- **Built-in commands** (`commands.md`): 72 lines added, 69 removed
+- **Data usage** (`data-usage.md`): 2 lines added, 2 removed
+- **Use Claude Code Desktop** (`desktop.md`): 19 lines added, 17 removed
+- **Development containers** (`devcontainer.md`): 2 lines added, 0 removed
+- **Environment variables** (`env-vars.md`): 2 lines added, 1 removed
+- **Speed up responses with fast mode** (`fast-mode.md`): 1 lines added, 1 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 1 lines added, 1 removed
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 1 lines added, 1 removed
+- **Run Claude Code programmatically** (`headless.md`): 5 lines added, 5 removed
+- **How Claude Code works** (`how-claude-code-works.md`): 3 lines added, 1 removed
+- **Interactive mode** (`interactive-mode.md`): 19 lines added, 19 removed
+- **Legal and compliance** (`legal-and-compliance.md`): 1 lines added, 1 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 32 lines added, 24 removed
+  - New section: "### Raise the limit for a specific tool"
+- **Monitoring** (`monitoring-usage.md`): 2 lines added, 0 removed
+- **Claude Code overview** (`overview.md`): 9 lines added, 9 removed
+- **Configure permissions** (`permissions.md`): 8 lines added, 8 removed
+- **Claude Code settings** (`settings.md`): 2 lines added, 1 removed
+- **Advanced setup** (`setup.md`): 6 lines added, 6 removed
+- **Extend Claude with skills** (`skills.md`): 21 lines added, 6 removed
+  - New section: "### Skill content lifecycle"
+  - New section: "### Pre-approve tools for a skill"
+- **Claude Code in Slack** (`slack.md`): 7 lines added, 7 removed
+- **Customize your status line** (`statusline.md`): 61 lines added, 36 removed
+- **Create custom subagents** (`sub-agents.md`): 1 lines added, 1 removed
+- **Troubleshooting** (`troubleshooting.md`): 17 lines added, 0 removed
+  - New section: "### Auto-compaction stops with a thrashing error"
+
+---
+
 ## 2026-04-08
 
 17 pages modified
