@@ -1,5 +1,1525 @@
 # Documentation Changes
 
+## 2026-04-10
+
+713 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Orchestrieren Sie Teams von Claude Code-Sitzungen** (`agent-teams.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code auf Amazon Bedrock** (`amazon-bedrock.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Teamnutzung mit Analysen verfolgen** (`analytics.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Best Practices für Claude Code** (`best-practices.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Checkpointing** (`checkpointing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code mit Chrome verwenden (Beta)** (`chrome.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code im Web** (`claude-code-on-the-web.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **CLI-Referenz** (`cli-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Code Review** (`code-review.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Häufige Workflows** (`common-workflows.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Kosten effektiv verwalten** (`costs.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Datennutzung** (`data-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Erste Schritte mit der Desktop-App** (`desktop-quickstart.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code Desktop verwenden** (`desktop.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Entwicklungscontainer** (`devcontainer.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Entdecken und installieren Sie vorgefertigte Plugins über Marktplätze** (`discover-plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Beschleunigen Sie Antworten mit dem Schnellmodus** (`fast-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code erweitern** (`features-overview.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitHub Actions** (`github-actions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code auf Google Vertex AI** (`google-vertex-ai.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code programmgesteuert ausführen** (`headless.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Automatisieren Sie Workflows mit Hooks** (`hooks-guide.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Hooks-Referenz** (`hooks.md`): 11 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **So funktioniert Claude Code** (`how-claude-code-works.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Interaktiver Modus** (`interactive-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **JetBrains IDEs** (`jetbrains.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Tastaturkürzel anpassen** (`keybindings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Rechtliche Bestimmungen und Compliance** (`legal-and-compliance.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **LLM-Gateway-Konfiguration** (`llm-gateway.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code mit Tools über MCP verbinden** (`mcp.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Wie Claude sich Ihr Projekt merkt** (`memory.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code auf Microsoft Foundry** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Modellkonfiguration** (`model-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Überwachung** (`monitoring-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Enterprise-Netzwerkkonfiguration** (`network-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Ausgabestile** (`output-styles.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code Übersicht** (`overview.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Berechtigungen konfigurieren** (`permissions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Erstellen und Verteilen eines Plugin-Marktplatzes** (`plugin-marketplaces.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Plugins-Referenz** (`plugins-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Plugins erstellen** (`plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Schnellstart** (`quickstart.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Lokale Sitzungen von jedem Gerät aus mit Remote Control fortsetzen** (`remote-control.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Sandboxing** (`sandboxing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Prompts nach Zeitplan ausführen** (`scheduled-tasks.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Sicherheit** (`security.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Serververwaltete Einstellungen konfigurieren (öffentliche Beta)** (`server-managed-settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code-Einstellungen** (`settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Erweiterte Einrichtung** (`setup.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Claude mit Skills erweitern** (`skills.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code in Slack** (`slack.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Passen Sie Ihre Statuszeile an** (`statusline.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Benutzerdefinierte Subagenten erstellen** (`sub-agents.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Optimieren Sie Ihr Terminal-Setup** (`terminal-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Übersicht zur Enterprise-Bereitstellung** (`third-party-integrations.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Fehlerbehebung** (`troubleshooting.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code in VS Code verwenden** (`vs-code.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Null-Datenspeicherung** (`zero-data-retention.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+
+### English
+
+
+**Modified**
+
+- **Orchestrate teams of Claude Code sessions** (`agent-teams.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code on Amazon Bedrock** (`amazon-bedrock.md`): 39 lines added, 12 removed
+  - New section: "## Submitting Feedback"
+  - New section: "## Sign in with Bedrock"
+  - New section: "## Set up manually"
+  - New section: "## Startup model checks"
+- **Track team usage with analytics** (`analytics.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Authentication** (`authentication.md`): 30 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+  - New section: "### Generate a long-lived token"
+- **Best Practices for Claude Code** (`best-practices.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Changelog** (`changelog.md`): 70 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Checkpointing** (`checkpointing.md`): 11 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Use Claude Code with Chrome (beta)** (`chrome.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Use Claude Code on the web** (`claude-code-on-the-web.md`): 11 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **CLI reference** (`cli-reference.md`): 75 lines added, 63 removed
+  - New section: "## Submitting Feedback"
+- **Code Review** (`code-review.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Commands** (`commands.md`): 24 lines added, 4 removed
+  - New section: "## Submitting Feedback"
+  - New section: "# Commands"
+- **Common workflows** (`common-workflows.md`): 11 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Manage costs effectively** (`costs.md`): 12 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Data usage** (`data-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Get started with the desktop app** (`desktop-quickstart.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Use Claude Code Desktop** (`desktop.md`): 11 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Development containers** (`devcontainer.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Discover and install prebuilt plugins through marketplaces** (`discover-plugins.md`): 16 lines added, 6 removed
+  - New section: "## Submitting Feedback"
+- **Environment variables** (`env-vars.md`): 200 lines added, 188 removed
+  - New section: "## Submitting Feedback"
+- **Speed up responses with fast mode** (`fast-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Extend Claude Code** (`features-overview.md`): 28 lines added, 2 removed
+  - New section: "## Submitting Feedback"
+  - New section: "### Build your setup over time"
+- **Claude Code GitHub Actions** (`github-actions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code on Google Vertex AI** (`google-vertex-ai.md`): 46 lines added, 4 removed
+  - New section: "## Submitting Feedback"
+  - New section: "## Sign in with Vertex AI"
+  - New section: "## Region configuration"
+  - New section: "## Set up manually"
+  - New section: "## Startup model checks"
+- **Run Claude Code programmatically** (`headless.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Automate workflows with hooks** (`hooks-guide.md`): 33 lines added, 23 removed
+  - New section: "## Submitting Feedback"
+- **Hooks reference** (`hooks.md`): 52 lines added, 27 removed
+  - New section: "## Submitting Feedback"
+- **How Claude Code works** (`how-claude-code-works.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Interactive mode** (`interactive-mode.md`): 19 lines added, 9 removed
+  - New section: "## Submitting Feedback"
+  - New section: "## Commands"
+- **JetBrains IDEs** (`jetbrains.md`): 11 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Customize keyboard shortcuts** (`keybindings.md`): 50 lines added, 20 removed
+  - New section: "## Submitting Feedback"
+  - New section: "### Scroll actions"
+- **Legal and compliance** (`legal-and-compliance.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **LLM gateway configuration** (`llm-gateway.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 12 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **How Claude remembers your project** (`memory.md`): 24 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+  - New section: "### When to add to CLAUDE.md"
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Model configuration** (`model-config.md`): 12 lines added, 2 removed
+  - New section: "## Submitting Feedback"
+- **Monitoring** (`monitoring-usage.md`): 19 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+  - New section: "### Detect retry exhaustion"
+- **Enterprise network configuration** (`network-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Output styles** (`output-styles.md`): 13 lines added, 3 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code overview** (`overview.md`): 18 lines added, 6 removed
+  - New section: "## Submitting Feedback"
+- **Configure permissions** (`permissions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Create and distribute a plugin marketplace** (`plugin-marketplaces.md`): 24 lines added, 13 removed
+  - New section: "## Submitting Feedback"
+- **Plugins reference** (`plugins-reference.md`): 30 lines added, 21 removed
+  - New section: "## Submitting Feedback"
+- **Create plugins** (`plugins.md`): 13 lines added, 3 removed
+  - New section: "## Submitting Feedback"
+- **Quickstart** (`quickstart.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Continue local sessions from any device with Remote Control** (`remote-control.md`): 37 lines added, 13 removed
+  - New section: "## Submitting Feedback"
+- **Sandboxing** (`sandboxing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Run prompts on a schedule** (`scheduled-tasks.md`): 11 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Security** (`security.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configure server-managed settings (public beta)** (`server-managed-settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code settings** (`settings.md`): 14 lines added, 2 removed
+  - New section: "## Submitting Feedback"
+- **Advanced setup** (`setup.md`): 29 lines added, 9 removed
+  - New section: "## Submitting Feedback"
+- **Extend Claude with skills** (`skills.md`): 18 lines added, 14 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code in Slack** (`slack.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Customize your status line** (`statusline.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Create custom subagents** (`sub-agents.md`): 15 lines added, 3 removed
+  - New section: "## Submitting Feedback"
+- **Optimize your terminal setup** (`terminal-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Enterprise deployment overview** (`third-party-integrations.md`): 11 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Tools reference** (`tools-reference.md`): 28 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+  - New section: "## Monitor tool"
+- **Troubleshooting** (`troubleshooting.md`): 11 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Use Claude Code in VS Code** (`vs-code.md`): 33 lines added, 15 removed
+  - New section: "## Submitting Feedback"
+- **Zero data retention** (`zero-data-retention.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+
+### Español
+
+
+**Modified**
+
+- **Orquestar equipos de sesiones de Claude Code** (`agent-teams.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code en Amazon Bedrock** (`amazon-bedrock.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Rastrear el uso del equipo con análisis** (`analytics.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Mejores prácticas para Claude Code** (`best-practices.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Checkpointing** (`checkpointing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Usar Claude Code con Chrome (beta)** (`chrome.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code en la web** (`claude-code-on-the-web.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Referencia de CLI** (`cli-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Code Review** (`code-review.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Flujos de trabajo comunes** (`common-workflows.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Gestionar costos de manera efectiva** (`costs.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Uso de datos** (`data-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Comenzar con la aplicación de escritorio** (`desktop-quickstart.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Usar Claude Code Desktop** (`desktop.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Contenedores de desarrollo** (`devcontainer.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Descubra e instale plugins pregenerados a través de mercados** (`discover-plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Acelera las respuestas con el modo rápido** (`fast-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Extender Claude Code** (`features-overview.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitHub Actions** (`github-actions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code en Google Vertex AI** (`google-vertex-ai.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Ejecutar Claude Code mediante programación** (`headless.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Automatizar flujos de trabajo con hooks** (`hooks-guide.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Referencia de hooks** (`hooks.md`): 11 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Cómo funciona Claude Code** (`how-claude-code-works.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Modo interactivo** (`interactive-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **JetBrains IDEs** (`jetbrains.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Personalizar atajos de teclado** (`keybindings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Legal y cumplimiento** (`legal-and-compliance.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configuración de la puerta de enlace LLM** (`llm-gateway.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Conectar Claude Code a herramientas mediante MCP** (`mcp.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Cómo Claude recuerda su proyecto** (`memory.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code en Microsoft Foundry** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configuración del modelo** (`model-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Monitoreo** (`monitoring-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configuración de red empresarial** (`network-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Estilos de salida** (`output-styles.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Descripción general de Claude Code** (`overview.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Configurar permisos** (`permissions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Crear y distribuir un marketplace de plugins** (`plugin-marketplaces.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Referencia de plugins** (`plugins-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Crear plugins** (`plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Inicio rápido** (`quickstart.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Continúe sesiones locales desde cualquier dispositivo con Remote Control** (`remote-control.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Sandboxing** (`sandboxing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Ejecutar prompts en un horario** (`scheduled-tasks.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Seguridad** (`security.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configurar la configuración administrada por servidor (beta pública)** (`server-managed-settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configuración de Claude Code** (`settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configuración avanzada** (`setup.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Ampliar Claude con skills** (`skills.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code en Slack** (`slack.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Personaliza tu línea de estado** (`statusline.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Crear subagentes personalizados** (`sub-agents.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Optimiza tu configuración de terminal** (`terminal-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Descripción general de implementación empresarial** (`third-party-integrations.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Solución de problemas** (`troubleshooting.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Usar Claude Code en VS Code** (`vs-code.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Retención cero de datos** (`zero-data-retention.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+
+### Français
+
+
+**Modified**
+
+- **Orchestrer des équipes de sessions Claude Code** (`agent-teams.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code sur Amazon Bedrock** (`amazon-bedrock.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Suivre l'utilisation de l'équipe avec l'analytique** (`analytics.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Meilleures pratiques pour Claude Code** (`best-practices.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Checkpointing** (`checkpointing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Utiliser Claude Code avec Chrome (bêta)** (`chrome.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code sur le web** (`claude-code-on-the-web.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Référence CLI** (`cli-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Révision de code** (`code-review.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Flux de travail courants** (`common-workflows.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Gérer les coûts efficacement** (`costs.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Utilisation des données** (`data-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Démarrer avec l'application de bureau** (`desktop-quickstart.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Utiliser Claude Code Desktop** (`desktop.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Conteneurs de développement** (`devcontainer.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Découvrir et installer des plugins prédéfinis via les marketplaces** (`discover-plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Accélérez les réponses avec le mode rapide** (`fast-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Étendre Claude Code** (`features-overview.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitHub Actions** (`github-actions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code sur Google Vertex AI** (`google-vertex-ai.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Exécuter Claude Code par programmation** (`headless.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Automatiser les workflows avec les hooks** (`hooks-guide.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Référence des hooks** (`hooks.md`): 11 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Comment fonctionne Claude Code** (`how-claude-code-works.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Mode interactif** (`interactive-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **JetBrains IDEs** (`jetbrains.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Personnaliser les raccourcis clavier** (`keybindings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Aspects juridiques et conformité** (`legal-and-compliance.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configuration de la passerelle LLM** (`llm-gateway.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Connecter Claude Code aux outils via MCP** (`mcp.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Comment Claude se souvient de votre projet** (`memory.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code sur Microsoft Foundry** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configuration du modèle** (`model-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Surveillance** (`monitoring-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configuration réseau d'entreprise** (`network-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Styles de sortie** (`output-styles.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Aperçu de Claude Code** (`overview.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Configurer les autorisations** (`permissions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Créer et distribuer une place de marché de plugins** (`plugin-marketplaces.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Référence des plugins** (`plugins-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Créer des plugins** (`plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Démarrage rapide** (`quickstart.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Continuer les sessions locales depuis n'importe quel appareil avec Remote Control** (`remote-control.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Sandboxing** (`sandboxing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Exécuter des prompts selon un calendrier** (`scheduled-tasks.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Sécurité** (`security.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configurer les paramètres gérés par le serveur (bêta publique)** (`server-managed-settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Paramètres Claude Code** (`settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configuration avancée** (`setup.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Étendre Claude avec des skills** (`skills.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code dans Slack** (`slack.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Personnalisez votre barre de statut** (`statusline.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Créer des sous-agents personnalisés** (`sub-agents.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Optimisez votre configuration de terminal** (`terminal-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Aperçu du déploiement en entreprise** (`third-party-integrations.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Dépannage** (`troubleshooting.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Utiliser Claude Code dans VS Code** (`vs-code.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Zéro conservation des données** (`zero-data-retention.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Koordinasikan tim Claude Code sessions** (`agent-teams.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code di Amazon Bedrock** (`amazon-bedrock.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Lacak penggunaan tim dengan analitik** (`analytics.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Praktik Terbaik untuk Claude Code** (`best-practices.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Checkpointing** (`checkpointing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Gunakan Claude Code dengan Chrome (beta)** (`chrome.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code di web** (`claude-code-on-the-web.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Referensi CLI** (`cli-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Code Review** (`code-review.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Alur kerja umum** (`common-workflows.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Kelola biaya secara efektif** (`costs.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Penggunaan data** (`data-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Memulai dengan aplikasi desktop** (`desktop-quickstart.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Gunakan Claude Code Desktop** (`desktop.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Kontainer pengembangan** (`devcontainer.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Temukan dan instal plugin yang sudah dibuat melalui marketplace** (`discover-plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Percepat respons dengan mode cepat** (`fast-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Perluas Claude Code** (`features-overview.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitHub Actions** (`github-actions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code di Google Vertex AI** (`google-vertex-ai.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Jalankan Claude Code secara programatis** (`headless.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Otomatisasi alur kerja dengan hooks** (`hooks-guide.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Referensi hooks** (`hooks.md`): 11 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Cara Kerja Claude Code** (`how-claude-code-works.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Mode interaktif** (`interactive-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **JetBrains IDEs** (`jetbrains.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Sesuaikan pintasan keyboard** (`keybindings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Hukum dan kepatuhan** (`legal-and-compliance.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Konfigurasi LLM gateway** (`llm-gateway.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Hubungkan Claude Code ke alat melalui MCP** (`mcp.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Bagaimana Claude mengingat proyek Anda** (`memory.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code di Microsoft Foundry** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Konfigurasi model** (`model-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Pemantauan** (`monitoring-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Konfigurasi jaringan enterprise** (`network-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Output styles** (`output-styles.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Ikhtisar Claude Code** (`overview.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Konfigurasi izin** (`permissions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Buat dan distribusikan marketplace plugin** (`plugin-marketplaces.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Referensi Plugins** (`plugins-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Buat plugins** (`plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Panduan Cepat** (`quickstart.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Lanjutkan sesi lokal dari perangkat apa pun dengan Remote Control** (`remote-control.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Sandboxing** (`sandboxing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Jalankan prompt sesuai jadwal** (`scheduled-tasks.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Keamanan** (`security.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Konfigurasi pengaturan yang dikelola server (beta publik)** (`server-managed-settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Pengaturan Claude Code** (`settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Pengaturan lanjutan** (`setup.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Perluas Claude dengan skills** (`skills.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code di Slack** (`slack.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Sesuaikan baris status Anda** (`statusline.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Buat subagent khusus** (`sub-agents.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Optimalkan pengaturan terminal Anda** (`terminal-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Ikhtisar penyebaran enterprise** (`third-party-integrations.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Troubleshooting** (`troubleshooting.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Gunakan Claude Code di VS Code** (`vs-code.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Retensi data nol** (`zero-data-retention.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+
+### Italiano
+
+
+**Modified**
+
+- **Orchestrare team di sessioni Claude Code** (`agent-teams.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code su Amazon Bedrock** (`amazon-bedrock.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Traccia l'utilizzo del team con l'analittica** (`analytics.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Best Practices per Claude Code** (`best-practices.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Checkpointing** (`checkpointing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Usa Claude Code con Chrome (beta)** (`chrome.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code sul web** (`claude-code-on-the-web.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Riferimento CLI** (`cli-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Code Review** (`code-review.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Flussi di lavoro comuni** (`common-workflows.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Gestisci i costi in modo efficace** (`costs.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Utilizzo dei dati** (`data-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Iniziare con l'app desktop** (`desktop-quickstart.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Usa Claude Code Desktop** (`desktop.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Contenitori di sviluppo** (`devcontainer.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Scopri e installa plugin precostruiti tramite marketplace** (`discover-plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Accelera le risposte con la modalità veloce** (`fast-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Estendi Claude Code** (`features-overview.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitHub Actions** (`github-actions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code su Google Vertex AI** (`google-vertex-ai.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Eseguire Claude Code a livello programmatico** (`headless.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Automatizzare i flussi di lavoro con hooks** (`hooks-guide.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Riferimento dei hooks** (`hooks.md`): 11 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Come funziona Claude Code** (`how-claude-code-works.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Modalità interattiva** (`interactive-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **JetBrains IDEs** (`jetbrains.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Personalizzare le scorciatoie da tastiera** (`keybindings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Aspetti legali e conformità** (`legal-and-compliance.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configurazione del gateway LLM** (`llm-gateway.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Connetti Claude Code ai tuoi strumenti tramite MCP** (`mcp.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Come Claude ricorda il tuo progetto** (`memory.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code su Microsoft Foundry** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configurazione del modello** (`model-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Monitoraggio** (`monitoring-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configurazione di rete aziendale** (`network-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Output styles** (`output-styles.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Panoramica di Claude Code** (`overview.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Configurare le autorizzazioni** (`permissions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Creare e distribuire un marketplace di plugin** (`plugin-marketplaces.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Riferimento dei plugin** (`plugins-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Creare plugin** (`plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Guida rapida** (`quickstart.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Continua le sessioni locali da qualsiasi dispositivo con Remote Control** (`remote-control.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Sandboxing** (`sandboxing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Eseguire prompt in base a una pianificazione** (`scheduled-tasks.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Sicurezza** (`security.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configurare le impostazioni gestite dal server (beta pubblico)** (`server-managed-settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Impostazioni di Claude Code** (`settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configurazione avanzata** (`setup.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Estendi Claude con skills** (`skills.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code in Slack** (`slack.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Personalizza la tua barra di stato** (`statusline.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Creare subagent personalizzati** (`sub-agents.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Ottimizza la configurazione del tuo terminale** (`terminal-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Panoramica della distribuzione aziendale** (`third-party-integrations.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Troubleshooting** (`troubleshooting.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Usa Claude Code in VS Code** (`vs-code.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Zero data retention** (`zero-data-retention.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+
+### 日本語
+
+
+**Modified**
+
+- **Claude Code セッションのチームを調整する** (`agent-teams.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Amazon Bedrock 上の Claude Code** (`amazon-bedrock.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **チームの使用状況を分析で追跡する** (`analytics.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code のベストプラクティス** (`best-practices.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **チェックポイント** (`checkpointing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Chrome で Claude Code を使用する（ベータ版）** (`chrome.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **ウェブ上の Claude Code** (`claude-code-on-the-web.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **CLI リファレンス** (`cli-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Code Review** (`code-review.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **一般的なワークフロー** (`common-workflows.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **コストを効果的に管理する** (`costs.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **データ使用** (`data-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **デスクトップアプリを始める** (`desktop-quickstart.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code Desktop を使用する** (`desktop.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **開発コンテナ** (`devcontainer.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **マーケットプレイスから事前構築されたプラグインを発見してインストールする** (`discover-plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **高速モードでレスポンスを高速化** (`fast-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code を拡張する** (`features-overview.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitHub Actions** (`github-actions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Google Vertex AI 上の Claude Code** (`google-vertex-ai.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code をプログラムで実行する** (`headless.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **hooks でワークフローを自動化する** (`hooks-guide.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Hooks リファレンス** (`hooks.md`): 11 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code の仕組み** (`how-claude-code-works.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **インタラクティブモード** (`interactive-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **JetBrains IDEs** (`jetbrains.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **キーボードショートカットのカスタマイズ** (`keybindings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **法的および規制対応** (`legal-and-compliance.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **LLM gateway設定** (`llm-gateway.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **MCP を使用して Claude Code をツールに接続する** (`mcp.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude があなたのプロジェクトを記憶する方法** (`memory.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **モデル設定** (`model-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **監視** (`monitoring-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **エンタープライズネットワーク設定** (`network-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **出力スタイル** (`output-styles.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code の概要** (`overview.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **権限を設定する** (`permissions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **プラグインマーケットプレイスの作成と配布** (`plugin-marketplaces.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **プラグインリファレンス** (`plugins-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **プラグインを作成する** (`plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **クイックスタート** (`quickstart.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **任意のデバイスからローカルセッションを続行する Remote Control** (`remote-control.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **サンドボックス** (`sandboxing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **スケジュールに従ってプロンプトを実行する** (`scheduled-tasks.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **セキュリティ** (`security.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **サーバー管理設定を構成する（パブリックベータ版）** (`server-managed-settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code の設定** (`settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **高度なセットアップ** (`setup.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **スキルで Claude を拡張する** (`skills.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Slack での Claude Code** (`slack.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **ステータスラインをカスタマイズする** (`statusline.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **カスタムサブエージェントの作成** (`sub-agents.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **ターミナルセットアップを最適化する** (`terminal-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **エンタープライズデプロイメント概要** (`third-party-integrations.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **トラブルシューティング** (`troubleshooting.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **VS Code で Claude Code を使用する** (`vs-code.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **ゼロデータ保持** (`zero-data-retention.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+
+### 한국어
+
+
+**Modified**
+
+- **Claude Code 세션 팀 조율하기** (`agent-teams.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Amazon Bedrock의 Claude Code** (`amazon-bedrock.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **팀 사용량을 분석으로 추적하기** (`analytics.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code 모범 사례** (`best-practices.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Checkpointing** (`checkpointing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Chrome에서 Claude Code 사용하기 (베타)** (`chrome.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **웹에서 Claude Code 사용하기** (`claude-code-on-the-web.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **CLI 참조** (`cli-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Code Review** (`code-review.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **일반적인 워크플로우** (`common-workflows.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **비용을 효과적으로 관리하기** (`costs.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **데이터 사용** (`data-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **데스크톱 앱 시작하기** (`desktop-quickstart.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code Desktop 사용하기** (`desktop.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **개발 컨테이너** (`devcontainer.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **마켓플레이스를 통해 미리 빌드된 플러그인 발견 및 설치** (`discover-plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **빠른 모드로 응답 속도 향상** (`fast-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code 확장하기** (`features-overview.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitHub Actions** (`github-actions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Google Vertex AI에서 Claude Code 사용하기** (`google-vertex-ai.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code를 프로그래밍 방식으로 실행하기** (`headless.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **hooks를 사용하여 워크플로우 자동화** (`hooks-guide.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Hooks 참조** (`hooks.md`): 11 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code의 작동 방식** (`how-claude-code-works.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **대화형 모드** (`interactive-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **JetBrains IDEs** (`jetbrains.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **키보드 단축키 사용자 정의** (`keybindings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **법률 및 규정 준수** (`legal-and-compliance.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **LLM gateway 구성** (`llm-gateway.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **MCP를 통해 Claude Code를 도구에 연결하기** (`mcp.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude가 프로젝트를 기억하는 방법** (`memory.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Microsoft Foundry의 Claude Code** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **모델 구성** (`model-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **모니터링** (`monitoring-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **엔터프라이즈 네트워크 구성** (`network-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **출력 스타일** (`output-styles.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code 개요** (`overview.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **권한 구성** (`permissions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **플러그인 마켓플레이스 생성 및 배포** (`plugin-marketplaces.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **플러그인 참조** (`plugins-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **플러그인 만들기** (`plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **빠른 시작** (`quickstart.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **모든 기기에서 로컬 세션 계속하기 (Remote Control)** (`remote-control.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **샌드박싱** (`sandboxing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **일정에 따라 프롬프트 실행하기** (`scheduled-tasks.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **보안** (`security.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **서버 관리 설정 구성(공개 베타)** (`server-managed-settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code 설정** (`settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **고급 설정** (`setup.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Claude를 skills로 확장하기** (`skills.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Slack의 Claude Code** (`slack.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **상태 표시줄 사용자 정의** (`statusline.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **사용자 정의 subagent 만들기** (`sub-agents.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **터미널 설정 최적화** (`terminal-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **엔터프라이즈 배포 개요** (`third-party-integrations.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **문제 해결** (`troubleshooting.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **VS Code에서 Claude Code 사용하기** (`vs-code.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Zero data retention** (`zero-data-retention.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+
+### Português
+
+
+**Modified**
+
+- **Orquestre equipes de sessões Claude Code** (`agent-teams.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code no Amazon Bedrock** (`amazon-bedrock.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Rastrear o uso da equipe com análise** (`analytics.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Melhores práticas para Claude Code** (`best-practices.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Checkpointing** (`checkpointing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Use Claude Code with Chrome (beta)** (`chrome.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code na web** (`claude-code-on-the-web.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Referência de CLI** (`cli-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Code Review** (`code-review.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Fluxos de trabalho comuns** (`common-workflows.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Gerencie custos de forma eficaz** (`costs.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Uso de dados** (`data-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Comece com o aplicativo de desktop** (`desktop-quickstart.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Use Claude Code Desktop** (`desktop.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Contêineres de desenvolvimento** (`devcontainer.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Descubra e instale plugins pré-construídos através de marketplaces** (`discover-plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Acelere respostas com modo rápido** (`fast-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Estender Claude Code** (`features-overview.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitHub Actions** (`github-actions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code no Google Vertex AI** (`google-vertex-ai.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Executar Claude Code programaticamente** (`headless.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Automatizar fluxos de trabalho com hooks** (`hooks-guide.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Referência de hooks** (`hooks.md`): 11 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Como Claude Code funciona** (`how-claude-code-works.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Modo interativo** (`interactive-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **JetBrains IDEs** (`jetbrains.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Personalizar atalhos de teclado** (`keybindings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Legal e conformidade** (`legal-and-compliance.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configuração do gateway LLM** (`llm-gateway.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Conectar Claude Code a ferramentas via MCP** (`mcp.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Como Claude se lembra do seu projeto** (`memory.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code no Microsoft Foundry** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configuração de modelo** (`model-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Monitoramento** (`monitoring-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configuração de rede empresarial** (`network-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Estilos de saída** (`output-styles.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Visão geral do Claude Code** (`overview.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Configurar permissões** (`permissions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Criar e distribuir um marketplace de plugins** (`plugin-marketplaces.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Referência de plugins** (`plugins-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Criar plugins** (`plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Guia de Início Rápido** (`quickstart.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Continue sessões locais de qualquer dispositivo com Remote Control** (`remote-control.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Sandboxing** (`sandboxing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Executar prompts em um cronograma** (`scheduled-tasks.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Segurança** (`security.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configurar configurações gerenciadas pelo servidor (beta público)** (`server-managed-settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configurações do Claude Code** (`settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Configuração avançada** (`setup.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Estenda Claude com skills** (`skills.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code no Slack** (`slack.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Personalize sua linha de status** (`statusline.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Criar subagentes personalizados** (`sub-agents.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Otimize sua configuração de terminal** (`terminal-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Visão geral da implantação empresarial** (`third-party-integrations.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Troubleshooting** (`troubleshooting.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Use Claude Code in VS Code** (`vs-code.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Retenção zero de dados** (`zero-data-retention.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+
+### Русский
+
+
+**Modified**
+
+- **Координируйте команды сеансов Claude Code** (`agent-teams.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code на Amazon Bedrock** (`amazon-bedrock.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Отслеживание использования команды с помощью аналитики** (`analytics.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Лучшие практики для Claude Code** (`best-practices.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Checkpointing** (`checkpointing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Использование Claude Code с Chrome (бета)** (`chrome.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code в веб-интерфейсе** (`claude-code-on-the-web.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Справочник CLI** (`cli-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Code Review** (`code-review.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Распространённые рабочие процессы** (`common-workflows.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Эффективное управление затратами** (`costs.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Использование данных** (`data-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Начало работы с настольным приложением** (`desktop-quickstart.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Использование Claude Code Desktop** (`desktop.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Контейнеры разработки** (`devcontainer.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Откройте и установите готовые плагины через маркетплейсы** (`discover-plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Ускорьте ответы с помощью быстрого режима** (`fast-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Расширение Claude Code** (`features-overview.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitHub Actions** (`github-actions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code на Google Vertex AI** (`google-vertex-ai.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Запуск Claude Code программно** (`headless.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Автоматизация рабочих процессов с помощью hooks** (`hooks-guide.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Справочник по hooks** (`hooks.md`): 11 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Как работает Claude Code** (`how-claude-code-works.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Интерактивный режим** (`interactive-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **JetBrains IDEs** (`jetbrains.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Настройка сочетаний клавиш** (`keybindings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Правовые и нормативные требования** (`legal-and-compliance.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Конфигурация LLM gateway** (`llm-gateway.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Подключите Claude Code к инструментам через MCP** (`mcp.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Как Claude запоминает ваш проект** (`memory.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code на Microsoft Foundry** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Конфигурация модели** (`model-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Мониторинг** (`monitoring-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Конфигурация сети для предприятия** (`network-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Output styles** (`output-styles.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Обзор Claude Code** (`overview.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Настройка разрешений** (`permissions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Создание и распространение marketplace плагинов** (`plugin-marketplaces.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Справочник по плагинам** (`plugins-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Создание plugins** (`plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Быстрый старт** (`quickstart.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Продолжайте локальные сеансы с любого устройства с помощью Remote Control** (`remote-control.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Sandboxing** (`sandboxing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Запуск подсказок по расписанию** (`scheduled-tasks.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Безопасность** (`security.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Настройка параметров, управляемых сервером (открытая бета)** (`server-managed-settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Параметры Claude Code** (`settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Расширенная настройка** (`setup.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Расширьте Claude с помощью skills** (`skills.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code в Slack** (`slack.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Настройка строки состояния** (`statusline.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Создание пользовательских subagents** (`sub-agents.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Оптимизируйте настройку вашего терминала** (`terminal-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Обзор корпоративного развертывания** (`third-party-integrations.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Troubleshooting** (`troubleshooting.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Использование Claude Code в VS Code** (`vs-code.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Нулевое хранение данных** (`zero-data-retention.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+
+### 简体中文
+
+
+**Modified**
+
+- **协调 Claude Code 会话团队** (`agent-teams.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Amazon Bedrock 上的 Claude Code** (`amazon-bedrock.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **使用分析跟踪团队使用情况** (`analytics.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code 最佳实践** (`best-practices.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **checkpointing** (`checkpointing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **在 Chrome 中使用 Claude Code（测试版）** (`chrome.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code on the web** (`claude-code-on-the-web.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **CLI 参考** (`cli-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Code Review** (`code-review.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **常见工作流程** (`common-workflows.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **有效管理成本** (`costs.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **数据使用** (`data-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **开始使用桌面应用** (`desktop-quickstart.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **使用 Claude Code Desktop** (`desktop.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **开发容器** (`devcontainer.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **通过市场发现和安装预构建插件** (`discover-plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **使用快速模式加快响应速度** (`fast-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **扩展 Claude Code** (`features-overview.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitHub Actions** (`github-actions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Google Vertex AI 上的 Claude Code** (`google-vertex-ai.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **以编程方式运行 Claude Code** (`headless.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **使用 hooks 自动化工作流** (`hooks-guide.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Hooks 参考** (`hooks.md`): 11 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code 如何工作** (`how-claude-code-works.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **交互模式** (`interactive-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **JetBrains IDEs** (`jetbrains.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **自定义快捷键** (`keybindings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **法律和合规** (`legal-and-compliance.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **LLM gateway 配置** (`llm-gateway.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **通过 MCP 将 Claude Code 连接到工具** (`mcp.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude 如何记住你的项目** (`memory.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **模型配置** (`model-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **监控** (`monitoring-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **企业网络配置** (`network-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **输出样式** (`output-styles.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code 概述** (`overview.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **配置权限** (`permissions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **创建和分发 plugin marketplace** (`plugin-marketplaces.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Plugins 参考** (`plugins-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **创建插件** (`plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **快速开始** (`quickstart.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **使用 Remote Control 从任何设备继续本地会话** (`remote-control.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Sandboxing** (`sandboxing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **按计划运行提示词** (`scheduled-tasks.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **安全性** (`security.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **配置服务器管理的设置（公开测试版）** (`server-managed-settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code 设置** (`settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **高级设置** (`setup.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **使用 skills 扩展 Claude** (`skills.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Slack 中的 Claude Code** (`slack.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **自定义你的状态行** (`statusline.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **创建自定义 subagents** (`sub-agents.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **优化您的终端设置** (`terminal-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **企业部署概览** (`third-party-integrations.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **故障排除** (`troubleshooting.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **在 VS Code 中使用 Claude Code** (`vs-code.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **零数据保留** (`zero-data-retention.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+
+### 繁體中文
+
+
+**Modified**
+
+- **協調 Claude Code 工作階段團隊** (`agent-teams.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Amazon Bedrock 上的 Claude Code** (`amazon-bedrock.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **使用分析追蹤團隊使用情況** (`analytics.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code 最佳實踐** (`best-practices.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Checkpointing** (`checkpointing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **在 Chrome 中使用 Claude Code（測試版）** (`chrome.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code 網頁版** (`claude-code-on-the-web.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **CLI 參考** (`cli-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Code Review** (`code-review.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **常見工作流程** (`common-workflows.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **有效管理成本** (`costs.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **資料使用** (`data-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **開始使用桌面應用程式** (`desktop-quickstart.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **使用 Claude Code Desktop** (`desktop.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **開發容器** (`devcontainer.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **透過市場探索和安裝預建外掛程式** (`discover-plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **使用快速模式加快回應速度** (`fast-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **擴展 Claude Code** (`features-overview.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitHub Actions** (`github-actions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Google Vertex AI 上的 Claude Code** (`google-vertex-ai.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **以程式方式執行 Claude Code** (`headless.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **使用 hooks 自動化工作流程** (`hooks-guide.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Hooks 參考** (`hooks.md`): 11 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code 如何運作** (`how-claude-code-works.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **互動模式** (`interactive-mode.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **JetBrains IDEs** (`jetbrains.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **自訂鍵盤快捷鍵** (`keybindings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **法律和合規** (`legal-and-compliance.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **LLM gateway 配置** (`llm-gateway.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **透過 MCP 將 Claude Code 連接到工具** (`mcp.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude 如何記住您的專案** (`memory.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **模型配置** (`model-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **監控** (`monitoring-usage.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **企業網路設定** (`network-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **輸出樣式** (`output-styles.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code 概述** (`overview.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **設定權限** (`permissions.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **建立並分發 plugin marketplace** (`plugin-marketplaces.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Plugins 參考** (`plugins-reference.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **建立 plugins** (`plugins.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **快速入門** (`quickstart.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **使用 Remote Control 從任何裝置繼續本地會話** (`remote-control.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Sandboxing** (`sandboxing.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **按排程執行提示** (`scheduled-tasks.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **安全性** (`security.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **設定伺服器管理的設定 (公開測試版)** (`server-managed-settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Claude Code 設定** (`settings.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **進階設定** (`setup.md`): 13 lines added, 1 removed
+  - New section: "## Submitting Feedback"
+- **使用 skills 擴展 Claude** (`skills.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **Slack 中的 Claude Code** (`slack.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **自訂您的狀態列** (`statusline.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **建立自訂 subagents** (`sub-agents.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **優化您的終端機設置** (`terminal-config.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **企業部署概述** (`third-party-integrations.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **故障排除** (`troubleshooting.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **在 VS Code 中使用 Claude Code** (`vs-code.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+- **零數據保留** (`zero-data-retention.md`): 10 lines added, 0 removed
+  - New section: "## Submitting Feedback"
+
+---
+
 ## 2026-04-09
 
 27 pages modified

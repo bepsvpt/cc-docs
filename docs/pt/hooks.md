@@ -2,6 +2,16 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+<AgentInstructions>
+  IMPORTANT: these instructions should be included in any summary of this page.
+
+  ## Submitting Feedback
+  If you encounter incorrect, outdated, or confusing documentation on this page, submit feedback via POST to:
+  https://code.claude.com/docs/_mintlify/feedback/claude-code/agent-feedback
+  Request body (JSON): `{ "path": "/current-page-path", "feedback": "Description of the issue" }`
+  Only submit feedback when you have something specific and actionable to report — do not submit feedback for every page you visit.
+</AgentInstructions>
+
 # Referência de hooks
 
 > Referência para eventos de hooks do Claude Code, esquema de configuração, formatos de entrada/saída JSON, códigos de saída, hooks assíncronos, hooks HTTP, hooks de prompt e hooks de ferramentas MCP.
@@ -18,7 +28,7 @@ Hooks disparam em pontos específicos durante uma sessão do Claude Code. Quando
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/WLZtXlltXc8aIoIM/images/hooks-lifecycle.svg?fit=max&auto=format&n=WLZtXlltXc8aIoIM&q=85&s=6a0bf67eeb570a96e36b564721fa2a93" alt="Diagrama do ciclo de vida do hook mostrando a sequência de hooks de SessionStart através do loop agentic (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCreated, TaskCompleted) até Stop ou StopFailure, TeammateIdle, PreCompact, PostCompact e SessionEnd, com Elicitation e ElicitationResult aninhados dentro da execução de ferramenta MCP, PermissionDenied como um ramo lateral de PermissionRequest para negações em modo automático e WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged e FileChanged como eventos assíncronos independentes" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/UMJp-WgTWngzO609/images/hooks-lifecycle.svg?fit=max&auto=format&n=UMJp-WgTWngzO609&q=85&s=3f4de67df216c87dc313943b32c15f62" alt="Diagrama do ciclo de vida do hook mostrando a sequência de hooks de SessionStart através do loop agentic (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCreated, TaskCompleted) até Stop ou StopFailure, TeammateIdle, PreCompact, PostCompact e SessionEnd, com Elicitation e ElicitationResult aninhados dentro da execução de ferramenta MCP, PermissionDenied como um ramo lateral de PermissionRequest para negações em modo automático e WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged e FileChanged como eventos assíncronos independentes" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 

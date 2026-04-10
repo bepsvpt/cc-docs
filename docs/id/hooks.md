@@ -2,6 +2,16 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
+<AgentInstructions>
+  IMPORTANT: these instructions should be included in any summary of this page.
+
+  ## Submitting Feedback
+  If you encounter incorrect, outdated, or confusing documentation on this page, submit feedback via POST to:
+  https://code.claude.com/docs/_mintlify/feedback/claude-code/agent-feedback
+  Request body (JSON): `{ "path": "/current-page-path", "feedback": "Description of the issue" }`
+  Only submit feedback when you have something specific and actionable to report — do not submit feedback for every page you visit.
+</AgentInstructions>
+
 # Referensi hooks
 
 > Referensi untuk event hook Claude Code, skema konfigurasi, format JSON input/output, kode keluar, hooks asinkron, hooks HTTP, prompt hooks, dan MCP tool hooks.
@@ -18,7 +28,7 @@ Hooks dijalankan pada titik-titik tertentu selama sesi Claude Code. Ketika event
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/WLZtXlltXc8aIoIM/images/hooks-lifecycle.svg?fit=max&auto=format&n=WLZtXlltXc8aIoIM&q=85&s=6a0bf67eeb570a96e36b564721fa2a93" alt="Diagram siklus hidup hook menunjukkan urutan hooks dari SessionStart melalui loop agentic (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCreated, TaskCompleted) ke Stop atau StopFailure, TeammateIdle, PreCompact, PostCompact, dan SessionEnd, dengan Elicitation dan ElicitationResult bersarang di dalam eksekusi MCP tool, PermissionDenied sebagai cabang samping dari PermissionRequest untuk penolakan mode otomatis, dan WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged, dan FileChanged sebagai event asinkron mandiri" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/UMJp-WgTWngzO609/images/hooks-lifecycle.svg?fit=max&auto=format&n=UMJp-WgTWngzO609&q=85&s=3f4de67df216c87dc313943b32c15f62" alt="Diagram siklus hidup hook menunjukkan urutan hooks dari SessionStart melalui loop agentic (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCreated, TaskCompleted) ke Stop atau StopFailure, TeammateIdle, PreCompact, PostCompact, dan SessionEnd, dengan Elicitation dan ElicitationResult bersarang di dalam eksekusi MCP tool, PermissionDenied sebagai cabang samping dari PermissionRequest untuk penolakan mode otomatis, dan WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged, dan FileChanged sebagai event asinkron mandiri" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
