@@ -1,5 +1,48 @@
 # Documentation Changes
 
+## 2026-04-11
+
+22 pages modified
+
+
+### English
+
+
+**Modified**
+
+- **Claude Code on Amazon Bedrock** (`amazon-bedrock.md`): 188 lines added, 6 removed
+  - New section: "# Optional: Override the region for the small/fast model (Haiku)."
+  - New section: "# Also applies to Bedrock Mantle."
+- **Changelog** (`changelog.md`): 49 lines added, 0 removed
+- **Commands** (`commands.md`): 2 lines added, 2 removed
+- **Manage costs effectively** (`costs.md`): 3 lines added, 3 removed
+- **Environment variables** (`env-vars.md`): 3 lines added, 2 removed
+- **Claude Code on Google Vertex AI** (`google-vertex-ai.md`): 180 lines added, 0 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 22 lines added, 1 removed
+- **Hooks reference** (`hooks.md`): 1 lines added, 1 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 8 lines added, 2 removed
+- **How Claude remembers your project** (`memory.md`): 0 lines added, 1 removed
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 180 lines added, 0 removed
+- **Monitoring** (`monitoring-usage.md`): 1 lines added, 1 removed
+- **Enterprise network configuration** (`network-config.md`): 27 lines added, 1 removed
+  - New section: "## CA certificate store"
+- **Configure permissions** (`permissions.md`): 2 lines added, 2 removed
+- **Run prompts on a schedule** (`scheduled-tasks.md`): 67 lines added, 15 removed
+  - New section: "## Run a prompt repeatedly with /loop"
+  - New section: "### Run on a fixed interval"
+  - New section: "### Let Claude choose the interval"
+  - New section: "### Run the built-in maintenance prompt"
+- **Configure server-managed settings** (`server-managed-settings.md`): 3 lines added, 3 removed
+  - New section: "# Configure server-managed settings"
+- **Claude Code settings** (`settings.md`): 3 lines added, 2 removed
+- **Customize your status line** (`statusline.md`): 1 lines added, 1 removed
+- **Create custom subagents** (`sub-agents.md`): 2 lines added, 0 removed
+- **Enterprise deployment overview** (`third-party-integrations.md`): 180 lines added, 0 removed
+- **Tools reference** (`tools-reference.md`): 5 lines added, 1 removed
+- **Troubleshooting** (`troubleshooting.md`): 1 lines added, 1 removed
+
+---
+
 ## 2026-04-10
 
 713 pages modified
