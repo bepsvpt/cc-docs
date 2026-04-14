@@ -1,5 +1,812 @@
 # Documentation Changes
 
+## 2026-04-14
+
+713 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Orchestrieren Sie Teams von Claude Code-Sitzungen** (`agent-teams.md`): 0 lines added, 10 removed
+- **Claude Code auf Amazon Bedrock** (`amazon-bedrock.md`): 0 lines added, 10 removed
+- **Teamnutzung mit Analysen verfolgen** (`analytics.md`): 0 lines added, 10 removed
+- **Best Practices für Claude Code** (`best-practices.md`): 0 lines added, 10 removed
+- **Checkpointing** (`checkpointing.md`): 0 lines added, 10 removed
+- **Claude Code mit Chrome verwenden (Beta)** (`chrome.md`): 0 lines added, 10 removed
+- **Claude Code im Web** (`claude-code-on-the-web.md`): 0 lines added, 10 removed
+- **CLI-Referenz** (`cli-reference.md`): 0 lines added, 10 removed
+- **Code Review** (`code-review.md`): 0 lines added, 10 removed
+- **Häufige Workflows** (`common-workflows.md`): 0 lines added, 10 removed
+- **Kosten effektiv verwalten** (`costs.md`): 0 lines added, 10 removed
+- **Datennutzung** (`data-usage.md`): 0 lines added, 10 removed
+- **Erste Schritte mit der Desktop-App** (`desktop-quickstart.md`): 0 lines added, 10 removed
+- **Claude Code Desktop verwenden** (`desktop.md`): 0 lines added, 10 removed
+- **Entwicklungscontainer** (`devcontainer.md`): 0 lines added, 10 removed
+- **Entdecken und installieren Sie vorgefertigte Plugins über Marktplätze** (`discover-plugins.md`): 0 lines added, 10 removed
+- **Beschleunigen Sie Antworten mit dem Schnellmodus** (`fast-mode.md`): 0 lines added, 10 removed
+- **Claude Code erweitern** (`features-overview.md`): 0 lines added, 10 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 0 lines added, 10 removed
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 0 lines added, 10 removed
+- **Claude Code auf Google Vertex AI** (`google-vertex-ai.md`): 0 lines added, 10 removed
+- **Claude Code programmgesteuert ausführen** (`headless.md`): 0 lines added, 10 removed
+- **Automatisieren Sie Workflows mit Hooks** (`hooks-guide.md`): 0 lines added, 10 removed
+- **Hooks-Referenz** (`hooks.md`): 0 lines added, 10 removed
+- **So funktioniert Claude Code** (`how-claude-code-works.md`): 0 lines added, 10 removed
+- **Interaktiver Modus** (`interactive-mode.md`): 0 lines added, 10 removed
+- **JetBrains IDEs** (`jetbrains.md`): 0 lines added, 10 removed
+- **Tastaturkürzel anpassen** (`keybindings.md`): 0 lines added, 10 removed
+- **Rechtliche Bestimmungen und Compliance** (`legal-and-compliance.md`): 0 lines added, 10 removed
+- **LLM-Gateway-Konfiguration** (`llm-gateway.md`): 0 lines added, 10 removed
+- **Claude Code mit Tools über MCP verbinden** (`mcp.md`): 1 lines added, 11 removed
+- **Wie Claude sich Ihr Projekt merkt** (`memory.md`): 0 lines added, 10 removed
+- **Claude Code auf Microsoft Foundry** (`microsoft-foundry.md`): 0 lines added, 10 removed
+- **Modellkonfiguration** (`model-config.md`): 0 lines added, 10 removed
+- **Überwachung** (`monitoring-usage.md`): 0 lines added, 10 removed
+- **Enterprise-Netzwerkkonfiguration** (`network-config.md`): 0 lines added, 10 removed
+- **Ausgabestile** (`output-styles.md`): 0 lines added, 10 removed
+- **Claude Code Übersicht** (`overview.md`): 1 lines added, 11 removed
+- **Berechtigungen konfigurieren** (`permissions.md`): 0 lines added, 10 removed
+- **Erstellen und Verteilen eines Plugin-Marktplatzes** (`plugin-marketplaces.md`): 0 lines added, 10 removed
+- **Plugins-Referenz** (`plugins-reference.md`): 0 lines added, 10 removed
+- **Plugins erstellen** (`plugins.md`): 0 lines added, 10 removed
+- **Schnellstart** (`quickstart.md`): 1 lines added, 11 removed
+- **Lokale Sitzungen von jedem Gerät aus mit Remote Control fortsetzen** (`remote-control.md`): 0 lines added, 10 removed
+- **Sandboxing** (`sandboxing.md`): 0 lines added, 10 removed
+- **Prompts nach Zeitplan ausführen** (`scheduled-tasks.md`): 0 lines added, 10 removed
+- **Sicherheit** (`security.md`): 0 lines added, 10 removed
+- **Serververwaltete Einstellungen konfigurieren (öffentliche Beta)** (`server-managed-settings.md`): 0 lines added, 10 removed
+- **Claude Code-Einstellungen** (`settings.md`): 0 lines added, 10 removed
+- **Erweiterte Einrichtung** (`setup.md`): 1 lines added, 11 removed
+- **Claude mit Skills erweitern** (`skills.md`): 0 lines added, 10 removed
+- **Claude Code in Slack** (`slack.md`): 0 lines added, 10 removed
+- **Passen Sie Ihre Statuszeile an** (`statusline.md`): 0 lines added, 10 removed
+- **Benutzerdefinierte Subagenten erstellen** (`sub-agents.md`): 0 lines added, 10 removed
+- **Optimieren Sie Ihr Terminal-Setup** (`terminal-config.md`): 0 lines added, 10 removed
+- **Übersicht zur Enterprise-Bereitstellung** (`third-party-integrations.md`): 0 lines added, 10 removed
+- **Fehlerbehebung** (`troubleshooting.md`): 0 lines added, 10 removed
+- **Claude Code in VS Code verwenden** (`vs-code.md`): 0 lines added, 10 removed
+- **Null-Datenspeicherung** (`zero-data-retention.md`): 0 lines added, 10 removed
+
+### English
+
+
+**Modified**
+
+- **Orchestrate teams of Claude Code sessions** (`agent-teams.md`): 0 lines added, 10 removed
+- **Claude Code on Amazon Bedrock** (`amazon-bedrock.md`): 0 lines added, 10 removed
+- **Track team usage with analytics** (`analytics.md`): 0 lines added, 10 removed
+- **Authentication** (`authentication.md`): 0 lines added, 10 removed
+- **Best Practices for Claude Code** (`best-practices.md`): 0 lines added, 10 removed
+- **Changelog** (`changelog.md`): 44 lines added, 10 removed
+- **Checkpointing** (`checkpointing.md`): 0 lines added, 10 removed
+- **Use Claude Code with Chrome (beta)** (`chrome.md`): 0 lines added, 10 removed
+- **Use Claude Code on the web** (`claude-code-on-the-web.md`): 0 lines added, 10 removed
+- **CLI reference** (`cli-reference.md`): 0 lines added, 10 removed
+- **Code Review** (`code-review.md`): 0 lines added, 10 removed
+- **Commands** (`commands.md`): 3 lines added, 12 removed
+- **Common workflows** (`common-workflows.md`): 1 lines added, 11 removed
+- **Manage costs effectively** (`costs.md`): 1 lines added, 11 removed
+- **Data usage** (`data-usage.md`): 0 lines added, 10 removed
+- **Get started with the desktop app** (`desktop-quickstart.md`): 0 lines added, 10 removed
+- **Use Claude Code Desktop** (`desktop.md`): 0 lines added, 10 removed
+- **Development containers** (`devcontainer.md`): 0 lines added, 10 removed
+- **Discover and install prebuilt plugins through marketplaces** (`discover-plugins.md`): 2 lines added, 10 removed
+- **Environment variables** (`env-vars.md`): 9 lines added, 15 removed
+- **Speed up responses with fast mode** (`fast-mode.md`): 0 lines added, 10 removed
+- **Extend Claude Code** (`features-overview.md`): 0 lines added, 10 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 0 lines added, 10 removed
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 0 lines added, 10 removed
+- **Claude Code on Google Vertex AI** (`google-vertex-ai.md`): 0 lines added, 10 removed
+- **Run Claude Code programmatically** (`headless.md`): 0 lines added, 10 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 0 lines added, 10 removed
+- **Hooks reference** (`hooks.md`): 31 lines added, 36 removed
+- **How Claude Code works** (`how-claude-code-works.md`): 0 lines added, 10 removed
+- **Interactive mode** (`interactive-mode.md`): 19 lines added, 29 removed
+- **JetBrains IDEs** (`jetbrains.md`): 0 lines added, 10 removed
+- **Customize keyboard shortcuts** (`keybindings.md`): 10 lines added, 11 removed
+  - New section: "### Doctor actions"
+- **Legal and compliance** (`legal-and-compliance.md`): 0 lines added, 10 removed
+- **LLM gateway configuration** (`llm-gateway.md`): 0 lines added, 10 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 1 lines added, 11 removed
+- **How Claude remembers your project** (`memory.md`): 2 lines added, 12 removed
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 0 lines added, 10 removed
+- **Model configuration** (`model-config.md`): 1 lines added, 11 removed
+- **Monitoring** (`monitoring-usage.md`): 58 lines added, 33 removed
+  - New section: "#### Plugin installed event"
+  - New section: "#### Skill activated event"
+- **Enterprise network configuration** (`network-config.md`): 2 lines added, 10 removed
+- **Output styles** (`output-styles.md`): 0 lines added, 10 removed
+- **Claude Code overview** (`overview.md`): 1 lines added, 11 removed
+- **Configure permissions** (`permissions.md`): 23 lines added, 19 removed
+  - New section: "#### Compound commands"
+  - New section: "#### Process wrappers"
+- **Create and distribute a plugin marketplace** (`plugin-marketplaces.md`): 0 lines added, 10 removed
+- **Plugins reference** (`plugins-reference.md`): 31 lines added, 36 removed
+- **Create plugins** (`plugins.md`): 1 lines added, 11 removed
+- **Quickstart** (`quickstart.md`): 1 lines added, 11 removed
+- **Continue local sessions from any device with Remote Control** (`remote-control.md`): 0 lines added, 10 removed
+- **Sandboxing** (`sandboxing.md`): 0 lines added, 10 removed
+- **Run prompts on a schedule** (`scheduled-tasks.md`): 0 lines added, 10 removed
+- **Security** (`security.md`): 0 lines added, 10 removed
+- **Configure server-managed settings** (`server-managed-settings.md`): 0 lines added, 10 removed
+- **Claude Code settings** (`settings.md`): 1 lines added, 10 removed
+- **Advanced setup** (`setup.md`): 14 lines added, 16 removed
+- **Extend Claude with skills** (`skills.md`): 22 lines added, 27 removed
+  - New section: "#### Live change detection"
+- **Claude Code in Slack** (`slack.md`): 0 lines added, 10 removed
+- **Customize your status line** (`statusline.md`): 19 lines added, 10 removed
+  - New section: "## Subagent status lines"
+- **Create custom subagents** (`sub-agents.md`): 4 lines added, 10 removed
+- **Optimize your terminal setup** (`terminal-config.md`): 25 lines added, 20 removed
+  - New section: "#### Set up Shift+Enter with /terminal-setup"
+  - New section: "#### Set up Shift+Enter in tmux"
+  - New section: "#### Set up Option+Enter on macOS"
+- **Enterprise deployment overview** (`third-party-integrations.md`): 0 lines added, 10 removed
+- **Tools reference** (`tools-reference.md`): 2 lines added, 12 removed
+- **Troubleshooting** (`troubleshooting.md`): 50 lines added, 33 removed
+  - New section: "### Windows: wrong install command"
+  - New section: "### Windows: Claude Code on Windows requires git-bash"
+  - New section: "### Windows: Claude Code does not support 32-bit Windows"
+  - New section: "### This organization has been disabled with an active subscription"
+  - New section: "### Not logged in or token expired"
+- **Use Claude Code in VS Code** (`vs-code.md`): 0 lines added, 10 removed
+- **Zero data retention** (`zero-data-retention.md`): 0 lines added, 10 removed
+
+### Español
+
+
+**Modified**
+
+- **Orquestar equipos de sesiones de Claude Code** (`agent-teams.md`): 0 lines added, 10 removed
+- **Claude Code en Amazon Bedrock** (`amazon-bedrock.md`): 0 lines added, 10 removed
+- **Rastrear el uso del equipo con análisis** (`analytics.md`): 0 lines added, 10 removed
+- **Mejores prácticas para Claude Code** (`best-practices.md`): 0 lines added, 10 removed
+- **Checkpointing** (`checkpointing.md`): 0 lines added, 10 removed
+- **Usar Claude Code con Chrome (beta)** (`chrome.md`): 0 lines added, 10 removed
+- **Claude Code en la web** (`claude-code-on-the-web.md`): 0 lines added, 10 removed
+- **Referencia de CLI** (`cli-reference.md`): 0 lines added, 10 removed
+- **Code Review** (`code-review.md`): 0 lines added, 10 removed
+- **Flujos de trabajo comunes** (`common-workflows.md`): 0 lines added, 10 removed
+- **Gestionar costos de manera efectiva** (`costs.md`): 0 lines added, 10 removed
+- **Uso de datos** (`data-usage.md`): 0 lines added, 10 removed
+- **Comenzar con la aplicación de escritorio** (`desktop-quickstart.md`): 0 lines added, 10 removed
+- **Usar Claude Code Desktop** (`desktop.md`): 0 lines added, 10 removed
+- **Contenedores de desarrollo** (`devcontainer.md`): 0 lines added, 10 removed
+- **Descubra e instale plugins pregenerados a través de mercados** (`discover-plugins.md`): 0 lines added, 10 removed
+- **Acelera las respuestas con el modo rápido** (`fast-mode.md`): 0 lines added, 10 removed
+- **Extender Claude Code** (`features-overview.md`): 0 lines added, 10 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 0 lines added, 10 removed
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 0 lines added, 10 removed
+- **Claude Code en Google Vertex AI** (`google-vertex-ai.md`): 0 lines added, 10 removed
+- **Ejecutar Claude Code mediante programación** (`headless.md`): 0 lines added, 10 removed
+- **Automatizar flujos de trabajo con hooks** (`hooks-guide.md`): 0 lines added, 10 removed
+- **Referencia de hooks** (`hooks.md`): 0 lines added, 10 removed
+- **Cómo funciona Claude Code** (`how-claude-code-works.md`): 0 lines added, 10 removed
+- **Modo interactivo** (`interactive-mode.md`): 0 lines added, 10 removed
+- **JetBrains IDEs** (`jetbrains.md`): 0 lines added, 10 removed
+- **Personalizar atajos de teclado** (`keybindings.md`): 0 lines added, 10 removed
+- **Legal y cumplimiento** (`legal-and-compliance.md`): 0 lines added, 10 removed
+- **Configuración de la puerta de enlace LLM** (`llm-gateway.md`): 0 lines added, 10 removed
+- **Conectar Claude Code a herramientas mediante MCP** (`mcp.md`): 1 lines added, 11 removed
+- **Cómo Claude recuerda su proyecto** (`memory.md`): 0 lines added, 10 removed
+- **Claude Code en Microsoft Foundry** (`microsoft-foundry.md`): 0 lines added, 10 removed
+- **Configuración del modelo** (`model-config.md`): 0 lines added, 10 removed
+- **Monitoreo** (`monitoring-usage.md`): 0 lines added, 10 removed
+- **Configuración de red empresarial** (`network-config.md`): 0 lines added, 10 removed
+- **Estilos de salida** (`output-styles.md`): 0 lines added, 10 removed
+- **Descripción general de Claude Code** (`overview.md`): 1 lines added, 11 removed
+- **Configurar permisos** (`permissions.md`): 0 lines added, 10 removed
+- **Crear y distribuir un marketplace de plugins** (`plugin-marketplaces.md`): 0 lines added, 10 removed
+- **Referencia de plugins** (`plugins-reference.md`): 0 lines added, 10 removed
+- **Crear plugins** (`plugins.md`): 0 lines added, 10 removed
+- **Inicio rápido** (`quickstart.md`): 1 lines added, 11 removed
+- **Continúe sesiones locales desde cualquier dispositivo con Remote Control** (`remote-control.md`): 0 lines added, 10 removed
+- **Sandboxing** (`sandboxing.md`): 0 lines added, 10 removed
+- **Ejecutar prompts en un horario** (`scheduled-tasks.md`): 0 lines added, 10 removed
+- **Seguridad** (`security.md`): 0 lines added, 10 removed
+- **Configurar la configuración administrada por servidor (beta pública)** (`server-managed-settings.md`): 0 lines added, 10 removed
+- **Configuración de Claude Code** (`settings.md`): 0 lines added, 10 removed
+- **Configuración avanzada** (`setup.md`): 1 lines added, 11 removed
+- **Ampliar Claude con skills** (`skills.md`): 0 lines added, 10 removed
+- **Claude Code en Slack** (`slack.md`): 0 lines added, 10 removed
+- **Personaliza tu línea de estado** (`statusline.md`): 0 lines added, 10 removed
+- **Crear subagentes personalizados** (`sub-agents.md`): 0 lines added, 10 removed
+- **Optimiza tu configuración de terminal** (`terminal-config.md`): 0 lines added, 10 removed
+- **Descripción general de implementación empresarial** (`third-party-integrations.md`): 0 lines added, 10 removed
+- **Solución de problemas** (`troubleshooting.md`): 0 lines added, 10 removed
+- **Usar Claude Code en VS Code** (`vs-code.md`): 0 lines added, 10 removed
+- **Retención cero de datos** (`zero-data-retention.md`): 0 lines added, 10 removed
+
+### Français
+
+
+**Modified**
+
+- **Orchestrer des équipes de sessions Claude Code** (`agent-teams.md`): 0 lines added, 10 removed
+- **Claude Code sur Amazon Bedrock** (`amazon-bedrock.md`): 0 lines added, 10 removed
+- **Suivre l'utilisation de l'équipe avec l'analytique** (`analytics.md`): 0 lines added, 10 removed
+- **Meilleures pratiques pour Claude Code** (`best-practices.md`): 0 lines added, 10 removed
+- **Checkpointing** (`checkpointing.md`): 0 lines added, 10 removed
+- **Utiliser Claude Code avec Chrome (bêta)** (`chrome.md`): 0 lines added, 10 removed
+- **Claude Code sur le web** (`claude-code-on-the-web.md`): 0 lines added, 10 removed
+- **Référence CLI** (`cli-reference.md`): 0 lines added, 10 removed
+- **Révision de code** (`code-review.md`): 0 lines added, 10 removed
+- **Flux de travail courants** (`common-workflows.md`): 0 lines added, 10 removed
+- **Gérer les coûts efficacement** (`costs.md`): 0 lines added, 10 removed
+- **Utilisation des données** (`data-usage.md`): 0 lines added, 10 removed
+- **Démarrer avec l'application de bureau** (`desktop-quickstart.md`): 0 lines added, 10 removed
+- **Utiliser Claude Code Desktop** (`desktop.md`): 0 lines added, 10 removed
+- **Conteneurs de développement** (`devcontainer.md`): 0 lines added, 10 removed
+- **Découvrir et installer des plugins prédéfinis via les marketplaces** (`discover-plugins.md`): 0 lines added, 10 removed
+- **Accélérez les réponses avec le mode rapide** (`fast-mode.md`): 0 lines added, 10 removed
+- **Étendre Claude Code** (`features-overview.md`): 0 lines added, 10 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 0 lines added, 10 removed
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 0 lines added, 10 removed
+- **Claude Code sur Google Vertex AI** (`google-vertex-ai.md`): 0 lines added, 10 removed
+- **Exécuter Claude Code par programmation** (`headless.md`): 0 lines added, 10 removed
+- **Automatiser les workflows avec les hooks** (`hooks-guide.md`): 0 lines added, 10 removed
+- **Référence des hooks** (`hooks.md`): 0 lines added, 10 removed
+- **Comment fonctionne Claude Code** (`how-claude-code-works.md`): 0 lines added, 10 removed
+- **Mode interactif** (`interactive-mode.md`): 0 lines added, 10 removed
+- **JetBrains IDEs** (`jetbrains.md`): 0 lines added, 10 removed
+- **Personnaliser les raccourcis clavier** (`keybindings.md`): 0 lines added, 10 removed
+- **Aspects juridiques et conformité** (`legal-and-compliance.md`): 0 lines added, 10 removed
+- **Configuration de la passerelle LLM** (`llm-gateway.md`): 0 lines added, 10 removed
+- **Connecter Claude Code aux outils via MCP** (`mcp.md`): 1 lines added, 11 removed
+- **Comment Claude se souvient de votre projet** (`memory.md`): 0 lines added, 10 removed
+- **Claude Code sur Microsoft Foundry** (`microsoft-foundry.md`): 0 lines added, 10 removed
+- **Configuration du modèle** (`model-config.md`): 0 lines added, 10 removed
+- **Surveillance** (`monitoring-usage.md`): 0 lines added, 10 removed
+- **Configuration réseau d'entreprise** (`network-config.md`): 0 lines added, 10 removed
+- **Styles de sortie** (`output-styles.md`): 0 lines added, 10 removed
+- **Aperçu de Claude Code** (`overview.md`): 1 lines added, 11 removed
+- **Configurer les autorisations** (`permissions.md`): 0 lines added, 10 removed
+- **Créer et distribuer une place de marché de plugins** (`plugin-marketplaces.md`): 0 lines added, 10 removed
+- **Référence des plugins** (`plugins-reference.md`): 0 lines added, 10 removed
+- **Créer des plugins** (`plugins.md`): 0 lines added, 10 removed
+- **Démarrage rapide** (`quickstart.md`): 1 lines added, 11 removed
+- **Continuer les sessions locales depuis n'importe quel appareil avec Remote Control** (`remote-control.md`): 0 lines added, 10 removed
+- **Sandboxing** (`sandboxing.md`): 0 lines added, 10 removed
+- **Exécuter des prompts selon un calendrier** (`scheduled-tasks.md`): 0 lines added, 10 removed
+- **Sécurité** (`security.md`): 0 lines added, 10 removed
+- **Configurer les paramètres gérés par le serveur (bêta publique)** (`server-managed-settings.md`): 0 lines added, 10 removed
+- **Paramètres Claude Code** (`settings.md`): 0 lines added, 10 removed
+- **Configuration avancée** (`setup.md`): 1 lines added, 11 removed
+- **Étendre Claude avec des skills** (`skills.md`): 0 lines added, 10 removed
+- **Claude Code dans Slack** (`slack.md`): 0 lines added, 10 removed
+- **Personnalisez votre barre de statut** (`statusline.md`): 0 lines added, 10 removed
+- **Créer des sous-agents personnalisés** (`sub-agents.md`): 0 lines added, 10 removed
+- **Optimisez votre configuration de terminal** (`terminal-config.md`): 0 lines added, 10 removed
+- **Aperçu du déploiement en entreprise** (`third-party-integrations.md`): 0 lines added, 10 removed
+- **Dépannage** (`troubleshooting.md`): 0 lines added, 10 removed
+- **Utiliser Claude Code dans VS Code** (`vs-code.md`): 0 lines added, 10 removed
+- **Zéro conservation des données** (`zero-data-retention.md`): 0 lines added, 10 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Koordinasikan tim Claude Code sessions** (`agent-teams.md`): 0 lines added, 10 removed
+- **Claude Code di Amazon Bedrock** (`amazon-bedrock.md`): 0 lines added, 10 removed
+- **Lacak penggunaan tim dengan analitik** (`analytics.md`): 0 lines added, 10 removed
+- **Praktik Terbaik untuk Claude Code** (`best-practices.md`): 0 lines added, 10 removed
+- **Checkpointing** (`checkpointing.md`): 0 lines added, 10 removed
+- **Gunakan Claude Code dengan Chrome (beta)** (`chrome.md`): 0 lines added, 10 removed
+- **Claude Code di web** (`claude-code-on-the-web.md`): 0 lines added, 10 removed
+- **Referensi CLI** (`cli-reference.md`): 0 lines added, 10 removed
+- **Code Review** (`code-review.md`): 0 lines added, 10 removed
+- **Alur kerja umum** (`common-workflows.md`): 0 lines added, 10 removed
+- **Kelola biaya secara efektif** (`costs.md`): 0 lines added, 10 removed
+- **Penggunaan data** (`data-usage.md`): 0 lines added, 10 removed
+- **Memulai dengan aplikasi desktop** (`desktop-quickstart.md`): 0 lines added, 10 removed
+- **Gunakan Claude Code Desktop** (`desktop.md`): 0 lines added, 10 removed
+- **Kontainer pengembangan** (`devcontainer.md`): 0 lines added, 10 removed
+- **Temukan dan instal plugin yang sudah dibuat melalui marketplace** (`discover-plugins.md`): 0 lines added, 10 removed
+- **Percepat respons dengan mode cepat** (`fast-mode.md`): 0 lines added, 10 removed
+- **Perluas Claude Code** (`features-overview.md`): 0 lines added, 10 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 0 lines added, 10 removed
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 0 lines added, 10 removed
+- **Claude Code di Google Vertex AI** (`google-vertex-ai.md`): 0 lines added, 10 removed
+- **Jalankan Claude Code secara programatis** (`headless.md`): 0 lines added, 10 removed
+- **Otomatisasi alur kerja dengan hooks** (`hooks-guide.md`): 0 lines added, 10 removed
+- **Referensi hooks** (`hooks.md`): 0 lines added, 10 removed
+- **Cara Kerja Claude Code** (`how-claude-code-works.md`): 0 lines added, 10 removed
+- **Mode interaktif** (`interactive-mode.md`): 0 lines added, 10 removed
+- **JetBrains IDEs** (`jetbrains.md`): 0 lines added, 10 removed
+- **Sesuaikan pintasan keyboard** (`keybindings.md`): 0 lines added, 10 removed
+- **Hukum dan kepatuhan** (`legal-and-compliance.md`): 0 lines added, 10 removed
+- **Konfigurasi LLM gateway** (`llm-gateway.md`): 0 lines added, 10 removed
+- **Hubungkan Claude Code ke alat melalui MCP** (`mcp.md`): 1 lines added, 11 removed
+- **Bagaimana Claude mengingat proyek Anda** (`memory.md`): 0 lines added, 10 removed
+- **Claude Code di Microsoft Foundry** (`microsoft-foundry.md`): 0 lines added, 10 removed
+- **Konfigurasi model** (`model-config.md`): 0 lines added, 10 removed
+- **Pemantauan** (`monitoring-usage.md`): 0 lines added, 10 removed
+- **Konfigurasi jaringan enterprise** (`network-config.md`): 0 lines added, 10 removed
+- **Output styles** (`output-styles.md`): 0 lines added, 10 removed
+- **Ikhtisar Claude Code** (`overview.md`): 1 lines added, 11 removed
+- **Konfigurasi izin** (`permissions.md`): 0 lines added, 10 removed
+- **Buat dan distribusikan marketplace plugin** (`plugin-marketplaces.md`): 0 lines added, 10 removed
+- **Referensi Plugins** (`plugins-reference.md`): 0 lines added, 10 removed
+- **Buat plugins** (`plugins.md`): 0 lines added, 10 removed
+- **Panduan Cepat** (`quickstart.md`): 1 lines added, 11 removed
+- **Lanjutkan sesi lokal dari perangkat apa pun dengan Remote Control** (`remote-control.md`): 0 lines added, 10 removed
+- **Sandboxing** (`sandboxing.md`): 0 lines added, 10 removed
+- **Jalankan prompt sesuai jadwal** (`scheduled-tasks.md`): 0 lines added, 10 removed
+- **Keamanan** (`security.md`): 0 lines added, 10 removed
+- **Konfigurasi pengaturan yang dikelola server (beta publik)** (`server-managed-settings.md`): 0 lines added, 10 removed
+- **Pengaturan Claude Code** (`settings.md`): 0 lines added, 10 removed
+- **Pengaturan lanjutan** (`setup.md`): 1 lines added, 11 removed
+- **Perluas Claude dengan skills** (`skills.md`): 0 lines added, 10 removed
+- **Claude Code di Slack** (`slack.md`): 0 lines added, 10 removed
+- **Sesuaikan baris status Anda** (`statusline.md`): 0 lines added, 10 removed
+- **Buat subagent khusus** (`sub-agents.md`): 0 lines added, 10 removed
+- **Optimalkan pengaturan terminal Anda** (`terminal-config.md`): 0 lines added, 10 removed
+- **Ikhtisar penyebaran enterprise** (`third-party-integrations.md`): 0 lines added, 10 removed
+- **Troubleshooting** (`troubleshooting.md`): 0 lines added, 10 removed
+- **Gunakan Claude Code di VS Code** (`vs-code.md`): 0 lines added, 10 removed
+- **Retensi data nol** (`zero-data-retention.md`): 0 lines added, 10 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Orchestrare team di sessioni Claude Code** (`agent-teams.md`): 0 lines added, 10 removed
+- **Claude Code su Amazon Bedrock** (`amazon-bedrock.md`): 0 lines added, 10 removed
+- **Traccia l'utilizzo del team con l'analittica** (`analytics.md`): 0 lines added, 10 removed
+- **Best Practices per Claude Code** (`best-practices.md`): 0 lines added, 10 removed
+- **Checkpointing** (`checkpointing.md`): 0 lines added, 10 removed
+- **Usa Claude Code con Chrome (beta)** (`chrome.md`): 0 lines added, 10 removed
+- **Claude Code sul web** (`claude-code-on-the-web.md`): 0 lines added, 10 removed
+- **Riferimento CLI** (`cli-reference.md`): 0 lines added, 10 removed
+- **Code Review** (`code-review.md`): 0 lines added, 10 removed
+- **Flussi di lavoro comuni** (`common-workflows.md`): 0 lines added, 10 removed
+- **Gestisci i costi in modo efficace** (`costs.md`): 0 lines added, 10 removed
+- **Utilizzo dei dati** (`data-usage.md`): 0 lines added, 10 removed
+- **Iniziare con l'app desktop** (`desktop-quickstart.md`): 0 lines added, 10 removed
+- **Usa Claude Code Desktop** (`desktop.md`): 0 lines added, 10 removed
+- **Contenitori di sviluppo** (`devcontainer.md`): 0 lines added, 10 removed
+- **Scopri e installa plugin precostruiti tramite marketplace** (`discover-plugins.md`): 0 lines added, 10 removed
+- **Accelera le risposte con la modalità veloce** (`fast-mode.md`): 0 lines added, 10 removed
+- **Estendi Claude Code** (`features-overview.md`): 0 lines added, 10 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 0 lines added, 10 removed
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 0 lines added, 10 removed
+- **Claude Code su Google Vertex AI** (`google-vertex-ai.md`): 0 lines added, 10 removed
+- **Eseguire Claude Code a livello programmatico** (`headless.md`): 0 lines added, 10 removed
+- **Automatizzare i flussi di lavoro con hooks** (`hooks-guide.md`): 0 lines added, 10 removed
+- **Riferimento dei hooks** (`hooks.md`): 0 lines added, 10 removed
+- **Come funziona Claude Code** (`how-claude-code-works.md`): 0 lines added, 10 removed
+- **Modalità interattiva** (`interactive-mode.md`): 0 lines added, 10 removed
+- **JetBrains IDEs** (`jetbrains.md`): 0 lines added, 10 removed
+- **Personalizzare le scorciatoie da tastiera** (`keybindings.md`): 0 lines added, 10 removed
+- **Aspetti legali e conformità** (`legal-and-compliance.md`): 0 lines added, 10 removed
+- **Configurazione del gateway LLM** (`llm-gateway.md`): 0 lines added, 10 removed
+- **Connetti Claude Code ai tuoi strumenti tramite MCP** (`mcp.md`): 1 lines added, 11 removed
+- **Come Claude ricorda il tuo progetto** (`memory.md`): 0 lines added, 10 removed
+- **Claude Code su Microsoft Foundry** (`microsoft-foundry.md`): 0 lines added, 10 removed
+- **Configurazione del modello** (`model-config.md`): 0 lines added, 10 removed
+- **Monitoraggio** (`monitoring-usage.md`): 0 lines added, 10 removed
+- **Configurazione di rete aziendale** (`network-config.md`): 0 lines added, 10 removed
+- **Output styles** (`output-styles.md`): 0 lines added, 10 removed
+- **Panoramica di Claude Code** (`overview.md`): 1 lines added, 11 removed
+- **Configurare le autorizzazioni** (`permissions.md`): 0 lines added, 10 removed
+- **Creare e distribuire un marketplace di plugin** (`plugin-marketplaces.md`): 0 lines added, 10 removed
+- **Riferimento dei plugin** (`plugins-reference.md`): 0 lines added, 10 removed
+- **Creare plugin** (`plugins.md`): 0 lines added, 10 removed
+- **Guida rapida** (`quickstart.md`): 1 lines added, 11 removed
+- **Continua le sessioni locali da qualsiasi dispositivo con Remote Control** (`remote-control.md`): 0 lines added, 10 removed
+- **Sandboxing** (`sandboxing.md`): 0 lines added, 10 removed
+- **Eseguire prompt in base a una pianificazione** (`scheduled-tasks.md`): 0 lines added, 10 removed
+- **Sicurezza** (`security.md`): 0 lines added, 10 removed
+- **Configurare le impostazioni gestite dal server (beta pubblico)** (`server-managed-settings.md`): 0 lines added, 10 removed
+- **Impostazioni di Claude Code** (`settings.md`): 0 lines added, 10 removed
+- **Configurazione avanzata** (`setup.md`): 1 lines added, 11 removed
+- **Estendi Claude con skills** (`skills.md`): 0 lines added, 10 removed
+- **Claude Code in Slack** (`slack.md`): 0 lines added, 10 removed
+- **Personalizza la tua barra di stato** (`statusline.md`): 0 lines added, 10 removed
+- **Creare subagent personalizzati** (`sub-agents.md`): 0 lines added, 10 removed
+- **Ottimizza la configurazione del tuo terminale** (`terminal-config.md`): 0 lines added, 10 removed
+- **Panoramica della distribuzione aziendale** (`third-party-integrations.md`): 0 lines added, 10 removed
+- **Troubleshooting** (`troubleshooting.md`): 0 lines added, 10 removed
+- **Usa Claude Code in VS Code** (`vs-code.md`): 0 lines added, 10 removed
+- **Zero data retention** (`zero-data-retention.md`): 0 lines added, 10 removed
+
+### 日本語
+
+
+**Modified**
+
+- **Claude Code セッションのチームを調整する** (`agent-teams.md`): 0 lines added, 10 removed
+- **Amazon Bedrock 上の Claude Code** (`amazon-bedrock.md`): 0 lines added, 10 removed
+- **チームの使用状況を分析で追跡する** (`analytics.md`): 0 lines added, 10 removed
+- **Claude Code のベストプラクティス** (`best-practices.md`): 0 lines added, 10 removed
+- **チェックポイント** (`checkpointing.md`): 0 lines added, 10 removed
+- **Chrome で Claude Code を使用する（ベータ版）** (`chrome.md`): 0 lines added, 10 removed
+- **ウェブ上の Claude Code** (`claude-code-on-the-web.md`): 0 lines added, 10 removed
+- **CLI リファレンス** (`cli-reference.md`): 0 lines added, 10 removed
+- **Code Review** (`code-review.md`): 0 lines added, 10 removed
+- **一般的なワークフロー** (`common-workflows.md`): 0 lines added, 10 removed
+- **コストを効果的に管理する** (`costs.md`): 0 lines added, 10 removed
+- **データ使用** (`data-usage.md`): 0 lines added, 10 removed
+- **デスクトップアプリを始める** (`desktop-quickstart.md`): 0 lines added, 10 removed
+- **Claude Code Desktop を使用する** (`desktop.md`): 0 lines added, 10 removed
+- **開発コンテナ** (`devcontainer.md`): 0 lines added, 10 removed
+- **マーケットプレイスから事前構築されたプラグインを発見してインストールする** (`discover-plugins.md`): 0 lines added, 10 removed
+- **高速モードでレスポンスを高速化** (`fast-mode.md`): 0 lines added, 10 removed
+- **Claude Code を拡張する** (`features-overview.md`): 0 lines added, 10 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 0 lines added, 10 removed
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 0 lines added, 10 removed
+- **Google Vertex AI 上の Claude Code** (`google-vertex-ai.md`): 0 lines added, 10 removed
+- **Claude Code をプログラムで実行する** (`headless.md`): 0 lines added, 10 removed
+- **hooks でワークフローを自動化する** (`hooks-guide.md`): 0 lines added, 10 removed
+- **Hooks リファレンス** (`hooks.md`): 0 lines added, 10 removed
+- **Claude Code の仕組み** (`how-claude-code-works.md`): 0 lines added, 10 removed
+- **インタラクティブモード** (`interactive-mode.md`): 0 lines added, 10 removed
+- **JetBrains IDEs** (`jetbrains.md`): 0 lines added, 10 removed
+- **キーボードショートカットのカスタマイズ** (`keybindings.md`): 0 lines added, 10 removed
+- **法的および規制対応** (`legal-and-compliance.md`): 0 lines added, 10 removed
+- **LLM gateway設定** (`llm-gateway.md`): 0 lines added, 10 removed
+- **MCP を使用して Claude Code をツールに接続する** (`mcp.md`): 1 lines added, 11 removed
+- **Claude があなたのプロジェクトを記憶する方法** (`memory.md`): 0 lines added, 10 removed
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 0 lines added, 10 removed
+- **モデル設定** (`model-config.md`): 0 lines added, 10 removed
+- **監視** (`monitoring-usage.md`): 0 lines added, 10 removed
+- **エンタープライズネットワーク設定** (`network-config.md`): 0 lines added, 10 removed
+- **出力スタイル** (`output-styles.md`): 0 lines added, 10 removed
+- **Claude Code の概要** (`overview.md`): 1 lines added, 11 removed
+- **権限を設定する** (`permissions.md`): 0 lines added, 10 removed
+- **プラグインマーケットプレイスの作成と配布** (`plugin-marketplaces.md`): 0 lines added, 10 removed
+- **プラグインリファレンス** (`plugins-reference.md`): 0 lines added, 10 removed
+- **プラグインを作成する** (`plugins.md`): 0 lines added, 10 removed
+- **クイックスタート** (`quickstart.md`): 1 lines added, 11 removed
+- **任意のデバイスからローカルセッションを続行する Remote Control** (`remote-control.md`): 0 lines added, 10 removed
+- **サンドボックス** (`sandboxing.md`): 0 lines added, 10 removed
+- **スケジュールに従ってプロンプトを実行する** (`scheduled-tasks.md`): 0 lines added, 10 removed
+- **セキュリティ** (`security.md`): 0 lines added, 10 removed
+- **サーバー管理設定を構成する（パブリックベータ版）** (`server-managed-settings.md`): 0 lines added, 10 removed
+- **Claude Code の設定** (`settings.md`): 0 lines added, 10 removed
+- **高度なセットアップ** (`setup.md`): 1 lines added, 11 removed
+- **スキルで Claude を拡張する** (`skills.md`): 0 lines added, 10 removed
+- **Slack での Claude Code** (`slack.md`): 0 lines added, 10 removed
+- **ステータスラインをカスタマイズする** (`statusline.md`): 0 lines added, 10 removed
+- **カスタムサブエージェントの作成** (`sub-agents.md`): 0 lines added, 10 removed
+- **ターミナルセットアップを最適化する** (`terminal-config.md`): 0 lines added, 10 removed
+- **エンタープライズデプロイメント概要** (`third-party-integrations.md`): 0 lines added, 10 removed
+- **トラブルシューティング** (`troubleshooting.md`): 0 lines added, 10 removed
+- **VS Code で Claude Code を使用する** (`vs-code.md`): 0 lines added, 10 removed
+- **ゼロデータ保持** (`zero-data-retention.md`): 0 lines added, 10 removed
+
+### 한국어
+
+
+**Modified**
+
+- **Claude Code 세션 팀 조율하기** (`agent-teams.md`): 0 lines added, 10 removed
+- **Amazon Bedrock의 Claude Code** (`amazon-bedrock.md`): 0 lines added, 10 removed
+- **팀 사용량을 분석으로 추적하기** (`analytics.md`): 0 lines added, 10 removed
+- **Claude Code 모범 사례** (`best-practices.md`): 0 lines added, 10 removed
+- **Checkpointing** (`checkpointing.md`): 0 lines added, 10 removed
+- **Chrome에서 Claude Code 사용하기 (베타)** (`chrome.md`): 0 lines added, 10 removed
+- **웹에서 Claude Code 사용하기** (`claude-code-on-the-web.md`): 0 lines added, 10 removed
+- **CLI 참조** (`cli-reference.md`): 0 lines added, 10 removed
+- **Code Review** (`code-review.md`): 0 lines added, 10 removed
+- **일반적인 워크플로우** (`common-workflows.md`): 0 lines added, 10 removed
+- **비용을 효과적으로 관리하기** (`costs.md`): 0 lines added, 10 removed
+- **데이터 사용** (`data-usage.md`): 0 lines added, 10 removed
+- **데스크톱 앱 시작하기** (`desktop-quickstart.md`): 0 lines added, 10 removed
+- **Claude Code Desktop 사용하기** (`desktop.md`): 0 lines added, 10 removed
+- **개발 컨테이너** (`devcontainer.md`): 0 lines added, 10 removed
+- **마켓플레이스를 통해 미리 빌드된 플러그인 발견 및 설치** (`discover-plugins.md`): 0 lines added, 10 removed
+- **빠른 모드로 응답 속도 향상** (`fast-mode.md`): 0 lines added, 10 removed
+- **Claude Code 확장하기** (`features-overview.md`): 0 lines added, 10 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 0 lines added, 10 removed
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 0 lines added, 10 removed
+- **Google Vertex AI에서 Claude Code 사용하기** (`google-vertex-ai.md`): 0 lines added, 10 removed
+- **Claude Code를 프로그래밍 방식으로 실행하기** (`headless.md`): 0 lines added, 10 removed
+- **hooks를 사용하여 워크플로우 자동화** (`hooks-guide.md`): 0 lines added, 10 removed
+- **Hooks 참조** (`hooks.md`): 0 lines added, 10 removed
+- **Claude Code의 작동 방식** (`how-claude-code-works.md`): 0 lines added, 10 removed
+- **대화형 모드** (`interactive-mode.md`): 0 lines added, 10 removed
+- **JetBrains IDEs** (`jetbrains.md`): 0 lines added, 10 removed
+- **키보드 단축키 사용자 정의** (`keybindings.md`): 0 lines added, 10 removed
+- **법률 및 규정 준수** (`legal-and-compliance.md`): 0 lines added, 10 removed
+- **LLM gateway 구성** (`llm-gateway.md`): 0 lines added, 10 removed
+- **MCP를 통해 Claude Code를 도구에 연결하기** (`mcp.md`): 1 lines added, 11 removed
+- **Claude가 프로젝트를 기억하는 방법** (`memory.md`): 0 lines added, 10 removed
+- **Microsoft Foundry의 Claude Code** (`microsoft-foundry.md`): 0 lines added, 10 removed
+- **모델 구성** (`model-config.md`): 0 lines added, 10 removed
+- **모니터링** (`monitoring-usage.md`): 0 lines added, 10 removed
+- **엔터프라이즈 네트워크 구성** (`network-config.md`): 0 lines added, 10 removed
+- **출력 스타일** (`output-styles.md`): 0 lines added, 10 removed
+- **Claude Code 개요** (`overview.md`): 1 lines added, 11 removed
+- **권한 구성** (`permissions.md`): 0 lines added, 10 removed
+- **플러그인 마켓플레이스 생성 및 배포** (`plugin-marketplaces.md`): 0 lines added, 10 removed
+- **플러그인 참조** (`plugins-reference.md`): 0 lines added, 10 removed
+- **플러그인 만들기** (`plugins.md`): 0 lines added, 10 removed
+- **빠른 시작** (`quickstart.md`): 1 lines added, 11 removed
+- **모든 기기에서 로컬 세션 계속하기 (Remote Control)** (`remote-control.md`): 0 lines added, 10 removed
+- **샌드박싱** (`sandboxing.md`): 0 lines added, 10 removed
+- **일정에 따라 프롬프트 실행하기** (`scheduled-tasks.md`): 0 lines added, 10 removed
+- **보안** (`security.md`): 0 lines added, 10 removed
+- **서버 관리 설정 구성(공개 베타)** (`server-managed-settings.md`): 0 lines added, 10 removed
+- **Claude Code 설정** (`settings.md`): 0 lines added, 10 removed
+- **고급 설정** (`setup.md`): 1 lines added, 11 removed
+- **Claude를 skills로 확장하기** (`skills.md`): 0 lines added, 10 removed
+- **Slack의 Claude Code** (`slack.md`): 0 lines added, 10 removed
+- **상태 표시줄 사용자 정의** (`statusline.md`): 0 lines added, 10 removed
+- **사용자 정의 subagent 만들기** (`sub-agents.md`): 0 lines added, 10 removed
+- **터미널 설정 최적화** (`terminal-config.md`): 0 lines added, 10 removed
+- **엔터프라이즈 배포 개요** (`third-party-integrations.md`): 0 lines added, 10 removed
+- **문제 해결** (`troubleshooting.md`): 0 lines added, 10 removed
+- **VS Code에서 Claude Code 사용하기** (`vs-code.md`): 0 lines added, 10 removed
+- **Zero data retention** (`zero-data-retention.md`): 0 lines added, 10 removed
+
+### Português
+
+
+**Modified**
+
+- **Orquestre equipes de sessões Claude Code** (`agent-teams.md`): 0 lines added, 10 removed
+- **Claude Code no Amazon Bedrock** (`amazon-bedrock.md`): 0 lines added, 10 removed
+- **Rastrear o uso da equipe com análise** (`analytics.md`): 0 lines added, 10 removed
+- **Melhores práticas para Claude Code** (`best-practices.md`): 0 lines added, 10 removed
+- **Checkpointing** (`checkpointing.md`): 0 lines added, 10 removed
+- **Use Claude Code with Chrome (beta)** (`chrome.md`): 0 lines added, 10 removed
+- **Claude Code na web** (`claude-code-on-the-web.md`): 0 lines added, 10 removed
+- **Referência de CLI** (`cli-reference.md`): 0 lines added, 10 removed
+- **Code Review** (`code-review.md`): 0 lines added, 10 removed
+- **Fluxos de trabalho comuns** (`common-workflows.md`): 0 lines added, 10 removed
+- **Gerencie custos de forma eficaz** (`costs.md`): 0 lines added, 10 removed
+- **Uso de dados** (`data-usage.md`): 0 lines added, 10 removed
+- **Comece com o aplicativo de desktop** (`desktop-quickstart.md`): 0 lines added, 10 removed
+- **Use Claude Code Desktop** (`desktop.md`): 0 lines added, 10 removed
+- **Contêineres de desenvolvimento** (`devcontainer.md`): 0 lines added, 10 removed
+- **Descubra e instale plugins pré-construídos através de marketplaces** (`discover-plugins.md`): 0 lines added, 10 removed
+- **Acelere respostas com modo rápido** (`fast-mode.md`): 0 lines added, 10 removed
+- **Estender Claude Code** (`features-overview.md`): 0 lines added, 10 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 0 lines added, 10 removed
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 0 lines added, 10 removed
+- **Claude Code no Google Vertex AI** (`google-vertex-ai.md`): 0 lines added, 10 removed
+- **Executar Claude Code programaticamente** (`headless.md`): 0 lines added, 10 removed
+- **Automatizar fluxos de trabalho com hooks** (`hooks-guide.md`): 0 lines added, 10 removed
+- **Referência de hooks** (`hooks.md`): 0 lines added, 10 removed
+- **Como Claude Code funciona** (`how-claude-code-works.md`): 0 lines added, 10 removed
+- **Modo interativo** (`interactive-mode.md`): 0 lines added, 10 removed
+- **JetBrains IDEs** (`jetbrains.md`): 0 lines added, 10 removed
+- **Personalizar atalhos de teclado** (`keybindings.md`): 0 lines added, 10 removed
+- **Legal e conformidade** (`legal-and-compliance.md`): 0 lines added, 10 removed
+- **Configuração do gateway LLM** (`llm-gateway.md`): 0 lines added, 10 removed
+- **Conectar Claude Code a ferramentas via MCP** (`mcp.md`): 1 lines added, 11 removed
+- **Como Claude se lembra do seu projeto** (`memory.md`): 0 lines added, 10 removed
+- **Claude Code no Microsoft Foundry** (`microsoft-foundry.md`): 0 lines added, 10 removed
+- **Configuração de modelo** (`model-config.md`): 0 lines added, 10 removed
+- **Monitoramento** (`monitoring-usage.md`): 0 lines added, 10 removed
+- **Configuração de rede empresarial** (`network-config.md`): 0 lines added, 10 removed
+- **Estilos de saída** (`output-styles.md`): 0 lines added, 10 removed
+- **Visão geral do Claude Code** (`overview.md`): 1 lines added, 11 removed
+- **Configurar permissões** (`permissions.md`): 0 lines added, 10 removed
+- **Criar e distribuir um marketplace de plugins** (`plugin-marketplaces.md`): 0 lines added, 10 removed
+- **Referência de plugins** (`plugins-reference.md`): 0 lines added, 10 removed
+- **Criar plugins** (`plugins.md`): 0 lines added, 10 removed
+- **Guia de Início Rápido** (`quickstart.md`): 1 lines added, 11 removed
+- **Continue sessões locais de qualquer dispositivo com Remote Control** (`remote-control.md`): 0 lines added, 10 removed
+- **Sandboxing** (`sandboxing.md`): 0 lines added, 10 removed
+- **Executar prompts em um cronograma** (`scheduled-tasks.md`): 0 lines added, 10 removed
+- **Segurança** (`security.md`): 0 lines added, 10 removed
+- **Configurar configurações gerenciadas pelo servidor (beta público)** (`server-managed-settings.md`): 0 lines added, 10 removed
+- **Configurações do Claude Code** (`settings.md`): 0 lines added, 10 removed
+- **Configuração avançada** (`setup.md`): 1 lines added, 11 removed
+- **Estenda Claude com skills** (`skills.md`): 0 lines added, 10 removed
+- **Claude Code no Slack** (`slack.md`): 0 lines added, 10 removed
+- **Personalize sua linha de status** (`statusline.md`): 0 lines added, 10 removed
+- **Criar subagentes personalizados** (`sub-agents.md`): 0 lines added, 10 removed
+- **Otimize sua configuração de terminal** (`terminal-config.md`): 0 lines added, 10 removed
+- **Visão geral da implantação empresarial** (`third-party-integrations.md`): 0 lines added, 10 removed
+- **Troubleshooting** (`troubleshooting.md`): 0 lines added, 10 removed
+- **Use Claude Code in VS Code** (`vs-code.md`): 0 lines added, 10 removed
+- **Retenção zero de dados** (`zero-data-retention.md`): 0 lines added, 10 removed
+
+### Русский
+
+
+**Modified**
+
+- **Координируйте команды сеансов Claude Code** (`agent-teams.md`): 0 lines added, 10 removed
+- **Claude Code на Amazon Bedrock** (`amazon-bedrock.md`): 0 lines added, 10 removed
+- **Отслеживание использования команды с помощью аналитики** (`analytics.md`): 0 lines added, 10 removed
+- **Лучшие практики для Claude Code** (`best-practices.md`): 0 lines added, 10 removed
+- **Checkpointing** (`checkpointing.md`): 0 lines added, 10 removed
+- **Использование Claude Code с Chrome (бета)** (`chrome.md`): 0 lines added, 10 removed
+- **Claude Code в веб-интерфейсе** (`claude-code-on-the-web.md`): 0 lines added, 10 removed
+- **Справочник CLI** (`cli-reference.md`): 0 lines added, 10 removed
+- **Code Review** (`code-review.md`): 0 lines added, 10 removed
+- **Распространённые рабочие процессы** (`common-workflows.md`): 0 lines added, 10 removed
+- **Эффективное управление затратами** (`costs.md`): 0 lines added, 10 removed
+- **Использование данных** (`data-usage.md`): 0 lines added, 10 removed
+- **Начало работы с настольным приложением** (`desktop-quickstart.md`): 0 lines added, 10 removed
+- **Использование Claude Code Desktop** (`desktop.md`): 0 lines added, 10 removed
+- **Контейнеры разработки** (`devcontainer.md`): 0 lines added, 10 removed
+- **Откройте и установите готовые плагины через маркетплейсы** (`discover-plugins.md`): 0 lines added, 10 removed
+- **Ускорьте ответы с помощью быстрого режима** (`fast-mode.md`): 0 lines added, 10 removed
+- **Расширение Claude Code** (`features-overview.md`): 0 lines added, 10 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 0 lines added, 10 removed
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 0 lines added, 10 removed
+- **Claude Code на Google Vertex AI** (`google-vertex-ai.md`): 0 lines added, 10 removed
+- **Запуск Claude Code программно** (`headless.md`): 0 lines added, 10 removed
+- **Автоматизация рабочих процессов с помощью hooks** (`hooks-guide.md`): 0 lines added, 10 removed
+- **Справочник по hooks** (`hooks.md`): 0 lines added, 10 removed
+- **Как работает Claude Code** (`how-claude-code-works.md`): 0 lines added, 10 removed
+- **Интерактивный режим** (`interactive-mode.md`): 0 lines added, 10 removed
+- **JetBrains IDEs** (`jetbrains.md`): 0 lines added, 10 removed
+- **Настройка сочетаний клавиш** (`keybindings.md`): 0 lines added, 10 removed
+- **Правовые и нормативные требования** (`legal-and-compliance.md`): 0 lines added, 10 removed
+- **Конфигурация LLM gateway** (`llm-gateway.md`): 0 lines added, 10 removed
+- **Подключите Claude Code к инструментам через MCP** (`mcp.md`): 1 lines added, 11 removed
+- **Как Claude запоминает ваш проект** (`memory.md`): 0 lines added, 10 removed
+- **Claude Code на Microsoft Foundry** (`microsoft-foundry.md`): 0 lines added, 10 removed
+- **Конфигурация модели** (`model-config.md`): 0 lines added, 10 removed
+- **Мониторинг** (`monitoring-usage.md`): 0 lines added, 10 removed
+- **Конфигурация сети для предприятия** (`network-config.md`): 0 lines added, 10 removed
+- **Output styles** (`output-styles.md`): 0 lines added, 10 removed
+- **Обзор Claude Code** (`overview.md`): 1 lines added, 11 removed
+- **Настройка разрешений** (`permissions.md`): 0 lines added, 10 removed
+- **Создание и распространение marketplace плагинов** (`plugin-marketplaces.md`): 0 lines added, 10 removed
+- **Справочник по плагинам** (`plugins-reference.md`): 0 lines added, 10 removed
+- **Создание plugins** (`plugins.md`): 0 lines added, 10 removed
+- **Быстрый старт** (`quickstart.md`): 1 lines added, 11 removed
+- **Продолжайте локальные сеансы с любого устройства с помощью Remote Control** (`remote-control.md`): 0 lines added, 10 removed
+- **Sandboxing** (`sandboxing.md`): 0 lines added, 10 removed
+- **Запуск подсказок по расписанию** (`scheduled-tasks.md`): 0 lines added, 10 removed
+- **Безопасность** (`security.md`): 0 lines added, 10 removed
+- **Настройка параметров, управляемых сервером (открытая бета)** (`server-managed-settings.md`): 0 lines added, 10 removed
+- **Параметры Claude Code** (`settings.md`): 0 lines added, 10 removed
+- **Расширенная настройка** (`setup.md`): 1 lines added, 11 removed
+- **Расширьте Claude с помощью skills** (`skills.md`): 0 lines added, 10 removed
+- **Claude Code в Slack** (`slack.md`): 0 lines added, 10 removed
+- **Настройка строки состояния** (`statusline.md`): 0 lines added, 10 removed
+- **Создание пользовательских subagents** (`sub-agents.md`): 0 lines added, 10 removed
+- **Оптимизируйте настройку вашего терминала** (`terminal-config.md`): 0 lines added, 10 removed
+- **Обзор корпоративного развертывания** (`third-party-integrations.md`): 0 lines added, 10 removed
+- **Troubleshooting** (`troubleshooting.md`): 0 lines added, 10 removed
+- **Использование Claude Code в VS Code** (`vs-code.md`): 0 lines added, 10 removed
+- **Нулевое хранение данных** (`zero-data-retention.md`): 0 lines added, 10 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **协调 Claude Code 会话团队** (`agent-teams.md`): 0 lines added, 10 removed
+- **Amazon Bedrock 上的 Claude Code** (`amazon-bedrock.md`): 0 lines added, 10 removed
+- **使用分析跟踪团队使用情况** (`analytics.md`): 0 lines added, 10 removed
+- **Claude Code 最佳实践** (`best-practices.md`): 0 lines added, 10 removed
+- **checkpointing** (`checkpointing.md`): 0 lines added, 10 removed
+- **在 Chrome 中使用 Claude Code（测试版）** (`chrome.md`): 0 lines added, 10 removed
+- **Claude Code on the web** (`claude-code-on-the-web.md`): 0 lines added, 10 removed
+- **CLI 参考** (`cli-reference.md`): 0 lines added, 10 removed
+- **Code Review** (`code-review.md`): 0 lines added, 10 removed
+- **常见工作流程** (`common-workflows.md`): 0 lines added, 10 removed
+- **有效管理成本** (`costs.md`): 0 lines added, 10 removed
+- **数据使用** (`data-usage.md`): 0 lines added, 10 removed
+- **开始使用桌面应用** (`desktop-quickstart.md`): 0 lines added, 10 removed
+- **使用 Claude Code Desktop** (`desktop.md`): 0 lines added, 10 removed
+- **开发容器** (`devcontainer.md`): 0 lines added, 10 removed
+- **通过市场发现和安装预构建插件** (`discover-plugins.md`): 0 lines added, 10 removed
+- **使用快速模式加快响应速度** (`fast-mode.md`): 0 lines added, 10 removed
+- **扩展 Claude Code** (`features-overview.md`): 0 lines added, 10 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 0 lines added, 10 removed
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 0 lines added, 10 removed
+- **Google Vertex AI 上的 Claude Code** (`google-vertex-ai.md`): 0 lines added, 10 removed
+- **以编程方式运行 Claude Code** (`headless.md`): 0 lines added, 10 removed
+- **使用 hooks 自动化工作流** (`hooks-guide.md`): 0 lines added, 10 removed
+- **Hooks 参考** (`hooks.md`): 0 lines added, 10 removed
+- **Claude Code 如何工作** (`how-claude-code-works.md`): 0 lines added, 10 removed
+- **交互模式** (`interactive-mode.md`): 0 lines added, 10 removed
+- **JetBrains IDEs** (`jetbrains.md`): 0 lines added, 10 removed
+- **自定义快捷键** (`keybindings.md`): 0 lines added, 10 removed
+- **法律和合规** (`legal-and-compliance.md`): 0 lines added, 10 removed
+- **LLM gateway 配置** (`llm-gateway.md`): 0 lines added, 10 removed
+- **通过 MCP 将 Claude Code 连接到工具** (`mcp.md`): 1 lines added, 11 removed
+- **Claude 如何记住你的项目** (`memory.md`): 0 lines added, 10 removed
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 0 lines added, 10 removed
+- **模型配置** (`model-config.md`): 0 lines added, 10 removed
+- **监控** (`monitoring-usage.md`): 0 lines added, 10 removed
+- **企业网络配置** (`network-config.md`): 0 lines added, 10 removed
+- **输出样式** (`output-styles.md`): 0 lines added, 10 removed
+- **Claude Code 概述** (`overview.md`): 1 lines added, 11 removed
+- **配置权限** (`permissions.md`): 0 lines added, 10 removed
+- **创建和分发 plugin marketplace** (`plugin-marketplaces.md`): 0 lines added, 10 removed
+- **Plugins 参考** (`plugins-reference.md`): 0 lines added, 10 removed
+- **创建插件** (`plugins.md`): 0 lines added, 10 removed
+- **快速开始** (`quickstart.md`): 1 lines added, 11 removed
+- **使用 Remote Control 从任何设备继续本地会话** (`remote-control.md`): 0 lines added, 10 removed
+- **Sandboxing** (`sandboxing.md`): 0 lines added, 10 removed
+- **按计划运行提示词** (`scheduled-tasks.md`): 0 lines added, 10 removed
+- **安全性** (`security.md`): 0 lines added, 10 removed
+- **配置服务器管理的设置（公开测试版）** (`server-managed-settings.md`): 0 lines added, 10 removed
+- **Claude Code 设置** (`settings.md`): 0 lines added, 10 removed
+- **高级设置** (`setup.md`): 1 lines added, 11 removed
+- **使用 skills 扩展 Claude** (`skills.md`): 0 lines added, 10 removed
+- **Slack 中的 Claude Code** (`slack.md`): 0 lines added, 10 removed
+- **自定义你的状态行** (`statusline.md`): 0 lines added, 10 removed
+- **创建自定义 subagents** (`sub-agents.md`): 0 lines added, 10 removed
+- **优化您的终端设置** (`terminal-config.md`): 0 lines added, 10 removed
+- **企业部署概览** (`third-party-integrations.md`): 0 lines added, 10 removed
+- **故障排除** (`troubleshooting.md`): 0 lines added, 10 removed
+- **在 VS Code 中使用 Claude Code** (`vs-code.md`): 0 lines added, 10 removed
+- **零数据保留** (`zero-data-retention.md`): 0 lines added, 10 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **協調 Claude Code 工作階段團隊** (`agent-teams.md`): 0 lines added, 10 removed
+- **Amazon Bedrock 上的 Claude Code** (`amazon-bedrock.md`): 0 lines added, 10 removed
+- **使用分析追蹤團隊使用情況** (`analytics.md`): 0 lines added, 10 removed
+- **Claude Code 最佳實踐** (`best-practices.md`): 0 lines added, 10 removed
+- **Checkpointing** (`checkpointing.md`): 0 lines added, 10 removed
+- **在 Chrome 中使用 Claude Code（測試版）** (`chrome.md`): 0 lines added, 10 removed
+- **Claude Code 網頁版** (`claude-code-on-the-web.md`): 0 lines added, 10 removed
+- **CLI 參考** (`cli-reference.md`): 0 lines added, 10 removed
+- **Code Review** (`code-review.md`): 0 lines added, 10 removed
+- **常見工作流程** (`common-workflows.md`): 0 lines added, 10 removed
+- **有效管理成本** (`costs.md`): 0 lines added, 10 removed
+- **資料使用** (`data-usage.md`): 0 lines added, 10 removed
+- **開始使用桌面應用程式** (`desktop-quickstart.md`): 0 lines added, 10 removed
+- **使用 Claude Code Desktop** (`desktop.md`): 0 lines added, 10 removed
+- **開發容器** (`devcontainer.md`): 0 lines added, 10 removed
+- **透過市場探索和安裝預建外掛程式** (`discover-plugins.md`): 0 lines added, 10 removed
+- **使用快速模式加快回應速度** (`fast-mode.md`): 0 lines added, 10 removed
+- **擴展 Claude Code** (`features-overview.md`): 0 lines added, 10 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 0 lines added, 10 removed
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 0 lines added, 10 removed
+- **Google Vertex AI 上的 Claude Code** (`google-vertex-ai.md`): 0 lines added, 10 removed
+- **以程式方式執行 Claude Code** (`headless.md`): 0 lines added, 10 removed
+- **使用 hooks 自動化工作流程** (`hooks-guide.md`): 0 lines added, 10 removed
+- **Hooks 參考** (`hooks.md`): 0 lines added, 10 removed
+- **Claude Code 如何運作** (`how-claude-code-works.md`): 0 lines added, 10 removed
+- **互動模式** (`interactive-mode.md`): 0 lines added, 10 removed
+- **JetBrains IDEs** (`jetbrains.md`): 0 lines added, 10 removed
+- **自訂鍵盤快捷鍵** (`keybindings.md`): 0 lines added, 10 removed
+- **法律和合規** (`legal-and-compliance.md`): 0 lines added, 10 removed
+- **LLM gateway 配置** (`llm-gateway.md`): 0 lines added, 10 removed
+- **透過 MCP 將 Claude Code 連接到工具** (`mcp.md`): 1 lines added, 11 removed
+- **Claude 如何記住您的專案** (`memory.md`): 0 lines added, 10 removed
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 0 lines added, 10 removed
+- **模型配置** (`model-config.md`): 0 lines added, 10 removed
+- **監控** (`monitoring-usage.md`): 0 lines added, 10 removed
+- **企業網路設定** (`network-config.md`): 0 lines added, 10 removed
+- **輸出樣式** (`output-styles.md`): 0 lines added, 10 removed
+- **Claude Code 概述** (`overview.md`): 1 lines added, 11 removed
+- **設定權限** (`permissions.md`): 0 lines added, 10 removed
+- **建立並分發 plugin marketplace** (`plugin-marketplaces.md`): 0 lines added, 10 removed
+- **Plugins 參考** (`plugins-reference.md`): 0 lines added, 10 removed
+- **建立 plugins** (`plugins.md`): 0 lines added, 10 removed
+- **快速入門** (`quickstart.md`): 1 lines added, 11 removed
+- **使用 Remote Control 從任何裝置繼續本地會話** (`remote-control.md`): 0 lines added, 10 removed
+- **Sandboxing** (`sandboxing.md`): 0 lines added, 10 removed
+- **按排程執行提示** (`scheduled-tasks.md`): 0 lines added, 10 removed
+- **安全性** (`security.md`): 0 lines added, 10 removed
+- **設定伺服器管理的設定 (公開測試版)** (`server-managed-settings.md`): 0 lines added, 10 removed
+- **Claude Code 設定** (`settings.md`): 0 lines added, 10 removed
+- **進階設定** (`setup.md`): 1 lines added, 11 removed
+- **使用 skills 擴展 Claude** (`skills.md`): 0 lines added, 10 removed
+- **Slack 中的 Claude Code** (`slack.md`): 0 lines added, 10 removed
+- **自訂您的狀態列** (`statusline.md`): 0 lines added, 10 removed
+- **建立自訂 subagents** (`sub-agents.md`): 0 lines added, 10 removed
+- **優化您的終端機設置** (`terminal-config.md`): 0 lines added, 10 removed
+- **企業部署概述** (`third-party-integrations.md`): 0 lines added, 10 removed
+- **故障排除** (`troubleshooting.md`): 0 lines added, 10 removed
+- **在 VS Code 中使用 Claude Code** (`vs-code.md`): 0 lines added, 10 removed
+- **零數據保留** (`zero-data-retention.md`): 0 lines added, 10 removed
+
+---
+
 ## 2026-04-11
 
 22 pages modified
