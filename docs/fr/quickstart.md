@@ -637,23 +637,23 @@ To install Claude Code, use one of the following methods:
   <Tab title="Native Install (Recommended)">
     **macOS, Linux, WSL:**
 
-    ```bash  theme={null}
+    ```bash theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell  theme={null}
+    ```powershell theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch  theme={null}
+    ```batch theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
 
-    If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. Use the PowerShell command above instead. Your prompt shows `PS C:\` when you're in PowerShell.
+    If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell. Your prompt shows `PS C:\` when you're in PowerShell and `C:\` without the `PS` when you're in CMD.
 
     **Native Windows setups require [Git for Windows](https://git-scm.com/downloads/win).** Install it first if you don't have it. WSL setups do not need it.
 
@@ -663,7 +663,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="Homebrew">
-    ```bash  theme={null}
+    ```bash theme={null}
     brew install --cask claude-code
     ```
 
@@ -675,7 +675,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="WinGet">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     winget install Anthropic.ClaudeCode
     ```
 
@@ -689,12 +689,12 @@ To install Claude Code, use one of the following methods:
 
 Claude Code nécessite un compte pour être utilisé. Lorsque vous démarrez une session interactive avec la commande `claude`, vous devrez vous connecter :
 
-```bash  theme={null}
+```bash theme={null}
 claude
 # Vous serez invité à vous connecter lors de la première utilisation
 ```
 
-```bash  theme={null}
+```bash theme={null}
 /login
 # Suivez les invites pour vous connecter avec votre compte
 ```
@@ -711,7 +711,7 @@ Une fois connecté, vos identifiants sont stockés et vous n'aurez pas besoin de
 
 Ouvrez votre terminal dans n'importe quel répertoire de projet et démarrez Claude Code :
 
-```bash  theme={null}
+```bash theme={null}
 cd /path/to/your/project
 claude
 ```
@@ -726,35 +726,35 @@ Vous verrez l'écran de bienvenue de Claude Code avec les informations de votre 
 
 Commençons par comprendre votre base de code. Essayez l'une de ces commandes :
 
-```text  theme={null}
+```text theme={null}
 what does this project do?
 ```
 
 Claude analysera vos fichiers et fournira un résumé. Vous pouvez également poser des questions plus spécifiques :
 
-```text  theme={null}
+```text theme={null}
 what technologies does this project use?
 ```
 
-```text  theme={null}
+```text theme={null}
 where is the main entry point?
 ```
 
-```text  theme={null}
+```text theme={null}
 explain the folder structure
 ```
 
 Vous pouvez également demander à Claude ses propres capacités :
 
-```text  theme={null}
+```text theme={null}
 what can Claude Code do?
 ```
 
-```text  theme={null}
+```text theme={null}
 how do I create custom skills in Claude Code?
 ```
 
-```text  theme={null}
+```text theme={null}
 can Claude Code work with Docker?
 ```
 
@@ -766,7 +766,7 @@ can Claude Code work with Docker?
 
 Maintenant, faisons en sorte que Claude Code fasse du vrai codage. Essayez une tâche simple :
 
-```text  theme={null}
+```text theme={null}
 add a hello world function to the main file
 ```
 
@@ -785,25 +785,25 @@ Claude Code va :
 
 Claude Code rend les opérations Git conversationnelles :
 
-```text  theme={null}
+```text theme={null}
 what files have I changed?
 ```
 
-```text  theme={null}
+```text theme={null}
 commit my changes with a descriptive message
 ```
 
 Vous pouvez également demander des opérations Git plus complexes :
 
-```text  theme={null}
+```text theme={null}
 create a new branch called feature/quickstart
 ```
 
-```text  theme={null}
+```text theme={null}
 show me the last 5 commits
 ```
 
-```text  theme={null}
+```text theme={null}
 help me resolve merge conflicts
 ```
 
@@ -813,13 +813,13 @@ Claude est compétent pour le débogage et l'implémentation de fonctionnalités
 
 Décrivez ce que vous voulez en langage naturel :
 
-```text  theme={null}
+```text theme={null}
 add input validation to the user registration form
 ```
 
 Ou corrigez les problèmes existants :
 
-```text  theme={null}
+```text theme={null}
 there's a bug where users can submit empty forms - fix it
 ```
 
@@ -836,25 +836,25 @@ Il existe plusieurs façons de travailler avec Claude :
 
 **Refactoriser le code**
 
-```text  theme={null}
+```text theme={null}
 refactor the authentication module to use async/await instead of callbacks
 ```
 
 **Écrire des tests**
 
-```text  theme={null}
+```text theme={null}
 write unit tests for the calculator functions
 ```
 
 **Mettre à jour la documentation**
 
-```text  theme={null}
+```text theme={null}
 update the README with installation instructions
 ```
 
 **Révision de code**
 
-```text  theme={null}
+```text theme={null}
 review my changes and suggest improvements
 ```
 
@@ -894,7 +894,7 @@ Pour plus d'informations, voir [les meilleures pratiques](/fr/best-practices) et
   <Accordion title="Utilisez des instructions étape par étape">
     Divisez les tâches complexes en étapes :
 
-    ```text  theme={null}
+    ```text theme={null}
     1. create a new database table for user profiles
     2. create an API endpoint to get and update user profiles
     3. build a webpage that allows users to see and edit their information
@@ -904,11 +904,11 @@ Pour plus d'informations, voir [les meilleures pratiques](/fr/best-practices) et
   <Accordion title="Laissez Claude explorer d'abord">
     Avant de faire des modifications, laissez Claude comprendre votre code :
 
-    ```text  theme={null}
+    ```text theme={null}
     analyze the database schema
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     build a dashboard showing products that are most frequently returned by our UK customers
     ```
   </Accordion>

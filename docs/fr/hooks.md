@@ -57,7 +57,7 @@ Le tableau ci-dessous résume le moment où chaque événement se déclenche. La
 
 Pour voir comment ces éléments s'assemblent, considérez ce hook `PreToolUse` qui bloque les commandes shell destructrices. Le `matcher` se limite aux appels d'outil Bash et la condition `if` se limite davantage aux commandes commençant par `rm`, donc `block-rm.sh` ne s'exécute que lorsque les deux filtres correspondent :
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PreToolUse": [
@@ -78,7 +78,7 @@ Pour voir comment ces éléments s'assemblent, considérez ce hook `PreToolUse` 
 
 Le script lit l'entrée JSON depuis stdin, extrait la commande et retourne une `permissionDecision` de `"deny"` si elle contient `rm -rf` :
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # .claude/hooks/block-rm.sh
 COMMAND=$(jq -r '.tool_input.command')
@@ -106,7 +106,7 @@ Supposons maintenant que Claude Code décide d'exécuter `Bash "rm -rf /tmp/buil
   <Step title="L'événement se déclenche">
     L'événement `PreToolUse` se déclenche. Claude Code envoie l'entrée de l'outil en JSON sur stdin au hook :
 
-    ```json  theme={null}
+    ```json theme={null}
     { "tool_name": "Bash", "tool_input": { "command": "rm -rf /tmp/build" }, ... }
     ```
   </Step>
@@ -122,7 +122,7 @@ Supposons maintenant que Claude Code décide d'exécuter `Bash "rm -rf /tmp/buil
   <Step title="Le gestionnaire de hook s'exécute">
     Le script inspecte la commande complète et trouve `rm -rf`, donc il imprime une décision sur stdout :
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hookSpecificOutput": {
         "hookEventName": "PreToolUse",
@@ -197,7 +197,7 @@ Le matcher est une regex, donc `Edit|Write` correspond à l'un ou l'autre outil 
 
 Cet exemple exécute un script de linting uniquement lorsque Claude écrit ou édite un fichier :
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PostToolUse": [
@@ -236,7 +236,7 @@ Utilisez des modèles regex pour cibler des outils MCP spécifiques ou des group
 
 Cet exemple enregistre toutes les opérations du serveur memory et valide les opérations d'écriture de n'importe quel serveur MCP :
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PreToolUse": [
@@ -310,7 +310,7 @@ La gestion des erreurs diffère des hooks de commande : les réponses non-2xx, l
 
 Cet exemple envoie les événements `PreToolUse` à un service de validation local, en s'authentifiant avec un token de la variable d'environnement `MY_TOKEN` :
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PreToolUse": [
@@ -356,7 +356,7 @@ Utilisez les variables d'environnement pour référencer les scripts de hook par
   <Tab title="Scripts de projet">
     Cet exemple utilise `$CLAUDE_PROJECT_DIR` pour exécuter un vérificateur de style à partir du répertoire `.claude/hooks/` du projet après tout appel d'outil `Write` ou `Edit` :
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hooks": {
         "PostToolUse": [
@@ -380,7 +380,7 @@ Utilisez les variables d'environnement pour référencer les scripts de hook par
 
     Cet exemple exécute un script de formatage fourni avec le plugin :
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "description": "Automatic code formatting",
       "hooks": {
@@ -414,7 +414,7 @@ Les hooks utilisent le même format de configuration que les hooks basés sur le
 
 Ce skill définit un hook `PreToolUse` qui exécute un script de validation de sécurité avant chaque commande `Bash` :
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: secure-operations
 description: Perform operations with security checks
@@ -479,7 +479,7 @@ Lors de l'exécution avec `--agent` ou à l'intérieur d'un subagent, deux champ
 
 Par exemple, un hook `PreToolUse` pour une commande Bash reçoit ceci sur stdin :
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/home/user/.claude/projects/.../transcript.jsonl",
@@ -507,7 +507,7 @@ Le code de sortie de votre commande de hook indique à Claude Code si l'action d
 
 Par exemple, un script de commande de hook qui bloque les commandes Bash dangereuses :
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # Lit l'entrée JSON depuis stdin, vérifie la commande
 command=$(jq -r '.tool_input.command' < /dev/stdin)
@@ -590,7 +590,7 @@ L'objet JSON supporte trois types de champs :
 
 Pour arrêter Claude entièrement indépendamment du type d'événement :
 
-```json  theme={null}
+```json theme={null}
 { "continue": false, "stopReason": "Build failed, fix errors before continuing" }
 ```
 
@@ -616,7 +616,7 @@ Voici des exemples de chaque modèle en action :
   <Tab title="Décision au niveau supérieur">
     Utilisé par `UserPromptSubmit`, `PostToolUse`, `PostToolUseFailure`, `Stop`, `SubagentStop` et `ConfigChange`. La seule valeur est `"block"`. Pour autoriser l'action à procéder, omettez `decision` de votre JSON ou quittez 0 sans aucun JSON :
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "decision": "block",
       "reason": "Test suite must pass before proceeding"
@@ -627,7 +627,7 @@ Voici des exemples de chaque modèle en action :
   <Tab title="PreToolUse">
     Utilise `hookSpecificOutput` pour un contrôle plus riche : autoriser, refuser, demander ou différer. Vous pouvez également modifier l'entrée de l'outil avant son exécution ou injecter du contexte supplémentaire pour Claude. Consultez [Contrôle de décision PreToolUse](#pretooluse-decision-control) pour l'ensemble complet des options.
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hookSpecificOutput": {
         "hookEventName": "PreToolUse",
@@ -641,7 +641,7 @@ Voici des exemples de chaque modèle en action :
   <Tab title="PermissionRequest">
     Utilise `hookSpecificOutput` pour autoriser ou refuser une demande de permission au nom de l'utilisateur. Lors de l'autorisation, vous pouvez également modifier l'entrée de l'outil ou appliquer des règles de permission afin que l'utilisateur ne soit pas invité à nouveau. Consultez [Contrôle de décision PermissionRequest](#permissionrequest-decision-control) pour l'ensemble complet des options.
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hookSpecificOutput": {
         "hookEventName": "PermissionRequest",
@@ -682,7 +682,7 @@ La valeur du matcher correspond à la façon dont la session a été initiée :
 
 En plus des [champs d'entrée communs](#common-input-fields), les hooks SessionStart reçoivent `source`, `model` et optionnellement `agent_type`. Le champ `source` indique comment la session a démarré : `"startup"` pour les nouvelles sessions, `"resume"` pour les sessions reprises, `"clear"` après `/clear` ou `"compact"` après compaction. Le champ `model` contient l'identifiant du modèle. Si vous démarrez Claude Code avec `claude --agent <name>`, un champ `agent_type` contient le nom de l'agent.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -701,7 +701,7 @@ Tout texte que votre script de hook imprime sur stdout est ajouté comme context
 | :------------------ | :------------------------------------------------------------------------------------ |
 | `additionalContext` | Chaîne ajoutée au contexte de Claude. Les valeurs de plusieurs hooks sont concaténées |
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
@@ -716,7 +716,7 @@ Les hooks SessionStart ont accès à la variable d'environnement `CLAUDE_ENV_FIL
 
 Pour définir des variables d'environnement individuelles, écrivez des déclarations `export` dans `CLAUDE_ENV_FILE`. Utilisez l'ajout (`>>`) pour préserver les variables définies par d'autres hooks :
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 
 if [ -n "$CLAUDE_ENV_FILE" ]; then
@@ -730,7 +730,7 @@ exit 0
 
 Pour capturer tous les changements d'environnement à partir des commandes de configuration, comparez les variables exportées avant et après :
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 
 ENV_BEFORE=$(export -p | sort)
@@ -772,7 +772,7 @@ En plus des [champs d'entrée communs](#common-input-fields), les hooks Instruct
 | `trigger_file_path` | Chemin vers le fichier dont l'accès a déclenché ce chargement, pour les chargements paresseux                                                                                                                                                       |
 | `parent_file_path`  | Chemin vers le fichier d'instructions parent qui a inclus celui-ci, pour les chargements `include`                                                                                                                                                  |
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../transcript.jsonl",
@@ -796,7 +796,7 @@ S'exécute lorsque l'utilisateur soumet un prompt, avant que Claude ne le traite
 
 En plus des [champs d'entrée communs](#common-input-fields), les hooks UserPromptSubmit reçoivent le champ `prompt` contenant le texte que l'utilisateur a soumis.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -826,7 +826,7 @@ Pour bloquer un prompt, retournez un objet JSON avec `decision` défini à `"blo
 | `reason`            | Affiché à l'utilisateur lorsque `decision` est `"block"`. Non ajouté au contexte                               |
 | `additionalContext` | Chaîne ajoutée au contexte de Claude                                                                           |
 
-```json  theme={null}
+```json theme={null}
 {
   "decision": "block",
   "reason": "Explanation for decision",
@@ -968,7 +968,7 @@ Lorsqu'un hook retourne `"ask"`, le dialogue de permission affiché à l'utilisa
 
 Lorsque plusieurs hooks PreToolUse retournent des décisions différentes, la précédence est `deny` > `defer` > `ask` > `allow`.
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "PreToolUse",
@@ -1006,7 +1006,7 @@ L'outil `AskUserQuestion` est le cas typique : Claude veut poser une question à
 
 Le champ `deferred_tool_use` porte l'`id`, le `name` et l'`input` de l'outil. L'`input` est les paramètres que Claude a générés pour l'appel d'outil, capturés avant l'exécution :
 
-```json  theme={null}
+```json theme={null}
 {
   "type": "result",
   "subtype": "success",
@@ -1041,7 +1041,7 @@ Correspond au nom de l'outil, mêmes valeurs que PreToolUse.
 
 Les hooks PermissionRequest reçoivent les champs `tool_name` et `tool_input` comme les hooks PreToolUse, mais sans `tool_use_id`. Un tableau optionnel `permission_suggestions` contient les options « toujours autoriser » que l'utilisateur verrait normalement dans le dialogue de permission. La différence est quand le hook se déclenche : les hooks PermissionRequest s'exécutent lorsqu'un dialogue de permission est sur le point d'être montré à l'utilisateur, tandis que les hooks PreToolUse s'exécutent avant l'exécution de l'outil indépendamment du statut de permission.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1076,7 +1076,7 @@ Les hooks `PermissionRequest` peuvent autoriser ou refuser les demandes de permi
 | `message`            | Pour `"deny"` uniquement : indique à Claude pourquoi la permission a été refusée                                                                                                                                   |
 | `interrupt`          | Pour `"deny"` uniquement : si `true`, arrête Claude                                                                                                                                                                |
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "PermissionRequest",
@@ -1124,7 +1124,7 @@ Correspond au nom de l'outil, mêmes valeurs que PreToolUse.
 
 Les hooks `PostToolUse` se déclenchent après qu'un outil s'est déjà exécuté avec succès. L'entrée inclut à la fois `tool_input`, les arguments envoyés à l'outil, et `tool_response`, le résultat qu'il a retourné. Le schéma exact pour les deux dépend de l'outil.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1155,7 +1155,7 @@ Les hooks `PostToolUse` peuvent fournir des commentaires à Claude après l'exé
 | `additionalContext`    | Contexte supplémentaire pour Claude à considérer                                                         |
 | `updatedMCPToolOutput` | Pour les [outils MCP](#match-mcp-tools) uniquement : remplace la sortie de l'outil par la valeur fournie |
 
-```json  theme={null}
+```json theme={null}
 {
   "decision": "block",
   "reason": "Explanation for decision",
@@ -1176,7 +1176,7 @@ Correspond au nom de l'outil, mêmes valeurs que PreToolUse.
 
 Les hooks PostToolUseFailure reçoivent les mêmes champs `tool_name` et `tool_input` que PostToolUse, ainsi que les informations d'erreur comme champs au niveau supérieur :
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1207,7 +1207,7 @@ Les hooks `PostToolUseFailure` peuvent fournir du contexte à Claude après l'é
 | :------------------ | :--------------------------------------------------------------------- |
 | `additionalContext` | Contexte supplémentaire pour Claude à considérer aux côtés de l'erreur |
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "PostToolUseFailure",
@@ -1226,7 +1226,7 @@ Correspond au nom de l'outil, mêmes valeurs que PreToolUse.
 
 En plus des [champs d'entrée communs](#common-input-fields), les hooks PermissionDenied reçoivent `tool_name`, `tool_input`, `tool_use_id` et `reason`.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1251,7 +1251,7 @@ En plus des [champs d'entrée communs](#common-input-fields), les hooks Permissi
 
 Les hooks PermissionDenied peuvent indiquer au modèle qu'il peut réessayer l'appel d'outil refusé. Retournez un objet JSON avec `hookSpecificOutput.retry` défini à `true` :
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "PermissionDenied",
@@ -1268,7 +1268,7 @@ S'exécute lorsque Claude Code envoie des notifications. Correspond au type de n
 
 Utilisez des matchers séparés pour exécuter différents gestionnaires selon le type de notification. Cette configuration déclenche un script d'alerte spécifique à la permission lorsque Claude a besoin d'approbation de permission et une notification différente lorsque Claude a été inactif :
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "Notification": [
@@ -1299,7 +1299,7 @@ Utilisez des matchers séparés pour exécuter différents gestionnaires selon l
 
 En plus des [champs d'entrée communs](#common-input-fields), les hooks Notification reçoivent `message` avec le texte de notification, un `title` optionnel et `notification_type` indiquant quel type s'est déclenché.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1325,7 +1325,7 @@ S'exécute lorsqu'un subagent Claude Code est lancé via l'outil Agent. Supporte
 
 En plus des [champs d'entrée communs](#common-input-fields), les hooks SubagentStart reçoivent `agent_id` avec l'identifiant unique du subagent et `agent_type` avec le nom de l'agent (agents intégrés comme `"Bash"`, `"Explore"`, `"Plan"` ou noms d'agents personnalisés).
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1342,7 +1342,7 @@ Les hooks SubagentStart ne peuvent pas bloquer la création de subagent, mais il
 | :------------------ | :------------------------------------- |
 | `additionalContext` | Chaîne ajoutée au contexte du subagent |
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "SubagentStart",
@@ -1359,7 +1359,7 @@ S'exécute lorsqu'un subagent Claude Code a terminé sa réponse. Correspond au 
 
 En plus des [champs d'entrée communs](#common-input-fields), les hooks SubagentStop reçoivent `stop_hook_active`, `agent_id`, `agent_type`, `agent_transcript_path` et `last_assistant_message`. Le champ `agent_type` est la valeur utilisée pour le filtrage du matcher. Le `transcript_path` est la transcription de la session principale, tandis que `agent_transcript_path` est la propre transcription du subagent stockée dans un dossier `subagents/` imbriqué. Le champ `last_assistant_message` contient le contenu textuel de la réponse finale du subagent, donc les hooks peuvent y accéder sans analyser le fichier de transcription.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "~/.claude/projects/.../abc123.jsonl",
@@ -1386,7 +1386,7 @@ Lorsqu'un hook `TaskCreated` quitte avec le code 2, la tâche n'est pas créée 
 
 En plus des [champs d'entrée communs](#common-input-fields), les hooks TaskCreated reçoivent `task_id`, `task_subject` et optionnellement `task_description`, `teammate_name` et `team_name`.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1418,7 +1418,7 @@ Les hooks TaskCreated supportent deux façons de contrôler la création de tâc
 
 Cet exemple bloque les tâches dont les sujets ne suivent pas le format requis :
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 INPUT=$(cat)
 TASK_SUBJECT=$(echo "$INPUT" | jq -r '.task_subject')
@@ -1441,7 +1441,7 @@ Lorsqu'un hook `TaskCompleted` quitte avec le code 2, la tâche n'est pas marqu�
 
 En plus des [champs d'entrée communs](#common-input-fields), les hooks TaskCompleted reçoivent `task_id`, `task_subject` et optionnellement `task_description`, `teammate_name` et `team_name`.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1473,7 +1473,7 @@ Les hooks TaskCompleted supportent deux façons de contrôler l'achèvement de l
 
 Cet exemple exécute les tests et bloque l'achèvement de la tâche s'ils échouent :
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 INPUT=$(cat)
 TASK_SUBJECT=$(echo "$INPUT" | jq -r '.task_subject')
@@ -1495,7 +1495,7 @@ S'exécute lorsque l'agent Claude Code principal a terminé sa réponse. Ne s'ex
 
 En plus des [champs d'entrée communs](#common-input-fields), les hooks Stop reçoivent `stop_hook_active` et `last_assistant_message`. Le champ `stop_hook_active` est `true` lorsque Claude Code continue déjà en raison d'un hook stop. Vérifiez cette valeur ou traitez la transcription pour empêcher Claude Code de s'exécuter indéfiniment. Le champ `last_assistant_message` contient le contenu textuel de la réponse finale de Claude, donc les hooks peuvent y accéder sans analyser le fichier de transcription.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "~/.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1516,7 +1516,7 @@ Les hooks `Stop` et `SubagentStop` peuvent contrôler si Claude continue. En plu
 | `decision` | `"block"` empêche Claude de s'arrêter. Omettez pour autoriser Claude à s'arrêter     |
 | `reason`   | Requis lorsque `decision` est `"block"`. Indique à Claude pourquoi il doit continuer |
 
-```json  theme={null}
+```json theme={null}
 {
   "decision": "block",
   "reason": "Must be provided when Claude is blocked from stopping"
@@ -1537,7 +1537,7 @@ En plus des [champs d'entrée communs](#common-input-fields), les hooks StopFail
 | `error_details`          | Détails supplémentaires sur l'erreur, le cas échéant                                                                                                                                                                                                                 |
 | `last_assistant_message` | Le texte d'erreur rendu affiché dans la conversation. Contrairement à `Stop` et `SubagentStop`, où ce champ contient la sortie conversationnelle de Claude, pour `StopFailure` il contient la chaîne d'erreur API elle-même, comme `"API Error: Rate limit reached"` |
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1561,7 +1561,7 @@ Lorsqu'un hook `TeammateIdle` quitte avec le code 2, le coéquipier reçoit le m
 
 En plus des [champs d'entrée communs](#common-input-fields), les hooks TeammateIdle reçoivent `teammate_name` et `team_name`.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1587,7 +1587,7 @@ Les hooks TeammateIdle supportent deux façons de contrôler le comportement du 
 
 Cet exemple vérifie qu'un artefact de construction existe avant d'autoriser un coéquipier à devenir inactif :
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 
 if [ ! -f "./dist/output.js" ]; then
@@ -1616,7 +1616,7 @@ Le matcher filtre sur la source de configuration :
 
 Cet exemple enregistre toutes les modifications de configuration pour l'audit de sécurité :
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "ConfigChange": [
@@ -1637,7 +1637,7 @@ Cet exemple enregistre toutes les modifications de configuration pour l'audit de
 
 En plus des [champs d'entrée communs](#common-input-fields), les hooks ConfigChange reçoivent `source` et optionnellement `file_path`. Le champ `source` indique quel type de configuration a changé, et `file_path` fournit le chemin vers le fichier spécifique qui a été modifié.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1657,7 +1657,7 @@ Les hooks ConfigChange peuvent bloquer les modifications de configuration de pre
 | `decision` | `"block"` empêche la modification de configuration d'être appliquée. Omettez pour autoriser la modification |
 | `reason`   | Explication affichée à l'utilisateur lorsque `decision` est `"block"`                                       |
 
-```json  theme={null}
+```json theme={null}
 {
   "decision": "block",
   "reason": "Configuration changes to project settings require admin approval"
@@ -1678,7 +1678,7 @@ CwdChanged ne supporte pas les matchers et se déclenche à chaque changement de
 
 En plus des [champs d'entrée communs](#common-input-fields), les hooks CwdChanged reçoivent `old_cwd` et `new_cwd`.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../transcript.jsonl",
@@ -1714,7 +1714,7 @@ En plus des [champs d'entrée communs](#common-input-fields), les hooks FileChan
 | `file_path` | Chemin absolu vers le fichier qui a changé                                                                 |
 | `event`     | Ce qui s'est passé : `"change"` (fichier modifié), `"add"` (fichier créé) ou `"unlink"` (fichier supprimé) |
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../transcript.jsonl",
@@ -1745,7 +1745,7 @@ Le hook doit retourner le chemin absolu du répertoire du worktree créé. Claud
 
 Cet exemple crée une copie de travail SVN et imprime le chemin pour que Claude Code l'utilise. Remplacez l'URL du référentiel par la vôtre :
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "WorktreeCreate": [
@@ -1768,7 +1768,7 @@ Le hook lit le `name` du worktree depuis l'entrée JSON sur stdin, extrait une c
 
 En plus des [champs d'entrée communs](#common-input-fields), les hooks WorktreeCreate reçoivent le champ `name`. C'est un identifiant slug pour le nouveau worktree, soit spécifié par l'utilisateur, soit généré automatiquement (par exemple, `bold-oak-a3f2`).
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1793,7 +1793,7 @@ La contrepartie de nettoyage de [WorktreeCreate](#worktreecreate). Ce hook se d�
 
 Claude Code transmet le chemin que WorktreeCreate a imprimé sur stdout comme `worktree_path` dans l'entrée du hook. Cet exemple lit ce chemin et supprime le répertoire :
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "WorktreeRemove": [
@@ -1814,7 +1814,7 @@ Claude Code transmet le chemin que WorktreeCreate a imprimé sur stdout comme `w
 
 En plus des [champs d'entrée communs](#common-input-fields), les hooks WorktreeRemove reçoivent le champ `worktree_path`, qui est le chemin absolu du worktree en cours de suppression.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1841,7 +1841,7 @@ La valeur du matcher indique si la compaction a été déclenchée manuellement 
 
 En plus des [champs d'entrée communs](#common-input-fields), les hooks PreCompact reçoivent `trigger` et `custom_instructions`. Pour `manual`, `custom_instructions` contient ce que l'utilisateur transmet dans `/compact`. Pour `auto`, `custom_instructions` est vide.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1867,7 +1867,7 @@ Les mêmes valeurs de matcher s'appliquent que pour `PreCompact` :
 
 En plus des [champs d'entrée communs](#common-input-fields), les hooks PostCompact reçoivent `trigger` et `compact_summary`. Le champ `compact_summary` contient le résumé de conversation généré par l'opération de compaction.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1899,7 +1899,7 @@ Le champ `reason` dans l'entrée du hook indique pourquoi la session s'est termi
 
 En plus des [champs d'entrée communs](#common-input-fields), les hooks SessionEnd reçoivent un champ `reason` indiquant pourquoi la session s'est terminée. Consultez le [tableau des raisons](#sessionend) ci-dessus pour toutes les valeurs.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1913,7 +1913,7 @@ Les hooks SessionEnd n'ont pas de contrôle de décision. Ils ne peuvent pas blo
 
 Les hooks SessionEnd ont un délai d'expiration par défaut de 1,5 secondes. Cela s'applique à la sortie de session, à `/clear`et au basculement de sessions via `/resume` interactif. Si vos hooks ont besoin de plus de temps, définissez la variable d'environnement `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` à une valeur plus élevée en millisecondes. Tout paramètre `timeout` par hook est également limité par cette valeur.
 
-```bash  theme={null}
+```bash theme={null}
 CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
 ```
 
@@ -1929,7 +1929,7 @@ En plus des [champs d'entrée communs](#common-input-fields), les hooks Elicitat
 
 Pour l'élicitation en mode formulaire (le cas le plus courant) :
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1950,7 +1950,7 @@ Pour l'élicitation en mode formulaire (le cas le plus courant) :
 
 Pour l'élicitation en mode URL (authentification basée sur navigateur) :
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1968,7 +1968,7 @@ Pour l'élicitation en mode URL (authentification basée sur navigateur) :
 
 Pour répondre par programmation sans afficher le dialogue, retournez un objet JSON avec `hookSpecificOutput` :
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "Elicitation",
@@ -1997,7 +1997,7 @@ Le champ matcher correspond au nom du serveur MCP.
 
 En plus des [champs d'entrée communs](#common-input-fields), les hooks ElicitationResult reçoivent `mcp_server_name`, `action` et les champs optionnels `mode`, `elicitation_id` et `content`.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -2016,7 +2016,7 @@ En plus des [champs d'entrée communs](#common-input-fields), les hooks Elicitat
 
 Pour remplacer la réponse de l'utilisateur, retournez un objet JSON avec `hookSpecificOutput` :
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "ElicitationResult",
@@ -2084,7 +2084,7 @@ Définissez `type` à `"prompt"` et fournissez une chaîne `prompt` au lieu d'un
 
 Ce hook `Stop` demande au LLM d'évaluer si Claude doit s'arrêter :
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "Stop": [
@@ -2112,7 +2112,7 @@ Ce hook `Stop` demande au LLM d'évaluer si Claude doit s'arrêter :
 
 Le LLM doit répondre avec JSON contenant :
 
-```json  theme={null}
+```json theme={null}
 {
   "ok": true | false,
   "reason": "Explanation for the decision"
@@ -2128,7 +2128,7 @@ Le LLM doit répondre avec JSON contenant :
 
 Ce hook `Stop` utilise un prompt détaillé pour vérifier trois conditions avant d'autoriser Claude à s'arrêter. Si `"ok"` est `false`, Claude continue de travailler avec la raison fournie comme sa prochaine instruction. Les hooks `SubagentStop` utilisent le même format pour évaluer si un [subagent](/fr/sub-agents) doit s'arrêter :
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "Stop": [
@@ -2176,7 +2176,7 @@ Le schéma de réponse est le même que les hooks de prompt : `{ "ok": true }` p
 
 Ce hook `Stop` vérifie que tous les tests unitaires réussissent avant d'autoriser Claude à terminer :
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "Stop": [
@@ -2204,7 +2204,7 @@ Ajoutez `"async": true` à la configuration d'un hook de commande pour l'exécut
 
 Ce hook exécute un script de test après chaque appel d'outil `Write`. Claude continue de travailler immédiatement tandis que `run-tests.sh` s'exécute pendant jusqu'à 120 secondes. Lorsque le script se termine, sa sortie est livrée au tour de conversation suivant :
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PostToolUse": [
@@ -2238,7 +2238,7 @@ Les notifications d'achèvement des hooks asynchrones sont supprimées par défa
 
 Ce hook démarre une suite de tests en arrière-plan chaque fois que Claude écrit un fichier, puis rapporte les résultats à Claude lorsque les tests se terminent. Enregistrez ce script dans `.claude/hooks/run-tests-async.sh` dans votre projet et rendez-le exécutable avec `chmod +x` :
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # run-tests-async.sh
 
@@ -2264,7 +2264,7 @@ fi
 
 Ensuite, ajoutez cette configuration à `.claude/settings.json` dans la racine de votre projet. Le drapeau `async: true` permet à Claude de continuer à travailler pendant que les tests s'exécutent :
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PostToolUse": [
@@ -2317,7 +2317,7 @@ Gardez ces pratiques à l'esprit lors de l'écriture de hooks :
 
 Exécutez `claude --debug` pour voir les détails d'exécution des hooks, y compris les hooks qui ont correspondu, leurs codes de sortie et leur sortie.
 
-```text  theme={null}
+```text theme={null}
 [DEBUG] Executing hooks for PostToolUse:Write
 [DEBUG] Found 1 hook commands to execute
 [DEBUG] Executing hook command: <Your command> with timeout 600000ms

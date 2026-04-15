@@ -235,7 +235,7 @@ Um alle Hintergrund-Task-Funktionen zu deaktivieren, setzen Sie die Umgebungsvar
 
 Führen Sie Bash-Befehle direkt aus, ohne Claude zu durchlaufen, indem Sie Ihre Eingabe mit `!` präfixieren:
 
-```bash  theme={null}
+```bash theme={null}
 ! npm test
 ! git status
 ! ls -la
@@ -268,7 +268,7 @@ Vorschläge werden automatisch nach dem ersten Turn eines Gesprächs, im nicht-i
 
 Um Prompt-Vorschläge vollständig zu deaktivieren, setzen Sie die Umgebungsvariable oder schalten Sie die Einstellung in `/config` um:
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=false
 ```
 

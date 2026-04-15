@@ -130,7 +130,7 @@ Los siguientes ejemplos muestran las variables de entorno a establecer en su she
   <Tab title="Proxy corporativo">
     Enrute el tráfico de Bedrock a través de su proxy corporativo estableciendo las siguientes [variables de entorno](/es/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Habilitar Bedrock
     export CLAUDE_CODE_USE_BEDROCK=1
     export AWS_REGION=us-east-1
@@ -143,7 +143,7 @@ Los siguientes ejemplos muestran las variables de entorno a establecer en su she
   <Tab title="LLM Gateway">
     Enrute el tráfico de Bedrock a través de su puerta de enlace LLM estableciendo las siguientes [variables de entorno](/es/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Habilitar Bedrock
     export CLAUDE_CODE_USE_BEDROCK=1
 
@@ -160,7 +160,7 @@ Los siguientes ejemplos muestran las variables de entorno a establecer en su she
   <Tab title="Proxy corporativo">
     Enrute el tráfico de Foundry a través de su proxy corporativo estableciendo las siguientes [variables de entorno](/es/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Habilitar Microsoft Foundry
     export CLAUDE_CODE_USE_FOUNDRY=1
     export ANTHROPIC_FOUNDRY_RESOURCE=your-resource
@@ -174,7 +174,7 @@ Los siguientes ejemplos muestran las variables de entorno a establecer en su she
   <Tab title="LLM Gateway">
     Enrute el tráfico de Foundry a través de su puerta de enlace LLM estableciendo las siguientes [variables de entorno](/es/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Habilitar Microsoft Foundry
     export CLAUDE_CODE_USE_FOUNDRY=1
 
@@ -191,7 +191,7 @@ Los siguientes ejemplos muestran las variables de entorno a establecer en su she
   <Tab title="Proxy corporativo">
     Enrute el tráfico de Vertex AI a través de su proxy corporativo estableciendo las siguientes [variables de entorno](/es/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Habilitar Vertex
     export CLAUDE_CODE_USE_VERTEX=1
     export CLOUD_ML_REGION=us-east5
@@ -205,7 +205,7 @@ Los siguientes ejemplos muestran las variables de entorno a establecer en su she
   <Tab title="LLM Gateway">
     Enrute el tráfico de Vertex AI a través de su puerta de enlace LLM estableciendo las siguientes [variables de entorno](/es/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Habilitar Vertex
     export CLAUDE_CODE_USE_VERTEX=1
 

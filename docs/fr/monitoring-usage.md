@@ -12,7 +12,7 @@ Suivez l'utilisation de Claude Code, les coûts et l'activité des outils dans v
 
 Configurez OpenTelemetry à l'aide de variables d'environnement :
 
-```bash  theme={null}
+```bash theme={null}
 # 1. Activer la télémétrie
 export CLAUDE_CODE_ENABLE_TELEMETRY=1
 
@@ -47,7 +47,7 @@ Les administrateurs peuvent configurer les paramètres OpenTelemetry pour tous l
 
 Exemple de configuration des paramètres gérés :
 
-```json  theme={null}
+```json theme={null}
 {
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
@@ -126,7 +126,7 @@ Pour les environnements d'entreprise qui nécessitent une authentification dynam
 
 Ajoutez à votre `.claude/settings.json` :
 
-```json  theme={null}
+```json theme={null}
 {
   "otelHeadersHelper": "/bin/generate_opentelemetry_headers.sh"
 }
@@ -136,7 +136,7 @@ Ajoutez à votre `.claude/settings.json` :
 
 Le script doit générer du JSON valide avec des paires clé-valeur de chaînes représentant les en-têtes HTTP :
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # Exemple : plusieurs en-têtes
 echo "{\"Authorization\": \"Bearer $(get-token.sh)\", \"X-API-Key\": \"$(get-api-key.sh)\"}"
@@ -150,7 +150,7 @@ Le script d'aide des en-têtes s'exécute au démarrage et périodiquement par l
 
 Les organisations avec plusieurs équipes ou départements peuvent ajouter des attributs personnalisés pour distinguer les différents groupes à l'aide de la variable d'environnement `OTEL_RESOURCE_ATTRIBUTES` :
 
-```bash  theme={null}
+```bash theme={null}
 # Ajouter des attributs personnalisés pour l'identification de l'équipe
 export OTEL_RESOURCE_ATTRIBUTES="department=engineering,team.id=platform,cost_center=eng-123"
 ```
@@ -174,7 +174,7 @@ Ces attributs personnalisés seront inclus dans toutes les métriques et tous le
 
   **Exemples :**
 
-  ```bash  theme={null}
+  ```bash theme={null}
   # ❌ Invalide - contient des espaces
   export OTEL_RESOURCE_ATTRIBUTES="org.name=John's Organization"
 
@@ -193,7 +193,7 @@ Ces attributs personnalisés seront inclus dans toutes les métriques et tous le
 
 Définissez ces variables d'environnement avant d'exécuter `claude`. Chaque bloc montre une configuration complète pour un exportateur ou un scénario de déploiement différent :
 
-```bash  theme={null}
+```bash theme={null}
 # Débogage de console (intervalles de 1 seconde)
 export CLAUDE_CODE_ENABLE_TELEMETRY=1
 export OTEL_METRICS_EXPORTER=console

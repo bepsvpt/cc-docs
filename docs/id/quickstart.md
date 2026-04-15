@@ -637,23 +637,23 @@ To install Claude Code, use one of the following methods:
   <Tab title="Native Install (Recommended)">
     **macOS, Linux, WSL:**
 
-    ```bash  theme={null}
+    ```bash theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell  theme={null}
+    ```powershell theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch  theme={null}
+    ```batch theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
 
-    If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. Use the PowerShell command above instead. Your prompt shows `PS C:\` when you're in PowerShell.
+    If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell. Your prompt shows `PS C:\` when you're in PowerShell and `C:\` without the `PS` when you're in CMD.
 
     **Native Windows setups require [Git for Windows](https://git-scm.com/downloads/win).** Install it first if you don't have it. WSL setups do not need it.
 
@@ -663,7 +663,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="Homebrew">
-    ```bash  theme={null}
+    ```bash theme={null}
     brew install --cask claude-code
     ```
 
@@ -675,7 +675,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="WinGet">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     winget install Anthropic.ClaudeCode
     ```
 
@@ -689,12 +689,12 @@ To install Claude Code, use one of the following methods:
 
 Claude Code memerlukan akun untuk digunakan. Ketika Anda memulai sesi interaktif dengan perintah `claude`, Anda perlu masuk:
 
-```bash  theme={null}
+```bash theme={null}
 claude
 # Anda akan diminta untuk masuk pada penggunaan pertama
 ```
 
-```bash  theme={null}
+```bash theme={null}
 /login
 # Ikuti petunjuk untuk masuk dengan akun Anda
 ```
@@ -711,7 +711,7 @@ Setelah masuk, kredensial Anda disimpan dan Anda tidak perlu masuk lagi. Untuk b
 
 Buka terminal Anda di direktori proyek mana pun dan mulai Claude Code:
 
-```bash  theme={null}
+```bash theme={null}
 cd /path/to/your/project
 claude
 ```
@@ -726,35 +726,35 @@ Anda akan melihat layar sambutan Claude Code dengan informasi sesi Anda, percaka
 
 Mari kita mulai dengan memahami basis kode Anda. Coba salah satu perintah ini:
 
-```text  theme={null}
+```text theme={null}
 apa yang dilakukan proyek ini?
 ```
 
 Claude akan menganalisis file Anda dan memberikan ringkasan. Anda juga dapat mengajukan pertanyaan yang lebih spesifik:
 
-```text  theme={null}
+```text theme={null}
 teknologi apa yang digunakan proyek ini?
 ```
 
-```text  theme={null}
+```text theme={null}
 di mana titik masuk utama?
 ```
 
-```text  theme={null}
+```text theme={null}
 jelaskan struktur folder
 ```
 
 Anda juga dapat menanyakan Claude tentang kemampuannya sendiri:
 
-```text  theme={null}
+```text theme={null}
 apa yang dapat dilakukan Claude Code?
 ```
 
-```text  theme={null}
+```text theme={null}
 bagaimana cara membuat skills kustom di Claude Code?
 ```
 
-```text  theme={null}
+```text theme={null}
 bisakah Claude Code bekerja dengan Docker?
 ```
 
@@ -766,7 +766,7 @@ bisakah Claude Code bekerja dengan Docker?
 
 Sekarang mari buat Claude Code melakukan beberapa pengkodean aktual. Coba tugas sederhana:
 
-```text  theme={null}
+```text theme={null}
 tambahkan fungsi hello world ke file utama
 ```
 
@@ -785,25 +785,25 @@ Claude Code akan:
 
 Claude Code membuat operasi Git menjadi percakapan:
 
-```text  theme={null}
+```text theme={null}
 file apa yang telah saya ubah?
 ```
 
-```text  theme={null}
+```text theme={null}
 komit perubahan saya dengan pesan deskriptif
 ```
 
 Anda juga dapat meminta operasi Git yang lebih kompleks:
 
-```text  theme={null}
+```text theme={null}
 buat cabang baru bernama feature/quickstart
 ```
 
-```text  theme={null}
+```text theme={null}
 tunjukkan 5 komit terakhir saya
 ```
 
-```text  theme={null}
+```text theme={null}
 bantu saya menyelesaikan konflik penggabungan
 ```
 
@@ -813,13 +813,13 @@ Claude mahir dalam debugging dan implementasi fitur.
 
 Jelaskan apa yang Anda inginkan dalam bahasa alami:
 
-```text  theme={null}
+```text theme={null}
 tambahkan validasi input ke formulir pendaftaran pengguna
 ```
 
 Atau perbaiki masalah yang ada:
 
-```text  theme={null}
+```text theme={null}
 ada bug di mana pengguna dapat mengirimkan formulir kosong - perbaiki
 ```
 
@@ -836,25 +836,25 @@ Ada beberapa cara untuk bekerja dengan Claude:
 
 **Refaktor kode**
 
-```text  theme={null}
+```text theme={null}
 refaktor modul autentikasi untuk menggunakan async/await alih-alih callback
 ```
 
 **Tulis tes**
 
-```text  theme={null}
+```text theme={null}
 tulis unit test untuk fungsi kalkulator
 ```
 
 **Perbarui dokumentasi**
 
-```text  theme={null}
+```text theme={null}
 perbarui README dengan instruksi instalasi
 ```
 
 **Tinjauan kode**
 
-```text  theme={null}
+```text theme={null}
 tinjau perubahan saya dan sarankan perbaikan
 ```
 
@@ -894,7 +894,7 @@ Untuk informasi lebih lanjut, lihat [praktik terbaik](/id/best-practices) dan [a
   <Accordion title="Gunakan instruksi langkah demi langkah">
     Pecah tugas kompleks menjadi langkah-langkah:
 
-    ```text  theme={null}
+    ```text theme={null}
     1. buat tabel database baru untuk profil pengguna
     2. buat endpoint API untuk mendapatkan dan memperbarui profil pengguna
     3. bangun halaman web yang memungkinkan pengguna melihat dan mengedit informasi mereka
@@ -904,11 +904,11 @@ Untuk informasi lebih lanjut, lihat [praktik terbaik](/id/best-practices) dan [a
   <Accordion title="Biarkan Claude menjelajahi terlebih dahulu">
     Sebelum membuat perubahan, biarkan Claude memahami kode Anda:
 
-    ```text  theme={null}
+    ```text theme={null}
     analisis skema database
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     bangun dasbor yang menampilkan produk yang paling sering dikembalikan oleh pelanggan Inggris kami
     ```
   </Accordion>

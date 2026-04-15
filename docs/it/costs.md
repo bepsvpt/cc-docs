@@ -22,7 +22,7 @@ Questa pagina spiega come [tracciare i tuoi costi](#track-your-costs), [gestire 
 
 Il comando `/cost` fornisce statistiche dettagliate sull'utilizzo dei token per la tua sessione attuale:
 
-```text  theme={null}
+```text theme={null}
 Total cost:            $0.55
 Total duration (API):  6m 19.7s
 Total duration (wall): 6h 33m 10.2s
@@ -87,7 +87,7 @@ Utilizza `/cost` per controllare l'utilizzo attuale dei token, o [configura la t
 
 Puoi anche personalizzare il comportamento della compaction nel tuo CLAUDE.md:
 
-```markdown  theme={null}
+```markdown theme={null}
 # Compact instructions
 
 When you are using compact, please focus on test output and code changes
@@ -121,7 +121,7 @@ Ad esempio, questo hook PreToolUse filtra l'output del test per mostrare solo i 
   <Tab title="settings.json">
     Aggiungi questo al tuo [settings.json](/it/settings#settings-files) per eseguire l'hook prima di ogni comando Bash:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hooks": {
         "PreToolUse": [
@@ -143,7 +143,7 @@ Ad esempio, questo hook PreToolUse filtra l'output del test per mostrare solo i 
   <Tab title="filter-test-output.sh">
     L'hook chiama questo script, che controlla se il comando è un test runner e lo modifica per mostrare solo i fallimenti:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     #!/bin/bash
     input=$(cat)
     cmd=$(echo "$input" | jq -r '.tool_input.command')

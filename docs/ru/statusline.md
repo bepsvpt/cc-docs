@@ -31,7 +31,7 @@
 
 Команда `/statusline` принимает инструкции на естественном языке, описывающие то, что вы хотите отображать. Claude Code генерирует файл скрипта в `~/.claude/` и автоматически обновляет ваши настройки:
 
-```text  theme={null}
+```text theme={null}
 /statusline show model name and context percentage with a progress bar
 ```
 
@@ -39,7 +39,7 @@
 
 Добавьте поле `statusLine` в ваши пользовательские настройки (`~/.claude/settings.json`, где `~` — это ваш домашний каталог) или [настройки проекта](/ru/settings#settings-files). Установите `type` на `"command"` и укажите `command` на путь скрипта или встроенную команду оболочки. Для полного пошагового руководства по созданию скрипта см. [Построение строки состояния пошагово](#build-a-status-line-step-by-step).
 
-```json  theme={null}
+```json theme={null}
 {
   "statusLine": {
     "type": "command",
@@ -51,7 +51,7 @@
 
 Поле `command` запускается в оболочке, поэтому вы также можете использовать встроенные команды вместо файла скрипта. Этот пример использует `jq` для разбора входных данных JSON и отображения имени модели и процента контекста:
 
-```json  theme={null}
+```json theme={null}
 {
   "statusLine": {
     "type": "command",
@@ -84,7 +84,7 @@
 
     Сохраните это в `~/.claude/statusline.sh` (где `~` — это ваш домашний каталог, например `/Users/username` на macOS или `/home/username` на Linux):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     #!/bin/bash
     # Read JSON data that Claude Code sends to stdin
     input=$(cat)
@@ -103,7 +103,7 @@
   <Step title="Сделайте его исполняемым">
     Отметьте скрипт как исполняемый, чтобы ваша оболочка могла его запустить:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     chmod +x ~/.claude/statusline.sh
     ```
   </Step>
@@ -111,7 +111,7 @@
   <Step title="Добавьте в настройки">
     Скажите Claude Code запустить ваш скрипт как строку состояния. Добавьте эту конфигурацию в `~/.claude/settings.json`, которая устанавливает `type` на `"command"` (означает «запустить эту команду оболочки») и указывает `command` на ваш скрипт:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "statusLine": {
         "type": "command",
@@ -178,7 +178,7 @@ Claude Code отправляет следующие поля JSON в ваш ск
 <Accordion title="Полная схема JSON">
   Ваша команда строки состояния получает эту структуру JSON через stdin:
 
-  ```json  theme={null}
+  ```json theme={null}
   {
     "cwd": "/current/working/directory",
     "session_id": "abc123...",

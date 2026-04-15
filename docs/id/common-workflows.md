@@ -16,33 +16,33 @@ Misalkan Anda baru saja bergabung dengan proyek baru dan perlu memahami struktur
 
 <Steps>
   <Step title="Navigasi ke direktori root proyek">
-    ```bash  theme={null}
+    ```bash theme={null}
     cd /path/to/project 
     ```
   </Step>
 
   <Step title="Mulai Claude Code">
-    ```bash  theme={null}
+    ```bash theme={null}
     claude 
     ```
   </Step>
 
   <Step title="Minta gambaran umum tingkat tinggi">
-    ```text  theme={null}
+    ```text theme={null}
     give me an overview of this codebase
     ```
   </Step>
 
   <Step title="Selami komponen spesifik lebih dalam">
-    ```text  theme={null}
+    ```text theme={null}
     explain the main architecture patterns used here
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     what are the key data models?
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     how is authentication handled?
     ```
   </Step>
@@ -62,19 +62,19 @@ Misalkan Anda perlu menemukan kode yang terkait dengan fitur atau fungsionalitas
 
 <Steps>
   <Step title="Minta Claude untuk menemukan file yang relevan">
-    ```text  theme={null}
+    ```text theme={null}
     find the files that handle user authentication
     ```
   </Step>
 
   <Step title="Dapatkan konteks tentang cara komponen berinteraksi">
-    ```text  theme={null}
+    ```text theme={null}
     how do these authentication files work together?
     ```
   </Step>
 
   <Step title="Pahami alur eksekusi">
-    ```text  theme={null}
+    ```text theme={null}
     trace the login process from front-end to database
     ```
   </Step>
@@ -96,19 +96,19 @@ Misalkan Anda telah mengalami pesan kesalahan dan perlu menemukan dan memperbaik
 
 <Steps>
   <Step title="Bagikan kesalahan dengan Claude">
-    ```text  theme={null}
+    ```text theme={null}
     I'm seeing an error when I run npm test
     ```
   </Step>
 
   <Step title="Minta rekomendasi perbaikan">
-    ```text  theme={null}
+    ```text theme={null}
     suggest a few ways to fix the @ts-ignore in user.ts
     ```
   </Step>
 
   <Step title="Terapkan perbaikan">
-    ```text  theme={null}
+    ```text theme={null}
     update user.ts to add the null check you suggested
     ```
   </Step>
@@ -130,25 +130,25 @@ Misalkan Anda perlu memperbarui kode lama untuk menggunakan pola dan praktik mod
 
 <Steps>
   <Step title="Identifikasi kode legacy untuk refactoring">
-    ```text  theme={null}
+    ```text theme={null}
     find deprecated API usage in our codebase
     ```
   </Step>
 
   <Step title="Dapatkan rekomendasi refactoring">
-    ```text  theme={null}
+    ```text theme={null}
     suggest how to refactor utils.js to use modern JavaScript features
     ```
   </Step>
 
   <Step title="Terapkan perubahan dengan aman">
-    ```text  theme={null}
+    ```text theme={null}
     refactor utils.js to use ES2024 features while maintaining the same behavior
     ```
   </Step>
 
   <Step title="Verifikasi refactoring">
-    ```text  theme={null}
+    ```text theme={null}
     run tests for the refactored code
     ```
   </Step>
@@ -170,7 +170,7 @@ Misalkan Anda ingin menggunakan subagents AI khusus untuk menangani tugas spesif
 
 <Steps>
   <Step title="Lihat subagents yang tersedia">
-    ```text  theme={null}
+    ```text theme={null}
     /agents
     ```
 
@@ -180,27 +180,27 @@ Misalkan Anda ingin menggunakan subagents AI khusus untuk menangani tugas spesif
   <Step title="Gunakan subagents secara otomatis">
     Claude Code secara otomatis mendelegasikan tugas yang sesuai ke subagents khusus:
 
-    ```text  theme={null}
+    ```text theme={null}
     review my recent code changes for security issues
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     run all tests and fix any failures
     ```
   </Step>
 
   <Step title="Secara eksplisit minta subagents spesifik">
-    ```text  theme={null}
+    ```text theme={null}
     use the code-reviewer subagent to check the auth module
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     have the debugger subagent investigate why users can't log in
     ```
   </Step>
 
   <Step title="Buat subagents kustom untuk alur kerja Anda">
-    ```text  theme={null}
+    ```text theme={null}
     /agents
     ```
 
@@ -246,7 +246,7 @@ Jika Anda berada dalam Normal Mode, **Shift+Tab** pertama kali beralih ke Auto-A
 
 Untuk memulai sesi baru dalam Plan Mode, gunakan flag `--permission-mode plan`:
 
-```bash  theme={null}
+```bash theme={null}
 claude --permission-mode plan
 ```
 
@@ -254,27 +254,27 @@ claude --permission-mode plan
 
 Anda juga dapat menjalankan kueri dalam Plan Mode secara langsung dengan `-p` (yaitu, dalam ["headless mode"](/id/headless)):
 
-```bash  theme={null}
+```bash theme={null}
 claude --permission-mode plan -p "Analyze the authentication system and suggest improvements"
 ```
 
 ### Contoh: Merencanakan refactor kompleks
 
-```bash  theme={null}
+```bash theme={null}
 claude --permission-mode plan
 ```
 
-```text  theme={null}
+```text theme={null}
 I need to refactor our authentication system to use OAuth2. Create a detailed migration plan.
 ```
 
 Claude menganalisis implementasi saat ini dan membuat rencana komprehensif. Perbaiki dengan tindak lanjut:
 
-```text  theme={null}
+```text theme={null}
 What about backward compatibility?
 ```
 
-```text  theme={null}
+```text theme={null}
 How should we handle database migration?
 ```
 
@@ -284,7 +284,7 @@ Ketika Anda menerima rencana, Claude secara otomatis memberi nama sesi dari kont
 
 ### Konfigurasikan Plan Mode sebagai default
 
-```json  theme={null}
+```json theme={null}
 // .claude/settings.json
 {
   "permissions": {
@@ -303,25 +303,25 @@ Misalkan Anda perlu menambahkan tes untuk kode yang tidak tercakup.
 
 <Steps>
   <Step title="Identifikasi kode yang tidak diuji">
-    ```text  theme={null}
+    ```text theme={null}
     find functions in NotificationsService.swift that are not covered by tests
     ```
   </Step>
 
   <Step title="Hasilkan scaffolding tes">
-    ```text  theme={null}
+    ```text theme={null}
     add tests for the notification service
     ```
   </Step>
 
   <Step title="Tambahkan kasus tes yang bermakna">
-    ```text  theme={null}
+    ```text theme={null}
     add test cases for edge conditions in the notification service
     ```
   </Step>
 
   <Step title="Jalankan dan verifikasi tes">
-    ```text  theme={null}
+    ```text theme={null}
     run the new tests and fix any failures
     ```
   </Step>
@@ -339,19 +339,19 @@ Anda dapat membuat pull request dengan meminta Claude secara langsung ("create a
 
 <Steps>
   <Step title="Ringkas perubahan Anda">
-    ```text  theme={null}
+    ```text theme={null}
     summarize the changes I've made to the authentication module
     ```
   </Step>
 
   <Step title="Hasilkan pull request">
-    ```text  theme={null}
+    ```text theme={null}
     create a pr
     ```
   </Step>
 
   <Step title="Tinjau dan perbaiki">
-    ```text  theme={null}
+    ```text theme={null}
     enhance the PR description with more context about the security improvements
     ```
   </Step>
@@ -369,25 +369,25 @@ Misalkan Anda perlu menambah atau memperbarui dokumentasi untuk kode Anda.
 
 <Steps>
   <Step title="Identifikasi kode yang tidak terdokumentasi">
-    ```text  theme={null}
+    ```text theme={null}
     find functions without proper JSDoc comments in the auth module
     ```
   </Step>
 
   <Step title="Hasilkan dokumentasi">
-    ```text  theme={null}
+    ```text theme={null}
     add JSDoc comments to the undocumented functions in auth.js
     ```
   </Step>
 
   <Step title="Tinjau dan tingkatkan">
-    ```text  theme={null}
+    ```text theme={null}
     improve the generated documentation with more context and examples
     ```
   </Step>
 
   <Step title="Verifikasi dokumentasi">
-    ```text  theme={null}
+    ```text theme={null}
     check if the documentation follows our project standards
     ```
   </Step>
@@ -417,35 +417,35 @@ Misalkan Anda perlu bekerja dengan gambar dalam basis kode Anda, dan Anda ingin 
   </Step>
 
   <Step title="Minta Claude untuk menganalisis gambar">
-    ```text  theme={null}
+    ```text theme={null}
     What does this image show?
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     Describe the UI elements in this screenshot
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     Are there any problematic elements in this diagram?
     ```
   </Step>
 
   <Step title="Gunakan gambar untuk konteks">
-    ```text  theme={null}
+    ```text theme={null}
     Here's a screenshot of the error. What's causing it?
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     This is our current database schema. How should we modify it for the new feature?
     ```
   </Step>
 
   <Step title="Dapatkan saran kode dari konten visual">
-    ```text  theme={null}
+    ```text theme={null}
     Generate CSS to match this design mockup
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     What HTML structure would recreate this component?
     ```
   </Step>
@@ -469,7 +469,7 @@ Gunakan @ untuk dengan cepat menyertakan file atau direktori tanpa menunggu Clau
 
 <Steps>
   <Step title="Referensikan file tunggal">
-    ```text  theme={null}
+    ```text theme={null}
     Explain the logic in @src/utils/auth.js
     ```
 
@@ -477,7 +477,7 @@ Gunakan @ untuk dengan cepat menyertakan file atau direktori tanpa menunggu Clau
   </Step>
 
   <Step title="Referensikan direktori">
-    ```text  theme={null}
+    ```text theme={null}
     What's the structure of @src/components?
     ```
 
@@ -485,7 +485,7 @@ Gunakan @ untuk dengan cepat menyertakan file atau direktori tanpa menunggu Clau
   </Step>
 
   <Step title="Referensikan sumber daya MCP">
-    ```text  theme={null}
+    ```text theme={null}
     Show me the data from @github:repos/owner/repo/issues
     ```
 
@@ -566,13 +566,13 @@ Berikan sesi nama deskriptif untuk menemukannya nanti. Ini adalah praktik terbai
   <Step title="Beri nama sesi">
     Beri nama sesi saat startup dengan `-n`:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude -n auth-refactor
     ```
 
     Atau gunakan `/rename` selama sesi, yang juga menampilkan nama di bilah prompt:
 
-    ```text  theme={null}
+    ```text theme={null}
     /rename auth-refactor
     ```
 
@@ -582,13 +582,13 @@ Berikan sesi nama deskriptif untuk menemukannya nanti. Ini adalah praktik terbai
   <Step title="Lanjutkan berdasarkan nama nanti">
     Dari baris perintah:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --resume auth-refactor
     ```
 
     Atau dari dalam sesi aktif:
 
-    ```text  theme={null}
+    ```text theme={null}
     /resume auth-refactor
     ```
   </Step>
@@ -650,7 +650,7 @@ Saat mengerjakan beberapa tugas sekaligus, Anda memerlukan setiap sesi Claude un
 
 Gunakan flag `--worktree` (`-w`) untuk membuat worktree terisolasi dan memulai Claude di dalamnya. Nilai yang Anda berikan menjadi nama direktori worktree dan nama cabang:
 
-```bash  theme={null}
+```bash theme={null}
 # Mulai Claude dalam worktree bernama "feature-auth"
 # Membuat .claude/worktrees/feature-auth/ dengan cabang baru
 claude --worktree feature-auth
@@ -661,7 +661,7 @@ claude --worktree bugfix-123
 
 Jika Anda menghilangkan nama, Claude secara otomatis menghasilkan nama acak:
 
-```bash  theme={null}
+```bash theme={null}
 # Auto-generates a name like "bright-running-fox"
 claude --worktree
 ```
@@ -670,7 +670,7 @@ Worktrees dibuat di `<repo>/.claude/worktrees/<name>` dan bercabang dari cabang 
 
 Cabang dasar tidak dapat dikonfigurasi melalui flag atau pengaturan Claude Code. `origin/HEAD` adalah referensi yang disimpan di direktori `.git` lokal Anda yang Git atur sekali saat Anda mengkloning. Jika cabang default repositori berubah nanti di GitHub atau GitLab, `origin/HEAD` lokal Anda terus menunjuk ke yang lama, dan worktrees akan bercabang dari sana. Untuk menyinkronkan ulang referensi lokal Anda dengan apa pun yang dianggap remote sebagai default saat ini:
 
-```bash  theme={null}
+```bash theme={null}
 git remote set-head origin -a
 ```
 
@@ -715,7 +715,7 @@ Ini berlaku untuk worktrees yang dibuat dengan `--worktree`, worktrees subagent,
 
 Untuk kontrol lebih besar atas lokasi worktree dan konfigurasi cabang, buat worktrees dengan Git secara langsung. Ini berguna ketika Anda perlu checkout cabang yang ada tertentu atau menempatkan worktree di luar repositori.
 
-```bash  theme={null}
+```bash theme={null}
 # Buat worktree dengan cabang baru
 git worktree add ../project-feature-a -b feature-a
 
@@ -754,7 +754,7 @@ Ketika Anda memulai tugas yang berjalan lama dan beralih ke jendela lain, Anda d
 
     <Tabs>
       <Tab title="macOS">
-        ```json  theme={null}
+        ```json theme={null}
         {
           "hooks": {
             "Notification": [
@@ -774,7 +774,7 @@ Ketika Anda memulai tugas yang berjalan lama dan beralih ke jendela lain, Anda d
       </Tab>
 
       <Tab title="Linux">
-        ```json  theme={null}
+        ```json theme={null}
         {
           "hooks": {
             "Notification": [
@@ -794,7 +794,7 @@ Ketika Anda memulai tugas yang berjalan lama dan beralih ke jendela lain, Anda d
       </Tab>
 
       <Tab title="Windows">
-        ```json  theme={null}
+        ```json theme={null}
         {
           "hooks": {
             "Notification": [
@@ -845,7 +845,7 @@ Misalkan Anda ingin menggunakan Claude Code sebagai linter atau code reviewer.
 
 **Tambahkan Claude ke skrip build Anda:**
 
-```json  theme={null}
+```json theme={null}
 // package.json
 {
     ...
@@ -870,7 +870,7 @@ Misalkan Anda ingin pipe data ke Claude, dan dapatkan kembali data dalam format 
 
 **Pipe data melalui Claude:**
 
-```bash  theme={null}
+```bash theme={null}
 cat build-error.txt | claude -p 'concisely explain the root cause of this build error' > output.txt
 ```
 
@@ -888,7 +888,7 @@ Misalkan Anda memerlukan output Claude dalam format tertentu, terutama saat meng
 
 <Steps>
   <Step title="Gunakan format teks (default)">
-    ```bash  theme={null}
+    ```bash theme={null}
     cat data.txt | claude -p 'summarize this data' --output-format text > summary.txt
     ```
 
@@ -896,7 +896,7 @@ Misalkan Anda memerlukan output Claude dalam format tertentu, terutama saat meng
   </Step>
 
   <Step title="Gunakan format JSON">
-    ```bash  theme={null}
+    ```bash theme={null}
     cat code.py | claude -p 'analyze this code for bugs' --output-format json > analysis.json
     ```
 
@@ -904,7 +904,7 @@ Misalkan Anda memerlukan output Claude dalam format tertentu, terutama saat meng
   </Step>
 
   <Step title="Gunakan format streaming JSON">
-    ```bash  theme={null}
+    ```bash theme={null}
     cat log.txt | claude -p 'parse this log file for errors' --output-format stream-json
     ```
 
@@ -947,27 +947,27 @@ Claude memiliki akses bawaan ke dokumentasinya dan dapat menjawab pertanyaan ten
 
 ### Contoh pertanyaan
 
-```text  theme={null}
+```text theme={null}
 can Claude Code create pull requests?
 ```
 
-```text  theme={null}
+```text theme={null}
 how does Claude Code handle permissions?
 ```
 
-```text  theme={null}
+```text theme={null}
 what skills are available?
 ```
 
-```text  theme={null}
+```text theme={null}
 how do I use MCP with Claude Code?
 ```
 
-```text  theme={null}
+```text theme={null}
 how do I configure Claude Code for Amazon Bedrock?
 ```
 
-```text  theme={null}
+```text theme={null}
 what are the limitations of Claude Code?
 ```
 

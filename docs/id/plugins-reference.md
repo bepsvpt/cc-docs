@@ -26,7 +26,7 @@ Plugins menambahkan skills ke Claude Code, membuat pintasan `/name` yang dapat A
 
 **Struktur skill**:
 
-```text  theme={null}
+```text theme={null}
 skills/
 ├── pdf-processor/
 │   ├── SKILL.md
@@ -54,7 +54,7 @@ Plugins dapat menyediakan subagents khusus untuk tugas-tugas tertentu yang dapat
 
 **Struktur agent**:
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 name: agent-name
 description: Apa yang agent ini spesialisasikan dan kapan Claude harus memanggilnya
@@ -88,7 +88,7 @@ Plugins dapat menyediakan event handlers yang merespons peristiwa Claude Code se
 
 **Konfigurasi hook**:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PostToolUse": [
@@ -154,7 +154,7 @@ Plugins dapat menggabungkan Model Context Protocol (MCP) servers untuk menghubun
 
 **Konfigurasi MCP server**:
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "plugin-database": {
@@ -200,7 +200,7 @@ Integrasi LSP menyediakan:
 
 **Format file `.lsp.json`**:
 
-```json  theme={null}
+```json theme={null}
 {
   "go": {
     "command": "gopls",
@@ -214,7 +214,7 @@ Integrasi LSP menyediakan:
 
 **Inline di `plugin.json`**:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "lspServers": {
@@ -290,7 +290,7 @@ Manifest bersifat opsional. Jika dihilangkan, Claude Code secara otomatis menemu
 
 ### Skema lengkap
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "plugin-name",
   "version": "1.2.0",
@@ -354,7 +354,7 @@ Nama ini digunakan untuk namespacing komponen. Misalnya, di UI, agent `agent-cre
 
 Field `userConfig` mendeklarasikan nilai yang Claude Code minta dari pengguna saat plugin diaktifkan. Gunakan ini daripada memerlukan pengguna untuk mengedit `settings.json` secara manual.
 
-```json  theme={null}
+```json theme={null}
 {
   "userConfig": {
     "api_endpoint": {
@@ -377,7 +377,7 @@ Nilai non-sensitif disimpan di `settings.json` di bawah `pluginConfigs[<plugin-i
 
 Field `channels` memungkinkan plugin mendeklarasikan satu atau lebih message channels yang menyuntikkan konten ke dalam percakapan. Setiap channel mengikat ke MCP server yang disediakan plugin.
 
-```json  theme={null}
+```json theme={null}
 {
   "channels": [
     {
@@ -404,7 +404,7 @@ Field `server` diperlukan dan harus cocok dengan kunci di `mcpServers` plugin. F
 
 **Contoh jalur**:
 
-```json  theme={null}
+```json theme={null}
 {
   "commands": [
     "./specialized/deploy.md",
@@ -425,7 +425,7 @@ Claude Code menyediakan dua variabel untuk mereferensikan jalur plugin. Keduanya
 
 **`${CLAUDE_PLUGIN_DATA}`**: direktori persisten untuk state plugin yang bertahan setelah updates. Gunakan ini untuk dependensi yang dipasang seperti `node_modules` atau Python virtual environments, kode yang dihasilkan, caches, dan file lainnya yang harus bertahan di seluruh versi plugin. Direktori dibuat secara otomatis pertama kali variabel ini direferensikan.
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PostToolUse": [
@@ -450,7 +450,7 @@ Penggunaan umum adalah memasang dependensi bahasa sekali dan menggunakannya kemb
 
 Hook `SessionStart` ini memasang `node_modules` pada run pertama dan lagi kapan pun update plugin menyertakan `package.json` yang berubah:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "SessionStart": [
@@ -471,7 +471,7 @@ Hook `SessionStart` ini memasang `node_modules` pada run pertama dan lagi kapan 
 
 Scripts yang disertakan di `${CLAUDE_PLUGIN_ROOT}` kemudian dapat berjalan terhadap `node_modules` yang persisten:
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "routines": {
@@ -506,7 +506,7 @@ Plugin yang dipasang tidak dapat mereferensikan file di luar direktorinya. Jalur
 
 Jika plugin Anda perlu mengakses file di luar direktorinya, Anda dapat membuat symbolic links ke file eksternal dalam direktori plugin Anda. Symlinks dihormati selama proses penyalinan:
 
-```bash  theme={null}
+```bash theme={null}
 # Di dalam direktori plugin Anda
 ln -s /path/to/shared-utils ./shared-utils
 ```
@@ -521,7 +521,7 @@ Konten yang di-symlink akan disalin ke plugin cache. Ini memberikan fleksibilita
 
 Plugin lengkap mengikuti struktur ini:
 
-```text  theme={null}
+```text theme={null}
 enterprise-plugin/
 ├── .claude-plugin/           # Direktori metadata (opsional)
 │   └── plugin.json             # plugin manifest
@@ -579,7 +579,7 @@ Claude Code menyediakan perintah CLI untuk manajemen plugin non-interaktif, berg
 
 Pasang plugin dari marketplace yang tersedia.
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin install <plugin> [options]
 ```
 
@@ -598,7 +598,7 @@ Cakupan menentukan file pengaturan mana yang ditambahkan plugin yang dipasang. M
 
 **Contoh:**
 
-```bash  theme={null}
+```bash theme={null}
 # Pasang ke cakupan user (default)
 claude plugin install formatter@my-marketplace
 
@@ -613,7 +613,7 @@ claude plugin install formatter@my-marketplace --scope local
 
 Hapus plugin yang dipasang.
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin uninstall <plugin> [options]
 ```
 
@@ -637,7 +637,7 @@ Secara default, menghapus dari cakupan terakhir yang tersisa juga menghapus dire
 
 Aktifkan plugin yang dinonaktifkan.
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin enable <plugin> [options]
 ```
 
@@ -656,7 +656,7 @@ claude plugin enable <plugin> [options]
 
 Nonaktifkan plugin tanpa menghapusnya.
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin disable <plugin> [options]
 ```
 
@@ -675,7 +675,7 @@ claude plugin disable <plugin> [options]
 
 Perbarui plugin ke versi terbaru.
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin update <plugin> [options]
 ```
 
@@ -766,7 +766,7 @@ Ini menunjukkan:
 
 **Struktur yang benar**: Komponen harus berada di root plugin, bukan di dalam `.claude-plugin/`. Hanya `plugin.json` yang termasuk di `.claude-plugin/`.
 
-```text  theme={null}
+```text theme={null}
 my-plugin/
 ├── .claude-plugin/
 │   └── plugin.json      ← Hanya manifest di sini
@@ -791,7 +791,7 @@ Jika komponen Anda berada di dalam `.claude-plugin/`, pindahkan ke root plugin.
 
 Ikuti semantic versioning untuk rilis plugin:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "version": "2.1.0"

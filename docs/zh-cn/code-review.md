@@ -58,7 +58,7 @@ Code Review 分析您的 GitHub pull request，并在发现问题的代码行上
 
 检查运行始终以中立结论完成，因此它永远不会通过分支保护规则阻止合并。如果您想根据 Code Review 发现来限制合并，请在您自己的 CI 中读取检查运行输出中的严重程度分解。Details 文本的最后一行是一个机器可读的评论，您的工作流可以使用 `gh` 和 jq 解析：
 
-```bash  theme={null}
+```bash theme={null}
 gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \
   --jq '.output.text | split("bughunter-severity: ")[1] | split(" -->")[0] | fromjson'
 ```
@@ -159,7 +159,7 @@ Claude 在目录层次结构的每个级别读取 `CLAUDE.md` 文件，因此子
 
 示例 `REVIEW.md`：
 
-```markdown  theme={null}
+```markdown theme={null}
 # Code Review Guidelines
 
 ## Always check

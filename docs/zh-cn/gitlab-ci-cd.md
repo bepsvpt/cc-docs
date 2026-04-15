@@ -62,7 +62,7 @@ Claude Code 支持强大的 CI/CD 工作流，改变您处理代码的方式：
 
 2. **向 `.gitlab-ci.yml` 添加 Claude 作业**
 
-```yaml  theme={null}
+```yaml theme={null}
 stages:
   - ai
 
@@ -126,7 +126,7 @@ claude:
 
 在问题评论中：
 
-```text  theme={null}
+```text theme={null}
 @claude implement this feature based on the issue description
 ```
 
@@ -136,7 +136,7 @@ Claude 分析问题和代码库，在分支中编写更改，并打开 MR 供审
 
 在 MR 讨论中：
 
-```text  theme={null}
+```text theme={null}
 @claude suggest a concrete approach to cache the results of this API call
 ```
 
@@ -146,7 +146,7 @@ Claude 提议更改，添加具有适当缓存的代码，并更新 MR。
 
 在问题或 MR 评论中：
 
-```text  theme={null}
+```text theme={null}
 @claude fix the TypeError in the user dashboard component
 ```
 
@@ -187,7 +187,7 @@ Claude 定位错误，实现修复，并更新分支或打开新 MR。
 
     在 Settings → CI/CD → Variables 中添加变量：
 
-    ```yaml  theme={null}
+    ```yaml theme={null}
     # 对于 AWS Bedrock：
     - AWS_ROLE_TO_ASSUME
     - AWS_REGION
@@ -227,7 +227,7 @@ Claude 定位错误，实现修复，并更新分支或打开新 MR。
 
     在 Settings → CI/CD → Variables 中添加变量：
 
-    ```yaml  theme={null}
+    ```yaml theme={null}
     # 对于 Google Vertex AI：
     - GCP_WORKLOAD_IDENTITY_PROVIDER
     - GCP_SERVICE_ACCOUNT
@@ -244,7 +244,7 @@ Claude 定位错误，实现修复，并更新分支或打开新 MR。
 
 ### 基本 .gitlab-ci.yml（Claude API）
 
-```yaml  theme={null}
+```yaml theme={null}
 stages:
   - ai
 
@@ -284,7 +284,7 @@ claude:
 * `AWS_ROLE_TO_ASSUME`：用于 Bedrock 访问的 IAM 角色的 ARN
 * `AWS_REGION`：Bedrock 区域（例如，`us-west-2`）
 
-```yaml  theme={null}
+```yaml theme={null}
 claude-bedrock:
   stage: ai
   image: node:24-alpine3.21
@@ -336,7 +336,7 @@ claude-bedrock:
 * `GCP_SERVICE_ACCOUNT`：服务账户电子邮件
 * `CLOUD_ML_REGION`：Vertex 区域（例如，`us-east5`）
 
-```yaml  theme={null}
+```yaml theme={null}
 claude-vertex:
   stage: ai
   image: gcr.io/google.com/cloudsdktool/google-cloud-cli:slim

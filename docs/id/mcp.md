@@ -251,7 +251,7 @@ Server MCP dapat dikonfigurasi dengan tiga cara berbeda tergantung pada kebutuha
 
 Server HTTP adalah opsi yang direkomendasikan untuk terhubung ke server MCP jarak jauh. Ini adalah transport yang paling banyak didukung untuk layanan berbasis cloud.
 
-```bash  theme={null}
+```bash theme={null}
 # Sintaks dasar
 claude mcp add --transport http <name> <url>
 
@@ -269,7 +269,7 @@ claude mcp add --transport http secure-api https://api.example.com/mcp \
   Transport SSE (Server-Sent Events) sudah usang. Gunakan server HTTP sebagai gantinya, jika tersedia.
 </Warning>
 
-```bash  theme={null}
+```bash theme={null}
 # Sintaks dasar
 claude mcp add --transport sse <name> <url>
 
@@ -285,7 +285,7 @@ claude mcp add --transport sse private-api https://api.company.com/sse \
 
 Server stdio berjalan sebagai proses lokal di mesin Anda. Mereka ideal untuk alat yang memerlukan akses sistem langsung atau skrip khusus.
 
-```bash  theme={null}
+```bash theme={null}
 # Sintaks dasar
 claude mcp add [options] <name> -- <command> [args...]
 
@@ -311,7 +311,7 @@ claude mcp add --transport stdio --env AIRTABLE_API_KEY=YOUR_KEY airtable \
 
 Setelah dikonfigurasi, Anda dapat mengelola server MCP Anda dengan perintah ini:
 
-```bash  theme={null}
+```bash theme={null}
 # Daftar semua server yang dikonfigurasi
 claude mcp list
 
@@ -349,7 +349,7 @@ Server MCP juga dapat mendorong pesan langsung ke dalam sesi Anda sehingga Claud
 <Warning>
   **Pengguna Windows**: Pada Windows asli (bukan WSL), server MCP lokal yang menggunakan `npx` memerlukan pembungkus `cmd /c` untuk memastikan eksekusi yang tepat.
 
-  ```bash  theme={null}
+  ```bash theme={null}
   # Ini membuat command="cmd" yang dapat dieksekusi Windows
   claude mcp add --transport stdio my-server -- cmd /c npx -y @some/package
   ```
@@ -372,7 +372,7 @@ Server MCP juga dapat mendorong pesan langsung ke dalam sesi Anda sehingga Claud
 
 Dalam `.mcp.json` di root plugin:
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "database-tools": {
@@ -388,7 +388,7 @@ Dalam `.mcp.json` di root plugin:
 
 Atau inline dalam `plugin.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "mcpServers": {
@@ -409,7 +409,7 @@ Atau inline dalam `plugin.json`:
 
 **Melihat server MCP plugin**:
 
-```bash  theme={null}
+```bash theme={null}
 # Dalam Claude Code, lihat semua server MCP termasuk yang dari plugin
 /mcp
 ```
@@ -436,7 +436,7 @@ Server dengan cakupan lokal mewakili tingkat konfigurasi default dan disimpan da
   Istilah "cakupan lokal" untuk server MCP berbeda dari pengaturan lokal umum. Server MCP dengan cakupan lokal disimpan dalam `~/.claude.json` (direktori home Anda), sementara pengaturan lokal umum menggunakan `.claude/settings.local.json` (di direktori proyek). Lihat [Pengaturan](/id/settings#settings-files) untuk detail tentang lokasi file pengaturan.
 </Note>
 
-```bash  theme={null}
+```bash theme={null}
 # Tambahkan server dengan cakupan lokal (default)
 claude mcp add --transport http stripe https://mcp.stripe.com
 
@@ -448,14 +448,14 @@ claude mcp add --transport http stripe --scope local https://mcp.stripe.com
 
 Server dengan cakupan proyek memungkinkan kolaborasi tim dengan menyimpan konfigurasi dalam file `.mcp.json` di direktori root proyek Anda. File ini dirancang untuk diperiksa ke dalam kontrol versi, memastikan semua anggota tim memiliki akses ke alat dan layanan MCP yang sama. Ketika Anda menambahkan server dengan cakupan proyek, Claude Code secara otomatis membuat atau memperbarui file ini dengan struktur konfigurasi yang sesuai.
 
-```bash  theme={null}
+```bash theme={null}
 # Tambahkan server dengan cakupan proyek
 claude mcp add --transport http paypal --scope project https://mcp.paypal.com/mcp
 ```
 
 File `.mcp.json` yang dihasilkan mengikuti format standar:
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "shared-server": {
@@ -473,7 +473,7 @@ Untuk alasan keamanan, Claude Code meminta persetujuan sebelum menggunakan serve
 
 Server dengan cakupan pengguna disimpan dalam `~/.claude.json` dan menyediakan aksesibilitas lintas proyek, menjadikannya tersedia di semua proyek di mesin Anda sambil tetap pribadi untuk akun pengguna Anda. Cakupan ini bekerja dengan baik untuk server utilitas pribadi, alat pengembangan, atau layanan yang sering Anda gunakan di berbagai proyek.
 
-```bash  theme={null}
+```bash theme={null}
 # Tambahkan server pengguna
 claude mcp add --transport http hubspot --scope user https://mcp.hubspot.com/anthropic
 ```
@@ -520,7 +520,7 @@ Variabel lingkungan dapat berkembang dalam:
 
 **Contoh dengan ekspansi variabel:**
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "api-server": {
@@ -540,92 +540,92 @@ Jika variabel lingkungan yang diperlukan tidak diatur dan tidak memiliki nilai d
 
 {/* ### Contoh: Otomatisasi pengujian browser dengan Playwright
 
-  ```bash
-  claude mcp add --transport stdio playwright -- npx -y @playwright/mcp@latest
-  ```
+```bash
+claude mcp add --transport stdio playwright -- npx -y @playwright/mcp@latest
+```
 
-  Kemudian tulis dan jalankan tes browser:
+Kemudian tulis dan jalankan tes browser:
 
-  ```text
-  Test if the login flow works with test@example.com
-  ```
-  ```text
-  Take a screenshot of the checkout page on mobile
-  ```
-  ```text
-  Verify that the search feature returns results
-  ``` */}
+```text
+Test if the login flow works with test@example.com
+```
+```text
+Take a screenshot of the checkout page on mobile
+```
+```text
+Verify that the search feature returns results
+``` */}
 
 ### Contoh: Pantau kesalahan dengan Sentry
 
-```bash  theme={null}
+```bash theme={null}
 claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
 ```
 
 Autentikasi dengan akun Sentry Anda:
 
-```text  theme={null}
+```text theme={null}
 /mcp
 ```
 
 Kemudian debug masalah produksi:
 
-```text  theme={null}
+```text theme={null}
 What are the most common errors in the last 24 hours?
 ```
 
-```text  theme={null}
+```text theme={null}
 Show me the stack trace for error ID abc123
 ```
 
-```text  theme={null}
+```text theme={null}
 Which deployment introduced these new errors?
 ```
 
 ### Contoh: Hubungkan ke GitHub untuk tinjauan kode
 
-```bash  theme={null}
+```bash theme={null}
 claude mcp add --transport http github https://api.githubcopilot.com/mcp/
 ```
 
 Autentikasi jika diperlukan dengan memilih "Authenticate" untuk GitHub:
 
-```text  theme={null}
+```text theme={null}
 /mcp
 ```
 
 Kemudian bekerja dengan GitHub:
 
-```text  theme={null}
+```text theme={null}
 Review PR #456 and suggest improvements
 ```
 
-```text  theme={null}
+```text theme={null}
 Create a new issue for the bug we just found
 ```
 
-```text  theme={null}
+```text theme={null}
 Show me all open PRs assigned to me
 ```
 
 ### Contoh: Tanyakan database PostgreSQL Anda
 
-```bash  theme={null}
+```bash theme={null}
 claude mcp add --transport stdio db -- npx -y @bytebase/dbhub \
   --dsn "postgresql://readonly:pass@prod.db.com:5432/analytics"
 ```
 
 Kemudian tanyakan database Anda secara alami:
 
-```text  theme={null}
+```text theme={null}
 What's our total revenue this month?
 ```
 
-```text  theme={null}
+```text theme={null}
 Show me the schema for the orders table
 ```
 
-```text  theme={null}
+```text theme={null}
 Find customers who haven't made a purchase in 90 days
 ```
 
@@ -637,7 +637,7 @@ Banyak server MCP berbasis cloud memerlukan autentikasi. Claude Code mendukung O
   <Step title="Tambahkan server yang memerlukan autentikasi">
     Sebagai contoh:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
     ```
   </Step>
@@ -645,7 +645,7 @@ Banyak server MCP berbasis cloud memerlukan autentikasi. Claude Code mendukung O
   <Step title="Gunakan perintah /mcp dalam Claude Code">
     Dalam Claude Code, gunakan perintah:
 
-    ```text  theme={null}
+    ```text theme={null}
     /mcp
     ```
 
@@ -669,7 +669,7 @@ Beberapa server MCP memerlukan URI pengalihan tertentu yang terdaftar sebelumnya
 
 Anda dapat menggunakan `--callback-port` sendiri (dengan pendaftaran klien dinamis) atau bersama dengan `--client-id` (dengan kredensial yang telah dikonfigurasi sebelumnya).
 
-```bash  theme={null}
+```bash theme={null}
 # Port callback tetap dengan pendaftaran klien dinamis
 claude mcp add --transport http \
   --callback-port 8080 \
@@ -694,7 +694,7 @@ Beberapa server MCP tidak mendukung pengaturan OAuth otomatis melalui Dynamic Cl
       <Tab title="claude mcp add">
         Gunakan `--client-id` untuk meneruskan ID klien aplikasi Anda. Flag `--client-secret` meminta rahasia dengan input yang disembunyikan:
 
-        ```bash  theme={null}
+        ```bash theme={null}
         claude mcp add --transport http \
           --client-id your-client-id --client-secret --callback-port 8080 \
           my-server https://mcp.example.com/mcp
@@ -704,7 +704,7 @@ Beberapa server MCP tidak mendukung pengaturan OAuth otomatis melalui Dynamic Cl
       <Tab title="claude mcp add-json">
         Sertakan objek `oauth` dalam konfigurasi JSON dan teruskan `--client-secret` sebagai flag terpisah:
 
-        ```bash  theme={null}
+        ```bash theme={null}
         claude mcp add-json my-server \
           '{"type":"http","url":"https://mcp.example.com/mcp","oauth":{"clientId":"your-client-id","callbackPort":8080}}' \
           --client-secret
@@ -714,7 +714,7 @@ Beberapa server MCP tidak mendukung pengaturan OAuth otomatis melalui Dynamic Cl
       <Tab title="claude mcp add-json (callback port only)">
         Gunakan `--callback-port` tanpa ID klien untuk memperbaiki port sambil menggunakan pendaftaran klien dinamis:
 
-        ```bash  theme={null}
+        ```bash theme={null}
         claude mcp add-json my-server \
           '{"type":"http","url":"https://mcp.example.com/mcp","oauth":{"callbackPort":8080}}'
         ```
@@ -723,7 +723,7 @@ Beberapa server MCP tidak mendukung pengaturan OAuth otomatis melalui Dynamic Cl
       <Tab title="CI / env var">
         Atur rahasia melalui variabel lingkungan untuk melewati prompt interaktif:
 
-        ```bash  theme={null}
+        ```bash theme={null}
         MCP_CLIENT_SECRET=your-secret claude mcp add --transport http \
           --client-id your-client-id --client-secret --callback-port 8080 \
           my-server https://mcp.example.com/mcp
@@ -753,7 +753,7 @@ Jika endpoint metadata OAuth standar server MCP Anda mengembalikan kesalahan tet
 
 Atur `authServerMetadataUrl` dalam objek `oauth` dari konfigurasi server Anda di `.mcp.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "my-server": {
@@ -773,7 +773,7 @@ URL harus menggunakan `https://`. Opsi ini memerlukan Claude Code v2.1.64 atau l
 
 Jika server MCP Anda menggunakan skema autentikasi selain OAuth (seperti Kerberos, token berumur pendek, atau SSO internal), gunakan `headersHelper` untuk menghasilkan header permintaan pada waktu koneksi. Claude Code menjalankan perintah dan menggabungkan outputnya ke dalam header koneksi.
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "internal-api": {
@@ -787,7 +787,7 @@ Jika server MCP Anda menggunakan skema autentikasi selain OAuth (seperti Kerbero
 
 Perintah juga dapat inline:
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "internal-api": {
@@ -826,7 +826,7 @@ Jika Anda memiliki konfigurasi JSON untuk server MCP, Anda dapat menambahkannya 
 
 <Steps>
   <Step title="Tambahkan server MCP dari JSON">
-    ```bash  theme={null}
+    ```bash theme={null}
     # Sintaks dasar
     claude mcp add-json <name> '<json>'
 
@@ -842,7 +842,7 @@ Jika Anda memiliki konfigurasi JSON untuk server MCP, Anda dapat menambahkannya 
   </Step>
 
   <Step title="Verifikasi server ditambahkan">
-    ```bash  theme={null}
+    ```bash theme={null}
     claude mcp get weather-api
     ```
   </Step>
@@ -862,7 +862,7 @@ Jika Anda telah mengonfigurasi server MCP di Claude Desktop, Anda dapat mengimpo
 
 <Steps>
   <Step title="Impor server dari Claude Desktop">
-    ```bash  theme={null}
+    ```bash theme={null}
     # Sintaks dasar 
     claude mcp add-from-claude-desktop 
     ```
@@ -873,7 +873,7 @@ Jika Anda telah mengonfigurasi server MCP di Claude Desktop, Anda dapat mengimpo
   </Step>
 
   <Step title="Verifikasi server diimpor">
-    ```bash  theme={null}
+    ```bash theme={null}
     claude mcp list 
     ```
   </Step>
@@ -905,7 +905,7 @@ Jika Anda telah masuk ke Claude Code dengan akun [Claude.ai](https://claude.ai),
   <Step title="Lihat dan kelola server di Claude Code">
     Di Claude Code, gunakan perintah:
 
-    ```text  theme={null}
+    ```text theme={null}
     /mcp
     ```
 
@@ -915,7 +915,7 @@ Jika Anda telah masuk ke Claude Code dengan akun [Claude.ai](https://claude.ai),
 
 Untuk menonaktifkan server MCP claude.ai di Claude Code, atur variabel lingkungan `ENABLE_CLAUDEAI_MCP_SERVERS` ke `false`:
 
-```bash  theme={null}
+```bash theme={null}
 ENABLE_CLAUDEAI_MCP_SERVERS=false claude
 ```
 
@@ -923,14 +923,14 @@ ENABLE_CLAUDEAI_MCP_SERVERS=false claude
 
 Anda dapat menggunakan Claude Code itu sendiri sebagai server MCP yang dapat terhubung oleh aplikasi lain:
 
-```bash  theme={null}
+```bash theme={null}
 # Mulai Claude sebagai server MCP stdio
 claude mcp serve
 ```
 
 Anda dapat menggunakan ini di Claude Desktop dengan menambahkan konfigurasi ini ke claude\_desktop\_config.json:
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "claude-code": {
@@ -948,13 +948,13 @@ Anda dapat menggunakan ini di Claude Desktop dengan menambahkan konfigurasi ini 
 
   Untuk menemukan jalur lengkap:
 
-  ```bash  theme={null}
+  ```bash theme={null}
   which claude
   ```
 
   Kemudian gunakan jalur lengkap dalam konfigurasi Anda:
 
-  ```json  theme={null}
+  ```json theme={null}
   {
     "mcpServers": {
       "claude-code": {
@@ -988,7 +988,7 @@ Ketika alat MCP menghasilkan output besar, Claude Code membantu mengelola penggu
 
 Untuk meningkatkan batas untuk alat yang menghasilkan output besar:
 
-```bash  theme={null}
+```bash theme={null}
 # Atur batas lebih tinggi untuk output alat MCP
 export MAX_MCP_OUTPUT_TOKENS=50000
 claude
@@ -1031,11 +1031,11 @@ Server MCP dapat mengekspos sumber daya yang dapat Anda referensikan menggunakan
   <Step title="Referensikan sumber daya tertentu">
     Gunakan format `@server:protocol://resource/path` untuk mereferensikan sumber daya:
 
-    ```text  theme={null}
+    ```text theme={null}
     Can you analyze @github:issue://123 and suggest a fix?
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     Please review the API documentation at @docs:file://api/authentication
     ```
   </Step>
@@ -1043,7 +1043,7 @@ Server MCP dapat mengekspos sumber daya yang dapat Anda referensikan menggunakan
   <Step title="Referensi sumber daya berganda">
     Anda dapat mereferensikan beberapa sumber daya dalam satu prompt:
 
-    ```text  theme={null}
+    ```text theme={null}
     Compare @postgres:schema://users with @docs:file://database/user-model
     ```
   </Step>
@@ -1094,7 +1094,7 @@ Kontrol perilaku pencarian alat dengan variabel lingkungan `ENABLE_TOOL_SEARCH`:
 | `auto:<N>`     | Mode ambang batas dengan persentase khusus, di mana `<N>` adalah 0-100 (misalnya, `auto:5` untuk 5%)                                               |
 | `false`        | Semua alat MCP dimuat sebelumnya, tidak ada penundaan                                                                                              |
 
-```bash  theme={null}
+```bash theme={null}
 # Gunakan ambang batas khusus 5%
 ENABLE_TOOL_SEARCH=auto:5 claude
 
@@ -1106,7 +1106,7 @@ Atau atur nilai dalam [field `env` settings.json](/id/settings#available-setting
 
 Anda juga dapat menonaktifkan alat ToolSearch secara khusus:
 
-```json  theme={null}
+```json theme={null}
 {
   "permissions": {
     "deny": ["ToolSearch"]
@@ -1126,7 +1126,7 @@ Server MCP dapat mengekspos prompt yang menjadi tersedia sebagai perintah di Cla
   </Step>
 
   <Step title="Jalankan prompt tanpa argumen">
-    ```text  theme={null}
+    ```text theme={null}
     /mcp__github__list_prs
     ```
   </Step>
@@ -1134,11 +1134,11 @@ Server MCP dapat mengekspos prompt yang menjadi tersedia sebagai perintah di Cla
   <Step title="Jalankan prompt dengan argumen">
     Banyak prompt menerima argumen. Teruskan mereka dipisahkan spasi setelah perintah:
 
-    ```text  theme={null}
+    ```text theme={null}
     /mcp__github__pr_review 456
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     /mcp__jira__create_issue "Bug in login flow" high
     ```
   </Step>
@@ -1182,7 +1182,7 @@ Administrator sistem menerapkan file konfigurasi ke direktori sistem:
 
 File `managed-mcp.json` menggunakan format yang sama seperti file `.mcp.json` standar:
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "github": {
@@ -1225,7 +1225,7 @@ Setiap entri dalam daftar putih atau daftar hitam dapat membatasi server dengan 
 
 #### Contoh konfigurasi
 
-```json  theme={null}
+```json theme={null}
 {
   "allowedMcpServers": [
     // Izinkan berdasarkan nama server
@@ -1289,7 +1289,7 @@ Pola URL mendukung wildcard menggunakan `*` untuk mencocokkan urutan karakter ap
 * Ini memastikan administrator dapat memberlakukan endpoint jarak jauh mana yang diizinkan
 
 <Accordion title="Contoh: Daftar putih hanya URL">
-  ```json  theme={null}
+  ```json theme={null}
   {
     "allowedMcpServers": [
       { "serverUrl": "https://mcp.company.com/*" },
@@ -1307,7 +1307,7 @@ Pola URL mendukung wildcard menggunakan `*` untuk mencocokkan urutan karakter ap
 </Accordion>
 
 <Accordion title="Contoh: Daftar putih hanya perintah">
-  ```json  theme={null}
+  ```json theme={null}
   {
     "allowedMcpServers": [
       { "serverCommand": ["npx", "-y", "approved-package"] }
@@ -1323,7 +1323,7 @@ Pola URL mendukung wildcard menggunakan `*` untuk mencocokkan urutan karakter ap
 </Accordion>
 
 <Accordion title="Contoh: Daftar putih nama dan perintah campuran">
-  ```json  theme={null}
+  ```json theme={null}
   {
     "allowedMcpServers": [
       { "serverName": "github" },
@@ -1342,7 +1342,7 @@ Pola URL mendukung wildcard menggunakan `*` untuk mencocokkan urutan karakter ap
 </Accordion>
 
 <Accordion title="Contoh: Daftar putih hanya nama">
-  ```json  theme={null}
+  ```json theme={null}
   {
     "allowedMcpServers": [
       { "serverName": "github" },

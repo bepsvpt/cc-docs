@@ -77,7 +77,7 @@ Fügen Sie einen Spezifizierer in Klammern hinzu, um bestimmte Werkzeugverwendun
 
 Bash-Regeln unterstützen Glob-Muster mit `*`. Platzhalter können an jeder Position im Befehl erscheinen. Diese Konfiguration ermöglicht npm- und git-Commit-Befehle, blockiert aber git push:
 
-```json  theme={null}
+```json theme={null}
 {
   "permissions": {
     "allow": [
@@ -188,7 +188,7 @@ Verwenden Sie `Agent(AgentName)`-Regeln, um zu steuern, welche [Subagents](/de/s
 
 Fügen Sie diese Regeln zum `deny`-Array in Ihren Einstellungen hinzu oder verwenden Sie das `--disallowedTools`-CLI-Flag, um bestimmte Agenten zu deaktivieren. Um den Explore-Agenten zu deaktivieren:
 
-```json  theme={null}
+```json theme={null}
 {
   "permissions": {
     "deny": ["Agent(Explore)"]
@@ -297,7 +297,7 @@ Einträge aus jedem Bereich werden kombiniert. Ein Entwickler kann `environment`
 
 Für die meisten Organisationen ist `autoMode.environment` das einzige Feld, das Sie festlegen müssen. Es teilt dem Klassifizierer mit, welche Repos, Buckets und Domänen vertrauenswürdig sind, ohne die integrierten Block- und Allow-Regeln zu berühren. Der Klassifizierer verwendet `environment`, um zu entscheiden, was „extern" bedeutet: Jedes Ziel, das nicht aufgelistet ist, ist ein potenzielles Exfiltrationsziel.
 
-```json  theme={null}
+```json theme={null}
 {
   "autoMode": {
     "environment": [
@@ -321,7 +321,7 @@ Einträge sind Prosa, keine Regex oder Werkzeugmuster. Der Klassifizierer liest 
 
 Eine nützliche Startvorlage: Füllen Sie die eingeklammerten Felder aus und entfernen Sie alle Zeilen, die nicht zutreffen:
 
-```json  theme={null}
+```json theme={null}
 {
   "autoMode": {
     "environment": [
@@ -349,7 +349,7 @@ Innerhalb des Klassifizierers ist die Priorität: `soft_deny`-Regeln blockieren 
 
 Um zu lockern: Entfernen Sie Regeln aus `soft_deny`, wenn die Standardeinstellungen etwas blockieren, das Ihre Pipeline bereits mit PR-Review, CI oder Staging-Umgebungen schützt, oder fügen Sie zu `allow` hinzu, wenn der Klassifizierer wiederholt ein Routinemuster kennzeichnet, das die Standard-Ausnahmen nicht abdecken. Um zu verschärfen: Fügen Sie zu `soft_deny` für Risiken hinzu, die für Ihre Umgebung spezifisch sind und die Standardeinstellungen vermissen, oder entfernen Sie aus `allow`, um eine Standard-Ausnahme zu den Block-Regeln zu halten. Führen Sie in allen Fällen `claude auto-mode defaults` aus, um die vollständigen Standard-Listen zu erhalten, kopieren Sie sie dann und bearbeiten Sie sie: Beginnen Sie niemals mit einer leeren Liste.
 
-```json  theme={null}
+```json theme={null}
 {
   "autoMode": {
     "environment": [
@@ -378,7 +378,7 @@ Die drei Abschnitte werden unabhängig ausgewertet, daher lässt das Festlegen v
 
 Da das Festlegen von `allow` oder `soft_deny` die Standardeinstellungen ersetzt, beginnen Sie jede Anpassung, indem Sie die vollständigen Standard-Listen kopieren. Drei CLI-Unterbefehle helfen Ihnen, zu überprüfen und zu validieren:
 
-```bash  theme={null}
+```bash theme={null}
 claude auto-mode defaults  # the built-in environment, allow, and soft_deny rules
 claude auto-mode config    # what the classifier actually uses: your settings where set, defaults otherwise
 claude auto-mode critique  # get AI feedback on your custom allow and soft_deny rules

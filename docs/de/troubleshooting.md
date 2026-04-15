@@ -40,7 +40,7 @@ Wenn Ihr Problem nicht aufgelistet ist, führen Sie diese Diagnoseschritte durch
 
 Das Installationsprogramm lädt von `storage.googleapis.com` herunter. Überprüfen Sie, ob Sie es erreichen können:
 
-```bash  theme={null}
+```bash theme={null}
 curl -sI https://storage.googleapis.com
 ```
 
@@ -54,7 +54,7 @@ Wenn Sie sich hinter einem Unternehmens-Proxy befinden, setzen Sie `HTTPS_PROXY`
 
 Dieses Beispiel setzt beide Proxy-Variablen und führt dann das Installationsprogramm über Ihren Proxy aus:
 
-```bash  theme={null}
+```bash theme={null}
 export HTTP_PROXY=http://proxy.example.com:8080
 export HTTPS_PROXY=http://proxy.example.com:8080
 curl -fsSL https://claude.ai/install.sh | bash
@@ -68,13 +68,13 @@ Wenn die Installation erfolgreich war, aber Sie einen `command not found`- oder 
 
 <Tabs>
   <Tab title="macOS/Linux">
-    ```bash  theme={null}
+    ```bash theme={null}
     echo $PATH | tr ':' '\n' | grep local/bin
     ```
 
     Wenn es keine Ausgabe gibt, fehlt das Verzeichnis. Fügen Sie es zu Ihrer Shell-Konfiguration hinzu:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Zsh (macOS-Standard)
     echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
     source ~/.zshrc
@@ -88,19 +88,19 @@ Wenn die Installation erfolgreich war, aber Sie einen `command not found`- oder 
 
     Überprüfen Sie, ob die Behebung funktioniert hat:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --version
     ```
   </Tab>
 
   <Tab title="Windows PowerShell">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     $env:PATH -split ';' | Select-String 'local\\bin'
     ```
 
     Wenn es keine Ausgabe gibt, fügen Sie das Installationsverzeichnis zu Ihrem Benutzer-PATH hinzu:
 
-    ```powershell  theme={null}
+    ```powershell theme={null}
     $currentPath = [Environment]::GetEnvironmentVariable('PATH', 'User')
     [Environment]::SetEnvironmentVariable('PATH', "$currentPath;$env:USERPROFILE\.local\bin", 'User')
     ```
@@ -109,13 +109,13 @@ Wenn die Installation erfolgreich war, aber Sie einen `command not found`- oder 
 
     Überprüfen Sie, ob die Behebung funktioniert hat:
 
-    ```powershell  theme={null}
+    ```powershell theme={null}
     claude --version
     ```
   </Tab>
 
   <Tab title="Windows CMD">
-    ```batch  theme={null}
+    ```batch theme={null}
     echo %PATH% | findstr /i "local\bin"
     ```
 
@@ -123,7 +123,7 @@ Wenn die Installation erfolgreich war, aber Sie einen `command not found`- oder 
 
     Überprüfen Sie, ob die Behebung funktioniert hat:
 
-    ```batch  theme={null}
+    ```batch theme={null}
     claude --version
     ```
   </Tab>
@@ -137,27 +137,27 @@ Mehrere Claude Code-Installationen können zu Versionskonflikten oder unerwartet
   <Tab title="macOS/Linux">
     Listet alle `claude`-Binärdateien auf, die in Ihrem PATH gefunden werden:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     which -a claude
     ```
 
     Überprüfen Sie, ob die native Installer- und npm-Versionen vorhanden sind:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     ls -la ~/.local/bin/claude
     ```
 
-    ```bash  theme={null}
+    ```bash theme={null}
     ls -la ~/.claude/local/
     ```
 
-    ```bash  theme={null}
+    ```bash theme={null}
     npm -g ls @anthropic-ai/claude-code 2>/dev/null
     ```
   </Tab>
 
   <Tab title="Windows PowerShell">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     where.exe claude
     Test-Path "$env:LOCALAPPDATA\Claude Code\claude.exe"
     ```
@@ -168,13 +168,13 @@ Wenn Sie mehrere Installationen finden, behalten Sie nur eine. Die native Instal
 
 Deinstallieren Sie eine globale npm-Installation:
 
-```bash  theme={null}
+```bash theme={null}
 npm uninstall -g @anthropic-ai/claude-code
 ```
 
 Entfernen Sie eine Homebrew-Installation unter macOS:
 
-```bash  theme={null}
+```bash theme={null}
 brew uninstall --cask claude-code
 ```
 
@@ -182,14 +182,14 @@ brew uninstall --cask claude-code
 
 Das Installationsprogramm benötigt Schreibzugriff auf `~/.local/bin/` und `~/.claude/`. Wenn die Installation mit Berechtigungsfehlern fehlschlägt, überprüfen Sie, ob diese Verzeichnisse beschreibbar sind:
 
-```bash  theme={null}
+```bash theme={null}
 test -w ~/.local/bin && echo "writable" || echo "not writable"
 test -w ~/.claude && echo "writable" || echo "not writable"
 ```
 
 Wenn eines der Verzeichnisse nicht beschreibbar ist, erstellen Sie das Installationsverzeichnis und setzen Sie Ihren Benutzer als Eigentümer:
 
-```bash  theme={null}
+```bash theme={null}
 sudo mkdir -p ~/.local/bin
 sudo chown -R $(whoami) ~/.local
 ```
@@ -200,19 +200,19 @@ Wenn `claude` installiert ist, aber beim Start abstürzt oder hängt, führen Si
 
 Bestätigen Sie, dass die Binärdatei vorhanden und ausführbar ist:
 
-```bash  theme={null}
+```bash theme={null}
 ls -la $(which claude)
 ```
 
 Überprüfen Sie unter Linux auf fehlende gemeinsame Bibliotheken. Wenn `ldd` fehlende Bibliotheken anzeigt, müssen Sie möglicherweise Systempakete installieren. Auf Alpine Linux und anderen musl-basierten Distributionen siehe [Alpine Linux-Setup](/de/setup#alpine-linux-and-musl-based-distributions).
 
-```bash  theme={null}
+```bash theme={null}
 ldd $(which claude) | grep "not found"
 ```
 
 Führen Sie eine schnelle Integritätsprüfung durch, dass die Binärdatei ausgeführt werden kann:
 
-```bash  theme={null}
+```bash theme={null}
 claude --version
 ```
 
@@ -224,14 +224,14 @@ Dies sind die am häufigsten auftretenden Installationsprobleme und deren Lösun
 
 Wenn Sie den Installationsbefehl ausführen, können Sie einen dieser Fehler sehen:
 
-```text  theme={null}
+```text theme={null}
 bash: line 1: syntax error near unexpected token `<'
 bash: line 1: `<!DOCTYPE html>'
 ```
 
 In PowerShell erscheint das gleiche Problem als:
 
-```text  theme={null}
+```text theme={null}
 Invoke-Expression: Missing argument in parameter list.
 ```
 
@@ -245,13 +245,13 @@ Andernfalls kann dies aufgrund von Netzwerkproblemen, regionalen Routing-Problem
 
    Installieren Sie unter macOS oder Linux über Homebrew:
 
-   ```bash  theme={null}
+   ```bash theme={null}
    brew install --cask claude-code
    ```
 
    Installieren Sie unter Windows über WinGet:
 
-   ```powershell  theme={null}
+   ```powershell theme={null}
    winget install Anthropic.ClaudeCode
    ```
 
@@ -277,7 +277,7 @@ Der Befehl `curl ... | bash` lädt das Skript herunter und übergibt es direkt a
 **Lösungen:**
 
 1. **Überprüfen Sie die Netzwerkstabilität**: Claude Code-Binärdateien werden auf Google Cloud Storage gehostet. Testen Sie, ob Sie es erreichen können:
-   ```bash  theme={null}
+   ```bash theme={null}
    curl -fsSL https://storage.googleapis.com -o /dev/null
    ```
    Wenn der Befehl stillschweigend abgeschlossen wird, ist Ihre Verbindung in Ordnung und das Problem ist wahrscheinlich vorübergehend. Versuchen Sie den Installationsbefehl erneut. Wenn Sie einen Fehler sehen, blockiert Ihr Netzwerk möglicherweise den Download.
@@ -286,13 +286,13 @@ Der Befehl `curl ... | bash` lädt das Skript herunter und übergibt es direkt a
 
    Unter macOS oder Linux:
 
-   ```bash  theme={null}
+   ```bash theme={null}
    brew install --cask claude-code
    ```
 
    Unter Windows:
 
-   ```powershell  theme={null}
+   ```powershell theme={null}
    winget install Anthropic.ClaudeCode
    ```
 
@@ -306,24 +306,24 @@ Fehler wie `curl: (35) TLS connect error`, `schannel: next InitializeSecurityCon
 
    Auf Ubuntu/Debian:
 
-   ```bash  theme={null}
+   ```bash theme={null}
    sudo apt-get update && sudo apt-get install ca-certificates
    ```
 
    Auf macOS über Homebrew:
 
-   ```bash  theme={null}
+   ```bash theme={null}
    brew install ca-certificates
    ```
 
 2. **Aktivieren Sie unter Windows TLS 1.2** in PowerShell, bevor Sie das Installationsprogramm ausführen:
-   ```powershell  theme={null}
+   ```powershell theme={null}
    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
    irm https://claude.ai/install.ps1 | iex
    ```
 
 3. **Überprüfen Sie auf Proxy- oder Firewall-Interferenz**: Unternehmens-Proxys, die TLS-Inspektion durchführen, können diese Fehler verursachen, einschließlich `unable to get local issuer certificate`. Setzen Sie `NODE_EXTRA_CA_CERTS` auf Ihr Unternehmens-CA-Zertifikat-Bundle:
-   ```bash  theme={null}
+   ```bash theme={null}
    export NODE_EXTRA_CA_CERTS=/path/to/corporate-ca.pem
    ```
    Fragen Sie Ihr IT-Team nach der Zertifikatsdatei, wenn Sie diese nicht haben. Sie können auch auf einer direkten Verbindung versuchen, um zu bestätigen, dass der Proxy die Ursache ist.
@@ -335,12 +335,12 @@ Das Installationsprogramm konnte den Download-Server nicht erreichen. Dies bedeu
 **Lösungen:**
 
 1. **Testen Sie die Konnektivität direkt**:
-   ```bash  theme={null}
+   ```bash theme={null}
    curl -sI https://storage.googleapis.com
    ```
 
 2. **Wenn Sie sich hinter einem Proxy befinden**, setzen Sie `HTTPS_PROXY`, damit das Installationsprogramm es durchleiten kann. Siehe [Proxy-Konfiguration](/de/network-config#proxy-configuration) für Details.
-   ```bash  theme={null}
+   ```bash theme={null}
    export HTTPS_PROXY=http://proxy.example.com:8080
    curl -fsSL https://claude.ai/install.sh | bash
    ```
@@ -349,13 +349,13 @@ Das Installationsprogramm konnte den Download-Server nicht erreichen. Dies bedeu
 
    Unter macOS oder Linux:
 
-   ```bash  theme={null}
+   ```bash theme={null}
    brew install --cask claude-code
    ```
 
    Unter Windows:
 
-   ```powershell  theme={null}
+   ```powershell theme={null}
    winget install Anthropic.ClaudeCode
    ```
 
@@ -367,18 +367,18 @@ Wenn Sie `'irm' is not recognized` oder `The token '&&' is not valid` sehen, fü
 
   Öffnen Sie PowerShell, indem Sie im Startmenü nach „PowerShell" suchen, und führen Sie dann den ursprünglichen Installationsbefehl aus:
 
-  ```powershell  theme={null}
+  ```powershell theme={null}
   irm https://claude.ai/install.ps1 | iex
   ```
 
   Oder bleiben Sie in CMD und verwenden Sie stattdessen das CMD-Installationsprogramm:
 
-  ```batch  theme={null}
+  ```batch theme={null}
   curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
   ```
 
 * **`&&` nicht gültig**: Sie befinden sich in PowerShell, haben aber den CMD-Installationsbefehl ausgeführt. Verwenden Sie das PowerShell-Installationsprogramm:
-  ```powershell  theme={null}
+  ```powershell theme={null}
   irm https://claude.ai/install.ps1 | iex
   ```
 
@@ -386,7 +386,7 @@ Wenn Sie `'irm' is not recognized` oder `The token '&&' is not valid` sehen, fü
 
 Wenn Sie während der Installation auf einem VPS oder einer Cloud-Instanz `Killed` sehen:
 
-```text  theme={null}
+```text theme={null}
 Setting up Claude Code...
 Installing Claude Code native build latest...
 bash: line 142: 34803 Killed    "$binary_path" install ${TARGET:+"$TARGET"}
@@ -400,7 +400,7 @@ Der Linux OOM-Killer hat den Prozess beendet, da dem System der Speicher ausgega
 
    Erstellen Sie eine 2-GB-Swap-Datei und aktivieren Sie sie:
 
-   ```bash  theme={null}
+   ```bash theme={null}
    sudo fallocate -l 2G /swapfile
    sudo chmod 600 /swapfile
    sudo mkswap /swapfile
@@ -409,7 +409,7 @@ Der Linux OOM-Killer hat den Prozess beendet, da dem System der Speicher ausgega
 
    Versuchen Sie dann die Installation erneut:
 
-   ```bash  theme={null}
+   ```bash theme={null}
    curl -fsSL https://claude.ai/install.sh | bash
    ```
 
@@ -424,13 +424,13 @@ Wenn Sie Claude Code in einem Docker-Container installieren, kann die Installati
 **Lösungen:**
 
 1. **Setzen Sie ein Arbeitsverzeichnis**, bevor Sie das Installationsprogramm ausführen. Wenn es von `/` aus ausgeführt wird, scannt das Installationsprogramm das gesamte Dateisystem, was zu übermäßiger Speichernutzung führt. Das Setzen von `WORKDIR` begrenzt den Scan auf ein kleines Verzeichnis:
-   ```dockerfile  theme={null}
+   ```dockerfile theme={null}
    WORKDIR /tmp
    RUN curl -fsSL https://claude.ai/install.sh | bash
    ```
 
 2. **Erhöhen Sie die Docker-Speicherlimits**, wenn Sie Docker Desktop verwenden:
-   ```bash  theme={null}
+   ```bash theme={null}
    docker build --memory=4g .
    ```
 
@@ -448,7 +448,7 @@ Claude Code unter nativem Windows benötigt [Git für Windows](https://git-scm.c
 
 **Wenn Git bereits installiert ist**, aber Claude Code es immer noch nicht finden kann, setzen Sie den Pfad in Ihrer [settings.json-Datei](/de/settings):
 
-```json  theme={null}
+```json theme={null}
 {
   "env": {
     "CLAUDE_CODE_GIT_BASH_PATH": "C:\\Program Files\\Git\\bin\\bash.exe"
@@ -462,7 +462,7 @@ Wenn Ihr Git an einem anderen Ort installiert ist, finden Sie den Pfad, indem Si
 
 Wenn Sie nach der Installation Fehler über fehlende gemeinsame Bibliotheken wie `libstdc++.so.6` oder `libgcc_s.so.1` sehen, hat das Installationsprogramm möglicherweise die falsche Binär-Variante für Ihr System heruntergeladen.
 
-```text  theme={null}
+```text theme={null}
 Error loading shared library libstdc++.so.6: No such file or directory
 ```
 
@@ -471,7 +471,7 @@ Dies kann auf glibc-basierten Systemen geschehen, auf denen musl-Cross-Compilati
 **Lösungen:**
 
 1. **Überprüfen Sie, welche libc Ihr System verwendet**:
-   ```bash  theme={null}
+   ```bash theme={null}
    ldd /bin/ls | head -1
    ```
    Wenn es `linux-vdso.so` oder Verweise auf `/lib/x86_64-linux-gnu/` anzeigt, befinden Sie sich auf glibc. Wenn es `musl` anzeigt, befinden Sie sich auf musl.
@@ -479,7 +479,7 @@ Dies kann auf glibc-basierten Systemen geschehen, auf denen musl-Cross-Compilati
 2. **Wenn Sie sich auf glibc befinden, aber die musl-Binärdatei erhalten haben**, entfernen Sie die Installation und installieren Sie erneut. Sie können die richtige Binärdatei auch manuell aus dem GCS-Bucket unter `https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/{VERSION}/manifest.json` herunterladen. Erstellen Sie ein [GitHub-Problem](https://github.com/anthropics/claude-code/issues) mit der Ausgabe von `ldd /bin/ls` und `ls /lib/libc.musl*`.
 
 3. **Wenn Sie sich tatsächlich auf musl befinden** (Alpine Linux), installieren Sie die erforderlichen Pakete:
-   ```bash  theme={null}
+   ```bash theme={null}
    apk add libgcc libstdc++ ripgrep
    ```
 
@@ -487,20 +487,20 @@ Dies kann auf glibc-basierten Systemen geschehen, auf denen musl-Cross-Compilati
 
 Wenn das Installationsprogramm `Illegal instruction` statt der OOM-Nachricht `Killed` ausgibt, stimmt die heruntergeladene Binärdatei nicht mit Ihrer CPU-Architektur überein. Dies geschieht häufig auf ARM-Servern, die eine x86-Binärdatei erhalten, oder auf älteren CPUs, denen erforderliche Befehlssätze fehlen.
 
-```text  theme={null}
+```text theme={null}
 bash: line 142: 2238232 Illegal instruction    "$binary_path" install ${TARGET:+"$TARGET"}
 ```
 
 **Lösungen:**
 
 1. **Überprüfen Sie Ihre Architektur**:
-   ```bash  theme={null}
+   ```bash theme={null}
    uname -m
    ```
    `x86_64` bedeutet 64-Bit Intel/AMD, `aarch64` bedeutet ARM64. Wenn die Binärdatei nicht übereinstimmt, [erstellen Sie ein GitHub-Problem](https://github.com/anthropics/claude-code/issues) mit der Ausgabe.
 
 2. **Versuchen Sie eine alternative Installationsmethode**, während das Architektur-Problem gelöst wird:
-   ```bash  theme={null}
+   ```bash theme={null}
    brew install --cask claude-code
    ```
 
@@ -508,7 +508,7 @@ bash: line 142: 2238232 Illegal instruction    "$binary_path" install ${TARGET:+
 
 Wenn Sie während der Installation `dyld: cannot load` oder `Abort trap: 6` sehen, ist die Binärdatei mit Ihrer macOS-Version oder Hardware nicht kompatibel.
 
-```text  theme={null}
+```text theme={null}
 dyld: cannot load 'claude-2.1.42-darwin-x64' (load command 0x80000034 is unknown)
 Abort trap: 6
 ```
@@ -520,7 +520,7 @@ Abort trap: 6
 2. **Aktualisieren Sie macOS**, wenn Sie eine ältere Version verwenden. Die Binärdatei verwendet Load-Befehle, die ältere macOS-Versionen nicht unterstützen.
 
 3. **Versuchen Sie Homebrew** als alternative Installationsmethode:
-   ```bash  theme={null}
+   ```bash theme={null}
    brew install --cask claude-code
    ```
 
@@ -548,7 +548,7 @@ Um dieses Problem zu beheben, beheben Sie Ihren Linux-PATH, um sicherzustellen, 
 
 Die häufigste Ursache ist, dass nvm nicht in nicht-interaktiven Shells geladen wird. Fügen Sie Folgendes zu Ihrer Shell-Konfigurationsdatei (`~/.bashrc`, `~/.zshrc` usw.) hinzu:
 
-```bash  theme={null}
+```bash theme={null}
 # Load nvm if it exists
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
@@ -557,7 +557,7 @@ export NVM_DIR="$HOME/.nvm"
 
 Oder führen Sie direkt in Ihrer aktuellen Sitzung aus:
 
-```bash  theme={null}
+```bash theme={null}
 source ~/.nvm/nvm.sh
 ```
 
@@ -565,7 +565,7 @@ source ~/.nvm/nvm.sh
 
 Wenn nvm ordnungsgemäß geladen ist, aber Windows-Pfade immer noch Vorrang haben, können Sie Ihre Linux-Pfade explizit in Ihrer Shell-Konfiguration dem PATH voranstellen:
 
-```bash  theme={null}
+```bash theme={null}
 export PATH="$HOME/.nvm/versions/node/$(node -v)/bin:$PATH"
 ```
 
@@ -579,13 +579,13 @@ export PATH="$HOME/.nvm/versions/node/$(node -v)/bin:$PATH"
 
 <Tabs>
   <Tab title="Ubuntu/Debian">
-    ```bash  theme={null}
+    ```bash theme={null}
     sudo apt-get install bubblewrap socat
     ```
   </Tab>
 
   <Tab title="Fedora">
-    ```bash  theme={null}
+    ```bash theme={null}
     sudo dnf install bubblewrap socat
     ```
   </Tab>
@@ -599,7 +599,7 @@ Wenn das native Installationsprogramm mit Berechtigungsfehlern fehlschlägt, ist
 
 Wenn Sie zuvor mit npm installiert haben und npm-spezifische Berechtigungsfehler erhalten, wechseln Sie zum nativen Installationsprogramm:
 
-```bash  theme={null}
+```bash theme={null}
 curl -fsSL https://claude.ai/install.sh | bash
 ```
 
@@ -643,7 +643,7 @@ Wenn Sie `API Error: 403 {"error":{"type":"forbidden","message":"Request not all
 
 Browser-basierte Anmeldung in WSL2 kann fehlschlagen, wenn WSL Ihren Windows-Browser nicht öffnen kann. Setzen Sie die Umgebungsvariable `BROWSER`:
 
-```bash  theme={null}
+```bash theme={null}
 export BROWSER="/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
 claude
 ```
@@ -678,7 +678,7 @@ Weitere Informationen zum Konfigurieren dieser Dateien finden Sie unter [Einstel
 
 Um Claude Code auf Standardeinstellungen zurückzusetzen, können Sie die Konfigurationsdateien entfernen:
 
-```bash  theme={null}
+```bash theme={null}
 # Reset all user settings and state
 rm ~/.claude.json
 rm -rf ~/.claude/
@@ -715,7 +715,7 @@ Wenn Claude Code nicht reagiert:
 
 Wenn das Such-Tool, `@file`-Erwähnungen, benutzerdefinierte Agenten und benutzerdefinierte Skills nicht funktionieren, installieren Sie das System `ripgrep`:
 
-```bash  theme={null}
+```bash theme={null}
 # macOS (Homebrew)  
 brew install ripgrep
 
@@ -765,13 +765,13 @@ WSL2 verwendet standardmäßig NAT-Netzwerk, das IDE-Erkennung verhindern kann. 
 **Option 1: Konfigurieren Sie Windows Firewall** (empfohlen)
 
 1. Finden Sie Ihre WSL2-IP-Adresse:
-   ```bash  theme={null}
+   ```bash theme={null}
    wsl hostname -I
    # Example output: 172.21.123.45
    ```
 
 2. Öffnen Sie PowerShell als Administrator und erstellen Sie eine Firewall-Regel:
-   ```powershell  theme={null}
+   ```powershell theme={null}
    New-NetFirewallRule -DisplayName "Allow WSL2 Internal Traffic" -Direction Inbound -Protocol TCP -Action Allow -RemoteAddress 172.21.0.0/16 -LocalAddress 172.21.0.0/16
    ```
    Passen Sie den IP-Bereich basierend auf Ihrem WSL2-Subnetz aus Schritt 1 an.
@@ -782,7 +782,7 @@ WSL2 verwendet standardmäßig NAT-Netzwerk, das IDE-Erkennung verhindern kann. 
 
 Fügen Sie zu `.wslconfig` in Ihrem Windows-Benutzerverzeichnis hinzu:
 
-```ini  theme={null}
+```ini theme={null}
 [wsl2]
 networkingMode=mirrored
 ```
@@ -827,7 +827,7 @@ Claude Code generiert manchmal Markdown-Dateien mit fehlenden Sprach-Tags auf Co
 
 Wenn Sie Code-Blöcke wie diesen in generiertem Markdown bemerken:
 
-````markdown  theme={null}
+````markdown theme={null}
 ```
 function example() {
   return "hello";
@@ -837,7 +837,7 @@ function example() {
 
 Statt ordnungsgemäß gekennzeichneter Blöcke wie:
 
-````markdown  theme={null}
+````markdown theme={null}
 ```javascript
 function example() {
   return "hello";

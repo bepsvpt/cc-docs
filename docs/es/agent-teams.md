@@ -74,7 +74,7 @@ Después de habilitar los equipos de agentes, dígale a Claude que cree un equip
 
 Este ejemplo funciona bien porque los tres roles son independientes y pueden explorar el problema sin esperar el uno al otro:
 
-```text  theme={null}
+```text theme={null}
 Estoy diseñando una herramienta CLI que ayuda a los desarrolladores a rastrear
 comentarios TODO en su base de código. Crea un equipo de agentes para explorar
 esto desde diferentes ángulos: un compañero de equipo en UX, uno en arquitectura
@@ -104,7 +104,7 @@ Los equipos de agentes admiten dos modos de visualización:
 
 El valor predeterminado es `"auto"`, que usa paneles divididos si ya está ejecutándose dentro de una sesión tmux, y en proceso de lo contrario. La configuración `"tmux"` habilita el modo de panel dividido y detecta automáticamente si usar tmux o iTerm2 según su terminal. Para anular, configure `teammateMode` en su [configuración global](/es/settings#global-config-settings) en `~/.claude.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "teammateMode": "in-process"
 }
@@ -112,7 +112,7 @@ El valor predeterminado es `"auto"`, que usa paneles divididos si ya está ejecu
 
 Para forzar el modo en proceso para una única sesión, páselo como una bandera:
 
-```bash  theme={null}
+```bash theme={null}
 claude --teammate-mode in-process
 ```
 
@@ -125,7 +125,7 @@ El modo de panel dividido requiere [tmux](https://github.com/tmux/tmux/wiki) o i
 
 Claude decide el número de compañeros de equipo a generar según su tarea, o puede especificar exactamente lo que desea:
 
-```text  theme={null}
+```text theme={null}
 Crea un equipo con 4 compañeros de equipo para refactorizar estos módulos en paralelo.
 Usa Sonnet para cada compañero de equipo.
 ```
@@ -134,7 +134,7 @@ Usa Sonnet para cada compañero de equipo.
 
 Para tareas complejas o riesgosas, puede requerir que los compañeros de equipo planifiquen antes de implementar. El compañero de equipo trabaja en modo de plan de solo lectura hasta que el líder apruebe su enfoque:
 
-```text  theme={null}
+```text theme={null}
 Genera un compañero de equipo arquitecto para refactorizar el módulo de autenticación.
 Requiere aprobación de plan antes de que hagan cambios.
 ```
@@ -165,7 +165,7 @@ El reclamo de tareas usa bloqueo de archivos para prevenir condiciones de carrer
 
 Para terminar gracefully la sesión de un compañero de equipo:
 
-```text  theme={null}
+```text theme={null}
 Pídele al compañero de equipo investigador que se apague
 ```
 
@@ -175,7 +175,7 @@ El líder envía una solicitud de apagado. El compañero de equipo puede aprobar
 
 Cuando haya terminado, pídele al líder que limpie:
 
-```text  theme={null}
+```text theme={null}
 Limpia el equipo
 ```
 
@@ -240,7 +240,7 @@ Al generar un compañero de equipo, puede hacer referencia a un tipo de [subagen
 
 Para usar una definición de subagent, mencione por nombre cuando le pida a Claude que genere el compañero de equipo:
 
-```text  theme={null}
+```text theme={null}
 Genera un compañero de equipo usando el tipo de agente security-reviewer para auditar el módulo de autenticación.
 ```
 
@@ -275,7 +275,7 @@ Estos ejemplos muestran cómo los equipos de agentes manejan tareas donde la exp
 
 Un único revisor tiende a gravitar hacia un tipo de problema a la vez. Dividir criterios de revisión en dominios independientes significa que la seguridad, el rendimiento y la cobertura de pruebas reciben atención exhaustiva simultáneamente. La indicación asigna a cada compañero de equipo una lente distinta para que no se superpongan:
 
-```text  theme={null}
+```text theme={null}
 Crea un equipo de agentes para revisar la PR #142. Genera tres revisores:
 - Uno enfocado en implicaciones de seguridad
 - Uno verificando impacto de rendimiento
@@ -289,7 +289,7 @@ Cada revisor trabaja desde la misma PR pero aplica un filtro diferente. El líde
 
 Cuando la causa raíz es poco clara, un único agente tiende a encontrar una explicación plausible y dejar de buscar. La indicación lucha contra esto haciendo que los compañeros de equipo sean explícitamente adversarios: el trabajo de cada uno no es solo investigar su propia teoría sino desafiar las de los demás.
 
-```text  theme={null}
+```text theme={null}
 Los usuarios reportan que la aplicación se cierra después de un mensaje en lugar de
 mantenerse conectada. Genera 5 compañeros de equipo de agentes para investigar
 diferentes hipótesis. Haz que se hablen entre sí para intentar refutar las teorías
@@ -307,7 +307,7 @@ Con múltiples investigadores independientes intentando activamente refutar mutu
 
 Los compañeros de equipo cargan contexto de proyecto automáticamente, incluyendo CLAUDE.md, MCP servers y skills, pero no heredan el historial de conversación del líder. Vea [Contexto y comunicación](#context-and-communication) para detalles. Incluya detalles específicos de la tarea en la indicación de generación:
 
-```text  theme={null}
+```text theme={null}
 Genera un compañero de equipo revisor de seguridad con la indicación: "Revisa el módulo
 de autenticación en src/auth/ para vulnerabilidades de seguridad. Enfócate en manejo
 de tokens, gestión de sesiones y validación de entrada. La aplicación usa tokens JWT
@@ -343,7 +343,7 @@ Escale solo cuando el trabajo genuinamente se beneficie de tener compañeros de 
 
 A veces el líder comienza a implementar tareas por sí mismo en lugar de esperar a los compañeros de equipo. Si nota esto:
 
-```text  theme={null}
+```text theme={null}
 Espera a que tus compañeros de equipo completen sus tareas antes de proceder
 ```
 
@@ -368,7 +368,7 @@ Si los compañeros de equipo no aparecen después de que le pida a Claude que cr
 * En modo en proceso, los compañeros de equipo pueden ya estar ejecutándose pero no ser visibles. Presione Shift+Down para ciclar a través de compañeros de equipo activos.
 * Verifique que la tarea que le dio a Claude fue lo suficientemente compleja para justificar un equipo. Claude decide si generar compañeros de equipo según la tarea.
 * Si solicitó explícitamente paneles divididos, asegúrese de que tmux esté instalado y disponible en su PATH:
-  ```bash  theme={null}
+  ```bash theme={null}
   which tmux
   ```
 * Para iTerm2, verifique que la CLI `it2` esté instalada y la API de Python esté habilitada en las preferencias de iTerm2.
@@ -392,7 +392,7 @@ El líder puede decidir que el equipo está terminado antes de que todas las tar
 
 Si una sesión tmux persiste después de que el equipo termina, puede no haber sido completamente limpiada. Enumere sesiones y mate la creada por el equipo:
 
-```bash  theme={null}
+```bash theme={null}
 tmux ls
 tmux kill-session -t <session-name>
 ```

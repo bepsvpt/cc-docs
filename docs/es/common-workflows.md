@@ -16,33 +16,33 @@ Supongamos que acaba de unirse a un nuevo proyecto y necesita comprender su estr
 
 <Steps>
   <Step title="Navegue al directorio raíz del proyecto">
-    ```bash  theme={null}
+    ```bash theme={null}
     cd /path/to/project 
     ```
   </Step>
 
   <Step title="Inicie Claude Code">
-    ```bash  theme={null}
+    ```bash theme={null}
     claude 
     ```
   </Step>
 
   <Step title="Solicite una descripción general de alto nivel">
-    ```text  theme={null}
+    ```text theme={null}
     dame una descripción general de esta base de código
     ```
   </Step>
 
   <Step title="Profundice en componentes específicos">
-    ```text  theme={null}
+    ```text theme={null}
     explica los patrones de arquitectura principales utilizados aquí
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     ¿cuáles son los modelos de datos clave?
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     ¿cómo se maneja la autenticación?
     ```
   </Step>
@@ -62,19 +62,19 @@ Supongamos que necesita localizar código relacionado con una característica o 
 
 <Steps>
   <Step title="Pida a Claude que encuentre archivos relevantes">
-    ```text  theme={null}
+    ```text theme={null}
     encuentra los archivos que manejan la autenticación de usuarios
     ```
   </Step>
 
   <Step title="Obtenga contexto sobre cómo interactúan los componentes">
-    ```text  theme={null}
+    ```text theme={null}
     ¿cómo funcionan juntos estos archivos de autenticación?
     ```
   </Step>
 
   <Step title="Comprenda el flujo de ejecución">
-    ```text  theme={null}
+    ```text theme={null}
     rastrear el proceso de inicio de sesión de front-end a base de datos
     ```
   </Step>
@@ -96,19 +96,19 @@ Supongamos que ha encontrado un mensaje de error y necesita encontrar y corregir
 
 <Steps>
   <Step title="Comparta el error con Claude">
-    ```text  theme={null}
+    ```text theme={null}
     estoy viendo un error cuando ejecuto npm test
     ```
   </Step>
 
   <Step title="Solicite recomendaciones de corrección">
-    ```text  theme={null}
+    ```text theme={null}
     sugiere algunas formas de corregir el @ts-ignore en user.ts
     ```
   </Step>
 
   <Step title="Aplique la corrección">
-    ```text  theme={null}
+    ```text theme={null}
     actualiza user.ts para agregar la verificación nula que sugeriste
     ```
   </Step>
@@ -130,25 +130,25 @@ Supongamos que necesita actualizar código antiguo para utilizar patrones y prá
 
 <Steps>
   <Step title="Identifique código heredado para refactorización">
-    ```text  theme={null}
+    ```text theme={null}
     encuentra el uso de API obsoleta en nuestra base de código
     ```
   </Step>
 
   <Step title="Obtenga recomendaciones de refactorización">
-    ```text  theme={null}
+    ```text theme={null}
     sugiere cómo refactorizar utils.js para usar características modernas de JavaScript
     ```
   </Step>
 
   <Step title="Aplique los cambios de manera segura">
-    ```text  theme={null}
+    ```text theme={null}
     refactoriza utils.js para usar características de ES2024 manteniendo el mismo comportamiento
     ```
   </Step>
 
   <Step title="Verifique la refactorización">
-    ```text  theme={null}
+    ```text theme={null}
     ejecuta pruebas para el código refactorizado
     ```
   </Step>
@@ -170,7 +170,7 @@ Supongamos que desea utilizar subagentes de IA especializados para manejar tarea
 
 <Steps>
   <Step title="Ver subagentes disponibles">
-    ```text  theme={null}
+    ```text theme={null}
     /agents
     ```
 
@@ -180,27 +180,27 @@ Supongamos que desea utilizar subagentes de IA especializados para manejar tarea
   <Step title="Usar subagentes automáticamente">
     Claude Code delega automáticamente tareas apropiadas a subagentes especializados:
 
-    ```text  theme={null}
+    ```text theme={null}
     revisa mis cambios de código recientes para problemas de seguridad
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     ejecuta todas las pruebas y corrige cualquier fallo
     ```
   </Step>
 
   <Step title="Solicitar explícitamente subagentes específicos">
-    ```text  theme={null}
+    ```text theme={null}
     usa el subagente code-reviewer para verificar el módulo de autenticación
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     haz que el subagente debugger investigue por qué los usuarios no pueden iniciar sesión
     ```
   </Step>
 
   <Step title="Crear subagentes personalizados para su flujo de trabajo">
-    ```text  theme={null}
+    ```text theme={null}
     /agents
     ```
 
@@ -246,7 +246,7 @@ Si está en Normal Mode, **Shift+Tab** primero cambia a Auto-Accept Mode, indica
 
 Para iniciar una nueva sesión en Plan Mode, use la bandera `--permission-mode plan`:
 
-```bash  theme={null}
+```bash theme={null}
 claude --permission-mode plan
 ```
 
@@ -254,27 +254,27 @@ claude --permission-mode plan
 
 También puede ejecutar una consulta en Plan Mode directamente con `-p` (es decir, en ["modo sin interfaz"](/es/headless)):
 
-```bash  theme={null}
+```bash theme={null}
 claude --permission-mode plan -p "Analiza el sistema de autenticación y sugiere mejoras"
 ```
 
 ### Ejemplo: Planificar una refactorización compleja
 
-```bash  theme={null}
+```bash theme={null}
 claude --permission-mode plan
 ```
 
-```text  theme={null}
+```text theme={null}
 Necesito refactorizar nuestro sistema de autenticación para usar OAuth2. Crea un plan de migración detallado.
 ```
 
 Claude analiza la implementación actual y crea un plan integral. Refine con seguimientos:
 
-```text  theme={null}
+```text theme={null}
 ¿Qué hay sobre la compatibilidad hacia atrás?
 ```
 
-```text  theme={null}
+```text theme={null}
 ¿Cómo deberíamos manejar la migración de la base de datos?
 ```
 
@@ -284,7 +284,7 @@ Cuando acepta un plan, Claude automáticamente nombra la sesión a partir del co
 
 ### Configurar Plan Mode como predeterminado
 
-```json  theme={null}
+```json theme={null}
 // .claude/settings.json
 {
   "permissions": {
@@ -303,25 +303,25 @@ Supongamos que necesita agregar pruebas para código no cubierto.
 
 <Steps>
   <Step title="Identifique código no probado">
-    ```text  theme={null}
+    ```text theme={null}
     encuentra funciones en NotificationsService.swift que no están cubiertas por pruebas
     ```
   </Step>
 
   <Step title="Genere andamiaje de prueba">
-    ```text  theme={null}
+    ```text theme={null}
     agrega pruebas para el servicio de notificaciones
     ```
   </Step>
 
   <Step title="Agregue casos de prueba significativos">
-    ```text  theme={null}
+    ```text theme={null}
     agrega casos de prueba para condiciones de borde en el servicio de notificaciones
     ```
   </Step>
 
   <Step title="Ejecute y verifique las pruebas">
-    ```text  theme={null}
+    ```text theme={null}
     ejecuta las nuevas pruebas y corrige cualquier fallo
     ```
   </Step>
@@ -339,19 +339,19 @@ Puede crear solicitudes de extracción pidiendo a Claude directamente ("crear un
 
 <Steps>
   <Step title="Resuma sus cambios">
-    ```text  theme={null}
+    ```text theme={null}
     resume los cambios que he hecho en el módulo de autenticación
     ```
   </Step>
 
   <Step title="Genere una solicitud de extracción">
-    ```text  theme={null}
+    ```text theme={null}
     crear una pr
     ```
   </Step>
 
   <Step title="Revise y refine">
-    ```text  theme={null}
+    ```text theme={null}
     mejora la descripción de la PR con más contexto sobre las mejoras de seguridad
     ```
   </Step>
@@ -369,25 +369,25 @@ Supongamos que necesita agregar o actualizar documentación para su código.
 
 <Steps>
   <Step title="Identifique código sin documentar">
-    ```text  theme={null}
+    ```text theme={null}
     encuentra funciones sin comentarios JSDoc adecuados en el módulo de autenticación
     ```
   </Step>
 
   <Step title="Genere documentación">
-    ```text  theme={null}
+    ```text theme={null}
     agrega comentarios JSDoc a las funciones sin documentar en auth.js
     ```
   </Step>
 
   <Step title="Revise y mejore">
-    ```text  theme={null}
+    ```text theme={null}
     mejora la documentación generada con más contexto y ejemplos
     ```
   </Step>
 
   <Step title="Verifique la documentación">
-    ```text  theme={null}
+    ```text theme={null}
     verifica si la documentación sigue nuestros estándares de proyecto
     ```
   </Step>
@@ -417,35 +417,35 @@ Supongamos que necesita trabajar con imágenes en su base de código y desea la 
   </Step>
 
   <Step title="Pida a Claude que analice la imagen">
-    ```text  theme={null}
+    ```text theme={null}
     ¿Qué muestra esta imagen?
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     Describe los elementos de la interfaz de usuario en esta captura de pantalla
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     ¿Hay algún elemento problemático en este diagrama?
     ```
   </Step>
 
   <Step title="Usar imágenes para contexto">
-    ```text  theme={null}
+    ```text theme={null}
     Aquí hay una captura de pantalla del error. ¿Qué lo está causando?
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     Este es nuestro esquema de base de datos actual. ¿Cómo deberíamos modificarlo para la nueva característica?
     ```
   </Step>
 
   <Step title="Obtenga sugerencias de código del contenido visual">
-    ```text  theme={null}
+    ```text theme={null}
     Generar CSS para coincidir con este mockup de diseño
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     ¿Qué estructura HTML recrearía este componente?
     ```
   </Step>
@@ -469,7 +469,7 @@ Use @ para incluir rápidamente archivos o directorios sin esperar a que Claude 
 
 <Steps>
   <Step title="Haga referencia a un archivo único">
-    ```text  theme={null}
+    ```text theme={null}
     Explica la lógica en @src/utils/auth.js
     ```
 
@@ -477,7 +477,7 @@ Use @ para incluir rápidamente archivos o directorios sin esperar a que Claude 
   </Step>
 
   <Step title="Haga referencia a un directorio">
-    ```text  theme={null}
+    ```text theme={null}
     ¿Cuál es la estructura de @src/components?
     ```
 
@@ -485,7 +485,7 @@ Use @ para incluir rápidamente archivos o directorios sin esperar a que Claude 
   </Step>
 
   <Step title="Haga referencia a recursos MCP">
-    ```text  theme={null}
+    ```text theme={null}
     Muéstrame los datos de @github:repos/owner/repo/issues
     ```
 
@@ -566,13 +566,13 @@ Dé a las sesiones nombres descriptivos para encontrarlas más tarde. Esta es un
   <Step title="Nombre la sesión">
     Nombre una sesión al inicio con `-n`:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude -n auth-refactor
     ```
 
     O use `/rename` durante una sesión, que también muestra el nombre en la barra de indicación:
 
-    ```text  theme={null}
+    ```text theme={null}
     /rename auth-refactor
     ```
 
@@ -582,13 +582,13 @@ Dé a las sesiones nombres descriptivos para encontrarlas más tarde. Esta es un
   <Step title="Reanude por nombre más tarde">
     Desde la línea de comandos:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --resume auth-refactor
     ```
 
     O desde dentro de una sesión activa:
 
-    ```text  theme={null}
+    ```text theme={null}
     /resume auth-refactor
     ```
   </Step>
@@ -650,7 +650,7 @@ Cuando trabaja en múltiples tareas a la vez, necesita que cada sesión de Claud
 
 Use la bandera `--worktree` (`-w`) para crear un worktree aislado e iniciar Claude en él. El valor que pasa se convierte en el nombre del directorio worktree y el nombre de la rama:
 
-```bash  theme={null}
+```bash theme={null}
 # Inicie Claude en un worktree llamado "feature-auth"
 # Crea .claude/worktrees/feature-auth/ con una nueva rama
 claude --worktree feature-auth
@@ -661,7 +661,7 @@ claude --worktree bugfix-123
 
 Si omite el nombre, Claude genera uno automáticamente:
 
-```bash  theme={null}
+```bash theme={null}
 # Auto-genera un nombre como "bright-running-fox"
 claude --worktree
 ```
@@ -670,7 +670,7 @@ Los worktrees se crean en `<repo>/.claude/worktrees/<name>` y se ramifican desde
 
 La rama base no es configurable a través de una bandera o configuración de Claude Code. `origin/HEAD` es una referencia almacenada en su directorio `.git` local que Git estableció una vez cuando clonó. Si la rama predeterminada del repositorio cambia más tarde en GitHub o GitLab, su `origin/HEAD` local sigue apuntando al anterior, y los worktrees se ramificarán desde allí. Para resincronizar su referencia local con lo que el remoto actualmente considera su predeterminado:
 
-```bash  theme={null}
+```bash theme={null}
 git remote set-head origin -a
 ```
 
@@ -715,7 +715,7 @@ Esto se aplica a worktrees creados con `--worktree`, worktrees de subagente y se
 
 Para más control sobre la ubicación del worktree y la configuración de rama, cree worktrees con Git directamente. Esto es útil cuando necesita verificar una rama existente específica o colocar el worktree fuera del repositorio.
 
-```bash  theme={null}
+```bash theme={null}
 # Crear un worktree con una nueva rama
 git worktree add ../project-feature-a -b feature-a
 
@@ -754,7 +754,7 @@ Cuando inicia una tarea de larga duración y cambia a otra ventana, puede config
 
     <Tabs>
       <Tab title="macOS">
-        ```json  theme={null}
+        ```json theme={null}
         {
           "hooks": {
             "Notification": [
@@ -774,7 +774,7 @@ Cuando inicia una tarea de larga duración y cambia a otra ventana, puede config
       </Tab>
 
       <Tab title="Linux">
-        ```json  theme={null}
+        ```json theme={null}
         {
           "hooks": {
             "Notification": [
@@ -794,7 +794,7 @@ Cuando inicia una tarea de larga duración y cambia a otra ventana, puede config
       </Tab>
 
       <Tab title="Windows">
-        ```json  theme={null}
+        ```json theme={null}
         {
           "hooks": {
             "Notification": [
@@ -845,7 +845,7 @@ Supongamos que desea usar Claude Code como un linter o revisor de código.
 
 **Agregue Claude a su script de compilación:**
 
-```json  theme={null}
+```json theme={null}
 // package.json
 {
     ...
@@ -870,7 +870,7 @@ Supongamos que desea canalizar datos a Claude y obtener datos en un formato estr
 
 **Canalizar datos a través de Claude:**
 
-```bash  theme={null}
+```bash theme={null}
 cat build-error.txt | claude -p 'concisely explain the root cause of this build error' > output.txt
 ```
 
@@ -888,7 +888,7 @@ Supongamos que necesita la salida de Claude en un formato específico, especialm
 
 <Steps>
   <Step title="Usar formato de texto (predeterminado)">
-    ```bash  theme={null}
+    ```bash theme={null}
     cat data.txt | claude -p 'summarize this data' --output-format text > summary.txt
     ```
 
@@ -896,7 +896,7 @@ Supongamos que necesita la salida de Claude en un formato específico, especialm
   </Step>
 
   <Step title="Usar formato JSON">
-    ```bash  theme={null}
+    ```bash theme={null}
     cat code.py | claude -p 'analyze this code for bugs' --output-format json > analysis.json
     ```
 
@@ -904,7 +904,7 @@ Supongamos que necesita la salida de Claude en un formato específico, especialm
   </Step>
 
   <Step title="Usar formato JSON de transmisión">
-    ```bash  theme={null}
+    ```bash theme={null}
     cat log.txt | claude -p 'parse this log file for errors' --output-format stream-json
     ```
 
@@ -947,27 +947,27 @@ Claude tiene acceso integrado a su documentación y puede responder preguntas so
 
 ### Preguntas de ejemplo
 
-```text  theme={null}
+```text theme={null}
 ¿puede Claude Code crear solicitudes de extracción?
 ```
 
-```text  theme={null}
+```text theme={null}
 ¿cómo maneja Claude Code los permisos?
 ```
 
-```text  theme={null}
+```text theme={null}
 ¿qué skills están disponibles?
 ```
 
-```text  theme={null}
+```text theme={null}
 ¿cómo uso MCP con Claude Code?
 ```
 
-```text  theme={null}
+```text theme={null}
 ¿cómo configuro Claude Code para Amazon Bedrock?
 ```
 
-```text  theme={null}
+```text theme={null}
 ¿cuáles son las limitaciones de Claude Code?
 ```
 

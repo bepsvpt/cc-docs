@@ -115,7 +115,7 @@
 
 預設情況下，快速模式在工作階段之間保持：如果使用者啟用快速模式，它在未來工作階段中保持開啟。[Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise) 或 [Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise) 方案上的管理員可以透過在[受管設定](/zh-TW/settings#settings-files)或[伺服器受管設定](/zh-TW/server-managed-settings)中將 `fastModePerSessionOptIn` 設定為 `true` 來防止這種情況。這會導致每個工作階段以快速模式關閉開始，要求使用者使用 `/fast` 明確啟用它。
 
-```json  theme={null}
+```json theme={null}
 {
   "fastModePerSessionOptIn": true
 }

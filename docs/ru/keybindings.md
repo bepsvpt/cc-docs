@@ -26,7 +26,7 @@ Claude Code поддерживает настраиваемые сочетани
 
 Этот пример привязывает `Ctrl+E` к открытию внешнего редактора в контексте чата и отменяет привязку `Ctrl+U`:
 
-```json  theme={null}
+```json theme={null}
 {
   "$schema": "https://www.schemastore.org/claude-code-keybindings.json",
   "$docs": "https://code.claude.com/docs/ru/keybindings",
@@ -312,7 +312,7 @@ Claude Code поддерживает настраиваемые сочетани
 
 Например:
 
-```text  theme={null}
+```text theme={null}
 ctrl+k          Одна клавиша с модификатором
 shift+tab       Shift + Tab
 meta+p          Command/Meta + P
@@ -329,7 +329,7 @@ ctrl+shift+c    Несколько модификаторов
 
 Аккорды — это последовательности нажатий клавиш, разделённые пробелами:
 
-```text  theme={null}
+```text theme={null}
 ctrl+k ctrl+s   Нажмите Ctrl+K, отпустите, затем Ctrl+S
 ```
 
@@ -346,7 +346,7 @@ ctrl+k ctrl+s   Нажмите Ctrl+K, отпустите, затем Ctrl+S
 
 Установите действие на `null` для отмены привязки сочетания по умолчанию:
 
-```json  theme={null}
+```json theme={null}
 {
   "bindings": [
     {
@@ -361,7 +361,7 @@ ctrl+k ctrl+s   Нажмите Ctrl+K, отпустите, затем Ctrl+S
 
 Это также работает для привязок аккордов. Отмена привязки каждого аккорда, который использует префикс, освобождает этот префикс для использования в качестве привязки с одной клавишей:
 
-```json  theme={null}
+```json theme={null}
 {
   "bindings": [
     {

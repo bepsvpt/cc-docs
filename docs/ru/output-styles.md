@@ -34,7 +34,7 @@ Output styles напрямую изменяют системный prompt Claude
 
 Чтобы установить стиль без меню, отредактируйте поле `outputStyle` непосредственно в файле настроек:
 
-```json  theme={null}
+```json theme={null}
 {
   "outputStyle": "Explanatory"
 }
@@ -46,7 +46,7 @@ Output styles напрямую изменяют системный prompt Claude
 
 Пользовательские output styles — это файлы Markdown с frontmatter и текстом, который будет добавлен в системный prompt:
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 name: My Custom Style
 description:

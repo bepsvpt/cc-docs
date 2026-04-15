@@ -44,7 +44,7 @@ Una vez instalada, puede comenzar a usar Claude Code a través de la interfaz de
 
     La forma más rápida de abrir Claude es hacer clic en el icono Spark en la **Barra de herramientas del editor** (esquina superior derecha del editor). El icono solo aparece cuando tiene un archivo abierto.
 
-        <img src="https://mintcdn.com/claude-code/mfM-EyoZGnQv8JTc/images/vs-code-editor-icon.png?fit=max&auto=format&n=mfM-EyoZGnQv8JTc&q=85&s=eb4540325d94664c51776dbbfec4cf02" alt="Editor de VS Code mostrando el icono Spark en la Barra de herramientas del editor" width="2796" height="734" data-path="images/vs-code-editor-icon.png" />
+    <img src="https://mintcdn.com/claude-code/mfM-EyoZGnQv8JTc/images/vs-code-editor-icon.png?fit=max&auto=format&n=mfM-EyoZGnQv8JTc&q=85&s=eb4540325d94664c51776dbbfec4cf02" alt="Editor de VS Code mostrando el icono Spark en la Barra de herramientas del editor" width="2796" height="734" data-path="images/vs-code-editor-icon.png" />
 
     Otras formas de abrir Claude Code:
 
@@ -64,13 +64,13 @@ Una vez instalada, puede comenzar a usar Claude Code a través de la interfaz de
 
     Aquí hay un ejemplo de cómo hacer una pregunta sobre una línea particular en un archivo:
 
-        <img src="https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-send-prompt.png?fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=ede3ed8d8d5f940e01c5de636d009cfd" alt="Editor de VS Code con las líneas 2-3 seleccionadas en un archivo Python, y el panel de Claude Code mostrando una pregunta sobre esas líneas con una referencia de mención @" width="3288" height="1876" data-path="images/vs-code-send-prompt.png" />
+    <img src="https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-send-prompt.png?fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=ede3ed8d8d5f940e01c5de636d009cfd" alt="Editor de VS Code con las líneas 2-3 seleccionadas en un archivo Python, y el panel de Claude Code mostrando una pregunta sobre esas líneas con una referencia de mención @" width="3288" height="1876" data-path="images/vs-code-send-prompt.png" />
   </Step>
 
   <Step title="Revisar cambios">
     Cuando Claude quiere editar un archivo, muestra una comparación lado a lado del original y los cambios propuestos, luego solicita permiso. Puede aceptar, rechazar o decirle a Claude qué hacer en su lugar.
 
-        <img src="https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-edits.png?fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=e005f9b41c541c5c7c59c082f7c4841c" alt="VS Code mostrando un diff de los cambios propuestos por Claude con un mensaje de permiso preguntando si realizar la edición" width="3292" height="1876" data-path="images/vs-code-edits.png" />
+    <img src="https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-edits.png?fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=e005f9b41c541c5c7c59c082f7c4841c" alt="VS Code mostrando un diff de los cambios propuestos por Claude con un mensaje de permiso preguntando si realizar la edición" width="3292" height="1876" data-path="images/vs-code-edits.png" />
   </Step>
 </Steps>
 
@@ -94,7 +94,7 @@ El cuadro de mensaje admite varias características:
 
 Use menciones @ para dar a Claude contexto sobre archivos o carpetas específicas. Cuando escribe `@` seguido de un nombre de archivo o carpeta, Claude lee ese contenido y puede responder preguntas sobre él o realizar cambios en él. Claude Code admite coincidencia difusa, por lo que puede escribir nombres parciales para encontrar lo que necesita:
 
-```text  theme={null}
+```text theme={null}
 > Explain the logic in @auth (fuzzy matches auth.js, AuthService.ts, etc.)
 > What's in @src/components/ (include a trailing slash for folders)
 ```
@@ -202,7 +202,7 @@ Conecte Claude a su navegador Chrome para probar aplicaciones web, depurar con r
 
 Escriba `@browser` en el cuadro de mensaje seguido de lo que desea que Claude haga:
 
-```text  theme={null}
+```text theme={null}
 @browser go to localhost:3000 and check the console for errors
 ```
 
@@ -240,7 +240,7 @@ La extensión registra un controlador URI en `vscode://anthropic.claude-code/ope
 
 Invoque el controlador con el abridor de URL de su sistema operativo. En macOS:
 
-```bash  theme={null}
+```bash theme={null}
 open "vscode://anthropic.claude-code/open"
 ```
 
@@ -255,7 +255,7 @@ El controlador acepta dos parámetros de consulta opcionales:
 
 Por ejemplo, para abrir una pestaña rellenada previamente con "review my changes":
 
-```text  theme={null}
+```text theme={null}
 vscode://anthropic.claude-code/open?prompt=review%20my%20changes
 ```
 
@@ -334,7 +334,7 @@ Los servidores MCP (Model Context Protocol) dan a Claude acceso a herramientas e
 
 Para agregar un servidor MCP, abra la terminal integrada (`` Ctrl+` `` o `` Cmd+` ``) y ejecute:
 
-```bash  theme={null}
+```bash theme={null}
 claude mcp add --transport http github https://api.githubcopilot.com/mcp/
 ```
 
@@ -350,7 +350,7 @@ Claude Code se integra con git para ayudar con flujos de trabajo de control de v
 
 Claude puede preparar cambios, escribir mensajes de confirmación y crear solicitudes de extracción basadas en su trabajo:
 
-```text  theme={null}
+```text theme={null}
 > commit my changes with a descriptive message
 > create a pr for this feature
 > summarize the changes I've made to the auth module
@@ -362,7 +362,7 @@ Al crear solicitudes de extracción, Claude genera descripciones basadas en los 
 
 Use la bandera `--worktree` (`-w`) para iniciar Claude en un worktree aislado con sus propios archivos y rama:
 
-```bash  theme={null}
+```bash theme={null}
 claude --worktree feature-auth
 ```
 
@@ -461,7 +461,7 @@ Para desinstalar la extensión Claude Code:
 
 Para también eliminar datos de extensión y restablecer toda la configuración:
 
-```bash  theme={null}
+```bash theme={null}
 rm -rf ~/.vscode/globalStorage/anthropic.claude-code
 ```
 

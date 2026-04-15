@@ -235,7 +235,7 @@ Para deshabilitar toda la funcionalidad de tareas de fondo, establezca la variab
 
 Ejecute comandos bash directamente sin pasar por Claude prefijando su entrada con `!`:
 
-```bash  theme={null}
+```bash theme={null}
 ! npm test
 ! git status
 ! ls -la
@@ -268,7 +268,7 @@ Las sugerencias se omiten automáticamente después del primer turno de una conv
 
 Para deshabilitar completamente las sugerencias de indicación, establezca la variable de entorno o alterne la configuración en `/config`:
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=false
 ```
 

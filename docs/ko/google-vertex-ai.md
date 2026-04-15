@@ -34,7 +34,7 @@ Claude Code는 Vertex AI [전역](https://cloud.google.com/blog/products/ai-mach
 
 GCP 프로젝트에서 Vertex AI API를 활성화합니다:
 
-```bash  theme={null}
+```bash theme={null}
 # 프로젝트 ID 설정
 gcloud config set project YOUR-PROJECT-ID
 
@@ -65,7 +65,7 @@ Claude Code는 표준 Google Cloud 인증을 사용합니다.
 
 다음 환경 변수를 설정합니다:
 
-```bash  theme={null}
+```bash theme={null}
 # Vertex AI 통합 활성화
 export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=global
@@ -94,7 +94,7 @@ export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 
 이러한 환경 변수를 특정 Vertex AI 모델 ID로 설정합니다:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6'
 export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
@@ -111,7 +111,7 @@ Claude Code는 고정 변수가 설정되지 않았을 때 이러한 기본 모�
 
 모델을 추가로 사용자 정의하려면:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_MODEL='claude-opus-4-6'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
 ```

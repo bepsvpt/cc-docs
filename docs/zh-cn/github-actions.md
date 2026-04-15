@@ -103,7 +103,7 @@ Claude Code 提供了一个强大的 GitHub Action，改变了您处理代码的
 
 **Beta 版本：**
 
-```yaml  theme={null}
+```yaml theme={null}
 - uses: anthropics/claude-code-action@beta
   with:
     mode: "tag"
@@ -116,7 +116,7 @@ Claude Code 提供了一个强大的 GitHub Action，改变了您处理代码的
 
 **GA 版本 (v1.0)：**
 
-```yaml  theme={null}
+```yaml theme={null}
 - uses: anthropics/claude-code-action@v1
   with:
     prompt: "Review this PR for security issues"
@@ -137,7 +137,7 @@ Claude Code GitHub Actions 可以帮助您完成各种任务。[examples 目录]
 
 ### 基本工作流
 
-```yaml  theme={null}
+```yaml theme={null}
 name: Claude Code
 on:
   issue_comment:
@@ -156,7 +156,7 @@ jobs:
 
 ### 使用 skills
 
-```yaml  theme={null}
+```yaml theme={null}
 name: Code Review
 on:
   pull_request:
@@ -174,7 +174,7 @@ jobs:
 
 ### 使用提示的自定义自动化
 
-```yaml  theme={null}
+```yaml theme={null}
 name: Daily Report
 on:
   schedule:
@@ -194,7 +194,7 @@ jobs:
 
 在 issue 或 PR 评论中：
 
-```text  theme={null}
+```text theme={null}
 @claude implement this feature based on the issue description
 @claude how should I implement user authentication for this endpoint?
 @claude fix the TypeError in the user dashboard component
@@ -253,7 +253,7 @@ Claude 将自动分析上下文并做出适当的响应。
 
 Claude Code Action v1 使用统一参数简化了配置：
 
-```yaml  theme={null}
+```yaml theme={null}
 - uses: anthropics/claude-code-action@v1
   with:
     anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -468,7 +468,7 @@ Claude Code Action v1 使用统一参数简化了配置：
         | `APP_ID`             | 您的 GitHub 应用 ID（来自应用设置） |
         | `APP_PRIVATE_KEY`    | 您为 GitHub 应用生成的私钥       |
 
-        ```yaml  theme={null}
+        ```yaml theme={null}
         name: Claude PR Action
 
         permissions:
@@ -539,7 +539,7 @@ Claude Code Action v1 使用统一参数简化了配置：
         | `APP_ID`                         | 您的 GitHub 应用 ID（来自应用设置）    |
         | `APP_PRIVATE_KEY`                | 您为 GitHub 应用生成的私钥          |
 
-        ```yaml  theme={null}
+        ```yaml theme={null}
         name: Claude PR Action
 
         permissions:
@@ -638,7 +638,7 @@ Claude Code Action v1 使用简化的配置：
 
 `claude_args` 参数接受任何 Claude Code CLI 参数：
 
-```yaml  theme={null}
+```yaml theme={null}
 claude_args: "--max-turns 5 --model claude-sonnet-4-6 --mcp-config /path/to/config.json"
 ```
 

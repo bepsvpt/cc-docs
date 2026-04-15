@@ -301,7 +301,7 @@ Prefiks `//path` yang lebih lama untuk jalur absolut masih berfungsi. Jika Anda 
 
 **Contoh konfigurasi:**
 
-```json  theme={null}
+```json theme={null}
 {
   "sandbox": {
     "enabled": true,
@@ -341,7 +341,7 @@ Claude Code menambahkan atribusi ke komit git dan pull request. Ini dikonfiguras
 
 **Atribusi komit default:**
 
-```text  theme={null}
+```text theme={null}
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
    Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
@@ -349,13 +349,13 @@ Claude Code menambahkan atribusi ke komit git dan pull request. Ini dikonfiguras
 
 **Atribusi pull request default:**
 
-```text  theme={null}
+```text theme={null}
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 ```
 
 **Contoh:**
 
-```json  theme={null}
+```json theme={null}
 {
   "attribution": {
     "commit": "Generated with AI\n\nCo-Authored-By: AI <ai@example.com>",
@@ -372,7 +372,7 @@ Claude Code menambahkan atribusi ke komit git dan pull request. Ini dikonfiguras
 
 Konfigurasikan perintah khusus untuk pelengkapan otomatis jalur file `@`. Saran file bawaan menggunakan traversal sistem file cepat, tetapi monorepo besar mungkin mendapat manfaat dari pengindeksan spesifik proyek seperti indeks file yang telah dibangun sebelumnya atau tooling khusus.
 
-```json  theme={null}
+```json theme={null}
 {
   "fileSuggestion": {
     "type": "command",
@@ -383,13 +383,13 @@ Konfigurasikan perintah khusus untuk pelengkapan otomatis jalur file `@`. Saran 
 
 Perintah berjalan dengan variabel lingkungan yang sama seperti [hooks](/id/hooks), termasuk `CLAUDE_PROJECT_DIR`. Ini menerima JSON melalui stdin dengan bidang `query`:
 
-```json  theme={null}
+```json theme={null}
 {"query": "src/comp"}
 ```
 
 Keluarkan jalur file yang dipisahkan baris baru ke stdout (saat ini dibatasi hingga 15):
 
-```text  theme={null}
+```text theme={null}
 src/components/Button.tsx
 src/components/Modal.tsx
 src/components/Form.tsx
@@ -397,7 +397,7 @@ src/components/Form.tsx
 
 **Contoh:**
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 query=$(cat | jq -r '.query')
 your-repo-file-index --query "$query" | head -20
@@ -416,7 +416,7 @@ Pengaturan ini mengontrol hook mana yang diizinkan untuk dijalankan dan apa yang
 
 Batasi URL mana yang dapat ditargetkan oleh HTTP hooks. Mendukung `*` sebagai wildcard untuk pencocokan. Saat array didefinisikan, HTTP hooks yang menargetkan URL yang tidak cocok diblokir secara diam-diam.
 
-```json  theme={null}
+```json theme={null}
 {
   "allowedHttpHookUrls": ["https://hooks.example.com/*", "http://localhost:*"]
 }
@@ -426,7 +426,7 @@ Batasi URL mana yang dapat ditargetkan oleh HTTP hooks. Mendukung `*` sebagai wi
 
 Batasi nama variabel lingkungan mana yang dapat diinterpolasi oleh HTTP hooks ke dalam nilai header. `allowedEnvVars` efektif setiap hook adalah persimpangan dari daftar sendiri dan pengaturan ini.
 
-```json  theme={null}
+```json theme={null}
 {
   "httpHookAllowedEnvVars": ["MY_TOKEN", "HOOK_SECRET"]
 }
@@ -482,7 +482,7 @@ Prompt sistem internal Claude Code tidak dipublikasikan. Untuk menambahkan instr
 
 Untuk mencegah Claude Code mengakses file yang berisi informasi sensitif seperti kunci API, rahasia, dan file lingkungan, gunakan pengaturan `permissions.deny` dalam file `.claude/settings.json` Anda:
 
-```json  theme={null}
+```json theme={null}
 {
   "permissions": {
     "deny": [
@@ -515,7 +515,7 @@ Claude Code mendukung sistem plugin yang memungkinkan Anda memperluas fungsional
 
 Pengaturan terkait plugin dalam `settings.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "enabledPlugins": {
     "formatter@acme-tools": true,
@@ -544,7 +544,7 @@ Mengontrol plugin mana yang diaktifkan. Format: `"plugin-name@marketplace-name":
 
 **Contoh**:
 
-```json  theme={null}
+```json theme={null}
 {
   "enabledPlugins": {
     "code-formatter@team-tools": true,
@@ -567,7 +567,7 @@ Mendefinisikan marketplace tambahan yang harus tersedia untuk repositori. Biasan
 
 **Contoh**:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "acme-tools": {
@@ -596,7 +596,7 @@ Mendefinisikan marketplace tambahan yang harus tersedia untuk repositori. Biasan
 
 Gunakan `source: 'settings'` untuk mendeklarasikan serangkaian plugin kecil inline tanpa menyiapkan repositori marketplace yang dihosting. Plugin yang terdaftar di sini harus mereferensikan sumber eksternal seperti GitHub atau npm. Anda masih perlu mengaktifkan setiap plugin secara terpisah dalam `enabledPlugins`.
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "team-tools": {
@@ -647,7 +647,7 @@ Daftar putih mendukung beberapa jenis sumber marketplace. Sebagian besar sumber 
 
 1. **Repositori GitHub**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "github", "repo": "acme-corp/approved-plugins" }
 { "source": "github", "repo": "acme-corp/security-tools", "ref": "v2.0" }
 { "source": "github", "repo": "acme-corp/plugins", "ref": "main", "path": "marketplace" }
@@ -657,7 +657,7 @@ Bidang: `repo` (diperlukan), `ref` (opsional: cabang/tag/SHA), `path` (opsional:
 
 2. **Repositori Git**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "git", "url": "https://gitlab.example.com/tools/plugins.git" }
 { "source": "git", "url": "https://bitbucket.org/acme-corp/plugins.git", "ref": "production" }
 { "source": "git", "url": "ssh://git@git.example.com/plugins.git", "ref": "v3.1", "path": "approved" }
@@ -667,7 +667,7 @@ Bidang: `url` (diperlukan), `ref` (opsional: cabang/tag/SHA), `path` (opsional: 
 
 3. **Marketplace berbasis URL**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "url", "url": "https://plugins.example.com/marketplace.json" }
 { "source": "url", "url": "https://cdn.example.com/marketplace.json", "headers": { "Authorization": "Bearer ${TOKEN}" } }
 ```
@@ -680,7 +680,7 @@ Bidang: `url` (diperlukan), `headers` (opsional: header HTTP untuk akses teraute
 
 4. **Paket NPM**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "npm", "package": "@acme-corp/claude-plugins" }
 { "source": "npm", "package": "@acme-corp/approved-marketplace" }
 ```
@@ -689,7 +689,7 @@ Bidang: `package` (diperlukan, mendukung paket berscopus)
 
 5. **Jalur file**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "file", "path": "/usr/local/share/claude/acme-marketplace.json" }
 { "source": "file", "path": "/opt/acme-corp/plugins/marketplace.json" }
 ```
@@ -698,7 +698,7 @@ Bidang: `path` (diperlukan: jalur absolut ke file marketplace.json)
 
 6. **Jalur direktori**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "directory", "path": "/usr/local/share/claude/acme-plugins" }
 { "source": "directory", "path": "/opt/acme-corp/approved-marketplaces" }
 ```
@@ -707,7 +707,7 @@ Bidang: `path` (diperlukan: jalur absolut ke direktori yang berisi `.claude-plug
 
 7. **Pencocokan pola host**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "hostPattern", "hostPattern": "^github\\.example\\.com$" }
 { "source": "hostPattern", "hostPattern": "^gitlab\\.internal\\.example\\.com$" }
 ```
@@ -727,7 +727,7 @@ Ekstraksi host berdasarkan jenis sumber:
 
 Contoh: izinkan marketplace spesifik saja:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -753,7 +753,7 @@ Contoh: izinkan marketplace spesifik saja:
 
 Contoh - Nonaktifkan semua penambahan marketplace:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": []
 }
@@ -761,7 +761,7 @@ Contoh - Nonaktifkan semua penambahan marketplace:
 
 Contoh: izinkan semua marketplace dari server git internal:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -782,7 +782,7 @@ Sumber marketplace harus cocok **dengan tepat** agar penambahan pengguna diizink
 
 Contoh sumber yang **TIDAK cocok**:
 
-```json  theme={null}
+```json theme={null}
 // Ini adalah sumber BERBEDA:
 { "source": "github", "repo": "acme-corp/plugins" }
 { "source": "github", "repo": "acme-corp/plugins", "ref": "main" }
@@ -808,7 +808,7 @@ Contoh sumber yang **TIDAK cocok**:
 
 `strictKnownMarketplaces` menggunakan objek sumber langsung:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     { "source": "github", "repo": "acme-corp/plugins" }
@@ -818,7 +818,7 @@ Contoh sumber yang **TIDAK cocok**:
 
 `extraKnownMarketplaces` memerlukan marketplace bernama:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "acme-tools": {
@@ -832,7 +832,7 @@ Contoh sumber yang **TIDAK cocok**:
 
 `strictKnownMarketplaces` adalah gerbang kebijakan: mengontrol apa yang dapat ditambahkan pengguna tetapi tidak mendaftarkan marketplace apa pun. Untuk membatasi dan pra-mendaftarkan marketplace untuk semua pengguna, atur keduanya dalam `managed-settings.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     { "source": "github", "repo": "acme-corp/plugins" }

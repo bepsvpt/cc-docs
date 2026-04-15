@@ -45,7 +45,7 @@ Si sus dispositivos están inscritos en una solución MDM o de administración d
 
     Este ejemplo aplica una lista de denegación de permisos, impide que los usuarios omitan permisos y restringe las reglas de permisos a las definidas en la configuración administrada:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "permissions": {
         "deny": [
@@ -64,7 +64,7 @@ Si sus dispositivos están inscritos en una solución MDM o de administración d
 
     Este ejemplo ejecuta un script de auditoría después de cada edición de archivo en toda la organización:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hooks": {
         "PostToolUse": [
@@ -81,7 +81,7 @@ Si sus dispositivos están inscritos en una solución MDM o de administración d
 
     Para configurar el clasificador del [modo automático](/es/permission-modes#eliminate-prompts-with-auto-mode) para que sepa qué repositorios, buckets y dominios confía su organización:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "autoMode": {
         "environment": [

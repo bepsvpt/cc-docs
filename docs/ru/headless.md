@@ -14,7 +14,7 @@
 
 Чтобы запустить Claude Code программно из CLI, передайте `-p` с вашим запросом и любыми [параметрами CLI](/ru/cli-reference):
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"
 ```
 
@@ -30,7 +30,7 @@ claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"
 
 Этот пример задаёт Claude вопрос о вашей кодовой базе и выводит ответ:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "What does the auth module do?"
 ```
 
@@ -48,7 +48,7 @@ claude -p "What does the auth module do?"
 
 Этот пример возвращает сводку проекта в виде JSON с метаданными сессии, с текстовым результатом в поле `result`:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Summarize this project" --output-format json
 ```
 
@@ -56,7 +56,7 @@ claude -p "Summarize this project" --output-format json
 
 Этот пример извлекает имена функций и возвращает их как массив строк:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Extract the main function names from auth.py" \
   --output-format json \
   --json-schema '{"type":"object","properties":{"functions":{"type":"array","items":{"type":"string"}}},"required":["functions"]}'
@@ -65,7 +65,7 @@ claude -p "Extract the main function names from auth.py" \
 <Tip>
   Используйте инструмент вроде [jq](https://jqlang.github.io/jq/) для анализа ответа и извлечения определённых полей:
 
-  ```bash  theme={null}
+  ```bash theme={null}
   # Extract the text result
   claude -p "Summarize this project" --output-format json | jq -r '.result'
 
@@ -81,13 +81,13 @@ claude -p "Extract the main function names from auth.py" \
 
 Используйте `--output-format stream-json` с `--verbose` и `--include-partial-messages` для получения токенов по мере их генерации. Каждая строка — это объект JSON, представляющий событие:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Explain recursion" --output-format stream-json --verbose --include-partial-messages
 ```
 
 Следующий пример использует [jq](https://jqlang.github.io/jq/) для фильтрации текстовых дельт и отображения только потокового текста. Флаг `-r` выводит необработанные строки (без кавычек), а `-j` объединяет без новых строк, чтобы токены передавались непрерывно:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Write a poem" --output-format stream-json --verbose --include-partial-messages | \
   jq -rj 'select(.type == "stream_event" and .event.delta.type? == "text_delta") | .event.delta.text'
 ```
@@ -98,7 +98,7 @@ claude -p "Write a poem" --output-format stream-json --verbose --include-partial
 
 Используйте `--allowedTools` для разрешения Claude использовать определённые инструменты без запроса. Этот пример запускает набор тестов и исправляет ошибки, позволяя Claude выполнять команды Bash и читать/редактировать файлы без запроса разрешения:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Run the test suite and fix any failures" \
   --allowedTools "Bash,Read,Edit"
 ```
@@ -107,7 +107,7 @@ claude -p "Run the test suite and fix any failures" \
 
 Этот пример проверяет поставленные в очередь изменения и создаёт коммит с соответствующим сообщением:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Look at my staged changes and create an appropriate commit" \
   --allowedTools "Bash(git diff *),Bash(git log *),Bash(git status *),Bash(git commit *)"
 ```
@@ -122,7 +122,7 @@ claude -p "Look at my staged changes and create an appropriate commit" \
 
 Используйте `--append-system-prompt` для добавления инструкций при сохранении поведения Claude Code по умолчанию. Этот пример передаёт diff PR в Claude и инструктирует его проверить на уязвимости безопасности:
 
-```bash  theme={null}
+```bash theme={null}
 gh pr diff "$1" | claude -p \
   --append-system-prompt "You are a security engineer. Review for vulnerabilities." \
   --output-format json
@@ -134,7 +134,7 @@ gh pr diff "$1" | claude -p \
 
 Используйте `--continue` для продолжения самого последнего разговора или `--resume` с ID сессии для продолжения определённого разговора. Этот пример запускает проверку, а затем отправляет дополнительные запросы:
 
-```bash  theme={null}
+```bash theme={null}
 # First request
 claude -p "Review this codebase for performance issues"
 
@@ -145,7 +145,7 @@ claude -p "Generate a summary of all issues found" --continue
 
 Если вы запускаете несколько разговоров, захватите ID сессии для возобновления определённого:
 
-```bash  theme={null}
+```bash theme={null}
 session_id=$(claude -p "Start a review" --output-format json | jq -r '.session_id')
 claude -p "Continue that review" --resume "$session_id"
 ```

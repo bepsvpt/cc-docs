@@ -45,7 +45,7 @@ Antes de usar Claude Code con Chrome, necesitas:
   <Step title="Lanzar Claude Code con Chrome">
     Inicia Claude Code con la bandera `--chrome`:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --chrome
     ```
 
@@ -55,7 +55,7 @@ Antes de usar Claude Code con Chrome, necesitas:
   <Step title="Pídele a Claude que use el navegador">
     Este ejemplo navega a una página, interactúa con ella e informa lo que encuentra, todo desde tu terminal o editor:
 
-    ```text  theme={null}
+    ```text theme={null}
     Go to code.claude.com/docs, click on the search box,
     type "hooks", and tell me what results appear
     ```
@@ -88,7 +88,7 @@ Estos ejemplos muestran formas comunes de combinar acciones del navegador con ta
 
 Al desarrollar una aplicación web, pídele a Claude que verifique que tus cambios funcionen correctamente:
 
-```text  theme={null}
+```text theme={null}
 I just updated the login form validation. Can you open localhost:3000,
 try submitting the form with invalid data, and check if the error
 messages appear correctly?
@@ -100,7 +100,7 @@ Claude navega a tu servidor local, interactúa con el formulario e informa lo qu
 
 Claude puede leer la salida de la consola para ayudar a diagnosticar problemas. Dile a Claude qué patrones buscar en lugar de pedirle toda la salida de la consola, ya que los registros pueden ser detallados:
 
-```text  theme={null}
+```text theme={null}
 Open the dashboard page and check the console for any errors when
 the page loads.
 ```
@@ -111,7 +111,7 @@ Claude lee los mensajes de la consola y puede filtrar patrones específicos o ti
 
 Acelera tareas repetitivas de entrada de datos:
 
-```text  theme={null}
+```text theme={null}
 I have a spreadsheet of customer contacts in contacts.csv. For each row,
 go to the CRM at crm.example.com, click "Add Contact", and fill in the
 name, email, and phone fields.
@@ -123,7 +123,7 @@ Claude lee tu archivo local, navega por la interfaz web e introduce los datos pa
 
 Usa Claude para escribir directamente en tus documentos sin configuración de API:
 
-```text  theme={null}
+```text theme={null}
 Draft a project update based on the recent commits and add it to my
 Google Doc at docs.google.com/document/d/abc123
 ```
@@ -134,7 +134,7 @@ Claude abre el documento, hace clic en el editor e introduce el contenido. Esto 
 
 Extrae información estructurada de sitios web:
 
-```text  theme={null}
+```text theme={null}
 Go to the product listings page and extract the name, price, and
 availability for each item. Save the results as a CSV file.
 ```
@@ -145,7 +145,7 @@ Claude navega a la página, lee el contenido y compila los datos en un formato e
 
 Coordina tareas en múltiples sitios web:
 
-```text  theme={null}
+```text theme={null}
 Check my calendar for meetings tomorrow, then for each meeting with
 an external attendee, look up their company website and add a note
 about what they do.
@@ -157,7 +157,7 @@ Claude trabaja en pestañas para recopilar información y completar el flujo de 
 
 Crea grabaciones compartibles de interacciones del navegador:
 
-```text  theme={null}
+```text theme={null}
 Record a GIF showing how to complete the checkout flow, from adding
 an item to the cart through to the confirmation page.
 ```

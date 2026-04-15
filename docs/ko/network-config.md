@@ -18,7 +18,7 @@ Claude Code는 환경 변수를 통해 다양한 엔터프라이즈 네트워크
 
 Claude Code는 표준 프록시 환경 변수를 준수합니다:
 
-```bash  theme={null}
+```bash theme={null}
 # HTTPS 프록시 (권장)
 export HTTPS_PROXY=https://proxy.example.com:8080
 
@@ -41,7 +41,7 @@ export NO_PROXY="*"
 
 프록시에 기본 인증이 필요한 경우 프록시 URL에 자격 증명을 포함합니다:
 
-```bash  theme={null}
+```bash theme={null}
 export HTTPS_PROXY=http://username:password@proxy.example.com:8080
 ```
 
@@ -57,7 +57,7 @@ export HTTPS_PROXY=http://username:password@proxy.example.com:8080
 
 엔터프라이즈 환경에서 HTTPS 연결(프록시를 통하든 직접 API 액세스를 통하든)에 사용자 정의 CA를 사용하는 경우 Claude Code를 구성하여 이를 신뢰하도록 합니다:
 
-```bash  theme={null}
+```bash theme={null}
 export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
 ```
 
@@ -65,7 +65,7 @@ export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
 
 클라이언트 인증서 인증이 필요한 엔터프라이즈 환경의 경우:
 
-```bash  theme={null}
+```bash theme={null}
 # 인증용 클라이언트 인증서
 export CLAUDE_CODE_CLIENT_CERT=/path/to/client-cert.pem
 

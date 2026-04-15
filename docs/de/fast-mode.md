@@ -115,7 +115,7 @@ Eine weitere Option zum vollständigen Deaktivieren des Schnellmodus ist das Set
 
 Standardmäßig bleibt der Schnellmodus über Sitzungen hinweg erhalten: Wenn ein Benutzer den Schnellmodus aktiviert, bleibt er in zukünftigen Sitzungen aktiviert. Administratoren in [Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise)- oder [Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise)-Plänen können dies verhindern, indem sie `fastModePerSessionOptIn` in [verwalteten Einstellungen](/de/settings#settings-files) oder [servergesteuerten Einstellungen](/de/server-managed-settings) auf `true` setzen. Dies führt dazu, dass jede Sitzung mit deaktiviertem Schnellmodus beginnt und Benutzer ihn explizit mit `/fast` aktivieren müssen.
 
-```json  theme={null}
+```json theme={null}
 {
   "fastModePerSessionOptIn": true
 }

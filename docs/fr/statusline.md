@@ -31,7 +31,7 @@ Utilisez la [commande `/statusline`](#use-the-statusline-command) pour que Claud
 
 La commande `/statusline` accepte des instructions en langage naturel décrivant ce que vous voulez afficher. Claude Code génère un fichier script dans `~/.claude/` et met à jour vos paramètres automatiquement :
 
-```text  theme={null}
+```text theme={null}
 /statusline show model name and context percentage with a progress bar
 ```
 
@@ -39,7 +39,7 @@ La commande `/statusline` accepte des instructions en langage naturel décrivant
 
 Ajoutez un champ `statusLine` à vos paramètres utilisateur (`~/.claude/settings.json`, où `~` est votre répertoire personnel) ou [paramètres de projet](/fr/settings#settings-files). Définissez `type` sur `"command"` et pointez `command` vers un chemin de script ou une commande shell en ligne. Pour une procédure complète de création d'un script, voir [Construire une barre de statut étape par étape](#build-a-status-line-step-by-step).
 
-```json  theme={null}
+```json theme={null}
 {
   "statusLine": {
     "type": "command",
@@ -51,7 +51,7 @@ Ajoutez un champ `statusLine` à vos paramètres utilisateur (`~/.claude/setting
 
 Le champ `command` s'exécute dans un shell, vous pouvez donc aussi utiliser des commandes en ligne au lieu d'un fichier script. Cet exemple utilise `jq` pour analyser l'entrée JSON et afficher le nom du modèle et le pourcentage de contexte :
 
-```json  theme={null}
+```json theme={null}
 {
   "statusLine": {
     "type": "command",
@@ -84,7 +84,7 @@ Ces exemples utilisent des scripts Bash, qui fonctionnent sur macOS et Linux. Su
 
     Enregistrez ceci dans `~/.claude/statusline.sh` (où `~` est votre répertoire personnel, tel que `/Users/username` sur macOS ou `/home/username` sur Linux) :
 
-    ```bash  theme={null}
+    ```bash theme={null}
     #!/bin/bash
     # Read JSON data that Claude Code sends to stdin
     input=$(cat)
@@ -103,7 +103,7 @@ Ces exemples utilisent des scripts Bash, qui fonctionnent sur macOS et Linux. Su
   <Step title="Le rendre exécutable">
     Marquez le script comme exécutable pour que votre shell puisse l'exécuter :
 
-    ```bash  theme={null}
+    ```bash theme={null}
     chmod +x ~/.claude/statusline.sh
     ```
   </Step>
@@ -111,7 +111,7 @@ Ces exemples utilisent des scripts Bash, qui fonctionnent sur macOS et Linux. Su
   <Step title="Ajouter aux paramètres">
     Dites à Claude Code d'exécuter votre script comme barre de statut. Ajoutez cette configuration à `~/.claude/settings.json`, qui définit `type` sur `"command"` (ce qui signifie « exécuter cette commande shell ») et pointe `command` vers votre script :
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "statusLine": {
         "type": "command",
@@ -178,7 +178,7 @@ Claude Code envoie les champs JSON suivants à votre script via stdin :
 <Accordion title="Schéma JSON complet">
   Votre commande de barre de statut reçoit cette structure JSON via stdin :
 
-  ```json  theme={null}
+  ```json theme={null}
   {
     "cwd": "/current/working/directory",
     "session_id": "abc123...",

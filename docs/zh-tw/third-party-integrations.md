@@ -130,7 +130,7 @@
   <Tab title="公司代理">
     通過設置以下 [環境變數](/zh-TW/env-vars) 將 Bedrock 流量路由通過您的公司代理：
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # 啟用 Bedrock
     export CLAUDE_CODE_USE_BEDROCK=1
     export AWS_REGION=us-east-1
@@ -143,7 +143,7 @@
   <Tab title="LLM 網關">
     通過設置以下 [環境變數](/zh-TW/env-vars) 將 Bedrock 流量路由通過您的 LLM 網關：
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # 啟用 Bedrock
     export CLAUDE_CODE_USE_BEDROCK=1
 
@@ -160,7 +160,7 @@
   <Tab title="公司代理">
     通過設置以下 [環境變數](/zh-TW/env-vars) 將 Foundry 流量路由通過您的公司代理：
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # 啟用 Microsoft Foundry
     export CLAUDE_CODE_USE_FOUNDRY=1
     export ANTHROPIC_FOUNDRY_RESOURCE=your-resource
@@ -174,7 +174,7 @@
   <Tab title="LLM 網關">
     通過設置以下 [環境變數](/zh-TW/env-vars) 將 Foundry 流量路由通過您的 LLM 網關：
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # 啟用 Microsoft Foundry
     export CLAUDE_CODE_USE_FOUNDRY=1
 
@@ -191,7 +191,7 @@
   <Tab title="公司代理">
     通過設置以下 [環境變數](/zh-TW/env-vars) 將 Vertex AI 流量路由通過您的公司代理：
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # 啟用 Vertex
     export CLAUDE_CODE_USE_VERTEX=1
     export CLOUD_ML_REGION=us-east5
@@ -205,7 +205,7 @@
   <Tab title="LLM 網關">
     通過設置以下 [環境變數](/zh-TW/env-vars) 將 Vertex AI 流量路由通過您的 LLM 網關：
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # 啟用 Vertex
     export CLAUDE_CODE_USE_VERTEX=1
 

@@ -26,7 +26,7 @@ Le fichier de configuration des liaisons de touches est un objet avec un tableau
 
 Cet exemple lie `Ctrl+E` pour ouvrir un éditeur externe dans le contexte de chat, et délié `Ctrl+U` :
 
-```json  theme={null}
+```json theme={null}
 {
   "$schema": "https://www.schemastore.org/claude-code-keybindings.json",
   "$docs": "https://code.claude.com/docs/fr/keybindings",
@@ -312,7 +312,7 @@ Utilisez les touches de modification avec le séparateur `+` :
 
 Par exemple :
 
-```text  theme={null}
+```text theme={null}
 ctrl+k          Touche unique avec modificateur
 shift+tab       Maj + Tab
 meta+p          Commande/Meta + P
@@ -329,7 +329,7 @@ Les lettres majuscules avec des modificateurs (par exemple, `ctrl+K`) sont trait
 
 Les accords sont des séquences de touches séparées par des espaces :
 
-```text  theme={null}
+```text theme={null}
 ctrl+k ctrl+s   Appuyez sur Ctrl+K, relâchez, puis Ctrl+S
 ```
 
@@ -346,7 +346,7 @@ ctrl+k ctrl+s   Appuyez sur Ctrl+K, relâchez, puis Ctrl+S
 
 Définissez une action sur `null` pour délier un raccourci par défaut :
 
-```json  theme={null}
+```json theme={null}
 {
   "bindings": [
     {
@@ -361,7 +361,7 @@ Définissez une action sur `null` pour délier un raccourci par défaut :
 
 Cela fonctionne également pour les liaisons d'accords. Délier tous les accords qui partagent un préfixe libère ce préfixe pour une utilisation comme liaison à touche unique :
 
-```json  theme={null}
+```json theme={null}
 {
   "bindings": [
     {

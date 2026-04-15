@@ -115,7 +115,7 @@
 
 デフォルトでは、高速モードはセッション全体で保持されます：ユーザーが高速モードを有効にすると、将来のセッションでもオンのままです。[Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise) または [Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise) プランの管理者は、[管理設定](/ja/settings#settings-files)または[サーバー管理設定](/ja/server-managed-settings)で `fastModePerSessionOptIn` を `true` に設定することでこれを防ぐことができます。これにより、各セッションは高速モードがオフで開始され、ユーザーが `/fast` で明示的に有効にする必要があります。
 
-```json  theme={null}
+```json theme={null}
 {
   "fastModePerSessionOptIn": true
 }

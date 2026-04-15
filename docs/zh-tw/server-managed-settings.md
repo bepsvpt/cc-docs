@@ -45,7 +45,7 @@ Claude Code 支援兩種集中設定方法。伺服器管理的設定從 Anthrop
 
     此範例強制執行權限拒絕清單，防止使用者繞過權限，並將權限規則限制為在受管設定中定義的規則：
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "permissions": {
         "deny": [
@@ -64,7 +64,7 @@ Claude Code 支援兩種集中設定方法。伺服器管理的設定從 Anthrop
 
     此範例在整個組織中的每次檔案編輯後執行稽核指令碼：
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hooks": {
         "PostToolUse": [
@@ -81,7 +81,7 @@ Claude Code 支援兩種集中設定方法。伺服器管理的設定從 Anthrop
 
     若要設定 [auto mode](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode) 分類器，使其知道您的組織信任哪些儲存庫、儲存桶和網域：
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "autoMode": {
         "environment": [

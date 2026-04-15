@@ -73,7 +73,7 @@ Si has configurado nombres de modelo personalizados en tu puerta de enlace, util
 
 Método más simple usando una clave API fija:
 
-```bash  theme={null}
+```bash theme={null}
 # Establecer en el entorno
 export ANTHROPIC_AUTH_TOKEN=sk-litellm-static-key
 
@@ -93,7 +93,7 @@ Para claves rotativas o autenticación por usuario:
 
 1. Crea un script ayudante de clave API:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # ~/bin/get-litellm-key.sh
 
@@ -109,7 +109,7 @@ jwt encode \
 
 2. Configura la configuración de Claude Code para usar el ayudante:
 
-```json  theme={null}
+```json theme={null}
 {
   "apiKeyHelper": "~/bin/get-litellm-key.sh"
 }
@@ -117,7 +117,7 @@ jwt encode \
 
 3. Establece el intervalo de actualización de token:
 
-```bash  theme={null}
+```bash theme={null}
 # Actualizar cada hora (3600000 ms)
 export CLAUDE_CODE_API_KEY_HELPER_TTL_MS=3600000
 ```
@@ -128,7 +128,7 @@ Este valor se enviará como encabezados `Authorization` y `X-Api-Key`. El `apiKe
 
 Usando el [punto final de formato Anthropic](https://docs.litellm.ai/docs/anthropic_unified) de LiteLLM:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_BASE_URL=https://litellm-server:4000
 ```
 
@@ -144,7 +144,7 @@ export ANTHROPIC_BASE_URL=https://litellm-server:4000
 
 Usando [punto final de paso directo](https://docs.litellm.ai/docs/pass_through/anthropic_completion):
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_BASE_URL=https://litellm-server:4000/anthropic
 ```
 
@@ -152,7 +152,7 @@ export ANTHROPIC_BASE_URL=https://litellm-server:4000/anthropic
 
 Usando [punto final de paso directo](https://docs.litellm.ai/docs/pass_through/bedrock):
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_BEDROCK_BASE_URL=https://litellm-server:4000/bedrock
 export CLAUDE_CODE_SKIP_BEDROCK_AUTH=1
 export CLAUDE_CODE_USE_BEDROCK=1
@@ -162,7 +162,7 @@ export CLAUDE_CODE_USE_BEDROCK=1
 
 Usando [punto final de paso directo](https://docs.litellm.ai/docs/pass_through/vertex_ai):
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_VERTEX_BASE_URL=https://litellm-server:4000/vertex_ai/v1
 export ANTHROPIC_VERTEX_PROJECT_ID=your-gcp-project-id
 export CLAUDE_CODE_SKIP_VERTEX_AUTH=1

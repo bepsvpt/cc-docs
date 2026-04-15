@@ -75,13 +75,13 @@ Di **Linux dan WSL2**, instal paket yang diperlukan terlebih dahulu:
 
 <Tabs>
   <Tab title="Ubuntu/Debian">
-    ```bash  theme={null}
+    ```bash theme={null}
     sudo apt-get install bubblewrap socat
     ```
   </Tab>
 
   <Tab title="Fedora">
-    ```bash  theme={null}
+    ```bash theme={null}
     sudo dnf install bubblewrap socat
     ```
   </Tab>
@@ -91,7 +91,7 @@ Di **Linux dan WSL2**, instal paket yang diperlukan terlebih dahulu:
 
 Anda dapat mengaktifkan sandboxing dengan menjalankan perintah `/sandbox`:
 
-```text  theme={null}
+```text theme={null}
 /sandbox
 ```
 
@@ -121,7 +121,7 @@ Sesuaikan perilaku sandbox melalui file `settings.json` Anda. Lihat [Settings](/
 
 Secara default, perintah sandboxed hanya dapat menulis ke direktori kerja saat ini. Jika perintah subprocess seperti `kubectl`, `terraform`, atau `npm` perlu menulis di luar direktori proyek, gunakan `sandbox.filesystem.allowWrite` untuk memberikan akses ke jalur tertentu:
 
-```json  theme={null}
+```json theme={null}
 {
   "sandbox": {
     "enabled": true,
@@ -150,7 +150,7 @@ Anda juga dapat menolak akses tulis atau baca menggunakan `sandbox.filesystem.de
 
 Misalnya, untuk memblokir pembacaan dari seluruh direktori home sambil tetap memungkinkan pembacaan dari proyek saat ini, tambahkan ini ke `.claude/settings.json` proyek Anda:
 
-```json  theme={null}
+```json theme={null}
 {
   "sandbox": {
     "enabled": true,
@@ -266,7 +266,7 @@ Untuk organisasi yang memerlukan keamanan jaringan lanjutan, Anda dapat menerapk
 * Mencatat semua permintaan jaringan
 * Mengintegrasikan dengan infrastruktur keamanan yang ada
 
-```json  theme={null}
+```json theme={null}
 {
   "sandbox": {
     "network": {
@@ -297,7 +297,7 @@ Alat bash sandboxed bekerja bersama dengan:
 
 Runtime sandbox tersedia sebagai paket npm sumber terbuka untuk digunakan dalam proyek agen Anda sendiri. Ini memungkinkan komunitas agen AI yang lebih luas untuk membangun sistem otonom yang lebih aman dan lebih aman. Ini juga dapat digunakan untuk sandbox program lain yang mungkin ingin Anda jalankan. Misalnya, untuk sandbox server MCP Anda dapat menjalankan:
 
-```bash  theme={null}
+```bash theme={null}
 npx @anthropic-ai/sandbox-runtime <command-to-sandbox>
 ```
 

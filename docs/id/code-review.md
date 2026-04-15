@@ -58,7 +58,7 @@ Setiap temuan juga muncul sebagai anotasi di tab **Files changed**, ditandai lan
 
 Jalankan pemeriksaan selalu selesai dengan kesimpulan netral sehingga tidak pernah memblokir penggabungan melalui aturan perlindungan cabang. Jika Anda ingin menggerbang penggabungan pada temuan Code Review, baca rincian keparahan dari output jalankan pemeriksaan di CI Anda sendiri. Baris terakhir dari teks Details adalah komentar yang dapat dibaca mesin yang dapat diurai alur kerja Anda dengan `gh` dan jq:
 
-```bash  theme={null}
+```bash theme={null}
 gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \
   --jq '.output.text | split("bughunter-severity: ")[1] | split(" -->")[0] | fromjson'
 ```
@@ -159,7 +159,7 @@ Tambahkan file `REVIEW.md` ke akar repositori Anda untuk aturan khusus ulasan. G
 
 Contoh `REVIEW.md`:
 
-```markdown  theme={null}
+```markdown theme={null}
 # Panduan Ulasan Kode
 
 ## Selalu periksa

@@ -56,7 +56,7 @@ Quickstart ini memandu Anda melalui pembuatan plugin dengan skill kustom. Anda a
   <Step title="Buat direktori plugin">
     Setiap plugin berada di direktorinya sendiri yang berisi manifest dan skills, agents, atau hooks Anda. Buat satu sekarang:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir my-first-plugin
     ```
   </Step>
@@ -66,7 +66,7 @@ Quickstart ini memandu Anda melalui pembuatan plugin dengan skill kustom. Anda a
 
     Buat direktori `.claude-plugin` di dalam folder plugin Anda:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir my-first-plugin/.claude-plugin
     ```
 
@@ -98,7 +98,7 @@ Quickstart ini memandu Anda melalui pembuatan plugin dengan skill kustom. Anda a
 
     Buat direktori skill di folder plugin Anda:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p my-first-plugin/skills/hello
     ```
 
@@ -117,13 +117,13 @@ Quickstart ini memandu Anda melalui pembuatan plugin dengan skill kustom. Anda a
   <Step title="Uji plugin Anda">
     Jalankan Claude Code dengan flag `--plugin-dir` untuk memuat plugin Anda:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --plugin-dir ./my-first-plugin
     ```
 
     Setelah Claude Code dimulai, coba skill baru Anda:
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /my-first-plugin:hello
     ```
 
@@ -153,7 +153,7 @@ Quickstart ini memandu Anda melalui pembuatan plugin dengan skill kustom. Anda a
 
     Jalankan `/reload-plugins` untuk mengambil perubahan, kemudian coba skill dengan nama Anda:
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /my-first-plugin:hello Alex
     ```
 
@@ -204,7 +204,7 @@ Plugins dapat mencakup [Agent Skills](/id/skills) untuk memperluas kemampuan Cla
 
 Tambahkan direktori `skills/` di root plugin Anda dengan folder Skill yang berisi file `SKILL.md`:
 
-```text  theme={null}
+```text theme={null}
 my-plugin/
 ├── .claude-plugin/
 │   └── plugin.json
@@ -215,7 +215,7 @@ my-plugin/
 
 Setiap `SKILL.md` memerlukan frontmatter dengan field `name` dan `description`, diikuti dengan instruksi:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: code-review
 description: Reviews code for best practices and potential issues. Use when reviewing code, checking PRs, or analyzing code quality.
@@ -276,7 +276,7 @@ Untuk plugins dengan banyak komponen, organisir struktur direktori Anda berdasar
 
 Gunakan flag `--plugin-dir` untuk menguji plugins selama pengembangan. Ini memuat plugin Anda secara langsung tanpa memerlukan instalasi.
 
-```bash  theme={null}
+```bash theme={null}
 claude --plugin-dir ./my-plugin
 ```
 
@@ -291,7 +291,7 @@ Saat Anda membuat perubahan pada plugin Anda, jalankan `/reload-plugins` untuk m
 <Tip>
   Anda dapat memuat beberapa plugins sekaligus dengan menentukan flag berkali-kali:
 
-  ```bash  theme={null}
+  ```bash theme={null}
   claude --plugin-dir ./plugin-one --plugin-dir ./plugin-two
   ```
 </Tip>
@@ -336,7 +336,7 @@ Jika Anda sudah memiliki skills atau hooks di direktori `.claude/` Anda, Anda da
   <Step title="Buat struktur plugin">
     Buat direktori plugin baru:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p my-plugin/.claude-plugin
     ```
 
@@ -354,7 +354,7 @@ Jika Anda sudah memiliki skills atau hooks di direktori `.claude/` Anda, Anda da
   <Step title="Salin file yang ada">
     Salin konfigurasi yang ada ke direktori plugin:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Copy commands
     cp -r .claude/commands my-plugin/
 
@@ -369,7 +369,7 @@ Jika Anda sudah memiliki skills atau hooks di direktori `.claude/` Anda, Anda da
   <Step title="Migrasi hooks">
     Jika Anda memiliki hooks di settings Anda, buat direktori hooks:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir my-plugin/hooks
     ```
 
@@ -392,7 +392,7 @@ Jika Anda sudah memiliki skills atau hooks di direktori `.claude/` Anda, Anda da
   <Step title="Uji plugin yang dimigrasikan">
     Muat plugin Anda untuk memverifikasi semuanya berfungsi:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --plugin-dir ./my-plugin
     ```
 

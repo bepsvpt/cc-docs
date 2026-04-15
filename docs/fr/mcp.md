@@ -251,7 +251,7 @@ Les serveurs MCP peuvent être configurés de trois façons différentes selon v
 
 Les serveurs HTTP sont l'option recommandée pour se connecter aux serveurs MCP distants. C'est le transport le plus largement supporté pour les services basés sur le cloud.
 
-```bash  theme={null}
+```bash theme={null}
 # Syntaxe de base
 claude mcp add --transport http <name> <url>
 
@@ -269,7 +269,7 @@ claude mcp add --transport http secure-api https://api.example.com/mcp \
   Le transport SSE (Server-Sent Events) est déprécié. Utilisez plutôt les serveurs HTTP, si disponibles.
 </Warning>
 
-```bash  theme={null}
+```bash theme={null}
 # Syntaxe de base
 claude mcp add --transport sse <name> <url>
 
@@ -285,7 +285,7 @@ claude mcp add --transport sse private-api https://api.company.com/sse \
 
 Les serveurs Stdio s'exécutent en tant que processus locaux sur votre machine. Ils sont idéaux pour les outils qui ont besoin d'un accès direct au système ou de scripts personnalisés.
 
-```bash  theme={null}
+```bash theme={null}
 # Syntaxe de base
 claude mcp add [options] <name> -- <command> [args...]
 
@@ -311,7 +311,7 @@ claude mcp add --transport stdio --env AIRTABLE_API_KEY=YOUR_KEY airtable \
 
 Une fois configurés, vous pouvez gérer vos serveurs MCP avec ces commandes :
 
-```bash  theme={null}
+```bash theme={null}
 # Lister tous les serveurs configurés
 claude mcp list
 
@@ -349,7 +349,7 @@ Un serveur MCP peut également pousser des messages directement dans votre sessi
 <Warning>
   **Utilisateurs Windows** : Sur Windows natif (pas WSL), les serveurs MCP locaux qui utilisent `npx` nécessitent le wrapper `cmd /c` pour assurer une exécution correcte.
 
-  ```bash  theme={null}
+  ```bash theme={null}
   # Cela crée command="cmd" que Windows peut exécuter
   claude mcp add --transport stdio my-server -- cmd /c npx -y @some/package
   ```
@@ -372,7 +372,7 @@ Les [plugins](/fr/plugins) peuvent regrouper des serveurs MCP, fournissant autom
 
 Dans `.mcp.json` à la racine du plugin :
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "database-tools": {
@@ -388,7 +388,7 @@ Dans `.mcp.json` à la racine du plugin :
 
 Ou en ligne dans `plugin.json` :
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "mcpServers": {
@@ -409,7 +409,7 @@ Ou en ligne dans `plugin.json` :
 
 **Affichage des serveurs MCP du plugin** :
 
-```bash  theme={null}
+```bash theme={null}
 # Dans Claude Code, voir tous les serveurs MCP y compris ceux du plugin
 /mcp
 ```
@@ -436,7 +436,7 @@ Les serveurs à portée locale représentent le niveau de configuration par déf
   Le terme « portée locale » pour les serveurs MCP diffère des paramètres locaux généraux. Les serveurs MCP à portée locale sont stockés dans `~/.claude.json` (votre répertoire personnel), tandis que les paramètres locaux généraux utilisent `.claude/settings.local.json` (dans le répertoire du projet). Consultez [Paramètres](/fr/settings#settings-files) pour plus de détails sur les emplacements des fichiers de paramètres.
 </Note>
 
-```bash  theme={null}
+```bash theme={null}
 # Ajouter un serveur à portée locale (par défaut)
 claude mcp add --transport http stripe https://mcp.stripe.com
 
@@ -448,14 +448,14 @@ claude mcp add --transport http stripe --scope local https://mcp.stripe.com
 
 Les serveurs à portée de projet permettent la collaboration d'équipe en stockant les configurations dans un fichier `.mcp.json` à la racine de votre projet. Ce fichier est conçu pour être archivé dans le contrôle de version, garantissant que tous les membres de l'équipe ont accès aux mêmes outils et services MCP. Lorsque vous ajoutez un serveur à portée de projet, Claude Code crée ou met à jour automatiquement ce fichier avec la structure de configuration appropriée.
 
-```bash  theme={null}
+```bash theme={null}
 # Ajouter un serveur à portée de projet
 claude mcp add --transport http paypal --scope project https://mcp.paypal.com/mcp
 ```
 
 Le fichier `.mcp.json` résultant suit un format standardisé :
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "shared-server": {
@@ -473,7 +473,7 @@ Pour des raisons de sécurité, Claude Code demande une approbation avant d'util
 
 Les serveurs à portée utilisateur sont stockés dans `~/.claude.json` et offrent une accessibilité inter-projets, les rendant disponibles dans tous les projets de votre machine tout en restant privés pour votre compte utilisateur. Cette portée fonctionne bien pour les serveurs utilitaires personnels, les outils de développement ou les services que vous utilisez fréquemment dans différents projets.
 
-```bash  theme={null}
+```bash theme={null}
 # Ajouter un serveur utilisateur
 claude mcp add --transport http hubspot --scope user https://mcp.hubspot.com/anthropic
 ```
@@ -520,7 +520,7 @@ Les variables d'environnement peuvent être développées dans :
 
 **Exemple avec expansion de variable :**
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "api-server": {
@@ -540,92 +540,92 @@ Si une variable d'environnement requise n'est pas définie et n'a pas de valeur 
 
 {/* ### Exemple : Automatiser les tests de navigateur avec Playwright
 
-  ```bash
-  claude mcp add --transport stdio playwright -- npx -y @playwright/mcp@latest
-  ```
+```bash
+claude mcp add --transport stdio playwright -- npx -y @playwright/mcp@latest
+```
 
-  Ensuite, écrivez et exécutez des tests de navigateur :
+Ensuite, écrivez et exécutez des tests de navigateur :
 
-  ```text
-  Test si le flux de connexion fonctionne avec test@example.com
-  ```
-  ```text
-  Prendre une capture d'écran de la page de paiement sur mobile
-  ```
-  ```text
-  Vérifier que la fonction de recherche retourne des résultats
-  ``` */}
+```text
+Test si le flux de connexion fonctionne avec test@example.com
+```
+```text
+Prendre une capture d'écran de la page de paiement sur mobile
+```
+```text
+Vérifier que la fonction de recherche retourne des résultats
+``` */}
 
 ### Exemple : Surveiller les erreurs avec Sentry
 
-```bash  theme={null}
+```bash theme={null}
 claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
 ```
 
 Authentifiez-vous avec votre compte Sentry :
 
-```text  theme={null}
+```text theme={null}
 /mcp
 ```
 
 Ensuite, déboguez les problèmes de production :
 
-```text  theme={null}
+```text theme={null}
 Quelles sont les erreurs les plus courantes au cours des 24 dernières heures ?
 ```
 
-```text  theme={null}
+```text theme={null}
 Montrez-moi la trace de pile pour l'erreur ID abc123
 ```
 
-```text  theme={null}
+```text theme={null}
 Quel déploiement a introduit ces nouvelles erreurs ?
 ```
 
 ### Exemple : Se connecter à GitHub pour les révisions de code
 
-```bash  theme={null}
+```bash theme={null}
 claude mcp add --transport http github https://api.githubcopilot.com/mcp/
 ```
 
 Authentifiez-vous si nécessaire en sélectionnant « Authenticate » pour GitHub :
 
-```text  theme={null}
+```text theme={null}
 /mcp
 ```
 
 Ensuite, travaillez avec GitHub :
 
-```text  theme={null}
+```text theme={null}
 Examinez la PR #456 et suggérez des améliorations
 ```
 
-```text  theme={null}
+```text theme={null}
 Créer un nouveau problème pour le bogue que nous venons de trouver
 ```
 
-```text  theme={null}
+```text theme={null}
 Montrez-moi toutes les PR ouvertes qui me sont assignées
 ```
 
 ### Exemple : Interroger votre base de données PostgreSQL
 
-```bash  theme={null}
+```bash theme={null}
 claude mcp add --transport stdio db -- npx -y @bytebase/dbhub \
   --dsn "postgresql://readonly:pass@prod.db.com:5432/analytics"
 ```
 
 Ensuite, interrogez votre base de données naturellement :
 
-```text  theme={null}
+```text theme={null}
 Quel est notre revenu total ce mois-ci ?
 ```
 
-```text  theme={null}
+```text theme={null}
 Montrez-moi le schéma de la table des commandes
 ```
 
-```text  theme={null}
+```text theme={null}
 Trouver les clients qui n'ont pas effectué d'achat depuis 90 jours
 ```
 
@@ -637,7 +637,7 @@ De nombreux serveurs MCP basés sur le cloud nécessitent une authentification. 
   <Step title="Ajouter le serveur qui nécessite une authentification">
     Par exemple :
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
     ```
   </Step>
@@ -645,7 +645,7 @@ De nombreux serveurs MCP basés sur le cloud nécessitent une authentification. 
   <Step title="Utiliser la commande /mcp dans Claude Code">
     Dans Claude Code, utilisez la commande :
 
-    ```text  theme={null}
+    ```text theme={null}
     /mcp
     ```
 
@@ -669,7 +669,7 @@ Certains serveurs MCP nécessitent un URI de redirection spécifique enregistré
 
 Vous pouvez utiliser `--callback-port` seul (avec l'enregistrement dynamique du client) ou ensemble avec `--client-id` (avec les identifiants pré-configurés).
 
-```bash  theme={null}
+```bash theme={null}
 # Port de rappel fixe avec enregistrement dynamique du client
 claude mcp add --transport http \
   --callback-port 8080 \
@@ -694,7 +694,7 @@ Certains serveurs MCP ne supportent pas la configuration OAuth automatique via l
       <Tab title="claude mcp add">
         Utilisez `--client-id` pour passer l'ID client de votre application. Le drapeau `--client-secret` demande le secret avec une entrée masquée :
 
-        ```bash  theme={null}
+        ```bash theme={null}
         claude mcp add --transport http \
           --client-id your-client-id --client-secret --callback-port 8080 \
           my-server https://mcp.example.com/mcp
@@ -704,7 +704,7 @@ Certains serveurs MCP ne supportent pas la configuration OAuth automatique via l
       <Tab title="claude mcp add-json">
         Incluez l'objet `oauth` dans la configuration JSON et passez `--client-secret` comme drapeau séparé :
 
-        ```bash  theme={null}
+        ```bash theme={null}
         claude mcp add-json my-server \
           '{"type":"http","url":"https://mcp.example.com/mcp","oauth":{"clientId":"your-client-id","callbackPort":8080}}' \
           --client-secret
@@ -714,7 +714,7 @@ Certains serveurs MCP ne supportent pas la configuration OAuth automatique via l
       <Tab title="claude mcp add-json (port de rappel uniquement)">
         Utilisez `--callback-port` sans ID client pour fixer le port tout en utilisant l'enregistrement dynamique du client :
 
-        ```bash  theme={null}
+        ```bash theme={null}
         claude mcp add-json my-server \
           '{"type":"http","url":"https://mcp.example.com/mcp","oauth":{"callbackPort":8080}}'
         ```
@@ -723,7 +723,7 @@ Certains serveurs MCP ne supportent pas la configuration OAuth automatique via l
       <Tab title="CI / variable d'environnement">
         Définissez le secret via une variable d'environnement pour ignorer l'invite interactive :
 
-        ```bash  theme={null}
+        ```bash theme={null}
         MCP_CLIENT_SECRET=your-secret claude mcp add --transport http \
           --client-id your-client-id --client-secret --callback-port 8080 \
           my-server https://mcp.example.com/mcp
@@ -753,7 +753,7 @@ Si votre serveur MCP retourne des erreurs sur le point de terminaison des métad
 
 Définissez `authServerMetadataUrl` dans l'objet `oauth` de la configuration de votre serveur dans `.mcp.json` :
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "my-server": {
@@ -773,7 +773,7 @@ L'URL doit utiliser `https://`. Cette option nécessite Claude Code v2.1.64 ou u
 
 Si votre serveur MCP utilise un schéma d'authentification autre que OAuth (tel que Kerberos, jetons de courte durée ou un SSO interne), utilisez `headersHelper` pour générer des en-têtes de requête au moment de la connexion. Claude Code exécute la commande et fusionne sa sortie dans les en-têtes de connexion.
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "internal-api": {
@@ -787,7 +787,7 @@ Si votre serveur MCP utilise un schéma d'authentification autre que OAuth (tel 
 
 La commande peut également être en ligne :
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "internal-api": {
@@ -826,7 +826,7 @@ Si vous avez une configuration JSON pour un serveur MCP, vous pouvez l'ajouter d
 
 <Steps>
   <Step title="Ajouter un serveur MCP à partir de JSON">
-    ```bash  theme={null}
+    ```bash theme={null}
     # Syntaxe de base
     claude mcp add-json <name> '<json>'
 
@@ -842,7 +842,7 @@ Si vous avez une configuration JSON pour un serveur MCP, vous pouvez l'ajouter d
   </Step>
 
   <Step title="Vérifier que le serveur a été ajouté">
-    ```bash  theme={null}
+    ```bash theme={null}
     claude mcp get weather-api
     ```
   </Step>
@@ -862,7 +862,7 @@ Si vous avez déjà configuré des serveurs MCP dans Claude Desktop, vous pouvez
 
 <Steps>
   <Step title="Importer les serveurs à partir de Claude Desktop">
-    ```bash  theme={null}
+    ```bash theme={null}
     # Syntaxe de base 
     claude mcp add-from-claude-desktop 
     ```
@@ -873,7 +873,7 @@ Si vous avez déjà configuré des serveurs MCP dans Claude Desktop, vous pouvez
   </Step>
 
   <Step title="Vérifier que les serveurs ont été importés">
-    ```bash  theme={null}
+    ```bash theme={null}
     claude mcp list 
     ```
   </Step>
@@ -905,7 +905,7 @@ Si vous vous êtes connecté à Claude Code avec un compte [Claude.ai](https://c
   <Step title="Afficher et gérer les serveurs dans Claude Code">
     Dans Claude Code, utilisez la commande :
 
-    ```text  theme={null}
+    ```text theme={null}
     /mcp
     ```
 
@@ -915,7 +915,7 @@ Si vous vous êtes connecté à Claude Code avec un compte [Claude.ai](https://c
 
 Pour désactiver les serveurs MCP de Claude.ai dans Claude Code, définissez la variable d'environnement `ENABLE_CLAUDEAI_MCP_SERVERS` sur `false` :
 
-```bash  theme={null}
+```bash theme={null}
 ENABLE_CLAUDEAI_MCP_SERVERS=false claude
 ```
 
@@ -923,14 +923,14 @@ ENABLE_CLAUDEAI_MCP_SERVERS=false claude
 
 Vous pouvez utiliser Claude Code lui-même comme serveur MCP auquel d'autres applications peuvent se connecter :
 
-```bash  theme={null}
+```bash theme={null}
 # Démarrer Claude en tant que serveur MCP stdio
 claude mcp serve
 ```
 
 Vous pouvez l'utiliser dans Claude Desktop en ajoutant cette configuration à claude\_desktop\_config.json :
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "claude-code": {
@@ -948,13 +948,13 @@ Vous pouvez l'utiliser dans Claude Desktop en ajoutant cette configuration à cl
 
   Pour trouver le chemin complet :
 
-  ```bash  theme={null}
+  ```bash theme={null}
   which claude
   ```
 
   Ensuite, utilisez le chemin complet dans votre configuration :
 
-  ```json  theme={null}
+  ```json theme={null}
   {
     "mcpServers": {
       "claude-code": {
@@ -988,7 +988,7 @@ Lorsque les outils MCP produisent de grandes sorties, Claude Code aide à gérer
 
 Pour augmenter la limite pour les outils qui produisent de grandes sorties :
 
-```bash  theme={null}
+```bash theme={null}
 # Définir une limite plus élevée pour les sorties des outils MCP
 export MAX_MCP_OUTPUT_TOKENS=50000
 claude
@@ -1031,11 +1031,11 @@ Les serveurs MCP peuvent exposer des ressources que vous pouvez référencer en 
   <Step title="Référencer une ressource spécifique">
     Utilisez le format `@server:protocol://resource/path` pour référencer une ressource :
 
-    ```text  theme={null}
+    ```text theme={null}
     Pouvez-vous analyser @github:issue://123 et suggérer un correctif ?
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     Veuillez examiner la documentation API à @docs:file://api/authentication
     ```
   </Step>
@@ -1043,7 +1043,7 @@ Les serveurs MCP peuvent exposer des ressources que vous pouvez référencer en 
   <Step title="Références de ressources multiples">
     Vous pouvez référencer plusieurs ressources dans un seul prompt :
 
-    ```text  theme={null}
+    ```text theme={null}
     Comparez @postgres:schema://users avec @docs:file://database/user-model
     ```
   </Step>
@@ -1094,7 +1094,7 @@ Contrôlez le comportement de la recherche d'outils avec la variable d'environne
 | `auto:<N>`   | Mode seuil avec un pourcentage personnalisé, où `<N>` est 0-100 (par exemple, `auto:5` pour 5 %)                                                 |
 | `false`      | Tous les outils MCP chargés à l'avance, pas de différé                                                                                           |
 
-```bash  theme={null}
+```bash theme={null}
 # Utiliser un seuil personnalisé de 5 %
 ENABLE_TOOL_SEARCH=auto:5 claude
 
@@ -1106,7 +1106,7 @@ Ou définissez la valeur dans le champ `env` de votre [settings.json](/fr/settin
 
 Vous pouvez également désactiver l'outil `ToolSearch` spécifiquement :
 
-```json  theme={null}
+```json theme={null}
 {
   "permissions": {
     "deny": ["ToolSearch"]
@@ -1126,7 +1126,7 @@ Les serveurs MCP peuvent exposer des prompts qui deviennent disponibles en tant 
   </Step>
 
   <Step title="Exécuter un prompt sans arguments">
-    ```text  theme={null}
+    ```text theme={null}
     /mcp__github__list_prs
     ```
   </Step>
@@ -1134,11 +1134,11 @@ Les serveurs MCP peuvent exposer des prompts qui deviennent disponibles en tant 
   <Step title="Exécuter un prompt avec des arguments">
     De nombreux prompts acceptent des arguments. Passez-les séparés par des espaces après la commande :
 
-    ```text  theme={null}
+    ```text theme={null}
     /mcp__github__pr_review 456
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     /mcp__jira__create_issue "Bug in login flow" high
     ```
   </Step>
@@ -1182,7 +1182,7 @@ Les administrateurs système déploient le fichier de configuration dans un rép
 
 Le fichier `managed-mcp.json` utilise le même format qu'un fichier `.mcp.json` standard :
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "github": {
@@ -1225,7 +1225,7 @@ Chaque entrée dans la liste blanche ou noire peut restreindre les serveurs de t
 
 #### Exemple de configuration
 
-```json  theme={null}
+```json theme={null}
 {
   "allowedMcpServers": [
     // Autoriser par nom de serveur
@@ -1289,7 +1289,7 @@ Les modèles d'URL supportent les caractères génériques en utilisant `*` pour
 * Cela garantit que les administrateurs peuvent appliquer les points de terminaison distants autorisés
 
 <Accordion title="Exemple : Liste blanche URL uniquement">
-  ```json  theme={null}
+  ```json theme={null}
   {
     "allowedMcpServers": [
       { "serverUrl": "https://mcp.company.com/*" },
@@ -1307,7 +1307,7 @@ Les modèles d'URL supportent les caractères génériques en utilisant `*` pour
 </Accordion>
 
 <Accordion title="Exemple : Liste blanche commande uniquement">
-  ```json  theme={null}
+  ```json theme={null}
   {
     "allowedMcpServers": [
       { "serverCommand": ["npx", "-y", "approved-package"] }
@@ -1323,7 +1323,7 @@ Les modèles d'URL supportent les caractères génériques en utilisant `*` pour
 </Accordion>
 
 <Accordion title="Exemple : Liste blanche mixte nom et commande">
-  ```json  theme={null}
+  ```json theme={null}
   {
     "allowedMcpServers": [
       { "serverName": "github" },
@@ -1342,7 +1342,7 @@ Les modèles d'URL supportent les caractères génériques en utilisant `*` pour
 </Accordion>
 
 <Accordion title="Exemple : Liste blanche nom uniquement">
-  ```json  theme={null}
+  ```json theme={null}
   {
     "allowedMcpServers": [
       { "serverName": "github" },

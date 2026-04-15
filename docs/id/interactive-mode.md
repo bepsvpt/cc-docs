@@ -235,7 +235,7 @@ Untuk menonaktifkan semua fungsionalitas tugas latar belakang, atur variabel lin
 
 Jalankan perintah bash secara langsung tanpa melalui Claude dengan menambahkan awalan input Anda dengan `!`:
 
-```bash  theme={null}
+```bash theme={null}
 ! npm test
 ! git status
 ! ls -la
@@ -268,7 +268,7 @@ Saran secara otomatis dilewati setelah giliran pertama percakapan, dalam mode no
 
 Untuk menonaktifkan saran prompt sepenuhnya, atur variabel lingkungan atau alihkan pengaturan di `/config`:
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=false
 ```
 

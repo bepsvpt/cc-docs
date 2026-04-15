@@ -115,7 +115,7 @@ Une autre option pour désactiver complètement le mode rapide est de définir `
 
 Par défaut, le mode rapide persiste entre les sessions : si un utilisateur active le mode rapide, il reste activé dans les sessions futures. Les administrateurs sur les plans [Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise) ou [Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise) peuvent empêcher cela en définissant `fastModePerSessionOptIn` à `true` dans les [paramètres gérés](/fr/settings#settings-files) ou les [paramètres gérés par le serveur](/fr/server-managed-settings). Cela fait que chaque session commence avec le mode rapide désactivé, obligeant les utilisateurs à l'activer explicitement avec `/fast`.
 
-```json  theme={null}
+```json theme={null}
 {
   "fastModePerSessionOptIn": true
 }

@@ -14,7 +14,7 @@ Das [Agent SDK](https://platform.claude.com/docs/de/agent-sdk/overview) bietet I
 
 Um Claude Code programmgesteuert über die CLI auszuführen, übergeben Sie `-p` mit Ihrer Eingabeaufforderung und allen [CLI-Optionen](/de/cli-reference):
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"
 ```
 
@@ -30,7 +30,7 @@ Fügen Sie das Flag `-p` (oder `--print`) zu jedem `claude`-Befehl hinzu, um ihn
 
 Dieses Beispiel stellt Claude eine Frage zu Ihrer Codebasis und gibt die Antwort aus:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "What does the auth module do?"
 ```
 
@@ -48,7 +48,7 @@ Verwenden Sie `--output-format`, um zu steuern, wie Antworten zurückgegeben wer
 
 Dieses Beispiel gibt eine Projektzusammenfassung als JSON mit Sitzungsmetadaten zurück, wobei sich das Textergebnis im Feld `result` befindet:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Summarize this project" --output-format json
 ```
 
@@ -56,7 +56,7 @@ Um eine Ausgabe zu erhalten, die einem bestimmten Schema entspricht, verwenden S
 
 Dieses Beispiel extrahiert Funktionsnamen und gibt sie als Array von Zeichenketten zurück:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Extract the main function names from auth.py" \
   --output-format json \
   --json-schema '{"type":"object","properties":{"functions":{"type":"array","items":{"type":"string"}}},"required":["functions"]}'
@@ -65,7 +65,7 @@ claude -p "Extract the main function names from auth.py" \
 <Tip>
   Verwenden Sie ein Tool wie [jq](https://jqlang.github.io/jq/), um die Antwort zu analysieren und bestimmte Felder zu extrahieren:
 
-  ```bash  theme={null}
+  ```bash theme={null}
   # Extract the text result
   claude -p "Summarize this project" --output-format json | jq -r '.result'
 
@@ -81,13 +81,13 @@ claude -p "Extract the main function names from auth.py" \
 
 Verwenden Sie `--output-format stream-json` mit `--verbose` und `--include-partial-messages`, um Token zu empfangen, während sie generiert werden. Jede Zeile ist ein JSON-Objekt, das ein Ereignis darstellt:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Explain recursion" --output-format stream-json --verbose --include-partial-messages
 ```
 
 Das folgende Beispiel verwendet [jq](https://jqlang.github.io/jq/), um nach Text-Deltas zu filtern und nur den Streaming-Text anzuzeigen. Das Flag `-r` gibt Rohzeichenketten aus (keine Anführungszeichen) und `-j` verbindet ohne Zeilenumbrüche, sodass Token kontinuierlich gestreamt werden:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Write a poem" --output-format stream-json --verbose --include-partial-messages | \
   jq -rj 'select(.type == "stream_event" and .event.delta.type? == "text_delta") | .event.delta.text'
 ```
@@ -98,7 +98,7 @@ Für programmgesteuertes Streaming mit Rückrufen und Nachrichtenobjekten siehe 
 
 Verwenden Sie `--allowedTools`, um Claude die Verwendung bestimmter Tools ohne Aufforderung zu ermöglichen. Dieses Beispiel führt eine Test-Suite aus und behebt Fehler, wobei Claude Bash-Befehle ausführen und Dateien lesen/bearbeiten kann, ohne um Genehmigung zu fragen:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Run the test suite and fix any failures" \
   --allowedTools "Bash,Read,Edit"
 ```
@@ -107,7 +107,7 @@ claude -p "Run the test suite and fix any failures" \
 
 Dieses Beispiel überprüft bereitgestellte Änderungen und erstellt einen Commit mit einer angemessenen Nachricht:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Look at my staged changes and create an appropriate commit" \
   --allowedTools "Bash(git diff *),Bash(git log *),Bash(git status *),Bash(git commit *)"
 ```
@@ -122,7 +122,7 @@ Das Flag `--allowedTools` verwendet [Berechtigungsregelsyntax](/de/settings#perm
 
 Verwenden Sie `--append-system-prompt`, um Anweisungen hinzuzufügen und dabei das Standardverhalten von Claude Code beizubehalten. Dieses Beispiel leitet einen PR-Diff an Claude weiter und weist ihn an, auf Sicherheitslücken zu überprüfen:
 
-```bash  theme={null}
+```bash theme={null}
 gh pr diff "$1" | claude -p \
   --append-system-prompt "You are a security engineer. Review for vulnerabilities." \
   --output-format json
@@ -134,7 +134,7 @@ Siehe [System-Eingabeaufforderungs-Flags](/de/cli-reference#system-prompt-flags)
 
 Verwenden Sie `--continue`, um das neueste Gespräch fortzusetzen, oder `--resume` mit einer Sitzungs-ID, um ein bestimmtes Gespräch fortzusetzen. Dieses Beispiel führt eine Überprüfung durch und sendet dann Folgeeingabeaufforderungen:
 
-```bash  theme={null}
+```bash theme={null}
 # First request
 claude -p "Review this codebase for performance issues"
 
@@ -145,7 +145,7 @@ claude -p "Generate a summary of all issues found" --continue
 
 Wenn Sie mehrere Gespräche führen, erfassen Sie die Sitzungs-ID, um ein bestimmtes Gespräch fortzusetzen:
 
-```bash  theme={null}
+```bash theme={null}
 session_id=$(claude -p "Start a review" --output-format json | jq -r '.session_id')
 claude -p "Continue that review" --resume "$session_id"
 ```

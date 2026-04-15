@@ -301,7 +301,7 @@ El prefijo anterior `//path` para rutas absolutas aún funciona. Si anteriorment
 
 **Ejemplo de configuración:**
 
-```json  theme={null}
+```json theme={null}
 {
   "sandbox": {
     "enabled": true,
@@ -341,7 +341,7 @@ Claude Code agrega atribución a commits de git y solicitudes de extracción. Es
 
 **Atribución de commit predeterminada:**
 
-```text  theme={null}
+```text theme={null}
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
    Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
@@ -349,13 +349,13 @@ Claude Code agrega atribución a commits de git y solicitudes de extracción. Es
 
 **Atribución de solicitud de extracción predeterminada:**
 
-```text  theme={null}
+```text theme={null}
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 ```
 
 **Ejemplo:**
 
-```json  theme={null}
+```json theme={null}
 {
   "attribution": {
     "commit": "Generated with AI\n\nCo-Authored-By: AI <ai@example.com>",
@@ -372,7 +372,7 @@ Claude Code agrega atribución a commits de git y solicitudes de extracción. Es
 
 Configure un comando personalizado para autocompletado de ruta de archivo `@`. La sugerencia de archivo integrada utiliza recorrido rápido del sistema de archivos, pero los monorepos grandes pueden beneficiarse de indexación específica del proyecto como un índice de archivo precompilado o herramientas personalizadas.
 
-```json  theme={null}
+```json theme={null}
 {
   "fileSuggestion": {
     "type": "command",
@@ -383,13 +383,13 @@ Configure un comando personalizado para autocompletado de ruta de archivo `@`. L
 
 El comando se ejecuta con las mismas variables de entorno que [hooks](/es/hooks), incluyendo `CLAUDE_PROJECT_DIR`. Recibe JSON a través de stdin con un campo `query`:
 
-```json  theme={null}
+```json theme={null}
 {"query": "src/comp"}
 ```
 
 Genere rutas de archivo separadas por saltos de línea a stdout (actualmente limitado a 15):
 
-```text  theme={null}
+```text theme={null}
 src/components/Button.tsx
 src/components/Modal.tsx
 src/components/Form.tsx
@@ -397,7 +397,7 @@ src/components/Form.tsx
 
 **Ejemplo:**
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 query=$(cat | jq -r '.query')
 your-repo-file-index --query "$query" | head -20
@@ -416,7 +416,7 @@ Estas configuraciones controlan qué hooks se pueden ejecutar y a qué pueden ac
 
 Limitar qué URLs pueden dirigirse los hooks HTTP. Admite `*` como comodín para coincidencia. Cuando la matriz se define, los hooks HTTP que se dirigen a URLs que no coinciden se bloquean silenciosamente.
 
-```json  theme={null}
+```json theme={null}
 {
   "allowedHttpHookUrls": ["https://hooks.example.com/*", "http://localhost:*"]
 }
@@ -426,7 +426,7 @@ Limitar qué URLs pueden dirigirse los hooks HTTP. Admite `*` como comodín para
 
 Limitar qué nombres de variables de entorno pueden interpolar los hooks HTTP en valores de encabezado. El `allowedEnvVars` efectivo de cada hook es la intersección de su propia lista y esta configuración.
 
-```json  theme={null}
+```json theme={null}
 {
   "httpHookAllowedEnvVars": ["MY_TOKEN", "HOOK_SECRET"]
 }
@@ -482,7 +482,7 @@ El indicador del sistema interno de Claude Code no se publica. Para agregar inst
 
 Para evitar que Claude Code acceda a archivos que contienen información sensible como claves API, secretos y archivos de entorno, use la configuración `permissions.deny` en su archivo `.claude/settings.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "permissions": {
     "deny": [
@@ -515,7 +515,7 @@ Claude Code admite un sistema de plugins que le permite extender la funcionalida
 
 Configuraciones relacionadas con plugins en `settings.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "enabledPlugins": {
     "formatter@acme-tools": true,
@@ -544,7 +544,7 @@ Controla qué plugins están habilitados. Formato: `"plugin-name@marketplace-nam
 
 **Ejemplo**:
 
-```json  theme={null}
+```json theme={null}
 {
   "enabledPlugins": {
     "code-formatter@team-tools": true,
@@ -567,7 +567,7 @@ Define marketplaces adicionales que deben estar disponibles para el repositorio.
 
 **Ejemplo**:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "acme-tools": {
@@ -596,7 +596,7 @@ Define marketplaces adicionales que deben estar disponibles para el repositorio.
 
 Use `source: 'settings'` para declarar un pequeño conjunto de plugins en línea sin configurar un repositorio de marketplace alojado. Los plugins listados aquí deben hacer referencia a fuentes externas como GitHub o npm. Aún necesita habilitar cada plugin por separado en `enabledPlugins`.
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "team-tools": {
@@ -647,7 +647,7 @@ La lista blanca admite múltiples tipos de fuente de marketplace. La mayoría de
 
 1. **Repositorios de GitHub**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "github", "repo": "acme-corp/approved-plugins" }
 { "source": "github", "repo": "acme-corp/security-tools", "ref": "v2.0" }
 { "source": "github", "repo": "acme-corp/plugins", "ref": "main", "path": "marketplace" }
@@ -657,7 +657,7 @@ Campos: `repo` (requerido), `ref` (opcional: rama/etiqueta/SHA), `path` (opciona
 
 2. **Repositorios de Git**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "git", "url": "https://gitlab.example.com/tools/plugins.git" }
 { "source": "git", "url": "https://bitbucket.org/acme-corp/plugins.git", "ref": "production" }
 { "source": "git", "url": "ssh://git@git.example.com/plugins.git", "ref": "v3.1", "path": "approved" }
@@ -667,7 +667,7 @@ Campos: `url` (requerido), `ref` (opcional: rama/etiqueta/SHA), `path` (opcional
 
 3. **Marketplaces basados en URL**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "url", "url": "https://plugins.example.com/marketplace.json" }
 { "source": "url", "url": "https://cdn.example.com/marketplace.json", "headers": { "Authorization": "Bearer ${TOKEN}" } }
 ```
@@ -680,7 +680,7 @@ Campos: `url` (requerido), `headers` (opcional: encabezados HTTP para acceso aut
 
 4. **Paquetes NPM**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "npm", "package": "@acme-corp/claude-plugins" }
 { "source": "npm", "package": "@acme-corp/approved-marketplace" }
 ```
@@ -689,7 +689,7 @@ Campos: `package` (requerido, admite paquetes con alcance)
 
 5. **Rutas de archivo**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "file", "path": "/usr/local/share/claude/acme-marketplace.json" }
 { "source": "file", "path": "/opt/acme-corp/plugins/marketplace.json" }
 ```
@@ -698,7 +698,7 @@ Campos: `path` (requerido: ruta absoluta al archivo marketplace.json)
 
 6. **Rutas de directorio**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "directory", "path": "/usr/local/share/claude/acme-plugins" }
 { "source": "directory", "path": "/opt/acme-corp/approved-marketplaces" }
 ```
@@ -707,7 +707,7 @@ Campos: `path` (requerido: ruta absoluta al directorio que contiene `.claude-plu
 
 7. **Coincidencia de patrón de host**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "hostPattern", "hostPattern": "^github\\.example\\.com$" }
 { "source": "hostPattern", "hostPattern": "^gitlab\\.internal\\.example\\.com$" }
 ```
@@ -727,7 +727,7 @@ Extracción de host por tipo de fuente:
 
 Ejemplo: permitir solo marketplaces específicos:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -753,7 +753,7 @@ Ejemplo: permitir solo marketplaces específicos:
 
 Ejemplo - Deshabilitar todas las adiciones de marketplace:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": []
 }
@@ -761,7 +761,7 @@ Ejemplo - Deshabilitar todas las adiciones de marketplace:
 
 Ejemplo: permitir todos los marketplaces de un servidor git interno:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -782,7 +782,7 @@ Las fuentes de marketplace deben coincidir **exactamente** para que se permita l
 
 Ejemplos de fuentes que **NO coinciden**:
 
-```json  theme={null}
+```json theme={null}
 // Estas son fuentes DIFERENTES:
 { "source": "github", "repo": "acme-corp/plugins" }
 { "source": "github", "repo": "acme-corp/plugins", "ref": "main" }
@@ -808,7 +808,7 @@ Ejemplos de fuentes que **NO coinciden**:
 
 `strictKnownMarketplaces` usa objetos de fuente directos:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     { "source": "github", "repo": "acme-corp/plugins" }
@@ -818,7 +818,7 @@ Ejemplos de fuentes que **NO coinciden**:
 
 `extraKnownMarketplaces` requiere marketplaces nombrados:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "acme-tools": {
@@ -832,7 +832,7 @@ Ejemplos de fuentes que **NO coinciden**:
 
 `strictKnownMarketplaces` es una puerta de política: controla qué pueden agregar los usuarios pero no registra ningún marketplace. Para restringir y pre-registrar un marketplace para todos los usuarios, establezca ambos en `managed-settings.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     { "source": "github", "repo": "acme-corp/plugins" }

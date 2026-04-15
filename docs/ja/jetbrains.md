@@ -49,11 +49,11 @@ IDE の統合ターミナルから `claude` を実行すると、すべての統
 
 任意の外部ターミナルで `/ide` コマンドを使用して Claude Code を JetBrains IDE に接続し、すべての機能をアクティブにします。
 
-```bash  theme={null}
+```bash theme={null}
 claude
 ```
 
-```text  theme={null}
+```text theme={null}
 /ide
 ```
 

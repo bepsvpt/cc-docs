@@ -75,13 +75,13 @@ No **Linux e WSL2**, instale primeiro os pacotes necessários:
 
 <Tabs>
   <Tab title="Ubuntu/Debian">
-    ```bash  theme={null}
+    ```bash theme={null}
     sudo apt-get install bubblewrap socat
     ```
   </Tab>
 
   <Tab title="Fedora">
-    ```bash  theme={null}
+    ```bash theme={null}
     sudo dnf install bubblewrap socat
     ```
   </Tab>
@@ -91,7 +91,7 @@ No **Linux e WSL2**, instale primeiro os pacotes necessários:
 
 Você pode habilitar o sandboxing executando o comando `/sandbox`:
 
-```text  theme={null}
+```text theme={null}
 /sandbox
 ```
 
@@ -121,7 +121,7 @@ Personalize o comportamento do sandbox através de seu arquivo `settings.json`. 
 
 Por padrão, comandos em sandbox podem apenas escrever no diretório de trabalho atual. Se comandos de subprocesso como `kubectl`, `terraform` ou `npm` precisarem escrever fora do diretório do projeto, use `sandbox.filesystem.allowWrite` para conceder acesso a caminhos específicos:
 
-```json  theme={null}
+```json theme={null}
 {
   "sandbox": {
     "enabled": true,
@@ -150,7 +150,7 @@ Você também pode negar acesso de escrita ou leitura usando `sandbox.filesystem
 
 Por exemplo, para bloquear a leitura de todo o diretório home enquanto ainda permite leituras do projeto atual, adicione isto ao `.claude/settings.json` do seu projeto:
 
-```json  theme={null}
+```json theme={null}
 {
   "sandbox": {
     "enabled": true,
@@ -266,7 +266,7 @@ Para organizações que exigem segurança de rede avançada, você pode implemen
 * Registrar todas as solicitações de rede
 * Integrar com infraestrutura de segurança existente
 
-```json  theme={null}
+```json theme={null}
 {
   "sandbox": {
     "network": {
@@ -297,7 +297,7 @@ A ferramenta bash em sandbox funciona junto com:
 
 O runtime do sandbox está disponível como um pacote npm de código aberto para uso em seus próprios projetos de agentes. Isso permite que a comunidade mais ampla de agentes de IA construa sistemas autônomos mais seguros e protegidos. Isso também pode ser usado para colocar em sandbox outros programas que você possa desejar executar. Por exemplo, para colocar um servidor MCP em sandbox, você poderia executar:
 
-```bash  theme={null}
+```bash theme={null}
 npx @anthropic-ai/sandbox-runtime <command-to-sandbox>
 ```
 

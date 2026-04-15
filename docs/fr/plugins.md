@@ -56,7 +56,7 @@ Ce démarrage rapide vous guide dans la création d'un plugin avec un skill pers
   <Step title="Créez le répertoire du plugin">
     Chaque plugin se trouve dans son propre répertoire contenant un manifeste et vos skills, agents ou hooks. Créez-en un maintenant :
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir my-first-plugin
     ```
   </Step>
@@ -66,7 +66,7 @@ Ce démarrage rapide vous guide dans la création d'un plugin avec un skill pers
 
     Créez le répertoire `.claude-plugin` à l'intérieur de votre dossier de plugin :
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir my-first-plugin/.claude-plugin
     ```
 
@@ -98,7 +98,7 @@ Ce démarrage rapide vous guide dans la création d'un plugin avec un skill pers
 
     Créez un répertoire de skill dans votre dossier de plugin :
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p my-first-plugin/skills/hello
     ```
 
@@ -117,13 +117,13 @@ Ce démarrage rapide vous guide dans la création d'un plugin avec un skill pers
   <Step title="Testez votre plugin">
     Exécutez Claude Code avec le drapeau `--plugin-dir` pour charger votre plugin :
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --plugin-dir ./my-first-plugin
     ```
 
     Une fois Claude Code démarré, essayez votre nouveau skill :
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /my-first-plugin:hello
     ```
 
@@ -153,7 +153,7 @@ Ce démarrage rapide vous guide dans la création d'un plugin avec un skill pers
 
     Exécutez `/reload-plugins` pour récupérer les modifications, puis essayez le skill avec votre nom :
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /my-first-plugin:hello Alex
     ```
 
@@ -204,7 +204,7 @@ Les plugins peuvent inclure des [Agent Skills](/fr/skills) pour étendre les cap
 
 Ajoutez un répertoire `skills/` à la racine de votre plugin avec des dossiers de Skill contenant des fichiers `SKILL.md` :
 
-```text  theme={null}
+```text theme={null}
 my-plugin/
 ├── .claude-plugin/
 │   └── plugin.json
@@ -215,7 +215,7 @@ my-plugin/
 
 Chaque `SKILL.md` a besoin d'un frontmatter avec les champs `name` et `description`, suivi d'instructions :
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: code-review
 description: Reviews code for best practices and potential issues. Use when reviewing code, checking PRs, or analyzing code quality.
@@ -276,7 +276,7 @@ Pour les plugins avec de nombreux composants, organisez votre structure de répe
 
 Utilisez le drapeau `--plugin-dir` pour tester les plugins pendant le développement. Cela charge votre plugin directement sans nécessiter d'installation.
 
-```bash  theme={null}
+```bash theme={null}
 claude --plugin-dir ./my-plugin
 ```
 
@@ -291,7 +291,7 @@ Quand un plugin `--plugin-dir` a le même nom qu'un plugin marketplace installé
 <Tip>
   Vous pouvez charger plusieurs plugins à la fois en spécifiant le drapeau plusieurs fois :
 
-  ```bash  theme={null}
+  ```bash theme={null}
   claude --plugin-dir ./plugin-one --plugin-dir ./plugin-two
   ```
 </Tip>
@@ -336,7 +336,7 @@ Si vous avez déjà des skills ou des hooks dans votre répertoire `.claude/`, v
   <Step title="Créez la structure du plugin">
     Créez un nouveau répertoire de plugin :
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p my-plugin/.claude-plugin
     ```
 
@@ -354,7 +354,7 @@ Si vous avez déjà des skills ou des hooks dans votre répertoire `.claude/`, v
   <Step title="Copiez vos fichiers existants">
     Copiez vos configurations existantes dans le répertoire du plugin :
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Copy commands
     cp -r .claude/commands my-plugin/
 
@@ -369,7 +369,7 @@ Si vous avez déjà des skills ou des hooks dans votre répertoire `.claude/`, v
   <Step title="Migrez les hooks">
     Si vous avez des hooks dans vos paramètres, créez un répertoire de hooks :
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir my-plugin/hooks
     ```
 
@@ -392,7 +392,7 @@ Si vous avez déjà des skills ou des hooks dans votre répertoire `.claude/`, v
   <Step title="Testez votre plugin migré">
     Chargez votre plugin pour vérifier que tout fonctionne :
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --plugin-dir ./my-plugin
     ```
 

@@ -130,7 +130,7 @@ Les exemples suivants montrent les variables d'environnement à définir dans vo
   <Tab title="Proxy d'entreprise">
     Acheminez le trafic Bedrock via votre proxy d'entreprise en définissant les [variables d'environnement](/fr/env-vars) suivantes :
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Bedrock
     export CLAUDE_CODE_USE_BEDROCK=1
     export AWS_REGION=us-east-1
@@ -143,7 +143,7 @@ Les exemples suivants montrent les variables d'environnement à définir dans vo
   <Tab title="Passerelle LLM">
     Acheminez le trafic Bedrock via votre passerelle LLM en définissant les [variables d'environnement](/fr/env-vars) suivantes :
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Bedrock
     export CLAUDE_CODE_USE_BEDROCK=1
 
@@ -160,7 +160,7 @@ Les exemples suivants montrent les variables d'environnement à définir dans vo
   <Tab title="Proxy d'entreprise">
     Acheminez le trafic Foundry via votre proxy d'entreprise en définissant les [variables d'environnement](/fr/env-vars) suivantes :
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Microsoft Foundry
     export CLAUDE_CODE_USE_FOUNDRY=1
     export ANTHROPIC_FOUNDRY_RESOURCE=your-resource
@@ -174,7 +174,7 @@ Les exemples suivants montrent les variables d'environnement à définir dans vo
   <Tab title="Passerelle LLM">
     Acheminez le trafic Foundry via votre passerelle LLM en définissant les [variables d'environnement](/fr/env-vars) suivantes :
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Microsoft Foundry
     export CLAUDE_CODE_USE_FOUNDRY=1
 
@@ -191,7 +191,7 @@ Les exemples suivants montrent les variables d'environnement à définir dans vo
   <Tab title="Proxy d'entreprise">
     Acheminez le trafic Vertex AI via votre proxy d'entreprise en définissant les [variables d'environnement](/fr/env-vars) suivantes :
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Vertex
     export CLAUDE_CODE_USE_VERTEX=1
     export CLOUD_ML_REGION=us-east5
@@ -205,7 +205,7 @@ Les exemples suivants montrent les variables d'environnement à définir dans vo
   <Tab title="Passerelle LLM">
     Acheminez le trafic Vertex AI via votre passerelle LLM en définissant les [variables d'environnement](/fr/env-vars) suivantes :
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Vertex
     export CLAUDE_CODE_USE_VERTEX=1
 

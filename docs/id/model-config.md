@@ -45,7 +45,7 @@ Anda dapat mengonfigurasi model Anda dengan beberapa cara, yang tercantum dalam 
 
 Contoh penggunaan:
 
-```bash  theme={null}
+```bash theme={null}
 # Mulai dengan Opus
 claude --model opus
 
@@ -55,7 +55,7 @@ claude --model opus
 
 Contoh file pengaturan:
 
-```json  theme={null}
+```json theme={null}
 {
     "permissions": {
         ...
@@ -70,7 +70,7 @@ Administrator enterprise dapat menggunakan `availableModels` dalam [pengaturan t
 
 Ketika `availableModels` diatur, pengguna tidak dapat beralih ke model yang tidak ada dalam daftar melalui `/model`, flag `--model`, alat Config, atau variabel lingkungan `ANTHROPIC_MODEL`.
 
-```json  theme={null}
+```json theme={null}
 {
   "availableModels": ["sonnet", "haiku"]
 }
@@ -94,7 +94,7 @@ Untuk sepenuhnya mengontrol pengalaman model, gabungkan tiga pengaturan:
 
 Contoh ini memulai pengguna di Sonnet 4.5, membatasi pemilih ke Sonnet dan Haiku, dan menetapkan Default untuk diselesaikan ke Sonnet 4.5 daripada rilis terbaru:
 
-```json  theme={null}
+```json theme={null}
 {
   "model": "claude-sonnet-4-5",
   "availableModels": ["claude-sonnet-4-5", "haiku"],
@@ -178,7 +178,7 @@ Jika akun Anda mendukung konteks 1M, opsi muncul di pemilih model (`/model`) dal
 
 Anda juga dapat menggunakan akhiran `[1m]` dengan alias model atau nama model lengkap:
 
-```bash  theme={null}
+```bash theme={null}
 # Gunakan alias opus[1m] atau sonnet[1m]
 /model opus[1m]
 /model sonnet[1m]
@@ -200,7 +200,7 @@ Gunakan `ANTHROPIC_CUSTOM_MODEL_OPTION` untuk menambahkan satu entri kustom ke p
 
 Contoh ini menetapkan ketiga variabel untuk membuat deployment Opus yang dirutekan gateway dapat dipilih:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_CUSTOM_MODEL_OPTION="my-gateway/claude-opus-4-6"
 export ANTHROPIC_CUSTOM_MODEL_OPTION_NAME="Opus via Gateway"
 export ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION="Custom deployment routed through the internal LLM gateway"
@@ -245,7 +245,7 @@ Terapkan pola yang sama untuk `ANTHROPIC_DEFAULT_SONNET_MODEL` dan `ANTHROPIC_DE
 
 Untuk mengaktifkan [konteks diperluas](#extended-context) untuk model yang ditetapkan, tambahkan `[1m]` ke ID model dalam `ANTHROPIC_DEFAULT_OPUS_MODEL` atau `ANTHROPIC_DEFAULT_SONNET_MODEL`:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6[1m]'
 ```
 
@@ -283,7 +283,7 @@ Ketika `_SUPPORTED_CAPABILITIES` diatur, kemampuan yang tercantum diaktifkan dan
 
 Contoh ini menetapkan Opus ke ARN model kustom Bedrock, menetapkan nama yang ramah, dan mendeklarasikan kemampuannya:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='arn:aws:bedrock:us-east-1:123456789012:custom-model/abc'
 export ANTHROPIC_DEFAULT_OPUS_MODEL_NAME='Opus via Bedrock'
 export ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION='Opus 4.6 routed through a Bedrock custom endpoint'
@@ -300,7 +300,7 @@ Ini memungkinkan administrator enterprise untuk merutekan setiap versi model ke 
 
 Atur `modelOverrides` dalam [file pengaturan](/id/settings#settings-files) Anda:
 
-```json  theme={null}
+```json theme={null}
 {
   "modelOverrides": {
     "claude-opus-4-6": "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/opus-prod",

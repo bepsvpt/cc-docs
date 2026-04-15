@@ -77,7 +77,7 @@ Agregue un especificador entre paréntesis para coincidir con usos específicos 
 
 Las reglas de Bash admiten patrones glob con `*`. Los comodines pueden aparecer en cualquier posición del comando. Esta configuración permite comandos npm y git commit mientras bloquea git push:
 
-```json  theme={null}
+```json theme={null}
 {
   "permissions": {
     "allow": [
@@ -188,7 +188,7 @@ Use reglas `Agent(AgentName)` para controlar qué [subagents](/es/sub-agents) pu
 
 Agregue estas reglas a la matriz `deny` en su configuración o use la bandera CLI `--disallowedTools` para deshabilitar agentes específicos. Para deshabilitar el agente Explore:
 
-```json  theme={null}
+```json theme={null}
 {
   "permissions": {
     "deny": ["Agent(Explore)"]
@@ -297,7 +297,7 @@ Las entradas de cada alcance se combinan. Un desarrollador puede extender `envir
 
 Para la mayoría de las organizaciones, `autoMode.environment` es el único campo que necesita establecer. Le dice al clasificador qué repositorios, buckets y dominios son confiables, sin tocar las reglas de bloqueo y permiso integradas. El clasificador usa `environment` para decidir qué significa "externo": cualquier destino no listado es un objetivo potencial de exfiltración.
 
-```json  theme={null}
+```json theme={null}
 {
   "autoMode": {
     "environment": [
@@ -321,7 +321,7 @@ Las entradas son prosa, no regex o patrones de herramienta. El clasificador las 
 
 Una plantilla de inicio útil: complete los campos entre corchetes y elimine cualquier línea que no se aplique:
 
-```json  theme={null}
+```json theme={null}
 {
   "autoMode": {
     "environment": [
@@ -349,7 +349,7 @@ Dentro del clasificador, la precedencia es: las reglas `soft_deny` bloquean prim
 
 Para aflojar: elimine reglas de `soft_deny` cuando los valores predeterminados bloquean algo que su pipeline ya protege con revisión de PR, CI o entornos de ensayo, o agregue a `allow` cuando el clasificador marca repetidamente un patrón rutinario que las excepciones predeterminadas no cubren. Para apretar: agregue a `soft_deny` para riesgos específicos de su entorno que los valores predeterminados pierden, o elimine de `allow` para mantener una excepción predeterminada a las reglas de bloqueo. En todos los casos, ejecute `claude auto-mode defaults` para obtener las listas predeterminadas completas, luego copie y edite: nunca comience desde una lista vacía.
 
-```json  theme={null}
+```json theme={null}
 {
   "autoMode": {
     "environment": [
@@ -378,7 +378,7 @@ Las tres secciones se evalúan independientemente, por lo que establecer `enviro
 
 Porque establecer `allow` o `soft_deny` reemplaza los valores predeterminados, comience cualquier personalización copiando las listas predeterminadas completas. Tres subcomandos CLI lo ayudan a inspeccionar y validar:
 
-```bash  theme={null}
+```bash theme={null}
 claude auto-mode defaults  # the built-in environment, allow, and soft_deny rules
 claude auto-mode config    # what the classifier actually uses: your settings where set, defaults otherwise
 claude auto-mode critique  # get AI feedback on your custom allow and soft_deny rules

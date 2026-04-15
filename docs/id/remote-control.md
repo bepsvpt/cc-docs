@@ -42,7 +42,7 @@ Anda dapat memulai server Remote Control khusus, memulai sesi interaktif dengan 
   <Tab title="Mode server">
     Navigasikan ke direktori proyek Anda dan jalankan:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude remote-control
     ```
 
@@ -62,13 +62,13 @@ Anda dapat memulai server Remote Control khusus, memulai sesi interaktif dengan 
   <Tab title="Sesi interaktif">
     Untuk memulai sesi Claude Code interaktif normal dengan Remote Control diaktifkan, gunakan bendera `--remote-control` (atau `--rc`):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --remote-control
     ```
 
     Secara opsional berikan nama untuk sesi:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --remote-control "My Project"
     ```
 
@@ -78,13 +78,13 @@ Anda dapat memulai server Remote Control khusus, memulai sesi interaktif dengan 
   <Tab title="Dari sesi yang ada">
     Jika Anda sudah dalam sesi Claude Code dan ingin melanjutkannya dari jarak jauh, gunakan perintah `/remote-control` (atau `/rc`):
 
-    ```text  theme={null}
+    ```text theme={null}
     /remote-control
     ```
 
     Berikan nama sebagai argumen untuk menetapkan judul sesi khusus:
 
-    ```text  theme={null}
+    ```text theme={null}
     /remote-control My Project
     ```
 
@@ -158,7 +158,7 @@ Kesalahan ini memiliki tiga penyebab yang berbeda. Jalankan `/status` terlebih d
 
 Claude Code tidak dapat memperoleh kredensial berumur pendek dari API Anthropic untuk membuat koneksi. Jalankan kembali dengan `--verbose` untuk melihat kesalahan lengkapnya:
 
-```bash  theme={null}
+```bash theme={null}
 claude remote-control --verbose
 ```
 
@@ -172,13 +172,13 @@ Penyebab umum:
 
 Claude Code offers several ways to work when you're not at your terminal. They differ in what triggers the work, where Claude runs, and how much you need to set up.
 
-|                                                | Trigger                                                                                        | Claude runs on                                                                                          | Setup                                                                                                                                | Best for                                                      |
-| :--------------------------------------------- | :--------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------ |
-| [Dispatch](/en/desktop#sessions-from-dispatch) | Message a task from the Claude mobile app                                                      | Your machine (Desktop)                                                                                  | [Pair the mobile app with Desktop](https://support.claude.com/en/articles/13947068)                                                  | Delegating work while you're away, minimal setup              |
-| [Remote Control](/en/remote-control)           | Drive a running session from [claude.ai/code](https://claude.ai/code) or the Claude mobile app | Your machine (CLI or VS Code)                                                                           | Run `claude remote-control`                                                                                                          | Steering in-progress work from another device                 |
-| [Channels](/en/channels)                       | Push events from a chat app like Telegram or Discord, or your own server                       | Your machine (CLI)                                                                                      | [Install a channel plugin](/en/channels#quickstart) or [build your own](/en/channels-reference)                                      | Reacting to external events like CI failures or chat messages |
-| [Slack](/en/slack)                             | Mention `@Claude` in a team channel                                                            | Anthropic cloud                                                                                         | [Install the Slack app](/en/slack#setting-up-claude-code-in-slack) with [Claude Code on the web](/en/claude-code-on-the-web) enabled | PRs and reviews from team chat                                |
-| [Scheduled tasks](/en/scheduled-tasks)         | Set a schedule                                                                                 | [CLI](/en/scheduled-tasks), [Desktop](/en/desktop-scheduled-tasks), or [cloud](/en/web-scheduled-tasks) | Pick a frequency                                                                                                                     | Recurring automation like daily reviews                       |
+|                                                | Trigger                                                                                        | Claude runs on                                                                               | Setup                                                                                                                                | Best for                                                      |
+| :--------------------------------------------- | :--------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------ |
+| [Dispatch](/en/desktop#sessions-from-dispatch) | Message a task from the Claude mobile app                                                      | Your machine (Desktop)                                                                       | [Pair the mobile app with Desktop](https://support.claude.com/en/articles/13947068)                                                  | Delegating work while you're away, minimal setup              |
+| [Remote Control](/en/remote-control)           | Drive a running session from [claude.ai/code](https://claude.ai/code) or the Claude mobile app | Your machine (CLI or VS Code)                                                                | Run `claude remote-control`                                                                                                          | Steering in-progress work from another device                 |
+| [Channels](/en/channels)                       | Push events from a chat app like Telegram or Discord, or your own server                       | Your machine (CLI)                                                                           | [Install a channel plugin](/en/channels#quickstart) or [build your own](/en/channels-reference)                                      | Reacting to external events like CI failures or chat messages |
+| [Slack](/en/slack)                             | Mention `@Claude` in a team channel                                                            | Anthropic cloud                                                                              | [Install the Slack app](/en/slack#setting-up-claude-code-in-slack) with [Claude Code on the web](/en/claude-code-on-the-web) enabled | PRs and reviews from team chat                                |
+| [Scheduled tasks](/en/scheduled-tasks)         | Set a schedule                                                                                 | [CLI](/en/scheduled-tasks), [Desktop](/en/desktop-scheduled-tasks), or [cloud](/en/routines) | Pick a frequency                                                                                                                     | Recurring automation like daily reviews                       |
 
 ## Sumber daya terkait
 

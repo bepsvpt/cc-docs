@@ -34,7 +34,7 @@ Claude Code pode ser usado com endpoints [globais](https://cloud.google.com/blog
 
 Ative a API Vertex AI no seu projeto GCP:
 
-```bash  theme={null}
+```bash theme={null}
 # Defina seu ID de projeto
 gcloud config set project YOUR-PROJECT-ID
 
@@ -65,7 +65,7 @@ Para mais informações, consulte a [documentação de autenticação do Google 
 
 Defina as seguintes variáveis de ambiente:
 
-```bash  theme={null}
+```bash theme={null}
 # Ativar integração Vertex AI
 export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=global
@@ -94,7 +94,7 @@ Cada versão de modelo tem sua própria variável `VERTEX_REGION_CLAUDE_*`. Cons
 
 Defina estas variáveis de ambiente para IDs de modelo Vertex AI específicos:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6'
 export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
@@ -111,7 +111,7 @@ Claude Code usa estes modelos padrão quando nenhuma variável de fixação est�
 
 Para personalizar modelos ainda mais:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_MODEL='claude-opus-4-6'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
 ```

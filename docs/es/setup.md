@@ -41,23 +41,23 @@ To install Claude Code, use one of the following methods:
   <Tab title="Native Install (Recommended)">
     **macOS, Linux, WSL:**
 
-    ```bash  theme={null}
+    ```bash theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell  theme={null}
+    ```powershell theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch  theme={null}
+    ```batch theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
 
-    If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. Use the PowerShell command above instead. Your prompt shows `PS C:\` when you're in PowerShell.
+    If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell. Your prompt shows `PS C:\` when you're in PowerShell and `C:\` without the `PS` when you're in CMD.
 
     **Native Windows setups require [Git for Windows](https://git-scm.com/downloads/win).** Install it first if you don't have it. WSL setups do not need it.
 
@@ -67,7 +67,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="Homebrew">
-    ```bash  theme={null}
+    ```bash theme={null}
     brew install --cask claude-code
     ```
 
@@ -79,7 +79,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="WinGet">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     winget install Anthropic.ClaudeCode
     ```
 
@@ -91,7 +91,7 @@ To install Claude Code, use one of the following methods:
 
 Después de que se complete la instalación, abra una terminal en el proyecto en el que desea trabajar e inicie Claude Code:
 
-```bash  theme={null}
+```bash theme={null}
 claude
 ```
 
@@ -107,7 +107,7 @@ Instale [Git for Windows](https://git-scm.com/downloads/win) y luego ejecute el 
 
 Si Claude Code no puede encontrar su instalación de Git Bash, establezca la ruta en su [archivo settings.json](/es/settings):
 
-```json  theme={null}
+```json theme={null}
 {
   "env": {
     "CLAUDE_CODE_GIT_BASH_PATH": "C:\\Program Files\\Git\\bin\\bash.exe"
@@ -127,13 +127,13 @@ El instalador nativo en Alpine y otras distribuciones basadas en musl/uClibc req
 
 Este ejemplo instala los paquetes requeridos en Alpine:
 
-```bash  theme={null}
+```bash theme={null}
 apk add libgcc libstdc++ ripgrep
 ```
 
 Luego establezca `USE_BUILTIN_RIPGREP` en `0` en su archivo [`settings.json`](/es/settings#available-settings):
 
-```json  theme={null}
+```json theme={null}
 {
   "env": {
     "USE_BUILTIN_RIPGREP": "0"
@@ -145,13 +145,13 @@ Luego establezca `USE_BUILTIN_RIPGREP` en `0` en su archivo [`settings.json`](/e
 
 Después de instalar, confirme que Claude Code está funcionando:
 
-```bash  theme={null}
+```bash theme={null}
 claude --version
 ```
 
 Para una verificación más detallada de su instalación y configuración, ejecute [`claude doctor`](/es/troubleshooting#get-more-help):
 
-```bash  theme={null}
+```bash theme={null}
 claude doctor
 ```
 
@@ -186,7 +186,7 @@ Controle qué canal de lanzamiento sigue Claude Code para actualizaciones autom�
 
 Configure esto a través de `/config` → **Auto-update channel**, o agréguelo a su [archivo settings.json](/es/settings):
 
-```json  theme={null}
+```json theme={null}
 {
   "autoUpdatesChannel": "stable"
 }
@@ -198,7 +198,7 @@ Para implementaciones empresariales, puede aplicar un canal de lanzamiento consi
 
 Establezca `DISABLE_AUTOUPDATER` en `"1"` en la clave `env` de su archivo [`settings.json`](/es/settings#available-settings):
 
-```json  theme={null}
+```json theme={null}
 {
   "env": {
     "DISABLE_AUTOUPDATER": "1"
@@ -210,7 +210,7 @@ Establezca `DISABLE_AUTOUPDATER` en `"1"` en la clave `env` de su archivo [`sett
 
 Para aplicar una actualización inmediatamente sin esperar la próxima verificación en segundo plano, ejecute:
 
-```bash  theme={null}
+```bash theme={null}
 claude update
 ```
 
@@ -226,19 +226,19 @@ Para instalar la versión más reciente (predeterminada):
 
 <Tabs>
   <Tab title="macOS, Linux, WSL">
-    ```bash  theme={null}
+    ```bash theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
   </Tab>
 
   <Tab title="Windows PowerShell">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
   </Tab>
 
   <Tab title="Windows CMD">
-    ```batch  theme={null}
+    ```batch theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
   </Tab>
@@ -248,19 +248,19 @@ Para instalar la versión estable:
 
 <Tabs>
   <Tab title="macOS, Linux, WSL">
-    ```bash  theme={null}
+    ```bash theme={null}
     curl -fsSL https://claude.ai/install.sh | bash -s stable
     ```
   </Tab>
 
   <Tab title="Windows PowerShell">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     & ([scriptblock]::Create((irm https://claude.ai/install.ps1))) stable
     ```
   </Tab>
 
   <Tab title="Windows CMD">
-    ```batch  theme={null}
+    ```batch theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd stable && del install.cmd
     ```
   </Tab>
@@ -270,19 +270,19 @@ Para instalar un número de versión específico:
 
 <Tabs>
   <Tab title="macOS, Linux, WSL">
-    ```bash  theme={null}
+    ```bash theme={null}
     curl -fsSL https://claude.ai/install.sh | bash -s 2.1.89
     ```
   </Tab>
 
   <Tab title="Windows PowerShell">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     & ([scriptblock]::Create((irm https://claude.ai/install.ps1))) 2.1.89
     ```
   </Tab>
 
   <Tab title="Windows CMD">
-    ```batch  theme={null}
+    ```batch theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd 2.1.89 && del install.cmd
     ```
   </Tab>
@@ -296,7 +296,7 @@ La instalación con npm está obsoleta. El instalador nativo es más rápido, no
 
 Si instaló previamente Claude Code con npm, cambie al instalador nativo:
 
-```bash  theme={null}
+```bash theme={null}
 # Instalar el binario nativo
 curl -fsSL https://claude.ai/install.sh | bash
 
@@ -310,7 +310,7 @@ También puede ejecutar `claude install` desde una instalación npm existente pa
 
 Si necesita instalación con npm por razones de compatibilidad, debe tener [Node.js 18+](https://nodejs.org/en/download) instalado. Instale el paquete globalmente:
 
-```bash  theme={null}
+```bash theme={null}
 npm install -g @anthropic-ai/claude-code
 ```
 
@@ -330,19 +330,19 @@ Los pasos 1-3 requieren un shell POSIX con `gpg` y `curl`. En Windows, ejecútel
   <Step title="Descargar e importar la clave pública">
     La clave de firma de lanzamiento se publica en una URL fija.
 
-    ```bash  theme={null}
+    ```bash theme={null}
     curl -fsSL https://downloads.claude.ai/keys/claude-code.asc | gpg --import
     ```
 
     Muestre la huella digital de la clave importada.
 
-    ```bash  theme={null}
+    ```bash theme={null}
     gpg --fingerprint security@anthropic.com
     ```
 
     Confirme que la salida incluye esta huella digital:
 
-    ```text  theme={null}
+    ```text theme={null}
     31DD DE24 DDFA B679 F42D  7BD2 BAA9 29FF 1A7E CACE
     ```
   </Step>
@@ -350,7 +350,7 @@ Los pasos 1-3 requieren un shell POSIX con `gpg` y `curl`. En Windows, ejecútel
   <Step title="Descargar el manifiesto y la firma">
     Establezca `VERSION` en el lanzamiento que desea verificar.
 
-    ```bash  theme={null}
+    ```bash theme={null}
     REPO=https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases
     VERSION=2.1.89
     curl -fsSLO "$REPO/$VERSION/manifest.json"
@@ -361,7 +361,7 @@ Los pasos 1-3 requieren un shell POSIX con `gpg` y `curl`. En Windows, ejecútel
   <Step title="Verificar la firma">
     Verifique la firma separada contra el manifiesto.
 
-    ```bash  theme={null}
+    ```bash theme={null}
     gpg --verify manifest.json.sig manifest.json
     ```
 
@@ -375,19 +375,19 @@ Los pasos 1-3 requieren un shell POSIX con `gpg` y `curl`. En Windows, ejecútel
 
     <Tabs>
       <Tab title="Linux">
-        ```bash  theme={null}
+        ```bash theme={null}
         sha256sum claude
         ```
       </Tab>
 
       <Tab title="macOS">
-        ```bash  theme={null}
+        ```bash theme={null}
         shasum -a 256 claude
         ```
       </Tab>
 
       <Tab title="Windows PowerShell">
-        ```powershell  theme={null}
+        ```powershell theme={null}
         (Get-FileHash claude.exe -Algorithm SHA256).Hash.ToLower()
         ```
       </Tab>
@@ -417,14 +417,14 @@ Elimine el binario de Claude Code y los archivos de versión:
 
 <Tabs>
   <Tab title="macOS, Linux, WSL">
-    ```bash  theme={null}
+    ```bash theme={null}
     rm -f ~/.local/bin/claude
     rm -rf ~/.local/share/claude
     ```
   </Tab>
 
   <Tab title="Windows PowerShell">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     Remove-Item -Path "$env:USERPROFILE\.local\bin\claude.exe" -Force
     Remove-Item -Path "$env:USERPROFILE\.local\share\claude" -Recurse -Force
     ```
@@ -435,7 +435,7 @@ Elimine el binario de Claude Code y los archivos de versión:
 
 Elimine el cask de Homebrew:
 
-```bash  theme={null}
+```bash theme={null}
 brew uninstall --cask claude-code
 ```
 
@@ -443,7 +443,7 @@ brew uninstall --cask claude-code
 
 Elimine el paquete de WinGet:
 
-```powershell  theme={null}
+```powershell theme={null}
 winget uninstall Anthropic.ClaudeCode
 ```
 
@@ -451,7 +451,7 @@ winget uninstall Anthropic.ClaudeCode
 
 Elimine el paquete npm global:
 
-```bash  theme={null}
+```bash theme={null}
 npm uninstall -g @anthropic-ai/claude-code
 ```
 
@@ -465,7 +465,7 @@ Para eliminar la configuración y datos en caché de Claude Code:
 
 <Tabs>
   <Tab title="macOS, Linux, WSL">
-    ```bash  theme={null}
+    ```bash theme={null}
     # Eliminar configuración de usuario y estado
     rm -rf ~/.claude
     rm ~/.claude.json
@@ -477,7 +477,7 @@ Para eliminar la configuración y datos en caché de Claude Code:
   </Tab>
 
   <Tab title="Windows PowerShell">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     # Eliminar configuración de usuario y estado
     Remove-Item -Path "$env:USERPROFILE\.claude" -Recurse -Force
     Remove-Item -Path "$env:USERPROFILE\.claude.json" -Force

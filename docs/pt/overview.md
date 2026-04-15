@@ -22,23 +22,23 @@ Escolha seu ambiente para começar. A maioria das superfícies requer uma [assin
       <Tab title="Native Install (Recommended)">
         **macOS, Linux, WSL:**
 
-        ```bash  theme={null}
+        ```bash theme={null}
         curl -fsSL https://claude.ai/install.sh | bash
         ```
 
         **Windows PowerShell:**
 
-        ```powershell  theme={null}
+        ```powershell theme={null}
         irm https://claude.ai/install.ps1 | iex
         ```
 
         **Windows CMD:**
 
-        ```batch  theme={null}
+        ```batch theme={null}
         curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
         ```
 
-        If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. Use the PowerShell command above instead. Your prompt shows `PS C:\` when you're in PowerShell.
+        If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell. Your prompt shows `PS C:\` when you're in PowerShell and `C:\` without the `PS` when you're in CMD.
 
         **Native Windows setups require [Git for Windows](https://git-scm.com/downloads/win).** Install it first if you don't have it. WSL setups do not need it.
 
@@ -48,7 +48,7 @@ Escolha seu ambiente para começar. A maioria das superfícies requer uma [assin
       </Tab>
 
       <Tab title="Homebrew">
-        ```bash  theme={null}
+        ```bash theme={null}
         brew install --cask claude-code
         ```
 
@@ -60,7 +60,7 @@ Escolha seu ambiente para começar. A maioria das superfícies requer uma [assin
       </Tab>
 
       <Tab title="WinGet">
-        ```powershell  theme={null}
+        ```powershell theme={null}
         winget install Anthropic.ClaudeCode
         ```
 
@@ -72,7 +72,7 @@ Escolha seu ambiente para começar. A maioria das superfícies requer uma [assin
 
     Em seguida, inicie Claude Code em qualquer projeto:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     cd your-project
     claude
     ```
@@ -134,7 +134,7 @@ Aqui estão algumas das maneiras como você pode usar Claude Code:
   <Accordion title="Automatize o trabalho que você continua adiando" icon="wand-magic-sparkles">
     Claude Code lida com as tarefas tediosas que consomem seu dia: escrever testes para código não testado, corrigir erros de lint em um projeto, resolver conflitos de mesclagem, atualizar dependências e escrever notas de lançamento.
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude "write tests for the auth module, run them, and fix any failures"
     ```
   </Accordion>
@@ -148,7 +148,7 @@ Aqui estão algumas das maneiras como você pode usar Claude Code:
   <Accordion title="Crie commits e pull requests" icon="code-branch">
     Claude Code funciona diretamente com git. Ele prepara alterações, escreve mensagens de commit, cria branches e abre pull requests.
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude "commit my changes with a descriptive message"
     ```
 
@@ -176,7 +176,7 @@ Aqui estão algumas das maneiras como você pode usar Claude Code:
   <Accordion title="Pipe, script e automatize com o CLI" icon="terminal">
     Claude Code é composável e segue a filosofia Unix. Pipe logs nele, execute-o em CI ou encadeie-o com outras ferramentas:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Analise a saída de log recente
     tail -200 app.log | claude -p "Slack me if you see any anomalies"
 

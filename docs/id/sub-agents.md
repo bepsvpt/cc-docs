@@ -83,7 +83,7 @@ Panduan ini memandu Anda melalui pembuatan subagent tingkat pengguna dengan peri
   <Step title="Buka antarmuka subagent">
     Di Claude Code, jalankan:
 
-    ```text  theme={null}
+    ```text theme={null}
     /agents
     ```
   </Step>
@@ -95,7 +95,7 @@ Panduan ini memandu Anda melalui pembuatan subagent tingkat pengguna dengan peri
   <Step title="Hasilkan dengan Claude">
     Pilih **Generate with Claude**. Ketika diminta, jelaskan subagent:
 
-    ```text  theme={null}
+    ```text theme={null}
     A code improvement agent that scans files and suggests improvements
     for readability, performance, and best practices. It should explain
     each issue, show the current code, and provide an improved version.
@@ -123,7 +123,7 @@ Panduan ini memandu Anda melalui pembuatan subagent tingkat pengguna dengan peri
   <Step title="Simpan dan coba">
     Tinjau ringkasan konfigurasi. Tekan `s` atau `Enter` untuk menyimpan, atau tekan `e` untuk menyimpan dan mengedit file di editor Anda. Subagent tersedia segera. Coba:
 
-    ```text  theme={null}
+    ```text theme={null}
     Use the code-improver agent to suggest improvements in this project
     ```
 
@@ -171,7 +171,7 @@ Subagent proyek ditemukan dengan berjalan naik dari direktori kerja saat ini. Di
 
 **Subagent yang ditentukan CLI** dilewatkan sebagai JSON saat meluncurkan Claude Code. Mereka hanya ada untuk sesi itu dan tidak disimpan ke disk, menjadikannya berguna untuk pengujian cepat atau skrip otomasi. Anda dapat mendefinisikan beberapa subagent dalam satu panggilan `--agents`:
 
-```bash  theme={null}
+```bash theme={null}
 claude --agents '{
   "code-reviewer": {
     "description": "Expert code reviewer. Use proactively after code changes.",
@@ -206,7 +206,7 @@ File subagent menggunakan frontmatter YAML untuk konfigurasi, diikuti oleh promp
   Subagent dimuat saat awal sesi. Jika Anda membuat subagent dengan menambahkan file secara manual, restart sesi Anda atau gunakan `/agents` untuk memuatnya segera.
 </Note>
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 name: code-reviewer
 description: Reviews code for quality and best practices
@@ -269,7 +269,7 @@ Subagent dapat menggunakan salah satu [alat internal](/id/tools-reference) Claud
 
 Untuk membatasi alat, gunakan bidang `tools` (allowlist) atau bidang `disallowedTools` (denylist). Contoh ini menggunakan `tools` untuk secara eksklusif mengizinkan Read, Grep, Glob, dan Bash. Subagent tidak dapat mengedit file, menulis file, atau menggunakan alat MCP apa pun:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: safe-researcher
 description: Research agent with restricted capabilities
@@ -279,7 +279,7 @@ tools: Read, Grep, Glob, Bash
 
 Contoh ini menggunakan `disallowedTools` untuk mewarisi setiap alat dari percakapan utama kecuali Write dan Edit. Subagent menyimpan Bash, alat MCP, dan semuanya yang lain:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: no-writes
 description: Inherits every tool except file writes
@@ -295,7 +295,7 @@ Ketika agen berjalan sebagai thread utama dengan `claude --agent`, agen dapat me
 
 <Note>Dalam versi 2.1.63, alat Task diganti nama menjadi Agent. Referensi `Task(...)` yang ada dalam pengaturan dan definisi agen masih berfungsi sebagai alias.</Note>
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: coordinator
 description: Coordinates work across specialized agents
@@ -307,7 +307,7 @@ Ini adalah allowlist: hanya subagent `worker` dan `researcher` yang dapat dihasi
 
 Untuk mengizinkan penelur subagent apa pun tanpa pembatasan, gunakan `Agent` tanpa tanda kurung:
 
-```yaml  theme={null}
+```yaml theme={null}
 tools: Agent, Read, Bash
 ```
 
@@ -319,7 +319,7 @@ Gunakan bidang `mcpServers` untuk memberikan subagent akses ke [MCP](/id/mcp) se
 
 Setiap entri dalam daftar adalah definisi server inline atau string yang mereferensikan MCP server yang sudah dikonfigurasi dalam sesi Anda:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: browser-tester
 description: Tests features in a real browser using Playwright
@@ -363,7 +363,7 @@ Jika induk menggunakan `bypassPermissions`, ini mengambil alih dan tidak dapat d
 
 Gunakan bidang `skills` untuk menyuntikkan konten skill ke dalam konteks subagent saat startup. Ini memberikan subagent pengetahuan domain tanpa memerlukan penemuan dan pemuatan skills selama eksekusi.
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: api-developer
 description: Implement API endpoints following team conventions
@@ -385,7 +385,7 @@ Konten lengkap setiap skill disuntikkan ke dalam konteks subagent, bukan hanya t
 
 Bidang `memory` memberikan subagent direktori persisten yang bertahan di seluruh percakapan. Subagent menggunakan direktori ini untuk membangun pengetahuan seiring waktu, seperti pola basis kode, wawasan debugging, dan keputusan arsitektur.
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: code-reviewer
 description: Reviews code for quality and best practices
@@ -417,7 +417,7 @@ Ketika memori diaktifkan:
 * Minta subagent untuk memperbarui memorinya setelah menyelesaikan tugas: "Sekarang setelah Anda selesai, simpan apa yang Anda pelajari ke memori Anda." Seiring waktu, ini membangun basis pengetahuan yang membuat subagent lebih efektif.
 * Sertakan instruksi memori langsung dalam file markdown subagent sehingga secara proaktif mempertahankan basis pengetahuannya sendiri:
 
-  ```markdown  theme={null}
+  ```markdown theme={null}
   Update your agent memory as you discover codepaths, patterns, library
   locations, and key architectural decisions. This builds up institutional
   knowledge across conversations. Write concise notes about what you found
@@ -430,7 +430,7 @@ Untuk kontrol yang lebih dinamis atas penggunaan alat, gunakan hooks `PreToolUse
 
 Contoh ini membuat subagent yang hanya mengizinkan kueri database hanya-baca. Hook `PreToolUse` menjalankan skrip yang ditentukan dalam `command` sebelum setiap perintah Bash dijalankan:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: db-reader
 description: Execute read-only database queries
@@ -446,7 +446,7 @@ hooks:
 
 Claude Code [melewatkan input hook sebagai JSON](/id/hooks#pretooluse-input) melalui stdin ke perintah hook. Skrip validasi membaca JSON ini, mengekstrak perintah Bash, dan [keluar dengan kode 2](/id/hooks#exit-code-2-behavior-per-event) untuk memblokir operasi penulisan:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # ./scripts/validate-readonly-query.sh
 
@@ -468,7 +468,7 @@ Lihat [Hook input](/id/hooks#pretooluse-input) untuk skema input lengkap dan [ex
 
 Anda dapat mencegah Claude menggunakan subagent tertentu dengan menambahkannya ke array `deny` dalam [pengaturan](/id/settings#permission-settings) Anda. Gunakan format `Agent(subagent-name)` di mana `subagent-name` cocok dengan bidang nama subagent.
 
-```json  theme={null}
+```json theme={null}
 {
   "permissions": {
     "deny": ["Agent(Explore)", "Agent(my-custom-agent)"]
@@ -478,7 +478,7 @@ Anda dapat mencegah Claude menggunakan subagent tertentu dengan menambahkannya k
 
 Ini berfungsi untuk subagent bawaan dan khusus. Anda juga dapat menggunakan flag CLI `--disallowedTools`:
 
-```bash  theme={null}
+```bash theme={null}
 claude --disallowedTools "Agent(Explore)"
 ```
 
@@ -505,7 +505,7 @@ Semua [hook events](/id/hooks#hook-events) didukung. Peristiwa paling umum untuk
 
 Contoh ini memvalidasi perintah Bash dengan hook `PreToolUse` dan menjalankan linter setelah edit file dengan `PostToolUse`:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: code-reviewer
 description: Review code changes with automatic linting
@@ -536,7 +536,7 @@ Konfigurasi hooks dalam `settings.json` yang merespons peristiwa siklus hidup su
 
 Kedua peristiwa mendukung matcher untuk menargetkan jenis agen tertentu berdasarkan nama. Contoh ini menjalankan skrip setup hanya ketika subagent `db-agent` dimulai, dan skrip cleanup ketika subagent apa pun berhenti:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "SubagentStart": [
@@ -576,14 +576,14 @@ Ketika delegasi otomatis tidak cukup, Anda dapat meminta subagent sendiri. Tiga 
 
 Untuk bahasa alami, tidak ada sintaks khusus. Sebutkan subagent dan Claude biasanya mendelegasikan:
 
-```text  theme={null}
+```text theme={null}
 Use the test-runner subagent to fix failing tests
 Have the code-reviewer subagent look at my recent changes
 ```
 
 **@-mention subagent.** Ketik `@` dan pilih subagent dari typeahead, dengan cara yang sama Anda @-mention file. Ini memastikan subagent tertentu berjalan daripada meninggalkan pilihan kepada Claude:
 
-```text  theme={null}
+```text theme={null}
 @"code-reviewer (agent)" look at the auth changes
 ```
 
@@ -593,7 +593,7 @@ Subagent yang disediakan oleh [plugin](/id/plugins) yang diaktifkan muncul di ty
 
 **Jalankan seluruh sesi sebagai subagent.** Lewatkan [`--agent <name>`](/id/cli-reference) untuk memulai sesi di mana thread utama itu sendiri mengambil prompt sistem subagent, pembatasan alat, dan model:
 
-```bash  theme={null}
+```bash theme={null}
 claude --agent code-reviewer
 ```
 
@@ -605,7 +605,7 @@ Untuk subagent yang disediakan plugin, lewatkan nama yang dibatasi: `claude --ag
 
 Untuk menjadikannya default untuk setiap sesi dalam proyek, atur `agent` dalam `.claude/settings.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "agent": "code-reviewer"
 }
@@ -635,7 +635,7 @@ Untuk menonaktifkan semua fungsionalitas background task, atur variabel lingkung
 
 Salah satu penggunaan paling efektif untuk subagent adalah mengisolasi operasi yang menghasilkan jumlah output besar. Menjalankan tes, mengambil dokumentasi, atau memproses file log dapat mengonsumsi konteks yang signifikan. Dengan mendelegasikan ini ke subagent, output verbose tetap dalam konteks subagent sementara hanya ringkasan relevan yang kembali ke percakapan utama Anda.
 
-```text  theme={null}
+```text theme={null}
 Use a subagent to run the test suite and report only the failing tests with their error messages
 ```
 
@@ -643,7 +643,7 @@ Use a subagent to run the test suite and report only the failing tests with thei
 
 Untuk investigasi independen, hasilkan beberapa subagent untuk bekerja secara bersamaan:
 
-```text  theme={null}
+```text theme={null}
 Research the authentication, database, and API modules in parallel using separate subagents
 ```
 
@@ -659,7 +659,7 @@ Untuk tugas yang memerlukan paralelisme berkelanjutan atau melebihi jendela kont
 
 Untuk alur kerja multi-langkah, minta Claude untuk menggunakan subagent secara berurutan. Setiap subagent menyelesaikan tugasnya dan mengembalikan hasil ke Claude, yang kemudian melewatkan konteks relevan ke subagent berikutnya.
 
-```text  theme={null}
+```text theme={null}
 Use the code-reviewer subagent to find performance issues, then use the optimizer subagent to fix them
 ```
 
@@ -698,7 +698,7 @@ Ketika subagent selesai, Claude menerima ID agennya. Claude menggunakan alat `Se
 
 Untuk melanjutkan subagent, minta Claude untuk melanjutkan pekerjaan sebelumnya:
 
-```text  theme={null}
+```text theme={null}
 Use the code-reviewer subagent to review the authentication module
 [Agent completes]
 
@@ -720,7 +720,7 @@ Subagent mendukung pemadatan otomatis menggunakan logika yang sama dengan percak
 
 Peristiwa pemadatan dicatat dalam file transkrip subagent:
 
-```json  theme={null}
+```json theme={null}
 {
   "type": "system",
   "subtype": "compact_boundary",
@@ -750,7 +750,7 @@ Contoh-contoh ini mendemonstrasikan pola efektif untuk membangun subagent. Gunak
 
 Subagent hanya-baca yang meninjau kode tanpa memodifikasinya. Contoh ini menunjukkan cara merancang subagent yang terfokus dengan akses alat terbatas (tidak ada Edit atau Write) dan prompt terperinci yang menentukan dengan tepat apa yang harus dicari dan cara memformat output.
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 name: code-reviewer
 description: Expert code review specialist. Proactively reviews code for quality, security, and maintainability. Use immediately after writing or modifying code.
@@ -787,7 +787,7 @@ Include specific examples of how to fix issues.
 
 Subagent yang dapat menganalisis dan memperbaiki masalah. Tidak seperti peninjau kode, yang ini mencakup Edit karena memperbaiki bug memerlukan memodifikasi kode. Prompt menyediakan alur kerja yang jelas dari diagnosis ke verifikasi.
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 name: debugger
 description: Debugging specialist for errors, test failures, and unexpected behavior. Use proactively when encountering any issues.
@@ -824,7 +824,7 @@ Focus on fixing the underlying issue, not the symptoms.
 
 Subagent khusus domain untuk pekerjaan analisis data. Contoh ini menunjukkan cara membuat subagent untuk alur kerja khusus di luar tugas pengkodean khas. Ini secara eksplisit menetapkan `model: sonnet` untuk analisis yang lebih mampu.
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 name: data-scientist
 description: Data analysis expert for SQL queries, BigQuery operations, and data insights. Use proactively for data analysis tasks and queries.
@@ -861,7 +861,7 @@ Always ensure queries are efficient and cost-effective.
 
 Subagent yang memungkinkan akses Bash tetapi memvalidasi perintah untuk mengizinkan hanya kueri SQL hanya-baca. Contoh ini menunjukkan cara menggunakan hooks `PreToolUse` untuk validasi bersyarat ketika Anda memerlukan kontrol lebih halus daripada bidang `tools`.
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 name: db-reader
 description: Execute read-only database queries. Use when analyzing data or generating reports.
@@ -888,7 +888,7 @@ Claude Code [melewatkan input hook sebagai JSON](/id/hooks#pretooluse-input) mel
 
 Buat skrip validasi di mana saja dalam proyek Anda. Jalur harus cocok dengan bidang `command` dalam konfigurasi hook Anda:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # Blocks SQL write operations, allows SELECT queries
 
@@ -913,7 +913,7 @@ exit 0
 
 Buat skrip dapat dieksekusi:
 
-```bash  theme={null}
+```bash theme={null}
 chmod +x ./scripts/validate-readonly-query.sh
 ```
 

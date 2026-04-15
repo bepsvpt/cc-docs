@@ -77,7 +77,7 @@ Ajoutez un spécificateur entre parenthèses pour correspondre à des usages d'o
 
 Les règles Bash prennent en charge les modèles glob avec `*`. Les caractères génériques peuvent apparaître à n'importe quelle position dans la commande. Cette configuration permet les commandes npm et git commit tout en bloquant git push :
 
-```json  theme={null}
+```json theme={null}
 {
   "permissions": {
     "allow": [
@@ -188,7 +188,7 @@ Utilisez les règles `Agent(AgentName)` pour contrôler quels [subagents](/fr/su
 
 Ajoutez ces règles au tableau `deny` dans vos paramètres ou utilisez l'indicateur CLI `--disallowedTools` pour désactiver des agents spécifiques. Pour désactiver l'agent Explore :
 
-```json  theme={null}
+```json theme={null}
 {
   "permissions": {
     "deny": ["Agent(Explore)"]
@@ -297,7 +297,7 @@ Les entrées de chaque portée sont combinées. Un développeur peut étendre `e
 
 Pour la plupart des organisations, `autoMode.environment` est le seul champ que vous devez définir. Il dit au classificateur quels référentiels, buckets et domaines sont approuvés, sans toucher aux règles de blocage et d'autorisation intégrées. Le classificateur utilise `environment` pour décider ce que signifie « externe » : toute destination non listée est une cible d'exfiltration potentielle.
 
-```json  theme={null}
+```json theme={null}
 {
   "autoMode": {
     "environment": [
@@ -321,7 +321,7 @@ Les entrées sont en prose, pas en regex ou en modèles d'outils. Le classificat
 
 Un modèle de démarrage utile : remplissez les champs entre crochets et supprimez les lignes qui ne s'appliquent pas :
 
-```json  theme={null}
+```json theme={null}
 {
   "autoMode": {
     "environment": [
@@ -349,7 +349,7 @@ Deux champs supplémentaires vous permettent de remplacer les listes de règles 
 
 Pour assouplir : supprimez les règles de `soft_deny` lorsque les paramètres par défaut bloquent quelque chose que votre pipeline protège déjà avec l'examen des PR, CI ou les environnements de staging, ou ajoutez à `allow` lorsque le classificateur signale à plusieurs reprises un modèle de routine que les exceptions par défaut ne couvrent pas. Pour renforcer : ajoutez à `soft_deny` pour les risques spécifiques à votre environnement que les paramètres par défaut manquent, ou supprimez de `allow` pour maintenir une exception par défaut aux règles de blocage. Dans tous les cas, exécutez `claude auto-mode defaults` pour obtenir les listes par défaut complètes, puis copiez et modifiez : ne commencez jamais par une liste vide.
 
-```json  theme={null}
+```json theme={null}
 {
   "autoMode": {
     "environment": [
@@ -378,7 +378,7 @@ Les trois sections sont évaluées indépendamment, donc définir `environment` 
 
 Parce que définir `allow` ou `soft_deny` remplace les paramètres par défaut, commencez toute personnalisation en copiant les listes par défaut complètes. Trois sous-commandes CLI vous aident à inspecter et valider :
 
-```bash  theme={null}
+```bash theme={null}
 claude auto-mode defaults  # the built-in environment, allow, and soft_deny rules
 claude auto-mode config    # what the classifier actually uses: your settings where set, defaults otherwise
 claude auto-mode critique  # get AI feedback on your custom allow and soft_deny rules

@@ -56,7 +56,7 @@ Claude Code 支持两种方式来添加自定义 skills、agents 和 hooks：
   <Step title="创建插件目录">
     每个插件都位于其自己的目录中，包含清单和你的 skills、agents 或 hooks。现在创建一个：
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir my-first-plugin
     ```
   </Step>
@@ -66,7 +66,7 @@ Claude Code 支持两种方式来添加自定义 skills、agents 和 hooks：
 
     在你的插件文件夹内创建 `.claude-plugin` 目录：
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir my-first-plugin/.claude-plugin
     ```
 
@@ -98,7 +98,7 @@ Claude Code 支持两种方式来添加自定义 skills、agents 和 hooks：
 
     在你的插件文件夹中创建一个 skill 目录：
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p my-first-plugin/skills/hello
     ```
 
@@ -117,13 +117,13 @@ Claude Code 支持两种方式来添加自定义 skills、agents 和 hooks：
   <Step title="测试你的插件">
     使用 `--plugin-dir` 标志运行 Claude Code 以加载你的插件：
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --plugin-dir ./my-first-plugin
     ```
 
     Claude Code 启动后，尝试你的新 skill：
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /my-first-plugin:hello
     ```
 
@@ -153,7 +153,7 @@ Claude Code 支持两种方式来添加自定义 skills、agents 和 hooks：
 
     运行 `/reload-plugins` 以获取更改，然后尝试使用你的名字的 skill：
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /my-first-plugin:hello Alex
     ```
 
@@ -204,7 +204,7 @@ Claude Code 支持两种方式来添加自定义 skills、agents 和 hooks：
 
 在你的插件根目录添加一个 `skills/` 目录，其中包含包含 `SKILL.md` 文件的 Skill 文件夹：
 
-```text  theme={null}
+```text theme={null}
 my-plugin/
 ├── .claude-plugin/
 │   └── plugin.json
@@ -215,7 +215,7 @@ my-plugin/
 
 每个 `SKILL.md` 需要包含 `name` 和 `description` 字段的 frontmatter，后跟说明：
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: code-review
 description: Reviews code for best practices and potential issues. Use when reviewing code, checking PRs, or analyzing code quality.
@@ -276,7 +276,7 @@ LSP（Language Server Protocol）插件为 Claude 提供实时代码智能。如
 
 使用 `--plugin-dir` 标志在开发期间测试插件。这会直接加载你的插件，无需安装。
 
-```bash  theme={null}
+```bash theme={null}
 claude --plugin-dir ./my-plugin
 ```
 
@@ -291,7 +291,7 @@ claude --plugin-dir ./my-plugin
 <Tip>
   你可以通过多次指定标志来一次加载多个插件：
 
-  ```bash  theme={null}
+  ```bash theme={null}
   claude --plugin-dir ./plugin-one --plugin-dir ./plugin-two
   ```
 </Tip>
@@ -336,7 +336,7 @@ claude --plugin-dir ./my-plugin
   <Step title="创建插件结构">
     创建一个新的插件目录：
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p my-plugin/.claude-plugin
     ```
 
@@ -354,7 +354,7 @@ claude --plugin-dir ./my-plugin
   <Step title="复制你现有的文件">
     将你现有的配置复制到插件目录：
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Copy commands
     cp -r .claude/commands my-plugin/
 
@@ -369,7 +369,7 @@ claude --plugin-dir ./my-plugin
   <Step title="迁移 hooks">
     如果你在设置中有 hooks，请创建一个 hooks 目录：
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir my-plugin/hooks
     ```
 
@@ -392,7 +392,7 @@ claude --plugin-dir ./my-plugin
   <Step title="测试你迁移的插件">
     加载你的插件以验证一切正常：
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --plugin-dir ./my-plugin
     ```
 

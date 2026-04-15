@@ -74,7 +74,7 @@ Après avoir activé les équipes d'agents, demandez à Claude de créer une éq
 
 Cet exemple fonctionne bien car les trois rôles sont indépendants et peuvent explorer le problème sans attendre les uns les autres :
 
-```text  theme={null}
+```text theme={null}
 Je conçois un outil CLI qui aide les développeurs à suivre les commentaires TODO dans
 leur base de code. Créez une équipe d'agents pour explorer cela sous différents angles : un
 coéquipier sur l'UX, un sur l'architecture technique, un jouant l'avocat du diable.
@@ -103,7 +103,7 @@ Les équipes d'agents supportent deux modes d'affichage :
 
 La valeur par défaut est `"auto"`, qui utilise les volets divisés si vous êtes déjà en train de s'exécuter dans une session tmux, et in-process sinon. Le paramètre `"tmux"` active le mode volets divisés et détecte automatiquement s'il faut utiliser tmux ou iTerm2 en fonction de votre terminal. Pour remplacer, définissez `teammateMode` dans votre [configuration globale](/fr/settings#global-config-settings) à `~/.claude.json` :
 
-```json  theme={null}
+```json theme={null}
 {
   "teammateMode": "in-process"
 }
@@ -111,7 +111,7 @@ La valeur par défaut est `"auto"`, qui utilise les volets divisés si vous ête
 
 Pour forcer le mode in-process pour une seule session, passez-le en tant que drapeau :
 
-```bash  theme={null}
+```bash theme={null}
 claude --teammate-mode in-process
 ```
 
@@ -124,7 +124,7 @@ Le mode volets divisés nécessite soit [tmux](https://github.com/tmux/tmux/wiki
 
 Claude décide du nombre de coéquipiers à générer en fonction de votre tâche, ou vous pouvez spécifier exactement ce que vous voulez :
 
-```text  theme={null}
+```text theme={null}
 Créez une équipe avec 4 coéquipiers pour refactoriser ces modules en parallèle.
 Utilisez Sonnet pour chaque coéquipier.
 ```
@@ -133,7 +133,7 @@ Utilisez Sonnet pour chaque coéquipier.
 
 Pour les tâches complexes ou risquées, vous pouvez exiger que les coéquipiers planifient avant de mettre en œuvre. Le coéquipier travaille en mode plan en lecture seule jusqu'à ce que le chef approuve son approche :
 
-```text  theme={null}
+```text theme={null}
 Générez un coéquipier architecte pour refactoriser le module d'authentification.
 Exigez l'approbation du plan avant qu'il ne fasse des modifications.
 ```
@@ -164,7 +164,7 @@ La revendication de tâche utilise le verrouillage de fichiers pour prévenir le
 
 Pour terminer gracieusement la session d'un coéquipier :
 
-```text  theme={null}
+```text theme={null}
 Demandez au coéquipier chercheur d'arrêter
 ```
 
@@ -174,7 +174,7 @@ Le chef envoie une demande d'arrêt. Le coéquipier peut approuver, quittant gra
 
 Lorsque vous avez terminé, demandez au chef de nettoyer :
 
-```text  theme={null}
+```text theme={null}
 Nettoyez l'équipe
 ```
 
@@ -239,7 +239,7 @@ Lors de la génération d'un coéquipier, vous pouvez référencer un type de [s
 
 Pour utiliser une définition de subagent, mentionnez-la par nom lorsque vous demandez à Claude de générer le coéquipier :
 
-```text  theme={null}
+```text theme={null}
 Générez un coéquipier utilisant le type d'agent security-reviewer pour auditer le module d'authentification.
 ```
 
@@ -274,7 +274,7 @@ Ces exemples montrent comment les équipes d'agents gèrent les tâches où l'ex
 
 Un seul examinateur tend à graviter vers un type de problème à la fois. Diviser les critères d'examen en domaines indépendants signifie que la sécurité, l'impact sur les performances et la couverture de test reçoivent tous une attention approfondie simultanément. Le prompt assigne à chaque coéquipier une lentille distincte pour qu'ils ne se chevauchent pas :
 
-```text  theme={null}
+```text theme={null}
 Créez une équipe d'agents pour examiner la PR #142. Générez trois examinateurs :
 - Un axé sur les implications de sécurité
 - Un vérifiant l'impact sur les performances
@@ -288,7 +288,7 @@ Chaque examinateur travaille à partir de la même PR mais applique un filtre di
 
 Lorsque la cause première est peu claire, un seul agent tend à trouver une explication plausible et s'arrête. Le prompt combat cela en rendant les coéquipiers explicitement adversaires : le travail de chacun n'est pas seulement d'enquêter sur sa propre théorie mais de contester les autres.
 
-```text  theme={null}
+```text theme={null}
 Les utilisateurs signalent que l'application se ferme après un message au lieu de rester connectée.
 Générez 5 coéquipiers agents pour enquêter sur différentes hypothèses. Demandez-leur de se parler
 pour essayer de réfuter les théories les uns des autres, comme un débat
@@ -305,7 +305,7 @@ Avec plusieurs enquêteurs indépendants essayant activement de réfuter les uns
 
 Les coéquipiers chargent automatiquement le contexte du projet, y compris CLAUDE.md, MCP servers et skills, mais ils n'héritent pas de l'historique de conversation du chef. Consultez [Contexte et communication](#context-and-communication) pour les détails. Incluez les détails spécifiques à la tâche dans le prompt de génération :
 
-```text  theme={null}
+```text theme={null}
 Générez un coéquipier examinateur de sécurité avec le prompt : « Examinez le module d'authentification
 à src/auth/ pour les vulnérabilités de sécurité. Concentrez-vous sur la gestion des tokens, la gestion
 des sessions et la validation des entrées. L'application utilise des tokens JWT stockés dans
@@ -340,7 +340,7 @@ Augmentez l'échelle uniquement lorsque le travail bénéficie véritablement d'
 
 Parfois, le chef commence à mettre en œuvre des tâches lui-même au lieu d'attendre les coéquipiers. Si vous remarquez cela :
 
-```text  theme={null}
+```text theme={null}
 Attendez que vos coéquipiers complètent leurs tâches avant de procéder
 ```
 
@@ -365,7 +365,7 @@ Si les coéquipiers n'apparaissent pas après avoir demandé à Claude de créer
 * En mode in-process, les coéquipiers peuvent déjà être en cours d'exécution mais non visibles. Appuyez sur Maj+Bas pour parcourir les coéquipiers actifs.
 * Vérifiez que la tâche que vous avez donnée à Claude était suffisamment complexe pour justifier une équipe. Claude décide s'il faut générer des coéquipiers en fonction de la tâche.
 * Si vous avez explicitement demandé des volets divisés, assurez-vous que tmux est installé et disponible dans votre PATH :
-  ```bash  theme={null}
+  ```bash theme={null}
   which tmux
   ```
 * Pour iTerm2, vérifiez que le CLI `it2` est installé et que l'API Python est activée dans les préférences d'iTerm2.
@@ -389,7 +389,7 @@ Le chef peut décider que l'équipe est terminée avant que toutes les tâches n
 
 Si une session tmux persiste après la fin de l'équipe, elle peut ne pas avoir été complètement nettoyée. Listez les sessions et tuez celle créée par l'équipe :
 
-```bash  theme={null}
+```bash theme={null}
 tmux ls
 tmux kill-session -t <session-name>
 ```

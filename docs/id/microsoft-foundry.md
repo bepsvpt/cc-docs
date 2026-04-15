@@ -38,7 +38,7 @@ Claude Code mendukung dua metode autentikasi untuk Microsoft Foundry. Pilih meto
 3. Salin **API Key**
 4. Atur variabel lingkungan:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_FOUNDRY_API_KEY=your-azure-api-key
 ```
 
@@ -49,7 +49,7 @@ Ini mendukung berbagai metode untuk mengautentikasi beban kerja lokal dan jarak 
 
 Di lingkungan lokal, Anda biasanya dapat menggunakan Azure CLI:
 
-```bash  theme={null}
+```bash theme={null}
 az login
 ```
 
@@ -61,7 +61,7 @@ az login
 
 Atur variabel lingkungan berikut untuk mengaktifkan Microsoft Foundry. Perhatikan bahwa nama deployment Anda diatur sebagai pengenal model di Claude Code (mungkin opsional jika menggunakan nama deployment yang disarankan).
 
-```bash  theme={null}
+```bash theme={null}
 # Aktifkan integrasi Microsoft Foundry
 export CLAUDE_CODE_USE_FOUNDRY=1
 
@@ -84,7 +84,7 @@ Peran default `Azure AI User` dan `Cognitive Services User` mencakup semua izin 
 
 Untuk izin yang lebih ketat, buat peran khusus dengan yang berikut:
 
-```json  theme={null}
+```json theme={null}
 {
   "permissions": [
     {

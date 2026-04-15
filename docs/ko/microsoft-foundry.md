@@ -38,7 +38,7 @@ Claude Code는 Microsoft Foundry에 대해 두 가지 인증 방법을 지원합
 3. **API 키** 복사합니다
 4. 환경 변수를 설정합니다:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_FOUNDRY_API_KEY=your-azure-api-key
 ```
 
@@ -49,7 +49,7 @@ export ANTHROPIC_FOUNDRY_API_KEY=your-azure-api-key
 
 로컬 환경에서는 일반적으로 Azure CLI를 사용할 수 있습니다:
 
-```bash  theme={null}
+```bash theme={null}
 az login
 ```
 
@@ -61,7 +61,7 @@ az login
 
 Microsoft Foundry를 활성화하려면 다음 환경 변수를 설정합니다. 배포의 이름은 Claude Code의 모델 식별자로 설정됩니다(제안된 배포 이름을 사용하는 경우 선택 사항일 수 있음).
 
-```bash  theme={null}
+```bash theme={null}
 # Microsoft Foundry 통합 활성화
 export CLAUDE_CODE_USE_FOUNDRY=1
 
@@ -84,7 +84,7 @@ export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-1'
 
 더 제한적인 권한의 경우 다음을 포함하는 사용자 지정 역할을 만듭니다:
 
-```json  theme={null}
+```json theme={null}
 {
   "permissions": [
     {

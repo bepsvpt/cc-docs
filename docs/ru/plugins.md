@@ -56,7 +56,7 @@ Claude Code поддерживает два способа добавления 
   <Step title="Создайте директорию plugin">
     Каждый plugin находится в собственной директории, содержащей манифест и ваши skills, agents или hooks. Создайте её сейчас:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir my-first-plugin
     ```
   </Step>
@@ -66,7 +66,7 @@ Claude Code поддерживает два способа добавления 
 
     Создайте директорию `.claude-plugin` внутри папки вашего plugin:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir my-first-plugin/.claude-plugin
     ```
 
@@ -98,7 +98,7 @@ Claude Code поддерживает два способа добавления 
 
     Создайте директорию skill в папке вашего plugin:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p my-first-plugin/skills/hello
     ```
 
@@ -117,13 +117,13 @@ Claude Code поддерживает два способа добавления 
   <Step title="Протестируйте ваш plugin">
     Запустите Claude Code с флагом `--plugin-dir` для загрузки вашего plugin:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --plugin-dir ./my-first-plugin
     ```
 
     После запуска Claude Code попробуйте ваш новый skill:
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /my-first-plugin:hello
     ```
 
@@ -153,7 +153,7 @@ Claude Code поддерживает два способа добавления 
 
     Запустите `/reload-plugins` для применения изменений, затем попробуйте skill с вашим именем:
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /my-first-plugin:hello Alex
     ```
 
@@ -204,7 +204,7 @@ Plugins могут включать [Agent Skills](/ru/skills) для расши
 
 Добавьте директорию `skills/` в корень вашего plugin с папками Skill, содержащими файлы `SKILL.md`:
 
-```text  theme={null}
+```text theme={null}
 my-plugin/
 ├── .claude-plugin/
 │   └── plugin.json
@@ -215,7 +215,7 @@ my-plugin/
 
 Каждый `SKILL.md` нуждается в frontmatter с полями `name` и `description`, за которыми следуют инструкции:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: code-review
 description: Reviews code for best practices and potential issues. Use when reviewing code, checking PRs, or analyzing code quality.
@@ -276,7 +276,7 @@ Plugins могут включать файл `settings.json` в корне plugi
 
 Используйте флаг `--plugin-dir` для тестирования plugins во время разработки. Это загружает ваш plugin напрямую без необходимости установки.
 
-```bash  theme={null}
+```bash theme={null}
 claude --plugin-dir ./my-plugin
 ```
 
@@ -291,7 +291,7 @@ claude --plugin-dir ./my-plugin
 <Tip>
   Вы можете загружать несколько plugins одновременно, указав флаг несколько раз:
 
-  ```bash  theme={null}
+  ```bash theme={null}
   claude --plugin-dir ./plugin-one --plugin-dir ./plugin-two
   ```
 </Tip>
@@ -336,7 +336,7 @@ claude --plugin-dir ./my-plugin
   <Step title="Создайте структуру plugin">
     Создайте новую директорию plugin:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p my-plugin/.claude-plugin
     ```
 
@@ -354,7 +354,7 @@ claude --plugin-dir ./my-plugin
   <Step title="Скопируйте ваши существующие файлы">
     Скопируйте ваши существующие конфигурации в директорию plugin:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Copy commands
     cp -r .claude/commands my-plugin/
 
@@ -369,7 +369,7 @@ claude --plugin-dir ./my-plugin
   <Step title="Мигрируйте hooks">
     Если у вас есть hooks в ваших параметрах, создайте директорию hooks:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir my-plugin/hooks
     ```
 
@@ -392,7 +392,7 @@ claude --plugin-dir ./my-plugin
   <Step title="Протестируйте ваш мигрированный plugin">
     Загрузите ваш plugin для проверки того, что всё работает:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --plugin-dir ./my-plugin
     ```
 

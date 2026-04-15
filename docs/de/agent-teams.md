@@ -74,7 +74,7 @@ Nach der Aktivierung von Agent-Teams teilen Sie Claude mit, dass Sie ein Agent-T
 
 Dieses Beispiel funktioniert gut, weil die drei Rollen unabhängig sind und das Problem erkunden können, ohne aufeinander zu warten:
 
-```text  theme={null}
+```text theme={null}
 I'm designing a CLI tool that helps developers track TODO comments across
 their codebase. Create an agent team to explore this from different angles: one
 teammate on UX, one on technical architecture, one playing devil's advocate.
@@ -103,7 +103,7 @@ Agent-Teams unterstützen zwei Anzeigemodi:
 
 Der Standard ist `"auto"`, der Split Panes verwendet, wenn Sie bereits in einer tmux-Sitzung ausgeführt werden, und ansonsten In-Process. Die Einstellung `"tmux"` aktiviert den Split-Pane-Modus und erkennt automatisch, ob tmux oder iTerm2 basierend auf Ihrem Terminal verwendet werden soll. Um zu überschreiben, setzen Sie `teammateMode` in Ihrer [globalen Konfiguration](/de/settings#global-config-settings) unter `~/.claude.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "teammateMode": "in-process"
 }
@@ -111,7 +111,7 @@ Der Standard ist `"auto"`, der Split Panes verwendet, wenn Sie bereits in einer 
 
 Um den In-Process-Modus für eine einzelne Sitzung zu erzwingen, übergeben Sie ihn als Flag:
 
-```bash  theme={null}
+```bash theme={null}
 claude --teammate-mode in-process
 ```
 
@@ -124,7 +124,7 @@ Der Split-Pane-Modus erfordert entweder [tmux](https://github.com/tmux/tmux/wiki
 
 Claude entscheidet die Anzahl der zu erzeugenden Teammates basierend auf Ihrer Aufgabe, oder Sie können genau angeben, was Sie möchten:
 
-```text  theme={null}
+```text theme={null}
 Create a team with 4 teammates to refactor these modules in parallel.
 Use Sonnet for each teammate.
 ```
@@ -133,7 +133,7 @@ Use Sonnet for each teammate.
 
 Für komplexe oder riskante Aufgaben können Sie verlangen, dass Teammates planen, bevor sie implementieren. Der Teammate arbeitet im schreibgeschützten Plan-Modus, bis der Lead seinen Ansatz genehmigt:
 
-```text  theme={null}
+```text theme={null}
 Spawn an architect teammate to refactor the authentication module.
 Require plan approval before they make any changes.
 ```
@@ -164,7 +164,7 @@ Das Beanspruchen von Aufgaben verwendet Dateisperrung, um Race Conditions zu ver
 
 Um die Sitzung eines Teammates ordnungsgemäß zu beenden:
 
-```text  theme={null}
+```text theme={null}
 Ask the researcher teammate to shut down
 ```
 
@@ -174,7 +174,7 @@ Der Lead sendet eine Abschaltungsanfrage. Der Teammate kann zustimmen und ordnun
 
 Wenn Sie fertig sind, bitten Sie den Lead zu bereinigen:
 
-```text  theme={null}
+```text theme={null}
 Clean up the team
 ```
 
@@ -239,7 +239,7 @@ Beim Erzeugen eines Teammates können Sie einen [Subagent](/de/sub-agents)-Typ a
 
 Um eine Subagent-Definition zu verwenden, erwähnen Sie sie nach Name, wenn Sie Claude auffordern, den Teammate zu erzeugen:
 
-```text  theme={null}
+```text theme={null}
 Spawn a teammate using the security-reviewer agent type to audit the auth module.
 ```
 
@@ -274,7 +274,7 @@ Diese Beispiele zeigen, wie Agent-Teams Aufgaben handhaben, bei denen parallele 
 
 Ein einzelner Reviewer neigt dazu, sich jeweils auf eine Art von Problem zu konzentrieren. Das Aufteilen von Überprüfungskriterien in unabhängige Domänen bedeutet, dass Sicherheit, Leistung und Testabdeckung alle gleichzeitig gründlich beachtet werden. Der Prompt weist jedem Teammate eine unterschiedliche Perspektive zu, damit sie sich nicht überlappen:
 
-```text  theme={null}
+```text theme={null}
 Create an agent team to review PR #142. Spawn three reviewers:
 - One focused on security implications
 - One checking performance impact
@@ -288,7 +288,7 @@ Jeder Reviewer arbeitet vom selben PR aus, wendet aber einen anderen Filter an. 
 
 Wenn die Grundursache unklar ist, neigt ein einzelner Agent dazu, eine plausible Erklärung zu finden und zu stoppen. Der Prompt bekämpft dies, indem er Teammates explizit gegnerisch macht: die Aufgabe jedes ist nicht nur, seine eigene Theorie zu untersuchen, sondern auch die anderen in Frage zu stellen.
 
-```text  theme={null}
+```text theme={null}
 Users report the app exits after one message instead of staying connected.
 Spawn 5 agent teammates to investigate different hypotheses. Have them talk to
 each other to try to disprove each other's theories, like a scientific
@@ -305,7 +305,7 @@ Mit mehreren unabhängigen Ermittlern, die aktiv versuchen, sich gegenseitig zu 
 
 Teammates laden Projektkontext automatisch, einschließlich CLAUDE.md, MCP servers und skills, aber sie erben nicht die Gesprächshistorie des Leads. Siehe [Kontext und Kommunikation](#context-and-communication) für Details. Fügen Sie aufgabenspezifische Details in den Spawn-Prompt ein:
 
-```text  theme={null}
+```text theme={null}
 Spawn a security reviewer teammate with the prompt: "Review the authentication module
 at src/auth/ for security vulnerabilities. Focus on token handling, session
 management, and input validation. The app uses JWT tokens stored in
@@ -340,7 +340,7 @@ Skalieren Sie nur auf, wenn die Arbeit wirklich davon profitiert, dass Teammates
 
 Manchmal beginnt der Lead, Aufgaben selbst zu implementieren, anstatt auf Teammates zu warten. Wenn Sie dies bemerken:
 
-```text  theme={null}
+```text theme={null}
 Wait for your teammates to complete their tasks before proceeding
 ```
 
@@ -365,7 +365,7 @@ Wenn Teammates nicht erscheinen, nachdem Sie Claude aufgefordert haben, ein Team
 * Im In-Process-Modus können Teammates bereits laufen, sind aber nicht sichtbar. Drücken Sie Shift+Down, um durch aktive Teammates zu wechseln.
 * Überprüfen Sie, dass die Aufgabe, die Sie Claude gegeben haben, komplex genug war, um ein Team zu rechtfertigen. Claude entscheidet basierend auf der Aufgabe, ob Teammates erzeugt werden sollen.
 * Wenn Sie explizit Split Panes angefordert haben, stellen Sie sicher, dass tmux installiert ist und in Ihrem PATH verfügbar ist:
-  ```bash  theme={null}
+  ```bash theme={null}
   which tmux
   ```
 * Für iTerm2 überprüfen Sie, dass die `it2` CLI installiert ist und die Python-API in iTerm2-Einstellungen aktiviert ist.
@@ -389,7 +389,7 @@ Der Lead kann entscheiden, dass das Team fertig ist, bevor alle Aufgaben tatsäc
 
 Wenn eine tmux-Sitzung nach dem Ende des Teams bestehen bleibt, wurde sie möglicherweise nicht vollständig bereinigt. Listen Sie Sitzungen auf und beenden Sie die vom Team erstellte:
 
-```bash  theme={null}
+```bash theme={null}
 tmux ls
 tmux kill-session -t <session-name>
 ```

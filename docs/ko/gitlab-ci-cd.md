@@ -62,7 +62,7 @@ Claude Code는 코드 작업 방식을 변환하는 강력한 CI/CD 워크플로
 
 2. **`.gitlab-ci.yml`에 Claude 작업 추가**
 
-```yaml  theme={null}
+```yaml theme={null}
 stages:
   - ai
 
@@ -126,7 +126,7 @@ claude:
 
 이슈 댓글에서:
 
-```text  theme={null}
+```text theme={null}
 @claude implement this feature based on the issue description
 ```
 
@@ -136,7 +136,7 @@ Claude는 이슈 및 코드베이스를 분석하고, 브랜치에서 변경 사
 
 MR 토론에서:
 
-```text  theme={null}
+```text theme={null}
 @claude suggest a concrete approach to cache the results of this API call
 ```
 
@@ -146,7 +146,7 @@ Claude는 변경 사항을 제안하고, 적절한 캐싱으로 코드를 추가
 
 이슈 또는 MR 댓글에서:
 
-```text  theme={null}
+```text theme={null}
 @claude fix the TypeError in the user dashboard component
 ```
 
@@ -187,7 +187,7 @@ Claude는 버그를 찾고, 수정을 구현하고, 브랜치를 업데이트하
 
     설정 → CI/CD → 변수에서 변수를 추가합니다:
 
-    ```yaml  theme={null}
+    ```yaml theme={null}
     # AWS Bedrock의 경우:
     - AWS_ROLE_TO_ASSUME
     - AWS_REGION
@@ -227,7 +227,7 @@ Claude는 버그를 찾고, 수정을 구현하고, 브랜치를 업데이트하
 
     설정 → CI/CD → 변수에서 변수를 추가합니다:
 
-    ```yaml  theme={null}
+    ```yaml theme={null}
     # Google Vertex AI의 경우:
     - GCP_WORKLOAD_IDENTITY_PROVIDER
     - GCP_SERVICE_ACCOUNT
@@ -244,7 +244,7 @@ Claude는 버그를 찾고, 수정을 구현하고, 브랜치를 업데이트하
 
 ### 기본 .gitlab-ci.yml (Claude API)
 
-```yaml  theme={null}
+```yaml theme={null}
 stages:
   - ai
 
@@ -284,7 +284,7 @@ claude:
 * `AWS_ROLE_TO_ASSUME`: Bedrock 액세스용 IAM 역할의 ARN
 * `AWS_REGION`: Bedrock 지역 (예: `us-west-2`)
 
-```yaml  theme={null}
+```yaml theme={null}
 claude-bedrock:
   stage: ai
   image: node:24-alpine3.21
@@ -336,7 +336,7 @@ claude-bedrock:
 * `GCP_SERVICE_ACCOUNT`: 서비스 계정 이메일
 * `CLOUD_ML_REGION`: Vertex 지역 (예: `us-east5`)
 
-```yaml  theme={null}
+```yaml theme={null}
 claude-vertex:
   stage: ai
   image: gcr.io/google.com/cloudsdktool/google-cloud-cli:slim

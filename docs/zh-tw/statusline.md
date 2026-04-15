@@ -31,7 +31,7 @@
 
 `/statusline` 命令接受描述您想顯示內容的自然語言指令。Claude Code 在 `~/.claude/` 中產生指令碼檔案並自動更新您的設定：
 
-```text  theme={null}
+```text theme={null}
 /statusline show model name and context percentage with a progress bar
 ```
 
@@ -39,7 +39,7 @@
 
 將 `statusLine` 欄位新增到您的使用者設定（`~/.claude/settings.json`，其中 `~` 是您的主目錄）或[專案設定](/zh-TW/settings#settings-files)。將 `type` 設定為 `"command"`，並將 `command` 指向指令碼路徑或內聯 shell 命令。如需建立指令碼的完整逐步說明，請參閱[逐步建立狀態列](#build-a-status-line-step-by-step)。
 
-```json  theme={null}
+```json theme={null}
 {
   "statusLine": {
     "type": "command",
@@ -51,7 +51,7 @@
 
 `command` 欄位在 shell 中執行，因此您也可以使用內聯命令而不是指令碼檔案。此範例使用 `jq` 解析 JSON 輸入並顯示模型名稱和 context 百分比：
 
-```json  theme={null}
+```json theme={null}
 {
   "statusLine": {
     "type": "command",
@@ -84,7 +84,7 @@
 
     將此儲存到 `~/.claude/statusline.sh`（其中 `~` 是您的主目錄，例如 macOS 上的 `/Users/username` 或 Linux 上的 `/home/username`）：
 
-    ```bash  theme={null}
+    ```bash theme={null}
     #!/bin/bash
     # Read JSON data that Claude Code sends to stdin
     input=$(cat)
@@ -103,7 +103,7 @@
   <Step title="使其可執行">
     將指令碼標記為可執行，以便您的 shell 可以執行它：
 
-    ```bash  theme={null}
+    ```bash theme={null}
     chmod +x ~/.claude/statusline.sh
     ```
   </Step>
@@ -111,7 +111,7 @@
   <Step title="新增到設定">
     告訴 Claude Code 執行您的指令碼作為狀態列。將此設定新增到 `~/.claude/settings.json`，它將 `type` 設定為 `"command"`（意思是「執行此 shell 命令」）並將 `command` 指向您的指令碼：
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "statusLine": {
         "type": "command",
@@ -178,7 +178,7 @@ Claude Code 透過 stdin 將以下 JSON 欄位傳送到您的指令碼：
 <Accordion title="完整 JSON 架構">
   您的狀態列命令透過 stdin 接收此 JSON 結構：
 
-  ```json  theme={null}
+  ```json theme={null}
   {
     "cwd": "/current/working/directory",
     "session_id": "abc123...",

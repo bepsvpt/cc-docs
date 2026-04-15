@@ -77,7 +77,7 @@ Tambahkan specifier dalam tanda kurung untuk mencocokkan penggunaan alat tertent
 
 Aturan Bash mendukung pola glob dengan `*`. Wildcard dapat muncul di posisi mana pun dalam perintah. Konfigurasi ini memungkinkan perintah npm dan git commit sambil memblokir git push:
 
-```json  theme={null}
+```json theme={null}
 {
   "permissions": {
     "allow": [
@@ -188,7 +188,7 @@ Gunakan aturan `Agent(AgentName)` untuk mengontrol [subagents](/id/sub-agents) m
 
 Tambahkan aturan ini ke array `deny` dalam pengaturan Anda atau gunakan flag CLI `--disallowedTools` untuk menonaktifkan agen tertentu. Untuk menonaktifkan agen Explore:
 
-```json  theme={null}
+```json theme={null}
 {
   "permissions": {
     "deny": ["Agent(Explore)"]
@@ -297,7 +297,7 @@ Entri dari setiap cakupan digabungkan. Pengembang dapat memperluas `environment`
 
 Untuk sebagian besar organisasi, `autoMode.environment` adalah satu-satunya bidang yang perlu Anda atur. Ini memberi tahu pengklasifikasi repositori, bucket, dan domain mana yang dipercaya, tanpa menyentuh aturan blokir dan allow bawaan. Pengklasifikasi menggunakan `environment` untuk memutuskan apa arti "eksternal": tujuan apa pun yang tidak terdaftar adalah target exfiltration potensial.
 
-```json  theme={null}
+```json theme={null}
 {
   "autoMode": {
     "environment": [
@@ -321,7 +321,7 @@ Entri adalah prosa, bukan regex atau pola alat. Pengklasifikasi membacanya sebag
 
 Template awal yang berguna: isi bidang dalam tanda kurung dan hapus baris apa pun yang tidak berlaku:
 
-```json  theme={null}
+```json theme={null}
 {
   "autoMode": {
     "environment": [
@@ -349,7 +349,7 @@ Di dalam pengklasifikasi, prioritasnya adalah: aturan `soft_deny` memblokir terl
 
 Untuk melonggarkan: hapus aturan dari `soft_deny` ketika default memblokir sesuatu yang sudah dijaga pipeline Anda dengan review PR, CI, atau lingkungan staging, atau tambahkan ke `allow` ketika pengklasifikasi berulang kali menandai pola rutin yang pengecualian default tidak mencakup. Untuk mengencangkan: tambahkan ke `soft_deny` untuk risiko spesifik lingkungan Anda yang default lewatkan, atau hapus dari `allow` untuk menahan pengecualian default ke aturan blokir. Dalam semua kasus, jalankan `claude auto-mode defaults` untuk mendapatkan daftar default lengkap, kemudian salin dan edit: jangan pernah mulai dari daftar kosong.
 
-```json  theme={null}
+```json theme={null}
 {
   "autoMode": {
     "environment": [
@@ -378,7 +378,7 @@ Tiga bagian dievaluasi secara independen, jadi mengatur `environment` saja menin
 
 Karena mengatur `allow` atau `soft_deny` mengganti default, mulai kustomisasi apa pun dengan menyalin daftar default lengkap. Tiga subperintah CLI membantu Anda memeriksa dan memvalidasi:
 
-```bash  theme={null}
+```bash theme={null}
 claude auto-mode defaults  # the built-in environment, allow, and soft_deny rules
 claude auto-mode config    # what the classifier actually uses: your settings where set, defaults otherwise
 claude auto-mode critique  # get AI feedback on your custom allow and soft_deny rules

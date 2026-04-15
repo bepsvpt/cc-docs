@@ -18,17 +18,17 @@ Les tâches sont limitées à la session : elles vivent dans le processus Claude
 
 Claude Code offers three ways to schedule recurring work:
 
-|                            | [Cloud](/en/web-scheduled-tasks) | [Desktop](/en/desktop-scheduled-tasks) | [`/loop`](/en/scheduled-tasks) |
-| :------------------------- | :------------------------------- | :------------------------------------- | :----------------------------- |
-| Runs on                    | Anthropic cloud                  | Your machine                           | Your machine                   |
-| Requires machine on        | No                               | Yes                                    | Yes                            |
-| Requires open session      | No                               | No                                     | Yes                            |
-| Persistent across restarts | Yes                              | Yes                                    | No (session-scoped)            |
-| Access to local files      | No (fresh clone)                 | Yes                                    | Yes                            |
-| MCP servers                | Connectors configured per task   | [Config files](/en/mcp) and connectors | Inherits from session          |
-| Permission prompts         | No (runs autonomously)           | Configurable per task                  | Inherits from session          |
-| Customizable schedule      | Via `/schedule` in the CLI       | Yes                                    | Yes                            |
-| Minimum interval           | 1 hour                           | 1 minute                               | 1 minute                       |
+|                            | [Cloud](/en/routines)          | [Desktop](/en/desktop-scheduled-tasks) | [`/loop`](/en/scheduled-tasks) |
+| :------------------------- | :----------------------------- | :------------------------------------- | :----------------------------- |
+| Runs on                    | Anthropic cloud                | Your machine                           | Your machine                   |
+| Requires machine on        | No                             | Yes                                    | Yes                            |
+| Requires open session      | No                             | No                                     | Yes                            |
+| Persistent across restarts | Yes                            | Yes                                    | No (session-scoped)            |
+| Access to local files      | No (fresh clone)               | Yes                                    | Yes                            |
+| MCP servers                | Connectors configured per task | [Config files](/en/mcp) and connectors | Inherits from session          |
+| Permission prompts         | No (runs autonomously)         | Configurable per task                  | Inherits from session          |
+| Customizable schedule      | Via `/schedule` in the CLI     | Yes                                    | Yes                            |
+| Minimum interval           | 1 hour                         | 1 minute                               | 1 minute                       |
 
 <Tip>
   Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
@@ -38,7 +38,7 @@ Claude Code offers three ways to schedule recurring work:
 
 La [compétence groupée](/fr/skills#bundled-skills) `/loop` est le moyen le plus rapide de planifier un prompt récurrent. Passez un intervalle optionnel et un prompt, et Claude configure une tâche cron qui s'exécute en arrière-plan pendant que la session reste ouverte.
 
-```text  theme={null}
+```text theme={null}
 /loop 5m check if the deployment finished and tell me what happened
 ```
 
@@ -60,7 +60,7 @@ Les unités prises en charge sont `s` pour les secondes, `m` pour les minutes, `
 
 Le prompt planifié peut lui-même être une invocation de commande ou de compétence. C'est utile pour réexécuter un flux de travail que vous avez déjà empaqueté.
 
-```text  theme={null}
+```text theme={null}
 /loop 20m /review-pr 1234
 ```
 
@@ -70,11 +70,11 @@ Chaque fois que la tâche s'exécute, Claude exécute `/review-pr 1234` comme si
 
 Pour les rappels ponctuels, décrivez ce que vous voulez en langage naturel au lieu d'utiliser `/loop`. Claude planifie une tâche à usage unique qui se supprime après son exécution.
 
-```text  theme={null}
+```text theme={null}
 remind me at 3pm to push the release branch
 ```
 
-```text  theme={null}
+```text theme={null}
 in 45 minutes, check whether the integration tests passed
 ```
 
@@ -84,11 +84,11 @@ Claude épingle l'heure d'exécution à une minute et une heure spécifiques en 
 
 Demandez à Claude en langage naturel de lister ou d'annuler les tâches, ou référencez directement les outils sous-jacents.
 
-```text  theme={null}
+```text theme={null}
 what scheduled tasks do I have?
 ```
 
-```text  theme={null}
+```text theme={null}
 cancel the deploy check job
 ```
 

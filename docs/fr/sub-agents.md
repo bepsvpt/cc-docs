@@ -83,7 +83,7 @@ Cette procédure pas à pas vous guide dans la création d'un sous-agent au nive
   <Step title="Ouvrir l'interface des sous-agents">
     Dans Claude Code, exécutez :
 
-    ```text  theme={null}
+    ```text theme={null}
     /agents
     ```
   </Step>
@@ -95,7 +95,7 @@ Cette procédure pas à pas vous guide dans la création d'un sous-agent au nive
   <Step title="Générer avec Claude">
     Sélectionnez **Generate with Claude**. Lorsque vous y êtes invité, décrivez le sous-agent :
 
-    ```text  theme={null}
+    ```text theme={null}
     A code improvement agent that scans files and suggests improvements
     for readability, performance, and best practices. It should explain
     each issue, show the current code, and provide an improved version.
@@ -123,7 +123,7 @@ Cette procédure pas à pas vous guide dans la création d'un sous-agent au nive
   <Step title="Enregistrer et essayer">
     Examinez le résumé de la configuration. Appuyez sur `s` ou `Entrée` pour enregistrer, ou appuyez sur `e` pour enregistrer et modifier le fichier dans votre éditeur. Le sous-agent est disponible immédiatement. Essayez-le :
 
-    ```text  theme={null}
+    ```text theme={null}
     Use the code-improver agent to suggest improvements in this project
     ```
 
@@ -171,7 +171,7 @@ Les sous-agents de projet sont découverts en remontant à partir du répertoire
 
 **Les sous-agents définis par CLI** sont passés en JSON lors du lancement de Claude Code. Ils n'existent que pour cette session et ne sont pas enregistrés sur le disque, ce qui les rend utiles pour les tests rapides ou les scripts d'automatisation. Vous pouvez définir plusieurs sous-agents dans un seul appel `--agents` :
 
-```bash  theme={null}
+```bash theme={null}
 claude --agents '{
   "code-reviewer": {
     "description": "Expert code reviewer. Use proactively after code changes.",
@@ -206,7 +206,7 @@ Les fichiers de sous-agent utilisent du frontmatter YAML pour la configuration, 
   Les sous-agents sont chargés au démarrage de la session. Si vous créez un sous-agent en ajoutant manuellement un fichier, redémarrez votre session ou utilisez `/agents` pour le charger immédiatement.
 </Note>
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 name: code-reviewer
 description: Reviews code for quality and best practices
@@ -269,7 +269,7 @@ Les sous-agents peuvent utiliser n'importe lequel des [outils internes](/fr/tool
 
 Pour restreindre les outils, utilisez soit le champ `tools` (liste blanche) soit le champ `disallowedTools` (liste noire). Cet exemple utilise `tools` pour autoriser exclusivement Read, Grep, Glob et Bash. Le sous-agent ne peut pas modifier les fichiers, écrire des fichiers ou utiliser des outils MCP :
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: safe-researcher
 description: Research agent with restricted capabilities
@@ -279,7 +279,7 @@ tools: Read, Grep, Glob, Bash
 
 Cet exemple utilise `disallowedTools` pour hériter de tous les outils de la conversation principale sauf Write et Edit. Le sous-agent conserve Bash, les outils MCP et tout le reste :
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: no-writes
 description: Inherits every tool except file writes
@@ -295,7 +295,7 @@ Lorsqu'un agent s'exécute en tant que thread principal avec `claude --agent`, i
 
 <Note>Dans la version 2.1.63, l'outil Task a été renommé en Agent. Les références `Task(...)` existantes dans les paramètres et les définitions d'agent fonctionnent toujours comme des alias.</Note>
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: coordinator
 description: Coordinates work across specialized agents
@@ -307,7 +307,7 @@ C'est une liste blanche : seuls les sous-agents `worker` et `researcher` peuvent
 
 Pour autoriser la génération de n'importe quel sous-agent sans restrictions, utilisez `Agent` sans parenthèses :
 
-```yaml  theme={null}
+```yaml theme={null}
 tools: Agent, Read, Bash
 ```
 
@@ -319,7 +319,7 @@ Utilisez le champ `mcpServers` pour donner à un sous-agent l'accès aux serveur
 
 Chaque entrée de la liste est soit une définition de serveur en ligne, soit une chaîne référençant un serveur MCP déjà configuré dans votre session :
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: browser-tester
 description: Tests features in a real browser using Playwright
@@ -363,7 +363,7 @@ Si le parent utilise `bypassPermissions`, cela prend précédence et ne peut pas
 
 Utilisez le champ `skills` pour injecter le contenu de la skill dans le contexte du sous-agent au démarrage. Cela donne au sous-agent des connaissances de domaine sans qu'il ait besoin de découvrir et charger les skills pendant l'exécution.
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: api-developer
 description: Implement API endpoints following team conventions
@@ -385,7 +385,7 @@ Le contenu complet de chaque skill est injecté dans le contexte du sous-agent, 
 
 Le champ `memory` donne au sous-agent un répertoire persistant qui survit aux conversations. Le sous-agent utilise ce répertoire pour accumuler des connaissances au fil du temps, comme les modèles de base de code, les insights de débogage et les décisions architecturales.
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: code-reviewer
 description: Reviews code for quality and best practices
@@ -417,7 +417,7 @@ Lorsque la mémoire est activée :
 * Demandez au sous-agent de mettre à jour sa mémoire après avoir terminé une tâche : « Maintenant que vous avez terminé, enregistrez ce que vous avez appris dans votre mémoire. » Au fil du temps, cela crée une base de connaissances qui rend le sous-agent plus efficace.
 * Incluez les instructions de mémoire directement dans le fichier markdown du sous-agent pour qu'il maintienne proactivement sa propre base de connaissances :
 
-  ```markdown  theme={null}
+  ```markdown theme={null}
   Update your agent memory as you discover codepaths, patterns, library
   locations, and key architectural decisions. This builds up institutional
   knowledge across conversations. Write concise notes about what you found
@@ -430,7 +430,7 @@ Pour un contrôle plus dynamique de l'utilisation des outils, utilisez les hooks
 
 Cet exemple crée un sous-agent qui n'autorise que les requêtes de base de données en lecture seule. Le hook `PreToolUse` exécute le script spécifié dans `command` avant chaque commande Bash :
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: db-reader
 description: Execute read-only database queries
@@ -446,7 +446,7 @@ hooks:
 
 Claude Code [passe l'entrée du hook en JSON](/fr/hooks#pretooluse-input) via stdin aux commandes du hook. Le script de validation lit ce JSON, extrait la commande Bash et [quitte avec le code 2](/fr/hooks#exit-code-2-behavior-per-event) pour bloquer les opérations d'écriture :
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # ./scripts/validate-readonly-query.sh
 
@@ -468,7 +468,7 @@ Consultez [Hook input](/fr/hooks#pretooluse-input) pour le schéma d'entrée com
 
 Vous pouvez empêcher Claude d'utiliser des sous-agents spécifiques en les ajoutant au tableau `deny` dans vos [paramètres](/fr/settings#permission-settings). Utilisez le format `Agent(subagent-name)` où `subagent-name` correspond au champ name du sous-agent.
 
-```json  theme={null}
+```json theme={null}
 {
   "permissions": {
     "deny": ["Agent(Explore)", "Agent(my-custom-agent)"]
@@ -478,7 +478,7 @@ Vous pouvez empêcher Claude d'utiliser des sous-agents spécifiques en les ajou
 
 Cela fonctionne pour les sous-agents intégrés et personnalisés. Vous pouvez également utiliser le drapeau CLI `--disallowedTools` :
 
-```bash  theme={null}
+```bash theme={null}
 claude --disallowedTools "Agent(Explore)"
 ```
 
@@ -505,7 +505,7 @@ Tous les [événements de hook](/fr/hooks#hook-events) sont pris en charge. Les 
 
 Cet exemple valide les commandes Bash avec le hook `PreToolUse` et exécute un linter après les modifications de fichiers avec `PostToolUse` :
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: code-reviewer
 description: Review code changes with automatic linting
@@ -536,7 +536,7 @@ Configurez les hooks dans `settings.json` qui répondent aux événements du cyc
 
 Les deux événements prennent en charge les matchers pour cibler des types d'agents spécifiques par nom. Cet exemple exécute un script de configuration uniquement lorsque le sous-agent `db-agent` démarre, et un script de nettoyage lorsque n'importe quel sous-agent s'arrête :
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "SubagentStart": [
@@ -576,14 +576,14 @@ Lorsque la délégation automatique ne suffit pas, vous pouvez demander un sous-
 
 Pour le langage naturel, il n'y a pas de syntaxe spéciale. Nommez le sous-agent et Claude délègue généralement :
 
-```text  theme={null}
+```text theme={null}
 Use the test-runner subagent to fix failing tests
 Have the code-reviewer subagent look at my recent changes
 ```
 
 **@-mentionnez le sous-agent.** Tapez `@` et choisissez le sous-agent dans la saisie semi-automatique, de la même manière que vous @-mentionnez les fichiers. Cela garantit que ce sous-agent spécifique s'exécute plutôt que de laisser le choix à Claude :
 
-```text  theme={null}
+```text theme={null}
 @"code-reviewer (agent)" look at the auth changes
 ```
 
@@ -593,7 +593,7 @@ Les sous-agents fournis par un [plugin](/fr/plugins) activé apparaissent dans l
 
 **Exécutez la session entière en tant que sous-agent.** Passez [`--agent <name>`](/fr/cli-reference) pour démarrer une session où le thread principal lui-même prend l'invite système, les restrictions d'outils et le modèle de ce sous-agent :
 
-```bash  theme={null}
+```bash theme={null}
 claude --agent code-reviewer
 ```
 
@@ -605,7 +605,7 @@ Pour un sous-agent fourni par un plugin, passez le nom délimité : `claude --ag
 
 Pour en faire la valeur par défaut pour chaque session dans un projet, définissez `agent` dans `.claude/settings.json` :
 
-```json  theme={null}
+```json theme={null}
 {
   "agent": "code-reviewer"
 }
@@ -635,7 +635,7 @@ Pour désactiver toute la fonctionnalité de tâche en arrière-plan, définisse
 
 L'une des utilisations les plus efficaces des sous-agents est l'isolation des opérations qui produisent de grandes quantités de résultats. L'exécution de tests, la récupération de documentation ou le traitement de fichiers journaux peuvent consommer un contexte important. En déléguant ces tâches à un sous-agent, la sortie détaillée reste dans le contexte du sous-agent tandis que seul le résumé pertinent revient à votre conversation principale.
 
-```text  theme={null}
+```text theme={null}
 Use a subagent to run the test suite and report only the failing tests with their error messages
 ```
 
@@ -643,7 +643,7 @@ Use a subagent to run the test suite and report only the failing tests with thei
 
 Pour les investigations indépendantes, générez plusieurs sous-agents pour travailler simultanément :
 
-```text  theme={null}
+```text theme={null}
 Research the authentication, database, and API modules in parallel using separate subagents
 ```
 
@@ -659,7 +659,7 @@ Pour les tâches qui nécessitent un parallélisme soutenu ou qui dépassent vot
 
 Pour les workflows multi-étapes, demandez à Claude d'utiliser les sous-agents en séquence. Chaque sous-agent termine sa tâche et retourne les résultats à Claude, qui transmet ensuite le contexte pertinent au sous-agent suivant.
 
-```text  theme={null}
+```text theme={null}
 Use the code-reviewer subagent to find performance issues, then use the optimizer subagent to fix them
 ```
 
@@ -698,7 +698,7 @@ Lorsqu'un sous-agent se termine, Claude reçoit son ID d'agent. Claude utilise l
 
 Pour reprendre un sous-agent, demandez à Claude de continuer le travail précédent :
 
-```text  theme={null}
+```text theme={null}
 Use the code-reviewer subagent to review the authentication module
 [Agent completes]
 
@@ -722,7 +722,7 @@ Les sous-agents prennent en charge la compaction automatique en utilisant la mê
 
 Les événements de compaction sont enregistrés dans les fichiers de transcription de sous-agent :
 
-```json  theme={null}
+```json theme={null}
 {
   "type": "system",
   "subtype": "compact_boundary",
@@ -752,7 +752,7 @@ Ces exemples démontrent des modèles efficaces pour construire des sous-agents.
 
 Un sous-agent en lecture seule qui examine le code sans le modifier. Cet exemple montre comment concevoir un sous-agent ciblé avec un accès limité aux outils (pas d'Edit ou Write) et une invite détaillée qui spécifie exactement ce qu'il faut chercher et comment formater la sortie.
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 name: code-reviewer
 description: Expert code review specialist. Proactively reviews code for quality, security, and maintainability. Use immediately after writing or modifying code.
@@ -789,7 +789,7 @@ Include specific examples of how to fix issues.
 
 Un sous-agent qui peut à la fois analyser et corriger les problèmes. Contrairement à l'examinateur de code, celui-ci inclut Edit car corriger les bugs nécessite de modifier le code. L'invite fournit un workflow clair du diagnostic à la vérification.
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 name: debugger
 description: Debugging specialist for errors, test failures, and unexpected behavior. Use proactively when encountering any issues.
@@ -826,7 +826,7 @@ Focus on fixing the underlying issue, not the symptoms.
 
 Un sous-agent spécialisé dans le domaine pour le travail d'analyse de données. Cet exemple montre comment créer des sous-agents pour des workflows spécialisés en dehors des tâches de codage typiques. Il définit explicitement `model: sonnet` pour une analyse plus capable.
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 name: data-scientist
 description: Data analysis expert for SQL queries, BigQuery operations, and data insights. Use proactively for data analysis tasks and queries.
@@ -863,7 +863,7 @@ Always ensure queries are efficient and cost-effective.
 
 Un sous-agent qui autorise l'accès à Bash mais valide les commandes pour n'autoriser que les requêtes SQL en lecture seule. Cet exemple montre comment utiliser les hooks `PreToolUse` pour la validation conditionnelle lorsque vous avez besoin d'un contrôle plus fin que le champ `tools` ne le permet.
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 name: db-reader
 description: Execute read-only database queries. Use when analyzing data or generating reports.
@@ -890,7 +890,7 @@ Claude Code [passe l'entrée du hook en JSON](/fr/hooks#pretooluse-input) via st
 
 Créez le script de validation n'importe où dans votre projet. Le chemin doit correspondre au champ `command` dans votre configuration de hook :
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # Blocks SQL write operations, allows SELECT queries
 
@@ -915,7 +915,7 @@ exit 0
 
 Rendez le script exécutable :
 
-```bash  theme={null}
+```bash theme={null}
 chmod +x ./scripts/validate-readonly-query.sh
 ```
 

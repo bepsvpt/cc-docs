@@ -103,7 +103,7 @@ Semua pengguna beta harus membuat perubahan ini pada file workflow mereka untuk 
 
 **Versi beta:**
 
-```yaml  theme={null}
+```yaml theme={null}
 - uses: anthropics/claude-code-action@beta
   with:
     mode: "tag"
@@ -116,7 +116,7 @@ Semua pengguna beta harus membuat perubahan ini pada file workflow mereka untuk 
 
 **Versi GA (v1.0):**
 
-```yaml  theme={null}
+```yaml theme={null}
 - uses: anthropics/claude-code-action@v1
   with:
     prompt: "Review this PR for security issues"
@@ -137,7 +137,7 @@ Claude Code GitHub Actions dapat membantu Anda dengan berbagai tugas. Direktori 
 
 ### Workflow dasar
 
-```yaml  theme={null}
+```yaml theme={null}
 name: Claude Code
 on:
   issue_comment:
@@ -156,7 +156,7 @@ jobs:
 
 ### Menggunakan skills
 
-```yaml  theme={null}
+```yaml theme={null}
 name: Code Review
 on:
   pull_request:
@@ -174,7 +174,7 @@ jobs:
 
 ### Otomasi kustom dengan prompt
 
-```yaml  theme={null}
+```yaml theme={null}
 name: Daily Report
 on:
   schedule:
@@ -194,7 +194,7 @@ jobs:
 
 Dalam komentar issue atau PR:
 
-```text  theme={null}
+```text theme={null}
 @claude implement this feature based on the issue description
 @claude how should I implement user authentication for this endpoint?
 @claude fix the TypeError in the user dashboard component
@@ -253,7 +253,7 @@ Saat menggunakan Claude Code GitHub Actions, waspadai biaya terkait:
 
 Claude Code Action v1 menyederhanakan konfigurasi dengan parameter terpadu:
 
-```yaml  theme={null}
+```yaml theme={null}
 - uses: anthropics/claude-code-action@v1
   with:
     anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -468,7 +468,7 @@ Sebelum menyiapkan Claude Code GitHub Actions dengan penyedia cloud, Anda memerl
         | `APP_ID`             | ID Aplikasi GitHub Anda (dari pengaturan aplikasi)          |
         | `APP_PRIVATE_KEY`    | Kunci pribadi yang Anda hasilkan untuk Aplikasi GitHub Anda |
 
-        ```yaml  theme={null}
+        ```yaml theme={null}
         name: Claude PR Action
 
         permissions:
@@ -539,7 +539,7 @@ Sebelum menyiapkan Claude Code GitHub Actions dengan penyedia cloud, Anda memerl
         | `APP_ID`                         | ID Aplikasi GitHub Anda (dari pengaturan aplikasi)          |
         | `APP_PRIVATE_KEY`                | Kunci pribadi yang Anda hasilkan untuk Aplikasi GitHub Anda |
 
-        ```yaml  theme={null}
+        ```yaml theme={null}
         name: Claude PR Action
 
         permissions:
@@ -638,7 +638,7 @@ Claude Code Action v1 menggunakan konfigurasi yang disederhanakan:
 
 Parameter `claude_args` menerima argumen Claude Code CLI apa pun:
 
-```yaml  theme={null}
+```yaml theme={null}
 claude_args: "--max-turns 5 --model claude-sonnet-4-6 --mcp-config /path/to/config.json"
 ```
 

@@ -86,7 +86,7 @@ Sowohl relative als auch absolute Pfade sind zulässig. Relative Pfade werden re
 
 Um eine README, package.json und einen Workflow-Leitfaden einzubeziehen, referenzieren Sie sie mit der `@`-Syntax überall in Ihrer CLAUDE.md:
 
-```text  theme={null}
+```text theme={null}
 Siehe @README für Projektübersicht und @package.json für verfügbare npm-Befehle für dieses Projekt.
 
 # Zusätzliche Anweisungen
@@ -95,7 +95,7 @@ Siehe @README für Projektübersicht und @package.json für verfügbare npm-Befe
 
 Für persönliche Vorlieben, die Sie nicht einchecken möchten, importieren Sie eine Datei aus Ihrem Home-Verzeichnis. Der Import geht in die gemeinsame CLAUDE.md, aber die Datei, auf die er verweist, bleibt auf Ihrem Computer:
 
-```text  theme={null}
+```text theme={null}
 # Individuelle Vorlieben
 - @~/.claude/my-project-instructions.md
 ```
@@ -134,7 +134,7 @@ Das Flag `--add-dir` gibt Claude Zugriff auf zusätzliche Verzeichnisse außerha
 
 Um auch CLAUDE.md-Dateien aus zusätzlichen Verzeichnissen zu laden, einschließlich `CLAUDE.md`, `.claude/CLAUDE.md` und `.claude/rules/*.md`, setzen Sie die Umgebungsvariable `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD`:
 
-```bash  theme={null}
+```bash theme={null}
 CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ../shared-config
 ```
 
@@ -150,7 +150,7 @@ Für größere Projekte können Sie Anweisungen in mehrere Dateien mit dem Verze
 
 Platzieren Sie Markdown-Dateien im Verzeichnis `.claude/rules/` Ihres Projekts. Jede Datei sollte ein Thema abdecken, mit einem beschreibenden Dateinamen wie `testing.md` oder `api-design.md`. Alle `.md`-Dateien werden rekursiv entdeckt, sodass Sie Regeln in Unterverzeichnisse wie `frontend/` oder `backend/` organisieren können:
 
-```text  theme={null}
+```text theme={null}
 your-project/
 ├── .claude/
 │   ├── CLAUDE.md           # Hauptprojektanweisungen
@@ -166,7 +166,7 @@ Regeln ohne [`paths`-Frontmatter](#path-specific-rules) werden beim Start mit de
 
 Regeln können mit YAML-Frontmatter mit dem Feld `paths` auf bestimmte Dateien beschränkt werden. Diese bedingten Regeln gelten nur, wenn Claude mit Dateien arbeitet, die den angegebenen Mustern entsprechen.
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 paths:
   - "src/api/**/*.ts"
@@ -192,7 +192,7 @@ Verwenden Sie Glob-Muster im Feld `paths`, um Dateien nach Erweiterung, Verzeich
 
 Sie können mehrere Muster angeben und Klammer-Expansion verwenden, um mehrere Erweiterungen in einem Muster zu vergleichen:
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 paths:
   - "src/**/*.{ts,tsx}"
@@ -207,7 +207,7 @@ Das Verzeichnis `.claude/rules/` unterstützt Symlinks, sodass Sie einen gemeins
 
 Dieses Beispiel verlinkt sowohl ein gemeinsames Verzeichnis als auch eine einzelne Datei:
 
-```bash  theme={null}
+```bash theme={null}
 ln -s ~/shared-claude-rules .claude/rules/shared
 ln -s ~/company-standards/security.md .claude/rules/security.md
 ```
@@ -216,7 +216,7 @@ ln -s ~/company-standards/security.md .claude/rules/security.md
 
 Persönliche Regeln in `~/.claude/rules/` gelten für jedes Projekt auf Ihrem Computer. Verwenden Sie sie für Vorlieben, die nicht projektspezifisch sind:
 
-```text  theme={null}
+```text theme={null}
 ~/.claude/rules/
 ├── preferences.md    # Ihre persönlichen Coding-Vorlieben
 └── workflows.md      # Ihre bevorzugten Workflows
@@ -264,7 +264,7 @@ In großen Monorepos können Vorgänger-CLAUDE.md-Dateien Anweisungen enthalten,
 
 Dieses Beispiel schließt eine CLAUDE.md auf oberster Ebene und ein Regelverzeichnis aus einem übergeordneten Ordner aus. Fügen Sie es zu `.claude/settings.local.json` hinzu, damit der Ausschluss lokal auf Ihrem Computer bleibt:
 
-```json  theme={null}
+```json theme={null}
 {
   "claudeMdExcludes": [
     "**/monorepo/CLAUDE.md",
@@ -289,7 +289,7 @@ Auto-Memory lässt Claude Wissen über Sitzungen hinweg sammeln, ohne dass Sie e
 
 Auto-Memory ist standardmäßig aktiviert. Um es umzuschalten, öffnen Sie `/memory` in einer Sitzung und verwenden Sie den Auto-Memory-Schalter, oder setzen Sie `autoMemoryEnabled` in Ihren Projekteinstellungen:
 
-```json  theme={null}
+```json theme={null}
 {
   "autoMemoryEnabled": false
 }
@@ -303,7 +303,7 @@ Jedes Projekt erhält sein eigenes Memory-Verzeichnis unter `~/.claude/projects/
 
 Um Auto-Memory an einem anderen Ort zu speichern, setzen Sie `autoMemoryDirectory` in Ihren Benutzer- oder lokalen Einstellungen:
 
-```json  theme={null}
+```json theme={null}
 {
   "autoMemoryDirectory": "~/my-custom-memory-dir"
 }
@@ -313,7 +313,7 @@ Diese Einstellung wird von Richtlinien-, lokalen und Benutzereinstellungen akzep
 
 Das Verzeichnis enthält einen `MEMORY.md`-Einstiegspunkt und optionale Themadateien:
 
-```text  theme={null}
+```text theme={null}
 ~/.claude/projects/<project>/memory/
 ├── MEMORY.md          # Prägnanter Index, geladen in jede Sitzung
 ├── debugging.md       # Detaillierte Notizen zu Debugging-Mustern

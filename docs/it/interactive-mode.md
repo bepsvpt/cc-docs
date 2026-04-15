@@ -235,7 +235,7 @@ Per disabilitare tutta la funzionalità di attività in background, impostare la
 
 Eseguite i comandi bash direttamente senza passare per Claude aggiungendo il prefisso `!` al vostro input:
 
-```bash  theme={null}
+```bash theme={null}
 ! npm test
 ! git status
 ! ls -la
@@ -268,7 +268,7 @@ I suggerimenti vengono automaticamente saltati dopo il primo turno di una conver
 
 Per disabilitare completamente i suggerimenti di prompt, impostare la variabile di ambiente o attivare/disattivare l'impostazione in `/config`:
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=false
 ```
 

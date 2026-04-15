@@ -41,23 +41,23 @@ To install Claude Code, use one of the following methods:
   <Tab title="Native Install (Recommended)">
     **macOS, Linux, WSL:**
 
-    ```bash  theme={null}
+    ```bash theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell  theme={null}
+    ```powershell theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch  theme={null}
+    ```batch theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
 
-    If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. Use the PowerShell command above instead. Your prompt shows `PS C:\` when you're in PowerShell.
+    If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell. Your prompt shows `PS C:\` when you're in PowerShell and `C:\` without the `PS` when you're in CMD.
 
     **Native Windows setups require [Git for Windows](https://git-scm.com/downloads/win).** Install it first if you don't have it. WSL setups do not need it.
 
@@ -67,7 +67,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="Homebrew">
-    ```bash  theme={null}
+    ```bash theme={null}
     brew install --cask claude-code
     ```
 
@@ -79,7 +79,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="WinGet">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     winget install Anthropic.ClaudeCode
     ```
 
@@ -91,7 +91,7 @@ To install Claude Code, use one of the following methods:
 
 Setelah instalasi selesai, buka terminal di proyek yang ingin Anda kerjakan dan mulai Claude Code:
 
-```bash  theme={null}
+```bash theme={null}
 claude
 ```
 
@@ -107,7 +107,7 @@ Instal [Git for Windows](https://git-scm.com/downloads/win), kemudian jalankan p
 
 Jika Claude Code tidak dapat menemukan instalasi Git Bash Anda, atur jalur di [file settings.json](/id/settings) Anda:
 
-```json  theme={null}
+```json theme={null}
 {
   "env": {
     "CLAUDE_CODE_GIT_BASH_PATH": "C:\\Program Files\\Git\\bin\\bash.exe"
@@ -127,13 +127,13 @@ Penginstal asli di Alpine dan distribusi berbasis musl/uClibc lainnya memerlukan
 
 Contoh ini menginstal paket yang diperlukan di Alpine:
 
-```bash  theme={null}
+```bash theme={null}
 apk add libgcc libstdc++ ripgrep
 ```
 
 Kemudian atur `USE_BUILTIN_RIPGREP` ke `0` di file [`settings.json`](/id/settings#available-settings) Anda:
 
-```json  theme={null}
+```json theme={null}
 {
   "env": {
     "USE_BUILTIN_RIPGREP": "0"
@@ -145,13 +145,13 @@ Kemudian atur `USE_BUILTIN_RIPGREP` ke `0` di file [`settings.json`](/id/setting
 
 Setelah menginstal, konfirmkan Claude Code berfungsi:
 
-```bash  theme={null}
+```bash theme={null}
 claude --version
 ```
 
 Untuk pemeriksaan yang lebih terperinci tentang instalasi dan konfigurasi Anda, jalankan [`claude doctor`](/id/troubleshooting#get-more-help):
 
-```bash  theme={null}
+```bash theme={null}
 claude doctor
 ```
 
@@ -186,7 +186,7 @@ Kontrol saluran rilis mana yang diikuti Claude Code untuk pembaruan otomatis dan
 
 Konfigurasi ini melalui `/config` → **Auto-update channel**, atau tambahkan ke [file settings.json](/id/settings) Anda:
 
-```json  theme={null}
+```json theme={null}
 {
   "autoUpdatesChannel": "stable"
 }
@@ -198,7 +198,7 @@ Untuk penerapan enterprise, Anda dapat memberlakukan saluran rilis yang konsiste
 
 Atur `DISABLE_AUTOUPDATER` ke `"1"` di kunci `env` dari file [`settings.json`](/id/settings#available-settings) Anda:
 
-```json  theme={null}
+```json theme={null}
 {
   "env": {
     "DISABLE_AUTOUPDATER": "1"
@@ -210,7 +210,7 @@ Atur `DISABLE_AUTOUPDATER` ke `"1"` di kunci `env` dari file [`settings.json`](/
 
 Untuk menerapkan pembaruan segera tanpa menunggu pemeriksaan latar belakang berikutnya, jalankan:
 
-```bash  theme={null}
+```bash theme={null}
 claude update
 ```
 
@@ -226,19 +226,19 @@ Untuk menginstal versi terbaru (default):
 
 <Tabs>
   <Tab title="macOS, Linux, WSL">
-    ```bash  theme={null}
+    ```bash theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
   </Tab>
 
   <Tab title="Windows PowerShell">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
   </Tab>
 
   <Tab title="Windows CMD">
-    ```batch  theme={null}
+    ```batch theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
   </Tab>
@@ -248,19 +248,19 @@ Untuk menginstal versi stabil:
 
 <Tabs>
   <Tab title="macOS, Linux, WSL">
-    ```bash  theme={null}
+    ```bash theme={null}
     curl -fsSL https://claude.ai/install.sh | bash -s stable
     ```
   </Tab>
 
   <Tab title="Windows PowerShell">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     & ([scriptblock]::Create((irm https://claude.ai/install.ps1))) stable
     ```
   </Tab>
 
   <Tab title="Windows CMD">
-    ```batch  theme={null}
+    ```batch theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd stable && del install.cmd
     ```
   </Tab>
@@ -270,19 +270,19 @@ Untuk menginstal nomor versi tertentu:
 
 <Tabs>
   <Tab title="macOS, Linux, WSL">
-    ```bash  theme={null}
+    ```bash theme={null}
     curl -fsSL https://claude.ai/install.sh | bash -s 2.1.89
     ```
   </Tab>
 
   <Tab title="Windows PowerShell">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     & ([scriptblock]::Create((irm https://claude.ai/install.ps1))) 2.1.89
     ```
   </Tab>
 
   <Tab title="Windows CMD">
-    ```batch  theme={null}
+    ```batch theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd 2.1.89 && del install.cmd
     ```
   </Tab>
@@ -296,7 +296,7 @@ Instalasi npm sudah usang. Penginstal asli lebih cepat, tidak memerlukan depende
 
 Jika Anda sebelumnya menginstal Claude Code dengan npm, beralih ke penginstal asli:
 
-```bash  theme={null}
+```bash theme={null}
 # Instal biner asli
 curl -fsSL https://claude.ai/install.sh | bash
 
@@ -310,7 +310,7 @@ Anda juga dapat menjalankan `claude install` dari instalasi npm yang ada untuk m
 
 Jika Anda memerlukan instalasi npm untuk alasan kompatibilitas, Anda harus memiliki [Node.js 18+](https://nodejs.org/en/download) terinstal. Instal paket secara global:
 
-```bash  theme={null}
+```bash theme={null}
 npm install -g @anthropic-ai/claude-code
 ```
 
@@ -330,19 +330,19 @@ Langkah-langkah 1-3 memerlukan shell POSIX dengan `gpg` dan `curl`. Di Windows, 
   <Step title="Unduh dan impor kunci publik">
     Kunci penandatanganan rilis dipublikasikan di URL tetap.
 
-    ```bash  theme={null}
+    ```bash theme={null}
     curl -fsSL https://downloads.claude.ai/keys/claude-code.asc | gpg --import
     ```
 
     Tampilkan sidik jari kunci yang diimpor.
 
-    ```bash  theme={null}
+    ```bash theme={null}
     gpg --fingerprint security@anthropic.com
     ```
 
     Konfirmasi output mencakup sidik jari ini:
 
-    ```text  theme={null}
+    ```text theme={null}
     31DD DE24 DDFA B679 F42D  7BD2 BAA9 29FF 1A7E CACE
     ```
   </Step>
@@ -350,7 +350,7 @@ Langkah-langkah 1-3 memerlukan shell POSIX dengan `gpg` dan `curl`. Di Windows, 
   <Step title="Unduh manifes dan tanda tangan">
     Atur `VERSION` ke rilis yang ingin Anda verifikasi.
 
-    ```bash  theme={null}
+    ```bash theme={null}
     REPO=https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases
     VERSION=2.1.89
     curl -fsSLO "$REPO/$VERSION/manifest.json"
@@ -361,7 +361,7 @@ Langkah-langkah 1-3 memerlukan shell POSIX dengan `gpg` dan `curl`. Di Windows, 
   <Step title="Verifikasi tanda tangan">
     Verifikasi tanda tangan terpisah terhadap manifes.
 
-    ```bash  theme={null}
+    ```bash theme={null}
     gpg --verify manifest.json.sig manifest.json
     ```
 
@@ -375,19 +375,19 @@ Langkah-langkah 1-3 memerlukan shell POSIX dengan `gpg` dan `curl`. Di Windows, 
 
     <Tabs>
       <Tab title="Linux">
-        ```bash  theme={null}
+        ```bash theme={null}
         sha256sum claude
         ```
       </Tab>
 
       <Tab title="macOS">
-        ```bash  theme={null}
+        ```bash theme={null}
         shasum -a 256 claude
         ```
       </Tab>
 
       <Tab title="Windows PowerShell">
-        ```powershell  theme={null}
+        ```powershell theme={null}
         (Get-FileHash claude.exe -Algorithm SHA256).Hash.ToLower()
         ```
       </Tab>
@@ -417,14 +417,14 @@ Hapus biner Claude Code dan file versi:
 
 <Tabs>
   <Tab title="macOS, Linux, WSL">
-    ```bash  theme={null}
+    ```bash theme={null}
     rm -f ~/.local/bin/claude
     rm -rf ~/.local/share/claude
     ```
   </Tab>
 
   <Tab title="Windows PowerShell">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     Remove-Item -Path "$env:USERPROFILE\.local\bin\claude.exe" -Force
     Remove-Item -Path "$env:USERPROFILE\.local\share\claude" -Recurse -Force
     ```
@@ -435,7 +435,7 @@ Hapus biner Claude Code dan file versi:
 
 Hapus cask Homebrew:
 
-```bash  theme={null}
+```bash theme={null}
 brew uninstall --cask claude-code
 ```
 
@@ -443,7 +443,7 @@ brew uninstall --cask claude-code
 
 Hapus paket WinGet:
 
-```powershell  theme={null}
+```powershell theme={null}
 winget uninstall Anthropic.ClaudeCode
 ```
 
@@ -451,7 +451,7 @@ winget uninstall Anthropic.ClaudeCode
 
 Hapus paket npm global:
 
-```bash  theme={null}
+```bash theme={null}
 npm uninstall -g @anthropic-ai/claude-code
 ```
 
@@ -465,7 +465,7 @@ Untuk menghapus pengaturan Claude Code dan data cache:
 
 <Tabs>
   <Tab title="macOS, Linux, WSL">
-    ```bash  theme={null}
+    ```bash theme={null}
     # Hapus pengaturan pengguna dan status
     rm -rf ~/.claude
     rm ~/.claude.json
@@ -477,7 +477,7 @@ Untuk menghapus pengaturan Claude Code dan data cache:
   </Tab>
 
   <Tab title="Windows PowerShell">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     # Hapus pengaturan pengguna dan status
     Remove-Item -Path "$env:USERPROFILE\.claude" -Recurse -Force
     Remove-Item -Path "$env:USERPROFILE\.claude.json" -Force

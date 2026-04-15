@@ -73,7 +73,7 @@ Gateway에서 사용자 정의 모델 이름을 구성한 경우 [모델 구성]
 
 고정 API 키를 사용한 가장 간단한 방법:
 
-```bash  theme={null}
+```bash theme={null}
 # 환경에서 설정
 export ANTHROPIC_AUTH_TOKEN=sk-litellm-static-key
 
@@ -93,7 +93,7 @@ export ANTHROPIC_AUTH_TOKEN=sk-litellm-static-key
 
 1. API 키 헬퍼 스크립트를 만듭니다:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # ~/bin/get-litellm-key.sh
 
@@ -109,7 +109,7 @@ jwt encode \
 
 2. 헬퍼를 사용하도록 Claude Code 설정을 구성합니다:
 
-```json  theme={null}
+```json theme={null}
 {
   "apiKeyHelper": "~/bin/get-litellm-key.sh"
 }
@@ -117,7 +117,7 @@ jwt encode \
 
 3. 토큰 새로고침 간격을 설정합니다:
 
-```bash  theme={null}
+```bash theme={null}
 # 1시간마다 새로고침 (3600000 ms)
 export CLAUDE_CODE_API_KEY_HELPER_TTL_MS=3600000
 ```
@@ -128,7 +128,7 @@ export CLAUDE_CODE_API_KEY_HELPER_TTL_MS=3600000
 
 LiteLLM의 [Anthropic 형식 엔드포인트](https://docs.litellm.ai/docs/anthropic_unified) 사용:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_BASE_URL=https://litellm-server:4000
 ```
 
@@ -144,7 +144,7 @@ export ANTHROPIC_BASE_URL=https://litellm-server:4000
 
 [통과 엔드포인트](https://docs.litellm.ai/docs/pass_through/anthropic_completion) 사용:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_BASE_URL=https://litellm-server:4000/anthropic
 ```
 
@@ -152,7 +152,7 @@ export ANTHROPIC_BASE_URL=https://litellm-server:4000/anthropic
 
 [통과 엔드포인트](https://docs.litellm.ai/docs/pass_through/bedrock) 사용:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_BEDROCK_BASE_URL=https://litellm-server:4000/bedrock
 export CLAUDE_CODE_SKIP_BEDROCK_AUTH=1
 export CLAUDE_CODE_USE_BEDROCK=1
@@ -162,7 +162,7 @@ export CLAUDE_CODE_USE_BEDROCK=1
 
 [통과 엔드포인트](https://docs.litellm.ai/docs/pass_through/vertex_ai) 사용:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_VERTEX_BASE_URL=https://litellm-server:4000/vertex_ai/v1
 export ANTHROPIC_VERTEX_PROJECT_ID=your-gcp-project-id
 export CLAUDE_CODE_SKIP_VERTEX_AUTH=1

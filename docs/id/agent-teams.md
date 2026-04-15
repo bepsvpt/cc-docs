@@ -74,7 +74,7 @@ Setelah mengaktifkan tim agent, beri tahu Claude untuk membuat tim agent dan jel
 
 Contoh ini bekerja dengan baik karena tiga peran independen dan dapat mengeksplorasi masalah tanpa menunggu satu sama lain:
 
-```text  theme={null}
+```text theme={null}
 Saya merancang alat CLI yang membantu developer melacak komentar TODO di seluruh
 codebase mereka. Buat tim agent untuk mengeksplorasi ini dari sudut berbeda: satu
 rekan tim pada UX, satu pada arsitektur teknis, satu memainkan devil's advocate.
@@ -103,7 +103,7 @@ Tim agent mendukung dua mode tampilan:
 
 Default adalah `"auto"`, yang menggunakan split panes jika Anda sudah berjalan di dalam session tmux, dan in-process sebaliknya. Pengaturan `"tmux"` mengaktifkan mode split-pane dan auto-detects apakah akan menggunakan tmux atau iTerm2 berdasarkan terminal Anda. Untuk mengganti, atur `teammateMode` di [global config](/id/settings#global-config-settings) Anda di `~/.claude.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "teammateMode": "in-process"
 }
@@ -111,7 +111,7 @@ Default adalah `"auto"`, yang menggunakan split panes jika Anda sudah berjalan d
 
 Untuk memaksa mode in-process untuk satu session, teruskan sebagai flag:
 
-```bash  theme={null}
+```bash theme={null}
 claude --teammate-mode in-process
 ```
 
@@ -124,7 +124,7 @@ Mode split-pane memerlukan baik [tmux](https://github.com/tmux/tmux/wiki) atau i
 
 Claude memutuskan jumlah rekan tim untuk dihasilkan berdasarkan tugas Anda, atau Anda dapat menentukan dengan tepat apa yang Anda inginkan:
 
-```text  theme={null}
+```text theme={null}
 Buat tim dengan 4 rekan tim untuk refactor modul-modul ini secara paralel.
 Gunakan Sonnet untuk setiap rekan tim.
 ```
@@ -133,7 +133,7 @@ Gunakan Sonnet untuk setiap rekan tim.
 
 Untuk tugas kompleks atau berisiko, Anda dapat memerlukan rekan tim untuk merencanakan sebelum mengimplementasikan. Rekan tim bekerja dalam mode rencana read-only sampai lead menyetujui pendekatan mereka:
 
-```text  theme={null}
+```text theme={null}
 Hasilkan rekan tim architect untuk refactor modul autentikasi.
 Perlukan persetujuan rencana sebelum mereka membuat perubahan apa pun.
 ```
@@ -164,7 +164,7 @@ Klaim tugas menggunakan file locking untuk mencegah race conditions ketika beber
 
 Untuk mengakhiri session rekan tim dengan baik:
 
-```text  theme={null}
+```text theme={null}
 Minta rekan tim peneliti untuk shutdown
 ```
 
@@ -174,7 +174,7 @@ Lead mengirim permintaan shutdown. Rekan tim dapat menyetujui, keluar dengan bai
 
 Ketika Anda selesai, minta lead untuk membersihkan:
 
-```text  theme={null}
+```text theme={null}
 Bersihkan tim
 ```
 
@@ -239,7 +239,7 @@ Ketika menelurkan rekan tim, Anda dapat mereferensikan tipe [subagent](/id/sub-a
 
 Untuk menggunakan subagent definition, sebutkan berdasarkan nama ketika meminta Claude untuk menelurkan rekan tim:
 
-```text  theme={null}
+```text theme={null}
 Hasilkan rekan tim menggunakan tipe agent security-reviewer untuk mengaudit modul auth.
 ```
 
@@ -274,7 +274,7 @@ Contoh-contoh ini menunjukkan bagaimana tim agent menangani tugas di mana eksplo
 
 Seorang reviewer tunggal cenderung tertarik pada satu jenis masalah pada satu waktu. Membagi kriteria review menjadi domain independen berarti keamanan, kinerja, dan test coverage semuanya mendapat perhatian menyeluruh secara bersamaan. Prompt menugaskan setiap rekan tim lensa yang berbeda sehingga mereka tidak tumpang tindih:
 
-```text  theme={null}
+```text theme={null}
 Buat tim agent untuk review PR #142. Hasilkan tiga reviewer:
 - Satu fokus pada implikasi keamanan
 - Satu memeriksa dampak kinerja
@@ -288,7 +288,7 @@ Setiap reviewer bekerja dari PR yang sama tetapi menerapkan filter berbeda. Lead
 
 Ketika akar penyebab tidak jelas, satu agent cenderung menemukan satu penjelasan yang masuk akal dan berhenti mencari. Prompt melawan ini dengan membuat rekan tim secara eksplisit adversarial: pekerjaan setiap orang bukan hanya menyelidiki teori mereka sendiri tetapi menantang yang lain.
 
-```text  theme={null}
+```text theme={null}
 Pengguna melaporkan aplikasi keluar setelah satu pesan alih-alih tetap terhubung.
 Hasilkan 5 rekan tim agent untuk menyelidiki hipotesis berbeda. Buat mereka berbicara
 satu sama lain untuk mencoba membantah teori satu sama lain, seperti debat
@@ -305,7 +305,7 @@ Dengan beberapa investigator independen secara aktif mencoba membantah satu sama
 
 Rekan tim memuat konteks proyek secara otomatis, termasuk CLAUDE.md, MCP servers, dan skills, tetapi mereka tidak mewarisi riwayat percakapan lead. Lihat [Context dan komunikasi](#context-and-communication) untuk detail. Sertakan detail spesifik tugas dalam spawn prompt:
 
-```text  theme={null}
+```text theme={null}
 Hasilkan rekan tim security reviewer dengan prompt: "Review modul autentikasi
 di src/auth/ untuk kerentanan keamanan. Fokus pada penanganan token, manajemen
 session, dan validasi input. Aplikasi menggunakan token JWT yang disimpan di
@@ -340,7 +340,7 @@ Skala naik hanya ketika pekerjaan benar-benar menguntungkan dari rekan tim beker
 
 Kadang-kadang lead mulai mengimplementasikan tugas sendiri alih-alih menunggu rekan tim. Jika Anda memperhatikan ini:
 
-```text  theme={null}
+```text theme={null}
 Tunggu rekan tim Anda menyelesaikan tugas mereka sebelum melanjutkan
 ```
 
@@ -365,7 +365,7 @@ Jika rekan tim tidak muncul setelah Anda meminta Claude untuk membuat tim:
 * Dalam mode in-process, rekan tim mungkin sudah berjalan tetapi tidak terlihat. Tekan Shift+Down untuk bersiklus melalui rekan tim aktif.
 * Periksa bahwa tugas yang Anda berikan Claude cukup kompleks untuk menjamin tim. Claude memutuskan apakah akan menelurkan rekan tim berdasarkan tugas.
 * Jika Anda secara eksplisit meminta split panes, pastikan tmux diinstal dan tersedia di PATH Anda:
-  ```bash  theme={null}
+  ```bash theme={null}
   which tmux
   ```
 * Untuk iTerm2, verifikasi `it2` CLI diinstal dan Python API diaktifkan di preferensi iTerm2.
@@ -389,7 +389,7 @@ Lead dapat memutuskan tim selesai sebelum semua tugas benar-benar selesai. Jika 
 
 Jika session tmux bertahan setelah tim berakhir, mungkin tidak sepenuhnya dibersihkan. Daftar session dan bunuh yang dibuat oleh tim:
 
-```bash  theme={null}
+```bash theme={null}
 tmux ls
 tmux kill-session -t <session-name>
 ```

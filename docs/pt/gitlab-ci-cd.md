@@ -62,7 +62,7 @@ A forma mais rápida de começar é adicionar um trabalho mínimo ao seu `.gitla
 
 2. **Adicione um trabalho Claude ao `.gitlab-ci.yml`**
 
-```yaml  theme={null}
+```yaml theme={null}
 stages:
   - ai
 
@@ -126,7 +126,7 @@ Se você preferir uma configuração mais controlada ou precisar de provedores c
 
 Em um comentário de problema:
 
-```text  theme={null}
+```text theme={null}
 @claude implement this feature based on the issue description
 ```
 
@@ -136,7 +136,7 @@ Claude analisa o problema e a base de código, escreve alterações em um branch
 
 Em uma discussão de MR:
 
-```text  theme={null}
+```text theme={null}
 @claude suggest a concrete approach to cache the results of this API call
 ```
 
@@ -146,7 +146,7 @@ Claude propõe alterações, adiciona código com cache apropriado e atualiza o 
 
 Em um comentário de problema ou MR:
 
-```text  theme={null}
+```text theme={null}
 @claude fix the TypeError in the user dashboard component
 ```
 
@@ -187,7 +187,7 @@ Para ambientes corporativos, você pode executar Claude Code inteiramente em sua
 
     Adicione variáveis em Settings → CI/CD → Variables:
 
-    ```yaml  theme={null}
+    ```yaml theme={null}
     # Para AWS Bedrock:
     - AWS_ROLE_TO_ASSUME
     - AWS_REGION
@@ -227,7 +227,7 @@ Para ambientes corporativos, você pode executar Claude Code inteiramente em sua
 
     Adicione variáveis em Settings → CI/CD → Variables:
 
-    ```yaml  theme={null}
+    ```yaml theme={null}
     # Para Google Vertex AI:
     - GCP_WORKLOAD_IDENTITY_PROVIDER
     - GCP_SERVICE_ACCOUNT
@@ -244,7 +244,7 @@ Abaixo estão trechos prontos para usar que você pode adaptar ao seu pipeline.
 
 ### .gitlab-ci.yml básico (Claude API)
 
-```yaml  theme={null}
+```yaml theme={null}
 stages:
   - ai
 
@@ -284,7 +284,7 @@ claude:
 * `AWS_ROLE_TO_ASSUME`: ARN da função IAM para acesso ao Bedrock
 * `AWS_REGION`: Região do Bedrock (por exemplo, `us-west-2`)
 
-```yaml  theme={null}
+```yaml theme={null}
 claude-bedrock:
   stage: ai
   image: node:24-alpine3.21
@@ -336,7 +336,7 @@ claude-bedrock:
 * `GCP_SERVICE_ACCOUNT`: Email da conta de serviço
 * `CLOUD_ML_REGION`: Região do Vertex (por exemplo, `us-east5`)
 
-```yaml  theme={null}
+```yaml theme={null}
 claude-vertex:
   stage: ai
   image: gcr.io/google.com/cloudsdktool/google-cloud-cli:slim

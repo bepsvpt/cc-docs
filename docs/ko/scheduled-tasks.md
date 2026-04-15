@@ -18,17 +18,17 @@
 
 Claude Code offers three ways to schedule recurring work:
 
-|                            | [Cloud](/en/web-scheduled-tasks) | [Desktop](/en/desktop-scheduled-tasks) | [`/loop`](/en/scheduled-tasks) |
-| :------------------------- | :------------------------------- | :------------------------------------- | :----------------------------- |
-| Runs on                    | Anthropic cloud                  | Your machine                           | Your machine                   |
-| Requires machine on        | No                               | Yes                                    | Yes                            |
-| Requires open session      | No                               | No                                     | Yes                            |
-| Persistent across restarts | Yes                              | Yes                                    | No (session-scoped)            |
-| Access to local files      | No (fresh clone)                 | Yes                                    | Yes                            |
-| MCP servers                | Connectors configured per task   | [Config files](/en/mcp) and connectors | Inherits from session          |
-| Permission prompts         | No (runs autonomously)           | Configurable per task                  | Inherits from session          |
-| Customizable schedule      | Via `/schedule` in the CLI       | Yes                                    | Yes                            |
-| Minimum interval           | 1 hour                           | 1 minute                               | 1 minute                       |
+|                            | [Cloud](/en/routines)          | [Desktop](/en/desktop-scheduled-tasks) | [`/loop`](/en/scheduled-tasks) |
+| :------------------------- | :----------------------------- | :------------------------------------- | :----------------------------- |
+| Runs on                    | Anthropic cloud                | Your machine                           | Your machine                   |
+| Requires machine on        | No                             | Yes                                    | Yes                            |
+| Requires open session      | No                             | No                                     | Yes                            |
+| Persistent across restarts | Yes                            | Yes                                    | No (session-scoped)            |
+| Access to local files      | No (fresh clone)               | Yes                                    | Yes                            |
+| MCP servers                | Connectors configured per task | [Config files](/en/mcp) and connectors | Inherits from session          |
+| Permission prompts         | No (runs autonomously)         | Configurable per task                  | Inherits from session          |
+| Customizable schedule      | Via `/schedule` in the CLI     | Yes                                    | Yes                            |
+| Minimum interval           | 1 hour                         | 1 minute                               | 1 minute                       |
 
 <Tip>
   Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
@@ -38,7 +38,7 @@ Claude Code offers three ways to schedule recurring work:
 
 `/loop` [번들 스킬](/ko/skills#bundled-skills)은 반복 프롬프트를 스케줄하는 가장 빠른 방법입니다. 선택적 간격과 프롬프트를 전달하면 Claude가 세션이 열려 있는 동안 백그라운드에서 실행되는 cron 작업을 설정합니다.
 
-```text  theme={null}
+```text theme={null}
 /loop 5m check if the deployment finished and tell me what happened
 ```
 
@@ -60,7 +60,7 @@ Claude는 간격을 파싱하고, cron 표현식으로 변환하고, 작업을 �
 
 스케줄된 프롬프트 자체가 명령어 또는 스킬 호출일 수 있습니다. 이는 이미 패키징한 워크플로우를 다시 실행하는 데 유용합니다.
 
-```text  theme={null}
+```text theme={null}
 /loop 20m /review-pr 1234
 ```
 
@@ -70,11 +70,11 @@ Claude는 간격을 파싱하고, cron 표현식으로 변환하고, 작업을 �
 
 일회성 알림의 경우 `/loop`를 사용하는 대신 자연어로 원하는 것을 설명합니다. Claude는 실행 후 자신을 삭제하는 단일 실행 작업을 스케줄합니다.
 
-```text  theme={null}
+```text theme={null}
 remind me at 3pm to push the release branch
 ```
 
-```text  theme={null}
+```text theme={null}
 in 45 minutes, check whether the integration tests passed
 ```
 
@@ -84,11 +84,11 @@ Claude는 cron 표현식을 사용하여 실행 시간을 특정 분과 시간�
 
 Claude에게 자연어로 작업을 나열하거나 취소하도록 요청하거나 기본 도구를 직접 참조합니다.
 
-```text  theme={null}
+```text theme={null}
 what scheduled tasks do I have?
 ```
 
-```text  theme={null}
+```text theme={null}
 cancel the deploy check job
 ```
 

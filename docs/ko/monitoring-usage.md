@@ -12,7 +12,7 @@ OpenTelemetry(OTel)를 통해 원격 측정 데이터를 내보내 조직 전체
 
 환경 변수를 사용하여 OpenTelemetry를 구성합니다:
 
-```bash  theme={null}
+```bash theme={null}
 # 1. 원격 측정 활성화
 export CLAUDE_CODE_ENABLE_TELEMETRY=1
 
@@ -47,7 +47,7 @@ claude
 
 관리 설정 구성 예:
 
-```json  theme={null}
+```json theme={null}
 {
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
@@ -126,7 +126,7 @@ claude
 
 `.claude/settings.json`에 추가:
 
-```json  theme={null}
+```json theme={null}
 {
   "otelHeadersHelper": "/bin/generate_opentelemetry_headers.sh"
 }
@@ -136,7 +136,7 @@ claude
 
 스크립트는 HTTP 헤더를 나타내는 문자열 키-값 쌍이 있는 유효한 JSON을 출력해야 합니다:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # 예: 여러 헤더
 echo "{\"Authorization\": \"Bearer $(get-token.sh)\", \"X-API-Key\": \"$(get-api-key.sh)\"}"
@@ -150,7 +150,7 @@ echo "{\"Authorization\": \"Bearer $(get-token.sh)\", \"X-API-Key\": \"$(get-api
 
 여러 팀 또는 부서가 있는 조직은 `OTEL_RESOURCE_ATTRIBUTES` 환경 변수를 사용하여 다양한 그룹을 구분하기 위한 사용자 정의 속성을 추가할 수 있습니다:
 
-```bash  theme={null}
+```bash theme={null}
 # 팀 식별을 위한 사용자 정의 속성 추가
 export OTEL_RESOURCE_ATTRIBUTES="department=engineering,team.id=platform,cost_center=eng-123"
 ```
@@ -174,7 +174,7 @@ export OTEL_RESOURCE_ATTRIBUTES="department=engineering,team.id=platform,cost_ce
 
   **예:**
 
-  ```bash  theme={null}
+  ```bash theme={null}
   # ❌ 유효하지 않음 - 공백 포함
   export OTEL_RESOURCE_ATTRIBUTES="org.name=John's Organization"
 
@@ -193,7 +193,7 @@ export OTEL_RESOURCE_ATTRIBUTES="department=engineering,team.id=platform,cost_ce
 
 `claude`를 실행하기 전에 이러한 환경 변수를 설정합니다. 각 블록은 다양한 내보내기 또는 배포 시나리오에 대한 완전한 구성을 보여줍니다:
 
-```bash  theme={null}
+```bash theme={null}
 # 콘솔 디버깅 (1초 간격)
 export CLAUDE_CODE_ENABLE_TELEMETRY=1
 export OTEL_METRICS_EXPORTER=console

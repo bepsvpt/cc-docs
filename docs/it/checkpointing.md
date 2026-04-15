@@ -62,7 +62,7 @@ I checkpoint sono particolarmente utili quando:
 
 Il checkpointing non traccia i file modificati dai comandi bash. Ad esempio, se Claude Code esegue:
 
-```bash  theme={null}
+```bash theme={null}
 rm file.txt
 mv old.txt new.txt
 cp source.txt dest.txt

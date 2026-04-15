@@ -49,11 +49,11 @@ Claude Code интегрируется с JetBrains IDEs через специа
 
 Используйте команду `/ide` в любом внешнем терминале для подключения Claude Code к вашей JetBrains IDE и активации всех функций:
 
-```bash  theme={null}
+```bash theme={null}
 claude
 ```
 
-```text  theme={null}
+```text theme={null}
 /ide
 ```
 

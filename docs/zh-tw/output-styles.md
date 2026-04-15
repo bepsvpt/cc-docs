@@ -34,7 +34,7 @@ Token 使用量取決於樣式。將指令添加到系統提示會增加輸入 t
 
 若要在不使用選單的情況下設定樣式，請直接編輯設定檔中的 `outputStyle` 欄位：
 
-```json  theme={null}
+```json theme={null}
 {
   "outputStyle": "Explanatory"
 }
@@ -46,7 +46,7 @@ Token 使用量取決於樣式。將指令添加到系統提示會增加輸入 t
 
 自訂輸出樣式是具有 frontmatter 和將添加到系統提示的文字的 Markdown 檔案：
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 name: My Custom Style
 description:

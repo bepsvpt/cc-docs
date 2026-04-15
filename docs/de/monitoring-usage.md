@@ -12,7 +12,7 @@ Verfolgen Sie die Nutzung, Kosten und Toolaktivität von Claude Code in Ihrer Or
 
 Konfigurieren Sie OpenTelemetry mit Umgebungsvariablen:
 
-```bash  theme={null}
+```bash theme={null}
 # 1. Telemetrie aktivieren
 export CLAUDE_CODE_ENABLE_TELEMETRY=1
 
@@ -47,7 +47,7 @@ Administratoren können OpenTelemetry-Einstellungen für alle Benutzer über die
 
 Beispiel für verwaltete Einstellungskonfiguration:
 
-```json  theme={null}
+```json theme={null}
 {
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
@@ -126,7 +126,7 @@ Für Unternehmensumgebungen, die eine dynamische Authentifizierung erfordern, k�
 
 Fügen Sie zu Ihrer `.claude/settings.json` hinzu:
 
-```json  theme={null}
+```json theme={null}
 {
   "otelHeadersHelper": "/bin/generate_opentelemetry_headers.sh"
 }
@@ -136,7 +136,7 @@ Fügen Sie zu Ihrer `.claude/settings.json` hinzu:
 
 Das Skript muss gültiges JSON mit Zeichenketten-Schlüssel-Wert-Paaren ausgeben, die HTTP-Header darstellen:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # Beispiel: Mehrere Header
 echo "{\"Authorization\": \"Bearer $(get-token.sh)\", \"X-API-Key\": \"$(get-api-key.sh)\"}"
@@ -150,7 +150,7 @@ Das Headers-Helper-Skript wird beim Start und danach regelmäßig ausgeführt, u
 
 Organisationen mit mehreren Teams oder Abteilungen können benutzerdefinierte Attribute hinzufügen, um zwischen verschiedenen Gruppen zu unterscheiden, indem sie die Umgebungsvariable `OTEL_RESOURCE_ATTRIBUTES` verwenden:
 
-```bash  theme={null}
+```bash theme={null}
 # Benutzerdefinierte Attribute für Team-Identifikation hinzufügen
 export OTEL_RESOURCE_ATTRIBUTES="department=engineering,team.id=platform,cost_center=eng-123"
 ```
@@ -174,7 +174,7 @@ Diese benutzerdefinierten Attribute werden in alle Metriken und Ereignisse einbe
 
   **Beispiele:**
 
-  ```bash  theme={null}
+  ```bash theme={null}
   # ❌ Ungültig - enthält Leerzeichen
   export OTEL_RESOURCE_ATTRIBUTES="org.name=John's Organization"
 
@@ -193,7 +193,7 @@ Diese benutzerdefinierten Attribute werden in alle Metriken und Ereignisse einbe
 
 Setzen Sie diese Umgebungsvariablen vor dem Ausführen von `claude`. Jeder Block zeigt eine vollständige Konfiguration für einen anderen Exporter oder ein anderes Bereitstellungsszenario:
 
-```bash  theme={null}
+```bash theme={null}
 # Console-Debugging (1-Sekunden-Intervalle)
 export CLAUDE_CODE_ENABLE_TELEMETRY=1
 export OTEL_METRICS_EXPORTER=console

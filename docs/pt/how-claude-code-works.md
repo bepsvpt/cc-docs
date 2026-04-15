@@ -114,7 +114,7 @@ Quando você retoma uma sessão com `claude --continue` ou `claude --resume`, vo
 
 Para ramificar e tentar uma abordagem diferente sem afetar a sessão original, use a flag `--fork-session`:
 
-```bash  theme={null}
+```bash theme={null}
 claude --continue --fork-session
 ```
 
@@ -187,13 +187,13 @@ Comandos integrados também o guiam através da configuração:
 
 Claude Code é conversacional. Você não precisa de prompts perfeitos. Comece com o que você quer, depois refine:
 
-```text  theme={null}
+```text theme={null}
 Corrigir o bug de login
 ```
 
 \[Claude investiga, tenta algo]
 
-```text  theme={null}
+```text theme={null}
 Isso não é bem certo. O problema está no tratamento de sessão.
 ```
 
@@ -209,7 +209,7 @@ Você pode interromper Claude em qualquer ponto. Se ele está indo pelo caminho 
 
 Quanto mais preciso seu prompt inicial, menos correções você precisará. Referencie arquivos específicos, mencione restrições e aponte para padrões de exemplo.
 
-```text  theme={null}
+```text theme={null}
 O fluxo de checkout está quebrado para usuários com cartões expirados.
 Verifique src/payments/ para o problema, especialmente atualização de token.
 Escreva um teste falhando primeiro, depois corrija.
@@ -221,7 +221,7 @@ Prompts vagos funcionam, mas você gastará mais tempo orientando. Prompts espec
 
 Claude funciona melhor quando pode verificar seu próprio trabalho. Inclua casos de teste, cole screenshots da UI esperada ou defina a saída que você quer.
 
-```text  theme={null}
+```text theme={null}
 Implementar validateEmail. Casos de teste: 'user@example.com' → true,
 'invalid' → false, 'user@.com' → false. Execute os testes depois.
 ```
@@ -232,7 +232,7 @@ Para trabalho visual, cole um screenshot do design e peça a Claude para compara
 
 Para problemas complexos, separe pesquisa de codificação. Use plan mode (`Shift+Tab` duas vezes) para analisar a base de código primeiro:
 
-```text  theme={null}
+```text theme={null}
 Leia src/auth/ e entenda como lidamos com sessões.
 Depois crie um plano para adicionar suporte OAuth.
 ```
@@ -243,7 +243,7 @@ Revise o plano, refine-o através de conversa, depois deixe Claude implementar. 
 
 Pense em delegar a um colega capaz. Dê contexto e direção, depois confie em Claude para descobrir os detalhes:
 
-```text  theme={null}
+```text theme={null}
 O fluxo de checkout está quebrado para usuários com cartões expirados.
 O código relevante está em src/payments/. Você pode investigar e corrigir?
 ```

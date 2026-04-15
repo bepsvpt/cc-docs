@@ -34,7 +34,7 @@ Führen Sie `/config` aus und wählen Sie **Output style**, um einen Stil aus ei
 
 Um einen Stil ohne Menü festzulegen, bearbeiten Sie das Feld `outputStyle` direkt in einer Einstellungsdatei:
 
-```json  theme={null}
+```json theme={null}
 {
   "outputStyle": "Explanatory"
 }
@@ -46,7 +46,7 @@ Da der Ausgabestil in der Systemaufforderung beim Sitzungsstart festgelegt wird,
 
 Benutzerdefinierte Ausgabestile sind Markdown-Dateien mit Frontmatter und dem Text, der zur Systemaufforderung hinzugefügt wird:
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 name: My Custom Style
 description:

@@ -27,7 +27,7 @@
 
 <Steps>
   <Step title="创建目录结构">
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p my-marketplace/.claude-plugin
     mkdir -p my-marketplace/plugins/quality-review-plugin/.claude-plugin
     mkdir -p my-marketplace/plugins/quality-review-plugin/skills/quality-review
@@ -88,7 +88,7 @@
   <Step title="添加和安装">
     添加 marketplace 并安装 plugin。
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /plugin marketplace add ./my-marketplace
     /plugin install quality-review-plugin@my-plugins
     ```
@@ -97,7 +97,7 @@
   <Step title="尝试一下">
     在编辑器中选择一些代码并运行你的新命令。
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /quality-review
     ```
   </Step>
@@ -117,7 +117,7 @@
 
 每个 plugin 条目至少需要一个 `name` 和 `source`（从哪里获取它）。有关所有可用字段，请参阅下面的[完整架构](#marketplace-schema)。
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "company-tools",
   "owner": {
@@ -240,7 +240,7 @@ Plugin 源告诉 Claude Code 在你的 marketplace 中列出的每个单独 plug
 
 对于同一存储库中的 plugins，使用以 `./` 开头的路径：
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "source": "./plugins/my-plugin"
@@ -255,7 +255,7 @@ Plugin 源告诉 Claude Code 在你的 marketplace 中列出的每个单独 plug
 
 ### GitHub 存储库
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "github-plugin",
   "source": {
@@ -267,7 +267,7 @@ Plugin 源告诉 Claude Code 在你的 marketplace 中列出的每个单独 plug
 
 你可以固定到特定的分支、标签或提交：
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "github-plugin",
   "source": {
@@ -287,7 +287,7 @@ Plugin 源告诉 Claude Code 在你的 marketplace 中列出的每个单独 plug
 
 ### Git 存储库
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "git-plugin",
   "source": {
@@ -299,7 +299,7 @@ Plugin 源告诉 Claude Code 在你的 marketplace 中列出的每个单独 plug
 
 你可以固定到特定的分支、标签或提交：
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "git-plugin",
   "source": {
@@ -321,7 +321,7 @@ Plugin 源告诉 Claude Code 在你的 marketplace 中列出的每个单独 plug
 
 使用 `git-subdir` 指向位于 git 存储库子目录中的 plugin。Claude Code 使用稀疏的部分克隆来仅获取子目录，最小化大型 monorepos 的带宽。
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "source": {
@@ -334,7 +334,7 @@ Plugin 源告诉 Claude Code 在你的 marketplace 中列出的每个单独 plug
 
 你可以固定到特定的分支、标签或提交：
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "source": {
@@ -360,7 +360,7 @@ Plugin 源告诉 Claude Code 在你的 marketplace 中列出的每个单独 plug
 
 作为 npm 包分发的 Plugins 使用 `npm install` 安装。这适用于公共 npm registry 上的任何包或你的团队托管的私有 registry。
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-npm-plugin",
   "source": {
@@ -372,7 +372,7 @@ Plugin 源告诉 Claude Code 在你的 marketplace 中列出的每个单独 plug
 
 要固定到特定版本，请添加 `version` 字段：
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-npm-plugin",
   "source": {
@@ -385,7 +385,7 @@ Plugin 源告诉 Claude Code 在你的 marketplace 中列出的每个单独 plug
 
 要从私有或内部 registry 安装，请添加 `registry` 字段：
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-npm-plugin",
   "source": {
@@ -407,7 +407,7 @@ Plugin 源告诉 Claude Code 在你的 marketplace 中列出的每个单独 plug
 
 此示例显示了使用许多可选字段的 plugin 条目，包括命令、agents、hooks 和 MCP servers 的自定义路径：
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "enterprise-tools",
   "source": {
@@ -490,7 +490,7 @@ GitHub 提供最简单的分发方法：
 
 任何 git 托管服务都可以工作，例如 GitLab、Bitbucket 和自托管服务器。用户使用完整的存储库 URL 添加：
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add https://gitlab.com/company/plugins.git
 ```
 
@@ -508,7 +508,7 @@ Claude Code 支持从私有存储库安装 plugins。对于手动安装和更新
 
 在你的 shell 配置中设置令牌（例如，`.bashrc`、`.zshrc`）或在运行 Claude Code 时传递它：
 
-```bash  theme={null}
+```bash theme={null}
 export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 ```
 
@@ -520,7 +520,7 @@ export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 
 在共享前本地测试你的 marketplace：
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add ./my-local-marketplace
 /plugin install test-plugin@my-local-marketplace
 ```
@@ -531,7 +531,7 @@ export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 
 你可以配置你的存储库，以便当团队成员信任项目文件夹时，他们会自动被提示安装你的 marketplace。将你的 marketplace 添加到 `.claude/settings.json`：
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "company-tools": {
@@ -546,7 +546,7 @@ export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 
 你也可以指定默认应启用哪些 plugins：
 
-```json  theme={null}
+```json theme={null}
 {
   "enabledPlugins": {
     "code-formatter@company-tools": true,
@@ -603,7 +603,7 @@ $CLAUDE_CODE_PLUGIN_SEED_DIR/
 
 禁用所有 marketplace 添加：
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": []
 }
@@ -611,7 +611,7 @@ $CLAUDE_CODE_PLUGIN_SEED_DIR/
 
 仅允许特定 marketplaces：
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -633,7 +633,7 @@ $CLAUDE_CODE_PLUGIN_SEED_DIR/
 
 使用主机上的正则表达式模式匹配允许来自内部 git 服务器的所有 marketplaces。这是 [GitHub Enterprise Server](/zh-CN/github-enterprise-server#plugin-marketplaces-on-ghes) 或自托管 GitLab 实例的推荐方法：
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -646,7 +646,7 @@ $CLAUDE_CODE_PLUGIN_SEED_DIR/
 
 使用路径上的正则表达式模式匹配允许来自特定目录的基于文件系统的 marketplaces：
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -696,7 +696,7 @@ Plugin 版本确定缓存路径和更新检测。你可以在 plugin manifest（
 
 ##### 示例
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "stable-tools",
   "plugins": [
@@ -712,7 +712,7 @@ Plugin 版本确定缓存路径和更新检测。你可以在 plugin manifest（
 }
 ```
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "latest-tools",
   "plugins": [
@@ -732,7 +732,7 @@ Plugin 版本确定缓存路径和更新检测。你可以在 plugin manifest（
 
 通过托管设置将每个 marketplace 分配给适当的用户组。例如，稳定组接收：
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "stable-tools": {
@@ -747,7 +747,7 @@ Plugin 版本确定缓存路径和更新检测。你可以在 plugin manifest（
 
 早期访问组改为接收 `latest-tools`：
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "latest-tools": {
@@ -766,25 +766,25 @@ Plugin 版本确定缓存路径和更新检测。你可以在 plugin manifest（
 
 验证你的 marketplace JSON 语法：
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin validate .
 ```
 
 或从 Claude Code 内：
 
-```shell  theme={null}
+```shell theme={null}
 /plugin validate .
 ```
 
 添加 marketplace 进行测试：
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add ./path/to/marketplace
 ```
 
 安装测试 plugin 以验证一切正常：
 
-```shell  theme={null}
+```shell theme={null}
 /plugin install test-plugin@marketplace-name
 ```
 
@@ -861,7 +861,7 @@ claude plugin validate .
 
 **解决方案**：设置 `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` 以在拉取失败时保留现有缓存，而不是清除它：
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
 ```
 
@@ -875,7 +875,7 @@ export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
 
 **解决方案**：使用 `CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS` 环境变量增加超时。该值以毫秒为单位：
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000  # 5 minutes
 ```
 
@@ -888,7 +888,7 @@ export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000  # 5 minutes
 **解决方案**：
 
 * **使用外部源**：将 plugin 条目更改为使用 GitHub、npm 或 git URL 源而不是相对路径：
-  ```json  theme={null}
+  ```json theme={null}
   { "name": "my-plugin", "source": { "source": "github", "repo": "owner/repo" } }
   ```
 * **使用基于 Git 的 marketplace**：在 Git 存储库中托管你的 marketplace 并使用 git URL 添加它。基于 Git 的 marketplaces 克隆整个存储库，使相对路径有效。

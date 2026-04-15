@@ -272,7 +272,7 @@ Claude erkennt automatisch Ihr Dev-Server-Setup und speichert die Konfiguration 
 
 Um anzupassen, wie Ihr Server startet, z. B. um `yarn dev` statt `npm run dev` zu verwenden oder den Port zu ändern, bearbeiten Sie die Datei manuell oder klicken Sie auf **Konfiguration bearbeiten** im Dropdown „Vorschau", um sie in Ihrem Code-Editor zu öffnen. Die Datei unterstützt JSON mit Kommentaren.
 
-```json  theme={null}
+```json theme={null}
 {
   "version": "0.0.1",
   "configurations": [
@@ -294,7 +294,7 @@ Wenn `autoVerify` aktiviert ist, überprüft Claude automatisch Code-Änderungen
 
 Die automatische Überprüfung ist standardmäßig aktiviert. Deaktivieren Sie sie pro Projekt, indem Sie `"autoVerify": false` zu `.claude/launch.json` hinzufügen, oder schalten Sie sie aus dem Dropdown **Vorschau** um.
 
-```json  theme={null}
+```json theme={null}
 {
   "version": "0.0.1",
   "autoVerify": false,
@@ -344,7 +344,7 @@ Diese Konfigurationen zeigen häufige Setups für verschiedene Projekttypen:
   <Tab title="Next.js">
     Diese Konfiguration führt eine Next.js-App mit Yarn auf Port 3000 aus:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "version": "0.0.1",
       "configurations": [
@@ -362,7 +362,7 @@ Diese Konfigurationen zeigen häufige Setups für verschiedene Projekttypen:
   <Tab title="Multiple servers">
     Für ein Monorepo mit einem Frontend und einem API-Server definieren Sie mehrere Konfigurationen. Das Frontend verwendet `autoPort: true`, sodass es einen freien Port wählt, wenn 3000 belegt ist, während der API-Server Port 8080 genau benötigt:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "version": "0.0.1",
       "configurations": [
@@ -391,7 +391,7 @@ Diese Konfigurationen zeigen häufige Setups für verschiedene Projekttypen:
   <Tab title="Node.js script">
     Um ein Node.js-Skript direkt auszuführen, statt einen Package-Manager-Befehl zu verwenden, verwenden Sie das Feld `program`:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "version": "0.0.1",
       "configurations": [
@@ -415,17 +415,17 @@ Standardmäßig starten geplante Aufgaben automatisch zu einer von Ihnen gewähl
 
 Claude Code offers three ways to schedule recurring work:
 
-|                            | [Cloud](/en/web-scheduled-tasks) | [Desktop](/en/desktop-scheduled-tasks) | [`/loop`](/en/scheduled-tasks) |
-| :------------------------- | :------------------------------- | :------------------------------------- | :----------------------------- |
-| Runs on                    | Anthropic cloud                  | Your machine                           | Your machine                   |
-| Requires machine on        | No                               | Yes                                    | Yes                            |
-| Requires open session      | No                               | No                                     | Yes                            |
-| Persistent across restarts | Yes                              | Yes                                    | No (session-scoped)            |
-| Access to local files      | No (fresh clone)                 | Yes                                    | Yes                            |
-| MCP servers                | Connectors configured per task   | [Config files](/en/mcp) and connectors | Inherits from session          |
-| Permission prompts         | No (runs autonomously)           | Configurable per task                  | Inherits from session          |
-| Customizable schedule      | Via `/schedule` in the CLI       | Yes                                    | Yes                            |
-| Minimum interval           | 1 hour                           | 1 minute                               | 1 minute                       |
+|                            | [Cloud](/en/routines)          | [Desktop](/en/desktop-scheduled-tasks) | [`/loop`](/en/scheduled-tasks) |
+| :------------------------- | :----------------------------- | :------------------------------------- | :----------------------------- |
+| Runs on                    | Anthropic cloud                | Your machine                           | Your machine                   |
+| Requires machine on        | No                             | Yes                                    | Yes                            |
+| Requires open session      | No                             | No                                     | Yes                            |
+| Persistent across restarts | Yes                            | Yes                                    | No (session-scoped)            |
+| Access to local files      | No (fresh clone)               | Yes                                    | Yes                            |
+| MCP servers                | Connectors configured per task | [Config files](/en/mcp) and connectors | Inherits from session          |
+| Permission prompts         | No (runs autonomously)         | Configurable per task                  | Inherits from session          |
+| Customizable schedule      | Via `/schedule` in the CLI     | Yes                                    | Yes                            |
+| Minimum interval           | 1 hour                         | 1 minute                               | 1 minute                       |
 
 <Tip>
   Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
@@ -723,7 +723,7 @@ Die Cowork-Registerkarte erfordert Apple Silicon (M1 oder später) auf macOS. Un
 
 Remote-Sitzungen können Branches erstellen, die auf Ihrem lokalen Computer nicht existieren. Klicken Sie auf den Branch-Namen in der Sitzungs-Symbolleiste, um ihn zu kopieren, und rufen Sie ihn dann lokal ab:
 
-```bash  theme={null}
+```bash theme={null}
 git fetch origin <branch-name>
 git checkout <branch-name>
 ```

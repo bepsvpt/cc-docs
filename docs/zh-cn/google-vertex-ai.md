@@ -34,7 +34,7 @@ Claude Code 可以与 Vertex AI [全局](https://cloud.google.com/blog/products/
 
 在您的 GCP 项目中启用 Vertex AI API：
 
-```bash  theme={null}
+```bash theme={null}
 # 设置您的项目 ID
 gcloud config set project YOUR-PROJECT-ID
 
@@ -65,7 +65,7 @@ Claude Code 使用标准的 Google Cloud 身份验证。
 
 设置以下环境变量：
 
-```bash  theme={null}
+```bash theme={null}
 # 启用 Vertex AI 集成
 export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=global
@@ -94,7 +94,7 @@ export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 
 将这些环境变量设置为特定的 Vertex AI 模型 ID：
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6'
 export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
@@ -111,7 +111,7 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
 
 要进一步自定义模型：
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_MODEL='claude-opus-4-6'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
 ```

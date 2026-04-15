@@ -22,7 +22,7 @@ Halaman ini mencakup cara [melacak biaya Anda](#track-your-costs), [mengelola bi
 
 Perintah `/cost` menyediakan statistik penggunaan token terperinci untuk sesi Anda saat ini:
 
-```text  theme={null}
+```text theme={null}
 Total cost:            $0.55
 Total duration (API):  6m 19.7s
 Total duration (wall): 6h 33m 10.2s
@@ -87,7 +87,7 @@ Gunakan `/cost` untuk memeriksa penggunaan token Anda saat ini, atau [konfiguras
 
 Anda juga dapat menyesuaikan perilaku compaction di CLAUDE.md Anda:
 
-```markdown  theme={null}
+```markdown theme={null}
 # Compact instructions
 
 When you are using compact, please focus on test output and code changes
@@ -121,7 +121,7 @@ Misalnya, hook PreToolUse ini memfilter output tes untuk menampilkan hanya kegag
   <Tab title="settings.json">
     Tambahkan ini ke [settings.json](/id/settings#settings-files) Anda untuk menjalankan hook sebelum setiap perintah Bash:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hooks": {
         "PreToolUse": [
@@ -143,7 +143,7 @@ Misalnya, hook PreToolUse ini memfilter output tes untuk menampilkan hanya kegag
   <Tab title="filter-test-output.sh">
     Hook memanggil skrip ini, yang memeriksa apakah perintah adalah test runner dan memodifikasinya untuk menampilkan hanya kegagalan:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     #!/bin/bash
     input=$(cat)
     cmd=$(echo "$input" | jq -r '.tool_input.command')

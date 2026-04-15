@@ -40,7 +40,7 @@ Cet exemple crée une skill qui enseigne à Claude comment expliquer le code en 
   <Step title="Créer le répertoire de la skill">
     Créez un répertoire pour la skill dans votre dossier de skills personnelles. Les skills personnelles sont disponibles dans tous vos projets.
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p ~/.claude/skills/explain-code
     ```
   </Step>
@@ -50,7 +50,7 @@ Cet exemple crée une skill qui enseigne à Claude comment expliquer le code en 
 
     Créez `~/.claude/skills/explain-code/SKILL.md` :
 
-    ```yaml  theme={null}
+    ```yaml theme={null}
     ---
     name: explain-code
     description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
@@ -72,13 +72,13 @@ Cet exemple crée une skill qui enseigne à Claude comment expliquer le code en 
 
     **Laisser Claude l'invoquer automatiquement** en posant une question qui correspond à la description :
 
-    ```text  theme={null}
+    ```text theme={null}
     How does this code work?
     ```
 
     **Ou l'invoquer directement** avec le nom de la skill :
 
-    ```text  theme={null}
+    ```text theme={null}
     /explain-code src/auth/login.ts
     ```
 
@@ -105,7 +105,7 @@ Quand vous travaillez avec des fichiers dans des sous-répertoires, Claude Code 
 
 Chaque skill est un répertoire avec `SKILL.md` comme point d'entrée :
 
-```text  theme={null}
+```text theme={null}
 my-skill/
 ├── SKILL.md           # Instructions principales (obligatoire)
 ├── template.md        # Modèle pour que Claude remplisse
@@ -141,7 +141,7 @@ Les fichiers de skill peuvent contenir n'importe quelles instructions, mais réf
 
 **Le contenu de référence** ajoute des connaissances que Claude applique à votre travail actuel. Conventions, modèles, guides de style, connaissances du domaine. Ce contenu s'exécute en ligne pour que Claude puisse l'utiliser aux côtés du contexte de votre conversation.
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: api-conventions
 description: API design patterns for this codebase
@@ -155,7 +155,7 @@ When writing API endpoints:
 
 **Le contenu de tâche** donne à Claude des instructions étape par étape pour une action spécifique, comme les déploiements, les commits ou la génération de code. Ce sont souvent des actions que vous voulez invoquer directement avec `/skill-name` plutôt que de laisser Claude décider quand les exécuter. Ajoutez `disable-model-invocation: true` pour empêcher Claude de la déclencher automatiquement.
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: deploy
 description: Deploy the application to production
@@ -175,7 +175,7 @@ Votre `SKILL.md` peut contenir n'importe quoi, mais réfléchir à la façon don
 
 Au-delà du contenu markdown, vous pouvez configurer le comportement de la skill en utilisant les champs du frontmatter YAML entre les marqueurs `---` en haut de votre fichier `SKILL.md` :
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: my-skill
 description: What this skill does
@@ -218,7 +218,7 @@ Les skills supportent la substitution de chaîne pour les valeurs dynamiques dan
 
 **Exemple utilisant les substitutions :**
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: session-logger
 description: Log activity for this session
@@ -233,7 +233,7 @@ $ARGUMENTS
 
 Les skills peuvent inclure plusieurs fichiers dans leur répertoire. Cela garde `SKILL.md` concentré sur l'essentiel tout en permettant à Claude d'accéder au matériel de référence détaillé uniquement quand c'est nécessaire. Les grandes docs de référence, les spécifications d'API, ou les collections d'exemples n'ont pas besoin de se charger dans le contexte à chaque fois que la skill s'exécute.
 
-```text  theme={null}
+```text theme={null}
 my-skill/
 ├── SKILL.md (obligatoire - aperçu et navigation)
 ├── reference.md (docs API détaillées - chargées quand nécessaire)
@@ -244,7 +244,7 @@ my-skill/
 
 Référencez les fichiers de support à partir de `SKILL.md` pour que Claude sache ce que chaque fichier contient et quand le charger :
 
-```markdown  theme={null}
+```markdown theme={null}
 ## Additional resources
 
 - For complete API details, see [reference.md](reference.md)
@@ -263,7 +263,7 @@ Par défaut, vous et Claude pouvez tous les deux invoquer n'importe quelle skill
 
 Cet exemple crée une skill de déploiement que seul vous pouvez déclencher. Le champ `disable-model-invocation: true` empêche Claude de l'exécuter automatiquement :
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: deploy
 description: Deploy the application to production
@@ -294,7 +294,7 @@ Voici comment les deux champs affectent l'invocation et le chargement du context
 
 Utilisez le champ `allowed-tools` pour limiter les outils que Claude peut utiliser quand une skill est active. Cette skill crée un mode lecture seule où Claude peut explorer les fichiers mais pas les modifier :
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: safe-reader
 description: Read files without making changes
@@ -308,7 +308,7 @@ Vous et Claude pouvez tous les deux passer des arguments lors de l'invocation d'
 
 Cette skill corrige un problème GitHub par numéro. L'espace réservé `$ARGUMENTS` est remplacé par tout ce qui suit le nom de la skill :
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: fix-issue
 description: Fix a GitHub issue
@@ -330,7 +330,7 @@ Si vous invoquez une skill avec des arguments mais que la skill n'inclut pas `$A
 
 Pour accéder aux arguments individuels par position, utilisez `$ARGUMENTS[N]` ou le raccourci plus court `$N` :
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: migrate-component
 description: Migrate a component from one framework to another
@@ -342,7 +342,7 @@ Preserve all existing behavior and tests.
 
 Exécuter `/migrate-component SearchBar React Vue` remplace `$ARGUMENTS[0]` par `SearchBar`, `$ARGUMENTS[1]` par `React`, et `$ARGUMENTS[2]` par `Vue`. La même skill utilisant le raccourci `$N` :
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: migrate-component
 description: Migrate a component from one framework to another
@@ -360,7 +360,7 @@ La syntaxe `` !`<command>` `` exécute les commandes shell avant que le contenu 
 
 Cette skill résume une pull request en récupérant les données de PR en direct avec le CLI GitHub. Les commandes `` !`gh pr diff` `` et autres s'exécutent d'abord, et leur sortie est insérée dans le prompt :
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: pr-summary
 description: Summarize changes in a pull request
@@ -411,7 +411,7 @@ Avec `context: fork`, vous écrivez la tâche dans votre skill et choisissez un 
 
 Cette skill exécute la recherche dans un agent Explore forké. Le contenu de la skill devient la tâche, et l'agent fournit des outils en lecture seule optimisés pour l'exploration de la base de code :
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: deep-research
 description: Research a topic thoroughly
@@ -443,14 +443,14 @@ Trois façons de contrôler quelles skills Claude peut invoquer :
 
 **Désactiver toutes les skills** en refusant l'outil Skill dans `/permissions` :
 
-```text  theme={null}
+```text theme={null}
 # Add to deny rules:
 Skill
 ```
 
 **Autoriser ou refuser des skills spécifiques** en utilisant les [règles de permission](/fr/permissions) :
 
-```text  theme={null}
+```text theme={null}
 # Allow only specific skills
 Skill(commit)
 Skill(review-pr *)
@@ -483,13 +483,13 @@ Cet exemple crée un explorateur de base de code : une vue d'arbre interactive o
 
 Créez le répertoire Skill :
 
-```bash  theme={null}
+```bash theme={null}
 mkdir -p ~/.claude/skills/codebase-visualizer/scripts
 ```
 
 Créez `~/.claude/skills/codebase-visualizer/SKILL.md`. La description dit à Claude quand activer cette Skill, et les instructions disent à Claude d'exécuter le script groupé :
 
-````yaml  theme={null}
+````yaml theme={null}
 ---
 name: codebase-visualizer
 description: Generate an interactive collapsible tree visualization of your codebase. Use when exploring a new repo, understanding project structure, or identifying large files.

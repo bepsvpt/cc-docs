@@ -14,7 +14,7 @@
 
 CLI からプログラムで Claude Code を実行するには、プロンプトと任意の [CLI オプション](/ja/cli-reference) を指定して `-p` を渡します。
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"
 ```
 
@@ -30,7 +30,7 @@ claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"
 
 この例は、コードベースについて Claude に質問し、応答を出力します。
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "What does the auth module do?"
 ```
 
@@ -48,7 +48,7 @@ claude -p "What does the auth module do?"
 
 この例は、セッションメタデータを含む JSON としてプロジェクト概要を返し、テキスト結果は `result` フィールドに含まれます。
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Summarize this project" --output-format json
 ```
 
@@ -56,7 +56,7 @@ claude -p "Summarize this project" --output-format json
 
 この例は、auth.py から関数名を抽出し、文字列の配列として返します。
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Extract the main function names from auth.py" \
   --output-format json \
   --json-schema '{"type":"object","properties":{"functions":{"type":"array","items":{"type":"string"}}},"required":["functions"]}'
@@ -65,7 +65,7 @@ claude -p "Extract the main function names from auth.py" \
 <Tip>
   [jq](https://jqlang.github.io/jq/) などのツールを使用して応答を解析し、特定のフィールドを抽出します。
 
-  ```bash  theme={null}
+  ```bash theme={null}
   # テキスト結果を抽出
   claude -p "Summarize this project" --output-format json | jq -r '.result'
 
@@ -81,13 +81,13 @@ claude -p "Extract the main function names from auth.py" \
 
 `--output-format stream-json` を `--verbose` および `--include-partial-messages` と共に使用して、生成されるトークンをリアルタイムで受け取ります。各行はイベントを表す JSON オブジェクトです。
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Explain recursion" --output-format stream-json --verbose --include-partial-messages
 ```
 
 次の例は、[jq](https://jqlang.github.io/jq/) を使用してテキストデルタをフィルタリングし、ストリーミングテキストのみを表示します。`-r` フラグは生の文字列を出力し（引用符なし）、`-j` は改行なしで結合するため、トークンは継続的にストリーミングされます。
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Write a poem" --output-format stream-json --verbose --include-partial-messages | \
   jq -rj 'select(.type == "stream_event" and .event.delta.type? == "text_delta") | .event.delta.text'
 ```
@@ -98,7 +98,7 @@ claude -p "Write a poem" --output-format stream-json --verbose --include-partial
 
 `--allowedTools` を使用して、Claude が確認を求めずに特定のツールを使用できるようにします。この例はテストスイートを実行し、失敗を修正し、Claude が許可を求めずに Bash コマンドを実行し、ファイルを読み取り/編集できるようにします。
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Run the test suite and fix any failures" \
   --allowedTools "Bash,Read,Edit"
 ```
@@ -107,7 +107,7 @@ claude -p "Run the test suite and fix any failures" \
 
 この例は、ステージされた変更を確認し、適切なメッセージを含むコミットを作成します。
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Look at my staged changes and create an appropriate commit" \
   --allowedTools "Bash(git diff *),Bash(git log *),Bash(git status *),Bash(git commit *)"
 ```
@@ -122,7 +122,7 @@ claude -p "Look at my staged changes and create an appropriate commit" \
 
 `--append-system-prompt` を使用して、Claude Code のデフォルト動作を保持しながら指示を追加します。この例は PR diff を Claude にパイプし、セキュリティ脆弱性をレビューするよう指示します。
 
-```bash  theme={null}
+```bash theme={null}
 gh pr diff "$1" | claude -p \
   --append-system-prompt "You are a security engineer. Review for vulnerabilities." \
   --output-format json
@@ -134,7 +134,7 @@ gh pr diff "$1" | claude -p \
 
 `--continue` を使用して最新の会話を続けるか、`--resume` をセッション ID と共に使用して特定の会話を続けます。この例はレビューを実行し、その後フォローアッププロンプトを送信します。
 
-```bash  theme={null}
+```bash theme={null}
 # 最初のリクエスト
 claude -p "Review this codebase for performance issues"
 
@@ -145,7 +145,7 @@ claude -p "Generate a summary of all issues found" --continue
 
 複数の会話を実行している場合は、セッション ID をキャプチャして特定の会話を再開します。
 
-```bash  theme={null}
+```bash theme={null}
 session_id=$(claude -p "Start a review" --output-format json | jq -r '.session_id')
 claude -p "Continue that review" --resume "$session_id"
 ```

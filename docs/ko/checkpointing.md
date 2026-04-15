@@ -62,7 +62,7 @@ Checkpoint는 다음과 같은 경우에 특히 유용합니다:
 
 Checkpointing은 bash 명령으로 수정된 파일을 추적하지 않습니다. 예를 들어 Claude Code가 다음을 실행하는 경우:
 
-```bash  theme={null}
+```bash theme={null}
 rm file.txt
 mv old.txt new.txt
 cp source.txt dest.txt

@@ -130,7 +130,7 @@ I seguenti esempi mostrano le variabili di ambiente da impostare nella tua shell
   <Tab title="Corporate proxy">
     Instrada il traffico Bedrock attraverso il tuo proxy aziendale impostando le seguenti [variabili di ambiente](/it/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Bedrock
     export CLAUDE_CODE_USE_BEDROCK=1
     export AWS_REGION=us-east-1
@@ -143,7 +143,7 @@ I seguenti esempi mostrano le variabili di ambiente da impostare nella tua shell
   <Tab title="LLM Gateway">
     Instrada il traffico Bedrock attraverso il tuo gateway LLM impostando le seguenti [variabili di ambiente](/it/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Bedrock
     export CLAUDE_CODE_USE_BEDROCK=1
 
@@ -160,7 +160,7 @@ I seguenti esempi mostrano le variabili di ambiente da impostare nella tua shell
   <Tab title="Corporate proxy">
     Instrada il traffico Foundry attraverso il tuo proxy aziendale impostando le seguenti [variabili di ambiente](/it/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Microsoft Foundry
     export CLAUDE_CODE_USE_FOUNDRY=1
     export ANTHROPIC_FOUNDRY_RESOURCE=your-resource
@@ -174,7 +174,7 @@ I seguenti esempi mostrano le variabili di ambiente da impostare nella tua shell
   <Tab title="LLM Gateway">
     Instrada il traffico Foundry attraverso il tuo gateway LLM impostando le seguenti [variabili di ambiente](/it/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Microsoft Foundry
     export CLAUDE_CODE_USE_FOUNDRY=1
 
@@ -191,7 +191,7 @@ I seguenti esempi mostrano le variabili di ambiente da impostare nella tua shell
   <Tab title="Corporate proxy">
     Instrada il traffico Vertex AI attraverso il tuo proxy aziendale impostando le seguenti [variabili di ambiente](/it/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Vertex
     export CLAUDE_CODE_USE_VERTEX=1
     export CLOUD_ML_REGION=us-east5
@@ -205,7 +205,7 @@ I seguenti esempi mostrano le variabili di ambiente da impostare nella tua shell
   <Tab title="LLM Gateway">
     Instrada il traffico Vertex AI attraverso il tuo gateway LLM impostando le seguenti [variabili di ambiente](/it/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Vertex
     export CLAUDE_CODE_USE_VERTEX=1
 

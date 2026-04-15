@@ -34,7 +34,7 @@ Claude Code dapat digunakan dengan titik akhir Vertex AI [global](https://cloud.
 
 Aktifkan Vertex AI API di proyek GCP Anda:
 
-```bash  theme={null}
+```bash theme={null}
 # Atur ID proyek Anda
 gcloud config set project YOUR-PROJECT-ID
 
@@ -65,7 +65,7 @@ Untuk informasi lebih lanjut, lihat [dokumentasi autentikasi Google Cloud](https
 
 Atur variabel lingkungan berikut:
 
-```bash  theme={null}
+```bash theme={null}
 # Aktifkan integrasi Vertex AI
 export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=global
@@ -94,7 +94,7 @@ Setiap versi model memiliki variabel `VERTEX_REGION_CLAUDE_*` sendiri. Lihat [re
 
 Atur variabel lingkungan ini ke ID model Vertex AI spesifik:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6'
 export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
@@ -111,7 +111,7 @@ Claude Code menggunakan model default ini ketika tidak ada variabel pinning yang
 
 Untuk menyesuaikan model lebih lanjut:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_MODEL='claude-opus-4-6'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
 ```

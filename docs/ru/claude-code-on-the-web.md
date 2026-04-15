@@ -123,7 +123,7 @@ Claude может отвечать на потоки комментариев р
 
 Запустите веб-сессию из командной строки с флагом `--remote`:
 
-```bash  theme={null}
+```bash theme={null}
 claude --remote "Fix the authentication bug in src/auth/login.ts"
 ```
 
@@ -133,13 +133,13 @@ claude --remote "Fix the authentication bug in src/auth/login.ts"
 
 **Планируйте локально, выполняйте удалённо**: Для сложных задач начните Claude в режиме плана для совместной работы над подходом, затем отправьте работу в веб-интерфейс:
 
-```bash  theme={null}
+```bash theme={null}
 claude --permission-mode plan
 ```
 
 В режиме плана Claude может только читать файлы и исследовать кодовую базу. Когда вы будете довольны планом, запустите удалённую сессию для автономного выполнения:
 
-```bash  theme={null}
+```bash theme={null}
 claude --remote "Execute the migration plan in docs/migration-plan.md"
 ```
 
@@ -147,7 +147,7 @@ claude --remote "Execute the migration plan in docs/migration-plan.md"
 
 **Запускайте задачи параллельно**: Каждая команда `--remote` создаёт свою собственную веб-сессию, которая выполняется независимо. Вы можете запустить несколько задач, и они все будут выполняться одновременно в отдельных сессиях:
 
-```bash  theme={null}
+```bash theme={null}
 claude --remote "Fix the flaky test in auth.spec.ts"
 claude --remote "Update the API documentation"
 claude --remote "Refactor the logger to use structured output"
@@ -228,7 +228,7 @@ claude --remote "Refactor the logger to use structured output"
 
 Чтобы увидеть, что предустановлено в вашем окружении, попросите Claude Code запустить:
 
-```bash  theme={null}
+```bash theme={null}
 check-tools
 ```
 
@@ -283,7 +283,7 @@ check-tools
 <Note>
   Переменные окружения должны быть указаны как пары ключ-значение в [формате `.env`](https://www.dotenv.org/). Например:
 
-  ```text  theme={null}
+  ```text theme={null}
   API_KEY=your_api_key
   DEBUG=true
   ```
@@ -303,7 +303,7 @@ Setup script — это скрипт Bash, который запускается
 
 Этот пример устанавливает CLI `gh`, которого нет в образе по умолчанию:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 apt update && apt install -y gh
 ```
@@ -337,7 +337,7 @@ SessionStart hooks также могут быть определены в ваш
 
 Чтобы настроить автоматическую установку зависимостей с помощью setup script, откройте параметры вашего окружения и добавьте скрипт:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 npm install
 pip install -r requirements.txt
@@ -345,7 +345,7 @@ pip install -r requirements.txt
 
 Альтернативно, вы можете использовать SessionStart hooks в файле `.claude/settings.json` вашего репозитория для установки зависимостей, которая должна также выполняться в локальных окружениях:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "SessionStart": [
@@ -365,7 +365,7 @@ pip install -r requirements.txt
 
 Создайте соответствующий скрипт в `scripts/install_pkgs.sh`:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 
 # Only run in remote environments

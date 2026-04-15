@@ -637,23 +637,23 @@ To install Claude Code, use one of the following methods:
   <Tab title="Native Install (Recommended)">
     **macOS, Linux, WSL:**
 
-    ```bash  theme={null}
+    ```bash theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell  theme={null}
+    ```powershell theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch  theme={null}
+    ```batch theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
 
-    If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. Use the PowerShell command above instead. Your prompt shows `PS C:\` when you're in PowerShell.
+    If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell. Your prompt shows `PS C:\` when you're in PowerShell and `C:\` without the `PS` when you're in CMD.
 
     **Native Windows setups require [Git for Windows](https://git-scm.com/downloads/win).** Install it first if you don't have it. WSL setups do not need it.
 
@@ -663,7 +663,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="Homebrew">
-    ```bash  theme={null}
+    ```bash theme={null}
     brew install --cask claude-code
     ```
 
@@ -675,7 +675,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="WinGet">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     winget install Anthropic.ClaudeCode
     ```
 
@@ -689,12 +689,12 @@ To install Claude Code, use one of the following methods:
 
 Claude Code를 사용하려면 계정이 필요합니다. `claude` 명령으로 대화형 세션을 시작할 때 로그인해야 합니다:
 
-```bash  theme={null}
+```bash theme={null}
 claude
 # 처음 사용할 때 로그인하라는 메시지가 표시됩니다
 ```
 
-```bash  theme={null}
+```bash theme={null}
 /login
 # 프롬프트를 따라 계정으로 로그인하십시오
 ```
@@ -711,7 +711,7 @@ claude
 
 프로젝트 디렉토리에서 터미널을 열고 Claude Code를 시작하십시오:
 
-```bash  theme={null}
+```bash theme={null}
 cd /path/to/your/project
 claude
 ```
@@ -726,35 +726,35 @@ claude
 
 코드베이스를 이해하는 것부터 시작하겠습니다. 다음 명령 중 하나를 시도하십시오:
 
-```text  theme={null}
+```text theme={null}
 이 프로젝트는 무엇을 하나요?
 ```
 
 Claude가 파일을 분석하고 요약을 제공합니다. 더 구체적인 질문을 할 수도 있습니다:
 
-```text  theme={null}
+```text theme={null}
 이 프로젝트는 어떤 기술을 사용하나요?
 ```
 
-```text  theme={null}
+```text theme={null}
 주요 진입점은 어디인가요?
 ```
 
-```text  theme={null}
+```text theme={null}
 폴더 구조를 설명해주세요
 ```
 
 Claude의 기능에 대해 물어볼 수도 있습니다:
 
-```text  theme={null}
+```text theme={null}
 Claude Code는 무엇을 할 수 있나요?
 ```
 
-```text  theme={null}
+```text theme={null}
 Claude Code에서 사용자 정의 skills를 만드는 방법은?
 ```
 
-```text  theme={null}
+```text theme={null}
 Claude Code는 Docker와 함께 작동할 수 있나요?
 ```
 
@@ -766,7 +766,7 @@ Claude Code는 Docker와 함께 작동할 수 있나요?
 
 이제 Claude Code가 실제 코딩을 하도록 해봅시다. 간단한 작업을 시도하십시오:
 
-```text  theme={null}
+```text theme={null}
 주 파일에 hello world 함수 추가
 ```
 
@@ -785,25 +785,25 @@ Claude Code는 다음을 수행합니다:
 
 Claude Code는 Git 작업을 대화형으로 만듭니다:
 
-```text  theme={null}
+```text theme={null}
 어떤 파일을 변경했나요?
 ```
 
-```text  theme={null}
+```text theme={null}
 설명적인 메시지로 변경 사항 커밋
 ```
 
 더 복잡한 Git 작업을 요청할 수도 있습니다:
 
-```text  theme={null}
+```text theme={null}
 feature/quickstart라는 새 브랜치 생성
 ```
 
-```text  theme={null}
+```text theme={null}
 마지막 5개의 커밋 표시
 ```
 
-```text  theme={null}
+```text theme={null}
 병합 충돌을 해결하는 데 도움을 주세요
 ```
 
@@ -813,13 +813,13 @@ Claude는 디버깅 및 기능 구현에 능숙합니다.
 
 자연어로 원하는 것을 설명하십시오:
 
-```text  theme={null}
+```text theme={null}
 사용자 등록 양식에 입력 유효성 검사 추가
 ```
 
 또는 기존 문제를 수정하십시오:
 
-```text  theme={null}
+```text theme={null}
 사용자가 빈 양식을 제출할 수 있는 버그가 있습니다 - 수정하세요
 ```
 
@@ -836,25 +836,25 @@ Claude와 함께 작업하는 여러 가지 방법이 있습니다:
 
 **코드 리팩토링**
 
-```text  theme={null}
+```text theme={null}
 인증 모듈을 콜백 대신 async/await를 사용하도록 리팩토링
 ```
 
 **테스트 작성**
 
-```text  theme={null}
+```text theme={null}
 계산기 함수에 대한 단위 테스트 작성
 ```
 
 **문서 업데이트**
 
-```text  theme={null}
+```text theme={null}
 설치 지침으로 README 업데이트
 ```
 
 **코드 검토**
 
-```text  theme={null}
+```text theme={null}
 내 변경 사항을 검토하고 개선 사항을 제안해주세요
 ```
 
@@ -894,7 +894,7 @@ Claude와 함께 작업하는 여러 가지 방법이 있습니다:
   <Accordion title="단계별 지침 사용">
     복잡한 작업을 단계로 나누기:
 
-    ```text  theme={null}
+    ```text theme={null}
     1. 사용자 프로필을 위한 새 데이터베이스 테이블 생성
     2. 사용자 프로필을 가져오고 업데이트하는 API 엔드포인트 생성
     3. 사용자가 자신의 정보를 보고 편집할 수 있는 웹페이지 구축
@@ -904,11 +904,11 @@ Claude와 함께 작업하는 여러 가지 방법이 있습니다:
   <Accordion title="Claude가 먼저 탐색하도록 하기">
     변경하기 전에 Claude가 코드를 이해하도록 하기:
 
-    ```text  theme={null}
+    ```text theme={null}
     데이터베이스 스키마 분석
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     영국 고객이 가장 자주 반품하는 제품을 보여주는 대시보드 구축
     ```
   </Accordion>

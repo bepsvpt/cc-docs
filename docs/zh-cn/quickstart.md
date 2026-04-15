@@ -637,23 +637,23 @@ To install Claude Code, use one of the following methods:
   <Tab title="Native Install (Recommended)">
     **macOS, Linux, WSL:**
 
-    ```bash  theme={null}
+    ```bash theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell  theme={null}
+    ```powershell theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch  theme={null}
+    ```batch theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
 
-    If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. Use the PowerShell command above instead. Your prompt shows `PS C:\` when you're in PowerShell.
+    If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell. Your prompt shows `PS C:\` when you're in PowerShell and `C:\` without the `PS` when you're in CMD.
 
     **Native Windows setups require [Git for Windows](https://git-scm.com/downloads/win).** Install it first if you don't have it. WSL setups do not need it.
 
@@ -663,7 +663,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="Homebrew">
-    ```bash  theme={null}
+    ```bash theme={null}
     brew install --cask claude-code
     ```
 
@@ -675,7 +675,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="WinGet">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     winget install Anthropic.ClaudeCode
     ```
 
@@ -689,12 +689,12 @@ To install Claude Code, use one of the following methods:
 
 Claude Code 需要账户才能使用。当您使用 `claude` 命令启动交互式会话时，您需要登录：
 
-```bash  theme={null}
+```bash theme={null}
 claude
 # 首次使用时系统会提示您登录
 ```
 
-```bash  theme={null}
+```bash theme={null}
 /login
 # 按照提示使用您的账户登录
 ```
@@ -711,7 +711,7 @@ claude
 
 在任何项目目录中打开您的终端并启动 Claude Code：
 
-```bash  theme={null}
+```bash theme={null}
 cd /path/to/your/project
 claude
 ```
@@ -726,35 +726,35 @@ claude
 
 让我们从理解您的代码库开始。尝试以下命令之一：
 
-```text  theme={null}
+```text theme={null}
 这个项目做什么？
 ```
 
 Claude 将分析您的文件并提供摘要。您也可以提出更具体的问题：
 
-```text  theme={null}
+```text theme={null}
 这个项目使用什么技术？
 ```
 
-```text  theme={null}
+```text theme={null}
 主入口点在哪里？
 ```
 
-```text  theme={null}
+```text theme={null}
 解释文件夹结构
 ```
 
 您也可以询问 Claude 关于其自身功能的问题：
 
-```text  theme={null}
+```text theme={null}
 Claude Code 能做什么？
 ```
 
-```text  theme={null}
+```text theme={null}
 我如何在 Claude Code 中创建自定义 skills？
 ```
 
-```text  theme={null}
+```text theme={null}
 Claude Code 可以与 Docker 一起工作吗？
 ```
 
@@ -766,7 +766,7 @@ Claude Code 可以与 Docker 一起工作吗？
 
 现在让我们让 Claude Code 进行一些实际的编码。尝试一个简单的任务：
 
-```text  theme={null}
+```text theme={null}
 在主文件中添加一个 hello world 函数
 ```
 
@@ -785,25 +785,25 @@ Claude Code 将：
 
 Claude Code 使 Git 操作变得对话式：
 
-```text  theme={null}
+```text theme={null}
 我更改了哪些文件？
 ```
 
-```text  theme={null}
+```text theme={null}
 用描述性消息提交我的更改
 ```
 
 您也可以提示更复杂的 Git 操作：
 
-```text  theme={null}
+```text theme={null}
 创建一个名为 feature/quickstart 的新分支
 ```
 
-```text  theme={null}
+```text theme={null}
 显示我最后的 5 次提交
 ```
 
-```text  theme={null}
+```text theme={null}
 帮我解决合并冲突
 ```
 
@@ -813,13 +813,13 @@ Claude 擅长调试和功能实现。
 
 用自然语言描述您想要的内容：
 
-```text  theme={null}
+```text theme={null}
 向用户注册表单添加输入验证
 ```
 
 或修复现有问题：
 
-```text  theme={null}
+```text theme={null}
 有一个错误，用户可以提交空表单 - 修复它
 ```
 
@@ -836,25 +836,25 @@ Claude Code 将：
 
 **重构代码**
 
-```text  theme={null}
+```text theme={null}
 重构身份验证模块以使用 async/await 而不是回调
 ```
 
 **编写测试**
 
-```text  theme={null}
+```text theme={null}
 为计算器函数编写单元测试
 ```
 
 **更新文档**
 
-```text  theme={null}
+```text theme={null}
 使用安装说明更新 README
 ```
 
 **代码审查**
 
-```text  theme={null}
+```text theme={null}
 审查我的更改并建议改进
 ```
 
@@ -894,7 +894,7 @@ Claude Code 将：
   <Accordion title="使用分步说明">
     将复杂任务分解为步骤：
 
-    ```text  theme={null}
+    ```text theme={null}
     1. 为用户配置文件创建新的数据库表
     2. 创建 API 端点以获取和更新用户配置文件
     3. 构建允许用户查看和编辑其信息的网页
@@ -904,11 +904,11 @@ Claude Code 将：
   <Accordion title="让 Claude 先探索">
     在进行更改之前，让 Claude 理解您的代码：
 
-    ```text  theme={null}
+    ```text theme={null}
     分析数据库架构
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     构建一个仪表板，显示英国客户最常退货的产品
     ```
   </Accordion>

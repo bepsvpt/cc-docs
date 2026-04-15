@@ -45,7 +45,7 @@ Se seus dispositivos estão inscritos em uma solução MDM ou gerenciamento de e
 
     Este exemplo impõe uma lista de negação de permissões, impede que os usuários ignorem as permissões e restringe as regras de permissão àquelas definidas nas configurações gerenciadas:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "permissions": {
         "deny": [
@@ -64,7 +64,7 @@ Se seus dispositivos estão inscritos em uma solução MDM ou gerenciamento de e
 
     Este exemplo executa um script de auditoria após cada edição de arquivo em toda a organização:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hooks": {
         "PostToolUse": [
@@ -81,7 +81,7 @@ Se seus dispositivos estão inscritos em uma solução MDM ou gerenciamento de e
 
     Para configurar o classificador do [modo automático](/pt/permission-modes#eliminate-prompts-with-auto-mode) para que ele saiba quais repositórios, buckets e domínios sua organização confia:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "autoMode": {
         "environment": [

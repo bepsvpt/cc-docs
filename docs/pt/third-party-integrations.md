@@ -130,7 +130,7 @@ Os exemplos a seguir mostram as variáveis de ambiente a definir no seu shell ou
   <Tab title="Proxy corporativo">
     Rotear o tráfego do Bedrock através do seu proxy corporativo definindo as seguintes [variáveis de ambiente](/pt/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Ativar Bedrock
     export CLAUDE_CODE_USE_BEDROCK=1
     export AWS_REGION=us-east-1
@@ -143,7 +143,7 @@ Os exemplos a seguir mostram as variáveis de ambiente a definir no seu shell ou
   <Tab title="Gateway LLM">
     Rotear o tráfego do Bedrock através do seu gateway LLM definindo as seguintes [variáveis de ambiente](/pt/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Ativar Bedrock
     export CLAUDE_CODE_USE_BEDROCK=1
 
@@ -160,7 +160,7 @@ Os exemplos a seguir mostram as variáveis de ambiente a definir no seu shell ou
   <Tab title="Proxy corporativo">
     Rotear o tráfego do Foundry através do seu proxy corporativo definindo as seguintes [variáveis de ambiente](/pt/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Ativar Microsoft Foundry
     export CLAUDE_CODE_USE_FOUNDRY=1
     export ANTHROPIC_FOUNDRY_RESOURCE=your-resource
@@ -174,7 +174,7 @@ Os exemplos a seguir mostram as variáveis de ambiente a definir no seu shell ou
   <Tab title="Gateway LLM">
     Rotear o tráfego do Foundry através do seu gateway LLM definindo as seguintes [variáveis de ambiente](/pt/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Ativar Microsoft Foundry
     export CLAUDE_CODE_USE_FOUNDRY=1
 
@@ -191,7 +191,7 @@ Os exemplos a seguir mostram as variáveis de ambiente a definir no seu shell ou
   <Tab title="Proxy corporativo">
     Rotear o tráfego do Vertex AI através do seu proxy corporativo definindo as seguintes [variáveis de ambiente](/pt/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Ativar Vertex
     export CLAUDE_CODE_USE_VERTEX=1
     export CLOUD_ML_REGION=us-east5
@@ -205,7 +205,7 @@ Os exemplos a seguir mostram as variáveis de ambiente a definir no seu shell ou
   <Tab title="Gateway LLM">
     Rotear o tráfego do Vertex AI através do seu gateway LLM definindo as seguintes [variáveis de ambiente](/pt/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Ativar Vertex
     export CLAUDE_CODE_USE_VERTEX=1
 

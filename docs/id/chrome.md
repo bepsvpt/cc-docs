@@ -45,7 +45,7 @@ Sebelum menggunakan Claude Code dengan Chrome, Anda memerlukan:
   <Step title="Luncurkan Claude Code dengan Chrome">
     Mulai Claude Code dengan flag `--chrome`:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --chrome
     ```
 
@@ -55,7 +55,7 @@ Sebelum menggunakan Claude Code dengan Chrome, Anda memerlukan:
   <Step title="Minta Claude menggunakan browser">
     Contoh ini menavigasi ke halaman, berinteraksi dengannya, dan melaporkan apa yang ditemukannya, semuanya dari terminal atau editor Anda:
 
-    ```text  theme={null}
+    ```text theme={null}
     Go to code.claude.com/docs, click on the search box,
     type "hooks", and tell me what results appear
     ```
@@ -88,7 +88,7 @@ Contoh-contoh ini menunjukkan cara umum untuk menggabungkan tindakan browser den
 
 Saat mengembangkan aplikasi web, minta Claude untuk memverifikasi perubahan Anda berfungsi dengan benar:
 
-```text  theme={null}
+```text theme={null}
 I just updated the login form validation. Can you open localhost:3000,
 try submitting the form with invalid data, and check if the error
 messages appear correctly?
@@ -100,7 +100,7 @@ Claude menavigasi ke server lokal Anda, berinteraksi dengan formulir, dan melapo
 
 Claude dapat membaca output console untuk membantu mendiagnosis masalah. Beri tahu Claude pola apa yang harus dicari daripada meminta semua output console, karena log dapat sangat panjang:
 
-```text  theme={null}
+```text theme={null}
 Open the dashboard page and check the console for any errors when
 the page loads.
 ```
@@ -111,7 +111,7 @@ Claude membaca pesan console dan dapat memfilter pola atau jenis kesalahan terte
 
 Percepat tugas entri data berulang:
 
-```text  theme={null}
+```text theme={null}
 I have a spreadsheet of customer contacts in contacts.csv. For each row,
 go to the CRM at crm.example.com, click "Add Contact", and fill in the
 name, email, and phone fields.
@@ -123,7 +123,7 @@ Claude membaca file lokal Anda, menavigasi antarmuka web, dan memasukkan data un
 
 Gunakan Claude untuk menulis langsung di dokumen Anda tanpa penyiapan API:
 
-```text  theme={null}
+```text theme={null}
 Draft a project update based on the recent commits and add it to my
 Google Doc at docs.google.com/document/d/abc123
 ```
@@ -134,7 +134,7 @@ Claude membuka dokumen, mengklik ke editor, dan mengetik konten. Ini bekerja den
 
 Tarik informasi terstruktur dari situs web:
 
-```text  theme={null}
+```text theme={null}
 Go to the product listings page and extract the name, price, and
 availability for each item. Save the results as a CSV file.
 ```
@@ -145,7 +145,7 @@ Claude menavigasi ke halaman, membaca konten, dan mengompilasi data ke dalam for
 
 Koordinasikan tugas di berbagai situs web:
 
-```text  theme={null}
+```text theme={null}
 Check my calendar for meetings tomorrow, then for each meeting with
 an external attendee, look up their company website and add a note
 about what they do.
@@ -157,7 +157,7 @@ Claude bekerja di seluruh tab untuk mengumpulkan informasi dan menyelesaikan alu
 
 Buat rekaman alur interaksi browser yang dapat dibagikan:
 
-```text  theme={null}
+```text theme={null}
 Record a GIF showing how to complete the checkout flow, from adding
 an item to the cart through to the confirmation page.
 ```

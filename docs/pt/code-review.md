@@ -58,7 +58,7 @@ Cada descoberta também aparece como uma anotação na aba **Files changed**, ma
 
 A execução de verificação sempre é concluída com uma conclusão neutra, portanto nunca bloqueia a mesclagem através de regras de proteção de branch. Se você deseja bloquear mesclagens em descobertas de Code Review, leia o detalhamento de severidade da saída de execução de verificação em seu próprio CI. A última linha do texto Details é um comentário legível por máquina que seu fluxo de trabalho pode analisar com `gh` e jq:
 
-```bash  theme={null}
+```bash theme={null}
 gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \
   --jq '.output.text | split("bughunter-severity: ")[1] | split(" -->")[0] | fromjson'
 ```
@@ -159,7 +159,7 @@ Adicione um arquivo `REVIEW.md` à raiz do seu repositório para regras específ
 
 Exemplo `REVIEW.md`:
 
-```markdown  theme={null}
+```markdown theme={null}
 # Diretrizes de Code Review
 
 ## Sempre verificar

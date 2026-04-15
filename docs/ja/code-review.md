@@ -58,7 +58,7 @@ Claude を管理サービスではなく独自の CI インフラストラクチ
 
 チェック実行は常に中立的な結論で完了するため、ブランチ保護ルールを通じてマージをブロックすることはありません。Code Review の結果に基づいてマージをゲートしたい場合は、チェック実行出力から重大度の内訳を読み取り、独自の CI で使用してください。Details テキストの最後の行は、ワークフローが `gh` と jq で解析できるマシン可読コメントです：
 
-```bash  theme={null}
+```bash theme={null}
 gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \
   --jq '.output.text | split("bughunter-severity: ")[1] | split(" -->")[0] | fromjson'
 ```
@@ -159,7 +159,7 @@ Claude はディレクトリ階層のすべてのレベルで `CLAUDE.md` ファ
 
 `REVIEW.md` の例：
 
-```markdown  theme={null}
+```markdown theme={null}
 # Code Review Guidelines
 
 ## Always check

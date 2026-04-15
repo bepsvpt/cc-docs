@@ -45,7 +45,7 @@ Claude Code의 `model` 설정에서 다음 중 하나를 구성할 수 있습니
 
 사용 예시:
 
-```bash  theme={null}
+```bash theme={null}
 # Opus로 시작
 claude --model opus
 
@@ -55,7 +55,7 @@ claude --model opus
 
 설정 파일 예시:
 
-```json  theme={null}
+```json theme={null}
 {
     "permissions": {
         ...
@@ -70,7 +70,7 @@ claude --model opus
 
 `availableModels`이 설정되면 사용자는 `/model`, `--model` 플래그, Config 도구 또는 `ANTHROPIC_MODEL` 환경 변수를 통해 목록에 없는 모델로 전환할 수 없습니다.
 
-```json  theme={null}
+```json theme={null}
 {
   "availableModels": ["sonnet", "haiku"]
 }
@@ -94,7 +94,7 @@ claude --model opus
 
 이 예시는 사용자를 Sonnet 4.5에서 시작하고, 선택기를 Sonnet과 Haiku로 제한하며, Default가 최신 릴리스가 아닌 Sonnet 4.5로 확인되도록 고정합니다:
 
-```json  theme={null}
+```json theme={null}
 {
   "model": "claude-sonnet-4-5",
   "availableModels": ["claude-sonnet-4-5", "haiku"],
@@ -178,7 +178,7 @@ Opus 4.6 및 Sonnet 4.6은 대규모 코드베이스를 사용한 긴 세션을 
 
 모델 별칭 또는 전체 모델 이름과 함께 `[1m]` 접미사를 사용할 수도 있습니다:
 
-```bash  theme={null}
+```bash theme={null}
 # opus[1m] 또는 sonnet[1m] 별칭 사용
 /model opus[1m]
 /model sonnet[1m]
@@ -200,7 +200,7 @@ Opus 4.6 및 Sonnet 4.6은 대규모 코드베이스를 사용한 긴 세션을 
 
 이 예시는 게이트웨이 라우팅된 Opus 배포를 선택 가능하게 하기 위해 세 가지 변수를 모두 설정합니다:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_CUSTOM_MODEL_OPTION="my-gateway/claude-opus-4-6"
 export ANTHROPIC_CUSTOM_MODEL_OPTION_NAME="Opus via Gateway"
 export ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION="Custom deployment routed through the internal LLM gateway"
@@ -245,7 +245,7 @@ Claude Code는 `ANTHROPIC_CUSTOM_MODEL_OPTION`에 설정된 모델 ID에 대한 
 
 고정된 모델에 대해 [확장 컨텍스트](#extended-context)를 활성화하려면 `ANTHROPIC_DEFAULT_OPUS_MODEL` 또는 `ANTHROPIC_DEFAULT_SONNET_MODEL`의 모델 ID에 `[1m]`을 추가합니다:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6[1m]'
 ```
 
@@ -283,7 +283,7 @@ Claude Code는 모델 ID를 알려진 패턴과 비교하여 [노력 수준](#ad
 
 이 예시는 Opus를 Bedrock 사용자 정의 모델 ARN에 고정하고, 친화적인 이름을 설정하며, 기능을 선언합니다:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='arn:aws:bedrock:us-east-1:123456789012:custom-model/abc'
 export ANTHROPIC_DEFAULT_OPUS_MODEL_NAME='Opus via Bedrock'
 export ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION='Opus 4.6 routed through a Bedrock custom endpoint'
@@ -300,7 +300,7 @@ export ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES='effort,max_effort,th
 
 [설정 파일](/ko/settings#settings-files)에서 `modelOverrides`를 설정합니다:
 
-```json  theme={null}
+```json theme={null}
 {
   "modelOverrides": {
     "claude-opus-4-6": "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/opus-prod",

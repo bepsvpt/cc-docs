@@ -45,7 +45,7 @@ Wenn Ihre Geräte in einer MDM- oder Endpunktverwaltungslösung registriert sind
 
     Dieses Beispiel erzwingt eine Berechtigungsverweigerungsliste, verhindert, dass Benutzer Berechtigungen umgehen, und beschränkt Berechtigungsregeln auf diejenigen, die in verwalteten Einstellungen definiert sind:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "permissions": {
         "deny": [
@@ -64,7 +64,7 @@ Wenn Ihre Geräte in einer MDM- oder Endpunktverwaltungslösung registriert sind
 
     Dieses Beispiel führt ein Audit-Skript nach jeder Dateibearbeitung in der gesamten Organisation aus:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hooks": {
         "PostToolUse": [
@@ -81,7 +81,7 @@ Wenn Ihre Geräte in einer MDM- oder Endpunktverwaltungslösung registriert sind
 
     Um den [Auto-Modus](/de/permission-modes#eliminate-prompts-with-auto-mode) Klassifizierer zu konfigurieren, damit er weiß, welche Repos, Buckets und Domains Ihre Organisation vertraut:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "autoMode": {
         "environment": [

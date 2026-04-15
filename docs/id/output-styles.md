@@ -53,7 +53,7 @@ disimpan ke `.claude/settings.local.json` di
 Untuk menetapkan style tanpa menu, edit field `outputStyle` secara langsung dalam
 file settings:
 
-```json  theme={null}
+```json theme={null}
 {
   "outputStyle": "Explanatory"
 }
@@ -69,7 +69,7 @@ biaya.
 Custom output styles adalah file Markdown dengan frontmatter dan teks yang akan
 ditambahkan ke system prompt:
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 name: My Custom Style
 description:

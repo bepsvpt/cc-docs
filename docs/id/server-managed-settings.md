@@ -45,7 +45,7 @@ Jika perangkat Anda terdaftar dalam solusi MDM atau manajemen endpoint, pengatur
 
     Contoh ini memberlakukan daftar penolakan izin, mencegah pengguna dari melewati izin, dan membatasi aturan izin hanya pada yang ditentukan dalam pengaturan terkelola:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "permissions": {
         "deny": [
@@ -64,7 +64,7 @@ Jika perangkat Anda terdaftar dalam solusi MDM atau manajemen endpoint, pengatur
 
     Contoh ini menjalankan skrip audit setelah setiap pengeditan file di seluruh organisasi:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hooks": {
         "PostToolUse": [
@@ -81,7 +81,7 @@ Jika perangkat Anda terdaftar dalam solusi MDM atau manajemen endpoint, pengatur
 
     Untuk mengonfigurasi pengklasifikasi [mode otomatis](/id/permission-modes#eliminate-prompts-with-auto-mode) sehingga mengetahui repositori, bucket, dan domain mana yang dipercaya organisasi Anda:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "autoMode": {
         "environment": [

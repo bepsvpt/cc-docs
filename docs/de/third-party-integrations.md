@@ -130,7 +130,7 @@ Die folgenden Beispiele zeigen die Umgebungsvariablen, die in Ihrer Shell oder S
   <Tab title="Unternehmens-Proxy">
     Leiten Sie Bedrock-Datenverkehr über Ihren Unternehmens-Proxy weiter, indem Sie die folgenden [Umgebungsvariablen](/de/env-vars) setzen:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Bedrock
     export CLAUDE_CODE_USE_BEDROCK=1
     export AWS_REGION=us-east-1
@@ -143,7 +143,7 @@ Die folgenden Beispiele zeigen die Umgebungsvariablen, die in Ihrer Shell oder S
   <Tab title="LLM-Gateway">
     Leiten Sie Bedrock-Datenverkehr über Ihr LLM-Gateway weiter, indem Sie die folgenden [Umgebungsvariablen](/de/env-vars) setzen:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Bedrock
     export CLAUDE_CODE_USE_BEDROCK=1
 
@@ -160,7 +160,7 @@ Die folgenden Beispiele zeigen die Umgebungsvariablen, die in Ihrer Shell oder S
   <Tab title="Unternehmens-Proxy">
     Leiten Sie Foundry-Datenverkehr über Ihren Unternehmens-Proxy weiter, indem Sie die folgenden [Umgebungsvariablen](/de/env-vars) setzen:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Microsoft Foundry
     export CLAUDE_CODE_USE_FOUNDRY=1
     export ANTHROPIC_FOUNDRY_RESOURCE=your-resource
@@ -174,7 +174,7 @@ Die folgenden Beispiele zeigen die Umgebungsvariablen, die in Ihrer Shell oder S
   <Tab title="LLM-Gateway">
     Leiten Sie Foundry-Datenverkehr über Ihr LLM-Gateway weiter, indem Sie die folgenden [Umgebungsvariablen](/de/env-vars) setzen:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Microsoft Foundry
     export CLAUDE_CODE_USE_FOUNDRY=1
 
@@ -191,7 +191,7 @@ Die folgenden Beispiele zeigen die Umgebungsvariablen, die in Ihrer Shell oder S
   <Tab title="Unternehmens-Proxy">
     Leiten Sie Vertex AI-Datenverkehr über Ihren Unternehmens-Proxy weiter, indem Sie die folgenden [Umgebungsvariablen](/de/env-vars) setzen:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Vertex
     export CLAUDE_CODE_USE_VERTEX=1
     export CLOUD_ML_REGION=us-east5
@@ -205,7 +205,7 @@ Die folgenden Beispiele zeigen die Umgebungsvariablen, die in Ihrer Shell oder S
   <Tab title="LLM-Gateway">
     Leiten Sie Vertex AI-Datenverkehr über Ihr LLM-Gateway weiter, indem Sie die folgenden [Umgebungsvariablen](/de/env-vars) setzen:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Vertex
     export CLAUDE_CODE_USE_VERTEX=1
 

@@ -301,7 +301,7 @@ Claude Code использует **систему областей** для оп
 
 **Пример конфигурации:**
 
-```json  theme={null}
+```json theme={null}
 {
   "sandbox": {
     "enabled": true,
@@ -341,7 +341,7 @@ Claude Code добавляет атрибуцию к коммитам git и pul
 
 **Атрибуция коммита по умолчанию:**
 
-```text  theme={null}
+```text theme={null}
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
    Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
@@ -349,13 +349,13 @@ Claude Code добавляет атрибуцию к коммитам git и pul
 
 **Атрибуция pull request по умолчанию:**
 
-```text  theme={null}
+```text theme={null}
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 ```
 
 **Пример:**
 
-```json  theme={null}
+```json theme={null}
 {
   "attribution": {
     "commit": "Generated with AI\n\nCo-Authored-By: AI <ai@example.com>",
@@ -372,7 +372,7 @@ Claude Code добавляет атрибуцию к коммитам git и pul
 
 Настройте пользовательскую команду для автодополнения пути файла `@`. Встроенное предложение файлов использует быстрый обход файловой системы, но большие монорепозитории могут выиграть от индексирования, специфичного для проекта, такого как предварительно построенный индекс файлов или пользовательские инструменты.
 
-```json  theme={null}
+```json theme={null}
 {
   "fileSuggestion": {
     "type": "command",
@@ -383,13 +383,13 @@ Claude Code добавляет атрибуцию к коммитам git и pul
 
 Команда запускается с теми же переменными окружения, что и [hooks](/ru/hooks), включая `CLAUDE_PROJECT_DIR`. Она получает JSON через stdin с полем `query`:
 
-```json  theme={null}
+```json theme={null}
 {"query": "src/comp"}
 ```
 
 Выведите пути файлов, разделенные новой строкой, в stdout (в настоящее время ограничено 15):
 
-```text  theme={null}
+```text theme={null}
 src/components/Button.tsx
 src/components/Modal.tsx
 src/components/Form.tsx
@@ -397,7 +397,7 @@ src/components/Form.tsx
 
 **Пример:**
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 query=$(cat | jq -r '.query')
 your-repo-file-index --query "$query" | head -20
@@ -416,7 +416,7 @@ your-repo-file-index --query "$query" | head -20
 
 Ограничьте, на какие URL могут быть направлены HTTP hooks. Поддерживает `*` как подстановочный знак для сопоставления. Когда массив определен, HTTP hooks, направленные на несовпадающие URL-адреса, молча блокируются.
 
-```json  theme={null}
+```json theme={null}
 {
   "allowedHttpHookUrls": ["https://hooks.example.com/*", "http://localhost:*"]
 }
@@ -426,7 +426,7 @@ your-repo-file-index --query "$query" | head -20
 
 Ограничьте, какие имена переменных окружения HTTP hooks могут интерполировать в значения заголовков. Эффективный `allowedEnvVars` каждого hook является пересечением его собственного списка и этого параметра.
 
-```json  theme={null}
+```json theme={null}
 {
   "httpHookAllowedEnvVars": ["MY_TOKEN", "HOOK_SECRET"]
 }
@@ -482,7 +482,7 @@ your-repo-file-index --query "$query" | head -20
 
 Чтобы предотвратить доступ Claude Code к файлам, содержащим чувствительную информацию, такую как ключи API, секреты и файлы окружения, используйте параметр `permissions.deny` в вашем файле `.claude/settings.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "permissions": {
     "deny": [
@@ -515,7 +515,7 @@ Claude Code поддерживает систему plugins, которая по
 
 Параметры, связанные с plugins, в `settings.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "enabledPlugins": {
     "formatter@acme-tools": true,
@@ -544,7 +544,7 @@ Claude Code поддерживает систему plugins, которая по
 
 **Пример**:
 
-```json  theme={null}
+```json theme={null}
 {
   "enabledPlugins": {
     "code-formatter@team-tools": true,
@@ -567,7 +567,7 @@ Claude Code поддерживает систему plugins, которая по
 
 **Пример**:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "acme-tools": {
@@ -596,7 +596,7 @@ Claude Code поддерживает систему plugins, которая по
 
 Используйте `source: 'settings'` для объявления небольшого набора plugins встроенным образом без настройки размещенного репозитория marketplace. Plugins, указанные здесь, должны ссылаться на внешние источники, такие как GitHub или npm. Вам по-прежнему нужно включить каждый plugin отдельно в `enabledPlugins`.
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "team-tools": {
@@ -647,7 +647,7 @@ Claude Code поддерживает систему plugins, которая по
 
 1. **Репозитории GitHub**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "github", "repo": "acme-corp/approved-plugins" }
 { "source": "github", "repo": "acme-corp/security-tools", "ref": "v2.0" }
 { "source": "github", "repo": "acme-corp/plugins", "ref": "main", "path": "marketplace" }
@@ -657,7 +657,7 @@ Claude Code поддерживает систему plugins, которая по
 
 2. **Репозитории Git**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "git", "url": "https://gitlab.example.com/tools/plugins.git" }
 { "source": "git", "url": "https://bitbucket.org/acme-corp/plugins.git", "ref": "production" }
 { "source": "git", "url": "ssh://git@git.example.com/plugins.git", "ref": "v3.1", "path": "approved" }
@@ -667,7 +667,7 @@ Claude Code поддерживает систему plugins, которая по
 
 3. **Marketplaces на основе URL**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "url", "url": "https://plugins.example.com/marketplace.json" }
 { "source": "url", "url": "https://cdn.example.com/marketplace.json", "headers": { "Authorization": "Bearer ${TOKEN}" } }
 ```
@@ -680,7 +680,7 @@ Claude Code поддерживает систему plugins, которая по
 
 4. **Пакеты NPM**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "npm", "package": "@acme-corp/claude-plugins" }
 { "source": "npm", "package": "@acme-corp/approved-marketplace" }
 ```
@@ -689,7 +689,7 @@ Claude Code поддерживает систему plugins, которая по
 
 5. **Пути файлов**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "file", "path": "/usr/local/share/claude/acme-marketplace.json" }
 { "source": "file", "path": "/opt/acme-corp/plugins/marketplace.json" }
 ```
@@ -698,7 +698,7 @@ Claude Code поддерживает систему plugins, которая по
 
 6. **Пути каталогов**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "directory", "path": "/usr/local/share/claude/acme-plugins" }
 { "source": "directory", "path": "/opt/acme-corp/approved-marketplaces" }
 ```
@@ -707,7 +707,7 @@ Claude Code поддерживает систему plugins, которая по
 
 7. **Сопоставление шаблона хоста**:
 
-```json  theme={null}
+```json theme={null}
 { "source": "hostPattern", "hostPattern": "^github\\.example\\.com$" }
 { "source": "hostPattern", "hostPattern": "^gitlab\\.internal\\.example\\.com$" }
 ```
@@ -727,7 +727,7 @@ Claude Code поддерживает систему plugins, которая по
 
 Пример: разрешить только определенные marketplaces:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -753,7 +753,7 @@ Claude Code поддерживает систему plugins, которая по
 
 Пример - Отключить все добавления marketplace:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": []
 }
@@ -761,7 +761,7 @@ Claude Code поддерживает систему plugins, которая по
 
 Пример: разрешить все marketplaces с внутреннего git сервера:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -782,7 +782,7 @@ Claude Code поддерживает систему plugins, которая по
 
 Примеры источников, которые **НЕ совпадают**:
 
-```json  theme={null}
+```json theme={null}
 // Это РАЗНЫЕ источники:
 { "source": "github", "repo": "acme-corp/plugins" }
 { "source": "github", "repo": "acme-corp/plugins", "ref": "main" }
@@ -808,7 +808,7 @@ Claude Code поддерживает систему plugins, которая по
 
 `strictKnownMarketplaces` использует прямые объекты источников:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     { "source": "github", "repo": "acme-corp/plugins" }
@@ -818,7 +818,7 @@ Claude Code поддерживает систему plugins, которая по
 
 `extraKnownMarketplaces` требует именованные marketplaces:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "acme-tools": {
@@ -832,7 +832,7 @@ Claude Code поддерживает систему plugins, которая по
 
 `strictKnownMarketplaces` - это политический шлюз: он контролирует, что пользователи могут добавить, но не регистрирует никакие marketplaces. Чтобы одновременно ограничить и предварительно зарегистрировать marketplace для всех пользователей, установите оба в `managed-settings.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     { "source": "github", "repo": "acme-corp/plugins" }

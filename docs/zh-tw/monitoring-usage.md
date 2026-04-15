@@ -12,7 +12,7 @@
 
 使用環境變數配置 OpenTelemetry：
 
-```bash  theme={null}
+```bash theme={null}
 # 1. 啟用遙測
 export CLAUDE_CODE_ENABLE_TELEMETRY=1
 
@@ -47,7 +47,7 @@ claude
 
 受管設定配置範例：
 
-```json  theme={null}
+```json theme={null}
 {
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
@@ -126,7 +126,7 @@ claude
 
 新增至您的 `.claude/settings.json`：
 
-```json  theme={null}
+```json theme={null}
 {
   "otelHeadersHelper": "/bin/generate_opentelemetry_headers.sh"
 }
@@ -136,7 +136,7 @@ claude
 
 指令碼必須輸出有效的 JSON，其中包含代表 HTTP 標頭的字串鍵值對：
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # 範例：多個標頭
 echo "{\"Authorization\": \"Bearer $(get-token.sh)\", \"X-API-Key\": \"$(get-api-key.sh)\"}"
@@ -150,7 +150,7 @@ echo "{\"Authorization\": \"Bearer $(get-token.sh)\", \"X-API-Key\": \"$(get-api
 
 具有多個團隊或部門的組織可以使用 `OTEL_RESOURCE_ATTRIBUTES` 環境變數新增自訂屬性以區分不同的群組：
 
-```bash  theme={null}
+```bash theme={null}
 # 新增自訂屬性以進行團隊識別
 export OTEL_RESOURCE_ATTRIBUTES="department=engineering,team.id=platform,cost_center=eng-123"
 ```
@@ -174,7 +174,7 @@ export OTEL_RESOURCE_ATTRIBUTES="department=engineering,team.id=platform,cost_ce
 
   **範例：**
 
-  ```bash  theme={null}
+  ```bash theme={null}
   # ❌ 無效 - 包含空格
   export OTEL_RESOURCE_ATTRIBUTES="org.name=John's Organization"
 
@@ -193,7 +193,7 @@ export OTEL_RESOURCE_ATTRIBUTES="department=engineering,team.id=platform,cost_ce
 
 在執行 `claude` 之前設定這些環境變數。每個區塊顯示不同匯出器或部署情境的完整配置：
 
-```bash  theme={null}
+```bash theme={null}
 # 控制台除錯（1 秒間隔）
 export CLAUDE_CODE_ENABLE_TELEMETRY=1
 export OTEL_METRICS_EXPORTER=console

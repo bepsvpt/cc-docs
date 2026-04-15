@@ -58,7 +58,7 @@ Jede Erkenntnis wird auch als Anmerkung auf der Registerkarte **Files changed** 
 
 Die Check-Run wird immer mit einer neutralen Schlussfolgerung abgeschlossen, sodass sie das Zusammenführen durch Branch-Schutzregeln niemals blockiert. Wenn Sie Zusammenführungen auf Code Review-Erkenntnisse beschränken möchten, lesen Sie die Schweregrad-Aufschlüsselung aus der Check-Run-Ausgabe in Ihrem eigenen CI. Die letzte Zeile des Details-Texts ist ein maschinenlesbarer Kommentar, den Ihr Workflow mit `gh` und jq analysieren kann:
 
-```bash  theme={null}
+```bash theme={null}
 gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \
   --jq '.output.text | split("bughunter-severity: ")[1] | split(" -->")[0] | fromjson'
 ```
@@ -159,7 +159,7 @@ Fügen Sie eine `REVIEW.md` Datei zu Ihrem Repository-Root hinzu, um Review-spez
 
 Beispiel `REVIEW.md`:
 
-```markdown  theme={null}
+```markdown theme={null}
 # Code Review Richtlinien
 
 ## Immer überprüfen

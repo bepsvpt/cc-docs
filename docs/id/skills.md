@@ -40,7 +40,7 @@ Contoh ini membuat skill yang mengajarkan Claude menjelaskan kode menggunakan di
   <Step title="Buat direktori skill">
     Buat direktori untuk skill di folder skills pribadi Anda. Skills pribadi tersedia di semua proyek Anda.
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p ~/.claude/skills/explain-code
     ```
   </Step>
@@ -50,7 +50,7 @@ Contoh ini membuat skill yang mengajarkan Claude menjelaskan kode menggunakan di
 
     Buat `~/.claude/skills/explain-code/SKILL.md`:
 
-    ```yaml  theme={null}
+    ```yaml theme={null}
     ---
     name: explain-code
     description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
@@ -72,13 +72,13 @@ Contoh ini membuat skill yang mengajarkan Claude menjelaskan kode menggunakan di
 
     **Biarkan Claude menginvokasinya secara otomatis** dengan menanyakan sesuatu yang cocok dengan deskripsi:
 
-    ```text  theme={null}
+    ```text theme={null}
     How does this code work?
     ```
 
     **Atau invokasinya secara langsung** dengan nama skill:
 
-    ```text  theme={null}
+    ```text theme={null}
     /explain-code src/auth/login.ts
     ```
 
@@ -105,7 +105,7 @@ Saat Anda bekerja dengan file di subdirektori, Claude Code secara otomatis menem
 
 Setiap skill adalah direktori dengan `SKILL.md` sebagai titik masuk:
 
-```text  theme={null}
+```text theme={null}
 my-skill/
 ├── SKILL.md           # Main instructions (required)
 ├── template.md        # Template for Claude to fill in
@@ -141,7 +141,7 @@ File skill dapat berisi instruksi apa pun, tetapi memikirkan bagaimana Anda ingi
 
 **Konten referensi** menambahkan pengetahuan yang diterapkan Claude pada pekerjaan Anda saat ini. Konvensi, pola, panduan gaya, pengetahuan domain. Konten ini berjalan inline sehingga Claude dapat menggunakannya bersama konteks percakapan Anda.
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: api-conventions
 description: API design patterns for this codebase
@@ -155,7 +155,7 @@ When writing API endpoints:
 
 **Konten tugas** memberikan Claude instruksi langkah demi langkah untuk tindakan spesifik, seperti deployment, commit, atau pembuatan kode. Ini sering kali tindakan yang ingin Anda invokasinya secara langsung dengan `/skill-name` daripada membiarkan Claude memutuskan kapan menjalankannya. Tambahkan `disable-model-invocation: true` untuk mencegah Claude memicunya secara otomatis.
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: deploy
 description: Deploy the application to production
@@ -175,7 +175,7 @@ Deploy the application:
 
 Selain konten markdown, Anda dapat mengonfigurasi perilaku skill menggunakan bidang frontmatter YAML antara penanda `---` di bagian atas file `SKILL.md` Anda:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: my-skill
 description: What this skill does
@@ -218,7 +218,7 @@ Skills mendukung substitusi string untuk nilai dinamis dalam konten skill:
 
 **Contoh menggunakan substitusi:**
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: session-logger
 description: Log activity for this session
@@ -233,7 +233,7 @@ $ARGUMENTS
 
 Skills dapat menyertakan beberapa file di direktorinya. Ini menjaga `SKILL.md` tetap fokus pada hal-hal penting sambil membiarkan Claude mengakses materi referensi terperinci hanya saat diperlukan. Dokumen referensi besar, spesifikasi API, atau koleksi contoh tidak perlu dimuat ke dalam konteks setiap kali skill berjalan.
 
-```text  theme={null}
+```text theme={null}
 my-skill/
 ├── SKILL.md (required - overview and navigation)
 ├── reference.md (detailed API docs - loaded when needed)
@@ -244,7 +244,7 @@ my-skill/
 
 Referensikan file pendukung dari `SKILL.md` Anda sehingga Claude tahu apa yang berisi setiap file dan kapan memuatnya:
 
-```markdown  theme={null}
+```markdown theme={null}
 ## Additional resources
 
 - For complete API details, see [reference.md](reference.md)
@@ -263,7 +263,7 @@ Secara default, baik Anda maupun Claude dapat menginvokasinya skill apa pun. And
 
 Contoh ini membuat skill deploy yang hanya dapat Anda picu. Bidang `disable-model-invocation: true` mencegah Claude menjalankannya secara otomatis:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: deploy
 description: Deploy the application to production
@@ -294,7 +294,7 @@ Berikut adalah bagaimana dua bidang mempengaruhi invokasi dan pemuatan konteks:
 
 Gunakan bidang `allowed-tools` untuk membatasi tools mana yang dapat digunakan Claude saat skill aktif. Skill ini membuat mode baca-saja di mana Claude dapat menjelajahi file tetapi tidak memodifikasinya:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: safe-reader
 description: Read files without making changes
@@ -308,7 +308,7 @@ Baik Anda maupun Claude dapat melewatkan argumen saat menginvokasinya skill. Arg
 
 Skill ini memperbaiki masalah GitHub berdasarkan nomor. Placeholder `$ARGUMENTS` diganti dengan apa pun yang mengikuti nama skill:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: fix-issue
 description: Fix a GitHub issue
@@ -330,7 +330,7 @@ Jika Anda menginvokasinya skill dengan argumen tetapi skill tidak menyertakan `$
 
 Untuk mengakses argumen individual berdasarkan posisi, gunakan `$ARGUMENTS[N]` atau yang lebih pendek `$N`:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: migrate-component
 description: Migrate a component from one framework to another
@@ -342,7 +342,7 @@ Preserve all existing behavior and tests.
 
 Menjalankan `/migrate-component SearchBar React Vue` mengganti `$ARGUMENTS[0]` dengan `SearchBar`, `$ARGUMENTS[1]` dengan `React`, dan `$ARGUMENTS[2]` dengan `Vue`. Skill yang sama menggunakan shorthand `$N`:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: migrate-component
 description: Migrate a component from one framework to another
@@ -360,7 +360,7 @@ Sintaks `` !`<command>` `` menjalankan perintah shell sebelum konten skill dikir
 
 Skill ini merangkum pull request dengan mengambil data PR langsung dengan GitHub CLI. Perintah `` !`gh pr diff` `` dan lainnya berjalan terlebih dahulu, dan output mereka dimasukkan ke dalam prompt:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: pr-summary
 description: Summarize changes in a pull request
@@ -411,7 +411,7 @@ Dengan `context: fork`, Anda menulis tugas dalam skill Anda dan memilih jenis ag
 
 Skill ini menjalankan penelitian dalam agen Explore yang di-fork. Konten skill menjadi tugas, dan agen menyediakan tools baca-saja yang dioptimalkan untuk eksplorasi codebase:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: deep-research
 description: Research a topic thoroughly
@@ -443,14 +443,14 @@ Tiga cara untuk mengontrol skills mana yang dapat diinvokasinya Claude:
 
 **Nonaktifkan semua skills** dengan menolak tool Skill di `/permissions`:
 
-```text  theme={null}
+```text theme={null}
 # Add to deny rules:
 Skill
 ```
 
 **Izinkan atau tolak skills spesifik** menggunakan [aturan izin](/id/permissions):
 
-```text  theme={null}
+```text theme={null}
 # Allow only specific skills
 Skill(commit)
 Skill(review-pr *)
@@ -483,13 +483,13 @@ Contoh ini membuat penjelajah codebase: tampilan pohon interaktif di mana Anda d
 
 Buat direktori Skill:
 
-```bash  theme={null}
+```bash theme={null}
 mkdir -p ~/.claude/skills/codebase-visualizer/scripts
 ```
 
 Buat `~/.claude/skills/codebase-visualizer/SKILL.md`. Deskripsi memberi tahu Claude kapan mengaktifkan Skill ini, dan instruksi memberi tahu Claude untuk menjalankan script yang dikemas:
 
-````yaml  theme={null}
+````yaml theme={null}
 ---
 name: codebase-visualizer
 description: Generate an interactive collapsible tree visualization of your codebase. Use when exploring a new repo, understanding project structure, or identifying large files.

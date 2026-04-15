@@ -58,7 +58,7 @@ Cada hallazgo también aparece como una anotación en la pestaña **Files change
 
 La ejecución de verificación siempre se completa con una conclusión neutral para que nunca bloquee la fusión a través de reglas de protección de rama. Si desea bloquear fusiones en hallazgos de Code Review, lea el desglose de severidad de la salida de ejecución de verificación en su propio CI. La última línea del texto de Details es un comentario legible por máquina que su flujo de trabajo puede analizar con `gh` y jq:
 
-```bash  theme={null}
+```bash theme={null}
 gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \
   --jq '.output.text | split("bughunter-severity: ")[1] | split(" -->")[0] | fromjson'
 ```
@@ -159,7 +159,7 @@ Agregue un archivo `REVIEW.md` a la raíz de su repositorio para reglas específ
 
 Ejemplo `REVIEW.md`:
 
-```markdown  theme={null}
+```markdown theme={null}
 # Directrices de revisión de código
 
 ## Siempre verificar

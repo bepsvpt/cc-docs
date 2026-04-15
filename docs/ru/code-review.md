@@ -58,7 +58,7 @@ Code Review анализирует ваши pull-запросы GitHub и пуб
 
 Проверка всегда завершается с нейтральным выводом, поэтому она никогда не блокирует слияние через правила защиты ветки. Если вы хотите заблокировать слияния на основе результатов Code Review, прочитайте разбор серьёзности из вывода проверки в вашем собственном CI. Последняя строка текста Details — это машиночитаемый комментарий, который ваш рабочий процесс может разобрать с помощью `gh` и jq:
 
-```bash  theme={null}
+```bash theme={null}
 gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \
   --jq '.output.text | split("bughunter-severity: ")[1] | split(" -->")[0] | fromjson'
 ```
@@ -159,7 +159,7 @@ Claude читает файлы `CLAUDE.md` на каждом уровне иер
 
 Пример `REVIEW.md`:
 
-```markdown  theme={null}
+```markdown theme={null}
 # Code Review Guidelines
 
 ## Always check

@@ -114,7 +114,7 @@ Ketika Anda melanjutkan session dengan `claude --continue` atau `claude --resume
 
 Untuk membuat cabang dan mencoba pendekatan berbeda tanpa mempengaruhi session asli, gunakan flag `--fork-session`:
 
-```bash  theme={null}
+```bash theme={null}
 claude --continue --fork-session
 ```
 
@@ -187,13 +187,13 @@ Perintah bawaan juga memandu Anda melalui setup:
 
 Claude Code bersifat conversational. Anda tidak memerlukan prompt yang sempurna. Mulai dengan apa yang Anda inginkan, kemudian perbaiki:
 
-```text  theme={null}
+```text theme={null}
 Perbaiki bug login
 ```
 
 \[Claude menyelidiki, mencoba sesuatu]
 
-```text  theme={null}
+```text theme={null}
 Itu tidak cukup benar. Masalahnya ada di session handling.
 ```
 
@@ -209,7 +209,7 @@ Anda dapat mengganggu Claude kapan saja. Jika Claude sedang menuju jalur yang sa
 
 Semakin presisi prompt awal Anda, semakin sedikit koreksi yang Anda perlukan. Referensikan file spesifik, sebutkan batasan, dan tunjukkan pola contoh.
 
-```text  theme={null}
+```text theme={null}
 Alur checkout rusak untuk pengguna dengan kartu yang kadaluarsa.
 Periksa src/payments/ untuk masalahnya, terutama token refresh.
 Tulis test yang gagal terlebih dahulu, kemudian perbaiki.
@@ -221,7 +221,7 @@ Prompt yang samar-samar berfungsi, tetapi Anda akan menghabiskan lebih banyak wa
 
 Claude berkinerja lebih baik ketika dapat memeriksa pekerjaannya sendiri. Sertakan test case, tempel screenshot UI yang diharapkan, atau tentukan output yang Anda inginkan.
 
-```text  theme={null}
+```text theme={null}
 Implementasikan validateEmail. Test case: 'user@example.com' → true,
 'invalid' → false, 'user@.com' → false. Jalankan test setelahnya.
 ```
@@ -232,7 +232,7 @@ Untuk pekerjaan visual, tempel screenshot desain dan minta Claude membandingkan 
 
 Untuk masalah kompleks, pisahkan penelitian dari coding. Gunakan plan mode (`Shift+Tab` dua kali) untuk menganalisis codebase terlebih dahulu:
 
-```text  theme={null}
+```text theme={null}
 Baca src/auth/ dan pahami bagaimana kami menangani session.
 Kemudian buat rencana untuk menambahkan dukungan OAuth.
 ```
@@ -243,7 +243,7 @@ Tinjau rencana, perbaiki melalui percakapan, kemudian biarkan Claude mengimpleme
 
 Pikirkan mendelegasikan kepada rekan kerja yang mampu. Berikan konteks dan arah, kemudian percayai Claude untuk mengetahui detail:
 
-```text  theme={null}
+```text theme={null}
 Alur checkout rusak untuk pengguna dengan kartu yang kadaluarsa.
 Kode yang relevan ada di src/payments/. Bisakah Anda menyelidiki dan memperbaikinya?
 ```

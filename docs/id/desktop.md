@@ -272,7 +272,7 @@ Claude secara otomatis mendeteksi setup dev server Anda dan menyimpan konfiguras
 
 Untuk menyesuaikan cara server Anda dimulai, misalnya menggunakan `yarn dev` alih-alih `npm run dev` atau mengubah port, edit file secara manual atau klik **Edit konfigurasi** di dropdown Pratinjau untuk membukanya di editor kode Anda. File mendukung JSON dengan komentar.
 
-```json  theme={null}
+```json theme={null}
 {
   "version": "0.0.1",
   "configurations": [
@@ -294,7 +294,7 @@ Ketika `autoVerify` diaktifkan, Claude secara otomatis memverifikasi perubahan k
 
 Verifikasi otomatis aktif secara default. Nonaktifkan per-proyek dengan menambahkan `"autoVerify": false` ke `.claude/launch.json`, atau alihkan dari menu dropdown **Pratinjau**.
 
-```json  theme={null}
+```json theme={null}
 {
   "version": "0.0.1",
   "autoVerify": false,
@@ -344,7 +344,7 @@ Konfigurasi ini menunjukkan setup umum untuk tipe proyek berbeda:
   <Tab title="Next.js">
     Konfigurasi ini menjalankan aplikasi Next.js menggunakan Yarn di port 3000:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "version": "0.0.1",
       "configurations": [
@@ -362,7 +362,7 @@ Konfigurasi ini menunjukkan setup umum untuk tipe proyek berbeda:
   <Tab title="Multiple servers">
     Untuk monorepo dengan server frontend dan API, tentukan beberapa konfigurasi. Frontend menggunakan `autoPort: true` sehingga memilih port gratis jika 3000 diambil, sementara server API memerlukan port 8080 dengan tepat:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "version": "0.0.1",
       "configurations": [
@@ -391,7 +391,7 @@ Konfigurasi ini menunjukkan setup umum untuk tipe proyek berbeda:
   <Tab title="Node.js script">
     Untuk menjalankan skrip Node.js secara langsung alih-alih menggunakan perintah package manager, gunakan bidang `program`:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "version": "0.0.1",
       "configurations": [
@@ -415,17 +415,17 @@ Secara default, tugas terjadwal memulai sesi lokal baru secara otomatis pada wak
 
 Claude Code offers three ways to schedule recurring work:
 
-|                            | [Cloud](/en/web-scheduled-tasks) | [Desktop](/en/desktop-scheduled-tasks) | [`/loop`](/en/scheduled-tasks) |
-| :------------------------- | :------------------------------- | :------------------------------------- | :----------------------------- |
-| Runs on                    | Anthropic cloud                  | Your machine                           | Your machine                   |
-| Requires machine on        | No                               | Yes                                    | Yes                            |
-| Requires open session      | No                               | No                                     | Yes                            |
-| Persistent across restarts | Yes                              | Yes                                    | No (session-scoped)            |
-| Access to local files      | No (fresh clone)                 | Yes                                    | Yes                            |
-| MCP servers                | Connectors configured per task   | [Config files](/en/mcp) and connectors | Inherits from session          |
-| Permission prompts         | No (runs autonomously)           | Configurable per task                  | Inherits from session          |
-| Customizable schedule      | Via `/schedule` in the CLI       | Yes                                    | Yes                            |
-| Minimum interval           | 1 hour                           | 1 minute                               | 1 minute                       |
+|                            | [Cloud](/en/routines)          | [Desktop](/en/desktop-scheduled-tasks) | [`/loop`](/en/scheduled-tasks) |
+| :------------------------- | :----------------------------- | :------------------------------------- | :----------------------------- |
+| Runs on                    | Anthropic cloud                | Your machine                           | Your machine                   |
+| Requires machine on        | No                             | Yes                                    | Yes                            |
+| Requires open session      | No                             | No                                     | Yes                            |
+| Persistent across restarts | Yes                            | Yes                                    | No (session-scoped)            |
+| Access to local files      | No (fresh clone)               | Yes                                    | Yes                            |
+| MCP servers                | Connectors configured per task | [Config files](/en/mcp) and connectors | Inherits from session          |
+| Permission prompts         | No (runs autonomously)         | Configurable per task                  | Inherits from session          |
+| Customizable schedule      | Via `/schedule` in the CLI     | Yes                                    | Yes                            |
+| Minimum interval           | 1 hour                         | 1 minute                               | 1 minute                       |
 
 <Tip>
   Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
@@ -723,7 +723,7 @@ Tab Cowork memerlukan Apple Silicon (M1 atau lebih baru) di macOS. Di Windows, C
 
 Sesi jarak jauh dapat membuat cabang yang tidak ada di mesin lokal Anda. Klik nama cabang di toolbar sesi untuk menyalinnya, kemudian ambil secara lokal:
 
-```bash  theme={null}
+```bash theme={null}
 git fetch origin <branch-name>
 git checkout <branch-name>
 ```

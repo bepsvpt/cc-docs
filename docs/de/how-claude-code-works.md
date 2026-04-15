@@ -114,7 +114,7 @@ Wenn Sie eine Sitzung mit `claude --continue` oder `claude --resume` fortsetzen,
 
 Um abzuzweigen und einen anderen Ansatz zu versuchen, ohne die ursprüngliche Sitzung zu beeinflussen, verwenden Sie das Flag `--fork-session`:
 
-```bash  theme={null}
+```bash theme={null}
 claude --continue --fork-session
 ```
 
@@ -187,13 +187,13 @@ Integrierte Befehle führen Sie auch durch die Einrichtung:
 
 Claude Code ist konversativ. Sie benötigen keine perfekten Eingabeaufforderungen. Beginnen Sie mit dem, was Sie möchten, und verfeinern Sie dann:
 
-```text  theme={null}
+```text theme={null}
 Beheben Sie den Login-Fehler
 ```
 
 \[Claude untersucht, versucht etwas]
 
-```text  theme={null}
+```text theme={null}
 Das ist nicht ganz richtig. Das Problem liegt in der Sitzungsverwaltung.
 ```
 
@@ -209,7 +209,7 @@ Sie können Claude jederzeit unterbrechen. Wenn er den falschen Weg geht, geben 
 
 Je präziser Ihre anfängliche Eingabeaufforderung ist, desto weniger Korrektionen benötigen Sie. Verweisen Sie auf spezifische Dateien, erwähnen Sie Einschränkungen und zeigen Sie auf Beispielmuster.
 
-```text  theme={null}
+```text theme={null}
 Der Checkout-Fluss ist für Benutzer mit abgelaufenen Karten unterbrochen.
 Überprüfen Sie src/payments/ auf das Problem, besonders Token-Aktualisierung.
 Schreiben Sie zuerst einen fehlgeschlagenen Test, dann beheben Sie ihn.
@@ -221,7 +221,7 @@ Vage Eingabeaufforderungen funktionieren, aber Sie werden mehr Zeit mit Lenkung 
 
 Claude funktioniert besser, wenn er seine eigene Arbeit überprüfen kann. Fügen Sie Testfälle ein, fügen Sie Screenshots des erwarteten UI ein oder definieren Sie die gewünschte Ausgabe.
 
-```text  theme={null}
+```text theme={null}
 Implementieren Sie validateEmail. Testfälle: 'user@example.com' → true,
 'invalid' → false, 'user@.com' → false. Führen Sie die Tests danach aus.
 ```
@@ -232,7 +232,7 @@ Für visuelle Arbeit fügen Sie einen Screenshot des Designs ein und bitten Sie 
 
 Bei komplexen Problemen trennen Sie Forschung von Codierung. Verwenden Sie Plan Mode (`Shift+Tab` zweimal), um die Codebasis zuerst zu analysieren:
 
-```text  theme={null}
+```text theme={null}
 Lesen Sie src/auth/ und verstehen Sie, wie wir Sitzungen handhaben.
 Erstellen Sie dann einen Plan zum Hinzufügen von OAuth-Unterstützung.
 ```
@@ -243,7 +243,7 @@ Erstellen Sie dann einen Plan zum Hinzufügen von OAuth-Unterstützung.
 
 Denken Sie daran, an einen fähigen Kollegen zu delegieren. Geben Sie Kontext und Richtung, dann vertrauen Sie Claude, die Details herauszufinden:
 
-```text  theme={null}
+```text theme={null}
 Der Checkout-Fluss ist für Benutzer mit abgelaufenen Karten unterbrochen.
 Der relevante Code ist in src/payments/. Können Sie ihn untersuchen und beheben?
 ```

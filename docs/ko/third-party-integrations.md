@@ -130,7 +130,7 @@
   <Tab title="회사 프록시">
     다음 [환경 변수](/ko/env-vars)를 설정하여 Bedrock 트래픽을 회사 프록시를 통해 라우팅합니다:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Bedrock 활성화
     export CLAUDE_CODE_USE_BEDROCK=1
     export AWS_REGION=us-east-1
@@ -143,7 +143,7 @@
   <Tab title="LLM 게이트웨이">
     다음 [환경 변수](/ko/env-vars)를 설정하여 Bedrock 트래픽을 LLM 게이트웨이를 통해 라우팅합니다:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Bedrock 활성화
     export CLAUDE_CODE_USE_BEDROCK=1
 
@@ -160,7 +160,7 @@
   <Tab title="회사 프록시">
     다음 [환경 변수](/ko/env-vars)를 설정하여 Foundry 트래픽을 회사 프록시를 통해 라우팅합니다:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Microsoft Foundry 활성화
     export CLAUDE_CODE_USE_FOUNDRY=1
     export ANTHROPIC_FOUNDRY_RESOURCE=your-resource
@@ -174,7 +174,7 @@
   <Tab title="LLM 게이트웨이">
     다음 [환경 변수](/ko/env-vars)를 설정하여 Foundry 트래픽을 LLM 게이트웨이를 통해 라우팅합니다:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Microsoft Foundry 활성화
     export CLAUDE_CODE_USE_FOUNDRY=1
 
@@ -191,7 +191,7 @@
   <Tab title="회사 프록시">
     다음 [환경 변수](/ko/env-vars)를 설정하여 Vertex AI 트래픽을 회사 프록시를 통해 라우팅합니다:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Vertex 활성화
     export CLAUDE_CODE_USE_VERTEX=1
     export CLOUD_ML_REGION=us-east5
@@ -205,7 +205,7 @@
   <Tab title="LLM 게이트웨이">
     다음 [환경 변수](/ko/env-vars)를 설정하여 Vertex AI 트래픽을 LLM 게이트웨이를 통해 라우팅합니다:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Vertex 활성화
     export CLAUDE_CODE_USE_VERTEX=1
 

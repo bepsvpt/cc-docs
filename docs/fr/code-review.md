@@ -58,7 +58,7 @@ Chaque résultat apparaît également comme une annotation dans l'onglet **Files
 
 L'exécution de vérification se termine toujours avec une conclusion neutre, de sorte qu'elle ne bloque jamais la fusion via les règles de protection de branche. Si vous souhaitez conditionner les fusions aux résultats de Code Review, lisez la répartition de gravité à partir de la sortie de l'exécution de vérification dans votre propre CI. La dernière ligne du texte Details est un commentaire lisible par machine que votre flux de travail peut analyser avec `gh` et jq :
 
-```bash  theme={null}
+```bash theme={null}
 gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \
   --jq '.output.text | split("bughunter-severity: ")[1] | split(" -->")[0] | fromjson'
 ```
@@ -159,7 +159,7 @@ Ajoutez un fichier `REVIEW.md` à la racine de votre référentiel pour les règ
 
 Exemple `REVIEW.md` :
 
-```markdown  theme={null}
+```markdown theme={null}
 # Code Review Guidelines
 
 ## Always check

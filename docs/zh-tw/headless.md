@@ -14,7 +14,7 @@
 
 若要從 CLI 以程式方式執行 Claude Code，請傳遞 `-p` 和您的提示以及任何 [CLI 選項](/zh-TW/cli-reference)：
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"
 ```
 
@@ -30,7 +30,7 @@ claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"
 
 此範例詢問 Claude 關於您的程式碼庫的問題並列印回應：
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "What does the auth module do?"
 ```
 
@@ -48,7 +48,7 @@ claude -p "What does the auth module do?"
 
 此範例以 JSON 格式傳回專案摘要及工作階段中繼資料，文字結果在 `result` 欄位中：
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Summarize this project" --output-format json
 ```
 
@@ -56,7 +56,7 @@ claude -p "Summarize this project" --output-format json
 
 此範例從 auth.py 提取函式名稱並將其作為字串陣列傳回：
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Extract the main function names from auth.py" \
   --output-format json \
   --json-schema '{"type":"object","properties":{"functions":{"type":"array","items":{"type":"string"}}},"required":["functions"]}'
@@ -65,7 +65,7 @@ claude -p "Extract the main function names from auth.py" \
 <Tip>
   使用 [jq](https://jqlang.github.io/jq/) 之類的工具來解析回應並提取特定欄位：
 
-  ```bash  theme={null}
+  ```bash theme={null}
   # Extract the text result
   claude -p "Summarize this project" --output-format json | jq -r '.result'
 
@@ -81,13 +81,13 @@ claude -p "Extract the main function names from auth.py" \
 
 使用 `--output-format stream-json` 搭配 `--verbose` 和 `--include-partial-messages` 以在產生令牌時接收它們。每一行都是代表事件的 JSON 物件：
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Explain recursion" --output-format stream-json --verbose --include-partial-messages
 ```
 
 下列範例使用 [jq](https://jqlang.github.io/jq/) 篩選文字差異並僅顯示串流文字。`-r` 旗標輸出原始字串（無引號），`-j` 不帶換行符號的聯結，因此令牌會連續串流：
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Write a poem" --output-format stream-json --verbose --include-partial-messages | \
   jq -rj 'select(.type == "stream_event" and .event.delta.type? == "text_delta") | .event.delta.text'
 ```
@@ -98,7 +98,7 @@ claude -p "Write a poem" --output-format stream-json --verbose --include-partial
 
 使用 `--allowedTools` 讓 Claude 使用某些工具而無需提示。此範例執行測試套件並修復失敗，允許 Claude 執行 Bash 命令和讀取/編輯檔案而無需請求許可：
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Run the test suite and fix any failures" \
   --allowedTools "Bash,Read,Edit"
 ```
@@ -107,7 +107,7 @@ claude -p "Run the test suite and fix any failures" \
 
 此範例檢查暫存的變更並建立具有適當訊息的提交：
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "Look at my staged changes and create an appropriate commit" \
   --allowedTools "Bash(git diff *),Bash(git log *),Bash(git status *),Bash(git commit *)"
 ```
@@ -122,7 +122,7 @@ claude -p "Look at my staged changes and create an appropriate commit" \
 
 使用 `--append-system-prompt` 新增指示同時保持 Claude Code 的預設行為。此範例將 PR 差異管道傳送至 Claude 並指示它檢查安全漏洞：
 
-```bash  theme={null}
+```bash theme={null}
 gh pr diff "$1" | claude -p \
   --append-system-prompt "You are a security engineer. Review for vulnerabilities." \
   --output-format json
@@ -134,7 +134,7 @@ gh pr diff "$1" | claude -p \
 
 使用 `--continue` 繼續最近的對話，或使用 `--resume` 搭配工作階段 ID 以繼續特定對話。此範例執行檢查，然後傳送後續提示：
 
-```bash  theme={null}
+```bash theme={null}
 # First request
 claude -p "Review this codebase for performance issues"
 
@@ -145,7 +145,7 @@ claude -p "Generate a summary of all issues found" --continue
 
 如果您執行多個對話，請擷取工作階段 ID 以繼續特定對話：
 
-```bash  theme={null}
+```bash theme={null}
 session_id=$(claude -p "Start a review" --output-format json | jq -r '.session_id')
 claude -p "Continue that review" --resume "$session_id"
 ```

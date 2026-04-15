@@ -57,7 +57,7 @@ Tabel di bawah merangkum kapan setiap event dijalankan. Bagian [Hook events](#ho
 
 Untuk melihat bagaimana potongan-potongan ini cocok bersama, pertimbangkan hook `PreToolUse` ini yang memblokir perintah shell yang merusak. `matcher` mempersempit ke pemanggilan tool Bash dan kondisi `if` mempersempit lebih lanjut ke perintah yang dimulai dengan `rm`, jadi `block-rm.sh` hanya spawn ketika kedua filter cocok:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PreToolUse": [
@@ -78,7 +78,7 @@ Untuk melihat bagaimana potongan-potongan ini cocok bersama, pertimbangkan hook 
 
 Skrip membaca input JSON dari stdin, mengekstrak perintah, dan mengembalikan `permissionDecision` dari `"deny"` jika berisi `rm -rf`:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # .claude/hooks/block-rm.sh
 COMMAND=$(jq -r '.tool_input.command')
@@ -106,7 +106,7 @@ Sekarang anggaplah Claude Code memutuskan untuk menjalankan `Bash "rm -rf /tmp/b
   <Step title="Event dijalankan">
     Event `PreToolUse` dijalankan. Claude Code mengirimkan input tool sebagai JSON di stdin ke hook:
 
-    ```json  theme={null}
+    ```json theme={null}
     { "tool_name": "Bash", "tool_input": { "command": "rm -rf /tmp/build" }, ... }
     ```
   </Step>
@@ -122,7 +122,7 @@ Sekarang anggaplah Claude Code memutuskan untuk menjalankan `Bash "rm -rf /tmp/b
   <Step title="Handler hook dijalankan">
     Skrip memeriksa perintah lengkap dan menemukan `rm -rf`, jadi itu mencetak keputusan ke stdout:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hookSpecificOutput": {
         "hookEventName": "PreToolUse",
@@ -197,7 +197,7 @@ Matcher adalah regex, jadi `Edit|Write` mencocokkan salah satu tool dan `Noteboo
 
 Contoh ini menjalankan skrip linting hanya ketika Claude menulis atau mengedit file:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PostToolUse": [
@@ -236,7 +236,7 @@ Gunakan pola regex untuk menargetkan MCP tools tertentu atau grup tools:
 
 Contoh ini mencatat semua operasi memory server dan memvalidasi operasi write dari server MCP apa pun:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PreToolUse": [
@@ -310,7 +310,7 @@ Penanganan kesalahan berbeda dari command hooks: respons non-2xx, kegagalan kone
 
 Contoh ini mengirimkan event `PreToolUse` ke layanan validasi lokal, mengautentikasi dengan token dari variabel lingkungan `MY_TOKEN`:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PreToolUse": [
@@ -356,7 +356,7 @@ Gunakan variabel lingkungan untuk mereferensikan skrip hook relatif terhadap aka
   <Tab title="Skrip proyek">
     Contoh ini menggunakan `$CLAUDE_PROJECT_DIR` untuk menjalankan pemeriksa gaya dari direktori `.claude/hooks/` proyek setelah pemanggilan tool `Write` atau `Edit` apa pun:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hooks": {
         "PostToolUse": [
@@ -380,7 +380,7 @@ Gunakan variabel lingkungan untuk mereferensikan skrip hook relatif terhadap aka
 
     Contoh ini menjalankan skrip pemformatan yang dibundel dengan plugin:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "description": "Automatic code formatting",
       "hooks": {
@@ -414,7 +414,7 @@ Hooks menggunakan format konfigurasi yang sama seperti hooks berbasis pengaturan
 
 Skill ini mendefinisikan hook `PreToolUse` yang menjalankan skrip validasi keamanan sebelum setiap perintah `Bash`:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: secure-operations
 description: Perform operations with security checks
@@ -479,7 +479,7 @@ Saat berjalan dengan `--agent` atau di dalam subagent, dua bidang tambahan diser
 
 Misalnya, hook `PreToolUse` untuk perintah Bash menerima ini di stdin:
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/home/user/.claude/projects/.../transcript.jsonl",
@@ -507,7 +507,7 @@ Kode keluar dari perintah hook Anda memberitahu Claude Code apakah tindakan haru
 
 Misalnya, skrip perintah hook yang memblokir perintah Bash berbahaya:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # Membaca input JSON dari stdin, memeriksa perintah
 command=$(jq -r '.tool_input.command' < /dev/stdin)
@@ -592,7 +592,7 @@ Objek JSON mendukung tiga jenis bidang:
 
 Untuk menghentikan Claude sepenuhnya terlepas dari tipe event:
 
-```json  theme={null}
+```json theme={null}
 { "continue": false, "stopReason": "Build failed, fix errors before continuing" }
 ```
 
@@ -618,7 +618,7 @@ Berikut adalah contoh setiap pola dalam aksi:
   <Tab title="Top-level decision">
     Digunakan oleh `UserPromptSubmit`, `PostToolUse`, `PostToolUseFailure`, `Stop`, `SubagentStop`, dan `ConfigChange`. Satu-satunya nilai adalah `"block"`. Untuk mengizinkan tindakan dilanjutkan, hilangkan `decision` dari JSON Anda, atau keluar 0 tanpa JSON apa pun:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "decision": "block",
       "reason": "Test suite must pass before proceeding"
@@ -629,7 +629,7 @@ Berikut adalah contoh setiap pola dalam aksi:
   <Tab title="PreToolUse">
     Menggunakan `hookSpecificOutput` untuk kontrol yang lebih kaya: izinkan, tolak, tanya, atau tunda. Anda juga dapat memodifikasi input tool sebelum dijalankan atau menyuntikkan konteks tambahan untuk Claude. Lihat [PreToolUse decision control](#pretooluse-decision-control) untuk set lengkap opsi.
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hookSpecificOutput": {
         "hookEventName": "PreToolUse",
@@ -643,7 +643,7 @@ Berikut adalah contoh setiap pola dalam aksi:
   <Tab title="PermissionRequest">
     Menggunakan `hookSpecificOutput` untuk mengizinkan atau menolak permintaan izin atas nama pengguna. Saat mengizinkan, Anda juga dapat memodifikasi input tool atau menerapkan aturan izin sehingga pengguna tidak diminta lagi. Lihat [PermissionRequest decision control](#permissionrequest-decision-control) untuk set lengkap opsi.
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hookSpecificOutput": {
         "hookEventName": "PermissionRequest",
@@ -684,7 +684,7 @@ Nilai matcher sesuai dengan cara sesi dimulai:
 
 Selain [bidang input umum](#common-input-fields), SessionStart hooks menerima `source`, `model`, dan secara opsional `agent_type`. Bidang `source` menunjukkan bagaimana sesi dimulai: `"startup"` untuk sesi baru, `"resume"` untuk sesi yang dilanjutkan, `"clear"` setelah `/clear`, atau `"compact"` setelah compaction. Bidang `model` berisi pengenal model. Jika Anda memulai Claude Code dengan `claude --agent <name>`, bidang `agent_type` berisi nama agent.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -703,7 +703,7 @@ Teks apa pun yang dicetak skrip hook ke stdout ditambahkan sebagai konteks untuk
 | :------------------ | :-------------------------------------------------------------------------- |
 | `additionalContext` | String ditambahkan ke konteks Claude. Nilai dari beberapa hooks digabungkan |
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
@@ -718,7 +718,7 @@ SessionStart hooks memiliki akses ke variabel lingkungan `CLAUDE_ENV_FILE`, yang
 
 Untuk menetapkan variabel lingkungan individual, tulis pernyataan `export` ke `CLAUDE_ENV_FILE`. Gunakan append (`>>`) untuk mempertahankan variabel yang ditetapkan oleh hooks lain:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 
 if [ -n "$CLAUDE_ENV_FILE" ]; then
@@ -732,7 +732,7 @@ exit 0
 
 Untuk menangkap semua perubahan lingkungan dari perintah setup, bandingkan variabel yang diekspor sebelum dan sesudah:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 
 ENV_BEFORE=$(export -p | sort)
@@ -774,7 +774,7 @@ Selain [bidang input umum](#common-input-fields), InstructionsLoaded hooks mener
 | `trigger_file_path` | Path ke file yang akses memicu load ini, untuk lazy loads                                                                                                                                                  |
 | `parent_file_path`  | Path ke file instruksi induk yang menyertakan ini, untuk load `include`                                                                                                                                    |
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../transcript.jsonl",
@@ -798,7 +798,7 @@ Dijalankan ketika pengguna mengirimkan prompt, sebelum Claude memproses. Ini mem
 
 Selain [bidang input umum](#common-input-fields), UserPromptSubmit hooks menerima bidang `prompt` yang berisi teks yang dikirimkan pengguna.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -828,7 +828,7 @@ Untuk memblokir prompt, kembalikan objek JSON dengan `decision` diatur ke `"bloc
 | `reason`            | Ditampilkan ke pengguna saat `decision` adalah `"block"`. Tidak ditambahkan ke konteks                           |
 | `additionalContext` | String ditambahkan ke konteks Claude                                                                             |
 
-```json  theme={null}
+```json theme={null}
 {
   "decision": "block",
   "reason": "Explanation for decision",
@@ -970,7 +970,7 @@ Ketika beberapa PreToolUse hooks mengembalikan keputusan berbeda, prioritas adal
 
 Ketika hook mengembalikan `"ask"`, dialog izin yang ditampilkan kepada pengguna mencakup label yang mengidentifikasi dari mana hook berasal: misalnya, `[User]`, `[Project]`, `[Plugin]`, atau `[Local]`. Ini membantu pengguna memahami sumber konfigurasi mana yang meminta konfirmasi.
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "PreToolUse",
@@ -1008,7 +1008,7 @@ Tool `AskUserQuestion` adalah kasus tipikal: Claude ingin menanyakan sesuatu kep
 
 Bidang `deferred_tool_use` membawa `id`, `name`, dan `input` tool. `input` adalah parameter yang Claude hasilkan untuk pemanggilan tool, ditangkap sebelum eksekusi:
 
-```json  theme={null}
+```json theme={null}
 {
   "type": "result",
   "subtype": "success",
@@ -1043,7 +1043,7 @@ Cocok pada nama tool, nilai yang sama seperti PreToolUse.
 
 PermissionRequest hooks menerima bidang `tool_name` dan `tool_input` seperti PreToolUse hooks, tetapi tanpa `tool_use_id`. Array `permission_suggestions` opsional berisi opsi "selalu izinkan" yang biasanya dilihat pengguna dalam dialog izin. Perbedaannya adalah kapan hook dijalankan: PermissionRequest hooks dijalankan ketika dialog izin akan ditampilkan ke pengguna, sementara PreToolUse hooks dijalankan sebelum eksekusi tool terlepas dari status izin.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1078,7 +1078,7 @@ Hooks `PermissionRequest` dapat mengizinkan atau menolak permintaan izin. Selain
 | `message`            | Untuk `"deny"` saja: memberitahu Claude mengapa izin ditolak                                                                                                                  |
 | `interrupt`          | Untuk `"deny"` saja: jika `true`, menghentikan Claude                                                                                                                         |
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "PermissionRequest",
@@ -1126,7 +1126,7 @@ Cocok pada nama tool, nilai yang sama seperti PreToolUse.
 
 Hooks `PostToolUse` dijalankan setelah tool sudah dijalankan dengan sukses. Input mencakup `tool_input`, argumen yang dikirim ke tool, dan `tool_response`, hasil yang dikembalikan. Skema yang tepat untuk keduanya tergantung pada tool.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1157,7 +1157,7 @@ Hooks `PostToolUse` dapat memberikan umpan balik ke Claude setelah eksekusi tool
 | `additionalContext`    | Konteks tambahan untuk Claude pertimbangkan                                                  |
 | `updatedMCPToolOutput` | Untuk [MCP tools](#match-mcp-tools) saja: mengganti output tool dengan nilai yang disediakan |
 
-```json  theme={null}
+```json theme={null}
 {
   "decision": "block",
   "reason": "Explanation for decision",
@@ -1178,7 +1178,7 @@ Cocok pada nama tool, nilai yang sama seperti PreToolUse.
 
 PostToolUseFailure hooks menerima bidang `tool_name` dan `tool_input` yang sama seperti PostToolUse, bersama dengan informasi kesalahan sebagai bidang tingkat atas:
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1209,7 +1209,7 @@ Hooks `PostToolUseFailure` dapat memberikan konteks ke Claude setelah kegagalan 
 | :------------------ | :------------------------------------------------------------ |
 | `additionalContext` | Konteks tambahan untuk Claude pertimbangkan bersama kesalahan |
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "PostToolUseFailure",
@@ -1228,7 +1228,7 @@ Cocok pada nama tool, nilai yang sama seperti PreToolUse.
 
 Selain [bidang input umum](#common-input-fields), PermissionDenied hooks menerima `tool_name`, `tool_input`, `tool_use_id`, dan `reason`.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1253,7 +1253,7 @@ Selain [bidang input umum](#common-input-fields), PermissionDenied hooks menerim
 
 PermissionDenied hooks dapat memberitahu model itu dapat mencoba lagi pemanggilan tool yang ditolak. Kembalikan objek JSON dengan `hookSpecificOutput.retry` diatur ke `true`:
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "PermissionDenied",
@@ -1270,7 +1270,7 @@ Dijalankan ketika Claude Code mengirimkan notifikasi. Cocok pada tipe notifikasi
 
 Gunakan matchers terpisah untuk menjalankan handler berbeda tergantung pada tipe notifikasi. Konfigurasi ini memicu skrip alert khusus izin ketika Claude memerlukan persetujuan izin dan notifikasi berbeda ketika Claude telah idle:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "Notification": [
@@ -1301,7 +1301,7 @@ Gunakan matchers terpisah untuk menjalankan handler berbeda tergantung pada tipe
 
 Selain [bidang input umum](#common-input-fields), Notification hooks menerima `message` dengan teks notifikasi, `title` opsional, dan `notification_type` menunjukkan tipe mana yang dijalankan.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1327,7 +1327,7 @@ Dijalankan ketika subagent Claude Code dispawn melalui tool Agent. Mendukung mat
 
 Selain [bidang input umum](#common-input-fields), SubagentStart hooks menerima `agent_id` dengan pengenal unik untuk subagent dan `agent_type` dengan nama agent (agent bawaan seperti `"Bash"`, `"Explore"`, `"Plan"`, atau nama agent kustom).
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1344,7 +1344,7 @@ SubagentStart hooks tidak dapat memblokir pembuatan subagent, tetapi mereka dapa
 | :------------------ | :------------------------------------- |
 | `additionalContext` | String ditambahkan ke konteks subagent |
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "SubagentStart",
@@ -1361,7 +1361,7 @@ Dijalankan ketika subagent Claude Code telah selesai merespons. Cocok pada tipe 
 
 Selain [bidang input umum](#common-input-fields), SubagentStop hooks menerima `stop_hook_active`, `agent_id`, `agent_type`, `agent_transcript_path`, dan `last_assistant_message`. Bidang `agent_type` adalah nilai yang digunakan untuk pemfilteran matcher. `transcript_path` adalah transkrip sesi utama, sementara `agent_transcript_path` adalah transkrip subagent sendiri yang disimpan dalam folder `subagents/` bersarang. Bidang `last_assistant_message` berisi konten teks respons akhir subagent, jadi hooks dapat mengaksesnya tanpa mengurai file transkrip.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "~/.claude/projects/.../abc123.jsonl",
@@ -1388,7 +1388,7 @@ Ketika hook `TaskCreated` keluar dengan kode 2, tugas tidak dibuat dan pesan std
 
 Selain [bidang input umum](#common-input-fields), TaskCreated hooks menerima `task_id`, `task_subject`, dan secara opsional `task_description`, `teammate_name`, dan `team_name`.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1420,7 +1420,7 @@ TaskCreated hooks mendukung dua cara untuk mengontrol pembuatan tugas:
 
 Contoh ini memblokir tugas yang subjeknya tidak mengikuti format yang diperlukan:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 INPUT=$(cat)
 TASK_SUBJECT=$(echo "$INPUT" | jq -r '.task_subject')
@@ -1443,7 +1443,7 @@ Ketika hook `TaskCompleted` keluar dengan kode 2, tugas tidak ditandai sebagai s
 
 Selain [bidang input umum](#common-input-fields), TaskCompleted hooks menerima `task_id`, `task_subject`, dan secara opsional `task_description`, `teammate_name`, dan `team_name`.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1475,7 +1475,7 @@ TaskCompleted hooks mendukung dua cara untuk mengontrol penyelesaian tugas:
 
 Contoh ini menjalankan tests dan memblokir penyelesaian tugas jika gagal:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 INPUT=$(cat)
 TASK_SUBJECT=$(echo "$INPUT" | jq -r '.task_subject')
@@ -1497,7 +1497,7 @@ Dijalankan ketika agent Claude Code utama telah selesai merespons. Tidak dijalan
 
 Selain [bidang input umum](#common-input-fields), Stop hooks menerima `stop_hook_active` dan `last_assistant_message`. Bidang `stop_hook_active` adalah `true` ketika Claude Code sudah melanjutkan sebagai hasil dari stop hook. Periksa nilai ini atau proses transkrip untuk mencegah Claude Code berjalan tanpa batas. Bidang `last_assistant_message` berisi konten teks respons akhir Claude, jadi hooks dapat mengaksesnya tanpa mengurai file transkrip.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "~/.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1518,7 +1518,7 @@ Hooks `Stop` dan `SubagentStop` dapat mengontrol apakah Claude melanjutkan. Sela
 | `decision` | `"block"` mencegah Claude berhenti. Hilangkan untuk mengizinkan Claude berhenti               |
 | `reason`   | Diperlukan saat `decision` adalah `"block"`. Memberitahu Claude mengapa itu harus melanjutkan |
 
-```json  theme={null}
+```json theme={null}
 {
   "decision": "block",
   "reason": "Must be provided when Claude is blocked from stopping"
@@ -1539,7 +1539,7 @@ Selain [bidang input umum](#common-input-fields), StopFailure hooks menerima `er
 | `error_details`          | Detail tambahan tentang kesalahan, ketika tersedia                                                                                                                                                                                                                    |
 | `last_assistant_message` | Teks kesalahan yang dirender ditampilkan dalam percakapan. Tidak seperti `Stop` dan `SubagentStop`, di mana bidang ini menyimpan output percakapan Claude, untuk `StopFailure` itu berisi string kesalahan API itu sendiri, seperti `"API Error: Rate limit reached"` |
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1563,7 +1563,7 @@ Ketika hook `TeammateIdle` keluar dengan kode 2, teammate menerima pesan stderr 
 
 Selain [bidang input umum](#common-input-fields), TeammateIdle hooks menerima `teammate_name` dan `team_name`.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1589,7 +1589,7 @@ TeammateIdle hooks mendukung dua cara untuk mengontrol perilaku teammate:
 
 Contoh ini memeriksa bahwa artefak build ada sebelum mengizinkan teammate menjadi idle:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 
 if [ ! -f "./dist/output.js" ]; then
@@ -1618,7 +1618,7 @@ Matcher memfilter pada sumber konfigurasi:
 
 Contoh ini mencatat semua perubahan konfigurasi untuk audit keamanan:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "ConfigChange": [
@@ -1639,7 +1639,7 @@ Contoh ini mencatat semua perubahan konfigurasi untuk audit keamanan:
 
 Selain [bidang input umum](#common-input-fields), ConfigChange hooks menerima `source` dan secara opsional `file_path`. Bidang `source` menunjukkan tipe konfigurasi mana yang berubah, dan `file_path` menyediakan path ke file spesifik yang dimodifikasi.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1659,7 +1659,7 @@ ConfigChange hooks dapat memblokir perubahan konfigurasi dari berlaku. Gunakan k
 | `decision` | `"block"` mencegah perubahan konfigurasi diterapkan. Hilangkan untuk mengizinkan perubahan |
 | `reason`   | Penjelasan ditampilkan ke pengguna saat `decision` adalah `"block"`                        |
 
-```json  theme={null}
+```json theme={null}
 {
   "decision": "block",
   "reason": "Configuration changes to project settings require admin approval"
@@ -1680,7 +1680,7 @@ CwdChanged tidak mendukung matchers dan dijalankan pada setiap perubahan direkto
 
 Selain [bidang input umum](#common-input-fields), CwdChanged hooks menerima `old_cwd` dan `new_cwd`.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../transcript.jsonl",
@@ -1716,7 +1716,7 @@ Selain [bidang input umum](#common-input-fields), FileChanged hooks menerima `fi
 | `file_path` | Path absolut ke file yang berubah                                                                       |
 | `event`     | Apa yang terjadi: `"change"` (file dimodifikasi), `"add"` (file dibuat), atau `"unlink"` (file dihapus) |
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../transcript.jsonl",
@@ -1747,7 +1747,7 @@ Hook harus mengembalikan path absolut ke direktori worktree yang dibuat. Claude 
 
 Contoh ini membuat salinan kerja SVN dan mencetak path untuk Claude Code gunakan. Ganti URL repositori dengan milik Anda sendiri:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "WorktreeCreate": [
@@ -1770,7 +1770,7 @@ Hook membaca `name` worktree dari input JSON di stdin, melakukan checkout salina
 
 Selain [bidang input umum](#common-input-fields), WorktreeCreate hooks menerima bidang `name`. Ini adalah pengenal slug untuk worktree baru, baik ditentukan oleh pengguna atau auto-generated (misalnya, `bold-oak-a3f2`).
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1795,7 +1795,7 @@ Pasangan cleanup untuk [WorktreeCreate](#worktreecreate). Hook ini dijalankan ke
 
 Claude Code meneruskan path yang dikembalikan oleh WorktreeCreate sebagai `worktree_path` dalam input hook. Contoh ini membaca path itu dan menghapus direktori:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "WorktreeRemove": [
@@ -1816,7 +1816,7 @@ Claude Code meneruskan path yang dikembalikan oleh WorktreeCreate sebagai `workt
 
 Selain [bidang input umum](#common-input-fields), WorktreeRemove hooks menerima bidang `worktree_path`, yang merupakan path absolut ke worktree yang sedang dihapus.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1843,7 +1843,7 @@ Nilai matcher menunjukkan apakah compaction dipicu secara manual atau otomatis:
 
 Selain [bidang input umum](#common-input-fields), PreCompact hooks menerima `trigger` dan `custom_instructions`. Untuk `manual`, `custom_instructions` berisi apa yang diteruskan pengguna ke `/compact`. Untuk `auto`, `custom_instructions` kosong.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1869,7 +1869,7 @@ Nilai matcher yang sama berlaku seperti untuk `PreCompact`:
 
 Selain [bidang input umum](#common-input-fields), PostCompact hooks menerima `trigger` dan `compact_summary`. Bidang `compact_summary` berisi ringkasan percakapan yang dihasilkan oleh operasi compact.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1901,7 +1901,7 @@ Bidang `reason` dalam input hook menunjukkan mengapa sesi berakhir:
 
 Selain [bidang input umum](#common-input-fields), SessionEnd hooks menerima bidang `reason` menunjukkan mengapa sesi berakhir. Lihat [tabel reason](#sessionend) di atas untuk semua nilai.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1915,7 +1915,7 @@ SessionEnd hooks tidak memiliki kontrol keputusan. Mereka tidak dapat memblokir 
 
 SessionEnd hooks memiliki timeout default 1.5 detik. Ini berlaku untuk keluar sesi, `/clear`, dan beralih sesi melalui `/resume` interaktif. Jika hooks Anda memerlukan lebih banyak waktu, atur variabel lingkungan `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` ke nilai lebih tinggi dalam milidetik. Pengaturan `timeout` per-hook apa pun juga dibatasi oleh nilai ini.
 
-```bash  theme={null}
+```bash theme={null}
 CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
 ```
 
@@ -1931,7 +1931,7 @@ Selain [bidang input umum](#common-input-fields), Elicitation hooks menerima `mc
 
 Untuk form-mode elicitation (kasus paling umum):
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1952,7 +1952,7 @@ Untuk form-mode elicitation (kasus paling umum):
 
 Untuk URL-mode elicitation (autentikasi berbasis browser):
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -1970,7 +1970,7 @@ Untuk URL-mode elicitation (autentikasi berbasis browser):
 
 Untuk merespons secara programatis tanpa menampilkan dialog, kembalikan objek JSON dengan `hookSpecificOutput`:
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "Elicitation",
@@ -1999,7 +1999,7 @@ Bidang matcher mencocokkan nama server MCP.
 
 Selain [bidang input umum](#common-input-fields), ElicitationResult hooks menerima `mcp_server_name`, `action`, dan bidang opsional `mode`, `elicitation_id`, dan `content`.
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
@@ -2018,7 +2018,7 @@ Selain [bidang input umum](#common-input-fields), ElicitationResult hooks meneri
 
 Untuk menimpa respons pengguna, kembalikan objek JSON dengan `hookSpecificOutput`:
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "ElicitationResult",
@@ -2086,7 +2086,7 @@ Atur `type` ke `"prompt"` dan sediakan string `prompt` alih-alih `command`. Guna
 
 Hook `Stop` ini meminta LLM untuk mengevaluasi apakah Claude harus berhenti sebelum mengizinkan Claude selesai:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "Stop": [
@@ -2114,7 +2114,7 @@ Hook `Stop` ini meminta LLM untuk mengevaluasi apakah Claude harus berhenti sebe
 
 LLM harus merespons dengan JSON yang berisi:
 
-```json  theme={null}
+```json theme={null}
 {
   "ok": true | false,
   "reason": "Explanation for the decision"
@@ -2130,7 +2130,7 @@ LLM harus merespons dengan JSON yang berisi:
 
 Hook `Stop` ini menggunakan prompt detail untuk memeriksa tiga kondisi sebelum mengizinkan Claude berhenti. Jika `"ok"` adalah `false`, Claude terus bekerja dengan alasan yang disediakan sebagai instruksi berikutnya. Hooks `SubagentStop` menggunakan format yang sama untuk mengevaluasi apakah [subagent](/id/sub-agents) harus berhenti:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "Stop": [
@@ -2178,7 +2178,7 @@ Skema respons sama seperti prompt hooks: `{ "ok": true }` untuk mengizinkan atau
 
 Hook `Stop` ini memverifikasi bahwa semua unit tests lulus sebelum mengizinkan Claude selesai:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "Stop": [
@@ -2206,7 +2206,7 @@ Tambahkan `"async": true` ke konfigurasi command hook untuk menjalankannya di la
 
 Hook ini menjalankan skrip test setelah setiap pemanggilan tool `Write`. Claude terus bekerja segera sementara `run-tests.sh` dijalankan hingga 120 detik. Ketika skrip selesai, outputnya disampaikan pada turn percakapan berikutnya:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PostToolUse": [
@@ -2240,7 +2240,7 @@ Notifikasi penyelesaian async hook ditekan secara default. Untuk melihatnya, akt
 
 Hook ini memulai test suite di latar belakang setiap kali Claude menulis file, kemudian melaporkan hasil kembali ke Claude ketika tests selesai. Simpan skrip ini ke `.claude/hooks/run-tests-async.sh` dalam proyek Anda dan buat dapat dijalankan dengan `chmod +x`:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # run-tests-async.sh
 
@@ -2266,7 +2266,7 @@ fi
 
 Kemudian tambahkan konfigurasi ini ke `.claude/settings.json` dalam akar proyek Anda. Flag `async: true` memungkinkan Claude terus bekerja sementara tests dijalankan:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PostToolUse": [
@@ -2319,7 +2319,7 @@ Ingat praktik-praktik ini saat menulis hooks:
 
 Jalankan `claude --debug` untuk melihat detail eksekusi hook, termasuk hooks mana yang cocok, kode keluar mereka, dan output.
 
-```text  theme={null}
+```text theme={null}
 [DEBUG] Executing hooks for PostToolUse:Write
 [DEBUG] Found 1 hook commands to execute
 [DEBUG] Executing hook command: <Your command> with timeout 600000ms

@@ -32,7 +32,7 @@ Official Anthropic marketplace (`claude-plugins-official`) secara otomatis terse
 
 Untuk menginstal plugin dari official marketplace, gunakan `/plugin install <name>@claude-plugins-official`. Misalnya, untuk menginstal integrasi GitHub:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin install github@claude-plugins-official
 ```
 
@@ -117,7 +117,7 @@ Anthropic juga memelihara [demo plugins marketplace](https://github.com/anthropi
   <Step title="Tambahkan marketplace">
     Dari dalam Claude Code, jalankan perintah `plugin marketplace add` untuk marketplace `anthropics/claude-code`:
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /plugin marketplace add anthropics/claude-code
     ```
 
@@ -146,7 +146,7 @@ Anthropic juga memelihara [demo plugins marketplace](https://github.com/anthropi
 
     Anda juga dapat menginstal langsung dari baris perintah:
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /plugin install commit-commands@anthropics-claude-code
     ```
 
@@ -158,7 +158,7 @@ Anthropic juga memelihara [demo plugins marketplace](https://github.com/anthropi
 
     Coba dengan membuat perubahan pada file dan menjalankan:
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /commit-commands:commit
     ```
 
@@ -189,7 +189,7 @@ Tambahkan repositori GitHub yang berisi file `.claude-plugin/marketplace.json` m
 
 Misalnya, `anthropics/claude-code` merujuk ke repositori `claude-code` yang dimiliki oleh `anthropics`:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add anthropics/claude-code
 ```
 
@@ -199,19 +199,19 @@ Tambahkan repositori git apa pun dengan memberikan URL lengkap. Ini bekerja deng
 
 Menggunakan HTTPS:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add https://gitlab.com/company/plugins.git
 ```
 
 Menggunakan SSH:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add git@gitlab.com:company/plugins.git
 ```
 
 Untuk menambahkan cabang atau tag tertentu, tambahkan `#` diikuti oleh ref:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add https://gitlab.com/company/plugins.git#v1.0.0
 ```
 
@@ -219,13 +219,13 @@ Untuk menambahkan cabang atau tag tertentu, tambahkan `#` diikuti oleh ref:
 
 Tambahkan direktori lokal yang berisi file `.claude-plugin/marketplace.json`:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add ./my-marketplace
 ```
 
 Anda juga dapat menambahkan jalur langsung ke file `marketplace.json`:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add ./path/to/marketplace.json
 ```
 
@@ -233,7 +233,7 @@ Anda juga dapat menambahkan jalur langsung ke file `marketplace.json`:
 
 Tambahkan file `marketplace.json` jarak jauh melalui URL:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add https://example.com/marketplace.json
 ```
 
@@ -245,7 +245,7 @@ Tambahkan file `marketplace.json` jarak jauh melalui URL:
 
 Setelah Anda menambahkan marketplace, Anda dapat menginstal plugin secara langsung (menginstal ke cakupan pengguna secara default):
 
-```shell  theme={null}
+```shell theme={null}
 /plugin install plugin-name@marketplace-name
 ```
 
@@ -271,25 +271,25 @@ Anda juga dapat mengelola plugin dengan perintah langsung.
 
 Nonaktifkan plugin tanpa menghapusnya:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin disable plugin-name@marketplace-name
 ```
 
 Aktifkan kembali plugin yang dinonaktifkan:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin enable plugin-name@marketplace-name
 ```
 
 Hapus plugin sepenuhnya:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin uninstall plugin-name@marketplace-name
 ```
 
 Opsi `--scope` memungkinkan Anda menargetkan cakupan tertentu dengan perintah CLI:
 
-```shell  theme={null}
+```shell theme={null}
 claude plugin install formatter@your-org --scope project
 claude plugin uninstall formatter@your-org --scope project
 ```
@@ -298,7 +298,7 @@ claude plugin uninstall formatter@your-org --scope project
 
 Saat Anda menginstal, mengaktifkan, atau menonaktifkan plugin selama sesi, jalankan `/reload-plugins` untuk mengambil semua perubahan tanpa restart:
 
-```shell  theme={null}
+```shell theme={null}
 /reload-plugins
 ```
 
@@ -323,19 +323,19 @@ Anda juga dapat mengelola marketplace dengan perintah langsung.
 
 Daftar semua marketplace yang dikonfigurasi:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace list
 ```
 
 Segarkan daftar plugin dari marketplace:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace update marketplace-name
 ```
 
 Hapus marketplace:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace remove marketplace-name
 ```
 
@@ -360,7 +360,7 @@ Untuk menonaktifkan semua pembaruan otomatis sepenuhnya untuk Claude Code dan se
 
 Untuk menjaga plugin auto-updates tetap diaktifkan sambil menonaktifkan Claude Code auto-updates, atur `FORCE_AUTOUPDATE_PLUGINS=1` bersama dengan `DISABLE_AUTOUPDATER`:
 
-```bash  theme={null}
+```bash theme={null}
 export DISABLE_AUTOUPDATER=1
 export FORCE_AUTOUPDATE_PLUGINS=1
 ```
@@ -373,7 +373,7 @@ Admin tim dapat menyiapkan instalasi marketplace otomatis untuk proyek dengan me
 
 Tambahkan `extraKnownMarketplaces` ke `.claude/settings.json` proyek Anda:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "my-team-tools": {

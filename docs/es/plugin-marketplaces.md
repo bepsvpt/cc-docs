@@ -27,7 +27,7 @@ Este ejemplo crea un marketplace con un plugin: una skill `/quality-review` para
 
 <Steps>
   <Step title="Crear la estructura de directorios">
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p my-marketplace/.claude-plugin
     mkdir -p my-marketplace/plugins/quality-review-plugin/.claude-plugin
     mkdir -p my-marketplace/plugins/quality-review-plugin/skills/quality-review
@@ -88,7 +88,7 @@ Este ejemplo crea un marketplace con un plugin: una skill `/quality-review` para
   <Step title="Agregar e instalar">
     Agregue el marketplace e instale el plugin.
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /plugin marketplace add ./my-marketplace
     /plugin install quality-review-plugin@my-plugins
     ```
@@ -97,7 +97,7 @@ Este ejemplo crea un marketplace con un plugin: una skill `/quality-review` para
   <Step title="Pruébelo">
     Seleccione algo de código en su editor y ejecute su nuevo comando.
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /quality-review
     ```
   </Step>
@@ -117,7 +117,7 @@ Cree `.claude-plugin/marketplace.json` en la raíz de su repositorio. Este archi
 
 Cada entrada de plugin necesita como mínimo un `name` y `source` (dónde obtenerlo). Consulte el [esquema completo](#marketplace-schema) a continuación para todos los campos disponibles.
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "company-tools",
   "owner": {
@@ -240,7 +240,7 @@ Una vez que un plugin se clona o copia en la máquina local, se copia en el cach
 
 Para plugins en el mismo repositorio, use una ruta que comience con `./`:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "source": "./plugins/my-plugin"
@@ -255,7 +255,7 @@ Las rutas se resuelven relativas a la raíz del marketplace, que es el directori
 
 ### Repositorios de GitHub
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "github-plugin",
   "source": {
@@ -267,7 +267,7 @@ Las rutas se resuelven relativas a la raíz del marketplace, que es el directori
 
 Puede fijar a una rama, etiqueta o commit específico:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "github-plugin",
   "source": {
@@ -287,7 +287,7 @@ Puede fijar a una rama, etiqueta o commit específico:
 
 ### Repositorios de Git
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "git-plugin",
   "source": {
@@ -299,7 +299,7 @@ Puede fijar a una rama, etiqueta o commit específico:
 
 Puede fijar a una rama, etiqueta o commit específico:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "git-plugin",
   "source": {
@@ -321,7 +321,7 @@ Puede fijar a una rama, etiqueta o commit específico:
 
 Use `git-subdir` para apuntar a un plugin que vive dentro de un subdirectorio de un repositorio de git. Claude Code usa un clon parcial y escaso para obtener solo el subdirectorio, minimizando el ancho de banda para monorepos grandes.
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "source": {
@@ -334,7 +334,7 @@ Use `git-subdir` para apuntar a un plugin que vive dentro de un subdirectorio de
 
 Puede fijar a una rama, etiqueta o commit específico:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "source": {
@@ -360,7 +360,7 @@ El campo `url` también acepta una abreviatura de GitHub (`owner/repo`) o URLs S
 
 Los plugins distribuidos como paquetes npm se instalan usando `npm install`. Esto funciona con cualquier paquete en el registro npm público o un registro privado que su equipo aloje.
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-npm-plugin",
   "source": {
@@ -372,7 +372,7 @@ Los plugins distribuidos como paquetes npm se instalan usando `npm install`. Est
 
 Para fijar a una versión específica, agregue el campo `version`:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-npm-plugin",
   "source": {
@@ -385,7 +385,7 @@ Para fijar a una versión específica, agregue el campo `version`:
 
 Para instalar desde un registro privado o interno, agregue el campo `registry`:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-npm-plugin",
   "source": {
@@ -407,7 +407,7 @@ Para instalar desde un registro privado o interno, agregue el campo `registry`:
 
 Este ejemplo muestra una entrada de plugin usando muchos de los campos opcionales, incluidas rutas personalizadas para comandos, agentes, hooks y MCP servers:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "enterprise-tools",
   "source": {
@@ -490,7 +490,7 @@ GitHub proporciona el método de distribución más fácil:
 
 Cualquier servicio de alojamiento de git funciona, como GitLab, Bitbucket y servidores autohospedados. Los usuarios agregan con la URL completa del repositorio:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add https://gitlab.com/company/plugins.git
 ```
 
@@ -508,7 +508,7 @@ Las actualizaciones automáticas en segundo plano se ejecutan al inicio sin ayud
 
 Establezca el token en su configuración de shell (por ejemplo, `.bashrc`, `.zshrc`) o páselo al ejecutar Claude Code:
 
-```bash  theme={null}
+```bash theme={null}
 export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 ```
 
@@ -520,7 +520,7 @@ export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 
 Pruebe su marketplace localmente antes de compartirlo:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add ./my-local-marketplace
 /plugin install test-plugin@my-local-marketplace
 ```
@@ -531,7 +531,7 @@ Para el rango completo de comandos add (GitHub, URLs de Git, rutas locales, URLs
 
 Puede configurar su repositorio para que los miembros del equipo sean automáticamente solicitados para instalar su marketplace cuando confíen en la carpeta del proyecto. Agregue su marketplace a `.claude/settings.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "company-tools": {
@@ -546,7 +546,7 @@ Puede configurar su repositorio para que los miembros del equipo sean automátic
 
 También puede especificar qué plugins deben estar habilitados de forma predeterminada:
 
-```json  theme={null}
+```json theme={null}
 {
   "enabledPlugins": {
     "code-formatter@company-tools": true,
@@ -603,7 +603,7 @@ Cuando `strictKnownMarketplaces` se configura en configuración administrada, el
 
 Deshabilitar todas las adiciones de marketplace:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": []
 }
@@ -611,7 +611,7 @@ Deshabilitar todas las adiciones de marketplace:
 
 Permitir solo marketplaces específicos:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -633,7 +633,7 @@ Permitir solo marketplaces específicos:
 
 Permitir todos los marketplaces desde un servidor git interno usando coincidencia de patrón regex en el host. Este es el enfoque recomendado para [GitHub Enterprise Server](/es/github-enterprise-server#plugin-marketplaces-on-ghes) o instancias de GitLab autohospedadas:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -646,7 +646,7 @@ Permitir todos los marketplaces desde un servidor git interno usando coincidenci
 
 Permitir marketplaces basados en sistema de archivos desde un directorio específico usando coincidencia de patrón regex en la ruta:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -696,7 +696,7 @@ Para soportar canales de lanzamiento "estable" y "último" para sus plugins, pue
 
 ##### Ejemplo
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "stable-tools",
   "plugins": [
@@ -712,7 +712,7 @@ Para soportar canales de lanzamiento "estable" y "último" para sus plugins, pue
 }
 ```
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "latest-tools",
   "plugins": [
@@ -732,7 +732,7 @@ Para soportar canales de lanzamiento "estable" y "último" para sus plugins, pue
 
 Asigne cada marketplace al grupo de usuarios apropiado a través de configuración administrada. Por ejemplo, el grupo estable recibe:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "stable-tools": {
@@ -747,7 +747,7 @@ Asigne cada marketplace al grupo de usuarios apropiado a través de configuraci�
 
 El grupo de acceso temprano recibe `latest-tools` en su lugar:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "latest-tools": {
@@ -766,25 +766,25 @@ Pruebe su marketplace antes de compartirlo.
 
 Valide la sintaxis JSON de su marketplace:
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin validate .
 ```
 
 O desde dentro de Claude Code:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin validate .
 ```
 
 Agregue el marketplace para pruebas:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add ./path/to/marketplace
 ```
 
 Instale un plugin de prueba para verificar que todo funciona:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin install test-plugin@marketplace-name
 ```
 
@@ -861,7 +861,7 @@ Para actualizaciones automáticas en segundo plano:
 
 **Solución**: Establezca `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` para mantener el caché existente cuando el pull falla en lugar de borrarlo:
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
 ```
 
@@ -875,7 +875,7 @@ Con esta variable establecida, Claude Code retiene el clon obsoleto del marketpl
 
 **Solución**: Aumente el tiempo de espera usando la variable de entorno `CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS`. El valor está en milisegundos:
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000  # 5 minutos
 ```
 
@@ -888,7 +888,7 @@ export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000  # 5 minutos
 **Soluciones**:
 
 * **Use fuentes externas**: Cambie las entradas de plugins para usar fuentes de GitHub, npm o URL de git en lugar de rutas relativas:
-  ```json  theme={null}
+  ```json theme={null}
   { "name": "my-plugin", "source": { "source": "github", "repo": "owner/repo" } }
   ```
 * **Use un marketplace basado en Git**: Aloje su marketplace en un repositorio de Git y agréguelo con la URL de git. Los marketplaces basados en Git clonan el repositorio completo, haciendo que las rutas relativas funcionen correctamente.

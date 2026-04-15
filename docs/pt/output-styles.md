@@ -34,7 +34,7 @@ Execute `/config` e selecione **Output style** para escolher um estilo de um men
 
 Para definir um estilo sem o menu, edite o campo `outputStyle` diretamente em um arquivo de configurações:
 
-```json  theme={null}
+```json theme={null}
 {
   "outputStyle": "Explanatory"
 }
@@ -46,7 +46,7 @@ Como o estilo de saída é definido no prompt do sistema no início da sessão, 
 
 Os estilos de saída personalizados são arquivos Markdown com frontmatter e o texto que será adicionado ao prompt do sistema:
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 name: My Custom Style
 description:

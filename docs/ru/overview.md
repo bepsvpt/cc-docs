@@ -22,23 +22,23 @@ Claude Code — это AI-помощник по кодированию, кото
       <Tab title="Native Install (Recommended)">
         **macOS, Linux, WSL:**
 
-        ```bash  theme={null}
+        ```bash theme={null}
         curl -fsSL https://claude.ai/install.sh | bash
         ```
 
         **Windows PowerShell:**
 
-        ```powershell  theme={null}
+        ```powershell theme={null}
         irm https://claude.ai/install.ps1 | iex
         ```
 
         **Windows CMD:**
 
-        ```batch  theme={null}
+        ```batch theme={null}
         curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
         ```
 
-        If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. Use the PowerShell command above instead. Your prompt shows `PS C:\` when you're in PowerShell.
+        If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell. Your prompt shows `PS C:\` when you're in PowerShell and `C:\` without the `PS` when you're in CMD.
 
         **Native Windows setups require [Git for Windows](https://git-scm.com/downloads/win).** Install it first if you don't have it. WSL setups do not need it.
 
@@ -48,7 +48,7 @@ Claude Code — это AI-помощник по кодированию, кото
       </Tab>
 
       <Tab title="Homebrew">
-        ```bash  theme={null}
+        ```bash theme={null}
         brew install --cask claude-code
         ```
 
@@ -60,7 +60,7 @@ Claude Code — это AI-помощник по кодированию, кото
       </Tab>
 
       <Tab title="WinGet">
-        ```powershell  theme={null}
+        ```powershell theme={null}
         winget install Anthropic.ClaudeCode
         ```
 
@@ -72,7 +72,7 @@ Claude Code — это AI-помощник по кодированию, кото
 
     Затем запустите Claude Code в любом проекте:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     cd your-project
     claude
     ```
@@ -134,7 +134,7 @@ Claude Code — это AI-помощник по кодированию, кото
   <Accordion title="Автоматизируйте работу, которую вы постоянно откладываете" icon="wand-magic-sparkles">
     Claude Code справляется с утомительными задачами, которые съедают ваш день: написание тестов для непроверенного кода, исправление ошибок lint по всему проекту, разрешение конфликтов слияния, обновление зависимостей и написание заметок о выпуске.
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude "write tests for the auth module, run them, and fix any failures"
     ```
   </Accordion>
@@ -148,7 +148,7 @@ Claude Code — это AI-помощник по кодированию, кото
   <Accordion title="Создавайте коммиты и pull requests" icon="code-branch">
     Claude Code работает непосредственно с git. Он подготавливает изменения, пишет сообщения коммитов, создает ветки и открывает pull requests.
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude "commit my changes with a descriptive message"
     ```
 
@@ -176,7 +176,7 @@ Claude Code — это AI-помощник по кодированию, кото
   <Accordion title="Передавайте, создавайте скрипты и автоматизируйте с помощью CLI" icon="terminal">
     Claude Code является составным и следует философии Unix. Передавайте в него логи, запускайте его в CI или объединяйте его с другими инструментами:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Анализируйте недавний вывод логов
     tail -200 app.log | claude -p "Slack me if you see any anomalies"
 

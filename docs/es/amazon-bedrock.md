@@ -36,13 +36,13 @@ Claude Code utiliza la cadena de credenciales predeterminada del SDK de AWS. Con
 
 **Opción A: Configuración de AWS CLI**
 
-```bash  theme={null}
+```bash theme={null}
 aws configure
 ```
 
 **Opción B: Variables de entorno (clave de acceso)**
 
-```bash  theme={null}
+```bash theme={null}
 export AWS_ACCESS_KEY_ID=your-access-key-id
 export AWS_SECRET_ACCESS_KEY=your-secret-access-key
 export AWS_SESSION_TOKEN=your-session-token
@@ -50,7 +50,7 @@ export AWS_SESSION_TOKEN=your-session-token
 
 **Opción C: Variables de entorno (perfil SSO)**
 
-```bash  theme={null}
+```bash theme={null}
 aws sso login --profile=<your-profile-name>
 
 export AWS_PROFILE=your-profile-name
@@ -58,7 +58,7 @@ export AWS_PROFILE=your-profile-name
 
 **Opción D: Credenciales de la consola de administración de AWS**
 
-```bash  theme={null}
+```bash theme={null}
 aws login
 ```
 
@@ -66,7 +66,7 @@ aws login
 
 **Opción E: Claves de API de Bedrock**
 
-```bash  theme={null}
+```bash theme={null}
 export AWS_BEARER_TOKEN_BEDROCK=your-bedrock-api-key
 ```
 
@@ -80,7 +80,7 @@ Cuando Claude Code detecta que sus credenciales de AWS han expirado (ya sea loca
 
 ##### Configuración de ejemplo
 
-```json  theme={null}
+```json theme={null}
 {
   "awsAuthRefresh": "aws sso login --profile myprofile",
   "env": {
@@ -95,7 +95,7 @@ Cuando Claude Code detecta que sus credenciales de AWS han expirado (ya sea loca
 
 **`awsCredentialExport`**: Solo use esto si no puede modificar `.aws` y debe devolver credenciales directamente. La salida se captura silenciosamente y no se muestra al usuario. El comando debe generar JSON en este formato:
 
-```json  theme={null}
+```json theme={null}
 {
   "Credentials": {
     "AccessKeyId": "value",
@@ -109,7 +109,7 @@ Cuando Claude Code detecta que sus credenciales de AWS han expirado (ya sea loca
 
 Establezca las siguientes variables de entorno para habilitar Bedrock:
 
-```bash  theme={null}
+```bash theme={null}
 # Enable Bedrock integration
 export CLAUDE_CODE_USE_BEDROCK=1
 export AWS_REGION=us-east-1  # or your preferred region
@@ -135,7 +135,7 @@ Al habilitar Bedrock para Claude Code, tenga en cuenta lo siguiente:
 
 Establezca estas variables de entorno en IDs de modelo de Bedrock específicos:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='us.anthropic.claude-opus-4-6-v1'
 export ANTHROPIC_DEFAULT_SONNET_MODEL='us.anthropic.claude-sonnet-4-6'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='us.anthropic.claude-haiku-4-5-20251001-v1:0'
@@ -152,7 +152,7 @@ Claude Code utiliza estos modelos predeterminados cuando no se establecen variab
 
 Para personalizar modelos aún más, utilice uno de estos métodos:
 
-```bash  theme={null}
+```bash theme={null}
 # Using inference profile ID
 export ANTHROPIC_MODEL='global.anthropic.claude-sonnet-4-6'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='us.anthropic.claude-haiku-4-5-20251001-v1:0'
@@ -172,7 +172,7 @@ Las variables de entorno `ANTHROPIC_DEFAULT_*_MODEL` configuran un perfil de inf
 
 Este ejemplo asigna tres versiones de Opus a ARN distintos para que los usuarios puedan cambiar entre ellas sin eludir los perfiles de inferencia de su organización:
 
-```json  theme={null}
+```json theme={null}
 {
   "modelOverrides": {
     "claude-opus-4-6": "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/opus-46-prod",
@@ -188,7 +188,7 @@ Cuando un usuario selecciona una de estas versiones en `/model`, Claude Code lla
 
 Cree una política de IAM con los permisos requeridos para Claude Code:
 
-```json  theme={null}
+```json theme={null}
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -244,7 +244,7 @@ Para habilitar la ventana de contexto de 1M para su modelo fijado, agregue `[1m]
 
 Configuración de ejemplo:
 
-```json  theme={null}
+```json theme={null}
 {
   "env": {
     "ANTHROPIC_CUSTOM_HEADERS": "X-Amzn-Bedrock-GuardrailIdentifier: your-guardrail-id\nX-Amzn-Bedrock-GuardrailVersion: 1"

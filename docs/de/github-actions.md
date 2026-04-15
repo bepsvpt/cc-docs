@@ -103,7 +103,7 @@ Alle Beta-Benutzer müssen diese Änderungen an ihren Workflow-Dateien vornehmen
 
 **Beta-Version:**
 
-```yaml  theme={null}
+```yaml theme={null}
 - uses: anthropics/claude-code-action@beta
   with:
     mode: "tag"
@@ -116,7 +116,7 @@ Alle Beta-Benutzer müssen diese Änderungen an ihren Workflow-Dateien vornehmen
 
 **GA-Version (v1.0):**
 
-```yaml  theme={null}
+```yaml theme={null}
 - uses: anthropics/claude-code-action@v1
   with:
     prompt: "Review this PR for security issues"
@@ -137,7 +137,7 @@ Claude Code GitHub Actions kann Ihnen bei einer Vielzahl von Aufgaben helfen. Da
 
 ### Basis-Workflow
 
-```yaml  theme={null}
+```yaml theme={null}
 name: Claude Code
 on:
   issue_comment:
@@ -156,7 +156,7 @@ jobs:
 
 ### Verwendung von skills
 
-```yaml  theme={null}
+```yaml theme={null}
 name: Code Review
 on:
   pull_request:
@@ -174,7 +174,7 @@ jobs:
 
 ### Benutzerdefinierte Automatisierung mit Prompts
 
-```yaml  theme={null}
+```yaml theme={null}
 name: Daily Report
 on:
   schedule:
@@ -194,7 +194,7 @@ jobs:
 
 In Issue- oder PR-Kommentaren:
 
-```text  theme={null}
+```text theme={null}
 @claude implement this feature based on the issue description
 @claude how should I implement user authentication for this endpoint?
 @claude fix the TypeError in the user dashboard component
@@ -253,7 +253,7 @@ Bei der Verwendung von Claude Code GitHub Actions sollten Sie sich der damit ver
 
 Die Claude Code Action v1 vereinfacht die Konfiguration mit einheitlichen Parametern:
 
-```yaml  theme={null}
+```yaml theme={null}
 - uses: anthropics/claude-code-action@v1
   with:
     anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -468,7 +468,7 @@ Bevor Sie Claude Code GitHub Actions mit Cloud-Providern einrichten, benötigen 
         | `APP_ID`             | Ihre GitHub-App-ID (aus App-Einstellungen)                         |
         | `APP_PRIVATE_KEY`    | Der private Schlüssel, den Sie für Ihre GitHub-App generiert haben |
 
-        ```yaml  theme={null}
+        ```yaml theme={null}
         name: Claude PR Action
 
         permissions:
@@ -539,7 +539,7 @@ Bevor Sie Claude Code GitHub Actions mit Cloud-Providern einrichten, benötigen 
         | `APP_ID`                         | Ihre GitHub-App-ID (aus App-Einstellungen)                         |
         | `APP_PRIVATE_KEY`                | Der private Schlüssel, den Sie für Ihre GitHub-App generiert haben |
 
-        ```yaml  theme={null}
+        ```yaml theme={null}
         name: Claude PR Action
 
         permissions:
@@ -638,7 +638,7 @@ Die Claude Code Action v1 verwendet eine vereinfachte Konfiguration:
 
 Der Parameter `claude_args` akzeptiert alle Claude Code CLI-Argumente:
 
-```yaml  theme={null}
+```yaml theme={null}
 claude_args: "--max-turns 5 --model claude-sonnet-4-6 --mcp-config /path/to/config.json"
 ```
 

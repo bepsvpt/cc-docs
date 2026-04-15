@@ -26,7 +26,7 @@ Die Keybindings-Konfigurationsdatei ist ein Objekt mit einem `bindings`-Array. J
 
 Dieses Beispiel bindet `Ctrl+E` zum Öffnen eines externen Editors im Chat-Kontext und hebt die Bindung von `Ctrl+U` auf:
 
-```json  theme={null}
+```json theme={null}
 {
   "$schema": "https://www.schemastore.org/claude-code-keybindings.json",
   "$docs": "https://code.claude.com/docs/en/keybindings",
@@ -312,7 +312,7 @@ Verwenden Sie Modifizierer-Tasten mit dem `+`-Trennzeichen:
 
 Beispiele:
 
-```text  theme={null}
+```text theme={null}
 ctrl+k          Einzelne Taste mit Modifizierer
 shift+tab       Umschalt + Tab
 meta+p          Befehl/Meta + P
@@ -329,7 +329,7 @@ Großbuchstaben mit Modifizierern (z. B. `ctrl+K`) werden als stilistisch behand
 
 Akkorde sind Sequenzen von Tastenkombinationen, die durch Leerzeichen getrennt sind:
 
-```text  theme={null}
+```text theme={null}
 ctrl+k ctrl+s   Drücken Sie Ctrl+K, loslassen, dann Ctrl+S
 ```
 
@@ -346,7 +346,7 @@ ctrl+k ctrl+s   Drücken Sie Ctrl+K, loslassen, dann Ctrl+S
 
 Setzen Sie eine Aktion auf `null`, um ein Standardkürzel aufzuheben:
 
-```json  theme={null}
+```json theme={null}
 {
   "bindings": [
     {
@@ -361,7 +361,7 @@ Setzen Sie eine Aktion auf `null`, um ein Standardkürzel aufzuheben:
 
 Dies funktioniert auch für Akkord-Bindings. Das Aufheben aller Akkorde, die ein Präfix teilen, gibt dieses Präfix für die Verwendung als Single-Key-Binding frei:
 
-```json  theme={null}
+```json theme={null}
 {
   "bindings": [
     {

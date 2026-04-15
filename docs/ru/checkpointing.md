@@ -62,7 +62,7 @@ Checkpoints особенно полезны, когда:
 
 Checkpointing не отслеживает файлы, изменённые командами bash. Например, если Claude Code запускает:
 
-```bash  theme={null}
+```bash theme={null}
 rm file.txt
 mv old.txt new.txt
 cp source.txt dest.txt

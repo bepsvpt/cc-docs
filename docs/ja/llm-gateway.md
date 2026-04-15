@@ -73,7 +73,7 @@ gatewayでカスタムモデル名を設定している場合は、[モデル設
 
 固定APIキーを使用した最も簡単な方法：
 
-```bash  theme={null}
+```bash theme={null}
 # 環境で設定
 export ANTHROPIC_AUTH_TOKEN=sk-litellm-static-key
 
@@ -93,7 +93,7 @@ export ANTHROPIC_AUTH_TOKEN=sk-litellm-static-key
 
 1. APIキーヘルパースクリプトを作成します：
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # ~/bin/get-litellm-key.sh
 
@@ -109,7 +109,7 @@ jwt encode \
 
 2. ヘルパーを使用するようにClaude Code設定を構成します：
 
-```json  theme={null}
+```json theme={null}
 {
   "apiKeyHelper": "~/bin/get-litellm-key.sh"
 }
@@ -117,7 +117,7 @@ jwt encode \
 
 3. トークンリフレッシュ間隔を設定します：
 
-```bash  theme={null}
+```bash theme={null}
 # 1時間ごとにリフレッシュ（3600000 ms）
 export CLAUDE_CODE_API_KEY_HELPER_TTL_MS=3600000
 ```
@@ -128,7 +128,7 @@ export CLAUDE_CODE_API_KEY_HELPER_TTL_MS=3600000
 
 LiteLLMの[Anthropic形式エンドポイント](https://docs.litellm.ai/docs/anthropic_unified)を使用：
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_BASE_URL=https://litellm-server:4000
 ```
 
@@ -144,7 +144,7 @@ export ANTHROPIC_BASE_URL=https://litellm-server:4000
 
 [パススルーエンドポイント](https://docs.litellm.ai/docs/pass_through/anthropic_completion)を使用：
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_BASE_URL=https://litellm-server:4000/anthropic
 ```
 
@@ -152,7 +152,7 @@ export ANTHROPIC_BASE_URL=https://litellm-server:4000/anthropic
 
 [パススルーエンドポイント](https://docs.litellm.ai/docs/pass_through/bedrock)を使用：
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_BEDROCK_BASE_URL=https://litellm-server:4000/bedrock
 export CLAUDE_CODE_SKIP_BEDROCK_AUTH=1
 export CLAUDE_CODE_USE_BEDROCK=1
@@ -162,7 +162,7 @@ export CLAUDE_CODE_USE_BEDROCK=1
 
 [パススルーエンドポイント](https://docs.litellm.ai/docs/pass_through/vertex_ai)を使用：
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_VERTEX_BASE_URL=https://litellm-server:4000/vertex_ai/v1
 export ANTHROPIC_VERTEX_PROJECT_ID=your-gcp-project-id
 export CLAUDE_CODE_SKIP_VERTEX_AUTH=1

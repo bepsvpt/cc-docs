@@ -32,7 +32,7 @@ La marketplace officielle Anthropic (`claude-plugins-official`) est automatiquem
 
 Pour installer un plugin depuis la marketplace officielle, utilisez `/plugin install <name>@claude-plugins-official`. Par exemple, pour installer l'intégration GitHub :
 
-```shell  theme={null}
+```shell theme={null}
 /plugin install github@claude-plugins-official
 ```
 
@@ -117,7 +117,7 @@ Anthropic maintient également une [marketplace de plugins de démonstration](ht
   <Step title="Ajouter la marketplace">
     Depuis Claude Code, exécutez la commande `plugin marketplace add` pour la marketplace `anthropics/claude-code` :
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /plugin marketplace add anthropics/claude-code
     ```
 
@@ -146,7 +146,7 @@ Anthropic maintient également une [marketplace de plugins de démonstration](ht
 
     Vous pouvez également installer directement depuis la ligne de commande :
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /plugin install commit-commands@anthropics-claude-code
     ```
 
@@ -158,7 +158,7 @@ Anthropic maintient également une [marketplace de plugins de démonstration](ht
 
     Essayez en effectuant une modification à un fichier et en exécutant :
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /commit-commands:commit
     ```
 
@@ -189,7 +189,7 @@ Ajoutez un référentiel GitHub qui contient un fichier `.claude-plugin/marketpl
 
 Par exemple, `anthropics/claude-code` fait référence au référentiel `claude-code` appartenant à `anthropics` :
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add anthropics/claude-code
 ```
 
@@ -199,19 +199,19 @@ Ajoutez n'importe quel référentiel git en fournissant l'URL complète. Cela fo
 
 Utilisation de HTTPS :
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add https://gitlab.com/company/plugins.git
 ```
 
 Utilisation de SSH :
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add git@gitlab.com:company/plugins.git
 ```
 
 Pour ajouter une branche ou un tag spécifique, ajoutez `#` suivi de la ref :
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add https://gitlab.com/company/plugins.git#v1.0.0
 ```
 
@@ -219,13 +219,13 @@ Pour ajouter une branche ou un tag spécifique, ajoutez `#` suivi de la ref :
 
 Ajoutez un répertoire local qui contient un fichier `.claude-plugin/marketplace.json` :
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add ./my-marketplace
 ```
 
 Vous pouvez également ajouter un chemin direct vers un fichier `marketplace.json` :
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add ./path/to/marketplace.json
 ```
 
@@ -233,7 +233,7 @@ Vous pouvez également ajouter un chemin direct vers un fichier `marketplace.jso
 
 Ajoutez un fichier `marketplace.json` distant via URL :
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add https://example.com/marketplace.json
 ```
 
@@ -245,7 +245,7 @@ Ajoutez un fichier `marketplace.json` distant via URL :
 
 Une fois que vous avez ajouté des marketplaces, vous pouvez installer des plugins directement (installe à la portée utilisateur par défaut) :
 
-```shell  theme={null}
+```shell theme={null}
 /plugin install plugin-name@marketplace-name
 ```
 
@@ -271,25 +271,25 @@ Vous pouvez également gérer les plugins avec des commandes directes.
 
 Désactiver un plugin sans le désinstaller :
 
-```shell  theme={null}
+```shell theme={null}
 /plugin disable plugin-name@marketplace-name
 ```
 
 Réactiver un plugin désactivé :
 
-```shell  theme={null}
+```shell theme={null}
 /plugin enable plugin-name@marketplace-name
 ```
 
 Supprimer complètement un plugin :
 
-```shell  theme={null}
+```shell theme={null}
 /plugin uninstall plugin-name@marketplace-name
 ```
 
 L'option `--scope` vous permet de cibler une portée spécifique avec les commandes CLI :
 
-```shell  theme={null}
+```shell theme={null}
 claude plugin install formatter@your-org --scope project
 claude plugin uninstall formatter@your-org --scope project
 ```
@@ -298,7 +298,7 @@ claude plugin uninstall formatter@your-org --scope project
 
 Quand vous installez, activez ou désactivez des plugins pendant une session, exécutez `/reload-plugins` pour récupérer toutes les modifications sans redémarrer :
 
-```shell  theme={null}
+```shell theme={null}
 /reload-plugins
 ```
 
@@ -323,19 +323,19 @@ Vous pouvez également gérer les marketplaces avec des commandes directes.
 
 Lister toutes les marketplaces configurées :
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace list
 ```
 
 Actualiser les listes de plugins d'une marketplace :
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace update marketplace-name
 ```
 
 Supprimer une marketplace :
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace remove marketplace-name
 ```
 
@@ -360,7 +360,7 @@ Pour désactiver complètement toutes les mises à jour automatiques pour Claude
 
 Pour garder les mises à jour automatiques des plugins activées tout en désactivant les mises à jour automatiques de Claude Code, définissez `FORCE_AUTOUPDATE_PLUGINS=1` avec `DISABLE_AUTOUPDATER` :
 
-```bash  theme={null}
+```bash theme={null}
 export DISABLE_AUTOUPDATER=1
 export FORCE_AUTOUPDATE_PLUGINS=1
 ```
@@ -373,7 +373,7 @@ Les administrateurs d'équipe peuvent configurer l'installation automatique de m
 
 Ajoutez `extraKnownMarketplaces` au `.claude/settings.json` de votre projet :
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "my-team-tools": {

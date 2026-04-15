@@ -115,7 +115,7 @@
 
 기본적으로 빠른 모드는 세션 간에 유지됩니다: 사용자가 빠른 모드를 활성화하면 향후 세션에서도 켜져 있습니다. [Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise) 또는 [Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise) 요금제의 관리자는 [관리되는 설정](/ko/settings#settings-files) 또는 [서버 관리 설정](/ko/server-managed-settings)에서 `fastModePerSessionOptIn`을 `true`로 설정하여 이를 방지할 수 있습니다. 이로 인해 각 세션이 빠른 모드가 꺼진 상태로 시작되며, 사용자가 `/fast`로 명시적으로 활성화해야 합니다.
 
-```json  theme={null}
+```json theme={null}
 {
   "fastModePerSessionOptIn": true
 }

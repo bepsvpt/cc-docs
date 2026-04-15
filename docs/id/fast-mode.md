@@ -115,7 +115,7 @@ Opsi lain untuk menonaktifkan mode cepat sepenuhnya adalah dengan menetapkan `CL
 
 Secara default, mode cepat bertahan di seluruh sesi: jika pengguna mengaktifkan mode cepat, mode ini tetap aktif di sesi mendatang. Administrator pada paket [Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise) atau [Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise) dapat mencegah ini dengan menetapkan `fastModePerSessionOptIn` ke `true` di [pengaturan terkelola](/id/settings#settings-files) atau [pengaturan yang dikelola server](/id/server-managed-settings). Ini menyebabkan setiap sesi dimulai dengan mode cepat mati, memerlukan pengguna untuk secara eksplisit mengaktifkannya dengan `/fast`.
 
-```json  theme={null}
+```json theme={null}
 {
   "fastModePerSessionOptIn": true
 }

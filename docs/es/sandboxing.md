@@ -75,13 +75,13 @@ En **Linux y WSL2**, instale primero los paquetes requeridos:
 
 <Tabs>
   <Tab title="Ubuntu/Debian">
-    ```bash  theme={null}
+    ```bash theme={null}
     sudo apt-get install bubblewrap socat
     ```
   </Tab>
 
   <Tab title="Fedora">
-    ```bash  theme={null}
+    ```bash theme={null}
     sudo dnf install bubblewrap socat
     ```
   </Tab>
@@ -91,7 +91,7 @@ En **Linux y WSL2**, instale primero los paquetes requeridos:
 
 Puede habilitar el sandboxing ejecutando el comando `/sandbox`:
 
-```text  theme={null}
+```text theme={null}
 /sandbox
 ```
 
@@ -121,7 +121,7 @@ Personalice el comportamiento del sandbox a través de su archivo `settings.json
 
 De forma predeterminada, los comandos aislados solo pueden escribir en el directorio de trabajo actual. Si comandos de subproceso como `kubectl`, `terraform` o `npm` necesitan escribir fuera del directorio del proyecto, use `sandbox.filesystem.allowWrite` para otorgar acceso a rutas específicas:
 
-```json  theme={null}
+```json theme={null}
 {
   "sandbox": {
     "enabled": true,
@@ -150,7 +150,7 @@ También puede denegar acceso de escritura o lectura usando `sandbox.filesystem.
 
 Por ejemplo, para bloquear la lectura de todo el directorio de inicio mientras aún se permite la lectura del proyecto actual, agregue esto al `.claude/settings.json` de su proyecto:
 
-```json  theme={null}
+```json theme={null}
 {
   "sandbox": {
     "enabled": true,
@@ -266,7 +266,7 @@ Para organizaciones que requieren seguridad de red avanzada, puede implementar u
 * Registrar todas las solicitudes de red
 * Integrar con infraestructura de seguridad existente
 
-```json  theme={null}
+```json theme={null}
 {
   "sandbox": {
     "network": {
@@ -297,7 +297,7 @@ La herramienta bash aislada funciona junto con:
 
 El tiempo de ejecución del sandbox está disponible como un paquete npm de código abierto para usar en sus propios proyectos de agentes. Esto permite que la comunidad más amplia de agentes de IA construya sistemas autónomos más seguros y protegidos. Esto también se puede usar para aislar otros programas que desee ejecutar. Por ejemplo, para aislar un servidor MCP podría ejecutar:
 
-```bash  theme={null}
+```bash theme={null}
 npx @anthropic-ai/sandbox-runtime <command-to-sandbox>
 ```
 

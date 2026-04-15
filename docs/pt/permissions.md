@@ -77,7 +77,7 @@ Adicione um especificador entre parênteses para corresponder a usos específico
 
 As regras Bash suportam padrões glob com `*`. Caracteres curinga podem aparecer em qualquer posição no comando. Esta configuração permite comandos npm e git commit enquanto bloqueia git push:
 
-```json  theme={null}
+```json theme={null}
 {
   "permissions": {
     "allow": [
@@ -188,7 +188,7 @@ Use regras `Agent(AgentName)` para controlar quais [subagents](/pt/sub-agents) C
 
 Adicione estas regras ao array `deny` em suas configurações ou use a flag CLI `--disallowedTools` para desabilitar agentes específicos. Para desabilitar o agente Explore:
 
-```json  theme={null}
+```json theme={null}
 {
   "permissions": {
     "deny": ["Agent(Explore)"]
@@ -297,7 +297,7 @@ Entradas de cada escopo são combinadas. Um desenvolvedor pode estender `environ
 
 Para a maioria das organizações, `autoMode.environment` é o único campo que você precisa definir. Ele diz ao classificador quais repos, buckets e domínios são confiáveis, sem tocar nas regras de bloqueio e allow integradas. O classificador usa `environment` para decidir o que "externo" significa: qualquer destino não listado é um alvo potencial de exfiltração.
 
-```json  theme={null}
+```json theme={null}
 {
   "autoMode": {
     "environment": [
@@ -321,7 +321,7 @@ Entradas são prosa, não regex ou padrões de ferramenta. O classificador as l�
 
 Um modelo inicial útil: preencha os campos entre colchetes e remova qualquer linha que não se aplique:
 
-```json  theme={null}
+```json theme={null}
 {
   "autoMode": {
     "environment": [
@@ -349,7 +349,7 @@ Dentro do classificador, a precedência é: regras `soft_deny` bloqueiam primeir
 
 Para afrouxar: remova regras de `soft_deny` quando os padrões bloqueiam algo que seu pipeline já protege com revisão de PR, CI ou ambientes de staging, ou adicione a `allow` quando o classificador repetidamente sinaliza um padrão rotineiro que as exceções padrão não cobrem. Para apertar: adicione a `soft_deny` para riscos específicos do seu ambiente que os padrões perdem, ou remova de `allow` para manter uma exceção padrão às regras de bloqueio. Em todos os casos, execute `claude auto-mode defaults` para obter as listas padrão completas, depois copie e edite: nunca comece de uma lista vazia.
 
-```json  theme={null}
+```json theme={null}
 {
   "autoMode": {
     "environment": [
@@ -378,7 +378,7 @@ As três seções são avaliadas independentemente, portanto definir `environmen
 
 Porque definir `allow` ou `soft_deny` substitui os padrões, comece qualquer personalização copiando as listas padrão completas. Três subcomandos CLI ajudam você a inspecionar e validar:
 
-```bash  theme={null}
+```bash theme={null}
 claude auto-mode defaults  # the built-in environment, allow, and soft_deny rules
 claude auto-mode config    # what the classifier actually uses: your settings where set, defaults otherwise
 claude auto-mode critique  # get AI feedback on your custom allow and soft_deny rules

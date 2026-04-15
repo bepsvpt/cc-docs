@@ -115,7 +115,7 @@
 
 По умолчанию быстрый режим сохраняется между сеансами: если пользователь включает быстрый режим, он остается включенным в будущих сеансах. Администраторы на планах [Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise) или [Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise) могут предотвратить это, установив `fastModePerSessionOptIn` на `true` в [управляемых параметрах](/ru/settings#settings-files) или [параметрах, управляемых сервером](/ru/server-managed-settings). Это приводит к тому, что каждый сеанс начинается с отключенным быстрым режимом, требуя от пользователей явного включения его с помощью `/fast`.
 
-```json  theme={null}
+```json theme={null}
 {
   "fastModePerSessionOptIn": true
 }

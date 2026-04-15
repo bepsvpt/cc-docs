@@ -24,7 +24,7 @@ Para crear un hook, añade un bloque `hooks` a un [archivo de configuración](#c
   <Step title="Añade el hook a tu configuración">
     Abre `~/.claude/settings.json` y añade un hook `Notification`. El ejemplo a continuación usa `osascript` para macOS; consulta [Recibe notificaciones cuando Claude necesita entrada](#get-notified-when-claude-needs-input) para comandos de Linux y Windows.
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hooks": {
         "Notification": [
@@ -80,7 +80,7 @@ Este hook usa el evento `Notification`, que se activa cuando Claude está espera
 
 <Tabs>
   <Tab title="macOS">
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hooks": {
         "Notification": [
@@ -101,7 +101,7 @@ Este hook usa el evento `Notification`, que se activa cuando Claude está espera
     <Accordion title="Si no aparece ninguna notificación">
       `osascript` enruta notificaciones a través de la aplicación Script Editor integrada. Si Script Editor no tiene permiso de notificación, el comando falla silenciosamente, y macOS no te pedirá que lo otorgues. Ejecuta esto en Terminal una vez para que Script Editor aparezca en tu configuración de notificaciones:
 
-      ```bash  theme={null}
+      ```bash theme={null}
       osascript -e 'display notification "test"'
       ```
 
@@ -110,7 +110,7 @@ Este hook usa el evento `Notification`, que se activa cuando Claude está espera
   </Tab>
 
   <Tab title="Linux">
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hooks": {
         "Notification": [
@@ -130,7 +130,7 @@ Este hook usa el evento `Notification`, que se activa cuando Claude está espera
   </Tab>
 
   <Tab title="Windows (PowerShell)">
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hooks": {
         "Notification": [
@@ -156,7 +156,7 @@ Ejecuta automáticamente [Prettier](https://prettier.io/) en cada archivo que Cl
 
 Este hook usa el evento `PostToolUse` con un matcher `Edit|Write`, por lo que se ejecuta solo después de herramientas de edición de archivos. El comando extrae la ruta del archivo editado con [`jq`](https://jqlang.github.io/jq/) y la pasa a Prettier. Añade esto a `.claude/settings.json` en la raíz de tu proyecto:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PostToolUse": [
@@ -188,7 +188,7 @@ Este ejemplo usa un archivo de script separado que el hook llama. El script veri
   <Step title="Crea el script del hook">
     Guarda esto en `.claude/hooks/protect-files.sh`:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     #!/bin/bash
     # protect-files.sh
 
@@ -211,7 +211,7 @@ Este ejemplo usa un archivo de script separado que el hook llama. El script veri
   <Step title="Haz el script ejecutable (macOS/Linux)">
     Los scripts de hook deben ser ejecutables para que Claude Code los ejecute:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     chmod +x .claude/hooks/protect-files.sh
     ```
   </Step>
@@ -219,7 +219,7 @@ Este ejemplo usa un archivo de script separado que el hook llama. El script veri
   <Step title="Registra el hook">
     Añade un hook `PreToolUse` a `.claude/settings.json` que ejecute el script antes de cualquier llamada a herramienta `Edit` o `Write`:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hooks": {
         "PreToolUse": [
@@ -245,7 +245,7 @@ Cuando la ventana de contexto de Claude se llena, la compactación resume la con
 
 Cualquier texto que tu comando escriba en stdout se añade al contexto de Claude. Este ejemplo recuerda a Claude las convenciones del proyecto y el trabajo reciente. Añade esto a `.claude/settings.json` en la raíz de tu proyecto:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "SessionStart": [
@@ -271,7 +271,7 @@ Realiza un seguimiento de cuándo los archivos de configuración o skills cambia
 
 Este ejemplo añade cada cambio a un registro de auditoría. Añade esto a `~/.claude/settings.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "ConfigChange": [
@@ -297,7 +297,7 @@ Algunos proyectos establecen diferentes variables de entorno dependiendo de en q
 
 Un hook `CwdChanged` arregla esto: se ejecuta cada vez que Claude cambia de directorio, para que puedas recargar las variables correctas para la nueva ubicación. El hook escribe los valores actualizados en `CLAUDE_ENV_FILE`, que Claude Code aplica antes de cada comando Bash. Añade esto a `~/.claude/settings.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "CwdChanged": [
@@ -316,7 +316,7 @@ Un hook `CwdChanged` arregla esto: se ejecuta cada vez que Claude cambia de dire
 
 Para reaccionar a archivos específicos en lugar de cada cambio de directorio, usa `FileChanged` con un `matcher` listando los nombres de archivo a observar (separados por tuberías). El `matcher` tanto configura qué archivos observar como filtra qué hooks se ejecutan. Este ejemplo observa `.envrc` y `.env` para cambios en el directorio actual:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "FileChanged": [
@@ -344,7 +344,7 @@ A diferencia de los ejemplos de código de salida anteriores, la aprobación aut
 
 El matcher limita el hook a `ExitPlanMode` solamente, para que ningún otro aviso se vea afectado. Añade esto a `~/.claude/settings.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PermissionRequest": [
@@ -368,7 +368,7 @@ Para establecer un modo de permiso específico en su lugar, la salida de tu hook
 
 Para cambiar la sesión a `acceptEdits`, tu hook escribe este JSON en stdout:
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "PermissionRequest",
@@ -433,7 +433,7 @@ Los hooks se comunican con Claude Code a través de stdin, stdout, stderr y cód
 
 Cada evento incluye campos comunes como `session_id` y `cwd`, pero cada tipo de evento añade datos diferentes. Por ejemplo, cuando Claude ejecuta un comando Bash, un hook `PreToolUse` recibe algo como esto en stdin:
 
-```json  theme={null}
+```json theme={null}
 {
   "session_id": "abc123",          // ID único para esta sesión
   "cwd": "/Users/sarah/myproject", // directorio de trabajo cuando se activó el evento
@@ -451,7 +451,7 @@ Tu script puede analizar ese JSON y actuar sobre cualquiera de esos campos. Los 
 
 Tu script le dice a Claude Code qué hacer a continuación escribiendo en stdout o stderr y saliendo con un código específico. Por ejemplo, un hook `PreToolUse` que quiere bloquear un comando:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 INPUT=$(cat)
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
@@ -480,7 +480,7 @@ Los códigos de salida te dan dos opciones: permitir o bloquear. Para más contr
 
 Por ejemplo, un hook `PreToolUse` puede negar una llamada a herramienta y decirle a Claude por qué, o escalarla al usuario para aprobación:
 
-```json  theme={null}
+```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "PreToolUse",
@@ -506,7 +506,7 @@ Para hooks `UserPromptSubmit`, usa `additionalContext` en su lugar para inyectar
 
 Sin un matcher, un hook se activa en cada ocurrencia de su evento. Los matchers te permiten estrecharlo. Por ejemplo, si quieres ejecutar un formateador solo después de ediciones de archivos (no después de cada llamada a herramienta), añade un matcher a tu hook `PostToolUse`:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PostToolUse": [
@@ -548,7 +548,7 @@ Algunos ejemplos más mostrando matchers en diferentes tipos de eventos:
   <Tab title="Registra cada comando Bash">
     Coincide solo con llamadas a herramienta `Bash` y registra cada comando en un archivo. El evento `PostToolUse` se activa después de que el comando se completa, por lo que `tool_input.command` contiene lo que se ejecutó. El hook recibe los datos del evento como JSON en stdin, y `jq -r '.tool_input.command'` extrae solo la cadena de comando, que `>>` añade al archivo de registro:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hooks": {
         "PostToolUse": [
@@ -572,7 +572,7 @@ Algunos ejemplos más mostrando matchers en diferentes tipos de eventos:
 
     El comando a continuación extrae el nombre de la herramienta de la entrada JSON del hook con `jq` y lo escribe en stderr, donde aparece en modo detallado (`Ctrl+O`):
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hooks": {
         "PreToolUse": [
@@ -594,7 +594,7 @@ Algunos ejemplos más mostrando matchers en diferentes tipos de eventos:
   <Tab title="Limpia al final de la sesión">
     El evento `SessionEnd` soporta matchers en la razón por la que terminó la sesión. Este hook solo se activa en `clear` (cuando ejecutas `/clear`), no en salidas normales:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hooks": {
         "SessionEnd": [
@@ -626,7 +626,7 @@ El campo `if` usa [sintaxis de regla de permiso](/es/permissions) para filtrar h
 
 Por ejemplo, para ejecutar un hook solo cuando Claude usa comandos `git` en lugar de todos los comandos Bash:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PreToolUse": [
@@ -677,7 +677,7 @@ El único trabajo del modelo es devolver una decisión sí/no como JSON:
 
 Este ejemplo usa un hook `Stop` para preguntarle al modelo si todas las tareas solicitadas están completas. Si el modelo devuelve `"ok": false`, Claude sigue trabajando y usa la `reason` como su siguiente instrucción:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "Stop": [
@@ -704,7 +704,7 @@ Los hooks de agente usan el mismo formato de respuesta `"ok"` / `"reason"` que l
 
 Este ejemplo verifica que las pruebas pasen antes de permitir que Claude se detenga:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "Stop": [
@@ -734,7 +734,7 @@ Los HTTP hooks son útiles cuando quieres que un servidor web, función en la nu
 
 Este ejemplo publica cada uso de herramienta a un servicio de registro local:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PostToolUse": [
@@ -792,7 +792,7 @@ El hook está configurado pero nunca se ejecuta.
 Ves un mensaje como "PreToolUse hook error: ..." en la transcripción.
 
 * Tu script salió con un código no cero inesperadamente. Pruébalo manualmente canalizando JSON de muestra:
-  ```bash  theme={null}
+  ```bash theme={null}
   echo '{"tool_name":"Bash","tool_input":{"command":"ls"}}' | ./my-hook.sh
   echo $?  // Verifica el código de salida
   ```
@@ -814,7 +814,7 @@ Claude sigue trabajando en un bucle infinito en lugar de detenerse.
 
 Tu script de hook Stop necesita verificar si ya activó una continuación. Analiza el campo `stop_hook_active` de la entrada JSON y sal temprano si es `true`:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 INPUT=$(cat)
 if [ "$(echo "$INPUT" | jq -r '.stop_hook_active')" = "true" ]; then
@@ -829,14 +829,14 @@ Claude Code muestra un error de análisis JSON aunque tu script de hook produzca
 
 Cuando Claude Code ejecuta un hook, genera un shell que obtiene tu perfil (`~/.zshrc` o `~/.bashrc`). Si tu perfil contiene declaraciones `echo` incondicionales, esa salida se antepone a tu JSON del hook:
 
-```text  theme={null}
+```text theme={null}
 Shell ready on arm64
 {"decision": "block", "reason": "Not allowed"}
 ```
 
 Claude Code intenta analizar esto como JSON y falla. Para arreglarlo, envuelve las declaraciones echo en tu perfil de shell para que solo se ejecuten en shells interactivos:
 
-```bash  theme={null}
+```bash theme={null}
 # En ~/.zshrc o ~/.bashrc
 if [[ $- == *i* ]]; then
   echo "Shell ready"

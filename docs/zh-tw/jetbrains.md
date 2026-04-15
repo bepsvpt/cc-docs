@@ -49,11 +49,11 @@ Claude Code 外掛程式適用於大多數 JetBrains IDEs，包括：
 
 在任何外部終端機中使用 `/ide` 命令，將 Claude Code 連接到您的 JetBrains IDE 並啟動所有功能：
 
-```bash  theme={null}
+```bash theme={null}
 claude
 ```
 
-```text  theme={null}
+```text theme={null}
 /ide
 ```
 

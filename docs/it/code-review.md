@@ -58,7 +58,7 @@ Ogni risultato appare anche come un'annotazione nella scheda **Files changed**, 
 
 Il check run si completa sempre con una conclusione neutra, quindi non blocca mai il merge attraverso le regole di protezione del ramo. Se vuoi bloccare i merge sui risultati di Code Review, leggi il breakdown della gravità dall'output del check run nel tuo CI. L'ultima riga del testo Details è un commento leggibile da macchina che il tuo flusso di lavoro può analizzare con `gh` e jq:
 
-```bash  theme={null}
+```bash theme={null}
 gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \
   --jq '.output.text | split("bughunter-severity: ")[1] | split(" -->")[0] | fromjson'
 ```
@@ -159,7 +159,7 @@ Aggiungi un file `REVIEW.md` alla radice del tuo repository per regole specifich
 
 Esempio di `REVIEW.md`:
 
-```markdown  theme={null}
+```markdown theme={null}
 # Linee guida per la revisione del codice
 
 ## Controlla sempre

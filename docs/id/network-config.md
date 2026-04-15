@@ -18,7 +18,7 @@ Claude Code mendukung berbagai konfigurasi jaringan dan keamanan enterprise mela
 
 Claude Code menghormati variabel lingkungan proxy standar:
 
-```bash  theme={null}
+```bash theme={null}
 # HTTPS proxy (direkomendasikan)
 export HTTPS_PROXY=https://proxy.example.com:8080
 
@@ -41,7 +41,7 @@ export NO_PROXY="*"
 
 Jika proxy Anda memerlukan autentikasi dasar, sertakan kredensial dalam URL proxy:
 
-```bash  theme={null}
+```bash theme={null}
 export HTTPS_PROXY=http://username:password@proxy.example.com:8080
 ```
 
@@ -57,7 +57,7 @@ export HTTPS_PROXY=http://username:password@proxy.example.com:8080
 
 Jika lingkungan enterprise Anda menggunakan CA kustom untuk koneksi HTTPS (baik melalui proxy atau akses API langsung), konfigurasikan Claude Code untuk mempercayainya:
 
-```bash  theme={null}
+```bash theme={null}
 export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
 ```
 
@@ -65,7 +65,7 @@ export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
 
 Untuk lingkungan enterprise yang memerlukan autentikasi sertifikat klien:
 
-```bash  theme={null}
+```bash theme={null}
 # Sertifikat klien untuk autentikasi
 export CLAUDE_CODE_CLIENT_CERT=/path/to/client-cert.pem
 

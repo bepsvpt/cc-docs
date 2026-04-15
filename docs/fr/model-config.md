@@ -45,7 +45,7 @@ Vous pouvez configurer votre modèle de plusieurs façons, énumérées par ordr
 
 Exemple d'utilisation :
 
-```bash  theme={null}
+```bash theme={null}
 # Démarrer avec Opus
 claude --model opus
 
@@ -55,7 +55,7 @@ claude --model opus
 
 Exemple de fichier de paramètres :
 
-```json  theme={null}
+```json theme={null}
 {
     "permissions": {
         ...
@@ -70,7 +70,7 @@ Les administrateurs d'entreprise peuvent utiliser `availableModels` dans les [pa
 
 Lorsque `availableModels` est défini, les utilisateurs ne peuvent pas basculer vers des modèles ne figurant pas dans la liste via `/model`, le drapeau `--model`, l'outil Config ou la variable d'environnement `ANTHROPIC_MODEL`.
 
-```json  theme={null}
+```json theme={null}
 {
   "availableModels": ["sonnet", "haiku"]
 }
@@ -94,7 +94,7 @@ Pour contrôler complètement l'expérience du modèle, combinez trois paramètr
 
 Cet exemple démarre les utilisateurs sur Sonnet 4.5, limite le sélecteur à Sonnet et Haiku, et épingle Par défaut pour se résoudre à Sonnet 4.5 plutôt qu'à la dernière version :
 
-```json  theme={null}
+```json theme={null}
 {
   "model": "claude-sonnet-4-5",
   "availableModels": ["claude-sonnet-4-5", "haiku"],
@@ -178,7 +178,7 @@ Si votre compte prend en charge le contexte 1M, l'option apparaît dans le séle
 
 Vous pouvez également utiliser le suffixe `[1m]` avec les alias de modèle ou les noms de modèle complets :
 
-```bash  theme={null}
+```bash theme={null}
 # Utiliser l'alias opus[1m] ou sonnet[1m]
 /model opus[1m]
 /model sonnet[1m]
@@ -200,7 +200,7 @@ Utilisez `ANTHROPIC_CUSTOM_MODEL_OPTION` pour ajouter une seule entrée personna
 
 Cet exemple définit les trois variables pour rendre un déploiement Opus acheminé par passerelle sélectionnable :
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_CUSTOM_MODEL_OPTION="my-gateway/claude-opus-4-6"
 export ANTHROPIC_CUSTOM_MODEL_OPTION_NAME="Opus via Gateway"
 export ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION="Custom deployment routed through the internal LLM gateway"
@@ -245,7 +245,7 @@ Appliquez le même modèle pour `ANTHROPIC_DEFAULT_SONNET_MODEL` et `ANTHROPIC_D
 
 Pour activer le [contexte étendu](#extended-context) pour un modèle épinglé, ajoutez `[1m]` à l'ID du modèle dans `ANTHROPIC_DEFAULT_OPUS_MODEL` ou `ANTHROPIC_DEFAULT_SONNET_MODEL` :
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6[1m]'
 ```
 
@@ -283,7 +283,7 @@ Lorsque `_SUPPORTED_CAPABILITIES` est défini, les capacités listées sont acti
 
 Cet exemple épingle Opus à un ARN de modèle personnalisé Bedrock, définit un nom convivial et déclare ses capacités :
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='arn:aws:bedrock:us-east-1:123456789012:custom-model/abc'
 export ANTHROPIC_DEFAULT_OPUS_MODEL_NAME='Opus via Bedrock'
 export ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION='Opus 4.6 routed through a Bedrock custom endpoint'
@@ -300,7 +300,7 @@ Cela permet aux administrateurs d'entreprise d'acheminer chaque version de modè
 
 Définissez `modelOverrides` dans votre [fichier de paramètres](/fr/settings#settings-files) :
 
-```json  theme={null}
+```json theme={null}
 {
   "modelOverrides": {
     "claude-opus-4-6": "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/opus-prod",

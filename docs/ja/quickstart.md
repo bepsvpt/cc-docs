@@ -637,23 +637,23 @@ To install Claude Code, use one of the following methods:
   <Tab title="Native Install (Recommended)">
     **macOS, Linux, WSL:**
 
-    ```bash  theme={null}
+    ```bash theme={null}
     curl -fsSL https://claude.ai/install.sh | bash
     ```
 
     **Windows PowerShell:**
 
-    ```powershell  theme={null}
+    ```powershell theme={null}
     irm https://claude.ai/install.ps1 | iex
     ```
 
     **Windows CMD:**
 
-    ```batch  theme={null}
+    ```batch theme={null}
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
 
-    If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. Use the PowerShell command above instead. Your prompt shows `PS C:\` when you're in PowerShell.
+    If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell. Your prompt shows `PS C:\` when you're in PowerShell and `C:\` without the `PS` when you're in CMD.
 
     **Native Windows setups require [Git for Windows](https://git-scm.com/downloads/win).** Install it first if you don't have it. WSL setups do not need it.
 
@@ -663,7 +663,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="Homebrew">
-    ```bash  theme={null}
+    ```bash theme={null}
     brew install --cask claude-code
     ```
 
@@ -675,7 +675,7 @@ To install Claude Code, use one of the following methods:
   </Tab>
 
   <Tab title="WinGet">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     winget install Anthropic.ClaudeCode
     ```
 
@@ -689,12 +689,12 @@ To install Claude Code, use one of the following methods:
 
 Claude Code を使用するにはアカウントが必要です。`claude` コマンドでインタラクティブセッションを開始すると、ログインが必要になります：
 
-```bash  theme={null}
+```bash theme={null}
 claude
 # 初回使用時にログインするよう求められます
 ```
 
-```bash  theme={null}
+```bash theme={null}
 /login
 # プロンプトに従ってアカウントでログインします
 ```
@@ -711,7 +711,7 @@ claude
 
 任意のプロジェクトディレクトリでターミナルを開き、Claude Code を開始します：
 
-```bash  theme={null}
+```bash theme={null}
 cd /path/to/your/project
 claude
 ```
@@ -726,35 +726,35 @@ claude
 
 コードベースを理解することから始めましょう。以下のコマンドのいずれかを試してください：
 
-```text  theme={null}
+```text theme={null}
 このプロジェクトは何をしていますか？
 ```
 
 Claude はファイルを分析して概要を提供します。より具体的な質問をすることもできます：
 
-```text  theme={null}
+```text theme={null}
 このプロジェクトはどのようなテクノロジーを使用していますか？
 ```
 
-```text  theme={null}
+```text theme={null}
 メインエントリーポイントはどこですか？
 ```
 
-```text  theme={null}
+```text theme={null}
 フォルダ構造を説明してください
 ```
 
 Claude 自体の機能について質問することもできます：
 
-```text  theme={null}
+```text theme={null}
 Claude Code は何ができますか？
 ```
 
-```text  theme={null}
+```text theme={null}
 Claude Code でカスタムスキルを作成するにはどうすればよいですか？
 ```
 
-```text  theme={null}
+```text theme={null}
 Claude Code は Docker で動作しますか？
 ```
 
@@ -766,7 +766,7 @@ Claude Code は Docker で動作しますか？
 
 次に、Claude Code に実際のコーディングを行わせましょう。簡単なタスクを試してください：
 
-```text  theme={null}
+```text theme={null}
 メインファイルに hello world 関数を追加してください
 ```
 
@@ -785,25 +785,25 @@ Claude Code は以下を実行します：
 
 Claude Code は Git 操作を会話形式にします：
 
-```text  theme={null}
+```text theme={null}
 どのファイルを変更しましたか？
 ```
 
-```text  theme={null}
+```text theme={null}
 説明的なメッセージで変更をコミットしてください
 ```
 
 より複雑な Git 操作を求めることもできます：
 
-```text  theme={null}
+```text theme={null}
 feature/quickstart という名前の新しいブランチを作成してください
 ```
 
-```text  theme={null}
+```text theme={null}
 最後の 5 つのコミットを表示してください
 ```
 
-```text  theme={null}
+```text theme={null}
 マージコンフリクトの解決を手伝ってください
 ```
 
@@ -813,13 +813,13 @@ Claude はデバッグと機能実装に長けています。
 
 自然言語で実現したいことを説明します：
 
-```text  theme={null}
+```text theme={null}
 ユーザー登録フォームに入力検証を追加してください
 ```
 
 または既存の問題を修正します：
 
-```text  theme={null}
+```text theme={null}
 ユーザーが空のフォームを送信できるバグがあります。修正してください
 ```
 
@@ -836,25 +836,25 @@ Claude と連携する方法は多数あります：
 
 **コードをリファクタリングする**
 
-```text  theme={null}
+```text theme={null}
 認証モジュールをリファクタリングして、コールバックの代わりに async/await を使用するようにしてください
 ```
 
 **テストを書く**
 
-```text  theme={null}
+```text theme={null}
 計算機関数のユニットテストを書いてください
 ```
 
 **ドキュメントを更新する**
 
-```text  theme={null}
+```text theme={null}
 インストール手順で README を更新してください
 ```
 
 **コードレビュー**
 
-```text  theme={null}
+```text theme={null}
 変更をレビューして改善を提案してください
 ```
 
@@ -894,7 +894,7 @@ Claude と連携する方法は多数あります：
   <Accordion title="段階的な指示を使用する">
     複雑なタスクをステップに分割します：
 
-    ```text  theme={null}
+    ```text theme={null}
     1. ユーザープロファイル用の新しいデータベーステーブルを作成する
     2. ユーザープロファイルを取得および更新するための API エンドポイントを作成する
     3. ユーザーが自分の情報を表示および編集できるウェブページを構築する
@@ -904,11 +904,11 @@ Claude と連携する方法は多数あります：
   <Accordion title="Claude に最初に探索させる">
     変更を加える前に、Claude にコードを理解させます：
 
-    ```text  theme={null}
+    ```text theme={null}
     データベーススキーマを分析する
     ```
 
-    ```text  theme={null}
+    ```text theme={null}
     英国の顧客によって最も頻繁に返品される製品を表示するダッシュボードを構築する
     ```
   </Accordion>

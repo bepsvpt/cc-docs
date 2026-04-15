@@ -49,11 +49,11 @@ Ejecuta `claude` desde la terminal integrada de tu IDE, y todas las característ
 
 Utiliza el comando `/ide` en cualquier terminal externo para conectar Claude Code a tu JetBrains IDE y activar todas las características:
 
-```bash  theme={null}
+```bash theme={null}
 claude
 ```
 
-```text  theme={null}
+```text theme={null}
 /ide
 ```
 

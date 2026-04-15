@@ -31,7 +31,7 @@ Gunakan [perintah `/statusline`](#use-the-statusline-command) untuk membuat Clau
 
 Perintah `/statusline` menerima instruksi bahasa alami yang menjelaskan apa yang ingin Anda tampilkan. Claude Code menghasilkan file skrip di `~/.claude/` dan memperbarui pengaturan Anda secara otomatis:
 
-```text  theme={null}
+```text theme={null}
 /statusline show model name and context percentage with a progress bar
 ```
 
@@ -39,7 +39,7 @@ Perintah `/statusline` menerima instruksi bahasa alami yang menjelaskan apa yang
 
 Tambahkan bidang `statusLine` ke pengaturan pengguna Anda (`~/.claude/settings.json`, di mana `~` adalah direktori home Anda) atau [pengaturan proyek](/id/settings#settings-files). Atur `type` ke `"command"` dan arahkan `command` ke jalur skrip atau perintah shell inline. Untuk panduan lengkap membuat skrip, lihat [Bangun baris status langkah demi langkah](#build-a-status-line-step-by-step).
 
-```json  theme={null}
+```json theme={null}
 {
   "statusLine": {
     "type": "command",
@@ -51,7 +51,7 @@ Tambahkan bidang `statusLine` ke pengaturan pengguna Anda (`~/.claude/settings.j
 
 Bidang `command` berjalan di shell, jadi Anda juga dapat menggunakan perintah inline alih-alih file skrip. Contoh ini menggunakan `jq` untuk mengurai input JSON dan menampilkan nama model dan persentase konteks:
 
-```json  theme={null}
+```json theme={null}
 {
   "statusLine": {
     "type": "command",
@@ -84,7 +84,7 @@ Contoh-contoh ini menggunakan skrip Bash, yang berfungsi di macOS dan Linux. Di 
 
     Simpan ini ke `~/.claude/statusline.sh` (di mana `~` adalah direktori home Anda, seperti `/Users/username` di macOS atau `/home/username` di Linux):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     #!/bin/bash
     # Read JSON data that Claude Code sends to stdin
     input=$(cat)
@@ -103,7 +103,7 @@ Contoh-contoh ini menggunakan skrip Bash, yang berfungsi di macOS dan Linux. Di 
   <Step title="Buat dapat dieksekusi">
     Tandai skrip sebagai dapat dieksekusi sehingga shell Anda dapat menjalankannya:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     chmod +x ~/.claude/statusline.sh
     ```
   </Step>
@@ -111,7 +111,7 @@ Contoh-contoh ini menggunakan skrip Bash, yang berfungsi di macOS dan Linux. Di 
   <Step title="Tambahkan ke pengaturan">
     Beri tahu Claude Code untuk menjalankan skrip Anda sebagai baris status. Tambahkan konfigurasi ini ke `~/.claude/settings.json`, yang menetapkan `type` ke `"command"` (berarti "jalankan perintah shell ini") dan menunjuk `command` ke skrip Anda:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "statusLine": {
         "type": "command",
@@ -178,7 +178,7 @@ Claude Code mengirim bidang JSON berikut ke skrip Anda melalui stdin:
 <Accordion title="Skema JSON lengkap">
   Perintah baris status Anda menerima struktur JSON ini melalui stdin:
 
-  ```json  theme={null}
+  ```json theme={null}
   {
     "cwd": "/current/working/directory",
     "session_id": "abc123...",

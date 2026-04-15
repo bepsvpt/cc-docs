@@ -123,7 +123,7 @@ Anda dapat memulai tugas baru di web dari terminal Anda, atau menarik sesi web k
 
 Mulai sesi web dari baris perintah dengan bendera `--remote`:
 
-```bash  theme={null}
+```bash theme={null}
 claude --remote "Fix the authentication bug in src/auth/login.ts"
 ```
 
@@ -133,13 +133,13 @@ Ini membuat sesi web baru di claude.ai. Tugas berjalan di cloud sementara Anda t
 
 **Rencanakan secara lokal, jalankan dari jarak jauh**: Untuk tugas kompleks, mulai Claude dalam plan mode untuk berkolaborasi pada pendekatan, kemudian kirim pekerjaan ke web:
 
-```bash  theme={null}
+```bash theme={null}
 claude --permission-mode plan
 ```
 
 Dalam plan mode, Claude hanya dapat membaca file dan menjelajahi basis kode. Setelah Anda puas dengan rencana, mulai sesi jarak jauh untuk eksekusi otonom:
 
-```bash  theme={null}
+```bash theme={null}
 claude --remote "Execute the migration plan in docs/migration-plan.md"
 ```
 
@@ -147,7 +147,7 @@ Pola ini memberi Anda kontrol atas strategi sambil membiarkan Claude mengeksekus
 
 **Jalankan tugas secara paralel**: Setiap perintah `--remote` membuat sesi web sendiri yang berjalan secara independen. Anda dapat memulai beberapa tugas dan semuanya akan berjalan secara bersamaan dalam sesi terpisah:
 
-```bash  theme={null}
+```bash theme={null}
 claude --remote "Fix the flaky test in auth.spec.ts"
 claude --remote "Update the API documentation"
 claude --remote "Refactor the logger to use structured output"
@@ -228,7 +228,7 @@ Kami membangun dan memelihara gambar universal dengan toolchain umum dan ekosist
 
 Untuk melihat apa yang sudah diinstal di lingkungan Anda, minta Claude Code untuk menjalankan:
 
-```bash  theme={null}
+```bash theme={null}
 check-tools
 ```
 
@@ -283,7 +283,7 @@ Ketika Anda memulai sesi di Claude Code di web, inilah yang terjadi di balik lay
 <Note>
   Variabel lingkungan harus ditentukan sebagai pasangan kunci-nilai, dalam [format `.env`](https://www.dotenv.org/). Misalnya:
 
-  ```text  theme={null}
+  ```text theme={null}
   API_KEY=your_api_key
   DEBUG=true
   ```
@@ -303,7 +303,7 @@ Untuk menambahkan setup script, buka dialog pengaturan lingkungan dan masukkan s
 
 Contoh ini menginstal CLI `gh`, yang tidak ada di gambar default:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 apt update && apt install -y gh
 ```
@@ -337,7 +337,7 @@ Gambar lingkungan kustom dan snapshot belum didukung. Gunakan [setup scripts](#s
 
 Untuk mengonfigurasi instalasi dependensi otomatis dengan setup script, buka pengaturan lingkungan Anda dan tambahkan skrip:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 npm install
 pip install -r requirements.txt
@@ -345,7 +345,7 @@ pip install -r requirements.txt
 
 Alternatifnya, Anda dapat menggunakan SessionStart hooks di file `.claude/settings.json` repositori Anda untuk instalasi dependensi yang juga harus berjalan di lingkungan lokal:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "SessionStart": [
@@ -365,7 +365,7 @@ Alternatifnya, Anda dapat menggunakan SessionStart hooks di file `.claude/settin
 
 Buat skrip yang sesuai di `scripts/install_pkgs.sh`:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 
 # Only run in remote environments

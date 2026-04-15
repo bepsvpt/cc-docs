@@ -12,7 +12,7 @@ Lacak penggunaan Claude Code, biaya, dan aktivitas alat di seluruh organisasi An
 
 Konfigurasikan OpenTelemetry menggunakan variabel lingkungan:
 
-```bash  theme={null}
+```bash theme={null}
 # 1. Aktifkan telemetri
 export CLAUDE_CODE_ENABLE_TELEMETRY=1
 
@@ -47,7 +47,7 @@ Administrator dapat mengonfigurasi pengaturan OpenTelemetry untuk semua pengguna
 
 Contoh konfigurasi pengaturan terkelola:
 
-```json  theme={null}
+```json theme={null}
 {
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
@@ -126,7 +126,7 @@ Untuk lingkungan perusahaan yang memerlukan autentikasi dinamis, Anda dapat meng
 
 Tambahkan ke `.claude/settings.json` Anda:
 
-```json  theme={null}
+```json theme={null}
 {
   "otelHeadersHelper": "/bin/generate_opentelemetry_headers.sh"
 }
@@ -136,7 +136,7 @@ Tambahkan ke `.claude/settings.json` Anda:
 
 Skrip harus menampilkan JSON yang valid dengan pasangan kunci-nilai string yang mewakili header HTTP:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # Contoh: Header ganda
 echo "{\"Authorization\": \"Bearer $(get-token.sh)\", \"X-API-Key\": \"$(get-api-key.sh)\"}"
@@ -150,7 +150,7 @@ Skrip pembantu header berjalan saat startup dan secara berkala setelahnya untuk 
 
 Organisasi dengan beberapa tim atau departemen dapat menambahkan atribut khusus untuk membedakan antara kelompok yang berbeda menggunakan variabel lingkungan `OTEL_RESOURCE_ATTRIBUTES`:
 
-```bash  theme={null}
+```bash theme={null}
 # Tambahkan atribut khusus untuk identifikasi tim
 export OTEL_RESOURCE_ATTRIBUTES="department=engineering,team.id=platform,cost_center=eng-123"
 ```
@@ -174,7 +174,7 @@ Atribut khusus ini akan disertakan dalam semua metrik dan acara, memungkinkan An
 
   **Contoh:**
 
-  ```bash  theme={null}
+  ```bash theme={null}
   # ❌ Tidak valid - berisi spasi
   export OTEL_RESOURCE_ATTRIBUTES="org.name=John's Organization"
 
@@ -193,7 +193,7 @@ Atribut khusus ini akan disertakan dalam semua metrik dan acara, memungkinkan An
 
 Atur variabel lingkungan ini sebelum menjalankan `claude`. Setiap blok menunjukkan konfigurasi lengkap untuk pengekspor atau skenario penerapan yang berbeda:
 
-```bash  theme={null}
+```bash theme={null}
 # Debugging konsol (interval 1 detik)
 export CLAUDE_CODE_ENABLE_TELEMETRY=1
 export OTEL_METRICS_EXPORTER=console

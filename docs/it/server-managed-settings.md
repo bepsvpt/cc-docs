@@ -45,7 +45,7 @@ Se i vostri dispositivi sono registrati in una soluzione MDM o di gestione degli
 
     Questo esempio applica un elenco di negazione delle autorizzazioni, impedisce agli utenti di ignorare le autorizzazioni e limita le regole di autorizzazione a quelle definite nelle impostazioni gestite:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "permissions": {
         "deny": [
@@ -64,7 +64,7 @@ Se i vostri dispositivi sono registrati in una soluzione MDM o di gestione degli
 
     Questo esempio esegue uno script di audit dopo ogni modifica di file in tutta l'organizzazione:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hooks": {
         "PostToolUse": [
@@ -81,7 +81,7 @@ Se i vostri dispositivi sono registrati in una soluzione MDM o di gestione degli
 
     Per configurare il classificatore della [modalità auto](/it/permission-modes#eliminate-prompts-with-auto-mode) in modo che conosca quali repository, bucket e domini la vostra organizzazione ritiene affidabili:
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "autoMode": {
         "environment": [

@@ -18,7 +18,7 @@ Claude Code поддерживает различные конфигурации
 
 Claude Code соответствует стандартным переменным окружения прокси:
 
-```bash  theme={null}
+```bash theme={null}
 # HTTPS прокси (рекомендуется)
 export HTTPS_PROXY=https://proxy.example.com:8080
 
@@ -41,7 +41,7 @@ export NO_PROXY="*"
 
 Если ваш прокси требует базовую аутентификацию, включите учетные данные в URL прокси:
 
-```bash  theme={null}
+```bash theme={null}
 export HTTPS_PROXY=http://username:password@proxy.example.com:8080
 ```
 
@@ -57,7 +57,7 @@ export HTTPS_PROXY=http://username:password@proxy.example.com:8080
 
 Если ваша корпоративная среда использует пользовательские CA для HTTPS соединений (через прокси или прямой доступ к API), настройте Claude Code для доверия им:
 
-```bash  theme={null}
+```bash theme={null}
 export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
 ```
 
@@ -65,7 +65,7 @@ export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
 
 Для корпоративных сред, требующих аутентификацию с помощью сертификата клиента:
 
-```bash  theme={null}
+```bash theme={null}
 # Сертификат клиента для аутентификации
 export CLAUDE_CODE_CLIENT_CERT=/path/to/client-cert.pem
 

@@ -130,7 +130,7 @@
   <Tab title="企業プロキシ">
     以下の[環境変数](/ja/env-vars)を設定して、Bedrock トラフィックを企業プロキシを通じてルーティングします。
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Bedrock を有効化
     export CLAUDE_CODE_USE_BEDROCK=1
     export AWS_REGION=us-east-1
@@ -143,7 +143,7 @@
   <Tab title="LLM ゲートウェイ">
     以下の[環境変数](/ja/env-vars)を設定して、Bedrock トラフィックを LLM ゲートウェイを通じてルーティングします。
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Bedrock を有効化
     export CLAUDE_CODE_USE_BEDROCK=1
 
@@ -160,7 +160,7 @@
   <Tab title="企業プロキシ">
     以下の[環境変数](/ja/env-vars)を設定して、Foundry トラフィックを企業プロキシを通じてルーティングします。
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Microsoft Foundry を有効化
     export CLAUDE_CODE_USE_FOUNDRY=1
     export ANTHROPIC_FOUNDRY_RESOURCE=your-resource
@@ -174,7 +174,7 @@
   <Tab title="LLM ゲートウェイ">
     以下の[環境変数](/ja/env-vars)を設定して、Foundry トラフィックを LLM ゲートウェイを通じてルーティングします。
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Microsoft Foundry を有効化
     export CLAUDE_CODE_USE_FOUNDRY=1
 
@@ -191,7 +191,7 @@
   <Tab title="企業プロキシ">
     以下の[環境変数](/ja/env-vars)を設定して、Vertex AI トラフィックを企業プロキシを通じてルーティングします。
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Vertex を有効化
     export CLAUDE_CODE_USE_VERTEX=1
     export CLOUD_ML_REGION=us-east5
@@ -205,7 +205,7 @@
   <Tab title="LLM ゲートウェイ">
     以下の[環境変数](/ja/env-vars)を設定して、Vertex AI トラフィックを LLM ゲートウェイを通じてルーティングします。
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Vertex を有効化
     export CLAUDE_CODE_USE_VERTEX=1
 

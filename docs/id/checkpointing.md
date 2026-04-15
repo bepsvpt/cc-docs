@@ -62,7 +62,7 @@ Checkpoints sangat berguna ketika:
 
 Checkpointing tidak melacak file yang dimodifikasi oleh perintah bash. Misalnya, jika Claude Code menjalankan:
 
-```bash  theme={null}
+```bash theme={null}
 rm file.txt
 mv old.txt new.txt
 cp source.txt dest.txt

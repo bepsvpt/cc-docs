@@ -26,7 +26,7 @@ Il file di configurazione delle scorciatoie da tastiera è un oggetto con un arr
 
 Questo esempio associa `Ctrl+E` per aprire un editor esterno nel contesto della chat e annulla l'associazione di `Ctrl+U`:
 
-```json  theme={null}
+```json theme={null}
 {
   "$schema": "https://www.schemastore.org/claude-code-keybindings.json",
   "$docs": "https://code.claude.com/docs/it/keybindings",
@@ -312,7 +312,7 @@ Utilizzare i tasti modificatori con il separatore `+`:
 
 Ad esempio:
 
-```text  theme={null}
+```text theme={null}
 ctrl+k          Singolo tasto con modificatore
 shift+tab       Shift + Tab
 meta+p          Command/Meta + P
@@ -329,7 +329,7 @@ Le lettere maiuscole con modificatori (ad es. `ctrl+K`) sono trattate come stili
 
 Gli accordi sono sequenze di tasti separate da spazi:
 
-```text  theme={null}
+```text theme={null}
 ctrl+k ctrl+s   Premi Ctrl+K, rilascia, quindi Ctrl+S
 ```
 
@@ -346,7 +346,7 @@ ctrl+k ctrl+s   Premi Ctrl+K, rilascia, quindi Ctrl+S
 
 Impostare un'azione su `null` per annullare l'associazione di una scorciatoia predefinita:
 
-```json  theme={null}
+```json theme={null}
 {
   "bindings": [
     {
@@ -361,7 +361,7 @@ Impostare un'azione su `null` per annullare l'associazione di una scorciatoia pr
 
 Questo funziona anche per i binding degli accordi. Annullare l'associazione di ogni accordo che condivide un prefisso libera quel prefisso per l'uso come binding a tasto singolo:
 
-```json  theme={null}
+```json theme={null}
 {
   "bindings": [
     {

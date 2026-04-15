@@ -56,7 +56,7 @@ Questo quickstart ti guida attraverso la creazione di un plugin con uno skill pe
   <Step title="Crea la directory del plugin">
     Ogni plugin vive nella sua directory contenente un manifest e i tuoi skills, agents o hooks. Creane uno ora:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir my-first-plugin
     ```
   </Step>
@@ -66,7 +66,7 @@ Questo quickstart ti guida attraverso la creazione di un plugin con uno skill pe
 
     Crea la directory `.claude-plugin` dentro la cartella del tuo plugin:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir my-first-plugin/.claude-plugin
     ```
 
@@ -98,7 +98,7 @@ Questo quickstart ti guida attraverso la creazione di un plugin con uno skill pe
 
     Crea una directory skill nella cartella del tuo plugin:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p my-first-plugin/skills/hello
     ```
 
@@ -117,13 +117,13 @@ Questo quickstart ti guida attraverso la creazione di un plugin con uno skill pe
   <Step title="Testa il tuo plugin">
     Esegui Claude Code con il flag `--plugin-dir` per caricare il tuo plugin:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --plugin-dir ./my-first-plugin
     ```
 
     Una volta che Claude Code si avvia, prova il tuo nuovo skill:
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /my-first-plugin:hello
     ```
 
@@ -153,7 +153,7 @@ Questo quickstart ti guida attraverso la creazione di un plugin con uno skill pe
 
     Esegui `/reload-plugins` per raccogliere i cambiamenti, poi prova lo skill con il tuo nome:
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /my-first-plugin:hello Alex
     ```
 
@@ -204,7 +204,7 @@ I plugin possono includere [Agent Skills](/it/skills) per estendere le capacità
 
 Aggiungi una directory `skills/` alla radice del tuo plugin con cartelle Skill contenenti file `SKILL.md`:
 
-```text  theme={null}
+```text theme={null}
 my-plugin/
 ├── .claude-plugin/
 │   └── plugin.json
@@ -215,7 +215,7 @@ my-plugin/
 
 Ogni `SKILL.md` ha bisogno di frontmatter con campi `name` e `description`, seguiti da istruzioni:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: code-review
 description: Reviews code for best practices and potential issues. Use when reviewing code, checking PRs, or analyzing code quality.
@@ -276,7 +276,7 @@ Per i plugin con molti componenti, organizza la tua struttura di directory per f
 
 Usa il flag `--plugin-dir` per testare i plugin durante lo sviluppo. Questo carica il tuo plugin direttamente senza richiedere l'installazione.
 
-```bash  theme={null}
+```bash theme={null}
 claude --plugin-dir ./my-plugin
 ```
 
@@ -291,7 +291,7 @@ Man mano che apporti modifiche al tuo plugin, esegui `/reload-plugins` per racco
 <Tip>
   Puoi caricare più plugin contemporaneamente specificando il flag più volte:
 
-  ```bash  theme={null}
+  ```bash theme={null}
   claude --plugin-dir ./plugin-one --plugin-dir ./plugin-two
   ```
 </Tip>
@@ -336,7 +336,7 @@ Se hai già skill o hooks nella tua directory `.claude/`, puoi convertirli in un
   <Step title="Crea la struttura del plugin">
     Crea una nuova directory plugin:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p my-plugin/.claude-plugin
     ```
 
@@ -354,7 +354,7 @@ Se hai già skill o hooks nella tua directory `.claude/`, puoi convertirli in un
   <Step title="Copia i tuoi file esistenti">
     Copia le tue configurazioni esistenti nella directory del plugin:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Copy commands
     cp -r .claude/commands my-plugin/
 
@@ -369,7 +369,7 @@ Se hai già skill o hooks nella tua directory `.claude/`, puoi convertirli in un
   <Step title="Migra gli hook">
     Se hai hook nelle tue impostazioni, crea una directory hooks:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir my-plugin/hooks
     ```
 
@@ -392,7 +392,7 @@ Se hai già skill o hooks nella tua directory `.claude/`, puoi convertirli in un
   <Step title="Testa il tuo plugin migrato">
     Carica il tuo plugin per verificare che tutto funzioni:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --plugin-dir ./my-plugin
     ```
 

@@ -351,7 +351,7 @@ Utilizzare Claude Code in questo modo è un flusso di lavoro di onboarding effic
 
 Claude fa domande su cose che potreste non aver ancora considerato, inclusa l'implementazione tecnica, l'interfaccia utente/esperienza utente, i casi limite e i compromessi.
 
-```text  theme={null}
+```text theme={null}
 I want to build [brief description]. Interview me in detail using the AskUserQuestion tool.
 
 Ask about technical implementation, UI/UX, edge cases, concerns, and tradeoffs. Don't ask obvious questions, dig into the hard parts I might not have considered.
@@ -407,7 +407,7 @@ Durante le sessioni lunghe, la finestra di contesto di Claude può riempirsi di 
 
 Poiché il contesto è il vostro vincolo fondamentale, i subagent sono uno degli strumenti più potenti disponibili. Quando Claude ricerca un codebase legge molti file, tutti i quali consumano il vostro contesto. I subagent vengono eseguiti in finestre di contesto separate e riportano riassunti:
 
-```text  theme={null}
+```text theme={null}
 Use subagents to investigate how our authentication system handles token
 refresh, and whether we have any existing OAuth utilities I should reuse.
 ```
@@ -416,7 +416,7 @@ Il subagent esplora il codebase, legge i file rilevanti e riporta i risultati, i
 
 Potete anche utilizzare i subagent per la verifica dopo che Claude implementa qualcosa:
 
-```text  theme={null}
+```text theme={null}
 use a subagent to review this code for edge cases
 ```
 
@@ -442,7 +442,7 @@ Invece di pianificare attentamente ogni mossa, potete dire a Claude di provare q
 
 Claude Code salva le conversazioni localmente. Quando un'attività si estende su più sessioni, non dovete rispiegare il contesto:
 
-```bash  theme={null}
+```bash theme={null}
 claude --continue    # Resume the most recent conversation
 claude --resume      # Select from recent conversations
 ```
@@ -465,7 +465,7 @@ Tutto finora presuppone un umano, un Claude e una conversazione. Ma Claude Code 
 
 Con `claude -p "your prompt"`, potete eseguire Claude in modo non interattivo, senza una sessione. La modalità non interattiva è il modo in cui integrate Claude nelle pipeline CI, pre-commit hook o qualsiasi flusso di lavoro automatizzato. I formati di output vi permettono di analizzare i risultati a livello di programmazione: testo semplice, JSON o JSON in streaming.
 
-```bash  theme={null}
+```bash theme={null}
 # One-off queries
 claude -p "Explain what this project does"
 
@@ -514,7 +514,7 @@ Per migrazioni o analisi su larga scala, potete distribuire il lavoro tra molte 
   </Step>
 
   <Step title="Scrivere uno script per eseguire un ciclo attraverso l'elenco">
-    ```bash  theme={null}
+    ```bash theme={null}
     for file in $(cat files.txt); do
       claude -p "Migrate $file from React to Vue. Return OK or FAIL." \
         --allowedTools "Edit,Bash(git commit *)"
@@ -529,7 +529,7 @@ Per migrazioni o analisi su larga scala, potete distribuire il lavoro tra molte 
 
 Potete anche integrare Claude nelle pipeline di elaborazione/dati esistenti:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "<your prompt>" --output-format json | your_command
 ```
 
@@ -539,7 +539,7 @@ Utilizzate `--verbose` per il debug durante lo sviluppo e spegnetelo in produzio
 
 Per l'esecuzione ininterrotta con controlli di sicurezza in background, utilizzate [auto mode](/it/permission-modes#eliminate-prompts-with-auto-mode). Un modello classificatore esamina i comandi prima che vengono eseguiti, bloccando l'escalation di ambito, l'infrastruttura sconosciuta e le azioni guidate da contenuti ostili mentre consente al lavoro di routine di procedere senza prompt.
 
-```bash  theme={null}
+```bash theme={null}
 claude --permission-mode auto -p "fix all lint errors"
 ```
 

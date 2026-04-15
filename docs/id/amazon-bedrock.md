@@ -36,13 +36,13 @@ Claude Code menggunakan rantai kredensial SDK AWS default. Atur kredensial Anda 
 
 **Opsi A: Konfigurasi AWS CLI**
 
-```bash  theme={null}
+```bash theme={null}
 aws configure
 ```
 
 **Opsi B: Variabel lingkungan (kunci akses)**
 
-```bash  theme={null}
+```bash theme={null}
 export AWS_ACCESS_KEY_ID=your-access-key-id
 export AWS_SECRET_ACCESS_KEY=your-secret-access-key
 export AWS_SESSION_TOKEN=your-session-token
@@ -50,7 +50,7 @@ export AWS_SESSION_TOKEN=your-session-token
 
 **Opsi C: Variabel lingkungan (profil SSO)**
 
-```bash  theme={null}
+```bash theme={null}
 aws sso login --profile=<your-profile-name>
 
 export AWS_PROFILE=your-profile-name
@@ -58,7 +58,7 @@ export AWS_PROFILE=your-profile-name
 
 **Opsi D: Kredensial AWS Management Console**
 
-```bash  theme={null}
+```bash theme={null}
 aws login
 ```
 
@@ -66,7 +66,7 @@ aws login
 
 **Opsi E: Kunci API Bedrock**
 
-```bash  theme={null}
+```bash theme={null}
 export AWS_BEARER_TOKEN_BEDROCK=your-bedrock-api-key
 ```
 
@@ -80,7 +80,7 @@ Ketika Claude Code mendeteksi bahwa kredensial AWS Anda telah kedaluwarsa (baik 
 
 ##### Contoh konfigurasi
 
-```json  theme={null}
+```json theme={null}
 {
   "awsAuthRefresh": "aws sso login --profile myprofile",
   "env": {
@@ -95,7 +95,7 @@ Ketika Claude Code mendeteksi bahwa kredensial AWS Anda telah kedaluwarsa (baik 
 
 **`awsCredentialExport`**: Hanya gunakan ini jika Anda tidak dapat memodifikasi `.aws` dan harus secara langsung mengembalikan kredensial. Output ditangkap secara diam-diam dan tidak ditampilkan kepada pengguna. Perintah harus menampilkan JSON dalam format ini:
 
-```json  theme={null}
+```json theme={null}
 {
   "Credentials": {
     "AccessKeyId": "value",
@@ -109,7 +109,7 @@ Ketika Claude Code mendeteksi bahwa kredensial AWS Anda telah kedaluwarsa (baik 
 
 Atur variabel lingkungan berikut untuk mengaktifkan Bedrock:
 
-```bash  theme={null}
+```bash theme={null}
 # Aktifkan integrasi Bedrock
 export CLAUDE_CODE_USE_BEDROCK=1
 export AWS_REGION=us-east-1  # atau wilayah pilihan Anda
@@ -135,7 +135,7 @@ Saat mengaktifkan Bedrock untuk Claude Code, perhatikan hal berikut:
 
 Atur variabel lingkungan ini ke ID model Bedrock spesifik:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='us.anthropic.claude-opus-4-6-v1'
 export ANTHROPIC_DEFAULT_SONNET_MODEL='us.anthropic.claude-sonnet-4-6'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='us.anthropic.claude-haiku-4-5-20251001-v1:0'
@@ -152,7 +152,7 @@ Claude Code menggunakan model default ini ketika tidak ada variabel pinning yang
 
 Untuk menyesuaikan model lebih lanjut, gunakan salah satu metode berikut:
 
-```bash  theme={null}
+```bash theme={null}
 # Menggunakan ID profil inferensi
 export ANTHROPIC_MODEL='global.anthropic.claude-sonnet-4-6'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='us.anthropic.claude-haiku-4-5-20251001-v1:0'
@@ -172,7 +172,7 @@ Variabel lingkungan `ANTHROPIC_DEFAULT_*_MODEL` mengonfigurasi satu profil infer
 
 Contoh ini memetakan tiga versi Opus ke ARN yang berbeda sehingga pengguna dapat beralih di antara mereka tanpa melewati profil inferensi organisasi Anda:
 
-```json  theme={null}
+```json theme={null}
 {
   "modelOverrides": {
     "claude-opus-4-6": "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/opus-46-prod",
@@ -194,7 +194,7 @@ Untuk mengaktifkan jendela konteks 1M untuk model yang Anda pin, tambahkan `[1m]
 
 Buat kebijakan IAM dengan izin yang diperlukan untuk Claude Code:
 
-```json  theme={null}
+```json theme={null}
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -244,7 +244,7 @@ Untuk detail, lihat [dokumentasi IAM Bedrock](https://docs.aws.amazon.com/bedroc
 
 Contoh konfigurasi:
 
-```json  theme={null}
+```json theme={null}
 {
   "env": {
     "ANTHROPIC_CUSTOM_HEADERS": "X-Amzn-Bedrock-GuardrailIdentifier: your-guardrail-id\nX-Amzn-Bedrock-GuardrailVersion: 1"

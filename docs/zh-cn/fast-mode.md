@@ -115,7 +115,7 @@
 
 默认情况下，快速模式在会话之间保持：如果用户启用快速模式，它会在未来的会话中保持打开。[团队](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise)或[企业](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise)计划上的管理员可以通过在[托管设置](/zh-CN/settings#settings-files)或[服务器托管设置](/zh-CN/server-managed-settings)中将 `fastModePerSessionOptIn` 设置为 `true` 来防止这种情况。这会导致每个会话以快速模式关闭开始，要求用户使用 `/fast` 明确启用它。
 
-```json  theme={null}
+```json theme={null}
 {
   "fastModePerSessionOptIn": true
 }

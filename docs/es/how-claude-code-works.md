@@ -114,7 +114,7 @@ Cuando reanuda una sesión con `claude --continue` o `claude --resume`, continú
 
 Para ramificar e intentar un enfoque diferente sin afectar la sesión original, use la bandera `--fork-session`:
 
-```bash  theme={null}
+```bash theme={null}
 claude --continue --fork-session
 ```
 
@@ -187,13 +187,13 @@ Los comandos integrados también lo guían a través de la configuración:
 
 Claude Code es conversacional. No necesita indicaciones perfectas. Comience con lo que desea, luego refine:
 
-```text  theme={null}
+```text theme={null}
 Arreglar el error de inicio de sesión
 ```
 
 \[Claude investiga, intenta algo]
 
-```text  theme={null}
+```text theme={null}
 Eso no es del todo correcto. El problema está en el manejo de sesiones.
 ```
 
@@ -209,7 +209,7 @@ Puede interrumpir a Claude en cualquier momento. Si va por el camino equivocado,
 
 Cuanto más precisa sea su indicación inicial, menos correcciones necesitará. Haga referencia a archivos específicos, mencione restricciones y señale patrones de ejemplo.
 
-```text  theme={null}
+```text theme={null}
 El flujo de pago está roto para usuarios con tarjetas vencidas.
 Verifique src/payments/ para el problema, especialmente la actualización de tokens.
 Escriba una prueba fallida primero, luego arréglela.
@@ -221,7 +221,7 @@ Las indicaciones vagas funcionan, pero pasará más tiempo dirigiendo. Las indic
 
 Claude funciona mejor cuando puede verificar su propio trabajo. Incluya casos de prueba, pegue capturas de pantalla de la interfaz de usuario esperada o defina la salida que desea.
 
-```text  theme={null}
+```text theme={null}
 Implementar validateEmail. Casos de prueba: 'user@example.com' → true,
 'invalid' → false, 'user@.com' → false. Ejecute las pruebas después.
 ```
@@ -232,7 +232,7 @@ Para trabajo visual, pegue una captura de pantalla del diseño y pida a Claude q
 
 Para problemas complejos, separe la investigación de la codificación. Use plan mode (`Shift+Tab` dos veces) para analizar la base de código primero:
 
-```text  theme={null}
+```text theme={null}
 Lea src/auth/ y entienda cómo manejamos sesiones.
 Luego cree un plan para agregar soporte OAuth.
 ```
@@ -243,7 +243,7 @@ Revise el plan, refínelo a través de la conversación, luego deje que Claude i
 
 Piense en delegar a un colega capaz. Dé contexto y dirección, luego confíe en que Claude descubra los detalles:
 
-```text  theme={null}
+```text theme={null}
 El flujo de pago está roto para usuarios con tarjetas vencidas.
 El código relevante está en src/payments/. ¿Puede investigar y arreglarlo?
 ```

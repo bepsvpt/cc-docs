@@ -22,23 +22,23 @@ Claude Code는 기능을 구축하고, 버그를 수정하고, 개발 작업을 
       <Tab title="Native Install (Recommended)">
         **macOS, Linux, WSL:**
 
-        ```bash  theme={null}
+        ```bash theme={null}
         curl -fsSL https://claude.ai/install.sh | bash
         ```
 
         **Windows PowerShell:**
 
-        ```powershell  theme={null}
+        ```powershell theme={null}
         irm https://claude.ai/install.ps1 | iex
         ```
 
         **Windows CMD:**
 
-        ```batch  theme={null}
+        ```batch theme={null}
         curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
         ```
 
-        If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. Use the PowerShell command above instead. Your prompt shows `PS C:\` when you're in PowerShell.
+        If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell. Your prompt shows `PS C:\` when you're in PowerShell and `C:\` without the `PS` when you're in CMD.
 
         **Native Windows setups require [Git for Windows](https://git-scm.com/downloads/win).** Install it first if you don't have it. WSL setups do not need it.
 
@@ -48,7 +48,7 @@ Claude Code는 기능을 구축하고, 버그를 수정하고, 개발 작업을 
       </Tab>
 
       <Tab title="Homebrew">
-        ```bash  theme={null}
+        ```bash theme={null}
         brew install --cask claude-code
         ```
 
@@ -60,7 +60,7 @@ Claude Code는 기능을 구축하고, 버그를 수정하고, 개발 작업을 
       </Tab>
 
       <Tab title="WinGet">
-        ```powershell  theme={null}
+        ```powershell theme={null}
         winget install Anthropic.ClaudeCode
         ```
 
@@ -72,7 +72,7 @@ Claude Code는 기능을 구축하고, 버그를 수정하고, 개발 작업을 
 
     그런 다음 모든 프로젝트에서 Claude Code를 시작합니다:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     cd your-project
     claude
     ```
@@ -134,7 +134,7 @@ Claude Code를 사용할 수 있는 몇 가지 방법은 다음과 같습니다:
   <Accordion title="계속 미루고 있는 작업 자동화" icon="wand-magic-sparkles">
     Claude Code는 하루를 낭비하는 지루한 작업을 처리합니다: 테스트되지 않은 코드에 대한 테스트 작성, 프로젝트 전체의 lint 오류 수정, 병합 충돌 해결, 종속성 업데이트 및 릴리스 노트 작성.
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude "write tests for the auth module, run them, and fix any failures"
     ```
   </Accordion>
@@ -148,7 +148,7 @@ Claude Code를 사용할 수 있는 몇 가지 방법은 다음과 같습니다:
   <Accordion title="커밋 및 풀 요청 생성" icon="code-branch">
     Claude Code는 git과 직접 작동합니다. 변경 사항을 스테이징하고, 커밋 메시지를 작성하고, 브랜치를 생성하고, 풀 요청을 엽니다.
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude "commit my changes with a descriptive message"
     ```
 
@@ -176,7 +176,7 @@ Claude Code를 사용할 수 있는 몇 가지 방법은 다음과 같습니다:
   <Accordion title="CLI로 파이프, 스크립트 및 자동화" icon="terminal">
     Claude Code는 구성 가능하며 Unix 철학을 따릅니다. 로그를 파이프하고, CI에서 실행하거나, 다른 도구와 연결합니다:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # 최근 로그 출력 분석
     tail -200 app.log | claude -p "Slack me if you see any anomalies"
 

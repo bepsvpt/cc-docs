@@ -130,7 +130,7 @@
   <Tab title="Корпоративный прокси">
     Маршрутизируйте трафик Bedrock через ваш корпоративный прокси, установив следующие [переменные окружения](/ru/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Включить Bedrock
     export CLAUDE_CODE_USE_BEDROCK=1
     export AWS_REGION=us-east-1
@@ -143,7 +143,7 @@
   <Tab title="Шлюз LLM">
     Маршрутизируйте трафик Bedrock через ваш шлюз LLM, установив следующие [переменные окружения](/ru/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Включить Bedrock
     export CLAUDE_CODE_USE_BEDROCK=1
 
@@ -160,7 +160,7 @@
   <Tab title="Корпоративный прокси">
     Маршрутизируйте трафик Foundry через ваш корпоративный прокси, установив следующие [переменные окружения](/ru/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Включить Microsoft Foundry
     export CLAUDE_CODE_USE_FOUNDRY=1
     export ANTHROPIC_FOUNDRY_RESOURCE=your-resource
@@ -174,7 +174,7 @@
   <Tab title="Шлюз LLM">
     Маршрутизируйте трафик Foundry через ваш шлюз LLM, установив следующие [переменные окружения](/ru/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Включить Microsoft Foundry
     export CLAUDE_CODE_USE_FOUNDRY=1
 
@@ -191,7 +191,7 @@
   <Tab title="Корпоративный прокси">
     Маршрутизируйте трафик Vertex AI через ваш корпоративный прокси, установив следующие [переменные окружения](/ru/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Включить Vertex
     export CLAUDE_CODE_USE_VERTEX=1
     export CLOUD_ML_REGION=us-east5
@@ -205,7 +205,7 @@
   <Tab title="Шлюз LLM">
     Маршрутизируйте трафик Vertex AI через ваш шлюз LLM, установив следующие [переменные окружения](/ru/env-vars):
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Включить Vertex
     export CLAUDE_CODE_USE_VERTEX=1
 

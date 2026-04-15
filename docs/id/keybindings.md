@@ -26,7 +26,7 @@ File konfigurasi keybindings adalah objek dengan array `bindings`. Setiap blok m
 
 Contoh ini mengikat `Ctrl+E` untuk membuka editor eksternal dalam konteks chat, dan membatalkan ikatan `Ctrl+U`:
 
-```json  theme={null}
+```json theme={null}
 {
   "$schema": "https://www.schemastore.org/claude-code-keybindings.json",
   "$docs": "https://code.claude.com/docs/id/keybindings",
@@ -312,7 +312,7 @@ Gunakan tombol pengubah dengan pemisah `+`:
 
 Sebagai contoh:
 
-```text  theme={null}
+```text theme={null}
 ctrl+k          Tombol tunggal dengan pengubah
 shift+tab       Shift + Tab
 meta+p          Command/Meta + P
@@ -329,7 +329,7 @@ Huruf besar dengan pengubah (misalnya, `ctrl+K`) diperlakukan sebagai gaya dan *
 
 Chord adalah urutan keystroke yang dipisahkan oleh spasi:
 
-```text  theme={null}
+```text theme={null}
 ctrl+k ctrl+s   Tekan Ctrl+K, lepaskan, lalu Ctrl+S
 ```
 
@@ -346,7 +346,7 @@ ctrl+k ctrl+s   Tekan Ctrl+K, lepaskan, lalu Ctrl+S
 
 Atur tindakan ke `null` untuk membatalkan ikatan pintasan default:
 
-```json  theme={null}
+```json theme={null}
 {
   "bindings": [
     {
@@ -361,7 +361,7 @@ Atur tindakan ke `null` untuk membatalkan ikatan pintasan default:
 
 Ini juga berfungsi untuk binding chord. Membatalkan setiap chord yang berbagi awalan membebaskan awalan itu untuk digunakan sebagai binding tombol tunggal:
 
-```json  theme={null}
+```json theme={null}
 {
   "bindings": [
     {

@@ -86,7 +86,7 @@ Jalur relatif dan absolut diizinkan. Jalur relatif diselesaikan relatif terhadap
 
 Untuk menarik README, package.json, dan panduan alur kerja, referensikan mereka dengan sintaks `@` di mana saja di CLAUDE.md Anda:
 
-```text  theme={null}
+```text theme={null}
 Lihat @README untuk gambaran umum proyek dan @package.json untuk perintah npm yang tersedia untuk proyek ini.
 
 # Instruksi Tambahan
@@ -95,7 +95,7 @@ Lihat @README untuk gambaran umum proyek dan @package.json untuk perintah npm ya
 
 Untuk preferensi pribadi yang tidak ingin Anda periksa, impor file dari direktori home Anda. Impor masuk ke CLAUDE.md bersama, tetapi file yang ditunjuknya tetap di mesin Anda:
 
-```text  theme={null}
+```text theme={null}
 # Preferensi Individu
 - @~/.claude/my-project-instructions.md
 ```
@@ -134,7 +134,7 @@ Flag `--add-dir` memberikan Claude akses ke direktori tambahan di luar direktori
 
 Untuk juga memuat file CLAUDE.md dari direktori tambahan, termasuk `CLAUDE.md`, `.claude/CLAUDE.md`, dan `.claude/rules/*.md`, atur variabel lingkungan `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD`:
 
-```bash  theme={null}
+```bash theme={null}
 CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ../shared-config
 ```
 
@@ -150,7 +150,7 @@ Untuk proyek yang lebih besar, Anda dapat mengorganisir instruksi menjadi bebera
 
 Tempatkan file markdown di direktori `.claude/rules/` proyek Anda. Setiap file harus mencakup satu topik, dengan nama file deskriptif seperti `testing.md` atau `api-design.md`. Semua file `.md` ditemukan secara rekursif, jadi Anda dapat mengorganisir aturan ke dalam subdirektori seperti `frontend/` atau `backend/`:
 
-```text  theme={null}
+```text theme={null}
 your-project/
 ├── .claude/
 │   ├── CLAUDE.md           # Instruksi proyek utama
@@ -166,7 +166,7 @@ Aturan tanpa [frontmatter `paths`](#path-specific-rules) dimuat saat peluncuran 
 
 Aturan dapat dibatasi ke file tertentu menggunakan frontmatter YAML dengan bidang `paths`. Aturan bersyarat ini hanya berlaku ketika Claude bekerja dengan file yang cocok dengan pola yang ditentukan.
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 paths:
   - "src/api/**/*.ts"
@@ -192,7 +192,7 @@ Gunakan pola glob di bidang `paths` untuk mencocokkan file berdasarkan ekstensi,
 
 Anda dapat menentukan beberapa pola dan menggunakan ekspansi brace untuk mencocokkan beberapa ekstensi dalam satu pola:
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 paths:
   - "src/**/*.{ts,tsx}"
@@ -207,7 +207,7 @@ Direktori `.claude/rules/` mendukung symlinks, jadi Anda dapat mempertahankan se
 
 Contoh ini menautkan direktori bersama dan file individual:
 
-```bash  theme={null}
+```bash theme={null}
 ln -s ~/shared-claude-rules .claude/rules/shared
 ln -s ~/company-standards/security.md .claude/rules/security.md
 ```
@@ -216,7 +216,7 @@ ln -s ~/company-standards/security.md .claude/rules/security.md
 
 Aturan pribadi di `~/.claude/rules/` berlaku untuk setiap proyek di mesin Anda. Gunakan untuk preferensi yang bukan khusus proyek:
 
-```text  theme={null}
+```text theme={null}
 ~/.claude/rules/
 ├── preferences.md    # Preferensi pengkodean pribadi Anda
 └── workflows.md      # Alur kerja pilihan Anda
@@ -264,7 +264,7 @@ Dalam monorepo besar, file CLAUDE.md leluhur mungkin berisi instruksi yang tidak
 
 Contoh ini mengecualikan CLAUDE.md tingkat atas dan direktori aturan dari folder induk. Tambahkan ke `.claude/settings.local.json` agar pengecualian tetap lokal ke mesin Anda:
 
-```json  theme={null}
+```json theme={null}
 {
   "claudeMdExcludes": [
     "**/monorepo/CLAUDE.md",
@@ -289,7 +289,7 @@ Auto memory memungkinkan Claude mengumpulkan pengetahuan lintas sesi tanpa Anda 
 
 Auto memory aktif secara default. Untuk mengalihkannya, buka `/memory` dalam sesi dan gunakan toggle auto memory, atau atur `autoMemoryEnabled` dalam pengaturan proyek Anda:
 
-```json  theme={null}
+```json theme={null}
 {
   "autoMemoryEnabled": false
 }
@@ -303,7 +303,7 @@ Setiap proyek mendapatkan direktori memori sendiri di `~/.claude/projects/<proje
 
 Untuk menyimpan auto memory di lokasi berbeda, atur `autoMemoryDirectory` dalam pengaturan pengguna atau lokal Anda:
 
-```json  theme={null}
+```json theme={null}
 {
   "autoMemoryDirectory": "~/my-custom-memory-dir"
 }
@@ -313,7 +313,7 @@ Pengaturan ini diterima dari pengaturan kebijakan, lokal, dan pengguna. Itu tida
 
 Direktori berisi titik masuk `MEMORY.md` dan file topik opsional:
 
-```text  theme={null}
+```text theme={null}
 ~/.claude/projects/<project>/memory/
 ├── MEMORY.md          # Indeks ringkas, dimuat ke dalam setiap sesi
 ├── debugging.md       # Catatan terperinci tentang pola debugging

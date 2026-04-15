@@ -130,7 +130,7 @@ Contoh berikut menunjukkan variabel lingkungan yang harus diatur di shell atau p
   <Tab title="Corporate proxy">
     Rutekan lalu lintas Bedrock melalui proxy perusahaan Anda dengan mengatur [variabel lingkungan](/id/env-vars) berikut:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Bedrock
     export CLAUDE_CODE_USE_BEDROCK=1
     export AWS_REGION=us-east-1
@@ -143,7 +143,7 @@ Contoh berikut menunjukkan variabel lingkungan yang harus diatur di shell atau p
   <Tab title="LLM Gateway">
     Rutekan lalu lintas Bedrock melalui gateway LLM Anda dengan mengatur [variabel lingkungan](/id/env-vars) berikut:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Bedrock
     export CLAUDE_CODE_USE_BEDROCK=1
 
@@ -160,7 +160,7 @@ Contoh berikut menunjukkan variabel lingkungan yang harus diatur di shell atau p
   <Tab title="Corporate proxy">
     Rutekan lalu lintas Foundry melalui proxy perusahaan Anda dengan mengatur [variabel lingkungan](/id/env-vars) berikut:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Microsoft Foundry
     export CLAUDE_CODE_USE_FOUNDRY=1
     export ANTHROPIC_FOUNDRY_RESOURCE=your-resource
@@ -174,7 +174,7 @@ Contoh berikut menunjukkan variabel lingkungan yang harus diatur di shell atau p
   <Tab title="LLM Gateway">
     Rutekan lalu lintas Foundry melalui gateway LLM Anda dengan mengatur [variabel lingkungan](/id/env-vars) berikut:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Microsoft Foundry
     export CLAUDE_CODE_USE_FOUNDRY=1
 
@@ -191,7 +191,7 @@ Contoh berikut menunjukkan variabel lingkungan yang harus diatur di shell atau p
   <Tab title="Corporate proxy">
     Rutekan lalu lintas Vertex AI melalui proxy perusahaan Anda dengan mengatur [variabel lingkungan](/id/env-vars) berikut:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Vertex
     export CLAUDE_CODE_USE_VERTEX=1
     export CLOUD_ML_REGION=us-east5
@@ -205,7 +205,7 @@ Contoh berikut menunjukkan variabel lingkungan yang harus diatur di shell atau p
   <Tab title="LLM Gateway">
     Rutekan lalu lintas Vertex AI melalui gateway LLM Anda dengan mengatur [variabel lingkungan](/id/env-vars) berikut:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Enable Vertex
     export CLAUDE_CODE_USE_VERTEX=1
 

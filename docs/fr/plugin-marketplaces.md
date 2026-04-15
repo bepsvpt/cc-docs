@@ -27,7 +27,7 @@ Cet exemple crée une place de marché avec un plugin : une compétence `/qualit
 
 <Steps>
   <Step title="Créer la structure de répertoires">
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p my-marketplace/.claude-plugin
     mkdir -p my-marketplace/plugins/quality-review-plugin/.claude-plugin
     mkdir -p my-marketplace/plugins/quality-review-plugin/skills/quality-review
@@ -88,7 +88,7 @@ Cet exemple crée une place de marché avec un plugin : une compétence `/qualit
   <Step title="Ajouter et installer">
     Ajoutez la place de marché et installez le plugin.
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /plugin marketplace add ./my-marketplace
     /plugin install quality-review-plugin@my-plugins
     ```
@@ -97,7 +97,7 @@ Cet exemple crée une place de marché avec un plugin : une compétence `/qualit
   <Step title="Essayer">
     Sélectionnez du code dans votre éditeur et exécutez votre nouvelle commande.
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /quality-review
     ```
   </Step>
@@ -117,7 +117,7 @@ Créez `.claude-plugin/marketplace.json` à la racine de votre dépôt. Ce fichi
 
 Chaque entrée de plugin a besoin au minimum d'un `name` et d'une `source` (où la récupérer). Consultez le [schéma complet](#marketplace-schema) ci-dessous pour tous les champs disponibles.
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "company-tools",
   "owner": {
@@ -240,7 +240,7 @@ Une fois qu'un plugin est cloné ou copié sur la machine locale, il est copié 
 
 Pour les plugins dans le même dépôt, utilisez un chemin commençant par `./` :
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "source": "./plugins/my-plugin"
@@ -255,7 +255,7 @@ Les chemins se résolvent par rapport à la racine de la place de marché, qui e
 
 ### Dépôts GitHub
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "github-plugin",
   "source": {
@@ -267,7 +267,7 @@ Les chemins se résolvent par rapport à la racine de la place de marché, qui e
 
 Vous pouvez épingler à une branche, un tag ou un commit spécifique :
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "github-plugin",
   "source": {
@@ -287,7 +287,7 @@ Vous pouvez épingler à une branche, un tag ou un commit spécifique :
 
 ### Dépôts Git
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "git-plugin",
   "source": {
@@ -299,7 +299,7 @@ Vous pouvez épingler à une branche, un tag ou un commit spécifique :
 
 Vous pouvez épingler à une branche, un tag ou un commit spécifique :
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "git-plugin",
   "source": {
@@ -321,7 +321,7 @@ Vous pouvez épingler à une branche, un tag ou un commit spécifique :
 
 Utilisez `git-subdir` pour pointer vers un plugin qui se trouve dans un sous-répertoire d'un dépôt git. Claude Code utilise un clone partiel et clairsemé pour récupérer uniquement le sous-répertoire, minimisant la bande passante pour les grands monodépôts.
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "source": {
@@ -334,7 +334,7 @@ Utilisez `git-subdir` pour pointer vers un plugin qui se trouve dans un sous-ré
 
 Vous pouvez épingler à une branche, un tag ou un commit spécifique :
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "source": {
@@ -360,7 +360,7 @@ Le champ `url` accepte également un raccourci GitHub (`owner/repo`) ou des URL 
 
 Les plugins distribués en tant que paquets npm sont installés à l'aide de `npm install`. Cela fonctionne avec n'importe quel paquet du registre npm public ou d'un registre privé que votre équipe héberge.
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-npm-plugin",
   "source": {
@@ -372,7 +372,7 @@ Les plugins distribués en tant que paquets npm sont installés à l'aide de `np
 
 Pour épingler à une version spécifique, ajoutez le champ `version` :
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-npm-plugin",
   "source": {
@@ -385,7 +385,7 @@ Pour épingler à une version spécifique, ajoutez le champ `version` :
 
 Pour installer à partir d'un registre privé ou interne, ajoutez le champ `registry` :
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-npm-plugin",
   "source": {
@@ -407,7 +407,7 @@ Pour installer à partir d'un registre privé ou interne, ajoutez le champ `regi
 
 Cet exemple montre une entrée de plugin utilisant de nombreux champs optionnels, notamment des chemins personnalisés pour les commandes, les agents, les hooks et les serveurs MCP :
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "enterprise-tools",
   "source": {
@@ -490,7 +490,7 @@ GitHub offre la méthode de distribution la plus facile :
 
 N'importe quel service d'hébergement git fonctionne, comme GitLab, Bitbucket et les serveurs auto-hébergés. Les utilisateurs ajoutent avec l'URL complète du dépôt :
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add https://gitlab.com/company/plugins.git
 ```
 
@@ -508,7 +508,7 @@ Les mises à jour automatiques en arrière-plan s'exécutent au démarrage sans 
 
 Définissez le jeton dans votre configuration de shell (par exemple, `.bashrc`, `.zshrc`) ou passez-le lors de l'exécution de Claude Code :
 
-```bash  theme={null}
+```bash theme={null}
 export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 ```
 
@@ -520,7 +520,7 @@ export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 
 Testez votre place de marché localement avant de la partager :
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add ./my-local-marketplace
 /plugin install test-plugin@my-local-marketplace
 ```
@@ -531,7 +531,7 @@ Pour la gamme complète de commandes add (GitHub, URL Git, chemins locaux, URL d
 
 Vous pouvez configurer votre dépôt pour que les membres de l'équipe soient automatiquement invités à installer votre place de marché lorsqu'ils font confiance au dossier du projet. Ajoutez votre place de marché à `.claude/settings.json` :
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "company-tools": {
@@ -546,7 +546,7 @@ Vous pouvez configurer votre dépôt pour que les membres de l'équipe soient au
 
 Vous pouvez également spécifier quels plugins doivent être activés par défaut :
 
-```json  theme={null}
+```json theme={null}
 {
   "enabledPlugins": {
     "code-formatter@company-tools": true,
@@ -603,7 +603,7 @@ Lorsque `strictKnownMarketplaces` est configuré dans les paramètres gérés, l
 
 Désactiver tous les ajouts de place de marché :
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": []
 }
@@ -611,7 +611,7 @@ Désactiver tous les ajouts de place de marché :
 
 Autoriser uniquement les places de marché spécifiques :
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -633,7 +633,7 @@ Autoriser uniquement les places de marché spécifiques :
 
 Autoriser toutes les places de marché d'un serveur git interne en utilisant la correspondance de motif regex sur l'hôte. C'est l'approche recommandée pour [GitHub Enterprise Server](/fr/github-enterprise-server#plugin-marketplaces-on-ghes) ou les instances GitLab auto-hébergées :
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -646,7 +646,7 @@ Autoriser toutes les places de marché d'un serveur git interne en utilisant la 
 
 Autoriser les places de marché basées sur le système de fichiers à partir d'un répertoire spécifique en utilisant la correspondance de motif regex sur le chemin :
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -696,7 +696,7 @@ Pour prendre en charge les canaux de publication « stable » et « latest » po
 
 ##### Exemple
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "stable-tools",
   "plugins": [
@@ -712,7 +712,7 @@ Pour prendre en charge les canaux de publication « stable » et « latest » po
 }
 ```
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "latest-tools",
   "plugins": [
@@ -732,7 +732,7 @@ Pour prendre en charge les canaux de publication « stable » et « latest » po
 
 Assignez chaque place de marché au groupe d'utilisateurs approprié via les paramètres gérés. Par exemple, le groupe stable reçoit :
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "stable-tools": {
@@ -747,7 +747,7 @@ Assignez chaque place de marché au groupe d'utilisateurs approprié via les par
 
 Le groupe early-access reçoit `latest-tools` à la place :
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "latest-tools": {
@@ -766,25 +766,25 @@ Testez votre place de marché avant de la partager.
 
 Validez la syntaxe JSON de votre place de marché :
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin validate .
 ```
 
 Ou depuis Claude Code :
 
-```shell  theme={null}
+```shell theme={null}
 /plugin validate .
 ```
 
 Ajoutez la place de marché pour le test :
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add ./path/to/marketplace
 ```
 
 Installez un plugin de test pour vérifier que tout fonctionne :
 
-```shell  theme={null}
+```shell theme={null}
 /plugin install test-plugin@marketplace-name
 ```
 
@@ -861,7 +861,7 @@ Pour les mises à jour automatiques en arrière-plan :
 
 **Solution** : Définissez `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` pour conserver le cache existant lorsque le pull échoue au lieu de l'effacer :
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
 ```
 
@@ -875,7 +875,7 @@ Avec cette variable définie, Claude Code conserve le clone obsolète de la plac
 
 **Solution** : Augmentez le délai d'expiration en utilisant la variable d'environnement `CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS`. La valeur est en millisecondes :
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000  # 5 minutes
 ```
 
@@ -888,7 +888,7 @@ export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000  # 5 minutes
 **Solutions** :
 
 * **Utiliser des sources externes** : Changez les entrées de plugins pour utiliser les sources GitHub, npm ou URL git au lieu des chemins relatifs :
-  ```json  theme={null}
+  ```json theme={null}
   { "name": "my-plugin", "source": { "source": "github", "repo": "owner/repo" } }
   ```
 * **Utiliser une place de marché basée sur Git** : Hébergez votre place de marché dans un dépôt Git et ajoutez-la avec l'URL git. Les places de marché basées sur Git clonent le dépôt entier, ce qui rend les chemins relatifs fonctionnels.

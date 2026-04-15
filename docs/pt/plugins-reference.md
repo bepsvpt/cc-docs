@@ -26,7 +26,7 @@ Os plugins adicionam skills ao Claude Code, criando atalhos `/name` que você ou
 
 **Estrutura de skill**:
 
-```text  theme={null}
+```text theme={null}
 skills/
 ├── pdf-processor/
 │   ├── SKILL.md
@@ -54,7 +54,7 @@ Os plugins podem fornecer subagents especializados para tarefas específicas que
 
 **Estrutura de agent**:
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 name: agent-name
 description: No que este agent se especializa e quando Claude deve invocá-lo
@@ -88,7 +88,7 @@ Os plugins podem fornecer manipuladores de eventos que respondem a eventos do Cl
 
 **Configuração de hook**:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PostToolUse": [
@@ -154,7 +154,7 @@ Os plugins podem agrupar servidores Model Context Protocol (MCP) para conectar C
 
 **Configuração de servidor MCP**:
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "plugin-database": {
@@ -200,7 +200,7 @@ A integração LSP fornece:
 
 **Formato de arquivo `.lsp.json`**:
 
-```json  theme={null}
+```json theme={null}
 {
   "go": {
     "command": "gopls",
@@ -214,7 +214,7 @@ A integração LSP fornece:
 
 **Inline em `plugin.json`**:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "lspServers": {
@@ -290,7 +290,7 @@ O manifesto é opcional. Se omitido, Claude Code descobre automaticamente compon
 
 ### Esquema completo
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "plugin-name",
   "version": "1.2.0",
@@ -354,7 +354,7 @@ Este nome é usado para namespacing de componentes. Por exemplo, na UI, o agent 
 
 O campo `userConfig` declara valores que Claude Code solicita ao usuário quando o plugin é habilitado. Use isso em vez de exigir que os usuários editem manualmente `settings.json`.
 
-```json  theme={null}
+```json theme={null}
 {
   "userConfig": {
     "api_endpoint": {
@@ -377,7 +377,7 @@ Valores não sensíveis são armazenados em `settings.json` sob `pluginConfigs[<
 
 O campo `channels` permite que um plugin declare um ou mais canais de mensagem que injetam conteúdo na conversa. Cada canal se vincula a um servidor MCP que o plugin fornece.
 
-```json  theme={null}
+```json theme={null}
 {
   "channels": [
     {
@@ -404,7 +404,7 @@ O campo `server` é obrigatório e deve corresponder a uma chave em `mcpServers`
 
 **Exemplos de caminho**:
 
-```json  theme={null}
+```json theme={null}
 {
   "commands": [
     "./specialized/deploy.md",
@@ -425,7 +425,7 @@ Claude Code fornece duas variáveis para referenciar caminhos de plugin. Ambas s
 
 **`${CLAUDE_PLUGIN_DATA}`**: um diretório persistente para estado do plugin que sobrevive a atualizações. Use isso para dependências instaladas como `node_modules` ou ambientes virtuais Python, código gerado, caches e quaisquer outros arquivos que devem persistir entre versões de plugin. O diretório é criado automaticamente na primeira vez que esta variável é referenciada.
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "PostToolUse": [
@@ -450,7 +450,7 @@ Um uso comum é instalar dependências de linguagem uma vez e reutilizá-las em 
 
 Este hook `SessionStart` instala `node_modules` na primeira execução e novamente sempre que uma atualização de plugin inclui um `package.json` alterado:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "SessionStart": [
@@ -471,7 +471,7 @@ O `diff` sai com código diferente de zero quando a cópia armazenada está falt
 
 Scripts agrupados em `${CLAUDE_PLUGIN_ROOT}` podem então executar contra o `node_modules` persistido:
 
-```json  theme={null}
+```json theme={null}
 {
   "mcpServers": {
     "routines": {
@@ -506,7 +506,7 @@ Plugins instalados não podem referenciar arquivos fora de seu diretório. Camin
 
 Se seu plugin precisa acessar arquivos fora de seu diretório, você pode criar links simbólicos para arquivos externos dentro de seu diretório de plugin. Links simbólicos são honrados durante o processo de cópia:
 
-```bash  theme={null}
+```bash theme={null}
 # Dentro de seu diretório de plugin
 ln -s /path/to/shared-utils ./shared-utils
 ```
@@ -521,7 +521,7 @@ O conteúdo vinculado será copiado para o cache de plugin. Isso fornece flexibi
 
 Um plugin completo segue esta estrutura:
 
-```text  theme={null}
+```text theme={null}
 enterprise-plugin/
 ├── .claude-plugin/           # Diretório de metadados (opcional)
 │   └── plugin.json             # manifesto de plugin
@@ -579,7 +579,7 @@ Claude Code fornece comandos CLI para gerenciamento de plugin não interativo, �
 
 Instale um plugin dos marketplaces disponíveis.
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin install <plugin> [options]
 ```
 
@@ -598,7 +598,7 @@ O escopo determina qual arquivo de configurações o plugin instalado é adicion
 
 **Exemplos:**
 
-```bash  theme={null}
+```bash theme={null}
 # Instalar em escopo de usuário (padrão)
 claude plugin install formatter@my-marketplace
 
@@ -613,7 +613,7 @@ claude plugin install formatter@my-marketplace --scope local
 
 Remova um plugin instalado.
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin uninstall <plugin> [options]
 ```
 
@@ -637,7 +637,7 @@ Por padrão, desinstalar do último escopo restante também deleta o diretório 
 
 Habilite um plugin desabilitado.
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin enable <plugin> [options]
 ```
 
@@ -656,7 +656,7 @@ claude plugin enable <plugin> [options]
 
 Desabilite um plugin sem desinstalá-lo.
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin disable <plugin> [options]
 ```
 
@@ -675,7 +675,7 @@ claude plugin disable <plugin> [options]
 
 Atualize um plugin para a versão mais recente.
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin update <plugin> [options]
 ```
 
@@ -766,7 +766,7 @@ Isso mostra:
 
 **Estrutura correta**: Componentes devem estar na raiz do plugin, não dentro de `.claude-plugin/`. Apenas `plugin.json` pertence em `.claude-plugin/`.
 
-```text  theme={null}
+```text theme={null}
 my-plugin/
 ├── .claude-plugin/
 │   └── plugin.json      ← Apenas manifesto aqui
@@ -791,7 +791,7 @@ Se seus componentes estão dentro de `.claude-plugin/`, mova-os para a raiz do p
 
 Siga versionamento semântico para lançamentos de plugin:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "version": "2.1.0"

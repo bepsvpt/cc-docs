@@ -54,7 +54,7 @@ selezione viene salvata in `.claude/settings.local.json` al
 Per impostare uno stile senza il menu, modificate direttamente il campo `outputStyle` in un
 file di impostazioni:
 
-```json  theme={null}
+```json theme={null}
 {
   "outputStyle": "Explanatory"
 }
@@ -70,7 +70,7 @@ il costo.
 Gli output styles personalizzati sono file Markdown con frontmatter e il testo che verrà
 aggiunto al prompt di sistema:
 
-```markdown  theme={null}
+```markdown theme={null}
 ---
 name: My Custom Style
 description:

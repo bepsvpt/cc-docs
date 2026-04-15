@@ -114,7 +114,7 @@ Lorsque vous reprenez une session avec `claude --continue` ou `claude --resume`,
 
 Pour créer une branche et essayer une approche différente sans affecter la session d'origine, utilisez le flag `--fork-session` :
 
-```bash  theme={null}
+```bash theme={null}
 claude --continue --fork-session
 ```
 
@@ -187,13 +187,13 @@ Les commandes intégrées vous guident également à travers la configuration :
 
 Claude Code est conversationnel. Vous n'avez pas besoin de prompts parfaits. Commencez par ce que vous voulez, puis affinez :
 
-```text  theme={null}
+```text theme={null}
 Corriger le bug de connexion
 ```
 
 \[Claude enquête, essaie quelque chose]
 
-```text  theme={null}
+```text theme={null}
 Ce n'est pas tout à fait correct. Le problème est dans la gestion de session.
 ```
 
@@ -209,7 +209,7 @@ Vous pouvez interrompre Claude à tout moment. S'il va dans la mauvaise directio
 
 Plus votre prompt initial est précis, moins de corrections vous aurez besoin. Référencez des fichiers spécifiques, mentionnez les contraintes, et pointez vers des motifs d'exemple.
 
-```text  theme={null}
+```text theme={null}
 Le flux de paiement est cassé pour les utilisateurs avec des cartes expirées.
 Vérifiez src/payments/ pour le problème, en particulier l'actualisation des tokens.
 Écrivez d'abord un test qui échoue, puis corrigez-le.
@@ -221,7 +221,7 @@ Les prompts vagues fonctionnent, mais vous passerez plus de temps à orienter. L
 
 Claude fonctionne mieux lorsqu'il peut vérifier son propre travail. Incluez des cas de test, collez des captures d'écran de l'interface utilisateur attendue, ou définissez la sortie que vous voulez.
 
-```text  theme={null}
+```text theme={null}
 Implémenter validateEmail. Cas de test : 'user@example.com' → true,
 'invalid' → false, 'user@.com' → false. Exécutez les tests après.
 ```
@@ -232,7 +232,7 @@ Pour le travail visuel, collez une capture d'écran de la conception et demandez
 
 Pour les problèmes complexes, séparez la recherche du codage. Utilisez le plan mode (`Shift+Tab` deux fois) pour analyser d'abord la base de code :
 
-```text  theme={null}
+```text theme={null}
 Lire src/auth/ et comprendre comment nous gérons les sessions.
 Ensuite, créer un plan pour ajouter le support OAuth.
 ```
@@ -243,7 +243,7 @@ Examinez le plan, affinez-le à travers la conversation, puis laissez Claude imp
 
 Pensez à déléguer à un collègue capable. Donnez le contexte et la direction, puis faites confiance à Claude pour déterminer les détails :
 
-```text  theme={null}
+```text theme={null}
 Le flux de paiement est cassé pour les utilisateurs avec des cartes expirées.
 Le code pertinent est dans src/payments/. Pouvez-vous enquêter et corriger ?
 ```

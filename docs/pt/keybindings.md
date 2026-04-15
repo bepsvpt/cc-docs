@@ -26,7 +26,7 @@ O arquivo de configuração de keybindings é um objeto com um array `bindings`.
 
 Este exemplo vincula `Ctrl+E` para abrir um editor externo no contexto de chat e desvincula `Ctrl+U`:
 
-```json  theme={null}
+```json theme={null}
 {
   "$schema": "https://www.schemastore.org/claude-code-keybindings.json",
   "$docs": "https://code.claude.com/docs/pt/keybindings",
@@ -312,7 +312,7 @@ Use teclas modificadoras com o separador `+`:
 
 Por exemplo:
 
-```text  theme={null}
+```text theme={null}
 ctrl+k          Tecla única com modificador
 shift+tab       Shift + Tab
 meta+p          Command/Meta + P
@@ -329,7 +329,7 @@ Letras maiúsculas com modificadores (por exemplo, `ctrl+K`) são tratadas como 
 
 Acordes são sequências de sequências de teclas separadas por espaços:
 
-```text  theme={null}
+```text theme={null}
 ctrl+k ctrl+s   Pressione Ctrl+K, solte, depois Ctrl+S
 ```
 
@@ -346,7 +346,7 @@ ctrl+k ctrl+s   Pressione Ctrl+K, solte, depois Ctrl+S
 
 Defina uma ação como `null` para desvinculá-la de um atalho padrão:
 
-```json  theme={null}
+```json theme={null}
 {
   "bindings": [
     {
@@ -361,7 +361,7 @@ Defina uma ação como `null` para desvinculá-la de um atalho padrão:
 
 Isso também funciona para vinculações de acordes. Desvinculando cada acorde que compartilha um prefixo libera esse prefixo para uso como uma vinculação de tecla única:
 
-```json  theme={null}
+```json theme={null}
 {
   "bindings": [
     {

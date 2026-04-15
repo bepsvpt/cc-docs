@@ -351,7 +351,7 @@ Menggunakan Claude Code dengan cara ini adalah alur kerja onboarding yang efekti
 
 Claude menanyakan tentang hal-hal yang mungkin belum Anda pertimbangkan, termasuk implementasi teknis, UI/UX, kasus tepi, dan trade-off.
 
-```text  theme={null}
+```text theme={null}
 I want to build [brief description]. Interview me in detail using the AskUserQuestion tool.
 
 Ask about technical implementation, UI/UX, edge cases, concerns, and tradeoffs. Don't ask obvious questions, dig into the hard parts I might not have considered.
@@ -407,7 +407,7 @@ Selama sesi panjang, jendela konteks Claude dapat terisi dengan percakapan yang 
 
 Karena konteks adalah batasan fundamental Anda, subagent adalah salah satu alat paling kuat yang tersedia. Ketika Claude meneliti basis kode, ia membaca banyak file, semuanya mengonsumsi konteks Anda. Subagent berjalan dalam jendela konteks terpisah dan melaporkan kembali ringkasan:
 
-```text  theme={null}
+```text theme={null}
 Use subagents to investigate how our authentication system handles token
 refresh, and whether we have any existing OAuth utilities I should reuse.
 ```
@@ -416,7 +416,7 @@ Subagent mengeksplorasi basis kode, membaca file yang relevan, dan melaporkan ke
 
 Anda juga dapat menggunakan subagent untuk verifikasi setelah Claude mengimplementasikan sesuatu:
 
-```text  theme={null}
+```text theme={null}
 use a subagent to review this code for edge cases
 ```
 
@@ -442,7 +442,7 @@ Alih-alih merencanakan setiap langkah dengan hati-hati, Anda dapat memberi tahu 
 
 Claude Code menyimpan percakapan secara lokal. Ketika tugas mencakup beberapa sesi, Anda tidak harus menjelaskan ulang konteksnya:
 
-```bash  theme={null}
+```bash theme={null}
 claude --continue    # Resume the most recent conversation
 claude --resume      # Select from recent conversations
 ```
@@ -465,7 +465,7 @@ Semuanya sejauh ini mengasumsikan satu manusia, satu Claude, dan satu percakapan
 
 Dengan `claude -p "your prompt"`, Anda dapat menjalankan Claude secara non-interaktif, tanpa sesi. Mode non-interaktif adalah cara Anda mengintegrasikan Claude ke dalam pipeline CI, pre-commit hooks, atau alur kerja otomatis apa pun. Format output memungkinkan Anda mengurai hasil secara terprogram: teks biasa, JSON, atau JSON streaming.
 
-```bash  theme={null}
+```bash theme={null}
 # One-off queries
 claude -p "Explain what this project does"
 
@@ -514,7 +514,7 @@ Untuk migrasi besar atau analisis, Anda dapat mendistribusikan pekerjaan di selu
   </Step>
 
   <Step title="Tulis skrip untuk loop melalui daftar">
-    ```bash  theme={null}
+    ```bash theme={null}
     for file in $(cat files.txt); do
       claude -p "Migrate $file from React to Vue. Return OK or FAIL." \
         --allowedTools "Edit,Bash(git commit *)"
@@ -529,7 +529,7 @@ Untuk migrasi besar atau analisis, Anda dapat mendistribusikan pekerjaan di selu
 
 Anda juga dapat mengintegrasikan Claude ke dalam pipeline pemrosesan/data yang ada:
 
-```bash  theme={null}
+```bash theme={null}
 claude -p "<your prompt>" --output-format json | your_command
 ```
 
@@ -539,7 +539,7 @@ Gunakan `--verbose` untuk debugging selama pengembangan, dan matikan dalam produ
 
 Untuk eksekusi tanpa gangguan dengan pemeriksaan keamanan latar belakang, gunakan [auto mode](/id/permission-modes#eliminate-prompts-with-auto-mode). Model classifier meninjau perintah sebelum dijalankan, memblokir eskalasi cakupan, infrastruktur yang tidak dikenal, dan tindakan yang didorong konten bermusuhan sambil membiarkan pekerjaan rutin berjalan tanpa prompt.
 
-```bash  theme={null}
+```bash theme={null}
 claude --permission-mode auto -p "fix all lint errors"
 ```
 

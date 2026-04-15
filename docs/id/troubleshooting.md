@@ -40,7 +40,7 @@ Jika masalah Anda tidak terdaftar, kerjakan langkah-langkah diagnostik ini.
 
 Installer mengunduh dari `storage.googleapis.com`. Verifikasi Anda dapat menjangkaunya:
 
-```bash  theme={null}
+```bash theme={null}
 curl -sI https://storage.googleapis.com
 ```
 
@@ -54,7 +54,7 @@ Jika Anda berada di belakang proxy perusahaan, atur `HTTPS_PROXY` dan `HTTP_PROX
 
 Contoh ini menetapkan kedua variabel proxy, kemudian menjalankan installer melalui proxy Anda:
 
-```bash  theme={null}
+```bash theme={null}
 export HTTP_PROXY=http://proxy.example.com:8080
 export HTTPS_PROXY=http://proxy.example.com:8080
 curl -fsSL https://claude.ai/install.sh | bash
@@ -68,13 +68,13 @@ Periksa apakah direktori instalasi ada di PATH Anda dengan membuat daftar entri 
 
 <Tabs>
   <Tab title="macOS/Linux">
-    ```bash  theme={null}
+    ```bash theme={null}
     echo $PATH | tr ':' '\n' | grep local/bin
     ```
 
     Jika tidak ada output, direktori hilang. Tambahkan ke konfigurasi shell Anda:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Zsh (macOS default)
     echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
     source ~/.zshrc
@@ -88,19 +88,19 @@ Periksa apakah direktori instalasi ada di PATH Anda dengan membuat daftar entri 
 
     Verifikasi perbaikan berhasil:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --version
     ```
   </Tab>
 
   <Tab title="Windows PowerShell">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     $env:PATH -split ';' | Select-String 'local\\bin'
     ```
 
     Jika tidak ada output, tambahkan direktori instalasi ke User PATH Anda:
 
-    ```powershell  theme={null}
+    ```powershell theme={null}
     $currentPath = [Environment]::GetEnvironmentVariable('PATH', 'User')
     [Environment]::SetEnvironmentVariable('PATH', "$currentPath;$env:USERPROFILE\.local\bin", 'User')
     ```
@@ -109,13 +109,13 @@ Periksa apakah direktori instalasi ada di PATH Anda dengan membuat daftar entri 
 
     Verifikasi perbaikan berhasil:
 
-    ```powershell  theme={null}
+    ```powershell theme={null}
     claude --version
     ```
   </Tab>
 
   <Tab title="Windows CMD">
-    ```batch  theme={null}
+    ```batch theme={null}
     echo %PATH% | findstr /i "local\bin"
     ```
 
@@ -123,7 +123,7 @@ Periksa apakah direktori instalasi ada di PATH Anda dengan membuat daftar entri 
 
     Verifikasi perbaikan berhasil:
 
-    ```batch  theme={null}
+    ```batch theme={null}
     claude --version
     ```
   </Tab>
@@ -137,27 +137,27 @@ Beberapa instalasi Claude Code dapat menyebabkan ketidakcocokan versi atau peril
   <Tab title="macOS/Linux">
     Buat daftar semua binary `claude` yang ditemukan di PATH Anda:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     which -a claude
     ```
 
     Periksa apakah installer native dan versi npm ada:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     ls -la ~/.local/bin/claude
     ```
 
-    ```bash  theme={null}
+    ```bash theme={null}
     ls -la ~/.claude/local/
     ```
 
-    ```bash  theme={null}
+    ```bash theme={null}
     npm -g ls @anthropic-ai/claude-code 2>/dev/null
     ```
   </Tab>
 
   <Tab title="Windows PowerShell">
-    ```powershell  theme={null}
+    ```powershell theme={null}
     where.exe claude
     Test-Path "$env:LOCALAPPDATA\Claude Code\claude.exe"
     ```
@@ -168,13 +168,13 @@ Jika Anda menemukan beberapa instalasi, pertahankan hanya satu. Instalasi native
 
 Uninstall instalasi npm global:
 
-```bash  theme={null}
+```bash theme={null}
 npm uninstall -g @anthropic-ai/claude-code
 ```
 
 Hapus instalasi Homebrew di macOS:
 
-```bash  theme={null}
+```bash theme={null}
 brew uninstall --cask claude-code
 ```
 
@@ -182,14 +182,14 @@ brew uninstall --cask claude-code
 
 Installer memerlukan akses tulis ke `~/.local/bin/` dan `~/.claude/`. Jika instalasi gagal dengan kesalahan izin, periksa apakah direktori ini dapat ditulis:
 
-```bash  theme={null}
+```bash theme={null}
 test -w ~/.local/bin && echo "writable" || echo "not writable"
 test -w ~/.claude && echo "writable" || echo "not writable"
 ```
 
 Jika salah satu direktori tidak dapat ditulis, buat direktori instalasi dan atur pengguna Anda sebagai pemilik:
 
-```bash  theme={null}
+```bash theme={null}
 sudo mkdir -p ~/.local/bin
 sudo chown -R $(whoami) ~/.local
 ```
@@ -200,19 +200,19 @@ Jika `claude` diinstal tetapi crash atau hang saat startup, jalankan pemeriksaan
 
 Konfirmasi binary ada dan dapat dieksekusi:
 
-```bash  theme={null}
+```bash theme={null}
 ls -la $(which claude)
 ```
 
 Di Linux, periksa perpustakaan bersama yang hilang. Jika `ldd` menunjukkan perpustakaan yang hilang, Anda mungkin perlu menginstal paket sistem. Di Alpine Linux dan distribusi berbasis musl lainnya, lihat [Alpine Linux setup](/id/setup#alpine-linux-and-musl-based-distributions).
 
-```bash  theme={null}
+```bash theme={null}
 ldd $(which claude) | grep "not found"
 ```
 
 Jalankan pemeriksaan kewarasan cepat bahwa binary dapat dieksekusi:
 
-```bash  theme={null}
+```bash theme={null}
 claude --version
 ```
 
@@ -224,14 +224,14 @@ Ini adalah masalah instalasi yang paling sering dihadapi dan solusinya.
 
 Saat menjalankan perintah install, Anda mungkin melihat salah satu kesalahan ini:
 
-```text  theme={null}
+```text theme={null}
 bash: line 1: syntax error near unexpected token `<'
 bash: line 1: `<!DOCTYPE html>'
 ```
 
 Di PowerShell, masalah yang sama muncul sebagai:
 
-```text  theme={null}
+```text theme={null}
 Invoke-Expression: Missing argument in parameter list.
 ```
 
@@ -245,13 +245,13 @@ Jika tidak, ini dapat terjadi karena masalah jaringan, perutean regional, atau g
 
    Di macOS atau Linux, instal melalui Homebrew:
 
-   ```bash  theme={null}
+   ```bash theme={null}
    brew install --cask claude-code
    ```
 
    Di Windows, instal melalui WinGet:
 
-   ```powershell  theme={null}
+   ```powershell theme={null}
    winget install Anthropic.ClaudeCode
    ```
 
@@ -277,7 +277,7 @@ Perintah `curl ... | bash` mengunduh skrip dan meneruskannya langsung ke Bash un
 **Solusi:**
 
 1. **Periksa stabilitas jaringan**: Binary Claude Code dihosting di Google Cloud Storage. Uji bahwa Anda dapat menjangkaunya:
-   ```bash  theme={null}
+   ```bash theme={null}
    curl -fsSL https://storage.googleapis.com -o /dev/null
    ```
    Jika perintah selesai diam-diam, koneksi Anda baik-baik saja dan masalahnya mungkin intermiten. Coba ulang perintah install. Jika Anda melihat kesalahan, jaringan Anda mungkin memblokir unduhan.
@@ -286,13 +286,13 @@ Perintah `curl ... | bash` mengunduh skrip dan meneruskannya langsung ke Bash un
 
    Di macOS atau Linux:
 
-   ```bash  theme={null}
+   ```bash theme={null}
    brew install --cask claude-code
    ```
 
    Di Windows:
 
-   ```powershell  theme={null}
+   ```powershell theme={null}
    winget install Anthropic.ClaudeCode
    ```
 
@@ -306,24 +306,24 @@ Kesalahan seperti `curl: (35) TLS connect error`, `schannel: next InitializeSecu
 
    Di Ubuntu/Debian:
 
-   ```bash  theme={null}
+   ```bash theme={null}
    sudo apt-get update && sudo apt-get install ca-certificates
    ```
 
    Di macOS melalui Homebrew:
 
-   ```bash  theme={null}
+   ```bash theme={null}
    brew install ca-certificates
    ```
 
 2. **Di Windows, aktifkan TLS 1.2** di PowerShell sebelum menjalankan installer:
-   ```powershell  theme={null}
+   ```powershell theme={null}
    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
    irm https://claude.ai/install.ps1 | iex
    ```
 
 3. **Periksa gangguan proxy atau firewall**: proxy perusahaan yang melakukan inspeksi TLS dapat menyebabkan kesalahan ini, termasuk `unable to get local issuer certificate`. Atur `NODE_EXTRA_CA_CERTS` ke bundel sertifikat CA perusahaan Anda:
-   ```bash  theme={null}
+   ```bash theme={null}
    export NODE_EXTRA_CA_CERTS=/path/to/corporate-ca.pem
    ```
    Tanyakan kepada tim IT Anda untuk file sertifikat jika Anda tidak memilikinya. Anda juga dapat mencoba pada koneksi langsung untuk mengkonfirmasi proxy adalah penyebabnya.
@@ -335,12 +335,12 @@ Installer tidak dapat menjangkau server download. Ini biasanya berarti `storage.
 **Solusi:**
 
 1. **Uji konektivitas secara langsung**:
-   ```bash  theme={null}
+   ```bash theme={null}
    curl -sI https://storage.googleapis.com
    ```
 
 2. **Jika di belakang proxy**, atur `HTTPS_PROXY` sehingga installer dapat merutekan melaluinya. Lihat [proxy configuration](/id/network-config#proxy-configuration) untuk detail.
-   ```bash  theme={null}
+   ```bash theme={null}
    export HTTPS_PROXY=http://proxy.example.com:8080
    curl -fsSL https://claude.ai/install.sh | bash
    ```
@@ -349,13 +349,13 @@ Installer tidak dapat menjangkau server download. Ini biasanya berarti `storage.
 
    Di macOS atau Linux:
 
-   ```bash  theme={null}
+   ```bash theme={null}
    brew install --cask claude-code
    ```
 
    Di Windows:
 
-   ```powershell  theme={null}
+   ```powershell theme={null}
    winget install Anthropic.ClaudeCode
    ```
 
@@ -367,18 +367,18 @@ Jika Anda melihat `'irm' is not recognized` atau `The token '&&' is not valid`, 
 
   Buka PowerShell dengan mencari "PowerShell" di menu Start, kemudian jalankan perintah install asli:
 
-  ```powershell  theme={null}
+  ```powershell theme={null}
   irm https://claude.ai/install.ps1 | iex
   ```
 
   Atau tetap di CMD dan gunakan installer CMD sebagai gantinya:
 
-  ```batch  theme={null}
+  ```batch theme={null}
   curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
   ```
 
 * **`&&` not valid**: Anda berada di PowerShell tetapi menjalankan perintah installer CMD. Gunakan installer PowerShell:
-  ```powershell  theme={null}
+  ```powershell theme={null}
   irm https://claude.ai/install.ps1 | iex
   ```
 
@@ -386,7 +386,7 @@ Jika Anda melihat `'irm' is not recognized` atau `The token '&&' is not valid`, 
 
 Jika Anda melihat `Killed` selama instalasi di VPS atau instance cloud:
 
-```text  theme={null}
+```text theme={null}
 Setting up Claude Code...
 Installing Claude Code native build latest...
 bash: line 142: 34803 Killed    "$binary_path" install ${TARGET:+"$TARGET"}
@@ -400,7 +400,7 @@ Pembunuh OOM Linux menghentikan proses karena sistem kehabisan memori. Claude Co
 
    Buat file swap 2 GB dan aktifkan:
 
-   ```bash  theme={null}
+   ```bash theme={null}
    sudo fallocate -l 2G /swapfile
    sudo chmod 600 /swapfile
    sudo mkswap /swapfile
@@ -409,7 +409,7 @@ Pembunuh OOM Linux menghentikan proses karena sistem kehabisan memori. Claude Co
 
    Kemudian coba ulang instalasi:
 
-   ```bash  theme={null}
+   ```bash theme={null}
    curl -fsSL https://claude.ai/install.sh | bash
    ```
 
@@ -424,13 +424,13 @@ Saat menginstal Claude Code di container Docker, menginstal sebagai root ke `/` 
 **Solusi:**
 
 1. **Atur direktori kerja** sebelum menjalankan installer. Saat dijalankan dari `/`, installer memindai seluruh filesystem, yang menyebabkan penggunaan memori berlebihan. Menetapkan `WORKDIR` membatasi pemindaian ke direktori kecil:
-   ```dockerfile  theme={null}
+   ```dockerfile theme={null}
    WORKDIR /tmp
    RUN curl -fsSL https://claude.ai/install.sh | bash
    ```
 
 2. **Tingkatkan batas memori Docker** jika menggunakan Docker Desktop:
-   ```bash  theme={null}
+   ```bash theme={null}
    docker build --memory=4g .
    ```
 
@@ -448,7 +448,7 @@ Claude Code di Windows native memerlukan [Git for Windows](https://git-scm.com/d
 
 **Jika Git sudah diinstal** tetapi Claude Code masih tidak dapat menemukannya, atur jalur di [file settings.json](/id/settings) Anda:
 
-```json  theme={null}
+```json theme={null}
 {
   "env": {
     "CLAUDE_CODE_GIT_BASH_PATH": "C:\\Program Files\\Git\\bin\\bash.exe"
@@ -462,7 +462,7 @@ Jika Git Anda diinstal di tempat lain, temukan jalur dengan menjalankan `where.e
 
 Jika Anda melihat kesalahan tentang perpustakaan bersama yang hilang seperti `libstdc++.so.6` atau `libgcc_s.so.1` setelah instalasi, installer mungkin telah mengunduh varian binary yang salah untuk sistem Anda.
 
-```text  theme={null}
+```text theme={null}
 Error loading shared library libstdc++.so.6: No such file or directory
 ```
 
@@ -471,7 +471,7 @@ Ini dapat terjadi pada sistem berbasis glibc yang memiliki paket cross-compilati
 **Solusi:**
 
 1. **Periksa libc mana yang digunakan sistem Anda**:
-   ```bash  theme={null}
+   ```bash theme={null}
    ldd /bin/ls | head -1
    ```
    Jika menunjukkan `linux-vdso.so` atau referensi ke `/lib/x86_64-linux-gnu/`, Anda berada di glibc. Jika menunjukkan `musl`, Anda berada di musl.
@@ -479,7 +479,7 @@ Ini dapat terjadi pada sistem berbasis glibc yang memiliki paket cross-compilati
 2. **Jika Anda berada di glibc tetapi mendapat binary musl**, hapus instalasi dan instal ulang. Anda juga dapat mengunduh binary yang benar secara manual dari bucket GCS di `https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/{VERSION}/manifest.json`. Ajukan [GitHub issue](https://github.com/anthropics/claude-code/issues) dengan output dari `ldd /bin/ls` dan `ls /lib/libc.musl*`.
 
 3. **Jika Anda benar-benar di musl** (Alpine Linux), instal paket yang diperlukan:
-   ```bash  theme={null}
+   ```bash theme={null}
    apk add libgcc libstdc++ ripgrep
    ```
 
@@ -487,20 +487,20 @@ Ini dapat terjadi pada sistem berbasis glibc yang memiliki paket cross-compilati
 
 Jika installer mencetak `Illegal instruction` alih-alih pesan OOM `Killed`, binary yang diunduh tidak cocok dengan arsitektur CPU Anda. Ini biasanya terjadi pada server ARM yang menerima binary x86, atau pada CPU lama yang kekurangan set instruksi yang diperlukan.
 
-```text  theme={null}
+```text theme={null}
 bash: line 142: 2238232 Illegal instruction    "$binary_path" install ${TARGET:+"$TARGET"}
 ```
 
 **Solusi:**
 
 1. **Verifikasi arsitektur Anda**:
-   ```bash  theme={null}
+   ```bash theme={null}
    uname -m
    ```
    `x86_64` berarti 64-bit Intel/AMD, `aarch64` berarti ARM64. Jika binary tidak cocok, [ajukan GitHub issue](https://github.com/anthropics/claude-code/issues) dengan output.
 
 2. **Coba metode instalasi alternatif** sementara masalah arsitektur diselesaikan:
-   ```bash  theme={null}
+   ```bash theme={null}
    brew install --cask claude-code
    ```
 
@@ -508,7 +508,7 @@ bash: line 142: 2238232 Illegal instruction    "$binary_path" install ${TARGET:+
 
 Jika Anda melihat `dyld: cannot load` atau `Abort trap: 6` selama instalasi, binary tidak kompatibel dengan versi macOS atau hardware Anda.
 
-```text  theme={null}
+```text theme={null}
 dyld: cannot load 'claude-2.1.42-darwin-x64' (load command 0x80000034 is unknown)
 Abort trap: 6
 ```
@@ -520,7 +520,7 @@ Abort trap: 6
 2. **Perbarui macOS** jika Anda berada di versi lama. Binary menggunakan perintah load yang versi macOS lama tidak mendukung.
 
 3. **Coba Homebrew** sebagai metode instalasi alternatif:
-   ```bash  theme={null}
+   ```bash theme={null}
    brew install --cask claude-code
    ```
 
@@ -548,7 +548,7 @@ Untuk mengatasi masalah ini, perbaiki Linux PATH Anda untuk memastikan versi Lin
 
 Penyebab paling umum adalah nvm tidak dimuat di shell non-interaktif. Tambahkan berikut ini ke file konfigurasi shell Anda (`~/.bashrc`, `~/.zshrc`, dll.):
 
-```bash  theme={null}
+```bash theme={null}
 # Load nvm if it exists
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
@@ -557,7 +557,7 @@ export NVM_DIR="$HOME/.nvm"
 
 Atau jalankan langsung di sesi saat ini:
 
-```bash  theme={null}
+```bash theme={null}
 source ~/.nvm/nvm.sh
 ```
 
@@ -565,7 +565,7 @@ source ~/.nvm/nvm.sh
 
 Jika nvm dimuat dengan benar tetapi jalur Windows masih mengambil prioritas, Anda dapat secara eksplisit menambahkan jalur Linux Anda ke PATH di konfigurasi shell Anda:
 
-```bash  theme={null}
+```bash theme={null}
 export PATH="$HOME/.nvm/versions/node/$(node -v)/bin:$PATH"
 ```
 
@@ -579,13 +579,13 @@ export PATH="$HOME/.nvm/versions/node/$(node -v)/bin:$PATH"
 
 <Tabs>
   <Tab title="Ubuntu/Debian">
-    ```bash  theme={null}
+    ```bash theme={null}
     sudo apt-get install bubblewrap socat
     ```
   </Tab>
 
   <Tab title="Fedora">
-    ```bash  theme={null}
+    ```bash theme={null}
     sudo dnf install bubblewrap socat
     ```
   </Tab>
@@ -599,7 +599,7 @@ Jika installer native gagal dengan kesalahan izin, direktori target mungkin tida
 
 Jika Anda sebelumnya menginstal dengan npm dan mengalami kesalahan spesifik npm, beralih ke installer native:
 
-```bash  theme={null}
+```bash theme={null}
 curl -fsSL https://claude.ai/install.sh | bash
 ```
 
@@ -643,7 +643,7 @@ Jika Anda melihat `API Error: 403 {"error":{"type":"forbidden","message":"Reques
 
 Login berbasis browser di WSL2 mungkin gagal jika WSL tidak dapat membuka browser Windows Anda. Atur variabel lingkungan `BROWSER`:
 
-```bash  theme={null}
+```bash theme={null}
 export BROWSER="/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
 claude
 ```
@@ -678,7 +678,7 @@ Untuk detail tentang mengonfigurasi file ini, lihat [Settings](/id/settings) dan
 
 Untuk mengatur ulang Claude Code ke pengaturan default, Anda dapat menghapus file konfigurasi:
 
-```bash  theme={null}
+```bash theme={null}
 # Reset all user settings and state
 rm ~/.claude.json
 rm -rf ~/.claude/
@@ -715,7 +715,7 @@ Jika Claude Code tampak tidak responsif:
 
 Jika Search tool, `@file` mentions, custom agents, dan custom skills tidak berfungsi, instal sistem `ripgrep`:
 
-```bash  theme={null}
+```bash theme={null}
 # macOS (Homebrew)  
 brew install ripgrep
 
@@ -765,13 +765,13 @@ WSL2 menggunakan jaringan NAT secara default, yang dapat mencegah deteksi IDE. A
 **Opsi 1: Konfigurasi Windows Firewall** (direkomendasikan)
 
 1. Temukan alamat IP WSL2 Anda:
-   ```bash  theme={null}
+   ```bash theme={null}
    wsl hostname -I
    # Example output: 172.21.123.45
    ```
 
 2. Buka PowerShell sebagai Administrator dan buat aturan firewall:
-   ```powershell  theme={null}
+   ```powershell theme={null}
    New-NetFirewallRule -DisplayName "Allow WSL2 Internal Traffic" -Direction Inbound -Protocol TCP -Action Allow -RemoteAddress 172.21.0.0/16 -LocalAddress 172.21.0.0/16
    ```
    Sesuaikan rentang IP berdasarkan subnet WSL2 Anda dari langkah 1.
@@ -782,7 +782,7 @@ WSL2 menggunakan jaringan NAT secara default, yang dapat mencegah deteksi IDE. A
 
 Tambahkan ke `.wslconfig` di direktori pengguna Windows Anda:
 
-```ini  theme={null}
+```ini theme={null}
 [wsl2]
 networkingMode=mirrored
 ```
@@ -827,7 +827,7 @@ Claude Code kadang-kadang menghasilkan file markdown dengan tag bahasa yang hila
 
 Jika Anda memperhatikan blok kode seperti ini dalam markdown yang dihasilkan:
 
-````markdown  theme={null}
+````markdown theme={null}
 ```
 function example() {
   return "hello";
@@ -837,7 +837,7 @@ function example() {
 
 Alih-alih blok yang diberi tag dengan benar seperti:
 
-````markdown  theme={null}
+````markdown theme={null}
 ```javascript
 function example() {
   return "hello";

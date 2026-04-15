@@ -45,7 +45,7 @@ Si vos appareils sont inscrits dans une solution MDM ou de gestion des points de
 
     Cet exemple applique une liste de refus de permissions, empêche les utilisateurs de contourner les permissions et restreint les règles de permission à celles définies dans les paramètres gérés :
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "permissions": {
         "deny": [
@@ -64,7 +64,7 @@ Si vos appareils sont inscrits dans une solution MDM ou de gestion des points de
 
     Cet exemple exécute un script d'audit après chaque modification de fichier dans toute l'organisation :
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "hooks": {
         "PostToolUse": [
@@ -81,7 +81,7 @@ Si vos appareils sont inscrits dans une solution MDM ou de gestion des points de
 
     Pour configurer le classificateur du [mode auto](/fr/permission-modes#eliminate-prompts-with-auto-mode) afin qu'il connaisse les dépôts, les buckets et les domaines de confiance de votre organisation :
 
-    ```json  theme={null}
+    ```json theme={null}
     {
       "autoMode": {
         "environment": [

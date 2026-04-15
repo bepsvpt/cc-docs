@@ -40,7 +40,7 @@ Este exemplo cria uma skill que ensina Claude a explicar código usando diagrama
   <Step title="Crie o diretório da skill">
     Crie um diretório para a skill em sua pasta de skills pessoais. Skills pessoais estão disponíveis em todos os seus projetos.
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p ~/.claude/skills/explain-code
     ```
   </Step>
@@ -50,7 +50,7 @@ Este exemplo cria uma skill que ensina Claude a explicar código usando diagrama
 
     Crie `~/.claude/skills/explain-code/SKILL.md`:
 
-    ```yaml  theme={null}
+    ```yaml theme={null}
     ---
     name: explain-code
     description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
@@ -72,13 +72,13 @@ Este exemplo cria uma skill que ensina Claude a explicar código usando diagrama
 
     **Deixe Claude invocá-la automaticamente** perguntando algo que corresponda à descrição:
 
-    ```text  theme={null}
+    ```text theme={null}
     How does this code work?
     ```
 
     **Ou invoque-a diretamente** com o nome da skill:
 
-    ```text  theme={null}
+    ```text theme={null}
     /explain-code src/auth/login.ts
     ```
 
@@ -105,7 +105,7 @@ Quando você trabalha com arquivos em subdiretórios, Claude Code descobre autom
 
 Cada skill é um diretório com `SKILL.md` como ponto de entrada:
 
-```text  theme={null}
+```text theme={null}
 my-skill/
 ├── SKILL.md           # Instruções principais (obrigatório)
 ├── template.md        # Template para Claude preencher
@@ -141,7 +141,7 @@ Arquivos de skill podem conter qualquer instrução, mas pensar em como você qu
 
 **Conteúdo de referência** adiciona conhecimento que Claude aplica ao seu trabalho atual. Convenções, padrões, guias de estilo, conhecimento de domínio. Este conteúdo é executado inline para que Claude possa usá-lo junto com seu contexto de conversa.
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: api-conventions
 description: API design patterns for this codebase
@@ -155,7 +155,7 @@ When writing API endpoints:
 
 **Conteúdo de tarefa** dá ao Claude instruções passo a passo para uma ação específica, como implantações, commits ou geração de código. Estas são frequentemente ações que você quer invocar diretamente com `/skill-name` em vez de deixar Claude decidir quando executá-las. Adicione `disable-model-invocation: true` para evitar que Claude a dispare automaticamente.
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: deploy
 description: Deploy the application to production
@@ -175,7 +175,7 @@ Seu `SKILL.md` pode conter qualquer coisa, mas pensar em como você quer que a s
 
 Além do conteúdo markdown, você pode configurar o comportamento da skill usando campos de frontmatter YAML entre marcadores `---` no topo de seu arquivo `SKILL.md`:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: my-skill
 description: What this skill does
@@ -218,7 +218,7 @@ Skills suportam substituição de string para valores dinâmicos no conteúdo da
 
 **Exemplo usando substituições:**
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: session-logger
 description: Log activity for this session
@@ -233,7 +233,7 @@ $ARGUMENTS
 
 Skills podem incluir múltiplos arquivos em seu diretório. Isso mantém `SKILL.md` focado no essencial enquanto deixa Claude acessar material de referência detalhado apenas quando necessário. Documentos de referência grandes, especificações de API, ou coleções de exemplos não precisam carregar em contexto toda vez que a skill é executada.
 
-```text  theme={null}
+```text theme={null}
 my-skill/
 ├── SKILL.md (obrigatório - visão geral e navegação)
 ├── reference.md (documentação de API detalhada - carregada quando necessário)
@@ -244,7 +244,7 @@ my-skill/
 
 Referencie arquivos de suporte de `SKILL.md` para que Claude saiba o que cada arquivo contém e quando carregá-lo:
 
-```markdown  theme={null}
+```markdown theme={null}
 ## Additional resources
 
 - For complete API details, see [reference.md](reference.md)
@@ -263,7 +263,7 @@ Por padrão, tanto você quanto Claude podem invocar qualquer skill. Você pode 
 
 Este exemplo cria uma skill de deploy que apenas você pode disparar. O campo `disable-model-invocation: true` evita que Claude a execute automaticamente:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: deploy
 description: Deploy the application to production
@@ -294,7 +294,7 @@ Aqui está como os dois campos afetam invocação e carregamento de contexto:
 
 Use o campo `allowed-tools` para limitar quais ferramentas Claude pode usar quando uma skill está ativa. Esta skill cria um modo somente leitura onde Claude pode explorar arquivos mas não modificá-los:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: safe-reader
 description: Read files without making changes
@@ -308,7 +308,7 @@ Tanto você quanto Claude podem passar argumentos ao invocar uma skill. Argument
 
 Esta skill corrige um problema do GitHub por número. O placeholder `$ARGUMENTS` é substituído por qualquer coisa que siga o nome da skill:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: fix-issue
 description: Fix a GitHub issue
@@ -330,7 +330,7 @@ Se você invocar uma skill com argumentos mas a skill não incluir `$ARGUMENTS`,
 
 Para acessar argumentos individuais por posição, use `$ARGUMENTS[N]` ou a forma mais curta `$N`:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: migrate-component
 description: Migrate a component from one framework to another
@@ -342,7 +342,7 @@ Preserve all existing behavior and tests.
 
 Executar `/migrate-component SearchBar React Vue` substitui `$ARGUMENTS[0]` com `SearchBar`, `$ARGUMENTS[1]` com `React`, e `$ARGUMENTS[2]` com `Vue`. A mesma skill usando a abreviação `$N`:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: migrate-component
 description: Migrate a component from one framework to another
@@ -360,7 +360,7 @@ A sintaxe `` !`<command>` `` executa comandos shell antes do conteúdo da skill 
 
 Esta skill resume um pull request buscando dados de PR ao vivo com o GitHub CLI. Os comandos `` !`gh pr diff` `` e outros são executados primeiro, e sua saída é inserida no prompt:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: pr-summary
 description: Summarize changes in a pull request
@@ -411,7 +411,7 @@ Com `context: fork`, você escreve a tarefa em sua skill e escolhe um tipo de ag
 
 Esta skill executa pesquisa em um agent Explore bifurcado. O conteúdo da skill se torna a tarefa, e o agent fornece ferramentas somente leitura otimizadas para exploração de codebase:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: deep-research
 description: Research a topic thoroughly
@@ -443,14 +443,14 @@ Três formas de controlar quais skills Claude pode invocar:
 
 **Desabilite todas as skills** negando a ferramenta Skill em `/permissions`:
 
-```text  theme={null}
+```text theme={null}
 # Add to deny rules:
 Skill
 ```
 
 **Permita ou negue skills específicas** usando [regras de permissão](/pt/permissions):
 
-```text  theme={null}
+```text theme={null}
 # Allow only specific skills
 Skill(commit)
 Skill(review-pr *)
@@ -483,13 +483,13 @@ Este exemplo cria um explorador de codebase: uma visualização de árvore inter
 
 Crie o diretório da Skill:
 
-```bash  theme={null}
+```bash theme={null}
 mkdir -p ~/.claude/skills/codebase-visualizer/scripts
 ```
 
 Crie `~/.claude/skills/codebase-visualizer/SKILL.md`. A descrição diz ao Claude quando ativar esta Skill, e as instruções dizem ao Claude para executar o script agrupado:
 
-````yaml  theme={null}
+````yaml theme={null}
 ---
 name: codebase-visualizer
 description: Generate an interactive collapsible tree visualization of your codebase. Use when exploring a new repo, understanding project structure, or identifying large files.

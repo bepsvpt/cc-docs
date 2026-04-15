@@ -115,7 +115,7 @@ Outra opção para desativar completamente o modo rápido é definir `CLAUDE_COD
 
 Por padrão, o modo rápido persiste entre sessões: se um usuário ativa o modo rápido, ele permanece ativado em futuras sessões. Os administradores em planos [Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise) ou [Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise) podem evitar isso definindo `fastModePerSessionOptIn` como `true` em [managed settings](/pt/settings#settings-files) ou [server-managed settings](/pt/server-managed-settings). Isso faz com que cada sessão comece com o modo rápido desativado, exigindo que os usuários o ativem explicitamente com `/fast`.
 
-```json  theme={null}
+```json theme={null}
 {
   "fastModePerSessionOptIn": true
 }

@@ -235,7 +235,7 @@ Para desabilitar toda a funcionalidade de tarefa em segundo plano, defina a vari
 
 Execute comandos bash diretamente sem passar por Claude prefixando sua entrada com `!`:
 
-```bash  theme={null}
+```bash theme={null}
 ! npm test
 ! git status
 ! ls -la
@@ -268,7 +268,7 @@ As sugestões são automaticamente puladas após a primeira volta de uma convers
 
 Para desabilitar sugestões de prompt inteiramente, defina a variável de ambiente ou alterne a configuração em `/config`:
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=false
 ```
 

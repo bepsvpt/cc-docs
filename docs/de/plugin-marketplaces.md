@@ -27,7 +27,7 @@ Dieses Beispiel erstellt einen Marktplatz mit einem Plugin: ein `/quality-review
 
 <Steps>
   <Step title="Erstellen Sie die Verzeichnisstruktur">
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p my-marketplace/.claude-plugin
     mkdir -p my-marketplace/plugins/quality-review-plugin/.claude-plugin
     mkdir -p my-marketplace/plugins/quality-review-plugin/skills/quality-review
@@ -88,7 +88,7 @@ Dieses Beispiel erstellt einen Marktplatz mit einem Plugin: ein `/quality-review
   <Step title="Hinzufügen und Installieren">
     Fügen Sie den Marktplatz hinzu und installieren Sie das Plugin.
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /plugin marketplace add ./my-marketplace
     /plugin install quality-review-plugin@my-plugins
     ```
@@ -97,7 +97,7 @@ Dieses Beispiel erstellt einen Marktplatz mit einem Plugin: ein `/quality-review
   <Step title="Probieren Sie es aus">
     Wählen Sie etwas Code in Ihrem Editor aus und führen Sie Ihren neuen Befehl aus.
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /quality-review
     ```
   </Step>
@@ -117,7 +117,7 @@ Erstellen Sie `.claude-plugin/marketplace.json` im Stammverzeichnis Ihres Reposi
 
 Jeder Plugin-Eintrag benötigt mindestens einen `name` und eine `source` (wo man ihn abrufen kann). Siehe das [vollständige Schema](#marketplace-schema) unten für alle verfügbaren Felder.
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "company-tools",
   "owner": {
@@ -240,7 +240,7 @@ Sobald ein Plugin geklont oder auf den lokalen Computer kopiert wird, wird es in
 
 Für Plugins im selben Repository verwenden Sie einen Pfad, der mit `./` beginnt:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "source": "./plugins/my-plugin"
@@ -255,7 +255,7 @@ Pfade werden relativ zum Marktplatz-Root aufgelöst, das ist das Verzeichnis, da
 
 ### GitHub-Repositories
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "github-plugin",
   "source": {
@@ -267,7 +267,7 @@ Pfade werden relativ zum Marktplatz-Root aufgelöst, das ist das Verzeichnis, da
 
 Sie können an einen bestimmten Branch, Tag oder Commit anheften:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "github-plugin",
   "source": {
@@ -287,7 +287,7 @@ Sie können an einen bestimmten Branch, Tag oder Commit anheften:
 
 ### Git-Repositories
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "git-plugin",
   "source": {
@@ -299,7 +299,7 @@ Sie können an einen bestimmten Branch, Tag oder Commit anheften:
 
 Sie können an einen bestimmten Branch, Tag oder Commit anheften:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "git-plugin",
   "source": {
@@ -321,7 +321,7 @@ Sie können an einen bestimmten Branch, Tag oder Commit anheften:
 
 Verwenden Sie `git-subdir`, um auf ein Plugin zu verweisen, das sich in einem Unterverzeichnis eines Git-Repositories befindet. Claude Code verwendet einen sparsamen, teilweisen Klon, um nur das Unterverzeichnis abzurufen und die Bandbreite für große Monorepos zu minimieren.
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "source": {
@@ -334,7 +334,7 @@ Verwenden Sie `git-subdir`, um auf ein Plugin zu verweisen, das sich in einem Un
 
 Sie können an einen bestimmten Branch, Tag oder Commit anheften:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "source": {
@@ -360,7 +360,7 @@ Das `url`-Feld akzeptiert auch eine GitHub-Kurzform (`owner/repo`) oder SSH-URLs
 
 Plugins, die als npm-Pakete verteilt werden, werden mit `npm install` installiert. Dies funktioniert mit jedem Paket in der öffentlichen npm-Registry oder einer privaten Registry, die Ihr Team hostet.
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-npm-plugin",
   "source": {
@@ -372,7 +372,7 @@ Plugins, die als npm-Pakete verteilt werden, werden mit `npm install` installier
 
 Um an eine bestimmte Version anzuheften, fügen Sie das `version`-Feld hinzu:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-npm-plugin",
   "source": {
@@ -385,7 +385,7 @@ Um an eine bestimmte Version anzuheften, fügen Sie das `version`-Feld hinzu:
 
 Um von einer privaten oder internen Registry zu installieren, fügen Sie das `registry`-Feld hinzu:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-npm-plugin",
   "source": {
@@ -407,7 +407,7 @@ Um von einer privaten oder internen Registry zu installieren, fügen Sie das `re
 
 Dieses Beispiel zeigt einen Plugin-Eintrag mit vielen optionalen Feldern, einschließlich benutzerdefinierter Pfade für Befehle, Agents, hooks und MCP servers:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "enterprise-tools",
   "source": {
@@ -490,7 +490,7 @@ GitHub bietet die einfachste Verteilungsmethode:
 
 Jeder Git-Hosting-Service funktioniert, wie GitLab, Bitbucket und selbstgehostete Server. Benutzer fügen mit der vollständigen Repository-URL hinzu:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add https://gitlab.com/company/plugins.git
 ```
 
@@ -508,7 +508,7 @@ Hintergrund-Auto-Updates werden beim Start ohne Credential-Helper ausgeführt, d
 
 Legen Sie das Token in Ihrer Shell-Konfiguration fest (z. B. `.bashrc`, `.zshrc`) oder übergeben Sie es beim Ausführen von Claude Code:
 
-```bash  theme={null}
+```bash theme={null}
 export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 ```
 
@@ -520,7 +520,7 @@ export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 
 Testen Sie Ihren Marktplatz lokal, bevor Sie ihn teilen:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add ./my-local-marketplace
 /plugin install test-plugin@my-local-marketplace
 ```
@@ -531,7 +531,7 @@ Für die vollständige Palette von Add-Befehlen (GitHub, Git-URLs, lokale Pfade,
 
 Sie können Ihr Repository so konfigurieren, dass Teammitglieder automatisch aufgefordert werden, Ihren Marktplatz zu installieren, wenn sie dem Projektordner vertrauen. Fügen Sie Ihren Marktplatz zu `.claude/settings.json` hinzu:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "company-tools": {
@@ -546,7 +546,7 @@ Sie können Ihr Repository so konfigurieren, dass Teammitglieder automatisch auf
 
 Sie können auch angeben, welche Plugins standardmäßig aktiviert sein sollen:
 
-```json  theme={null}
+```json theme={null}
 {
   "enabledPlugins": {
     "code-formatter@company-tools": true,
@@ -603,7 +603,7 @@ Wenn `strictKnownMarketplaces` in verwalteten Einstellungen konfiguriert ist, h�
 
 Deaktivieren Sie alle Marktplatz-Ergänzungen:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": []
 }
@@ -611,7 +611,7 @@ Deaktivieren Sie alle Marktplatz-Ergänzungen:
 
 Nur bestimmte Marktplätze zulassen:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -633,7 +633,7 @@ Nur bestimmte Marktplätze zulassen:
 
 Alle Marktplätze von einem internen Git-Server mit Regex-Musterabgleich auf dem Host zulassen. Dies ist der empfohlene Ansatz für [GitHub Enterprise Server](/de/github-enterprise-server#plugin-marketplaces-on-ghes) oder selbstgehostete GitLab-Instanzen:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -646,7 +646,7 @@ Alle Marktplätze von einem internen Git-Server mit Regex-Musterabgleich auf dem
 
 Dateisystem-basierte Marktplätze aus einem bestimmten Verzeichnis mit Regex-Musterabgleich auf dem Pfad zulassen:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -696,7 +696,7 @@ Um "stabile" und "neueste" Release-Kanäle für Ihre Plugins zu unterstützen, k
 
 ##### Beispiel
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "stable-tools",
   "plugins": [
@@ -712,7 +712,7 @@ Um "stabile" und "neueste" Release-Kanäle für Ihre Plugins zu unterstützen, k
 }
 ```
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "latest-tools",
   "plugins": [
@@ -732,7 +732,7 @@ Um "stabile" und "neueste" Release-Kanäle für Ihre Plugins zu unterstützen, k
 
 Weisen Sie jeden Marktplatz der entsprechenden Benutzergruppe über verwaltete Einstellungen zu. Beispielsweise erhält die stabile Gruppe:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "stable-tools": {
@@ -747,7 +747,7 @@ Weisen Sie jeden Marktplatz der entsprechenden Benutzergruppe über verwaltete E
 
 Die Early-Access-Gruppe erhält stattdessen `latest-tools`:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "latest-tools": {
@@ -766,25 +766,25 @@ Testen Sie Ihren Marktplatz vor dem Teilen.
 
 Validieren Sie Ihre Marktplatz-JSON-Syntax:
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin validate .
 ```
 
 Oder von innerhalb von Claude Code:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin validate .
 ```
 
 Fügen Sie den Marktplatz zum Testen hinzu:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add ./path/to/marketplace
 ```
 
 Installieren Sie ein Test-Plugin, um zu überprüfen, ob alles funktioniert:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin install test-plugin@marketplace-name
 ```
 
@@ -861,7 +861,7 @@ Für Hintergrund-Auto-Updates:
 
 **Lösung**: Legen Sie `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` fest, um den vorhandenen Cache beizubehalten, wenn der Pull fehlschlägt, anstatt ihn zu löschen:
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
 ```
 
@@ -875,7 +875,7 @@ Mit dieser Variable gesetzt behält Claude Code den veralteten Marktplatz-Klon b
 
 **Lösung**: Erhöhen Sie das Timeout mit der Umgebungsvariable `CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS`. Der Wert ist in Millisekunden:
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000  # 5 Minuten
 ```
 
@@ -888,7 +888,7 @@ export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000  # 5 Minuten
 **Lösungen**:
 
 * **Verwenden Sie externe Quellen**: Ändern Sie Plugin-Einträge, um stattdessen GitHub-, npm- oder Git-URL-Quellen zu verwenden:
-  ```json  theme={null}
+  ```json theme={null}
   { "name": "my-plugin", "source": { "source": "github", "repo": "owner/repo" } }
   ```
 * **Verwenden Sie einen Git-basierten Marktplatz**: Hosten Sie Ihren Marktplatz in einem Git-Repository und fügen Sie ihn mit der Git-URL hinzu. Git-basierte Marktplätze klonen das gesamte Repository, wodurch relative Pfade funktionieren.

@@ -235,7 +235,7 @@ Pour désactiver toutes les fonctionnalités de tâche en arrière-plan, défini
 
 Exécutez les commandes bash directement sans passer par Claude en préfixant votre entrée avec `!` :
 
-```bash  theme={null}
+```bash theme={null}
 ! npm test
 ! git status
 ! ls -la
@@ -268,7 +268,7 @@ Les suggestions sont automatiquement ignorées après le premier tour d'une conv
 
 Pour désactiver complètement les suggestions d'invite, définissez la variable d'environnement ou basculez le paramètre dans `/config` :
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=false
 ```
 

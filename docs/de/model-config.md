@@ -45,7 +45,7 @@ Sie können Ihr Modell auf mehrere Arten konfigurieren, aufgelistet nach Priorit
 
 Beispielverwendung:
 
-```bash  theme={null}
+```bash theme={null}
 # Mit Opus starten
 claude --model opus
 
@@ -55,7 +55,7 @@ claude --model opus
 
 Beispiel-Einstellungsdatei:
 
-```json  theme={null}
+```json theme={null}
 {
     "permissions": {
         ...
@@ -70,7 +70,7 @@ Enterprise-Administratoren können `availableModels` in [verwalteten oder Richtl
 
 Wenn `availableModels` gesetzt ist, können Benutzer nicht über `/model`, das `--model`-Flag, das Config-Tool oder die `ANTHROPIC_MODEL`-Umgebungsvariable zu Modellen wechseln, die nicht in der Liste enthalten sind.
 
-```json  theme={null}
+```json theme={null}
 {
   "availableModels": ["sonnet", "haiku"]
 }
@@ -94,7 +94,7 @@ Um die Modellerfahrung vollständig zu kontrollieren, kombinieren Sie drei Einst
 
 Dieses Beispiel startet Benutzer auf Sonnet 4.5, begrenzt die Auswahl auf Sonnet und Haiku und fixiert „Standard" auf Sonnet 4.5 statt auf die neueste Version:
 
-```json  theme={null}
+```json theme={null}
 {
   "model": "claude-sonnet-4-5",
   "availableModels": ["claude-sonnet-4-5", "haiku"],
@@ -178,7 +178,7 @@ Wenn Ihr Konto 1M-Kontext unterstützt, erscheint die Option in der Modellauswah
 
 Sie können auch das `[1m]`-Suffix mit Modellaliasen oder vollständigen Modellnamen verwenden:
 
-```bash  theme={null}
+```bash theme={null}
 # Verwenden Sie den opus[1m]- oder sonnet[1m]-Alias
 /model opus[1m]
 /model sonnet[1m]
@@ -200,7 +200,7 @@ Verwenden Sie `ANTHROPIC_CUSTOM_MODEL_OPTION`, um einen einzelnen benutzerdefini
 
 Dieses Beispiel setzt alle drei Variablen, um eine Gateway-gesteuerte Opus-Bereitstellung auswählbar zu machen:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_CUSTOM_MODEL_OPTION="my-gateway/claude-opus-4-6"
 export ANTHROPIC_CUSTOM_MODEL_OPTION_NAME="Opus via Gateway"
 export ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION="Custom deployment routed through the internal LLM gateway"
@@ -245,7 +245,7 @@ Wenden Sie das gleiche Muster auf `ANTHROPIC_DEFAULT_SONNET_MODEL` und `ANTHROPI
 
 Um [erweiterten Kontext](#extended-context) für ein fixiertes Modell zu aktivieren, fügen Sie `[1m]` an die Modell-ID in `ANTHROPIC_DEFAULT_OPUS_MODEL` oder `ANTHROPIC_DEFAULT_SONNET_MODEL` an:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6[1m]'
 ```
 
@@ -265,7 +265,7 @@ Dies ermöglicht es Enterprise-Administratoren, jede Modellversion zu einem best
 
 Setzen Sie `modelOverrides` in Ihrer [Einstellungsdatei](/de/settings#settings-files):
 
-```json  theme={null}
+```json theme={null}
 {
   "modelOverrides": {
     "claude-opus-4-6": "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/opus-prod",
@@ -309,7 +309,7 @@ Wenn `_SUPPORTED_CAPABILITIES` gesetzt ist, werden aufgelistete Funktionen aktiv
 
 Dieses Beispiel fixiert Opus auf ein benutzerdefiniertes Bedrock-Modell-ARN, setzt einen benutzerfreundlichen Namen und deklariert seine Funktionen:
 
-```bash  theme={null}
+```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='arn:aws:bedrock:us-east-1:123456789012:custom-model/abc'
 export ANTHROPIC_DEFAULT_OPUS_MODEL_NAME='Opus via Bedrock'
 export ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION='Opus 4.6 routed through a Bedrock custom endpoint'

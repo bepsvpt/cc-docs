@@ -27,7 +27,7 @@ Contoh ini membuat marketplace dengan satu plugin: skill `/quality-review` untuk
 
 <Steps>
   <Step title="Buat struktur direktori">
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p my-marketplace/.claude-plugin
     mkdir -p my-marketplace/plugins/quality-review-plugin/.claude-plugin
     mkdir -p my-marketplace/plugins/quality-review-plugin/skills/quality-review
@@ -88,7 +88,7 @@ Contoh ini membuat marketplace dengan satu plugin: skill `/quality-review` untuk
   <Step title="Tambahkan dan pasang">
     Tambahkan marketplace dan pasang plugin.
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /plugin marketplace add ./my-marketplace
     /plugin install quality-review-plugin@my-plugins
     ```
@@ -97,7 +97,7 @@ Contoh ini membuat marketplace dengan satu plugin: skill `/quality-review` untuk
   <Step title="Coba">
     Pilih beberapa kode di editor Anda dan jalankan perintah baru Anda.
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /quality-review
     ```
   </Step>
@@ -117,7 +117,7 @@ Buat `.claude-plugin/marketplace.json` di root repositori Anda. File ini mendefi
 
 Setiap entri plugin memerlukan minimal `name` dan `source` (di mana mengambilnya). Lihat [skema lengkap](#marketplace-schema) di bawah untuk semua field yang tersedia.
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "company-tools",
   "owner": {
@@ -240,7 +240,7 @@ Setelah plugin diklon atau disalin ke mesin lokal, plugin disalin ke cache plugi
 
 Untuk plugin di repositori yang sama, gunakan jalur yang dimulai dengan `./`:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "source": "./plugins/my-plugin"
@@ -255,7 +255,7 @@ Jalur diselesaikan relatif terhadap root marketplace, yang merupakan direktori y
 
 ### Repositori GitHub
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "github-plugin",
   "source": {
@@ -267,7 +267,7 @@ Jalur diselesaikan relatif terhadap root marketplace, yang merupakan direktori y
 
 Anda dapat menyematkan ke branch, tag, atau commit tertentu:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "github-plugin",
   "source": {
@@ -287,7 +287,7 @@ Anda dapat menyematkan ke branch, tag, atau commit tertentu:
 
 ### Repositori Git
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "git-plugin",
   "source": {
@@ -299,7 +299,7 @@ Anda dapat menyematkan ke branch, tag, atau commit tertentu:
 
 Anda dapat menyematkan ke branch, tag, atau commit tertentu:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "git-plugin",
   "source": {
@@ -321,7 +321,7 @@ Anda dapat menyematkan ke branch, tag, atau commit tertentu:
 
 Gunakan `git-subdir` untuk menunjuk ke plugin yang berada di dalam subdirektori repositori git. Claude Code menggunakan klon parsial dan sparse untuk mengambil hanya subdirektori, meminimalkan bandwidth untuk monorepo besar.
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "source": {
@@ -334,7 +334,7 @@ Gunakan `git-subdir` untuk menunjuk ke plugin yang berada di dalam subdirektori 
 
 Anda dapat menyematkan ke branch, tag, atau commit tertentu:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-plugin",
   "source": {
@@ -360,7 +360,7 @@ Field `url` juga menerima shorthand GitHub (`owner/repo`) atau URL SSH (`git@git
 
 Plugin yang didistribusikan sebagai paket npm dipasang menggunakan `npm install`. Ini berfungsi dengan paket apa pun di registry npm publik atau registry pribadi yang dihosting tim Anda.
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-npm-plugin",
   "source": {
@@ -372,7 +372,7 @@ Plugin yang didistribusikan sebagai paket npm dipasang menggunakan `npm install`
 
 Untuk menyematkan ke versi tertentu, tambahkan field `version`:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-npm-plugin",
   "source": {
@@ -385,7 +385,7 @@ Untuk menyematkan ke versi tertentu, tambahkan field `version`:
 
 Untuk memasang dari registry pribadi atau internal, tambahkan field `registry`:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "my-npm-plugin",
   "source": {
@@ -407,7 +407,7 @@ Untuk memasang dari registry pribadi atau internal, tambahkan field `registry`:
 
 Contoh ini menunjukkan entri plugin menggunakan banyak field opsional, termasuk jalur kustom untuk commands, agents, hooks, dan MCP servers:
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "enterprise-tools",
   "source": {
@@ -490,7 +490,7 @@ GitHub menyediakan metode distribusi paling mudah:
 
 Layanan hosting git apa pun berfungsi, seperti GitLab, Bitbucket, dan server yang dihosting sendiri. Pengguna menambahkan dengan URL repositori lengkap:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add https://gitlab.com/company/plugins.git
 ```
 
@@ -508,7 +508,7 @@ Pembaruan otomatis latar belakang berjalan saat startup tanpa helper kredensial,
 
 Atur token dalam konfigurasi shell Anda (misalnya, `.bashrc`, `.zshrc`) atau teruskan saat menjalankan Claude Code:
 
-```bash  theme={null}
+```bash theme={null}
 export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 ```
 
@@ -520,7 +520,7 @@ export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
 
 Uji marketplace Anda secara lokal sebelum berbagi:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add ./my-local-marketplace
 /plugin install test-plugin@my-local-marketplace
 ```
@@ -531,7 +531,7 @@ Untuk rangkaian lengkap perintah add (GitHub, URL Git, jalur lokal, URL jarak ja
 
 Anda dapat mengonfigurasi repositori Anda sehingga anggota tim secara otomatis diminta untuk memasang marketplace Anda ketika mereka mempercayai folder proyek. Tambahkan marketplace Anda ke `.claude/settings.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "company-tools": {
@@ -546,7 +546,7 @@ Anda dapat mengonfigurasi repositori Anda sehingga anggota tim secara otomatis d
 
 Anda juga dapat menentukan plugin mana yang harus diaktifkan secara default:
 
-```json  theme={null}
+```json theme={null}
 {
   "enabledPlugins": {
     "code-formatter@company-tools": true,
@@ -603,7 +603,7 @@ Ketika `strictKnownMarketplaces` dikonfigurasi dalam pengaturan yang dikelola, p
 
 Nonaktifkan semua penambahan marketplace:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": []
 }
@@ -611,7 +611,7 @@ Nonaktifkan semua penambahan marketplace:
 
 Izinkan marketplace tertentu saja:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -633,7 +633,7 @@ Izinkan marketplace tertentu saja:
 
 Izinkan semua marketplace dari server git internal menggunakan pencocokan pola regex pada host. Ini adalah pendekatan yang direkomendasikan untuk [GitHub Enterprise Server](/id/github-enterprise-server#plugin-marketplaces-on-ghes) atau instance GitLab yang dihosting sendiri:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -646,7 +646,7 @@ Izinkan semua marketplace dari server git internal menggunakan pencocokan pola r
 
 Izinkan marketplace berbasis filesystem dari direktori tertentu menggunakan pencocokan pola regex pada jalur:
 
-```json  theme={null}
+```json theme={null}
 {
   "strictKnownMarketplaces": [
     {
@@ -696,7 +696,7 @@ Untuk mendukung saluran rilis "stable" dan "latest" untuk plugin Anda, Anda dapa
 
 ##### Contoh
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "stable-tools",
   "plugins": [
@@ -712,7 +712,7 @@ Untuk mendukung saluran rilis "stable" dan "latest" untuk plugin Anda, Anda dapa
 }
 ```
 
-```json  theme={null}
+```json theme={null}
 {
   "name": "latest-tools",
   "plugins": [
@@ -732,7 +732,7 @@ Untuk mendukung saluran rilis "stable" dan "latest" untuk plugin Anda, Anda dapa
 
 Tetapkan setiap marketplace ke grup pengguna yang sesuai melalui pengaturan yang dikelola. Misalnya, grup stabil menerima:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "stable-tools": {
@@ -747,7 +747,7 @@ Tetapkan setiap marketplace ke grup pengguna yang sesuai melalui pengaturan yang
 
 Grup early-access menerima `latest-tools` sebagai gantinya:
 
-```json  theme={null}
+```json theme={null}
 {
   "extraKnownMarketplaces": {
     "latest-tools": {
@@ -766,25 +766,25 @@ Uji marketplace Anda sebelum berbagi.
 
 Validasi sintaks JSON marketplace Anda:
 
-```bash  theme={null}
+```bash theme={null}
 claude plugin validate .
 ```
 
 Atau dari dalam Claude Code:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin validate .
 ```
 
 Tambahkan marketplace untuk pengujian:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin marketplace add ./path/to/marketplace
 ```
 
 Pasang plugin uji untuk memverifikasi semuanya berfungsi:
 
-```shell  theme={null}
+```shell theme={null}
 /plugin install test-plugin@marketplace-name
 ```
 
@@ -861,7 +861,7 @@ Untuk pembaruan otomatis latar belakang:
 
 **Solusi**: Atur `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` untuk menyimpan cache yang ada ketika pull gagal alih-alih menghapusnya:
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
 ```
 
@@ -875,7 +875,7 @@ Dengan variabel ini diatur, Claude Code mempertahankan klon marketplace yang sud
 
 **Solusi**: Tingkatkan timeout menggunakan variabel lingkungan `CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS`. Nilainya dalam milidetik:
 
-```bash  theme={null}
+```bash theme={null}
 export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000  # 5 minutes
 ```
 
@@ -888,7 +888,7 @@ export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000  # 5 minutes
 **Solusi**:
 
 * **Gunakan sumber eksternal**: Ubah entri plugin untuk menggunakan sumber GitHub, npm, atau URL git alih-alih jalur relatif:
-  ```json  theme={null}
+  ```json theme={null}
   { "name": "my-plugin", "source": { "source": "github", "repo": "owner/repo" } }
   ```
 * **Gunakan marketplace berbasis Git**: Host marketplace Anda di repositori Git dan tambahkan dengan URL git. Marketplace berbasis Git mengklon seluruh repositori, membuat jalur relatif berfungsi dengan benar.

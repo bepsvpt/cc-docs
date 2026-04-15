@@ -123,7 +123,7 @@ Puoi avviare nuove attività sul web dal tuo terminale, oppure estrarre sessioni
 
 Avvia una sessione web dalla riga di comando con il flag `--remote`:
 
-```bash  theme={null}
+```bash theme={null}
 claude --remote "Fix the authentication bug in src/auth/login.ts"
 ```
 
@@ -133,13 +133,13 @@ Questo crea una nuova sessione web su claude.ai. L'attività viene eseguita nel 
 
 **Pianifica localmente, esegui da remoto**: Per attività complesse, avvia Claude in Plan Mode per collaborare sull'approccio, quindi invia il lavoro al web:
 
-```bash  theme={null}
+```bash theme={null}
 claude --permission-mode plan
 ```
 
 In Plan Mode, Claude può solo leggere file ed esplorare la base di codice. Una volta soddisfatto del piano, avvia una sessione remota per l'esecuzione autonoma:
 
-```bash  theme={null}
+```bash theme={null}
 claude --remote "Execute the migration plan in docs/migration-plan.md"
 ```
 
@@ -147,7 +147,7 @@ Questo modello ti dà il controllo sulla strategia mentre consente a Claude di e
 
 **Esegui attività in parallelo**: Ogni comando `--remote` crea la sua propria sessione web che viene eseguita indipendentemente. Puoi avviare più attività e verranno tutte eseguite simultaneamente in sessioni separate:
 
-```bash  theme={null}
+```bash theme={null}
 claude --remote "Fix the flaky test in auth.spec.ts"
 claude --remote "Update the API documentation"
 claude --remote "Refactor the logger to use structured output"
@@ -228,7 +228,7 @@ Costruiamo e manteniamo un'immagine universale con toolchain comuni e ecosistemi
 
 Per vedere cosa è preinstallato nel tuo ambiente, chiedi a Claude Code di eseguire:
 
-```bash  theme={null}
+```bash theme={null}
 check-tools
 ```
 
@@ -283,7 +283,7 @@ Quando avvii una sessione in Claude Code sul web, ecco cosa accade dietro le qui
 <Note>
   Le variabili di ambiente devono essere specificate come coppie chiave-valore, in [formato `.env`](https://www.dotenv.org/). Ad esempio:
 
-  ```text  theme={null}
+  ```text theme={null}
   API_KEY=your_api_key
   DEBUG=true
   ```
@@ -303,7 +303,7 @@ Per aggiungere uno script di configurazione, apri la finestra di dialogo delle i
 
 Questo esempio installa la CLI `gh`, che non è nell'immagine predefinita:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 apt update && apt install -y gh
 ```
@@ -337,7 +337,7 @@ Le immagini di ambiente personalizzate e gli snapshot non sono ancora supportati
 
 Per configurare l'installazione automatica delle dipendenze con uno script di configurazione, apri le impostazioni dell'ambiente e aggiungi uno script:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 npm install
 pip install -r requirements.txt
@@ -345,7 +345,7 @@ pip install -r requirements.txt
 
 In alternativa, puoi utilizzare gli hook SessionStart nel file `.claude/settings.json` del tuo repository per l'installazione di dipendenze che dovrebbe essere eseguita anche negli ambienti locali:
 
-```json  theme={null}
+```json theme={null}
 {
   "hooks": {
     "SessionStart": [
@@ -365,7 +365,7 @@ In alternativa, puoi utilizzare gli hook SessionStart nel file `.claude/settings
 
 Crea lo script corrispondente in `scripts/install_pkgs.sh`:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 
 # Only run in remote environments

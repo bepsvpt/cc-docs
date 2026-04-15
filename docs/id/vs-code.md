@@ -44,7 +44,7 @@ Setelah diinstal, Anda dapat mulai menggunakan Claude Code melalui antarmuka VS 
 
     Cara tercepat untuk membuka Claude adalah dengan mengklik ikon Spark di **Editor Toolbar** (sudut kanan atas editor). Ikon hanya muncul saat Anda memiliki file terbuka.
 
-        <img src="https://mintcdn.com/claude-code/mfM-EyoZGnQv8JTc/images/vs-code-editor-icon.png?fit=max&auto=format&n=mfM-EyoZGnQv8JTc&q=85&s=eb4540325d94664c51776dbbfec4cf02" alt="Editor VS Code menampilkan ikon Spark di Editor Toolbar" width="2796" height="734" data-path="images/vs-code-editor-icon.png" />
+    <img src="https://mintcdn.com/claude-code/mfM-EyoZGnQv8JTc/images/vs-code-editor-icon.png?fit=max&auto=format&n=mfM-EyoZGnQv8JTc&q=85&s=eb4540325d94664c51776dbbfec4cf02" alt="Editor VS Code menampilkan ikon Spark di Editor Toolbar" width="2796" height="734" data-path="images/vs-code-editor-icon.png" />
 
     Cara lain untuk membuka Claude Code:
 
@@ -64,13 +64,13 @@ Setelah diinstal, Anda dapat mulai menggunakan Claude Code melalui antarmuka VS 
 
     Berikut adalah contoh menanyakan tentang baris tertentu dalam file:
 
-        <img src="https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-send-prompt.png?fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=ede3ed8d8d5f940e01c5de636d009cfd" alt="Editor VS Code dengan baris 2-3 dipilih dalam file Python, dan panel Claude Code menampilkan pertanyaan tentang baris tersebut dengan referensi @-mention" width="3288" height="1876" data-path="images/vs-code-send-prompt.png" />
+    <img src="https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-send-prompt.png?fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=ede3ed8d8d5f940e01c5de636d009cfd" alt="Editor VS Code dengan baris 2-3 dipilih dalam file Python, dan panel Claude Code menampilkan pertanyaan tentang baris tersebut dengan referensi @-mention" width="3288" height="1876" data-path="images/vs-code-send-prompt.png" />
   </Step>
 
   <Step title="Tinjau perubahan">
     Saat Claude ingin mengedit file, ia menampilkan perbandingan berdampingan dari perubahan asli dan yang diusulkan, kemudian meminta izin. Anda dapat menerima, menolak, atau memberi tahu Claude apa yang harus dilakukan sebagai gantinya.
 
-        <img src="https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-edits.png?fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=e005f9b41c541c5c7c59c082f7c4841c" alt="VS Code menampilkan diff dari perubahan yang diusulkan Claude dengan prompt izin menanyakan apakah akan membuat edit" width="3292" height="1876" data-path="images/vs-code-edits.png" />
+    <img src="https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-edits.png?fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=e005f9b41c541c5c7c59c082f7c4841c" alt="VS Code menampilkan diff dari perubahan yang diusulkan Claude dengan prompt izin menanyakan apakah akan membuat edit" width="3292" height="1876" data-path="images/vs-code-edits.png" />
   </Step>
 </Steps>
 
@@ -94,7 +94,7 @@ Kotak prompt mendukung beberapa fitur:
 
 Gunakan @-mentions untuk memberikan Claude konteks tentang file atau folder tertentu. Saat Anda mengetik `@` diikuti dengan nama file atau folder, Claude membaca konten tersebut dan dapat menjawab pertanyaan tentangnya atau membuat perubahan padanya. Claude Code mendukung fuzzy matching, jadi Anda dapat mengetik nama parsial untuk menemukan apa yang Anda butuhkan:
 
-```text  theme={null}
+```text theme={null}
 > Explain the logic in @auth (fuzzy matches auth.js, AuthService.ts, etc.)
 > What's in @src/components/ (include a trailing slash for folders)
 ```
@@ -202,7 +202,7 @@ Hubungkan Claude ke browser Chrome Anda untuk menguji aplikasi web, debug dengan
 
 Ketik `@browser` di kotak prompt diikuti dengan apa yang ingin Anda lakukan Claude:
 
-```text  theme={null}
+```text theme={null}
 @browser go to localhost:3000 and check the console for errors
 ```
 
@@ -240,7 +240,7 @@ Ekstensi mendaftarkan URI handler di `vscode://anthropic.claude-code/open`. Guna
 
 Panggil handler dengan pembuka URL sistem operasi Anda. Di macOS:
 
-```bash  theme={null}
+```bash theme={null}
 open "vscode://anthropic.claude-code/open"
 ```
 
@@ -255,7 +255,7 @@ Handler menerima dua parameter query opsional:
 
 Misalnya, untuk membuka tab yang di-pre-fill dengan "review my changes":
 
-```text  theme={null}
+```text theme={null}
 vscode://anthropic.claude-code/open?prompt=review%20my%20changes
 ```
 
@@ -334,7 +334,7 @@ MCP (Model Context Protocol) servers memberikan Claude akses ke alat eksternal, 
 
 Untuk menambahkan MCP server, buka terminal terintegrasi (`` Ctrl+` `` atau `` Cmd+` ``) dan jalankan:
 
-```bash  theme={null}
+```bash theme={null}
 claude mcp add --transport http github https://api.githubcopilot.com/mcp/
 ```
 
@@ -350,7 +350,7 @@ Claude Code terintegrasi dengan git untuk membantu dengan alur kerja kontrol ver
 
 Claude dapat stage perubahan, menulis pesan commit, dan membuat pull request berdasarkan pekerjaan Anda:
 
-```text  theme={null}
+```text theme={null}
 > commit my changes with a descriptive message
 > create a pr for this feature
 > summarize the changes I've made to the auth module
@@ -362,7 +362,7 @@ Saat membuat pull request, Claude menghasilkan deskripsi berdasarkan perubahan k
 
 Gunakan flag `--worktree` (`-w`) untuk memulai Claude di worktree terisolasi dengan file dan branch-nya sendiri:
 
-```bash  theme={null}
+```bash theme={null}
 claude --worktree feature-auth
 ```
 
@@ -461,7 +461,7 @@ Untuk menguninstal ekstensi Claude Code:
 
 Untuk juga menghapus data ekstensi dan reset semua pengaturan:
 
-```bash  theme={null}
+```bash theme={null}
 rm -rf ~/.vscode/globalStorage/anthropic.claude-code
 ```
 

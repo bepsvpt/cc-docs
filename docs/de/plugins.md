@@ -56,7 +56,7 @@ Dieser Schnellstart führt Sie durch die Erstellung eines Plugins mit einem benu
   <Step title="Erstellen Sie das Plugin-Verzeichnis">
     Jedes Plugin befindet sich in seinem eigenen Verzeichnis, das ein Manifest und Ihre Skills, Agents oder Hooks enthält. Erstellen Sie jetzt eines:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir my-first-plugin
     ```
   </Step>
@@ -66,7 +66,7 @@ Dieser Schnellstart führt Sie durch die Erstellung eines Plugins mit einem benu
 
     Erstellen Sie das `.claude-plugin`-Verzeichnis in Ihrem Plugin-Ordner:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir my-first-plugin/.claude-plugin
     ```
 
@@ -98,7 +98,7 @@ Dieser Schnellstart führt Sie durch die Erstellung eines Plugins mit einem benu
 
     Erstellen Sie ein Skill-Verzeichnis in Ihrem Plugin-Ordner:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p my-first-plugin/skills/hello
     ```
 
@@ -117,13 +117,13 @@ Dieser Schnellstart führt Sie durch die Erstellung eines Plugins mit einem benu
   <Step title="Testen Sie Ihr Plugin">
     Führen Sie Claude Code mit dem Flag `--plugin-dir` aus, um Ihr Plugin zu laden:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --plugin-dir ./my-first-plugin
     ```
 
     Sobald Claude Code startet, versuchen Sie Ihren neuen Skill:
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /my-first-plugin:hello
     ```
 
@@ -153,7 +153,7 @@ Dieser Schnellstart führt Sie durch die Erstellung eines Plugins mit einem benu
 
     Führen Sie `/reload-plugins` aus, um die Änderungen zu übernehmen, und versuchen Sie dann den Skill mit Ihrem Namen:
 
-    ```shell  theme={null}
+    ```shell theme={null}
     /my-first-plugin:hello Alex
     ```
 
@@ -204,7 +204,7 @@ Plugins können [Agent-Skills](/de/skills) enthalten, um die Fähigkeiten von Cl
 
 Fügen Sie ein Verzeichnis `skills/` auf Ihrer Plugin-Root mit Skill-Ordnern hinzu, die `SKILL.md`-Dateien enthalten:
 
-```text  theme={null}
+```text theme={null}
 my-plugin/
 ├── .claude-plugin/
 │   └── plugin.json
@@ -215,7 +215,7 @@ my-plugin/
 
 Jede `SKILL.md` benötigt Frontmatter mit den Feldern `name` und `description`, gefolgt von Anweisungen:
 
-```yaml  theme={null}
+```yaml theme={null}
 ---
 name: code-review
 description: Reviews code for best practices and potential issues. Use when reviewing code, checking PRs, or analyzing code quality.
@@ -276,7 +276,7 @@ Für Plugins mit vielen Komponenten organisieren Sie Ihre Verzeichnisstruktur na
 
 Verwenden Sie das Flag `--plugin-dir`, um Plugins während der Entwicklung zu testen. Dies lädt Ihr Plugin direkt, ohne dass eine Installation erforderlich ist.
 
-```bash  theme={null}
+```bash theme={null}
 claude --plugin-dir ./my-plugin
 ```
 
@@ -291,7 +291,7 @@ Wenn Sie Änderungen an Ihrem Plugin vornehmen, führen Sie `/reload-plugins` au
 <Tip>
   Sie können mehrere Plugins gleichzeitig laden, indem Sie das Flag mehrmals angeben:
 
-  ```bash  theme={null}
+  ```bash theme={null}
   claude --plugin-dir ./plugin-one --plugin-dir ./plugin-two
   ```
 </Tip>
@@ -336,7 +336,7 @@ Wenn Sie bereits Skills oder Hooks in Ihrem Verzeichnis `.claude/` haben, könne
   <Step title="Erstellen Sie die Plugin-Struktur">
     Erstellen Sie ein neues Plugin-Verzeichnis:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir -p my-plugin/.claude-plugin
     ```
 
@@ -354,7 +354,7 @@ Wenn Sie bereits Skills oder Hooks in Ihrem Verzeichnis `.claude/` haben, könne
   <Step title="Kopieren Sie Ihre vorhandenen Dateien">
     Kopieren Sie Ihre vorhandenen Konfigurationen in das Plugin-Verzeichnis:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     # Copy commands
     cp -r .claude/commands my-plugin/
 
@@ -369,7 +369,7 @@ Wenn Sie bereits Skills oder Hooks in Ihrem Verzeichnis `.claude/` haben, könne
   <Step title="Migrieren Sie Hooks">
     Wenn Sie Hooks in Ihren Einstellungen haben, erstellen Sie ein Hooks-Verzeichnis:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     mkdir my-plugin/hooks
     ```
 
@@ -392,7 +392,7 @@ Wenn Sie bereits Skills oder Hooks in Ihrem Verzeichnis `.claude/` haben, könne
   <Step title="Testen Sie Ihr migriertes Plugin">
     Laden Sie Ihr Plugin, um zu überprüfen, ob alles funktioniert:
 
-    ```bash  theme={null}
+    ```bash theme={null}
     claude --plugin-dir ./my-plugin
     ```
 

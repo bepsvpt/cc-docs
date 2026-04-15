@@ -26,7 +26,7 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 
 此範例在聊天上下文中將 `Ctrl+E` 繫結到開啟外部編輯器，並取消繫結 `Ctrl+U`：
 
-```json  theme={null}
+```json theme={null}
 {
   "$schema": "https://www.schemastore.org/claude-code-keybindings.json",
   "$docs": "https://code.claude.com/docs/zh-TW/keybindings",
@@ -312,7 +312,7 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 
 例如：
 
-```text  theme={null}
+```text theme={null}
 ctrl+k          單一鍵搭配修飾鍵
 shift+tab       Shift + Tab
 meta+p          Command/Meta + P
@@ -329,7 +329,7 @@ ctrl+shift+c    多個修飾鍵
 
 和弦是由空格分隔的按鍵組合序列：
 
-```text  theme={null}
+```text theme={null}
 ctrl+k ctrl+s   按 Ctrl+K，放開，然後按 Ctrl+S
 ```
 
@@ -346,7 +346,7 @@ ctrl+k ctrl+s   按 Ctrl+K，放開，然後按 Ctrl+S
 
 將動作設定為 `null` 以取消繫結預設快捷鍵：
 
-```json  theme={null}
+```json theme={null}
 {
   "bindings": [
     {
@@ -361,7 +361,7 @@ ctrl+k ctrl+s   按 Ctrl+K，放開，然後按 Ctrl+S
 
 這也適用於和弦繫結。取消繫結共享前綴的每個和弦會釋放該前綴以用作單一鍵繫結：
 
-```json  theme={null}
+```json theme={null}
 {
   "bindings": [
     {

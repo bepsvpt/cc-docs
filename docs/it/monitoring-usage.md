@@ -12,7 +12,7 @@ Traccia l'utilizzo di Claude Code, i costi e l'attività degli strumenti in tutt
 
 Configura OpenTelemetry utilizzando variabili di ambiente:
 
-```bash  theme={null}
+```bash theme={null}
 # 1. Abilita la telemetria
 export CLAUDE_CODE_ENABLE_TELEMETRY=1
 
@@ -47,7 +47,7 @@ Gli amministratori possono configurare le impostazioni di OpenTelemetry per tutt
 
 Esempio di configurazione delle impostazioni gestite:
 
-```json  theme={null}
+```json theme={null}
 {
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
@@ -126,7 +126,7 @@ Per gli ambienti aziendali che richiedono autenticazione dinamica, puoi configur
 
 Aggiungi al tuo `.claude/settings.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "otelHeadersHelper": "/bin/generate_opentelemetry_headers.sh"
 }
@@ -136,7 +136,7 @@ Aggiungi al tuo `.claude/settings.json`:
 
 Lo script deve generare JSON valido con coppie chiave-valore di stringhe che rappresentano intestazioni HTTP:
 
-```bash  theme={null}
+```bash theme={null}
 #!/bin/bash
 # Esempio: Intestazioni multiple
 echo "{\"Authorization\": \"Bearer $(get-token.sh)\", \"X-API-Key\": \"$(get-api-key.sh)\"}"
@@ -150,7 +150,7 @@ Lo script dell'helper di intestazioni viene eseguito all'avvio e periodicamente 
 
 Le organizzazioni con più team o dipartimenti possono aggiungere attributi personalizzati per distinguere tra diversi gruppi utilizzando la variabile di ambiente `OTEL_RESOURCE_ATTRIBUTES`:
 
-```bash  theme={null}
+```bash theme={null}
 # Aggiungi attributi personalizzati per l'identificazione del team
 export OTEL_RESOURCE_ATTRIBUTES="department=engineering,team.id=platform,cost_center=eng-123"
 ```
@@ -174,7 +174,7 @@ Questi attributi personalizzati verranno inclusi in tutte le metriche e gli even
 
   **Esempi:**
 
-  ```bash  theme={null}
+  ```bash theme={null}
   # ❌ Non valido - contiene spazi
   export OTEL_RESOURCE_ATTRIBUTES="org.name=John's Organization"
 
@@ -193,7 +193,7 @@ Questi attributi personalizzati verranno inclusi in tutte le metriche e gli even
 
 Imposta queste variabili di ambiente prima di eseguire `claude`. Ogni blocco mostra una configurazione completa per un diverso esportatore o scenario di distribuzione:
 
-```bash  theme={null}
+```bash theme={null}
 # Debug della console (intervalli di 1 secondo)
 export CLAUDE_CODE_ENABLE_TELEMETRY=1
 export OTEL_METRICS_EXPORTER=console

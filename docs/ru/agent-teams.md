@@ -74,7 +74,7 @@
 
 Этот пример хорошо работает, потому что три роли независимы и могут исследовать проблему без ожидания друг друга:
 
-```text  theme={null}
+```text theme={null}
 I'm designing a CLI tool that helps developers track TODO comments across
 their codebase. Create an agent team to explore this from different angles: one
 teammate on UX, one on technical architecture, one playing devil's advocate.
@@ -103,7 +103,7 @@ teammate on UX, one on technical architecture, one playing devil's advocate.
 
 По умолчанию используется `"auto"`, который использует разделенные панели, если вы уже работаете внутри сеанса tmux, и in-process в противном случае. Параметр `"tmux"` включает режим разделенных панелей и автоматически определяет, использовать ли tmux или iTerm2 на основе вашего терминала. Чтобы переопределить, установите `teammateMode` в вашем [глобальном конфиге](/ru/settings#global-config-settings) в `~/.claude.json`:
 
-```json  theme={null}
+```json theme={null}
 {
   "teammateMode": "in-process"
 }
@@ -111,7 +111,7 @@ teammate on UX, one on technical architecture, one playing devil's advocate.
 
 Чтобы принудительно включить режим in-process для одного сеанса, передайте его как флаг:
 
-```bash  theme={null}
+```bash theme={null}
 claude --teammate-mode in-process
 ```
 
@@ -124,7 +124,7 @@ claude --teammate-mode in-process
 
 Claude решает количество товарищей по команде для порождения на основе вашей задачи, или вы можете указать ровно то, что вы хотите:
 
-```text  theme={null}
+```text theme={null}
 Create a team with 4 teammates to refactor these modules in parallel.
 Use Sonnet for each teammate.
 ```
@@ -133,7 +133,7 @@ Use Sonnet for each teammate.
 
 Для сложных или рискованных задач вы можете потребовать, чтобы товарищи по команде планировали перед реализацией. Товарищ по команде работает в режиме только для чтения Plan Mode до тех пор, пока лидер не одобрит его подход:
 
-```text  theme={null}
+```text theme={null}
 Spawn an architect teammate to refactor the authentication module.
 Require plan approval before they make any changes.
 ```
@@ -164,7 +164,7 @@ Require plan approval before they make any changes.
 
 Чтобы корректно завершить сеанс товарища по команде:
 
-```text  theme={null}
+```text theme={null}
 Ask the researcher teammate to shut down
 ```
 
@@ -174,7 +174,7 @@ Ask the researcher teammate to shut down
 
 Когда вы закончите, попросите лидера очистить команду:
 
-```text  theme={null}
+```text theme={null}
 Clean up the team
 ```
 
@@ -239,7 +239,7 @@ Claude Code генерирует оба этих файла автоматиче
 
 Чтобы использовать определение subagent, упомяните его по имени при просьбе Claude порождать товарища по команде:
 
-```text  theme={null}
+```text theme={null}
 Spawn a teammate using the security-reviewer agent type to audit the auth module.
 ```
 
@@ -274,7 +274,7 @@ Spawn a teammate using the security-reviewer agent type to audit the auth module
 
 Один рецензент имеет тенденцию сосредотачиваться на одном типе проблемы за раз. Разделение критериев проверки на независимые области означает, что безопасность, производительность и покрытие тестами получают тщательное внимание одновременно. Запрос назначает каждому товарищу по команде отдельный объектив, чтобы они не перекрывались:
 
-```text  theme={null}
+```text theme={null}
 Create an agent team to review PR #142. Spawn three reviewers:
 - One focused on security implications
 - One checking performance impact
@@ -288,7 +288,7 @@ Have them each review and report findings.
 
 Когда первопричина неясна, один агент имеет тенденцию находить одно правдоподобное объяснение и останавливаться. Запрос борется с этим, делая товарищей по команде явно враждебными: работа каждого — не только исследовать свою теорию, но и оспаривать теории других.
 
-```text  theme={null}
+```text theme={null}
 Users report the app exits after one message instead of staying connected.
 Spawn 5 agent teammates to investigate different hypotheses. Have them talk to
 each other to try to disprove each other's theories, like a scientific
@@ -305,7 +305,7 @@ debate. Update the findings doc with whatever consensus emerges.
 
 Товарищи по команде автоматически загружают контекст проекта, включая CLAUDE.md, MCP servers и skills, но они не наследуют историю разговора лидера. См. [Контекст и коммуникация](#context-and-communication) для деталей. Включите детали, специфичные для задачи, в запрос на порождение:
 
-```text  theme={null}
+```text theme={null}
 Spawn a security reviewer teammate with the prompt: "Review the authentication module
 at src/auth/ for security vulnerabilities. Focus on token handling, session
 management, and input validation. The app uses JWT tokens stored in
@@ -340,7 +340,7 @@ httpOnly cookies. Report any issues with severity ratings."
 
 Иногда лидер начинает реализовывать задачи сам вместо ожидания товарищей по команде. Если вы заметите это:
 
-```text  theme={null}
+```text theme={null}
 Wait for your teammates to complete their tasks before proceeding
 ```
 
@@ -365,7 +365,7 @@ Wait for your teammates to complete their tasks before proceeding
 * В режиме in-process товарищи по команде могут уже работать, но не видны. Нажмите Shift+Down для циклического переключения между активными товарищами по команде.
 * Проверьте, что задача, которую вы дали Claude, была достаточно сложной, чтобы оправдать команду. Claude решает, порождать ли товарищей по команде, на основе задачи.
 * Если вы явно запросили разделенные панели, убедитесь, что tmux установлен и доступен в вашем PATH:
-  ```bash  theme={null}
+  ```bash theme={null}
   which tmux
   ```
 * Для iTerm2 проверьте, что `it2` CLI установлен и Python API включен в предпочтениях iTerm2.
@@ -389,7 +389,7 @@ Wait for your teammates to complete their tasks before proceeding
 
 Если сеанс tmux сохраняется после завершения команды, он может не быть полностью очищен. Перечислите сеансы и убейте созданный командой:
 
-```bash  theme={null}
+```bash theme={null}
 tmux ls
 tmux kill-session -t <session-name>
 ```
