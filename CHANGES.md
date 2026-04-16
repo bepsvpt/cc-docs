@@ -1,5 +1,115 @@
 # Documentation Changes
 
+## 2026-04-16
+
+25 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Schnellstart** (`quickstart.md`): 57 lines added, 33 removed
+
+### English
+
+
+**Modified**
+
+- **Claude Code on Amazon Bedrock** (`amazon-bedrock.md`): 3 lines added, 1 removed
+- **Changelog** (`changelog.md`): 37 lines added, 1 removed
+- **Use Claude Code on the web** (`claude-code-on-the-web.md`): 10 lines added, 0 removed
+  - New section: "### Link artifacts back to the session"
+- **Code Review** (`code-review.md`): 61 lines added, 24 removed
+  - New section: "#### What you can tune"
+  - New section: "#### Example"
+  - New section: "# Review instructions"
+  - New section: "## What Important means here"
+  - New section: "## Cap the nits"
+- **Manage costs effectively** (`costs.md`): 1 lines added, 1 removed
+- **Environment variables** (`env-vars.md`): 3 lines added, 0 removed
+- **Claude Code on Google Vertex AI** (`google-vertex-ai.md`): 3 lines added, 1 removed
+- **JetBrains IDEs** (`jetbrains.md`): 1 lines added, 1 removed
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 3 lines added, 1 removed
+- **Claude Code overview** (`overview.md`): 641 lines added, 0 removed
+- **Quickstart** (`quickstart.md`): 62 lines added, 34 removed
+- **Claude Code settings** (`settings.md`): 2 lines added, 2 removed
+- **Customize your status line** (`statusline.md`): 2 lines added, 2 removed
+- **Enterprise deployment overview** (`third-party-integrations.md`): 3 lines added, 1 removed
+
+### Español
+
+
+**Modified**
+
+- **Inicio rápido** (`quickstart.md`): 57 lines added, 33 removed
+
+### Français
+
+
+**Modified**
+
+- **Démarrage rapide** (`quickstart.md`): 57 lines added, 33 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Panduan Cepat** (`quickstart.md`): 57 lines added, 33 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Guida rapida** (`quickstart.md`): 57 lines added, 33 removed
+
+### 日本語
+
+
+**Modified**
+
+- **クイックスタート** (`quickstart.md`): 57 lines added, 33 removed
+
+### 한국어
+
+
+**Modified**
+
+- **빠른 시작** (`quickstart.md`): 57 lines added, 33 removed
+
+### Português
+
+
+**Modified**
+
+- **Guia de Início Rápido** (`quickstart.md`): 57 lines added, 33 removed
+
+### Русский
+
+
+**Modified**
+
+- **Быстрый старт** (`quickstart.md`): 57 lines added, 33 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **快速开始** (`quickstart.md`): 57 lines added, 33 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **快速入門** (`quickstart.md`): 57 lines added, 33 removed
+
+---
+
 ## 2026-04-15
 
 583 pages modified
