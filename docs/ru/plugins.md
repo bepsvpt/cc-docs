@@ -74,12 +74,12 @@ Claude Code поддерживает два способа добавления 
 
     ```json my-first-plugin/.claude-plugin/plugin.json theme={null}
     {
-    "name": "my-first-plugin",
-    "description": "A greeting plugin to learn the basics",
-    "version": "1.0.0",
-    "author": {
-    "name": "Your Name"
-    }
+      "name": "my-first-plugin",
+      "description": "A greeting plugin to learn the basics",
+      "version": "1.0.0",
+      "author": {
+        "name": "Your Name"
+      }
     }
     ```
 
@@ -182,12 +182,14 @@ Claude Code поддерживает два способа добавления 
 | Директория        | Местоположение | Назначение                                                                                            |
 | :---------------- | :------------- | :---------------------------------------------------------------------------------------------------- |
 | `.claude-plugin/` | Корень plugin  | Содержит манифест `plugin.json` (опционально, если компоненты используют местоположения по умолчанию) |
-| `commands/`       | Корень plugin  | Skills как файлы Markdown                                                                             |
+| `skills/`         | Корень plugin  | Skills как директории `<name>/SKILL.md`                                                               |
+| `commands/`       | Корень plugin  | Skills как плоские файлы Markdown. Используйте `skills/` для новых plugins                            |
 | `agents/`         | Корень plugin  | Определения пользовательских agents                                                                   |
-| `skills/`         | Корень plugin  | Agent Skills с файлами `SKILL.md`                                                                     |
 | `hooks/`          | Корень plugin  | Обработчики событий в `hooks.json`                                                                    |
 | `.mcp.json`       | Корень plugin  | Конфигурации MCP server                                                                               |
 | `.lsp.json`       | Корень plugin  | Конфигурации LSP server для интеллекта кода                                                           |
+| `monitors/`       | Корень plugin  | Конфигурации фонового монитора в `monitors.json`                                                      |
+| `bin/`            | Корень plugin  | Исполняемые файлы, добавленные в `PATH` инструмента Bash во время включения plugin                    |
 | `settings.json`   | Корень plugin  | Параметры по умолчанию [settings](/ru/settings), применяемые при включении plugin                     |
 
 <Note>
@@ -213,11 +215,10 @@ my-plugin/
         └── SKILL.md
 ```
 
-Каждый `SKILL.md` нуждается в frontmatter с полями `name` и `description`, за которыми следуют инструкции:
+Каждый `SKILL.md` содержит YAML frontmatter и инструкции. Включите `description` чтобы Claude знал, когда использовать skill:
 
 ```yaml theme={null}
 ---
-name: code-review
 description: Reviews code for best practices and potential issues. Use when reviewing code, checking PRs, or analyzing code quality.
 ---
 
@@ -254,9 +255,27 @@ LSP (Language Server Protocol) plugins дают Claude интеллект код
 
 Для полных опций конфигурации LSP см. [LSP servers](/ru/plugins-reference#lsp-servers).
 
+### Добавьте фоновые мониторы в ваш plugin
+
+Фоновые мониторы позволяют вашему plugin отслеживать логи, файлы или внешний статус в фоне и уведомлять Claude по мере поступления событий. Claude Code автоматически запускает каждый монитор при активации plugin, поэтому вам не нужно инструктировать Claude запустить наблюдение.
+
+Добавьте файл `monitors/monitors.json` в корень plugin с массивом записей монитора:
+
+```json monitors/monitors.json theme={null}
+[
+  {
+    "name": "error-log",
+    "command": "tail -F ./logs/error.log",
+    "description": "Application error log"
+  }
+]
+```
+
+Каждая строка stdout из `command` доставляется Claude как уведомление во время сеанса. Для полной схемы, включая триггер `when` и подстановку переменных, см. [Monitors](/ru/plugins-reference#monitors).
+
 ### Поставляйте параметры по умолчанию с вашим plugin
 
-Plugins могут включать файл `settings.json` в корне plugin для применения конфигурации по умолчанию при включении plugin. В настоящее время поддерживается только ключ `agent`.
+Plugins могут включать файл `settings.json` в корне plugin для применения конфигурации по умолчанию при включении plugin. В настоящее время поддерживаются только ключи `agent` и `subagentStatusLine`.
 
 Установка `agent` активирует один из [пользовательских agents](/ru/sub-agents) plugin в качестве основного потока, применяя его системный prompt, ограничения инструментов и модель. Это позволяет plugin изменить поведение Claude Code по умолчанию при включении.
 
@@ -301,7 +320,7 @@ claude --plugin-dir ./my-plugin
 Если ваш plugin не работает как ожидается:
 
 1. **Проверьте структуру**: Убедитесь, что ваши директории находятся в корне plugin, а не внутри `.claude-plugin/`
-2. **Протестируйте компоненты отдельно**: Проверьте каждую команду, agent и hook отдельно
+2. **Протестируйте компоненты отдельно**: Проверьте каждый skill, agent и hook отдельно
 3. **Используйте инструменты валидации и отладки**: См. [Инструменты отладки и разработки](/ru/plugins-reference#debugging-and-development-tools) для команд CLI и методов troubleshooting
 
 ### Поделитесь вашими plugins
@@ -321,6 +340,8 @@ claude --plugin-dir ./my-plugin
 
 * **Claude.ai**: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
 * **Console**: [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
+
+Когда ваш plugin будет указан, вы сможете иметь собственный CLI, который подскажет пользователям Claude Code установить его. См. [Рекомендуйте ваш plugin из вашего CLI](/ru/plugin-hints).
 
 <Note>
   Для полных технических спецификаций, методов отладки и стратегий распространения см. [Справочник plugins](/ru/plugins-reference).

@@ -11,9 +11,9 @@
 На этой странице описывается установка приложения и начало вашего первого сеанса. Если вы уже настроены, см. [Использование Claude Code Desktop](/ru/desktop) для полного справочника.
 
 <Frame>
-  <img src="https://mintcdn.com/claude-code/CNLUpFGiXoc9mhvD/images/desktop-code-tab-light.png?fit=max&auto=format&n=CNLUpFGiXoc9mhvD&q=85&s=9a36a7a27b9f4c6f2e1c83bdb34f69ce" className="block dark:hidden" alt="Интерфейс Claude Code Desktop, показывающий выбранную вкладку Code с полем подсказки, селектором режима разрешений, установленным на Ask permissions, средством выбора модели, селектором папки и опцией Local environment" width="2500" height="1376" data-path="images/desktop-code-tab-light.png" />
+  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-light.png" className="block dark:hidden" alt="Интерфейс Claude Code Desktop, показывающий выбранную вкладку Code с полем подсказки, селектором режима разрешений, установленным на Ask permissions, средством выбора модели, селектором папки и опцией Local environment" />
 
-  <img src="https://mintcdn.com/claude-code/CNLUpFGiXoc9mhvD/images/desktop-code-tab-dark.png?fit=max&auto=format&n=CNLUpFGiXoc9mhvD&q=85&s=5463defe81c459fb9b1f91f6a958cfb8" className="hidden dark:block" alt="Интерфейс Claude Code Desktop в темном режиме, показывающий выбранную вкладку Code с полем подсказки, селектором режима разрешений, установленным на Ask permissions, средством выбора модели, селектором папки и опцией Local environment" width="2504" height="1374" data-path="images/desktop-code-tab-dark.png" />
+  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-dark.png" className="hidden dark:block" alt="Интерфейс Claude Code Desktop в темном режиме, показывающий выбранную вкладку Code с полем подсказки, селектором режима разрешений, установленным на Ask permissions, средством выбора модели, селектором папки и опцией Local environment" />
 </Frame>
 
 Настольное приложение имеет три вкладки:

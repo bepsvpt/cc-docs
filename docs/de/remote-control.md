@@ -36,7 +36,7 @@ Bevor Sie Remote Control verwenden, bestätigen Sie, dass Ihre Umgebung diese Be
 
 ## Starten Sie eine Remote Control-Sitzung
 
-Sie können einen dedizierten Remote Control-Server starten, eine interaktive Sitzung mit aktiviertem Remote Control starten oder eine bereits laufende Sitzung verbinden.
+Sie können eine Remote Control-Sitzung über die CLI oder die VS Code-Erweiterung starten. Die CLI bietet drei Aufrufmodi; VS Code verwendet den Befehl `/remote-control`.
 
 <Tabs>
   <Tab title="Server-Modus">
@@ -50,13 +50,14 @@ Sie können einen dedizierten Remote Control-Server starten, eine interaktive Si
 
     Verfügbare Flags:
 
-    | Flag                         | Beschreibung                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-    | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-    | `--name "My Project"`        | Legen Sie einen benutzerdefinierten Sitzungstitel fest, der in der Sitzungsliste unter claude.ai/code sichtbar ist.                                                                                                                                                                                                                                                                                                                                          |
-    | `--spawn <mode>`             | Wie gleichzeitige Sitzungen erstellt werden. Drücken Sie `w` zur Laufzeit zum Umschalten.<br />• `same-dir` (Standard): Alle Sitzungen teilen sich das aktuelle Arbeitsverzeichnis, sodass sie in Konflikt geraten können, wenn dieselben Dateien bearbeitet werden.<br />• `worktree`: Jede On-Demand-Sitzung erhält ihren eigenen [git worktree](/de/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees). Erfordert ein Git-Repository. |
-    | `--capacity <N>`             | Maximale Anzahl gleichzeitiger Sitzungen. Standard ist 32.                                                                                                                                                                                                                                                                                                                                                                                                   |
-    | `--verbose`                  | Zeigen Sie detaillierte Verbindungs- und Sitzungsprotokolle an.                                                                                                                                                                                                                                                                                                                                                                                              |
-    | `--sandbox` / `--no-sandbox` | Aktivieren oder deaktivieren Sie [sandboxing](/de/sandboxing) für Dateisystem- und Netzwerkisolation. Standardmäßig deaktiviert.                                                                                                                                                                                                                                                                                                                             |
+    | Flag                                            | Beschreibung                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+    | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | `--name "My Project"`                           | Legen Sie einen benutzerdefinierten Sitzungstitel fest, der in der Sitzungsliste unter claude.ai/code sichtbar ist.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+    | `--remote-control-session-name-prefix <prefix>` | Präfix für automatisch generierte Sitzungsnamen, wenn kein expliziter Name festgelegt ist. Standardmäßig der Hostname Ihres Computers, was Namen wie `myhost-graceful-unicorn` erzeugt. Setzen Sie `CLAUDE_REMOTE_CONTROL_SESSION_NAME_PREFIX` für denselben Effekt.                                                                                                                                                                                                                                                                                                                                                                   |
+    | `--spawn <mode>`                                | Wie der Server Sitzungen erstellt.<br />• `same-dir` (Standard): Alle Sitzungen teilen sich das aktuelle Arbeitsverzeichnis, sodass sie in Konflikt geraten können, wenn dieselben Dateien bearbeitet werden.<br />• `worktree`: Jede On-Demand-Sitzung erhält ihren eigenen [git worktree](/de/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees). Erfordert ein Git-Repository.<br />• `session`: Single-Session-Modus. Bedient genau eine Sitzung und lehnt zusätzliche Verbindungen ab. Wird nur beim Start festgelegt.<br />Drücken Sie `w` zur Laufzeit, um zwischen `same-dir` und `worktree` umzuschalten. |
+    | `--capacity <N>`                                | Maximale Anzahl gleichzeitiger Sitzungen. Standard ist 32. Kann nicht mit `--spawn=session` verwendet werden.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+    | `--verbose`                                     | Zeigen Sie detaillierte Verbindungs- und Sitzungsprotokolle an.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+    | `--sandbox` / `--no-sandbox`                    | Aktivieren oder deaktivieren Sie [sandboxing](/de/sandboxing) für Dateisystem- und Netzwerkisolation. Standardmäßig deaktiviert.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
   </Tab>
 
   <Tab title="Interaktive Sitzung">
@@ -90,13 +91,27 @@ Sie können einen dedizierten Remote Control-Server starten, eine interaktive Si
 
     Dies startet eine Remote Control-Sitzung, die Ihren aktuellen Gesprächsverlauf überträgt und eine Sitzungs-URL und einen QR-Code anzeigt, die Sie zum [Verbinden von einem anderen Gerät](#connect-from-another-device) verwenden können. Die Flags `--verbose`, `--sandbox` und `--no-sandbox` sind mit diesem Befehl nicht verfügbar.
   </Tab>
+
+  <Tab title="VS Code">
+    In der [Claude Code VS Code-Erweiterung](/de/vs-code) geben Sie `/remote-control` oder `/rc` in das Eingabefeld ein, oder öffnen Sie das Befehlsmenü mit `/` und wählen Sie es aus. Erfordert Claude Code v2.1.79 oder später.
+
+    ```text theme={null}
+    /remote-control
+    ```
+
+    Ein Banner wird über dem Eingabefeld angezeigt und zeigt den Verbindungsstatus. Nach der Verbindung klicken Sie auf **Im Browser öffnen** im Banner, um direkt zur Sitzung zu gehen, oder finden Sie sie in der Sitzungsliste unter [claude.ai/code](https://claude.ai/code). Die Sitzungs-URL wird auch im Gespräch gepostet.
+
+    Um die Verbindung zu trennen, klicken Sie auf das Schließsymbol im Banner oder führen Sie `/remote-control` erneut aus.
+
+    Im Gegensatz zur CLI akzeptiert der VS Code-Befehl kein Namensargument und zeigt keinen QR-Code an. Der Sitzungstitel wird aus Ihrem Gesprächsverlauf oder der ersten Eingabeaufforderung abgeleitet.
+  </Tab>
 </Tabs>
 
 ### Verbinden Sie sich von einem anderen Gerät
 
 Sobald eine Remote Control-Sitzung aktiv ist, haben Sie mehrere Möglichkeiten, sich von einem anderen Gerät aus zu verbinden:
 
-* **Öffnen Sie die Sitzungs-URL** in einem beliebigen Browser, um direkt zur Sitzung auf [claude.ai/code](https://claude.ai/code) zu gehen. Sowohl `claude remote-control` als auch `/remote-control` zeigen diese URL im Terminal an.
+* **Öffnen Sie die Sitzungs-URL** in einem beliebigen Browser, um direkt zur Sitzung auf [claude.ai/code](https://claude.ai/code) zu gehen.
 * **Scannen Sie den QR-Code**, der neben der Sitzungs-URL angezeigt wird, um ihn direkt in der Claude-App zu öffnen. Mit `claude remote-control` drücken Sie die Leertaste, um die QR-Code-Anzeige umzuschalten.
 * **Öffnen Sie [claude.ai/code](https://claude.ai/code) oder die Claude-App** und finden Sie die Sitzung nach Name in der Sitzungsliste. Remote Control-Sitzungen zeigen ein Computersymbol mit einem grünen Statusindikator an, wenn sie online sind.
 
@@ -105,7 +120,9 @@ Der Titel der Remote-Sitzung wird in dieser Reihenfolge gewählt:
 1. Der Name, den Sie an `--name`, `--remote-control` oder `/remote-control` übergeben haben
 2. Der Titel, den Sie mit `/rename` festgelegt haben
 3. Die letzte aussagekräftige Nachricht im vorhandenen Gesprächsverlauf
-4. Ihre erste Eingabeaufforderung, sobald Sie eine senden
+4. Ein automatisch generierter Name wie `myhost-graceful-unicorn`, wobei `myhost` der Hostname Ihres Computers oder das Präfix ist, das Sie mit `--remote-control-session-name-prefix` festgelegt haben
+
+Wenn Sie keinen expliziten Namen festgelegt haben, wird der Titel aktualisiert, um Ihre Eingabeaufforderung widerzuspiegeln, sobald Sie eine senden.
 
 Wenn die Umgebung bereits eine aktive Sitzung hat, werden Sie gefragt, ob Sie diese fortsetzen oder eine neue starten möchten.
 
@@ -115,7 +132,7 @@ Wenn Sie die Claude-App noch nicht haben, verwenden Sie den Befehl `/mobile` in 
 
 Standardmäßig wird Remote Control nur aktiviert, wenn Sie explizit `claude remote-control`, `claude --remote-control` oder `/remote-control` ausführen. Um es automatisch für jede interaktive Sitzung zu aktivieren, führen Sie `/config` in Claude Code aus und setzen Sie **Enable Remote Control for all sessions** auf `true`. Setzen Sie es auf `false` zurück, um es zu deaktivieren.
 
-Mit dieser Einstellung registriert jeder interaktive Claude Code-Prozess eine Remote-Sitzung. Wenn Sie mehrere Instanzen ausführen, erhält jede ihre eigene Umgebung und Sitzung. Um mehrere gleichzeitige Sitzungen aus einem einzelnen Prozess auszuführen, verwenden Sie stattdessen den Server-Modus mit `--spawn`.
+Mit dieser Einstellung registriert jeder interaktive Claude Code-Prozess eine Remote-Sitzung. Wenn Sie mehrere Instanzen ausführen, erhält jede ihre eigene Umgebung und Sitzung. Um mehrere gleichzeitige Sitzungen aus einem einzelnen Prozess auszuführen, verwenden Sie stattdessen den [Server-Modus](#start-a-remote-control-session).
 
 ## Verbindung und Sicherheit
 
@@ -129,15 +146,64 @@ Remote Control und [Claude Code im Web](/de/claude-code-on-the-web) verwenden be
 
 Verwenden Sie Remote Control, wenn Sie sich mitten in lokaler Arbeit befinden und von einem anderen Gerät aus weitermachen möchten. Verwenden Sie Claude Code im Web, wenn Sie eine Aufgabe ohne lokale Einrichtung starten möchten, an einem Repository arbeiten, das Sie nicht geklont haben, oder mehrere Aufgaben parallel ausführen möchten.
 
+## Mobile Push-Benachrichtigungen
+
+Wenn Remote Control aktiv ist, kann Claude Push-Benachrichtigungen an Ihr Telefon senden.
+
+Claude entscheidet, wann eine Push-Benachrichtigung gesendet wird. Sie wird normalerweise gesendet, wenn eine lange laufende Aufgabe abgeschlossen ist oder wenn Claude eine Entscheidung von Ihnen benötigt, um fortzufahren. Sie können auch eine Push-Benachrichtigung in Ihrer Eingabeaufforderung anfordern, zum Beispiel `notify me when the tests finish`. Über den Ein-/Aus-Schalter unten gibt es keine Pro-Event-Konfiguration.
+
+<Note>
+  Mobile Push-Benachrichtigungen erfordern Claude Code v2.1.110 oder später.
+</Note>
+
+So richten Sie Mobile Push-Benachrichtigungen ein:
+
+<Steps>
+  <Step title="Installieren Sie die Claude-Mobile-App">
+    Laden Sie die Claude-App für [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) oder [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude) herunter.
+  </Step>
+
+  <Step title="Melden Sie sich mit Ihrem Claude Code-Konto an">
+    Verwenden Sie dasselbe Konto und die gleiche Organisation, die Sie für Claude Code im Terminal verwenden.
+  </Step>
+
+  <Step title="Benachrichtigungen zulassen">
+    Akzeptieren Sie die Benachrichtigungsberechtigungsaufforderung des Betriebssystems.
+  </Step>
+
+  <Step title="Aktivieren Sie Push in Claude Code">
+    Führen Sie in Ihrem Terminal `/config` aus und aktivieren Sie **Push when Claude decides**.
+  </Step>
+</Steps>
+
+Wenn Benachrichtigungen nicht ankommen:
+
+* Wenn `/config` **No mobile registered** anzeigt, öffnen Sie die Claude-App auf Ihrem Telefon, damit sie ihr Push-Token aktualisieren kann. Die Warnung wird beim nächsten Verbinden von Remote Control gelöscht.
+* Auf iOS können Focus-Modi und Benachrichtigungszusammenfassungen Push-Benachrichtigungen unterdrücken oder verzögern. Überprüfen Sie Einstellungen → Benachrichtigungen → Claude.
+* Auf Android kann aggressive Batterieoptimierung die Zustellung verzögern. Befreien Sie die Claude-App von der Batterieoptimierung in den Systemeinstellungen.
+
 ## Einschränkungen
 
-* **Eine Remote-Sitzung pro interaktivem Prozess**: Außerhalb des Server-Modus unterstützt jede Claude Code-Instanz jeweils eine Remote-Sitzung. Verwenden Sie den Server-Modus mit `--spawn`, um mehrere gleichzeitige Sitzungen aus einem einzelnen Prozess auszuführen.
-* **Terminal muss offen bleiben**: Remote Control wird als lokaler Prozess ausgeführt. Wenn Sie das Terminal schließen oder den `claude`-Prozess beenden, endet die Sitzung. Führen Sie `claude remote-control` erneut aus, um eine neue zu starten.
+* **Eine Remote-Sitzung pro interaktivem Prozess**: Außerhalb des Server-Modus unterstützt jede Claude Code-Instanz jeweils eine Remote-Sitzung. Verwenden Sie den [Server-Modus](#start-a-remote-control-session), um mehrere gleichzeitige Sitzungen aus einem einzelnen Prozess auszuführen.
+* **Lokaler Prozess muss weiterhin ausgeführt werden**: Remote Control wird als lokaler Prozess ausgeführt. Wenn Sie das Terminal schließen, VS Code beenden oder den `claude`-Prozess anderweitig beenden, endet die Sitzung.
 * **Längerer Netzwerkausfall**: Wenn Ihr Computer aktiv ist, aber länger als etwa 10 Minuten das Netzwerk nicht erreichen kann, läuft die Sitzung ab und der Prozess wird beendet. Führen Sie `claude remote-control` erneut aus, um eine neue Sitzung zu starten.
+* **Ultraplan trennt Remote Control**: Das Starten einer [ultraplan](/de/ultraplan)-Sitzung trennt jede aktive Remote Control-Sitzung, da beide Funktionen die Schnittstelle claude.ai/code belegen und nur eine gleichzeitig verbunden sein kann.
 
 ## Fehlerbehebung
 
-### 'Remote Control ist für Ihr Konto noch nicht aktiviert"
+### „Remote Control erfordert ein claude.ai-Abonnement"
+
+Sie sind nicht mit einem claude.ai-Konto authentifiziert. Führen Sie `claude auth login` aus und wählen Sie die claude.ai-Option. Wenn `ANTHROPIC_API_KEY` in Ihrer Umgebung festgelegt ist, heben Sie die Festlegung zuerst auf.
+
+### „Remote Control erfordert ein Token mit vollständigem Umfang"
+
+Sie sind mit einem langlebigen Token von `claude setup-token` oder der Umgebungsvariable `CLAUDE_CODE_OAUTH_TOKEN` authentifiziert. Diese Token sind auf Inferenz-only beschränkt und können keine Remote Control-Sitzungen einrichten. Führen Sie `claude auth login` aus, um sich stattdessen mit einem Token mit vollständigem Umfang zu authentifizieren.
+
+### „Ihre Organisation für die Remote Control-Berechtigung konnte nicht bestimmt werden"
+
+Ihre zwischengespeicherten Kontoinformationen sind veraltet oder unvollständig. Führen Sie `claude auth login` aus, um sie zu aktualisieren.
+
+### „Remote Control ist für Ihr Konto noch nicht aktiviert"
 
 Die Berechtigungsprüfung kann mit bestimmten Umgebungsvariablen fehlschlagen:
 
@@ -183,7 +249,8 @@ Claude Code offers several ways to work when you're not at your terminal. They d
 ## Verwandte Ressourcen
 
 * [Claude Code im Web](/de/claude-code-on-the-web): Führen Sie Sitzungen in von Anthropic verwalteten Cloud-Umgebungen aus, anstatt auf Ihrem Computer
-* [Kanäle](/de/channels): Leiten Sie Telegram oder Discord in eine Sitzung weiter, damit Claude auf Nachrichten reagiert, während Sie weg sind
+* [Ultraplan](/de/ultraplan): Starten Sie eine Cloud-Planungssitzung von Ihrem Terminal aus und überprüfen Sie den Plan in Ihrem Browser
+* [Kanäle](/de/channels): Leiten Sie Telegram, Discord oder iMessage in eine Sitzung weiter, damit Claude auf Nachrichten reagiert, während Sie weg sind
 * [Dispatch](/de/desktop#sessions-from-dispatch): Senden Sie eine Aufgabe von Ihrem Telefon aus, und sie kann eine Desktop-Sitzung spawnen, um sie zu bearbeiten
 * [Authentifizierung](/de/authentication): Richten Sie `/login` ein und verwalten Sie Anmeldeinformationen für claude.ai
 * [CLI-Referenz](/de/cli-reference): Vollständige Liste von Flags und Befehlen einschließlich `claude remote-control`

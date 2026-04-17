@@ -11,9 +11,9 @@ O aplicativo de desktop oferece Claude Code com uma interface gráfica: revisão
 Esta página orienta você na instalação do aplicativo e no início de sua primeira sessão. Se você já está configurado, consulte [Usar Claude Code Desktop](/pt/desktop) para a referência completa.
 
 <Frame>
-  <img src="https://mintcdn.com/claude-code/CNLUpFGiXoc9mhvD/images/desktop-code-tab-light.png?fit=max&auto=format&n=CNLUpFGiXoc9mhvD&q=85&s=9a36a7a27b9f4c6f2e1c83bdb34f69ce" className="block dark:hidden" alt="A interface do Claude Code Desktop mostrando a aba Code selecionada, com uma caixa de prompt, seletor de modo de permissão definido como Ask permissions, seletor de modelo, seletor de pasta e opção de ambiente local" width="2500" height="1376" data-path="images/desktop-code-tab-light.png" />
+  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-light.png" className="block dark:hidden" alt="A interface do Claude Code Desktop mostrando a aba Code selecionada, com uma caixa de prompt, seletor de modo de permissão definido como Ask permissions, seletor de modelo, seletor de pasta e opção de ambiente local" />
 
-  <img src="https://mintcdn.com/claude-code/CNLUpFGiXoc9mhvD/images/desktop-code-tab-dark.png?fit=max&auto=format&n=CNLUpFGiXoc9mhvD&q=85&s=5463defe81c459fb9b1f91f6a958cfb8" className="hidden dark:block" alt="A interface do Claude Code Desktop no modo escuro mostrando a aba Code selecionada, com uma caixa de prompt, seletor de modo de permissão definido como Ask permissions, seletor de modelo, seletor de pasta e opção de ambiente local" width="2504" height="1374" data-path="images/desktop-code-tab-dark.png" />
+  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-dark.png" className="hidden dark:block" alt="A interface do Claude Code Desktop no modo escuro mostrando a aba Code selecionada, com uma caixa de prompt, seletor de modo de permissão definido como Ask permissions, seletor de modelo, seletor de pasta e opção de ambiente local" />
 </Frame>
 
 O aplicativo de desktop tem três abas:

@@ -18,9 +18,9 @@ Claude Code s'exécute sur les plateformes et configurations suivantes :
   * Ubuntu 20.04+
   * Debian 10+
   * Alpine Linux 3.19+
-* **Matériel** : 4 Go+ de RAM
+* **Matériel** : 4 Go+ de RAM, processeur x64 ou ARM64
 * **Réseau** : connexion Internet requise. Consultez la [configuration réseau](/fr/network-config#network-access-requirements).
-* **Shell** : Bash, Zsh, PowerShell ou CMD. Sur Windows, [Git for Windows](https://git-scm.com/downloads/win) est requis.
+* **Shell** : Bash, Zsh, PowerShell ou CMD. Les configurations Windows natives nécessitent [Git for Windows](https://git-scm.com/downloads/win). Les configurations WSL ne le nécessitent pas.
 * **Localisation** : [pays supportés par Anthropic](https://www.anthropic.com/supported-countries)
 
 ### Dépendances supplémentaires
@@ -99,13 +99,21 @@ Si vous rencontrez des problèmes lors de l'installation, consultez le [guide de
 
 ### Configuration sur Windows
 
-Claude Code sur Windows nécessite [Git for Windows](https://git-scm.com/downloads/win) ou WSL. Vous pouvez lancer `claude` à partir de PowerShell, CMD ou Git Bash. Claude Code utilise Git Bash en interne pour exécuter les commandes. Vous n'avez pas besoin d'exécuter PowerShell en tant qu'administrateur.
+Vous pouvez exécuter Claude Code nativement sur Windows ou à l'intérieur de WSL. Choisissez en fonction de l'endroit où vos projets sont situés et des fonctionnalités dont vous avez besoin :
+
+| Option        | Nécessite                                            | [Sandboxing](/fr/sandboxing) | Quand l'utiliser                                            |
+| ------------- | ---------------------------------------------------- | ---------------------------- | ----------------------------------------------------------- |
+| Windows natif | [Git for Windows](https://git-scm.com/downloads/win) | Non supporté                 | Projets et outils Windows natifs                            |
+| WSL 2         | WSL 2 activé                                         | Supporté                     | Chaînes d'outils Linux ou exécution de commandes en sandbox |
+| WSL 1         | WSL 1 activé                                         | Non supporté                 | Si WSL 2 n'est pas disponible                               |
 
 **Option 1 : Windows natif avec Git Bash**
 
-Installez [Git for Windows](https://git-scm.com/downloads/win), puis exécutez la commande d'installation à partir de PowerShell ou CMD.
+Installez [Git for Windows](https://git-scm.com/downloads/win), puis exécutez la commande d'installation à partir de PowerShell ou CMD. Vous n'avez pas besoin d'exécuter en tant qu'administrateur.
 
-Si Claude Code ne trouve pas votre installation de Git Bash, définissez le chemin dans votre [fichier settings.json](/fr/settings) :
+Que vous installiez à partir de PowerShell ou CMD affecte uniquement la commande d'installation que vous exécutez. Votre invite affiche `PS C:\Users\VotreNom>` dans PowerShell et `C:\Users\VotreNom>` sans le `PS` dans CMD. Si vous êtes nouveau sur le terminal, le [guide du terminal](/fr/terminal-guide#windows) vous guide à travers chaque étape.
+
+Après l'installation, lancez `claude` à partir de PowerShell, CMD ou Git Bash. Claude Code utilise Git Bash en interne pour exécuter les commandes quel que soit l'endroit d'où vous l'avez lancé. Si Claude Code ne trouve pas votre installation de Git Bash, définissez le chemin dans votre [fichier settings.json](/fr/settings) :
 
 ```json theme={null}
 {
@@ -119,7 +127,7 @@ Claude Code peut également exécuter PowerShell nativement sur Windows en tant 
 
 **Option 2 : WSL**
 
-WSL 1 et WSL 2 sont tous deux supportés. WSL 2 supporte le [sandboxing](/fr/sandboxing) pour une sécurité renforcée. WSL 1 ne supporte pas le sandboxing.
+Ouvrez votre distribution WSL et exécutez le programme d'installation Linux à partir des [instructions d'installation](#install-claude-code) ci-dessus. Vous installez et lancez `claude` à l'intérieur du terminal WSL, pas à partir de PowerShell ou CMD.
 
 ### Alpine Linux et distributions basées sur musl
 
@@ -170,11 +178,11 @@ Les installations natives se mettent à jour automatiquement en arrière-plan. V
 Claude Code vérifie les mises à jour au démarrage et périodiquement pendant l'exécution. Les mises à jour se téléchargent et s'installent en arrière-plan, puis prennent effet la prochaine fois que vous démarrez Claude Code.
 
 <Note>
-  Les installations Homebrew et WinGet ne se mettent pas à jour automatiquement. Utilisez `brew upgrade claude-code` ou `winget upgrade Anthropic.ClaudeCode` pour mettre à jour manuellement.
+  Les installations Homebrew et WinGet ne se mettent pas à jour automatiquement. Pour Homebrew, exécutez `brew upgrade claude-code` ou `brew upgrade claude-code@latest`, selon le cask que vous avez installé. Pour WinGet, exécutez `winget upgrade Anthropic.ClaudeCode`.
 
   **Problème connu :** Claude Code peut vous notifier des mises à jour avant que la nouvelle version soit disponible dans ces gestionnaires de paquets. Si une mise à niveau échoue, attendez et réessayez plus tard.
 
-  Homebrew conserve les anciennes versions sur le disque après les mises à niveau. Exécutez `brew cleanup claude-code` périodiquement pour récupérer de l'espace disque.
+  Homebrew conserve les anciennes versions sur le disque après les mises à niveau. Exécutez `brew cleanup` périodiquement pour récupérer de l'espace disque.
 </Note>
 
 ### Configurer le canal de version
@@ -193,6 +201,8 @@ Configurez ceci via `/config` → **Canal de mise à jour automatique**, ou ajou
 ```
 
 Pour les déploiements d'entreprise, vous pouvez appliquer un canal de version cohérent dans votre organisation à l'aide des [paramètres gérés](/fr/permissions#managed-settings).
+
+Les installations Homebrew choisissent un canal par nom de cask au lieu de ce paramètre : `claude-code` suit stable et `claude-code@latest` suit latest.
 
 ### Désactiver les mises à jour automatiques
 
@@ -433,10 +443,16 @@ Supprimez le binaire Claude Code et les fichiers de version :
 
 ### Installation Homebrew
 
-Supprimez le cask Homebrew :
+Supprimez le cask Homebrew que vous avez installé. Si vous avez installé le cask stable :
 
 ```bash theme={null}
 brew uninstall --cask claude-code
+```
+
+Si vous avez installé le cask latest :
+
+```bash theme={null}
+brew uninstall --cask claude-code@latest
 ```
 
 ### Installation WinGet
@@ -460,6 +476,8 @@ npm uninstall -g @anthropic-ai/claude-code
 <Warning>
   La suppression des fichiers de configuration supprimera tous vos paramètres, outils autorisés, configurations de serveur MCP et historique de session.
 </Warning>
+
+L'extension VS Code, le plugin JetBrains et l'application de bureau écrivent également dans `~/.claude/`. Si l'un d'eux est toujours installé, le répertoire est recréé la prochaine fois qu'il s'exécute. Pour supprimer Claude Code complètement, désinstallez l'[extension VS Code](/fr/vs-code#uninstall-the-extension), le plugin JetBrains et l'application de bureau avant de supprimer ces fichiers.
 
 Pour supprimer les paramètres et données en cache de Claude Code :
 

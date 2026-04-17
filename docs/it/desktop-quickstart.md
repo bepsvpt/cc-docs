@@ -11,9 +11,9 @@ L'app desktop ti offre Claude Code con un'interfaccia grafica: revisione visiva 
 Questa pagina illustra l'installazione dell'app e l'avvio della tua prima sessione. Se sei già configurato, consulta [Usa Claude Code Desktop](/it/desktop) per il riferimento completo.
 
 <Frame>
-  <img src="https://mintcdn.com/claude-code/CNLUpFGiXoc9mhvD/images/desktop-code-tab-light.png?fit=max&auto=format&n=CNLUpFGiXoc9mhvD&q=85&s=9a36a7a27b9f4c6f2e1c83bdb34f69ce" className="block dark:hidden" alt="L'interfaccia di Claude Code Desktop che mostra la scheda Code selezionata, con una casella di prompt, il selettore della modalità di autorizzazione impostato su Chiedi autorizzazioni, il selettore del modello, il selettore della cartella e l'opzione Ambiente locale" width="2500" height="1376" data-path="images/desktop-code-tab-light.png" />
+  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-light.png" className="block dark:hidden" alt="L'interfaccia di Claude Code Desktop che mostra la scheda Code selezionata, con una casella di prompt, il selettore della modalità di autorizzazione impostato su Chiedi autorizzazioni, il selettore del modello, il selettore della cartella e l'opzione Ambiente locale" />
 
-  <img src="https://mintcdn.com/claude-code/CNLUpFGiXoc9mhvD/images/desktop-code-tab-dark.png?fit=max&auto=format&n=CNLUpFGiXoc9mhvD&q=85&s=5463defe81c459fb9b1f91f6a958cfb8" className="hidden dark:block" alt="L'interfaccia di Claude Code Desktop in modalità scura che mostra la scheda Code selezionata, con una casella di prompt, il selettore della modalità di autorizzazione impostato su Chiedi autorizzazioni, il selettore del modello, il selettore della cartella e l'opzione Ambiente locale" width="2504" height="1374" data-path="images/desktop-code-tab-dark.png" />
+  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-dark.png" className="hidden dark:block" alt="L'interfaccia di Claude Code Desktop in modalità scura che mostra la scheda Code selezionata, con una casella di prompt, il selettore della modalità di autorizzazione impostato su Chiedi autorizzazioni, il selettore del modello, il selettore della cartella e l'opzione Ambiente locale" />
 </Frame>
 
 L'app desktop ha tre schede:

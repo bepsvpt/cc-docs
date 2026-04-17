@@ -11,9 +11,9 @@ Die Desktop-App bietet Ihnen Claude Code mit einer grafischen Benutzeroberfläch
 Diese Seite führt Sie durch die Installation der App und den Start Ihrer ersten Sitzung. Wenn Sie bereits eingerichtet sind, siehe [Claude Code Desktop verwenden](/de/desktop) für die vollständige Referenz.
 
 <Frame>
-  <img src="https://mintcdn.com/claude-code/CNLUpFGiXoc9mhvD/images/desktop-code-tab-light.png?fit=max&auto=format&n=CNLUpFGiXoc9mhvD&q=85&s=9a36a7a27b9f4c6f2e1c83bdb34f69ce" className="block dark:hidden" alt="Die Claude Code Desktop-Oberfläche mit der ausgewählten Registerkarte Code, mit einem Eingabefeld, einem Berechtigungsmodus-Selektor auf Berechtigungen erfragen, einem Modellwähler, einem Ordnerwähler und der Option Lokale Umgebung" width="2500" height="1376" data-path="images/desktop-code-tab-light.png" />
+  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-light.png" className="block dark:hidden" alt="Die Claude Code Desktop-Oberfläche mit der ausgewählten Registerkarte Code, mit einem Eingabefeld, einem Berechtigungsmodus-Selektor auf Berechtigungen erfragen, einem Modellwähler, einem Ordnerwähler und der Option Lokale Umgebung" />
 
-  <img src="https://mintcdn.com/claude-code/CNLUpFGiXoc9mhvD/images/desktop-code-tab-dark.png?fit=max&auto=format&n=CNLUpFGiXoc9mhvD&q=85&s=5463defe81c459fb9b1f91f6a958cfb8" className="hidden dark:block" alt="Die Claude Code Desktop-Oberfläche im dunklen Modus mit der ausgewählten Registerkarte Code, mit einem Eingabefeld, einem Berechtigungsmodus-Selektor auf Berechtigungen erfragen, einem Modellwähler, einem Ordnerwähler und der Option Lokale Umgebung" width="2504" height="1374" data-path="images/desktop-code-tab-dark.png" />
+  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-dark.png" className="hidden dark:block" alt="Die Claude Code Desktop-Oberfläche im dunklen Modus mit der ausgewählten Registerkarte Code, mit einem Eingabefeld, einem Berechtigungsmodus-Selektor auf Berechtigungen erfragen, einem Modellwähler, einem Ordnerwähler und der Option Lokale Umgebung" />
 </Frame>
 
 Die Desktop-App hat drei Registerkarten:

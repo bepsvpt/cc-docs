@@ -36,7 +36,7 @@ Sebelum menggunakan Remote Control, konfirmasi bahwa lingkungan Anda memenuhi ko
 
 ## Mulai sesi Remote Control
 
-Anda dapat memulai server Remote Control khusus, memulai sesi interaktif dengan Remote Control diaktifkan, atau menghubungkan sesi yang sudah berjalan.
+Anda dapat memulai sesi Remote Control dari CLI atau ekstensi VS Code. CLI menawarkan tiga mode invokasi; VS Code menggunakan perintah `/remote-control`.
 
 <Tabs>
   <Tab title="Mode server">
@@ -50,13 +50,14 @@ Anda dapat memulai server Remote Control khusus, memulai sesi interaktif dengan 
 
     Bendera yang tersedia:
 
-    | Bendera                      | Deskripsi                                                                                                                                                                                                                                                                                                                                                                                                      |
-    | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | `--name "My Project"`        | Tetapkan judul sesi khusus yang terlihat dalam daftar sesi di claude.ai/code.                                                                                                                                                                                                                                                                                                                                  |
-    | `--spawn <mode>`             | Bagaimana sesi bersamaan dibuat. Tekan `w` saat runtime untuk beralih.<br />• `same-dir` (default): semua sesi berbagi direktori kerja saat ini, sehingga dapat bertentangan jika mengedit file yang sama.<br />• `worktree`: setiap sesi sesuai permintaan mendapatkan [git worktree](/id/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) miliknya sendiri. Memerlukan repositori git. |
-    | `--capacity <N>`             | Jumlah maksimum sesi bersamaan. Default adalah 32.                                                                                                                                                                                                                                                                                                                                                             |
-    | `--verbose`                  | Tampilkan log koneksi dan sesi terperinci.                                                                                                                                                                                                                                                                                                                                                                     |
-    | `--sandbox` / `--no-sandbox` | Aktifkan atau nonaktifkan [sandboxing](/id/sandboxing) untuk isolasi sistem file dan jaringan. Dimatikan secara default.                                                                                                                                                                                                                                                                                       |
+    | Bendera                                         | Deskripsi                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+    | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | `--name "My Project"`                           | Tetapkan judul sesi khusus yang terlihat dalam daftar sesi di claude.ai/code.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+    | `--remote-control-session-name-prefix <prefix>` | Awalan untuk nama sesi yang dibuat secara otomatis ketika tidak ada nama eksplisit yang ditetapkan. Default adalah nama mesin Anda, menghasilkan nama seperti `myhost-graceful-unicorn`. Atur `CLAUDE_REMOTE_CONTROL_SESSION_NAME_PREFIX` untuk efek yang sama.                                                                                                                                                                                                                                                                                                        |
+    | `--spawn <mode>`                                | Bagaimana server membuat sesi.<br />• `same-dir` (default): semua sesi berbagi direktori kerja saat ini, sehingga dapat bertentangan jika mengedit file yang sama.<br />• `worktree`: setiap sesi sesuai permintaan mendapatkan [git worktree](/id/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) miliknya sendiri. Memerlukan repositori git.<br />• `session`: mode sesi tunggal. Melayani tepat satu sesi dan menolak koneksi tambahan. Atur saat startup saja.<br />Tekan `w` saat runtime untuk beralih antara `same-dir` dan `worktree`. |
+    | `--capacity <N>`                                | Jumlah maksimum sesi bersamaan. Default adalah 32. Tidak dapat digunakan dengan `--spawn=session`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+    | `--verbose`                                     | Tampilkan log koneksi dan sesi terperinci.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+    | `--sandbox` / `--no-sandbox`                    | Aktifkan atau nonaktifkan [sandboxing](/id/sandboxing) untuk isolasi sistem file dan jaringan. Dimatikan secara default.                                                                                                                                                                                                                                                                                                                                                                                                                                               |
   </Tab>
 
   <Tab title="Sesi interaktif">
@@ -90,13 +91,27 @@ Anda dapat memulai server Remote Control khusus, memulai sesi interaktif dengan 
 
     Ini memulai sesi Remote Control yang membawa riwayat percakapan saat ini dan menampilkan URL sesi dan kode QR yang dapat Anda gunakan untuk [terhubung dari perangkat lain](#connect-from-another-device). Bendera `--verbose`, `--sandbox`, dan `--no-sandbox` tidak tersedia dengan perintah ini.
   </Tab>
+
+  <Tab title="VS Code">
+    Di [ekstensi VS Code Claude Code](/id/vs-code), ketik `/remote-control` atau `/rc` di kotak prompt, atau buka menu perintah dengan `/` dan pilihnya. Memerlukan Claude Code v2.1.79 atau lebih baru.
+
+    ```text theme={null}
+    /remote-control
+    ```
+
+    Spanduk muncul di atas kotak prompt yang menunjukkan status koneksi. Setelah terhubung, klik **Open in browser** di spanduk untuk langsung ke sesi, atau temukan di daftar sesi di [claude.ai/code](https://claude.ai/code). URL sesi juga diposting dalam percakapan.
+
+    Untuk memutuskan sambungan, klik ikon tutup di spanduk atau jalankan `/remote-control` lagi.
+
+    Tidak seperti CLI, perintah VS Code tidak menerima argumen nama atau menampilkan kode QR. Judul sesi berasal dari riwayat percakapan Anda atau prompt pertama.
+  </Tab>
 </Tabs>
 
 ### Terhubung dari perangkat lain
 
 Setelah sesi Remote Control aktif, Anda memiliki beberapa cara untuk terhubung dari perangkat lain:
 
-* **Buka URL sesi** di browser apa pun untuk langsung ke sesi di [claude.ai/code](https://claude.ai/code). Baik `claude remote-control` maupun `/remote-control` menampilkan URL ini di terminal.
+* **Buka URL sesi** di browser apa pun untuk langsung ke sesi di [claude.ai/code](https://claude.ai/code).
 * **Pindai kode QR** yang ditampilkan bersama URL sesi untuk membukanya langsung di aplikasi Claude. Dengan `claude remote-control`, tekan spacebar untuk beralih tampilan kode QR.
 * **Buka [claude.ai/code](https://claude.ai/code) atau aplikasi Claude** dan temukan sesi berdasarkan nama dalam daftar sesi. Sesi Remote Control menampilkan ikon komputer dengan titik status hijau saat online.
 
@@ -105,7 +120,9 @@ Judul sesi jarak jauh dipilih dalam urutan ini:
 1. Nama yang Anda berikan ke `--name`, `--remote-control`, atau `/remote-control`
 2. Judul yang Anda tetapkan dengan `/rename`
 3. Pesan bermakna terakhir dalam riwayat percakapan yang ada
-4. Prompt pertama Anda setelah Anda mengirimnya
+4. Nama yang dibuat secara otomatis seperti `myhost-graceful-unicorn`, di mana `myhost` adalah nama mesin Anda atau awalan yang Anda tetapkan dengan `--remote-control-session-name-prefix`
+
+Jika Anda tidak menetapkan nama eksplisit, judul akan diperbarui untuk mencerminkan prompt Anda setelah Anda mengirimnya.
 
 Jika lingkungan sudah memiliki sesi aktif, Anda akan ditanya apakah akan melanjutkannya atau memulai yang baru.
 
@@ -115,7 +132,7 @@ Jika Anda belum memiliki aplikasi Claude, gunakan perintah `/mobile` di dalam Cl
 
 Secara default, Remote Control hanya diaktifkan ketika Anda secara eksplisit menjalankan `claude remote-control`, `claude --remote-control`, atau `/remote-control`. Untuk mengaktifkannya secara otomatis untuk setiap sesi interaktif, jalankan `/config` di dalam Claude Code dan atur **Enable Remote Control for all sessions** ke `true`. Atur kembali ke `false` untuk menonaktifkan.
 
-Dengan pengaturan ini aktif, setiap proses Claude Code interaktif mendaftarkan satu sesi jarak jauh. Jika Anda menjalankan beberapa instance, masing-masing mendapatkan lingkungan dan sesi sendiri. Untuk menjalankan beberapa sesi bersamaan dari satu proses, gunakan mode server dengan `--spawn` sebagai gantinya.
+Dengan pengaturan ini aktif, setiap proses Claude Code interaktif mendaftarkan satu sesi jarak jauh. Jika Anda menjalankan beberapa instance, masing-masing mendapatkan lingkungan dan sesi sendiri. Untuk menjalankan beberapa sesi bersamaan dari satu proses, gunakan [mode server](#start-a-remote-control-session) sebagai gantinya.
 
 ## Koneksi dan keamanan
 
@@ -129,13 +146,62 @@ Remote Control dan [Claude Code di web](/id/claude-code-on-the-web) keduanya men
 
 Gunakan Remote Control ketika Anda sedang dalam pekerjaan lokal dan ingin terus melanjutkan dari perangkat lain. Gunakan Claude Code di web ketika Anda ingin memulai tugas tanpa pengaturan lokal apa pun, bekerja pada repo yang tidak Anda miliki klonnya, atau menjalankan beberapa tugas secara paralel.
 
+## Notifikasi push mobile
+
+Ketika Remote Control aktif, Claude dapat mengirim notifikasi push ke ponsel Anda.
+
+Claude memutuskan kapan harus push. Biasanya mengirim satu ketika tugas yang berjalan lama selesai atau ketika memerlukan keputusan dari Anda untuk melanjutkan. Anda juga dapat meminta push dalam prompt Anda, misalnya `notify me when the tests finish`. Selain toggle on/off di bawah, tidak ada konfigurasi per-event.
+
+<Note>
+  Notifikasi push mobile memerlukan Claude Code v2.1.110 atau lebih baru.
+</Note>
+
+Untuk menyiapkan notifikasi push mobile:
+
+<Steps>
+  <Step title="Instal aplikasi Claude mobile">
+    Unduh aplikasi Claude untuk [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) atau [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude).
+  </Step>
+
+  <Step title="Masuk dengan akun Claude Code Anda">
+    Gunakan akun dan organisasi yang sama yang Anda gunakan untuk Claude Code di terminal.
+  </Step>
+
+  <Step title="Izinkan notifikasi">
+    Terima prompt izin notifikasi dari sistem operasi.
+  </Step>
+
+  <Step title="Aktifkan push di Claude Code">
+    Di terminal Anda, jalankan `/config` dan aktifkan **Push when Claude decides**.
+  </Step>
+</Steps>
+
+Jika notifikasi tidak tiba:
+
+* Jika `/config` menunjukkan **No mobile registered**, buka aplikasi Claude di ponsel Anda sehingga dapat menyegarkan token push-nya. Peringatan hilang saat Remote Control terhubung berikutnya.
+* Di iOS, Focus modes dan notification summaries dapat menekan atau menunda push. Periksa Settings → Notifications → Claude.
+* Di Android, optimasi baterai yang agresif dapat menunda pengiriman. Kecualikan aplikasi Claude dari optimasi baterai di pengaturan sistem.
+
 ## Keterbatasan
 
-* **Satu sesi jarak jauh per proses interaktif**: di luar mode server, setiap instance Claude Code mendukung satu sesi jarak jauh pada satu waktu. Gunakan mode server dengan `--spawn` untuk menjalankan beberapa sesi bersamaan dari satu proses.
-* **Terminal harus tetap terbuka**: Remote Control berjalan sebagai proses lokal. Jika Anda menutup terminal atau menghentikan proses `claude`, sesi berakhir. Jalankan `claude remote-control` lagi untuk memulai yang baru.
+* **Satu sesi jarak jauh per proses interaktif**: di luar mode server, setiap instance Claude Code mendukung satu sesi jarak jauh pada satu waktu. Gunakan [mode server](#start-a-remote-control-session) untuk menjalankan beberapa sesi bersamaan dari satu proses.
+* **Proses lokal harus tetap berjalan**: Remote Control berjalan sebagai proses lokal. Jika Anda menutup terminal, keluar dari VS Code, atau menghentikan proses `claude`, sesi berakhir.
 * **Pemadaman jaringan yang diperpanjang**: jika mesin Anda aktif tetapi tidak dapat menjangkau jaringan selama lebih dari kira-kira 10 menit, sesi habis waktu dan proses keluar. Jalankan `claude remote-control` lagi untuk memulai sesi baru.
+* **Ultraplan memutuskan Remote Control**: memulai sesi [ultraplan](/id/ultraplan) memutuskan sesi Remote Control aktif apa pun karena kedua fitur menempati antarmuka claude.ai/code dan hanya satu yang dapat terhubung pada satu waktu.
 
 ## Pemecahan masalah
+
+### "Remote Control memerlukan langganan claude.ai"
+
+Anda tidak diautentikasi dengan akun claude.ai. Jalankan `claude auth login` dan pilih opsi claude.ai. Jika `ANTHROPIC_API_KEY` diatur di lingkungan Anda, batalkan pengaturannya terlebih dahulu.
+
+### "Remote Control memerlukan token login dengan cakupan penuh"
+
+Anda diautentikasi dengan token berumur panjang dari `claude setup-token` atau variabel lingkungan `CLAUDE_CODE_OAUTH_TOKEN`. Token ini terbatas pada inference-only dan tidak dapat membuat sesi Remote Control. Jalankan `claude auth login` untuk autentikasi dengan token sesi cakupan penuh sebagai gantinya.
+
+### "Tidak dapat menentukan organisasi Anda untuk kelayakan Remote Control"
+
+Informasi akun cache Anda sudah usang atau tidak lengkap. Jalankan `claude auth login` untuk menyegarkannya.
 
 ### "Remote Control belum diaktifkan untuk akun Anda"
 
@@ -183,7 +249,8 @@ Claude Code offers several ways to work when you're not at your terminal. They d
 ## Sumber daya terkait
 
 * [Claude Code di web](/id/claude-code-on-the-web): jalankan sesi di lingkungan cloud yang dikelola Anthropic alih-alih di mesin Anda
-* [Channels](/id/channels): teruskan Telegram atau Discord ke sesi sehingga Claude bereaksi terhadap pesan saat Anda pergi
+* [Ultraplan](/id/ultraplan): luncurkan sesi perencanaan cloud dari terminal Anda dan tinjau rencana di browser Anda
+* [Channels](/id/channels): teruskan Telegram, Discord, atau iMessage ke sesi sehingga Claude bereaksi terhadap pesan saat Anda pergi
 * [Dispatch](/id/desktop#sessions-from-dispatch): kirim pesan tugas dari ponsel Anda dan dapat menjalankan sesi Desktop untuk menanganinya
 * [Autentikasi](/id/authentication): atur `/login` dan kelola kredensial untuk claude.ai
 * [Referensi CLI](/id/cli-reference): daftar lengkap bendera dan perintah termasuk `claude remote-control`

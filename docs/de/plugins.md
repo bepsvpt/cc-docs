@@ -74,12 +74,12 @@ Dieser Schnellstart führt Sie durch die Erstellung eines Plugins mit einem benu
 
     ```json my-first-plugin/.claude-plugin/plugin.json theme={null}
     {
-    "name": "my-first-plugin",
-    "description": "A greeting plugin to learn the basics",
-    "version": "1.0.0",
-    "author": {
-    "name": "Your Name"
-    }
+      "name": "my-first-plugin",
+      "description": "A greeting plugin to learn the basics",
+      "version": "1.0.0",
+      "author": {
+        "name": "Your Name"
+      }
     }
     ```
 
@@ -179,16 +179,18 @@ Sie haben ein Plugin mit einem Skill erstellt, aber Plugins können viel mehr en
   **Häufiger Fehler**: Platzieren Sie `commands/`, `agents/`, `skills/` oder `hooks/` nicht im Verzeichnis `.claude-plugin/`. Nur `plugin.json` gehört in `.claude-plugin/`. Alle anderen Verzeichnisse müssen auf der Plugin-Root-Ebene sein.
 </Warning>
 
-| Verzeichnis       | Speicherort | Zweck                                                                                        |
-| :---------------- | :---------- | :------------------------------------------------------------------------------------------- |
-| `.claude-plugin/` | Plugin-Root | Enthält `plugin.json`-Manifest (optional, wenn Komponenten Standardspeicherorte verwenden)   |
-| `commands/`       | Plugin-Root | Skills als Markdown-Dateien                                                                  |
-| `agents/`         | Plugin-Root | Benutzerdefinierte Agent-Definitionen                                                        |
-| `skills/`         | Plugin-Root | Agent-Skills mit `SKILL.md`-Dateien                                                          |
-| `hooks/`          | Plugin-Root | Event-Handler in `hooks.json`                                                                |
-| `.mcp.json`       | Plugin-Root | MCP-Server-Konfigurationen                                                                   |
-| `.lsp.json`       | Plugin-Root | LSP-Server-Konfigurationen für Code-Intelligenz                                              |
-| `settings.json`   | Plugin-Root | Standard-[Einstellungen](/de/settings), die angewendet werden, wenn das Plugin aktiviert ist |
+| Verzeichnis       | Speicherort | Zweck                                                                                                   |
+| :---------------- | :---------- | :------------------------------------------------------------------------------------------------------ |
+| `.claude-plugin/` | Plugin-Root | Enthält `plugin.json`-Manifest (optional, wenn Komponenten Standardspeicherorte verwenden)              |
+| `skills/`         | Plugin-Root | Skills als `<name>/SKILL.md`-Verzeichnisse                                                              |
+| `commands/`       | Plugin-Root | Skills als flache Markdown-Dateien. Verwenden Sie `skills/` für neue Plugins                            |
+| `agents/`         | Plugin-Root | Benutzerdefinierte Agent-Definitionen                                                                   |
+| `hooks/`          | Plugin-Root | Event-Handler in `hooks.json`                                                                           |
+| `.mcp.json`       | Plugin-Root | MCP-Server-Konfigurationen                                                                              |
+| `.lsp.json`       | Plugin-Root | LSP-Server-Konfigurationen für Code-Intelligenz                                                         |
+| `monitors/`       | Plugin-Root | Hintergrund-Monitor-Konfigurationen in `monitors.json`                                                  |
+| `bin/`            | Plugin-Root | Ausführbare Dateien, die zum `PATH` des Bash-Tools hinzugefügt werden, während das Plugin aktiviert ist |
+| `settings.json`   | Plugin-Root | Standard-[Einstellungen](/de/settings), die angewendet werden, wenn das Plugin aktiviert ist            |
 
 <Note>
   **Nächste Schritte**: Bereit, weitere Funktionen hinzuzufügen? Springen Sie zu [Entwickeln Sie komplexere Plugins](#develop-more-complex-plugins), um Agents, Hooks, MCP-Server und LSP-Server hinzuzufügen. Für vollständige technische Spezifikationen aller Plugin-Komponenten siehe [Plugins-Referenz](/de/plugins-reference).
@@ -213,11 +215,10 @@ my-plugin/
         └── SKILL.md
 ```
 
-Jede `SKILL.md` benötigt Frontmatter mit den Feldern `name` und `description`, gefolgt von Anweisungen:
+Jede `SKILL.md` enthält YAML-Frontmatter und Anweisungen. Fügen Sie eine `description` ein, damit Claude weiß, wann der Skill verwendet werden soll:
 
 ```yaml theme={null}
 ---
-name: code-review
 description: Reviews code for best practices and potential issues. Use when reviewing code, checking PRs, or analyzing code quality.
 ---
 
@@ -254,9 +255,27 @@ Benutzer, die Ihr Plugin installieren, müssen die Language-Server-Binärdatei a
 
 Für vollständige LSP-Konfigurationsoptionen siehe [LSP-Server](/de/plugins-reference#lsp-servers).
 
+### Fügen Sie Hintergrund-Monitore zu Ihrem Plugin hinzu
+
+Hintergrund-Monitore ermöglichen es Ihrem Plugin, Protokolle, Dateien oder externen Status im Hintergrund zu überwachen und Claude zu benachrichtigen, wenn Ereignisse eintreffen. Claude Code startet jeden Monitor automatisch, wenn das Plugin aktiv ist, sodass Sie Claude nicht anweisen müssen, die Überwachung zu starten.
+
+Fügen Sie eine Datei `monitors/monitors.json` auf der Plugin-Root mit einem Array von Monitor-Einträgen hinzu:
+
+```json monitors/monitors.json theme={null}
+[
+  {
+    "name": "error-log",
+    "command": "tail -F ./logs/error.log",
+    "description": "Application error log"
+  }
+]
+```
+
+Jede stdout-Zeile aus `command` wird Claude während der Sitzung als Benachrichtigung zugestellt. Für das vollständige Schema, einschließlich des `when`-Triggers und der Variablenersetzung, siehe [Monitore](/de/plugins-reference#monitors).
+
 ### Versenden Sie Standard-Einstellungen mit Ihrem Plugin
 
-Plugins können eine Datei `settings.json` auf der Plugin-Root enthalten, um Standard-Konfiguration anzuwenden, wenn das Plugin aktiviert ist. Derzeit wird nur der Schlüssel `agent` unterstützt.
+Plugins können eine Datei `settings.json` auf der Plugin-Root enthalten, um Standard-Konfiguration anzuwenden, wenn das Plugin aktiviert ist. Derzeit werden nur die Schlüssel `agent` und `subagentStatusLine` unterstützt.
 
 Das Setzen von `agent` aktiviert einen der [benutzerdefinierten Agents](/de/sub-agents) des Plugins als Haupt-Thread und wendet seinen System-Prompt, Tool-Einschränkungen und Modell an. Dies ermöglicht es einem Plugin, das Standardverhalten von Claude Code zu ändern, wenn es aktiviert ist.
 
@@ -301,7 +320,7 @@ Wenn Sie Änderungen an Ihrem Plugin vornehmen, führen Sie `/reload-plugins` au
 Wenn Ihr Plugin nicht wie erwartet funktioniert:
 
 1. **Überprüfen Sie die Struktur**: Stellen Sie sicher, dass Ihre Verzeichnisse auf der Plugin-Root sind, nicht in `.claude-plugin/`
-2. **Testen Sie Komponenten einzeln**: Überprüfen Sie jeden Befehl, Agent und Hook separat
+2. **Testen Sie Komponenten einzeln**: Überprüfen Sie jeden Skill, Agent und Hook separat
 3. **Verwenden Sie Validierungs- und Debugging-Tools**: Siehe [Debugging- und Entwicklungstools](/de/plugins-reference#debugging-and-development-tools) für CLI-Befehle und Troubleshooting-Techniken
 
 ### Teilen Sie Ihre Plugins
@@ -321,6 +340,8 @@ Um ein Plugin beim offiziellen Anthropic-Marketplace einzureichen, verwenden Sie
 
 * **Claude.ai**: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
 * **Console**: [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
+
+Sobald Ihr Plugin aufgelistet ist, können Sie Ihre eigene CLI haben, die Claude Code-Benutzer auffordert, es zu installieren. Siehe [Empfehlen Sie Ihr Plugin von Ihrer CLI](/de/plugin-hints).
 
 <Note>
   Für vollständige technische Spezifikationen, Debugging-Techniken und Verteilungsstrategien siehe [Plugins-Referenz](/de/plugins-reference).

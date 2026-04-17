@@ -74,12 +74,12 @@ Quickstart ini memandu Anda melalui pembuatan plugin dengan skill kustom. Anda a
 
     ```json my-first-plugin/.claude-plugin/plugin.json theme={null}
     {
-    "name": "my-first-plugin",
-    "description": "A greeting plugin to learn the basics",
-    "version": "1.0.0",
-    "author": {
-    "name": "Your Name"
-    }
+      "name": "my-first-plugin",
+      "description": "A greeting plugin to learn the basics",
+      "version": "1.0.0",
+      "author": {
+        "name": "Your Name"
+      }
     }
     ```
 
@@ -173,7 +173,7 @@ Anda telah berhasil membuat dan menguji plugin dengan komponen kunci ini:
 
 ## Ikhtisar struktur plugin
 
-Anda telah membuat plugin dengan skill, tetapi plugins dapat mencakup banyak hal lagi: agents kustom, hooks, MCP servers, dan LSP servers.
+Anda telah membuat plugin dengan skill, tetapi plugins dapat mencakup banyak hal lagi: agents kustom, hooks, MCP servers, LSP servers, dan background monitors.
 
 <Warning>
   **Kesalahan umum**: Jangan letakkan `commands/`, `agents/`, `skills/`, atau `hooks/` di dalam direktori `.claude-plugin/`. Hanya `plugin.json` yang masuk ke dalam `.claude-plugin/`. Semua direktori lainnya harus berada di tingkat root plugin.
@@ -182,12 +182,14 @@ Anda telah membuat plugin dengan skill, tetapi plugins dapat mencakup banyak hal
 | Direktori         | Lokasi      | Tujuan                                                                            |
 | :---------------- | :---------- | :-------------------------------------------------------------------------------- |
 | `.claude-plugin/` | Root plugin | Berisi manifest `plugin.json` (opsional jika komponen menggunakan lokasi default) |
-| `commands/`       | Root plugin | Skills sebagai file Markdown                                                      |
+| `skills/`         | Root plugin | Skills sebagai direktori `<name>/SKILL.md`                                        |
+| `commands/`       | Root plugin | Skills sebagai file Markdown datar. Gunakan `skills/` untuk plugins baru          |
 | `agents/`         | Root plugin | Definisi agent kustom                                                             |
-| `skills/`         | Root plugin | Agent Skills dengan file `SKILL.md`                                               |
 | `hooks/`          | Root plugin | Event handlers di `hooks.json`                                                    |
 | `.mcp.json`       | Root plugin | Konfigurasi MCP server                                                            |
 | `.lsp.json`       | Root plugin | Konfigurasi LSP server untuk code intelligence                                    |
+| `monitors/`       | Root plugin | Konfigurasi background monitor di `monitors.json`                                 |
+| `bin/`            | Root plugin | Executable yang ditambahkan ke `PATH` tool Bash saat plugin diaktifkan            |
 | `settings.json`   | Root plugin | [Settings](/id/settings) default yang diterapkan ketika plugin diaktifkan         |
 
 <Note>
@@ -213,11 +215,10 @@ my-plugin/
         └── SKILL.md
 ```
 
-Setiap `SKILL.md` memerlukan frontmatter dengan field `name` dan `description`, diikuti dengan instruksi:
+Setiap `SKILL.md` berisi frontmatter YAML dan instruksi. Sertakan `description` sehingga Claude tahu kapan menggunakan skill:
 
 ```yaml theme={null}
 ---
-name: code-review
 description: Reviews code for best practices and potential issues. Use when reviewing code, checking PRs, or analyzing code quality.
 ---
 
@@ -254,9 +255,27 @@ Pengguna yang memasang plugin Anda harus memiliki binary language server yang di
 
 Untuk opsi konfigurasi LSP lengkap, lihat [LSP servers](/id/plugins-reference#lsp-servers).
 
-### Kirim settings default dengan plugin Anda
+### Tambahkan background monitors ke plugin Anda
 
-Plugins dapat menyertakan file `settings.json` di root plugin untuk menerapkan konfigurasi default ketika plugin diaktifkan. Saat ini, hanya key `agent` yang didukung.
+Background monitors memungkinkan plugin Anda untuk menonton logs, file, atau status eksternal di latar belakang dan memberi tahu Claude saat event tiba. Claude Code memulai setiap monitor secara otomatis ketika plugin aktif, jadi Anda tidak perlu menginstruksikan Claude untuk memulai watch.
+
+Tambahkan file `monitors/monitors.json` di root plugin dengan array entri monitor:
+
+```json monitors/monitors.json theme={null}
+[
+  {
+    "name": "error-log",
+    "command": "tail -F ./logs/error.log",
+    "description": "Application error log"
+  }
+]
+```
+
+Setiap baris stdout dari `command` dikirimkan ke Claude sebagai notifikasi selama sesi. Untuk skema lengkap, termasuk trigger `when` dan substitusi variabel, lihat [Monitors](/id/plugins-reference#monitors).
+
+### Kirim default settings dengan plugin Anda
+
+Plugins dapat menyertakan file `settings.json` di root plugin untuk menerapkan konfigurasi default ketika plugin diaktifkan. Saat ini, hanya key `agent` dan `subagentStatusLine` yang didukung.
 
 Mengatur `agent` mengaktifkan salah satu [custom agents](/id/sub-agents) plugin sebagai thread utama, menerapkan system prompt, pembatasan tool, dan modelnya. Ini memungkinkan plugin untuk mengubah perilaku Claude Code secara default ketika diaktifkan.
 
@@ -301,7 +320,7 @@ Saat Anda membuat perubahan pada plugin Anda, jalankan `/reload-plugins` untuk m
 Jika plugin Anda tidak bekerja seperti yang diharapkan:
 
 1. **Periksa struktur**: Pastikan direktori Anda berada di root plugin, bukan di dalam `.claude-plugin/`
-2. **Uji komponen secara individual**: Periksa setiap command, agent, dan hook secara terpisah
+2. **Uji komponen secara individual**: Periksa setiap skill, agent, dan hook secara terpisah
 3. **Gunakan alat validasi dan debugging**: Lihat [Alat debugging dan pengembangan](/id/plugins-reference#debugging-and-development-tools) untuk perintah CLI dan teknik troubleshooting
 
 ### Bagikan plugins Anda
@@ -321,6 +340,8 @@ Untuk mengirimkan plugin ke marketplace Anthropic resmi, gunakan salah satu form
 
 * **Claude.ai**: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
 * **Console**: [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
+
+Setelah plugin Anda terdaftar, Anda dapat memiliki CLI Anda sendiri yang meminta pengguna Claude Code untuk memasangnya. Lihat [Rekomendasikan plugin Anda dari CLI Anda](/id/plugin-hints).
 
 <Note>
   Untuk spesifikasi teknis lengkap, teknik debugging, dan strategi distribusi, lihat [Referensi plugins](/id/plugins-reference).

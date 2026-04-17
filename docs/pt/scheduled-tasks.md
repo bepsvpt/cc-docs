@@ -12,61 +12,113 @@
 
 Tarefas agendadas permitem que Claude execute novamente um prompt automaticamente em um intervalo. Use-as para pesquisar uma implantação, cuidar de um PR, verificar uma compilação de longa duração ou lembrar-se de fazer algo mais tarde na sessão. Para reagir a eventos conforme eles acontecem em vez de pesquisar, consulte [Channels](/pt/channels): seu CI pode enviar a falha para a sessão diretamente.
 
-As tarefas têm escopo de sessão: elas vivem no processo atual do Claude Code e desaparecem quando você sai. Para agendamento durável que sobreviva a reinicializações, use tarefas agendadas do [Cloud](/pt/web-scheduled-tasks) ou [Desktop](/pt/desktop#schedule-recurring-tasks), ou [GitHub Actions](/pt/github-actions).
+As tarefas têm escopo de sessão: elas vivem no processo atual do Claude Code e desaparecem quando você sai. Para agendamento durável que sobreviva a reinicializações, use [Routines](/pt/routines), [tarefas agendadas do Desktop](/pt/desktop-scheduled-tasks) ou [GitHub Actions](/pt/github-actions).
 
 ## Compare opções de agendamento
 
 Claude Code offers three ways to schedule recurring work:
 
-|                            | [Cloud](/en/routines)          | [Desktop](/en/desktop-scheduled-tasks) | [`/loop`](/en/scheduled-tasks) |
-| :------------------------- | :----------------------------- | :------------------------------------- | :----------------------------- |
-| Runs on                    | Anthropic cloud                | Your machine                           | Your machine                   |
-| Requires machine on        | No                             | Yes                                    | Yes                            |
-| Requires open session      | No                             | No                                     | Yes                            |
-| Persistent across restarts | Yes                            | Yes                                    | No (session-scoped)            |
-| Access to local files      | No (fresh clone)               | Yes                                    | Yes                            |
-| MCP servers                | Connectors configured per task | [Config files](/en/mcp) and connectors | Inherits from session          |
-| Permission prompts         | No (runs autonomously)         | Configurable per task                  | Inherits from session          |
-| Customizable schedule      | Via `/schedule` in the CLI     | Yes                                    | Yes                            |
-| Minimum interval           | 1 hour                         | 1 minute                               | 1 minute                       |
+|                            | [Cloud](/en/routines)          | [Desktop](/en/desktop-scheduled-tasks) | [`/loop`](/en/scheduled-tasks)      |
+| :------------------------- | :----------------------------- | :------------------------------------- | :---------------------------------- |
+| Runs on                    | Anthropic cloud                | Your machine                           | Your machine                        |
+| Requires machine on        | No                             | Yes                                    | Yes                                 |
+| Requires open session      | No                             | No                                     | Yes                                 |
+| Persistent across restarts | Yes                            | Yes                                    | Restored on `--resume` if unexpired |
+| Access to local files      | No (fresh clone)               | Yes                                    | Yes                                 |
+| MCP servers                | Connectors configured per task | [Config files](/en/mcp) and connectors | Inherits from session               |
+| Permission prompts         | No (runs autonomously)         | Configurable per task                  | Inherits from session               |
+| Customizable schedule      | Via `/schedule` in the CLI     | Yes                                    | Yes                                 |
+| Minimum interval           | 1 hour                         | 1 minute                               | 1 minute                            |
 
 <Tip>
   Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
 </Tip>
 
-## Agendar um prompt recorrente com /loop
+## Execute um prompt repetidamente com /loop
 
-A skill agrupada `/loop` [bundled skill](/pt/skills#bundled-skills) é a maneira mais rápida de agendar um prompt recorrente. Passe um intervalo opcional e um prompt, e Claude configura um trabalho cron que é acionado em segundo plano enquanto a sessão permanece aberta.
+A skill agrupada `/loop` [bundled skill](/pt/commands) é a maneira mais rápida de executar um prompt repetidamente enquanto a sessão permanece aberta. Tanto o intervalo quanto o prompt são opcionais, e o que você fornece determina como o loop se comporta.
+
+| O que você fornece        | Exemplo                     | O que acontece                                                                                                    |
+| :------------------------ | :-------------------------- | :---------------------------------------------------------------------------------------------------------------- |
+| Intervalo e prompt        | `/loop 5m check the deploy` | Seu prompt é executado em um [cronograma fixo](#run-on-a-fixed-interval)                                          |
+| Apenas prompt             | `/loop check the deploy`    | Seu prompt é executado em um [intervalo que Claude escolhe](#let-claude-choose-the-interval) a cada iteração      |
+| Apenas intervalo, ou nada | `/loop`                     | O [prompt de manutenção integrado](#run-the-built-in-maintenance-prompt) é executado, ou seu `loop.md` se existir |
+
+Você também pode passar outro comando como o prompt, por exemplo `/loop 20m /review-pr 1234`, para re-executar um fluxo de trabalho empacotado a cada iteração.
+
+### Execute em um intervalo fixo
+
+Quando você fornece um intervalo, Claude o converte em uma expressão cron, agenda o trabalho e confirma a cadência e o ID do trabalho.
 
 ```text theme={null}
 /loop 5m check if the deployment finished and tell me what happened
 ```
 
-Claude analisa o intervalo, o converte em uma expressão cron, agenda o trabalho e confirma a cadência e o ID do trabalho.
+O intervalo pode preceder o prompt como um token simples como `30m`, ou seguir como uma cláusula como `every 2 hours`. As unidades suportadas são `s` para segundos, `m` para minutos, `h` para horas e `d` para dias.
 
-### Sintaxe de intervalo
+Os segundos são arredondados para o minuto mais próximo, pois o cron tem granularidade de um minuto. Os intervalos que não mapeiam para um passo cron limpo, como `7m` ou `90m`, são arredondados para o intervalo mais próximo que funciona e Claude informa qual foi escolhido.
 
-Os intervalos são opcionais. Você pode colocá-los no início, no final ou omiti-los completamente.
+### Deixe Claude escolher o intervalo
 
-| Forma                  | Exemplo                               | Intervalo analisado         |
-| :--------------------- | :------------------------------------ | :-------------------------- |
-| Token inicial          | `/loop 30m check the build`           | a cada 30 minutos           |
-| Cláusula `every` final | `/loop check the build every 2 hours` | a cada 2 horas              |
-| Sem intervalo          | `/loop check the build`               | padrão de a cada 10 minutos |
+Quando você omite o intervalo, Claude escolhe um dinamicamente em vez de executar em um cronograma cron fixo. Após cada iteração, ele escolhe um atraso entre um minuto e uma hora com base no que observou: esperas curtas enquanto uma compilação está terminando ou um PR está ativo, esperas mais longas quando nada está pendente. O atraso escolhido e o motivo dele são impressos no final de cada iteração.
 
-As unidades suportadas são `s` para segundos, `m` para minutos, `h` para horas e `d` para dias. Os segundos são arredondados para o minuto mais próximo, pois o cron tem granularidade de um minuto. Os intervalos que não se dividem uniformemente em sua unidade, como `7m` ou `90m`, são arredondados para o intervalo mais próximo e Claude informa qual foi escolhido.
-
-### Fazer loop sobre outro comando
-
-O prompt agendado pode ser um comando ou invocação de skill. Isso é útil para re-executar um fluxo de trabalho que você já empacotou.
+O exemplo abaixo verifica CI e comentários de revisão, com Claude esperando mais tempo entre iterações uma vez que o PR fica silencioso:
 
 ```text theme={null}
-/loop 20m /review-pr 1234
+/loop check whether CI passed and address any review comments
 ```
 
-Cada vez que o trabalho é acionado, Claude executa `/review-pr 1234` como se você tivesse digitado.
+Quando você pede um cronograma `/loop` dinâmico, Claude pode usar a [ferramenta Monitor](/pt/tools-reference#monitor-tool) diretamente. Monitor executa um script em segundo plano e transmite cada linha de saída de volta, o que evita pesquisa completamente e geralmente é mais eficiente em tokens e responsivo do que re-executar um prompt em um intervalo.
 
-## Definir um lembrete único
+Um loop agendado dinamicamente aparece em sua [lista de tarefas agendadas](#manage-scheduled-tasks) como qualquer outra tarefa, portanto você pode listá-lo ou cancelá-lo da mesma forma. As [regras de jitter](#jitter) não se aplicam a ele, mas a [expiração de sete dias](#seven-day-expiry) se aplica: o loop termina automaticamente sete dias após você iniciá-lo.
+
+<Note>
+  No Bedrock, Vertex AI e Microsoft Foundry, um prompt sem intervalo é executado em um cronograma fixo de 10 minutos.
+</Note>
+
+### Execute o prompt de manutenção integrado
+
+Quando você omite o prompt, Claude usa um prompt de manutenção integrado em vez de um que você fornece. A cada iteração, ele trabalha através do seguinte, em ordem:
+
+* continuar qualquer trabalho inacabado da conversa
+* cuidar do pull request do branch atual: comentários de revisão, execuções de CI falhadas, conflitos de mesclagem
+* executar passes de limpeza, como caças a bugs ou simplificação quando nada mais está pendente
+
+Claude não inicia novas iniciativas fora desse escopo, e ações irreversíveis como envio ou exclusão apenas prosseguem quando continuam algo que a transcrição já autorizou.
+
+```text theme={null}
+/loop
+```
+
+Um `/loop` simples executa este prompt em um [intervalo escolhido dinamicamente](#let-claude-choose-the-interval). Adicione um intervalo, por exemplo `/loop 15m`, para executá-lo em um cronograma fixo. Para substituir o prompt integrado pelo seu próprio padrão, consulte [Personalize o prompt padrão com loop.md](#customize-the-default-prompt-with-loop-md).
+
+<Note>
+  No Bedrock, Vertex AI e Microsoft Foundry, `/loop` sem prompt imprime a mensagem de uso em vez de iniciar o loop de manutenção.
+</Note>
+
+### Personalize o prompt padrão com loop.md
+
+Um arquivo `loop.md` substitui o prompt de manutenção integrado pelas suas próprias instruções. Ele define um único prompt padrão para `/loop` simples, não uma lista de tarefas agendadas separadas, e é ignorado sempre que você fornece um prompt na linha de comando. Para agendar prompts adicionais junto com ele, use `/loop <prompt>` ou [peça a Claude diretamente](#manage-scheduled-tasks).
+
+Claude procura o arquivo em dois locais e usa o primeiro que encontra.
+
+| Caminho             | Escopo                                                                        |
+| :------------------ | :---------------------------------------------------------------------------- |
+| `.claude/loop.md`   | Nível do projeto. Tem precedência quando ambos os arquivos existem.           |
+| `~/.claude/loop.md` | Nível do usuário. Aplica-se em qualquer projeto que não defina o seu próprio. |
+
+O arquivo é Markdown simples sem estrutura obrigatória. Escreva como se estivesse digitando o prompt `/loop` diretamente. O exemplo a seguir mantém um branch de lançamento saudável:
+
+```markdown title=".claude/loop.md" theme={null}
+Check the `release/next` PR. If CI is red, pull the failing job log,
+diagnose, and push a minimal fix. If new review comments have arrived,
+address each one and resolve the thread. If everything is green and
+quiet, say so in one line.
+```
+
+Edições em `loop.md` entram em vigor na próxima iteração, portanto você pode refinar as instruções enquanto um loop está em execução. Quando nenhum `loop.md` existe em nenhum local, o loop volta ao prompt de manutenção integrado. Mantenha o arquivo conciso: conteúdo além de 25.000 bytes é truncado.
+
+## Defina um lembrete único
 
 Para lembretes únicos, descreva o que você deseja em linguagem natural em vez de usar `/loop`. Claude agenda uma tarefa de disparo único que se deleta após ser executada.
 
@@ -80,7 +132,7 @@ in 45 minutes, check whether the integration tests passed
 
 Claude fixa o tempo de disparo em um minuto e hora específicos usando uma expressão cron e confirma quando será acionado.
 
-## Gerenciar tarefas agendadas
+## Gerencie tarefas agendadas
 
 Peça a Claude em linguagem natural para listar ou cancelar tarefas, ou referencie as ferramentas subjacentes diretamente.
 
@@ -119,7 +171,7 @@ O deslocamento é derivado do ID da tarefa, portanto a mesma tarefa sempre obté
 
 ### Expiração de sete dias
 
-Tarefas recorrentes expiram automaticamente 7 dias após a criação. A tarefa é acionada uma última vez e depois se deleta. Isso limita quanto tempo um loop esquecido pode ser executado. Se você precisar que uma tarefa recorrente dure mais tempo, cancele e recrie-a antes de expirar, ou use tarefas agendadas do [Cloud](/pt/web-scheduled-tasks) ou tarefas agendadas do [Desktop](/pt/desktop#schedule-recurring-tasks) para agendamento durável.
+Tarefas recorrentes expiram automaticamente 7 dias após a criação. A tarefa é acionada uma última vez e depois se deleta. Isso limita quanto tempo um loop esquecido pode ser executado. Se você precisar que uma tarefa recorrente dure mais tempo, cancele e recrie-a antes de expirar, ou use [Routines](/pt/routines) ou [tarefas agendadas do Desktop](/pt/desktop-scheduled-tasks) para agendamento durável.
 
 ## Referência de expressão cron
 
@@ -138,7 +190,7 @@ O dia da semana usa `0` ou `7` para domingo até `6` para sábado. A sintaxe est
 
 Quando tanto o dia do mês quanto o dia da semana são restritos, uma data corresponde se qualquer campo corresponder. Isso segue a semântica padrão do vixie-cron.
 
-## Desabilitar tarefas agendadas
+## Desabilite tarefas agendadas
 
 Defina `CLAUDE_CODE_DISABLE_CRON=1` em seu ambiente para desabilitar o agendador completamente. As ferramentas cron e `/loop` ficam indisponíveis e qualquer tarefa já agendada para de ser acionada. Consulte [Variáveis de ambiente](/pt/env-vars) para a lista completa de sinalizadores de desabilitação.
 
@@ -152,6 +204,6 @@ O agendamento com escopo de sessão tem limitações inerentes:
 
 Para automação orientada por cron que precisa ser executada sem supervisão:
 
-* [Tarefas agendadas do Cloud](/pt/web-scheduled-tasks): executadas na infraestrutura gerenciada pela Anthropic
+* [Routines](/pt/routines): executadas na infraestrutura gerenciada pela Anthropic em um cronograma, via chamada de API ou em eventos do GitHub
 * [GitHub Actions](/pt/github-actions): use um gatilho `schedule` em CI
-* [Tarefas agendadas do Desktop](/pt/desktop#schedule-recurring-tasks): executadas localmente em sua máquina
+* [Tarefas agendadas do Desktop](/pt/desktop-scheduled-tasks): executadas localmente em sua máquina

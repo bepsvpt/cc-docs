@@ -74,12 +74,12 @@ Este início rápido o guia através da criação de um plugin com um skill pers
 
     ```json my-first-plugin/.claude-plugin/plugin.json theme={null}
     {
-    "name": "my-first-plugin",
-    "description": "A greeting plugin to learn the basics",
-    "version": "1.0.0",
-    "author": {
-    "name": "Your Name"
-    }
+      "name": "my-first-plugin",
+      "description": "A greeting plugin to learn the basics",
+      "version": "1.0.0",
+      "author": {
+        "name": "Your Name"
+      }
     }
     ```
 
@@ -173,22 +173,24 @@ Você criou e testou com sucesso um plugin com estes componentes-chave:
 
 ## Visão geral da estrutura do plugin
 
-Você criou um plugin com um skill, mas plugins podem incluir muito mais: agents personalizados, hooks, MCP servers e LSP servers.
+Você criou um plugin com um skill, mas plugins podem incluir muito mais: agents personalizados, hooks, MCP servers, LSP servers e monitores de background.
 
 <Warning>
   **Erro comum**: Não coloque `commands/`, `agents/`, `skills/` ou `hooks/` dentro do diretório `.claude-plugin/`. Apenas `plugin.json` vai dentro de `.claude-plugin/`. Todos os outros diretórios devem estar no nível raiz do plugin.
 </Warning>
 
-| Diretório         | Localização    | Propósito                                                                         |
-| :---------------- | :------------- | :-------------------------------------------------------------------------------- |
-| `.claude-plugin/` | Raiz do plugin | Contém manifesto `plugin.json` (opcional se componentes usam localizações padrão) |
-| `commands/`       | Raiz do plugin | Skills como arquivos Markdown                                                     |
-| `agents/`         | Raiz do plugin | Definições de agent personalizadas                                                |
-| `skills/`         | Raiz do plugin | Agent Skills com arquivos `SKILL.md`                                              |
-| `hooks/`          | Raiz do plugin | Manipuladores de eventos em `hooks.json`                                          |
-| `.mcp.json`       | Raiz do plugin | Configurações de MCP server                                                       |
-| `.lsp.json`       | Raiz do plugin | Configurações de LSP server para inteligência de código                           |
-| `settings.json`   | Raiz do plugin | [Configurações](/pt/settings) padrão aplicadas quando o plugin é habilitado       |
+| Diretório         | Localização    | Propósito                                                                              |
+| :---------------- | :------------- | :------------------------------------------------------------------------------------- |
+| `.claude-plugin/` | Raiz do plugin | Contém manifesto `plugin.json` (opcional se componentes usam localizações padrão)      |
+| `skills/`         | Raiz do plugin | Skills como diretórios `<name>/SKILL.md`                                               |
+| `commands/`       | Raiz do plugin | Skills como arquivos Markdown simples. Use `skills/` para novos plugins                |
+| `agents/`         | Raiz do plugin | Definições de agent personalizadas                                                     |
+| `hooks/`          | Raiz do plugin | Manipuladores de eventos em `hooks.json`                                               |
+| `.mcp.json`       | Raiz do plugin | Configurações de MCP server                                                            |
+| `.lsp.json`       | Raiz do plugin | Configurações de LSP server para inteligência de código                                |
+| `monitors/`       | Raiz do plugin | Configurações de monitor de background em `monitors.json`                              |
+| `bin/`            | Raiz do plugin | Executáveis adicionados ao `PATH` da ferramenta Bash enquanto o plugin está habilitado |
+| `settings.json`   | Raiz do plugin | [Configurações](/pt/settings) padrão aplicadas quando o plugin é habilitado            |
 
 <Note>
   **Próximos passos**: Pronto para adicionar mais recursos? Vá para [Desenvolver plugins mais complexos](#develop-more-complex-plugins) para adicionar agents, hooks, MCP servers e LSP servers. Para especificações técnicas completas de todos os componentes do plugin, veja [Referência de plugins](/pt/plugins-reference).
@@ -213,11 +215,10 @@ my-plugin/
         └── SKILL.md
 ```
 
-Cada `SKILL.md` precisa de frontmatter com campos `name` e `description`, seguido por instruções:
+Cada `SKILL.md` contém frontmatter YAML e instruções. Inclua uma `description` para que Claude saiba quando usar o skill:
 
 ```yaml theme={null}
 ---
-name: code-review
 description: Reviews code for best practices and potential issues. Use when reviewing code, checking PRs, or analyzing code quality.
 ---
 
@@ -254,9 +255,27 @@ Usuários instalando seu plugin devem ter o binário do language server instalad
 
 Para opções de configuração LSP completas, veja [LSP servers](/pt/plugins-reference#lsp-servers).
 
+### Adicione monitores de background ao seu plugin
+
+Monitores de background permitem que seu plugin observe logs, arquivos ou status externo em background e notifique Claude conforme eventos chegam. Claude Code inicia cada monitor automaticamente quando o plugin está ativo, então você não precisa instruir Claude a iniciar a observação.
+
+Adicione um arquivo `monitors/monitors.json` na raiz do plugin com um array de entradas de monitor:
+
+```json monitors/monitors.json theme={null}
+[
+  {
+    "name": "error-log",
+    "command": "tail -F ./logs/error.log",
+    "description": "Application error log"
+  }
+]
+```
+
+Cada linha de stdout do `command` é entregue ao Claude como uma notificação durante a sessão. Para o esquema completo, incluindo o trigger `when` e substituição de variáveis, veja [Monitors](/pt/plugins-reference#monitors).
+
 ### Envie configurações padrão com seu plugin
 
-Plugins podem incluir um arquivo `settings.json` na raiz do plugin para aplicar configuração padrão quando o plugin é habilitado. Atualmente, apenas a chave `agent` é suportada.
+Plugins podem incluir um arquivo `settings.json` na raiz do plugin para aplicar configuração padrão quando o plugin é habilitado. Atualmente, apenas as chaves `agent` e `subagentStatusLine` são suportadas.
 
 Definir `agent` ativa um dos [agents personalizados](/pt/sub-agents) do plugin como a thread principal, aplicando seu prompt de sistema, restrições de ferramentas e modelo. Isso permite que um plugin mude como Claude Code se comporta por padrão quando habilitado.
 
@@ -301,7 +320,7 @@ Conforme você faz mudanças no seu plugin, execute `/reload-plugins` para pegar
 Se seu plugin não está funcionando como esperado:
 
 1. **Verifique a estrutura**: Certifique-se de que seus diretórios estão na raiz do plugin, não dentro de `.claude-plugin/`
-2. **Teste componentes individualmente**: Verifique cada comando, agent e hook separadamente
+2. **Teste componentes individualmente**: Verifique cada skill, agent e hook separadamente
 3. **Use ferramentas de validação e depuração**: Veja [Ferramentas de depuração e desenvolvimento](/pt/plugins-reference#debugging-and-development-tools) para comandos CLI e técnicas de troubleshooting
 
 ### Compartilhe seus plugins
@@ -321,6 +340,8 @@ Para enviar um plugin para o marketplace oficial da Anthropic, use um dos formul
 
 * **Claude.ai**: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
 * **Console**: [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
+
+Uma vez que seu plugin está listado, você pode ter seu próprio CLI solicitar aos usuários do Claude Code que o instalem. Veja [Recomende seu plugin a partir de seu CLI](/pt/plugin-hints).
 
 <Note>
   Para especificações técnicas completas, técnicas de depuração e estratégias de distribuição, veja [Referência de plugins](/pt/plugins-reference).
@@ -396,7 +417,7 @@ Se você já tem skills ou hooks em seu diretório `.claude/`, você pode conver
     claude --plugin-dir ./my-plugin
     ```
 
-    Teste cada componente: execute seus comandos, verifique que agents aparecem em `/agents` e verifique que hooks disparam corretamente.
+    Teste cada componente: execute seus skills, verifique que agents aparecem em `/agents` e verifique que hooks disparam corretamente.
   </Step>
 </Steps>
 

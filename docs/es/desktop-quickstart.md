@@ -11,9 +11,9 @@ La aplicación de escritorio le proporciona Claude Code con una interfaz gráfic
 Esta página lo guía a través de la instalación de la aplicación e iniciando su primera sesión. Si ya está configurado, consulte [Usar Claude Code Desktop](/es/desktop) para la referencia completa.
 
 <Frame>
-  <img src="https://mintcdn.com/claude-code/CNLUpFGiXoc9mhvD/images/desktop-code-tab-light.png?fit=max&auto=format&n=CNLUpFGiXoc9mhvD&q=85&s=9a36a7a27b9f4c6f2e1c83bdb34f69ce" className="block dark:hidden" alt="La interfaz de Claude Code Desktop mostrando la pestaña Code seleccionada, con un cuadro de solicitud, selector de modo de permisos establecido en Ask permissions, selector de modelo, selector de carpeta y opción de entorno local" width="2500" height="1376" data-path="images/desktop-code-tab-light.png" />
+  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-light.png" className="block dark:hidden" alt="La interfaz de Claude Code Desktop mostrando la pestaña Code seleccionada, con un cuadro de solicitud, selector de modo de permisos establecido en Ask permissions, selector de modelo, selector de carpeta y opción de entorno local" />
 
-  <img src="https://mintcdn.com/claude-code/CNLUpFGiXoc9mhvD/images/desktop-code-tab-dark.png?fit=max&auto=format&n=CNLUpFGiXoc9mhvD&q=85&s=5463defe81c459fb9b1f91f6a958cfb8" className="hidden dark:block" alt="La interfaz de Claude Code Desktop en modo oscuro mostrando la pestaña Code seleccionada, con un cuadro de solicitud, selector de modo de permisos establecido en Ask permissions, selector de modelo, selector de carpeta y opción de entorno local" width="2504" height="1374" data-path="images/desktop-code-tab-dark.png" />
+  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-dark.png" className="hidden dark:block" alt="La interfaz de Claude Code Desktop en modo oscuro mostrando la pestaña Code seleccionada, con un cuadro de solicitud, selector de modo de permisos establecido en Ask permissions, selector de modelo, selector de carpeta y opción de entorno local" />
 </Frame>
 
 La aplicación de escritorio tiene tres pestañas:

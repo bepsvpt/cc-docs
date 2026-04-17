@@ -12,59 +12,111 @@
 
 Tugas terjadwal memungkinkan Claude menjalankan kembali prompt secara otomatis pada interval tertentu. Gunakan untuk polling deployment, mengawasi PR, memeriksa build yang berjalan lama, atau mengingatkan diri sendiri untuk melakukan sesuatu nanti dalam sesi. Untuk bereaksi terhadap peristiwa saat terjadi daripada polling, lihat [Channels](/id/channels): CI Anda dapat mendorong kegagalan ke dalam sesi secara langsung.
 
-Tugas bersifat session-scoped: mereka hidup dalam proses Claude Code saat ini dan hilang saat Anda keluar. Untuk penjadwalan yang tahan lama yang bertahan setelah restart, gunakan tugas terjadwal [Cloud](/id/web-scheduled-tasks) atau [Desktop](/id/desktop#schedule-recurring-tasks), atau [GitHub Actions](/id/github-actions).
+Tugas bersifat session-scoped: mereka hidup dalam proses Claude Code saat ini dan hilang saat Anda keluar. Untuk penjadwalan yang tahan lama yang bertahan setelah restart, gunakan [Routines](/id/routines), [Desktop scheduled tasks](/id/desktop-scheduled-tasks), atau [GitHub Actions](/id/github-actions).
 
 ## Bandingkan opsi penjadwalan
 
 Claude Code offers three ways to schedule recurring work:
 
-|                            | [Cloud](/en/routines)          | [Desktop](/en/desktop-scheduled-tasks) | [`/loop`](/en/scheduled-tasks) |
-| :------------------------- | :----------------------------- | :------------------------------------- | :----------------------------- |
-| Runs on                    | Anthropic cloud                | Your machine                           | Your machine                   |
-| Requires machine on        | No                             | Yes                                    | Yes                            |
-| Requires open session      | No                             | No                                     | Yes                            |
-| Persistent across restarts | Yes                            | Yes                                    | No (session-scoped)            |
-| Access to local files      | No (fresh clone)               | Yes                                    | Yes                            |
-| MCP servers                | Connectors configured per task | [Config files](/en/mcp) and connectors | Inherits from session          |
-| Permission prompts         | No (runs autonomously)         | Configurable per task                  | Inherits from session          |
-| Customizable schedule      | Via `/schedule` in the CLI     | Yes                                    | Yes                            |
-| Minimum interval           | 1 hour                         | 1 minute                               | 1 minute                       |
+|                            | [Cloud](/en/routines)          | [Desktop](/en/desktop-scheduled-tasks) | [`/loop`](/en/scheduled-tasks)      |
+| :------------------------- | :----------------------------- | :------------------------------------- | :---------------------------------- |
+| Runs on                    | Anthropic cloud                | Your machine                           | Your machine                        |
+| Requires machine on        | No                             | Yes                                    | Yes                                 |
+| Requires open session      | No                             | No                                     | Yes                                 |
+| Persistent across restarts | Yes                            | Yes                                    | Restored on `--resume` if unexpired |
+| Access to local files      | No (fresh clone)               | Yes                                    | Yes                                 |
+| MCP servers                | Connectors configured per task | [Config files](/en/mcp) and connectors | Inherits from session               |
+| Permission prompts         | No (runs autonomously)         | Configurable per task                  | Inherits from session               |
+| Customizable schedule      | Via `/schedule` in the CLI     | Yes                                    | Yes                                 |
+| Minimum interval           | 1 hour                         | 1 minute                               | 1 minute                            |
 
 <Tip>
   Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
 </Tip>
 
-## Jadwalkan prompt berulang dengan /loop
+## Jalankan prompt berulang dengan /loop
 
-Skill `/loop` [bundled skill](/id/skills#bundled-skills) adalah cara tercepat untuk menjadwalkan prompt berulang. Berikan interval opsional dan prompt, dan Claude menyiapkan cron job yang berjalan di latar belakang sementara sesi tetap terbuka.
+Skill `/loop` [bundled skill](/id/commands) adalah cara tercepat untuk menjalankan prompt berulang sementara sesi tetap terbuka. Baik interval maupun prompt bersifat opsional, dan apa yang Anda berikan menentukan bagaimana loop berperilaku.
+
+| Apa yang Anda berikan                  | Contoh                      | Apa yang terjadi                                                                                          |
+| :------------------------------------- | :-------------------------- | :-------------------------------------------------------------------------------------------------------- |
+| Interval dan prompt                    | `/loop 5m check the deploy` | Prompt Anda berjalan pada [jadwal tetap](#run-on-a-fixed-interval)                                        |
+| Hanya prompt                           | `/loop check the deploy`    | Prompt Anda berjalan pada [interval yang dipilih Claude](#let-claude-choose-the-interval) setiap iterasi  |
+| Hanya interval, atau tidak ada apa-apa | `/loop`                     | [Prompt pemeliharaan bawaan](#run-the-built-in-maintenance-prompt) berjalan, atau `loop.md` Anda jika ada |
+
+Anda juga dapat melewatkan perintah lain sebagai prompt, misalnya `/loop 20m /review-pr 1234`, untuk menjalankan kembali workflow yang sudah dikemas setiap iterasi.
+
+### Jalankan pada interval tetap
+
+Ketika Anda memberikan interval, Claude mengonversinya ke ekspresi cron, menjadwalkan job, dan mengonfirmasi cadence dan ID job.
 
 ```text theme={null}
 /loop 5m check if the deployment finished and tell me what happened
 ```
 
-Claude mengurai interval, mengonversinya ke ekspresi cron, menjadwalkan job, dan mengonfirmasi cadence dan ID job.
+Interval dapat memimpin prompt sebagai token bare seperti `30m`, atau mengikutinya sebagai klausa seperti `every 2 hours`. Unit yang didukung adalah `s` untuk detik, `m` untuk menit, `h` untuk jam, dan `d` untuk hari.
 
-### Sintaks interval
+Detik dibulatkan ke menit terdekat karena cron memiliki granularitas satu menit. Interval yang tidak memetakan ke langkah cron yang bersih, seperti `7m` atau `90m`, dibulatkan ke interval terdekat yang bersih dan Claude memberi tahu Anda apa yang dipilihnya.
 
-Interval bersifat opsional. Anda dapat memimpinnya, mengikutinya, atau meninggalkannya sepenuhnya.
+### Biarkan Claude memilih interval
 
-| Form                       | Contoh                                | Interval yang diurai    |
-| :------------------------- | :------------------------------------ | :---------------------- |
-| Token terdepan             | `/loop 30m check the build`           | setiap 30 menit         |
-| Klausa `every` di belakang | `/loop check the build every 2 hours` | setiap 2 jam            |
-| Tanpa interval             | `/loop check the build`               | default setiap 10 menit |
+Ketika Anda menghilangkan interval, Claude memilih satu secara dinamis daripada berjalan pada jadwal cron tetap. Setelah setiap iterasi, Claude memilih penundaan antara satu menit dan satu jam berdasarkan apa yang diamatinya: menunggu pendek saat build selesai atau PR aktif, menunggu lebih lama ketika tidak ada yang tertunda. Penundaan yang dipilih dan alasan untuk itu dicetak di akhir setiap iterasi.
 
-Unit yang didukung adalah `s` untuk detik, `m` untuk menit, `h` untuk jam, dan `d` untuk hari. Detik dibulatkan ke menit terdekat karena cron memiliki granularitas satu menit. Interval yang tidak terbagi rata ke dalam unit mereka, seperti `7m` atau `90m`, dibulatkan ke interval yang bersih terdekat dan Claude memberi tahu Anda apa yang dipilihnya.
-
-### Loop di atas perintah lain
-
-Prompt terjadwal itu sendiri dapat berupa invokasi perintah atau skill. Ini berguna untuk menjalankan kembali workflow yang sudah Anda paket.
+Contoh di bawah memeriksa CI dan komentar review, dengan Claude menunggu lebih lama di antara iterasi setelah PR menjadi tenang:
 
 ```text theme={null}
-/loop 20m /review-pr 1234
+/loop check whether CI passed and address any review comments
 ```
 
-Setiap kali job berjalan, Claude menjalankan `/review-pr 1234` seolah-olah Anda telah mengetiknya.
+Ketika Anda meminta jadwal `/loop` dinamis, Claude dapat menggunakan [Monitor tool](/id/tools-reference#monitor-tool) secara langsung. Monitor menjalankan skrip latar belakang dan mengalirkan setiap baris output kembali, yang menghindari polling sama sekali dan sering lebih efisien token dan responsif daripada menjalankan kembali prompt pada interval.
+
+Loop yang dijadwalkan secara dinamis muncul dalam [daftar tugas terjadwal](#manage-scheduled-tasks) Anda seperti tugas lainnya, jadi Anda dapat membuat daftar atau membatalkannya dengan cara yang sama. Aturan [jitter](#jitter) tidak berlaku untuk itu, tetapi [kedaluwarsa tujuh hari](#seven-day-expiry) berlaku: loop berakhir secara otomatis tujuh hari setelah Anda memulainya.
+
+<Note>
+  Di Bedrock, Vertex AI, dan Microsoft Foundry, prompt tanpa interval berjalan pada jadwal tetap 10 menit sebagai gantinya.
+</Note>
+
+### Jalankan prompt pemeliharaan bawaan
+
+Ketika Anda menghilangkan prompt, Claude menggunakan prompt pemeliharaan bawaan daripada yang Anda berikan. Pada setiap iterasi, Claude bekerja melalui hal-hal berikut, secara berurutan:
+
+* lanjutkan pekerjaan yang belum selesai dari percakapan
+* urus pull request cabang saat ini: komentar review, CI runs yang gagal, merge conflicts
+* jalankan pass pembersihan seperti bug hunts atau simplification ketika tidak ada yang tertunda
+
+Claude tidak memulai inisiatif baru di luar cakupan itu, dan tindakan yang tidak dapat diubah seperti pushing atau deleting hanya dilanjutkan ketika mereka melanjutkan sesuatu yang sudah diotorisasi transkrip.
+
+```text theme={null}
+/loop
+```
+
+Bare `/loop` menjalankan prompt ini pada [interval yang dipilih secara dinamis](#let-claude-choose-the-interval). Tambahkan interval, misalnya `/loop 15m`, untuk menjalankannya pada jadwal tetap sebagai gantinya. Untuk mengganti prompt bawaan dengan prompt default Anda sendiri, lihat [Customize the default prompt with loop.md](#customize-the-default-prompt-with-loop-md).
+
+<Note>
+  Di Bedrock, Vertex AI, dan Microsoft Foundry, `/loop` tanpa prompt mencetak pesan penggunaan daripada memulai loop pemeliharaan.
+</Note>
+
+### Sesuaikan prompt default dengan loop.md
+
+File `loop.md` mengganti prompt pemeliharaan bawaan dengan instruksi Anda sendiri. File ini mendefinisikan satu prompt default tunggal untuk bare `/loop`, bukan daftar tugas terjadwal terpisah, dan diabaikan setiap kali Anda memberikan prompt pada baris perintah. Untuk menjadwalkan prompt tambahan bersama dengannya, gunakan `/loop <prompt>` atau [minta Claude secara langsung](#manage-scheduled-tasks).
+
+Claude mencari file di dua lokasi dan menggunakan yang pertama ditemukannya.
+
+| Path                | Scope                                                                             |
+| :------------------ | :-------------------------------------------------------------------------------- |
+| `.claude/loop.md`   | Project-level. Mengambil prioritas ketika kedua file ada.                         |
+| `~/.claude/loop.md` | User-level. Berlaku di proyek apa pun yang tidak mendefinisikan miliknya sendiri. |
+
+File adalah Markdown biasa tanpa struktur yang diperlukan. Tulislah seolah-olah Anda mengetik prompt `/loop` secara langsung. Contoh berikut menjaga cabang rilis tetap sehat:
+
+```markdown title=".claude/loop.md" theme={null}
+Check the `release/next` PR. If CI is red, pull the failing job log,
+diagnose, and push a minimal fix. If new review comments have arrived,
+address each one and resolve the thread. If everything is green and
+quiet, say so in one line.
+```
+
+Edit ke `loop.md` berlaku pada iterasi berikutnya, jadi Anda dapat menyempurnakan instruksi saat loop berjalan. Ketika tidak ada `loop.md` yang ada di lokasi mana pun, loop kembali ke prompt pemeliharaan bawaan. Jaga file tetap ringkas: konten di luar 25.000 byte dipotong.
 
 ## Atur pengingat sekali jalan
 
@@ -119,7 +171,7 @@ Offset berasal dari ID tugas, jadi tugas yang sama selalu mendapatkan offset yan
 
 ### Kedaluwarsa tujuh hari
 
-Tugas berulang secara otomatis kedaluwarsa 7 hari setelah pembuatan. Tugas berjalan satu kali terakhir, kemudian menghapus dirinya sendiri. Ini membatasi berapa lama loop yang terlupakan dapat berjalan. Jika Anda memerlukan tugas berulang untuk bertahan lebih lama, batalkan dan buat ulang sebelum kedaluwarsa, atau gunakan [Cloud scheduled tasks](/id/web-scheduled-tasks) atau [Desktop scheduled tasks](/id/desktop#schedule-recurring-tasks) untuk penjadwalan yang tahan lama.
+Tugas berulang secara otomatis kedaluwarsa 7 hari setelah pembuatan. Tugas berjalan satu kali terakhir, kemudian menghapus dirinya sendiri. Ini membatasi berapa lama loop yang terlupakan dapat berjalan. Jika Anda memerlukan tugas berulang untuk bertahan lebih lama, batalkan dan buat ulang sebelum kedaluwarsa, atau gunakan [Routines](/id/routines) atau [Desktop scheduled tasks](/id/desktop-scheduled-tasks) untuk penjadwalan yang tahan lama.
 
 ## Referensi ekspresi cron
 
@@ -152,6 +204,6 @@ Penjadwalan session-scoped memiliki batasan yang melekat:
 
 Untuk otomasi yang didorong cron yang perlu berjalan tanpa pengawasan:
 
-* [Cloud scheduled tasks](/id/web-scheduled-tasks): berjalan pada infrastruktur yang dikelola Anthropic
+* [Routines](/id/routines): berjalan pada infrastruktur yang dikelola Anthropic pada jadwal, melalui panggilan API, atau pada peristiwa GitHub
 * [GitHub Actions](/id/github-actions): gunakan trigger `schedule` dalam CI
-* [Desktop scheduled tasks](/id/desktop#schedule-recurring-tasks): berjalan secara lokal di mesin Anda
+* [Desktop scheduled tasks](/id/desktop-scheduled-tasks): berjalan secara lokal di mesin Anda

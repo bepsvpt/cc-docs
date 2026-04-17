@@ -74,12 +74,12 @@ Claude Code 支持两种方式来添加自定义 skills、agents 和 hooks：
 
     ```json my-first-plugin/.claude-plugin/plugin.json theme={null}
     {
-    "name": "my-first-plugin",
-    "description": "A greeting plugin to learn the basics",
-    "version": "1.0.0",
-    "author": {
-    "name": "Your Name"
-    }
+      "name": "my-first-plugin",
+      "description": "A greeting plugin to learn the basics",
+      "version": "1.0.0",
+      "author": {
+        "name": "Your Name"
+      }
     }
     ```
 
@@ -179,16 +179,18 @@ Claude Code 支持两种方式来添加自定义 skills、agents 和 hooks：
   **常见错误**：不要将 `commands/`、`agents/`、`skills/` 或 `hooks/` 放在 `.claude-plugin/` 目录内。只有 `plugin.json` 应该在 `.claude-plugin/` 内。所有其他目录必须在插件根级别。
 </Warning>
 
-| 目录                | 位置  | 目的                                  |
-| :---------------- | :-- | :---------------------------------- |
-| `.claude-plugin/` | 插件根 | 包含 `plugin.json` 清单（如果组件使用默认位置，则可选） |
-| `commands/`       | 插件根 | 作为 Markdown 文件的 Skills              |
-| `agents/`         | 插件根 | 自定义 agent 定义                        |
-| `skills/`         | 插件根 | 带有 `SKILL.md` 文件的 Agent Skills      |
-| `hooks/`          | 插件根 | `hooks.json` 中的事件处理程序               |
-| `.mcp.json`       | 插件根 | MCP server 配置                       |
-| `.lsp.json`       | 插件根 | 用于代码智能的 LSP server 配置               |
-| `settings.json`   | 插件根 | 启用插件时应用的默认[设置](/zh-CN/settings)     |
+| 目录                | 位置  | 目的                                       |
+| :---------------- | :-- | :--------------------------------------- |
+| `.claude-plugin/` | 插件根 | 包含 `plugin.json` 清单（如果组件使用默认位置，则可选）      |
+| `skills/`         | 插件根 | Skills 作为 `<name>/SKILL.md` 目录           |
+| `commands/`       | 插件根 | Skills 作为平面 Markdown 文件。为新插件使用 `skills/` |
+| `agents/`         | 插件根 | 自定义 agent 定义                             |
+| `hooks/`          | 插件根 | `hooks.json` 中的事件处理程序                    |
+| `.mcp.json`       | 插件根 | MCP server 配置                            |
+| `.lsp.json`       | 插件根 | 用于代码智能的 LSP server 配置                    |
+| `monitors/`       | 插件根 | `monitors.json` 中的后台监视器配置                |
+| `bin/`            | 插件根 | 在启用插件时添加到 Bash tool 的 `PATH` 的可执行文件      |
+| `settings.json`   | 插件根 | 启用插件时应用的默认[设置](/zh-CN/settings)          |
 
 <Note>
   **后续步骤**：准备好添加更多功能了吗？跳转到[开发更复杂的插件](#develop-more-complex-plugins)以添加 agents、hooks、MCP servers 和 LSP servers。有关所有插件组件的完整技术规范，请参阅[插件参考](/zh-CN/plugins-reference)。
@@ -213,11 +215,10 @@ my-plugin/
         └── SKILL.md
 ```
 
-每个 `SKILL.md` 需要包含 `name` 和 `description` 字段的 frontmatter，后跟说明：
+每个 `SKILL.md` 包含 YAML frontmatter 和说明。包含一个 `description`，以便 Claude 知道何时使用该 skill：
 
 ```yaml theme={null}
 ---
-name: code-review
 description: Reviews code for best practices and potential issues. Use when reviewing code, checking PRs, or analyzing code quality.
 ---
 
@@ -254,9 +255,27 @@ LSP（Language Server Protocol）插件为 Claude 提供实时代码智能。如
 
 有关完整的 LSP 配置选项，请参阅 [LSP servers](/zh-CN/plugins-reference#lsp-servers)。
 
+### 向你的插件添加后台监视器
+
+后台监视器让你的插件在后台监视日志、文件或外部状态，并在事件到达时通知 Claude。Claude Code 在插件处于活动状态时自动启动每个监视器，因此你无需指示 Claude 启动监视。
+
+在插件根目录添加一个 `monitors/monitors.json` 文件，其中包含监视器条目数组：
+
+```json monitors/monitors.json theme={null}
+[
+  {
+    "name": "error-log",
+    "command": "tail -F ./logs/error.log",
+    "description": "Application error log"
+  }
+]
+```
+
+来自 `command` 的每个 stdout 行在会话期间作为通知传递给 Claude。有关完整的架构，包括 `when` 触发器和变量替换，请参阅[监视器](/zh-CN/plugins-reference#monitors)。
+
 ### 使用你的插件提供默认设置
 
-插件可以在插件根目录包含一个 `settings.json` 文件，以在启用插件时应用默认配置。目前仅支持 `agent` 键。
+插件可以在插件根目录包含一个 `settings.json` 文件，以在启用插件时应用默认配置。目前仅支持 `agent` 和 `subagentStatusLine` 键。
 
 设置 `agent` 激活插件的[自定义 agents](/zh-CN/sub-agents) 之一作为主线程，应用其系统提示、工具限制和模型。这让插件在启用时通过改变 Claude Code 的默认行为方式。
 
@@ -301,7 +320,7 @@ claude --plugin-dir ./my-plugin
 如果你的插件不按预期工作：
 
 1. **检查结构**：确保你的目录在插件根目录，而不是在 `.claude-plugin/` 内
-2. **单独测试组件**：分别检查每个命令、agent 和 hook
+2. **单独测试组件**：分别检查每个 skill、agent 和 hook
 3. **使用验证和调试工具**：有关 CLI 命令和故障排除技术，请参阅[调试和开发工具](/zh-CN/plugins-reference#debugging-and-development-tools)
 
 ### 共享你的插件
@@ -321,6 +340,8 @@ claude --plugin-dir ./my-plugin
 
 * **Claude.ai**：[claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
 * **Console**：[platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
+
+一旦你的插件被列出，你可以拥有自己的 CLI 提示 Claude Code 用户安装它。请参阅[从你的 CLI 推荐你的插件](/zh-CN/plugin-hints)。
 
 <Note>
   有关完整的技术规范、调试技术和分发策略，请参阅[插件参考](/zh-CN/plugins-reference)。

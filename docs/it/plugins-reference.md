@@ -12,7 +12,7 @@
 
 Questo riferimento fornisce specifiche tecniche complete per il sistema di plugin di Claude Code, inclusi schemi dei componenti, comandi CLI e strumenti di sviluppo.
 
-Un **plugin** è una directory autonoma di componenti che estende Claude Code con funzionalità personalizzate. I componenti del plugin includono skills, agents, hooks, MCP servers e LSP servers.
+Un **plugin** è una directory autonoma di componenti che estende Claude Code con funzionalità personalizzate. I componenti del plugin includono skills, agents, hooks, server MCP, server LSP e monitor.
 
 ## Riferimento dei componenti del plugin
 
@@ -265,6 +265,58 @@ L'integrazione LSP fornisce:
 
 Installa il server di linguaggio per primo, quindi installa il plugin dal marketplace.
 
+### Monitors
+
+I plugin possono dichiarare monitor in background che Claude Code avvia automaticamente quando il plugin è attivo. Ogni monitor esegue un comando shell per la durata della sessione e fornisce ogni riga stdout a Claude come notifica, in modo che Claude possa reagire alle voci di log, ai cambiamenti di stato o agli eventi sottoposti a polling senza essere chiesto di avviare il watch stesso.
+
+I monitor dei plugin utilizzano lo stesso meccanismo dello [strumento Monitor](/it/tools-reference#monitor-tool) e condividono i suoi vincoli di disponibilità. Vengono eseguiti solo in sessioni CLI interattive, vengono eseguiti senza sandbox allo stesso livello di fiducia degli [hooks](#hooks) e vengono saltati su host in cui lo strumento Monitor non è disponibile.
+
+<Note>
+  I monitor dei plugin richiedono Claude Code v2.1.105 o successivo.
+</Note>
+
+**Posizione**: `monitors/monitors.json` nella radice del plugin, o inline in `plugin.json`
+
+**Formato**: Array JSON di voci di monitor
+
+Il seguente `monitors/monitors.json` monitora un endpoint di stato di distribuzione e un log di errore locale:
+
+```json theme={null}
+[
+  {
+    "name": "deploy-status",
+    "command": "${CLAUDE_PLUGIN_ROOT}/scripts/poll-deploy.sh ${user_config.api_endpoint}",
+    "description": "Deployment status changes"
+  },
+  {
+    "name": "error-log",
+    "command": "tail -F ./logs/error.log",
+    "description": "Application error log",
+    "when": "on-skill-invoke:debug"
+  }
+]
+```
+
+Per dichiarare monitor inline, imposta la chiave `monitors` in `plugin.json` sullo stesso array. Per caricare da un percorso non predefinito, imposta `monitors` su una stringa di percorso relativo come `"./config/monitors.json"`.
+
+**Campi obbligatori:**
+
+| Campo         | Descrizione                                                                                                                                 |
+| :------------ | :------------------------------------------------------------------------------------------------------------------------------------------ |
+| `name`        | Identificatore univoco all'interno del plugin. Previene processi duplicati quando il plugin si ricarica o una skill viene invocata di nuovo |
+| `command`     | Comando shell eseguito come processo in background persistente nella directory di lavoro della sessione                                     |
+| `description` | Breve riepilogo di ciò che viene monitorato. Mostrato nel pannello attività e nei riepiloghi delle notifiche                                |
+
+**Campi opzionali:**
+
+| Campo  | Descrizione                                                                                                                                                                                                                                            |
+| :----- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `when` | Controlla quando il monitor si avvia. `"always"` lo avvia all'avvio della sessione e al ricaricamento del plugin, ed è il predefinito. `"on-skill-invoke:<skill-name>"` lo avvia la prima volta che la skill denominata in questo plugin viene inviata |
+
+Il valore `command` supporta le stesse [sostituzioni di variabili](#environment-variables) delle configurazioni dei server MCP e LSP: `${CLAUDE_PLUGIN_ROOT}`, `${CLAUDE_PLUGIN_DATA}`, `${user_config.*}` e qualsiasi `${ENV_VAR}` dall'ambiente. Prefissa il comando con `cd "${CLAUDE_PLUGIN_ROOT}" && ` se lo script ha bisogno di essere eseguito dalla directory del plugin stesso.
+
+La disabilitazione di un plugin a metà sessione non interrompe i monitor già in esecuzione. Si interrompono quando la sessione termina.
+
 ***
 
 ## Ambiti di installazione del plugin
@@ -304,13 +356,18 @@ Il manifest è opzionale. Se omesso, Claude Code scopre automaticamente i compon
   "repository": "https://github.com/author/plugin",
   "license": "MIT",
   "keywords": ["keyword1", "keyword2"],
+  "skills": "./custom/skills/",
   "commands": ["./custom/commands/special.md"],
   "agents": "./custom/agents/",
-  "skills": "./custom/skills/",
   "hooks": "./config/hooks.json",
   "mcpServers": "./mcp-config.json",
   "outputStyles": "./styles/",
-  "lspServers": "./.lsp.json"
+  "lspServers": "./.lsp.json",
+  "monitors": "./monitors.json",
+  "dependencies": [
+    "helper-lib",
+    { "name": "secrets-vault", "version": "~2.1.0" }
+  ]
 }
 ```
 
@@ -338,17 +395,19 @@ Questo nome viene utilizzato per lo spazio dei nomi dei componenti. Ad esempio, 
 
 ### Campi del percorso del componente
 
-| Campo          | Tipo                  | Descrizione                                                                                                                                                                    | Esempio                               |
-| :------------- | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------ |
-| `commands`     | string\|array         | File/directory di comandi aggiuntivi                                                                                                                                           | `"./custom/cmd.md"` o `["./cmd1.md"]` |
-| `agents`       | string\|array         | File di agent aggiuntivi                                                                                                                                                       | `"./custom/agents/reviewer.md"`       |
-| `skills`       | string\|array         | Directory di skills aggiuntive                                                                                                                                                 | `"./custom/skills/"`                  |
-| `hooks`        | string\|array\|object | Percorsi di configurazione degli hook o configurazione inline                                                                                                                  | `"./my-extra-hooks.json"`             |
-| `mcpServers`   | string\|array\|object | Percorsi di configurazione MCP o configurazione inline                                                                                                                         | `"./my-extra-mcp-config.json"`        |
-| `outputStyles` | string\|array         | File/directory di stili di output aggiuntivi                                                                                                                                   | `"./styles/"`                         |
-| `lspServers`   | string\|array\|object | Configurazioni [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) per l'intelligenza del codice (vai alla definizione, trova riferimenti, ecc.) | `"./.lsp.json"`                       |
-| `userConfig`   | object                | Valori configurabili dall'utente richiesti al momento dell'abilitazione. Vedi [Configurazione utente](#user-configuration)                                                     | Vedi sotto                            |
-| `channels`     | array                 | Dichiarazioni di canale per l'iniezione di messaggi (stile Telegram, Slack, Discord). Vedi [Canali](#channels)                                                                 | Vedi sotto                            |
+| Campo          | Tipo                  | Descrizione                                                                                                                                                                    | Esempio                                              |
+| :------------- | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
+| `skills`       | string\|array         | Directory di skills personalizzate contenenti `<name>/SKILL.md` (sostituisce il valore predefinito `skills/`)                                                                  | `"./custom/skills/"`                                 |
+| `commands`     | string\|array         | File di skill markdown flat personalizzati o directory (sostituisce il valore predefinito `commands/`)                                                                         | `"./custom/cmd.md"` o `["./cmd1.md"]`                |
+| `agents`       | string\|array         | File di agent personalizzati (sostituisce il valore predefinito `agents/`)                                                                                                     | `"./custom/agents/reviewer.md"`                      |
+| `hooks`        | string\|array\|object | Percorsi di configurazione degli hook o configurazione inline                                                                                                                  | `"./my-extra-hooks.json"`                            |
+| `mcpServers`   | string\|array\|object | Percorsi di configurazione MCP o configurazione inline                                                                                                                         | `"./my-extra-mcp-config.json"`                       |
+| `outputStyles` | string\|array         | File/directory di stili di output personalizzati (sostituisce il valore predefinito `output-styles/`)                                                                          | `"./styles/"`                                        |
+| `lspServers`   | string\|array\|object | Configurazioni [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) per l'intelligenza del codice (vai alla definizione, trova riferimenti, ecc.) | `"./.lsp.json"`                                      |
+| `monitors`     | string\|array         | Configurazioni di [Monitor](/it/tools-reference#monitor-tool) in background che si avviano automaticamente quando il plugin è attivo. Vedi [Monitors](#monitors)               | `"./monitors.json"`                                  |
+| `userConfig`   | object                | Valori configurabili dall'utente richiesti al momento dell'abilitazione. Vedi [Configurazione utente](#user-configuration)                                                     | Vedi sotto                                           |
+| `channels`     | array                 | Dichiarazioni di canale per l'iniezione di messaggi (stile Telegram, Slack, Discord). Vedi [Canali](#channels)                                                                 | Vedi sotto                                           |
+| `dependencies` | array                 | Altri plugin richiesti da questo plugin, facoltativamente con vincoli di versione semver. Vedi [Vincola le versioni delle dipendenze del plugin](/it/plugin-dependencies)      | `[{ "name": "secrets-vault", "version": "~2.1.0" }]` |
 
 ### Configurazione utente
 
@@ -369,7 +428,7 @@ Il campo `userConfig` dichiara i valori per i quali Claude Code chiede all'utent
 }
 ```
 
-Le chiavi devono essere identificatori validi. Ogni valore è disponibile per la sostituzione come `${user_config.KEY}` nelle configurazioni dei server MCP e LSP, nei comandi degli hook e (solo per i valori non sensibili) nel contenuto delle skills e degli agents. I valori vengono anche esportati ai sottoprocessi del plugin come variabili di ambiente `CLAUDE_PLUGIN_OPTION_<KEY>`.
+Le chiavi devono essere identificatori validi. Ogni valore è disponibile per la sostituzione come `${user_config.KEY}` nelle configurazioni dei server MCP e LSP, nei comandi degli hook, nei comandi dei monitor e (solo per i valori non sensibili) nel contenuto delle skills e degli agents. I valori vengono anche esportati ai sottoprocessi del plugin come variabili di ambiente `CLAUDE_PLUGIN_OPTION_<KEY>`.
 
 I valori non sensibili vengono archiviati in `settings.json` sotto `pluginConfigs[<plugin-id>].options`. I valori sensibili vanno al portachiavi di sistema (o `~/.claude/.credentials.json` dove il portachiavi non è disponibile). L'archiviazione del portachiavi è condivisa con i token OAuth e ha un limite totale approssimativo di 2 KB, quindi mantieni i valori sensibili piccoli.
 
@@ -395,12 +454,13 @@ Il campo `server` è obbligatorio e deve corrispondere a una chiave in `mcpServe
 
 ### Regole del comportamento del percorso
 
-**Importante**: I percorsi personalizzati integrano le directory predefinite - non le sostituiscono.
+Per `skills`, `commands`, `agents`, `outputStyles` e `monitors`, un percorso personalizzato sostituisce il valore predefinito. Se il manifest specifica `skills`, la directory predefinita `skills/` non viene scansionata; se specifica `monitors`, il valore predefinito `monitors/monitors.json` non viene caricato. [Hooks](#hooks), [MCP servers](#mcp-servers) e [LSP servers](#lsp-servers) hanno semantica diversa per gestire più fonti.
 
-* Se `commands/` esiste, viene caricato in aggiunta ai percorsi di comandi personalizzati
 * Tutti i percorsi devono essere relativi alla radice del plugin e iniziare con `./`
-* I comandi dai percorsi personalizzati utilizzano le stesse regole di denominazione e spazio dei nomi
-* È possibile specificare più percorsi come array per flessibilità
+* I componenti dai percorsi personalizzati utilizzano le stesse regole di denominazione e spazio dei nomi
+* È possibile specificare più percorsi come array
+* Per mantenere la directory predefinita e aggiungere più percorsi per skills, commands, agents o output styles, includi il valore predefinito nel tuo array: `"skills": ["./skills/", "./extras/"]`
+* Quando un percorso di skill punta a una directory che contiene direttamente un `SKILL.md`, ad esempio `"skills": ["./"]` che punta alla radice del plugin, il campo frontmatter `name` in `SKILL.md` determina il nome di invocazione della skill. Questo fornisce un nome stabile indipendentemente dalla directory di installazione. Se `name` non è impostato nel frontmatter, il nome della directory viene utilizzato come fallback.
 
 **Esempi di percorso**:
 
@@ -419,7 +479,7 @@ Il campo `server` è obbligatorio e deve corrispondere a una chiave in `mcpServe
 
 ### Variabili di ambiente
 
-Claude Code fornisce due variabili per fare riferimento ai percorsi del plugin. Entrambe vengono sostituite inline ovunque appaiano nel contenuto delle skills, nel contenuto degli agents, nei comandi degli hook e nelle configurazioni dei server MCP o LSP. Entrambe vengono anche esportate come variabili di ambiente ai processi degli hook e ai sottoprocessi dei server MCP o LSP.
+Claude Code fornisce due variabili per fare riferimento ai percorsi del plugin. Entrambe vengono sostituite inline ovunque appaiano nel contenuto delle skills, nel contenuto degli agents, nei comandi degli hook, nei comandi dei monitor e nelle configurazioni dei server MCP o LSP. Entrambe vengono anche esportate come variabili di ambiente ai processi degli hook e ai sottoprocessi dei server MCP o LSP.
 
 **`${CLAUDE_PLUGIN_ROOT}`**: il percorso assoluto della directory di installazione del tuo plugin. Usalo per fare riferimento a script, binari e file di configurazione forniti con il plugin. Questo percorso cambia quando il plugin viene aggiornato, quindi i file che scrivi qui non sopravvivono a un aggiornamento.
 
@@ -498,20 +558,23 @@ I plugin vengono specificati in uno di due modi:
 
 Per motivi di sicurezza e verifica, Claude Code copia i plugin del *marketplace* nella **cache dei plugin** locale dell'utente (`~/.claude/plugins/cache`) piuttosto che usarli sul posto. Comprendere questo comportamento è importante quando si sviluppano plugin che fanno riferimento a file esterni.
 
+Ogni versione installata è una directory separata nella cache. Quando aggiorni o disinstalli un plugin, la directory della versione precedente viene contrassegnata come orfana e rimossa automaticamente 7 giorni dopo. Il periodo di grazia consente alle sessioni di Claude Code concorrenti che hanno già caricato la versione precedente di continuare a funzionare senza errori.
+
+Gli strumenti Glob e Grep di Claude saltano le directory delle versioni orfane durante le ricerche, quindi i risultati dei file non includono il codice del plugin obsoleto.
+
 ### Limitazioni dell'attraversamento dei percorsi
 
 I plugin installati non possono fare riferimento a file al di fuori della loro directory. I percorsi che attraversano al di fuori della radice del plugin (come `../shared-utils`) non funzioneranno dopo l'installazione perché questi file esterni non vengono copiati nella cache.
 
 ### Lavorare con dipendenze esterne
 
-Se il tuo plugin ha bisogno di accedere a file al di fuori della sua directory, puoi creare link simbolici a file esterni all'interno della directory del tuo plugin. I symlink vengono rispettati durante il processo di copia:
+Se il tuo plugin ha bisogno di accedere a file al di fuori della sua directory, puoi creare link simbolici a file esterni all'interno della directory del tuo plugin. I symlink vengono preservati nella cache piuttosto che dereferenziati e si risolvono al loro target in fase di esecuzione. Il seguente comando crea un link dall'interno della directory del tuo plugin a una posizione di utilità condivise:
 
 ```bash theme={null}
-# All'interno della directory del tuo plugin
 ln -s /path/to/shared-utils ./shared-utils
 ```
 
-Il contenuto collegato simbolicamente verrà copiato nella cache del plugin. Questo fornisce flessibilità mantenendo i vantaggi di sicurezza del sistema di caching.
+Questo fornisce flessibilità mantenendo i vantaggi di sicurezza del sistema di caching.
 
 ***
 
@@ -525,22 +588,28 @@ Un plugin completo segue questa struttura:
 enterprise-plugin/
 ├── .claude-plugin/           # Directory dei metadati (opzionale)
 │   └── plugin.json             # manifest del plugin
-├── commands/                 # Posizione predefinita del comando
-│   ├── status.md
-│   └── logs.md
-├── agents/                   # Posizione predefinita dell'agent
-│   ├── security-reviewer.md
-│   ├── performance-tester.md
-│   └── compliance-checker.md
-├── skills/                   # Skills dell'agent
+├── skills/                   # Skills
 │   ├── code-reviewer/
 │   │   └── SKILL.md
 │   └── pdf-processor/
 │       ├── SKILL.md
 │       └── scripts/
+├── commands/                 # Skills come file markdown flat
+│   ├── status.md
+│   └── logs.md
+├── agents/                   # Definizioni dei subagent
+│   ├── security-reviewer.md
+│   ├── performance-tester.md
+│   └── compliance-checker.md
+├── output-styles/            # Definizioni dello stile di output
+│   └── terse.md
+├── monitors/                 # Configurazioni dei monitor in background
+│   └── monitors.json
 ├── hooks/                    # Configurazioni degli hook
 │   ├── hooks.json           # Configurazione principale degli hook
 │   └── security-hooks.json  # Hook aggiuntivi
+├── bin/                      # Eseguibili del plugin aggiunti a PATH
+│   └── my-tool               # Invocabile come comando bare nello strumento Bash
 ├── settings.json            # Impostazioni predefinite per il plugin
 ├── .mcp.json                # Definizioni del server MCP
 ├── .lsp.json                # Configurazioni del server LSP
@@ -553,21 +622,24 @@ enterprise-plugin/
 ```
 
 <Warning>
-  La directory `.claude-plugin/` contiene il file `plugin.json`. Tutte le altre directory (commands/, agents/, skills/, hooks/) devono essere nella radice del plugin, non all'interno di `.claude-plugin/`.
+  La directory `.claude-plugin/` contiene il file `plugin.json`. Tutte le altre directory (commands/, agents/, skills/, output-styles/, monitors/, hooks/) devono essere nella radice del plugin, non all'interno di `.claude-plugin/`.
 </Warning>
 
 ### Riferimento delle posizioni dei file
 
-| Componente       | Posizione predefinita        | Scopo                                                                                                                                         |
-| :--------------- | :--------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Manifest**     | `.claude-plugin/plugin.json` | Metadati e configurazione del plugin (opzionale)                                                                                              |
-| **Comandi**      | `commands/`                  | File Markdown della skill (legacy; usa `skills/` per le nuove skills)                                                                         |
-| **Agents**       | `agents/`                    | File Markdown del subagent                                                                                                                    |
-| **Skills**       | `skills/`                    | Skills con struttura `<name>/SKILL.md`                                                                                                        |
-| **Hooks**        | `hooks/hooks.json`           | Configurazione degli hook                                                                                                                     |
-| **Server MCP**   | `.mcp.json`                  | Definizioni del server MCP                                                                                                                    |
-| **Server LSP**   | `.lsp.json`                  | Configurazioni del server di linguaggio                                                                                                       |
-| **Impostazioni** | `settings.json`              | Configurazione predefinita applicata quando il plugin è abilitato. Attualmente sono supportate solo le impostazioni [`agent`](/it/sub-agents) |
+| Componente        | Posizione predefinita        | Scopo                                                                                                                                                                                                  |
+| :---------------- | :--------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Manifest**      | `.claude-plugin/plugin.json` | Metadati e configurazione del plugin (opzionale)                                                                                                                                                       |
+| **Skills**        | `skills/`                    | Skills con struttura `<name>/SKILL.md`                                                                                                                                                                 |
+| **Commands**      | `commands/`                  | Skills come file Markdown flat. Usa `skills/` per i nuovi plugin                                                                                                                                       |
+| **Agents**        | `agents/`                    | File Markdown del subagent                                                                                                                                                                             |
+| **Output styles** | `output-styles/`             | Definizioni dello stile di output                                                                                                                                                                      |
+| **Hooks**         | `hooks/hooks.json`           | Configurazione degli hook                                                                                                                                                                              |
+| **MCP servers**   | `.mcp.json`                  | Definizioni del server MCP                                                                                                                                                                             |
+| **LSP servers**   | `.lsp.json`                  | Configurazioni del server di linguaggio                                                                                                                                                                |
+| **Monitors**      | `monitors/monitors.json`     | Configurazioni dei monitor in background                                                                                                                                                               |
+| **Executables**   | `bin/`                       | Eseguibili aggiunti al `PATH` dello strumento Bash. I file qui sono invocabili come comandi bare in qualsiasi chiamata dello strumento Bash mentre il plugin è abilitato                               |
+| **Settings**      | `settings.json`              | Configurazione predefinita applicata quando il plugin è abilitato. Attualmente sono supportate solo le chiavi [`agent`](/it/sub-agents) e [`subagentStatusLine`](/it/statusline#subagent-status-lines) |
 
 ***
 
@@ -594,7 +666,7 @@ claude plugin install <plugin> [options]
 | `-s, --scope <scope>` | Ambito di installazione: `user`, `project`, o `local` | `user`      |
 | `-h, --help`          | Visualizza la guida per il comando                    |             |
 
-L'ambito determina quale file di impostazioni viene aggiunto al plugin installato. Ad esempio, --scope project scrive in `enabledPlugins` in .claude/settings.json, rendendo il plugin disponibile a tutti coloro che clonano il repository del progetto.
+L'ambito determina quale file di impostazioni viene aggiunto al plugin installato. Ad esempio, `--scope project` scrive in `enabledPlugins` in .claude/settings.json, rendendo il plugin disponibile a tutti coloro che clonano il repository del progetto.
 
 **Esempi:**
 
@@ -702,7 +774,7 @@ Questo mostra:
 
 * Quali plugin vengono caricati
 * Eventuali errori nei manifest del plugin
-* Registrazione di comandi, agents e hook
+* Registrazione di skill, agent e hook
 * Inizializzazione del server MCP
 
 ### Problemi comuni
@@ -710,8 +782,8 @@ Questo mostra:
 | Problema                            | Causa                               | Soluzione                                                                                                                                                                      |
 | :---------------------------------- | :---------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Plugin non caricato                 | `plugin.json` non valido            | Esegui `claude plugin validate` o `/plugin validate` per controllare `plugin.json`, il frontmatter di skill/agent/command e `hooks/hooks.json` per errori di sintassi e schema |
-| Comandi non visualizzati            | Struttura della directory errata    | Assicurati che `commands/` sia alla radice, non in `.claude-plugin/`                                                                                                           |
-| Hook non attivati                   | Script non eseguibile               | Esegui `chmod +x script.sh`                                                                                                                                                    |
+| Skills non visualizzate             | Struttura della directory errata    | Assicurati che `skills/` o `commands/` sia alla radice del plugin, non all'interno di `.claude-plugin/`                                                                        |
+| Hooks non attivati                  | Script non eseguibile               | Esegui `chmod +x script.sh`                                                                                                                                                    |
 | Server MCP non riesce               | `${CLAUDE_PLUGIN_ROOT}` mancante    | Usa la variabile per tutti i percorsi del plugin                                                                                                                               |
 | Errori di percorso                  | Percorsi assoluti utilizzati        | Tutti i percorsi devono essere relativi e iniziare con `./`                                                                                                                    |
 | LSP `Executable not found in $PATH` | Server di linguaggio non installato | Installa il binario (ad es., `npm install -g typescript-language-server typescript`)                                                                                           |
@@ -762,7 +834,7 @@ Questo mostra:
 
 ### Errori di struttura della directory
 
-**Sintomi**: Il plugin si carica ma i componenti (comandi, agents, hook) sono mancanti.
+**Sintomi**: Il plugin si carica ma i componenti (skills, agents, hooks) sono mancanti.
 
 **Struttura corretta**: I componenti devono essere nella radice del plugin, non all'interno di `.claude-plugin/`. Solo `plugin.json` appartiene a `.claude-plugin/`.
 

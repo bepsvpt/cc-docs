@@ -12,7 +12,7 @@
 
 Referensi ini menyediakan spesifikasi teknis lengkap untuk sistem plugin Claude Code, termasuk skema komponen, perintah CLI, dan alat pengembangan.
 
-Sebuah **plugin** adalah direktori yang mandiri berisi komponen yang memperluas Claude Code dengan fungsionalitas khusus. Komponen plugin mencakup skills, agents, hooks, MCP servers, dan LSP servers.
+Sebuah **plugin** adalah direktori yang mandiri berisi komponen yang memperluas Claude Code dengan fungsionalitas khusus. Komponen plugin mencakup skills, agents, hooks, MCP servers, LSP servers, dan monitors.
 
 ## Referensi komponen plugin
 
@@ -265,6 +265,58 @@ Integrasi LSP menyediakan:
 
 Pasang language server terlebih dahulu, kemudian pasang plugin dari marketplace.
 
+### Monitors
+
+Plugins dapat mendeklarasikan monitors latar belakang yang Claude Code mulai secara otomatis saat plugin aktif. Setiap monitor menjalankan perintah shell untuk seumur hidup sesi dan mengirimkan setiap baris stdout ke Claude sebagai notifikasi, sehingga Claude dapat bereaksi terhadap entri log, perubahan status, atau peristiwa yang dipolling tanpa diminta untuk memulai watch itu sendiri.
+
+Plugin monitors menggunakan mekanisme yang sama seperti [Monitor tool](/id/tools-reference#monitor-tool) dan berbagi batasan ketersediaannya. Mereka hanya berjalan dalam sesi CLI interaktif, berjalan tanpa sandbox pada tingkat kepercayaan yang sama seperti [hooks](#hooks), dan dilewati pada host di mana Monitor tool tidak tersedia.
+
+<Note>
+  Plugin monitors memerlukan Claude Code v2.1.105 atau lebih baru.
+</Note>
+
+**Lokasi**: `monitors/monitors.json` di root plugin, atau inline di `plugin.json`
+
+**Format**: Array JSON dari entri monitor
+
+`monitors/monitors.json` berikut memantau endpoint status deployment dan log error lokal:
+
+```json theme={null}
+[
+  {
+    "name": "deploy-status",
+    "command": "${CLAUDE_PLUGIN_ROOT}/scripts/poll-deploy.sh ${user_config.api_endpoint}",
+    "description": "Deployment status changes"
+  },
+  {
+    "name": "error-log",
+    "command": "tail -F ./logs/error.log",
+    "description": "Application error log",
+    "when": "on-skill-invoke:debug"
+  }
+]
+```
+
+Untuk mendeklarasikan monitors inline, atur kunci `monitors` di `plugin.json` ke array yang sama. Untuk memuat dari jalur non-default, atur `monitors` ke string jalur relatif seperti `"./config/monitors.json"`.
+
+**Field yang diperlukan:**
+
+| Field         | Deskripsi                                                                                                     |
+| :------------ | :------------------------------------------------------------------------------------------------------------ |
+| `name`        | Pengenal unik dalam plugin. Mencegah proses duplikat saat plugin dimuat ulang atau skill dipanggil lagi       |
+| `command`     | Perintah shell yang dijalankan sebagai proses latar belakang persisten dalam direktori kerja sesi             |
+| `description` | Ringkasan singkat tentang apa yang sedang dipantau. Ditampilkan di panel tugas dan dalam ringkasan notifikasi |
+
+**Field opsional:**
+
+| Field  | Deskripsi                                                                                                                                                                                                                |
+| :----- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `when` | Mengontrol kapan monitor dimulai. `"always"` memulainya saat startup sesi dan pada reload plugin, dan merupakan default. `"on-skill-invoke:<skill-name>"` memulainya pertama kali skill bernama dalam plugin ini dikirim |
+
+Nilai `command` mendukung [substitusi variabel](#environment-variables) yang sama seperti konfigurasi MCP dan LSP server: `${CLAUDE_PLUGIN_ROOT}`, `${CLAUDE_PLUGIN_DATA}`, `${user_config.*}`, dan `${ENV_VAR}` apa pun dari lingkungan. Awali perintah dengan `cd "${CLAUDE_PLUGIN_ROOT}" && ` jika script perlu berjalan dari direktori plugin itu sendiri.
+
+Menonaktifkan plugin di tengah sesi tidak menghentikan monitors yang sudah berjalan. Mereka berhenti saat sesi berakhir.
+
 ***
 
 ## Cakupan instalasi plugin
@@ -304,13 +356,18 @@ Manifest bersifat opsional. Jika dihilangkan, Claude Code secara otomatis menemu
   "repository": "https://github.com/author/plugin",
   "license": "MIT",
   "keywords": ["keyword1", "keyword2"],
+  "skills": "./custom/skills/",
   "commands": ["./custom/commands/special.md"],
   "agents": "./custom/agents/",
-  "skills": "./custom/skills/",
   "hooks": "./config/hooks.json",
   "mcpServers": "./mcp-config.json",
   "outputStyles": "./styles/",
-  "lspServers": "./.lsp.json"
+  "lspServers": "./.lsp.json",
+  "monitors": "./monitors.json",
+  "dependencies": [
+    "helper-lib",
+    { "name": "secrets-vault", "version": "~2.1.0" }
+  ]
 }
 ```
 
@@ -338,17 +395,19 @@ Nama ini digunakan untuk namespacing komponen. Misalnya, di UI, agent `agent-cre
 
 ### Field jalur komponen
 
-| Field          | Tipe                  | Deskripsi                                                                                                                                                   | Contoh                                   |
-| :------------- | :-------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------- |
-| `commands`     | string\|array         | File/direktori command tambahan                                                                                                                             | `"./custom/cmd.md"` atau `["./cmd1.md"]` |
-| `agents`       | string\|array         | File agent tambahan                                                                                                                                         | `"./custom/agents/reviewer.md"`          |
-| `skills`       | string\|array         | Direktori skill tambahan                                                                                                                                    | `"./custom/skills/"`                     |
-| `hooks`        | string\|array\|object | Jalur konfigurasi hook atau konfigurasi inline                                                                                                              | `"./my-extra-hooks.json"`                |
-| `mcpServers`   | string\|array\|object | Jalur konfigurasi MCP atau konfigurasi inline                                                                                                               | `"./my-extra-mcp-config.json"`           |
-| `outputStyles` | string\|array         | File/direktori gaya output tambahan                                                                                                                         | `"./styles/"`                            |
-| `lspServers`   | string\|array\|object | Konfigurasi [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) untuk intelijen kode (buka definisi, temukan referensi, dll.) | `"./.lsp.json"`                          |
-| `userConfig`   | object                | Nilai yang dapat dikonfigurasi pengguna yang diminta saat enable. Lihat [User configuration](#user-configuration)                                           | Lihat di bawah                           |
-| `channels`     | array                 | Deklarasi channel untuk message injection (Telegram, Slack, Discord style). Lihat [Channels](#channels)                                                     | Lihat di bawah                           |
+| Field          | Tipe                  | Deskripsi                                                                                                                                                   | Contoh                                               |
+| :------------- | :-------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
+| `skills`       | string\|array         | Direktori skill khusus yang berisi `<name>/SKILL.md` (menggantikan default `skills/`)                                                                       | `"./custom/skills/"`                                 |
+| `commands`     | string\|array         | File skill `.md` datar atau direktori khusus (menggantikan default `commands/`)                                                                             | `"./custom/cmd.md"` atau `["./cmd1.md"]`             |
+| `agents`       | string\|array         | File agent khusus (menggantikan default `agents/`)                                                                                                          | `"./custom/agents/reviewer.md"`                      |
+| `hooks`        | string\|array\|object | Jalur konfigurasi hook atau konfigurasi inline                                                                                                              | `"./my-extra-hooks.json"`                            |
+| `mcpServers`   | string\|array\|object | Jalur konfigurasi MCP atau konfigurasi inline                                                                                                               | `"./my-extra-mcp-config.json"`                       |
+| `outputStyles` | string\|array         | File/direktori gaya output khusus (menggantikan default `output-styles/`)                                                                                   | `"./styles/"`                                        |
+| `lspServers`   | string\|array\|object | Konfigurasi [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) untuk intelijen kode (buka definisi, temukan referensi, dll.) | `"./.lsp.json"`                                      |
+| `monitors`     | string\|array         | Konfigurasi [Monitor](/id/tools-reference#monitor-tool) latar belakang yang dimulai secara otomatis saat plugin aktif. Lihat [Monitors](#monitors)          | `"./monitors.json"`                                  |
+| `userConfig`   | object                | Nilai yang dapat dikonfigurasi pengguna yang diminta saat enable. Lihat [User configuration](#user-configuration)                                           | Lihat di bawah                                       |
+| `channels`     | array                 | Deklarasi channel untuk message injection (Telegram, Slack, Discord style). Lihat [Channels](#channels)                                                     | Lihat di bawah                                       |
+| `dependencies` | array                 | Plugin lain yang diperlukan plugin ini, secara opsional dengan batasan versi semver. Lihat [Constrain plugin dependency versions](/id/plugin-dependencies)  | `[{ "name": "secrets-vault", "version": "~2.1.0" }]` |
 
 ### User configuration
 
@@ -369,7 +428,7 @@ Field `userConfig` mendeklarasikan nilai yang Claude Code minta dari pengguna sa
 }
 ```
 
-Kunci harus berupa pengenal yang valid. Setiap nilai tersedia untuk substitusi sebagai `${user_config.KEY}` di konfigurasi MCP dan LSP server, perintah hook, dan (hanya untuk nilai non-sensitif) konten skill dan agent. Nilai juga diekspor ke subprocess plugin sebagai variabel lingkungan `CLAUDE_PLUGIN_OPTION_<KEY>`.
+Kunci harus berupa pengenal yang valid. Setiap nilai tersedia untuk substitusi sebagai `${user_config.KEY}` di konfigurasi MCP dan LSP server, perintah hook, perintah monitor, dan (hanya untuk nilai non-sensitif) konten skill dan agent. Nilai juga diekspor ke subprocess plugin sebagai variabel lingkungan `CLAUDE_PLUGIN_OPTION_<KEY>`.
 
 Nilai non-sensitif disimpan di `settings.json` di bawah `pluginConfigs[<plugin-id>].options`. Nilai sensitif masuk ke keychain sistem (atau `~/.claude/.credentials.json` di mana keychain tidak tersedia). Penyimpanan keychain dibagikan dengan token OAuth dan memiliki batas total sekitar 2 KB, jadi jaga nilai sensitif tetap kecil.
 
@@ -395,12 +454,13 @@ Field `server` diperlukan dan harus cocok dengan kunci di `mcpServers` plugin. F
 
 ### Aturan perilaku jalur
 
-**Penting**: Jalur khusus melengkapi direktori default - mereka tidak menggantikannya.
+Untuk `skills`, `commands`, `agents`, `outputStyles`, dan `monitors`, jalur khusus menggantikan default. Jika manifest menentukan `skills`, direktori default `skills/` tidak dipindai; jika menentukan `monitors`, default `monitors/monitors.json` tidak dimuat. [Hooks](#hooks), [MCP servers](#mcp-servers), dan [LSP servers](#lsp-servers) memiliki semantik berbeda untuk menangani beberapa sumber.
 
-* Jika `commands/` ada, itu dimuat selain jalur command khusus
 * Semua jalur harus relatif terhadap root plugin dan dimulai dengan `./`
-* Commands dari jalur khusus menggunakan aturan penamaan dan namespacing yang sama
-* Beberapa jalur dapat ditentukan sebagai array untuk fleksibilitas
+* Komponen dari jalur khusus menggunakan aturan penamaan dan namespacing yang sama
+* Beberapa jalur dapat ditentukan sebagai array
+* Untuk menyimpan direktori default dan menambahkan lebih banyak jalur untuk skills, commands, agents, atau output styles, sertakan default dalam array Anda: `"skills": ["./skills/", "./extras/"]`
+* Ketika jalur skill menunjuk ke direktori yang berisi `SKILL.md` secara langsung, misalnya `"skills": ["./"]` menunjuk ke root plugin, field frontmatter `name` di `SKILL.md` menentukan nama invokasi skill. Ini memberikan nama stabil terlepas dari direktori instalasi. Jika `name` tidak diatur di frontmatter, basename direktori digunakan sebagai fallback.
 
 **Contoh jalur**:
 
@@ -419,7 +479,7 @@ Field `server` diperlukan dan harus cocok dengan kunci di `mcpServers` plugin. F
 
 ### Variabel lingkungan
 
-Claude Code menyediakan dua variabel untuk mereferensikan jalur plugin. Keduanya disubstitusi inline di mana pun mereka muncul dalam konten skill, konten agent, perintah hook, dan konfigurasi MCP atau LSP server. Keduanya juga diekspor sebagai variabel lingkungan ke proses hook dan subprocess MCP atau LSP server.
+Claude Code menyediakan dua variabel untuk mereferensikan jalur plugin. Keduanya disubstitusi inline di mana pun mereka muncul dalam konten skill, konten agent, perintah hook, perintah monitor, dan konfigurasi MCP atau LSP server. Keduanya juga diekspor sebagai variabel lingkungan ke proses hook dan subprocess MCP atau LSP server.
 
 **`${CLAUDE_PLUGIN_ROOT}`**: jalur absolut ke direktori instalasi plugin Anda. Gunakan ini untuk mereferensikan scripts, binaries, dan file konfigurasi yang disertakan dengan plugin. Jalur ini berubah saat plugin diperbarui, jadi file yang Anda tulis di sini tidak bertahan setelah update.
 
@@ -498,20 +558,23 @@ Plugins ditentukan dalam salah satu dari dua cara:
 
 Untuk tujuan keamanan dan verifikasi, Claude Code menyalin plugin *marketplace* ke **plugin cache** lokal pengguna (`~/.claude/plugins/cache`) daripada menggunakannya di tempat. Memahami perilaku ini penting saat mengembangkan plugins yang mereferensikan file eksternal.
 
+Setiap versi yang dipasang adalah direktori terpisah dalam cache. Saat Anda memperbarui atau menghapus plugin, direktori versi sebelumnya ditandai sebagai orphaned dan dihapus secara otomatis 7 hari kemudian. Periode grace memungkinkan sesi Claude Code bersamaan yang sudah memuat versi lama untuk terus berjalan tanpa kesalahan.
+
+Tools Glob dan Grep Claude melewati direktori versi orphaned selama pencarian, jadi hasil file tidak menyertakan kode plugin yang ketinggalan zaman.
+
 ### Batasan path traversal
 
 Plugin yang dipasang tidak dapat mereferensikan file di luar direktorinya. Jalur yang melintasi di luar root plugin (seperti `../shared-utils`) tidak akan berfungsi setelah instalasi karena file eksternal tersebut tidak disalin ke cache.
 
 ### Bekerja dengan dependensi eksternal
 
-Jika plugin Anda perlu mengakses file di luar direktorinya, Anda dapat membuat symbolic links ke file eksternal dalam direktori plugin Anda. Symlinks dihormati selama proses penyalinan:
+Jika plugin Anda perlu mengakses file di luar direktorinya, Anda dapat membuat symbolic links ke file eksternal dalam direktori plugin Anda. Symlinks dipertahankan dalam cache daripada didereferensikan, dan mereka diselesaikan ke target mereka saat runtime. Perintah berikut membuat link dari dalam direktori plugin Anda ke lokasi utilitas bersama:
 
 ```bash theme={null}
-# Di dalam direktori plugin Anda
 ln -s /path/to/shared-utils ./shared-utils
 ```
 
-Konten yang di-symlink akan disalin ke plugin cache. Ini memberikan fleksibilitas sambil mempertahankan manfaat keamanan dari sistem caching.
+Ini memberikan fleksibilitas sambil mempertahankan manfaat keamanan dari sistem caching.
 
 ***
 
@@ -525,22 +588,28 @@ Plugin lengkap mengikuti struktur ini:
 enterprise-plugin/
 ├── .claude-plugin/           # Direktori metadata (opsional)
 │   └── plugin.json             # plugin manifest
-├── commands/                 # Lokasi command default
-│   ├── status.md
-│   └── logs.md
-├── agents/                   # Lokasi agent default
-│   ├── security-reviewer.md
-│   ├── performance-tester.md
-│   └── compliance-checker.md
-├── skills/                   # Agent Skills
+├── skills/                   # Skills
 │   ├── code-reviewer/
 │   │   └── SKILL.md
 │   └── pdf-processor/
 │       ├── SKILL.md
 │       └── scripts/
+├── commands/                 # Skills sebagai file .md datar
+│   ├── status.md
+│   └── logs.md
+├── agents/                   # Definisi subagent
+│   ├── security-reviewer.md
+│   ├── performance-tester.md
+│   └── compliance-checker.md
+├── output-styles/            # Definisi gaya output
+│   └── terse.md
+├── monitors/                 # Konfigurasi monitor latar belakang
+│   └── monitors.json
 ├── hooks/                    # Konfigurasi hook
 │   ├── hooks.json           # Konfigurasi hook utama
 │   └── security-hooks.json  # Hook tambahan
+├── bin/                      # Executables plugin ditambahkan ke PATH
+│   └── my-tool               # Dapat dipanggil sebagai perintah bare di Bash tool
 ├── settings.json            # Pengaturan default untuk plugin
 ├── .mcp.json                # Definisi MCP server
 ├── .lsp.json                # Konfigurasi LSP server
@@ -553,21 +622,24 @@ enterprise-plugin/
 ```
 
 <Warning>
-  Direktori `.claude-plugin/` berisi file `plugin.json`. Semua direktori lainnya (commands/, agents/, skills/, hooks/) harus berada di root plugin, bukan di dalam `.claude-plugin/`.
+  Direktori `.claude-plugin/` berisi file `plugin.json`. Semua direktori lainnya (commands/, agents/, skills/, output-styles/, monitors/, hooks/) harus berada di root plugin, bukan di dalam `.claude-plugin/`.
 </Warning>
 
 ### Referensi lokasi file
 
-| Komponen        | Lokasi Default               | Tujuan                                                                                                                        |
-| :-------------- | :--------------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
-| **Manifest**    | `.claude-plugin/plugin.json` | Metadata dan konfigurasi plugin (opsional)                                                                                    |
-| **Commands**    | `commands/`                  | File Markdown Skill (legacy; gunakan `skills/` untuk skill baru)                                                              |
-| **Agents**      | `agents/`                    | File Markdown Subagent                                                                                                        |
-| **Skills**      | `skills/`                    | Skills dengan struktur `<name>/SKILL.md`                                                                                      |
-| **Hooks**       | `hooks/hooks.json`           | Konfigurasi hook                                                                                                              |
-| **MCP servers** | `.mcp.json`                  | Definisi MCP server                                                                                                           |
-| **LSP servers** | `.lsp.json`                  | Konfigurasi language server                                                                                                   |
-| **Settings**    | `settings.json`              | Konfigurasi default yang diterapkan saat plugin diaktifkan. Saat ini hanya pengaturan [`agent`](/id/sub-agents) yang didukung |
+| Komponen          | Lokasi Default               | Tujuan                                                                                                                                                                                    |
+| :---------------- | :--------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Manifest**      | `.claude-plugin/plugin.json` | Metadata dan konfigurasi plugin (opsional)                                                                                                                                                |
+| **Skills**        | `skills/`                    | Skills dengan struktur `<name>/SKILL.md`                                                                                                                                                  |
+| **Commands**      | `commands/`                  | Skills sebagai file Markdown datar. Gunakan `skills/` untuk plugin baru                                                                                                                   |
+| **Agents**        | `agents/`                    | File Markdown Subagent                                                                                                                                                                    |
+| **Output styles** | `output-styles/`             | Definisi gaya output                                                                                                                                                                      |
+| **Hooks**         | `hooks/hooks.json`           | Konfigurasi hook                                                                                                                                                                          |
+| **MCP servers**   | `.mcp.json`                  | Definisi MCP server                                                                                                                                                                       |
+| **LSP servers**   | `.lsp.json`                  | Konfigurasi language server                                                                                                                                                               |
+| **Monitors**      | `monitors/monitors.json`     | Konfigurasi monitor latar belakang                                                                                                                                                        |
+| **Executables**   | `bin/`                       | Executables ditambahkan ke `PATH` Bash tool. File di sini dapat dipanggil sebagai perintah bare di panggilan Bash tool apa pun saat plugin diaktifkan                                     |
+| **Settings**      | `settings.json`              | Konfigurasi default yang diterapkan saat plugin diaktifkan. Saat ini hanya kunci [`agent`](/id/sub-agents) dan [`subagentStatusLine`](/id/statusline#subagent-status-lines) yang didukung |
 
 ***
 
@@ -594,7 +666,7 @@ claude plugin install <plugin> [options]
 | `-s, --scope <scope>` | Cakupan instalasi: `user`, `project`, atau `local` | `user`  |
 | `-h, --help`          | Tampilkan bantuan untuk perintah                   |         |
 
-Cakupan menentukan file pengaturan mana yang ditambahkan plugin yang dipasang. Misalnya, --scope project menulis ke `enabledPlugins` di .claude/settings.json, membuat plugin tersedia untuk semua orang yang mengkloning repositori proyek.
+Cakupan menentukan file pengaturan mana yang ditambahkan plugin yang dipasang. Misalnya, `--scope project` menulis ke `enabledPlugins` di .claude/settings.json, membuat plugin tersedia untuk semua orang yang mengkloning repositori proyek.
 
 **Contoh:**
 
@@ -702,7 +774,7 @@ Ini menunjukkan:
 
 * Plugin mana yang sedang dimuat
 * Kesalahan apa pun dalam manifest plugin
-* Registrasi command, agent, dan hook
+* Registrasi skill, agent, dan hook
 * Inisialisasi MCP server
 
 ### Masalah umum
@@ -710,7 +782,7 @@ Ini menunjukkan:
 | Masalah                             | Penyebab                       | Solusi                                                                                                                                                                             |
 | :---------------------------------- | :----------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Plugin tidak dimuat                 | `plugin.json` tidak valid      | Jalankan `claude plugin validate` atau `/plugin validate` untuk memeriksa `plugin.json`, frontmatter skill/agent/command, dan `hooks/hooks.json` untuk kesalahan sintaks dan skema |
-| Commands tidak muncul               | Struktur direktori salah       | Pastikan `commands/` di root, bukan di `.claude-plugin/`                                                                                                                           |
+| Skills tidak muncul                 | Struktur direktori salah       | Pastikan `skills/` atau `commands/` di root plugin, bukan di `.claude-plugin/`                                                                                                     |
 | Hooks tidak aktif                   | Script tidak dapat dieksekusi  | Jalankan `chmod +x script.sh`                                                                                                                                                      |
 | MCP server gagal                    | `${CLAUDE_PLUGIN_ROOT}` hilang | Gunakan variabel untuk semua jalur plugin                                                                                                                                          |
 | Kesalahan jalur                     | Jalur absolut digunakan        | Semua jalur harus relatif dan dimulai dengan `./`                                                                                                                                  |
@@ -762,7 +834,7 @@ Ini menunjukkan:
 
 ### Kesalahan struktur direktori
 
-**Gejala**: Plugin dimuat tetapi komponen (commands, agents, hooks) hilang.
+**Gejala**: Plugin dimuat tetapi komponen (skills, agents, hooks) hilang.
 
 **Struktur yang benar**: Komponen harus berada di root plugin, bukan di dalam `.claude-plugin/`. Hanya `plugin.json` yang termasuk di `.claude-plugin/`.
 

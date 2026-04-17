@@ -11,9 +11,9 @@ L'application de bureau vous donne accès à Claude Code avec une interface grap
 Cette page vous guide dans l'installation de l'application et le démarrage de votre première session. Si vous êtes déjà configuré, consultez [Utiliser Claude Code Desktop](/fr/desktop) pour la référence complète.
 
 <Frame>
-  <img src="https://mintcdn.com/claude-code/CNLUpFGiXoc9mhvD/images/desktop-code-tab-light.png?fit=max&auto=format&n=CNLUpFGiXoc9mhvD&q=85&s=9a36a7a27b9f4c6f2e1c83bdb34f69ce" className="block dark:hidden" alt="L'interface Claude Code Desktop montrant l'onglet Code sélectionné, avec une boîte de saisie, un sélecteur de mode de permission défini sur Demander les permissions, un sélecteur de modèle, un sélecteur de dossier et l'option Environnement local" width="2500" height="1376" data-path="images/desktop-code-tab-light.png" />
+  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-light.png" className="block dark:hidden" alt="L'interface Claude Code Desktop montrant l'onglet Code sélectionné, avec une boîte de saisie, un sélecteur de mode de permission défini sur Demander les permissions, un sélecteur de modèle, un sélecteur de dossier et l'option Environnement local" />
 
-  <img src="https://mintcdn.com/claude-code/CNLUpFGiXoc9mhvD/images/desktop-code-tab-dark.png?fit=max&auto=format&n=CNLUpFGiXoc9mhvD&q=85&s=5463defe81c459fb9b1f91f6a958cfb8" className="hidden dark:block" alt="L'interface Claude Code Desktop en mode sombre montrant l'onglet Code sélectionné, avec une boîte de saisie, un sélecteur de mode de permission défini sur Demander les permissions, un sélecteur de modèle, un sélecteur de dossier et l'option Environnement local" width="2504" height="1374" data-path="images/desktop-code-tab-dark.png" />
+  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-dark.png" className="hidden dark:block" alt="L'interface Claude Code Desktop en mode sombre montrant l'onglet Code sélectionné, avec une boîte de saisie, un sélecteur de mode de permission défini sur Demander les permissions, un sélecteur de modèle, un sélecteur de dossier et l'option Environnement local" />
 </Frame>
 
 L'application de bureau a trois onglets :

@@ -1,5 +1,411 @@
 # Documentation Changes
 
+## 2026-04-17
+
+137 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Claude Code im Web verwenden** (`claude-code-on-the-web.md`): 592 lines added, 526 removed
+  - New section: "# Claude Code im Web verwenden"
+  - New section: "## GitHub-Authentifizierungsoptionen"
+  - New section: "## Die Cloud-Umgebung"
+  - New section: "### Was in Cloud-Sitzungen verfügbar ist"
+  - New section: "### Installierte Tools"
+- **Erste Schritte mit der Desktop-App** (`desktop-quickstart.md`): 2 lines added, 2 removed
+- **Claude Code Desktop verwenden** (`desktop.md`): 11 lines added, 11 removed
+- **Plugins-Referenz** (`plugins-reference.md`): 117 lines added, 45 removed
+  - New section: "### Monitore"
+- **Plugins erstellen** (`plugins.md`): 41 lines added, 20 removed
+  - New section: "### Fügen Sie Hintergrund-Monitore zu Ihrem Plugin hinzu"
+- **Lokale Sitzungen von jedem Gerät aus mit Remote Control fortsetzen** (`remote-control.md`): 82 lines added, 15 removed
+  - New section: "## Mobile Push-Benachrichtigungen"
+  - New section: "### „Remote Control erfordert ein claude.ai-Abonnement""
+  - New section: "### „Remote Control erfordert ein Token mit vollständigem Umfang""
+  - New section: "### „Ihre Organisation für die Remote Control-Berechtigung konnte nicht bestimmt werden""
+  - New section: "### „Remote Control ist für Ihr Konto noch nicht aktiviert""
+- **Prompts nach Zeitplan ausführen** (`scheduled-tasks.md`): 82 lines added, 30 removed
+  - New section: "## Führen Sie einen Prompt wiederholt mit /loop aus"
+  - New section: "### Führen Sie nach einem festen Intervall aus"
+  - New section: "### Lassen Sie Claude das Intervall wählen"
+  - New section: "### Führen Sie den integrierten Wartungs-Prompt aus"
+- **Claude Code-Einstellungen** (`settings.md`): 24 lines added, 14 removed
+- **Erweiterte Einrichtung** (`setup.md`): 28 lines added, 10 removed
+
+### English
+
+
+**Modified**
+
+- **Claude Code on Amazon Bedrock** (`amazon-bedrock.md`): 8 lines added, 5 removed
+- **Changelog** (`changelog.md`): 43 lines added, 1 removed
+- **Use Claude Code on the web** (`claude-code-on-the-web.md`): 51 lines added, 13 removed
+  - New section: "### Environment caching"
+  - New section: "## Troubleshooting"
+  - New section: "### Session creation failed"
+  - New section: "### Remote Control session expired or access denied"
+  - New section: "### Environment expired"
+- **CLI reference** (`cli-reference.md`): 4 lines added, 2 removed
+- **Commands** (`commands.md`): 85 lines added, 79 removed
+- **Common workflows** (`common-workflows.md`): 37 lines added, 27 removed
+- **Get started with the desktop app** (`desktop-quickstart.md`): 4 lines added, 12 removed
+- **Use Claude Code Desktop** (`desktop.md`): 24 lines added, 17 removed
+- **Discover and install prebuilt plugins through marketplaces** (`discover-plugins.md`): 9 lines added, 3 removed
+- **Environment variables** (`env-vars.md`): 13 lines added, 7 removed
+- **Speed up responses with fast mode** (`fast-mode.md`): 1 lines added, 1 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 1 lines added, 1 removed
+- **Claude Code on Google Vertex AI** (`google-vertex-ai.md`): 7 lines added, 5 removed
+- **Run Claude Code programmatically** (`headless.md`): 20 lines added, 1 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 4 lines added, 0 removed
+- **Hooks reference** (`hooks.md`): 11 lines added, 7 removed
+- **How Claude Code works** (`how-claude-code-works.md`): 1 lines added, 1 removed
+- **Interactive mode** (`interactive-mode.md`): 41 lines added, 31 removed
+  - New section: "## Session recap"
+- **Customize keyboard shortcuts** (`keybindings.md`): 20 lines added, 19 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 30 lines added, 2 removed
+  - New section: "### Automatic reconnection"
+  - New section: "### Restrict OAuth scopes"
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 4 lines added, 2 removed
+- **Model configuration** (`model-config.md`): 76 lines added, 34 removed
+  - New section: "#### Choose an effort level"
+  - New section: "#### Set the effort level"
+  - New section: "#### Adaptive reasoning and fixed thinking budgets"
+- **Monitoring** (`monitoring-usage.md`): 64 lines added, 21 removed
+  - New section: "#### API request body event"
+  - New section: "#### API response body event"
+- **Configure permissions** (`permissions.md`): 16 lines added, 1 removed
+  - New section: "#### Read-only commands"
+- **Create and distribute a plugin marketplace** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **Plugins reference** (`plugins-reference.md`): 91 lines added, 16 removed
+  - New section: "### Monitors"
+  - New section: "### plugin list"
+- **Create plugins** (`plugins.md`): 22 lines added, 1 removed
+  - New section: "### Add background monitors to your plugin"
+- **Continue local sessions from any device with Remote Control** (`remote-control.md`): 37 lines added, 0 removed
+  - New section: "## Mobile push notifications"
+- **Run prompts on a schedule** (`scheduled-tasks.md`): 14 lines added, 14 removed
+- **Claude Code settings** (`settings.md`): 9 lines added, 3 removed
+- **Advanced setup** (`setup.md`): 20 lines added, 1 removed
+  - New section: "### Pin a minimum version"
+- **Extend Claude with skills** (`skills.md`): 3 lines added, 3 removed
+- **Customize your status line** (`statusline.md`): 1 lines added, 1 removed
+- **Create custom subagents** (`sub-agents.md`): 4 lines added, 4 removed
+- **Optimize your terminal setup** (`terminal-config.md`): 2 lines added, 2 removed
+- **Tools reference** (`tools-reference.md`): 45 lines added, 42 removed
+- **Troubleshooting** (`troubleshooting.md`): 28 lines added, 24 removed
+- **Use Claude Code in VS Code** (`vs-code.md`): 4 lines added, 4 removed
+
+### Español
+
+
+**Modified**
+
+- **Usar Claude Code en la web** (`claude-code-on-the-web.md`): 592 lines added, 526 removed
+  - New section: "# Usar Claude Code en la web"
+  - New section: "## Opciones de autenticación de GitHub"
+  - New section: "## El entorno en la nube"
+  - New section: "### Qué está disponible en sesiones en la nube"
+  - New section: "### Herramientas instaladas"
+- **Comenzar con la aplicación de escritorio** (`desktop-quickstart.md`): 2 lines added, 2 removed
+- **Usar Claude Code Desktop** (`desktop.md`): 11 lines added, 11 removed
+- **Referencia de plugins** (`plugins-reference.md`): 120 lines added, 48 removed
+  - New section: "### Monitors"
+- **Crear plugins** (`plugins.md`): 129 lines added, 108 removed
+  - New section: "### Cree su primer plugin"
+  - New section: "### Agregue Skills a su plugin"
+  - New section: "### Agregue servidores LSP a su plugin"
+  - New section: "### Agregue monitores de fondo a su plugin"
+  - New section: "### Envíe configuraciones predeterminadas con su plugin"
+- **Continúe sesiones locales desde cualquier dispositivo con Remote Control** (`remote-control.md`): 81 lines added, 14 removed
+  - New section: "## Notificaciones push móviles"
+  - New section: "### "Remote Control requires a claude.ai subscription""
+  - New section: "### "Remote Control requires a full-scope login token""
+  - New section: "### "Unable to determine your organization for Remote Control eligibility""
+- **Ejecutar prompts en un horario** (`scheduled-tasks.md`): 82 lines added, 30 removed
+  - New section: "## Ejecutar un prompt repetidamente con /loop"
+  - New section: "### Ejecutar en un intervalo fijo"
+  - New section: "### Dejar que Claude elija el intervalo"
+  - New section: "### Ejecutar el prompt de mantenimiento integrado"
+- **Configuración de Claude Code** (`settings.md`): 24 lines added, 14 removed
+- **Configuración avanzada** (`setup.md`): 27 lines added, 9 removed
+
+### Français
+
+
+**Modified**
+
+- **Utiliser Claude Code sur le web** (`claude-code-on-the-web.md`): 593 lines added, 523 removed
+  - New section: "# Utiliser Claude Code sur le web"
+  - New section: "## Options d'authentification GitHub"
+  - New section: "## L'environnement cloud"
+  - New section: "### Ce qui est disponible dans les sessions cloud"
+  - New section: "### Outils installés"
+- **Démarrer avec l'application de bureau** (`desktop-quickstart.md`): 2 lines added, 2 removed
+- **Utiliser Claude Code Desktop** (`desktop.md`): 11 lines added, 11 removed
+- **Référence des plugins** (`plugins-reference.md`): 118 lines added, 46 removed
+  - New section: "### Moniteurs"
+- **Créer des plugins** (`plugins.md`): 34 lines added, 13 removed
+  - New section: "### Ajoutez des moniteurs en arrière-plan à votre plugin"
+- **Continuer les sessions locales depuis n'importe quel appareil avec Remote Control** (`remote-control.md`): 81 lines added, 14 removed
+  - New section: "## Notifications push mobiles"
+  - New section: "### « Remote Control requires a claude.ai subscription »"
+  - New section: "### « Remote Control requires a full-scope login token »"
+  - New section: "### « Unable to determine your organization for Remote Control eligibility »"
+- **Exécuter des prompts selon un calendrier** (`scheduled-tasks.md`): 82 lines added, 30 removed
+  - New section: "## Exécuter un prompt de manière répétée avec /loop"
+  - New section: "### Exécuter selon un intervalle fixe"
+  - New section: "### Laisser Claude choisir l'intervalle"
+  - New section: "### Exécuter le prompt de maintenance intégré"
+- **Paramètres Claude Code** (`settings.md`): 32 lines added, 22 removed
+- **Configuration avancée** (`setup.md`): 27 lines added, 9 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Gunakan Claude Code di web** (`claude-code-on-the-web.md`): 592 lines added, 526 removed
+  - New section: "# Gunakan Claude Code di web"
+  - New section: "## Opsi autentikasi GitHub"
+  - New section: "## Lingkungan cloud"
+  - New section: "### Apa yang tersedia di sesi cloud"
+  - New section: "### Alat yang diinstal"
+- **Memulai dengan aplikasi desktop** (`desktop-quickstart.md`): 2 lines added, 2 removed
+- **Gunakan Claude Code Desktop** (`desktop.md`): 11 lines added, 11 removed
+- **Referensi Plugins** (`plugins-reference.md`): 118 lines added, 46 removed
+  - New section: "### Monitors"
+- **Buat plugins** (`plugins.md`): 35 lines added, 14 removed
+  - New section: "### Tambahkan background monitors ke plugin Anda"
+  - New section: "### Kirim default settings dengan plugin Anda"
+- **Lanjutkan sesi lokal dari perangkat apa pun dengan Remote Control** (`remote-control.md`): 81 lines added, 14 removed
+  - New section: "## Notifikasi push mobile"
+  - New section: "### "Remote Control memerlukan langganan claude.ai""
+  - New section: "### "Remote Control memerlukan token login dengan cakupan penuh""
+  - New section: "### "Tidak dapat menentukan organisasi Anda untuk kelayakan Remote Control""
+- **Jalankan prompt sesuai jadwal** (`scheduled-tasks.md`): 82 lines added, 30 removed
+  - New section: "## Jalankan prompt berulang dengan /loop"
+  - New section: "### Jalankan pada interval tetap"
+  - New section: "### Biarkan Claude memilih interval"
+  - New section: "### Jalankan prompt pemeliharaan bawaan"
+- **Pengaturan Claude Code** (`settings.md`): 22 lines added, 14 removed
+- **Pengaturan lanjutan** (`setup.md`): 28 lines added, 10 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Usa Claude Code sul web** (`claude-code-on-the-web.md`): 592 lines added, 526 removed
+  - New section: "# Usa Claude Code sul web"
+  - New section: "## Opzioni di autenticazione GitHub"
+  - New section: "## L'ambiente cloud"
+  - New section: "### Cosa è disponibile nelle sessioni cloud"
+  - New section: "### Strumenti installati"
+- **Iniziare con l'app desktop** (`desktop-quickstart.md`): 2 lines added, 2 removed
+- **Usa Claude Code Desktop** (`desktop.md`): 11 lines added, 11 removed
+- **Riferimento dei plugin** (`plugins-reference.md`): 119 lines added, 47 removed
+  - New section: "### Monitors"
+- **Creare plugin** (`plugins.md`): 34 lines added, 13 removed
+  - New section: "### Aggiungi monitor in background al tuo plugin"
+- **Continua le sessioni locali da qualsiasi dispositivo con Remote Control** (`remote-control.md`): 81 lines added, 14 removed
+  - New section: "## Notifiche push mobili"
+  - New section: "### "Remote Control requires a claude.ai subscription""
+  - New section: "### "Remote Control requires a full-scope login token""
+  - New section: "### "Unable to determine your organization for Remote Control eligibility""
+- **Eseguire prompt in base a una pianificazione** (`scheduled-tasks.md`): 85 lines added, 33 removed
+  - New section: "## Eseguire un prompt ripetutamente con /loop"
+  - New section: "### Eseguire su un intervallo fisso"
+  - New section: "### Lasciare che Claude scelga l'intervallo"
+  - New section: "### Eseguire il prompt di manutenzione integrato"
+- **Impostazioni di Claude Code** (`settings.md`): 22 lines added, 12 removed
+- **Configurazione avanzata** (`setup.md`): 27 lines added, 9 removed
+
+### 日本語
+
+
+**Modified**
+
+- **ウェブ上の Claude Code を使用する** (`claude-code-on-the-web.md`): 592 lines added, 526 removed
+  - New section: "# ウェブ上の Claude Code を使用する"
+  - New section: "## GitHub 認証オプション"
+  - New section: "## クラウド環境"
+  - New section: "### クラウドセッションで利用可能なもの"
+  - New section: "### インストール済みツール"
+- **デスクトップアプリを始める** (`desktop-quickstart.md`): 2 lines added, 2 removed
+- **Claude Code Desktop を使用する** (`desktop.md`): 11 lines added, 11 removed
+- **プラグインリファレンス** (`plugins-reference.md`): 118 lines added, 46 removed
+  - New section: "### Monitors"
+- **プラグインを作成する** (`plugins.md`): 43 lines added, 22 removed
+  - New section: "### プラグインでバックグラウンドモニターを追加する"
+- **任意のデバイスからローカルセッションを続行する Remote Control** (`remote-control.md`): 81 lines added, 14 removed
+  - New section: "## モバイルプッシュ通知"
+  - New section: "### 「Remote Control には claude.ai サブスクリプションが必要です」"
+  - New section: "### 「Remote Control には完全スコープのログイントークンが必要です」"
+  - New section: "### 「Remote Control 適格性のための組織を決定できません」"
+- **スケジュールに従ってプロンプトを実行する** (`scheduled-tasks.md`): 82 lines added, 30 removed
+  - New section: "## /loop で定期的にプロンプトを実行する"
+  - New section: "### 固定間隔で実行する"
+  - New section: "### Claude に間隔を選択させる"
+  - New section: "### 組み込みメンテナンスプロンプトを実行する"
+- **Claude Code の設定** (`settings.md`): 23 lines added, 14 removed
+- **高度なセットアップ** (`setup.md`): 27 lines added, 9 removed
+
+### 한국어
+
+
+**Modified**
+
+- **웹에서 Claude Code 사용하기** (`claude-code-on-the-web.md`): 591 lines added, 525 removed
+  - New section: "## GitHub 인증 옵션"
+  - New section: "## 클라우드 환경"
+  - New section: "### 클라우드 세션에서 사용 가능한 것"
+  - New section: "### 설치된 도구"
+  - New section: "### GitHub 이슈 및 pull request 작업"
+- **데스크톱 앱 시작하기** (`desktop-quickstart.md`): 2 lines added, 2 removed
+- **Claude Code Desktop 사용하기** (`desktop.md`): 11 lines added, 11 removed
+- **플러그인 참조** (`plugins-reference.md`): 118 lines added, 46 removed
+  - New section: "### Monitors"
+- **플러그인 만들기** (`plugins.md`): 34 lines added, 13 removed
+  - New section: "### 플러그인에 백그라운드 모니터 추가"
+- **모든 기기에서 로컬 세션 계속하기 (Remote Control)** (`remote-control.md`): 82 lines added, 15 removed
+  - New section: "## 모바일 푸시 알림"
+  - New section: "### "Remote Control에는 claude.ai 구독이 필요합니다""
+  - New section: "### "Remote Control에는 전체 범위 로그인 토큰이 필요합니다""
+  - New section: "### "Remote Control 적격성을 위해 조직을 결정할 수 없습니다""
+- **일정에 따라 프롬프트 실행하기** (`scheduled-tasks.md`): 83 lines added, 31 removed
+  - New section: "## /loop로 반복 프롬프트 실행하기"
+  - New section: "### 고정 간격으로 실행하기"
+  - New section: "### Claude가 간격을 선택하도록 하기"
+  - New section: "### 내장 유지보수 프롬프트 실행하기"
+- **Claude Code 설정** (`settings.md`): 83 lines added, 71 removed
+- **고급 설정** (`setup.md`): 27 lines added, 9 removed
+
+### Português
+
+
+**Modified**
+
+- **Use Claude Code na web** (`claude-code-on-the-web.md`): 592 lines added, 526 removed
+  - New section: "# Use Claude Code na web"
+  - New section: "## Opções de autenticação do GitHub"
+  - New section: "## O ambiente em nuvem"
+  - New section: "### O que está disponível em sessões em nuvem"
+  - New section: "### Ferramentas instaladas"
+- **Comece com o aplicativo de desktop** (`desktop-quickstart.md`): 2 lines added, 2 removed
+- **Use Claude Code Desktop** (`desktop.md`): 11 lines added, 11 removed
+- **Referência de plugins** (`plugins-reference.md`): 118 lines added, 46 removed
+  - New section: "### Monitors"
+- **Criar plugins** (`plugins.md`): 43 lines added, 22 removed
+  - New section: "### Adicione monitores de background ao seu plugin"
+- **Continue sessões locais de qualquer dispositivo com Remote Control** (`remote-control.md`): 81 lines added, 14 removed
+  - New section: "## Notificações push móveis"
+  - New section: "### "Remote Control requires a claude.ai subscription""
+  - New section: "### "Remote Control requires a full-scope login token""
+  - New section: "### "Unable to determine your organization for Remote Control eligibility""
+- **Executar prompts em um cronograma** (`scheduled-tasks.md`): 85 lines added, 33 removed
+  - New section: "## Execute um prompt repetidamente com /loop"
+  - New section: "### Execute em um intervalo fixo"
+  - New section: "### Deixe Claude escolher o intervalo"
+  - New section: "### Execute o prompt de manutenção integrado"
+  - New section: "## Defina um lembrete único"
+- **Configurações do Claude Code** (`settings.md`): 24 lines added, 14 removed
+- **Configuração avançada** (`setup.md`): 27 lines added, 9 removed
+
+### Русский
+
+
+**Modified**
+
+- **Использование Claude Code в веб-интерфейсе** (`claude-code-on-the-web.md`): 592 lines added, 526 removed
+  - New section: "# Использование Claude Code в веб-интерфейсе"
+  - New section: "## Варианты аутентификации GitHub"
+  - New section: "## Облачное окружение"
+  - New section: "### Что доступно в облачных сессиях"
+  - New section: "### Установленные инструменты"
+- **Начало работы с настольным приложением** (`desktop-quickstart.md`): 2 lines added, 2 removed
+- **Использование Claude Code Desktop** (`desktop.md`): 11 lines added, 11 removed
+- **Справочник по плагинам** (`plugins-reference.md`): 125 lines added, 53 removed
+  - New section: "### Monitors"
+- **Создание plugins** (`plugins.md`): 33 lines added, 12 removed
+  - New section: "### Добавьте фоновые мониторы в ваш plugin"
+- **Продолжайте локальные сеансы с любого устройства с помощью Remote Control** (`remote-control.md`): 81 lines added, 14 removed
+  - New section: "## Мобильные push-уведомления"
+  - New section: "### "Remote Control requires a claude.ai subscription""
+  - New section: "### "Remote Control requires a full-scope login token""
+  - New section: "### "Unable to determine your organization for Remote Control eligibility""
+- **Запуск подсказок по расписанию** (`scheduled-tasks.md`): 81 lines added, 29 removed
+  - New section: "### Запуск по фиксированному интервалу"
+  - New section: "### Позвольте Claude выбрать интервал"
+  - New section: "### Запустите встроенную подсказку обслуживания"
+- **Параметры Claude Code** (`settings.md`): 22 lines added, 14 removed
+- **Расширенная настройка** (`setup.md`): 27 lines added, 9 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **在网络上使用 Claude Code** (`claude-code-on-the-web.md`): 592 lines added, 526 removed
+  - New section: "# 在网络上使用 Claude Code"
+  - New section: "## GitHub 身份验证选项"
+  - New section: "## 云环境"
+  - New section: "### 云会话中可用的内容"
+  - New section: "### 已安装的工具"
+- **开始使用桌面应用** (`desktop-quickstart.md`): 2 lines added, 2 removed
+- **使用 Claude Code Desktop** (`desktop.md`): 11 lines added, 11 removed
+- **Plugins 参考** (`plugins-reference.md`): 118 lines added, 46 removed
+  - New section: "### Monitors"
+- **创建插件** (`plugins.md`): 41 lines added, 20 removed
+  - New section: "### 向你的插件添加后台监视器"
+- **使用 Remote Control 从任何设备继续本地会话** (`remote-control.md`): 81 lines added, 14 removed
+  - New section: "## 移动推送通知"
+  - New section: "### "Remote Control 需要 claude.ai 订阅""
+  - New section: "### "Remote Control 需要完整范围的登录令牌""
+  - New section: "### "无法确定您的组织以进行 Remote Control 资格检查""
+- **按计划运行提示词** (`scheduled-tasks.md`): 82 lines added, 30 removed
+  - New section: "## 使用 /loop 重复运行提示词"
+  - New section: "### 在固定间隔上运行"
+  - New section: "### 让 Claude 选择间隔"
+  - New section: "### 运行内置维护提示词"
+- **Claude Code 设置** (`settings.md`): 79 lines added, 69 removed
+- **高级设置** (`setup.md`): 27 lines added, 9 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **在網頁上使用 Claude Code** (`claude-code-on-the-web.md`): 592 lines added, 526 removed
+  - New section: "# 在網頁上使用 Claude Code"
+  - New section: "## GitHub 驗證選項"
+  - New section: "## 雲端環境"
+  - New section: "### 雲端工作階段中可用的內容"
+  - New section: "### 已安裝的工具"
+- **開始使用桌面應用程式** (`desktop-quickstart.md`): 2 lines added, 2 removed
+- **使用 Claude Code Desktop** (`desktop.md`): 11 lines added, 11 removed
+- **Plugins 參考** (`plugins-reference.md`): 118 lines added, 46 removed
+  - New section: "### Monitors"
+- **建立 plugins** (`plugins.md`): 41 lines added, 20 removed
+  - New section: "### 將背景監視器新增到您的 plugin"
+- **使用 Remote Control 從任何裝置繼續本地會話** (`remote-control.md`): 82 lines added, 15 removed
+  - New section: "## 行動推播通知"
+  - New section: "### 「Remote Control 需要 claude.ai 訂閱」"
+  - New section: "### 「Remote Control 需要完整範圍登入令牌」"
+  - New section: "### 「無法確定您的組織以進行 Remote Control 資格檢查」"
+- **按排程執行提示** (`scheduled-tasks.md`): 82 lines added, 30 removed
+  - New section: "## 使用 /loop 重複執行提示"
+  - New section: "### 在固定間隔上執行"
+  - New section: "### 讓 Claude 選擇間隔"
+  - New section: "### 執行內建維護提示"
+- **Claude Code 設定** (`settings.md`): 79 lines added, 69 removed
+- **進階設定** (`setup.md`): 27 lines added, 9 removed
+
+---
+
 ## 2026-04-16
 
 25 pages modified

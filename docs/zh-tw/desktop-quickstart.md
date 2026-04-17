@@ -11,9 +11,9 @@
 本頁面將引導您安裝應用程式並開始您的第一個會話。如果您已經設定完成，請參閱 [使用 Claude Code Desktop](/zh-TW/desktop) 以取得完整參考。
 
 <Frame>
-  <img src="https://mintcdn.com/claude-code/CNLUpFGiXoc9mhvD/images/desktop-code-tab-light.png?fit=max&auto=format&n=CNLUpFGiXoc9mhvD&q=85&s=9a36a7a27b9f4c6f2e1c83bdb34f69ce" className="block dark:hidden" alt="Claude Code Desktop 介面顯示已選擇 Code 標籤，包含提示框、權限模式選擇器設定為'詢問權限'、模型選擇器、資料夾選擇器和本機環境選項" width="2500" height="1376" data-path="images/desktop-code-tab-light.png" />
+  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-light.png" className="block dark:hidden" alt="Claude Code Desktop 介面顯示已選擇 Code 標籤，包含提示框、權限模式選擇器設定為'詢問權限'、模型選擇器、資料夾選擇器和本機環境選項" />
 
-  <img src="https://mintcdn.com/claude-code/CNLUpFGiXoc9mhvD/images/desktop-code-tab-dark.png?fit=max&auto=format&n=CNLUpFGiXoc9mhvD&q=85&s=5463defe81c459fb9b1f91f6a958cfb8" className="hidden dark:block" alt="Claude Code Desktop 深色模式介面顯示已選擇 Code 標籤，包含提示框、權限模式選擇器設定為'詢問權限'、模型選擇器、資料夾選擇器和本機環境選項" width="2504" height="1374" data-path="images/desktop-code-tab-dark.png" />
+  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-dark.png" className="hidden dark:block" alt="Claude Code Desktop 深色模式介面顯示已選擇 Code 標籤，包含提示框、權限模式選擇器設定為'詢問權限'、模型選擇器、資料夾選擇器和本機環境選項" />
 </Frame>
 
 桌面應用程式有三個標籤：

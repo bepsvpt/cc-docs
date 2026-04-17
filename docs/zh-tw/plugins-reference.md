@@ -12,7 +12,7 @@
 
 本參考提供 Claude Code 外掛系統的完整技術規格，包括元件架構、CLI 命令和開發工具。
 
-**plugin** 是一個自包含的目錄，包含擴展 Claude Code 功能的元件。Plugin 元件包括 skills、agents、hooks、MCP servers 和 LSP servers。
+**plugin** 是一個自包含的目錄，包含擴展 Claude Code 功能的元件。Plugin 元件包括 skills、agents、hooks、MCP servers、LSP servers 和 monitors。
 
 ## Plugin 元件參考
 
@@ -265,6 +265,58 @@ LSP 整合提供：
 
 先安裝語言伺服器，然後從 marketplace 安裝 plugin。
 
+### Monitors
+
+Plugins 可以宣告背景 monitors，Claude Code 在 plugin 啟用時自動啟動。每個 monitor 執行一個 shell 命令，持續整個工作階段，並將每個 stdout 行傳遞給 Claude 作為通知，以便 Claude 可以對日誌項目、狀態變更或輪詢事件做出反應，而無需被要求自行啟動監視。
+
+Plugin monitors 使用與 [Monitor tool](/zh-TW/tools-reference#monitor-tool) 相同的機制，並共享其可用性限制。它們僅在互動式 CLI 工作階段中執行，以與 [hooks](#hooks) 相同的信任級別在未沙箱化的環境中執行，並在 Monitor tool 不可用的主機上被跳過。
+
+<Note>
+  Plugin monitors 需要 Claude Code v2.1.105 或更新版本。
+</Note>
+
+**位置**：plugin 根目錄中的 `monitors/monitors.json`，或在 `plugin.json` 中內聯
+
+**格式**：monitor 項目的 JSON 陣列
+
+以下 `monitors/monitors.json` 監視部署狀態端點和本機錯誤日誌：
+
+```json theme={null}
+[
+  {
+    "name": "deploy-status",
+    "command": "${CLAUDE_PLUGIN_ROOT}/scripts/poll-deploy.sh ${user_config.api_endpoint}",
+    "description": "Deployment status changes"
+  },
+  {
+    "name": "error-log",
+    "command": "tail -F ./logs/error.log",
+    "description": "Application error log",
+    "when": "on-skill-invoke:debug"
+  }
+]
+```
+
+若要內聯宣告 monitors，請將 `plugin.json` 中的 `monitors` 金鑰設定為相同的陣列。若要從非預設路徑載入，請將 `monitors` 設定為相對路徑字串，例如 `"./config/monitors.json"`。
+
+**必需欄位：**
+
+| 欄位            | 描述                                                 |
+| :------------ | :------------------------------------------------- |
+| `name`        | 在 plugin 中唯一的識別碼。防止 plugin 重新載入或再次叫用 skill 時出現重複程序 |
+| `command`     | 在工作階段工作目錄中作為持久背景程序執行的 shell 命令                     |
+| `description` | 正在監視的內容的簡短摘要。顯示在任務面板和通知摘要中                         |
+
+**選用欄位：**
+
+| 欄位     | 描述                                                                                                                       |
+| :----- | :----------------------------------------------------------------------------------------------------------------------- |
+| `when` | 控制 monitor 何時啟動。`"always"` 在工作階段啟動和 plugin 重新載入時啟動它，是預設值。`"on-skill-invoke:<skill-name>"` 在此 plugin 中的命名 skill 首次被分派時啟動它 |
+
+`command` 值支援與 MCP 和 LSP server 設定相同的 [variable substitutions](#environment-variables)：`${CLAUDE_PLUGIN_ROOT}`、`${CLAUDE_PLUGIN_DATA}`、`${user_config.*}` 和環境中的任何 `${ENV_VAR}`。如果指令碼需要從 plugin 自己的目錄執行，請在命令前加上 `cd "${CLAUDE_PLUGIN_ROOT}" && `。
+
+在工作階段中途停用 plugin 不會停止已在執行的 monitors。它們在工作階段結束時停止。
+
 ***
 
 ## Plugin 安裝範圍
@@ -304,13 +356,18 @@ manifest 是選用的。如果省略，Claude Code 會自動探索 [預設位置
   "repository": "https://github.com/author/plugin",
   "license": "MIT",
   "keywords": ["keyword1", "keyword2"],
+  "skills": "./custom/skills/",
   "commands": ["./custom/commands/special.md"],
   "agents": "./custom/agents/",
-  "skills": "./custom/skills/",
   "hooks": "./config/hooks.json",
   "mcpServers": "./mcp-config.json",
   "outputStyles": "./styles/",
-  "lspServers": "./.lsp.json"
+  "lspServers": "./.lsp.json",
+  "monitors": "./monitors.json",
+  "dependencies": [
+    "helper-lib",
+    { "name": "secrets-vault", "version": "~2.1.0" }
+  ]
 }
 ```
 
@@ -338,17 +395,19 @@ manifest 是選用的。如果省略，Claude Code 會自動探索 [預設位置
 
 ### 元件路徑欄位
 
-| 欄位             | 類型                    | 描述                                                                                                       | 範例                                    |
-| :------------- | :-------------------- | :------------------------------------------------------------------------------------------------------- | :------------------------------------ |
-| `commands`     | string\|array         | 其他命令檔案/目錄                                                                                                | `"./custom/cmd.md"` 或 `["./cmd1.md"]` |
-| `agents`       | string\|array         | 其他 agent 檔案                                                                                              | `"./custom/agents/reviewer.md"`       |
-| `skills`       | string\|array         | 其他 skill 目錄                                                                                              | `"./custom/skills/"`                  |
-| `hooks`        | string\|array\|object | Hook 設定路徑或內聯設定                                                                                           | `"./my-extra-hooks.json"`             |
-| `mcpServers`   | string\|array\|object | MCP 設定路徑或內聯設定                                                                                            | `"./my-extra-mcp-config.json"`        |
-| `outputStyles` | string\|array         | 其他輸出樣式檔案/目錄                                                                                              | `"./styles/"`                         |
-| `lspServers`   | string\|array\|object | [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) 設定，用於程式碼智慧（前往定義、尋找參考等） | `"./.lsp.json"`                       |
-| `userConfig`   | object                | 在啟用時提示使用者的使用者可設定值。請參閱 [User configuration](#user-configuration)                                          | 請參閱下方                                 |
-| `channels`     | array                 | 訊息注入的頻道宣告（Telegram、Slack、Discord 風格）。請參閱 [Channels](#channels)                                           | 請參閱下方                                 |
+| 欄位             | 類型                    | 描述                                                                                                              | 範例                                                   |
+| :------------- | :-------------------- | :-------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
+| `skills`       | string\|array         | 包含 `<name>/SKILL.md` 的自訂 skill 目錄（取代預設 `skills/`）                                                               | `"./custom/skills/"`                                 |
+| `commands`     | string\|array         | 自訂平面 `.md` skill 檔案或目錄（取代預設 `commands/`）                                                                        | `"./custom/cmd.md"` 或 `["./cmd1.md"]`                |
+| `agents`       | string\|array         | 自訂 agent 檔案（取代預設 `agents/`）                                                                                     | `"./custom/agents/reviewer.md"`                      |
+| `hooks`        | string\|array\|object | Hook 設定路徑或內聯設定                                                                                                  | `"./my-extra-hooks.json"`                            |
+| `mcpServers`   | string\|array\|object | MCP 設定路徑或內聯設定                                                                                                   | `"./my-extra-mcp-config.json"`                       |
+| `outputStyles` | string\|array         | 自訂輸出樣式檔案/目錄（取代預設 `output-styles/`）                                                                              | `"./styles/"`                                        |
+| `lspServers`   | string\|array\|object | [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) 設定，用於程式碼智慧（前往定義、尋找參考等）        | `"./.lsp.json"`                                      |
+| `monitors`     | string\|array         | 背景 [Monitor](/zh-TW/tools-reference#monitor-tool) 設定，在 plugin 啟用時自動啟動。請參閱 [Monitors](#monitors)                 | `"./monitors.json"`                                  |
+| `userConfig`   | object                | 在啟用時提示使用者的使用者可設定值。請參閱 [User configuration](#user-configuration)                                                 | 請參閱下方                                                |
+| `channels`     | array                 | 訊息注入的頻道宣告（Telegram、Slack、Discord 風格）。請參閱 [Channels](#channels)                                                  | 請參閱下方                                                |
+| `dependencies` | array                 | 此 plugin 需要的其他 plugins，可選擇使用 semver 版本限制。請參閱 [Constrain plugin dependency versions](/zh-TW/plugin-dependencies) | `[{ "name": "secrets-vault", "version": "~2.1.0" }]` |
 
 ### User configuration
 
@@ -369,7 +428,7 @@ manifest 是選用的。如果省略，Claude Code 會自動探索 [預設位置
 }
 ```
 
-金鑰必須是有效的識別碼。每個值都可用於在 MCP 和 LSP server 設定、hook 命令中替換為 `${user_config.KEY}`，以及（僅適用於非敏感值）skill 和 agent 內容。值也會匯出到 plugin 子程序作為 `CLAUDE_PLUGIN_OPTION_<KEY>` 環境變數。
+金鑰必須是有效的識別碼。每個值都可用於在 MCP 和 LSP server 設定、hook 命令、monitor 命令中替換為 `${user_config.KEY}`，以及（僅適用於非敏感值）skill 和 agent 內容。值也會匯出到 plugin 子程序作為 `CLAUDE_PLUGIN_OPTION_<KEY>` 環境變數。
 
 非敏感值儲存在 `settings.json` 中的 `pluginConfigs[<plugin-id>].options` 下。敏感值進入系統鑰匙圈（或在鑰匙圈不可用的地方進入 `~/.claude/.credentials.json`）。鑰匙圈儲存與 OAuth 令牌共享，總限制約為 2 KB，因此請保持敏感值較小。
 
@@ -395,12 +454,13 @@ manifest 是選用的。如果省略，Claude Code 會自動探索 [預設位置
 
 ### 路徑行為規則
 
-**重要**：自訂路徑補充預設目錄 - 它們不會取代預設目錄。
+對於 `skills`、`commands`、`agents`、`outputStyles` 和 `monitors`，自訂路徑取代預設值。如果 manifest 指定 `skills`，預設 `skills/` 目錄不會被掃描；如果它指定 `monitors`，預設 `monitors/monitors.json` 不會被載入。[Hooks](#hooks)、[MCP servers](#mcp-servers) 和 [LSP servers](#lsp-servers) 有不同的語義來處理多個來源。
 
-* 如果 `commands/` 存在，除了自訂命令路徑外，還會載入它
 * 所有路徑必須相對於 plugin 根目錄，並以 `./` 開頭
-* 來自自訂路徑的命令使用相同的命名和命名空間規則
-* 可以將多個路徑指定為陣列以提高靈活性
+* 來自自訂路徑的元件使用相同的命名和命名空間規則
+* 可以將多個路徑指定為陣列
+* 若要保留預設目錄並為 skills、commands、agents 或 output styles 新增更多路徑，請在陣列中包含預設值：`"skills": ["./skills/", "./extras/"]`
+* 當 skill 路徑指向直接包含 `SKILL.md` 的目錄時，例如 `"skills": ["./"]` 指向 plugin 根目錄，frontmatter 中的 `name` 欄位決定 skill 的叫用名稱。這提供了一個穩定的名稱，無論安裝目錄如何。如果 frontmatter 中未設定 `name`，目錄基名將用作後備。
 
 **路徑範例**：
 
@@ -419,7 +479,7 @@ manifest 是選用的。如果省略，Claude Code 會自動探索 [預設位置
 
 ### 環境變數
 
-Claude Code 提供兩個變數用於參考 plugin 路徑。兩者都在 skill 內容、agent 內容、hook 命令以及 MCP 或 LSP server 設定中出現的任何地方內聯替換。兩者也會匯出為環境變數到 hook 程序和 MCP 或 LSP server 子程序。
+Claude Code 提供兩個變數用於參考 plugin 路徑。兩者都在 skill 內容、agent 內容、hook 命令、monitor 命令以及 MCP 或 LSP server 設定中出現的任何地方內聯替換。兩者也會匯出為環境變數到 hook 程序和 MCP 或 LSP server 子程序。
 
 **`${CLAUDE_PLUGIN_ROOT}`**：plugin 安裝目錄的絕對路徑。使用此方法參考與 plugin 捆綁的指令碼、二進位檔和設定檔。此路徑在 plugin 更新時會變更，因此您在此處寫入的檔案不會在更新後保留。
 
@@ -498,20 +558,23 @@ Plugins 可以透過以下兩種方式之一指定：
 
 出於安全和驗證目的，Claude Code 將 *marketplace* plugins 複製到使用者的本機 **plugin 快取**（`~/.claude/plugins/cache`），而不是就地使用它們。在開發參考外部檔案的 plugins 時，理解此行為很重要。
 
+每個已安裝的版本是快取中的單獨目錄。當您更新或卸載 plugin 時，先前的版本目錄被標記為孤立，並在 7 天後自動移除。寬限期讓已載入舊版本的並行 Claude Code 工作階段繼續執行而不出錯。
+
+Claude 的 Glob 和 Grep 工具在搜尋期間跳過孤立的版本目錄，因此檔案結果不包含過時的 plugin 程式碼。
+
 ### 路徑遍歷限制
 
 已安裝的 plugins 無法參考其目錄外的檔案。遍歷 plugin 根目錄外的路徑（例如 `../shared-utils`）在安裝後將無法運作，因為這些外部檔案不會複製到快取中。
 
 ### 使用外部依賴項
 
-如果您的 plugin 需要存取其目錄外的檔案，您可以在 plugin 目錄中建立指向外部檔案的符號連結。在複製過程中會遵守符號連結：
+如果您的 plugin 需要存取其目錄外的檔案，您可以在 plugin 目錄中建立指向外部檔案的符號連結。符號連結在快取中被保留而不是被取消參考，並在執行時解析到其目標。以下命令從 plugin 目錄內建立到共享公用程式位置的連結：
 
 ```bash theme={null}
-# Inside your plugin directory
 ln -s /path/to/shared-utils ./shared-utils
 ```
 
-符號連結的內容將被複製到 plugin 快取中。這在維持快取系統安全優勢的同時提供了靈活性。
+這在維持快取系統安全優勢的同時提供了靈活性。
 
 ***
 
@@ -525,22 +588,28 @@ ln -s /path/to/shared-utils ./shared-utils
 enterprise-plugin/
 ├── .claude-plugin/           # Metadata directory (optional)
 │   └── plugin.json             # plugin manifest
-├── commands/                 # Default command location
-│   ├── status.md
-│   └── logs.md
-├── agents/                   # Default agent location
-│   ├── security-reviewer.md
-│   ├── performance-tester.md
-│   └── compliance-checker.md
-├── skills/                   # Agent Skills
+├── skills/                   # Skills
 │   ├── code-reviewer/
 │   │   └── SKILL.md
 │   └── pdf-processor/
 │       ├── SKILL.md
 │       └── scripts/
+├── commands/                 # Skills as flat .md files
+│   ├── status.md
+│   └── logs.md
+├── agents/                   # Subagent definitions
+│   ├── security-reviewer.md
+│   ├── performance-tester.md
+│   └── compliance-checker.md
+├── output-styles/            # Output style definitions
+│   └── terse.md
+├── monitors/                 # Background monitor configurations
+│   └── monitors.json
 ├── hooks/                    # Hook configurations
 │   ├── hooks.json           # Main hook config
 │   └── security-hooks.json  # Additional hooks
+├── bin/                      # Plugin executables added to PATH
+│   └── my-tool               # Invokable as bare command in Bash tool
 ├── settings.json            # Default settings for the plugin
 ├── .mcp.json                # MCP server definitions
 ├── .lsp.json                # LSP server configurations
@@ -553,21 +622,24 @@ enterprise-plugin/
 ```
 
 <Warning>
-  `.claude-plugin/` 目錄包含 `plugin.json` 檔案。所有其他目錄（commands/、agents/、skills/、hooks/）必須位於 plugin 根目錄，而不是在 `.claude-plugin/` 內。
+  `.claude-plugin/` 目錄包含 `plugin.json` 檔案。所有其他目錄（commands/、agents/、skills/、output-styles/、monitors/、hooks/）必須位於 plugin 根目錄，而不是在 `.claude-plugin/` 內。
 </Warning>
 
 ### 檔案位置參考
 
-| 元件              | 預設位置                         | 用途                                                       |
-| :-------------- | :--------------------------- | :------------------------------------------------------- |
-| **Manifest**    | `.claude-plugin/plugin.json` | Plugin 中繼資料和設定（選用）                                       |
-| **Commands**    | `commands/`                  | Skill Markdown 檔案（舊版；新 skills 使用 `skills/`）              |
-| **Agents**      | `agents/`                    | Subagent Markdown 檔案                                     |
-| **Skills**      | `skills/`                    | 具有 `<name>/SKILL.md` 結構的 Skills                          |
-| **Hooks**       | `hooks/hooks.json`           | Hook 設定                                                  |
-| **MCP servers** | `.mcp.json`                  | MCP server 定義                                            |
-| **LSP servers** | `.lsp.json`                  | 語言伺服器設定                                                  |
-| **Settings**    | `settings.json`              | 啟用 plugin 時套用的預設設定。目前僅支援 [`agent`](/zh-TW/sub-agents) 設定 |
+| 元件                | 預設位置                         | 用途                                                                                                                         |
+| :---------------- | :--------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
+| **Manifest**      | `.claude-plugin/plugin.json` | Plugin 中繼資料和設定（選用）                                                                                                         |
+| **Skills**        | `skills/`                    | 具有 `<name>/SKILL.md` 結構的 Skills                                                                                            |
+| **Commands**      | `commands/`                  | 作為平面 Markdown 檔案的 Skills。新 plugins 使用 `skills/`                                                                            |
+| **Agents**        | `agents/`                    | Subagent Markdown 檔案                                                                                                       |
+| **Output styles** | `output-styles/`             | 輸出樣式定義                                                                                                                     |
+| **Hooks**         | `hooks/hooks.json`           | Hook 設定                                                                                                                    |
+| **MCP servers**   | `.mcp.json`                  | MCP server 定義                                                                                                              |
+| **LSP servers**   | `.lsp.json`                  | 語言伺服器設定                                                                                                                    |
+| **Monitors**      | `monitors/monitors.json`     | 背景 monitor 設定                                                                                                              |
+| **Executables**   | `bin/`                       | 新增到 Bash tool 的 `PATH` 的可執行檔。此處的檔案在 plugin 啟用時可在任何 Bash tool 呼叫中作為裸命令叫用                                                    |
+| **Settings**      | `settings.json`              | 啟用 plugin 時套用的預設設定。目前僅支援 [`agent`](/zh-TW/sub-agents) 和 [`subagentStatusLine`](/zh-TW/statusline#subagent-status-lines) 金鑰 |
 
 ***
 
@@ -594,7 +666,7 @@ claude plugin install <plugin> [options]
 | `-s, --scope <scope>` | 安裝範圍：`user`、`project` 或 `local` | `user` |
 | `-h, --help`          | 顯示命令說明                          |        |
 
-範圍決定已安裝的 plugin 新增到哪個設定檔。例如，--scope project 寫入 `.claude/settings.json` 中的 `enabledPlugins`，使 plugin 對克隆專案存放庫的每個人都可用。
+範圍決定已安裝的 plugin 新增到哪個設定檔。例如，`--scope project` 寫入 `.claude/settings.json` 中的 `enabledPlugins`，使 plugin 對克隆專案存放庫的每個人都可用。
 
 **範例：**
 
@@ -702,7 +774,7 @@ claude plugin update <plugin> [options]
 
 * 正在載入哪些 plugins
 * plugin manifests 中的任何錯誤
-* 命令、agent 和 hook 註冊
+* Skill、agent 和 hook 註冊
 * MCP server 初始化
 
 ### 常見問題
@@ -710,7 +782,7 @@ claude plugin update <plugin> [options]
 | 問題                                  | 原因                         | 解決方案                                                                                                                            |
 | :---------------------------------- | :------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
 | Plugin 未載入                          | 無效的 `plugin.json`          | 執行 `claude plugin validate` 或 `/plugin validate` 檢查 `plugin.json`、skill/agent/command frontmatter 和 `hooks/hooks.json` 的語法和架構錯誤 |
-| 命令未出現                               | 目錄結構錯誤                     | 確保 `commands/` 在根目錄，而不是在 `.claude-plugin/` 中                                                                                    |
+| Skills 未出現                          | 目錄結構錯誤                     | 確保 `skills/` 或 `commands/` 在 plugin 根目錄，而不是在 `.claude-plugin/` 中                                                                |
 | Hooks 未觸發                           | 指令碼不可執行                    | 執行 `chmod +x script.sh`                                                                                                         |
 | MCP server 失敗                       | 缺少 `${CLAUDE_PLUGIN_ROOT}` | 對所有 plugin 路徑使用變數                                                                                                               |
 | 路徑錯誤                                | 使用了絕對路徑                    | 所有路徑必須是相對的，並以 `./` 開頭                                                                                                           |
@@ -762,7 +834,7 @@ claude plugin update <plugin> [options]
 
 ### 目錄結構錯誤
 
-**症狀**：Plugin 載入但元件（命令、agents、hooks）遺失。
+**症狀**：Plugin 載入但元件（skills、agents、hooks）遺失。
 
 **正確結構**：元件必須位於 plugin 根目錄，而不是在 `.claude-plugin/` 內。只有 `plugin.json` 屬於 `.claude-plugin/`。
 

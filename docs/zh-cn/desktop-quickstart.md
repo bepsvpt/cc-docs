@@ -11,9 +11,9 @@
 本页面将指导您安装应用并开始您的第一个会话。如果您已经设置完成，请参阅[使用 Claude Code Desktop](/zh-CN/desktop)了解完整参考。
 
 <Frame>
-  <img src="https://mintcdn.com/claude-code/CNLUpFGiXoc9mhvD/images/desktop-code-tab-light.png?fit=max&auto=format&n=CNLUpFGiXoc9mhvD&q=85&s=9a36a7a27b9f4c6f2e1c83bdb34f69ce" className="block dark:hidden" alt="Claude Code Desktop 界面显示已选择 Code 选项卡，包含提示框、权限模式选择器设置为询问权限、模型选择器、文件夹选择器和本地环境选项" width="2500" height="1376" data-path="images/desktop-code-tab-light.png" />
+  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-light.png" className="block dark:hidden" alt="Claude Code Desktop 界面显示已选择 Code 选项卡，包含提示框、权限模式选择器设置为询问权限、模型选择器、文件夹选择器和本地环境选项" />
 
-  <img src="https://mintcdn.com/claude-code/CNLUpFGiXoc9mhvD/images/desktop-code-tab-dark.png?fit=max&auto=format&n=CNLUpFGiXoc9mhvD&q=85&s=5463defe81c459fb9b1f91f6a958cfb8" className="hidden dark:block" alt="Claude Code Desktop 深色模式界面显示已选择 Code 选项卡，包含提示框、权限模式选择器设置为询问权限、模型选择器、文件夹选择器和本地环境选项" width="2504" height="1374" data-path="images/desktop-code-tab-dark.png" />
+  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-dark.png" className="hidden dark:block" alt="Claude Code Desktop 深色模式界面显示已选择 Code 选项卡，包含提示框、权限模式选择器设置为询问权限、模型选择器、文件夹选择器和本地环境选项" />
 </Frame>
 
 桌面应用有三个选项卡：

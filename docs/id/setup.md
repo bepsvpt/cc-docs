@@ -18,9 +18,9 @@ Claude Code berjalan pada platform dan konfigurasi berikut:
   * Ubuntu 20.04+
   * Debian 10+
   * Alpine Linux 3.19+
-* **Perangkat keras**: RAM 4 GB+
+* **Perangkat keras**: RAM 4 GB+, prosesor x64 atau ARM64
 * **Jaringan**: koneksi internet diperlukan. Lihat [konfigurasi jaringan](/id/network-config#network-access-requirements).
-* **Shell**: Bash, Zsh, PowerShell, atau CMD. Di Windows, [Git for Windows](https://git-scm.com/downloads/win) diperlukan.
+* **Shell**: Bash, Zsh, PowerShell, atau CMD. Pengaturan Windows asli memerlukan [Git for Windows](https://git-scm.com/downloads/win). Pengaturan WSL tidak.
 * **Lokasi**: [negara yang didukung Anthropic](https://www.anthropic.com/supported-countries)
 
 ### Dependensi tambahan
@@ -99,13 +99,21 @@ Jika Anda mengalami masalah apa pun selama instalasi, lihat [panduan troubleshoo
 
 ### Pengaturan di Windows
 
-Claude Code di Windows memerlukan [Git for Windows](https://git-scm.com/downloads/win) atau WSL. Anda dapat meluncurkan `claude` dari PowerShell, CMD, atau Git Bash. Claude Code menggunakan Git Bash secara internal untuk menjalankan perintah. Anda tidak perlu menjalankan PowerShell sebagai Administrator.
+Anda dapat menjalankan Claude Code secara asli di Windows atau di dalam WSL. Pilih berdasarkan di mana proyek Anda berada dan fitur apa yang Anda butuhkan:
+
+| Opsi         | Memerlukan                                           | [Sandboxing](/id/sandboxing) | Kapan digunakan                                   |
+| ------------ | ---------------------------------------------------- | ---------------------------- | ------------------------------------------------- |
+| Windows Asli | [Git for Windows](https://git-scm.com/downloads/win) | Tidak didukung               | Proyek dan alat Windows asli                      |
+| WSL 2        | WSL 2 diaktifkan                                     | Didukung                     | Toolchain Linux atau eksekusi perintah bersandbox |
+| WSL 1        | WSL 1 diaktifkan                                     | Tidak didukung               | Jika WSL 2 tidak tersedia                         |
 
 **Opsi 1: Windows Asli dengan Git Bash**
 
-Instal [Git for Windows](https://git-scm.com/downloads/win), kemudian jalankan perintah instalasi dari PowerShell atau CMD.
+Instal [Git for Windows](https://git-scm.com/downloads/win), kemudian jalankan perintah instalasi dari PowerShell atau CMD. Anda tidak perlu menjalankan sebagai Administrator.
 
-Jika Claude Code tidak dapat menemukan instalasi Git Bash Anda, atur jalur di [file settings.json](/id/settings) Anda:
+Apakah Anda menginstal dari PowerShell atau CMD hanya mempengaruhi perintah instalasi mana yang Anda jalankan. Prompt Anda menampilkan `PS C:\Users\YourName>` di PowerShell dan `C:\Users\YourName>` tanpa `PS` di CMD. Jika Anda baru mengenal terminal, [panduan terminal](/id/terminal-guide#windows) memandu setiap langkah.
+
+Setelah instalasi, luncurkan `claude` dari PowerShell, CMD, atau Git Bash. Claude Code menggunakan Git Bash secara internal untuk menjalankan perintah terlepas dari tempat Anda meluncurkannya. Jika Claude Code tidak dapat menemukan instalasi Git Bash Anda, atur jalur di [file settings.json](/id/settings) Anda:
 
 ```json theme={null}
 {
@@ -115,11 +123,11 @@ Jika Claude Code tidak dapat menemukan instalasi Git Bash Anda, atur jalur di [f
 }
 ```
 
-Claude Code juga dapat menjalankan PowerShell secara native di Windows sebagai pratinjau opt-in. Lihat [PowerShell tool](/id/tools-reference#powershell-tool) untuk pengaturan dan batasan.
+Claude Code juga dapat menjalankan PowerShell secara asli di Windows sebagai pratinjau opt-in. Lihat [PowerShell tool](/id/tools-reference#powershell-tool) untuk pengaturan dan batasan.
 
 **Opsi 2: WSL**
 
-Baik WSL 1 maupun WSL 2 didukung. WSL 2 mendukung [sandboxing](/id/sandboxing) untuk keamanan yang ditingkatkan. WSL 1 tidak mendukung sandboxing.
+Buka distribusi WSL Anda dan jalankan penginstal Linux dari [instruksi instalasi](#install-claude-code) di atas. Anda menginstal dan meluncurkan `claude` di dalam terminal WSL, bukan dari PowerShell atau CMD.
 
 ### Alpine Linux dan distribusi berbasis musl
 
@@ -170,11 +178,11 @@ Instalasi asli secara otomatis diperbarui di latar belakang. Anda dapat [mengonf
 Claude Code memeriksa pembaruan saat startup dan secara berkala saat berjalan. Pembaruan diunduh dan diinstal di latar belakang, kemudian berlaku saat Anda memulai Claude Code berikutnya.
 
 <Note>
-  Instalasi Homebrew dan WinGet tidak auto-update. Gunakan `brew upgrade claude-code` atau `winget upgrade Anthropic.ClaudeCode` untuk memperbarui secara manual.
+  Instalasi Homebrew dan WinGet tidak auto-update. Untuk Homebrew, jalankan `brew upgrade claude-code` atau `brew upgrade claude-code@latest`, tergantung cask mana yang Anda instal. Untuk WinGet, jalankan `winget upgrade Anthropic.ClaudeCode`.
 
   **Masalah yang diketahui:** Claude Code dapat memberi tahu Anda tentang pembaruan sebelum versi baru tersedia di manajer paket ini. Jika upgrade gagal, tunggu dan coba lagi nanti.
 
-  Homebrew menyimpan versi lama di disk setelah upgrade. Jalankan `brew cleanup claude-code` secara berkala untuk membebaskan ruang disk.
+  Homebrew menyimpan versi lama di disk setelah upgrade. Jalankan `brew cleanup` secara berkala untuk membebaskan ruang disk.
 </Note>
 
 ### Konfigurasi saluran rilis
@@ -193,6 +201,8 @@ Konfigurasi ini melalui `/config` → **Auto-update channel**, atau tambahkan ke
 ```
 
 Untuk penerapan enterprise, Anda dapat memberlakukan saluran rilis yang konsisten di seluruh organisasi Anda menggunakan [managed settings](/id/permissions#managed-settings).
+
+Instalasi Homebrew memilih saluran berdasarkan nama cask sebagai gantinya: `claude-code` melacak stable dan `claude-code@latest` melacak latest.
 
 ### Nonaktifkan pembaruan otomatis
 
@@ -433,10 +443,16 @@ Hapus biner Claude Code dan file versi:
 
 ### Instalasi Homebrew
 
-Hapus cask Homebrew:
+Hapus cask Homebrew yang Anda instal. Jika Anda menginstal cask stabil:
 
 ```bash theme={null}
 brew uninstall --cask claude-code
+```
+
+Jika Anda menginstal cask latest:
+
+```bash theme={null}
+brew uninstall --cask claude-code@latest
 ```
 
 ### Instalasi WinGet
@@ -460,6 +476,8 @@ npm uninstall -g @anthropic-ai/claude-code
 <Warning>
   Menghapus file konfigurasi akan menghapus semua pengaturan, alat yang diizinkan, konfigurasi server MCP, dan riwayat sesi Anda.
 </Warning>
+
+Ekstensi VS Code, plugin JetBrains, dan Aplikasi Desktop juga menulis ke `~/.claude/`. Jika salah satunya masih terinstal, direktori akan dibuat ulang saat berikutnya dijalankan. Untuk menghapus Claude Code sepenuhnya, copot [ekstensi VS Code](/id/vs-code#uninstall-the-extension), plugin JetBrains, dan Aplikasi Desktop sebelum menghapus file ini.
 
 Untuk menghapus pengaturan Claude Code dan data cache:
 

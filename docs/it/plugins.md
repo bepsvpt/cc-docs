@@ -74,12 +74,12 @@ Questo quickstart ti guida attraverso la creazione di un plugin con uno skill pe
 
     ```json my-first-plugin/.claude-plugin/plugin.json theme={null}
     {
-    "name": "my-first-plugin",
-    "description": "A greeting plugin to learn the basics",
-    "version": "1.0.0",
-    "author": {
-    "name": "Your Name"
-    }
+      "name": "my-first-plugin",
+      "description": "A greeting plugin to learn the basics",
+      "version": "1.0.0",
+      "author": {
+        "name": "Your Name"
+      }
     }
     ```
 
@@ -173,7 +173,7 @@ Hai creato e testato con successo un plugin con questi componenti chiave:
 
 ## Panoramica della struttura del plugin
 
-Hai creato un plugin con uno skill, ma i plugin possono includere molto di più: agents personalizzati, hooks, MCP servers e LSP servers.
+Hai creato un plugin con uno skill, ma i plugin possono includere molto di più: agents personalizzati, hooks, MCP servers, LSP servers e monitor in background.
 
 <Warning>
   **Errore comune**: Non mettere `commands/`, `agents/`, `skills/` o `hooks/` dentro la directory `.claude-plugin/`. Solo `plugin.json` va dentro `.claude-plugin/`. Tutte le altre directory devono essere al livello radice del plugin.
@@ -182,12 +182,14 @@ Hai creato un plugin con uno skill, ma i plugin possono includere molto di più:
 | Directory         | Posizione         | Scopo                                                                                      |
 | :---------------- | :---------------- | :----------------------------------------------------------------------------------------- |
 | `.claude-plugin/` | Radice del plugin | Contiene il manifest `plugin.json` (opzionale se i componenti usano posizioni predefinite) |
-| `commands/`       | Radice del plugin | Skills come file Markdown                                                                  |
+| `skills/`         | Radice del plugin | Skills come directory `<name>/SKILL.md`                                                    |
+| `commands/`       | Radice del plugin | Skills come file Markdown flat. Usa `skills/` per i nuovi plugin                           |
 | `agents/`         | Radice del plugin | Definizioni di agent personalizzati                                                        |
-| `skills/`         | Radice del plugin | Agent Skills con file `SKILL.md`                                                           |
 | `hooks/`          | Radice del plugin | Gestori di eventi in `hooks.json`                                                          |
 | `.mcp.json`       | Radice del plugin | Configurazioni del server MCP                                                              |
 | `.lsp.json`       | Radice del plugin | Configurazioni del server LSP per l'intelligenza del codice                                |
+| `monitors/`       | Radice del plugin | Configurazioni del monitor in background in `monitors.json`                                |
+| `bin/`            | Radice del plugin | Eseguibili aggiunti al `PATH` dello strumento Bash mentre il plugin è abilitato            |
 | `settings.json`   | Radice del plugin | [Impostazioni](/it/settings) predefinite applicate quando il plugin è abilitato            |
 
 <Note>
@@ -213,11 +215,10 @@ my-plugin/
         └── SKILL.md
 ```
 
-Ogni `SKILL.md` ha bisogno di frontmatter con campi `name` e `description`, seguiti da istruzioni:
+Ogni `SKILL.md` contiene frontmatter YAML e istruzioni. Includi una `description` in modo che Claude sappia quando usare lo skill:
 
 ```yaml theme={null}
 ---
-name: code-review
 description: Reviews code for best practices and potential issues. Use when reviewing code, checking PRs, or analyzing code quality.
 ---
 
@@ -254,9 +255,27 @@ Gli utenti che installano il tuo plugin devono avere il binario del language ser
 
 Per le opzioni di configurazione LSP complete, vedi [LSP servers](/it/plugins-reference#lsp-servers).
 
+### Aggiungi monitor in background al tuo plugin
+
+I monitor in background permettono al tuo plugin di osservare log, file o stato esterno in background e notificare Claude quando gli eventi arrivano. Claude Code avvia automaticamente ogni monitor quando il plugin è attivo, quindi non hai bisogno di istruire Claude ad avviare la sorveglianza.
+
+Aggiungi un file `monitors/monitors.json` alla radice del plugin con un array di voci di monitor:
+
+```json monitors/monitors.json theme={null}
+[
+  {
+    "name": "error-log",
+    "command": "tail -F ./logs/error.log",
+    "description": "Application error log"
+  }
+]
+```
+
+Ogni riga stdout da `command` viene consegnata a Claude come notifica durante la sessione. Per lo schema completo, incluso il trigger `when` e la sostituzione delle variabili, vedi [Monitors](/it/plugins-reference#monitors).
+
 ### Spedisci impostazioni predefinite con il tuo plugin
 
-I plugin possono includere un file `settings.json` alla radice del plugin per applicare la configurazione predefinita quando il plugin è abilitato. Attualmente, è supportata solo la chiave `agent`.
+I plugin possono includere un file `settings.json` alla radice del plugin per applicare la configurazione predefinita quando il plugin è abilitato. Attualmente, sono supportate solo le chiavi `agent` e `subagentStatusLine`.
 
 Impostare `agent` attiva uno dei [custom agents](/it/sub-agents) del plugin come thread principale, applicando il suo system prompt, le restrizioni degli strumenti e il modello. Questo consente a un plugin di cambiare il comportamento predefinito di Claude Code quando abilitato.
 
@@ -301,7 +320,7 @@ Man mano che apporti modifiche al tuo plugin, esegui `/reload-plugins` per racco
 Se il tuo plugin non funziona come previsto:
 
 1. **Controlla la struttura**: Assicurati che le tue directory siano alla radice del plugin, non dentro `.claude-plugin/`
-2. **Testa i componenti individualmente**: Controlla ogni comando, agent e hook separatamente
+2. **Testa i componenti individualmente**: Controlla ogni skill, agent e hook separatamente
 3. **Usa strumenti di validazione e debug**: Vedi [Strumenti di debug e sviluppo](/it/plugins-reference#debugging-and-development-tools) per i comandi CLI e le tecniche di troubleshooting
 
 ### Condividi i tuoi plugin
@@ -321,6 +340,8 @@ Per inviare un plugin al marketplace ufficiale di Anthropic, usa uno dei moduli 
 
 * **Claude.ai**: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
 * **Console**: [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
+
+Una volta che il tuo plugin è elencato, puoi avere il tuo CLI che invita gli utenti di Claude Code a installarlo. Vedi [Consiglia il tuo plugin dal tuo CLI](/it/plugin-hints).
 
 <Note>
   Per le specifiche tecniche complete, le tecniche di debug e le strategie di distribuzione, vedi [Riferimento plugin](/it/plugins-reference).
