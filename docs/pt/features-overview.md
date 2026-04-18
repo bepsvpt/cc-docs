@@ -198,7 +198,7 @@ Cada recurso carrega em diferentes pontos em sua sessão. As abas abaixo explica
 
     **Herança:** Claude lê arquivos CLAUDE.md do seu diretório de trabalho até a raiz e descobre aninhados em subdiretórios conforme acessa esses arquivos. Consulte [Como arquivos CLAUDE.md carregam](/pt/memory#how-claudemd-files-load) para detalhes.
 
-    <Tip>Mantenha CLAUDE.md com menos de \~500 linhas. Mova material de referência para skills, que carregam sob demanda.</Tip>
+    <Tip>Mantenha CLAUDE.md com menos de 200 linhas. Mova material de referência para skills, que carregam sob demanda.</Tip>
   </Tab>
 
   <Tab title="Skills">

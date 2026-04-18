@@ -198,7 +198,7 @@ Chaque fonctionnalité se charge à différents points de votre session. Les ong
 
     **Héritage :** Claude lit les fichiers CLAUDE.md de votre répertoire de travail jusqu'à la racine et découvre les fichiers imbriqués dans les sous-répertoires au fur et à mesure qu'il accède à ces fichiers. Consultez [Comment les fichiers CLAUDE.md se chargent](/fr/memory#how-claudemd-files-load) pour plus de détails.
 
-    <Tip>Gardez CLAUDE.md sous environ 500 lignes. Déplacez le matériel de référence vers les skills, qui se chargent à la demande.</Tip>
+    <Tip>Gardez CLAUDE.md sous 200 lignes. Déplacez le matériel de référence vers les skills, qui se chargent à la demande.</Tip>
   </Tab>
 
   <Tab title="Skills">

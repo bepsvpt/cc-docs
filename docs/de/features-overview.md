@@ -198,7 +198,7 @@ Jede Funktion wird an verschiedenen Punkten in Ihrer Sitzung geladen. Die folgen
 
     **Vererbung:** Claude liest CLAUDE.md-Dateien aus Ihrem Arbeitsverzeichnis bis zur Wurzel und entdeckt verschachtelte in Unterverzeichnissen, wenn es auf diese Dateien zugreift. Weitere Informationen finden Sie unter [How CLAUDE.md files load](/de/memory#how-claudemd-files-load).
 
-    <Tip>Halten Sie CLAUDE.md unter \~500 Zeilen. Verschieben Sie Referenzmaterial zu Skills, die On-Demand geladen werden.</Tip>
+    <Tip>Halten Sie CLAUDE.md unter 200 Zeilen. Verschieben Sie Referenzmaterial zu Skills, die On-Demand geladen werden.</Tip>
   </Tab>
 
   <Tab title="Skills">

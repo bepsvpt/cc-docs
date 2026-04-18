@@ -1,5 +1,101 @@
 # Documentation Changes
 
+## 2026-04-18
+
+16 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Claude Code erweitern** (`features-overview.md`): 1 lines added, 1 removed
+
+### English
+
+
+**Modified**
+
+- **Changelog** (`changelog.md`): 41 lines added, 0 removed
+- **Hooks reference** (`hooks.md`): 1 lines added, 1 removed
+- **Model configuration** (`model-config.md`): 2 lines added, 0 removed
+- **Advanced setup** (`setup.md`): 10 lines added, 24 removed
+- **Troubleshooting** (`troubleshooting.md`): 10 lines added, 0 removed
+  - New section: "### Native binary not found after npm install"
+
+### Español
+
+
+**Modified**
+
+- **Extender Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+
+### Français
+
+
+**Modified**
+
+- **Étendre Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Perluas Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Estendi Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+
+### 日本語
+
+
+**Modified**
+
+- **Claude Code を拡張する** (`features-overview.md`): 1 lines added, 1 removed
+
+### 한국어
+
+
+**Modified**
+
+- **Claude Code 확장하기** (`features-overview.md`): 1 lines added, 1 removed
+
+### Português
+
+
+**Modified**
+
+- **Estender Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+
+### Русский
+
+
+**Modified**
+
+- **Расширение Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **扩展 Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **擴展 Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+
+---
+
 ## 2026-04-17
 
 137 pages modified

@@ -198,7 +198,7 @@ Ogni funzionalità si carica in diversi punti della vostra sessione. Le schede s
 
     **Eredità:** Claude legge i file CLAUDE.md dalla vostra directory di lavoro fino alla radice e scopre quelli annidati nelle sottodirectory mentre accede a quei file. Consultate [Come i file CLAUDE.md si caricano](/it/memory#how-claudemd-files-load) per i dettagli.
 
-    <Tip>Mantenete CLAUDE.md sotto \~500 righe. Spostate il materiale di riferimento in skills, che si caricano su richiesta.</Tip>
+    <Tip>Mantenete CLAUDE.md sotto 200 righe. Spostate il materiale di riferimento in skills, che si caricano su richiesta.</Tip>
   </Tab>
 
   <Tab title="Skills">

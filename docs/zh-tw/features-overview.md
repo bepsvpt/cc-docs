@@ -198,7 +198,7 @@ Claude Code 結合了一個能夠推理您程式碼的模型與[內建工具](/z
 
     **繼承：** Claude 從您的工作目錄讀取 CLAUDE.md 檔案直到根目錄，並在訪問這些檔案時在子目錄中發現嵌套的檔案。有關詳細資訊，請參閱 [CLAUDE.md 檔案如何載入](/zh-TW/memory#how-claudemd-files-load)。
 
-    <Tip>保持 CLAUDE.md 在約 500 行以下。將參考資料移動到 skills，它們按需載入。</Tip>
+    <Tip>保持 CLAUDE.md 在 200 行以下。將參考資料移動到 skills，它們按需載入。</Tip>
   </Tab>
 
   <Tab title="Skills">

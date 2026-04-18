@@ -198,7 +198,7 @@ Setiap fitur dimuat pada titik berbeda dalam sesi Anda. Tab di bawah menjelaskan
 
     **Warisan:** Claude membaca file CLAUDE.md dari direktori kerja Anda hingga ke root, dan menemukan yang tersarang di subdirektori saat mengakses file tersebut. Lihat [Bagaimana file CLAUDE.md dimuat](/id/memory#how-claudemd-files-load) untuk detail.
 
-    <Tip>Jaga CLAUDE.md di bawah \~500 baris. Pindahkan materi referensi ke skills, yang dimuat on-demand.</Tip>
+    <Tip>Jaga CLAUDE.md di bawah 200 baris. Pindahkan materi referensi ke skills, yang dimuat on-demand.</Tip>
   </Tab>
 
   <Tab title="Skills">

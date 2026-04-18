@@ -198,7 +198,7 @@ Cada característica se carga en diferentes puntos de su sesión. Las pestañas 
 
     **Herencia:** Claude lee archivos CLAUDE.md de su directorio de trabajo hasta la raíz, y descubre los anidados en subdirectorios mientras accede a esos archivos. Consulte [Cómo se cargan los archivos CLAUDE.md](/es/memory#how-claudemd-files-load) para obtener detalles.
 
-    <Tip>Mantenga CLAUDE.md bajo \~500 líneas. Mueva material de referencia a skills, que se cargan bajo demanda.</Tip>
+    <Tip>Mantenga CLAUDE.md bajo 200 líneas. Mueva material de referencia a skills, que se cargan bajo demanda.</Tip>
   </Tab>
 
   <Tab title="Skills">
