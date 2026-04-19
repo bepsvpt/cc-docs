@@ -1,5 +1,28 @@
 # Documentation Changes
 
+## 2026-04-19
+
+9 pages modified
+
+
+### English
+
+
+**Modified**
+
+- **Changelog** (`changelog.md`): 4 lines added, 0 removed
+- **Commands** (`commands.md`): 2 lines added, 2 removed
+- **Interactive mode** (`interactive-mode.md`): 12 lines added, 9 removed
+- **Customize keyboard shortcuts** (`keybindings.md`): 20 lines added, 14 removed
+- **Configure permissions** (`permissions.md`): 4 lines added, 2 removed
+- **Continue local sessions from any device with Remote Control** (`remote-control.md`): 2 lines added, 2 removed
+- **Sandboxing** (`sandboxing.md`): 1 lines added, 0 removed
+- **Run prompts on a schedule** (`scheduled-tasks.md`): 4 lines added, 0 removed
+  - New section: "### Stop a loop"
+- **Claude Code settings** (`settings.md`): 24 lines added, 22 removed
+
+---
+
 ## 2026-04-18
 
 16 pages modified
