@@ -123,7 +123,7 @@ Después de la instalación, inicie `claude` desde PowerShell, CMD o Git Bash. C
 }
 ```
 
-Claude Code también puede ejecutar PowerShell de forma nativa en Windows como una vista previa de participación. Consulte [herramienta PowerShell](/es/tools-reference#powershell-tool) para configuración y limitaciones.
+Claude Code también puede ejecutar PowerShell de forma nativa en Windows. La herramienta PowerShell se está implementando progresivamente; establezca `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` para participar o `0` para no participar. Consulte [herramienta PowerShell](/es/tools-reference#powershell-tool) para configuración y limitaciones.
 
 **Opción 2: WSL**
 
@@ -203,6 +203,23 @@ Configure esto a través de `/config` → **Auto-update channel**, o agréguelo 
 Para implementaciones empresariales, puede aplicar un canal de lanzamiento consistente en toda su organización usando [configuración administrada](/es/permissions#managed-settings).
 
 Las instalaciones de Homebrew eligen un canal por nombre de cask en lugar de esta configuración: `claude-code` rastrea estable y `claude-code@latest` rastrea latest.
+
+### Fijar una versión mínima
+
+La configuración `minimumVersion` establece un piso. Las actualizaciones automáticas en segundo plano y `claude update` se niegan a instalar cualquier versión por debajo de este valor, por lo que cambiar al canal `"stable"` no lo degrada si ya está en una compilación `"latest"` más nueva.
+
+Cambiar de `"latest"` a `"stable"` a través de `/config` le solicita que permanezca en la versión actual o permita la degradación. Elegir permanecer establece `minimumVersion` en esa versión. Cambiar de nuevo a `"latest"` lo borra.
+
+Agréguelo a su [archivo settings.json](/es/settings) para fijar un piso explícitamente:
+
+```json theme={null}
+{
+  "autoUpdatesChannel": "stable",
+  "minimumVersion": "2.1.100"
+}
+```
+
+En [configuración administrada](/es/permissions#managed-settings), esto aplica un mínimo en toda la organización que la configuración de usuario y proyecto no puede anular.
 
 ### Deshabilitar actualizaciones automáticas
 
@@ -298,31 +315,17 @@ Para instalar un número de versión específico:
   </Tab>
 </Tabs>
 
-### Instalación npm obsoleta
+### Instalar con npm
 
-La instalación con npm está obsoleta. El instalador nativo es más rápido, no requiere dependencias y se actualiza automáticamente en segundo plano. Use el método de [instalación nativa](#install-claude-code) cuando sea posible.
-
-#### Migrar de npm a nativo
-
-Si instaló previamente Claude Code con npm, cambie al instalador nativo:
-
-```bash theme={null}
-# Instalar el binario nativo
-curl -fsSL https://claude.ai/install.sh | bash
-
-# Eliminar la instalación anterior de npm
-npm uninstall -g @anthropic-ai/claude-code
-```
-
-También puede ejecutar `claude install` desde una instalación npm existente para instalar el binario nativo junto a ella y luego eliminar la versión npm.
-
-#### Instalar con npm
-
-Si necesita instalación con npm por razones de compatibilidad, debe tener [Node.js 18+](https://nodejs.org/en/download) instalado. Instale el paquete globalmente:
+También puede instalar Claude Code como un paquete npm global. El paquete requiere [Node.js 18 o posterior](https://nodejs.org/en/download).
 
 ```bash theme={null}
 npm install -g @anthropic-ai/claude-code
 ```
+
+El paquete npm instala el mismo binario nativo que el instalador independiente. npm extrae el binario a través de una dependencia opcional por plataforma como `@anthropic-ai/claude-code-darwin-arm64`, y un paso postinstall lo vincula en su lugar. El binario `claude` instalado no invoca Node en sí mismo.
+
+Las plataformas de instalación npm compatibles son `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64` y `win32-arm64`. Su gestor de paquetes debe permitir dependencias opcionales. Consulte [solución de problemas](/es/troubleshooting#native-binary-not-found-after-npm-install) si falta el binario después de la instalación.
 
 <Warning>
   NO use `sudo npm install -g` ya que esto puede causar problemas de permisos y riesgos de seguridad. Si encuentra errores de permisos, consulte [solución de problemas de errores de permisos](/es/troubleshooting#permission-errors-during-installation).

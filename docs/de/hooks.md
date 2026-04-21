@@ -14,11 +14,11 @@ Hooks sind benutzerdefinierte Shell-Befehle, HTTP-Endpunkte oder LLM-Prompts, di
 
 ## Hook-Lebenszyklus
 
-Hooks werden an bestimmten Punkten während einer Claude Code-Sitzung ausgelöst. Wenn ein Ereignis ausgelöst wird und ein Matcher passt, übergibt Claude Code JSON-Kontext über das Ereignis an Ihren Hook-Handler. Für Command-Hooks kommt die Eingabe über stdin an. Für HTTP-Hooks kommt sie als POST-Request-Body an. Ihr Handler kann dann die Eingabe überprüfen, Maßnahmen ergreifen und optional eine Entscheidung zurückgeben. Einige Ereignisse werden einmal pro Sitzung ausgelöst, während andere wiederholt in der agentengesteuerten Schleife ausgelöst werden:
+Hooks werden an bestimmten Punkten während einer Claude Code-Sitzung ausgelöst. Wenn ein Ereignis ausgelöst wird und ein Matcher passt, übergibt Claude Code JSON-Kontext über das Ereignis an Ihren Hook-Handler. Für Command-Hooks kommt die Eingabe über stdin an. Für HTTP-Hooks kommt sie als POST-Request-Body an. Ihr Handler kann dann die Eingabe überprüfen, Maßnahmen ergreifen und optional eine Entscheidung zurückgeben. Ereignisse fallen in drei Rhythmen: einmal pro Sitzung (`SessionStart`, `SessionEnd`), einmal pro Runde (`UserPromptSubmit`, `Stop`, `StopFailure`) und bei jedem Tool-Aufruf innerhalb der agentengesteuerten Schleife (`PreToolUse`, `PostToolUse`):
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/UMJp-WgTWngzO609/images/hooks-lifecycle.svg?fit=max&auto=format&n=UMJp-WgTWngzO609&q=85&s=3f4de67df216c87dc313943b32c15f62" alt="Hook-Lebenszyklus-Diagramm, das die Abfolge von Hooks von SessionStart durch die agentengesteuerte Schleife (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCreated, TaskCompleted) bis Stop oder StopFailure, TeammateIdle, PreCompact, PostCompact und SessionEnd zeigt, mit Elicitation und ElicitationResult verschachtelt in MCP-Tool-Ausführung, PermissionDenied als Seitenzweig von PermissionRequest für Auto-Mode-Ablehnungen und WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged und FileChanged als eigenständige asynchrone Ereignisse" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/UMJp-WgTWngzO609/images/hooks-lifecycle.svg?fit=max&auto=format&n=UMJp-WgTWngzO609&q=85&s=3f4de67df216c87dc313943b32c15f62" alt="Hook-Lebenszyklus-Diagramm, das SessionStart zeigt, dann eine Pro-Runde-Schleife mit UserPromptSubmit, die verschachtelte agentengesteuerte Schleife (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCreated, TaskCompleted) und Stop oder StopFailure, gefolgt von TeammateIdle, PreCompact, PostCompact und SessionEnd, mit Elicitation und ElicitationResult verschachtelt in MCP-Tool-Ausführung, PermissionDenied als Seitenzweig von PermissionRequest für Auto-Mode-Ablehnungen und WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged und FileChanged als eigenständige asynchrone Ereignisse" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
@@ -55,7 +55,7 @@ Die folgende Tabelle fasst zusammen, wann jedes Ereignis ausgelöst wird. Der Ab
 
 ### Wie ein Hook aufgelöst wird
 
-Um zu sehen, wie diese Teile zusammenpassen, betrachten Sie diesen `PreToolUse`-Hook, der destruktive Shell-Befehle blockiert. Der `matcher` grenzt auf Bash-Tool-Aufrufe ein und die `if`-Bedingung grenzt weiter auf Befehle ein, die mit `rm` beginnen, daher wird `block-rm.sh` nur ausgeführt, wenn beide Filter passen:
+Um zu sehen, wie diese Teile zusammenpassen, betrachten Sie diesen `PreToolUse`-Hook, der destruktive Shell-Befehle blockiert. Der `matcher` grenzt auf Bash-Tool-Aufrufe ein und die `if`-Bedingung grenzt weiter auf Bash-Unterbefehle ein, die mit `rm *` übereinstimmen, daher wird `block-rm.sh` nur ausgeführt, wenn beide Filter passen:
 
 ```json theme={null}
 {
@@ -116,7 +116,7 @@ Angenommen, Claude Code entscheidet sich, `Bash "rm -rf /tmp/build"` auszuführe
   </Step>
 
   <Step title="If-Bedingung prüft">
-    Die `if`-Bedingung `"Bash(rm *)"` passt, weil der Befehl mit `rm` beginnt, daher wird dieser Handler ausgeführt. Wenn der Befehl `npm test` gewesen wäre, würde die `if`-Prüfung fehlschlagen und `block-rm.sh` würde nie ausgeführt, wodurch der Prozess-Spawn-Overhead vermieden wird. Das Feld `if` ist optional; ohne es wird jeder Handler in der passenden Gruppe ausgeführt.
+    Die `if`-Bedingung `"Bash(rm *)"` passt, weil `rm -rf /tmp/build` ein Unterbefehl ist, der mit `rm *` übereinstimmt, daher wird dieser Handler ausgeführt. Wenn der Befehl `npm test` gewesen wäre, würde die `if`-Prüfung fehlschlagen und `block-rm.sh` würde nie ausgeführt, wodurch der Prozess-Spawn-Overhead vermieden wird. Das Feld `if` ist optional; ohne es wird jeder Handler in der passenden Gruppe ausgeführt.
   </Step>
 
   <Step title="Hook-Handler wird ausgeführt">
@@ -169,31 +169,41 @@ Der Ort, an dem Sie einen Hook definieren, bestimmt seinen Umfang:
 | [Plugin](/de/plugins) `hooks/hooks.json`                     | Wenn Plugin aktiviert ist        | Ja, mit dem Plugin gebündelt          |
 | [Skill](/de/skills) oder [Agent](/de/sub-agents) Frontmatter | Während die Komponente aktiv ist | Ja, in der Komponentendatei definiert |
 
-Weitere Informationen zur Auflösung von Einstellungsdateien finden Sie unter [Einstellungen](/de/settings). Enterprise-Administratoren können `allowManagedHooksOnly` verwenden, um Benutzer-, Projekt- und Plugin-Hooks zu blockieren. Siehe [Hook-Konfiguration](/de/settings#hook-configuration).
+Weitere Informationen zur Auflösung von Einstellungsdateien finden Sie unter [Einstellungen](/de/settings). Enterprise-Administratoren können `allowManagedHooksOnly` verwenden, um Benutzer-, Projekt- und Plugin-Hooks zu blockieren. Hooks von Plugins, die in verwalteten Einstellungen `enabledPlugins` erzwungen aktiviert sind, sind ausgenommen, daher können Administratoren überprüfte Hooks über einen Organisations-Marketplace verteilen. Siehe [Hook-Konfiguration](/de/settings#hook-configuration).
 
 ### Matcher-Muster
 
-Das Feld `matcher` ist eine Regex-Zeichenkette, die filtert, wann Hooks ausgelöst werden. Verwenden Sie `"*"`, `""` oder lassen Sie `matcher` ganz weg, um alle Vorkommen zu treffen. Jeder Ereignistyp passt auf ein anderes Feld:
+Das Feld `matcher` filtert, wann Hooks ausgelöst werden. Wie ein Matcher evaluiert wird, hängt von den Zeichen ab, die er enthält:
 
-| Ereignis                                                                                                       | Worauf der Matcher filtert                | Beispiel-Matcher-Werte                                                                                                    |
-| :------------------------------------------------------------------------------------------------------------- | :---------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                     | Tool-Name                                 | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
-| `SessionStart`                                                                                                 | Wie die Sitzung gestartet wurde           | `startup`, `resume`, `clear`, `compact`                                                                                   |
-| `SessionEnd`                                                                                                   | Warum die Sitzung endete                  | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                                 | Benachrichtigungstyp                      | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                                | Agent-Typ                                 | `Bash`, `Explore`, `Plan` oder benutzerdefinierte Agent-Namen                                                             |
-| `PreCompact`, `PostCompact`                                                                                    | Was die Komprimierung ausgelöst hat       | `manual`, `auto`                                                                                                          |
-| `SubagentStop`                                                                                                 | Agent-Typ                                 | gleiche Werte wie `SubagentStart`                                                                                         |
-| `ConfigChange`                                                                                                 | Konfigurationsquelle                      | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
-| `CwdChanged`                                                                                                   | Keine Matcher-Unterstützung               | wird immer bei jedem Verzeichniswechsel ausgelöst                                                                         |
-| `FileChanged`                                                                                                  | Dateiname (Basename der geänderten Datei) | `.envrc`, `.env`, jeder Dateiname, den Sie überwachen möchten                                                             |
-| `StopFailure`                                                                                                  | Fehlertyp                                 | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                                           | Ladegrund                                 | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
-| `Elicitation`                                                                                                  | MCP-Server-Name                           | Ihre konfigurierten MCP-Server-Namen                                                                                      |
-| `ElicitationResult`                                                                                            | MCP-Server-Name                           | gleiche Werte wie `Elicitation`                                                                                           |
-| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | Keine Matcher-Unterstützung               | wird immer bei jedem Auftreten ausgelöst                                                                                  |
+| Matcher-Wert                          | Evaluiert als                                                           | Beispiel                                                                                                             |
+| :------------------------------------ | :---------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| `"*"`, `""` oder weggelassen          | Alle treffen                                                            | wird bei jedem Auftreten des Ereignisses ausgelöst                                                                   |
+| Nur Buchstaben, Ziffern, `_` und `\|` | Exakte Zeichenkette oder `\|`-getrennte Liste von exakten Zeichenketten | `Bash` passt nur zum Bash-Tool; `Edit\|Write` passt zu beiden Tools genau                                            |
+| Enthält ein anderes Zeichen           | JavaScript-Regex                                                        | `^Notebook` passt zu jedem Tool, das mit Notebook beginnt; `mcp__memory__.*` passt zu jedem Tool vom `memory`-Server |
 
-Der Matcher ist ein Regex, daher passt `Edit|Write` zu beiden Tools und `Notebook.*` passt zu jedem Tool, das mit Notebook beginnt. Der Matcher wird gegen ein Feld aus der [JSON-Eingabe](#hook-input-and-output) ausgeführt, die Claude Code an Ihren Hook über stdin sendet. Für Tool-Ereignisse ist dieses Feld `tool_name`. Jeder Abschnitt [Hook-Ereignis](#hook-events) listet den vollständigen Satz von Matcher-Werten und das Eingabeschema für dieses Ereignis auf.
+Das Ereignis `FileChanged` folgt diesen Regeln nicht, wenn es seine Überwachungsliste erstellt. Siehe [FileChanged](#filechanged).
+
+Jeder Ereignistyp passt auf ein anderes Feld:
+
+| Ereignis                                                                                                       | Worauf der Matcher filtert                                    | Beispiel-Matcher-Werte                                                                                                    |
+| :------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                     | Tool-Name                                                     | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `SessionStart`                                                                                                 | Wie die Sitzung gestartet wurde                               | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `SessionEnd`                                                                                                   | Warum die Sitzung endete                                      | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
+| `Notification`                                                                                                 | Benachrichtigungstyp                                          | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
+| `SubagentStart`                                                                                                | Agent-Typ                                                     | `Bash`, `Explore`, `Plan` oder benutzerdefinierte Agent-Namen                                                             |
+| `PreCompact`, `PostCompact`                                                                                    | Was die Komprimierung ausgelöst hat                           | `manual`, `auto`                                                                                                          |
+| `SubagentStop`                                                                                                 | Agent-Typ                                                     | gleiche Werte wie `SubagentStart`                                                                                         |
+| `ConfigChange`                                                                                                 | Konfigurationsquelle                                          | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
+| `CwdChanged`                                                                                                   | Keine Matcher-Unterstützung                                   | wird immer bei jedem Verzeichniswechsel ausgelöst                                                                         |
+| `FileChanged`                                                                                                  | Dateinamen zum Überwachen (siehe [FileChanged](#filechanged)) | `.envrc\|.env`                                                                                                            |
+| `StopFailure`                                                                                                  | Fehlertyp                                                     | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                           | Ladegrund                                                     | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `Elicitation`                                                                                                  | MCP-Server-Name                                               | Ihre konfigurierten MCP-Server-Namen                                                                                      |
+| `ElicitationResult`                                                                                            | MCP-Server-Name                                               | gleiche Werte wie `Elicitation`                                                                                           |
+| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | Keine Matcher-Unterstützung                                   | wird immer bei jedem Auftreten ausgelöst                                                                                  |
+
+Der Matcher wird gegen ein Feld aus der [JSON-Eingabe](#hook-input-and-output) ausgeführt, die Claude Code an Ihren Hook über stdin sendet. Für Tool-Ereignisse ist dieses Feld `tool_name`. Jeder Abschnitt [Hook-Ereignis](#hook-events) listet den vollständigen Satz von Matcher-Werten und das Eingabeschema für dieses Ereignis auf.
 
 Dieses Beispiel führt ein Linting-Skript nur aus, wenn Claude eine Datei schreibt oder bearbeitet:
 
@@ -217,7 +227,7 @@ Dieses Beispiel führt ein Linting-Skript nur aus, wenn Claude eine Datei schrei
 
 `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` und `CwdChanged` unterstützen keine Matcher und werden immer bei jedem Auftreten ausgelöst. Wenn Sie ein `matcher`-Feld zu diesen Ereignissen hinzufügen, wird es stillschweigend ignoriert.
 
-Für Tool-Ereignisse können Sie enger filtern, indem Sie das Feld [`if`](#common-fields) auf einzelnen Hook-Handlern setzen. `if` verwendet [Berechtigungsregel-Syntax](/de/permissions), um gegen den Tool-Namen und die Argumente zusammen zu passen, daher wird `"Bash(git *)"` nur für `git`-Befehle ausgeführt und `"Edit(*.ts)"` wird nur für TypeScript-Dateien ausgeführt.
+Für Tool-Ereignisse können Sie enger filtern, indem Sie das Feld [`if`](#common-fields) auf einzelnen Hook-Handlern setzen. `if` verwendet [Berechtigungsregel-Syntax](/de/permissions), um gegen den Tool-Namen und die Argumente zusammen zu passen, daher wird `"Bash(git *)"` ausgeführt, wenn ein Bash-Befehl mit `git *` übereinstimmt und `"Edit(*.ts)"` wird nur für TypeScript-Dateien ausgeführt.
 
 #### MCP-Tools abgleichen
 
@@ -229,10 +239,10 @@ MCP-Tools folgen dem Benennungsmuster `mcp__<server>__<tool>`, zum Beispiel:
 * `mcp__filesystem__read_file`: Filesystem-Server-Tool zum Lesen von Dateien
 * `mcp__github__search_repositories`: GitHub-Server-Suchtool
 
-Verwenden Sie Regex-Muster, um bestimmte MCP-Tools oder Gruppen von Tools anzusteuern:
+Um jedes Tool von einem Server zu treffen, fügen Sie `.*` zum Server-Präfix hinzu. Das `.*` ist erforderlich: Ein Matcher wie `mcp__memory` enthält nur Buchstaben und Unterstriche, daher wird er als exakte Zeichenkette verglichen und passt zu keinem Tool.
 
 * `mcp__memory__.*` passt zu allen Tools vom `memory`-Server
-* `mcp__.*__write.*` passt zu jedem Tool, das „write" enthält, von jedem Server
+* `mcp__.*__write.*` passt zu jedem Tool, dessen Name mit `write` beginnt, von jedem Server
 
 Dieses Beispiel protokolliert alle Memory-Server-Operationen und validiert Schreibvorgänge von jedem MCP-Server:
 
@@ -270,29 +280,32 @@ Jedes Objekt im inneren `hooks`-Array ist ein Hook-Handler: der Shell-Befehl, HT
 * **[Command-Hooks](#command-hook-fields)** (`type: "command"`): führen einen Shell-Befehl aus. Ihr Skript erhält die [JSON-Eingabe](#hook-input-and-output) des Ereignisses über stdin und kommuniziert Ergebnisse über Exit-Codes und stdout zurück.
 * **[HTTP-Hooks](#http-hook-fields)** (`type: "http"`): senden die [JSON-Eingabe](#hook-input-and-output) des Ereignisses als HTTP-POST-Request an eine URL. Der Endpunkt kommuniziert Ergebnisse über den Response-Body mit dem gleichen [JSON-Ausgabeformat](#json-output) wie Command-Hooks zurück.
 * **[Prompt-Hooks](#prompt-and-agent-hook-fields)** (`type: "prompt"`): senden einen Prompt an ein Claude-Modell für eine Single-Turn-Evaluierung. Das Modell gibt eine Ja/Nein-Entscheidung als JSON zurück. Siehe [Prompt-basierte Hooks](#prompt-based-hooks).
-* **[Agent-Hooks](#prompt-and-agent-hook-fields)** (`type: "agent"`): spawnen einen Subagenten, der Tools wie Read, Grep und Glob verwenden kann, um Bedingungen zu überprüfen, bevor eine Entscheidung zurückgegeben wird. Siehe [Agent-basierte Hooks](#agent-based-hooks).
+* **[Agent-Hooks](#prompt-and-agent-hook-fields)** (`type: "agent"`): spawnen einen Subagenten, der Tools wie Read, Grep und Glob verwenden kann, um Bedingungen zu überprüfen, bevor eine Entscheidung zurückgegeben wird. Agent-Hooks sind experimentell und können sich ändern. Siehe [Agent-basierte Hooks](#agent-based-hooks).
 
 #### Gemeinsame Felder
 
 Diese Felder gelten für alle Hook-Typen:
 
-| Feld            | Erforderlich | Beschreibung                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| :-------------- | :----------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`          | ja           | `"command"`, `"http"`, `"prompt"` oder `"agent"`                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| `if`            | nein         | Berechtigungsregel-Syntax zum Filtern, wann dieser Hook ausgeführt wird, wie `"Bash(git *)"` oder `"Edit(*.ts)"`. Der Hook wird nur ausgeführt, wenn der Tool-Aufruf dem Muster entspricht. Wird nur auf Tool-Ereignisse evaluiert: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest` und `PermissionDenied`. Bei anderen Ereignissen wird ein Hook mit `if` gesetzt nie ausgeführt. Verwendet die gleiche Syntax wie [Berechtigungsregeln](/de/permissions) |
-| `timeout`       | nein         | Sekunden vor dem Abbruch. Standardwerte: 600 für Command, 30 für Prompt, 60 für Agent                                                                                                                                                                                                                                                                                                                                                                                             |
-| `statusMessage` | nein         | Benutzerdefinierte Spinner-Nachricht, die angezeigt wird, während der Hook ausgeführt wird                                                                                                                                                                                                                                                                                                                                                                                        |
-| `once`          | nein         | Wenn `true`, wird nur einmal pro Sitzung ausgeführt und dann entfernt. Nur Skills, nicht Agents. Siehe [Hooks in Skills und Agents](#hooks-in-skills-and-agents)                                                                                                                                                                                                                                                                                                                  |
+| Feld            | Erforderlich | Beschreibung                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| :-------------- | :----------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`          | ja           | `"command"`, `"http"`, `"prompt"` oder `"agent"`                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `if`            | nein         | Berechtigungsregel-Syntax zum Filtern, wann dieser Hook ausgeführt wird, wie `"Bash(git *)"` oder `"Edit(*.ts)"`. Der Hook wird nur ausgeführt, wenn der Tool-Aufruf dem Muster entspricht, oder wenn ein Bash-Befehl zu komplex zum Analysieren ist. Wird nur auf Tool-Ereignisse evaluiert: `PreToolUse`, `PostToolUse`, `PostToolUseFailure` und `PermissionRequest`. Bei anderen Ereignissen wird ein Hook mit `if` gesetzt nie ausgeführt. Verwendet die gleiche Syntax wie [Berechtigungsregeln](/de/permissions) |
+| `timeout`       | nein         | Sekunden vor dem Abbruch. Standardwerte: 600 für Command, 30 für Prompt, 60 für Agent                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `statusMessage` | nein         | Benutzerdefinierte Spinner-Nachricht, die angezeigt wird, während der Hook ausgeführt wird                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `once`          | nein         | Wenn `true`, wird nur einmal pro Sitzung ausgeführt und dann entfernt. Nur für Hooks, die in [Skill-Frontmatter](#hooks-in-skills-and-agents) deklariert sind; wird in Einstellungsdateien und Agent-Frontmatter ignoriert                                                                                                                                                                                                                                                                                              |
+
+Das Feld `if` enthält genau eine Berechtigungsregel. Es gibt keine `&&`-, `||`- oder List-Syntax zum Kombinieren von Regeln; um mehrere Bedingungen anzuwenden, definieren Sie einen separaten Hook-Handler für jeden. Für Bash wird die Regel gegen jeden Subbefehl der Tool-Eingabe abgeglichen, nachdem führende `VAR=value`-Zuweisungen entfernt wurden, daher passt `if: "Bash(git push *)"` sowohl zu `FOO=bar git push` als auch zu `npm test && git push`. Der Hook wird ausgeführt, wenn ein Subbefehl passt, und wird immer ausgeführt, wenn der Befehl zu komplex zum Analysieren ist.
 
 #### Command-Hook-Felder
 
 Zusätzlich zu den [gemeinsamen Feldern](#common-fields) akzeptieren Command-Hooks diese Felder:
 
-| Feld      | Erforderlich | Beschreibung                                                                                                                                                                                                                                                     |
-| :-------- | :----------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `command` | ja           | Shell-Befehl zum Ausführen                                                                                                                                                                                                                                       |
-| `async`   | nein         | Wenn `true`, wird im Hintergrund ausgeführt, ohne zu blockieren. Siehe [Hooks im Hintergrund ausführen](#run-hooks-in-the-background)                                                                                                                            |
-| `shell`   | nein         | Shell zum Verwenden für diesen Hook. Akzeptiert `"bash"` (Standard) oder `"powershell"`. Das Setzen von `"powershell"` führt den Befehl über PowerShell unter Windows aus. Erfordert nicht `CLAUDE_CODE_USE_POWERSHELL_TOOL`, da Hooks PowerShell direkt spawnen |
+| Feld          | Erforderlich | Beschreibung                                                                                                                                                                                                                                                                  |
+| :------------ | :----------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `command`     | ja           | Shell-Befehl zum Ausführen                                                                                                                                                                                                                                                    |
+| `async`       | nein         | Wenn `true`, wird im Hintergrund ausgeführt, ohne zu blockieren. Siehe [Hooks im Hintergrund ausführen](#run-hooks-in-the-background)                                                                                                                                         |
+| `asyncRewake` | nein         | Wenn `true`, wird im Hintergrund ausgeführt und weckt Claude bei Exit-Code 2 auf. Impliziert `async`. Der stderr des Hooks oder stdout, wenn stderr leer ist, wird Claude als Systemerinnerung angezeigt, damit es auf einen lang laufenden Hintergrund-Fehler reagieren kann |
+| `shell`       | nein         | Shell zum Verwenden für diesen Hook. Akzeptiert `"bash"` (Standard) oder `"powershell"`. Das Setzen von `"powershell"` führt den Befehl über PowerShell unter Windows aus. Erfordert nicht `CLAUDE_CODE_USE_POWERSHELL_TOOL`, da Hooks PowerShell direkt spawnen              |
 
 #### HTTP-Hook-Felder
 
@@ -460,7 +473,7 @@ Command-Hooks erhalten JSON-Daten über stdin und kommunizieren Ergebnisse über
 
 ### Gemeinsame Eingabefelder
 
-Alle Hook-Ereignisse erhalten diese Felder als JSON, zusätzlich zu ereignisspezifischen Feldern, die in jedem Abschnitt [Hook-Ereignis](#hook-events) dokumentiert sind. Für Command-Hooks kommt diese JSON über stdin an. Für HTTP-Hooks kommt sie als POST-Request-Body an.
+Hook-Ereignisse erhalten diese Felder als JSON, zusätzlich zu ereignisspezifischen Feldern, die in jedem Abschnitt [Hook-Ereignis](#hook-events) dokumentiert sind. Für Command-Hooks kommt diese JSON über stdin an. Für HTTP-Hooks kommt sie als POST-Request-Body an.
 
 | Feld              | Beschreibung                                                                                                                                                                                                                                                   |
 | :---------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -499,11 +512,11 @@ Die Felder `tool_name` und `tool_input` sind ereignisspezifisch. Jeder Abschnitt
 
 Der Exit-Code aus Ihrem Hook-Befehl teilt Claude Code mit, ob die Aktion fortgesetzt, blockiert oder ignoriert werden soll.
 
-**Exit 0** bedeutet Erfolg. Claude Code analysiert stdout auf [JSON-Ausgabefelder](#json-output). JSON-Ausgabe wird nur bei Exit 0 verarbeitet. Für die meisten Ereignisse wird stdout nur im ausführlichen Modus (`Ctrl+O`) angezeigt. Die Ausnahmen sind `UserPromptSubmit` und `SessionStart`, wo stdout als Kontext hinzugefügt wird, den Claude sehen und darauf reagieren kann.
+**Exit 0** bedeutet Erfolg. Claude Code analysiert stdout auf [JSON-Ausgabefelder](#json-output). JSON-Ausgabe wird nur bei Exit 0 verarbeitet. Für die meisten Ereignisse wird stdout in das Debug-Log geschrieben, aber nicht im Transkript angezeigt. Die Ausnahmen sind `UserPromptSubmit` und `SessionStart`, wo stdout als Kontext hinzugefügt wird, den Claude sehen und darauf reagieren kann.
 
 **Exit 2** bedeutet ein blockierender Fehler. Claude Code ignoriert stdout und jede JSON darin. Stattdessen wird der stderr-Text an Claude als Fehlermeldung zurückgegeben. Die Auswirkung hängt vom Ereignis ab: `PreToolUse` blockiert den Tool-Aufruf, `UserPromptSubmit` lehnt den Prompt ab, und so weiter. Siehe [Exit-Code-2-Verhalten](#exit-code-2-behavior-per-event) für die vollständige Liste.
 
-**Jeder andere Exit-Code** ist ein nicht-blockierender Fehler. stderr wird im ausführlichen Modus (`Ctrl+O`) angezeigt und die Ausführung wird fortgesetzt.
+**Jeder andere Exit-Code** ist ein nicht-blockierender Fehler für die meisten Hook-Ereignisse. Das Transkript zeigt eine `<hook name> hook error`-Benachrichtigung gefolgt von der ersten Zeile von stderr, damit Sie die Ursache ohne `--debug` identifizieren können. Die Ausführung wird fortgesetzt und der vollständige stderr wird in das Debug-Log geschrieben.
 
 Zum Beispiel ein Hook-Befehlsskript, das gefährliche Bash-Befehle blockiert:
 
@@ -519,6 +532,10 @@ fi
 
 exit 0  # Erfolg: Tool-Aufruf wird fortgesetzt
 ```
+
+<Warning>
+  Für die meisten Hook-Ereignisse blockiert nur Exit-Code 2 die Aktion. Claude Code behandelt Exit-Code 1 als nicht-blockierenden Fehler und setzt die Aktion fort, obwohl 1 der konventionelle Unix-Fehlercode ist. Wenn Ihr Hook eine Richtlinie durchsetzen soll, verwenden Sie `exit 2`. Die Ausnahme ist `WorktreeCreate`, wo jeder Nicht-Null-Exit-Code die Worktree-Erstellung abbricht.
+</Warning>
 
 #### Exit-Code-2-Verhalten pro Ereignis
 
@@ -545,7 +562,7 @@ Exit-Code 2 ist die Art, wie ein Hook signalisiert „Stopp, mach das nicht." Di
 | `SessionEnd`         | Nein                   | Zeigt stderr nur dem Benutzer an                                                                                                                                                                 |
 | `CwdChanged`         | Nein                   | Zeigt stderr nur dem Benutzer an                                                                                                                                                                 |
 | `FileChanged`        | Nein                   | Zeigt stderr nur dem Benutzer an                                                                                                                                                                 |
-| `PreCompact`         | Nein                   | Zeigt stderr nur dem Benutzer an                                                                                                                                                                 |
+| `PreCompact`         | Ja                     | Blockiert die Komprimierung                                                                                                                                                                      |
 | `PostCompact`        | Nein                   | Zeigt stderr nur dem Benutzer an                                                                                                                                                                 |
 | `Elicitation`        | Ja                     | Verweigert die Elicitation                                                                                                                                                                       |
 | `ElicitationResult`  | Ja                     | Blockiert die Antwort (Aktion wird Ablehnung)                                                                                                                                                    |
@@ -575,6 +592,8 @@ Exit-Codes ermöglichen es Ihnen, zuzulassen oder zu blockieren, aber JSON-Ausga
 
 Die stdout Ihres Hooks darf nur das JSON-Objekt enthalten. Wenn Ihr Shell-Profil beim Start Text ausgibt, kann dies die JSON-Analyse beeinträchtigen. Siehe [JSON-Validierung fehlgeschlagen](/de/hooks-guide#json-validation-failed) in der Fehlerbehebungsanleitung.
 
+Hook-Ausgabe, die in Kontext injiziert wird (`additionalContext`, `systemMessage` oder Plain-stdout), ist auf 10.000 Zeichen begrenzt. Ausgabe, die dieses Limit überschreitet, wird in einer Datei gespeichert und durch eine Vorschau und einen Dateipfad ersetzt, auf die gleiche Weise wie große Tool-Ergebnisse behandelt werden.
+
 Das JSON-Objekt unterstützt drei Arten von Feldern:
 
 * **Universelle Felder** wie `continue` funktionieren über alle Ereignisse hinweg. Diese sind in der Tabelle unten aufgelistet.
@@ -585,7 +604,7 @@ Das JSON-Objekt unterstützt drei Arten von Feldern:
 | :--------------- | :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `continue`       | `true`   | Wenn `false`, stoppt Claude die Verarbeitung vollständig, nachdem der Hook ausgeführt wurde. Hat Vorrang vor allen ereignisspezifischen Entscheidungsfeldern |
 | `stopReason`     | keine    | Nachricht, die dem Benutzer angezeigt wird, wenn `continue` `false` ist. Wird Claude nicht angezeigt                                                         |
-| `suppressOutput` | `false`  | Wenn `true`, verbirgt stdout aus der Ausgabe des ausführlichen Modus                                                                                         |
+| `suppressOutput` | `false`  | Wenn `true`, verbirgt stdout aus dem Debug-Log                                                                                                               |
 | `systemMessage`  | keine    | Warnmeldung, die dem Benutzer angezeigt wird                                                                                                                 |
 
 Um Claude unabhängig vom Ereignistyp vollständig zu stoppen:
@@ -598,23 +617,23 @@ Um Claude unabhängig vom Ereignistyp vollständig zu stoppen:
 
 Nicht jedes Ereignis unterstützt das Blockieren oder Steuern des Verhaltens durch JSON. Die Ereignisse, die dies tun, verwenden jeweils einen anderen Satz von Feldern, um diese Entscheidung auszudrücken. Verwenden Sie diese Tabelle als schnelle Referenz, bevor Sie einen Hook schreiben:
 
-| Ereignisse                                                                                                                  | Entscheidungsmuster              | Schlüsselfelder                                                                                                                                                                      |
-| :-------------------------------------------------------------------------------------------------------------------------- | :------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange                                         | Top-Level `decision`             | `decision: "block"`, `reason`                                                                                                                                                        |
-| TeammateIdle, TaskCreated, TaskCompleted                                                                                    | Exit-Code oder `continue: false` | Exit-Code 2 blockiert die Aktion mit stderr-Feedback. JSON `{"continue": false, "stopReason": "..."}` stoppt auch den Teammate vollständig, was dem `Stop`-Hook-Verhalten entspricht |
-| PreToolUse                                                                                                                  | `hookSpecificOutput`             | `permissionDecision` (allow/deny/ask/defer), `permissionDecisionReason`                                                                                                              |
-| PermissionRequest                                                                                                           | `hookSpecificOutput`             | `decision.behavior` (allow/deny)                                                                                                                                                     |
-| PermissionDenied                                                                                                            | `hookSpecificOutput`             | `retry: true` teilt dem Modell mit, dass es möglicherweise den verweigerten Tool-Aufruf erneut versuchen kann                                                                        |
-| WorktreeCreate                                                                                                              | Pfad-Rückgabe                    | Command-Hook gibt Pfad auf stdout aus; HTTP-Hook gibt `hookSpecificOutput.worktreePath` zurück. Hook-Fehler oder fehlender Pfad schlägt die Erstellung fehl                          |
-| Elicitation                                                                                                                 | `hookSpecificOutput`             | `action` (accept/decline/cancel), `content` (Formularfeldwerte für accept)                                                                                                           |
-| ElicitationResult                                                                                                           | `hookSpecificOutput`             | `action` (accept/decline/cancel), `content` (Formularfeldwerte überschreiben)                                                                                                        |
-| WorktreeRemove, Notification, SessionEnd, PreCompact, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged | Keine                            | Keine Entscheidungskontrolle. Wird für Nebenwirkungen wie Protokollierung oder Bereinigung verwendet                                                                                 |
+| Ereignisse                                                                                                      | Entscheidungsmuster              | Schlüsselfelder                                                                                                                                                                      |
+| :-------------------------------------------------------------------------------------------------------------- | :------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange, PreCompact                 | Top-Level `decision`             | `decision: "block"`, `reason`                                                                                                                                                        |
+| TeammateIdle, TaskCreated, TaskCompleted                                                                        | Exit-Code oder `continue: false` | Exit-Code 2 blockiert die Aktion mit stderr-Feedback. JSON `{"continue": false, "stopReason": "..."}` stoppt auch den Teammate vollständig, was dem `Stop`-Hook-Verhalten entspricht |
+| PreToolUse                                                                                                      | `hookSpecificOutput`             | `permissionDecision` (allow/deny/ask/defer), `permissionDecisionReason`                                                                                                              |
+| PermissionRequest                                                                                               | `hookSpecificOutput`             | `decision.behavior` (allow/deny)                                                                                                                                                     |
+| PermissionDenied                                                                                                | `hookSpecificOutput`             | `retry: true` teilt dem Modell mit, dass es möglicherweise den verweigerten Tool-Aufruf erneut versuchen kann                                                                        |
+| WorktreeCreate                                                                                                  | Pfad-Rückgabe                    | Command-Hook gibt Pfad auf stdout aus; HTTP-Hook gibt `hookSpecificOutput.worktreePath` zurück. Hook-Fehler oder fehlender Pfad schlägt die Erstellung fehl                          |
+| Elicitation                                                                                                     | `hookSpecificOutput`             | `action` (accept/decline/cancel), `content` (Formularfeldwerte für accept)                                                                                                           |
+| ElicitationResult                                                                                               | `hookSpecificOutput`             | `action` (accept/decline/cancel), `content` (Formularfeldwerte überschreiben)                                                                                                        |
+| WorktreeRemove, Notification, SessionEnd, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged | Keine                            | Keine Entscheidungskontrolle. Wird für Nebenwirkungen wie Protokollierung oder Bereinigung verwendet                                                                                 |
 
 Hier sind Beispiele für jedes Muster in Aktion:
 
 <Tabs>
   <Tab title="Top-Level-Entscheidung">
-    Wird von `UserPromptSubmit`, `PostToolUse`, `PostToolUseFailure`, `Stop`, `SubagentStop` und `ConfigChange` verwendet. Der einzige Wert ist `"block"`. Um die Aktion fortzusetzen, lassen Sie `decision` aus Ihrem JSON weg, oder beenden Sie mit 0 ohne jede JSON:
+    Wird von `UserPromptSubmit`, `PostToolUse`, `PostToolUseFailure`, `Stop`, `SubagentStop`, `ConfigChange` und `PreCompact` verwendet. Der einzige Wert ist `"block"`. Um die Aktion fortzusetzen, lassen Sie `decision` aus Ihrem JSON weg, oder beenden Sie mit 0 ohne jede JSON:
 
     ```json theme={null}
     {
@@ -820,11 +839,12 @@ Plain-stdout wird als Hook-Ausgabe im Transkript angezeigt. Das Feld `additional
 
 Um einen Prompt zu blockieren, geben Sie ein JSON-Objekt mit `decision` auf `"block"` zurück:
 
-| Feld                | Beschreibung                                                                                                            |
-| :------------------ | :---------------------------------------------------------------------------------------------------------------------- |
-| `decision`          | `"block"` verhindert die Verarbeitung des Prompts und löscht ihn aus dem Kontext. Weglassen, um den Prompt fortzusetzen |
-| `reason`            | Wird dem Benutzer angezeigt, wenn `decision` `"block"` ist. Wird nicht zum Kontext hinzugefügt                          |
-| `additionalContext` | Zeichenkette, die zu Claudes Kontext hinzugefügt wird                                                                   |
+| Feld                | Beschreibung                                                                                                                                   |
+| :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| `decision`          | `"block"` verhindert die Verarbeitung des Prompts und löscht ihn aus dem Kontext. Weglassen, um den Prompt fortzusetzen                        |
+| `reason`            | Wird dem Benutzer angezeigt, wenn `decision` `"block"` ist. Wird nicht zum Kontext hinzugefügt                                                 |
+| `additionalContext` | Zeichenkette, die zu Claudes Kontext hinzugefügt wird                                                                                          |
+| `sessionTitle`      | Setzt den Sitzungstitel, gleiche Auswirkung wie `/rename`. Verwenden Sie, um Sitzungen automatisch basierend auf dem Prompt-Inhalt zu benennen |
 
 ```json theme={null}
 {
@@ -832,7 +852,8 @@ Um einen Prompt zu blockieren, geben Sie ein JSON-Objekt mit `decision` auf `"bl
   "reason": "Explanation for decision",
   "hookSpecificOutput": {
     "hookEventName": "UserPromptSubmit",
-    "additionalContext": "My additional context here"
+    "additionalContext": "My additional context here",
+    "sessionTitle": "My session title"
   }
 }
 ```
@@ -1068,13 +1089,13 @@ PermissionRequest-Hooks erhalten `tool_name`- und `tool_input`-Felder wie PreToo
 
 `PermissionRequest`-Hooks können Berechtigungsanfragen zulassen oder verweigern. Zusätzlich zu den [JSON-Ausgabefeldern](#json-output), die für alle Hooks verfügbar sind, kann Ihr Hook-Skript ein `decision`-Objekt mit diesen ereignisspezifischen Feldern zurückgeben:
 
-| Feld                 | Beschreibung                                                                                                                                                                               |
-| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `behavior`           | `"allow"` gewährt die Berechtigung, `"deny"` verweigert sie                                                                                                                                |
-| `updatedInput`       | Nur für `"allow"`: ändert die Tool-Eingabeparameter vor der Ausführung. Ersetzt das gesamte Eingabeobjekt, daher müssen Sie unveränderte Felder zusammen mit geänderten einbeziehen        |
-| `updatedPermissions` | Nur für `"allow"`: Array von [Berechtigungsupdate-Einträgen](#permission-update-entries) zum Anwenden, wie das Hinzufügen einer Allow-Regel oder das Ändern des Session-Berechtigungsmodus |
-| `message`            | Nur für `"deny"`: teilt Claude mit, warum die Berechtigung verweigert wurde                                                                                                                |
-| `interrupt`          | Nur für `"deny"`: wenn `true`, stoppt Claude                                                                                                                                               |
+| Feld                 | Beschreibung                                                                                                                                                                                                                                                |
+| :------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `behavior`           | `"allow"` gewährt die Berechtigung, `"deny"` verweigert sie. [Deny- und Ask-Regeln](/de/permissions#manage-permissions) gelten weiterhin, daher überschreibt ein Hook, der `"allow"` zurückgibt, keine passende Deny-Regel                                  |
+| `updatedInput`       | Nur für `"allow"`: ändert die Tool-Eingabeparameter vor der Ausführung. Ersetzt das gesamte Eingabeobjekt, daher müssen Sie unveränderte Felder zusammen mit geänderten einbeziehen. Die geänderte Eingabe wird erneut gegen Deny- und Ask-Regeln evaluiert |
+| `updatedPermissions` | Nur für `"allow"`: Array von [Berechtigungsupdate-Einträgen](#permission-update-entries) zum Anwenden, wie das Hinzufügen einer Allow-Regel oder das Ändern des Session-Berechtigungsmodus                                                                  |
+| `message`            | Nur für `"deny"`: teilt Claude mit, warum die Berechtigung verweigert wurde                                                                                                                                                                                 |
+| `interrupt`          | Nur für `"deny"`: wenn `true`, stoppt Claude                                                                                                                                                                                                                |
 
 ```json theme={null}
 {
@@ -1102,6 +1123,10 @@ Das Ausgabefeld `updatedPermissions` und das [`permission_suggestions`-Eingabefe
 | `setMode`           | `mode`, `destination`              | Ändert den Berechtigungsmodus. Gültige Modi sind `default`, `acceptEdits`, `dontAsk`, `bypassPermissions` und `plan`                                                                                       |
 | `addDirectories`    | `directories`, `destination`       | Fügt Arbeitsverzeichnisse hinzu. `directories` ist ein Array von Pfad-Zeichenketten                                                                                                                        |
 | `removeDirectories` | `directories`, `destination`       | Entfernt Arbeitsverzeichnisse                                                                                                                                                                              |
+
+<Note>
+  `setMode` mit `bypassPermissions` nimmt nur Auswirkungen an, wenn die Sitzung mit Bypass-Modus bereits verfügbar gestartet wurde: `--dangerously-skip-permissions`, `--permission-mode bypassPermissions`, `--allow-dangerously-skip-permissions` oder `permissions.defaultMode: "bypassPermissions"` in Einstellungen, und der Modus ist nicht durch [`permissions.disableBypassPermissionsMode`](/de/permissions#managed-settings) deaktiviert. Andernfalls ist das Update ein No-Op. `bypassPermissions` wird niemals als `defaultMode` persistiert, unabhängig von `destination`.
+</Note>
 
 Das Feld `destination` auf jedem Eintrag bestimmt, ob die Änderung im Speicher bleibt oder in einer Einstellungsdatei persistiert wird.
 
@@ -1697,11 +1722,16 @@ Zusätzlich zu den [JSON-Ausgabefeldern](#json-output), die für alle Hooks verf
 | :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `watchPaths` | Array von absoluten Pfaden. Ersetzt die aktuelle dynamische Überwachungsliste (Pfade aus Ihrer `matcher`-Konfiguration werden immer überwacht). Das Zurückgeben eines leeren Arrays löscht die dynamische Liste, was typisch ist, wenn Sie ein neues Verzeichnis betreten |
 
-CwdChanged-Hooks haben keine Entscheidungskontrolle. Sie können den Verzeichniswechsel nicht blockieren.
+CwdChanged-Hooks haben keine Entscheidung skontrolle. Sie können den Verzeichniswechsel nicht blockieren.
 
 ### FileChanged
 
-Wird ausgeführt, wenn sich eine überwachte Datei auf der Festplatte ändert. Das Feld `matcher` in Ihrer Hook-Konfiguration steuert, welche Dateinamen überwacht werden: Es ist eine durch Pipes getrennte Liste von Basenames (Dateinamen ohne Verzeichnispfade, zum Beispiel `".envrc|.env"`). Der gleiche `matcher`-Wert wird auch verwendet, um zu filtern, welche Hooks ausgeführt werden, wenn sich eine Datei ändert, und passt auf den Basename der geänderten Datei. Nützlich zum Neuladen von Umgebungsvariablen, wenn Projekt-Konfigurationsdateien geändert werden.
+Wird ausgeführt, wenn sich eine überwachte Datei auf der Festplatte ändert. Nützlich zum Neuladen von Umgebungsvariablen, wenn Projekt-Konfigurationsdateien geändert werden.
+
+Das Feld `matcher` für dieses Ereignis dient zwei Zwecken:
+
+* **Erstellen Sie die Überwachungsliste**: Der Wert wird auf `|` aufgeteilt und jedes Segment wird als Dateiname im Arbeitsverzeichnis registriert, daher überwacht `".envrc|.env"` genau diese zwei Dateien. Regex-Muster sind hier nicht nützlich: Ein Wert wie `^\.env` würde eine Datei überwachen, die buchstäblich `^\.env` heißt.
+* **Filtern Sie, welche Hooks ausgeführt werden**: Wenn sich eine überwachte Datei ändert, wird der gleiche Wert verwendet, um zu filtern, welche Hook-Gruppen ausgeführt werden, wobei die Standard-[Matcher-Regeln](#matcher-patterns) gegen den Basename der geänderten Datei verwendet werden.
 
 FileChanged-Hooks haben Zugriff auf `CLAUDE_ENV_FILE`. Variablen, die in diese Datei geschrieben werden, bleiben in nachfolgenden Bash-Befehlen für die Sitzung erhalten, genau wie in [SessionStart-Hooks](#persist-environment-variables). Nur `type: "command"`-Hooks werden unterstützt.
 
@@ -1743,7 +1773,7 @@ Da der Hook das Standard-Verhalten vollständig ersetzt, wird [`.worktreeinclude
 
 Der Hook muss den absoluten Pfad zum erstellten Worktree-Verzeichnis zurückgeben. Claude Code verwendet diesen Pfad als Arbeitsverzeichnis für die isolierte Sitzung. Command-Hooks geben ihn auf stdout aus; HTTP-Hooks geben ihn über `hookSpecificOutput.worktreePath` zurück.
 
-Dieses Beispiel erstellt eine SVN-Arbeit skopie und gibt den Pfad aus, damit Claude Code ihn verwenden kann. Ersetzen Sie die Repository-URL durch Ihre eigene:
+Dieses Beispiel erstellt eine SVN-Arbeitskopie und gibt den Pfad aus, damit Claude Code ihn verwenden kann. Ersetzen Sie die Repository-URL durch Ihre eigene:
 
 ```json theme={null}
 {
@@ -1837,6 +1867,10 @@ Der Matcher-Wert gibt an, ob die Komprimierung manuell oder automatisch ausgelö
 | `manual` | `/compact`                                           |
 | `auto`   | Auto-Komprimierung, wenn das Kontextfenster voll ist |
 
+Exit mit Code 2, um die Komprimierung zu blockieren. Für ein manuelles `/compact` wird die stderr-Nachricht dem Benutzer angezeigt. Sie können auch blockieren, indem Sie JSON mit `"decision": "block"` zurückgeben.
+
+Das Blockieren der automatischen Komprimierung hat unterschiedliche Auswirkungen, je nachdem, wann es ausgelöst wird. Wenn die Komprimierung proaktiv ausgelöst wurde, bevor das Kontextlimit erreicht wurde, überspringt Claude Code sie und das Gespräch wird unkomprimiert fortgesetzt. Wenn die Komprimierung ausgelöst wurde, um sich von einem Kontextlimit-Fehler zu erholen, der bereits von der API zurückgegeben wurde, wird der zugrunde liegende Fehler angezeigt und die aktuelle Anfrage schlägt fehl.
+
 #### PreCompact-Eingabe
 
 Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten PreCompact-Hooks `trigger` und `custom_instructions`. Für `manual` enthält `custom_instructions` das, was der Benutzer in `/compact` übergibt. Für `auto` ist `custom_instructions` leer.
@@ -1911,7 +1945,7 @@ Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten S
 
 SessionEnd-Hooks haben keine Entscheidungskontrolle. Sie können die Sitzungsbeendigung nicht blockieren, können aber Bereinigungsaufgaben durchführen.
 
-SessionEnd-Hooks haben ein Standard-Timeout von 1,5 Sekunden. Dies gilt sowohl für den Sitzungsausstieg als auch für `/clear` und das Wechseln von Sitzungen über interaktives `/resume`. Wenn Ihre Hooks mehr Zeit benötigen, setzen Sie die Umgebungsvariable `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` auf einen höheren Wert in Millisekunden. Jede Pro-Hook-Einstellung `timeout` wird auch durch diesen Wert begrenzt.
+SessionEnd-Hooks haben ein Standard-Timeout von 1,5 Sekunden. Dies gilt sowohl für den Sitzungsausstieg als auch für `/clear` und das Wechseln von Sitzungen über interaktives `/resume`. Wenn ein Hook mehr Zeit benötigt, setzen Sie eine Pro-Hook-`timeout` in der Hook-Konfiguration. Das Gesamtbudget wird automatisch auf das höchste Pro-Hook-Timeout erhöht, das in Einstellungsdateien konfiguriert ist, bis zu 60 Sekunden. Timeouts, die auf Plugin-bereitgestellten Hooks gesetzt sind, erhöhen das Budget nicht. Um das Budget explizit zu überschreiben, setzen Sie die Umgebungsvariable `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` in Millisekunden.
 
 ```bash theme={null}
 CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
@@ -2031,7 +2065,7 @@ Um die Antwort des Benutzers zu überschreiben, geben Sie ein JSON-Objekt mit `h
 | `action`  | `accept`, `decline`, `cancel` | Überschreibt die Aktion des Benutzers                                          |
 | `content` | Objekt                        | Überschreibt Formularfeldwerte. Nur aussagekräftig, wenn `action` `accept` ist |
 
-Exit-Code 2 blockiert die Antwort und ändert die effektive Aktion in `decline`.
+Exit-Code 2 blockiert die Antwort, wodurch die effektive Aktion zu `decline` wird.
 
 ## Prompt-basierte Hooks
 
@@ -2147,6 +2181,10 @@ Dieser `Stop`-Hook verwendet einen detaillierten Prompt, um drei Bedingungen zu 
 ```
 
 ## Agent-basierte Hooks
+
+<Warning>
+  Agent-Hooks sind experimentell. Das Verhalten und die Konfiguration können sich in zukünftigen Versionen ändern. Für Produktions-Workflows bevorzugen Sie [Command Hooks](#command-hook-fields).
+</Warning>
 
 Agent-basierte Hooks (`type: "agent"`) sind wie Prompt-basierte Hooks, aber mit Multi-Turn-Tool-Zugriff. Anstelle eines einzelnen LLM-Aufrufs spawnt ein Agent-Hook einen Subagenten, der Dateien lesen, Code durchsuchen und die Codebasis überprüfen kann, um Bedingungen zu überprüfen. Agent-Hooks unterstützen die gleichen Ereignisse wie Prompt-basierte Hooks.
 
@@ -2290,7 +2328,7 @@ Asynchrone Hooks haben mehrere Einschränkungen im Vergleich zu synchronen Hooks
 
 * Nur `type: "command"`-Hooks unterstützen `async`. Prompt-basierte Hooks können nicht asynchron ausgeführt werden.
 * Asynchrone Hooks können nicht blockieren oder Entscheidungen zurückgeben. Zu dem Zeitpunkt, an dem der Hook abgeschlossen ist, hat die auslösende Aktion bereits stattgefunden.
-* Hook-Ausgabe wird beim nächsten Gesprächsturn geliefert. Wenn die Sitzung untätig ist, wartet die Response, bis die nächste Benutzerinteraktion erfolgt.
+* Hook-Ausgabe wird beim nächsten Gesprächsturn geliefert. Wenn die Sitzung untätig ist, wartet die Response, bis die nächste Benutzerinteraktion erfolgt. Ausnahme: Ein `asyncRewake`-Hook, der mit Code 2 beendet wird, weckt Claude sofort auf, auch wenn die Sitzung untätig ist.
 * Jede Ausführung erstellt einen separaten Hintergrund-Prozess. Es gibt keine Deduplizierung über mehrere Auslösungen des gleichen asynchronen Hooks.
 
 ## Sicherheitsüberlegungen
@@ -2338,7 +2376,7 @@ Unter Windows können Sie einzelne Hooks in PowerShell ausführen, indem Sie `"s
 
 ## Debug-Hooks
 
-Führen Sie `claude --debug` aus, um Hook-Ausführungsdetails zu sehen, einschließlich welche Hooks passten, ihre Exit-Codes und Ausgabe.
+Hook-Ausführungsdetails, einschließlich welche Hooks passten, ihre Exit-Codes und vollständige stdout und stderr, werden in die Debug-Log-Datei geschrieben. Starten Sie Claude Code mit `claude --debug-file <path>`, um das Log in einen bekannten Speicherort zu schreiben, oder führen Sie `claude --debug` aus und lesen Sie das Log unter `~/.claude/debug/<session-id>.txt`. Das Flag `--debug` gibt nicht auf dem Terminal aus.
 
 ```text theme={null}
 [DEBUG] Executing hooks for PostToolUse:Write

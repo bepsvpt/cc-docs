@@ -2,100 +2,157 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Ottimizza la configurazione del tuo terminale
+# Configura il tuo terminale per Claude Code
 
-> Claude Code funziona al meglio quando il tuo terminale è correttamente configurato. Segui queste linee guida per ottimizzare la tua esperienza.
+> Correggi Shift+Invio per le nuove righe, ricevi un segnale acustico del terminale quando Claude finisce, configura tmux, abbina il tema dei colori e abilita la modalità Vim nella CLI di Claude Code.
 
-### Temi e aspetto
+Claude Code funziona in qualsiasi terminale senza configurazione. Questa pagina è per quando qualcosa di specifico non si comporta come previsto. Trova il tuo sintomo di seguito. Se tutto ti sembra già corretto, non hai bisogno di questa pagina.
 
-Claude non può controllare il tema del tuo terminale. Questo è gestito dall'applicazione del tuo terminale. Puoi far corrispondere il tema di Claude Code al tuo terminale in qualsiasi momento tramite il comando `/config`.
+* [Shift+Invio invia invece di inserire una nuova riga](#enter-multiline-prompts)
+* [Le scorciatoie del tasto Option non funzionano su macOS](#enable-option-key-shortcuts-on-macos)
+* [Nessun suono o avviso quando Claude finisce](#get-a-terminal-bell-or-notification)
+* [Esegui Claude Code dentro tmux](#configure-tmux)
+* [Lo schermo sfarfalla o il scrollback salta](#switch-to-fullscreen-rendering)
+* [Vuoi i tasti Vim nel prompt](#edit-prompts-with-vim-keybindings)
 
-Per ulteriori personalizzazioni dell'interfaccia di Claude Code stesso, puoi configurare una [linea di stato personalizzata](/it/statusline) per visualizzare informazioni contestuali come il modello corrente, la directory di lavoro o il ramo git nella parte inferiore del tuo terminale.
+Questa pagina riguarda come far inviare al tuo terminale i segnali giusti a Claude Code. Per modificare i tasti a cui Claude Code stesso risponde, consulta invece [scorciatoie da tastiera](/it/keybindings).
 
-### Interruzioni di riga
+## Enter multiline prompts
 
-Hai diverse opzioni per inserire interruzioni di riga in Claude Code:
+Premere Invio invia il tuo messaggio. Per aggiungere un'interruzione di riga senza inviare, premi Ctrl+J, oppure digita `\` e poi premi Invio. Entrambi funzionano in ogni terminale senza configurazione.
 
-* **Escape rapido**: Digita `\` seguito da Invio per creare una nuova riga
-* **Shift+Invio**: Funziona immediatamente in iTerm2, WezTerm, Ghostty e Kitty
-* **Scorciatoia da tastiera**: Configura una scorciatoia da tastiera per inserire una nuova riga in altri terminali
+Nella maggior parte dei terminali puoi anche premere Shift+Invio, ma il supporto varia a seconda dell'emulatore di terminale:
 
-**Configura Shift+Invio per altri terminali**
+| Terminale                                                                      | Shift+Invio per nuova riga                  |
+| :----------------------------------------------------------------------------- | :------------------------------------------ |
+| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal                          | Funziona senza configurazione               |
+| VS Code, Cursor, Windsurf, Alacritty, Zed                                      | Esegui `/terminal-setup` una volta          |
+| Windows Terminal, gnome-terminal, JetBrains IDEs come PyCharm e Android Studio | Non disponibile; usa Ctrl+J o `\` poi Invio |
 
-Esegui `/terminal-setup` all'interno di Claude Code per configurare automaticamente Shift+Invio per VS Code, Alacritty, Zed e Warp.
+Per VS Code, Cursor, Windsurf, Alacritty e Zed, `/terminal-setup` scrive Shift+Invio e altre scorciatoie da tastiera nel file di configurazione del terminale. Se segnala un conflitto come `Found existing VSCode terminal Shift+Enter key binding`, rimuovi quella voce dal file delle scorciatoie da tastiera del terminale, ad esempio `keybindings.json` di VS Code, ed esegui il comando di nuovo. Esegui `/terminal-setup` direttamente nel terminale host piuttosto che dentro tmux o screen, poiché ha bisogno di scrivere nella configurazione del terminale host.
 
-<Note>
-  Il comando `/terminal-setup` è visibile solo nei terminali che richiedono una configurazione manuale. Se stai utilizzando iTerm2, WezTerm, Ghostty o Kitty, non vedrai questo comando perché Shift+Invio funziona già nativamente.
-</Note>
+Se stai eseguendo dentro tmux, Shift+Invio richiede anche la [configurazione tmux di seguito](#configure-tmux) anche quando il terminale esterno la supporta.
 
-**Configura Option+Invio (VS Code, iTerm2 o macOS Terminal.app)**
+Per associare la nuova riga a un tasto diverso, o per scambiare il comportamento in modo che Invio inserisca una nuova riga e Shift+Invio invii, mappa le azioni `chat:newline` e `chat:submit` nel tuo [file delle scorciatoie da tastiera](/it/keybindings).
 
-**Per Mac Terminal.app:**
+## Enable Option key shortcuts on macOS
 
-1. Apri Impostazioni → Profili → Tastiera
-2. Seleziona "Usa Option come Meta Key"
+Alcuni scorciatoie di Claude Code utilizzano il tasto Option, come Option+Invio per una nuova riga o Option+P per cambiare modelli. Su macOS, la maggior parte dei terminali non invia Option come modificatore per impostazione predefinita, quindi questi scorciatoie non funzionano finché non lo abiliti. L'impostazione del terminale per questo è solitamente etichettata "Use Option as Meta Key"; Meta è il nome storico Unix per il tasto ora etichettato come Option o Alt.
 
-**Per iTerm2:**
+<Tabs>
+  <Tab title="Apple Terminal">
+    Apri Impostazioni → Profili → Tastiera e seleziona "Use Option as Meta Key".
 
-1. Apri Impostazioni → Profili → Tasti
-2. In Generale, imposta il tasto Option sinistro/destro su "Esc+"
+    Se hai accettato il prompt di primo avvio di Claude Code che offriva "Option+Invio per nuove righe e campanello visivo", questo è già fatto. Quel prompt esegue `/terminal-setup` per te, che abilita Option come Meta e cambia il campanello audio a un flash di schermo visivo nel tuo profilo Apple Terminal.
+  </Tab>
 
-**Per il terminale VS Code:**
+  <Tab title="iTerm2">
+    Apri Impostazioni → Profili → Tasti → Generale e imposta il tasto Option sinistro e il tasto Option destro su "Esc+".
+  </Tab>
 
-Imposta `"terminal.integrated.macOptionIsMeta": true` nelle impostazioni di VS Code.
+  <Tab title="VS Code">
+    Aggiungi `"terminal.integrated.macOptionIsMeta": true` alle tue impostazioni di VS Code.
+  </Tab>
+</Tabs>
 
-### Configurazione delle notifiche
+Per Ghostty, Kitty e altri terminali, cerca un'impostazione Option-as-Alt o Option-as-Meta nel file di configurazione del terminale.
 
-Quando Claude finisce di lavorare ed è in attesa del tuo input, genera un evento di notifica. Puoi visualizzare questo evento come una notifica desktop tramite il tuo terminale o eseguire logica personalizzata con [hook di notifica](/it/hooks#notification).
+## Get a terminal bell or notification
 
-#### Notifiche del terminale
+Quando Claude finisce un'attività o si mette in pausa per un prompt di autorizzazione, attiva un evento di notifica. Visualizzare questo come un campanello del terminale o una notifica desktop ti consente di passare ad altro lavoro mentre un'attività lunga è in esecuzione.
 
-Kitty e Ghostty supportano le notifiche desktop senza configurazione aggiuntiva. iTerm 2 richiede una configurazione:
+Claude Code invia una notifica desktop solo in Ghostty, Kitty e iTerm2; ogni altro terminale ha bisogno di un [hook Notification](#play-a-sound-with-a-notification-hook) invece. La notifica raggiunge anche la tua macchina locale tramite SSH, quindi una sessione remota può comunque avvertirti. Ghostty e Kitty la inoltrano al tuo centro notifiche del sistema operativo senza ulteriore configurazione. iTerm2 richiede che tu abiliti l'inoltro:
 
-1. Apri Impostazioni di iTerm 2 → Profili → Terminale
-2. Abilita "Notification Center Alerts"
-3. Fai clic su "Filter Alerts" e seleziona "Send escape sequence-generated alerts"
+<Steps>
+  <Step title="Apri le impostazioni di notifica di iTerm2">
+    Vai a Impostazioni → Profili → Terminale.
+  </Step>
 
-Se le notifiche non vengono visualizzate, verifica che l'applicazione del tuo terminale abbia i permessi di notifica nelle impostazioni del tuo sistema operativo.
+  <Step title="Abilita gli avvisi">
+    Seleziona "Notification Center Alerts", poi fai clic su "Filter Alerts" e abilita "Send escape sequence-generated alerts".
+  </Step>
+</Steps>
 
-Quando esegui Claude Code all'interno di tmux, le notifiche e la [barra di avanzamento del terminale](/it/settings#global-config-settings) raggiungono il terminale esterno, come iTerm2, Kitty o Ghostty, solo se abiliti il passthrough nella tua configurazione di tmux:
+Se le notifiche ancora non appaiono, conferma che la tua applicazione di terminale ha il permesso di notifica nelle impostazioni del tuo sistema operativo, e se stai eseguendo dentro tmux, [abilita il passthrough](#configure-tmux).
 
+### Play a sound with a Notification hook
+
+In qualsiasi terminale puoi configurare un [hook Notification](/it/hooks-guide#get-notified-when-claude-needs-input) per riprodurre un suono o eseguire un comando personalizzato quando Claude ha bisogno della tua attenzione. Gli hook vengono eseguiti insieme alla notifica desktop piuttosto che sostituirla. I terminali come Warp o Apple Terminal si affidano a un hook da solo poiché Claude Code non invia loro una notifica desktop.
+
+L'esempio di seguito riproduce un suono di sistema su macOS. La guida collegata ha comandi di notifica desktop per macOS, Linux e Windows.
+
+```json ~/.claude/settings.json theme={null}
+{
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [{ "type": "command", "command": "afplay /System/Library/Sounds/Glass.aiff" }]
+      }
+    ]
+  }
+}
 ```
+
+## Configure tmux
+
+Quando Claude Code viene eseguito dentro tmux, due cose si rompono per impostazione predefinita: Shift+Invio invia invece di inserire una nuova riga, e le notifiche desktop e la [barra di avanzamento](/it/settings#global-config-settings) non raggiungono mai il terminale esterno. Aggiungi queste righe a `~/.tmux.conf`, poi esegui `tmux source-file ~/.tmux.conf` per applicarle al server in esecuzione:
+
+```bash ~/.tmux.conf theme={null}
 set -g allow-passthrough on
+set -s extended-keys on
+set -as terminal-features 'xterm*:extkeys'
 ```
 
-Senza questa impostazione, tmux intercetta le sequenze di escape e non raggiungono l'applicazione del terminale.
+La riga `allow-passthrough` consente alle notifiche e agli aggiornamenti di avanzamento di raggiungere iTerm2, Ghostty o Kitty invece di essere inghiottiti da tmux. Le righe `extended-keys` consentono a tmux di distinguere Shift+Invio da Invio semplice in modo che il scorciatoia della nuova riga funzioni.
 
-Altri terminali, incluso il Terminal predefinito di macOS, non supportano le notifiche native. Utilizza invece gli [hook di notifica](/it/hooks#notification).
+## Match the color theme
 
-#### Hook di notifica
+Usa il comando `/theme`, o il selettore di tema in `/config`, per scegliere un tema di Claude Code che corrisponda al tuo terminale. Selezionando l'opzione auto rileva lo sfondo chiaro o scuro del tuo terminale, quindi il tema segue i cambiamenti di aspetto del sistema operativo ogni volta che il tuo terminale lo fa. I temi disponibili sono incorporati; non c'è un file di tema personalizzato. Claude Code non controlla lo schema di colori del terminale stesso, che è impostato dall'applicazione del terminale.
 
-Per aggiungere un comportamento personalizzato quando le notifiche vengono attivate, come riprodurre un suono o inviare un messaggio, configura un [hook di notifica](/it/hooks#notification). Gli hook vengono eseguiti insieme alle notifiche del terminale, non come sostituzione.
+Per personalizzare ciò che appare in fondo all'interfaccia, configura una [linea di stato personalizzata](/it/statusline) che mostra il modello corrente, la directory di lavoro, il ramo git o altro contesto.
 
-### Riduci lo sfarfallio e l'utilizzo della memoria
+## Switch to fullscreen rendering
 
-Se vedi sfarfallio durante sessioni lunghe, o la posizione di scorrimento del tuo terminale salta in alto mentre Claude sta lavorando, prova il [rendering a schermo intero](/it/fullscreen). Utilizza un percorso di rendering alternativo che mantiene la memoria piatta e aggiunge il supporto del mouse. Abilitalo con `CLAUDE_CODE_NO_FLICKER=1`.
+Se lo schermo sfarfalla o la posizione di scorrimento salta mentre Claude sta lavorando, passa alla [modalità di rendering a schermo intero](/it/fullscreen). Disegna su uno schermo separato che il terminale riserva per le app a schermo intero invece di aggiungere al tuo normale scrollback, il che mantiene l'utilizzo della memoria piatto e aggiunge il supporto del mouse per lo scorrimento e la selezione. In questa modalità scorri con il mouse o PageUp dentro Claude Code piuttosto che con lo scrollback nativo del tuo terminale; consulta la [pagina fullscreen](/it/fullscreen#search-and-review-the-conversation) per come cercare e copiare.
 
-### Gestione di input di grandi dimensioni
+Esegui `/tui fullscreen` per passare nella sessione corrente con la tua conversazione intatta. Per renderlo predefinito, imposta la variabile di ambiente `CLAUDE_CODE_NO_FLICKER` prima di avviare Claude Code:
 
-Quando lavori con codice esteso o istruzioni lunghe:
+<CodeGroup>
+  ```bash Bash and Zsh theme={null}
+  CLAUDE_CODE_NO_FLICKER=1 claude
+  ```
 
-* **Evita l'incollamento diretto**: Claude Code potrebbe avere difficoltà con contenuti incollati molto lunghi
-* **Usa flussi di lavoro basati su file**: Scrivi il contenuto in un file e chiedi a Claude di leggerlo
-* **Sii consapevole delle limitazioni di VS Code**: Il terminale di VS Code è particolarmente soggetto al troncamento di incollamenti lunghi
+  ```powershell PowerShell theme={null}
+  $env:CLAUDE_CODE_NO_FLICKER = "1"; claude
+  ```
 
-### Modalità Vim
+  ```json ~/.claude/settings.json theme={null}
+  {
+    "env": {
+      "CLAUDE_CODE_NO_FLICKER": "1"
+    }
+  }
+  ```
+</CodeGroup>
 
-Claude Code supporta un sottoinsieme di scorciatoie da tastiera Vim che può essere abilitato con `/vim` o configurato tramite `/config`. Per impostare la modalità direttamente nel tuo file di configurazione, imposta la chiave di configurazione globale [`editorMode`](/it/settings#global-config-settings) su `"vim"` in `~/.claude.json`.
+## Paste large content
 
-Il sottoinsieme supportato include:
+Quando incolla più di 10.000 caratteri nel prompt, Claude Code comprime l'input a un placeholder `[Pasted text]` in modo che la casella di input rimanga utilizzabile. Il contenuto completo viene comunque inviato a Claude quando invii.
 
-* Cambio di modalità: `Esc` (a NORMAL), `i`/`I`, `a`/`A`, `o`/`O` (a INSERT)
-* Navigazione: `h`/`j`/`k`/`l`, `w`/`e`/`b`, `0`/`$`/`^`, `gg`/`G`, `f`/`F`/`t`/`T` con ripetizione `;`/`,`
-* Modifica: `x`, `dw`/`de`/`db`/`dd`/`D`, `cw`/`ce`/`cb`/`cc`/`C`, `.` (ripeti)
-* Copia/incolla: `yy`/`Y`, `yw`/`ye`/`yb`, `p`/`P`
-* Oggetti di testo: `iw`/`aw`, `iW`/`aW`, `i"`/`a"`, `i'`/`a'`, `i(`/`a(`, `i[`/`a[`, `i{`/`a{`
-* Indentazione: `>>`/`<<`
-* Operazioni di riga: `J` (unisci righe)
+Il terminale integrato di VS Code può perdere caratteri da incollamenti molto grandi prima che raggiungano Claude Code, quindi preferisci flussi di lavoro basati su file lì. Per input molto grandi come interi file o lunghi log, scrivi il contenuto in un file e chiedi a Claude di leggerlo invece di incollare. Questo mantiene la trascrizione della conversazione leggibile e consente a Claude di fare riferimento al file per percorso nei turni successivi.
 
-Vedi [Modalità interattiva](/it/interactive-mode#vim-editor-mode) per il riferimento completo.
+## Edit prompts with Vim keybindings
+
+Claude Code include una modalità di editing in stile Vim per l'input del prompt. Abilitala tramite `/config` → Editor mode, o impostando la chiave di configurazione globale [`editorMode`](/it/settings#global-config-settings) su `"vim"` in `~/.claude.json`. Imposta Editor mode di nuovo su `normal` per disattivarla.
+
+La modalità Vim supporta un sottoinsieme di motions in modalità NORMAL e operatori, come la navigazione `hjkl` e `d`/`c`/`y` con oggetti di testo. Consulta la [tabella di riferimento della modalità editor Vim](/it/interactive-mode#vim-editor-mode) per la tabella completa dei tasti. I motions Vim non sono rimappabili tramite il file delle scorciatoie da tastiera.
+
+Premere Invio invia comunque il tuo prompt in modalità INSERT, a differenza di Vim standard. Usa `o` o `O` in modalità NORMAL, o Ctrl+J, per inserire una nuova riga invece.
+
+## Related resources
+
+* [Interactive mode](/it/interactive-mode): riferimento completo delle scorciatoie da tastiera e la tabella dei tasti Vim
+* [Keybindings](/it/keybindings): rimappa qualsiasi scorciatoia di Claude Code, inclusi Invio e Shift+Invio
+* [Fullscreen rendering](/it/fullscreen): dettagli su scorrimento, ricerca e copia in modalità fullscreen
+* [Hooks guide](/it/hooks-guide): altri esempi di hook Notification per Linux e Windows
+* [Troubleshooting](/it/troubleshooting): correzioni per problemi al di fuori della configurazione del terminale

@@ -12,7 +12,7 @@
 
 Tarefas agendadas permitem que Claude execute novamente um prompt automaticamente em um intervalo. Use-as para pesquisar uma implantação, cuidar de um PR, verificar uma compilação de longa duração ou lembrar-se de fazer algo mais tarde na sessão. Para reagir a eventos conforme eles acontecem em vez de pesquisar, consulte [Channels](/pt/channels): seu CI pode enviar a falha para a sessão diretamente.
 
-As tarefas têm escopo de sessão: elas vivem no processo atual do Claude Code e desaparecem quando você sai. Para agendamento durável que sobreviva a reinicializações, use [Routines](/pt/routines), [tarefas agendadas do Desktop](/pt/desktop-scheduled-tasks) ou [GitHub Actions](/pt/github-actions).
+As tarefas têm escopo de sessão: elas vivem na conversa atual e param quando você inicia uma nova. Retomar com `--resume` ou `--continue` traz de volta qualquer tarefa que não tenha [expirado](#seven-day-expiry): uma tarefa recorrente criada nos últimos 7 dias, ou uma única cujo tempo agendado ainda não passou. Para agendamento que sobreviva independentemente de qualquer sessão, use [Routines](/pt/routines), [tarefas agendadas do Desktop](/pt/desktop-scheduled-tasks) ou [GitHub Actions](/pt/github-actions).
 
 ## Compare opções de agendamento
 
@@ -118,6 +118,10 @@ quiet, say so in one line.
 
 Edições em `loop.md` entram em vigor na próxima iteração, portanto você pode refinar as instruções enquanto um loop está em execução. Quando nenhum `loop.md` existe em nenhum local, o loop volta ao prompt de manutenção integrado. Mantenha o arquivo conciso: conteúdo além de 25.000 bytes é truncado.
 
+### Pare um loop
+
+Para parar um `/loop` enquanto ele está aguardando a próxima iteração, pressione `Esc`. Isso limpa o despertar pendente para que o loop não dispare novamente. As tarefas que você agendou [pedindo a Claude diretamente](#manage-scheduled-tasks) não são afetadas por `Esc` e permanecem no lugar até que você as delete.
+
 ## Defina um lembrete único
 
 Para lembretes únicos, descreva o que você deseja em linguagem natural em vez de usar `/loop`. Claude agenda uma tarefa de disparo único que se deleta após ser executada.
@@ -198,9 +202,9 @@ Defina `CLAUDE_CODE_DISABLE_CRON=1` em seu ambiente para desabilitar o agendador
 
 O agendamento com escopo de sessão tem limitações inerentes:
 
-* As tarefas só são acionadas enquanto Claude Code está em execução e ocioso. Fechar o terminal ou deixar a sessão sair cancela tudo.
+* As tarefas só são acionadas enquanto Claude Code está em execução e ocioso. Fechar o terminal ou deixar a sessão sair para tudo.
 * Sem recuperação para disparos perdidos. Se o tempo agendado de uma tarefa passar enquanto Claude está ocupado em uma solicitação de longa duração, ela dispara uma vez quando Claude fica ocioso, não uma vez por intervalo perdido.
-* Sem persistência entre reinicializações. Reiniciar Claude Code limpa todas as tarefas com escopo de sessão.
+* Iniciar uma conversa nova limpa todas as tarefas com escopo de sessão. Retomar com `claude --resume` ou `claude --continue` restaura tarefas que não expiraram: tarefas recorrentes dentro de sete dias de criação, e tarefas únicas cujo tempo agendado ainda não passou. Tarefas de Bash em segundo plano e tarefas de monitor nunca são restauradas ao retomar.
 
 Para automação orientada por cron que precisa ser executada sem supervisão:
 

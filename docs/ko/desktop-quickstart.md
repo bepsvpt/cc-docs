@@ -6,15 +6,25 @@
 
 > 데스크톱에 Claude Code를 설치하고 첫 번째 코딩 세션을 시작합니다
 
-데스크톱 앱은 그래픽 인터페이스를 갖춘 Claude Code를 제공합니다: 시각적 diff 검토, 라이브 앱 미리보기, GitHub PR 모니터링 및 자동 병합, Git worktree 격리를 통한 병렬 세션, 예약된 작업, 그리고 작업을 원격으로 실행할 수 있는 기능입니다. 터미널이 필요하지 않습니다.
+데스크톱 앱은 여러 세션을 나란히 실행하도록 구축된 그래픽 인터페이스를 갖춘 Claude Code를 제공합니다: 병렬 작업을 관리하기 위한 사이드바, 통합 터미널 및 파일 편집기가 있는 드래그 앤 드롭 레이아웃, 시각적 diff 검토, 라이브 앱 미리보기, GitHub PR 모니터링 및 자동 병합, 그리고 예약된 작업입니다. 터미널이 필요하지 않습니다.
+
+<CardGroup cols={2}>
+  <Card title="Download for macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
+    Universal build for Intel and Apple Silicon
+  </Card>
+
+  <Card title="Download for Windows" icon="windows" href="https://claude.ai/api/desktop/win32/x64/setup/latest/redirect?utm_source=claude_code&utm_medium=docs">
+    For x64 processors
+  </Card>
+</CardGroup>
+
+For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). Linux is not supported.
+
+<Note>
+  Claude Code는 [Pro, Max, Team, 또는 Enterprise 구독](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing)이 필요합니다.
+</Note>
 
 이 페이지는 앱 설치 및 첫 번째 세션 시작을 안내합니다. 이미 설정되어 있다면 전체 참조는 [Claude Code Desktop 사용](/ko/desktop)을 참조하세요.
-
-<Frame>
-  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-light.png" className="block dark:hidden" alt="Code 탭이 선택된 Claude Code Desktop 인터페이스로, 프롬프트 상자, 권한 모드 선택기(Ask permissions로 설정됨), 모델 선택기, 폴더 선택기, 그리고 Local 환경 옵션을 보여줍니다" />
-
-  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-dark.png" className="hidden dark:block" alt="다크 모드의 Claude Code Desktop 인터페이스로 Code 탭이 선택되어 있으며, 프롬프트 상자, 권한 모드 선택기(Ask permissions로 설정됨), 모델 선택기, 폴더 선택기, 그리고 Local 환경 옵션을 보여줍니다" />
-</Frame>
 
 데스크톱 앱에는 세 개의 탭이 있습니다:
 
@@ -24,33 +34,11 @@
 
 Chat과 Cowork는 [Claude Desktop 지원 문서](https://support.claude.com/en/collections/16163169-claude-desktop)에서 다룹니다. 이 페이지는 **Code** 탭에 중점을 둡니다.
 
-<Note>
-  Claude Code는 [Pro, Max, Teams, 또는 Enterprise 구독](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing)이 필요합니다.
-</Note>
-
 ## 설치
 
 <Steps>
-  <Step title="앱 다운로드">
-    플랫폼에 맞는 Claude를 다운로드합니다.
-
-    <CardGroup cols={2}>
-      <Card title="macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
-        Intel 및 Apple Silicon용 범용 빌드
-      </Card>
-
-      <Card title="Windows" icon="windows" href="https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code&utm_medium=docs">
-        x64 프로세서용
-      </Card>
-    </CardGroup>
-
-    Windows ARM64의 경우 [여기에서 다운로드](https://claude.ai/api/desktop/win32/arm64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs)하세요.
-
-    Linux는 현재 지원되지 않습니다.
-  </Step>
-
-  <Step title="로그인">
-    Applications 폴더(macOS) 또는 Start 메뉴(Windows)에서 Claude를 실행합니다. Anthropic 계정으로 로그인합니다.
+  <Step title="설치 및 로그인">
+    위의 링크에서 플랫폼에 맞는 설치 프로그램을 다운로드하고 실행합니다. macOS의 Applications 폴더 또는 Windows의 Start 메뉴에서 Claude를 실행한 다음 Anthropic 계정으로 로그인합니다.
   </Step>
 
   <Step title="Code 탭 열기">
@@ -79,7 +67,7 @@ Code 탭이 열려 있으면 프로젝트를 선택하고 Claude에게 할 일�
   </Step>
 
   <Step title="모델 선택">
-    전송 버튼 옆의 드롭다운에서 모델을 선택합니다. Opus, Sonnet, Haiku의 비교는 [모델](/ko/model-config#available-models)을 참조하세요. 세션이 시작된 후에는 모델을 변경할 수 없습니다.
+    전송 버튼 옆의 드롭다운에서 모델을 선택합니다. Opus, Sonnet, Haiku의 비교는 [모델](/ko/model-config#available-models)을 참조하세요. 나중에 동일한 드롭다운에서 모델을 변경할 수 있습니다.
   </Step>
 
   <Step title="Claude에게 할 일 지시">
@@ -123,9 +111,9 @@ Code 탭이 열려 있으면 프로젝트를 선택하고 Claude에게 할 일�
 
 **pull request 추적.** PR을 연 후 Claude Code는 CI 확인 결과를 모니터링하고 실패를 자동으로 수정하거나 모든 확인이 통과되면 PR을 자동으로 병합할 수 있습니다. [pull request 상태 모니터링](/ko/desktop#monitor-pull-request-status)을 참조하세요.
 
-**Claude를 일정에 따라 실행.** [예약된 작업](/ko/desktop#schedule-recurring-tasks)을 설정하여 Claude를 정기적으로 자동으로 실행합니다: 매일 아침 일일 코드 검토, 주간 종속성 감사, 또는 연결된 도구에서 정보를 가져오는 브리핑입니다.
+**Claude를 일정에 따라 실행.** [예약된 작업](/ko/desktop-scheduled-tasks)을 설정하여 Claude를 정기적으로 자동으로 실행합니다: 매일 아침 일일 코드 검토, 주간 종속성 감사, 또는 연결된 도구에서 정보를 가져오는 브리핑입니다.
 
-**준비가 되면 확장.** 사이드바에서 [병렬 세션](/ko/desktop#work-in-parallel-with-sessions)을 열어 여러 작업을 동시에 수행하며, 각각 자신의 Git worktree에서 실행합니다. [장기 실행 작업을 클라우드로 보내](/ko/desktop#run-long-running-tasks-remotely) 앱을 닫아도 계속되도록 하거나, 작업이 예상보다 오래 걸리면 [웹 또는 IDE에서 세션을 계속](/ko/desktop#continue-in-another-surface)합니다. [GitHub, Slack, Linear와 같은 외부 도구를 연결](/ko/desktop#extend-claude-code)하여 워크플로우를 통합합니다.
+**준비가 되면 확장.** 사이드바에서 [병렬 세션](/ko/desktop#work-in-parallel-with-sessions)을 열어 여러 작업을 동시에 수행하며, 각각 자신의 Git worktree에서 실행하고, [작업 창](/ko/desktop#watch-background-tasks)을 열어 세션이 실행 중인 subagents 및 백그라운드 명령을 봅니다. [side chat](/ko/desktop#ask-a-side-question-without-derailing-the-session)을 열어 메인 스레드를 방해하지 않고 질문을 합니다. [장기 실행 작업을 클라우드로 보내](/ko/desktop#run-long-running-tasks-remotely) 앱을 닫아도 계속되도록 하거나, 작업이 예상보다 오래 걸리면 [웹 또는 IDE에서 세션을 계속](/ko/desktop#continue-in-another-surface)합니다. [GitHub, Slack, Linear와 같은 외부 도구를 연결](/ko/desktop#extend-claude-code)하여 워크플로우를 통합합니다.
 
 ## CLI에서 오셨나요?
 

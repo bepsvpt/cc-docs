@@ -42,7 +42,28 @@ Untuk membuat hook, tambahkan blok `hooks` ke [file pengaturan](#configure-hook-
     }
     ```
 
-    Jika file pengaturan Anda sudah memiliki kunci `hooks`, gabungkan entri `Notification` ke dalamnya daripada mengganti seluruh objek. Anda juga dapat meminta Claude untuk menulis hook untuk Anda dengan mendeskripsikan apa yang Anda inginkan di CLI.
+    Jika file pengaturan Anda sudah memiliki kunci `hooks`, tambahkan `Notification` sebagai sibling dari kunci acara yang ada daripada mengganti seluruh objek. Setiap nama acara adalah kunci di dalam objek `hooks` tunggal:
+
+    ```json theme={null}
+    {
+      "hooks": {
+        "PostToolUse": [
+          {
+            "matcher": "Edit|Write",
+            "hooks": [{ "type": "command", "command": "jq -r '.tool_input.file_path' | xargs npx prettier --write" }]
+          }
+        ],
+        "Notification": [
+          {
+            "matcher": "",
+            "hooks": [{ "type": "command", "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'" }]
+          }
+        ]
+      }
+    }
+    ```
+
+    Anda juga dapat meminta Claude untuk menulis hook untuk Anda dengan mendeskripsikan apa yang Anda inginkan di CLI.
   </Step>
 
   <Step title="Verifikasi konfigurasi">
@@ -295,17 +316,27 @@ Matcher memfilter berdasarkan jenis konfigurasi: `user_settings`, `project_setti
 
 Beberapa proyek menetapkan variabel lingkungan berbeda tergantung pada direktori mana Anda berada. Alat seperti [direnv](https://direnv.net/) melakukan ini secara otomatis di shell Anda, tetapi alat Bash Claude tidak mengambil perubahan itu sendiri.
 
-Hook `CwdChanged` memperbaiki ini: ia berjalan setiap kali Claude mengubah direktori, sehingga Anda dapat memuat ulang variabel yang benar untuk lokasi baru. Hook menulis nilai yang diperbarui ke `CLAUDE_ENV_FILE`, yang Claude Code terapkan sebelum setiap perintah Bash. Tambahkan ini ke `~/.claude/settings.json`:
+Memasangkan hook `SessionStart` dengan hook `CwdChanged` memperbaiki ini. `SessionStart` memuat variabel untuk direktori tempat Anda meluncurkan, dan `CwdChanged` memuat ulang variabel setiap kali Claude mengubah direktori. Keduanya menulis ke `CLAUDE_ENV_FILE`, yang Claude Code jalankan sebagai preamble skrip sebelum setiap perintah Bash. Tambahkan ini ke `~/.claude/settings.json`:
 
 ```json theme={null}
 {
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "direnv export bash > \"$CLAUDE_ENV_FILE\""
+          }
+        ]
+      }
+    ],
     "CwdChanged": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "direnv export bash >> \"$CLAUDE_ENV_FILE\""
+            "command": "direnv export bash > \"$CLAUDE_ENV_FILE\""
           }
         ]
       }
@@ -314,7 +345,9 @@ Hook `CwdChanged` memperbaiki ini: ia berjalan setiap kali Claude mengubah direk
 }
 ```
 
-Untuk bereaksi terhadap file spesifik daripada setiap perubahan direktori, gunakan `FileChanged` dengan `matcher` yang mencantumkan nama file yang akan dipantau (dipisahkan dengan pipa). `matcher` mengonfigurasi file mana yang akan dipantau dan memfilter hook mana yang berjalan. Contoh ini memantau `.envrc` dan `.env` untuk perubahan di direktori saat ini:
+Jalankan `direnv allow` sekali di setiap direktori yang memiliki `.envrc` sehingga direnv diizinkan untuk memuatnya. Jika Anda menggunakan devbox atau nix sebagai gantinya direnv, pola yang sama berfungsi dengan `devbox shellenv` atau `devbox global shellenv` sebagai pengganti `direnv export bash`.
+
+Untuk bereaksi terhadap file spesifik daripada setiap perubahan direktori, gunakan `FileChanged` dengan `matcher` yang mencantumkan nama file yang akan dipantau, dipisahkan dengan `|`. Untuk membangun daftar pantau, nilai ini dibagi menjadi nama file literal daripada dievaluasi sebagai regex. Lihat [FileChanged](/id/hooks#filechanged) untuk cara nilai yang sama juga memfilter hook mana yang berjalan ketika file berubah. Contoh ini memantau `.envrc` dan `.env` di direktori kerja:
 
 ```json theme={null}
 {
@@ -325,7 +358,7 @@ Untuk bereaksi terhadap file spesifik daripada setiap perubahan direktori, gunak
         "hooks": [
           {
             "type": "command",
-            "command": "direnv export bash >> \"$CLAUDE_ENV_FILE\""
+            "command": "direnv export bash > \"$CLAUDE_ENV_FILE\""
           }
         ]
       }
@@ -365,6 +398,10 @@ Matcher membatasi hook ke `ExitPlanMode` saja, sehingga tidak ada prompt lain ya
 Ketika hook menyetujui, Claude Code keluar dari plan mode dan mengembalikan mode izin apa pun yang aktif sebelum Anda memasuki plan mode. Transkrip menunjukkan "Allowed by PermissionRequest hook" di mana dialog akan muncul. Jalur hook selalu menjaga percakapan saat ini: tidak dapat menghapus konteks dan memulai sesi implementasi segar seperti yang dapat dilakukan dialog.
 
 Untuk menetapkan mode izin tertentu sebagai gantinya, output hook Anda dapat menyertakan array `updatedPermissions` dengan entri `setMode`. Nilai `mode` adalah mode izin apa pun seperti `default`, `acceptEdits`, atau `bypassPermissions`, dan `destination: "session"` menerapkannya hanya untuk sesi saat ini.
+
+<Note>
+  `bypassPermissions` hanya berlaku jika sesi diluncurkan dengan mode bypass sudah tersedia: `--dangerously-skip-permissions`, `--permission-mode bypassPermissions`, `--allow-dangerously-skip-permissions`, atau `permissions.defaultMode: "bypassPermissions"` dalam pengaturan, dan tidak dinonaktifkan oleh [`permissions.disableBypassPermissionsMode`](/id/permissions#managed-settings). Ini tidak pernah disimpan sebagai `defaultMode`.
+</Note>
 
 Untuk beralih sesi ke `acceptEdits`, hook Anda menulis JSON ini ke stdout:
 
@@ -423,7 +460,7 @@ Setiap hook memiliki `type` yang menentukan cara menjalankannya. Sebagian besar 
 
 * `"type": "http"`: POST data acara ke URL. Lihat [HTTP hooks](#http-hooks).
 * `"type": "prompt"`: evaluasi LLM single-turn. Lihat [Prompt-based hooks](#prompt-based-hooks).
-* `"type": "agent"`: verifikasi multi-turn dengan akses alat. Lihat [Agent-based hooks](#agent-based-hooks).
+* `"type": "agent"`: verifikasi multi-turn dengan akses alat. Agent hooks bersifat eksperimental dan mungkin berubah. Lihat [Agent-based hooks](#agent-based-hooks).
 
 ### Baca input dan kembalikan output
 
@@ -468,7 +505,7 @@ Kode keluar menentukan apa yang terjadi selanjutnya:
 
 * **Exit 0**: tindakan berlanjut. Untuk hook `UserPromptSubmit` dan `SessionStart`, apa pun yang Anda tulis ke stdout ditambahkan ke konteks Claude.
 * **Exit 2**: tindakan diblokir. Tulis alasan ke stderr, dan Claude menerimanya sebagai umpan balik sehingga dapat menyesuaikan.
-* **Kode keluar lainnya**: tindakan berlanjut. Stderr dicatat tetapi tidak ditampilkan ke Claude. Alihkan mode verbose dengan `Ctrl+O` untuk melihat pesan ini dalam transkrip.
+* **Kode keluar lainnya**: tindakan berlanjut. Transkrip menunjukkan pemberitahuan `<hook name> hook error` diikuti oleh baris pertama stderr; stderr lengkap masuk ke [debug log](/id/hooks#debug-hooks).
 
 #### Structured JSON output
 
@@ -492,7 +529,7 @@ Misalnya, hook `PreToolUse` dapat menolak panggilan alat dan memberi tahu Claude
 
 Dengan `"deny"`, Claude Code membatalkan panggilan alat dan memberi makan `permissionDecisionReason` kembali ke Claude. Nilai `permissionDecision` ini spesifik untuk `PreToolUse`:
 
-* `"allow"`: lanjutkan tanpa menampilkan prompt izin interaktif. Aturan deny dan ask, termasuk daftar deny yang dikelola perusahaan, masih berlaku
+* `"allow"`: lewati prompt izin interaktif. Aturan deny dan ask, termasuk daftar deny yang dikelola perusahaan, masih berlaku
 * `"deny"`: batalkan panggilan alat dan kirim alasan ke Claude
 * `"ask"`: tampilkan prompt izin kepada pengguna seperti biasa
 
@@ -523,26 +560,26 @@ Tanpa matcher, hook aktif pada setiap kemunculan acaranya. Matchers memungkinkan
 }
 ```
 
-Matcher `"Edit|Write"` adalah pola regex yang cocok dengan nama alat. Hook hanya aktif ketika Claude menggunakan alat `Edit` atau `Write`, bukan ketika menggunakan `Bash`, `Read`, atau alat lainnya.
+Matcher `"Edit|Write"` aktif hanya ketika Claude menggunakan alat `Edit` atau `Write`, bukan ketika menggunakan `Bash`, `Read`, atau alat lainnya. Lihat [Matcher patterns](/id/hooks#matcher-patterns) untuk cara nama biasa dan ekspresi reguler dievaluasi.
 
-Setiap jenis acara cocok pada bidang spesifik. Matchers mendukung string tepat dan pola regex:
+Setiap jenis acara cocok pada bidang spesifik:
 
-| Acara                                                                                                                        | Apa yang difilter matcher              | Contoh nilai matcher                                                                                                      |
-| :--------------------------------------------------------------------------------------------------------------------------- | :------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                   | nama alat                              | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
-| `SessionStart`                                                                                                               | cara sesi dimulai                      | `startup`, `resume`, `clear`, `compact`                                                                                   |
-| `SessionEnd`                                                                                                                 | mengapa sesi berakhir                  | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                                               | jenis notifikasi                       | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                                              | jenis agen                             | `Bash`, `Explore`, `Plan`, atau nama agen khusus                                                                          |
-| `PreCompact`, `PostCompact`                                                                                                  | apa yang memicu compaction             | `manual`, `auto`                                                                                                          |
-| `SubagentStop`                                                                                                               | jenis agen                             | nilai yang sama seperti `SubagentStart`                                                                                   |
-| `ConfigChange`                                                                                                               | sumber konfigurasi                     | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
-| `StopFailure`                                                                                                                | jenis kesalahan                        | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                                                         | alasan pemuatan                        | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
-| `Elicitation`                                                                                                                | nama server MCP                        | nama server MCP yang dikonfigurasi Anda                                                                                   |
-| `ElicitationResult`                                                                                                          | nama server MCP                        | nilai yang sama seperti `Elicitation`                                                                                     |
-| `FileChanged`                                                                                                                | nama file (basename file yang berubah) | `.envrc`, `.env`, nama file apa pun yang ingin Anda pantau                                                                |
-| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged` | tidak ada dukungan matcher             | selalu aktif pada setiap kemunculan                                                                                       |
+| Acara                                                                                                                        | Apa yang difilter matcher                                                    | Contoh nilai matcher                                                                                                      |
+| :--------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                   | nama alat                                                                    | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `SessionStart`                                                                                                               | cara sesi dimulai                                                            | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `SessionEnd`                                                                                                                 | mengapa sesi berakhir                                                        | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
+| `Notification`                                                                                                               | jenis notifikasi                                                             | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
+| `SubagentStart`                                                                                                              | jenis agen                                                                   | `Bash`, `Explore`, `Plan`, atau nama agen khusus                                                                          |
+| `PreCompact`, `PostCompact`                                                                                                  | apa yang memicu compaction                                                   | `manual`, `auto`                                                                                                          |
+| `SubagentStop`                                                                                                               | jenis agen                                                                   | nilai yang sama seperti `SubagentStart`                                                                                   |
+| `ConfigChange`                                                                                                               | sumber konfigurasi                                                           | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
+| `StopFailure`                                                                                                                | jenis kesalahan                                                              | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                                         | alasan pemuatan                                                              | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `Elicitation`                                                                                                                | nama server MCP                                                              | nama server MCP yang dikonfigurasi Anda                                                                                   |
+| `ElicitationResult`                                                                                                          | nama server MCP                                                              | nilai yang sama seperti `Elicitation`                                                                                     |
+| `FileChanged`                                                                                                                | nama file literal yang dipantau (lihat [FileChanged](/id/hooks#filechanged)) | `.envrc\|.env`                                                                                                            |
+| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged` | tidak ada dukungan matcher                                                   | selalu aktif pada setiap kemunculan                                                                                       |
 
 Beberapa contoh lagi menunjukkan matchers pada jenis acara berbeda:
 
@@ -572,7 +609,7 @@ Beberapa contoh lagi menunjukkan matchers pada jenis acara berbeda:
   <Tab title="Cocokkan alat MCP">
     Alat MCP menggunakan konvensi penamaan berbeda dari alat bawaan: `mcp__<server>__<tool>`, di mana `<server>` adalah nama server MCP dan `<tool>` adalah alat yang disediakannya. Misalnya, `mcp__github__search_repositories` atau `mcp__filesystem__read_file`. Gunakan matcher regex untuk menargetkan semua alat dari server spesifik, atau cocokkan di seluruh server dengan pola seperti `mcp__.*__write.*`. Lihat [Match MCP tools](/id/hooks#match-mcp-tools) dalam referensi untuk daftar lengkap contoh.
 
-    Perintah di bawah mengekstrak nama alat dari input JSON hook dengan `jq` dan menulisnya ke stderr, di mana muncul dalam mode verbose (`Ctrl+O`):
+    Perintah di bawah mengekstrak nama alat dari input JSON hook dengan `jq` dan menulisnya ke stderr. Menulis ke stderr menjaga stdout bersih untuk output JSON dan mengirim pesan ke [debug log](/id/hooks#debug-hooks):
 
     ```json theme={null}
     {
@@ -624,7 +661,7 @@ Untuk sintaks matcher lengkap, lihat [Hooks reference](/id/hooks#configuration).
   Bidang `if` memerlukan Claude Code v2.1.85 atau lebih baru. Versi sebelumnya mengabaikannya dan menjalankan hook pada setiap panggilan yang cocok.
 </Note>
 
-Bidang `if` menggunakan [sintaks aturan izin](/id/permissions) untuk memfilter hooks berdasarkan nama alat dan argumen bersama-sama, sehingga proses hook hanya muncul ketika panggilan alat cocok. Ini melampaui `matcher`, yang memfilter pada tingkat grup berdasarkan nama alat saja.
+Bidang `if` menggunakan [sintaks aturan izin](/id/permissions) untuk memfilter hooks berdasarkan nama alat dan argumen bersama-sama, sehingga proses hook hanya muncul ketika panggilan alat cocok, atau ketika perintah Bash terlalu kompleks untuk diurai. Ini melampaui `matcher`, yang memfilter pada tingkat grup berdasarkan nama alat saja.
 
 Misalnya, untuk menjalankan hook hanya ketika Claude menggunakan perintah `git` daripada semua perintah Bash:
 
@@ -647,9 +684,9 @@ Misalnya, untuk menjalankan hook hanya ketika Claude menggunakan perintah `git` 
 }
 ```
 
-Proses hook hanya muncul ketika perintah Bash dimulai dengan `git`. Perintah Bash lainnya melewati handler ini sepenuhnya. Bidang `if` menerima pola yang sama seperti aturan izin: `"Bash(git *)"`, `"Edit(*.ts)"`, dan seterusnya. Untuk mencocokkan beberapa nama alat, gunakan handler terpisah masing-masing dengan nilai `if` sendiri, atau cocokkan pada tingkat `matcher` di mana alternasi pipa didukung.
+Proses hook hanya muncul ketika subperintah dari perintah Bash cocok dengan `git *`, atau ketika perintah terlalu kompleks untuk diurai menjadi subperintah. Untuk perintah gabungan seperti `npm test && git push`, Claude Code mengevaluasi setiap subperintah dan menjalankan hook karena `git push` cocok. Bidang `if` menerima pola yang sama seperti aturan izin: `"Bash(git *)"`, `"Edit(*.ts)"`, dan seterusnya. Untuk mencocokkan beberapa nama alat, gunakan handler terpisah masing-masing dengan nilai `if` sendiri, atau cocokkan pada tingkat `matcher` di mana alternasi pipa didukung.
 
-`if` hanya bekerja pada acara alat: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, dan `PermissionDenied`. Menambahkannya ke acara lain mencegah hook dari berjalan.
+`if` hanya bekerja pada acara alat: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, dan `PermissionRequest`. Menambahkannya ke acara lain mencegah hook dari berjalan.
 
 ### Konfigurasi lokasi hook
 
@@ -699,6 +736,10 @@ Contoh ini menggunakan hook `Stop` untuk menanyakan kepada model apakah semua tu
 Untuk opsi konfigurasi lengkap, lihat [Prompt-based hooks](/id/hooks#prompt-based-hooks) dalam referensi.
 
 ## Agent-based hooks
+
+<Warning>
+  Agent hooks bersifat eksperimental. Perilaku dan konfigurasi mungkin berubah dalam rilis mendatang. Untuk alur kerja produksi, lebih suka [command hooks](/id/hooks#command-hook-fields).
+</Warning>
 
 Ketika verifikasi memerlukan inspeksi file atau menjalankan perintah, gunakan hook `type: "agent"`. Tidak seperti hook prompt yang membuat panggilan LLM tunggal, hook agent menelurkan subagent yang dapat membaca file, mencari kode, dan menggunakan alat lain untuk memverifikasi kondisi sebelum mengembalikan keputusan.
 
@@ -849,7 +890,9 @@ Variabel `$-` berisi flag shell, dan `i` berarti interaktif. Hooks berjalan di s
 
 ### Teknik debug
 
-Alihkan mode verbose dengan `Ctrl+O` untuk melihat output hook dalam transkrip, atau jalankan `claude --debug` untuk detail eksekusi lengkap termasuk hook mana yang cocok dan kode keluar mereka.
+Tampilan transkrip, diaktifkan dengan `Ctrl+O`, menunjukkan ringkasan satu baris untuk setiap hook yang aktif: kesuksesan diam-diam, kesalahan pemblokiran menampilkan stderr, dan kesalahan non-pemblokiran menampilkan pemberitahuan `<hook name> hook error` diikuti oleh baris pertama stderr.
+
+Untuk detail eksekusi lengkap termasuk hook mana yang cocok, kode keluar mereka, stdout, dan stderr, baca debug log. Mulai Claude Code dengan `claude --debug-file /tmp/claude.log` untuk menulis ke jalur yang diketahui, kemudian `tail -f /tmp/claude.log` di terminal lain. Jika Anda memulai tanpa flag itu, jalankan `/debug` di tengah sesi untuk mengaktifkan logging dan temukan jalur log.
 
 ## Pelajari lebih lanjut
 

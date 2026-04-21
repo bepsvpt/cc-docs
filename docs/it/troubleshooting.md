@@ -9,28 +9,31 @@
 ## Risolvi i problemi di installazione
 
 <Tip>
-  Se preferisci evitare completamente il terminale, l'[app Claude Code Desktop](/it/desktop-quickstart) ti consente di installare e utilizzare Claude Code tramite un'interfaccia grafica. Scaricala per [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) o [Windows](https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs) e inizia a programmare senza alcuna configurazione da riga di comando.
+  Se preferisci evitare completamente il terminale, l'[app Claude Code Desktop](/it/desktop-quickstart) ti consente di installare e utilizzare Claude Code tramite un'interfaccia grafica. Scaricala per [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) o [Windows](https://claude.com/download?utm_source=claude_code\&utm_medium=docs) e inizia a programmare senza alcuna configurazione da riga di comando.
 </Tip>
 
 Trova il messaggio di errore o il sintomo che stai vedendo:
 
-| Cosa vedi                                                                 | Soluzione                                                                                                            |
-| :------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------- |
-| `command not found: claude` o `'claude' is not recognized`                | [Correggi il tuo PATH](#command-not-found-claude-after-installation)                                                 |
-| `syntax error near unexpected token '<'`                                  | [Lo script di installazione restituisce HTML](#install-script-returns-html-instead-of-a-shell-script)                |
-| `curl: (56) Failure writing output to destination`                        | [Scarica lo script prima, poi eseguilo](#curl-56-failure-writing-output-to-destination)                              |
-| `Killed` durante l'installazione su Linux                                 | [Aggiungi spazio di swap per server con poca memoria](#install-killed-on-low-memory-linux-servers)                   |
-| `TLS connect error` o `SSL/TLS secure channel`                            | [Aggiorna i certificati CA](#tls-or-ssl-connection-errors)                                                           |
-| `Failed to fetch version` o impossibile raggiungere il server di download | [Controlla la connettività di rete e le impostazioni proxy](#check-network-connectivity)                             |
-| `irm is not recognized` o `&& is not valid`                               | [Usa il comando corretto per la tua shell](#windows-irm-or--not-recognized)                                          |
-| `Claude Code on Windows requires git-bash`                                | [Installa o configura Git Bash](#windows-claude-code-on-windows-requires-git-bash)                                   |
-| `Error loading shared library`                                            | [Variante binaria sbagliata per il tuo sistema](#linux-wrong-binary-variant-installed-muslglibc-mismatch)            |
-| `Illegal instruction` su Linux                                            | [Mancata corrispondenza dell'architettura](#illegal-instruction-on-linux)                                            |
-| `dyld: cannot load` o `Abort trap` su macOS                               | [Incompatibilità binaria](#dyld-cannot-load-on-macos)                                                                |
-| `Invoke-Expression: Missing argument in parameter list`                   | [Lo script di installazione restituisce HTML](#install-script-returns-html-instead-of-a-shell-script)                |
-| `App unavailable in region`                                               | Claude Code non è disponibile nel tuo paese. Vedi [paesi supportati](https://www.anthropic.com/supported-countries). |
-| `unable to get local issuer certificate`                                  | [Configura i certificati CA aziendali](#tls-or-ssl-connection-errors)                                                |
-| `OAuth error` o `403 Forbidden`                                           | [Correggi l'autenticazione](#authentication-issues)                                                                  |
+| Cosa vedi                                                                              | Soluzione                                                                                                            |
+| :------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| `command not found: claude` o `'claude' is not recognized`                             | [Correggi il tuo PATH](#command-not-found-claude-after-installation)                                                 |
+| `syntax error near unexpected token '<'`                                               | [Lo script di installazione restituisce HTML](#install-script-returns-html-instead-of-a-shell-script)                |
+| `curl: (56) Failure writing output to destination`                                     | [Scarica lo script prima, poi eseguilo](#curl-56-failure-writing-output-to-destination)                              |
+| `Killed` durante l'installazione su Linux                                              | [Aggiungi spazio di swap per server con poca memoria](#install-killed-on-low-memory-linux-servers)                   |
+| `TLS connect error` o `SSL/TLS secure channel`                                         | [Aggiorna i certificati CA](#tls-or-ssl-connection-errors)                                                           |
+| `Failed to fetch version` o impossibile raggiungere il server di download              | [Controlla la connettività di rete e le impostazioni proxy](#check-network-connectivity)                             |
+| `irm is not recognized` o `&& is not valid`                                            | [Usa il comando corretto per la tua shell](#windows-wrong-install-command)                                           |
+| `'bash' is not recognized as the name of a cmdlet`                                     | [Usa il comando del programma di installazione di Windows](#windows-wrong-install-command)                           |
+| `Claude Code on Windows requires git-bash`                                             | [Installa o configura Git Bash](#windows-claude-code-on-windows-requires-git-bash)                                   |
+| `Claude Code does not support 32-bit Windows`                                          | [Apri Windows PowerShell, non la voce x86](#windows-claude-code-does-not-support-32-bit-windows)                     |
+| `Error loading shared library`                                                         | [Variante binaria sbagliata per il tuo sistema](#linux-wrong-binary-variant-installed-musl/glibc-mismatch)           |
+| `Illegal instruction` su Linux                                                         | [Mancata corrispondenza dell'architettura](#illegal-instruction-on-linux)                                            |
+| `dyld: cannot load`, `dyld: Symbol not found`, o `Abort trap` su macOS                 | [Incompatibilità binaria](#dyld-cannot-load-on-macos)                                                                |
+| `Invoke-Expression: Missing argument in parameter list`                                | [Lo script di installazione restituisce HTML](#install-script-returns-html-instead-of-a-shell-script)                |
+| `App unavailable in region`                                                            | Claude Code non è disponibile nel tuo paese. Vedi [paesi supportati](https://www.anthropic.com/supported-countries). |
+| `unable to get local issuer certificate`                                               | [Configura i certificati CA aziendali](#tls-or-ssl-connection-errors)                                                |
+| `OAuth error` o `403 Forbidden`                                                        | [Correggi l'autenticazione](#authentication-issues)                                                                  |
+| `API Error: 500`, `529 Overloaded`, `429`, o altri errori 4xx e 5xx non elencati sopra | Vedi il [riferimento degli errori](/it/errors)                                                                       |
 
 Se il tuo problema non è elencato, segui questi passaggi diagnostici.
 
@@ -172,7 +175,7 @@ Disinstalla un'installazione globale npm:
 npm uninstall -g @anthropic-ai/claude-code
 ```
 
-Rimuovi un'installazione Homebrew su macOS:
+Rimuovi un'installazione Homebrew su macOS (usa `claude-code@latest` se hai installato quel cask):
 
 ```bash theme={null}
 brew uninstall --cask claude-code
@@ -328,6 +331,12 @@ Errori come `curl: (35) TLS connect error`, `schannel: next InitializeSecurityCo
    ```
    Chiedi al tuo team IT il file del certificato se non lo hai. Puoi anche provare su una connessione diretta per confermare che il proxy è la causa.
 
+4. **Su Windows, ignora i controlli di revoca dei certificati** se vedi `CRYPT_E_NO_REVOCATION_CHECK (0x80092012)` o `CRYPT_E_REVOCATION_OFFLINE (0x80092013)`. Questi significano che curl ha raggiunto il server ma la tua rete blocca la ricerca di revoca del certificato, il che è comune dietro firewall aziendali. Aggiungi `--ssl-revoke-best-effort` al comando di installazione:
+   ```bat theme={null}
+   curl --ssl-revoke-best-effort -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+   ```
+   In alternativa, installa con `winget install Anthropic.ClaudeCode`, che evita curl completamente.
+
 ### `Failed to fetch version from storage.googleapis.com`
 
 Il programma di installazione non ha potuto raggiungere il server di download. Questo in genere significa che `storage.googleapis.com` è bloccato sulla tua rete.
@@ -359,9 +368,9 @@ Il programma di installazione non ha potuto raggiungere il server di download. Q
    winget install Anthropic.ClaudeCode
    ```
 
-### Windows: `irm` o `&&` non riconosciuto
+### Windows: comando di installazione sbagliato
 
-Se vedi `'irm' is not recognized` o `The token '&&' is not valid`, stai eseguendo il comando sbagliato per la tua shell.
+Se vedi `'irm' is not recognized`, `The token '&&' is not valid`, o `'bash' is not recognized as the name of a cmdlet`, hai copiato il comando di installazione per una shell o un sistema operativo diverso.
 
 * **`irm` non riconosciuto**: sei in CMD, non in PowerShell. Hai due opzioni:
 
@@ -378,6 +387,11 @@ Se vedi `'irm' is not recognized` o `The token '&&' is not valid`, stai eseguend
   ```
 
 * **`&&` non valido**: sei in PowerShell ma hai eseguito il comando del programma di installazione CMD. Usa il programma di installazione PowerShell:
+  ```powershell theme={null}
+  irm https://claude.ai/install.ps1 | iex
+  ```
+
+* **`bash` non riconosciuto**: hai eseguito il programma di installazione macOS/Linux su Windows. Usa il programma di installazione PowerShell:
   ```powershell theme={null}
   irm https://claude.ai/install.ps1 | iex
   ```
@@ -440,7 +454,7 @@ Se hai installato una versione precedente di Claude Desktop, potrebbe registrare
 
 Aggiorna Claude Desktop all'ultima versione per risolvere questo problema.
 
-### Windows: "Claude Code on Windows requires git-bash"
+### Windows: Claude Code on Windows requires git-bash
 
 Claude Code su Windows nativo ha bisogno di [Git for Windows](https://git-scm.com/downloads/win), che include Git Bash.
 
@@ -457,6 +471,18 @@ Claude Code su Windows nativo ha bisogno di [Git for Windows](https://git-scm.co
 ```
 
 Se il tuo Git è installato da qualche altra parte, trova il percorso eseguendo `where.exe git` in PowerShell e usa il percorso `bin\bash.exe` da quella directory.
+
+### Windows: Claude Code does not support 32-bit Windows
+
+Windows include due voci di PowerShell nel menu Start: `Windows PowerShell` e `Windows PowerShell (x86)`. La voce x86 viene eseguita come processo a 32 bit e attiva questo errore anche su una macchina a 64 bit. Per verificare quale caso sei, esegui questo nella stessa finestra che ha prodotto l'errore:
+
+```powershell theme={null}
+[Environment]::Is64BitOperatingSystem
+```
+
+Se stampa `True`, il tuo sistema operativo va bene. Chiudi la finestra, apri `Windows PowerShell` senza il suffisso x86, e esegui di nuovo il comando di installazione.
+
+Se stampa `False`, sei su un'edizione a 32 bit di Windows. Claude Code richiede un sistema operativo a 64 bit. Vedi i [requisiti di sistema](/it/setup#system-requirements).
 
 ### Linux: variante binaria sbagliata installata (mancata corrispondenza musl/glibc)
 
@@ -506,11 +532,19 @@ bash: line 142: 2238232 Illegal instruction    "$binary_path" install ${TARGET:+
 
 ### `dyld: cannot load` su macOS
 
-Se vedi `dyld: cannot load` o `Abort trap: 6` durante l'installazione, il binario è incompatibile con la tua versione di macOS o hardware.
+Se vedi `dyld: cannot load`, `dyld: Symbol not found`, o `Abort trap: 6` durante l'installazione, il binario è incompatibile con la tua versione di macOS o hardware.
 
 ```text theme={null}
 dyld: cannot load 'claude-2.1.42-darwin-x64' (load command 0x80000034 is unknown)
 Abort trap: 6
+```
+
+Un errore `Symbol not found` che fa riferimento a `libicucore` indica anche che la tua versione di macOS è più vecchia di quella supportata dal binario:
+
+```text theme={null}
+dyld: Symbol not found: _ubrk_clone
+  Referenced from: claude-darwin-x64 (which was built for Mac OS X 13.0)
+  Expected in: /usr/lib/libicucore.A.dylib
 ```
 
 **Soluzioni:**
@@ -575,7 +609,7 @@ export PATH="$HOME/.nvm/versions/node/$(node -v)/bin:$PATH"
 
 ### Configurazione sandbox WSL2
 
-Il [sandboxing](/it/sandboxing) è supportato su WSL2 ma richiede l'installazione di pacchetti aggiuntivi. Se vedi un errore come "Sandbox requires socat and bubblewrap" quando esegui `/sandbox`, installa le dipendenze:
+Il [sandboxing](/it/sandboxing) è supportato su WSL2 ma richiede l'installazione di pacchetti aggiuntivi. Se vedi un errore su `bubblewrap` o `socat` mancanti quando esegui `/sandbox`, installa le dipendenze:
 
 <Tabs>
   <Tab title="Ubuntu/Debian">
@@ -593,6 +627,8 @@ Il [sandboxing](/it/sandboxing) è supportato su WSL2 ma richiede l'installazion
 
 WSL1 non supporta il sandboxing. Se vedi "Sandboxing requires WSL2", devi eseguire l'upgrade a WSL2 o eseguire Claude Code senza sandboxing.
 
+I comandi in sandbox non possono lanciare binari di Windows come `cmd.exe`, `powershell.exe`, o eseguibili sotto `/mnt/c/`. WSL li passa all'host di Windows su un socket Unix, che il sandbox blocca. Se un comando ha bisogno di invocare un binario di Windows, aggiungilo a [`excludedCommands`](/it/settings#sandbox-settings) in modo che venga eseguito al di fuori del sandbox.
+
 ### Errori di permesso durante l'installazione
 
 Se il programma di installazione nativo fallisce con errori di permesso, la directory di destinazione potrebbe non essere scrivibile. Vedi [Controlla i permessi della directory](#check-directory-permissions).
@@ -602,6 +638,16 @@ Se hai precedentemente installato con npm e stai riscontrando errori di permesso
 ```bash theme={null}
 curl -fsSL https://claude.ai/install.sh | bash
 ```
+
+### Binario nativo non trovato dopo l'installazione npm
+
+Il pacchetto npm `@anthropic-ai/claude-code` incorpora il binario nativo attraverso una dipendenza opzionale per piattaforma come `@anthropic-ai/claude-code-darwin-arm64`. Se eseguire `claude` dopo l'installazione stampa `Could not find native binary package "@anthropic-ai/claude-code-<platform>"`, controlla le seguenti cause:
+
+* **Le dipendenze opzionali sono disabilitate.** Rimuovi `--omit=optional` dal tuo comando di installazione npm, `--no-optional` da pnpm, o `--ignore-optional` da yarn, e controlla che `.npmrc` non imposti `optional=false`. Quindi reinstalla. Il binario nativo viene fornito solo come dipendenza opzionale, quindi non c'è fallback JavaScript se viene saltato.
+* **Piattaforma non supportata.** I binari precompilati vengono pubblicati per `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64`, e `win32-arm64`. Claude Code non fornisce un binario per altre piattaforme; vedi i [requisiti di sistema](/it/setup#system-requirements).
+* **Lo specchio npm aziendale manca dei pacchetti della piattaforma.** Assicurati che il tuo registro esegua il mirroring di tutti gli otto pacchetti `@anthropic-ai/claude-code-*` della piattaforma oltre al pacchetto meta.
+
+L'installazione con `--ignore-scripts` non attiva questo errore. Il passaggio postinstall che collega il binario in posizione viene saltato, quindi Claude Code ricade su un wrapper che individua e genera il binario della piattaforma ad ogni avvio. Questo funziona ma si avvia più lentamente; reinstalla con gli script abilitati per l'esecuzione diretta.
 
 ## Permessi e autenticazione
 
@@ -639,6 +685,43 @@ Se vedi `API Error: 403 {"error":{"type":"forbidden","message":"Request not allo
 * **Utenti Console**: conferma che il tuo account abbia il ruolo "Claude Code" o "Developer" assegnato dal tuo amministratore
 * **Dietro un proxy**: i proxy aziendali possono interferire con le richieste API. Vedi [configurazione di rete](/it/network-config) per la configurazione del proxy.
 
+### Modello non trovato o non accessibile
+
+Se vedi `There's an issue with the selected model (...). It may not exist or you may not have access to it`, l'API ha rifiutato il nome del modello configurato.
+
+Le cause comuni sono:
+
+* Un errore di battitura nel nome del modello passato a `--model`
+* Un ID modello obsoleto o deprecato salvato nelle tue impostazioni
+* Una chiave API senza accesso a quel modello sul tuo livello di utilizzo attuale
+
+Controlla dove il modello è impostato, in [ordine di priorità](/it/model-config#setting-your-model):
+
+* Il flag `--model`
+* La variabile di ambiente `ANTHROPIC_MODEL`
+* Il campo `model` in `.claude/settings.local.json`
+* Il campo `model` nel `.claude/settings.json` del tuo progetto
+* Il campo `model` in `~/.claude/settings.json`
+
+Per cancellare un valore obsoleto, rimuovi il campo `model` dalle tue impostazioni o annulla `ANTHROPIC_MODEL`, e Claude Code ricadrà sul modello predefinito per il tuo account.
+
+Per sfogliare i modelli disponibili per il tuo account, avvia `claude` in modo interattivo ed esegui `/model` per aprire il selettore. Per le distribuzioni Vertex AI, vedi [la sezione troubleshooting di Vertex AI](/it/google-vertex-ai#troubleshooting).
+
+### Questa organizzazione è stata disabilitata con un abbonamento attivo
+
+Se vedi `API Error: 400 ... "This organization has been disabled"` nonostante tu abbia un abbonamento Claude attivo, una variabile di ambiente `ANTHROPIC_API_KEY` sta sostituendo il tuo abbonamento. Questo accade comunemente quando una vecchia chiave API da un precedente datore di lavoro o progetto è ancora impostata nel tuo profilo di shell.
+
+Quando `ANTHROPIC_API_KEY` è presente e l'hai approvato, Claude Code usa quella chiave invece delle credenziali OAuth del tuo abbonamento. In modalità non interattiva (`-p`), la chiave viene sempre utilizzata quando presente. Vedi [precedenza di autenticazione](/it/authentication#authentication-precedence) per l'ordine di risoluzione completo.
+
+Per usare il tuo abbonamento, annulla la variabile di ambiente e rimuovila dal tuo profilo di shell:
+
+```bash theme={null}
+unset ANTHROPIC_API_KEY
+claude
+```
+
+Controlla `~/.zshrc`, `~/.bashrc`, o `~/.profile` per le righe `export ANTHROPIC_API_KEY=...` e rimuovile per rendere il cambiamento permanente. Esegui `/status` all'interno di Claude Code per confermare quale metodo di autenticazione è attivo.
+
 ### L'accesso OAuth fallisce in WSL2
 
 L'accesso basato su browser in WSL2 potrebbe fallire se WSL non riesce ad aprire il tuo browser di Windows. Imposta la variabile di ambiente `BROWSER`:
@@ -650,11 +733,13 @@ claude
 
 Oppure copia l'URL manualmente: quando appare il prompt di accesso, premi `c` per copiare l'URL OAuth, quindi incollalo nel tuo browser di Windows.
 
-### "Not logged in" o token scaduto
+### Non connesso o token scaduto
 
 Se Claude Code ti chiede di accedere di nuovo dopo una sessione, il tuo token OAuth potrebbe essere scaduto.
 
 Esegui `/login` per autenticarti di nuovo. Se questo accade frequentemente, controlla che l'orologio di sistema sia accurato, poiché la convalida del token dipende da timestamp corretti.
+
+Su macOS, l'accesso può anche fallire quando il Keychain è bloccato o la sua password non è sincronizzata con la password del tuo account, il che impedisce a Claude Code di salvare le credenziali. Esegui `claude doctor` per controllare l'accesso al Keychain. Per sbloccare il Keychain manualmente, esegui `security unlock-keychain ~/Library/Keychains/login.keychain-db`. Se lo sblocco non aiuta, apri Keychain Access, seleziona il keychain `login`, e scegli Edit > Change Password for Keychain "login" per risincronizzarlo con la password del tuo account.
 
 ## Posizioni dei file di configurazione
 
@@ -703,6 +788,19 @@ Claude Code è progettato per funzionare con la maggior parte degli ambienti di 
 1. Usa `/compact` regolarmente per ridurre la dimensione del contesto
 2. Chiudi e riavvia Claude Code tra i compiti principali
 3. Considera di aggiungere grandi directory di build al tuo file `.gitignore`
+
+Se l'utilizzo della memoria rimane elevato dopo questi passaggi, esegui `/heapdump` per scrivere uno snapshot dell'heap JavaScript e una suddivisione della memoria su `~/Desktop`. La suddivisione mostra la dimensione del set residente, l'heap JS, i buffer di array, e la memoria nativa non contabilizzata, il che aiuta a identificare se la crescita è negli oggetti JavaScript o nel codice nativo. Apri il file `.heapsnapshot` in Chrome DevTools sotto Memory → Load per ispezionare i detentori. Allega entrambi i file quando segnali un problema di memoria su [GitHub](https://github.com/anthropics/claude-code/issues).
+
+### Auto-compaction si ferma con un errore di thrashing
+
+Se vedi `Autocompact is thrashing: the context refilled to the limit...`, la compattazione automatica è riuscita ma un file o un output dello strumento ha immediatamente riempito la finestra di contesto più volte di seguito. Claude Code smette di riprovare per evitare di sprecare chiamate API su un ciclo che non sta facendo progressi.
+
+Per recuperare:
+
+1. Chiedi a Claude di leggere il file di grandi dimensioni in blocchi più piccoli, come un intervallo di righe specifico o una funzione, invece dell'intero file
+2. Esegui `/compact` con un focus che elimina l'output di grandi dimensioni, ad esempio `/compact keep only the plan and the diff`
+3. Sposta il lavoro su file di grandi dimensioni a un [subagent](/it/sub-agents) in modo che venga eseguito in una finestra di contesto separata
+4. Esegui `/clear` se la conversazione precedente non è più necessaria
 
 ### Il comando si blocca o si congela
 
@@ -832,7 +930,7 @@ Se noti blocchi di codice come questo nel markdown generato:
 function example() {
   return "hello";
 }
-```text
+```
 ````
 
 Invece di blocchi correttamente taggati come:
@@ -842,7 +940,7 @@ Invece di blocchi correttamente taggati come:
 function example() {
   return "hello";
 }
-```text
+```
 ````
 
 **Soluzioni:**
@@ -877,14 +975,15 @@ Per minimizzare i problemi di formattazione:
 
 Se stai riscontrando problemi non affrontati qui:
 
-1. Usa il comando `/bug` all'interno di Claude Code per segnalare i problemi direttamente ad Anthropic
-2. Controlla il [repository GitHub](https://github.com/anthropics/claude-code) per i problemi noti
-3. Esegui `/doctor` per diagnosticare i problemi. Controlla:
+1. Vedi il [riferimento degli errori](/it/errors) per `API Error: 5xx`, `529 Overloaded`, `429`, e errori di convalida delle richieste che appaiono durante una sessione
+2. Usa il comando `/feedback` all'interno di Claude Code per segnalare i problemi direttamente ad Anthropic
+3. Controlla il [repository GitHub](https://github.com/anthropics/claude-code) per i problemi noti
+4. Esegui `/doctor` per diagnosticare i problemi. Controlla:
    * Tipo di installazione, versione e funzionalità di ricerca
    * Stato dell'aggiornamento automatico e versioni disponibili
    * File di impostazioni non validi (JSON malformato, tipi non corretti)
-   * Errori di configurazione del server MCP
+   * Errori di configurazione del server MCP, incluso lo stesso nome di server definito in più ambiti con endpoint diversi
    * Problemi di configurazione delle scorciatoie da tastiera
    * Avvisi di utilizzo del contesto (file CLAUDE.md di grandi dimensioni, utilizzo elevato di token MCP, regole di permesso non raggiungibili)
    * Errori di caricamento di plugin e agenti
-4. Chiedi a Claude direttamente sulle sue capacità e funzionalità - Claude ha accesso integrato alla sua documentazione
+5. Chiedi a Claude direttamente sulle sue capacità e funzionalità - Claude ha accesso integrato alla sua documentazione

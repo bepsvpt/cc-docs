@@ -35,7 +35,7 @@ Claude Code mendukung beberapa mode izin yang mengontrol bagaimana alat disetuju
 | Mode                | Deskripsi                                                                                                                                                                      |
 | :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `default`           | Perilaku standar: meminta izin pada penggunaan pertama setiap alat                                                                                                             |
-| `acceptEdits`       | Secara otomatis menerima izin edit file untuk sesi, kecuali penulisan ke direktori yang dilindungi                                                                             |
+| `acceptEdits`       | Secara otomatis menerima edit file dan perintah sistem file umum (`mkdir`, `touch`, `mv`, `cp`, dll.) untuk jalur di direktori kerja atau `additionalDirectories`              |
 | `plan`              | Plan Mode: Claude dapat menganalisis tetapi tidak memodifikasi file atau menjalankan perintah                                                                                  |
 | `auto`              | Secara otomatis menyetujui panggilan alat dengan pemeriksaan keamanan latar belakang yang memverifikasi tindakan selaras dengan permintaan Anda. Saat ini pratinjau penelitian |
 | `dontAsk`           | Secara otomatis menolak alat kecuali pra-disetujui melalui `/permissions` atau aturan `permissions.allow`                                                                      |
@@ -94,7 +94,9 @@ Aturan Bash mendukung pola glob dengan `*`. Wildcard dapat muncul di posisi mana
 }
 ```
 
-Spasi sebelum `*` penting: `Bash(ls *)` mencocokkan `ls -la` tetapi bukan `lsof`, sementara `Bash(ls*)` mencocokkan keduanya. Sintaks akhiran `:*` warisan setara dengan ` *` tetapi sudah usang.
+Spasi sebelum `*` penting: `Bash(ls *)` mencocokkan `ls -la` tetapi bukan `lsof`, sementara `Bash(ls*)` mencocokkan keduanya. Akhiran `:*` adalah cara setara untuk menulis wildcard trailing, jadi `Bash(ls:*)` mencocokkan perintah yang sama dengan `Bash(ls *)`.
+
+Dialog izin menulis bentuk yang dipisahkan spasi ketika Anda memilih "Ya, jangan tanya lagi" untuk awalan perintah. Bentuk `:*` hanya dikenali di akhir pola. Dalam pola seperti `Bash(git:* push)`, titik dua diperlakukan sebagai karakter literal dan tidak akan mencocokkan perintah git.
 
 ## Aturan izin khusus alat
 
@@ -106,15 +108,37 @@ Aturan izin Bash mendukung pencocokan wildcard dengan `*`. Wildcard dapat muncul
 * `Bash(npm run test *)` mencocokkan perintah Bash yang dimulai dengan `npm run test`
 * `Bash(npm *)` mencocokkan perintah apa pun yang dimulai dengan `npm `
 * `Bash(* install)` mencocokkan perintah apa pun yang berakhir dengan ` install`
-* `Bash(git * main)` mencocokkan perintah seperti `git checkout main`, `git merge main`
+* `Bash(git * main)` mencocokkan perintah seperti `git checkout main` dan `git log --oneline main`
+
+Satu `*` mencocokkan urutan karakter apa pun termasuk spasi, jadi satu wildcard dapat mencakup beberapa argumen. `Bash(git *)` mencocokkan `git log --oneline --all`, dan `Bash(git * main)` mencocokkan `git push origin main` serta `git merge main`.
 
 Ketika `*` muncul di akhir dengan spasi sebelumnya (seperti `Bash(ls *)`), ini memberlakukan batas kata, memerlukan awalan diikuti oleh spasi atau akhir string. Misalnya, `Bash(ls *)` mencocokkan `ls -la` tetapi bukan `lsof`. Sebaliknya, `Bash(ls*)` tanpa spasi mencocokkan `ls -la` dan `lsof` karena tidak ada batasan batas kata.
 
+#### Perintah gabungan
+
 <Tip>
-  Claude Code menyadari operator shell (seperti `&&`) jadi aturan pencocokan awalan seperti `Bash(safe-cmd *)` tidak akan memberinya izin untuk menjalankan perintah `safe-cmd && other-cmd`.
+  Claude Code menyadari operator shell, jadi aturan seperti `Bash(safe-cmd *)` tidak akan memberinya izin untuk menjalankan perintah `safe-cmd && other-cmd`. Pemisah perintah yang dikenali adalah `&&`, `||`, `;`, `|`, `|&`, `&`, dan baris baru. Aturan harus mencocokkan setiap subperintah secara independen.
 </Tip>
 
 Ketika Anda menyetujui perintah gabungan dengan "Ya, jangan tanya lagi", Claude Code menyimpan aturan terpisah untuk setiap subperintah yang memerlukan persetujuan, bukan satu aturan untuk string gabungan lengkap. Misalnya, menyetujui `git status && npm test` menyimpan aturan untuk `npm test`, jadi invokasi `npm test` di masa depan dikenali terlepas dari apa yang mendahului `&&`. Subperintah seperti `cd` ke subdirektori menghasilkan aturan Read mereka sendiri untuk jalur itu. Hingga 5 aturan dapat disimpan untuk satu perintah gabungan.
+
+#### Pembungkus proses
+
+Sebelum mencocokkan aturan Bash, Claude Code menghilangkan serangkaian pembungkus proses tetap sehingga aturan seperti `Bash(npm test *)` juga mencocokkan `timeout 30 npm test`. Pembungkus yang dikenali adalah `timeout`, `time`, `nice`, `nohup`, dan `stdbuf`.
+
+`xargs` telanjang juga dihilangkan, jadi `Bash(grep *)` mencocokkan `xargs grep pattern`. Penghilangan hanya berlaku ketika `xargs` tidak memiliki flag: invokasi seperti `xargs -n1 grep pattern` dicocokkan sebagai perintah `xargs`, jadi aturan yang ditulis untuk perintah inner tidak mencakupnya.
+
+Daftar pembungkus ini bawaan dan tidak dapat dikonfigurasi. Pelari lingkungan pengembangan seperti `direnv exec`, `devbox run`, `mise exec`, `npx`, dan `docker exec` tidak ada dalam daftar. Karena alat ini menjalankan argumen mereka sebagai perintah, aturan seperti `Bash(devbox run *)` mencocokkan apa pun yang datang setelah `run`, termasuk `devbox run rm -rf .`. Untuk menyetujui pekerjaan di dalam pelari lingkungan, tulis aturan spesifik yang mencakup baik pelari maupun perintah inner, seperti `Bash(devbox run npm test)`. Tambahkan satu aturan per perintah inner yang ingin Anda izinkan.
+
+Pembungkus exec seperti `watch`, `setsid`, `ionice`, dan `flock` selalu meminta dan tidak dapat disetujui otomatis oleh aturan awalan seperti `Bash(watch *)`. Hal yang sama berlaku untuk `find` dengan `-exec` atau `-delete`: aturan `Bash(find *)` tidak mencakup bentuk ini. Untuk menyetujui invokasi spesifik, tulis aturan pencocokan tepat untuk string perintah lengkap.
+
+#### Perintah hanya baca
+
+Claude Code mengenali serangkaian perintah Bash bawaan sebagai hanya baca dan menjalankannya tanpa prompt izin di setiap mode. Ini termasuk `ls`, `cat`, `head`, `tail`, `grep`, `find`, `wc`, `diff`, `stat`, `du`, `cd`, dan bentuk hanya baca dari `git`. Serangkaian ini tidak dapat dikonfigurasi; untuk memerlukan prompt untuk salah satu perintah ini, tambahkan aturan `ask` atau `deny` untuk itu.
+
+Pola glob yang tidak dikutip diizinkan untuk perintah yang setiap flagnya hanya baca, jadi `ls *.ts` dan `wc -l src/*.py` berjalan tanpa prompt. Perintah dengan flag yang mampu menulis atau exec, seperti `find`, `sort`, `sed`, dan `git`, masih meminta ketika glob yang tidak dikutip ada karena glob dapat berkembang menjadi flag seperti `-delete`.
+
+`cd` ke jalur di dalam direktori kerja Anda atau [direktori tambahan](#working-directories) juga hanya baca. Perintah gabungan seperti `cd packages/api && ls` berjalan tanpa prompt ketika setiap bagian memenuhi syarat sendiri. Menggabungkan `cd` dengan `git` dalam satu perintah gabungan selalu meminta, terlepas dari direktori target.
 
 <Warning>
   Pola izin Bash yang mencoba membatasi argumen perintah rapuh. Misalnya, `Bash(curl http://github.com/ *)` dimaksudkan untuk membatasi curl ke URL GitHub, tetapi tidak akan mencocokkan variasi seperti:
@@ -168,6 +192,13 @@ Contoh:
   Dalam pola gitignore, `*` mencocokkan file dalam satu direktori sementara `**` mencocokkan secara rekursif di seluruh direktori. Untuk memungkinkan semua akses file, gunakan hanya nama alat tanpa tanda kurung: `Read`, `Edit`, atau `Write`.
 </Note>
 
+Ketika Claude mengakses symlink, aturan izin memeriksa dua jalur: symlink itu sendiri dan file yang diselesaikannya. Aturan allow dan deny memperlakukan pasangan itu secara berbeda: aturan allow kembali ke meminta Anda, sementara aturan deny memblokir sepenuhnya.
+
+* **Aturan allow**: berlaku hanya ketika jalur symlink dan targetnya cocok. Symlink di dalam direktori yang diizinkan yang menunjuk ke luar masih meminta Anda.
+* **Aturan deny**: berlaku ketika jalur symlink atau targetnya cocok. Symlink yang menunjuk ke file yang ditolak itu sendiri ditolak.
+
+Misalnya, dengan `Read(./project/**)` diizinkan dan `Read(~/.ssh/**)` ditolak, symlink di `./project/key` menunjuk ke `~/.ssh/id_rsa` diblokir: target gagal aturan allow dan cocok dengan aturan deny.
+
 ### WebFetch
 
 * `WebFetch(domain:example.com)` mencocokkan permintaan pengambilan ke example.com
@@ -200,7 +231,7 @@ Tambahkan aturan ini ke array `deny` dalam pengaturan Anda atau gunakan flag CLI
 
 [Hook Claude Code](/id/hooks-guide) menyediakan cara untuk mendaftarkan perintah shell kustom guna melakukan evaluasi izin saat runtime. Ketika Claude Code membuat panggilan alat, hook PreToolUse berjalan sebelum prompt izin. Output hook dapat menolak panggilan alat, memaksa prompt, atau melewati prompt untuk membiarkan panggilan berlanjut.
 
-Melewati prompt tidak melewati aturan izin. Aturan deny dan ask masih dievaluasi setelah hook mengembalikan `"allow"`, jadi aturan deny yang cocok masih memblokir panggilan. Ini mempertahankan prioritas deny-first yang dijelaskan dalam [Kelola izin](#manage-permissions), termasuk aturan deny yang ditetapkan dalam pengaturan terkelola.
+Keputusan hook tidak melewati aturan izin. Aturan deny dan ask dievaluasi terlepas dari apa yang dikembalikan hook PreToolUse, jadi aturan deny yang cocok memblokir panggilan dan aturan ask masih meminta bahkan ketika hook mengembalikan `"allow"` atau `"ask"`. Ini mempertahankan prioritas deny-first yang dijelaskan dalam [Kelola izin](#manage-permissions), termasuk aturan deny yang ditetapkan dalam pengaturan terkelola.
 
 Hook pemblokiran juga memiliki prioritas atas aturan allow. Hook yang keluar dengan kode 2 menghentikan panggilan alat sebelum aturan izin dievaluasi, jadi blokir berlaku bahkan ketika aturan allow akan membiarkan panggilan berlanjut. Untuk menjalankan semua perintah Bash tanpa prompt kecuali untuk beberapa yang ingin Anda blokir, tambahkan `"Bash"` ke daftar allow Anda dan daftarkan hook PreToolUse yang menolak perintah tertentu itu. Lihat [Block edits to protected files](/id/hooks-guide#block-edits-to-protected-files) untuk skrip hook yang dapat Anda sesuaikan.
 
@@ -220,11 +251,11 @@ Menambahkan direktori memperluas tempat Claude dapat membaca dan mengedit file. 
 
 Jenis konfigurasi berikut dimuat dari direktori `--add-dir`:
 
-| Konfigurasi                                       | Dimuat dari `--add-dir`                                              |
-| :------------------------------------------------ | :------------------------------------------------------------------- |
-| [Skills](/id/skills) di `.claude/skills/`         | Ya, dengan live reload                                               |
-| Pengaturan plugin di `.claude/settings.json`      | `enabledPlugins` dan `extraKnownMarketplaces` saja                   |
-| File [CLAUDE.md](/id/memory) dan `.claude/rules/` | Hanya ketika `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` diatur |
+| Konfigurasi                                                           | Dimuat dari `--add-dir`                                                                                                                                           |
+| :-------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Skills](/id/skills) di `.claude/skills/`                             | Ya, dengan live reload                                                                                                                                            |
+| Pengaturan plugin di `.claude/settings.json`                          | `enabledPlugins` dan `extraKnownMarketplaces` saja                                                                                                                |
+| File [CLAUDE.md](/id/memory), `.claude/rules/`, dan `CLAUDE.local.md` | Hanya ketika `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` diatur. `CLAUDE.local.md` juga memerlukan sumber pengaturan `local`, yang diaktifkan secara default |
 
 Segalanya yang lain, termasuk subagents, commands, output styles, hooks, dan pengaturan lainnya, ditemukan hanya dari direktori kerja saat ini dan induknya, direktori pengguna Anda di `~/.claude/`, dan pengaturan terkelola. Untuk berbagi konfigurasi itu di seluruh proyek, gunakan salah satu pendekatan ini:
 
@@ -244,7 +275,9 @@ Gunakan keduanya untuk pertahanan berlapis:
 * Aturan deny izin memblokir Claude dari bahkan mencoba mengakses sumber daya terbatas
 * Pembatasan sandbox mencegah perintah Bash menjangkau sumber daya di luar batas yang ditentukan, bahkan jika injeksi prompt melewati pengambilan keputusan Claude
 * Pembatasan sistem file di sandbox menggunakan aturan deny Read dan Edit, bukan konfigurasi sandbox terpisah
-* Pembatasan jaringan menggabungkan aturan izin WebFetch dengan daftar `allowedDomains` sandbox
+* Pembatasan jaringan menggabungkan aturan izin WebFetch dengan daftar `allowedDomains` dan `deniedDomains` sandbox
+
+Ketika sandboxing diaktifkan dengan `autoAllowBashIfSandboxed: true`, yang merupakan default, perintah Bash yang di-sandbox berjalan tanpa meminta bahkan jika izin Anda mencakup `ask: Bash(*)`. Batas sandbox menggantikan prompt per-perintah. Lihat [sandbox modes](/id/sandboxing#sandbox-modes) untuk mengubah perilaku ini.
 
 ## Pengaturan terkelola
 
@@ -257,11 +290,12 @@ Beberapa pengaturan hanya efektif dalam pengaturan terkelola. Menempatkan mereka
 | Pengaturan                                     | Deskripsi                                                                                                                                                                                                                                                 |
 | :--------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `allowedChannelPlugins`                        | Daftar izin plugin saluran yang dapat mendorong pesan. Menggantikan daftar izin Anthropic default saat diatur. Memerlukan `channelsEnabled: true`. Lihat [Restrict which channel plugins can run](/id/channels#restrict-which-channel-plugins-can-run)    |
-| `allowManagedHooksOnly`                        | Ketika `true`, mencegah pemuatan hook pengguna, proyek, dan plugin. Hanya hook terkelola dan hook SDK yang diizinkan                                                                                                                                      |
+| `allowManagedHooksOnly`                        | Ketika `true`, hanya hook terkelola, hook SDK, dan hook dari plugin yang dipaksa-aktifkan dalam pengaturan terkelola `enabledPlugins` yang dimuat. Hook pengguna, proyek, dan semua plugin lainnya diblokir                                               |
 | `allowManagedMcpServersOnly`                   | Ketika `true`, hanya `allowedMcpServers` dari pengaturan terkelola yang dihormati. `deniedMcpServers` masih digabung dari semua sumber. Lihat [Managed MCP configuration](/id/mcp#managed-mcp-configuration)                                              |
 | `allowManagedPermissionRulesOnly`              | Ketika `true`, mencegah pengaturan pengguna dan proyek dari mendefinisikan aturan izin `allow`, `ask`, atau `deny`. Hanya aturan dalam pengaturan terkelola yang berlaku                                                                                  |
 | `blockedMarketplaces`                          | Daftar blokir sumber marketplace. Sumber yang diblokir diperiksa sebelum mengunduh, jadi mereka tidak pernah menyentuh sistem file. Lihat [managed marketplace restrictions](/id/plugin-marketplaces#managed-marketplace-restrictions)                    |
 | `channelsEnabled`                              | Izinkan [channels](/id/channels) untuk pengguna Team dan Enterprise. Tidak diatur atau `false` memblokir pengiriman pesan saluran terlepas dari apa yang dilewatkan pengguna ke `--channels`                                                              |
+| `forceRemoteSettingsRefresh`                   | Ketika `true`, memblokir startup CLI hingga pengaturan terkelola jarak jauh segar diambil dan keluar jika pengambilan gagal. Lihat [fail-closed enforcement](/id/server-managed-settings#enforce-fail-closed-startup)                                     |
 | `pluginTrustMessage`                           | Pesan kustom ditambahkan ke peringatan kepercayaan plugin yang ditampilkan sebelum instalasi                                                                                                                                                              |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Ketika `true`, hanya jalur `filesystem.allowRead` dari pengaturan terkelola yang dihormati. `denyRead` masih digabung dari semua sumber                                                                                                                   |
 | `sandbox.network.allowManagedDomainsOnly`      | Ketika `true`, hanya `allowedDomains` dan aturan allow `WebFetch(domain:...)` dari pengaturan terkelola yang dihormati. Domain yang tidak diizinkan diblokir secara otomatis tanpa meminta pengguna. Domain yang ditolak masih digabung dari semua sumber |

@@ -12,7 +12,7 @@
 
 Tugas terjadwal memungkinkan Claude menjalankan kembali prompt secara otomatis pada interval tertentu. Gunakan untuk polling deployment, mengawasi PR, memeriksa build yang berjalan lama, atau mengingatkan diri sendiri untuk melakukan sesuatu nanti dalam sesi. Untuk bereaksi terhadap peristiwa saat terjadi daripada polling, lihat [Channels](/id/channels): CI Anda dapat mendorong kegagalan ke dalam sesi secara langsung.
 
-Tugas bersifat session-scoped: mereka hidup dalam proses Claude Code saat ini dan hilang saat Anda keluar. Untuk penjadwalan yang tahan lama yang bertahan setelah restart, gunakan [Routines](/id/routines), [Desktop scheduled tasks](/id/desktop-scheduled-tasks), atau [GitHub Actions](/id/github-actions).
+Tugas bersifat session-scoped: mereka hidup dalam percakapan saat ini dan berhenti saat Anda memulai yang baru. Melanjutkan dengan `--resume` atau `--continue` membawa kembali tugas apa pun yang belum [kedaluwarsa](#seven-day-expiry): tugas berulang yang dibuat dalam 7 hari terakhir, atau tugas sekali jalan yang waktu terjadwalnya belum berlalu. Untuk penjadwalan yang bertahan secara independen dari sesi apa pun, gunakan [Routines](/id/routines), [Desktop scheduled tasks](/id/desktop-scheduled-tasks), atau [GitHub Actions](/id/github-actions).
 
 ## Bandingkan opsi penjadwalan
 
@@ -118,6 +118,10 @@ quiet, say so in one line.
 
 Edit ke `loop.md` berlaku pada iterasi berikutnya, jadi Anda dapat menyempurnakan instruksi saat loop berjalan. Ketika tidak ada `loop.md` yang ada di lokasi mana pun, loop kembali ke prompt pemeliharaan bawaan. Jaga file tetap ringkas: konten di luar 25.000 byte dipotong.
 
+### Hentikan loop
+
+Untuk menghentikan `/loop` saat menunggu iterasi berikutnya, tekan `Esc`. Ini menghapus wakeup yang tertunda sehingga loop tidak berjalan lagi. Tugas yang Anda jadwalkan dengan [meminta Claude secara langsung](#manage-scheduled-tasks) tidak terpengaruh oleh `Esc` dan tetap ada sampai Anda menghapusnya.
+
 ## Atur pengingat sekali jalan
 
 Untuk pengingat sekali jalan, jelaskan apa yang Anda inginkan dalam bahasa alami daripada menggunakan `/loop`. Claude menjadwalkan tugas single-fire yang menghapus dirinya sendiri setelah berjalan.
@@ -198,9 +202,9 @@ Atur `CLAUDE_CODE_DISABLE_CRON=1` di lingkungan Anda untuk menonaktifkan penjadw
 
 Penjadwalan session-scoped memiliki batasan yang melekat:
 
-* Tugas hanya berjalan saat Claude Code berjalan dan idle. Menutup terminal atau membiarkan sesi keluar membatalkan semuanya.
+* Tugas hanya berjalan saat Claude Code berjalan dan idle. Menutup terminal atau membiarkan sesi keluar menghentikan semuanya.
 * Tidak ada catch-up untuk fire yang terlewat. Jika waktu terjadwal tugas berlalu saat Claude sibuk dengan permintaan yang berjalan lama, itu berjalan sekali saat Claude menjadi idle, bukan sekali per interval yang terlewat.
-* Tidak ada persistensi di seluruh restart. Memulai ulang Claude Code menghapus semua tugas session-scoped.
+* Memulai percakapan baru menghapus semua tugas session-scoped. Melanjutkan dengan `claude --resume` atau `claude --continue` memulihkan tugas yang belum kedaluwarsa: tugas berulang dalam tujuh hari pembuatan, dan tugas sekali jalan yang waktu terjadwalnya belum berlalu. Tugas Bash latar belakang dan monitor tidak pernah dipulihkan pada resume.
 
 Untuk otomasi yang didorong cron yang perlu berjalan tanpa pengawasan:
 

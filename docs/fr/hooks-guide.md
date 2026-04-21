@@ -42,7 +42,28 @@ Pour créer un hook, ajoutez un bloc `hooks` à un [fichier de paramètres](#con
     }
     ```
 
-    Si votre fichier de paramètres a déjà une clé `hooks`, fusionnez l'entrée `Notification` plutôt que de remplacer l'objet entier. Vous pouvez également demander à Claude d'écrire le hook pour vous en décrivant ce que vous voulez dans le CLI.
+    Si votre fichier de paramètres a déjà une clé `hooks`, ajoutez `Notification` comme frère des clés d'événement existantes plutôt que de remplacer l'objet entier. Chaque nom d'événement est une clé à l'intérieur du seul objet `hooks` :
+
+    ```json theme={null}
+    {
+      "hooks": {
+        "PostToolUse": [
+          {
+            "matcher": "Edit|Write",
+            "hooks": [{ "type": "command", "command": "jq -r '.tool_input.file_path' | xargs npx prettier --write" }]
+          }
+        ],
+        "Notification": [
+          {
+            "matcher": "",
+            "hooks": [{ "type": "command", "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'" }]
+          }
+        ]
+      }
+    }
+    ```
+
+    Vous pouvez également demander à Claude d'écrire le hook pour vous en décrivant ce que vous voulez dans le CLI.
   </Step>
 
   <Step title="Vérifier la configuration">
@@ -295,17 +316,27 @@ Le matcher filtre par type de configuration : `user_settings`, `project_settings
 
 Certains projets définissent des variables d'environnement différentes selon le répertoire dans lequel vous vous trouvez. Des outils comme [direnv](https://direnv.net/) le font automatiquement dans votre shell, mais l'outil Bash de Claude ne récupère pas ces modifications de lui-même.
 
-Un hook `CwdChanged` corrige cela : il s'exécute chaque fois que Claude change de répertoire, afin que vous puissiez recharger les variables correctes pour le nouvel emplacement. Le hook écrit les valeurs mises à jour dans `CLAUDE_ENV_FILE`, que Claude Code applique avant chaque commande Bash. Ajoutez ceci à `~/.claude/settings.json` :
+L'association d'un hook `SessionStart` avec un hook `CwdChanged` corrige cela. `SessionStart` charge les variables pour le répertoire dans lequel vous lancez, et `CwdChanged` les recharge chaque fois que Claude change de répertoire. Les deux écrivent dans `CLAUDE_ENV_FILE`, que Claude Code exécute comme un préambule de script avant chaque commande Bash. Ajoutez ceci à `~/.claude/settings.json` :
 
 ```json theme={null}
 {
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "direnv export bash > \"$CLAUDE_ENV_FILE\""
+          }
+        ]
+      }
+    ],
     "CwdChanged": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "direnv export bash >> \"$CLAUDE_ENV_FILE\""
+            "command": "direnv export bash > \"$CLAUDE_ENV_FILE\""
           }
         ]
       }
@@ -314,7 +345,9 @@ Un hook `CwdChanged` corrige cela : il s'exécute chaque fois que Claude change 
 }
 ```
 
-Pour réagir à des fichiers spécifiques au lieu de chaque changement de répertoire, utilisez `FileChanged` avec un `matcher` listant les noms de fichiers à surveiller (séparés par des pipes). Le `matcher` configure à la fois les fichiers à surveiller et filtre les hooks qui s'exécutent. Cet exemple surveille `.envrc` et `.env` pour les modifications dans le répertoire actuel :
+Exécutez `direnv allow` une fois dans chaque répertoire qui a un `.envrc` afin que direnv soit autorisé à le charger. Si vous utilisez devbox ou nix à la place de direnv, le même modèle fonctionne avec `devbox shellenv` ou `devbox global shellenv` à la place de `direnv export bash`.
+
+Pour réagir à des fichiers spécifiques au lieu de chaque changement de répertoire, utilisez `FileChanged` avec un `matcher` listant les noms de fichiers à surveiller, séparés par `|`. Pour construire la liste de surveillance, cette valeur est divisée en noms de fichiers littéraux plutôt qu'évaluée comme une regex. Consultez [FileChanged](/fr/hooks#filechanged) pour savoir comment la même valeur filtre également les groupes de hooks qui s'exécutent lorsqu'un fichier change. Cet exemple surveille `.envrc` et `.env` dans le répertoire de travail :
 
 ```json theme={null}
 {
@@ -325,7 +358,7 @@ Pour réagir à des fichiers spécifiques au lieu de chaque changement de réper
         "hooks": [
           {
             "type": "command",
-            "command": "direnv export bash >> \"$CLAUDE_ENV_FILE\""
+            "command": "direnv export bash > \"$CLAUDE_ENV_FILE\""
           }
         ]
       }
@@ -365,6 +398,10 @@ Le matcher limite le hook à `ExitPlanMode` uniquement, afin qu'aucune autre inv
 Lorsque le hook approuve, Claude Code quitte le mode plan et restaure le mode de permission qui était actif avant que vous entriez en mode plan. La transcription affiche « Allowed by PermissionRequest hook » où la boîte de dialogue aurait apparu. Le chemin du hook garde toujours la conversation actuelle : il ne peut pas effacer le contexte et démarrer une session d'implémentation fraîche comme la boîte de dialogue peut le faire.
 
 Pour définir un mode de permission spécifique à la place, la sortie de votre hook peut inclure un tableau `updatedPermissions` avec une entrée `setMode`. La valeur `mode` est n'importe quel mode de permission comme `default`, `acceptEdits`, ou `bypassPermissions`, et `destination: "session"` l'applique pour la session actuelle uniquement.
+
+<Note>
+  `bypassPermissions` ne s'applique que si la session a été lancée avec le mode bypass déjà disponible : `--dangerously-skip-permissions`, `--permission-mode bypassPermissions`, `--allow-dangerously-skip-permissions`, ou `permissions.defaultMode: "bypassPermissions"` dans les paramètres, et non désactivé par [`permissions.disableBypassPermissionsMode`](/fr/permissions#managed-settings). Il n'est jamais persisté en tant que `defaultMode`.
+</Note>
 
 Pour basculer la session vers `acceptEdits`, votre hook écrit ce JSON sur stdout :
 
@@ -423,7 +460,7 @@ Chaque hook a un `type` qui détermine comment il s'exécute. La plupart des hoo
 
 * `"type": "http"` : POST les données d'événement vers une URL. Consultez [Hooks HTTP](#http-hooks).
 * `"type": "prompt"` : évaluation LLM à un seul tour. Consultez [Hooks basés sur des invites](#prompt-based-hooks).
-* `"type": "agent"` : vérification multi-tour avec accès aux outils. Consultez [Hooks basés sur des agents](#agent-based-hooks).
+* `"type": "agent"` : vérification multi-tour avec accès aux outils. Les hooks d'agent sont expérimentaux et peuvent changer. Consultez [Hooks basés sur des agents](#agent-based-hooks).
 
 ### Lire l'entrée et retourner la sortie
 
@@ -468,7 +505,7 @@ Le code de sortie détermine ce qui se passe ensuite :
 
 * **Exit 0** : l'action se poursuit. Pour les hooks `UserPromptSubmit` et `SessionStart`, tout ce que vous écrivez sur stdout est ajouté au contexte de Claude.
 * **Exit 2** : l'action est bloquée. Écrivez une raison sur stderr, et Claude la reçoit comme retour afin qu'il puisse s'ajuster.
-* **Tout autre code de sortie** : l'action se poursuit. Stderr est enregistré mais non affiché à Claude. Basculez le mode verbeux avec `Ctrl+O` pour voir ces messages dans la transcription.
+* **Tout autre code de sortie** : l'action se poursuit. La transcription affiche un avis `<hook name> hook error` suivi de la première ligne de stderr ; le stderr complet va au [journal de débogage](/fr/hooks#debug-hooks).
 
 #### Sortie JSON structurée
 
@@ -490,9 +527,9 @@ Par exemple, un hook `PreToolUse` peut refuser un appel d'outil et dire à Claud
 }
 ```
 
-Claude Code lit `permissionDecision` et annule l'appel d'outil, puis renvoie `permissionDecisionReason` à Claude comme retour. Ces trois options sont spécifiques à `PreToolUse` :
+Avec `"deny"`, Claude Code annule l'appel d'outil et renvoie `permissionDecisionReason` à Claude. Ces valeurs `permissionDecision` sont spécifiques à `PreToolUse` :
 
-* `"allow"` : procéder sans afficher une invite de permission interactive. Les règles de refus et d'ask, y compris les listes de refus gérées par l'entreprise, s'appliquent toujours
+* `"allow"` : ignorer l'invite de permission interactive. Les règles de refus et d'ask, y compris les listes de refus gérées par l'entreprise, s'appliquent toujours
 * `"deny"` : annuler l'appel d'outil et envoyer la raison à Claude
 * `"ask"` : afficher l'invite de permission à l'utilisateur comme d'habitude
 
@@ -523,26 +560,26 @@ Sans matcher, un hook se déclenche à chaque occurrence de son événement. Les
 }
 ```
 
-Le matcher `"Edit|Write"` est un modèle regex qui correspond au nom de l'outil. Le hook ne se déclenche que lorsque Claude utilise l'outil `Edit` ou `Write`, pas lorsqu'il utilise `Bash`, `Read`, ou tout autre outil.
+Le matcher `"Edit|Write"` se déclenche uniquement lorsque Claude utilise l'outil `Edit` ou `Write`, pas lorsqu'il utilise `Bash`, `Read`, ou tout autre outil. Consultez [Modèles de matcher](/fr/hooks#matcher-patterns) pour savoir comment les noms simples et les expressions régulières sont évalués.
 
-Chaque type d'événement correspond à un champ spécifique. Les matchers supportent les chaînes exactes et les modèles regex :
+Chaque type d'événement correspond à un champ spécifique :
 
-| Événement                                                                                                                    | Ce que le matcher filtre                     | Exemples de valeurs de matcher                                                                                            |
-| :--------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                   | nom de l'outil                               | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
-| `SessionStart`                                                                                                               | comment la session a démarré                 | `startup`, `resume`, `clear`, `compact`                                                                                   |
-| `SessionEnd`                                                                                                                 | pourquoi la session s'est terminée           | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                                               | type de notification                         | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                                              | type d'agent                                 | `Bash`, `Explore`, `Plan`, ou noms d'agents personnalisés                                                                 |
-| `PreCompact`, `PostCompact`                                                                                                  | ce qui a déclenché la compaction             | `manual`, `auto`                                                                                                          |
-| `SubagentStop`                                                                                                               | type d'agent                                 | mêmes valeurs que `SubagentStart`                                                                                         |
-| `ConfigChange`                                                                                                               | source de configuration                      | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
-| `StopFailure`                                                                                                                | type d'erreur                                | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                                                         | raison du chargement                         | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
-| `Elicitation`                                                                                                                | nom du serveur MCP                           | vos noms de serveur MCP configurés                                                                                        |
-| `ElicitationResult`                                                                                                          | nom du serveur MCP                           | mêmes valeurs que `Elicitation`                                                                                           |
-| `FileChanged`                                                                                                                | nom de fichier (basename du fichier modifié) | `.envrc`, `.env`, n'importe quel nom de fichier que vous voulez surveiller                                                |
-| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged` | pas de support de matcher                    | se déclenche toujours à chaque occurrence                                                                                 |
+| Événement                                                                                                                    | Ce que le matcher filtre                                                                 | Exemples de valeurs de matcher                                                                                            |
+| :--------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                   | nom de l'outil                                                                           | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `SessionStart`                                                                                                               | comment la session a démarré                                                             | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `SessionEnd`                                                                                                                 | pourquoi la session s'est terminée                                                       | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
+| `Notification`                                                                                                               | type de notification                                                                     | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
+| `SubagentStart`                                                                                                              | type d'agent                                                                             | `Bash`, `Explore`, `Plan`, ou noms d'agents personnalisés                                                                 |
+| `PreCompact`, `PostCompact`                                                                                                  | ce qui a déclenché la compaction                                                         | `manual`, `auto`                                                                                                          |
+| `SubagentStop`                                                                                                               | type d'agent                                                                             | mêmes valeurs que `SubagentStart`                                                                                         |
+| `ConfigChange`                                                                                                               | source de configuration                                                                  | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
+| `StopFailure`                                                                                                                | type d'erreur                                                                            | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                                         | raison du chargement                                                                     | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `Elicitation`                                                                                                                | nom du serveur MCP                                                                       | vos noms de serveur MCP configurés                                                                                        |
+| `ElicitationResult`                                                                                                          | nom du serveur MCP                                                                       | mêmes valeurs que `Elicitation`                                                                                           |
+| `FileChanged`                                                                                                                | noms de fichiers littéraux à surveiller (consultez [FileChanged](/fr/hooks#filechanged)) | `.envrc\|.env`                                                                                                            |
+| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged` | pas de support de matcher                                                                | se déclenche toujours à chaque occurrence                                                                                 |
 
 Quelques autres exemples montrant des matchers sur différents types d'événements :
 
@@ -572,7 +609,7 @@ Quelques autres exemples montrant des matchers sur différents types d'événeme
   <Tab title="Correspondre aux outils MCP">
     Les outils MCP utilisent une convention de nommage différente des outils intégrés : `mcp__<server>__<tool>`, où `<server>` est le nom du serveur MCP et `<tool>` est l'outil qu'il fournit. Par exemple, `mcp__github__search_repositories` ou `mcp__filesystem__read_file`. Utilisez un matcher regex pour cibler tous les outils d'un serveur spécifique, ou correspondre entre les serveurs avec un modèle comme `mcp__.*__write.*`. Consultez [Correspondre aux outils MCP](/fr/hooks#match-mcp-tools) dans la référence pour la liste complète des exemples.
 
-    La commande ci-dessous extrait le nom de l'outil de l'entrée JSON du hook avec `jq` et l'écrit sur stderr, où il apparaît en mode verbeux (`Ctrl+O`) :
+    La commande ci-dessous extrait le nom de l'outil de l'entrée JSON du hook avec `jq` et l'écrit sur stderr. L'écriture sur stderr garde stdout propre pour la sortie JSON et envoie le message au [journal de débogage](/fr/hooks#debug-hooks) :
 
     ```json theme={null}
     {
@@ -624,7 +661,7 @@ Pour la syntaxe complète du matcher, consultez la [référence des Hooks](/fr/h
   Le champ `if` nécessite Claude Code v2.1.85 ou ultérieur. Les versions antérieures l'ignorent et exécutent le hook à chaque appel correspondant.
 </Note>
 
-Le champ `if` utilise la [syntaxe des règles de permission](/fr/permissions) pour filtrer les hooks par nom d'outil et arguments ensemble, afin que le processus du hook ne soit généré que lorsque l'appel d'outil correspond. Cela va au-delà du `matcher`, qui filtre au niveau du groupe par nom d'outil uniquement.
+Le champ `if` utilise la [syntaxe des règles de permission](/fr/permissions) pour filtrer les hooks par nom d'outil et arguments ensemble, afin que le processus du hook ne soit généré que lorsque l'appel d'outil correspond, ou lorsqu'une commande Bash est trop complexe à analyser. Cela va au-delà du `matcher`, qui filtre au niveau du groupe par nom d'outil uniquement.
 
 Par exemple, pour exécuter un hook uniquement lorsque Claude utilise des commandes `git` plutôt que toutes les commandes Bash :
 
@@ -647,9 +684,9 @@ Par exemple, pour exécuter un hook uniquement lorsque Claude utilise des comman
 }
 ```
 
-Le processus du hook ne se génère que lorsque la commande Bash commence par `git`. Les autres commandes Bash ignorent complètement ce gestionnaire. Le champ `if` accepte les mêmes modèles que les règles de permission : `"Bash(git *)"`, `"Edit(*.ts)"`, et ainsi de suite. Pour correspondre à plusieurs noms d'outils, utilisez des gestionnaires séparés chacun avec sa propre valeur `if`, ou correspondez au niveau du `matcher` où l'alternation par pipe est supportée.
+Le processus du hook ne se génère que lorsqu'une sous-commande de la commande Bash correspond à `git *`, ou lorsque la commande est trop complexe à analyser en sous-commandes. Pour les commandes composées comme `npm test && git push`, Claude Code évalue chaque sous-commande et déclenche le hook car `git push` correspond. Le champ `if` accepte les mêmes modèles que les règles de permission : `"Bash(git *)"`, `"Edit(*.ts)"`, et ainsi de suite. Pour correspondre à plusieurs noms d'outils, utilisez des gestionnaires séparés chacun avec sa propre valeur `if`, ou correspondez au niveau du `matcher` où l'alternation par pipe est supportée.
 
-`if` ne fonctionne que sur les événements d'outils : `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, et `PermissionDenied`. L'ajouter à tout autre événement empêche le hook de s'exécuter.
+`if` ne fonctionne que sur les événements d'outils : `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, et `PermissionRequest`. L'ajouter à tout autre événement empêche le hook de s'exécuter.
 
 ### Configurer l'emplacement du hook
 
@@ -699,6 +736,10 @@ Cet exemple utilise un hook `Stop` pour demander au modèle si toutes les tâche
 Pour les options de configuration complètes, consultez [Hooks basés sur des invites](/fr/hooks#prompt-based-hooks) dans la référence.
 
 ## Hooks basés sur des agents
+
+<Warning>
+  Les hooks d'agent sont expérimentaux. Le comportement et la configuration peuvent changer dans les versions futures. Pour les workflows de production, préférez les [hooks de commande](/fr/hooks#command-hook-fields).
+</Warning>
 
 Lorsque la vérification nécessite d'inspecter des fichiers ou d'exécuter des commandes, utilisez les hooks `type: "agent"`. Contrairement aux hooks d'invite qui font un seul appel LLM, les hooks d'agent génèrent un subagent qui peut lire des fichiers, rechercher du code et utiliser d'autres outils pour vérifier les conditions avant de retourner une décision.
 
@@ -849,7 +890,9 @@ La variable `$-` contient les drapeaux du shell, et `i` signifie interactif. Les
 
 ### Techniques de débogage
 
-Basculez le mode verbeux avec `Ctrl+O` pour voir la sortie du hook dans la transcription, ou exécutez `claude --debug` pour les détails d'exécution complets, y compris les hooks qui ont correspondu et leurs codes de sortie.
+La vue de transcription, basculée avec `Ctrl+O`, affiche un résumé d'une ligne pour chaque hook qui s'est déclenché : le succès est silencieux, les erreurs de blocage affichent stderr, et les erreurs sans blocage affichent un avis `<hook name> hook error` suivi de la première ligne de stderr.
+
+Pour les détails d'exécution complets incluant les hooks qui ont correspondu, leurs codes de sortie, stdout et stderr, lisez le journal de débogage. Démarrez Claude Code avec `claude --debug-file /tmp/claude.log` pour écrire dans un chemin connu, puis `tail -f /tmp/claude.log` dans un autre terminal. Si vous avez démarré sans ce drapeau, exécutez `/debug` en milieu de session pour activer la journalisation et trouver le chemin du journal.
 
 ## En savoir plus
 

@@ -25,20 +25,26 @@
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | **`default`**    | 特殊值，清除任何模型覆盖并恢复到您的账户类型推荐的模型。本身不是模型别名                                                                                             |
 | **`best`**       | 使用最强大的可用模型，当前等同于 `opus`                                                                                                          |
-| **`sonnet`**     | 使用最新的 Sonnet 模型（当前为 Sonnet 4.6）用于日常编码任务                                                                                          |
-| **`opus`**       | 使用最新的 Opus 模型（当前为 Opus 4.6）用于复杂推理任务                                                                                              |
+| **`sonnet`**     | 使用最新的 Sonnet 模型用于日常编码任务                                                                                                          |
+| **`opus`**       | 使用最新的 Opus 模型用于复杂推理任务                                                                                                            |
 | **`haiku`**      | 使用快速高效的 Haiku 模型用于简单任务                                                                                                           |
 | **`sonnet[1m]`** | 使用 Sonnet 和[100 万令牌上下文窗口](https://platform.claude.com/docs/zh-CN/build-with-claude/context-windows#1m-token-context-window)用于长会话 |
 | **`opus[1m]`**   | 使用 Opus 和[100 万令牌上下文窗口](https://platform.claude.com/docs/zh-CN/build-with-claude/context-windows#1m-token-context-window)用于长会话   |
 | **`opusplan`**   | 特殊模式，在 Plan Mode 中使用 `opus`，然后在执行时切换到 `sonnet`                                                                                   |
 
-别名始终指向最新版本。要固定到特定版本，请使用完整模型名称（例如 `claude-opus-4-6`）或设置相应的环境变量，如 `ANTHROPIC_DEFAULT_OPUS_MODEL`。
+在 Anthropic API 上，`opus` 解析为 Opus 4.7，`sonnet` 解析为 Sonnet 4.6。在 Bedrock、Vertex 和 Foundry 上，`opus` 解析为 Opus 4.6，`sonnet` 解析为 Sonnet 4.5；通过显式选择完整模型名称或设置 `ANTHROPIC_DEFAULT_OPUS_MODEL` 或 `ANTHROPIC_DEFAULT_SONNET_MODEL` 可以在这些提供商上获得更新的模型。
+
+别名指向您的提供商推荐的版本，并随时间更新。要固定到特定版本，请使用完整模型名称（例如 `claude-opus-4-7`）或设置相应的环境变量，如 `ANTHROPIC_DEFAULT_OPUS_MODEL`。
+
+<Note>
+  Opus 4.7 需要 Claude Code v2.1.111 或更高版本。运行 `claude update` 进行升级。
+</Note>
 
 ### 设置您的模型
 
 您可以通过多种方式配置模型，按优先级顺序列出：
 
-1. **在会话期间** - 使用 `/model <alias|name>` 在会话中途切换模型
+1. **在会话期间** - 使用 `/model <alias|name>` 立即切换，或运行不带参数的 `/model` 打开选择器。当对话有先前的输出时，选择器会要求确认，因为下一个响应会重新读取完整历史记录而不使用缓存的上下文
 2. **启动时** - 使用 `claude --model <alias|name>` 启动
 3. **环境变量** - 设置 `ANTHROPIC_MODEL=<alias|name>`
 4. **设置** - 在设置文件中使用 `model` 字段永久配置。
@@ -110,17 +116,25 @@ claude --model opus
 
 当 `availableModels` 在多个级别设置时，例如用户设置和项目设置，数组会被合并并去重。要强制执行严格的允许列表，请在托管或策略设置中设置 `availableModels`，这具有最高优先级。
 
+### Mantle 模型 ID
+
+当启用[Bedrock Mantle 端点](/zh-CN/amazon-bedrock#use-the-mantle-endpoint)时，`availableModels` 中以 `anthropic.` 开头的条目会作为自定义选项添加到 `/model` 选择器，并路由到 Mantle 端点。这是对[为第三方部署固定模型](#pin-models-for-third-party-deployments)中描述的仅别名匹配的例外。该设置仍然将选择器限制为列出的条目，因此请在任何 Mantle ID 旁边包含标准别名。
+
 ## 特殊模型行为
 
 ### `default` 模型设置
 
 `default` 的行为取决于您的账户类型：
 
-* **Max 和 Team Premium**：默认为 Opus 4.6
-* **Pro 和 Team Standard**：默认为 Sonnet 4.6
-* **Enterprise**：Opus 4.6 可用但不是默认值
+* **Max 和 Team Premium**：默认为 Opus 4.7
+* **Pro、Team Standard、Enterprise 和 Anthropic API**：默认为 Sonnet 4.6
+* **Bedrock、Vertex 和 Foundry**：默认为 Sonnet 4.5
 
 如果您在使用 Opus 时达到使用阈值，Claude Code 可能会自动回退到 Sonnet。
+
+<Note>
+  2026 年 4 月 23 日，Enterprise 按使用量付费和 Anthropic API 用户的默认模型将更改为 Opus 4.7。要保持不同的默认值，请设置 `ANTHROPIC_MODEL` 或[服务器管理的设置](/zh-CN/server-managed-settings)中的 `model` 字段。
+</Note>
 
 ### `opusplan` 模型设置
 
@@ -131,40 +145,73 @@ claude --model opus
 
 这为您提供了两全其美的方案：Opus 的卓越推理能力用于规划，Sonnet 的效率用于执行。
 
+Plan Mode 中的 Opus 阶段使用标准的 200K 上下文窗口运行。[扩展上下文](#extended-context)中描述的自动 1M 升级适用于 `opus` 模型设置，不适用于 `opusplan`。
+
 ### 调整工作量级别
 
-[工作量级别](https://platform.claude.com/docs/zh-CN/build-with-claude/effort)控制自适应推理，根据任务复杂性动态分配思考。较低的工作量对于直接任务更快更便宜，而较高的工作量为复杂问题提供更深入的推理。
+[工作量级别](https://platform.claude.com/docs/zh-CN/build-with-claude/effort)控制自适应推理，让模型根据任务复杂性决定是否以及在每一步思考多少。较低的工作量对于直接任务更快更便宜，而较高的工作量为复杂问题提供更深入的推理。
 
-三个级别在会话中持续存在：**low**、**medium** 和 **high**。第四个级别 **max** 提供最深入的推理，对令牌支出没有限制，因此响应速度更慢，成本比 `high` 更高。`max` 仅在 Opus 4.6 上可用，不会在会话间持续存在，除非通过 `CLAUDE_CODE_EFFORT_LEVEL` 环境变量。
+Opus 4.7、Opus 4.6 和 Sonnet 4.6 支持工作量。可用的级别取决于模型：
 
-Opus 4.6 和 Sonnet 4.6 默认为中等工作量。这适用于所有提供商，包括 Bedrock、Vertex AI 和直接 API 访问。
+| 模型                    | 级别                                  |
+| :-------------------- | :---------------------------------- |
+| Opus 4.7              | `low`、`medium`、`high`、`xhigh`、`max` |
+| Opus 4.6 和 Sonnet 4.6 | `low`、`medium`、`high`、`max`         |
 
-中等是大多数编码任务的推荐级别：它平衡了速度和推理深度，更高的级别可能导致模型过度思考日常工作。为真正受益于更深入推理的任务保留 `high` 或 `max`，例如困难的调试问题或复杂的架构决策。
+如果您设置活跃模型不支持的级别，Claude Code 会回退到您设置的级别或以下的最高支持级别。例如，`xhigh` 在 Opus 4.6 上运行为 `high`。
 
-对于一次性深入推理而不改变您的会话设置，在您的提示中包含"ultrathink"以触发该轮的高工作量。
+在 Opus 4.7 上，所有计划和提供商的默认工作量是 `xhigh`。在 Opus 4.6 和 Sonnet 4.6 上，默认值是 `high`，或在 Pro 和 Max 上为 `medium`。
 
-**设置工作量：**
+当您首次运行 Opus 4.7 时，Claude Code 会应用 `xhigh`，即使您之前为 Opus 4.6 或 Sonnet 4.6 设置了不同的工作量级别。切换后再次运行 `/effort` 以选择不同的级别。
 
-* **`/effort`**：运行 `/effort low`、`/effort medium`、`/effort high` 或 `/effort max` 来更改级别，或运行 `/effort auto` 来重置为模型默认值
+`low`、`medium`、`high` 和 `xhigh` 在会话间持续存在。`max` 提供最深入的推理，对令牌支出没有限制，仅适用于当前会话，除非通过 `CLAUDE_CODE_EFFORT_LEVEL` 环境变量设置。
+
+#### 选择工作量级别
+
+每个级别都在令牌支出和功能之间进行权衡。默认值适合大多数编码任务；当您想要不同的平衡时进行调整。
+
+| 级别       | 何时使用                                        |
+| :------- | :------------------------------------------ |
+| `low`    | 保留用于短期、范围有限、延迟敏感且不需要高智能的任务                  |
+| `medium` | 减少成本敏感工作的令牌使用，可以权衡一些智能                      |
+| `high`   | 平衡令牌使用和智能。用作智能敏感工作的最低要求，或相对于 `xhigh` 减少令牌支出 |
+| `xhigh`  | 大多数编码和代理任务的最佳结果。Opus 4.7 上的推荐默认值            |
+| `max`    | 可以改进困难任务的性能，但可能显示收益递减，容易过度思考。在广泛采用前进行测试     |
+
+工作量规模按模型校准，因此相同的级别名称在不同模型中不代表相同的基础值。
+
+对于一次性深入推理而不改变您的会话设置，在您的提示中包含"ultrathink"。这会添加一个上下文内指令，告诉模型在该轮进行更多推理；它不会改变发送到 API 的工作量级别。
+
+#### 设置工作量级别
+
+您可以通过以下任何方式更改工作量：
+
+* **`/effort`**：运行不带参数的 `/effort` 打开交互式滑块，运行 `/effort` 后跟级别名称直接设置，或运行 `/effort auto` 重置为模型默认值
 * **在 `/model` 中**：选择模型时使用左右箭头键调整工作量滑块
-* **`--effort` 标志**：在启动 Claude Code 时传递 `low`、`medium`、`high` 或 `max` 来为单个会话设置级别
-* **环境变量**：设置 `CLAUDE_CODE_EFFORT_LEVEL` 为 `low`、`medium`、`high`、`max` 或 `auto`
-* **设置**：在设置文件中设置 `effortLevel` 为 `"low"`、`"medium"` 或 `"high"`
+* **`--effort` 标志**：在启动 Claude Code 时传递级别名称为单个会话设置
+* **环境变量**：设置 `CLAUDE_CODE_EFFORT_LEVEL` 为级别名称或 `auto`
+* **设置**：在设置文件中设置 `effortLevel`
 * **Skill 和 subagent frontmatter**：在 [skill](/zh-CN/skills#frontmatter-reference) 或 [subagent](/zh-CN/sub-agents#supported-frontmatter-fields) markdown 文件中设置 `effort` 以在该 skill 或 subagent 运行时覆盖工作量级别
 
 环境变量优先于所有其他方法，然后是您配置的级别，然后是模型默认值。Frontmatter 工作量在该 skill 或 subagent 活跃时应用，覆盖会话级别但不覆盖环境变量。
 
-Opus 4.6 和 Sonnet 4.6 支持工作量。当选择支持的模型时，工作量滑块会出现在 `/model` 中。当前工作量级别也显示在徽标和旋转器旁边，例如"with low effort"，因此您可以确认哪个设置处于活动状态，而无需打开 `/model`。
+当选择支持的模型时，工作量滑块会出现在 `/model` 中。当前工作量级别也显示在徽标和旋转器旁边，例如"with low effort"，因此您可以确认哪个设置处于活动状态，而无需打开 `/model`。
 
-要在 Opus 4.6 和 Sonnet 4.6 上禁用自适应推理并恢复到之前的固定思考预算，请设置 `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1`。禁用时，这些模型使用由 `MAX_THINKING_TOKENS` 控制的固定预算。请参阅[环境变量](/zh-CN/env-vars)。
+#### 自适应推理和固定思考预算
+
+自适应推理使思考在每一步都是可选的，因此 Claude 可以更快地响应常规提示，并为受益于思考的步骤保留更深入的思考。如果您希望 Claude 比当前级别产生的思考更多或更少，您可以直接在您的提示或 `CLAUDE.md` 中说明；模型会在其工作量设置范围内响应该指导。
+
+Opus 4.7 始终使用自适应推理。固定思考预算模式和 `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` 不适用于它。
+
+在 Opus 4.6 和 Sonnet 4.6 上，您可以设置 `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` 以恢复到由 `MAX_THINKING_TOKENS` 控制的先前固定思考预算。请参阅[环境变量](/zh-CN/env-vars)。
 
 ### 扩展上下文
 
-Opus 4.6 和 Sonnet 4.6 支持[100 万令牌上下文窗口](https://platform.claude.com/docs/zh-CN/build-with-claude/context-windows#1m-token-context-window)用于包含大型代码库的长会话。
+Opus 4.7、Opus 4.6 和 Sonnet 4.6 支持[100 万令牌上下文窗口](https://platform.claude.com/docs/zh-CN/build-with-claude/context-windows#1m-token-context-window)用于包含大型代码库的长会话。
 
 可用性因模型和计划而异。在 Max、Team 和 Enterprise 计划上，Opus 会自动升级到 1M 上下文，无需额外配置。这适用于 Team Standard 和 Team Premium 席位。
 
-| 计划                    | Opus 4.6 with 1M context                                                                    | Sonnet 4.6 with 1M context                                                                  |
+| 计划                    | Opus with 1M context                                                                        | Sonnet with 1M context                                                                      |
 | --------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | Max、Team 和 Enterprise | 包含在订阅中                                                                                      | 需要[额外使用](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
 | Pro                   | 需要[额外使用](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) | 需要[额外使用](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
@@ -184,7 +231,7 @@ Opus 4.6 和 Sonnet 4.6 支持[100 万令牌上下文窗口](https://platform.cl
 /model sonnet[1m]
 
 # 或将 [1m] 附加到完整模型名称
-/model claude-opus-4-6[1m]
+/model claude-opus-4-7[1m]
 ```
 
 ## 检查您当前的模型
@@ -201,7 +248,7 @@ Opus 4.6 和 Sonnet 4.6 支持[100 万令牌上下文窗口](https://platform.cl
 此示例设置所有三个变量以使网关路由的 Opus 部署可选择：
 
 ```bash theme={null}
-export ANTHROPIC_CUSTOM_MODEL_OPTION="my-gateway/claude-opus-4-6"
+export ANTHROPIC_CUSTOM_MODEL_OPTION="my-gateway/claude-opus-4-7"
 export ANTHROPIC_CUSTOM_MODEL_OPTION_NAME="Opus via Gateway"
 export ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION="Custom deployment routed through the internal LLM gateway"
 ```
@@ -227,29 +274,29 @@ Claude Code 跳过对 `ANTHROPIC_CUSTOM_MODEL_OPTION` 中设置的模型 ID 的�
 
 通过 [Bedrock](/zh-CN/amazon-bedrock)、[Vertex AI](/zh-CN/google-vertex-ai) 或 [Foundry](/zh-CN/microsoft-foundry) 部署 Claude Code 时，在向用户推出前固定模型版本。
 
-不固定模型，Claude Code 会使用模型别名（`sonnet`、`opus`、`haiku`），这些别名会解析为最新版本。当 Anthropic 发布新模型时，其账户未启用新版本的用户会无声地中断。
+不固定模型，Claude Code 会使用模型别名（`sonnet`、`opus`、`haiku`），这些别名会解析为最新版本。当 Anthropic 发布新模型时，如果用户账户未启用新版本，Bedrock 和 Vertex AI 用户会看到通知并回退到该会话的先前版本，而 Foundry 用户会看到错误，因为 Foundry 没有等效的启动检查。
 
 <Warning>
-  在初始设置中将所有三个模型环境变量设置为特定版本 ID。跳过此步骤意味着 Claude Code 更新可能会在您没有任何操作的情况下破坏您的用户。
+  在初始设置中将所有三个模型环境变量设置为特定版本 ID。固定让您控制用户何时迁移到新模型。
 </Warning>
 
 对您的提供商使用以下环境变量和特定版本的模型 ID：
 
-| 提供商       | 示例                                                                      |
-| :-------- | :---------------------------------------------------------------------- |
-| Bedrock   | `export ANTHROPIC_DEFAULT_OPUS_MODEL='us.anthropic.claude-opus-4-6-v1'` |
-| Vertex AI | `export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6'`                 |
-| Foundry   | `export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6'`                 |
+| 提供商       | 示例                                                                   |
+| :-------- | :------------------------------------------------------------------- |
+| Bedrock   | `export ANTHROPIC_DEFAULT_OPUS_MODEL='us.anthropic.claude-opus-4-7'` |
+| Vertex AI | `export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7'`              |
+| Foundry   | `export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7'`              |
 
 对 `ANTHROPIC_DEFAULT_SONNET_MODEL` 和 `ANTHROPIC_DEFAULT_HAIKU_MODEL` 应用相同的模式。有关所有提供商的当前和旧版模型 ID，请参阅[模型概览](https://platform.claude.com/docs/zh-CN/about-claude/models/overview)。要将用户升级到新模型版本，请更新这些环境变量并重新部署。
 
 要为固定模型启用[扩展上下文](#extended-context)，请在 `ANTHROPIC_DEFAULT_OPUS_MODEL` 或 `ANTHROPIC_DEFAULT_SONNET_MODEL` 中的模型 ID 后附加 `[1m]`：
 
 ```bash theme={null}
-export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6[1m]'
+export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7[1m]'
 ```
 
-`[1m]` 后缀将 1M 上下文窗口应用于该别名的所有使用，包括 `opusplan`。Claude Code 在将模型 ID 发送到您的提供商之前会删除该后缀。仅当底层模型支持 1M 上下文（如 Opus 4.6 或 Sonnet 4.6）时才附加 `[1m]`。
+`[1m]` 后缀将 1M 上下文窗口应用于该别名的所有使用，包括 `opusplan`。Claude Code 在将模型 ID 发送到您的提供商之前会删除该后缀。仅当底层模型支持 1M 上下文（如 Opus 4.7 或 Sonnet 4.6）时才附加 `[1m]`。
 
 <Note>
   使用第三方提供商时，`settings.availableModels` 允许列表仍然适用。过滤与模型别名（`opus`、`sonnet`、`haiku`）匹配，而不是提供商特定的模型 ID。
@@ -267,13 +314,14 @@ export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6[1m]'
 | `ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION`            | 固定 Opus 模型在 `/model` 选择器中的显示描述。未设置时默认为 `Custom Opus model` |
 | `ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES` | 固定 Opus 模型支持的功能的逗号分隔列表                                     |
 
-相同的 `_NAME`、`_DESCRIPTION` 和 `_SUPPORTED_CAPABILITIES` 后缀可用于 `ANTHROPIC_DEFAULT_SONNET_MODEL` 和 `ANTHROPIC_DEFAULT_HAIKU_MODEL`。
+相同的 `_NAME`、`_DESCRIPTION` 和 `_SUPPORTED_CAPABILITIES` 后缀可用于 `ANTHROPIC_DEFAULT_SONNET_MODEL`、`ANTHROPIC_DEFAULT_HAIKU_MODEL` 和 `ANTHROPIC_CUSTOM_MODEL_OPTION`。
 
 Claude Code 通过将模型 ID 与已知模式匹配来启用[工作量级别](#adjust-effort-level)和[扩展思考](/zh-CN/common-workflows#use-extended-thinking-thinking-mode)等功能。提供商特定的 ID（如 Bedrock ARN 或自定义部署名称）通常与这些模式不匹配，导致支持的功能被禁用。设置 `_SUPPORTED_CAPABILITIES` 以告诉 Claude Code 模型实际支持的功能：
 
 | 功能值                    | 启用                                                                  |
 | ---------------------- | ------------------------------------------------------------------- |
 | `effort`               | [工作量级别](#adjust-effort-level)和 `/effort` 命令                         |
+| `xhigh_effort`         | {/* min-version: 2.1.111 */}`xhigh` 工作量级别                           |
 | `max_effort`           | `max` 工作量级别                                                         |
 | `thinking`             | [扩展思考](/zh-CN/common-workflows#use-extended-thinking-thinking-mode) |
 | `adaptive_thinking`    | 根据任务复杂性动态分配思考的自适应推理                                                 |
@@ -286,8 +334,8 @@ Claude Code 通过将模型 ID 与已知模式匹配来启用[工作量级别](#
 ```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='arn:aws:bedrock:us-east-1:123456789012:custom-model/abc'
 export ANTHROPIC_DEFAULT_OPUS_MODEL_NAME='Opus via Bedrock'
-export ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION='Opus 4.6 routed through a Bedrock custom endpoint'
-export ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES='effort,max_effort,thinking,adaptive_thinking,interleaved_thinking'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION='Opus 4.7 routed through a Bedrock custom endpoint'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES='effort,xhigh_effort,max_effort,thinking,adaptive_thinking,interleaved_thinking'
 ```
 
 ### 按版本覆盖模型 ID
@@ -303,8 +351,8 @@ export ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES='effort,max_effort,th
 ```json theme={null}
 {
   "modelOverrides": {
-    "claude-opus-4-6": "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/opus-prod",
-    "claude-opus-4-5-20251101": "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/opus-45-prod",
+    "claude-opus-4-7": "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/opus-prod",
+    "claude-opus-4-6": "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/opus-46-prod",
     "claude-sonnet-4-6": "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/sonnet-prod"
   }
 }

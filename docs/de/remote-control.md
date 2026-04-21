@@ -14,7 +14,7 @@ Remote Control verbindet [claude.ai/code](https://claude.ai/code) oder die Claud
 
 Wenn Sie eine Remote Control-Sitzung auf Ihrem Computer starten, wird Claude die ganze Zeit lokal ausgeführt, sodass nichts in die Cloud verschoben wird. Mit Remote Control können Sie:
 
-* **Ihre vollständige lokale Umgebung remote nutzen**: Ihr Dateisystem, [MCP servers](/de/mcp), Tools und Projektkonfiguration bleiben verfügbar
+* **Ihre vollständige lokale Umgebung remote nutzen**: Ihr Dateisystem, [MCP servers](/de/mcp), Tools und Projektkonfiguration bleiben verfügbar, und durch Eingabe von `@` werden Dateipfade aus Ihrem lokalen Projekt automatisch vervollständigt
 * **Von beiden Oberflächen gleichzeitig arbeiten**: Das Gespräch bleibt auf allen verbundenen Geräten synchronisiert, sodass Sie Nachrichten von Ihrem Terminal, Browser und Telefon austauschbar senden können
 * **Unterbrechungen überstehen**: Wenn Ihr Laptop in den Ruhezustand wechselt oder Ihr Netzwerk ausfällt, wird die Sitzung automatisch wiederhergestellt, wenn Ihr Computer wieder online ist
 
@@ -188,6 +188,7 @@ Wenn Benachrichtigungen nicht ankommen:
 * **Lokaler Prozess muss weiterhin ausgeführt werden**: Remote Control wird als lokaler Prozess ausgeführt. Wenn Sie das Terminal schließen, VS Code beenden oder den `claude`-Prozess anderweitig beenden, endet die Sitzung.
 * **Längerer Netzwerkausfall**: Wenn Ihr Computer aktiv ist, aber länger als etwa 10 Minuten das Netzwerk nicht erreichen kann, läuft die Sitzung ab und der Prozess wird beendet. Führen Sie `claude remote-control` erneut aus, um eine neue Sitzung zu starten.
 * **Ultraplan trennt Remote Control**: Das Starten einer [ultraplan](/de/ultraplan)-Sitzung trennt jede aktive Remote Control-Sitzung, da beide Funktionen die Schnittstelle claude.ai/code belegen und nur eine gleichzeitig verbunden sein kann.
+* **Einige Befehle sind nur lokal verfügbar**: Befehle, die eine interaktive Auswahl im Terminal öffnen, wie `/mcp`, `/plugin` oder `/resume`, funktionieren nur über die lokale CLI. Befehle, die Textausgabe erzeugen, einschließlich `/compact`, `/clear`, `/context`, `/cost`, `/exit`, `/extra-usage`, `/recap` und `/reload-plugins`, funktionieren von mobil und Web aus.
 
 ## Fehlerbehebung
 

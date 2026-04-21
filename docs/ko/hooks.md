@@ -14,11 +14,11 @@ Hook은 Claude Code의 수명 주기에서 특정 지점에 자동으로 실행�
 
 ## Hook 수명 주기
 
-Hook은 Claude Code 세션 중 특정 지점에서 실행됩니다. 이벤트가 발생하고 matcher가 일치하면 Claude Code는 이벤트에 대한 JSON 컨텍스트를 hook 핸들러에 전달합니다. 명령 hook의 경우 입력은 stdin에 도착합니다. HTTP hook의 경우 POST 요청 본문으로 도착합니다. 그러면 핸들러는 입력을 검사하고 조치를 취한 후 선택적으로 결정을 반환할 수 있습니다. 일부 이벤트는 세션당 한 번 발생하고 다른 이벤트는 에이전트 루프 내에서 반복적으로 발생합니다:
+Hook은 Claude Code 세션 중 특정 지점에서 실행됩니다. 이벤트가 발생하고 matcher가 일치하면 Claude Code는 이벤트에 대한 JSON 컨텍스트를 hook 핸들러에 전달합니다. 명령 hook의 경우 입력은 stdin에 도착합니다. HTTP hook의 경우 POST 요청 본문으로 도착합니다. 그러면 핸들러는 입력을 검사하고 조치를 취한 후 선택적으로 결정을 반환할 수 있습니다. 이벤트는 세 가지 주기로 발생합니다: 세션당 한 번 (`SessionStart`, `SessionEnd`), 턴당 한 번 (`UserPromptSubmit`, `Stop`, `StopFailure`), 에이전트 루프 내의 모든 도구 호출에서 (`PreToolUse`, `PostToolUse`):
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/UMJp-WgTWngzO609/images/hooks-lifecycle.svg?fit=max&auto=format&n=UMJp-WgTWngzO609&q=85&s=3f4de67df216c87dc313943b32c15f62" alt="SessionStart에서 에이전트 루프를 거쳐 SessionEnd까지의 hook 시퀀스를 보여주는 hook 수명 주기 다이어그램 (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCreated, TaskCompleted), PostCompact 및 SessionEnd, Elicitation 및 ElicitationResult는 MCP 도구 실행 내에 중첩되고 WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged, FileChanged는 독립적인 비동기 이벤트" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/UMJp-WgTWngzO609/images/hooks-lifecycle.svg?fit=max&auto=format&n=UMJp-WgTWngzO609&q=85&s=3f4de67df216c87dc313943b32c15f62" alt="SessionStart에서 시작하여 턴당 루프 (UserPromptSubmit, 중첩된 에이전트 루프 (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCreated, TaskCompleted), Stop 또는 StopFailure), TeammateIdle, PreCompact, PostCompact, SessionEnd를 거쳐 진행되는 hook 수명 주기 다이어그램. Elicitation 및 ElicitationResult는 MCP 도구 실행 내에 중첩되고, PermissionDenied는 PermissionRequest의 부분 분기이며, WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged, FileChanged는 독립적인 비동기 이벤트" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
@@ -55,7 +55,7 @@ Hook은 Claude Code 세션 중 특정 지점에서 실행됩니다. 이벤트가
 
 ### Hook이 어떻게 해결되는지
 
-이러한 부분들이 어떻게 함께 작동하는지 보려면 파괴적인 셸 명령을 차단하는 이 `PreToolUse` hook을 고려하세요. `matcher`는 Bash 도구 호출로 좁혀지고 `if` 조건은 `rm`으로 시작하는 명령으로 더 좁혀지므로 `block-rm.sh`는 두 필터가 모두 일치할 때만 생성됩니다:
+이러한 부분들이 어떻게 함께 작동하는지 보려면 파괴적인 셸 명령을 차단하는 이 `PreToolUse` hook을 고려하세요. `matcher`는 Bash 도구 호출로 좁혀지고 `if` 조건은 `rm *`과 일치하는 Bash 부명령으로 더 좁혀지므로 `block-rm.sh`는 두 필터가 모두 일치할 때만 생성됩니다:
 
 ```json theme={null}
 {
@@ -116,7 +116,7 @@ fi
   </Step>
 
   <Step title="If 조건 확인">
-    `if` 조건 `"Bash(rm *)"`은 명령이 `rm`으로 시작하므로 일치하여 이 핸들러가 생성됩니다. 명령이 `npm test`였다면 `if` 검사가 실패하고 `block-rm.sh`는 절대 실행되지 않아 프로세스 생성 오버헤드를 피합니다. `if` 필드는 선택 사항입니다. 없으면 일치한 그룹의 모든 핸들러가 실행됩니다.
+    `if` 조건 `"Bash(rm *)"`은 `rm -rf /tmp/build`가 `rm *`과 일치하는 부명령이므로 일치하여 이 핸들러가 생성됩니다. 명령이 `npm test`였다면 `if` 검사가 실패하고 `block-rm.sh`는 절대 실행되지 않아 프로세스 생성 오버헤드를 피합니다. `if` 필드는 선택 사항입니다. 없으면 일치한 그룹의 모든 핸들러가 실행됩니다.
   </Step>
 
   <Step title="Hook 핸들러 실행">
@@ -169,31 +169,41 @@ hook을 정의하는 위치는 그 범위를 결정합니다:
 | [Plugin](/ko/plugins) `hooks/hooks.json`                   | plugin이 활성화되었을 때  | 예, plugin과 함께 번들됨 |
 | [Skill](/ko/skills) 또는 [agent](/ko/sub-agents) frontmatter | 컴포넌트가 활성화되어 있는 동안 | 예, 컴포넌트 파일에서 정의됨  |
 
-설정 파일 해결에 대한 자세한 내용은 [설정](/ko/settings)을 참조하세요. 엔터프라이즈 관리자는 `allowManagedHooksOnly`를 사용하여 사용자, 프로젝트 및 plugin hook을 차단할 수 있습니다. [Hook 구성](/ko/settings#hook-configuration)을 참조하세요.
+설정 파일 해결에 대한 자세한 내용은 [설정](/ko/settings)을 참조하세요. 엔터프라이즈 관리자는 `allowManagedHooksOnly`를 사용하여 사용자, 프로젝트 및 plugin hook을 차단할 수 있습니다. 관리형 설정 `enabledPlugins`에서 강제 활성화된 plugin의 hook은 면제되므로 관리자는 조직 마켓플레이스를 통해 검증된 hook을 배포할 수 있습니다. [Hook 구성](/ko/settings#hook-configuration)을 참조하세요.
 
 ### Matcher 패턴
 
-`matcher` 필드는 hook이 발생할 때를 필터링하는 정규식 문자열입니다. `"*"`, `""` 또는 `matcher`를 완전히 생략하여 모든 발생과 일치시킵니다. 각 이벤트 유형은 다른 필드에서 일치합니다:
+`matcher` 필드는 hook이 발생할 때를 필터링합니다. matcher가 평가되는 방식은 포함된 문자에 따라 다릅니다:
 
-| 이벤트                                                                                                            | Matcher가 필터링하는 것       | 예제 matcher 값                                                                                                              |
-| :------------------------------------------------------------------------------------------------------------- | :--------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                     | 도구 이름                  | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
-| `SessionStart`                                                                                                 | 세션이 시작된 방식             | `startup`, `resume`, `clear`, `compact`                                                                                   |
-| `SessionEnd`                                                                                                   | 세션이 종료된 이유             | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                                 | 알림 유형                  | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                                | 에이전트 유형                | `Bash`, `Explore`, `Plan` 또는 사용자 정의 에이전트 이름                                                                               |
-| `PreCompact`, `PostCompact`                                                                                    | 압축을 트리거한 것             | `manual`, `auto`                                                                                                          |
-| `SubagentStop`                                                                                                 | 에이전트 유형                | `SubagentStart`와 동일한 값                                                                                                    |
-| `ConfigChange`                                                                                                 | 구성 소스                  | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
-| `CwdChanged`                                                                                                   | matcher 지원 없음          | 모든 디렉토리 변경에서 항상 발생                                                                                                        |
-| `FileChanged`                                                                                                  | 파일명 (변경된 파일의 basename) | `.envrc`, `.env`, 감시하려는 모든 파일명                                                                                            |
-| `StopFailure`                                                                                                  | 오류 유형                  | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                                           | 로드 이유                  | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
-| `Elicitation`                                                                                                  | MCP 서버 이름              | 구성된 MCP 서버 이름                                                                                                             |
-| `ElicitationResult`                                                                                            | MCP 서버 이름              | `Elicitation`과 동일한 값                                                                                                      |
-| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | matcher 지원 없음          | 모든 발생에서 항상 발생                                                                                                             |
+| Matcher 값             | 평가 대상                           | 예제                                                                                |
+| :-------------------- | :------------------------------ | :-------------------------------------------------------------------------------- |
+| `"*"`, `""` 또는 생략됨    | 모두 일치                           | 이벤트의 모든 발생에서 발생                                                                   |
+| 문자, 숫자, `_`, `\|`만 포함 | 정확한 문자열 또는 `\|`로 구분된 정확한 문자열 목록 | `Bash`는 Bash 도구만 일치; `Edit\|Write`는 두 도구 중 하나와 정확히 일치                             |
+| 다른 문자 포함              | JavaScript 정규식                  | `^Notebook`은 Notebook으로 시작하는 모든 도구와 일치; `mcp__memory__.*`는 `memory` 서버의 모든 도구와 일치 |
 
-matcher는 정규식이므로 `Edit|Write`는 두 도구와 일치하고 `Notebook.*`는 Notebook으로 시작하는 모든 도구와 일치합니다. matcher는 Claude Code가 stdin의 hook에 전송하는 [JSON 입력](#hook-input-and-output)의 필드에 대해 실행됩니다. 도구 이벤트의 경우 해당 필드는 `tool_name`입니다. 각 [hook 이벤트](#hook-events) 섹션에서는 해당 이벤트의 전체 matcher 값 집합과 입력 스키마를 나열합니다.
+`FileChanged` 이벤트는 감시 목록을 구축할 때 이러한 규칙을 따르지 않습니다. [FileChanged](#filechanged)를 참조하세요.
+
+각 이벤트 유형은 다른 필드에서 일치합니다:
+
+| 이벤트                                                                                                            | Matcher가 필터링하는 것                             | 예제 matcher 값                                                                                                              |
+| :------------------------------------------------------------------------------------------------------------- | :------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                     | 도구 이름                                        | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `SessionStart`                                                                                                 | 세션이 시작된 방식                                   | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `SessionEnd`                                                                                                   | 세션이 종료된 이유                                   | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
+| `Notification`                                                                                                 | 알림 유형                                        | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
+| `SubagentStart`                                                                                                | 에이전트 유형                                      | `Bash`, `Explore`, `Plan` 또는 사용자 정의 에이전트 이름                                                                               |
+| `PreCompact`, `PostCompact`                                                                                    | 압축을 트리거한 것                                   | `manual`, `auto`                                                                                                          |
+| `SubagentStop`                                                                                                 | 에이전트 유형                                      | `SubagentStart`와 동일한 값                                                                                                    |
+| `ConfigChange`                                                                                                 | 구성 소스                                        | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
+| `CwdChanged`                                                                                                   | matcher 지원 없음                                | 모든 디렉토리 변경에서 항상 발생                                                                                                        |
+| `FileChanged`                                                                                                  | 감시할 리터럴 파일명 ([FileChanged](#filechanged) 참조) | `.envrc\|.env`                                                                                                            |
+| `StopFailure`                                                                                                  | 오류 유형                                        | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                           | 로드 이유                                        | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `Elicitation`                                                                                                  | MCP 서버 이름                                    | 구성된 MCP 서버 이름                                                                                                             |
+| `ElicitationResult`                                                                                            | MCP 서버 이름                                    | `Elicitation`과 동일한 값                                                                                                      |
+| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | matcher 지원 없음                                | 모든 발생에서 항상 발생                                                                                                             |
+
+matcher는 Claude Code가 stdin의 hook에 전송하는 [JSON 입력](#hook-input-and-output)의 필드에 대해 실행됩니다. 도구 이벤트의 경우 해당 필드는 `tool_name`입니다. 각 [hook 이벤트](#hook-events) 섹션에서는 해당 이벤트의 전체 matcher 값 집합과 입력 스키마를 나열합니다.
 
 이 예제는 Claude가 파일을 쓰거나 편집할 때만 linting 스크립트를 실행합니다:
 
@@ -229,10 +239,10 @@ MCP 도구는 `mcp__<server>__<tool>` 명명 패턴을 따릅니다. 예를 들�
 * `mcp__filesystem__read_file`: Filesystem 서버의 read file 도구
 * `mcp__github__search_repositories`: GitHub 서버의 search 도구
 
-정규식 패턴을 사용하여 특정 MCP 도구 또는 도구 그룹을 대상으로 합니다:
+서버의 모든 도구와 일치하려면 서버 접두사에 `.*`를 추가합니다. `.*`는 필수입니다: `mcp__memory`와 같은 matcher는 문자와 밑줄만 포함하므로 정확한 문자열로 비교되고 도구와 일치하지 않습니다.
 
 * `mcp__memory__.*`는 `memory` 서버의 모든 도구와 일치합니다
-* `mcp__.*__write.*`는 모든 서버의 "write"를 포함하는 모든 도구와 일치합니다
+* `mcp__.*__write.*`는 모든 서버의 이름이 `write`로 시작하는 모든 도구와 일치합니다
 
 이 예제는 모든 memory 서버 작업을 기록하고 모든 MCP 서버의 쓰기 작업을 검증합니다:
 
@@ -270,29 +280,32 @@ MCP 도구는 `mcp__<server>__<tool>` 명명 패턴을 따릅니다. 예를 들�
 * **[명령 hook](#command-hook-fields)** (`type: "command"`): 셸 명령을 실행합니다. 스크립트는 이벤트의 [JSON 입력](#hook-input-and-output)을 stdin에서 받고 종료 코드와 stdout을 통해 결과를 다시 전달합니다.
 * **[HTTP hook](#http-hook-fields)** (`type: "http"`): 이벤트의 JSON 입력을 HTTP POST 요청으로 URL에 전송합니다. 엔드포인트는 명령 hook과 동일한 [JSON 출력 형식](#json-output)을 사용하여 응답 본문을 통해 결과를 다시 전달합니다.
 * **[프롬프트 hook](#prompt-and-agent-hook-fields)** (`type: "prompt"`): Claude 모델에 단일 턴 평가를 위한 프롬프트를 전송합니다. 모델은 yes/no 결정을 JSON으로 반환합니다. [프롬프트 기반 hook](#prompt-based-hooks)을 참조하세요.
-* **[에이전트 hook](#prompt-and-agent-hook-fields)** (`type: "agent"`): Read, Grep, Glob과 같은 도구를 사용하여 결정을 반환하기 전에 조건을 확인할 수 있는 subagent를 생성합니다. [에이전트 기반 hook](#agent-based-hooks)을 참조하세요.
+* **[에이전트 hook](#prompt-and-agent-hook-fields)** (`type: "agent"`): Read, Grep, Glob과 같은 도구를 사용하여 결정을 반환하기 전에 조건을 확인할 수 있는 subagent를 생성합니다. 에이전트 hook은 실험적이며 변경될 수 있습니다. [에이전트 기반 hook](#agent-based-hooks)을 참조하세요.
 
 #### 공통 필드
 
 이러한 필드는 모든 hook 유형에 적용됩니다:
 
-| 필드              | 필수  | 설명                                                                                                                                                                                                                                                                                                      |
-| :-------------- | :-- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `type`          | 예   | `"command"`, `"http"`, `"prompt"` 또는 `"agent"`                                                                                                                                                                                                                                                          |
-| `if`            | 아니오 | `"Bash(git *)"` 또는 `"Edit(*.ts)"`와 같은 권한 규칙 구문을 사용하여 이 hook이 실행될 때를 필터링합니다. hook은 도구 호출이 패턴과 일치할 때만 생성됩니다. 도구 이벤트에서만 평가됩니다: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`. 다른 이벤트에서는 `if`가 설정된 hook이 절대 실행되지 않습니다. [권한 규칙](/ko/permissions)과 동일한 구문을 사용합니다 |
-| `timeout`       | 아니오 | 취소하기 전 초 단위. 기본값: 명령의 경우 600, 프롬프트의 경우 30, 에이전트의 경우 60                                                                                                                                                                                                                                                  |
-| `statusMessage` | 아니오 | hook이 실행되는 동안 표시되는 사용자 정의 스피너 메시지                                                                                                                                                                                                                                                                       |
-| `once`          | 아니오 | `true`인 경우 세션당 한 번만 실행된 후 제거됩니다. Skill만 해당, 에이전트 아님. [Skill 및 에이전트의 Hook](#hooks-in-skills-and-agents) 참조                                                                                                                                                                                               |
+| 필드              | 필수  | 설명                                                                                                                                                                                                                                                                                  |
+| :-------------- | :-- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`          | 예   | `"command"`, `"http"`, `"prompt"` 또는 `"agent"`                                                                                                                                                                                                                                      |
+| `if`            | 아니오 | `"Bash(git *)"` 또는 `"Edit(*.ts)"`와 같은 권한 규칙 구문을 사용하여 이 hook이 실행될 때를 필터링합니다. hook은 도구 호출이 패턴과 일치할 때만 생성됩니다. 도구 이벤트에서만 평가됩니다: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`. 다른 이벤트에서는 `if`가 설정된 hook이 절대 실행되지 않습니다. [권한 규칙](/ko/permissions)과 동일한 구문을 사용합니다 |
+| `timeout`       | 아니오 | 취소하기 전 초 단위. 기본값: 명령의 경우 600, 프롬프트의 경우 30, 에이전트의 경우 60                                                                                                                                                                                                                              |
+| `statusMessage` | 아니오 | hook이 실행되는 동안 표시되는 사용자 정의 스피너 메시지                                                                                                                                                                                                                                                   |
+| `once`          | 아니오 | `true`인 경우 세션당 한 번만 실행된 후 제거됩니다. [Skill 및 에이전트의 Hook](#hooks-in-skills-and-agents)에서만 적용됨; 설정 파일 및 에이전트 frontmatter에서는 무시됨                                                                                                                                                          |
+
+`if` 필드는 정확히 하나의 권한 규칙을 보유합니다. 규칙을 결합하기 위한 `&&`, `||` 또는 목록 구문이 없습니다. 여러 조건을 적용하려면 각각에 대해 별도의 hook 핸들러를 정의합니다. Bash의 경우 규칙은 선행 `VAR=value` 할당이 제거된 후 도구 입력의 각 하위 명령에 대해 일치하므로 `if: "Bash(git push *)"` 는 `FOO=bar git push` 및 `npm test && git push` 모두와 일치합니다. hook은 모든 하위 명령이 일치할 때 실행되며 명령이 너무 복잡하여 구문 분석할 수 없을 때 항상 실행됩니다.
 
 #### 명령 hook 필드
 
 [공통 필드](#common-fields) 외에도 명령 hook은 이러한 필드를 허용합니다:
 
-| 필드        | 필수  | 설명                                                                                                                                                                                             |
-| :-------- | :-- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `command` | 예   | 실행할 셸 명령                                                                                                                                                                                       |
-| `async`   | 아니오 | `true`인 경우 차단하지 않고 백그라운드에서 실행됩니다. [백그라운드에서 hook 실행](#run-hooks-in-the-background) 참조                                                                                                           |
-| `shell`   | 아니오 | 이 hook에 사용할 셸. `"bash"` (기본값) 또는 `"powershell"`을 허용합니다. `"powershell"`을 설정하면 Windows에서 PowerShell을 통해 명령을 실행합니다. `CLAUDE_CODE_USE_POWERSHELL_TOOL`이 필요하지 않습니다. hook이 PowerShell을 직접 생성하기 때문입니다 |
+| 필드            | 필수  | 설명                                                                                                                                                                                             |
+| :------------ | :-- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `command`     | 예   | 실행할 셸 명령                                                                                                                                                                                       |
+| `async`       | 아니오 | `true`인 경우 차단하지 않고 백그라운드에서 실행됩니다. [백그라운드에서 hook 실행](#run-hooks-in-the-background) 참조                                                                                                           |
+| `asyncRewake` | 아니오 | `true`인 경우 백그라운드에서 실행되고 종료 코드 2에서 Claude를 깨웁니다. `async`를 의미합니다. hook의 stderr 또는 stderr이 비어 있으면 stdout이 Claude에 시스템 알림으로 표시되므로 장기 실행 백그라운드 실패에 반응할 수 있습니다                                       |
+| `shell`       | 아니오 | 이 hook에 사용할 셸. `"bash"` (기본값) 또는 `"powershell"`을 허용합니다. `"powershell"`을 설정하면 Windows에서 PowerShell을 통해 명령을 실행합니다. `CLAUDE_CODE_USE_POWERSHELL_TOOL`이 필요하지 않습니다. hook이 PowerShell을 직접 생성하기 때문입니다 |
 
 #### HTTP hook 필드
 
@@ -460,7 +473,7 @@ hook을 제거하려면 설정 JSON 파일에서 해당 항목을 삭제합니�
 
 ### 공통 입력 필드
 
-모든 hook 이벤트는 각 [hook 이벤트](#hook-events) 섹션에서 문서화된 이벤트 특정 필드 외에 이러한 필드를 JSON으로 받습니다. 명령 hook의 경우 이 JSON은 stdin을 통해 도착합니다. HTTP hook의 경우 POST 요청 본문으로 도착합니다.
+Hook 이벤트는 각 [hook 이벤트](#hook-events) 섹션에서 문서화된 이벤트 특정 필드 외에 이러한 필드를 JSON으로 받습니다. 명령 hook의 경우 이 JSON은 stdin을 통해 도착합니다. HTTP hook의 경우 POST 요청 본문으로 도착합니다.
 
 | 필드                | 설명                                                                                                                                                                                    |
 | :---------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -499,11 +512,11 @@ hook을 제거하려면 설정 JSON 파일에서 해당 항목을 삭제합니�
 
 hook 명령의 종료 코드는 Claude Code에 작업을 진행할지, 차단할지 또는 무시할지를 알려줍니다.
 
-**종료 0**은 성공을 의미합니다. Claude Code는 [JSON 출력 필드](#json-output)에 대해 stdout을 구문 분석합니다. JSON 출력은 종료 0에서만 처리됩니다. 대부분의 이벤트에서 stdout은 자세한 모드 (`Ctrl+O`)에서만 표시됩니다. 예외는 `UserPromptSubmit` 및 `SessionStart`이며, 여기서 stdout은 Claude가 보고 작용할 수 있는 컨텍스트로 추가됩니다.
+**종료 0**은 성공을 의미합니다. Claude Code는 [JSON 출력 필드](#json-output)에 대해 stdout을 구문 분석합니다. JSON 출력은 종료 0에서만 처리됩니다. 대부분의 이벤트에서 stdout은 디버그 로그에 기록되지만 트랜스크립트에는 표시되지 않습니다. 예외는 `UserPromptSubmit` 및 `SessionStart`이며, 여기서 stdout은 Claude가 보고 작용할 수 있는 컨텍스트로 추가됩니다.
 
 **종료 2**는 차단 오류를 의미합니다. Claude Code는 stdout과 그 안의 JSON을 무시합니다. 대신 stderr 텍스트가 Claude에 오류 메시지로 피드백됩니다. 효과는 이벤트에 따라 다릅니다: `PreToolUse`는 도구 호출을 차단하고 `UserPromptSubmit`은 프롬프트를 거부합니다. 전체 목록은 [이벤트별 종료 코드 2 동작](#exit-code-2-behavior-per-event)을 참조하세요.
 
-**다른 종료 코드**는 차단하지 않는 오류입니다. stderr는 자세한 모드 (`Ctrl+O`)에서 표시되고 실행이 계속됩니다.
+**다른 종료 코드**는 대부분의 hook 이벤트에 대한 차단하지 않는 오류입니다. 트랜스크립트는 `<hook name> hook error` 알림을 표시하고 stderr의 첫 번째 줄을 표시하므로 `--debug` 없이도 원인을 식별할 수 있습니다. 실행이 계속되고 전체 stderr은 디버그 로그에 기록됩니다.
 
 예를 들어 위험한 Bash 명령을 차단하는 hook 명령 스크립트:
 
@@ -519,6 +532,10 @@ fi
 
 exit 0  # 성공: 도구 호출이 진행됨
 ```
+
+<Warning>
+  대부분의 hook 이벤트에서 종료 코드 2만 작업을 차단합니다. Claude Code는 종료 코드 1을 차단하지 않는 오류로 취급하고 작업을 진행합니다. 1이 기존 Unix 실패 코드이지만 말입니다. hook이 정책을 적용하려면 `exit 2`를 사용합니다. 예외는 `WorktreeCreate`이며, 0이 아닌 종료 코드는 worktree 생성을 중단합니다.
+</Warning>
 
 #### 이벤트별 종료 코드 2 동작
 
@@ -545,7 +562,7 @@ exit 0  # 성공: 도구 호출이 진행됨
 | `SessionEnd`         | 아니오    | 사용자에게만 stderr을 표시합니다                                                                               |
 | `CwdChanged`         | 아니오    | 사용자에게만 stderr을 표시합니다                                                                               |
 | `FileChanged`        | 아니오    | 사용자에게만 stderr을 표시합니다                                                                               |
-| `PreCompact`         | 아니오    | 사용자에게만 stderr을 표시합니다                                                                               |
+| `PreCompact`         | 예      | 압축을 차단합니다                                                                                          |
 | `PostCompact`        | 아니오    | 사용자에게만 stderr을 표시합니다                                                                               |
 | `Elicitation`        | 예      | elicitation을 거부합니다                                                                                 |
 | `ElicitationResult`  | 예      | 응답을 차단합니다 (작업이 거부됨)                                                                                |
@@ -587,7 +604,7 @@ JSON 객체는 세 가지 종류의 필드를 지원합니다:
 | :--------------- | :------ | :----------------------------------------------------------------- |
 | `continue`       | `true`  | `false`인 경우 hook이 실행된 후 Claude가 완전히 중지됩니다. 모든 이벤트 특정 결정 필드보다 우선합니다 |
 | `stopReason`     | 없음      | `continue`가 `false`일 때 사용자에게 표시되는 메시지. Claude에는 표시되지 않음            |
-| `suppressOutput` | `false` | `true`인 경우 자세한 모드 출력에서 stdout을 숨깁니다                                |
+| `suppressOutput` | `false` | `true`인 경우 디버그 로그에서 stdout을 숨깁니다                                   |
 | `systemMessage`  | 없음      | 사용자에게 표시되는 경고 메시지                                                  |
 
 Claude를 이벤트 유형과 관계없이 완전히 중지하려면:
@@ -600,23 +617,23 @@ Claude를 이벤트 유형과 관계없이 완전히 중지하려면:
 
 모든 이벤트가 JSON을 통해 동작을 차단하거나 제어하는 것을 지원하는 것은 아닙니다. 그렇게 하는 이벤트는 각각 다른 필드 집합을 사용하여 해당 결정을 표현합니다. hook을 작성하기 전에 이 표를 빠른 참조로 사용하세요:
 
-| 이벤트                                                                                                                         | 결정 패턴                      | 주요 필드                                                                                                                  |
-| :-------------------------------------------------------------------------------------------------------------------------- | :------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
-| UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange                                         | 최상위 `decision`             | `decision: "block"`, `reason`                                                                                          |
-| TeammateIdle, TaskCreated, TaskCompleted                                                                                    | 종료 코드 또는 `continue: false` | 종료 코드 2는 stderr 피드백으로 작업을 차단합니다. JSON `{"continue": false, "stopReason": "..."}` 또한 팀원을 완전히 중지하여 `Stop` hook 동작과 일치합니다 |
-| PreToolUse                                                                                                                  | `hookSpecificOutput`       | `permissionDecision` (allow/deny/ask/defer), `permissionDecisionReason`                                                |
-| PermissionRequest                                                                                                           | `hookSpecificOutput`       | `decision.behavior` (allow/deny)                                                                                       |
-| PermissionDenied                                                                                                            | `hookSpecificOutput`       | `retry: true`는 모델이 거부된 도구 호출을 재시도할 수 있음을 알립니다                                                                          |
-| WorktreeCreate                                                                                                              | 경로 반환                      | 명령 hook은 stdout에 경로를 인쇄합니다; HTTP hook은 `hookSpecificOutput.worktreePath`를 반환합니다. hook 실패 또는 누락된 경로는 생성을 실패합니다          |
-| Elicitation                                                                                                                 | `hookSpecificOutput`       | `action` (accept/decline/cancel), `content` (form field values for accept)                                             |
-| ElicitationResult                                                                                                           | `hookSpecificOutput`       | `action` (accept/decline/cancel), `content` (form field values override)                                               |
-| WorktreeRemove, Notification, SessionEnd, PreCompact, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged | 없음                         | 결정 제어 없음. 로깅 또는 정리와 같은 부작용에 사용됨                                                                                        |
+| 이벤트                                                                                                             | 결정 패턴                      | 주요 필드                                                                                                                  |
+| :-------------------------------------------------------------------------------------------------------------- | :------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
+| UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange, PreCompact                 | 최상위 `decision`             | `decision: "block"`, `reason`                                                                                          |
+| TeammateIdle, TaskCreated, TaskCompleted                                                                        | 종료 코드 또는 `continue: false` | 종료 코드 2는 stderr 피드백으로 작업을 차단합니다. JSON `{"continue": false, "stopReason": "..."}` 또한 팀원을 완전히 중지하여 `Stop` hook 동작과 일치합니다 |
+| PreToolUse                                                                                                      | `hookSpecificOutput`       | `permissionDecision` (allow/deny/ask/defer), `permissionDecisionReason`                                                |
+| PermissionRequest                                                                                               | `hookSpecificOutput`       | `decision.behavior` (allow/deny)                                                                                       |
+| PermissionDenied                                                                                                | `hookSpecificOutput`       | `retry: true`는 모델이 거부된 도구 호출을 재시도할 수 있음을 알립니다                                                                          |
+| WorktreeCreate                                                                                                  | 경로 반환                      | 명령 hook은 stdout에 경로를 인쇄합니다; HTTP hook은 `hookSpecificOutput.worktreePath`를 반환합니다. hook 실패 또는 누락된 경로는 생성을 실패합니다          |
+| Elicitation                                                                                                     | `hookSpecificOutput`       | `action` (accept/decline/cancel), `content` (form field values for accept)                                             |
+| ElicitationResult                                                                                               | `hookSpecificOutput`       | `action` (accept/decline/cancel), `content` (form field values override)                                               |
+| WorktreeRemove, Notification, SessionEnd, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged | 없음                         | 결정 제어 없음. 로깅 또는 정리와 같은 부작용에 사용됨                                                                                        |
 
 다음은 각 패턴의 실제 예입니다:
 
 <Tabs>
   <Tab title="최상위 결정">
-    `UserPromptSubmit`, `PostToolUse`, `PostToolUseFailure`, `Stop`, `SubagentStop`, `ConfigChange`에서 사용됩니다. 유일한 값은 `"block"`입니다. 작업을 진행하도록 허용하려면 JSON에서 `decision`을 생략하거나 JSON 없이 종료 0으로 나갑니다:
+    `UserPromptSubmit`, `PostToolUse`, `PostToolUseFailure`, `Stop`, `SubagentStop`, `ConfigChange`, `PreCompact`에서 사용됩니다. 유일한 값은 `"block"`입니다. 작업을 진행하도록 허용하려면 JSON에서 `decision`을 생략하거나 JSON 없이 종료 0으로 나갑니다:
 
     ```json theme={null}
     {
@@ -822,11 +839,12 @@ InstructionsLoaded hook은 결정 제어가 없습니다. 명령 로드를 차�
 
 프롬프트를 차단하려면 `decision`을 `"block"`으로 설정한 JSON 객체를 반환합니다:
 
-| 필드                  | 설명                                                             |
-| :------------------ | :------------------------------------------------------------- |
-| `decision`          | `"block"`은 프롬프트가 처리되는 것을 방지하고 컨텍스트에서 지웁니다. 생략하여 프롬프트를 진행하도록 허용 |
-| `reason`            | `decision`이 `"block"`일 때 사용자에게 표시됩니다. 컨텍스트에 추가되지 않음            |
-| `additionalContext` | Claude의 컨텍스트에 추가되는 문자열                                         |
+| 필드                  | 설명                                                                         |
+| :------------------ | :------------------------------------------------------------------------- |
+| `decision`          | `"block"`은 프롬프트가 처리되는 것을 방지하고 컨텍스트에서 지웁니다. 생략하여 프롬프트를 진행하도록 허용             |
+| `reason`            | `decision`이 `"block"`일 때 사용자에게 표시됩니다. 컨텍스트에 추가되지 않음                        |
+| `additionalContext` | Claude의 컨텍스트에 추가되는 문자열                                                     |
+| `sessionTitle`      | 세션 제목을 설정합니다. `/rename`과 동일한 효과입니다. 프롬프트 내용을 기반으로 세션을 자동으로 이름 지정하는 데 사용합니다 |
 
 ```json theme={null}
 {
@@ -834,7 +852,8 @@ InstructionsLoaded hook은 결정 제어가 없습니다. 명령 로드를 차�
   "reason": "Explanation for decision",
   "hookSpecificOutput": {
     "hookEventName": "UserPromptSubmit",
-    "additionalContext": "My additional context here"
+    "additionalContext": "My additional context here",
+    "sessionTitle": "My session title"
   }
 }
 ```
@@ -1066,13 +1085,13 @@ PermissionRequest hook은 PreToolUse hook과 같은 `tool_name` 및 `tool_input`
 
 `PermissionRequest` hook은 권한 요청을 허용하거나 거부할 수 있습니다. 모든 hook에 사용 가능한 [JSON 출력 필드](#json-output) 외에도 hook 스크립트는 이러한 이벤트 특정 필드가 있는 `decision` 객체를 반환할 수 있습니다:
 
-| 필드                   | 설명                                                                                            |
-| :------------------- | :-------------------------------------------------------------------------------------------- |
-| `behavior`           | `"allow"`는 권한을 부여하고, `"deny"`는 거부합니다                                                          |
-| `updatedInput`       | `"allow"`만 해당: 실행 전에 도구의 입력 매개변수를 수정합니다. 전체 입력 객체를 바꾸므로 변경되지 않은 필드를 수정된 필드와 함께 포함합니다          |
-| `updatedPermissions` | `"allow"`만 해당: 적용할 [권한 업데이트 항목](#permission-update-entries) 배열, 예를 들어 허용 규칙 추가 또는 세션 권한 모드 변경 |
-| `message`            | `"deny"`만 해당: Claude에 권한이 거부된 이유를 알립니다                                                        |
-| `interrupt`          | `"deny"`만 해당: `true`인 경우 Claude를 중지합니다                                                        |
+| 필드                   | 설명                                                                                                                                                |
+| :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `behavior`           | `"allow"`는 권한을 부여하고, `"deny"`는 거부합니다. [권한 거부 및 요청 규칙](/ko/permissions#manage-permissions)은 여전히 평가되므로 hook이 `"allow"`를 반환해도 일치하는 거부 규칙을 재정의하지 않습니다 |
+| `updatedInput`       | `"allow"`만 해당: 실행 전에 도구의 입력 매개변수를 수정합니다. 전체 입력 객체를 바꾸므로 변경되지 않은 필드를 수정된 필드와 함께 포함합니다. 수정된 입력은 거부 및 요청 규칙에 대해 다시 평가됩니다                             |
+| `updatedPermissions` | `"allow"`만 해당: 적용할 [권한 업데이트 항목](#permission-update-entries) 배열, 예를 들어 허용 규칙 추가 또는 세션 권한 모드 변경                                                     |
+| `message`            | `"deny"`만 해당: Claude에 권한이 거부된 이유를 알립니다                                                                                                            |
+| `interrupt`          | `"deny"`만 해당: `true`인 경우 Claude를 중지합니다                                                                                                            |
 
 ```json theme={null}
 {
@@ -1100,6 +1119,10 @@ PermissionRequest hook은 PreToolUse hook과 같은 `tool_name` 및 `tool_input`
 | `setMode`           | `mode`, `destination`              | 권한 모드를 변경합니다. 유효한 모드는 `default`, `acceptEdits`, `dontAsk`, `bypassPermissions`, `plan`입니다                                                     |
 | `addDirectories`    | `directories`, `destination`       | 작업 디렉토리를 추가합니다. `directories`는 경로 문자열의 배열입니다                                                                                                  |
 | `removeDirectories` | `directories`, `destination`       | 작업 디렉토리를 제거합니다                                                                                                                                |
+
+<Note>
+  `setMode`와 `bypassPermissions`는 세션이 이미 bypass 모드를 사용 가능하게 시작된 경우에만 적용됩니다: `--dangerously-skip-permissions`, `--permission-mode bypassPermissions`, `--allow-dangerously-skip-permissions`, 또는 설정의 `permissions.defaultMode: "bypassPermissions"`, 그리고 모드가 [`permissions.disableBypassPermissionsMode`](/ko/permissions#managed-settings)에 의해 비활성화되지 않은 경우입니다. 그렇지 않으면 업데이트는 작동하지 않습니다. `bypassPermissions`는 `destination`과 관계없이 `defaultMode`로 절대 유지되지 않습니다.
+</Note>
 
 모든 항목의 `destination` 필드는 변경이 메모리에만 유지되는지 또는 설정 파일에 유지되는지를 결정합니다.
 
@@ -1491,7 +1514,7 @@ exit 0
 
 #### Stop 입력
 
-[공통 입력 필드](#common-input-fields) 외에도 Stop hook은 `stop_hook_active` 및 `last_assistant_message`를 받습니다. `stop_hook_active` 필드는 Claude Code가 이미 stop hook의 결과로 계속되고 있을 때 `true`입니다. 이 값을 확인하거나 트랜스크립트를  처리하여 Claude Code가 무한정 실행되는 것을 방지합니다. `last_assistant_message` 필드는 Claude의 최종 응답의 텍스트 내용을 포함하므로 hook은 트랜스크립트 파일을 구문 분석하지 않고도 액세스할 수 있습니다.
+[공통 입력 필드](#common-input-fields) 외에도 Stop hook은 `stop_hook_active` 및 `last_assistant_message`를 받습니다. `stop_hook_active` 필드는 Claude Code가 이미 stop hook의 결과로 계속되고 있을 때 `true`입니다. 이 값을 확인하거나 트랜스크립트를 처리하여 Claude Code가 무한정 실행되는 것을 방지합니다. `last_assistant_message` 필드는 Claude의 최종 응답의 텍스트 내용을 포함하므로 hook은 트랜스크립트 파일을 구문 분석하지 않고도 액세스할 수 있습니다.
 
 ```json theme={null}
 {
@@ -1699,7 +1722,12 @@ CwdChanged hook은 결정 제어가 없습니다. 디렉토리 변경을 차단�
 
 ### FileChanged
 
-감시된 파일이 디스크에서 변경될 때 실행됩니다. hook 구성의 `matcher` 필드는 감시할 파일명을 제어합니다: 디렉토리 경로 없이 파일명 (예: `".envrc|.env"`)의 파이프로 구분된 목록입니다. 동일한 `matcher` 값은 파일이 변경될 때 실행할 hook을 필터링하는 데도 사용되며, 변경된 파일의 basename과 일치합니다. 프로젝트 구성 파일이 수정될 때 환경 변수를 다시 로드하는 데 유용합니다.
+감시된 파일이 디스크에서 변경될 때 실행됩니다. 유용합니다. 프로젝트 구성 파일이 수정될 때 환경 변수를 다시 로드하는 데 유용합니다.
+
+`matcher`는 이 이벤트에 대해 두 가지 역할을 합니다:
+
+* **감시 목록 구축**: 값은 `|`로 분할되고 각 세그먼트는 작업 디렉토리의 리터럴 파일명으로 등록되므로 `".envrc|.env"`는 정확히 이 두 파일을 감시합니다. 정규식 패턴은 여기서 유용하지 않습니다: `^\.env`와 같은 값은 `^\.env`라는 리터럴 이름의 파일을 감시합니다.
+* **hook 실행 필터링**: 감시된 파일이 변경되면 동일한 값이 표준 [matcher 규칙](#matcher-patterns)을 사용하여 변경된 파일의 basename에 대해 실행할 hook 그룹을 필터링합니다.
 
 FileChanged hook은 `CLAUDE_ENV_FILE`에 액세스할 수 있습니다. 해당 파일에 작성된 변수는 [SessionStart hook](#persist-environment-variables)과 마찬가지로 세션의 후속 Bash 명령에 유지됩니다. `type: "command"` hook만 지원됩니다.
 
@@ -1833,6 +1861,10 @@ matcher 값은 압축이 수동으로 또는 자동으로 트리거되었는지 
 | `manual` | `/compact`              |
 | `auto`   | 컨텍스트 윈도우가 가득 찼을 때 자동 압축 |
 
+종료 코드 2로 압축을 차단합니다. 수동 `/compact`의 경우 stderr 메시지가 사용자에게 표시됩니다. JSON `"decision": "block"`을 사용하여 차단할 수도 있습니다.
+
+자동 압축 차단은 발생 시기에 따라 다른 효과를 가집니다. 컨텍스트 제한 전에 압축이 사전에 트리거된 경우 Claude Code는 이를 건너뛰고 대화가 압축되지 않은 상태로 계속됩니다. 컨텍스트 제한 오류를 복구하기 위해 압축이 트리거된 경우 기본 오류가 표시되고 현재 요청이 실패합니다.
+
 #### PreCompact 입력
 
 [공통 입력 필드](#common-input-fields) 외에도 PreCompact hook은 `trigger` 및 `custom_instructions`를 받습니다. `manual`의 경우 `custom_instructions`는 사용자가 `/compact`에 전달하는 것을 포함합니다. `auto`의 경우 `custom_instructions`는 비어 있습니다.
@@ -1907,7 +1939,7 @@ hook 입력의 `reason` 필드는 세션이 종료된 이유를 나타냅니다:
 
 SessionEnd hook은 결정 제어가 없습니다. 세션 종료를 차단할 수 없지만 정리 작업을 수행할 수 있습니다.
 
-SessionEnd hook의 기본 시간 초과는 1.5초입니다. 이는 세션 종료, `/clear`, 대화형 `/resume`을 통한 세션 전환 모두에 적용됩니다. hook에 더 많은 시간이 필요하면 `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` 환경 변수를 밀리초 단위로 더 높은 값으로 설정합니다. 모든 hook별 `timeout` 설정도 이 값으로 제한됩니다.
+SessionEnd hook의 기본 시간 초과는 1.5초입니다. 이는 세션 종료, `/clear`, 대화형 `/resume`을 통한 세션 전환 모두에 적용됩니다. hook에 더 많은 시간이 필요하면 hook 구성에서 `timeout`을 설정합니다. 전체 예산은 설정 파일의 가장 높은 hook별 `timeout`으로 자동으로 올라가며, 최대 60초입니다. plugin 제공 hook에 설정된 시간 초과는 예산을 올리지 않습니다. 예산을 명시적으로 재정의하려면 `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` 환경 변수를 밀리초 단위로 설정합니다.
 
 ```bash theme={null}
 CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
@@ -2144,7 +2176,11 @@ LLM은 다음을 포함하는 JSON으로 응답해야 합니다:
 
 ## 에이전트 기반 hook
 
-에이전트 기반 hook (`type: "agent"`)은 프롬프트 기반 hook과 유사하지만 다중 턴 도구 액세스가 있습니다. 단일 LLM 호출 대신 에이전트 hook은 프롬프트와 hook의 JSON 입력을 가진 subagent를 생성합니다.
+<Warning>
+  에이전트 hook은 실험적입니다. 동작 및 구성은 향후 릴리스에서 변경될 수 있습니다. 프로덕션 워크플로우의 경우 [명령 hook](#command-hook-fields)을 선호합니다.
+</Warning>
+
+에이전트 기반 hook (`type: "agent"`)은 프롬프트 기반 hook과 유사하지만 다중 턴 도구 액세스가 있습니다. 단일 LLM 호출 대신 에이전트 hook은 파일을 읽고, 코드를 검색하고, 코드베이스를 검사하여 조건을 확인할 수 있는 subagent를 생성합니다. 에이전트 hook은 프롬프트 기반 hook과 동일한 이벤트를 지원합니다.
 
 ### 에이전트 hook이 어떻게 작동하는지
 
@@ -2155,7 +2191,7 @@ LLM은 다음을 포함하는 JSON으로 응답해야 합니다:
 3. 최대 50턴 후 subagent는 구조화된 `{ "ok": true/false }` 결정을 반환합니다
 4. Claude Code는 프롬프트 hook과 동일한 방식으로 결정을 처리합니다
 
-에이전트 hook은 검증이 실제 파일을 검사하거나 테스트 출력을 검사해야 할 때 유용하며, hook 입력 데이터만으로는 평가할 수 없습니다.
+에이전트 hook은 검증이 hook 입력 데이터만으로 평가하는 것이 아니라 실제 파일이나 테스트 출력을 검사해야 할 때 유용합니다.
 
 ### 에이전트 hook 구성
 
@@ -2286,7 +2322,7 @@ fi
 
 * `type: "command"` hook만 `async`를 지원합니다. 프롬프트 기반 hook은 비동기적으로 실행될 수 없습니다.
 * 비동기 hook은 도구 호출을 차단하거나 결정을 반환할 수 없습니다. hook이 완료될 때까지 트리거 작업이 이미 진행되었습니다.
-* Hook 출력은 다음 대화 턴에 전달됩니다. 세션이 유휴 상태이면 응답은 다음 사용자 상호 작용까지 기다립니다.
+* Hook 출력은 다음 대화 턴에 전달됩니다. 세션이 유휴 상태이면 응답은 다음 사용자 상호 작용까지 기다립니다. 예외: `asyncRewake` hook이 종료 코드 2로 종료되면 세션이 유휴 상태일 때도 Claude를 즉시 깨웁니다.
 * 각 실행은 별도의 백그라운드 프로세스를 생성합니다. 동일한 비동기 hook의 여러 발생에 걸쳐 중복 제거가 없습니다.
 
 ## 보안 고려 사항
@@ -2334,7 +2370,7 @@ Windows에서 개별 hook을 PowerShell에서 실행할 수 있습니다. 명령
 
 ## Hook 디버그
 
-`claude --debug`를 실행하여 hook 실행 세부 정보를 확인합니다. 여기에는 일치한 hook, 종료 코드, 출력이 포함됩니다.
+Hook 실행 세부 정보, 일치한 hook, 종료 코드, 전체 stdout 및 stderr은 디버그 로그 파일에 기록됩니다. `claude --debug-file <path>`로 Claude Code를 시작하여 로그를 알려진 위치에 작성하거나 `claude --debug`를 실행하고 `~/.claude/debug/<session-id>.txt`에서 로그를 읽습니다. `--debug` 플래그는 터미널에 인쇄하지 않습니다.
 
 ```text theme={null}
 [DEBUG] Executing hooks for PostToolUse:Write

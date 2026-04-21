@@ -4,27 +4,43 @@
 
 # 使用 Claude Code Desktop
 
-> 充分利用 Claude Code Desktop：電腦使用、從您的手機 Dispatch 會話、具有 Git 隔離的並行會話、視覺化差異檢查、應用程式預覽、PR 監控、連接器和企業配置。
+> 充分利用 Claude Code Desktop：具有 Git 隔離的並行會話、拖放窗格佈局、整合終端機和檔案編輯器、側邊聊天、電腦使用、從您的手機 Dispatch 會話、視覺化差異檢查、應用程式預覽、PR 監控、連接器和企業配置。
 
 Claude Desktop 應用程式中的 Code 標籤讓您可以透過圖形介面而不是終端機來使用 Claude Code。
 
+<CardGroup cols={2}>
+  <Card title="Download for macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
+    Universal build for Intel and Apple Silicon
+  </Card>
+
+  <Card title="Download for Windows" icon="windows" href="https://claude.ai/api/desktop/win32/x64/setup/latest/redirect?utm_source=claude_code&utm_medium=docs">
+    For x64 processors
+  </Card>
+</CardGroup>
+
+For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). Linux is not supported.
+
+安裝後，啟動 Claude，登入，然後點擊 **Code** 標籤。有關您第一個會話的完整逐步說明，請參閱[快速入門指南](/zh-TW/desktop-quickstart)。
+
 Desktop 在標準 Claude Code 體驗的基礎上增加了這些功能：
 
-* [視覺化差異檢查](#review-changes-with-diff-view)，包含內嵌註解
-* [即時應用程式預覽](#preview-your-app)，搭配開發伺服器
-* [電腦使用](#let-claude-use-your-computer)，在 macOS 上開啟應用程式並控制您的螢幕
-* [GitHub PR 監控](#monitor-pull-request-status)，具有自動修復和自動合併
 * [並行會話](#work-in-parallel-with-sessions)，具有自動 Git worktree 隔離
+* [拖放佈局](#arrange-your-workspace)，具有整合終端機、檔案編輯器和預覽窗格
+* [側邊聊天](#ask-a-side-question-without-derailing-the-session)，分支而不影響主執行緒
+* [視覺化差異檢查](#review-changes-with-diff-view)，具有內嵌註解
+* [即時應用程式預覽](#preview-your-app)，搭配開發伺服器、HTML 檔案和 PDF
+* [電腦使用](#let-claude-use-your-computer)，在 macOS 和 Windows 上開啟應用程式並控制您的螢幕
+* [GitHub PR 監控](#monitor-pull-request-status)，具有自動修復、自動合併和自動存檔
 * [Dispatch](#sessions-from-dispatch) 整合：從您的手機傳送任務，在此處取得會話
-* [排程任務](#schedule-recurring-tasks)，按照定期排程執行 Claude
+* [排程任務](/zh-TW/desktop-scheduled-tasks)，按照定期排程執行 Claude
 * [連接器](#connect-external-tools)，用於 GitHub、Slack、Linear 等
 * 本機、[SSH](#ssh-sessions) 和[雲端](#run-long-running-tasks-remotely)環境
 
-<Tip>
-  初次使用 Desktop？從[快速入門](/zh-TW/desktop-quickstart)開始安裝應用程式並進行第一次編輯。
-</Tip>
+<Note>
+  本頁面描述的工作區佈局、終端機、檔案編輯器、側邊聊天和檢視模式需要 Claude Desktop v1.2581.0 或更新版本。在 macOS 上開啟 **Claude → Check for Updates**，或在 Windows 上開啟 **Help → Check for Updates** 以更新。
+</Note>
 
-本頁涵蓋[使用程式碼](#work-with-code)、[電腦使用](#let-claude-use-your-computer)、[管理會話](#manage-sessions)、[擴展 Claude Code](#extend-claude-code)、[排程任務](#schedule-recurring-tasks)和[配置](#environment-configuration)。它還包括 [CLI 比較](#coming-from-the-cli)和[疑難排解](#troubleshooting)。
+本頁涵蓋[使用程式碼](#work-with-code)、[安排您的工作區](#arrange-your-workspace)、[電腦使用](#let-claude-use-your-computer)、[管理會話](#manage-sessions)、[擴展 Claude Code](#extend-claude-code) 和[配置](#environment-configuration)。它還包括 [CLI 比較](#coming-from-the-cli)和[疑難排解](#troubleshooting)。
 
 ## 開始會話
 
@@ -32,7 +48,7 @@ Desktop 在標準 Claude Code 體驗的基礎上增加了這些功能：
 
 * **環境**：選擇 Claude 執行的位置。選擇 **Local** 用於您的機器、**Remote** 用於 Anthropic 託管的雲端會話，或用於您管理的遠端機器的 [**SSH 連線**](#ssh-sessions)。請參閱[環境配置](#environment-configuration)。
 * **專案資料夾**：選擇 Claude 工作的資料夾或儲存庫。對於遠端會話，您可以新增[多個儲存庫](#run-long-running-tasks-remotely)。
-* **模型**：從傳送按鈕旁的下拉式選單中選擇[模型](/zh-TW/model-config#available-models)。會話開始後，模型會被鎖定。
+* **模型**：從傳送按鈕旁的下拉式選單中選擇[模型](/zh-TW/model-config#available-models)。您可以在會話期間變更此設定。
 * **權限模式**：從[模式選擇器](#choose-a-permission-mode)中選擇 Claude 擁有多少自主權。您可以在會話期間變更此設定。
 
 輸入您的任務並按 **Enter** 開始。每個會話都會追蹤自己的上下文並獨立進行變更。
@@ -58,13 +74,13 @@ Desktop 在標準 Claude Code 體驗的基礎上增加了這些功能：
 
 權限模式控制 Claude 在會話期間擁有多少自主權：它是否在編輯檔案、執行命令或兩者之前詢問。您可以隨時使用傳送按鈕旁的模式選擇器切換模式。從「詢問權限」開始，以查看 Claude 確切執行的操作，然後隨著您變得更加熟悉，移至「自動接受編輯」或 Plan Mode。
 
-| 模式            | 設定金鑰                | 行為                                                                                                                                                 |
-| ------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **詢問權限**      | `default`           | Claude 在編輯檔案或執行命令之前詢問。您會看到差異，並可以接受或拒絕每項變更。建議新使用者使用。                                                                                                |
-| **自動接受編輯**    | `acceptEdits`       | Claude 自動接受檔案編輯，但在執行終端機命令之前仍會詢問。當您信任檔案變更並想要更快速的迭代時，請使用此選項。                                                                                         |
-| **Plan Mode** | `plan`              | Claude 分析您的程式碼並建立計畫，而不修改檔案或執行命令。適合您想要先檢查方法的複雜任務。                                                                                                   |
-| **Auto**      | `auto`              | Claude 執行所有操作，並進行背景安全檢查以驗證與您的請求的一致性。減少權限提示，同時保持監督。目前是研究預覽版。在 Team、Enterprise 和 API 計畫上可用。需要 Claude Sonnet 4.6 或 Opus 4.6。在您的「設定」→「Claude Code」中啟用。 |
-| **略過權限**      | `bypassPermissions` | Claude 執行時不會有任何權限提示，相當於 CLI 中的 `--dangerously-skip-permissions`。在「設定」→「Claude Code」下的「允許略過權限模式」中啟用。僅在沙箱容器或虛擬機器中使用。企業管理員可以停用此選項。                    |
+| 模式            | 設定金鑰                | 行為                                                                                                                                                                                                                                         |
+| ------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **詢問權限**      | `default`           | Claude 在編輯檔案或執行命令之前詢問。您會看到差異，並可以接受或拒絕每項變更。建議新使用者使用。                                                                                                                                                                                        |
+| **自動接受編輯**    | `acceptEdits`       | Claude 自動接受檔案編輯和常見的檔案系統命令，如 `mkdir`、`touch` 和 `mv`，但在執行其他終端機命令之前仍會詢問。當您信任檔案變更並想要更快速的迭代時，請使用此選項。                                                                                                                                            |
+| **Plan Mode** | `plan`              | Claude 讀取檔案並執行命令以探索，然後提出計畫而不編輯您的原始程式碼。適合您想要先檢查方法的複雜任務。                                                                                                                                                                                     |
+| **Auto**      | `auto`              | Claude 執行所有操作，並進行背景安全檢查以驗證與您的請求的一致性。減少權限提示，同時保持監督。目前是研究預覽版。在 Max、Team、Enterprise 和 API 計畫上可用。需要 Claude Sonnet 4.6、Opus 4.6 或 Opus 4.7 在 Team、Enterprise 和 API 計畫上；Claude Opus 4.7 僅在 Max 計畫上。在 Pro 計畫或第三方提供者上不可用。在您的「設定」→「Claude Code」中啟用。 |
+| **略過權限**      | `bypassPermissions` | Claude 執行時不會有任何權限提示，相當於 CLI 中的 `--dangerously-skip-permissions`。在「設定」→「Claude Code」下的「允許略過權限模式」中啟用。僅在沙箱容器或虛擬機器中使用。企業管理員可以停用此選項。                                                                                                            |
 
 `dontAsk` 權限模式僅在 [CLI](/zh-TW/permission-modes#allow-only-pre-approved-tools-with-dontask-mode) 中可用。
 
@@ -80,7 +96,9 @@ Desktop 在標準 Claude Code 體驗的基礎上增加了這些功能：
 
 Claude 可以啟動開發伺服器並開啟嵌入式瀏覽器來驗證其變更。這適用於前端網路應用程式以及後端伺服器：Claude 可以測試 API 端點、檢視伺服器日誌，並對其發現的問題進行迭代。在大多數情況下，Claude 在編輯專案檔案後會自動啟動伺服器。您也可以隨時要求 Claude 進行預覽。預設情況下，Claude [自動驗證](#auto-verify-changes)每次編輯後的變更。
 
-從預覽面板，您可以：
+預覽窗格也可以開啟您專案中的靜態 HTML 檔案、PDF 和影像。點擊聊天中的 HTML、PDF 或影像路徑以在預覽中開啟它。
+
+從預覽窗格，您可以：
 
 * 直接在嵌入式瀏覽器中與執行中的應用程式互動
 * 觀看 Claude 自動驗證自己的變更：它會擷取螢幕截圖、檢查 DOM、點擊元素、填寫表單，並修復它發現的問題
@@ -118,21 +136,86 @@ Claude 會讀取您的註解並進行要求的變更，這些變更會顯示為�
 * **自動修復**：啟用後，Claude 會透過讀取失敗輸出並進行迭代，自動嘗試修復失敗的 CI 檢查。
 * **自動合併**：啟用後，Claude 會在所有檢查通過後合併 PR。合併方法是壓縮。自動合併必須在您的 GitHub 儲存庫設定中[啟用](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-auto-merge-for-pull-requests-in-your-repository)才能運作。
 
-使用 CI 狀態列中的 **Auto-fix** 和 **Auto-merge** 切換來啟用任一選項。Claude Code 也會在 CI 完成時傳送桌面通知。
+使用 CI 狀態列中的 **Auto-fix** 和 **Auto-merge** 切換來啟用任一選項。Claude Code 也會在 CI 完成時傳送桌面通知。若要在 PR 合併或關閉後自動存檔會話，請在'設定'→'Claude Code'中開啟[自動存檔](#work-in-parallel-with-sessions)。
 
 <Note>
   PR 監控需要在您的機器上安裝並驗證 [GitHub CLI (`gh`)](https://cli.github.com/)。如果未安裝 `gh`，Desktop 會在您第一次嘗試建立 PR 時提示您安裝它。
 </Note>
 
+## 安排您的工作區
+
+桌面應用程式是圍繞您可以以任何佈局排列的窗格構建的：聊天、差異、預覽、終端機、檔案、計畫、任務和子代理。透過其標題拖動窗格以重新定位它，或拖動窗格邊緣以調整其大小。在 macOS 上按 **Cmd+\\** 或在 Windows 上按 **Ctrl+\\** 以關閉焦點窗格。從會話工具列中的 **Views** 選單開啟其他窗格。
+
+### 在終端機中執行命令
+
+整合終端機讓您在會話旁執行命令，而無需切換到另一個應用程式。從 **Views** 選單開啟它，或在 macOS 或 Windows 上按 **Ctrl+\`**。終端機在您會話的工作目錄中開啟，並與 Claude 共用相同的環境，因此 `npm test` 或 `git status` 等命令會看到 Claude 正在編輯的相同檔案。終端機僅在本機會話中可用。
+
+### 開啟和編輯檔案
+
+點擊聊天或差異檢視器中的檔案路徑以在檔案窗格中開啟它。HTML、PDF 和影像路徑改為在[預覽窗格](#preview-your-app)中開啟。進行現場編輯並點擊 **Save** 以寫回。如果自您開啟檔案以來檔案在磁碟上已變更，窗格會警告您並讓您覆蓋或放棄。點擊 **Discard** 以還原您的編輯，或點擊窗格標題中的路徑以複製絕對路徑。
+
+檔案窗格在本機和 SSH 會話中可用。對於遠端會話，要求 Claude 進行變更。
+
+### 在其他應用程式中開啟檔案
+
+右鍵點擊聊天、差異檢視器或檔案窗格中的任何檔案路徑以開啟上下文選單：
+
+* **Attach as context**：將檔案新增到您的下一個提示
+* **Open in**：在已安裝的編輯器（如 VS Code、Cursor 或 Zed）中開啟檔案
+* **Show in Finder**（在 macOS 上），**Show in Explorer**（在 Windows 上）：開啟包含資料夾
+* **Copy path**：將絕對路徑複製到您的剪貼簿
+
+### 切換檢視模式
+
+檢視模式控制聊天記錄中顯示多少詳細資訊。從傳送按鈕旁的 **Transcript view** 下拉式選單切換模式，或在 macOS 或 Windows 上按 **Ctrl+O** 以循環瀏覽它們。
+
+| 模式          | 它顯示什麼                      |
+| ----------- | -------------------------- |
+| **Normal**  | 工具呼叫摺疊成摘要，具有完整文字回應         |
+| **Verbose** | Claude 採取的每個工具呼叫、檔案讀取和中間步驟 |
+| **Summary** | 僅 Claude 的最終回應和它所做的變更      |
+
+在調試 Claude 為什麼採取特定操作時使用'Verbose'。當您執行多個會話並想要快速掃描結果時，使用'Summary'。
+
+### 快捷鍵
+
+在 macOS 上按 **Cmd+/** 或在 Windows 上按 **Ctrl+/** 以查看 Code 標籤中可用的所有快捷鍵。在 Windows 上，對下面的快捷鍵使用 **Ctrl** 代替 **Cmd**。會話循環、終端機切換和檢視模式切換在每個平台上都使用 **Ctrl**。
+
+| 快捷鍵                                   | 操作            |
+| ------------------------------------- | ------------- |
+| `Cmd` `/`                             | 顯示快捷鍵         |
+| `Cmd` `N`                             | 新會話           |
+| `Cmd` `W`                             | 關閉會話          |
+| `Ctrl` `Tab` / `Ctrl` `Shift` `Tab`   | 下一個或上一個會話     |
+| `Cmd` `Shift` `]` / `Cmd` `Shift` `[` | 下一個或上一個會話     |
+| `Esc`                                 | 停止 Claude 的回應 |
+| `Cmd` `Shift` `D`                     | 切換差異窗格        |
+| `Cmd` `Shift` `P`                     | 切換預覽窗格        |
+| `Cmd` `Shift` `S`                     | 在預覽中選擇元素      |
+| `Ctrl` `` ` ``                        | 切換終端機窗格       |
+| `Cmd` `\`                             | 關閉焦點窗格        |
+| `Cmd` `;`                             | 開啟側邊聊天        |
+| `Ctrl` `O`                            | 循環檢視模式        |
+| `Cmd` `Shift` `M`                     | 開啟權限模式選單      |
+| `Cmd` `Shift` `I`                     | 開啟模型選單        |
+| `Cmd` `Shift` `E`                     | 開啟工作量選單       |
+| `1`–`9`                               | 在開啟的選單中選擇項目   |
+
+這些快捷鍵僅適用於 Code 標籤。終端機型[互動模式快捷鍵](/zh-TW/interactive-mode#keyboard-shortcuts)（如 `Shift+Tab` 以循環模式）不適用於 Desktop。
+
+### 檢查使用情況
+
+點擊模型選擇器旁的使用情況環以查看您目前的上下文視窗使用情況和您計畫在該期間的使用情況。上下文使用情況是按會話的；計畫使用情況在您所有 Claude Code 介面中共用。
+
 ## 讓 Claude 使用您的電腦
 
-電腦使用讓 Claude 開啟您的應用程式、控制您的螢幕，並以您的方式直接在您的機器上工作。要求 Claude 在 iOS 模擬器中測試原生應用程式、與沒有 CLI 的桌面工具互動，或自動化只能透過 GUI 運作的內容。
+電腦使用讓 Claude 開啟您的應用程式、控制您的螢幕，並以您的方式直接在您的機器上工作。要求 Claude 在行動模擬器中測試原生應用程式、與沒有 CLI 的桌面工具互動，或自動化只能透過 GUI 運作的內容。
 
 <Note>
-  電腦使用是 macOS 上的研究預覽版，需要 Pro 或 Max 計畫。它在 Team 或 Enterprise 計畫上不可用。Claude Desktop 應用程式必須執行。
+  電腦使用是 macOS 和 Windows 上的研究預覽版，需要 Pro 或 Max 計畫。它在 Team 或 Enterprise 計畫上不可用。Claude Desktop 應用程式必須執行。
 </Note>
 
-電腦使用預設為關閉。[在'設定'中啟用它](#enable-computer-use)並授予所需的 macOS 權限，然後 Claude 才能控制您的螢幕。
+電腦使用預設為關閉。[在'設定'中啟用它](#enable-computer-use)，然後 Claude 才能控制您的螢幕。在 macOS 上，您還需要授予'協助工具'和'螢幕錄製'權限。
 
 <Warning>
   與[沙箱化 Bash 工具](/zh-TW/sandboxing)不同，電腦使用在您的實際桌面上執行，可以存取您批准的任何內容。Claude 會檢查每個操作並標記螢幕上內容的潛在提示注入，但信任邊界不同。有關最佳實踐，請參閱[電腦使用安全指南](https://support.claude.com/en/articles/14128542)。
@@ -147,7 +230,7 @@ Claude 有多種方式與應用程式或服務互動，電腦使用是最廣泛�
 * 如果任務是瀏覽器工作且您已設定[Chrome 中的 Claude](/zh-TW/chrome)，Claude 會使用它。
 * 如果以上都不適用，Claude 會使用電腦使用。
 
-[每個應用程式的存取層級](#app-permissions)強化了這一點：瀏覽器限制為僅檢視，終端機和 IDE 限制為僅點擊，引導 Claude 使用專用工具，即使電腦使用處於活動狀態。螢幕控制保留給其他工具無法到達的內容，例如原生應用程式、硬體控制面板、iOS 模擬器或沒有 API 的專有工具。
+[每個應用程式的存取層級](#app-permissions)強化了這一點：瀏覽器限制為僅檢視，終端機和 IDE 限制為僅點擊，引導 Claude 使用專用工具，即使電腦使用處於活動狀態。螢幕控制保留給其他工具無法到達的內容，例如原生應用程式、硬體控制面板、行動模擬器或沒有 API 的專有工具。
 
 ### 啟用電腦使用
 
@@ -159,13 +242,13 @@ Claude 有多種方式與應用程式或服務互動，電腦使用是最廣泛�
   </Step>
 
   <Step title="開啟切換">
-    在桌面應用程式中，前往 **Settings > General**（在 **Desktop app** 下）。找到 **Computer use** 切換並開啟它。
+    在桌面應用程式中，前往 **Settings > General**（在 **Desktop app** 下）。找到 **Computer use** 切換並開啟它。在 Windows 上，切換立即生效，設定完成。在 macOS 上，繼續下一步。
 
-    如果您看不到切換，請確認您在 macOS 上使用 Pro 或 Max 計畫，然後更新並重新啟動應用程式。
+    如果您看不到切換，請確認您在 macOS 或 Windows 上使用 Pro 或 Max 計畫，然後更新並重新啟動應用程式。
   </Step>
 
   <Step title="授予 macOS 權限">
-    在切換生效之前，授予兩個 macOS 系統權限：
+    在 macOS 上，在切換生效之前授予兩個系統權限：
 
     * **Accessibility**：讓 Claude 點擊、輸入和滾動
     * **Screen Recording**：讓 Claude 看到您螢幕上的內容
@@ -186,7 +269,7 @@ Claude 第一次需要使用應用程式時，會在您的會話中出現提示�
 | 僅點擊  | 點擊和滾動，但不能輸入或使用快捷鍵 | 終端機、IDE  |
 | 完全控制 | 點擊、輸入、拖動和使用快捷鍵    | 其他所有內容   |
 
-具有廣泛影響力的應用程式（如 Terminal、Finder 和 System Settings）在提示中顯示額外警告，以便您知道批准它們會授予什麼。
+具有廣泛影響力的應用程式（如終端機、Finder 或檔案總管，以及「系統設定」或「設定」）在提示中顯示額外警告，以便您知道批准它們會授予什麼。
 
 您可以在 **Settings > General**（在 **Desktop app** 下）中配置兩個設定：
 
@@ -195,13 +278,13 @@ Claude 第一次需要使用應用程式時，會在您的會話中出現提示�
 
 ## 管理會話
 
-每個會話都是一個獨立的對話，具有自己的上下文和變更。您可以並行執行多個會話、將工作傳送到雲端，或讓 Dispatch 從您的手機為您啟動會話。
+每個會話都是一個獨立的對話，具有自己的上下文和變更。您可以並行執行多個會話、分支出側邊聊天、將工作傳送到雲端，或讓 Dispatch 從您的手機為您啟動會話。
 
 ### 使用會話並行工作
 
-點擊側邊欄中的 **+ New session** 以並行處理多個任務。對於 Git 儲存庫，每個會話都會使用 [Git worktrees](/zh-TW/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) 獲得自己的隔離專案副本，因此一個會話中的變更不會影響其他會話，直到您提交它們。
+點擊側邊欄中的 **+ New session**，或在 macOS 上按 **Cmd+N** 或在 Windows 上按 **Ctrl+N**，以並行處理多個任務。按 **Ctrl+Tab** 和 **Ctrl+Shift+Tab** 以循環瀏覽側邊欄中的會話。對於 Git 儲存庫，每個會話都會使用 [Git worktrees](/zh-TW/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) 獲得自己的隔離專案副本，因此一個會話中的變更不會影響其他會話，直到您提交它們。
 
-Worktrees 預設儲存在 `<project-root>/.claude/worktrees/` 中。您可以在「設定」→「Claude Code」下的「Worktree location」中將其變更為自訂目錄。您也可以設定一個分支前綴，該前綴會被加在每個 worktree 分支名稱前面，這對於保持 Claude 建立的分支井然有序很有用。若要在完成後移除 worktree，請將滑鼠懸停在側邊欄中的會話上，然後點擊存檔圖示。
+Worktrees 預設儲存在 `<project-root>/.claude/worktrees/` 中。您可以在「設定」→「Claude Code」下的「Worktree location」中將其變更為自訂目錄。您也可以設定一個分支前綴，該前綴會被加在每個 worktree 分支名稱前面，這對於保持 Claude 建立的分支井然有序很有用。若要在完成後移除 worktree，請將滑鼠懸停在側邊欄中的會話上，然後點擊存檔圖示。若要在 PR 合併或關閉後自動存檔會話，請在「設定」→「Claude Code」中開啟 **Auto-archive after PR merge or close**。自動存檔僅適用於已完成執行的本機會話。
 
 若要在新 worktrees 中包含 gitignored 檔案（如 `.env`），請在您的專案根目錄中建立 [`.worktreeinclude` 檔案](/zh-TW/common-workflows#copy-gitignored-files-to-worktrees)。
 
@@ -209,7 +292,19 @@ Worktrees 預設儲存在 `<project-root>/.claude/worktrees/` 中。您可以在
   會話隔離需要 [Git](https://git-scm.com/downloads)。大多數 Mac 預設包含 Git。在終端機中執行 `git --version` 進行檢查。在 Windows 上，Code 標籤需要 Git 才能運作：[下載 Git for Windows](https://git-scm.com/downloads/win)、安裝它，然後重新啟動應用程式。如果您遇到 Git 錯誤，請嘗試 Cowork 會話來幫助排除您的設定問題。
 </Note>
 
-使用側邊欄頂部的篩選圖示按狀態（Active、Archived）和環境（Local、Cloud）篩選會話。若要重新命名會話或檢查上下文使用情況，請點擊活動會話頂部工具列中的會話標題。當上下文填滿時，Claude 會自動總結對話並繼續工作。您也可以輸入 `/compact` 來更早觸發總結並釋放上下文空間。有關壓縮如何運作的詳細資訊，請參閱[上下文視窗](/zh-TW/how-claude-code-works#the-context-window)。
+使用側邊欄頂部的控制項按狀態、專案或環境篩選會話，並按專案分組會話。若要重新命名會話，請點擊活動會話頂部工具列中的會話標題。若要檢查上下文使用情況，請參閱[檢查使用情況](#check-usage)。當上下文填滿時，Claude 會自動總結對話並繼續工作。您也可以輸入 `/compact` 來更早觸發總結並釋放上下文空間。有關壓縮如何運作的詳細資訊，請參閱[上下文視窗](/zh-TW/how-claude-code-works#the-context-window)。
+
+### 在不偏離會話的情況下詢問側邊問題
+
+側邊聊天讓您詢問 Claude 一個使用您會話上下文的問題，但不會將任何內容新增回主對話。當您想要理解一段程式碼、檢查假設或探索想法而不引導會話偏離時，請使用它。
+
+在 macOS 上按 **Cmd+;** 或在 Windows 上按 **Ctrl+;** 以開啟側邊聊天，或在提示框中輸入 `/btw`。側邊聊天可以讀取主執行緒中到該點為止的所有內容。完成後，關閉側邊聊天並在您離開的地方繼續主會話。側邊聊天在本機和 SSH 會話中可用。
+
+### 觀看背景任務
+
+任務窗格顯示在目前會話內執行的背景工作：子代理、背景 shell 命令和工作流程。從 **Views** 選單開啟它或將其拖入您的佈局。
+
+點擊任何項目以在子代理窗格中查看其輸出或停止它。若要查看其他會話正在執行的操作，請使用[側邊欄](#work-in-parallel-with-sessions)。
 
 ### 遠端執行長時間執行的任務
 
@@ -236,9 +331,7 @@ Worktrees 預設儲存在 `<project-root>/.claude/worktrees/` 中。您可以在
 
 如果您已[啟用電腦使用](#let-claude-use-your-computer)，Dispatch 產生的 Code 會話也可以使用它。這些會話中的應用程式批准在 30 分鐘後過期並重新提示，而不是像常規 Code 會話那樣持續整個會話。
 
-Dispatch 需要 Pro 或 Max 計畫，在 Team 或 Enterprise 計畫上不可用。
-
-有關設定、配對和 Dispatch 設定，請參閱 [Dispatch 幫助文章](https://support.claude.com/en/articles/13947068)。
+有關設定、配對和 Dispatch 設定，請參閱 [Dispatch 幫助文章](https://support.claude.com/en/articles/13947068)。Dispatch 需要 Pro 或 Max 計畫，在 Team 或 Enterprise 計畫上不可用。
 
 Dispatch 是當您遠離終端機時與 Claude 合作的多種方式之一。請參閱[平台和整合](/zh-TW/platforms#work-when-you-are-away-from-your-terminal)以將其與遠端控制、頻道、Slack 和排程任務進行比較。
 
@@ -248,7 +341,7 @@ Dispatch 是當您遠離終端機時與 Claude 合作的多種方式之一。請
 
 ### 連接外部工具
 
-對於本機和 [SSH](#ssh-sessions) 會話，點擊提示框旁的 **+** 按鈕，然後選擇 **Connectors** 以新增 Google Calendar、Slack、GitHub、Linear、Notion 等整合。您可以在會話之前或期間新增連接器。遠端會話不提供 **+** 按鈕，但[排程任務](/zh-TW/web-scheduled-tasks)在任務建立時配置連接器。
+對於本機和 [SSH](#ssh-sessions) 會話，點擊提示框旁的 **+** 按鈕，然後選擇 **Connectors** 以新增 Google Calendar、Slack、GitHub、Linear、Notion 等整合。您可以在會話之前或期間新增連接器。**+** 按鈕在遠端會話中不可用，但[routines](/zh-TW/routines) 在 routine 建立時配置連接器。
 
 若要管理或斷開連接器，請在桌面應用程式中前往「設定」→「Connectors」，或從提示框中的「Connectors」選單中選擇 **Manage connectors**。
 
@@ -258,15 +351,15 @@ Dispatch 是當您遠離終端機時與 Claude 合作的多種方式之一。請
 
 ### 使用 skills
 
-[Skills](/zh-TW/skills) 擴展 Claude 可以執行的操作。Claude 在相關時自動載入它們，或者您可以直接呼叫一個：在提示框中輸入 `/` 或點擊 **+** 按鈕並選擇 **Slash commands** 以瀏覽可用的內容。這包括[內建命令](/zh-TW/commands)、您的[自訂 skills](/zh-TW/skills#create-custom-skills)、來自您程式碼庫的專案 skills，以及來自任何[已安裝 plugins](/zh-TW/plugins) 的 skills。選擇一個，它會在輸入欄位中突出顯示。在其後輸入您的任務並照常傳送。
+[Skills](/zh-TW/skills) 擴展 Claude 可以執行的操作。Claude 在相關時自動載入它們，或者您可以直接呼叫一個：在提示框中輸入 `/` 或點擊 **+** 按鈕並選擇 **Slash commands** 以瀏覽可用的內容。這包括[內建命令](/zh-TW/commands)、您的[自訂 skills](/zh-TW/skills#create-your-first-skill)、來自您程式碼庫的專案 skills，以及來自任何[已安裝 plugins](/zh-TW/plugins) 的 skills。選擇一個，它會在輸入欄位中突出顯示。在其後輸入您的任務並照常傳送。
 
 ### 安裝 plugins
 
 [Plugins](/zh-TW/plugins) 是可重複使用的套件，可將 skills、agents、hooks、MCP servers 和 LSP 配置新增到 Claude Code。您可以從桌面應用程式安裝 plugins，而無需使用終端機。
 
-對於本機和 [SSH](#ssh-sessions) 會話，點擊提示框旁的 **+** 按鈕，然後選擇 **Plugins** 以查看您已安裝的 plugins 及其命令。若要新增 plugin，從子選單中選擇 **Add plugin** 以開啟 plugin 瀏覽器，它顯示來自您配置的[市場](/zh-TW/plugin-marketplaces)（包括官方 Anthropic 市場）的可用 plugins。選擇 **Manage plugins** 以啟用、停用或解除安裝 plugins。
+對於本機和 [SSH](#ssh-sessions) 會話，點擊提示框旁的 **+** 按鈕，然後選擇 **Plugins** 以查看您已安裝的 plugins 及其 skills。若要新增 plugin，從子選單中選擇 **Add plugin** 以開啟 plugin 瀏覽器，它顯示來自您配置的[市場](/zh-TW/plugin-marketplaces)（包括官方 Anthropic 市場）的可用 plugins。選擇 **Manage plugins** 以啟用、停用或解除安裝 plugins。
 
-Plugins 可以限定於您的使用者帳戶、特定專案或僅本機。遠端會話不提供 Plugins。有關完整的 plugin 參考（包括建立您自己的 plugins），請參閱 [plugins](/zh-TW/plugins)。
+Plugins 可以限定於您的使用者帳戶、特定專案或僅本機。如果您的組織集中管理 plugins，這些 plugins 在桌面會話中的可用方式與在 CLI 中相同。遠端會話不提供 Plugins。有關完整的 plugin 參考（包括建立您自己的 plugins），請參閱 [plugins](/zh-TW/plugins)。
 
 ### 配置預覽伺服器
 
@@ -310,17 +403,17 @@ Claude 會自動偵測您的開發伺服器設定，並將配置儲存在您開�
 
 `configurations` 陣列中的每個項目接受以下欄位：
 
-| 欄位                  | 類型        | 描述                                                                                                    |
-| ------------------- | --------- | ----------------------------------------------------------------------------------------------------- |
-| `name`              | string    | 此伺服器的唯一識別碼                                                                                            |
-| `runtimeExecutable` | string    | 要執行的命令，例如 `npm`、`yarn` 或 `node`                                                                       |
-| `runtimeArgs`       | string\[] | 傳遞給 `runtimeExecutable` 的引數，例如 `["run", "dev"]`                                                       |
-| `port`              | number    | 您的伺服器監聽的連接埠。預設為 3000                                                                                  |
-| `cwd`               | string    | 相對於您的專案根目錄的工作目錄。預設為專案根目錄。使用 `${workspaceFolder}` 明確參考專案根目錄                                            |
-| `env`               | object    | 其他環境變數作為鍵值對，例如 `{ "NODE_ENV": "development" }`。不要在此處放置機密，因為此檔案會提交到您的儲存庫。在您的 shell 設定檔中設定的機密會自動繼承。     |
-| `autoPort`          | boolean   | 如何處理連接埠衝突。請參閱下面                                                                                       |
-| `program`           | string    | 使用 `node` 執行的指令碼。請參閱[何時使用 `program` 與 `runtimeExecutable`](#when-to-use-program-vs-runtimeexecutable) |
-| `args`              | string\[] | 傳遞給 `program` 的引數。僅在設定 `program` 時使用                                                                  |
+| 欄位                  | 類型        | 描述                                                                                                                         |
+| ------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `name`              | string    | 此伺服器的唯一識別碼                                                                                                                 |
+| `runtimeExecutable` | string    | 要執行的命令，例如 `npm`、`yarn` 或 `node`                                                                                            |
+| `runtimeArgs`       | string\[] | 傳遞給 `runtimeExecutable` 的引數，例如 `["run", "dev"]`                                                                            |
+| `port`              | number    | 您的伺服器監聽的連接埠。預設為 3000                                                                                                       |
+| `cwd`               | string    | 相對於您的專案根目錄的工作目錄。預設為專案根目錄。使用 `${workspaceFolder}` 明確參考專案根目錄                                                                 |
+| `env`               | object    | 其他環境變數作為鍵值對，例如 `{ "NODE_ENV": "development" }`。不要在此處放置機密，因為此檔案會提交到您的儲存庫。若要將機密傳遞到您的開發伺服器，請在[本機環境編輯器](#local-sessions)中設定它們。 |
+| `autoPort`          | boolean   | 如何處理連接埠衝突。請參閱下面                                                                                                            |
+| `program`           | string    | 使用 `node` 執行的指令碼。請參閱[何時使用 `program` 與 `runtimeExecutable`](#when-to-use-program-vs-runtimeexecutable)                      |
+| `args`              | string\[] | 傳遞給 `program` 的引數。僅在設定 `program` 時使用                                                                                       |
 
 ##### 何時使用 `program` 與 `runtimeExecutable`
 
@@ -409,99 +502,6 @@ Claude 會自動偵測您的開發伺服器設定，並將配置儲存在您開�
   </Tab>
 </Tabs>
 
-## 排程定期任務
-
-預設情況下，排程任務在您選擇的時間和頻率自動啟動新會話。使用它們進行定期工作，例如每日程式碼檢查、相依性更新檢查或從您的日曆和收件箱提取的早晨簡報。
-
-### 比較排程選項
-
-Claude Code offers three ways to schedule recurring work:
-
-|                            | [Cloud](/en/routines)          | [Desktop](/en/desktop-scheduled-tasks) | [`/loop`](/en/scheduled-tasks)      |
-| :------------------------- | :----------------------------- | :------------------------------------- | :---------------------------------- |
-| Runs on                    | Anthropic cloud                | Your machine                           | Your machine                        |
-| Requires machine on        | No                             | Yes                                    | Yes                                 |
-| Requires open session      | No                             | No                                     | Yes                                 |
-| Persistent across restarts | Yes                            | Yes                                    | Restored on `--resume` if unexpired |
-| Access to local files      | No (fresh clone)               | Yes                                    | Yes                                 |
-| MCP servers                | Connectors configured per task | [Config files](/en/mcp) and connectors | Inherits from session               |
-| Permission prompts         | No (runs autonomously)         | Configurable per task                  | Inherits from session               |
-| Customizable schedule      | Via `/schedule` in the CLI     | Yes                                    | Yes                                 |
-| Minimum interval           | 1 hour                         | 1 minute                               | 1 minute                            |
-
-<Tip>
-  Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
-</Tip>
-
-「排程」頁面支援兩種任務：
-
-* **本機任務**：在您的機器上執行。它們可以直接存取您的本機檔案和工具，但桌面應用程式必須開啟且您的電腦保持清醒才能執行。
-* **遠端任務**：在 Anthropic 管理的雲端基礎設施上執行。即使您的電腦關閉，它們也會繼續執行，但針對儲存庫的新複製而不是您的本機簽出工作。
-
-兩種類型都出現在同一任務網格中。點擊 **New task** 以選擇要建立的類型。本節的其餘部分涵蓋本機任務；對於遠端任務，請參閱[雲端排程任務](/zh-TW/web-scheduled-tasks)。
-
-有關錯過的執行和追趕行為的詳細資訊，請參閱[排程任務如何執行](#how-scheduled-tasks-run)。
-
-<Note>
-  預設情況下，本機排程任務針對您的工作目錄所處的任何狀態執行，包括未提交的變更。在提示輸入中啟用 worktree 切換，為每次執行提供自己的隔離 Git worktree，與[並行會話](#work-in-parallel-with-sessions)的方式相同。
-</Note>
-
-若要建立本機排程任務，請點擊側邊欄中的 **Schedule**，點擊 **New task**，然後選擇 **New local task**。配置這些欄位：
-
-| 欄位          | 描述                                                                             |
-| ----------- | ------------------------------------------------------------------------------ |
-| Name        | 任務的識別碼。轉換為小寫 kebab-case 並用作磁碟上的資料夾名稱。在您的任務中必須是唯一的。                             |
-| Description | 任務清單中顯示的簡短摘要。                                                                  |
-| Prompt      | 任務執行時傳送給 Claude 的指示。以您在提示框中撰寫任何訊息的方式撰寫此內容。提示輸入也包括模型、權限模式、工作資料夾和 worktree 的控制項。 |
-| Frequency   | 任務執行的頻率。請參閱下面的[頻率選項](#frequency-options)。                                      |
-
-您也可以透過在任何會話中描述您想要的內容來建立任務。例如，「設定一個每天早上 9 點執行的每日程式碼檢查。」
-
-### 頻率選項
-
-* **Manual**：無排程，僅在您點擊 **Run now** 時執行。適合儲存您按需觸發的提示
-* **Hourly**：每小時執行一次。每個任務從整點獲得最多 10 分鐘的固定偏移，以錯開 API 流量
-* **Daily**：顯示時間選擇器，預設為上午 9:00 本機時間
-* **Weekdays**：與 Daily 相同，但跳過星期六和星期日
-* **Weekly**：顯示時間選擇器和日期選擇器
-
-對於選擇器不提供的間隔（每 15 分鐘、每月第一天等），在任何 Desktop 會話中詢問 Claude 設定排程。使用純文字；例如，「排程一個任務每 6 小時執行一次所有測試。」
-
-### 排程任務如何執行
-
-本機排程任務在您的機器上執行。Desktop 在應用程式開啟時每分鐘檢查一次排程，並在任務到期時啟動新會話，獨立於您開啟的任何手動會話。每個任務在排程時間後獲得最多 10 分鐘的固定延遲，以錯開 API 流量。延遲是確定性的：同一任務始終在相同的偏移處啟動。
-
-當任務觸發時，您會收到桌面通知，新會話會在側邊欄中的 **Scheduled** 部分下出現。開啟它以查看 Claude 執行的操作、檢查變更或回應權限提示。會話的工作方式與任何其他會話相同：Claude 可以編輯檔案、執行命令、建立提交和開啟提取請求。
-
-任務僅在桌面應用程式執行且您的電腦清醒時執行。如果您的電腦在排程時間內睡眠，執行會被跳過。若要防止閒置睡眠，在「設定」下的 **Desktop app → General** 中啟用 **Keep computer awake**。關閉筆記本電腦蓋仍會使其進入睡眠狀態。對於需要在您的電腦關閉時執行的任務，請改用[遠端任務](/zh-TW/web-scheduled-tasks)。
-
-### 錯過的執行
-
-當應用程式啟動或您的電腦喚醒時，Desktop 會檢查每個任務是否在過去七天內錯過了任何執行。如果有，Desktop 會為最近錯過的時間啟動恰好一次追趕執行，並丟棄任何更舊的執行。錯過六天的每日任務在喚醒時執行一次。Desktop 會在追趕執行啟動時顯示通知。
-
-在撰寫提示時請記住這一點。排程在上午 9 點的任務可能在晚上 11 點執行，如果您的電腦整天睡眠。如果時間很重要，請在提示本身中新增護欄，例如：「僅檢查今天的提交。如果已過下午 5 點，請跳過檢查，只發佈錯過內容的摘要。」
-
-### 排程任務的權限
-
-每個任務都有自己的權限模式，您在建立或編輯任務時設定。來自 `~/.claude/settings.json` 的允許規則也適用於排程任務會話。如果任務在詢問模式下執行並需要執行它沒有權限的工具，執行會停滯，直到您批准它。會話在側邊欄中保持開啟，以便您稍後可以回答。
-
-若要避免停滯，在建立任務後點擊 **Run now**，觀察權限提示，並為每個提示選擇「always allow」。該任務的未來執行會自動批准相同的工具，而無需提示。您可以從任務的詳細資訊頁面檢查和撤銷這些批准。
-
-### 管理排程任務
-
-點擊 **Schedule** 清單中的任務以開啟其詳細資訊頁面。從這裡您可以：
-
-* **Run now**：立即啟動任務，無需等待下一個排程時間
-* **Toggle repeats**：暫停或恢復排程執行，而無需刪除任務
-* **Edit**：變更提示、頻率、資料夾或其他設定
-* **Review history**：查看每次過去的執行，包括因您的電腦睡眠而被跳過的執行
-* **Review allowed permissions**：從 **Always allowed** 面板查看和撤銷此任務的已儲存工具批准
-* **Delete**：移除任務並存檔它建立的所有會話
-
-您也可以透過在任何 Desktop 會話中詢問 Claude 來管理任務。例如，「暫停我的 dependency-audit 任務」、「刪除 standup-prep 任務」或「顯示我的排程任務。」
-
-若要在磁碟上編輯任務的提示，請開啟 `~/.claude/scheduled-tasks/<task-name>/SKILL.md`（或在設定 [`CLAUDE_CONFIG_DIR`](/zh-TW/env-vars) 時在其下）。該檔案使用 YAML frontmatter 用於 `name` 和 `description`，提示作為正文。變更在下一次執行時生效。排程、資料夾、模型和啟用狀態不在此檔案中：透過編輯表單或詢問 Claude 變更它們。
-
 ## 環境配置
 
 您在[開始會話](#start-a-session)時選擇的環境決定了 Claude 執行的位置以及您如何連接：
@@ -512,15 +512,17 @@ Claude Code offers three ways to schedule recurring work:
 
 ### 本機會話
 
-本機會話從您的 shell 繼承環境變數。如果您需要其他變數，請在您的 shell 設定檔（例如 `~/.zshrc` 或 `~/.bashrc`）中設定它們，並重新啟動桌面應用程式。有關支援的變數的完整清單，請參閱[環境變數](/zh-TW/env-vars)。
+桌面應用程式並不總是繼承您的完整 shell 環境。在 macOS 上，當您從 Dock 或 Finder 啟動應用程式時，它會讀取您的 shell 設定檔（如 `~/.zshrc` 或 `~/.bashrc`）以提取 `PATH` 和一組固定的 Claude Code 變數，但您在那裡匯出的其他變數不會被拾取。在 Windows 上，應用程式繼承使用者和系統環境變數，但不讀取 PowerShell 設定檔。
 
-[擴展思考](/zh-TW/common-workflows#use-extended-thinking-thinking-mode)預設啟用，這改進了複雜推理任務的效能，但使用額外的 tokens。若要完全停用思考，請在您的 shell 設定檔中設定 `MAX_THINKING_TOKENS=0`。在 Opus 上，除了 `0` 外，`MAX_THINKING_TOKENS` 會被忽略，因為自適應推理控制思考深度。
+若要在任何平台上為本機會話和開發伺服器設定環境變數，請在提示框中開啟環境下拉式選單，將滑鼠懸停在 **Local** 上，然後點擊齒輪圖示以開啟本機環境編輯器。您在此處儲存的變數會在您的機器上加密儲存，並適用於您啟動的每個本機會話和預覽伺服器。您也可以將變數新增到 `~/.claude/settings.json` 檔案中的 `env` 金鑰，儘管這些僅到達 Claude 會話而不是開發伺服器。有關支援的變數的完整清單，請參閱[環境變數](/zh-TW/env-vars)。
+
+[擴展思考](/zh-TW/common-workflows#use-extended-thinking-thinking-mode)預設啟用，這改進了複雜推理任務的效能，但使用額外的 tokens。若要完全停用思考，請在本機環境編輯器中將 `MAX_THINKING_TOKENS` 設定為 `0`。在具有[自適應推理](/zh-TW/model-config#adjust-effort-level)的模型上，任何其他 `MAX_THINKING_TOKENS` 值都會被忽略，因為自適應推理控制思考深度。在 Opus 4.6 和 Sonnet 4.6 上，將 `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` 設定為 `1` 以使用固定思考預算；Opus 4.7 始終使用自適應推理，沒有固定預算模式。
 
 ### 遠端會話
 
 遠端會話即使您關閉應用程式也會在背景繼續。使用情況計入您的[訂閱計畫限制](/zh-TW/costs)，沒有單獨的計算費用。
 
-您可以建立具有不同網路存取級別和環境變數的自訂雲端環境。在開始遠端會話時選擇環境下拉式選單，然後選擇 **Add environment**。有關配置網路存取和環境變數的詳細資訊，請參閱[雲端環境](/zh-TW/claude-code-on-the-web#cloud-environment)。
+您可以建立具有不同網路存取級別和環境變數的自訂雲端環境。在開始遠端會話時選擇環境下拉式選單，然後選擇 **Add environment**。有關配置網路存取和環境變數的詳細資訊，請參閱[雲端環境](/zh-TW/claude-code-on-the-web#the-cloud-environment)。
 
 ### SSH 會話
 
@@ -535,7 +537,7 @@ SSH 會話可讓您在遠端機器上執行 Claude Code，同時使用桌面應�
 
 新增後，連線會出現在環境下拉式選單中。選擇它以在該機器上啟動會話。Claude 在遠端機器上執行，可存取其檔案和工具。
 
-Claude Code 必須安裝在遠端機器上。連接後，SSH 會話支援權限模式、連接器、plugins 和 MCP servers。
+遠端機器必須執行 Linux 或 macOS，且 Claude Code 必須安裝在其上。連接後，SSH 會話支援權限模式、連接器、plugins 和 MCP servers。
 
 ## 企業配置
 
@@ -597,35 +599,35 @@ Desktop 可以透過企業部署工具分發：
 若要將 CLI 會話移至 Desktop，請在終端機中執行 `/desktop`。Claude 儲存您的會話並在桌面應用程式中開啟它，然後退出 CLI。此命令僅在 macOS 和 Windows 上可用。
 
 <Tip>
-  何時使用 Desktop 與 CLI：當您想要視覺化差異檢查、檔案附件或側邊欄中的會話管理時，使用 Desktop。當您需要指令碼、自動化、第三方提供者或偏好終端機工作流程時，使用 CLI。
+  何時使用 Desktop 與 CLI：當您想要在一個視窗中管理並行會話、並排排列窗格或視覺化檢查變更時，使用 Desktop。當您需要指令碼、自動化或偏好終端機工作流程時，使用 CLI。
 </Tip>
 
 ### CLI 標誌等效項
 
 此表顯示常見 CLI 標誌的桌面應用程式等效項。未列出的標誌沒有桌面等效項，因為它們是為指令碼或自動化設計的。
 
-| CLI                                   | Desktop 等效項                                                           |
-| ------------------------------------- | --------------------------------------------------------------------- |
-| `--model sonnet`                      | 傳送按鈕旁的模型下拉式選單，在開始會話之前                                                 |
-| `--resume`, `--continue`              | 點擊側邊欄中的會話                                                             |
-| `--permission-mode`                   | 傳送按鈕旁的模式選擇器                                                           |
-| `--dangerously-skip-permissions`      | 略過權限模式。在「設定」→「Claude Code」→「允許略過權限模式」中啟用。企業管理員可以停用此設定。                |
-| `--add-dir`                           | 在遠端會話中使用 **+** 按鈕新增多個儲存庫                                              |
-| `--allowedTools`, `--disallowedTools` | 在 Desktop 中不可用                                                        |
-| `--verbose`                           | 不可用。檢查系統日誌：macOS 上的 Console.app、Windows 上的「事件檢視器」→「Windows 日誌」→「應用程式」 |
-| `--print`, `--output-format`          | 不可用。Desktop 僅限互動。                                                     |
-| `ANTHROPIC_MODEL` 環境變數                | 傳送按鈕旁的模型下拉式選單                                                         |
-| `MAX_THINKING_TOKENS` 環境變數            | 在 shell 設定檔中設定；適用於本機會話。請參閱[環境配置](#environment-configuration)。         |
+| CLI                                   | Desktop 等效項                                                |
+| ------------------------------------- | ---------------------------------------------------------- |
+| `--model sonnet`                      | 傳送按鈕旁的模型下拉式選單                                              |
+| `--resume`, `--continue`              | 點擊側邊欄中的會話                                                  |
+| `--permission-mode`                   | 傳送按鈕旁的模式選擇器                                                |
+| `--dangerously-skip-permissions`      | 略過權限模式。在「設定」→「Claude Code」→「允許略過權限模式」中啟用。企業管理員可以停用此設定。     |
+| `--add-dir`                           | 在遠端會話中使用 **+** 按鈕新增多個儲存庫                                   |
+| `--allowedTools`, `--disallowedTools` | 在 Desktop 中不可用                                             |
+| `--verbose`                           | [Verbose 檢視模式](#switch-view-modes)在「Transcript view」下拉式選單中 |
+| `--print`, `--output-format`          | 不可用。Desktop 僅限互動。                                          |
+| `ANTHROPIC_MODEL` 環境變數                | 傳送按鈕旁的模型下拉式選單                                              |
+| `MAX_THINKING_TOKENS` 環境變數            | 在本機環境編輯器中設定。請參閱[環境配置](#environment-configuration)。         |
 
 ### 共用配置
 
 Desktop 和 CLI 讀取相同的配置檔案，因此您的設定會轉移：
 
-* **[CLAUDE.md](/zh-TW/memory)** 檔案在您的專案中由兩者使用
+* **[CLAUDE.md](/zh-TW/memory)** 和 `CLAUDE.local.md` 檔案在您的專案中由兩者使用
 * **[MCP servers](/zh-TW/mcp)** 在 `~/.claude.json` 或 `.mcp.json` 中配置的在兩者中都有效
 * **[Hooks](/zh-TW/hooks)** 和 **[skills](/zh-TW/skills)** 在設定中定義的適用於兩者
 * **[Settings](/zh-TW/settings)** 在 `~/.claude.json` 和 `~/.claude/settings.json` 中是共用的。`settings.json` 中的權限規則、允許的工具和其他設定適用於 Desktop 會話。
-* **Models**：Sonnet、Opus 和 Haiku 在兩者中都可用。在 Desktop 中，在開始會話之前從傳送按鈕旁的下拉式選單中選擇模型。您無法在活動會話期間變更模型。
+* **Models**：Sonnet、Opus 和 Haiku 在兩者中都可用。在 Desktop 中，從傳送按鈕旁的下拉式選單中選擇模型。您可以在會話期間從相同的下拉式選單變更模型。
 
 <Note>
   **MCP servers：桌面聊天應用程式與 Claude Code**：在 `claude_desktop_config.json` 中為 Claude Desktop 聊天應用程式配置的 MCP servers 與 Claude Code 分開，不會出現在 Code 標籤中。若要在 Claude Code 中使用 MCP servers，請在 `~/.claude.json` 或您的專案的 `.mcp.json` 檔案中配置它們。有關詳細資訊，請參閱 [MCP 配置](/zh-TW/mcp#installing-mcp-servers)。
@@ -635,32 +637,34 @@ Desktop 和 CLI 讀取相同的配置檔案，因此您的設定會轉移：
 
 此表比較 CLI 和 Desktop 之間的核心功能。有關 CLI 標誌的完整清單，請參閱 [CLI 參考](/zh-TW/cli-reference)。
 
-| 功能                                        | CLI                                                            | Desktop                                             |
-| ----------------------------------------- | -------------------------------------------------------------- | --------------------------------------------------- |
-| 權限模式                                      | 所有模式，包括 `dontAsk`                                              | 詢問權限、自動接受編輯、Plan Mode、Auto 和透過「設定」略過權限              |
-| `--dangerously-skip-permissions`          | CLI 標誌                                                         | 略過權限模式。在「設定」→「Claude Code」→「允許略過權限模式」中啟用            |
-| [第三方提供者](/zh-TW/third-party-integrations) | Bedrock、Vertex、Foundry                                         | 不可用。Desktop 直接連接到 Anthropic 的 API。                  |
-| [MCP servers](/zh-TW/mcp)                 | 在設定檔案中配置                                                       | 本機和 SSH 會話的連接器 UI，或設定檔案                             |
-| [Plugins](/zh-TW/plugins)                 | `/plugin` 命令                                                   | plugin 管理器 UI                                       |
-| @mention 檔案                               | 文字型                                                            | 具有自動完成                                              |
-| 檔案附件                                      | 不可用                                                            | 影像、PDF                                              |
-| 會話隔離                                      | [`--worktree`](/zh-TW/cli-reference) 標誌                        | 自動 worktrees                                        |
-| 多個會話                                      | 單獨的終端機                                                         | 側邊欄標籤                                               |
-| 定期任務                                      | cron 工作、CI 管道                                                  | [排程任務](#schedule-recurring-tasks)                   |
-| 電腦使用                                      | [透過 `/mcp` 在 macOS 上啟用](/zh-TW/computer-use)                   | [應用程式和螢幕控制](#let-claude-use-your-computer)在 macOS 上 |
-| Dispatch 整合                               | 不可用                                                            | [Dispatch 會話](#sessions-from-dispatch)在側邊欄中         |
-| 指令碼和自動化                                   | [`--print`](/zh-TW/cli-reference)、[Agent SDK](/zh-TW/headless) | 不可用                                                 |
+| 功能                                        | CLI                                                            | Desktop                                                                                                                             |
+| ----------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 權限模式                                      | 所有模式，包括 `dontAsk`                                              | 詢問權限、自動接受編輯、Plan Mode、Auto 和透過「設定」略過權限                                                                                              |
+| `--dangerously-skip-permissions`          | CLI 標誌                                                         | 略過權限模式。在「設定」→「Claude Code」→「允許略過權限模式」中啟用                                                                                            |
+| [第三方提供者](/zh-TW/third-party-integrations) | Bedrock、Vertex、Foundry                                         | Anthropic 的 API 預設。企業部署可以配置 Vertex AI 和閘道提供者。請參閱[企業配置指南](https://support.claude.com/en/articles/12622667-enterprise-configuration)。 |
+| [MCP servers](/zh-TW/mcp)                 | 在設定檔案中配置                                                       | 本機和 SSH 會話的連接器 UI，或設定檔案                                                                                                             |
+| [Plugins](/zh-TW/plugins)                 | `/plugin` 命令                                                   | plugin 管理器 UI                                                                                                                       |
+| @mention 檔案                               | 文字型                                                            | 具有自動完成；本機和 SSH 會話僅                                                                                                                  |
+| 檔案附件                                      | 不可用                                                            | 影像、PDF                                                                                                                              |
+| 會話隔離                                      | [`--worktree`](/zh-TW/cli-reference) 標誌                        | 自動 worktrees                                                                                                                        |
+| 多個會話                                      | 單獨的終端機                                                         | 側邊欄標籤                                                                                                                               |
+| 定期任務                                      | Cron 工作、CI 管道                                                  | [排程任務](/zh-TW/desktop-scheduled-tasks)                                                                                              |
+| 電腦使用                                      | [透過 `/mcp` 在 macOS 上啟用](/zh-TW/computer-use)                   | [應用程式和螢幕控制](#let-claude-use-your-computer)在 macOS 和 Windows 上                                                                       |
+| Dispatch 整合                               | 不可用                                                            | [Dispatch 會話](#sessions-from-dispatch)在側邊欄中                                                                                         |
+| 指令碼和自動化                                   | [`--print`](/zh-TW/cli-reference)、[Agent SDK](/zh-TW/headless) | 不可用                                                                                                                                 |
 
 ### Desktop 中不可用的內容
 
 以下功能僅在 CLI 或 VS Code 擴充功能中可用：
 
-* **第三方提供者**：Desktop 直接連接到 Anthropic 的 API。改用 [CLI](/zh-TW/quickstart) 搭配 Bedrock、Vertex 或 Foundry。
+* **第三方提供者**：Desktop 預設連接到 Anthropic 的 API。企業部署可以配置 Vertex AI 和閘道提供者。對於 Bedrock 或 Foundry，請使用 [CLI](/zh-TW/quickstart)。
 * **Linux**：桌面應用程式僅在 macOS 和 Windows 上可用。
 * **內嵌程式碼建議**：Desktop 不提供自動完成樣式的建議。它透過對話提示和明確的程式碼變更進行工作。
 * **Agent teams**：多代理協調可透過 [CLI](/zh-TW/agent-teams) 和 [Agent SDK](/zh-TW/headless) 使用，不在 Desktop 中。
 
 ## 疑難排解
+
+下面的部分涵蓋桌面應用程式特定的問題。對於出現在聊天中的執行時 API 錯誤，例如 `API Error: 500`、`529 Overloaded`、`429` 或 `Prompt is too long`，請參閱[錯誤參考](/zh-TW/errors)。這些錯誤及其修復在 CLI、Desktop 和網路中是相同的。
 
 ### 檢查您的版本
 
@@ -676,7 +680,7 @@ Desktop 和 CLI 讀取相同的配置檔案，因此您的設定會轉移：
 如果在使用 Code 標籤時看到 `Error 403: Forbidden` 或其他驗證失敗：
 
 1. 從應用程式選單登出並重新登入。這是最常見的修復。
-2. 驗證您有有效的付費訂閱：Pro、Max、Teams 或 Enterprise。
+2. 驗證您有有效的付費訂閱：Pro、Max、Team 或 Enterprise。
 3. 如果 CLI 有效但 Desktop 無效，完全退出桌面應用程式（不只是關閉視窗），然後重新開啟並登入。
 4. 檢查您的網際網路連線和代理設定。
 
@@ -715,11 +719,6 @@ Desktop 和 CLI 讀取相同的配置檔案，因此您的設定會轉移：
 
 * **安裝後 PATH 未更新**：開啟新的終端機視窗。PATH 更新僅適用於新的終端機會話。
 * **並行安裝錯誤**：如果您看到有關另一個安裝進行中的錯誤，但實際上沒有，請嘗試以管理員身份執行安裝程式。
-* **ARM64**：Windows ARM64 裝置完全支援。
-
-### Intel Mac 上的 Cowork 標籤不可用
-
-Cowork 標籤在 macOS 上需要 Apple Silicon（M1 或更新版本）。在 Windows 上，Cowork 在所有支援的硬體上可用。Chat 和 Code 標籤在 Intel Mac 上正常運作。
 
 ### 在 CLI 中開啟時「分支尚不存在」
 

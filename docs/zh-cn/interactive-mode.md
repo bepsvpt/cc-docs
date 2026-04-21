@@ -13,45 +13,48 @@
 
   **macOS 用户**：Option/Alt 键快捷键（`Alt+B`、`Alt+F`、`Alt+Y`、`Alt+M`、`Alt+P`、`Alt+T`）需要在终端中将 Option 配置为 Meta：
 
-  * **iTerm2**：设置 → 配置文件 → 键 → 将左/右 Option 键设置为"Esc+"
-  * **Terminal.app**：设置 → 配置文件 → 键盘 → 勾选"使用 Option 作为 Meta 键"
-  * **VS Code**：设置 `"terminal.integrated.macOptionIsMeta": true` 在 VS Code 设置中
+  * **iTerm2**：设置 → 配置文件 → 键 → 常规 → 将左/右 Option 键设置为"Esc+"
+  * **Apple Terminal**：设置 → 配置文件 → 键盘 → 勾选"使用 Option 作为 Meta 键"
+  * **VS Code**：在 VS Code 设置中设置 `"terminal.integrated.macOptionIsMeta": true`
 
   有关详细信息，请参阅[终端配置](/zh-CN/terminal-config)。
 </Note>
 
 ### 常规控制
 
-| 快捷键                                          | 描述                    | 上下文                                                                                                                |
-| :------------------------------------------- | :-------------------- | :----------------------------------------------------------------------------------------------------------------- |
-| `Ctrl+C`                                     | 取消当前输入或生成             | 标准中断                                                                                                               |
-| `Ctrl+X Ctrl+K`                              | 终止所有后台代理。在 3 秒内按两次以确认 | 后台代理控制                                                                                                             |
-| `Ctrl+D`                                     | 退出 Claude Code 会话     | EOF 信号                                                                                                             |
-| `Ctrl+G` 或 `Ctrl+X Ctrl+E`                   | 在默认文本编辑器中打开           | 在默认文本编辑器中编辑您的提示或自定义响应。`Ctrl+X Ctrl+E` 是 readline 原生绑定                                                              |
-| `Ctrl+L`                                     | 重绘屏幕                  | 重新绘制当前 UI 而不清除对话历史                                                                                                 |
-| `Ctrl+O`                                     | 切换详细输出                | 显示详细的工具使用和执行情况。还会展开 MCP 读取和搜索调用，这些调用默认会折叠为单行，如"Queried slack"                                                      |
-| `Ctrl+R`                                     | 反向搜索命令历史              | 交互式搜索以前的命令                                                                                                         |
-| `Ctrl+V` 或 `Cmd+V`（iTerm2）或 `Alt+V`（Windows） | 从剪贴板粘贴图像              | 在光标处插入 `[Image #N]` 芯片，以便您可以在提示中按位置引用它                                                                             |
-| `Ctrl+B`                                     | 后台运行任务                | 后台运行 bash 命令和代理。Tmux 用户按两次                                                                                         |
-| `Ctrl+T`                                     | 切换任务列表                | 在终端状态区域中显示或隐藏[任务列表](#task-list)                                                                                    |
-| `Left/Right arrows`                          | 在对话框选项卡之间循环           | 在权限对话框和菜单中的选项卡之间导航                                                                                                 |
-| `Up/Down arrows`                             | 导航命令历史                | 回忆以前的输入                                                                                                            |
-| `Esc` + `Esc`                                | 回退或总结                 | 将代码和/或对话恢复到上一个点，或从选定的消息进行总结                                                                                        |
-| `Shift+Tab` 或 `Alt+M`（某些配置）                  | 循环权限模式                | 在 `default`、`acceptEdits`、`plan` 和您启用的任何模式（如 `auto` 或 `bypassPermissions`）之间循环。请参阅[权限模式](/zh-CN/permission-modes)。 |
-| `Option+P`（macOS）或 `Alt+P`（Windows/Linux）    | 切换模型                  | 在不清除提示的情况下切换模型                                                                                                     |
-| `Option+T`（macOS）或 `Alt+T`（Windows/Linux）    | 切换扩展思考                | 启用或禁用扩展思考模式。在 macOS 上，配置您的终端以发送 Option 作为 Meta，以便此快捷键工作                                                            |
-| `Option+O`（macOS）或 `Alt+O`（Windows/Linux）    | 切换快速模式                | 启用或禁用[快速模式](/zh-CN/fast-mode)                                                                                      |
+| 快捷键                                          | 描述                    | 上下文                                                                                                                                 |
+| :------------------------------------------- | :-------------------- | :---------------------------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+C`                                     | 取消当前输入或生成             | 标准中断                                                                                                                                |
+| `Ctrl+X Ctrl+K`                              | 终止所有后台代理。在 3 秒内按两次以确认 | 后台代理控制                                                                                                                              |
+| `Ctrl+D`                                     | 退出 Claude Code 会话     | EOF 信号                                                                                                                              |
+| `Ctrl+G` 或 `Ctrl+X Ctrl+E`                   | 在默认文本编辑器中打开           | 在默认文本编辑器中编辑您的提示或自定义响应。`Ctrl+X Ctrl+E` 是 readline 原生绑定。在 `/config` 中打开"在外部编辑器中显示最后响应"以在您的提示上方将 Claude 的上一个回复作为 `#` 注释上下文预置；保存时会删除注释块 |
+| `Ctrl+L`                                     | 清除提示输入并重绘屏幕           | 清除键入的文本并强制完整的终端重绘。对话历史被保留。使用此功能可在显示变得混乱或部分空白时恢复                                                                                     |
+| `Ctrl+O`                                     | 切换转录查看器               | 显示详细的工具使用和执行情况。还会展开 MCP 调用，这些调用默认会折叠为单行，如"Called slack 3 times"                                                                     |
+| `Ctrl+R`                                     | 反向搜索命令历史              | 交互式搜索以前的命令                                                                                                                          |
+| `Ctrl+V` 或 `Cmd+V`（iTerm2）或 `Alt+V`（Windows） | 从剪贴板粘贴图像              | 在光标处插入 `[Image #N]` 芯片，以便您可以在提示中按位置引用它                                                                                              |
+| `Ctrl+B`                                     | 后台运行任务                | 后台运行 bash 命令和代理。Tmux 用户按两次                                                                                                          |
+| `Ctrl+T`                                     | 切换任务列表                | 在终端状态区域中显示或隐藏[任务列表](#task-list)                                                                                                     |
+| `Left/Right arrows`                          | 在对话框选项卡之间循环           | 在权限对话框和菜单中的选项卡之间导航                                                                                                                  |
+| `Up/Down arrows` 或 `Ctrl+P`/`Ctrl+N`         | 移动光标或导航命令历史           | 在多行输入中，首先在提示内移动光标。一旦光标已在顶部或底部边缘，再次按下会导航命令历史                                                                                         |
+| `Esc` + `Esc`                                | 回退或总结                 | 将代码和/或对话恢复到上一个点，或从选定的消息进行总结                                                                                                         |
+| `Shift+Tab` 或 `Alt+M`（某些配置）                  | 循环权限模式                | 在 `default`、`acceptEdits`、`plan` 和您启用的任何模式（如 `auto` 或 `bypassPermissions`）之间循环。请参阅[权限模式](/zh-CN/permission-modes)。                  |
+| `Option+P`（macOS）或 `Alt+P`（Windows/Linux）    | 切换模型                  | 在不清除提示的情况下切换模型                                                                                                                      |
+| `Option+T`（macOS）或 `Alt+T`（Windows/Linux）    | 切换扩展思考                | 启用或禁用扩展思考模式。在 macOS 上，配置您的终端以发送 Option 作为 Meta，以便此快捷键工作                                                                             |
+| `Option+O`（macOS）或 `Alt+O`（Windows/Linux）    | 切换快速模式                | 启用或禁用[快速模式](/zh-CN/fast-mode)                                                                                                       |
 
 ### 文本编辑
 
-| 快捷键                    | 描述          | 上下文                                                                |
-| :--------------------- | :---------- | :----------------------------------------------------------------- |
-| `Ctrl+K`               | 删除到行尾       | 存储已删除的文本以供粘贴                                                       |
-| `Ctrl+U`               | 从光标删除到行首    | 存储已删除的文本以供粘贴。重复以清除多行输入中的多行                                         |
-| `Ctrl+Y`               | 粘贴已删除的文本    | 粘贴用 `Ctrl+K` 或 `Ctrl+U` 删除的文本                                      |
-| `Alt+Y`（在 `Ctrl+Y` 之后） | 循环粘贴历史      | 粘贴后，循环浏览以前删除的文本。在 macOS 上需要[将 Option 作为 Meta](#keyboard-shortcuts) |
-| `Alt+B`                | 将光标向后移动一个单词 | 单词导航。在 macOS 上需要[将 Option 作为 Meta](#keyboard-shortcuts)            |
-| `Alt+F`                | 将光标向前移动一个单词 | 单词导航。在 macOS 上需要[将 Option 作为 Meta](#keyboard-shortcuts)            |
+| 快捷键                    | 描述           | 上下文                                                                                           |
+| :--------------------- | :----------- | :-------------------------------------------------------------------------------------------- |
+| `Ctrl+A`               | 将光标移动到当前行的开始 | 在多行输入中，移动到当前逻辑行的开始                                                                            |
+| `Ctrl+E`               | 将光标移动到当前行的末尾 | 在多行输入中，移动到当前逻辑行的末尾                                                                            |
+| `Ctrl+K`               | 删除到行尾        | 存储已删除的文本以供粘贴                                                                                  |
+| `Ctrl+U`               | 从光标删除到行首     | 存储已删除的文本以供粘贴。重复以清除多行输入中的多行。在 macOS 上，终端模拟器（包括 iTerm2 和 Terminal.app）将 `Cmd+Backspace` 映射到此快捷键 |
+| `Ctrl+W`               | 删除上一个单词      | 存储已删除的文本以供粘贴。在 Windows 上，`Ctrl+Backspace` 也会删除上一个单词                                           |
+| `Ctrl+Y`               | 粘贴已删除的文本     | 粘贴用 `Ctrl+K`、`Ctrl+U` 或 `Ctrl+W` 删除的文本                                                        |
+| `Alt+Y`（在 `Ctrl+Y` 之后） | 循环粘贴历史       | 粘贴后，循环浏览以前删除的文本。在 macOS 上需要[将 Option 作为 Meta](#keyboard-shortcuts)                            |
+| `Alt+B`                | 将光标向后移动一个单词  | 单词导航。在 macOS 上需要[将 Option 作为 Meta](#keyboard-shortcuts)                                       |
+| `Alt+F`                | 将光标向前移动一个单词  | 单词导航。在 macOS 上需要[将 Option 作为 Meta](#keyboard-shortcuts)                                       |
 
 ### 主题和显示
 
@@ -61,34 +64,36 @@
 
 ### 多行输入
 
-| 方法          | 快捷键            | 上下文                                  |
-| :---------- | :------------- | :----------------------------------- |
-| 快速转义        | `\` + `Enter`  | 在所有终端中工作                             |
-| macOS 默认    | `Option+Enter` | macOS 上的默认设置                         |
-| Shift+Enter | `Shift+Enter`  | 在 iTerm2、WezTerm、Ghostty、Kitty 中开箱即用 |
-| 控制序列        | `Ctrl+J`       | 多行的换行符                               |
-| 粘贴模式        | 直接粘贴           | 对于代码块、日志                             |
+| 方法          | 快捷键            | 上下文                                                                                          |
+| :---------- | :------------- | :------------------------------------------------------------------------------------------- |
+| 快速转义        | `\` + `Enter`  | 在所有终端中工作                                                                                     |
+| Option 键    | `Option+Enter` | 在 macOS 上启用[将 Option 作为 Meta](/zh-CN/terminal-config#enable-option-key-shortcuts-on-macos) 后 |
+| Shift+Enter | `Shift+Enter`  | 在 iTerm2、WezTerm、Ghostty、Kitty、Warp、Apple Terminal 中开箱即用                                     |
+| 控制序列        | `Ctrl+J`       | 在任何终端中工作，无需配置                                                                                |
+| 粘贴模式        | 直接粘贴           | 对于代码块、日志                                                                                     |
 
 <Tip>
-  Shift+Enter 在 iTerm2、WezTerm、Ghostty 和 Kitty 中无需配置即可工作。对于其他终端（VS Code、Alacritty、Zed、Warp），运行 `/terminal-setup` 以安装绑定。
+  Shift+Enter 在 iTerm2、WezTerm、Ghostty、Kitty、Warp 和 Apple Terminal 中无需配置即可工作。对于 VS Code、Cursor、Windsurf、Alacritty 和 Zed，运行 `/terminal-setup` 以安装绑定。
 </Tip>
 
 ### 快速命令
 
-| 快捷键     | 描述        | 注释                                                     |
-| :------ | :-------- | :----------------------------------------------------- |
-| `/` 在开始 | 命令或 skill | 请参阅[内置命令](#built-in-commands)和 [skills](/zh-CN/skills) |
-| `!` 在开始 | Bash 模式   | 直接运行命令并将执行输出添加到会话                                      |
-| `@`     | 文件路径提及    | 触发文件路径自动完成                                             |
+| 快捷键     | 描述        | 注释                                          |
+| :------ | :-------- | :------------------------------------------ |
+| `/` 在开始 | 命令或 skill | 请参阅[命令](#commands)和 [skills](/zh-CN/skills) |
+| `!` 在开始 | Bash 模式   | 直接运行命令并将执行输出添加到会话                           |
+| `@`     | 文件路径提及    | 触发文件路径自动完成                                  |
 
 ### 转录查看器
 
 当转录查看器打开时（使用 `Ctrl+O` 切换），这些快捷键可用。`Ctrl+E` 可以通过 [`transcript:toggleShowAll`](/zh-CN/keybindings) 重新绑定。
 
-| 快捷键                | 描述                                                            |
-| :----------------- | :------------------------------------------------------------ |
-| `Ctrl+E`           | 切换显示所有内容                                                      |
-| `q`、`Ctrl+C`、`Esc` | 退出转录视图。所有三个都可以通过 [`transcript:exit`](/zh-CN/keybindings) 重新绑定 |
+| 快捷键                | 描述                                                                                                                |
+| :----------------- | :---------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+E`           | 切换显示所有内容                                                                                                          |
+| `[`                | 将完整对话写入终端的原生滚动缓冲区，以便 `Cmd+F`、tmux 复制模式和其他原生工具可以搜索它。需要[全屏渲染](/zh-CN/fullscreen#search-and-review-the-conversation) |
+| `v`                | 将对话写入临时文件并在 `$VISUAL` 或 `$EDITOR` 中打开它。需要[全屏渲染](/zh-CN/fullscreen)                                                |
+| `q`、`Ctrl+C`、`Esc` | 退出转录视图。所有三个都可以通过 [`transcript:exit`](/zh-CN/keybindings) 重新绑定                                                     |
 
 ### 语音输入
 
@@ -96,15 +101,15 @@
 | :--------- | :----- | :------------------------------------------------------------------------------------------------------ |
 | 按住 `Space` | 按键说话听写 | 需要启用[语音听写](/zh-CN/voice-dictation)。转录在光标处插入。[可重新绑定](/zh-CN/voice-dictation#rebind-the-push-to-talk-key) |
 
-## 内置命令
+## 命令
 
-在 Claude Code 中键入 `/` 以查看所有可用命令，或键入 `/` 后跟任何字母以进行筛选。`/` 菜单显示内置命令和[捆绑的 skills](/zh-CN/skills#bundled-skills)，如 `/simplify`。并非所有命令对每个用户都可见，因为某些命令取决于您的平台或计划。
+在 Claude Code 中键入 `/` 以查看所有可用命令，或键入 `/` 后跟任何字母以进行筛选。`/` 菜单显示您可以调用的所有内容：内置命令、捆绑的和用户编写的 [skills](/zh-CN/skills)，以及由 [plugins](/zh-CN/plugins) 和 [MCP servers](/zh-CN/mcp#use-mcp-prompts-as-commands) 贡献的命令。并非所有内置命令对每个用户都可见，因为某些命令取决于您的平台或计划。
 
-有关内置命令的完整列表，请参阅[命令参考](/zh-CN/commands)。要创建您自己的命令，请参阅 [skills](/zh-CN/skills)。
+有关 Claude Code 中包含的命令的完整列表，请参阅[命令参考](/zh-CN/commands)。
 
 ## Vim 编辑器模式
 
-使用 `/vim` 命令启用 vim 风格编辑，或通过 `/config` 永久配置。
+通过 `/config` → 编辑器模式启用 vim 风格编辑。
 
 ### 模式切换
 
@@ -139,7 +144,7 @@
 | `,`             | 反向重复最后一个 f/F/t/T 动作 |
 
 <Note>
-  在 vim 正常模式下，如果光标在输入的开始或结束处且无法进一步移动，箭头键将导航命令历史。
+  在 vim 正常模式下，如果光标在输入的开始或结束处且无法进一步移动，`j`/`k` 和箭头键将导航命令历史。
 </Note>
 
 ### 编辑（NORMAL 模式）
@@ -160,6 +165,7 @@
 | `>>`           | 缩进行         |
 | `<<`           | 取消缩进行       |
 | `J`            | 连接行         |
+| `u`            | 撤销          |
 | `.`            | 重复最后一个更改    |
 
 ### 文本对象（NORMAL 模式）
@@ -299,6 +305,14 @@ export CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=false
 * 要查看所有任务或清除它们，直接询问 Claude："show me all tasks"或"clear all tasks"
 * 任务在上下文压缩中持续存在，帮助 Claude 在较大的项目上保持组织
 * 要在会话之间共享任务列表，请设置 `CLAUDE_CODE_TASK_LIST_ID` 以使用 `~/.claude/tasks/` 中的命名目录：`CLAUDE_CODE_TASK_LIST_ID=my-project claude`
+
+## 会话回顾
+
+当您从离开后返回终端时，Claude Code 会显示到目前为止会话中发生的情况的单行回顾。回顾在后台生成，一旦自上次完成的轮次以来至少已经过了三分钟且终端未聚焦，就会生成，因此当您切换回来时已准备好。回顾仅在会话至少有三个轮次后出现，并且永远不会连续出现两次。
+
+运行 `/recap` 以按需生成摘要。要关闭自动回顾，打开 `/config` 并禁用**会话回顾**。
+
+会话回顾在每个计划和提供商上默认启用。要覆盖 `/config` 切换，请将 [`CLAUDE_CODE_ENABLE_AWAY_SUMMARY`](/zh-CN/env-vars) 设置为 `0` 或 `1`。回顾在非交互模式下始终被跳过。
 
 ## PR 审查状态
 

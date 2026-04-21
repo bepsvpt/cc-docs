@@ -9,28 +9,31 @@
 ## 설치 문제 해결
 
 <Tip>
-  터미널을 완전히 건너뛰고 싶다면, [Claude Code Desktop 앱](/ko/desktop-quickstart)을 사용하여 그래픽 인터페이스를 통해 Claude Code를 설치하고 사용할 수 있습니다. [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) 또는 [Windows](https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs)용으로 다운로드하고 명령줄 설정 없이 코딩을 시작하세요.
+  터미널을 완전히 건너뛰고 싶다면, [Claude Code Desktop 앱](/ko/desktop-quickstart)을 사용하여 그래픽 인터페이스를 통해 Claude Code를 설치하고 사용할 수 있습니다. [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) 또는 [Windows](https://claude.com/download?utm_source=claude_code\&utm_medium=docs)용으로 다운로드하고 명령줄 설정 없이 코딩을 시작하세요.
 </Tip>
 
 표시되는 오류 메시지 또는 증상을 찾으세요:
 
-| 표시되는 내용                                                     | 해결책                                                                                            |
-| :---------------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
-| `command not found: claude` 또는 `'claude' is not recognized` | [PATH 수정](#command-not-found-claude-after-installation)                                        |
-| `syntax error near unexpected token '<'`                    | [설치 스크립트가 HTML 반환](#install-script-returns-html-instead-of-a-shell-script)                     |
-| `curl: (56) Failure writing output to destination`          | [스크립트를 먼저 다운로드한 후 실행](#curl-56-failure-writing-output-to-destination)                          |
-| Linux에서 설치 중 `Killed`                                       | [저메모리 서버에 스왑 공간 추가](#install-killed-on-low-memory-linux-servers)                               |
-| `TLS connect error` 또는 `SSL/TLS secure channel`             | [CA 인증서 업데이트](#tls-or-ssl-connection-errors)                                                   |
-| `Failed to fetch version` 또는 다운로드 서버에 연결할 수 없음              | [네트워크 및 프록시 설정 확인](#check-network-connectivity)                                                |
-| `irm is not recognized` 또는 `&& is not valid`                | [셸에 맞는 명령 사용](#windows-irm-or--not-recognized)                                                 |
-| `Claude Code on Windows requires git-bash`                  | [Git Bash 설치 또는 구성](#windows-claude-code-on-windows-requires-git-bash)                         |
-| `Error loading shared library`                              | [시스템에 맞지 않는 바이너리 변형](#linux-wrong-binary-variant-installed-muslglibc-mismatch)                 |
-| Linux에서 `Illegal instruction`                               | [아키텍처 불일치](#illegal-instruction-on-linux)                                                      |
-| macOS에서 `dyld: cannot load` 또는 `Abort trap`                 | [바이너리 호환성 문제](#dyld-cannot-load-on-macos)                                                      |
-| `Invoke-Expression: Missing argument in parameter list`     | [설치 스크립트가 HTML 반환](#install-script-returns-html-instead-of-a-shell-script)                     |
-| `App unavailable in region`                                 | Claude Code는 귀국에서 사용할 수 없습니다. [지원되는 국가](https://www.anthropic.com/supported-countries)를 참조하세요. |
-| `unable to get local issuer certificate`                    | [기업 CA 인증서 구성](#tls-or-ssl-connection-errors)                                                  |
-| `OAuth error` 또는 `403 Forbidden`                            | [인증 수정](#authentication-issues)                                                                |
+| 표시되는 내용                                                                  | 해결책                                                                                            |
+| :----------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
+| `command not found: claude` 또는 `'claude' is not recognized`              | [PATH 수정](#command-not-found-claude-after-installation)                                        |
+| `syntax error near unexpected token '<'`                                 | [설치 스크립트가 HTML 반환](#install-script-returns-html-instead-of-a-shell-script)                     |
+| `curl: (56) Failure writing output to destination`                       | [스크립트를 먼저 다운로드한 후 실행](#curl-56-failure-writing-output-to-destination)                          |
+| Linux에서 설치 중 `Killed`                                                    | [저메모리 서버에 스왑 공간 추가](#install-killed-on-low-memory-linux-servers)                               |
+| `TLS connect error` 또는 `SSL/TLS secure channel`                          | [CA 인증서 업데이트](#tls-or-ssl-connection-errors)                                                   |
+| `Failed to fetch version` 또는 다운로드 서버에 연결할 수 없음                           | [네트워크 및 프록시 설정 확인](#check-network-connectivity)                                                |
+| `irm is not recognized` 또는 `&& is not valid`                             | [셸에 맞는 명령 사용](#windows-wrong-install-command)                                                  |
+| `'bash' is not recognized as the name of a cmdlet`                       | [Windows 설치 프로그램 명령 사용](#windows-wrong-install-command)                                        |
+| `Claude Code on Windows requires git-bash`                               | [Git Bash 설치 또는 구성](#windows-claude-code-on-windows-requires-git-bash)                         |
+| `Claude Code does not support 32-bit Windows`                            | [Windows PowerShell 열기, x86 항목 아님](#windows-claude-code-does-not-support-32-bit-windows)       |
+| `Error loading shared library`                                           | [시스템에 맞지 않는 바이너리 변형](#linux-wrong-binary-variant-installed-musl/glibc-mismatch)                |
+| Linux에서 `Illegal instruction`                                            | [아키텍처 불일치](#illegal-instruction-on-linux)                                                      |
+| macOS에서 `dyld: cannot load`, `dyld: Symbol not found`, 또는 `Abort trap`   | [바이너리 호환성](#dyld-cannot-load-on-macos)                                                         |
+| `Invoke-Expression: Missing argument in parameter list`                  | [설치 스크립트가 HTML 반환](#install-script-returns-html-instead-of-a-shell-script)                     |
+| `App unavailable in region`                                              | Claude Code는 귀국에서 사용할 수 없습니다. [지원되는 국가](https://www.anthropic.com/supported-countries)를 참조하세요. |
+| `unable to get local issuer certificate`                                 | [기업 CA 인증서 구성](#tls-or-ssl-connection-errors)                                                  |
+| `OAuth error` 또는 `403 Forbidden`                                         | [인증 수정](#authentication-issues)                                                                |
+| `API Error: 500`, `529 Overloaded`, `429`, 또는 위에 나열되지 않은 기타 4xx 및 5xx 오류 | [오류 참조](/ko/errors) 참조                                                                         |
 
 문제가 나열되지 않은 경우 다음 진단 단계를 진행하세요.
 
@@ -172,7 +175,7 @@ npm 전역 설치 제거:
 npm uninstall -g @anthropic-ai/claude-code
 ```
 
-macOS에서 Homebrew 설치 제거:
+macOS에서 Homebrew 설치 제거 (`claude-code@latest` cask를 설치한 경우 사용):
 
 ```bash theme={null}
 brew uninstall --cask claude-code
@@ -328,6 +331,12 @@ Invoke-Expression: Missing argument in parameter list.
    ```
    인증서 파일이 없으면 IT 팀에 문의하세요. 프록시가 원인인지 확인하기 위해 직접 연결에서도 시도할 수 있습니다.
 
+4. **Windows에서 인증서 해지 확인 무시** `CRYPT_E_NO_REVOCATION_CHECK (0x80092012)` 또는 `CRYPT_E_REVOCATION_OFFLINE (0x80092013)`이 표시되면. 이는 curl이 서버에 도달했지만 네트워크가 인증서 해지 조회를 차단했음을 의미하며, 이는 기업 방화벽 뒤에서 일반적입니다. 설치 명령에 `--ssl-revoke-best-effort`를 추가하세요:
+   ```bat theme={null}
+   curl --ssl-revoke-best-effort -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+   ```
+   또는 curl을 완전히 피하는 `winget install Anthropic.ClaudeCode`로 설치하세요.
+
 ### `Failed to fetch version from storage.googleapis.com`
 
 설치 프로그램이 다운로드 서버에 연결할 수 없습니다. 이는 일반적으로 `storage.googleapis.com`이 네트워크에서 차단되었음을 의미합니다.
@@ -359,9 +368,9 @@ Invoke-Expression: Missing argument in parameter list.
    winget install Anthropic.ClaudeCode
    ```
 
-### Windows: `irm` 또는 `&&` 인식 안 됨
+### Windows: 잘못된 설치 명령
 
-`'irm' is not recognized` 또는 `The token '&&' is not valid`가 표시되면 셸에 맞지 않는 명령을 실행하고 있습니다.
+`'irm' is not recognized`, `The token '&&' is not valid`, 또는 `'bash' is not recognized as the name of a cmdlet`이 표시되면 다른 셸 또는 운영 체제용 설치 명령을 복사했습니다.
 
 * **`irm` 인식 안 됨**: PowerShell이 아닌 CMD에 있습니다. 두 가지 옵션이 있습니다:
 
@@ -378,6 +387,11 @@ Invoke-Expression: Missing argument in parameter list.
   ```
 
 * **`&&` 유효하지 않음**: PowerShell에 있지만 CMD 설치 프로그램 명령을 실행했습니다. PowerShell 설치 프로그램을 사용하세요:
+  ```powershell theme={null}
+  irm https://claude.ai/install.ps1 | iex
+  ```
+
+* **`bash` 인식 안 됨**: Windows에서 macOS/Linux 설치 프로그램을 실행했습니다. PowerShell 설치 프로그램을 대신 사용하세요:
   ```powershell theme={null}
   irm https://claude.ai/install.ps1 | iex
   ```
@@ -440,7 +454,7 @@ Docker 컨테이너에서 Claude Code를 설치할 때 root로 `/`에 설치하�
 
 이 문제를 해결하려면 Claude Desktop을 최신 버전으로 업데이트하세요.
 
-### Windows: "Claude Code on Windows requires git-bash"
+### Windows: Claude Code on Windows requires git-bash
 
 Windows의 Claude Code는 Git Bash를 포함하는 [Git for Windows](https://git-scm.com/downloads/win)가 필요합니다.
 
@@ -457,6 +471,18 @@ Windows의 Claude Code는 Git Bash를 포함하는 [Git for Windows](https://git
 ```
 
 Git이 다른 곳에 설치된 경우 PowerShell에서 `where.exe git`을 실행하여 경로를 찾고 해당 디렉토리의 `bin\bash.exe` 경로를 사용하세요.
+
+### Windows: Claude Code does not support 32-bit Windows
+
+Windows에는 시작 메뉴에 두 개의 PowerShell 항목이 있습니다: `Windows PowerShell` 및 `Windows PowerShell (x86)`. x86 항목은 32비트 프로세스로 실행되며 64비트 머신에서도 이 오류를 트리거합니다. 어느 경우인지 확인하려면 오류를 생성한 동일한 창에서 다음을 실행하세요:
+
+```powershell theme={null}
+[Environment]::Is64BitOperatingSystem
+```
+
+이것이 `True`를 인쇄하면 운영 체제는 정상입니다. 창을 닫고 x86 접미사 없이 `Windows PowerShell`을 열고 설치 명령을 다시 실행하세요.
+
+이것이 `False`를 인쇄하면 32비트 Windows 버전을 사용 중입니다. Claude Code는 64비트 운영 체제가 필요합니다. [시스템 요구 사항](/ko/setup#system-requirements)을 참조하세요.
 
 ### Linux: 잘못된 바이너리 변형 설치됨 (musl/glibc 불일치)
 
@@ -506,11 +532,19 @@ bash: line 142: 2238232 Illegal instruction    "$binary_path" install ${TARGET:+
 
 ### macOS에서 `dyld: cannot load`
 
-설치 중에 `dyld: cannot load` 또는 `Abort trap: 6`이 표시되면 바이너리가 macOS 버전 또는 하드웨어와 호환되지 않습니다.
+설치 중에 `dyld: cannot load`, `dyld: Symbol not found`, 또는 `Abort trap: 6`이 표시되면 바이너리가 macOS 버전 또는 하드웨어와 호환되지 않습니다.
 
 ```text theme={null}
 dyld: cannot load 'claude-2.1.42-darwin-x64' (load command 0x80000034 is unknown)
 Abort trap: 6
+```
+
+`libicucore`를 참조하는 `Symbol not found` 오류도 바이너리가 지원하는 것보다 macOS 버전이 더 오래되었음을 나타냅니다:
+
+```text theme={null}
+dyld: Symbol not found: _ubrk_clone
+  Referenced from: claude-darwin-x64 (which was built for Mac OS X 13.0)
+  Expected in: /usr/lib/libicucore.A.dylib
 ```
 
 **해결책:**
@@ -575,7 +609,7 @@ export PATH="$HOME/.nvm/versions/node/$(node -v)/bin:$PATH"
 
 ### WSL2 샌드박스 설정
 
-[샌드박싱](/ko/sandboxing)은 WSL2에서 지원되지만 추가 패키지를 설치해야 합니다. `/sandbox`를 실행할 때 "Sandbox requires socat and bubblewrap"과 같은 오류가 표시되면 종속성을 설치하세요:
+[샌드박싱](/ko/sandboxing)은 WSL2에서 지원되지만 추가 패키지를 설치해야 합니다. `/sandbox`를 실행할 때 누락된 `bubblewrap` 또는 `socat`에 대한 오류가 표시되면 종속성을 설치하세요:
 
 <Tabs>
   <Tab title="Ubuntu/Debian">
@@ -593,6 +627,8 @@ export PATH="$HOME/.nvm/versions/node/$(node -v)/bin:$PATH"
 
 WSL1은 샌드박싱을 지원하지 않습니다. "Sandboxing requires WSL2"가 표시되면 WSL2로 업그레이드하거나 샌드박싱 없이 Claude Code를 실행해야 합니다.
 
+샌드박스된 명령은 `cmd.exe`, `powershell.exe` 또는 `/mnt/c/` 아래의 실행 파일과 같은 Windows 바이너리를 시작할 수 없습니다. WSL은 이를 Unix 소켓을 통해 Windows 호스트에 전달하며, 이는 샌드박스가 차단합니다. 명령이 Windows 바이너리를 호출해야 하는 경우 [`excludedCommands`](/ko/settings#sandbox-settings)에 추가하여 샌드박스 외부에서 실행되도록 하세요.
+
 ### 설치 중 권한 오류
 
 네이티브 설치 프로그램이 권한 오류로 실패하면 대상 디렉토리가 쓰기 가능하지 않을 수 있습니다. [디렉토리 권한 확인](#check-directory-permissions)을 참조하세요.
@@ -602,6 +638,16 @@ WSL1은 샌드박싱을 지원하지 않습니다. "Sandboxing requires WSL2"가
 ```bash theme={null}
 curl -fsSL https://claude.ai/install.sh | bash
 ```
+
+### npm 설치 후 네이티브 바이너리를 찾을 수 없음
+
+`@anthropic-ai/claude-code` npm 패키지는 `@anthropic-ai/claude-code-darwin-arm64`와 같은 플랫폼별 선택적 종속성을 통해 네이티브 바이너리를 가져옵니다. 설치 후 `claude`를 실행하면 `Could not find native binary package "@anthropic-ai/claude-code-<platform>"`이 인쇄되면 다음 원인을 확인하세요:
+
+* **선택적 종속성이 비활성화됨.** npm 설치 명령에서 `--omit=optional`을 제거하고, pnpm에서 `--no-optional`을 제거하고, yarn에서 `--ignore-optional`을 제거하고, `.npmrc`가 `optional=false`를 설정하지 않는지 확인한 후 다시 설치하세요. 네이티브 바이너리는 선택적 종속성으로만 제공되므로 건너뛰면 JavaScript 폴백이 없습니다.
+* **지원되지 않는 플랫폼.** 미리 빌드된 바이너리는 `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64`, 및 `win32-arm64`에 대해 게시됩니다. Claude Code는 다른 플랫폼용 바이너리를 제공하지 않습니다. [시스템 요구 사항](/ko/setup#system-requirements)을 참조하세요.
+* **기업 npm 미러가 플랫폼 패키지를 누락함.** 레지스트리가 메타 패키지 외에도 8개의 `@anthropic-ai/claude-code-*` 플랫폼 패키지를 모두 미러링하는지 확인하세요.
+
+`--ignore-scripts`로 설치하면 이 오류가 트리거되지 않습니다. 바이너리를 제자리에 연결하는 postinstall 단계를 건너뛰므로 Claude Code는 각 시작 시 플랫폼 바이너리를 찾아 생성하는 래퍼로 폴백합니다. 이것은 작동하지만 더 천천히 시작됩니다. 직접 실행을 위해 스크립트를 활성화하여 다시 설치하세요.
 
 ## 권한 및 인증
 
@@ -639,6 +685,43 @@ curl -fsSL https://claude.ai/install.sh | bash
 * **Console 사용자**: 관리자가 계정에 "Claude Code" 또는 "Developer" 역할을 할당했는지 확인하세요
 * **프록시 뒤에 있음**: 기업 프록시가 API 요청을 방해할 수 있습니다. 프록시 설정은 [네트워크 구성](/ko/network-config)을 참조하세요.
 
+### 모델을 찾을 수 없거나 액세스할 수 없음
+
+`There's an issue with the selected model (...). It may not exist or you may not have access to it`가 표시되면 API가 구성된 모델 이름을 거부했습니다.
+
+일반적인 원인:
+
+* `--model`에 전달된 모델 이름의 오타
+* 설정에 저장된 오래되었거나 더 이상 사용되지 않는 모델 ID
+* 현재 사용 계층에서 해당 모델에 액세스할 수 없는 API 키
+
+모델이 설정된 위치를 확인하세요. [우선순위 순서](/ko/model-config#setting-your-model):
+
+* `--model` 플래그
+* `ANTHROPIC_MODEL` 환경 변수
+* `.claude/settings.local.json`의 `model` 필드
+* 프로젝트의 `.claude/settings.json`의 `model` 필드
+* `~/.claude/settings.json`의 `model` 필드
+
+오래된 값을 지우려면 설정에서 `model` 필드를 제거하거나 `ANTHROPIC_MODEL`을 설정 해제하면 Claude Code가 계정의 기본 모델로 폴백합니다.
+
+계정에서 사용 가능한 모델을 찾아보려면 `claude`를 대화형으로 시작하고 `/model`을 실행하여 선택기를 여세요. Vertex AI 배포의 경우 [Vertex AI 문제 해결 섹션](/ko/google-vertex-ai#troubleshooting)을 참조하세요.
+
+### 활성 구독이 있는데 조직이 비활성화됨
+
+활성 Claude 구독이 있음에도 불구하고 `API Error: 400 ... "This organization has been disabled"`가 표시되면 `ANTHROPIC_API_KEY` 환경 변수가 구독을 재정의하고 있습니다. 이는 이전 고용주 또는 프로젝트의 오래된 API 키가 여전히 셸 프로필에 설정되어 있을 때 일반적으로 발생합니다.
+
+`ANTHROPIC_API_KEY`가 있고 승인했을 때 Claude Code는 구독의 OAuth 자격 증명 대신 해당 키를 사용합니다. 비대화형 모드(`-p`)에서는 키가 있을 때 항상 사용됩니다. 전체 해결 순서는 [인증 우선순위](/ko/authentication#authentication-precedence)를 참조하세요.
+
+구독을 대신 사용하려면 환경 변수를 설정 해제하고 셸 프로필에서 제거하세요:
+
+```bash theme={null}
+unset ANTHROPIC_API_KEY
+claude
+```
+
+`~/.zshrc`, `~/.bashrc`, 또는 `~/.profile`에서 `export ANTHROPIC_API_KEY=...` 줄을 확인하고 제거하여 변경을 영구적으로 만드세요. Claude Code 내에서 `/status`를 실행하여 어떤 인증 방법이 활성화되어 있는지 확인하세요.
+
 ### WSL2에서 OAuth 로그인 실패
 
 WSL2의 브라우저 기반 로그인은 WSL이 Windows 브라우저를 열 수 없는 경우 실패할 수 있습니다. `BROWSER` 환경 변수를 설정하세요:
@@ -650,11 +733,13 @@ claude
 
 또는 수동으로 URL을 복사하세요: 로그인 프롬프트가 나타나면 `c`를 눌러 OAuth URL을 복사한 후 Windows 브라우저에 붙여넣으세요.
 
-### "Not logged in" 또는 토큰 만료됨
+### 로그인되지 않음 또는 토큰 만료됨
 
 Claude Code가 세션 후 다시 로그인하도록 요청하면 OAuth 토큰이 만료되었을 수 있습니다.
 
 `/login`을 실행하여 다시 인증하세요. 이것이 자주 발생하면 시스템 시계가 정확한지 확인하세요. 토큰 검증은 올바른 타임스탬프에 따라 달라집니다.
+
+macOS에서 로그인은 Keychain이 잠겨 있거나 암호가 계정 암호와 동기화되지 않은 경우에도 실패할 수 있으며, 이는 Claude Code가 자격 증명을 저장하지 못하게 합니다. `claude doctor`를 실행하여 Keychain 액세스를 확인하세요. Keychain을 수동으로 잠금 해제하려면 `security unlock-keychain ~/Library/Keychains/login.keychain-db`를 실행하세요. 잠금 해제가 도움이 되지 않으면 Keychain Access를 열고 `login` keychain을 선택한 후 편집 > "login" keychain의 암호 변경을 선택하여 계정 암호와 다시 동기화하세요.
 
 ## 구성 파일 위치
 
@@ -703,6 +788,19 @@ Claude Code는 대부분의 개발 환경에서 작동하도록 설계되었지�
 1. `/compact`를 정기적으로 사용하여 컨텍스트 크기 감소
 2. 주요 작업 사이에 Claude Code 닫기 및 다시 시작
 3. 큰 빌드 디렉토리를 `.gitignore` 파일에 추가하는 것을 고려하세요
+
+메모리 사용량이 이 단계 후에도 높게 유지되면 `/heapdump`를 실행하여 JavaScript 힙 스냅샷과 메모리 분석을 `~/Desktop`에 작성하세요. 분석은 상주 집합 크기, JS 힙, 배열 버퍼 및 설명되지 않은 네이티브 메모리를 표시하며, 이는 증가가 JavaScript 객체인지 네이티브 코드인지 식별하는 데 도움이 됩니다. Chrome DevTools의 메모리 → 로드에서 `.heapsnapshot` 파일을 열어 보유자를 검사하세요. [GitHub](https://github.com/anthropics/claude-code/issues)에서 메모리 문제를 보고할 때 두 파일을 모두 첨부하세요.
+
+### 자동 압축이 스래싱 오류로 중단됨
+
+`Autocompact is thrashing: the context refilled to the limit...`이 표시되면 자동 압축이 성공했지만 파일 또는 도구 출력이 즉시 컨텍스트 창을 여러 번 연속으로 다시 채웠습니다. Claude Code는 진행되지 않는 루프에서 API 호출을 낭비하지 않기 위해 재시도를 중단합니다.
+
+복구하려면:
+
+1. Claude에게 전체 파일 대신 특정 줄 범위 또는 함수와 같은 더 작은 청크로 큰 파일을 읽도록 요청하세요
+2. 큰 출력을 삭제하는 포커스로 `/compact`를 실행하세요. 예: `/compact keep only the plan and the diff`
+3. 큰 파일 작업을 [서브에이전트](/ko/sub-agents)로 이동하여 별도의 컨텍스트 창에서 실행하세요
+4. 이전 대화가 더 이상 필요하지 않으면 `/clear`를 실행하세요
 
 ### 명령 중단 또는 정지
 
@@ -832,7 +930,7 @@ Claude Code는 때때로 코드 펜스에 언어 태그가 누락된 markdown �
 function example() {
   return "hello";
 }
-```text
+```
 ````
 
 다음과 같이 적절히 태그된 블록 대신:
@@ -842,7 +940,7 @@ function example() {
 function example() {
   return "hello";
 }
-```text
+```
 ````
 
 **해결책:**
@@ -877,14 +975,15 @@ function example() {
 
 여기에 다루지 않은 문제가 발생하는 경우:
 
-1. Claude Code 내에서 `/bug` 명령을 사용하여 Anthropic에 문제를 직접 보고하세요
-2. [GitHub 저장소](https://github.com/anthropics/claude-code)에서 알려진 문제를 확인하세요
-3. `/doctor`를 실행하여 문제를 진단하세요. 다음을 확인합니다:
+1. [오류 참조](/ko/errors)에서 세션 중에 나타나는 `API Error: 5xx`, `529 Overloaded`, `429` 및 요청 검증 오류를 참조하세요
+2. Claude Code 내에서 `/feedback` 명령을 사용하여 Anthropic에 문제를 직접 보고하세요
+3. [GitHub 저장소](https://github.com/anthropics/claude-code)에서 알려진 문제를 확인하세요
+4. `/doctor`를 실행하여 문제를 진단하세요. 다음을 확인합니다:
    * 설치 유형, 버전 및 검색 기능
    * 자동 업데이트 상태 및 사용 가능한 버전
    * 잘못된 설정 파일 (형식이 잘못된 JSON, 잘못된 유형)
-   * MCP 서버 구성 오류
+   * MCP 서버 구성 오류 (동일한 서버 이름이 다른 엔드포인트를 가진 여러 범위에서 정의됨 포함)
    * 키 바인딩 구성 문제
    * 컨텍스트 사용 경고 (큰 CLAUDE.md 파일, 높은 MCP 토큰 사용량, 도달할 수 없는 권한 규칙)
    * 플러그인 및 에이전트 로딩 오류
-4. Claude에게 직접 기능 및 특징에 대해 물어보세요 - Claude는 문서에 대한 기본 제공 액세스 권한이 있습니다
+5. Claude에게 직접 기능 및 특징에 대해 물어보세요 - Claude는 문서에 대한 기본 제공 액세스 권한이 있습니다

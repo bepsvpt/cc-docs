@@ -2,100 +2,157 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# 優化您的終端機設置
+# 為 Claude Code 配置您的終端機
 
-> Claude Code 在終端機配置正確時效果最佳。請遵循這些指南來優化您的體驗。
+> 修復 Shift+Enter 以插入換行符、在 Claude 完成時獲得終端機鈴聲、配置 tmux、匹配色彩主題，以及在 Claude Code CLI 中啟用 Vim 模式。
 
-### 主題和外觀
+Claude Code 在任何終端機中都可以無需配置而運作。此頁面適用於當某些特定功能的行為不符合您的預期時。在下方找到您的症狀。如果一切已經感覺正確，您不需要此頁面。
 
-Claude 無法控制您終端機的主題。這由您的終端機應用程式處理。您可以隨時透過 `/config` 命令將 Claude Code 的主題與您的終端機相匹配。
+* [Shift+Enter 提交而不是插入換行符](#enter-multiline-prompts)
+* [Option 鍵快捷鍵在 macOS 上無效](#enable-option-key-shortcuts-on-macos)
+* [Claude 完成時沒有聲音或警報](#get-a-terminal-bell-or-notification)
+* [您在 tmux 內執行 Claude Code](#configure-tmux)
+* [顯示閃爍或捲動位置跳躍](#switch-to-fullscreen-rendering)
+* [您想在提示中使用 Vim 快捷鍵](#edit-prompts-with-vim-keybindings)
 
-如需進一步自訂 Claude Code 介面本身，您可以配置[自訂狀態列](/zh-TW/statusline)以在終端機底部顯示上下文資訊，例如目前的模型、工作目錄或 git 分支。
+此頁面是關於讓您的終端機向 Claude Code 發送正確的信號。若要更改 Claude Code 本身回應的快捷鍵，請改為參閱[快捷鍵](/zh-TW/keybindings)。
 
-### 換行符
+## 輸入多行提示
 
-您有多個選項可以在 Claude Code 中輸入換行符：
+按 Enter 提交您的訊息。若要在不提交的情況下新增換行符，請按 Ctrl+J，或輸入 `\` 然後按 Enter。兩者都在每個終端機中無需設置即可運作。
 
-* **快速逃脫**：輸入 `\` 後跟 Enter 以建立新行
-* **Shift+Enter**：在 iTerm2、WezTerm、Ghostty 和 Kitty 中開箱即用
-* **鍵盤快捷鍵**：在其他終端機中設置快捷鍵以插入新行
+在大多數終端機中，您也可以按 Shift+Enter，但支援因終端機模擬器而異：
 
-**為其他終端機設置 Shift+Enter**
+| 終端機                                                                        | Shift+Enter 用於換行符            |
+| :------------------------------------------------------------------------- | :--------------------------- |
+| Ghostty、Kitty、iTerm2、WezTerm、Warp、Apple Terminal                           | 無需設置即可運作                     |
+| VS Code、Cursor、Windsurf、Alacritty、Zed                                      | 執行一次 `/terminal-setup`       |
+| Windows Terminal、gnome-terminal、JetBrains IDE（例如 PyCharm 和 Android Studio） | 不可用；使用 Ctrl+J 或 `\` 然後 Enter |
 
-在 Claude Code 中執行 `/terminal-setup` 以自動為 VS Code、Alacritty、Zed 和 Warp 配置 Shift+Enter。
+對於 VS Code、Cursor、Windsurf、Alacritty 和 Zed，`/terminal-setup` 將 Shift+Enter 和其他快捷鍵寫入終端機的配置檔案。如果它報告衝突，例如 `Found existing VSCode terminal Shift+Enter key binding`，請從終端機自己的快捷鍵檔案（例如 VS Code 的 `keybindings.json`）中移除該項目，然後再次執行該命令。直接在主機終端機中執行 `/terminal-setup` 而不是在 tmux 或 screen 內，因為它需要寫入主機終端機的配置。
 
-<Note>
-  `/terminal-setup` 命令僅在需要手動配置的終端機中可見。如果您使用 iTerm2、WezTerm、Ghostty 或 Kitty，您將看不到此命令，因為 Shift+Enter 已經原生運作。
-</Note>
+如果您在 tmux 內執行，即使外部終端機支援，Shift+Enter 也需要下面的 [tmux 配置](#configure-tmux)。
 
-**設置 Option+Enter（VS Code、iTerm2 或 macOS Terminal.app）**
+若要將換行符綁定到不同的快捷鍵，或交換行為使 Enter 插入換行符而 Shift+Enter 提交，請在您的[快捷鍵檔案](/zh-TW/keybindings)中對應 `chat:newline` 和 `chat:submit` 動作。
 
-**對於 Mac Terminal.app：**
+## 在 macOS 上啟用 Option 快捷鍵
 
-1. 開啟設定 → 設定檔 → 鍵盤
-2. 勾選「使用 Option 作為 Meta 鍵」
+某些 Claude Code 快捷鍵使用 Option 快捷鍵，例如 Option+Enter 用於換行符或 Option+P 用於切換模型。在 macOS 上，大多數終端機預設不會將 Option 作為修飾符發送，因此這些快捷鍵在您啟用它之前無法運作。終端機設定通常標記為「使用 Option 作為 Meta 快捷鍵」；Meta 是現在標記為 Option 或 Alt 的快捷鍵的歷史 Unix 名稱。
 
-**對於 iTerm2：**
+<Tabs>
+  <Tab title="Apple Terminal">
+    開啟設定 → 設定檔 → 鍵盤並勾選'使用 Option 作為 Meta 快捷鍵'。
 
-1. 開啟設定 → 設定檔 → 按鍵
-2. 在「一般」下，將左/右 Option 鍵設置為「Esc+」
+    如果您接受了 Claude Code 的首次執行提示，該提示提供'Option+Enter 用於換行符和視覺鈴聲'，這已經完成。該提示為您執行 `/terminal-setup`，它在您的 Apple Terminal 設定檔中啟用 Option 作為 Meta 並將音訊鈴聲切換為視覺螢幕閃爍。
+  </Tab>
 
-**對於 VS Code 終端機：**
+  <Tab title="iTerm2">
+    開啟設定 → 設定檔 → 快捷鍵 → 一般並將左 Option 快捷鍵和右 Option 快捷鍵設置為「Esc+」。
+  </Tab>
 
-在 VS Code 設定中設置 `"terminal.integrated.macOptionIsMeta": true`。
+  <Tab title="VS Code">
+    將 `"terminal.integrated.macOptionIsMeta": true` 新增至您的 VS Code 設定。
+  </Tab>
+</Tabs>
 
-### 通知設置
+對於 Ghostty、Kitty 和其他終端機，請在終端機的配置檔案中尋找 Option-as-Alt 或 Option-as-Meta 設定。
 
-當 Claude 完成工作並等待您的輸入時，它會觸發通知事件。您可以透過您的終端機將此事件顯示為桌面通知，或使用[通知 hooks](/zh-TW/hooks#notification) 執行自訂邏輯。
+## 獲得終端機鈴聲或通知
 
-#### 終端機通知
+當 Claude 完成工作或暫停以進行權限提示時，它會觸發通知事件。將其顯示為終端機鈴聲或桌面通知可讓您在長工作執行時切換到其他工作。
 
-Kitty 和 Ghostty 無需額外配置即支援桌面通知。iTerm 2 需要設置：
+Claude Code 僅在 Ghostty、Kitty 和 iTerm2 中發送桌面通知；所有其他終端機都需要[通知 hook](#play-a-sound-with-a-notification-hook)。通知也會透過 SSH 到達您的本機，因此遠端工作階段仍然可以提醒您。Ghostty 和 Kitty 無需進一步設置即可將其轉發到您的 OS 通知中心。iTerm2 要求您啟用轉發：
 
-1. 開啟 iTerm 2 設定 → 設定檔 → 終端機
-2. 啟用「通知中心警報」
-3. 點擊「篩選警報」並勾選「傳送逃脫序列產生的警報」
+<Steps>
+  <Step title="開啟 iTerm2 通知設定">
+    前往設定 → 設定檔 → 終端機。
+  </Step>
 
-如果通知未出現，請驗證您的終端機應用程式在您的作業系統設定中具有通知權限。
+  <Step title="啟用警報">
+    勾選「通知中心警報」，然後點擊「篩選警報」並啟用「傳送逃脫序列產生的警報」。
+  </Step>
+</Steps>
 
-在 tmux 中執行 Claude Code 時，通知和[終端機進度列](/zh-TW/settings#global-config-settings)僅在您在 tmux 配置中啟用通過時才會到達外部終端機（例如 iTerm2、Kitty 或 Ghostty）：
+如果通知仍未出現，請確認您的終端機應用程式在您的 OS 設定中具有通知權限，如果您在 tmux 內執行，請[啟用通過](#configure-tmux)。
 
+### 使用通知 hook 播放聲音
+
+在任何終端機中，您可以配置[通知 hook](/zh-TW/hooks-guide#get-notified-when-claude-needs-input) 以在 Claude 需要您的注意時播放聲音或執行自訂命令。Hooks 與桌面通知一起執行，而不是替代它。Warp 或 Apple Terminal 等終端機依賴 hook 單獨運作，因為 Claude Code 不會向它們發送桌面通知。
+
+下面的範例在 macOS 上播放系統聲音。連結的指南包含 macOS、Linux 和 Windows 的桌面通知命令。
+
+```json ~/.claude/settings.json theme={null}
+{
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [{ "type": "command", "command": "afplay /System/Library/Sounds/Glass.aiff" }]
+      }
+    ]
+  }
+}
 ```
+
+## 配置 tmux
+
+當 Claude Code 在 tmux 內執行時，預設情況下會發生兩件事：Shift+Enter 提交而不是插入換行符，桌面通知和[進度列](/zh-TW/settings#global-config-settings)永遠無法到達外部終端機。將這些行新增至 `~/.tmux.conf`，然後執行 `tmux source-file ~/.tmux.conf` 以將它們應用到執行中的伺服器：
+
+```bash ~/.tmux.conf theme={null}
 set -g allow-passthrough on
+set -s extended-keys on
+set -as terminal-features 'xterm*:extkeys'
 ```
 
-沒有此設定，tmux 會攔截逃脫序列，它們不會到達終端機應用程式。
+`allow-passthrough` 行讓通知和進度更新到達 iTerm2、Ghostty 或 Kitty，而不是被 tmux 吞沒。`extended-keys` 行讓 tmux 區分 Shift+Enter 和純 Enter，以便換行符快捷鍵運作。
 
-其他終端機（包括預設的 macOS Terminal）不支援原生通知。改用[通知 hooks](/zh-TW/hooks#notification)。
+## 匹配色彩主題
 
-#### 通知 hooks
+使用 `/theme` 命令或 `/config` 中的主題選擇器來選擇與您的終端機相匹配的 Claude Code 主題。選擇自動選項會偵測您的終端機的淺色或深色背景，因此主題會在您的終端機執行時跟隨 OS 外觀變更。可用的主題是內建的；沒有自訂主題檔案。Claude Code 不控制終端機自己的色彩配置，該配置由終端機應用程式設定。
 
-若要在通知觸發時新增自訂行為（例如播放聲音或傳送訊息），請配置[通知 hook](/zh-TW/hooks#notification)。Hooks 與終端機通知一起執行，而不是作為替代品。
+若要自訂介面底部出現的內容，請配置[自訂狀態列](/zh-TW/statusline)，顯示目前的模型、工作目錄、git 分支或其他上下文。
 
-### 減少閃爍和記憶體使用
+## 切換到全螢幕渲染
 
-如果您在長時間工作期間看到閃爍，或您的終端機捲動位置在 Claude 工作時跳到頂部，請嘗試[全螢幕渲染](/zh-TW/fullscreen)。它使用替代渲染路徑，保持記憶體平穩並新增滑鼠支援。使用 `CLAUDE_CODE_NO_FLICKER=1` 啟用它。
+如果顯示閃爍或捲動位置在 Claude 工作時跳躍，請切換到[全螢幕渲染模式](/zh-TW/fullscreen)。它繪製到終端機為全螢幕應用程式保留的單獨螢幕，而不是附加到您的正常捲動，這保持記憶體使用平穩並新增滑鼠支援以進行捲動和選擇。在此模式中，您使用滑鼠或 PageUp 在 Claude Code 內捲動，而不是使用您的終端機的原生捲動；請參閱[全螢幕頁面](/zh-TW/fullscreen#search-and-review-the-conversation)以瞭解如何搜尋和複製。
 
-### 處理大型輸入
+執行 `/tui fullscreen` 以在目前工作階段中切換，您的對話保持完整。若要使其成為預設值，請在啟動 Claude Code 之前設置 `CLAUDE_CODE_NO_FLICKER` 環境變數：
 
-使用大量程式碼或長指令時：
+<CodeGroup>
+  ```bash Bash and Zsh theme={null}
+  CLAUDE_CODE_NO_FLICKER=1 claude
+  ```
 
-* **避免直接貼上**：Claude Code 可能難以處理非常長的貼上內容
-* **使用基於檔案的工作流程**：將內容寫入檔案並要求 Claude 讀取它
-* **注意 VS Code 的限制**：VS Code 終端機特別容易截斷長貼上
+  ```powershell PowerShell theme={null}
+  $env:CLAUDE_CODE_NO_FLICKER = "1"; claude
+  ```
 
-### Vim 模式
+  ```json ~/.claude/settings.json theme={null}
+  {
+    "env": {
+      "CLAUDE_CODE_NO_FLICKER": "1"
+    }
+  }
+  ```
+</CodeGroup>
 
-Claude Code 支援可透過 `/vim` 啟用或透過 `/config` 配置的 Vim 快捷鍵子集。若要直接在您的配置檔案中設置模式，請在 `~/.claude.json` 中將 [`editorMode`](/zh-TW/settings#global-config-settings) 全域配置鍵設置為 `"vim"`。
+## 貼上大型內容
 
-支援的子集包括：
+當您將超過 10,000 個字元貼上到提示中時，Claude Code 會將輸入摺疊為 `[Pasted text]` 預留位置，以便輸入框保持可用。完整內容在您提交時仍會發送到 Claude。
 
-* 模式切換：`Esc`（至 NORMAL）、`i`/`I`、`a`/`A`、`o`/`O`（至 INSERT）
-* 導覽：`h`/`j`/`k`/`l`、`w`/`e`/`b`、`0`/`$`/`^`、`gg`/`G`、`f`/`F`/`t`/`T` 搭配 `;`/`,` 重複
-* 編輯：`x`、`dw`/`de`/`db`/`dd`/`D`、`cw`/`ce`/`cb`/`cc`/`C`、`.`（重複）
-* 複製/貼上：`yy`/`Y`、`yw`/`ye`/`yb`、`p`/`P`
-* 文字物件：`iw`/`aw`、`iW`/`aW`、`i"`/`a"`、`i'`/`a'`、`i(`/`a(`、`i[`/`a[`、`i{`/`a{`
-* 縮排：`>>`/`<<`
-* 行操作：`J`（合併行）
+VS Code 整合終端機可能會在非常大的貼上中丟棄字元，然後才能到達 Claude Code，因此在那裡更喜歡基於檔案的工作流程。對於非常大的輸入（例如整個檔案或長日誌），請將內容寫入檔案並要求 Claude 讀取它，而不是貼上。這保持對話記錄可讀，並讓 Claude 在稍後的回合中按路徑參考檔案。
 
-請參閱[互動模式](/zh-TW/interactive-mode#vim-editor-mode)以取得完整參考。
+## 使用 Vim 快捷鍵編輯提示
+
+Claude Code 包括提示輸入的 Vim 風格編輯模式。透過 `/config` → 編輯器模式啟用它，或透過在 `~/.claude.json` 中將 [`editorMode`](/zh-TW/settings#global-config-settings) 全域配置快捷鍵設置為 `"vim"` 啟用它。將編輯器模式設置回 `normal` 以將其關閉。
+
+Vim 模式支援 NORMAL 模式動作和運算子的子集，例如 `hjkl` 導覽和 `d`/`c`/`y` 搭配文字物件。請參閱 [Vim 編輯器模式參考](/zh-TW/interactive-mode#vim-editor-mode)以取得完整快捷鍵表。Vim 動作無法透過快捷鍵檔案重新對應。
+
+在 INSERT 模式中按 Enter 仍會提交您的提示，不同於標準 Vim。在 NORMAL 模式中使用 `o` 或 `O`，或 Ctrl+J，以插入換行符。
+
+## 相關資源
+
+* [互動模式](/zh-TW/interactive-mode)：完整鍵盤快捷鍵參考和 Vim 快捷鍵表
+* [快捷鍵](/zh-TW/keybindings)：重新對應任何 Claude Code 快捷鍵，包括 Enter 和 Shift+Enter
+* [全螢幕渲染](/zh-TW/fullscreen)：全螢幕模式中捲動、搜尋和複製的詳細資訊
+* [Hooks 指南](/zh-TW/hooks-guide)：Linux 和 Windows 的更多通知 hook 範例
+* [疑難排解](/zh-TW/troubleshooting)：終端機配置外部問題的修復

@@ -103,7 +103,7 @@ Standardmäßig zeigt Claude Code eine Warnung an und führt Befehle ohne Sandbo
 
 Claude Code bietet zwei Sandbox-Modi:
 
-**Auto-Allow-Modus**: Bash-Befehle werden versuchen, innerhalb der Sandbox ausgeführt zu werden und sind automatisch zulässig, ohne dass eine Genehmigung erforderlich ist. Befehle, die nicht in der Sandbox ausgeführt werden können (wie solche, die Netzwerkzugriff auf nicht zulässige Hosts benötigen), fallen auf den regulären Genehmigungsfluss zurück. Explizite Ask/Deny-Regeln, die Sie konfiguriert haben, werden immer respektiert.
+**Auto-Allow-Modus**: Bash-Befehle werden versuchen, innerhalb der Sandbox ausgeführt zu werden und sind automatisch zulässig, ohne dass eine Genehmigung erforderlich ist. Befehle, die nicht in der Sandbox ausgeführt werden können (wie solche, die Netzwerkzugriff auf nicht zulässige Hosts benötigen), fallen auf den regulären Genehmigungsfluss zurück. Explizite Deny-Regeln werden immer respektiert. Ask-Regeln gelten nur für Befehle, die auf den regulären Genehmigungsfluss zurückfallen.
 
 **Regulärer Genehmigungsmodus**: Alle Bash-Befehle durchlaufen den Standard-Genehmigungsfluss, auch wenn sie in der Sandbox ausgeführt werden. Dies bietet mehr Kontrolle, erfordert aber mehr Genehmigungen.
 
@@ -169,7 +169,7 @@ Das `.` in `allowRead` wird zum Projekt-Root aufgelöst, da diese Konfiguration 
 
   * Viele CLI-Tools erfordern Zugriff auf bestimmte Hosts. Wenn Sie diese Tools verwenden, werden sie um Genehmigung bitten, auf bestimmte Hosts zuzugreifen. Die Gewährung der Genehmigung ermöglicht ihnen, jetzt und in Zukunft auf diese Hosts zuzugreifen, was ihnen ermöglicht, sicher innerhalb der Sandbox ausgeführt zu werden.
   * `watchman` ist nicht kompatibel mit der Ausführung in der Sandbox. Wenn Sie `jest` ausführen, erwägen Sie die Verwendung von `jest --no-watchman`
-  * `docker` ist nicht kompatibel mit der Ausführung in der Sandbox. Erwägen Sie, `docker` in `excludedCommands` anzugeben, um zu erzwingen, dass es außerhalb der Sandbox ausgeführt wird.
+  * `docker` ist nicht kompatibel mit der Ausführung in der Sandbox. Erwägen Sie, `docker *` in `excludedCommands` anzugeben, um zu erzwingen, dass es außerhalb der Sandbox ausgeführt wird.
 </Tip>
 
 <Note>
@@ -250,6 +250,7 @@ Dateisystem- und Netzwerk-Einschränkungen werden sowohl durch Sandbox-Einstellu
 * Verwenden Sie `Read` und `Edit` Deny-Regeln, um Zugriff auf spezifische Dateien oder Verzeichnisse zu blockieren
 * Verwenden Sie `WebFetch` Allow/Deny-Regeln, um Domain-Zugriff zu steuern
 * Verwenden Sie Sandbox `allowedDomains`, um zu steuern, auf welche Domains Bash-Befehle zugreifen können
+* Verwenden Sie Sandbox `deniedDomains`, um spezifische Domains zu blockieren, auch wenn ein breiteres `allowedDomains`-Wildcard sie sonst zulassen würde
 
 Pfade aus beiden `sandbox.filesystem`-Einstellungen und Genehmigungsregeln werden zusammengeführt in die endgültige Sandbox-Konfiguration.
 
@@ -314,7 +315,7 @@ Für Implementierungsdetails und Quellcode besuchen Sie das [GitHub-Repository](
 Die Sandbox isoliert Bash-Subprozesse. Andere Tools funktionieren unter verschiedenen Grenzen:
 
 * **Integrierte Datei-Tools**: Read, Edit und Write verwenden das Genehmigungssystem direkt, anstatt durch die Sandbox zu laufen. Siehe [Genehmigungen](/de/permissions).
-* **Computer-Nutzung**: Wenn Claude Apps öffnet und Ihren Bildschirm auf macOS steuert, läuft es auf Ihrem tatsächlichen Desktop, anstatt in einer isolierten Umgebung. Pro-App-Genehmigungseingaben kontrollieren jede Anwendung. Siehe [Computer-Nutzung in der CLI](/de/computer-use) oder [Computer-Nutzung auf Desktop](/de/desktop#let-claude-use-your-computer).
+* **Computer-Nutzung**: Wenn Claude Apps öffnet und Ihren Bildschirm steuert, läuft es auf Ihrem tatsächlichen Desktop, anstatt in einer isolierten Umgebung. Pro-App-Genehmigungseingaben kontrollieren jede Anwendung. Siehe [Computer-Nutzung in der CLI](/de/computer-use) oder [Computer-Nutzung auf Desktop](/de/desktop#let-claude-use-your-computer).
 
 ## Siehe auch
 

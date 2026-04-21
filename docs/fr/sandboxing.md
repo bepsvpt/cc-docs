@@ -169,7 +169,7 @@ Le `.` dans `allowRead` se résout à la racine du projet car cette configuratio
 
   * De nombreux outils CLI nécessitent d'accéder à certains hôtes. Au fur et à mesure que vous utilisez ces outils, ils demanderont la permission d'accéder à certains hôtes. Accorder la permission leur permettra d'accéder à ces hôtes maintenant et à l'avenir, leur permettant de s'exécuter en toute sécurité dans le sandbox.
   * `watchman` est incompatible avec l'exécution dans le sandbox. Si vous exécutez `jest`, envisagez d'utiliser `jest --no-watchman`
-  * `docker` est incompatible avec l'exécution dans le sandbox. Envisagez de spécifier `docker` dans `excludedCommands` pour le forcer à s'exécuter en dehors du sandbox.
+  * `docker` est incompatible avec l'exécution dans le sandbox. Envisagez de spécifier `docker *` dans `excludedCommands` pour le forcer à s'exécuter en dehors du sandbox.
 </Tip>
 
 <Note>
@@ -250,6 +250,7 @@ Les restrictions du système de fichiers et du réseau sont configurées via les
 * Utilisez les règles de refus `Read` et `Edit` pour bloquer l'accès à des fichiers ou répertoires spécifiques
 * Utilisez les règles d'autorisation/refus `WebFetch` pour contrôler l'accès au domaine
 * Utilisez les `allowedDomains` du sandbox pour contrôler quels domaines les commandes Bash peuvent atteindre
+* Utilisez les `deniedDomains` du sandbox pour bloquer des domaines spécifiques même lorsqu'un wildcard `allowedDomains` plus large les autoriserait autrement
 
 Les chemins des paramètres `sandbox.filesystem` et des règles de permission sont fusionnés dans la configuration finale du sandbox.
 
@@ -314,7 +315,7 @@ Pour les détails d'implémentation et le code source, visitez le [référentiel
 Le sandbox isole les sous-processus Bash. Les autres outils fonctionnent sous des limites différentes :
 
 * **Outils de fichiers intégrés** : Read, Edit et Write utilisent le système de permissions directement plutôt que de s'exécuter via le sandbox. Consultez [permissions](/fr/permissions).
-* **Utilisation de l'ordinateur** : Lorsque Claude ouvre des applications et contrôle votre écran sur macOS, il s'exécute sur votre bureau réel plutôt que dans un environnement isolé. Les invites de permission par application contrôlent chaque application. Consultez [utilisation de l'ordinateur dans la CLI](/fr/computer-use) ou [utilisation de l'ordinateur dans Desktop](/fr/desktop#let-claude-use-your-computer).
+* **Utilisation de l'ordinateur** : Lorsque Claude ouvre des applications et contrôle votre écran, il s'exécute sur votre bureau réel plutôt que dans un environnement isolé. Les invites de permission par application contrôlent chaque application. Consultez [utilisation de l'ordinateur dans la CLI](/fr/computer-use) ou [utilisation de l'ordinateur dans Desktop](/fr/desktop#let-claude-use-your-computer).
 
 ## Voir aussi
 

@@ -66,6 +66,8 @@ Cada bloco de vinculação especifica um **contexto** onde as vinculações se a
 | `ModelPicker`     | Nível de esforço do seletor de modelo                     |
 | `Select`          | Componentes genéricos de seleção/lista                    |
 | `Plugin`          | Diálogo de plugin (procurar, descobrir, gerenciar)        |
+| `Scroll`          | Rolagem de conversa e seleção de texto em modo tela cheia |
+| `Doctor`          | Tela de diagnósticos `/doctor`                            |
 
 ## Ações disponíveis
 
@@ -75,13 +77,13 @@ As ações seguem um formato `namespace:action`, como `chat:submit` para enviar 
 
 Ações disponíveis no contexto `Global`:
 
-| Ação                   | Padrão | Descrição                                 |
-| :--------------------- | :----- | :---------------------------------------- |
-| `app:interrupt`        | Ctrl+C | Cancelar operação atual                   |
-| `app:exit`             | Ctrl+D | Sair do Claude Code                       |
-| `app:redraw`           | Ctrl+L | Redesenhar a tela                         |
-| `app:toggleTodos`      | Ctrl+T | Alternar visibilidade da lista de tarefas |
-| `app:toggleTranscript` | Ctrl+O | Alternar transcrição detalhada            |
+| Ação                   | Padrão         | Descrição                                 |
+| :--------------------- | :------------- | :---------------------------------------- |
+| `app:interrupt`        | Ctrl+C         | Cancelar operação atual                   |
+| `app:exit`             | Ctrl+D         | Sair do Claude Code                       |
+| `app:redraw`           | (desvinculado) | Forçar redesenho do terminal              |
+| `app:toggleTodos`      | Ctrl+T         | Alternar visibilidade da lista de tarefas |
+| `app:toggleTranscript` | Ctrl+O         | Alternar transcrição detalhada            |
 
 ### Ações de histórico
 
@@ -97,20 +99,21 @@ Ações para navegar no histórico de comandos:
 
 Ações disponíveis no contexto `Chat`:
 
-| Ação                  | Padrão                    | Descrição                                  |
-| :-------------------- | :------------------------ | :----------------------------------------- |
-| `chat:cancel`         | Escape                    | Cancelar entrada atual                     |
-| `chat:killAgents`     | Ctrl+X Ctrl+K             | Encerrar todos os agentes em segundo plano |
-| `chat:cycleMode`      | Shift+Tab\*               | Ciclar modos de permissão                  |
-| `chat:modelPicker`    | Cmd+P / Meta+P            | Abrir seletor de modelo                    |
-| `chat:fastMode`       | Meta+O                    | Alternar modo rápido                       |
-| `chat:thinkingToggle` | Cmd+T / Meta+T            | Alternar pensamento estendido              |
-| `chat:submit`         | Enter                     | Enviar mensagem                            |
-| `chat:newline`        | (desvinculado)            | Inserir uma nova linha sem enviar          |
-| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | Desfazer última ação                       |
-| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Abrir em editor externo                    |
-| `chat:stash`          | Ctrl+S                    | Guardar prompt atual                       |
-| `chat:imagePaste`     | Ctrl+V (Alt+V no Windows) | Colar imagem                               |
+| Ação                  | Padrão                    | Descrição                                                 |
+| :-------------------- | :------------------------ | :-------------------------------------------------------- |
+| `chat:cancel`         | Escape                    | Cancelar entrada atual                                    |
+| `chat:clearInput`     | Ctrl+L                    | Limpar entrada de prompt e forçar redesenho de tela cheia |
+| `chat:killAgents`     | Ctrl+X Ctrl+K             | Encerrar todos os agentes em segundo plano                |
+| `chat:cycleMode`      | Shift+Tab\*               | Ciclar modos de permissão                                 |
+| `chat:modelPicker`    | Cmd+P / Meta+P            | Abrir seletor de modelo                                   |
+| `chat:fastMode`       | Meta+O                    | Alternar modo rápido                                      |
+| `chat:thinkingToggle` | Cmd+T / Meta+T            | Alternar pensamento estendido                             |
+| `chat:submit`         | Enter                     | Enviar mensagem                                           |
+| `chat:newline`        | Ctrl+J                    | Inserir uma nova linha sem enviar                         |
+| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | Desfazer última ação                                      |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Abrir em editor externo                                   |
+| `chat:stash`          | Ctrl+S                    | Guardar prompt atual                                      |
+| `chat:imagePaste`     | Ctrl+V (Alt+V no Windows) | Colar imagem                                              |
 
 \*No Windows sem modo VT (Node \<24.2.0/\<22.17.0, Bun \<1.2.23), o padrão é Meta+M.
 
@@ -276,10 +279,11 @@ Ações disponíveis no contexto `Select`:
 
 Ações disponíveis no contexto `Plugin`:
 
-| Ação             | Padrão | Descrição                     |
-| :--------------- | :----- | :---------------------------- |
-| `plugin:toggle`  | Space  | Alternar seleção de plugin    |
-| `plugin:install` | I      | Instalar plugins selecionados |
+| Ação              | Padrão | Descrição                                                                                           |
+| :---------------- | :----- | :-------------------------------------------------------------------------------------------------- |
+| `plugin:toggle`   | Space  | Alternar seleção de plugin                                                                          |
+| `plugin:install`  | I      | Instalar plugins selecionados                                                                       |
+| `plugin:favorite` | F      | Marcar o plugin selecionado como favorito para que seja classificado perto do topo da aba Instalado |
 
 ### Ações de configurações
 
@@ -291,6 +295,14 @@ Ações disponíveis no contexto `Settings`:
 | `settings:retry`  | R      | Tentar novamente carregar dados de uso (em caso de erro)                                |
 | `settings:close`  | Enter  | Salvar alterações e fechar o painel de configuração. Escape descarta alterações e fecha |
 
+### Ações de doctor
+
+Ações disponíveis no contexto `Doctor`:
+
+| Ação         | Padrão | Descrição                                                                                                                     |
+| :----------- | :----- | :---------------------------------------------------------------------------------------------------------------------------- |
+| `doctor:fix` | F      | Enviar o relatório de diagnósticos para Claude corrigir os problemas relatados. Ativo apenas quando problemas são encontrados |
+
 ### Ações de voz
 
 Ações disponíveis no contexto `Chat` quando a [ditação por voz](/pt/voice-dictation) está ativada:
@@ -298,6 +310,31 @@ Ações disponíveis no contexto `Chat` quando a [ditação por voz](/pt/voice-d
 | Ação               | Padrão | Descrição                                 |
 | :----------------- | :----- | :---------------------------------------- |
 | `voice:pushToTalk` | Space  | Mantenha pressionado para ditar um prompt |
+
+### Ações de rolagem
+
+Ações disponíveis no contexto `Scroll` quando a [renderização em tela cheia](/pt/fullscreen) está ativada:
+
+| Ação                        | Padrão               | Descrição                                                                                                                                   |
+| :-------------------------- | :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
+| `scroll:lineUp`             | (desvinculado)       | Rolar para cima uma linha. A rolagem da roda do mouse dispara esta ação                                                                     |
+| `scroll:lineDown`           | (desvinculado)       | Rolar para baixo uma linha. A rolagem da roda do mouse dispara esta ação                                                                    |
+| `scroll:pageUp`             | PageUp               | Rolar para cima metade da altura da janela de visualização                                                                                  |
+| `scroll:pageDown`           | PageDown             | Rolar para baixo metade da altura da janela de visualização                                                                                 |
+| `scroll:top`                | Ctrl+Home            | Pular para o início da conversa                                                                                                             |
+| `scroll:bottom`             | Ctrl+End             | Pular para a mensagem mais recente e reativar o auto-follow                                                                                 |
+| `scroll:halfPageUp`         | (desvinculado)       | Rolar para cima metade da altura da janela de visualização. Mesmo comportamento que `scroll:pageUp`, fornecido para rebinds no estilo vi    |
+| `scroll:halfPageDown`       | (desvinculado)       | Rolar para baixo metade da altura da janela de visualização. Mesmo comportamento que `scroll:pageDown`, fornecido para rebinds no estilo vi |
+| `scroll:fullPageUp`         | (desvinculado)       | Rolar para cima a altura completa da janela de visualização                                                                                 |
+| `scroll:fullPageDown`       | (desvinculado)       | Rolar para baixo a altura completa da janela de visualização                                                                                |
+| `selection:copy`            | Ctrl+Shift+C / Cmd+C | Copiar o texto selecionado para a área de transferência                                                                                     |
+| `selection:clear`           | (desvinculado)       | Limpar a seleção de texto ativa                                                                                                             |
+| `selection:extendLeft`      | Shift+Left           | Estender a seleção ativa uma coluna para a esquerda                                                                                         |
+| `selection:extendRight`     | Shift+Right          | Estender a seleção ativa uma coluna para a direita                                                                                          |
+| `selection:extendUp`        | Shift+Up             | Estender a seleção ativa uma linha para cima. Rola a janela de visualização quando a seleção atinge a borda superior                        |
+| `selection:extendDown`      | Shift+Down           | Estender a seleção ativa uma linha para baixo. Rola a janela de visualização quando a seleção atinge a borda inferior                       |
+| `selection:extendLineStart` | Shift+Home           | Estender a seleção ativa para o início da linha                                                                                             |
+| `selection:extendLineEnd`   | Shift+End            | Estender a seleção ativa para o final da linha                                                                                              |
 
 ## Sintaxe de sequência de teclas
 
@@ -400,7 +437,7 @@ Alguns atalhos podem entrar em conflito com multiplexadores de terminal:
 
 ## Interação com modo vim
 
-Quando o modo vim está ativado (`/vim`), keybindings e modo vim operam independentemente:
+Quando o modo vim está ativado via `/config` → Editor mode, keybindings e modo vim operam independentemente:
 
 * **Modo vim** manipula entrada no nível de entrada de texto (movimento do cursor, modos, motions)
 * **Keybindings** manipulam ações no nível de componente (alternar tarefas, enviar, etc.)

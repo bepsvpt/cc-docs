@@ -1,5 +1,601 @@
 # Documentation Changes
 
+## 2026-04-21
+
+181 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Erste Schritte mit der Desktop-App** (`desktop-quickstart.md`): 24 lines added, 34 removed
+- **Claude Code Desktop verwenden** (`desktop.md`): 173 lines added, 172 removed
+  - New section: "## Anordnen Ihres Arbeitsbereichs"
+  - New section: "### Führen Sie Befehle im Terminal aus"
+  - New section: "### Öffnen und bearbeiten Sie Dateien"
+  - New section: "### Öffnen Sie Dateien in anderen Apps"
+  - New section: "### Wechseln Sie Ansichtsmodi"
+- **Automatisieren Sie Workflows mit Hooks** (`hooks-guide.md`): 81 lines added, 38 removed
+  - New section: "# ... Rest Ihrer Hook-Logik"
+- **Hooks-Referenz** (`hooks.md`): 117 lines added, 79 removed
+- **Interaktiver Modus** (`interactive-mode.md`): 61 lines added, 47 removed
+  - New section: "## Befehle"
+  - New section: "## Sitzungs-Zusammenfassung"
+- **Tastaturkürzel anpassen** (`keybindings.md`): 63 lines added, 26 removed
+  - New section: "### Doctor-Aktionen"
+  - New section: "### Scroll-Aktionen"
+- **Modellkonfiguration** (`model-config.md`): 122 lines added, 38 removed
+  - New section: "### Mantle-Modell-IDs"
+  - New section: "#### Wählen Sie ein Aufwandsniveau"
+  - New section: "#### Setzen Sie das Aufwandsniveau"
+  - New section: "#### Adaptives Reasoning und feste Thinking-Budgets"
+  - New section: "### Modelle für Drittanbieter-Bereitstellungen fixieren"
+- **Berechtigungen konfigurieren** (`permissions.md`): 53 lines added, 19 removed
+  - New section: "#### Zusammengesetzte Befehle"
+  - New section: "#### Prozess-Wrapper"
+  - New section: "#### Schreibgeschützte Befehle"
+- **Lokale Sitzungen von jedem Gerät aus mit Remote Control fortsetzen** (`remote-control.md`): 2 lines added, 1 removed
+- **Sandboxing** (`sandboxing.md`): 4 lines added, 3 removed
+- **Prompts nach Zeitplan ausführen** (`scheduled-tasks.md`): 7 lines added, 3 removed
+  - New section: "### Stoppen Sie eine Schleife"
+- **Claude Code-Einstellungen** (`settings.md`): 29 lines added, 23 removed
+- **Erweiterte Einrichtung** (`setup.md`): 23 lines added, 20 removed
+  - New section: "### Mindestversion festlegen"
+  - New section: "### Mit npm installieren"
+- **Konfigurieren Sie Ihr Terminal für Claude Code** (`terminal-config.md`): 112 lines added, 55 removed
+  - New section: "# Konfigurieren Sie Ihr Terminal für Claude Code"
+  - New section: "## Mehrzeilige Eingabeaufforderungen eingeben"
+  - New section: "## Aktivieren Sie Option-Taste-Verknüpfungen auf macOS"
+  - New section: "## Erhalten Sie einen Terminalton oder eine Benachrichtigung"
+  - New section: "### Spielen Sie einen Ton mit einem Benachrichtigungshook ab"
+- **Fehlerbehebung** (`troubleshooting.md`): 134 lines added, 35 removed
+  - New section: "### Windows: falscher Installationsbefehl"
+  - New section: "### Windows: Claude Code on Windows requires git-bash"
+  - New section: "### Windows: Claude Code does not support 32-bit Windows"
+  - New section: "### Linux: falscher Binär-Variant installiert (musl/glibc-Nichtübereinstimmung)"
+  - New section: "### Native Binärdatei nicht gefunden nach npm-Installation"
+
+### English
+
+
+**Modified**
+
+- **Best Practices for Claude Code** (`best-practices.md`): 1 lines added, 1 removed
+- **Changelog** (`changelog.md`): 27 lines added, 0 removed
+- **Commands** (`commands.md`): 4 lines added, 4 removed
+- **Common workflows** (`common-workflows.md`): 8 lines added, 0 removed
+  - New section: "## Work in notes and non-code folders"
+- **Use Claude Code Desktop** (`desktop.md`): 24 lines added, 0 removed
+  - New section: "#### Pre-configure SSH connections for your team"
+- **Environment variables** (`env-vars.md`): 1 lines added, 1 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 23 lines added, 7 removed
+- **Hooks reference** (`hooks.md`): 17 lines added, 11 removed
+- **Interactive mode** (`interactive-mode.md`): 11 lines added, 10 removed
+- **Claude Code settings** (`settings.md`): 1 lines added, 0 removed
+- **Advanced setup** (`setup.md`): 5 lines added, 5 removed
+- **Customize your status line** (`statusline.md`): 2 lines added, 2 removed
+- **Create custom subagents** (`sub-agents.md`): 1 lines added, 1 removed
+- **Configure your terminal for Claude Code** (`terminal-config.md`): 106 lines added, 65 removed
+  - New section: "# Configure your terminal for Claude Code"
+  - New section: "## Enter multiline prompts"
+  - New section: "## Enable Option key shortcuts on macOS"
+  - New section: "## Get a terminal bell or notification"
+  - New section: "### Play a sound with a Notification hook"
+- **Use Claude Code in VS Code** (`vs-code.md`): 1 lines added, 1 removed
+- **Zero data retention** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### Español
+
+
+**Modified**
+
+- **Comenzar con la aplicación de escritorio** (`desktop-quickstart.md`): 24 lines added, 34 removed
+- **Usar Claude Code Desktop** (`desktop.md`): 176 lines added, 175 removed
+  - New section: "## Organizar su espacio de trabajo"
+  - New section: "### Ejecutar comandos en la terminal"
+  - New section: "### Abrir y editar archivos"
+  - New section: "### Abrir archivos en otras aplicaciones"
+  - New section: "### Cambiar modos de vista"
+- **Automatizar flujos de trabajo con hooks** (`hooks-guide.md`): 69 lines added, 36 removed
+  - New section: "# ... resto de tu lógica de hook"
+- **Referencia de hooks** (`hooks.md`): 136 lines added, 77 removed
+  - New section: "## Herramienta PowerShell en Windows"
+- **Modo interactivo** (`interactive-mode.md`): 61 lines added, 47 removed
+  - New section: "## Comandos"
+  - New section: "## Resumen de sesión"
+- **Personalizar atajos de teclado** (`keybindings.md`): 77 lines added, 40 removed
+  - New section: "### Acciones de doctor"
+  - New section: "### Acciones de desplazamiento"
+- **Configuración del modelo** (`model-config.md`): 87 lines added, 39 removed
+  - New section: "### IDs de modelo Mantle"
+  - New section: "#### Elegir un nivel de esfuerzo"
+  - New section: "#### Establecer el nivel de esfuerzo"
+  - New section: "#### Razonamiento adaptativo y presupuestos de pensamiento fijo"
+- **Configurar permisos** (`permissions.md`): 53 lines added, 19 removed
+  - New section: "#### Comandos compuestos"
+  - New section: "#### Envoltorios de procesos"
+  - New section: "#### Comandos de solo lectura"
+- **Continúe sesiones locales desde cualquier dispositivo con Remote Control** (`remote-control.md`): 2 lines added, 1 removed
+- **Sandboxing** (`sandboxing.md`): 4 lines added, 3 removed
+- **Ejecutar prompts en un horario** (`scheduled-tasks.md`): 8 lines added, 4 removed
+  - New section: "### Detener un bucle"
+- **Configuración de Claude Code** (`settings.md`): 30 lines added, 24 removed
+- **Configuración avanzada** (`setup.md`): 23 lines added, 20 removed
+  - New section: "### Fijar una versión mínima"
+  - New section: "### Instalar con npm"
+- **Configura tu terminal para Claude Code** (`terminal-config.md`): 112 lines added, 55 removed
+  - New section: "# Configura tu terminal para Claude Code"
+  - New section: "## Ingresa indicadores multilínea"
+  - New section: "## Habilita atajos de tecla Option en macOS"
+  - New section: "## Obtén una campana de terminal o notificación"
+  - New section: "### Reproduce un sonido con un gancho de Notificación"
+- **Solución de problemas** (`troubleshooting.md`): 131 lines added, 32 removed
+  - New section: "### Windows: comando de instalación incorrecto"
+  - New section: "### Windows: Claude Code on Windows requires git-bash"
+  - New section: "### Windows: Claude Code does not support 32-bit Windows"
+  - New section: "### Binario nativo no encontrado después de instalar npm"
+  - New section: "### Modelo no encontrado o no accesible"
+
+### Français
+
+
+**Modified**
+
+- **Démarrer avec l'application de bureau** (`desktop-quickstart.md`): 23 lines added, 33 removed
+- **Utiliser Claude Code Desktop** (`desktop.md`): 180 lines added, 179 removed
+  - New section: "## Arranger votre espace de travail"
+  - New section: "### Exécuter les commandes dans le terminal"
+  - New section: "### Ouvrir et modifier les fichiers"
+  - New section: "### Ouvrir les fichiers dans d'autres applications"
+  - New section: "### Changer les modes d'affichage"
+- **Automatiser les workflows avec les hooks** (`hooks-guide.md`): 77 lines added, 34 removed
+- **Référence des hooks** (`hooks.md`): 147 lines added, 84 removed
+  - New section: "## Outil PowerShell sur Windows"
+- **Mode interactif** (`interactive-mode.md`): 65 lines added, 51 removed
+  - New section: "## Commandes"
+  - New section: "## Récapitulatif de session"
+- **Personnaliser les raccourcis clavier** (`keybindings.md`): 77 lines added, 40 removed
+  - New section: "### Actions du docteur"
+  - New section: "### Actions de défilement"
+- **Configuration du modèle** (`model-config.md`): 85 lines added, 37 removed
+  - New section: "### ID de modèle Mantle"
+  - New section: "#### Choisir un niveau d'effort"
+  - New section: "#### Définir le niveau d'effort"
+  - New section: "#### Raisonnement adaptatif et budgets de réflexion fixes"
+- **Configurer les autorisations** (`permissions.md`): 53 lines added, 19 removed
+  - New section: "#### Commandes composées"
+  - New section: "#### Wrappers de processus"
+  - New section: "#### Commandes en lecture seule"
+- **Continuer les sessions locales depuis n'importe quel appareil avec Remote Control** (`remote-control.md`): 2 lines added, 1 removed
+- **Sandboxing** (`sandboxing.md`): 3 lines added, 2 removed
+- **Exécuter des prompts selon un calendrier** (`scheduled-tasks.md`): 7 lines added, 3 removed
+  - New section: "### Arrêter une boucle"
+- **Paramètres Claude Code** (`settings.md`): 30 lines added, 24 removed
+- **Configuration avancée** (`setup.md`): 23 lines added, 20 removed
+  - New section: "### Épingler une version minimale"
+  - New section: "### Installer avec npm"
+- **Configurez votre terminal pour Claude Code** (`terminal-config.md`): 112 lines added, 55 removed
+  - New section: "# Configurez votre terminal pour Claude Code"
+  - New section: "## Entrer des invites multilignes"
+  - New section: "## Activer les raccourcis de la touche Option sur macOS"
+  - New section: "## Obtenir une cloche de terminal ou une notification"
+  - New section: "### Jouer un son avec un hook Notification"
+- **Dépannage** (`troubleshooting.md`): 130 lines added, 31 removed
+  - New section: "### Windows : mauvaise commande d'installation"
+  - New section: "### Windows : Claude Code does not support 32-bit Windows"
+  - New section: "### Binaire natif non trouvé après l'installation npm"
+  - New section: "### Modèle non trouvé ou non accessible"
+  - New section: "### Cette organisation a été désactivée avec un abonnement actif"
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Memulai dengan aplikasi desktop** (`desktop-quickstart.md`): 21 lines added, 33 removed
+- **Gunakan Claude Code Desktop** (`desktop.md`): 304 lines added, 303 removed
+  - New section: "### Pilih permission mode"
+  - New section: "### Tinjau perubahan dengan diff view"
+  - New section: "## Atur workspace Anda"
+  - New section: "### Jalankan perintah di terminal"
+  - New section: "### Buka dan edit file"
+- **Otomatisasi alur kerja dengan hooks** (`hooks-guide.md`): 76 lines added, 33 removed
+- **Referensi hooks** (`hooks.md`): 106 lines added, 70 removed
+- **Mode interaktif** (`interactive-mode.md`): 63 lines added, 49 removed
+  - New section: "## Perintah"
+  - New section: "## Ringkasan sesi"
+- **Sesuaikan pintasan keyboard** (`keybindings.md`): 75 lines added, 46 removed
+  - New section: "### Tindakan scroll"
+- **Konfigurasi model** (`model-config.md`): 86 lines added, 38 removed
+  - New section: "### ID model Mantle"
+  - New section: "#### Pilih tingkat usaha"
+  - New section: "#### Atur tingkat usaha"
+  - New section: "#### Penalaran adaptif dan anggaran pemikiran tetap"
+- **Konfigurasi izin** (`permissions.md`): 46 lines added, 12 removed
+  - New section: "#### Perintah gabungan"
+  - New section: "#### Pembungkus proses"
+  - New section: "#### Perintah hanya baca"
+- **Lanjutkan sesi lokal dari perangkat apa pun dengan Remote Control** (`remote-control.md`): 2 lines added, 1 removed
+- **Sandboxing** (`sandboxing.md`): 2 lines added, 1 removed
+- **Jalankan prompt sesuai jadwal** (`scheduled-tasks.md`): 7 lines added, 3 removed
+  - New section: "### Hentikan loop"
+- **Pengaturan Claude Code** (`settings.md`): 30 lines added, 24 removed
+- **Pengaturan lanjutan** (`setup.md`): 23 lines added, 20 removed
+  - New section: "### Tetapkan versi minimum"
+  - New section: "### Instal dengan npm"
+- **Konfigurasi terminal Anda untuk Claude Code** (`terminal-config.md`): 112 lines added, 55 removed
+  - New section: "# Konfigurasi terminal Anda untuk Claude Code"
+  - New section: "## Masukkan prompt multiline"
+  - New section: "## Aktifkan pintasan tombol Option di macOS"
+  - New section: "## Dapatkan bel terminal atau notifikasi"
+  - New section: "### Putar suara dengan hook Notification"
+- **Troubleshooting** (`troubleshooting.md`): 131 lines added, 32 removed
+  - New section: "### Windows: wrong install command"
+  - New section: "### Windows: Claude Code on Windows requires git-bash"
+  - New section: "### Windows: Claude Code does not support 32-bit Windows"
+  - New section: "### Native binary not found after npm install"
+  - New section: "### Model not found or not accessible"
+
+### Italiano
+
+
+**Modified**
+
+- **Iniziare con l'app desktop** (`desktop-quickstart.md`): 23 lines added, 33 removed
+- **Usa Claude Code Desktop** (`desktop.md`): 186 lines added, 187 removed
+  - New section: "## Organizza l'area di lavoro"
+  - New section: "### Esegui comandi nel terminale"
+  - New section: "### Apri e modifica file"
+  - New section: "### Apri file in altre app"
+  - New section: "### Cambia modalità di visualizzazione"
+- **Automatizzare i flussi di lavoro con hooks** (`hooks-guide.md`): 79 lines added, 36 removed
+- **Riferimento dei hooks** (`hooks.md`): 112 lines added, 76 removed
+- **Modalità interattiva** (`interactive-mode.md`): 61 lines added, 47 removed
+  - New section: "## Comandi"
+  - New section: "## Riepilogo della sessione"
+- **Personalizzare le scorciatoie da tastiera** (`keybindings.md`): 83 lines added, 46 removed
+  - New section: "### Azioni del Doctor"
+  - New section: "### Azioni di scorrimento"
+- **Configurazione del modello** (`model-config.md`): 86 lines added, 38 removed
+  - New section: "### ID di modello Mantle"
+  - New section: "#### Scegliere un livello di sforzo"
+  - New section: "#### Impostare il livello di sforzo"
+  - New section: "#### Ragionamento adattivo e budget di pensiero fissi"
+- **Configurare le autorizzazioni** (`permissions.md`): 53 lines added, 19 removed
+  - New section: "#### Comandi composti"
+  - New section: "#### Wrapper di processo"
+  - New section: "#### Comandi di sola lettura"
+- **Continua le sessioni locali da qualsiasi dispositivo con Remote Control** (`remote-control.md`): 2 lines added, 1 removed
+- **Sandboxing** (`sandboxing.md`): 3 lines added, 2 removed
+- **Eseguire prompt in base a una pianificazione** (`scheduled-tasks.md`): 7 lines added, 3 removed
+  - New section: "### Interrompere un ciclo"
+- **Impostazioni di Claude Code** (`settings.md`): 31 lines added, 25 removed
+- **Configurazione avanzata** (`setup.md`): 23 lines added, 20 removed
+  - New section: "### Fissare una versione minima"
+  - New section: "### Installare con npm"
+- **Configura il tuo terminale per Claude Code** (`terminal-config.md`): 112 lines added, 55 removed
+  - New section: "# Configura il tuo terminale per Claude Code"
+  - New section: "## Enter multiline prompts"
+  - New section: "## Enable Option key shortcuts on macOS"
+  - New section: "## Get a terminal bell or notification"
+  - New section: "### Play a sound with a Notification hook"
+- **Troubleshooting** (`troubleshooting.md`): 131 lines added, 32 removed
+  - New section: "### Windows: comando di installazione sbagliato"
+  - New section: "### Windows: Claude Code on Windows requires git-bash"
+  - New section: "### Windows: Claude Code does not support 32-bit Windows"
+  - New section: "### Binario nativo non trovato dopo l'installazione npm"
+  - New section: "### Modello non trovato o non accessibile"
+
+### 日本語
+
+
+**Modified**
+
+- **デスクトップアプリを始める** (`desktop-quickstart.md`): 23 lines added, 33 removed
+- **Claude Code Desktop を使用する** (`desktop.md`): 170 lines added, 171 removed
+  - New section: "## ワークスペースを配置する"
+  - New section: "### ターミナルでコマンドを実行する"
+  - New section: "### ファイルを開いて編集する"
+  - New section: "### ファイルを他のアプリで開く"
+  - New section: "### ビューモードを切り替える"
+- **hooks でワークフローを自動化する** (`hooks-guide.md`): 82 lines added, 37 removed
+- **Hooks リファレンス** (`hooks.md`): 117 lines added, 83 removed
+- **インタラクティブモード** (`interactive-mode.md`): 66 lines added, 52 removed
+  - New section: "## コマンド"
+  - New section: "## セッション要約"
+- **キーボードショートカットのカスタマイズ** (`keybindings.md`): 64 lines added, 27 removed
+  - New section: "### Doctor アクション"
+  - New section: "### スクロールアクション"
+- **モデル設定** (`model-config.md`): 85 lines added, 37 removed
+  - New section: "### Mantle モデル ID"
+  - New section: "#### 努力レベルの選択"
+  - New section: "#### 努力レベルの設定"
+  - New section: "#### 適応的推論と固定思考予算"
+- **権限を設定する** (`permissions.md`): 53 lines added, 19 removed
+  - New section: "#### 複合コマンド"
+  - New section: "#### プロセスラッパー"
+  - New section: "#### 読み取り専用コマンド"
+- **任意のデバイスからローカルセッションを続行する Remote Control** (`remote-control.md`): 5 lines added, 4 removed
+- **サンドボックス** (`sandboxing.md`): 4 lines added, 3 removed
+- **スケジュールに従ってプロンプトを実行する** (`scheduled-tasks.md`): 7 lines added, 3 removed
+  - New section: "### ループを停止する"
+- **Claude Code の設定** (`settings.md`): 30 lines added, 24 removed
+- **高度なセットアップ** (`setup.md`): 23 lines added, 20 removed
+  - New section: "### 最小バージョンをピン留め"
+  - New section: "### npm でのインストール"
+- **Claude Code 用にターミナルを設定する** (`terminal-config.md`): 112 lines added, 55 removed
+  - New section: "# Claude Code 用にターミナルを設定する"
+  - New section: "## 複数行のプロンプトを入力する"
+  - New section: "## macOS で Option キーショートカットを有効にする"
+  - New section: "## ターミナルベルまたは通知を取得する"
+  - New section: "### 通知フックでサウンドを再生する"
+- **トラブルシューティング** (`troubleshooting.md`): 135 lines added, 36 removed
+  - New section: "# Zsh（macOS デフォルト）"
+  - New section: "# Bash（Linux デフォルト）"
+  - New section: "### Windows：間違ったインストールコマンド"
+  - New section: "### Windows：Claude Code は 32 ビット Windows をサポートしていません"
+  - New section: "### npm インストール後にネイティブバイナリが見つからない"
+
+### 한국어
+
+
+**Modified**
+
+- **데스크톱 앱 시작하기** (`desktop-quickstart.md`): 21 lines added, 33 removed
+- **Claude Code Desktop 사용하기** (`desktop.md`): 181 lines added, 180 removed
+  - New section: "## 워크스페이스 정렬하기"
+  - New section: "### 터미널에서 명령 실행하기"
+  - New section: "### 파일 열기 및 편집하기"
+  - New section: "### 다른 앱에서 파일 열기"
+  - New section: "### 보기 모드 전환하기"
+- **hooks를 사용하여 워크플로우 자동화** (`hooks-guide.md`): 84 lines added, 41 removed
+- **Hooks 참조** (`hooks.md`): 114 lines added, 78 removed
+- **대화형 모드** (`interactive-mode.md`): 66 lines added, 52 removed
+  - New section: "## 명령"
+  - New section: "## 세션 요약"
+- **키보드 단축키 사용자 정의** (`keybindings.md`): 63 lines added, 26 removed
+  - New section: "### Doctor 작업"
+  - New section: "### 스크롤 작업"
+- **모델 구성** (`model-config.md`): 86 lines added, 38 removed
+  - New section: "### Mantle 모델 ID"
+  - New section: "#### 노력 수준 선택"
+  - New section: "#### 노력 수준 설정"
+  - New section: "#### 적응형 추론 및 고정 사고 예산"
+- **권한 구성** (`permissions.md`): 53 lines added, 19 removed
+  - New section: "#### 복합 명령"
+  - New section: "#### 프로세스 래퍼"
+  - New section: "#### 읽기 전용 명령"
+- **모든 기기에서 로컬 세션 계속하기 (Remote Control)** (`remote-control.md`): 2 lines added, 1 removed
+- **샌드박싱** (`sandboxing.md`): 4 lines added, 3 removed
+- **일정에 따라 프롬프트 실행하기** (`scheduled-tasks.md`): 7 lines added, 3 removed
+  - New section: "### 루프 중지하기"
+- **Claude Code 설정** (`settings.md`): 34 lines added, 28 removed
+- **고급 설정** (`setup.md`): 23 lines added, 20 removed
+  - New section: "### 최소 버전 고정"
+  - New section: "### npm으로 설치"
+- **Claude Code를 위한 터미널 구성** (`terminal-config.md`): 112 lines added, 55 removed
+  - New section: "# Claude Code를 위한 터미널 구성"
+  - New section: "## 여러 줄 프롬프트 입력"
+  - New section: "## macOS에서 Option 키 단축키 활성화"
+  - New section: "## 터미널 벨 또는 알림 받기"
+  - New section: "### 알림 훅으로 소리 재생"
+- **문제 해결** (`troubleshooting.md`): 131 lines added, 32 removed
+  - New section: "### Windows: 잘못된 설치 명령"
+  - New section: "### Windows: Claude Code on Windows requires git-bash"
+  - New section: "### Windows: Claude Code does not support 32-bit Windows"
+  - New section: "### npm 설치 후 네이티브 바이너리를 찾을 수 없음"
+  - New section: "### 모델을 찾을 수 없거나 액세스할 수 없음"
+
+### Português
+
+
+**Modified**
+
+- **Comece com o aplicativo de desktop** (`desktop-quickstart.md`): 23 lines added, 33 removed
+- **Use Claude Code Desktop** (`desktop.md`): 200 lines added, 199 removed
+  - New section: "## Organizar seu workspace"
+  - New section: "### Executar comandos no terminal"
+  - New section: "### Abrir e editar arquivos"
+  - New section: "### Abrir arquivos em outros aplicativos"
+  - New section: "### Alternar modos de visualização"
+- **Automatizar fluxos de trabalho com hooks** (`hooks-guide.md`): 83 lines added, 40 removed
+  - New section: "# ... resto da lógica do seu hook"
+- **Referência de hooks** (`hooks.md`): 116 lines added, 83 removed
+- **Modo interativo** (`interactive-mode.md`): 68 lines added, 54 removed
+  - New section: "## Comandos"
+  - New section: "## Resumo de sessão"
+- **Personalizar atalhos de teclado** (`keybindings.md`): 63 lines added, 26 removed
+  - New section: "### Ações de doctor"
+  - New section: "### Ações de rolagem"
+- **Configuração de modelo** (`model-config.md`): 85 lines added, 37 removed
+  - New section: "### IDs de modelo Mantle"
+  - New section: "#### Escolher um nível de esforço"
+  - New section: "#### Definir o nível de esforço"
+  - New section: "#### Raciocínio adaptativo e orçamentos de pensamento fixos"
+- **Configurar permissões** (`permissions.md`): 47 lines added, 13 removed
+  - New section: "#### Comandos compostos"
+  - New section: "#### Wrappers de processo"
+  - New section: "#### Comandos somente leitura"
+- **Continue sessões locais de qualquer dispositivo com Remote Control** (`remote-control.md`): 2 lines added, 1 removed
+- **Sandboxing** (`sandboxing.md`): 4 lines added, 3 removed
+- **Executar prompts em um cronograma** (`scheduled-tasks.md`): 7 lines added, 3 removed
+  - New section: "### Pare um loop"
+- **Configurações do Claude Code** (`settings.md`): 31 lines added, 25 removed
+- **Configuração avançada** (`setup.md`): 23 lines added, 20 removed
+  - New section: "### Fixar uma versão mínima"
+  - New section: "### Instalar com npm"
+- **Configure seu terminal para Claude Code** (`terminal-config.md`): 112 lines added, 55 removed
+  - New section: "# Configure seu terminal para Claude Code"
+  - New section: "## Enter multiline prompts"
+  - New section: "## Enable Option key shortcuts on macOS"
+  - New section: "## Get a terminal bell or notification"
+  - New section: "### Play a sound with a Notification hook"
+- **Troubleshooting** (`troubleshooting.md`): 132 lines added, 33 removed
+  - New section: "### Windows: comando de instalação incorreto"
+  - New section: "### Windows: Claude Code on Windows requires git-bash"
+  - New section: "### Windows: Claude Code does not support 32-bit Windows"
+  - New section: "### Binário nativo não encontrado após instalação npm"
+  - New section: "### Modelo não encontrado ou não acessível"
+
+### Русский
+
+
+**Modified**
+
+- **Начало работы с настольным приложением** (`desktop-quickstart.md`): 23 lines added, 33 removed
+- **Использование Claude Code Desktop** (`desktop.md`): 177 lines added, 178 removed
+  - New section: "## Организация рабочей области"
+  - New section: "### Запуск команд в терминале"
+  - New section: "### Открытие и редактирование файлов"
+  - New section: "### Открытие файлов в других приложениях"
+  - New section: "### Переключение режимов просмотра"
+- **Автоматизация рабочих процессов с помощью hooks** (`hooks-guide.md`): 77 lines added, 34 removed
+- **Справочник по hooks** (`hooks.md`): 134 lines added, 96 removed
+  - New section: "### Workt reeCreate"
+  - New section: "## Debug hooks"
+- **Интерактивный режим** (`interactive-mode.md`): 65 lines added, 51 removed
+  - New section: "## Команды"
+  - New section: "## Резюме сеанса"
+- **Настройка сочетаний клавиш** (`keybindings.md`): 63 lines added, 26 removed
+  - New section: "### Действия Doctor"
+  - New section: "### Действия прокрутки"
+- **Конфигурация модели** (`model-config.md`): 87 lines added, 40 removed
+  - New section: "### Идентификаторы моделей Mantle"
+  - New section: "#### Выбор уровня усилий"
+  - New section: "#### Установка уровня усилий"
+  - New section: "#### Адаптивное рассуждение и фиксированные бюджеты мышления"
+- **Настройка разрешений** (`permissions.md`): 58 lines added, 24 removed
+  - New section: "#### Составные команды"
+  - New section: "#### Оборачиватели процессов"
+  - New section: "#### Команды только для чтения"
+- **Продолжайте локальные сеансы с любого устройства с помощью Remote Control** (`remote-control.md`): 2 lines added, 1 removed
+- **Sandboxing** (`sandboxing.md`): 4 lines added, 3 removed
+- **Запуск подсказок по расписанию** (`scheduled-tasks.md`): 6 lines added, 2 removed
+  - New section: "### Остановите цикл"
+- **Параметры Claude Code** (`settings.md`): 30 lines added, 24 removed
+- **Расширенная настройка** (`setup.md`): 23 lines added, 20 removed
+  - New section: "### Закрепление минимальной версии"
+  - New section: "### Установка с npm"
+- **Настройте ваш терминал для Claude Code** (`terminal-config.md`): 112 lines added, 55 removed
+  - New section: "# Настройте ваш терминал для Claude Code"
+  - New section: "## Ввод многострочных приглашений"
+  - New section: "## Включите сочетания клавиш Option на macOS"
+  - New section: "## Получите звуковой сигнал терминала или уведомление"
+  - New section: "### Воспроизведите звук с помощью хука Notification"
+- **Troubleshooting** (`troubleshooting.md`): 132 lines added, 33 removed
+  - New section: "### Windows: неправильная команда установки"
+  - New section: "### Windows: Claude Code on Windows requires git-bash"
+  - New section: "### Windows: Claude Code does not support 32-bit Windows"
+  - New section: "### Собственный двоичный файл не найден после установки npm"
+  - New section: "### Модель не найдена или недоступна"
+
+### 简体中文
+
+
+**Modified**
+
+- **开始使用桌面应用** (`desktop-quickstart.md`): 23 lines added, 33 removed
+- **使用 Claude Code Desktop** (`desktop.md`): 185 lines added, 184 removed
+  - New section: "## 整理工作区"
+  - New section: "### 在终端中运行命令"
+  - New section: "### 打开和编辑文件"
+  - New section: "### 在其他应用中打开文件"
+  - New section: "### 切换视图模式"
+- **使用 hooks 自动化工作流** (`hooks-guide.md`): 81 lines added, 36 removed
+- **Hooks 参考** (`hooks.md`): 112 lines added, 76 removed
+  - New section: "## 基于代理的 hooks"
+  - New section: "### 基于代理的 hooks 如何工作"
+- **交互模式** (`interactive-mode.md`): 66 lines added, 52 removed
+  - New section: "## 命令"
+  - New section: "## 会话回顾"
+- **自定义快捷键** (`keybindings.md`): 57 lines added, 20 removed
+  - New section: "### Doctor 操作"
+  - New section: "### 滚动操作"
+- **模型配置** (`model-config.md`): 85 lines added, 37 removed
+  - New section: "### Mantle 模型 ID"
+  - New section: "#### 选择工作量级别"
+  - New section: "#### 设置工作量级别"
+  - New section: "#### 自适应推理和固定思考预算"
+- **配置权限** (`permissions.md`): 53 lines added, 19 removed
+  - New section: "#### 复合命令"
+  - New section: "#### 进程包装器"
+  - New section: "#### 只读命令"
+- **使用 Remote Control 从任何设备继续本地会话** (`remote-control.md`): 2 lines added, 1 removed
+- **Sandboxing** (`sandboxing.md`): 4 lines added, 3 removed
+- **按计划运行提示词** (`scheduled-tasks.md`): 7 lines added, 3 removed
+  - New section: "### 停止循环"
+- **Claude Code 设置** (`settings.md`): 30 lines added, 24 removed
+- **高级设置** (`setup.md`): 23 lines added, 20 removed
+  - New section: "### 固定最低版本"
+  - New section: "### 使用 npm 安装"
+- **为 Claude Code 配置您的终端** (`terminal-config.md`): 112 lines added, 55 removed
+  - New section: "# 为 Claude Code 配置您的终端"
+  - New section: "## 输入多行提示符"
+  - New section: "## 在 macOS 上启用 Option 快捷键"
+  - New section: "## 获取终端铃声或通知"
+  - New section: "### 使用通知钩子播放声音"
+- **故障排除** (`troubleshooting.md`): 132 lines added, 33 removed
+  - New section: "### Windows：错误的安装命令"
+  - New section: "### Windows：Claude Code on Windows requires git-bash"
+  - New section: "### Windows：Claude Code does not support 32-bit Windows"
+  - New section: "### npm 安装后未找到本机二进制文件"
+  - New section: "### 模型未找到或无法访问"
+
+### 繁體中文
+
+
+**Modified**
+
+- **開始使用桌面應用程式** (`desktop-quickstart.md`): 23 lines added, 33 removed
+- **使用 Claude Code Desktop** (`desktop.md`): 183 lines added, 184 removed
+  - New section: "## 安排您的工作區"
+  - New section: "### 在終端機中執行命令"
+  - New section: "### 開啟和編輯檔案"
+  - New section: "### 在其他應用程式中開啟檔案"
+  - New section: "### 切換檢視模式"
+- **使用 hooks 自動化工作流程** (`hooks-guide.md`): 78 lines added, 33 removed
+- **Hooks 參考** (`hooks.md`): 112 lines added, 76 removed
+- **互動模式** (`interactive-mode.md`): 65 lines added, 51 removed
+  - New section: "## 命令"
+  - New section: "## 會話摘要"
+- **自訂鍵盤快捷鍵** (`keybindings.md`): 57 lines added, 20 removed
+  - New section: "### Doctor 動作"
+  - New section: "### 滾動動作"
+- **模型配置** (`model-config.md`): 117 lines added, 34 removed
+  - New section: "### Mantle 模型 ID"
+  - New section: "#### 選擇努力等級"
+  - New section: "#### 設定努力等級"
+  - New section: "#### 自適應推理和固定思考預算"
+  - New section: "### 為第三方部署自訂固定模型顯示和能力"
+- **設定權限** (`permissions.md`): 53 lines added, 19 removed
+  - New section: "#### 複合命令"
+  - New section: "#### 程序包裝器"
+  - New section: "#### 唯讀命令"
+- **使用 Remote Control 從任何裝置繼續本地會話** (`remote-control.md`): 2 lines added, 1 removed
+- **Sandboxing** (`sandboxing.md`): 4 lines added, 3 removed
+- **按排程執行提示** (`scheduled-tasks.md`): 7 lines added, 3 removed
+  - New section: "### 停止迴圈"
+- **Claude Code 設定** (`settings.md`): 31 lines added, 25 removed
+- **進階設定** (`setup.md`): 23 lines added, 20 removed
+  - New section: "### 固定最低版本"
+  - New section: "### 使用 npm 安裝"
+- **為 Claude Code 配置您的終端機** (`terminal-config.md`): 112 lines added, 55 removed
+  - New section: "# 為 Claude Code 配置您的終端機"
+  - New section: "## 輸入多行提示"
+  - New section: "## 在 macOS 上啟用 Option 快捷鍵"
+  - New section: "## 獲得終端機鈴聲或通知"
+  - New section: "### 使用通知 hook 播放聲音"
+- **故障排除** (`troubleshooting.md`): 131 lines added, 32 removed
+  - New section: "### Windows：錯誤的安裝命令"
+  - New section: "### Windows：Claude Code on Windows requires git-bash"
+  - New section: "### Windows：Claude Code does not support 32-bit Windows"
+  - New section: "### npm 安裝後未找到本機二進制文件"
+  - New section: "### 模型未找到或無法訪問"
+
+---
+
 ## 2026-04-19
 
 9 pages modified

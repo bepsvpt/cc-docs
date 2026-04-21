@@ -12,7 +12,7 @@
 
 计划任务让 Claude 按间隔自动重新运行提示词。使用它们来轮询部署、监督 PR、检查长时间运行的构建，或在会话中稍后提醒自己做某事。要对事件进行实时反应而不是轮询，请参阅 [Channels](/zh-CN/channels)：您的 CI 可以直接将失败推送到会话中。
 
-任务是会话范围的：它们存在于当前 Claude Code 进程中，当您退出时就会消失。对于需要在重启后继续运行的持久调度，请使用 [Routines](/zh-CN/routines)、[Desktop 计划任务](/zh-CN/desktop-scheduled-tasks) 或 [GitHub Actions](/zh-CN/github-actions)。
+任务是会话范围的：它们存在于当前对话中，当您启动新对话时就会停止。使用 `--resume` 或 `--continue` 恢复会带回任何尚未[过期](#seven-day-expiry)的任务：在过去 7 天内创建的重复任务，或计划时间尚未到达的一次性任务。对于独立于任何会话而存在的调度，请使用 [Routines](/zh-CN/routines)、[Desktop 计划任务](/zh-CN/desktop-scheduled-tasks) 或 [GitHub Actions](/zh-CN/github-actions)。
 
 ## 比较调度选项
 
@@ -118,6 +118,10 @@ quiet, say so in one line.
 
 对 `loop.md` 的编辑在下一次迭代时生效，所以您可以在循环运行时优化说明。当任一位置都不存在 `loop.md` 时，循环回退到内置维护提示词。保持文件简洁：超过 25,000 字节的内容会被截断。
 
+### 停止循环
+
+要在 `/loop` 等待下一次迭代时停止它，请按 `Esc`。这会清除待处理的唤醒，所以循环不会再次触发。您通过[直接询问 Claude](#manage-scheduled-tasks)计划的任务不受 `Esc` 影响，会保留在原位，直到您删除它们。
+
 ## 设置一次性提醒
 
 对于一次性提醒，用自然语言描述您想要的内容，而不是使用 `/loop`。Claude 计划一个单次触发的任务，该任务在运行后删除自己。
@@ -198,9 +202,9 @@ cancel the deploy check job
 
 会话范围的调度有固有的限制：
 
-* 任务仅在 Claude Code 运行且空闲时触发。关闭终端或让会话退出会取消所有内容。
+* 任务仅在 Claude Code 运行且空闲时触发。关闭终端或让会话退出会停止它们触发。
 * 没有错过触发的追赶。如果任务的计划时间在 Claude 忙于长时间运行的请求时经过，它会在 Claude 变为空闲时触发一次，而不是每个错过的间隔触发一次。
-* 没有跨重启的持久性。重启 Claude Code 会清除所有会话范围的任务。
+* 启动新对话会清除所有会话范围的任务。使用 `claude --resume` 或 `claude --continue` 恢复会恢复尚未过期的任务：创建后七天内的重复任务，以及计划时间尚未到达的一次性任务。后台 Bash 和监视器任务在恢复时永远不会被恢复。
 
 对于需要无人值守运行的 cron 驱动自动化：
 

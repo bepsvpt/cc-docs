@@ -123,7 +123,7 @@ claude
 }
 ```
 
-Claude Code 也可以在 Windows 上以选择加入预览的方式原生运行 PowerShell。有关设置和限制，请参阅 [PowerShell 工具](/zh-CN/tools-reference#powershell-tool)。
+Claude Code 也可以在 Windows 上原生运行 PowerShell。PowerShell 工具正在逐步推出；设置 `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` 以选择加入或 `0` 以选择退出。有关设置和限制，请参阅 [PowerShell 工具](/zh-CN/tools-reference#powershell-tool)。
 
 **选项 2：WSL**
 
@@ -203,6 +203,23 @@ Claude Code 在启动时和运行时定期检查更新。更新在后台下载�
 对于企业部署，您可以使用[托管设置](/zh-CN/permissions#managed-settings)在整个组织中强制执行一致的发布渠道。
 
 Homebrew 安装通过 cask 名称而不是此设置来选择渠道：`claude-code` 跟踪稳定版，`claude-code@latest` 跟踪最新版。
+
+### 固定最低版本
+
+`minimumVersion` 设置建立了一个下限。后台自动更新和 `claude update` 拒绝安装低于此值的任何版本，因此如果您已经在较新的 `"latest"` 构建上，切换到 `"stable"` 渠道不会降级您。
+
+通过 `/config` 从 `"latest"` 切换到 `"stable"` 会提示您选择保留当前版本或允许降级。选择保留会将 `minimumVersion` 设置为该版本。切换回 `"latest"` 会清除它。
+
+将其添加到您的 [settings.json 文件](/zh-CN/settings)以显式固定下限：
+
+```json theme={null}
+{
+  "autoUpdatesChannel": "stable",
+  "minimumVersion": "2.1.100"
+}
+```
+
+在[托管设置](/zh-CN/permissions#managed-settings)中，这会强制执行用户和项目设置无法覆盖的组织范围最低版本。
 
 ### 禁用自动更新
 
@@ -298,31 +315,17 @@ claude update
   </Tab>
 </Tabs>
 
-### 已弃用的 npm 安装
+### 使用 npm 安装
 
-npm 安装已弃用。原生安装程序更快，不需要依赖项，并在后台自动更新。尽可能使用[原生安装](#install-claude-code)方法。
-
-#### 从 npm 迁移到原生
-
-如果您之前使用 npm 安装了 Claude Code，请切换到原生安装程序：
-
-```bash theme={null}
-# 安装原生二进制文件
-curl -fsSL https://claude.ai/install.sh | bash
-
-# 删除旧的 npm 安装
-npm uninstall -g @anthropic-ai/claude-code
-```
-
-您也可以从现有的 npm 安装运行 `claude install` 来在其旁边安装原生二进制文件，然后删除 npm 版本。
-
-#### 使用 npm 安装
-
-如果您因兼容性原因需要 npm 安装，您必须安装 [Node.js 18+](https://nodejs.org/en/download)。全局安装该包：
+您也可以将 Claude Code 安装为全局 npm 包。该包需要 [Node.js 18 或更高版本](https://nodejs.org/en/download)。
 
 ```bash theme={null}
 npm install -g @anthropic-ai/claude-code
 ```
+
+npm 包安装与独立安装程序相同的原生二进制文件。npm 通过每个平台的可选依赖项（如 `@anthropic-ai/claude-code-darwin-arm64`）拉取二进制文件，并通过 postinstall 步骤将其链接到位。已安装的 `claude` 二进制文件本身不调用 Node。
+
+支持的 npm 安装平台是 `darwin-arm64`、`darwin-x64`、`linux-x64`、`linux-arm64`、`linux-x64-musl`、`linux-arm64-musl`、`win32-x64` 和 `win32-arm64`。您的包管理器必须允许可选依赖项。如果安装后二进制文件丢失，请参阅[故障排除](/zh-CN/troubleshooting#native-binary-not-found-after-npm-install)。
 
 <Warning>
   不要使用 `sudo npm install -g`，因为这可能导致权限问题和安全风险。如果遇到权限错误，请参阅[故障排除权限错误](/zh-CN/troubleshooting#permission-errors-during-installation)。

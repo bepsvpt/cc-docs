@@ -123,7 +123,7 @@ Setelah instalasi, luncurkan `claude` dari PowerShell, CMD, atau Git Bash. Claud
 }
 ```
 
-Claude Code juga dapat menjalankan PowerShell secara asli di Windows sebagai pratinjau opt-in. Lihat [PowerShell tool](/id/tools-reference#powershell-tool) untuk pengaturan dan batasan.
+Claude Code juga dapat menjalankan PowerShell secara asli di Windows. Alat PowerShell sedang diluncurkan secara progresif; atur `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` untuk memilih masuk atau `0` untuk memilih keluar. Lihat [PowerShell tool](/id/tools-reference#powershell-tool) untuk pengaturan dan batasan.
 
 **Opsi 2: WSL**
 
@@ -203,6 +203,23 @@ Konfigurasi ini melalui `/config` → **Auto-update channel**, atau tambahkan ke
 Untuk penerapan enterprise, Anda dapat memberlakukan saluran rilis yang konsisten di seluruh organisasi Anda menggunakan [managed settings](/id/permissions#managed-settings).
 
 Instalasi Homebrew memilih saluran berdasarkan nama cask sebagai gantinya: `claude-code` melacak stable dan `claude-code@latest` melacak latest.
+
+### Tetapkan versi minimum
+
+Pengaturan `minimumVersion` menetapkan batas bawah. Pembaruan otomatis latar belakang dan `claude update` menolak untuk menginstal versi apa pun di bawah nilai ini, jadi beralih ke saluran `"stable"` tidak menurunkan Anda jika Anda sudah di build `"latest"` yang lebih baru.
+
+Beralih dari `"latest"` ke `"stable"` melalui `/config` meminta Anda untuk tetap di versi saat ini atau memungkinkan downgrade. Memilih untuk tetap menetapkan `minimumVersion` ke versi itu. Beralih kembali ke `"latest"` menghapusnya.
+
+Tambahkan ke [file settings.json](/id/settings) Anda untuk menetapkan batas secara eksplisit:
+
+```json theme={null}
+{
+  "autoUpdatesChannel": "stable",
+  "minimumVersion": "2.1.100"
+}
+```
+
+Dalam [managed settings](/id/permissions#managed-settings), ini memberlakukan minimum di seluruh organisasi yang tidak dapat ditimpa oleh pengaturan pengguna dan proyek.
 
 ### Nonaktifkan pembaruan otomatis
 
@@ -298,31 +315,17 @@ Untuk menginstal nomor versi tertentu:
   </Tab>
 </Tabs>
 
-### Instalasi npm yang sudah usang
+### Instal dengan npm
 
-Instalasi npm sudah usang. Penginstal asli lebih cepat, tidak memerlukan dependensi, dan auto-update di latar belakang. Gunakan metode [instalasi asli](#install-claude-code) jika memungkinkan.
-
-#### Migrasi dari npm ke asli
-
-Jika Anda sebelumnya menginstal Claude Code dengan npm, beralih ke penginstal asli:
-
-```bash theme={null}
-# Instal biner asli
-curl -fsSL https://claude.ai/install.sh | bash
-
-# Hapus instalasi npm lama
-npm uninstall -g @anthropic-ai/claude-code
-```
-
-Anda juga dapat menjalankan `claude install` dari instalasi npm yang ada untuk menginstal biner asli bersama dengannya, kemudian hapus versi npm.
-
-#### Instal dengan npm
-
-Jika Anda memerlukan instalasi npm untuk alasan kompatibilitas, Anda harus memiliki [Node.js 18+](https://nodejs.org/en/download) terinstal. Instal paket secara global:
+Anda juga dapat menginstal Claude Code sebagai paket npm global. Paket memerlukan [Node.js 18 atau lebih baru](https://nodejs.org/en/download).
 
 ```bash theme={null}
 npm install -g @anthropic-ai/claude-code
 ```
+
+Paket npm menginstal biner asli yang sama dengan penginstal standalone. npm menarik biner melalui dependensi opsional per-platform seperti `@anthropic-ai/claude-code-darwin-arm64`, dan langkah postinstall menautkannya ke tempat. Biner `claude` yang terinstal tidak sendiri memanggil Node.
+
+Platform instalasi npm yang didukung adalah `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64`, dan `win32-arm64`. Manajer paket Anda harus memungkinkan dependensi opsional. Lihat [troubleshooting](/id/troubleshooting#native-binary-not-found-after-npm-install) jika biner hilang setelah instalasi.
 
 <Warning>
   JANGAN gunakan `sudo npm install -g` karena ini dapat menyebabkan masalah izin dan risiko keamanan. Jika Anda mengalami kesalahan izin, lihat [troubleshooting kesalahan izin](/id/troubleshooting#permission-errors-during-installation).

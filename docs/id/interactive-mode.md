@@ -13,8 +13,8 @@
 
   **Pengguna macOS**: Pintasan tombol Option/Alt (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`, `Alt+T`) memerlukan konfigurasi Option sebagai Meta di terminal Anda:
 
-  * **iTerm2**: settings → Profiles → Keys → atur Left/Right Option key ke "Esc+"
-  * **Terminal.app**: settings → Profiles → Keyboard → centang "Use Option as Meta Key"
+  * **iTerm2**: Settings → Profiles → Keys → General → atur Left/Right Option key ke "Esc+"
+  * **Apple Terminal**: Settings → Profiles → Keyboard → centang "Use Option as Meta Key"
   * **VS Code**: atur `"terminal.integrated.macOptionIsMeta": true` dalam pengaturan VS Code
 
   Lihat [Konfigurasi terminal](/id/terminal-config) untuk detail.
@@ -22,36 +22,39 @@
 
 ### Kontrol umum
 
-| Pintasan                                              | Deskripsi                                                                           | Konteks                                                                                                                                                                           |
-| :---------------------------------------------------- | :---------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Ctrl+C`                                              | Batalkan input atau generasi saat ini                                               | Interupsi standar                                                                                                                                                                 |
-| `Ctrl+X Ctrl+K`                                       | Matikan semua agen latar belakang. Tekan dua kali dalam 3 detik untuk mengonfirmasi | Kontrol agen latar belakang                                                                                                                                                       |
-| `Ctrl+D`                                              | Keluar dari sesi Claude Code                                                        | Sinyal EOF                                                                                                                                                                        |
-| `Ctrl+G` atau `Ctrl+X Ctrl+E`                         | Buka di editor teks default                                                         | Edit prompt atau respons kustom Anda di editor teks default. `Ctrl+X Ctrl+E` adalah binding readline-native                                                                       |
-| `Ctrl+L`                                              | Gambar ulang layar                                                                  | Melukis ulang UI saat ini tanpa menghapus riwayat percakapan                                                                                                                      |
-| `Ctrl+O`                                              | Alihkan output verbose                                                              | Menampilkan penggunaan dan eksekusi alat yang terperinci. Juga memperluas panggilan baca dan pencarian MCP, yang runtuh menjadi satu baris seperti "Queried slack" secara default |
-| `Ctrl+R`                                              | Pencarian riwayat perintah terbalik                                                 | Cari melalui perintah sebelumnya secara interaktif                                                                                                                                |
-| `Ctrl+V` atau `Cmd+V` (iTerm2) atau `Alt+V` (Windows) | Tempel gambar dari clipboard                                                        | Menyisipkan chip `[Image #N]` di kursor sehingga Anda dapat mereferensikannya secara posisional dalam prompt Anda                                                                 |
-| `Ctrl+B`                                              | Tugas yang berjalan di latar belakang                                               | Menjalankan perintah bash dan agen di latar belakang. Pengguna Tmux tekan dua kali                                                                                                |
-| `Ctrl+T`                                              | Alihkan daftar tugas                                                                | Tampilkan atau sembunyikan [daftar tugas](#task-list) di area status terminal                                                                                                     |
-| `Left/Right arrows`                                   | Siklus melalui tab dialog                                                           | Navigasi antar tab dalam dialog izin dan menu                                                                                                                                     |
-| `Up/Down arrows`                                      | Navigasi riwayat perintah                                                           | Ingat kembali input sebelumnya                                                                                                                                                    |
-| `Esc` + `Esc`                                         | Putar ulang atau ringkas                                                            | Kembalikan kode dan/atau percakapan ke titik sebelumnya, atau ringkas dari pesan yang dipilih                                                                                     |
-| `Shift+Tab` atau `Alt+M` (beberapa konfigurasi)       | Alihkan mode izin                                                                   | Beralih antara `default`, `acceptEdits`, `plan`, dan mode apa pun yang telah Anda aktifkan, seperti `auto` atau `bypassPermissions`. Lihat [mode izin](/id/permission-modes).     |
-| `Option+P` (macOS) atau `Alt+P` (Windows/Linux)       | Alihkan model                                                                       | Alihkan model tanpa menghapus prompt Anda                                                                                                                                         |
-| `Option+T` (macOS) atau `Alt+T` (Windows/Linux)       | Alihkan pemikiran yang diperluas                                                    | Aktifkan atau nonaktifkan mode pemikiran yang diperluas. Di macOS, konfigurasi terminal Anda untuk mengirim Option sebagai Meta agar pintasan ini berfungsi                       |
-| `Option+O` (macOS) atau `Alt+O` (Windows/Linux)       | Alihkan mode cepat                                                                  | Aktifkan atau nonaktifkan [mode cepat](/id/fast-mode)                                                                                                                             |
+| Pintasan                                              | Deskripsi                                                                           | Konteks                                                                                                                                                                                                                                                                                                             |
+| :---------------------------------------------------- | :---------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Ctrl+C`                                              | Batalkan input atau generasi saat ini                                               | Interupsi standar                                                                                                                                                                                                                                                                                                   |
+| `Ctrl+X Ctrl+K`                                       | Matikan semua agen latar belakang. Tekan dua kali dalam 3 detik untuk mengonfirmasi | Kontrol agen latar belakang                                                                                                                                                                                                                                                                                         |
+| `Ctrl+D`                                              | Keluar dari sesi Claude Code                                                        | Sinyal EOF                                                                                                                                                                                                                                                                                                          |
+| `Ctrl+G` atau `Ctrl+X Ctrl+E`                         | Buka di editor teks default                                                         | Edit prompt atau respons kustom Anda di editor teks default. `Ctrl+X Ctrl+E` adalah binding readline-native. Aktifkan Show last response in external editor di `/config` untuk menambahkan respons Claude sebelumnya sebagai konteks berkomentar `#` di atas prompt Anda; blok komentar dihapus saat Anda menyimpan |
+| `Ctrl+L`                                              | Hapus input prompt dan gambar ulang layar                                           | Menghapus teks yang diketik dan memaksa redraw terminal penuh. Riwayat percakapan disimpan. Gunakan ini untuk memulihkan jika tampilan menjadi berantakan atau sebagian kosong                                                                                                                                      |
+| `Ctrl+O`                                              | Alihkan penampil transkrip                                                          | Menampilkan penggunaan dan eksekusi alat yang terperinci. Juga memperluas panggilan MCP, yang runtuh menjadi satu baris seperti "Called slack 3 times" secara default                                                                                                                                               |
+| `Ctrl+R`                                              | Pencarian riwayat perintah terbalik                                                 | Cari melalui perintah sebelumnya secara interaktif                                                                                                                                                                                                                                                                  |
+| `Ctrl+V` atau `Cmd+V` (iTerm2) atau `Alt+V` (Windows) | Tempel gambar dari clipboard                                                        | Menyisipkan chip `[Image #N]` di kursor sehingga Anda dapat mereferensikannya secara posisional dalam prompt Anda                                                                                                                                                                                                   |
+| `Ctrl+B`                                              | Tugas yang berjalan di latar belakang                                               | Menjalankan perintah bash dan agen di latar belakang. Pengguna Tmux tekan dua kali                                                                                                                                                                                                                                  |
+| `Ctrl+T`                                              | Alihkan daftar tugas                                                                | Tampilkan atau sembunyikan [daftar tugas](#task-list) di area status terminal                                                                                                                                                                                                                                       |
+| `Left/Right arrows`                                   | Siklus melalui tab dialog                                                           | Navigasi antar tab dalam dialog izin dan menu                                                                                                                                                                                                                                                                       |
+| `Up/Down arrows` atau `Ctrl+P`/`Ctrl+N`               | Pindahkan kursor atau navigasi riwayat perintah                                     | Dalam input multiline, pertama-tama memindahkan kursor dalam prompt. Setelah kursor sudah berada di tepi atas atau bawah, menekan lagi menavigasi riwayat perintah                                                                                                                                                  |
+| `Esc` + `Esc`                                         | Putar ulang atau ringkas                                                            | Kembalikan kode dan/atau percakapan ke titik sebelumnya, atau ringkas dari pesan yang dipilih                                                                                                                                                                                                                       |
+| `Shift+Tab` atau `Alt+M` (beberapa konfigurasi)       | Alihkan mode izin                                                                   | Beralih antara `default`, `acceptEdits`, `plan`, dan mode apa pun yang telah Anda aktifkan, seperti `auto` atau `bypassPermissions`. Lihat [permission modes](/id/permission-modes).                                                                                                                                |
+| `Option+P` (macOS) atau `Alt+P` (Windows/Linux)       | Alihkan model                                                                       | Alihkan model tanpa menghapus prompt Anda                                                                                                                                                                                                                                                                           |
+| `Option+T` (macOS) atau `Alt+T` (Windows/Linux)       | Alihkan extended thinking                                                           | Aktifkan atau nonaktifkan mode extended thinking. Di macOS, konfigurasi terminal Anda untuk mengirim Option sebagai Meta agar pintasan ini berfungsi                                                                                                                                                                |
+| `Option+O` (macOS) atau `Alt+O` (Windows/Linux)       | Alihkan mode cepat                                                                  | Aktifkan atau nonaktifkan [fast mode](/id/fast-mode)                                                                                                                                                                                                                                                                |
 
 ### Pengeditan teks
 
-| Pintasan                   | Deskripsi                          | Konteks                                                                                                                       |
-| :------------------------- | :--------------------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
-| `Ctrl+K`                   | Hapus hingga akhir baris           | Menyimpan teks yang dihapus untuk ditempel                                                                                    |
-| `Ctrl+U`                   | Hapus dari kursor ke awal baris    | Menyimpan teks yang dihapus untuk ditempel. Ulangi untuk menghapus di seluruh baris dalam input multiline                     |
-| `Ctrl+Y`                   | Tempel teks yang dihapus           | Tempel teks yang dihapus dengan `Ctrl+K` atau `Ctrl+U`                                                                        |
-| `Alt+Y` (setelah `Ctrl+Y`) | Siklus riwayat tempel              | Setelah menempel, siklus melalui teks yang dihapus sebelumnya. Memerlukan [Option sebagai Meta](#keyboard-shortcuts) di macOS |
-| `Alt+B`                    | Pindahkan kursor kembali satu kata | Navigasi kata. Memerlukan [Option sebagai Meta](#keyboard-shortcuts) di macOS                                                 |
-| `Alt+F`                    | Pindahkan kursor maju satu kata    | Navigasi kata. Memerlukan [Option sebagai Meta](#keyboard-shortcuts) di macOS                                                 |
+| Pintasan                   | Deskripsi                                | Konteks                                                                                                                                                                                                           |
+| :------------------------- | :--------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+A`                   | Pindahkan kursor ke awal baris saat ini  | Dalam input multiline, memindahkan ke awal baris logis saat ini                                                                                                                                                   |
+| `Ctrl+E`                   | Pindahkan kursor ke akhir baris saat ini | Dalam input multiline, memindahkan ke akhir baris logis saat ini                                                                                                                                                  |
+| `Ctrl+K`                   | Hapus hingga akhir baris                 | Menyimpan teks yang dihapus untuk ditempel                                                                                                                                                                        |
+| `Ctrl+U`                   | Hapus dari kursor ke awal baris          | Menyimpan teks yang dihapus untuk ditempel. Ulangi untuk menghapus di seluruh baris dalam input multiline. Di macOS, emulator terminal termasuk iTerm2 dan Terminal.app memetakan `Cmd+Backspace` ke pintasan ini |
+| `Ctrl+W`                   | Hapus kata sebelumnya                    | Menyimpan teks yang dihapus untuk ditempel. Di Windows, `Ctrl+Backspace` juga menghapus kata sebelumnya                                                                                                           |
+| `Ctrl+Y`                   | Tempel teks yang dihapus                 | Tempel teks yang dihapus dengan `Ctrl+K`, `Ctrl+U`, atau `Ctrl+W`                                                                                                                                                 |
+| `Alt+Y` (setelah `Ctrl+Y`) | Siklus riwayat tempel                    | Setelah menempel, siklus melalui teks yang dihapus sebelumnya. Memerlukan [Option as Meta](#keyboard-shortcuts) di macOS                                                                                          |
+| `Alt+B`                    | Pindahkan kursor kembali satu kata       | Navigasi kata. Memerlukan [Option as Meta](#keyboard-shortcuts) di macOS                                                                                                                                          |
+| `Alt+F`                    | Pindahkan kursor maju satu kata          | Navigasi kata. Memerlukan [Option as Meta](#keyboard-shortcuts) di macOS                                                                                                                                          |
 
 ### Tema dan tampilan
 
@@ -61,23 +64,23 @@
 
 ### Input multiline
 
-| Metode         | Pintasan        | Konteks                                               |
-| :------------- | :-------------- | :---------------------------------------------------- |
-| Escape cepat   | `\` + `Enter`   | Berfungsi di semua terminal                           |
-| Default macOS  | `Option+Enter`  | Default di macOS                                      |
-| Shift+Enter    | `Shift+Enter`   | Berfungsi langsung di iTerm2, WezTerm, Ghostty, Kitty |
-| Urutan kontrol | `Ctrl+J`        | Karakter line feed untuk multiline                    |
-| Mode tempel    | Tempel langsung | Untuk blok kode, log                                  |
+| Metode         | Pintasan        | Konteks                                                                                                  |
+| :------------- | :-------------- | :------------------------------------------------------------------------------------------------------- |
+| Escape cepat   | `\` + `Enter`   | Berfungsi di semua terminal                                                                              |
+| Tombol Option  | `Option+Enter`  | Setelah mengaktifkan [Option as Meta](/id/terminal-config#enable-option-key-shortcuts-on-macos) di macOS |
+| Shift+Enter    | `Shift+Enter`   | Bawaan di iTerm2, WezTerm, Ghostty, Kitty, Warp, Apple Terminal                                          |
+| Urutan kontrol | `Ctrl+J`        | Berfungsi di terminal apa pun tanpa konfigurasi                                                          |
+| Mode tempel    | Tempel langsung | Untuk blok kode, log                                                                                     |
 
 <Tip>
-  Shift+Enter berfungsi tanpa konfigurasi di iTerm2, WezTerm, Ghostty, dan Kitty. Untuk terminal lain (VS Code, Alacritty, Zed, Warp), jalankan `/terminal-setup` untuk memasang binding.
+  Shift+Enter berfungsi tanpa konfigurasi di iTerm2, WezTerm, Ghostty, Kitty, Warp, dan Apple Terminal. Untuk VS Code, Cursor, Windsurf, Alacritty, dan Zed, jalankan `/terminal-setup` untuk memasang binding.
 </Tip>
 
 ### Perintah cepat
 
 | Pintasan    | Deskripsi             | Catatan                                                                 |
 | :---------- | :-------------------- | :---------------------------------------------------------------------- |
-| `/` di awal | Perintah atau skill   | Lihat [perintah bawaan](#built-in-commands) dan [skills](/id/skills)    |
+| `/` di awal | Perintah atau skill   | Lihat [perintah](#commands) dan [skills](/id/skills)                    |
 | `!` di awal | Mode Bash             | Jalankan perintah secara langsung dan tambahkan output eksekusi ke sesi |
 | `@`         | Penyebutan jalur file | Picu pelengkapan otomatis jalur file                                    |
 
@@ -85,10 +88,12 @@
 
 Ketika penampil transkrip terbuka (dialihkan dengan `Ctrl+O`), pintasan ini tersedia. `Ctrl+E` dapat diubah melalui [`transcript:toggleShowAll`](/id/keybindings).
 
-| Pintasan             | Deskripsi                                                                                           |
-| :------------------- | :-------------------------------------------------------------------------------------------------- |
-| `Ctrl+E`             | Alihkan tampilkan semua konten                                                                      |
-| `q`, `Ctrl+C`, `Esc` | Keluar dari tampilan transkrip. Ketiganya dapat diubah melalui [`transcript:exit`](/id/keybindings) |
+| Pintasan             | Deskripsi                                                                                                                                                                                                                |
+| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+E`             | Alihkan tampilkan semua konten                                                                                                                                                                                           |
+| `[`                  | Tulis percakapan lengkap ke scrollback asli terminal Anda sehingga `Cmd+F`, mode copy tmux, dan alat asli lainnya dapat mencarinya. Memerlukan [fullscreen rendering](/id/fullscreen#search-and-review-the-conversation) |
+| `v`                  | Tulis percakapan ke file sementara dan buka di `$VISUAL` atau `$EDITOR`. Memerlukan [fullscreen rendering](/id/fullscreen)                                                                                               |
+| `q`, `Ctrl+C`, `Esc` | Keluar dari tampilan transkrip. Ketiganya dapat diubah melalui [`transcript:exit`](/id/keybindings)                                                                                                                      |
 
 ### Input suara
 
@@ -96,15 +101,15 @@ Ketika penampil transkrip terbuka (dialihkan dengan `Ctrl+O`), pintasan ini ters
 | :------------ | :--------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Tahan `Space` | Dictation push-to-talk | Memerlukan [voice dictation](/id/voice-dictation) untuk diaktifkan. Transkrip disisipkan di kursor. [Dapat diubah](/id/voice-dictation#rebind-the-push-to-talk-key) |
 
-## Perintah bawaan
+## Perintah
 
-Ketik `/` di Claude Code untuk melihat semua perintah yang tersedia, atau ketik `/` diikuti huruf apa pun untuk memfilter. Menu `/` menampilkan perintah bawaan dan [skills bundel](/id/skills#bundled-skills) seperti `/simplify`. Tidak semua perintah terlihat oleh setiap pengguna karena beberapa bergantung pada platform atau paket Anda.
+Ketik `/` di Claude Code untuk melihat semua perintah yang tersedia, atau ketik `/` diikuti huruf apa pun untuk memfilter. Menu `/` menampilkan semua yang dapat Anda panggil: perintah bawaan, [skills](/id/skills) bundel dan yang ditulis pengguna, dan perintah yang disumbangkan oleh [plugins](/id/plugins) dan [MCP servers](/id/mcp#use-mcp-prompts-as-commands). Tidak semua perintah bawaan terlihat oleh setiap pengguna karena beberapa bergantung pada platform atau paket Anda.
 
-Lihat [referensi perintah](/id/commands) untuk daftar lengkap perintah bawaan. Untuk membuat perintah Anda sendiri, lihat [skills](/id/skills).
+Lihat [referensi perintah](/id/commands) untuk daftar lengkap perintah yang disertakan dalam Claude Code.
 
 ## Mode editor Vim
 
-Aktifkan pengeditan gaya vim dengan perintah `/vim` atau konfigurasi secara permanen melalui `/config`.
+Aktifkan pengeditan gaya vim melalui `/config` → Editor mode.
 
 ### Pengalihan mode
 
@@ -139,7 +144,7 @@ Aktifkan pengeditan gaya vim dengan perintah `/vim` atau konfigurasi secara perm
 | `,`             | Ulangi gerakan f/F/t/T terakhir dalam urutan terbalik       |
 
 <Note>
-  Dalam mode normal vim, jika kursor berada di awal atau akhir input dan tidak dapat bergerak lebih jauh, tombol panah menavigasi riwayat perintah sebagai gantinya.
+  Dalam mode normal vim, jika kursor berada di awal atau akhir input dan tidak dapat bergerak lebih jauh, `j`/`k` dan tombol panah menavigasi riwayat perintah sebagai gantinya.
 </Note>
 
 ### Pengeditan (mode NORMAL)
@@ -160,6 +165,7 @@ Aktifkan pengeditan gaya vim dengan perintah `/vim` atau konfigurasi secara perm
 | `>>`           | Indentasi baris                 |
 | `<<`           | Kurangi indentasi baris         |
 | `J`            | Gabungkan baris                 |
+| `u`            | Batalkan                        |
 | `.`            | Ulangi perubahan terakhir       |
 
 ### Objek teks (mode NORMAL)
@@ -221,7 +227,7 @@ Untuk menjalankan perintah di latar belakang, Anda dapat:
 * Tugas latar belakang dibersihkan secara otomatis ketika Claude Code keluar
 * Tugas latar belakang secara otomatis dihentikan jika output melebihi 5GB, dengan catatan di stderr yang menjelaskan alasannya
 
-Untuk menonaktifkan semua fungsionalitas tugas latar belakang, atur variabel lingkungan `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` ke `1`. Lihat [Variabel lingkungan](/id/env-vars) untuk detail.
+Untuk menonaktifkan semua fungsionalitas tugas latar belakang, atur variabel lingkungan `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` ke `1`. Lihat [Environment variables](/id/env-vars) untuk detail.
 
 **Perintah yang sering di-background:**
 
@@ -264,7 +270,7 @@ Setelah Claude merespons, saran terus muncul berdasarkan riwayat percakapan Anda
 
 Saran berjalan sebagai permintaan latar belakang yang menggunakan kembali cache prompt percakapan induk, sehingga biaya tambahan minimal. Claude Code melewati pembuatan saran ketika cache dingin untuk menghindari biaya yang tidak perlu.
 
-Saran secara otomatis dilewati setelah giliran pertama percakapan, dalam mode non-interaktif, dan dalam mode plan.
+Saran secara otomatis dilewati setelah giliran pertama percakapan, dalam mode non-interaktif, dan dalam Plan Mode.
 
 Untuk menonaktifkan saran prompt sepenuhnya, atur variabel lingkungan atau alihkan pengaturan di `/config`:
 
@@ -299,6 +305,14 @@ Ketika mengerjakan pekerjaan yang kompleks dan multi-langkah, Claude membuat daf
 * Untuk melihat semua tugas atau menghapusnya, minta Claude secara langsung: "show me all tasks" atau "clear all tasks"
 * Tugas bertahan di seluruh pemadatan konteks, membantu Claude tetap terorganisir pada proyek yang lebih besar
 * Untuk berbagi daftar tugas di seluruh sesi, atur `CLAUDE_CODE_TASK_LIST_ID` untuk menggunakan direktori bernama di `~/.claude/tasks/`: `CLAUDE_CODE_TASK_LIST_ID=my-project claude`
+
+## Ringkasan sesi
+
+Ketika Anda kembali ke terminal setelah pergi, Claude Code menampilkan ringkasan satu baris tentang apa yang terjadi dalam sesi sejauh ini. Ringkasan dihasilkan di latar belakang setelah setidaknya tiga menit telah berlalu sejak giliran terakhir yang selesai dan terminal tidak fokus, sehingga siap ketika Anda beralih kembali. Ringkasan hanya muncul setelah sesi memiliki setidaknya tiga giliran, dan tidak pernah dua kali berturut-turut.
+
+Jalankan `/recap` untuk menghasilkan ringkasan sesuai permintaan. Untuk mematikan ringkasan otomatis, buka `/config` dan nonaktifkan **Session recap**.
+
+Ringkasan sesi aktif secara default untuk setiap paket dan penyedia. Untuk mengganti alihan `/config`, atur [`CLAUDE_CODE_ENABLE_AWAY_SUMMARY`](/id/env-vars) ke `0` atau `1`. Ringkasan selalu dilewati dalam mode non-interaktif.
 
 ## Status tinjauan PR
 

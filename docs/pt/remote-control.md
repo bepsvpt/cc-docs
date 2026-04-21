@@ -14,7 +14,7 @@ Remote Control conecta [claude.ai/code](https://claude.ai/code) ou o aplicativo 
 
 Quando você inicia uma sessão de Remote Control na sua máquina, Claude continua executando localmente o tempo todo, portanto nada se move para a nuvem. Com Remote Control você pode:
 
-* **Usar seu ambiente local completo remotamente**: seu sistema de arquivos, [MCP servers](/pt/mcp), ferramentas e configuração do projeto permanecem disponíveis
+* **Usar seu ambiente local completo remotamente**: seu sistema de arquivos, [MCP servers](/pt/mcp), ferramentas e configuração do projeto permanecem disponíveis, e digitar `@` autocompleta caminhos de arquivo do seu projeto local
 * **Trabalhar em ambas as superfícies ao mesmo tempo**: a conversa permanece sincronizada em todos os dispositivos conectados, para que você possa enviar mensagens do seu terminal, navegador e telefone de forma intercambiável
 * **Sobreviver a interrupções**: se seu laptop dormir ou sua rede cair, a sessão se reconecta automaticamente quando sua máquina voltar a ficar online
 
@@ -188,6 +188,7 @@ Se as notificações não chegarem:
 * **O processo local deve continuar em execução**: Remote Control é executado como um processo local. Se você fechar o terminal, sair do VS Code ou parar o processo `claude`, a sessão termina.
 * **Interrupção de rede estendida**: se sua máquina estiver ligada mas não conseguir alcançar a rede por mais de aproximadamente 10 minutos, a sessão expira e o processo sai. Execute `claude remote-control` novamente para iniciar uma nova sessão.
 * **Ultraplan desconecta Remote Control**: iniciar uma sessão [ultraplan](/pt/ultraplan) desconecta qualquer sessão de Remote Control ativa porque ambos os recursos ocupam a interface claude.ai/code e apenas um pode estar conectado por vez.
+* **Alguns comandos são apenas locais**: comandos que abrem um seletor interativo no terminal, como `/mcp`, `/plugin` ou `/resume`, funcionam apenas a partir da CLI local. Comandos que produzem saída de texto, incluindo `/compact`, `/clear`, `/context`, `/cost`, `/exit`, `/extra-usage`, `/recap` e `/reload-plugins`, funcionam a partir de dispositivos móveis e web.
 
 ## Solução de problemas
 

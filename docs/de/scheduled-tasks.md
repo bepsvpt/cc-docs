@@ -12,7 +12,7 @@
 
 Geplante Aufgaben ermöglichen es Claude, einen Prompt automatisch in regelmäßigen Abständen erneut auszuführen. Verwenden Sie sie, um eine Bereitstellung abzurufen, einen PR zu überwachen, einen langwierigen Build zu überprüfen oder sich später in der Sitzung an etwas zu erinnern. Um auf Ereignisse zu reagieren, während sie geschehen, anstatt abzurufen, siehe [Kanäle](/de/channels): Ihr CI kann den Fehler direkt in die Sitzung übertragen.
 
-Aufgaben sind sitzungsbezogen: Sie existieren im aktuellen Claude Code-Prozess und sind weg, wenn Sie beenden. Für dauerhafte Planung, die Neustarts übersteht, verwenden Sie [Routinen](/de/routines), [Desktop-geplante Aufgaben](/de/desktop-scheduled-tasks) oder [GitHub Actions](/de/github-actions).
+Aufgaben sind sitzungsbezogen: Sie existieren im aktuellen Gespräch und werden beendet, wenn Sie ein neues starten. Das Fortsetzen mit `--resume` oder `--continue` bringt alle Aufgaben zurück, die nicht [abgelaufen sind](#seven-day-expiry): eine wiederkehrende Aufgabe, die in den letzten 7 Tagen erstellt wurde, oder eine einmalige Aufgabe, deren geplante Zeit noch nicht vergangen ist. Für Planung, die unabhängig von einer Sitzung bestehen bleibt, verwenden Sie [Routinen](/de/routines), [Desktop-geplante Aufgaben](/de/desktop-scheduled-tasks) oder [GitHub Actions](/de/github-actions).
 
 ## Vergleichen Sie Planungsoptionen
 
@@ -118,6 +118,10 @@ quiet, say so in one line.
 
 Änderungen an `loop.md` treten bei der nächsten Iteration in Kraft, sodass Sie die Anweisungen verfeinern können, während eine Schleife läuft. Wenn keine `loop.md` an einem der beiden Orte vorhanden ist, fällt die Schleife auf den integrierten Wartungs-Prompt zurück. Halten Sie die Datei prägnant: Inhalte über 25.000 Bytes werden gekürzt.
 
+### Stoppen Sie eine Schleife
+
+Um eine `/loop` zu stoppen, während sie auf die nächste Iteration wartet, drücken Sie `Esc`. Dies löscht den ausstehenden Wakeup, sodass die Schleife nicht erneut läuft. Aufgaben, die Sie durch [direktes Fragen an Claude](#manage-scheduled-tasks) geplant haben, sind nicht von `Esc` betroffen und bleiben bestehen, bis Sie sie löschen.
+
 ## Setzen Sie eine einmalige Erinnerung
 
 Für einmalige Erinnerungen beschreiben Sie, was Sie möchten, in natürlicher Sprache, anstatt `/loop` zu verwenden. Claude plant eine einmalige Aufgabe, die sich nach der Ausführung selbst löscht.
@@ -198,9 +202,9 @@ Setzen Sie `CLAUDE_CODE_DISABLE_CRON=1` in Ihrer Umgebung, um den Scheduler voll
 
 Die sitzungsbezogene Planung hat inhärente Einschränkungen:
 
-* Aufgaben laufen nur, während Claude Code läuft und untätig ist. Das Schließen des Terminals oder das Beenden der Sitzung storniert alles.
+* Aufgaben laufen nur, während Claude Code läuft und untätig ist. Das Schließen des Terminals oder das Beenden der Sitzung stoppt sie.
 * Kein Aufholen für verpasste Läufe. Wenn die geplante Zeit einer Aufgabe verstreicht, während Claude mit einer langwierigen Anfrage beschäftigt ist, läuft sie einmal, wenn Claude untätig wird, nicht einmal pro verpasstem Intervall.
-* Keine Persistenz über Neustarts hinweg. Das Neustarten von Claude Code löscht alle sitzungsbezogenen Aufgaben.
+* Neues Gespräch löscht alle sitzungsbezogenen Aufgaben. Das Fortsetzen mit `claude --resume` oder `claude --continue` stellt Aufgaben wieder her, die nicht abgelaufen sind: wiederkehrende Aufgaben innerhalb von sieben Tagen nach der Erstellung und einmalige Aufgaben, deren geplante Zeit noch nicht vergangen ist. Hintergrund-Bash- und Monitor-Aufgaben werden bei Fortsetzen nie wiederhergestellt.
 
 Für Cron-gesteuerte Automatisierung, die unbeaufsichtigt laufen muss:
 

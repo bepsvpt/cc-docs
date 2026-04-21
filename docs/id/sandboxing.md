@@ -169,7 +169,7 @@ Misalnya, untuk memblokir pembacaan dari seluruh direktori home sambil tetap mem
 
   * Banyak alat CLI memerlukan akses ke host tertentu. Saat Anda menggunakan alat ini, mereka akan meminta izin untuk mengakses host tertentu. Memberikan izin akan memungkinkan mereka mengakses host ini sekarang dan di masa depan, memungkinkan mereka untuk dieksekusi dengan aman di dalam sandbox.
   * `watchman` tidak kompatibel dengan berjalan di sandbox. Jika Anda menjalankan `jest`, pertimbangkan menggunakan `jest --no-watchman`
-  * `docker` tidak kompatibel dengan berjalan di sandbox. Pertimbangkan untuk menentukan `docker` dalam `excludedCommands` untuk memaksanya berjalan di luar sandbox.
+  * `docker` tidak kompatibel dengan berjalan di sandbox. Pertimbangkan untuk menentukan `docker *` dalam `excludedCommands` untuk memaksanya berjalan di luar sandbox.
 </Tip>
 
 <Note>
@@ -250,6 +250,7 @@ Pembatasan filesystem dan jaringan dikonfigurasi melalui pengaturan sandbox dan 
 * Gunakan aturan tolak `Read` dan `Edit` untuk memblokir akses ke file atau direktori tertentu
 * Gunakan aturan izin/tolak `WebFetch` untuk mengontrol akses domain
 * Gunakan `allowedDomains` sandbox untuk mengontrol domain mana yang dapat dijangkau perintah Bash
+* Gunakan `deniedDomains` sandbox untuk memblokir domain tertentu bahkan ketika wildcard `allowedDomains` yang lebih luas akan sebaliknya mengizinkannya
 
 Jalur dari pengaturan `sandbox.filesystem` dan aturan izin digabungkan bersama ke dalam konfigurasi sandbox akhir.
 

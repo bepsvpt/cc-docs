@@ -9,28 +9,31 @@
 ## 故障排除安裝問題
 
 <Tip>
-  如果您想完全跳過終端，[Claude Code 桌面應用](/zh-TW/desktop-quickstart)讓您可以通過圖形界面安裝和使用 Claude Code。下載適用於 [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) 或 [Windows](https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs) 的版本，無需任何命令行設置即可開始編碼。
+  如果您想完全跳過終端，[Claude Code 桌面應用](/zh-TW/desktop-quickstart)讓您可以通過圖形界面安裝和使用 Claude Code。下載適用於 [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) 或 [Windows](https://claude.com/download?utm_source=claude_code\&utm_medium=docs) 的版本，無需任何命令行設置即可開始編碼。
 </Tip>
 
 找到您看到的錯誤消息或症狀：
 
-| 您看到的內容                                                     | 解決方案                                                                                  |
-| :--------------------------------------------------------- | :------------------------------------------------------------------------------------ |
-| `command not found: claude` 或 `'claude' is not recognized` | [修復您的 PATH](#command-not-found-claude-after-installation)                             |
-| `syntax error near unexpected token '<'`                   | [安裝腳本返回 HTML](#install-script-returns-html-instead-of-a-shell-script)                 |
-| `curl: (56) Failure writing output to destination`         | [先下載腳本，然後運行](#curl-56-failure-writing-output-to-destination)                          |
-| 在 Linux 上安裝期間 `Killed`                                     | [為低內存服務器添加交換空間](#install-killed-on-low-memory-linux-servers)                          |
-| `TLS connect error` 或 `SSL/TLS secure channel`             | [更新 CA 證書](#tls-or-ssl-connection-errors)                                             |
-| `Failed to fetch version` 或無法連接下載服務器                       | [檢查網絡和代理設置](#check-network-connectivity)                                              |
-| `irm is not recognized` 或 `&& is not valid`                | [為您的 shell 使用正確的命令](#windows-irm-or--not-recognized)                                  |
-| `Claude Code on Windows requires git-bash`                 | [安裝或配置 Git Bash](#windows-claude-code-on-windows-requires-git-bash)                   |
-| `Error loading shared library`                             | [您的系統安裝了錯誤的二進制變體](#linux-wrong-binary-variant-installed-muslglibc-mismatch)           |
-| Linux 上的 `Illegal instruction`                             | [架構不匹配](#illegal-instruction-on-linux)                                                |
-| macOS 上的 `dyld: cannot load` 或 `Abort trap`                | [二進制不兼容](#dyld-cannot-load-on-macos)                                                  |
-| `Invoke-Expression: Missing argument in parameter list`    | [安裝腳本返回 HTML](#install-script-returns-html-instead-of-a-shell-script)                 |
-| `App unavailable in region`                                | Claude Code 在您的國家/地區不可用。請參閱[支持的國家/地區](https://www.anthropic.com/supported-countries)。 |
-| `unable to get local issuer certificate`                   | [配置企業 CA 證書](#tls-or-ssl-connection-errors)                                           |
-| `OAuth error` 或 `403 Forbidden`                            | [修復身份驗證](#authentication-issues)                                                      |
+| 您看到的內容                                                               | 解決方案                                                                                     |
+| :------------------------------------------------------------------- | :--------------------------------------------------------------------------------------- |
+| `command not found: claude` 或 `'claude' is not recognized`           | [修復您的 PATH](#command-not-found-claude-after-installation)                                |
+| `syntax error near unexpected token '<'`                             | [安裝腳本返回 HTML](#install-script-returns-html-instead-of-a-shell-script)                    |
+| `curl: (56) Failure writing output to destination`                   | [先下載腳本，然後運行](#curl-56-failure-writing-output-to-destination)                             |
+| 在 Linux 上安裝期間 `Killed`                                               | [為低內存服務器添加交換空間](#install-killed-on-low-memory-linux-servers)                             |
+| `TLS connect error` 或 `SSL/TLS secure channel`                       | [更新 CA 證書](#tls-or-ssl-connection-errors)                                                |
+| `Failed to fetch version` 或無法連接下載服務器                                 | [檢查網絡和代理設置](#check-network-connectivity)                                                 |
+| `irm is not recognized` 或 `&& is not valid`                          | [為您的 shell 使用正確的命令](#windows-wrong-install-command)                                      |
+| `'bash' is not recognized as the name of a cmdlet`                   | [使用 Windows 安裝程序命令](#windows-wrong-install-command)                                      |
+| `Claude Code on Windows requires git-bash`                           | [安裝或配置 Git Bash](#windows-claude-code-on-windows-requires-git-bash)                      |
+| `Claude Code does not support 32-bit Windows`                        | [打開 Windows PowerShell，而不是 x86 條目](#windows-claude-code-does-not-support-32-bit-windows) |
+| `Error loading shared library`                                       | [您的系統安裝了錯誤的二進制變體](#linux-wrong-binary-variant-installed-musl/glibc-mismatch)             |
+| Linux 上的 `Illegal instruction`                                       | [架構不匹配](#illegal-instruction-on-linux)                                                   |
+| macOS 上的 `dyld: cannot load`、`dyld: Symbol not found` 或 `Abort trap` | [二進制不兼容](#dyld-cannot-load-on-macos)                                                     |
+| `Invoke-Expression: Missing argument in parameter list`              | [安裝腳本返回 HTML](#install-script-returns-html-instead-of-a-shell-script)                    |
+| `App unavailable in region`                                          | Claude Code 在您的國家/地區不可用。請參閱[支持的國家/地區](https://www.anthropic.com/supported-countries)。    |
+| `unable to get local issuer certificate`                             | [配置企業 CA 證書](#tls-or-ssl-connection-errors)                                              |
+| `OAuth error` 或 `403 Forbidden`                                      | [修復身份驗證](#authentication-issues)                                                         |
+| `API Error: 500`、`529 Overloaded`、`429` 或其他上面未列出的 4xx 和 5xx 錯誤       | 請參閱[錯誤參考](/zh-TW/errors)                                                                 |
 
 如果您的問題未列出，請按照這些診斷步驟進行操作。
 
@@ -172,7 +175,7 @@ curl -fsSL https://claude.ai/install.sh | bash
 npm uninstall -g @anthropic-ai/claude-code
 ```
 
-在 macOS 上刪除 Homebrew 安裝：
+在 macOS 上刪除 Homebrew 安裝（如果您安裝了該 cask，請使用 `claude-code@latest`）：
 
 ```bash theme={null}
 brew uninstall --cask claude-code
@@ -328,6 +331,12 @@ Invoke-Expression: Missing argument in parameter list.
    ```
    如果您沒有證書文件，請向您的 IT 團隊索取。您也可以嘗試直接連接以確認代理是原因。
 
+4. **在 Windows 上，繞過證書撤銷檢查**，如果您看到 `CRYPT_E_NO_REVOCATION_CHECK (0x80092012)` 或 `CRYPT_E_REVOCATION_OFFLINE (0x80092013)`。這些意味著 curl 到達了服務器，但您的網絡阻止了證書撤銷查詢，這在企業防火牆後面很常見。將 `--ssl-revoke-best-effort` 添加到安裝命令：
+   ```bat theme={null}
+   curl --ssl-revoke-best-effort -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+   ```
+   或者，使用 `winget install Anthropic.ClaudeCode` 安裝，這完全避免了 curl。
+
 ### `Failed to fetch version from storage.googleapis.com`
 
 安裝程序無法訪問下載服務器。這通常意味著 `storage.googleapis.com` 在您的網絡上被阻止。
@@ -359,9 +368,9 @@ Invoke-Expression: Missing argument in parameter list.
    winget install Anthropic.ClaudeCode
    ```
 
-### Windows：`irm` 或 `&&` 未被識別
+### Windows：錯誤的安裝命令
 
-如果您看到 `'irm' is not recognized` 或 `The token '&&' is not valid`，您正在為您的 shell 運行錯誤的命令。
+如果您看到 `'irm' is not recognized`、`The token '&&' is not valid` 或 `'bash' is not recognized as the name of a cmdlet`，您複製了不同 shell 或操作系統的安裝命令。
 
 * **`irm` 未被識別**：您在 CMD 中，而不是 PowerShell。您有兩個選項：
 
@@ -378,6 +387,11 @@ Invoke-Expression: Missing argument in parameter list.
   ```
 
 * **`&&` 無效**：您在 PowerShell 中但運行了 CMD 安裝程序命令。使用 PowerShell 安裝程序：
+  ```powershell theme={null}
+  irm https://claude.ai/install.ps1 | iex
+  ```
+
+* **`bash` 未被識別**：您在 Windows 上運行了 macOS/Linux 安裝程序。改用 PowerShell 安裝程序：
   ```powershell theme={null}
   irm https://claude.ai/install.ps1 | iex
   ```
@@ -440,7 +454,7 @@ Linux OOM 殺手終止了該進程，因為系統內存不足。Claude Code 至�
 
 更新 Claude Desktop 到最新版本以修復此問題。
 
-### Windows："Claude Code on Windows requires git-bash"
+### Windows：Claude Code on Windows requires git-bash
 
 Windows 上的 Claude Code 需要 [Git for Windows](https://git-scm.com/downloads/win)，其中包括 Git Bash。
 
@@ -457,6 +471,18 @@ Windows 上的 Claude Code 需要 [Git for Windows](https://git-scm.com/download
 ```
 
 如果您的 Git 安裝在其他地方，通過在 PowerShell 中運行 `where.exe git` 找到路徑，並使用該目錄中的 `bin\bash.exe` 路徑。
+
+### Windows：Claude Code does not support 32-bit Windows
+
+Windows 在開始菜單中包括兩個 PowerShell 條目：`Windows PowerShell` 和 `Windows PowerShell (x86)`。x86 條目以 32 位進程運行，即使在 64 位機器上也會觸發此錯誤。要檢查您處於哪種情況，請在產生錯誤的同一窗口中運行此命令：
+
+```powershell theme={null}
+[Environment]::Is64BitOperatingSystem
+```
+
+如果這打印 `True`，您的操作系統沒問題。關閉窗口，打開不帶 x86 後綴的 `Windows PowerShell`，然後再次運行安裝命令。
+
+如果這打印 `False`，您在 32 位版本的 Windows 上。Claude Code 需要 64 位操作系統。請參閱[系統要求](/zh-TW/setup#system-requirements)。
 
 ### Linux：安裝了錯誤的二進制變體（musl/glibc 不匹配）
 
@@ -506,11 +532,19 @@ bash: line 142: 2238232 Illegal instruction    "$binary_path" install ${TARGET:+
 
 ### macOS 上的 `dyld: cannot load`
 
-如果在安裝期間看到 `dyld: cannot load` 或 `Abort trap: 6`，二進制文件與您的 macOS 版本或硬件不兼容。
+如果在安裝期間看到 `dyld: cannot load`、`dyld: Symbol not found` 或 `Abort trap: 6`，二進制文件與您的 macOS 版本或硬件不兼容。
 
 ```text theme={null}
 dyld: cannot load 'claude-2.1.42-darwin-x64' (load command 0x80000034 is unknown)
 Abort trap: 6
+```
+
+引用 `libicucore` 的 `Symbol not found` 錯誤也表示您的 macOS 版本比二進制文件支持的版本更舊：
+
+```text theme={null}
+dyld: Symbol not found: _ubrk_clone
+  Referenced from: claude-darwin-x64 (which was built for Mac OS X 13.0)
+  Expected in: /usr/lib/libicucore.A.dylib
 ```
 
 **解決方案：**
@@ -575,7 +609,7 @@ export PATH="$HOME/.nvm/versions/node/$(node -v)/bin:$PATH"
 
 ### WSL2 sandbox 設置
 
-[Sandboxing](/zh-TW/sandboxing) 在 WSL2 上受支持，但需要安裝額外的包。如果運行 `/sandbox` 時看到"Sandbox requires socat and bubblewrap"之類的錯誤，安裝依賴項：
+[Sandboxing](/zh-TW/sandboxing) 在 WSL2 上受支持，但需要安裝額外的包。如果運行 `/sandbox` 時看到有關缺失 `bubblewrap` 或 `socat` 的錯誤，安裝依賴項：
 
 <Tabs>
   <Tab title="Ubuntu/Debian">
@@ -593,6 +627,8 @@ export PATH="$HOME/.nvm/versions/node/$(node -v)/bin:$PATH"
 
 WSL1 不支持 sandboxing。如果您看到"Sandboxing requires WSL2"，您需要升級到 WSL2 或在不使用 sandboxing 的情況下運行 Claude Code。
 
+沙盒命令無法啟動 Windows 二進制文件，如 `cmd.exe`、`powershell.exe` 或 `/mnt/c/` 下的可執行文件。WSL 通過 Unix socket 將這些交給 Windows 主機，沙盒會阻止。如果命令需要調用 Windows 二進制文件，將其添加到 [`excludedCommands`](/zh-TW/settings#sandbox-settings) 以便它在沙盒外運行。
+
 ### 安裝期間的權限錯誤
 
 如果本機安裝程序因權限錯誤而失敗，目標目錄可能不可寫。請參閱[檢查目錄權限](#check-directory-permissions)。
@@ -602,6 +638,16 @@ WSL1 不支持 sandboxing。如果您看到"Sandboxing requires WSL2"，您需�
 ```bash theme={null}
 curl -fsSL https://claude.ai/install.sh | bash
 ```
+
+### npm 安裝後未找到本機二進制文件
+
+`@anthropic-ai/claude-code` npm 包通過每個平台的可選依賴項（如 `@anthropic-ai/claude-code-darwin-arm64`）拉入本機二進制文件。如果運行 `claude` 後安裝打印 `Could not find native binary package "@anthropic-ai/claude-code-<platform>"`，檢查以下原因：
+
+* **可選依賴項被禁用。** 從您的 npm 安裝命令中刪除 `--omit=optional`，從 pnpm 中刪除 `--no-optional`，或從 yarn 中刪除 `--ignore-optional`，並檢查 `.npmrc` 是否未設置 `optional=false`。然後重新安裝。本機二進制文件僅作為可選依賴項交付，因此如果跳過它，沒有 JavaScript 回退。
+* **不支持的平台。** 預構建的二進制文件發佈用於 `darwin-arm64`、`darwin-x64`、`linux-x64`、`linux-arm64`、`linux-x64-musl`、`linux-arm64-musl`、`win32-x64` 和 `win32-arm64`。Claude Code 不為其他平台提供二進制文件；請參閱[系統要求](/zh-TW/setup#system-requirements)。
+* **企業 npm 鏡像缺少平台包。** 確保您的註冊表除了元包外還鏡像所有八個 `@anthropic-ai/claude-code-*` 平台包。
+
+使用 `--ignore-scripts` 安裝不會觸發此錯誤。鏈接二進制文件到位的 postinstall 步驟被跳過，因此 Claude Code 回退到在每次啟動時定位和生成平台二進制文件的包裝器。這有效但啟動速度較慢；使用啟用的腳本重新安裝以進行直接執行。
 
 ## 權限和身份驗證
 
@@ -639,6 +685,43 @@ curl -fsSL https://claude.ai/install.sh | bash
 * **Console 用戶**：確認您的帳戶已由您的管理員分配"Claude Code"或"Developer"角色
 * **在代理後面**：企業代理可能干擾 API 請求。有關代理設置，請參閱[網絡配置](/zh-TW/network-config)。
 
+### 模型未找到或無法訪問
+
+如果您看到 `There's an issue with the selected model (...). It may not exist or you may not have access to it`，API 拒絕了配置的模型名稱。
+
+常見原因：
+
+* 傳遞給 `--model` 的模型名稱中有拼寫錯誤
+* 保存在您的設置中的過時或已棄用的模型 ID
+* 沒有訪問您當前使用層上該模型的 API 密鑰
+
+按[優先順序](/zh-TW/model-config#setting-your-model)檢查模型的設置位置：
+
+* `--model` 標誌
+* `ANTHROPIC_MODEL` 環境變量
+* `.claude/settings.local.json` 中的 `model` 字段
+* 您項目的 `.claude/settings.json` 中的 `model` 字段
+* `~/.claude/settings.json` 中的 `model` 字段
+
+要清除過時的值，從您的設置中刪除 `model` 字段或取消設置 `ANTHROPIC_MODEL`，Claude Code 將回退到您帳戶的默認模型。
+
+要瀏覽您帳戶可用的模型，以交互方式啟動 `claude` 並運行 `/model` 以打開選擇器。對於 Vertex AI 部署，請參閱 [Vertex AI 故障排除部分](/zh-TW/google-vertex-ai#troubleshooting)。
+
+### 此組織已被禁用，但有活躍的訂閱
+
+如果您看到 `API Error: 400 ... "This organization has been disabled"`，儘管有活躍的 Claude 訂閱，`ANTHROPIC_API_KEY` 環境變量正在覆蓋您的訂閱。這通常發生在來自前一個雇主或項目的舊 API 密鑰仍在您的 shell 配置文件中設置時。
+
+當 `ANTHROPIC_API_KEY` 存在且您已批准它時，Claude Code 使用該密鑰而不是您訂閱的 OAuth 憑據。在非交互模式 (`-p`) 中，當存在密鑰時始終使用該密鑰。請參閱[身份驗證優先順序](/zh-TW/authentication#authentication-precedence)以了解完整的解決順序。
+
+要改用您的訂閱，取消設置環境變量並從您的 shell 配置文件中刪除它：
+
+```bash theme={null}
+unset ANTHROPIC_API_KEY
+claude
+```
+
+檢查 `~/.zshrc`、`~/.bashrc` 或 `~/.profile` 中的 `export ANTHROPIC_API_KEY=...` 行並刪除它們以使更改永久生效。在 Claude Code 內運行 `/status` 以確認哪種身份驗證方法是活躍的。
+
 ### OAuth 登錄在 WSL2 中失敗
 
 如果 WSL 無法打開您的 Windows 瀏覽器，WSL2 中基於瀏覽器的登錄可能失敗。設置 `BROWSER` 環境變量：
@@ -650,11 +733,13 @@ claude
 
 或手動複製 URL：當登錄提示出現時，按 `c` 複製 OAuth URL，然後將其粘貼到您的 Windows 瀏覽器中。
 
-### "未登錄"或令牌已過期
+### 未登錄或令牌已過期
 
 如果 Claude Code 在會話後提示您再次登錄，您的 OAuth 令牌可能已過期。
 
 運行 `/login` 重新進行身份驗證。如果這種情況經常發生，檢查您的系統時鐘是否準確，因為令牌驗證取決於正確的時間戳。
+
+在 macOS 上，當 Keychain 被鎖定或其密碼與您的帳戶密碼不同步時，登錄也可能失敗，這會阻止 Claude Code 保存憑據。運行 `claude doctor` 以檢查 Keychain 訪問。要手動解鎖 Keychain，運行 `security unlock-keychain ~/Library/Keychains/login.keychain-db`。如果解鎖沒有幫助，打開 Keychain Access，選擇 `login` keychain，並選擇 Edit > Change Password for Keychain "login" 以將其與您的帳戶密碼重新同步。
 
 ## 配置文件位置
 
@@ -703,6 +788,19 @@ Claude Code 設計用於與大多數開發環境配合使用，但在處理大�
 1. 定期使用 `/compact` 減少上下文大小
 2. 在主要任務之間關閉並重新啟動 Claude Code
 3. 考慮將大型構建目錄添加到您的 `.gitignore` 文件
+
+如果在這些步驟後內存使用仍然很高，運行 `/heapdump` 以將 JavaScript 堆快照和內存分解寫入 `~/Desktop`。分解顯示駐留集大小、JS 堆、數組緩衝區和未計算的本機內存，這有助於識別增長是在 JavaScript 對象還是本機代碼中。在 Chrome DevTools 中的 Memory → Load 下打開 `.heapsnapshot` 文件以檢查保留者。在 [GitHub](https://github.com/anthropics/claude-code/issues) 上報告內存問題時附加兩個文件。
+
+### Auto-compaction 停止並出現 thrashing 錯誤
+
+如果您看到 `Autocompact is thrashing: the context refilled to the limit...`，自動 compaction 成功，但文件或工具輸出立即多次重新填充上下文窗口。Claude Code 停止重試以避免在沒有進展的循環上浪費 API 調用。
+
+要恢復：
+
+1. 要求 Claude 以較小的塊讀取超大文件，例如特定行範圍或函數，而不是整個文件
+2. 運行 `/compact` 並關注丟棄大輸出，例如 `/compact keep only the plan and the diff`
+3. 將大文件工作移動到 [subagent](/zh-TW/sub-agents)，以便它在單獨的上下文窗口中運行
+4. 如果早期對話不再需要，運行 `/clear`
 
 ### 命令掛起或凍結
 
@@ -832,7 +930,7 @@ Claude Code 有時生成 markdown 文件，代碼圍欄上缺少語言標籤，�
 function example() {
   return "hello";
 }
-```text
+```
 ````
 
 而不是正確標記的塊，如：
@@ -842,7 +940,7 @@ function example() {
 function example() {
   return "hello";
 }
-```text
+```
 ````
 
 **解決方案：**
@@ -877,14 +975,15 @@ function example() {
 
 如果您遇到此處未涵蓋的問題：
 
-1. 在 Claude Code 中使用 `/bug` 命令直接向 Anthropic 報告問題
-2. 檢查 [GitHub 存儲庫](https://github.com/anthropics/claude-code)以了解已知問題
-3. 運行 `/doctor` 診斷問題。它檢查：
+1. 請參閱[錯誤參考](/zh-TW/errors)以了解在會話期間出現的 `API Error: 5xx`、`529 Overloaded`、`429` 和請求驗證錯誤
+2. 在 Claude Code 內使用 `/feedback` 命令直接向 Anthropic 報告問題
+3. 檢查 [GitHub 存儲庫](https://github.com/anthropics/claude-code)以了解已知問題
+4. 運行 `/doctor` 診斷問題。它檢查：
    * 安裝類型、版本和搜索功能
    * 自動更新狀態和可用版本
    * 無效的設置文件（格式錯誤的 JSON、不正確的類型）
-   * MCP 服務器配置錯誤
+   * MCP 服務器配置錯誤，包括在多個範圍中定義的相同服務器名稱但具有不同的端點
    * 快捷鍵配置問題
    * 上下文使用警告（大型 CLAUDE.md 文件、高 MCP 令牌使用、無法訪問的權限規則）
    * 插件和代理加載錯誤
-4. 直接向 Claude 詢問其功能和特性 - Claude 內置訪問其文檔
+5. 直接向 Claude 詢問其功能和特性 - Claude 內置訪問其文檔

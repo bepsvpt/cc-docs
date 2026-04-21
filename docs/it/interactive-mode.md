@@ -13,8 +13,8 @@
 
   **Utenti macOS**: Le scorciatoie con il tasto Option/Alt (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`, `Alt+T`) richiedono la configurazione di Option come Meta nel vostro terminale:
 
-  * **iTerm2**: impostazioni → Profili → Tasti → impostare il tasto Option sinistro/destro su "Esc+"
-  * **Terminal.app**: impostazioni → Profili → Tastiera → selezionare "Usa Option come Meta Key"
+  * **iTerm2**: Impostazioni → Profili → Tasti → Generale → impostare il tasto Option sinistro/destro su "Esc+"
+  * **Apple Terminal**: Impostazioni → Profili → Tastiera → selezionare "Usa Option come Meta Key"
   * **VS Code**: impostare `"terminal.integrated.macOptionIsMeta": true` nelle impostazioni di VS Code
 
   Vedere [Configurazione del terminale](/it/terminal-config) per i dettagli.
@@ -22,36 +22,39 @@
 
 ### Controlli generali
 
-| Scorciatoia                                     | Descrizione                                                                              | Contesto                                                                                                                                                                                                    |
-| :---------------------------------------------- | :--------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Ctrl+C`                                        | Annulla l'input corrente o la generazione                                                | Interruzione standard                                                                                                                                                                                       |
-| `Ctrl+X Ctrl+K`                                 | Termina tutti gli agenti in background. Premere due volte entro 3 secondi per confermare | Controllo agente in background                                                                                                                                                                              |
-| `Ctrl+D`                                        | Esci dalla sessione di Claude Code                                                       | Segnale EOF                                                                                                                                                                                                 |
-| `Ctrl+G` o `Ctrl+X Ctrl+E`                      | Apri nell'editor di testo predefinito                                                    | Modifica il vostro prompt o la risposta personalizzata nell'editor di testo predefinito. `Ctrl+X Ctrl+E` è il binding nativo di readline                                                                    |
-| `Ctrl+L`                                        | Ridisegna lo schermo                                                                     | Ridipinge l'interfaccia utente corrente senza cancellare la cronologia della conversazione                                                                                                                  |
-| `Ctrl+O`                                        | Attiva/disattiva l'output dettagliato                                                    | Mostra l'utilizzo e l'esecuzione dettagliati degli strumenti. Inoltre espande le chiamate di lettura e ricerca MCP, che si compattano in una singola riga come "Queried slack" per impostazione predefinita |
-| `Ctrl+R`                                        | Ricerca inversa nella cronologia dei comandi                                             | Cerca i comandi precedenti in modo interattivo                                                                                                                                                              |
-| `Ctrl+V` o `Cmd+V` (iTerm2) o `Alt+V` (Windows) | Incolla immagine dagli appunti                                                           | Inserisce un chip `[Image #N]` al cursore in modo da poter farvi riferimento posizionalmente nel vostro prompt                                                                                              |
-| `Ctrl+B`                                        | Attività in esecuzione in background                                                     | Esegue i comandi bash e gli agenti in background. Gli utenti Tmux premono due volte                                                                                                                         |
-| `Ctrl+T`                                        | Attiva/disattiva l'elenco delle attività                                                 | Mostra o nascondi l'[elenco delle attività](#task-list) nell'area di stato del terminale                                                                                                                    |
-| `Frecce sinistra/destra`                        | Cicla attraverso le schede della finestra di dialogo                                     | Naviga tra le schede nelle finestre di dialogo dei permessi e nei menu                                                                                                                                      |
-| `Frecce su/giù`                                 | Naviga nella cronologia dei comandi                                                      | Richiama gli input precedenti                                                                                                                                                                               |
-| `Esc` + `Esc`                                   | Riavvolgi o riassumi                                                                     | Ripristina il codice e/o la conversazione a un punto precedente, o riassumi da un messaggio selezionato                                                                                                     |
-| `Shift+Tab` o `Alt+M` (alcune configurazioni)   | Cicla le modalità di permesso                                                            | Cicla attraverso `default`, `acceptEdits`, `plan` e qualsiasi modalità abilitata, come `auto` o `bypassPermissions`. Vedere [modalità di permesso](/it/permission-modes).                                   |
-| `Option+P` (macOS) o `Alt+P` (Windows/Linux)    | Cambia modello                                                                           | Cambia modelli senza cancellare il vostro prompt                                                                                                                                                            |
-| `Option+T` (macOS) o `Alt+T` (Windows/Linux)    | Attiva/disattiva il pensiero esteso                                                      | Abilita o disabilita la modalità di pensiero esteso. Su macOS, configurare il vostro terminale per inviare Option come Meta affinché questa scorciatoia funzioni                                            |
-| `Option+O` (macOS) o `Alt+O` (Windows/Linux)    | Attiva/disattiva la modalità veloce                                                      | Abilita o disabilita la [modalità veloce](/it/fast-mode)                                                                                                                                                    |
+| Scorciatoia                                     | Descrizione                                                                              | Contesto                                                                                                                                                                                                                                                                                                                                                              |
+| :---------------------------------------------- | :--------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+C`                                        | Annulla l'input corrente o la generazione                                                | Interruzione standard                                                                                                                                                                                                                                                                                                                                                 |
+| `Ctrl+X Ctrl+K`                                 | Termina tutti gli agenti in background. Premere due volte entro 3 secondi per confermare | Controllo agente in background                                                                                                                                                                                                                                                                                                                                        |
+| `Ctrl+D`                                        | Esci dalla sessione di Claude Code                                                       | Segnale EOF                                                                                                                                                                                                                                                                                                                                                           |
+| `Ctrl+G` o `Ctrl+X Ctrl+E`                      | Apri nell'editor di testo predefinito                                                    | Modifica il vostro prompt o la risposta personalizzata nell'editor di testo predefinito. `Ctrl+X Ctrl+E` è il binding nativo di readline. Attivare Mostra ultima risposta nell'editor esterno in `/config` per anteporre la risposta precedente di Claude come contesto commentato con `#` sopra il vostro prompt; il blocco di commento viene rimosso quando salvate |
+| `Ctrl+L`                                        | Cancella l'input del prompt e ridisegna lo schermo                                       | Cancella il testo digitato e forza un ridisegno completo del terminale. La cronologia della conversazione viene mantenuta. Utilizzate questo per recuperare se la visualizzazione diventa distorta o parzialmente vuota                                                                                                                                               |
+| `Ctrl+O`                                        | Attiva/disattiva il visualizzatore di trascrizione                                       | Mostra l'utilizzo e l'esecuzione dettagliati degli strumenti. Inoltre espande le chiamate MCP, che si compattano in una singola riga come "Called slack 3 times" per impostazione predefinita                                                                                                                                                                         |
+| `Ctrl+R`                                        | Ricerca inversa nella cronologia dei comandi                                             | Cerca i comandi precedenti in modo interattivo                                                                                                                                                                                                                                                                                                                        |
+| `Ctrl+V` o `Cmd+V` (iTerm2) o `Alt+V` (Windows) | Incolla immagine dagli appunti                                                           | Inserisce un chip `[Image #N]` al cursore in modo da poter farvi riferimento posizionalmente nel vostro prompt                                                                                                                                                                                                                                                        |
+| `Ctrl+B`                                        | Attività in esecuzione in background                                                     | Esegue i comandi bash e gli agenti in background. Gli utenti Tmux premono due volte                                                                                                                                                                                                                                                                                   |
+| `Ctrl+T`                                        | Attiva/disattiva l'elenco delle attività                                                 | Mostra o nascondi l'[elenco delle attività](#task-list) nell'area di stato del terminale                                                                                                                                                                                                                                                                              |
+| `Frecce sinistra/destra`                        | Cicla attraverso le schede della finestra di dialogo                                     | Naviga tra le schede nelle finestre di dialogo dei permessi e nei menu                                                                                                                                                                                                                                                                                                |
+| `Frecce su/giù` o `Ctrl+P`/`Ctrl+N`             | Sposta il cursore o naviga nella cronologia dei comandi                                  | Nell'input multilinea, prima sposta il cursore all'interno del prompt. Una volta che il cursore è già sul bordo superiore o inferiore, premere di nuovo naviga nella cronologia dei comandi                                                                                                                                                                           |
+| `Esc` + `Esc`                                   | Riavvolgi o riassumi                                                                     | Ripristina il codice e/o la conversazione a un punto precedente, o riassumi da un messaggio selezionato                                                                                                                                                                                                                                                               |
+| `Shift+Tab` o `Alt+M` (alcune configurazioni)   | Cicla le modalità di permesso                                                            | Cicla attraverso `default`, `acceptEdits`, `plan` e qualsiasi modalità abilitata, come `auto` o `bypassPermissions`. Vedere [modalità di permesso](/it/permission-modes).                                                                                                                                                                                             |
+| `Option+P` (macOS) o `Alt+P` (Windows/Linux)    | Cambia modello                                                                           | Cambia modelli senza cancellare il vostro prompt                                                                                                                                                                                                                                                                                                                      |
+| `Option+T` (macOS) o `Alt+T` (Windows/Linux)    | Attiva/disattiva il pensiero esteso                                                      | Abilita o disabilita la modalità di pensiero esteso. Su macOS, configurare il vostro terminale per inviare Option come Meta affinché questa scorciatoia funzioni                                                                                                                                                                                                      |
+| `Option+O` (macOS) o `Alt+O` (Windows/Linux)    | Attiva/disattiva la modalità veloce                                                      | Abilita o disabilita la [modalità veloce](/it/fast-mode)                                                                                                                                                                                                                                                                                                              |
 
 ### Modifica del testo
 
-| Scorciatoia             | Descrizione                               | Contesto                                                                                                                            |
-| :---------------------- | :---------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------- |
-| `Ctrl+K`                | Elimina fino alla fine della riga         | Memorizza il testo eliminato per l'incollamento                                                                                     |
-| `Ctrl+U`                | Elimina dal cursore all'inizio della riga | Memorizza il testo eliminato per l'incollamento. Ripetere per cancellare su più righe nell'input multilinea                         |
-| `Ctrl+Y`                | Incolla il testo eliminato                | Incolla il testo eliminato con `Ctrl+K` o `Ctrl+U`                                                                                  |
-| `Alt+Y` (dopo `Ctrl+Y`) | Cicla la cronologia degli incollamenti    | Dopo l'incollamento, cicla attraverso il testo precedentemente eliminato. Richiede [Option come Meta](#keyboard-shortcuts) su macOS |
-| `Alt+B`                 | Sposta il cursore indietro di una parola  | Navigazione per parole. Richiede [Option come Meta](#keyboard-shortcuts) su macOS                                                   |
-| `Alt+F`                 | Sposta il cursore in avanti di una parola | Navigazione per parole. Richiede [Option come Meta](#keyboard-shortcuts) su macOS                                                   |
+| Scorciatoia             | Descrizione                                      | Contesto                                                                                                                                                                                                                     |
+| :---------------------- | :----------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+A`                | Sposta il cursore all'inizio della riga corrente | Nell'input multilinea, sposta all'inizio della riga logica corrente                                                                                                                                                          |
+| `Ctrl+E`                | Sposta il cursore alla fine della riga corrente  | Nell'input multilinea, sposta alla fine della riga logica corrente                                                                                                                                                           |
+| `Ctrl+K`                | Elimina fino alla fine della riga                | Memorizza il testo eliminato per l'incollamento                                                                                                                                                                              |
+| `Ctrl+U`                | Elimina dal cursore all'inizio della riga        | Memorizza il testo eliminato per l'incollamento. Ripetere per cancellare su più righe nell'input multilinea. Su macOS, gli emulatori di terminale inclusi iTerm2 e Terminal.app mappano `Cmd+Backspace` a questa scorciatoia |
+| `Ctrl+W`                | Elimina la parola precedente                     | Memorizza il testo eliminato per l'incollamento. Su Windows, `Ctrl+Backspace` elimina anche la parola precedente                                                                                                             |
+| `Ctrl+Y`                | Incolla il testo eliminato                       | Incolla il testo eliminato con `Ctrl+K`, `Ctrl+U` o `Ctrl+W`                                                                                                                                                                 |
+| `Alt+Y` (dopo `Ctrl+Y`) | Cicla la cronologia degli incollamenti           | Dopo l'incollamento, cicla attraverso il testo precedentemente eliminato. Richiede [Option come Meta](#keyboard-shortcuts) su macOS                                                                                          |
+| `Alt+B`                 | Sposta il cursore indietro di una parola         | Navigazione per parole. Richiede [Option come Meta](#keyboard-shortcuts) su macOS                                                                                                                                            |
+| `Alt+F`                 | Sposta il cursore in avanti di una parola        | Navigazione per parole. Richiede [Option come Meta](#keyboard-shortcuts) su macOS                                                                                                                                            |
 
 ### Tema e visualizzazione
 
@@ -61,23 +64,23 @@
 
 ### Input multilinea
 
-| Metodo                | Scorciatoia          | Contesto                                                   |
-| :-------------------- | :------------------- | :--------------------------------------------------------- |
-| Escape rapido         | `\` + `Enter`        | Funziona in tutti i terminali                              |
-| Predefinito macOS     | `Option+Enter`       | Predefinito su macOS                                       |
-| Shift+Enter           | `Shift+Enter`        | Funziona immediatamente in iTerm2, WezTerm, Ghostty, Kitty |
-| Sequenza di controllo | `Ctrl+J`             | Carattere di avanzamento riga per multilinea               |
-| Modalità incolla      | Incolla direttamente | Per blocchi di codice, log                                 |
+| Metodo                | Scorciatoia          | Contesto                                                                                                  |
+| :-------------------- | :------------------- | :-------------------------------------------------------------------------------------------------------- |
+| Escape rapido         | `\` + `Enter`        | Funziona in tutti i terminali                                                                             |
+| Tasto Option          | `Option+Enter`       | Dopo aver abilitato [Option come Meta](/it/terminal-config#enable-option-key-shortcuts-on-macos) su macOS |
+| Shift+Enter           | `Shift+Enter`        | Nativo in iTerm2, WezTerm, Ghostty, Kitty, Warp, Apple Terminal                                           |
+| Sequenza di controllo | `Ctrl+J`             | Funziona in qualsiasi terminale senza configurazione                                                      |
+| Modalità incolla      | Incolla direttamente | Per blocchi di codice, log                                                                                |
 
 <Tip>
-  Shift+Enter funziona senza configurazione in iTerm2, WezTerm, Ghostty e Kitty. Per altri terminali (VS Code, Alacritty, Zed, Warp), eseguire `/terminal-setup` per installare il binding.
+  Shift+Enter funziona senza configurazione in iTerm2, WezTerm, Ghostty, Kitty, Warp e Apple Terminal. Per VS Code, Cursor, Windsurf, Alacritty e Zed, eseguire `/terminal-setup` per installare il binding.
 </Tip>
 
 ### Comandi rapidi
 
 | Scorciatoia    | Descrizione                    | Note                                                                          |
 | :------------- | :----------------------------- | :---------------------------------------------------------------------------- |
-| `/` all'inizio | Comando o skill                | Vedere [comandi integrati](#built-in-commands) e [skills](/it/skills)         |
+| `/` all'inizio | Comando o skill                | Vedere [comandi](#commands) e [skills](/it/skills)                            |
 | `!` all'inizio | Modalità Bash                  | Esegui i comandi direttamente e aggiungi l'output di esecuzione alla sessione |
 | `@`            | Menzione del percorso del file | Attiva l'autocompletamento del percorso del file                              |
 
@@ -85,10 +88,12 @@
 
 Quando il visualizzatore di trascrizione è aperto (attivato con `Ctrl+O`), queste scorciatoie sono disponibili. `Ctrl+E` può essere riassegnato tramite [`transcript:toggleShowAll`](/it/keybindings).
 
-| Scorciatoia          | Descrizione                                                                                                                        |
-| :------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
-| `Ctrl+E`             | Attiva/disattiva mostra tutto il contenuto                                                                                         |
-| `q`, `Ctrl+C`, `Esc` | Esci dalla visualizzazione della trascrizione. Tutti e tre possono essere riassegnati tramite [`transcript:exit`](/it/keybindings) |
+| Scorciatoia          | Descrizione                                                                                                                                                                                                                                                       |
+| :------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+E`             | Attiva/disattiva mostra tutto il contenuto                                                                                                                                                                                                                        |
+| `[`                  | Scrivi la conversazione completa nel scrollback nativo del vostro terminale in modo che `Cmd+F`, la modalità copia di tmux e altri strumenti nativi possano cercarla. Richiede il [rendering a schermo intero](/it/fullscreen#search-and-review-the-conversation) |
+| `v`                  | Scrivi la conversazione in un file temporaneo e aprilo in `$VISUAL` o `$EDITOR`. Richiede il [rendering a schermo intero](/it/fullscreen)                                                                                                                         |
+| `q`, `Ctrl+C`, `Esc` | Esci dalla visualizzazione della trascrizione. Tutti e tre possono essere riassegnati tramite [`transcript:exit`](/it/keybindings)                                                                                                                                |
 
 ### Input vocale
 
@@ -96,15 +101,15 @@ Quando il visualizzatore di trascrizione è aperto (attivato con `Ctrl+O`), ques
 | :-------------------- | :--------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Tieni premuto `Space` | Dettatura push-to-talk | Richiede che la [dettatura vocale](/it/voice-dictation) sia abilitata. La trascrizione si inserisce al cursore. [Riassegnabile](/it/voice-dictation#rebind-the-push-to-talk-key) |
 
-## Comandi integrati
+## Comandi
 
-Digitate `/` in Claude Code per visualizzare tutti i comandi disponibili, oppure digitate `/` seguito da qualsiasi lettera per filtrare. Il menu `/` mostra sia i comandi integrati che le [skills in bundle](/it/skills#bundled-skills) come `/simplify`. Non tutti i comandi sono visibili a ogni utente poiché alcuni dipendono dalla vostra piattaforma o dal vostro piano.
+Digitate `/` in Claude Code per visualizzare tutti i comandi disponibili, oppure digitate `/` seguito da qualsiasi lettera per filtrare. Il menu `/` mostra tutto ciò che potete invocare: comandi integrati, [skills](/it/skills) in bundle e create dagli utenti, e comandi forniti da [plugin](/it/plugins) e [server MCP](/it/mcp#use-mcp-prompts-as-commands). Non tutti i comandi integrati sono visibili a ogni utente poiché alcuni dipendono dalla vostra piattaforma o dal vostro piano.
 
-Vedere il [riferimento dei comandi](/it/commands) per l'elenco completo dei comandi integrati. Per creare i vostri comandi, vedere [skills](/it/skills).
+Vedere il [riferimento dei comandi](/it/commands) per l'elenco completo dei comandi inclusi in Claude Code.
 
 ## Modalità editor Vim
 
-Abilitate la modifica in stile vim con il comando `/vim` o configurate permanentemente tramite `/config`.
+Abilitate la modifica in stile vim tramite `/config` → Editor mode.
 
 ### Cambio di modalità
 
@@ -139,7 +144,7 @@ Abilitate la modifica in stile vim con il comando `/vim` o configurate permanent
 | `,`             | Ripeti l'ultimo movimento f/F/t/T in ordine inverso        |
 
 <Note>
-  In modalità normale vim, se il cursore è all'inizio o alla fine dell'input e non può muoversi ulteriormente, i tasti freccia navigano nella cronologia dei comandi.
+  In modalità normale vim, se il cursore è all'inizio o alla fine dell'input e non può muoversi ulteriormente, `j`/`k` e i tasti freccia navigano nella cronologia dei comandi.
 </Note>
 
 ### Modifica (modalità NORMAL)
@@ -160,6 +165,7 @@ Abilitate la modifica in stile vim con il comando `/vim` o configurate permanent
 | `>>`           | Indenta riga                           |
 | `<<`           | Dedenta riga                           |
 | `J`            | Unisci righe                           |
+| `u`            | Annulla                                |
 | `.`            | Ripeti l'ultimo cambiamento            |
 
 ### Oggetti di testo (modalità NORMAL)
@@ -299,6 +305,14 @@ Quando lavorate su lavori complessi e multistep, Claude crea un elenco di attivi
 * Per visualizzare tutte le attività o cancellarle, chiedete direttamente a Claude: "show me all tasks" o "clear all tasks"
 * Le attività persistono attraverso i compattamenti del contesto, aiutando Claude a rimanere organizzato su progetti più grandi
 * Per condividere un elenco di attività tra sessioni, impostare `CLAUDE_CODE_TASK_LIST_ID` per utilizzare una directory denominata in `~/.claude/tasks/`: `CLAUDE_CODE_TASK_LIST_ID=my-project claude`
+
+## Riepilogo della sessione
+
+Quando tornate al terminale dopo esservi allontanati, Claude Code mostra un riepilogo di una riga di ciò che è accaduto nella sessione finora. Il riepilogo viene generato in background una volta che sono trascorsi almeno tre minuti dall'ultimo turno completato e il terminale non è a fuoco, quindi è pronto quando tornate. I riepiloghi appaiono solo una volta che la sessione ha almeno tre turni, e mai due volte di seguito.
+
+Eseguite `/recap` per generare un riepilogo su richiesta. Per disattivare i riepiloghi automatici, aprite `/config` e disabilitate **Session recap**.
+
+Il riepilogo della sessione è abilitato per impostazione predefinita per ogni piano e provider. Per ignorare l'interruttore `/config`, impostare [`CLAUDE_CODE_ENABLE_AWAY_SUMMARY`](/it/env-vars) su `0` o `1`. Il riepilogo viene sempre saltato in modalità non interattiva.
 
 ## Stato della revisione PR
 

@@ -66,6 +66,8 @@ Claude Code 支持可自定义的快捷键。运行 `/keybindings` 来创建或�
 | `ModelPicker`     | 模型选择器工作量级别        |
 | `Select`          | 通用选择/列表组件         |
 | `Plugin`          | 插件对话框（浏览、发现、管理）   |
+| `Scroll`          | 对话滚动和全屏模式下的文本选择   |
+| `Doctor`          | `/doctor` 诊断屏幕    |
 
 ## 可用操作
 
@@ -79,7 +81,7 @@ Claude Code 支持可自定义的快捷键。运行 `/keybindings` 来创建或�
 | :--------------------- | :----- | :------------- |
 | `app:interrupt`        | Ctrl+C | 取消当前操作         |
 | `app:exit`             | Ctrl+D | 退出 Claude Code |
-| `app:redraw`           | Ctrl+L | 重绘屏幕           |
+| `app:redraw`           | （未绑定）  | 强制终端重绘         |
 | `app:toggleTodos`      | Ctrl+T | 切换任务列表可见性      |
 | `app:toggleTranscript` | Ctrl+O | 切换详细记录         |
 
@@ -97,20 +99,21 @@ Claude Code 支持可自定义的快捷键。运行 `/keybindings` 来创建或�
 
 在 `Chat` 上下文中可用的操作：
 
-| 操作                    | 默认                       | 描述        |
-| :-------------------- | :----------------------- | :-------- |
-| `chat:cancel`         | Escape                   | 取消当前输入    |
-| `chat:killAgents`     | Ctrl+X Ctrl+K            | 终止所有后台代理  |
-| `chat:cycleMode`      | Shift+Tab\*              | 循环权限模式    |
-| `chat:modelPicker`    | Cmd+P / Meta+P           | 打开模型选择器   |
-| `chat:fastMode`       | Meta+O                   | 切换快速模式    |
-| `chat:thinkingToggle` | Cmd+T / Meta+T           | 切换扩展思考    |
-| `chat:submit`         | Enter                    | 提交消息      |
-| `chat:newline`        | （未绑定）                    | 插入换行符而不提交 |
-| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-    | 撤销上一个操作   |
-| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E    | 在外部编辑器中打开 |
-| `chat:stash`          | Ctrl+S                   | 隐藏当前提示    |
-| `chat:imagePaste`     | Ctrl+V（Windows 上为 Alt+V） | 粘贴图像      |
+| 操作                    | 默认                       | 描述            |
+| :-------------------- | :----------------------- | :------------ |
+| `chat:cancel`         | Escape                   | 取消当前输入        |
+| `chat:clearInput`     | Ctrl+L                   | 清除提示输入并强制全屏重绘 |
+| `chat:killAgents`     | Ctrl+X Ctrl+K            | 终止所有后台代理      |
+| `chat:cycleMode`      | Shift+Tab\*              | 循环权限模式        |
+| `chat:modelPicker`    | Cmd+P / Meta+P           | 打开模型选择器       |
+| `chat:fastMode`       | Meta+O                   | 切换快速模式        |
+| `chat:thinkingToggle` | Cmd+T / Meta+T           | 切换扩展思考        |
+| `chat:submit`         | Enter                    | 提交消息          |
+| `chat:newline`        | Ctrl+J                   | 插入换行符而不提交     |
+| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-    | 撤销上一个操作       |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E    | 在外部编辑器中打开     |
+| `chat:stash`          | Ctrl+S                   | 隐藏当前提示        |
+| `chat:imagePaste`     | Ctrl+V（Windows 上为 Alt+V） | 粘贴图像          |
 
 \*在没有 VT 模式的 Windows 上（Node \<24.2.0/\<22.17.0，Bun \<1.2.23），默认为 Meta+M。
 
@@ -276,10 +279,11 @@ Claude Code 支持可自定义的快捷键。运行 `/keybindings` 来创建或�
 
 在 `Plugin` 上下文中可用的操作：
 
-| 操作               | 默认    | 描述      |
-| :--------------- | :---- | :------ |
-| `plugin:toggle`  | Space | 切换插件选择  |
-| `plugin:install` | I     | 安装选定的插件 |
+| 操作                | 默认    | 描述                            |
+| :---------------- | :---- | :---------------------------- |
+| `plugin:toggle`   | Space | 切换插件选择                        |
+| `plugin:install`  | I     | 安装选定的插件                       |
+| `plugin:favorite` | F     | 将选定的插件标记为收藏，使其在"已安装"选项卡顶部附近排序 |
 
 ### 设置操作
 
@@ -291,6 +295,14 @@ Claude Code 支持可自定义的快捷键。运行 `/keybindings` 来创建或�
 | `settings:retry`  | R     | 重试加载使用数据（出错时）              |
 | `settings:close`  | Enter | 保存更改并关闭配置面板。Escape 放弃更改并关闭 |
 
+### Doctor 操作
+
+在 `Doctor` 上下文中可用的操作：
+
+| 操作           | 默认 | 描述                                 |
+| :----------- | :- | :--------------------------------- |
+| `doctor:fix` | F  | 将诊断报告发送给 Claude 以修复报告的问题。仅在发现问题时活跃 |
+
 ### 语音操作
 
 在启用[语音听写](/zh-CN/voice-dictation)时，在 `Chat` 上下文中可用的操作：
@@ -298,6 +310,31 @@ Claude Code 支持可自定义的快捷键。运行 `/keybindings` 来创建或�
 | 操作                 | 默认    | 描述      |
 | :----------------- | :---- | :------ |
 | `voice:pushToTalk` | Space | 按住以听写提示 |
+
+### 滚动操作
+
+在启用[全屏渲染](/zh-CN/fullscreen)时，在 `Scroll` 上下文中可用的操作：
+
+| 操作                          | 默认                   | 描述                                                   |
+| :-------------------------- | :------------------- | :--------------------------------------------------- |
+| `scroll:lineUp`             | （未绑定）                | 向上滚动一行。鼠标滚轮滚动触发此操作                                   |
+| `scroll:lineDown`           | （未绑定）                | 向下滚动一行。鼠标滚轮滚动触发此操作                                   |
+| `scroll:pageUp`             | PageUp               | 向上滚动视口高度的一半                                          |
+| `scroll:pageDown`           | PageDown             | 向下滚动视口高度的一半                                          |
+| `scroll:top`                | Ctrl+Home            | 跳到对话的开始                                              |
+| `scroll:bottom`             | Ctrl+End             | 跳到最新消息并重新启用自动跟随                                      |
+| `scroll:halfPageUp`         | （未绑定）                | 向上滚动视口高度的一半。与 `scroll:pageUp` 相同的行为，为 vi 风格的重新绑定提供   |
+| `scroll:halfPageDown`       | （未绑定）                | 向下滚动视口高度的一半。与 `scroll:pageDown` 相同的行为，为 vi 风格的重新绑定提供 |
+| `scroll:fullPageUp`         | （未绑定）                | 向上滚动整个视口高度                                           |
+| `scroll:fullPageDown`       | （未绑定）                | 向下滚动整个视口高度                                           |
+| `selection:copy`            | Ctrl+Shift+C / Cmd+C | 将选定的文本复制到剪贴板                                         |
+| `selection:clear`           | （未绑定）                | 清除活动的文本选择                                            |
+| `selection:extendLeft`      | Shift+Left           | 将活动选择向左扩展一列                                          |
+| `selection:extendRight`     | Shift+Right          | 将活动选择向右扩展一列                                          |
+| `selection:extendUp`        | Shift+Up             | 将活动选择向上扩展一行。当选择到达顶部边缘时滚动视口                           |
+| `selection:extendDown`      | Shift+Down           | 将活动选择向下扩展一行。当选择到达底部边缘时滚动视口                           |
+| `selection:extendLineStart` | Shift+Home           | 将活动选择扩展到行的开始                                         |
+| `selection:extendLineEnd`   | Shift+End            | 将活动选择扩展到行的结束                                         |
 
 ## 按键语法
 
@@ -400,7 +437,7 @@ ctrl+k ctrl+s   按 Ctrl+K，释放，然后按 Ctrl+S
 
 ## Vim 模式交互
 
-启用 vim 模式（`/vim`）时，快捷键和 vim 模式独立运行：
+启用 vim 模式（通过 `/config` → 编辑器模式）时，快捷键和 vim 模式独立运行：
 
 * **Vim 模式**在文本输入级别处理输入（光标移动、模式、动作）
 * **快捷键**在组件级别处理操作（切换待办事项、提交等）

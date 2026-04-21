@@ -6,15 +6,25 @@
 
 > Instale Claude Code no desktop e inicie sua primeira sessão de codificação
 
-O aplicativo de desktop oferece Claude Code com uma interface gráfica: revisão visual de diff, visualização ao vivo do aplicativo, monitoramento de PR do GitHub com mesclagem automática, sessões paralelas com isolamento de Git worktree, tarefas agendadas e a capacidade de executar tarefas remotamente. Nenhum terminal necessário.
+O aplicativo de desktop oferece Claude Code com uma interface gráfica construída para executar múltiplas sessões lado a lado: uma barra lateral para gerenciar trabalho paralelo, um layout com arrastar e soltar com terminal integrado e editor de arquivos, revisão visual de diff, visualização ao vivo do aplicativo, monitoramento de PR do GitHub com mesclagem automática e tarefas agendadas. Nenhum terminal necessário.
+
+<CardGroup cols={2}>
+  <Card title="Download for macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
+    Universal build for Intel and Apple Silicon
+  </Card>
+
+  <Card title="Download for Windows" icon="windows" href="https://claude.ai/api/desktop/win32/x64/setup/latest/redirect?utm_source=claude_code&utm_medium=docs">
+    For x64 processors
+  </Card>
+</CardGroup>
+
+For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). Linux is not supported.
+
+<Note>
+  Claude Code requer uma [assinatura Pro, Max, Team ou Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing).
+</Note>
 
 Esta página orienta você na instalação do aplicativo e no início de sua primeira sessão. Se você já está configurado, consulte [Usar Claude Code Desktop](/pt/desktop) para a referência completa.
-
-<Frame>
-  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-light.png" className="block dark:hidden" alt="A interface do Claude Code Desktop mostrando a aba Code selecionada, com uma caixa de prompt, seletor de modo de permissão definido como Ask permissions, seletor de modelo, seletor de pasta e opção de ambiente local" />
-
-  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-dark.png" className="hidden dark:block" alt="A interface do Claude Code Desktop no modo escuro mostrando a aba Code selecionada, com uma caixa de prompt, seletor de modo de permissão definido como Ask permissions, seletor de modelo, seletor de pasta e opção de ambiente local" />
-</Frame>
 
 O aplicativo de desktop tem três abas:
 
@@ -24,33 +34,11 @@ O aplicativo de desktop tem três abas:
 
 Chat e Cowork são cobertos nos [artigos de suporte do Claude Desktop](https://support.claude.com/en/collections/16163169-claude-desktop). Esta página se concentra na aba **Code**.
 
-<Note>
-  Claude Code requer uma [assinatura Pro, Max, Teams ou Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing).
-</Note>
-
 ## Instalar
 
 <Steps>
-  <Step title="Baixe o aplicativo">
-    Baixe Claude para sua plataforma.
-
-    <CardGroup cols={2}>
-      <Card title="macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
-        Build universal para Intel e Apple Silicon
-      </Card>
-
-      <Card title="Windows" icon="windows" href="https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code&utm_medium=docs">
-        Para processadores x64
-      </Card>
-    </CardGroup>
-
-    Para Windows ARM64, [baixe aqui](https://claude.ai/api/desktop/win32/arm64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs).
-
-    Linux não é suportado no momento.
-  </Step>
-
-  <Step title="Faça login">
-    Inicie Claude na sua pasta Applications (macOS) ou menu Iniciar (Windows). Faça login com sua conta Anthropic.
+  <Step title="Instale e faça login">
+    Baixe o instalador para sua plataforma nos links acima e execute-o. Inicie Claude na sua pasta Applications no macOS ou no menu Iniciar no Windows e faça login com sua conta Anthropic.
   </Step>
 
   <Step title="Abra a aba Code">
@@ -79,7 +67,7 @@ Com a aba Code aberta, escolha um projeto e dê a Claude algo para fazer.
   </Step>
 
   <Step title="Escolha um modelo">
-    Selecione um modelo no dropdown ao lado do botão enviar. Consulte [modelos](/pt/model-config#available-models) para uma comparação de Opus, Sonnet e Haiku. Você não pode alterar o modelo após a sessão iniciar.
+    Selecione um modelo no dropdown ao lado do botão enviar. Consulte [modelos](/pt/model-config#available-models) para uma comparação de Opus, Sonnet e Haiku. Você pode alterar o modelo mais tarde no mesmo dropdown.
   </Step>
 
   <Step title="Diga a Claude o que fazer">
@@ -119,13 +107,15 @@ Você fez sua primeira edição. Para a referência completa sobre tudo que o De
 
 **Adicione plugins para mais capacidades.** Clique no botão **+** ao lado da caixa de prompt e selecione **Plugins** para procurar e instalar [plugins](/pt/desktop#install-plugins) que adicionam skills, agentes, MCP servers e muito mais.
 
+**Organize seu espaço de trabalho.** Arraste os painéis de chat, diff, terminal, arquivo e visualização para qualquer layout que desejar. Abra o terminal com **Ctrl+\`** para executar comandos ao lado de sua sessão, ou clique em um caminho de arquivo para abri-lo no painel de arquivo. Consulte [Organize seu espaço de trabalho](/pt/desktop#arrange-your-workspace).
+
 **Visualize seu aplicativo.** Clique no dropdown **Preview** para executar seu servidor de desenvolvimento diretamente no desktop. Claude pode visualizar o aplicativo em execução, testar endpoints, inspecionar logs e iterar sobre o que vê. Consulte [Visualize seu aplicativo](/pt/desktop#preview-your-app).
 
 **Rastreie sua solicitação de pull.** Depois de abrir um PR, Claude Code monitora os resultados de verificação de CI e pode corrigir automaticamente falhas ou mesclar o PR assim que todas as verificações passarem. Consulte [Monitore o status da solicitação de pull](/pt/desktop#monitor-pull-request-status).
 
-**Coloque Claude em um cronograma.** Configure [tarefas agendadas](/pt/desktop#schedule-recurring-tasks) para executar Claude automaticamente em uma base recorrente: uma revisão de código diária todas as manhãs, uma auditoria de dependência semanal ou um briefing que extrai de suas ferramentas conectadas.
+**Coloque Claude em um cronograma.** Configure [tarefas agendadas](/pt/desktop-scheduled-tasks) para executar Claude automaticamente em uma base recorrente: uma revisão de código diária todas as manhãs, uma auditoria de dependência semanal ou um briefing que extrai de suas ferramentas conectadas.
 
-**Escale quando estiver pronto.** Abra [sessões paralelas](/pt/desktop#work-in-parallel-with-sessions) na barra lateral para trabalhar em várias tarefas ao mesmo tempo, cada uma em seu próprio Git worktree. Envie [trabalho de longa duração para a nuvem](/pt/desktop#run-long-running-tasks-remotely) para que continue mesmo se você fechar o aplicativo, ou [continue uma sessão na web ou em seu IDE](/pt/desktop#continue-in-another-surface) se uma tarefa levar mais tempo do que o esperado. [Conecte ferramentas externas](/pt/desktop#extend-claude-code) como GitHub, Slack e Linear para reunir seu fluxo de trabalho.
+**Escale quando estiver pronto.** Abra [sessões paralelas](/pt/desktop#work-in-parallel-with-sessions) na barra lateral para trabalhar em várias tarefas ao mesmo tempo, cada uma em seu próprio Git worktree, e abra o [painel de tarefas](/pt/desktop#watch-background-tasks) para observar os subagentes e comandos em segundo plano que uma sessão está executando. Abra um [side chat](/pt/desktop#ask-a-side-question-without-derailing-the-session) para fazer uma pergunta sem descarrilar a thread principal. Envie [trabalho de longa duração para a nuvem](/pt/desktop#run-long-running-tasks-remotely) para que continue mesmo se você fechar o aplicativo, ou [continue uma sessão na web ou em seu IDE](/pt/desktop#continue-in-another-surface) se uma tarefa levar mais tempo do que o esperado. [Conecte ferramentas externas](/pt/desktop#extend-claude-code) como GitHub, Slack e Linear para reunir seu fluxo de trabalho.
 
 ## Vindo da CLI?
 

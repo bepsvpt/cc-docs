@@ -12,7 +12,7 @@
 
 Le attività pianificate consentono a Claude di rieseguire automaticamente un prompt a intervalli regolari. Utilizzarle per eseguire il polling di una distribuzione, monitorare una PR, controllare una compilazione a lunga esecuzione o ricordarsi di fare qualcosa più tardi nella sessione. Per reagire agli eventi man mano che si verificano invece di eseguire il polling, vedere [Channels](/it/channels): il vostro CI può inviare il fallimento direttamente nella sessione.
 
-Le attività hanno ambito di sessione: vivono nel processo Claude Code corrente e scompaiono quando si esce. Per la pianificazione durevole che sopravvive ai riavvii, utilizzare [Routines](/it/routines), [Attività pianificate Desktop](/it/desktop-scheduled-tasks) o [GitHub Actions](/it/github-actions).
+Le attività hanno ambito di sessione: vivono nella conversazione corrente e si interrompono quando si avvia una nuova. La ripresa con `--resume` o `--continue` ripristina qualsiasi attività che non sia [scaduta](#seven-day-expiry): un'attività ricorrente creata negli ultimi 7 giorni, oppure una singola la cui ora pianificata non è ancora passata. Per la pianificazione che sopravvive indipendentemente da qualsiasi sessione, utilizzare [Routines](/it/routines), [Attività pianificate Desktop](/it/desktop-scheduled-tasks) o [GitHub Actions](/it/github-actions).
 
 ## Confrontare le opzioni di pianificazione
 
@@ -118,6 +118,10 @@ quiet, say so in one line.
 
 Le modifiche a `loop.md` hanno effetto alla successiva iterazione, quindi potete perfezionare le istruzioni mentre un ciclo è in esecuzione. Quando nessun `loop.md` esiste in nessuna posizione, il ciclo ritorna al prompt di manutenzione integrato. Mantenete il file conciso: il contenuto oltre 25.000 byte viene troncato.
 
+### Interrompere un ciclo
+
+Per interrompere un `/loop` mentre è in attesa della successiva iterazione, premete `Esc`. Questo cancella il risveglio in sospeso in modo che il ciclo non si attivi di nuovo. Le attività pianificate [chiedendo direttamente a Claude](#manage-scheduled-tasks) non sono interessate da `Esc` e rimangono in posizione fino a quando non le eliminate.
+
 ## Impostare un promemoria una tantum
 
 Per promemoria una tantum, descrivete quello che volete in linguaggio naturale invece di utilizzare `/loop`. Claude pianifica un'attività a fuoco singolo che si elimina dopo l'esecuzione.
@@ -198,9 +202,9 @@ Impostare `CLAUDE_CODE_DISABLE_CRON=1` nel vostro ambiente per disabilitare comp
 
 La pianificazione con ambito di sessione ha vincoli intrinseci:
 
-* Le attività si attivano solo mentre Claude Code è in esecuzione e inattivo. La chiusura del terminale o l'uscita dalla sessione annulla tutto.
+* Le attività si attivano solo mentre Claude Code è in esecuzione e inattivo. La chiusura del terminale o l'uscita dalla sessione le interrompe.
 * Nessun recupero per attivazioni perse. Se l'ora pianificata di un'attività passa mentre Claude è occupato in una richiesta a lunga esecuzione, si attiva una sola volta quando Claude diventa inattivo, non una volta per ogni intervallo perso.
-* Nessuna persistenza tra i riavvii. Il riavvio di Claude Code cancella tutte le attività con ambito di sessione.
+* L'avvio di una nuova conversazione cancella tutte le attività con ambito di sessione. La ripresa con `claude --resume` o `claude --continue` ripristina le attività che non sono scadute: attività ricorrenti entro sette giorni dalla creazione, e attività una tantum la cui ora pianificata non è ancora passata. Le attività Bash in background e monitor non vengono mai ripristinate al riavvio.
 
 Per l'automazione basata su cron che deve essere eseguita senza supervisione:
 

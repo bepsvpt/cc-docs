@@ -46,26 +46,28 @@ Cet exemple lie `Ctrl+E` pour ouvrir un éditeur externe dans le contexte de cha
 
 Chaque bloc de liaison spécifie un **contexte** où les liaisons s'appliquent :
 
-| Contexte          | Description                                                           |
-| :---------------- | :-------------------------------------------------------------------- |
-| `Global`          | S'applique partout dans l'application                                 |
-| `Chat`            | Zone de saisie de chat principale                                     |
-| `Autocomplete`    | Le menu d'autocomplétion est ouvert                                   |
-| `Settings`        | Menu des paramètres                                                   |
-| `Confirmation`    | Dialogues de permission et de confirmation                            |
-| `Tabs`            | Composants de navigation par onglets                                  |
-| `Help`            | Le menu d'aide est visible                                            |
-| `Transcript`      | Visionneuse de transcription                                          |
-| `HistorySearch`   | Mode de recherche d'historique (Ctrl+R)                               |
-| `Task`            | Une tâche de fond est en cours d'exécution                            |
-| `ThemePicker`     | Dialogue du sélecteur de thème                                        |
-| `Attachments`     | Navigation de la pièce jointe d'image dans les dialogues de sélection |
-| `Footer`          | Navigation de l'indicateur de pied de page (tâches, équipes, diff)    |
-| `MessageSelector` | Sélection de message du dialogue de rembobinage et de résumé          |
-| `DiffDialog`      | Navigation de la visionneuse de diff                                  |
-| `ModelPicker`     | Niveau d'effort du sélecteur de modèle                                |
-| `Select`          | Composants génériques de sélection/liste                              |
-| `Plugin`          | Dialogue du plugin (parcourir, découvrir, gérer)                      |
+| Contexte          | Description                                                             |
+| :---------------- | :---------------------------------------------------------------------- |
+| `Global`          | S'applique partout dans l'application                                   |
+| `Chat`            | Zone de saisie de chat principale                                       |
+| `Autocomplete`    | Le menu d'autocomplétion est ouvert                                     |
+| `Settings`        | Menu des paramètres                                                     |
+| `Confirmation`    | Dialogues de permission et de confirmation                              |
+| `Tabs`            | Composants de navigation par onglets                                    |
+| `Help`            | Le menu d'aide est visible                                              |
+| `Transcript`      | Visionneuse de transcription                                            |
+| `HistorySearch`   | Mode de recherche d'historique (Ctrl+R)                                 |
+| `Task`            | Une tâche de fond est en cours d'exécution                              |
+| `ThemePicker`     | Dialogue du sélecteur de thème                                          |
+| `Attachments`     | Navigation de la pièce jointe d'image dans les dialogues de sélection   |
+| `Footer`          | Navigation de l'indicateur de pied de page (tâches, équipes, diff)      |
+| `MessageSelector` | Sélection de message du dialogue de rembobinage et de résumé            |
+| `DiffDialog`      | Navigation de la visionneuse de diff                                    |
+| `ModelPicker`     | Niveau d'effort du sélecteur de modèle                                  |
+| `Select`          | Composants génériques de sélection/liste                                |
+| `Plugin`          | Dialogue du plugin (parcourir, découvrir, gérer)                        |
+| `Scroll`          | Défilement de la conversation et sélection de texte en mode plein écran |
+| `Doctor`          | Écran de diagnostics `/doctor`                                          |
 
 ## Actions disponibles
 
@@ -79,7 +81,7 @@ Actions disponibles dans le contexte `Global` :
 | :--------------------- | :--------- | :-------------------------------------------- |
 | `app:interrupt`        | Ctrl+C     | Annuler l'opération en cours                  |
 | `app:exit`             | Ctrl+D     | Quitter Claude Code                           |
-| `app:redraw`           | Ctrl+L     | Redessiner l'écran                            |
+| `app:redraw`           | (non lié)  | Forcer le redessinage du terminal             |
 | `app:toggleTodos`      | Ctrl+T     | Basculer la visibilité de la liste des tâches |
 | `app:toggleTranscript` | Ctrl+O     | Basculer la transcription détaillée           |
 
@@ -97,20 +99,21 @@ Actions pour naviguer dans l'historique des commandes :
 
 Actions disponibles dans le contexte `Chat` :
 
-| Action                | Par défaut                  | Description                               |
-| :-------------------- | :-------------------------- | :---------------------------------------- |
-| `chat:cancel`         | Échappement                 | Annuler l'entrée actuelle                 |
-| `chat:killAgents`     | Ctrl+X Ctrl+K               | Arrêter tous les agents de fond           |
-| `chat:cycleMode`      | Maj+Tab\*                   | Cycler les modes de permission            |
-| `chat:modelPicker`    | Cmd+P / Meta+P              | Ouvrir le sélecteur de modèle             |
-| `chat:fastMode`       | Meta+O                      | Basculer le mode rapide                   |
-| `chat:thinkingToggle` | Cmd+T / Meta+T              | Basculer la réflexion étendue             |
-| `chat:submit`         | Entrée                      | Soumettre le message                      |
-| `chat:newline`        | (non lié)                   | Insérer une nouvelle ligne sans soumettre |
-| `chat:undo`           | Ctrl+\_, Ctrl+Maj+-         | Annuler la dernière action                |
-| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E       | Ouvrir dans un éditeur externe            |
-| `chat:stash`          | Ctrl+S                      | Mettre en cache l'invite actuelle         |
-| `chat:imagePaste`     | Ctrl+V (Alt+V sous Windows) | Coller une image                          |
+| Action                | Par défaut                  | Description                                                           |
+| :-------------------- | :-------------------------- | :-------------------------------------------------------------------- |
+| `chat:cancel`         | Échappement                 | Annuler l'entrée actuelle                                             |
+| `chat:clearInput`     | Ctrl+L                      | Effacer l'entrée d'invite et forcer un redessinage complet de l'écran |
+| `chat:killAgents`     | Ctrl+X Ctrl+K               | Arrêter tous les agents de fond                                       |
+| `chat:cycleMode`      | Maj+Tab\*                   | Cycler les modes de permission                                        |
+| `chat:modelPicker`    | Cmd+P / Meta+P              | Ouvrir le sélecteur de modèle                                         |
+| `chat:fastMode`       | Meta+O                      | Basculer le mode rapide                                               |
+| `chat:thinkingToggle` | Cmd+T / Meta+T              | Basculer la réflexion étendue                                         |
+| `chat:submit`         | Entrée                      | Soumettre le message                                                  |
+| `chat:newline`        | Ctrl+J                      | Insérer une nouvelle ligne sans soumettre                             |
+| `chat:undo`           | Ctrl+\_, Ctrl+Maj+-         | Annuler la dernière action                                            |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E       | Ouvrir dans un éditeur externe                                        |
+| `chat:stash`          | Ctrl+S                      | Mettre en cache l'invite actuelle                                     |
+| `chat:imagePaste`     | Ctrl+V (Alt+V sous Windows) | Coller une image                                                      |
 
 \*Sous Windows sans mode VT (Node \<24.2.0/\<22.17.0, Bun \<1.2.23), la valeur par défaut est Meta+M.
 
@@ -276,10 +279,11 @@ Actions disponibles dans le contexte `Select` :
 
 Actions disponibles dans le contexte `Plugin` :
 
-| Action           | Par défaut | Description                        |
-| :--------------- | :--------- | :--------------------------------- |
-| `plugin:toggle`  | Espace     | Basculer la sélection du plugin    |
-| `plugin:install` | I          | Installer les plugins sélectionnés |
+| Action            | Par défaut | Description                                                                                       |
+| :---------------- | :--------- | :------------------------------------------------------------------------------------------------ |
+| `plugin:toggle`   | Espace     | Basculer la sélection du plugin                                                                   |
+| `plugin:install`  | I          | Installer les plugins sélectionnés                                                                |
+| `plugin:favorite` | F          | Marquer le plugin sélectionné comme favori pour qu'il soit trié près du haut de l'onglet Installé |
 
 ### Actions des paramètres
 
@@ -291,6 +295,14 @@ Actions disponibles dans le contexte `Settings` :
 | `settings:retry`  | R          | Réessayer de charger les données d'utilisation (en cas d'erreur)                                                   |
 | `settings:close`  | Entrée     | Enregistrer les modifications et fermer le panneau de configuration. Échappement annule les modifications et ferme |
 
+### Actions du docteur
+
+Actions disponibles dans le contexte `Doctor` :
+
+| Action       | Par défaut | Description                                                                                                                          |
+| :----------- | :--------- | :----------------------------------------------------------------------------------------------------------------------------------- |
+| `doctor:fix` | F          | Envoyer le rapport de diagnostics à Claude pour corriger les problèmes signalés. Actif uniquement lorsque des problèmes sont trouvés |
+
 ### Actions vocales
 
 Actions disponibles dans le contexte `Chat` lorsque la [dictée vocale](/fr/voice-dictation) est activée :
@@ -298,6 +310,31 @@ Actions disponibles dans le contexte `Chat` lorsque la [dictée vocale](/fr/voic
 | Action             | Par défaut | Description                      |
 | :----------------- | :--------- | :------------------------------- |
 | `voice:pushToTalk` | Espace     | Maintenez pour dicter une invite |
+
+### Actions de défilement
+
+Actions disponibles dans le contexte `Scroll` lorsque le [rendu plein écran](/fr/fullscreen) est activé :
+
+| Action                      | Par défaut         | Description                                                                                                                                                   |
+| :-------------------------- | :----------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `scroll:lineUp`             | (non lié)          | Faire défiler vers le haut d'une ligne. Le défilement à la souris déclenche cette action                                                                      |
+| `scroll:lineDown`           | (non lié)          | Faire défiler vers le bas d'une ligne. Le défilement à la souris déclenche cette action                                                                       |
+| `scroll:pageUp`             | PageUp             | Faire défiler vers le haut de la moitié de la hauteur de la fenêtre d'affichage                                                                               |
+| `scroll:pageDown`           | PageDown           | Faire défiler vers le bas de la moitié de la hauteur de la fenêtre d'affichage                                                                                |
+| `scroll:top`                | Ctrl+Home          | Sauter au début de la conversation                                                                                                                            |
+| `scroll:bottom`             | Ctrl+End           | Sauter au dernier message et réactiver le suivi automatique                                                                                                   |
+| `scroll:halfPageUp`         | (non lié)          | Faire défiler vers le haut de la moitié de la hauteur de la fenêtre d'affichage. Même comportement que `scroll:pageUp`, fourni pour les reliures de style vi  |
+| `scroll:halfPageDown`       | (non lié)          | Faire défiler vers le bas de la moitié de la hauteur de la fenêtre d'affichage. Même comportement que `scroll:pageDown`, fourni pour les reliures de style vi |
+| `scroll:fullPageUp`         | (non lié)          | Faire défiler vers le haut de la hauteur complète de la fenêtre d'affichage                                                                                   |
+| `scroll:fullPageDown`       | (non lié)          | Faire défiler vers le bas de la hauteur complète de la fenêtre d'affichage                                                                                    |
+| `selection:copy`            | Ctrl+Maj+C / Cmd+C | Copier le texte sélectionné dans le presse-papiers                                                                                                            |
+| `selection:clear`           | (non lié)          | Effacer la sélection de texte active                                                                                                                          |
+| `selection:extendLeft`      | Maj+Gauche         | Étendre la sélection active d'une colonne vers la gauche                                                                                                      |
+| `selection:extendRight`     | Maj+Droite         | Étendre la sélection active d'une colonne vers la droite                                                                                                      |
+| `selection:extendUp`        | Maj+Haut           | Étendre la sélection active d'une ligne vers le haut. Fait défiler la fenêtre d'affichage lorsque la sélection atteint le bord supérieur                      |
+| `selection:extendDown`      | Maj+Bas            | Étendre la sélection active d'une ligne vers le bas. Fait défiler la fenêtre d'affichage lorsque la sélection atteint le bord inférieur                       |
+| `selection:extendLineStart` | Maj+Home           | Étendre la sélection active au début de la ligne                                                                                                              |
+| `selection:extendLineEnd`   | Maj+End            | Étendre la sélection active à la fin de la ligne                                                                                                              |
 
 ## Syntaxe des séquences de touches
 
@@ -400,7 +437,7 @@ Certains raccourcis peuvent entrer en conflit avec les multiplexeurs de terminal
 
 ## Interaction du mode Vim
 
-Lorsque le mode vim est activé (`/vim`), les liaisons de touches et le mode vim fonctionnent indépendamment :
+Lorsque le mode vim est activé via `/config` → Mode Éditeur, les liaisons de touches et le mode vim fonctionnent indépendamment :
 
 * **Mode Vim** gère l'entrée au niveau de la saisie de texte (mouvement du curseur, modes, motions)
 * **Liaisons de touches** gèrent les actions au niveau du composant (basculer les tâches, soumettre, etc.)

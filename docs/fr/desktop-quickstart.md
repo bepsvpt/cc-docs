@@ -6,15 +6,25 @@
 
 > Installez Claude Code sur le bureau et commencez votre première session de codage
 
-L'application de bureau vous donne accès à Claude Code avec une interface graphique : examen des différences visuelles, aperçu en direct de l'application, surveillance des PR GitHub avec fusion automatique, sessions parallèles avec isolation Git worktree, tâches planifiées et la possibilité d'exécuter des tâches à distance. Aucun terminal requis.
+L'application de bureau vous donne accès à Claude Code avec une interface graphique conçue pour exécuter plusieurs sessions côte à côte : une barre latérale pour gérer les travaux parallèles, une disposition glisser-déposer avec un terminal intégré et un éditeur de fichiers, un examen des différences visuelles, un aperçu en direct de l'application, la surveillance des PR GitHub avec fusion automatique, et les tâches planifiées. Aucun terminal requis.
+
+<CardGroup cols={2}>
+  <Card title="Download for macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
+    Universal build for Intel and Apple Silicon
+  </Card>
+
+  <Card title="Download for Windows" icon="windows" href="https://claude.ai/api/desktop/win32/x64/setup/latest/redirect?utm_source=claude_code&utm_medium=docs">
+    For x64 processors
+  </Card>
+</CardGroup>
+
+For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). Linux is not supported.
+
+<Note>
+  Claude Code nécessite un [abonnement Pro, Max, Team ou Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing).
+</Note>
 
 Cette page vous guide dans l'installation de l'application et le démarrage de votre première session. Si vous êtes déjà configuré, consultez [Utiliser Claude Code Desktop](/fr/desktop) pour la référence complète.
-
-<Frame>
-  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-light.png" className="block dark:hidden" alt="L'interface Claude Code Desktop montrant l'onglet Code sélectionné, avec une boîte de saisie, un sélecteur de mode de permission défini sur Demander les permissions, un sélecteur de modèle, un sélecteur de dossier et l'option Environnement local" />
-
-  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-dark.png" className="hidden dark:block" alt="L'interface Claude Code Desktop en mode sombre montrant l'onglet Code sélectionné, avec une boîte de saisie, un sélecteur de mode de permission défini sur Demander les permissions, un sélecteur de modèle, un sélecteur de dossier et l'option Environnement local" />
-</Frame>
 
 L'application de bureau a trois onglets :
 
@@ -24,33 +34,11 @@ L'application de bureau a trois onglets :
 
 Chat et Cowork sont couverts dans les [articles d'assistance Claude Desktop](https://support.claude.com/en/collections/16163169-claude-desktop). Cette page se concentre sur l'onglet **Code**.
 
-<Note>
-  Claude Code nécessite un [abonnement Pro, Max, Teams ou Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing).
-</Note>
-
 ## Installer
 
 <Steps>
-  <Step title="Télécharger l'application">
-    Téléchargez Claude pour votre plateforme.
-
-    <CardGroup cols={2}>
-      <Card title="macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
-        Build universel pour Intel et Apple Silicon
-      </Card>
-
-      <Card title="Windows" icon="windows" href="https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code&utm_medium=docs">
-        Pour les processeurs x64
-      </Card>
-    </CardGroup>
-
-    Pour Windows ARM64, [téléchargez ici](https://claude.ai/api/desktop/win32/arm64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs).
-
-    Linux n'est pas actuellement supporté.
-  </Step>
-
-  <Step title="Se connecter">
-    Lancez Claude à partir de votre dossier Applications (macOS) ou du menu Démarrer (Windows). Connectez-vous avec votre compte Anthropic.
+  <Step title="Installer et se connecter">
+    Téléchargez le programme d'installation pour votre plateforme à partir des liens ci-dessus et exécutez-le. Lancez Claude à partir de votre dossier Applications sur macOS ou du menu Démarrer sur Windows, puis connectez-vous avec votre compte Anthropic.
   </Step>
 
   <Step title="Ouvrir l'onglet Code">
@@ -79,7 +67,7 @@ Avec l'onglet Code ouvert, choisissez un projet et donnez à Claude quelque chos
   </Step>
 
   <Step title="Choisir un modèle">
-    Sélectionnez un modèle dans la liste déroulante à côté du bouton d'envoi. Consultez [modèles](/fr/model-config#available-models) pour une comparaison d'Opus, Sonnet et Haiku. Vous ne pouvez pas changer le modèle après le démarrage de la session.
+    Sélectionnez un modèle dans la liste déroulante à côté du bouton d'envoi. Consultez [modèles](/fr/model-config#available-models) pour une comparaison d'Opus, Sonnet et Haiku. Vous pouvez changer le modèle plus tard à partir de la même liste déroulante.
   </Step>
 
   <Step title="Dire à Claude ce qu'il faut faire">
@@ -119,13 +107,15 @@ Vous avez fait votre première modification. Pour la référence complète sur t
 
 **Ajouter des plugins pour plus de capacités.** Cliquez sur le bouton **+** à côté de la boîte de saisie et sélectionnez **Plugins** pour parcourir et installer les [plugins](/fr/desktop#install-plugins) qui ajoutent des skills, des agents, des MCP servers et bien plus.
 
+**Arranger votre espace de travail.** Glissez-déposez les volets de chat, de différence, de terminal, de fichier et d'aperçu dans la disposition que vous souhaitez. Ouvrez le terminal avec **Ctrl+\`** pour exécuter des commandes aux côtés de votre session, ou cliquez sur un chemin de fichier pour l'ouvrir dans le volet de fichier. Consultez [Arranger votre espace de travail](/fr/desktop#arrange-your-workspace).
+
 **Prévisualiser votre application.** Cliquez sur la liste déroulante **Preview** pour exécuter votre serveur de développement directement dans le bureau. Claude peut voir l'application en cours d'exécution, tester les points de terminaison, inspecter les journaux et itérer sur ce qu'il voit. Consultez [Prévisualiser votre application](/fr/desktop#preview-your-app).
 
 **Suivre votre demande de tirage.** Après avoir ouvert une PR, Claude Code surveille les résultats des vérifications CI et peut corriger automatiquement les défaillances ou fusionner la PR une fois que toutes les vérifications sont réussies. Consultez [Surveiller l'état de la demande de tirage](/fr/desktop#monitor-pull-request-status).
 
-**Mettre Claude sur un calendrier.** Configurez les [tâches planifiées](/fr/desktop#schedule-recurring-tasks) pour exécuter Claude automatiquement de manière récurrente : un examen de code quotidien chaque matin, un audit de dépendances hebdomadaire ou un briefing qui extrait de vos outils connectés.
+**Mettre Claude sur un calendrier.** Configurez les [tâches planifiées](/fr/desktop-scheduled-tasks) pour exécuter Claude automatiquement de manière récurrente : un examen de code quotidien chaque matin, un audit de dépendances hebdomadaire ou un briefing qui extrait de vos outils connectés.
 
-**Augmenter l'échelle quand vous êtes prêt.** Ouvrez les [sessions parallèles](/fr/desktop#work-in-parallel-with-sessions) à partir de la barre latérale pour travailler sur plusieurs tâches à la fois, chacune dans son propre Git worktree. Envoyez les [travaux de longue durée vers le cloud](/fr/desktop#run-long-running-tasks-remotely) pour qu'ils continuent même si vous fermez l'application, ou [continuez une session sur le web ou dans votre IDE](/fr/desktop#continue-in-another-surface) si une tâche prend plus de temps que prévu. [Connectez les outils externes](/fr/desktop#extend-claude-code) comme GitHub, Slack et Linear pour réunir votre flux de travail.
+**Augmenter l'échelle quand vous êtes prêt.** Ouvrez les [sessions parallèles](/fr/desktop#work-in-parallel-with-sessions) à partir de la barre latérale pour travailler sur plusieurs tâches à la fois, chacune dans son propre Git worktree, et ouvrez le [volet des tâches](/fr/desktop#watch-background-tasks) pour regarder les sous-agents et les commandes en arrière-plan qu'une session exécute. Ouvrez un [chat latéral](/fr/desktop#ask-a-side-question-without-derailing-the-session) pour poser une question sans dérailler le fil principal. Envoyez les [travaux de longue durée vers le cloud](/fr/desktop#run-long-running-tasks-remotely) pour qu'ils continuent même si vous fermez l'application, ou [continuez une session sur le web ou dans votre IDE](/fr/desktop#continue-in-another-surface) si une tâche prend plus de temps que prévu. [Connectez les outils externes](/fr/desktop#extend-claude-code) comme GitHub, Slack et Linear pour réunir votre flux de travail.
 
 ## Venant de la CLI ?
 

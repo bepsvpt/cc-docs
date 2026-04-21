@@ -13,8 +13,8 @@
 
   **macOS-Benutzer**: Option/Alt-Tastenkürzel (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`, `Alt+T`) erfordern die Konfiguration von Option als Meta in Ihrem Terminal:
 
-  * **iTerm2**: Einstellungen → Profile → Keys → Left/Right Option key auf „Esc+" setzen
-  * **Terminal.app**: Einstellungen → Profile → Keyboard → „Use Option as Meta Key" aktivieren
+  * **iTerm2**: Einstellungen → Profile → Keys → General → Left/Right Option key auf „Esc+" setzen
+  * **Apple Terminal**: Einstellungen → Profile → Keyboard → „Use Option as Meta Key" aktivieren
   * **VS Code**: `"terminal.integrated.macOptionIsMeta": true` in VS Code-Einstellungen setzen
 
   Weitere Informationen finden Sie unter [Terminal-Konfiguration](/de/terminal-config).
@@ -22,36 +22,39 @@
 
 ### Allgemeine Steuerelemente
 
-| Kürzel                                                | Beschreibung                                                                                 | Kontext                                                                                                                                                                                 |
-| :---------------------------------------------------- | :------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Ctrl+C`                                              | Aktuelle Eingabe oder Generierung abbrechen                                                  | Standard-Interrupt                                                                                                                                                                      |
-| `Ctrl+X Ctrl+K`                                       | Alle Hintergrund-Agenten beenden. Zweimal innerhalb von 3 Sekunden drücken, um zu bestätigen | Steuerung von Hintergrund-Agenten                                                                                                                                                       |
-| `Ctrl+D`                                              | Claude Code-Sitzung beenden                                                                  | EOF-Signal                                                                                                                                                                              |
-| `Ctrl+G` oder `Ctrl+X Ctrl+E`                         | Im Standard-Texteditor öffnen                                                                | Bearbeiten Sie Ihren Prompt oder benutzerdefinierte Antwort in Ihrem Standard-Texteditor. `Ctrl+X Ctrl+E` ist die readline-native Bindung                                               |
-| `Ctrl+L`                                              | Bildschirm neu zeichnen                                                                      | Zeichnet die aktuelle Benutzeroberfläche neu, ohne den Gesprächsverlauf zu löschen                                                                                                      |
-| `Ctrl+O`                                              | Ausführliche Ausgabe umschalten                                                              | Zeigt detaillierte Tool-Nutzung und Ausführung. Erweitert auch MCP-Lese- und Suchaufrufe, die standardmäßig zu einer einzelnen Zeile wie „Queried slack" zusammengefasst werden         |
-| `Ctrl+R`                                              | Reverse-Suche im Befehlsverlauf                                                              | Durchsuchen Sie vorherige Befehle interaktiv                                                                                                                                            |
-| `Ctrl+V` oder `Cmd+V` (iTerm2) oder `Alt+V` (Windows) | Bild aus Zwischenablage einfügen                                                             | Fügt einen `[Image #N]`-Chip an der Cursor-Position ein, sodass Sie ihn positionell in Ihrem Prompt referenzieren können                                                                |
-| `Ctrl+B`                                              | Hintergrund-Ausführung von Aufgaben                                                          | Führt Bash-Befehle und Agenten im Hintergrund aus. Tmux-Benutzer drücken zweimal                                                                                                        |
-| `Ctrl+T`                                              | Task-Liste umschalten                                                                        | Zeigen oder verbergen Sie die [Task-Liste](#task-list) im Terminal-Statusbereich                                                                                                        |
-| `Left/Right arrows`                                   | Durch Dialog-Registerkarten navigieren                                                       | Navigieren Sie zwischen Registerkarten in Berechtigungsdialogen und Menüs                                                                                                               |
-| `Up/Down arrows`                                      | Befehlsverlauf navigieren                                                                    | Rufen Sie vorherige Eingaben ab                                                                                                                                                         |
-| `Esc` + `Esc`                                         | Zurückspulen oder zusammenfassen                                                             | Stellen Sie Code und/oder Gespräch auf einen vorherigen Punkt wieder her, oder fassen Sie ab einer ausgewählten Nachricht zusammen                                                      |
-| `Shift+Tab` oder `Alt+M` (einige Konfigurationen)     | Berechtigungsmodi umschalten                                                                 | Wechseln Sie zwischen `default`, `acceptEdits`, `plan` und allen Modi, die Sie aktiviert haben, z. B. `auto` oder `bypassPermissions`. Siehe [Berechtigungsmodi](/de/permission-modes). |
-| `Option+P` (macOS) oder `Alt+P` (Windows/Linux)       | Modell wechseln                                                                              | Wechseln Sie Modelle, ohne Ihren Prompt zu löschen                                                                                                                                      |
-| `Option+T` (macOS) oder `Alt+T` (Windows/Linux)       | Extended Thinking umschalten                                                                 | Aktivieren oder deaktivieren Sie den Extended Thinking-Modus. Konfigurieren Sie auf macOS Ihr Terminal, um Option als Meta zu senden, damit dieses Kürzel funktioniert                  |
-| `Option+O` (macOS) oder `Alt+O` (Windows/Linux)       | Schnellmodus umschalten                                                                      | Aktivieren oder deaktivieren Sie den [Schnellmodus](/de/fast-mode)                                                                                                                      |
+| Kürzel                                                | Beschreibung                                                                                 | Kontext                                                                                                                                                                                                                                                                                                                                                  |
+| :---------------------------------------------------- | :------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+C`                                              | Aktuelle Eingabe oder Generierung abbrechen                                                  | Standard-Interrupt                                                                                                                                                                                                                                                                                                                                       |
+| `Ctrl+X Ctrl+K`                                       | Alle Hintergrund-Agenten beenden. Zweimal innerhalb von 3 Sekunden drücken, um zu bestätigen | Steuerung von Hintergrund-Agenten                                                                                                                                                                                                                                                                                                                        |
+| `Ctrl+D`                                              | Claude Code-Sitzung beenden                                                                  | EOF-Signal                                                                                                                                                                                                                                                                                                                                               |
+| `Ctrl+G` oder `Ctrl+X Ctrl+E`                         | Im Standard-Texteditor öffnen                                                                | Bearbeiten Sie Ihren Prompt oder benutzerdefinierte Antwort in Ihrem Standard-Texteditor. `Ctrl+X Ctrl+E` ist die readline-native Bindung. Aktivieren Sie „Show last response in external editor" in `/config`, um Claudes vorherige Antwort als `#`-kommentierter Kontext über Ihrem Prompt einzufügen; der Kommentarblock wird beim Speichern entfernt |
+| `Ctrl+L`                                              | Eingabeaufforderung löschen und Bildschirm neu zeichnen                                      | Löscht eingegebenen Text und erzwingt eine vollständige Terminal-Neuzeichnung. Der Gesprächsverlauf wird beibehalten. Verwenden Sie dies, um die Anzeige wiederherzustellen, wenn sie verzerrt oder teilweise leer wird                                                                                                                                  |
+| `Ctrl+O`                                              | Transkript-Viewer umschalten                                                                 | Zeigt detaillierte Tool-Nutzung und Ausführung. Erweitert auch MCP-Aufrufe, die standardmäßig zu einer einzelnen Zeile wie „Called slack 3 times" zusammengefasst werden                                                                                                                                                                                 |
+| `Ctrl+R`                                              | Reverse-Suche im Befehlsverlauf                                                              | Durchsuchen Sie vorherige Befehle interaktiv                                                                                                                                                                                                                                                                                                             |
+| `Ctrl+V` oder `Cmd+V` (iTerm2) oder `Alt+V` (Windows) | Bild aus Zwischenablage einfügen                                                             | Fügt einen `[Image #N]`-Chip an der Cursor-Position ein, sodass Sie ihn positionell in Ihrem Prompt referenzieren können                                                                                                                                                                                                                                 |
+| `Ctrl+B`                                              | Hintergrund-Ausführung von Aufgaben                                                          | Führt Bash-Befehle und Agenten im Hintergrund aus. Tmux-Benutzer drücken zweimal                                                                                                                                                                                                                                                                         |
+| `Ctrl+T`                                              | Task-Liste umschalten                                                                        | Zeigen oder verbergen Sie die [Task-Liste](#task-list) im Terminal-Statusbereich                                                                                                                                                                                                                                                                         |
+| `Left/Right arrows`                                   | Durch Dialog-Registerkarten navigieren                                                       | Navigieren Sie zwischen Registerkarten in Berechtigungsdialogen und Menüs                                                                                                                                                                                                                                                                                |
+| `Up/Down arrows` oder `Ctrl+P`/`Ctrl+N`               | Cursor bewegen oder Befehlsverlauf navigieren                                                | Bei mehrzeiliger Eingabe bewegt sich der Cursor zunächst innerhalb der Eingabeaufforderung. Sobald sich der Cursor bereits am oberen oder unteren Rand befindet, navigiert das erneute Drücken durch den Befehlsverlauf                                                                                                                                  |
+| `Esc` + `Esc`                                         | Zurückspulen oder zusammenfassen                                                             | Stellen Sie Code und/oder Gespräch auf einen vorherigen Punkt wieder her, oder fassen Sie ab einer ausgewählten Nachricht zusammen                                                                                                                                                                                                                       |
+| `Shift+Tab` oder `Alt+M` (einige Konfigurationen)     | Berechtigungsmodi umschalten                                                                 | Wechseln Sie zwischen `default`, `acceptEdits`, `plan` und allen Modi, die Sie aktiviert haben, z. B. `auto` oder `bypassPermissions`. Siehe [Berechtigungsmodi](/de/permission-modes).                                                                                                                                                                  |
+| `Option+P` (macOS) oder `Alt+P` (Windows/Linux)       | Modell wechseln                                                                              | Wechseln Sie Modelle, ohne Ihren Prompt zu löschen                                                                                                                                                                                                                                                                                                       |
+| `Option+T` (macOS) oder `Alt+T` (Windows/Linux)       | Extended Thinking umschalten                                                                 | Aktivieren oder deaktivieren Sie den Extended Thinking-Modus. Konfigurieren Sie auf macOS Ihr Terminal, um Option als Meta zu senden, damit dieses Kürzel funktioniert                                                                                                                                                                                   |
+| `Option+O` (macOS) oder `Alt+O` (Windows/Linux)       | Schnellmodus umschalten                                                                      | Aktivieren oder deaktivieren Sie den [Schnellmodus](/de/fast-mode)                                                                                                                                                                                                                                                                                       |
 
 ### Textbearbeitung
 
-| Kürzel                  | Beschreibung                            | Kontext                                                                                                                         |
-| :---------------------- | :-------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
-| `Ctrl+K`                | Bis zum Ende der Zeile löschen          | Speichert gelöschten Text zum Einfügen                                                                                          |
-| `Ctrl+U`                | Vom Cursor bis zum Zeilenanfang löschen | Speichert gelöschten Text zum Einfügen. Wiederholen Sie, um über Zeilen in mehrzeiliger Eingabe zu löschen                      |
-| `Ctrl+Y`                | Gelöschten Text einfügen                | Fügen Sie Text ein, der mit `Ctrl+K` oder `Ctrl+U` gelöscht wurde                                                               |
-| `Alt+Y` (nach `Ctrl+Y`) | Einfügeverlauf durchlaufen              | Nach dem Einfügen können Sie durch zuvor gelöschten Text navigieren. Erfordert [Option als Meta](#keyboard-shortcuts) auf macOS |
-| `Alt+B`                 | Cursor um ein Wort nach hinten bewegen  | Wort-Navigation. Erfordert [Option als Meta](#keyboard-shortcuts) auf macOS                                                     |
-| `Alt+F`                 | Cursor um ein Wort nach vorne bewegen   | Wort-Navigation. Erfordert [Option als Meta](#keyboard-shortcuts) auf macOS                                                     |
+| Kürzel                  | Beschreibung                                     | Kontext                                                                                                                                                                                                                  |
+| :---------------------- | :----------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+A`                | Cursor an den Anfang der aktuellen Zeile bewegen | Bei mehrzeiliger Eingabe bewegt sich der Cursor an den Anfang der aktuellen logischen Zeile                                                                                                                              |
+| `Ctrl+E`                | Cursor an das Ende der aktuellen Zeile bewegen   | Bei mehrzeiliger Eingabe bewegt sich der Cursor an das Ende der aktuellen logischen Zeile                                                                                                                                |
+| `Ctrl+K`                | Bis zum Ende der Zeile löschen                   | Speichert gelöschten Text zum Einfügen                                                                                                                                                                                   |
+| `Ctrl+U`                | Vom Cursor bis zum Zeilenanfang löschen          | Speichert gelöschten Text zum Einfügen. Wiederholen Sie, um über Zeilen in mehrzeiliger Eingabe zu löschen. Auf macOS ordnen Terminal-Emulatoren einschließlich iTerm2 und Terminal.app `Cmd+Backspace` diesem Kürzel zu |
+| `Ctrl+W`                | Vorheriges Wort löschen                          | Speichert gelöschten Text zum Einfügen. Unter Windows löscht `Ctrl+Backspace` auch das vorherige Wort                                                                                                                    |
+| `Ctrl+Y`                | Gelöschten Text einfügen                         | Fügen Sie Text ein, der mit `Ctrl+K`, `Ctrl+U` oder `Ctrl+W` gelöscht wurde                                                                                                                                              |
+| `Alt+Y` (nach `Ctrl+Y`) | Einfügeverlauf durchlaufen                       | Nach dem Einfügen können Sie durch zuvor gelöschten Text navigieren. Erfordert [Option als Meta](#keyboard-shortcuts) auf macOS                                                                                          |
+| `Alt+B`                 | Cursor um ein Wort nach hinten bewegen           | Wort-Navigation. Erfordert [Option als Meta](#keyboard-shortcuts) auf macOS                                                                                                                                              |
+| `Alt+F`                 | Cursor um ein Wort nach vorne bewegen            | Wort-Navigation. Erfordert [Option als Meta](#keyboard-shortcuts) auf macOS                                                                                                                                              |
 
 ### Design und Anzeige
 
@@ -61,23 +64,23 @@
 
 ### Mehrzeilige Eingabe
 
-| Methode          | Kürzel          | Kontext                                                       |
-| :--------------- | :-------------- | :------------------------------------------------------------ |
-| Schneller Escape | `\` + `Enter`   | Funktioniert in allen Terminals                               |
-| macOS-Standard   | `Option+Enter`  | Standard auf macOS                                            |
-| Shift+Enter      | `Shift+Enter`   | Funktioniert standardmäßig in iTerm2, WezTerm, Ghostty, Kitty |
-| Steuersequenz    | `Ctrl+J`        | Zeilenumbruch-Zeichen für mehrzeilig                          |
-| Einfügemodus     | Direkt einfügen | Für Code-Blöcke, Protokolle                                   |
+| Methode          | Kürzel          | Kontext                                                                                                    |
+| :--------------- | :-------------- | :--------------------------------------------------------------------------------------------------------- |
+| Schneller Escape | `\` + `Enter`   | Funktioniert in allen Terminals                                                                            |
+| Option-Taste     | `Option+Enter`  | Nach Aktivierung von [Option als Meta](/de/terminal-config#enable-option-key-shortcuts-on-macos) auf macOS |
+| Shift+Enter      | `Shift+Enter`   | Nativ in iTerm2, WezTerm, Ghostty, Kitty, Warp, Apple Terminal                                             |
+| Steuersequenz    | `Ctrl+J`        | Funktioniert in jedem Terminal ohne Konfiguration                                                          |
+| Einfügemodus     | Direkt einfügen | Für Code-Blöcke, Protokolle                                                                                |
 
 <Tip>
-  Shift+Enter funktioniert ohne Konfiguration in iTerm2, WezTerm, Ghostty und Kitty. Für andere Terminals (VS Code, Alacritty, Zed, Warp) führen Sie `/terminal-setup` aus, um die Bindung zu installieren.
+  Shift+Enter funktioniert ohne Konfiguration in iTerm2, WezTerm, Ghostty, Kitty, Warp und Apple Terminal. Für VS Code, Cursor, Windsurf, Alacritty und Zed führen Sie `/terminal-setup` aus, um die Bindung zu installieren.
 </Tip>
 
 ### Schnellbefehle
 
 | Kürzel        | Beschreibung        | Notizen                                                                              |
 | :------------ | :------------------ | :----------------------------------------------------------------------------------- |
-| `/` am Anfang | Befehl oder Skill   | Siehe [integrierte Befehle](#built-in-commands) und [Skills](/de/skills)             |
+| `/` am Anfang | Befehl oder Skill   | Siehe [Befehle](#commands) und [Skills](/de/skills)                                  |
 | `!` am Anfang | Bash-Modus          | Führen Sie Befehle direkt aus und fügen Sie die Ausführungsausgabe zur Sitzung hinzu |
 | `@`           | Dateipfad-Erwähnung | Trigger für Dateipfad-Autovervollständigung                                          |
 
@@ -85,10 +88,12 @@
 
 Wenn der Transkript-Viewer offen ist (umgeschaltet mit `Ctrl+O`), sind diese Kürzel verfügbar. `Ctrl+E` kann über [`transcript:toggleShowAll`](/de/keybindings) neu zugewiesen werden.
 
-| Kürzel               | Beschreibung                                                                                                 |
-| :------------------- | :----------------------------------------------------------------------------------------------------------- |
-| `Ctrl+E`             | Alle Inhalte anzeigen umschalten                                                                             |
-| `q`, `Ctrl+C`, `Esc` | Transkript-Ansicht beenden. Alle drei können über [`transcript:exit`](/de/keybindings) neu zugewiesen werden |
+| Kürzel               | Beschreibung                                                                                                                                                                                                                                        |
+| :------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Ctrl+E`             | Alle Inhalte anzeigen umschalten                                                                                                                                                                                                                    |
+| `[`                  | Schreiben Sie das vollständige Gespräch in den nativen Scrollback Ihres Terminals, sodass `Cmd+F`, tmux-Kopiermodus und andere native Tools es durchsuchen können. Erfordert [Vollbildrendering](/de/fullscreen#search-and-review-the-conversation) |
+| `v`                  | Schreiben Sie das Gespräch in eine temporäre Datei und öffnen Sie es in `$VISUAL` oder `$EDITOR`. Erfordert [Vollbildrendering](/de/fullscreen)                                                                                                     |
+| `q`, `Ctrl+C`, `Esc` | Transkript-Ansicht beenden. Alle drei können über [`transcript:exit`](/de/keybindings) neu zugewiesen werden                                                                                                                                        |
 
 ### Spracheingabe
 
@@ -96,15 +101,15 @@ Wenn der Transkript-Viewer offen ist (umgeschaltet mit `Ctrl+O`), sind diese Kü
 | :------------- | :--------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Space` halten | Push-to-Talk-Diktieren | Erfordert, dass [Sprach-Diktieren](/de/voice-dictation) aktiviert ist. Transkript wird an der Cursor-Position eingefügt. [Neu zuweisbar](/de/voice-dictation#rebind-the-push-to-talk-key) |
 
-## Integrierte Befehle
+## Befehle
 
-Geben Sie `/` in Claude Code ein, um alle verfügbaren Befehle anzuzeigen, oder geben Sie `/` gefolgt von beliebigen Buchstaben ein, um zu filtern. Das `/`-Menü zeigt sowohl integrierte Befehle als auch [gebündelte Skills](/de/skills#bundled-skills) wie `/simplify`. Nicht alle Befehle sind für jeden Benutzer sichtbar, da einige von Ihrer Plattform oder Ihrem Plan abhängen.
+Geben Sie `/` in Claude Code ein, um alle verfügbaren Befehle anzuzeigen, oder geben Sie `/` gefolgt von beliebigen Buchstaben ein, um zu filtern. Das `/`-Menü zeigt alles, was Sie aufrufen können: integrierte Befehle, gebündelte und von Benutzern erstellte [Skills](/de/skills) sowie Befehle, die von [Plugins](/de/plugins) und [MCP-Servern](/de/mcp#use-mcp-prompts-as-commands) beigetragen werden. Nicht alle integrierten Befehle sind für jeden Benutzer sichtbar, da einige von Ihrer Plattform oder Ihrem Plan abhängen.
 
-Siehe die [Befehls-Referenz](/de/commands) für die vollständige Liste der integrierten Befehle. Um Ihre eigenen Befehle zu erstellen, siehe [Skills](/de/skills).
+Siehe die [Befehls-Referenz](/de/commands) für die vollständige Liste der in Claude Code enthaltenen Befehle.
 
 ## Vim-Editor-Modus
 
-Aktivieren Sie Vim-ähnliche Bearbeitung mit dem `/vim`-Befehl oder konfigurieren Sie es dauerhaft über `/config`.
+Aktivieren Sie Vim-ähnliche Bearbeitung über `/config` → Editor mode.
 
 ### Modusumschaltung
 
@@ -139,7 +144,7 @@ Aktivieren Sie Vim-ähnliche Bearbeitung mit dem `/vim`-Befehl oder konfiguriere
 | `,`             | Letzte f/F/t/T-Bewegung in umgekehrter Reihenfolge wiederholen |
 
 <Note>
-  Im Vim-Normal-Modus navigieren die Pfeiltasten den Befehlsverlauf, wenn sich der Cursor am Anfang oder Ende der Eingabe befindet und nicht weiter bewegt werden kann.
+  Im Vim-Normal-Modus navigieren `j`/`k` und die Pfeiltasten den Befehlsverlauf, wenn sich der Cursor am Anfang oder Ende der Eingabe befindet und nicht weiter bewegt werden kann.
 </Note>
 
 ### Bearbeitung (NORMAL-Modus)
@@ -160,6 +165,7 @@ Aktivieren Sie Vim-ähnliche Bearbeitung mit dem `/vim`-Befehl oder konfiguriere
 | `>>`           | Zeile einrücken                |
 | `<<`           | Zeile ausrücken                |
 | `J`            | Zeilen verbinden               |
+| `u`            | Rückgängig machen              |
 | `.`            | Letzte Änderung wiederholen    |
 
 ### Textobjekte (NORMAL-Modus)
@@ -299,6 +305,14 @@ Bei der Arbeit an komplexen, mehrstufigen Aufgaben erstellt Claude eine Task-Lis
 * Um alle Tasks anzuzeigen oder zu löschen, fragen Sie Claude direkt: „show me all tasks" oder „clear all tasks"
 * Tasks bleiben über Kontext-Kompaktionen hinweg bestehen und helfen Claude, bei größeren Projekten organisiert zu bleiben
 * Um eine Task-Liste über Sitzungen hinweg zu teilen, setzen Sie `CLAUDE_CODE_TASK_LIST_ID`, um ein benanntes Verzeichnis in `~/.claude/tasks/` zu verwenden: `CLAUDE_CODE_TASK_LIST_ID=my-project claude`
+
+## Sitzungs-Zusammenfassung
+
+Wenn Sie zum Terminal zurückkehren, nachdem Sie sich entfernt haben, zeigt Claude Code eine einzeilige Zusammenfassung dessen an, was bisher in der Sitzung passiert ist. Die Zusammenfassung wird im Hintergrund generiert, sobald mindestens drei Minuten seit dem letzten abgeschlossenen Turn vergangen sind und das Terminal nicht fokussiert ist, sodass sie bereit ist, wenn Sie zurückwechseln. Zusammenfassungen erscheinen nur, wenn die Sitzung mindestens drei Turns hat, und nie zweimal hintereinander.
+
+Führen Sie `/recap` aus, um eine Zusammenfassung auf Anfrage zu generieren. Um automatische Zusammenfassungen auszuschalten, öffnen Sie `/config` und deaktivieren Sie **Session recap**.
+
+Die Sitzungs-Zusammenfassung ist standardmäßig für jeden Plan und Provider aktiviert. Um die `/config`-Umschaltung zu überschreiben, setzen Sie [`CLAUDE_CODE_ENABLE_AWAY_SUMMARY`](/de/env-vars) auf `0` oder `1`. Die Zusammenfassung wird im nicht-interaktiven Modus immer übersprungen.
 
 ## PR-Review-Status
 

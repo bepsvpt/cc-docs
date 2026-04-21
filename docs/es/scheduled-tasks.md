@@ -12,7 +12,7 @@
 
 Las tareas programadas permiten que Claude vuelva a ejecutar un prompt automáticamente en un intervalo. Úselas para sondear una implementación, supervisar un PR, verificar una compilación de larga duración o recordarse a sí mismo que debe hacer algo más adelante en la sesión. Para reaccionar a eventos a medida que ocurren en lugar de sondear, consulte [Channels](/es/channels): su CI puede insertar el error directamente en la sesión.
 
-Las tareas tienen alcance de sesión: viven en el proceso actual de Claude Code y desaparecen cuando sale. Para la programación duradera que sobrevive a los reinicios, utilice [Routines](/es/routines), [tareas programadas de Desktop](/es/desktop-scheduled-tasks) o [GitHub Actions](/es/github-actions).
+Las tareas tienen alcance de sesión: viven en la conversación actual y se detienen cuando inicia una nueva. Reanudar con `--resume` o `--continue` trae de vuelta cualquier tarea que no haya [expirado](#seven-day-expiry): una tarea recurrente creada en los últimos 7 días, o una única cuyo tiempo programado aún no ha pasado. Para la programación que sobrevive independientemente de cualquier sesión, utilice [Routines](/es/routines), [tareas programadas de Desktop](/es/desktop-scheduled-tasks) o [GitHub Actions](/es/github-actions).
 
 ## Comparar opciones de programación
 
@@ -118,6 +118,10 @@ quiet, say so in one line.
 
 Las ediciones a `loop.md` tienen efecto en la siguiente iteración, por lo que puede refinar las instrucciones mientras un bucle se está ejecutando. Cuando no existe `loop.md` en ninguna ubicación, el bucle vuelve al prompt de mantenimiento integrado. Mantenga el archivo conciso: el contenido más allá de 25,000 bytes se trunca.
 
+### Detener un bucle
+
+Para detener un `/loop` mientras espera la siguiente iteración, presione `Esc`. Esto borra el despertar pendiente para que el bucle no se ejecute nuevamente. Las tareas que programó [pidiendo a Claude directamente](#manage-scheduled-tasks) no se ven afectadas por `Esc` y permanecen en su lugar hasta que las elimine.
+
 ## Establecer un recordatorio único
 
 Para recordatorios únicos, describa lo que desea en lenguaje natural en lugar de usar `/loop`. Claude programa una tarea de un solo disparo que se elimina a sí misma después de ejecutarse.
@@ -171,7 +175,7 @@ El desplazamiento se deriva del ID de la tarea, por lo que la misma tarea siempr
 
 ### Vencimiento de siete días
 
-Las tareas recurrentes expiran automáticamente 7 días después de su creación. La tarea se ejecuta una última vez y luego se elimina a sí misma. Esto limita cuánto tiempo puede ejecutarse un bucle olvidado. Si necesita que una tarea recurrente dure más, cancele y recree antes de que expire, o utilice [Routines](/es/routines) o [tareas programadas de Desktop](/es/desktop-scheduled-tasks) para programación duradera.
+Las tareas recurrentes expiran automáticamente 7 días después de su creación. La tarea se ejecuta una última vez, luego se elimina a sí misma. Esto limita cuánto tiempo puede ejecutarse un bucle olvidado. Si necesita que una tarea recurrente dure más, cancele y recree antes de que expire, o utilice [Routines](/es/routines) o [tareas programadas de Desktop](/es/desktop-scheduled-tasks) para programación duradera.
 
 ## Referencia de expresión cron
 
@@ -198,9 +202,9 @@ Establezca `CLAUDE_CODE_DISABLE_CRON=1` en su entorno para deshabilitar completa
 
 La programación con alcance de sesión tiene limitaciones inherentes:
 
-* Las tareas solo se ejecutan mientras Claude Code está ejecutándose e inactivo. Cerrar la terminal o dejar que la sesión salga cancela todo.
+* Las tareas solo se ejecutan mientras Claude Code está ejecutándose e inactivo. Cerrar la terminal o dejar que la sesión salga detiene su ejecución.
 * Sin recuperación de disparos perdidos. Si el tiempo programado de una tarea pasa mientras Claude está ocupado en una solicitud de larga duración, se ejecuta una vez cuando Claude queda inactivo, no una vez por intervalo perdido.
-* Sin persistencia entre reinicios. Reiniciar Claude Code borra todas las tareas con alcance de sesión.
+* Iniciar una conversación nueva borra todas las tareas con alcance de sesión. Reanudar con `claude --resume` o `claude --continue` restaura tareas que no han expirado: tareas recurrentes dentro de siete días de creación, y tareas únicas cuyo tiempo programado aún no ha pasado. Las tareas de Bash de fondo y monitor nunca se restauran al reanudar.
 
 Para la automatización impulsada por cron que necesita ejecutarse sin supervisión:
 

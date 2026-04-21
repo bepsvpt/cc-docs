@@ -46,26 +46,28 @@ Contoh ini mengikat `Ctrl+E` untuk membuka editor eksternal dalam konteks chat, 
 
 Setiap blok binding menentukan **konteks** di mana binding berlaku:
 
-| Konteks           | Deskripsi                                    |
-| :---------------- | :------------------------------------------- |
-| `Global`          | Berlaku di mana saja dalam aplikasi          |
-| `Chat`            | Area input chat utama                        |
-| `Autocomplete`    | Menu penyelesaian otomatis terbuka           |
-| `Settings`        | Menu pengaturan                              |
-| `Confirmation`    | Dialog izin dan konfirmasi                   |
-| `Tabs`            | Komponen navigasi tab                        |
-| `Help`            | Menu bantuan terlihat                        |
-| `Transcript`      | Penampil transkrip                           |
-| `HistorySearch`   | Mode pencarian riwayat (Ctrl+R)              |
-| `Task`            | Tugas latar belakang sedang berjalan         |
-| `ThemePicker`     | Dialog pemilih tema                          |
-| `Attachments`     | Navigasi lampiran gambar dalam dialog pilih  |
-| `Footer`          | Navigasi indikator footer (tugas, tim, diff) |
-| `MessageSelector` | Pemilihan pesan dialog rewind dan ringkasan  |
-| `DiffDialog`      | Navigasi penampil diff                       |
-| `ModelPicker`     | Tingkat upaya pemilih model                  |
-| `Select`          | Komponen select/list generik                 |
-| `Plugin`          | Dialog plugin (jelajahi, temukan, kelola)    |
+| Konteks           | Deskripsi                                                       |
+| :---------------- | :-------------------------------------------------------------- |
+| `Global`          | Berlaku di mana saja dalam aplikasi                             |
+| `Chat`            | Area input chat utama                                           |
+| `Autocomplete`    | Menu penyelesaian otomatis terbuka                              |
+| `Settings`        | Menu pengaturan                                                 |
+| `Confirmation`    | Dialog izin dan konfirmasi                                      |
+| `Tabs`            | Komponen navigasi tab                                           |
+| `Help`            | Menu bantuan terlihat                                           |
+| `Transcript`      | Penampil transkrip                                              |
+| `HistorySearch`   | Mode pencarian riwayat (Ctrl+R)                                 |
+| `Task`            | Tugas latar belakang sedang berjalan                            |
+| `ThemePicker`     | Dialog pemilih tema                                             |
+| `Attachments`     | Navigasi lampiran gambar dalam dialog pilih                     |
+| `Footer`          | Navigasi indikator footer (tugas, tim, diff)                    |
+| `MessageSelector` | Pemilihan pesan dialog rewind dan ringkasan                     |
+| `DiffDialog`      | Navigasi penampil diff                                          |
+| `ModelPicker`     | Tingkat upaya pemilih model                                     |
+| `Select`          | Komponen select/list generik                                    |
+| `Plugin`          | Dialog plugin (jelajahi, temukan, kelola)                       |
+| `Scroll`          | Pengguliran percakapan dan pemilihan teks dalam mode fullscreen |
+| `Doctor`          | Layar diagnostik `/doctor`                                      |
 
 ## Tindakan yang tersedia
 
@@ -75,13 +77,13 @@ Tindakan mengikuti format `namespace:action`, seperti `chat:submit` untuk mengir
 
 Tindakan yang tersedia dalam konteks `Global`:
 
-| Tindakan               | Default | Deskripsi                        |
-| :--------------------- | :------ | :------------------------------- |
-| `app:interrupt`        | Ctrl+C  | Batalkan operasi saat ini        |
-| `app:exit`             | Ctrl+D  | Keluar dari Claude Code          |
-| `app:redraw`           | Ctrl+L  | Gambar ulang layar               |
-| `app:toggleTodos`      | Ctrl+T  | Alihkan visibilitas daftar tugas |
-| `app:toggleTranscript` | Ctrl+O  | Alihkan transkrip verbose        |
+| Tindakan               | Default   | Deskripsi                           |
+| :--------------------- | :-------- | :---------------------------------- |
+| `app:interrupt`        | Ctrl+C    | Batalkan operasi saat ini           |
+| `app:exit`             | Ctrl+D    | Keluar dari Claude Code             |
+| `app:redraw`           | (unbound) | Paksa terminal untuk digambar ulang |
+| `app:toggleTodos`      | Ctrl+T    | Alihkan visibilitas daftar tugas    |
+| `app:toggleTranscript` | Ctrl+O    | Alihkan transkrip verbose           |
 
 ### Tindakan riwayat
 
@@ -97,20 +99,21 @@ Tindakan untuk menavigasi riwayat perintah:
 
 Tindakan yang tersedia dalam konteks `Chat`:
 
-| Tindakan              | Default                   | Deskripsi                          |
-| :-------------------- | :------------------------ | :--------------------------------- |
-| `chat:cancel`         | Escape                    | Batalkan input saat ini            |
-| `chat:killAgents`     | Ctrl+X Ctrl+K             | Matikan semua agen latar belakang  |
-| `chat:cycleMode`      | Shift+Tab\*               | Mode izin siklus                   |
-| `chat:modelPicker`    | Cmd+P / Meta+P            | Buka pemilih model                 |
-| `chat:fastMode`       | Meta+O                    | Alihkan mode cepat                 |
-| `chat:thinkingToggle` | Cmd+T / Meta+T            | Alihkan pemikiran yang diperluas   |
-| `chat:submit`         | Enter                     | Kirim pesan                        |
-| `chat:newline`        | (unbound)                 | Sisipkan baris baru tanpa mengirim |
-| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | Batalkan tindakan terakhir         |
-| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Buka di editor eksternal           |
-| `chat:stash`          | Ctrl+S                    | Simpan prompt saat ini             |
-| `chat:imagePaste`     | Ctrl+V (Alt+V di Windows) | Tempel gambar                      |
+| Tindakan              | Default                   | Deskripsi                                             |
+| :-------------------- | :------------------------ | :---------------------------------------------------- |
+| `chat:cancel`         | Escape                    | Batalkan input saat ini                               |
+| `chat:clearInput`     | Ctrl+L                    | Hapus input prompt dan paksa gambar ulang layar penuh |
+| `chat:killAgents`     | Ctrl+X Ctrl+K             | Matikan semua agen latar belakang                     |
+| `chat:cycleMode`      | Shift+Tab\*               | Mode izin siklus                                      |
+| `chat:modelPicker`    | Cmd+P / Meta+P            | Buka pemilih model                                    |
+| `chat:fastMode`       | Meta+O                    | Alihkan mode cepat                                    |
+| `chat:thinkingToggle` | Cmd+T / Meta+T            | Alihkan pemikiran yang diperluas                      |
+| `chat:submit`         | Enter                     | Kirim pesan                                           |
+| `chat:newline`        | Ctrl+J                    | Sisipkan baris baru tanpa mengirim                    |
+| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | Batalkan tindakan terakhir                            |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Buka di editor eksternal                              |
+| `chat:stash`          | Ctrl+S                    | Simpan prompt saat ini                                |
+| `chat:imagePaste`     | Ctrl+V (Alt+V di Windows) | Tempel gambar                                         |
 
 \*Di Windows tanpa mode VT (Node \<24.2.0/\<22.17.0, Bun \<1.2.23), default ke Meta+M.
 
@@ -276,10 +279,11 @@ Tindakan yang tersedia dalam konteks `Select`:
 
 Tindakan yang tersedia dalam konteks `Plugin`:
 
-| Tindakan         | Default | Deskripsi                  |
-| :--------------- | :------ | :------------------------- |
-| `plugin:toggle`  | Space   | Alihkan pemilihan plugin   |
-| `plugin:install` | I       | Instal plugin yang dipilih |
+| Tindakan          | Default | Deskripsi                                                                                        |
+| :---------------- | :------ | :----------------------------------------------------------------------------------------------- |
+| `plugin:toggle`   | Space   | Alihkan pemilihan plugin                                                                         |
+| `plugin:install`  | I       | Instal plugin yang dipilih                                                                       |
+| `plugin:favorite` | F       | Tandai plugin yang dipilih sebagai favorit sehingga diurutkan di dekat bagian atas tab Installed |
 
 ### Tindakan pengaturan
 
@@ -298,6 +302,31 @@ Tindakan yang tersedia dalam konteks `Chat` ketika [dikte suara](/id/voice-dicta
 | Tindakan           | Default | Deskripsi                   |
 | :----------------- | :------ | :-------------------------- |
 | `voice:pushToTalk` | Space   | Tahan untuk mendikte prompt |
+
+### Tindakan scroll
+
+Tindakan yang tersedia dalam konteks `Scroll` ketika [rendering fullscreen](/id/fullscreen) diaktifkan:
+
+| Tindakan                    | Default              | Deskripsi                                                                                                             |
+| :-------------------------- | :------------------- | :-------------------------------------------------------------------------------------------------------------------- |
+| `scroll:lineUp`             | (unbound)            | Gulir ke atas satu baris. Pengguliran roda mouse memicu tindakan ini                                                  |
+| `scroll:lineDown`           | (unbound)            | Gulir ke bawah satu baris. Pengguliran roda mouse memicu tindakan ini                                                 |
+| `scroll:pageUp`             | PageUp               | Gulir ke atas setengah tinggi viewport                                                                                |
+| `scroll:pageDown`           | PageDown             | Gulir ke bawah setengah tinggi viewport                                                                               |
+| `scroll:top`                | Ctrl+Home            | Lompat ke awal percakapan                                                                                             |
+| `scroll:bottom`             | Ctrl+End             | Lompat ke pesan terbaru dan aktifkan kembali auto-follow                                                              |
+| `scroll:halfPageUp`         | (unbound)            | Gulir ke atas setengah tinggi viewport. Perilaku yang sama dengan `scroll:pageUp`, disediakan untuk rebind gaya vi    |
+| `scroll:halfPageDown`       | (unbound)            | Gulir ke bawah setengah tinggi viewport. Perilaku yang sama dengan `scroll:pageDown`, disediakan untuk rebind gaya vi |
+| `scroll:fullPageUp`         | (unbound)            | Gulir ke atas tinggi viewport penuh                                                                                   |
+| `scroll:fullPageDown`       | (unbound)            | Gulir ke bawah tinggi viewport penuh                                                                                  |
+| `selection:copy`            | Ctrl+Shift+C / Cmd+C | Salin teks yang dipilih ke clipboard                                                                                  |
+| `selection:clear`           | (unbound)            | Hapus pemilihan teks aktif                                                                                            |
+| `selection:extendLeft`      | Shift+Left           | Perluas pemilihan aktif satu kolom ke kiri                                                                            |
+| `selection:extendRight`     | Shift+Right          | Perluas pemilihan aktif satu kolom ke kanan                                                                           |
+| `selection:extendUp`        | Shift+Up             | Perluas pemilihan aktif satu baris ke atas. Menggulir viewport ketika pemilihan mencapai tepi atas                    |
+| `selection:extendDown`      | Shift+Down           | Perluas pemilihan aktif satu baris ke bawah. Menggulir viewport ketika pemilihan mencapai tepi bawah                  |
+| `selection:extendLineStart` | Shift+Home           | Perluas pemilihan aktif ke awal baris                                                                                 |
+| `selection:extendLineEnd`   | Shift+End            | Perluas pemilihan aktif ke akhir baris                                                                                |
 
 ## Sintaks keystroke
 
@@ -400,7 +429,7 @@ Beberapa pintasan mungkin bertentangan dengan multiplexer terminal:
 
 ## Interaksi mode vim
 
-Ketika mode vim diaktifkan (`/vim`), keybindings dan mode vim beroperasi secara independen:
+Ketika mode vim diaktifkan melalui `/config` → Editor mode, keybindings dan mode vim beroperasi secara independen:
 
 * **Mode vim** menangani input pada tingkat input teks (gerakan kursor, mode, motions)
 * **Keybindings** menangani tindakan pada tingkat komponen (alihkan todos, kirim, dll.)

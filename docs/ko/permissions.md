@@ -32,14 +32,14 @@ Claude Code는 강력함과 안전성의 균형을 맞추기 위해 계층화된
 
 Claude Code는 도구 승인 방식을 제어하는 여러 권한 모드를 지원합니다. [권한 모드](/ko/permission-modes)에서 각 모드를 사용할 시기를 확인합니다. [설정 파일](/ko/settings#settings-files)에서 `defaultMode`를 설정합니다:
 
-| 모드                  | 설명                                                                       |
-| :------------------ | :----------------------------------------------------------------------- |
-| `default`           | 표준 동작: 각 도구를 처음 사용할 때 권한을 요청합니다                                          |
-| `acceptEdits`       | 세션에 대해 파일 편집 권한을 자동으로 수락합니다                                              |
-| `plan`              | Plan Mode: Claude는 파일을 분석할 수 있지만 수정하거나 명령을 실행할 수 없습니다                    |
-| `auto`              | 배경 안전 검사를 통해 도구 호출을 자동으로 승인하여 작업이 요청과 일치하는지 확인합니다. 현재 연구 미리보기입니다         |
-| `dontAsk`           | `/permissions` 또는 `permissions.allow` 규칙을 통해 사전 승인되지 않은 한 도구를 자동으로 거부합니다 |
-| `bypassPermissions` | 보호된 디렉토리에 대한 쓰기를 제외한 모든 권한 프롬프트를 건너뜁니다(아래 경고 참조)                         |
+| 모드                  | 설명                                                                                                            |
+| :------------------ | :------------------------------------------------------------------------------------------------------------ |
+| `default`           | 표준 동작: 각 도구를 처음 사용할 때 권한을 요청합니다                                                                               |
+| `acceptEdits`       | 작업 디렉토리 또는 `additionalDirectories`의 경로에 대해 파일 편집 및 일반적인 파일 시스템 명령(`mkdir`, `touch`, `mv`, `cp` 등)을 자동으로 수락합니다 |
+| `plan`              | Plan Mode: Claude는 파일을 분석할 수 있지만 수정하거나 명령을 실행할 수 없습니다                                                         |
+| `auto`              | 배경 안전 검사를 통해 도구 호출을 자동으로 승인하여 작업이 요청과 일치하는지 확인합니다. 현재 연구 미리보기입니다                                              |
+| `dontAsk`           | `/permissions` 또는 `permissions.allow` 규칙을 통해 사전 승인되지 않은 한 도구를 자동으로 거부합니다                                      |
+| `bypassPermissions` | 보호된 디렉토리에 대한 쓰기를 제외한 모든 권한 프롬프트를 건너뜁니다(아래 경고 참조)                                                              |
 
 <Warning>
   `bypassPermissions` 모드는 권한 프롬프트를 건너뜁니다. `.git`, `.claude`, `.vscode`, `.idea` 및 `.husky` 디렉토리에 대한 쓰기는 여전히 확인을 요청하여 저장소 상태, 편집기 구성 및 git 훅의 실수로 인한 손상을 방지합니다. `.claude/commands`, `.claude/agents` 및 `.claude/skills`에 대한 쓰기는 면제되며 프롬프트하지 않습니다. Claude는 기술, 서브에이전트 및 명령을 만들 때 정기적으로 여기에 씁니다. 컨테이너나 VM과 같은 Claude Code가 손상을 일으킬 수 없는 격리된 환경에서만 이 모드를 사용합니다. 관리자는 [관리형 설정](#managed-settings)에서 `permissions.disableBypassPermissionsMode`를 `"disable"`로 설정하여 이 모드를 방지할 수 있습니다.
@@ -94,7 +94,9 @@ Bash 규칙은 `*`를 사용한 glob 패턴을 지원합니다. 와일드카드�
 }
 ```
 
-`*` 앞의 공백이 중요합니다: `Bash(ls *)`는 `ls -la`와 일치하지만 `lsof`와는 일치하지 않으며, `Bash(ls*)`는 둘 다 일치합니다. 레거시 `:*` 접미사 구문은 ` *`와 동등하지만 더 이상 사용되지 않습니다.
+`*` 앞의 공백이 중요합니다: `Bash(ls *)`는 `ls -la`와 일치하지만 `lsof`와는 일치하지 않으며, `Bash(ls*)`는 둘 다 일치합니다. `:*` 접미사는 뒤에 오는 와일드카드를 작성하는 동등한 방법이므로 `Bash(ls:*)`는 `Bash(ls *)`와 동일한 명령과 일치합니다.
+
+권한 대화 상자는 명령 접두사에 대해 "예, 다시 묻지 않기"를 선택할 때 공백으로 구분된 형식을 작성합니다. `:*` 형식은 패턴의 끝에서만 인식됩니다. `Bash(git:* push)`와 같은 패턴에서 콜론은 리터럴 문자로 취급되며 git 명령과 일치하지 않습니다.
 
 ## 도구별 권한 규칙
 
@@ -106,15 +108,37 @@ Bash 권한 규칙은 `*`를 사용한 와일드카드 일치를 지원합니다
 * `Bash(npm run test *)`는 `npm run test`로 시작하는 Bash 명령과 일치합니다
 * `Bash(npm *)`는 `npm `로 시작하는 모든 명령과 일치합니다
 * `Bash(* install)`은 ` install`로 끝나는 모든 명령과 일치합니다
-* `Bash(git * main)`은 `git checkout main`, `git merge main`과 같은 명령과 일치합니다
+* `Bash(git * main)`은 `git checkout main` 및 `git log --oneline main`과 같은 명령과 일치합니다
+
+단일 `*`는 공백을 포함한 모든 문자 시퀀스와 일치하므로 하나의 와일드카드가 여러 인수에 걸칠 수 있습니다. `Bash(git *)`는 `git log --oneline --all`과 일치하며, `Bash(git * main)`은 `git push origin main` 및 `git merge main`과 일치합니다.
 
 `*`가 앞에 공백이 있는 끝에 나타날 때(예: `Bash(ls *)`), 단어 경계를 적용하여 접두사 뒤에 공백이나 문자열 끝이 필요합니다. 예를 들어, `Bash(ls *)`는 `ls -la`와 일치하지만 `lsof`와는 일치하지 않습니다. 반대로, 공백이 없는 `Bash(ls*)`는 단어 경계 제약이 없으므로 `ls -la`와 `lsof` 모두와 일치합니다.
 
+#### 복합 명령
+
 <Tip>
-  Claude Code는 셸 연산자(예: `&&`)를 인식하므로 `Bash(safe-cmd *)`와 같은 접두사 일치 규칙은 `safe-cmd && other-cmd` 명령을 실행할 권한을 부여하지 않습니다.
+  Claude Code는 셸 연산자를 인식하므로 `Bash(safe-cmd *)`와 같은 규칙은 `safe-cmd && other-cmd` 명령을 실행할 권한을 부여하지 않습니다. 인식되는 명령 구분자는 `&&`, `||`, `;`, `|`, `|&`, `&` 및 줄바꿈입니다. 규칙은 각 서브명령과 독립적으로 일치해야 합니다.
 </Tip>
 
 "예, 다시 묻지 않기"로 복합 명령을 승인하면 Claude Code는 전체 복합 문자열에 대한 단일 규칙이 아니라 승인이 필요한 각 서브명령에 대해 별도의 규칙을 저장합니다. 예를 들어, `git status && npm test`를 승인하면 `npm test`에 대한 규칙을 저장하므로 향후 `npm test` 호출은 `&&` 앞에 무엇이 있든 인식됩니다. `cd`를 서브디렉토리로 이동하는 것과 같은 서브명령은 해당 경로에 대한 자체 Read 규칙을 생성합니다. 단일 복합 명령에 대해 최대 5개의 규칙이 저장될 수 있습니다.
+
+#### 프로세스 래퍼
+
+Bash 규칙을 일치시키기 전에 Claude Code는 고정된 프로세스 래퍼 집합을 제거하므로 `Bash(npm test *)`와 같은 규칙은 `timeout 30 npm test`도 일치합니다. 인식되는 래퍼는 `timeout`, `time`, `nice`, `nohup` 및 `stdbuf`입니다.
+
+베어 `xargs`도 제거되므로 `Bash(grep *)`는 `xargs grep pattern`과 일치합니다. 제거는 `xargs`에 플래그가 없을 때만 적용됩니다: `xargs -n1 grep pattern`과 같은 호출은 `xargs` 명령으로 일치되므로 내부 명령에 대해 작성된 규칙은 이를 포함하지 않습니다.
+
+이 래퍼 목록은 기본 제공되며 구성할 수 없습니다. `direnv exec`, `devbox run`, `mise exec`, `npx` 및 `docker exec`과 같은 개발 환경 러너는 목록에 없습니다. 이러한 도구는 인수를 명령으로 실행하므로 `Bash(devbox run *)`와 같은 규칙은 `devbox run rm -rf .`를 포함하여 `run` 뒤에 오는 모든 것과 일치합니다. 환경 러너 내에서 작업을 승인하려면 `Bash(devbox run npm test)`와 같이 러너와 내부 명령을 모두 포함하는 특정 규칙을 작성합니다. 허용하려는 각 내부 명령에 대해 하나의 규칙을 추가합니다.
+
+`watch`, `setsid`, `ionice` 및 `flock`과 같은 Exec 래퍼는 항상 프롬프트하며 `Bash(watch *)`와 같은 접두사 규칙으로 자동 승인될 수 없습니다. 동일한 사항이 `-exec` 또는 `-delete`를 사용하는 `find`에 적용됩니다: `Bash(find *)` 규칙은 이러한 형식을 포함하지 않습니다. 특정 호출을 승인하려면 전체 명령 문자열에 대한 정확한 일치 규칙을 작성합니다.
+
+#### 읽기 전용 명령
+
+Claude Code는 기본 제공 Bash 명령 집합을 읽기 전용으로 인식하고 모든 모드에서 권한 프롬프트 없이 실행합니다. 여기에는 `ls`, `cat`, `head`, `tail`, `grep`, `find`, `wc`, `diff`, `stat`, `du`, `cd` 및 `git`의 읽기 전용 형식이 포함됩니다. 집합은 구성할 수 없습니다. 이러한 명령 중 하나에 대해 프롬프트를 요구하려면 `ask` 또는 `deny` 규칙을 추가합니다.
+
+따옴표 없는 glob 패턴은 모든 플래그가 읽기 전용인 명령에 대해 허용되므로 `ls *.ts` 및 `wc -l src/*.py`는 프롬프트 없이 실행됩니다. `find`, `sort`, `sed` 및 `git`과 같이 쓰기 가능하거나 실행 가능한 플래그가 있는 명령은 glob이 `-delete`와 같은 플래그로 확장될 수 있으므로 따옴표 없는 glob이 있을 때 여전히 프롬프트합니다.
+
+작업 디렉토리 또는 [추가 디렉토리](#working-directories) 내의 경로로의 `cd`도 읽기 전용입니다. `cd packages/api && ls`와 같은 복합 명령은 각 부분이 자체적으로 적격일 때 프롬프트 없이 실행됩니다. 하나의 복합 명령에서 `cd`와 `git`을 결합하면 대상 디렉토리와 관계없이 항상 프롬프트합니다.
 
 <Warning>
   명령 인수를 제약하려고 시도하는 Bash 권한 패턴은 취약합니다. 예를 들어, `Bash(curl http://github.com/ *)`는 curl을 GitHub URL로 제한하려고 하지만 다음과 같은 변형과는 일치하지 않습니다:
@@ -168,6 +192,13 @@ Windows에서 경로는 일치하기 전에 POSIX 형식으로 정규화됩니�
   gitignore 패턴에서 `*`는 단일 디렉토리의 파일과 일치하고 `**`는 디렉토리 전체에서 재귀적으로 일치합니다. 모든 파일 액세스를 허용하려면 괄호 없이 도구 이름만 사용합니다: `Read`, `Edit` 또는 `Write`.
 </Note>
 
+Claude가 심볼릭 링크에 액세스할 때 권한 규칙은 두 경로를 확인합니다: 심볼릭 링크 자체와 이것이 해결되는 파일입니다. Allow 및 deny 규칙은 해당 쌍을 다르게 취급합니다: allow 규칙은 프롬프트로 폴백하고 deny 규칙은 즉시 차단합니다.
+
+* **Allow 규칙**: 심볼릭 링크 경로와 해당 대상이 모두 일치할 때만 적용됩니다. 허용된 디렉토리 내의 심볼릭 링크가 외부를 가리키면 여전히 프롬프트합니다.
+* **Deny 규칙**: 심볼릭 링크 경로 또는 대상이 일치할 때 적용됩니다. 거부된 파일을 가리키는 심볼릭 링크는 자체적으로 거부됩니다.
+
+예를 들어, `Read(./project/**)` allowed 및 `Read(~/.ssh/**)` denied를 사용하면 `./project/key`의 심볼릭 링크가 `~/.ssh/id_rsa`를 가리킬 때 차단됩니다: 대상이 allow 규칙에 실패하고 deny 규칙과 일치합니다.
+
 ### WebFetch
 
 * `WebFetch(domain:example.com)`은 example.com으로의 가져오기 요청과 일치합니다
@@ -200,7 +231,7 @@ Windows에서 경로는 일치하기 전에 POSIX 형식으로 정규화됩니�
 
 [Claude Code 훅](/ko/hooks-guide)은 런타임에 권한 평가를 수행하기 위해 사용자 정의 셸 명령을 등록하는 방법을 제공합니다. Claude Code가 도구 호출을 할 때, PreToolUse 훅은 권한 프롬프트 전에 실행됩니다. 훅 출력은 도구 호출을 거부하거나, 프롬프트를 강제하거나, 프롬프트를 건너뛰어 호출을 진행하도록 할 수 있습니다.
 
-프롬프트를 건너뛰는 것은 권한 규칙을 우회하지 않습니다. Deny 및 ask 규칙은 훅이 `"allow"`를 반환한 후에도 여전히 평가되므로 일치하는 deny 규칙은 여전히 호출을 차단합니다. 이는 [권한 관리](#manage-permissions)에서 설명한 deny 우선 우선순위를 유지하며, 관리형 설정에서 설정한 deny 규칙을 포함합니다.
+훅 결정은 권한 규칙을 우회하지 않습니다. Deny 및 ask 규칙은 훅이 `"allow"` 또는 `"ask"`를 반환한 후에도 여전히 평가되므로 일치하는 deny 규칙은 호출을 차단하고 일치하는 ask 규칙은 훅이 `"allow"` 또는 `"ask"`를 반환했을 때도 여전히 프롬프트합니다. 이는 [권한 관리](#manage-permissions)에서 설명한 deny 우선 우선순위를 유지하며, 관리형 설정에서 설정한 deny 규칙을 포함합니다.
 
 차단 훅은 또한 allow 규칙보다 우선합니다. 종료 코드 2로 종료되는 훅은 권한 규칙이 평가되기 전에 도구 호출을 중지하므로 allow 규칙이 호출을 허용할 수 있는 경우에도 차단이 적용됩니다. 모든 Bash 명령을 프롬프트 없이 실행하되 차단하려는 몇 가지를 제외하려면 allow 목록에 `"Bash"`를 추가하고 해당 특정 명령을 거부하는 PreToolUse 훅을 등록합니다. 적응할 수 있는 훅 스크립트는 [보호된 파일에 대한 편집 차단](/ko/hooks-guide#block-edits-to-protected-files)을 참조합니다.
 
@@ -220,11 +251,11 @@ Windows에서 경로는 일치하기 전에 POSIX 형식으로 정규화됩니�
 
 다음 구성 유형은 `--add-dir` 디렉토리에서 로드됩니다:
 
-| 구성                                            | `--add-dir`에서 로드됨                                          |
-| :-------------------------------------------- | :--------------------------------------------------------- |
-| `.claude/skills/`의 [Skills](/ko/skills)       | 예, 라이브 리로드 포함                                              |
-| `.claude/settings.json`의 플러그인 설정              | `enabledPlugins` 및 `extraKnownMarketplaces`만               |
-| [CLAUDE.md](/ko/memory) 파일 및 `.claude/rules/` | `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1`이 설정된 경우에만 |
+| 구성                                                               | `--add-dir`에서 로드됨                                                                                                       |
+| :--------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------- |
+| `.claude/skills/`의 [Skills](/ko/skills)                          | 예, 라이브 리로드 포함                                                                                                           |
+| `.claude/settings.json`의 플러그인 설정                                 | `enabledPlugins` 및 `extraKnownMarketplaces`만                                                                            |
+| [CLAUDE.md](/ko/memory) 파일, `.claude/rules/` 및 `CLAUDE.local.md` | `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1`이 설정된 경우에만. `CLAUDE.local.md`는 추가로 `local` 설정 소스가 필요하며, 이는 기본적으로 활성화됩니다 |
 
 서브에이전트, 명령, 출력 스타일, 훅 및 기타 설정을 포함한 다른 모든 것은 현재 작업 디렉토리 및 해당 부모, `~/.claude/`의 사용자 디렉토리 및 관리형 설정에서만 발견됩니다. 프로젝트 전체에서 해당 구성을 공유하려면 다음 방법 중 하나를 사용합니다:
 
@@ -244,7 +275,9 @@ Windows에서 경로는 일치하기 전에 POSIX 형식으로 정규화됩니�
 * 권한 deny 규칙은 Claude가 제한된 리소스에 액세스하려고 시도하는 것을 차단합니다
 * 샌드박스 제한은 프롬프트 주입이 Claude의 의사 결정을 우회하더라도 Bash 명령이 정의된 경계 외부의 리소스에 도달하는 것을 방지합니다
 * 샌드박스의 파일 시스템 제한은 Read 및 Edit deny 규칙을 사용하며, 별도의 샌드박스 구성은 사용하지 않습니다
-* 네트워크 제한은 WebFetch 권한 규칙과 샌드박스의 `allowedDomains` 목록을 결합합니다
+* 네트워크 제한은 WebFetch 권한 규칙과 샌드박스의 `allowedDomains` 및 `deniedDomains` 목록을 결합합니다
+
+샌드박싱이 `autoAllowBashIfSandboxed: true`로 활성화되면(기본값), 권한에 `ask: Bash(*)`가 포함되어 있어도 샌드박스된 Bash 명령은 프롬프트 없이 실행됩니다. 샌드박스 경계는 명령별 프롬프트를 대체합니다. [샌드박스 모드](/ko/sandboxing#sandbox-modes)를 참조하여 이 동작을 변경합니다.
 
 ## 관리형 설정
 
@@ -257,11 +290,12 @@ Claude Code 구성에 대한 중앙 집중식 제어가 필요한 조직의 경�
 | 설정                                             | 설명                                                                                                                                                                              |
 | :--------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `allowedChannelPlugins`                        | 메시지를 푸시할 수 있는 채널 플러그인의 허용 목록입니다. `channelsEnabled: true`가 필요할 때 기본 Anthropic 허용 목록을 대체합니다. [채널 플러그인이 실행될 수 있는 것을 제한합니다](/ko/channels#restrict-which-channel-plugins-can-run) 참조 |
-| `allowManagedHooksOnly`                        | `true`일 때, 사용자, 프로젝트 및 플러그인 훅의 로드를 방지합니다. 관리형 훅 및 SDK 훅만 허용됩니다                                                                                                                  |
+| `allowManagedHooksOnly`                        | `true`일 때, 관리형 훅, SDK 훅 및 관리형 설정 `enabledPlugins`에서 강제 활성화된 플러그인의 훅만 로드됩니다. 사용자, 프로젝트 및 다른 모든 플러그인 훅은 차단됩니다                                                                     |
 | `allowManagedMcpServersOnly`                   | `true`일 때, 관리형 설정의 `allowedMcpServers`만 존중됩니다. `deniedMcpServers`는 여전히 모든 소스에서 병합됩니다. [관리형 MCP 구성](/ko/mcp#managed-mcp-configuration) 참조                                        |
 | `allowManagedPermissionRulesOnly`              | `true`일 때, 사용자 및 프로젝트 설정이 `allow`, `ask` 또는 `deny` 권한 규칙을 정의하는 것을 방지합니다. 관리형 설정의 규칙만 적용됩니다                                                                                      |
 | `blockedMarketplaces`                          | 마켓플레이스 소스의 차단 목록입니다. 차단된 소스는 다운로드 전에 확인되므로 파일 시스템에 닿지 않습니다. [관리형 마켓플레이스 제한](/ko/plugin-marketplaces#managed-marketplace-restrictions) 참조                                        |
 | `channelsEnabled`                              | Team 및 Enterprise 사용자를 위한 [채널](/ko/channels)을 허용합니다. 설정되지 않거나 `false`이면 사용자가 `--channels`에 전달하는 것과 관계없이 채널 메시지 전달을 차단합니다                                                        |
+| `forceRemoteSettingsRefresh`                   | `true`일 때, 원격 관리형 설정이 새로 가져올 때까지 CLI 시작을 차단하고 가져오기에 실패하면 종료합니다. [실패 폐쇄 적용](/ko/server-managed-settings#enforce-fail-closed-startup) 참조                                          |
 | `pluginTrustMessage`                           | 설치 전에 표시되는 플러그인 신뢰 경고에 추가되는 사용자 정의 메시지                                                                                                                                          |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | `true`일 때, 관리형 설정의 `filesystem.allowRead` 경로만 존중됩니다. `denyRead`는 여전히 모든 소스에서 병합됩니다                                                                                              |
 | `sandbox.network.allowManagedDomainsOnly`      | `true`일 때, 관리형 설정의 `allowedDomains` 및 `WebFetch(domain:...)` allow 규칙만 존중됩니다. 허용되지 않은 도메인은 사용자에게 프롬프트하지 않고 자동으로 차단됩니다. 거부된 도메인은 여전히 모든 소스에서 병합됩니다                               |

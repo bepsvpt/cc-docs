@@ -32,14 +32,14 @@ Les règles sont évaluées dans l'ordre : **deny -> ask -> allow**. La premièr
 
 Claude Code prend en charge plusieurs modes d'autorisation qui contrôlent la façon dont les outils sont approuvés. Consultez [Modes d'autorisation](/fr/permission-modes) pour savoir quand utiliser chacun. Définissez le `defaultMode` dans vos [fichiers de paramètres](/fr/settings#settings-files) :
 
-| Mode                | Description                                                                                                                                                                                      |
-| :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `default`           | Comportement standard : demande une autorisation à la première utilisation de chaque outil                                                                                                       |
-| `acceptEdits`       | Accepte automatiquement les autorisations d'édition de fichiers pour la session, sauf les écritures dans les répertoires protégés                                                                |
-| `plan`              | Plan Mode : Claude peut analyser mais pas modifier les fichiers ou exécuter les commandes                                                                                                        |
-| `auto`              | Approuve automatiquement les appels d'outils avec des vérifications de sécurité en arrière-plan qui vérifient que les actions s'alignent avec votre demande. Actuellement un aperçu de recherche |
-| `dontAsk`           | Refuse automatiquement les outils sauf s'ils sont pré-approuvés via `/permissions` ou les règles `permissions.allow`                                                                             |
-| `bypassPermissions` | Ignore les invites d'autorisation sauf pour les écritures dans les répertoires protégés (voir l'avertissement ci-dessous)                                                                        |
+| Mode                | Description                                                                                                                                                                                                  |
+| :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `default`           | Comportement standard : demande une autorisation à la première utilisation de chaque outil                                                                                                                   |
+| `acceptEdits`       | Accepte automatiquement les éditions de fichiers et les commandes courantes du système de fichiers (`mkdir`, `touch`, `mv`, `cp`, etc.) pour les chemins du répertoire de travail ou `additionalDirectories` |
+| `plan`              | Plan Mode : Claude peut analyser mais pas modifier les fichiers ou exécuter les commandes                                                                                                                    |
+| `auto`              | Approuve automatiquement les appels d'outils avec des vérifications de sécurité en arrière-plan qui vérifient que les actions s'alignent avec votre demande. Actuellement un aperçu de recherche             |
+| `dontAsk`           | Refuse automatiquement les outils sauf s'ils sont pré-approuvés via `/permissions` ou les règles `permissions.allow`                                                                                         |
+| `bypassPermissions` | Ignore les invites d'autorisation sauf pour les écritures dans les répertoires protégés (voir l'avertissement ci-dessous)                                                                                    |
 
 <Warning>
   Le mode `bypassPermissions` ignore les invites d'autorisation. Les écritures dans les répertoires `.git`, `.claude`, `.vscode`, `.idea` et `.husky` demandent toujours une confirmation pour éviter la corruption accidentelle de l'état du référentiel, de la configuration de l'éditeur et des hooks git. Les écritures dans `.claude/commands`, `.claude/agents` et `.claude/skills` sont exemptées et ne demandent pas, car Claude écrit régulièrement là lors de la création de skills, de subagents et de commandes. Utilisez ce mode uniquement dans des environnements isolés comme les conteneurs ou les machines virtuelles où Claude Code ne peut pas causer de dommages. Les administrateurs peuvent empêcher ce mode en définissant `permissions.disableBypassPermissionsMode` sur `"disable"` dans les [paramètres gérés](#managed-settings).
@@ -94,7 +94,9 @@ Les règles Bash prennent en charge les modèles glob avec `*`. Les caractères 
 }
 ```
 
-L'espace avant `*` est important : `Bash(ls *)` correspond à `ls -la` mais pas à `lsof`, tandis que `Bash(ls*)` correspond aux deux. La syntaxe du suffixe `:*` hérité est équivalente à ` *` mais est dépréciée.
+L'espace avant `*` est important : `Bash(ls *)` correspond à `ls -la` mais pas à `lsof`, tandis que `Bash(ls*)` correspond aux deux. Le suffixe `:*` est une façon équivalente d'écrire un caractère générique de fin, donc `Bash(ls:*)` correspond aux mêmes commandes que `Bash(ls *)`.
+
+La boîte de dialogue d'autorisation écrit la forme séparée par des espaces lorsque vous sélectionnez « Oui, ne pas demander à nouveau » pour un préfixe de commande. La forme `:*` n'est reconnue qu'à la fin d'un modèle. Dans un modèle comme `Bash(git:* push)`, le deux-points est traité comme un caractère littéral et ne correspondra pas aux commandes git.
 
 ## Règles d'autorisation spécifiques aux outils
 
@@ -106,15 +108,37 @@ Les règles d'autorisation Bash prennent en charge la correspondance de caractè
 * `Bash(npm run test *)` correspond aux commandes Bash commençant par `npm run test`
 * `Bash(npm *)` correspond à toute commande commençant par `npm `
 * `Bash(* install)` correspond à toute commande se terminant par ` install`
-* `Bash(git * main)` correspond à des commandes comme `git checkout main`, `git merge main`
+* `Bash(git * main)` correspond à des commandes comme `git checkout main` et `git log --oneline main`
+
+Un seul `*` correspond à n'importe quelle séquence de caractères, y compris les espaces, donc un caractère générique peut s'étendre sur plusieurs arguments. `Bash(git *)` correspond à `git log --oneline --all`, et `Bash(git * main)` correspond à `git push origin main` ainsi qu'à `git merge main`.
 
 Lorsque `*` apparaît à la fin avec un espace avant (comme `Bash(ls *)`), il applique une limite de mot, exigeant que le préfixe soit suivi d'un espace ou de la fin de la chaîne. Par exemple, `Bash(ls *)` correspond à `ls -la` mais pas à `lsof`. En contraste, `Bash(ls*)` sans espace correspond aux deux `ls -la` et `lsof` car il n'y a pas de contrainte de limite de mot.
 
+#### Commandes composées
+
 <Tip>
-  Claude Code est conscient des opérateurs shell (comme `&&`) donc une règle de correspondance de préfixe comme `Bash(safe-cmd *)` ne lui donnera pas la permission d'exécuter la commande `safe-cmd && other-cmd`.
+  Claude Code est conscient des opérateurs shell, donc une règle comme `Bash(safe-cmd *)` ne lui donnera pas la permission d'exécuter la commande `safe-cmd && other-cmd`. Les séparateurs de commande reconnus sont `&&`, `||`, `;`, `|`, `|&`, `&` et les sauts de ligne. Une règle doit correspondre à chaque sous-commande indépendamment.
 </Tip>
 
 Lorsque vous approuvez une commande composée avec « Oui, ne pas demander à nouveau », Claude Code enregistre une règle séparée pour chaque sous-commande qui nécessite une approbation, plutôt qu'une seule règle pour la chaîne complète. Par exemple, approuver `git status && npm test` enregistre une règle pour `npm test`, donc les invocations futures de `npm test` sont reconnues indépendamment de ce qui précède le `&&`. Les sous-commandes comme `cd` dans un sous-répertoire génèrent leur propre règle Read pour ce chemin. Jusqu'à 5 règles peuvent être enregistrées pour une seule commande composée.
+
+#### Wrappers de processus
+
+Avant de correspondre aux règles Bash, Claude Code supprime un ensemble fixe de wrappers de processus afin qu'une règle comme `Bash(npm test *)` corresponde également à `timeout 30 npm test`. Les wrappers reconnus sont `timeout`, `time`, `nice`, `nohup` et `stdbuf`.
+
+Le `xargs` nu est également supprimé, donc `Bash(grep *)` correspond à `xargs grep pattern`. La suppression s'applique uniquement lorsque `xargs` n'a pas de drapeaux : une invocation comme `xargs -n1 grep pattern` est mise en correspondance en tant que commande `xargs`, donc les règles écrites pour la commande interne ne la couvrent pas.
+
+Cette liste de wrappers est intégrée et n'est pas configurable. Les exécuteurs d'environnement de développement tels que `direnv exec`, `devbox run`, `mise exec`, `npx` et `docker exec` ne figurent pas dans la liste. Parce que ces outils exécutent leurs arguments en tant que commande, une règle comme `Bash(devbox run *)` correspond à tout ce qui vient après `run`, y compris `devbox run rm -rf .`. Pour approuver le travail à l'intérieur d'un exécuteur d'environnement, écrivez une règle spécifique qui inclut à la fois l'exécuteur et la commande interne, comme `Bash(devbox run npm test)`. Ajoutez une règle par commande interne que vous souhaitez autoriser.
+
+Les wrappers exec tels que `watch`, `setsid`, `ionice` et `flock` demandent toujours et ne peuvent pas être approuvés automatiquement par une règle de préfixe comme `Bash(watch *)`. Il en va de même pour `find` avec `-exec` ou `-delete` : une règle `Bash(find *)` ne couvre pas ces formes. Pour approuver une invocation spécifique, écrivez une règle de correspondance exacte pour la chaîne de commande complète.
+
+#### Commandes en lecture seule
+
+Claude Code reconnaît un ensemble intégré de commandes Bash comme étant en lecture seule et les exécute sans invite d'autorisation dans tous les modes. Ceux-ci incluent `ls`, `cat`, `head`, `tail`, `grep`, `find`, `wc`, `diff`, `stat`, `du`, `cd` et les formes en lecture seule de `git`. L'ensemble n'est pas configurable ; pour exiger une invite pour l'une de ces commandes, ajoutez une règle `ask` ou `deny` pour celle-ci.
+
+Les modèles glob non cités sont autorisés pour les commandes dont chaque drapeau est en lecture seule, donc `ls *.ts` et `wc -l src/*.py` s'exécutent sans invite. Les commandes avec des drapeaux capables d'écriture ou d'exécution, tels que `find`, `sort`, `sed` et `git`, demandent toujours lorsqu'un glob non cité est présent car le glob pourrait s'étendre à un drapeau comme `-delete`.
+
+Un `cd` dans un chemin à l'intérieur de votre répertoire de travail ou d'un [répertoire supplémentaire](#working-directories) est également en lecture seule. Une commande composée comme `cd packages/api && ls` s'exécute sans invite lorsque chaque partie se qualifie seule. La combinaison de `cd` avec `git` dans une seule commande composée demande toujours, indépendamment du répertoire cible.
 
 <Warning>
   Les modèles d'autorisation Bash qui tentent de contraindre les arguments de commande sont fragiles. Par exemple, `Bash(curl http://github.com/ *)` a l'intention de restreindre curl aux URL GitHub, mais ne correspondra pas aux variations comme :
@@ -168,6 +192,13 @@ Exemples :
   Dans les modèles gitignore, `*` correspond aux fichiers dans un seul répertoire tandis que `**` correspond récursivement dans les répertoires. Pour autoriser tous les accès aux fichiers, utilisez simplement le nom de l'outil sans parenthèses : `Read`, `Edit` ou `Write`.
 </Note>
 
+Lorsque Claude accède à un lien symbolique, les règles d'autorisation vérifient deux chemins : le lien symbolique lui-même et le fichier vers lequel il se résout. Les règles d'autorisation et de refus traitent cette paire différemment : les règles d'autorisation reviennent à vous inviter, tandis que les règles de refus bloquent carrément.
+
+* **Règles d'autorisation** : s'appliquent uniquement lorsque le chemin du lien symbolique et sa cible correspondent tous les deux. Un lien symbolique à l'intérieur d'un répertoire autorisé qui pointe vers l'extérieur vous invite toujours.
+* **Règles de refus** : s'appliquent lorsque le chemin du lien symbolique ou sa cible correspond. Un lien symbolique qui pointe vers un fichier refusé est lui-même refusé.
+
+Par exemple, avec `Read(./project/**)` autorisé et `Read(~/.ssh/**)` refusé, un lien symbolique à `./project/key` pointant vers `~/.ssh/id_rsa` est bloqué : la cible échoue à la règle d'autorisation et correspond à la règle de refus.
+
 ### WebFetch
 
 * `WebFetch(domain:example.com)` correspond aux demandes de récupération vers example.com
@@ -200,7 +231,7 @@ Ajoutez ces règles au tableau `deny` dans vos paramètres ou utilisez l'indicat
 
 Les [hooks Claude Code](/fr/hooks-guide) fournissent un moyen d'enregistrer des commandes shell personnalisées pour effectuer l'évaluation des autorisations à l'exécution. Lorsque Claude Code effectue un appel d'outil, les hooks PreToolUse s'exécutent avant l'invite d'autorisation. La sortie du hook peut refuser l'appel d'outil, forcer une invite ou ignorer l'invite pour laisser l'appel se poursuivre.
 
-Ignorer l'invite ne contourne pas les règles d'autorisation. Les règles de refus et de demande sont toujours évaluées après qu'un hook retourne `"allow"`, donc une règle de refus correspondante bloque toujours l'appel. Cela préserve la précédence de refus en premier décrite dans [Gérer les autorisations](#manage-permissions), y compris les règles de refus définies dans les paramètres gérés.
+Les décisions du hook ne contournent pas les règles d'autorisation. Les règles de refus et de demande sont évaluées indépendamment de ce qu'un hook PreToolUse retourne, donc une règle de refus correspondante bloque l'appel et une règle de demande correspondante demande toujours même lorsque le hook a retourné `"allow"` ou `"ask"`. Cela préserve la précédence de refus en premier décrite dans [Gérer les autorisations](#manage-permissions), y compris les règles de refus définies dans les paramètres gérés.
 
 Un hook de blocage prend également la priorité sur les règles d'autorisation. Un hook qui se termine avec le code 2 arrête l'appel d'outil avant que les règles d'autorisation ne soient évaluées, donc le blocage s'applique même lorsqu'une règle d'autorisation permettrait autrement l'appel. Pour exécuter toutes les commandes Bash sans invites sauf pour quelques-unes que vous voulez bloquer, ajoutez `"Bash"` à votre liste d'autorisation et enregistrez un hook PreToolUse qui rejette ces commandes spécifiques. Consultez [Bloquer les éditions des fichiers protégés](/fr/hooks-guide#block-edits-to-protected-files) pour un script de hook que vous pouvez adapter.
 
@@ -220,11 +251,11 @@ L'ajout d'un répertoire étend l'endroit où Claude peut lire et éditer les fi
 
 Les types de configuration suivants sont chargés à partir des répertoires `--add-dir` :
 
-| Configuration                                        | Chargé à partir de `--add-dir`                                                 |
-| :--------------------------------------------------- | :----------------------------------------------------------------------------- |
-| [Skills](/fr/skills) dans `.claude/skills/`          | Oui, avec rechargement en direct                                               |
-| Paramètres de plugin dans `.claude/settings.json`    | `enabledPlugins` et `extraKnownMarketplaces` uniquement                        |
-| Fichiers [CLAUDE.md](/fr/memory) et `.claude/rules/` | Uniquement lorsque `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` est défini |
+| Configuration                                                           | Chargé à partir de `--add-dir`                                                                                                                                        |
+| :---------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Skills](/fr/skills) dans `.claude/skills/`                             | Oui, avec rechargement en direct                                                                                                                                      |
+| Paramètres de plugin dans `.claude/settings.json`                       | `enabledPlugins` et `extraKnownMarketplaces` uniquement                                                                                                               |
+| Fichiers [CLAUDE.md](/fr/memory), `.claude/rules/` et `CLAUDE.local.md` | Uniquement lorsque `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` est défini. `CLAUDE.local.md` nécessite également le paramètre `local`, qui est activé par défaut |
 
 Tout le reste, y compris les subagents, les commandes, les styles de sortie, les hooks et d'autres paramètres, est découvert uniquement à partir du répertoire de travail actuel et de ses parents, de votre répertoire utilisateur à `~/.claude/` et des paramètres gérés. Pour partager cette configuration entre les projets, utilisez l'une de ces approches :
 
@@ -244,7 +275,9 @@ Utilisez les deux pour une défense en profondeur :
 * Les règles de refus d'autorisation empêchent Claude d'essayer même d'accéder aux ressources restreintes
 * Les restrictions de sandbox empêchent les commandes Bash d'atteindre les ressources en dehors des limites définies, même si une injection de prompt contourne la prise de décision de Claude
 * Les restrictions du système de fichiers dans le sandbox utilisent les règles de refus Read et Edit, pas une configuration de sandbox séparée
-* Les restrictions réseau combinent les règles d'autorisation WebFetch avec la liste `allowedDomains` du sandbox
+* Les restrictions réseau combinent les règles d'autorisation WebFetch avec les listes `allowedDomains` et `deniedDomains` du sandbox
+
+Lorsque le sandboxing est activé avec `autoAllowBashIfSandboxed: true`, qui est la valeur par défaut, les commandes Bash en sandbox s'exécutent sans invite même si vos autorisations incluent `ask: Bash(*)`. La limite du sandbox remplace l'invite par commande. Consultez [modes sandbox](/fr/sandboxing#sandbox-modes) pour modifier ce comportement.
 
 ## Paramètres gérés
 
@@ -257,11 +290,12 @@ Les paramètres suivants ne sont efficaces que dans les paramètres gérés. Les
 | Paramètre                                      | Description                                                                                                                                                                                                                                                                                              |
 | :--------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `allowedChannelPlugins`                        | Liste blanche des plugins de canal qui peuvent envoyer des messages. Remplace la liste blanche Anthropic par défaut lorsqu'elle est définie. Nécessite `channelsEnabled: true`. Consultez [Restreindre les plugins de canal qui peuvent s'exécuter](/fr/channels#restrict-which-channel-plugins-can-run) |
-| `allowManagedHooksOnly`                        | Lorsque `true`, empêche le chargement des hooks utilisateur, projet et plugin. Seuls les hooks gérés et les hooks SDK sont autorisés                                                                                                                                                                     |
+| `allowManagedHooksOnly`                        | Lorsque `true`, seuls les hooks gérés, les hooks SDK et les hooks des plugins activés de force dans les paramètres gérés `enabledPlugins` sont chargés. Les hooks utilisateur, projet et tous les autres hooks de plugin sont bloqués                                                                    |
 | `allowManagedMcpServersOnly`                   | Lorsque `true`, seuls les `allowedMcpServers` des paramètres gérés sont respectés. `deniedMcpServers` fusionne toujours à partir de toutes les sources. Consultez [Configuration MCP gérée](/fr/mcp#managed-mcp-configuration)                                                                           |
 | `allowManagedPermissionRulesOnly`              | Lorsque `true`, empêche les paramètres utilisateur et projet de définir les règles d'autorisation `allow`, `ask` ou `deny`. Seules les règles dans les paramètres gérés s'appliquent                                                                                                                     |
 | `blockedMarketplaces`                          | Liste noire des sources de marketplace. Les sources bloquées sont vérifiées avant le téléchargement, elles ne touchent donc jamais le système de fichiers. Consultez [restrictions de marketplace gérées](/fr/plugin-marketplaces#managed-marketplace-restrictions)                                      |
 | `channelsEnabled`                              | Autoriser les [canaux](/fr/channels) pour les utilisateurs Team et Enterprise. Non défini ou `false` bloque la livraison des messages de canal indépendamment de ce que les utilisateurs passent à `--channels`                                                                                          |
+| `forceRemoteSettingsRefresh`                   | Lorsque `true`, bloque le démarrage de la CLI jusqu'à ce que les paramètres gérés distants soient fraîchement récupérés et se termine si la récupération échoue. Consultez [application fail-closed](/fr/server-managed-settings#enforce-fail-closed-startup)                                            |
 | `pluginTrustMessage`                           | Message personnalisé ajouté à l'avertissement de confiance du plugin affiché avant l'installation                                                                                                                                                                                                        |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Lorsque `true`, seuls les chemins `filesystem.allowRead` des paramètres gérés sont respectés. `denyRead` fusionne toujours à partir de toutes les sources                                                                                                                                                |
 | `sandbox.network.allowManagedDomainsOnly`      | Lorsque `true`, seuls les `allowedDomains` et les règles d'autorisation `WebFetch(domain:...)` des paramètres gérés sont respectés. Les domaines non autorisés sont bloqués automatiquement sans inviter l'utilisateur. Les domaines refusés fusionnent toujours à partir de toutes les sources          |

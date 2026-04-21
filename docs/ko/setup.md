@@ -123,7 +123,7 @@ PowerShell 또는 CMD에서 설치하는지 여부는 실행하는 설치 명령
 }
 ```
 
-Claude Code는 또한 Windows에서 PowerShell을 기본적으로 실행할 수 있으며 옵트인 미리보기로 제공됩니다. 설정 및 제한사항은 [PowerShell 도구](/ko/tools-reference#powershell-tool)를 참조하세요.
+Claude Code는 또한 Windows에서 PowerShell을 기본적으로 실행할 수 있습니다. PowerShell 도구는 점진적으로 출시되고 있습니다. 옵트인하려면 `CLAUDE_CODE_USE_POWERSHELL_TOOL=1`을 설정하거나 옵트아웃하려면 `0`을 설정하세요. 설정 및 제한사항은 [PowerShell 도구](/ko/tools-reference#powershell-tool)를 참조하세요.
 
 **옵션 2: WSL**
 
@@ -203,6 +203,23 @@ Claude Code는 시작 시 및 실행 중에 주기적으로 업데이트를 확�
 엔터프라이즈 배포의 경우 [관리 설정](/ko/permissions#managed-settings)을 사용하여 조직 전체에서 일관된 릴리스 채널을 적용할 수 있습니다.
 
 Homebrew 설치는 이 설정 대신 cask 이름으로 채널을 선택합니다: `claude-code`는 안정적인 버전을 추적하고 `claude-code@latest`는 최신 버전을 추적합니다.
+
+### 최소 버전 고정
+
+`minimumVersion` 설정은 하한을 설정합니다. 백그라운드 자동 업데이트 및 `claude update`는 이 값 이하의 버전 설치를 거부하므로 `"stable"` 채널로 이동해도 이미 최신 `"latest"` 빌드에 있는 경우 다운그레이드되지 않습니다.
+
+`/config`를 통해 `"latest"`에서 `"stable"`로 전환하면 현재 버전을 유지하거나 다운그레이드를 허용하라는 메시지가 표시됩니다. 현재 버전을 유지하도록 선택하면 `minimumVersion`이 해당 버전으로 설정됩니다. `"latest"`로 다시 전환하면 이를 지웁니다.
+
+[settings.json 파일](/ko/settings)에 추가하여 하한을 명시적으로 고정하세요:
+
+```json theme={null}
+{
+  "autoUpdatesChannel": "stable",
+  "minimumVersion": "2.1.100"
+}
+```
+
+[관리 설정](/ko/permissions#managed-settings)에서 이는 사용자 및 프로젝트 설정이 재정의할 수 없는 조직 전체 최소값을 적용합니다.
 
 ### 자동 업데이트 비활성화
 
@@ -298,31 +315,17 @@ claude update
   </Tab>
 </Tabs>
 
-### 더 이상 사용되지 않는 npm 설치
+### npm으로 설치
 
-npm 설치는 더 이상 사용되지 않습니다. 네이티브 설치 프로그램이 더 빠르고 종속성이 필요 없으며 백그라운드에서 자동으로 업데이트됩니다. 가능하면 [네이티브 설치](#install-claude-code) 방법을 사용하세요.
-
-#### npm에서 네이티브로 마이그레이션
-
-이전에 npm으로 Claude Code를 설치한 경우 네이티브 설치 프로그램으로 전환하세요:
-
-```bash theme={null}
-# 네이티브 바이너리 설치
-curl -fsSL https://claude.ai/install.sh | bash
-
-# 이전 npm 설치 제거
-npm uninstall -g @anthropic-ai/claude-code
-```
-
-기존 npm 설치에서 `claude install`을 실행하여 네이티브 바이너리를 나란히 설치한 후 npm 버전을 제거할 수도 있습니다.
-
-#### npm으로 설치
-
-호환성 이유로 npm 설치가 필요한 경우 [Node.js 18+](https://nodejs.org/en/download)가 설치되어 있어야 합니다. 패키지를 전역으로 설치하세요:
+Claude Code를 전역 npm 패키지로 설치할 수도 있습니다. 패키지에는 [Node.js 18 이상](https://nodejs.org/en/download)이 필요합니다.
 
 ```bash theme={null}
 npm install -g @anthropic-ai/claude-code
 ```
+
+npm 패키지는 독립 실행형 설치 프로그램과 동일한 네이티브 바이너리를 설치합니다. npm은 `@anthropic-ai/claude-code-darwin-arm64`와 같은 플랫폼별 선택적 종속성을 통해 바이너리를 가져오고 설치 후 단계가 이를 제자리에 연결합니다. 설치된 `claude` 바이너리는 자체적으로 Node를 호출하지 않습니다.
+
+지원되는 npm 설치 플랫폼은 `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64` 및 `win32-arm64`입니다. 패키지 관리자는 선택적 종속성을 허용해야 합니다. 설치 후 바이너리가 누락된 경우 [문제 해결](/ko/troubleshooting#native-binary-not-found-after-npm-install)을 참조하세요.
 
 <Warning>
   `sudo npm install -g`를 사용하지 마세요. 이는 권한 문제 및 보안 위험으로 이어질 수 있습니다. 권한 오류가 발생하면 [권한 오류 문제 해결](/ko/troubleshooting#permission-errors-during-installation)을 참조하세요.

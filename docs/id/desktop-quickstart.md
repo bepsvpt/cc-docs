@@ -6,15 +6,25 @@
 
 > Instal Claude Code di desktop dan mulai sesi coding pertama Anda
 
-Aplikasi desktop memberi Anda Claude Code dengan antarmuka grafis: tinjauan diff visual, pratinjau aplikasi langsung, pemantauan GitHub PR dengan penggabungan otomatis, sesi paralel dengan isolasi Git worktree, tugas terjadwal, dan kemampuan untuk menjalankan tugas dari jarak jauh. Tidak perlu terminal.
+Aplikasi desktop memberi Anda Claude Code dengan antarmuka grafis yang dirancang untuk menjalankan beberapa sesi berdampingan: sidebar untuk mengelola pekerjaan paralel, tata letak drag-and-drop dengan terminal terintegrasi dan editor file, tinjauan diff visual, pratinjau aplikasi langsung, pemantauan GitHub PR dengan penggabungan otomatis, dan tugas terjadwal. Tidak perlu terminal.
+
+<CardGroup cols={2}>
+  <Card title="Download for macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
+    Universal build for Intel and Apple Silicon
+  </Card>
+
+  <Card title="Download for Windows" icon="windows" href="https://claude.ai/api/desktop/win32/x64/setup/latest/redirect?utm_source=claude_code&utm_medium=docs">
+    For x64 processors
+  </Card>
+</CardGroup>
+
+For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). Linux is not supported.
+
+<Note>
+  Claude Code memerlukan [langganan Pro, Max, Team, atau Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing).
+</Note>
 
 Halaman ini memandu Anda melalui instalasi aplikasi dan memulai sesi pertama Anda. Jika Anda sudah siap, lihat [Gunakan Claude Code Desktop](/id/desktop) untuk referensi lengkap.
-
-<Frame>
-  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-light.png" className="block dark:hidden" alt="Antarmuka Claude Code Desktop menampilkan tab Code yang dipilih, dengan kotak prompt, pemilih mode izin diatur ke Minta izin, pemilih model, pemilih folder, dan opsi Lingkungan Lokal" />
-
-  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-dark.png" className="hidden dark:block" alt="Antarmuka Claude Code Desktop dalam mode gelap menampilkan tab Code yang dipilih, dengan kotak prompt, pemilih mode izin diatur ke Minta izin, pemilih model, pemilih folder, dan opsi Lingkungan Lokal" />
-</Frame>
 
 Aplikasi desktop memiliki tiga tab:
 
@@ -24,33 +34,11 @@ Aplikasi desktop memiliki tiga tab:
 
 Chat dan Cowork tercakup dalam [artikel dukungan Claude Desktop](https://support.claude.com/en/collections/16163169-claude-desktop). Halaman ini berfokus pada tab **Code**.
 
-<Note>
-  Claude Code memerlukan [langganan Pro, Max, Teams, atau Enterprise](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing).
-</Note>
-
 ## Instal
 
 <Steps>
-  <Step title="Unduh aplikasi">
-    Unduh Claude untuk platform Anda.
-
-    <CardGroup cols={2}>
-      <Card title="macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
-        Build universal untuk Intel dan Apple Silicon
-      </Card>
-
-      <Card title="Windows" icon="windows" href="https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code&utm_medium=docs">
-        Untuk prosesor x64
-      </Card>
-    </CardGroup>
-
-    Untuk Windows ARM64, [unduh di sini](https://claude.ai/api/desktop/win32/arm64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs).
-
-    Linux saat ini tidak didukung.
-  </Step>
-
-  <Step title="Masuk">
-    Luncurkan Claude dari folder Aplikasi Anda (macOS) atau menu Start (Windows). Masuk dengan akun Anthropic Anda.
+  <Step title="Instal dan masuk">
+    Unduh installer untuk platform Anda dari tautan di atas dan jalankan. Luncurkan Claude dari folder Aplikasi Anda di macOS atau menu Start di Windows, kemudian masuk dengan akun Anthropic Anda.
   </Step>
 
   <Step title="Buka tab Code">
@@ -79,7 +67,7 @@ Dengan tab Code terbuka, pilih proyek dan beri Claude sesuatu untuk dikerjakan.
   </Step>
 
   <Step title="Pilih model">
-    Pilih model dari dropdown di sebelah tombol kirim. Lihat [models](/id/model-config#available-models) untuk perbandingan Opus, Sonnet, dan Haiku. Anda tidak dapat mengubah model setelah sesi dimulai.
+    Pilih model dari dropdown di sebelah tombol kirim. Lihat [models](/id/model-config#available-models) untuk perbandingan Opus, Sonnet, dan Haiku. Anda dapat mengubah model nanti dari dropdown yang sama.
   </Step>
 
   <Step title="Beri tahu Claude apa yang harus dilakukan">
@@ -123,9 +111,9 @@ Anda telah membuat edit pertama Anda. Untuk referensi lengkap tentang semua yang
 
 **Lacak pull request Anda.** Setelah membuka PR, Claude Code memantau hasil pemeriksaan CI dan dapat secara otomatis memperbaiki kegagalan atau menggabungkan PR setelah semua pemeriksaan lulus. Lihat [Pantau status pull request](/id/desktop#monitor-pull-request-status).
 
-**Letakkan Claude pada jadwal.** Atur [tugas terjadwal](/id/desktop#schedule-recurring-tasks) untuk menjalankan Claude secara otomatis secara berulang: tinjauan kode harian setiap pagi, audit dependensi mingguan, atau briefing yang menarik dari alat yang terhubung.
+**Letakkan Claude pada jadwal.** Atur [tugas terjadwal](/id/desktop-scheduled-tasks) untuk menjalankan Claude secara otomatis secara berulang: tinjauan kode harian setiap pagi, audit dependensi mingguan, atau briefing yang menarik dari alat yang terhubung.
 
-**Skalakan ketika Anda siap.** Buka [sesi paralel](/id/desktop#work-in-parallel-with-sessions) dari sidebar untuk bekerja pada beberapa tugas sekaligus, masing-masing di worktree Git-nya sendiri. Kirim [pekerjaan jangka panjang ke cloud](/id/desktop#run-long-running-tasks-remotely) sehingga terus berjalan bahkan jika Anda menutup aplikasi, atau [lanjutkan sesi di web atau di IDE Anda](/id/desktop#continue-in-another-surface) jika tugas memakan waktu lebih lama dari yang diharapkan. [Hubungkan alat eksternal](/id/desktop#extend-claude-code) seperti GitHub, Slack, dan Linear untuk menyatukan alur kerja Anda.
+**Skalakan ketika Anda siap.** Buka [sesi paralel](/id/desktop#work-in-parallel-with-sessions) dari sidebar untuk bekerja pada beberapa tugas sekaligus, masing-masing di Git worktree-nya sendiri, dan buka [pane tugas](/id/desktop#watch-background-tasks) untuk menonton subagents dan perintah latar belakang yang sedang dijalankan sesi. Buka [side chat](/id/desktop#ask-a-side-question-without-derailing-the-session) untuk mengajukan pertanyaan tanpa mengganggu thread utama. Kirim [pekerjaan jangka panjang ke cloud](/id/desktop#run-long-running-tasks-remotely) sehingga terus berjalan bahkan jika Anda menutup aplikasi, atau [lanjutkan sesi di web atau di IDE Anda](/id/desktop#continue-in-another-surface) jika tugas memakan waktu lebih lama dari yang diharapkan. [Hubungkan alat eksternal](/id/desktop#extend-claude-code) seperti GitHub, Slack, dan Linear untuk menyatukan alur kerja Anda.
 
 ## Datang dari CLI?
 

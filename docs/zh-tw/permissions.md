@@ -32,14 +32,14 @@ Claude Code 使用分層權限系統來平衡功能和安全性：
 
 Claude Code 支援多種權限模式來控制工具的批准方式。請參閱 [Permission modes](/zh-TW/permission-modes) 以了解何時使用每一種。在您的 [settings files](/zh-TW/settings#settings-files) 中設定 `defaultMode`：
 
-| 模式                  | 描述                                                      |
-| :------------------ | :------------------------------------------------------ |
-| `default`           | 標準行為：在首次使用每個工具時提示權限                                     |
-| `acceptEdits`       | 自動接受工作階段的檔案編輯權限，除了對受保護目錄的寫入                             |
-| `plan`              | Plan Mode：Claude 可以分析但不能修改檔案或執行命令                       |
-| `auto`              | 自動批准工具呼叫，並進行背景安全檢查以驗證操作是否符合您的要求。目前為研究預覽版                |
-| `dontAsk`           | 自動拒絕工具，除非透過 `/permissions` 或 `permissions.allow` 規則預先批准 |
-| `bypassPermissions` | 跳過權限提示，除了對受保護目錄的寫入（請參閱下方警告）                             |
+| 模式                  | 描述                                                                               |
+| :------------------ | :------------------------------------------------------------------------------- |
+| `default`           | 標準行為：在首次使用每個工具時提示權限                                                              |
+| `acceptEdits`       | 自動接受工作目錄或 `additionalDirectories` 中路徑的檔案編輯和常見檔案系統命令（`mkdir`、`touch`、`mv`、`cp` 等） |
+| `plan`              | Plan Mode：Claude 可以分析但不能修改檔案或執行命令                                                |
+| `auto`              | 自動批准工具呼叫，並進行背景安全檢查以驗證操作是否符合您的要求。目前為研究預覽版                                         |
+| `dontAsk`           | 自動拒絕工具，除非透過 `/permissions` 或 `permissions.allow` 規則預先批准                          |
+| `bypassPermissions` | 跳過權限提示，除了對受保護目錄的寫入（請參閱下方警告）                                                      |
 
 <Warning>
   `bypassPermissions` 模式會跳過權限提示。對 `.git`、`.claude`、`.vscode`、`.idea` 和 `.husky` 目錄的寫入仍會提示確認，以防止意外損壞儲存庫狀態、編輯器設定和 git hooks。對 `.claude/commands`、`.claude/agents` 和 `.claude/skills` 的寫入被豁免，不會提示，因為 Claude 在建立技能、子代理和命令時會定期寫入這些位置。僅在隔離環境（如容器或虛擬機）中使用此模式，其中 Claude Code 無法造成損害。管理員可以透過在 [managed settings](#managed-settings) 中將 `permissions.disableBypassPermissionsMode` 設定為 `"disable"` 來防止此模式。
@@ -94,7 +94,9 @@ Bash 規則支援使用 `*` 的 glob 模式。萬用字元可以出現在命令�
 }
 ```
 
-`*` 前的空格很重要：`Bash(ls *)` 符合 `ls -la` 但不符合 `lsof`，而 `Bash(ls*)` 兩者都符合。舊版 `:*` 後綴語法等同於 ` *` 但已棄用。
+`*` 前的空格很重要：`Bash(ls *)` 符合 `ls -la` 但不符合 `lsof`，而 `Bash(ls*)` 兩者都符合。`:*` 後綴是寫入尾部萬用字元的等效方式，所以 `Bash(ls:*)` 符合與 `Bash(ls *)` 相同的命令。
+
+當您為命令前綴選擇"是，不要再問"時，權限對話框會寫入空格分隔的形式。`:*` 形式僅在模式末尾被識別。在像 `Bash(git:* push)` 這樣的模式中，冒號被視為字面字元，不會符合 git 命令。
 
 ## 工具特定的權限規則
 
@@ -106,15 +108,37 @@ Bash 權限規則支援使用 `*` 的萬用字元符合。萬用字元可以出�
 * `Bash(npm run test *)` 符合以 `npm run test` 開頭的 Bash 命令
 * `Bash(npm *)` 符合任何以 `npm ` 開頭的命令
 * `Bash(* install)` 符合任何以 ` install` 結尾的命令
-* `Bash(git * main)` 符合命令如 `git checkout main`、`git merge main`
+* `Bash(git * main)` 符合命令如 `git checkout main` 和 `git log --oneline main`
+
+單一 `*` 符合任何字元序列，包括空格，所以一個萬用字元可以跨越多個引數。`Bash(git *)` 符合 `git log --oneline --all`，而 `Bash(git * main)` 符合 `git push origin main` 以及 `git merge main`。
 
 當 `*` 出現在末尾且前面有空格時（如 `Bash(ls *)`），它會強制執行字邊界，要求前綴後面跟著空格或字串結尾。例如，`Bash(ls *)` 符合 `ls -la` 但不符合 `lsof`。相比之下，`Bash(ls*)` 沒有空格會同時符合 `ls -la` 和 `lsof`，因為沒有字邊界限制。
 
+#### 複合命令
+
 <Tip>
-  Claude Code 知道 shell 運算子（如 `&&`），所以前綴符合規則如 `Bash(safe-cmd *)` 不會給它執行命令 `safe-cmd && other-cmd` 的權限。
+  Claude Code 知道 shell 運算子，所以前綴符合規則如 `Bash(safe-cmd *)` 不會給它執行命令 `safe-cmd && other-cmd` 的權限。已識別的命令分隔符是 `&&`、`||`、`;`、`|`、`|&`、`&` 和換行符。規則必須獨立符合每個子命令。
 </Tip>
 
 當您使用"是，不要再問"批准複合命令時，Claude Code 會為每個需要批准的子命令儲存一個單獨的規則，而不是為完整複合字串儲存單一規則。例如，批准 `git status && npm test` 會為 `npm test` 儲存一個規則，因此未來的 `npm test` 呼叫會被識別，無論 `&&` 前面是什麼。子命令如 `cd` 進入子目錄會為該路徑產生自己的 Read 規則。單一複合命令最多可能儲存 5 個規則。
+
+#### 程序包裝器
+
+在符合 Bash 規則之前，Claude Code 會移除一組固定的程序包裝器，所以像 `Bash(npm test *)` 這樣的規則也符合 `timeout 30 npm test`。已識別的包裝器是 `timeout`、`time`、`nice`、`nohup` 和 `stdbuf`。
+
+裸 `xargs` 也會被移除，所以 `Bash(grep *)` 符合 `xargs grep pattern`。移除僅在 `xargs` 沒有旗標時適用：像 `xargs -n1 grep pattern` 這樣的呼叫被符合為 `xargs` 命令，所以為內部命令編寫的規則不涵蓋它。
+
+此包裝器清單是內建的，不可設定。開發環境執行器如 `direnv exec`、`devbox run`、`mise exec`、`npx` 和 `docker exec` 不在清單中。因為這些工具將其引數作為命令執行，像 `Bash(devbox run *)` 這樣的規則符合 `run` 後面的任何內容，包括 `devbox run rm -rf .`。若要批准環境執行器內的工作，請編寫包含執行器和內部命令的特定規則，如 `Bash(devbox run npm test)`。為您想要允許的每個內部命令新增一個規則。
+
+Exec 包裝器如 `watch`、`setsid`、`ionice` 和 `flock` 始終提示，無法透過像 `Bash(watch *)` 這樣的前綴規則自動批准。同樣適用於帶有 `-exec` 或 `-delete` 的 `find`：`Bash(find *)` 規則不涵蓋這些形式。若要批准特定呼叫，請為完整命令字串編寫精確符合規則。
+
+#### 唯讀命令
+
+Claude Code 將一組內建的 Bash 命令識別為唯讀，並在每種模式中無需權限提示即可執行它們。這些包括 `ls`、`cat`、`head`、`tail`、`grep`、`find`、`wc`、`diff`、`stat`、`du`、`cd` 和 `git` 的唯讀形式。該集合不可設定；若要要求其中一個命令的提示，請為其新增 `ask` 或 `deny` 規則。
+
+對於每個旗標都是唯讀的命令，允許未引用的 glob 模式，所以 `ls *.ts` 和 `wc -l src/*.py` 無需提示即可執行。具有寫入能力或執行能力旗標的命令，如 `find`、`sort`、`sed` 和 `git`，在存在未引用的 glob 時仍會提示，因為 glob 可能會擴展為像 `-delete` 這樣的旗標。
+
+`cd` 進入工作目錄或 [additional directory](#working-directories) 內的路徑也是唯讀的。像 `cd packages/api && ls` 這樣的複合命令在每個部分都符合時無需提示即可執行。在一個複合命令中結合 `cd` 和 `git` 始終提示，無論目標目錄如何。
 
 <Warning>
   嘗試限制命令引數的 Bash 權限模式很脆弱。例如，`Bash(curl http://github.com/ *)` 旨在將 curl 限制為 GitHub URL，但不會符合以下變化：
@@ -168,6 +192,13 @@ Read 和 Edit 規則都遵循 [gitignore](https://git-scm.com/docs/gitignore) �
   在 gitignore 模式中，`*` 符合單一目錄中的檔案，而 `**` 遞迴符合目錄。若要允許所有檔案存取，請使用不帶括號的工具名稱：`Read`、`Edit` 或 `Write`。
 </Note>
 
+當 Claude 存取符號連結時，權限規則檢查兩個路徑：符號連結本身和它解析到的檔案。Allow 和 deny 規則對該對的處理方式不同：allow 規則回退到提示您，而 deny 規則直接阻止。
+
+* **Allow 規則**：僅在符號連結路徑及其目標都符合時適用。允許目錄內的符號連結指向外部仍會提示您。
+* **Deny 規則**：在符號連結路徑或其目標符合時適用。指向被拒絕檔案的符號連結本身被拒絕。
+
+例如，使用 `Read(./project/**)` 允許和 `Read(~/.ssh/**)` 拒絕，位於 `./project/key` 指向 `~/.ssh/id_rsa` 的符號連結被阻止：目標未通過 allow 規則且符合 deny 規則。
+
 ### WebFetch
 
 * `WebFetch(domain:example.com)` 符合對 example.com 的擷取請求
@@ -200,7 +231,7 @@ Read 和 Edit 規則都遵循 [gitignore](https://git-scm.com/docs/gitignore) �
 
 [Claude Code hooks](/zh-TW/hooks-guide) 提供了一種方式來註冊自訂 shell 命令，以在執行時執行權限評估。當 Claude Code 進行工具呼叫時，PreToolUse hooks 在權限提示之前執行。hook 輸出可以拒絕工具呼叫、強制提示或跳過提示以讓呼叫繼續進行。
 
-跳過提示不會繞過權限規則。Deny 和 ask 規則在 hook 返回 `"allow"` 後仍會被評估，因此符合的 deny 規則仍會阻止呼叫。這保留了 [Manage permissions](#manage-permissions) 中描述的 deny 優先順序，包括在受管理設定中設定的 deny 規則。
+Hook 決定不會繞過權限規則。Deny 和 ask 規則在 hook 返回 `"allow"` 或 `"ask"` 後仍會被評估，因此符合的 deny 規則仍會阻止呼叫，符合的 ask 規則即使在 hook 返回 `"allow"` 或 `"ask"` 時仍會提示。這保留了 [Manage permissions](#manage-permissions) 中描述的 deny 優先順序，包括在受管理設定中設定的 deny 規則。
 
 阻止 hook 也優先於 allow 規則。以代碼 2 退出的 hook 會在評估權限規則之前停止工具呼叫，因此即使 allow 規則會允許呼叫，該阻止也會適用。若要執行所有 Bash 命令而無需提示，除了您想要阻止的少數幾個，請將 `"Bash"` 新增到您的 allow 清單，並註冊一個 PreToolUse hook 來拒絕那些特定命令。請參閱 [Block edits to protected files](/zh-TW/hooks-guide#block-edits-to-protected-files) 以取得您可以調整的 hook 指令碼。
 
@@ -220,11 +251,11 @@ Read 和 Edit 規則都遵循 [gitignore](https://git-scm.com/docs/gitignore) �
 
 以下設定類型從 `--add-dir` 目錄載入：
 
-| 設定                                              | 從 `--add-dir` 載入                                        |
-| :---------------------------------------------- | :------------------------------------------------------ |
-| `.claude/skills/` 中的 [Skills](/zh-TW/skills)    | 是，具有即時重新載入                                              |
-| `.claude/settings.json` 中的外掛設定                  | 僅 `enabledPlugins` 和 `extraKnownMarketplaces`           |
-| [CLAUDE.md](/zh-TW/memory) 檔案和 `.claude/rules/` | 僅當設定 `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` 時 |
+| 設定                                                                 | 從 `--add-dir` 載入                                                                                 |
+| :----------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
+| `.claude/skills/` 中的 [Skills](/zh-TW/skills)                       | 是，具有即時重新載入                                                                                       |
+| `.claude/settings.json` 中的外掛設定                                     | 僅 `enabledPlugins` 和 `extraKnownMarketplaces`                                                    |
+| [CLAUDE.md](/zh-TW/memory) 檔案、`.claude/rules/` 和 `CLAUDE.local.md` | 僅當設定 `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` 時。`CLAUDE.local.md` 另外需要 `local` 設定來源，預設啟用 |
 
 其他所有內容，包括 subagents、命令、輸出樣式、hooks 和其他設定，僅從目前工作目錄及其父目錄、您在 `~/.claude/` 的使用者目錄和受管理設定發現。若要在專案間共享該設定，請使用以下方法之一：
 
@@ -244,7 +275,9 @@ Read 和 Edit 規則都遵循 [gitignore](https://git-scm.com/docs/gitignore) �
 * 權限 deny 規則阻止 Claude 甚至嘗試存取受限資源
 * 沙箱限制防止 Bash 命令到達定義邊界外的資源，即使提示注入繞過 Claude 的決策制定
 * 沙箱中的檔案系統限制使用 Read 和 Edit deny 規則，而不是單獨的沙箱設定
-* 網路限制結合 WebFetch 權限規則與沙箱的 `allowedDomains` 清單
+* 網路限制結合 WebFetch 權限規則與沙箱的 `allowedDomains` 和 `deniedDomains` 清單
+
+當沙箱啟用 `autoAllowBashIfSandboxed: true`（預設值）時，沙箱化 Bash 命令無需提示即可執行，即使您的權限包括 `ask: Bash(*)`。沙箱邊界替代每個命令提示。請參閱 [sandbox modes](/zh-TW/sandboxing#sandbox-modes) 以變更此行為。
 
 ## 受管理設定
 
@@ -257,11 +290,12 @@ Read 和 Edit 規則都遵循 [gitignore](https://git-scm.com/docs/gitignore) �
 | 設定                                             | 描述                                                                                                                                                                      |
 | :--------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `allowedChannelPlugins`                        | 可能推送訊息的頻道外掛的允許清單。設定時替換預設 Anthropic 允許清單。需要 `channelsEnabled: true`。請參閱 [Restrict which channel plugins can run](/zh-TW/channels#restrict-which-channel-plugins-can-run) |
-| `allowManagedHooksOnly`                        | 當為 `true` 時，防止載入使用者、專案和外掛 hooks。僅允許受管理 hooks 和 SDK hooks                                                                                                                |
+| `allowManagedHooksOnly`                        | 當為 `true` 時，僅載入受管理 hooks、SDK hooks 和在受管理設定 `enabledPlugins` 中強制啟用的外掛中的 hooks。使用者、專案和所有其他外掛 hooks 被阻止                                                                    |
 | `allowManagedMcpServersOnly`                   | 當為 `true` 時，僅尊重受管理設定中的 `allowedMcpServers`。`deniedMcpServers` 仍然從所有來源合併。請參閱 [Managed MCP configuration](/zh-TW/mcp#managed-mcp-configuration)                           |
 | `allowManagedPermissionRulesOnly`              | 當為 `true` 時，防止使用者和專案設定定義 `allow`、`ask` 或 `deny` 權限規則。僅套用受管理設定中的規則                                                                                                       |
 | `blockedMarketplaces`                          | 市場來源的封鎖清單。在下載前檢查被封鎖的來源，因此它們永遠不會接觸檔案系統。請參閱 [managed marketplace restrictions](/zh-TW/plugin-marketplaces#managed-marketplace-restrictions)                               |
 | `channelsEnabled`                              | 允許 Team 和 Enterprise 使用者使用 [channels](/zh-TW/channels)。未設定或 `false` 會阻止頻道訊息傳遞，無論使用者傳遞什麼給 `--channels`                                                                   |
+| `forceRemoteSettingsRefresh`                   | 當為 `true` 時，阻止 CLI 啟動直到遠端受管理設定被新鮮擷取，如果擷取失敗則退出。請參閱 [fail-closed enforcement](/zh-TW/server-managed-settings#enforce-fail-closed-startup)                                 |
 | `pluginTrustMessage`                           | 自訂訊息，附加到安裝前顯示的外掛信任警告                                                                                                                                                    |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | 當為 `true` 時，僅尊重受管理設定中的 `filesystem.allowRead` 路徑。`denyRead` 仍然從所有來源合併                                                                                                   |
 | `sandbox.network.allowManagedDomainsOnly`      | 當為 `true` 時，僅尊重來自受管理設定的 `allowedDomains` 和 `WebFetch(domain:...)` allow 規則。非允許的網域會自動被阻止，無需提示使用者。被拒絕的網域仍然從所有來源合併                                                         |

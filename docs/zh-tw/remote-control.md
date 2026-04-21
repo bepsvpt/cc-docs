@@ -14,7 +14,7 @@ Remote Control 將 [claude.ai/code](https://claude.ai/code) 或 Claude 應用程
 
 當您在機器上啟動 Remote Control 會話時，Claude 會在整個過程中在本地執行，因此沒有任何內容會移至雲端。使用 Remote Control，您可以：
 
-* **遠端使用您的完整本地環境**：您的檔案系統、[MCP servers](/zh-TW/mcp)、工具和專案配置都保持可用
+* **遠端使用您的完整本地環境**：您的檔案系統、[MCP servers](/zh-TW/mcp)、工具和專案配置都保持可用，輸入 `@` 會自動完成來自您本地專案的檔案路徑
 * **同時在兩個介面上工作**：對話在所有連接的裝置上保持同步，因此您可以從終端機、瀏覽器和手機交替發送訊息
 * **克服中斷**：如果您的筆記型電腦進入睡眠狀態或網路中斷，當您的機器重新上線時，會話會自動重新連接
 
@@ -188,6 +188,7 @@ Claude 決定何時推播。它通常在長時間執行的任務完成或需要�
 * **本地程序必須保持執行**：Remote Control 作為本地程序執行。如果您關閉終端機、退出 VS Code 或以其他方式停止 `claude` 程序，會話結束。
 * **延長的網路中斷**：如果您的機器處於喚醒狀態但無法在大約 10 分鐘以上的時間內到達網路，會話會逾時並且程序退出。再次執行 `claude remote-control` 以啟動新會話。
 * **Ultraplan 斷開 Remote Control**：啟動 [ultraplan](/zh-TW/ultraplan) 會話會斷開任何活動的 Remote Control 會話，因為兩個功能都佔據 claude.ai/code 介面，一次只能連接一個。
+* **某些命令僅限本地**：在終端機中開啟互動式選擇器的命令，例如 `/mcp`、`/plugin` 或 `/resume`，只能從本地 CLI 使用。產生文字輸出的命令，包括 `/compact`、`/clear`、`/context`、`/cost`、`/exit`、`/extra-usage`、`/recap` 和 `/reload-plugins`，可從行動和網頁使用。
 
 ## 疑難排解
 

@@ -9,28 +9,31 @@
 ## Troubleshoot installation issues
 
 <Tip>
-  Jika Anda lebih suka melewati terminal sepenuhnya, [aplikasi Claude Code Desktop](/id/desktop-quickstart) memungkinkan Anda menginstal dan menggunakan Claude Code melalui antarmuka grafis. Unduh untuk [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) atau [Windows](https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs) dan mulai coding tanpa setup command-line apa pun.
+  Jika Anda lebih suka melewati terminal sepenuhnya, [aplikasi Claude Code Desktop](/id/desktop-quickstart) memungkinkan Anda menginstal dan menggunakan Claude Code melalui antarmuka grafis. Unduh untuk [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) atau [Windows](https://claude.com/download?utm_source=claude_code\&utm_medium=docs) dan mulai coding tanpa setup command-line apa pun.
 </Tip>
 
 Temukan pesan kesalahan atau gejala yang Anda lihat:
 
-| Apa yang Anda lihat                                                   | Solusi                                                                                                                  |
-| :-------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------- |
-| `command not found: claude` atau `'claude' is not recognized`         | [Perbaiki PATH Anda](#command-not-found-claude-after-installation)                                                      |
-| `syntax error near unexpected token '<'`                              | [Install script returns HTML](#install-script-returns-html-instead-of-a-shell-script)                                   |
-| `curl: (56) Failure writing output to destination`                    | [Download script first, then run it](#curl-56-failure-writing-output-to-destination)                                    |
-| `Killed` selama install di Linux                                      | [Add swap space for low-memory servers](#install-killed-on-low-memory-linux-servers)                                    |
-| `TLS connect error` atau `SSL/TLS secure channel`                     | [Update CA certificates](#tls-or-ssl-connection-errors)                                                                 |
-| `Failed to fetch version` atau tidak dapat menjangkau server download | [Check network and proxy settings](#check-network-connectivity)                                                         |
-| `irm is not recognized` atau `&& is not valid`                        | [Use the right command for your shell](#windows-irm-or--not-recognized)                                                 |
-| `Claude Code on Windows requires git-bash`                            | [Install or configure Git Bash](#windows-claude-code-on-windows-requires-git-bash)                                      |
-| `Error loading shared library`                                        | [Wrong binary variant for your system](#linux-wrong-binary-variant-installed-muslglibc-mismatch)                        |
-| `Illegal instruction` di Linux                                        | [Architecture mismatch](#illegal-instruction-on-linux)                                                                  |
-| `dyld: cannot load` atau `Abort trap` di macOS                        | [Binary incompatibility](#dyld-cannot-load-on-macos)                                                                    |
-| `Invoke-Expression: Missing argument in parameter list`               | [Install script returns HTML](#install-script-returns-html-instead-of-a-shell-script)                                   |
-| `App unavailable in region`                                           | Claude Code tidak tersedia di negara Anda. Lihat [negara yang didukung](https://www.anthropic.com/supported-countries). |
-| `unable to get local issuer certificate`                              | [Configure corporate CA certificates](#tls-or-ssl-connection-errors)                                                    |
-| `OAuth error` atau `403 Forbidden`                                    | [Fix authentication](#authentication-issues)                                                                            |
+| Apa yang Anda lihat                                                                                    | Solusi                                                                                                                  |
+| :----------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------- |
+| `command not found: claude` atau `'claude' is not recognized`                                          | [Perbaiki PATH Anda](#command-not-found-claude-after-installation)                                                      |
+| `syntax error near unexpected token '<'`                                                               | [Install script returns HTML](#install-script-returns-html-instead-of-a-shell-script)                                   |
+| `curl: (56) Failure writing output to destination`                                                     | [Download script first, then run it](#curl-56-failure-writing-output-to-destination)                                    |
+| `Killed` selama install di Linux                                                                       | [Add swap space for low-memory servers](#install-killed-on-low-memory-linux-servers)                                    |
+| `TLS connect error` atau `SSL/TLS secure channel`                                                      | [Update CA certificates](#tls-or-ssl-connection-errors)                                                                 |
+| `Failed to fetch version` atau tidak dapat menjangkau server download                                  | [Check network and proxy settings](#check-network-connectivity)                                                         |
+| `irm is not recognized` atau `&& is not valid`                                                         | [Use the right command for your shell](#windows-wrong-install-command)                                                  |
+| `'bash' is not recognized as the name of a cmdlet`                                                     | [Use the Windows installer command](#windows-wrong-install-command)                                                     |
+| `Claude Code on Windows requires git-bash`                                                             | [Install or configure Git Bash](#windows-claude-code-on-windows-requires-git-bash)                                      |
+| `Claude Code does not support 32-bit Windows`                                                          | [Open Windows PowerShell, not the x86 entry](#windows-claude-code-does-not-support-32-bit-windows)                      |
+| `Error loading shared library`                                                                         | [Wrong binary variant for your system](#linux-wrong-binary-variant-installed-musl/glibc-mismatch)                       |
+| `Illegal instruction` di Linux                                                                         | [Architecture mismatch](#illegal-instruction-on-linux)                                                                  |
+| `dyld: cannot load`, `dyld: Symbol not found`, atau `Abort trap` di macOS                              | [Binary incompatibility](#dyld-cannot-load-on-macos)                                                                    |
+| `Invoke-Expression: Missing argument in parameter list`                                                | [Install script returns HTML](#install-script-returns-html-instead-of-a-shell-script)                                   |
+| `App unavailable in region`                                                                            | Claude Code tidak tersedia di negara Anda. Lihat [negara yang didukung](https://www.anthropic.com/supported-countries). |
+| `unable to get local issuer certificate`                                                               | [Configure corporate CA certificates](#tls-or-ssl-connection-errors)                                                    |
+| `OAuth error` atau `403 Forbidden`                                                                     | [Fix authentication](#authentication-issues)                                                                            |
+| `API Error: 500`, `529 Overloaded`, `429`, atau error 4xx dan 5xx lainnya yang tidak terdaftar di atas | Lihat [Error reference](/id/errors)                                                                                     |
 
 Jika masalah Anda tidak terdaftar, kerjakan langkah-langkah diagnostik ini.
 
@@ -172,7 +175,7 @@ Uninstall instalasi npm global:
 npm uninstall -g @anthropic-ai/claude-code
 ```
 
-Hapus instalasi Homebrew di macOS:
+Hapus instalasi Homebrew di macOS (gunakan `claude-code@latest` jika Anda menginstal cask itu):
 
 ```bash theme={null}
 brew uninstall --cask claude-code
@@ -328,6 +331,12 @@ Kesalahan seperti `curl: (35) TLS connect error`, `schannel: next InitializeSecu
    ```
    Tanyakan kepada tim IT Anda untuk file sertifikat jika Anda tidak memilikinya. Anda juga dapat mencoba pada koneksi langsung untuk mengkonfirmasi proxy adalah penyebabnya.
 
+4. **Di Windows, lewati pemeriksaan revokasi sertifikat** jika Anda melihat `CRYPT_E_NO_REVOCATION_CHECK (0x80092012)` atau `CRYPT_E_REVOCATION_OFFLINE (0x80092013)`. Ini berarti curl mencapai server tetapi jaringan Anda memblokir pencarian revokasi sertifikat, yang umum di belakang firewall perusahaan. Tambahkan `--ssl-revoke-best-effort` ke perintah install:
+   ```bat theme={null}
+   curl --ssl-revoke-best-effort -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+   ```
+   Atau, instal dengan `winget install Anthropic.ClaudeCode`, yang menghindari curl sepenuhnya.
+
 ### `Failed to fetch version from storage.googleapis.com`
 
 Installer tidak dapat menjangkau server download. Ini biasanya berarti `storage.googleapis.com` diblokir di jaringan Anda.
@@ -359,9 +368,9 @@ Installer tidak dapat menjangkau server download. Ini biasanya berarti `storage.
    winget install Anthropic.ClaudeCode
    ```
 
-### Windows: `irm` or `&&` not recognized
+### Windows: wrong install command
 
-Jika Anda melihat `'irm' is not recognized` atau `The token '&&' is not valid`, Anda menjalankan perintah yang salah untuk shell Anda.
+Jika Anda melihat `'irm' is not recognized`, `The token '&&' is not valid`, atau `'bash' is not recognized as the name of a cmdlet`, Anda menyalin perintah install untuk shell atau sistem operasi yang berbeda.
 
 * **`irm` not recognized**: Anda berada di CMD, bukan PowerShell. Anda memiliki dua opsi:
 
@@ -378,6 +387,11 @@ Jika Anda melihat `'irm' is not recognized` atau `The token '&&' is not valid`, 
   ```
 
 * **`&&` not valid**: Anda berada di PowerShell tetapi menjalankan perintah installer CMD. Gunakan installer PowerShell:
+  ```powershell theme={null}
+  irm https://claude.ai/install.ps1 | iex
+  ```
+
+* **`bash` not recognized**: Anda menjalankan installer macOS/Linux di Windows. Gunakan installer PowerShell sebagai gantinya:
   ```powershell theme={null}
   irm https://claude.ai/install.ps1 | iex
   ```
@@ -440,7 +454,7 @@ Jika Anda menginstal versi lama Claude Desktop, itu mungkin mendaftarkan `Claude
 
 Perbarui Claude Desktop ke versi terbaru untuk memperbaiki masalah ini.
 
-### Windows: "Claude Code on Windows requires git-bash"
+### Windows: Claude Code on Windows requires git-bash
 
 Claude Code di Windows native memerlukan [Git for Windows](https://git-scm.com/downloads/win), yang mencakup Git Bash.
 
@@ -457,6 +471,18 @@ Claude Code di Windows native memerlukan [Git for Windows](https://git-scm.com/d
 ```
 
 Jika Git Anda diinstal di tempat lain, temukan jalur dengan menjalankan `where.exe git` di PowerShell dan gunakan jalur `bin\bash.exe` dari direktori itu.
+
+### Windows: Claude Code does not support 32-bit Windows
+
+Windows mencakup dua entri PowerShell di menu Start: `Windows PowerShell` dan `Windows PowerShell (x86)`. Entri x86 berjalan sebagai proses 32-bit dan memicu kesalahan ini bahkan di mesin 64-bit. Untuk memeriksa kasus mana yang Anda alami, jalankan ini di jendela yang sama yang menghasilkan kesalahan:
+
+```powershell theme={null}
+[Environment]::Is64BitOperatingSystem
+```
+
+Jika ini mencetak `True`, sistem operasi Anda baik-baik saja. Tutup jendela, buka `Windows PowerShell` tanpa akhiran x86, dan jalankan perintah install lagi.
+
+Jika ini mencetak `False`, Anda berada di edisi Windows 32-bit. Claude Code memerlukan sistem operasi 64-bit. Lihat [system requirements](/id/setup#system-requirements).
 
 ### Linux: wrong binary variant installed (musl/glibc mismatch)
 
@@ -506,11 +532,19 @@ bash: line 142: 2238232 Illegal instruction    "$binary_path" install ${TARGET:+
 
 ### `dyld: cannot load` on macOS
 
-Jika Anda melihat `dyld: cannot load` atau `Abort trap: 6` selama instalasi, binary tidak kompatibel dengan versi macOS atau hardware Anda.
+Jika Anda melihat `dyld: cannot load`, `dyld: Symbol not found`, atau `Abort trap: 6` selama instalasi, binary tidak kompatibel dengan versi macOS atau hardware Anda.
 
 ```text theme={null}
 dyld: cannot load 'claude-2.1.42-darwin-x64' (load command 0x80000034 is unknown)
 Abort trap: 6
+```
+
+Kesalahan `Symbol not found` yang mereferensikan `libicucore` juga menunjukkan versi macOS Anda lebih lama dari yang didukung binary:
+
+```text theme={null}
+dyld: Symbol not found: _ubrk_clone
+  Referenced from: claude-darwin-x64 (which was built for Mac OS X 13.0)
+  Expected in: /usr/lib/libicucore.A.dylib
 ```
 
 **Solusi:**
@@ -575,7 +609,7 @@ export PATH="$HOME/.nvm/versions/node/$(node -v)/bin:$PATH"
 
 ### WSL2 sandbox setup
 
-[Sandboxing](/id/sandboxing) didukung di WSL2 tetapi memerlukan penginstalan paket tambahan. Jika Anda melihat kesalahan seperti "Sandbox requires socat and bubblewrap" saat menjalankan `/sandbox`, instal dependensi:
+[Sandboxing](/id/sandboxing) didukung di WSL2 tetapi memerlukan penginstalan paket tambahan. Jika Anda melihat kesalahan tentang `bubblewrap` atau `socat` yang hilang saat menjalankan `/sandbox`, instal dependensi:
 
 <Tabs>
   <Tab title="Ubuntu/Debian">
@@ -593,6 +627,8 @@ export PATH="$HOME/.nvm/versions/node/$(node -v)/bin:$PATH"
 
 WSL1 tidak mendukung sandboxing. Jika Anda melihat "Sandboxing requires WSL2", Anda perlu upgrade ke WSL2 atau menjalankan Claude Code tanpa sandboxing.
 
+Perintah sandboxed tidak dapat meluncurkan binary Windows seperti `cmd.exe`, `powershell.exe`, atau executable di bawah `/mnt/c/`. WSL menyerahkan ini ke host Windows melalui Unix socket, yang sandbox blokir. Jika perintah perlu memanggil binary Windows, tambahkan ke [`excludedCommands`](/id/settings#sandbox-settings) sehingga berjalan di luar sandbox.
+
 ### Permission errors during installation
 
 Jika installer native gagal dengan kesalahan izin, direktori target mungkin tidak dapat ditulis. Lihat [Check directory permissions](#check-directory-permissions).
@@ -602,6 +638,16 @@ Jika Anda sebelumnya menginstal dengan npm dan mengalami kesalahan spesifik npm,
 ```bash theme={null}
 curl -fsSL https://claude.ai/install.sh | bash
 ```
+
+### Native binary not found after npm install
+
+Paket npm `@anthropic-ai/claude-code` menarik binary native melalui dependensi opsional per-platform seperti `@anthropic-ai/claude-code-darwin-arm64`. Jika menjalankan `claude` setelah install mencetak `Could not find native binary package "@anthropic-ai/claude-code-<platform>"`, periksa penyebab berikut:
+
+* **Optional dependencies are disabled.** Hapus `--omit=optional` dari perintah npm install Anda, `--no-optional` dari pnpm, atau `--ignore-optional` dari yarn, dan periksa bahwa `.npmrc` tidak menetapkan `optional=false`. Kemudian instal ulang. Binary native hanya dikirimkan sebagai dependensi opsional, jadi tidak ada fallback JavaScript jika dilewati.
+* **Unsupported platform.** Binary pra-built dipublikasikan untuk `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64`, dan `win32-arm64`. Claude Code tidak mengirimkan binary untuk platform lain; lihat [system requirements](/id/setup#system-requirements).
+* **Corporate npm mirror is missing the platform packages.** Pastikan registry Anda mencerminkan semua delapan paket platform `@anthropic-ai/claude-code-*` selain paket meta.
+
+Menginstal dengan `--ignore-scripts` tidak memicu kesalahan ini. Langkah postinstall yang menghubungkan binary ke tempat dilewati, jadi Claude Code kembali ke wrapper yang menemukan dan menjalankan binary platform di setiap peluncuran. Ini berfungsi tetapi dimulai lebih lambat; instal ulang dengan skrip diaktifkan untuk eksekusi langsung.
 
 ## Permissions and authentication
 
@@ -639,6 +685,43 @@ Jika Anda melihat `API Error: 403 {"error":{"type":"forbidden","message":"Reques
 * **Pengguna Console**: konfirmasi akun Anda memiliki peran "Claude Code" atau "Developer" yang ditetapkan oleh admin Anda
 * **Di belakang proxy**: proxy perusahaan dapat mengganggu permintaan API. Lihat [network configuration](/id/network-config) untuk setup proxy.
 
+### Model not found or not accessible
+
+Jika Anda melihat `There's an issue with the selected model (...). It may not exist or you may not have access to it`, API menolak nama model yang dikonfigurasi.
+
+Penyebab umum:
+
+* Typo dalam nama model yang diteruskan ke `--model`
+* ID model yang sudah usang atau tidak digunakan lagi yang disimpan di pengaturan Anda
+* Kunci API tanpa akses ke model itu di tier penggunaan saat ini
+
+Periksa di mana model diatur, dalam [urutan prioritas](/id/model-config#setting-your-model):
+
+* Bendera `--model`
+* Variabel lingkungan `ANTHROPIC_MODEL`
+* Bidang `model` di `.claude/settings.local.json`
+* Bidang `model` di `.claude/settings.json` proyek Anda
+* Bidang `model` di `~/.claude/settings.json`
+
+Untuk menghapus nilai yang sudah usang, hapus bidang `model` dari pengaturan Anda atau hapus `ANTHROPIC_MODEL`, dan Claude Code akan kembali ke model default untuk akun Anda.
+
+Untuk menelusuri model yang tersedia untuk akun Anda, mulai `claude` secara interaktif dan jalankan `/model` untuk membuka picker. Untuk deployment Vertex AI, lihat [bagian troubleshooting Vertex AI](/id/google-vertex-ai#troubleshooting).
+
+### This organization has been disabled with an active subscription
+
+Jika Anda melihat `API Error: 400 ... "This organization has been disabled"` meskipun memiliki langganan Claude aktif, variabel lingkungan `ANTHROPIC_API_KEY` menimpa langganan Anda. Ini biasanya terjadi ketika kunci API lama dari majikan atau proyek sebelumnya masih diatur di profil shell Anda.
+
+Ketika `ANTHROPIC_API_KEY` ada dan Anda telah menyetujuinya, Claude Code menggunakan kunci itu alih-alih kredensial OAuth langganan Anda. Dalam mode non-interaktif (`-p`), kunci selalu digunakan saat ada. Lihat [authentication precedence](/id/authentication#authentication-precedence) untuk urutan resolusi lengkap.
+
+Untuk menggunakan langganan Anda sebagai gantinya, hapus variabel lingkungan dan hapus dari profil shell Anda:
+
+```bash theme={null}
+unset ANTHROPIC_API_KEY
+claude
+```
+
+Periksa `~/.zshrc`, `~/.bashrc`, atau `~/.profile` untuk baris `export ANTHROPIC_API_KEY=...` dan hapus untuk membuat perubahan permanen. Jalankan `/status` di dalam Claude Code untuk mengkonfirmasi metode autentikasi mana yang aktif.
+
 ### OAuth login fails in WSL2
 
 Login berbasis browser di WSL2 mungkin gagal jika WSL tidak dapat membuka browser Windows Anda. Atur variabel lingkungan `BROWSER`:
@@ -650,11 +733,13 @@ claude
 
 Atau salin URL secara manual: saat prompt login muncul, tekan `c` untuk menyalin URL OAuth, kemudian tempel ke browser Windows Anda.
 
-### "Not logged in" or token expired
+### Not logged in or token expired
 
 Jika Claude Code meminta Anda untuk login lagi setelah sesi, token OAuth Anda mungkin telah kedaluwarsa.
 
 Jalankan `/login` untuk re-authenticate. Jika ini terjadi sering, periksa bahwa jam sistem Anda akurat, karena validasi token bergantung pada timestamp yang benar.
+
+Di macOS, login juga dapat gagal ketika Keychain terkunci atau passwordnya tidak sinkron dengan password akun Anda, yang mencegah Claude Code menyimpan kredensial. Jalankan `claude doctor` untuk memeriksa akses Keychain. Untuk membuka Keychain secara manual, jalankan `security unlock-keychain ~/Library/Keychains/login.keychain-db`. Jika membuka kunci tidak membantu, buka Keychain Access, pilih keychain `login`, dan pilih Edit > Change Password for Keychain "login" untuk menyinkronkannya kembali dengan password akun Anda.
 
 ## Configuration file locations
 
@@ -703,6 +788,19 @@ Claude Code dirancang untuk bekerja dengan sebagian besar lingkungan pengembanga
 1. Gunakan `/compact` secara teratur untuk mengurangi ukuran konteks
 2. Tutup dan mulai ulang Claude Code di antara tugas-tugas besar
 3. Pertimbangkan menambahkan direktori build besar ke file `.gitignore` Anda
+
+Jika penggunaan memori tetap tinggi setelah langkah-langkah ini, jalankan `/heapdump` untuk menulis snapshot heap JavaScript dan rincian memori ke `~/Desktop`. Rincian menunjukkan resident set size, JS heap, array buffers, dan memori native yang tidak terhitung, yang membantu mengidentifikasi apakah pertumbuhan ada di objek JavaScript atau di kode native. Buka file `.heapsnapshot` di Chrome DevTools di bawah Memory → Load untuk memeriksa retainers. Lampirkan kedua file saat melaporkan masalah memori di [GitHub](https://github.com/anthropics/claude-code/issues).
+
+### Auto-compaction stops with a thrashing error
+
+Jika Anda melihat `Autocompact is thrashing: the context refilled to the limit...`, automatic compaction berhasil tetapi file atau output alat segera mengisi ulang jendela konteks beberapa kali berturut-turut. Claude Code berhenti mencoba ulang untuk menghindari pemborosan panggilan API pada loop yang tidak membuat kemajuan.
+
+Untuk pulih:
+
+1. Minta Claude membaca file yang terlalu besar dalam potongan yang lebih kecil, seperti rentang baris tertentu atau fungsi, alih-alih seluruh file
+2. Jalankan `/compact` dengan fokus yang menjatuhkan output besar, misalnya `/compact keep only the plan and the diff`
+3. Pindahkan pekerjaan file besar ke [subagent](/id/sub-agents) sehingga berjalan di jendela konteks terpisah
+4. Jalankan `/clear` jika percakapan sebelumnya tidak lagi diperlukan
 
 ### Command hangs or freezes
 
@@ -832,7 +930,7 @@ Jika Anda memperhatikan blok kode seperti ini dalam markdown yang dihasilkan:
 function example() {
   return "hello";
 }
-```text
+```
 ````
 
 Alih-alih blok yang diberi tag dengan benar seperti:
@@ -842,7 +940,7 @@ Alih-alih blok yang diberi tag dengan benar seperti:
 function example() {
   return "hello";
 }
-```text
+```
 ````
 
 **Solusi:**
@@ -877,14 +975,15 @@ Untuk meminimalkan masalah pemformatan:
 
 Jika Anda mengalami masalah yang tidak tercakup di sini:
 
-1. Gunakan perintah `/bug` dalam Claude Code untuk melaporkan masalah langsung ke Anthropic
-2. Periksa [GitHub repository](https://github.com/anthropics/claude-code) untuk masalah yang diketahui
-3. Jalankan `/doctor` untuk mendiagnosis masalah. Ini memeriksa:
+1. Lihat [Error reference](/id/errors) untuk `API Error: 5xx`, `529 Overloaded`, `429`, dan error validasi permintaan yang muncul selama sesi
+2. Gunakan perintah `/feedback` dalam Claude Code untuk melaporkan masalah langsung ke Anthropic
+3. Periksa [GitHub repository](https://github.com/anthropics/claude-code) untuk masalah yang diketahui
+4. Jalankan `/doctor` untuk mendiagnosis masalah. Ini memeriksa:
    * Tipe instalasi, versi, dan fungsionalitas pencarian
    * Status auto-update dan versi yang tersedia
    * File pengaturan yang tidak valid (JSON yang salah bentuk, tipe yang tidak benar)
-   * Kesalahan konfigurasi MCP server
+   * Kesalahan konfigurasi MCP server, termasuk nama server yang sama didefinisikan dalam beberapa scope dengan endpoint berbeda
    * Masalah konfigurasi pintasan keyboard
    * Peringatan penggunaan konteks (file CLAUDE.md besar, penggunaan token MCP tinggi, aturan izin yang tidak dapat dijangkau)
    * Plugin dan kesalahan pemuatan agen
-4. Tanyakan Claude secara langsung tentang kemampuan dan fiturnya - Claude memiliki akses bawaan ke dokumentasinya
+5. Tanyakan Claude secara langsung tentang kemampuan dan fiturnya - Claude memiliki akses bawaan ke dokumentasinya

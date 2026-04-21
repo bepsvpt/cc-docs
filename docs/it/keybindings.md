@@ -46,26 +46,28 @@ Questo esempio associa `Ctrl+E` per aprire un editor esterno nel contesto della 
 
 Ogni blocco di binding specifica un **contesto** dove si applicano i binding:
 
-| Contesto          | Descrizione                                                                    |
-| :---------------- | :----------------------------------------------------------------------------- |
-| `Global`          | Si applica ovunque nell'app                                                    |
-| `Chat`            | Area di input della chat principale                                            |
-| `Autocomplete`    | Menu di autocompletamento è aperto                                             |
-| `Settings`        | Menu delle impostazioni                                                        |
-| `Confirmation`    | Dialoghi di permesso e conferma                                                |
-| `Tabs`            | Componenti di navigazione delle schede                                         |
-| `Help`            | Menu della guida è visibile                                                    |
-| `Transcript`      | Visualizzatore di trascrizione                                                 |
-| `HistorySearch`   | Modalità di ricerca nella cronologia (Ctrl+R)                                  |
-| `Task`            | Attività in background in esecuzione                                           |
-| `ThemePicker`     | Dialogo di selezione del tema                                                  |
-| `Attachments`     | Navigazione degli allegati nei dialoghi di selezione                           |
-| `Footer`          | Navigazione dell'indicatore di piè di pagina (attività, team, diff)            |
-| `MessageSelector` | Selezione dei messaggi nella finestra di dialogo di riavvolgimento e riepilogo |
-| `DiffDialog`      | Navigazione del visualizzatore diff                                            |
-| `ModelPicker`     | Livello di sforzo del selezionatore di modelli                                 |
-| `Select`          | Componenti generici di selezione/elenco                                        |
-| `Plugin`          | Dialogo dei plugin (sfoglia, scopri, gestisci)                                 |
+| Contesto          | Descrizione                                                                        |
+| :---------------- | :--------------------------------------------------------------------------------- |
+| `Global`          | Si applica ovunque nell'app                                                        |
+| `Chat`            | Area di input della chat principale                                                |
+| `Autocomplete`    | Menu di autocompletamento è aperto                                                 |
+| `Settings`        | Menu delle impostazioni                                                            |
+| `Confirmation`    | Dialoghi di permesso e conferma                                                    |
+| `Tabs`            | Componenti di navigazione delle schede                                             |
+| `Help`            | Menu della guida è visibile                                                        |
+| `Transcript`      | Visualizzatore di trascrizione                                                     |
+| `HistorySearch`   | Modalità di ricerca nella cronologia (Ctrl+R)                                      |
+| `Task`            | Attività in background in esecuzione                                               |
+| `ThemePicker`     | Dialogo di selezione del tema                                                      |
+| `Attachments`     | Navigazione degli allegati nei dialoghi di selezione                               |
+| `Footer`          | Navigazione dell'indicatore di piè di pagina (attività, team, diff)                |
+| `MessageSelector` | Selezione dei messaggi nella finestra di dialogo di riavvolgimento e riepilogo     |
+| `DiffDialog`      | Navigazione del visualizzatore diff                                                |
+| `ModelPicker`     | Livello di sforzo del selezionatore di modelli                                     |
+| `Select`          | Componenti generici di selezione/elenco                                            |
+| `Plugin`          | Dialogo dei plugin (sfoglia, scopri, gestisci)                                     |
+| `Scroll`          | Scorrimento della conversazione e selezione del testo in modalità a schermo intero |
+| `Doctor`          | Schermata diagnostica `/doctor`                                                    |
 
 ## Azioni disponibili
 
@@ -75,13 +77,13 @@ Le azioni seguono un formato `namespace:action`, come `chat:submit` per inviare 
 
 Azioni disponibili nel contesto `Global`:
 
-| Azione                 | Predefinito | Descrizione                                               |
-| :--------------------- | :---------- | :-------------------------------------------------------- |
-| `app:interrupt`        | Ctrl+C      | Annulla l'operazione corrente                             |
-| `app:exit`             | Ctrl+D      | Esci da Claude Code                                       |
-| `app:redraw`           | Ctrl+L      | Ridisegna lo schermo                                      |
-| `app:toggleTodos`      | Ctrl+T      | Attiva/disattiva la visibilità dell'elenco delle attività |
-| `app:toggleTranscript` | Ctrl+O      | Attiva/disattiva la trascrizione dettagliata              |
+| Azione                 | Predefinito     | Descrizione                                               |
+| :--------------------- | :-------------- | :-------------------------------------------------------- |
+| `app:interrupt`        | Ctrl+C          | Annulla l'operazione corrente                             |
+| `app:exit`             | Ctrl+D          | Esci da Claude Code                                       |
+| `app:redraw`           | (non associato) | Forza il ridisegno del terminale                          |
+| `app:toggleTodos`      | Ctrl+T          | Attiva/disattiva la visibilità dell'elenco delle attività |
+| `app:toggleTranscript` | Ctrl+O          | Attiva/disattiva la trascrizione dettagliata              |
 
 ### Azioni della cronologia
 
@@ -97,20 +99,21 @@ Azioni per navigare nella cronologia dei comandi:
 
 Azioni disponibili nel contesto `Chat`:
 
-| Azione                | Predefinito               | Descrizione                            |
-| :-------------------- | :------------------------ | :------------------------------------- |
-| `chat:cancel`         | Escape                    | Annulla l'input corrente               |
-| `chat:killAgents`     | Ctrl+X Ctrl+K             | Termina tutti gli agenti in background |
-| `chat:cycleMode`      | Shift+Tab\*               | Cicla le modalità di permesso          |
-| `chat:modelPicker`    | Cmd+P / Meta+P            | Apri il selezionatore di modelli       |
-| `chat:fastMode`       | Meta+O                    | Attiva/disattiva la modalità veloce    |
-| `chat:thinkingToggle` | Cmd+T / Meta+T            | Attiva/disattiva il pensiero esteso    |
-| `chat:submit`         | Invio                     | Invia il messaggio                     |
-| `chat:newline`        | (non associato)           | Inserisci una nuova riga senza inviare |
-| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | Annulla l'ultima azione                |
-| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Apri nell'editor esterno               |
-| `chat:stash`          | Ctrl+S                    | Nascondi il prompt corrente            |
-| `chat:imagePaste`     | Ctrl+V (Alt+V su Windows) | Incolla immagine                       |
+| Azione                | Predefinito               | Descrizione                                                       |
+| :-------------------- | :------------------------ | :---------------------------------------------------------------- |
+| `chat:cancel`         | Escape                    | Annulla l'input corrente                                          |
+| `chat:clearInput`     | Ctrl+L                    | Cancella l'input del prompt e forza un ridisegno a schermo intero |
+| `chat:killAgents`     | Ctrl+X Ctrl+K             | Termina tutti gli agenti in background                            |
+| `chat:cycleMode`      | Shift+Tab\*               | Cicla le modalità di permesso                                     |
+| `chat:modelPicker`    | Cmd+P / Meta+P            | Apri il selezionatore di modelli                                  |
+| `chat:fastMode`       | Meta+O                    | Attiva/disattiva la modalità veloce                               |
+| `chat:thinkingToggle` | Cmd+T / Meta+T            | Attiva/disattiva il pensiero esteso                               |
+| `chat:submit`         | Invio                     | Invia il messaggio                                                |
+| `chat:newline`        | Ctrl+J                    | Inserisci una nuova riga senza inviare                            |
+| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | Annulla l'ultima azione                                           |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Apri nell'editor esterno                                          |
+| `chat:stash`          | Ctrl+S                    | Nascondi il prompt corrente                                       |
+| `chat:imagePaste`     | Ctrl+V (Alt+V su Windows) | Incolla immagine                                                  |
 
 \*Su Windows senza modalità VT (Node \<24.2.0/\<22.17.0, Bun \<1.2.23), il valore predefinito è Meta+M.
 
@@ -276,10 +279,11 @@ Azioni disponibili nel contesto `Select`:
 
 Azioni disponibili nel contesto `Plugin`:
 
-| Azione           | Predefinito | Descrizione                              |
-| :--------------- | :---------- | :--------------------------------------- |
-| `plugin:toggle`  | Spazio      | Attiva/disattiva la selezione del plugin |
-| `plugin:install` | I           | Installa i plugin selezionati            |
+| Azione            | Predefinito | Descrizione                                                                                                           |
+| :---------------- | :---------- | :-------------------------------------------------------------------------------------------------------------------- |
+| `plugin:toggle`   | Spazio      | Attiva/disattiva la selezione del plugin                                                                              |
+| `plugin:install`  | I           | Installa i plugin selezionati                                                                                         |
+| `plugin:favorite` | F           | Aggiungi ai preferiti il plugin selezionato in modo che si ordini vicino alla parte superiore della scheda Installati |
 
 ### Azioni delle impostazioni
 
@@ -291,6 +295,14 @@ Azioni disponibili nel contesto `Settings`:
 | `settings:retry`  | R           | Riprova a caricare i dati di utilizzo (in caso di errore)                                      |
 | `settings:close`  | Invio       | Salva le modifiche e chiudi il pannello di configurazione. Escape scarta le modifiche e chiude |
 
+### Azioni del Doctor
+
+Azioni disponibili nel contesto `Doctor`:
+
+| Azione       | Predefinito | Descrizione                                                                                                             |
+| :----------- | :---------- | :---------------------------------------------------------------------------------------------------------------------- |
+| `doctor:fix` | F           | Invia il rapporto diagnostico a Claude per correggere i problemi segnalati. Attivo solo quando vengono trovati problemi |
+
 ### Azioni vocali
 
 Azioni disponibili nel contesto `Chat` quando la [dettatura vocale](/it/voice-dictation) è abilitata:
@@ -298,6 +310,31 @@ Azioni disponibili nel contesto `Chat` quando la [dettatura vocale](/it/voice-di
 | Azione             | Predefinito | Descrizione                         |
 | :----------------- | :---------- | :---------------------------------- |
 | `voice:pushToTalk` | Spazio      | Tieni premuto per dettare un prompt |
+
+### Azioni di scorrimento
+
+Azioni disponibili nel contesto `Scroll` quando il [rendering a schermo intero](/it/fullscreen) è abilitato:
+
+| Azione                      | Predefinito          | Descrizione                                                                                                                             |
+| :-------------------------- | :------------------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
+| `scroll:lineUp`             | (non associato)      | Scorri verso l'alto di una riga. Lo scorrimento con la rotella del mouse attiva questa azione                                           |
+| `scroll:lineDown`           | (non associato)      | Scorri verso il basso di una riga. Lo scorrimento con la rotella del mouse attiva questa azione                                         |
+| `scroll:pageUp`             | PagSu                | Scorri verso l'alto della metà dell'altezza del viewport                                                                                |
+| `scroll:pageDown`           | PagGiù               | Scorri verso il basso della metà dell'altezza del viewport                                                                              |
+| `scroll:top`                | Ctrl+Home            | Salta all'inizio della conversazione                                                                                                    |
+| `scroll:bottom`             | Ctrl+Fine            | Salta al messaggio più recente e riabilita il follow automatico                                                                         |
+| `scroll:halfPageUp`         | (non associato)      | Scorri verso l'alto della metà dell'altezza del viewport. Stesso comportamento di `scroll:pageUp`, fornito per i rebind in stile vi     |
+| `scroll:halfPageDown`       | (non associato)      | Scorri verso il basso della metà dell'altezza del viewport. Stesso comportamento di `scroll:pageDown`, fornito per i rebind in stile vi |
+| `scroll:fullPageUp`         | (non associato)      | Scorri verso l'alto dell'intera altezza del viewport                                                                                    |
+| `scroll:fullPageDown`       | (non associato)      | Scorri verso il basso dell'intera altezza del viewport                                                                                  |
+| `selection:copy`            | Ctrl+Shift+C / Cmd+C | Copia il testo selezionato negli appunti                                                                                                |
+| `selection:clear`           | (non associato)      | Cancella la selezione di testo attiva                                                                                                   |
+| `selection:extendLeft`      | Shift+Sinistra       | Estendi la selezione attiva di una colonna a sinistra                                                                                   |
+| `selection:extendRight`     | Shift+Destra         | Estendi la selezione attiva di una colonna a destra                                                                                     |
+| `selection:extendUp`        | Shift+Su             | Estendi la selezione attiva di una riga verso l'alto. Scorri il viewport quando la selezione raggiunge il bordo superiore               |
+| `selection:extendDown`      | Shift+Giù            | Estendi la selezione attiva di una riga verso il basso. Scorri il viewport quando la selezione raggiunge il bordo inferiore             |
+| `selection:extendLineStart` | Shift+Home           | Estendi la selezione attiva all'inizio della riga                                                                                       |
+| `selection:extendLineEnd`   | Shift+Fine           | Estendi la selezione attiva alla fine della riga                                                                                        |
 
 ## Sintassi delle sequenze di tasti
 
@@ -400,7 +437,7 @@ Alcune scorciatoie potrebbero entrare in conflitto con i multiplexer di terminal
 
 ## Interazione con la modalità Vim
 
-Quando la modalità vim è abilitata (`/vim`), i keybindings e la modalità vim operano indipendentemente:
+Quando la modalità vim è abilitata tramite `/config` → Editor mode, i keybindings e la modalità vim operano indipendentemente:
 
 * **Modalità Vim** gestisce l'input a livello di input di testo (movimento del cursore, modalità, movimenti)
 * **Keybindings** gestisce le azioni a livello di componente (attiva/disattiva attività, invia, ecc.)

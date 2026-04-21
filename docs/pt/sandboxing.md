@@ -103,7 +103,7 @@ Por padrão, se o sandbox não conseguir iniciar (dependências ausentes, plataf
 
 Claude Code oferece dois modos de sandbox:
 
-**Modo de permissão automática**: Comandos bash tentarão ser executados dentro do sandbox e são automaticamente permitidos sem exigir permissão. Comandos que não podem ser colocados em sandbox (como aqueles que precisam de acesso à rede para hosts não permitidos) voltam ao fluxo de permissão regular. Regras explícitas de ask/deny que você configurou são sempre respeitadas.
+**Modo de permissão automática**: Comandos bash tentarão ser executados dentro do sandbox e são automaticamente permitidos sem exigir permissão. Comandos que não podem ser colocados em sandbox (como aqueles que precisam de acesso à rede para hosts não permitidos) voltam ao fluxo de permissão regular. Regras explícitas de negação são sempre respeitadas. Regras de ask se aplicam apenas a comandos que voltam ao fluxo de permissão regular.
 
 **Modo de permissões regular**: Todos os comandos bash passam pelo fluxo de permissão padrão, mesmo quando em sandbox. Isso fornece mais controle, mas requer mais aprovações.
 
@@ -169,7 +169,7 @@ O `.` em `allowRead` resolve para a raiz do projeto porque esta configuração r
 
   * Muitas ferramentas CLI requerem acesso a certos hosts. Conforme você usa essas ferramentas, elas solicitarão permissão para acessar certos hosts. Conceder permissão permitirá que elas acessem esses hosts agora e no futuro, permitindo que sejam executadas com segurança dentro do sandbox.
   * `watchman` é incompatível com execução no sandbox. Se você estiver executando `jest`, considere usar `jest --no-watchman`
-  * `docker` é incompatível com execução no sandbox. Considere especificar `docker` em `excludedCommands` para forçá-lo a ser executado fora do sandbox.
+  * `docker` é incompatível com execução no sandbox. Considere especificar `docker *` em `excludedCommands` para forçá-lo a ser executado fora do sandbox.
 </Tip>
 
 <Note>
@@ -250,6 +250,7 @@ Restrições de sistema de arquivos e rede são configuradas através de configu
 * Use regras de negação `Read` e `Edit` para bloquear acesso a arquivos ou diretórios específicos
 * Use regras de permissão/negação `WebFetch` para controlar acesso a domínios
 * Use `allowedDomains` de sandbox para controlar quais domínios comandos Bash podem alcançar
+* Use `deniedDomains` de sandbox para bloquear domínios específicos mesmo quando um wildcard `allowedDomains` mais amplo permitiria de outra forma
 
 Caminhos de ambas as configurações `sandbox.filesystem` e regras de permissão são mesclados juntos na configuração final do sandbox.
 
@@ -314,7 +315,7 @@ Para detalhes de implementação e código-fonte, visite o [repositório GitHub]
 O sandbox isola subprocessos Bash. Outras ferramentas operam sob limites diferentes:
 
 * **Ferramentas de arquivo integradas**: Read, Edit e Write usam o sistema de permissão diretamente em vez de serem executadas através do sandbox. Veja [permissões](/pt/permissions).
-* **Uso de computador**: quando Claude abre aplicativos e controla sua tela no macOS, ele é executado em seu desktop real em vez de em um ambiente isolado. Prompts de permissão por aplicativo controlam cada aplicativo. Veja [uso de computador no CLI](/pt/computer-use) ou [uso de computador no Desktop](/pt/desktop#let-claude-use-your-computer).
+* **Uso de computador**: quando Claude abre aplicativos e controla sua tela, ele é executado em seu desktop real em vez de em um ambiente isolado. Prompts de permissão por aplicativo controlam cada aplicativo. Veja [uso de computador no CLI](/pt/computer-use) ou [uso de computador no Desktop](/pt/desktop#let-claude-use-your-computer).
 
 ## Veja também
 

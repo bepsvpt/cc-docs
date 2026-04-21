@@ -169,7 +169,7 @@ Il `.` in `allowRead` si risolve nella radice del progetto perché questa config
 
   * Molti strumenti CLI richiedono l'accesso a determinati host. Man mano che utilizzi questi strumenti, richiederanno l'autorizzazione per accedere a determinati host. Concedere l'autorizzazione consentirà loro di accedere a questi host ora e in futuro, consentendo loro di eseguire in modo sicuro all'interno della sandbox.
   * `watchman` è incompatibile con l'esecuzione nella sandbox. Se stai eseguendo `jest`, considera di utilizzare `jest --no-watchman`
-  * `docker` è incompatibile con l'esecuzione nella sandbox. Considera di specificare `docker` in `excludedCommands` per forzarlo a eseguire al di fuori della sandbox.
+  * `docker` è incompatibile con l'esecuzione nella sandbox. Considera di specificare `docker *` in `excludedCommands` per forzarlo a eseguire al di fuori della sandbox.
 </Tip>
 
 <Note>
@@ -250,6 +250,7 @@ Le restrizioni di filesystem e rete sono configurate sia tramite le impostazioni
 * Utilizza le regole di negazione `Read` e `Edit` per bloccare l'accesso a file o directory specifici
 * Utilizza le regole di consentimento/negazione `WebFetch` per controllare l'accesso al dominio
 * Utilizza la sandbox `allowedDomains` per controllare quali domini i comandi Bash possono raggiungere
+* Utilizza la sandbox `deniedDomains` per bloccare domini specifici anche quando un wildcard `allowedDomains` più ampio altrimenti li permetterebbe
 
 I percorsi dalle impostazioni `sandbox.filesystem` e dalle regole di autorizzazione vengono uniti insieme nella configurazione finale della sandbox.
 
@@ -314,7 +315,7 @@ Per i dettagli di implementazione e il codice sorgente, visita il [repository Gi
 La sandbox isola i sottoprocessi Bash. Altri strumenti operano sotto confini diversi:
 
 * **Strumenti di file integrati**: Read, Edit e Write utilizzano il sistema di autorizzazione direttamente piuttosto che eseguire attraverso la sandbox. Vedi [autorizzazioni](/it/permissions).
-* **Utilizzo del computer**: quando Claude apre app e controlla lo schermo su macOS, viene eseguito sul tuo desktop effettivo piuttosto che in un ambiente isolato. I prompt di autorizzazione per app gating ogni applicazione. Vedi [utilizzo del computer nella CLI](/it/computer-use) o [utilizzo del computer in Desktop](/it/desktop#let-claude-use-your-computer).
+* **Utilizzo del computer**: quando Claude apre app e controlla lo schermo, viene eseguito sul tuo desktop effettivo piuttosto che in un ambiente isolato. I prompt di autorizzazione per app gating ogni applicazione. Vedi [utilizzo del computer nella CLI](/it/computer-use) o [utilizzo del computer in Desktop](/it/desktop#let-claude-use-your-computer).
 
 ## Vedi anche
 

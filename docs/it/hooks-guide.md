@@ -42,7 +42,28 @@ Per creare un hook, aggiungete un blocco `hooks` a un [file di impostazioni](#co
     }
     ```
 
-    Se il vostro file di impostazioni ha già una chiave `hooks`, unite la voce `Notification` ad essa piuttosto che sostituire l'intero oggetto. Potete anche chiedere a Claude di scrivere l'hook per voi descrivendo quello che volete nella CLI.
+    Se il vostro file di impostazioni ha già una chiave `hooks`, aggiungete `Notification` come sibling delle chiavi di evento esistenti piuttosto che sostituire l'intero oggetto. Ogni nome di evento è una chiave all'interno del singolo oggetto `hooks`:
+
+    ```json theme={null}
+    {
+      "hooks": {
+        "PostToolUse": [
+          {
+            "matcher": "Edit|Write",
+            "hooks": [{ "type": "command", "command": "jq -r '.tool_input.file_path' | xargs npx prettier --write" }]
+          }
+        ],
+        "Notification": [
+          {
+            "matcher": "",
+            "hooks": [{ "type": "command", "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'" }]
+          }
+        ]
+      }
+    }
+    ```
+
+    Potete anche chiedere a Claude di scrivere l'hook per voi descrivendo quello che volete nella CLI.
   </Step>
 
   <Step title="Verificare la configurazione">
@@ -295,17 +316,27 @@ Il matcher filtra per tipo di configurazione: `user_settings`, `project_settings
 
 Alcuni progetti impostano variabili di ambiente diverse a seconda di quale directory siete. Strumenti come [direnv](https://direnv.net/) lo fanno automaticamente nella vostra shell, ma lo strumento Bash di Claude non raccoglie quei cambiamenti da solo.
 
-Un hook `CwdChanged` risolve questo: si esegue ogni volta che Claude cambia directory, in modo da poter ricaricare le variabili corrette per la nuova posizione. L'hook scrive i valori aggiornati su `CLAUDE_ENV_FILE`, che Claude Code applica prima di ogni comando Bash. Aggiungete questo a `~/.claude/settings.json`:
+L'accoppiamento di un hook `SessionStart` con un hook `CwdChanged` risolve questo. `SessionStart` carica le variabili per la directory in cui avviate, e `CwdChanged` le ricarica ogni volta che Claude cambia directory. Entrambi scrivono su `CLAUDE_ENV_FILE`, che Claude Code esegue come preambolo di script prima di ogni comando Bash. Aggiungete questo a `~/.claude/settings.json`:
 
 ```json theme={null}
 {
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "direnv export bash > \"$CLAUDE_ENV_FILE\""
+          }
+        ]
+      }
+    ],
     "CwdChanged": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "direnv export bash >> \"$CLAUDE_ENV_FILE\""
+            "command": "direnv export bash > \"$CLAUDE_ENV_FILE\""
           }
         ]
       }
@@ -314,7 +345,9 @@ Un hook `CwdChanged` risolve questo: si esegue ogni volta che Claude cambia dire
 }
 ```
 
-Per reagire a file specifici invece di ogni cambio di directory, utilizzate `FileChanged` con un `matcher` che elenca i nomi dei file da guardare (separati da pipe). Il `matcher` sia configura quali file guardare che filtra quali hook si eseguono. Questo esempio guarda `.envrc` e `.env` per i cambiamenti nella directory corrente:
+Eseguite `direnv allow` una volta in ogni directory che ha un `.envrc` in modo che direnv sia autorizzato a caricarlo. Se utilizzate devbox o nix invece di direnv, lo stesso modello funziona con `devbox shellenv` o `devbox global shellenv` al posto di `direnv export bash`.
+
+Per reagire a file specifici invece di ogni cambio di directory, utilizzate `FileChanged` con un `matcher` che elenca i nomi dei file da guardare, separati da `|`. Per costruire l'elenco di osservazione, questo valore viene diviso in nomi di file letterali piuttosto che valutato come regex. Consultate [FileChanged](/it/hooks#filechanged) per come lo stesso valore filtra anche quali gruppi di hook si eseguono quando un file cambia. Questo esempio guarda `.envrc` e `.env` nella directory di lavoro:
 
 ```json theme={null}
 {
@@ -325,7 +358,7 @@ Per reagire a file specifici invece di ogni cambio di directory, utilizzate `Fil
         "hooks": [
           {
             "type": "command",
-            "command": "direnv export bash >> \"$CLAUDE_ENV_FILE\""
+            "command": "direnv export bash > \"$CLAUDE_ENV_FILE\""
           }
         ]
       }
@@ -365,6 +398,10 @@ Il matcher limita l'hook a `ExitPlanMode` solo, in modo che nessun altro prompt 
 Quando l'hook approva, Claude Code esce dalla modalità piano e ripristina qualsiasi modalità di autorizzazione fosse attiva prima di entrare in modalità piano. La trascrizione mostra "Allowed by PermissionRequest hook" dove la finestra di dialogo sarebbe apparsa. Il percorso dell'hook mantiene sempre la conversazione corrente: non può cancellare il contesto e avviare una sessione di implementazione fresca come la finestra di dialogo può.
 
 Per impostare una modalità di autorizzazione specifica invece, l'output del vostro hook può includere un array `updatedPermissions` con una voce `setMode`. Il valore `mode` è qualsiasi modalità di autorizzazione come `default`, `acceptEdits`, o `bypassPermissions`, e `destination: "session"` la applica solo per la sessione corrente.
+
+<Note>
+  `bypassPermissions` si applica solo se la sessione è stata avviata con modalità bypass già disponibile: `--dangerously-skip-permissions`, `--permission-mode bypassPermissions`, `--allow-dangerously-skip-permissions`, o `permissions.defaultMode: "bypassPermissions"` nelle impostazioni, e non disabilitato da [`permissions.disableBypassPermissionsMode`](/it/permissions#managed-settings). Non viene mai persistito come `defaultMode`.
+</Note>
 
 Per passare la sessione a `acceptEdits`, il vostro hook scrive questo JSON su stdout:
 
@@ -423,7 +460,7 @@ Ogni hook ha un `type` che determina come si esegue. La maggior parte degli hook
 
 * `"type": "http"`: POST dei dati dell'evento a un URL. Consultate [HTTP hooks](#http-hooks).
 * `"type": "prompt"`: valutazione LLM a turno singolo. Consultate [Hooks basati su prompt](#prompt-based-hooks).
-* `"type": "agent"`: verifica multi-turno con accesso agli strumenti. Consultate [Hooks basati su agenti](#agent-based-hooks).
+* `"type": "agent"`: verifica multi-turno con accesso agli strumenti. Gli agent hooks sono sperimentali e potrebbero cambiare. Consultate [Hooks basati su agenti](#agent-based-hooks).
 
 ### Leggere l'input e restituire l'output
 
@@ -468,7 +505,7 @@ Il codice di uscita determina cosa succede dopo:
 
 * **Exit 0**: l'azione procede. Per gli hook `UserPromptSubmit` e `SessionStart`, qualsiasi cosa scriviate su stdout viene aggiunta al contesto di Claude.
 * **Exit 2**: l'azione è bloccata. Scrivete un motivo su stderr, e Claude lo riceve come feedback in modo da poter adattarsi.
-* **Qualsiasi altro codice di uscita**: l'azione procede. Stderr viene registrato ma non mostrato a Claude. Attivate la modalità verbose con `Ctrl+O` per vedere questi messaggi nella trascrizione.
+* **Qualsiasi altro codice di uscita**: l'azione procede. La trascrizione mostra un avviso `<hook name> hook error` seguito dalla prima riga di stderr; lo stderr completo va al [debug log](/it/hooks#debug-hooks).
 
 #### Output JSON strutturato
 
@@ -490,13 +527,13 @@ Ad esempio, un hook `PreToolUse` può negare una chiamata di strumento e dire a 
 }
 ```
 
-Con `"deny"`, Claude Code annulla la chiamata dello strumento e alimenta `permissionDecisionReason` di nuovo a Claude come feedback. Queste tre opzioni sono specifiche per `PreToolUse`:
+Con `"deny"`, Claude Code annulla la chiamata dello strumento e alimenta `permissionDecisionReason` di nuovo a Claude. Questi valori `permissionDecision` sono specifici per `PreToolUse`:
 
-* `"allow"`: procedi senza mostrare un prompt di autorizzazione interattivo. Le regole di negazione e richiesta, incluse le liste di negazione gestite dall'azienda, si applicano ancora
+* `"allow"`: salta il prompt di autorizzazione interattivo. Le regole di negazione e richiesta, incluse le liste di negazione gestite dall'azienda, si applicano ancora
 * `"deny"`: annulla la chiamata dello strumento e invia il motivo a Claude
 * `"ask"`: mostra il prompt di autorizzazione all'utente come al solito
 
-Una quarta opzione, `"defer"`, è disponibile in [modalità non interattiva](/it/headless) con il flag `-p`. Esce dal processo con la chiamata dello strumento preservata in modo che un wrapper SDK Agent possa raccogliere input e riprendere. Consultate [Rinviare una chiamata di strumento per dopo](/it/hooks#defer-a-tool-call-for-later) nel riferimento.
+Un quarto valore, `"defer"`, è disponibile in [modalità non interattiva](/it/headless) con il flag `-p`. Esce dal processo con la chiamata dello strumento preservata in modo che un wrapper SDK Agent possa raccogliere input e riprendere. Consultate [Rinviare una chiamata di strumento per dopo](/it/hooks#defer-a-tool-call-for-later) nel riferimento.
 
 Restituire `"allow"` salta il prompt interattivo ma non sostituisce le [regole di autorizzazione](/it/permissions#manage-permissions). Se una regola di negazione corrisponde alla chiamata dello strumento, la chiamata viene bloccata anche quando il vostro hook restituisce `"allow"`. Se una regola di richiesta corrisponde, l'utente viene comunque richiesto. Questo significa che le regole di negazione da qualsiasi ambito di impostazioni, incluse le [impostazioni gestite](/it/settings#settings-files), hanno sempre la precedenza sulle approvazioni degli hook.
 
@@ -523,26 +560,26 @@ Senza un matcher, un hook si attiva su ogni occorrenza del suo evento. I matcher
 }
 ```
 
-Il matcher `"Edit|Write"` è un modello regex che corrisponde al nome dello strumento. L'hook si attiva solo quando Claude utilizza lo strumento `Edit` o `Write`, non quando utilizza `Bash`, `Read`, o qualsiasi altro strumento.
+Il matcher `"Edit|Write"` si attiva solo quando Claude utilizza lo strumento `Edit` o `Write`, non quando utilizza `Bash`, `Read`, o qualsiasi altro strumento. Consultate [Modelli di matcher](/it/hooks#matcher-patterns) per come i nomi semplici e le espressioni regolari vengono valutati.
 
-Ogni tipo di evento corrisponde a un campo specifico. I matcher supportano stringhe esatte e modelli regex:
+Ogni tipo di evento corrisponde a un campo specifico:
 
-| Evento                                                                                                                       | Cosa filtra il matcher                       | Valori matcher di esempio                                                                                                 |
-| :--------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                   | nome dello strumento                         | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
-| `SessionStart`                                                                                                               | come è iniziata la sessione                  | `startup`, `resume`, `clear`, `compact`                                                                                   |
-| `SessionEnd`                                                                                                                 | perché è terminata la sessione               | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                                               | tipo di notifica                             | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                                              | tipo di agente                               | `Bash`, `Explore`, `Plan`, o nomi di agenti personalizzati                                                                |
-| `PreCompact`, `PostCompact`                                                                                                  | cosa ha attivato la compattazione            | `manual`, `auto`                                                                                                          |
-| `SubagentStop`                                                                                                               | tipo di agente                               | stessi valori di `SubagentStart`                                                                                          |
-| `ConfigChange`                                                                                                               | fonte di configurazione                      | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
-| `StopFailure`                                                                                                                | tipo di errore                               | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                                                         | motivo del caricamento                       | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
-| `Elicitation`                                                                                                                | nome del server MCP                          | i vostri nomi di server MCP configurati                                                                                   |
-| `ElicitationResult`                                                                                                          | nome del server MCP                          | stessi valori di `Elicitation`                                                                                            |
-| `FileChanged`                                                                                                                | nome del file (basename del file modificato) | `.envrc`, `.env`, qualsiasi nome di file che volete guardare                                                              |
-| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged` | nessun supporto matcher                      | si attiva sempre su ogni occorrenza                                                                                       |
+| Evento                                                                                                                       | Cosa filtra il matcher                                                               | Valori matcher di esempio                                                                                                 |
+| :--------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                   | nome dello strumento                                                                 | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `SessionStart`                                                                                                               | come è iniziata la sessione                                                          | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `SessionEnd`                                                                                                                 | perché è terminata la sessione                                                       | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
+| `Notification`                                                                                                               | tipo di notifica                                                                     | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
+| `SubagentStart`                                                                                                              | tipo di agente                                                                       | `Bash`, `Explore`, `Plan`, o nomi di agenti personalizzati                                                                |
+| `PreCompact`, `PostCompact`                                                                                                  | cosa ha attivato la compattazione                                                    | `manual`, `auto`                                                                                                          |
+| `SubagentStop`                                                                                                               | tipo di agente                                                                       | stessi valori di `SubagentStart`                                                                                          |
+| `ConfigChange`                                                                                                               | fonte di configurazione                                                              | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
+| `StopFailure`                                                                                                                | tipo di errore                                                                       | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                                         | motivo del caricamento                                                               | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `Elicitation`                                                                                                                | nome del server MCP                                                                  | i vostri nomi di server MCP configurati                                                                                   |
+| `ElicitationResult`                                                                                                          | nome del server MCP                                                                  | stessi valori di `Elicitation`                                                                                            |
+| `FileChanged`                                                                                                                | nomi di file letterali da guardare (consultate [FileChanged](/it/hooks#filechanged)) | `.envrc\|.env`                                                                                                            |
+| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged` | nessun supporto matcher                                                              | si attiva sempre su ogni occorrenza                                                                                       |
 
 Alcuni altri esempi che mostrano i matcher su diversi tipi di evento:
 
@@ -572,7 +609,7 @@ Alcuni altri esempi che mostrano i matcher su diversi tipi di evento:
   <Tab title="Corrispondere agli strumenti MCP">
     Gli strumenti MCP utilizzano una convenzione di denominazione diversa rispetto agli strumenti integrati: `mcp__<server>__<tool>`, dove `<server>` è il nome del server MCP e `<tool>` è lo strumento che fornisce. Ad esempio, `mcp__github__search_repositories` o `mcp__filesystem__read_file`. Utilizzate un matcher regex per indirizzare tutti gli strumenti da un server specifico, o corrispondere tra i server con un modello come `mcp__.*__write.*`. Consultate [Corrispondere agli strumenti MCP](/it/hooks#match-mcp-tools) nel riferimento per l'elenco completo degli esempi.
 
-    Il comando sottostante estrae il nome dello strumento dall'input JSON dell'hook con `jq` e lo scrive su stderr, dove appare in modalità verbose (`Ctrl+O`):
+    Il comando sottostante estrae il nome dello strumento dall'input JSON dell'hook con `jq` e lo scrive su stderr. Scrivere su stderr mantiene stdout pulito per l'output JSON e invia il messaggio al [debug log](/it/hooks#debug-hooks):
 
     ```json theme={null}
     {
@@ -624,7 +661,7 @@ Per la sintassi completa del matcher, consultate il [riferimento Hooks](/it/hook
   Il campo `if` richiede Claude Code v2.1.85 o successivo. Le versioni precedenti lo ignorano e eseguono l'hook su ogni chiamata corrispondente.
 </Note>
 
-Il campo `if` utilizza la [sintassi delle regole di autorizzazione](/it/permissions) per filtrare gli hooks per nome dello strumento e argomenti insieme, in modo che il processo dell'hook si generi solo quando la chiamata dello strumento corrisponde. Questo va oltre il `matcher`, che filtra a livello di gruppo per nome dello strumento solo.
+Il campo `if` utilizza la [sintassi delle regole di autorizzazione](/it/permissions) per filtrare gli hooks per nome dello strumento e argomenti insieme, in modo che il processo dell'hook si generi solo quando la chiamata dello strumento corrisponde, o quando un comando Bash è troppo complesso per essere analizzato. Questo va oltre il `matcher`, che filtra a livello di gruppo per nome dello strumento solo.
 
 Ad esempio, per eseguire un hook solo quando Claude utilizza comandi `git` piuttosto che tutti i comandi Bash:
 
@@ -647,9 +684,9 @@ Ad esempio, per eseguire un hook solo quando Claude utilizza comandi `git` piutt
 }
 ```
 
-Il processo dell'hook si genera solo quando il comando Bash inizia con `git`. Gli altri comandi Bash saltano completamente questo handler. Il campo `if` accetta gli stessi modelli delle regole di autorizzazione: `"Bash(git *)"`, `"Edit(*.ts)"`, e così via. Per corrispondere a più nomi di strumenti, utilizzate handler separati ognuno con il suo valore `if`, o corrispondere a livello di `matcher` dove l'alternazione con pipe è supportata.
+Il processo dell'hook si genera solo quando un sottocomando del comando Bash corrisponde a `git *`, o quando il comando è troppo complesso per essere analizzato in sottocomandi. Per comandi composti come `npm test && git push`, Claude Code valuta ogni sottocomando e attiva l'hook perché `git push` corrisponde. Il campo `if` accetta gli stessi modelli delle regole di autorizzazione: `"Bash(git *)"`, `"Edit(*.ts)"`, e così via. Per corrispondere a più nomi di strumenti, utilizzate handler separati ognuno con il suo valore `if`, o corrispondere a livello di `matcher` dove l'alternazione con pipe è supportata.
 
-`if` funziona solo su eventi di strumenti: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, e `PermissionDenied`. Aggiungerlo a qualsiasi altro evento impedisce all'hook di eseguirsi.
+`if` funziona solo su eventi di strumenti: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, e `PermissionRequest`. Aggiungerlo a qualsiasi altro evento impedisce all'hook di eseguirsi.
 
 ### Configurare la posizione dell'hook
 
@@ -699,6 +736,10 @@ Questo esempio utilizza un hook `Stop` per chiedere al modello se tutti i compit
 Per le opzioni di configurazione complete, consultate [Hooks basati su prompt](/it/hooks#prompt-based-hooks) nel riferimento.
 
 ## Hooks basati su agenti
+
+<Warning>
+  Gli agent hooks sono sperimentali. Il comportamento e la configurazione potrebbero cambiare nelle versioni future. Per i flussi di lavoro di produzione, preferite gli [hooks di comando](/it/hooks#command-hook-fields).
+</Warning>
 
 Quando la verifica richiede l'ispezione di file o l'esecuzione di comandi, utilizzate gli hook `type: "agent"`. A differenza degli hook di prompt che effettuano una singola chiamata LLM, gli hook di agenti generano un subagent che può leggere file, cercare codice e utilizzare altri strumenti per verificare le condizioni prima di restituire una decisione.
 
@@ -793,7 +834,7 @@ L'hook è configurato ma non si esegue mai.
 
 Vedete un messaggio come "PreToolUse hook error: ..." nella trascrizione.
 
-* Il vostro script è uscito con un codice diverso da zero inaspittatamente. Testatelo manualmente inviando JSON di esempio:
+* Il vostro script è uscito con un codice diverso da zero inaspettatamente. Testatelo manualmente inviando JSON di esempio:
   ```bash theme={null}
   echo '{"tool_name":"Bash","tool_input":{"command":"ls"}}' | ./my-hook.sh
   echo $?  # Check the exit code
@@ -849,7 +890,9 @@ La variabile `$-` contiene i flag della shell, e `i` significa interattiva. Gli 
 
 ### Tecniche di debug
 
-Attivate la modalità verbose con `Ctrl+O` per vedere l'output dell'hook nella trascrizione, o eseguite `claude --debug` per i dettagli di esecuzione completi incluso quali hook hanno corrisposto e i loro codici di uscita.
+La vista della trascrizione, attivata con `Ctrl+O`, mostra un riepilogo di una riga per ogni hook che si è attivato: il successo è silenzioso, gli errori di blocco mostrano stderr, e gli errori non bloccanti mostrano un avviso `<hook name> hook error` seguito dalla prima riga di stderr.
+
+Per i dettagli di esecuzione completi incluso quali hook hanno corrisposto, i loro codici di uscita, stdout e stderr, leggete il debug log. Avviate Claude Code con `claude --debug-file /tmp/claude.log` per scrivere in un percorso noto, quindi `tail -f /tmp/claude.log` in un altro terminale. Se avete avviato senza quel flag, eseguite `/debug` a metà sessione per abilitare la registrazione e trovare il percorso del log.
 
 ## Ulteriori informazioni
 

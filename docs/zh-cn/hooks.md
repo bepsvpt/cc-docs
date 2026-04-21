@@ -14,11 +14,11 @@ Hooks 是用户定义的 shell 命令、HTTP 端点或 LLM 提示，在 Claude C
 
 ## Hook 生命周期
 
-Hooks 在 Claude Code 会话期间的特定点触发。当事件触发且匹配器匹配时，Claude Code 会将关于该事件的 JSON 上下文传递给您的 hook 处理程序。对于命令 hooks，输入通过 stdin 到达。对于 HTTP hooks，它作为 POST 请求体到达。您的处理程序随后可以检查输入、采取行动并可选地返回决定。某些事件每个会话触发一次，而其他事件在代理循环内重复触发：
+Hooks 在 Claude Code 会话期间的特定点触发。当事件触发且匹配器匹配时，Claude Code 会将关于该事件的 JSON 上下文传递给您的 hook 处理程序。对于命令 hooks，输入通过 stdin 到达。对于 HTTP hooks，它作为 POST 请求体到达。您的处理程序随后可以检查输入、采取行动并可选地返回决定。事件分为三种频率：每个会话一次（`SessionStart`、`SessionEnd`）、每轮一次（`UserPromptSubmit`、`Stop`、`StopFailure`）以及代理循环内的每个工具调用（`PreToolUse`、`PostToolUse`）：
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/UMJp-WgTWngzO609/images/hooks-lifecycle.svg?fit=max&auto=format&n=UMJp-WgTWngzO609&q=85&s=3f4de67df216c87dc313943b32c15f62" alt="Hook 生命周期图，显示从 SessionStart 通过代理循环（PreToolUse、PermissionRequest、PostToolUse、SubagentStart/Stop、TaskCreated、TaskCompleted）到 Stop 或 StopFailure、TeammateIdle、PreCompact、PostCompact 和 SessionEnd 的 hooks 序列，Elicitation 和 ElicitationResult 嵌套在 MCP 工具执行内，PermissionDenied 作为 PermissionRequest 的副分支用于自动模式拒绝，WorktreeCreate、WorktreeRemove、Notification、ConfigChange、InstructionsLoaded、CwdChanged 和 FileChanged 作为独立异步事件" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/UMJp-WgTWngzO609/images/hooks-lifecycle.svg?fit=max&auto=format&n=UMJp-WgTWngzO609&q=85&s=3f4de67df216c87dc313943b32c15f62" alt="Hook 生命周期图，显示 SessionStart，然后是每轮循环，包含 UserPromptSubmit、嵌套的代理循环（PreToolUse、PermissionRequest、PostToolUse、SubagentStart/Stop、TaskCreated、TaskCompleted）和 Stop 或 StopFailure，然后是 TeammateIdle、PreCompact、PostCompact 和 SessionEnd，Elicitation 和 ElicitationResult 嵌套在 MCP 工具执行内，PermissionDenied 作为 PermissionRequest 的副分支用于自动模式拒绝，WorktreeCreate、WorktreeRemove、Notification、ConfigChange、InstructionsLoaded、CwdChanged 和 FileChanged 作为独立异步事件" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
@@ -55,7 +55,7 @@ Hooks 在 Claude Code 会话期间的特定点触发。当事件触发且匹配�
 
 ### Hook 如何解析
 
-要了解这些部分如何组合在一起，请考虑这个 `PreToolUse` hook，它阻止破坏性 shell 命令。`matcher` 缩小到 Bash 工具调用，`if` 条件进一步缩小到以 `rm` 开头的命令，因此 `block-rm.sh` 仅在两个过滤器都匹配时生成：
+要了解这些部分如何组合在一起，请考虑这个 `PreToolUse` hook，它阻止破坏性 shell 命令。`matcher` 缩小到 Bash 工具调用，`if` 条件进一步缩小到匹配 `rm *` 的 Bash 子命令，因此 `block-rm.sh` 仅在两个过滤器都匹配时生成：
 
 ```json theme={null}
 {
@@ -116,7 +116,7 @@ fi
   </Step>
 
   <Step title="If 条件检查">
-    `if` 条件 `"Bash(rm *)"` 匹配，因为命令以 `rm` 开头，因此此处理程序生成。如果命令是 `npm test`，`if` 检查会失败，`block-rm.sh` 永远不会运行，避免进程生成开销。`if` 字段是可选的；没有它，匹配组中的每个处理程序都运行。
+    `if` 条件 `"Bash(rm *)"` 匹配，因为 `rm -rf /tmp/build` 是匹配 `rm *` 的子命令，因此此处理程序生成。如果命令是 `npm test`，`if` 检查会失败，`block-rm.sh` 永远不会运行，避免进程生成开销。`if` 字段是可选的；没有它，匹配组中的每个处理程序都运行。
   </Step>
 
   <Step title="Hook 处理程序运行">
@@ -169,31 +169,41 @@ Hooks 在 JSON 设置文件中定义。配置有三个嵌套级别：
 | [Plugin](/zh-CN/plugins) `hooks/hooks.json`                 | 启用插件时  | 是，与插件捆绑      |
 | [Skill](/zh-CN/skills) 或[代理](/zh-CN/sub-agents) frontmatter | 组件活跃时  | 是，在组件文件中定义   |
 
-有关设置文件解析的详细信息，请参阅[设置](/zh-CN/settings)。企业管理员可以使用 `allowManagedHooksOnly` 来阻止用户、项目和插件 hooks。请参阅[Hook 配置](/zh-CN/settings#hook-configuration)。
+有关设置文件解析的详细信息，请参阅[设置](/zh-CN/settings)。企业管理员可以使用 `allowManagedHooksOnly` 来阻止用户、项目和插件 hooks。在托管设置 `enabledPlugins` 中强制启用的插件中的 Hooks 是豁免的，因此管理员可以通过组织市场分发经过审查的 hooks。请参阅[Hook 配置](/zh-CN/settings#hook-configuration)。
 
 ### 匹配器模式
 
-`matcher` 字段是一个正则表达式字符串，用于过滤 hooks 何时触发。使用 `"*"`、`""` 或完全省略 `matcher` 以匹配所有出现。每个事件类型在不同的字段上匹配：
+`matcher` 字段过滤 hooks 何时触发。匹配器的评估方式取决于它包含的字符：
 
-| 事件                                                                                                       | 匹配器过滤的内容     | 示例匹配器值                                                                                                              |
-| :------------------------------------------------------------------------------------------------------- | :----------- | :------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`、`PostToolUse`、`PostToolUseFailure`、`PermissionRequest`、`PermissionDenied`                   | 工具名称         | `Bash`、`Edit\|Write`、`mcp__.*`                                                                                      |
-| `SessionStart`                                                                                           | 会话如何启动       | `startup`、`resume`、`clear`、`compact`                                                                                |
-| `SessionEnd`                                                                                             | 会话为何结束       | `clear`、`resume`、`logout`、`prompt_input_exit`、`bypass_permissions_disabled`、`other`                                 |
-| `Notification`                                                                                           | 通知类型         | `permission_prompt`、`idle_prompt`、`auth_success`、`elicitation_dialog`                                               |
-| `SubagentStart`                                                                                          | 代理类型         | `Bash`、`Explore`、`Plan` 或自定义代理名称                                                                                    |
-| `PreCompact`、`PostCompact`                                                                               | 触发压缩的原因      | `manual`、`auto`                                                                                                     |
-| `SubagentStop`                                                                                           | 代理类型         | 与 `SubagentStart` 相同的值                                                                                              |
-| `ConfigChange`                                                                                           | 配置源          | `user_settings`、`project_settings`、`local_settings`、`policy_settings`、`skills`                                      |
-| `CwdChanged`                                                                                             | 不支持匹配器       | 总是在每次目录更改时触发                                                                                                        |
-| `FileChanged`                                                                                            | 文件名（更改文件的基名） | `.envrc`、`.env`、任何您想监视的文件名                                                                                          |
-| `StopFailure`                                                                                            | 错误类型         | `rate_limit`、`authentication_failed`、`billing_error`、`invalid_request`、`server_error`、`max_output_tokens`、`unknown` |
-| `InstructionsLoaded`                                                                                     | 加载原因         | `session_start`、`nested_traversal`、`path_glob_match`、`include`、`compact`                                            |
-| `Elicitation`                                                                                            | MCP 服务器名称    | 您配置的 MCP 服务器名称                                                                                                      |
-| `ElicitationResult`                                                                                      | MCP 服务器名称    | 与 `Elicitation` 相同的值                                                                                                |
-| `UserPromptSubmit`、`Stop`、`TeammateIdle`、`TaskCreated`、`TaskCompleted`、`WorktreeCreate`、`WorktreeRemove` | 不支持匹配器       | 总是在每次出现时触发                                                                                                          |
+| 匹配器值              | 评估为                    | 示例                                                                        |
+| :---------------- | :--------------------- | :------------------------------------------------------------------------ |
+| `"*"`、`""` 或省略    | 匹配所有                   | 在事件的每次出现时触发                                                               |
+| 仅字母、数字、`_` 和 `\|` | 精确字符串或 `\|` 分隔的精确字符串列表 | `Bash` 仅匹配 Bash 工具；`Edit\|Write` 精确匹配任一工具                                 |
+| 包含任何其他字符          | JavaScript 正则表达式       | `^Notebook` 匹配任何以 Notebook 开头的工具；`mcp__memory__.*` 匹配来自 `memory` 服务器的每个工具 |
 
-匹配器是一个正则表达式，所以 `Edit|Write` 匹配任一工具，`Notebook.*` 匹配任何以 Notebook 开头的工具。匹配器针对 Claude Code 在 stdin 上发送给您的 hook 的[JSON 输入](#hook-input-and-output)中的字段运行。对于工具事件，该字段是 `tool_name`。每个[hook 事件](#hook-events)部分列出了完整的匹配器值集和该事件的输入架构。
+`FileChanged` 事件在构建其监视列表时不遵循这些规则。请参阅 [FileChanged](#filechanged)。
+
+每个事件类型在不同的字段上匹配：
+
+| 事件                                                                                                       | 匹配器过滤的内容                                  | 示例匹配器值                                                                                                              |
+| :------------------------------------------------------------------------------------------------------- | :---------------------------------------- | :------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`、`PostToolUse`、`PostToolUseFailure`、`PermissionRequest`、`PermissionDenied`                   | 工具名称                                      | `Bash`、`Edit\|Write`、`mcp__.*`                                                                                      |
+| `SessionStart`                                                                                           | 会话如何启动                                    | `startup`、`resume`、`clear`、`compact`                                                                                |
+| `SessionEnd`                                                                                             | 会话为何结束                                    | `clear`、`resume`、`logout`、`prompt_input_exit`、`bypass_permissions_disabled`、`other`                                 |
+| `Notification`                                                                                           | 通知类型                                      | `permission_prompt`、`idle_prompt`、`auth_success`、`elicitation_dialog`                                               |
+| `SubagentStart`                                                                                          | 代理类型                                      | `Bash`、`Explore`、`Plan` 或自定义代理名称                                                                                    |
+| `PreCompact`、`PostCompact`                                                                               | 触发压缩的原因                                   | `manual`、`auto`                                                                                                     |
+| `SubagentStop`                                                                                           | 代理类型                                      | 与 `SubagentStart` 相同的值                                                                                              |
+| `ConfigChange`                                                                                           | 配置源                                       | `user_settings`、`project_settings`、`local_settings`、`policy_settings`、`skills`                                      |
+| `CwdChanged`                                                                                             | 不支持匹配器                                    | 总是在每次目录更改时触发                                                                                                        |
+| `FileChanged`                                                                                            | 文字文件名以监视（请参阅 [FileChanged](#filechanged)） | `.envrc\|.env`                                                                                                      |
+| `StopFailure`                                                                                            | 错误类型                                      | `rate_limit`、`authentication_failed`、`billing_error`、`invalid_request`、`server_error`、`max_output_tokens`、`unknown` |
+| `InstructionsLoaded`                                                                                     | 加载原因                                      | `session_start`、`nested_traversal`、`path_glob_match`、`include`、`compact`                                            |
+| `Elicitation`                                                                                            | MCP 服务器名称                                 | 您配置的 MCP 服务器名称                                                                                                      |
+| `ElicitationResult`                                                                                      | MCP 服务器名称                                 | 与 `Elicitation` 相同的值                                                                                                |
+| `UserPromptSubmit`、`Stop`、`TeammateIdle`、`TaskCreated`、`TaskCompleted`、`WorktreeCreate`、`WorktreeRemove` | 不支持匹配器                                    | 总是在每次出现时触发                                                                                                          |
+
+匹配器针对 Claude Code 在 stdin 上发送给您的 hook 的[JSON 输入](#hook-input-and-output)中的字段运行。对于工具事件，该字段是 `tool_name`。每个[hook 事件](#hook-events)部分列出了完整的匹配器值集和该事件的输入架构。
 
 此示例仅在 Claude 写入或编辑文件时运行 linting 脚本：
 
@@ -229,10 +239,10 @@ MCP 工具遵循命名模式 `mcp__<server>__<tool>`，例如：
 * `mcp__filesystem__read_file`：Filesystem 服务器的读取文件工具
 * `mcp__github__search_repositories`：GitHub 服务器的搜索工具
 
-使用正则表达式模式来针对特定 MCP 工具或工具组：
+要匹配来自服务器的每个工具，请在服务器前缀后追加 `.*`。`.*` 是必需的：像 `mcp__memory` 这样的匹配器仅包含字母和下划线，因此它作为精确字符串进行比较，不匹配任何工具。
 
 * `mcp__memory__.*` 匹配来自 `memory` 服务器的所有工具
-* `mcp__.*__write.*` 匹配来自任何服务器的任何包含"write"的工具
+* `mcp__.*__write.*` 匹配来自任何服务器的任何名称以 `write` 开头的工具
 
 此示例记录所有内存服务器操作并验证来自任何 MCP 服务器的写入操作：
 
@@ -270,29 +280,32 @@ MCP 工具遵循命名模式 `mcp__<server>__<tool>`，例如：
 * **[命令 hooks](#command-hook-fields)**（`type: "command"`）：运行 shell 命令。您的脚本在 stdin 上接收事件的[JSON 输入](#hook-input-and-output)，并通过退出代码和 stdout 传回结果。
 * **[HTTP hooks](#http-hook-fields)**（`type: "http"`）：将事件的 JSON 输入作为 HTTP POST 请求发送到 URL。端点通过使用与命令 hooks 相同的[JSON 输出格式](#json-output)的响应体传回结果。
 * **[提示 hooks](#prompt-and-agent-hook-fields)**（`type: "prompt"`）：向 Claude 模型发送提示以进行单轮评估。模型返回 yes/no 决定作为 JSON。请参阅[基于提示的 hooks](#prompt-based-hooks)。
-* **[代理 hooks](#prompt-and-agent-hook-fields)**（`type: "agent"`）：生成一个可以使用 Read、Grep 和 Glob 等工具来验证条件的 subagent，然后返回决定。请参阅[基于代理的 hooks](#agent-based-hooks)。
+* **[代理 hooks](#prompt-and-agent-hook-fields)**（`type: "agent"`）：生成一个可以使用 Read、Grep 和 Glob 等工具来验证条件的 subagent，然后返回决定。代理 hooks 是实验性的，可能会改变。请参阅[基于代理的 hooks](#agent-based-hooks)。
 
 #### 通用字段
 
 这些字段适用于所有 hook 类型：
 
-| 字段              | 必需 | 描述                                                                                                                                                                                                                                                  |
-| :-------------- | :- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`          | 是  | `"command"`、`"http"`、`"prompt"` 或 `"agent"`                                                                                                                                                                                                         |
-| `if`            | 否  | 权限规则语法以过滤此 hook 何时运行，例如 `"Bash(git *)"` 或 `"Edit(*.ts)"`。仅当工具调用与模式匹配时，hook 才会生成。仅在工具事件上评估：`PreToolUse`、`PostToolUse`、`PostToolUseFailure`、`PermissionRequest` 和 `PermissionDenied`。在其他事件上，设置了 `if` 的 hook 永远不会运行。使用与[权限规则](/zh-CN/permissions)相同的语法 |
-| `timeout`       | 否  | 取消前的秒数。默认值：命令 600、提示 30、代理 60                                                                                                                                                                                                                       |
-| `statusMessage` | 否  | hook 运行时显示的自定义加载程序消息                                                                                                                                                                                                                                |
-| `once`          | 否  | 如果为 `true`，每个会话仅运行一次，然后被移除。仅限 skills，不是代理。请参阅[skills 和代理中的 Hooks](#hooks-in-skills-and-agents)                                                                                                                                                      |
+| 字段              | 必需 | 描述                                                                                                                                                                                                                               |
+| :-------------- | :- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`          | 是  | `"command"`、`"http"`、`"prompt"` 或 `"agent"`                                                                                                                                                                                      |
+| `if`            | 否  | 权限规则语法以过滤此 hook 何时运行，例如 `"Bash(git *)"` 或 `"Edit(*.ts)"`。仅当工具调用与模式匹配时，hook 才会生成。仅在工具事件上评估：`PreToolUse`、`PostToolUse`、`PostToolUseFailure` 和 `PermissionRequest`。在其他事件上，设置了 `if` 的 hook 永远不会运行。使用与[权限规则](/zh-CN/permissions)相同的语法 |
+| `timeout`       | 否  | 取消前的秒数。默认值：命令 600、提示 30、代理 60                                                                                                                                                                                                    |
+| `statusMessage` | 否  | hook 运行时显示的自定义加载程序消息                                                                                                                                                                                                             |
+| `once`          | 否  | 如果为 `true`，每个会话仅运行一次，然后被移除。仅在[skill frontmatter](#hooks-in-skills-and-agents)中声明的 hooks 中受尊重；在设置文件和代理 frontmatter 中被忽略                                                                                                           |
+
+`if` 字段恰好包含一个权限规则。没有 `&&`、`||` 或列表语法来组合规则；要应用多个条件，请为每个条件定义一个单独的 hook 处理程序。对于 Bash，规则针对工具输入的每个子命令进行匹配，在去除前导 `VAR=value` 赋值后，因此 `if: "Bash(git push *)"` 既匹配 `FOO=bar git push` 也匹配 `npm test && git push`。如果任何子命令匹配，hook 会运行，并且在命令太复杂而无法解析时总是运行。
 
 #### 命令 hook 字段
 
 除了[通用字段](#common-fields)外，命令 hooks 还接受这些字段：
 
-| 字段        | 必需 | 描述                                                                                                                                                              |
-| :-------- | :- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `command` | 是  | 要执行的 shell 命令                                                                                                                                                   |
-| `async`   | 否  | 如果为 `true`，在后台运行而不阻止。请参阅[在后台运行 hooks](#run-hooks-in-the-background)                                                                                             |
-| `shell`   | 否  | 用于此 hook 的 shell。接受 `"bash"`（默认）或 `"powershell"`。设置 `"powershell"` 在 Windows 上通过 PowerShell 运行命令。不需要 `CLAUDE_CODE_USE_POWERSHELL_TOOL`，因为 hooks 直接生成 PowerShell |
+| 字段            | 必需 | 描述                                                                                                                                                              |
+| :------------ | :- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `command`     | 是  | 要执行的 shell 命令                                                                                                                                                   |
+| `async`       | 否  | 如果为 `true`，在后台运行而不阻止。请参阅[在后台运行 hooks](#run-hooks-in-the-background)                                                                                             |
+| `asyncRewake` | 否  | 如果为 `true`，在后台运行并在退出代码 2 时唤醒 Claude。暗示 `async`。Hook 的 stderr，或 stdout（如果 stderr 为空），作为系统提醒显示给 Claude，以便它可以对长时间运行的后台失败做出反应                                       |
+| `shell`       | 否  | 用于此 hook 的 shell。接受 `"bash"`（默认）或 `"powershell"`。设置 `"powershell"` 在 Windows 上通过 PowerShell 运行命令。不需要 `CLAUDE_CODE_USE_POWERSHELL_TOOL`，因为 hooks 直接生成 PowerShell |
 
 #### HTTP hook 字段
 
@@ -499,11 +512,11 @@ hooks:
 
 您的 hook 命令的退出代码告诉 Claude Code 操作是否应该继续、被阻止或被忽略。
 
-**退出 0** 表示成功。Claude Code 解析 stdout 以获取[JSON 输出字段](#json-output)。JSON 输出仅在退出 0 时处理。对于大多数事件，stdout 仅在详细模式（`Ctrl+O`）中显示。例外是 `UserPromptSubmit` 和 `SessionStart`，其中 stdout 作为 Claude 可以看到和作用的上下文添加。
+**退出 0** 表示成功。Claude Code 解析 stdout 以获取[JSON 输出字段](#json-output)。JSON 输出仅在退出 0 时处理。对于大多数事件，stdout 被写入调试日志，但不显示在成绩单中。例外是 `UserPromptSubmit` 和 `SessionStart`，其中 stdout 作为 Claude 可以看到和作用的上下文添加。
 
 **退出 2** 表示阻止错误。Claude Code 忽略 stdout 和其中的任何 JSON。相反，stderr 文本被反馈给 Claude 作为错误消息。效果取决于事件：`PreToolUse` 阻止工具调用，`UserPromptSubmit` 拒绝提示，等等。有关完整列表，请参阅[每个事件的退出代码 2 行为](#exit-code-2-behavior-per-event)。
 
-**任何其他退出代码** 是非阻止错误。stderr 在详细模式（`Ctrl+O`）中显示，执行继续。
+**任何其他退出代码** 是大多数 hook 事件的非阻止错误。成绩单显示 `<hook name> hook error` 通知，然后是 stderr 的第一行，因此您可以在不使用 `--debug` 的情况下识别原因。执行继续，完整的 stderr 被写入调试日志。
 
 例如，一个 hook 命令脚本，阻止危险的 Bash 命令：
 
@@ -519,6 +532,10 @@ fi
 
 exit 0  # 成功：工具调用继续
 ```
+
+<Warning>
+  对于大多数 hook 事件，仅退出代码 2 阻止操作。Claude Code 将退出代码 1 视为非阻止错误并继续操作，尽管 1 是传统的 Unix 失败代码。如果您的 hook 旨在强制执行策略，请使用 `exit 2`。例外是 `WorktreeCreate`，其中任何非零退出代码都会中止 worktree 创建。
+</Warning>
 
 #### 每个事件的退出代码 2 行为
 
@@ -545,7 +562,7 @@ exit 0  # 成功：工具调用继续
 | `SessionEnd`         | 否     | 仅向用户显示 stderr                                                              |
 | `CwdChanged`         | 否     | 仅向用户显示 stderr                                                              |
 | `FileChanged`        | 否     | 仅向用户显示 stderr                                                              |
-| `PreCompact`         | 否     | 仅向用户显示 stderr                                                              |
+| `PreCompact`         | 是     | 阻止压缩                                                                       |
 | `PostCompact`        | 否     | 仅向用户显示 stderr                                                              |
 | `Elicitation`        | 是     | 拒绝 elicitation                                                             |
 | `ElicitationResult`  | 是     | 阻止响应（操作变为 decline）                                                         |
@@ -587,7 +604,7 @@ JSON 对象支持三种字段：
 | :--------------- | :------ | :--------------------------------------------------- |
 | `continue`       | `true`  | 如果为 `false`，Claude 在 hook 运行后完全停止处理。优先于任何事件特定的决定字段   |
 | `stopReason`     | 无       | hook 运行后 `continue` 为 `false` 时向用户显示的消息。不向 Claude 显示 |
-| `suppressOutput` | `false` | 如果为 `true`，从详细模式输出中隐藏 stdout                         |
+| `suppressOutput` | `false` | 如果为 `true`，从调试日志中隐藏 stdout                           |
 | `systemMessage`  | 无       | 向用户显示的警告消息                                           |
 
 要无论事件类型如何都完全停止 Claude：
@@ -600,17 +617,17 @@ JSON 对象支持三种字段：
 
 并非每个事件都支持通过 JSON 阻止或控制行为。支持的事件各自使用不同的字段集来表达该决定。在编写 hook 之前，使用此表作为快速参考：
 
-| 事件                                                                                                                  | 决定模式                    | 关键字段                                                                                               |
-| :------------------------------------------------------------------------------------------------------------------ | :---------------------- | :------------------------------------------------------------------------------------------------- |
-| UserPromptSubmit、PostToolUse、PostToolUseFailure、Stop、SubagentStop、ConfigChange                                      | 顶级 `decision`           | `decision: "block"`、`reason`                                                                       |
-| TeammateIdle、TaskCreated、TaskCompleted                                                                              | 退出代码或 `continue: false` | 退出代码 2 使用 stderr 反馈阻止操作。JSON `{"continue": false, "stopReason": "..."}` 也会完全停止队友，匹配 `Stop` hook 行为 |
-| PreToolUse                                                                                                          | `hookSpecificOutput`    | `permissionDecision`（allow/deny/ask/defer）、`permissionDecisionReason`                              |
-| PermissionRequest                                                                                                   | `hookSpecificOutput`    | `decision.behavior`（allow/deny）                                                                    |
-| PermissionDenied                                                                                                    | `hookSpecificOutput`    | `retry: true` 告诉模型它可能重试被拒绝的工具调用                                                                    |
-| WorktreeCreate                                                                                                      | 路径返回                    | 命令 hook 在 stdout 上打印路径；HTTP hook 通过 `hookSpecificOutput.worktreePath` 返回。Hook 失败或缺少路径会导致创建失败       |
-| Elicitation                                                                                                         | `hookSpecificOutput`    | `action`（accept/decline/cancel）、`content`（form 字段值用于 accept）                                       |
-| ElicitationResult                                                                                                   | `hookSpecificOutput`    | `action`（accept/decline/cancel）、`content`（form 字段值覆盖）                                              |
-| WorktreeRemove、Notification、SessionEnd、PreCompact、PostCompact、InstructionsLoaded、StopFailure、CwdChanged、FileChanged | 无                       | 无决定控制。用于日志记录或清理等副作用                                                                                |
+| 事件                                                                                                       | 决定模式                    | 关键字段                                                                                               |
+| :------------------------------------------------------------------------------------------------------- | :---------------------- | :------------------------------------------------------------------------------------------------- |
+| UserPromptSubmit、PostToolUse、PostToolUseFailure、Stop、SubagentStop、ConfigChange、PreCompact                | 顶级 `decision`           | `decision: "block"`、`reason`                                                                       |
+| TeammateIdle、TaskCreated、TaskCompleted                                                                   | 退出代码或 `continue: false` | 退出代码 2 使用 stderr 反馈阻止操作。JSON `{"continue": false, "stopReason": "..."}` 也会完全停止队友，匹配 `Stop` hook 行为 |
+| PreToolUse                                                                                               | `hookSpecificOutput`    | `permissionDecision`（allow/deny/ask/defer）、`permissionDecisionReason`                              |
+| PermissionRequest                                                                                        | `hookSpecificOutput`    | `decision.behavior`（allow/deny）                                                                    |
+| PermissionDenied                                                                                         | `hookSpecificOutput`    | `retry: true` 告诉模型它可能重试被拒绝的工具调用                                                                    |
+| WorktreeCreate                                                                                           | 路径返回                    | 命令 hook 在 stdout 上打印路径；HTTP hook 通过 `hookSpecificOutput.worktreePath` 返回。Hook 失败或缺少路径会导致创建失败       |
+| Elicitation                                                                                              | `hookSpecificOutput`    | `action`（accept/decline/cancel）、`content`（form 字段值用于 accept）                                       |
+| ElicitationResult                                                                                        | `hookSpecificOutput`    | `action`（accept/decline/cancel）、`content`（form 字段值覆盖）                                              |
+| WorktreeRemove、Notification、SessionEnd、PostCompact、InstructionsLoaded、StopFailure、CwdChanged、FileChanged | 无                       | 无决定控制。用于日志记录或清理等副作用                                                                                |
 
 以下是每种模式的实际示例：
 
@@ -822,11 +839,12 @@ InstructionsLoaded hooks 没有决定控制。它们无法阻止或修改指令�
 
 要阻止提示，返回一个 JSON 对象，其中 `decision` 设置为 `"block"`：
 
-| 字段                  | 描述                                      |
-| :------------------ | :-------------------------------------- |
-| `decision`          | `"block"` 防止提示被处理并从上下文中删除。省略以允许提示继续     |
-| `reason`            | 当 `decision` 为 `"block"` 时向用户显示。不添加到上下文 |
-| `additionalContext` | 添加到 Claude 上下文的字符串                      |
+| 字段                  | 描述                                       |
+| :------------------ | :--------------------------------------- |
+| `decision`          | `"block"` 防止提示被处理并从上下文中删除。省略以允许提示继续      |
+| `reason`            | 当 `decision` 为 `"block"` 时向用户显示。不添加到上下文  |
+| `additionalContext` | 添加到 Claude 上下文的字符串                       |
+| `sessionTitle`      | 设置会话标题，与 `/rename` 相同的效果。使用此根据提示内容自动命名会话 |
 
 ```json theme={null}
 {
@@ -834,7 +852,8 @@ InstructionsLoaded hooks 没有决定控制。它们无法阻止或修改指令�
   "reason": "Explanation for decision",
   "hookSpecificOutput": {
     "hookEventName": "UserPromptSubmit",
-    "additionalContext": "My additional context here"
+    "additionalContext": "My additional context here",
+    "sessionTitle": "My session title"
   }
 }
 ```
@@ -1069,13 +1088,13 @@ PermissionRequest hooks 接收 `tool_name` 和 `tool_input` 字段，如 PreTool
 
 `PermissionRequest` hooks 可以允许或拒绝权限请求。除了所有 hooks 可用的[JSON 输出字段](#json-output)外，您的 hook 脚本可以返回一个 `decision` 对象，其中包含这些事件特定字段：
 
-| 字段                   | 描述                                                                             |
-| :------------------- | :----------------------------------------------------------------------------- |
-| `behavior`           | `"allow"` 授予权限，`"deny"` 拒绝它                                                    |
-| `updatedInput`       | 仅对 `"allow"`：在执行前修改工具的输入参数。替换整个输入对象，因此包括未修改的字段以及修改后的字段                         |
-| `updatedPermissions` | 仅对 `"allow"`：应用权限规则更新的[权限更新条目](#permission-update-entries)数组，例如添加允许规则或更改会话权限模式 |
-| `message`            | 仅对 `"deny"`：告诉 Claude 为什么权限被拒绝                                                 |
-| `interrupt`          | 仅对 `"deny"`：如果为 `true`，停止 Claude                                               |
+| 字段                   | 描述                                                                                                                  |
+| :------------------- | :------------------------------------------------------------------------------------------------------------------ |
+| `behavior`           | `"allow"` 授予权限，`"deny"` 拒绝它。[拒绝和询问规则](/zh-CN/permissions#manage-permissions)仍然被评估，所以返回 `"allow"` 的 hook 不会覆盖匹配的拒绝规则 |
+| `updatedInput`       | 仅对 `"allow"`：在执行前修改工具的输入参数。替换整个输入对象，因此包括未修改的字段以及修改后的字段。修改后的输入会重新针对拒绝和询问规则进行评估                                       |
+| `updatedPermissions` | 仅对 `"allow"`：应用权限规则更新的[权限更新条目](#permission-update-entries)数组，例如添加允许规则或更改会话权限模式                                      |
+| `message`            | 仅对 `"deny"`：告诉 Claude 为什么权限被拒绝                                                                                      |
+| `interrupt`          | 仅对 `"deny"`：如果为 `true`，停止 Claude                                                                                    |
 
 ```json theme={null}
 {
@@ -1103,6 +1122,10 @@ PermissionRequest hooks 接收 `tool_name` 和 `tool_input` 字段，如 PreTool
 | `setMode`           | `mode`、`destination`             | 更改权限模式。有效模式为 `default`、`acceptEdits`、`dontAsk`、`bypassPermissions` 和 `plan`                                          |
 | `addDirectories`    | `directories`、`destination`      | 添加工作目录。`directories` 是路径字符串的数组                                                                                       |
 | `removeDirectories` | `directories`、`destination`      | 移除工作目录                                                                                                               |
+
+<Note>
+  `setMode` 与 `bypassPermissions` 仅在会话已启动时生效，绕过模式已可用：`--dangerously-skip-permissions`、`--permission-mode bypassPermissions`、`--allow-dangerously-skip-permissions` 或设置中的 `permissions.defaultMode: "bypassPermissions"`，且模式未被 [`permissions.disableBypassPermissionsMode`](/zh-CN/permissions#managed-settings) 禁用。否则更新是无操作。`bypassPermissions` 无论 `destination` 如何都永远不会作为 `defaultMode` 持久化。
+</Note>
 
 每个条目上的 `destination` 字段确定更改是保留在内存中还是持久化到设置文件。
 
@@ -1702,7 +1725,12 @@ CwdChanged hooks 没有决定控制。它们无法阻止目录更改。
 
 ### FileChanged
 
-当监视的文件在磁盘上更改时运行。您的 hook 配置中的 `matcher` 字段控制要监视的文件名：它是基名的管道分隔列表（不带目录路径的文件名，例如 `".envrc|.env"`）。当文件更改时，相同的 `matcher` 值也用于过滤哪些 hooks 运行，与更改文件的基名匹配。用于在项目配置文件修改时重新加载环境变量。
+当监视的文件在磁盘上更改时运行。用于在项目配置文件修改时重新加载环境变量。
+
+此事件的 `matcher` 有两个作用：
+
+* **构建监视列表**：值在 `|` 上分割，每个段注册为工作目录中的文字文件名，因此 `".envrc|.env"` 监视恰好这两个文件。正则表达式模式在这里不有用：像 `^\.env` 这样的值会监视一个字面上名为 `^\.env` 的文件。
+* **过滤哪些 hooks 运行**：当监视的文件更改时，相同的值使用标准[匹配器规则](#matcher-patterns)针对更改文件的基名过滤哪些 hook 组运行。
 
 FileChanged hooks 可以访问 `CLAUDE_ENV_FILE`。写入该文件的变量持久化到会话的后续 Bash 命令中，就像在[SessionStart hooks](#persist-environment-variables)中一样。仅支持 `type: "command"` hooks。
 
@@ -1838,6 +1866,10 @@ WorktreeRemove hooks 没有决定控制。它们无法阻止 worktree 移除，�
 | `manual` | `/compact`   |
 | `auto`   | 当上下文窗口满时自动压缩 |
 
+退出代码 2 以阻止压缩。对于手动 `/compact`，stderr 消息向用户显示。您也可以通过返回带有 `"decision": "block"` 的 JSON 来阻止。
+
+阻止自动压缩有不同的效果，取决于何时触发。如果压缩在上下文限制之前主动触发，Claude Code 跳过它，对话继续未压缩。如果压缩被触发以从已由 API 返回的上下文限制错误恢复，底层错误浮出并且当前请求失败。
+
 #### PreCompact 输入
 
 除了[通用输入字段](#common-input-fields)外，PreCompact hooks 还接收 `trigger` 和 `custom_instructions`。对于 `manual`，`custom_instructions` 包含用户传入 `/compact` 的内容。对于 `auto`，`custom_instructions` 为空。
@@ -1912,7 +1944,7 @@ hook 输入中的 `reason` 字段指示会话为何结束：
 
 SessionEnd hooks 没有决定控制。它们无法阻止会话终止，但可以执行清理任务。
 
-SessionEnd hooks 的默认超时为 1.5 秒。这适用于会话退出、`/clear` 和通过交互式 `/resume` 切换会话。如果您的 hooks 需要更多时间，请将 `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` 环境变量设置为毫秒的更高值。任何每个 hook 的 `timeout` 设置也受此值的限制。
+SessionEnd hooks 的默认超时为 1.5 秒。这适用于会话退出、`/clear` 和通过交互式 `/resume` 切换会话。如果 hook 需要更多时间，设置 `timeout` 在 hook 配置中。总体预算自动提高到配置的最高每个 hook 超时，最多 60 秒。在插件提供的 hooks 上设置的超时不会提高预算。要显式覆盖预算，请在毫秒中设置 `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` 环境变量。
 
 ```bash theme={null}
 CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
@@ -2147,11 +2179,15 @@ LLM 必须使用包含以下内容的 JSON 响应：
 }
 ```
 
-## 基于代理的 Hooks
+## 基于代理的 hooks
+
+<Warning>
+  代理 hooks 是实验性的。行为和配置可能在未来版本中更改。对于生产工作流，建议使用[命令 hooks](#command-hook-fields)。
+</Warning>
 
 基于代理的 hooks（`type: "agent"`）类似于基于提示的 hooks，但具有多轮工具访问。代理 hook 生成一个可以读取文件、搜索代码和检查代码库以验证条件的 subagent，而不是单个 LLM 调用。代理 hooks 支持与基于提示的 hooks 相同的事件。
 
-### 基于代理的 Hooks 如何工作
+### 基于代理的 hooks 如何工作
 
 当代理 hook 触发时：
 
@@ -2291,7 +2327,7 @@ fi
 
 * 仅 `type: "command"` hooks 支持 `async`。基于提示的 hooks 无法异步运行。
 * 异步 hooks 无法阻止工具调用或返回决定。到 hook 完成时，触发操作已经进行。
-* Hook 输出在下一个对话轮次传递。如果会话空闲，响应等待直到下一个用户交互。
+* Hook 输出在下一个对话轮次传递。如果会话空闲，响应等待直到下一个用户交互。例外：`asyncRewake` hook 在退出代码 2 时立即唤醒 Claude，即使会话空闲。
 * 每次执行创建一个单独的后台进程。同一异步 hook 的多个触发之间没有去重。
 
 ## 安全考虑
@@ -2339,7 +2375,7 @@ fi
 
 ## 调试 Hooks
 
-运行 `claude --debug` 以查看 hook 执行详细信息，包括哪些 hooks 匹配、它们的退出代码和输出。
+Hook 执行详细信息，包括哪些 hooks 匹配、它们的退出代码和完整 stdout 和 stderr，被写入调试日志文件。使用 `claude --debug-file <path>` 启动 Claude Code 以将日志写入已知位置，或运行 `claude --debug` 并在 `~/.claude/debug/<session-id>.txt` 读取日志。`--debug` 标志不打印到终端。
 
 ```text theme={null}
 [DEBUG] Executing hooks for PostToolUse:Write
@@ -2348,6 +2384,6 @@ fi
 [DEBUG] Hook command completed with status 0: <Your stdout>
 ```
 
-有关更细粒度的 hook 匹配详细信息，设置 `CLAUDE_CODE_DEBUG_LOG_LEVEL=verbose` 以查看额外的日志行，例如 hook 匹配器计数和查询匹配。
+对于更细粒度的 hook 匹配详细信息，设置 `CLAUDE_CODE_DEBUG_LOG_LEVEL=verbose` 以查看额外的日志行，例如 hook 匹配器计数和查询匹配。
 
 有关故障排除常见问题，如 hooks 不触发、无限 Stop hook 循环或配置错误，请参阅指南中的[限制和故障排除](/zh-CN/hooks-guide#limitations-and-troubleshooting)。

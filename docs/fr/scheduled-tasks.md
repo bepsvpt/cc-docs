@@ -12,7 +12,7 @@
 
 Les tâches planifiées permettent à Claude de réexécuter automatiquement un prompt à intervalles réguliers. Utilisez-les pour interroger un déploiement, surveiller une PR, vérifier une compilation longue ou vous rappeler de faire quelque chose plus tard dans la session. Pour réagir aux événements au fur et à mesure qu'ils se produisent au lieu d'interroger, consultez [Channels](/fr/channels) : votre CI peut pousser l'échec directement dans la session.
 
-Les tâches sont limitées à la session : elles vivent dans le processus Claude Code actuel et disparaissent lorsque vous quittez. Pour une planification durable qui survit aux redémarrages, utilisez [Routines](/fr/routines), [Tâches planifiées sur le bureau](/fr/desktop-scheduled-tasks) ou [GitHub Actions](/fr/github-actions).
+Les tâches sont limitées à la session : elles vivent dans la conversation actuelle et s'arrêtent quand vous en commencez une nouvelle. La reprise avec `--resume` ou `--continue` ramène toute tâche qui n'a pas [expiré](#seven-day-expiry) : une tâche récurrente créée au cours des 7 derniers jours, ou une tâche ponctuelle dont l'heure planifiée n'a pas encore passé. Pour une planification qui survit indépendamment de toute session, utilisez [Routines](/fr/routines), [Tâches planifiées sur le bureau](/fr/desktop-scheduled-tasks) ou [GitHub Actions](/fr/github-actions).
 
 ## Comparer les options de planification
 
@@ -118,6 +118,10 @@ quiet, say so in one line.
 
 Les modifications apportées à `loop.md` prennent effet à la prochaine itération, vous pouvez donc affiner les instructions pendant qu'une boucle s'exécute. Quand aucun `loop.md` n'existe dans l'un ou l'autre emplacement, la boucle revient au prompt de maintenance intégré. Gardez le fichier concis : le contenu au-delà de 25 000 octets est tronqué.
 
+### Arrêter une boucle
+
+Pour arrêter un `/loop` pendant qu'il attend la prochaine itération, appuyez sur `Esc`. Cela efface le réveil en attente afin que la boucle ne se déclenche pas à nouveau. Les tâches que vous avez planifiées en [demandant directement à Claude](#manage-scheduled-tasks) ne sont pas affectées par `Esc` et restent en place jusqu'à ce que vous les supprimiez.
+
 ## Définir un rappel ponctuel
 
 Pour les rappels ponctuels, décrivez ce que vous voulez en langage naturel au lieu d'utiliser `/loop`. Claude planifie une tâche à usage unique qui se supprime après son exécution.
@@ -198,9 +202,9 @@ Définissez `CLAUDE_CODE_DISABLE_CRON=1` dans votre environnement pour désactiv
 
 La planification limitée à la session a des contraintes inhérentes :
 
-* Les tâches ne s'exécutent que pendant que Claude Code s'exécute et est inactif. Fermer le terminal ou laisser la session se terminer annule tout.
+* Les tâches ne s'exécutent que pendant que Claude Code s'exécute et est inactif. Fermer le terminal ou laisser la session se terminer arrête leur exécution.
 * Pas de rattrapage pour les exécutions manquées. Si l'heure planifiée d'une tâche passe pendant que Claude est occupé par une demande longue, elle s'exécute une fois quand Claude devient inactif, pas une fois par intervalle manqué.
-* Pas de persistance entre les redémarrages. Le redémarrage de Claude Code efface toutes les tâches limitées à la session.
+* Démarrer une nouvelle conversation efface toutes les tâches limitées à la session. La reprise avec `claude --resume` ou `claude --continue` restaure les tâches qui n'ont pas expiré : les tâches récurrentes dans les sept jours suivant leur création, et les tâches ponctuelles dont l'heure planifiée n'a pas encore passé. Les tâches Bash en arrière-plan et les tâches de surveillance ne sont jamais restaurées à la reprise.
 
 Pour l'automatisation pilotée par cron qui doit s'exécuter sans surveillance :
 

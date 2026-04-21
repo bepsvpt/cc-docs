@@ -25,20 +25,26 @@ Os aliases de modelo fornecem uma maneira conveniente de selecionar configuraç�
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`default`**    | Valor especial que limpa qualquer substituição de modelo e reverte para o modelo recomendado para seu tipo de conta. Não é em si um alias de modelo                              |
 | **`best`**       | Usa o modelo mais capaz disponível, atualmente equivalente a `opus`                                                                                                              |
-| **`sonnet`**     | Usa o modelo Sonnet mais recente (atualmente Sonnet 4.6) para tarefas de codificação diária                                                                                      |
-| **`opus`**       | Usa o modelo Opus mais recente (atualmente Opus 4.6) para tarefas de raciocínio complexo                                                                                         |
+| **`sonnet`**     | Usa o modelo Sonnet mais recente para tarefas de codificação diária                                                                                                              |
+| **`opus`**       | Usa o modelo Opus mais recente para tarefas de raciocínio complexo                                                                                                               |
 | **`haiku`**      | Usa o modelo Haiku rápido e eficiente para tarefas simples                                                                                                                       |
 | **`sonnet[1m]`** | Usa Sonnet com uma [janela de contexto de 1 milhão de tokens](https://platform.claude.com/docs/pt/build-with-claude/context-windows#1m-token-context-window) para sessões longas |
 | **`opus[1m]`**   | Usa Opus com uma [janela de contexto de 1 milhão de tokens](https://platform.claude.com/docs/pt/build-with-claude/context-windows#1m-token-context-window) para sessões longas   |
 | **`opusplan`**   | Modo especial que usa `opus` durante o modo de plano, depois muda para `sonnet` para execução                                                                                    |
 
-Os aliases sempre apontam para a versão mais recente. Para fixar uma versão específica, use o nome completo do modelo (por exemplo, `claude-opus-4-6`) ou defina a variável de ambiente correspondente como `ANTHROPIC_DEFAULT_OPUS_MODEL`.
+Na API Anthropic, `opus` se resolve para Opus 4.7 e `sonnet` se resolve para Sonnet 4.6. No Bedrock, Vertex e Foundry, `opus` se resolve para Opus 4.6 e `sonnet` se resolve para Sonnet 4.5; modelos mais recentes estão disponíveis nesses provedores selecionando o nome completo do modelo explicitamente ou definindo `ANTHROPIC_DEFAULT_OPUS_MODEL` ou `ANTHROPIC_DEFAULT_SONNET_MODEL`.
+
+Os aliases apontam para a versão recomendada para seu provedor e são atualizados ao longo do tempo. Para fixar uma versão específica, use o nome completo do modelo (por exemplo, `claude-opus-4-7`) ou defina a variável de ambiente correspondente como `ANTHROPIC_DEFAULT_OPUS_MODEL`.
+
+<Note>
+  Opus 4.7 requer Claude Code v2.1.111 ou posterior. Execute `claude update` para atualizar.
+</Note>
 
 ### Configurando seu modelo
 
 Você pode configurar seu modelo de várias maneiras, listadas em ordem de prioridade:
 
-1. **Durante a sessão** - Use `/model <alias|name>` para alternar modelos durante a sessão
+1. **Durante a sessão** - Use `/model <alias|name>` para alternar imediatamente, ou execute `/model` sem argumentos para abrir o seletor. O seletor pede confirmação quando a conversa tem saída anterior, pois a próxima resposta relê o histórico completo sem contexto em cache
 2. **Na inicialização** - Inicie com `claude --model <alias|name>`
 3. **Variável de ambiente** - Defina `ANTHROPIC_MODEL=<alias|name>`
 4. **Configurações** - Configure permanentemente em seu arquivo de configurações usando o campo `model`.
@@ -110,17 +116,25 @@ Sem o bloco `env`, um usuário que seleciona Padrão no seletor obteria a versã
 
 Quando `availableModels` é definido em vários níveis, como configurações de usuário e configurações de projeto, os arrays são mesclados e desduplicados. Para impor uma lista de permissões rigorosa, defina `availableModels` em configurações gerenciadas ou de política que têm a prioridade mais alta.
 
+### IDs de modelo Mantle
+
+Quando o [endpoint Bedrock Mantle](/pt/amazon-bedrock#use-the-mantle-endpoint) está habilitado, entradas em `availableModels` que começam com `anthropic.` são adicionadas ao seletor `/model` como opções personalizadas e roteadas para o endpoint Mantle. Esta é uma exceção à correspondência somente de alias descrita em [Fixar modelos para implantações de terceiros](#pin-models-for-third-party-deployments). A configuração ainda restringe o seletor às entradas listadas, portanto inclua os aliases padrão junto com qualquer ID Mantle.
+
 ## Comportamento especial do modelo
 
 ### Configuração do modelo `default`
 
 O comportamento de `default` depende do tipo de sua conta:
 
-* **Max e Team Premium**: padrão para Opus 4.6
-* **Pro e Team Standard**: padrão para Sonnet 4.6
-* **Enterprise**: Opus 4.6 está disponível, mas não é o padrão
+* **Max e Team Premium**: padrão para Opus 4.7
+* **Pro, Team Standard, Enterprise e API Anthropic**: padrão para Sonnet 4.6
+* **Bedrock, Vertex e Foundry**: padrão para Sonnet 4.5
 
 Claude Code pode fazer fallback automaticamente para Sonnet se você atingir um limite de uso com Opus.
+
+<Note>
+  Em 23 de abril de 2026, o modelo padrão para usuários Enterprise pagos conforme o uso e API Anthropic mudará para Opus 4.7. Para manter um padrão diferente, defina `ANTHROPIC_MODEL` ou o campo `model` em [configurações gerenciadas pelo servidor](/pt/server-managed-settings).
+</Note>
 
 ### Configuração do modelo `opusplan`
 
@@ -131,40 +145,73 @@ O alias de modelo `opusplan` fornece uma abordagem híbrida automatizada:
 
 Isso oferece o melhor dos dois mundos: o raciocínio superior do Opus para planejamento e a eficiência do Sonnet para execução.
 
+A fase Opus do modo de plano é executada com a janela de contexto padrão de 200K. A atualização automática de 1M descrita em [Contexto estendido](#extended-context) se aplica à configuração do modelo `opus` e não se estende a `opusplan`.
+
 ### Ajustar nível de esforço
 
-[Níveis de esforço](https://platform.claude.com/docs/pt/build-with-claude/effort) controlam raciocínio adaptativo, que aloca dinamicamente o pensamento com base na complexidade da tarefa. Esforço menor é mais rápido e mais barato para tarefas diretas, enquanto esforço maior fornece raciocínio mais profundo para problemas complexos.
+[Níveis de esforço](https://platform.claude.com/docs/pt/build-with-claude/effort) controlam raciocínio adaptativo, que permite que o modelo decida se e quanto pensar em cada etapa com base na complexidade da tarefa. Esforço menor é mais rápido e mais barato para tarefas diretas, enquanto esforço maior fornece raciocínio mais profundo para problemas complexos.
 
-Três níveis persistem entre sessões: **low**, **medium** e **high**. Um quarto nível, **max**, fornece o raciocínio mais profundo sem restrição no gasto de tokens, portanto as respostas são mais lentas e custam mais do que em `high`. `max` está disponível apenas em Opus 4.6 e não persiste entre sessões, exceto através da variável de ambiente `CLAUDE_CODE_EFFORT_LEVEL`.
+O esforço é suportado em Opus 4.7, Opus 4.6 e Sonnet 4.6. Os níveis disponíveis dependem do modelo:
 
-Opus 4.6 e Sonnet 4.6 usam como padrão esforço médio. Isso se aplica a todos os provedores, incluindo Bedrock, Vertex AI e acesso direto à API.
+| Modelo                | Níveis                                  |
+| :-------------------- | :-------------------------------------- |
+| Opus 4.7              | `low`, `medium`, `high`, `xhigh`, `max` |
+| Opus 4.6 e Sonnet 4.6 | `low`, `medium`, `high`, `max`          |
 
-Médio é o nível recomendado para a maioria das tarefas de codificação: equilibra velocidade e profundidade de raciocínio, e níveis mais altos podem fazer o modelo pensar demais em trabalho rotineiro. Reserve `high` ou `max` para tarefas que genuinamente se beneficiam de raciocínio mais profundo, como problemas de depuração difíceis ou decisões arquitetônicas complexas.
+Se você definir um nível que o modelo ativo não suporta, Claude Code volta para o nível mais alto suportado no ou abaixo do que você definiu. Por exemplo, `xhigh` é executado como `high` em Opus 4.6.
 
-Para raciocínio profundo único sem alterar sua configuração de sessão, inclua "ultrathink" em seu prompt para disparar esforço alto para essa vez.
+Em Opus 4.7, o esforço padrão é `xhigh` para todos os planos e provedores. Em Opus 4.6 e Sonnet 4.6, o padrão é `high`, ou `medium` em Pro e Max.
 
-**Configurando esforço:**
+Quando você executa Opus 4.7 pela primeira vez, Claude Code aplica `xhigh` mesmo que você tenha definido anteriormente um nível de esforço diferente para Opus 4.6 ou Sonnet 4.6. Execute `/effort` novamente para escolher um nível diferente após alternar.
 
-* **`/effort`**: execute `/effort low`, `/effort medium`, `/effort high` ou `/effort max` para alterar o nível, ou `/effort auto` para redefinir para o padrão do modelo
+`low`, `medium`, `high` e `xhigh` persistem entre sessões. `max` fornece o raciocínio mais profundo sem restrição no gasto de tokens e se aplica apenas à sessão atual, exceto quando definido através da variável de ambiente `CLAUDE_CODE_EFFORT_LEVEL`.
+
+#### Escolher um nível de esforço
+
+Cada nível negocia gasto de tokens contra capacidade. O padrão é adequado para a maioria das tarefas de codificação; ajuste quando você quiser um equilíbrio diferente.
+
+| Nível    | Quando usá-lo                                                                                                                                           |
+| :------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `low`    | Reserve para tarefas curtas, delimitadas, sensíveis à latência que não são sensíveis à inteligência                                                     |
+| `medium` | Reduz o uso de tokens para trabalho sensível a custos que pode fazer concessões em inteligência                                                         |
+| `high`   | Equilibra o uso de tokens e inteligência. Use como mínimo para trabalho sensível à inteligência, ou para reduzir o gasto de tokens em relação a `xhigh` |
+| `xhigh`  | Melhores resultados para a maioria das tarefas de codificação e agentes. Padrão recomendado em Opus 4.7                                                 |
+| `max`    | Pode melhorar o desempenho em tarefas exigentes, mas pode mostrar retornos decrescentes e é propenso a pensar demais. Teste antes de adotar amplamente  |
+
+A escala de esforço é calibrada por modelo, portanto o mesmo nome de nível não representa o mesmo valor subjacente entre modelos.
+
+Para raciocínio profundo único sem alterar sua configuração de sessão, inclua "ultrathink" em seu prompt. Isso adiciona uma instrução no contexto dizendo ao modelo para raciocinar mais nessa vez; não altera o nível de esforço enviado para a API.
+
+#### Definir o nível de esforço
+
+Você pode alterar o esforço através de qualquer um dos seguintes:
+
+* **`/effort`**: execute `/effort` sem argumentos para abrir um controle deslizante interativo, `/effort` seguido por um nome de nível para defini-lo diretamente, ou `/effort auto` para redefinir para o padrão do modelo
 * **Em `/model`**: use as teclas de seta esquerda/direita para ajustar o controle deslizante de esforço ao selecionar um modelo
-* **Sinalizador `--effort`**: passe `low`, `medium`, `high` ou `max` para definir o nível para uma única sessão ao iniciar Claude Code
-* **Variável de ambiente**: defina `CLAUDE_CODE_EFFORT_LEVEL` para `low`, `medium`, `high`, `max` ou `auto`
-* **Configurações**: defina `effortLevel` em seu arquivo de configurações para `"low"`, `"medium"` ou `"high"`
+* **Sinalizador `--effort`**: passe um nome de nível para defini-lo para uma única sessão ao iniciar Claude Code
+* **Variável de ambiente**: defina `CLAUDE_CODE_EFFORT_LEVEL` para um nome de nível ou `auto`
+* **Configurações**: defina `effortLevel` em seu arquivo de configurações
 * **Frontmatter de skill e subagent**: defina `effort` em um arquivo markdown de [skill](/pt/skills#frontmatter-reference) ou [subagent](/pt/sub-agents#supported-frontmatter-fields) para substituir o nível de esforço quando esse skill ou subagent é executado
 
 A variável de ambiente tem precedência sobre todos os outros métodos, depois seu nível configurado, depois o padrão do modelo. O esforço de frontmatter se aplica quando esse skill ou subagent está ativo, substituindo o nível de sessão, mas não a variável de ambiente.
 
-O esforço é suportado em Opus 4.6 e Sonnet 4.6. O controle deslizante de esforço aparece em `/model` quando um modelo suportado é selecionado. O nível de esforço atual também é exibido ao lado do logo e spinner, por exemplo "with low effort", para que você possa confirmar qual configuração está ativa sem abrir `/model`.
+O controle deslizante de esforço aparece em `/model` quando um modelo suportado é selecionado. O nível de esforço atual também é exibido ao lado do logo e spinner, por exemplo "with low effort", para que você possa confirmar qual configuração está ativa sem abrir `/model`.
 
-Para desabilitar raciocínio adaptativo em Opus 4.6 e Sonnet 4.6 e reverter para o orçamento de pensamento fixo anterior, defina `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1`. Quando desabilitado, esses modelos usam o orçamento fixo controlado por `MAX_THINKING_TOKENS`. Veja [variáveis de ambiente](/pt/env-vars).
+#### Raciocínio adaptativo e orçamentos de pensamento fixos
+
+O raciocínio adaptativo torna o pensamento opcional em cada etapa, portanto Claude pode responder mais rápido a prompts rotineiros e reservar pensamento mais profundo para etapas que se beneficiam dele. Se você quiser que Claude pense mais ou menos frequentemente do que o nível atual produz, você pode dizer isso diretamente em seu prompt ou em `CLAUDE.md`; o modelo responde a essa orientação dentro de sua configuração de esforço.
+
+Opus 4.7 sempre usa raciocínio adaptativo. O modo de orçamento de pensamento fixo e `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` não se aplicam a ele.
+
+Em Opus 4.6 e Sonnet 4.6, você pode definir `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` para reverter para o orçamento de pensamento fixo anterior controlado por `MAX_THINKING_TOKENS`. Veja [variáveis de ambiente](/pt/env-vars).
 
 ### Contexto estendido
 
-Opus 4.6 e Sonnet 4.6 suportam uma [janela de contexto de 1 milhão de tokens](https://platform.claude.com/docs/pt/build-with-claude/context-windows#1m-token-context-window) para sessões longas com grandes bases de código.
+Opus 4.7, Opus 4.6 e Sonnet 4.6 suportam uma [janela de contexto de 1 milhão de tokens](https://platform.claude.com/docs/pt/build-with-claude/context-windows#1m-token-context-window) para sessões longas com grandes bases de código.
 
 A disponibilidade varia por modelo e plano. Nos planos Max, Team e Enterprise, Opus é automaticamente atualizado para contexto 1M sem configuração adicional. Isso se aplica aos assentos Team Standard e Team Premium.
 
-| Plano                          | Opus 4.6 com contexto 1M                                                                              | Sonnet 4.6 com contexto 1M                                                                            |
+| Plano                          | Opus com contexto 1M                                                                                  | Sonnet com contexto 1M                                                                                |
 | ------------------------------ | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | Max, Team e Enterprise         | Incluído na assinatura                                                                                | Requer [uso extra](https://support.claude.com/pt/articles/12429409-extra-usage-for-paid-claude-plans) |
 | Pro                            | Requer [uso extra](https://support.claude.com/pt/articles/12429409-extra-usage-for-paid-claude-plans) | Requer [uso extra](https://support.claude.com/pt/articles/12429409-extra-usage-for-paid-claude-plans) |
@@ -184,7 +231,7 @@ Você também pode usar o sufixo `[1m]` com aliases de modelo ou nomes de modelo
 /model sonnet[1m]
 
 # Ou anexe [1m] a um nome de modelo completo
-/model claude-opus-4-6[1m]
+/model claude-opus-4-7[1m]
 ```
 
 ## Verificando seu modelo atual
@@ -201,7 +248,7 @@ Use `ANTHROPIC_CUSTOM_MODEL_OPTION` para adicionar uma única entrada personaliz
 Este exemplo define todas as três variáveis para tornar uma implantação Opus roteada por gateway selecionável:
 
 ```bash theme={null}
-export ANTHROPIC_CUSTOM_MODEL_OPTION="my-gateway/claude-opus-4-6"
+export ANTHROPIC_CUSTOM_MODEL_OPTION="my-gateway/claude-opus-4-7"
 export ANTHROPIC_CUSTOM_MODEL_OPTION_NAME="Opus via Gateway"
 export ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION="Custom deployment routed through the internal LLM gateway"
 ```
@@ -227,29 +274,29 @@ Nota: `ANTHROPIC_SMALL_FAST_MODEL` está descontinuado em favor de `ANTHROPIC_DE
 
 Ao implantar Claude Code através de [Bedrock](/pt/amazon-bedrock), [Vertex AI](/pt/google-vertex-ai) ou [Foundry](/pt/microsoft-foundry), fixe versões de modelo antes de lançar para usuários.
 
-Sem fixação, Claude Code usa aliases de modelo (`sonnet`, `opus`, `haiku`) que resolvem para a versão mais recente. Quando Anthropic lança um novo modelo, os usuários cujas contas não têm a nova versão habilitada quebrarão silenciosamente.
+Sem fixação, Claude Code usa aliases de modelo (`sonnet`, `opus`, `haiku`) que resolvem para a versão mais recente. Quando Anthropic lança um novo modelo que ainda não está habilitado na conta de um usuário, os usuários de Bedrock e Vertex AI veem um aviso e voltam para a versão anterior para essa sessão, enquanto os usuários de Foundry veem erros porque Foundry não tem verificação de inicialização equivalente.
 
 <Warning>
-  Defina todas as três variáveis de ambiente de modelo para IDs de versão específicos como parte de sua configuração inicial. Pular esta etapa significa que uma atualização do Claude Code pode quebrar seus usuários sem nenhuma ação de sua parte.
+  Defina todas as três variáveis de ambiente de modelo para IDs de versão específicos como parte de sua configuração inicial. Fixar permite que você controle quando seus usuários se movem para um novo modelo.
 </Warning>
 
 Use as seguintes variáveis de ambiente com IDs de modelo específicos de versão para seu provedor:
 
-| Provedor  | Exemplo                                                                 |
-| :-------- | :---------------------------------------------------------------------- |
-| Bedrock   | `export ANTHROPIC_DEFAULT_OPUS_MODEL='us.anthropic.claude-opus-4-6-v1'` |
-| Vertex AI | `export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6'`                 |
-| Foundry   | `export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6'`                 |
+| Provedor  | Exemplo                                                              |
+| :-------- | :------------------------------------------------------------------- |
+| Bedrock   | `export ANTHROPIC_DEFAULT_OPUS_MODEL='us.anthropic.claude-opus-4-7'` |
+| Vertex AI | `export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7'`              |
+| Foundry   | `export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7'`              |
 
 Aplique o mesmo padrão para `ANTHROPIC_DEFAULT_SONNET_MODEL` e `ANTHROPIC_DEFAULT_HAIKU_MODEL`. Para IDs de modelo atuais e legados em todos os provedores, veja [Visão geral de modelos](https://platform.claude.com/docs/pt/about-claude/models/overview). Para atualizar usuários para uma nova versão de modelo, atualize essas variáveis de ambiente e reimplante.
 
 Para habilitar [contexto estendido](#extended-context) para um modelo fixado, anexe `[1m]` ao ID do modelo em `ANTHROPIC_DEFAULT_OPUS_MODEL` ou `ANTHROPIC_DEFAULT_SONNET_MODEL`:
 
 ```bash theme={null}
-export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6[1m]'
+export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7[1m]'
 ```
 
-O sufixo `[1m]` aplica a janela de contexto 1M a todo o uso desse alias, incluindo `opusplan`. Claude Code remove o sufixo antes de enviar o ID do modelo para seu provedor. Apenas anexe `[1m]` quando o modelo subjacente suportar contexto 1M, como Opus 4.6 ou Sonnet 4.6.
+O sufixo `[1m]` aplica a janela de contexto 1M a todo o uso desse alias, incluindo `opusplan`. Claude Code remove o sufixo antes de enviar o ID do modelo para seu provedor. Apenas anexe `[1m]` quando o modelo subjacente suportar contexto 1M, como Opus 4.7 ou Sonnet 4.6.
 
 <Note>
   A lista de permissões `settings.availableModels` ainda se aplica ao usar provedores de terceiros. A filtragem corresponde ao alias de modelo (`opus`, `sonnet`, `haiku`), não ao ID de modelo específico do provedor.
@@ -267,13 +314,14 @@ Essas variáveis só têm efeito em provedores de terceiros, como Bedrock, Verte
 | `ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION`            | Descrição de exibição para o modelo Opus fixado no seletor `/model`. Padrão para `Custom Opus model` quando não definido |
 | `ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES` | Lista separada por vírgulas de capacidades que o modelo Opus fixado suporta                                              |
 
-Os mesmos sufixos `_NAME`, `_DESCRIPTION` e `_SUPPORTED_CAPABILITIES` estão disponíveis para `ANTHROPIC_DEFAULT_SONNET_MODEL` e `ANTHROPIC_DEFAULT_HAIKU_MODEL`.
+Os mesmos sufixos `_NAME`, `_DESCRIPTION` e `_SUPPORTED_CAPABILITIES` estão disponíveis para `ANTHROPIC_DEFAULT_SONNET_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL` e `ANTHROPIC_CUSTOM_MODEL_OPTION`.
 
 Claude Code habilita recursos como [níveis de esforço](#adjust-effort-level) e [pensamento estendido](/pt/common-workflows#use-extended-thinking-thinking-mode) correspondendo o ID do modelo contra padrões conhecidos. IDs específicos do provedor, como ARNs Bedrock ou nomes de implantação personalizados, geralmente não correspondem a esses padrões, deixando recursos suportados desabilitados. Defina `_SUPPORTED_CAPABILITIES` para informar ao Claude Code quais recursos o modelo realmente suporta:
 
 | Valor de capacidade    | Habilita                                                                                      |
 | ---------------------- | --------------------------------------------------------------------------------------------- |
 | `effort`               | [Níveis de esforço](#adjust-effort-level) e o comando `/effort`                               |
+| `xhigh_effort`         | O nível de esforço `xhigh`                                                                    |
 | `max_effort`           | O nível de esforço `max`                                                                      |
 | `thinking`             | [Pensamento estendido](/pt/common-workflows#use-extended-thinking-thinking-mode)              |
 | `adaptive_thinking`    | Raciocínio adaptativo que aloca dinamicamente o pensamento com base na complexidade da tarefa |
@@ -286,8 +334,8 @@ Este exemplo fixa Opus para um ARN de modelo personalizado Bedrock, define um no
 ```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='arn:aws:bedrock:us-east-1:123456789012:custom-model/abc'
 export ANTHROPIC_DEFAULT_OPUS_MODEL_NAME='Opus via Bedrock'
-export ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION='Opus 4.6 routed through a Bedrock custom endpoint'
-export ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES='effort,max_effort,thinking,adaptive_thinking,interleaved_thinking'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION='Opus 4.7 routed through a Bedrock custom endpoint'
+export ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES='effort,xhigh_effort,max_effort,thinking,adaptive_thinking,interleaved_thinking'
 ```
 
 ### Substituir IDs de modelo por versão
@@ -303,8 +351,8 @@ Defina `modelOverrides` em seu [arquivo de configurações](/pt/settings#setting
 ```json theme={null}
 {
   "modelOverrides": {
-    "claude-opus-4-6": "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/opus-prod",
-    "claude-opus-4-5-20251101": "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/opus-45-prod",
+    "claude-opus-4-7": "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/opus-prod",
+    "claude-opus-4-6": "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/opus-46-prod",
     "claude-sonnet-4-6": "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/sonnet-prod"
   }
 }

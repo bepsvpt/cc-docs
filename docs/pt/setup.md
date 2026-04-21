@@ -123,7 +123,7 @@ Após a instalação, inicie `claude` a partir do PowerShell, CMD ou Git Bash. C
 }
 ```
 
-Claude Code também pode executar PowerShell nativamente no Windows como uma visualização de aceitação. Consulte [ferramenta PowerShell](/pt/tools-reference#powershell-tool) para configuração e limitações.
+Claude Code também pode executar PowerShell nativamente no Windows. A ferramenta PowerShell está sendo lançada progressivamente; defina `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` para aceitar ou `0` para recusar. Consulte [ferramenta PowerShell](/pt/tools-reference#powershell-tool) para configuração e limitações.
 
 **Opção 2: WSL**
 
@@ -203,6 +203,23 @@ Configure isso via `/config` → **Canal de atualização automática**, ou adic
 Para implantações empresariais, você pode impor um canal de lançamento consistente em toda a sua organização usando [configurações gerenciadas](/pt/permissions#managed-settings).
 
 As instalações do Homebrew escolhem um canal pelo nome do cask em vez dessa configuração: `claude-code` rastreia estável e `claude-code@latest` rastreia mais recente.
+
+### Fixar uma versão mínima
+
+A configuração `minimumVersion` estabelece um piso. As atualizações automáticas em segundo plano e `claude update` recusam instalar qualquer versão abaixo desse valor, portanto mudar para o canal `"stable"` não faz downgrade se você já estiver em um build `"latest"` mais recente.
+
+Mudar de `"latest"` para `"stable"` via `/config` solicita que você escolha ficar na versão atual ou permitir o downgrade. Escolher ficar define `minimumVersion` para essa versão. Mudar de volta para `"latest"` limpa isso.
+
+Adicione-o ao seu [arquivo settings.json](/pt/settings) para fixar um piso explicitamente:
+
+```json theme={null}
+{
+  "autoUpdatesChannel": "stable",
+  "minimumVersion": "2.1.100"
+}
+```
+
+Em [configurações gerenciadas](/pt/permissions#managed-settings), isso impõe um mínimo em toda a organização que as configurações de usuário e projeto não podem substituir.
 
 ### Desabilitar atualizações automáticas
 
@@ -298,31 +315,17 @@ Para instalar um número de versão específico:
   </Tab>
 </Tabs>
 
-### Instalação npm descontinuada
+### Instalar com npm
 
-A instalação npm está descontinuada. O instalador nativo é mais rápido, não requer dependências e é atualizado automaticamente em segundo plano. Use o método de [instalação nativa](#install-claude-code) quando possível.
-
-#### Migrar do npm para nativo
-
-Se você instalou anteriormente Claude Code com npm, mude para o instalador nativo:
-
-```bash theme={null}
-# Instalar o binário nativo
-curl -fsSL https://claude.ai/install.sh | bash
-
-# Remover a instalação antiga do npm
-npm uninstall -g @anthropic-ai/claude-code
-```
-
-Você também pode executar `claude install` a partir de uma instalação npm existente para instalar o binário nativo junto com ela e depois remover a versão npm.
-
-#### Instalar com npm
-
-Se você precisar da instalação npm por motivos de compatibilidade, você deve ter [Node.js 18+](https://nodejs.org/en/download) instalado. Instale o pacote globalmente:
+Você também pode instalar Claude Code como um pacote npm global. O pacote requer [Node.js 18 ou posterior](https://nodejs.org/en/download).
 
 ```bash theme={null}
 npm install -g @anthropic-ai/claude-code
 ```
+
+O pacote npm instala o mesmo binário nativo que o instalador autônomo. npm puxa o binário através de uma dependência opcional por plataforma como `@anthropic-ai/claude-code-darwin-arm64`, e uma etapa postinstall o vincula no lugar. O binário `claude` instalado não invoca Node em si.
+
+As plataformas de instalação npm suportadas são `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64` e `win32-arm64`. Seu gerenciador de pacotes deve permitir dependências opcionais. Consulte [solução de problemas](/pt/troubleshooting#native-binary-not-found-after-npm-install) se o binário estiver faltando após a instalação.
 
 <Warning>
   NÃO use `sudo npm install -g` pois isso pode levar a problemas de permissão e riscos de segurança. Se você encontrar erros de permissão, consulte [solução de problemas de erros de permissão](/pt/troubleshooting#permission-errors-during-installation).

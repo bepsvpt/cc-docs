@@ -42,7 +42,28 @@ Hooks 是用户定义的 shell 命令，在 Claude Code 生命周期中的特定
     }
     ```
 
-    如果你的设置文件已经有一个 `hooks` 键，请将 `Notification` 条目合并到其中，而不是替换整个对象。你也可以通过在 CLI 中描述你想要的内容来要求 Claude 为你编写 hook。
+    如果你的设置文件已经有一个 `hooks` 键，请将 `Notification` 作为现有事件键的同级添加，而不是替换整个对象。每个事件名称是单个 `hooks` 对象内的一个键：
+
+    ```json theme={null}
+    {
+      "hooks": {
+        "PostToolUse": [
+          {
+            "matcher": "Edit|Write",
+            "hooks": [{ "type": "command", "command": "jq -r '.tool_input.file_path' | xargs npx prettier --write" }]
+          }
+        ],
+        "Notification": [
+          {
+            "matcher": "",
+            "hooks": [{ "type": "command", "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'" }]
+          }
+        ]
+      }
+    }
+    ```
+
+    你也可以通过在 CLI 中描述你想要的内容来要求 Claude 为你编写 hook。
   </Step>
 
   <Step title="验证配置">
@@ -295,17 +316,27 @@ Hooks 让你在 Claude Code 生命周期中的关键点运行代码：编辑后�
 
 某些项目根据你所在的目录设置不同的环境变量。[direnv](https://direnv.net/) 之类的工具在你的 shell 中自动执行此操作，但 Claude 的 Bash 工具不会自动拾取这些更改。
 
-`CwdChanged` hook 修复了这个问题：它在 Claude 每次更改目录时运行，因此你可以为新位置重新加载正确的变量。hook 将更新的值写入 `CLAUDE_ENV_FILE`，Claude Code 在每个 Bash 命令之前应用它。将其添加到 `~/.claude/settings.json`：
+配对 `SessionStart` hook 和 `CwdChanged` hook 可以解决这个问题。`SessionStart` 加载你启动时所在目录的变量，`CwdChanged` 在 Claude 每次更改目录时重新加载它们。两者都写入 `CLAUDE_ENV_FILE`，Claude Code 在每个 Bash 命令之前作为脚本前导运行。将其添加到 `~/.claude/settings.json`：
 
 ```json theme={null}
 {
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "direnv export bash > \"$CLAUDE_ENV_FILE\""
+          }
+        ]
+      }
+    ],
     "CwdChanged": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "direnv export bash >> \"$CLAUDE_ENV_FILE\""
+            "command": "direnv export bash > \"$CLAUDE_ENV_FILE\""
           }
         ]
       }
@@ -314,7 +345,9 @@ Hooks 让你在 Claude Code 生命周期中的关键点运行代码：编辑后�
 }
 ```
 
-要对特定文件而不是每个目录更改做出反应，请使用 `FileChanged` 和 `matcher` 列出要监视的文件名（用管道分隔）。`matcher` 既配置要监视的文件，也过滤哪些 hooks 运行。此示例监视当前目录中 `.envrc` 和 `.env` 的更改：
+在每个包含 `.envrc` 的目录中运行一次 `direnv allow`，以便 direnv 被允许加载它。如果你使用 devbox 或 nix 而不是 direnv，相同的模式适用于 `devbox shellenv` 或 `devbox global shellenv` 代替 `direnv export bash`。
+
+要对特定文件而不是每个目录更改做出反应，请使用 `FileChanged` 和 `matcher` 列出要监视的文件名，用 `|` 分隔。要构建监视列表，此值被分割为文字文件名而不是作为正则表达式进行评估。有关当文件更改时相同值如何也过滤哪些 hook 组运行，请参阅 [FileChanged](/zh-CN/hooks#filechanged)。此示例监视工作目录中 `.envrc` 和 `.env` 的更改：
 
 ```json theme={null}
 {
@@ -325,7 +358,7 @@ Hooks 让你在 Claude Code 生命周期中的关键点运行代码：编辑后�
         "hooks": [
           {
             "type": "command",
-            "command": "direnv export bash >> \"$CLAUDE_ENV_FILE\""
+            "command": "direnv export bash > \"$CLAUDE_ENV_FILE\""
           }
         ]
       }
@@ -365,6 +398,10 @@ Hooks 让你在 Claude Code 生命周期中的关键点运行代码：编辑后�
 当 hook 批准时，Claude Code 退出计划模式并恢复进入计划模式之前处于活动状态的任何权限模式。成绩单显示"Allowed by PermissionRequest hook"，其中对话会出现。hook 路径始终保持当前对话：它无法清除上下文并以对话可以的方式启动新的实现会话。
 
 要改为设置特定的权限模式，你的 hook 的输出可以包含一个 `updatedPermissions` 数组，其中包含 `setMode` 条目。`mode` 值是任何权限模式，如 `default`、`acceptEdits` 或 `bypassPermissions`，`destination: "session"` 仅将其应用于当前会话。
+
+<Note>
+  `bypassPermissions` 仅在会话已启动时应用，具有绕过模式可用：`--dangerously-skip-permissions`、`--permission-mode bypassPermissions`、`--allow-dangerously-skip-permissions` 或 `permissions.defaultMode: "bypassPermissions"` 在设置中，且未被 [`permissions.disableBypassPermissionsMode`](/zh-CN/permissions#managed-settings) 禁用。它永远不会作为 `defaultMode` 持久化。
+</Note>
 
 要将会话切换到 `acceptEdits`，你的 hook 将此 JSON 写入 stdout：
 
@@ -423,7 +460,7 @@ Hook 事件在 Claude Code 中的特定生命周期点触发。当事件触发�
 
 * `"type": "http"`：将事件数据 POST 到 URL。请参阅 [HTTP hooks](#http-hooks)。
 * `"type": "prompt"`：单轮 LLM 评估。请参阅 [基于提示的 hooks](#prompt-based-hooks)。
-* `"type": "agent"`：具有工具访问权限的多轮验证。请参阅 [基于代理的 hooks](#agent-based-hooks)。
+* `"type": "agent"`：具有工具访问权限的多轮验证。代理 hooks 是实验性的，可能会改变。请参阅 [基于代理的 hooks](#agent-based-hooks)。
 
 ### 读取输入并返回输出
 
@@ -457,18 +494,18 @@ INPUT=$(cat)
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
 
 if echo "$COMMAND" | grep -q "drop table"; then
-  echo "Blocked: dropping tables is not allowed" >&2  // stderr 变成 Claude 的反馈
-  exit 2 // exit 2 = 阻止操作
+  echo "Blocked: dropping tables is not allowed" >&2  # stderr 变成 Claude 的反馈
+  exit 2 # exit 2 = 阻止操作
 fi
 
-exit 0  // exit 0 = 让它继续
+exit 0  # exit 0 = 让它继续
 ```
 
 退出代码确定接下来会发生什么：
 
 * **退出 0**：操作继续。对于 `UserPromptSubmit` 和 `SessionStart` hooks，你写入 stdout 的任何内容都会添加到 Claude 的上下文中。
 * **退出 2**：操作被阻止。写入原因到 stderr，Claude 会收到它作为反馈，以便它可以调整。
-* **任何其他退出代码**：操作继续。Stderr 被记录但不显示给 Claude。使用 `Ctrl+O` 切换详细模式以在成绩单中查看这些消息。
+* **任何其他退出代码**：操作继续。成绩单显示 `<hook name> hook error` 通知，后跟 stderr 的第一行；完整的 stderr 进入 [调试日志](/zh-CN/hooks#debug-hooks)。
 
 #### 结构化 JSON 输出
 
@@ -490,11 +527,13 @@ exit 0  // exit 0 = 让它继续
 }
 ```
 
-Claude Code 读取 `permissionDecision` 并取消工具调用，然后将 `permissionDecisionReason` 反馈给 Claude。这三个选项特定于 `PreToolUse`：
+Claude Code 读取 `permissionDecision` 并取消工具调用，然后将 `permissionDecisionReason` 反馈给 Claude。这些 `permissionDecision` 值特定于 `PreToolUse`：
 
 * `"allow"`：跳过交互式权限提示。拒绝和询问规则，包括企业托管拒绝列表，仍然适用
 * `"deny"`：取消工具调用并将原因发送给 Claude
 * `"ask"`：照常向用户显示权限提示
+
+第四个值 `"defer"` 在 [非交互模式](/zh-CN/headless) 中使用 `-p` 标志时可用。它以保留的工具调用退出进程，以便 Agent SDK 包装器可以收集输入并恢复。请参阅参考中的 [延迟工具调用以供稍后使用](/zh-CN/hooks#defer-a-tool-call-for-later)。
 
 返回 `"allow"` 跳过交互式提示但不覆盖 [权限规则](/zh-CN/permissions#manage-permissions)。如果拒绝规则与工具调用匹配，即使你的 hook 返回 `"allow"`，调用也会被阻止。如果询问规则匹配，用户仍然会被提示。这意味着来自任何设置范围的拒绝规则，包括 [托管设置](/zh-CN/settings#settings-files)，总是优先于 hook 批准。
 
@@ -521,26 +560,26 @@ Claude Code 读取 `permissionDecision` 并取消工具调用，然后将 `permi
 }
 ```
 
-`"Edit|Write"` 匹配器是一个与工具名称匹配的正则表达式模式。hook 仅在 Claude 使用 `Edit` 或 `Write` 工具时触发，而不是在它使用 `Bash`、`Read` 或任何其他工具时触发。
+`"Edit|Write"` 匹配器仅在 Claude 使用 `Edit` 或 `Write` 工具时触发，而不是在它使用 `Bash`、`Read` 或任何其他工具时触发。请参阅 [匹配器模式](/zh-CN/hooks#matcher-patterns) 了解纯名称和正则表达式如何被评估。
 
-每个事件类型在特定字段上匹配。匹配器支持精确字符串和正则表达式模式：
+每个事件类型在特定字段上匹配：
 
-| 事件                                                                                                                    | 匹配器过滤的内容     | 示例匹配器值                                                                                                              |
-| :-------------------------------------------------------------------------------------------------------------------- | :----------- | :------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`、`PostToolUse`、`PostToolUseFailure`、`PermissionRequest`、`PermissionDenied`                                | 工具名称         | `Bash`、`Edit\|Write`、`mcp__.*`                                                                                      |
-| `SessionStart`                                                                                                        | 会话如何启动       | `startup`、`resume`、`clear`、`compact`                                                                                |
-| `SessionEnd`                                                                                                          | 会话为什么结束      | `clear`、`resume`、`logout`、`prompt_input_exit`、`bypass_permissions_disabled`、`other`                                 |
-| `Notification`                                                                                                        | 通知类型         | `permission_prompt`、`idle_prompt`、`auth_success`、`elicitation_dialog`                                               |
-| `SubagentStart`                                                                                                       | 代理类型         | `Bash`、`Explore`、`Plan` 或自定义代理名称                                                                                    |
-| `PreCompact`、`PostCompact`                                                                                            | 什么触发了压缩      | `manual`、`auto`                                                                                                     |
-| `SubagentStop`                                                                                                        | 代理类型         | 与 `SubagentStart` 相同的值                                                                                              |
-| `ConfigChange`                                                                                                        | 配置源          | `user_settings`、`project_settings`、`local_settings`、`policy_settings`、`skills`                                      |
-| `StopFailure`                                                                                                         | 错误类型         | `rate_limit`、`authentication_failed`、`billing_error`、`invalid_request`、`server_error`、`max_output_tokens`、`unknown` |
-| `InstructionsLoaded`                                                                                                  | 加载原因         | `session_start`、`nested_traversal`、`path_glob_match`、`include`、`compact`                                            |
-| `Elicitation`                                                                                                         | MCP 服务器名称    | 你配置的 MCP 服务器名称                                                                                                      |
-| `ElicitationResult`                                                                                                   | MCP 服务器名称    | 与 `Elicitation` 相同的值                                                                                                |
-| `FileChanged`                                                                                                         | 文件名（更改文件的基名） | `.envrc`、`.env`、任何你想监视的文件名                                                                                          |
-| `UserPromptSubmit`、`Stop`、`TeammateIdle`、`TaskCreated`、`TaskCompleted`、`WorktreeCreate`、`WorktreeRemove`、`CwdChanged` | 不支持匹配器       | 始终在每次出现时触发                                                                                                          |
+| 事件                                                                                                                    | 匹配器过滤的内容                                              | 示例匹配器值                                                                                                              |
+| :-------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`、`PostToolUse`、`PostToolUseFailure`、`PermissionRequest`、`PermissionDenied`                                | 工具名称                                                  | `Bash`、`Edit\|Write`、`mcp__.*`                                                                                      |
+| `SessionStart`                                                                                                        | 会话如何启动                                                | `startup`、`resume`、`clear`、`compact`                                                                                |
+| `SessionEnd`                                                                                                          | 会话为什么结束                                               | `clear`、`resume`、`logout`、`prompt_input_exit`、`bypass_permissions_disabled`、`other`                                 |
+| `Notification`                                                                                                        | 通知类型                                                  | `permission_prompt`、`idle_prompt`、`auth_success`、`elicitation_dialog`                                               |
+| `SubagentStart`                                                                                                       | 代理类型                                                  | `Bash`、`Explore`、`Plan` 或自定义代理名称                                                                                    |
+| `PreCompact`、`PostCompact`                                                                                            | 什么触发了压缩                                               | `manual`、`auto`                                                                                                     |
+| `SubagentStop`                                                                                                        | 代理类型                                                  | 与 `SubagentStart` 相同的值                                                                                              |
+| `ConfigChange`                                                                                                        | 配置源                                                   | `user_settings`、`project_settings`、`local_settings`、`policy_settings`、`skills`                                      |
+| `StopFailure`                                                                                                         | 错误类型                                                  | `rate_limit`、`authentication_failed`、`billing_error`、`invalid_request`、`server_error`、`max_output_tokens`、`unknown` |
+| `InstructionsLoaded`                                                                                                  | 加载原因                                                  | `session_start`、`nested_traversal`、`path_glob_match`、`include`、`compact`                                            |
+| `Elicitation`                                                                                                         | MCP 服务器名称                                             | 你配置的 MCP 服务器名称                                                                                                      |
+| `ElicitationResult`                                                                                                   | MCP 服务器名称                                             | 与 `Elicitation` 相同的值                                                                                                |
+| `FileChanged`                                                                                                         | 文字文件名来监视（请参阅 [FileChanged](/zh-CN/hooks#filechanged)） | `.envrc\|.env`                                                                                                      |
+| `UserPromptSubmit`、`Stop`、`TeammateIdle`、`TaskCreated`、`TaskCompleted`、`WorktreeCreate`、`WorktreeRemove`、`CwdChanged` | 不支持匹配器                                                | 始终在每次出现时触发                                                                                                          |
 
 显示不同事件类型上匹配器的更多示例：
 
@@ -570,7 +609,7 @@ Claude Code 读取 `permissionDecision` 并取消工具调用，然后将 `permi
   <Tab title="匹配 MCP 工具">
     MCP 工具使用与内置工具不同的命名约定：`mcp__<server>__<tool>`，其中 `<server>` 是 MCP 服务器名称，`<tool>` 是它提供的工具。例如，`mcp__github__search_repositories` 或 `mcp__filesystem__read_file`。使用正则表达式匹配器来针对来自特定服务器的所有工具，或使用 `mcp__.*__write.*` 之类的模式跨服务器匹配。有关完整的示例列表，请参阅参考中的 [匹配 MCP 工具](/zh-CN/hooks#match-mcp-tools)。
 
-    下面的命令使用 `jq` 从 hook 的 JSON 输入中提取工具名称，并将其写入 stderr，其中它显示在详细模式（`Ctrl+O`）中：
+    下面的命令使用 `jq` 从 hook 的 JSON 输入中提取工具名称，并将其写入 stderr。将其写入 stderr 保持 stdout 清洁以用于 JSON 输出，并将消息发送到 [调试日志](/zh-CN/hooks#debug-hooks)：
 
     ```json theme={null}
     {
@@ -622,7 +661,7 @@ Claude Code 读取 `permissionDecision` 并取消工具调用，然后将 `permi
   `if` 字段需要 Claude Code v2.1.85 或更高版本。早期版本忽略它并在每个匹配的调用上运行 hook。
 </Note>
 
-`if` 字段使用 [权限规则语法](/zh-CN/permissions) 按工具名称和参数一起过滤 hooks，因此 hook 进程仅在工具调用匹配时生成。这超越了 `matcher`，它仅在工具名称级别按组过滤。
+`if` 字段使用 [权限规则语法](/zh-CN/permissions) 按工具名称和参数一起过滤 hooks，因此 hook 进程仅在工具调用匹配时生成，或当 Bash 命令太复杂而无法解析时。这超越了 `matcher`，它仅在工具名称级别按组过滤。
 
 例如，要仅在 Claude 使用 `git` 命令而不是所有 Bash 命令时运行 hook：
 
@@ -645,9 +684,9 @@ Claude Code 读取 `permissionDecision` 并取消工具调用，然后将 `permi
 }
 ```
 
-hook 进程仅在 Bash 命令以 `git` 开头时生成。其他 Bash 命令完全跳过此处理程序。`if` 字段接受与权限规则相同的模式：`"Bash(git *)"`、`"Edit(*.ts)"` 等。要匹配多个工具名称，使用单独的处理程序，每个都有自己的 `if` 值，或在 `matcher` 级别匹配，其中支持管道交替。
+hook 进程仅在 Bash 命令的子命令与 `git *` 匹配时生成，或当命令太复杂而无法解析为子命令时。对于像 `npm test && git push` 这样的复合命令，Claude Code 评估每个子命令并触发 hook，因为 `git push` 匹配。`if` 字段接受与权限规则相同的模式：`"Bash(git *)"`、`"Edit(*.ts)"` 等。要匹配多个工具名称，使用单独的处理程序，每个都有自己的 `if` 值，或在 `matcher` 级别匹配，其中支持管道交替。
 
-`if` 仅适用于工具事件：`PreToolUse`、`PostToolUse`、`PostToolUseFailure`、`PermissionRequest` 和 `PermissionDenied`。将其添加到任何其他事件会阻止 hook 运行。
+`if` 仅适用于工具事件：`PreToolUse`、`PostToolUse`、`PostToolUseFailure` 和 `PermissionRequest`。将其添加到任何其他事件会阻止 hook 运行。
 
 ### 配置 hook 位置
 
@@ -697,6 +736,10 @@ hook 进程仅在 Bash 命令以 `git` 开头时生成。其他 Bash 命令完�
 有关完整的配置选项，请参阅参考中的 [基于提示的 hooks](/zh-CN/hooks#prompt-based-hooks)。
 
 ## 基于代理的 hooks
+
+<Warning>
+  代理 hooks 是实验性的。行为和配置可能在未来版本中改变。对于生产工作流，更倾向于 [命令 hooks](/zh-CN/hooks#command-hook-fields)。
+</Warning>
 
 当验证需要检查文件或运行命令时，使用 `type: "agent"` hooks。与只进行单个 LLM 调用的提示 hooks 不同，代理 hooks 生成一个 subagent，它可以读取文件、搜索代码和使用其他工具来验证条件，然后返回决策。
 
@@ -847,7 +890,9 @@ fi
 
 ### 调试技术
 
-使用 `Ctrl+O` 切换详细模式以在成绩单中查看 hook 输出，或运行 `claude --debug` 以获取完整的执行详情，包括哪些 hooks 匹配及其退出代码。
+成绩单视图，使用 `Ctrl+O` 切换，显示每个触发的 hook 的单行摘要：成功是无声的，阻止错误显示 stderr，非阻止错误显示 `<hook name> hook error` 通知，后跟 stderr 的第一行。
+
+有关完整的执行详情，包括哪些 hooks 匹配、它们的退出代码、stdout 和 stderr，请阅读调试日志。使用 `claude --debug-file /tmp/claude.log` 启动 Claude Code 以写入已知路径，然后在另一个终端中 `tail -f /tmp/claude.log`。如果你启动时没有该标志，在会话中运行 `/debug` 以启用日志记录并找到日志路径。
 
 ## 了解更多
 

@@ -2,100 +2,157 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Optimieren Sie Ihr Terminal-Setup
+# Konfigurieren Sie Ihr Terminal für Claude Code
 
-> Claude Code funktioniert am besten, wenn Ihr Terminal richtig konfiguriert ist. Befolgen Sie diese Richtlinien, um Ihr Erlebnis zu optimieren.
+> Beheben Sie Shift+Enter für Zeilenumbrüche, erhalten Sie einen Terminalton, wenn Claude fertig ist, konfigurieren Sie tmux, passen Sie das Farbschema an, und aktivieren Sie den Vim-Modus in der Claude Code CLI.
 
-### Designs und Erscheinungsbild
+Claude Code funktioniert in jedem Terminal ohne Konfiguration. Diese Seite ist für den Fall, dass etwas nicht so funktioniert, wie Sie es erwarten. Finden Sie Ihr Symptom unten. Wenn alles bereits richtig funktioniert, benötigen Sie diese Seite nicht.
 
-Claude kann das Design Ihres Terminals nicht steuern. Das wird von Ihrer Terminalanwendung verwaltet. Sie können das Design von Claude Code jederzeit über den Befehl `/config` an Ihr Terminal anpassen.
+* [Shift+Enter sendet statt einen Zeilenumbruch einzufügen](#enter-multiline-prompts)
+* [Option-Taste-Verknüpfungen funktionieren nicht auf macOS](#enable-option-key-shortcuts-on-macos)
+* [Kein Ton oder Benachrichtigung, wenn Claude fertig ist](#get-a-terminal-bell-or-notification)
+* [Sie führen Claude Code in tmux aus](#configure-tmux)
+* [Die Anzeige flimmert oder die Scrollposition springt](#switch-to-fullscreen-rendering)
+* [Sie möchten Vim-Tasten in der Eingabeaufforderung](#edit-prompts-with-vim-keybindings)
 
-Für zusätzliche Anpassungen der Claude Code-Oberfläche selbst können Sie eine [benutzerdefinierte Statuszeile](/de/statusline) konfigurieren, um kontextbezogene Informationen wie das aktuelle Modell, das Arbeitsverzeichnis oder den Git-Branch am unteren Rand Ihres Terminals anzuzeigen.
+Diese Seite behandelt das Konfigurieren Ihres Terminals, um die richtigen Signale an Claude Code zu senden. Um zu ändern, auf welche Tasten Claude Code selbst reagiert, siehe stattdessen [Tastenbelegungen](/de/keybindings).
 
-### Zeilenumbrüche
+## Mehrzeilige Eingabeaufforderungen eingeben
 
-Sie haben mehrere Optionen, um Zeilenumbrüche in Claude Code einzugeben:
+Durch Drücken von Enter wird Ihre Nachricht gesendet. Um einen Zeilenumbruch ohne Absenden hinzuzufügen, drücken Sie Ctrl+J, oder geben Sie `\` ein und drücken dann Enter. Beide funktionieren in jedem Terminal ohne Setup.
 
-* **Schnelle Flucht**: Geben Sie `\` gefolgt von Enter ein, um einen Zeilenumbruch zu erstellen
-* **Shift+Enter**: Funktioniert standardmäßig in iTerm2, WezTerm, Ghostty und Kitty
-* **Tastaturkürzel**: Richten Sie eine Tastenkombination ein, um einen Zeilenumbruch in anderen Terminals einzufügen
+In den meisten Terminals können Sie auch Shift+Enter drücken, aber die Unterstützung variiert je nach Terminal-Emulator:
 
-**Shift+Enter für andere Terminals einrichten**
+| Terminal                                                                        | Shift+Enter für Zeilenumbruch                             |
+| :------------------------------------------------------------------------------ | :-------------------------------------------------------- |
+| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal                           | Funktioniert ohne Setup                                   |
+| VS Code, Cursor, Windsurf, Alacritty, Zed                                       | Führen Sie `/terminal-setup` einmal aus                   |
+| Windows Terminal, gnome-terminal, JetBrains IDEs wie PyCharm und Android Studio | Nicht verfügbar; verwenden Sie Ctrl+J oder `\` dann Enter |
 
-Führen Sie `/terminal-setup` in Claude Code aus, um Shift+Enter automatisch für VS Code, Alacritty, Zed und Warp zu konfigurieren.
+Für VS Code, Cursor, Windsurf, Alacritty und Zed schreibt `/terminal-setup` Shift+Enter und andere Tastenbelegungen in die Konfigurationsdatei des Terminals. Wenn es einen Konflikt meldet, z. B. `Found existing VSCode terminal Shift+Enter key binding`, entfernen Sie diesen Eintrag aus der Tastenbelegungsdatei des Terminals, z. B. VS Code's `keybindings.json`, und führen Sie den Befehl erneut aus. Führen Sie `/terminal-setup` direkt im Host-Terminal aus, nicht in tmux oder screen, da es in die Konfiguration des Host-Terminals schreiben muss.
 
-<Note>
-  Der Befehl `/terminal-setup` ist nur in Terminals sichtbar, die eine manuelle Konfiguration erfordern. Wenn Sie iTerm2, WezTerm, Ghostty oder Kitty verwenden, sehen Sie diesen Befehl nicht, da Shift+Enter bereits nativ funktioniert.
-</Note>
+Wenn Sie in tmux ausgeführt werden, erfordert Shift+Enter auch die [tmux-Konfiguration unten](#configure-tmux), selbst wenn das äußere Terminal es unterstützt.
 
-**Option+Enter einrichten (VS Code, iTerm2 oder macOS Terminal.app)**
+Um Zeilenumbruch an eine andere Taste zu binden oder das Verhalten zu tauschen, sodass Enter einen Zeilenumbruch einfügt und Shift+Enter sendet, ordnen Sie die Aktionen `chat:newline` und `chat:submit` in Ihrer [Tastenbelegungsdatei](/de/keybindings) zu.
 
-**Für Mac Terminal.app:**
+## Aktivieren Sie Option-Taste-Verknüpfungen auf macOS
 
-1. Öffnen Sie Einstellungen → Profile → Tastatur
-2. Aktivieren Sie „Option als Meta-Taste verwenden"
+Einige Claude Code-Verknüpfungen verwenden die Option-Taste, z. B. Option+Enter für einen Zeilenumbruch oder Option+P zum Wechsel von Modellen. Auf macOS senden die meisten Terminals die Option-Taste standardmäßig nicht als Modifizierer, daher funktionieren diese Verknüpfungen nicht, bis Sie sie aktivieren. Die Terminal-Einstellung dafür wird normalerweise als „Option als Meta-Taste verwenden" bezeichnet; Meta ist der historische Unix-Name für die Taste, die jetzt Option oder Alt genannt wird.
 
-**Für iTerm2:**
+<Tabs>
+  <Tab title="Apple Terminal">
+    Öffnen Sie Einstellungen → Profile → Tastatur und aktivieren Sie 'Option als Meta-Taste verwenden".
 
-1. Öffnen Sie Einstellungen → Profile → Tasten
-2. Stellen Sie unter Allgemein die linke/rechte Optionstaste auf „Esc+" ein
+    Wenn Sie die erste Eingabeaufforderung von Claude Code akzeptiert haben, die „Option+Enter für Zeilenumbrüche und visuellen Ton" angeboten hat, ist dies bereits erledigt. Diese Eingabeaufforderung führt `/terminal-setup` für Sie aus, das Option als Meta aktiviert und den Audioton auf einen visuellen Bildschirmblitz in Ihrem Apple Terminal-Profil umschaltet.
+  </Tab>
 
-**Für VS Code-Terminal:**
+  <Tab title="iTerm2">
+    Öffnen Sie Einstellungen → Profile → Tasten → Allgemein und stellen Sie die linke Option-Taste und die rechte Option-Taste auf 'Esc+" ein.
+  </Tab>
 
-Stellen Sie `"terminal.integrated.macOptionIsMeta": true` in den VS Code-Einstellungen ein.
+  <Tab title="VS Code">
+    Fügen Sie `"terminal.integrated.macOptionIsMeta": true` zu Ihren VS Code-Einstellungen hinzu.
+  </Tab>
+</Tabs>
 
-### Benachrichtigungseinrichtung
+Für Ghostty, Kitty und andere Terminals suchen Sie nach einer Option-als-Alt- oder Option-als-Meta-Einstellung in der Konfigurationsdatei des Terminals.
 
-Wenn Claude die Arbeit abgeschlossen hat und auf Ihre Eingabe wartet, wird ein Benachrichtigungsereignis ausgelöst. Sie können dieses Ereignis als Desktop-Benachrichtigung über Ihr Terminal anzeigen oder benutzerdefinierte Logik mit [Benachrichtigungshooks](/de/hooks#notification) ausführen.
+## Erhalten Sie einen Terminalton oder eine Benachrichtigung
 
-#### Terminal-Benachrichtigungen
+Wenn Claude eine Aufgabe abschließt oder bei einer Berechtigungsaufforderung pausiert, wird ein Benachrichtigungsereignis ausgelöst. Wenn Sie dies als Terminalton oder Desktop-Benachrichtigung anzeigen, können Sie zu anderen Arbeiten wechseln, während eine lange Aufgabe ausgeführt wird.
 
-Kitty und Ghostty unterstützen Desktop-Benachrichtigungen ohne zusätzliche Konfiguration. iTerm 2 erfordert Setup:
+Claude Code sendet eine Desktop-Benachrichtigung nur in Ghostty, Kitty und iTerm2; jedes andere Terminal benötigt stattdessen einen [Benachrichtigungshook](#play-a-sound-with-a-notification-hook). Die Benachrichtigung erreicht auch Ihren lokalen Computer über SSH, sodass eine Remote-Sitzung Sie immer noch benachrichtigen kann. Ghostty und Kitty leiten sie ohne weitere Einrichtung an Ihr Betriebssystem-Benachrichtigungscenter weiter. iTerm2 erfordert, dass Sie die Weiterleitung aktivieren:
 
-1. Öffnen Sie iTerm 2 Einstellungen → Profile → Terminal
-2. Aktivieren Sie „Notification Center Alerts"
-3. Klicken Sie auf „Filter Alerts" und aktivieren Sie „Send escape sequence-generated alerts"
+<Steps>
+  <Step title="Öffnen Sie iTerm2-Benachrichtigungseinstellungen">
+    Gehen Sie zu Einstellungen → Profile → Terminal.
+  </Step>
 
-Wenn Benachrichtigungen nicht angezeigt werden, überprüfen Sie, ob Ihre Terminalanwendung in Ihren Betriebssystemeinstellungen Benachrichtigungsberechtigungen hat.
+  <Step title="Aktivieren Sie Benachrichtigungen">
+    Aktivieren Sie „Notification Center Alerts", klicken Sie dann auf „Filter Alerts" und aktivieren Sie „Send escape sequence-generated alerts".
+  </Step>
+</Steps>
 
-Wenn Claude Code in tmux ausgeführt wird, erreichen Benachrichtigungen und die [Terminal-Fortschrittsleiste](/de/settings#global-config-settings) nur das äußere Terminal, z. B. iTerm2, Kitty oder Ghostty, wenn Sie Passthrough in Ihrer tmux-Konfiguration aktivieren:
+Wenn Benachrichtigungen immer noch nicht angezeigt werden, bestätigen Sie, dass Ihre Terminalanwendung in Ihren Betriebssystemeinstellungen Benachrichtigungsberechtigung hat, und wenn Sie in tmux ausgeführt werden, [aktivieren Sie Passthrough](#configure-tmux).
 
+### Spielen Sie einen Ton mit einem Benachrichtigungshook ab
+
+In jedem Terminal können Sie einen [Benachrichtigungshook](/de/hooks-guide#get-notified-when-claude-needs-input) konfigurieren, um einen Ton abzuspielen oder einen benutzerdefinierten Befehl auszuführen, wenn Claude Ihre Aufmerksamkeit benötigt. Hooks werden neben der Desktop-Benachrichtigung ausgeführt, nicht als Ersatz. Terminals wie Warp oder Apple Terminal verlassen sich allein auf einen Hook, da Claude Code ihnen keine Desktop-Benachrichtigung sendet.
+
+Das folgende Beispiel spielt einen Systemton auf macOS ab. Der verlinkte Leitfaden enthält Desktop-Benachrichtigungsbefehle für macOS, Linux und Windows.
+
+```json ~/.claude/settings.json theme={null}
+{
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [{ "type": "command", "command": "afplay /System/Library/Sounds/Glass.aiff" }]
+      }
+    ]
+  }
+}
 ```
+
+## Konfigurieren Sie tmux
+
+Wenn Claude Code in tmux ausgeführt wird, brechen zwei Dinge standardmäßig: Shift+Enter sendet statt einen Zeilenumbruch einzufügen, und Desktop-Benachrichtigungen und die [Fortschrittsleiste](/de/settings#global-config-settings) erreichen niemals das äußere Terminal. Fügen Sie diese Zeilen zu `~/.tmux.conf` hinzu und führen Sie dann `tmux source-file ~/.tmux.conf` aus, um sie auf den laufenden Server anzuwenden:
+
+```bash ~/.tmux.conf theme={null}
 set -g allow-passthrough on
+set -s extended-keys on
+set -as terminal-features 'xterm*:extkeys'
 ```
 
-Ohne diese Einstellung werden die Escape-Sequenzen von tmux abgefangen und erreichen die Terminalanwendung nicht.
+Die `allow-passthrough`-Zeile ermöglicht es, dass Benachrichtigungen und Fortschrittsaktualisierungen iTerm2, Ghostty oder Kitty erreichen, anstatt von tmux verschluckt zu werden. Die `extended-keys`-Zeilen ermöglichen es tmux, Shift+Enter von einfachem Enter zu unterscheiden, sodass die Zeilenumbruch-Verknüpfung funktioniert.
 
-Andere Terminals, einschließlich des Standard-macOS-Terminals, unterstützen keine nativen Benachrichtigungen. Verwenden Sie stattdessen [Benachrichtigungshooks](/de/hooks#notification).
+## Passen Sie das Farbschema an
 
-#### Benachrichtigungshooks
+Verwenden Sie den Befehl `/theme` oder die Designauswahl in `/config`, um ein Claude Code-Design auszuwählen, das Ihrem Terminal entspricht. Wenn Sie die Auto-Option auswählen, wird der helle oder dunkle Hintergrund Ihres Terminals erkannt, sodass das Design den Änderungen des Betriebssystem-Erscheinungsbilds folgt, wenn Ihr Terminal dies tut. Die verfügbaren Designs sind integriert; es gibt keine benutzerdefinierte Design-Datei. Claude Code steuert nicht das Farbschema des Terminals selbst, das von der Terminalanwendung festgelegt wird.
 
-Um benutzerdefiniertes Verhalten hinzuzufügen, wenn Benachrichtigungen ausgelöst werden, z. B. das Abspielen eines Sounds oder das Senden einer Nachricht, konfigurieren Sie einen [Benachrichtigungshook](/de/hooks#notification). Hooks werden neben Terminal-Benachrichtigungen ausgeführt, nicht als Ersatz.
+Um anzupassen, was am unteren Rand der Benutzeroberfläche angezeigt wird, konfigurieren Sie eine [benutzerdefinierte Statuszeile](/de/statusline), die das aktuelle Modell, das Arbeitsverzeichnis, den Git-Branch oder andere Kontextinformationen anzeigt.
 
-### Flimmern und Speichernutzung reduzieren
+## Wechseln Sie zum Vollbildrendering
 
-Wenn Sie während langer Sitzungen Flimmern sehen oder Ihre Terminal-Scroll-Position springt nach oben, während Claude arbeitet, versuchen Sie [Vollbildrendering](/de/fullscreen). Es verwendet einen alternativen Rendering-Pfad, der den Speicher flach hält und Mausunterstützung hinzufügt. Aktivieren Sie es mit `CLAUDE_CODE_NO_FLICKER=1`.
+Wenn die Anzeige flimmert oder die Scrollposition springt, während Claude arbeitet, wechseln Sie zum [Vollbildrendering-Modus](/de/fullscreen). Es zeichnet auf einen separaten Bildschirm, den das Terminal für Vollbild-Apps reserviert, anstatt an Ihren normalen Scrollback anzuhängen, was die Speichernutzung flach hält und Mausunterstützung zum Scrollen und Auswählen hinzufügt. In diesem Modus scrollen Sie mit der Maus oder PageUp in Claude Code, nicht mit dem nativen Scrollback Ihres Terminals; siehe die [Vollbildseite](/de/fullscreen#search-and-review-the-conversation) für die Suche und das Kopieren.
 
-### Umgang mit großen Eingaben
+Führen Sie `/tui fullscreen` aus, um in der aktuellen Sitzung mit Ihrem Gespräch intakt zu wechseln. Um es zur Standardeinstellung zu machen, setzen Sie die Umgebungsvariable `CLAUDE_CODE_NO_FLICKER`, bevor Sie Claude Code starten:
 
-Bei der Arbeit mit umfangreichem Code oder langen Anweisungen:
+<CodeGroup>
+  ```bash Bash and Zsh theme={null}
+  CLAUDE_CODE_NO_FLICKER=1 claude
+  ```
 
-* **Vermeiden Sie direktes Einfügen**: Claude Code kann bei sehr langen eingefügten Inhalten Schwierigkeiten haben
-* **Verwenden Sie dateibasierte Workflows**: Schreiben Sie Inhalte in eine Datei und bitten Sie Claude, diese zu lesen
-* **Beachten Sie VS Code-Einschränkungen**: Das VS Code-Terminal neigt besonders dazu, lange Einfügungen zu kürzen
+  ```powershell PowerShell theme={null}
+  $env:CLAUDE_CODE_NO_FLICKER = "1"; claude
+  ```
 
-### Vim-Modus
+  ```json ~/.claude/settings.json theme={null}
+  {
+    "env": {
+      "CLAUDE_CODE_NO_FLICKER": "1"
+    }
+  }
+  ```
+</CodeGroup>
 
-Claude Code unterstützt eine Teilmenge von Vim-Tastenkombinationen, die mit `/vim` aktiviert oder über `/config` konfiguriert werden können. Um den Modus direkt in Ihrer Konfigurationsdatei festzulegen, stellen Sie den globalen Konfigurationsschlüssel [`editorMode`](/de/settings#global-config-settings) auf `"vim"` in `~/.claude.json` ein.
+## Großen Inhalt einfügen
 
-Die unterstützte Teilmenge umfasst:
+Wenn Sie mehr als 10.000 Zeichen in die Eingabeaufforderung einfügen, reduziert Claude Code die Eingabe auf einen `[Pasted text]`-Platzhalter, damit das Eingabefeld verwendbar bleibt. Der vollständige Inhalt wird immer noch an Claude gesendet, wenn Sie absenden.
 
-* Modusumschaltung: `Esc` (zu NORMAL), `i`/`I`, `a`/`A`, `o`/`O` (zu INSERT)
-* Navigation: `h`/`j`/`k`/`l`, `w`/`e`/`b`, `0`/`$`/`^`, `gg`/`G`, `f`/`F`/`t`/`T` mit `;`/`,` Wiederholung
-* Bearbeitung: `x`, `dw`/`de`/`db`/`dd`/`D`, `cw`/`ce`/`cb`/`cc`/`C`, `.` (Wiederholung)
-* Yank/Einfügen: `yy`/`Y`, `yw`/`ye`/`yb`, `p`/`P`
-* Textobjekte: `iw`/`aw`, `iW`/`aW`, `i"`/`a"`, `i'`/`a'`, `i(`/`a(`, `i[`/`a[`, `i{`/`a{`
-* Einrückung: `>>`/`<<`
-* Zeilenoperationen: `J` (Zeilen verbinden)
+Das integrierte VS Code-Terminal kann Zeichen aus sehr großen Einfügungen verlieren, bevor sie Claude Code erreichen, daher bevorzugen Sie dort dateibasierte Workflows. Für sehr große Eingaben wie ganze Dateien oder lange Protokolle schreiben Sie den Inhalt in eine Datei und bitten Claude, diese zu lesen, anstatt einzufügen. Dies hält das Gesprächstranskript lesbar und ermöglicht es Claude, die Datei in späteren Zügen nach Pfad zu referenzieren.
 
-Siehe [Interaktiver Modus](/de/interactive-mode#vim-editor-mode) für die vollständige Referenz.
+## Bearbeiten Sie Eingabeaufforderungen mit Vim-Tastenbelegungen
+
+Claude Code enthält einen Vim-ähnlichen Bearbeitungsmodus für die Eingabeaufforderungseingabe. Aktivieren Sie ihn über `/config` → Editor-Modus, oder indem Sie den globalen Konfigurationsschlüssel [`editorMode`](/de/settings#global-config-settings) auf `"vim"` in `~/.claude.json` setzen. Setzen Sie den Editor-Modus zurück auf `normal`, um ihn auszuschalten.
+
+Der Vim-Modus unterstützt eine Teilmenge von NORMAL-Modus-Bewegungen und Operatoren, wie z. B. `hjkl`-Navigation und `d`/`c`/`y` mit Textobjekten. Siehe die [Vim-Editor-Modus-Referenz](/de/interactive-mode#vim-editor-mode) für die vollständige Schlüsseltabelle. Vim-Bewegungen können nicht über die Tastenbelegungsdatei neu zugeordnet werden.
+
+Das Drücken von Enter sendet Ihre Eingabeaufforderung immer noch im INSERT-Modus, anders als Standard-Vim. Verwenden Sie `o` oder `O` im NORMAL-Modus oder Ctrl+J, um stattdessen einen Zeilenumbruch einzufügen.
+
+## Verwandte Ressourcen
+
+* [Interaktiver Modus](/de/interactive-mode): vollständige Tastaturverknüpfungs-Referenz und die Vim-Schlüsseltabelle
+* [Tastenbelegungen](/de/keybindings): ordnen Sie jede Claude Code-Verknüpfung neu zu, einschließlich Enter und Shift+Enter
+* [Vollbildrendering](/de/fullscreen): Details zum Scrollen, Suchen und Kopieren im Vollbildmodus
+* [Hooks-Leitfaden](/de/hooks-guide): weitere Benachrichtigungshook-Beispiele für Linux und Windows
+* [Fehlerbehebung](/de/troubleshooting): Behebungen für Probleme außerhalb der Terminalkonfiguration

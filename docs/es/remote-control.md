@@ -14,7 +14,7 @@ Remote Control conecta [claude.ai/code](https://claude.ai/code) o la aplicación
 
 Cuando inicia una sesión de Remote Control en su máquina, Claude sigue ejecutándose localmente todo el tiempo, por lo que nada se mueve a la nube. Con Remote Control puede:
 
-* **Usar su entorno local completo de forma remota**: su sistema de archivos, [MCP servers](/es/mcp), herramientas y configuración del proyecto permanecen disponibles
+* **Usar su entorno local completo de forma remota**: su sistema de archivos, [MCP servers](/es/mcp), herramientas y configuración del proyecto permanecen disponibles, y escribir `@` completa automáticamente las rutas de archivo de su proyecto local
 * **Trabajar desde ambas superficies a la vez**: la conversación se mantiene sincronizada en todos los dispositivos conectados, por lo que puede enviar mensajes desde su terminal, navegador y teléfono indistintamente
 * **Sobrevivir a interrupciones**: si su portátil se duerme o su red se cae, la sesión se reconecta automáticamente cuando su máquina vuelve a estar en línea
 
@@ -188,6 +188,7 @@ Si las notificaciones no llegan:
 * **El proceso local debe seguir ejecutándose**: Remote Control se ejecuta como un proceso local. Si cierra la terminal, cierra VS Code, o detiene el proceso `claude` de otra manera, la sesión finaliza.
 * **Interrupción de red extendida**: si su máquina está despierta pero no puede alcanzar la red durante más de aproximadamente 10 minutos, la sesión agota el tiempo de espera y el proceso se cierra. Ejecute `claude remote-control` nuevamente para iniciar una nueva sesión.
 * **Ultraplan desconecta Remote Control**: iniciar una sesión de [ultraplan](/es/ultraplan) desconecta cualquier sesión de Remote Control activa porque ambas características ocupan la interfaz claude.ai/code y solo una puede estar conectada a la vez.
+* **Algunos comandos son solo locales**: comandos que abren un selector interactivo en la terminal, como `/mcp`, `/plugin`, o `/resume`, funcionan solo desde la CLI local. Los comandos que producen salida de texto, incluyendo `/compact`, `/clear`, `/context`, `/cost`, `/exit`, `/extra-usage`, `/recap`, y `/reload-plugins`, funcionan desde móvil y web.
 
 ## Solución de problemas
 

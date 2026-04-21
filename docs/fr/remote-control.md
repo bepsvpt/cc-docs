@@ -14,7 +14,7 @@ Remote Control connecte [claude.ai/code](https://claude.ai/code) ou l'applicatio
 
 Lorsque vous démarrez une session Remote Control sur votre machine, Claude continue à s'exécuter localement à tout moment, donc rien ne se déplace vers le cloud. Avec Remote Control, vous pouvez :
 
-* **Utiliser votre environnement local complet à distance** : votre système de fichiers, [serveurs MCP](/fr/mcp), outils et configuration de projet restent tous disponibles
+* **Utiliser votre environnement local complet à distance** : votre système de fichiers, [serveurs MCP](/fr/mcp), outils et configuration de projet restent tous disponibles, et taper `@` complète automatiquement les chemins de fichiers de votre projet local
 * **Travailler depuis les deux surfaces à la fois** : la conversation reste synchronisée sur tous les appareils connectés, vous pouvez donc envoyer des messages depuis votre terminal, navigateur et téléphone de manière interchangeable
 * **Survivre aux interruptions** : si votre ordinateur portable s'endort ou votre réseau tombe en panne, la session se reconnecte automatiquement lorsque votre machine revient en ligne
 
@@ -188,6 +188,7 @@ Si les notifications n'arrivent pas :
 * **Le processus local doit continuer à s'exécuter** : Remote Control s'exécute en tant que processus local. Si vous fermez le terminal, quittez VS Code, ou arrêtez autrement le processus `claude`, la session se termine.
 * **Panne réseau prolongée** : si votre machine est allumée mais incapable d'atteindre le réseau pendant plus de dix minutes environ, la session expire et le processus se termine. Exécutez `claude remote-control` à nouveau pour démarrer une nouvelle session.
 * **Ultraplan déconnecte Remote Control** : le démarrage d'une session [ultraplan](/fr/ultraplan) déconnecte toute session Remote Control active car les deux fonctionnalités occupent l'interface claude.ai/code et une seule peut être connectée à la fois.
+* **Certaines commandes sont locales uniquement** : les commandes qui ouvrent un sélecteur interactif dans le terminal, telles que `/mcp`, `/plugin`, ou `/resume`, fonctionnent uniquement à partir de la CLI locale. Les commandes qui produisent une sortie textuelle, y compris `/compact`, `/clear`, `/context`, `/cost`, `/exit`, `/extra-usage`, `/recap`, et `/reload-plugins`, fonctionnent à partir du web et du mobile.
 
 ## Dépannage
 

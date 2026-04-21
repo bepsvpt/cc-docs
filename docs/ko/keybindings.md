@@ -66,6 +66,8 @@ keybindings 구성 파일은 `bindings` 배열이 있는 객체입니다. 각 �
 | `ModelPicker`     | 모델 선택기 노력 수준               |
 | `Select`          | 일반 선택/목록 구성 요소             |
 | `Plugin`          | 플러그인 대화 상자(찾아보기, 발견, 관리)   |
+| `Scroll`          | 전체 화면 모드에서 대화 스크롤 및 텍스트 선택 |
+| `Doctor`          | `/doctor` 진단 화면            |
 
 ## 사용 가능한 작업
 
@@ -75,13 +77,13 @@ keybindings 구성 파일은 `bindings` 배열이 있는 객체입니다. 각 �
 
 `Global` 컨텍스트에서 사용 가능한 작업:
 
-| 작업                     | 기본값    | 설명             |
-| :--------------------- | :----- | :------------- |
-| `app:interrupt`        | Ctrl+C | 현재 작업 취소       |
-| `app:exit`             | Ctrl+D | Claude Code 종료 |
-| `app:redraw`           | Ctrl+L | 화면 다시 그리기      |
-| `app:toggleTodos`      | Ctrl+T | 작업 목록 표시 여부 전환 |
-| `app:toggleTranscript` | Ctrl+O | 상세 트랜스크립트 전환   |
+| 작업                     | 기본값       | 설명             |
+| :--------------------- | :-------- | :------------- |
+| `app:interrupt`        | Ctrl+C    | 현재 작업 취소       |
+| `app:exit`             | Ctrl+D    | Claude Code 종료 |
+| `app:redraw`           | (바인딩 해제됨) | 터미널 다시 그리기 강제  |
+| `app:toggleTodos`      | Ctrl+T    | 작업 목록 표시 여부 전환 |
+| `app:toggleTranscript` | Ctrl+O    | 상세 트랜스크립트 전환   |
 
 ### 기록 작업
 
@@ -97,20 +99,21 @@ keybindings 구성 파일은 `bindings` 배열이 있는 객체입니다. 각 �
 
 `Chat` 컨텍스트에서 사용 가능한 작업:
 
-| 작업                    | 기본값                      | 설명               |
-| :-------------------- | :----------------------- | :--------------- |
-| `chat:cancel`         | Escape                   | 현재 입력 취소         |
-| `chat:killAgents`     | Ctrl+X Ctrl+K            | 모든 백그라운드 에이전트 종료 |
-| `chat:cycleMode`      | Shift+Tab\*              | 권한 모드 순환         |
-| `chat:modelPicker`    | Cmd+P / Meta+P           | 모델 선택기 열기        |
-| `chat:fastMode`       | Meta+O                   | 빠른 모드 전환         |
-| `chat:thinkingToggle` | Cmd+T / Meta+T           | 확장 사고 전환         |
-| `chat:submit`         | Enter                    | 메시지 제출           |
-| `chat:newline`        | (바인딩 해제됨)                | 제출하지 않고 줄 바꿈 삽입  |
-| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-    | 마지막 작업 실행 취소     |
-| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E    | 외부 편집기에서 열기      |
-| `chat:stash`          | Ctrl+S                   | 현재 프롬프트 숨기기      |
-| `chat:imagePaste`     | Ctrl+V (Windows에서 Alt+V) | 이미지 붙여넣기         |
+| 작업                    | 기본값                      | 설명                           |
+| :-------------------- | :----------------------- | :--------------------------- |
+| `chat:cancel`         | Escape                   | 현재 입력 취소                     |
+| `chat:clearInput`     | Ctrl+L                   | 프롬프트 입력을 지우고 전체 화면 다시 그리기 강제 |
+| `chat:killAgents`     | Ctrl+X Ctrl+K            | 모든 백그라운드 에이전트 종료             |
+| `chat:cycleMode`      | Shift+Tab\*              | 권한 모드 순환                     |
+| `chat:modelPicker`    | Cmd+P / Meta+P           | 모델 선택기 열기                    |
+| `chat:fastMode`       | Meta+O                   | 빠른 모드 전환                     |
+| `chat:thinkingToggle` | Cmd+T / Meta+T           | 확장 사고 전환                     |
+| `chat:submit`         | Enter                    | 메시지 제출                       |
+| `chat:newline`        | Ctrl+J                   | 제출하지 않고 줄 바꿈 삽입              |
+| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-    | 마지막 작업 실행 취소                 |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E    | 외부 편집기에서 열기                  |
+| `chat:stash`          | Ctrl+S                   | 현재 프롬프트 숨기기                  |
+| `chat:imagePaste`     | Ctrl+V (Windows에서 Alt+V) | 이미지 붙여넣기                     |
 
 \*VT 모드가 없는 Windows에서(Node \<24.2.0/\<22.17.0, Bun \<1.2.23), 기본값은 Meta+M입니다.
 
@@ -276,10 +279,11 @@ keybindings 구성 파일은 `bindings` 배열이 있는 객체입니다. 각 �
 
 `Plugin` 컨텍스트에서 사용 가능한 작업:
 
-| 작업               | 기본값   | 설명          |
-| :--------------- | :---- | :---------- |
-| `plugin:toggle`  | Space | 플러그인 선택 전환  |
-| `plugin:install` | I     | 선택한 플러그인 설치 |
+| 작업                | 기본값   | 설명                                        |
+| :---------------- | :---- | :---------------------------------------- |
+| `plugin:toggle`   | Space | 플러그인 선택 전환                                |
+| `plugin:install`  | I     | 선택한 플러그인 설치                               |
+| `plugin:favorite` | F     | 선택한 플러그인을 즐겨찾기로 설정하여 설치된 탭 상단 근처에 정렬되도록 함 |
 
 ### 설정 작업
 
@@ -291,6 +295,14 @@ keybindings 구성 파일은 `bindings` 배열이 있는 객체입니다. 각 �
 | `settings:retry`  | R     | 사용량 데이터 다시 로드(오류 시)                              |
 | `settings:close`  | Enter | 변경 사항을 저장하고 구성 패널을 닫습니다. Escape는 변경 사항을 버리고 닫습니다 |
 
+### Doctor 작업
+
+`Doctor` 컨텍스트에서 사용 가능한 작업:
+
+| 작업           | 기본값 | 설명                                                  |
+| :----------- | :-- | :-------------------------------------------------- |
+| `doctor:fix` | F   | 진단 보고서를 Claude에 보내 보고된 문제를 해결합니다. 문제가 발견되었을 때만 활성화됨 |
+
 ### 음성 작업
 
 [음성 받아쓰기](/ko/voice-dictation)가 활성화되었을 때 `Chat` 컨텍스트에서 사용 가능한 작업:
@@ -298,6 +310,31 @@ keybindings 구성 파일은 `bindings` 배열이 있는 객체입니다. 각 �
 | 작업                 | 기본값   | 설명                   |
 | :----------------- | :---- | :------------------- |
 | `voice:pushToTalk` | Space | 프롬프트를 받아쓰기 위해 누르고 있기 |
+
+### 스크롤 작업
+
+[전체 화면 렌더링](/ko/fullscreen)이 활성화되었을 때 `Scroll` 컨텍스트에서 사용 가능한 작업:
+
+| 작업                          | 기본값                  | 설명                                                                       |
+| :-------------------------- | :------------------- | :----------------------------------------------------------------------- |
+| `scroll:lineUp`             | (바인딩 해제됨)            | 한 줄 위로 스크롤합니다. 마우스 휠 스크롤이 이 작업을 트리거합니다                                   |
+| `scroll:lineDown`           | (바인딩 해제됨)            | 한 줄 아래로 스크롤합니다. 마우스 휠 스크롤이 이 작업을 트리거합니다                                  |
+| `scroll:pageUp`             | PageUp               | 뷰포트 높이의 절반만큼 위로 스크롤                                                      |
+| `scroll:pageDown`           | PageDown             | 뷰포트 높이의 절반만큼 아래로 스크롤                                                     |
+| `scroll:top`                | Ctrl+Home            | 대화의 시작으로 이동                                                              |
+| `scroll:bottom`             | Ctrl+End             | 최신 메시지로 이동하고 자동 팔로우 다시 활성화                                               |
+| `scroll:halfPageUp`         | (바인딩 해제됨)            | 뷰포트 높이의 절반만큼 위로 스크롤합니다. `scroll:pageUp`과 동일한 동작이며 vi 스타일 재바인딩을 위해 제공됨    |
+| `scroll:halfPageDown`       | (바인딩 해제됨)            | 뷰포트 높이의 절반만큼 아래로 스크롤합니다. `scroll:pageDown`과 동일한 동작이며 vi 스타일 재바인딩을 위해 제공됨 |
+| `scroll:fullPageUp`         | (바인딩 해제됨)            | 전체 뷰포트 높이만큼 위로 스크롤                                                       |
+| `scroll:fullPageDown`       | (바인딩 해제됨)            | 전체 뷰포트 높이만큼 아래로 스크롤                                                      |
+| `selection:copy`            | Ctrl+Shift+C / Cmd+C | 선택한 텍스트를 클립보드에 복사                                                        |
+| `selection:clear`           | (바인딩 해제됨)            | 활성 텍스트 선택 지우기                                                            |
+| `selection:extendLeft`      | Shift+Left           | 활성 선택을 한 열 왼쪽으로 확장                                                       |
+| `selection:extendRight`     | Shift+Right          | 활성 선택을 한 열 오른쪽으로 확장                                                      |
+| `selection:extendUp`        | Shift+Up             | 활성 선택을 한 행 위로 확장합니다. 선택이 상단 가장자리에 도달하면 뷰포트를 스크롤합니다                       |
+| `selection:extendDown`      | Shift+Down           | 활성 선택을 한 행 아래로 확장합니다. 선택이 하단 가장자리에 도달하면 뷰포트를 스크롤합니다                      |
+| `selection:extendLineStart` | Shift+Home           | 활성 선택을 줄의 시작으로 확장                                                        |
+| `selection:extendLineEnd`   | Shift+End            | 활성 선택을 줄의 끝으로 확장                                                         |
 
 ## 키 입력 구문
 
@@ -400,7 +437,7 @@ ctrl+k ctrl+s   Ctrl+K를 누르고 놓은 다음 Ctrl+S를 누릅니다
 
 ## Vim 모드 상호 작용
 
-vim 모드가 활성화되면(`/vim`), 키바인딩과 vim 모드는 독립적으로 작동합니다:
+vim 모드가 `/config` → 편집기 모드를 통해 활성화되면 키바인딩과 vim 모드는 독립적으로 작동합니다:
 
 * **Vim 모드**는 텍스트 입력 수준에서 입력을 처리합니다(커서 이동, 모드, 동작).
 * **키바인딩**은 구성 요소 수준에서 작업을 처리합니다(작업 전환, 제출 등).

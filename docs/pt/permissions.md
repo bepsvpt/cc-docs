@@ -16,7 +16,7 @@ Claude Code usa um sistema de permissões em camadas para equilibrar poder e seg
 | :--------------------- | :------------------------ | :------------------- | :------------------------------------------------- |
 | Somente leitura        | Leitura de arquivos, Grep | Não                  | N/A                                                |
 | Comandos Bash          | Execução de shell         | Sim                  | Permanentemente por diretório de projeto e comando |
-| Modificação de arquivo | Editar/escrever arquivos  | Sim                  | Até o final da sessão                              |
+| Modificação de arquivo | Edit/Write de arquivos    | Sim                  | Até o final da sessão                              |
 
 ## Gerenciar permissões
 
@@ -35,7 +35,7 @@ Claude Code suporta vários modos de permissão que controlam como as ferramenta
 | Modo                | Descrição                                                                                                                                                                                       |
 | :------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `default`           | Comportamento padrão: solicita permissão no primeiro uso de cada ferramenta                                                                                                                     |
-| `acceptEdits`       | Aceita automaticamente permissões de edição de arquivo para a sessão, exceto escritas em diretórios protegidos                                                                                  |
+| `acceptEdits`       | Aceita automaticamente edições de arquivo e comandos comuns do sistema de arquivos (`mkdir`, `touch`, `mv`, `cp`, etc.) para caminhos no diretório de trabalho ou `additionalDirectories`       |
 | `plan`              | Plan Mode: Claude pode analisar mas não modificar arquivos ou executar comandos                                                                                                                 |
 | `auto`              | Aprova automaticamente chamadas de ferramentas com verificações de segurança em segundo plano que verificam se as ações se alinham com sua solicitação. Atualmente uma visualização de pesquisa |
 | `dontAsk`           | Nega automaticamente ferramentas a menos que pré-aprovadas via `/permissions` ou regras `permissions.allow`                                                                                     |
@@ -94,7 +94,9 @@ As regras Bash suportam padrões glob com `*`. Caracteres curinga podem aparecer
 }
 ```
 
-O espaço antes de `*` importa: `Bash(ls *)` corresponde a `ls -la` mas não a `lsof`, enquanto `Bash(ls*)` corresponde a ambos. A sintaxe de sufixo legado `:*` é equivalente a ` *` mas está descontinuada.
+O espaço antes de `*` importa: `Bash(ls *)` corresponde a `ls -la` mas não a `lsof`, enquanto `Bash(ls*)` corresponde a ambos. O sufixo `:*` é uma maneira equivalente de escrever um caractere curinga à direita, portanto `Bash(ls:*)` corresponde aos mesmos comandos que `Bash(ls *)`.
+
+O diálogo de permissão escreve a forma separada por espaço quando você seleciona "Sim, não pergunte novamente" para um prefixo de comando. A forma `:*` é reconhecida apenas no final de um padrão. Em um padrão como `Bash(git:* push)`, o dois-pontos é tratado como um caractere literal e não corresponderá a comandos git.
 
 ## Regras de permissão específicas da ferramenta
 
@@ -106,15 +108,37 @@ As regras de permissão Bash suportam correspondência com caracteres curinga `*
 * `Bash(npm run test *)` corresponde a comandos Bash começando com `npm run test`
 * `Bash(npm *)` corresponde a qualquer comando começando com `npm `
 * `Bash(* install)` corresponde a qualquer comando terminando com ` install`
-* `Bash(git * main)` corresponde a comandos como `git checkout main`, `git merge main`
+* `Bash(git * main)` corresponde a comandos como `git checkout main` e `git log --oneline main`
+
+Um único `*` corresponde a qualquer sequência de caracteres incluindo espaços, portanto um caractere curinga pode abranger múltiplos argumentos. `Bash(git *)` corresponde a `git log --oneline --all`, e `Bash(git * main)` corresponde a `git push origin main` bem como `git merge main`.
 
 Quando `*` aparece no final com um espaço antes dele (como `Bash(ls *)`), ele impõe um limite de palavra, exigindo que o prefixo seja seguido por um espaço ou fim de string. Por exemplo, `Bash(ls *)` corresponde a `ls -la` mas não a `lsof`. Em contraste, `Bash(ls*)` sem espaço corresponde a ambos `ls -la` e `lsof` porque não há restrição de limite de palavra.
 
+#### Comandos compostos
+
 <Tip>
-  Claude Code está ciente de operadores de shell (como `&&`) portanto uma regra de correspondência de prefixo como `Bash(safe-cmd *)` não lhe dará permissão para executar o comando `safe-cmd && other-cmd`.
+  Claude Code está ciente de operadores de shell, portanto uma regra como `Bash(safe-cmd *)` não lhe dará permissão para executar o comando `safe-cmd && other-cmd`. Os separadores de comando reconhecidos são `&&`, `||`, `;`, `|`, `|&`, `&` e quebras de linha. Uma regra deve corresponder a cada subcomando independentemente.
 </Tip>
 
 Quando você aprova um comando composto com "Sim, não pergunte novamente", Claude Code salva uma regra separada para cada subcomando que requer aprovação, em vez de uma única regra para a string completa. Por exemplo, aprovar `git status && npm test` salva uma regra para `npm test`, portanto futuras invocações de `npm test` são reconhecidas independentemente do que precede o `&&`. Subcomandos como `cd` em um subdiretório geram sua própria regra Read para esse caminho. Até 5 regras podem ser salvas para um único comando composto.
+
+#### Wrappers de processo
+
+Antes de corresponder regras Bash, Claude Code remove um conjunto fixo de wrappers de processo para que uma regra como `Bash(npm test *)` também corresponda a `timeout 30 npm test`. Os wrappers reconhecidos são `timeout`, `time`, `nice`, `nohup` e `stdbuf`.
+
+`xargs` simples também é removido, portanto `Bash(grep *)` corresponde a `xargs grep pattern`. A remoção se aplica apenas quando `xargs` não tem flags: uma invocação como `xargs -n1 grep pattern` é correspondida como um comando `xargs`, portanto regras escritas para o comando interno não a cobrem.
+
+Esta lista de wrapper é integrada e não é configurável. Executores de ambiente de desenvolvimento como `direnv exec`, `devbox run`, `mise exec`, `npx` e `docker exec` não estão na lista. Porque essas ferramentas executam seus argumentos como um comando, uma regra como `Bash(devbox run *)` corresponde a tudo que vem após `run`, incluindo `devbox run rm -rf .`. Para aprovar trabalho dentro de um executor de ambiente, escreva uma regra específica que inclua tanto o executor quanto o comando interno, como `Bash(devbox run npm test)`. Adicione uma regra por comando interno que você quer permitir.
+
+Wrappers exec como `watch`, `setsid`, `ionice` e `flock` sempre solicitam e não podem ser auto-aprovados por uma regra de prefixo como `Bash(watch *)`. O mesmo se aplica a `find` com `-exec` ou `-delete`: uma regra `Bash(find *)` não cobre essas formas. Para aprovar uma invocação específica, escreva uma regra de correspondência exata para a string de comando completa.
+
+#### Comandos somente leitura
+
+Claude Code reconhece um conjunto integrado de comandos Bash como somente leitura e os executa sem um prompt de permissão em cada modo. Estes incluem `ls`, `cat`, `head`, `tail`, `grep`, `find`, `wc`, `diff`, `stat`, `du`, `cd` e formas somente leitura de `git`. O conjunto não é configurável; para exigir um prompt para um desses comandos, adicione uma regra `ask` ou `deny` para ele.
+
+Padrões glob sem aspas são permitidos para comandos cujas todas as flags são somente leitura, portanto `ls *.ts` e `wc -l src/*.py` são executados sem um prompt. Comandos com flags capazes de escrita ou execução, como `find`, `sort`, `sed` e `git`, ainda solicitam quando um glob sem aspas está presente porque o glob poderia expandir para uma flag como `-delete`.
+
+Um `cd` em um caminho dentro do seu diretório de trabalho ou um [diretório adicional](#working-directories) também é somente leitura. Um comando composto como `cd packages/api && ls` é executado sem um prompt quando cada parte se qualifica por conta própria. Combinar `cd` com `git` em um comando composto sempre solicita, independentemente do diretório de destino.
 
 <Warning>
   Padrões de permissão Bash que tentam restringir argumentos de comando são frágeis. Por exemplo, `Bash(curl http://github.com/ *)` pretende restringir curl a URLs do GitHub, mas não corresponderá a variações como:
@@ -168,6 +192,13 @@ Exemplos:
   Em padrões gitignore, `*` corresponde a arquivos em um único diretório enquanto `**` corresponde recursivamente entre diretórios. Para permitir acesso a todos os arquivos, use apenas o nome da ferramenta sem parênteses: `Read`, `Edit` ou `Write`.
 </Note>
 
+Quando Claude acessa um symlink, as regras de permissão verificam dois caminhos: o próprio symlink e o arquivo para o qual ele se resolve. As regras allow e deny tratam esse par de forma diferente: as regras allow voltam a solicitar, enquanto as regras deny bloqueiam imediatamente.
+
+* **Regras allow**: se aplicam apenas quando tanto o caminho do symlink quanto seu alvo correspondem. Um symlink dentro de um diretório permitido que aponta para fora dele ainda solicita.
+* **Regras deny**: se aplicam quando o caminho do symlink ou seu alvo correspondem. Um symlink que aponta para um arquivo negado é ele próprio negado.
+
+Por exemplo, com `Read(./project/**)` permitido e `Read(~/.ssh/**)` negado, um symlink em `./project/key` apontando para `~/.ssh/id_rsa` é bloqueado: o alvo falha na regra allow e corresponde à regra deny.
+
 ### WebFetch
 
 * `WebFetch(domain:example.com)` corresponde a solicitações de busca para example.com
@@ -200,7 +231,7 @@ Adicione estas regras ao array `deny` em suas configurações ou use a flag CLI 
 
 Os [hooks do Claude Code](/pt/hooks-guide) fornecem uma maneira de registrar comandos de shell personalizados para realizar avaliação de permissão em tempo de execução. Quando Claude Code faz uma chamada de ferramenta, os hooks PreToolUse são executados antes do prompt de permissão. A saída do hook pode negar a chamada de ferramenta, forçar um prompt ou pular o prompt para deixar a chamada prosseguir.
 
-Pular o prompt não contorna as regras de permissão. As regras deny e ask ainda são avaliadas após um hook retornar `"allow"`, portanto uma regra deny correspondente ainda bloqueia a chamada. Isto preserva a precedência deny-first descrita em [Gerenciar permissões](#manage-permissions), incluindo regras deny definidas em configurações gerenciadas.
+As decisões do hook não contornam as regras de permissão. As regras deny e ask são avaliadas independentemente do que um hook PreToolUse retorna, portanto uma regra deny correspondente bloqueia a chamada e uma regra ask correspondente ainda solicita mesmo quando o hook retornou `"allow"` ou `"ask"`. Isto preserva a precedência deny-first descrita em [Gerenciar permissões](#manage-permissions), incluindo regras deny definidas em configurações gerenciadas.
 
 Um hook de bloqueio também tem precedência sobre regras allow. Um hook que sai com código 2 interrompe a chamada de ferramenta antes das regras de permissão serem avaliadas, portanto o bloqueio se aplica mesmo quando uma regra allow permitiria a chamada. Para executar todos os comandos Bash sem prompts exceto por alguns que você quer bloqueados, adicione `"Bash"` à sua lista allow e registre um hook PreToolUse que rejeita esses comandos específicos. Veja [Bloquear edições em arquivos protegidos](/pt/hooks-guide#block-edits-to-protected-files) para um script de hook que você pode adaptar.
 
@@ -220,11 +251,11 @@ Adicionar um diretório estende onde Claude pode ler e editar arquivos. Não faz
 
 Os seguintes tipos de configuração são carregados de diretórios `--add-dir`:
 
-| Configuração                                        | Carregado de `--add-dir`                                                     |
-| :-------------------------------------------------- | :--------------------------------------------------------------------------- |
-| [Skills](/pt/skills) em `.claude/skills/`           | Sim, com recarga ao vivo                                                     |
-| Configurações de plugin em `.claude/settings.json`  | Apenas `enabledPlugins` e `extraKnownMarketplaces`                           |
-| Arquivos [CLAUDE.md](/pt/memory) e `.claude/rules/` | Apenas quando `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` está definido |
+| Configuração                                                           | Carregado de `--add-dir`                                                                                                                                                        |
+| :--------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [Skills](/pt/skills) em `.claude/skills/`                              | Sim, com recarga ao vivo                                                                                                                                                        |
+| Configurações de plugin em `.claude/settings.json`                     | Apenas `enabledPlugins` e `extraKnownMarketplaces`                                                                                                                              |
+| Arquivos [CLAUDE.md](/pt/memory), `.claude/rules/` e `CLAUDE.local.md` | Apenas quando `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` está definido. `CLAUDE.local.md` adicionalmente requer a fonte de configuração `local`, que é ativada por padrão |
 
 Tudo mais, incluindo subagents, comandos, estilos de saída, hooks e outras configurações, é descoberto apenas do diretório de trabalho atual e seus pais, seu diretório de usuário em `~/.claude/` e configurações gerenciadas. Para compartilhar essa configuração entre projetos, use uma destas abordagens:
 
@@ -244,7 +275,9 @@ Use ambos para defesa em profundidade:
 * As regras deny de permissão bloqueiam Claude de até tentar acessar recursos restritos
 * As restrições de sandbox impedem que comandos Bash alcancem recursos fora dos limites definidos, mesmo se uma injeção de prompt contornar a tomada de decisão de Claude
 * As restrições de sistema de arquivos no sandbox usam regras deny de Read e Edit, não configuração de sandbox separada
-* As restrições de rede combinam regras de permissão WebFetch com a lista `allowedDomains` do sandbox
+* As restrições de rede combinam regras de permissão WebFetch com as listas `allowedDomains` e `deniedDomains` do sandbox
+
+Quando o sandboxing é ativado com `autoAllowBashIfSandboxed: true`, que é o padrão, comandos Bash em sandbox são executados sem solicitar mesmo se suas permissões incluem `ask: Bash(*)`. O limite do sandbox substitui o prompt por comando. Veja [modos de sandbox](/pt/sandboxing#sandbox-modes) para alterar este comportamento.
 
 ## Configurações gerenciadas
 
@@ -257,11 +290,12 @@ As seguintes configurações são lidas apenas de configurações gerenciadas. C
 | Configuração                                   | Descrição                                                                                                                                                                                                                                                                                 |
 | :--------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `allowedChannelPlugins`                        | Lista de permissão de plugins de canal que podem enviar mensagens. Substitui a lista de permissão padrão da Anthropic quando definida. Requer `channelsEnabled: true`. Veja [Restringir quais plugins de canal podem ser executados](/pt/channels#restrict-which-channel-plugins-can-run) |
-| `allowManagedHooksOnly`                        | Quando `true`, impede o carregamento de hooks de usuário, projeto e plugin. Apenas hooks gerenciados e hooks SDK são permitidos                                                                                                                                                           |
+| `allowManagedHooksOnly`                        | Quando `true`, apenas hooks gerenciados, hooks SDK e hooks de plugins força-ativados em configurações gerenciadas `enabledPlugins` são carregados. Hooks de usuário, projeto e todos os outros plugins são bloqueados                                                                     |
 | `allowManagedMcpServersOnly`                   | Quando `true`, apenas `allowedMcpServers` de configurações gerenciadas são respeitados. `deniedMcpServers` ainda se mescla de todas as fontes. Veja [Configuração MCP gerenciada](/pt/mcp#managed-mcp-configuration)                                                                      |
 | `allowManagedPermissionRulesOnly`              | Quando `true`, impede que configurações de usuário e projeto definam regras de permissão `allow`, `ask` ou `deny`. Apenas regras em configurações gerenciadas se aplicam                                                                                                                  |
 | `blockedMarketplaces`                          | Lista de bloqueio de fontes de marketplace. Fontes bloqueadas são verificadas antes do download, portanto nunca tocam o sistema de arquivos. Veja [restrições de marketplace gerenciadas](/pt/plugin-marketplaces#managed-marketplace-restrictions)                                       |
 | `channelsEnabled`                              | Permitir [channels](/pt/channels) para usuários Team e Enterprise. Não definido ou `false` bloqueia entrega de mensagem de canal independentemente do que os usuários passam para `--channels`                                                                                            |
+| `forceRemoteSettingsRefresh`                   | Quando `true`, bloqueia a inicialização da CLI até que as configurações gerenciadas remotas sejam buscadas recentemente e sai se a busca falhar. Veja [imposição fail-closed](/pt/server-managed-settings#enforce-fail-closed-startup)                                                    |
 | `pluginTrustMessage`                           | Mensagem personalizada anexada ao aviso de confiança de plugin mostrado antes da instalação                                                                                                                                                                                               |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Quando `true`, apenas caminhos `filesystem.allowRead` de configurações gerenciadas são respeitados. `denyRead` ainda se mescla de todas as fontes                                                                                                                                         |
 | `sandbox.network.allowManagedDomainsOnly`      | Quando `true`, apenas `allowedDomains` e regras allow `WebFetch(domain:...)` de configurações gerenciadas são respeitados. Domínios não permitidos são bloqueados automaticamente sem solicitar ao usuário. Domínios negados ainda se mesclam de todas as fontes                          |

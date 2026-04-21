@@ -14,7 +14,7 @@ Remote Control connette [claude.ai/code](https://claude.ai/code) o l'app Claude 
 
 Quando avvii una sessione Remote Control sulla tua macchina, Claude continua a funzionare localmente per tutto il tempo, quindi nulla si sposta nel cloud. Con Remote Control puoi:
 
-* **Utilizzare il tuo ambiente locale completo da remoto**: il tuo filesystem, i [server MCP](/it/mcp), gli strumenti e la configurazione del progetto rimangono disponibili
+* **Utilizzare il tuo ambiente locale completo da remoto**: il tuo filesystem, i [server MCP](/it/mcp), gli strumenti e la configurazione del progetto rimangono disponibili, e digitando `@` l'autocompletamento completa i percorsi dei file dal tuo progetto locale
 * **Lavorare da entrambe le superfici contemporaneamente**: la conversazione rimane sincronizzata su tutti i dispositivi connessi, quindi puoi inviare messaggi dal tuo terminale, browser e telefono in modo intercambiabile
 * **Sopravvivere alle interruzioni**: se il tuo laptop va in sospensione o la tua rete si interrompe, la sessione si riconnette automaticamente quando la tua macchina torna online
 
@@ -188,6 +188,7 @@ Se le notifiche non arrivano:
 * **Il processo locale deve continuare a funzionare**: Remote Control viene eseguito come processo locale. Se chiudi il terminale, esci da VS Code, o altrimenti interrompi il processo `claude`, la sessione termina.
 * **Interruzione di rete prolungata**: se la tua macchina è accesa ma non riesce a raggiungere la rete per più di circa 10 minuti, la sessione scade e il processo esce. Esegui di nuovo `claude remote-control` per avviare una nuova sessione.
 * **Ultraplan disconnette Remote Control**: avviare una sessione [ultraplan](/it/ultraplan) disconnette qualsiasi sessione Remote Control attiva perché entrambe le funzioni occupano l'interfaccia claude.ai/code e solo una può essere connessa alla volta.
+* **Alcuni comandi sono solo locali**: i comandi che aprono un selettore interattivo nel terminale, come `/mcp`, `/plugin`, o `/resume`, funzionano solo dalla CLI locale. I comandi che producono output di testo, inclusi `/compact`, `/clear`, `/context`, `/cost`, `/exit`, `/extra-usage`, `/recap`, e `/reload-plugins`, funzionano da mobile e web.
 
 ## Risoluzione dei problemi
 

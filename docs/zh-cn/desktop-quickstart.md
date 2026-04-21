@@ -6,15 +6,25 @@
 
 > 在桌面上安装 Claude Code 并开始您的第一个编码会话
 
-桌面应用为您提供具有图形界面的 Claude Code：可视化差异审查、实时应用预览、GitHub PR 监控和自动合并、使用 Git worktree 隔离的并行会话、计划任务以及远程运行任务的能力。无需终端。
+桌面应用为您提供具有图形界面的 Claude Code，专为并行运行多个会话而构建：用于管理并行工作的侧边栏、带有集成终端和文件编辑器的拖放布局、可视化差异审查、实时应用预览、GitHub PR 监控和自动合并以及计划任务。无需终端。
+
+<CardGroup cols={2}>
+  <Card title="Download for macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
+    Universal build for Intel and Apple Silicon
+  </Card>
+
+  <Card title="Download for Windows" icon="windows" href="https://claude.ai/api/desktop/win32/x64/setup/latest/redirect?utm_source=claude_code&utm_medium=docs">
+    For x64 processors
+  </Card>
+</CardGroup>
+
+For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). Linux is not supported.
+
+<Note>
+  Claude Code 需要 [Pro、Max、Team 或 Enterprise 订阅](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing)。
+</Note>
 
 本页面将指导您安装应用并开始您的第一个会话。如果您已经设置完成，请参阅[使用 Claude Code Desktop](/zh-CN/desktop)了解完整参考。
-
-<Frame>
-  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-light.png" className="block dark:hidden" alt="Claude Code Desktop 界面显示已选择 Code 选项卡，包含提示框、权限模式选择器设置为询问权限、模型选择器、文件夹选择器和本地环境选项" />
-
-  <img src="https://mintlify.s3.us-west-1.amazonaws.com/claude-code/images/desktop-code-tab-dark.png" className="hidden dark:block" alt="Claude Code Desktop 深色模式界面显示已选择 Code 选项卡，包含提示框、权限模式选择器设置为询问权限、模型选择器、文件夹选择器和本地环境选项" />
-</Frame>
 
 桌面应用有三个选项卡：
 
@@ -24,33 +34,11 @@
 
 Chat 和 Cowork 在 [Claude Desktop 支持文章](https://support.claude.com/en/collections/16163169-claude-desktop)中有介绍。本页面重点关注 **Code** 选项卡。
 
-<Note>
-  Claude Code 需要 [Pro、Max、Teams 或 Enterprise 订阅](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing)。
-</Note>
-
 ## 安装
 
 <Steps>
-  <Step title="下载应用">
-    为您的平台下载 Claude。
-
-    <CardGroup cols={2}>
-      <Card title="macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
-        适用于 Intel 和 Apple Silicon 的通用版本
-      </Card>
-
-      <Card title="Windows" icon="windows" href="https://claude.ai/api/desktop/win32/x64/exe/latest/redirect?utm_source=claude_code&utm_medium=docs">
-        适用于 x64 处理器
-      </Card>
-    </CardGroup>
-
-    对于 Windows ARM64，[在此下载](https://claude.ai/api/desktop/win32/arm64/exe/latest/redirect?utm_source=claude_code\&utm_medium=docs)。
-
-    目前不支持 Linux。
-  </Step>
-
-  <Step title="登录">
-    从应用程序文件夹 (macOS) 或开始菜单 (Windows) 启动 Claude。使用您的 Anthropic 账户登录。
+  <Step title="安装并登录">
+    从上面的链接下载您的平台的安装程序并运行它。在 macOS 上从应用程序文件夹启动 Claude，或在 Windows 上从开始菜单启动，然后使用您的 Anthropic 账户登录。
   </Step>
 
   <Step title="打开 Code 选项卡">
@@ -79,7 +67,7 @@ Chat 和 Cowork 在 [Claude Desktop 支持文章](https://support.claude.com/en/
   </Step>
 
   <Step title="选择模型">
-    从发送按钮旁的下拉菜单中选择模型。请参阅[模型](/zh-CN/model-config#available-models)了解 Opus、Sonnet 和 Haiku 的比较。会话开始后无法更改模型。
+    从发送按钮旁的下拉菜单中选择模型。请参阅[模型](/zh-CN/model-config#available-models)了解 Opus、Sonnet 和 Haiku 的比较。您可以稍后从同一下拉菜单更改模型。
   </Step>
 
   <Step title="告诉 Claude 要做什么">
@@ -119,13 +107,15 @@ Chat 和 Cowork 在 [Claude Desktop 支持文章](https://support.claude.com/en/
 
 **添加插件以获得更多功能。** 点击提示框旁的 **+** 按钮并选择 **Plugins** 以浏览和安装[插件](/zh-CN/desktop#install-plugins)，这些插件添加 skills、代理、MCP servers 等。
 
+**整理您的工作区。** 将聊天、差异、终端、文件和预览窗格拖放到您想要的任何布局中。使用 **Ctrl+\`** 打开终端以在会话旁运行命令，或点击文件路径以在文件窗格中打开它。请参阅[整理您的工作区](/zh-CN/desktop#arrange-your-workspace)。
+
 **预览您的应用。** 点击 **Preview** 下拉菜单以直接在桌面中运行您的开发服务器。Claude 可以查看正在运行的应用、测试端点、检查日志并对其看到的内容进行迭代。请参阅[预览您的应用](/zh-CN/desktop#preview-your-app)。
 
 **跟踪您的拉取请求。** 打开 PR 后，Claude Code 监控 CI 检查结果，可以自动修复失败或在所有检查通过后合并 PR。请参阅[监控拉取请求状态](/zh-CN/desktop#monitor-pull-request-status)。
 
-**将 Claude 放在日程上。** 设置[计划任务](/zh-CN/desktop#schedule-recurring-tasks)以定期自动运行 Claude：每天早上进行代码审查、每周进行依赖审计，或从您连接的工具中提取信息的简报。
+**将 Claude 放在日程上。** 设置[计划任务](/zh-CN/desktop-scheduled-tasks)以定期自动运行 Claude：每天早上进行代码审查、每周进行依赖审计，或从您连接的工具中提取信息的简报。
 
-**准备好时扩展。** 从侧边栏打开[并行会话](/zh-CN/desktop#work-in-parallel-with-sessions)以同时处理多个任务，每个任务都在自己的 Git worktree 中。将[长期运行的工作发送到云](/zh-CN/desktop#run-long-running-tasks-remotely)，以便即使关闭应用也能继续，或者如果任务花费的时间比预期长，[在网络或 IDE 中继续会话](/zh-CN/desktop#continue-in-another-surface)。[连接外部工具](/zh-CN/desktop#extend-claude-code)，如 GitHub、Slack 和 Linear，以整合您的工作流。
+**准备好时扩展。** 从侧边栏打开[并行会话](/zh-CN/desktop#work-in-parallel-with-sessions)以同时处理多个任务，每个任务都在自己的 Git worktree 中，并打开[任务窗格](/zh-CN/desktop#watch-background-tasks)以观看会话正在运行的子代理和后台命令。打开[侧边聊天](/zh-CN/desktop#ask-a-side-question-without-derailing-the-session)以提出问题而不会偏离主线程。将[长期运行的工作发送到云](/zh-CN/desktop#run-long-running-tasks-remotely)，以便即使关闭应用也能继续，或者如果任务花费的时间比预期长，[在网络或 IDE 中继续会话](/zh-CN/desktop#continue-in-another-surface)。[连接外部工具](/zh-CN/desktop#extend-claude-code)，如 GitHub、Slack 和 Linear，以整合您的工作流。
 
 ## 来自 CLI？
 

@@ -32,14 +32,14 @@ Regeln werden in dieser Reihenfolge ausgewertet: **deny -> ask -> allow**. Die e
 
 Claude Code unterstützt mehrere Berechtigungsmodi, die steuern, wie Werkzeuge genehmigt werden. Siehe [Berechtigungsmodi](/de/permission-modes) für den Zeitpunkt der Verwendung jedes Modus. Legen Sie den `defaultMode` in Ihren [Einstellungsdateien](/de/settings#settings-files) fest:
 
-| Modus               | Beschreibung                                                                                                                                                              |
-| :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `default`           | Standardverhalten: fordert Genehmigung bei der ersten Verwendung jedes Werkzeugs auf                                                                                      |
-| `acceptEdits`       | Akzeptiert automatisch Dateiberechtigungen für die Sitzung, außer Schreibvorgänge in geschützte Verzeichnisse                                                             |
-| `plan`              | Plan Mode: Claude kann Dateien analysieren, aber nicht ändern oder Befehle ausführen                                                                                      |
-| `auto`              | Genehmigt Werkzeugaufrufe automatisch mit Hintergrund-Sicherheitsprüfungen, die überprüfen, ob Aktionen mit Ihrer Anfrage übereinstimmen. Derzeit eine Forschungsvorschau |
-| `dontAsk`           | Verweigert Werkzeuge automatisch, es sei denn, sie sind vorab über `/permissions` oder `permissions.allow`-Regeln genehmigt                                               |
-| `bypassPermissions` | Überspringt Berechtigungsaufforderungen außer für Schreibvorgänge in geschützte Verzeichnisse (siehe Warnung unten)                                                       |
+| Modus               | Beschreibung                                                                                                                                                                |
+| :------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `default`           | Standardverhalten: fordert Genehmigung bei der ersten Verwendung jedes Werkzeugs auf                                                                                        |
+| `acceptEdits`       | Akzeptiert automatisch Dateiberechtigungen und häufige Dateisystem-Befehle (`mkdir`, `touch`, `mv`, `cp` usw.) für Pfade im Arbeitsverzeichnis oder `additionalDirectories` |
+| `plan`              | Plan Mode: Claude kann Dateien analysieren, aber nicht ändern oder Befehle ausführen                                                                                        |
+| `auto`              | Genehmigt Werkzeugaufrufe automatisch mit Hintergrund-Sicherheitsprüfungen, die überprüfen, ob Aktionen mit Ihrer Anfrage übereinstimmen. Derzeit eine Forschungsvorschau   |
+| `dontAsk`           | Verweigert Werkzeuge automatisch, es sei denn, sie sind vorab über `/permissions` oder `permissions.allow`-Regeln genehmigt                                                 |
+| `bypassPermissions` | Überspringt Berechtigungsaufforderungen außer für Schreibvorgänge in geschützte Verzeichnisse (siehe Warnung unten)                                                         |
 
 <Warning>
   Der Modus `bypassPermissions` überspringt Berechtigungsaufforderungen. Schreibvorgänge in die Verzeichnisse `.git`, `.claude`, `.vscode`, `.idea` und `.husky` fordern weiterhin eine Bestätigung auf, um eine versehentliche Beschädigung des Repository-Status, der Editor-Konfiguration und der Git-Hooks zu verhindern. Schreibvorgänge in `.claude/commands`, `.claude/agents` und `.claude/skills` sind ausgenommen und fordern nicht auf, da Claude routinemäßig dort schreibt, wenn Skills, Subagents und Befehle erstellt werden. Verwenden Sie diesen Modus nur in isolierten Umgebungen wie Containern oder VMs, in denen Claude Code keinen Schaden anrichten kann. Administratoren können diesen Modus verhindern, indem sie `permissions.disableBypassPermissionsMode` in [verwalteten Einstellungen](#managed-settings) auf `"disable"` setzen.
@@ -94,7 +94,9 @@ Bash-Regeln unterstützen Glob-Muster mit `*`. Platzhalter können an jeder Posi
 }
 ```
 
-Das Leerzeichen vor `*` ist wichtig: `Bash(ls *)` gleicht `ls -la` ab, aber nicht `lsof`, während `Bash(ls*)` beide abgleicht. Die veraltete `:*`-Suffixsyntax ist gleichwertig mit ` *`, wird aber nicht mehr empfohlen.
+Das Leerzeichen vor `*` ist wichtig: `Bash(ls *)` gleicht `ls -la` ab, aber nicht `lsof`, während `Bash(ls*)` beide abgleicht. Das Suffix `:*` ist eine gleichwertige Möglichkeit, einen nachgestellten Platzhalter zu schreiben, daher gleicht `Bash(ls:*)` die gleichen Befehle ab wie `Bash(ls *)`.
+
+Der Berechtigungsdialog schreibt die durch Leerzeichen getrennte Form, wenn Sie „Ja, nicht mehr fragen" für ein Befehlspräfix auswählen. Die Form `:*` wird nur am Ende eines Musters erkannt. In einem Muster wie `Bash(git:* push)` wird der Doppelpunkt als Literalzeichen behandelt und passt nicht zu git-Befehlen.
 
 ## Werkzeugspezifische Berechtigungsregeln
 
@@ -106,15 +108,37 @@ Bash-Berechtigungsregeln unterstützen Wildcard-Abgleich mit `*`. Platzhalter k�
 * `Bash(npm run test *)` gleicht Bash-Befehle ab, die mit `npm run test` beginnen
 * `Bash(npm *)` gleicht jeden Befehl ab, der mit `npm ` beginnt
 * `Bash(* install)` gleicht jeden Befehl ab, der mit ` install` endet
-* `Bash(git * main)` gleicht Befehle wie `git checkout main`, `git merge main` ab
+* `Bash(git * main)` gleicht Befehle wie `git checkout main` und `git log --oneline main` ab
+
+Ein einzelnes `*` gleicht jede Zeichenfolge ab, einschließlich Leerzeichen, daher kann ein Platzhalter mehrere Argumente umfassen. `Bash(git *)` gleicht `git log --oneline --all` ab, und `Bash(git * main)` gleicht sowohl `git push origin main` als auch `git merge main` ab.
 
 Wenn `*` am Ende mit einem Leerzeichen davor erscheint (wie `Bash(ls *)`), wird eine Wortgrenze erzwungen, die erfordert, dass dem Präfix ein Leerzeichen oder das Ende der Zeichenkette folgt. Zum Beispiel gleicht `Bash(ls *)` `ls -la` ab, aber nicht `lsof`. Im Gegensatz dazu gleicht `Bash(ls*)` ohne Leerzeichen sowohl `ls -la` als auch `lsof` ab, da es keine Wortgrenzbeschränkung gibt.
 
+#### Zusammengesetzte Befehle
+
 <Tip>
-  Claude Code ist sich Shell-Operatoren (wie `&&`) bewusst, daher gibt eine Präfixabgleichregel wie `Bash(safe-cmd *)` ihm nicht die Berechtigung, den Befehl `safe-cmd && other-cmd` auszuführen.
+  Claude Code ist sich Shell-Operatoren bewusst, daher gibt eine Regel wie `Bash(safe-cmd *)` ihm nicht die Berechtigung, den Befehl `safe-cmd && other-cmd` auszuführen. Die erkannten Befehlstrennzeichen sind `&&`, `||`, `;`, `|`, `|&`, `&` und Zeilenumbrüche. Eine Regel muss jeden Unterbefehl unabhängig abgleichen.
 </Tip>
 
 Wenn Sie einen zusammengesetzten Befehl mit „Ja, nicht mehr fragen" genehmigen, speichert Claude Code eine separate Regel für jeden Unterbefehl, der Genehmigung erfordert, anstelle einer einzelnen Regel für die vollständige zusammengesetzte Zeichenkette. Zum Beispiel speichert das Genehmigen von `git status && npm test` eine Regel für `npm test`, sodass zukünftige `npm test`-Aufrufe erkannt werden, unabhängig davon, was dem `&&` vorausgeht. Unterbefehle wie `cd` in ein Unterverzeichnis generieren ihre eigene Read-Regel für diesen Pfad. Für einen einzelnen zusammengesetzten Befehl können bis zu 5 Regeln gespeichert werden.
+
+#### Prozess-Wrapper
+
+Vor dem Abgleich von Bash-Regeln entfernt Claude Code einen festen Satz von Prozess-Wrappern, daher gleicht eine Regel wie `Bash(npm test *)` auch `timeout 30 npm test` ab. Die erkannten Wrapper sind `timeout`, `time`, `nice`, `nohup` und `stdbuf`.
+
+Auch bloßes `xargs` wird entfernt, daher gleicht `Bash(grep *)` `xargs grep pattern` ab. Das Entfernen gilt nur, wenn `xargs` keine Flags hat: Ein Aufruf wie `xargs -n1 grep pattern` wird als `xargs`-Befehl abgeglichen, daher decken Regeln, die für den inneren Befehl geschrieben wurden, ihn nicht ab.
+
+Diese Wrapper-Liste ist integriert und nicht konfigurierbar. Entwicklungsumgebungs-Runner wie `direnv exec`, `devbox run`, `mise exec`, `npx` und `docker exec` sind nicht in der Liste. Da diese Tools ihre Argumente als Befehl ausführen, gleicht eine Regel wie `Bash(devbox run *)` alles ab, was nach `run` kommt, einschließlich `devbox run rm -rf .`. Um Arbeit innerhalb eines Umgebungs-Runners zu genehmigen, schreiben Sie eine spezifische Regel, die sowohl den Runner als auch den inneren Befehl enthält, wie `Bash(devbox run npm test)`. Fügen Sie eine Regel pro innerem Befehl hinzu, den Sie zulassen möchten.
+
+Exec-Wrapper wie `watch`, `setsid`, `ionice` und `flock` fordern immer auf und können nicht durch eine Präfixregel wie `Bash(watch *)` automatisch genehmigt werden. Das gleiche gilt für `find` mit `-exec` oder `-delete`: Eine `Bash(find *)` Regel deckt diese Formen nicht ab. Um einen spezifischen Aufruf zu genehmigen, schreiben Sie eine exakte Übereinstimmungsregel für die vollständige Befehlszeichenkette.
+
+#### Schreibgeschützte Befehle
+
+Claude Code erkennt einen integrierten Satz von Bash-Befehlen als schreibgeschützt und führt sie ohne Berechtigungsaufforderung in jedem Modus aus. Diese umfassen `ls`, `cat`, `head`, `tail`, `grep`, `find`, `wc`, `diff`, `stat`, `du`, `cd` und schreibgeschützte Formen von `git`. Der Satz ist nicht konfigurierbar; um eine Aufforderung für einen dieser Befehle zu erfordern, fügen Sie eine `ask`- oder `deny`-Regel dafür hinzu.
+
+Unquotierte Glob-Muster sind für Befehle zulässig, deren jedes Flag schreibgeschützt ist, daher laufen `ls *.ts` und `wc -l src/*.py` ohne Aufforderung. Befehle mit schreibfähigen oder ausführungsfähigen Flags, wie `find`, `sort`, `sed` und `git`, fordern immer noch auf, wenn ein unquotiertes Glob vorhanden ist, da das Glob zu einem Flag wie `-delete` expandieren könnte.
+
+Ein `cd` in einen Pfad innerhalb Ihres Arbeitsverzeichnisses oder eines [zusätzlichen Verzeichnisses](#working-directories) ist auch schreibgeschützt. Ein zusammengesetzter Befehl wie `cd packages/api && ls` läuft ohne Aufforderung, wenn jeder Teil auf eigene Faust qualifiziert. Das Kombinieren von `cd` mit `git` in einem zusammengesetzten Befehl fordert immer auf, unabhängig vom Zielverzeichnis.
 
 <Warning>
   Bash-Berechtigungsmuster, die versuchen, Befehlsargumente einzuschränken, sind fragil. Zum Beispiel beabsichtigt `Bash(curl http://github.com/ *)`, curl auf GitHub-URLs zu beschränken, wird aber Variationen nicht abgleichen wie:
@@ -168,6 +192,13 @@ Beispiele:
   In gitignore-Mustern gleicht `*` Dateien in einem einzelnen Verzeichnis ab, während `**` rekursiv über Verzeichnisse hinweg abgleicht. Um allen Dateizugriff zu ermöglichen, verwenden Sie einfach den Werkzeugnamen ohne Klammern: `Read`, `Edit` oder `Write`.
 </Note>
 
+Wenn Claude auf einen Symlink zugreift, überprüfen Berechtigungsregeln zwei Pfade: den Symlink selbst und die Datei, auf die er verweist. Allow- und Deny-Regeln behandeln dieses Paar unterschiedlich: Allow-Regeln fallen auf Aufforderungen zurück, während Deny-Regeln direkt blockieren.
+
+* **Allow-Regeln**: gelten nur, wenn sowohl der Symlink-Pfad als auch sein Ziel übereinstimmen. Ein Symlink in einem zulässigen Verzeichnis, der außerhalb davon verweist, fordert Sie immer noch auf.
+* **Deny-Regeln**: gelten, wenn entweder der Symlink-Pfad oder sein Ziel übereinstimmt. Ein Symlink, der auf eine verweigerte Datei verweist, ist selbst verweigert.
+
+Zum Beispiel mit `Read(./project/**)` zulässig und `Read(~/.ssh/**)` verweigert, wird ein Symlink bei `./project/key`, der auf `~/.ssh/id_rsa` verweist, blockiert: Das Ziel schlägt die Allow-Regel fehl und passt zur Deny-Regel.
+
 ### WebFetch
 
 * `WebFetch(domain:example.com)` gleicht Fetch-Anfragen an example.com ab
@@ -200,7 +231,7 @@ Fügen Sie diese Regeln zum `deny`-Array in Ihren Einstellungen hinzu oder verwe
 
 [Claude Code Hooks](/de/hooks-guide) bieten eine Möglichkeit, benutzerdefinierte Shell-Befehle zu registrieren, um die Berechtigungsevaluierung zur Laufzeit durchzuführen. Wenn Claude Code einen Werkzeugaufruf tätigt, werden PreToolUse-Hooks vor dem Berechtigungssystem ausgeführt. Die Hook-Ausgabe kann den Werkzeugaufruf verweigern, eine Aufforderung erzwingen oder die Aufforderung überspringen, um den Aufruf fortzufahren.
 
-Das Überspringen der Aufforderung umgeht keine Berechtigungsregeln. Deny- und Ask-Regeln werden immer noch ausgewertet, nachdem ein Hook `"allow"` zurückgibt, daher blockiert eine übereinstimmende Deny-Regel immer noch den Aufruf. Dies bewahrt die Deny-First-Priorität, die in [Berechtigungen verwalten](#manage-permissions) beschrieben ist, einschließlich Deny-Regeln, die in verwalteten Einstellungen festgelegt sind.
+Hook-Entscheidungen umgehen keine Berechtigungsregeln. Deny- und Ask-Regeln werden unabhängig davon ausgewertet, was ein PreToolUse-Hook zurückgibt, daher blockiert eine übereinstimmende Deny-Regel den Aufruf und eine übereinstimmende Ask-Regel fordert immer noch auf, selbst wenn der Hook `"allow"` oder `"ask"` zurückgegeben hat. Dies bewahrt die Deny-First-Priorität, die in [Berechtigungen verwalten](#manage-permissions) beschrieben ist, einschließlich Deny-Regeln, die in verwalteten Einstellungen festgelegt sind.
 
 Ein blockierender Hook hat auch Vorrang vor Allow-Regeln. Ein Hook, der mit Code 2 beendet wird, stoppt den Werkzeugaufruf, bevor Berechtigungsregeln ausgewertet werden, daher gilt die Blockierung auch dann, wenn eine Allow-Regel den Aufruf sonst zulassen würde. Um alle Bash-Befehle ohne Aufforderungen auszuführen, außer für einige, die Sie blockieren möchten, fügen Sie `"Bash"` zu Ihrer Allow-Liste hinzu und registrieren Sie einen PreToolUse-Hook, der diese spezifischen Befehle ablehnt. Siehe [Bearbeitungen geschützter Dateien blockieren](/de/hooks-guide#block-edits-to-protected-files) für ein Hook-Skript, das Sie anpassen können.
 
@@ -220,11 +251,11 @@ Das Hinzufügen eines Verzeichnisses erweitert, wo Claude Dateien lesen und bear
 
 Die folgenden Konfigurationstypen werden aus `--add-dir`-Verzeichnissen geladen:
 
-| Konfiguration                                        | Geladen aus `--add-dir`                                               |
-| :--------------------------------------------------- | :-------------------------------------------------------------------- |
-| [Skills](/de/skills) in `.claude/skills/`            | Ja, mit Live-Reload                                                   |
-| Plugin-Einstellungen in `.claude/settings.json`      | Nur `enabledPlugins` und `extraKnownMarketplaces`                     |
-| [CLAUDE.md](/de/memory)-Dateien und `.claude/rules/` | Nur wenn `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` gesetzt ist |
+| Konfiguration                                                           | Geladen aus `--add-dir`                                                                                                                                                       |
+| :---------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Skills](/de/skills) in `.claude/skills/`                               | Ja, mit Live-Reload                                                                                                                                                           |
+| Plugin-Einstellungen in `.claude/settings.json`                         | Nur `enabledPlugins` und `extraKnownMarketplaces`                                                                                                                             |
+| [CLAUDE.md](/de/memory)-Dateien, `.claude/rules/` und `CLAUDE.local.md` | Nur wenn `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` gesetzt ist. `CLAUDE.local.md` erfordert zusätzlich die `local`-Einstellungsquelle, die standardmäßig aktiviert ist |
 
 Alles andere, einschließlich Subagents, Befehle, Ausgabestile, Hooks und andere Einstellungen, wird nur aus dem aktuellen Arbeitsverzeichnis und seinen übergeordneten Verzeichnissen, Ihrem Benutzerverzeichnis unter `~/.claude/` und verwalteten Einstellungen erkannt. Um diese Konfiguration über Projekte hinweg zu teilen, verwenden Sie einen dieser Ansätze:
 
@@ -244,7 +275,9 @@ Verwenden Sie beide für Defense-in-Depth:
 * Berechtigungs-Deny-Regeln blockieren Claude daran, überhaupt zu versuchen, auf eingeschränkte Ressourcen zuzugreifen
 * Sandbox-Einschränkungen verhindern, dass Bash-Befehle Ressourcen außerhalb definierter Grenzen erreichen, selbst wenn eine Prompt-Injection Claude's Entscheidungsfindung umgeht
 * Dateisystem-Einschränkungen in der Sandbox verwenden Read- und Edit-Deny-Regeln, nicht separate Sandbox-Konfiguration
-* Netzwerk-Einschränkungen kombinieren WebFetch-Berechtigungsregeln mit der `allowedDomains`-Liste der Sandbox
+* Netzwerk-Einschränkungen kombinieren WebFetch-Berechtigungsregeln mit den `allowedDomains`- und `deniedDomains`-Listen der Sandbox
+
+Wenn Sandboxing mit `autoAllowBashIfSandboxed: true` aktiviert ist, was die Standardeinstellung ist, laufen sandboxed Bash-Befehle ohne Aufforderung, selbst wenn Ihre Berechtigungen `ask: Bash(*)` enthalten. Die Sandbox-Grenze ersetzt die Pro-Befehl-Aufforderung. Siehe [Sandbox-Modi](/de/sandboxing#sandbox-modes), um dieses Verhalten zu ändern.
 
 ## Verwaltete Einstellungen
 
@@ -257,11 +290,12 @@ Die folgenden Einstellungen sind nur in verwalteten Einstellungen wirksam. Das P
 | Einstellung                                    | Beschreibung                                                                                                                                                                                                                                                                                        |
 | :--------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `allowedChannelPlugins`                        | Zulassungsliste von Channel-Plugins, die Nachrichten pushen dürfen. Ersetzt die Standard-Anthropic-Zulassungsliste, wenn gesetzt. Erfordert `channelsEnabled: true`. Siehe [Einschränken Sie, welche Channel-Plugins ausgeführt werden können](/de/channels#restrict-which-channel-plugins-can-run) |
-| `allowManagedHooksOnly`                        | Wenn `true`, verhindert das Laden von Benutzer-, Projekt- und Plugin-Hooks. Nur verwaltete Hooks und SDK-Hooks sind zulässig                                                                                                                                                                        |
+| `allowManagedHooksOnly`                        | Wenn `true`, werden nur verwaltete Hooks, SDK-Hooks und Hooks aus Plugins, die in verwalteten Einstellungen `enabledPlugins` erzwungen sind, geladen. Benutzer-, Projekt- und alle anderen Plugin-Hooks werden blockiert                                                                            |
 | `allowManagedMcpServersOnly`                   | Wenn `true`, werden nur `allowedMcpServers` aus verwalteten Einstellungen berücksichtigt. `deniedMcpServers` wird immer noch aus allen Quellen zusammengeführt. Siehe [Verwaltete MCP-Konfiguration](/de/mcp#managed-mcp-configuration)                                                             |
 | `allowManagedPermissionRulesOnly`              | Wenn `true`, verhindert, dass Benutzer- und Projekteinstellungen `allow`-, `ask`- oder `deny`-Berechtigungsregeln definieren. Nur Regeln in verwalteten Einstellungen gelten                                                                                                                        |
 | `blockedMarketplaces`                          | Blocklist von Marketplace-Quellen. Blockierte Quellen werden vor dem Download überprüft, sodass sie das Dateisystem nie berühren. Siehe [verwaltete Marketplace-Einschränkungen](/de/plugin-marketplaces#managed-marketplace-restrictions)                                                          |
 | `channelsEnabled`                              | Ermöglichen Sie [Channels](/de/channels) für Team- und Enterprise-Benutzer. Nicht gesetzt oder `false` blockiert die Nachrichtenübermittlung über Channels, unabhängig davon, was Benutzer an `--channels` übergeben                                                                                |
+| `forceRemoteSettingsRefresh`                   | Wenn `true`, blockiert CLI-Start, bis remote verwaltete Einstellungen aktuell abgerufen werden, und beendet sich, wenn der Abruf fehlschlägt. Siehe [Fail-Closed-Durchsetzung](/de/server-managed-settings#enforce-fail-closed-startup)                                                             |
 | `pluginTrustMessage`                           | Benutzerdefinierte Nachricht, die der vor der Installation angezeigten Plugin-Vertrauenswarnung hinzugefügt wird                                                                                                                                                                                    |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Wenn `true`, werden nur `filesystem.allowRead`-Pfade aus verwalteten Einstellungen berücksichtigt. `denyRead` wird immer noch aus allen Quellen zusammengeführt                                                                                                                                     |
 | `sandbox.network.allowManagedDomainsOnly`      | Wenn `true`, werden nur `allowedDomains` und `WebFetch(domain:...)`-Allow-Regeln aus verwalteten Einstellungen berücksichtigt. Nicht zulässige Domänen werden automatisch blockiert, ohne den Benutzer zu fragen. Verweigerte Domänen werden immer noch aus allen Quellen zusammengeführt           |

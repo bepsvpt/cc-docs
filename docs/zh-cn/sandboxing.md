@@ -103,7 +103,7 @@ Claude Code 具有原生沙箱功能，为代理执行提供更安全的环境�
 
 Claude Code 提供两种沙箱模式：
 
-**自动允许模式**：Bash 命令将尝试在沙箱内运行，并自动允许而无需权限。无法沙箱化的命令（例如需要访问非允许主机的网络访问的命令）会回退到常规权限流程。您配置的显式询问/拒绝规则始终被尊重。
+**自动允许模式**：Bash 命令将尝试在沙箱内运行，并自动允许而无需权限。无法沙箱化的命令（例如需要访问非允许主机的网络访问的命令）会回退到常规权限流程。显式拒绝规则始终被尊重。询问规则仅适用于回退到常规权限流程的命令。
 
 **常规权限模式**：所有 bash 命令都通过标准权限流程，即使是沙箱化的。这提供了更多控制，但需要更多批准。
 
@@ -169,7 +169,7 @@ Claude Code 提供两种沙箱模式：
 
   * 许多 CLI 工具需要访问某些主机。当您使用这些工具时，它们会请求访问某些主机的权限。授予权限将允许它们现在和将来访问这些主机，使它们能够在沙箱内安全执行。
   * `watchman` 与在沙箱中运行不兼容。如果您运行 `jest`，请考虑使用 `jest --no-watchman`
-  * `docker` 与在沙箱中运行不兼容。考虑在 `excludedCommands` 中指定 `docker` 以强制其在沙箱外运行。
+  * `docker` 与在沙箱中运行不兼容。考虑在 `excludedCommands` 中指定 `docker *` 以强制其在沙箱外运行。
 </Tip>
 
 <Note>
@@ -250,6 +250,7 @@ Claude Code 提供两种沙箱模式：
 * 使用 `Read` 和 `Edit` 拒绝规则阻止访问特定文件或目录
 * 使用 `WebFetch` 允许/拒绝规则控制域名访问
 * 使用沙箱 `allowedDomains` 控制 Bash 命令可以到达的域名
+* 使用沙箱 `deniedDomains` 阻止特定域名，即使更广泛的 `allowedDomains` 通配符会允许它们
 
 来自 `sandbox.filesystem` 设置和权限规则的路径被合并到最终沙箱配置中。
 
@@ -314,7 +315,7 @@ npx @anthropic-ai/sandbox-runtime <command-to-sandbox>
 沙箱隔离 Bash 子进程。其他工具在不同的边界下运行：
 
 * **内置文件工具**：Read、Edit 和 Write 直接使用权限系统，而不是通过沙箱运行。请参阅 [permissions](/zh-CN/permissions)。
-* **计算机使用**：当 Claude 在 macOS 上打开应用程序并控制您的屏幕时，它在您的实际桌面上运行，而不是在隔离的环境中。每个应用程序的权限提示控制每个应用程序。请参阅 [CLI 中的计算机使用](/zh-CN/computer-use) 或 [Desktop 中的计算机使用](/zh-CN/desktop#let-claude-use-your-computer)。
+* **计算机使用**：当 Claude 打开应用程序并控制您的屏幕时，它在您的实际桌面上运行，而不是在隔离的环境中。每个应用程序的权限提示控制每个应用程序。请参阅 [CLI 中的计算机使用](/zh-CN/computer-use) 或 [Desktop 中的计算机使用](/zh-CN/desktop#let-claude-use-your-computer)。
 
 ## 另请参阅
 

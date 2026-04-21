@@ -12,7 +12,7 @@
 
 排程任務讓 Claude 按間隔自動重新執行提示。使用它們來輪詢部署、監督 PR、檢查長時間執行的建置，或在工作階段稍後提醒自己執行某些操作。若要改為對事件發生時做出反應而不是輪詢，請參閱 [Channels](/zh-TW/channels)：您的 CI 可以直接將失敗推送到工作階段中。
 
-任務的範圍限於工作階段：它們存在於目前的 Claude Code 程序中，當您退出時就會消失。如需在重新啟動後仍能持續的持久排程，請使用 [Routines](/zh-TW/routines)、[Desktop 排程任務](/zh-TW/desktop-scheduled-tasks) 或 [GitHub Actions](/zh-TW/github-actions)。
+任務的範圍限於工作階段：它們存在於目前的對話中，當您啟動新的對話時就會停止。使用 `--resume` 或 `--continue` 繼續會恢復任何尚未[過期](#seven-day-expiry)的任務：在過去 7 天內建立的重複執行任務，或排程時間尚未到達的一次性任務。對於獨立於任何工作階段而存在的排程，請使用 [Routines](/zh-TW/routines)、[Desktop 排程任務](/zh-TW/desktop-scheduled-tasks) 或 [GitHub Actions](/zh-TW/github-actions)。
 
 ## 比較排程選項
 
@@ -118,6 +118,10 @@ quiet, say so in one line.
 
 對 `loop.md` 的編輯在下次迭代時生效，因此您可以在迴圈執行時精煉指示。當任一位置都不存在 `loop.md` 時，迴圈會回退到內建維護提示。保持檔案簡潔：超過 25,000 位元組的內容會被截斷。
 
+### 停止迴圈
+
+若要在 `/loop` 等待下一次迭代時停止它，請按 `Esc`。這會清除待處理的喚醒，使迴圈不會再次執行。您透過[直接要求 Claude](#manage-scheduled-tasks) 排程的任務不受 `Esc` 影響，會保留在原位，直到您刪除它們。
+
 ## 設定一次性提醒
 
 對於一次性提醒，請用自然語言描述您想要的內容，而不是使用 `/loop`。Claude 會排程一個執行後自動刪除的單次執行任務。
@@ -198,9 +202,9 @@ cancel the deploy check job
 
 工作階段範圍的排程有固有的限制：
 
-* 任務只在 Claude Code 執行且閒置時執行。關閉終端或讓工作階段退出會取消所有內容。
+* 任務只在 Claude Code 執行且閒置時執行。關閉終端或讓工作階段退出會停止它們執行。
 * 沒有錯過執行的追趕。如果任務的排程時間在 Claude 忙於長時間執行的請求時經過，它會在 Claude 變為閒置時執行一次，而不是每個錯過的間隔執行一次。
-* 沒有跨重新啟動的持久性。重新啟動 Claude Code 會清除所有工作階段範圍的任務。
+* 啟動新的對話會清除所有工作階段範圍的任務。使用 `claude --resume` 或 `claude --continue` 繼續會恢復尚未過期的任務：建立後七天內的重複執行任務，以及排程時間尚未到達的一次性任務。背景 Bash 和監視任務在繼續時永遠不會被恢復。
 
 對於需要無人值守執行的 cron 驅動自動化：
 

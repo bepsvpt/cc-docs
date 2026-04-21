@@ -66,6 +66,8 @@ Jeder Binding-Block gibt einen **Kontext** an, in dem die Bindings gelten:
 | `ModelPicker`     | Modell-Picker-Aufwandsstufe                               |
 | `Select`          | Generische Select/List-Komponenten                        |
 | `Plugin`          | Plugin-Dialog (durchsuchen, entdecken, verwalten)         |
+| `Scroll`          | Konversations-Scrolling und Textauswahl im Vollbildmodus  |
+| `Doctor`          | `/doctor` Diagnose-Bildschirm                             |
 
 ## Verfügbare Aktionen
 
@@ -75,13 +77,13 @@ Aktionen folgen einem `namespace:action`-Format, wie `chat:submit` zum Senden ei
 
 Aktionen verfügbar im `Global`-Kontext:
 
-| Aktion                 | Standard | Beschreibung                              |
-| :--------------------- | :------- | :---------------------------------------- |
-| `app:interrupt`        | Ctrl+C   | Aktuelle Operation abbrechen              |
-| `app:exit`             | Ctrl+D   | Claude Code beenden                       |
-| `app:redraw`           | Ctrl+L   | Bildschirm neu zeichnen                   |
-| `app:toggleTodos`      | Ctrl+T   | Sichtbarkeit der Aufgabenliste umschalten |
-| `app:toggleTranscript` | Ctrl+O   | Ausführliches Transkript umschalten       |
+| Aktion                 | Standard         | Beschreibung                              |
+| :--------------------- | :--------------- | :---------------------------------------- |
+| `app:interrupt`        | Ctrl+C           | Aktuelle Operation abbrechen              |
+| `app:exit`             | Ctrl+D           | Claude Code beenden                       |
+| `app:redraw`           | (nicht gebunden) | Bildschirm neu zeichnen erzwingen         |
+| `app:toggleTodos`      | Ctrl+T           | Sichtbarkeit der Aufgabenliste umschalten |
+| `app:toggleTranscript` | Ctrl+O           | Ausführliches Transkript umschalten       |
 
 ### Verlaufsaktionen
 
@@ -97,20 +99,21 @@ Aktionen zum Navigieren im Befehlsverlauf:
 
 Aktionen verfügbar im `Chat`-Kontext:
 
-| Aktion                | Standard                     | Beschreibung                           |
-| :-------------------- | :--------------------------- | :------------------------------------- |
-| `chat:cancel`         | Escape                       | Aktuelle Eingabe abbrechen             |
-| `chat:killAgents`     | Ctrl+X Ctrl+K                | Alle Hintergrund-Agenten beenden       |
-| `chat:cycleMode`      | Shift+Tab\*                  | Berechtigungsmodi durchlaufen          |
-| `chat:modelPicker`    | Cmd+P / Meta+P               | Modell-Picker öffnen                   |
-| `chat:fastMode`       | Meta+O                       | Schnellmodus umschalten                |
-| `chat:thinkingToggle` | Cmd+T / Meta+T               | Erweitertes Denken umschalten          |
-| `chat:submit`         | Enter                        | Nachricht senden                       |
-| `chat:newline`        | (nicht gebunden)             | Zeilenumbruch einfügen, ohne zu senden |
-| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-        | Letzte Aktion rückgängig machen        |
-| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E        | In externem Editor öffnen              |
-| `chat:stash`          | Ctrl+S                       | Aktuelle Eingabeaufforderung speichern |
-| `chat:imagePaste`     | Ctrl+V (Alt+V unter Windows) | Bild einfügen                          |
+| Aktion                | Standard                     | Beschreibung                                                      |
+| :-------------------- | :--------------------------- | :---------------------------------------------------------------- |
+| `chat:cancel`         | Escape                       | Aktuelle Eingabe abbrechen                                        |
+| `chat:clearInput`     | Ctrl+L                       | Eingabeaufforderung löschen und Bildschirm neu zeichnen erzwingen |
+| `chat:killAgents`     | Ctrl+X Ctrl+K                | Alle Hintergrund-Agenten beenden                                  |
+| `chat:cycleMode`      | Shift+Tab\*                  | Berechtigungsmodi durchlaufen                                     |
+| `chat:modelPicker`    | Cmd+P / Meta+P               | Modell-Picker öffnen                                              |
+| `chat:fastMode`       | Meta+O                       | Schnellmodus umschalten                                           |
+| `chat:thinkingToggle` | Cmd+T / Meta+T               | Erweitertes Denken umschalten                                     |
+| `chat:submit`         | Enter                        | Nachricht senden                                                  |
+| `chat:newline`        | Ctrl+J                       | Zeilenumbruch einfügen, ohne zu senden                            |
+| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-        | Letzte Aktion rückgängig machen                                   |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E        | In externem Editor öffnen                                         |
+| `chat:stash`          | Ctrl+S                       | Aktuelle Eingabeaufforderung speichern                            |
+| `chat:imagePaste`     | Ctrl+V (Alt+V unter Windows) | Bild einfügen                                                     |
 
 \*Unter Windows ohne VT-Modus (Node \<24.2.0/\<22.17.0, Bun \<1.2.23) Standard auf Meta+M.
 
@@ -276,10 +279,11 @@ Aktionen verfügbar im `Select`-Kontext:
 
 Aktionen verfügbar im `Plugin`-Kontext:
 
-| Aktion           | Standard  | Beschreibung                     |
-| :--------------- | :-------- | :------------------------------- |
-| `plugin:toggle`  | Leertaste | Plugin-Auswahl umschalten        |
-| `plugin:install` | I         | Ausgewählte Plugins installieren |
+| Aktion            | Standard  | Beschreibung                                                                                               |
+| :---------------- | :-------- | :--------------------------------------------------------------------------------------------------------- |
+| `plugin:toggle`   | Leertaste | Plugin-Auswahl umschalten                                                                                  |
+| `plugin:install`  | I         | Ausgewählte Plugins installieren                                                                           |
+| `plugin:favorite` | F         | Ausgewähltes Plugin als Favorit markieren, damit es oben auf der Registerkarte „Installiert" sortiert wird |
 
 ### Einstellungs-Aktionen
 
@@ -291,6 +295,14 @@ Aktionen verfügbar im `Settings`-Kontext:
 | `settings:retry`  | R        | Nutzungsdaten neu laden (bei Fehler)                                                            |
 | `settings:close`  | Enter    | Änderungen speichern und Konfigurationspanel schließen. Escape verwirft Änderungen und schließt |
 
+### Doctor-Aktionen
+
+Aktionen verfügbar im `Doctor`-Kontext:
+
+| Aktion       | Standard | Beschreibung                                                                                                              |
+| :----------- | :------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `doctor:fix` | F        | Senden Sie den Diagnosebericht an Claude, um die gemeldeten Probleme zu beheben. Nur aktiv, wenn Probleme gefunden werden |
+
 ### Sprach-Aktionen
 
 Aktionen verfügbar im `Chat`-Kontext, wenn [Sprachdiktat](/de/voice-dictation) aktiviert ist:
@@ -298,6 +310,31 @@ Aktionen verfügbar im `Chat`-Kontext, wenn [Sprachdiktat](/de/voice-dictation) 
 | Aktion             | Standard  | Beschreibung                                                  |
 | :----------------- | :-------- | :------------------------------------------------------------ |
 | `voice:pushToTalk` | Leertaste | Halten Sie gedrückt, um eine Eingabeaufforderung zu diktieren |
+
+### Scroll-Aktionen
+
+Aktionen verfügbar im `Scroll`-Kontext, wenn [Vollbildrendering](/de/fullscreen) aktiviert ist:
+
+| Aktion                      | Standard             | Beschreibung                                                                                                                   |
+| :-------------------------- | :------------------- | :----------------------------------------------------------------------------------------------------------------------------- |
+| `scroll:lineUp`             | (nicht gebunden)     | Eine Zeile nach oben scrollen. Mausrad-Scrolling löst diese Aktion aus                                                         |
+| `scroll:lineDown`           | (nicht gebunden)     | Eine Zeile nach unten scrollen. Mausrad-Scrolling löst diese Aktion aus                                                        |
+| `scroll:pageUp`             | Bild-Auf             | Halbe Viewport-Höhe nach oben scrollen                                                                                         |
+| `scroll:pageDown`           | Bild-Ab              | Halbe Viewport-Höhe nach unten scrollen                                                                                        |
+| `scroll:top`                | Ctrl+Pos1            | Zum Anfang der Konversation springen                                                                                           |
+| `scroll:bottom`             | Ctrl+Ende            | Zur neuesten Nachricht springen und Auto-Follow erneut aktivieren                                                              |
+| `scroll:halfPageUp`         | (nicht gebunden)     | Halbe Viewport-Höhe nach oben scrollen. Gleiches Verhalten wie `scroll:pageUp`, bereitgestellt für Vi-ähnliche Neubindungen    |
+| `scroll:halfPageDown`       | (nicht gebunden)     | Halbe Viewport-Höhe nach unten scrollen. Gleiches Verhalten wie `scroll:pageDown`, bereitgestellt für Vi-ähnliche Neubindungen |
+| `scroll:fullPageUp`         | (nicht gebunden)     | Volle Viewport-Höhe nach oben scrollen                                                                                         |
+| `scroll:fullPageDown`       | (nicht gebunden)     | Volle Viewport-Höhe nach unten scrollen                                                                                        |
+| `selection:copy`            | Ctrl+Shift+C / Cmd+C | Ausgewählten Text in die Zwischenablage kopieren                                                                               |
+| `selection:clear`           | (nicht gebunden)     | Aktive Textauswahl löschen                                                                                                     |
+| `selection:extendLeft`      | Shift+Links          | Aktive Auswahl eine Spalte nach links erweitern                                                                                |
+| `selection:extendRight`     | Shift+Rechts         | Aktive Auswahl eine Spalte nach rechts erweitern                                                                               |
+| `selection:extendUp`        | Shift+Oben           | Aktive Auswahl eine Zeile nach oben erweitern. Scrollt den Viewport, wenn die Auswahl die obere Kante erreicht                 |
+| `selection:extendDown`      | Shift+Unten          | Aktive Auswahl eine Zeile nach unten erweitern. Scrollt den Viewport, wenn die Auswahl die untere Kante erreicht               |
+| `selection:extendLineStart` | Shift+Pos1           | Aktive Auswahl zum Anfang der Zeile erweitern                                                                                  |
+| `selection:extendLineEnd`   | Shift+Ende           | Aktive Auswahl zum Ende der Zeile erweitern                                                                                    |
 
 ## Tastenkombinations-Syntax
 
@@ -400,7 +437,7 @@ Einige Kürzel können mit Terminal-Multiplexern in Konflikt geraten:
 
 ## Vim-Modus-Interaktion
 
-Wenn der Vim-Modus aktiviert ist (`/vim`), arbeiten Keybindings und Vim-Modus unabhängig:
+Wenn der Vim-Modus aktiviert ist über `/config` → Editor-Modus, arbeiten Keybindings und Vim-Modus unabhängig:
 
 * **Vim-Modus** verarbeitet Eingaben auf der Texteingangsebene (Cursor-Bewegung, Modi, Bewegungen)
 * **Keybindings** verarbeiten Aktionen auf der Komponentenebene (Aufgaben umschalten, senden usw.)

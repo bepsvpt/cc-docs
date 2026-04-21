@@ -123,7 +123,7 @@ Dopo l'installazione, avviate `claude` da PowerShell, CMD o Git Bash. Claude Cod
 }
 ```
 
-Claude Code può anche eseguire PowerShell nativamente su Windows come anteprima opt-in. Consultate [strumento PowerShell](/it/tools-reference#powershell-tool) per la configurazione e le limitazioni.
+Claude Code può anche eseguire PowerShell nativamente su Windows. Lo strumento PowerShell è in fase di rollout progressivo; impostate `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` per attivare o `0` per disattivare. Consultate [strumento PowerShell](/it/tools-reference#powershell-tool) per la configurazione e le limitazioni.
 
 **Opzione 2: WSL**
 
@@ -203,6 +203,23 @@ Configurate questo tramite `/config` → **Auto-update channel**, oppure aggiung
 Per le distribuzioni aziendali, potete applicare un canale di rilascio coerente in tutta l'organizzazione utilizzando [impostazioni gestite](/it/permissions#managed-settings).
 
 Le installazioni Homebrew scelgono un canale in base al nome del cask invece di questa impostazione: `claude-code` traccia stable e `claude-code@latest` traccia latest.
+
+### Fissare una versione minima
+
+L'impostazione `minimumVersion` stabilisce un limite inferiore. Gli aggiornamenti automatici in background e `claude update` rifiutano di installare qualsiasi versione al di sotto di questo valore, quindi il passaggio al canale `"stable"` non vi fa regredire se siete già su una build `"latest"` più recente.
+
+Il passaggio da `"latest"` a `"stable"` tramite `/config` vi chiede di rimanere sulla versione corrente o di consentire il downgrade. Se scegliete di rimanere, viene impostato `minimumVersion` a quella versione. Il passaggio di nuovo a `"latest"` lo cancella.
+
+Aggiungetelo al vostro [file settings.json](/it/settings) per fissare un limite inferiore esplicitamente:
+
+```json theme={null}
+{
+  "autoUpdatesChannel": "stable",
+  "minimumVersion": "2.1.100"
+}
+```
+
+Nelle [impostazioni gestite](/it/permissions#managed-settings), questo applica un minimo a livello di organizzazione che le impostazioni utente e di progetto non possono ignorare.
 
 ### Disabilitare gli aggiornamenti automatici
 
@@ -298,31 +315,17 @@ Per installare un numero di versione specifico:
   </Tab>
 </Tabs>
 
-### Installazione npm deprecata
+### Installare con npm
 
-L'installazione npm è deprecata. L'installer nativo è più veloce, non richiede dipendenze e si aggiorna automaticamente in background. Utilizzate il metodo di [installazione nativa](#install-claude-code) quando possibile.
-
-#### Migrare da npm a nativo
-
-Se avete precedentemente installato Claude Code con npm, passate all'installer nativo:
-
-```bash theme={null}
-# Installare il binario nativo
-curl -fsSL https://claude.ai/install.sh | bash
-
-# Rimuovere la vecchia installazione npm
-npm uninstall -g @anthropic-ai/claude-code
-```
-
-Potete anche eseguire `claude install` da un'installazione npm esistente per installare il binario nativo insieme ad essa, quindi rimuovere la versione npm.
-
-#### Installare con npm
-
-Se avete bisogno dell'installazione npm per motivi di compatibilità, dovete avere [Node.js 18+](https://nodejs.org/en/download) installato. Installate il pacchetto globalmente:
+Potete anche installare Claude Code come pacchetto npm globale. Il pacchetto richiede [Node.js 18 o successivo](https://nodejs.org/en/download).
 
 ```bash theme={null}
 npm install -g @anthropic-ai/claude-code
 ```
+
+Il pacchetto npm installa lo stesso binario nativo dell'installer standalone. npm estrae il binario attraverso una dipendenza opzionale per piattaforma come `@anthropic-ai/claude-code-darwin-arm64`, e un passaggio postinstall lo collega in posizione. Il binario `claude` installato non invoca Node stesso.
+
+Le piattaforme di installazione npm supportate sono `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64` e `win32-arm64`. Il vostro gestore di pacchetti deve consentire dipendenze opzionali. Consultate la [risoluzione dei problemi](/it/troubleshooting#native-binary-not-found-after-npm-install) se il binario manca dopo l'installazione.
 
 <Warning>
   NON utilizzate `sudo npm install -g` poiché ciò può portare a problemi di permessi e rischi di sicurezza. Se riscontrate errori di permessi, consultate la [risoluzione dei problemi di permessi](/it/troubleshooting#permission-errors-during-installation).
