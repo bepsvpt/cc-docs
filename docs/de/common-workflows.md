@@ -403,6 +403,14 @@ Angenommen, Sie müssen Dokumentation für Ihren Code hinzufügen oder aktualisi
 
 ***
 
+## Mit Notizen und Nicht-Code-Ordnern arbeiten
+
+Claude Code funktioniert in jedem Verzeichnis. Führen Sie es in einem Notiz-Vault, einem Dokumentationsordner oder einer beliebigen Sammlung von Markdown-Dateien aus, um Inhalte auf die gleiche Weise zu suchen, zu bearbeiten und zu reorganisieren wie Code.
+
+Das Verzeichnis `.claude/` und `CLAUDE.md` befinden sich neben den Konfigurationsverzeichnissen anderer Tools ohne Konflikte. Claude liest Dateien bei jedem Tool-Aufruf neu, daher sieht es Änderungen, die Sie in einer anderen Anwendung vornehmen, beim nächsten Lesen dieser Datei.
+
+***
+
 ## Mit Bildern arbeiten
 
 Angenommen, Sie müssen mit Bildern in Ihrer Codebase arbeiten und möchten Claudes Hilfe bei der Analyse von Bildinhalten.
@@ -506,9 +514,9 @@ Verwenden Sie @, um schnell Dateien oder Verzeichnisse einzubeziehen, ohne auf C
 
 ## Verwenden Sie erweitertes Denken (Thinking Mode)
 
-[Erweitertes Denken](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) ist standardmäßig aktiviert und gibt Claude Platz, um komplexe Probleme Schritt für Schritt zu durchdenken, bevor er antwortet. Dieses Denken ist im ausführlichen Modus sichtbar, den Sie mit `Ctrl+O` umschalten können.
+[Erweitertes Denken](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) ist standardmäßig aktiviert und gibt Claude Platz, um komplexe Probleme Schritt für Schritt zu durchdenken, bevor er antwortet. Dieses Denken ist im ausführlichen Modus sichtbar, den Sie mit `Ctrl+O` umschalten können. Während des erweiterten Denkens werden Fortschrittshinweise unter dem Indikator angezeigt, um zu zeigen, dass Claude aktiv arbeitet.
 
-Darüber hinaus unterstützen Opus 4.6 und Sonnet 4.6 adaptives Denken: Anstelle eines festen Thinking-Token-Budgets weist das Modell Thinking dynamisch basierend auf Ihrer [Effort-Level](/de/model-config#adjust-effort-level)-Einstellung zu. Erweitertes Denken und adaptives Denken arbeiten zusammen, um Ihnen Kontrolle darüber zu geben, wie tief Claude denkt, bevor er antwortet.
+Darüber hinaus verwenden [Modelle, die Effort unterstützen](/de/model-config#adjust-effort-level), adaptives Denken: Anstelle eines festen Thinking-Token-Budgets entscheidet das Modell dynamisch, ob und wie viel es denken soll, basierend auf Ihrer Effort-Level-Einstellung und der anstehenden Aufgabe. Adaptives Denken ermöglicht es Claude, schneller auf Routine-Prompts zu reagieren und tieferes Denken für Schritte zu reservieren, die davon profitieren.
 
 Erweitertes Denken ist besonders wertvoll für komplexe architektonische Entscheidungen, schwierige Fehler, mehrstufige Implementierungsplanung und Bewertung von Kompromissen zwischen verschiedenen Ansätzen.
 
@@ -520,13 +528,13 @@ Erweitertes Denken ist besonders wertvoll für komplexe architektonische Entsche
 
 Thinking ist standardmäßig aktiviert, aber Sie können es anpassen oder deaktivieren.
 
-| Bereich                        | Wie man konfiguriert                                                                                            | Details                                                                                                                                                                                                       |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Effort Level**               | Führen Sie `/effort` aus, passen Sie in `/model` an, oder setzen Sie [`CLAUDE_CODE_EFFORT_LEVEL`](/de/env-vars) | Steuern Sie die Thinking-Tiefe für Opus 4.6 und Sonnet 4.6. Siehe [Effort Level anpassen](/de/model-config#adjust-effort-level)                                                                               |
-| **`ultrathink` Schlüsselwort** | Fügen Sie „ultrathink" irgendwo in Ihrem Prompt ein                                                             | Setzt Effort auf high für diesen Turn auf Opus 4.6 und Sonnet 4.6. Nützlich für einmalige Aufgaben, die tiefes Denken erfordern, ohne Ihre Effort-Einstellung dauerhaft zu ändern                             |
-| **Toggle-Verknüpfung**         | Drücken Sie `Option+T` (macOS) oder `Alt+T` (Windows/Linux)                                                     | Schalten Sie Thinking für die aktuelle Sitzung ein/aus (alle Modelle). Kann [Terminal-Konfiguration](/de/terminal-config) erfordern, um Option-Tasten-Verknüpfungen zu aktivieren                             |
-| **Globaler Standard**          | Verwenden Sie `/config`, um Thinking Mode umzuschalten                                                          | Setzt Ihren Standard über alle Projekte (alle Modelle).<br />Gespeichert als `alwaysThinkingEnabled` in `~/.claude/settings.json`                                                                             |
-| **Token-Budget begrenzen**     | Setzen Sie die Umgebungsvariable [`MAX_THINKING_TOKENS`](/de/env-vars)                                          | Begrenzen Sie das Thinking-Budget auf eine bestimmte Anzahl von Tokens. Auf Opus 4.6 und Sonnet 4.6 gilt nur `0`, es sei denn, adaptives Denken ist deaktiviert. Beispiel: `export MAX_THINKING_TOKENS=10000` |
+| Bereich                        | Wie man konfiguriert                                                                                            | Details                                                                                                                                                                                                             |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Effort Level**               | Führen Sie `/effort` aus, passen Sie in `/model` an, oder setzen Sie [`CLAUDE_CODE_EFFORT_LEVEL`](/de/env-vars) | Steuern Sie die Thinking-Tiefe auf [unterstützten Modellen](/de/model-config#adjust-effort-level)                                                                                                                   |
+| **`ultrathink` Schlüsselwort** | Fügen Sie „ultrathink" irgendwo in Ihrem Prompt ein                                                             | Fügt eine In-Context-Anweisung hinzu, die das Modell anweist, mehr auf diesem Turn zu denken. Ändert nicht die Effort-Ebene selbst; siehe [Effort Level anpassen](/de/model-config#adjust-effort-level) dafür       |
+| **Toggle-Verknüpfung**         | Drücken Sie `Option+T` (macOS) oder `Alt+T` (Windows/Linux)                                                     | Schalten Sie Thinking für die aktuelle Sitzung ein/aus (alle Modelle). Kann [Terminal-Konfiguration](/de/terminal-config) erfordern, um Option-Tasten-Verknüpfungen zu aktivieren                                   |
+| **Globaler Standard**          | Verwenden Sie `/config`, um Thinking Mode umzuschalten                                                          | Setzt Ihren Standard über alle Projekte (alle Modelle).<br />Gespeichert als `alwaysThinkingEnabled` in `~/.claude/settings.json`                                                                                   |
+| **Token-Budget begrenzen**     | Setzen Sie die Umgebungsvariable [`MAX_THINKING_TOKENS`](/de/env-vars)                                          | Begrenzen Sie das Thinking-Budget auf eine bestimmte Anzahl von Tokens. Auf Modellen mit adaptivem Denken gilt nur `0`, es sei denn, adaptives Denken ist deaktiviert. Beispiel: `export MAX_THINKING_TOKENS=10000` |
 
 Um Claudes Thinking-Prozess anzuzeigen, drücken Sie `Ctrl+O`, um den ausführlichen Modus umzuschalten und das interne Denken als grauer kursiver Text angezeigt zu sehen.
 
@@ -534,11 +542,11 @@ Um Claudes Thinking-Prozess anzuzeigen, drücken Sie `Ctrl+O`, um den ausführli
 
 Erweitertes Denken steuert, wie viel internes Denken Claude vor der Antwort durchführt. Mehr Denken bietet mehr Platz, um Lösungen zu erkunden, Grenzfälle zu analysieren und Fehler selbst zu korrigieren.
 
-**Mit Opus 4.6 und Sonnet 4.6** verwendet Thinking adaptives Denken: Das Modell weist Thinking-Tokens dynamisch basierend auf dem [Effort Level](/de/model-config#adjust-effort-level) zu, den Sie auswählen. Dies ist die empfohlene Methode, um den Kompromiss zwischen Geschwindigkeit und Reasoning-Tiefe zu optimieren.
+Auf [Modellen, die Effort unterstützen](/de/model-config#adjust-effort-level), verwendet Thinking adaptives Denken: Das Modell weist Thinking-Tokens dynamisch basierend auf dem Effort Level zu, den Sie auswählen. Dies ist die empfohlene Methode, um den Kompromiss zwischen Geschwindigkeit und Reasoning-Tiefe zu optimieren. Wenn Sie möchten, dass Claude mehr oder weniger denkt, als Ihr Effort Level sonst erzeugen würde, können Sie dies auch direkt in Ihrem Prompt oder in `CLAUDE.md` sagen.
 
-**Mit älteren Modellen** verwendet Thinking ein festes Token-Budget, das aus Ihrer Output-Zuteilung gezogen wird. Das Budget variiert je nach Modell; siehe [`MAX_THINKING_TOKENS`](/de/env-vars) für Obergrenzen pro Modell. Sie können das Budget mit dieser Umgebungsvariable begrenzen oder Thinking vollständig über `/config` oder den `Option+T`/`Alt+T`-Toggle deaktivieren.
+Bei älteren Modellen verwendet Thinking ein festes Token-Budget, das aus Ihrer Output-Zuteilung gezogen wird. Das Budget variiert je nach Modell; siehe [`MAX_THINKING_TOKENS`](/de/env-vars) für Obergrenzen pro Modell. Sie können das Budget mit dieser Umgebungsvariable begrenzen oder Thinking vollständig über `/config` oder den `Option+T`/`Alt+T`-Toggle deaktivieren.
 
-Auf Opus 4.6 und Sonnet 4.6 steuert [adaptives Denken](/de/model-config#adjust-effort-level) die Thinking-Tiefe, daher gilt `MAX_THINKING_TOKENS` nur, wenn es auf `0` gesetzt ist, um Thinking zu deaktivieren, oder wenn `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` diese Modelle auf das feste Budget zurückversetzt. Siehe [Umgebungsvariablen](/de/env-vars).
+Auf Modellen mit adaptivem Denken gilt `MAX_THINKING_TOKENS` nur, wenn es auf `0` gesetzt ist, um Thinking zu deaktivieren, oder wenn `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` das Modell auf das feste Budget zurückversetzt. `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` gilt nur für Opus 4.6 und Sonnet 4.6. Opus 4.7 verwendet immer adaptives Denken und unterstützt kein festes Thinking-Budget. Siehe [Umgebungsvariablen](/de/env-vars).
 
 <Warning>
   Ihnen werden alle verwendeten Thinking-Tokens berechnet, auch wenn Thinking-Zusammenfassungen redigiert werden. Im interaktiven Modus wird Thinking standardmäßig als zusammengefasster Stub angezeigt. Setzen Sie `showThinkingSummaries: true` in `settings.json`, um vollständige Zusammenfassungen anzuzeigen.
@@ -556,7 +564,15 @@ Wenn Sie Claude Code starten, können Sie eine vorherige Sitzung fortsetzen:
 
 Verwenden Sie innerhalb einer aktiven Sitzung `/resume`, um zu einem anderen Gespräch zu wechseln.
 
-Sitzungen werden pro Projektverzeichnis gespeichert. Die `/resume`-Auswahl zeigt interaktive Sitzungen aus demselben Git-Repository, einschließlich Worktrees. Sitzungen, die von `claude -p` oder SDK-Aufrufen erstellt wurden, werden nicht in der Auswahl angezeigt, aber Sie können eine trotzdem fortsetzen, indem Sie ihre Sitzungs-ID direkt an `claude --resume <session-id>` übergeben.
+Sitzungen werden pro Projektverzeichnis gespeichert. Standardmäßig zeigt die `/resume`-Auswahl interaktive Sitzungen aus dem aktuellen Worktree mit Tastaturkürzeln, um die Liste auf andere Worktrees oder Projekte zu erweitern, zu suchen, in der Vorschau anzuzeigen und umzubenennen. Siehe [Verwenden Sie die Sitzungsauswahl](#use-the-session-picker) unten für die vollständige Tastaturkürzel-Referenz.
+
+Wenn Sie eine Sitzung aus einem anderen Worktree desselben Repositorys auswählen, setzt Claude Code sie direkt fort, ohne dass Sie zuerst das Verzeichnis wechseln müssen. Wenn Sie eine Sitzung aus einem nicht verwandten Projekt auswählen, wird ein `cd`- und Resume-Befehl stattdessen in Ihre Zwischenablage kopiert.
+
+Das Fortsetzen nach Name wird über das aktuelle Repository und seine Worktrees aufgelöst. Sowohl `claude --resume <name>` als auch `/resume <name>` suchen nach einer genauen Übereinstimmung und setzen sie direkt fort, auch wenn die Sitzung in einem anderen Worktree lebt.
+
+Wenn der Name mehrdeutig ist, öffnet `claude --resume <name>` die Auswahl mit dem Namen als vorgefülltem Suchbegriff. `/resume <name>` aus einer aktiven Sitzung meldet stattdessen einen Fehler, also führen Sie `/resume` ohne Argument aus, um die Auswahl zu öffnen und auszuwählen.
+
+Sitzungen, die von `claude -p` oder SDK-Aufrufen erstellt wurden, werden nicht in der Auswahl angezeigt, aber Sie können eine trotzdem fortsetzen, indem Sie ihre Sitzungs-ID direkt an `claude --resume <session-id>` übergeben.
 
 ### Benennen Sie Ihre Sitzungen
 
@@ -576,7 +592,7 @@ Geben Sie Sitzungen beschreibende Namen, um sie später zu finden. Dies ist eine
     /rename auth-refactor
     ```
 
-    Sie können jede Sitzung auch aus der Auswahl umbenennen: Führen Sie `/resume` aus, navigieren Sie zu einer Sitzung und drücken Sie `R`.
+    Sie können jede Sitzung auch aus der Auswahl umbenennen: Führen Sie `/resume` aus, navigieren Sie zu einer Sitzung, und drücken Sie `Ctrl+R`.
   </Step>
 
   <Step title="Später nach Name fortsetzen">
@@ -600,26 +616,28 @@ Der Befehl `/resume` (oder `claude --resume` ohne Argumente) öffnet eine intera
 
 **Tastaturkürzel in der Auswahl:**
 
-| Verknüpfung | Aktion                                                            |
-| :---------- | :---------------------------------------------------------------- |
-| `↑` / `↓`   | Navigieren Sie zwischen Sitzungen                                 |
-| `→` / `←`   | Erweitern oder reduzieren Sie gruppierte Sitzungen                |
-| `Enter`     | Wählen Sie die hervorgehobene Sitzung aus und setzen Sie sie fort |
-| `P`         | Zeigen Sie eine Vorschau des Sitzungsinhalts an                   |
-| `R`         | Benennen Sie die hervorgehobene Sitzung um                        |
-| `/`         | Suchen Sie, um Sitzungen zu filtern                               |
-| `A`         | Wechseln Sie zwischen aktuellem Verzeichnis und allen Projekten   |
-| `B`         | Filtern Sie nach Sitzungen aus Ihrem aktuellen Git-Branch         |
-| `Esc`       | Beenden Sie die Auswahl oder den Suchmodus                        |
+| Verknüpfung                                              | Aktion                                                                                                                                                                                |
+| :------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `↑` / `↓`                                                | Navigieren Sie zwischen Sitzungen                                                                                                                                                     |
+| `→` / `←`                                                | Erweitern oder reduzieren Sie gruppierte Sitzungen                                                                                                                                    |
+| `Enter`                                                  | Wählen Sie die hervorgehobene Sitzung aus und setzen Sie sie fort                                                                                                                     |
+| `Space`                                                  | Zeigen Sie eine Vorschau des Sitzungsinhalts an. `Ctrl+V` funktioniert auch auf Terminals, die es nicht als Einfügen erfassen                                                         |
+| `Ctrl+R`                                                 | Benennen Sie die hervorgehobene Sitzung um                                                                                                                                            |
+| `/` oder ein beliebiges druckbares Zeichen außer `Space` | Geben Sie den Suchmodus ein und filtern Sie Sitzungen                                                                                                                                 |
+| `Ctrl+A`                                                 | Zeigen Sie Sitzungen aus allen Projekten auf diesem Computer an. Drücken Sie erneut, um zum aktuellen Repository zurückzukehren                                                       |
+| `Ctrl+W`                                                 | Zeigen Sie Sitzungen aus allen Worktrees des aktuellen Repositorys an. Drücken Sie erneut, um zum aktuellen Worktree zurückzukehren. Wird nur in Multi-Worktree-Repositorys angezeigt |
+| `Ctrl+B`                                                 | Filtern Sie zu Sitzungen aus Ihrem aktuellen Git-Branch. Drücken Sie erneut, um Sitzungen aus allen Branches anzuzeigen                                                               |
+| `Esc`                                                    | Beenden Sie die Auswahl oder den Suchmodus                                                                                                                                            |
 
 **Sitzungsorganisation:**
 
 Die Auswahl zeigt Sitzungen mit hilfreichen Metadaten an:
 
-* Sitzungsname oder anfänglicher Prompt
+* Sitzungsname, falls festgelegt, ansonsten die Gesprächszusammenfassung oder der erste Benutzer-Prompt
 * Verstrichene Zeit seit letzter Aktivität
 * Nachrichtenanzahl
 * Git-Branch (falls zutreffend)
+* Projektpfad, angezeigt nach Erweiterung auf alle Projekte mit `Ctrl+A`
 
 Verzweigte Sitzungen (erstellt mit `/branch`, `/rewind` oder `--fork-session`) werden unter ihrer Root-Sitzung gruppiert, was es einfacher macht, verwandte Gespräche zu finden.
 
@@ -631,7 +649,7 @@ Verzweigte Sitzungen (erstellt mit `/branch`, `/rewind` oder `--fork-session`) w
   * Verwenden Sie `--resume session-name`, wenn Sie wissen, welche Sitzung Sie benötigen
   * Verwenden Sie `--resume` (ohne Namen), wenn Sie durchsuchen und auswählen müssen
   * Verwenden Sie für Skripte `claude --continue --print "prompt"`, um im nicht-interaktiven Modus fortzufahren
-  * Drücken Sie `P` in der Auswahl, um eine Sitzung vor dem Fortsetzen in der Vorschau anzuzeigen
+  * Drücken Sie `Space` in der Auswahl, um eine Sitzung vor dem Fortsetzen in der Vorschau anzuzeigen
   * Die fortgesetzte Konversation beginnt mit demselben Modell und der gleichen Konfiguration wie das Original
 
   Wie es funktioniert:
@@ -690,6 +708,8 @@ Wenn Sie eine Worktree-Sitzung beenden, handhabt Claude die Bereinigung basieren
 
 * **Keine Änderungen**: Der Worktree und sein Branch werden automatisch entfernt
 * **Änderungen oder Commits vorhanden**: Claude fragt Sie, ob Sie den Worktree behalten oder entfernen möchten. Das Behalten bewahrt das Verzeichnis und den Branch, damit Sie später zurückkehren können. Das Entfernen löscht das Worktree-Verzeichnis und seinen Branch und verwirft alle nicht committeten Änderungen und Commits
+
+Subagent-Worktrees, die durch einen Absturz oder einen unterbrochenen parallelen Lauf verwaist sind, werden beim Start automatisch entfernt, sobald sie älter als Ihre [`cleanupPeriodDays`](/de/settings#available-settings)-Einstellung sind, vorausgesetzt, sie haben keine nicht committeten Änderungen, keine nicht verfolgten Dateien und keine nicht gepushten Commits. Worktrees, die Sie mit `--worktree` erstellen, werden durch diese Bereinigung nie entfernt.
 
 Um Worktrees außerhalb einer Claude-Sitzung zu bereinigen, verwenden Sie [manuelle Worktree-Verwaltung](#manage-worktrees-manually).
 
@@ -928,12 +948,12 @@ Angenommen, Sie möchten Claude automatisch eine Aufgabe auf wiederkehrender Bas
 
 Wählen Sie eine Planungsoption basierend darauf, wo Sie die Aufgabe ausführen möchten:
 
-| Option                                                            | Wo es ausgeführt wird                  | Am besten für                                                                                                                                             |
-| :---------------------------------------------------------------- | :------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Cloud-geplante Aufgaben](/de/web-scheduled-tasks)                | Von Anthropic verwaltete Infrastruktur | Aufgaben, die auch dann ausgeführt werden sollten, wenn Ihr Computer ausgeschaltet ist. Konfigurieren Sie unter [claude.ai/code](https://claude.ai/code). |
-| [Desktop-geplante Aufgaben](/de/desktop#schedule-recurring-tasks) | Ihr Computer, über die Desktop-App     | Aufgaben, die direkten Zugriff auf lokale Dateien, Tools oder nicht committete Änderungen benötigen.                                                      |
-| [GitHub Actions](/de/github-actions)                              | Ihre CI-Pipeline                       | Aufgaben, die an Repository-Ereignisse wie geöffnete PRs gebunden sind, oder Cron-Zeitpläne, die neben Ihrer Workflow-Konfiguration leben sollten.        |
-| [`/loop`](/de/scheduled-tasks)                                    | Die aktuelle CLI-Sitzung               | Schnelle Abfragen während eine Sitzung offen ist. Aufgaben werden abgebrochen, wenn Sie beenden.                                                          |
+| Option                                                   | Wo es ausgeführt wird                  | Am besten für                                                                                                                                                                                                                                                                   |
+| :------------------------------------------------------- | :------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [Routines](/de/routines)                                 | Von Anthropic verwaltete Infrastruktur | Aufgaben, die auch dann ausgeführt werden sollten, wenn Ihr Computer ausgeschaltet ist. Können auch durch API-Aufrufe oder GitHub-Ereignisse zusätzlich zu einem Zeitplan ausgelöst werden. Konfigurieren Sie unter [claude.ai/code/routines](https://claude.ai/code/routines). |
+| [Desktop-geplante Aufgaben](/de/desktop-scheduled-tasks) | Ihr Computer, über die Desktop-App     | Aufgaben, die direkten Zugriff auf lokale Dateien, Tools oder nicht committete Änderungen benötigen.                                                                                                                                                                            |
+| [GitHub Actions](/de/github-actions)                     | Ihre CI-Pipeline                       | Aufgaben, die an Repository-Ereignisse wie geöffnete PRs gebunden sind, oder Cron-Zeitpläne, die neben Ihrer Workflow-Konfiguration leben sollten.                                                                                                                              |
+| [`/loop`](/de/scheduled-tasks)                           | Die aktuelle CLI-Sitzung               | Schnelle Abfragen während eine Sitzung offen ist. Aufgaben werden abgebrochen, wenn Sie beenden.                                                                                                                                                                                |
 
 <Tip>
   Wenn Sie Prompts für geplante Aufgaben schreiben, seien Sie explizit darüber, wie Erfolg aussieht und was mit Ergebnissen zu tun ist. Die Aufgabe wird autonom ausgeführt, daher kann sie keine Klärungsfragen stellen. Beispiel: 'Überprüfen Sie offene PRs mit dem Label `needs-review`, hinterlassen Sie Inline-Kommentare zu Problemen und posten Sie eine Zusammenfassung im `#eng-reviews` Slack-Kanal."
@@ -972,7 +992,7 @@ what are the limitations of Claude Code?
 ```
 
 <Note>
-  Claude bietet dokumentationsgestützte Antworten auf diese Fragen. Für ausführbare Beispiele und praktische Demonstrationen verweisen Sie auf die spezifischen Workflow-Abschnitte oben.
+  Claude bietet dokumentationsgestützte Antworten auf diese Fragen. Für praktische Demonstrationen führen Sie `/powerup` für interaktive Lektionen mit animierten Demos aus, oder beziehen Sie sich auf die spezifischen Workflow-Abschnitte oben.
 </Note>
 
 <Tip>

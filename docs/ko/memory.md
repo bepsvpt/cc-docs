@@ -38,17 +38,29 @@ Subagent도 자신의 자동 메모리를 유지할 수 있습니다. 자세한 
 
 CLAUDE.md 파일은 프로젝트, 개인 워크플로우 또는 전체 조직에 대해 Claude에 지속적인 지침을 제공하는 마크다운 파일입니다. 이러한 파일을 일반 텍스트로 작성하면 Claude가 모든 세션의 시작 시 읽습니다.
 
+### CLAUDE.md에 추가할 시기
+
+CLAUDE.md를 다시 설명해야 할 내용을 적어두는 장소로 취급합니다. 다음과 같은 경우에 추가합니다:
+
+* Claude가 같은 실수를 두 번째로 합니다
+* 코드 리뷰에서 Claude가 이 코드베이스에 대해 알아야 할 것을 발견합니다
+* 지난 세션에 입력한 것과 같은 수정 또는 설명을 채팅에 입력합니다
+* 새로운 팀원이 생산성을 높이기 위해 같은 컨텍스트가 필요합니다
+
+모든 세션에서 Claude가 보유해야 할 사실로 유지합니다: 빌드 명령, 규칙, 프로젝트 레이아웃, "항상 X를 수행합니다" 규칙. 항목이 다단계 절차이거나 코드베이스의 한 부분에만 중요한 경우 대신 [skill](/ko/skills) 또는 [경로 범위 규칙](#organize-rules-with-clauderules)으로 이동합니다. [확장 개요](/ko/features-overview#build-your-setup-over-time)에서 각 메커니즘을 사용할 시기를 다룹니다.
+
 ### CLAUDE.md 파일을 어디에 배치할지 선택
 
 CLAUDE.md 파일은 여러 위치에 있을 수 있으며, 각각 다른 범위를 가집니다. 더 구체적인 위치가 더 광범위한 위치보다 우선합니다.
 
-| 범위          | 위치                                                                                                                                                                    | 목적                        | 사용 사례                        | 공유 대상          |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- | ---------------------------- | -------------- |
-| **관리 정책**   | • macOS: `/Library/Application Support/ClaudeCode/CLAUDE.md`<br />• Linux 및 WSL: `/etc/claude-code/CLAUDE.md`<br />• Windows: `C:\Program Files\ClaudeCode\CLAUDE.md` | IT/DevOps에서 관리하는 조직 전체 지침 | 회사 코딩 표준, 보안 정책, 규정 준수 요구사항  | 조직의 모든 사용자     |
-| **프로젝트 지침** | `./CLAUDE.md` 또는 `./.claude/CLAUDE.md`                                                                                                                                | 프로젝트에 대한 팀 공유 지침          | 프로젝트 아키텍처, 코딩 표준, 일반적인 워크플로우 | 소스 제어를 통한 팀 멤버 |
-| **사용자 지침**  | `~/.claude/CLAUDE.md`                                                                                                                                                 | 모든 프로젝트에 대한 개인 선호도        | 코드 스타일 선호도, 개인 도구 단축키        | 본인만(모든 프로젝트)   |
+| 범위          | 위치                                                                                                                                                                    | 목적                             | 사용 사례                        | 공유 대상          |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ | ---------------------------- | -------------- |
+| **관리 정책**   | • macOS: `/Library/Application Support/ClaudeCode/CLAUDE.md`<br />• Linux 및 WSL: `/etc/claude-code/CLAUDE.md`<br />• Windows: `C:\Program Files\ClaudeCode\CLAUDE.md` | IT/DevOps에서 관리하는 조직 전체 지침      | 회사 코딩 표준, 보안 정책, 규정 준수 요구사항  | 조직의 모든 사용자     |
+| **프로젝트 지침** | `./CLAUDE.md` 또는 `./.claude/CLAUDE.md`                                                                                                                                | 프로젝트에 대한 팀 공유 지침               | 프로젝트 아키텍처, 코딩 표준, 일반적인 워크플로우 | 소스 제어를 통한 팀 멤버 |
+| **사용자 지침**  | `~/.claude/CLAUDE.md`                                                                                                                                                 | 모든 프로젝트에 대한 개인 선호도             | 코드 스타일 선호도, 개인 도구 단축키        | 본인만(모든 프로젝트)   |
+| **로컬 지침**   | `./CLAUDE.local.md`                                                                                                                                                   | 개인 프로젝트별 선호도; `.gitignore`에 추가 | 샌드박스 URL, 선호하는 테스트 데이터       | 본인만(현재 프로젝트)   |
 
-작업 디렉토리 위의 디렉토리 계층 구조에 있는 CLAUDE.md 파일은 시작 시 전체 로드됩니다. 하위 디렉토리의 CLAUDE.md 파일은 Claude가 해당 디렉토리의 파일을 읽을 때 필요에 따라 로드됩니다. 전체 해석 순서는 [CLAUDE.md 파일이 로드되는 방식](#how-claudemd-files-load)을 참조하세요.
+작업 디렉토리 위의 디렉토리 계층 구조에 있는 CLAUDE.md 및 CLAUDE.local.md 파일은 시작 시 전체 로드됩니다. 하위 디렉토리의 파일은 Claude가 해당 디렉토리의 파일을 읽을 때 필요에 따라 로드됩니다. [CLAUDE.md 파일이 로드되는 방식](#how-claudemd-files-load)에서 전체 해석 순서를 참조하세요.
 
 대규모 프로젝트의 경우 [프로젝트 규칙](#organize-rules-with-clauderules)을 사용하여 지침을 주제별 파일로 나눌 수 있습니다. 규칙을 통해 특정 파일 유형 또는 하위 디렉토리에 지침의 범위를 지정할 수 있습니다.
 
@@ -93,7 +105,9 @@ README, package.json 및 워크플로우 가이드를 가져오려면 CLAUDE.md�
 - git 워크플로우 @docs/git-instructions.md
 ```
 
-체크인하지 않으려는 개인 선호도의 경우 홈 디렉토리에서 파일을 가져옵니다. 가져오기는 공유 CLAUDE.md에 있지만 가리키는 파일은 컴퓨터에 남아 있습니다:
+개인 프로젝트별 선호도의 경우 프로젝트 루트에서 `CLAUDE.local.md`를 만듭니다. 이는 `CLAUDE.md`와 함께 로드되고 같은 방식으로 취급됩니다. 버전 제어에 커밋되지 않도록 `.gitignore`에 `CLAUDE.local.md`를 추가합니다. `/init`을 실행하고 개인 옵션을 선택하면 자동으로 수행됩니다.
+
+동일한 저장소의 여러 git worktree에서 작업하는 경우 gitignored `CLAUDE.local.md`는 생성한 worktree에만 존재합니다. worktree 간에 개인 지침을 공유하려면 대신 홈 디렉토리에서 파일을 가져옵니다:
 
 ```text theme={null}
 # 개인 선호도
@@ -120,9 +134,11 @@ Claude Code는 `CLAUDE.md`를 읽으며 `AGENTS.md`를 읽지 않습니다. 저�
 
 ### CLAUDE.md 파일이 로드되는 방식
 
-Claude Code는 현재 작업 디렉토리에서 디렉토리 트리를 따라 올라가며 CLAUDE.md 파일을 읽고 각 디렉토리를 확인합니다. 즉, `foo/bar/`에서 Claude Code를 실행하면 `foo/bar/CLAUDE.md`와 `foo/CLAUDE.md` 모두에서 지침을 로드합니다.
+Claude Code는 현재 작업 디렉토리에서 디렉토리 트리를 따라 올라가며 CLAUDE.md 파일을 읽고 각 디렉토리를 확인합니다. 즉, `foo/bar/`에서 Claude Code를 실행하면 `foo/bar/CLAUDE.md`, `foo/CLAUDE.md` 및 그 옆의 모든 `CLAUDE.local.md` 파일에서 지침을 로드합니다.
 
-Claude는 또한 현재 작업 디렉토리 아래의 하위 디렉토리에서 CLAUDE.md 파일을 발견합니다. 시작 시 로드하는 대신 Claude가 해당 하위 디렉토리의 파일을 읽을 때 포함됩니다.
+발견된 모든 파일은 서로를 재정의하지 않고 컨텍스트에 연결됩니다. 각 디렉토리 내에서 `CLAUDE.local.md`는 `CLAUDE.md` 후에 추가되므로 지침이 충돌할 때 개인 노트가 해당 수준에서 Claude가 읽는 마지막 것입니다.
+
+Claude는 또한 현재 작업 디렉토리 아래의 하위 디렉토리에서 `CLAUDE.md` 및 `CLAUDE.local.md` 파일을 발견합니다. 시작 시 로드하는 대신 Claude가 해당 하위 디렉토리의 파일을 읽을 때 포함됩니다.
 
 대규모 모노레포에서 작업하고 다른 팀의 CLAUDE.md 파일이 선택되는 경우 [`claudeMdExcludes`](#exclude-specific-claudemd-files)를 사용하여 건너뜁니다.
 
@@ -132,11 +148,13 @@ CLAUDE.md 파일의 블록 수준 HTML 주석(`<!-- maintainer notes -->`)은 �
 
 `--add-dir` 플래그는 Claude에 주 작업 디렉토리 외부의 추가 디렉토리에 대한 액세스를 제공합니다. 기본적으로 이러한 디렉토리의 CLAUDE.md 파일은 로드되지 않습니다.
 
-추가 디렉토리에서 CLAUDE.md 파일을 로드하려면 `CLAUDE.md`, `.claude/CLAUDE.md` 및 `.claude/rules/*.md`를 포함하여 `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD` 환경 변수를 설정합니다:
+추가 디렉토리에서 메모리 파일을 로드하려면 `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD` 환경 변수를 설정합니다:
 
 ```bash theme={null}
 CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ../shared-config
 ```
+
+이는 추가 디렉토리에서 `CLAUDE.md`, `.claude/CLAUDE.md`, `.claude/rules/*.md` 및 `CLAUDE.local.md`를 로드합니다. [`--setting-sources`](/ko/cli-reference)에서 `local`을 제외하면 `CLAUDE.local.md`는 건너뜁니다.
 
 ### `.claude/rules/`로 규칙 구성
 
@@ -341,7 +359,7 @@ Claude는 세션 중에 메모리 파일을 읽고 씁니다. Claude Code 인터
 
 ## `/memory`로 보기 및 편집
 
-`/memory` 명령은 현재 세션에 로드된 모든 CLAUDE.md 및 규칙 파일을 나열하고, 자동 메모리를 켜거나 끌 수 있으며, 자동 메모리 폴더를 열 수 있는 링크를 제공합니다. 파일을 선택하여 편집기에서 엽니다.
+`/memory` 명령은 현재 세션에 로드된 모든 CLAUDE.md, CLAUDE.local.md 및 규칙 파일을 나열하고, 자동 메모리를 켜거나 끌 수 있으며, 자동 메모리 폴더를 열 수 있는 링크를 제공합니다. 파일을 선택하여 편집기에서 엽니다.
 
 Claude에게 "항상 npm이 아닌 pnpm을 사용합니다" 또는 "API 테스트에 로컬 Redis 인스턴스가 필요하다는 것을 기억합니다"와 같이 뭔가를 기억하도록 요청하면 Claude는 자동 메모리에 저장합니다. 대신 CLAUDE.md에 지침을 추가하려면 Claude에게 직접 "이것을 CLAUDE.md에 추가합니다"라고 요청하거나 `/memory`를 통해 파일을 직접 편집합니다.
 
@@ -355,7 +373,7 @@ CLAUDE.md 콘텐츠는 시스템 프롬프트의 일부가 아니라 시스템 �
 
 디버깅하려면:
 
-* `/memory`를 실행하여 CLAUDE.md 파일이 로드되는지 확인합니다. 파일이 나열되지 않으면 Claude가 볼 수 없습니다.
+* `/memory`를 실행하여 CLAUDE.md 및 CLAUDE.local.md 파일이 로드되는지 확인합니다. 파일이 나열되지 않으면 Claude가 볼 수 없습니다.
 * 관련 CLAUDE.md가 세션에 대해 로드되는 위치에 있는지 확인합니다([CLAUDE.md 파일을 어디에 배치할지 선택](#choose-where-to-put-claudemd-files) 참조).
 * 지침을 더 구체적으로 만듭니다. "2칸 들여쓰기 사용"이 "코드를 제대로 포맷합니다"보다 더 잘 작동합니다.
 * CLAUDE.md 파일 전체에서 충돌하는 지침을 찾습니다. 두 파일이 동일한 동작에 대해 다른 지침을 제공하면 Claude가 하나를 임의로 선택할 수 있습니다.
@@ -376,13 +394,15 @@ CLAUDE.md 콘텐츠는 시스템 프롬프트의 일부가 아니라 시스템 �
 
 ### `/compact` 후 지침이 손실된 것 같습니다
 
-CLAUDE.md는 압축을 완전히 생존합니다. `/compact` 후 Claude는 디스크에서 CLAUDE.md를 다시 읽고 세션에 새로 다시 주입합니다. 압축 후 지침이 사라진 경우 CLAUDE.md에 작성되지 않고 대화에서만 제공되었습니다. 세션 간에 지속되도록 CLAUDE.md에 추가합니다.
+프로젝트 루트 CLAUDE.md는 압축을 완전히 생존합니다: `/compact` 후 Claude는 디스크에서 CLAUDE.md를 다시 읽고 세션에 새로 다시 주입합니다. 하위 디렉토리의 중첩된 CLAUDE.md 파일은 자동으로 다시 주입되지 않습니다. 해당 하위 디렉토리의 파일을 다시 읽을 때 다음에 다시 로드됩니다.
+
+압축 후 지침이 사라진 경우 CLAUDE.md에 작성되지 않고 대화에서만 제공되었습니다. 세션 간에 지속되도록 CLAUDE.md에 추가합니다. 압축 후 생존하는 항목의 전체 분석은 [압축 후 생존하는 항목](/ko/context-window#what-survives-compaction)을 참조하세요.
 
 효과적인 지침에 대한 지침은 [효과적인 지침 작성](#write-effective-instructions)을 참조하세요.
 
 ## 관련 리소스
 
+* [구성 디버깅](/ko/debug-your-config): CLAUDE.md 또는 설정이 적용되지 않는 이유 진단
 * [Skills](/ko/skills): 필요에 따라 로드되는 반복 가능한 워크플로우 패키지
 * [설정](/ko/settings): 설정 파일로 Claude Code 동작 구성
-* [세션 관리](/ko/sessions): 컨텍스트 관리, 대화 재개 및 병렬 세션 실행
 * [Subagent 메모리](/ko/sub-agents#enable-persistent-memory): subagent가 자신의 자동 메모리를 유지하도록 허용

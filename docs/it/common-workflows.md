@@ -506,9 +506,9 @@ Usa @ per includere rapidamente file o directory senza aspettare che Claude li l
 
 ## Utilizzare il pensiero esteso (Thinking Mode)
 
-[Extended thinking](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) è abilitato per impostazione predefinita, dando a Claude lo spazio per ragionare attraverso problemi complessi passo dopo passo prima di rispondere. Questo ragionamento è visibile in modalità verbose, che puoi attivare con `Ctrl+O`.
+[Extended thinking](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) è abilitato per impostazione predefinita, dando a Claude lo spazio per ragionare attraverso problemi complessi passo dopo passo prima di rispondere. Questo ragionamento è visibile in modalità verbose, che puoi attivare con `Ctrl+O`. Durante il pensiero esteso, i suggerimenti di progresso appaiono sotto l'indicatore per mostrare che Claude sta lavorando attivamente.
 
-Inoltre, Opus 4.6 e Sonnet 4.6 supportano il ragionamento adattivo: invece di un budget di token di pensiero fisso, il modello alloca dinamicamente il pensiero in base alla tua impostazione di [livello di sforzo](/it/model-config#adjust-effort-level). Extended thinking e il ragionamento adattivo lavorano insieme per darti il controllo su quanto profondamente Claude ragiona prima di rispondere.
+Inoltre, i [modelli che supportano lo sforzo](/it/model-config#adjust-effort-level) utilizzano il ragionamento adattivo: invece di un budget di token di pensiero fisso, il modello decide dinamicamente se e quanto pensare in base alla tua impostazione di livello di sforzo e al compito in questione. Il ragionamento adattivo consente a Claude di rispondere più velocemente ai prompt di routine e di riservare un pensiero più profondo ai passaggi che ne traggono beneficio.
 
 Extended thinking è particolarmente prezioso per decisioni architettoniche complesse, bug impegnativi, pianificazione dell'implementazione multi-step e valutazione dei compromessi tra diversi approcci.
 
@@ -520,13 +520,13 @@ Extended thinking è particolarmente prezioso per decisioni architettoniche comp
 
 Il pensiero è abilitato per impostazione predefinita, ma puoi regolarlo o disabilitarlo.
 
-| Ambito                                        | Come configurare                                                                           | Dettagli                                                                                                                                                                                                         |
-| --------------------------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Livello di sforzo**                         | Esegui `/effort`, regola in `/model`, o imposta [`CLAUDE_CODE_EFFORT_LEVEL`](/it/env-vars) | Controlla la profondità del pensiero per Opus 4.6 e Sonnet 4.6. Vedi [Regola il livello di sforzo](/it/model-config#adjust-effort-level)                                                                         |
-| **Parola chiave `ultrathink`**                | Includi "ultrathink" in qualsiasi punto del tuo prompt                                     | Imposta lo sforzo su alto per quel turno su Opus 4.6 e Sonnet 4.6. Utile per attività una tantum che richiedono un ragionamento profondo senza modificare permanentemente la tua impostazione di sforzo          |
-| **Scorciatoia di attivazione/disattivazione** | Premi `Option+T` (macOS) o `Alt+T` (Windows/Linux)                                         | Attiva/disattiva il pensiero per la sessione corrente (tutti i modelli). Potrebbe richiedere la [configurazione del terminale](/it/terminal-config) per abilitare le scorciatoie da tastiera Option              |
-| **Predefinito globale**                       | Usa `/config` per attivare/disattivare Thinking Mode                                       | Imposta il tuo predefinito in tutti i progetti (tutti i modelli).<br />Salvato come `alwaysThinkingEnabled` in `~/.claude/settings.json`                                                                         |
-| **Limitare il budget dei token**              | Imposta la variabile di ambiente [`MAX_THINKING_TOKENS`](/it/env-vars)                     | Limita il budget di pensiero a un numero specifico di token. Su Opus 4.6 e Sonnet 4.6, solo `0` si applica a meno che il ragionamento adattivo non sia disabilitato. Esempio: `export MAX_THINKING_TOKENS=10000` |
+| Ambito                                        | Come configurare                                                                           | Dettagli                                                                                                                                                                                                                     |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Livello di sforzo**                         | Esegui `/effort`, regola in `/model`, o imposta [`CLAUDE_CODE_EFFORT_LEVEL`](/it/env-vars) | Controlla la profondità del pensiero su [modelli supportati](/it/model-config#adjust-effort-level)                                                                                                                           |
+| **Parola chiave `ultrathink`**                | Includi "ultrathink" in qualsiasi punto del tuo prompt                                     | Aggiunge un'istruzione in-context che dice al modello di ragionare di più su quel turno. Non cambia il livello di sforzo stesso; vedi [Regola il livello di sforzo](/it/model-config#adjust-effort-level) per questo         |
+| **Scorciatoia di attivazione/disattivazione** | Premi `Option+T` (macOS) o `Alt+T` (Windows/Linux)                                         | Attiva/disattiva il pensiero per la sessione corrente (tutti i modelli). Potrebbe richiedere la [configurazione del terminale](/it/terminal-config) per abilitare le scorciatoie da tastiera Option                          |
+| **Predefinito globale**                       | Usa `/config` per attivare/disattivare Thinking Mode                                       | Imposta il tuo predefinito in tutti i progetti (tutti i modelli).<br />Salvato come `alwaysThinkingEnabled` in `~/.claude/settings.json`                                                                                     |
+| **Limitare il budget dei token**              | Imposta la variabile di ambiente [`MAX_THINKING_TOKENS`](/it/env-vars)                     | Limita il budget di pensiero a un numero specifico di token. Su modelli con ragionamento adattivo, solo `0` si applica a meno che il ragionamento adattivo non sia disabilitato. Esempio: `export MAX_THINKING_TOKENS=10000` |
 
 Per visualizzare il processo di pensiero di Claude, premi `Ctrl+O` per attivare la modalità verbose e vedi il ragionamento interno visualizzato come testo grigio in corsivo.
 
@@ -534,11 +534,11 @@ Per visualizzare il processo di pensiero di Claude, premi `Ctrl+O` per attivare 
 
 Extended thinking controlla quanto ragionamento interno Claude esegue prima di rispondere. Più pensiero fornisce più spazio per esplorare soluzioni, analizzare casi limite e autocorreggersi gli errori.
 
-**Con Opus 4.6 e Sonnet 4.6**, il pensiero utilizza il ragionamento adattivo: il modello alloca dinamicamente i token di pensiero in base al [livello di sforzo](/it/model-config#adjust-effort-level) che selezioni. Questo è il modo consigliato per sintonizzare il compromesso tra velocità e profondità di ragionamento.
+Su [modelli che supportano lo sforzo](/it/model-config#adjust-effort-level), il pensiero utilizza il ragionamento adattivo: il modello alloca dinamicamente i token di pensiero in base al livello di sforzo che selezioni. Questo è il modo consigliato per sintonizzare il compromesso tra velocità e profondità di ragionamento. Se desideri che Claude pensi più o meno spesso di quanto il tuo livello di sforzo produrrebbe altrimenti, puoi anche dirlo direttamente nel tuo prompt o in `CLAUDE.md`.
 
-**Con modelli più vecchi**, il pensiero utilizza un budget fisso di token prelevato dalla tua allocazione di output. Il budget varia in base al modello; vedi [`MAX_THINKING_TOKENS`](/it/env-vars) per i massimali per modello. Puoi limitare il budget con quella variabile di ambiente, o disabilitare completamente il pensiero tramite `/config` o l'attivazione/disattivazione `Option+T`/`Alt+T`.
+Con modelli più vecchi, il pensiero utilizza un budget fisso di token prelevato dalla tua allocazione di output. Il budget varia in base al modello; vedi [`MAX_THINKING_TOKENS`](/it/env-vars) per i massimali per modello. Puoi limitare il budget con quella variabile di ambiente, o disabilitare completamente il pensiero tramite `/config` o l'attivazione/disattivazione `Option+T`/`Alt+T`.
 
-Su Opus 4.6 e Sonnet 4.6, il [ragionamento adattivo](/it/model-config#adjust-effort-level) controlla la profondità del pensiero, quindi `MAX_THINKING_TOKENS` si applica solo quando impostato su `0` per disabilitare il pensiero, o quando `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` ripristina questi modelli al budget fisso. Vedi [variabili di ambiente](/it/env-vars).
+Su modelli con ragionamento adattivo, `MAX_THINKING_TOKENS` si applica solo quando impostato su `0` per disabilitare il pensiero, o quando `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` ripristina il modello al budget fisso. `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` si applica solo a Opus 4.6 e Sonnet 4.6. Opus 4.7 utilizza sempre il ragionamento adattivo e non supporta un budget di pensiero fisso. Vedi [variabili di ambiente](/it/env-vars).
 
 <Warning>
   Ti viene addebitato per tutti i token di pensiero utilizzati anche quando i riassunti di pensiero sono redatti. In modalità interattiva, il pensiero appare come uno stub compresso per impostazione predefinita. Imposta `showThinkingSummaries: true` in `settings.json` per mostrare riassunti completi.
@@ -556,7 +556,15 @@ Quando avvii Claude Code, puoi riprendere una sessione precedente:
 
 Da una sessione attiva, usa `/resume` per passare a una conversazione diversa.
 
-Le sessioni vengono archiviate per directory di progetto. Il selettore `/resume` mostra le sessioni interattive dallo stesso repository git, inclusi i worktree. Le sessioni create da `claude -p` o da invocazioni SDK non appaiono nel selettore, ma puoi comunque riprenderne una passando il suo ID di sessione direttamente a `claude --resume <session-id>`.
+Le sessioni vengono archiviate per directory di progetto. Per impostazione predefinita, il selettore `/resume` mostra le sessioni interattive dal worktree corrente, con scorciatoie da tastiera per ampliare l'elenco ad altri worktree o progetti, cercare, visualizzare l'anteprima e rinominare. Vedi [Utilizzare il selettore di sessione](#use-the-session-picker) di seguito per il riferimento completo delle scorciatoie.
+
+Quando selezioni una sessione da un altro worktree dello stesso repository, Claude Code la riprende direttamente senza richiedere di cambiare directory prima. Selezionare una sessione da un progetto non correlato copia un comando `cd` e resume negli appunti.
+
+La ripresa per nome si risolve nel repository corrente e nei suoi worktree. Sia `claude --resume <name>` che `/resume <name>` cercano una corrispondenza esatta e la riprendono direttamente, anche se la sessione si trova in un worktree diverso.
+
+Quando il nome è ambiguo, `claude --resume <name>` apre il selettore con il nome pre-compilato come termine di ricerca. `/resume <name>` da una sessione attiva segnala un errore, quindi esegui `/resume` senza argomenti per aprire il selettore e scegliere.
+
+Le sessioni create da `claude -p` o da invocazioni SDK non appaiono nel selettore, ma puoi comunque riprenderne una passando il suo ID di sessione direttamente a `claude --resume <session-id>`.
 
 ### Denominare le tue sessioni
 
@@ -576,7 +584,7 @@ Dai alle sessioni nomi descrittivi per trovarle in seguito. Questa è una best p
     /rename auth-refactor
     ```
 
-    Puoi anche rinominare qualsiasi sessione dal selettore: esegui `/resume`, naviga a una sessione e premi `R`.
+    Puoi anche rinominare qualsiasi sessione dal selettore: esegui `/resume`, naviga a una sessione e premi `Ctrl+R`.
   </Step>
 
   <Step title="Riprendere per nome in seguito">
@@ -600,38 +608,40 @@ Il comando `/resume` (o `claude --resume` senza argomenti) apre un selettore di 
 
 **Scorciatoie da tastiera nel selettore:**
 
-| Scorciatoia | Azione                                                 |
-| :---------- | :----------------------------------------------------- |
-| `↑` / `↓`   | Navigare tra le sessioni                               |
-| `→` / `←`   | Espandere o comprimere le sessioni raggruppate         |
-| `Enter`     | Selezionare e riprendere la sessione evidenziata       |
-| `P`         | Visualizzare l'anteprima del contenuto della sessione  |
-| `R`         | Rinominare la sessione evidenziata                     |
-| `/`         | Cercare per filtrare le sessioni                       |
-| `A`         | Alternare tra la directory corrente e tutti i progetti |
-| `B`         | Filtrare le sessioni dal tuo ramo git corrente         |
-| `Esc`       | Uscire dal selettore o dalla modalità di ricerca       |
+| Scorciatoia                                             | Azione                                                                                                                                                               |
+| :------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `↑` / `↓`                                               | Navigare tra le sessioni                                                                                                                                             |
+| `→` / `←`                                               | Espandere o comprimere le sessioni raggruppate                                                                                                                       |
+| `Enter`                                                 | Selezionare e riprendere la sessione evidenziata                                                                                                                     |
+| `Space`                                                 | Visualizzare l'anteprima del contenuto della sessione. `Ctrl+V` funziona anche su terminali che non lo catturano come incolla                                        |
+| `Ctrl+R`                                                | Rinominare la sessione evidenziata                                                                                                                                   |
+| `/` o qualsiasi carattere stampabile diverso da `Space` | Entrare in modalità di ricerca e filtrare le sessioni                                                                                                                |
+| `Ctrl+A`                                                | Mostrare le sessioni da tutti i progetti su questa macchina. Premi di nuovo per ripristinare il repository corrente                                                  |
+| `Ctrl+W`                                                | Mostrare le sessioni da tutti i worktree del repository corrente. Premi di nuovo per ripristinare il worktree corrente. Mostrato solo in repository con più worktree |
+| `Ctrl+B`                                                | Filtrare le sessioni dal tuo ramo git corrente. Premi di nuovo per mostrare le sessioni da tutti i rami                                                              |
+| `Esc`                                                   | Uscire dal selettore o dalla modalità di ricerca                                                                                                                     |
 
 **Organizzazione della sessione:**
 
 Il selettore visualizza le sessioni con metadati utili:
 
-* Nome della sessione o prompt iniziale
+* Nome della sessione se impostato, altrimenti il riassunto della conversazione o il primo prompt dell'utente
 * Tempo trascorso dall'ultima attività
 * Conteggio dei messaggi
 * Ramo Git (se applicabile)
+* Percorso del progetto, mostrato dopo l'ampliamento a tutti i progetti con `Ctrl+A`
 
 Le sessioni fork (create con `/branch`, `/rewind`, o `--fork-session`) sono raggruppate insieme sotto la loro sessione radice, rendendo più facile trovare conversazioni correlate.
 
 <Tip>
   Suggerimenti:
 
-  * **Denominare le sessioni in anticipo**: Usa `/rename` quando inizi a lavorare su un'attività distinta, è molto più facile trovare "payment-integration" che "explain this function" in seguito
+  * **Denominare le sessioni in anticipo**: Usa `/rename` quando inizi a lavorare su un'attività distinta: è molto più facile trovare "payment-integration" che "explain this function" in seguito
   * Usa `--continue` per un accesso rapido alla tua conversazione più recente nella directory corrente
   * Usa `--resume session-name` quando sai quale sessione ti serve
   * Usa `--resume` (senza un nome) quando hai bisogno di sfogliare e selezionare
   * Per gli script, usa `claude --continue --print "prompt"` per riprendere in modalità non interattiva
-  * Premi `P` nel selettore per visualizzare l'anteprima di una sessione prima di riprenderla
+  * Premi `Space` nel selettore per visualizzare l'anteprima di una sessione prima di riprenderla
   * La conversazione ripresa inizia con lo stesso modello e configurazione dell'originale
 
   Come funziona:
@@ -690,6 +700,8 @@ Quando esci da una sessione di worktree, Claude gestisce la pulizia in base al f
 
 * **Nessuna modifica**: il worktree e il suo ramo vengono rimossi automaticamente
 * **Modifiche o commit esistenti**: Claude ti chiede se mantenere o rimuovere il worktree. Mantenere preserva la directory e il ramo in modo da poter tornare in seguito. Rimuovere elimina la directory del worktree e il suo ramo, scartando tutte le modifiche non sottoposte a commit e i commit
+
+I worktree dei subagent orfani da un crash o da un'esecuzione parallela interrotta vengono rimossi automaticamente all'avvio una volta che sono più vecchi della tua impostazione [`cleanupPeriodDays`](/it/settings#available-settings), a condizione che non abbiano modifiche non sottoposte a commit, nessun file non tracciato e nessun commit non sottoposto a push. I worktree che crei con `--worktree` non vengono mai rimossi da questa pulizia.
 
 Per pulire i worktree al di fuori di una sessione di Claude, usa la [gestione manuale del worktree](#manage-worktrees-manually).
 
@@ -928,12 +940,12 @@ Supponiamo che tu voglia che Claude gestisca un'attività automaticamente su bas
 
 Scegli un'opzione di pianificazione in base a dove desideri che l'attività venga eseguita:
 
-| Opzione                                                              | Dove viene eseguita                    | Migliore per                                                                                                                                              |
-| :------------------------------------------------------------------- | :------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Attività pianificate nel cloud](/it/web-scheduled-tasks)            | Infrastruttura gestita da Anthropic    | Attività che dovrebbero essere eseguite anche quando il tuo computer è spento. Configura su [claude.ai/code](https://claude.ai/code).                     |
-| [Attività pianificate desktop](/it/desktop#schedule-recurring-tasks) | La tua macchina, tramite l'app desktop | Attività che hanno bisogno di accesso diretto a file locali, strumenti o modifiche non sottoposte a commit.                                               |
-| [GitHub Actions](/it/github-actions)                                 | La tua pipeline CI                     | Attività legate a eventi del repository come PR aperte, o pianificazioni cron che dovrebbero vivere insieme alla tua configurazione del flusso di lavoro. |
-| [`/loop`](/it/scheduled-tasks)                                       | La sessione CLI corrente               | Polling rapido mentre una sessione è aperta. Le attività vengono annullate quando esci.                                                                   |
+| Opzione                                                     | Dove viene eseguita                    | Migliore per                                                                                                                                                                                                                                |
+| :---------------------------------------------------------- | :------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [Routines](/it/routines)                                    | Infrastruttura gestita da Anthropic    | Attività che dovrebbero essere eseguite anche quando il tuo computer è spento. Possono anche attivarsi su chiamate API o eventi GitHub oltre a una pianificazione. Configura su [claude.ai/code/routines](https://claude.ai/code/routines). |
+| [Attività pianificate desktop](/it/desktop-scheduled-tasks) | La tua macchina, tramite l'app desktop | Attività che hanno bisogno di accesso diretto a file locali, strumenti o modifiche non sottoposte a commit.                                                                                                                                 |
+| [GitHub Actions](/it/github-actions)                        | La tua pipeline CI                     | Attività legate a eventi del repository come PR aperte, o pianificazioni cron che dovrebbero vivere insieme alla tua configurazione del flusso di lavoro.                                                                                   |
+| [`/loop`](/it/scheduled-tasks)                              | La sessione CLI corrente               | Polling rapido mentre una sessione è aperta. Le attività si fermano quando inizi una nuova conversazione; `--resume` e `--continue` ripristinano quelle non scadute.                                                                        |
 
 <Tip>
   Quando scrivi prompt per attività pianificate, sii esplicito su cosa significhi il successo e cosa fare con i risultati. L'attività viene eseguita autonomamente, quindi non può fare domande di chiarimento. Ad esempio: "Review open PRs labeled `needs-review`, leave inline comments on any issues, and post a summary in the `#eng-reviews` Slack channel."
@@ -972,7 +984,7 @@ what are the limitations of Claude Code?
 ```
 
 <Note>
-  Claude fornisce risposte basate sulla documentazione a queste domande. Per esempi eseguibili e dimostrazioni pratiche, fai riferimento alle sezioni di flusso di lavoro specifiche sopra.
+  Claude fornisce risposte basate sulla documentazione a queste domande. Per dimostrazioni pratiche, esegui `/powerup` per lezioni interattive con demo animate, o fai riferimento alle sezioni di flusso di lavoro specifiche sopra.
 </Note>
 
 <Tip>

@@ -277,7 +277,7 @@ Gunakan keduanya untuk pertahanan berlapis:
 * Pembatasan sistem file di sandbox menggunakan aturan deny Read dan Edit, bukan konfigurasi sandbox terpisah
 * Pembatasan jaringan menggabungkan aturan izin WebFetch dengan daftar `allowedDomains` dan `deniedDomains` sandbox
 
-Ketika sandboxing diaktifkan dengan `autoAllowBashIfSandboxed: true`, yang merupakan default, perintah Bash yang di-sandbox berjalan tanpa meminta bahkan jika izin Anda mencakup `ask: Bash(*)`. Batas sandbox menggantikan prompt per-perintah. Lihat [sandbox modes](/id/sandboxing#sandbox-modes) untuk mengubah perilaku ini.
+Ketika sandboxing diaktifkan dengan `autoAllowBashIfSandboxed: true`, yang merupakan default, perintah Bash yang di-sandbox berjalan tanpa meminta bahkan jika izin Anda mencakup `ask: Bash(*)`. Batas sandbox menggantikan prompt per-perintah. Aturan deny eksplisit masih berlaku, dan perintah `rm` atau `rmdir` yang menargetkan `/`, direktori home Anda, atau jalur sistem kritis lainnya masih memicu prompt. Lihat [sandbox modes](/id/sandboxing#sandbox-modes) untuk mengubah perilaku ini.
 
 ## Pengaturan terkelola
 
@@ -315,9 +315,11 @@ Untuk bereaksi terhadap penolakan secara terprogram, gunakan [hook `PermissionDe
 
 ## Konfigurasi pengklasifikasi mode auto
 
-[Mode auto](/id/permission-modes#eliminate-prompts-with-auto-mode) menggunakan model pengklasifikasi untuk memutuskan apakah setiap tindakan aman untuk dijalankan tanpa meminta. Dari kotak itu mempercayai hanya direktori kerja dan, jika ada, remote repositori saat ini. Tindakan seperti mendorong ke org kontrol sumber perusahaan Anda atau menulis ke bucket cloud tim akan diblokir sebagai potensi exfiltration data. Blok pengaturan `autoMode` memungkinkan Anda memberi tahu pengklasifikasi infrastruktur mana yang dipercaya organisasi Anda.
+[Mode auto](/id/permission-modes#eliminate-prompts-with-auto-mode) menggunakan model pengklasifikasi untuk memutuskan apakah setiap tindakan aman untuk dijalankan tanpa meminta. Dari kotak itu mempercayai hanya direktori kerja dan, jika ada, remote repositori saat ini. Tindakan seperti mendorong ke org kontrol sumber perusahaan Anda atau menulis ke bucket cloud tim akan diblokir sebagai potensi exfiltration data.
 
-Pengklasifikasi membaca `autoMode` dari pengaturan pengguna, `.claude/settings.local.json`, dan pengaturan terkelola. Ini tidak membaca dari pengaturan proyek bersama di `.claude/settings.json`, karena repositori yang diperiksa masuk dapat sebaliknya menyuntikkan aturan allow-nya sendiri.
+Untuk menyesuaikan apa yang diizinkan atau diblokir pengklasifikasi, tambahkan instruksi ke file [CLAUDE.md](/id/memory) Anda. Pengklasifikasi membaca CLAUDE.md dari direktori terpercaya bersama percakapan, jadi instruksi seperti "jangan pernah force push" mengarahkan Claude dan pengklasifikasi pada saat yang bersamaan. Mulai di sini untuk konvensi proyek dan aturan perilaku.
+
+Untuk aturan yang berlaku di seluruh proyek, seperti infrastruktur terpercaya atau aturan deny organisasi-lebar, gunakan blok pengaturan `autoMode`. Pengklasifikasi membaca `autoMode` dari pengaturan pengguna, `.claude/settings.local.json`, dan pengaturan terkelola. Ini tidak membaca dari pengaturan proyek bersama di `.claude/settings.json`, karena repositori yang diperiksa masuk dapat sebaliknya menyuntikkan aturan allow-nya sendiri.
 
 | Cakupan                      | File                          | Gunakan untuk                                                     |
 | :--------------------------- | :---------------------------- | :---------------------------------------------------------------- |

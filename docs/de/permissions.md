@@ -277,7 +277,7 @@ Verwenden Sie beide für Defense-in-Depth:
 * Dateisystem-Einschränkungen in der Sandbox verwenden Read- und Edit-Deny-Regeln, nicht separate Sandbox-Konfiguration
 * Netzwerk-Einschränkungen kombinieren WebFetch-Berechtigungsregeln mit den `allowedDomains`- und `deniedDomains`-Listen der Sandbox
 
-Wenn Sandboxing mit `autoAllowBashIfSandboxed: true` aktiviert ist, was die Standardeinstellung ist, laufen sandboxed Bash-Befehle ohne Aufforderung, selbst wenn Ihre Berechtigungen `ask: Bash(*)` enthalten. Die Sandbox-Grenze ersetzt die Pro-Befehl-Aufforderung. Siehe [Sandbox-Modi](/de/sandboxing#sandbox-modes), um dieses Verhalten zu ändern.
+Wenn Sandboxing mit `autoAllowBashIfSandboxed: true` aktiviert ist, was die Standardeinstellung ist, laufen sandboxed Bash-Befehle ohne Aufforderung, selbst wenn Ihre Berechtigungen `ask: Bash(*)` enthalten. Die Sandbox-Grenze ersetzt die Pro-Befehl-Aufforderung. Explizite Deny-Regeln gelten weiterhin, und `rm`- oder `rmdir`-Befehle, die auf `/`, Ihr Home-Verzeichnis oder andere kritische Systempfade abzielen, lösen weiterhin eine Aufforderung aus. Siehe [Sandbox-Modi](/de/sandboxing#sandbox-modes), um dieses Verhalten zu ändern.
 
 ## Verwaltete Einstellungen
 
@@ -315,9 +315,11 @@ Um auf Ablehnungen programmgesteuert zu reagieren, verwenden Sie den [`Permissio
 
 ## Konfigurieren Sie den Auto-Mode-Klassifizierer
 
-[Auto Mode](/de/permission-modes#eliminate-prompts-with-auto-mode) verwendet ein Klassifizierermodell, um zu entscheiden, ob jede Aktion sicher ausgeführt werden kann, ohne zu fragen. Standardmäßig vertraut es nur dem Arbeitsverzeichnis und, falls vorhanden, den Remotes des aktuellen Repos. Aktionen wie das Pushen zu Ihrer Unternehmens-Quellcode-Org oder das Schreiben in einen Team-Cloud-Bucket werden als potenzielle Datenexfiltration blockiert. Der `autoMode`-Einstellungsblock ermöglicht es Ihnen, dem Klassifizierer mitzuteilen, welche Infrastruktur Ihre Organisation vertraut.
+[Auto Mode](/de/permission-modes#eliminate-prompts-with-auto-mode) verwendet ein Klassifizierermodell, um zu entscheiden, ob jede Aktion sicher ausgeführt werden kann, ohne zu fragen. Standardmäßig vertraut es nur dem Arbeitsverzeichnis und, falls vorhanden, den Remotes des aktuellen Repos. Aktionen wie das Pushen zu Ihrer Unternehmens-Quellcode-Org oder das Schreiben in einen Team-Cloud-Bucket werden als potenzielle Datenexfiltration blockiert.
 
-Der Klassifizierer liest `autoMode` aus Benutzereinstellungen, `.claude/settings.local.json` und verwalteten Einstellungen. Er liest nicht aus gemeinsamen Projekteinstellungen in `.claude/settings.json`, da ein eingechecktes Repo sonst seine eigenen Allow-Regeln injizieren könnte.
+Um anzupassen, was der Klassifizierer zulässt oder blockiert, fügen Sie Anweisungen zu Ihrer [CLAUDE.md](/de/memory)-Datei hinzu. Der Klassifizierer liest CLAUDE.md aus vertrauenswürdigen Verzeichnissen neben dem Gespräch, daher steuert eine Anweisung wie „niemals Force-Push" sowohl Claude als auch den Klassifizierer gleichzeitig. Beginnen Sie hier mit Projektkonventionen und Verhaltensregeln.
+
+Für Regeln, die projektübergreifend gelten, wie vertrauenswürdige Infrastruktur oder organisationsweite Ablehnungsregeln, verwenden Sie den `autoMode`-Einstellungsblock. Der Klassifizierer liest `autoMode` aus Benutzereinstellungen, `.claude/settings.local.json` und verwalteten Einstellungen. Er liest nicht aus gemeinsamen Projekteinstellungen in `.claude/settings.json`, da ein eingechecktes Repo sonst seine eigenen Allow-Regeln injizieren könnte.
 
 | Bereich                     | Datei                         | Verwendung für                                                          |
 | :-------------------------- | :---------------------------- | :---------------------------------------------------------------------- |

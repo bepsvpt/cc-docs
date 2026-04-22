@@ -61,6 +61,6 @@ ZDR이 활성화된 경우에도 Anthropic은 법률에서 요구하거나 Usage
 
 ## ZDR 요청
 
-Claude for Enterprise의 Claude Code에 대해 ZDR을 요청하려면 Anthropic 계정 팀에 문의하세요. 계정 팀이 내부적으로 요청을 제출하면 Anthropic이 적격성을 확인한 후 조직에서 ZDR을 검토하고 활성화합니다. 모든 활성화 작업은 감사 로그에 기록됩니다.
+Claude for Enterprise의 Claude Code에 대해 ZDR을 요청하려면 [영업팀에 문의](https://www.anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=zero_data_retention_request)하거나 Anthropic 계정 팀에 문의하세요. 계정 팀이 내부적으로 요청을 제출하면 Anthropic이 적격성을 확인한 후 조직에서 ZDR을 검토하고 활성화합니다. 모든 활성화 작업은 감사 로그에 기록됩니다.
 
 현재 종량제 API 키를 통해 Claude Code에 대해 ZDR을 사용 중인 경우 Claude for Enterprise로 전환하여 Claude Code에 대한 ZDR을 유지하면서 관리 기능에 액세스할 수 있습니다. 마이그레이션을 조정하려면 계정 팀에 문의하세요.

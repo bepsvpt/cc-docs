@@ -8,8 +8,10 @@
 
 Skills 擴展了 Claude 能做的事情。建立一個 `SKILL.md` 檔案，其中包含說明，Claude 就會將其新增到其工具組中。Claude 在相關時會使用 skills，或者您可以直接使用 `/skill-name` 叫用一個。
 
+當您不斷將相同的劇本、檢查清單或多步驟程序貼到聊天中時，或當 CLAUDE.md 的某個部分已成長為程序而不是事實時，請建立一個 skill。與 CLAUDE.md 內容不同，skill 的主體僅在使用時載入，因此長參考資料在您需要之前幾乎不花費任何成本。
+
 <Note>
-  對於內建命令（如 `/help` 和 `/compact`），請參閱[內建命令參考](/zh-TW/commands)。
+  對於內建命令（如 `/help` 和 `/compact`）以及捆綁的 skills（如 `/debug` 和 `/simplify`），請參閱[命令參考](/zh-TW/commands)。
 
   **自訂命令已合併到 skills 中。** `.claude/commands/deploy.md` 中的檔案和 `.claude/skills/deploy/SKILL.md` 中的 skill 都會建立 `/deploy` 並以相同方式運作。您現有的 `.claude/commands/` 檔案會繼續運作。Skills 新增了可選功能：支援檔案的目錄、[控制您或 Claude 是否叫用它們](#control-who-invokes-a-skill)的 frontmatter，以及 Claude 在相關時自動載入它們的能力。
 </Note>
@@ -18,17 +20,9 @@ Claude Code skills 遵循 [Agent Skills](https://agentskills.io) 開放標準，
 
 ## 捆綁的 skills
 
-捆綁的 skills 隨 Claude Code 一起提供，在每個工作階段中都可用。與[內建命令](/zh-TW/commands)不同，內建命令直接執行固定邏輯，捆綁的 skills 是基於提示的：它們為 Claude 提供詳細的劇本，並讓它使用其工具來協調工作。這意味著捆綁的 skills 可以生成平行代理、讀取檔案並適應您的程式碼庫。
+Claude Code 包含一組捆綁的 skills，在每個工作階段中都可用，包括 `/simplify`、`/batch`、`/debug`、`/loop` 和 `/claude-api`。與大多數內建命令不同，內建命令直接執行固定邏輯，捆綁的 skills 是基於提示的：它們為 Claude 提供詳細的劇本，並讓它使用其工具來協調工作。您叫用它們的方式與任何其他 skill 相同，輸入 `/` 後跟 skill 名稱。
 
-您叫用捆綁的 skills 的方式與任何其他 skill 相同：輸入 `/` 後跟 skill 名稱。在下表中，`<arg>` 表示必需的引數，`[arg]` 表示可選的引數。
-
-| Skill                       | 目的                                                                                                                                                                                                                                                     |
-| :-------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/batch <instruction>`      | 在平行中跨程式碼庫協調大規模變更。研究程式碼庫，將工作分解為 5 到 30 個獨立單位，並呈現計畫。獲得批准後，在隔離的 [git worktree](/zh-TW/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) 中為每個單位生成一個背景代理。每個代理實現其單位、執行測試並開啟拉取請求。需要 git 存放庫。範例：`/batch migrate src/ from Solid to React` |
-| `/claude-api`               | 為您的專案語言（Python、TypeScript、Java、Go、Ruby、C# 或 cURL）載入 Claude API 參考資料，以及 Python 和 TypeScript 的 Agent SDK 參考。涵蓋工具使用、串流、批次、結構化輸出和常見陷阱。當您的程式碼匯入 `anthropic`、`@anthropic-ai/sdk` 或 `claude_agent_sdk` 時也會自動啟動                                                |
-| `/debug [description]`      | 啟用目前工作階段的偵錯記錄，並透過讀取工作階段偵錯日誌來排查問題。偵錯記錄預設為關閉，除非您使用 `claude --debug` 啟動，因此在工作階段中途執行 `/debug` 會從該點開始捕獲日誌。可選擇描述問題以聚焦分析                                                                                                                                      |
-| `/loop [interval] <prompt>` | 在工作階段保持開啟時按間隔重複執行提示。適用於輪詢部署、監督拉取請求或定期重新執行另一個 skill。範例：`/loop 5m check if the deploy finished`。請參閱[按排程執行提示](/zh-TW/scheduled-tasks)                                                                                                                     |
-| `/simplify [focus]`         | 檢查您最近變更的檔案以尋找程式碼重用、品質和效率問題，然後修復它們。在平行中生成三個審查代理，彙總其發現並應用修復。傳遞文字以聚焦於特定關注點：`/simplify focus on memory efficiency`                                                                                                                                         |
+捆綁的 skills 在[命令參考](/zh-TW/commands)中與內建命令一起列出，在「目的」欄中標記為 **Skill**。
 
 ## 開始使用
 
@@ -99,6 +93,10 @@ Claude Code skills 遵循 [Agent Skills](https://agentskills.io) 開放標準，
 
 當 skills 在各個層級共享相同名稱時，優先級較高的位置獲勝：企業 > 個人 > 專案。外掛 skills 使用 `plugin-name:skill-name` 命名空間，因此它們不能與其他層級衝突。如果您在 `.claude/commands/` 中有檔案，它們的運作方式相同，但如果 skill 和命令共享相同名稱，skill 優先。
 
+#### 即時變更偵測
+
+Claude Code 監視 skill 目錄以尋找檔案變更。在 `~/.claude/skills/`、專案 `.claude/skills/` 或 `--add-dir` 目錄內的 `.claude/skills/` 中新增、編輯或移除 skill 會在目前工作階段內生效，無需重新啟動。建立在工作階段開始時不存在的頂級 skills 目錄需要重新啟動 Claude Code，以便可以監視新目錄。
+
 #### 從巢狀目錄自動發現
 
 當您在子目錄中使用檔案時，Claude Code 會自動從巢狀 `.claude/skills/` 目錄發現 skills。例如，如果您正在編輯 `packages/frontend/` 中的檔案，Claude Code 也會在 `packages/frontend/.claude/skills/` 中尋找 skills。這支援 monorepo 設定，其中套件有自己的 skills。
@@ -123,7 +121,7 @@ my-skill/
 
 #### 來自其他目錄的 skills
 
-`--add-dir` 旗標[授予檔案存取權](/zh-TW/permissions#additional-directories-grant-file-access-not-configuration)而不是設定發現，但 skills 是例外：已新增目錄中的 `.claude/skills/` 會自動載入並由即時變更偵測拾取，因此您可以在工作階段期間編輯這些 skills 而無需重新啟動。
+`--add-dir` 旗標[授予檔案存取權](/zh-TW/permissions#additional-directories-grant-file-access-not-configuration)而不是設定發現，但 skills 是例外：已新增目錄中的 `.claude/skills/` 會自動載入。請參閱[即時變更偵測](#live-change-detection)以了解編輯在工作階段期間如何被拾取。
 
 其他 `.claude/` 設定（例如 subagents、命令和輸出樣式）不會從其他目錄載入。請參閱[例外表](/zh-TW/permissions#additional-directories-grant-file-access-not-configuration)以取得完整的載入和未載入內容清單，以及跨專案共享設定的建議方式。
 
@@ -188,33 +186,38 @@ Your skill instructions here...
 
 所有欄位都是可選的。建議只使用 `description`，以便 Claude 知道何時使用該 skill。
 
-| 欄位                         | 必需 | 描述                                                                                                                                                                 |
-| :------------------------- | :- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`                     | 否  | Skill 的顯示名稱。如果省略，使用目錄名稱。僅限小寫字母、數字和連字號（最多 64 個字元）。                                                                                                                  |
-| `description`              | 建議 | Skill 的功能以及何時使用它。Claude 使用此來決定何時應用該 skill。如果省略，使用 markdown 內容的第一段。前置關鍵使用案例：超過 250 個字元的描述會在 skill 清單中截斷以減少上下文使用。                                                    |
-| `argument-hint`            | 否  | 自動完成期間顯示的提示，指示預期的引數。範例：`[issue-number]` 或 `[filename] [format]`。                                                                                                   |
-| `disable-model-invocation` | 否  | 設定為 `true` 以防止 Claude 自動載入此 skill。用於您想使用 `/name` 手動觸發的工作流程。預設值：`false`。                                                                                            |
-| `user-invocable`           | 否  | 設定為 `false` 以從 `/` 功能表中隱藏。用於使用者不應直接叫用的背景知識。預設值：`true`。                                                                                                             |
-| `allowed-tools`            | 否  | 當此 skill 處於作用中時，Claude 可以使用而無需詢問許可的工具。接受空格分隔的字串或 YAML 清單。                                                                                                          |
-| `model`                    | 否  | 當此 skill 處於作用中時要使用的模型。                                                                                                                                             |
-| `effort`                   | 否  | 當此 skill 處於作用中時的[努力級別](/zh-TW/model-config#adjust-effort-level)。覆蓋工作階段努力級別。預設值：繼承自工作階段。選項：`low`、`medium`、`high`、`max`（僅限 Opus 4.6）。                                |
-| `context`                  | 否  | 設定為 `fork` 以在分叉的 subagent 上下文中執行。                                                                                                                                  |
-| `agent`                    | 否  | 當設定 `context: fork` 時要使用的 subagent 類型。                                                                                                                             |
-| `hooks`                    | 否  | 限定於此 skill 生命週期的 hooks。請參閱 [Skills 和代理中的 Hooks](/zh-TW/hooks#hooks-in-skills-and-agents) 以取得設定格式。                                                                  |
-| `paths`                    | 否  | Glob 模式，限制何時啟動此 skill。接受逗號分隔的字串或 YAML 清單。設定時，Claude 僅在使用與模式相符的檔案時自動載入該 skill。使用與[路徑特定規則](/zh-TW/memory#path-specific-rules)相同的格式。                                  |
-| `shell`                    | 否  | 用於此 skill 中 `` !`command` `` 區塊的 shell。接受 `bash`（預設）或 `powershell`。設定 `powershell` 會在 Windows 上透過 PowerShell 執行內聯 shell 命令。需要 `CLAUDE_CODE_USE_POWERSHELL_TOOL=1`。 |
+| 欄位                         | 必需 | 描述                                                                                                                                                                            |
+| :------------------------- | :- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`                     | 否  | Skill 的顯示名稱。如果省略，使用目錄名稱。僅限小寫字母、數字和連字號（最多 64 個字元）。                                                                                                                             |
+| `description`              | 建議 | Skill 的功能以及何時使用它。Claude 使用此來決定何時應用該 skill。如果省略，使用 markdown 內容的第一段。前置關鍵使用案例：結合的 `description` 和 `when_to_use` 文字在 skill 清單中截斷至 1,536 個字元以減少上下文使用。                              |
+| `when_to_use`              | 否  | Claude 應何時叫用該 skill 的額外上下文，例如觸發短語或範例請求。附加到 skill 清單中的 `description`，並計入 1,536 個字元的上限。                                                                                         |
+| `argument-hint`            | 否  | 自動完成期間顯示的提示，指示預期的引數。範例：`[issue-number]` 或 `[filename] [format]`。                                                                                                              |
+| `arguments`                | 否  | 用於 skill 內容中[`$name` 替換](#available-string-substitutions)的具名位置引數。接受空格分隔的字串或 YAML 清單。名稱按順序對應到引數位置。                                                                             |
+| `disable-model-invocation` | 否  | 設定為 `true` 以防止 Claude 自動載入此 skill。用於您想使用 `/name` 手動觸發的工作流程。也防止該 skill 被[預載入到 subagents](/zh-TW/sub-agents#preload-skills-into-subagents)。預設值：`false`。                         |
+| `user-invocable`           | 否  | 設定為 `false` 以從 `/` 功能表中隱藏。用於使用者不應直接叫用的背景知識。預設值：`true`。                                                                                                                        |
+| `allowed-tools`            | 否  | 當此 skill 處於作用中時，Claude 可以使用而無需詢問許可的工具。接受空格分隔的字串或 YAML 清單。                                                                                                                     |
+| `model`                    | 否  | 當此 skill 處於作用中時要使用的模型。覆蓋適用於目前回合的其餘部分，不會儲存到設定；工作階段模型在您的下一個提示時恢復。接受與 [`/model`](/zh-TW/model-config) 相同的值，或 `inherit` 以保持作用中的模型。                                                |
+| `effort`                   | 否  | 當此 skill 處於作用中時的[努力級別](/zh-TW/model-config#adjust-effort-level)。覆蓋工作階段努力級別。預設值：繼承自工作階段。選項：`low`、`medium`、`high`、`xhigh`、`max`；可用級別取決於模型。                                      |
+| `context`                  | 否  | 設定為 `fork` 以在分叉的 subagent 上下文中執行。                                                                                                                                             |
+| `agent`                    | 否  | 當設定 `context: fork` 時要使用的 subagent 類型。                                                                                                                                        |
+| `hooks`                    | 否  | 限定於此 skill 生命週期的 hooks。請參閱 [Skills 和代理中的 Hooks](/zh-TW/hooks#hooks-in-skills-and-agents) 以取得設定格式。                                                                             |
+| `paths`                    | 否  | Glob 模式，限制何時啟動此 skill。接受逗號分隔的字串或 YAML 清單。設定時，Claude 僅在使用與模式相符的檔案時自動載入該 skill。使用與[路徑特定規則](/zh-TW/memory#path-specific-rules)相同的格式。                                             |
+| `shell`                    | 否  | 用於此 skill 中 `` !`command` `` 和 ` ```! ` 區塊的 shell。接受 `bash`（預設）或 `powershell`。設定 `powershell` 會在 Windows 上透過 PowerShell 執行內聯 shell 命令。需要 `CLAUDE_CODE_USE_POWERSHELL_TOOL=1`。 |
 
 #### 可用的字串替換
 
 Skills 支援 skill 內容中動態值的字串替換：
 
-| 變數                     | 描述                                                                                                                 |
-| :--------------------- | :----------------------------------------------------------------------------------------------------------------- |
-| `$ARGUMENTS`           | 叫用 skill 時傳遞的所有引數。如果 `$ARGUMENTS` 不在內容中，引數會附加為 `ARGUMENTS: <value>`。                                               |
-| `$ARGUMENTS[N]`        | 透過 0 為基礎的索引存取特定引數，例如 `$ARGUMENTS[0]` 表示第一個引數。                                                                      |
-| `$N`                   | `$ARGUMENTS[N]` 的簡寫，例如 `$0` 表示第一個引數或 `$1` 表示第二個引數。                                                                 |
-| `${CLAUDE_SESSION_ID}` | 目前的工作階段 ID。適用於記錄、建立工作階段特定檔案或將 skill 輸出與工作階段相關聯。                                                                    |
-| `${CLAUDE_SKILL_DIR}`  | 包含 skill 的 `SKILL.md` 檔案的目錄。對於外掛 skills，這是外掛中 skill 的子目錄，而不是外掛根目錄。在 bash 注入命令中使用此來參考與 skill 捆綁的指令碼或檔案，無論目前的工作目錄如何。 |
+| 變數                     | 描述                                                                                                                                                       |
+| :--------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `$ARGUMENTS`           | 叫用 skill 時傳遞的所有引數。如果 `$ARGUMENTS` 不在內容中，引數會附加為 `ARGUMENTS: <value>`。                                                                                     |
+| `$ARGUMENTS[N]`        | 透過 0 為基礎的索引存取特定引數，例如 `$ARGUMENTS[0]` 表示第一個引數。                                                                                                            |
+| `$N`                   | `$ARGUMENTS[N]` 的簡寫，例如 `$0` 表示第一個引數或 `$1` 表示第二個引數。                                                                                                       |
+| `$name`                | 在 [`arguments`](#frontmatter-reference) frontmatter 清單中宣告的具名引數。名稱按順序對應到位置，因此使用 `arguments: [issue, branch]` 時，預留位置 `$issue` 擴展為第一個引數，`$branch` 擴展為第二個引數。 |
+| `${CLAUDE_SESSION_ID}` | 目前的工作階段 ID。適用於記錄、建立工作階段特定檔案或將 skill 輸出與工作階段相關聯。                                                                                                          |
+| `${CLAUDE_SKILL_DIR}`  | 包含 skill 的 `SKILL.md` 檔案的目錄。對於外掛 skills，這是外掛中 skill 的子目錄，而不是外掛根目錄。在 bash 注入命令中使用此來參考與 skill 捆綁的指令碼或檔案，無論目前的工作目錄如何。                                       |
+
+索引引數使用 shell 風格的引用，因此將多字值包裝在引號中以將其作為單個引數傳遞。例如，`/my-skill "hello world" second` 使 `$0` 擴展為 `hello world`，`$1` 擴展為 `second`。`$ARGUMENTS` 預留位置始終擴展為輸入的完整引數字串。
 
 **使用替換的範例：**
 
@@ -290,17 +293,30 @@ Deploy $ARGUMENTS to production:
   在常規工作階段中，skill 描述會載入上下文，以便 Claude 知道可用的內容，但完整 skill 內容僅在叫用時載入。[預載入 skills 的 Subagents](/zh-TW/sub-agents#preload-skills-into-subagents) 的運作方式不同：完整 skill 內容在啟動時注入。
 </Note>
 
-### 限制工具存取
+### Skill 內容生命週期
 
-使用 `allowed-tools` 欄位來限制當 skill 處於作用中時 Claude 可以使用的工具。此 skill 建立一個唯讀模式，其中 Claude 可以探索檔案但不能修改它們：
+當您或 Claude 叫用 skill 時，呈現的 `SKILL.md` 內容作為單一訊息進入對話，並在工作階段的其餘部分保持在那裡。Claude Code 不會在稍後的回合中重新讀取 skill 檔案，因此應將應該在整個任務中應用的指導寫成常設說明，而不是一次性步驟。
+
+[Auto-compact](/zh-TW/how-claude-code-works#when-context-fills-up) 在令牌預算內轉發叫用的 skills。當對話被摘要以釋放上下文時，Claude Code 在摘要後重新附加每個 skill 的最新叫用，保留每個的前 5,000 個令牌。重新附加的 skills 共享 25,000 個令牌的組合預算。Claude Code 從最近叫用的 skill 開始填充此預算，因此如果您在一個工作階段中叫用了許多 skills，較舊的 skills 可能在 compaction 後完全被丟棄。
+
+如果 skill 在第一個回應後似乎停止影響行為，內容通常仍然存在，模型正在選擇其他工具或方法。加強 skill 的 `description` 和說明，以便模型繼續偏好它，或使用 [hooks](/zh-TW/hooks) 來確定性地強制行為。如果 skill 很大或您在它之後叫用了其他幾個，請在 compaction 後重新叫用它以恢復完整內容。
+
+### 為 skill 預先批准工具
+
+`allowed-tools` 欄位在 skill 處於作用中時授予列出的工具的許可，因此 Claude 可以使用它們而無需提示您批准。它不會限制哪些工具可用：每個工具仍然可呼叫，您的[許可設定](/zh-TW/permissions)仍然管理未列出的工具。
+
+此 skill 讓 Claude 在您叫用它時執行 git 命令而無需每次使用批准：
 
 ```yaml theme={null}
 ---
-name: safe-reader
-description: Read files without making changes
-allowed-tools: Read Grep Glob
+name: commit
+description: Stage and commit the current changes
+disable-model-invocation: true
+allowed-tools: Bash(git add *) Bash(git commit *) Bash(git status *)
 ---
 ```
+
+若要阻止 skill 使用某些工具，請在您的[許可設定](/zh-TW/permissions)中新增拒絕規則。
 
 ### 將引數傳遞給 skills
 
@@ -324,7 +340,7 @@ Fix GitHub issue $ARGUMENTS following our coding standards.
 5. Create a commit
 ```
 
-當您執行 `/fix-issue 123` 時，Claude 會收到'Fix GitHub issue 123 following our coding standards...'
+當您執行 `/fix-issue 123` 時，Claude 會收到「Fix GitHub issue 123 following our coding standards...」
 
 如果您使用引數叫用 skill，但 skill 不包含 `$ARGUMENTS`，Claude Code 會將 `ARGUMENTS: <your input>` 附加到 skill 內容的末尾，以便 Claude 仍然看到您輸入的內容。
 
@@ -386,8 +402,21 @@ Summarize this pull request...
 
 這是預處理，不是 Claude 執行的內容。Claude 只看到最終結果。
 
+對於多行命令，請使用以 ` ```! ` 開啟的圍欄程式碼區塊，而不是內聯形式：
+
+````markdown theme={null}
+## Environment
+```!
+node --version
+npm --version
+git status --short
+```
+````
+
+若要停用來自使用者、專案、外掛或[其他目錄](#skills-from-additional-directories)來源的 skills 和自訂命令的此行為，請在[設定](/zh-TW/settings)中設定 `"disableSkillShellExecution": true`。每個命令會被替換為 `[shell command execution disabled by policy]` 而不是被執行。捆綁和受管 skills 不受影響。此設定在[受管設定](/zh-TW/permissions#managed-settings)中最有用，使用者無法覆蓋它。
+
 <Tip>
-  若要在 skill 中啟用[擴展思考](/zh-TW/common-workflows#use-extended-thinking-thinking-mode)，請在您的 skill 內容中的任何位置包含'ultrathink'一詞。
+  若要在 skill 中啟用[擴展思考](/zh-TW/common-workflows#use-extended-thinking-thinking-mode)，請在您的 skill 內容中的任何位置包含「ultrathink」一詞。
 </Tip>
 
 ### 在 subagent 中執行 skills
@@ -395,7 +424,7 @@ Summarize this pull request...
 當您想要 skill 在隔離中執行時，將 `context: fork` 新增到您的 frontmatter。Skill 內容變成驅動 subagent 的提示。它將無法存取您的對話歷史記錄。
 
 <Warning>
-  `context: fork` 僅對具有明確說明的 skills 有意義。如果您的 skill 包含'使用這些 API 慣例'之類的指南而沒有任務，subagent 會收到指南但沒有可操作的提示，並返回而沒有有意義的輸出。
+  `context: fork` 僅對具有明確說明的 skills 有意義。如果您的 skill 包含「使用這些 API 慣例」之類的指南而沒有任務，subagent 會收到指南但沒有可操作的提示，並返回而沒有有意義的輸出。
 </Warning>
 
 Skills 和 [subagents](/zh-TW/sub-agents) 以兩個方向協同運作：
@@ -429,7 +458,7 @@ Research $ARGUMENTS thoroughly:
 當此 skill 執行時：
 
 1. 建立新的隔離上下文
-2. Subagent 收到 skill 內容作為其提示（'Research \$ARGUMENTS thoroughly...'）
+2. Subagent 收到 skill 內容作為其提示（「Research \$ARGUMENTS thoroughly...」）
 3. `agent` 欄位決定執行環境（模型、工具和許可）
 4. 結果會總結並返回到您的主要對話
 
@@ -437,7 +466,7 @@ Research $ARGUMENTS thoroughly:
 
 ### 限制 Claude 的 skill 存取
 
-預設情況下，Claude 可以叫用任何沒有設定 `disable-model-invocation: true` 的 skill。定義 `allowed-tools` 的 Skills 在 skill 處於作用中時授予 Claude 對這些工具的存取權，無需每次使用批准。您的[許可設定](/zh-TW/permissions)仍然管理所有其他工具的基準批准行為。內建命令（如 `/compact` 和 `/init`）無法透過 Skill 工具取得。
+預設情況下，Claude 可以叫用任何沒有設定 `disable-model-invocation: true` 的 skill。定義 `allowed-tools` 的 Skills 在 skill 處於作用中時授予 Claude 對這些工具的存取權，無需每次使用批准。您的[許可設定](/zh-TW/permissions)仍然管理所有其他工具的基準批准行為。一些內建命令也可透過 Skill 工具取得，包括 `/init`、`/review` 和 `/security-review`。其他內建命令（例如 `/compact`）則不行。
 
 控制 Claude 可以叫用哪些 skills 的三種方式：
 
@@ -686,13 +715,14 @@ if __name__ == '__main__':
 
 Skill 描述會載入上下文，以便 Claude 知道可用的內容。所有 skill 名稱始終包含在內，但如果您有許多 skills，描述會被縮短以適應字元預算，這可能會去除 Claude 需要匹配您的請求的關鍵字。預算在上下文視窗的 1% 處動態縮放，回退為 8,000 個字元。
 
-若要提高限制，請設定 `SLASH_COMMAND_TOOL_CHAR_BUDGET` 環境變數。或在來源處修剪描述：前置關鍵使用案例，因為每個項目無論預算如何都限制在 250 個字元。
+若要提高限制，請設定 `SLASH_COMMAND_TOOL_CHAR_BUDGET` 環境變數。或在來源處修剪描述和 `when_to_use` 文字：前置關鍵使用案例，因為每個項目的結合文字無論預算如何都限制在 1,536 個字元。
 
 ## 相關資源
 
+* **[除錯您的設定](/zh-TW/debug-your-config)**：診斷為什麼 skill 沒有出現或觸發
 * **[Subagents](/zh-TW/sub-agents)**：委派任務給專門的代理
-* **[外掛](/zh-TW/plugins)**：使用其他擴展功能打包和分發 skills
+* **[Plugins](/zh-TW/plugins)**：使用其他擴展功能打包和分發 skills
 * **[Hooks](/zh-TW/hooks)**：自動化工具事件周圍的工作流程
-* **[記憶](/zh-TW/memory)**：管理 CLAUDE.md 檔案以取得持久上下文
-* **[內建命令](/zh-TW/commands)**：內建 `/` 命令的參考
-* **[許可](/zh-TW/permissions)**：控制工具和 skill 存取
+* **[Memory](/zh-TW/memory)**：管理 CLAUDE.md 檔案以取得持久上下文
+* **[Commands](/zh-TW/commands)**：內建命令和捆綁 skills 的參考
+* **[Permissions](/zh-TW/permissions)**：控制工具和 skill 存取

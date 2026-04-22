@@ -403,6 +403,14 @@ Supposons que vous ayez besoin d'ajouter ou de mettre à jour la documentation d
 
 ***
 
+## Travailler dans les notes et les dossiers non-code
+
+Claude Code fonctionne dans n'importe quel répertoire. Exécutez-le à l'intérieur d'un coffre-fort de notes, d'un dossier de documentation ou de toute collection de fichiers markdown pour rechercher, modifier et réorganiser le contenu de la même manière que vous le feriez pour du code.
+
+Le répertoire `.claude/` et `CLAUDE.md` se trouvent aux côtés des répertoires de configuration d'autres outils sans conflit. Claude lit les fichiers à nouveau à chaque appel d'outil, il voit donc les modifications que vous apportez dans une autre application la prochaine fois qu'il lit ce fichier.
+
+***
+
 ## Travailler avec les images
 
 Supposons que vous ayez besoin de travailler avec des images dans votre base de code et que vous souhaitiez l'aide de Claude pour analyser le contenu des images.
@@ -506,9 +514,9 @@ Utilisez @ pour inclure rapidement des fichiers ou des répertoires sans attendr
 
 ## Utiliser la réflexion étendue (mode de réflexion)
 
-[La réflexion étendue](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) est activée par défaut, donnant à Claude l'espace pour raisonner à travers des problèmes complexes étape par étape avant de répondre. Ce raisonnement est visible en mode verbeux, que vous pouvez activer avec `Ctrl+O`.
+[La réflexion étendue](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) est activée par défaut, donnant à Claude l'espace pour raisonner à travers des problèmes complexes étape par étape avant de répondre. Ce raisonnement est visible en mode verbeux, que vous pouvez activer avec `Ctrl+O`. Pendant la réflexion étendue, des indices de progression apparaissent sous l'indicateur pour montrer que Claude travaille activement.
 
-De plus, Opus 4.6 et Sonnet 4.6 prennent en charge le raisonnement adaptatif : au lieu d'un budget de jetons de réflexion fixe, le modèle alloue dynamiquement la réflexion en fonction de votre paramètre [niveau d'effort](/fr/model-config#adjust-effort-level). La réflexion étendue et le raisonnement adaptatif fonctionnent ensemble pour vous donner le contrôle sur la profondeur de la réflexion de Claude avant de répondre.
+De plus, les [modèles qui prennent en charge l'effort](/fr/model-config#adjust-effort-level) utilisent le raisonnement adaptatif : au lieu d'un budget de jetons de réflexion fixe, le modèle décide dynamiquement s'il faut penser et combien en fonction de votre paramètre de niveau d'effort et de la tâche à accomplir. Le raisonnement adaptatif permet à Claude de répondre plus rapidement aux prompts de routine et de réserver une réflexion plus profonde pour les étapes qui en bénéficient.
 
 La réflexion étendue est particulièrement précieuse pour les décisions architecturales complexes, les bogues difficiles, la planification de l'implémentation multi-étapes et l'évaluation des compromis entre différentes approches.
 
@@ -520,13 +528,13 @@ La réflexion étendue est particulièrement précieuse pour les décisions arch
 
 La réflexion est activée par défaut, mais vous pouvez l'ajuster ou la désactiver.
 
-| Portée                          | Comment configurer                                                                                  | Détails                                                                                                                                                                                                        |
-| ------------------------------- | --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Niveau d'effort**             | Exécutez `/effort`, ajustez dans `/model`, ou définissez [`CLAUDE_CODE_EFFORT_LEVEL`](/fr/env-vars) | Contrôlez la profondeur de la réflexion pour Opus 4.6 et Sonnet 4.6. Consultez [Ajuster le niveau d'effort](/fr/model-config#adjust-effort-level)                                                              |
-| **Mot-clé `ultrathink`**        | Incluez « ultrathink » n'importe où dans votre prompt                                               | Définit l'effort à high pour ce tour sur Opus 4.6 et Sonnet 4.6. Utile pour les tâches ponctuelles nécessitant un raisonnement profond sans modifier définitivement votre paramètre d'effort                   |
-| **Raccourci de basculement**    | Appuyez sur `Option+T` (macOS) ou `Alt+T` (Windows/Linux)                                           | Basculez la réflexion activée/désactivée pour la session actuelle (tous les modèles). Peut nécessiter une [configuration du terminal](/fr/terminal-config) pour activer les raccourcis de la touche Option     |
-| **Défaut global**               | Utilisez `/config` pour basculer le mode de réflexion                                               | Définit votre défaut sur tous les projets (tous les modèles).<br />Enregistré comme `alwaysThinkingEnabled` dans `~/.claude/settings.json`                                                                     |
-| **Limiter le budget de jetons** | Définissez la variable d'environnement [`MAX_THINKING_TOKENS`](/fr/env-vars)                        | Limitez le budget de réflexion à un nombre spécifique de jetons. Sur Opus 4.6 et Sonnet 4.6, seul `0` s'applique sauf si le raisonnement adaptatif est désactivé. Exemple : `export MAX_THINKING_TOKENS=10000` |
+| Portée                          | Comment configurer                                                                                  | Détails                                                                                                                                                                                                                         |
+| ------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Niveau d'effort**             | Exécutez `/effort`, ajustez dans `/model`, ou définissez [`CLAUDE_CODE_EFFORT_LEVEL`](/fr/env-vars) | Contrôlez la profondeur de la réflexion sur les [modèles pris en charge](/fr/model-config#adjust-effort-level)                                                                                                                  |
+| **Mot-clé `ultrathink`**        | Incluez « ultrathink » n'importe où dans votre prompt                                               | Ajoute une instruction en contexte indiquant au modèle de raisonner davantage sur ce tour. Ne change pas le niveau d'effort lui-même ; consultez [Ajuster le niveau d'effort](/fr/model-config#adjust-effort-level) pour cela   |
+| **Raccourci de basculement**    | Appuyez sur `Option+T` (macOS) ou `Alt+T` (Windows/Linux)                                           | Basculez la réflexion activée/désactivée pour la session actuelle (tous les modèles). Peut nécessiter une [configuration du terminal](/fr/terminal-config) pour activer les raccourcis de la touche Option                      |
+| **Défaut global**               | Utilisez `/config` pour basculer le mode de réflexion                                               | Définit votre défaut sur tous les projets (tous les modèles).<br />Enregistré comme `alwaysThinkingEnabled` dans `~/.claude/settings.json`                                                                                      |
+| **Limiter le budget de jetons** | Définissez la variable d'environnement [`MAX_THINKING_TOKENS`](/fr/env-vars)                        | Limitez le budget de réflexion à un nombre spécifique de jetons. Sur les modèles avec raisonnement adaptatif, seul `0` s'applique sauf si le raisonnement adaptatif est désactivé. Exemple : `export MAX_THINKING_TOKENS=10000` |
 
 Pour afficher le processus de réflexion de Claude, appuyez sur `Ctrl+O` pour basculer le mode verbeux et voir le raisonnement interne affiché en texte gris italique.
 
@@ -534,11 +542,11 @@ Pour afficher le processus de réflexion de Claude, appuyez sur `Ctrl+O` pour ba
 
 La réflexion étendue contrôle la quantité de raisonnement interne que Claude effectue avant de répondre. Plus de réflexion fournit plus d'espace pour explorer les solutions, analyser les cas limites et corriger les erreurs.
 
-**Avec Opus 4.6 et Sonnet 4.6**, la réflexion utilise le raisonnement adaptatif : le modèle alloue dynamiquement les jetons de réflexion en fonction du [niveau d'effort](/fr/model-config#adjust-effort-level) que vous sélectionnez. C'est la façon recommandée d'ajuster le compromis entre la vitesse et la profondeur du raisonnement.
+Sur les [modèles qui prennent en charge l'effort](/fr/model-config#adjust-effort-level), la réflexion utilise le raisonnement adaptatif : le modèle alloue dynamiquement les jetons de réflexion en fonction du niveau d'effort que vous sélectionnez. C'est la façon recommandée d'ajuster le compromis entre la vitesse et la profondeur du raisonnement. Si vous souhaitez que Claude pense plus ou moins souvent que votre niveau d'effort ne le produirait autrement, vous pouvez également le dire directement dans votre prompt ou dans `CLAUDE.md`.
 
-**Avec d'autres modèles**, la réflexion utilise un budget fixe de jetons tiré de votre allocation de sortie. Le budget varie selon le modèle ; consultez [`MAX_THINKING_TOKENS`](/fr/env-vars) pour les plafonds par modèle. Vous pouvez limiter le budget avec cette variable d'environnement, ou désactiver complètement la réflexion via `/config` ou le basculement `Option+T`/`Alt+T`.
+Avec les modèles plus anciens, la réflexion utilise un budget fixe de jetons tiré de votre allocation de sortie. Le budget varie selon le modèle ; consultez [`MAX_THINKING_TOKENS`](/fr/env-vars) pour les plafonds par modèle. Vous pouvez limiter le budget avec cette variable d'environnement, ou désactiver complètement la réflexion via `/config` ou le basculement `Option+T`/`Alt+T`.
 
-Sur Opus 4.6 et Sonnet 4.6, le [raisonnement adaptatif](/fr/model-config#adjust-effort-level) contrôle la profondeur de la réflexion, donc `MAX_THINKING_TOKENS` ne s'applique que lorsqu'il est défini à `0` pour désactiver la réflexion, ou lorsque `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` revient à ces modèles au budget fixe. Consultez [variables d'environnement](/fr/env-vars).
+Sur les modèles avec raisonnement adaptatif, `MAX_THINKING_TOKENS` ne s'applique que lorsqu'il est défini à `0` pour désactiver la réflexion, ou lorsque `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` revient à ces modèles au budget fixe. `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` s'applique à Opus 4.6 et Sonnet 4.6 uniquement. Opus 4.7 utilise toujours le raisonnement adaptatif et ne prend pas en charge un budget de réflexion fixe. Consultez [variables d'environnement](/fr/env-vars).
 
 <Warning>
   Vous êtes facturé pour tous les jetons de réflexion utilisés, même si les résumés de réflexion sont redactés. En mode interactif, la réflexion apparaît comme un stub réduit par défaut. Définissez `showThinkingSummaries: true` dans `settings.json` pour afficher les résumés complets.
@@ -556,7 +564,15 @@ Lors du démarrage de Claude Code, vous pouvez reprendre une session précédent
 
 À partir d'une session active, utilisez `/resume` pour basculer vers une conversation différente.
 
-Les sessions sont stockées par répertoire de projet. Le sélecteur `/resume` affiche les sessions interactives du même référentiel git, y compris les worktrees. Les sessions créées par `claude -p` ou les invocations SDK n'apparaissent pas dans le sélecteur, mais vous pouvez toujours en reprendre une en passant son ID de session directement à `claude --resume <session-id>`.
+Les sessions sont stockées par répertoire de projet. Par défaut, le sélecteur `/resume` affiche les sessions interactives du même référentiel git, y compris les worktrees. Les sessions créées par `claude -p` ou les invocations SDK n'apparaissent pas dans le sélecteur, mais vous pouvez toujours en reprendre une en passant son ID de session directement à `claude --resume <session-id>`.
+
+Lorsque vous sélectionnez une session à partir d'un autre worktree du même référentiel, Claude Code la reprend directement sans vous obliger à d'abord basculer les répertoires. La sélection d'une session à partir d'un projet non lié copie une commande `cd` et de reprise dans votre presse-papiers à la place.
+
+La reprise par nom se résout dans le référentiel actuel et ses worktrees. À la fois `claude --resume <name>` et `/resume <name>` recherchent une correspondance exacte et la reprennent directement, même si la session se trouve dans un worktree différent.
+
+Lorsque le nom est ambigu, `claude --resume <name>` ouvre le sélecteur avec le nom pré-rempli comme terme de recherche. `/resume <name>` à partir d'une session signale une erreur à la place, donc exécutez `/resume` sans argument pour ouvrir le sélecteur et choisir.
+
+Les sessions créées par `claude -p` ou les invocations SDK n'apparaissent pas dans le sélecteur, mais vous pouvez toujours en reprendre une en passant son ID de session directement à `claude --resume <session-id>`.
 
 ### Nommez vos sessions
 
@@ -576,7 +592,7 @@ Donnez aux sessions des noms descriptifs pour les trouver plus tard. C'est une b
     /rename auth-refactor
     ```
 
-    Vous pouvez également renommer n'importe quelle session à partir du sélecteur : exécutez `/resume`, accédez à une session et appuyez sur `R`.
+    Vous pouvez également renommer n'importe quelle session à partir du sélecteur : exécutez `/resume`, accédez à une session et appuyez sur `Ctrl+R`.
   </Step>
 
   <Step title="Reprenez par nom plus tard">
@@ -600,26 +616,28 @@ La commande `/resume` (ou `claude --resume` sans arguments) ouvre un sélecteur 
 
 **Raccourcis clavier dans le sélecteur :**
 
-| Raccourci | Action                                                  |
-| :-------- | :------------------------------------------------------ |
-| `↑` / `↓` | Naviguer entre les sessions                             |
-| `→` / `←` | Développer ou réduire les sessions groupées             |
-| `Entrée`  | Sélectionner et reprendre la session en surbrillance    |
-| `P`       | Aperçu du contenu de la session                         |
-| `R`       | Renommer la session en surbrillance                     |
-| `/`       | Rechercher pour filtrer les sessions                    |
-| `A`       | Basculer entre le répertoire actuel et tous les projets |
-| `B`       | Filtrer les sessions de votre branche git actuelle      |
-| `Échap`   | Quitter le sélecteur ou le mode de recherche            |
+| Raccourci                                           | Action                                                                                                                                                                           |
+| :-------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `↑` / `↓`                                           | Naviguer entre les sessions                                                                                                                                                      |
+| `→` / `←`                                           | Développer ou réduire les sessions groupées                                                                                                                                      |
+| `Entrée`                                            | Sélectionner et reprendre la session en surbrillance                                                                                                                             |
+| `Espace`                                            | Aperçu du contenu de la session. `Ctrl+V` fonctionne également sur les terminaux qui ne le capturent pas comme collage                                                           |
+| `Ctrl+R`                                            | Renommer la session en surbrillance                                                                                                                                              |
+| `/` ou tout caractère imprimable autre que `Espace` | Entrer en mode de recherche et filtrer les sessions                                                                                                                              |
+| `Ctrl+A`                                            | Afficher les sessions de tous les projets sur cette machine. Appuyez à nouveau pour restaurer le référentiel actuel                                                              |
+| `Ctrl+W`                                            | Afficher les sessions de tous les worktrees du référentiel actuel. Appuyez à nouveau pour restaurer le worktree actuel. Affiché uniquement dans les référentiels multi-worktrees |
+| `Ctrl+B`                                            | Filtrer les sessions de votre branche git actuelle. Appuyez à nouveau pour afficher les sessions de toutes les branches                                                          |
+| `Échap`                                             | Quitter le sélecteur ou le mode de recherche                                                                                                                                     |
 
 **Organisation des sessions :**
 
 Le sélecteur affiche les sessions avec des métadonnées utiles :
 
-* Nom de la session ou prompt initial
+* Nom de la session s'il est défini, sinon le résumé de la conversation ou le premier prompt utilisateur
 * Temps écoulé depuis la dernière activité
 * Nombre de messages
 * Branche Git (le cas échéant)
+* Chemin du projet, affiché après élargissement à tous les projets avec `Ctrl+A`
 
 Les sessions bifurquées (créées avec `/branch`, `/rewind`, ou `--fork-session`) sont groupées ensemble sous leur session racine, ce qui facilite la recherche de conversations connexes.
 
@@ -631,7 +649,7 @@ Les sessions bifurquées (créées avec `/branch`, `/rewind`, ou `--fork-session
   * Utilisez `--resume session-name` quand vous savez quelle session vous avez besoin
   * Utilisez `--resume` (sans nom) quand vous avez besoin de parcourir et de sélectionner
   * Pour les scripts, utilisez `claude --continue --print "prompt"` pour reprendre en mode non interactif
-  * Appuyez sur `P` dans le sélecteur pour prévisualiser une session avant de la reprendre
+  * Appuyez sur `Espace` dans le sélecteur pour prévisualiser une session avant de la reprendre
   * La conversation reprise démarre avec le même modèle et la même configuration que l'original
 
   Comment cela fonctionne :
@@ -690,6 +708,8 @@ Lorsque vous quittez une session worktree, Claude gère le nettoyage en fonction
 
 * **Pas de modifications** : le worktree et sa branche sont supprimés automatiquement
 * **Les modifications ou les commits existent** : Claude vous demande de conserver ou de supprimer le worktree. La conservation préserve le répertoire et la branche afin que vous puissiez revenir plus tard. La suppression supprime le répertoire worktree et sa branche, en supprimant toutes les modifications non validées et les commits
+
+Les worktrees des subagents orphelins causés par un crash ou une exécution parallèle interrompue sont supprimés automatiquement au démarrage une fois qu'ils sont plus anciens que votre paramètre [`cleanupPeriodDays`](/fr/settings#available-settings), à condition qu'ils n'aient pas de modifications non validées, pas de fichiers non suivis et pas de commits non poussés. Les worktrees que vous créez avec `--worktree` ne sont jamais supprimés par ce balayage.
 
 Pour nettoyer les worktrees en dehors d'une session Claude, utilisez la [gestion manuelle des worktrees](#manage-worktrees-manually).
 
@@ -928,12 +948,12 @@ Supposons que vous souhaitiez que Claude gère une tâche automatiquement de man
 
 Choisissez une option de planification en fonction de l'endroit où vous souhaitez que la tâche s'exécute :
 
-| Option                                                                  | Où elle s'exécute                          | Idéale pour                                                                                                                                                          |
-| :---------------------------------------------------------------------- | :----------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Tâches planifiées dans le cloud](/fr/web-scheduled-tasks)              | Infrastructure gérée par Anthropic         | Les tâches qui doivent s'exécuter même quand votre ordinateur est éteint. Configurez sur [claude.ai/code](https://claude.ai/code).                                   |
-| [Tâches planifiées sur le bureau](/fr/desktop#schedule-recurring-tasks) | Votre machine, via l'application de bureau | Les tâches qui ont besoin d'un accès direct aux fichiers locaux, aux outils ou aux modifications non validées.                                                       |
-| [GitHub Actions](/fr/github-actions)                                    | Votre pipeline CI                          | Les tâches liées aux événements du référentiel comme les PR ouvertes, ou les calendriers cron qui doivent vivre aux côtés de votre configuration de flux de travail. |
-| [`/loop`](/fr/scheduled-tasks)                                          | La session CLI actuelle                    | L'interrogation rapide pendant qu'une session est ouverte. Les tâches sont annulées quand vous quittez.                                                              |
+| Option                                                         | Où elle s'exécute                          | Idéale pour                                                                                                                                                                                                                                               |
+| :------------------------------------------------------------- | :----------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Routines](/fr/routines)                                       | Infrastructure gérée par Anthropic         | Les tâches qui doivent s'exécuter même quand votre ordinateur est éteint. Peuvent également se déclencher sur les appels API ou les événements GitHub en plus d'un calendrier. Configurez sur [claude.ai/code/routines](https://claude.ai/code/routines). |
+| [Tâches planifiées sur le bureau](/fr/desktop-scheduled-tasks) | Votre machine, via l'application de bureau | Les tâches qui ont besoin d'un accès direct aux fichiers locaux, aux outils ou aux modifications non validées.                                                                                                                                            |
+| [GitHub Actions](/fr/github-actions)                           | Votre pipeline CI                          | Les tâches liées aux événements du référentiel comme les PR ouvertes, ou les calendriers cron qui doivent vivre aux côtés de votre configuration de flux de travail.                                                                                      |
+| [`/loop`](/fr/scheduled-tasks)                                 | La session CLI actuelle                    | L'interrogation rapide pendant qu'une session est ouverte. Les tâches s'arrêtent quand vous commencez une nouvelle conversation ; `--resume` et `--continue` restaurent les tâches non expirées.                                                          |
 
 <Tip>
   Lors de la rédaction de prompts pour les tâches planifiées, soyez explicite sur ce que signifie le succès et ce qu'il faut faire avec les résultats. La tâche s'exécute de manière autonome, elle ne peut donc pas poser de questions de clarification. Par exemple : ' Examinez les PR ouvertes étiquetées `needs-review`, laissez des commentaires en ligne sur les problèmes et publiez un résumé dans le canal Slack `#eng-reviews`. '

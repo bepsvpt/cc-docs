@@ -18,40 +18,41 @@ Hook은 Claude Code 세션 중 특정 지점에서 실행됩니다. 이벤트가
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/UMJp-WgTWngzO609/images/hooks-lifecycle.svg?fit=max&auto=format&n=UMJp-WgTWngzO609&q=85&s=3f4de67df216c87dc313943b32c15f62" alt="SessionStart에서 시작하여 턴당 루프 (UserPromptSubmit, 중첩된 에이전트 루프 (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCreated, TaskCompleted), Stop 또는 StopFailure), TeammateIdle, PreCompact, PostCompact, SessionEnd를 거쳐 진행되는 hook 수명 주기 다이어그램. Elicitation 및 ElicitationResult는 MCP 도구 실행 내에 중첩되고, PermissionDenied는 PermissionRequest의 부분 분기이며, WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged, FileChanged는 독립적인 비동기 이벤트" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/NgDeMMkM7ZmaRibg/images/hooks-lifecycle.svg?fit=max&auto=format&n=NgDeMMkM7ZmaRibg&q=85&s=ec53c77f9943a6470cb2c8ecace6d809" alt="SessionStart에서 시작하여 턴당 루프(UserPromptSubmit, 슬래시 명령에 대한 UserPromptExpansion, 중첩된 에이전트 루프(PreToolUse, PermissionRequest, PostToolUse, PostToolUseFailure, SubagentStart/Stop, TaskCreated, TaskCompleted), Stop 또는 StopFailure), TeammateIdle, PreCompact, PostCompact, SessionEnd를 거쳐 진행되는 hook 수명 주기 다이어그램. Elicitation 및 ElicitationResult는 MCP 도구 실행 내에 중첩되고, PermissionDenied는 PermissionRequest의 부분 분기(자동 모드 거부용), WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged, FileChanged는 독립적인 비동기 이벤트" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
 아래 표는 각 이벤트가 언제 발생하는지 요약합니다. [Hook 이벤트](#hook-events) 섹션에서는 각 이벤트의 전체 입력 스키마와 결정 제어 옵션을 문서화합니다.
 
-| Event                | When it fires                                                                                                                                          |
-| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SessionStart`       | When a session begins or resumes                                                                                                                       |
-| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                                                                   |
-| `PreToolUse`         | Before a tool call executes. Can block it                                                                                                              |
-| `PermissionRequest`  | When a permission dialog appears                                                                                                                       |
-| `PermissionDenied`   | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
-| `PostToolUse`        | After a tool call succeeds                                                                                                                             |
-| `PostToolUseFailure` | After a tool call fails                                                                                                                                |
-| `Notification`       | When Claude Code sends a notification                                                                                                                  |
-| `SubagentStart`      | When a subagent is spawned                                                                                                                             |
-| `SubagentStop`       | When a subagent finishes                                                                                                                               |
-| `TaskCreated`        | When a task is being created via `TaskCreate`                                                                                                          |
-| `TaskCompleted`      | When a task is being marked as completed                                                                                                               |
-| `Stop`               | When Claude finishes responding                                                                                                                        |
-| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
-| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
-| `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
-| `ConfigChange`       | When a configuration file changes during a session                                                                                                     |
-| `CwdChanged`         | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
-| `FileChanged`        | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
-| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
-| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
-| `PreCompact`         | Before context compaction                                                                                                                              |
-| `PostCompact`        | After context compaction completes                                                                                                                     |
-| `Elicitation`        | When an MCP server requests user input during a tool call                                                                                              |
-| `ElicitationResult`  | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
-| `SessionEnd`         | When a session terminates                                                                                                                              |
+| Event                 | When it fires                                                                                                                                          |
+| :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SessionStart`        | When a session begins or resumes                                                                                                                       |
+| `UserPromptSubmit`    | When you submit a prompt, before Claude processes it                                                                                                   |
+| `UserPromptExpansion` | When a user-typed command expands into a prompt, before it reaches Claude. Can block the expansion                                                     |
+| `PreToolUse`          | Before a tool call executes. Can block it                                                                                                              |
+| `PermissionRequest`   | When a permission dialog appears                                                                                                                       |
+| `PermissionDenied`    | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
+| `PostToolUse`         | After a tool call succeeds                                                                                                                             |
+| `PostToolUseFailure`  | After a tool call fails                                                                                                                                |
+| `Notification`        | When Claude Code sends a notification                                                                                                                  |
+| `SubagentStart`       | When a subagent is spawned                                                                                                                             |
+| `SubagentStop`        | When a subagent finishes                                                                                                                               |
+| `TaskCreated`         | When a task is being created via `TaskCreate`                                                                                                          |
+| `TaskCompleted`       | When a task is being marked as completed                                                                                                               |
+| `Stop`                | When Claude finishes responding                                                                                                                        |
+| `StopFailure`         | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
+| `TeammateIdle`        | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
+| `InstructionsLoaded`  | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
+| `ConfigChange`        | When a configuration file changes during a session                                                                                                     |
+| `CwdChanged`          | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
+| `FileChanged`         | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
+| `WorktreeCreate`      | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
+| `WorktreeRemove`      | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
+| `PreCompact`          | Before context compaction                                                                                                                              |
+| `PostCompact`         | After context compaction completes                                                                                                                     |
+| `Elicitation`         | When an MCP server requests user input during a tool call                                                                                              |
+| `ElicitationResult`   | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
+| `SessionEnd`          | When a session terminates                                                                                                                              |
 
 ### Hook이 어떻게 해결되는지
 
@@ -199,6 +200,7 @@ hook을 정의하는 위치는 그 범위를 결정합니다:
 | `FileChanged`                                                                                                  | 감시할 리터럴 파일명 ([FileChanged](#filechanged) 참조) | `.envrc\|.env`                                                                                                            |
 | `StopFailure`                                                                                                  | 오류 유형                                        | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
 | `InstructionsLoaded`                                                                                           | 로드 이유                                        | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `UserPromptExpansion`                                                                                          | 명령 이름                                        | skill 또는 명령 이름                                                                                                            |
 | `Elicitation`                                                                                                  | MCP 서버 이름                                    | 구성된 MCP 서버 이름                                                                                                             |
 | `ElicitationResult`                                                                                            | MCP 서버 이름                                    | `Elicitation`과 동일한 값                                                                                                      |
 | `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | matcher 지원 없음                                | 모든 발생에서 항상 발생                                                                                                             |
@@ -227,7 +229,7 @@ matcher는 Claude Code가 stdin의 hook에 전송하는 [JSON 입력](#hook-inpu
 
 `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged`는 matcher를 지원하지 않으며 모든 발생에서 항상 발생합니다. 이러한 이벤트에 `matcher` 필드를 추가하면 자동으로 무시됩니다.
 
-도구 이벤트의 경우 개별 hook 핸들러에서 [`if` 필드](#common-fields)를 설정하여 더 좁게 필터링할 수 있습니다. `if`는 [권한 규칙 구문](/ko/permissions)을 사용하여 도구 이름과 인수를 함께 일치시키므로 `"Bash(git *)"` 는 `git` 명령에만 실행되고 `"Edit(*.ts)"`는 TypeScript 파일에만 실행됩니다.
+도구 이벤트의 경우 개별 hook 핸들러에서 [`if` 필드](#common-fields)를 설정하여 더 좁게 필터링할 수 있습니다. `if`는 [권한 규칙 구문](/ko/permissions)을 사용하여 도구 이름과 인수를 함께 일치시키므로 `"Bash(git *)"` 는 `git *` 패턴과 일치하는 모든 하위 명령에서 실행되고 `"Edit(*.ts)"`는 TypeScript 파일에만 실행됩니다.
 
 #### MCP 도구 일치
 
@@ -455,7 +457,7 @@ Claude Code에서 `/hooks`를 입력하여 구성된 hook의 읽기 전용 브�
 * `Session`: 현재 세션을 위해 메모리에 등록됨
 * `Built-in`: Claude Code에 의해 내부적으로 등록됨
 
-hook을 선택하면 이벤트, matcher, 유형, 소스 파일, 전체 명령, 프롬프트 또는 URL을 표시하는 세부 정보 보기가 열립니다. 메뉴는 읽기 전용입니다: hook을 추가, 수정 또는 제거하려면 설정 JSON을 직접 편집하세요.
+hook을 선택하면 이벤트, matcher, 유형, 소스 파일, 전체 명령, 프롬프트 또는 URL을 표시하는 세부 정보 보기가 열립니다. 메뉴는 읽기 전용입니다: hook을 추가, 수정 또는 제거하려면 설정 JSON을 직접 편집하거나 Claude에 변경을 요청하세요.
 
 ### Hook 비활성화 또는 제거
 
@@ -512,7 +514,7 @@ Hook 이벤트는 각 [hook 이벤트](#hook-events) 섹션에서 문서화된 �
 
 hook 명령의 종료 코드는 Claude Code에 작업을 진행할지, 차단할지 또는 무시할지를 알려줍니다.
 
-**종료 0**은 성공을 의미합니다. Claude Code는 [JSON 출력 필드](#json-output)에 대해 stdout을 구문 분석합니다. JSON 출력은 종료 0에서만 처리됩니다. 대부분의 이벤트에서 stdout은 디버그 로그에 기록되지만 트랜스크립트에는 표시되지 않습니다. 예외는 `UserPromptSubmit` 및 `SessionStart`이며, 여기서 stdout은 Claude가 보고 작용할 수 있는 컨텍스트로 추가됩니다.
+**종료 0**은 성공을 의미합니다. Claude Code는 [JSON 출력 필드](#json-output)에 대해 stdout을 구문 분석합니다. JSON 출력은 종료 0에서만 처리됩니다. 대부분의 이벤트에서 stdout은 디버그 로그에 기록되지만 트랜스크립트에는 표시되지 않습니다. 예외는 `UserPromptSubmit`, `UserPromptExpansion`, 및 `SessionStart`이며, 여기서 stdout은 Claude가 보고 작용할 수 있는 컨텍스트로 추가됩니다.
 
 **종료 2**는 차단 오류를 의미합니다. Claude Code는 stdout과 그 안의 JSON을 무시합니다. 대신 stderr 텍스트가 Claude에 오류 메시지로 피드백됩니다. 효과는 이벤트에 따라 다릅니다: `PreToolUse`는 도구 호출을 차단하고 `UserPromptSubmit`은 프롬프트를 거부합니다. 전체 목록은 [이벤트별 종료 코드 2 동작](#exit-code-2-behavior-per-event)을 참조하세요.
 
@@ -541,34 +543,35 @@ exit 0  # 성공: 도구 호출이 진행됨
 
 종료 코드 2는 hook이 "멈춰, 이것을 하지 마"라고 신호하는 방식입니다. 효과는 이벤트에 따라 다릅니다. 일부 이벤트는 차단할 수 있는 작업을 나타내고 (아직 발생하지 않은 도구 호출처럼) 다른 이벤트는 이미 발생했거나 방지할 수 없는 것을 나타내기 때문입니다.
 
-| Hook 이벤트             | 차단 가능? | 종료 코드 2에서 발생하는 것                                                                                   |
-| :------------------- | :----- | :------------------------------------------------------------------------------------------------- |
-| `PreToolUse`         | 예      | 도구 호출을 차단합니다                                                                                       |
-| `PermissionRequest`  | 예      | 권한을 거부합니다                                                                                          |
-| `UserPromptSubmit`   | 예      | 프롬프트 처리를 차단하고 프롬프트를 지웁니다                                                                           |
-| `Stop`               | 예      | Claude가 중지되는 것을 방지하고 대화를 계속합니다                                                                     |
-| `SubagentStop`       | 예      | subagent가 중지되는 것을 방지합니다                                                                            |
-| `TeammateIdle`       | 예      | 팀원이 유휴 상태가 되는 것을 방지합니다 (팀원이 계속 작업함)                                                                |
-| `TaskCreated`        | 예      | 작업 생성을 롤백합니다                                                                                       |
-| `TaskCompleted`      | 예      | 작업이 완료로 표시되는 것을 방지합니다                                                                              |
-| `ConfigChange`       | 예      | 구성 변경이 적용되는 것을 차단합니다 (`policy_settings` 제외)                                                        |
-| `StopFailure`        | 아니오    | 출력과 종료 코드는 무시됩니다                                                                                   |
-| `PostToolUse`        | 아니오    | Claude에 stderr을 표시합니다 (도구가 이미 실행됨)                                                                 |
-| `PostToolUseFailure` | 아니오    | Claude에 stderr을 표시합니다 (도구가 이미 실패함)                                                                 |
-| `PermissionDenied`   | 아니오    | 종료 코드와 stderr은 무시됩니다 (거부가 이미 발생함). JSON `hookSpecificOutput.retry: true`를 사용하여 모델이 재시도할 수 있음을 알립니다 |
-| `Notification`       | 아니오    | 사용자에게만 stderr을 표시합니다                                                                               |
-| `SubagentStart`      | 아니오    | 사용자에게만 stderr을 표시합니다                                                                               |
-| `SessionStart`       | 아니오    | 사용자에게만 stderr을 표시합니다                                                                               |
-| `SessionEnd`         | 아니오    | 사용자에게만 stderr을 표시합니다                                                                               |
-| `CwdChanged`         | 아니오    | 사용자에게만 stderr을 표시합니다                                                                               |
-| `FileChanged`        | 아니오    | 사용자에게만 stderr을 표시합니다                                                                               |
-| `PreCompact`         | 예      | 압축을 차단합니다                                                                                          |
-| `PostCompact`        | 아니오    | 사용자에게만 stderr을 표시합니다                                                                               |
-| `Elicitation`        | 예      | elicitation을 거부합니다                                                                                 |
-| `ElicitationResult`  | 예      | 응답을 차단합니다 (작업이 거부됨)                                                                                |
-| `WorktreeCreate`     | 예      | 0이 아닌 종료 코드로 인해 worktree 생성이 실패합니다                                                                 |
-| `WorktreeRemove`     | 아니오    | 실패는 디버그 모드에서만 기록됩니다                                                                                |
-| `InstructionsLoaded` | 아니오    | 종료 코드는 무시됩니다                                                                                       |
+| Hook 이벤트              | 차단 가능? | 종료 코드 2에서 발생하는 것                                                                                   |
+| :-------------------- | :----- | :------------------------------------------------------------------------------------------------- |
+| `PreToolUse`          | 예      | 도구 호출을 차단합니다                                                                                       |
+| `PermissionRequest`   | 예      | 권한을 거부합니다                                                                                          |
+| `UserPromptSubmit`    | 예      | 프롬프트 처리를 차단하고 프롬프트를 지웁니다                                                                           |
+| `UserPromptExpansion` | 예      | 확장을 차단합니다                                                                                          |
+| `Stop`                | 예      | Claude가 중지되는 것을 방지하고 대화를 계속합니다                                                                     |
+| `SubagentStop`        | 예      | subagent가 중지되는 것을 방지합니다                                                                            |
+| `TeammateIdle`        | 예      | 팀원이 유휴 상태가 되는 것을 방지합니다 (팀원이 계속 작업함)                                                                |
+| `TaskCreated`         | 예      | 작업 생성을 롤백합니다                                                                                       |
+| `TaskCompleted`       | 예      | 작업이 완료로 표시되는 것을 방지합니다                                                                              |
+| `ConfigChange`        | 예      | 구성 변경이 적용되는 것을 차단합니다 (`policy_settings` 제외)                                                        |
+| `StopFailure`         | 아니오    | 출력과 종료 코드는 무시됩니다                                                                                   |
+| `PostToolUse`         | 아니오    | Claude에 stderr을 표시합니다 (도구가 이미 실행됨)                                                                 |
+| `PostToolUseFailure`  | 아니오    | Claude에 stderr을 표시합니다 (도구가 이미 실패함)                                                                 |
+| `PermissionDenied`    | 아니오    | 종료 코드와 stderr은 무시됩니다 (거부가 이미 발생함). JSON `hookSpecificOutput.retry: true`를 사용하여 모델이 재시도할 수 있음을 알립니다 |
+| `Notification`        | 아니오    | 사용자에게만 stderr을 표시합니다                                                                               |
+| `SubagentStart`       | 아니오    | 사용자에게만 stderr을 표시합니다                                                                               |
+| `SessionStart`        | 아니오    | 사용자에게만 stderr을 표시합니다                                                                               |
+| `SessionEnd`          | 아니오    | 사용자에게만 stderr을 표시합니다                                                                               |
+| `CwdChanged`          | 아니오    | 사용자에게만 stderr을 표시합니다                                                                               |
+| `FileChanged`         | 아니오    | 사용자에게만 stderr을 표시합니다                                                                               |
+| `PreCompact`          | 예      | 압축을 차단합니다                                                                                          |
+| `PostCompact`         | 아니오    | 사용자에게만 stderr을 표시합니다                                                                               |
+| `Elicitation`         | 예      | elicitation을 거부합니다                                                                                 |
+| `ElicitationResult`   | 예      | 응답을 차단합니다 (작업이 거부됨)                                                                                |
+| `WorktreeCreate`      | 예      | 0이 아닌 종료 코드로 인해 worktree 생성이 실패합니다                                                                 |
+| `WorktreeRemove`      | 아니오    | 실패는 디버그 모드에서만 기록됩니다                                                                                |
+| `InstructionsLoaded`  | 아니오    | 종료 코드는 무시됩니다                                                                                       |
 
 ### HTTP 응답 처리
 
@@ -617,23 +620,23 @@ Claude를 이벤트 유형과 관계없이 완전히 중지하려면:
 
 모든 이벤트가 JSON을 통해 동작을 차단하거나 제어하는 것을 지원하는 것은 아닙니다. 그렇게 하는 이벤트는 각각 다른 필드 집합을 사용하여 해당 결정을 표현합니다. hook을 작성하기 전에 이 표를 빠른 참조로 사용하세요:
 
-| 이벤트                                                                                                             | 결정 패턴                      | 주요 필드                                                                                                                  |
-| :-------------------------------------------------------------------------------------------------------------- | :------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
-| UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange, PreCompact                 | 최상위 `decision`             | `decision: "block"`, `reason`                                                                                          |
-| TeammateIdle, TaskCreated, TaskCompleted                                                                        | 종료 코드 또는 `continue: false` | 종료 코드 2는 stderr 피드백으로 작업을 차단합니다. JSON `{"continue": false, "stopReason": "..."}` 또한 팀원을 완전히 중지하여 `Stop` hook 동작과 일치합니다 |
-| PreToolUse                                                                                                      | `hookSpecificOutput`       | `permissionDecision` (allow/deny/ask/defer), `permissionDecisionReason`                                                |
-| PermissionRequest                                                                                               | `hookSpecificOutput`       | `decision.behavior` (allow/deny)                                                                                       |
-| PermissionDenied                                                                                                | `hookSpecificOutput`       | `retry: true`는 모델이 거부된 도구 호출을 재시도할 수 있음을 알립니다                                                                          |
-| WorktreeCreate                                                                                                  | 경로 반환                      | 명령 hook은 stdout에 경로를 인쇄합니다; HTTP hook은 `hookSpecificOutput.worktreePath`를 반환합니다. hook 실패 또는 누락된 경로는 생성을 실패합니다          |
-| Elicitation                                                                                                     | `hookSpecificOutput`       | `action` (accept/decline/cancel), `content` (form field values for accept)                                             |
-| ElicitationResult                                                                                               | `hookSpecificOutput`       | `action` (accept/decline/cancel), `content` (form field values override)                                               |
-| WorktreeRemove, Notification, SessionEnd, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged | 없음                         | 결정 제어 없음. 로깅 또는 정리와 같은 부작용에 사용됨                                                                                        |
+| 이벤트                                                                                                                  | 결정 패턴                      | 주요 필드                                                                                                                  |
+| :------------------------------------------------------------------------------------------------------------------- | :------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
+| UserPromptSubmit, UserPromptExpansion, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange, PreCompact | 최상위 `decision`             | `decision: "block"`, `reason`                                                                                          |
+| TeammateIdle, TaskCreated, TaskCompleted                                                                             | 종료 코드 또는 `continue: false` | 종료 코드 2는 stderr 피드백으로 작업을 차단합니다. JSON `{"continue": false, "stopReason": "..."}` 또한 팀원을 완전히 중지하여 `Stop` hook 동작과 일치합니다 |
+| PreToolUse                                                                                                           | `hookSpecificOutput`       | `permissionDecision` (allow/deny/ask/defer), `permissionDecisionReason`                                                |
+| PermissionRequest                                                                                                    | `hookSpecificOutput`       | `decision.behavior` (allow/deny)                                                                                       |
+| PermissionDenied                                                                                                     | `hookSpecificOutput`       | `retry: true`는 모델이 거부된 도구 호출을 재시도할 수 있음을 알립니다                                                                          |
+| WorktreeCreate                                                                                                       | 경로 반환                      | 명령 hook은 stdout에 경로를 인쇄합니다; HTTP hook은 `hookSpecificOutput.worktreePath`를 반환합니다. hook 실패 또는 누락된 경로는 생성을 실패합니다          |
+| Elicitation                                                                                                          | `hookSpecificOutput`       | `action` (accept/decline/cancel), `content` (form field values for accept)                                             |
+| ElicitationResult                                                                                                    | `hookSpecificOutput`       | `action` (accept/decline/cancel), `content` (form field values override)                                               |
+| WorktreeRemove, Notification, SessionEnd, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged      | 없음                         | 결정 제어 없음. 로깅 또는 정리와 같은 부작용에 사용됨                                                                                        |
 
 다음은 각 패턴의 실제 예입니다:
 
 <Tabs>
   <Tab title="최상위 결정">
-    `UserPromptSubmit`, `PostToolUse`, `PostToolUseFailure`, `Stop`, `SubagentStop`, `ConfigChange`, `PreCompact`에서 사용됩니다. 유일한 값은 `"block"`입니다. 작업을 진행하도록 허용하려면 JSON에서 `decision`을 생략하거나 JSON 없이 종료 0으로 나갑니다:
+    `UserPromptSubmit`, `UserPromptExpansion`, `PostToolUse`, `PostToolUseFailure`, `Stop`, `SubagentStop`, `ConfigChange`, `PreCompact`에서 사용됩니다. 유일한 값은 `"block"`입니다. 작업을 진행하도록 허용하려면 JSON에서 `decision`을 생략하거나 JSON 없이 종료 0으로 나갑니다:
 
     ```json theme={null}
     {
@@ -862,6 +865,54 @@ InstructionsLoaded hook은 결정 제어가 없습니다. 명령 로드를 차�
   JSON 형식은 간단한 사용 사례에는 필요하지 않습니다. 컨텍스트를 추가하려면 종료 코드 0으로 stdout에 일반 텍스트를 인쇄할 수 있습니다. 프롬프트를 차단하거나 더 구조화된 제어가 필요할 때 JSON을 사용합니다.
 </Note>
 
+### UserPromptExpansion
+
+사용자가 입력한 slash 명령이 Claude에 도달하기 전에 프롬프트로 확장될 때 실행됩니다. 이를 사용하여 특정 명령이 직접 호출되는 것을 차단하거나, 특정 skill에 대한 컨텍스트를 주입하거나, 사용자가 호출하는 명령을 기록합니다. 예를 들어 `deploy`와 일치하는 hook은 승인 파일이 없으면 `/deploy`를 차단할 수 있고, review skill과 일치하는 hook은 팀의 review 체크리스트를 `additionalContext`로 추가할 수 있습니다.
+
+이 이벤트는 `PreToolUse`가 다루지 않는 경로를 다룹니다: `PreToolUse` hook이 `Skill` 도구와 일치하면 Claude가 도구를 호출할 때만 발생하지만, `/skillname`을 직접 입력하면 `PreToolUse`를 우회합니다. `UserPromptExpansion`은 그 직접 경로에서 발생합니다.
+
+`command_name`에서 일치합니다. matcher를 비워두어 모든 prompt 유형 slash 명령에서 발생하도록 합니다.
+
+#### UserPromptExpansion 입력
+
+[공통 입력 필드](#common-input-fields) 외에도 UserPromptExpansion hook은 `expansion_type`, `command_name`, `command_args`, `command_source`, 원본 `prompt` 문자열을 받습니다. `expansion_type` 필드는 skill 및 사용자 정의 명령의 경우 `slash_command`이거나 MCP 서버 프롬프트의 경우 `mcp_prompt`입니다.
+
+```json theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../00893aaf.jsonl",
+  "cwd": "/Users/...",
+  "permission_mode": "default",
+  "hook_event_name": "UserPromptExpansion",
+  "expansion_type": "slash_command",
+  "command_name": "example-skill",
+  "command_args": "arg1 arg2",
+  "command_source": "plugin",
+  "prompt": "/example-skill arg1 arg2"
+}
+```
+
+#### UserPromptExpansion 결정 제어
+
+`UserPromptExpansion` hook은 확장을 차단하거나 컨텍스트를 추가할 수 있습니다. 모든 [JSON 출력 필드](#json-output)를 사용할 수 있습니다.
+
+| 필드                  | 설명                                                |
+| :------------------ | :------------------------------------------------ |
+| `decision`          | `"block"`은 slash 명령이 확장되는 것을 방지합니다. 생략하여 진행하도록 허용 |
+| `reason`            | `decision`이 `"block"`일 때 사용자에게 표시됩니다              |
+| `additionalContext` | 확장된 프롬프트와 함께 Claude의 컨텍스트에 추가되는 문자열               |
+
+```json theme={null}
+{
+  "decision": "block",
+  "reason": "This slash command is not available",
+  "hookSpecificOutput": {
+    "hookEventName": "UserPromptExpansion",
+    "additionalContext": "Additional context for this expansion"
+  }
+}
+```
+
 ### PreToolUse
 
 Claude가 도구 매개변수를 생성한 후 도구 호출을 처리하기 전에 실행됩니다. 도구 이름에서 일치합니다: `Bash`, `Edit`, `Write`, `Read`, `Glob`, `Grep`, `Agent`, `WebFetch`, `WebSearch`, `AskUserQuestion`, `ExitPlanMode`, 모든 [MCP 도구 이름](#match-mcp-tools).
@@ -985,6 +1036,8 @@ glob 패턴과 일치하는 파일을 찾습니다.
 | `updatedInput`             | 실행 전에 도구의 입력 매개변수를 수정합니다. 전체 입력 객체를 바꾸므로 변경되지 않은 필드를 수정된 필드와 함께 포함합니다. `"allow"`와 결합하여 자동 승인하거나 `"ask"`와 결합하여 수정된 입력을 사용자에게 표시합니다. `"defer"`의 경우 무시됩니다                                      |
 | `additionalContext`        | 도구가 실행되기 전에 Claude의 컨텍스트에 추가되는 문자열. `"defer"`의 경우 무시됩니다                                                                                                                                     |
 
+여러 PreToolUse hook이 다른 결정을 반환할 때 우선순위는 `deny` > `defer` > `ask` > `allow`입니다.
+
 hook이 `"ask"`를 반환하면 사용자에게 표시되는 권한 프롬프트에는 hook이 어디에서 왔는지를 나타내는 레이블이 포함됩니다: 예를 들어 `[User]`, `[Project]`, `[Plugin]` 또는 `[Local]`. 이는 사용자가 어느 구성 소스가 확인을 요청하는지 이해하는 데 도움이 됩니다.
 
 ```json theme={null}
@@ -1040,6 +1093,8 @@ hook이 `"ask"`를 반환하면 사용자에게 표시되는 권한 프롬프트
 ```
 
 시간 초과 또는 재시도 제한이 없습니다. 세션은 재개할 때까지 디스크에 유지됩니다. 재개할 때 답변이 준비되지 않으면 hook이 `"defer"`를 다시 반환할 수 있고 프로세스는 동일한 방식으로 종료됩니다. 호출 프로세스는 결국 `"allow"` 또는 `"deny"`를 반환하여 루프를 끝낼 시기를 제어합니다.
+
+`"defer"`는 Claude가 한 번에 단일 도구 호출을 만들 때만 작동합니다. Claude가 여러 도구 호출을 한 번에 만들면 `"defer"`는 경고와 함께 무시되고 도구는 일반 권한 흐름을 통해 진행됩니다. 제약이 존재하는 이유는 재개가 하나의 도구만 다시 실행할 수 있기 때문입니다: 다른 도구를 미해결 상태로 두지 않고 배치에서 하나의 호출을 연기할 방법이 없습니다.
 
 연기된 도구가 재개할 때 더 이상 사용 가능하지 않으면 프로세스는 `stop_reason: "tool_deferred_unavailable"`과 `is_error: true`로 종료되고 hook이 발생하기 전에 종료됩니다. 이는 도구를 제공한 MCP 서버가 재개된 세션에 연결되지 않을 때 발생합니다. `deferred_tool_use` 페이로드는 여전히 포함되므로 어느 도구가 누락되었는지 식별할 수 있습니다.
 
@@ -1691,7 +1746,7 @@ ConfigChange hook은 구성 변경이 적용되는 것을 차단할 수 있습�
 
 세션 중에 작업 디렉토리가 변경될 때 실행됩니다. 예를 들어 Claude가 `cd` 명령을 실행할 때입니다. 이를 사용하여 디렉토리 변경에 반응합니다: 환경 변수를 다시 로드하고, 프로젝트 특정 도구 체인을 활성화하거나, 설정 스크립트를 자동으로 실행합니다. [FileChanged](#filechanged)와 쌍을 이루어 [direnv](https://direnv.net/)와 같은 디렉토리별 환경을 관리하는 도구를 사용합니다.
 
-CwdChanged hook은 `CLAUDE_ENV_FILE`에 액세스할 수 있습니다. 해당 파일에 작성된 변수는 [SessionStart hook](#persist-environment-variables)과 마찬가지로 세션의 후속 Bash 명령에 유지됩니다. `type: "command"` hook만 지원됩니다.
+CwdChanged hook은 `CLAUDE_ENV_FILE`에 액세스할 수 있습니다. 해당 파일에 작성된 변수는 [SessionStart hook](#persist-environment-variables)과 마찬가지로 세션의 후속 Bash 명령에 유지됩니다.
 
 CwdChanged는 matcher를 지원하지 않으며 모든 디렉토리 변경에서 발생합니다.
 
@@ -1722,14 +1777,14 @@ CwdChanged hook은 결정 제어가 없습니다. 디렉토리 변경을 차단�
 
 ### FileChanged
 
-감시된 파일이 디스크에서 변경될 때 실행됩니다. 유용합니다. 프로젝트 구성 파일이 수정될 때 환경 변수를 다시 로드하는 데 유용합니다.
+감시된 파일이 디스크에서 변경될 때 실행됩니다. 프로젝트 구성 파일이 수정될 때 환경 변수를 다시 로드하는 데 유용합니다.
 
 `matcher`는 이 이벤트에 대해 두 가지 역할을 합니다:
 
 * **감시 목록 구축**: 값은 `|`로 분할되고 각 세그먼트는 작업 디렉토리의 리터럴 파일명으로 등록되므로 `".envrc|.env"`는 정확히 이 두 파일을 감시합니다. 정규식 패턴은 여기서 유용하지 않습니다: `^\.env`와 같은 값은 `^\.env`라는 리터럴 이름의 파일을 감시합니다.
 * **hook 실행 필터링**: 감시된 파일이 변경되면 동일한 값이 표준 [matcher 규칙](#matcher-patterns)을 사용하여 변경된 파일의 basename에 대해 실행할 hook 그룹을 필터링합니다.
 
-FileChanged hook은 `CLAUDE_ENV_FILE`에 액세스할 수 있습니다. 해당 파일에 작성된 변수는 [SessionStart hook](#persist-environment-variables)과 마찬가지로 세션의 후속 Bash 명령에 유지됩니다. `type: "command"` hook만 지원됩니다.
+FileChanged hook은 `CLAUDE_ENV_FILE`에 액세스할 수 있습니다. 해당 파일에 작성된 변수는 [SessionStart hook](#persist-environment-variables)과 마찬가지로 세션의 후속 Bash 명령에 유지됩니다.
 
 #### FileChanged 입력
 
@@ -1765,7 +1820,7 @@ FileChanged hook은 결정 제어가 없습니다. 파일 변경을 차단할 �
 
 `claude --worktree`를 실행하거나 [subagent가 `isolation: "worktree"`를 사용](/ko/sub-agents#choose-the-subagent-scope)할 때 Claude Code는 `git worktree`를 사용하여 격리된 작업 복사본을 생성합니다. WorktreeCreate hook을 구성하면 기본 git 동작을 대체하여 SVN, Perforce 또는 Mercurial과 같은 다른 버전 제어 시스템을 사용할 수 있습니다.
 
-hook은 생성된 worktree 디렉토리의 절대 경로를 반환해야 합니다. Claude Code는 이 경로를 격리된 세션의 작업 디렉토리로 사용합니다. 명령 hook은 stdout에 경로를 인쇄합니다; HTTP hook은 `hookSpecificOutput.worktreePath`를 반환합니다. hook 실패 또는 누락된 경로는 생성을 실패합니다.
+hook은 생성된 worktree 디렉토리의 절대 경로를 반환해야 합니다. Claude Code는 이 경로를 격리된 세션의 작업 디렉토리로 사용합니다. 명령 hook은 stdout에 경로를 인쇄합니다; HTTP hook은 `hookSpecificOutput.worktreePath`를 반환합니다.
 
 이 예제는 SVN 작업 복사본을 생성하고 Claude Code가 사용할 경로를 인쇄합니다. 리포지토리 URL을 자신의 것으로 바꾸세요:
 
@@ -2075,6 +2130,7 @@ matcher 필드는 MCP 서버 이름과 일치합니다.
 * `SubagentStop`
 * `TaskCompleted`
 * `TaskCreated`
+* `UserPromptExpansion`
 * `UserPromptSubmit`
 
 `command` 및 `http` hook만 지원하지만 `prompt` 또는 `agent`는 지원하지 않는 이벤트:
@@ -2381,4 +2437,4 @@ Hook 실행 세부 정보, 일치한 hook, 종료 코드, 전체 stdout 및 stde
 
 더 세밀한 hook 일치 세부 정보를 보려면 `CLAUDE_CODE_DEBUG_LOG_LEVEL=verbose`를 설정하여 hook matcher 수 및 쿼리 일치와 같은 추가 로그 줄을 확인합니다.
 
-hook이 발생하지 않음, 무한 Stop hook 루프 또는 구성 오류와 같은 일반적인 문제 해결은 가이드의 [제한 사항 및 문제 해결](/ko/hooks-guide#limitations-and-troubleshooting)을 참조하세요.
+hook이 발생하지 않음, 무한 Stop hook 루프 또는 구성 오류와 같은 일반적인 문제 해결은 가이드의 [제한 사항 및 문제 해결](/ko/hooks-guide#limitations-and-troubleshooting)을 참조하세요. 더 광범위한 진단 안내는 `/context`, `/doctor` 및 설정 우선순위를 다루는 [구성 디버그](/ko/debug-your-config)를 참조하세요.

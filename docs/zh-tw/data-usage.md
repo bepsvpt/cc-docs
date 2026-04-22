@@ -19,13 +19,13 @@
 
 如果您明確選擇加入向我們提供訓練材料的方法，例如透過[開發者合作夥伴計畫](https://support.claude.com/en/articles/11174108-about-the-development-partner-program)，我們可能會使用所提供的材料來訓練我們的模型。組織管理員可以明確選擇為其組織加入開發者合作夥伴計畫。請注意，此計畫僅適用於 Anthropic 第一方 API，不適用於 Bedrock 或 Vertex 使用者。
 
-### 使用 `/bug` 命令的回饋
+### 使用 `/feedback` 命令的回饋
 
-如果您選擇使用 `/bug` 命令向我們發送有關 Claude Code 的回饋，我們可能會使用您的回饋來改進我們的產品和服務。透過 `/bug` 共享的文字記錄會保留 5 年。
+如果您選擇使用 `/feedback` 命令向我們發送有關 Claude Code 的回饋，我們可能會使用您的回饋來改進我們的產品和服務。透過 `/feedback` 共享的文字記錄會保留 5 年。
 
 ### 工作階段品質調查
 
-當您在 Claude Code 中看到「Claude 在此工作階段中表現如何？」提示時，回應此調查（包括選擇「關閉」），只會記錄您的數字評分（1、2、3 或關閉）。我們不會作為此調查的一部分收集或儲存任何對話文字記錄、輸入、輸出或其他工作階段資料。與豎起大拇指/向下大拇指回饋或 `/bug` 報告不同，此工作階段品質調查是一個簡單的產品滿意度指標。您對此調查的回應不會影響您的資料訓練偏好設定，也不能用於訓練我們的 AI 模型。
+當您在 Claude Code 中看到「Claude 在此工作階段中表現如何？」提示時，回應此調查（包括選擇「關閉」），只會記錄您的數字評分（1、2、3 或關閉）。我們不會作為此調查的一部分收集或儲存任何對話文字記錄、輸入、輸出或其他工作階段資料。與豎起大拇指/向下大拇指回饋或 `/feedback` 報告不同，此工作階段品質調查是一個簡單的產品滿意度指標。您對此調查的回應不會影響您的資料訓練偏好設定，也不能用於訓練我們的 AI 模型。
 
 若要停用這些調查，請設定 `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`。當設定 `DISABLE_TELEMETRY` 或 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 時，調查也會停用。若要控制頻率而不是停用，請在您的設定檔中設定 [`feedbackSurveyRate`](/zh-TW/settings#available-settings) 為 `0` 到 `1` 之間的機率。
 
@@ -43,9 +43,9 @@ Anthropic 根據您的帳戶類型和偏好設定保留 Claude Code 資料。
 
 * 標準：30 天保留期
 * [零資料保留](/zh-TW/zero-data-retention)：適用於 Claude for Enterprise 上的 Claude Code。ZDR 按組織啟用；每個新組織必須由您的帳戶團隊單獨啟用 ZDR
-* 本機快取：Claude Code 用戶端可能會在本機儲存工作階段長達 30 天，以啟用工作階段繼續（可配置）
+* 本機快取：Claude Code 用戶端在 `~/.claude/projects/` 下以純文字形式本機儲存工作階段文字記錄，預設為 30 天，以啟用工作階段繼續。使用 `cleanupPeriodDays` 調整期間。請參閱[應用程式資料](/zh-TW/claude-directory#application-data)以了解儲存的內容以及如何清除。
 
-您可以隨時刪除網路上的個別 Claude Code 工作階段。刪除工作階段會永久移除工作階段的事件資料。如需有關如何刪除工作階段的說明，請參閱[管理工作階段](/zh-TW/claude-code-on-the-web#managing-sessions)。
+您可以隨時刪除網路上的個別 Claude Code 工作階段。刪除工作階段會永久移除工作階段的事件資料。如需有關如何刪除工作階段的說明，請參閱[刪除工作階段](/zh-TW/claude-code-on-the-web#delete-sessions)。
 
 在我們的[隱私中心](https://privacy.anthropic.com/)了解更多有關資料保留實踐的資訊。
 
@@ -82,17 +82,24 @@ Claude Code 從使用者的機器連接到 Statsig 服務，以記錄延遲、�
 
 Claude Code 從使用者的機器連接到 Sentry 進行操作錯誤記錄。資料在傳輸中使用 TLS 加密，在靜止時使用 256 位 AES 加密。在 [Sentry 安全文件](https://sentry.io/security/)中閱讀更多資訊。若要選擇退出錯誤記錄，請設定 `DISABLE_ERROR_REPORTING` 環境變數。
 
-當使用者執行 `/bug` 命令時，他們的完整對話歷史記錄（包括程式碼）的副本會發送到 Anthropic。資料在傳輸中和靜止時加密。可選地，在我們的公開儲存庫中建立 Github 問題。若要選擇退出錯誤報告，請設定 `DISABLE_BUG_COMMAND` 環境變數。
+當使用者執行 `/feedback` 命令時，他們的完整對話歷史記錄（包括程式碼）的副本會發送到 Anthropic。資料在傳輸中和靜止時加密。可選地，在我們的公開儲存庫中建立 Github 問題。若要選擇退出，請設定 `DISABLE_FEEDBACK_COMMAND` 環境變數為 `1`。
 
 ## 按 API 提供者的預設行為
 
-根據預設，當使用 Bedrock、Vertex 或 Foundry 時，錯誤報告、遙測和錯誤報告會停用。工作階段品質調查是例外，無論提供者為何都會出現。您可以透過設定 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 一次選擇退出所有非必要流量，包括調查。以下是完整的預設行為：
+根據預設，當使用 Bedrock、Vertex 或 Foundry 時，錯誤報告、遙測和錯誤報告會停用。工作階段品質調查和 WebFetch 網域安全檢查是例外，無論提供者為何都會執行。您可以透過設定 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 一次選擇退出所有非必要流量，包括調查。此變數不會影響 WebFetch 檢查，該檢查有其自己的選擇退出。以下是完整的預設行為：
 
-| 服務                        | Claude API                                              | Vertex API                                              | Bedrock API                                             | Foundry API                                             |
-| ------------------------- | ------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------- |
-| **Statsig（指標）**           | 預設開啟。<br />`DISABLE_TELEMETRY=1` 以停用。                   | 預設關閉。<br />`CLAUDE_CODE_USE_VERTEX` 必須為 1。              | 預設關閉。<br />`CLAUDE_CODE_USE_BEDROCK` 必須為 1。             | 預設關閉。<br />`CLAUDE_CODE_USE_FOUNDRY` 必須為 1。             |
-| **Sentry（錯誤）**            | 預設開啟。<br />`DISABLE_ERROR_REPORTING=1` 以停用。             | 預設關閉。<br />`CLAUDE_CODE_USE_VERTEX` 必須為 1。              | 預設關閉。<br />`CLAUDE_CODE_USE_BEDROCK` 必須為 1。             | 預設關閉。<br />`CLAUDE_CODE_USE_FOUNDRY` 必須為 1。             |
-| **Claude API（`/bug` 報告）** | 預設開啟。<br />`DISABLE_BUG_COMMAND=1` 以停用。                 | 預設關閉。<br />`CLAUDE_CODE_USE_VERTEX` 必須為 1。              | 預設關閉。<br />`CLAUDE_CODE_USE_BEDROCK` 必須為 1。             | 預設關閉。<br />`CLAUDE_CODE_USE_FOUNDRY` 必須為 1。             |
-| **工作階段品質調查**              | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。 | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。 | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。 | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。 |
+| 服務                             | Claude API                                                            | Vertex API                                                            | Bedrock API                                                           | Foundry API                                                           |
+| ------------------------------ | --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| **Statsig（指標）**                | 預設開啟。<br />`DISABLE_TELEMETRY=1` 以停用。                                 | 預設關閉。<br />`CLAUDE_CODE_USE_VERTEX` 必須為 1。                            | 預設關閉。<br />`CLAUDE_CODE_USE_BEDROCK` 必須為 1。                           | 預設關閉。<br />`CLAUDE_CODE_USE_FOUNDRY` 必須為 1。                           |
+| **Sentry（錯誤）**                 | 預設開啟。<br />`DISABLE_ERROR_REPORTING=1` 以停用。                           | 預設關閉。<br />`CLAUDE_CODE_USE_VERTEX` 必須為 1。                            | 預設關閉。<br />`CLAUDE_CODE_USE_BEDROCK` 必須為 1。                           | 預設關閉。<br />`CLAUDE_CODE_USE_FOUNDRY` 必須為 1。                           |
+| **Claude API（`/feedback` 報告）** | 預設開啟。<br />`DISABLE_FEEDBACK_COMMAND=1` 以停用。                          | 預設關閉。<br />`CLAUDE_CODE_USE_VERTEX` 必須為 1。                            | 預設關閉。<br />`CLAUDE_CODE_USE_BEDROCK` 必須為 1。                           | 預設關閉。<br />`CLAUDE_CODE_USE_FOUNDRY` 必須為 1。                           |
+| **工作階段品質調查**                   | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。               | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。               | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。               | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。               |
+| **WebFetch 網域安全檢查**            | 預設開啟。<br />[設定](/zh-TW/settings)中的 `skipWebFetchPreflight: true` 以停用。 | 預設開啟。<br />[設定](/zh-TW/settings)中的 `skipWebFetchPreflight: true` 以停用。 | 預設開啟。<br />[設定](/zh-TW/settings)中的 `skipWebFetchPreflight: true` 以停用。 | 預設開啟。<br />[設定](/zh-TW/settings)中的 `skipWebFetchPreflight: true` 以停用。 |
 
-所有環境變數都可以簽入 `settings.json`（[閱讀更多](/zh-TW/settings)）。
+所有環境變數都可以簽入 `settings.json`（請參閱[設定參考](/zh-TW/settings)）。
+
+### WebFetch 網域安全檢查
+
+在擷取 URL 之前，WebFetch 工具會將請求的主機名稱發送到 `api.anthropic.com`，以根據 Anthropic 維護的安全封鎖清單進行檢查。只會發送主機名稱，不會發送完整 URL、路徑或頁面內容。結果按主機名稱快取五分鐘。
+
+無論您使用哪個模型提供者，此檢查都會執行，並且不受 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 影響。如果您的網路封鎖 `api.anthropic.com`，WebFetch 請求會失敗，直到您允許清單該網域或在[設定](/zh-TW/settings)中設定 `skipWebFetchPreflight: true`。停用檢查意味著 WebFetch 會嘗試擷取任何 URL，而不查詢封鎖清單，因此如果您需要限制 Claude 可以存取的網域，請將其與 [`WebFetch` 權限規則](/zh-TW/permissions#webfetch)結合。

@@ -108,34 +108,35 @@ disallowedTools: Write, Edit
 
 플러그인 hooks는 [사용자 정의 hooks](/ko/hooks)와 동일한 라이프사이클 이벤트에 응답합니다:
 
-| Event                | When it fires                                                                                                                                          |
-| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SessionStart`       | When a session begins or resumes                                                                                                                       |
-| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                                                                   |
-| `PreToolUse`         | Before a tool call executes. Can block it                                                                                                              |
-| `PermissionRequest`  | When a permission dialog appears                                                                                                                       |
-| `PermissionDenied`   | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
-| `PostToolUse`        | After a tool call succeeds                                                                                                                             |
-| `PostToolUseFailure` | After a tool call fails                                                                                                                                |
-| `Notification`       | When Claude Code sends a notification                                                                                                                  |
-| `SubagentStart`      | When a subagent is spawned                                                                                                                             |
-| `SubagentStop`       | When a subagent finishes                                                                                                                               |
-| `TaskCreated`        | When a task is being created via `TaskCreate`                                                                                                          |
-| `TaskCompleted`      | When a task is being marked as completed                                                                                                               |
-| `Stop`               | When Claude finishes responding                                                                                                                        |
-| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
-| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
-| `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
-| `ConfigChange`       | When a configuration file changes during a session                                                                                                     |
-| `CwdChanged`         | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
-| `FileChanged`        | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
-| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
-| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
-| `PreCompact`         | Before context compaction                                                                                                                              |
-| `PostCompact`        | After context compaction completes                                                                                                                     |
-| `Elicitation`        | When an MCP server requests user input during a tool call                                                                                              |
-| `ElicitationResult`  | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
-| `SessionEnd`         | When a session terminates                                                                                                                              |
+| Event                 | When it fires                                                                                                                                          |
+| :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SessionStart`        | When a session begins or resumes                                                                                                                       |
+| `UserPromptSubmit`    | When you submit a prompt, before Claude processes it                                                                                                   |
+| `UserPromptExpansion` | When a user-typed command expands into a prompt, before it reaches Claude. Can block the expansion                                                     |
+| `PreToolUse`          | Before a tool call executes. Can block it                                                                                                              |
+| `PermissionRequest`   | When a permission dialog appears                                                                                                                       |
+| `PermissionDenied`    | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
+| `PostToolUse`         | After a tool call succeeds                                                                                                                             |
+| `PostToolUseFailure`  | After a tool call fails                                                                                                                                |
+| `Notification`        | When Claude Code sends a notification                                                                                                                  |
+| `SubagentStart`       | When a subagent is spawned                                                                                                                             |
+| `SubagentStop`        | When a subagent finishes                                                                                                                               |
+| `TaskCreated`         | When a task is being created via `TaskCreate`                                                                                                          |
+| `TaskCompleted`       | When a task is being marked as completed                                                                                                               |
+| `Stop`                | When Claude finishes responding                                                                                                                        |
+| `StopFailure`         | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
+| `TeammateIdle`        | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
+| `InstructionsLoaded`  | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
+| `ConfigChange`        | When a configuration file changes during a session                                                                                                     |
+| `CwdChanged`          | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
+| `FileChanged`         | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
+| `WorktreeCreate`      | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
+| `WorktreeRemove`      | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
+| `PreCompact`          | Before context compaction                                                                                                                              |
+| `PostCompact`         | After context compaction completes                                                                                                                     |
+| `Elicitation`         | When an MCP server requests user input during a tool call                                                                                              |
+| `ElicitationResult`   | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
+| `SessionEnd`          | When a session terminates                                                                                                                              |
 
 **Hook 유형**:
 
@@ -417,10 +418,13 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `monitors` 키를 �
 {
   "userConfig": {
     "api_endpoint": {
-      "description": "팀의 API 엔드포인트",
-      "sensitive": false
+      "type": "string",
+      "title": "API 엔드포인트",
+      "description": "팀의 API 엔드포인트"
     },
     "api_token": {
+      "type": "string",
+      "title": "API 토큰",
       "description": "API 인증 토큰",
       "sensitive": true
     }
@@ -428,7 +432,20 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `monitors` 키를 �
 }
 ```
 
-키는 유효한 식별자여야 합니다. 각 값은 MCP 및 LSP 서버 구성, hook 명령어, monitor 명령어 및 (민감하지 않은 값만) skill 및 agent 콘텐츠에서 `${user_config.KEY}`로 대체할 수 있습니다. 값은 또한 플러그인 서브프로세스에 `CLAUDE_PLUGIN_OPTION_<KEY>` 환경 변수로 내보내집니다.
+키는 유효한 식별자여야 합니다. 각 옵션은 다음 필드를 지원합니다:
+
+| 필드            | 필수  | 설명                                                        |
+| :------------ | :-- | :-------------------------------------------------------- |
+| `type`        | 예   | `string`, `number`, `boolean`, `directory` 또는 `file` 중 하나 |
+| `title`       | 예   | 구성 대화에 표시되는 레이블                                           |
+| `description` | 예   | 필드 아래에 표시되는 도움말 텍스트                                       |
+| `sensitive`   | 아니오 | `true`인 경우 입력을 마스킹하고 값을 `settings.json` 대신 보안 저장소에 저장합니다. |
+| `required`    | 아니오 | `true`인 경우 필드가 비어 있으면 검증이 실패합니다.                          |
+| `default`     | 아니오 | 사용자가 아무것도 제공하지 않을 때 사용되는 값                                |
+| `multiple`    | 아니오 | `string` 타입의 경우 문자열 배열 허용                                 |
+| `min` / `max` | 아니오 | `number` 타입의 범위                                           |
+
+각 값은 MCP 및 LSP 서버 구성, hook 명령어 및 monitor 명령어에서 `${user_config.KEY}`로 대체할 수 있습니다. 민감하지 않은 값은 skill 및 agent 콘텐츠에서도 대체할 수 있습니다. 모든 값은 플러그인 서브프로세스에 `CLAUDE_PLUGIN_OPTION_<KEY>` 환경 변수로 내보내집니다.
 
 민감하지 않은 값은 `settings.json`의 `pluginConfigs[<plugin-id>].options` 아래에 저장됩니다. 민감한 값은 시스템 키체인 (또는 키체인을 사용할 수 없는 경우 `~/.claude/.credentials.json`)으로 이동합니다. 키체인 저장소는 OAuth 토큰과 공유되며 약 2 KB의 총 제한이 있으므로 민감한 값을 작게 유지하세요.
 
@@ -442,8 +459,17 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `monitors` 키를 �
     {
       "server": "telegram",
       "userConfig": {
-        "bot_token": { "description": "Telegram 봇 토큰", "sensitive": true },
-        "owner_id": { "description": "Telegram 사용자 ID", "sensitive": false }
+        "bot_token": {
+          "type": "string",
+          "title": "봇 토큰",
+          "description": "Telegram 봇 토큰",
+          "sensitive": true
+        },
+        "owner_id": {
+          "type": "string",
+          "title": "소유자 ID",
+          "description": "Telegram 사용자 ID"
+        }
       }
     }
   ]
@@ -761,6 +787,24 @@ claude plugin update <plugin> [options]
 | :-------------------- | :------------------------------------------------ | :----- |
 | `-s, --scope <scope>` | 업데이트할 범위: `user`, `project`, `local` 또는 `managed` | `user` |
 | `-h, --help`          | 명령어 도움말 표시                                        |        |
+
+***
+
+### plugin list
+
+설치된 플러그인을 버전, 소스 마켓플레이스 및 활성화 상태와 함께 나열합니다.
+
+```bash theme={null}
+claude plugin list [options]
+```
+
+**옵션:**
+
+| 옵션            | 설명                                   | 기본값 |
+| :------------ | :----------------------------------- | :-- |
+| `--json`      | JSON으로 출력                            |     |
+| `--available` | 마켓플레이스에서 사용 가능한 플러그인 포함. `--json` 필요 |     |
+| `-h, --help`  | 명령어 도움말 표시                           |     |
 
 ***
 

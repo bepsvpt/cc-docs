@@ -18,40 +18,41 @@
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/UMJp-WgTWngzO609/images/hooks-lifecycle.svg?fit=max&auto=format&n=UMJp-WgTWngzO609&q=85&s=3f4de67df216c87dc313943b32c15f62" alt="SessionStart から始まり、ターンごとのループ（UserPromptSubmit、nested agentic ループ（PreToolUse、PermissionRequest、PostToolUse、SubagentStart/Stop、TaskCreated、TaskCompleted）、Stop または StopFailure）、TeammateIdle、PreCompact、PostCompact、SessionEnd を含むフック ライフサイクル図。Elicitation と ElicitationResult は MCP ツール実行内にネストされ、PermissionDenied は PermissionRequest からの副分岐として、WorktreeCreate、WorktreeRemove、Notification、ConfigChange、InstructionsLoaded、CwdChanged、FileChanged はスタンドアロン非同期イベント" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/NgDeMMkM7ZmaRibg/images/hooks-lifecycle.svg?fit=max&auto=format&n=NgDeMMkM7ZmaRibg&q=85&s=ec53c77f9943a6470cb2c8ecace6d809" alt="SessionStart から始まり、ターンごとのループ（UserPromptSubmit、UserPromptExpansion（スラッシュ コマンド用）、ネストされた agentic ループ（PreToolUse、PermissionRequest、PostToolUse、PostToolUseFailure、SubagentStart/Stop、TaskCreated、TaskCompleted）、Stop または StopFailure）、TeammateIdle、PreCompact、PostCompact、SessionEnd を含むフック ライフサイクル図。Elicitation と ElicitationResult は MCP ツール実行内にネストされ、PermissionDenied は PermissionRequest からの副分岐として、WorktreeCreate、WorktreeRemove、Notification、ConfigChange、InstructionsLoaded、CwdChanged、FileChanged はスタンドアロン非同期イベント" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
 以下の表は、各イベントがいつ発火するかをまとめています。[フック イベント](#hook-events)セクションでは、各イベントの完全な入力スキーマと決定制御オプションについて説明しています。
 
-| Event                | When it fires                                                                                                                                          |
-| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SessionStart`       | When a session begins or resumes                                                                                                                       |
-| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                                                                   |
-| `PreToolUse`         | Before a tool call executes. Can block it                                                                                                              |
-| `PermissionRequest`  | When a permission dialog appears                                                                                                                       |
-| `PermissionDenied`   | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
-| `PostToolUse`        | After a tool call succeeds                                                                                                                             |
-| `PostToolUseFailure` | After a tool call fails                                                                                                                                |
-| `Notification`       | When Claude Code sends a notification                                                                                                                  |
-| `SubagentStart`      | When a subagent is spawned                                                                                                                             |
-| `SubagentStop`       | When a subagent finishes                                                                                                                               |
-| `TaskCreated`        | When a task is being created via `TaskCreate`                                                                                                          |
-| `TaskCompleted`      | When a task is being marked as completed                                                                                                               |
-| `Stop`               | When Claude finishes responding                                                                                                                        |
-| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
-| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
-| `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
-| `ConfigChange`       | When a configuration file changes during a session                                                                                                     |
-| `CwdChanged`         | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
-| `FileChanged`        | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
-| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
-| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
-| `PreCompact`         | Before context compaction                                                                                                                              |
-| `PostCompact`        | After context compaction completes                                                                                                                     |
-| `Elicitation`        | When an MCP server requests user input during a tool call                                                                                              |
-| `ElicitationResult`  | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
-| `SessionEnd`         | When a session terminates                                                                                                                              |
+| Event                 | When it fires                                                                                                                                          |
+| :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SessionStart`        | When a session begins or resumes                                                                                                                       |
+| `UserPromptSubmit`    | When you submit a prompt, before Claude processes it                                                                                                   |
+| `UserPromptExpansion` | When a user-typed command expands into a prompt, before it reaches Claude. Can block the expansion                                                     |
+| `PreToolUse`          | Before a tool call executes. Can block it                                                                                                              |
+| `PermissionRequest`   | When a permission dialog appears                                                                                                                       |
+| `PermissionDenied`    | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
+| `PostToolUse`         | After a tool call succeeds                                                                                                                             |
+| `PostToolUseFailure`  | After a tool call fails                                                                                                                                |
+| `Notification`        | When Claude Code sends a notification                                                                                                                  |
+| `SubagentStart`       | When a subagent is spawned                                                                                                                             |
+| `SubagentStop`        | When a subagent finishes                                                                                                                               |
+| `TaskCreated`         | When a task is being created via `TaskCreate`                                                                                                          |
+| `TaskCompleted`       | When a task is being marked as completed                                                                                                               |
+| `Stop`                | When Claude finishes responding                                                                                                                        |
+| `StopFailure`         | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
+| `TeammateIdle`        | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
+| `InstructionsLoaded`  | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
+| `ConfigChange`        | When a configuration file changes during a session                                                                                                     |
+| `CwdChanged`          | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
+| `FileChanged`         | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
+| `WorktreeCreate`      | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
+| `WorktreeRemove`      | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
+| `PreCompact`          | Before context compaction                                                                                                                              |
+| `PostCompact`         | After context compaction completes                                                                                                                     |
+| `Elicitation`         | When an MCP server requests user input during a tool call                                                                                              |
+| `ElicitationResult`   | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
+| `SessionEnd`          | When a session terminates                                                                                                                              |
 
 ### フックがどのように解決されるか
 
@@ -199,6 +200,7 @@ fi
 | `FileChanged`                                                                                            | 監視するリテラル ファイル名（[FileChanged](#filechanged)を参照） | `.envrc\|.env`                                                                                                      |
 | `StopFailure`                                                                                            | エラー タイプ                                        | `rate_limit`、`authentication_failed`、`billing_error`、`invalid_request`、`server_error`、`max_output_tokens`、`unknown` |
 | `InstructionsLoaded`                                                                                     | ロード理由                                          | `session_start`、`nested_traversal`、`path_glob_match`、`include`、`compact`                                            |
+| `UserPromptExpansion`                                                                                    | コマンド名                                          | スキルまたはコマンド名                                                                                                         |
 | `Elicitation`                                                                                            | MCP サーバー名                                      | 設定された MCP サーバー名                                                                                                     |
 | `ElicitationResult`                                                                                      | MCP サーバー名                                      | `Elicitation` と同じ値                                                                                                  |
 | `UserPromptSubmit`、`Stop`、`TeammateIdle`、`TaskCreated`、`TaskCompleted`、`WorktreeCreate`、`WorktreeRemove` | マッチャー サポートなし                                   | すべての出現で常に発火                                                                                                         |
@@ -227,7 +229,7 @@ fi
 
 `UserPromptSubmit`、`Stop`、`TeammateIdle`、`TaskCreated`、`TaskCompleted`、`WorktreeCreate`、`WorktreeRemove`、`CwdChanged` はマッチャーをサポートせず、すべての出現で常に発火します。これらのイベントに `matcher` フィールドを追加すると、サイレントに無視されます。
 
-ツール イベントの場合、個別のフック ハンドラーで [`if` フィールド](#common-fields)を設定することで、より狭くフィルタリングできます。`if` は[権限ルール構文](/ja/permissions)を使用してツール名と引数を一緒にマッチするため、`"Bash(git *)"` は `git` コマンドのみに対して実行され、`"Edit(*.ts)"` は TypeScript ファイルのみに対して実行されます。
+ツール イベントの場合、個別のフック ハンドラーで [`if` フィールド](#common-fields)を設定することで、より狭くフィルタリングできます。`if` は[権限ルール構文](/ja/permissions)を使用してツール名と引数を一緒にマッチするため、`"Bash(git *)"` は `git *` に一致する Bash 入力のサブコマンドのいずれかに対して実行され、`"Edit(*.ts)"` は TypeScript ファイルのみに対して実行されます。
 
 #### MCP ツールをマッチ
 
@@ -510,7 +512,7 @@ Claude Code で `/hooks` と入力して、設定されたフックの読み取�
 
 フック コマンドからの終了コードは、Claude Code にアクションが進行すべきか、ブロックされるべきか、無視されるべきかを伝えます。
 
-**終了 0** は成功を意味します。Claude Code は stdout を[JSON 出力フィールド](#json-output)で解析します。JSON 出力は終了 0 でのみ処理されます。ほとんどのイベントでは、stdout はデバッグ ログに書き込まれますが、トランスクリプトには表示されません。例外は `UserPromptSubmit` と `SessionStart` で、stdout は Claude が見て行動できるコンテキストとして追加されます。
+**終了 0** は成功を意味します。Claude Code は stdout を[JSON 出力フィールド](#json-output)で解析します。JSON 出力は終了 0 でのみ処理されます。ほとんどのイベントでは、stdout はデバッグ ログに書き込まれますが、トランスクリプトには表示されません。例外は `UserPromptSubmit`、`UserPromptExpansion`、および `SessionStart` で、stdout は Claude が見て行動できるコンテキストとして追加されます。
 
 **終了 2** はブロッキング エラーを意味します。Claude Code は stdout とそれ内の JSON を無視します。代わりに、stderr テキストがエラー メッセージとして Claude にフィードバックされます。効果はイベントに依存します。`PreToolUse` はツール呼び出しをブロックし、`UserPromptSubmit` はプロンプトを拒否します。完全なリストについては、[終了コード 2 動作](#exit-code-2-behavior-per-event)を参照してください。
 
@@ -539,34 +541,35 @@ exit 0  # 成功: ツール呼び出しが進行
 
 終了コード 2 は、フックが「停止、これをしないでください」と通知する方法です。効果はイベントに依存します。一部のイベントはブロック可能なアクション（まだ発生していないツール呼び出しなど）を表し、他のイベントはすでに発生したか防止できないことを表すためです。
 
-| フック イベント             | ブロック可能？ | 終了 2 で何が起こるか                                                                            |
-| :------------------- | :------ | :-------------------------------------------------------------------------------------- |
-| `PreToolUse`         | はい      | ツール呼び出しをブロック                                                                            |
-| `PermissionRequest`  | はい      | 権限を拒否                                                                                   |
-| `UserPromptSubmit`   | はい      | プロンプト処理をブロックしてプロンプトを消去                                                                  |
-| `Stop`               | はい      | Claude が停止するのを防ぎ、会話を続行                                                                  |
-| `SubagentStop`       | はい      | サブエージェントが停止するのを防止                                                                       |
-| `TeammateIdle`       | はい      | チームメイトがアイドル状態になるのを防止（チームメイトが作業を続行）                                                      |
-| `TaskCreated`        | はい      | タスク作成をロールバック                                                                            |
-| `TaskCompleted`      | はい      | タスクが完了としてマークされるのを防止                                                                     |
-| `ConfigChange`       | はい      | 設定変更が有効になるのをブロック（`policy_settings` を除く）                                                 |
-| `StopFailure`        | いいえ     | 出力と終了コードは無視                                                                             |
-| `PostToolUse`        | いいえ     | Claude に stderr を表示（ツールはすでに実行）                                                          |
-| `PostToolUseFailure` | いいえ     | Claude に stderr を表示（ツールはすでに失敗）                                                          |
-| `PermissionDenied`   | いいえ     | 終了コードと stderr は無視（拒否はすでに発生）。JSON `hookSpecificOutput.retry: true` を使用してモデルが再試行できることを伝える |
-| `Notification`       | いいえ     | ユーザーのみに stderr を表示                                                                      |
-| `SubagentStart`      | いいえ     | ユーザーのみに stderr を表示                                                                      |
-| `SessionStart`       | いいえ     | ユーザーのみに stderr を表示                                                                      |
-| `SessionEnd`         | いいえ     | ユーザーのみに stderr を表示                                                                      |
-| `CwdChanged`         | いいえ     | ユーザーのみに stderr を表示                                                                      |
-| `FileChanged`        | いいえ     | ユーザーのみに stderr を表示                                                                      |
-| `PreCompact`         | はい      | コンパクションをブロック                                                                            |
-| `PostCompact`        | いいえ     | ユーザーのみに stderr を表示                                                                      |
-| `Elicitation`        | はい      | elicitation を拒否                                                                         |
-| `ElicitationResult`  | はい      | レスポンスをブロック（アクションが decline になる）                                                          |
-| `WorktreeCreate`     | はい      | 0 以外の終了コードでワークツリー作成が失敗                                                                  |
-| `WorktreeRemove`     | いいえ     | 失敗はデバッグ モードでのみログ                                                                        |
-| `InstructionsLoaded` | いいえ     | 終了コードは無視                                                                                |
+| フック イベント              | ブロック可能？ | 終了 2 で何が起こるか                                                                            |
+| :-------------------- | :------ | :-------------------------------------------------------------------------------------- |
+| `PreToolUse`          | はい      | ツール呼び出しをブロック                                                                            |
+| `PermissionRequest`   | はい      | 権限を拒否                                                                                   |
+| `UserPromptSubmit`    | はい      | プロンプト処理をブロックしてプロンプトを消去                                                                  |
+| `UserPromptExpansion` | はい      | 拡張をブロック                                                                                 |
+| `Stop`                | はい      | Claude が停止するのを防ぎ、会話を続行                                                                  |
+| `SubagentStop`        | はい      | サブエージェントが停止するのを防止                                                                       |
+| `TeammateIdle`        | はい      | チームメイトがアイドル状態になるのを防止（チームメイトが作業を続行）                                                      |
+| `TaskCreated`         | はい      | タスク作成をロールバック                                                                            |
+| `TaskCompleted`       | はい      | タスクが完了としてマークされるのを防止                                                                     |
+| `ConfigChange`        | はい      | 設定変更が有効になるのをブロック（`policy_settings` を除く）                                                 |
+| `StopFailure`         | いいえ     | 出力と終了コードは無視                                                                             |
+| `PostToolUse`         | いいえ     | Claude に stderr を表示（ツールはすでに実行）                                                          |
+| `PostToolUseFailure`  | いいえ     | Claude に stderr を表示（ツールはすでに失敗）                                                          |
+| `PermissionDenied`    | いいえ     | 終了コードと stderr は無視（拒否はすでに発生）。JSON `hookSpecificOutput.retry: true` を使用してモデルが再試行できることを伝える |
+| `Notification`        | いいえ     | ユーザーのみに stderr を表示                                                                      |
+| `SubagentStart`       | いいえ     | ユーザーのみに stderr を表示                                                                      |
+| `SessionStart`        | いいえ     | ユーザーのみに stderr を表示                                                                      |
+| `SessionEnd`          | いいえ     | ユーザーのみに stderr を表示                                                                      |
+| `CwdChanged`          | いいえ     | ユーザーのみに stderr を表示                                                                      |
+| `FileChanged`         | いいえ     | ユーザーのみに stderr を表示                                                                      |
+| `PreCompact`          | はい      | コンパクションをブロック                                                                            |
+| `PostCompact`         | いいえ     | ユーザーのみに stderr を表示                                                                      |
+| `Elicitation`         | はい      | elicitation を拒否                                                                         |
+| `ElicitationResult`   | はい      | レスポンスをブロック（アクションが decline になる）                                                          |
+| `WorktreeCreate`      | はい      | 0 以外の終了コードでワークツリー作成が失敗                                                                  |
+| `WorktreeRemove`      | いいえ     | 失敗はデバッグ モードでのみログ                                                                        |
+| `InstructionsLoaded`  | いいえ     | 終了コードは無視                                                                                |
 
 ### HTTP レスポンス処理
 
@@ -582,7 +585,7 @@ HTTP フックは終了コードと stdout の代わりに HTTP ステータス 
 
 ### JSON 出力
 
-終了コードで許可またはブロックできますが、JSON 出力はより細かい制御を提供します。終了コード 2 でブロックする代わりに、終了 0 して stdout に JSON オブジェクトを出力します。Claude Code はその JSON から特定のフィールドを読み取り、ブロック、許可、またはユーザーへのエスカレーションを含む動作を制御します。
+終了コードで許可またはブロックできますが、JSON 出力はより細かい制御を提供します。終了コード 2 でブロックする代わりに、終了 0 して stdout に JSON オブジェクトを出力します。Claude Code はその JSON から特定のフィールドを読み取り、ブロック、許可、またはユーザーへのエスカレーションを含む[決定制御](#decision-control)を通じた動作を制御します。
 
 <Note>
   フックごとに 1 つのアプローチを選択する必要があります。両方ではありません。終了コードのみでシグナリングするか、終了 0 して構造化制御のために JSON を出力するかのいずれかです。Claude Code は終了 0 でのみ JSON を処理します。終了 2 の場合、JSON は無視されます。
@@ -615,23 +618,23 @@ Claude を完全に停止するには、イベント タイプに関係なく。
 
 すべてのイベントが JSON を通じたブロッキングまたは動作制御をサポートしているわけではありません。サポートするイベントは、その決定を表現するために異なるフィールド セットを使用します。フックを書く前に、このテーブルをクイック リファレンスとして使用してください。
 
-| イベント                                                                                                     | 決定パターン                     | キー フィールド                                                                                                                   |
-| :------------------------------------------------------------------------------------------------------- | :------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
-| UserPromptSubmit、PostToolUse、PostToolUseFailure、Stop、SubagentStop、ConfigChange、PreCompact                | トップレベル `decision`          | `decision: "block"`、`reason`                                                                                               |
-| TeammateIdle、TaskCreated、TaskCompleted                                                                   | 終了コードまたは `continue: false` | 終了コード 2 はアクションをブロックし、stderr フィードバックを使用します。JSON `{"continue": false, "stopReason": "..."}` はチームメイト全体を停止し、`Stop` フック動作と一致します |
-| PreToolUse                                                                                               | `hookSpecificOutput`       | `permissionDecision`（allow/deny/ask/defer）、`permissionDecisionReason`                                                      |
-| PermissionRequest                                                                                        | `hookSpecificOutput`       | `decision.behavior`（allow/deny）                                                                                            |
-| PermissionDenied                                                                                         | `hookSpecificOutput`       | `retry: true` はモデルが拒否されたツール呼び出しを再試行できることを伝える                                                                               |
-| WorktreeCreate                                                                                           | パス戻り値                      | コマンド フックは stdout にパスを出力します。HTTP フックは `hookSpecificOutput.worktreePath` 経由で返します。フック失敗またはパス欠落で作成が失敗                          |
-| Elicitation                                                                                              | `hookSpecificOutput`       | `action`（accept/decline/cancel）、`content`（accept の場合のフォーム フィールド値）                                                          |
-| ElicitationResult                                                                                        | `hookSpecificOutput`       | `action`（accept/decline/cancel）、`content`（フォーム フィールド値をオーバーライド）                                                             |
-| WorktreeRemove、Notification、SessionEnd、PostCompact、InstructionsLoaded、StopFailure、CwdChanged、FileChanged | なし                         | 決定制御なし。ログやクリーンアップなどの副作用に使用                                                                                                 |
+| イベント                                                                                                          | 決定パターン                     | キー フィールド                                                                                                                   |
+| :------------------------------------------------------------------------------------------------------------ | :------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
+| UserPromptSubmit、UserPromptExpansion、PostToolUse、PostToolUseFailure、Stop、SubagentStop、ConfigChange、PreCompact | トップレベル `decision`          | `decision: "block"`、`reason`                                                                                               |
+| TeammateIdle、TaskCreated、TaskCompleted                                                                        | 終了コードまたは `continue: false` | 終了コード 2 はアクションをブロックし、stderr フィードバックを使用します。JSON `{"continue": false, "stopReason": "..."}` はチームメイト全体を停止し、`Stop` フック動作と一致します |
+| PreToolUse                                                                                                    | `hookSpecificOutput`       | `permissionDecision`（allow/deny/ask/defer）、`permissionDecisionReason`                                                      |
+| PermissionRequest                                                                                             | `hookSpecificOutput`       | `decision.behavior`（allow/deny）                                                                                            |
+| PermissionDenied                                                                                              | `hookSpecificOutput`       | `retry: true` はモデルが拒否されたツール呼び出しを再試行できることを伝える                                                                               |
+| WorktreeCreate                                                                                                | パス戻り値                      | コマンド フックは stdout にパスを出力します。HTTP フックは `hookSpecificOutput.worktreePath` 経由で返します。フック失敗またはパス欠落で作成が失敗                          |
+| Elicitation                                                                                                   | `hookSpecificOutput`       | `action`（accept/decline/cancel）、`content`（accept の場合のフォーム フィールド値）                                                          |
+| ElicitationResult                                                                                             | `hookSpecificOutput`       | `action`（accept/decline/cancel）、`content`（フォーム フィールド値をオーバーライド）                                                             |
+| WorktreeRemove、Notification、SessionEnd、PostCompact、InstructionsLoaded、StopFailure、CwdChanged、FileChanged      | なし                         | 決定制御なし。ログやクリーンアップなどの副作用に使用                                                                                                 |
 
 各パターンの実行例を以下に示します。
 
 <Tabs>
   <Tab title="トップレベル決定">
-    `UserPromptSubmit`、`PostToolUse`、`PostToolUseFailure`、`Stop`、`SubagentStop`、`ConfigChange`、`PreCompact` で使用されます。唯一の値は `"block"` です。アクションを進行させるには、JSON から `decision` を省略するか、JSON なしで終了 0 で終了します。
+    `UserPromptSubmit`、`UserPromptExpansion`、`PostToolUse`、`PostToolUseFailure`、`Stop`、`SubagentStop`、`ConfigChange`、`PreCompact` で使用されます。唯一の値は `"block"` です。アクションを進行させるには、JSON から `decision` を省略するか、JSON なしで終了 0 で終了します。
 
     ```json theme={null}
     {
@@ -642,7 +645,7 @@ Claude を完全に停止するには、イベント タイプに関係なく。
   </Tab>
 
   <Tab title="PreToolUse">
-    より豊かな制御のために `hookSpecificOutput` を使用します。許可、拒否、質問、または遅延。ツール入力を実行前に変更したり、Claude 用に追加コンテキストを注入することもできます。オプションの完全なセットについては、[PreToolUse 決定制御](#pretooluse-decision-control)を参照してください。
+    より豊かな制御のために `hookSpecificOutput` を使用します。許可、拒否、または質問。ツール入力を実行前に変更したり、Claude 用に追加コンテキストを注入することもできます。オプションの完全なセットについては、[PreToolUse 決定制御](#pretooluse-decision-control)を参照してください。
 
     ```json theme={null}
     {
@@ -859,6 +862,54 @@ InstructionsLoaded フックは決定制御がありません。命令ロード�
 <Note>
   JSON 形式は単純なユースケースには必須ではありません。コンテキストを追加するには、終了コード 0 で stdout にプレーン テキストを出力できます。プロンプトをブロックしたい場合、またはより構造化された制御が必要な場合は JSON を使用します。
 </Note>
+
+### UserPromptExpansion
+
+ユーザーが入力したスラッシュ コマンドが Claude に到達する前にプロンプトに展開されるときに実行されます。特定のコマンドを直接呼び出しからブロックしたり、特定のスキルのコンテキストを注入したり、ユーザーが呼び出すコマンドをログしたりするのに使用します。例えば、`deploy` にマッチするフックは、承認ファイルが存在しない限り `/deploy` をブロックできます。または、レビュー スキルにマッチするフックはチームのレビュー チェックリストを `additionalContext` として追加できます。
+
+このイベントは `PreToolUse` がカバーしないパスをカバーします。`PreToolUse` フックが `Skill` ツールにマッチするのは Claude がツールを呼び出すときのみですが、`/skillname` を直接入力すると `PreToolUse` をバイパスします。`UserPromptExpansion` はその直接パスで発火します。
+
+`command_name` でマッチします。マッチャーを空のままにして、すべてのプロンプト タイプのスラッシュ コマンドで発火します。
+
+#### UserPromptExpansion 入力
+
+[共通入力フィールド](#common-input-fields)に加えて、UserPromptExpansion フックは `expansion_type`、`command_name`、`command_args`、`command_source`、および元の `prompt` 文字列を受け取ります。`expansion_type` フィールドはスキルとカスタム コマンドの場合は `slash_command`、MCP サーバー プロンプトの場合は `mcp_prompt` です。
+
+```json theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../00893aaf.jsonl",
+  "cwd": "/Users/...",
+  "permission_mode": "default",
+  "hook_event_name": "UserPromptExpansion",
+  "expansion_type": "slash_command",
+  "command_name": "example-skill",
+  "command_args": "arg1 arg2",
+  "command_source": "plugin",
+  "prompt": "/example-skill arg1 arg2"
+}
+```
+
+#### UserPromptExpansion 決定制御
+
+`UserPromptExpansion` フックは展開をブロックするか、コンテキストを追加できます。すべての[JSON 出力フィールド](#json-output)が利用可能です。
+
+| フィールド               | 説明                                       |
+| :------------------ | :--------------------------------------- |
+| `decision`          | `"block"` はスラッシュ コマンドが展開されるのを防止。許可するには省略 |
+| `reason`            | `decision` が `"block"` のときにユーザーに表示されます   |
+| `additionalContext` | 展開されたプロンプトと一緒に Claude のコンテキストに追加される文字列   |
+
+```json theme={null}
+{
+  "decision": "block",
+  "reason": "This slash command is not available",
+  "hookSpecificOutput": {
+    "hookEventName": "UserPromptExpansion",
+    "additionalContext": "Additional context for this expansion"
+  }
+}
+```
 
 ### PreToolUse
 
@@ -1087,13 +1138,13 @@ PermissionRequest フックは PreToolUse フックのような `tool_name` と 
 
 `PermissionRequest` フックは権限リクエストを許可または拒否できます。すべてのフックで利用可能な[JSON 出力フィールド](#json-output)に加えて、フック スクリプトはこれらのイベント固有のフィールドを持つ `decision` オブジェクトを返すことができます。
 
-| フィールド                | 説明                                                                                          |
-| :------------------- | :------------------------------------------------------------------------------------------ |
-| `behavior`           | `"allow"` は権限を付与、`"deny"` は拒否                                                               |
-| `updatedInput`       | `"allow"` のみ: 実行前にツールの入力パラメーターを変更します。入力オブジェクト全体を置き換えるため、変更されていないフィールドを変更されたフィールドと一緒に含めます    |
-| `updatedPermissions` | `"allow"` のみ: 適用する[権限更新エントリ](#permission-update-entries)の配列。ユーザーがダイアログで「常に許可」オプションを選択するのと同等 |
-| `message`            | `"deny"` のみ: 権限が拒否された理由を Claude に伝える                                                        |
-| `interrupt`          | `"deny"` のみ: `true` の場合、Claude を停止                                                          |
+| フィールド                | 説明                                                                                                                              |
+| :------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
+| `behavior`           | `"allow"` は権限を付与、`"deny"` は拒否。[拒否と質問ルール](/ja/permissions#manage-permissions)は引き続き評価されるため、`"allow"` を返すフックは一致する拒否ルールをオーバーライドしません |
+| `updatedInput`       | `"allow"` のみ: 実行前にツールの入力パラメーターを変更します。入力オブジェクト全体を置き換えるため、変更されていないフィールドを変更されたフィールドと一緒に含めます。変更された入力は拒否と質問ルールに対して再評価されます            |
+| `updatedPermissions` | `"allow"` のみ: 適用する[権限更新エントリ](#permission-update-entries)の配列。許可ルールを追加したり、セッション権限モードを変更したりするなど                                    |
+| `message`            | `"deny"` のみ: 権限が拒否された理由を Claude に伝える                                                                                            |
+| `interrupt`          | `"deny"` のみ: `true` の場合、Claude を停止                                                                                              |
 
 ```json theme={null}
 {
@@ -1693,7 +1744,7 @@ ConfigChange フックは設定変更が有効になるのをブロックでき�
 
 セッション中に作業ディレクトリが変更されるときに実行されます。例えば、Claude が `cd` コマンドを実行するとき。これを使用してディレクトリ変更に反応します。環境変数をリロードしたり、プロジェクト固有のツールチェーンをアクティブにしたり、セットアップ スクリプトを自動的に実行したりします。[FileChanged](#filechanged)とペアになり、[direnv](https://direnv.net/)などのツール用に、ディレクトリごとの環境を管理します。
 
-CwdChanged フックは `CLAUDE_ENV_FILE` にアクセスできます。そのファイルに書き込まれた変数は、[SessionStart フック](#persist-environment-variables)と同じように、セッション中の後続の Bash コマンドに永続化されます。`type: "command"` フックのみがサポートされています。
+CwdChanged フックは `CLAUDE_ENV_FILE` にアクセスできます。そのファイルに書き込まれた変数は、[SessionStart フック](#persist-environment-variables)と同じように、セッション中の後続の Bash コマンドに永続化されます。
 
 CwdChanged はマッチャーをサポートせず、すべてのディレクトリ変更で発火します。
 
@@ -1731,7 +1782,7 @@ CwdChanged フックは決定制御がありません。ディレクトリ変更
 * **監視リストを構築**: 値は `|` で分割され、各セグメントは作業ディレクトリのリテラル ファイル名として登録されるため、`.envrc|.env` はこれら 2 つのファイルを正確に監視します。正規表現パターンはここでは役に立ちません。`^\.env` のような値は `^\.env` という文字通りの名前のファイルを監視します。
 * **どのフックが実行されるかをフィルタリング**: 監視されたファイルが変更されると、同じ値は標準[マッチャー ルール](#matcher-patterns)を使用して、変更されたファイルのベース名に対してどのフック グループが実行されるかをフィルタリングします。
 
-FileChanged フックは `CLAUDE_ENV_FILE` にアクセスできます。そのファイルに書き込まれた変数は、[SessionStart フック](#persist-environment-variables)と同じように、セッション中の後続の Bash コマンドに永続化されます。`type: "command"` フックのみがサポートされています。
+FileChanged フックは `CLAUDE_ENV_FILE` にアクセスできます。そのファイルに書き込まれた変数は、[SessionStart フック](#persist-environment-variables)と同じように、セッション中の後続の Bash コマンドに永続化されます。
 
 #### FileChanged 入力
 
@@ -1767,7 +1818,7 @@ FileChanged フックは決定制御がありません。ファイル変更を�
 
 `claude --worktree` を実行するか、[サブエージェントが `isolation: "worktree"` を使用](/ja/sub-agents#choose-the-subagent-scope)する場合、Claude Code は `git worktree` を使用して分離された作業コピーを作成します。WorktreeCreate フックを設定する場合、デフォルトの git 動作を置き換え、SVN、Perforce、Mercurial などの別のバージョン管理システムを使用できます。
 
-フックは作成されたワークツリー ディレクトリへの絶対パスを返す必要があります。Claude Code はこのパスを分離されたセッションの作業ディレクトリとして使用します。コマンド フックは stdout にパスを出力します。HTTP フックは `hookSpecificOutput.worktreePath` 経由で返します。フック失敗またはパス欠落で作成が失敗します。
+フックは作成されたワークツリー ディレクトリへの絶対パスを返す必要があります。Claude Code はこのパスを分離されたセッションの作業ディレクトリとして使用します。コマンド フックは stdout にパスを出力します。HTTP フックは `hookSpecificOutput.worktreePath` 経由で返します。
 
 [`.worktreeinclude`](/ja/common-workflows#copy-gitignored-files-to-worktrees)は処理されません。`.env` などのローカル設定ファイルを新しいワークツリーにコピーする必要がある場合は、フック スクリプト内で実行してください。
 
@@ -1943,7 +1994,7 @@ Claude Code セッションが終了するときに実行されます。クリ�
 
 SessionEnd フックは決定制御がありません。セッション終了をブロックできませんが、クリーンアップ タスクを実行できます。
 
-SessionEnd フックのデフォルト タイムアウトは 1.5 秒です。これはセッション終了、`/clear`、およびインタラクティブ `/resume` 経由でのセッション切り替えに適用されます。フックにより多くの時間が必要な場合は、`CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` 環境変数をミリ秒単位でより高い値に設定します。フックごとの `timeout` 設定もこの値でキャップされます。
+SessionEnd フックのデフォルト タイムアウトは 1.5 秒です。これはセッション終了、`/clear`、およびインタラクティブ `/resume` 経由でのセッション切り替えに適用されます。フックにより多くの時間が必要な場合は、フック設定でフックごとの `timeout` を設定します。全体的な予算は、設定ファイルで設定されたフックごとのタイムアウトの最高値に自動的に引き上げられ、最大 60 秒です。プラグイン提供のフックに設定されたタイムアウトは予算を引き上げません。予算を明示的にオーバーライドするには、`CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS` 環境変数をミリ秒単位で設定します。
 
 ```bash theme={null}
 CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
@@ -2069,7 +2120,7 @@ URL モード elicitation（ブラウザベースの認証）の場合。
 
 コマンド フックと HTTP フックに加えて、Claude Code はプロンプト ベースのフック（`type: "prompt"`）をサポートしており、LLM を使用してアクションを許可またはブロックするかどうかを評価し、エージェント フック（`type: "agent"`）はツール アクセスを持つ agentic ベリファイアーを生成します。すべてのイベントがすべてのフック タイプをサポートしているわけではありません。
 
-4 つのフック タイプ（`command`、`http`、`prompt`、`agent`）すべてをサポートするイベント。
+4 つのフック タイプ（`command`、`http`、`prompt`、`agent`）すべてをサポートするイベント：
 
 * `PermissionRequest`
 * `PostToolUse`
@@ -2079,9 +2130,10 @@ URL モード elicitation（ブラウザベースの認証）の場合。
 * `SubagentStop`
 * `TaskCompleted`
 * `TaskCreated`
+* `UserPromptExpansion`
 * `UserPromptSubmit`
 
-`command` と `http` フックをサポートするが、`prompt` または `agent` をサポートしないイベント。
+`command` と `http` フックをサポートするが、`prompt` または `agent` をサポートしないイベント：
 
 * `ConfigChange`
 * `CwdChanged`
@@ -2104,7 +2156,7 @@ URL モード elicitation（ブラウザベースの認証）の場合。
 
 ### プロンプト ベースのフックの仕組み
 
-プロンプト ベースのフックは Bash コマンドを実行する代わりに。
+プロンプト ベースのフックは Bash コマンドを実行する代わりに：
 
 1. フック入力とプロンプトを Claude モデル（デフォルトは Haiku）に送信
 2. LLM は決定を含む構造化 JSON で応答
@@ -2114,7 +2166,7 @@ URL モード elicitation（ブラウザベースの認証）の場合。
 
 `type` を `"prompt"` に設定し、`command` の代わりに `prompt` 文字列を提供します。`$ARGUMENTS` プレースホルダーを使用して、フックの JSON 入力データをプロンプト テキストに注入します。Claude Code は結合されたプロンプトと入力を高速 Claude モデルに送信し、JSON 決定を返します。
 
-この `Stop` フックは、Claude が終了する前にすべてのタスクが完了しているかどうかを評価するよう LLM に求めます。
+この `Stop` フックは、Claude が終了する前にすべてのタスクが完了しているかどうかを評価するよう LLM に求めます：
 
 ```json theme={null}
 {
@@ -2142,7 +2194,7 @@ URL モード elicitation（ブラウザベースの認証）の場合。
 
 ### レスポンス スキーマ
 
-LLM は以下を含む JSON で応答する必要があります。
+LLM は以下を含む JSON で応答する必要があります：
 
 ```json theme={null}
 {
@@ -2151,14 +2203,14 @@ LLM は以下を含む JSON で応答する必要があります。
 }
 ```
 
-| フィールド    | 説明                            |
-| :------- | :---------------------------- |
-| `ok`     | `true` はアクションを許可、`false` は防止  |
-| `reason` | `ok` が `false` のときに必須。表示される説明 |
+| フィールド    | 説明                                    |
+| :------- | :------------------------------------ |
+| `ok`     | `true` はアクションを許可、`false` は防止          |
+| `reason` | `ok` が `false` のときに必須。Claude に表示される説明 |
 
-### 例: マルチ基準 Stop フック
+### 例：マルチ基準 Stop フック
 
-この `Stop` フックは詳細なプロンプトを使用して、Claude が停止することを許可する前に 3 つの条件をチェックします。`"ok"` が `false` の場合、Claude は提供された理由を次の指示として受け取り、作業を続行します。`SubagentStop` フックは同じ形式を使用して、[サブエージェント](/ja/sub-agents)が停止すべきかどうかを評価します。
+この `Stop` フックは詳細なプロンプトを使用して、Claude が停止することを許可する前に 3 つの条件をチェックします。`"ok"` が `false` の場合、Claude は提供された理由を次の指示として受け取り、作業を続行します。`SubagentStop` フックは同じ形式を使用して、[サブエージェント](/ja/sub-agents)が停止すべきかどうかを評価します：
 
 ```json theme={null}
 {
@@ -2385,4 +2437,4 @@ Windows では、コマンド フックで `"shell": "powershell"` を設定す�
 
 より詳細なフック マッチング詳細については、`CLAUDE_CODE_DEBUG_LOG_LEVEL=verbose` を設定して、フック マッチャー数とクエリ マッチングなどの追加ログ行を確認します。
 
-フックが発火しない、無限 Stop フック ループ、設定エラーなどの一般的な問題のトラブルシューティングについては、ガイドの[制限事項とトラブルシューティング](/ja/hooks-guide#limitations-and-troubleshooting)を参照してください。
+フックが発火しない、無限 Stop フック ループ、設定エラーなどの一般的な問題のトラブルシューティングについては、ガイドの[制限事項とトラブルシューティング](/ja/hooks-guide#limitations-and-troubleshooting)を参照してください。より広範な診断チュートリアルについては、`/context`、`/doctor`、および設定の優先順位をカバーする[設定をデバッグ](/ja/debug-your-config)を参照してください。

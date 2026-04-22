@@ -14,7 +14,7 @@
 
 创建和分发 marketplace 涉及：
 
-1. **创建 plugins**：使用命令、agents、hooks、MCP servers 或 LSP servers 构建一个或多个 plugins。本指南假设你已经有要分发的 plugins；有关如何创建 plugins 的详细信息，请参阅[创建 plugins](/zh-CN/plugins)。
+1. **创建 plugins**：使用 skills、agents、hooks、MCP servers 或 LSP servers 构建一个或多个 plugins。本指南假设你已经有要分发的 plugins；有关如何创建 plugins 的详细信息，请参阅[创建 plugins](/zh-CN/plugins)。
 2. **创建 marketplace 文件**：定义一个 `marketplace.json`，列出你的 plugins 及其位置（请参阅[创建 marketplace 文件](#create-the-marketplace-file)）。
 3. **托管 marketplace**：推送到 GitHub、GitLab 或其他 git 主机（请参阅[托管和分发 marketplaces](#host-and-distribute-marketplaces)）。
 4. **与用户共享**：用户使用 `/plugin marketplace add` 添加你的 marketplace 并安装单个 plugins（请参阅[发现和安装 plugins](/zh-CN/discover-plugins)）。
@@ -95,7 +95,7 @@
   </Step>
 
   <Step title="尝试一下">
-    在编辑器中选择一些代码并运行你的新命令。
+    在编辑器中选择一些代码并运行你的新 skill。
 
     ```shell theme={null}
     /quality-review
@@ -108,7 +108,7 @@
 <Note>
   **plugins 如何安装**：当用户安装 plugin 时，Claude Code 将 plugin 目录复制到缓存位置。这意味着 plugins 无法使用 `../shared-utils` 之类的路径引用其目录外的文件，因为这些文件不会被复制。
 
-  如果你需要在 plugins 之间共享文件，请使用符号链接（在复制期间会被跟踪）。有关详细信息，请参阅 [Plugin 缓存和文件解析](/zh-CN/plugins-reference#plugin-caching-and-file-resolution)。
+  如果你需要在 plugins 之间共享文件，请使用符号链接。有关详细信息，请参阅 [Plugin 缓存和文件解析](/zh-CN/plugins-reference#plugin-caching-and-file-resolution)。
 </Note>
 
 ## 创建 marketplace 文件
@@ -167,13 +167,14 @@
 | `name`  | string | 是  | 维护者或团队的名称  |
 | `email` | string | 否  | 维护者的联系电子邮件 |
 
-### 可选元数据
+### 可选字段
 
-| 字段                     | 类型     | 描述                                                                                                       |
-| :--------------------- | :----- | :------------------------------------------------------------------------------------------------------- |
-| `metadata.description` | string | 简短的 marketplace 描述                                                                                       |
-| `metadata.version`     | string | Marketplace 版本                                                                                           |
-| `metadata.pluginRoot`  | string | 前置到相对 plugin 源路径的基目录（例如，`"./plugins"` 让你写 `"source": "formatter"` 而不是 `"source": "./plugins/formatter"`） |
+| 字段                                    | 类型     | 描述                                                                                                                                                                                      |
+| :------------------------------------ | :----- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `metadata.description`                | string | 简短的 marketplace 描述                                                                                                                                                                      |
+| `metadata.version`                    | string | Marketplace 版本                                                                                                                                                                          |
+| `metadata.pluginRoot`                 | string | 前置到相对 plugin 源路径的基目录（例如，`"./plugins"` 让你写 `"source": "formatter"` 而不是 `"source": "./plugins/formatter"`）                                                                                |
+| `allowCrossMarketplaceDependenciesOn` | array  | 此 marketplace 中的 plugins 可能依赖的其他 marketplaces。来自此处未列出的 marketplace 的依赖项在安装时被阻止。见[依赖来自另一个 marketplace 的 plugin](/zh-CN/plugin-dependencies#depend-on-a-plugin-from-another-marketplace)。 |
 
 ## Plugin 条目
 
@@ -205,13 +206,14 @@
 
 **组件配置字段：**
 
-| 字段           | 类型             | 描述                        |
-| :----------- | :------------- | :------------------------ |
-| `commands`   | string\|array  | 命令文件或目录的自定义路径             |
-| `agents`     | string\|array  | agent 文件的自定义路径            |
-| `hooks`      | string\|object | 自定义 hooks 配置或 hooks 文件的路径 |
-| `mcpServers` | string\|object | MCP server 配置或 MCP 配置的路径  |
-| `lspServers` | string\|object | LSP server 配置或 LSP 配置的路径  |
+| 字段           | 类型             | 描述                                    |
+| :----------- | :------------- | :------------------------------------ |
+| `skills`     | string\|array  | 包含 `<name>/SKILL.md` 的 skill 目录的自定义路径 |
+| `commands`   | string\|array  | 平面 `.md` skill 文件或目录的自定义路径            |
+| `agents`     | string\|array  | agent 文件的自定义路径                        |
+| `hooks`      | string\|object | 自定义 hooks 配置或 hooks 文件的路径             |
+| `mcpServers` | string\|object | MCP server 配置或 MCP 配置的路径              |
+| `lspServers` | string\|object | LSP server 配置或 LSP 配置的路径              |
 
 ## Plugin 源
 
@@ -219,13 +221,13 @@ Plugin 源告诉 Claude Code 在你的 marketplace 中列出的每个单独 plug
 
 一旦 plugin 被克隆或复制到本地机器，它就会被复制到本地版本化 plugin 缓存中，位置为 `~/.claude/plugins/cache`。
 
-| 源            | 类型                           | 字段                               | 注释                                      |
-| ------------ | ---------------------------- | -------------------------------- | --------------------------------------- |
-| 相对路径         | `string`（例如 `"./my-plugin"`） | —                                | marketplace repo 中的本地目录。必须以 `./` 开头     |
-| `github`     | object                       | `repo`、`ref?`、`sha?`             |                                         |
-| `url`        | object                       | `url`、`ref?`、`sha?`              | Git URL 源                               |
-| `git-subdir` | object                       | `url`、`path`、`ref?`、`sha?`       | git repo 中的子目录。稀疏克隆以最小化大型 monorepos 的带宽 |
-| `npm`        | object                       | `package`、`version?`、`registry?` | 通过 `npm install` 安装                     |
+| 源            | 类型                           | 字段                               | 注释                                                                                 |
+| ------------ | ---------------------------- | -------------------------------- | ---------------------------------------------------------------------------------- |
+| 相对路径         | `string`（例如 `"./my-plugin"`） | 无                                | marketplace repo 中的本地目录。必须以 `./` 开头。相对于 marketplace 根目录解析，而不是 `.claude-plugin/` 目录 |
+| `github`     | object                       | `repo`、`ref?`、`sha?`             |                                                                                    |
+| `url`        | object                       | `url`、`ref?`、`sha?`              | Git URL 源                                                                          |
+| `git-subdir` | object                       | `url`、`path`、`ref?`、`sha?`       | git repo 中的子目录。稀疏克隆以最小化大型 monorepos 的带宽                                            |
+| `npm`        | object                       | `package`、`version?`、`registry?` | 通过 `npm install` 安装                                                                |
 
 <Note>
   **Marketplace 源与 plugin 源**：这些是控制不同事物的不同概念。
@@ -247,7 +249,7 @@ Plugin 源告诉 Claude Code 在你的 marketplace 中列出的每个单独 plug
 }
 ```
 
-路径相对于 marketplace 根目录解析，即包含 `.claude-plugin/` 的目录。在上面的示例中，`./plugins/my-plugin` 指向 `<repo>/plugins/my-plugin`，即使 `marketplace.json` 位于 `<repo>/.claude-plugin/marketplace.json`。不要使用 `../` 来爬出 `.claude-plugin/`。
+路径相对于 marketplace 根目录解析，即包含 `.claude-plugin/` 的目录。在上面的示例中，`./plugins/my-plugin` 指向 `<repo>/plugins/my-plugin`，即使 `marketplace.json` 位于 `<repo>/.claude-plugin/marketplace.json`。不要使用 `../` 来引用 marketplace 根目录外的路径。
 
 <Note>
   相对路径仅在用户通过 Git（GitHub、GitLab 或 git URL）添加你的 marketplace 时有效。如果用户通过直接 URL 添加你的 marketplace 到 `marketplace.json` 文件，相对路径将无法正确解析。对于基于 URL 的分发，请改用 GitHub、npm 或 git URL 源。有关详细信息，请参阅[故障排除](#plugins-with-relative-paths-fail-in-url-based-marketplaces)。
@@ -462,7 +464,7 @@ Plugin 源告诉 Claude Code 在你的 marketplace 中列出的每个单独 plug
 
 ### Strict 模式
 
-`strict` 字段控制 `plugin.json` 是否是组件定义（命令、agents、hooks、skills、MCP servers、输出样式）的权威。
+`strict` 字段控制 `plugin.json` 是否是组件定义（skills、agents、hooks、MCP servers、输出样式）的权威。
 
 | 值          | 行为                                                                      |
 | :--------- | :---------------------------------------------------------------------- |
@@ -471,8 +473,8 @@ Plugin 源告诉 Claude Code 在你的 marketplace 中列出的每个单独 plug
 
 **何时使用每种模式：**
 
-* **`strict: true`**：plugin 有自己的 `plugin.json` 并管理自己的组件。marketplace 条目可以在顶部添加额外的命令或 hooks。这是默认值，适用于大多数 plugins。
-* **`strict: false`**：marketplace 操作员想要完全控制。plugin repo 提供原始文件，marketplace 条目定义这些文件中的哪些被公开为命令、agents、hooks 等。当 marketplace 以不同于 plugin 作者意图的方式重组或策划 plugin 的组件时很有用。
+* **`strict: true`**：plugin 有自己的 `plugin.json` 并管理自己的组件。marketplace 条目可以在顶部添加额外的 skills 或 hooks。这是默认值，适用于大多数 plugins。
+* **`strict: false`**：marketplace 操作员想要完全控制。plugin repo 提供原始文件，marketplace 条目定义这些文件中的哪些被公开为 skills、agents、hooks 等。当 marketplace 以不同于 plugin 作者意图的方式重组或策划 plugin 的组件时很有用。
 
 ## 托管和分发 marketplaces
 
@@ -496,7 +498,7 @@ GitHub 提供最简单的分发方法：
 
 ### 私有存储库
 
-Claude Code 支持从私有存储库安装 plugins。对于手动安装和更新，Claude Code 使用你现有的 git 凭证助手。如果 `git clone` 对你终端中的私有存储库有效，它在 Claude Code 中也有效。常见的凭证助手包括用于 GitHub 的 `gh auth login`、macOS Keychain 和 `git-credential-store`。
+Claude Code 支持从私有存储库安装 plugins。对于手动安装和更新，Claude Code 使用你现有的 git 凭证助手，所以通过 `gh auth login`、macOS Keychain 或 `git-credential-store` 的 HTTPS 访问工作方式与你的终端中相同。SSH 访问工作，只要主机已经在你的 `known_hosts` 文件中，并且密钥已加载到 `ssh-agent` 中，因为 Claude Code 会抑制主机指纹和密钥密码的交互式 SSH 提示。
 
 后台自动更新在启动时运行，不使用凭证助手，因为交互式提示会阻止 Claude Code 启动。要为私有 marketplaces 启用自动更新，请在你的环境中设置适当的身份验证令牌：
 
@@ -576,7 +578,16 @@ $CLAUDE_CODE_PLUGIN_SEED_DIR/
   cache/<marketplace>/<plugin>/<version>/...
 ```
 
-构建种子目录的最简单方法是在镜像构建期间运行 Claude Code 一次，安装你需要的 plugins，然后将生成的 `~/.claude/plugins` 目录复制到你的镜像中，并将 `CLAUDE_CODE_PLUGIN_SEED_DIR` 指向它。
+要构建种子目录，请在镜像构建期间运行 Claude Code 一次，安装你需要的 plugins，然后将生成的 `~/.claude/plugins` 目录复制到你的镜像中，并将 `CLAUDE_CODE_PLUGIN_SEED_DIR` 指向它。
+
+要跳过复制步骤，请在构建期间将 `CLAUDE_CODE_PLUGIN_CACHE_DIR` 设置为你的目标种子路径，以便 plugins 直接安装到那里：
+
+```bash theme={null}
+CLAUDE_CODE_PLUGIN_CACHE_DIR=/opt/claude-seed claude plugin marketplace add your-org/plugins
+CLAUDE_CODE_PLUGIN_CACHE_DIR=/opt/claude-seed claude plugin install my-tool@your-plugins
+```
+
+然后在你的容器的运行时环境中设置 `CLAUDE_CODE_PLUGIN_SEED_DIR=/opt/claude-seed`，以便 Claude Code 在启动时从种子读取。
 
 在启动时，Claude Code 将种子的 `known_marketplaces.json` 中找到的 marketplaces 注册到主配置中，并使用在 `cache/` 下找到的 plugin 缓存，而无需重新克隆。这在交互模式和使用 `-p` 标志的非交互模式中都有效。
 
@@ -585,6 +596,7 @@ $CLAUDE_CODE_PLUGIN_SEED_DIR/
 * **只读**：种子目录永远不会被写入。由于 git pull 会在只读文件系统上失败，种子 marketplaces 的自动更新被禁用。
 * **种子条目优先**：在每次启动时，种子中声明的 marketplaces 会覆盖用户配置中的任何匹配条目。要选择退出种子 plugin，请使用 `/plugin disable` 而不是删除 marketplace。
 * **路径解析**：Claude Code 通过在运行时探测 `$CLAUDE_CODE_PLUGIN_SEED_DIR/marketplaces/<name>/` 来定位 marketplace 内容，而不是信任存储在种子 JSON 内的路径。这意味着即使在与构建时不同的路径上挂载，种子也能正确工作。
+* **变更被阻止**：针对种子管理的 marketplace 运行 `/plugin marketplace remove` 或 `/plugin marketplace update` 会失败，并提示你要求管理员更新种子镜像。
 * **与设置组合**：如果 `extraKnownMarketplaces` 或 `enabledPlugins` 声明的 marketplace 已经存在于种子中，Claude Code 使用种子副本而不是克隆。
 
 ### 托管 marketplace 限制
@@ -789,6 +801,115 @@ claude plugin validate .
 ```
 
 有关完整的 plugin 测试工作流，请参阅[本地测试你的 plugins](/zh-CN/plugins#test-your-plugins-locally)。有关技术故障排除，请参阅 [Plugins 参考](/zh-CN/plugins-reference)。
+
+## 从 CLI 管理 marketplaces
+
+Claude Code 提供非交互式 `claude plugin marketplace` 子命令用于脚本编写和自动化。这些等同于交互式会话中可用的 `/plugin marketplace` 命令。
+
+### Plugin marketplace add
+
+从 GitHub 存储库、git URL、远程 URL 或本地路径添加 marketplace。
+
+```bash theme={null}
+claude plugin marketplace add <source> [options]
+```
+
+**参数：**
+
+* `<source>`：GitHub `owner/repo` 简写、git URL、指向 `marketplace.json` 文件的远程 URL 或本地目录路径。要固定到分支或标签，请将 `@ref` 附加到 GitHub 简写或 `#ref` 附加到 git URL
+
+**选项：**
+
+| 选项                    | 描述                                                                                                                 | 默认值    |
+| :-------------------- | :----------------------------------------------------------------------------------------------------------------- | :----- |
+| `--scope <scope>`     | 声明 marketplace 的位置：`user`、`project` 或 `local`。见 [Plugin 安装范围](/zh-CN/plugins-reference#plugin-installation-scopes) | `user` |
+| `--sparse <paths...>` | 通过 git sparse-checkout 限制检出到特定目录。对 monorepos 有用                                                                    |        |
+
+从 GitHub 使用 `owner/repo` 简写添加 marketplace：
+
+```bash theme={null}
+claude plugin marketplace add acme-corp/claude-plugins
+```
+
+使用 `@ref` 固定到特定分支或标签：
+
+```bash theme={null}
+claude plugin marketplace add acme-corp/claude-plugins@v2.0
+```
+
+从非 GitHub 主机上的 git URL 添加：
+
+```bash theme={null}
+claude plugin marketplace add https://gitlab.example.com/team/plugins.git
+```
+
+从直接提供 `marketplace.json` 文件的远程 URL 添加：
+
+```bash theme={null}
+claude plugin marketplace add https://example.com/marketplace.json
+```
+
+从本地目录添加以进行测试：
+
+```bash theme={null}
+claude plugin marketplace add ./my-marketplace
+```
+
+在项目范围声明 marketplace，以便通过 `.claude/settings.json` 与你的团队共享：
+
+```bash theme={null}
+claude plugin marketplace add acme-corp/claude-plugins --scope project
+```
+
+对于 monorepo，限制检出到包含 plugin 内容的目录：
+
+```bash theme={null}
+claude plugin marketplace add acme-corp/monorepo --sparse .claude-plugin plugins
+```
+
+### Plugin marketplace list
+
+列出所有配置的 marketplaces。
+
+```bash theme={null}
+claude plugin marketplace list [options]
+```
+
+**选项：**
+
+| 选项       | 描述       |
+| :------- | :------- |
+| `--json` | 输出为 JSON |
+
+### Plugin marketplace remove
+
+删除配置的 marketplace。别名 `rm` 也被接受。
+
+```bash theme={null}
+claude plugin marketplace remove <name>
+```
+
+**参数：**
+
+* `<name>`：marketplace 名称要删除，如 `claude plugin marketplace list` 所示。这是来自 `marketplace.json` 的 `name`，而不是你传递给 `add` 的源
+
+<Warning>
+  删除 marketplace 也会卸载你从它安装的任何 plugins。要刷新 marketplace 而不丢失已安装的 plugins，请改用 `claude plugin marketplace update`。
+</Warning>
+
+### Plugin marketplace update
+
+从其源刷新 marketplaces 以检索新 plugins 和版本更改。
+
+```bash theme={null}
+claude plugin marketplace update [name]
+```
+
+**参数：**
+
+* `[name]`：marketplace 名称要更新，如 `claude plugin marketplace list` 所示。如果省略，更新所有 marketplaces
+
+`remove` 和 `update` 在针对种子管理的 marketplace 运行时都会失败，这是只读的。更新所有 marketplaces 时，种子管理的条目被跳过，其他 marketplaces 仍然更新。要更改种子提供的 plugins，请要求你的管理员更新种子镜像。见[为容器预填充 plugins](#pre-populate-plugins-for-containers)。
 
 ## 故障排除
 

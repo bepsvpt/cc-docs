@@ -20,7 +20,7 @@ Sebagian besar praktik terbaik didasarkan pada satu batasan: jendela konteks Cla
 
 Jendela konteks Claude menyimpan seluruh percakapan Anda, termasuk setiap pesan, setiap file yang dibaca Claude, dan setiap output perintah. Namun, ini dapat terisi dengan cepat. Sesi debugging tunggal atau eksplorasi basis kode mungkin menghasilkan dan mengonsumsi puluhan ribu token.
 
-Ini penting karena kinerja LLM menurun saat konteks terisi. Ketika jendela konteks hampir penuh, Claude mungkin mulai "lupa" instruksi sebelumnya atau membuat lebih banyak kesalahan. Jendela konteks adalah sumber daya paling penting untuk dikelola. Lacak penggunaan konteks secara berkelanjutan dengan [baris status khusus](/id/statusline), dan lihat [Kurangi penggunaan token](/id/costs#reduce-token-usage) untuk strategi mengurangi penggunaan token.
+Ini penting karena kinerja LLM menurun saat konteks terisi. Ketika jendela konteks hampir penuh, Claude mungkin mulai "lupa" instruksi sebelumnya atau membuat lebih banyak kesalahan. Jendela konteks adalah sumber daya paling penting untuk dikelola. Untuk melihat bagaimana sesi terisi dalam praktik, [tonton panduan interaktif](/id/context-window) tentang apa yang dimuat saat startup dan berapa biaya setiap pembacaan file. Lacak penggunaan konteks secara berkelanjutan dengan [baris status khusus](/id/statusline), dan lihat [Kurangi penggunaan token](/id/costs#reduce-token-usage) untuk strategi mengurangi penggunaan token.
 
 ***
 
@@ -196,6 +196,7 @@ Anda dapat menempatkan file CLAUDE.md di beberapa lokasi:
 
 * **Folder home (`~/.claude/CLAUDE.md`)**: berlaku untuk semua sesi Claude
 * **Root proyek (`./CLAUDE.md`)**: periksa ke dalam git untuk dibagikan dengan tim Anda
+* **Root proyek (`./CLAUDE.local.md`)**: catatan khusus proyek pribadi; tambahkan file ini ke `.gitignore` Anda sehingga tidak dibagikan dengan tim Anda
 * **Direktori induk**: berguna untuk monorepo di mana `root/CLAUDE.md` dan `root/foo/CLAUDE.md` ditarik secara otomatis
 * **Direktori anak**: Claude menarik file CLAUDE.md anak sesuai permintaan saat bekerja dengan file di direktori tersebut
 
@@ -317,9 +318,9 @@ Beri tahu Claude untuk menggunakan subagent secara eksplisit: *"Gunakan subagent
   Jalankan `/plugin` untuk menjelajahi marketplace. Plugins menambahkan skills, alat, dan integrasi tanpa konfigurasi.
 </Tip>
 
-[Plugins](/id/plugins) menggabungkan skills, hooks, subagent, dan server MCP menjadi satu unit yang dapat diinstal dari komunitas dan Anthropic. Jika Anda bekerja dengan bahasa yang diketik, instal [plugin code intelligence](/id/discover-plugins#code-intelligence) untuk memberikan Claude navigasi simbol presisi dan deteksi kesalahan otomatis setelah pengeditan.
+[Plugins](/id/plugins) menggabungkan skills, hooks, subagents, dan server MCP menjadi satu unit yang dapat diinstal dari komunitas dan Anthropic. Jika Anda bekerja dengan bahasa yang diketik, instal [plugin code intelligence](/id/discover-plugins#code-intelligence) untuk memberikan Claude navigasi simbol presisi dan deteksi kesalahan otomatis setelah pengeditan.
 
-Untuk panduan memilih antara skills, subagent, hooks, dan MCP, lihat [Perluas Claude Code](/id/features-overview#match-features-to-your-goal).
+Untuk panduan memilih antara skills, subagents, hooks, dan MCP, lihat [Perluas Claude Code](/id/features-overview#match-features-to-your-goal).
 
 ***
 
@@ -397,15 +398,15 @@ Selama sesi panjang, jendela konteks Claude dapat terisi dengan percakapan yang 
 * Untuk kontrol lebih, jalankan `/compact <instructions>`, seperti `/compact Focus on the API changes`
 * Untuk mengompaksi hanya bagian dari percakapan, gunakan `Esc + Esc` atau `/rewind`, pilih checkpoint pesan, dan pilih **Summarize from here**. Ini mengondensasi pesan dari titik itu maju sambil menjaga konteks awal tetap utuh.
 * Sesuaikan perilaku compaction di CLAUDE.md dengan instruksi seperti `"When compacting, always preserve the full list of modified files and any test commands"` untuk memastikan konteks kritis bertahan dari ringkasan
-* Untuk pertanyaan cepat yang tidak perlu tetap dalam konteks, gunakan [`/btw`](/id/interactive-mode#side-questions-with-btw). Jawabannya muncul dalam overlay yang dapat ditutup dan tidak pernah memasuki riwayat percakapan, jadi Anda dapat memeriksa detail tanpa menumbuhkan konteks.
+* Untuk pertanyaan cepat yang tidak perlu tetap dalam konteks, gunakan [`/btw`](/id/interactive-mode#side-questions-with-%2Fbtw). Jawabannya muncul dalam overlay yang dapat ditutup dan tidak pernah memasuki riwayat percakapan, jadi Anda dapat memeriksa detail tanpa menumbuhkan konteks.
 
-### Gunakan subagent untuk investigasi
+### Gunakan subagents untuk investigasi
 
 <Tip>
   Delegasikan penelitian dengan `"use subagents to investigate X"`. Mereka mengeksplorasi dalam konteks terpisah, menjaga percakapan utama Anda bersih untuk implementasi.
 </Tip>
 
-Karena konteks adalah batasan fundamental Anda, subagent adalah salah satu alat paling kuat yang tersedia. Ketika Claude meneliti basis kode, ia membaca banyak file, semuanya mengonsumsi konteks Anda. Subagent berjalan dalam jendela konteks terpisah dan melaporkan kembali ringkasan:
+Karena konteks adalah batasan fundamental Anda, subagents adalah salah satu alat paling kuat yang tersedia. Ketika Claude meneliti basis kode, ia membaca banyak file, semuanya mengonsumsi konteks Anda. Subagents berjalan dalam jendela konteks terpisah dan melaporkan kembali ringkasan:
 
 ```text theme={null}
 Use subagents to investigate how our authentication system handles token
@@ -414,13 +415,13 @@ refresh, and whether we have any existing OAuth utilities I should reuse.
 
 Subagent mengeksplorasi basis kode, membaca file yang relevan, dan melaporkan kembali dengan temuan, semuanya tanpa mengacaukan percakapan utama Anda.
 
-Anda juga dapat menggunakan subagent untuk verifikasi setelah Claude mengimplementasikan sesuatu:
+Anda juga dapat menggunakan subagents untuk verifikasi setelah Claude mengimplementasikan sesuatu:
 
 ```text theme={null}
 use a subagent to review this code for edge cases
 ```
 
-### Rewind dengan checkpoint
+### Rewind dengan checkpoints
 
 <Tip>
   Setiap tindakan yang dilakukan Claude membuat checkpoint. Anda dapat mengembalikan percakapan, kode, atau keduanya ke checkpoint sebelumnya.
@@ -428,10 +429,10 @@ use a subagent to review this code for edge cases
 
 Claude secara otomatis membuat checkpoint sebelum perubahan. Tekan Escape dua kali atau jalankan `/rewind` untuk membuka menu rewind. Anda dapat mengembalikan percakapan saja, mengembalikan kode saja, mengembalikan keduanya, atau meringkas dari pesan yang dipilih. Lihat [Checkpointing](/id/checkpointing) untuk detail.
 
-Alih-alih merencanakan setiap langkah dengan hati-hati, Anda dapat memberi tahu Claude untuk mencoba sesuatu yang berisiko. Jika tidak berhasil, rewind dan coba pendekatan berbeda. Checkpoint bertahan di seluruh sesi, jadi Anda dapat menutup terminal dan masih rewind nanti.
+Alih-alih merencanakan setiap langkah dengan hati-hati, Anda dapat memberi tahu Claude untuk mencoba sesuatu yang berisiko. Jika tidak berhasil, rewind dan coba pendekatan berbeda. Checkpoints bertahan di seluruh sesi, jadi Anda dapat menutup terminal dan masih rewind nanti.
 
 <Warning>
-  Checkpoint hanya melacak perubahan yang dibuat *oleh Claude*, bukan proses eksternal. Ini bukan pengganti git.
+  Checkpoints hanya melacak perubahan yang dibuat *oleh Claude*, bukan proses eksternal. Ini bukan pengganti git.
 </Warning>
 
 ### Lanjutkan percakapan
@@ -560,7 +561,7 @@ Ini adalah kesalahan umum. Mengenalinya lebih awal menghemat waktu:
 * **Kesenjangan kepercayaan-kemudian-verifikasi.** Claude menghasilkan implementasi yang terlihat masuk akal tetapi tidak menangani kasus tepi.
   > **Perbaikan**: Selalu berikan verifikasi (tes, skrip, tangkapan layar). Jika Anda tidak dapat memverifikasinya, jangan kirimkan.
 * **Eksplorasi tak terbatas.** Anda meminta Claude untuk "menyelidiki" sesuatu tanpa membatasinya. Claude membaca ratusan file, mengisi konteks.
-  > **Perbaikan**: Batasi investigasi secara sempit atau gunakan subagent sehingga eksplorasi tidak mengonsumsi konteks utama Anda.
+  > **Perbaikan**: Batasi investigasi secara sempit atau gunakan subagents sehingga eksplorasi tidak mengonsumsi konteks utama Anda.
 
 ***
 
@@ -577,6 +578,6 @@ Seiring waktu, Anda akan mengembangkan intuisi yang tidak dapat ditangkap oleh p
 ## Sumber daya terkait
 
 * [Cara Claude Code Bekerja](/id/how-claude-code-works): loop agentic, alat, dan manajemen konteks
-* [Perluas Claude Code](/id/features-overview): skills, hooks, MCP, subagent, dan plugins
+* [Perluas Claude Code](/id/features-overview): skills, hooks, MCP, subagents, dan plugins
 * [Alur kerja umum](/id/common-workflows): resep langkah demi langkah untuk debugging, pengujian, PR, dan lainnya
 * [CLAUDE.md](/id/memory): simpan konvensi proyek dan konteks persisten

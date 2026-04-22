@@ -539,6 +539,29 @@ Nach dem Hinzufügen wird die Verbindung im Umgebungs-Dropdown angezeigt. Wähle
 
 Der Remote-Computer muss Linux oder macOS ausführen, und Claude Code muss darauf installiert sein. Nach der Verbindung unterstützen SSH-Sitzungen Berechtigungsmodi, Konnektoren, Plugins und MCP-Server.
 
+#### SSH-Verbindungen für Ihr Team vorkonfigurieren
+
+Administratoren können SSH-Verbindungen an Teammitglieder verteilen, indem sie `sshConfigs` zu einer [verwalteten Einstellungsdatei](/de/settings#settings-precedence) hinzufügen. Auf diese Weise definierte Verbindungen werden in der Umgebungs-Dropdown-Liste jedes Benutzers automatisch angezeigt und sind als verwaltet gekennzeichnet, sodass Benutzer sie auswählen, aber nicht bearbeiten oder löschen können.
+
+Das folgende Beispiel konfiguriert eine einzelne Verbindung vor, die sich in `~/projects` auf dem Remote-Host öffnet:
+
+```json theme={null}
+{
+  "sshConfigs": [
+    {
+      "id": "shared-dev-vm",
+      "name": "Shared Dev VM",
+      "sshHost": "user@dev.example.com",
+      "sshPort": 22,
+      "sshIdentityFile": "~/.ssh/id_ed25519",
+      "startDirectory": "~/projects"
+    }
+  ]
+}
+```
+
+Jeder Eintrag erfordert `id`, `name` und `sshHost`. Die Felder `sshPort`, `sshIdentityFile` und `startDirectory` sind optional. Benutzer können auch `sshConfigs` zu ihrer eigenen `~/.claude/settings.json` hinzufügen, wo Verbindungen, die über den Dialog hinzugefügt werden, gespeichert sind.
+
 ## Unternehmenskonfiguration
 
 Organisationen in Team- oder Enterprise-Plänen können das Verhalten der Desktop-App durch Admin-Konsolen-Steuerelemente, verwaltete Einstellungsdateien und Geräteverwaltungsrichtlinien verwalten.
@@ -561,6 +584,7 @@ Verwaltete Einstellungen überschreiben Projekt- und Benutzereinstellungen und g
 | `permissions.disableBypassPermissionsMode` | auf `"disable"` setzen, um Benutzer daran zu hindern, den Bypass-Berechtigungsmodus zu aktivieren.                                                                                                                         |
 | `disableAutoMode`                          | auf `"disable"` setzen, um Benutzer daran zu hindern, den [Auto](/de/permission-modes#eliminate-prompts-with-auto-mode)-Modus zu aktivieren. Entfernt Auto aus dem Moduswahlschalter. Auch unter `permissions` akzeptiert. |
 | `autoMode`                                 | passen Sie an, was der Auto-Modus-Klassifizierer über Ihre Organisation vertraut und blockiert. Siehe [Konfigurieren Sie den Auto-Modus-Klassifizierer](/de/permissions#configure-the-auto-mode-classifier).               |
+| `sshConfigs`                               | vorkonfigurieren Sie [SSH-Verbindungen](#pre-configure-ssh-connections-for-your-team), die in der Umgebungs-Dropdown angezeigt werden. Benutzer können verwaltete Verbindungen nicht bearbeiten oder löschen.              |
 
 `permissions.disableBypassPermissionsMode` und `disableAutoMode` funktionieren auch in Benutzer- und Projekteinstellungen, aber das Platzieren in verwalteten Einstellungen verhindert, dass Benutzer sie überschreiben. `autoMode` wird aus Benutzereinstellungen, `.claude/settings.local.json` und verwalteten Einstellungen gelesen, aber nicht aus der eingecheckten `.claude/settings.json`: ein geklontes Repo kann seine eigenen Klassifiziererregeln nicht injizieren. Für die vollständige Liste der verwalteten Einstellungen einschließlich `allowManagedPermissionRulesOnly` und `allowManagedHooksOnly` siehe [verwaltete Einstellungen](/de/permissions#managed-only-settings).
 

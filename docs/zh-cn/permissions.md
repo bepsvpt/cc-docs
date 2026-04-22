@@ -277,7 +277,7 @@ Hook 决定不会绕过权限规则。Deny 和 ask 规则在 hook 返回 `"allow
 * 沙箱中的文件系统限制使用 Read 和 Edit deny 规则，而不是单独的沙箱配置
 * 网络限制结合 WebFetch 权限规则与沙箱的 `allowedDomains` 和 `deniedDomains` 列表
 
-当沙箱启用 `autoAllowBashIfSandboxed: true`（这是默认值）时，沙箱化的 Bash 命令无需提示即可运行，即使您的权限包括 `ask: Bash(*)`。沙箱边界替代了每个命令的提示。请参见[沙箱模式](/zh-CN/sandboxing#sandbox-modes)以更改此行为。
+当沙箱启用 `autoAllowBashIfSandboxed: true`（这是默认值）时，沙箱化的 Bash 命令无需提示即可运行，即使您的权限包括 `ask: Bash(*)`。沙箱边界替代了每个命令的提示。显式 deny 规则仍然适用，针对 `/`、您的主目录或其他关键系统路径的 `rm` 或 `rmdir` 命令仍然会触发提示。请参见[沙箱模式](/zh-CN/sandboxing#sandbox-modes)以更改此行为。
 
 ## 托管设置
 
@@ -315,9 +315,11 @@ Hook 决定不会绕过权限规则。Deny 和 ask 规则在 hook 返回 `"allow
 
 ## 配置自动模式分类器
 
-[自动模式](/zh-CN/permission-modes#eliminate-prompts-with-auto-mode)使用分类器模型来决定每个操作是否可以安全运行而无需提示。开箱即用，它仅信任工作目录和（如果存在）当前存储库的远程。诸如推送到您公司的源代码控制组织或写入团队云存储桶之类的操作将被阻止为潜在的数据泄露。`autoMode` 设置块让您告诉分类器您的组织信任哪些基础设施。
+[自动模式](/zh-CN/permission-modes#eliminate-prompts-with-auto-mode)使用分类器模型来决定每个操作是否可以安全运行而无需提示。开箱即用，它仅信任工作目录和（如果存在）当前存储库的远程。诸如推送到您公司的源代码控制组织或写入团队云存储桶之类的操作将被阻止为潜在的数据泄露。
 
-分类器从用户设置、`.claude/settings.local.json` 和托管设置中读取 `autoMode`。它不从 `.claude/settings.json` 中的共享项目设置中读取，因为已检入的存储库可能会注入自己的 allow 规则。
+要调整分类器允许或阻止的内容，请向您的 [CLAUDE.md](/zh-CN/memory) 文件添加说明。分类器从对话旁边的受信任目录中读取 CLAUDE.md，因此诸如"永远不要强制推送"之类的说明同时指导 Claude 和分类器。从项目约定和行为规则开始。
+
+对于适用于多个项目的规则，例如受信任的基础设施或组织范围的拒绝规则，请使用 `autoMode` 设置块。分类器从用户设置、`.claude/settings.local.json` 和托管设置中读取 `autoMode`。它不从 `.claude/settings.json` 中的共享项目设置中读取，因为已检入的存储库可能会注入自己的 allow 规则。
 
 | 范围          | 文件                            | 用于                        |
 | :---------- | :---------------------------- | :------------------------ |

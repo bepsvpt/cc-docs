@@ -403,6 +403,14 @@ Claude 可以生成遵循您项目现有模式和约定的测试。请求测试�
 
 ***
 
+## 在笔记和非代码文件夹中工作
+
+Claude Code 可以在任何目录中工作。在笔记库、文档文件夹或任何 markdown 文件集合中运行它，以搜索、编辑和重新组织内容，就像处理代码一样。
+
+`.claude/` 目录和 `CLAUDE.md` 与其他工具的配置目录并排存在，不会产生冲突。Claude 在每次工具调用时都会重新读取文件，因此它会在下次读取该文件时看到您在另一个应用程序中所做的编辑。
+
+***
+
 ## 使用图像
 
 假设您需要在代码库中使用图像，并希望 Claude 帮助分析图像内容。
@@ -506,9 +514,9 @@ Claude 可以生成遵循您项目现有模式和约定的测试。请求测试�
 
 ## 使用扩展思考（Thinking Mode）
 
-[扩展思考](https://platform.claude.com/docs/en/build-with-claude/extended-thinking)默认启用，为 Claude 提供空间在响应前逐步推理复杂问题。此推理在详细模式中可见，您可以使用 `Ctrl+O` 切换。
+[扩展思考](https://platform.claude.com/docs/en/build-with-claude/extended-thinking)默认启用，为 Claude 提供空间在响应前逐步推理复杂问题。此推理在详细模式中可见，您可以使用 `Ctrl+O` 切换。在扩展思考期间，进度提示会出现在指示器下方，显示 Claude 正在积极工作。
 
-此外，Opus 4.6 和 Sonnet 4.6 支持自适应推理：不是固定的思考令牌预算，而是模型根据您的[努力级别](/zh-CN/model-config#adjust-effort-level)设置动态分配思考。扩展思考和自适应推理一起工作，让您能够控制 Claude 在响应前的推理深度。
+此外，[支持努力级别的模型](/zh-CN/model-config#adjust-effort-level)使用自适应推理：不是固定的思考令牌预算，而是模型根据您的努力级别设置和手头的任务动态决定是否以及如何思考。自适应推理让 Claude 能够更快地响应常规提示，并为受益于深度思考的步骤保留更深层的思考。
 
 扩展思考对于复杂的架构决策、具有挑战性的错误、多步骤实现规划和评估不同方法之间的权衡特别有价值。
 
@@ -520,13 +528,13 @@ Claude 可以生成遵循您项目现有模式和约定的测试。请求测试�
 
 思考默认启用，但您可以调整或禁用它。
 
-| 范围                   | 如何配置                                                                          | 详细信息                                                                                                     |
-| -------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| **努力级别**             | 运行 `/effort`，在 `/model` 中调整，或设置 [`CLAUDE_CODE_EFFORT_LEVEL`](/zh-CN/env-vars) | 控制 Opus 4.6 和 Sonnet 4.6 的思考深度。请参阅[调整努力级别](/zh-CN/model-config#adjust-effort-level)                      |
-| **`ultrathink` 关键字** | 在提示中的任何地方包含 "ultrathink"                                                      | 在 Opus 4.6 和 Sonnet 4.6 上为该轮设置努力为高。对于需要深度推理的一次性任务很有用，无需永久更改您的努力设置                                        |
-| **切换快捷键**            | 按 `Option+T`（macOS）或 `Alt+T`（Windows/Linux）                                   | 为当前会话切换思考开/关（所有模型）。可能需要[终端配置](/zh-CN/terminal-config)来启用 Option 键快捷键                                     |
-| **全局默认值**            | 使用 `/config` 切换 Thinking Mode                                                 | 在所有项目中设置默认值（所有模型）。<br />保存为 `~/.claude/settings.json` 中的 `alwaysThinkingEnabled`                         |
-| **限制令牌预算**           | 设置 [`MAX_THINKING_TOKENS`](/zh-CN/env-vars) 环境变量                              | 将思考预算限制为特定数量的令牌。在 Opus 4.6 和 Sonnet 4.6 上，仅当设置为 `0` 时才适用，除非禁用自适应推理。示例：`export MAX_THINKING_TOKENS=10000` |
+| 范围                   | 如何配置                                                                          | 详细信息                                                                                         |
+| -------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| **努力级别**             | 运行 `/effort`，在 `/model` 中调整，或设置 [`CLAUDE_CODE_EFFORT_LEVEL`](/zh-CN/env-vars) | 控制[支持的模型](/zh-CN/model-config#adjust-effort-level)上的思考深度                                     |
+| **`ultrathink` 关键字** | 在提示中的任何地方包含 "ultrathink"                                                      | 添加上下文内指令，告诉模型在该轮进行更多推理。不改变努力级别本身；有关详细信息，请参阅[调整努力级别](/zh-CN/model-config#adjust-effort-level) |
+| **切换快捷键**            | 按 `Option+T`（macOS）或 `Alt+T`（Windows/Linux）                                   | 为当前会话切换思考开/关（所有模型）。可能需要[终端配置](/zh-CN/terminal-config)来启用 Option 键快捷键                         |
+| **全局默认值**            | 使用 `/config` 切换 Thinking Mode                                                 | 在所有项目中设置默认值（所有模型）。<br />保存为 `~/.claude/settings.json` 中的 `alwaysThinkingEnabled`             |
+| **限制令牌预算**           | 设置 [`MAX_THINKING_TOKENS`](/zh-CN/env-vars) 环境变量                              | 将思考预算限制为特定数量的令牌。在具有自适应推理的模型上，仅当设置为 `0` 时才适用，除非禁用自适应推理。示例：`export MAX_THINKING_TOKENS=10000`  |
 
 要查看 Claude 的思考过程，按 `Ctrl+O` 切换详细模式，并查看显示为灰色斜体文本的内部推理。
 
@@ -534,11 +542,11 @@ Claude 可以生成遵循您项目现有模式和约定的测试。请求测试�
 
 扩展思考控制 Claude 在响应前执行多少内部推理。更多思考提供更多空间来探索解决方案、分析边界情况和自我纠正错误。
 
-**使用 Opus 4.6 和 Sonnet 4.6**，思考使用自适应推理：模型根据您选择的[努力级别](/zh-CN/model-config#adjust-effort-level)动态分配思考令牌。这是调整速度和推理深度之间权衡的推荐方式。
+在[支持努力级别的模型](/zh-CN/model-config#adjust-effort-level)上，思考使用自适应推理：模型根据您选择的努力级别动态分配思考令牌。这是调整速度和推理深度之间权衡的推荐方式。如果您希望 Claude 比您的努力级别通常会产生的更多或更少地思考，您也可以直接在提示中或在 `CLAUDE.md` 中说明。
 
-**使用较旧的模型**，思考使用从您的输出分配中提取的固定令牌预算。预算因模型而异；有关详细信息，请参阅 [`MAX_THINKING_TOKENS`](/zh-CN/env-vars)。您可以使用该环境变量限制预算，或通过 `/config` 或 `Option+T`/`Alt+T` 切换完全禁用思考。
+对于较旧的模型，思考使用从您的输出分配中提取的固定令牌预算。预算因模型而异；有关详细信息，请参阅 [`MAX_THINKING_TOKENS`](/zh-CN/env-vars)。您可以使用该环境变量限制预算，或通过 `/config` 或 `Option+T`/`Alt+T` 切换完全禁用思考。
 
-在 Opus 4.6 和 Sonnet 4.6 上，[自适应推理](/zh-CN/model-config#adjust-effort-level)控制思考深度，因此 `MAX_THINKING_TOKENS` 仅在设置为 `0` 以禁用思考时适用，或当 `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` 将这些模型恢复为固定预算时。请参阅[环境变量](/zh-CN/env-vars)。
+在具有自适应推理的模型上，`MAX_THINKING_TOKENS` 仅在设置为 `0` 以禁用思考时适用，或当 `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` 将模型恢复为固定预算时。`CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` 仅适用于 Opus 4.6 和 Sonnet 4.6。Opus 4.7 始终使用自适应推理，不支持固定思考预算。请参阅[环境变量](/zh-CN/env-vars)。
 
 <Warning>
   您需要为所有使用的思考令牌付费，即使思考摘要被编辑。在交互模式中，思考默认显示为折叠的存根。在 `settings.json` 中设置 `showThinkingSummaries: true` 以显示完整摘要。
@@ -556,7 +564,15 @@ Claude 可以生成遵循您项目现有模式和约定的测试。请求测试�
 
 从活跃会话内，使用 `/resume` 切换到不同的对话。
 
-会话按项目目录存储。`/resume` 选择器显示来自同一 git 存储库的会话，包括 worktrees。由 `claude -p` 或 SDK 调用创建的会话不会出现在选择器中，但您仍然可以通过将其会话 ID 直接传递给 `claude --resume <session-id>` 来恢复它。
+会话按项目目录存储。默认情况下，`/resume` 选择器显示来自当前 worktree 的交互式会话，带有键盘快捷键来扩展列表到其他 worktrees 或项目、搜索、预览和重命名。有关完整的快捷键参考，请参阅下面的[使用会话选择器](#use-the-session-picker)。
+
+当您从同一存储库的另一个 worktree 选择会话时，Claude Code 直接恢复它，无需您首先切换目录。从不相关项目选择会话会将 `cd` 和恢复命令复制到您的剪贴板。
+
+按名称恢复在当前存储库及其 worktrees 中解析。`claude --resume <name>` 和 `/resume <name>` 都查找精确匹配并直接恢复它，即使会话位于不同的 worktree 中。
+
+当名称不明确时，`claude --resume <name>` 打开选择器，名称预填充为搜索词。`/resume <name>` 从活跃会话内报告错误，因此运行 `/resume` 不带参数来打开选择器并选择。
+
+由 `claude -p` 或 SDK 调用创建的会话不会出现在选择器中，但您仍然可以通过将其会话 ID 直接传递给 `claude --resume <session-id>` 来恢复它。
 
 ### 命名您的会话
 
@@ -576,7 +592,7 @@ Claude 可以生成遵循您项目现有模式和约定的测试。请求测试�
     /rename auth-refactor
     ```
 
-    您也可以从选择器重命名任何会话：运行 `/resume`，导航到会话，然后按 `R`。
+    您也可以从选择器重命名任何会话：运行 `/resume`，导航到会话，然后按 `Ctrl+R`。
   </Step>
 
   <Step title="稍后按名称恢复">
@@ -600,26 +616,28 @@ Claude 可以生成遵循您项目现有模式和约定的测试。请求测试�
 
 **选择器中的键盘快捷键：**
 
-| 快捷键       | 操作                |
-| :-------- | :---------------- |
-| `↑` / `↓` | 在会话之间导航           |
-| `→` / `←` | 展开或折叠分组的会话        |
-| `Enter`   | 选择并恢复突出显示的会话      |
-| `P`       | 预览会话内容            |
-| `R`       | 重命名突出显示的会话        |
-| `/`       | 搜索以过滤会话           |
-| `A`       | 在当前目录和所有项目之间切换    |
-| `B`       | 过滤到来自当前 git 分支的会话 |
-| `Esc`     | 退出选择器或搜索模式        |
+| 快捷键                       | 操作                                                             |
+| :------------------------ | :------------------------------------------------------------- |
+| `↑` / `↓`                 | 在会话之间导航                                                        |
+| `→` / `←`                 | 展开或折叠分组的会话                                                     |
+| `Enter`                   | 选择并恢复突出显示的会话                                                   |
+| `Space`                   | 预览会话内容。`Ctrl+V` 也适用于不将其捕获为粘贴的终端                                |
+| `Ctrl+R`                  | 重命名突出显示的会话                                                     |
+| `/` 或任何可打印字符（除 `Space` 外） | 进入搜索模式并过滤会话                                                    |
+| `Ctrl+A`                  | 显示此机器上所有项目的会话。再次按下以恢复当前存储库                                     |
+| `Ctrl+W`                  | 显示当前存储库所有 worktrees 的会话。再次按下以恢复当前 worktree。仅在多 worktree 存储库中显示 |
+| `Ctrl+B`                  | 过滤到来自当前 git 分支的会话。再次按下以显示所有分支的会话                               |
+| `Esc`                     | 退出选择器或搜索模式                                                     |
 
 **会话组织：**
 
 选择器显示带有有用元数据的会话：
 
-* 会话名称或初始提示
+* 会话名称（如果设置），否则对话摘要或第一个用户提示
 * 自上次活动以来经过的时间
 * 消息计数
 * Git 分支（如果适用）
+* 项目路径，在使用 `Ctrl+A` 扩展到所有项目后显示
 
 分叉的会话（使用 `/branch`、`/rewind` 或 `--fork-session` 创建）在其根会话下分组，使查找相关对话更容易。
 
@@ -631,7 +649,7 @@ Claude 可以生成遵循您项目现有模式和约定的测试。请求测试�
   * 当您知道需要哪个会话时使用 `--resume session-name`
   * 当您需要浏览和选择时使用 `--resume`（不带名称）
   * 对于脚本，使用 `claude --continue --print "prompt"` 以非交互模式恢复
-  * 在选择器中按 `P` 在恢复前预览会话
+  * 在选择器中按 `Space` 在恢复前预览会话
   * 恢复的对话以与原始对话相同的模型和配置开始
 
   工作原理：
@@ -690,6 +708,8 @@ Subagents 也可以使用 worktree 隔离来并行工作而不会冲突。要求
 
 * **无更改**：worktree 及其分支自动删除
 * **存在更改或提交**：Claude 提示您保留或删除 worktree。保留会保留目录和分支，以便您稍后可以返回。删除会删除 worktree 目录及其分支，丢弃所有未提交的更改和提交
+
+Subagent worktrees 由崩溃或中断的并行运行孤立的，在启动时会自动删除，一旦它们超过您的 [`cleanupPeriodDays`](/zh-CN/settings#available-settings) 设置，前提是它们没有未提交的更改、没有未跟踪的文件和没有未推送的提交。使用 `--worktree` 创建的 Worktrees 永远不会被此扫描删除。
 
 要在 Claude 会话外清理 worktrees，请使用[手动 worktree 管理](#manage-worktrees-manually)。
 
@@ -928,12 +948,12 @@ cat build-error.txt | claude -p 'concisely explain the root cause of this build 
 
 根据您希望任务运行的位置选择调度选项：
 
-| 选项                                                | 运行位置              | 最适合                                                              |
-| :------------------------------------------------ | :---------------- | :--------------------------------------------------------------- |
-| [云计划任务](/zh-CN/web-scheduled-tasks)               | Anthropic 管理的基础设施 | 即使您的计算机关闭也应该运行的任务。在 [claude.ai/code](https://claude.ai/code) 配置。 |
-| [桌面计划任务](/zh-CN/desktop#schedule-recurring-tasks) | 您的机器，通过桌面应用       | 需要直接访问本地文件、工具或未提交更改的任务。                                          |
-| [GitHub Actions](/zh-CN/github-actions)           | 您的 CI 管道          | 与存储库事件（如打开的 PR）相关的任务，或应该与工作流配置一起存在的 cron 计划。                     |
-| [`/loop`](/zh-CN/scheduled-tasks)                 | 当前 CLI 会话         | 会话打开时的快速轮询。任务在您退出时被取消。                                           |
+| 选项                                       | 运行位置              | 最适合                                                                                                               |
+| :--------------------------------------- | :---------------- | :---------------------------------------------------------------------------------------------------------------- |
+| [Routines](/zh-CN/routines)              | Anthropic 管理的基础设施 | 即使您的计算机关闭也应该运行的任务。也可以在 API 调用或 GitHub 事件上触发，除了计划。在 [claude.ai/code/routines](https://claude.ai/code/routines) 配置。 |
+| [桌面计划任务](/zh-CN/desktop-scheduled-tasks) | 您的机器，通过桌面应用       | 需要直接访问本地文件、工具或未提交更改的任务。                                                                                           |
+| [GitHub Actions](/zh-CN/github-actions)  | 您的 CI 管道          | 与存储库事件（如打开的 PR）相关的任务，或应该与工作流配置一起存在的 cron 计划。                                                                      |
+| [`/loop`](/zh-CN/scheduled-tasks)        | 当前 CLI 会话         | 会话打开时的快速轮询。任务在您开始新对话时停止；`--resume` 和 `--continue` 恢复未过期的任务。                                                       |
 
 <Tip>
   为计划任务编写提示时，明确说明成功是什么样的以及如何处理结果。任务自主运行，所以它不能提出澄清问题。例如："审查标记为 `needs-review` 的开放 PR，对任何问题留下内联评论，并在 `#eng-reviews` Slack 频道中发布摘要。"
@@ -972,7 +992,7 @@ what are the limitations of Claude Code?
 ```
 
 <Note>
-  Claude 基于文档提供对这些问题的答案。有关可执行示例和实际演示，请参阅上面的特定工作流程部分。
+  Claude 基于文档提供对这些问题的答案。有关可执行示例和实际演示，请运行 `/powerup` 以获得带有动画演示的交互式课程，或参考上面的特定工作流程部分。
 </Note>
 
 <Tip>

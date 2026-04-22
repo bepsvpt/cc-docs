@@ -539,6 +539,29 @@ SSH 會話可讓您在遠端機器上執行 Claude Code，同時使用桌面應�
 
 遠端機器必須執行 Linux 或 macOS，且 Claude Code 必須安裝在其上。連接後，SSH 會話支援權限模式、連接器、plugins 和 MCP servers。
 
+#### 為您的團隊預先配置 SSH 連線
+
+管理員可以透過將 `sshConfigs` 新增到[受管設定](/zh-TW/settings#settings-precedence)檔案來將 SSH 連線分發給團隊成員。以這種方式定義的連線會自動出現在每個使用者的環境下拉式選單中，並顯示為受管，因此使用者可以選擇它們，但無法在應用程式中編輯或刪除它們。
+
+以下範例預先配置了一個在遠端主機上的 `~/projects` 中開啟的單一連線：
+
+```json theme={null}
+{
+  "sshConfigs": [
+    {
+      "id": "shared-dev-vm",
+      "name": "Shared Dev VM",
+      "sshHost": "user@dev.example.com",
+      "sshPort": 22,
+      "sshIdentityFile": "~/.ssh/id_ed25519",
+      "startDirectory": "~/projects"
+    }
+  ]
+}
+```
+
+每個項目都需要 `id`、`name` 和 `sshHost`。`sshPort`、`sshIdentityFile` 和 `startDirectory` 欄位是選用的。使用者也可以將 `sshConfigs` 新增到他們自己的 `~/.claude/settings.json`，這是透過對話框新增的連線的儲存位置。
+
 ## 企業配置
 
 Teams 或 Enterprise 計畫上的組織可以透過管理員主控台控制、受管設定檔案和裝置管理原則來管理桌面應用程式行為。
@@ -561,6 +584,7 @@ Teams 或 Enterprise 計畫上的組織可以透過管理員主控台控制、�
 | `permissions.disableBypassPermissionsMode` | 設定為 `"disable"` 以防止使用者啟用略過權限模式。                                                                                                   |
 | `disableAutoMode`                          | 設定為 `"disable"` 以防止使用者啟用 [Auto](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode) 模式。從模式選擇器中移除 Auto。也在 `permissions` 下接受。 |
 | `autoMode`                                 | 自訂 auto 模式分類器在您的組織中信任和阻止的內容。請參閱[配置 auto 模式分類器](/zh-TW/permissions#configure-the-auto-mode-classifier)。                            |
+| `sshConfigs`                               | 預先配置[SSH 連線](#pre-configure-ssh-connections-for-your-team)，在環境下拉式選單中顯示。使用者無法編輯或刪除受管連線。                                            |
 
 `permissions.disableBypassPermissionsMode` 和 `disableAutoMode` 也在使用者和專案設定中運作，但將它們放在受管設定中可防止使用者覆蓋它們。`autoMode` 從使用者設定、`.claude/settings.local.json` 和受管設定讀取，但不從簽入的 `.claude/settings.json` 讀取：複製的儲存庫無法注入自己的分類器規則。有關受管專用設定（包括 `allowManagedPermissionRulesOnly` 和 `allowManagedHooksOnly`）的完整清單，請參閱[受管專用設定](/zh-TW/permissions#managed-only-settings)。
 

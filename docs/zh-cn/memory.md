@@ -38,17 +38,29 @@ subagents 也可以维护自己的自动记忆。有关详细信息，请参阅 
 
 CLAUDE.md 文件是 markdown 文件，为项目、你的个人工作流或整个组织为 Claude 提供持久指令。你用纯文本编写这些文件；Claude 在每个会话开始时读取它们。
 
+### 何时添加到 CLAUDE.md
+
+将 CLAUDE.md 视为你写下你本来会重新解释的内容的地方。在以下情况下添加到它：
+
+* Claude 第二次犯同样的错误
+* 代码审查发现 Claude 应该了解这个代码库的内容
+* 你在聊天中输入的相同更正或澄清是你上个会话输入的
+* 新队友需要相同的上下文才能提高生产力
+
+将其保持为 Claude 应该在每个会话中保持的事实：构建命令、约定、项目布局、"总是做 X"规则。如果一个条目是多步骤过程或仅对代码库的一部分重要，将其移到 [skill](/zh-CN/skills) 或 [路径范围规则](#organize-rules-with-clauderules) 中。[扩展概述](/zh-CN/features-overview#build-your-setup-over-time)涵盖何时使用每种机制。
+
 ### 选择 CLAUDE.md 文件的位置
 
 CLAUDE.md 文件可以位于多个位置，每个位置有不同的范围。更具体的位置优先于更广泛的位置。
 
-| 范围       | 位置                                                                                                                                                                    | 目的                    | 用例示例             | 共享对象         |
-| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- | ---------------- | ------------ |
-| **托管策略** | • macOS: `/Library/Application Support/ClaudeCode/CLAUDE.md`<br />• Linux 和 WSL: `/etc/claude-code/CLAUDE.md`<br />• Windows: `C:\Program Files\ClaudeCode\CLAUDE.md` | 由 IT/DevOps 管理的组织范围指令 | 公司编码标准、安全策略、合规要求 | 组织中的所有用户     |
-| **项目指令** | `./CLAUDE.md` 或 `./.claude/CLAUDE.md`                                                                                                                                 | 项目的团队共享指令             | 项目架构、编码标准、常见工作流  | 通过源代码控制的团队成员 |
-| **用户指令** | `~/.claude/CLAUDE.md`                                                                                                                                                 | 所有项目的个人偏好             | 代码样式偏好、个人工具快捷方式  | 仅你（所有项目）     |
+| 范围       | 位置                                                                                                                                                                    | 目的                        | 用例示例             | 共享对象         |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- | ---------------- | ------------ |
+| **托管策略** | • macOS: `/Library/Application Support/ClaudeCode/CLAUDE.md`<br />• Linux 和 WSL: `/etc/claude-code/CLAUDE.md`<br />• Windows: `C:\Program Files\ClaudeCode\CLAUDE.md` | 由 IT/DevOps 管理的组织范围指令     | 公司编码标准、安全策略、合规要求 | 组织中的所有用户     |
+| **项目指令** | `./CLAUDE.md` 或 `./.claude/CLAUDE.md`                                                                                                                                 | 项目的团队共享指令                 | 项目架构、编码标准、常见工作流  | 通过源代码控制的团队成员 |
+| **用户指令** | `~/.claude/CLAUDE.md`                                                                                                                                                 | 所有项目的个人偏好                 | 代码样式偏好、个人工具快捷方式  | 仅你（所有项目）     |
+| **本地指令** | `./CLAUDE.local.md`                                                                                                                                                   | 个人项目特定偏好；添加到 `.gitignore` | 你的沙箱 URL、首选测试数据  | 仅你（当前项目）     |
 
-工作目录上方目录层次结构中的 CLAUDE.md 文件在启动时完整加载。子目录中的 CLAUDE.md 文件在 Claude 读取这些目录中的文件时按需加载。有关完整的解析顺序，请参阅 [CLAUDE.md 文件如何加载](#how-claudemd-files-load)。
+工作目录上方目录层次结构中的 CLAUDE.md 和 CLAUDE.local.md 文件在启动时完整加载。子目录中的文件在 Claude 读取这些目录中的文件时按需加载。有关完整的解析顺序，请参阅 [CLAUDE.md 文件如何加载](#how-claudemd-files-load)。
 
 对于大型项目，你可以使用 [项目规则](#organize-rules-with-clauderules) 将指令分解为特定主题的文件。规则让你将指令范围限定到特定文件类型或子目录。
 
@@ -93,7 +105,9 @@ CLAUDE.md 文件可以使用 `@path/to/import` 语法导入其他文件。导入
 - git 工作流 @docs/git-instructions.md
 ```
 
-对于你不想签入的个人偏好，从你的主目录导入文件。导入位于共享 CLAUDE.md 中，但它指向的文件保留在你的机器上：
+对于你不想签入版本控制的私人项目偏好，在项目根目录创建 `CLAUDE.local.md`。它与 `CLAUDE.md` 一起加载并以相同方式处理。将 `CLAUDE.local.md` 添加到你的 `.gitignore` 以便它不被提交；运行 `/init` 并选择个人选项会为你做这个。
+
+如果你在同一存储库的多个 git worktrees 中工作，一个被 gitignore 的 `CLAUDE.local.md` 仅存在于你创建它的 worktree 中。要在 worktrees 中共享个人指令，改为从你的主目录导入文件：
 
 ```text theme={null}
 # 个人偏好
@@ -115,14 +129,16 @@ Claude Code 读取 `CLAUDE.md`，而不是 `AGENTS.md`。如果你的存储库�
 
 ## Claude Code
 
-对 `src/billing/` 下的更改使用 plan mode。
+对 `src/billing/` 下的更改使用 Plan Mode。
 ```
 
 ### CLAUDE.md 文件如何加载
 
-Claude Code 通过从当前工作目录向上遍历目录树来读取 CLAUDE.md 文件，检查沿途的每个目录。这意味着如果你在 `foo/bar/` 中运行 Claude Code，它会从 `foo/bar/CLAUDE.md` 和 `foo/CLAUDE.md` 加载指令。
+Claude Code 通过从当前工作目录向上遍历目录树来读取 CLAUDE.md 文件，检查沿途的每个目录是否有 `CLAUDE.md` 和 `CLAUDE.local.md` 文件。这意味着如果你在 `foo/bar/` 中运行 Claude Code，它会从 `foo/bar/CLAUDE.md`、`foo/CLAUDE.md` 和沿途的任何 `CLAUDE.local.md` 文件加载指令。
 
-Claude 还在当前工作目录下的子目录中发现 CLAUDE.md 文件。它们不是在启动时加载，而是在 Claude 读取这些子目录中的文件时包含。
+所有发现的文件被连接到上下文中，而不是相互覆盖。在每个目录中，`CLAUDE.local.md` 在 `CLAUDE.md` 之后附加，因此当指令冲突时，你的个人笔记是 Claude 在该级别读取的最后内容。
+
+Claude 还在当前工作目录下的子目录中发现 `CLAUDE.md` 和 `CLAUDE.local.md` 文件。它们不是在启动时加载，而是在 Claude 读取这些子目录中的文件时包含。
 
 如果你在一个大型 monorepo 中工作，其他团队的 CLAUDE.md 文件被拾取，使用 [`claudeMdExcludes`](#exclude-specific-claudemd-files) 跳过它们。
 
@@ -132,11 +148,13 @@ Claude 还在当前工作目录下的子目录中发现 CLAUDE.md 文件。它�
 
 `--add-dir` 标志使 Claude 可以访问主工作目录外的其他目录。默认情况下，不加载这些目录中的 CLAUDE.md 文件。
 
-要也从其他目录加载 CLAUDE.md 文件，包括 `CLAUDE.md`、`.claude/CLAUDE.md` 和 `.claude/rules/*.md`，设置 `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD` 环境变量：
+要也从其他目录加载记忆文件，设置 `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD` 环境变量：
 
 ```bash theme={null}
 CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ../shared-config
 ```
+
+这会从其他目录加载 `CLAUDE.md`、`.claude/CLAUDE.md`、`.claude/rules/*.md` 和 `CLAUDE.local.md`。如果你从 [`--setting-sources`](/zh-CN/cli-reference) 中排除 `local`，`CLAUDE.local.md` 会被跳过。
 
 ### 使用 `.claude/rules/` 组织规则
 
@@ -341,7 +359,7 @@ Claude 在你的会话中读取和写入记忆文件。当你在 Claude Code 界
 
 ## 使用 `/memory` 查看和编辑
 
-`/memory` 命令列出在你当前会话中加载的所有 CLAUDE.md 和规则文件，让你切换自动记忆开或关，并提供打开自动记忆文件夹的链接。选择任何文件在你的编辑器中打开它。
+`/memory` 命令列出在你当前会话中加载的所有 CLAUDE.md、CLAUDE.local.md 和规则文件，让你切换自动记忆开或关，并提供打开自动记忆文件夹的链接。选择任何文件在你的编辑器中打开它。
 
 当你要求 Claude 记住某些内容时，如"总是使用 pnpm，而不是 npm"或"记住 API 测试需要本地 Redis 实例"，Claude 将其保存到自动记忆。要改为添加指令到 CLAUDE.md，直接要求 Claude，如"将其添加到 CLAUDE.md"，或通过 `/memory` 自己编辑文件。
 
@@ -355,7 +373,7 @@ CLAUDE.md 内容作为用户消息在系统提示之后传递，而不是系统�
 
 要调试：
 
-* 运行 `/memory` 验证你的 CLAUDE.md 文件被加载。如果文件未列出，Claude 看不到它。
+* 运行 `/memory` 验证你的 CLAUDE.md 和 CLAUDE.local.md 文件被加载。如果文件未列出，Claude 看不到它。
 * 检查相关 CLAUDE.md 是否在为你的会话加载的位置（参见 [选择 CLAUDE.md 文件的位置](#choose-where-to-put-claudemd-files)）。
 * 使指令更具体。"使用 2 空格缩进"比"格式化代码很好"效果更好。
 * 查找跨 CLAUDE.md 文件的冲突指令。如果两个文件为相同行为提供不同的指导，Claude 可能会任意选择一个。
@@ -376,13 +394,15 @@ CLAUDE.md 内容作为用户消息在系统提示之后传递，而不是系统�
 
 ### 在 `/compact` 后指令似乎丢失了
 
-CLAUDE.md 完全在压缩中存活。在 `/compact` 之后，Claude 从磁盘重新读取你的 CLAUDE.md 并将其新鲜重新注入会话。如果指令在压缩后消失，它仅在对话中给出，未写入 CLAUDE.md。将其添加到 CLAUDE.md 以使其在会话中持久化。
+项目根 CLAUDE.md 在压缩中存活：在 `/compact` 之后，Claude 从磁盘重新读取它并将其重新注入到会话中。子目录中的嵌套 CLAUDE.md 文件不会自动重新注入；它们在 Claude 下次读取该子目录中的文件时重新加载。
+
+如果指令在压缩后消失，它要么仅在对话中给出，要么位于尚未重新加载的嵌套 CLAUDE.md 中。将仅对话的指令添加到 CLAUDE.md 以使其在会话中持久化。有关完整的细分，请参阅 [什么在压缩中存活](/zh-CN/context-window#what-survives-compaction)。
 
 有关大小、结构和具体性的指导，请参阅 [编写有效的指令](#write-effective-instructions)。
 
 ## 相关资源
 
+* [调试你的配置](/zh-CN/debug-your-config)：诊断为什么 CLAUDE.md 或设置未生效
 * [Skills](/zh-CN/skills)：打包按需加载的可重复工作流
 * [Settings](/zh-CN/settings)：使用设置文件配置 Claude Code 行为
-* [管理会话](/zh-CN/sessions)：管理上下文、恢复对话和运行并行会话
 * [Subagent 记忆](/zh-CN/sub-agents#enable-persistent-memory)：让 subagents 维护自己的自动记忆

@@ -61,6 +61,6 @@ ZDR 涵蓋通過 Claude for Enterprise 上的 Claude Code 進行的模型推理�
 
 ## 請求 ZDR
 
-要為 Claude for Enterprise 上的 Claude Code 請求 ZDR，請聯繫您的 Anthropic 帳戶團隊。您的帳戶團隊將在內部提交請求，Anthropic 將在確認符合條件後在您的組織上審查並啟用 ZDR。所有啟用操作都會被審計記錄。
+要為 Claude for Enterprise 上的 Claude Code 請求 ZDR，請[聯繫銷售](https://www.anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=zero_data_retention_request)或您的 Anthropic 帳戶團隊。您的帳戶團隊將在內部提交請求，Anthropic 將在確認符合條件後在您的組織上審查並啟用 ZDR。所有啟用操作都會被審計記錄。
 
 如果您目前通過按使用量付費的 API 密鑰使用 Claude Code 的 ZDR，您可以過渡到 Claude for Enterprise 以獲得管理功能的訪問權限，同時為 Claude Code 保持 ZDR。請聯繫您的帳戶團隊以協調遷移。

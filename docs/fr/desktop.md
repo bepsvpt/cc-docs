@@ -539,6 +539,29 @@ Une fois ajoutée, la connexion apparaît dans la liste déroulante d'environnem
 
 La machine distante doit exécuter Linux ou macOS, et Claude Code doit être installé sur elle. Une fois connecté, les sessions SSH supportent les modes de permission, les connecteurs, les plugins et les serveurs MCP.
 
+#### Pré-configurer les connexions SSH pour votre équipe
+
+Les administrateurs peuvent distribuer les connexions SSH aux membres de l'équipe en ajoutant `sshConfigs` à un fichier de [paramètres gérés](/fr/settings#settings-precedence). Les connexions définies de cette manière apparaissent dans la liste déroulante d'environnement de chaque utilisateur automatiquement et sont affichées comme gérées, de sorte que les utilisateurs peuvent les sélectionner mais ne peuvent pas les modifier ou les supprimer dans l'application.
+
+L'exemple suivant pré-configure une seule connexion qui s'ouvre dans `~/projects` sur l'hôte distant :
+
+```json theme={null}
+{
+  "sshConfigs": [
+    {
+      "id": "shared-dev-vm",
+      "name": "Shared Dev VM",
+      "sshHost": "user@dev.example.com",
+      "sshPort": 22,
+      "sshIdentityFile": "~/.ssh/id_ed25519",
+      "startDirectory": "~/projects"
+    }
+  ]
+}
+```
+
+Chaque entrée nécessite `id`, `name` et `sshHost`. Les champs `sshPort`, `sshIdentityFile` et `startDirectory` sont optionnels. Les utilisateurs peuvent également ajouter `sshConfigs` à leur propre `~/.claude/settings.json`, qui est l'endroit où les connexions ajoutées via la boîte de dialogue sont stockées.
+
 ## Configuration d'entreprise
 
 Les organisations sur les plans Team ou Enterprise peuvent gérer le comportement de l'application de bureau via les contrôles de la console d'administration, les fichiers de paramètres gérés et les politiques de gestion des appareils.
@@ -556,11 +579,12 @@ Ces paramètres sont configurés via la [console de paramètres d'administration
 
 Les paramètres gérés remplacent les paramètres du projet et de l'utilisateur et s'appliquent quand Desktop génère des sessions CLI. Vous pouvez définir ces clés dans le fichier [paramètres gérés](/fr/settings#settings-precedence) de votre organisation ou les pousser à distance via la console d'administration.
 
-| Clé                                        | Description                                                                                                                                                                                                          |
-| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `permissions.disableBypassPermissionsMode` | définissez sur `"disable"` pour empêcher les utilisateurs d'activer le mode de contournement des permissions.                                                                                                        |
-| `disableAutoMode`                          | définissez sur `"disable"` pour empêcher les utilisateurs d'activer le mode [Auto](/fr/permission-modes#eliminate-prompts-with-auto-mode). Supprime Auto du sélecteur de mode. Également accepté sous `permissions`. |
-| `autoMode`                                 | personnalisez ce que le classificateur du mode auto fait confiance et bloque dans votre organisation. Voir [Configurer le classificateur du mode auto](/fr/permissions#configure-the-auto-mode-classifier).          |
+| Clé                                        | Description                                                                                                                                                                                                                  |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `permissions.disableBypassPermissionsMode` | définissez sur `"disable"` pour empêcher les utilisateurs d'activer le mode de contournement des permissions.                                                                                                                |
+| `disableAutoMode`                          | définissez sur `"disable"` pour empêcher les utilisateurs d'activer le mode [Auto](/fr/permission-modes#eliminate-prompts-with-auto-mode). Supprime Auto du sélecteur de mode. Également accepté sous `permissions`.         |
+| `autoMode`                                 | personnalisez ce que le classificateur du mode auto fait confiance et bloque dans votre organisation. Voir [Configurer le classificateur du mode auto](/fr/permissions#configure-the-auto-mode-classifier).                  |
+| `sshConfigs`                               | pré-configurez les [connexions SSH](#pre-configure-ssh-connections-for-your-team) qui apparaissent dans la liste déroulante de l'environnement. Les utilisateurs ne peuvent pas modifier ou supprimer les connexions gérées. |
 
 `permissions.disableBypassPermissionsMode` et `disableAutoMode` fonctionnent également dans les paramètres utilisateur et projet, mais les placer dans les paramètres gérés empêche les utilisateurs de les remplacer. `autoMode` est lu à partir des paramètres utilisateur, `.claude/settings.local.json` et des paramètres gérés, mais pas à partir du `.claude/settings.json` coché : un référentiel cloné ne peut pas injecter ses propres règles de classificateur. Pour la liste complète des paramètres gérés uniquement, y compris `allowManagedPermissionRulesOnly` et `allowManagedHooksOnly`, voir [paramètres gérés uniquement](/fr/permissions#managed-only-settings).
 

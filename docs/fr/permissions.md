@@ -277,7 +277,7 @@ Utilisez les deux pour une défense en profondeur :
 * Les restrictions du système de fichiers dans le sandbox utilisent les règles de refus Read et Edit, pas une configuration de sandbox séparée
 * Les restrictions réseau combinent les règles d'autorisation WebFetch avec les listes `allowedDomains` et `deniedDomains` du sandbox
 
-Lorsque le sandboxing est activé avec `autoAllowBashIfSandboxed: true`, qui est la valeur par défaut, les commandes Bash en sandbox s'exécutent sans invite même si vos autorisations incluent `ask: Bash(*)`. La limite du sandbox remplace l'invite par commande. Consultez [modes sandbox](/fr/sandboxing#sandbox-modes) pour modifier ce comportement.
+Lorsque le sandboxing est activé avec `autoAllowBashIfSandboxed: true`, qui est la valeur par défaut, les commandes Bash en sandbox s'exécutent sans invite même si vos autorisations incluent `ask: Bash(*)`. La limite du sandbox remplace l'invite par commande. Les règles de refus explicites s'appliquent toujours, et les commandes `rm` ou `rmdir` qui ciblent `/`, votre répertoire personnel ou d'autres chemins système critiques déclenchent toujours une invite. Consultez [modes sandbox](/fr/sandboxing#sandbox-modes) pour modifier ce comportement.
 
 ## Paramètres gérés
 
@@ -315,9 +315,11 @@ Pour réagir aux refus par programmation, utilisez le [hook `PermissionDenied`](
 
 ## Configurer le classificateur du mode auto
 
-Le [mode auto](/fr/permission-modes#eliminate-prompts-with-auto-mode) utilise un modèle de classificateur pour décider si chaque action est sûre à exécuter sans inviter. Par défaut, il ne fait confiance qu'au répertoire de travail et, s'il est présent, aux remotes du référentiel actuel. Les actions comme pousser vers l'organisation de contrôle de source de votre entreprise ou écrire dans un bucket cloud d'équipe seront bloquées comme exfiltration de données potentielle. Le bloc de paramètres `autoMode` vous permet de dire au classificateur quelle infrastructure votre organisation approuve.
+Le [mode auto](/fr/permission-modes#eliminate-prompts-with-auto-mode) utilise un modèle de classificateur pour décider si chaque action est sûre à exécuter sans inviter. Par défaut, il ne fait confiance qu'au répertoire de travail et, s'il est présent, aux remotes du référentiel actuel. Les actions comme pousser vers l'organisation de contrôle de source de votre entreprise ou écrire dans un bucket cloud d'équipe seront bloquées comme exfiltration de données potentielle.
 
-Le classificateur lit `autoMode` à partir des paramètres utilisateur, `.claude/settings.local.json` et des paramètres gérés. Il ne lit pas à partir des paramètres de projet partagés dans `.claude/settings.json`, car un référentiel archivé pourrait autrement injecter ses propres règles d'autorisation.
+Pour ajuster ce que le classificateur autorise ou bloque, ajoutez des instructions à votre fichier [CLAUDE.md](/fr/memory). Le classificateur lit CLAUDE.md à partir des répertoires approuvés aux côtés de la conversation, donc une instruction comme « ne jamais force push » oriente à la fois Claude et le classificateur en même temps. Commencez ici pour les conventions de projet et les règles de comportement.
+
+Pour les règles qui s'appliquent à plusieurs projets, comme l'infrastructure approuvée ou les règles de refus à l'échelle de l'organisation, utilisez le bloc de paramètres `autoMode`. Le classificateur lit `autoMode` à partir des paramètres utilisateur, `.claude/settings.local.json` et des paramètres gérés. Il ne lit pas à partir des paramètres de projet partagés dans `.claude/settings.json`, car un référentiel archivé pourrait autrement injecter ses propres règles d'autorisation.
 
 | Portée                        | Fichier                       | Utiliser pour                                              |
 | :---------------------------- | :---------------------------- | :--------------------------------------------------------- |

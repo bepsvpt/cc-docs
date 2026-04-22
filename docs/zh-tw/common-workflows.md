@@ -403,6 +403,14 @@ Claude 可以產生遵循您專案現有模式和慣例的測試。要求測試�
 
 ***
 
+## 在筆記和非程式碼資料夾中工作
+
+Claude Code 可在任何目錄中工作。在筆記保管庫、文件資料夾或任何 markdown 檔案集合中執行它，以搜尋、編輯和重新組織內容，就像您處理程式碼一樣。
+
+`.claude/` 目錄和 `CLAUDE.md` 與其他工具的配置目錄並存，不會產生衝突。Claude 在每次工具呼叫時都會重新讀取檔案，所以它會在下次讀取該檔案時看到您在另一個應用程式中所做的編輯。
+
+***
+
 ## 使用影像
 
 假設您需要在程式碼庫中使用影像，並希望 Claude 幫助分析影像內容。
@@ -506,9 +514,9 @@ Claude 可以產生遵循您專案現有模式和慣例的測試。要求測試�
 
 ## 使用擴展思考（Thinking Mode）
 
-[擴展思考](https://platform.claude.com/docs/en/build-with-claude/extended-thinking)預設啟用，為 Claude 提供空間在回應前逐步推理複雜問題。此推理在詳細模式中可見，您可以使用 `Ctrl+O` 切換。
+[擴展思考](https://platform.claude.com/docs/en/build-with-claude/extended-thinking)預設啟用，為 Claude 提供空間在回應前逐步推理複雜問題。此推理在詳細模式中可見，您可以使用 `Ctrl+O` 切換。在擴展思考期間，進度提示會出現在指示器下方，顯示 Claude 正在積極工作。
 
-此外，Opus 4.6 和 Sonnet 4.6 支援自適應推理：不是固定的思考令牌預算，而是模型根據您的[努力級別](/zh-TW/model-config#adjust-effort-level)設定動態分配思考。擴展思考和自適應推理一起工作，讓您控制 Claude 在回應前的推理深度。
+此外，[支援努力級別的模型](/zh-TW/model-config#adjust-effort-level)使用自適應推理：不是固定的思考令牌預算，而是模型根據您的努力級別設定和手邊的任務動態決定是否以及如何思考。自適應推理讓 Claude 對日常提示回應更快，並為受益於深度思考的步驟保留更深層的思考。
 
 擴展思考對於複雜的架構決策、具有挑戰性的錯誤、多步驟實現規劃和評估不同方法之間的權衡特別有價值。
 
@@ -520,13 +528,13 @@ Claude 可以產生遵循您專案現有模式和慣例的測試。要求測試�
 
 思考預設啟用，但您可以調整或禁用它。
 
-| 範圍                   | 如何配置                                                                          | 詳細資訊                                                                                                     |
-| -------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| **努力級別**             | 執行 `/effort`、在 `/model` 中調整，或設定 [`CLAUDE_CODE_EFFORT_LEVEL`](/zh-TW/env-vars) | 控制 Opus 4.6 和 Sonnet 4.6 的思考深度。請參閱[調整努力級別](/zh-TW/model-config#adjust-effort-level)                      |
-| **`ultrathink` 關鍵字** | 在提示中的任何地方包含「ultrathink」                                                       | 在 Opus 4.6 和 Sonnet 4.6 上為該輪設定努力為高。對於需要深度推理的一次性任務很有用，無需永久更改您的努力設定                                        |
-| **切換快捷鍵**            | 按 `Option+T`（macOS）或 `Alt+T`（Windows/Linux）                                   | 切換當前會話的思考開/關（所有模型）。可能需要[終端配置](/zh-TW/terminal-config)來啟用 Option 鍵快捷鍵                                     |
-| **全域預設值**            | 使用 `/config` 切換 Thinking Mode                                                 | 在所有專案中設定預設值（所有模型）。<br />儲存為 `~/.claude/settings.json` 中的 `alwaysThinkingEnabled`                         |
-| **限制令牌預算**           | 設定 [`MAX_THINKING_TOKENS`](/zh-TW/env-vars) 環境變數                              | 將思考預算限制為特定數量的令牌。在 Opus 4.6 和 Sonnet 4.6 上，只有設定為 `0` 時才適用，除非禁用自適應推理。範例：`export MAX_THINKING_TOKENS=10000` |
+| 範圍                   | 如何配置                                                                          | 詳細資訊                                                                                         |
+| -------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| **努力級別**             | 執行 `/effort`、在 `/model` 中調整，或設定 [`CLAUDE_CODE_EFFORT_LEVEL`](/zh-TW/env-vars) | 控制[支援的模型](/zh-TW/model-config#adjust-effort-level)上的思考深度                                     |
+| **`ultrathink` 關鍵字** | 在提示中的任何地方包含「ultrathink」                                                       | 在該輪添加上下文指令，告訴模型進行更多推理。不會改變努力級別本身；請參閱[調整努力級別](/zh-TW/model-config#adjust-effort-level)以了解相關資訊 |
+| **切換快捷鍵**            | 按 `Option+T`（macOS）或 `Alt+T`（Windows/Linux）                                   | 切換當前會話的思考開/關（所有模型）。可能需要[終端配置](/zh-TW/terminal-config)來啟用 Option 鍵快捷鍵                         |
+| **全域預設值**            | 使用 `/config` 切換 Thinking Mode                                                 | 在所有專案中設定預設值（所有模型）。<br />儲存為 `~/.claude/settings.json` 中的 `alwaysThinkingEnabled`             |
+| **限制令牌預算**           | 設定 [`MAX_THINKING_TOKENS`](/zh-TW/env-vars) 環境變數                              | 將思考預算限制為特定數量的令牌。在支援自適應推理的模型上，只有設定為 `0` 時才適用，除非禁用自適應推理。範例：`export MAX_THINKING_TOKENS=10000`  |
 
 要檢視 Claude 的思考過程，按 `Ctrl+O` 切換詳細模式，並查看顯示為灰色斜體文字的內部推理。
 
@@ -534,11 +542,11 @@ Claude 可以產生遵循您專案現有模式和慣例的測試。要求測試�
 
 擴展思考控制 Claude 在回應前執行多少內部推理。更多思考提供更多空間來探索解決方案、分析邊界情況和自我糾正錯誤。
 
-**使用 Opus 4.6 和 Sonnet 4.6**，思考使用自適應推理：模型根據您選擇的[努力級別](/zh-TW/model-config#adjust-effort-level)動態分配思考令牌。這是調整速度和推理深度之間權衡的推薦方式。
+在[支援努力級別的模型](/zh-TW/model-config#adjust-effort-level)上，思考使用自適應推理：模型根據您選擇的努力級別動態分配思考令牌。這是調整速度和推理深度之間權衡的推薦方式。如果您想讓 Claude 比您的努力級別會產生的更多或更少地思考，您也可以直接在提示中或在 `CLAUDE.md` 中說明。
 
-**使用較舊的模型**，思考使用固定令牌預算，從您的輸出分配中提取。預算因模型而異；有關詳細資訊，請參閱 [`MAX_THINKING_TOKENS`](/zh-TW/env-vars)。您可以使用該環境變數限制預算，或通過 `/config` 或 `Option+T`/`Alt+T` 切換完全禁用思考。
+使用較舊的模型，思考使用固定令牌預算，從您的輸出分配中提取。預算因模型而異；有關詳細資訊，請參閱 [`MAX_THINKING_TOKENS`](/zh-TW/env-vars)。您可以使用該環境變數限制預算，或通過 `/config` 或 `Option+T`/`Alt+T` 切換完全禁用思考。
 
-在 Opus 4.6 和 Sonnet 4.6 上，[自適應推理](/zh-TW/model-config#adjust-effort-level)控制思考深度，所以 `MAX_THINKING_TOKENS` 只在設定為 `0` 以禁用思考時適用，或當 `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` 將這些模型恢復為固定預算時適用。請參閱[環境變數](/zh-TW/env-vars)。
+在支援自適應推理的模型上，`MAX_THINKING_TOKENS` 只在設定為 `0` 以禁用思考時適用，或當 `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` 將模型恢復為固定預算時適用。`CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` 僅適用於 Opus 4.6 和 Sonnet 4.6。Opus 4.7 始終使用自適應推理，不支援固定思考預算。請參閱[環境變數](/zh-TW/env-vars)。
 
 <Warning>
   您需要為所有使用的思考令牌付費，即使思考摘要被編輯。在互動模式中，思考預設顯示為摺疊的存根。在 `settings.json` 中設定 `showThinkingSummaries: true` 以顯示完整摘要。
@@ -556,7 +564,15 @@ Claude 可以產生遵循您專案現有模式和慣例的測試。要求測試�
 
 從活躍會話內，使用 `/resume` 切換到不同的對話。
 
-會話按專案目錄儲存。`/resume` 選擇器顯示來自同一 git 儲存庫的會話，包括 worktrees。由 `claude -p` 或 SDK 調用建立的會話不會出現在選擇器中，但您仍然可以通過將其會話 ID 直接傳遞給 `claude --resume <session-id>` 來繼續。
+會話按專案目錄儲存。預設情況下，`/resume` 選擇器顯示來自當前 worktree 的互動式會話，帶有快捷鍵以擴展清單到其他 worktrees 或專案、搜尋、預覽和重新命名。有關完整的快捷鍵參考，請參閱下面的[使用會話選擇器](#use-the-session-picker)。
+
+當您從同一儲存庫的另一個 worktree 選擇會話時，Claude Code 會直接繼續它，無需您先切換目錄。從不相關的專案選擇會話會將 `cd` 和繼續命令複製到您的剪貼簿。
+
+按名稱繼續會在當前儲存庫及其 worktrees 中解析。`claude --resume <name>` 和 `/resume <name>` 都會尋找精確匹配並直接繼續它，即使會話位於不同的 worktree 中。
+
+當名稱不明確時，`claude --resume <name>` 會開啟選擇器，並將名稱預先填充為搜尋詞。`/resume <name>` 從會話內報告錯誤，所以執行 `/resume` 不帶引數以開啟選擇器並選擇。
+
+由 `claude -p` 或 SDK 調用建立的會話不會出現在選擇器中，但您仍然可以通過將其會話 ID 直接傳遞給 `claude --resume <session-id>` 來繼續。
 
 ### 命名您的會話
 
@@ -576,7 +592,7 @@ Claude 可以產生遵循您專案現有模式和慣例的測試。要求測試�
     /rename auth-refactor
     ```
 
-    您也可以從選擇器重新命名任何會話：執行 `/resume`，導航到會話，然後按 `R`。
+    您也可以從選擇器重新命名任何會話：執行 `/resume`，導航到會話，然後按 `Ctrl+R`。
   </Step>
 
   <Step title="稍後按名稱繼續">
@@ -600,26 +616,28 @@ Claude 可以產生遵循您專案現有模式和慣例的測試。要求測試�
 
 **選擇器中的快捷鍵：**
 
-| 快捷鍵       | 動作                 |
-| :-------- | :----------------- |
-| `↑` / `↓` | 在會話之間導航            |
-| `→` / `←` | 展開或摺疊分組的會話         |
-| `Enter`   | 選擇並繼續突出顯示的會話       |
-| `P`       | 預覽會話內容             |
-| `R`       | 重新命名突出顯示的會話        |
-| `/`       | 搜尋以篩選會話            |
-| `A`       | 在當前目錄和所有專案之間切換     |
-| `B`       | 篩選為來自您當前 git 分支的會話 |
-| `Esc`     | 退出選擇器或搜尋模式         |
+| 快捷鍵                      | 動作                                                             |
+| :----------------------- | :------------------------------------------------------------- |
+| `↑` / `↓`                | 在會話之間導航                                                        |
+| `→` / `←`                | 展開或摺疊分組的會話                                                     |
+| `Enter`                  | 選擇並繼續突出顯示的會話                                                   |
+| `Space`                  | 預覽會話內容。`Ctrl+V` 在不將其捕獲為貼上的終端上也有效                               |
+| `Ctrl+R`                 | 重新命名突出顯示的會話                                                    |
+| `/` 或除 `Space` 外的任何可列印字元 | 進入搜尋模式並篩選會話                                                    |
+| `Ctrl+A`                 | 顯示此機器上所有專案的會話。再次按下以恢復當前儲存庫                                     |
+| `Ctrl+W`                 | 顯示當前儲存庫所有 worktrees 的會話。再次按下以恢復當前 worktree。僅在多 worktree 儲存庫中顯示 |
+| `Ctrl+B`                 | 篩選為來自您當前 git 分支的會話。再次按下以顯示所有分支的會話                              |
+| `Esc`                    | 退出選擇器或搜尋模式                                                     |
 
 **會話組織：**
 
 選擇器顯示帶有有用中繼資料的會話：
 
-* 會話名稱或初始提示
+* 會話名稱（如果設定），否則對話摘要或第一個使用者提示
 * 自上次活動以來經過的時間
 * 訊息計數
 * Git 分支（如果適用）
+* 專案路徑，在使用 `Ctrl+A` 擴展到所有專案後顯示
 
 分叉的會話（使用 `/branch`、`/rewind` 或 `--fork-session` 建立）在其根會話下分組，使找到相關對話更容易。
 
@@ -631,7 +649,7 @@ Claude 可以產生遵循您專案現有模式和慣例的測試。要求測試�
   * 當您知道需要哪個會話時，使用 `--resume session-name`
   * 當您需要瀏覽和選擇時，使用 `--resume`（不帶名稱）
   * 對於指令碼，使用 `claude --continue --print "prompt"` 以非互動模式繼續
-  * 在選擇器中按 `P` 在繼續前預覽會話
+  * 在選擇器中按 `Space` 在繼續前預覽會話
   * 繼續的對話以與原始對話相同的模型和配置開始
 
   它如何運作：
@@ -690,6 +708,8 @@ Subagents 也可以使用 worktree 隔離來並行工作而不會衝突。要求
 
 * **無變更**：worktree 及其分支會自動移除
 * **存在變更或提交**：Claude 提示您保留或移除 worktree。保留會保留目錄和分支，以便您稍後返回。移除會刪除 worktree 目錄及其分支，丟棄所有未提交的變更和提交
+
+Subagent worktrees 由於崩潰或中斷的平行執行而孤立的，一旦它們超過您的 [`cleanupPeriodDays`](/zh-TW/settings#available-settings) 設定，就會在啟動時自動移除，前提是它們沒有未提交的變更、沒有未追蹤的檔案且沒有未推送的提交。使用 `--worktree` 建立的 Worktrees 永遠不會被此掃描移除。
 
 要在 Claude 會話外清理 worktrees，請使用[手動 worktree 管理](#manage-worktrees-manually)。
 
@@ -928,12 +948,12 @@ cat build-error.txt | claude -p 'concisely explain the root cause of this build 
 
 根據您想讓任務執行的位置選擇排程選項：
 
-| 選項                                                | 執行位置              | 最適合                                                            |
-| :------------------------------------------------ | :---------------- | :------------------------------------------------------------- |
-| [雲端排程任務](/zh-TW/web-scheduled-tasks)              | Anthropic 管理的基礎設施 | 應該在您的電腦關閉時執行的任務。在 [claude.ai/code](https://claude.ai/code) 配置。 |
-| [桌面排程任務](/zh-TW/desktop#schedule-recurring-tasks) | 您的機器，通過桌面應用       | 需要直接存取本地檔案、工具或未提交變更的任務。                                        |
-| [GitHub Actions](/zh-TW/github-actions)           | 您的 CI 管道          | 與儲存庫事件（如開啟的 PR）或應與工作流程配置一起存在的 cron 排程相關的任務。                    |
-| [`/loop`](/zh-TW/scheduled-tasks)                 | 當前 CLI 會話         | 會話開啟時的快速輪詢。退出時任務被取消。                                           |
+| 選項                                       | 執行位置              | 最適合                                                                                                            |
+| :--------------------------------------- | :---------------- | :------------------------------------------------------------------------------------------------------------- |
+| [Routines](/zh-TW/routines)              | Anthropic 管理的基礎設施 | 應該在您的電腦關閉時執行的任務。也可以由 API 呼叫或 GitHub 事件觸發，除了排程。在 [claude.ai/code/routines](https://claude.ai/code/routines) 配置。 |
+| [桌面排程任務](/zh-TW/desktop-scheduled-tasks) | 您的機器，通過桌面應用       | 需要直接存取本地檔案、工具或未提交變更的任務。                                                                                        |
+| [GitHub Actions](/zh-TW/github-actions)  | 您的 CI 管道          | 與儲存庫事件（如開啟的 PR）相關的任務，或應與工作流程配置一起存在的 cron 排程。                                                                   |
+| [`/loop`](/zh-TW/scheduled-tasks)        | 當前 CLI 會話         | 會話開啟時的快速輪詢。任務在您開始新對話時停止；`--resume` 和 `--continue` 恢復未過期的任務。                                                    |
 
 <Tip>
   為排程任務編寫提示時，明確說明成功是什麼樣子以及如何處理結果。任務自主執行，所以它無法提出澄清問題。例如：'檢查標記為 `needs-review` 的開放 PR，對任何問題留下內聯評論，並在 `#eng-reviews` Slack 頻道中發佈摘要。'

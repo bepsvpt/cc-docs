@@ -14,7 +14,7 @@
 
 마켓플레이스를 생성하고 배포하는 과정은 다음과 같습니다:
 
-1. **플러그인 생성**: 명령어, 에이전트, hooks, MCP 서버 또는 LSP 서버를 사용하여 하나 이상의 플러그인을 빌드합니다. 이 가이드에서는 배포할 플러그인이 이미 있다고 가정합니다. 플러그인 생성 방법에 대한 자세한 내용은 [플러그인 생성](/ko/plugins)을 참조하세요.
+1. **플러그인 생성**: skills, 에이전트, hooks, MCP 서버 또는 LSP 서버를 사용하여 하나 이상의 플러그인을 빌드합니다. 이 가이드에서는 배포할 플러그인이 이미 있다고 가정합니다. 플러그인 생성 방법에 대한 자세한 내용은 [플러그인 생성](/ko/plugins)을 참조하세요.
 2. **마켓플레이스 파일 생성**: 플러그인을 나열하고 플러그인을 찾을 위치를 정의하는 `marketplace.json`을 정의합니다([마켓플레이스 파일 생성](#create-the-marketplace-file) 참조).
 3. **마켓플레이스 호스팅**: GitHub, GitLab 또는 다른 git 호스트에 푸시합니다([마켓플레이스 호스팅 및 배포](#host-and-distribute-marketplaces) 참조).
 4. **사용자와 공유**: 사용자가 `/plugin marketplace add`로 마켓플레이스를 추가하고 개별 플러그인을 설치합니다([플러그인 검색 및 설치](/ko/discover-plugins) 참조).
@@ -95,7 +95,7 @@
   </Step>
 
   <Step title="시도해보기">
-    편집기에서 일부 코드를 선택하고 새 명령어를 실행합니다.
+    편집기에서 일부 코드를 선택하고 새 skill을 실행합니다.
 
     ```shell theme={null}
     /quality-review
@@ -108,7 +108,7 @@ hooks, 에이전트, MCP 서버 및 LSP 서버를 포함하여 플러그인이 �
 <Note>
   **플러그인 설치 방법**: 사용자가 플러그인을 설치하면 Claude Code는 플러그인 디렉터리를 캐시 위치에 복사합니다. 이는 `../shared-utils`와 같은 경로를 사용하여 플러그인 디렉터리 외부의 파일을 참조할 수 없다는 의미입니다. 왜냐하면 해당 파일이 복사되지 않기 때문입니다.
 
-  플러그인 간에 파일을 공유해야 하는 경우 symlink를 사용합니다(복사 중에 따릅니다). 자세한 내용은 [플러그인 캐싱 및 파일 해석](/ko/plugins-reference#plugin-caching-and-file-resolution)을 참조하세요.
+  플러그인 간에 파일을 공유해야 하는 경우 symlink를 사용합니다. 자세한 내용은 [플러그인 캐싱 및 파일 해석](/ko/plugins-reference#plugin-caching-and-file-resolution)을 참조하세요.
 </Note>
 
 ## 마켓플레이스 파일 생성
@@ -167,13 +167,14 @@ hooks, 에이전트, MCP 서버 및 LSP 서버를 포함하여 플러그인이 �
 | `name`  | string | 예   | 유지 관리자 또는 팀의 이름 |
 | `email` | string | 아니오 | 유지 관리자의 연락처 이메일 |
 
-### 선택적 메타데이터
+### 선택적 필드
 
-| 필드                     | 유형     | 설명                                                                                                                            |
-| :--------------------- | :----- | :---------------------------------------------------------------------------------------------------------------------------- |
-| `metadata.description` | string | 간단한 마켓플레이스 설명                                                                                                                 |
-| `metadata.version`     | string | 마켓플레이스 버전                                                                                                                     |
-| `metadata.pluginRoot`  | string | 상대 플러그인 소스 경로에 앞에 붙는 기본 디렉터리(예: `"./plugins"`를 사용하면 `"source": "./plugins/formatter"` 대신 `"source": "formatter"`를 작성할 수 있습니다) |
+| 필드                                    | 유형     | 설명                                                                                                                                                                          |
+| :------------------------------------ | :----- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `metadata.description`                | string | 간단한 마켓플레이스 설명                                                                                                                                                               |
+| `metadata.version`                    | string | 마켓플레이스 버전                                                                                                                                                                   |
+| `metadata.pluginRoot`                 | string | 상대 플러그인 소스 경로에 앞에 붙는 기본 디렉터리(예: `"./plugins"`를 사용하면 `"source": "./plugins/formatter"` 대신 `"source": "formatter"`를 작성할 수 있습니다)                                               |
+| `allowCrossMarketplaceDependenciesOn` | array  | 이 마켓플레이스의 플러그인이 의존할 수 있는 다른 마켓플레이스. 여기에 나열되지 않은 마켓플레이스의 종속성은 설치 시 차단됩니다. [다른 마켓플레이스의 플러그인에 의존](/ko/plugin-dependencies#depend-on-a-plugin-from-another-marketplace)을 참조하세요. |
 
 ## 플러그인 항목
 
@@ -205,13 +206,14 @@ hooks, 에이전트, MCP 서버 및 LSP 서버를 포함하여 플러그인이 �
 
 **구성 요소 구성 필드:**
 
-| 필드           | 유형             | 설명                             |
-| :----------- | :------------- | :----------------------------- |
-| `commands`   | string\|array  | 명령어 파일 또는 디렉터리의 사용자 정의 경로      |
-| `agents`     | string\|array  | 에이전트 파일의 사용자 정의 경로             |
-| `hooks`      | string\|object | 사용자 정의 hooks 구성 또는 hooks 파일 경로 |
-| `mcpServers` | string\|object | MCP 서버 구성 또는 MCP 구성 경로         |
-| `lspServers` | string\|object | LSP 서버 구성 또는 LSP 구성 경로         |
+| 필드           | 유형             | 설명                                            |
+| :----------- | :------------- | :-------------------------------------------- |
+| `skills`     | string\|array  | `<name>/SKILL.md`를 포함하는 skill 디렉터리의 사용자 정의 경로 |
+| `commands`   | string\|array  | 평면 `.md` skill 파일 또는 디렉터리의 사용자 정의 경로          |
+| `agents`     | string\|array  | 에이전트 파일의 사용자 정의 경로                            |
+| `hooks`      | string\|object | 사용자 정의 hooks 구성 또는 hooks 파일 경로                |
+| `mcpServers` | string\|object | MCP 서버 구성 또는 MCP 구성 경로                        |
+| `lspServers` | string\|object | LSP 서버 구성 또는 LSP 구성 경로                        |
 
 ## 플러그인 소스
 
@@ -221,7 +223,7 @@ hooks, 에이전트, MCP 서버 및 LSP 서버를 포함하여 플러그인이 �
 
 | 소스           | 유형                            | 필드                                 | 참고                                                 |
 | ------------ | ----------------------------- | ---------------------------------- | -------------------------------------------------- |
-| 상대 경로        | `string` (예: `"./my-plugin"`) | —                                  | 마켓플레이스 저장소 내의 로컬 디렉터리. `./`로 시작해야 합니다              |
+| 상대 경로        | `string` (예: `"./my-plugin"`) | 없음                                 | 마켓플레이스 저장소 내의 로컬 디렉터리. `./`로 시작해야 합니다              |
 | `github`     | object                        | `repo`, `ref?`, `sha?`             |                                                    |
 | `url`        | object                        | `url`, `ref?`, `sha?`              | Git URL 소스                                         |
 | `git-subdir` | object                        | `url`, `path`, `ref?`, `sha?`      | git 저장소 내의 하위 디렉터리. 모노레포의 대역폭을 최소화하기 위해 희소하게 복제합니다 |
@@ -462,7 +464,7 @@ npm 패키지로 배포되는 플러그인은 `npm install`을 사용하여 설�
 
 ### Strict 모드
 
-`strict` 필드는 `plugin.json`이 구성 요소 정의(명령어, 에이전트, hooks, skills, MCP 서버, 출력 스타일)의 권한인지 여부를 제어합니다.
+`strict` 필드는 `plugin.json`이 구성 요소 정의(skills, 에이전트, hooks, MCP 서버, 출력 스타일)의 권한인지 여부를 제어합니다.
 
 | 값           | 동작                                                                                  |
 | :---------- | :---------------------------------------------------------------------------------- |
@@ -471,8 +473,8 @@ npm 패키지로 배포되는 플러그인은 `npm install`을 사용하여 설�
 
 **각 모드를 사용할 때:**
 
-* **`strict: true`**: 플러그인은 자신의 `plugin.json`을 가지고 있으며 자신의 구성 요소를 관리합니다. 마켓플레이스 항목은 맨 위에 추가 명령어 또는 hooks를 추가할 수 있습니다. 이것이 기본값이며 대부분의 플러그인에서 작동합니다.
-* **`strict: false`**: 마켓플레이스 운영자가 완전한 제어를 원합니다. 플러그인 저장소는 원본 파일을 제공하고 마켓플레이스 항목은 이러한 파일 중 어느 것이 명령어, 에이전트, hooks 등으로 노출되는지 정의합니다. 마켓플레이스가 플러그인 작성자의 의도와 다르게 플러그인의 구성 요소를 재구성하거나 큐레이션할 때 유용합니다.
+* **`strict: true`**: 플러그인은 자신의 `plugin.json`을 가지고 있으며 자신의 구성 요소를 관리합니다. 마켓플레이스 항목은 맨 위에 추가 skills 또는 hooks를 추가할 수 있습니다. 이것이 기본값이며 대부분의 플러그인에서 작동합니다.
+* **`strict: false`**: 마켓플레이스 운영자가 완전한 제어를 원합니다. 플러그인 저장소는 원본 파일을 제공하고 마켓플레이스 항목은 이러한 파일 중 어느 것이 skills, 에이전트, hooks 등으로 노출되는지 정의합니다. 마켓플레이스가 플러그인 작성자의 의도와 다르게 플러그인의 구성 요소를 재구성하거나 큐레이션할 때 유용합니다.
 
 ## 마켓플레이스 호스팅 및 배포
 
@@ -496,7 +498,7 @@ GitLab, Bitbucket 및 자체 호스팅 서버와 같은 모든 git 호스팅 서
 
 ### 개인 저장소
 
-Claude Code는 개인 저장소에서 플러그인 설치를 지원합니다. 수동 설치 및 업데이트의 경우 Claude Code는 기존 git 자격 증명 도우미를 사용합니다. 터미널에서 개인 저장소에 대해 `git clone`이 작동하면 Claude Code에서도 작동합니다. 일반적인 자격 증명 도우미에는 GitHub의 `gh auth login`, macOS Keychain 및 `git-credential-store`가 포함됩니다.
+Claude Code는 개인 저장소에서 플러그인 설치를 지원합니다. 수동 설치 및 업데이트의 경우 Claude Code는 기존 git 자격 증명 도우미를 사용합니다. 따라서 HTTPS 액세스는 `gh auth login`, macOS Keychain 또는 `git-credential-store`를 통해 터미널에서와 동일하게 작동합니다. SSH 액세스는 호스트가 이미 `known_hosts` 파일에 있고 키가 `ssh-agent`에 로드되어 있는 한 작동합니다. Claude Code는 호스트 지문 및 키 암호에 대한 대화형 SSH 프롬프트를 억제하기 때문입니다.
 
 백그라운드 자동 업데이트는 대화형 프롬프트가 Claude Code 시작을 차단하므로 자격 증명 도우미 없이 시작 시 실행됩니다. 개인 마켓플레이스에 대한 자동 업데이트를 활성화하려면 환경에서 적절한 인증 토큰을 설정합니다:
 
@@ -576,7 +578,16 @@ $CLAUDE_CODE_PLUGIN_SEED_DIR/
   cache/<marketplace>/<plugin>/<version>/...
 ```
 
-시드 디렉터리를 구축하는 가장 간단한 방법은 이미지 빌드 중에 Claude Code를 한 번 실행하고, 필요한 플러그인을 설치한 다음, 결과 `~/.claude/plugins` 디렉터리를 이미지에 복사하고 `CLAUDE_CODE_PLUGIN_SEED_DIR`을 가리키는 것입니다.
+시드 디렉터리를 구축하려면 이미지 빌드 중에 Claude Code를 한 번 실행하고, 필요한 플러그인을 설치한 다음, 결과 `~/.claude/plugins` 디렉터리를 이미지에 복사하고 `CLAUDE_CODE_PLUGIN_SEED_DIR`을 가리킵니다.
+
+복사 단계를 건너뛰려면 빌드 중에 `CLAUDE_CODE_PLUGIN_CACHE_DIR`을 대상 시드 경로로 설정하여 플러그인이 직접 설치되도록 합니다:
+
+```bash theme={null}
+CLAUDE_CODE_PLUGIN_CACHE_DIR=/opt/claude-seed claude plugin marketplace add your-org/plugins
+CLAUDE_CODE_PLUGIN_CACHE_DIR=/opt/claude-seed claude plugin install my-tool@your-plugins
+```
+
+그런 다음 런타임 환경에서 `CLAUDE_CODE_PLUGIN_SEED_DIR=/opt/claude-seed`를 설정하여 Claude Code가 시작 시 시드에서 읽도록 합니다.
 
 시작 시 Claude Code는 시드의 `known_marketplaces.json`에서 찾은 마켓플레이스를 기본 구성에 등록하고 `cache/` 아래에서 찾은 플러그인 캐시를 다시 복제하지 않고 사용합니다. 이는 대화형 모드와 `-p` 플래그를 사용한 비대화형 모드 모두에서 작동합니다.
 
@@ -585,6 +596,7 @@ $CLAUDE_CODE_PLUGIN_SEED_DIR/
 * **읽기 전용**: 시드 디렉터리는 절대 쓰기되지 않습니다. git pull이 읽기 전용 파일 시스템에서 실패하므로 시드 마켓플레이스에 대해 자동 업데이트가 비활성화됩니다.
 * **시드 항목이 우선합니다**: 시드에서 선언된 마켓플레이스는 각 시작 시 사용자 구성의 일치하는 항목을 덮어씁니다. 시드 플러그인을 거부하려면 마켓플레이스를 제거하는 대신 `/plugin disable`을 사용합니다.
 * **경로 해석**: Claude Code는 시드의 JSON 내에 저장된 경로를 신뢰하지 않고 런타임에 `$CLAUDE_CODE_PLUGIN_SEED_DIR/marketplaces/<name>/`을 탐색하여 마켓플레이스 콘텐츠를 찾습니다. 이는 시드가 빌드된 위치와 다른 경로에 마운트된 경우에도 시드가 올바르게 작동함을 의미합니다.
+* **변경 차단**: 시드 관리 마켓플레이스에 대해 `/plugin marketplace remove` 또는 `/plugin marketplace update`를 실행하면 시드 이미지를 업데이트하도록 관리자에게 문의하라는 지침과 함께 실패합니다.
 * **설정과 구성**: `extraKnownMarketplaces` 또는 `enabledPlugins`이 시드에 이미 존재하는 마켓플레이스를 선언하면 Claude Code는 복제하는 대신 시드 복사본을 사용합니다.
 
 ### 관리되는 마켓플레이스 제한
@@ -789,6 +801,115 @@ claude plugin validate .
 ```
 
 전체 플러그인 테스트 워크플로우는 [플러그인을 로컬에서 테스트](/ko/plugins#test-your-plugins-locally)를 참조하세요. 기술적 문제 해결은 [플러그인 참조](/ko/plugins-reference)를 참조하세요.
+
+## CLI에서 마켓플레이스 관리
+
+Claude Code는 스크립팅 및 자동화를 위한 비대화형 `claude plugin marketplace` 하위 명령어를 제공합니다. 이는 대화형 세션 내에서 사용 가능한 `/plugin marketplace` 명령어와 동일합니다.
+
+### 플러그인 마켓플레이스 추가
+
+GitHub 저장소, git URL, 원격 URL 또는 로컬 경로에서 마켓플레이스를 추가합니다.
+
+```bash theme={null}
+claude plugin marketplace add <source> [options]
+```
+
+**인수:**
+
+* `<source>`: GitHub `owner/repo` 단축형, git URL, `marketplace.json` 파일에 대한 원격 URL 또는 로컬 디렉터리 경로. 분기 또는 태그에 고정하려면 GitHub 단축형에 `@ref`를 추가하거나 git URL에 `#ref`를 추가합니다
+
+**옵션:**
+
+| 옵션                    | 설명                                                                                                              | 기본값    |
+| :-------------------- | :-------------------------------------------------------------------------------------------------------------- | :----- |
+| `--scope <scope>`     | 마켓플레이스를 선언할 위치: `user`, `project` 또는 `local`. [플러그인 설치 범위](/ko/plugins-reference#plugin-installation-scopes) 참조 | `user` |
+| `--sparse <paths...>` | git sparse-checkout을 통해 특정 디렉터리로 체크아웃 제한. 모노레포에 유용                                                              |        |
+
+GitHub에서 `owner/repo` 단축형을 사용하여 마켓플레이스 추가:
+
+```bash theme={null}
+claude plugin marketplace add acme-corp/claude-plugins
+```
+
+`@ref`를 사용하여 특정 분기 또는 태그에 고정:
+
+```bash theme={null}
+claude plugin marketplace add acme-corp/claude-plugins@v2.0
+```
+
+비 GitHub 호스트의 git URL에서 추가:
+
+```bash theme={null}
+claude plugin marketplace add https://gitlab.example.com/team/plugins.git
+```
+
+`marketplace.json` 파일을 직접 제공하는 원격 URL에서 추가:
+
+```bash theme={null}
+claude plugin marketplace add https://example.com/marketplace.json
+```
+
+테스트를 위해 로컬 디렉터리에서 추가:
+
+```bash theme={null}
+claude plugin marketplace add ./my-marketplace
+```
+
+마켓플레이스를 프로젝트 범위에서 선언하여 `.claude/settings.json`을 통해 팀과 공유:
+
+```bash theme={null}
+claude plugin marketplace add acme-corp/claude-plugins --scope project
+```
+
+모노레포의 경우 플러그인 콘텐츠를 포함하는 디렉터리로 체크아웃 제한:
+
+```bash theme={null}
+claude plugin marketplace add acme-corp/monorepo --sparse .claude-plugin plugins
+```
+
+### 플러그인 마켓플레이스 목록
+
+구성된 모든 마켓플레이스를 나열합니다.
+
+```bash theme={null}
+claude plugin marketplace list [options]
+```
+
+**옵션:**
+
+| 옵션       | 설명        |
+| :------- | :-------- |
+| `--json` | JSON으로 출력 |
+
+### 플러그인 마켓플레이스 제거
+
+구성된 마켓플레이스를 제거합니다. 별칭 `rm`도 허용됩니다.
+
+```bash theme={null}
+claude plugin marketplace remove <name>
+```
+
+**인수:**
+
+* `<name>`: `claude plugin marketplace list`에 표시된 마켓플레이스 이름을 제거합니다. 이는 `add`에 전달한 소스가 아니라 `marketplace.json`의 `name`입니다
+
+<Warning>
+  마켓플레이스를 제거하면 해당 마켓플레이스에서 설치한 모든 플러그인도 제거됩니다. 설치된 플러그인을 잃지 않고 마켓플레이스를 새로 고치려면 `claude plugin marketplace update`를 대신 사용합니다.
+</Warning>
+
+### 플러그인 마켓플레이스 업데이트
+
+소스에서 마켓플레이스를 새로 고쳐 새 플러그인 및 버전 변경을 검색합니다.
+
+```bash theme={null}
+claude plugin marketplace update [name]
+```
+
+**인수:**
+
+* `[name]`: `claude plugin marketplace list`에 표시된 마켓플레이스 이름을 업데이트합니다. 생략하면 모든 마켓플레이스를 업데이트합니다
+
+`remove`와 `update` 모두 시드 관리 마켓플레이스에 대해 실행할 때 실패합니다. 이는 읽기 전용입니다. 모든 마켓플레이스를 업데이트할 때 시드 관리 항목은 건너뛰고 다른 마켓플레이스는 여전히 업데이트됩니다. 시드 제공 플러그인을 변경하려면 관리자에게 시드 이미지를 업데이트하도록 요청합니다. [컨테이너에 대한 플러그인 사전 채우기](#pre-populate-plugins-for-containers)를 참조하세요.
 
 ## 문제 해결
 

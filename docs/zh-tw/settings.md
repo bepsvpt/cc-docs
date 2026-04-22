@@ -85,7 +85,7 @@ Claude Code 使用**範圍系統**來決定設定的適用位置和共享對象�
 
   * **伺服器管理的設定**：透過 Claude.ai 管理員主控台從 Anthropic 的伺服器傳遞。請參閱[伺服器管理的設定](/zh-TW/server-managed-settings)。
   * **MDM/OS 層級政策**：透過 macOS 和 Windows 上的原生裝置管理傳遞：
-    * macOS：`com.anthropic.claudecode` managed preferences 網域（透過 Jamf、Iru (Kandji) 或其他 MDM 工具中的設定檔案部署）
+    * macOS：`com.anthropic.claudecode` managed preferences 網域。plist 的頂層金鑰鏡像 `managed-settings.json`，巢狀設定為字典，陣列為 plist 陣列。透過 Jamf、Iru (Kandji) 或類似 MDM 工具中的設定檔案部署。
     * Windows：`HKLM\SOFTWARE\Policies\ClaudeCode` 登錄機碼，其中包含 `Settings` 值（REG\_SZ 或 REG\_EXPAND\_SZ）包含 JSON（透過群組原則或 Intune 部署）
     * Windows（使用者層級）：`HKCU\SOFTWARE\Policies\ClaudeCode`（最低政策優先順序，僅在沒有管理員層級來源時使用）
   * **檔案型**：`managed-settings.json` 和 `managed-mcp.json` 部署到系統目錄：
@@ -210,9 +210,11 @@ Claude Code 使用**範圍系統**來決定設定的適用位置和共享對象�
 | `respectGitignore`                | 控制 `@` 檔案選擇器是否尊重 `.gitignore` 模式。當為 `true`（預設）時，符合 `.gitignore` 模式的檔案會從建議中排除                                                                                                                                                                                                                           | `false`                                                                                                                       |
 | `showClearContextOnPlanAccept`    | 在計畫接受畫面上顯示「清除內容」選項。預設為 `false`。設定為 `true` 以還原選項                                                                                                                                                                                                                                                        | `true`                                                                                                                        |
 | `showThinkingSummaries`           | 在互動式工作階段中顯示[擴展思考](/zh-TW/common-workflows#use-extended-thinking-thinking-mode)摘要。未設定或 `false`（互動模式中的預設值）時，思考區塊由 API 編輯並顯示為摺疊的存根。編輯只會改變您看到的內容，而不是模型生成的內容：若要減少思考支出，請[降低預算或停用思考](/zh-TW/common-workflows#use-extended-thinking-thinking-mode)。非互動模式（`-p`）和 SDK 呼叫者無論此設定如何都始終接收摘要                          | `true`                                                                                                                        |
+| `skipWebFetchPreflight`           | 跳過[WebFetch 網域安全檢查](/zh-TW/data-usage#webfetch-domain-safety-check)，該檢查在擷取前將每個請求的主機名稱傳送到 `api.anthropic.com`。在阻止流量到 Anthropic 的環境中設定為 `true`，例如 Bedrock、Vertex AI 或 Foundry 部署，具有限制性的出站。跳過時，WebFetch 嘗試任何 URL 而不諮詢黑名單                                                                                  | `true`                                                                                                                        |
 | `spinnerTipsEnabled`              | 在 Claude 工作時在微調器中顯示提示。設定為 `false` 以停用提示（預設：`true`）                                                                                                                                                                                                                                                     | `false`                                                                                                                       |
 | `spinnerTipsOverride`             | 使用自訂字串覆蓋微調器提示。`tips`：提示字串陣列。`excludeDefault`：如果為 `true`，僅顯示自訂提示；如果為 `false` 或不存在，自訂提示會與內建提示合併                                                                                                                                                                                                          | `{ "excludeDefault": true, "tips": ["Use our internal tool X"] }`                                                             |
 | `spinnerVerbs`                    | 自訂在微調器和輪次持續時間訊息中顯示的動作動詞。將 `mode` 設定為 `"replace"` 以僅使用您的動詞，或 `"append"` 以將它們新增到預設值                                                                                                                                                                                                                      | `{"mode": "append", "verbs": ["Pondering", "Crafting"]}`                                                                      |
+| `sshConfigs`                      | 要在[桌面](/zh-TW/desktop#pre-configure-ssh-connections-for-your-team)環境下拉式清單中顯示的 SSH 連線。每個項目需要 `id`、`name` 和 `sshHost`；`sshPort`、`sshIdentityFile` 和 `startDirectory` 是選用的。在 managed 設定中設定時，連線對使用者是唯讀的。僅從 managed 和使用者設定讀取                                                                                | `[{"id": "dev-vm", "name": "Dev VM", "sshHost": "user@dev.example.com"}]`                                                     |
 | `statusLine`                      | 設定自訂狀態行以顯示內容。請參閱 [`statusLine` 文件](/zh-TW/statusline)                                                                                                                                                                                                                                                  | `{"type": "command", "command": "~/.claude/statusline.sh"}`                                                                   |
 | `strictKnownMarketplaces`         | （Managed 設定僅限）使用者可以新增的 plugin marketplaces 白名單。未定義 = 無限制，空陣列 = 鎖定。僅適用於 marketplace 新增。請參閱 [Managed marketplace 限制](/zh-TW/plugin-marketplaces#managed-marketplace-restrictions)                                                                                                                        | `[{ "source": "github", "repo": "acme-corp/plugins" }]`                                                                       |
 | `tui`                             | 終端機 UI 渲染器。使用 `"fullscreen"` 以取得無閃爍[替代螢幕渲染器](/zh-TW/fullscreen)，具有虛擬化捲軸。使用 `"default"` 以取得經典主螢幕渲染器。透過 `/tui` 設定                                                                                                                                                                                        | `"fullscreen"`                                                                                                                |
@@ -479,7 +481,7 @@ your-repo-file-index --query "$query" | head -20
 
 ### 驗證使用中的設定
 
-在 Claude Code 內執行 `/status` 以查看哪些設定來源處於使用中以及它們來自何處。輸出顯示每個設定層（managed、使用者、專案）及其來源，例如 `Enterprise managed settings (remote)`、`Enterprise managed settings (plist)`、`Enterprise managed settings (HKLM)` 或 `Enterprise managed settings (file)`。如果設定檔案包含錯誤，`/status` 會報告問題，以便您可以修復它。
+在 Claude Code 內執行 `/status` 以查看哪些設定來源處於使用中以及它們來自何處。輸出顯示每個設定層（managed、使用者、專案）及其來源，例如 `Enterprise managed settings (remote)`、`Enterprise managed settings (plist)`、`Enterprise managed settings (HKLM)`、`Enterprise managed settings (HKCU)` 或 `Enterprise managed settings (file)`。如果設定檔案包含錯誤，`/status` 會報告問題，以便您可以修復它。
 
 ### 設定系統的關鍵要點
 
@@ -900,4 +902,5 @@ Claude Code 可以存取一組工具，用於讀取、編輯、搜尋、執行�
 
 * [Permissions](/zh-TW/permissions)：權限系統、規則語法、工具特定模式和 managed 政策
 * [Authentication](/zh-TW/authentication)：設定使用者對 Claude Code 的存取
-* [Troubleshooting](/zh-TW/troubleshooting)：常見設定問題的解決方案
+* [Debug your configuration](/zh-TW/debug-your-config)：診斷為什麼設定、hook 或 MCP server 未生效
+* [Troubleshooting](/zh-TW/troubleshooting)：安裝、authentication 和平台問題

@@ -403,6 +403,14 @@ Misalkan Anda perlu menambah atau memperbarui dokumentasi untuk kode Anda.
 
 ***
 
+## Bekerja dalam catatan dan folder non-kode
+
+Claude Code bekerja di direktori apa pun. Jalankan di dalam vault catatan, folder dokumentasi, atau koleksi file markdown apa pun untuk mencari, mengedit, dan mengatur ulang konten dengan cara yang sama seperti Anda melakukan kode.
+
+Direktori `.claude/` dan `CLAUDE.md` duduk bersama direktori konfigurasi alat lain tanpa konflik. Claude membaca file segar pada setiap panggilan alat, jadi ia melihat edit yang Anda buat di aplikasi lain saat berikutnya membaca file tersebut.
+
+***
+
 ## Bekerja dengan gambar
 
 Misalkan Anda perlu bekerja dengan gambar dalam basis kode Anda, dan Anda ingin bantuan Claude menganalisis konten gambar.
@@ -506,9 +514,9 @@ Gunakan @ untuk dengan cepat menyertakan file atau direktori tanpa menunggu Clau
 
 ## Gunakan extended thinking (thinking mode)
 
-[Extended thinking](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) diaktifkan secara default, memberikan Claude ruang untuk bernalar melalui masalah kompleks langkah demi langkah sebelum merespons. Penalaran ini terlihat dalam verbose mode, yang dapat Anda aktifkan dengan `Ctrl+O`.
+[Extended thinking](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) diaktifkan secara default, memberikan Claude ruang untuk bernalar melalui masalah kompleks langkah demi langkah sebelum merespons. Penalaran ini terlihat dalam verbose mode, yang dapat Anda aktifkan dengan `Ctrl+O`. Selama extended thinking, petunjuk kemajuan muncul di bawah indikator untuk menunjukkan bahwa Claude sedang bekerja secara aktif.
 
-Selain itu, Opus 4.6 dan Sonnet 4.6 mendukung adaptive reasoning: alih-alih anggaran token thinking yang tetap, model secara dinamis mengalokasikan thinking berdasarkan pengaturan [effort level](/id/model-config#adjust-effort-level) Anda. Extended thinking dan adaptive reasoning bekerja bersama untuk memberi Anda kontrol atas seberapa dalam Claude bernalar sebelum merespons.
+Selain itu, [model yang mendukung effort](/id/model-config#adjust-effort-level) menggunakan adaptive reasoning: alih-alih anggaran token thinking yang tetap, model secara dinamis memutuskan apakah dan berapa banyak untuk berpikir berdasarkan pengaturan effort level Anda dan tugas yang dihadapi. Adaptive reasoning memungkinkan Claude merespons lebih cepat untuk prompt rutin dan menyisihkan pemikiran yang lebih dalam untuk langkah-langkah yang mendapat manfaat darinya.
 
 Extended thinking sangat berharga untuk keputusan arsitektur kompleks, bug menantang, perencanaan implementasi multi-langkah, dan mengevaluasi trade-off antara pendekatan yang berbeda.
 
@@ -520,13 +528,13 @@ Extended thinking sangat berharga untuk keputusan arsitektur kompleks, bug menan
 
 Thinking diaktifkan secara default, tetapi Anda dapat menyesuaikan atau menonaktifkannya.
 
-| Scope                       | Cara mengkonfigurasi                                                                            | Detail                                                                                                                                                                                             |
-| --------------------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Effort level**            | Jalankan `/effort`, sesuaikan di `/model`, atau atur [`CLAUDE_CODE_EFFORT_LEVEL`](/id/env-vars) | Kontrol kedalaman thinking untuk Opus 4.6 dan Sonnet 4.6. Lihat [Adjust effort level](/id/model-config#adjust-effort-level)                                                                        |
-| **Kata kunci `ultrathink`** | Sertakan "ultrathink" di mana saja dalam prompt Anda                                            | Menetapkan effort ke high untuk giliran itu pada Opus 4.6 dan Sonnet 4.6. Berguna untuk tugas sekali jadi yang memerlukan penalaran mendalam tanpa mengubah pengaturan effort Anda secara permanen |
-| **Pintasan toggle**         | Tekan `Option+T` (macOS) atau `Alt+T` (Windows/Linux)                                           | Toggle thinking on/off untuk sesi saat ini (semua model). Mungkin memerlukan [konfigurasi terminal](/id/terminal-config) untuk mengaktifkan pintasan tombol Option                                 |
-| **Default global**          | Gunakan `/config` untuk toggle thinking mode                                                    | Menetapkan default Anda di semua proyek (semua model).<br />Disimpan sebagai `alwaysThinkingEnabled` di `~/.claude/settings.json`                                                                  |
-| **Batasi anggaran token**   | Atur variabel lingkungan [`MAX_THINKING_TOKENS`](/id/env-vars)                                  | Batasi anggaran thinking ke jumlah token tertentu. Pada Opus 4.6 dan Sonnet 4.6, hanya `0` berlaku kecuali adaptive reasoning dinonaktifkan. Contoh: `export MAX_THINKING_TOKENS=10000`            |
+| Scope                       | Cara mengkonfigurasi                                                                            | Detail                                                                                                                                                                                                                      |
+| --------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Effort level**            | Jalankan `/effort`, sesuaikan di `/model`, atau atur [`CLAUDE_CODE_EFFORT_LEVEL`](/id/env-vars) | Kontrol kedalaman thinking pada [model yang didukung](/id/model-config#adjust-effort-level)                                                                                                                                 |
+| **Kata kunci `ultrathink`** | Sertakan "ultrathink" di mana saja dalam prompt Anda                                            | Menambahkan instruksi in-context yang memberi tahu model untuk bernalar lebih banyak pada giliran itu. Tidak mengubah effort level itu sendiri; lihat [Adjust effort level](/id/model-config#adjust-effort-level) untuk itu |
+| **Pintasan toggle**         | Tekan `Option+T` (macOS) atau `Alt+T` (Windows/Linux)                                           | Toggle thinking on/off untuk sesi saat ini (semua model). Mungkin memerlukan [konfigurasi terminal](/id/terminal-config) untuk mengaktifkan pintasan tombol Option                                                          |
+| **Default global**          | Gunakan `/config` untuk toggle thinking mode                                                    | Menetapkan default Anda di semua proyek (semua model).<br />Disimpan sebagai `alwaysThinkingEnabled` di `~/.claude/settings.json`                                                                                           |
+| **Batasi anggaran token**   | Atur variabel lingkungan [`MAX_THINKING_TOKENS`](/id/env-vars)                                  | Batasi anggaran thinking ke jumlah token tertentu. Pada model dengan adaptive reasoning, hanya `0` berlaku kecuali adaptive reasoning dinonaktifkan. Contoh: `export MAX_THINKING_TOKENS=10000`                             |
 
 Untuk melihat proses thinking Claude, tekan `Ctrl+O` untuk toggle verbose mode dan lihat penalaran internal ditampilkan sebagai teks italic abu-abu.
 
@@ -534,11 +542,11 @@ Untuk melihat proses thinking Claude, tekan `Ctrl+O` untuk toggle verbose mode d
 
 Extended thinking mengontrol berapa banyak penalaran internal yang dilakukan Claude sebelum merespons. Lebih banyak thinking memberikan lebih banyak ruang untuk menjelajahi solusi, menganalisis kasus tepi, dan memperbaiki kesalahan sendiri.
 
-**Dengan Opus 4.6 dan Sonnet 4.6**, thinking menggunakan adaptive reasoning: model secara dinamis mengalokasikan token thinking berdasarkan [effort level](/id/model-config#adjust-effort-level) yang Anda pilih. Ini adalah cara yang direkomendasikan untuk menyesuaikan trade-off antara kecepatan dan kedalaman penalaran.
+Pada [model yang mendukung effort](/id/model-config#adjust-effort-level), thinking menggunakan adaptive reasoning: model secara dinamis mengalokasikan token thinking berdasarkan effort level yang Anda pilih. Ini adalah cara yang direkomendasikan untuk menyesuaikan trade-off antara kecepatan dan kedalaman penalaran. Jika Anda ingin Claude berpikir lebih atau kurang sering daripada yang akan dihasilkan effort level Anda, Anda juga dapat mengatakan demikian secara langsung dalam prompt Anda atau di `CLAUDE.md`.
 
-**Dengan model lama**, thinking menggunakan anggaran token tetap yang diambil dari alokasi output Anda. Anggaran bervariasi menurut model; lihat [`MAX_THINKING_TOKENS`](/id/env-vars) untuk batas per-model. Anda dapat membatasinya dengan variabel lingkungan itu, atau menonaktifkan thinking sepenuhnya melalui `/config` atau toggle `Option+T`/`Alt+T`.
+Dengan model yang lebih lama, thinking menggunakan anggaran token tetap yang diambil dari alokasi output Anda. Anggaran bervariasi menurut model; lihat [`MAX_THINKING_TOKENS`](/id/env-vars) untuk batas per-model. Anda dapat membatasinya dengan variabel lingkungan itu, atau menonaktifkan thinking sepenuhnya melalui `/config` atau toggle `Option+T`/`Alt+T`.
 
-Pada Opus 4.6 dan Sonnet 4.6, [adaptive reasoning](/id/model-config#adjust-effort-level) mengontrol kedalaman thinking, jadi `MAX_THINKING_TOKENS` hanya berlaku ketika diatur ke `0` untuk menonaktifkan thinking, atau ketika `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` mengembalikan model ini ke anggaran tetap. Lihat [variabel lingkungan](/id/env-vars).
+Pada model dengan adaptive reasoning, `MAX_THINKING_TOKENS` hanya berlaku ketika diatur ke `0` untuk menonaktifkan thinking, atau ketika `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` mengembalikan model ke anggaran tetap. `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` berlaku untuk Opus 4.6 dan Sonnet 4.6 saja. Opus 4.7 selalu menggunakan adaptive reasoning dan tidak mendukung anggaran thinking tetap. Lihat [variabel lingkungan](/id/env-vars).
 
 <Warning>
   Anda dikenakan biaya untuk semua token thinking yang digunakan bahkan ketika ringkasan thinking dihilangkan. Dalam mode interaktif, thinking muncul sebagai stub yang diruntuhkan secara default. Atur `showThinkingSummaries: true` di `settings.json` untuk menampilkan ringkasan lengkap.
@@ -556,7 +564,15 @@ Saat memulai Claude Code, Anda dapat melanjutkan sesi sebelumnya:
 
 Dari dalam sesi aktif, gunakan `/resume` untuk beralih ke percakapan berbeda.
 
-Sesi disimpan per direktori proyek. Pemilih `/resume` menampilkan sesi interaktif dari repositori git yang sama, termasuk worktrees. Sesi yang dibuat oleh `claude -p` atau invokasi SDK tidak muncul di pemilih, tetapi Anda masih dapat melanjutkan satu dengan meneruskan ID sesinya langsung ke `claude --resume <session-id>`.
+Sesi disimpan per direktori proyek. Secara default, pemilih `/resume` menampilkan sesi interaktif dari worktree saat ini, dengan pintasan keyboard untuk memperluas daftar ke worktrees lain atau proyek, mencari, melihat pratinjau, dan mengganti nama. Lihat [Gunakan pemilih sesi](#use-the-session-picker) di bawah untuk referensi pintasan lengkap.
+
+Ketika Anda memilih sesi dari worktree lain dari repositori yang sama, Claude Code melanjutkannya secara langsung tanpa memerlukan Anda untuk beralih direktori terlebih dahulu. Memilih sesi dari proyek yang tidak terkait menyalin perintah `cd` dan resume ke clipboard Anda sebagai gantinya.
+
+Melanjutkan berdasarkan nama menyelesaikan di seluruh repositori saat ini dan worktrees-nya. Baik `claude --resume <name>` dan `/resume <name>` mencari kecocokan yang tepat dan melanjutkannya secara langsung, bahkan jika sesi berada di worktree yang berbeda.
+
+Ketika nama ambigu, `claude --resume <name>` membuka pemilih dengan nama yang sudah diisi sebagai istilah pencarian. `/resume <name>` dari dalam sesi melaporkan kesalahan sebagai gantinya, jadi jalankan `/resume` tanpa argumen untuk membuka pemilih dan pilih.
+
+Sesi yang dibuat oleh `claude -p` atau invokasi SDK tidak muncul di pemilih, tetapi Anda masih dapat melanjutkan satu dengan meneruskan ID sesinya langsung ke `claude --resume <session-id>`.
 
 ### Beri nama sesi Anda
 
@@ -576,7 +592,7 @@ Berikan sesi nama deskriptif untuk menemukannya nanti. Ini adalah praktik terbai
     /rename auth-refactor
     ```
 
-    Anda juga dapat mengganti nama sesi apa pun dari pemilih: jalankan `/resume`, navigasi ke sesi, dan tekan `R`.
+    Anda juga dapat mengganti nama sesi apa pun dari pemilih: jalankan `/resume`, navigasi ke sesi, dan tekan `Ctrl+R`.
   </Step>
 
   <Step title="Lanjutkan berdasarkan nama nanti">
@@ -600,26 +616,28 @@ Perintah `/resume` (atau `claude --resume` tanpa argumen) membuka pemilih sesi i
 
 **Pintasan keyboard dalam pemilih:**
 
-| Pintasan  | Tindakan                                          |
-| :-------- | :------------------------------------------------ |
-| `↑` / `↓` | Navigasi antar sesi                               |
-| `→` / `←` | Perluas atau tutup sesi yang dikelompokkan        |
-| `Enter`   | Pilih dan lanjutkan sesi yang disorot             |
-| `P`       | Pratinjau konten sesi                             |
-| `R`       | Ganti nama sesi yang disorot                      |
-| `/`       | Cari untuk memfilter sesi                         |
-| `A`       | Toggle antara direktori saat ini dan semua proyek |
-| `B`       | Filter ke sesi dari cabang git saat ini Anda      |
-| `Esc`     | Keluar dari pemilih atau mode pencarian           |
+| Pintasan                                                    | Tindakan                                                                                                                                                       |
+| :---------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `↑` / `↓`                                                   | Navigasi antar sesi                                                                                                                                            |
+| `→` / `←`                                                   | Perluas atau tutup sesi yang dikelompokkan                                                                                                                     |
+| `Enter`                                                     | Pilih dan lanjutkan sesi yang disorot                                                                                                                          |
+| `Space`                                                     | Lihat pratinjau konten sesi. `Ctrl+V` juga bekerja di terminal yang tidak menangkapnya sebagai paste                                                           |
+| `Ctrl+R`                                                    | Ganti nama sesi yang disorot                                                                                                                                   |
+| `/` atau karakter yang dapat dicetak lainnya selain `Space` | Masuk mode pencarian dan filter sesi                                                                                                                           |
+| `Ctrl+A`                                                    | Tampilkan sesi dari semua proyek di mesin ini. Tekan lagi untuk mengembalikan repositori saat ini                                                              |
+| `Ctrl+W`                                                    | Tampilkan sesi dari semua worktrees dari repositori saat ini. Tekan lagi untuk mengembalikan worktree saat ini. Hanya ditampilkan di repositori multi-worktree |
+| `Ctrl+B`                                                    | Filter ke sesi dari cabang git saat ini Anda. Tekan lagi untuk menampilkan sesi dari semua cabang                                                              |
+| `Esc`                                                       | Keluar dari pemilih atau mode pencarian                                                                                                                        |
 
 **Organisasi sesi:**
 
 Pemilih menampilkan sesi dengan metadata yang membantu:
 
-* Nama sesi atau prompt awal
+* Nama sesi jika diatur, jika tidak ringkasan percakapan atau prompt pengguna pertama
 * Waktu yang telah berlalu sejak aktivitas terakhir
 * Jumlah pesan
 * Cabang Git (jika berlaku)
+* Jalur proyek, ditampilkan setelah memperluas ke semua proyek dengan `Ctrl+A`
 
 Sesi yang di-fork (dibuat dengan `/branch`, `/rewind`, atau `--fork-session`) dikelompokkan bersama di bawah sesi root mereka, memudahkan menemukan percakapan terkait.
 
@@ -631,7 +649,7 @@ Sesi yang di-fork (dibuat dengan `/branch`, `/rewind`, atau `--fork-session`) di
   * Gunakan `--resume session-name` ketika Anda tahu sesi mana yang Anda butuhkan
   * Gunakan `--resume` (tanpa nama) ketika Anda perlu menjelajahi dan memilih
   * Untuk skrip, gunakan `claude --continue --print "prompt"` untuk melanjutkan dalam mode non-interaktif
-  * Tekan `P` dalam pemilih untuk melihat pratinjau sesi sebelum melanjutkannya
+  * Tekan `Space` dalam pemilih untuk melihat pratinjau sesi sebelum melanjutkannya
   * Percakapan yang dilanjutkan dimulai dengan model dan konfigurasi yang sama dengan yang asli
 
   Cara kerjanya:
@@ -690,6 +708,8 @@ Ketika Anda keluar dari sesi worktree, Claude menangani pembersihan berdasarkan 
 
 * **Tidak ada perubahan**: worktree dan cabangnya dihapus secara otomatis
 * **Perubahan atau commit ada**: Claude meminta Anda untuk menyimpan atau menghapus worktree. Menyimpan mempertahankan direktori dan cabang sehingga Anda dapat kembali nanti. Menghapus menghapus direktori worktree dan cabangnya, membuang semua perubahan yang tidak dilakukan dan commit
+
+Worktrees subagent yang ditinggalkan oleh crash atau run paralel yang terputus dihapus secara otomatis saat startup setelah mereka lebih lama dari pengaturan [`cleanupPeriodDays`](/id/settings#available-settings) Anda, asalkan mereka tidak memiliki perubahan yang tidak dilakukan, tidak ada file yang tidak dilacak, dan tidak ada commit yang tidak didorong. Worktrees yang Anda buat dengan `--worktree` tidak pernah dihapus oleh sweep ini.
 
 Untuk membersihkan worktrees di luar sesi Claude, gunakan [manajemen worktree manual](#manage-worktrees-manually).
 
@@ -928,12 +948,12 @@ Misalkan Anda ingin Claude menangani tugas secara otomatis secara berulang, sepe
 
 Pilih opsi penjadwalan berdasarkan tempat Anda ingin tugas berjalan:
 
-| Opsi                                                            | Tempat berjalan                       | Terbaik untuk                                                                                                                     |
-| :-------------------------------------------------------------- | :------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------- |
-| [Cloud scheduled tasks](/id/web-scheduled-tasks)                | Infrastruktur yang dikelola Anthropic | Tugas yang harus berjalan bahkan ketika komputer Anda mati. Konfigurasikan di [claude.ai/code](https://claude.ai/code).           |
-| [Desktop scheduled tasks](/id/desktop#schedule-recurring-tasks) | Mesin Anda, melalui aplikasi desktop  | Tugas yang memerlukan akses langsung ke file lokal, alat, atau perubahan yang tidak dilakukan.                                    |
-| [GitHub Actions](/id/github-actions)                            | Pipeline CI Anda                      | Tugas yang terikat pada event repo seperti PR yang dibuka, atau jadwal cron yang harus hidup bersama konfigurasi alur kerja Anda. |
-| [`/loop`](/id/scheduled-tasks)                                  | Sesi CLI saat ini                     | Polling cepat saat sesi terbuka. Tugas dibatalkan saat Anda keluar.                                                               |
+| Opsi                                                   | Tempat berjalan                       | Terbaik untuk                                                                                                                                                                                                   |
+| :----------------------------------------------------- | :------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Routines](/id/routines)                               | Infrastruktur yang dikelola Anthropic | Tugas yang harus berjalan bahkan ketika komputer Anda mati. Dapat juga dipicu oleh panggilan API atau event GitHub selain jadwal. Konfigurasikan di [claude.ai/code/routines](https://claude.ai/code/routines). |
+| [Desktop scheduled tasks](/id/desktop-scheduled-tasks) | Mesin Anda, melalui aplikasi desktop  | Tugas yang memerlukan akses langsung ke file lokal, alat, atau perubahan yang tidak dilakukan.                                                                                                                  |
+| [GitHub Actions](/id/github-actions)                   | Pipeline CI Anda                      | Tugas yang terikat pada event repo seperti PR yang dibuka, atau jadwal cron yang harus hidup bersama konfigurasi alur kerja Anda.                                                                               |
+| [`/loop`](/id/scheduled-tasks)                         | Sesi CLI saat ini                     | Polling cepat saat sesi terbuka. Tugas berhenti ketika Anda memulai percakapan baru; `--resume` dan `--continue` mengembalikan yang belum kadaluarsa.                                                           |
 
 <Tip>
   Saat menulis prompt untuk tugas terjadwal, jelaskan apa yang terlihat seperti kesuksesan dan apa yang harus dilakukan dengan hasil. Tugas berjalan secara otonom, jadi tidak dapat mengajukan pertanyaan klarifikasi. Misalnya: "Review open PRs labeled `needs-review`, leave inline comments on any issues, and post a summary in the `#eng-reviews` Slack channel."

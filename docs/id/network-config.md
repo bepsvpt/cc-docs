@@ -53,9 +53,35 @@ export HTTPS_PROXY=http://username:password@proxy.example.com:8080
   Untuk proxy yang memerlukan autentikasi lanjutan (NTLM, Kerberos, dll.), pertimbangkan menggunakan layanan LLM Gateway yang mendukung metode autentikasi Anda.
 </Tip>
 
+## Penyimpanan sertifikat CA
+
+Secara default, Claude Code mempercayai baik sertifikat CA Mozilla yang disertakan maupun penyimpanan sertifikat sistem operasi Anda. Proxy inspeksi TLS enterprise seperti CrowdStrike Falcon dan Zscaler bekerja tanpa konfigurasi tambahan ketika sertifikat akar mereka diinstal di penyimpanan kepercayaan OS.
+
+<Note>
+  Integrasi penyimpanan CA sistem memerlukan distribusi biner Claude Code asli. Saat berjalan di runtime Node.js, penyimpanan CA sistem tidak digabungkan secara otomatis. Dalam hal itu, atur `NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem` untuk mempercayai CA akar enterprise.
+</Note>
+
+`CLAUDE_CODE_CERT_STORE` menerima daftar sumber yang dipisahkan koma. Nilai yang dikenali adalah `bundled` untuk set CA Mozilla yang dikirimkan dengan Claude Code dan `system` untuk penyimpanan kepercayaan sistem operasi. Default adalah `bundled,system`.
+
+Untuk mempercayai hanya set CA Mozilla yang disertakan:
+
+```bash theme={null}
+export CLAUDE_CODE_CERT_STORE=bundled
+```
+
+Untuk mempercayai hanya penyimpanan sertifikat OS:
+
+```bash theme={null}
+export CLAUDE_CODE_CERT_STORE=system
+```
+
+<Note>
+  `CLAUDE_CODE_CERT_STORE` tidak memiliki kunci skema `settings.json` khusus. Aturnya melalui blok `env` di `~/.claude/settings.json` atau langsung di lingkungan proses.
+</Note>
+
 ## Sertifikat CA kustom
 
-Jika lingkungan enterprise Anda menggunakan CA kustom untuk koneksi HTTPS (baik melalui proxy atau akses API langsung), konfigurasikan Claude Code untuk mempercayainya:
+Jika lingkungan enterprise Anda menggunakan CA kustom, konfigurasikan Claude Code untuk mempercayainya secara langsung:
 
 ```bash theme={null}
 export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
@@ -86,10 +112,14 @@ Claude Code memerlukan akses ke URL berikut:
 
 Pastikan URL ini diizinkan dalam konfigurasi proxy dan aturan firewall Anda. Ini sangat penting ketika menggunakan Claude Code di lingkungan jaringan terkontainer atau terbatas.
 
-Penginstal asli dan pemeriksaan pembaruan juga memerlukan URL berikut. Izinkan keduanya, karena penginstal dan pembaruan otomatis mengambil dari `storage.googleapis.com` sementara unduhan plugin menggunakan `downloads.claude.ai`. Jika Anda menginstal Claude Code melalui npm atau mengelola distribusi biner Anda sendiri, pengguna akhir mungkin tidak memerlukan akses:
+Saat menggunakan [Bedrock](/id/amazon-bedrock), [Vertex AI](/id/google-vertex-ai), atau [Foundry](/id/microsoft-foundry), lalu lintas model menuju penyedia Anda alih-alih `api.anthropic.com`. Alat WebFetch masih memanggil `api.anthropic.com` untuk [pemeriksaan keamanan domainnya](/id/data-usage#webfetch-domain-safety-check) kecuali Anda menetapkan `skipWebFetchPreflight: true` di [pengaturan](/id/settings).
 
-* `storage.googleapis.com`: bucket unduhan untuk biner Claude Code dan pembaruan otomatis
-* `downloads.claude.ai`: CDN yang menghosting skrip instalasi, penunjuk versi, manifes, kunci penandatanganan, dan file yang dapat dieksekusi plugin
+Penginstal asli dan pemeriksaan pembaruan juga memerlukan URL berikut. Izinkan keduanya, karena klien yang menjalankan versi Claude Code yang lebih lama mengambil dari `storage.googleapis.com`. Jika Anda menginstal Claude Code melalui npm atau mengelola distribusi biner Anda sendiri, pengguna akhir mungkin tidak memerlukan akses:
+
+* `downloads.claude.ai`: host unduhan untuk biner Claude Code, pembaruan otomatis, penunjuk versi, manifes, skrip instalasi, kunci penandatanganan, dan file yang dapat dieksekusi plugin
+* `storage.googleapis.com`: host unduhan warisan yang digunakan oleh klien yang lebih lama
+
+Integrasi [Chrome](/id/chrome) terhubung ke ekstensi browser melalui jembatan WebSocket. Jika Anda menggunakan Claude di Chrome, izinkan `bridge.claudeusercontent.com` untuk koneksi WebSocket keluar.
 
 [Claude Code di web](/id/claude-code-on-the-web) dan [Code Review](/id/code-review) terhubung ke repositori Anda dari infrastruktur yang dikelola Anthropic. Jika organisasi GitHub Enterprise Cloud Anda membatasi akses berdasarkan alamat IP, aktifkan [pewarisan daftar izin IP untuk GitHub Apps yang diinstal](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps). Claude GitHub App mendaftarkan rentang IP-nya, jadi mengaktifkan pengaturan ini memungkinkan akses tanpa konfigurasi manual. Untuk [menambahkan rentang ke daftar izin Anda secara manual](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address) sebagai gantinya, atau untuk mengonfigurasi firewall lainnya, lihat [Alamat IP API Anthropic](https://platform.claude.com/docs/en/api/ip-addresses).
 

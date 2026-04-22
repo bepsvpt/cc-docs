@@ -6,7 +6,9 @@
 
 > Buat dan gunakan subagent AI khusus di Claude Code untuk alur kerja khusus tugas dan manajemen konteks yang lebih baik.
 
-Subagent adalah asisten AI khusus yang menangani jenis tugas tertentu. Setiap subagent berjalan di jendela konteksnya sendiri dengan prompt sistem khusus, akses alat tertentu, dan izin independen. Ketika Claude menemukan tugas yang sesuai dengan deskripsi subagent, Claude mendelegasikan ke subagent tersebut, yang bekerja secara independen dan mengembalikan hasil. Untuk melihat penghematan konteks dalam praktik, [visualisasi jendela konteks](/id/context-window) menjelaskan sesi di mana subagent menangani penelitian di jendela terpisahnya sendiri.
+Subagent adalah asisten AI khusus yang menangani jenis tugas tertentu. Gunakan satu ketika tugas sampingan akan membanjiri percakapan utama Anda dengan hasil pencarian, log, atau konten file yang tidak akan Anda referensikan lagi: subagent melakukan pekerjaan itu dalam konteksnya sendiri dan hanya mengembalikan ringkasan. Tentukan subagent khusus ketika Anda terus menelurkan jenis pekerja yang sama dengan instruksi yang sama.
+
+Setiap subagent berjalan di jendela konteksnya sendiri dengan prompt sistem khusus, akses alat tertentu, dan izin independen. Ketika Claude menemukan tugas yang sesuai dengan deskripsi subagent, Claude mendelegasikan ke subagent tersebut, yang bekerja secara independen dan mengembalikan hasil. Untuk melihat penghematan konteks dalam praktik, [visualisasi jendela konteks](/id/context-window) menjelaskan sesi di mana subagent menangani penelitian di jendela terpisahnya sendiri.
 
 <Note>
   Jika Anda memerlukan beberapa agen yang bekerja secara paralel dan berkomunikasi satu sama lain, lihat [tim agen](/id/agent-teams) sebagai gantinya. Subagent bekerja dalam satu sesi; tim agen mengoordinasikan di seluruh sesi terpisah.
@@ -89,7 +91,7 @@ Panduan ini memandu Anda melalui pembuatan subagent tingkat pengguna dengan peri
   </Step>
 
   <Step title="Pilih lokasi">
-    Pilih **Create new agent**, kemudian pilih **Personal**. Ini menyimpan subagent ke `~/.claude/agents/` sehingga tersedia di semua proyek Anda.
+    Beralih ke tab **Library**, pilih **Create new agent**, kemudian pilih **Personal**. Ini menyimpan subagent ke `~/.claude/agents/` sehingga tersedia di semua proyek Anda.
   </Step>
 
   <Step title="Hasilkan dengan Claude">
@@ -139,7 +141,7 @@ Anda juga dapat membuat subagent secara manual sebagai file Markdown, mendefinis
 
 ### Gunakan perintah /agents
 
-Perintah `/agents` menyediakan antarmuka interaktif untuk mengelola subagent. Jalankan `/agents` untuk:
+Perintah `/agents` membuka antarmuka bertab untuk mengelola subagent. Tab **Running** menunjukkan subagent langsung dan memungkinkan Anda membuka atau menghentikannya. Tab **Library** memungkinkan Anda:
 
 * Melihat semua subagent yang tersedia (bawaan, pengguna, proyek, dan plugin)
 * Membuat subagent baru dengan setup terpandu atau generasi Claude
@@ -196,7 +198,7 @@ Flag `--agents` menerima JSON dengan [frontmatter](#supported-frontmatter-fields
   Untuk alasan keamanan, subagent plugin tidak mendukung bidang frontmatter `hooks`, `mcpServers`, atau `permissionMode`. Bidang-bidang ini diabaikan saat memuat agen dari plugin. Jika Anda membutuhkannya, salin file agen ke dalam `.claude/agents/` atau `~/.claude/agents/`. Anda juga dapat menambahkan aturan ke [`permissions.allow`](/id/settings#permission-settings) dalam `settings.json` atau `settings.local.json`, tetapi aturan-aturan ini berlaku untuk seluruh sesi, bukan hanya subagent plugin.
 </Note>
 
-Definisi subagent dari salah satu cakupan ini juga tersedia untuk [tim agen](/id/agent-teams#use-subagent-definitions-for-teammates): saat menelurkan rekan kerja, Anda dapat mereferensikan jenis subagent dan rekan kerja mewarisi prompt sistem, alat, dan modelnya.
+Definisi subagent dari salah satu cakupan ini juga tersedia untuk [tim agen](/id/agent-teams#use-subagent-definitions-for-teammates): saat menelurkan rekan kerja, Anda dapat mereferensikan jenis subagent dan rekan kerja menggunakan `tools` dan `model`-nya, dengan badan definisi ditambahkan ke prompt sistem rekan kerja sebagai instruksi tambahan. Lihat [tim agen](/id/agent-teams#use-subagent-definitions-for-teammates) untuk bidang frontmatter mana yang berlaku pada jalur itu.
 
 ### Tulis file subagent
 
@@ -220,6 +222,8 @@ specific, actionable feedback on quality, security, and best practices.
 
 Frontmatter mendefinisikan metadata dan konfigurasi subagent. Badan menjadi prompt sistem yang memandu perilaku subagent. Subagent menerima hanya prompt sistem ini (ditambah detail lingkungan dasar seperti direktori kerja), bukan prompt sistem Claude Code lengkap.
 
+Subagent dimulai di direktori kerja saat ini percakapan utama. Dalam subagent, perintah `cd` tidak bertahan antara panggilan alat Bash atau PowerShell dan tidak mempengaruhi direktori kerja percakapan utama. Untuk memberikan subagent salinan repositori yang terisolasi sebagai gantinya, atur [`isolation: worktree`](#supported-frontmatter-fields).
+
 #### Bidang frontmatter yang didukung
 
 Bidang berikut dapat digunakan dalam frontmatter YAML. Hanya `name` dan `description` yang diperlukan.
@@ -230,7 +234,7 @@ Bidang berikut dapat digunakan dalam frontmatter YAML. Hanya `name` dan `descrip
 | `description`     | Ya         | Kapan Claude harus mendelegasikan ke subagent ini                                                                                                                                                                                                                                                      |
 | `tools`           | Tidak      | [Alat](#available-tools) yang dapat digunakan subagent. Mewarisi semua alat jika dihilangkan                                                                                                                                                                                                           |
 | `disallowedTools` | Tidak      | Alat untuk ditolak, dihapus dari daftar yang diwarisi atau ditentukan                                                                                                                                                                                                                                  |
-| `model`           | Tidak      | [Model](#choose-a-model) untuk digunakan: `sonnet`, `opus`, `haiku`, ID model lengkap (misalnya, `claude-opus-4-6`), atau `inherit`. Default ke `inherit`                                                                                                                                              |
+| `model`           | Tidak      | [Model](#choose-a-model) untuk digunakan: `sonnet`, `opus`, `haiku`, ID model lengkap (misalnya, `claude-opus-4-7`), atau `inherit`. Default ke `inherit`                                                                                                                                              |
 | `permissionMode`  | Tidak      | [Mode izin](#permission-modes): `default`, `acceptEdits`, `auto`, `dontAsk`, `bypassPermissions`, atau `plan`                                                                                                                                                                                          |
 | `maxTurns`        | Tidak      | Jumlah maksimum putaran agentic sebelum subagent berhenti                                                                                                                                                                                                                                              |
 | `skills`          | Tidak      | [Skills](/id/skills) untuk dimuat ke dalam konteks subagent saat startup. Konten skill lengkap disuntikkan, bukan hanya tersedia untuk invokasi. Subagent tidak mewarisi skills dari percakapan induk                                                                                                  |
@@ -238,7 +242,7 @@ Bidang berikut dapat digunakan dalam frontmatter YAML. Hanya `name` dan `descrip
 | `hooks`           | Tidak      | [Lifecycle hooks](#define-hooks-for-subagents) yang dibatasi pada subagent ini                                                                                                                                                                                                                         |
 | `memory`          | Tidak      | [Cakupan memori persisten](#enable-persistent-memory): `user`, `project`, atau `local`. Memungkinkan pembelajaran lintas sesi                                                                                                                                                                          |
 | `background`      | Tidak      | Atur ke `true` untuk selalu menjalankan subagent ini sebagai [background task](#run-subagents-in-foreground-or-background). Default: `false`                                                                                                                                                           |
-| `effort`          | Tidak      | Tingkat usaha ketika subagent ini aktif. Menimpa tingkat usaha sesi. Default: mewarisi dari sesi. Opsi: `low`, `medium`, `high`, `max` (Opus 4.6 saja)                                                                                                                                                 |
+| `effort`          | Tidak      | Tingkat usaha ketika subagent ini aktif. Menimpa tingkat usaha sesi. Default: mewarisi dari sesi. Opsi: `low`, `medium`, `high`, `xhigh`, `max`; tingkat yang tersedia tergantung pada model                                                                                                           |
 | `isolation`       | Tidak      | Atur ke `worktree` untuk menjalankan subagent dalam [git worktree](/id/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) sementara, memberikannya salinan repositori yang terisolasi. Worktree secara otomatis dibersihkan jika subagent tidak membuat perubahan                  |
 | `color`           | Tidak      | Warna tampilan untuk subagent dalam daftar tugas dan transkrip. Menerima `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, atau `cyan`                                                                                                                                                     |
 | `initialPrompt`   | Tidak      | Auto-submitted sebagai putaran pengguna pertama ketika agen ini berjalan sebagai agen sesi utama (melalui `--agent` atau pengaturan `agent`). [Commands](/id/commands) dan [skills](/id/skills) diproses. Ditambahkan di depan prompt yang disediakan pengguna apa pun                                 |
@@ -248,7 +252,7 @@ Bidang berikut dapat digunakan dalam frontmatter YAML. Hanya `name` dan `descrip
 Bidang `model` mengontrol [model AI](/id/model-config) mana yang digunakan subagent:
 
 * **Alias model**: Gunakan salah satu alias yang tersedia: `sonnet`, `opus`, atau `haiku`
-* **ID model lengkap**: Gunakan ID model lengkap seperti `claude-opus-4-6` atau `claude-sonnet-4-6`. Menerima nilai yang sama dengan flag `--model`
+* **ID model lengkap**: Gunakan ID model lengkap seperti `claude-opus-4-7` atau `claude-sonnet-4-6`. Menerima nilai yang sama dengan flag `--model`
 * **inherit**: Gunakan model yang sama dengan percakapan utama
 * **Dihilangkan**: Jika tidak ditentukan, default ke `inherit` (menggunakan model yang sama dengan percakapan utama)
 
@@ -347,7 +351,7 @@ Bidang `permissionMode` mengontrol bagaimana subagent menangani prompt izin. Sub
 | Mode                | Perilaku                                                                                                                                                     |
 | :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `default`           | Pemeriksaan izin standar dengan prompt                                                                                                                       |
-| `acceptEdits`       | Auto-terima edit file kecuali di direktori yang dilindungi                                                                                                   |
+| `acceptEdits`       | Auto-terima edit file dan perintah sistem file umum untuk jalur di direktori kerja atau `additionalDirectories`                                              |
 | `auto`              | [Auto mode](/id/permission-modes#eliminate-prompts-with-auto-mode): pengklasifikasi latar belakang meninjau perintah dan penulisan direktori yang dilindungi |
 | `dontAsk`           | Auto-tolak prompt izin (alat yang secara eksplisit diizinkan masih berfungsi)                                                                                |
 | `bypassPermissions` | Lewati prompt izin                                                                                                                                           |
@@ -357,7 +361,7 @@ Bidang `permissionMode` mengontrol bagaimana subagent menangani prompt izin. Sub
   Gunakan `bypassPermissions` dengan hati-hati. Ini melewati prompt izin, memungkinkan subagent untuk menjalankan operasi tanpa persetujuan. Penulisan ke direktori `.git`, `.claude`, `.vscode`, `.idea`, dan `.husky` masih meminta konfirmasi, kecuali untuk `.claude/commands`, `.claude/agents`, dan `.claude/skills`. Lihat [permission modes](/id/permission-modes#skip-all-checks-with-bypasspermissions-mode) untuk detail.
 </Warning>
 
-Jika induk menggunakan `bypassPermissions`, ini mengambil alih dan tidak dapat ditimpa. Jika induk menggunakan [auto mode](/id/permission-modes#eliminate-prompts-with-auto-mode), subagent mewarisi auto mode dan `permissionMode` apa pun dalam frontmatternya diabaikan: pengklasifikasi mengevaluasi panggilan alat subagent dengan aturan blok dan izin yang sama dengan sesi induk.
+Jika induk menggunakan `bypassPermissions` atau `acceptEdits`, ini mengambil alih dan tidak dapat ditimpa. Jika induk menggunakan [auto mode](/id/permission-modes#eliminate-prompts-with-auto-mode), subagent mewarisi auto mode dan `permissionMode` apa pun dalam frontmatternya diabaikan: pengklasifikasi mengevaluasi panggilan alat subagent dengan aturan blok dan izin yang sama dengan sesi induk.
 
 #### Preload skills ke dalam subagent
 
@@ -376,6 +380,8 @@ Implement API endpoints. Follow the conventions and patterns from the preloaded 
 ```
 
 Konten lengkap setiap skill disuntikkan ke dalam konteks subagent, bukan hanya tersedia untuk invokasi. Subagent tidak mewarisi skills dari percakapan induk; Anda harus mencantumkannya secara eksplisit.
+
+Anda tidak dapat preload skills yang menetapkan [`disable-model-invocation: true`](/id/skills#control-who-invokes-a-skill), karena preloading menarik dari set skills yang sama yang dapat diinvokasi Claude. Jika skill yang tercantum hilang atau dinonaktifkan, Claude Code melewatinya dan mencatat peringatan ke debug log.
 
 <Note>
   Ini adalah kebalikan dari [menjalankan skill dalam subagent](/id/skills#run-skills-in-a-subagent). Dengan `skills` dalam subagent, subagent mengontrol prompt sistem dan memuat konten skill. Dengan `context: fork` dalam skill, konten skill disuntikkan ke dalam agen yang Anda tentukan. Keduanya menggunakan sistem yang mendasar yang sama.
@@ -494,6 +500,10 @@ Subagent dapat mendefinisikan [hooks](/id/hooks) yang berjalan selama siklus hid
 #### Hooks dalam frontmatter subagent
 
 Tentukan hooks langsung dalam file markdown subagent. Hooks ini hanya berjalan saat subagent spesifik itu aktif dan dibersihkan saat selesai.
+
+<Note>
+  Frontmatter hooks terjadi ketika agen dihasilkan sebagai subagent melalui alat Agent atau @-mention, dan ketika agen berjalan sebagai utama sesi melalui [`--agent`](#invoke-subagents-explicitly) atau pengaturan `agent`. Dalam kasus sesi-utama mereka berjalan bersama hook apa pun yang ditentukan dalam [`settings.json`](/id/hooks).
+</Note>
 
 Semua [hook events](/id/hooks#hook-events) didukung. Peristiwa paling umum untuk subagent adalah:
 
@@ -680,7 +690,7 @@ Gunakan **subagent** ketika:
 
 Pertimbangkan [Skills](/id/skills) sebagai gantinya ketika Anda menginginkan prompt atau alur kerja yang dapat digunakan kembali yang berjalan dalam konteks percakapan utama daripada konteks subagent yang terisolasi.
 
-Untuk pertanyaan cepat tentang sesuatu yang sudah ada dalam percakapan Anda, gunakan [`/btw`](/id/interactive-mode#side-questions-with-btw) sebagai gantinya dari subagent. Ini melihat konteks penuh Anda tetapi tidak memiliki akses alat, dan jawabannya dibuang daripada ditambahkan ke riwayat.
+Untuk pertanyaan cepat tentang sesuatu yang sudah ada dalam percakapan Anda, gunakan [`/btw`](/id/interactive-mode#side-questions-with-%2Fbtw) sebagai gantinya dari subagent. Ini melihat konteks penuh Anda tetapi tidak memiliki akses alat, dan jawabannya dibuang daripada ditambahkan ke riwayat.
 
 <Note>
   Subagent tidak dapat menelurkan subagent lain. Jika alur kerja Anda memerlukan delegasi bersarang, gunakan [Skills](/id/skills) atau [rantai subagent](#chain-subagents) dari percakapan utama.

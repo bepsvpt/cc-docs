@@ -20,7 +20,7 @@ La mayoría de las mejores prácticas se basan en una restricción: la ventana d
 
 La ventana de contexto de Claude contiene toda su conversación, incluido cada mensaje, cada archivo que Claude lee y cada salida de comando. Sin embargo, esto puede llenarse rápidamente. Una única sesión de depuración o exploración de código base podría generar y consumir decenas de miles de tokens.
 
-Esto importa porque el rendimiento del LLM se degrada a medida que se llena el contexto. Cuando la ventana de contexto se está llenando, Claude puede comenzar a "olvidar" instrucciones anteriores o cometer más errores. La ventana de contexto es el recurso más importante a gestionar. Rastree el uso de contexto continuamente con una [línea de estado personalizada](/es/statusline), y consulte [Reducir el uso de tokens](/es/costs#reduce-token-usage) para estrategias sobre cómo reducir el uso de tokens.
+Esto importa porque el rendimiento del LLM se degrada a medida que se llena el contexto. Cuando la ventana de contexto se está llenando, Claude puede comenzar a "olvidar" instrucciones anteriores o cometer más errores. La ventana de contexto es el recurso más importante a gestionar. Para ver cómo se llena una sesión en la práctica, [vea un recorrido interactivo](/es/context-window) de lo que se carga al inicio y cuánto cuesta cada lectura de archivo. Rastree el uso de contexto continuamente con una [línea de estado personalizada](/es/statusline), y consulte [Reducir el uso de tokens](/es/costs#reduce-token-usage) para estrategias sobre cómo reducir el uso de tokens.
 
 ***
 
@@ -120,7 +120,7 @@ Claude puede inferir intención, pero no puede leer su mente. Haga referencia a 
 | **Hacer referencia a patrones existentes.** Señale a Claude los patrones en su código base.          | *"agregar un widget de calendario"*                      | *"ver cómo se implementan los widgets existentes en la página de inicio para entender los patrones. HotDogWidget.php es un buen ejemplo. seguir el patrón para implementar un nuevo widget de calendario que permita al usuario seleccionar un mes y paginar hacia adelante/atrás para elegir un año. construir desde cero sin bibliotecas que no sean las ya utilizadas en el código base."* |
 | **Describir el síntoma.** Proporcione el síntoma, la ubicación probable y qué significa "corregido". | *"corregir el error de inicio de sesión"*                | *"los usuarios informan que el inicio de sesión falla después del agotamiento de la sesión. verificar el flujo de autenticación en src/auth/, especialmente la actualización de tokens. escribir una prueba fallida que reproduzca el problema, luego corregirlo"*                                                                                                                            |
 
-Los indicaciones vagas pueden ser útiles cuando está explorando y puede permitirse corregir el curso. Una indicación como `"¿qué mejoraría en este archivo?"` puede revelar cosas en las que no habría pensado en preguntar.
+Las indicaciones vagas pueden ser útiles cuando está explorando y puede permitirse corregir el curso. Una indicación como `"¿qué mejoraría en este archivo?"` puede revelar cosas en las que no habría pensado en preguntar.
 
 ### Proporcionar contenido enriquecido
 
@@ -196,6 +196,7 @@ Puede colocar archivos CLAUDE.md en varias ubicaciones:
 
 * **Carpeta de inicio (`~/.claude/CLAUDE.md`)**: se aplica a todas las sesiones de Claude
 * **Raíz del proyecto (`./CLAUDE.md`)**: verificar en git para compartir con su equipo
+* **Raíz del proyecto (`./CLAUDE.local.md`)**: notas personales específicas del proyecto; agregue este archivo a su `.gitignore` para que no se comparta con su equipo
 * **Directorios principales**: útil para monorepos donde tanto `root/CLAUDE.md` como `root/foo/CLAUDE.md` se extraen automáticamente
 * **Directorios secundarios**: Claude extrae archivos CLAUDE.md secundarios bajo demanda cuando trabaja con archivos en esos directorios
 
@@ -397,7 +398,7 @@ Durante sesiones largas, la ventana de contexto de Claude puede llenarse con con
 * Para más control, ejecute `/compact <instructions>`, como `/compact Focus on the API changes`
 * Para compactar solo parte de la conversación, use `Esc + Esc` o `/rewind`, seleccione un punto de control de mensaje y elija **Summarize from here**. Esto condensa mensajes desde ese punto hacia adelante mientras mantiene el contexto anterior intacto.
 * Personalice el comportamiento de compactación en CLAUDE.md con instrucciones como `"When compacting, always preserve the full list of modified files and any test commands"` para asegurar que el contexto crítico sobreviva a la resumición
-* Para preguntas rápidas que no necesitan permanecer en contexto, use [`/btw`](/es/interactive-mode#side-questions-with-btw). La respuesta aparece en una superposición descaritable y nunca entra en el historial de conversación, para que pueda verificar un detalle sin aumentar el contexto.
+* Para preguntas rápidas que no necesitan permanecer en contexto, use [`/btw`](/es/interactive-mode#side-questions-with-%2Fbtw). La respuesta aparece en una superposición descaritable y nunca entra en el historial de conversación, para que pueda verificar un detalle sin aumentar el contexto.
 
 ### Use subagents para investigación
 

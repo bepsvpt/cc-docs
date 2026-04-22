@@ -277,7 +277,7 @@ Use ambos para defensa en profundidad:
 * Las restricciones del sistema de archivos en el sandbox usan reglas de negación Read y Edit, no configuración de sandbox separada
 * Las restricciones de red combinan reglas de permisos WebFetch con las listas `allowedDomains` y `deniedDomains` del sandbox
 
-Cuando el sandboxing está habilitado con `autoAllowBashIfSandboxed: true`, que es el valor predeterminado, los comandos Bash en sandbox se ejecutan sin solicitar incluso si sus permisos incluyen `ask: Bash(*)`. El límite del sandbox sustituye el aviso por comando. Consulte [modos de sandbox](/es/sandboxing#sandbox-modes) para cambiar este comportamiento.
+Cuando el sandboxing está habilitado con `autoAllowBashIfSandboxed: true`, que es el valor predeterminado, los comandos Bash en sandbox se ejecutan sin solicitar incluso si sus permisos incluyen `ask: Bash(*)`. El límite del sandbox sustituye el aviso por comando. Las reglas de negación explícitas aún se aplican, y los comandos `rm` o `rmdir` que apunten a `/`, su directorio de inicio u otras rutas críticas del sistema aún desencadenan un aviso. Consulte [modos de sandbox](/es/sandboxing#sandbox-modes) para cambiar este comportamiento.
 
 ## Configuración administrada
 
@@ -315,9 +315,11 @@ Para reaccionar a denegaciones programáticamente, use el [hook `PermissionDenie
 
 ## Configurar el clasificador del modo auto
 
-El [modo auto](/es/permission-modes#eliminate-prompts-with-auto-mode) utiliza un modelo clasificador para decidir si cada acción es segura de ejecutar sin solicitar. De fábrica, solo confía en el directorio de trabajo y, si está presente, los remotos del repositorio actual. Acciones como empujar a la organización de control de fuente de su empresa o escribir en un bucket de nube de equipo serán bloqueadas como posible exfiltración de datos. El bloque de configuración `autoMode` le permite decirle al clasificador qué infraestructura confía su organización.
+El [modo auto](/es/permission-modes#eliminate-prompts-with-auto-mode) utiliza un modelo clasificador para decidir si cada acción es segura de ejecutar sin solicitar. De fábrica, solo confía en el directorio de trabajo y, si está presente, los remotos del repositorio actual. Acciones como empujar a la organización de control de fuente de su empresa o escribir en un bucket de nube de equipo serán bloqueadas como posible exfiltración de datos.
 
-El clasificador lee `autoMode` de configuración de usuario, `.claude/settings.local.json` y configuración administrada. No lee de configuración de proyecto compartida en `.claude/settings.json`, porque un repositorio registrado podría inyectar sus propias reglas de permiso.
+Para ajustar lo que el clasificador permite o bloquea, agregue instrucciones a su archivo [CLAUDE.md](/es/memory). El clasificador lee CLAUDE.md desde directorios confiables junto a la conversación, por lo que una instrucción como "nunca force push" dirige tanto a Claude como al clasificador al mismo tiempo. Comience aquí para convenciones de proyecto y reglas de comportamiento.
+
+Para reglas que se aplican en todos los proyectos, como infraestructura confiable o reglas de denegación en toda la organización, use el bloque de configuración `autoMode`. El clasificador lee `autoMode` desde configuración de usuario, `.claude/settings.local.json` y configuración administrada. No lee desde configuración de proyecto compartida en `.claude/settings.json`, porque un repositorio registrado podría inyectar sus propias reglas de permiso.
 
 | Alcance                       | Archivo                       | Usar para                                                         |
 | :---------------------------- | :---------------------------- | :---------------------------------------------------------------- |

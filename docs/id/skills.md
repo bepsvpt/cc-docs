@@ -8,8 +8,10 @@
 
 Skills memperluas apa yang dapat dilakukan Claude. Buat file `SKILL.md` dengan instruksi, dan Claude menambahkannya ke toolkit-nya. Claude menggunakan skills saat relevan, atau Anda dapat menginvokasinya secara langsung dengan `/skill-name`.
 
+Buat skill ketika Anda terus menempel playbook yang sama, checklist, atau prosedur multi-langkah ke dalam chat, atau ketika bagian dari CLAUDE.md telah berkembang menjadi prosedur daripada fakta. Tidak seperti konten CLAUDE.md, badan skill hanya dimuat saat digunakan, jadi materi referensi yang panjang hampir tidak ada biayanya sampai Anda membutuhkannya.
+
 <Note>
-  Untuk perintah bawaan seperti `/help` dan `/compact`, lihat [referensi perintah bawaan](/id/commands).
+  Untuk perintah bawaan seperti `/help` dan `/compact`, dan skills bundel seperti `/debug` dan `/simplify`, lihat [referensi perintah](/id/commands).
 
   **Perintah kustom telah digabungkan ke dalam skills.** File di `.claude/commands/deploy.md` dan skill di `.claude/skills/deploy/SKILL.md` keduanya membuat `/deploy` dan bekerja dengan cara yang sama. File `.claude/commands/` yang ada tetap berfungsi. Skills menambahkan fitur opsional: direktori untuk file pendukung, frontmatter untuk [mengontrol apakah Anda atau Claude menginvokasinya](#control-who-invokes-a-skill), dan kemampuan bagi Claude untuk memuatnya secara otomatis saat relevan.
 </Note>
@@ -18,17 +20,9 @@ Skills Claude Code mengikuti standar terbuka [Agent Skills](https://agentskills.
 
 ## Skills bundel
 
-Skills bundel dikirim dengan Claude Code dan tersedia di setiap sesi. Tidak seperti [perintah bawaan](/id/commands), yang menjalankan logika tetap secara langsung, skills bundel berbasis prompt: mereka memberikan Claude playbook terperinci dan membiarkannya mengorkestrasi pekerjaan menggunakan tools-nya. Ini berarti skills bundel dapat menelurkan agen paralel, membaca file, dan beradaptasi dengan codebase Anda.
+Claude Code menyertakan serangkaian skills bundel yang tersedia di setiap sesi, termasuk `/simplify`, `/batch`, `/debug`, `/loop`, dan `/claude-api`. Tidak seperti sebagian besar perintah bawaan, yang menjalankan logika tetap secara langsung, skills bundel berbasis prompt: mereka memberikan Claude playbook terperinci dan membiarkannya mengorkestrasi pekerjaan menggunakan tools-nya. Anda menginvokasinya dengan cara yang sama seperti skill lainnya, dengan mengetik `/` diikuti dengan nama skill.
 
-Anda menginvokasinya skills bundel dengan cara yang sama seperti skill lainnya: ketik `/` diikuti dengan nama skill. Dalam tabel di bawah, `<arg>` menunjukkan argumen yang diperlukan dan `[arg]` menunjukkan argumen opsional.
-
-| Skill                       | Tujuan                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| :-------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/batch <instruction>`      | Mengorkestrasi perubahan skala besar di seluruh codebase secara paralel. Meneliti codebase, menguraikan pekerjaan menjadi 5 hingga 30 unit independen, dan menyajikan rencana. Setelah disetujui, menelurkan satu agen latar belakang per unit dalam [git worktree](/id/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) yang terisolasi. Setiap agen mengimplementasikan unitnya, menjalankan tes, dan membuka pull request. Memerlukan repositori git. Contoh: `/batch migrate src/ from Solid to React` |
-| `/claude-api`               | Muat materi referensi Claude API untuk bahasa proyek Anda (Python, TypeScript, Java, Go, Ruby, C#, PHP, atau cURL) dan referensi Agent SDK untuk Python dan TypeScript. Mencakup tool use, streaming, batches, structured outputs, dan pitfalls umum. Juga diaktifkan secara otomatis saat kode Anda mengimpor `anthropic`, `@anthropic-ai/sdk`, atau `claude_agent_sdk`                                                                                                                                                         |
-| `/debug [description]`      | Aktifkan debug logging untuk sesi saat ini dan troubleshoot masalah dengan membaca log debug sesi. Debug logging dimatikan secara default kecuali Anda memulai dengan `claude --debug`, jadi menjalankan `/debug` di tengah sesi mulai menangkap log dari titik itu ke depan. Secara opsional jelaskan masalahnya untuk fokus analisis                                                                                                                                                                                           |
-| `/loop [interval] <prompt>` | Jalankan prompt berulang kali pada interval saat sesi tetap terbuka. Berguna untuk polling deployment, babysitting PR, atau menjalankan kembali skill lain secara berkala. Contoh: `/loop 5m check if the deploy finished`. Lihat [Jalankan prompts pada jadwal](/id/scheduled-tasks)                                                                                                                                                                                                                                            |
-| `/simplify [focus]`         | Tinjau file yang baru-baru ini diubah untuk masalah penggunaan kembali kode, kualitas, dan efisiensi, kemudian perbaiki. Menelurkan tiga agen review secara paralel, mengagregasi temuan mereka, dan menerapkan perbaikan. Lewatkan teks untuk fokus pada kekhawatiran spesifik: `/simplify focus on memory efficiency`                                                                                                                                                                                                          |
+Skills bundel terdaftar bersama perintah bawaan dalam [referensi perintah](/id/commands), ditandai **Skill** di kolom Tujuan.
 
 ## Memulai
 
@@ -99,6 +93,10 @@ Tempat Anda menyimpan skill menentukan siapa yang dapat menggunakannya:
 
 Ketika skills berbagi nama yang sama di berbagai level, lokasi prioritas lebih tinggi menang: enterprise > pribadi > proyek. Skills plugin menggunakan namespace `plugin-name:skill-name`, jadi mereka tidak dapat bertentangan dengan level lain. Jika Anda memiliki file di `.claude/commands/`, file tersebut bekerja dengan cara yang sama, tetapi jika skill dan perintah berbagi nama yang sama, skill mengambil alih.
 
+#### Deteksi perubahan langsung
+
+Claude Code memantau direktori skill untuk perubahan file. Menambahkan, mengedit, atau menghapus skill di bawah `~/.claude/skills/`, proyek `.claude/skills/`, atau `.claude/skills/` di dalam direktori `--add-dir` berlaku dalam sesi saat ini tanpa memulai ulang. Membuat direktori skills tingkat atas yang tidak ada saat sesi dimulai memerlukan memulai ulang Claude Code sehingga direktori baru dapat dipantau.
+
 #### Penemuan otomatis dari direktori bersarang
 
 Saat Anda bekerja dengan file di subdirektori, Claude Code secara otomatis menemukan skills dari direktori `.claude/skills/` bersarang. Misalnya, jika Anda mengedit file di `packages/frontend/`, Claude Code juga mencari skills di `packages/frontend/.claude/skills/`. Ini mendukung pengaturan monorepo di mana paket memiliki skills mereka sendiri.
@@ -123,7 +121,7 @@ my-skill/
 
 #### Skills dari direktori tambahan
 
-Bendera `--add-dir` [memberikan akses file](/id/permissions#additional-directories-grant-file-access-not-configuration) daripada penemuan konfigurasi, tetapi skills adalah pengecualian: `.claude/skills/` dalam direktori yang ditambahkan dimuat secara otomatis dan diambil oleh deteksi perubahan langsung, sehingga Anda dapat mengedit skills tersebut selama sesi tanpa memulai ulang.
+Bendera `--add-dir` [memberikan akses file](/id/permissions#additional-directories-grant-file-access-not-configuration) daripada penemuan konfigurasi, tetapi skills adalah pengecualian: `.claude/skills/` dalam direktori yang ditambahkan dimuat secara otomatis. Lihat [Deteksi perubahan langsung](#live-change-detection) untuk bagaimana edit diambil selama sesi.
 
 Konfigurasi `.claude/` lainnya seperti subagents, perintah, dan gaya output tidak dimuat dari direktori tambahan. Lihat [tabel pengecualian](/id/permissions#additional-directories-grant-file-access-not-configuration) untuk daftar lengkap apa yang dimuat dan tidak dimuat, serta cara yang direkomendasikan untuk berbagi konfigurasi di seluruh proyek.
 
@@ -188,33 +186,38 @@ Your skill instructions here...
 
 Semua bidang opsional. Hanya `description` yang direkomendasikan sehingga Claude tahu kapan menggunakan skill.
 
-| Bidang                     | Diperlukan       | Deskripsi                                                                                                                                                                                                                                                                                                                      |
-| :------------------------- | :--------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`                     | Tidak            | Nama tampilan untuk skill. Jika dihilangkan, menggunakan nama direktori. Huruf kecil, angka, dan tanda hubung saja (maks 64 karakter).                                                                                                                                                                                         |
-| `description`              | Direkomendasikan | Apa yang dilakukan skill dan kapan menggunakannya. Claude menggunakan ini untuk memutuskan kapan menerapkan skill. Jika dihilangkan, menggunakan paragraf pertama konten markdown. Depankan kasus penggunaan utama: deskripsi lebih panjang dari 250 karakter dipotong dalam daftar skill untuk mengurangi penggunaan konteks. |
-| `argument-hint`            | Tidak            | Petunjuk yang ditampilkan selama autocomplete untuk menunjukkan argumen yang diharapkan. Contoh: `[issue-number]` atau `[filename] [format]`.                                                                                                                                                                                  |
-| `disable-model-invocation` | Tidak            | Atur ke `true` untuk mencegah Claude memuat skill ini secara otomatis. Gunakan untuk workflow yang ingin Anda picu secara manual dengan `/name`. Default: `false`.                                                                                                                                                             |
-| `user-invocable`           | Tidak            | Atur ke `false` untuk menyembunyikan dari menu `/`. Gunakan untuk pengetahuan latar belakang yang tidak boleh diinvokasinya pengguna secara langsung. Default: `true`.                                                                                                                                                         |
-| `allowed-tools`            | Tidak            | Tools yang dapat digunakan Claude tanpa meminta izin saat skill ini aktif. Menerima string yang dipisahkan spasi atau daftar YAML.                                                                                                                                                                                             |
-| `model`                    | Tidak            | Model yang digunakan saat skill ini aktif.                                                                                                                                                                                                                                                                                     |
-| `effort`                   | Tidak            | [Effort level](/id/model-config#adjust-effort-level) saat skill ini aktif. Mengganti effort level sesi. Default: mewarisi dari sesi. Opsi: `low`, `medium`, `high`, `max` (Opus 4.6 saja).                                                                                                                                     |
-| `context`                  | Tidak            | Atur ke `fork` untuk menjalankan dalam konteks subagent yang di-fork.                                                                                                                                                                                                                                                          |
-| `agent`                    | Tidak            | Jenis subagent mana yang digunakan saat `context: fork` diatur.                                                                                                                                                                                                                                                                |
-| `hooks`                    | Tidak            | Hooks yang dibatasi pada lifecycle skill ini. Lihat [Hooks dalam skills dan agents](/id/hooks#hooks-in-skills-and-agents) untuk format konfigurasi.                                                                                                                                                                            |
-| `paths`                    | Tidak            | Pola glob yang membatasi kapan skill ini diaktifkan. Menerima string yang dipisahkan koma atau daftar YAML. Ketika diatur, Claude memuat skill secara otomatis hanya saat bekerja dengan file yang cocok dengan pola. Menggunakan format yang sama seperti [aturan khusus path](/id/memory#path-specific-rules).               |
-| `shell`                    | Tidak            | Shell yang digunakan untuk blok `` !`command` `` dalam skill ini. Menerima `bash` (default) atau `powershell`. Mengatur `powershell` menjalankan perintah shell inline melalui PowerShell di Windows. Memerlukan `CLAUDE_CODE_USE_POWERSHELL_TOOL=1`.                                                                          |
+| Bidang                     | Diperlukan       | Deskripsi                                                                                                                                                                                                                                                                                                                                              |
+| :------------------------- | :--------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`                     | Tidak            | Nama tampilan untuk skill. Jika dihilangkan, menggunakan nama direktori. Huruf kecil, angka, dan tanda hubung saja (maks 64 karakter).                                                                                                                                                                                                                 |
+| `description`              | Direkomendasikan | Apa yang dilakukan skill dan kapan menggunakannya. Claude menggunakan ini untuk memutuskan kapan menerapkan skill. Jika dihilangkan, menggunakan paragraf pertama konten markdown. Depankan kasus penggunaan utama: teks gabungan `description` dan `when_to_use` dipotong pada 1.536 karakter dalam daftar skill untuk mengurangi penggunaan konteks. |
+| `when_to_use`              | Tidak            | Konteks tambahan untuk kapan Claude harus menginvokasinya skill, seperti frasa pemicu atau permintaan contoh. Ditambahkan ke `description` dalam daftar skill dan dihitung terhadap batas 1.536 karakter.                                                                                                                                              |
+| `argument-hint`            | Tidak            | Petunjuk yang ditampilkan selama autocomplete untuk menunjukkan argumen yang diharapkan. Contoh: `[issue-number]` atau `[filename] [format]`.                                                                                                                                                                                                          |
+| `arguments`                | Tidak            | Argumen posisional bernama untuk [substitusi `$name`](#available-string-substitutions) dalam konten skill. Menerima string yang dipisahkan spasi atau daftar YAML. Nama memetakan ke posisi argumen secara berurutan.                                                                                                                                  |
+| `disable-model-invocation` | Tidak            | Atur ke `true` untuk mencegah Claude memuat skill ini secara otomatis. Gunakan untuk workflow yang ingin Anda picu secara manual dengan `/name`. Juga mencegah skill dari [dimuat sebelumnya ke dalam subagents](/id/sub-agents#preload-skills-into-subagents). Default: `false`.                                                                      |
+| `user-invocable`           | Tidak            | Atur ke `false` untuk menyembunyikan dari menu `/`. Gunakan untuk pengetahuan latar belakang yang tidak boleh diinvokasinya pengguna secara langsung. Default: `true`.                                                                                                                                                                                 |
+| `allowed-tools`            | Tidak            | Tools yang dapat digunakan Claude tanpa meminta izin saat skill ini aktif. Menerima string yang dipisahkan spasi atau daftar YAML.                                                                                                                                                                                                                     |
+| `model`                    | Tidak            | Model yang digunakan saat skill ini aktif. Penggantian berlaku untuk sisa giliran saat ini dan tidak disimpan ke pengaturan; model sesi dilanjutkan pada prompt Anda berikutnya. Menerima nilai yang sama seperti [`/model`](/id/model-config), atau `inherit` untuk menjaga model aktif.                                                              |
+| `effort`                   | Tidak            | [Effort level](/id/model-config#adjust-effort-level) saat skill ini aktif. Mengganti effort level sesi. Default: mewarisi dari sesi. Opsi: `low`, `medium`, `high`, `xhigh`, `max`; level yang tersedia tergantung pada model.                                                                                                                         |
+| `context`                  | Tidak            | Atur ke `fork` untuk menjalankan dalam konteks subagent yang di-fork.                                                                                                                                                                                                                                                                                  |
+| `agent`                    | Tidak            | Jenis subagent mana yang digunakan saat `context: fork` diatur.                                                                                                                                                                                                                                                                                        |
+| `hooks`                    | Tidak            | Hooks yang dibatasi pada lifecycle skill ini. Lihat [Hooks dalam skills dan agents](/id/hooks#hooks-in-skills-and-agents) untuk format konfigurasi.                                                                                                                                                                                                    |
+| `paths`                    | Tidak            | Pola glob yang membatasi kapan skill ini diaktifkan. Menerima string yang dipisahkan koma atau daftar YAML. Ketika diatur, Claude memuat skill secara otomatis hanya saat bekerja dengan file yang cocok dengan pola. Menggunakan format yang sama seperti [aturan khusus path](/id/memory#path-specific-rules).                                       |
+| `shell`                    | Tidak            | Shell yang digunakan untuk `` !`command` `` dan ` ```! ` blocks dalam skill ini. Menerima `bash` (default) atau `powershell`. Mengatur `powershell` menjalankan perintah shell inline melalui PowerShell di Windows. Memerlukan `CLAUDE_CODE_USE_POWERSHELL_TOOL=1`.                                                                                   |
 
 #### Substitusi string yang tersedia
 
 Skills mendukung substitusi string untuk nilai dinamis dalam konten skill:
 
-| Variabel               | Deskripsi                                                                                                                                                                                                                                                                         |
-| :--------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `$ARGUMENTS`           | Semua argumen yang dilewatkan saat menginvokasinya skill. Jika `$ARGUMENTS` tidak ada dalam konten, argumen ditambahkan sebagai `ARGUMENTS: <value>`.                                                                                                                             |
-| `$ARGUMENTS[N]`        | Akses argumen spesifik berdasarkan indeks berbasis 0, seperti `$ARGUMENTS[0]` untuk argumen pertama.                                                                                                                                                                              |
-| `$N`                   | Singkat untuk `$ARGUMENTS[N]`, seperti `$0` untuk argumen pertama atau `$1` untuk argumen kedua.                                                                                                                                                                                  |
-| `${CLAUDE_SESSION_ID}` | ID sesi saat ini. Berguna untuk logging, membuat file khusus sesi, atau mengkorelasikan output skill dengan sesi.                                                                                                                                                                 |
-| `${CLAUDE_SKILL_DIR}`  | Direktori yang berisi file `SKILL.md` skill. Untuk skills plugin, ini adalah subdirektori skill dalam plugin, bukan root plugin. Gunakan ini dalam perintah injeksi bash untuk mereferensikan script atau file yang dikemas dengan skill, terlepas dari direktori kerja saat ini. |
+| Variabel               | Deskripsi                                                                                                                                                                                                                                                                            |
+| :--------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `$ARGUMENTS`           | Semua argumen yang dilewatkan saat menginvokasinya skill. Jika `$ARGUMENTS` tidak ada dalam konten, argumen ditambahkan sebagai `ARGUMENTS: <value>`.                                                                                                                                |
+| `$ARGUMENTS[N]`        | Akses argumen spesifik berdasarkan indeks berbasis 0, seperti `$ARGUMENTS[0]` untuk argumen pertama.                                                                                                                                                                                 |
+| `$N`                   | Singkat untuk `$ARGUMENTS[N]`, seperti `$0` untuk argumen pertama atau `$1` untuk argumen kedua.                                                                                                                                                                                     |
+| `$name`                | Argumen bernama yang dideklarasikan dalam daftar frontmatter [`arguments`](#frontmatter-reference). Nama memetakan ke posisi secara berurutan, jadi dengan `arguments: [issue, branch]` placeholder `$issue` berkembang menjadi argumen pertama dan `$branch` menjadi argumen kedua. |
+| `${CLAUDE_SESSION_ID}` | ID sesi saat ini. Berguna untuk logging, membuat file khusus sesi, atau mengkorelasikan output skill dengan sesi.                                                                                                                                                                    |
+| `${CLAUDE_SKILL_DIR}`  | Direktori yang berisi file `SKILL.md` skill. Untuk skills plugin, ini adalah subdirektori skill dalam plugin, bukan root plugin. Gunakan ini dalam perintah injeksi bash untuk mereferensikan script atau file yang dikemas dengan skill, terlepas dari direktori kerja saat ini.    |
+
+Argumen yang diindeks menggunakan quoting gaya shell, jadi bungkus nilai multi-kata dalam tanda kutip untuk meneruskannya sebagai argumen tunggal. Misalnya, `/my-skill "hello world" second` membuat `$0` berkembang menjadi `hello world` dan `$1` menjadi `second`. Placeholder `$ARGUMENTS` selalu berkembang menjadi string argumen lengkap seperti yang diketik.
 
 **Contoh menggunakan substitusi:**
 
@@ -290,17 +293,30 @@ Berikut adalah bagaimana dua bidang mempengaruhi invokasi dan pemuatan konteks:
   Dalam sesi reguler, deskripsi skill dimuat ke dalam konteks sehingga Claude tahu apa yang tersedia, tetapi konten skill penuh hanya dimuat saat diinvokasinya. [Subagents dengan skills yang dimuat sebelumnya](/id/sub-agents#preload-skills-into-subagents) bekerja berbeda: konten skill penuh disuntikkan saat startup.
 </Note>
 
-### Batasi akses tool
+### Lifecycle konten skill
 
-Gunakan bidang `allowed-tools` untuk membatasi tools mana yang dapat digunakan Claude saat skill aktif. Skill ini membuat mode baca-saja di mana Claude dapat menjelajahi file tetapi tidak memodifikasinya:
+Saat Anda atau Claude menginvokasinya skill, konten `SKILL.md` yang dirender memasuki percakapan sebagai pesan tunggal dan tetap di sana untuk sisa sesi. Claude Code tidak membaca ulang file skill pada giliran berikutnya, jadi tulis panduan yang harus berlaku sepanjang tugas sebagai instruksi berdiri daripada langkah satu kali.
+
+[Auto-compaction](/id/how-claude-code-works#when-context-fills-up) membawa skills yang diinvokasinya maju dalam anggaran token. Ketika percakapan dirangkum untuk membebaskan konteks, Claude Code melampirkan kembali invokasi skill terbaru setelah ringkasan, menjaga 5.000 token pertama dari masing-masing. Skills yang dilampirkan kembali berbagi anggaran gabungan 25.000 token. Claude Code mengisi anggaran ini mulai dari skill yang paling baru diinvokasinya, jadi skills yang lebih lama dapat dijatuhkan sepenuhnya setelah compaction jika Anda telah menginvokasinya banyak dalam satu sesi.
+
+Jika skill tampaknya berhenti mempengaruhi perilaku setelah respons pertama, konten biasanya masih ada dan model memilih tools atau pendekatan lain. Perkuat deskripsi skill dan instruksi sehingga model terus menyukainya, atau gunakan [hooks](/id/hooks) untuk menerapkan perilaku secara deterministik. Jika skill besar atau Anda menginvokasinya beberapa yang lain setelahnya, invokasinya kembali setelah compaction untuk mengembalikan konten penuh.
+
+### Pra-setujui tools untuk skill
+
+Bidang `allowed-tools` memberikan izin untuk tools yang terdaftar saat skill aktif, sehingga Claude dapat menggunakannya tanpa meminta persetujuan Anda. Ini tidak membatasi tools mana yang tersedia: setiap tool tetap dapat dipanggil, dan [pengaturan izin](/id/permissions) Anda masih mengatur tools yang tidak terdaftar.
+
+Skill ini memungkinkan Claude menjalankan perintah git tanpa persetujuan per-penggunaan kapan pun Anda menginvokasinya:
 
 ```yaml theme={null}
 ---
-name: safe-reader
-description: Read files without making changes
-allowed-tools: Read Grep Glob
+name: commit
+description: Stage and commit the current changes
+disable-model-invocation: true
+allowed-tools: Bash(git add *) Bash(git commit *) Bash(git status *)
 ---
 ```
+
+Untuk memblokir skill dari menggunakan tools tertentu, tambahkan aturan deny dalam [pengaturan izin](/id/permissions) Anda sebagai gantinya.
 
 ### Lewatkan argumen ke skills
 
@@ -386,6 +402,19 @@ Saat skill ini berjalan:
 
 Ini adalah preprocessing, bukan sesuatu yang dijalankan Claude. Claude hanya melihat hasil akhir.
 
+Untuk perintah multi-baris, gunakan blok kode yang dibuka dengan ` ```! ` sebagai gantinya dari bentuk inline:
+
+````markdown theme={null}
+## Environment
+```!
+node --version
+npm --version
+git status --short
+```
+````
+
+Untuk menonaktifkan perilaku ini untuk skills dan perintah kustom dari sumber pengguna, proyek, plugin, atau [direktori tambahan](#skills-from-additional-directories), atur `"disableSkillShellExecution": true` dalam [pengaturan](/id/settings). Setiap perintah diganti dengan `[shell command execution disabled by policy]` sebagai gantinya dijalankan. Skills bundel dan terkelola tidak terpengaruh. Pengaturan ini paling berguna dalam [pengaturan terkelola](/id/permissions#managed-settings), di mana pengguna tidak dapat menimpanya.
+
 <Tip>
   Untuk mengaktifkan [extended thinking](/id/common-workflows#use-extended-thinking-thinking-mode) dalam skill, sertakan kata "ultrathink" di mana pun dalam konten skill Anda.
 </Tip>
@@ -437,7 +466,7 @@ Bidang `agent` menentukan konfigurasi subagent mana yang digunakan. Opsi termasu
 
 ### Batasi akses skill Claude
 
-Secara default, Claude dapat menginvokasinya skill apa pun yang tidak memiliki `disable-model-invocation: true` diatur. Skills yang mendefinisikan `allowed-tools` memberikan Claude akses ke tools tersebut tanpa persetujuan per-penggunaan saat skill aktif. Pengaturan [izin](/id/permissions) Anda masih mengatur perilaku persetujuan baseline untuk semua tools lainnya. Perintah bawaan seperti `/compact` dan `/init` tidak tersedia melalui tool Skill.
+Secara default, Claude dapat menginvokasinya skill apa pun yang tidak memiliki `disable-model-invocation: true` diatur. Skills yang mendefinisikan `allowed-tools` memberikan Claude akses ke tools tersebut tanpa persetujuan per-penggunaan saat skill aktif. Pengaturan [izin](/id/permissions) Anda masih mengatur perilaku persetujuan baseline untuk semua tools lainnya. Beberapa perintah bawaan juga tersedia melalui tool Skill, termasuk `/init`, `/review`, dan `/security-review`. Perintah bawaan lainnya seperti `/compact` tidak.
 
 Tiga cara untuk mengontrol skills mana yang dapat diinvokasinya Claude:
 
@@ -686,13 +715,14 @@ Jika Claude menggunakan skill Anda saat Anda tidak menginginkannya:
 
 Deskripsi skill dimuat ke dalam konteks sehingga Claude tahu apa yang tersedia. Semua nama skill selalu disertakan, tetapi jika Anda memiliki banyak skills, deskripsi diperpendek agar sesuai dengan anggaran karakter, yang dapat menghilangkan kata kunci yang dibutuhkan Claude untuk mencocokkan permintaan Anda. Anggaran diskalakan secara dinamis pada 1% dari jendela konteks, dengan fallback 8.000 karakter.
 
-Untuk menaikkan batas, atur variabel lingkungan `SLASH_COMMAND_TOOL_CHAR_BUDGET`. Atau potong deskripsi di sumbernya: depankan kasus penggunaan utama, karena setiap entri dibatasi pada 250 karakter terlepas dari anggaran.
+Untuk menaikkan batas, atur variabel lingkungan `SLASH_COMMAND_TOOL_CHAR_BUDGET`. Atau potong teks `description` dan `when_to_use` di sumbernya: depankan kasus penggunaan utama, karena teks gabungan setiap entri dibatasi pada 1.536 karakter terlepas dari anggaran.
 
 ## Sumber daya terkait
 
+* **[Debug konfigurasi Anda](/id/debug-your-config)**: diagnosis mengapa skill tidak muncul atau tidak terpicu
 * **[Subagents](/id/sub-agents)**: delegasikan tugas ke agen khusus
 * **[Plugins](/id/plugins)**: paket dan distribusikan skills dengan ekstensi lainnya
 * **[Hooks](/id/hooks)**: otomatisasi workflow di sekitar peristiwa tool
 * **[Memory](/id/memory)**: kelola file CLAUDE.md untuk konteks persisten
-* **[Built-in commands](/id/commands)**: referensi untuk perintah `/` bawaan
+* **[Commands](/id/commands)**: referensi untuk perintah bawaan dan skills bundel
 * **[Permissions](/id/permissions)**: kontrol akses tool dan skill

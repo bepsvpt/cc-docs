@@ -6,7 +6,9 @@
 
 > 在 Claude Code 中建立和使用專門的 AI subagents，用於特定任務的工作流程和改進的上下文管理。
 
-Subagents 是專門的 AI 助手，用於處理特定類型的任務。每個 subagent 在自己的 context window 中執行，具有自訂系統提示、特定工具存取和獨立權限。當 Claude 遇到與 subagent 描述相符的任務時，它會委派給該 subagent，該 subagent 獨立工作並返回結果。若要在實踐中查看上下文節省，[context window visualization](/zh-TW/context-window) 會逐步說明一個 subagent 在自己的獨立視窗中處理研究的工作階段。
+Subagents 是專門的 AI 助手，用於處理特定類型的任務。當側面任務會用搜尋結果、日誌或檔案內容淹沒您的主要對話時，請使用一個 subagent，而您不會再次參考這些內容：subagent 在自己的上下文中執行該工作，並僅返回摘要。當您持續產生相同類型的工作者並使用相同指令時，定義自訂 subagent。
+
+每個 subagent 在自己的 context window 中執行，具有自訂系統提示、特定工具存取和獨立權限。當 Claude 遇到與 subagent 描述相符的任務時，它會委派給該 subagent，該 subagent 獨立工作並返回結果。若要在實踐中查看上下文節省，[context window visualization](/zh-TW/context-window) 會逐步說明一個 subagent 在自己的獨立視窗中處理研究的工作階段。
 
 <Note>
   如果您需要多個代理並行工作並相互通訊，請改為參閱 [agent teams](/zh-TW/agent-teams)。Subagents 在單一工作階段內工作；agent teams 跨越多個獨立工作階段進行協調。
@@ -89,7 +91,7 @@ Subagents 在 Markdown 檔案中定義，具有 YAML frontmatter。您可以 [�
   </Step>
 
   <Step title="選擇位置">
-    選擇 **Create new agent**，然後選擇 **Personal**。這會將 subagent 儲存到 `~/.claude/agents/`，以便在所有專案中使用。
+    切換到 **Library** 標籤，選擇 **Create new agent**，然後選擇 **Personal**。這會將 subagent 儲存到 `~/.claude/agents/`，以便在所有專案中使用。
   </Step>
 
   <Step title="使用 Claude 生成">
@@ -139,7 +141,7 @@ Subagents 在 Markdown 檔案中定義，具有 YAML frontmatter。您可以 [�
 
 ### 使用 /agents 命令
 
-`/agents` 命令提供用於管理 subagents 的互動式介面。執行 `/agents` 以：
+`/agents` 命令開啟用於管理 subagents 的分頁介面。**Running** 標籤顯示即時 subagents，讓您開啟或停止它們。**Library** 標籤讓您：
 
 * 檢視所有可用的 subagents（內建、使用者、專案和外掛程式）
 * 使用引導式設定或 Claude 生成建立新的 subagents
@@ -196,7 +198,7 @@ claude --agents '{
   基於安全考慮，外掛程式 subagents 不支援 `hooks`、`mcpServers` 或 `permissionMode` frontmatter 欄位。從外掛程式載入代理時，這些欄位會被忽略。如果您需要它們，請將代理檔案複製到 `.claude/agents/` 或 `~/.claude/agents/`。您也可以在 `settings.json` 或 `settings.local.json` 中的 [`permissions.allow`](/zh-TW/settings#permission-settings) 新增規則，但這些規則適用於整個工作階段，而不僅僅是外掛程式 subagent。
 </Note>
 
-來自任何這些範圍的 subagent 定義也可用於 [agent teams](/zh-TW/agent-teams#use-subagent-definitions-for-teammates)：當產生隊友時，您可以參考 subagent 類型，隊友會繼承其系統提示、工具和模型。
+來自任何這些範圍的 subagent 定義也可用於 [agent teams](/zh-TW/agent-teams#use-subagent-definitions-for-teammates)：當產生隊友時，您可以參考 subagent 類型，隊友會使用其 `tools` 和 `model`，定義的主體作為額外指令附加到隊友的系統提示。請參閱 [agent teams](/zh-TW/agent-teams#use-subagent-definitions-for-teammates) 以了解哪些 frontmatter 欄位適用於該路徑。
 
 ### 編寫 subagent 檔案
 
@@ -220,6 +222,8 @@ specific, actionable feedback on quality, security, and best practices.
 
 Frontmatter 定義 subagent 的中繼資料和配置。主體成為指導 subagent 行為的系統提示。Subagents 只接收此系統提示（加上基本環境詳細資訊，如工作目錄），而不是完整的 Claude Code 系統提示。
 
+一個 subagent 在主要對話的目前工作目錄中啟動。在 subagent 內，`cd` 命令不會在 Bash 或 PowerShell 工具呼叫之間持續，也不會影響主要對話的工作目錄。若要改為給 subagent 儲存庫的隔離副本，請設定 [`isolation: worktree`](#supported-frontmatter-fields)。
+
 #### 支援的 frontmatter 欄位
 
 以下欄位可用於 YAML frontmatter。只有 `name` 和 `description` 是必需的。
@@ -230,7 +234,7 @@ Frontmatter 定義 subagent 的中繼資料和配置。主體成為指導 subage
 | `description`     | Yes      | Claude 何時應委派給此 subagent                                                                                                                                                       |
 | `tools`           | No       | [Tools](#available-tools) subagent 可以使用。如果省略，繼承所有工具                                                                                                                           |
 | `disallowedTools` | No       | 要拒絕的工具，從繼承或指定的清單中移除                                                                                                                                                           |
-| `model`           | No       | [Model](#choose-a-model) 使用：`sonnet`、`opus`、`haiku`、完整模型 ID（例如，`claude-opus-4-6`）或 `inherit`。預設為 `inherit`                                                                    |
+| `model`           | No       | [Model](#choose-a-model) 使用：`sonnet`、`opus`、`haiku`、完整模型 ID（例如，`claude-opus-4-7`）或 `inherit`。預設為 `inherit`                                                                    |
 | `permissionMode`  | No       | [Permission mode](#permission-modes)：`default`、`acceptEdits`、`auto`、`dontAsk`、`bypassPermissions` 或 `plan`                                                                    |
 | `maxTurns`        | No       | subagent 停止前的最大代理轉數                                                                                                                                                           |
 | `skills`          | No       | [Skills](/zh-TW/skills) 在啟動時載入到 subagent 的上下文中。注入完整技能內容，而不僅僅是可供呼叫。Subagents 不從父對話繼承技能                                                                                         |
@@ -238,7 +242,7 @@ Frontmatter 定義 subagent 的中繼資料和配置。主體成為指導 subage
 | `hooks`           | No       | [Lifecycle hooks](#define-hooks-for-subagents) 限定於此 subagent                                                                                                                  |
 | `memory`          | No       | [Persistent memory scope](#enable-persistent-memory)：`user`、`project` 或 `local`。啟用跨工作階段學習                                                                                     |
 | `background`      | No       | 設定為 `true` 以始終將此 subagent 作為 [background task](#run-subagents-in-foreground-or-background) 執行。預設：`false`                                                                      |
-| `effort`          | No       | 此 subagent 活動時的努力程度。覆蓋工作階段努力程度。預設：從工作階段繼承。選項：`low`、`medium`、`high`、`max`（僅 Opus 4.6）                                                                                          |
+| `effort`          | No       | 此 subagent 活動時的努力程度。覆蓋工作階段努力程度。預設：從工作階段繼承。選項：`low`、`medium`、`high`、`xhigh`、`max`；可用的層級取決於模型                                                                                   |
 | `isolation`       | No       | 設定為 `worktree` 以在臨時 [git worktree](/zh-TW/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) 中執行 subagent，為其提供儲存庫的隔離副本。如果 subagent 不進行任何更改，worktree 會自動清理 |
 | `color`           | No       | Subagent 在任務清單和文字中的顯示顏色。接受 `red`、`blue`、`green`、`yellow`、`purple`、`orange`、`pink` 或 `cyan`                                                                                    |
 | `initialPrompt`   | No       | 當此代理作為主工作階段代理執行時（透過 `--agent` 或 `agent` 設定），自動提交為第一個使用者轉數。[Commands](/zh-TW/commands) 和 [skills](/zh-TW/skills) 會被處理。前置於任何使用者提供的提示                                            |
@@ -248,7 +252,7 @@ Frontmatter 定義 subagent 的中繼資料和配置。主體成為指導 subage
 `model` 欄位控制 subagent 使用的 [AI model](/zh-TW/model-config)：
 
 * **Model alias**：使用可用的別名之一：`sonnet`、`opus` 或 `haiku`
-* **Full model ID**：使用完整模型 ID，例如 `claude-opus-4-6` 或 `claude-sonnet-4-6`。接受與 `--model` 標誌相同的值
+* **Full model ID**：使用完整模型 ID，例如 `claude-opus-4-7` 或 `claude-sonnet-4-6`。接受與 `--model` 標誌相同的值
 * **inherit**：使用與主要對話相同的模型
 * **Omitted**：如果未指定，預設為 `inherit`（使用與主要對話相同的模型）
 
@@ -344,20 +348,20 @@ Use the Playwright tools to navigate, screenshot, and interact with pages.
 
 `permissionMode` 欄位控制 subagent 如何處理權限提示。Subagents 從主要對話繼承權限上下文，並可以覆蓋模式，除非父模式優先，如下所述。
 
-| Mode                | Behavior                                                                             |
-| :------------------ | :----------------------------------------------------------------------------------- |
-| `default`           | 標準權限檢查，帶有提示                                                                          |
-| `acceptEdits`       | 自動接受檔案編輯                                                                             |
-| `auto`              | [Auto mode](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode)：AI 分類器評估每個工具呼叫 |
-| `dontAsk`           | 自動拒絕權限提示（明確允許的工具仍然工作）                                                                |
-| `bypassPermissions` | 跳過權限提示                                                                               |
-| `plan`              | Plan mode（唯讀探索）                                                                      |
+| Mode                | Behavior                                                                                |
+| :------------------ | :-------------------------------------------------------------------------------------- |
+| `default`           | 標準權限檢查，帶有提示                                                                             |
+| `acceptEdits`       | 自動接受檔案編輯和工作目錄或 `additionalDirectories` 中路徑的常見檔案系統命令                                     |
+| `auto`              | [Auto mode](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode)：背景分類器審查命令和受保護目錄寫入 |
+| `dontAsk`           | 自動拒絕權限提示（明確允許的工具仍然工作）                                                                   |
+| `bypassPermissions` | 跳過權限提示                                                                                  |
+| `plan`              | Plan mode（唯讀探索）                                                                         |
 
 <Warning>
-  謹慎使用 `bypassPermissions`。它跳過權限提示，允許 subagent 執行操作而無需批准。寫入 `.git`、`.claude`、`.vscode` 和 `.idea` 目錄仍然會提示確認，除了 `.claude/commands`、`.claude/agents` 和 `.claude/skills`。請參閱 [permission modes](/zh-TW/permission-modes#skip-all-checks-with-bypasspermissions-mode) 以了解詳細資訊。
+  謹慎使用 `bypassPermissions`。它跳過權限提示，允許 subagent 執行操作而無需批准。寫入 `.git`、`.claude`、`.vscode`、`.idea` 和 `.husky` 目錄仍然會提示確認，除了 `.claude/commands`、`.claude/agents` 和 `.claude/skills`。請參閱 [permission modes](/zh-TW/permission-modes#skip-all-checks-with-bypasspermissions-mode) 以了解詳細資訊。
 </Warning>
 
-如果父級使用 `bypassPermissions`，這優先並且無法被覆蓋。如果父級使用 [auto mode](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode)，subagent 繼承 auto mode，其 frontmatter 中的任何 `permissionMode` 都會被忽略：分類器使用與父工作階段相同的阻止和允許規則評估 subagent 的工具呼叫。
+如果父級使用 `bypassPermissions` 或 `acceptEdits`，這優先並且無法被覆蓋。如果父級使用 [auto mode](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode)，subagent 繼承 auto mode，其 frontmatter 中的任何 `permissionMode` 都會被忽略：分類器使用與父工作階段相同的阻止和允許規則評估 subagent 的工具呼叫。
 
 #### 將技能預載入 subagents
 
@@ -376,6 +380,8 @@ Implement API endpoints. Follow the conventions and patterns from the preloaded 
 ```
 
 每個技能的完整內容被注入到 subagent 的上下文中，而不僅僅是可供呼叫。Subagents 不從父對話繼承技能；您必須明確列出它們。
+
+您無法預載入設定 [`disable-model-invocation: true`](/zh-TW/skills#control-who-invokes-a-skill) 的技能，因為預載入來自 Claude 可以呼叫的相同技能集。如果列出的技能遺失或已停用，Claude Code 會跳過它並將警告記錄到除錯日誌。
 
 <Note>
   這與 [在 subagent 中執行技能](/zh-TW/skills#run-skills-in-a-subagent) 相反。使用 subagent 中的 `skills`，subagent 控制系統提示並載入技能內容。使用技能中的 `context: fork`，技能內容被注入到您指定的代理中。兩者都使用相同的基礎系統。
@@ -494,6 +500,10 @@ Subagents 可以定義在 subagent 生命週期期間執行的 [hooks](/zh-TW/ho
 #### Subagent frontmatter 中的 Hooks
 
 直接在 subagent 的 markdown 檔案中定義 hooks。這些 hooks 只在該特定 subagent 活動時執行，並在完成時清理。
+
+<Note>
+  Frontmatter hooks 在代理透過 Agent 工具或 @-mention 作為 subagent 產生時觸發，以及當代理透過 [`--agent`](#invoke-subagents-explicitly) 或 `agent` 設定作為主工作階段執行時觸發。在主工作階段情況下，它們與在 [`settings.json`](/zh-TW/hooks) 中定義的任何 hooks 一起執行。
+</Note>
 
 支援所有 [hook events](/zh-TW/hooks#hook-events)。subagents 最常見的事件是：
 
@@ -680,7 +690,7 @@ Use the code-reviewer subagent to find performance issues, then use the optimize
 
 當您想要可重複使用的提示或在主要對話上下文中執行的工作流程而不是隔離的 subagent 上下文時，請改為考慮 [Skills](/zh-TW/skills)。
 
-對於關於對話中已有內容的快速問題，請使用 [`/btw`](/zh-TW/interactive-mode#side-questions-with-btw) 而不是 subagent。它看到您的完整上下文，但沒有工具存取，答案被丟棄而不是新增到歷史記錄。
+對於關於對話中已有內容的快速問題，請使用 [`/btw`](/zh-TW/interactive-mode#side-questions-with-%2Fbtw) 而不是 subagent。它看到您的完整上下文，但沒有工具存取，答案被丟棄而不是新增到歷史記錄。
 
 <Note>
   Subagents 無法產生其他 subagents。如果您的工作流程需要嵌套委派，請使用 [Skills](/zh-TW/skills) 或從主要對話 [鏈接 subagents](#chain-subagents)。

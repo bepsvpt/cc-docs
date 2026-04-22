@@ -20,7 +20,7 @@ La plupart des meilleures pratiques sont basées sur une contrainte : la fenêtr
 
 La fenêtre de contexte de Claude contient l'intégralité de votre conversation, y compris chaque message, chaque fichier que Claude lit et chaque sortie de commande. Cependant, cela peut se remplir rapidement. Une seule session de débogage ou exploration de base de code peut générer et consommer des dizaines de milliers de tokens.
 
-Cela importe car les performances des LLM se dégradent à mesure que le contexte se remplit. Lorsque la fenêtre de contexte est presque pleine, Claude peut commencer à « oublier » les instructions antérieures ou faire plus d'erreurs. La fenêtre de contexte est la ressource la plus importante à gérer. Suivez l'utilisation du contexte en continu avec une [ligne d'état personnalisée](/fr/statusline), et consultez [Réduire l'utilisation des tokens](/fr/costs#reduce-token-usage) pour des stratégies de réduction de l'utilisation des tokens.
+Cela importe car les performances des LLM se dégradent à mesure que le contexte se remplit. Lorsque la fenêtre de contexte est presque pleine, Claude peut commencer à « oublier » les instructions antérieures ou faire plus d'erreurs. La fenêtre de contexte est la ressource la plus importante à gérer. Pour voir comment une session se remplit en pratique, [regardez une démonstration interactive](/fr/context-window) de ce qui se charge au démarrage et ce que chaque lecture de fichier coûte. Suivez l'utilisation du contexte en continu avec une [ligne d'état personnalisée](/fr/statusline), et consultez [Réduire l'utilisation des tokens](/fr/costs#reduce-token-usage) pour des stratégies de réduction de l'utilisation des tokens.
 
 ***
 
@@ -196,6 +196,7 @@ Vous pouvez placer les fichiers CLAUDE.md dans plusieurs emplacements :
 
 * **Dossier personnel (`~/.claude/CLAUDE.md`)** : s'applique à toutes les sessions Claude
 * **Racine du projet (`./CLAUDE.md`)** : vérifier dans git pour partager avec votre équipe
+* **Racine du projet (`./CLAUDE.local.md`)** : notes personnelles spécifiques au projet ; ajoutez ce fichier à votre `.gitignore` pour qu'il ne soit pas partagé avec votre équipe
 * **Répertoires parents** : utile pour les monorepos où `root/CLAUDE.md` et `root/foo/CLAUDE.md` sont extraits automatiquement
 * **Répertoires enfants** : Claude extrait les fichiers CLAUDE.md enfants à la demande lorsqu'il travaille avec des fichiers dans ces répertoires
 

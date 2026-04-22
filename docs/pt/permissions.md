@@ -277,7 +277,7 @@ Use ambos para defesa em profundidade:
 * As restrições de sistema de arquivos no sandbox usam regras deny de Read e Edit, não configuração de sandbox separada
 * As restrições de rede combinam regras de permissão WebFetch com as listas `allowedDomains` e `deniedDomains` do sandbox
 
-Quando o sandboxing é ativado com `autoAllowBashIfSandboxed: true`, que é o padrão, comandos Bash em sandbox são executados sem solicitar mesmo se suas permissões incluem `ask: Bash(*)`. O limite do sandbox substitui o prompt por comando. Veja [modos de sandbox](/pt/sandboxing#sandbox-modes) para alterar este comportamento.
+Quando o sandboxing é ativado com `autoAllowBashIfSandboxed: true`, que é o padrão, comandos Bash em sandbox são executados sem solicitar mesmo se suas permissões incluem `ask: Bash(*)`. O limite do sandbox substitui o prompt por comando. Regras deny explícitas ainda se aplicam, e comandos `rm` ou `rmdir` que visam `/`, seu diretório inicial ou outros caminhos críticos do sistema ainda acionam um prompt. Veja [modos de sandbox](/pt/sandboxing#sandbox-modes) para alterar este comportamento.
 
 ## Configurações gerenciadas
 
@@ -315,9 +315,11 @@ Para reagir a negações programaticamente, use o hook [`PermissionDenied`](/pt/
 
 ## Configurar o classificador do modo auto
 
-O [modo auto](/pt/permission-modes#eliminate-prompts-with-auto-mode) usa um modelo classificador para decidir se cada ação é segura para executar sem solicitar. Pronto para uso, ele confia apenas no diretório de trabalho e, se presente, nos remotes do repositório atual. Ações como fazer push para a organização de controle de fonte da sua empresa ou escrever em um bucket de nuvem de equipe serão bloqueadas como possível exfiltração de dados. O bloco de configurações `autoMode` permite que você diga ao classificador qual infraestrutura sua organização confia.
+O [modo auto](/pt/permission-modes#eliminate-prompts-with-auto-mode) usa um modelo classificador para decidir se cada ação é segura para executar sem solicitar. Pronto para uso, ele confia apenas no diretório de trabalho e, se presente, nos remotes do repositório atual. Ações como fazer push para a organização de controle de fonte da sua empresa ou escrever em um bucket de nuvem de equipe serão bloqueadas como possível exfiltração de dados.
 
-O classificador lê `autoMode` de configurações de usuário, `.claude/settings.local.json` e configurações gerenciadas. Ele não lê de configurações de projeto compartilhado em `.claude/settings.json`, porque um repositório verificado poderia injetar suas próprias regras allow.
+Para ajustar o que o classificador permite ou bloqueia, adicione instruções ao seu arquivo [CLAUDE.md](/pt/memory). O classificador lê CLAUDE.md de diretórios confiáveis ao lado da conversa, portanto uma instrução como "nunca force push" orienta tanto Claude quanto o classificador ao mesmo tempo. Comece aqui para convenções de projeto e regras de comportamento.
+
+Para regras que se aplicam em projetos, como infraestrutura confiável ou regras de negação em toda a organização, use o bloco de configurações `autoMode`. O classificador lê `autoMode` de configurações de usuário, `.claude/settings.local.json` e configurações gerenciadas. Ele não lê de configurações de projeto compartilhado em `.claude/settings.json`, porque um repositório verificado poderia injetar suas próprias regras allow.
 
 | Escopo                       | Arquivo                       | Use para                                                       |
 | :--------------------------- | :---------------------------- | :------------------------------------------------------------- |
@@ -325,7 +327,7 @@ O classificador lê `autoMode` de configurações de usuário, `.claude/settings
 | Um projeto, um desenvolvedor | `.claude/settings.local.json` | Buckets ou serviços confiáveis por projeto, gitignored         |
 | Em toda a organização        | Configurações gerenciadas     | Infraestrutura confiável imposta para todos os desenvolvedores |
 
-Entradas de cada escopo são combinadas. Um desenvolvedor pode estender `environment`, `allow` e `soft_deny` com entradas pessoais mas não pode remover entradas que as configurações gerenciadas fornecem. Porque as regras allow atuam como exceções às regras de bloqueio dentro do classificador, uma entrada `allow` adicionada por desenvolvedor pode substituir uma entrada `soft_deny` da organização: a combinação é aditiva, não um limite de política duro. Se você precisar de uma regra que desenvolvedores não possam contornar, use `permissions.deny` em configurações gerenciadas em vez disso, que bloqueia ações antes do classificador ser consultado.
+Entradas de cada escopo são combinadas. Um desenvolvedor pode estender `environment`, `allow` e `soft_deny` com entradas pessoais, mas não pode remover entradas que as configurações gerenciadas fornecem. Porque as regras allow atuam como exceções às regras de bloqueio dentro do classificador, uma entrada `allow` adicionada por desenvolvedor pode substituir uma entrada `soft_deny` da organização: a combinação é aditiva, não um limite de política duro. Se você precisar de uma regra que desenvolvedores não possam contornar, use `permissions.deny` em configurações gerenciadas em vez disso, que bloqueia ações antes do classificador ser consultado.
 
 ### Definir infraestrutura confiável
 

@@ -53,9 +53,35 @@ export HTTPS_PROXY=http://username:password@proxy.example.com:8080
   Para proxies que exigem autenticação avançada (NTLM, Kerberos, etc.), considere usar um serviço LLM Gateway que suporte seu método de autenticação.
 </Tip>
 
+## Armazenamento de certificados CA
+
+Por padrão, Claude Code confia tanto em seus certificados CA Mozilla agrupados quanto no armazenamento de certificados do seu sistema operacional. Proxies de inspeção TLS empresariais, como CrowdStrike Falcon e Zscaler, funcionam sem configuração adicional quando seu certificado raiz é instalado no armazenamento de confiança do SO.
+
+<Note>
+  A integração do armazenamento de CA do sistema requer a distribuição binária nativa do Claude Code. Ao executar no tempo de execução Node.js, o armazenamento de CA do sistema não é mesclado automaticamente. Nesse caso, defina `NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem` para confiar em uma CA raiz empresarial.
+</Note>
+
+`CLAUDE_CODE_CERT_STORE` aceita uma lista separada por vírgulas de fontes. Os valores reconhecidos são `bundled` para o conjunto de CA Mozilla enviado com Claude Code e `system` para o armazenamento de confiança do sistema operacional. O padrão é `bundled,system`.
+
+Para confiar apenas no conjunto de CA Mozilla agrupado:
+
+```bash theme={null}
+export CLAUDE_CODE_CERT_STORE=bundled
+```
+
+Para confiar apenas no armazenamento de certificados do SO:
+
+```bash theme={null}
+export CLAUDE_CODE_CERT_STORE=system
+```
+
+<Note>
+  `CLAUDE_CODE_CERT_STORE` não possui uma chave de esquema dedicada em `settings.json`. Defina-a através do bloco `env` em `~/.claude/settings.json` ou diretamente no ambiente do processo.
+</Note>
+
 ## Certificados CA personalizados
 
-Se seu ambiente empresarial usa CAs personalizadas para conexões HTTPS (seja através de um proxy ou acesso direto à API), configure Claude Code para confiar neles:
+Se seu ambiente empresarial usa uma CA personalizada, configure Claude Code para confiar nela diretamente:
 
 ```bash theme={null}
 export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
@@ -86,10 +112,14 @@ Claude Code requer acesso aos seguintes URLs:
 
 Certifique-se de que esses URLs estão na lista de permissões em sua configuração de proxy e regras de firewall. Isso é especialmente importante ao usar Claude Code em ambientes de rede containerizados ou restritos.
 
-O instalador nativo e as verificações de atualização também exigem os seguintes URLs. Coloque ambos na lista de permissões, pois o instalador e o atualizador automático buscam de `storage.googleapis.com` enquanto os downloads de plugins usam `downloads.claude.ai`. Se você instalar Claude Code através do npm ou gerenciar sua própria distribuição binária, os usuários finais podem não precisar de acesso:
+Ao usar [Bedrock](/pt/amazon-bedrock), [Vertex AI](/pt/google-vertex-ai) ou [Foundry](/pt/microsoft-foundry), o tráfego de modelo vai para seu provedor em vez de `api.anthropic.com`. A ferramenta WebFetch ainda chama `api.anthropic.com` para sua [verificação de segurança de domínio](/pt/data-usage#webfetch-domain-safety-check) a menos que você defina `skipWebFetchPreflight: true` em [configurações](/pt/settings).
 
-* `storage.googleapis.com`: bucket de download para o binário Claude Code e atualizador automático
-* `downloads.claude.ai`: CDN hospedando o script de instalação, ponteiros de versão, manifestos, chaves de assinatura e executáveis de plugins
+O instalador nativo e as verificações de atualização também exigem os seguintes URLs. Coloque ambos na lista de permissões, pois clientes executando versões mais antigas do Claude Code buscam de `storage.googleapis.com`. Se você instalar Claude Code através do npm ou gerenciar sua própria distribuição binária, os usuários finais podem não precisar de acesso:
+
+* `downloads.claude.ai`: host de download para o binário Claude Code, atualizador automático, ponteiros de versão, manifestos, script de instalação, chaves de assinatura e executáveis de plugins
+* `storage.googleapis.com`: host de download legado usado por clientes mais antigos
+
+A [integração com Chrome](/pt/chrome) conecta a extensão do navegador através de uma ponte WebSocket. Se você usar Claude no Chrome, coloque na lista de permissões `bridge.claudeusercontent.com` para conexões WebSocket de saída.
 
 [Claude Code na web](/pt/claude-code-on-the-web) e [Code Review](/pt/code-review) se conectam aos seus repositórios a partir da infraestrutura gerenciada pela Anthropic. Se sua organização GitHub Enterprise Cloud restringe o acesso por endereço IP, ative [herança de lista de permissão de IP para GitHub Apps instalados](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps). O Claude GitHub App registra seus intervalos de IP, portanto, ativar essa configuração permite acesso sem configuração manual. Para [adicionar os intervalos à sua lista de permissões manualmente](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address) em vez disso, ou para configurar outros firewalls, consulte [Endereços IP da API Anthropic](https://platform.claude.com/docs/en/api/ip-addresses).
 

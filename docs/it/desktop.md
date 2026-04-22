@@ -500,7 +500,7 @@ Queste configurazioni mostrano configurazioni comuni per diversi tipi di progett
   </Tab>
 </Tabs>
 
-## Environment configuration
+## Configurazione dell'ambiente
 
 L'ambiente che scegli quando [avvii una sessione](#start-a-session) determina dove Claude viene eseguito e come ti connetti:
 
@@ -537,11 +537,34 @@ Una volta aggiunta, la connessione appare nel menu a discesa dell'ambiente. Sele
 
 La macchina remota deve eseguire Linux o macOS, e Claude Code deve essere installato su di essa. Una volta connesso, le sessioni SSH supportano modalità di autorizzazione, connettori, plugin e MCP servers.
 
-## Enterprise configuration
+#### Pre-configure SSH connections for your team
+
+Gli amministratori possono distribuire connessioni SSH ai membri del team aggiungendo `sshConfigs` a un file di [impostazioni gestite](/it/settings#settings-precedence). Le connessioni definite in questo modo appaiono nel menu a discesa dell'ambiente di ogni utente automaticamente e vengono mostrate come gestite, quindi gli utenti possono selezionarle ma non possono modificarle o eliminarle nell'app.
+
+L'esempio seguente pre-configura una singola connessione che si apre in `~/projects` sull'host remoto:
+
+```json theme={null}
+{
+  "sshConfigs": [
+    {
+      "id": "shared-dev-vm",
+      "name": "Shared Dev VM",
+      "sshHost": "user@dev.example.com",
+      "sshPort": 22,
+      "sshIdentityFile": "~/.ssh/id_ed25519",
+      "startDirectory": "~/projects"
+    }
+  ]
+}
+```
+
+Ogni voce richiede `id`, `name` e `sshHost`. I campi `sshPort`, `sshIdentityFile` e `startDirectory` sono facoltativi. Gli utenti possono anche aggiungere `sshConfigs` al loro `~/.claude/settings.json`, che è dove vengono archiviate le connessioni aggiunte tramite la finestra di dialogo.
+
+## Configurazione aziendale
 
 Le organizzazioni su piani Team o Enterprise possono gestire il comportamento dell'app desktop tramite controlli della console di amministrazione, file di impostazioni gestiti e criteri di gestione dei dispositivi.
 
-### Admin console controls
+### Controlli della console di amministrazione
 
 Queste impostazioni sono configurate tramite la [console delle impostazioni di amministrazione](https://claude.ai/admin-settings/claude-code):
 
@@ -550,7 +573,7 @@ Queste impostazioni sono configurate tramite la [console delle impostazioni di a
 * **Remote Control**: abilita o disabilita [Remote Control](/it/remote-control) per la tua organizzazione
 * **Disable Bypass permissions mode**: impedisci agli utenti della tua organizzazione di abilitare la modalità bypass permissions
 
-### Managed settings
+### Impostazioni gestite
 
 Le impostazioni gestite sovrascrivono le impostazioni del progetto e dell'utente e si applicano quando Desktop genera sessioni CLI. Puoi impostare queste chiavi nel file [impostazioni gestite](/it/settings#settings-precedence) della tua organizzazione o inviarle in remoto tramite la console di amministrazione.
 
@@ -559,27 +582,28 @@ Le impostazioni gestite sovrascrivono le impostazioni del progetto e dell'utente
 | `permissions.disableBypassPermissionsMode` | imposta su `"disable"` per impedire agli utenti di abilitare la modalità bypass permissions.                                                                                                                         |
 | `disableAutoMode`                          | imposta su `"disable"` per impedire agli utenti di abilitare la modalità [Auto](/it/permission-modes#eliminate-prompts-with-auto-mode). Rimuove Auto dal selettore di modalità. Accettato anche sotto `permissions`. |
 | `autoMode`                                 | personalizza cosa il classificatore della modalità auto si fida e blocca in tutta la tua organizzazione. Vedi [Configura il classificatore della modalità auto](/it/permissions#configure-the-auto-mode-classifier). |
+| `sshConfigs`                               | pre-configura le [connessioni SSH](#pre-configure-ssh-connections-for-your-team) che appaiono nel menu a discesa dell'ambiente. Gli utenti non possono modificare o eliminare le connessioni gestite.                |
 
 `permissions.disableBypassPermissionsMode` e `disableAutoMode` funzionano anche nelle impostazioni dell'utente e del progetto, ma metterli nelle impostazioni gestite impedisce agli utenti di sovrascriverli. `autoMode` viene letto dalle impostazioni dell'utente, `.claude/settings.local.json` e impostazioni gestite, ma non da `.claude/settings.json` controllato: un repo clonato non può iniettare le sue stesse regole del classificatore. Per l'elenco completo delle impostazioni solo gestite incluse `allowManagedPermissionRulesOnly` e `allowManagedHooksOnly`, vedi [impostazioni solo gestite](/it/permissions#managed-only-settings).
 
 Le impostazioni gestite remote caricate tramite la console di amministrazione attualmente si applicano solo alle sessioni CLI e IDE. Per le restrizioni specifiche di Desktop, usa i controlli della console di amministrazione sopra.
 
-### Device management policies
+### Criteri di gestione dei dispositivi
 
 I team IT possono gestire l'app desktop tramite MDM su macOS o criteri di gruppo su Windows. I criteri disponibili includono l'abilitazione o la disabilitazione della funzione Claude Code, il controllo degli aggiornamenti automatici e l'impostazione di un URL di distribuzione personalizzato.
 
 * **macOS**: configura tramite il dominio di preferenza `com.anthropic.Claude` usando strumenti come Jamf o Kandji
 * **Windows**: configura tramite il registro in `SOFTWARE\Policies\Claude`
 
-### Authentication and SSO
+### Autenticazione e SSO
 
 Le organizzazioni aziendali possono richiedere SSO per tutti gli utenti. Vedi [autenticazione](/it/authentication) per i dettagli a livello di piano e [Configurazione di SSO](https://support.claude.com/en/articles/13132885-setting-up-single-sign-on-sso) per la configurazione SAML e OIDC.
 
-### Data handling
+### Gestione dei dati
 
 Claude Code elabora il tuo codice localmente nelle sessioni locali o sull'infrastruttura cloud di Anthropic nelle sessioni remote. Le conversazioni e il contesto del codice vengono inviati all'API di Anthropic per l'elaborazione. Vedi [gestione dei dati](/it/data-usage) per i dettagli sulla conservazione dei dati, la privacy e la conformità.
 
-### Deployment
+### Distribuzione
 
 Desktop può essere distribuito tramite strumenti di distribuzione aziendale:
 

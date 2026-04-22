@@ -53,9 +53,35 @@ export HTTPS_PROXY=http://username:password@proxy.example.com:8080
   고급 인증(NTLM, Kerberos 등)이 필요한 프록시의 경우 인증 방법을 지원하는 LLM Gateway 서비스 사용을 고려하십시오.
 </Tip>
 
+## CA 인증서 저장소
+
+기본적으로 Claude Code는 번들로 제공되는 Mozilla CA 인증서와 운영 체제의 인증서 저장소를 모두 신뢰합니다. CrowdStrike Falcon 및 Zscaler와 같은 엔터프라이즈 TLS 검사 프록시는 루트 인증서가 OS 신뢰 저장소에 설치되어 있으면 추가 구성 없이 작동합니다.
+
+<Note>
+  시스템 CA 저장소 통합에는 네이티브 Claude Code 바이너리 배포가 필요합니다. Node.js 런타임에서 실행할 때는 시스템 CA 저장소가 자동으로 병합되지 않습니다. 이 경우 `NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem`을 설정하여 엔터프라이즈 루트 CA를 신뢰합니다.
+</Note>
+
+`CLAUDE_CODE_CERT_STORE`는 쉼표로 구분된 소스 목록을 허용합니다. 인식되는 값은 Claude Code와 함께 제공되는 Mozilla CA 세트의 경우 `bundled`, 운영 체제 신뢰 저장소의 경우 `system`입니다. 기본값은 `bundled,system`입니다.
+
+번들로 제공되는 Mozilla CA 세트만 신뢰하려면:
+
+```bash theme={null}
+export CLAUDE_CODE_CERT_STORE=bundled
+```
+
+OS 인증서 저장소만 신뢰하려면:
+
+```bash theme={null}
+export CLAUDE_CODE_CERT_STORE=system
+```
+
+<Note>
+  `CLAUDE_CODE_CERT_STORE`에는 전용 `settings.json` 스키마 키가 없습니다. `~/.claude/settings.json`의 `env` 블록에서 또는 프로세스 환경에서 직접 설정합니다.
+</Note>
+
 ## 사용자 정의 CA 인증서
 
-엔터프라이즈 환경에서 HTTPS 연결(프록시를 통하든 직접 API 액세스를 통하든)에 사용자 정의 CA를 사용하는 경우 Claude Code를 구성하여 이를 신뢰하도록 합니다:
+엔터프라이즈 환경에서 사용자 정의 CA를 사용하는 경우 Claude Code를 구성하여 이를 직접 신뢰하도록 합니다:
 
 ```bash theme={null}
 export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
@@ -86,10 +112,14 @@ Claude Code는 다음 URL에 대한 액세스가 필요합니다:
 
 이러한 URL이 프록시 구성 및 방화벽 규칙에서 허용 목록에 있는지 확인하십시오. 이는 특히 컨테이너화되거나 제한된 네트워크 환경에서 Claude Code를 사용할 때 중요합니다.
 
-네이티브 설치 관리자 및 업데이트 확인도 다음 URL이 필요합니다. 설치 관리자 및 자동 업데이터는 `storage.googleapis.com`에서 가져오고 플러그인 다운로드는 `downloads.claude.ai`를 사용하므로 둘 다 허용 목록에 추가하십시오. npm을 통해 Claude Code를 설치하거나 자신의 바이너리 배포를 관리하는 경우 최종 사용자는 액세스가 필요하지 않을 수 있습니다:
+[Bedrock](/ko/amazon-bedrock), [Vertex AI](/ko/google-vertex-ai) 또는 [Foundry](/ko/microsoft-foundry)를 사용할 때 모델 트래픽은 `api.anthropic.com` 대신 공급자로 이동합니다. WebFetch 도구는 \[`skipWebFetchPreflight: true`를 [설정](/ko/settings)에서 설정하지 않는 한 [도메인 안전 검사](/ko/data-usage#webfetch-domain-safety-check)를 위해 여전히 `api.anthropic.com`을 호출합니다.
 
-* `storage.googleapis.com`: Claude Code 바이너리 및 자동 업데이터용 다운로드 버킷
-* `downloads.claude.ai`: 설치 스크립트, 버전 포인터, 매니페스트, 서명 키 및 플러그인 실행 파일을 호스팅하는 CDN
+네이티브 설치 관리자 및 업데이트 확인도 다음 URL이 필요합니다. 이전 Claude Code 버전을 실행하는 클라이언트가 `storage.googleapis.com`에서 가져오므로 둘 다 허용 목록에 추가하십시오. npm을 통해 Claude Code를 설치하거나 자신의 바이너리 배포를 관리하는 경우 최종 사용자는 액세스가 필요하지 않을 수 있습니다:
+
+* `downloads.claude.ai`: Claude Code 바이너리, 자동 업데이터, 버전 포인터, 매니페스트, 설치 스크립트, 서명 키 및 플러그인 실행 파일용 다운로드 호스트
+* `storage.googleapis.com`: 이전 클라이언트에서 사용하는 레거시 다운로드 호스트
+
+[Chrome 통합](/ko/chrome)은 WebSocket 브리지를 통해 브라우저 확장 프로그램에 연결합니다. Chrome에서 Claude를 사용하는 경우 아웃바운드 WebSocket 연결을 위해 `bridge.claudeusercontent.com`을 허용 목록에 추가하십시오.
 
 [웹의 Claude Code](/ko/claude-code-on-the-web) 및 [Code Review](/ko/code-review)는 Anthropic 관리 인프라에서 리포지토리에 연결합니다. GitHub Enterprise Cloud 조직이 IP 주소로 액세스를 제한하는 경우 [설치된 GitHub Apps에 대한 IP 허용 목록 상속 활성화](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps)를 수행하십시오. Claude GitHub App은 IP 범위를 등록하므로 이 설정을 활성화하면 수동 구성 없이 액세스할 수 있습니다. 대신 [범위를 허용 목록에 수동으로 추가](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address)하거나 다른 방화벽을 구성하려면 [Anthropic API IP 주소](https://platform.claude.com/docs/en/api/ip-addresses)를 참조하십시오.
 

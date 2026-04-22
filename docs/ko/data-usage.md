@@ -19,13 +19,13 @@
 
 [Development Partner Program](https://support.claude.com/ko/articles/11174108-about-the-development-partner-program)을 통해 학습할 자료를 제공하는 방법에 명시적으로 옵트인하는 경우, 제공된 자료를 사용하여 모델을 학습할 수 있습니다. 조직 관리자는 조직에 대해 Development Partner Program에 명시적으로 옵트인할 수 있습니다. 이 프로그램은 Anthropic 자체 API에만 사용 가능하며 Bedrock 또는 Vertex 사용자는 이용할 수 없습니다.
 
-### `/bug` 명령을 사용한 피드백
+### `/feedback` 명령을 사용한 피드백
 
-`/bug` 명령을 사용하여 Claude Code에 대한 피드백을 보내기로 선택한 경우, 피드백을 사용하여 제품 및 서비스를 개선할 수 있습니다. `/bug`를 통해 공유된 대화 기록은 5년 동안 보관됩니다.
+`/feedback` 명령을 사용하여 Claude Code에 대한 피드백을 보내기로 선택한 경우, 피드백을 사용하여 제품 및 서비스를 개선할 수 있습니다. `/feedback`을 통해 공유된 대화 기록은 5년 동안 보관됩니다.
 
 ### 세션 품질 설문조사
 
-Claude Code에서 "Claude가 이 세션을 어떻게 수행하고 있나요?"라는 메시지가 표시될 때, 이 설문조사에 응답하면("Dismiss" 선택 포함) 숫자 등급(1, 2, 3 또는 dismiss)만 기록됩니다. 이 설문조사의 일부로 대화 기록, 입력, 출력 또는 기타 세션 데이터를 수집하거나 저장하지 않습니다. 엄지손가락 위/아래 피드백이나 `/bug` 보고서와 달리, 이 세션 품질 설문조사는 간단한 제품 만족도 지표입니다. 이 설문조사에 대한 응답은 데이터 학습 선호도에 영향을 주지 않으며 AI 모델을 학습하는 데 사용될 수 없습니다.
+Claude Code에서 "Claude가 이 세션을 어떻게 수행하고 있나요?"라는 메시지가 표시될 때, 이 설문조사에 응답하면("Dismiss" 선택 포함) 숫자 등급(1, 2, 3 또는 dismiss)만 기록됩니다. 이 설문조사의 일부로 대화 기록, 입력, 출력 또는 기타 세션 데이터를 수집하거나 저장하지 않습니다. 엄지손가락 위/아래 피드백이나 `/feedback` 보고서와 달리, 이 세션 품질 설문조사는 간단한 제품 만족도 지표입니다. 이 설문조사에 대한 응답은 데이터 학습 선호도에 영향을 주지 않으며 AI 모델을 학습하는 데 사용될 수 없습니다.
 
 이러한 설문조사를 비활성화하려면 `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`을 설정합니다. `DISABLE_TELEMETRY` 또는 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`이 설정되면 설문조사도 비활성화됩니다. 빈도를 제어하려면 설정 파일에서 [`feedbackSurveyRate`](/ko/settings#available-settings)를 `0`과 `1` 사이의 확률로 설정합니다.
 
@@ -43,9 +43,9 @@ Anthropic은 계정 유형 및 선호도에 따라 Claude Code 데이터를 보�
 
 * 표준: 30일 보관 기간
 * [Zero data retention](/ko/zero-data-retention): Claude for Enterprise의 Claude Code에서 사용 가능합니다. ZDR은 조직별로 활성화되며, 각 새로운 조직은 계정 팀에서 별도로 ZDR을 활성화해야 합니다.
-* 로컬 캐싱: Claude Code 클라이언트는 세션 재개를 활성화하기 위해 최대 30일 동안 세션을 로컬에 저장할 수 있습니다(구성 가능).
+* 로컬 캐싱: Claude Code 클라이언트는 세션 재개를 활성화하기 위해 `~/.claude/projects/` 아래의 일반 텍스트로 세션 기록을 로컬에 저장합니다(기본값 30일). `cleanupPeriodDays`로 기간을 조정합니다. 저장되는 내용 및 삭제 방법은 [application data](/ko/claude-directory#application-data)를 참조하세요.
 
-웹에서 개별 Claude Code 세션을 언제든지 삭제할 수 있습니다. 세션을 삭제하면 세션의 이벤트 데이터가 영구적으로 제거됩니다. 세션 삭제 방법에 대한 지침은 [세션 관리](/ko/claude-code-on-the-web#managing-sessions)를 참조하세요.
+웹에서 개별 Claude Code 세션을 언제든지 삭제할 수 있습니다. 세션을 삭제하면 세션의 이벤트 데이터가 영구적으로 제거됩니다. 세션 삭제 방법에 대한 지침은 [Delete sessions](/ko/claude-code-on-the-web#delete-sessions)를 참조하세요.
 
 [Privacy Center](https://privacy.anthropic.com/)에서 데이터 보관 관행에 대해 자세히 알아보세요.
 
@@ -82,17 +82,24 @@ Claude Code는 사용자의 머신에서 Statsig 서비스에 연결하여 지�
 
 Claude Code는 사용자의 머신에서 Sentry에 연결하여 운영 오류 로깅을 수행합니다. 데이터는 TLS를 사용하여 전송 중에 암호화되고 256비트 AES 암호화를 사용하여 저장 시에 암호화됩니다. [Sentry 보안 문서](https://sentry.io/security/)에서 자세히 알아보세요. 오류 로깅을 거부하려면 `DISABLE_ERROR_REPORTING` 환경 변수를 설정합니다.
 
-사용자가 `/bug` 명령을 실행하면 코드를 포함한 전체 대화 기록의 복사본이 Anthropic으로 전송됩니다. 데이터는 전송 중 및 저장 시에 암호화됩니다. 선택적으로 공개 저장소에 Github 이슈가 생성됩니다. 버그 보고를 거부하려면 `DISABLE_BUG_COMMAND` 환경 변수를 설정합니다.
+사용자가 `/feedback` 명령을 실행하면 코드를 포함한 전체 대화 기록의 복사본이 Anthropic으로 전송됩니다. 데이터는 전송 중 및 저장 시에 암호화됩니다. 선택적으로 공개 저장소에 Github 이슈가 생성됩니다. 거부하려면 `DISABLE_FEEDBACK_COMMAND` 환경 변수를 `1`로 설정합니다.
 
 ## API 제공자별 기본 동작
 
-기본적으로 Bedrock, Vertex 또는 Foundry를 사용할 때 오류 보고, 원격 측정 및 버그 보고가 비활성화됩니다. 세션 품질 설문조사는 예외이며 제공자와 관계없이 나타납니다. `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`을 설정하여 설문조사를 포함한 모든 필수가 아닌 트래픽을 한 번에 거부할 수 있습니다. 다음은 전체 기본 동작입니다:
+기본적으로 Bedrock, Vertex 또는 Foundry를 사용할 때 오류 보고, 원격 측정 및 버그 보고가 비활성화됩니다. 세션 품질 설문조사 및 WebFetch 도메인 안전 검사는 예외이며 제공자와 관계없이 실행됩니다. `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`을 설정하여 설문조사를 포함한 모든 필수가 아닌 트래픽을 한 번에 거부할 수 있습니다. 이 변수는 WebFetch 검사에 영향을 주지 않으며, WebFetch 검사는 자체 거부 옵션이 있습니다. 다음은 전체 기본 동작입니다:
 
-| 서비스                        | Claude API                                                    | Vertex API                                                    | Bedrock API                                                   | Foundry API                                                   |
-| -------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------- |
-| **Statsig (메트릭)**          | 기본 켜짐.<br />`DISABLE_TELEMETRY=1`로 비활성화합니다.                   | 기본 꺼짐.<br />`CLAUDE_CODE_USE_VERTEX`는 1이어야 합니다.               | 기본 꺼짐.<br />`CLAUDE_CODE_USE_BEDROCK`은 1이어야 합니다.              | 기본 꺼짐.<br />`CLAUDE_CODE_USE_FOUNDRY`는 1이어야 합니다.              |
-| **Sentry (오류)**            | 기본 켜짐.<br />`DISABLE_ERROR_REPORTING=1`로 비활성화합니다.             | 기본 꺼짐.<br />`CLAUDE_CODE_USE_VERTEX`는 1이어야 합니다.               | 기본 꺼짐.<br />`CLAUDE_CODE_USE_BEDROCK`은 1이어야 합니다.              | 기본 꺼짐.<br />`CLAUDE_CODE_USE_FOUNDRY`는 1이어야 합니다.              |
-| **Claude API (`/bug` 보고)** | 기본 켜짐.<br />`DISABLE_BUG_COMMAND=1`로 비활성화합니다.                 | 기본 꺼짐.<br />`CLAUDE_CODE_USE_VERTEX`는 1이어야 합니다.               | 기본 꺼짐.<br />`CLAUDE_CODE_USE_BEDROCK`은 1이어야 합니다.              | 기본 꺼짐.<br />`CLAUDE_CODE_USE_FOUNDRY`는 1이어야 합니다.              |
-| **세션 품질 설문조사**             | 기본 켜짐.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`로 비활성화합니다. | 기본 켜짐.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`로 비활성화합니다. | 기본 켜짐.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`로 비활성화합니다. | 기본 켜짐.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`로 비활성화합니다. |
+| 서비스                             | Claude API                                                                     | Vertex API                                                                     | Bedrock API                                                                    | Foundry API                                                                    |
+| ------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| **Statsig (메트릭)**               | 기본 켜짐.<br />`DISABLE_TELEMETRY=1`로 비활성화합니다.                                    | 기본 꺼짐.<br />`CLAUDE_CODE_USE_VERTEX`는 1이어야 합니다.                                | 기본 꺼짐.<br />`CLAUDE_CODE_USE_BEDROCK`은 1이어야 합니다.                               | 기본 꺼짐.<br />`CLAUDE_CODE_USE_FOUNDRY`는 1이어야 합니다.                               |
+| **Sentry (오류)**                 | 기본 켜짐.<br />`DISABLE_ERROR_REPORTING=1`로 비활성화합니다.                              | 기본 꺼짐.<br />`CLAUDE_CODE_USE_VERTEX`는 1이어야 합니다.                                | 기본 꺼짐.<br />`CLAUDE_CODE_USE_BEDROCK`은 1이어야 합니다.                               | 기본 꺼짐.<br />`CLAUDE_CODE_USE_FOUNDRY`는 1이어야 합니다.                               |
+| **Claude API (`/feedback` 보고)** | 기본 켜짐.<br />`DISABLE_FEEDBACK_COMMAND=1`로 비활성화합니다.                             | 기본 꺼짐.<br />`CLAUDE_CODE_USE_VERTEX`는 1이어야 합니다.                                | 기본 꺼짐.<br />`CLAUDE_CODE_USE_BEDROCK`은 1이어야 합니다.                               | 기본 꺼짐.<br />`CLAUDE_CODE_USE_FOUNDRY`는 1이어야 합니다.                               |
+| **세션 품질 설문조사**                  | 기본 켜짐.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`로 비활성화합니다.                  | 기본 켜짐.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`로 비활성화합니다.                  | 기본 켜짐.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`로 비활성화합니다.                  | 기본 켜짐.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`로 비활성화합니다.                  |
+| **WebFetch 도메인 안전 검사**          | 기본 켜짐.<br />[settings](/ko/settings)에서 `skipWebFetchPreflight: true`로 비활성화합니다. | 기본 켜짐.<br />[settings](/ko/settings)에서 `skipWebFetchPreflight: true`로 비활성화합니다. | 기본 켜짐.<br />[settings](/ko/settings)에서 `skipWebFetchPreflight: true`로 비활성화합니다. | 기본 켜짐.<br />[settings](/ko/settings)에서 `skipWebFetchPreflight: true`로 비활성화합니다. |
 
-모든 환경 변수는 `settings.json`에 체크인할 수 있습니다([자세히 알아보기](/ko/settings)).
+모든 환경 변수는 `settings.json`에 체크인할 수 있습니다([settings reference](/ko/settings) 참조).
+
+### WebFetch 도메인 안전 검사
+
+URL을 가져오기 전에 WebFetch 도구는 요청된 호스트명을 `api.anthropic.com`으로 전송하여 Anthropic에서 유지 관리하는 안전 차단 목록에 대해 확인합니다. 전체 URL, 경로 또는 페이지 내용이 아닌 호스트명만 전송됩니다. 결과는 호스트명당 5분 동안 캐시됩니다.
+
+이 검사는 사용하는 모델 제공자와 관계없이 실행되며 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`의 영향을 받지 않습니다. 네트워크가 `api.anthropic.com`을 차단하는 경우, WebFetch 요청은 도메인을 허용 목록에 추가하거나 [settings](/ko/settings)에서 `skipWebFetchPreflight: true`를 설정할 때까지 실패합니다. 검사를 비활성화하면 WebFetch가 차단 목록을 참조하지 않고 모든 URL을 검색하려고 시도하므로, Claude가 도달할 수 있는 도메인을 제한해야 하는 경우 [`WebFetch` permission rules](/ko/permissions#webfetch)와 함께 사용합니다.

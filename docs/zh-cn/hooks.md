@@ -18,40 +18,41 @@ Hooks 在 Claude Code 会话期间的特定点触发。当事件触发且匹配�
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/UMJp-WgTWngzO609/images/hooks-lifecycle.svg?fit=max&auto=format&n=UMJp-WgTWngzO609&q=85&s=3f4de67df216c87dc313943b32c15f62" alt="Hook 生命周期图，显示 SessionStart，然后是每轮循环，包含 UserPromptSubmit、嵌套的代理循环（PreToolUse、PermissionRequest、PostToolUse、SubagentStart/Stop、TaskCreated、TaskCompleted）和 Stop 或 StopFailure，然后是 TeammateIdle、PreCompact、PostCompact 和 SessionEnd，Elicitation 和 ElicitationResult 嵌套在 MCP 工具执行内，PermissionDenied 作为 PermissionRequest 的副分支用于自动模式拒绝，WorktreeCreate、WorktreeRemove、Notification、ConfigChange、InstructionsLoaded、CwdChanged 和 FileChanged 作为独立异步事件" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/NgDeMMkM7ZmaRibg/images/hooks-lifecycle.svg?fit=max&auto=format&n=NgDeMMkM7ZmaRibg&q=85&s=ec53c77f9943a6470cb2c8ecace6d809" alt="Hook 生命周期图，显示 SessionStart，然后是每轮循环，包含 UserPromptSubmit、用于 slash commands 的 UserPromptExpansion、嵌套的代理循环（PreToolUse、PermissionRequest、PostToolUse、PostToolUseFailure、SubagentStart/Stop、TaskCreated、TaskCompleted）和 Stop 或 StopFailure，然后是 TeammateIdle、PreCompact、PostCompact 和 SessionEnd，Elicitation 和 ElicitationResult 嵌套在 MCP 工具执行内，PermissionDenied 作为 PermissionRequest 的副分支用于自动模式拒绝，WorktreeCreate、WorktreeRemove、Notification、ConfigChange、InstructionsLoaded、CwdChanged 和 FileChanged 作为独立异步事件" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
 下表总结了每个事件何时触发。[Hook 事件](#hook-events)部分记录了每个事件的完整输入架构和决定控制选项。
 
-| Event                | When it fires                                                                                                                                          |
-| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SessionStart`       | When a session begins or resumes                                                                                                                       |
-| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                                                                   |
-| `PreToolUse`         | Before a tool call executes. Can block it                                                                                                              |
-| `PermissionRequest`  | When a permission dialog appears                                                                                                                       |
-| `PermissionDenied`   | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
-| `PostToolUse`        | After a tool call succeeds                                                                                                                             |
-| `PostToolUseFailure` | After a tool call fails                                                                                                                                |
-| `Notification`       | When Claude Code sends a notification                                                                                                                  |
-| `SubagentStart`      | When a subagent is spawned                                                                                                                             |
-| `SubagentStop`       | When a subagent finishes                                                                                                                               |
-| `TaskCreated`        | When a task is being created via `TaskCreate`                                                                                                          |
-| `TaskCompleted`      | When a task is being marked as completed                                                                                                               |
-| `Stop`               | When Claude finishes responding                                                                                                                        |
-| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
-| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
-| `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
-| `ConfigChange`       | When a configuration file changes during a session                                                                                                     |
-| `CwdChanged`         | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
-| `FileChanged`        | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
-| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
-| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
-| `PreCompact`         | Before context compaction                                                                                                                              |
-| `PostCompact`        | After context compaction completes                                                                                                                     |
-| `Elicitation`        | When an MCP server requests user input during a tool call                                                                                              |
-| `ElicitationResult`  | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
-| `SessionEnd`         | When a session terminates                                                                                                                              |
+| Event                 | When it fires                                                                                                                                          |
+| :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SessionStart`        | When a session begins or resumes                                                                                                                       |
+| `UserPromptSubmit`    | When you submit a prompt, before Claude processes it                                                                                                   |
+| `UserPromptExpansion` | When a user-typed command expands into a prompt, before it reaches Claude. Can block the expansion                                                     |
+| `PreToolUse`          | Before a tool call executes. Can block it                                                                                                              |
+| `PermissionRequest`   | When a permission dialog appears                                                                                                                       |
+| `PermissionDenied`    | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
+| `PostToolUse`         | After a tool call succeeds                                                                                                                             |
+| `PostToolUseFailure`  | After a tool call fails                                                                                                                                |
+| `Notification`        | When Claude Code sends a notification                                                                                                                  |
+| `SubagentStart`       | When a subagent is spawned                                                                                                                             |
+| `SubagentStop`        | When a subagent finishes                                                                                                                               |
+| `TaskCreated`         | When a task is being created via `TaskCreate`                                                                                                          |
+| `TaskCompleted`       | When a task is being marked as completed                                                                                                               |
+| `Stop`                | When Claude finishes responding                                                                                                                        |
+| `StopFailure`         | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
+| `TeammateIdle`        | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
+| `InstructionsLoaded`  | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
+| `ConfigChange`        | When a configuration file changes during a session                                                                                                     |
+| `CwdChanged`          | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
+| `FileChanged`         | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
+| `WorktreeCreate`      | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
+| `WorktreeRemove`      | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
+| `PreCompact`          | Before context compaction                                                                                                                              |
+| `PostCompact`         | After context compaction completes                                                                                                                     |
+| `Elicitation`         | When an MCP server requests user input during a tool call                                                                                              |
+| `ElicitationResult`   | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
+| `SessionEnd`          | When a session terminates                                                                                                                              |
 
 ### Hook 如何解析
 
@@ -199,6 +200,7 @@ Hooks 在 JSON 设置文件中定义。配置有三个嵌套级别：
 | `FileChanged`                                                                                            | 文字文件名以监视（请参阅 [FileChanged](#filechanged)） | `.envrc\|.env`                                                                                                      |
 | `StopFailure`                                                                                            | 错误类型                                      | `rate_limit`、`authentication_failed`、`billing_error`、`invalid_request`、`server_error`、`max_output_tokens`、`unknown` |
 | `InstructionsLoaded`                                                                                     | 加载原因                                      | `session_start`、`nested_traversal`、`path_glob_match`、`include`、`compact`                                            |
+| `UserPromptExpansion`                                                                                    | 命令名称                                      | 您的 skill 或命令名称                                                                                                      |
 | `Elicitation`                                                                                            | MCP 服务器名称                                 | 您配置的 MCP 服务器名称                                                                                                      |
 | `ElicitationResult`                                                                                      | MCP 服务器名称                                 | 与 `Elicitation` 相同的值                                                                                                |
 | `UserPromptSubmit`、`Stop`、`TeammateIdle`、`TaskCreated`、`TaskCompleted`、`WorktreeCreate`、`WorktreeRemove` | 不支持匹配器                                    | 总是在每次出现时触发                                                                                                          |
@@ -512,7 +514,7 @@ hooks:
 
 您的 hook 命令的退出代码告诉 Claude Code 操作是否应该继续、被阻止或被忽略。
 
-**退出 0** 表示成功。Claude Code 解析 stdout 以获取[JSON 输出字段](#json-output)。JSON 输出仅在退出 0 时处理。对于大多数事件，stdout 被写入调试日志，但不显示在成绩单中。例外是 `UserPromptSubmit` 和 `SessionStart`，其中 stdout 作为 Claude 可以看到和作用的上下文添加。
+**退出 0** 表示成功。Claude Code 解析 stdout 以获取[JSON 输出字段](#json-output)。JSON 输出仅在退出 0 时处理。对于大多数事件，stdout 被写入调试日志，但不显示在成绩单中。例外是 `UserPromptSubmit`、`UserPromptExpansion` 和 `SessionStart`，其中 stdout 作为 Claude 可以看到和作用的上下文添加。
 
 **退出 2** 表示阻止错误。Claude Code 忽略 stdout 和其中的任何 JSON。相反，stderr 文本被反馈给 Claude 作为错误消息。效果取决于事件：`PreToolUse` 阻止工具调用，`UserPromptSubmit` 拒绝提示，等等。有关完整列表，请参阅[每个事件的退出代码 2 行为](#exit-code-2-behavior-per-event)。
 
@@ -541,34 +543,35 @@ exit 0  # 成功：工具调用继续
 
 退出代码 2 是 hook 发出"停止，不要这样做"的方式。效果取决于事件，因为某些事件代表可以被阻止的操作（如尚未发生的工具调用），而其他事件代表已经发生或无法防止的事情。
 
-| Hook 事件              | 可以阻止？ | 退出 2 时发生的情况                                                                |
-| :------------------- | :---- | :------------------------------------------------------------------------- |
-| `PreToolUse`         | 是     | 阻止工具调用                                                                     |
-| `PermissionRequest`  | 是     | 拒绝权限                                                                       |
-| `UserPromptSubmit`   | 是     | 阻止提示处理并从上下文中删除提示                                                           |
-| `Stop`               | 是     | 防止 Claude 停止，继续对话                                                          |
-| `SubagentStop`       | 是     | 防止 subagent 停止                                                             |
-| `TeammateIdle`       | 是     | 防止队友空闲（队友继续工作）                                                             |
-| `TaskCreated`        | 是     | 回滚任务创建                                                                     |
-| `TaskCompleted`      | 是     | 防止任务被标记为已完成                                                                |
-| `ConfigChange`       | 是     | 阻止配置更改生效（除了 `policy_settings`）                                             |
-| `StopFailure`        | 否     | 输出和退出代码被忽略                                                                 |
-| `PostToolUse`        | 否     | 向 Claude 显示 stderr（工具已运行）                                                  |
-| `PostToolUseFailure` | 否     | 向 Claude 显示 stderr（工具已失败）                                                  |
-| `PermissionDenied`   | 否     | 退出代码和 stderr 被忽略（拒绝已发生）。使用 JSON `hookSpecificOutput.retry: true` 告诉模型它可能重试 |
-| `Notification`       | 否     | 仅向用户显示 stderr                                                              |
-| `SubagentStart`      | 否     | 仅向用户显示 stderr                                                              |
-| `SessionStart`       | 否     | 仅向用户显示 stderr                                                              |
-| `SessionEnd`         | 否     | 仅向用户显示 stderr                                                              |
-| `CwdChanged`         | 否     | 仅向用户显示 stderr                                                              |
-| `FileChanged`        | 否     | 仅向用户显示 stderr                                                              |
-| `PreCompact`         | 是     | 阻止压缩                                                                       |
-| `PostCompact`        | 否     | 仅向用户显示 stderr                                                              |
-| `Elicitation`        | 是     | 拒绝 elicitation                                                             |
-| `ElicitationResult`  | 是     | 阻止响应（操作变为 decline）                                                         |
-| `WorktreeCreate`     | 是     | 任何非零退出代码都会导致 worktree 创建失败                                                 |
-| `WorktreeRemove`     | 否     | 失败仅在调试模式下记录                                                                |
-| `InstructionsLoaded` | 否     | 退出代码被忽略                                                                    |
+| Hook 事件               | 可以阻止？ | 退出 2 时发生的情况                                                                |
+| :-------------------- | :---- | :------------------------------------------------------------------------- |
+| `PreToolUse`          | 是     | 阻止工具调用                                                                     |
+| `PermissionRequest`   | 是     | 拒绝权限                                                                       |
+| `UserPromptSubmit`    | 是     | 阻止提示处理并从上下文中删除提示                                                           |
+| `UserPromptExpansion` | 是     | 阻止扩展                                                                       |
+| `Stop`                | 是     | 防止 Claude 停止，继续对话                                                          |
+| `SubagentStop`        | 是     | 防止 subagent 停止                                                             |
+| `TeammateIdle`        | 是     | 防止队友空闲（队友继续工作）                                                             |
+| `TaskCreated`         | 是     | 回滚任务创建                                                                     |
+| `TaskCompleted`       | 是     | 防止任务被标记为已完成                                                                |
+| `ConfigChange`        | 是     | 阻止配置更改生效（除了 `policy_settings`）                                             |
+| `StopFailure`         | 否     | 输出和退出代码被忽略                                                                 |
+| `PostToolUse`         | 否     | 向 Claude 显示 stderr（工具已运行）                                                  |
+| `PostToolUseFailure`  | 否     | 向 Claude 显示 stderr（工具已失败）                                                  |
+| `PermissionDenied`    | 否     | 退出代码和 stderr 被忽略（拒绝已发生）。使用 JSON `hookSpecificOutput.retry: true` 告诉模型它可能重试 |
+| `Notification`        | 否     | 仅向用户显示 stderr                                                              |
+| `SubagentStart`       | 否     | 仅向用户显示 stderr                                                              |
+| `SessionStart`        | 否     | 仅向用户显示 stderr                                                              |
+| `SessionEnd`          | 否     | 仅向用户显示 stderr                                                              |
+| `CwdChanged`          | 否     | 仅向用户显示 stderr                                                              |
+| `FileChanged`         | 否     | 仅向用户显示 stderr                                                              |
+| `PreCompact`          | 是     | 阻止压缩                                                                       |
+| `PostCompact`         | 否     | 仅向用户显示 stderr                                                              |
+| `Elicitation`         | 是     | 拒绝 elicitation                                                             |
+| `ElicitationResult`   | 是     | 阻止响应（操作变为 decline）                                                         |
+| `WorktreeCreate`      | 是     | 任何非零退出代码都会导致 worktree 创建失败                                                 |
+| `WorktreeRemove`      | 否     | 失败仅在调试模式下记录                                                                |
+| `InstructionsLoaded`  | 否     | 退出代码被忽略                                                                    |
 
 ### HTTP 响应处理
 
@@ -617,23 +620,23 @@ JSON 对象支持三种字段：
 
 并非每个事件都支持通过 JSON 阻止或控制行为。支持的事件各自使用不同的字段集来表达该决定。在编写 hook 之前，使用此表作为快速参考：
 
-| 事件                                                                                                       | 决定模式                    | 关键字段                                                                                               |
-| :------------------------------------------------------------------------------------------------------- | :---------------------- | :------------------------------------------------------------------------------------------------- |
-| UserPromptSubmit、PostToolUse、PostToolUseFailure、Stop、SubagentStop、ConfigChange、PreCompact                | 顶级 `decision`           | `decision: "block"`、`reason`                                                                       |
-| TeammateIdle、TaskCreated、TaskCompleted                                                                   | 退出代码或 `continue: false` | 退出代码 2 使用 stderr 反馈阻止操作。JSON `{"continue": false, "stopReason": "..."}` 也会完全停止队友，匹配 `Stop` hook 行为 |
-| PreToolUse                                                                                               | `hookSpecificOutput`    | `permissionDecision`（allow/deny/ask/defer）、`permissionDecisionReason`                              |
-| PermissionRequest                                                                                        | `hookSpecificOutput`    | `decision.behavior`（allow/deny）                                                                    |
-| PermissionDenied                                                                                         | `hookSpecificOutput`    | `retry: true` 告诉模型它可能重试被拒绝的工具调用                                                                    |
-| WorktreeCreate                                                                                           | 路径返回                    | 命令 hook 在 stdout 上打印路径；HTTP hook 通过 `hookSpecificOutput.worktreePath` 返回。Hook 失败或缺少路径会导致创建失败       |
-| Elicitation                                                                                              | `hookSpecificOutput`    | `action`（accept/decline/cancel）、`content`（form 字段值用于 accept）                                       |
-| ElicitationResult                                                                                        | `hookSpecificOutput`    | `action`（accept/decline/cancel）、`content`（form 字段值覆盖）                                              |
-| WorktreeRemove、Notification、SessionEnd、PostCompact、InstructionsLoaded、StopFailure、CwdChanged、FileChanged | 无                       | 无决定控制。用于日志记录或清理等副作用                                                                                |
+| 事件                                                                                                            | 决定模式                    | 关键字段                                                                                               |
+| :------------------------------------------------------------------------------------------------------------ | :---------------------- | :------------------------------------------------------------------------------------------------- |
+| UserPromptSubmit、UserPromptExpansion、PostToolUse、PostToolUseFailure、Stop、SubagentStop、ConfigChange、PreCompact | 顶级 `decision`           | `decision: "block"`、`reason`                                                                       |
+| TeammateIdle、TaskCreated、TaskCompleted                                                                        | 退出代码或 `continue: false` | 退出代码 2 使用 stderr 反馈阻止操作。JSON `{"continue": false, "stopReason": "..."}` 也会完全停止队友，匹配 `Stop` hook 行为 |
+| PreToolUse                                                                                                    | `hookSpecificOutput`    | `permissionDecision`（allow/deny/ask/defer）、`permissionDecisionReason`                              |
+| PermissionRequest                                                                                             | `hookSpecificOutput`    | `decision.behavior`（allow/deny）                                                                    |
+| PermissionDenied                                                                                              | `hookSpecificOutput`    | `retry: true` 告诉模型它可能重试被拒绝的工具调用                                                                    |
+| WorktreeCreate                                                                                                | 路径返回                    | 命令 hook 在 stdout 上打印路径；HTTP hook 通过 `hookSpecificOutput.worktreePath` 返回。Hook 失败或缺少路径会导致创建失败       |
+| Elicitation                                                                                                   | `hookSpecificOutput`    | `action`（accept/decline/cancel）、`content`（form 字段值用于 accept）                                       |
+| ElicitationResult                                                                                             | `hookSpecificOutput`    | `action`（accept/decline/cancel）、`content`（form 字段值覆盖）                                              |
+| WorktreeRemove、Notification、SessionEnd、PostCompact、InstructionsLoaded、StopFailure、CwdChanged、FileChanged      | 无                       | 无决定控制。用于日志记录或清理等副作用                                                                                |
 
 以下是每种模式的实际示例：
 
 <Tabs>
   <Tab title="顶级决定">
-    由 `UserPromptSubmit`、`PostToolUse`、`PostToolUseFailure`、`Stop`、`SubagentStop` 和 `ConfigChange` 使用。唯一的值是 `"block"`。要允许操作继续，从您的 JSON 中省略 `decision`，或退出 0 而不带任何 JSON：
+    由 `UserPromptSubmit`、`UserPromptExpansion`、`PostToolUse`、`PostToolUseFailure`、`Stop`、`SubagentStop`、`ConfigChange` 和 `PreCompact` 使用。唯一的值是 `"block"`。要允许操作继续，从您的 JSON 中省略 `decision`，或退出 0 而不带任何 JSON：
 
     ```json theme={null}
     {
@@ -644,7 +647,7 @@ JSON 对象支持三种字段：
   </Tab>
 
   <Tab title="PreToolUse">
-    使用 `hookSpecificOutput` 以获得更丰富的控制：允许、拒绝、询问或延迟工具调用。您还可以在运行前修改工具输入或为 Claude 注入额外上下文。有关完整的选项集，请参阅[PreToolUse 决定控制](#pretooluse-decision-control)。
+    使用 `hookSpecificOutput` 以获得更丰富的控制：允许、拒绝或升级给用户。您还可以在运行前修改工具输入或为 Claude 注入额外上下文。有关完整的选项集，请参阅[PreToolUse 决定控制](#pretooluse-decision-control)。
 
     ```json theme={null}
     {
@@ -861,6 +864,54 @@ InstructionsLoaded hooks 没有决定控制。它们无法阻止或修改指令�
 <Note>
   JSON 格式对于简单用例不是必需的。要添加上下文，您可以使用退出代码 0 将纯文本打印到 stdout。当您需要阻止提示或想要更结构化的控制时，使用 JSON。
 </Note>
+
+### UserPromptExpansion
+
+当用户输入的斜杠命令在到达 Claude 之前展开为提示时运行。使用此来阻止特定命令的直接调用、为特定 skill 注入上下文或记录用户调用哪些命令。例如，匹配 `deploy` 的 hook 可以阻止 `/deploy`，除非存在批准文件，或匹配审查 skill 的 hook 可以将团队的审查清单附加为 `additionalContext`。
+
+此事件涵盖 `PreToolUse` 不涵盖的路径：匹配 `Skill` 工具的 `PreToolUse` hook 仅在 Claude 调用工具时触发，但直接输入 `/skillname` 绕过 `PreToolUse`。`UserPromptExpansion` 在该直接路径上触发。
+
+在 `command_name` 上匹配。留空匹配器以对每个提示类型斜杠命令触发。
+
+#### UserPromptExpansion 输入
+
+除了[通用输入字段](#common-input-fields)外，UserPromptExpansion hooks 还接收 `expansion_type`、`command_name`、`command_args`、`command_source` 和原始 `prompt` 字符串。`expansion_type` 字段对于 skill 和自定义命令为 `slash_command`，或对于 MCP 服务器提示为 `mcp_prompt`。
+
+```json theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../00893aaf.jsonl",
+  "cwd": "/Users/...",
+  "permission_mode": "default",
+  "hook_event_name": "UserPromptExpansion",
+  "expansion_type": "slash_command",
+  "command_name": "example-skill",
+  "command_args": "arg1 arg2",
+  "command_source": "plugin",
+  "prompt": "/example-skill arg1 arg2"
+}
+```
+
+#### UserPromptExpansion 决定控制
+
+`UserPromptExpansion` hooks 可以阻止展开或添加上下文。所有[JSON 输出字段](#json-output)都可用。
+
+| 字段                  | 描述                              |
+| :------------------ | :------------------------------ |
+| `decision`          | `"block"` 防止斜杠命令展开。省略以允许它继续     |
+| `reason`            | 当 `decision` 为 `"block"` 时向用户显示 |
+| `additionalContext` | 添加到 Claude 上下文的字符串，与展开的提示一起     |
+
+```json theme={null}
+{
+  "decision": "block",
+  "reason": "This slash command is not available",
+  "hookSpecificOutput": {
+    "hookEventName": "UserPromptExpansion",
+    "additionalContext": "Additional context for this expansion"
+  }
+}
+```
 
 ### PreToolUse
 
@@ -1694,7 +1745,7 @@ ConfigChange hooks 可以阻止配置更改生效。使用退出代码 2 或 JSO
 
 当会话期间工作目录更改时运行，例如当 Claude 执行 `cd` 命令时。使用此来对目录更改做出反应：重新加载环境变量、激活项目特定的工具链或自动运行设置脚本。与[FileChanged](#filechanged)配对，用于[direnv](https://direnv.net/)等管理每个目录环境的工具。
 
-CwdChanged hooks 可以访问 `CLAUDE_ENV_FILE`。写入该文件的变量持久化到会话的后续 Bash 命令中，就像在[SessionStart hooks](#persist-environment-variables)中一样。仅支持 `type: "command"` hooks。
+CwdChanged hooks 可以访问 `CLAUDE_ENV_FILE`。写入该文件的变量持久化到会话的后续 Bash 命令中，就像在[SessionStart hooks](#persist-environment-variables)中一样。
 
 CwdChanged 不支持匹配器，在每次目录更改时触发。
 
@@ -1732,7 +1783,7 @@ CwdChanged hooks 没有决定控制。它们无法阻止目录更改。
 * **构建监视列表**：值在 `|` 上分割，每个段注册为工作目录中的文字文件名，因此 `".envrc|.env"` 监视恰好这两个文件。正则表达式模式在这里不有用：像 `^\.env` 这样的值会监视一个字面上名为 `^\.env` 的文件。
 * **过滤哪些 hooks 运行**：当监视的文件更改时，相同的值使用标准[匹配器规则](#matcher-patterns)针对更改文件的基名过滤哪些 hook 组运行。
 
-FileChanged hooks 可以访问 `CLAUDE_ENV_FILE`。写入该文件的变量持久化到会话的后续 Bash 命令中，就像在[SessionStart hooks](#persist-environment-variables)中一样。仅支持 `type: "command"` hooks。
+FileChanged hooks 可以访问 `CLAUDE_ENV_FILE`。写入该文件的变量持久化到会话的后续 Bash 命令中，就像在[SessionStart hooks](#persist-environment-variables)中一样。
 
 #### FileChanged 输入
 
@@ -2066,7 +2117,7 @@ CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
 
 退出代码 2 阻止响应，将有效操作更改为 `decline`。
 
-## 基于提示的 Hooks
+## 基于提示的 hooks
 
 除了命令和 HTTP hooks 外，Claude Code 还支持基于提示的 hooks（`type: "prompt"`），使用 LLM 来评估是否允许或阻止操作，以及代理 hooks（`type: "agent"`），生成具有工具访问权限的代理验证器。并非所有事件都支持每种 hook 类型。
 
@@ -2080,6 +2131,7 @@ CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
 * `SubagentStop`
 * `TaskCompleted`
 * `TaskCreated`
+* `UserPromptExpansion`
 * `UserPromptSubmit`
 
 仅支持 `command` 和 `http` hooks 但不支持 `prompt` 或 `agent` 的事件：
@@ -2103,7 +2155,7 @@ CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
 
 `SessionStart` 仅支持 `command` hooks。
 
-### 基于提示的 Hooks 如何工作
+### 基于提示的 hooks 如何工作
 
 基于提示的 hooks 不执行 Bash 命令，而是：
 
@@ -2159,7 +2211,7 @@ LLM 必须使用包含以下内容的 JSON 响应：
 
 ### 示例：多条件 Stop hook
 
-此 `Stop` hook 使用详细提示检查三个条件，然后允许 Claude 停止。如果 `"ok"` 为 `false`，Claude 继续工作，提供的原因作为其下一条指令。`SubagentStop` hooks 使用相同的格式来评估[subagent](/zh-CN/sub-agents)是否应该停止：
+此 `Stop` hook 使用详细提示检查三个条件，然后允许 Claude 停止。如果 `"ok"` 为 `false`，Claude 继续工作，提供的原因作为其下一条指令。`SubagentStop` hooks 使用相同的格式来评估 [subagent](/zh-CN/sub-agents) 是否应该停止：
 
 ```json theme={null}
 {
@@ -2373,7 +2425,7 @@ fi
 }
 ```
 
-## 调试 Hooks
+## 调试 hooks
 
 Hook 执行详细信息，包括哪些 hooks 匹配、它们的退出代码和完整 stdout 和 stderr，被写入调试日志文件。使用 `claude --debug-file <path>` 启动 Claude Code 以将日志写入已知位置，或运行 `claude --debug` 并在 `~/.claude/debug/<session-id>.txt` 读取日志。`--debug` 标志不打印到终端。
 
@@ -2386,4 +2438,4 @@ Hook 执行详细信息，包括哪些 hooks 匹配、它们的退出代码和�
 
 对于更细粒度的 hook 匹配详细信息，设置 `CLAUDE_CODE_DEBUG_LOG_LEVEL=verbose` 以查看额外的日志行，例如 hook 匹配器计数和查询匹配。
 
-有关故障排除常见问题，如 hooks 不触发、无限 Stop hook 循环或配置错误，请参阅指南中的[限制和故障排除](/zh-CN/hooks-guide#limitations-and-troubleshooting)。
+有关故障排除常见问题，如 hooks 不触发、无限 Stop hook 循环或配置错误，请参阅指南中的[限制和故障排除](/zh-CN/hooks-guide#limitations-and-troubleshooting)。有关涵盖 `/context`、`/doctor` 和设置优先级的更广泛的诊断演练，请参阅[调试你的配置](/zh-CN/debug-your-config)。

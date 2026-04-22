@@ -20,7 +20,7 @@ A maioria das melhores práticas é baseada em uma restrição: a janela de cont
 
 A janela de contexto do Claude contém toda a sua conversa, incluindo cada mensagem, cada arquivo que Claude lê e cada saída de comando. No entanto, isso pode se encher rapidamente. Uma única sessão de depuração ou exploração de codebase pode gerar e consumir dezenas de milhares de tokens.
 
-Isso importa porque o desempenho do LLM se degrada conforme o contexto se enche. Quando a janela de contexto está ficando cheia, Claude pode começar a "esquecer" instruções anteriores ou cometer mais erros. A janela de contexto é o recurso mais importante a gerenciar. Rastreie o uso de contexto continuamente com uma [custom status line](/pt/statusline), e veja [Reduce token usage](/pt/costs#reduce-token-usage) para estratégias de redução do uso de tokens.
+Isso importa porque o desempenho do LLM se degrada conforme o contexto se enche. Quando a janela de contexto está ficando cheia, Claude pode começar a "esquecer" instruções anteriores ou cometer mais erros. A janela de contexto é o recurso mais importante a gerenciar. Para ver como uma sessão se enche na prática, [assista a um passo a passo interativo](/pt/context-window) do que é carregado na inicialização e quanto cada leitura de arquivo custa. Rastreie o uso de contexto continuamente com uma [custom status line](/pt/statusline), e veja [Reduce token usage](/pt/costs#reduce-token-usage) para estratégias de redução do uso de tokens.
 
 ***
 
@@ -196,6 +196,7 @@ Você pode colocar arquivos CLAUDE.md em vários locais:
 
 * **Pasta home (`~/.claude/CLAUDE.md`)**: aplica-se a todas as sessões Claude
 * **Raiz do projeto (`./CLAUDE.md`)**: verifique no git para compartilhar com sua equipe
+* **Raiz do projeto (`./CLAUDE.local.md`)**: notas pessoais específicas do projeto; adicione este arquivo ao seu `.gitignore` para que não seja compartilhado com sua equipe
 * **Diretórios pai**: útil para monorepos onde tanto `root/CLAUDE.md` quanto `root/foo/CLAUDE.md` são puxados automaticamente
 * **Diretórios filhos**: Claude puxa arquivos CLAUDE.md filhos sob demanda ao trabalhar com arquivos nesses diretórios
 
@@ -397,7 +398,7 @@ Durante sessões longas, a janela de contexto do Claude pode se encher com conve
 * Para mais controle, execute `/compact <instructions>`, como `/compact Focus on the API changes`
 * Para compactar apenas parte da conversa, use `Esc + Esc` ou `/rewind`, selecione um checkpoint de mensagem e escolha **Summarize from here**. Isso condensa mensagens daquele ponto em diante enquanto mantém contexto anterior intacto.
 * Customize comportamento de compaction em CLAUDE.md com instruções como `"When compacting, always preserve the full list of modified files and any test commands"` para garantir que contexto crítico sobreviva à sumarização
-* Para perguntas rápidas que não precisam ficar em contexto, use [`/btw`](/pt/interactive-mode#side-questions-with-btw). A resposta aparece em uma sobreposição dispensável e nunca entra no histórico de conversa, então você pode verificar um detalhe sem crescer contexto.
+* Para perguntas rápidas que não precisam ficar em contexto, use [`/btw`](/pt/interactive-mode#side-questions-with-%2Fbtw). A resposta aparece em uma sobreposição dispensável e nunca entra no histórico de conversa, então você pode verificar um detalhe sem crescer contexto.
 
 ### Use subagents para investigação
 

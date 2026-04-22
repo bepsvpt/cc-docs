@@ -85,7 +85,7 @@ Claude Code는 **범위 시스템**을 사용하여 구성이 어디에 적용�
 
   * **서버 관리 설정**: Anthropic의 서버에서 Claude.ai 관리 콘솔을 통해 전달됩니다. [서버 관리 설정](/ko/server-managed-settings)을 참조하세요.
   * **MDM/OS 수준 정책**: macOS 및 Windows의 기본 장치 관리를 통해 전달됩니다:
-    * macOS: `com.anthropic.claudecode` managed preferences domain (Jamf, Kandji 또는 기타 MDM 도구의 구성 프로필을 통해 배포)
+    * macOS: `com.anthropic.claudecode` managed preferences domain. plist의 최상위 키는 `managed-settings.json`을 반영하며, 중첩된 설정은 딕셔너리이고 배열은 plist 배열입니다. Jamf, Kandji (Iru) 또는 유사한 MDM 도구의 구성 프로필을 통해 배포합니다.
     * Windows: `HKLM\SOFTWARE\Policies\ClaudeCode` 레지스트리 키와 JSON을 포함하는 `Settings` 값 (REG\_SZ 또는 REG\_EXPAND\_SZ) (그룹 정책 또는 Intune을 통해 배포)
     * Windows (사용자 수준): `HKCU\SOFTWARE\Policies\ClaudeCode` (최저 정책 우선순위, 관리자 수준 소스가 없을 때만 사용)
   * **파일 기반**: 시스템 디렉토리에 배포된 `managed-settings.json` 및 `managed-mcp.json`:
@@ -106,7 +106,7 @@ Claude Code는 **범위 시스템**을 사용하여 구성이 어디에 적용�
 
   [managed 설정](/ko/permissions#managed-only-settings) 및 [Managed MCP 구성](/ko/mcp#managed-mcp-configuration)을 참조하세요.
 
-  이 [저장소](https://github.com/anthropics/claude-code/tree/main/examples/mdm)에는 Jamf, Kandji, Intune 및 그룹 정책에 대한 시작 배포 템플릿이 포함되어 있습니다. 이를 시작점으로 사용하고 필요에 맞게 조정합니다.
+  이 [저장소](https://github.com/anthropics/claude-code/tree/main/examples/mdm)에는 Jamf, Kandji (Iru), Intune 및 그룹 정책에 대한 시작 배포 템플릿이 포함되어 있습니다. 이를 시작점으로 사용하고 필요에 맞게 조정합니다.
 
   <Note>
     Managed 배포는 `strictKnownMarketplaces`를 사용하여 **플러그인 마켓플레이스 추가**를 제한할 수도 있습니다. 자세한 내용은 [Managed 마켓플레이스 제한](/ko/plugin-marketplaces#managed-marketplace-restrictions)을 참조하세요.
@@ -210,9 +210,11 @@ Claude Code는 **범위 시스템**을 사용하여 구성이 어디에 적용�
 | `respectGitignore`                | `@` 파일 선택기가 `.gitignore` 패턴을 존중할지 여부를 제어합니다. `true` (기본값)일 때 `.gitignore` 패턴과 일치하는 파일은 제안에서 제외됩니다                                                                                                                                                                                                                                                              | `false`                                                                                                                        |
 | `showClearContextOnPlanAccept`    | 계획 수락 화면에서 "컨텍스트 지우기" 옵션을 표시합니다. 기본값: `false`. 옵션을 복원하려면 `true`로 설정합니다                                                                                                                                                                                                                                                                                         | `true`                                                                                                                         |
 | `showThinkingSummaries`           | 대화형 세션에서 [확장 사고](/ko/common-workflows#use-extended-thinking-thinking-mode) 요약을 표시합니다. 설정되지 않거나 `false` (대화형 모드의 기본값)일 때 사고 블록은 API에 의해 편집되고 축소된 스텁으로 표시됩니다. 편집은 표시되는 내용만 변경하고 모델이 생성하는 내용은 변경하지 않습니다. 사고 지출을 줄이려면 [예산을 낮추거나 사고를 비활성화](/ko/common-workflows#use-extended-thinking-thinking-mode)하세요. 비대화형 모드 (`-p`) 및 SDK 호출자는 이 설정과 관계없이 항상 요약을 받습니다           | `true`                                                                                                                         |
+| `skipWebFetchPreflight`           | [WebFetch 도메인 안전 검사](/ko/data-usage#webfetch-domain-safety-check)를 건너뜁니다. 이 검사는 각 요청된 호스트명을 가져오기 전에 `api.anthropic.com`으로 전송합니다. Bedrock, Vertex AI 또는 Foundry 배포와 같이 Anthropic으로의 트래픽을 차단하는 환경에서 `true`로 설정합니다. 건너뛰면 WebFetch는 차단 목록을 참조하지 않고 모든 URL을 시도합니다                                                                                                   | `true`                                                                                                                         |
 | `spinnerTipsEnabled`              | Claude가 작업 중일 때 스피너에 팁을 표시합니다. 팁을 비활성화하려면 `false`로 설정합니다 (기본값: `true`)                                                                                                                                                                                                                                                                                         | `false`                                                                                                                        |
 | `spinnerTipsOverride`             | 사용자 정의 문자열로 스피너 팁을 재정의합니다. `tips`: 팁 문자열 배열. `excludeDefault`: `true`이면 사용자 정의 팁만 표시하고, `false`이거나 없으면 사용자 정의 팁이 기본 제공 팁과 병합됩니다                                                                                                                                                                                                                                | `{ "excludeDefault": true, "tips": ["Use our internal tool X"] }`                                                              |
 | `spinnerVerbs`                    | 스피너 및 턴 지속 시간 메시지에 표시되는 작업 동사를 사용자 정의합니다. `mode`를 `"replace"`로 설정하여 동사만 사용하거나 `"append"`로 설정하여 기본값에 추가합니다                                                                                                                                                                                                                                                      | `{"mode": "append", "verbs": ["Pondering", "Crafting"]}`                                                                       |
+| `sshConfigs`                      | [Desktop](/ko/desktop#pre-configure-ssh-connections-for-your-team) 환경 드롭다운에 표시할 SSH 연결입니다. 각 항목에는 `id`, `name` 및 `sshHost`가 필요하며, `sshPort`, `sshIdentityFile` 및 `startDirectory`는 선택 사항입니다. Managed 설정에서 설정되면 연결은 사용자에게 읽기 전용입니다. Managed 및 사용자 설정에서만 읽음                                                                                                      | `[{"id": "dev-vm", "name": "Dev VM", "sshHost": "user@dev.example.com"}]`                                                      |
 | `statusLine`                      | 컨텍스트를 표시하기 위한 사용자 정의 상태 줄을 구성합니다. [`statusLine` 문서](/ko/statusline)를 참조하세요                                                                                                                                                                                                                                                                                     | `{"type": "command", "command": "~/.claude/statusline.sh"}`                                                                    |
 | `strictKnownMarketplaces`         | (Managed 설정만) 사용자가 추가할 수 있는 플러그인 마켓플레이스의 허용 목록입니다. 정의되지 않음 = 제한 없음, 빈 배열 = 잠금. 마켓플레이스 추가에만 적용됩니다. [Managed 마켓플레이스 제한](/ko/plugin-marketplaces#managed-marketplace-restrictions)을 참조하세요                                                                                                                                                                         | `[{ "source": "github", "repo": "acme-corp/plugins" }]`                                                                        |
 | `tui`                             | 터미널 UI 렌더러입니다. 깜박임 없는 [alt-screen 렌더러](/ko/fullscreen)가 있는 가상화된 스크롤백을 위해 `"fullscreen"`을 사용합니다. 클래식 메인 화면 렌더러를 위해 `"default"`를 사용합니다. `/tui`를 통해 설정합니다                                                                                                                                                                                                         | `"fullscreen"`                                                                                                                 |
@@ -280,7 +282,7 @@ Read, Edit, WebFetch, MCP 및 Agent 규칙에 대한 와일드카드 동작, 도
 | 키                                      | 설명                                                                                                                                                                                                                                          | 예제                                |
 | :------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :-------------------------------- |
 | `enabled`                              | bash 샌드박싱 활성화 (macOS, Linux 및 WSL2). 기본값: false                                                                                                                                                                                             | `true`                            |
-| `failIfUnavailable`                    | `sandbox.enabled`가 true이지만 샌드박스를 시작할 수 없는 경우 (종속성 누락, 지원되지 않는 플랫폼 또는 플랫폼 제한) 시작 시 오류로 종료합니다. false (기본값)일 때 경고가 표시되고 명령이 샌드박싱되지 않은 상태로 실행됩니다. Managed 설정 배포에서 샌드박싱을 하드 게이트로 요구하는 경우를 위한 것입니다                                                | `true`                            |
+| `failIfUnavailable`                    | `sandbox.enabled`가 true이지만 샌드박스를 시작할 수 없는 경우 (종속성 누락, 지원되지 않는 플랫폼) 시작 시 오류로 종료합니다. false (기본값)일 때 경고가 표시되고 명령이 샌드박싱되지 않은 상태로 실행됩니다. Managed 설정 배포에서 샌드박싱을 하드 게이트로 요구하는 경우를 위한 것입니다                                                          | `true`                            |
 | `autoAllowBashIfSandboxed`             | 샌드박싱되면 bash 명령 자동 승인. 기본값: true                                                                                                                                                                                                             | `true`                            |
 | `excludedCommands`                     | 샌드박스 외부에서 실행해야 하는 명령                                                                                                                                                                                                                        | `["docker *"]`                    |
 | `allowUnsandboxedCommands`             | `dangerouslyDisableSandbox` 매개변수를 통해 샌드박스 외부에서 명령을 실행하도록 허용합니다. `false`로 설정되면 `dangerouslyDisableSandbox` 이스케이프 해치가 완전히 비활성화되고 모든 명령은 샌드박싱되거나 `excludedCommands`에 있어야 합니다. 엄격한 샌드박싱이 필요한 엔터프라이즈 정책에 유용합니다. 기본값: true                        | `false`                           |
@@ -479,7 +481,7 @@ HTTP hooks가 헤더 값에 보간할 수 있는 환경 변수 이름을 제한�
 
 ### 활성 설정 확인
 
-Claude Code 내에서 `/status`를 실행하여 어떤 설정 소스가 활성화되어 있고 어디에서 오는지 확인합니다. 출력은 각 구성 계층 (managed, user, project)을 `Enterprise managed settings (remote)`, `Enterprise managed settings (plist)`, `Enterprise managed settings (HKLM)` 또는 `Enterprise managed settings (file)`과 같은 출처와 함께 표시합니다. 설정 파일에 오류가 포함되어 있으면 `/status`는 문제를 보고하여 수정할 수 있습니다.
+Claude Code 내에서 `/status`를 실행하여 어떤 설정 소스가 활성화되어 있고 어디에서 오는지 확인합니다. 출력은 각 구성 계층 (managed, user, project)을 `Enterprise managed settings (remote)`, `Enterprise managed settings (plist)`, `Enterprise managed settings (HKLM)`, `Enterprise managed settings (HKCU)` 또는 `Enterprise managed settings (file)`과 같은 출처와 함께 표시합니다. 설정 파일에 오류가 포함되어 있으면 `/status`는 문제를 보고하여 수정할 수 있습니다.
 
 ### 구성 시스템의 핵심 포인트
 
@@ -900,6 +902,7 @@ Claude Code는 파일 읽기, 편집, 검색, 명령 실행 및 subagents 조율
 
 ## 참고 항목
 
-* [권한](/ko/permissions): 권한 시스템, 규칙 구문, 도구 특정 패턴 및 managed 정책
+* [권한](/ko/permissions): 권한 시스템, 규칙 구문, 도구 특정 패턴 및 관리형 정책
 * [인증](/ko/authentication): Claude Code에 대한 사용자 액세스 설정
-* [문제 해결](/ko/troubleshooting): 일반적인 구성 문제에 대한 솔루션
+* [구성 디버깅](/ko/debug-your-config): 설정, 훅 또는 MCP 서버가 적용되지 않는 이유를 진단합니다
+* [문제 해결](/ko/troubleshooting): 설치, 인증 및 플랫폼 문제

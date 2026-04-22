@@ -520,13 +520,13 @@ Claude가 다른 포트를 선택하면 할당된 포트를 `PORT` 환경 변수
 
 원격 세션은 앱을 닫아도 백그라운드에서 계속됩니다. 사용량은 별도의 컴퓨팅 요금 없이 [구독 계획 한도](/ko/costs)에 포함됩니다.
 
-다양한 네트워크 액세스 수준 및 환경 변수를 가진 사용자 정의 클라우드 환경을 만들 수 있습니다. 원격 세션을 시작할 때 환경 드롭다운을 선택하고 **Add environment**를 선택합니다. 네트워크 액세스 및 환경 변수 구성에 대한 자세한 내용은 [클라우드 환경](/ko/claude-code-on-the-web#the-cloud-environment)을 참조하세요.
+다양한 네트워크 액세스 수준 및 환경 변수를 가진 사용자 정의 클라우드 환경을 만들 수 있습니다. 원격 세션을 시작할 때 환경 드롭다운을 선택하고 **환경 추가**를 선택합니다. 네트워크 액세스 및 환경 변수 구성에 대한 자세한 내용은 [클라우드 환경](/ko/claude-code-on-the-web#the-cloud-environment)을 참조하세요.
 
 ### SSH 세션
 
 SSH 세션을 사용하면 데스크톱 앱을 인터페이스로 사용하면서 원격 머신에서 Claude Code를 실행할 수 있습니다. 이는 클라우드 VM, 개발 컨테이너 또는 특정 하드웨어 또는 종속성이 있는 서버에 있는 코드베이스로 작업할 때 유용합니다.
 
-SSH 연결을 추가하려면 세션을 시작하기 전에 환경 드롭다운을 클릭하고 **+ Add SSH connection**을 선택합니다. 대화 상자는 다음을 요청합니다:
+SSH 연결을 추가하려면 세션을 시작하기 전에 환경 드롭다운을 클릭하고 **+ SSH 연결 추가**를 선택합니다. 대화 상자는 다음을 요청합니다:
 
 * **Name**: 이 연결의 친화적인 레이블
 * **SSH Host**: `user@hostname` 또는 `~/.ssh/config`에 정의된 호스트
@@ -536,6 +536,29 @@ SSH 연결을 추가하려면 세션을 시작하기 전에 환경 드롭다운�
 추가되면 연결이 환경 드롭다운에 나타납니다. 이를 선택하여 해당 머신에서 세션을 시작합니다. Claude는 원격 머신에서 파일 및 도구에 액세스하여 실행됩니다.
 
 원격 머신은 Linux 또는 macOS를 실행해야 하며 Claude Code를 설치해야 합니다. 연결되면 SSH 세션은 권한 모드, 커넥터, 플러그인, MCP 서버를 지원합니다.
+
+#### 팀을 위해 SSH 연결을 미리 구성합니다
+
+관리자는 [관리되는 설정](/ko/settings#settings-precedence) 파일에 `sshConfigs`를 추가하여 팀 멤버에게 SSH 연결을 배포할 수 있습니다. 이러한 방식으로 정의된 연결은 각 사용자의 환경 드롭다운에 자동으로 나타나며 관리되는 것으로 표시되므로 사용자는 이를 선택할 수 있지만 앱에서 편집하거나 삭제할 수 없습니다.
+
+다음 예제는 원격 호스트의 `~/projects`에서 열리는 단일 연결을 미리 구성합니다:
+
+```json theme={null}
+{
+  "sshConfigs": [
+    {
+      "id": "shared-dev-vm",
+      "name": "Shared Dev VM",
+      "sshHost": "user@dev.example.com",
+      "sshPort": 22,
+      "sshIdentityFile": "~/.ssh/id_ed25519",
+      "startDirectory": "~/projects"
+    }
+  ]
+}
+```
+
+각 항목에는 `id`, `name`, `sshHost`가 필요합니다. `sshPort`, `sshIdentityFile`, `startDirectory` 필드는 선택 사항입니다. 사용자는 자신의 `~/.claude/settings.json`에 `sshConfigs`를 추가할 수도 있습니다. 이는 대화 상자를 통해 추가된 연결이 저장되는 위치입니다.
 
 ## 엔터프라이즈 구성
 
@@ -559,6 +582,7 @@ Team 또는 Enterprise 계획의 조직은 관리 콘솔 컨트롤, 관리 설�
 | `permissions.disableBypassPermissionsMode` | 사용자가 권한 무시 모드를 활성화하지 못하도록 하려면 `"disable"`로 설정합니다.                                                                                                          |
 | `disableAutoMode`                          | 사용자가 [Auto](/ko/permission-modes#eliminate-prompts-with-auto-mode) 모드를 활성화하지 못하도록 하려면 `"disable"`로 설정합니다. 모드 선택기에서 Auto를 제거합니다. `permissions` 아래에서도 허용됩니다. |
 | `autoMode`                                 | 조직 전체에서 auto mode 분류기가 신뢰하고 차단하는 것을 사용자 정의합니다. [auto mode 분류기 구성](/ko/permissions#configure-the-auto-mode-classifier)을 참조하세요.                              |
+| `sshConfigs`                               | 환경 드롭다운에 나타나는 [SSH 연결](#pre-configure-ssh-connections-for-your-team)을 사전 구성합니다. 사용자는 관리 연결을 편집하거나 삭제할 수 없습니다.                                              |
 
 `permissions.disableBypassPermissionsMode` 및 `disableAutoMode`는 사용자 및 프로젝트 설정에서도 작동하지만 관리 설정에 배치하면 사용자가 재정의하지 못하도록 방지합니다. `autoMode`는 사용자 설정, `.claude/settings.local.json`, 관리 설정에서 읽혀지지만 체크인된 `.claude/settings.json`에서는 읽혀지지 않습니다: 복제된 저장소는 자신의 분류기 규칙을 주입할 수 없습니다. `allowManagedPermissionRulesOnly` 및 `allowManagedHooksOnly`를 포함한 관리 전용 설정의 전체 목록은 [관리 전용 설정](/ko/permissions#managed-only-settings)을 참조하세요.
 

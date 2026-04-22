@@ -6,7 +6,9 @@
 
 > Crie e use subagentes de IA especializados no Claude Code para fluxos de trabalho específicos de tarefas e gerenciamento de contexto aprimorado.
 
-Subagentes são assistentes de IA especializados que lidam com tipos específicos de tarefas. Cada subagente é executado em sua própria janela de contexto com um prompt de sistema personalizado, acesso a ferramentas específicas e permissões independentes. Quando Claude encontra uma tarefa que corresponde à descrição de um subagente, ele delega para esse subagente, que funciona independentemente e retorna resultados. Para ver a economia de contexto na prática, a [visualização da janela de contexto](/pt/context-window) apresenta uma sessão onde um subagente lida com pesquisa em sua própria janela separada.
+Subagentes são assistentes de IA especializados que lidam com tipos específicos de tarefas. Use um quando uma tarefa secundária inundaria sua conversa principal com resultados de pesquisa, logs ou conteúdos de arquivo que você não referenciará novamente: o subagente faz esse trabalho em seu próprio contexto e retorna apenas o resumo. Defina um subagente personalizado quando você continua gerando o mesmo tipo de worker com as mesmas instruções.
+
+Cada subagente é executado em sua própria janela de contexto com um prompt de sistema personalizado, acesso a ferramentas específicas e permissões independentes. Quando Claude encontra uma tarefa que corresponde à descrição de um subagente, ele delega para esse subagente, que funciona independentemente e retorna resultados. Para ver a economia de contexto na prática, a [visualização da janela de contexto](/pt/context-window) apresenta uma sessão onde um subagente lida com pesquisa em sua própria janela separada.
 
 <Note>
   Se você precisa de múltiplos agentes trabalhando em paralelo e se comunicando entre si, consulte [equipes de agentes](/pt/agent-teams) em vez disso. Subagentes funcionam dentro de uma única sessão; equipes de agentes coordenam entre sessões separadas.
@@ -89,7 +91,7 @@ Este passo a passo o guia através da criação de um subagente no nível do usu
   </Step>
 
   <Step title="Escolher um local">
-    Selecione **Create new agent**, depois escolha **Personal**. Isso salva o subagente em `~/.claude/agents/` para que esteja disponível em todos os seus projetos.
+    Mude para a aba **Library**, selecione **Create new agent**, depois escolha **Personal**. Isso salva o subagente em `~/.claude/agents/` para que esteja disponível em todos os seus projetos.
   </Step>
 
   <Step title="Gerar com Claude">
@@ -139,13 +141,13 @@ Você também pode criar subagentes manualmente como arquivos Markdown, defini-l
 
 ### Usar o comando /agents
 
-O comando `/agents` fornece uma interface interativa para gerenciar subagentes. Execute `/agents` para:
+O comando `/agents` abre uma interface com abas para gerenciar subagentes. A aba **Running** mostra subagentes ao vivo e permite que você os abra ou pare. A aba **Library** permite que você:
 
-* Visualizar todos os subagentes disponíveis (integrados, usuário, projeto e plugin)
-* Criar novos subagentes com configuração guiada ou geração por Claude
-* Editar configuração de subagente existente e acesso a ferramentas
-* Deletar subagentes personalizados
-* Ver quais subagentes estão ativos quando duplicatas existem
+* Visualize todos os subagentes disponíveis (integrados, usuário, projeto e plugin)
+* Crie novos subagentes com configuração guiada ou geração por Claude
+* Edite configuração de subagente existente e acesso a ferramentas
+* Delete subagentes personalizados
+* Veja quais subagentes estão ativos quando duplicatas existem
 
 Esta é a forma recomendada de criar e gerenciar subagentes. Para criação manual ou automação, você também pode adicionar arquivos de subagente diretamente.
 
@@ -196,7 +198,7 @@ O flag `--agents` aceita JSON com os mesmos campos de [frontmatter](#supported-f
   Por razões de segurança, subagentes de plugin não suportam os campos de frontmatter `hooks`, `mcpServers` ou `permissionMode`. Estes campos são ignorados ao carregar agentes de um plugin. Se você precisar deles, copie o arquivo do agente para `.claude/agents/` ou `~/.claude/agents/`. Você também pode adicionar regras a [`permissions.allow`](/pt/settings#permission-settings) em `settings.json` ou `settings.local.json`, mas estas regras se aplicam a toda a sessão, não apenas ao subagente do plugin.
 </Note>
 
-Definições de subagente de qualquer um desses escopos também estão disponíveis para [equipes de agentes](/pt/agent-teams#use-subagent-definitions-for-teammates): ao gerar um colega de trabalho, você pode referenciar um tipo de subagente e o colega de trabalho herda seu prompt de sistema, ferramentas e modelo.
+Definições de subagente de qualquer um desses escopos também estão disponíveis para [equipes de agentes](/pt/agent-teams#use-subagent-definitions-for-teammates): ao gerar um colega de trabalho, você pode referenciar um tipo de subagente e o colega de trabalho usa suas `tools` e `model`, com o corpo da definição anexado ao prompt de sistema do colega de trabalho como instruções adicionais. Veja [equipes de agentes](/pt/agent-teams#use-subagent-definitions-for-teammates) para quais campos de frontmatter se aplicam nesse caminho.
 
 ### Escrever arquivos de subagente
 
@@ -220,6 +222,8 @@ specific, actionable feedback on quality, security, and best practices.
 
 O frontmatter define os metadados e configuração do subagente. O corpo se torna o prompt de sistema que guia o comportamento do subagente. Subagentes recebem apenas este prompt de sistema (mais detalhes básicos de ambiente como diretório de trabalho), não o prompt de sistema completo do Claude Code.
 
+Um subagente começa no diretório de trabalho atual da conversa principal. Dentro de um subagente, comandos `cd` não persistem entre chamadas de ferramentas Bash ou PowerShell e não afetam o diretório de trabalho da conversa principal. Para dar ao subagente uma cópia isolada do repositório em vez disso, defina [`isolation: worktree`](#supported-frontmatter-fields).
+
 #### Campos de frontmatter suportados
 
 Os seguintes campos podem ser usados no frontmatter YAML. Apenas `name` e `description` são obrigatórios.
@@ -230,7 +234,7 @@ Os seguintes campos podem ser usados no frontmatter YAML. Apenas `name` e `descr
 | `description`     | Yes      | Quando Claude deve delegar para este subagente                                                                                                                                                                                                                                                                |
 | `tools`           | No       | [Ferramentas](#available-tools) que o subagente pode usar. Herda todas as ferramentas se omitido                                                                                                                                                                                                              |
 | `disallowedTools` | No       | Ferramentas a negar, removidas da lista herdada ou especificada                                                                                                                                                                                                                                               |
-| `model`           | No       | [Modelo](#choose-a-model) a usar: `sonnet`, `opus`, `haiku`, um ID de modelo completo (por exemplo, `claude-opus-4-6`), ou `inherit`. Padrão: `inherit`                                                                                                                                                       |
+| `model`           | No       | [Modelo](#choose-a-model) a usar: `sonnet`, `opus`, `haiku`, um ID de modelo completo (por exemplo, `claude-opus-4-7`), ou `inherit`. Padrão: `inherit`                                                                                                                                                       |
 | `permissionMode`  | No       | [Modo de permissão](#permission-modes): `default`, `acceptEdits`, `auto`, `dontAsk`, `bypassPermissions`, ou `plan`                                                                                                                                                                                           |
 | `maxTurns`        | No       | Número máximo de turnos de agente antes do subagente parar                                                                                                                                                                                                                                                    |
 | `skills`          | No       | [Skills](/pt/skills) a carregar no contexto do subagente na inicialização. O conteúdo completo da skill é injetado, não apenas disponibilizado para invocação. Subagentes não herdam skills da conversa pai                                                                                                   |
@@ -238,7 +242,7 @@ Os seguintes campos podem ser usados no frontmatter YAML. Apenas `name` e `descr
 | `hooks`           | No       | [Lifecycle hooks](#define-hooks-for-subagents) com escopo para este subagente                                                                                                                                                                                                                                 |
 | `memory`          | No       | [Escopo de memória persistente](#enable-persistent-memory): `user`, `project`, ou `local`. Habilita aprendizado entre sessões                                                                                                                                                                                 |
 | `background`      | No       | Defina como `true` para sempre executar este subagente como uma [tarefa em background](#run-subagents-in-foreground-or-background). Padrão: `false`                                                                                                                                                           |
-| `effort`          | No       | Nível de esforço quando este subagente está ativo. Sobrescreve o nível de esforço da sessão. Padrão: herda da sessão. Opções: `low`, `medium`, `high`, `max` (apenas Opus 4.6)                                                                                                                                |
+| `effort`          | No       | Nível de esforço quando este subagente está ativo. Sobrescreve o nível de esforço da sessão. Padrão: herda da sessão. Opções: `low`, `medium`, `high`, `xhigh`, `max`; os níveis disponíveis dependem do modelo                                                                                               |
 | `isolation`       | No       | Defina como `worktree` para executar o subagente em um [git worktree](/pt/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) temporário, dando-lhe uma cópia isolada do repositório. O worktree é automaticamente limpo se o subagente não fizer alterações                               |
 | `color`           | No       | Cor de exibição para o subagente na lista de tarefas e transcrição. Aceita `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, ou `cyan`                                                                                                                                                            |
 | `initialPrompt`   | No       | Auto-enviado como o primeiro turno do usuário quando este agente é executado como o agente da sessão principal (via `--agent` ou a configuração `agent`). [Comandos](/pt/commands) e [skills](/pt/skills) são processados. Preposto a qualquer prompt fornecido pelo usuário                                  |
@@ -248,7 +252,7 @@ Os seguintes campos podem ser usados no frontmatter YAML. Apenas `name` e `descr
 O campo `model` controla qual [modelo de IA](/pt/model-config) o subagente usa:
 
 * **Alias de modelo**: Use um dos aliases disponíveis: `sonnet`, `opus`, ou `haiku`
-* **ID de modelo completo**: Use um ID de modelo completo como `claude-opus-4-6` ou `claude-sonnet-4-6`. Aceita os mesmos valores que o flag `--model`
+* **ID de modelo completo**: Use um ID de modelo completo como `claude-opus-4-7` ou `claude-sonnet-4-6`. Aceita os mesmos valores que o flag `--model`
 * **inherit**: Use o mesmo modelo que a conversa principal
 * **Omitido**: Se não especificado, padrão é `inherit` (usa o mesmo modelo que a conversa principal)
 
@@ -344,20 +348,20 @@ Para manter um MCP server fora da conversa principal inteiramente e evitar que s
 
 O campo `permissionMode` controla como o subagente lida com prompts de permissão. Subagentes herdam o contexto de permissão da conversa principal e podem sobrescrever o modo, exceto quando o modo pai tem precedência conforme descrito abaixo.
 
-| Mode                | Behavior                                                                                                                     |
-| :------------------ | :--------------------------------------------------------------------------------------------------------------------------- |
-| `default`           | Verificação de permissão padrão com prompts                                                                                  |
-| `acceptEdits`       | Auto-aceitar edições de arquivo exceto em diretórios protegidos                                                              |
-| `auto`              | [Auto mode](/pt/permission-modes#eliminate-prompts-with-auto-mode): um classificador de IA avalia cada chamada de ferramenta |
-| `dontAsk`           | Auto-negar prompts de permissão (ferramentas explicitamente permitidas ainda funcionam)                                      |
-| `bypassPermissions` | Pular prompts de permissão                                                                                                   |
-| `plan`              | Plan mode (exploração somente leitura)                                                                                       |
+| Mode                | Behavior                                                                                                                                   |
+| :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------- |
+| `default`           | Verificação de permissão padrão com prompts                                                                                                |
+| `acceptEdits`       | Auto-aceitar edições de arquivo e comandos comuns do sistema de arquivos para caminhos no diretório de trabalho ou `additionalDirectories` |
+| `auto`              | [Auto mode](/pt/permission-modes#eliminate-prompts-with-auto-mode): um classificador de IA avalia cada chamada de ferramenta               |
+| `dontAsk`           | Auto-negar prompts de permissão (ferramentas explicitamente permitidas ainda funcionam)                                                    |
+| `bypassPermissions` | Pular prompts de permissão                                                                                                                 |
+| `plan`              | Plan mode (exploração somente leitura)                                                                                                     |
 
 <Warning>
   Use `bypassPermissions` com cuidado. Ele pula prompts de permissão, permitindo que o subagente execute operações sem aprovação. Escritas em diretórios `.git`, `.claude`, `.vscode`, `.idea` e `.husky` ainda solicitam confirmação, exceto para `.claude/commands`, `.claude/agents` e `.claude/skills`. Veja [modos de permissão](/pt/permission-modes#skip-all-checks-with-bypasspermissions-mode) para detalhes.
 </Warning>
 
-Se o pai usar `bypassPermissions`, isso tem precedência e não pode ser sobrescrito. Se o pai usar [auto mode](/pt/permission-modes#eliminate-prompts-with-auto-mode), o subagente herda auto mode e qualquer `permissionMode` em seu frontmatter é ignorado: o classificador avalia as chamadas de ferramentas do subagente com as mesmas regras de bloqueio e permissão que a sessão pai.
+Se o pai usar `bypassPermissions` ou `acceptEdits`, isso tem precedência e não pode ser sobrescrito. Se o pai usar [auto mode](/pt/permission-modes#eliminate-prompts-with-auto-mode), o subagente herda auto mode e qualquer `permissionMode` em seu frontmatter é ignorado: o classificador avalia as chamadas de ferramentas do subagente com as mesmas regras de bloqueio e permissão que a sessão pai.
 
 #### Pré-carregar skills em subagentes
 
@@ -376,6 +380,8 @@ Implement API endpoints. Follow the conventions and patterns from the preloaded 
 ```
 
 O conteúdo completo de cada skill é injetado no contexto do subagente, não apenas disponibilizado para invocação. Subagentes não herdam skills da conversa pai; você deve listá-las explicitamente.
+
+Você não pode pré-carregar skills que definem [`disable-model-invocation: true`](/pt/skills#control-who-invokes-a-skill), já que pré-carregar extrai do mesmo conjunto de skills que Claude pode invocar. Se uma skill listada estiver faltando ou desabilitada, Claude Code a ignora e registra um aviso no log de debug.
 
 <Note>
   Isto é o inverso de [executar uma skill em um subagente](/pt/skills#run-skills-in-a-subagent). Com `skills` em um subagente, o subagente controla o prompt de sistema e carrega conteúdo de skill. Com `context: fork` em uma skill, o conteúdo de skill é injetado no agente que você especificar. Ambos usam o mesmo sistema subjacente.
@@ -495,6 +501,10 @@ Subagentes podem definir [hooks](/pt/hooks) que são executados durante o ciclo 
 
 Defina hooks diretamente no arquivo markdown do subagente. Estes hooks são executados apenas enquanto esse subagente específico está ativo e são limpos quando termina.
 
+<Note>
+  Hooks de frontmatter disparam quando o agente é gerado como um subagente através da ferramenta Agent ou uma @-menção, e quando o agente é executado como a sessão principal via [`--agent`](#invoke-subagents-explicitly) ou a configuração `agent`. No caso de sessão principal, eles são executados junto com qualquer hook definido em [`settings.json`](/pt/hooks).
+</Note>
+
 Todos os [eventos de hook](/pt/hooks#hook-events) são suportados. Os eventos mais comuns para subagentes são:
 
 | Event         | Matcher input      | When it fires                                                                    |
@@ -523,7 +533,7 @@ hooks:
 ---
 ```
 
-Hooks `Stop` no frontmatter são automaticamente convertidos para eventos `SubagentStop`.
+Quando o agente é invocado como um subagente, hooks `Stop` no frontmatter são automaticamente convertidos para eventos `SubagentStop`.
 
 #### Hooks no nível do projeto para eventos de subagente
 
@@ -680,7 +690,7 @@ Use **subagentes** quando:
 
 Considere [Skills](/pt/skills) em vez disso quando você quer prompts reutilizáveis ou fluxos de trabalho que são executados no contexto da conversa principal em vez de contexto de subagente isolado.
 
-Para uma pergunta rápida sobre algo já em sua conversa, use [`/btw`](/pt/interactive-mode#side-questions-with-btw) em vez de um subagente. Ele vê seu contexto completo mas não tem acesso a ferramentas, e a resposta é descartada em vez de adicionada ao histórico.
+Para uma pergunta rápida sobre algo já em sua conversa, use [`/btw`](/pt/interactive-mode#side-questions-with-%2Fbtw) em vez de um subagente. Ele vê seu contexto completo mas não tem acesso a ferramentas, e a resposta é descartada em vez de adicionada ao histórico.
 
 <Note>
   Subagentes não podem gerar outros subagentes. Se seu fluxo de trabalho requer delegação aninhada, use [Skills](/pt/skills) ou [encadeie subagentes](#chain-subagents) da conversa principal.

@@ -14,7 +14,7 @@ Möchten Sie Plugins aus einem vorhandenen Marktplatz installieren? Siehe [Entde
 
 Das Erstellen und Verteilen eines Marktplatzes umfasst:
 
-1. **Plugins erstellen**: Erstellen Sie ein oder mehrere Plugins mit Befehlen, Agents, hooks, MCP servers oder LSP servers. Diese Anleitung setzt voraus, dass Sie bereits Plugins zum Verteilen haben; siehe [Plugins erstellen](/de/plugins) für Details zum Erstellen von Plugins.
+1. **Plugins erstellen**: Erstellen Sie ein oder mehrere Plugins mit skills, Agents, hooks, MCP servers oder LSP servers. Diese Anleitung setzt voraus, dass Sie bereits Plugins zum Verteilen haben; siehe [Plugins erstellen](/de/plugins) für Details zum Erstellen von Plugins.
 2. **Marktplatzdatei erstellen**: Definieren Sie eine `marketplace.json`, die Ihre Plugins und deren Speicherorte auflistet (siehe [Marktplatzdatei erstellen](#create-the-marketplace-file)).
 3. **Marktplatz hosten**: Pushen Sie zu GitHub, GitLab oder einem anderen Git-Host (siehe [Marktplätze hosten und verteilen](#host-and-distribute-marketplaces)).
 4. **Mit Benutzern teilen**: Benutzer fügen Ihren Marktplatz mit `/plugin marketplace add` hinzu und installieren einzelne Plugins (siehe [Plugins entdecken und installieren](/de/discover-plugins)).
@@ -95,7 +95,7 @@ Dieses Beispiel erstellt einen Marktplatz mit einem Plugin: ein `/quality-review
   </Step>
 
   <Step title="Probieren Sie es aus">
-    Wählen Sie etwas Code in Ihrem Editor aus und führen Sie Ihren neuen Befehl aus.
+    Wählen Sie etwas Code in Ihrem Editor aus und führen Sie Ihr neues skill aus.
 
     ```shell theme={null}
     /quality-review
@@ -108,7 +108,7 @@ Um mehr über die Möglichkeiten von Plugins zu erfahren, einschließlich hooks,
 <Note>
   **Wie Plugins installiert werden**: Wenn Benutzer ein Plugin installieren, kopiert Claude Code das Plugin-Verzeichnis an einen Cache-Speicherort. Das bedeutet, dass Plugins keine Dateien außerhalb ihres Verzeichnisses mit Pfaden wie `../shared-utils` referenzieren können, da diese Dateien nicht kopiert werden.
 
-  Wenn Sie Dateien über Plugins hinweg teilen müssen, verwenden Sie Symlinks (die während des Kopierens verfolgt werden). Siehe [Plugin-Caching und Dateiauflösung](/de/plugins-reference#plugin-caching-and-file-resolution) für Details.
+  Wenn Sie Dateien über Plugins hinweg teilen müssen, verwenden Sie Symlinks. Siehe [Plugin-Caching und Dateiauflösung](/de/plugins-reference#plugin-caching-and-file-resolution) für Details.
 </Note>
 
 ## Marktplatzdatei erstellen
@@ -167,13 +167,14 @@ Jeder Plugin-Eintrag benötigt mindestens einen `name` und eine `source` (wo man
 | `name`  | string | Ja           | Name des Betreuers oder Teams   |
 | `email` | string | Nein         | Kontakt-E-Mail für den Betreuer |
 
-### Optionale Metadaten
+### Optionale Felder
 
-| Feld                   | Typ    | Beschreibung                                                                                                                                                                                  |
-| :--------------------- | :----- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `metadata.description` | string | Kurze Marktplatzbeschreibung                                                                                                                                                                  |
-| `metadata.version`     | string | Marktplatz-Version                                                                                                                                                                            |
-| `metadata.pluginRoot`  | string | Basisverzeichnis, das relativen Plugin-Quellpfaden vorangestellt wird (z. B. `"./plugins"` ermöglicht es Ihnen, `"source": "formatter"` statt `"source": "./plugins/formatter"` zu schreiben) |
+| Feld                                  | Typ    | Beschreibung                                                                                                                                                                                                                                                                                                                 |
+| :------------------------------------ | :----- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `metadata.description`                | string | Kurze Marktplatzbeschreibung                                                                                                                                                                                                                                                                                                 |
+| `metadata.version`                    | string | Marktplatz-Version                                                                                                                                                                                                                                                                                                           |
+| `metadata.pluginRoot`                 | string | Basisverzeichnis, das relativen Plugin-Quellpfaden vorangestellt wird (z. B. `"./plugins"` ermöglicht es Ihnen, `"source": "formatter"` statt `"source": "./plugins/formatter"` zu schreiben)                                                                                                                                |
+| `allowCrossMarketplaceDependenciesOn` | array  | Andere Marktplätze, von denen Plugins in diesem Marktplatz abhängen können. Abhängigkeiten von einem Marktplatz, der hier nicht aufgelistet ist, werden bei der Installation blockiert. Siehe [Von einem Plugin aus einem anderen Marktplatz abhängen](/de/plugin-dependencies#depend-on-a-plugin-from-another-marketplace). |
 
 ## Plugin-Einträge
 
@@ -205,13 +206,14 @@ Jeder Plugin-Eintrag im `plugins`-Array beschreibt ein Plugin und wo man es find
 
 **Komponenten-Konfigurationsfelder:**
 
-| Feld         | Typ            | Beschreibung                                                    |
-| :----------- | :------------- | :-------------------------------------------------------------- |
-| `commands`   | string\|array  | Benutzerdefinierte Pfade zu Befehlsdateien oder -verzeichnissen |
-| `agents`     | string\|array  | Benutzerdefinierte Pfade zu Agent-Dateien                       |
-| `hooks`      | string\|object | Benutzerdefinierte hooks-Konfiguration oder Pfad zu hooks-Datei |
-| `mcpServers` | string\|object | MCP server-Konfigurationen oder Pfad zu MCP-Konfiguration       |
-| `lspServers` | string\|object | LSP server-Konfigurationen oder Pfad zu LSP-Konfiguration       |
+| Feld         | Typ            | Beschreibung                                                                      |
+| :----------- | :------------- | :-------------------------------------------------------------------------------- |
+| `skills`     | string\|array  | Benutzerdefinierte Pfade zu Skill-Verzeichnissen, die `<name>/SKILL.md` enthalten |
+| `commands`   | string\|array  | Benutzerdefinierte Pfade zu flachen `.md` Skill-Dateien oder Verzeichnissen       |
+| `agents`     | string\|array  | Benutzerdefinierte Pfade zu Agent-Dateien                                         |
+| `hooks`      | string\|object | Benutzerdefinierte hooks-Konfiguration oder Pfad zu hooks-Datei                   |
+| `mcpServers` | string\|object | MCP server-Konfigurationen oder Pfad zu MCP-Konfiguration                         |
+| `lspServers` | string\|object | LSP server-Konfigurationen oder Pfad zu LSP-Konfiguration                         |
 
 ## Plugin-Quellen
 
@@ -219,13 +221,13 @@ Plugin-Quellen teilen Claude Code mit, wo jedes einzelne Plugin in Ihrem Marktpl
 
 Sobald ein Plugin geklont oder auf den lokalen Computer kopiert wird, wird es in den lokalen versionierten Plugin-Cache unter `~/.claude/plugins/cache` kopiert.
 
-| Quelle         | Typ                              | Felder                             | Notizen                                                                                          |
-| -------------- | -------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Relativer Pfad | `string` (z. B. `"./my-plugin"`) | —                                  | Lokales Verzeichnis im Marktplatz-Repo. Muss mit `./` beginnen                                   |
-| `github`       | object                           | `repo`, `ref?`, `sha?`             |                                                                                                  |
-| `url`          | object                           | `url`, `ref?`, `sha?`              | Git-URL-Quelle                                                                                   |
-| `git-subdir`   | object                           | `url`, `path`, `ref?`, `sha?`      | Unterverzeichnis in einem Git-Repo. Klont sparsam, um die Bandbreite für Monorepos zu minimieren |
-| `npm`          | object                           | `package`, `version?`, `registry?` | Installiert über `npm install`                                                                   |
+| Quelle         | Typ                              | Felder                             | Notizen                                                                                                                                             |
+| -------------- | -------------------------------- | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Relativer Pfad | `string` (z. B. `"./my-plugin"`) | —                                  | Lokales Verzeichnis im Marktplatz-Repo. Muss mit `./` beginnen. Wird relativ zum Marktplatz-Root aufgelöst, nicht zum `.claude-plugin/`-Verzeichnis |
+| `github`       | object                           | `repo`, `ref?`, `sha?`             |                                                                                                                                                     |
+| `url`          | object                           | `url`, `ref?`, `sha?`              | Git-URL-Quelle                                                                                                                                      |
+| `git-subdir`   | object                           | `url`, `path`, `ref?`, `sha?`      | Unterverzeichnis in einem Git-Repo. Klont sparsam, um die Bandbreite für Monorepos zu minimieren                                                    |
+| `npm`          | object                           | `package`, `version?`, `registry?` | Installiert über `npm install`                                                                                                                      |
 
 <Note>
   **Marktplatz-Quellen vs. Plugin-Quellen**: Dies sind unterschiedliche Konzepte, die unterschiedliche Dinge steuern.
@@ -247,7 +249,7 @@ Für Plugins im selben Repository verwenden Sie einen Pfad, der mit `./` beginnt
 }
 ```
 
-Pfade werden relativ zum Marktplatz-Root aufgelöst, das ist das Verzeichnis, das `.claude-plugin/` enthält. Im obigen Beispiel verweist `./plugins/my-plugin` auf `<repo>/plugins/my-plugin`, obwohl `marketplace.json` unter `<repo>/.claude-plugin/marketplace.json` lebt. Verwenden Sie nicht `../`, um aus `.claude-plugin/` herauszuklettern.
+Pfade werden relativ zum Marktplatz-Root aufgelöst, das ist das Verzeichnis, das `.claude-plugin/` enthält. Im obigen Beispiel verweist `./plugins/my-plugin` auf `<repo>/plugins/my-plugin`, obwohl `marketplace.json` unter `<repo>/.claude-plugin/marketplace.json` lebt. Verwenden Sie nicht `../`, um Pfade außerhalb des Marktplatz-Root zu referenzieren.
 
 <Note>
   Relative Pfade funktionieren nur, wenn Benutzer Ihren Marktplatz über Git hinzufügen (GitHub, GitLab oder Git-URL). Wenn Benutzer Ihren Marktplatz über eine direkte URL zur `marketplace.json`-Datei hinzufügen, werden relative Pfade nicht korrekt aufgelöst. Verwenden Sie für URL-basierte Verteilung stattdessen GitHub-, npm- oder Git-URL-Quellen. Siehe [Fehlerbehebung](#plugins-with-relative-paths-fail-in-url-based-marketplaces) für Details.
@@ -462,7 +464,7 @@ Wichtige Dinge zu beachten:
 
 ### Strict Mode
 
-Das `strict`-Feld steuert, ob `plugin.json` die Autorität für Komponentendefinitionen ist (Befehle, Agents, hooks, skills, MCP servers, Ausgabestile).
+Das `strict`-Feld steuert, ob `plugin.json` die Autorität für Komponentendefinitionen ist (skills, Agents, hooks, MCP servers, Ausgabestile).
 
 | Wert              | Verhalten                                                                                                                                                                                  |
 | :---------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -471,8 +473,8 @@ Das `strict`-Feld steuert, ob `plugin.json` die Autorität für Komponentendefin
 
 **Wann jeder Modus verwendet werden sollte:**
 
-* **`strict: true`**: Das Plugin hat seine eigene `plugin.json` und verwaltet seine eigenen Komponenten. Der Marktplatz-Eintrag kann zusätzliche Befehle oder hooks hinzufügen. Dies ist der Standard und funktioniert für die meisten Plugins.
-* **`strict: false`**: Der Marktplatz-Betreiber möchte vollständige Kontrolle. Das Plugin-Repo stellt Rohdateien bereit, und der Marktplatz-Eintrag definiert, welche dieser Dateien als Befehle, Agents, hooks usw. verfügbar gemacht werden. Nützlich, wenn der Marktplatz die Komponenten eines Plugins anders strukturiert oder kuratiert als vom Plugin-Autor beabsichtigt.
+* **`strict: true`**: Das Plugin hat seine eigene `plugin.json` und verwaltet seine eigenen Komponenten. Der Marktplatz-Eintrag kann zusätzliche skills oder hooks hinzufügen. Dies ist der Standard und funktioniert für die meisten Plugins.
+* **`strict: false`**: Der Marktplatz-Betreiber möchte vollständige Kontrolle. Das Plugin-Repo stellt Rohdateien bereit, und der Marktplatz-Eintrag definiert, welche dieser Dateien als skills, Agents, hooks usw. verfügbar gemacht werden. Nützlich, wenn der Marktplatz die Komponenten eines Plugins anders strukturiert oder kuratiert als vom Plugin-Autor beabsichtigt.
 
 ## Marktplätze hosten und verteilen
 
@@ -496,7 +498,7 @@ Jeder Git-Hosting-Service funktioniert, wie GitLab, Bitbucket und selbstgehostet
 
 ### Private Repositories
 
-Claude Code unterstützt die Installation von Plugins aus privaten Repositories. Für manuelle Installation und Updates verwendet Claude Code Ihre vorhandenen Git-Credential-Helper. Wenn `git clone` für ein privates Repository in Ihrem Terminal funktioniert, funktioniert es auch in Claude Code. Häufige Credential-Helper sind `gh auth login` für GitHub, macOS Keychain und `git-credential-store`.
+Claude Code unterstützt die Installation von Plugins aus privaten Repositories. Für manuelle Installation und Updates verwendet Claude Code Ihre vorhandenen Git-Credential-Helper, daher funktioniert HTTPS-Zugriff über `gh auth login`, macOS Keychain oder `git-credential-store` genauso wie in Ihrem Terminal. SSH-Zugriff funktioniert, solange der Host bereits in Ihrer `known_hosts`-Datei vorhanden ist und der Schlüssel in `ssh-agent` geladen ist, da Claude Code interaktive SSH-Eingabeaufforderungen für den Host-Fingerprint und die Schlüsselpassphrase unterdrückt.
 
 Hintergrund-Auto-Updates werden beim Start ohne Credential-Helper ausgeführt, da interaktive Eingabeaufforderungen Claude Code am Start hindern würden. Um Auto-Updates für private Marktplätze zu aktivieren, legen Sie das entsprechende Authentifizierungstoken in Ihrer Umgebung fest:
 
@@ -576,7 +578,16 @@ $CLAUDE_CODE_PLUGIN_SEED_DIR/
   cache/<marketplace>/<plugin>/<version>/...
 ```
 
-Der einfachste Weg, ein Seed-Verzeichnis zu erstellen, ist, Claude Code einmal während des Image-Builds auszuführen, die benötigten Plugins zu installieren, dann das resultierende `~/.claude/plugins`-Verzeichnis in Ihr Image zu kopieren und `CLAUDE_CODE_PLUGIN_SEED_DIR` darauf zu verweisen.
+Um ein Seed-Verzeichnis zu erstellen, führen Sie Claude Code einmal während des Image-Builds aus, installieren Sie die benötigten Plugins, kopieren Sie dann das resultierende `~/.claude/plugins`-Verzeichnis in Ihr Image und verweisen Sie `CLAUDE_CODE_PLUGIN_SEED_DIR` darauf.
+
+Um den Kopierungsschritt zu überspringen, legen Sie `CLAUDE_CODE_PLUGIN_CACHE_DIR` während des Builds auf Ihren Ziel-Seed-Pfad fest, damit Plugins direkt dort installiert werden:
+
+```bash theme={null}
+CLAUDE_CODE_PLUGIN_CACHE_DIR=/opt/claude-seed claude plugin marketplace add your-org/plugins
+CLAUDE_CODE_PLUGIN_CACHE_DIR=/opt/claude-seed claude plugin install my-tool@your-plugins
+```
+
+Legen Sie dann `CLAUDE_CODE_PLUGIN_SEED_DIR=/opt/claude-seed` in der Laufzeitumgebung Ihres Containers fest, damit Claude Code beim Start aus dem Seed liest.
 
 Beim Start registriert Claude Code Marktplätze, die in der Seed-Datei `known_marketplaces.json` gefunden werden, in der primären Konfiguration und verwendet Plugin-Caches, die unter `cache/` gefunden werden, ohne erneut zu klonen. Dies funktioniert sowohl im interaktiven Modus als auch im nicht-interaktiven Modus mit dem `-p`-Flag.
 
@@ -585,6 +596,7 @@ Verhaltensdetails:
 * **Schreibgeschützt**: Das Seed-Verzeichnis wird nie geschrieben. Auto-Updates sind für Seed-Marktplätze deaktiviert, da git pull auf einem schreibgeschützten Dateisystem fehlschlagen würde.
 * **Seed-Einträge haben Vorrang**: Marktplätze, die in der Seed deklariert sind, überschreiben alle übereinstimmenden Einträge in der Benutzerkonfiguration bei jedem Start. Um sich von einem Seed-Plugin abzumelden, verwenden Sie `/plugin disable`, anstatt den Marktplatz zu entfernen.
 * **Pfadauflösung**: Claude Code lokalisiert Marktplatz-Inhalte, indem es `$CLAUDE_CODE_PLUGIN_SEED_DIR/marketplaces/<name>/` zur Laufzeit durchsucht, nicht indem es Pfaden vertraut, die in der Seed-JSON gespeichert sind. Dies bedeutet, dass die Seed korrekt funktioniert, auch wenn sie an einem anderen Pfad als dort, wo sie erstellt wurde, bereitgestellt wird.
+* **Mutation ist blockiert**: Das Ausführen von `/plugin marketplace remove` oder `/plugin marketplace update` gegen einen Seed-verwalteten Marktplatz schlägt mit Anleitung fehl, um Ihren Administrator zu bitten, das Seed-Image zu aktualisieren.
 * **Komponiert mit Einstellungen**: Wenn `extraKnownMarketplaces` oder `enabledPlugins` einen Marktplatz deklarieren, der bereits in der Seed vorhanden ist, verwendet Claude Code die Seed-Kopie, anstatt zu klonen.
 
 ### Verwaltete Marktplatz-Einschränkungen
@@ -789,6 +801,115 @@ Installieren Sie ein Test-Plugin, um zu überprüfen, ob alles funktioniert:
 ```
 
 Für vollständige Plugin-Test-Workflows siehe [Testen Sie Ihre Plugins lokal](/de/plugins#test-your-plugins-locally). Für technische Fehlerbehebung siehe [Plugins-Referenz](/de/plugins-reference).
+
+## Verwalten Sie Marktplätze über die CLI
+
+Claude Code bietet nicht-interaktive `claude plugin marketplace` Unterbefehle zum Scripting und zur Automatisierung. Diese entsprechen den `/plugin marketplace` Befehlen, die in einer interaktiven Sitzung verfügbar sind.
+
+### Plugin marketplace add
+
+Fügen Sie einen Marktplatz aus einem GitHub-Repository, einer Git-URL, einer Remote-URL oder einem lokalen Pfad hinzu.
+
+```bash theme={null}
+claude plugin marketplace add <source> [options]
+```
+
+**Argumente:**
+
+* `<source>`: GitHub `owner/repo` Kurzform, Git-URL, Remote-URL zu einer `marketplace.json`-Datei oder lokaler Verzeichnispfad. Um an einen Branch oder Tag anzuheften, fügen Sie `@ref` zur GitHub-Kurzform oder `#ref` zu einer Git-URL hinzu
+
+**Optionen:**
+
+| Option                | Beschreibung                                                                                                                                                     | Standard |
+| :-------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------- |
+| `--scope <scope>`     | Wo der Marktplatz deklariert werden soll: `user`, `project` oder `local`. Siehe [Plugin-Installationsbereiche](/de/plugins-reference#plugin-installation-scopes) | `user`   |
+| `--sparse <paths...>` | Begrenzen Sie den Checkout auf bestimmte Verzeichnisse über git sparse-checkout. Nützlich für Monorepos                                                          |          |
+
+Fügen Sie einen Marktplatz aus GitHub mit `owner/repo` Kurzform hinzu:
+
+```bash theme={null}
+claude plugin marketplace add acme-corp/claude-plugins
+```
+
+Heften Sie an einen bestimmten Branch oder Tag mit `@ref` an:
+
+```bash theme={null}
+claude plugin marketplace add acme-corp/claude-plugins@v2.0
+```
+
+Fügen Sie von einer Git-URL auf einem nicht-GitHub-Host hinzu:
+
+```bash theme={null}
+claude plugin marketplace add https://gitlab.example.com/team/plugins.git
+```
+
+Fügen Sie von einer Remote-URL hinzu, die die `marketplace.json`-Datei direkt bereitstellt:
+
+```bash theme={null}
+claude plugin marketplace add https://example.com/marketplace.json
+```
+
+Fügen Sie von einem lokalen Verzeichnis zum Testen hinzu:
+
+```bash theme={null}
+claude plugin marketplace add ./my-marketplace
+```
+
+Deklarieren Sie den Marktplatz im Projektbereich, damit er mit Ihrem Team über `.claude/settings.json` geteilt wird:
+
+```bash theme={null}
+claude plugin marketplace add acme-corp/claude-plugins --scope project
+```
+
+Für ein Monorepo begrenzen Sie den Checkout auf die Verzeichnisse, die Plugin-Inhalte enthalten:
+
+```bash theme={null}
+claude plugin marketplace add acme-corp/monorepo --sparse .claude-plugin plugins
+```
+
+### Plugin marketplace list
+
+Listet alle konfigurierten Marktplätze auf.
+
+```bash theme={null}
+claude plugin marketplace list [options]
+```
+
+**Optionen:**
+
+| Option   | Beschreibung     |
+| :------- | :--------------- |
+| `--json` | Ausgabe als JSON |
+
+### Plugin marketplace remove
+
+Entfernen Sie einen konfigurierten Marktplatz. Der Alias `rm` wird auch akzeptiert.
+
+```bash theme={null}
+claude plugin marketplace remove <name>
+```
+
+**Argumente:**
+
+* `<name>`: Marktplatz-Name zum Entfernen, wie von `claude plugin marketplace list` angezeigt. Dies ist der `name` aus `marketplace.json`, nicht die Quelle, die Sie an `add` übergeben haben
+
+<Warning>
+  Das Entfernen eines Marktplatzes deinstalliert auch alle Plugins, die Sie von ihm installiert haben. Um einen Marktplatz zu aktualisieren, ohne installierte Plugins zu verlieren, verwenden Sie stattdessen `claude plugin marketplace update`.
+</Warning>
+
+### Plugin marketplace update
+
+Aktualisieren Sie Marktplätze von ihren Quellen, um neue Plugins und Versionsänderungen abzurufen.
+
+```bash theme={null}
+claude plugin marketplace update [name]
+```
+
+**Argumente:**
+
+* `[name]`: Marktplatz-Name zum Aktualisieren, wie von `claude plugin marketplace list` angezeigt. Aktualisiert alle Marktplätze, wenn weggelassen
+
+Sowohl `remove` als auch `update` schlagen fehl, wenn sie gegen einen Seed-verwalteten Marktplatz ausgeführt werden, der schreibgeschützt ist. Beim Aktualisieren aller Marktplätze werden Seed-verwaltete Einträge übersprungen und andere Marktplätze werden weiterhin aktualisiert. Um Seed-bereitgestellte Plugins zu ändern, bitten Sie Ihren Administrator, das Seed-Image zu aktualisieren. Siehe [Plugins für Container vorab ausfüllen](#pre-populate-plugins-for-containers).
 
 ## Fehlerbehebung
 

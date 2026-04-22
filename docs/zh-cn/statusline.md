@@ -62,6 +62,8 @@
 
 可选的 `padding` 字段为状态行内容添加额外的水平间距（以字符为单位）。默认为 `0`。此填充是在界面的内置间距之外的，所以它控制相对缩进而不是距离终端边缘的绝对距离。
 
+可选的 `refreshInterval` 字段除了[事件驱动的更新](#how-status-lines-work)外，每 N 秒重新运行一次你的命令。最小值为 `1`。当你的状态行显示基于时间的数据（如时钟）或后台子代理在主会话空闲时更改 git 状态时，设置此选项。如果不设置，则仅在事件上运行。
+
 ### 禁用状态行
 
 运行 `/statusline` 并要求它删除或清除你的状态行（例如，`/statusline delete`、`/statusline clear`、`/statusline remove it`）。你也可以手动从 settings.json 中删除 `statusLine` 字段。
@@ -132,6 +134,8 @@ Claude Code 运行你的脚本并通过 stdin 向其传输[JSON 会话数据](#a
 
 你的脚本在每条新的助手消息之后、权限模式更改时或 vim 模式切换时运行。更新在 300ms 处进行防抖，这意味着快速更改会批处理在一起，你的脚本在事情稳定后运行一次。如果在你的脚本仍在运行时触发新的更新，则会取消正在进行的执行。如果你编辑你的脚本，更改在 Claude Code 的下一次交互触发更新之前不会出现。
 
+这些触发器在主会话空闲时可能会安静，例如当协调器等待后台子代理时。为了在空闲期间保持基于时间或外部来源的段的最新状态，将 [`refreshInterval`](#manually-configure-a-status-line) 设置为也在固定计时器上重新运行命令。
+
 **你的脚本可以输出什么**
 
 * **多行**：每个 `echo` 或 `print` 语句显示为单独的行。请参阅[多行示例](#display-multiple-lines)。
@@ -144,36 +148,37 @@ Claude Code 运行你的脚本并通过 stdin 向其传输[JSON 会话数据](#a
 
 Claude Code 通过 stdin 向你的脚本发送以下 JSON 字段：
 
-| 字段                                                                               | 描述                                                                                  |
-| -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `model.id`, `model.display_name`                                                 | 当前模型标识符和显示名称                                                                        |
-| `cwd`, `workspace.current_dir`                                                   | 当前工作目录。两个字段包含相同的值；为了与 `workspace.project_dir` 保持一致，首选 `workspace.current_dir`。      |
-| `workspace.project_dir`                                                          | 启动 Claude Code 的目录，如果在会话期间工作目录更改，可能与 `cwd` 不同                                       |
-| `workspace.added_dirs`                                                           | 通过 `/add-dir` 或 `--add-dir` 添加的其他目录。如果未添加任何目录，则为空数组                                 |
-| `cost.total_cost_usd`                                                            | 总会话成本（美元）                                                                           |
-| `cost.total_duration_ms`                                                         | 自会话开始以来的总挂钟时间（毫秒）                                                                   |
-| `cost.total_api_duration_ms`                                                     | 等待 API 响应的总时间（毫秒）                                                                   |
-| `cost.total_lines_added`, `cost.total_lines_removed`                             | 更改的代码行数                                                                             |
-| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | 整个会话中的累积令牌计数                                                                        |
-| `context_window.context_window_size`                                             | 最大上下文窗口大小（令牌）。默认为 200000，或对于具有扩展上下文的模型为 1000000。                                    |
-| `context_window.used_percentage`                                                 | 预计算的已使用上下文窗口百分比                                                                     |
-| `context_window.remaining_percentage`                                            | 预计算的剩余上下文窗口百分比                                                                      |
-| `context_window.current_usage`                                                   | 来自最后一次 API 调用的令牌计数，在[上下文窗口字段](#context-window-fields)中描述                            |
-| `exceeds_200k_tokens`                                                            | 最近一次 API 响应中的总令牌计数（输入、缓存和输出令牌合并）是否超过 200k。这是一个固定阈值，与实际上下文窗口大小无关。                    |
-| `rate_limits.five_hour.used_percentage`, `rate_limits.seven_day.used_percentage` | 消耗的 5 小时或 7 天速率限制的百分比，从 0 到 100                                                     |
-| `rate_limits.five_hour.resets_at`, `rate_limits.seven_day.resets_at`             | Unix 纪元秒，当 5 小时或 7 天速率限制窗口重置时                                                       |
-| `session_id`                                                                     | 唯一的会话标识符                                                                            |
-| `session_name`                                                                   | 使用 `--name` 标志或 `/rename` 设置的自定义会话名称。如果未设置自定义名称，则不存在                                |
-| `transcript_path`                                                                | 对话记录文件的路径                                                                           |
-| `version`                                                                        | Claude Code 版本                                                                      |
-| `output_style.name`                                                              | 当前输出样式的名称                                                                           |
-| `vim.mode`                                                                       | 启用[vim 模式](/zh-CN/interactive-mode#vim-editor-mode)时的当前 vim 模式（`NORMAL` 或 `INSERT`） |
-| `agent.name`                                                                     | 使用 `--agent` 标志或配置的代理设置运行时的代理名称                                                     |
-| `worktree.name`                                                                  | 活跃 worktree 的名称。仅在 `--worktree` 会话期间出现                                              |
-| `worktree.path`                                                                  | worktree 目录的绝对路径                                                                    |
-| `worktree.branch`                                                                | worktree 的 Git 分支名称（例如，`"worktree-my-feature"`）。对于基于钩子的 worktree 不存在                |
-| `worktree.original_cwd`                                                          | Claude 进入 worktree 之前所在的目录                                                          |
-| `worktree.original_branch`                                                       | 进入 worktree 之前检出的 Git 分支。对于基于钩子的 worktree 不存在                                       |
+| 字段                                                                               | 描述                                                                                                                                   |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `model.id`, `model.display_name`                                                 | 当前模型标识符和显示名称                                                                                                                         |
+| `cwd`, `workspace.current_dir`                                                   | 当前工作目录。两个字段包含相同的值；为了与 `workspace.project_dir` 保持一致，首选 `workspace.current_dir`。                                                       |
+| `workspace.project_dir`                                                          | 启动 Claude Code 的目录，如果在会话期间工作目录更改，可能与 `cwd` 不同                                                                                        |
+| `workspace.added_dirs`                                                           | 通过 `/add-dir` 或 `--add-dir` 添加的其他目录。如果未添加任何目录，则为空数组                                                                                  |
+| `workspace.git_worktree`                                                         | 当前目录在使用 `git worktree add` 创建的链接 worktree 内时的 Git worktree 名称。在主工作树中不存在。对于任何 git worktree 都会填充，不同于仅适用于 `--worktree` 会话的 `worktree.*` |
+| `cost.total_cost_usd`                                                            | 以美元计的估计会话成本，在客户端计算。可能与你的实际账单不同                                                                                                       |
+| `cost.total_duration_ms`                                                         | 自会话开始以来的总挂钟时间（毫秒）                                                                                                                    |
+| `cost.total_api_duration_ms`                                                     | 等待 API 响应的总时间（毫秒）                                                                                                                    |
+| `cost.total_lines_added`, `cost.total_lines_removed`                             | 更改的代码行数                                                                                                                              |
+| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | 整个会话中的累积令牌计数                                                                                                                         |
+| `context_window.context_window_size`                                             | 最大上下文窗口大小（令牌）。默认为 200000，或对于具有扩展上下文的模型为 1000000。                                                                                     |
+| `context_window.used_percentage`                                                 | 预计算的已使用上下文窗口百分比                                                                                                                      |
+| `context_window.remaining_percentage`                                            | 预计算的剩余上下文窗口百分比                                                                                                                       |
+| `context_window.current_usage`                                                   | 来自最后一次 API 调用的令牌计数，在[上下文窗口字段](#context-window-fields)中描述                                                                             |
+| `exceeds_200k_tokens`                                                            | 最近一次 API 响应中的总令牌计数（输入、缓存和输出令牌合并）是否超过 200k。这是一个固定阈值，与实际上下文窗口大小无关。                                                                     |
+| `rate_limits.five_hour.used_percentage`, `rate_limits.seven_day.used_percentage` | 消耗的 5 小时或 7 天速率限制的百分比，从 0 到 100                                                                                                      |
+| `rate_limits.five_hour.resets_at`, `rate_limits.seven_day.resets_at`             | Unix 纪元秒，当 5 小时或 7 天速率限制窗口重置时                                                                                                        |
+| `session_id`                                                                     | 唯一的会话标识符                                                                                                                             |
+| `session_name`                                                                   | 使用 `--name` 标志或 `/rename` 设置的自定义会话名称。如果未设置自定义名称，则不存在                                                                                 |
+| `transcript_path`                                                                | 对话记录文件的路径                                                                                                                            |
+| `version`                                                                        | Claude Code 版本                                                                                                                       |
+| `output_style.name`                                                              | 当前输出样式的名称                                                                                                                            |
+| `vim.mode`                                                                       | 启用[vim 模式](/zh-CN/interactive-mode#vim-editor-mode)时的当前 vim 模式（`NORMAL` 或 `INSERT`）                                                  |
+| `agent.name`                                                                     | 使用 `--agent` 标志或配置的代理设置运行时的代理名称                                                                                                      |
+| `worktree.name`                                                                  | 活跃 worktree 的名称。仅在 `--worktree` 会话期间出现                                                                                               |
+| `worktree.path`                                                                  | worktree 目录的绝对路径                                                                                                                     |
+| `worktree.branch`                                                                | worktree 的 Git 分支名称（例如，`"worktree-my-feature"`）。对于基于钩子的 worktree 不存在                                                                 |
+| `worktree.original_cwd`                                                          | Claude 进入 worktree 之前所在的目录                                                                                                           |
+| `worktree.original_branch`                                                       | 进入 worktree 之前检出的 Git 分支。对于基于钩子的 worktree 不存在                                                                                        |
 
 <Accordion title="完整 JSON 架构">
   你的状态行命令通过 stdin 接收此 JSON 结构：
@@ -185,13 +190,14 @@ Claude Code 通过 stdin 向你的脚本发送以下 JSON 字段：
     "session_name": "my-session",
     "transcript_path": "/path/to/transcript.jsonl",
     "model": {
-      "id": "claude-opus-4-6",
+      "id": "claude-opus-4-7",
       "display_name": "Opus"
     },
     "workspace": {
       "current_dir": "/current/working/directory",
       "project_dir": "/original/project/directory",
-      "added_dirs": []
+      "added_dirs": [],
+      "git_worktree": "feature-xyz"
     },
     "version": "2.1.90",
     "output_style": {
@@ -247,6 +253,7 @@ Claude Code 通过 stdin 向你的脚本发送以下 JSON 字段：
   **可能不存在的字段**（不在 JSON 中）：
 
   * `session_name`：仅在使用 `--name` 或 `/rename` 设置自定义名称时出现
+  * `workspace.git_worktree`：仅当当前目录在链接的 git worktree 内时出现
   * `vim`：仅在启用 vim 模式时出现
   * `agent`：仅在使用 `--agent` 标志或配置的代理设置运行时出现
   * `worktree`：仅在 `--worktree` 会话期间出现。当存在时，`branch` 和 `original_branch` 对于基于钩子的 worktree 也可能不存在
@@ -453,7 +460,7 @@ Bash 示例使用 [`jq`](https://jqlang.github.io/jq/) 来解析 JSON。Python �
 
 ### 成本和持续时间跟踪
 
-跟踪你的会话的 API 成本和经过的时间。`cost.total_cost_usd` 字段累积当前会话中所有 API 调用的成本。`cost.total_duration_ms` 字段测量自会话开始以来的总经过时间，而 `cost.total_api_duration_ms` 仅跟踪等待 API 响应的时间。
+跟踪你的会话的 API 成本和经过的时间。`cost.total_cost_usd` 字段累积当前会话中所有 API 调用的估计成本。`cost.total_duration_ms` 字段测量自会话开始以来的总经过时间，而 `cost.total_api_duration_ms` 仅跟踪等待 API 响应的时间。
 
 每个脚本将成本格式化为货币并将毫秒转换为分钟和秒：
 
@@ -769,7 +776,7 @@ Bash 示例使用 [`jq`](https://jqlang.github.io/jq/) 来解析 JSON。Python �
 
 你的状态行脚本在活跃会话期间频繁运行。像 `git status` 或 `git diff` 这样的命令可能很慢，特别是在大型存储库中。此示例将 git 信息缓存到临时文件，并仅每 5 秒刷新一次。
 
-为缓存文件使用稳定的固定文件名，如 `/tmp/statusline-git-cache`。每个状态行调用作为新进程运行，所以基于进程的标识符如 `$$`、`os.getpid()` 或 `process.pid` 每次都产生不同的值，缓存永远不会被重用。
+缓存文件名需要在会话内的状态行调用中保持稳定，但在会话之间是唯一的，以便不同存储库中的并发会话不会读取彼此的缓存 git 状态。基于进程的标识符如 `$$`、`os.getpid()` 或 `process.pid` 在每次调用时都会改变，会破坏缓存。改用 JSON 输入中的 `session_id`：它在会话的生命周期内是稳定的，并且对每个会话是唯一的。
 
 每个脚本在运行 git 命令之前检查缓存文件是否缺失或早于 5 秒：
 
@@ -780,8 +787,9 @@ Bash 示例使用 [`jq`](https://jqlang.github.io/jq/) 来解析 JSON。Python �
 
   MODEL=$(echo "$input" | jq -r '.model.display_name')
   DIR=$(echo "$input" | jq -r '.workspace.current_dir')
+  SESSION_ID=$(echo "$input" | jq -r '.session_id')
 
-  CACHE_FILE="/tmp/statusline-git-cache"
+  CACHE_FILE="/tmp/statusline-git-cache-$SESSION_ID"
   CACHE_MAX_AGE=5  # seconds
 
   cache_is_stale() {
@@ -817,8 +825,9 @@ Bash 示例使用 [`jq`](https://jqlang.github.io/jq/) 来解析 JSON。Python �
   data = json.load(sys.stdin)
   model = data['model']['display_name']
   directory = os.path.basename(data['workspace']['current_dir'])
+  session_id = data['session_id']
 
-  CACHE_FILE = "/tmp/statusline-git-cache"
+  CACHE_FILE = f"/tmp/statusline-git-cache-{session_id}"
   CACHE_MAX_AGE = 5  # seconds
 
   def cache_is_stale():
@@ -861,8 +870,9 @@ Bash 示例使用 [`jq`](https://jqlang.github.io/jq/) 来解析 JSON。Python �
       const data = JSON.parse(input);
       const model = data.model.display_name;
       const dir = path.basename(data.workspace.current_dir);
+      const sessionId = data.session_id;
 
-      const CACHE_FILE = '/tmp/statusline-git-cache';
+      const CACHE_FILE = `/tmp/statusline-git-cache-${sessionId}`;
       const CACHE_MAX_AGE = 5; // seconds
 
       const cacheIsStale = () => {
@@ -944,9 +954,28 @@ Bash 示例使用 [`jq`](https://jqlang.github.io/jq/) 来解析 JSON。Python �
   ```
 </CodeGroup>
 
+## 子代理状态行
+
+`subagentStatusLine` 设置为代理面板中显示的每个[子代理](/zh-CN/sub-agents)呈现自定义行体。使用它来替换默认的 `name · description · token count` 行为你自己的格式。
+
+```json theme={null}
+{
+  "subagentStatusLine": {
+    "type": "command",
+    "command": "~/.claude/subagent-statusline.sh"
+  }
+}
+```
+
+该命令在每个刷新周期运行一次，所有可见的子代理行作为单个 JSON 对象传递到 stdin。输入包括[基本钩子字段](/zh-CN/hooks#common-input-fields)加上 `columns`（可用行宽）和 `tasks` 数组，其中每个任务有 `id`、`name`、`type`、`status`、`description`、`label`、`startTime`、`tokenCount`、`tokenSamples` 和 `cwd`。
+
+将一个 JSON 行写入 stdout，用于你想覆盖的每一行，形式为 `{"id": "<task id>", "content": "<row body>"}` 。`content` 字符串按原样呈现，包括 ANSI 颜色和 OSC 8 超链接。省略任务的 `id` 以保持该行的默认呈现；发出空 `content` 字符串以隐藏它。
+
+适用于 `statusLine` 的相同信任和 `disableAllHooks` 门控也适用于此处。插件可以在其[`settings.json`](/zh-CN/plugins-reference#standard-plugin-layout)中提供默认的 `subagentStatusLine`。
+
 ## 提示
 
-* **使用模拟输入测试**：`echo '{"model":{"display_name":"Opus"},"context_window":{"used_percentage":25}}' | ./statusline.sh`
+* **使用模拟输入测试**：`echo '{"model":{"display_name":"Opus"},"workspace":{"current_dir":"/home/user/project"},"context_window":{"used_percentage":25},"session_id":"test-session-abc"}' | ./statusline.sh`
 * **保持输出简短**：状态栏的宽度有限，所以长输出可能会被截断或换行不当
 * **缓存慢速操作**：你的脚本在活跃会话期间频繁运行，所以像 `git status` 这样的命令可能会导致延迟。请参阅[缓存示例](#cache-expensive-operations)了解如何处理这个问题。
 
@@ -978,8 +1007,23 @@ Bash 示例使用 [`jq`](https://jqlang.github.io/jq/) 来解析 JSON。Python �
 **OSC 8 链接不可点击**
 
 * 验证你的终端支持 OSC 8 超链接（iTerm2、Kitty、WezTerm）
+
 * Terminal.app 不支持可点击链接
+
+* 如果链接文本出现但不可点击，Claude Code 可能未检测到你的终端中的超链接支持。这通常影响 Windows Terminal 和其他不在自动检测列表中的模拟器。在启动 Claude Code 之前设置 `FORCE_HYPERLINK` 环境变量以覆盖检测：
+
+  ```bash theme={null}
+  FORCE_HYPERLINK=1 claude
+  ```
+
+  在 PowerShell 中，首先在当前会话中设置变量：
+
+  ```powershell theme={null}
+  $env:FORCE_HYPERLINK = "1"; claude
+  ```
+
 * SSH 和 tmux 会话可能根据配置剥离 OSC 序列
+
 * 如果转义序列显示为文字文本，如 `\e]8;;`，使用 `printf '%b'` 而不是 `echo -e` 以获得更可靠的转义处理
 
 **转义序列显示故障**
@@ -1002,6 +1046,6 @@ Bash 示例使用 [`jq`](https://jqlang.github.io/jq/) 来解析 JSON。Python �
 
 **通知共享状态行行**
 
-* 系统通知，如 MCP 服务器错误、自动更新和令牌警告，显示在与你的状态行相同行的右侧
+* 系统通知，如 MCP 服务器错误和自动更新，显示在与你的状态行相同行的右侧。临时通知，如上下文低警告，也会循环通过此区域。
 * 启用详细模式会向此区域添加令牌计数器
 * 在窄终端上，这些通知可能会截断你的状态行输出

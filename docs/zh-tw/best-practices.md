@@ -20,7 +20,7 @@ Claude Code 是一個代理式編碼環境。與等待回答問題的聊天機�
 
 Claude 的 context window 保存您的整個對話，包括每條消息、Claude 讀取的每個文件和每個命令輸出。但是，這可能會很快填滿。單個調試會話或代碼庫探索可能會生成並消耗數萬個令牌。
 
-這很重要，因為隨著 context 填滿，LLM 性能會下降。當 context window 即將滿時，Claude 可能會開始「遺忘」早期的指令或犯更多錯誤。context window 是最重要的資源來管理。使用 [自定義狀態行](/zh-TW/statusline) 持續跟蹤 context 使用情況，並查看 [減少令牌使用](/zh-TW/costs#reduce-token-usage) 以了解減少令牌使用的策略。
+這很重要，因為隨著 context 填滿，LLM 性能會下降。當 context window 即將滿時，Claude 可能會開始「遺忘」早期的指令或犯更多錯誤。context window 是最重要的資源來管理。要查看會話在實踐中如何填滿，請 [觀看互動式演練](/zh-TW/context-window)，了解啟動時加載的內容以及每次文件讀取的成本。使用 [自定義狀態行](/zh-TW/statusline) 持續跟蹤 context 使用情況，並查看 [減少令牌使用](/zh-TW/costs#reduce-token-usage) 以了解減少令牌使用的策略。
 
 ***
 
@@ -196,6 +196,7 @@ See @README.md for project overview and @package.json for available npm commands
 
 * **主文件夾（`~/.claude/CLAUDE.md`）**：適用於所有 Claude 會話
 * **項目根目錄（`./CLAUDE.md`）**：簽入 git 以與您的團隊共享
+* **項目根目錄（`./CLAUDE.local.md`）**：個人項目特定的筆記；將此文件添加到您的 `.gitignore`，以便不與您的團隊共享
 * **父目錄**：對於 monorepos 很有用，其中 `root/CLAUDE.md` 和 `root/foo/CLAUDE.md` 都會自動拉入
 * **子目錄**：當在這些目錄中的文件上工作時，Claude 按需拉入子 CLAUDE.md 文件
 

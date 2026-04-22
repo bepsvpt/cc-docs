@@ -85,7 +85,7 @@ Claude Code 使用**作用域系统**来确定配置应用的位置以及与谁�
 
   * **服务器管理的设置**：通过 Claude.ai 管理员控制台从 Anthropic 的服务器交付。请参阅[服务器管理的设置](/zh-CN/server-managed-settings)。
   * **MDM/OS 级别策略**：通过 macOS 和 Windows 上的本机设备管理交付：
-    * macOS：`com.anthropic.claudecode` managed preferences 域（通过 Jamf、Iru (Kandji) 或其他 MDM 工具中的配置文件部署）
+    * macOS：`com.anthropic.claudecode` managed preferences 域。plist 的顶级键镜像 `managed-settings.json`，嵌套设置为字典，数组为 plist 数组。通过 Jamf、Iru (Kandji) 或类似 MDM 工具中的配置文件部署。
     * Windows：`HKLM\SOFTWARE\Policies\ClaudeCode` 注册表项，带有包含 JSON 的 `Settings` 值（REG\_SZ 或 REG\_EXPAND\_SZ）（通过组策略或 Intune 部署）
     * Windows（用户级）：`HKCU\SOFTWARE\Policies\ClaudeCode`（最低策略优先级，仅在不存在管理员级源时使用）
   * **基于文件**：`managed-settings.json` 和 `managed-mcp.json` 部署到系统目录：
@@ -210,9 +210,11 @@ Claude Code 使用**作用域系统**来确定配置应用的位置以及与谁�
 | `respectGitignore`                | 控制 `@` 文件选择器是否尊重 `.gitignore` 模式。当为 `true`（默认）时，匹配 `.gitignore` 模式的文件被排除在建议之外                                                                                                                                                                                                                       | `false`                                                                                                                       |
 | `showClearContextOnPlanAccept`    | 在计划接受屏幕上显示"清除上下文"选项。默认为 `false`。设置为 `true` 以恢复该选项                                                                                                                                                                                                                                                   | `true`                                                                                                                        |
 | `showThinkingSummaries`           | 在交互式会话中显示[扩展思考](/zh-CN/common-workflows#use-extended-thinking-thinking-mode)摘要。未设置或 `false`（交互模式中的默认值）时，思考块由 API 编辑并显示为折叠的存根。编辑仅改变您看到的内容，而不是模型生成的内容：要减少思考支出，[降低预算或禁用思考](/zh-CN/common-workflows#use-extended-thinking-thinking-mode)。非交互模式（`-p`）和 SDK 调用者无论此设置如何都始终接收摘要                             | `true`                                                                                                                        |
+| `skipWebFetchPreflight`           | 跳过[WebFetch 域安全检查](/zh-CN/data-usage#webfetch-domain-safety-check)，该检查在获取前将每个请求的主机名发送到 `api.anthropic.com`。在阻止到 Anthropic 的流量的环境中设置为 `true`，例如 Bedrock、Vertex AI 或 Foundry 部署，具有限制性出站。跳过时，WebFetch 尝试任何 URL 而不咨询阻止列表                                                                                | `true`                                                                                                                        |
 | `spinnerTipsEnabled`              | 在 Claude 工作时在微调器中显示提示。设置为 `false` 以禁用提示（默认：`true`）                                                                                                                                                                                                                                                  | `false`                                                                                                                       |
 | `spinnerTipsOverride`             | 使用自定义字符串覆盖微调器提示。`tips`：提示字符串数组。`excludeDefault`：如果为 `true`，仅显示自定义提示；如果为 `false` 或不存在，自定义提示与内置提示合并                                                                                                                                                                                                   | `{ "excludeDefault": true, "tips": ["Use our internal tool X"] }`                                                             |
 | `spinnerVerbs`                    | 自定义在微调器和轮次持续时间消息中显示的操作动词。将 `mode` 设置为 `"replace"` 以仅使用您的动词，或 `"append"` 以将它们添加到默认值                                                                                                                                                                                                                  | `{"mode": "append", "verbs": ["Pondering", "Crafting"]}`                                                                      |
+| `sshConfigs`                      | 要在[桌面](/zh-CN/desktop#pre-configure-ssh-connections-for-your-team)环境下拉菜单中显示的 SSH 连接。每个条目需要 `id`、`name` 和 `sshHost`；`sshPort`、`sshIdentityFile` 和 `startDirectory` 是可选的。在 managed 设置中设置时，连接对用户是只读的。仅从 managed 和用户设置读取                                                                                | `[{"id": "dev-vm", "name": "Dev VM", "sshHost": "user@dev.example.com"}]`                                                     |
 | `statusLine`                      | 配置自定义状态行以显示上下文。请参阅[`statusLine` 文档](/zh-CN/statusline)                                                                                                                                                                                                                                              | `{"type": "command", "command": "~/.claude/statusline.sh"}`                                                                   |
 | `strictKnownMarketplaces`         | （仅 Managed 设置）用户可以添加的插件市场的允许列表。未定义 = 无限制，空数组 = 锁定。仅适用于市场添加。请参阅 [Managed 市场限制](/zh-CN/plugin-marketplaces#managed-marketplace-restrictions)                                                                                                                                                          | `[{ "source": "github", "repo": "acme-corp/plugins" }]`                                                                       |
 | `tui`                             | 终端 UI 渲染器。使用 `"fullscreen"` 获取无闪烁的[替代屏幕渲染器](/zh-CN/fullscreen)，具有虚拟化滚动条。使用 `"default"` 获取经典主屏幕渲染器。通过 `/tui` 设置                                                                                                                                                                                      | `"fullscreen"`                                                                                                                |
@@ -280,7 +282,7 @@ Claude Code 使用**作用域系统**来确定配置应用的位置以及与谁�
 | 键                                      | 描述                                                                                                                                                                                         | 示例                                |
 | :------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------- |
 | `enabled`                              | 启用 bash sandboxing（macOS、Linux 和 WSL2）。默认：false                                                                                                                                            | `true`                            |
-| `failIfUnavailable`                    | 如果 `sandbox.enabled` 为 true 但 sandbox 无法启动（缺少依赖项、不支持的平台或平台限制），则在启动时以错误退出。当为 false（默认）时，显示警告，命令无 sandbox 运行。用于需要 sandboxing 作为硬门的 managed 设置部署                                              | `true`                            |
+| `failIfUnavailable`                    | 如果 `sandbox.enabled` 为 true 但 sandbox 无法启动（缺少依赖项或不支持的平台），则在启动时以错误退出。当为 false（默认）时，显示警告，命令无 sandbox 运行。用于需要 sandboxing 作为硬门的 managed 设置部署                                                   | `true`                            |
 | `autoAllowBashIfSandboxed`             | 当 sandboxed 时自动批准 bash 命令。默认：true                                                                                                                                                          | `true`                            |
 | `excludedCommands`                     | 应在 sandbox 外运行的命令                                                                                                                                                                          | `["docker *"]`                    |
 | `allowUnsandboxedCommands`             | 允许命令通过 `dangerouslyDisableSandbox` 参数在 sandbox 外运行。当设置为 `false` 时，`dangerouslyDisableSandbox` 逃生舱口完全禁用，所有命令必须 sandboxed（或在 `excludedCommands` 中）。对于需要严格 sandboxing 的企业策略很有用。默认：true        | `false`                           |
@@ -479,7 +481,7 @@ your-repo-file-index --query "$query" | head -20
 
 ### 验证活跃设置
 
-在 Claude Code 中运行 `/status` 以查看哪些设置源处于活跃状态以及它们来自何处。输出显示每个配置层（managed、user、project）及其来源，例如 `Enterprise managed settings (remote)`、`Enterprise managed settings (plist)`、`Enterprise managed settings (HKLM)` 或 `Enterprise managed settings (file)`。如果设置文件包含错误，`/status` 会报告问题，以便您可以修复它。
+在 Claude Code 中运行 `/status` 以查看哪些设置源处于活跃状态以及它们来自何处。输出显示每个配置层（managed、user、project）及其来源，例如 `Enterprise managed settings (remote)`、`Enterprise managed settings (plist)`、`Enterprise managed settings (HKLM)`、`Enterprise managed settings (HKCU)` 或 `Enterprise managed settings (file)`。如果设置文件包含错误，`/status` 会报告问题，以便您可以修复它。
 
 ### 配置系统的关键点
 
@@ -900,4 +902,5 @@ Claude Code 可以访问一组用于读取、编辑、搜索、运行命令和�
 
 * [权限](/zh-CN/permissions)：权限系统、规则语法、工具特定模式和 managed 策略
 * [身份验证](/zh-CN/authentication)：设置用户对 Claude Code 的访问
-* [故障排除](/zh-CN/troubleshooting)：常见配置问题的解决方案
+* [调试您的配置](/zh-CN/debug-your-config)：诊断为什么设置、hook 或 MCP 服务器没有生效
+* [故障排除](/zh-CN/troubleshooting)：安装、身份验证和平台问题

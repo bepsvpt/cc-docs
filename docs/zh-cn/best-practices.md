@@ -20,7 +20,7 @@ Claude Code 是一个代理式编码环境。与等待回答问题的聊天机�
 
 Claude 的 context window 保存你的整个对话，包括每条消息、Claude 读取的每个文件和每个命令输出。但这可能会很快填满。单个调试会话或代码库探索可能会生成并消耗数万个 token。
 
-这很重要，因为当 context 填充时，LLM 性能会下降。当 context window 即将满时，Claude 可能会开始"遗忘"早期的指令或犯更多错误。context window 是最重要的资源。使用 [自定义状态行](/zh-CN/statusline) 持续跟踪 context 使用情况，并查看 [减少 token 使用](/zh-CN/costs#reduce-token-usage) 了解减少 token 使用的策略。
+这很重要，因为当 context 填充时，LLM 性能会下降。当 context window 即将满时，Claude 可能会开始"遗忘"早期的指令或犯更多错误。context window 是最重要的资源。要查看会话在实践中如何填充，请 [观看交互式演练](/zh-CN/context-window)，了解启动时加载的内容以及每个文件读取的成本。使用 [自定义状态行](/zh-CN/statusline) 持续跟踪 context 使用情况，并查看 [减少 token 使用](/zh-CN/costs#reduce-token-usage) 了解减少 token 使用的策略。
 
 ***
 
@@ -196,6 +196,7 @@ See @README.md for project overview and @package.json for available npm commands
 
 * **主文件夹（`~/.claude/CLAUDE.md`）**：适用于所有 Claude 会话
 * **项目根目录（`./CLAUDE.md`）**：检入 git 以与你的团队共享
+* **项目根目录（`./CLAUDE.local.md`）**：个人项目特定的笔记；将此文件添加到你的 `.gitignore`，以便它不会与你的团队共享
 * **父目录**：对于 monorepos 有用，其中 `root/CLAUDE.md` 和 `root/foo/CLAUDE.md` 都会自动拉入
 * **子目录**：当处理这些目录中的文件时，Claude 按需拉入子 CLAUDE.md 文件
 
@@ -397,7 +398,7 @@ Claude Code 在你接近 context 限制时自动压缩对话历史，这保留�
 * 为了更多控制，运行 `/compact <instructions>`，如 `/compact Focus on the API changes`
 * 要仅压缩对话的一部分，使用 `Esc + Esc` 或 `/rewind`，选择消息检查点，并选择 **从这里总结**。这会压缩从该点开始的消息，同时保持早期 context 完整。
 * 在 CLAUDE.md 中使用像 `"When compacting, always preserve the full list of modified files and any test commands"` 这样的指令来自定义压缩行为，以确保关键 context 在总结中存活
-* 对于不需要留在 context 中的快速问题，使用 [`/btw`](/zh-CN/interactive-mode#side-questions-with-btw)。答案出现在可关闭的覆盖层中，永远不会进入对话历史，所以你可以检查细节而不增加 context。
+* 对于不需要留在 context 中的快速问题，使用 [`/btw`](/zh-CN/interactive-mode#side-questions-with-%2Fbtw)。答案出现在可关闭的覆盖层中，永远不会进入对话历史，所以你可以检查细节而不增加 context。
 
 ### 使用 subagents 进行调查
 

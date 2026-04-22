@@ -18,40 +18,41 @@ Hooks срабатывают в определённых точках во вр�
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/UMJp-WgTWngzO609/images/hooks-lifecycle.svg?fit=max&auto=format&n=UMJp-WgTWngzO609&q=85&s=3f4de67df216c87dc313943b32c15f62" alt="Диаграмма жизненного цикла hook, показывающая SessionStart, затем цикл за ход, содержащий UserPromptSubmit, вложенный агентный цикл (PreToolUse, PermissionRequest, PostToolUse, SubagentStart/Stop, TaskCreated, TaskCompleted) и Stop или StopFailure, за которым следуют TeammateIdle, PreCompact, PostCompact и SessionEnd, с Elicitation и ElicitationResult вложенными внутри выполнения MCP tool, PermissionDenied как боковая ветвь от PermissionRequest для автоматических отказов, и WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged и FileChanged как отдельные асинхронные события" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/NgDeMMkM7ZmaRibg/images/hooks-lifecycle.svg?fit=max&auto=format&n=NgDeMMkM7ZmaRibg&q=85&s=ec53c77f9943a6470cb2c8ecace6d809" alt="Диаграмма жизненного цикла hook, показывающая SessionStart, затем цикл за ход, содержащий UserPromptSubmit, UserPromptExpansion для slash commands, вложенный агентный цикл (PreToolUse, PermissionRequest, PostToolUse, PostToolUseFailure, SubagentStart/Stop, TaskCreated, TaskCompleted) и Stop или StopFailure, за которым следуют TeammateIdle, PreCompact, PostCompact и SessionEnd, с Elicitation и ElicitationResult вложенными внутри выполнения MCP tool, PermissionDenied как боковая ветвь от PermissionRequest для автоматических отказов, и WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged и FileChanged как отдельные асинхронные события" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
 Таблица ниже суммирует, когда срабатывает каждое событие. Раздел [Hook events](#hook-events) документирует полную схему входа и параметры управления решением для каждого события.
 
-| Event                | When it fires                                                                                                                                          |
-| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SessionStart`       | When a session begins or resumes                                                                                                                       |
-| `UserPromptSubmit`   | When you submit a prompt, before Claude processes it                                                                                                   |
-| `PreToolUse`         | Before a tool call executes. Can block it                                                                                                              |
-| `PermissionRequest`  | When a permission dialog appears                                                                                                                       |
-| `PermissionDenied`   | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
-| `PostToolUse`        | After a tool call succeeds                                                                                                                             |
-| `PostToolUseFailure` | After a tool call fails                                                                                                                                |
-| `Notification`       | When Claude Code sends a notification                                                                                                                  |
-| `SubagentStart`      | When a subagent is spawned                                                                                                                             |
-| `SubagentStop`       | When a subagent finishes                                                                                                                               |
-| `TaskCreated`        | When a task is being created via `TaskCreate`                                                                                                          |
-| `TaskCompleted`      | When a task is being marked as completed                                                                                                               |
-| `Stop`               | When Claude finishes responding                                                                                                                        |
-| `StopFailure`        | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
-| `TeammateIdle`       | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
-| `InstructionsLoaded` | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
-| `ConfigChange`       | When a configuration file changes during a session                                                                                                     |
-| `CwdChanged`         | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
-| `FileChanged`        | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
-| `WorktreeCreate`     | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
-| `WorktreeRemove`     | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
-| `PreCompact`         | Before context compaction                                                                                                                              |
-| `PostCompact`        | After context compaction completes                                                                                                                     |
-| `Elicitation`        | When an MCP server requests user input during a tool call                                                                                              |
-| `ElicitationResult`  | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
-| `SessionEnd`         | When a session terminates                                                                                                                              |
+| Event                 | When it fires                                                                                                                                          |
+| :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SessionStart`        | When a session begins or resumes                                                                                                                       |
+| `UserPromptSubmit`    | When you submit a prompt, before Claude processes it                                                                                                   |
+| `UserPromptExpansion` | When a user-typed command expands into a prompt, before it reaches Claude. Can block the expansion                                                     |
+| `PreToolUse`          | Before a tool call executes. Can block it                                                                                                              |
+| `PermissionRequest`   | When a permission dialog appears                                                                                                                       |
+| `PermissionDenied`    | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
+| `PostToolUse`         | After a tool call succeeds                                                                                                                             |
+| `PostToolUseFailure`  | After a tool call fails                                                                                                                                |
+| `Notification`        | When Claude Code sends a notification                                                                                                                  |
+| `SubagentStart`       | When a subagent is spawned                                                                                                                             |
+| `SubagentStop`        | When a subagent finishes                                                                                                                               |
+| `TaskCreated`         | When a task is being created via `TaskCreate`                                                                                                          |
+| `TaskCompleted`       | When a task is being marked as completed                                                                                                               |
+| `Stop`                | When Claude finishes responding                                                                                                                        |
+| `StopFailure`         | When the turn ends due to an API error. Output and exit code are ignored                                                                               |
+| `TeammateIdle`        | When an [agent team](/en/agent-teams) teammate is about to go idle                                                                                     |
+| `InstructionsLoaded`  | When a CLAUDE.md or `.claude/rules/*.md` file is loaded into context. Fires at session start and when files are lazily loaded during a session         |
+| `ConfigChange`        | When a configuration file changes during a session                                                                                                     |
+| `CwdChanged`          | When the working directory changes, for example when Claude executes a `cd` command. Useful for reactive environment management with tools like direnv |
+| `FileChanged`         | When a watched file changes on disk. The `matcher` field specifies which filenames to watch                                                            |
+| `WorktreeCreate`      | When a worktree is being created via `--worktree` or `isolation: "worktree"`. Replaces default git behavior                                            |
+| `WorktreeRemove`      | When a worktree is being removed, either at session exit or when a subagent finishes                                                                   |
+| `PreCompact`          | Before context compaction                                                                                                                              |
+| `PostCompact`         | After context compaction completes                                                                                                                     |
+| `Elicitation`         | When an MCP server requests user input during a tool call                                                                                              |
+| `ElicitationResult`   | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
+| `SessionEnd`          | When a session terminates                                                                                                                              |
 
 ### Как разрешается hook
 
@@ -199,6 +200,7 @@ Hooks определяются в JSON файлах настроек. Конфи
 | `FileChanged`                                                                                                  | буквальные имена файлов для наблюдения (см. [FileChanged](#filechanged)) | `.envrc\|.env`                                                                                                            |
 | `StopFailure`                                                                                                  | тип ошибки                                                               | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
 | `InstructionsLoaded`                                                                                           | причина загрузки                                                         | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `UserPromptExpansion`                                                                                          | имя команды                                                              | ваши имена skills или команд                                                                                              |
 | `Elicitation`                                                                                                  | имя MCP сервера                                                          | ваши настроенные имена MCP серверов                                                                                       |
 | `ElicitationResult`                                                                                            | имя MCP сервера                                                          | те же значения, что и `Elicitation`                                                                                       |
 | `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | поддержка фильтра отсутствует                                            | всегда срабатывает при каждом вхождении                                                                                   |
@@ -512,7 +514,7 @@ Hook события получают эти поля как JSON, в допол�
 
 Код выхода из вашей команды hook говорит Claude Code, должно ли действие продолжаться, быть заблокировано или быть проигнорировано.
 
-**Exit 0** означает успех. Claude Code анализирует stdout для [JSON полей выхода](#json-output). JSON выход обрабатывается только при exit 0. Для большинства событий stdout записывается в журнал отладки, но не показывается в транскрипте. Исключения — `UserPromptSubmit` и `SessionStart`, где stdout добавляется как контекст, который Claude может видеть и действовать.
+**Exit 0** означает успех. Claude Code анализирует stdout для [JSON полей выхода](#json-output). JSON выход обрабатывается только при exit 0. Для большинства событий stdout записывается в журнал отладки, но не показывается в транскрипте. Исключения — `UserPromptSubmit`, `UserPromptExpansion` и `SessionStart`, где stdout добавляется как контекст, который Claude может видеть и действовать.
 
 **Exit 2** означает блокирующую ошибку. Claude Code игнорирует stdout и любой JSON в нём. Вместо этого текст stderr передаётся обратно Claude как сообщение об ошибке. Эффект зависит от события: `PreToolUse` блокирует вызов инструмента, `UserPromptSubmit` отклоняет подсказку и так далее. См. [exit code 2 behavior](#exit-code-2-behavior-per-event) для полного списка.
 
@@ -541,34 +543,35 @@ exit 0  # Success: tool call proceeds
 
 Exit code 2 — это способ hook сигнализировать "стоп, не делай этого". Эффект зависит от события, потому что некоторые события представляют действия, которые могут быть заблокированы (например, вызов инструмента, который ещё не произошёл), а другие представляют вещи, которые уже произошли или не могут быть предотвращены.
 
-| Hook событие         | Может блокировать? | Что происходит при exit 2                                                                                                                                       |
-| :------------------- | :----------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `PreToolUse`         | Да                 | Блокирует вызов инструмента                                                                                                                                     |
-| `PermissionRequest`  | Да                 | Отклоняет разрешение                                                                                                                                            |
-| `UserPromptSubmit`   | Да                 | Блокирует обработку подсказки и стирает подсказку                                                                                                               |
-| `Stop`               | Да                 | Предотвращает остановку Claude, продолжает разговор                                                                                                             |
-| `SubagentStop`       | Да                 | Предотвращает остановку subagent                                                                                                                                |
-| `TeammateIdle`       | Да                 | Предотвращает переход товарища в режим ожидания (товарищ продолжает работать)                                                                                   |
-| `TaskCreated`        | Да                 | Откатывает создание задачи                                                                                                                                      |
-| `TaskCompleted`      | Да                 | Предотвращает отметку задачи как завершённой                                                                                                                    |
-| `ConfigChange`       | Да                 | Блокирует применение изменения конфигурации (кроме `policy_settings`)                                                                                           |
-| `StopFailure`        | Нет                | Выход и код выхода игнорируются                                                                                                                                 |
-| `PostToolUse`        | Нет                | Показывает stderr Claude (инструмент уже запустился)                                                                                                            |
-| `PostToolUseFailure` | Нет                | Показывает stderr Claude (инструмент уже не удался)                                                                                                             |
-| `PermissionDenied`   | Нет                | Код выхода и stderr игнорируются (отказ уже произошёл). Используйте JSON `hookSpecificOutput.retry: true` для сообщения модели, что она может повторить попытку |
-| `Notification`       | Нет                | Показывает stderr только пользователю                                                                                                                           |
-| `SubagentStart`      | Нет                | Показывает stderr только пользователю                                                                                                                           |
-| `SessionStart`       | Нет                | Показывает stderr только пользователю                                                                                                                           |
-| `SessionEnd`         | Нет                | Показывает stderr только пользователю                                                                                                                           |
-| `CwdChanged`         | Нет                | Показывает stderr только пользователю                                                                                                                           |
-| `FileChanged`        | Нет                | Показывает stderr только пользователю                                                                                                                           |
-| `PreCompact`         | Да                 | Блокирует компактирование                                                                                                                                       |
-| `PostCompact`        | Нет                | Показывает stderr только пользователю                                                                                                                           |
-| `Elicitation`        | Да                 | Отклоняет elicitation                                                                                                                                           |
-| `ElicitationResult`  | Да                 | Блокирует ответ (действие становится decline)                                                                                                                   |
-| `WorktreeCreate`     | Да                 | Любой ненулевой код выхода вызывает сбой создания worktree                                                                                                      |
-| `WorktreeRemove`     | Нет                | Сбои логируются только в режиме отладки                                                                                                                         |
-| `InstructionsLoaded` | Нет                | Код выхода игнорируется                                                                                                                                         |
+| Hook событие          | Может блокировать? | Что происходит при exit 2                                                                                                                                       |
+| :-------------------- | :----------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PreToolUse`          | Да                 | Блокирует вызов инструмента                                                                                                                                     |
+| `PermissionRequest`   | Да                 | Отклоняет разрешение                                                                                                                                            |
+| `UserPromptSubmit`    | Да                 | Блокирует обработку подсказки и стирает подсказку                                                                                                               |
+| `UserPromptExpansion` | Да                 | Блокирует расширение                                                                                                                                            |
+| `Stop`                | Да                 | Предотвращает остановку Claude, продолжает разговор                                                                                                             |
+| `SubagentStop`        | Да                 | Предотвращает остановку subagent                                                                                                                                |
+| `TeammateIdle`        | Да                 | Предотвращает переход товарища в режим ожидания (товарищ продолжает работать)                                                                                   |
+| `TaskCreated`         | Да                 | Откатывает создание задачи                                                                                                                                      |
+| `TaskCompleted`       | Да                 | Предотвращает отметку задачи как завершённой                                                                                                                    |
+| `ConfigChange`        | Да                 | Блокирует применение изменения конфигурации (кроме `policy_settings`)                                                                                           |
+| `StopFailure`         | Нет                | Выход и код выхода игнорируются                                                                                                                                 |
+| `PostToolUse`         | Нет                | Показывает stderr Claude (инструмент уже запустился)                                                                                                            |
+| `PostToolUseFailure`  | Нет                | Показывает stderr Claude (инструмент уже не удался)                                                                                                             |
+| `PermissionDenied`    | Нет                | Код выхода и stderr игнорируются (отказ уже произошёл). Используйте JSON `hookSpecificOutput.retry: true` для сообщения модели, что она может повторить попытку |
+| `Notification`        | Нет                | Показывает stderr только пользователю                                                                                                                           |
+| `SubagentStart`       | Нет                | Показывает stderr только пользователю                                                                                                                           |
+| `SessionStart`        | Нет                | Показывает stderr только пользователю                                                                                                                           |
+| `SessionEnd`          | Нет                | Показывает stderr только пользователю                                                                                                                           |
+| `CwdChanged`          | Нет                | Показывает stderr только пользователю                                                                                                                           |
+| `FileChanged`         | Нет                | Показывает stderr только пользователю                                                                                                                           |
+| `PreCompact`          | Да                 | Блокирует компактирование                                                                                                                                       |
+| `PostCompact`         | Нет                | Показывает stderr только пользователю                                                                                                                           |
+| `Elicitation`         | Да                 | Отклоняет elicitation                                                                                                                                           |
+| `ElicitationResult`   | Да                 | Блокирует ответ (действие становится decline)                                                                                                                   |
+| `WorktreeCreate`      | Да                 | Любой ненулевой код выхода вызывает сбой создания worktree                                                                                                      |
+| `WorktreeRemove`      | Нет                | Сбои логируются только в режиме отладки                                                                                                                         |
+| `InstructionsLoaded`  | Нет                | Код выхода игнорируется                                                                                                                                         |
 
 ### HTTP response handling
 
@@ -617,23 +620,23 @@ JSON объект поддерживает три вида полей:
 
 Не каждое событие поддерживает блокировку или управление поведением через JSON. События, которые это делают, каждое использует другой набор полей для выражения этого решения. Используйте эту таблицу как быструю ссылку перед написанием hook:
 
-| События                                                                                                         | Шаблон решения                  | Ключевые поля                                                                                                                                                                       |
-| :-------------------------------------------------------------------------------------------------------------- | :------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange, PreCompact                 | Верхнеуровневое `decision`      | `decision: "block"`, `reason`                                                                                                                                                       |
-| TeammateIdle, TaskCreated, TaskCompleted                                                                        | Exit code или `continue: false` | Exit code 2 блокирует действие с обратной связью stderr. JSON `{"continue": false, "stopReason": "..."}` также полностью останавливает товарища, соответствуя поведению hook `Stop` |
-| PreToolUse                                                                                                      | `hookSpecificOutput`            | `permissionDecision` (allow/deny/ask/defer), `permissionDecisionReason`                                                                                                             |
-| PermissionRequest                                                                                               | `hookSpecificOutput`            | `decision.behavior` (allow/deny)                                                                                                                                                    |
-| PermissionDenied                                                                                                | `hookSpecificOutput`            | `retry: true` говорит модели, что она может повторить попытку отклонённого вызова инструмента                                                                                       |
-| WorktreeCreate                                                                                                  | path return                     | Command hook выводит путь на stdout; HTTP hook возвращает `hookSpecificOutput.worktreePath`. Сбой hook или отсутствие пути вызывает сбой создания                                   |
-| Elicitation                                                                                                     | `hookSpecificOutput`            | `action` (accept/decline/cancel), `content` (значения полей формы для accept)                                                                                                       |
-| ElicitationResult                                                                                               | `hookSpecificOutput`            | `action` (accept/decline/cancel), `content` (переопределение значений полей формы)                                                                                                  |
-| WorktreeRemove, Notification, SessionEnd, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged | Нет                             | Нет управления решением. Используется для побочных эффектов, таких как логирование или очистка                                                                                      |
+| События                                                                                                              | Шаблон решения                  | Ключевые поля                                                                                                                                                                       |
+| :------------------------------------------------------------------------------------------------------------------- | :------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| UserPromptSubmit, UserPromptExpansion, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange, PreCompact | Верхнеуровневое `decision`      | `decision: "block"`, `reason`                                                                                                                                                       |
+| TeammateIdle, TaskCreated, TaskCompleted                                                                             | Exit code или `continue: false` | Exit code 2 блокирует действие с обратной связью stderr. JSON `{"continue": false, "stopReason": "..."}` также полностью останавливает товарища, соответствуя поведению hook `Stop` |
+| PreToolUse                                                                                                           | `hookSpecificOutput`            | `permissionDecision` (allow/deny/ask/defer), `permissionDecisionReason`                                                                                                             |
+| PermissionRequest                                                                                                    | `hookSpecificOutput`            | `decision.behavior` (allow/deny)                                                                                                                                                    |
+| PermissionDenied                                                                                                     | `hookSpecificOutput`            | `retry: true` говорит модели, что она может повторить попытку отклонённого вызова инструмента                                                                                       |
+| WorktreeCreate                                                                                                       | path return                     | Command hook выводит путь на stdout; HTTP hook возвращает `hookSpecificOutput.worktreePath`. Сбой hook или отсутствие пути вызывает сбой создания                                   |
+| Elicitation                                                                                                          | `hookSpecificOutput`            | `action` (accept/decline/cancel), `content` (значения полей формы для accept)                                                                                                       |
+| ElicitationResult                                                                                                    | `hookSpecificOutput`            | `action` (accept/decline/cancel), `content` (переопределение значений полей формы)                                                                                                  |
+| WorktreeRemove, Notification, SessionEnd, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged      | Нет                             | Нет управления решением. Используется для побочных эффектов, таких как логирование или очистка                                                                                      |
 
 Вот примеры каждого шаблона в действии:
 
 <Tabs>
   <Tab title="Top-level decision">
-    Используется `UserPromptSubmit`, `PostToolUse`, `PostToolUseFailure`, `Stop`, `SubagentStop`, `ConfigChange` и `PreCompact`. Единственное значение — `"block"`. Чтобы разрешить действию продолжаться, опустите `decision` из вашего JSON или выйдите с 0 без какого-либо JSON вообще:
+    Используется `UserPromptSubmit`, `UserPromptExpansion`, `PostToolUse`, `PostToolUseFailure`, `Stop`, `SubagentStop`, `ConfigChange` и `PreCompact`. Единственное значение — `"block"`. Чтобы разрешить действию продолжаться, опустите `decision` из вашего JSON или выйдите с 0 без какого-либо JSON вообще:
 
     ```json theme={null}
     {
@@ -828,7 +831,7 @@ InstructionsLoaded hooks не имеют управления решением. 
 
 #### UserPromptSubmit decision control
 
-Hooks `UserPromptSubmit` могут управлять тем, обрабатывается ли подсказка пользователя, и добавлять контекст. Доступны все [JSON полей выхода](#json-output).
+Hooks `UserPromptSubmit` могут управлять тем, обрабатывается ли подсказка пользователя, и добавлять контекст. Доступны все [JSON поля выхода](#json-output).
 
 Есть два способа добавить контекст в разговор при exit code 0:
 
@@ -861,6 +864,54 @@ Hooks `UserPromptSubmit` могут управлять тем, обрабаты�
 <Note>
   Формат JSON не требуется для простых случаев использования. Чтобы добавить контекст, вы можете вывести простой текст на stdout с exit code 0. Используйте JSON, когда вам нужно блокировать подсказки или вам нужно более структурированное управление.
 </Note>
+
+### UserPromptExpansion
+
+Запускается, когда пользователь вводит slash command, который расширяется в подсказку перед достижением Claude. Используйте это для блокировки определённых команд от прямого вызова, внедрения контекста для определённого skill или логирования, какие команды вызывают пользователи. Например, hook, соответствующий `deploy`, может заблокировать `/deploy`, если файл одобрения отсутствует, или hook, соответствующий skill проверки, может добавить контрольный список проверки команды как `additionalContext`.
+
+Это событие охватывает путь, который `PreToolUse` не охватывает: hook `PreToolUse`, соответствующий инструменту `Skill`, срабатывает только когда Claude вызывает инструмент, но ввод `/skillname` напрямую обходит `PreToolUse`. `UserPromptExpansion` срабатывает на этом прямом пути.
+
+Совпадает с `command_name`. Оставьте фильтр пустым для срабатывания на каждой подсказке-типе slash command.
+
+#### UserPromptExpansion input
+
+В дополнение к [общим полям входа](#common-input-fields), UserPromptExpansion hooks получают `expansion_type`, `command_name`, `command_args`, `command_source` и исходную строку `prompt`. Поле `expansion_type` равно `slash_command` для skill и пользовательских команд или `mcp_prompt` для подсказок MCP сервера.
+
+```json theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../00893aaf.jsonl",
+  "cwd": "/Users/...",
+  "permission_mode": "default",
+  "hook_event_name": "UserPromptExpansion",
+  "expansion_type": "slash_command",
+  "command_name": "example-skill",
+  "command_args": "arg1 arg2",
+  "command_source": "plugin",
+  "prompt": "/example-skill arg1 arg2"
+}
+```
+
+#### UserPromptExpansion decision control
+
+Hooks `UserPromptExpansion` могут блокировать расширение или добавлять контекст. Доступны все [JSON поля выхода](#json-output).
+
+| Поле                | Описание                                                                                     |
+| :------------------ | :------------------------------------------------------------------------------------------- |
+| `decision`          | `"block"` предотвращает расширение slash command. Опустите, чтобы разрешить ему продолжаться |
+| `reason`            | Показывается пользователю при `decision` равном `"block"`                                    |
+| `additionalContext` | Строка, добавленная в контекст Claude наряду с расширенной подсказкой                        |
+
+```json theme={null}
+{
+  "decision": "block",
+  "reason": "This slash command is not available",
+  "hookSpecificOutput": {
+    "hookEventName": "UserPromptExpansion",
+    "additionalContext": "Additional context for this expansion"
+  }
+}
+```
 
 ### PreToolUse
 
@@ -1695,7 +1746,7 @@ ConfigChange hooks могут блокировать применение изм
 
 Запускается при изменении рабочего каталога во время сеанса, например когда Claude выполняет команду `cd`. Используйте это для реакции на изменения каталога: перезагрузка переменных окружения, активация специфичных для проекта цепочек инструментов или автоматический запуск скриптов настройки. Объединяется с [FileChanged](#filechanged) для инструментов, таких как [direnv](https://direnv.net/), которые управляют окружением для каждого каталога.
 
-CwdChanged hooks имеют доступ к `CLAUDE_ENV_FILE`. Переменные, написанные в этот файл, сохраняются в последующих командах Bash для сеанса, как и в [SessionStart hooks](#persist-environment-variables). Поддерживаются только hooks `type: "command"`.
+CwdChanged hooks имеют доступ к `CLAUDE_ENV_FILE`. Переменные, написанные в этот файл, сохраняются в последующих командах Bash для сеанса, как и в [SessionStart hooks](#persist-environment-variables).
 
 CwdChanged не поддерживает фильтры и срабатывает при каждом изменении каталога.
 
@@ -1733,7 +1784,7 @@ CwdChanged hooks не имеют управления решением. Они �
 * **Построение списка наблюдения**: значение разделяется на `|` и каждый сегмент регистрируется как буквальное имя файла в рабочем каталоге, поэтому `".envrc|.env"` отслеживает ровно эти два файла. Regex шаблоны здесь не полезны: значение, такое как `^\.env`, отслеживало бы файл буквально названный `^\.env`.
 * **Фильтрация, какие hooks запускаются**: когда отслеживаемый файл изменяется, то же значение фильтрует, какие группы hook запускаются, используя стандартные [правила фильтра](#matcher-patterns) против базового имени изменённого файла.
 
-FileChanged hooks имеют доступ к `CLAUDE_ENV_FILE`. Переменные, написанные в этот файл, сохраняются в последующих командах Bash для сеанса, как и в [SessionStart hooks](#persist-environment-variables). Поддерживаются только hooks `type: "command"`.
+FileChanged hooks имеют доступ к `CLAUDE_ENV_FILE`. Переменные, написанные в этот файл, сохраняются в последующих командах Bash для сеанса, как и в [SessionStart hooks](#persist-environment-variables).
 
 #### FileChanged input
 
@@ -1765,7 +1816,7 @@ FileChanged hooks имеют доступ к `CLAUDE_ENV_FILE`. Переменн
 
 FileChanged hooks не имеют управления решением. Они не могут блокировать изменение файла от возникновения.
 
-### Workt reeCreate
+### WorktreeCreate
 
 Когда вы запускаете `claude --worktree` или [subagent использует `isolation: "worktree"`](/ru/sub-agents#choose-the-subagent-scope), Claude Code создаёт изолированную рабочую копию, используя `git worktree`. Если вы настроите hook WorktreeCreate, он заменяет поведение git по умолчанию, позволяя вам использовать другую систему контроля версий, такую как SVN, Perforce или Mercurial.
 
@@ -2081,6 +2132,7 @@ Exit code 2 блокирует ответ, изменяя эффективное
 * `SubagentStop`
 * `TaskCompleted`
 * `TaskCreated`
+* `UserPromptExpansion`
 * `UserPromptSubmit`
 
 События, которые поддерживают `command` и `http` hooks, но не `prompt` или `agent`:
@@ -2102,7 +2154,7 @@ Exit code 2 блокирует ответ, изменяя эффективное
 * `WorktreeCreate`
 * `WorktreeRemove`
 
-`SessionStart` поддерживает только hooks `type: "command"`.
+`SessionStart` поддерживает только `command` hooks.
 
 ### How prompt-based hooks work
 
@@ -2376,7 +2428,7 @@ Command hooks запускаются с полными разрешениями 
 
 ## Debug hooks
 
-Запустите Claude Code с `claude --debug-file <path>` для записи журнала в известное расположение, или запустите `claude --debug` и прочитайте журнал в `~/.claude/debug/<session-id>.txt`. Флаг `--debug` не выводит на терминал.
+Детали выполнения hooks, включая информацию о том, какие hooks совпали, их коды выхода и полный stdout и stderr, записываются в файл отладочного журнала. Запустите Claude Code с `claude --debug-file <path>` для записи журнала в известное расположение, или запустите `claude --debug` и прочитайте журнал в `~/.claude/debug/<session-id>.txt`. Флаг `--debug` не выводит на терминал.
 
 ```text theme={null}
 [DEBUG] Executing hooks for PostToolUse:Write
@@ -2387,4 +2439,4 @@ Command hooks запускаются с полными разрешениями 
 
 Для более детальной информации о совпадении hooks установите `CLAUDE_CODE_DEBUG_LOG_LEVEL=verbose` для просмотра дополнительных строк логирования, таких как количество совпадений фильтра hook и совпадение запроса.
 
-Для устранения неполадок распространённых проблем, таких как hooks, которые не срабатывают, бесконечные циклы Stop hook или ошибки конфигурации, см. [Limitations and troubleshooting](/ru/hooks-guide#limitations-and-troubleshooting) в руководстве.
+Для устранения неполадок распространённых проблем, таких как hooks, которые не срабатывают, бесконечные циклы Stop hook или ошибки конфигурации, см. [Limitations and troubleshooting](/ru/hooks-guide#limitations-and-troubleshooting) в руководстве. Для более широкого диагностического пошагового руководства, охватывающего `/context`, `/doctor` и приоритет параметров, см. [Debug your config](/ru/debug-your-config).

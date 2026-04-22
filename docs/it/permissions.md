@@ -277,7 +277,7 @@ Utilizza entrambi per la difesa in profondità:
 * Le restrizioni del filesystem nella sandbox utilizzano le regole deny di Read e Edit, non una configurazione sandbox separata
 * Le restrizioni di rete combinano le regole di autorizzazione WebFetch con gli elenchi `allowedDomains` e `deniedDomains` della sandbox
 
-Quando il sandboxing è abilitato con `autoAllowBashIfSandboxed: true`, che è l'impostazione predefinita, i comandi Bash in sandbox vengono eseguiti senza richiedere un prompt anche se le tue autorizzazioni includono `ask: Bash(*)`. Il confine della sandbox sostituisce il prompt per comando. Vedi [modalità sandbox](/it/sandboxing#sandbox-modes) per modificare questo comportamento.
+Quando il sandboxing è abilitato con `autoAllowBashIfSandboxed: true`, che è l'impostazione predefinita, i comandi Bash in sandbox vengono eseguiti senza richiedere un prompt anche se le tue autorizzazioni includono `ask: Bash(*)`. Il confine della sandbox sostituisce il prompt per comando. Le regole deny esplicite si applicano ancora, e i comandi `rm` o `rmdir` che hanno come destinazione `/`, la tua directory home o altri percorsi critici del sistema attivano comunque un prompt. Consulta [modalità sandbox](/it/sandboxing#sandbox-modes) per modificare questo comportamento.
 
 ## Impostazioni gestite
 
@@ -315,9 +315,11 @@ Per reagire ai rifiuti a livello di programmazione, utilizza l'[hook `Permission
 
 ## Configurare il classificatore della modalità auto
 
-La [modalità auto](/it/permission-modes#eliminate-prompts-with-auto-mode) utilizza un modello di classificazione per decidere se ogni azione è sicura da eseguire senza richiedere. Per impostazione predefinita, si fida solo della directory di lavoro e, se presente, dei remoti del repository corrente. Azioni come il push verso l'organizzazione di controllo del codice sorgente della tua azienda o la scrittura in un bucket cloud del team verranno bloccate come potenziale esfiltrazione di dati. Il blocco di impostazioni `autoMode` ti consente di dire al classificatore quale infrastruttura la tua organizzazione si fida.
+La [modalità auto](/it/permission-modes#eliminate-prompts-with-auto-mode) utilizza un modello di classificazione per decidere se ogni azione è sicura da eseguire senza richiedere. Per impostazione predefinita, si fida solo della directory di lavoro e, se presente, dei remoti del repository corrente. Azioni come il push verso l'organizzazione di controllo del codice sorgente della tua azienda o la scrittura in un bucket cloud del team verranno bloccate come potenziale esfiltrazione di dati.
 
-Il classificatore legge `autoMode` dalle impostazioni utente, `.claude/settings.local.json` e impostazioni gestite. Non legge dalle impostazioni di progetto condivise in `.claude/settings.json`, perché un repository archiviato potrebbe altrimenti iniettare le sue proprie regole allow.
+Per regolare ciò che il classificatore consente o blocca, aggiungi istruzioni al tuo file [CLAUDE.md](/it/memory). Il classificatore legge CLAUDE.md dalle directory affidabili insieme alla conversazione, quindi un'istruzione come "non forzare mai il push" guida sia Claude che il classificatore contemporaneamente. Inizia qui per le convenzioni di progetto e le regole comportamentali.
+
+Per le regole che si applicano tra i progetti, come l'infrastruttura affidabile o le regole di negazione a livello organizzativo, utilizza il blocco di impostazioni `autoMode`. Il classificatore legge `autoMode` dalle impostazioni utente, `.claude/settings.local.json` e impostazioni gestite. Non legge dalle impostazioni di progetto condivise in `.claude/settings.json`, perché un repository archiviato potrebbe altrimenti iniettare le sue proprie regole allow.
 
 | Ambito                        | File                          | Utilizzare per                                               |
 | :---------------------------- | :---------------------------- | :----------------------------------------------------------- |

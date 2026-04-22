@@ -52,9 +52,17 @@ IDE에 대한 링크를 클릭하여 직접 설치합니다:
     * **명령 팔레트**: `Cmd+Shift+P`(Mac) 또는 `Ctrl+Shift+P`(Windows/Linux)를 누르고, "Claude Code"를 입력한 후 "새 탭에서 열기"와 같은 옵션을 선택합니다.
     * **상태 표시줄**: 창의 오른쪽 아래 모서리에서 **✱ Claude Code**를 클릭합니다. 파일을 열지 않았을 때도 작동합니다.
 
-    패널을 처음 열 때 **Learn Claude Code** 체크리스트가 나타납니다. **보여주기**를 클릭하여 각 항목을 진행하거나 X로 닫습니다. 나중에 다시 열려면 VS Code 설정의 확장 프로그램 → Claude Code에서 **Hide Onboarding**을 선택 해제합니다.
-
     Claude 패널을 드래그하여 VS Code의 어느 곳이든 다시 배치할 수 있습니다. 자세한 내용은 [워크플로우 사용자 정의](#customize-your-workflow)를 참조하십시오.
+  </Step>
+
+  <Step title="로그인">
+    패널을 처음 열 때 로그인 화면이 나타납니다. **로그인**을 클릭하고 브라우저에서 인증을 완료합니다.
+
+    나중에 **로그인하지 않음 · /login을 실행하십시오**가 표시되면 확장 프로그램이 로그인 화면을 자동으로 다시 엽니다. 나타나지 않으면 명령 팔레트에서 **Developer: Reload Window**로 창을 다시 로드합니다.
+
+    셸에 `ANTHROPIC_API_KEY`가 설정되어 있지만 여전히 로그인 프롬프트가 표시되면 VS Code가 셸 환경을 상속하지 못했을 수 있습니다. `code .`를 사용하여 터미널에서 VS Code를 시작하여 환경 변수를 상속하거나 대신 Claude 계정으로 로그인합니다.
+
+    로그인한 후 **Learn Claude Code** 체크리스트가 나타납니다. **보여주기**를 클릭하여 각 항목을 진행하거나 X로 닫습니다. 나중에 다시 열려면 VS Code 설정의 확장 프로그램 → Claude Code에서 **Hide Onboarding**을 선택 해제합니다.
   </Step>
 
   <Step title="프롬프트 보내기">
@@ -68,7 +76,7 @@ IDE에 대한 링크를 클릭하여 직접 설치합니다:
   </Step>
 
   <Step title="변경 사항 검토">
-    Claude가 파일을 편집하려고 할 때, 원본과 제안된 변경 사항을 나란히 비교하고 권한을 요청합니다. 수락하거나 거부하거나 Claude에게 대신 수행할 작업을 알릴 수 있습니다.
+    Claude가 파일을 편집하려고 할 때, 원본과 제안된 변경 사항을 나란히 비교하고 권한을 요청합니다. 수락하거나 거부하거나 Claude에게 대신 수행할 작업을 알릴 수 있습니다. 수락하기 전에 diff 보기에서 제안된 콘텐츠를 직접 편집하면 Claude는 수정되었다는 것을 알려지므로 파일이 원래 제안과 일치한다고 가정하지 않습니다.
 
     <img src="https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-edits.png?fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=e005f9b41c541c5c7c59c082f7c4841c" alt="Claude의 제안된 변경 사항의 diff를 표시하고 편집을 수행할지 여부를 묻는 권한 프롬프트가 있는 VS Code" width="3292" height="1876" data-path="images/vs-code-edits.png" />
   </Step>
@@ -85,9 +93,9 @@ Claude Code로 수행할 수 있는 작업에 대한 더 많은 아이디어는 
 프롬프트 상자는 여러 기능을 지원합니다:
 
 * **권한 모드**: 프롬프트 상자 하단의 모드 표시기를 클릭하여 모드를 전환합니다. 일반 모드에서 Claude는 각 작업 전에 권한을 요청합니다. Plan Mode에서 Claude는 수행할 작업을 설명하고 변경을 수행하기 전에 승인을 기다립니다. VS Code는 자동으로 계획을 전체 markdown 문서로 열어서 Claude가 시작하기 전에 피드백을 제공하기 위해 인라인 주석을 추가할 수 있습니다. 자동 수락 모드에서 Claude는 요청 없이 편집을 수행합니다. VS Code 설정의 `claudeCode.initialPermissionMode`에서 기본값을 설정합니다.
-* **명령 메뉴**: `/`를 클릭하거나 입력하여 명령 메뉴를 엽니다. 옵션에는 파일 첨부, 모델 전환, 확장 사고 토글 및 계획 사용량 보기(`/usage`)와 [Remote Control](/ko/remote-control) 세션 시작(`/remote-control`)이 포함됩니다. 사용자 정의 섹션은 MCP 서버, hooks, 메모리, 권한 및 플러그인에 대한 액세스를 제공합니다. 터미널 아이콘이 있는 항목은 통합 터미널에서 열립니다.
+* **명령 메뉴**: `/`를 클릭하거나 입력하여 명령 메뉴를 엽니다. 옵션에는 파일 첨부, 모델 전환, 확장 사고 토글, 계획 사용량 보기(`/usage`) 및 [Remote Control](/ko/remote-control) 세션 시작(`/remote-control`)이 포함됩니다. 사용자 정의 섹션은 MCP 서버, hooks, 메모리, 권한 및 플러그인에 대한 액세스를 제공합니다. 터미널 아이콘이 있는 항목은 통합 터미널에서 열립니다.
 * **컨텍스트 표시기**: 프롬프트 상자는 Claude의 context window를 얼마나 사용하고 있는지 표시합니다. Claude는 필요할 때 자동으로 압축하거나 `/compact`를 수동으로 실행할 수 있습니다.
-* **확장 사고**: Claude가 복잡한 문제를 추론하는 데 더 많은 시간을 소비할 수 있습니다. 명령 메뉴(`/`)를 통해 켭니다. 자세한 내용은 [확장 사고](/ko/common-workflows#use-extended-thinking-thinking-mode)를 참조하십시오.
+* **확장 사고**: Claude가 복잡한 문제를 추론하는 데 더 많은 시간을 소비할 수 있습니다. 명령 메뉴(`/`)를 통해 켭니다. Claude의 추론은 대화에 축소된 블록으로 나타납니다: 블록을 클릭하여 읽거나 `Ctrl+O`를 눌러 세션의 모든 사고 블록을 확장하거나 축소합니다. 자세한 내용은 [확장 사고](/ko/common-workflows#use-extended-thinking-thinking-mode)를 참조하십시오.
 * **여러 줄 입력**: `Shift+Enter`를 눌러 보내지 않고 새 줄을 추가합니다. 이것은 질문 대화의 "기타" 자유 텍스트 입력에서도 작동합니다.
 
 ### 파일 및 폴더 참조
@@ -107,15 +115,15 @@ Claude Code로 수행할 수 있는 작업에 대한 더 많은 아이디어는 
 
 ### 과거 대화 재개
 
-Claude Code 패널 상단의 드롭다운을 클릭하여 대화 기록에 액세스합니다. 키워드로 검색하거나 시간별로 찾아볼 수 있습니다(오늘, 어제, 지난 7일 등). 대화를 클릭하여 전체 메시지 기록으로 재개합니다. 새 세션은 첫 번째 메시지를 기반으로 AI가 생성한 제목을 받습니다. 세션 위에 마우스를 올려 이름 바꾸기 및 제거 작업을 표시합니다: 설명적인 제목으로 이름을 바꾸거나 목록에서 삭제하려면 제거합니다. 세션 재개에 대한 자세한 내용은 [일반적인 워크플로우](/ko/common-workflows#resume-previous-conversations)를 참조하십시오.
+Claude Code 패널 상단의 **세션 기록** 버튼을 클릭하여 대화 기록에 액세스합니다. 키워드로 검색하거나 시간별로 찾아볼 수 있습니다(오늘, 어제, 지난 7일 등). 대화를 클릭하여 전체 메시지 기록으로 재개합니다. 새 세션은 첫 번째 메시지를 기반으로 AI가 생성한 제목을 받습니다. 세션 위에 마우스를 올려 이름 바꾸기 및 제거 작업을 표시합니다: 설명적인 제목으로 이름을 바꾸거나 목록에서 삭제하려면 제거합니다. 세션 재개에 대한 자세한 내용은 [일반적인 워크플로우](/ko/common-workflows#resume-previous-conversations)를 참조하십시오.
 
 ### Claude.ai에서 원격 세션 재개
 
 [웹에서 Claude Code](/ko/claude-code-on-the-web)를 사용하는 경우 VS Code에서 직접 해당 원격 세션을 재개할 수 있습니다. 이를 위해서는 Anthropic Console이 아닌 **Claude.ai Subscription**으로 로그인해야 합니다.
 
 <Steps>
-  <Step title="과거 대화 열기">
-    Claude Code 패널 상단의 **과거 대화** 드롭다운을 클릭합니다.
+  <Step title="세션 기록 열기">
+    Claude Code 패널 상단의 **세션 기록** 버튼을 클릭합니다.
   </Step>
 
   <Step title="원격 탭 선택">
@@ -222,17 +230,17 @@ Claude는 브라우저 작업을 위해 새 탭을 열고 브라우저의 로그
   이는 확장 프로그램을 제어하기 위한 VS Code 명령입니다. 모든 기본 제공 Claude Code 명령을 확장 프로그램에서 사용할 수 있는 것은 아닙니다. 자세한 내용은 [VS Code 확장 프로그램 vs. Claude Code CLI](#vs-code-extension-vs-claude-code-cli)를 참조하십시오.
 </Note>
 
-| 명령                         | 단축키                                                    | 설명                                  |
-| -------------------------- | ------------------------------------------------------ | ----------------------------------- |
-| Focus Input                | `Cmd+Esc`(Mac) / `Ctrl+Esc`(Windows/Linux)             | 편집기와 Claude 사이의 포커스 전환              |
-| Open in Side Bar           | -                                                      | 왼쪽 사이드바에서 Claude 열기                 |
-| Open in Terminal           | -                                                      | 터미널 모드에서 Claude 열기                  |
-| Open in New Tab            | `Cmd+Shift+Esc`(Mac) / `Ctrl+Shift+Esc`(Windows/Linux) | 편집기 탭으로 새 대화 열기                     |
-| Open in New Window         | -                                                      | 별도 창에서 새 대화 열기                      |
-| New Conversation           | `Cmd+N`(Mac) / `Ctrl+N`(Windows/Linux)                 | 새 대화 시작(Claude가 포커스되어야 함)           |
-| Insert @-Mention Reference | `Option+K`(Mac) / `Alt+K`(Windows/Linux)               | 현재 파일 및 선택에 대한 참조 삽입(편집기가 포커스되어야 함) |
-| Show Logs                  | -                                                      | 확장 프로그램 디버그 로그 보기                   |
-| Logout                     | -                                                      | Anthropic 계정에서 로그아웃                 |
+| 명령                         | 단축키                                                    | 설명                                                                             |
+| -------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| Focus Input                | `Cmd+Esc`(Mac) / `Ctrl+Esc`(Windows/Linux)             | 편집기와 Claude 사이의 포커스 전환                                                         |
+| Open in Side Bar           | -                                                      | 왼쪽 사이드바에서 Claude 열기                                                            |
+| Open in Terminal           | -                                                      | 터미널 모드에서 Claude 열기                                                             |
+| Open in New Tab            | `Cmd+Shift+Esc`(Mac) / `Ctrl+Shift+Esc`(Windows/Linux) | 편집기 탭으로 새 대화 열기                                                                |
+| Open in New Window         | -                                                      | 별도 창에서 새 대화 열기                                                                 |
+| New Conversation           | `Cmd+N`(Mac) / `Ctrl+N`(Windows/Linux)                 | 새 대화 시작. Claude가 포커스되어야 하고 `enableNewConversationShortcut`이 `true`로 설정되어야 합니다. |
+| Insert @-Mention Reference | `Option+K`(Mac) / `Alt+K`(Windows/Linux)               | 현재 파일 및 선택에 대한 참조 삽입(편집기가 포커스되어야 함)                                            |
+| Show Logs                  | -                                                      | 확장 프로그램 디버그 로그 보기                                                              |
+| Logout                     | -                                                      | Anthropic 계정에서 로그아웃                                                            |
 
 ### 다른 도구에서 VS Code 탭 시작
 
@@ -272,21 +280,21 @@ vscode://anthropic.claude-code/open?prompt=review%20my%20changes
 
 ### 확장 프로그램 설정
 
-| 설정                                | 기본값       | 설명                                                                                                                                                                                                                   |
-| --------------------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `selectedModel`                   | `default` | 새 대화를 위한 모델. `/model`로 세션별로 변경합니다.                                                                                                                                                                                   |
-| `useTerminal`                     | `false`   | 그래픽 패널 대신 터미널 모드에서 Claude 시작                                                                                                                                                                                         |
-| `initialPermissionMode`           | `default` | 새 대화에 대한 승인 프롬프트 제어: `default`, `plan`, `acceptEdits`, `auto` 또는 `bypassPermissions`. [권한 모드](/ko/permission-modes)를 참조하십시오.                                                                                         |
-| `preferredLocation`               | `panel`   | Claude가 열리는 위치: `sidebar`(오른쪽) 또는 `panel`(새 탭)                                                                                                                                                                       |
-| `autosave`                        | `true`    | Claude가 파일을 읽거나 쓰기 전에 자동 저장                                                                                                                                                                                          |
-| `useCtrlEnterToSend`              | `false`   | Enter 대신 Ctrl/Cmd+Enter를 사용하여 프롬프트 보내기                                                                                                                                                                               |
-| `enableNewConversationShortcut`   | `true`    | Cmd/Ctrl+N을 사용하여 새 대화 시작 활성화                                                                                                                                                                                         |
-| `hideOnboarding`                  | `false`   | 온보딩 체크리스트 숨기기(졸업 모자 아이콘)                                                                                                                                                                                             |
-| `respectGitIgnore`                | `true`    | 파일 검색에서 .gitignore 패턴 제외                                                                                                                                                                                             |
-| `environmentVariables`            | `[]`      | Claude 프로세스에 대한 환경 변수 설정. 공유 구성을 위해 Claude Code 설정을 대신 사용합니다.                                                                                                                                                        |
-| `disableLoginPrompt`              | `false`   | 인증 프롬프트 건너뛰기(타사 공급자 설정용)                                                                                                                                                                                             |
-| `allowDangerouslySkipPermissions` | `false`   | [Auto](/ko/permission-modes#eliminate-prompts-with-auto-mode) 및 Bypass 권한을 모드 선택기에 추가합니다. Auto는 Team 플랜과 Claude Sonnet 4.6 또는 Opus 4.6이 필요하므로 이 토글이 켜져 있어도 옵션이 사용 불가능할 수 있습니다. Bypass 권한은 인터넷 액세스가 없는 샌드박스에서만 사용합니다. |
-| `claudeProcessWrapper`            | -         | Claude 프로세스를 시작하는 데 사용되는 실행 파일 경로                                                                                                                                                                                    |
+| 설정                                | 기본값       | 설명                                                                                                                                                                                                                                                                  |
+| --------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useTerminal`                     | `false`   | 그래픽 패널 대신 터미널 모드에서 Claude 시작                                                                                                                                                                                                                                        |
+| `initialPermissionMode`           | `default` | 새 대화에 대한 승인 프롬프트 제어: `default`, `plan`, `acceptEdits` 또는 `bypassPermissions`. [권한 모드](/ko/permission-modes)를 참조하십시오.                                                                                                                                                |
+| `preferredLocation`               | `panel`   | Claude가 열리는 위치: `sidebar`(오른쪽) 또는 `panel`(새 탭)                                                                                                                                                                                                                      |
+| `autosave`                        | `true`    | Claude가 파일을 읽거나 쓰기 전에 자동 저장                                                                                                                                                                                                                                         |
+| `useCtrlEnterToSend`              | `false`   | Enter 대신 Ctrl/Cmd+Enter를 사용하여 프롬프트 보내기                                                                                                                                                                                                                              |
+| `enableNewConversationShortcut`   | `false`   | Cmd/Ctrl+N을 사용하여 새 대화 시작 활성화                                                                                                                                                                                                                                        |
+| `hideOnboarding`                  | `false`   | 온보딩 체크리스트 숨기기(졸업 모자 아이콘)                                                                                                                                                                                                                                            |
+| `respectGitIgnore`                | `true`    | 파일 검색에서 .gitignore 패턴 제외                                                                                                                                                                                                                                            |
+| `usePythonEnvironment`            | `true`    | Claude를 실행할 때 작업 공간의 Python 환경을 활성화합니다. Python 확장 프로그램이 필요합니다.                                                                                                                                                                                                      |
+| `environmentVariables`            | `[]`      | Claude 프로세스에 대한 환경 변수 설정. 공유 구성을 위해 Claude Code 설정을 대신 사용합니다.                                                                                                                                                                                                       |
+| `disableLoginPrompt`              | `false`   | 인증 프롬프트 건너뛰기(타사 공급자 설정용)                                                                                                                                                                                                                                            |
+| `allowDangerouslySkipPermissions` | `false`   | [Auto mode](/ko/permission-modes#eliminate-prompts-with-auto-mode) 및 Bypass 권한을 모드 선택기에 추가합니다. Auto mode는 [계획, 관리자, 모델 및 공급자 요구 사항](/ko/permission-modes#eliminate-prompts-with-auto-mode)이 있으므로 이 토글이 켜져 있어도 사용 불가능할 수 있습니다. Bypass 권한은 인터넷 액세스가 없는 샌드박스에서만 사용합니다. |
+| `claudeProcessWrapper`            | -         | Claude 프로세스를 시작하는 데 사용되는 실행 파일 경로                                                                                                                                                                                                                                   |
 
 ## VS Code 확장 프로그램 vs. Claude Code CLI
 
@@ -420,6 +428,8 @@ claude --worktree feature-auth
 <Note>
   Quick Pick 확인은 `PreToolUse` hooks와 별개입니다. `mcp__ide__executeCode`에 대한 허용 목록 항목을 사용하면 Claude가 셀 실행을 *제안*할 수 있습니다. VS Code 내의 Quick Pick은 실제로 *실행*할 수 있게 해줍니다.
 </Note>
+
+<a id="troubleshooting" />
 
 ## 일반적인 문제 해결
 

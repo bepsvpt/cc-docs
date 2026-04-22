@@ -277,7 +277,7 @@ Hook 決定不會繞過權限規則。Deny 和 ask 規則在 hook 返回 `"allow
 * 沙箱中的檔案系統限制使用 Read 和 Edit deny 規則，而不是單獨的沙箱設定
 * 網路限制結合 WebFetch 權限規則與沙箱的 `allowedDomains` 和 `deniedDomains` 清單
 
-當沙箱啟用 `autoAllowBashIfSandboxed: true`（預設值）時，沙箱化 Bash 命令無需提示即可執行，即使您的權限包括 `ask: Bash(*)`。沙箱邊界替代每個命令提示。請參閱 [sandbox modes](/zh-TW/sandboxing#sandbox-modes) 以變更此行為。
+當沙箱啟用 `autoAllowBashIfSandboxed: true`（預設值）時，沙箱化 Bash 命令無需提示即可執行，即使您的權限包括 `ask: Bash(*)`。沙箱邊界替代每個命令提示。明確的 deny 規則仍然適用，以及針對 `/`、您的主目錄或其他關鍵系統路徑的 `rm` 或 `rmdir` 命令仍然會觸發提示。請參閱 [sandbox modes](/zh-TW/sandboxing#sandbox-modes) 以變更此行為。
 
 ## 受管理設定
 
@@ -315,9 +315,11 @@ Hook 決定不會繞過權限規則。Deny 和 ask 規則在 hook 返回 `"allow
 
 ## 設定 auto mode 分類器
 
-[Auto mode](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode) 使用分類器模型來決定每個操作是否可以安全執行而無需提示。開箱即用，它僅信任工作目錄和（如果存在）目前儲存庫的遠端。推送到您公司的原始碼控制組織或寫入團隊雲端儲存桶等操作將被阻止為潛在的資料外洩。`autoMode` 設定區塊讓您告訴分類器您的組織信任哪些基礎設施。
+[Auto mode](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode) 使用分類器模型來決定每個操作是否可以安全執行而無需提示。開箱即用，它僅信任工作目錄和（如果存在）目前儲存庫的遠端。推送到您公司的原始碼控制組織或寫入團隊雲端儲存桶等操作將被阻止為潛在的資料外洩。
 
-分類器從使用者設定、`.claude/settings.local.json` 和受管理設定中讀取 `autoMode`。它不從 `.claude/settings.json` 中的共用專案設定讀取，因為簽入的儲存庫可能會注入自己的 allow 規則。
+若要調整分類器允許或阻止的內容，請在您的 [CLAUDE.md](/zh-TW/memory) 檔案中新增指示。分類器從信任的目錄旁邊的對話中讀取 CLAUDE.md，因此像「永遠不要強制推送」這樣的指示同時引導 Claude 和分類器。從專案慣例和行為規則開始。
+
+對於跨專案應用的規則，例如信任的基礎設施或組織範圍的拒絕規則，請使用 `autoMode` 設定區塊。分類器從使用者設定、`.claude/settings.local.json` 和受管理設定中讀取 `autoMode`。它不從 `.claude/settings.json` 中的共用專案設定讀取，因為簽入的儲存庫可能會注入自己的 allow 規則。
 
 | 範圍          | 檔案                            | 用於                       |
 | :---------- | :---------------------------- | :----------------------- |
@@ -329,7 +331,7 @@ Hook 決定不會繞過權限規則。Deny 和 ask 規則在 hook 返回 `"allow
 
 ### 定義信任的基礎設施
 
-對於大多數組織，`autoMode.environment` 是您唯一需要設定的欄位。它告訴分類器哪些儲存庫、儲存桶和網域是信任的，而不涉及內建的 block 和 allow 規則。分類器使用 `environment` 來決定"外部"的含義：任何未列出的目的地都是潛在的外洩目標。
+對於大多數組織，`autoMode.environment` 是您唯一需要設定的欄位。它告訴分類器哪些儲存庫、儲存桶和網域是信任的，而不涉及內建的 block 和 allow 規則。分類器使用 `environment` 來決定「外部」的含義：任何未列出的目的地都是潛在的外洩目標。
 
 ```json theme={null}
 {
@@ -379,7 +381,7 @@ Hook 決定不會繞過權限規則。Deny 和 ask 規則在 hook 返回 `"allow
 
 兩個額外的欄位讓您替換分類器的內建規則清單：`autoMode.soft_deny` 控制被阻止的內容，`autoMode.allow` 控制哪些例外適用。每個都是散文描述的陣列，讀作自然語言規則。
 
-在分類器內，優先順序是：`soft_deny` 規則首先阻止，然後 `allow` 規則覆蓋為例外，然後明確的使用者意圖覆蓋兩者。如果使用者的訊息直接且具體地描述 Claude 即將採取的確切操作，分類器允許它，即使 `soft_deny` 規則符合。一般請求不計算：要求 Claude"清理儲存庫"不授權強制推送，但要求 Claude"強制推送此分支"則授權。
+在分類器內，優先順序是：`soft_deny` 規則首先阻止，然後 `allow` 規則覆蓋為例外，然後明確的使用者意圖覆蓋兩者。如果使用者的訊息直接且具體地描述 Claude 即將採取的確切操作，分類器允許它，即使 `soft_deny` 規則符合。一般請求不計算：要求 Claude「清理儲存庫」不授權強制推送，但要求 Claude「強制推送此分支」則授權。
 
 若要放寬：當預設值阻止您的管道已透過 PR 審查、CI 或暫存環境防護的內容時，從 `soft_deny` 移除規則，或當分類器重複標記預設例外不涵蓋的常規模式時新增到 `allow`。若要收緊：新增到 `soft_deny` 以應對預設值遺漏的特定於您環境的風險，或從 `allow` 移除以對 block 規則保持預設例外。在所有情況下，執行 `claude auto-mode defaults` 以取得完整的預設清單，然後複製和編輯：永遠不要從空清單開始。
 

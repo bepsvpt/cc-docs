@@ -537,7 +537,30 @@ SSH 会话让你在远程机器上运行 Claude Code，同时使用桌面应用�
 
 添加后，连接出现在环境下拉菜单中。选择它在该机器上启动会话。Claude 在远程机器上运行，可以访问其文件和工具。
 
-远程机器必须运行 Linux 或 macOS，并且 Claude Code 必须安装在其上。连接后，SSH 会话支持权限模式、连接器、插件和 MCP servers。
+远程机器必须运行 Linux 或 macOS，并且 Claude Code 必须安装在其上。连接后，SSH 会话支持权限模式、连接器、plugins 和 MCP servers。
+
+#### 为你的团队预配置 SSH 连接
+
+管理员可以通过将 `sshConfigs` 添加到[托管设置](/zh-CN/settings#settings-precedence)文件来向团队成员分发 SSH 连接。以这种方式定义的连接会自动出现在每个用户的环境下拉菜单中，并显示为托管的，因此用户可以选择它们，但不能在应用中编辑或删除它们。
+
+以下示例预配置了一个在远程主机上的 `~/projects` 中打开的单个连接：
+
+```json theme={null}
+{
+  "sshConfigs": [
+    {
+      "id": "shared-dev-vm",
+      "name": "Shared Dev VM",
+      "sshHost": "user@dev.example.com",
+      "sshPort": 22,
+      "sshIdentityFile": "~/.ssh/id_ed25519",
+      "startDirectory": "~/projects"
+    }
+  ]
+}
+```
+
+每个条目需要 `id`、`name` 和 `sshHost`。`sshPort`、`sshIdentityFile` 和 `startDirectory` 字段是可选的。用户也可以将 `sshConfigs` 添加到他们自己的 `~/.claude/settings.json`，这是通过对话框添加的连接存储的位置。
 
 ## 企业配置
 
@@ -561,6 +584,7 @@ Teams 或 Enterprise 计划上的组织可以通过管理员控制台控制、�
 | `permissions.disableBypassPermissionsMode` | 设置为 `"disable"` 以防止用户启用绕过权限模式。                                                                                                   |
 | `disableAutoMode`                          | 设置为 `"disable"` 以防止用户启用 [Auto](/zh-CN/permission-modes#eliminate-prompts-with-auto-mode) 模式。从模式选择器中删除 Auto。也在 `permissions` 下接受。 |
 | `autoMode`                                 | 自定义 auto 模式分类器在你的组织中信任和阻止的内容。请参阅[配置 auto 模式分类器](/zh-CN/permissions#configure-the-auto-mode-classifier)。                          |
+| `sshConfigs`                               | 预配置[SSH 连接](#pre-configure-ssh-connections-for-your-team)，在环境下拉菜单中显示。用户无法编辑或删除托管连接。                                              |
 
 `permissions.disableBypassPermissionsMode` 和 `disableAutoMode` 也在用户和项目设置中工作，但将它们放在托管设置中可防止用户覆盖它们。`autoMode` 从用户设置、`.claude/settings.local.json` 和托管设置中读取，但不从已检入的 `.claude/settings.json` 中读取：克隆的存储库无法注入其自己的分类器规则。有关托管专用设置的完整列表，包括 `allowManagedPermissionRulesOnly` 和 `allowManagedHooksOnly`，请参阅[托管专用设置](/zh-CN/permissions#managed-only-settings)。
 

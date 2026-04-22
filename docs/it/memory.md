@@ -38,17 +38,29 @@ I subagents possono anche mantenere la propria memoria automatica. Vedi [configu
 
 I file CLAUDE.md sono file markdown che forniscono a Claude istruzioni persistenti per un progetto, il tuo flusso di lavoro personale o l'intera organizzazione. Scrivi questi file in testo semplice; Claude li legge all'inizio di ogni sessione.
 
+### Quando aggiungere a CLAUDE.md
+
+Tratta CLAUDE.md come il posto dove scrivi quello che altrimenti dovresti rispiegare. Aggiungi a esso quando:
+
+* Claude commette lo stesso errore una seconda volta
+* Una revisione del codice rileva qualcosa che Claude avrebbe dovuto sapere su questa base di codice
+* Digiti la stessa correzione o chiarimento nella chat che hai digitato nella sessione precedente
+* Un nuovo membro del team avrebbe bisogno dello stesso contesto per essere produttivo
+
+Mantienilo su fatti che Claude dovrebbe tenere in ogni sessione: comandi di compilazione, convenzioni, layout del progetto, regole "fai sempre X". Se una voce è una procedura multi-step o riguarda solo una parte della base di codice, spostala in una [skill](/it/skills) o in una [regola con ambito di percorso](#organize-rules-with-claude/rules/) invece. La [panoramica dell'estensione](/it/features-overview#build-your-setup-over-time) copre quando usare ogni meccanismo.
+
 ### Scegli dove mettere i file CLAUDE.md
 
 I file CLAUDE.md possono trovarsi in diversi percorsi, ognuno con un ambito diverso. I percorsi più specifici hanno la precedenza su quelli più ampi.
 
-| Ambito                     | Posizione                                                                                                                                                             | Scopo                                                   | Esempi di casi d'uso                                                            | Condiviso con                                         |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| **Politica gestita**       | • macOS: `/Library/Application Support/ClaudeCode/CLAUDE.md`<br />• Linux e WSL: `/etc/claude-code/CLAUDE.md`<br />• Windows: `C:\Program Files\ClaudeCode\CLAUDE.md` | Istruzioni a livello organizzativo gestite da IT/DevOps | Standard di codifica aziendale, politiche di sicurezza, requisiti di conformità | Tutti gli utenti dell'organizzazione                  |
-| **Istruzioni di progetto** | `./CLAUDE.md` o `./.claude/CLAUDE.md`                                                                                                                                 | Istruzioni condivise dal team per il progetto           | Architettura del progetto, standard di codifica, flussi di lavoro comuni        | Membri del team tramite controllo del codice sorgente |
-| **Istruzioni utente**      | `~/.claude/CLAUDE.md`                                                                                                                                                 | Preferenze personali per tutti i progetti               | Preferenze di stile del codice, scorciatoie di strumenti personali              | Solo tu (tutti i progetti)                            |
+| Ambito                     | Posizione                                                                                                                                                             | Scopo                                                                 | Esempi di casi d'uso                                                            | Condiviso con                                         |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| **Politica gestita**       | • macOS: `/Library/Application Support/ClaudeCode/CLAUDE.md`<br />• Linux e WSL: `/etc/claude-code/CLAUDE.md`<br />• Windows: `C:\Program Files\ClaudeCode\CLAUDE.md` | Istruzioni a livello organizzativo gestite da IT/DevOps               | Standard di codifica aziendale, politiche di sicurezza, requisiti di conformità | Tutti gli utenti dell'organizzazione                  |
+| **Istruzioni di progetto** | `./CLAUDE.md` o `./.claude/CLAUDE.md`                                                                                                                                 | Istruzioni condivise dal team per il progetto                         | Architettura del progetto, standard di codifica, flussi di lavoro comuni        | Membri del team tramite controllo del codice sorgente |
+| **Istruzioni utente**      | `~/.claude/CLAUDE.md`                                                                                                                                                 | Preferenze personali per tutti i progetti                             | Preferenze di stile del codice, scorciatoie di strumenti personali              | Solo tu (tutti i progetti)                            |
+| **Istruzioni locali**      | `./CLAUDE.local.md`                                                                                                                                                   | Preferenze personali specifiche del progetto; aggiungi a `.gitignore` | I tuoi URL sandbox, dati di test preferiti                                      | Solo tu (progetto corrente)                           |
 
-I file CLAUDE.md nella gerarchia di directory sopra la directory di lavoro vengono caricati completamente all'avvio. I file CLAUDE.md nelle sottodirectory vengono caricati su richiesta quando Claude legge i file in quelle directory. Vedi [Come vengono caricati i file CLAUDE.md](#how-claude-md-files-load) per l'ordine di risoluzione completo.
+I file CLAUDE.md e CLAUDE.local.md nella gerarchia di directory sopra la directory di lavoro vengono caricati completamente all'avvio. I file nelle sottodirectory vengono caricati su richiesta quando Claude legge i file in quelle directory. Vedi [Come vengono caricati i file CLAUDE.md](#how-claude-md-files-load) per l'ordine di risoluzione completo.
 
 Per i progetti di grandi dimensioni, puoi suddividere le istruzioni in file specifici per argomento utilizzando [regole di progetto](#organize-rules-with-claude/rules/). Le regole ti consentono di limitare le istruzioni a tipi di file specifici o sottodirectory.
 
@@ -93,7 +105,9 @@ Vedi @README per la panoramica del progetto e @package.json per i comandi npm di
 - flusso di lavoro git @docs/git-instructions.md
 ```
 
-Per le preferenze personali che non vuoi archiviare, importa un file dalla tua home directory. L'importazione va nel CLAUDE.md condiviso, ma il file a cui punta rimane sulla tua macchina:
+Per le preferenze personali per progetto che non vuoi archiviare nel controllo del codice sorgente, crea un `CLAUDE.local.md` nella radice del progetto. Si carica insieme a `CLAUDE.md` e viene trattato allo stesso modo. Aggiungi `CLAUDE.local.md` al tuo `.gitignore` in modo che non venga sottoposto a commit; eseguire `/init` e scegliere l'opzione personale lo fa per te.
+
+Se lavori su più git worktrees dello stesso repository, un `CLAUDE.local.md` ignorato da git esiste solo nel worktree dove lo hai creato. Per condividere istruzioni personali tra worktrees, importa un file dalla tua home directory invece:
 
 ```text theme={null}
 # Preferenze individuali
@@ -120,9 +134,11 @@ Usa plan mode per le modifiche in `src/billing/`.
 
 ### Come vengono caricati i file CLAUDE.md
 
-Claude Code legge i file CLAUDE.md camminando verso l'alto nell'albero delle directory dalla tua directory di lavoro corrente, controllando ogni directory lungo il percorso. Ciò significa che se esegui Claude Code in `foo/bar/`, carica le istruzioni sia da `foo/bar/CLAUDE.md` che da `foo/CLAUDE.md`.
+Claude Code legge i file CLAUDE.md camminando verso l'alto nell'albero delle directory dalla tua directory di lavoro corrente, controllando ogni directory lungo il percorso per i file `CLAUDE.md` e `CLAUDE.local.md`. Ciò significa che se esegui Claude Code in `foo/bar/`, carica le istruzioni da `foo/bar/CLAUDE.md`, `foo/CLAUDE.md` e qualsiasi file `CLAUDE.local.md` accanto a loro.
 
-Claude scopre anche i file CLAUDE.md nelle sottodirectory sotto la tua directory di lavoro corrente. Invece di caricarli all'avvio, vengono inclusi quando Claude legge i file in quelle sottodirectory.
+Tutti i file scoperti vengono concatenati nel contesto piuttosto che sovrascriversi a vicenda. All'interno di ogni directory, `CLAUDE.local.md` viene aggiunto dopo `CLAUDE.md`, quindi quando le istruzioni entrano in conflitto, le tue note personali sono l'ultima cosa che Claude legge a quel livello.
+
+Claude scopre anche i file `CLAUDE.md` e `CLAUDE.local.md` nelle sottodirectory sotto la tua directory di lavoro corrente. Invece di caricarli all'avvio, vengono inclusi quando Claude legge i file in quelle sottodirectory.
 
 Se lavori in un grande monorepo dove i file CLAUDE.md di altri team vengono raccolti, usa [`claudeMdExcludes`](#exclude-specific-claude-md-files) per saltarli.
 
@@ -132,11 +148,13 @@ I commenti HTML a livello di blocco (`<!-- maintainer notes -->`) nei file CLAUD
 
 Il flag `--add-dir` dà a Claude accesso a directory aggiuntive al di fuori della tua directory di lavoro principale. Per impostazione predefinita, i file CLAUDE.md da queste directory non vengono caricati.
 
-Per caricare anche i file CLAUDE.md da directory aggiuntive, inclusi `CLAUDE.md`, `.claude/CLAUDE.md` e `.claude/rules/*.md`, imposta la variabile di ambiente `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD`:
+Per caricare anche i file di memoria da directory aggiuntive, imposta la variabile di ambiente `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD`:
 
 ```bash theme={null}
 CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ../shared-config
 ```
+
+Questo carica `CLAUDE.md`, `.claude/CLAUDE.md`, `.claude/rules/*.md` e `CLAUDE.local.md` dalla directory aggiuntiva. `CLAUDE.local.md` viene saltato se escludi `local` da [`--setting-sources`](/it/cli-reference).
 
 ### Organizza le regole con `.claude/rules/`
 
@@ -341,7 +359,7 @@ I file di memoria automatica sono markdown semplice che puoi modificare o elimin
 
 ## Visualizza e modifica con `/memory`
 
-Il comando `/memory` elenca tutti i file CLAUDE.md e rules caricati nella tua sessione corrente, ti consente di attivare o disattivare la memoria automatica e fornisce un collegamento per aprire la cartella di memoria automatica. Seleziona qualsiasi file per aprirlo nel tuo editor.
+Il comando `/memory` elenca tutti i file CLAUDE.md, CLAUDE.local.md e rules caricati nella tua sessione corrente, ti consente di attivare o disattivare la memoria automatica e fornisce un collegamento per aprire la cartella di memoria automatica. Seleziona qualsiasi file per aprirlo nel tuo editor.
 
 Quando chiedi a Claude di ricordare qualcosa, come "usa sempre pnpm, non npm" o "ricorda che i test API richiedono un'istanza Redis locale", Claude lo salva nella memoria automatica. Per aggiungere istruzioni a CLAUDE.md, chiedi direttamente a Claude, come "aggiungi questo a CLAUDE.md", oppure modifica il file tu stesso tramite `/memory`.
 
@@ -355,7 +373,7 @@ Il contenuto di CLAUDE.md viene consegnato come messaggio utente dopo il prompt 
 
 Per eseguire il debug:
 
-* Esegui `/memory` per verificare che i tuoi file CLAUDE.md vengono caricati. Se un file non è elencato, Claude non può vederlo.
+* Esegui `/memory` per verificare che i tuoi file CLAUDE.md e CLAUDE.local.md vengono caricati. Se un file non è elencato, Claude non può vederlo.
 * Verifica che il CLAUDE.md rilevante si trovi in una posizione che viene caricata per la tua sessione (vedi [Scegli dove mettere i file CLAUDE.md](#choose-where-to-put-claude-md-files)).
 * Rendi le istruzioni più specifiche. "Usa indentazione a 2 spazi" funziona meglio di "formatta il codice bene".
 * Cerca istruzioni conflittuali tra i file CLAUDE.md. Se due file danno una guida diversa per lo stesso comportamento, Claude potrebbe sceglierne una arbitrariamente.
@@ -376,13 +394,15 @@ I file con più di 200 righe consumano più contesto e possono ridurre l'aderenz
 
 ### Le istruzioni sembrano perse dopo `/compact`
 
-CLAUDE.md sopravvive completamente alla compattazione. Dopo `/compact`, Claude rilegge il tuo CLAUDE.md dal disco e lo reinetta fresco nella sessione. Se un'istruzione è scomparsa dopo la compattazione, è stata data solo nella conversazione, non scritta su CLAUDE.md. Aggiungila a CLAUDE.md per farla persistere tra le sessioni.
+CLAUDE.md di progetto sopravvive alla compattazione: dopo `/compact`, Claude rilegge il tuo CLAUDE.md dal disco e lo reinetta nella sessione. I file CLAUDE.md annidati nelle sottodirectory non vengono reinettati automaticamente; vengono ricaricati la prossima volta che Claude legge un file in quella sottodirectory.
+
+Se un'istruzione è scomparsa dopo la compattazione, è stata data solo nella conversazione o si trova in un CLAUDE.md annidato che non è stato ancora ricaricato. Aggiungi istruzioni solo per conversazione a CLAUDE.md per farle persistere. Vedi [Cosa sopravvive alla compattazione](/it/context-window#what-survives-compaction) per il breakdown completo.
 
 Vedi [Scrivi istruzioni efficaci](#write-effective-instructions) per una guida su dimensione, struttura e specificità.
 
 ## Risorse correlate
 
+* [Esegui il debug della tua configurazione](/it/debug-your-config): diagnostica perché CLAUDE.md o le impostazioni non hanno effetto
 * [Skills](/it/skills): pacchetto di flussi di lavoro ripetibili che si caricano su richiesta
 * [Impostazioni](/it/settings): configura il comportamento di Claude Code con file di impostazioni
-* [Gestisci sessioni](/it/sessions): gestisci il contesto, riprendi conversazioni ed esegui sessioni parallele
 * [Memoria subagent](/it/sub-agents#enable-persistent-memory): consenti ai subagents di mantenere la propria memoria automatica

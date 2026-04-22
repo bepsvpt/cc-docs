@@ -52,9 +52,17 @@ VS Code 擴充功能為 Claude Code 提供了原生圖形介面，直接整合�
     * **命令面板**：`Cmd+Shift+P`（Mac）或 `Ctrl+Shift+P`（Windows/Linux），輸入「Claude Code」，然後選擇一個選項，例如「在新標籤中開啟」
     * **狀態列**：點擊視窗右下角的 **✱ Claude Code**。即使沒有開啟檔案，這也有效。
 
-    首次開啟面板時，會出現**學習 Claude Code** 檢查清單。透過點擊**顯示給我**來完成每一項，或用 X 關閉它。若要稍後重新開啟它，請在 VS Code 設定中的「擴充功能」→「Claude Code」下取消勾選**隱藏入門**。
-
     您可以拖動 Claude 面板以在 VS Code 中的任何位置重新定位它。有關詳細資訊，請參閱[自訂您的工作流程](#customize-your-workflow)。
+  </Step>
+
+  <Step title="登入">
+    首次開啟面板時，會出現登入畫面。點擊**登入**並在您的瀏覽器中完成授權。
+
+    如果您稍後看到**未登入 · 請執行 /login**，擴充功能會自動重新開啟登入畫面。如果它沒有出現，請從命令面板使用**Developer: Reload Window**重新載入視窗。
+
+    如果您在 shell 中設定了 `ANTHROPIC_API_KEY` 但仍然看到登入提示，VS Code 可能沒有繼承您的 shell 環境。使用 `code .` 從終端機啟動 VS Code，以便它繼承您的環境變數，或改為使用您的 Claude 帳戶登入。
+
+    登入後，會出現**學習 Claude Code** 檢查清單。透過點擊**顯示給我**來完成每一項，或用 X 關閉它。若要稍後重新開啟它，請在 VS Code 設定中的'擴充功能'→'Claude Code'下取消勾選**隱藏入門**。
   </Step>
 
   <Step title="傳送提示">
@@ -68,7 +76,7 @@ VS Code 擴充功能為 Claude Code 提供了原生圖形介面，直接整合�
   </Step>
 
   <Step title="審查變更">
-    當 Claude 想要編輯檔案時，它會顯示原始內容和建議變更的並排比較，然後要求許可。您可以接受、拒絕或告訴 Claude 改為做什麼。
+    當 Claude 想要編輯檔案時，它會顯示原始內容和建議變更的並排比較，然後要求許可。您可以接受、拒絕或告訴 Claude 改為做什麼。如果您在接受前直接在差異檢視中編輯建議的內容，Claude 會被告知您修改了它，因此它不會假設檔案與其原始提案相符。
 
     <img src="https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-edits.png?fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=e005f9b41c541c5c7c59c082f7c4841c" alt="VS Code 顯示 Claude 建議變更的差異，以及詢問是否進行編輯的許可提示" width="3292" height="1876" data-path="images/vs-code-edits.png" />
   </Step>
@@ -77,7 +85,7 @@ VS Code 擴充功能為 Claude Code 提供了原生圖形介面，直接整合�
 有關您可以使用 Claude Code 做什麼的更多想法，請參閱[常見工作流程](/zh-TW/common-workflows)。
 
 <Tip>
-  從命令面板執行「Claude Code: Open Walkthrough」以獲得基礎知識的引導式導覽。
+  從命令面板執行'Claude Code: Open Walkthrough'以獲得基礎知識的引導式導覽。
 </Tip>
 
 ## 使用提示框
@@ -85,10 +93,10 @@ VS Code 擴充功能為 Claude Code 提供了原生圖形介面，直接整合�
 提示框支援多項功能：
 
 * **許可模式**：點擊提示框底部的模式指示器以切換模式。在正常模式下，Claude 在每個操作前要求許可。在 Plan Mode 中，Claude 描述它將做什麼，並在進行變更前等待批准。VS Code 會自動將計畫作為完整 markdown 文件開啟，您可以在其中添加內聯評論以在 Claude 開始前提供反饋。在自動接受模式下，Claude 進行編輯而不詢問。在 VS Code 設定中的 `claudeCode.initialPermissionMode` 下設定預設值。
-* **命令菜單**：點擊 `/` 或輸入 `/` 以開啟命令菜單。選項包括附加檔案、切換模型、切換擴展思考、查看計畫使用情況（`/usage`）以及啟動 [Remote Control](/zh-TW/remote-control) 工作階段（`/remote-control`）。「自訂」部分提供對 MCP servers、hooks、memory、permissions 和 plugins 的存取。帶有終端機圖示的項目在整合終端機中開啟。
+* **命令菜單**：點擊 `/` 或輸入 `/` 以開啟命令菜單。選項包括附加檔案、切換模型、切換擴展思考、查看計畫使用情況（`/usage`）以及啟動 [Remote Control](/zh-TW/remote-control) 工作階段（`/remote-control`）。'自訂'部分提供對 MCP servers、hooks、memory、permissions 和 plugins 的存取。帶有終端機圖示的項目在整合終端機中開啟。
 * **上下文指示器**：提示框顯示您使用了多少 Claude 的 context window。Claude 在需要時會自動壓縮，或您可以手動執行 `/compact`。
-* **擴展思考**：讓 Claude 花更多時間推理複雜問題。透過命令菜單（`/`）切換它。有關詳細資訊，請參閱[擴展思考](/zh-TW/common-workflows#use-extended-thinking-thinking-mode)。
-* **多行輸入**：按 `Shift+Enter` 以添加新行而不傳送。這也適用於問題對話框的「其他」自由文字輸入。
+* **擴展思考**：讓 Claude 花更多時間推理複雜問題。透過命令菜單（`/`）切換它。Claude 的推理在對話中顯示為摺疊的區塊：點擊一個區塊以讀取它，或按 `Ctrl+O` 以展開或摺疊工作階段中的每個思考區塊。有關詳細資訊，請參閱[擴展思考](/zh-TW/common-workflows#use-extended-thinking-thinking-mode)。
+* **多行輸入**：按 `Shift+Enter` 以添加新行而不傳送。這也適用於問題對話框的'其他'自由文字輸入。
 
 ### 參考檔案和資料夾
 
@@ -107,15 +115,15 @@ VS Code 擴充功能為 Claude Code 提供了原生圖形介面，直接整合�
 
 ### 恢復過去的對話
 
-點擊 Claude Code 面板頂部的下拉菜單以存取您的對話歷史記錄。您可以按關鍵字搜尋或按時間瀏覽（今天、昨天、過去 7 天等）。點擊任何對話以使用完整訊息歷史記錄恢復它。新工作階段會根據您的第一條訊息接收 AI 生成的標題。將滑鼠懸停在工作階段上以顯示重新命名和移除操作：重新命名以給它一個描述性標題，或移除以將其從清單中刪除。有關恢復工作階段的更多資訊，請參閱[常見工作流程](/zh-TW/common-workflows#resume-previous-conversations)。
+點擊 Claude Code 面板頂部的**工作階段歷史記錄**按鈕以存取您的對話歷史記錄。您可以按關鍵字搜尋或按時間瀏覽（今天、昨天、過去 7 天等）。點擊任何對話以使用完整訊息歷史記錄恢復它。新工作階段會根據您的第一條訊息接收 AI 生成的標題。將滑鼠懸停在工作階段上以顯示重新命名和移除操作：重新命名以給它一個描述性標題，或移除以將其從清單中刪除。有關恢復工作階段的更多資訊，請參閱[常見工作流程](/zh-TW/common-workflows#resume-previous-conversations)。
 
 ### 從 Claude.ai 恢復遠端工作階段
 
 如果您使用[網路上的 Claude Code](/zh-TW/claude-code-on-the-web)，您可以直接在 VS Code 中恢復這些遠端工作階段。這需要使用 **Claude.ai Subscription** 登入，而不是 Anthropic Console。
 
 <Steps>
-  <Step title="開啟過去的對話">
-    點擊 Claude Code 面板頂部的**過去的對話**下拉菜單。
+  <Step title="開啟工作階段歷史記錄">
+    點擊 Claude Code 面板頂部的**工作階段歷史記錄**按鈕。
   </Step>
 
   <Step title="選擇遠端標籤">
@@ -128,7 +136,7 @@ VS Code 擴充功能為 Claude Code 提供了原生圖形介面，直接整合�
 </Steps>
 
 <Note>
-  只有使用 GitHub 儲存庫啟動的網路工作階段才會出現在'遠端'標籤中。恢復會在本機載入對話歷史記錄；變更不會同步回 claude.ai。
+  只有使用 GitHub 儲存庫啟動的網路工作階段才會出現在遠端標籤中。恢復會在本機載入對話歷史記錄；變更不會同步回 claude.ai。
 </Note>
 
 ## 自訂您的工作流程
@@ -157,7 +165,7 @@ VS Code 擴充功能為 Claude Code 提供了原生圖形介面，直接整合�
 
 預設情況下，擴充功能開啟圖形聊天面板。如果您偏好 CLI 風格的介面，請開啟[使用終端機設定](vscode://settings/claudeCode.useTerminal)並勾選該框。
 
-您也可以開啟 VS Code 設定（Mac 上的 `Cmd+,` 或 Windows/Linux 上的 `Ctrl+,`），前往'擴充功能'→'Claude Code'，然後勾選**使用終端機**。
+您也可以開啟 VS Code 設定（Mac 上的 `Cmd+,` 或 Windows/Linux 上的 `Ctrl+,`），前往「擴充功能」→「Claude Code」，然後勾選**使用終端機**。
 
 ## 管理 plugins
 
@@ -214,25 +222,25 @@ Claude 為瀏覽器任務開啟新標籤並共享您的瀏覽器登入狀態，�
 
 ## VS Code 命令和快捷鍵
 
-開啟命令面板（Mac 上的 `Cmd+Shift+P` 或 Windows/Linux 上的 `Ctrl+Shift+P`）並輸入'Claude Code'以查看 Claude Code 擴充功能的所有可用 VS Code 命令。
+開啟命令面板（Mac 上的 `Cmd+Shift+P` 或 Windows/Linux 上的 `Ctrl+Shift+P`）並輸入「Claude Code」以查看 Claude Code 擴充功能的所有可用 VS Code 命令。
 
-某些快捷鍵取決於哪個面板'獲得焦點'（接收鍵盤輸入）。當您的游標在程式碼檔案中時，編輯器獲得焦點。當您的游標在 Claude 的提示框中時，Claude 獲得焦點。使用 `Cmd+Esc` / `Ctrl+Esc` 在它們之間切換。
+某些快捷鍵取決於哪個面板「獲得焦點」（接收鍵盤輸入）。當您的游標在程式碼檔案中時，編輯器獲得焦點。當您的游標在 Claude 的提示框中時，Claude 獲得焦點。使用 `Cmd+Esc` / `Ctrl+Esc` 在它們之間切換。
 
 <Note>
   這些是用於控制擴充功能的 VS Code 命令。並非所有內建 Claude Code 命令都在擴充功能中可用。有關詳細資訊，請參閱 [VS Code 擴充功能與 Claude Code CLI](#vs-code-extension-vs-claude-code-cli)。
 </Note>
 
-| 命令                         | 快捷鍵                                                   | 描述                       |
-| -------------------------- | ----------------------------------------------------- | ------------------------ |
-| Focus Input                | `Cmd+Esc`（Mac）/ `Ctrl+Esc`（Windows/Linux）             | 在編輯器和 Claude 之間切換焦點      |
-| Open in Side Bar           | -                                                     | 在左側邊欄中開啟 Claude          |
-| Open in Terminal           | -                                                     | 在終端機模式中開啟 Claude         |
-| Open in New Tab            | `Cmd+Shift+Esc`（Mac）/ `Ctrl+Shift+Esc`（Windows/Linux） | 將新對話作為編輯器標籤開啟            |
-| Open in New Window         | -                                                     | 在單獨的視窗中開啟新對話             |
-| New Conversation           | `Cmd+N`（Mac）/ `Ctrl+N`（Windows/Linux）                 | 開始新對話（需要 Claude 獲得焦點）    |
-| Insert @-Mention Reference | `Option+K`（Mac）/ `Alt+K`（Windows/Linux）               | 插入對目前檔案和選擇的參考（需要編輯器獲得焦點） |
-| Show Logs                  | -                                                     | 檢視擴充功能除錯日誌               |
-| Logout                     | -                                                     | 登出您的 Anthropic 帳戶        |
+| 命令                         | 快捷鍵                                                   | 描述                                                               |
+| -------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------- |
+| Focus Input                | `Cmd+Esc`（Mac）/ `Ctrl+Esc`（Windows/Linux）             | 在編輯器和 Claude 之間切換焦點                                              |
+| Open in Side Bar           | -                                                     | 在左側邊欄中開啟 Claude                                                  |
+| Open in Terminal           | -                                                     | 在終端機模式中開啟 Claude                                                 |
+| Open in New Tab            | `Cmd+Shift+Esc`（Mac）/ `Ctrl+Shift+Esc`（Windows/Linux） | 將新對話作為編輯器標籤開啟                                                    |
+| Open in New Window         | -                                                     | 在單獨的視窗中開啟新對話                                                     |
+| New Conversation           | `Cmd+N`（Mac）/ `Ctrl+N`（Windows/Linux）                 | 開始新對話。需要 Claude 獲得焦點且 `enableNewConversationShortcut` 設定為 `true` |
+| Insert @-Mention Reference | `Option+K`（Mac）/ `Alt+K`（Windows/Linux）               | 插入對目前檔案和選擇的參考（需要編輯器獲得焦點）                                         |
+| Show Logs                  | -                                                     | 檢視擴充功能除錯日誌                                                       |
+| Logout                     | -                                                     | 登出您的 Anthropic 帳戶                                                |
 
 ### 從其他工具啟動 VS Code 標籤
 
@@ -272,21 +280,21 @@ vscode://anthropic.claude-code/open?prompt=review%20my%20changes
 
 ### 擴充功能設定
 
-| 設定                                | 預設值       | 描述                                                                                                                                                                                                        |
-| --------------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `selectedModel`                   | `default` | 新對話的模型。使用 `/model` 按工作階段變更。                                                                                                                                                                               |
-| `useTerminal`                     | `false`   | 以終端機模式而不是圖形面板啟動 Claude                                                                                                                                                                                    |
-| `initialPermissionMode`           | `default` | 控制批准提示：`default`、`plan`、`acceptEdits`、`auto` 或 `bypassPermissions`。請參閱[許可模式](/zh-TW/permission-modes)。                                                                                                    |
-| `preferredLocation`               | `panel`   | Claude 開啟的位置：`sidebar`（右側）或 `panel`（新標籤）                                                                                                                                                                  |
-| `autosave`                        | `true`    | Claude 讀取或寫入檔案前自動儲存檔案                                                                                                                                                                                     |
-| `useCtrlEnterToSend`              | `false`   | 使用 Ctrl/Cmd+Enter 而不是 Enter 來傳送提示                                                                                                                                                                         |
-| `enableNewConversationShortcut`   | `true`    | 啟用 Cmd/Ctrl+N 以開始新對話                                                                                                                                                                                      |
-| `hideOnboarding`                  | `false`   | 隱藏入門檢查清單（畢業帽圖示）                                                                                                                                                                                           |
-| `respectGitIgnore`                | `true`    | 從檔案搜尋中排除 .gitignore 模式                                                                                                                                                                                    |
-| `environmentVariables`            | `[]`      | 為 Claude 程序設定環境變數。改為使用 Claude Code 設定以進行共享配置。                                                                                                                                                             |
-| `disableLoginPrompt`              | `false`   | 跳過身份驗證提示（用於第三方提供者設定）                                                                                                                                                                                      |
-| `allowDangerouslySkipPermissions` | `false`   | 將 [Auto](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode) 和 Bypass permissions 添加到模式選擇器。Auto 需要 Team 計畫和 Claude Sonnet 4.6 或 Opus 4.6，因此即使此切換打開，該選項也可能保持不可用。僅在沒有網際網路存取的沙箱中使用 Bypass permissions。 |
-| `claudeProcessWrapper`            | -         | 用於啟動 Claude 程序的可執行檔路徑                                                                                                                                                                                     |
+| 設定                                | 預設值       | 描述                                                                                                                                                                                                                                                      |
+| --------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useTerminal`                     | `false`   | 以終端機模式而不是圖形面板啟動 Claude                                                                                                                                                                                                                                  |
+| `initialPermissionMode`           | `default` | 控制新對話的批准提示：`default`、`plan`、`acceptEdits` 或 `bypassPermissions`。請參閱[許可模式](/zh-TW/permission-modes)。                                                                                                                                                     |
+| `preferredLocation`               | `panel`   | Claude 開啟的位置：`sidebar`（右側）或 `panel`（新標籤）                                                                                                                                                                                                                |
+| `autosave`                        | `true`    | Claude 讀取或寫入檔案前自動儲存檔案                                                                                                                                                                                                                                   |
+| `useCtrlEnterToSend`              | `false`   | 使用 Ctrl/Cmd+Enter 而不是 Enter 來傳送提示                                                                                                                                                                                                                       |
+| `enableNewConversationShortcut`   | `false`   | 啟用 Cmd/Ctrl+N 以開始新對話                                                                                                                                                                                                                                    |
+| `hideOnboarding`                  | `false`   | 隱藏入門檢查清單（畢業帽圖示）                                                                                                                                                                                                                                         |
+| `respectGitIgnore`                | `true`    | 從檔案搜尋中排除 .gitignore 模式                                                                                                                                                                                                                                  |
+| `usePythonEnvironment`            | `true`    | 執行 Claude 時啟動工作區的 Python 環境。需要 Python 擴充功能。                                                                                                                                                                                                             |
+| `environmentVariables`            | `[]`      | 為 Claude 程序設定環境變數。改為使用 Claude Code 設定以進行共享配置。                                                                                                                                                                                                           |
+| `disableLoginPrompt`              | `false`   | 跳過身份驗證提示（用於第三方提供者設定）                                                                                                                                                                                                                                    |
+| `allowDangerouslySkipPermissions` | `false`   | 將 [Auto mode](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode) 和 Bypass permissions 添加到模式選擇器。Auto mode 有[計畫、管理員、模型和提供者要求](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode)，因此即使此切換打開，該選項也可能保持不可用。僅在沒有網際網路存取的沙箱中使用 Bypass permissions。 |
+| `claudeProcessWrapper`            | -         | 用於啟動 Claude 程序的可執行檔路徑                                                                                                                                                                                                                                   |
 
 ## VS Code 擴充功能與 Claude Code CLI
 
@@ -420,6 +428,8 @@ claude --worktree feature-auth
 <Note>
   Quick Pick 確認與 `PreToolUse` hooks 分開。`mcp__ide__executeCode` 的允許列表條目讓 Claude *提議*執行儲存格；VS Code 內的 Quick Pick 是讓它*實際*執行的原因。
 </Note>
+
+<a id="troubleshooting" />
 
 ## 修復常見問題
 

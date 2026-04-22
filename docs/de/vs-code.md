@@ -52,9 +52,17 @@ Nach der Installation können Sie Claude Code über die VS Code-Benutzeroberflä
     * **Befehlspalette**: `Cmd+Shift+P` (Mac) oder `Ctrl+Shift+P` (Windows/Linux), geben Sie „Claude Code" ein und wählen Sie eine Option wie „In neuer Registerkarte öffnen"
     * **Statusleiste**: Klicken Sie auf **✱ Claude Code** in der unteren rechten Ecke des Fensters. Dies funktioniert auch, wenn keine Datei geöffnet ist.
 
-    Wenn Sie das Panel zum ersten Mal öffnen, wird eine **Claude Code erlernen**-Checkliste angezeigt. Arbeiten Sie jedes Element durch, indem Sie auf **Zeig mir** klicken, oder schließen Sie es mit dem X. Um es später erneut zu öffnen, deaktivieren Sie **Onboarding ausblenden** in den VS Code-Einstellungen unter Erweiterungen → Claude Code.
-
     Sie können das Claude-Panel ziehen, um es überall in VS Code zu repositionieren. Siehe [Passen Sie Ihren Workflow an](#customize-your-workflow) für Details.
+  </Step>
+
+  <Step title="Melden Sie sich an">
+    Wenn Sie das Panel zum ersten Mal öffnen, wird ein Anmeldungsbildschirm angezeigt. Klicken Sie auf **Anmelden** und schließen Sie die Autorisierung in Ihrem Browser ab.
+
+    Wenn Sie später **Nicht angemeldet · Bitte führen Sie /login aus** sehen, öffnet die Erweiterung den Anmeldungsbildschirm automatisch erneut. Wenn er nicht angezeigt wird, laden Sie das Fenster aus der Befehlspalette mit **Developer: Reload Window** neu.
+
+    Wenn Sie `ANTHROPIC_API_KEY` in Ihrer Shell gesetzt haben, aber immer noch die Anmeldungsaufforderung sehen, hat VS Code möglicherweise Ihre Shell-Umgebung nicht geerbt. Starten Sie VS Code von einem Terminal mit `code .` aus, damit es Ihre Umgebungsvariablen erbt, oder melden Sie sich stattdessen mit Ihrem Claude-Konto an.
+
+    Nach der Anmeldung wird eine **Claude Code erlernen**-Checkliste angezeigt. Arbeiten Sie jedes Element durch, indem Sie auf **Zeig mir** klicken, oder schließen Sie es mit dem X. Um es später erneut zu öffnen, deaktivieren Sie **Onboarding ausblenden** in den VS Code-Einstellungen unter Erweiterungen → Claude Code.
   </Step>
 
   <Step title="Senden Sie eine Eingabeaufforderung">
@@ -68,7 +76,7 @@ Nach der Installation können Sie Claude Code über die VS Code-Benutzeroberflä
   </Step>
 
   <Step title="Überprüfen Sie Änderungen">
-    Wenn Claude eine Datei bearbeiten möchte, zeigt es einen Vergleich der ursprünglichen und vorgeschlagenen Änderungen nebeneinander an und fordert dann die Genehmigung an. Sie können akzeptieren, ablehnen oder Claude sagen, was stattdessen zu tun ist.
+    Wenn Claude eine Datei bearbeiten möchte, zeigt es einen Vergleich der ursprünglichen und vorgeschlagenen Änderungen nebeneinander an und fordert dann die Genehmigung an. Sie können akzeptieren, ablehnen oder Claude sagen, was stattdessen zu tun ist. Wenn Sie den vorgeschlagenen Inhalt direkt in der Diff-Ansicht bearbeiten, bevor Sie akzeptieren, wird Claude mitgeteilt, dass Sie ihn geändert haben, sodass er nicht davon ausgeht, dass die Datei seinem ursprünglichen Vorschlag entspricht.
 
     <img src="https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-edits.png?fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=e005f9b41c541c5c7c59c082f7c4841c" alt="VS Code zeigt einen Diff von Claudes vorgeschlagenen Änderungen mit einer Genehmigungsaufforderung, die fragt, ob die Bearbeitung vorgenommen werden soll" width="3292" height="1876" data-path="images/vs-code-edits.png" />
   </Step>
@@ -77,7 +85,7 @@ Nach der Installation können Sie Claude Code über die VS Code-Benutzeroberflä
 Weitere Ideen, was Sie mit Claude Code tun können, finden Sie unter [Häufige Workflows](/de/common-workflows).
 
 <Tip>
-  Führen Sie „Claude Code: Open Walkthrough" aus der Befehlspalette aus, um eine geführte Tour durch die Grundlagen zu erhalten.
+  Führen Sie 'Claude Code: Open Walkthrough" aus der Befehlspalette aus, um eine geführte Tour durch die Grundlagen zu erhalten.
 </Tip>
 
 ## Verwenden Sie das Eingabefeld
@@ -87,7 +95,7 @@ Das Eingabefeld unterstützt mehrere Funktionen:
 * **Genehmigungsmodi**: Klicken Sie auf den Modusindikator am unteren Rand des Eingabefelds, um Modi zu wechseln. Im normalen Modus fragt Claude vor jeder Aktion um Genehmigung. Im Plan Mode beschreibt Claude, was es tun wird, und wartet auf Genehmigung, bevor es Änderungen vornimmt. VS Code öffnet den Plan automatisch als vollständiges Markdown-Dokument, in dem Sie Inline-Kommentare hinzufügen können, um Feedback zu geben, bevor Claude beginnt. Im Auto-Accept-Modus nimmt Claude Bearbeitungen vor, ohne zu fragen. Legen Sie den Standard in den VS Code-Einstellungen unter `claudeCode.initialPermissionMode` fest.
 * **Befehlsmenü**: Klicken Sie auf `/` oder geben Sie `/` ein, um das Befehlsmenü zu öffnen. Zu den Optionen gehören das Anhängen von Dateien, das Wechseln von Modellen, das Umschalten von erweitertem Denken, das Anzeigen der Plannutzung (`/usage`) und das Starten einer [Remote Control](/de/remote-control)-Sitzung (`/remote-control`). Der Abschnitt „Anpassen" bietet Zugriff auf MCP servers, hooks, memory, permissions und plugins. Elemente mit einem Terminal-Symbol werden im integrierten Terminal geöffnet.
 * **Kontextindikator**: Das Eingabefeld zeigt, wie viel von Claudes context window Sie verwenden. Claude komprimiert automatisch bei Bedarf, oder Sie können `/compact` manuell ausführen.
-* **Erweitertes Denken**: Ermöglicht Claude, mehr Zeit für die Überlegung komplexer Probleme aufzuwenden. Aktivieren Sie es über das Befehlsmenü (`/`). Siehe [Erweitertes Denken](/de/common-workflows#use-extended-thinking-thinking-mode) für Details.
+* **Erweitertes Denken**: Ermöglicht Claude, mehr Zeit für die Überlegung komplexer Probleme aufzuwenden. Aktivieren Sie es über das Befehlsmenü (`/`). Claudes Überlegungen werden im Gespräch als zusammengeklappte Blöcke angezeigt: Klicken Sie auf einen Block, um ihn zu lesen, oder drücken Sie `Ctrl+O`, um jeden Denkblock in der Sitzung zu erweitern oder zu reduzieren. Siehe [Erweitertes Denken](/de/common-workflows#use-extended-thinking-thinking-mode) für Details.
 * **Mehrzeilige Eingabe**: Drücken Sie `Shift+Enter`, um eine neue Zeile hinzuzufügen, ohne zu senden. Dies funktioniert auch in der Freitexteingabe „Sonstiges" von Frage-Dialogen.
 
 ### Referenzdateien und Ordner
@@ -107,15 +115,15 @@ Sie können auch `Shift` gedrückt halten, während Sie Dateien in das Eingabefe
 
 ### Frühere Gespräche fortsetzen
 
-Klicken Sie auf das Dropdown-Menü oben im Claude Code-Panel, um auf Ihren Gesprächsverlauf zuzugreifen. Sie können nach Schlüsselwort suchen oder nach Zeit durchsuchen (Heute, Gestern, Letzte 7 Tage usw.). Klicken Sie auf ein beliebiges Gespräch, um es mit dem vollständigen Nachrichtenverlauf fortzusetzen. Neue Sitzungen erhalten KI-generierte Titel basierend auf Ihrer ersten Nachricht. Bewegen Sie den Mauszeiger über eine Sitzung, um Umbenennungs- und Entfernungsaktionen anzuzeigen: Benennen Sie um, um ihr einen beschreibenden Titel zu geben, oder entfernen Sie sie, um sie aus der Liste zu löschen. Weitere Informationen zum Fortsetzen von Sitzungen finden Sie unter [Häufige Workflows](/de/common-workflows#resume-previous-conversations).
+Klicken Sie auf die Schaltfläche **Sitzungsverlauf** oben im Claude Code-Panel, um auf Ihren Gesprächsverlauf zuzugreifen. Sie können nach Schlüsselwort suchen oder nach Zeit durchsuchen (Heute, Gestern, Letzte 7 Tage usw.). Klicken Sie auf ein beliebiges Gespräch, um es mit dem vollständigen Nachrichtenverlauf fortzusetzen. Neue Sitzungen erhalten KI-generierte Titel basierend auf Ihrer ersten Nachricht. Bewegen Sie den Mauszeiger über eine Sitzung, um Umbenennungs- und Entfernungsaktionen anzuzeigen: Benennen Sie um, um ihr einen beschreibenden Titel zu geben, oder entfernen Sie sie, um sie aus der Liste zu löschen. Weitere Informationen zum Fortsetzen von Sitzungen finden Sie unter [Häufige Workflows](/de/common-workflows#resume-previous-conversations).
 
 ### Fortsetzen von Remote-Sitzungen von Claude.ai
 
 Wenn Sie [Claude Code im Web](/de/claude-code-on-the-web) verwenden, können Sie diese Remote-Sitzungen direkt in VS Code fortsetzen. Dies erfordert die Anmeldung mit **Claude.ai Subscription**, nicht Anthropic Console.
 
 <Steps>
-  <Step title="Öffnen Sie frühere Gespräche">
-    Klicken Sie auf das Dropdown-Menü **Frühere Gespräche** oben im Claude Code-Panel.
+  <Step title="Öffnen Sie den Sitzungsverlauf">
+    Klicken Sie auf die Schaltfläche **Sitzungsverlauf** oben im Claude Code-Panel.
   </Step>
 
   <Step title="Wählen Sie die Registerkarte „Remote“">
@@ -222,17 +230,17 @@ Einige Tastaturkürzel hängen davon ab, welches Panel „fokussiert" ist (Tasta
   Dies sind VS Code-Befehle zum Steuern der Erweiterung. Nicht alle integrierten Claude Code-Befehle sind in der Erweiterung verfügbar. Siehe [VS Code-Erweiterung vs. Claude Code CLI](#vs-code-extension-vs-claude-code-cli) für Details.
 </Note>
 
-| Befehl                        | Tastaturkürzel                                           | Beschreibung                                                                                            |
-| ----------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Focus Input                   | `Cmd+Esc` (Mac) / `Ctrl+Esc` (Windows/Linux)             | Fokus zwischen Editor und Claude umschalten                                                             |
-| In Seitenleiste öffnen        | -                                                        | Öffnen Sie Claude in der linken Seitenleiste                                                            |
-| Im Terminal öffnen            | -                                                        | Öffnen Sie Claude im Terminal-Modus                                                                     |
-| In neuer Registerkarte öffnen | `Cmd+Shift+Esc` (Mac) / `Ctrl+Shift+Esc` (Windows/Linux) | Öffnen Sie ein neues Gespräch als Editor-Registerkarte                                                  |
-| In neuem Fenster öffnen       | -                                                        | Öffnen Sie ein neues Gespräch in einem separaten Fenster                                                |
-| Neues Gespräch                | `Cmd+N` (Mac) / `Ctrl+N` (Windows/Linux)                 | Starten Sie ein neues Gespräch (erfordert, dass Claude fokussiert ist)                                  |
-| @-Erwähnungsreferenz einfügen | `Option+K` (Mac) / `Alt+K` (Windows/Linux)               | Fügen Sie eine Referenz zur aktuellen Datei und Auswahl ein (erfordert, dass der Editor fokussiert ist) |
-| Protokolle anzeigen           | -                                                        | Anzeigen von Erweiterungs-Debug-Protokollen                                                             |
-| Abmelden                      | -                                                        | Melden Sie sich von Ihrem Anthropic-Konto ab                                                            |
+| Befehl                        | Tastaturkürzel                                           | Beschreibung                                                                                                                     |
+| ----------------------------- | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Focus Input                   | `Cmd+Esc` (Mac) / `Ctrl+Esc` (Windows/Linux)             | Fokus zwischen Editor und Claude umschalten                                                                                      |
+| In Seitenleiste öffnen        | -                                                        | Öffnen Sie Claude in der linken Seitenleiste                                                                                     |
+| Im Terminal öffnen            | -                                                        | Öffnen Sie Claude im Terminal-Modus                                                                                              |
+| In neuer Registerkarte öffnen | `Cmd+Shift+Esc` (Mac) / `Ctrl+Shift+Esc` (Windows/Linux) | Öffnen Sie ein neues Gespräch als Editor-Registerkarte                                                                           |
+| In neuem Fenster öffnen       | -                                                        | Öffnen Sie ein neues Gespräch in einem separaten Fenster                                                                         |
+| Neues Gespräch                | `Cmd+N` (Mac) / `Ctrl+N` (Windows/Linux)                 | Starten Sie ein neues Gespräch. Erfordert, dass Claude fokussiert ist und `enableNewConversationShortcut` auf `true` gesetzt ist |
+| @-Erwähnungsreferenz einfügen | `Option+K` (Mac) / `Alt+K` (Windows/Linux)               | Fügen Sie eine Referenz zur aktuellen Datei und Auswahl ein (erfordert, dass der Editor fokussiert ist)                          |
+| Protokolle anzeigen           | -                                                        | Anzeigen von Erweiterungs-Debug-Protokollen                                                                                      |
+| Abmelden                      | -                                                        | Melden Sie sich von Ihrem Anthropic-Konto ab                                                                                     |
 
 ### Starten Sie eine VS Code-Registerkarte von anderen Tools aus
 
@@ -272,21 +280,21 @@ Die Erweiterung hat zwei Arten von Einstellungen:
 
 ### Erweiterungseinstellungen
 
-| Einstellung                       | Standard  | Beschreibung                                                                                                                                                                                                                                                                                                                                               |
-| --------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `selectedModel`                   | `default` | Modell für neue Gespräche. Ändern Sie pro Sitzung mit `/model`.                                                                                                                                                                                                                                                                                            |
-| `useTerminal`                     | `false`   | Starten Sie Claude im Terminal-Modus statt im grafischen Panel                                                                                                                                                                                                                                                                                             |
-| `initialPermissionMode`           | `default` | Steuert Genehmigungsaufforderungen für neue Gespräche: `default`, `plan`, `acceptEdits`, `auto` oder `bypassPermissions`. Siehe [Genehmigungsmodi](/de/permission-modes).                                                                                                                                                                                  |
-| `preferredLocation`               | `panel`   | Wo Claude öffnet: `sidebar` (rechts) oder `panel` (neue Registerkarte)                                                                                                                                                                                                                                                                                     |
-| `autosave`                        | `true`    | Speichern Sie Dateien automatisch, bevor Claude sie liest oder schreibt                                                                                                                                                                                                                                                                                    |
-| `useCtrlEnterToSend`              | `false`   | Verwenden Sie Ctrl/Cmd+Enter statt Enter, um Eingabeaufforderungen zu senden                                                                                                                                                                                                                                                                               |
-| `enableNewConversationShortcut`   | `true`    | Aktivieren Sie Cmd/Ctrl+N, um ein neues Gespräch zu starten                                                                                                                                                                                                                                                                                                |
-| `hideOnboarding`                  | `false`   | Blenden Sie die Onboarding-Checkliste aus (Abschlusskappe-Symbol)                                                                                                                                                                                                                                                                                          |
-| `respectGitIgnore`                | `true`    | Schließen Sie .gitignore-Muster aus Dateisuchvorgängen aus                                                                                                                                                                                                                                                                                                 |
-| `environmentVariables`            | `[]`      | Legen Sie Umgebungsvariablen für den Claude-Prozess fest. Verwenden Sie stattdessen Claude Code-Einstellungen für gemeinsame Konfiguration.                                                                                                                                                                                                                |
-| `disableLoginPrompt`              | `false`   | Überspringen Sie Authentifizierungsaufforderungen (für Setups von Drittanbietern)                                                                                                                                                                                                                                                                          |
-| `allowDangerouslySkipPermissions` | `false`   | Fügt [Auto](/de/permission-modes#eliminate-prompts-with-auto-mode) und Bypass-Berechtigungen zum Moduswahlschalter hinzu. Auto erfordert einen Team-Plan und Claude Sonnet 4.6 oder Opus 4.6, daher bleibt die Option möglicherweise auch mit diesem Umschalter nicht verfügbar. Verwenden Sie Bypass-Berechtigungen nur in Sandboxes ohne Internetzugang. |
-| `claudeProcessWrapper`            | -         | Ausführbarer Pfad, der zum Starten des Claude-Prozesses verwendet wird                                                                                                                                                                                                                                                                                     |
+| Einstellung                       | Standard  | Beschreibung                                                                                                                                                                                                                                                                                                                                                                                                           |
+| --------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useTerminal`                     | `false`   | Starten Sie Claude im Terminal-Modus statt im grafischen Panel                                                                                                                                                                                                                                                                                                                                                         |
+| `initialPermissionMode`           | `default` | Steuert Genehmigungsaufforderungen für neue Gespräche: `default`, `plan`, `acceptEdits` oder `bypassPermissions`. Siehe [Genehmigungsmodi](/de/permission-modes).                                                                                                                                                                                                                                                      |
+| `preferredLocation`               | `panel`   | Wo Claude öffnet: `sidebar` (rechts) oder `panel` (neue Registerkarte)                                                                                                                                                                                                                                                                                                                                                 |
+| `autosave`                        | `true`    | Speichern Sie Dateien automatisch, bevor Claude sie liest oder schreibt                                                                                                                                                                                                                                                                                                                                                |
+| `useCtrlEnterToSend`              | `false`   | Verwenden Sie Ctrl/Cmd+Enter statt Enter, um Eingabeaufforderungen zu senden                                                                                                                                                                                                                                                                                                                                           |
+| `enableNewConversationShortcut`   | `false`   | Aktivieren Sie Cmd/Ctrl+N, um ein neues Gespräch zu starten                                                                                                                                                                                                                                                                                                                                                            |
+| `hideOnboarding`                  | `false`   | Blenden Sie die Onboarding-Checkliste aus (Abschlusskappe-Symbol)                                                                                                                                                                                                                                                                                                                                                      |
+| `respectGitIgnore`                | `true`    | Schließen Sie .gitignore-Muster aus Dateisuchvorgängen aus                                                                                                                                                                                                                                                                                                                                                             |
+| `usePythonEnvironment`            | `true`    | Aktivieren Sie die Python-Umgebung des Arbeitsbereichs beim Ausführen von Claude. Erfordert die Python-Erweiterung.                                                                                                                                                                                                                                                                                                    |
+| `environmentVariables`            | `[]`      | Legen Sie Umgebungsvariablen für den Claude-Prozess fest. Verwenden Sie stattdessen Claude Code-Einstellungen für gemeinsame Konfiguration.                                                                                                                                                                                                                                                                            |
+| `disableLoginPrompt`              | `false`   | Überspringen Sie Authentifizierungsaufforderungen (für Setups von Drittanbietern)                                                                                                                                                                                                                                                                                                                                      |
+| `allowDangerouslySkipPermissions` | `false`   | Fügt [Auto-Modus](/de/permission-modes#eliminate-prompts-with-auto-mode) und Bypass-Berechtigungen zum Moduswahlschalter hinzu. Auto-Modus hat [Plan-, Admin-, Modell- und Anbieteranforderungen](/de/permission-modes#eliminate-prompts-with-auto-mode), daher bleibt die Option möglicherweise auch mit diesem Umschalter nicht verfügbar. Verwenden Sie Bypass-Berechtigungen nur in Sandboxes ohne Internetzugang. |
+| `claudeProcessWrapper`            | -         | Ausführbarer Pfad, der zum Starten des Claude-Prozesses verwendet wird                                                                                                                                                                                                                                                                                                                                                 |
 
 ## VS Code-Erweiterung vs. Claude Code CLI
 
@@ -421,6 +429,8 @@ Der Server heißt `ide` und ist in `/mcp` verborgen, da es nichts zu konfigurier
   Die Quick Pick-Bestätigung ist separat von `PreToolUse` Hooks. Ein Allowlist-Eintrag für `mcp__ide__executeCode` lässt Claude eine Zelle *vorschlagen*; die Quick Pick in VS Code ist das, was sie tatsächlich *ausführen* lässt.
 </Note>
 
+<a id="troubleshooting" />
+
 ## Beheben Sie häufige Probleme
 
 ### Erweiterung wird nicht installiert
@@ -435,7 +445,7 @@ Das Spark-Symbol wird in der **Editor-Symbolleiste** (oben rechts des Editors) a
 
 1. **Öffnen Sie eine Datei**: Das Symbol erfordert, dass eine Datei geöffnet ist. Nur einen Ordner zu öffnen reicht nicht aus.
 2. **Überprüfen Sie die VS Code-Version**: Erfordert 1.98.0 oder höher (Hilfe → Über)
-3. **Starten Sie VS Code neu**: Führen Sie 'Developer: Reload Window" aus der Befehlspalette aus
+3. **Starten Sie VS Code neu**: Führen Sie „Developer: Reload Window" aus der Befehlspalette aus
 4. **Deaktivieren Sie konfliktverursachende Erweiterungen**: Deaktivieren Sie vorübergehend andere KI-Erweiterungen (Cline, Continue usw.)
 5. **Überprüfen Sie die Arbeitsbereichsvertrauenswürdigkeit**: Die Erweiterung funktioniert nicht im Restricted Mode
 

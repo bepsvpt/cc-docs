@@ -537,13 +537,36 @@ Untuk menambahkan koneksi SSH, klik dropdown lingkungan sebelum memulai sesi dan
 
 Setelah ditambahkan, koneksi muncul di dropdown lingkungan. Pilih untuk memulai sesi di mesin itu. Claude berjalan di mesin jarak jauh dengan akses ke file dan alatnya.
 
-Mesin jarak jauh harus menjalankan Linux atau macOS, dan Claude Code harus diinstal di atasnya. Setelah terhubung, sesi SSH mendukung permission modes, konektor, plugins, dan MCP servers.
+Mesin jarak jauh harus menjalankan Linux atau macOS, dan Claude Code harus diinstal di atasnya. Setelah terhubung, sesi SSH mendukung permission modes, connectors, plugins, dan MCP servers.
 
-## Enterprise configuration
+#### Pre-configure SSH connections for your team
+
+Administrator dapat mendistribusikan koneksi SSH kepada anggota tim dengan menambahkan `sshConfigs` ke file [managed settings](/id/settings#settings-precedence). Koneksi yang ditentukan dengan cara ini muncul di dropdown lingkungan setiap pengguna secara otomatis dan ditampilkan sebagai terkelola, sehingga pengguna dapat memilihnya tetapi tidak dapat mengedit atau menghapusnya di aplikasi.
+
+Contoh berikut pre-configure satu koneksi yang terbuka di `~/projects` pada host jarak jauh:
+
+```json theme={null}
+{
+  "sshConfigs": [
+    {
+      "id": "shared-dev-vm",
+      "name": "Shared Dev VM",
+      "sshHost": "user@dev.example.com",
+      "sshPort": 22,
+      "sshIdentityFile": "~/.ssh/id_ed25519",
+      "startDirectory": "~/projects"
+    }
+  ]
+}
+```
+
+Setiap entri memerlukan `id`, `name`, dan `sshHost`. Bidang `sshPort`, `sshIdentityFile`, dan `startDirectory` bersifat opsional. Pengguna juga dapat menambahkan `sshConfigs` ke `~/.claude/settings.json` mereka sendiri, yang merupakan tempat koneksi yang ditambahkan melalui dialog disimpan.
+
+## Konfigurasi Enterprise
 
 Organisasi pada rencana Team atau Enterprise dapat mengelola perilaku aplikasi desktop melalui kontrol konsol admin, file pengaturan yang dikelola, dan kebijakan manajemen perangkat.
 
-### Admin console controls
+### Kontrol konsol admin
 
 Pengaturan ini dikonfigurasi melalui [konsol pengaturan admin](https://claude.ai/admin-settings/claude-code):
 
@@ -552,7 +575,7 @@ Pengaturan ini dikonfigurasi melalui [konsol pengaturan admin](https://claude.ai
 * **Remote Control**: aktifkan atau nonaktifkan [Remote Control](/id/remote-control) untuk organisasi Anda
 * **Disable Bypass permissions mode**: cegah pengguna di organisasi Anda dari mengaktifkan bypass permissions mode
 
-### Managed settings
+### Pengaturan yang dikelola
 
 Pengaturan yang dikelola menimpa pengaturan proyek dan pengguna dan berlaku ketika Desktop menjalankan sesi CLI. Anda dapat mengatur kunci ini di file [managed settings](/id/settings#settings-precedence) organisasi Anda atau mendorongnya dari jarak jauh melalui konsol admin.
 
@@ -561,27 +584,28 @@ Pengaturan yang dikelola menimpa pengaturan proyek dan pengguna dan berlaku keti
 | `permissions.disableBypassPermissionsMode` | atur ke `"disable"` untuk mencegah pengguna dari mengaktifkan Bypass permissions mode.                                                                                                                    |
 | `disableAutoMode`                          | atur ke `"disable"` untuk mencegah pengguna dari mengaktifkan [Auto](/id/permission-modes#eliminate-prompts-with-auto-mode) mode. Menghapus Auto dari pemilih mode. Juga diterima di bawah `permissions`. |
 | `autoMode`                                 | sesuaikan apa yang dipercaya dan diblokir oleh pengklasifikasi auto mode di seluruh organisasi Anda. Lihat [Configure the auto mode classifier](/id/permissions#configure-the-auto-mode-classifier).      |
+| `sshConfigs`                               | pre-configure [SSH connections](#pre-configure-ssh-connections-for-your-team) yang muncul di dropdown lingkungan. Pengguna tidak dapat mengedit atau menghapus koneksi yang dikelola.                     |
 
 `permissions.disableBypassPermissionsMode` dan `disableAutoMode` juga bekerja di pengaturan pengguna dan proyek, tetapi menempatkannya di pengaturan yang dikelola mencegah pengguna dari menimpanya. `autoMode` dibaca dari pengaturan pengguna, `.claude/settings.local.json`, dan pengaturan yang dikelola, tetapi bukan dari `.claude/settings.json` yang diperiksa: repositori yang diklon tidak dapat menyuntikkan aturan pengklasifikasinya sendiri. Untuk daftar lengkap pengaturan khusus yang dikelola termasuk `allowManagedPermissionRulesOnly` dan `allowManagedHooksOnly`, lihat [managed-only settings](/id/permissions#managed-only-settings).
 
 Pengaturan yang dikelola jarak jauh yang diunggah melalui konsol admin saat ini berlaku untuk sesi CLI dan IDE saja. Untuk pembatasan khusus Desktop, gunakan kontrol konsol admin di atas.
 
-### Device management policies
+### Kebijakan manajemen perangkat
 
 Tim IT dapat mengelola aplikasi desktop melalui MDM di macOS atau group policy di Windows. Kebijakan yang tersedia termasuk mengaktifkan atau menonaktifkan fitur Claude Code, mengontrol auto-updates, dan menetapkan URL penyebaran kustom.
 
 * **macOS**: konfigurasikan melalui domain preferensi `com.anthropic.Claude` menggunakan alat seperti Jamf atau Kandji
 * **Windows**: konfigurasikan melalui registri di `SOFTWARE\Policies\Claude`
 
-### Authentication and SSO
+### Autentikasi dan SSO
 
 Organisasi enterprise dapat memerlukan SSO untuk semua pengguna. Lihat [authentication](/id/authentication) untuk detail tingkat rencana dan [Setting up SSO](https://support.claude.com/en/articles/13132885-setting-up-single-sign-on-sso) untuk konfigurasi SAML dan OIDC.
 
-### Data handling
+### Penanganan data
 
 Claude Code memproses kode Anda secara lokal dalam sesi lokal atau pada infrastruktur cloud Anthropic dalam sesi jarak jauh. Percakapan dan konteks kode dikirim ke API Anthropic untuk diproses. Lihat [data handling](/id/data-usage) untuk detail tentang retensi data, privasi, dan kepatuhan.
 
-### Deployment
+### Penyebaran
 
 Desktop dapat didistribusikan melalui alat penyebaran enterprise:
 

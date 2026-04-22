@@ -1,5 +1,532 @@
 # Documentation Changes
 
+## 2026-04-22
+
+210 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Best Practices für Claude Code** (`best-practices.md`): 3 lines added, 2 removed
+- **Häufige Workflows** (`common-workflows.md`): 54 lines added, 34 removed
+  - New section: "## Mit Notizen und Nicht-Code-Ordnern arbeiten"
+- **Datennutzung** (`data-usage.md`): 21 lines added, 14 removed
+  - New section: "### Feedback mit dem `/feedback`-Befehl"
+  - New section: "### WebFetch-Domänensicherheitsprüfung"
+- **Claude Code Desktop verwenden** (`desktop.md`): 24 lines added, 0 removed
+  - New section: "#### SSH-Verbindungen für Ihr Team vorkonfigurieren"
+- **Automatisieren Sie Workflows mit Hooks** (`hooks-guide.md`): 29 lines added, 28 removed
+- **Hooks-Referenz** (`hooks.md`): 126 lines added, 74 removed
+  - New section: "### UserPromptExpansion"
+  - New section: "#### UserPromptExpansion-Eingabe"
+  - New section: "#### UserPromptExpansion-Entscheidungskontrolle"
+- **Wie Claude sich Ihr Projekt merkt** (`memory.md`): 34 lines added, 14 removed
+  - New section: "### Wann sollte ich zu CLAUDE.md hinzufügen"
+- **Enterprise-Netzwerkkonfiguration** (`network-config.md`): 34 lines added, 4 removed
+  - New section: "## CA-Zertifikatspeicher"
+- **Berechtigungen konfigurieren** (`permissions.md`): 5 lines added, 3 removed
+- **Erstellen und Verteilen eines Plugin-Marktplatzes** (`plugin-marketplaces.md`): 150 lines added, 29 removed
+  - New section: "### Optionale Felder"
+  - New section: "## Verwalten Sie Marktplätze über die CLI"
+  - New section: "### Plugin marketplace add"
+  - New section: "### Plugin marketplace list"
+  - New section: "### Plugin marketplace remove"
+- **Plugins-Referenz** (`plugins-reference.md`): 77 lines added, 33 removed
+  - New section: "### plugin list"
+- **Claude Code-Einstellungen** (`settings.md`): 9 lines added, 6 removed
+- **Claude mit Skills erweitern** (`skills.md`): 66 lines added, 36 removed
+  - New section: "#### Live-Änderungserkennung"
+  - New section: "### Skill-Inhalts-Lebenszyklus"
+  - New section: "### Tools für einen Skill vorab genehmigen"
+- **Passen Sie Ihre Statuszeile an** (`statusline.md`): 83 lines added, 39 removed
+  - New section: "## Subagent-Statuszeilen"
+- **Benutzerdefinierte Subagenten erstellen** (`sub-agents.md`): 22 lines added, 12 removed
+  - New section: "#### Beschränken Sie, welche Subagenten gespawnt werden können"
+- **Claude Code in VS Code verwenden** (`vs-code.md`): 45 lines added, 35 removed
+- **Null-Datenspeicherung** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### English
+
+
+**Modified**
+
+- **Changelog** (`changelog.md`): 31 lines added, 0 removed
+- **Common workflows** (`common-workflows.md`): 1 lines added, 1 removed
+- **Data usage** (`data-usage.md`): 14 lines added, 7 removed
+  - New section: "### WebFetch domain safety check"
+- **Environment variables** (`env-vars.md`): 3 lines added, 2 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 31 lines added, 29 removed
+- **Hooks reference** (`hooks.md`): 125 lines added, 73 removed
+  - New section: "### UserPromptExpansion"
+  - New section: "#### UserPromptExpansion input"
+  - New section: "#### UserPromptExpansion decision control"
+- **Interactive mode** (`interactive-mode.md`): 2 lines added, 2 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 1 lines added, 1 removed
+- **How Claude remembers your project** (`memory.md`): 1 lines added, 0 removed
+- **Monitoring** (`monitoring-usage.md`): 305 lines added, 38 removed
+  - New section: "#### Span hierarchy"
+  - New section: "#### Span attributes"
+  - New section: "#### Permission mode changed event"
+  - New section: "#### Auth event"
+  - New section: "#### MCP server connection event"
+- **Enterprise network configuration** (`network-config.md`): 5 lines added, 3 removed
+- **Claude Code overview** (`overview.md`): 1 lines added, 8 removed
+- **Configure permissions** (`permissions.md`): 5 lines added, 3 removed
+- **Create and distribute a plugin marketplace** (`plugin-marketplaces.md`): 8 lines added, 7 removed
+  - New section: "### Optional fields"
+- **Plugins reference** (`plugins-reference.md`): 59 lines added, 33 removed
+- **Quickstart** (`quickstart.md`): 1 lines added, 113 removed
+- **Sandboxing** (`sandboxing.md`): 2 lines added, 2 removed
+- **Claude Code settings** (`settings.md`): 6 lines added, 4 removed
+- **Advanced setup** (`setup.md`): 1 lines added, 1 removed
+- **Extend Claude with skills** (`skills.md`): 5 lines added, 2 removed
+- **Create custom subagents** (`sub-agents.md`): 4 lines added, 2 removed
+- **Configure your terminal for Claude Code** (`terminal-config.md`): 1 lines added, 1 removed
+- **Troubleshooting** (`troubleshooting.md`): 9 lines added, 9 removed
+  - New section: "### `Failed to fetch version from downloads.claude.ai`"
+
+### Español
+
+
+**Modified**
+
+- **Mejores prácticas para Claude Code** (`best-practices.md`): 4 lines added, 3 removed
+- **Flujos de trabajo comunes** (`common-workflows.md`): 54 lines added, 34 removed
+  - New section: "## Trabajar en notas y carpetas que no son código"
+- **Uso de datos** (`data-usage.md`): 21 lines added, 14 removed
+  - New section: "### Comentarios usando el comando `/feedback`"
+  - New section: "### Verificación de seguridad del dominio WebFetch"
+- **Usar Claude Code Desktop** (`desktop.md`): 24 lines added, 0 removed
+  - New section: "#### Pre-configurar conexiones SSH para su equipo"
+- **Automatizar flujos de trabajo con hooks** (`hooks-guide.md`): 29 lines added, 28 removed
+- **Referencia de hooks** (`hooks.md`): 127 lines added, 75 removed
+  - New section: "### UserPromptExpansion"
+  - New section: "#### Entrada de UserPromptExpansion"
+  - New section: "#### Control de decisión de UserPromptExpansion"
+  - New section: "#### Control de decisión de PreToolUse"
+- **Cómo Claude recuerda su proyecto** (`memory.md`): 34 lines added, 14 removed
+  - New section: "### Cuándo agregar a CLAUDE.md"
+- **Configuración de red empresarial** (`network-config.md`): 34 lines added, 4 removed
+  - New section: "## Almacén de certificados CA"
+- **Configurar permisos** (`permissions.md`): 5 lines added, 3 removed
+- **Crear y distribuir un marketplace de plugins** (`plugin-marketplaces.md`): 154 lines added, 32 removed
+  - New section: "### Campos opcionales"
+  - New section: "## Administrar marketplaces desde la CLI"
+  - New section: "### Plugin marketplace add"
+  - New section: "### Plugin marketplace list"
+  - New section: "### Plugin marketplace remove"
+- **Referencia de plugins** (`plugins-reference.md`): 77 lines added, 33 removed
+  - New section: "### plugin list"
+- **Configuración de Claude Code** (`settings.md`): 7 lines added, 4 removed
+- **Ampliar Claude con skills** (`skills.md`): 71 lines added, 41 removed
+  - New section: "#### Detección de cambios en vivo"
+  - New section: "### Ciclo de vida del contenido del skill"
+  - New section: "### Pre-aprobar herramientas para un skill"
+- **Personaliza tu línea de estado** (`statusline.md`): 85 lines added, 41 removed
+  - New section: "## Líneas de estado de subagentes"
+- **Crear subagentes personalizados** (`sub-agents.md`): 28 lines added, 18 removed
+- **Usar Claude Code en VS Code** (`vs-code.md`): 171 lines added, 161 removed
+  - New section: "## Personalizar tu flujo de trabajo"
+- **Retención cero de datos** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### Français
+
+
+**Modified**
+
+- **Meilleures pratiques pour Claude Code** (`best-practices.md`): 2 lines added, 1 removed
+- **Flux de travail courants** (`common-workflows.md`): 53 lines added, 33 removed
+  - New section: "## Travailler dans les notes et les dossiers non-code"
+- **Utilisation des données** (`data-usage.md`): 21 lines added, 14 removed
+  - New section: "### Retours d'information à l'aide de la commande `/feedback`"
+  - New section: "### Vérification de sécurité du domaine WebFetch"
+- **Utiliser Claude Code Desktop** (`desktop.md`): 29 lines added, 5 removed
+  - New section: "#### Pré-configurer les connexions SSH pour votre équipe"
+- **Automatiser les workflows avec les hooks** (`hooks-guide.md`): 29 lines added, 28 removed
+- **Référence des hooks** (`hooks.md`): 128 lines added, 76 removed
+  - New section: "### UserPromptExpansion"
+  - New section: "#### Entrée UserPromptExpansion"
+  - New section: "#### Contrôle de décision UserPromptExpansion"
+- **Comment Claude se souvient de votre projet** (`memory.md`): 34 lines added, 14 removed
+  - New section: "### Quand ajouter à CLAUDE.md"
+- **Configuration réseau d'entreprise** (`network-config.md`): 34 lines added, 4 removed
+  - New section: "## Magasin de certificats CA"
+- **Configurer les autorisations** (`permissions.md`): 5 lines added, 3 removed
+- **Créer et distribuer une place de marché de plugins** (`plugin-marketplaces.md`): 150 lines added, 29 removed
+  - New section: "### Champs optionnels"
+  - New section: "## Gérer les places de marché à partir de la CLI"
+  - New section: "### Plugin marketplace add"
+  - New section: "### Plugin marketplace list"
+  - New section: "### Plugin marketplace remove"
+- **Référence des plugins** (`plugins-reference.md`): 77 lines added, 33 removed
+  - New section: "### plugin list"
+- **Paramètres Claude Code** (`settings.md`): 7 lines added, 4 removed
+- **Étendre Claude avec des skills** (`skills.md`): 69 lines added, 39 removed
+  - New section: "#### Détection de changement en direct"
+  - New section: "### Cycle de vie du contenu de la skill"
+  - New section: "### Pré-approuver les outils pour une skill"
+- **Personnalisez votre barre de statut** (`statusline.md`): 85 lines added, 41 removed
+  - New section: "## Barres de statut des sous-agents"
+- **Créer des sous-agents personnalisés** (`sub-agents.md`): 28 lines added, 18 removed
+- **Utiliser Claude Code dans VS Code** (`vs-code.md`): 50 lines added, 40 removed
+- **Zéro conservation des données** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Praktik Terbaik untuk Claude Code** (`best-practices.md`): 13 lines added, 12 removed
+  - New section: "### Gunakan subagents untuk investigasi"
+  - New section: "### Rewind dengan checkpoints"
+- **Alur kerja umum** (`common-workflows.md`): 53 lines added, 33 removed
+  - New section: "## Bekerja dalam catatan dan folder non-kode"
+- **Penggunaan data** (`data-usage.md`): 22 lines added, 15 removed
+  - New section: "### Umpan balik menggunakan perintah `/feedback`"
+  - New section: "### Pemeriksaan keamanan domain WebFetch"
+- **Gunakan Claude Code Desktop** (`desktop.md`): 32 lines added, 8 removed
+  - New section: "#### Pre-configure SSH connections for your team"
+  - New section: "## Konfigurasi Enterprise"
+  - New section: "### Kontrol konsol admin"
+  - New section: "### Pengaturan yang dikelola"
+  - New section: "### Kebijakan manajemen perangkat"
+- **Otomatisasi alur kerja dengan hooks** (`hooks-guide.md`): 29 lines added, 28 removed
+- **Referensi hooks** (`hooks.md`): 160 lines added, 85 removed
+  - New section: "### UserPromptExpansion"
+  - New section: "#### Input UserPromptExpansion"
+  - New section: "#### Kontrol keputusan UserPromptExpansion"
+  - New section: "## Windows PowerShell tool"
+- **Bagaimana Claude mengingat proyek Anda** (`memory.md`): 29 lines added, 9 removed
+  - New section: "### Kapan harus menambahkan ke CLAUDE.md"
+- **Konfigurasi jaringan enterprise** (`network-config.md`): 34 lines added, 4 removed
+  - New section: "## Penyimpanan sertifikat CA"
+- **Konfigurasi izin** (`permissions.md`): 5 lines added, 3 removed
+- **Buat dan distribusikan marketplace plugin** (`plugin-marketplaces.md`): 155 lines added, 34 removed
+  - New section: "### Field opsional"
+  - New section: "## Kelola marketplace dari CLI"
+  - New section: "### Plugin marketplace add"
+  - New section: "### Plugin marketplace list"
+  - New section: "### Plugin marketplace remove"
+- **Referensi Plugins** (`plugins-reference.md`): 77 lines added, 33 removed
+  - New section: "### plugin list"
+- **Pengaturan Claude Code** (`settings.md`): 31 lines added, 26 removed
+- **Perluas Claude dengan skills** (`skills.md`): 72 lines added, 42 removed
+  - New section: "#### Deteksi perubahan langsung"
+  - New section: "### Lifecycle konten skill"
+  - New section: "### Pra-setujui tools untuk skill"
+- **Sesuaikan baris status Anda** (`statusline.md`): 82 lines added, 38 removed
+  - New section: "## Baris status subagen"
+- **Buat subagent khusus** (`sub-agents.md`): 20 lines added, 10 removed
+- **Gunakan Claude Code di VS Code** (`vs-code.md`): 43 lines added, 33 removed
+- **Retensi data nol** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Best Practices per Claude Code** (`best-practices.md`): 3 lines added, 2 removed
+- **Flussi di lavoro comuni** (`common-workflows.md`): 47 lines added, 35 removed
+- **Utilizzo dei dati** (`data-usage.md`): 21 lines added, 14 removed
+  - New section: "### Feedback utilizzando il comando `/feedback`"
+  - New section: "### Controllo di sicurezza del dominio WebFetch"
+- **Usa Claude Code Desktop** (`desktop.md`): 32 lines added, 8 removed
+  - New section: "## Configurazione dell'ambiente"
+  - New section: "#### Pre-configure SSH connections for your team"
+  - New section: "## Configurazione aziendale"
+  - New section: "### Controlli della console di amministrazione"
+  - New section: "### Impostazioni gestite"
+- **Automatizzare i flussi di lavoro con hooks** (`hooks-guide.md`): 29 lines added, 28 removed
+- **Riferimento dei hooks** (`hooks.md`): 128 lines added, 76 removed
+  - New section: "## Configurazione"
+  - New section: "### UserPromptExpansion"
+  - New section: "#### Input di UserPromptExpansion"
+  - New section: "#### Controllo della decisione di UserPromptExpansion"
+- **Come Claude ricorda il tuo progetto** (`memory.md`): 34 lines added, 14 removed
+  - New section: "### Quando aggiungere a CLAUDE.md"
+- **Configurazione di rete aziendale** (`network-config.md`): 34 lines added, 4 removed
+  - New section: "## Archivio certificati CA"
+- **Configurare le autorizzazioni** (`permissions.md`): 5 lines added, 3 removed
+- **Creare e distribuire un marketplace di plugin** (`plugin-marketplaces.md`): 152 lines added, 31 removed
+  - New section: "### Campi opzionali"
+  - New section: "## Gestisci marketplace dalla CLI"
+  - New section: "### Plugin marketplace add"
+  - New section: "### Plugin marketplace list"
+  - New section: "### Plugin marketplace remove"
+- **Riferimento dei plugin** (`plugins-reference.md`): 78 lines added, 34 removed
+  - New section: "### plugin list"
+- **Impostazioni di Claude Code** (`settings.md`): 8 lines added, 5 removed
+- **Estendi Claude con skills** (`skills.md`): 66 lines added, 36 removed
+  - New section: "#### Rilevamento dei cambiamenti in tempo reale"
+  - New section: "### Ciclo di vita del contenuto della skill"
+  - New section: "### Pre-approva gli strumenti per una skill"
+- **Personalizza la tua barra di stato** (`statusline.md`): 83 lines added, 39 removed
+  - New section: "## Barre di stato dei subagent"
+- **Creare subagent personalizzati** (`sub-agents.md`): 29 lines added, 19 removed
+- **Usa Claude Code in VS Code** (`vs-code.md`): 43 lines added, 33 removed
+- **Zero data retention** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### 日本語
+
+
+**Modified**
+
+- **Claude Code のベストプラクティス** (`best-practices.md`): 2 lines added, 1 removed
+- **一般的なワークフロー** (`common-workflows.md`): 53 lines added, 35 removed
+  - New section: "## ノートと非コードフォルダで作業する"
+- **データ使用** (`data-usage.md`): 21 lines added, 14 removed
+  - New section: "### `/feedback` コマンドを使用したフィードバック"
+  - New section: "### WebFetch ドメインセーフティチェック"
+- **Claude Code Desktop を使用する** (`desktop.md`): 32 lines added, 8 removed
+  - New section: "#### チームの SSH 接続を事前設定する"
+- **hooks でワークフローを自動化する** (`hooks-guide.md`): 29 lines added, 28 removed
+- **Hooks リファレンス** (`hooks.md`): 148 lines added, 96 removed
+  - New section: "### UserPromptExpansion"
+  - New section: "#### UserPromptExpansion 入力"
+  - New section: "#### UserPromptExpansion 決定制御"
+  - New section: "### 例：マルチ基準 Stop フック"
+- **Claude があなたのプロジェクトを記憶する方法** (`memory.md`): 34 lines added, 16 removed
+  - New section: "### CLAUDE.md をいつ追加するか"
+- **エンタープライズネットワーク設定** (`network-config.md`): 34 lines added, 4 removed
+  - New section: "## CA 証明書ストア"
+- **権限を設定する** (`permissions.md`): 10 lines added, 2 removed
+  - New section: "## auto モード分類器の拒否を確認する"
+- **プラグインマーケットプレイスの作成と配布** (`plugin-marketplaces.md`): 159 lines added, 38 removed
+  - New section: "### オプションフィールド"
+  - New section: "## CLI からマーケットプレイスを管理する"
+  - New section: "### プラグインマーケットプレイス追加"
+  - New section: "### プラグインマーケットプレイスリスト"
+  - New section: "### プラグインマーケットプレイス削除"
+- **プラグインリファレンス** (`plugins-reference.md`): 77 lines added, 33 removed
+  - New section: "### plugin list"
+- **Claude Code の設定** (`settings.md`): 9 lines added, 6 removed
+- **スキルで Claude を拡張する** (`skills.md`): 76 lines added, 46 removed
+  - New section: "#### ライブ変更検出"
+  - New section: "### スキルコンテンツのライフサイクル"
+  - New section: "### スキルのツールを事前承認する"
+- **ステータスラインをカスタマイズする** (`statusline.md`): 68 lines added, 39 removed
+  - New section: "## サブエージェントステータスライン"
+- **カスタムサブエージェントの作成** (`sub-agents.md`): 28 lines added, 18 removed
+- **VS Code で Claude Code を使用する** (`vs-code.md`): 83 lines added, 73 removed
+- **ゼロデータ保持** (`zero-data-retention.md`): 2 lines added, 2 removed
+
+### 한국어
+
+
+**Modified**
+
+- **Claude Code 모범 사례** (`best-practices.md`): 2 lines added, 1 removed
+- **일반적인 워크플로우** (`common-workflows.md`): 47 lines added, 35 removed
+- **데이터 사용** (`data-usage.md`): 21 lines added, 14 removed
+  - New section: "### `/feedback` 명령을 사용한 피드백"
+  - New section: "### WebFetch 도메인 안전 검사"
+- **Claude Code Desktop 사용하기** (`desktop.md`): 26 lines added, 2 removed
+  - New section: "#### 팀을 위해 SSH 연결을 미리 구성합니다"
+- **hooks를 사용하여 워크플로우 자동화** (`hooks-guide.md`): 29 lines added, 28 removed
+- **Hooks 참조** (`hooks.md`): 133 lines added, 77 removed
+  - New section: "### UserPromptExpansion"
+  - New section: "#### UserPromptExpansion 입력"
+  - New section: "#### UserPromptExpansion 결정 제어"
+- **Claude가 프로젝트를 기억하는 방법** (`memory.md`): 34 lines added, 14 removed
+  - New section: "### CLAUDE.md에 추가할 시기"
+- **엔터프라이즈 네트워크 구성** (`network-config.md`): 34 lines added, 4 removed
+  - New section: "## CA 인증서 저장소"
+- **권한 구성** (`permissions.md`): 5 lines added, 3 removed
+- **플러그인 마켓플레이스 생성 및 배포** (`plugin-marketplaces.md`): 143 lines added, 22 removed
+  - New section: "### 선택적 필드"
+  - New section: "## CLI에서 마켓플레이스 관리"
+  - New section: "### 플러그인 마켓플레이스 추가"
+  - New section: "### 플러그인 마켓플레이스 목록"
+  - New section: "### 플러그인 마켓플레이스 제거"
+- **플러그인 참조** (`plugins-reference.md`): 77 lines added, 33 removed
+  - New section: "### plugin list"
+- **Claude Code 설정** (`settings.md`): 9 lines added, 6 removed
+- **Claude를 skills로 확장하기** (`skills.md`): 72 lines added, 42 removed
+  - New section: "#### 라이브 변경 감지"
+  - New section: "### Skill 콘텐츠 라이프사이클"
+  - New section: "### Skill에 대한 도구 사전 승인"
+- **상태 표시줄 사용자 정의** (`statusline.md`): 82 lines added, 38 removed
+  - New section: "## 서브에이전트 상태 표시줄"
+- **사용자 정의 subagent 만들기** (`sub-agents.md`): 28 lines added, 18 removed
+- **VS Code에서 Claude Code 사용하기** (`vs-code.md`): 44 lines added, 34 removed
+- **Zero data retention** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### Português
+
+
+**Modified**
+
+- **Melhores práticas para Claude Code** (`best-practices.md`): 3 lines added, 2 removed
+- **Fluxos de trabalho comuns** (`common-workflows.md`): 47 lines added, 35 removed
+- **Uso de dados** (`data-usage.md`): 21 lines added, 14 removed
+  - New section: "### Feedback usando o comando `/feedback`"
+  - New section: "### Verificação de segurança de domínio WebFetch"
+- **Use Claude Code Desktop** (`desktop.md`): 24 lines added, 0 removed
+  - New section: "#### Pré-configurar conexões SSH para sua equipe"
+- **Automatizar fluxos de trabalho com hooks** (`hooks-guide.md`): 29 lines added, 28 removed
+- **Referência de hooks** (`hooks.md`): 132 lines added, 77 removed
+  - New section: "### UserPromptExpansion"
+  - New section: "#### Entrada de UserPromptExpansion"
+  - New section: "#### Controle de decisão de UserPromptExpansion"
+- **Como Claude se lembra do seu projeto** (`memory.md`): 35 lines added, 15 removed
+  - New section: "### Quando adicionar a CLAUDE.md"
+- **Configuração de rede empresarial** (`network-config.md`): 34 lines added, 4 removed
+  - New section: "## Armazenamento de certificados CA"
+- **Configurar permissões** (`permissions.md`): 6 lines added, 4 removed
+- **Criar e distribuir um marketplace de plugins** (`plugin-marketplaces.md`): 153 lines added, 32 removed
+  - New section: "### Campos opcionais"
+  - New section: "### Strict mode"
+  - New section: "## Gerenciar marketplaces a partir da CLI"
+  - New section: "### Plugin marketplace add"
+  - New section: "### Plugin marketplace list"
+- **Referência de plugins** (`plugins-reference.md`): 77 lines added, 33 removed
+  - New section: "### plugin list"
+- **Configurações do Claude Code** (`settings.md`): 7 lines added, 4 removed
+- **Estenda Claude com skills** (`skills.md`): 66 lines added, 36 removed
+  - New section: "#### Detecção de mudança ao vivo"
+  - New section: "## Configurar skills"
+  - New section: "### Ciclo de vida do conteúdo de skill"
+  - New section: "### Pré-aprove ferramentas para uma skill"
+- **Personalize sua linha de status** (`statusline.md`): 83 lines added, 39 removed
+  - New section: "## Linhas de status de subagente"
+- **Criar subagentes personalizados** (`sub-agents.md`): 33 lines added, 23 removed
+- **Use Claude Code in VS Code** (`vs-code.md`): 43 lines added, 33 removed
+- **Retenção zero de dados** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### Русский
+
+
+**Modified**
+
+- **Лучшие практики для Claude Code** (`best-practices.md`): 3 lines added, 2 removed
+- **Распространённые рабочие процессы** (`common-workflows.md`): 53 lines added, 33 removed
+  - New section: "## Работа с заметками и папками, не содержащими код"
+- **Использование данных** (`data-usage.md`): 21 lines added, 14 removed
+  - New section: "### Обратная связь с помощью команды `/feedback`"
+  - New section: "### WebFetch domain safety check"
+- **Использование Claude Code Desktop** (`desktop.md`): 24 lines added, 0 removed
+  - New section: "#### Предварительная конфигурация SSH-соединений для вашей команды"
+- **Автоматизация рабочих процессов с помощью hooks** (`hooks-guide.md`): 29 lines added, 28 removed
+- **Справочник по hooks** (`hooks.md`): 129 lines added, 77 removed
+  - New section: "### UserPromptExpansion"
+  - New section: "#### UserPromptExpansion input"
+  - New section: "#### UserPromptExpansion decision control"
+  - New section: "### WorktreeCreate"
+- **Как Claude запоминает ваш проект** (`memory.md`): 34 lines added, 14 removed
+  - New section: "### Когда добавлять в CLAUDE.md"
+- **Конфигурация сети для предприятия** (`network-config.md`): 34 lines added, 4 removed
+  - New section: "## Хранилище сертификатов CA"
+- **Настройка разрешений** (`permissions.md`): 5 lines added, 3 removed
+- **Создание и распространение marketplace плагинов** (`plugin-marketplaces.md`): 164 lines added, 43 removed
+  - New section: "### Дополнительные поля"
+  - New section: "## Управление marketplace из CLI"
+  - New section: "### Plugin marketplace add"
+  - New section: "### Plugin marketplace list"
+  - New section: "### Plugin marketplace remove"
+- **Справочник по плагинам** (`plugins-reference.md`): 77 lines added, 33 removed
+  - New section: "### plugin list"
+- **Параметры Claude Code** (`settings.md`): 9 lines added, 4 removed
+- **Расширьте Claude с помощью skills** (`skills.md`): 57 lines added, 27 removed
+  - New section: "#### Обнаружение живых изменений"
+  - New section: "### Жизненный цикл содержимого skill"
+  - New section: "### Предварительно одобрите инструменты для skill"
+- **Настройка строки состояния** (`statusline.md`): 82 lines added, 38 removed
+  - New section: "## Строки состояния подагентов"
+- **Создание пользовательских subagents** (`sub-agents.md`): 32 lines added, 22 removed
+- **Использование Claude Code в VS Code** (`vs-code.md`): 43 lines added, 33 removed
+- **Нулевое хранение данных** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **Claude Code 最佳实践** (`best-practices.md`): 3 lines added, 2 removed
+- **常见工作流程** (`common-workflows.md`): 54 lines added, 34 removed
+  - New section: "## 在笔记和非代码文件夹中工作"
+- **数据使用** (`data-usage.md`): 21 lines added, 14 removed
+  - New section: "### 使用 `/feedback` 命令的反馈"
+  - New section: "### WebFetch 域安全检查"
+- **使用 Claude Code Desktop** (`desktop.md`): 25 lines added, 1 removed
+  - New section: "#### 为你的团队预配置 SSH 连接"
+- **使用 hooks 自动化工作流** (`hooks-guide.md`): 29 lines added, 28 removed
+- **Hooks 参考** (`hooks.md`): 130 lines added, 78 removed
+  - New section: "### UserPromptExpansion"
+  - New section: "#### UserPromptExpansion 输入"
+  - New section: "#### UserPromptExpansion 决定控制"
+  - New section: "## 基于提示的 hooks"
+  - New section: "### 基于提示的 hooks 如何工作"
+- **Claude 如何记住你的项目** (`memory.md`): 35 lines added, 15 removed
+  - New section: "### 何时添加到 CLAUDE.md"
+- **企业网络配置** (`network-config.md`): 34 lines added, 4 removed
+  - New section: "## CA 证书存储"
+- **配置权限** (`permissions.md`): 5 lines added, 3 removed
+- **创建和分发 plugin marketplace** (`plugin-marketplaces.md`): 150 lines added, 29 removed
+  - New section: "### 可选字段"
+  - New section: "## 从 CLI 管理 marketplaces"
+  - New section: "### Plugin marketplace add"
+  - New section: "### Plugin marketplace list"
+  - New section: "### Plugin marketplace remove"
+- **Plugins 参考** (`plugins-reference.md`): 78 lines added, 34 removed
+  - New section: "### plugin list"
+- **Claude Code 设置** (`settings.md`): 7 lines added, 4 removed
+- **使用 skills 扩展 Claude** (`skills.md`): 72 lines added, 42 removed
+  - New section: "#### 实时变更检测"
+  - New section: "### Skill 内容生命周期"
+  - New section: "### 为 skill 预先批准工具"
+- **自定义你的状态行** (`statusline.md`): 83 lines added, 39 removed
+  - New section: "## 子代理状态行"
+- **创建自定义 subagents** (`sub-agents.md`): 20 lines added, 10 removed
+- **在 VS Code 中使用 Claude Code** (`vs-code.md`): 43 lines added, 33 removed
+- **零数据保留** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **Claude Code 最佳實踐** (`best-practices.md`): 2 lines added, 1 removed
+- **常見工作流程** (`common-workflows.md`): 53 lines added, 33 removed
+  - New section: "## 在筆記和非程式碼資料夾中工作"
+- **資料使用** (`data-usage.md`): 21 lines added, 14 removed
+  - New section: "### 使用 `/feedback` 命令的回饋"
+  - New section: "### WebFetch 網域安全檢查"
+- **使用 Claude Code Desktop** (`desktop.md`): 24 lines added, 0 removed
+  - New section: "#### 為您的團隊預先配置 SSH 連線"
+- **使用 hooks 自動化工作流程** (`hooks-guide.md`): 29 lines added, 28 removed
+- **Hooks 參考** (`hooks.md`): 127 lines added, 75 removed
+  - New section: "### UserPromptExpansion"
+  - New section: "#### UserPromptExpansion 輸入"
+  - New section: "#### UserPromptExpansion 決定控制"
+- **Claude 如何記住您的專案** (`memory.md`): 34 lines added, 14 removed
+  - New section: "### 何時新增到 CLAUDE.md"
+- **企業網路設定** (`network-config.md`): 34 lines added, 4 removed
+  - New section: "## CA 憑證存放區"
+- **設定權限** (`permissions.md`): 7 lines added, 5 removed
+- **建立並分發 plugin marketplace** (`plugin-marketplaces.md`): 153 lines added, 32 removed
+  - New section: "### 選用欄位"
+  - New section: "## 從 CLI 管理 marketplace"
+  - New section: "### Plugin marketplace add"
+  - New section: "### Plugin marketplace list"
+  - New section: "### Plugin marketplace remove"
+- **Plugins 參考** (`plugins-reference.md`): 77 lines added, 33 removed
+  - New section: "### plugin list"
+- **Claude Code 設定** (`settings.md`): 6 lines added, 3 removed
+- **使用 skills 擴展 Claude** (`skills.md`): 79 lines added, 49 removed
+  - New section: "#### 即時變更偵測"
+  - New section: "### Skill 內容生命週期"
+  - New section: "### 為 skill 預先批准工具"
+- **自訂您的狀態列** (`statusline.md`): 87 lines added, 43 removed
+  - New section: "## 子代理狀態列"
+- **建立自訂 subagents** (`sub-agents.md`): 28 lines added, 18 removed
+- **在 VS Code 中使用 Claude Code** (`vs-code.md`): 50 lines added, 40 removed
+- **零數據保留** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+---
+
 ## 2026-04-21
 
 181 pages modified

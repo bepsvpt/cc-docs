@@ -61,6 +61,6 @@ Mesmo com ZDR ativado, a Anthropic pode reter dados quando exigido por lei ou pa
 
 ## Solicitar ZDR
 
-Para solicitar ZDR para Claude Code no Claude for Enterprise, entre em contato com sua equipe de conta da Anthropic. Sua equipe de conta enviará a solicitação internamente, e a Anthropic revisará e ativará ZDR em sua organização após confirmar a elegibilidade. Todas as ações de ativação são registradas em log de auditoria.
+Para solicitar ZDR para Claude Code no Claude for Enterprise, [entre em contato com vendas](https://www.anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=zero_data_retention_request) ou sua equipe de conta da Anthropic. Sua equipe de conta enviará a solicitação internamente, e a Anthropic revisará e ativará ZDR em sua organização após confirmar a elegibilidade. Todas as ações de ativação são registradas em log de auditoria.
 
 Se você está usando ZDR para Claude Code através de chaves de API pay-as-you-go, você pode fazer a transição para Claude for Enterprise para ganhar acesso a recursos administrativos enquanto mantém ZDR para Claude Code. Entre em contato com sua equipe de conta para coordenar a migração.

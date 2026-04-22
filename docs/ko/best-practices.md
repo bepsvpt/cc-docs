@@ -20,7 +20,7 @@ Claude Code는 에이전트 코딩 환경입니다. 질문에 답하고 기다�
 
 Claude의 context window는 모든 메시지, Claude가 읽은 모든 파일, 모든 명령 출력을 포함한 전체 대화를 보유합니다. 그러나 이는 빠르게 채워질 수 있습니다. 단일 디버깅 세션이나 코드베이스 탐색만으로도 수만 개의 토큰을 생성하고 소비할 수 있습니다.
 
-LLM 성능이 context가 채워질수록 저하되기 때문에 이는 중요합니다. context window가 거의 가득 차면 Claude는 이전 지시사항을 "잊기" 시작하거나 더 많은 실수를 할 수 있습니다. context window는 관리해야 할 가장 중요한 리소스입니다. [사용자 정의 상태 줄](/ko/statusline)로 context 사용량을 지속적으로 추적하고, [토큰 사용량 감소](/ko/costs#reduce-token-usage)에서 토큰 사용량을 줄이기 위한 전략을 참조하십시오.
+LLM 성능이 context가 채워질수록 저하되기 때문에 이는 중요합니다. context window가 거의 가득 차면 Claude는 이전 지시사항을 "잊기" 시작하거나 더 많은 실수를 할 수 있습니다. context window는 관리해야 할 가장 중요한 리소스입니다. 세션이 실제로 어떻게 채워지는지 보려면 [대화형 연습](/ko/context-window)을 시청하여 시작 시 로드되는 것과 각 파일 읽기의 비용을 확인하십시오. [사용자 정의 상태 줄](/ko/statusline)로 context 사용량을 지속적으로 추적하고, [토큰 사용량 감소](/ko/costs#reduce-token-usage)에서 토큰 사용량을 줄이기 위한 전략을 참조하십시오.
 
 ***
 
@@ -196,6 +196,7 @@ CLAUDE.md 파일을 여러 위치에 배치할 수 있습니다:
 
 * **홈 폴더(`~/.claude/CLAUDE.md`)**: 모든 Claude 세션에 적용됨
 * **프로젝트 루트(`./CLAUDE.md`)**: git에 체크인하여 팀과 공유
+* **프로젝트 루트(`./CLAUDE.local.md`)**: 개인 프로젝트 특정 노트; 팀과 공유되지 않도록 `.gitignore`에 이 파일을 추가하십시오
 * **상위 디렉토리**: 모노레포에 유용하며, `root/CLAUDE.md`와 `root/foo/CLAUDE.md` 모두 자동으로 가져와집니다
 * **하위 디렉토리**: Claude는 해당 디렉토리의 파일로 작업할 때 필요에 따라 하위 CLAUDE.md 파일을 가져옵니다
 

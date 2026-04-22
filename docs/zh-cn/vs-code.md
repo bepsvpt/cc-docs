@@ -52,9 +52,17 @@ VS Code 扩展为 Claude Code 提供了原生图形界面，直接集成到您�
     * **命令面板**：`Cmd+Shift+P`（Mac）或 `Ctrl+Shift+P`（Windows/Linux），输入"Claude Code"，然后选择一个选项，如"在新选项卡中打开"
     * **状态栏**：点击窗口右下角的\*\*✱ Claude Code\*\*。即使没有打开文件也可以使用。
 
-    首次打开面板时，会出现**学习 Claude Code** 检查清单。通过点击**显示给我**来完成每一项，或用 X 关闭它。要稍后重新打开它，请在 VS Code 设置中的扩展 → Claude Code 下取消选中**隐藏入门**。
-
     您可以拖动 Claude 面板在 VS Code 中重新定位它。有关详细信息，请参阅[自定义您的工作流](#customize-your-workflow)。
+  </Step>
+
+  <Step title="登录">
+    首次打开面板时，会出现登录屏幕。点击**登录**并在浏览器中完成授权。
+
+    如果您稍后看到**未登录 · 请运行 /login**，扩展会自动重新打开登录屏幕。如果它没有出现，请从命令面板使用**Developer: Reload Window**重新加载窗口。
+
+    如果您在 shell 中设置了 `ANTHROPIC_API_KEY` 但仍然看到登录提示，VS Code 可能没有继承您的 shell 环境。使用 `code .` 从终端启动 VS Code，以便它继承您的环境变量，或改用您的 Claude 账户登录。
+
+    登录后，会出现**学习 Claude Code** 检查清单。通过点击**显示给我**来完成每一项，或用 X 关闭它。要稍后重新打开它，请在 VS Code 设置中的扩展 → Claude Code 下取消选中**隐藏入门**。
   </Step>
 
   <Step title="发送提示">
@@ -68,7 +76,7 @@ VS Code 扩展为 Claude Code 提供了原生图形界面，直接集成到您�
   </Step>
 
   <Step title="审查更改">
-    当 Claude 想要编辑文件时，它会显示原始内容和建议更改的并排比较，然后请求许可。您可以接受、拒绝或告诉 Claude 改为做什么。
+    当 Claude 想要编辑文件时，它会显示原始内容和建议更改的并排比较，然后请求许可。您可以接受、拒绝或告诉 Claude 改为做什么。如果您在接受前直接在差异视图中编辑建议的内容，Claude 会被告知您修改了它，因此它不会假设文件与其原始提案相匹配。
 
     <img src="https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-edits.png?fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=e005f9b41c541c5c7c59c082f7c4841c" alt="VS Code 显示 Claude 建议更改的差异，带有权限提示，询问是否进行编辑" width="3292" height="1876" data-path="images/vs-code-edits.png" />
   </Step>
@@ -87,7 +95,7 @@ VS Code 扩展为 Claude Code 提供了原生图形界面，直接集成到您�
 * **权限模式**：点击提示框底部的模式指示器以切换模式。在正常模式下，Claude 在每个操作前请求许可。在 Plan mode 中，Claude 描述它将做什么，并在进行更改前等待批准。VS Code 会自动将计划作为完整的 markdown 文档打开，您可以添加内联注释以在 Claude 开始前提供反馈。在自动接受模式下，Claude 进行编辑而不询问。在 VS Code 设置中的 `claudeCode.initialPermissionMode` 下设置默认值。
 * **命令菜单**：点击 `/` 或输入 `/` 以打开命令菜单。选项包括附加文件、切换模型、切换扩展思考、查看计划使用情况（`/usage`）以及启动 [Remote Control](/zh-CN/remote-control) 会话（`/remote-control`）。自定义部分提供对 MCP servers、hooks、memory、permissions 和 plugins 的访问。带有终端图标的项目在集成终端中打开。
 * **上下文指示器**：提示框显示您使用了多少 Claude 的 context window。Claude 在需要时自动压缩，或者您可以手动运行 `/compact`。
-* **扩展思考**：让 Claude 花更多时间推理复杂问题。通过命令菜单（`/`）切换它。有关详细信息，请参阅[扩展思考](/zh-CN/common-workflows#use-extended-thinking-thinking-mode)。
+* **扩展思考**：让 Claude 花更多时间推理复杂问题。通过命令菜单（`/`）切换它。Claude 的推理在对话中显示为折叠块：点击一个块来阅读它，或按 `Ctrl+O` 以展开或折叠会话中的每个思考块。有关详细信息，请参阅[扩展思考](/zh-CN/common-workflows#use-extended-thinking-thinking-mode)。
 * **多行输入**：按 `Shift+Enter` 添加新行而不发送。这也适用于问题对话框的"其他"自由文本输入。
 
 ### 引用文件和文件夹
@@ -107,15 +115,15 @@ VS Code 扩展为 Claude Code 提供了原生图形界面，直接集成到您�
 
 ### 恢复过去的对话
 
-点击 Claude Code 面板顶部的下拉菜单以访问您的对话历史记录。您可以按关键字搜索或按时间浏览（今天、昨天、过去 7 天等）。点击任何对话以使用完整的消息历史记录恢复它。新会话根据您的第一条消息接收 AI 生成的标题。将鼠标悬停在会话上以显示重命名和删除操作：重命名以给它一个描述性标题，或删除以将其从列表中删除。有关恢复会话的更多信息，请参阅[常见工作流](/zh-CN/common-workflows#resume-previous-conversations)。
+点击 Claude Code 面板顶部的**会话历史**按钮以访问您的对话历史记录。您可以按关键字搜索或按时间浏览（今天、昨天、过去 7 天等）。点击任何对话以使用完整的消息历史记录恢复它。新会话根据您的第一条消息接收 AI 生成的标题。将鼠标悬停在会话上以显示重命名和删除操作：重命名以给它一个描述性标题，或删除以将其从列表中删除。有关恢复会话的更多信息，请参阅[常见工作流](/zh-CN/common-workflows#resume-previous-conversations)。
 
 ### 从 Claude.ai 恢复远程会话
 
 如果您使用[网络上的 Claude Code](/zh-CN/claude-code-on-the-web)，您可以直接在 VS Code 中恢复这些远程会话。这需要使用 **Claude.ai Subscription** 登录，而不是 Anthropic Console。
 
 <Steps>
-  <Step title="打开过去的对话">
-    点击 Claude Code 面板顶部的**过去的对话**下拉菜单。
+  <Step title="打开会话历史">
+    点击 Claude Code 面板顶部的**会话历史**按钮。
   </Step>
 
   <Step title="选择远程选项卡">
@@ -222,17 +230,17 @@ Claude 为浏览器任务打开新选项卡并共享您的浏览器登录状态�
   这些是用于控制扩展的 VS Code 命令。并非所有内置 Claude Code 命令都在扩展中可用。有关详细信息，请参阅 [VS Code 扩展与 Claude Code CLI](#vs-code-extension-vs-claude-code-cli)。
 </Note>
 
-| 命令        | 快捷键                                                   | 描述                       |
-| --------- | ----------------------------------------------------- | ------------------------ |
-| 焦点输入      | `Cmd+Esc`（Mac）/ `Ctrl+Esc`（Windows/Linux）             | 在编辑器和 Claude 之间切换焦点      |
-| 在边栏中打开    | -                                                     | 在左侧边栏中打开 Claude          |
-| 在终端中打开    | -                                                     | 在终端模式下打开 Claude          |
-| 在新选项卡中打开  | `Cmd+Shift+Esc`（Mac）/ `Ctrl+Shift+Esc`（Windows/Linux） | 将新对话作为编辑器选项卡打开           |
-| 在新窗口中打开   | -                                                     | 在单独的窗口中打开新对话             |
-| 新对话       | `Cmd+N`（Mac）/ `Ctrl+N`（Windows/Linux）                 | 开始新对话（需要 Claude 获得焦点）    |
-| 插入 @-提及引用 | `Option+K`（Mac）/ `Alt+K`（Windows/Linux）               | 插入对当前文件和选择的引用（需要编辑器获得焦点） |
-| 显示日志      | -                                                     | 查看扩展调试日志                 |
-| 登出        | -                                                     | 登出您的 Anthropic 账户        |
+| 命令        | 快捷键                                                   | 描述                                                               |
+| --------- | ----------------------------------------------------- | ---------------------------------------------------------------- |
+| 焦点输入      | `Cmd+Esc`（Mac）/ `Ctrl+Esc`（Windows/Linux）             | 在编辑器和 Claude 之间切换焦点                                              |
+| 在边栏中打开    | -                                                     | 在左侧边栏中打开 Claude                                                  |
+| 在终端中打开    | -                                                     | 在终端模式下打开 Claude                                                  |
+| 在新选项卡中打开  | `Cmd+Shift+Esc`（Mac）/ `Ctrl+Shift+Esc`（Windows/Linux） | 将新对话作为编辑器选项卡打开                                                   |
+| 在新窗口中打开   | -                                                     | 在单独的窗口中打开新对话                                                     |
+| 新对话       | `Cmd+N`（Mac）/ `Ctrl+N`（Windows/Linux）                 | 开始新对话。需要 Claude 获得焦点且 `enableNewConversationShortcut` 设置为 `true` |
+| 插入 @-提及引用 | `Option+K`（Mac）/ `Alt+K`（Windows/Linux）               | 插入对当前文件和选择的引用（需要编辑器获得焦点）                                         |
+| 显示日志      | -                                                     | 查看扩展调试日志                                                         |
+| 登出        | -                                                     | 登出您的 Anthropic 账户                                                |
 
 ### 从其他工具启动 VS Code 选项卡
 
@@ -272,21 +280,21 @@ vscode://anthropic.claude-code/open?prompt=review%20my%20changes
 
 ### 扩展设置
 
-| 设置                                | 默认值       | 描述                                                                                                                                                                                                      |
-| --------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `selectedModel`                   | `default` | 新对话的模型。使用 `/model` 按会话更改。                                                                                                                                                                               |
-| `useTerminal`                     | `false`   | 以终端模式而不是图形面板启动 Claude                                                                                                                                                                                   |
-| `initialPermissionMode`           | `default` | 控制新对话的批准提示：`default`、`plan`、`acceptEdits`、`auto` 或 `bypassPermissions`。请参阅[权限模式](/zh-CN/permission-modes)。                                                                                              |
-| `preferredLocation`               | `panel`   | Claude 打开的位置：`sidebar`（右侧）或 `panel`（新选项卡）                                                                                                                                                               |
-| `autosave`                        | `true`    | 在 Claude 读取或写入文件前自动保存文件                                                                                                                                                                                 |
-| `useCtrlEnterToSend`              | `false`   | 使用 Ctrl/Cmd+Enter 而不是 Enter 发送提示                                                                                                                                                                        |
-| `enableNewConversationShortcut`   | `true`    | 启用 Cmd/Ctrl+N 以开始新对话                                                                                                                                                                                    |
-| `hideOnboarding`                  | `false`   | 隐藏入门检查清单（毕业帽图标）                                                                                                                                                                                         |
-| `respectGitIgnore`                | `true`    | 从文件搜索中排除 .gitignore 模式                                                                                                                                                                                  |
-| `environmentVariables`            | `[]`      | 为 Claude 进程设置环境变量。对于共享配置，请改用 Claude Code 设置。                                                                                                                                                            |
-| `disableLoginPrompt`              | `false`   | 跳过身份验证提示（用于第三方提供商设置）                                                                                                                                                                                    |
-| `allowDangerouslySkipPermissions` | `false`   | 添加 [Auto](/zh-CN/permission-modes#eliminate-prompts-with-auto-mode) 和 Bypass permissions 到模式选择器。Auto 需要 Team 计划和 Claude Sonnet 4.6 或 Opus 4.6，因此即使此切换打开，该选项也可能保持不可用。仅在没有互联网访问的沙箱中使用 Bypass permissions。 |
-| `claudeProcessWrapper`            | -         | 用于启动 Claude 进程的可执行文件路径                                                                                                                                                                                  |
+| 设置                                | 默认值       | 描述                                                                                                                                                                                                                                                    |
+| --------------------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useTerminal`                     | `false`   | 以终端模式而不是图形面板启动 Claude                                                                                                                                                                                                                                 |
+| `initialPermissionMode`           | `default` | 控制新对话的批准提示：`default`、`plan`、`acceptEdits` 或 `bypassPermissions`。请参阅[权限模式](/zh-CN/permission-modes)。                                                                                                                                                   |
+| `preferredLocation`               | `panel`   | Claude 打开的位置：`sidebar`（右侧）或 `panel`（新选项卡）                                                                                                                                                                                                             |
+| `autosave`                        | `true`    | 在 Claude 读取或写入文件前自动保存文件                                                                                                                                                                                                                               |
+| `useCtrlEnterToSend`              | `false`   | 使用 Ctrl/Cmd+Enter 而不是 Enter 发送提示                                                                                                                                                                                                                      |
+| `enableNewConversationShortcut`   | `false`   | 启用 Cmd/Ctrl+N 以开始新对话                                                                                                                                                                                                                                  |
+| `hideOnboarding`                  | `false`   | 隐藏入门检查清单（毕业帽图标）                                                                                                                                                                                                                                       |
+| `respectGitIgnore`                | `true`    | 从文件搜索中排除 .gitignore 模式                                                                                                                                                                                                                                |
+| `usePythonEnvironment`            | `true`    | 运行 Claude 时激活工作区的 Python 环境。需要 Python 扩展。                                                                                                                                                                                                             |
+| `environmentVariables`            | `[]`      | 为 Claude 进程设置环境变量。对于共享配置，请改用 Claude Code 设置。                                                                                                                                                                                                          |
+| `disableLoginPrompt`              | `false`   | 跳过身份验证提示（用于第三方提供商设置）                                                                                                                                                                                                                                  |
+| `allowDangerouslySkipPermissions` | `false`   | 添加 [Auto mode](/zh-CN/permission-modes#eliminate-prompts-with-auto-mode) 和 Bypass permissions 到模式选择器。Auto mode 有[计划、管理员、模型和提供商要求](/zh-CN/permission-modes#eliminate-prompts-with-auto-mode)，因此即使此切换打开，该选项也可能保持不可用。仅在没有互联网访问的沙箱中使用 Bypass permissions。 |
+| `claudeProcessWrapper`            | -         | 用于启动 Claude 进程的可执行文件路径                                                                                                                                                                                                                                |
 
 ## VS Code 扩展与 Claude Code CLI
 
@@ -420,6 +428,8 @@ claude --worktree feature-auth
 <Note>
   Quick Pick 确认与 `PreToolUse` hooks 分开。`mcp__ide__executeCode` 的允许列表条目让 Claude *提议*运行单元格；VS Code 内的 Quick Pick 是让它*实际*运行的原因。
 </Note>
+
+<a id="troubleshooting" />
 
 ## 修复常见问题
 

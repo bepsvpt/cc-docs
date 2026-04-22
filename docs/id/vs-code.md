@@ -52,9 +52,17 @@ Setelah diinstal, Anda dapat mulai menggunakan Claude Code melalui antarmuka VS 
     * **Command Palette**: `Cmd+Shift+P` (Mac) atau `Ctrl+Shift+P` (Windows/Linux), ketik "Claude Code", dan pilih opsi seperti "Open in New Tab"
     * **Status Bar**: klik **✱ Claude Code** di sudut kanan bawah jendela. Ini berfungsi bahkan saat tidak ada file yang terbuka.
 
-    Saat Anda pertama kali membuka panel, daftar periksa **Learn Claude Code** muncul. Kerjakan setiap item dengan mengklik **Show me**, atau tutup dengan X. Untuk membukanya kembali nanti, hapus centang **Hide Onboarding** di pengaturan VS Code di bawah Extensions → Claude Code.
-
     Anda dapat menyeret panel Claude untuk memposisikan ulang di mana saja di VS Code. Lihat [Sesuaikan alur kerja Anda](#customize-your-workflow) untuk detail.
+  </Step>
+
+  <Step title="Masuk">
+    Saat pertama kali Anda membuka panel, layar masuk muncul. Klik **Sign in** dan selesaikan otorisasi di browser Anda.
+
+    Jika Anda melihat **Not logged in · Please run /login** nanti, ekstensi membuka kembali layar masuk secara otomatis. Jika tidak muncul, muat ulang jendela dari Command Palette dengan **Developer: Reload Window**.
+
+    Jika Anda memiliki `ANTHROPIC_API_KEY` yang diatur di shell Anda tetapi masih melihat prompt masuk, VS Code mungkin tidak mewarisi lingkungan shell Anda. Luncurkan VS Code dari terminal dengan `code .` sehingga mewarisi variabel lingkungan Anda, atau masuk dengan akun Claude Anda sebagai gantinya.
+
+    Setelah Anda masuk, daftar periksa **Learn Claude Code** muncul. Kerjakan setiap item dengan mengklik **Show me**, atau tutup dengan X. Untuk membukanya kembali nanti, hapus centang **Hide Onboarding** di pengaturan VS Code di bawah Extensions → Claude Code.
   </Step>
 
   <Step title="Kirim prompt">
@@ -68,7 +76,7 @@ Setelah diinstal, Anda dapat mulai menggunakan Claude Code melalui antarmuka VS 
   </Step>
 
   <Step title="Tinjau perubahan">
-    Saat Claude ingin mengedit file, ia menampilkan perbandingan berdampingan dari perubahan asli dan yang diusulkan, kemudian meminta izin. Anda dapat menerima, menolak, atau memberi tahu Claude apa yang harus dilakukan sebagai gantinya.
+    Saat Claude ingin mengedit file, ia menampilkan perbandingan berdampingan dari perubahan asli dan yang diusulkan, kemudian meminta izin. Anda dapat menerima, menolak, atau memberi tahu Claude apa yang harus dilakukan sebagai gantinya. Jika Anda mengedit konten yang diusulkan secara langsung di tampilan diff sebelum menerima, Claude diberitahu bahwa Anda memodifikasinya sehingga tidak menganggap file cocok dengan proposal aslinya.
 
     <img src="https://mintcdn.com/claude-code/FVYz38sRY-VuoGHA/images/vs-code-edits.png?fit=max&auto=format&n=FVYz38sRY-VuoGHA&q=85&s=e005f9b41c541c5c7c59c082f7c4841c" alt="VS Code menampilkan diff dari perubahan yang diusulkan Claude dengan prompt izin menanyakan apakah akan membuat edit" width="3292" height="1876" data-path="images/vs-code-edits.png" />
   </Step>
@@ -87,7 +95,7 @@ Kotak prompt mendukung beberapa fitur:
 * **Mode izin**: klik indikator mode di bagian bawah kotak prompt untuk beralih mode. Dalam mode normal, Claude meminta izin sebelum setiap tindakan. Dalam Plan mode, Claude menjelaskan apa yang akan dilakukan dan menunggu persetujuan sebelum membuat perubahan. VS Code secara otomatis membuka rencana sebagai dokumen markdown penuh di mana Anda dapat menambahkan komentar inline untuk memberikan umpan balik sebelum Claude mulai. Dalam mode auto-accept, Claude membuat edit tanpa bertanya. Atur default di pengaturan VS Code di bawah `claudeCode.initialPermissionMode`.
 * **Menu perintah**: klik `/` atau ketik `/` untuk membuka menu perintah. Opsi termasuk melampirkan file, beralih model, mengalihkan extended thinking, melihat penggunaan rencana (`/usage`), dan memulai sesi [Remote Control](/id/remote-control) (`/remote-control`). Bagian Customize menyediakan akses ke MCP servers, hooks, memory, permissions, dan plugins. Item dengan ikon terminal terbuka di terminal terintegrasi.
 * **Indikator konteks**: kotak prompt menunjukkan berapa banyak context window Claude yang Anda gunakan. Claude secara otomatis melakukan compact saat diperlukan, atau Anda dapat menjalankan `/compact` secara manual.
-* **Extended thinking**: memungkinkan Claude menghabiskan lebih banyak waktu untuk bernalar melalui masalah kompleks. Alihkan melalui menu perintah (`/`). Lihat [Extended thinking](/id/common-workflows#use-extended-thinking-thinking-mode) untuk detail.
+* **Extended thinking**: memungkinkan Claude menghabiskan lebih banyak waktu untuk bernalar melalui masalah kompleks. Alihkan melalui menu perintah (`/`). Penalaran Claude muncul dalam percakapan sebagai blok yang dilipat: klik blok untuk membacanya, atau tekan `Ctrl+O` untuk memperluas atau melipat setiap blok thinking dalam sesi. Lihat [Extended thinking](/id/common-workflows#use-extended-thinking-thinking-mode) untuk detail.
 * **Input multi-baris**: tekan `Shift+Enter` untuk menambahkan baris baru tanpa mengirim. Ini juga berfungsi di input teks bebas "Other" dari dialog pertanyaan.
 
 ### Referensikan file dan folder
@@ -107,15 +115,15 @@ Anda juga dapat menahan `Shift` sambil menyeret file ke kotak prompt untuk menam
 
 ### Lanjutkan percakapan masa lalu
 
-Klik dropdown di bagian atas panel Claude Code untuk mengakses riwayat percakapan Anda. Anda dapat mencari berdasarkan kata kunci atau menelusuri berdasarkan waktu (Today, Yesterday, Last 7 days, dll.). Klik percakapan apa pun untuk melanjutkannya dengan riwayat pesan lengkap. Sesi baru menerima judul yang dihasilkan AI berdasarkan pesan pertama Anda. Arahkan kursor ke sesi untuk mengungkapkan tindakan rename dan remove: rename untuk memberikan judul deskriptif, atau remove untuk menghapusnya dari daftar. Untuk lebih lanjut tentang melanjutkan sesi, lihat [Alur kerja umum](/id/common-workflows#resume-previous-conversations).
+Klik tombol **Session history** di bagian atas panel Claude Code untuk mengakses riwayat percakapan Anda. Anda dapat mencari berdasarkan kata kunci atau menelusuri berdasarkan waktu (Today, Yesterday, Last 7 days, dll.). Klik percakapan apa pun untuk melanjutkannya dengan riwayat pesan lengkap. Sesi baru menerima judul yang dihasilkan AI berdasarkan pesan pertama Anda. Arahkan kursor ke sesi untuk mengungkapkan tindakan rename dan remove: rename untuk memberikan judul deskriptif, atau remove untuk menghapusnya dari daftar. Untuk lebih lanjut tentang melanjutkan sesi, lihat [Alur kerja umum](/id/common-workflows#resume-previous-conversations).
 
 ### Lanjutkan sesi jarak jauh dari Claude.ai
 
 Jika Anda menggunakan [Claude Code di web](/id/claude-code-on-the-web), Anda dapat melanjutkan sesi jarak jauh tersebut langsung di VS Code. Ini memerlukan masuk dengan **Claude.ai Subscription**, bukan Anthropic Console.
 
 <Steps>
-  <Step title="Buka Percakapan Masa Lalu">
-    Klik dropdown **Past Conversations** di bagian atas panel Claude Code.
+  <Step title="Buka riwayat sesi">
+    Klik tombol **Session history** di bagian atas panel Claude Code.
   </Step>
 
   <Step title="Pilih tab Remote">
@@ -222,17 +230,17 @@ Beberapa pintasan tergantung pada panel mana yang "focused" (menerima input keyb
   Ini adalah perintah VS Code untuk mengontrol ekstensi. Tidak semua perintah Claude Code bawaan tersedia di ekstensi. Lihat [Ekstensi VS Code vs. Claude Code CLI](#vs-code-extension-vs-claude-code-cli) untuk detail.
 </Note>
 
-| Perintah                   | Pintasan                                                 | Deskripsi                                                                      |
-| -------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| Focus Input                | `Cmd+Esc` (Mac) / `Ctrl+Esc` (Windows/Linux)             | Alihkan fokus antara editor dan Claude                                         |
-| Open in Side Bar           | -                                                        | Buka Claude di sidebar kiri                                                    |
-| Open in Terminal           | -                                                        | Buka Claude dalam mode terminal                                                |
-| Open in New Tab            | `Cmd+Shift+Esc` (Mac) / `Ctrl+Shift+Esc` (Windows/Linux) | Buka percakapan baru sebagai tab editor                                        |
-| Open in New Window         | -                                                        | Buka percakapan baru di jendela terpisah                                       |
-| New Conversation           | `Cmd+N` (Mac) / `Ctrl+N` (Windows/Linux)                 | Mulai percakapan baru (memerlukan Claude difokuskan)                           |
-| Insert @-Mention Reference | `Option+K` (Mac) / `Alt+K` (Windows/Linux)               | Sisipkan referensi ke file saat ini dan pilihan (memerlukan editor difokuskan) |
-| Show Logs                  | -                                                        | Lihat log debug ekstensi                                                       |
-| Logout                     | -                                                        | Keluar dari akun Anthropic Anda                                                |
+| Perintah                   | Pintasan                                                 | Deskripsi                                                                                                |
+| -------------------------- | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Focus Input                | `Cmd+Esc` (Mac) / `Ctrl+Esc` (Windows/Linux)             | Alihkan fokus antara editor dan Claude                                                                   |
+| Open in Side Bar           | -                                                        | Buka Claude di sidebar kiri                                                                              |
+| Open in Terminal           | -                                                        | Buka Claude dalam mode terminal                                                                          |
+| Open in New Tab            | `Cmd+Shift+Esc` (Mac) / `Ctrl+Shift+Esc` (Windows/Linux) | Buka percakapan baru sebagai tab editor                                                                  |
+| Open in New Window         | -                                                        | Buka percakapan baru di jendela terpisah                                                                 |
+| New Conversation           | `Cmd+N` (Mac) / `Ctrl+N` (Windows/Linux)                 | Mulai percakapan baru. Memerlukan Claude difokuskan dan `enableNewConversationShortcut` diatur ke `true` |
+| Insert @-Mention Reference | `Option+K` (Mac) / `Alt+K` (Windows/Linux)               | Sisipkan referensi ke file saat ini dan pilihan (memerlukan editor difokuskan)                           |
+| Show Logs                  | -                                                        | Lihat log debug ekstensi                                                                                 |
+| Logout                     | -                                                        | Keluar dari akun Anthropic Anda                                                                          |
 
 ### Luncurkan tab VS Code dari alat lain
 
@@ -272,21 +280,21 @@ Ekstensi memiliki dua jenis pengaturan:
 
 ### Pengaturan ekstensi
 
-| Pengaturan                        | Default   | Deskripsi                                                                                                                                                                                                                                                                                                                  |
-| --------------------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `selectedModel`                   | `default` | Model untuk percakapan baru. Ubah per-sesi dengan `/model`.                                                                                                                                                                                                                                                                |
-| `useTerminal`                     | `false`   | Luncurkan Claude dalam mode terminal alih-alih panel grafis                                                                                                                                                                                                                                                                |
-| `initialPermissionMode`           | `default` | Mengontrol prompt persetujuan untuk percakapan baru: `default`, `plan`, `acceptEdits`, `auto`, atau `bypassPermissions`. Lihat [permission modes](/id/permission-modes).                                                                                                                                                   |
-| `preferredLocation`               | `panel`   | Di mana Claude terbuka: `sidebar` (kanan) atau `panel` (tab baru)                                                                                                                                                                                                                                                          |
-| `autosave`                        | `true`    | Auto-save file sebelum Claude membaca atau menulisnya                                                                                                                                                                                                                                                                      |
-| `useCtrlEnterToSend`              | `false`   | Gunakan Ctrl/Cmd+Enter alih-alih Enter untuk mengirim prompt                                                                                                                                                                                                                                                               |
-| `enableNewConversationShortcut`   | `true`    | Aktifkan Cmd/Ctrl+N untuk memulai percakapan baru                                                                                                                                                                                                                                                                          |
-| `hideOnboarding`                  | `false`   | Sembunyikan daftar periksa onboarding (ikon graduation cap)                                                                                                                                                                                                                                                                |
-| `respectGitIgnore`                | `true`    | Kecualikan pola .gitignore dari pencarian file                                                                                                                                                                                                                                                                             |
-| `environmentVariables`            | `[]`      | Atur variabel lingkungan untuk proses Claude. Gunakan pengaturan Claude Code sebagai gantinya untuk konfigurasi bersama.                                                                                                                                                                                                   |
-| `disableLoginPrompt`              | `false`   | Lewati prompt autentikasi (untuk setup penyedia pihak ketiga)                                                                                                                                                                                                                                                              |
-| `allowDangerouslySkipPermissions` | `false`   | Menambahkan [Auto](/id/permission-modes#eliminate-prompts-with-auto-mode) dan Bypass permissions ke pemilih mode. Auto memerlukan paket Team dan Claude Sonnet 4.6 atau Opus 4.6, jadi opsi mungkin tetap tidak tersedia bahkan dengan toggle ini aktif. Gunakan Bypass permissions hanya di sandbox tanpa akses internet. |
-| `claudeProcessWrapper`            | -         | Jalur executable yang digunakan untuk meluncurkan proses Claude                                                                                                                                                                                                                                                            |
+| Pengaturan                        | Default   | Deskripsi                                                                                                                                                                                                                                                                                                                                                                            |
+| --------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `useTerminal`                     | `false`   | Luncurkan Claude dalam mode terminal alih-alih panel grafis                                                                                                                                                                                                                                                                                                                          |
+| `initialPermissionMode`           | `default` | Mengontrol prompt persetujuan untuk percakapan baru: `default`, `plan`, `acceptEdits`, atau `bypassPermissions`. Lihat [permission modes](/id/permission-modes).                                                                                                                                                                                                                     |
+| `preferredLocation`               | `panel`   | Di mana Claude terbuka: `sidebar` (kanan) atau `panel` (tab baru)                                                                                                                                                                                                                                                                                                                    |
+| `autosave`                        | `true`    | Auto-save file sebelum Claude membaca atau menulisnya                                                                                                                                                                                                                                                                                                                                |
+| `useCtrlEnterToSend`              | `false`   | Gunakan Ctrl/Cmd+Enter alih-alih Enter untuk mengirim prompt                                                                                                                                                                                                                                                                                                                         |
+| `enableNewConversationShortcut`   | `false`   | Aktifkan Cmd/Ctrl+N untuk memulai percakapan baru                                                                                                                                                                                                                                                                                                                                    |
+| `hideOnboarding`                  | `false`   | Sembunyikan daftar periksa onboarding (ikon graduation cap)                                                                                                                                                                                                                                                                                                                          |
+| `respectGitIgnore`                | `true`    | Kecualikan pola .gitignore dari pencarian file                                                                                                                                                                                                                                                                                                                                       |
+| `usePythonEnvironment`            | `true`    | Aktifkan lingkungan Python workspace saat menjalankan Claude. Memerlukan ekstensi Python.                                                                                                                                                                                                                                                                                            |
+| `environmentVariables`            | `[]`      | Atur variabel lingkungan untuk proses Claude. Gunakan pengaturan Claude Code sebagai gantinya untuk konfigurasi bersama.                                                                                                                                                                                                                                                             |
+| `disableLoginPrompt`              | `false`   | Lewati prompt autentikasi (untuk setup penyedia pihak ketiga)                                                                                                                                                                                                                                                                                                                        |
+| `allowDangerouslySkipPermissions` | `false`   | Menambahkan [Auto mode](/id/permission-modes#eliminate-prompts-with-auto-mode) dan Bypass permissions ke pemilih mode. Auto mode memiliki [persyaratan plan, admin, model, dan provider](/id/permission-modes#eliminate-prompts-with-auto-mode), jadi mungkin tetap tidak tersedia bahkan dengan toggle ini aktif. Gunakan Bypass permissions hanya di sandbox tanpa akses internet. |
+| `claudeProcessWrapper`            | -         | Jalur executable yang digunakan untuk meluncurkan proses Claude                                                                                                                                                                                                                                                                                                                      |
 
 ## Ekstensi VS Code vs. Claude Code CLI
 
@@ -420,6 +428,8 @@ Server bernama `ide` dan tersembunyi dari `/mcp` karena tidak ada yang perlu dik
 <Note>
   Konfirmasi Quick Pick terpisah dari hook `PreToolUse`. Entri allowlist untuk `mcp__ide__executeCode` memungkinkan Claude *mengusulkan* menjalankan sel; Quick Pick di dalam VS Code adalah apa yang memungkinkannya *benar-benar* berjalan.
 </Note>
+
+<a id="troubleshooting" />
 
 ## Perbaiki masalah umum
 

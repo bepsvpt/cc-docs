@@ -62,6 +62,8 @@
 
 可選的 `padding` 欄位為狀態列內容新增額外的水平間距（以字元為單位）。預設為 `0`。此填充是在介面的內建間距之外，因此它控制相對縮排而不是距離終端邊緣的絕對距離。
 
+可選的 `refreshInterval` 欄位除了[事件驅動的更新](#how-status-lines-work)外，每 N 秒重新執行一次您的命令。最小值為 `1`。當您的狀態列顯示基於時間的資料（例如時鐘）或背景子代理在主工作階段閒置時變更 git 狀態時，請設定此項。保持未設定以僅在事件上執行。
+
 ### 停用狀態列
 
 執行 `/statusline` 並要求它移除或清除您的狀態列（例如 `/statusline delete`、`/statusline clear`、`/statusline remove it`）。您也可以手動從 settings.json 中刪除 `statusLine` 欄位。
@@ -132,6 +134,8 @@ Claude Code 執行您的指令碼並透過 stdin 將 [JSON 工作階段資料](#
 
 您的指令碼在每個新的助手訊息之後、權限模式變更時或 vim 模式切換時執行。更新在 300ms 處進行去抖動，這意味著快速變更會批次在一起，您的指令碼在事情穩定後執行一次。如果在您的指令碼仍在執行時觸發新的更新，則會取消進行中的執行。如果您編輯指令碼，變更在您與 Claude Code 的下一次互動觸發更新之前不會出現。
 
+這些觸發器在主工作階段閒置時可能會安靜，例如當協調器等待背景子代理時。為了在閒置期間保持基於時間或外部來源的片段最新，請將 [`refreshInterval`](#manually-configure-a-status-line) 設定為也在固定計時器上重新執行命令。
+
 **您的指令碼可以輸出什麼**
 
 * **多行**：每個 `echo` 或 `print` 陳述式顯示為單獨的行。請參閱[多行範例](#display-multiple-lines)。
@@ -144,36 +148,37 @@ Claude Code 執行您的指令碼並透過 stdin 將 [JSON 工作階段資料](#
 
 Claude Code 透過 stdin 將以下 JSON 欄位傳送到您的指令碼：
 
-| 欄位                                                                               | 描述                                                                                   |
-| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| `model.id`, `model.display_name`                                                 | 目前的模型識別碼和顯示名稱                                                                        |
-| `cwd`, `workspace.current_dir`                                                   | 目前的工作目錄。兩個欄位包含相同的值；`workspace.current_dir` 因與 `workspace.project_dir` 一致而首選。         |
-| `workspace.project_dir`                                                          | 啟動 Claude Code 的目錄，如果工作階段期間工作目錄變更，可能與 `cwd` 不同                                       |
-| `workspace.added_dirs`                                                           | 透過 `/add-dir` 或 `--add-dir` 新增的其他目錄。如果未新增任何目錄，則為空陣列                                  |
-| `cost.total_cost_usd`                                                            | 工作階段總成本（美元）                                                                          |
-| `cost.total_duration_ms`                                                         | 自工作階段開始以來的總掛鐘時間（毫秒）                                                                  |
-| `cost.total_api_duration_ms`                                                     | 等待 API 回應所花費的總時間（毫秒）                                                                 |
-| `cost.total_lines_added`, `cost.total_lines_removed`                             | 變更的程式碼行數                                                                             |
-| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | 整個工作階段中的累積令牌計數                                                                       |
-| `context_window.context_window_size`                                             | 最大 context window 大小（令牌）。預設為 200000，或具有擴展 context 的模型為 1000000。                      |
-| `context_window.used_percentage`                                                 | 預先計算的已使用 context window 百分比                                                          |
-| `context_window.remaining_percentage`                                            | 預先計算的剩餘 context window 百分比                                                           |
-| `context_window.current_usage`                                                   | 最後一次 API 呼叫中的令牌計數，在 [context window 欄位](#context-window-fields)中描述                   |
-| `exceeds_200k_tokens`                                                            | 最近 API 回應中的總令牌計數（輸入、快取和輸出令牌合併）是否超過 200k。這是一個固定閾值，與實際 context window 大小無關。            |
-| `rate_limits.five_hour.used_percentage`, `rate_limits.seven_day.used_percentage` | 消耗的 5 小時或 7 天速率限制的百分比，從 0 到 100                                                      |
-| `rate_limits.five_hour.resets_at`, `rate_limits.seven_day.resets_at`             | 5 小時或 7 天速率限制視窗重設時的 Unix 紀元秒數                                                        |
-| `session_id`                                                                     | 唯一的工作階段識別碼                                                                           |
-| `session_name`                                                                   | 使用 `--name` 旗標或 `/rename` 設定的自訂工作階段名稱。如果未設定自訂名稱，則不存在                                 |
-| `transcript_path`                                                                | 對話記錄檔案的路徑                                                                            |
-| `version`                                                                        | Claude Code 版本                                                                       |
-| `output_style.name`                                                              | 目前輸出樣式的名稱                                                                            |
-| `vim.mode`                                                                       | 啟用 [vim 模式](/zh-TW/interactive-mode#vim-editor-mode)時的目前 vim 模式（`NORMAL` 或 `INSERT`） |
-| `agent.name`                                                                     | 使用 `--agent` 旗標或設定的代理設定執行時的代理名稱                                                      |
-| `worktree.name`                                                                  | 作用中 worktree 的名稱。僅在 `--worktree` 工作階段期間出現                                            |
-| `worktree.path`                                                                  | worktree 目錄的絕對路徑                                                                     |
-| `worktree.branch`                                                                | worktree 的 Git 分支名稱（例如 `"worktree-my-feature"`）。對於基於 hook 的 worktree 不存在             |
-| `worktree.original_cwd`                                                          | Claude 進入 worktree 之前所在的目錄                                                           |
-| `worktree.original_branch`                                                       | 進入 worktree 之前簽出的 Git 分支。對於基於 hook 的 worktree 不存在                                    |
+| 欄位                                                                               | 描述                                                                                                                                      |
+| -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `model.id`, `model.display_name`                                                 | 目前的模型識別碼和顯示名稱                                                                                                                           |
+| `cwd`, `workspace.current_dir`                                                   | 目前的工作目錄。兩個欄位包含相同的值；`workspace.current_dir` 因與 `workspace.project_dir` 一致而首選。                                                            |
+| `workspace.project_dir`                                                          | 啟動 Claude Code 的目錄，如果工作階段期間工作目錄變更，可能與 `cwd` 不同                                                                                          |
+| `workspace.added_dirs`                                                           | 透過 `/add-dir` 或 `--add-dir` 新增的其他目錄。如果未新增任何目錄，則為空陣列                                                                                     |
+| `workspace.git_worktree`                                                         | 當目前目錄位於使用 `git worktree add` 建立的連結 worktree 內時的 Git worktree 名稱。在主工作樹中不存在。對任何 git worktree 都會填入，不同於 `worktree.*` 僅適用於 `--worktree` 工作階段 |
+| `cost.total_cost_usd`                                                            | 工作階段總成本（美元），在用戶端計算。可能與您的實際帳單不同                                                                                                          |
+| `cost.total_duration_ms`                                                         | 自工作階段開始以來的總掛鐘時間（毫秒）                                                                                                                     |
+| `cost.total_api_duration_ms`                                                     | 等待 API 回應所花費的總時間（毫秒）                                                                                                                    |
+| `cost.total_lines_added`, `cost.total_lines_removed`                             | 變更的程式碼行數                                                                                                                                |
+| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | 整個工作階段中的累積令牌計數                                                                                                                          |
+| `context_window.context_window_size`                                             | 最大 context window 大小（令牌）。預設為 200000，或具有擴展 context 的模型為 1000000。                                                                         |
+| `context_window.used_percentage`                                                 | 預先計算的已使用 context window 百分比                                                                                                             |
+| `context_window.remaining_percentage`                                            | 預先計算的剩餘 context window 百分比                                                                                                              |
+| `context_window.current_usage`                                                   | 最後一次 API 呼叫中的令牌計數，在 [context window 欄位](#context-window-fields)中描述                                                                      |
+| `exceeds_200k_tokens`                                                            | 最近 API 回應中的總令牌計數（輸入、快取和輸出令牌合併）是否超過 200k。這是一個固定閾值，與實際 context window 大小無關。                                                               |
+| `rate_limits.five_hour.used_percentage`, `rate_limits.seven_day.used_percentage` | 消耗的 5 小時或 7 天速率限制的百分比，從 0 到 100                                                                                                         |
+| `rate_limits.five_hour.resets_at`, `rate_limits.seven_day.resets_at`             | 5 小時或 7 天速率限制視窗重設時的 Unix 紀元秒數                                                                                                           |
+| `session_id`                                                                     | 唯一的工作階段識別碼                                                                                                                              |
+| `session_name`                                                                   | 使用 `--name` 旗標或 `/rename` 設定的自訂工作階段名稱。如果未設定自訂名稱，則不存在                                                                                    |
+| `transcript_path`                                                                | 對話記錄檔案的路徑                                                                                                                               |
+| `version`                                                                        | Claude Code 版本                                                                                                                          |
+| `output_style.name`                                                              | 目前輸出樣式的名稱                                                                                                                               |
+| `vim.mode`                                                                       | 啟用 [vim 模式](/zh-TW/interactive-mode#vim-editor-mode)時的目前 vim 模式（`NORMAL` 或 `INSERT`）                                                    |
+| `agent.name`                                                                     | 使用 `--agent` 旗標或設定的代理設定執行時的代理名稱                                                                                                         |
+| `worktree.name`                                                                  | 作用中 worktree 的名稱。僅在 `--worktree` 工作階段期間出現                                                                                               |
+| `worktree.path`                                                                  | worktree 目錄的絕對路徑                                                                                                                        |
+| `worktree.branch`                                                                | worktree 的 Git 分支名稱（例如 `"worktree-my-feature"`）。對於基於 hook 的 worktree 不存在                                                                |
+| `worktree.original_cwd`                                                          | Claude 進入 worktree 之前所在的目錄                                                                                                              |
+| `worktree.original_branch`                                                       | 進入 worktree 之前簽出的 Git 分支。對於基於 hook 的 worktree 不存在                                                                                       |
 
 <Accordion title="完整 JSON 架構">
   您的狀態列命令透過 stdin 接收此 JSON 結構：
@@ -185,13 +190,14 @@ Claude Code 透過 stdin 將以下 JSON 欄位傳送到您的指令碼：
     "session_name": "my-session",
     "transcript_path": "/path/to/transcript.jsonl",
     "model": {
-      "id": "claude-opus-4-6",
+      "id": "claude-opus-4-7",
       "display_name": "Opus"
     },
     "workspace": {
       "current_dir": "/current/working/directory",
       "project_dir": "/original/project/directory",
-      "added_dirs": []
+      "added_dirs": [],
+      "git_worktree": "feature-xyz"
     },
     "version": "2.1.90",
     "output_style": {
@@ -247,6 +253,7 @@ Claude Code 透過 stdin 將以下 JSON 欄位傳送到您的指令碼：
   **可能不存在的欄位**（不在 JSON 中）：
 
   * `session_name`：僅在使用 `--name` 或 `/rename` 設定自訂名稱時出現
+  * `workspace.git_worktree`：僅當目前目錄位於連結 git worktree 內時出現
   * `vim`：僅在啟用 vim 模式時出現
   * `agent`：僅在使用 `--agent` 旗標或設定的代理設定執行時出現
   * `worktree`：僅在 `--worktree` 工作階段期間出現。存在時，`branch` 和 `original_branch` 對於基於 hook 的 worktree 也可能不存在
@@ -769,7 +776,7 @@ Bash 範例使用 [`jq`](https://jqlang.github.io/jq/) 來解析 JSON。Python �
 
 您的狀態列指令碼在活躍工作階段期間頻繁執行。`git status` 或 `git diff` 等命令可能很慢，特別是在大型儲存庫中。此範例將 git 資訊快取到臨時檔案，並且僅每 5 秒重新整理一次。
 
-為快取檔案使用穩定的固定檔案名，例如 `/tmp/statusline-git-cache`。每個狀態列呼叫作為新程序執行，因此基於程序的識別碼（如 `$$`、`os.getpid()` 或 `process.pid`）每次都產生不同的值，快取永遠不會被重複使用。
+快取檔案名稱需要在工作階段內的狀態列呼叫中保持穩定，但在工作階段之間保持唯一，以便不同儲存庫中的並行工作階段不會讀取彼此的快取 git 狀態。基於程序的識別碼（如 `$$`、`os.getpid()` 或 `process.pid`）在每次呼叫時都會變更，並會破壞快取。改用 JSON 輸入中的 `session_id`：它在工作階段的生命週期內保持穩定，並且每個工作階段都是唯一的。
 
 每個指令碼在執行 git 命令之前檢查快取檔案是否遺漏或超過 5 秒：
 
@@ -780,8 +787,9 @@ Bash 範例使用 [`jq`](https://jqlang.github.io/jq/) 來解析 JSON。Python �
 
   MODEL=$(echo "$input" | jq -r '.model.display_name')
   DIR=$(echo "$input" | jq -r '.workspace.current_dir')
+  SESSION_ID=$(echo "$input" | jq -r '.session_id')
 
-  CACHE_FILE="/tmp/statusline-git-cache"
+  CACHE_FILE="/tmp/statusline-git-cache-$SESSION_ID"
   CACHE_MAX_AGE=5  # seconds
 
   cache_is_stale() {
@@ -817,8 +825,9 @@ Bash 範例使用 [`jq`](https://jqlang.github.io/jq/) 來解析 JSON。Python �
   data = json.load(sys.stdin)
   model = data['model']['display_name']
   directory = os.path.basename(data['workspace']['current_dir'])
+  session_id = data['session_id']
 
-  CACHE_FILE = "/tmp/statusline-git-cache"
+  CACHE_FILE = f"/tmp/statusline-git-cache-{session_id}"
   CACHE_MAX_AGE = 5  # seconds
 
   def cache_is_stale():
@@ -861,8 +870,9 @@ Bash 範例使用 [`jq`](https://jqlang.github.io/jq/) 來解析 JSON。Python �
       const data = JSON.parse(input);
       const model = data.model.display_name;
       const dir = path.basename(data.workspace.current_dir);
+      const sessionId = data.session_id;
 
-      const CACHE_FILE = '/tmp/statusline-git-cache';
+      const CACHE_FILE = `/tmp/statusline-git-cache-${sessionId}`;
       const CACHE_MAX_AGE = 5; // seconds
 
       const cacheIsStale = () => {
@@ -944,9 +954,28 @@ Bash 範例使用 [`jq`](https://jqlang.github.io/jq/) 來解析 JSON。Python �
   ```
 </CodeGroup>
 
+## 子代理狀態列
+
+`subagentStatusLine` 設定為[子代理](/zh-TW/sub-agents)面板中顯示的每個子代理呈現自訂行主體。使用它來用您自己的格式化取代預設的 `name · description · token count` 行。
+
+```json theme={null}
+{
+  "subagentStatusLine": {
+    "type": "command",
+    "command": "~/.claude/subagent-statusline.sh"
+  }
+}
+```
+
+命令在每個重新整理刻度上執行一次，所有可見的子代理行作為單個 JSON 物件在 stdin 上傳遞。輸入包括[基本 hook 欄位](/zh-TW/hooks#common-input-fields)加上 `columns`（可用行寬度）和 `tasks` 陣列，其中每個任務具有 `id`、`name`、`type`、`status`、`description`、`label`、`startTime`、`tokenCount`、`tokenSamples` 和 `cwd`。
+
+將一個 JSON 行寫入 stdout，每行您想要覆蓋，形式為 `{"id": "<task id>", "content": "<row body>"}` 。`content` 字串按原樣呈現，包括 ANSI 顏色和 OSC 8 超連結。省略任務的 `id` 以保持該行的預設呈現；發出空 `content` 字串以隱藏它。
+
+適用於 `statusLine` 的相同信任和 `disableAllHooks` 閘門也適用於此。外掛程式可以在其 [`settings.json`](/zh-TW/plugins-reference#standard-plugin-layout) 中提供預設 `subagentStatusLine`。
+
 ## 提示
 
-* **使用模擬輸入測試**：`echo '{"model":{"display_name":"Opus"},"context_window":{"used_percentage":25}}' | ./statusline.sh`
+* **使用模擬輸入測試**：`echo '{"model":{"display_name":"Opus"},"workspace":{"current_dir":"/home/user/project"},"context_window":{"used_percentage":25},"session_id":"test-session-abc"}' | ./statusline.sh`
 * **保持輸出簡短**：狀態列寬度有限，因此長輸出可能會被截斷或換行不當
 * **快取慢速操作**：您的指令碼在活躍工作階段期間頻繁執行，因此 `git status` 等命令可能會導致延遲。請參閱[快取範例](#cache-expensive-operations)以瞭解如何處理此問題。
 
@@ -978,8 +1007,23 @@ Bash 範例使用 [`jq`](https://jqlang.github.io/jq/) 來解析 JSON。Python �
 **OSC 8 連結不可點擊**
 
 * 驗證您的終端支援 OSC 8 超連結（iTerm2、Kitty、WezTerm）
+
 * Terminal.app 不支援可點擊連結
+
+* 如果連結文字出現但不可點擊，Claude Code 可能未在您的終端中偵測到超連結支援。這通常會影響 Windows Terminal 和其他不在自動偵測清單中的模擬器。設定 `FORCE_HYPERLINK` 環境變數以在啟動 Claude Code 之前覆蓋偵測：
+
+  ```bash theme={null}
+  FORCE_HYPERLINK=1 claude
+  ```
+
+  在 PowerShell 中，先在目前工作階段中設定變數：
+
+  ```powershell theme={null}
+  $env:FORCE_HYPERLINK = "1"; claude
+  ```
+
 * SSH 和 tmux 工作階段可能根據設定去除 OSC 序列
+
 * 如果逃逸序列顯示為文字（如 `\e]8;;`），請使用 `printf '%b'` 而不是 `echo -e` 以獲得更可靠的逃逸處理
 
 **逃逸序列的顯示故障**
@@ -987,6 +1031,11 @@ Bash 範例使用 [`jq`](https://jqlang.github.io/jq/) 來解析 JSON。Python �
 * 複雜的逃逸序列（ANSI 顏色、OSC 8 連結）如果與其他 UI 更新重疊，偶爾會導致輸出損壞
 * 如果您看到損壞的文字，請嘗試簡化您的指令碼為純文字輸出
 * 帶有逃逸碼的多行狀態列比單行純文字更容易出現呈現問題
+
+**工作區信任必需**
+
+* 狀態列命令僅在您已接受目前目錄的工作區信任對話時執行。因為 `statusLine` 執行 shell 命令，它需要與 hooks 和其他執行 shell 的設定相同的信任接受。
+* 如果未接受信任，您將看到通知 `statusline skipped · restart to fix` 而不是您的狀態列輸出。重新啟動 Claude Code 並接受信任提示以啟用它。
 
 **指令碼錯誤或掛起**
 
@@ -997,11 +1046,6 @@ Bash 範例使用 [`jq`](https://jqlang.github.io/jq/) 來解析 JSON。Python �
 
 **通知共享狀態列行**
 
-* 系統通知（如 MCP 伺服器錯誤、自動更新和令牌警告）顯示在與您的狀態列相同行的右側
+* 系統通知（如 MCP 伺服器錯誤和自動更新）顯示在與您的狀態列相同行的右側。暫時性通知（例如 context-low 警告）也會在此區域循環。
 * 啟用詳細模式會在此區域新增令牌計數器
 * 在狹窄的終端上，這些通知可能會截斷您的狀態列輸出
-
-**需要工作區信任**
-
-* 狀態列命令僅在您已接受目前目錄的工作區信任對話時執行。因為 `statusLine` 執行 shell 命令，它需要與 hooks 和其他執行 shell 的設定相同的信任接受。
-* 如果未接受信任，您將看到通知 `statusline skipped · restart to fix` 而不是您的狀態列輸出。重新啟動 Claude Code 並接受信任提示以啟用它。

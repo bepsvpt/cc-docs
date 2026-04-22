@@ -20,7 +20,7 @@ Die meisten Best Practices basieren auf einer Einschränkung: Claudes Kontextfen
 
 Claudes Kontextfenster enthält Ihre gesamte Konversation, einschließlich jeder Nachricht, jeder Datei, die Claude liest, und jeder Befehlsausgabe. Dies kann sich jedoch schnell füllen. Eine einzelne Debugging-Sitzung oder Codebase-Erkundung könnte Zehntausende von Tokens generieren und verbrauchen.
 
-Dies ist wichtig, da die LLM-Leistung abnimmt, wenn sich der Kontext füllt. Wenn das Kontextfenster voll wird, könnte Claude anfangen, frühere Anweisungen zu „vergessen" oder mehr Fehler zu machen. Das Kontextfenster ist die wichtigste Ressource, die verwaltet werden muss. Verfolgen Sie die Kontextnutzung kontinuierlich mit einer [benutzerdefinierten Statuszeile](/de/statusline), und siehe [Token-Nutzung reduzieren](/de/costs#reduce-token-usage) für Strategien zur Reduzierung der Token-Nutzung.
+Dies ist wichtig, da die LLM-Leistung abnimmt, wenn sich der Kontext füllt. Wenn das Kontextfenster voll wird, könnte Claude anfangen, frühere Anweisungen zu „vergessen" oder mehr Fehler zu machen. Das Kontextfenster ist die wichtigste Ressource, die verwaltet werden muss. Um zu sehen, wie sich eine Session in der Praxis füllt, [schauen Sie sich eine interaktive Anleitung](/de/context-window) an, was beim Start geladen wird und was jedes Datei-Lesen kostet. Verfolgen Sie die Kontextnutzung kontinuierlich mit einer [benutzerdefinierten Statuszeile](/de/statusline), und siehe [Token-Nutzung reduzieren](/de/costs#reduce-token-usage) für Strategien zur Reduzierung der Token-Nutzung.
 
 ***
 
@@ -196,6 +196,7 @@ Sie können CLAUDE.md-Dateien an mehreren Orten platzieren:
 
 * **Home-Ordner (`~/.claude/CLAUDE.md`)**: gilt für alle Claude-Sessions
 * **Projekt-Root (`./CLAUDE.md`)**: überprüfen Sie in Git, um mit Ihrem Team zu teilen
+* **Projekt-Root (`./CLAUDE.local.md`)**: persönliche projektspezifische Notizen; fügen Sie diese Datei zu Ihrer `.gitignore` hinzu, damit sie nicht mit Ihrem Team geteilt wird
 * **Übergeordnete Verzeichnisse**: nützlich für Monorepos, bei denen sowohl `root/CLAUDE.md` als auch `root/foo/CLAUDE.md` automatisch eingezogen werden
 * **Untergeordnete Verzeichnisse**: Claude zieht untergeordnete CLAUDE.md-Dateien bei Bedarf ein, wenn mit Dateien in diesen Verzeichnissen gearbeitet wird
 
@@ -397,7 +398,7 @@ Während langer Sessions kann sich Claudes Kontextfenster mit irrelevanten Konve
 * Für mehr Kontrolle führen Sie `/compact <instructions>` aus, wie `/compact Focus on the API changes`
 * Um nur einen Teil der Konversation zu komprimieren, verwenden Sie `Esc + Esc` oder `/rewind`, wählen Sie einen Nachricht-Checkpoint und wählen Sie **Summarize from here**. Dies verdichtet Nachrichten von diesem Punkt an, während der frühere Kontext erhalten bleibt.
 * Passen Sie das Komprimierungsverhalten in CLAUDE.md mit Anweisungen wie `„When compacting, always preserve the full list of modified files and any test commands"` an, um sicherzustellen, dass kritischer Kontext die Zusammenfassung überlebt
-* Für schnelle Fragen, die nicht im Kontext bleiben müssen, verwenden Sie [`/btw`](/de/interactive-mode#side-questions-with-btw). Die Antwort erscheint in einer verwerfbaren Überlagerung und gelangt niemals in die Konversationshistorie, sodass Sie ein Detail überprüfen können, ohne den Kontext zu vergrößern.
+* Für schnelle Fragen, die nicht im Kontext bleiben müssen, verwenden Sie [`/btw`](/de/interactive-mode#side-questions-with-%2Fbtw). Die Antwort erscheint in einer verwerfbaren Überlagerung und gelangt niemals in die Konversationshistorie, sodass Sie ein Detail überprüfen können, ohne den Kontext zu vergrößern.
 
 ### Verwenden Sie Subagents für Untersuchungen
 

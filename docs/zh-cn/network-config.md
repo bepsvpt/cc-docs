@@ -53,9 +53,35 @@ export HTTPS_PROXY=http://username:password@proxy.example.com:8080
   对于需要高级身份验证（NTLM、Kerberos 等）的代理，请考虑使用支持您的身份验证方法的 LLM 网关服务。
 </Tip>
 
+## CA 证书存储
+
+默认情况下，Claude Code 信任其捆绑的 Mozilla CA 证书和您的操作系统的证书存储。企业 TLS 检查代理（如 CrowdStrike Falcon 和 Zscaler）在其根证书安装在操作系统信任存储中时无需额外配置即可工作。
+
+<Note>
+  系统 CA 存储集成需要本机 Claude Code 二进制分发。在 Node.js 运行时上运行时，系统 CA 存储不会自动合并。在这种情况下，设置 `NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem` 以信任企业根 CA。
+</Note>
+
+`CLAUDE_CODE_CERT_STORE` 接受逗号分隔的源列表。识别的值为 `bundled`（Claude Code 附带的 Mozilla CA 集）和 `system`（操作系统信任存储）。默认值为 `bundled,system`。
+
+仅信任捆绑的 Mozilla CA 集：
+
+```bash theme={null}
+export CLAUDE_CODE_CERT_STORE=bundled
+```
+
+仅信任操作系统证书存储：
+
+```bash theme={null}
+export CLAUDE_CODE_CERT_STORE=system
+```
+
+<Note>
+  `CLAUDE_CODE_CERT_STORE` 没有专用的 `settings.json` 架构密钥。通过 `~/.claude/settings.json` 中的 `env` 块或直接在进程环境中设置它。
+</Note>
+
 ## 自定义 CA 证书
 
-如果您的企业环境使用自定义 CA 进行 HTTPS 连接（无论是通过代理还是直接 API 访问），请配置 Claude Code 以信任它们：
+如果您的企业环境使用自定义 CA，请配置 Claude Code 以直接信任它：
 
 ```bash theme={null}
 export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
@@ -86,10 +112,14 @@ Claude Code 需要访问以下 URL：
 
 确保这些 URL 在您的代理配置和防火墙规则中被列入白名单。这在容器化或受限网络环境中使用 Claude Code 时尤为重要。
 
-本机安装程序和更新检查还需要访问以下 URL。由于安装程序和自动更新程序从 `storage.googleapis.com` 获取，而插件下载使用 `downloads.claude.ai`，请将两者都列入白名单。如果您通过 npm 安装 Claude Code 或管理自己的二进制分发，最终用户可能不需要访问：
+使用 [Bedrock](/zh-CN/amazon-bedrock)、[Vertex AI](/zh-CN/google-vertex-ai) 或 [Foundry](/zh-CN/microsoft-foundry) 时，模型流量会转到您的提供商而不是 `api.anthropic.com`。WebFetch 工具仍会调用 `api.anthropic.com` 进行其 [域名安全检查](/zh-CN/data-usage#webfetch-domain-safety-check)，除非您在 [settings](/zh-CN/settings) 中设置 `skipWebFetchPreflight: true`。
 
-* `storage.googleapis.com`：Claude Code 二进制文件和自动更新程序的下载存储桶
-* `downloads.claude.ai`：托管安装脚本、版本指针、清单、签名密钥和插件可执行文件的 CDN
+本机安装程序和更新检查还需要以下 URL。请将两者都列入白名单，因为运行较旧 Claude Code 版本的客户端从 `storage.googleapis.com` 获取。如果您通过 npm 安装 Claude Code 或管理自己的二进制分发，最终用户可能不需要访问：
+
+* `downloads.claude.ai`：Claude Code 二进制文件、自动更新程序、版本指针、清单、安装脚本、签名密钥和插件可执行文件的下载主机
+* `storage.googleapis.com`：较旧客户端使用的旧版下载主机
+
+[Chrome 集成](/zh-CN/chrome) 通过 WebSocket 桥接连接到浏览器扩展。如果您在 Chrome 中使用 Claude，请为出站 WebSocket 连接列入白名单 `bridge.claudeusercontent.com`。
 
 [Claude Code on the web](/zh-CN/claude-code-on-the-web) 和 [Code Review](/zh-CN/code-review) 从 Anthropic 管理的基础设施连接到您的存储库。如果您的 GitHub Enterprise Cloud 组织按 IP 地址限制访问，请启用 [已安装 GitHub Apps 的 IP 允许列表继承](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps)。Claude GitHub App 注册了其 IP 范围，因此启用此设置允许访问而无需手动配置。要 [手动将范围添加到您的允许列表](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address)，或配置其他防火墙，请参阅 [Anthropic API IP 地址](https://platform.claude.com/docs/en/api/ip-addresses)。
 

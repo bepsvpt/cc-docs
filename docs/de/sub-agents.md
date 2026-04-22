@@ -6,7 +6,9 @@
 
 > Erstellen und verwenden Sie spezialisierte KI-Subagenten in Claude Code für aufgabenspezifische Workflows und verbesserte Kontextverwaltung.
 
-Subagenten sind spezialisierte KI-Assistenten, die bestimmte Arten von Aufgaben bearbeiten. Jeder Subagent läuft in seinem eigenen Kontextfenster mit einem benutzerdefinierten Systemprompt, spezifischem Werkzeugzugriff und unabhängigen Berechtigungen. Wenn Claude auf eine Aufgabe trifft, die der Beschreibung eines Subagenten entspricht, delegiert es an diesen Subagenten, der unabhängig arbeitet und Ergebnisse zurückgibt. Um die Kontexteinsparungen in der Praxis zu sehen, zeigt die [Kontextfenster-Visualisierung](/de/context-window) eine Sitzung, in der ein Subagent Recherchen in seinem eigenen separaten Fenster durchführt.
+Subagenten sind spezialisierte KI-Assistenten, die bestimmte Arten von Aufgaben bearbeiten. Verwenden Sie einen, wenn eine Nebenaufgabe Ihre Hauptkonversation mit Suchergebnissen, Protokollen oder Dateiinhalten überfluten würde, auf die Sie nicht mehr verweisen werden: Der Subagent führt diese Arbeit in seinem eigenen Kontext durch und gibt nur die Zusammenfassung zurück. Definieren Sie einen benutzerdefinierten Subagenten, wenn Sie wiederholt denselben Typ von Worker mit denselben Anweisungen spawnen.
+
+Jeder Subagent läuft in seinem eigenen Kontextfenster mit einem benutzerdefinierten Systemprompt, spezifischem Werkzeugzugriff und unabhängigen Berechtigungen. Wenn Claude auf eine Aufgabe trifft, die der Beschreibung eines Subagenten entspricht, delegiert es an diesen Subagenten, der unabhängig arbeitet und Ergebnisse zurückgibt. Um die Kontexteinsparungen in der Praxis zu sehen, zeigt die [Kontextfenster-Visualisierung](/de/context-window) eine Sitzung, in der ein Subagent Recherchen in seinem eigenen separaten Fenster durchführt.
 
 <Note>
   Wenn Sie mehrere Agenten benötigen, die parallel arbeiten und miteinander kommunizieren, siehe stattdessen [Agent-Teams](/de/agent-teams). Subagenten arbeiten innerhalb einer einzelnen Sitzung; Agent-Teams koordinieren über separate Sitzungen hinweg.
@@ -89,7 +91,7 @@ Diese Anleitung führt Sie durch die Erstellung eines Subagenten auf Benutzerebe
   </Step>
 
   <Step title="Wählen Sie einen Ort">
-    Wählen Sie **Create new agent**, dann wählen Sie **Personal**. Dies speichert den Subagenten in `~/.claude/agents/`, sodass er in allen Ihren Projekten verfügbar ist.
+    Wechseln Sie zur Registerkarte **Library**, wählen Sie **Create new agent**, dann wählen Sie **Personal**. Dies speichert den Subagenten in `~/.claude/agents/`, sodass er in allen Ihren Projekten verfügbar ist.
   </Step>
 
   <Step title="Mit Claude generieren">
@@ -139,7 +141,7 @@ Sie können Subagenten auch manuell als Markdown-Dateien erstellen, sie über CL
 
 ### Verwenden Sie den /agents-Befehl
 
-Der `/agents`-Befehl bietet eine interaktive Schnittstelle zur Verwaltung von Subagenten. Führen Sie `/agents` aus, um:
+Der `/agents`-Befehl öffnet eine Schnittstelle mit Registerkarten zur Verwaltung von Subagenten. Die Registerkarte **Running** zeigt aktive Subagenten und ermöglicht es Ihnen, sie zu öffnen oder zu stoppen. Die Registerkarte **Library** ermöglicht es Ihnen:
 
 * Alle verfügbaren Subagenten anzuzeigen (integriert, Benutzer, Projekt und Plugin)
 * Neue Subagenten mit geführtem Setup oder Claude-Generierung zu erstellen
@@ -196,7 +198,7 @@ Das `--agents`-Flag akzeptiert JSON mit denselben [Frontmatter](#supported-front
   Aus Sicherheitsgründen unterstützen Plugin-Subagenten die Frontmatter-Felder `hooks`, `mcpServers` oder `permissionMode` nicht. Diese Felder werden ignoriert, wenn Agenten aus einem Plugin geladen werden. Wenn Sie sie benötigen, kopieren Sie die Agent-Datei in `.claude/agents/` oder `~/.claude/agents/`. Sie können auch Regeln zu [`permissions.allow`](/de/settings#permission-settings) in `settings.json` oder `settings.local.json` hinzufügen, aber diese Regeln gelten für die gesamte Sitzung, nicht nur für den Plugin-Subagenten.
 </Note>
 
-Subagenten-Definitionen aus einem dieser Umfänge sind auch für [Agent-Teams](/de/agent-teams#use-subagent-definitions-for-teammates) verfügbar: Beim Spawnen eines Teammates können Sie auf einen Subagenten-Typ verweisen und der Teammate erbt seinen Systemprompt, seine Werkzeuge und sein Modell.
+Subagenten-Definitionen aus einem dieser Umfänge sind auch für [Agent-Teams](/de/agent-teams#use-subagent-definitions-for-teammates) verfügbar: Beim Spawnen eines Teammates können Sie auf einen Subagenten-Typ verweisen und der Teammate erbt seine `tools` und sein `model`, wobei der Body der Definition als zusätzliche Anweisungen an den Systemprompt des Teammates angehängt wird. Siehe [Agent-Teams](/de/agent-teams#use-subagent-definitions-for-teammates) für welche Frontmatter-Felder auf diesem Pfad gelten.
 
 ### Schreiben Sie Subagenten-Dateien
 
@@ -220,6 +222,8 @@ specific, actionable feedback on quality, security, and best practices.
 
 Das Frontmatter definiert die Metadaten und Konfiguration des Subagenten. Der Body wird zum Systemprompt, der das Verhalten des Subagenten leitet. Subagenten erhalten nur diesen Systemprompt (plus grundlegende Umgebungsdetails wie Arbeitsverzeichnis), nicht den vollständigen Claude Code-Systemprompt.
 
+Ein Subagent startet im aktuellen Arbeitsverzeichnis der Hauptkonversation. Innerhalb eines Subagenten bleiben `cd`-Befehle nicht zwischen Bash- oder PowerShell-Werkzeugaufrufen bestehen und beeinflussen nicht das Arbeitsverzeichnis der Hauptkonversation. Um dem Subagenten stattdessen eine isolierte Kopie des Repositorys zu geben, setzen Sie [`isolation: worktree`](#supported-frontmatter-fields).
+
 #### Unterstützte Frontmatter-Felder
 
 Die folgenden Felder können im YAML-Frontmatter verwendet werden. Nur `name` und `description` sind erforderlich.
@@ -230,7 +234,7 @@ Die folgenden Felder können im YAML-Frontmatter verwendet werden. Nur `name` un
 | `description`     | Ja           | Wann Claude an diesen Subagenten delegieren sollte                                                                                                                                                                                                                                                                                 |
 | `tools`           | Nein         | [Werkzeuge](#available-tools), die der Subagent verwenden kann. Erbt alle Werkzeuge, wenn weggelassen                                                                                                                                                                                                                              |
 | `disallowedTools` | Nein         | Werkzeuge zum Verweigern, entfernt aus geerbter oder angegebener Liste                                                                                                                                                                                                                                                             |
-| `model`           | Nein         | [Modell](#choose-a-model) zu verwenden: `sonnet`, `opus`, `haiku`, eine vollständige Modell-ID (z. B. `claude-opus-4-6`) oder `inherit`. Standard ist `inherit`                                                                                                                                                                    |
+| `model`           | Nein         | [Modell](#choose-a-model) zu verwenden: `sonnet`, `opus`, `haiku`, eine vollständige Modell-ID (z. B. `claude-opus-4-7`) oder `inherit`. Standard ist `inherit`                                                                                                                                                                    |
 | `permissionMode`  | Nein         | [Berechtigungsmodus](#permission-modes): `default`, `acceptEdits`, `auto`, `dontAsk`, `bypassPermissions` oder `plan`                                                                                                                                                                                                              |
 | `maxTurns`        | Nein         | Maximale Anzahl von Agenten-Turns, bevor der Subagent stoppt                                                                                                                                                                                                                                                                       |
 | `skills`          | Nein         | [Skills](/de/skills) zum Laden in den Kontext des Subagenten beim Start. Der vollständige Skill-Inhalt wird eingespritzt, nicht nur zur Invokation verfügbar gemacht. Subagenten erben keine Skills von der übergeordneten Konversation                                                                                            |
@@ -238,7 +242,7 @@ Die folgenden Felder können im YAML-Frontmatter verwendet werden. Nur `name` un
 | `hooks`           | Nein         | [Lifecycle-Hooks](#define-hooks-for-subagents) mit Umfang auf diesen Subagenten                                                                                                                                                                                                                                                    |
 | `memory`          | Nein         | [Persistenter Speicherumfang](#enable-persistent-memory): `user`, `project` oder `local`. Ermöglicht sitzungsübergreifendes Lernen                                                                                                                                                                                                 |
 | `background`      | Nein         | Auf `true` setzen, um diesen Subagenten immer als [Hintergrundaufgabe](#run-subagents-in-foreground-or-background) auszuführen. Standard: `false`                                                                                                                                                                                  |
-| `effort`          | Nein         | Aufwandsstufe, wenn dieser Subagent aktiv ist. Überschreibt die Aufwandsstufe der Sitzung. Standard: erbt von Sitzung. Optionen: `low`, `medium`, `high`, `max` (nur Opus 4.6)                                                                                                                                                     |
+| `effort`          | Nein         | Aufwandsstufe, wenn dieser Subagent aktiv ist. Überschreibt die Aufwandsstufe der Sitzung. Standard: erbt von Sitzung. Optionen: `low`, `medium`, `high`, `xhigh`, `max`; verfügbare Stufen hängen vom Modell ab                                                                                                                   |
 | `isolation`       | Nein         | Auf `worktree` setzen, um den Subagenten in einem temporären [Git-Worktree](/de/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) auszuführen, was ihm eine isolierte Kopie des Repositorys gibt. Der Worktree wird automatisch bereinigt, wenn der Subagent keine Änderungen vornimmt                        |
 | `color`           | Nein         | Anzeigefarbe für den Subagenten in der Aufgabenliste und dem Transkript. Akzeptiert `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink` oder `cyan`                                                                                                                                                                       |
 | `initialPrompt`   | Nein         | Auto-eingereicht als der erste Benutzer-Turn, wenn dieser Agent als Hauptsitzungs-Agent läuft (über `--agent` oder die `agent`-Einstellung). [Befehle](/de/commands) und [Skills](/de/skills) werden verarbeitet. Vorangestellt zu jedem vom Benutzer bereitgestellten Prompt                                                      |
@@ -248,7 +252,7 @@ Die folgenden Felder können im YAML-Frontmatter verwendet werden. Nur `name` un
 Das `model`-Feld steuert, welches [KI-Modell](/de/model-config) der Subagent verwendet:
 
 * **Modell-Alias**: Verwenden Sie einen der verfügbaren Aliase: `sonnet`, `opus` oder `haiku`
-* **Vollständige Modell-ID**: Verwenden Sie eine vollständige Modell-ID wie `claude-opus-4-6` oder `claude-sonnet-4-6`. Akzeptiert dieselben Werte wie das `--model`-Flag
+* **Vollständige Modell-ID**: Verwenden Sie eine vollständige Modell-ID wie `claude-opus-4-7` oder `claude-sonnet-4-6`. Akzeptiert dieselben Werte wie das `--model`-Flag
 * **inherit**: Verwenden Sie dasselbe Modell wie die Hauptkonversation
 * **Weggelassen**: Wenn nicht angegeben, wird standardmäßig `inherit` verwendet (verwendet dasselbe Modell wie die Hauptkonversation)
 
@@ -289,7 +293,7 @@ disallowedTools: Write, Edit
 
 Wenn beide gesetzt sind, wird `disallowedTools` zuerst angewendet, dann wird `tools` gegen den verbleibenden Pool aufgelöst. Ein Werkzeug, das in beiden aufgelistet ist, wird entfernt.
 
-#### Beschränken Sie, welche Subagenten spawned werden können
+#### Beschränken Sie, welche Subagenten gespawnt werden können
 
 Wenn ein Agent als Hauptthread mit `claude --agent` läuft, kann er Subagenten mit dem Agent-Werkzeug spawnen. Um zu beschränken, welche Subagenten-Typen er spawnen kann, verwenden Sie die `Agent(agent_type)`-Syntax im `tools`-Feld.
 
@@ -347,7 +351,7 @@ Das `permissionMode`-Feld steuert, wie der Subagent Berechtigungsaufforderungen 
 | Modus               | Verhalten                                                                                                                                                     |
 | :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `default`           | Standardberechtigungsprüfung mit Aufforderungen                                                                                                               |
-| `acceptEdits`       | Automatische Akzeptanz von Dateibearbeitungen außer in geschützten Verzeichnissen                                                                             |
+| `acceptEdits`       | Automatische Akzeptanz von Dateibearbeitungen und häufigen Dateisystem-Befehlen für Pfade im Arbeitsverzeichnis oder `additionalDirectories`                  |
 | `auto`              | [Auto-Modus](/de/permission-modes#eliminate-prompts-with-auto-mode): ein KI-Klassifizierer bewertet Befehle und Schreibvorgänge in geschützten Verzeichnissen |
 | `dontAsk`           | Automatische Ablehnung von Berechtigungsaufforderungen (explizit zulässige Werkzeuge funktionieren weiterhin)                                                 |
 | `bypassPermissions` | Alle Berechtigungsprüfungen überspringen                                                                                                                      |
@@ -357,7 +361,7 @@ Das `permissionMode`-Feld steuert, wie der Subagent Berechtigungsaufforderungen 
   Verwenden Sie `bypassPermissions` mit Vorsicht. Es überspringt Berechtigungsaufforderungen und ermöglicht dem Subagenten, Operationen ohne Genehmigung auszuführen. Schreibvorgänge in `.git`-, `.claude`-, `.vscode`-, `.idea`- und `.husky`-Verzeichnissen werden weiterhin zur Bestätigung aufgefordert, außer für `.claude/commands`, `.claude/agents` und `.claude/skills`. Siehe [Berechtigungsmodi](/de/permission-modes#skip-all-checks-with-bypasspermissions-mode) für Details.
 </Warning>
 
-Wenn das übergeordnete Element `bypassPermissions` verwendet, hat dies Vorrang und kann nicht überschrieben werden. Wenn das übergeordnete Element den [Auto-Modus](/de/permission-modes#eliminate-prompts-with-auto-mode) verwendet, erbt der Subagent den Auto-Modus und jedes `permissionMode` in seinem Frontmatter wird ignoriert: der Klassifizierer bewertet die Werkzeugaufrufe des Subagenten mit denselben Block- und Zulassungsregeln wie die übergeordnete Sitzung.
+Wenn das übergeordnete Element `bypassPermissions` oder `acceptEdits` verwendet, hat dies Vorrang und kann nicht überschrieben werden. Wenn das übergeordnete Element den [Auto-Modus](/de/permission-modes#eliminate-prompts-with-auto-mode) verwendet, erbt der Subagent den Auto-Modus und jedes `permissionMode` in seinem Frontmatter wird ignoriert: der Klassifizierer bewertet die Werkzeugaufrufe des Subagenten mit denselben Block- und Zulassungsregeln wie die übergeordnete Sitzung.
 
 #### Laden Sie Skills in Subagenten vor
 
@@ -376,6 +380,8 @@ Implement API endpoints. Follow the conventions and patterns from the preloaded 
 ```
 
 Der vollständige Inhalt jedes Skills wird in den Kontext des Subagenten eingespritzt, nicht nur zur Invokation verfügbar gemacht. Subagenten erben keine Skills von der übergeordneten Konversation; Sie müssen sie explizit auflisten.
+
+Sie können keine Skills vorausladen, die [`disable-model-invocation: true`](/de/skills#control-who-invokes-a-skill) setzen, da das Vorausladen aus demselben Satz von Skills stammt, die Claude aufrufen kann. Wenn ein aufgelisteter Skill fehlt oder deaktiviert ist, überspringt Claude Code ihn und protokolliert eine Warnung im Debug-Protokoll.
 
 <Note>
   Dies ist das Gegenteil von [Ausführen eines Skills in einem Subagenten](/de/skills#run-skills-in-a-subagent). Mit `skills` in einem Subagenten kontrolliert der Subagent den Systemprompt und lädt Skill-Inhalte. Mit `context: fork` in einem Skill wird der Skill-Inhalt in den von Ihnen angegebenen Agent eingespritzt. Beide verwenden dasselbe zugrunde liegende System.
@@ -495,6 +501,10 @@ Subagenten können [Hooks](/de/hooks) definieren, die während des Lebenszyklus 
 
 Definieren Sie Hooks direkt in der Markdown-Datei des Subagenten. Diese Hooks werden nur ausgeführt, während dieser spezifische Subagent aktiv ist, und werden bereinigt, wenn er endet.
 
+<Note>
+  Frontmatter-Hooks werden ausgelöst, wenn der Agent als Subagent durch das Agent-Werkzeug oder eine @-Erwähnung gespawnt wird, und wenn der Agent als Hauptsitzung über [`--agent`](#invoke-subagents-explicitly) oder die `agent`-Einstellung läuft. Im Hauptsitzungs-Fall werden sie zusammen mit allen Hooks ausgeführt, die in [`settings.json`](/de/hooks) definiert sind.
+</Note>
+
 Alle [Hook-Ereignisse](/de/hooks#hook-events) werden unterstützt. Die häufigsten Ereignisse für Subagenten sind:
 
 | Ereignis      | Matcher-Eingabe | Wann es ausgelöst wird                                                    |
@@ -523,7 +533,7 @@ hooks:
 ---
 ```
 
-`Stop`-Hooks im Frontmatter werden automatisch in `SubagentStop`-Ereignisse konvertiert.
+Wenn der Agent als Subagent aufgerufen wird, werden `Stop`-Hooks im Frontmatter automatisch in `SubagentStop`-Ereignisse konvertiert.
 
 #### Hooks auf Projektebene für Subagenten-Ereignisse
 
@@ -680,7 +690,7 @@ Verwenden Sie **Subagenten**, wenn:
 
 Erwägen Sie stattdessen [Skills](/de/skills), wenn Sie wiederverwendbare Prompts oder Workflows möchten, die im Kontext der Hauptkonversation ausgeführt werden, anstatt in isoliertem Subagenten-Kontext.
 
-Für eine schnelle Frage zu etwas, das bereits in Ihrer Konversation ist, verwenden Sie stattdessen [`/btw`](/de/interactive-mode#side-questions-with-btw). Es sieht Ihren vollständigen Kontext, hat aber keinen Werkzeugzugriff, und die Antwort wird verworfen, anstatt zur Historie hinzugefügt zu werden.
+Für eine schnelle Frage zu etwas, das bereits in Ihrer Konversation ist, verwenden Sie stattdessen [`/btw`](/de/interactive-mode#side-questions-with-%2Fbtw). Es sieht Ihren vollständigen Kontext, hat aber keinen Werkzeugzugriff, und die Antwort wird verworfen, anstatt zur Historie hinzugefügt zu werden.
 
 <Note>
   Subagenten können keine anderen Subagenten spawnen. Wenn Ihr Workflow verschachtelte Delegation erfordert, verwenden Sie [Skills](/de/skills) oder [verketten Sie Subagenten](#chain-subagents) von der Hauptkonversation.

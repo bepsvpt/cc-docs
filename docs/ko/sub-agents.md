@@ -6,7 +6,9 @@
 
 > Claude Code에서 작업별 워크플로우 및 향상된 컨텍스트 관리를 위한 특화된 AI subagent를 만들고 사용합니다.
 
-Subagent는 특정 유형의 작업을 처리하는 특화된 AI 어시스턴트입니다. 각 subagent는 자체 컨텍스트 윈도우에서 실행되며 사용자 정의 시스템 프롬프트, 특정 도구 액세스 및 독립적인 권한을 가집니다. Claude가 subagent의 설명과 일치하는 작업을 만나면 해당 subagent에 위임하고, subagent는 독립적으로 작동하여 결과를 반환합니다. 실제로 컨텍스트 절감을 확인하려면 [컨텍스트 윈도우 시각화](/ko/context-window)에서 subagent가 자신의 별도 윈도우에서 연구를 처리하는 세션을 안내합니다.
+Subagent는 특정 유형의 작업을 처리하는 특화된 AI 어시스턴트입니다. 부작업이 검색 결과, 로그 또는 다시 참조하지 않을 파일 콘텐츠로 주 대화를 넘칠 때 하나를 사용하세요: subagent는 자신의 컨텍스트에서 해당 작업을 수행하고 요약만 반환합니다. 동일한 지침으로 동일한 종류의 워커를 계속 생성할 때 사용자 정의 subagent를 정의합니다.
+
+각 subagent는 자체 컨텍스트 윈도우에서 실행되며 사용자 정의 시스템 프롬프트, 특정 도구 액세스 및 독립적인 권한을 가집니다. Claude가 subagent의 설명과 일치하는 작업을 만나면 해당 subagent에 위임하고, subagent는 독립적으로 작동하여 결과를 반환합니다. 실제로 컨텍스트 절감을 확인하려면 [컨텍스트 윈도우 시각화](/ko/context-window)에서 subagent가 자신의 별도 윈도우에서 연구를 처리하는 세션을 안내합니다.
 
 <Note>
   여러 에이전트가 병렬로 작동하고 서로 통신해야 하는 경우 [agent teams](/ko/agent-teams)를 참조하세요. Subagent는 단일 세션 내에서 작동하고, agent team은 별도 세션 간에 조정합니다.
@@ -89,7 +91,7 @@ Subagent는 YAML frontmatter가 있는 Markdown 파일로 정의됩니다. [수�
   </Step>
 
   <Step title="위치 선택">
-    **Create new agent**를 선택한 다음 **Personal**을 선택합니다. 이렇게 하면 subagent가 `~/.claude/agents/`에 저장되어 모든 프로젝트에서 사용할 수 있습니다.
+    **Library** 탭으로 전환하고 **Create new agent**를 선택한 다음 **Personal**을 선택합니다. 이렇게 하면 subagent가 `~/.claude/agents/`에 저장되어 모든 프로젝트에서 사용할 수 있습니다.
   </Step>
 
   <Step title="Claude로 생성">
@@ -139,7 +141,7 @@ Markdown 파일로 subagent를 수동으로 만들거나, CLI 플래그를 통�
 
 ### /agents 명령 사용
 
-`/agents` 명령은 subagent를 관리하기 위한 대화형 인터페이스를 제공합니다. `/agents`를 실행하여:
+`/agents` 명령은 subagent를 관리하기 위한 탭 인터페이스를 엽니다. **Running** 탭은 라이브 subagent를 표시하고 열거나 중지할 수 있습니다. **Library** 탭을 사용하면 다음을 수행할 수 있습니다:
 
 * 사용 가능한 모든 subagent 보기 (내장, 사용자, 프로젝트, 플러그인)
 * 안내된 설정 또는 Claude 생성으로 새 subagent 만들기
@@ -196,7 +198,7 @@ claude --agents '{
   보안상의 이유로 플러그인 subagent는 `hooks`, `mcpServers`, `permissionMode` frontmatter 필드를 지원하지 않습니다. 이러한 필드는 플러그인에서 에이전트를 로드할 때 무시됩니다. 필요한 경우 에이전트 파일을 `.claude/agents/` 또는 `~/.claude/agents/`로 복사합니다. `settings.json` 또는 `settings.local.json`의 [`permissions.allow`](/ko/settings#permission-settings)에 규칙을 추가할 수도 있지만, 이러한 규칙은 전체 세션에 적용되며 플러그인 subagent에만 적용되지 않습니다.
 </Note>
 
-이러한 범위의 subagent 정의는 [agent teams](/ko/agent-teams#use-subagent-definitions-for-teammates)에서도 사용 가능합니다: 팀원을 생성할 때 subagent 유형을 참조할 수 있으며 팀원은 해당 시스템 프롬프트, 도구 및 모델을 상속합니다.
+이러한 범위의 subagent 정의는 [agent teams](/ko/agent-teams#use-subagent-definitions-for-teammates)에서도 사용 가능합니다: 팀원을 생성할 때 subagent 유형을 참조할 수 있으며 팀원은 해당 `tools` 및 `model`을 사용하고, 정의의 본문이 팀원의 시스템 프롬프트에 추가 지침으로 추가됩니다. 어느 frontmatter 필드가 해당 경로에 적용되는지는 [agent teams](/ko/agent-teams#use-subagent-definitions-for-teammates)를 참조하세요.
 
 ### Subagent 파일 작성
 
@@ -220,6 +222,8 @@ specific, actionable feedback on quality, security, and best practices.
 
 Frontmatter는 subagent의 메타데이터와 구성을 정의합니다. 본문은 subagent의 동작을 안내하는 시스템 프롬프트가 됩니다. Subagent는 이 시스템 프롬프트만 받습니다(작업 디렉토리와 같은 기본 환경 세부 정보 포함). 전체 Claude Code 시스템 프롬프트는 받지 않습니다.
 
+Subagent는 주 대화의 현재 작업 디렉토리에서 시작합니다. Subagent 내에서 `cd` 명령은 Bash 또는 PowerShell 도구 호출 간에 유지되지 않으며 주 대화의 작업 디렉토리에 영향을 주지 않습니다. Subagent에 저장소의 격리된 복사본을 제공하려면 [`isolation: worktree`](#supported-frontmatter-fields)를 설정합니다.
+
 #### 지원되는 frontmatter 필드
 
 다음 필드를 YAML frontmatter에서 사용할 수 있습니다. `name`과 `description`만 필수입니다.
@@ -230,7 +234,7 @@ Frontmatter는 subagent의 메타데이터와 구성을 정의합니다. 본문�
 | `description`     | 예   | Claude가 이 subagent에 위임해야 할 때                                                                                                                                                                       |
 | `tools`           | 아니오 | Subagent가 사용할 수 있는 [도구](#available-tools). 생략하면 모든 도구 상속                                                                                                                                           |
 | `disallowedTools` | 아니오 | 거부할 도구, 상속되거나 지정된 목록에서 제거됨                                                                                                                                                                         |
-| `model`           | 아니오 | 사용할 [모델](#choose-a-model): `sonnet`, `opus`, `haiku`, 전체 모델 ID (예: `claude-opus-4-6`), 또는 `inherit`. 기본값: `inherit`                                                                                |
+| `model`           | 아니오 | 사용할 [모델](#choose-a-model): `sonnet`, `opus`, `haiku`, 전체 모델 ID (예: `claude-opus-4-7`), 또는 `inherit`. 기본값: `inherit`                                                                                |
 | `permissionMode`  | 아니오 | [권한 모드](#permission-modes): `default`, `acceptEdits`, `auto`, `dontAsk`, `bypassPermissions`, 또는 `plan`                                                                                            |
 | `maxTurns`        | 아니오 | Subagent가 중지되기 전의 최대 에이전트 턴 수                                                                                                                                                                      |
 | `skills`          | 아니오 | 시작 시 subagent의 컨텍스트에 로드할 [skills](/ko/skills). 호출 가능하게 만들어지는 것이 아니라 전체 skill 콘텐츠가 주입됩니다. Subagent는 부모 대화에서 skills를 상속하지 않습니다                                                                       |
@@ -238,7 +242,7 @@ Frontmatter는 subagent의 메타데이터와 구성을 정의합니다. 본문�
 | `hooks`           | 아니오 | 이 subagent로 범위가 지정된 [라이프사이클 hooks](#define-hooks-for-subagents)                                                                                                                                    |
 | `memory`          | 아니오 | [지속적 메모리 범위](#enable-persistent-memory): `user`, `project`, 또는 `local`. 교차 세션 학습 활성화                                                                                                               |
 | `background`      | 아니오 | 이 subagent를 항상 [background task](#run-subagents-in-foreground-or-background)로 실행하려면 `true`로 설정합니다. 기본값: `false`                                                                                    |
-| `effort`          | 아니오 | 이 subagent가 활성화될 때의 노력 수준. 세션 노력 수준을 재정의합니다. 기본값: 세션에서 상속. 옵션: `low`, `medium`, `high`, `max` (Opus 4.6만 해당)                                                                                       |
+| `effort`          | 아니오 | 이 subagent가 활성화될 때의 노력 수준. 세션 노력 수준을 재정의합니다. 기본값: 세션에서 상속. 옵션: `low`, `medium`, `high`, `xhigh`, `max` (사용 가능한 수준은 모델에 따라 다름)                                                                      |
 | `isolation`       | 아니오 | Subagent를 임시 [git worktree](/ko/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees)에서 실행하려면 `worktree`로 설정하여 저장소의 격리된 복사본을 제공합니다. Subagent가 변경 사항을 만들지 않으면 worktree가 자동으로 정리됩니다 |
 | `color`           | 아니오 | 작업 목록 및 트랜스크립트에서 subagent의 표시 색상입니다. `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, 또는 `cyan`을 허용합니다                                                                                |
 | `initialPrompt`   | 아니오 | 이 에이전트가 주 세션 에이전트로 실행될 때 (`--agent` 또는 `agent` 설정을 통해) 첫 번째 사용자 턴으로 자동 제출됩니다. [Commands](/ko/commands) 및 [skills](/ko/skills)가 처리됩니다. 사용자 제공 프롬프트에 앞에 붙습니다                                         |
@@ -248,7 +252,7 @@ Frontmatter는 subagent의 메타데이터와 구성을 정의합니다. 본문�
 `model` 필드는 subagent가 사용하는 [AI 모델](/ko/model-config)을 제어합니다:
 
 * **모델 별칭**: 사용 가능한 별칭 중 하나를 사용합니다: `sonnet`, `opus`, 또는 `haiku`
-* **전체 모델 ID**: `claude-opus-4-6` 또는 `claude-sonnet-4-6`과 같은 전체 모델 ID를 사용합니다. `--model` 플래그와 동일한 값을 허용합니다
+* **전체 모델 ID**: `claude-opus-4-7` 또는 `claude-sonnet-4-6`과 같은 전체 모델 ID를 사용합니다. `--model` 플래그와 동일한 값을 허용합니다
 * **inherit**: 주 대화와 동일한 모델을 사용합니다
 * **생략됨**: 지정하지 않으면 기본값은 `inherit`입니다 (주 대화와 동일한 모델 사용)
 
@@ -344,20 +348,20 @@ MCP 서버를 주 대화에서 완전히 분리하고 도구 설명이 컨텍스
 
 `permissionMode` 필드는 subagent가 권한 프롬프트를 처리하는 방식을 제어합니다. Subagent는 주 대화의 권한 컨텍스트를 상속하고 모드를 재정의할 수 있습니다. 단, 아래에 설명된 대로 부모 모드가 우선하는 경우는 제외입니다.
 
-| 모드                  | 동작                                                                                         |
-| :------------------ | :----------------------------------------------------------------------------------------- |
-| `default`           | 프롬프트를 사용한 표준 권한 확인                                                                         |
-| `acceptEdits`       | 파일 편집 자동 수락                                                                                |
-| `auto`              | [Auto mode](/ko/permission-modes#eliminate-prompts-with-auto-mode): AI 분류기가 각 도구 호출을 평가합니다 |
-| `dontAsk`           | 권한 프롬프트 자동 거부 (명시적으로 허용된 도구는 여전히 작동)                                                       |
-| `bypassPermissions` | 권한 프롬프트 건너뛰기                                                                               |
-| `plan`              | Plan mode (읽기 전용 탐색)                                                                       |
+| 모드                  | 동작                                                                                                  |
+| :------------------ | :-------------------------------------------------------------------------------------------------- |
+| `default`           | 프롬프트를 사용한 표준 권한 확인                                                                                  |
+| `acceptEdits`       | 파일 편집 및 작업 디렉토리 또는 `additionalDirectories`의 경로에 대한 일반적인 파일시스템 명령 자동 수락                              |
+| `auto`              | [Auto mode](/ko/permission-modes#eliminate-prompts-with-auto-mode): 백그라운드 분류기가 명령을 검토하고 보호된 디렉토리 쓰기 |
+| `dontAsk`           | 권한 프롬프트 자동 거부 (명시적으로 허용된 도구는 여전히 작동)                                                                |
+| `bypassPermissions` | 권한 프롬프트 건너뛰기                                                                                        |
+| `plan`              | Plan mode (읽기 전용 탐색)                                                                                |
 
 <Warning>
-  `bypassPermissions`는 주의해서 사용하세요. 권한 프롬프트를 건너뛰어 subagent가 승인 없이 작업을 실행할 수 있습니다. `.git`, `.claude`, `.vscode`, `.idea` 디렉토리에 대한 쓰기는 여전히 확인을 요청합니다. `.claude/commands`, `.claude/agents`, `.claude/skills`는 제외합니다. 자세한 내용은 [permission modes](/ko/permission-modes#skip-all-checks-with-bypasspermissions-mode)를 참조하세요.
+  `bypassPermissions`는 주의해서 사용하세요. 권한 프롬프트를 건너뛰어 subagent가 승인 없이 작업을 실행할 수 있습니다. `.git`, `.claude`, `.vscode`, `.idea`, `.husky` 디렉토리에 대한 쓰기는 여전히 확인을 요청합니다. `.claude/commands`, `.claude/agents`, `.claude/skills`는 제외합니다. 자세한 내용은 [permission modes](/ko/permission-modes#skip-all-checks-with-bypasspermissions-mode)를 참조하세요.
 </Warning>
 
-부모가 `bypassPermissions`를 사용하면 이것이 우선하며 재정의할 수 없습니다. 부모가 [auto mode](/ko/permission-modes#eliminate-prompts-with-auto-mode)를 사용하면 subagent는 auto mode를 상속하고 frontmatter의 모든 `permissionMode`는 무시됩니다: 분류기는 부모 세션과 동일한 차단 및 허용 규칙으로 subagent의 도구 호출을 평가합니다.
+부모가 `bypassPermissions` 또는 `acceptEdits`를 사용하면 이것이 우선하며 재정의할 수 없습니다. 부모가 [auto mode](/ko/permission-modes#eliminate-prompts-with-auto-mode)를 사용하면 subagent는 auto mode를 상속하고 frontmatter의 모든 `permissionMode`는 무시됩니다: 분류기는 부모 세션과 동일한 차단 및 허용 규칙으로 subagent의 도구 호출을 평가합니다.
 
 #### Subagent에 skills 미리 로드
 
@@ -376,6 +380,8 @@ Implement API endpoints. Follow the conventions and patterns from the preloaded 
 ```
 
 각 skill의 전체 콘텐츠가 subagent의 컨텍스트에 주입되며, 호출 가능하게 만들어지는 것이 아닙니다. Subagent는 부모 대화에서 skills를 상속하지 않으므로 명시적으로 나열해야 합니다.
+
+`disable-model-invocation: true`를 설정하는 skills는 미리 로드할 수 없습니다. 미리 로드는 Claude가 호출할 수 있는 동일한 skills 세트에서 가져오기 때문입니다. 나열된 skill이 누락되었거나 비활성화된 경우 Claude Code는 이를 건너뛰고 디버그 로그에 경고를 기록합니다.
 
 <Note>
   이것은 [subagent에서 skill 실행](/ko/skills#run-skills-in-a-subagent)의 역입니다. Subagent의 `skills`를 사용하면 subagent가 시스템 프롬프트를 제어하고 skill 콘텐츠를 로드합니다. Skill의 `context: fork`를 사용하면 skill 콘텐츠가 지정한 에이전트에 주입됩니다. 둘 다 동일한 기본 시스템을 사용합니다.
@@ -494,6 +500,10 @@ Subagent는 subagent의 라이프사이클 중에 실행되는 [hooks](/ko/hooks
 #### Subagent frontmatter의 hook
 
 Subagent의 markdown 파일에 직접 hook을 정의합니다. 이러한 hook은 해당 특정 subagent가 활성화된 동안만 실행되고 완료될 때 정리됩니다.
+
+<Note>
+  Frontmatter hook은 에이전트가 Agent 도구 또는 @-mention을 통해 subagent로 생성될 때 발생합니다. [`--agent`](#invoke-subagents-explicitly) 또는 `agent` 설정을 통해 주 세션으로 실행될 때도 발생합니다. 주 세션의 경우 [`settings.json`](/ko/hooks)에서 정의된 모든 hook과 함께 실행됩니다.
+</Note>
 
 모든 [hook 이벤트](/ko/hooks#hook-events)가 지원됩니다. Subagent에 가장 일반적인 이벤트는:
 
@@ -680,7 +690,7 @@ Use the code-reviewer subagent to find performance issues, then use the optimize
 
 격리된 subagent 컨텍스트가 아닌 주 대화 컨텍스트에서 실행되는 재사용 가능한 프롬프트 또는 워크플로우를 원할 때 [Skills](/ko/skills)를 대신 고려합니다.
 
-대화에 이미 있는 항목에 대한 빠른 질문의 경우 subagent 대신 [`/btw`](/ko/interactive-mode#side-questions-with-btw)를 사용합니다. 전체 컨텍스트를 보지만 도구 액세스가 없으며 답변은 기록에 추가되지 않습니다.
+대화에 이미 있는 항목에 대한 빠른 질문의 경우 subagent 대신 [`/btw`](/ko/interactive-mode#side-questions-with-%2Fbtw)를 사용합니다. 전체 컨텍스트를 보지만 도구 액세스가 없으며 답변은 기록에 추가되지 않습니다.
 
 <Note>
   Subagent는 다른 subagent를 생성할 수 없습니다. 워크플로우가 중첩된 위임이 필요한 경우 [Skills](/ko/skills) 또는 주 대화에서 [subagent 체인](#chain-subagents)을 사용합니다.
