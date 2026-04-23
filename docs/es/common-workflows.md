@@ -514,7 +514,7 @@ Use @ para incluir rápidamente archivos o directorios sin esperar a que Claude 
 
 ## Usar pensamiento extendido (Thinking Mode)
 
-[El pensamiento extendido](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) está habilitado de forma predeterminada, dando a Claude espacio para razonar a través de problemas complejos paso a paso antes de responder. Este razonamiento es visible en modo detallado, que puede alternar con `Ctrl+O`. Durante el pensamiento extendido, aparecen sugerencias de progreso debajo del indicador para mostrar que Claude está trabajando activamente.
+[El pensamiento extendido](https://platform.claude.com/docs/es/build-with-claude/extended-thinking) está habilitado de forma predeterminada, dando a Claude espacio para razonar a través de problemas complejos paso a paso antes de responder. Este razonamiento es visible en modo detallado, que puede alternar con `Ctrl+O`. Durante el pensamiento extendido, el indicador de progreso muestra sugerencias de progreso en línea como "aún pensando" y "casi terminado de pensar" para indicar que Claude está trabajando activamente.
 
 Además, [los modelos que admiten esfuerzo](/es/model-config#adjust-effort-level) utilizan razonamiento adaptativo: en lugar de un presupuesto de token de pensamiento fijo, el modelo decide dinámicamente si y cuánto pensar basándose en su configuración de nivel de esfuerzo y la tarea en cuestión. El razonamiento adaptativo permite a Claude responder más rápido a indicaciones rutinarias y reservar un pensamiento más profundo para pasos que se benefician de él.
 
@@ -563,6 +563,8 @@ Cuando inicia Claude Code, puede reanudar una sesión anterior:
 * `claude --from-pr 123` reanuda sesiones vinculadas a una solicitud de extracción específica
 
 Desde dentro de una sesión activa, use `/resume` para cambiar a una conversación diferente.
+
+Cuando la sesión seleccionada es antigua y lo suficientemente grande como para que releerla consumiría una parte sustancial de sus límites de uso, `--resume`, `--continue` y `/resume` ofrecen reanudar desde un resumen en lugar de cargar la transcripción completa. Este mensaje no está disponible en Amazon Bedrock, Google Cloud Vertex AI o Microsoft Foundry.
 
 Las sesiones se almacenan por directorio de proyecto. De forma predeterminada, el selector `/resume` muestra sesiones interactivas del worktree actual, con atajos de teclado para ampliar la lista a otros worktrees o proyectos, buscar, obtener una vista previa y renombrar. Consulte [Usar el selector de sesión](#use-the-session-picker) a continuación para la referencia completa de atajos.
 

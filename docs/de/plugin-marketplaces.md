@@ -677,7 +677,7 @@ Verwenden Sie `".*"` als `pathPattern`, um jeden Dateisystempfad zuzulassen und 
 
 #### Wie Einschränkungen funktionieren
 
-Einschränkungen werden früh im Plugin-Installationsprozess validiert, bevor Netzwerkanfragen oder Dateisystemoperationen auftreten. Dies verhindert unbefugte Marktplatz-Zugriffversuche.
+Einschränkungen werden überprüft, bevor Netzwerk- oder Dateisystemoperationen durchgeführt werden. Die Überprüfung wird beim Hinzufügen von Marktplätzen und beim Installieren, Aktualisieren, Aktualisieren und Auto-Update von Plugins durchgeführt. Wenn ein Marktplatz hinzugefügt wurde, bevor die Richtlinie konfiguriert wurde, und seine Quelle nicht mehr mit der Zulassungsliste übereinstimmt, weigert sich Claude Code, Plugins daraus zu installieren oder zu aktualisieren. Die gleiche Durchsetzung gilt für `blockedMarketplaces`.
 
 Die Zulassungsliste verwendet exakten Abgleich für die meisten Quellentypen. Damit ein Marktplatz zulässig ist, müssen alle angegebenen Felder genau übereinstimmen:
 
@@ -695,7 +695,7 @@ Für vollständige Konfigurationsdetails einschließlich aller unterstützten Qu
 Plugin-Versionen bestimmen Cache-Pfade und Update-Erkennung. Sie können die Version im Plugin-Manifest (`plugin.json`) oder im Marktplatz-Eintrag (`marketplace.json`) angeben.
 
 <Warning>
-  Vermeiden Sie nach Möglichkeit, die Version an beiden Stellen festzulegen. Das Plugin-Manifest gewinnt immer stillschweigend, was dazu führen kann, dass die Marktplatz-Version ignoriert wird. Legen Sie für Plugins mit relativen Pfaden die Version im Marktplatz-Eintrag fest. Legen Sie für alle anderen Plugin-Quellen die Version im Plugin-Manifest fest.
+  Vermeiden Sie nach Möglichkeit, die Version an beiden Stellen festzulegen. Das Plugin-Manifest gewinnt immer stillschweigend, was dazu führen kann, dass die Marktplatz-Version ignoriert wird. Für Plugins mit relativen Pfaden legen Sie die Version im Marktplatz-Eintrag fest. Für alle anderen Plugin-Quellen legen Sie die Version im Plugin-Manifest fest.
 </Warning>
 
 #### Richten Sie Release-Kanäle ein

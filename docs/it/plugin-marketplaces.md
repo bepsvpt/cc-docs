@@ -677,7 +677,7 @@ Usa `".*"` come `pathPattern` per consentire qualsiasi percorso del filesystem c
 
 #### Come funzionano le restrizioni
 
-Le restrizioni vengono convalidate all'inizio del processo di installazione del plugin, prima di qualsiasi richiesta di rete o operazione del filesystem. Ciò impedisce i tentativi di accesso non autorizzato al marketplace.
+Le restrizioni vengono convalidate prima di qualsiasi operazione di rete o del filesystem. Il controllo viene eseguito all'aggiunta del marketplace e all'installazione, aggiornamento, aggiornamento e auto-aggiornamento del plugin. Se un marketplace è stato aggiunto prima della configurazione della policy e la sua fonte non corrisponde più all'elenco di autorizzazione, Claude Code rifiuta di installare o aggiornare i plugin da esso. Lo stesso controllo si applica a `blockedMarketplaces`.
 
 L'elenco di autorizzazione utilizza la corrispondenza esatta per la maggior parte dei tipi di fonte. Affinché un marketplace sia consentito, tutti i campi specificati devono corrispondere esattamente:
 

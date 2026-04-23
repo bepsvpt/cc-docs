@@ -581,7 +581,7 @@ Team 또는 Enterprise 계획의 조직은 관리 콘솔 컨트롤, 관리 설�
 | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `permissions.disableBypassPermissionsMode` | 사용자가 권한 무시 모드를 활성화하지 못하도록 하려면 `"disable"`로 설정합니다.                                                                                                          |
 | `disableAutoMode`                          | 사용자가 [Auto](/ko/permission-modes#eliminate-prompts-with-auto-mode) 모드를 활성화하지 못하도록 하려면 `"disable"`로 설정합니다. 모드 선택기에서 Auto를 제거합니다. `permissions` 아래에서도 허용됩니다. |
-| `autoMode`                                 | 조직 전체에서 auto mode 분류기가 신뢰하고 차단하는 것을 사용자 정의합니다. [auto mode 분류기 구성](/ko/permissions#configure-the-auto-mode-classifier)을 참조하세요.                              |
+| `autoMode`                                 | 조직 전체에서 auto mode 분류기가 신뢰하고 차단하는 것을 사용자 정의합니다. [auto mode 구성](/ko/auto-mode-config)을 참조하세요.                                                                |
 | `sshConfigs`                               | 환경 드롭다운에 나타나는 [SSH 연결](#pre-configure-ssh-connections-for-your-team)을 사전 구성합니다. 사용자는 관리 연결을 편집하거나 삭제할 수 없습니다.                                              |
 
 `permissions.disableBypassPermissionsMode` 및 `disableAutoMode`는 사용자 및 프로젝트 설정에서도 작동하지만 관리 설정에 배치하면 사용자가 재정의하지 못하도록 방지합니다. `autoMode`는 사용자 설정, `.claude/settings.local.json`, 관리 설정에서 읽혀지지만 체크인된 `.claude/settings.json`에서는 읽혀지지 않습니다: 복제된 저장소는 자신의 분류기 규칙을 주입할 수 없습니다. `allowManagedPermissionRulesOnly` 및 `allowManagedHooksOnly`를 포함한 관리 전용 설정의 전체 목록은 [관리 전용 설정](/ko/permissions#managed-only-settings)을 참조하세요.

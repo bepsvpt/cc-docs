@@ -12,7 +12,7 @@
 
 * 一個**模型別名**
 * 一個**模型名稱**
-  * Anthropic API：完整的\*\*[模型名稱](https://platform.claude.com/docs/en/about-claude/models/overview)\*\*
+  * Anthropic API：完整的\*\*[模型名稱](https://platform.claude.com/docs/zh-TW/about-claude/models/overview)\*\*
   * Bedrock：推論設定檔 ARN
   * Foundry：部署名稱
   * Vertex：版本名稱
@@ -21,16 +21,16 @@
 
 模型別名提供了一種便捷的方式來選擇模型設定，無需記住確切的版本號：
 
-| 模型別名             | 行為                                                                                                                                                |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`default`**    | 特殊值，可清除任何模型覆蓋並還原為您帳戶類型的推薦模型。本身不是模型別名                                                                                                              |
-| **`best`**       | 使用最強大的可用模型，目前相當於 `opus`                                                                                                                           |
-| **`sonnet`**     | 使用最新的 Sonnet 模型進行日常編碼任務                                                                                                                           |
-| **`opus`**       | 使用最新的 Opus 模型進行複雜推理任務                                                                                                                             |
-| **`haiku`**      | 使用快速高效的 Haiku 模型進行簡單任務                                                                                                                            |
-| **`sonnet[1m]`** | 使用 Sonnet 搭配[100 萬個 token 的 context window](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window)進行長時間會話 |
-| **`opus[1m]`**   | 使用 Opus 搭配[100 萬個 token 的 context window](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window)進行長時間會話   |
-| **`opusplan`**   | 特殊模式，在 Plan Mode 期間使用 `opus`，然後在執行時切換到 `sonnet`                                                                                                   |
+| 模型別名             | 行為                                                                                                                                                   |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`default`**    | 特殊值，可清除任何模型覆蓋並還原為您帳戶類型的推薦模型。本身不是模型別名                                                                                                                 |
+| **`best`**       | 使用最強大的可用模型，目前相當於 `opus`                                                                                                                              |
+| **`sonnet`**     | 使用最新的 Sonnet 模型進行日常編碼任務                                                                                                                              |
+| **`opus`**       | 使用最新的 Opus 模型進行複雜推理任務                                                                                                                                |
+| **`haiku`**      | 使用快速高效的 Haiku 模型進行簡單任務                                                                                                                               |
+| **`sonnet[1m]`** | 使用 Sonnet 搭配[100 萬個 token 的 context window](https://platform.claude.com/docs/zh-TW/build-with-claude/context-windows#1m-token-context-window)進行長時間會話 |
+| **`opus[1m]`**   | 使用 Opus 搭配[100 萬個 token 的 context window](https://platform.claude.com/docs/zh-TW/build-with-claude/context-windows#1m-token-context-window)進行長時間會話   |
+| **`opusplan`**   | 特殊模式，在 Plan Mode 期間使用 `opus`，然後在執行時切換到 `sonnet`                                                                                                      |
 
 在 Anthropic API 上，`opus` 解析為 Opus 4.7，`sonnet` 解析為 Sonnet 4.6。在 Bedrock、Vertex 和 Foundry 上，`opus` 解析為 Opus 4.6，`sonnet` 解析為 Sonnet 4.5；透過明確選擇完整模型名稱或設定 `ANTHROPIC_DEFAULT_OPUS_MODEL` 或 `ANTHROPIC_DEFAULT_SONNET_MODEL`，這些提供者上可以使用更新的模型。
 
@@ -48,6 +48,10 @@
 2. **在啟動時** - 使用 `claude --model <alias|name>` 啟動
 3. **環境變數** - 設定 `ANTHROPIC_MODEL=<alias|name>`
 4. **設定** - 在設定檔中使用 `model` 欄位永久配置。
+
+您的 `/model` 選擇會儲存到使用者設定並在重新啟動後保持。自 v2.1.117 起，如果專案的 `.claude/settings.json` 固定了不同的模型，Claude Code 也會將您的選擇寫入 `.claude/settings.local.json`，以便在重新啟動後在該專案中繼續應用。受管設定優先級最高，並在下次啟動時重新應用。
+
+當啟動時的活動模型來自專案或受管設定而非您自己的選擇時，啟動標題會顯示哪個設定檔設定了它。執行 `/model` 以覆蓋目前會話。
 
 使用範例：
 
@@ -160,7 +164,7 @@ Plan Mode Opus 階段使用標準 200K context window 執行。[擴展 context](
 
 如果您設定活動模型不支援的等級，Claude Code 會回退到您設定的等級處或以下的最高支援等級。例如，`xhigh` 在 Opus 4.6 上執行為 `high`。
 
-在 Opus 4.7 上，所有計畫和提供者的預設努力為 `xhigh`。在 Opus 4.6 和 Sonnet 4.6 上，預設為 `high`，或在 Pro 和 Max 上為 `medium`。
+自 v2.1.117 起，Opus 4.7 上的預設努力為 `xhigh`，Opus 4.6 和 Sonnet 4.6 上的預設努力為 `high`。
 
 當您首次執行 Opus 4.7 時，Claude Code 會應用 `xhigh`，即使您之前為 Opus 4.6 或 Sonnet 4.6 設定了不同的努力等級。執行 `/effort` 以在切換後選擇不同的等級。
 

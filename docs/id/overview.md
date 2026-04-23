@@ -70,6 +70,8 @@ Pilih lingkungan Anda untuk memulai. Sebagian besar permukaan memerlukan akun [l
       </Tab>
     </Tabs>
 
+    You can also install with [apt, dnf, or apk](/en/setup#install-with-linux-package-managers) on Debian, Fedora, RHEL, and Alpine.
+
     Kemudian mulai Claude Code di proyek apa pun:
 
     ```bash theme={null}

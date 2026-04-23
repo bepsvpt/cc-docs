@@ -2,7 +2,7 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# 設定伺服器管理的設定 (公開測試版)
+# 設定伺服器管理的設定
 
 > 透過伺服器傳遞的設定在 Claude.ai 上為您的組織集中設定 Claude Code，無需裝置管理基礎設施。
 
@@ -11,7 +11,7 @@
 此方法適用於沒有裝置管理基礎設施的組織，或需要為非受管裝置上的使用者管理設定的組織。
 
 <Note>
-  伺服器管理的設定處於公開測試版，適用於 [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) 和 [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise) 客戶。功能可能在正式推出前進行演變。
+  伺服器管理的設定適用於 [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) 和 [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise) 客戶。
 </Note>
 
 ## 需求
@@ -93,7 +93,7 @@ Claude Code 支援兩種集中設定方法。伺服器管理的設定從 Anthrop
     }
     ```
 
-    因為 hooks 執行 shell 命令，使用者在套用前會看到[安全核准對話方塊](#security-approval-dialogs)。請參閱[設定 auto mode 分類器](/zh-TW/permissions#configure-the-auto-mode-classifier)，了解 `autoMode` 項目如何影響分類器阻止的內容，以及關於 `allow` 和 `soft_deny` 欄位的重要警告。
+    因為 hooks 執行 shell 命令，使用者在套用前會看到[安全核准對話方塊](#security-approval-dialogs)。請參閱[設定 auto mode](/zh-TW/auto-mode-config)，了解 `autoMode` 項目如何影響分類器阻止的內容，以及關於 `allow` 和 `soft_deny` 欄位的重要警告。
   </Step>
 
   <Step title="儲存並部署">
@@ -120,7 +120,7 @@ Claude Code 支援兩種集中設定方法。伺服器管理的設定從 Anthrop
 
 ### 目前的限制
 
-伺服器管理的設定在測試版期間有以下限制：
+伺服器管理的設定有以下限制：
 
 * 設定統一套用到組織中的所有使用者。尚不支援每個群組的設定。
 * [MCP 伺服器設定](/zh-TW/mcp#managed-mcp-configuration) 無法透過伺服器管理的設定分發。
@@ -152,6 +152,22 @@ Claude Code 在啟動時從 Anthropic 的伺服器擷取設定，並在作用中
 * 快取設定透過網路故障持續存在
 
 Claude Code 自動套用設定更新而無需重新啟動，除了進階設定（例如 OpenTelemetry 設定）需要完整重新啟動才能生效。
+
+### 強制執行失敗關閉啟動
+
+根據預設，如果遠端設定擷取在啟動時失敗，CLI 會在沒有受管設定的情況下繼續。對於這個簡短的未強制執行視窗無法接受的環境，請在您的受管設定中設定 `forceRemoteSettingsRefresh: true`。
+
+當此設定處於作用中時，CLI 會在啟動時阻止，直到遠端設定被新鮮擷取。如果擷取失敗，CLI 會結束而不是在沒有原則的情況下繼續。此設定會自我延續：一旦從伺服器傳遞，它也會在本機快取，以便後續啟動即使在新工作階段的第一次成功擷取之前也會強制執行相同的行為。
+
+若要啟用此功能，請將金鑰新增到您的受管設定設定：
+
+```json theme={null}
+{
+  "forceRemoteSettingsRefresh": true
+}
+```
+
+在啟用此設定之前，請確保您的網路原則允許連線到 `api.anthropic.com`。如果該端點無法到達，CLI 會在啟動時結束，使用者無法啟動 Claude Code。
 
 ### 安全核准對話方塊
 
@@ -186,13 +202,13 @@ Claude Code 自動套用設定更新而無需重新啟動，除了進階設定�
 
 伺服器管理的設定提供集中式原則強制執行，但它們作為用戶端控制運作。在非受管裝置上，具有管理員或 sudo 存取權的使用者可以修改 Claude Code 二進位檔、檔案系統或網路設定。
 
-| 情況                             | 行為                                 |
-| :----------------------------- | :--------------------------------- |
-| 使用者編輯快取的設定檔                    | 篡改的檔案在啟動時套用，但正確的設定會在下次伺服器擷取時還原     |
-| 使用者刪除快取的設定檔                    | 首次啟動行為發生：設定非同步擷取，有一個簡短的未強制執行視窗     |
-| API 無法使用                       | 如果可用，快取設定會套用，否則受管設定在下次成功擷取之前不會強制執行 |
-| 使用者使用不同的組織進行身份驗證               | 不會為受管組織外的帳戶傳遞設定                    |
-| 使用者設定非預設的 `ANTHROPIC_BASE_URL` | 使用第三方 API 提供者時，伺服器管理的設定會被略過        |
+| 情況                             | 行為                                                                                      |
+| :----------------------------- | :-------------------------------------------------------------------------------------- |
+| 使用者編輯快取的設定檔                    | 篡改的檔案在啟動時套用，但正確的設定會在下次伺服器擷取時還原                                                          |
+| 使用者刪除快取的設定檔                    | 首次啟動行為發生：設定非同步擷取，有一個簡短的未強制執行視窗                                                          |
+| API 無法使用                       | 如果可用，快取設定會套用，否則受管設定在下次成功擷取之前不會強制執行。使用 `forceRemoteSettingsRefresh: true` 時，CLI 會結束而不是繼續 |
+| 使用者使用不同的組織進行身份驗證               | 不會為受管組織外的帳戶傳遞設定                                                                         |
+| 使用者設定非預設的 `ANTHROPIC_BASE_URL` | 使用第三方 API 提供者時，伺服器管理的設定會被略過                                                             |
 
 若要偵測執行時期設定變更，請使用 [`ConfigChange` hooks](/zh-TW/hooks#configchange) 來記錄修改或在未授權的變更生效前阻止它們。
 

@@ -104,22 +104,20 @@ export CLAUDE_CODE_CLIENT_KEY_PASSPHRASE="your-passphrase"
 
 ## 네트워크 액세스 요구 사항
 
-Claude Code는 다음 URL에 대한 액세스가 필요합니다:
+Claude Code는 다음 URL에 대한 액세스가 필요합니다. 특히 컨테이너화되거나 제한된 네트워크 환경에서 프록시 구성 및 방화벽 규칙에 이러한 URL을 허용 목록에 추가하십시오.
 
-* `api.anthropic.com`: Claude API 엔드포인트
-* `claude.ai`: claude.ai 계정 인증
-* `platform.claude.com`: Anthropic Console 계정 인증
+| URL                            | 필요한 용도                                                                |
+| ------------------------------ | --------------------------------------------------------------------- |
+| `api.anthropic.com`            | Claude API 요청                                                         |
+| `claude.ai`                    | claude.ai 계정 인증                                                       |
+| `platform.claude.com`          | Anthropic Console 계정 인증                                               |
+| `downloads.claude.ai`          | 플러그인 실행 파일 다운로드; 네이티브 설치 관리자 및 네이티브 자동 업데이터                           |
+| `storage.googleapis.com`       | {/* max-version: 2.1.115 */}2.1.116 이전 버전의 네이티브 설치 관리자 및 네이티브 자동 업데이터 |
+| `bridge.claudeusercontent.com` | [Chrome의 Claude](/ko/chrome) 확장 프로그램 WebSocket 브리지                    |
 
-이러한 URL이 프록시 구성 및 방화벽 규칙에서 허용 목록에 있는지 확인하십시오. 이는 특히 컨테이너화되거나 제한된 네트워크 환경에서 Claude Code를 사용할 때 중요합니다.
+npm을 통해 Claude Code를 설치하거나 자신의 바이너리 배포를 관리하는 경우 최종 사용자는 `downloads.claude.ai` 또는 `storage.googleapis.com`에 대한 액세스가 필요하지 않을 수 있습니다.
 
-[Bedrock](/ko/amazon-bedrock), [Vertex AI](/ko/google-vertex-ai) 또는 [Foundry](/ko/microsoft-foundry)를 사용할 때 모델 트래픽은 `api.anthropic.com` 대신 공급자로 이동합니다. WebFetch 도구는 \[`skipWebFetchPreflight: true`를 [설정](/ko/settings)에서 설정하지 않는 한 [도메인 안전 검사](/ko/data-usage#webfetch-domain-safety-check)를 위해 여전히 `api.anthropic.com`을 호출합니다.
-
-네이티브 설치 관리자 및 업데이트 확인도 다음 URL이 필요합니다. 이전 Claude Code 버전을 실행하는 클라이언트가 `storage.googleapis.com`에서 가져오므로 둘 다 허용 목록에 추가하십시오. npm을 통해 Claude Code를 설치하거나 자신의 바이너리 배포를 관리하는 경우 최종 사용자는 액세스가 필요하지 않을 수 있습니다:
-
-* `downloads.claude.ai`: Claude Code 바이너리, 자동 업데이터, 버전 포인터, 매니페스트, 설치 스크립트, 서명 키 및 플러그인 실행 파일용 다운로드 호스트
-* `storage.googleapis.com`: 이전 클라이언트에서 사용하는 레거시 다운로드 호스트
-
-[Chrome 통합](/ko/chrome)은 WebSocket 브리지를 통해 브라우저 확장 프로그램에 연결합니다. Chrome에서 Claude를 사용하는 경우 아웃바운드 WebSocket 연결을 위해 `bridge.claudeusercontent.com`을 허용 목록에 추가하십시오.
+[Amazon Bedrock](/ko/amazon-bedrock), [Google Vertex AI](/ko/google-vertex-ai) 또는 [Microsoft Foundry](/ko/microsoft-foundry)를 사용할 때 모델 트래픽 및 인증은 `api.anthropic.com`, `claude.ai` 또는 `platform.claude.com` 대신 공급자로 이동합니다. WebFetch 도구는 [설정](/ko/settings)에서 `skipWebFetchPreflight: true`를 설정하지 않는 한 [도메인 안전 검사](/ko/data-usage#webfetch-domain-safety-check)를 위해 여전히 `api.anthropic.com`을 호출합니다.
 
 [웹의 Claude Code](/ko/claude-code-on-the-web) 및 [Code Review](/ko/code-review)는 Anthropic 관리 인프라에서 리포지토리에 연결합니다. GitHub Enterprise Cloud 조직이 IP 주소로 액세스를 제한하는 경우 [설치된 GitHub Apps에 대한 IP 허용 목록 상속 활성화](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps)를 수행하십시오. Claude GitHub App은 IP 범위를 등록하므로 이 설정을 활성화하면 수동 구성 없이 액세스할 수 있습니다. 대신 [범위를 허용 목록에 수동으로 추가](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address)하거나 다른 방화벽을 구성하려면 [Anthropic API IP 주소](https://platform.claude.com/docs/en/api/ip-addresses)를 참조하십시오.
 

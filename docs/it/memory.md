@@ -78,7 +78,7 @@ Un CLAUDE.md di progetto può essere archiviato in `./CLAUDE.md` o `./.claude/CL
 
 I file CLAUDE.md vengono caricati nella finestra di contesto all'inizio di ogni sessione, consumando token insieme alla tua conversazione. La [visualizzazione della finestra di contesto](/it/context-window) mostra dove CLAUDE.md si carica rispetto al resto del contesto di avvio. Poiché sono contesto piuttosto che configurazione forzata, il modo in cui scrivi le istruzioni influisce su quanto affidabilmente Claude le segue. Le istruzioni specifiche, concise e ben strutturate funzionano meglio.
 
-**Dimensione**: punta a meno di 200 righe per file CLAUDE.md. I file più lunghi consumano più contesto e riducono l'aderenza. Se le tue istruzioni stanno crescendo molto, dividile usando [importazioni](#import-additional-files) o file [`.claude/rules/`](#organize-rules-with-claude/rules/).
+**Dimensione**: punta a meno di 200 righe per file CLAUDE.md. I file più lunghi consumano più contesto e riducono l'aderenza. Se le tue istruzioni stanno crescendo molto, usa [regole con ambito di percorso](#path-specific-rules) in modo che le istruzioni si carichino solo quando Claude lavora con file corrispondenti. Puoi anche dividere il contenuto in [importazioni](#import-additional-files) per l'organizzazione, anche se i file importati si caricano comunque e entrano nella finestra di contesto all'avvio.
 
 **Struttura**: usa intestazioni e punti elenco markdown per raggruppare le istruzioni correlate. Claude scansiona la struttura nello stesso modo in cui i lettori lo fanno: le sezioni organizzate sono più facili da seguire rispetto ai paragrafi densi.
 
@@ -390,7 +390,7 @@ Esegui `/memory` e seleziona la cartella di memoria automatica per sfogliare ci�
 
 ### Il mio CLAUDE.md è troppo grande
 
-I file con più di 200 righe consumano più contesto e possono ridurre l'aderenza. Sposta il contenuto dettagliato in file separati a cui si fa riferimento con importazioni `@path` (vedi [Importa file aggiuntivi](#import-additional-files)), oppure dividi le tue istruzioni tra file `.claude/rules/`.
+I file con più di 200 righe consumano più contesto e possono ridurre l'aderenza. Usa [regole con ambito di percorso](#path-specific-rules) per caricare istruzioni solo quando Claude lavora con file corrispondenti, oppure riduci il contenuto che non è necessario in ogni sessione. La divisione in [importazioni `@path`](#import-additional-files) aiuta l'organizzazione ma non riduce il contesto, poiché i file importati vengono caricati all'avvio.
 
 ### Le istruzioni sembrano perse dopo `/compact`
 

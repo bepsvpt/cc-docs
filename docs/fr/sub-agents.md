@@ -24,7 +24,13 @@ Les sous-agents vous aident à :
 
 Claude utilise la description de chaque sous-agent pour décider quand déléguer les tâches. Lorsque vous créez un sous-agent, écrivez une description claire pour que Claude sache quand l'utiliser.
 
-Claude Code inclut plusieurs sous-agents intégrés comme **Explore**, **Plan** et **general-purpose**. Vous pouvez également créer des sous-agents personnalisés pour gérer des tâches spécifiques. Cette page couvre les [sous-agents intégrés](#built-in-subagents), [comment créer les vôtres](#quickstart-create-your-first-subagent), [les options de configuration complètes](#configure-subagents), [les modèles de travail avec les sous-agents](#work-with-subagents) et [les exemples de sous-agents](#example-subagents).
+Claude Code inclut plusieurs sous-agents intégrés comme **Explore**, **Plan** et **general-purpose**. Vous pouvez également créer des sous-agents personnalisés pour gérer des tâches spécifiques. Cette page couvre :
+
+* [Sous-agents intégrés](#built-in-subagents)
+* [Comment créer les vôtres](#quickstart-create-your-first-subagent)
+* [Options de configuration complètes](#configure-subagents)
+* [Modèles de travail avec les sous-agents](#work-with-subagents)
+* [Exemples de sous-agents](#example-subagents)
 
 ## Sous-agents intégrés
 
@@ -320,6 +326,15 @@ Si `Agent` est complètement omis de la liste `tools`, l'agent ne peut générer
 #### Limiter les serveurs MCP à un sous-agent
 
 Utilisez le champ `mcpServers` pour donner à un sous-agent l'accès aux serveurs [MCP](/fr/mcp) qui ne sont pas disponibles dans la conversation principale. Les serveurs en ligne définis ici sont connectés au démarrage du sous-agent et déconnectés à la fin. Les références de chaîne partagent la connexion de la session parent.
+
+<Note>
+  Le champ `mcpServers` s'applique dans les deux contextes où un fichier d'agent peut s'exécuter :
+
+  * En tant que sous-agent, généré via l'outil Agent ou une @-mention
+  * En tant que session principale, lancée avec [`--agent`](#invoke-subagents-explicitly) ou le paramètre `agent`
+
+  Lorsque l'agent est la session principale, les définitions de serveur en ligne se connectent au démarrage aux côtés des serveurs de [`.mcp.json`](/fr/mcp) et des fichiers de paramètres.
+</Note>
 
 Chaque entrée de la liste est soit une définition de serveur en ligne, soit une chaîne référençant un serveur MCP déjà configuré dans votre session :
 

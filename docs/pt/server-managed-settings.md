@@ -2,7 +2,7 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Configurar configurações gerenciadas pelo servidor (beta público)
+# Configurar configurações gerenciadas pelo servidor
 
 > Configure centralmente o Claude Code para sua organização através de configurações entregues pelo servidor, sem exigir infraestrutura de gerenciamento de dispositivos.
 
@@ -11,7 +11,7 @@ As configurações gerenciadas pelo servidor permitem que administradores config
 Essa abordagem foi projetada para organizações que não possuem infraestrutura de gerenciamento de dispositivos ou precisam gerenciar configurações para usuários em dispositivos não gerenciados.
 
 <Note>
-  As configurações gerenciadas pelo servidor estão em beta público e disponíveis para clientes do [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) e [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise). Os recursos podem evoluir antes da disponibilidade geral.
+  As configurações gerenciadas pelo servidor estão disponíveis para clientes do [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) e [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise).
 </Note>
 
 ## Requisitos
@@ -93,7 +93,7 @@ Se seus dispositivos estão inscritos em uma solução MDM ou gerenciamento de e
     }
     ```
 
-    Como hooks executam comandos shell, os usuários veem uma [caixa de diálogo de aprovação de segurança](#security-approval-dialogs) antes de serem aplicados. Veja [Configurar o classificador do modo automático](/pt/permissions#configure-the-auto-mode-classifier) para saber como as entradas `autoMode` afetam o que o classificador bloqueia e avisos importantes sobre os campos `allow` e `soft_deny`.
+    Como hooks executam comandos shell, os usuários veem uma [caixa de diálogo de aprovação de segurança](#security-approval-dialogs) antes de serem aplicados. Veja [Configurar o modo automático](/pt/auto-mode-config) para saber como as entradas `autoMode` afetam o que o classificador bloqueia e avisos importantes sobre os campos `allow` e `soft_deny`.
   </Step>
 
   <Step title="Salvar e implantar">
@@ -120,7 +120,7 @@ A maioria das [chaves de configurações](/pt/settings#available-settings) funci
 
 ### Limitações atuais
 
-As configurações gerenciadas pelo servidor têm as seguintes limitações durante o período beta:
+As configurações gerenciadas pelo servidor têm as seguintes limitações:
 
 * As configurações se aplicam uniformemente a todos os usuários da organização. Configurações por grupo ainda não são suportadas.
 * [Configurações de servidor MCP](/pt/mcp#managed-mcp-configuration) não podem ser distribuídas através de configurações gerenciadas pelo servidor.
@@ -152,6 +152,22 @@ O Claude Code busca configurações dos servidores da Anthropic na inicializaç�
 * As configurações em cache persistem através de falhas de rede
 
 O Claude Code aplica atualizações de configurações automaticamente sem reinicialização, exceto para configurações avançadas como configuração OpenTelemetry, que exigem uma reinicialização completa para entrar em vigor.
+
+### Impor inicialização com falha fechada
+
+Por padrão, se a busca de configurações remotas falhar na inicialização, a CLI continua sem configurações gerenciadas. Para ambientes onde essa breve janela não aplicada é inaceitável, defina `forceRemoteSettingsRefresh: true` em suas configurações gerenciadas.
+
+Quando essa configuração está ativa, a CLI bloqueia na inicialização até que as configurações remotas sejam buscadas recentemente. Se a busca falhar, a CLI sai em vez de prosseguir sem a política. Essa configuração se auto-perpetua: uma vez entregue do servidor, ela também é armazenada em cache localmente para que as inicializações subsequentes imponham o mesmo comportamento mesmo antes da primeira busca bem-sucedida de uma nova sessão.
+
+Para ativar isso, adicione a chave à sua configuração de configurações gerenciadas:
+
+```json theme={null}
+{
+  "forceRemoteSettingsRefresh": true
+}
+```
+
+Antes de ativar essa configuração, certifique-se de que suas políticas de rede permitem conectividade a `api.anthropic.com`. Se esse endpoint estiver inacessível, a CLI sai na inicialização e os usuários não podem iniciar o Claude Code.
 
 ### Caixas de diálogo de aprovação de segurança
 
@@ -186,13 +202,13 @@ Os eventos de auditoria incluem o tipo de ação executada, a conta e o disposit
 
 As configurações gerenciadas pelo servidor fornecem aplicação de política centralizada, mas funcionam como um controle do lado do cliente. Em dispositivos não gerenciados, usuários com acesso de administrador ou sudo podem modificar o binário do Claude Code, sistema de arquivos ou configuração de rede.
 
-| Cenário                                            | Comportamento                                                                                                                                        |
-| :------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Usuário edita o arquivo de configurações em cache  | O arquivo adulterado se aplica na inicialização, mas as configurações corretas são restauradas na próxima busca do servidor                          |
-| Usuário deleta o arquivo de configurações em cache | Comportamento de primeiro lançamento ocorre: configurações são buscadas de forma assíncrona com uma breve janela não aplicada                        |
-| API está indisponível                              | As configurações em cache se aplicam se disponíveis, caso contrário, as configurações gerenciadas não são aplicadas até a próxima busca bem-sucedida |
-| Usuário se autentica com uma organização diferente | As configurações não são entregues para contas fora da organização gerenciada                                                                        |
-| Usuário define um `ANTHROPIC_BASE_URL` não padrão  | As configurações gerenciadas pelo servidor são ignoradas ao usar provedores de API de terceiros                                                      |
+| Cenário                                            | Comportamento                                                                                                                                                                                                               |
+| :------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Usuário edita o arquivo de configurações em cache  | O arquivo adulterado se aplica na inicialização, mas as configurações corretas são restauradas na próxima busca do servidor                                                                                                 |
+| Usuário deleta o arquivo de configurações em cache | Comportamento de primeiro lançamento ocorre: configurações são buscadas de forma assíncrona com uma breve janela não aplicada                                                                                               |
+| API está indisponível                              | As configurações em cache se aplicam se disponíveis, caso contrário, as configurações gerenciadas não são aplicadas até a próxima busca bem-sucedida. Com `forceRemoteSettingsRefresh: true`, a CLI sai em vez de continuar |
+| Usuário se autentica com uma organização diferente | As configurações não são entregues para contas fora da organização gerenciada                                                                                                                                               |
+| Usuário define um `ANTHROPIC_BASE_URL` não padrão  | As configurações gerenciadas pelo servidor são ignoradas ao usar provedores de API de terceiros                                                                                                                             |
 
 Para detectar alterações de configuração em tempo de execução, use [hooks `ConfigChange`](/pt/hooks#configchange) para registrar modificações ou bloquear alterações não autorizadas antes que entrem em vigor.
 

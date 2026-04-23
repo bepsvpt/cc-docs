@@ -24,7 +24,13 @@ Subagent membantu Anda:
 
 Claude menggunakan deskripsi setiap subagent untuk memutuskan kapan mendelegasikan tugas. Ketika Anda membuat subagent, tulis deskripsi yang jelas sehingga Claude tahu kapan menggunakannya.
 
-Claude Code mencakup beberapa subagent bawaan seperti **Explore**, **Plan**, dan **general-purpose**. Anda juga dapat membuat subagent khusus untuk menangani tugas tertentu. Halaman ini mencakup [subagent bawaan](#built-in-subagents), [cara membuat subagent Anda sendiri](#quickstart-create-your-first-subagent), [opsi konfigurasi lengkap](#configure-subagents), [pola untuk bekerja dengan subagent](#work-with-subagents), dan [contoh subagent](#example-subagents).
+Claude Code mencakup beberapa subagent bawaan seperti **Explore**, **Plan**, dan **general-purpose**. Anda juga dapat membuat subagent khusus untuk menangani tugas tertentu. Halaman ini mencakup:
+
+* [Subagent bawaan](#built-in-subagents)
+* [Cara membuat subagent Anda sendiri](#quickstart-create-your-first-subagent)
+* [Opsi konfigurasi lengkap](#configure-subagents)
+* [Pola untuk bekerja dengan subagent](#work-with-subagents)
+* [Contoh subagent](#example-subagents)
 
 ## Subagent bawaan
 
@@ -321,6 +327,15 @@ Jika `Agent` dihilangkan dari daftar `tools` sepenuhnya, agen tidak dapat menelu
 
 Gunakan bidang `mcpServers` untuk memberikan subagent akses ke [MCP](/id/mcp) servers yang tidak tersedia dalam percakapan utama. Server inline yang ditentukan di sini terhubung saat subagent dimulai dan terputus saat selesai. Referensi string berbagi koneksi sesi induk.
 
+<Note>
+  Bidang `mcpServers` berlaku dalam kedua konteks di mana file agen dapat berjalan:
+
+  * Sebagai subagent, dihasilkan melalui alat Agent atau @-mention
+  * Sebagai sesi utama, diluncurkan dengan [`--agent`](#invoke-subagents-explicitly) atau pengaturan `agent`
+
+  Ketika agen adalah sesi utama, definisi server inline terhubung saat startup bersama server dari [`.mcp.json`](/id/mcp) dan file pengaturan.
+</Note>
+
 Setiap entri dalam daftar adalah definisi server inline atau string yang mereferensikan MCP server yang sudah dikonfigurasi dalam sesi Anda:
 
 ```yaml theme={null}
@@ -502,7 +517,7 @@ Subagent dapat mendefinisikan [hooks](/id/hooks) yang berjalan selama siklus hid
 Tentukan hooks langsung dalam file markdown subagent. Hooks ini hanya berjalan saat subagent spesifik itu aktif dan dibersihkan saat selesai.
 
 <Note>
-  Frontmatter hooks terjadi ketika agen dihasilkan sebagai subagent melalui alat Agent atau @-mention, dan ketika agen berjalan sebagai utama sesi melalui [`--agent`](#invoke-subagents-explicitly) atau pengaturan `agent`. Dalam kasus sesi-utama mereka berjalan bersama hook apa pun yang ditentukan dalam [`settings.json`](/id/hooks).
+  Frontmatter hooks terjadi ketika agen dihasilkan sebagai subagent melalui alat Agent atau @-mention, dan ketika agen berjalan sebagai sesi utama melalui [`--agent`](#invoke-subagents-explicitly) atau pengaturan `agent`. Dalam kasus sesi-utama mereka berjalan bersama hook apa pun yang ditentukan dalam [`settings.json`](/id/hooks).
 </Note>
 
 Semua [hook events](/id/hooks#hook-events) didukung. Peristiwa paling umum untuk subagent adalah:

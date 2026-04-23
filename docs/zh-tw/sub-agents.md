@@ -24,7 +24,13 @@ Subagents 可以幫助您：
 
 Claude 使用每個 subagent 的描述來決定何時委派任務。當您建立 subagent 時，請寫一個清晰的描述，以便 Claude 知道何時使用它。
 
-Claude Code 包括幾個內建 subagents，如 **Explore**、**Plan** 和 **general-purpose**。您也可以建立自訂 subagents 來處理特定任務。本頁涵蓋 [內建 subagents](#built-in-subagents)、[如何建立您自己的](#quickstart-create-your-first-subagent)、[完整配置選項](#configure-subagents)、[使用 subagents 的模式](#work-with-subagents) 和 [範例 subagents](#example-subagents)。
+Claude Code 包括幾個內建 subagents，如 **Explore**、**Plan** 和 **general-purpose**。您也可以建立自訂 subagents 來處理特定任務。本頁涵蓋：
+
+* [內建 subagents](#built-in-subagents)
+* [如何建立您自己的](#quickstart-create-your-first-subagent)
+* [完整配置選項](#configure-subagents)
+* [使用 subagents 的模式](#work-with-subagents)
+* [範例 subagents](#example-subagents)
 
 ## 內建 subagents
 
@@ -320,6 +326,15 @@ tools: Agent, Read, Bash
 #### 將 MCP 伺服器限定於 subagent
 
 使用 `mcpServers` 欄位為 subagent 提供對主要對話中不可用的 [MCP](/zh-TW/mcp) 伺服器的存取。此處定義的內聯伺服器在 subagent 啟動時連接，在完成時斷開連接。字串參考共享父工作階段的連接。
+
+<Note>
+  `mcpServers` 欄位適用於代理檔案可以執行的兩個上下文：
+
+  * 作為 subagent，透過 Agent 工具或 @-mention 產生
+  * 作為主工作階段，使用 [`--agent`](#invoke-subagents-explicitly) 或 `agent` 設定啟動
+
+  當代理是主工作階段時，內聯伺服器定義在啟動時與來自 [`.mcp.json`](/zh-TW/mcp) 和設定檔案的伺服器一起連接。
+</Note>
 
 清單中的每個條目要麼是內聯伺服器定義，要麼是參考工作階段中已配置的 MCP 伺服器的字串：
 

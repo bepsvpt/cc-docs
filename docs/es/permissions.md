@@ -443,6 +443,7 @@ Este [repositorio](https://github.com/anthropics/claude-code/tree/main/examples/
 ## Ver también
 
 * [Settings](/es/settings): referencia de configuración completa incluyendo la tabla de configuración de permisos
+* [Configure auto mode](/es/auto-mode-config): indique al clasificador del modo auto qué infraestructura confía su organización
 * [Sandboxing](/es/sandboxing): aislamiento del sistema de archivos y red a nivel del SO para comandos Bash
 * [Authentication](/es/authentication): configure el acceso de usuario a Claude Code
 * [Security](/es/security): salvaguardas de seguridad y mejores prácticas

@@ -104,22 +104,20 @@ export CLAUDE_CODE_CLIENT_KEY_PASSPHRASE="your-passphrase"
 
 ## Требования к доступу в сети
 
-Claude Code требует доступ к следующим URL:
+Claude Code требует доступ к следующим URL. Добавьте их в белый список в конфигурации прокси и правилах брандмауэра, особенно в контейнеризованных или ограниченных сетевых средах.
 
-* `api.anthropic.com`: конечные точки Claude API
-* `claude.ai`: аутентификация для учетных записей claude.ai
-* `platform.claude.com`: аутентификация для учетных записей Anthropic Console
+| URL                            | Требуется для                                                                                                 |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `api.anthropic.com`            | Запросы Claude API                                                                                            |
+| `claude.ai`                    | Аутентификация учетной записи claude.ai                                                                       |
+| `platform.claude.com`          | Аутентификация учетной записи Anthropic Console                                                               |
+| `downloads.claude.ai`          | Загрузки исполняемых файлов плагинов; встроенный установщик и встроенное автоматическое обновление            |
+| `storage.googleapis.com`       | {/* max-version: 2.1.115 */}Встроенный установщик и встроенное автоматическое обновление в версиях до 2.1.116 |
+| `bridge.claudeusercontent.com` | Мост WebSocket расширения [Claude в Chrome](/ru/chrome)                                                       |
 
-Убедитесь, что эти URL добавлены в белый список в конфигурации прокси и правилах брандмауэра. Это особенно важно при использовании Claude Code в контейнеризованных или ограниченных сетевых средах.
+Если вы устанавливаете Claude Code через npm или управляете собственным распределением бинарных файлов, конечным пользователям может не потребоваться доступ к `downloads.claude.ai` или `storage.googleapis.com`.
 
-При использовании [Bedrock](/ru/amazon-bedrock), [Vertex AI](/ru/google-vertex-ai) или [Foundry](/ru/microsoft-foundry) трафик модели идет к вашему поставщику вместо `api.anthropic.com`. Инструмент WebFetch по-прежнему вызывает `api.anthropic.com` для своей [проверки безопасности домена](/ru/data-usage#webfetch-domain-safety-check), если вы не установите `skipWebFetchPreflight: true` в [параметрах](/ru/settings).
-
-Встроенный установщик и проверки обновлений также требуют доступ к следующим URL. Добавьте оба в белый список, так как клиенты, работающие на старых версиях Claude Code, загружают из `storage.googleapis.com`. Если вы устанавливаете Claude Code через npm или управляете собственным распределением бинарных файлов, конечным пользователям может не потребоваться доступ:
-
-* `downloads.claude.ai`: хост загрузки для двоичного файла Claude Code, автоматического обновляющего модуля, указателей версий, манифестов, скрипта установки, ключей подписи и исполняемых файлов плагинов
-* `storage.googleapis.com`: устаревший хост загрузки, используемый старыми клиентами
-
-[Интеграция Chrome](/ru/chrome) подключается к расширению браузера через мост WebSocket. Если вы используете Claude в Chrome, добавьте `bridge.claudeusercontent.com` в белый список для исходящих соединений WebSocket.
+При использовании [Amazon Bedrock](/ru/amazon-bedrock), [Google Vertex AI](/ru/google-vertex-ai) или [Microsoft Foundry](/ru/microsoft-foundry) трафик модели и аутентификация идут к вашему поставщику вместо `api.anthropic.com`, `claude.ai` или `platform.claude.com`. Инструмент WebFetch по-прежнему вызывает `api.anthropic.com` для своей [проверки безопасности домена](/ru/data-usage#webfetch-domain-safety-check), если вы не установите `skipWebFetchPreflight: true` в [параметрах](/ru/settings).
 
 [Claude Code в веб-версии](/ru/claude-code-on-the-web) и [Code Review](/ru/code-review) подключаются к вашим репозиториям из управляемой Anthropic инфраструктуры. Если ваша организация GitHub Enterprise Cloud ограничивает доступ по IP-адресу, включите [наследование списка разрешенных IP для установленных GitHub Apps](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps). GitHub App Claude регистрирует свои диапазоны IP, поэтому включение этого параметра позволяет получить доступ без ручной конфигурации. Чтобы [добавить диапазоны в список разрешенных вручную](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address) вместо этого, или для настройки других брандмауэров, см. [IP-адреса Anthropic API](https://platform.claude.com/docs/en/api/ip-addresses).
 

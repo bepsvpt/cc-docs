@@ -104,22 +104,20 @@ export CLAUDE_CODE_CLIENT_KEY_PASSPHRASE="your-passphrase"
 
 ## Requisiti di accesso alla rete
 
-Claude Code richiede accesso ai seguenti URL:
+Claude Code richiede accesso ai seguenti URL. Inserire questi nella whitelist nella configurazione del proxy e nelle regole del firewall, soprattutto in ambienti di rete containerizzati o limitati.
 
-* `api.anthropic.com`: endpoint dell'API Claude
-* `claude.ai`: autenticazione per account claude.ai
-* `platform.claude.com`: autenticazione per account Anthropic Console
+| URL                            | Richiesto per                                                                                          |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `api.anthropic.com`            | Richieste API Claude                                                                                   |
+| `claude.ai`                    | Autenticazione account claude.ai                                                                       |
+| `platform.claude.com`          | Autenticazione account Anthropic Console                                                               |
+| `downloads.claude.ai`          | Download eseguibili plugin; installer nativo e auto-updater nativo                                     |
+| `storage.googleapis.com`       | {/* max-version: 2.1.115 */}Installer nativo e auto-updater nativo nelle versioni precedenti a 2.1.116 |
+| `bridge.claudeusercontent.com` | Bridge WebSocket estensione [Claude in Chrome](/it/chrome)                                             |
 
-Assicurarsi che questi URL siano inseriti nella whitelist nella configurazione del proxy e nelle regole del firewall. Ciò è particolarmente importante quando si utilizza Claude Code in ambienti di rete containerizzati o limitati.
+Se si installa Claude Code tramite npm o si gestisce la propria distribuzione binaria, gli utenti finali potrebbero non avere bisogno di accesso a `downloads.claude.ai` o `storage.googleapis.com`.
 
-Quando si utilizza [Bedrock](/it/amazon-bedrock), [Vertex AI](/it/google-vertex-ai) o [Foundry](/it/microsoft-foundry), il traffico del modello va al provider invece di `api.anthropic.com`. Lo strumento WebFetch chiama comunque `api.anthropic.com` per il suo [controllo di sicurezza del dominio](/it/data-usage#webfetch-domain-safety-check) a meno che non si imposti `skipWebFetchPreflight: true` nelle [impostazioni](/it/settings).
-
-L'installer nativo e i controlli degli aggiornamenti richiedono inoltre i seguenti URL. Inserire nella whitelist entrambi, poiché i client che eseguono versioni precedenti di Claude Code scaricano da `storage.googleapis.com`. Se si installa Claude Code tramite npm o si gestisce la propria distribuzione binaria, gli utenti finali potrebbero non avere bisogno di accesso:
-
-* `downloads.claude.ai`: host di download per il binario Claude Code, auto-updater, puntatori di versione, manifesti, script di installazione, chiavi di firma ed eseguibili dei plugin
-* `storage.googleapis.com`: host di download legacy utilizzato dai client precedenti
-
-L'[integrazione Chrome](/it/chrome) si connette all'estensione del browser su un bridge WebSocket. Se si utilizza Claude in Chrome, inserire nella whitelist `bridge.claudeusercontent.com` per le connessioni WebSocket in uscita.
+Quando si utilizza [Amazon Bedrock](/it/amazon-bedrock), [Google Vertex AI](/it/google-vertex-ai) o [Microsoft Foundry](/it/microsoft-foundry), il traffico del modello e l'autenticazione vanno al provider invece di `api.anthropic.com`, `claude.ai` o `platform.claude.com`. Lo strumento WebFetch chiama comunque `api.anthropic.com` per il suo [controllo di sicurezza del dominio](/it/data-usage#webfetch-domain-safety-check) a meno che non si imposti `skipWebFetchPreflight: true` nelle [impostazioni](/it/settings).
 
 [Claude Code sul web](/it/claude-code-on-the-web) e [Code Review](/it/code-review) si connettono ai repository dall'infrastruttura gestita da Anthropic. Se l'organizzazione GitHub Enterprise Cloud limita l'accesso per indirizzo IP, abilitare [l'ereditarietà della lista di indirizzi IP consentiti per le app GitHub installate](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps). L'app GitHub di Claude registra i suoi intervalli di indirizzi IP, quindi l'abilitazione di questa impostazione consente l'accesso senza configurazione manuale. Per [aggiungere gli intervalli alla lista di indirizzi consentiti manualmente](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address) invece, o per configurare altri firewall, consultare gli [indirizzi IP dell'API Anthropic](https://platform.claude.com/docs/en/api/ip-addresses).
 

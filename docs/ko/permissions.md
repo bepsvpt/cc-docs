@@ -443,6 +443,7 @@ claude auto-mode critique  # get AI feedback on your custom allow and soft_deny 
 ## 참고 항목
 
 * [설정](/ko/settings): 권한 설정 테이블을 포함한 완전한 구성 참조
+* [자동 모드 구성](/ko/auto-mode-config): 자동 모드 분류기에 조직이 신뢰하는 인프라를 알려줍니다
 * [샌드박싱](/ko/sandboxing): Bash 명령에 대한 OS 수준 파일 시스템 및 네트워크 격리
 * [인증](/ko/authentication): Claude Code에 대한 사용자 액세스 설정
 * [보안](/ko/security): 보안 보호 및 모범 사례

@@ -49,6 +49,10 @@ Vous pouvez configurer votre modèle de plusieurs façons, énumérées par ordr
 3. **Variable d'environnement** - Définissez `ANTHROPIC_MODEL=<alias|name>`
 4. **Paramètres** - Configurez de manière permanente dans votre fichier de paramètres en utilisant le champ `model`.
 
+Votre sélection `/model` est enregistrée dans les paramètres utilisateur et persiste entre les redémarrages. À partir de la v2.1.117, si le fichier `.claude/settings.json` du projet épingle un modèle différent, Claude Code écrit également votre choix dans `.claude/settings.local.json` afin qu'il continue à s'appliquer dans ce projet après un redémarrage. Les paramètres gérés ont la priorité et se réappliquent au prochain lancement.
+
+Lorsque le modèle actif au démarrage provient des paramètres du projet ou gérés plutôt que de votre propre sélection, l'en-tête de démarrage indique quel fichier de paramètres l'a défini. Exécutez `/model` pour remplacer la sélection pour la session actuelle.
+
 Exemple d'utilisation :
 
 ```bash theme={null}
@@ -160,7 +164,7 @@ L'effort est pris en charge sur Opus 4.7, Opus 4.6 et Sonnet 4.6. Les niveaux di
 
 Si vous définissez un niveau que le modèle actif ne prend pas en charge, Claude Code revient au niveau le plus élevé pris en charge au niveau ou en dessous de celui que vous avez défini. Par exemple, `xhigh` s'exécute comme `high` sur Opus 4.6.
 
-Sur Opus 4.7, l'effort par défaut est `xhigh` pour tous les plans et fournisseurs. Sur Opus 4.6 et Sonnet 4.6, la valeur par défaut est `high`, ou `medium` sur Pro et Max.
+À partir de la v2.1.117, l'effort par défaut est `xhigh` sur Opus 4.7 et `high` sur Opus 4.6 et Sonnet 4.6.
 
 Lorsque vous exécutez Opus 4.7 pour la première fois, Claude Code applique `xhigh` même si vous aviez précédemment défini un niveau d'effort différent pour Opus 4.6 ou Sonnet 4.6. Exécutez `/effort` à nouveau pour choisir un niveau différent après le changement.
 

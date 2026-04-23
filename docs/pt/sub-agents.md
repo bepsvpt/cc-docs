@@ -24,7 +24,13 @@ Subagentes ajudam você a:
 
 Claude usa a descrição de cada subagente para decidir quando delegar tarefas. Quando você cria um subagente, escreva uma descrição clara para que Claude saiba quando usá-lo.
 
-Claude Code inclui vários subagentes integrados como **Explore**, **Plan** e **general-purpose**. Você também pode criar subagentes personalizados para lidar com tarefas específicas. Esta página cobre os [subagentes integrados](#built-in-subagents), [como criar o seu próprio](#quickstart-create-your-first-subagent), [opções de configuração completas](#configure-subagents), [padrões para trabalhar com subagentes](#work-with-subagents) e [subagentes de exemplo](#example-subagents).
+Claude Code inclui vários subagentes integrados como **Explore**, **Plan** e **general-purpose**. Você também pode criar subagentes personalizados para lidar com tarefas específicas. Esta página cobre:
+
+* [Subagentes integrados](#built-in-subagents)
+* [Como criar o seu próprio](#quickstart-create-your-first-subagent)
+* [Opções de configuração completas](#configure-subagents)
+* [Padrões para trabalhar com subagentes](#work-with-subagents)
+* [Subagentes de exemplo](#example-subagents)
 
 ## Subagentes integrados
 
@@ -320,6 +326,15 @@ Se `Agent` for omitido da lista `tools` inteiramente, o agente não pode gerar n
 #### Escopo de MCP servers para um subagente
 
 Use o campo `mcpServers` para dar a um subagente acesso a [MCP](/pt/mcp) servers que não estão disponíveis na conversa principal. Servidores inline definidos aqui são conectados quando o subagente inicia e desconectados quando termina. Referências de string compartilham a conexão da sessão pai.
+
+<Note>
+  O campo `mcpServers` se aplica em ambos os contextos onde um arquivo de agente pode ser executado:
+
+  * Como um subagente, gerado através da ferramenta Agent ou uma @-menção
+  * Como a sessão principal, iniciada com [`--agent`](#invoke-subagents-explicitly) ou a configuração `agent`
+
+  Quando o agente é a sessão principal, definições de servidor inline se conectam na inicialização junto com servidores de [`.mcp.json`](/pt/mcp) e arquivos de configurações.
+</Note>
 
 Cada entrada na lista é uma definição de servidor inline ou uma string referenciando um MCP server já configurado em sua sessão:
 

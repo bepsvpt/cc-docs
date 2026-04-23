@@ -89,6 +89,8 @@ To install Claude Code, use one of the following methods:
   </Tab>
 </Tabs>
 
+You can also install with [apt, dnf, or apk](/en/setup#install-with-linux-package-managers) on Debian, Fedora, RHEL, and Alpine.
+
 Setelah instalasi selesai, buka terminal di proyek yang ingin Anda kerjakan dan mulai Claude Code:
 
 ```bash theme={null}
@@ -171,14 +173,14 @@ Setelah menginstal, masuk dengan menjalankan `claude` dan mengikuti petunjuk bro
 
 ## Perbarui Claude Code
 
-Instalasi asli secara otomatis diperbarui di latar belakang. Anda dapat [mengonfigurasi saluran rilis](#configure-release-channel) untuk mengontrol apakah Anda menerima pembaruan segera atau sesuai jadwal stabil yang tertunda, atau [menonaktifkan pembaruan otomatis](#disable-auto-updates) sepenuhnya. Instalasi Homebrew dan WinGet memerlukan pembaruan manual.
+Instalasi asli secara otomatis diperbarui di latar belakang. Anda dapat [mengonfigurasi saluran rilis](#configure-release-channel) untuk mengontrol apakah Anda menerima pembaruan segera atau sesuai jadwal stabil yang tertunda, atau [menonaktifkan pembaruan otomatis](#disable-auto-updates) sepenuhnya. Instalasi Homebrew, WinGet, dan [manajer paket Linux](#install-with-linux-package-managers) memerlukan pembaruan manual.
 
 ### Pembaruan otomatis
 
 Claude Code memeriksa pembaruan saat startup dan secara berkala saat berjalan. Pembaruan diunduh dan diinstal di latar belakang, kemudian berlaku saat Anda memulai Claude Code berikutnya.
 
 <Note>
-  Instalasi Homebrew dan WinGet tidak auto-update. Untuk Homebrew, jalankan `brew upgrade claude-code` atau `brew upgrade claude-code@latest`, tergantung cask mana yang Anda instal. Untuk WinGet, jalankan `winget upgrade Anthropic.ClaudeCode`.
+  Instalasi Homebrew, WinGet, apt, dnf, dan apk tidak auto-update. Untuk Homebrew, jalankan `brew upgrade claude-code` atau `brew upgrade claude-code@latest`, tergantung cask mana yang Anda instal. Untuk WinGet, jalankan `winget upgrade Anthropic.ClaudeCode`. Untuk manajer paket Linux, lihat perintah upgrade di [Install with Linux package managers](#install-with-linux-package-managers).
 
   **Masalah yang diketahui:** Claude Code dapat memberi tahu Anda tentang pembaruan sebelum versi baru tersedia di manajer paket ini. Jika upgrade gagal, tunggu dan coba lagi nanti.
 
@@ -243,7 +245,7 @@ claude update
 
 ## Opsi instalasi lanjutan
 
-Opsi ini untuk version pinning, migrasi dari npm, dan verifikasi integritas biner.
+Opsi ini untuk version pinning, manajer paket Linux, npm, dan verifikasi integritas biner.
 
 ### Instal versi tertentu
 
@@ -315,6 +317,67 @@ Untuk menginstal nomor versi tertentu:
   </Tab>
 </Tabs>
 
+### Instal dengan manajer paket Linux
+
+Claude Code menerbitkan repositori apt, dnf, dan apk yang ditandatangani. Ganti `stable` dengan `latest` untuk saluran rolling. Instalasi manajer paket tidak auto-update melalui Claude Code; pembaruan tiba melalui alur upgrade sistem normal Anda.
+
+Semua repositori ditandatangani dengan [kunci penandatanganan rilis Claude Code](#binary-integrity-and-code-signing). Sebelum mempercayai kunci, verifikasi seperti yang dijelaskan di setiap tab.
+
+<Tabs>
+  <Tab title="apt">
+    Untuk Debian dan Ubuntu. Untuk menggunakan saluran rolling, ubah kedua kemunculan `stable` di baris `deb`: jalur URL dan nama suite.
+
+    ```bash theme={null}
+    sudo install -d -m 0755 /etc/apt/keyrings
+    sudo curl -fsSL https://downloads.claude.ai/keys/claude-code.asc \
+      -o /etc/apt/keyrings/claude-code.asc
+    echo "deb [signed-by=/etc/apt/keyrings/claude-code.asc] https://downloads.claude.ai/claude-code/apt/stable stable main" \
+      | sudo tee /etc/apt/sources.list.d/claude-code.list
+    sudo apt update
+    sudo apt install claude-code
+    ```
+
+    Verifikasi sidik jari kunci GPG sebelum mempercayainya: `gpg --show-keys /etc/apt/keyrings/claude-code.asc` harus melaporkan `31DD DE24 DDFA B679 F42D 7BD2 BAA9 29FF 1A7E CACE`.
+
+    Untuk upgrade nanti, jalankan `sudo apt update && sudo apt upgrade claude-code`.
+  </Tab>
+
+  <Tab title="dnf">
+    Untuk Fedora dan RHEL:
+
+    ```bash theme={null}
+    sudo tee /etc/yum.repos.d/claude-code.repo <<'EOF'
+    [claude-code]
+    name=Claude Code
+    baseurl=https://downloads.claude.ai/claude-code/rpm/stable
+    enabled=1
+    gpgcheck=1
+    gpgkey=https://downloads.claude.ai/keys/claude-code.asc
+    EOF
+    sudo dnf install claude-code
+    ```
+
+    dnf mengunduh kunci pada instalasi pertama dan meminta Anda untuk mengkonfirmasi sidik jari. Verifikasi itu cocok dengan `31DD DE24 DDFA B679 F42D 7BD2 BAA9 29FF 1A7E CACE` sebelum menerima.
+
+    Untuk upgrade nanti, jalankan `sudo dnf upgrade claude-code`.
+  </Tab>
+
+  <Tab title="apk">
+    Untuk Alpine Linux:
+
+    ```sh theme={null}
+    wget -O /etc/apk/keys/claude-code.rsa.pub \
+      https://downloads.claude.ai/keys/claude-code.rsa.pub
+    echo "https://downloads.claude.ai/claude-code/apk/stable" >> /etc/apk/repositories
+    apk add claude-code
+    ```
+
+    Verifikasi kunci yang diunduh dengan `sha256sum /etc/apk/keys/claude-code.rsa.pub`, yang harus melaporkan `395759c1f7449ef4cdef305a42e820f3c766d6090d142634ebdb049f113168b6`.
+
+    Untuk upgrade nanti, jalankan `apk update && apk upgrade claude-code`.
+  </Tab>
+</Tabs>
+
 ### Instal dengan npm
 
 Anda juga dapat menginstal Claude Code sebagai paket npm global. Paket memerlukan [Node.js 18 atau lebih baru](https://nodejs.org/en/download).
@@ -364,7 +427,7 @@ Langkah-langkah 1-3 memerlukan shell POSIX dengan `gpg` dan `curl`. Di Windows, 
     Atur `VERSION` ke rilis yang ingin Anda verifikasi.
 
     ```bash theme={null}
-    REPO=https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases
+    REPO=https://downloads.claude.ai/claude-code-releases
     VERSION=2.1.89
     curl -fsSLO "$REPO/$VERSION/manifest.json"
     curl -fsSLO "$REPO/$VERSION/manifest.json.sig"
@@ -418,7 +481,7 @@ Selain manifes yang ditandatangani, biner individual membawa tanda tangan kode n
 
 * **macOS**: ditandatangani oleh "Anthropic PBC" dan dinotarisi oleh Apple. Verifikasi dengan `codesign --verify --verbose ./claude`.
 * **Windows**: ditandatangani oleh "Anthropic, PBC". Verifikasi dengan `Get-AuthenticodeSignature .\claude.exe`.
-* **Linux**: gunakan tanda tangan manifes di atas untuk memverifikasi integritas. Biner Linux tidak ditandatangani kode secara individual.
+* **Linux**: biner tidak ditandatangani kode secara individual. Jika Anda mengunduh langsung dari bucket `claude-code-releases` atau menggunakan penginstal asli, verifikasi integritas dengan tanda tangan manifes di atas. Jika Anda menginstal dengan [apt, dnf, atau apk](#install-with-linux-package-managers), manajer paket Anda memverifikasi tanda tangan secara otomatis menggunakan kunci penandatanganan repositori.
 
 ## Hapus instalasi Claude Code
 
@@ -465,6 +528,34 @@ Hapus paket WinGet:
 ```powershell theme={null}
 winget uninstall Anthropic.ClaudeCode
 ```
+
+### apt / dnf / apk
+
+Hapus paket dan konfigurasi repositori:
+
+<Tabs>
+  <Tab title="apt">
+    ```bash theme={null}
+    sudo apt remove claude-code
+    sudo rm /etc/apt/sources.list.d/claude-code.list /etc/apt/keyrings/claude-code.asc
+    ```
+  </Tab>
+
+  <Tab title="dnf">
+    ```bash theme={null}
+    sudo dnf remove claude-code
+    sudo rm /etc/yum.repos.d/claude-code.repo
+    ```
+  </Tab>
+
+  <Tab title="apk">
+    ```sh theme={null}
+    apk del claude-code
+    sed -i '\|downloads.claude.ai/claude-code/apk|d' /etc/apk/repositories
+    rm /etc/apk/keys/claude-code.rsa.pub
+    ```
+  </Tab>
+</Tabs>
 
 ### npm
 

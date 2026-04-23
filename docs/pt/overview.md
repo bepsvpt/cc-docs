@@ -70,6 +70,8 @@ Escolha seu ambiente para começar. A maioria das superfícies requer uma [assin
       </Tab>
     </Tabs>
 
+    You can also install with [apt, dnf, or apk](/en/setup#install-with-linux-package-managers) on Debian, Fedora, RHEL, and Alpine.
+
     Em seguida, inicie Claude Code em qualquer projeto:
 
     ```bash theme={null}

@@ -68,27 +68,28 @@ claude
 
 ### 常見配置變數
 
-| 環境變數                                                | 描述                                                               | 範例值                                  |
-| --------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------ |
-| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | 啟用遙測收集（必需）                                                       | `1`                                  |
-| `OTEL_METRICS_EXPORTER`                             | 指標匯出器類型，逗號分隔。使用 `none` 以停用                                       | `console`、`otlp`、`prometheus`、`none` |
-| `OTEL_LOGS_EXPORTER`                                | 日誌/事件匯出器類型，逗號分隔。使用 `none` 以停用                                    | `console`、`otlp`、`none`              |
-| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | OTLP 匯出器的協議，適用於所有訊號                                              | `grpc`、`http/json`、`http/protobuf`   |
-| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | 所有訊號的 OTLP 收集器端點                                                 | `http://localhost:4317`              |
-| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | 指標協議，覆蓋一般設定                                                      | `grpc`、`http/json`、`http/protobuf`   |
-| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | OTLP 指標端點，覆蓋一般設定                                                 | `http://localhost:4318/v1/metrics`   |
-| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | 日誌協議，覆蓋一般設定                                                      | `grpc`、`http/json`、`http/protobuf`   |
-| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | OTLP 日誌端點，覆蓋一般設定                                                 | `http://localhost:4318/v1/logs`      |
-| `OTEL_EXPORTER_OTLP_HEADERS`                        | OTLP 的身份驗證標頭                                                     | `Authorization=Bearer token`         |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | mTLS 身份驗證的用戶端金鑰                                                  | 用戶端金鑰檔案的路徑                           |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | mTLS 身份驗證的用戶端憑證                                                  | 用戶端憑證檔案的路徑                           |
-| `OTEL_METRIC_EXPORT_INTERVAL`                       | 匯出間隔（毫秒）（預設：60000）                                               | `5000`、`60000`                       |
-| `OTEL_LOGS_EXPORT_INTERVAL`                         | 日誌匯出間隔（毫秒）（預設：5000）                                              | `1000`、`10000`                       |
-| `OTEL_LOG_USER_PROMPTS`                             | 啟用使用者提示內容的日誌記錄（預設：停用）                                            | `1` 以啟用                              |
-| `OTEL_LOG_TOOL_DETAILS`                             | 啟用在工具事件中記錄工具參數和輸入引數的日誌：Bash 命令、MCP 伺服器和工具名稱、技能名稱和工具輸入（預設：停用）     | `1` 以啟用                              |
-| `OTEL_LOG_TOOL_CONTENT`                             | 啟用在跨度事件中記錄工具輸入和輸出內容的日誌（預設：停用）。需要[追蹤](#traces-beta)。內容在 60 KB 處截斷 | `1` 以啟用                              |
-| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | 指標時間性偏好（預設：`delta`）。如果您的後端期望累積時間性，請設定為 `cumulative`              | `delta`、`cumulative`                 |
-| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | 重新整理動態標頭的間隔（預設：1740000ms / 29 分鐘）                                | `900000`                             |
+| 環境變數                                                | 描述                                                                                                                                                                                                          | 範例值                                                                  |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | 啟用遙測收集（必需）                                                                                                                                                                                                  | `1`                                                                  |
+| `OTEL_METRICS_EXPORTER`                             | 指標匯出器類型，逗號分隔。使用 `none` 以停用                                                                                                                                                                                  | `console`、`otlp`、`prometheus`、`none`                                 |
+| `OTEL_LOGS_EXPORTER`                                | 日誌/事件匯出器類型，逗號分隔。使用 `none` 以停用                                                                                                                                                                               | `console`、`otlp`、`none`                                              |
+| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | OTLP 匯出器的協議，適用於所有訊號                                                                                                                                                                                         | `grpc`、`http/json`、`http/protobuf`                                   |
+| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | 所有訊號的 OTLP 收集器端點                                                                                                                                                                                            | `http://localhost:4317`                                              |
+| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | 指標協議，覆蓋一般設定                                                                                                                                                                                                 | `grpc`、`http/json`、`http/protobuf`                                   |
+| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | OTLP 指標端點，覆蓋一般設定                                                                                                                                                                                            | `http://localhost:4318/v1/metrics`                                   |
+| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | 日誌協議，覆蓋一般設定                                                                                                                                                                                                 | `grpc`、`http/json`、`http/protobuf`                                   |
+| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | OTLP 日誌端點，覆蓋一般設定                                                                                                                                                                                            | `http://localhost:4318/v1/logs`                                      |
+| `OTEL_EXPORTER_OTLP_HEADERS`                        | OTLP 的身份驗證標頭                                                                                                                                                                                                | `Authorization=Bearer token`                                         |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | mTLS 身份驗證的用戶端金鑰                                                                                                                                                                                             | 用戶端金鑰檔案的路徑                                                           |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | mTLS 身份驗證的用戶端憑證                                                                                                                                                                                             | 用戶端憑證檔案的路徑                                                           |
+| `OTEL_METRIC_EXPORT_INTERVAL`                       | 匯出間隔（毫秒）（預設：60000）                                                                                                                                                                                          | `5000`、`60000`                                                       |
+| `OTEL_LOGS_EXPORT_INTERVAL`                         | 日誌匯出間隔（毫秒）（預設：5000）                                                                                                                                                                                         | `1000`、`10000`                                                       |
+| `OTEL_LOG_USER_PROMPTS`                             | 啟用使用者提示內容的日誌記錄（預設：停用）                                                                                                                                                                                       | `1` 以啟用                                                              |
+| `OTEL_LOG_TOOL_DETAILS`                             | 啟用在工具事件和追蹤跨度屬性中記錄工具參數和輸入引數的日誌：Bash 命令、MCP 伺服器和工具名稱、技能名稱和工具輸入。也在 `user_prompt` 事件上啟用自訂、plugin 和 MCP 命令名稱（預設：停用）                                                                                              | `1` 以啟用                                                              |
+| `OTEL_LOG_TOOL_CONTENT`                             | 啟用在跨度事件中記錄工具輸入和輸出內容的日誌（預設：停用）。需要[追蹤](#traces-beta)。內容在 60 KB 處截斷                                                                                                                                            | `1` 以啟用                                                              |
+| `OTEL_LOG_RAW_API_BODIES`                           | 將完整的 Anthropic Messages API 請求和回應 JSON 作為 `api_request_body` / `api_response_body` 日誌事件發出（預設：停用）。主體包括整個對話歷史記錄。啟用此選項意味著同意 `OTEL_LOG_USER_PROMPTS`、`OTEL_LOG_TOOL_DETAILS` 和 `OTEL_LOG_TOOL_CONTENT` 會揭露的所有內容 | `1` 用於在 60 KB 處截斷的內聯主體，或 `file:<dir>` 用於磁碟上未截斷的主體，事件中有 `body_ref` 指標 |
+| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | 指標時間性偏好（預設：`delta`）。如果您的後端期望累積時間性，請設定為 `cumulative`                                                                                                                                                         | `delta`、`cumulative`                                                 |
+| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | 重新整理動態標頭的間隔（預設：1740000ms / 29 分鐘）                                                                                                                                                                           | `900000`                                                             |
 
 ### 指標基數控制
 
@@ -116,7 +117,117 @@ claude
 | `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`  | OTLP 追蹤端點，覆蓋 `OTEL_EXPORTER_OTLP_ENDPOINT`      | `http://localhost:4318/v1/traces`  |
 | `OTEL_TRACES_EXPORT_INTERVAL`         | 跨度批次匯出間隔（毫秒）（預設：5000）                           | `1000`、`10000`                     |
 
-跨度預設會編輯使用者提示文字和工具內容。設定 `OTEL_LOG_USER_PROMPTS=1` 和 `OTEL_LOG_TOOL_CONTENT=1` 以包含它們。
+跨度預設會編輯使用者提示文字、工具輸入詳情和工具內容。設定 `OTEL_LOG_USER_PROMPTS=1`、`OTEL_LOG_TOOL_DETAILS=1` 和 `OTEL_LOG_TOOL_CONTENT=1` 以包含它們。
+
+當追蹤處於活動狀態時，Bash 和 PowerShell 子程序會自動繼承包含活動工具執行跨度的 W3C 追蹤上下文的 `TRACEPARENT` 環境變數。這讓任何讀取 `TRACEPARENT` 的子程序都可以在同一追蹤下將其自己的跨度作為父項，透過 Claude 執行的指令碼和命令啟用端到端分散式追蹤。
+
+在 Agent SDK 和以 `-p` 啟動的非互動式工作階段中，Claude Code 也會在啟動每個互動跨度時從其自己的環境中讀取 `TRACEPARENT` 和 `TRACESTATE`。這讓嵌入程序將其活動 W3C 追蹤上下文傳遞到子程序中，以便 Claude Code 的跨度顯示為呼叫者分散式追蹤的子項。互動式工作階段會忽略入站 `TRACEPARENT` 以避免意外繼承來自 CI 或容器環境的環境值。
+
+#### 跨度階層
+
+每個使用者提示啟動一個 `claude_code.interaction` 根跨度。API 呼叫、工具呼叫和 hook 執行被記錄為其子項。工具跨度有兩個自己的子跨度：一個用於等待權限決定所花費的時間，一個用於執行本身。當 Task 工具產生子代理時，子代理的 API 和工具跨度會嵌套在父項的 `claude_code.tool` 跨度下。
+
+```text theme={null}
+claude_code.interaction
+├── claude_code.llm_request
+├── claude_code.hook                    (requires detailed beta tracing)
+└── claude_code.tool
+    ├── claude_code.tool.blocked_on_user
+    ├── claude_code.tool.execution
+    └── (Task tool) subagent claude_code.llm_request / claude_code.tool spans
+```
+
+在 Agent SDK 和 `claude -p` 工作階段中，當環境中設定 `TRACEPARENT` 時，`claude_code.interaction` 本身會成為呼叫者跨度的子項。
+
+#### 跨度屬性
+
+每個跨度都帶有[標準屬性](#standard-attributes)加上與其名稱相符的 `span.type` 屬性。下表列出在每個跨度上設定的其他屬性。`llm_request`、`tool.execution` 和 `hook` 跨度在記錄失敗時設定 OpenTelemetry 狀態 `ERROR`；其他跨度始終以狀態 `UNSET` 結束。
+
+**`claude_code.interaction`**
+
+| 屬性                        | 描述                             | 由以下控制                   |
+| ------------------------- | ------------------------------ | ----------------------- |
+| `user_prompt`             | 提示文字。除非設定了閘道，否則值為 `<REDACTED>` | `OTEL_LOG_USER_PROMPTS` |
+| `user_prompt_length`      | 提示長度（字元）                       |                         |
+| `interaction.sequence`    | 此工作階段中互動的 1 為基數計數器             |                         |
+| `interaction.duration_ms` | 輪次的牆上時間持續時間                    |                         |
+
+**`claude_code.llm_request`**
+
+| 屬性                       | 描述                                           | 由以下控制 |
+| ------------------------ | -------------------------------------------- | ----- |
+| `model`                  | 模型識別碼                                        |       |
+| `gen_ai.system`          | 始終為 `anthropic`。OpenTelemetry GenAI 語義慣例     |       |
+| `gen_ai.request.model`   | 與 `model` 相同的值。OpenTelemetry GenAI 語義慣例      |       |
+| `query_source`           | 發出請求的子系統，例如 `repl_main_thread` 或子代理名稱        |       |
+| `speed`                  | `fast` 或 `normal`                            |       |
+| `llm_request.context`    | `interaction`、`tool` 或 `standalone`，取決於父跨度   |       |
+| `duration_ms`            | 包括重試的牆上時間持續時間                                |       |
+| `ttft_ms`                | 首個權杖的時間（毫秒）                                  |       |
+| `input_tokens`           | 來自 API 使用區塊的輸入權杖計數                           |       |
+| `output_tokens`          | 輸出權杖計數                                       |       |
+| `cache_read_tokens`      | 從提示快取讀取的權杖                                   |       |
+| `cache_creation_tokens`  | 寫入提示快取的權杖                                    |       |
+| `request_id`             | 來自 `request-id` 回應標頭的 Anthropic API 請求 ID    |       |
+| `gen_ai.response.id`     | 與 `request_id` 相同的值。OpenTelemetry GenAI 語義慣例 |       |
+| `client_request_id`      | 最後一次嘗試的用戶端產生的 `x-client-request-id`          |       |
+| `attempt`                | 為此請求進行的總嘗試次數                                 |       |
+| `success`                | `true` 或 `false`                             |       |
+| `status_code`            | 請求失敗時的 HTTP 狀態碼                              |       |
+| `error`                  | 請求失敗時的錯誤訊息                                   |       |
+| `response.has_tool_call` | 當回應包含工具使用區塊時為 `true`                         |       |
+
+每次重試嘗試也被記錄為具有 `attempt` 和 `client_request_id` 屬性的 `gen_ai.request.attempt` 跨度事件。
+
+**`claude_code.tool`**
+
+| 屬性              | 描述                          | 由以下控制                   |
+| --------------- | --------------------------- | ----------------------- |
+| `tool_name`     | 工具名稱                        |                         |
+| `duration_ms`   | 包括權限等待和執行的牆上時間持續時間          |                         |
+| `result_tokens` | 工具結果的近似權杖大小                 |                         |
+| `file_path`     | Read、Edit 和 Write 工具的目標檔案路徑 | `OTEL_LOG_TOOL_DETAILS` |
+| `full_command`  | Bash 工具的命令字串                | `OTEL_LOG_TOOL_DETAILS` |
+| `skill_name`    | Skill 工具的技能名稱               | `OTEL_LOG_TOOL_DETAILS` |
+| `subagent_type` | Task 工具的子代理類型               | `OTEL_LOG_TOOL_DETAILS` |
+
+當 `OTEL_LOG_TOOL_CONTENT=1` 時，此跨度也會記錄一個 `tool.output` 跨度事件，其屬性包含工具的輸入和輸出主體，在每個屬性處截斷 60 KB。
+
+**`claude_code.tool.blocked_on_user`**
+
+| 屬性            | 描述                         | 由以下控制 |
+| ------------- | -------------------------- | ----- |
+| `duration_ms` | 等待權限決定所花費的時間               |       |
+| `decision`    | `accept` 或 `reject`        |       |
+| `source`      | 決定來源，符合 `tool_decision` 事件 |       |
+
+**`claude_code.tool.execution`**
+
+| 屬性            | 描述                                                            | 由以下控制                   |
+| ------------- | ------------------------------------------------------------- | ----------------------- |
+| `duration_ms` | 執行工具主體所花費的時間                                                  |                         |
+| `success`     | `true` 或 `false`                                              |                         |
+| `error`       | 執行失敗時的錯誤類別字串，例如 `Error:ENOENT` 或 `ShellError`。當設定了閘道時包含完整錯誤訊息 | `OTEL_LOG_TOOL_DETAILS` |
+
+**`claude_code.hook`**
+
+此跨度僅在詳細 beta 追蹤處於活動狀態時發出，除了上述追蹤匯出器配置外，還需要 `ENABLE_BETA_TRACING_DETAILED=1` 和 `BETA_TRACING_ENDPOINT`。在互動式 CLI 工作階段中，這也需要您的組織被列入該功能的允許清單。Agent SDK 和非互動式 `-p` 工作階段不受限制。當僅設定 `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA` 時不會發出。
+
+| 屬性                       | 描述                               | 由以下控制                   |
+| ------------------------ | -------------------------------- | ----------------------- |
+| `hook_event`             | Hook 事件類型，例如 `PreToolUse`        |                         |
+| `hook_name`              | 完整 hook 名稱，例如 `PreToolUse:Write` |                         |
+| `num_hooks`              | 執行的匹配 hook 命令數                   |                         |
+| `hook_definitions`       | JSON 序列化的 hook 配置                | `OTEL_LOG_TOOL_DETAILS` |
+| `duration_ms`            | 所有匹配 hook 的牆上時間持續時間              |                         |
+| `num_success`            | 成功完成的 hook 計數                    |                         |
+| `num_blocking`           | 傳回阻止決定的 hook 計數                  |                         |
+| `num_non_blocking_error` | 在不阻止的情況下失敗的 hook 計數              |                         |
+| `num_cancelled`          | 在完成前取消的 hook 計數                  |                         |
+
+<Note>
+  其他內容承載屬性，例如 `new_context`、`system_prompt_preview`、`tool_input` 和 `response.model_output`，僅在詳細 beta 追蹤處於活動狀態時發出。它們不是穩定跨度架構的一部分。
+</Note>
 
 ### 動態標頭
 
@@ -284,6 +395,7 @@ Claude Code 匯出以下指標：
 **屬性**：
 
 * 所有[標準屬性](#standard-attributes)
+* `start_type`：工作階段的啟動方式。`"fresh"`、`"resume"` 或 `"continue"` 之一
 
 #### 程式碼行計數器
 
@@ -318,6 +430,9 @@ Claude Code 匯出以下指標：
 
 * 所有[標準屬性](#standard-attributes)
 * `model`：模型識別碼（例如，"claude-sonnet-4-6"）
+* `query_source`：發出請求的子系統的類別。`"main"`、`"subagent"` 或 `"auxiliary"` 之一
+* `speed`：當請求使用快速模式時為 `"fast"`。否則不存在
+* `effort`：應用於請求的[努力等級](/zh-TW/model-config#adjust-effort-level)：`"low"`、`"medium"`、`"high"`、`"xhigh"` 或 `"max"`。當模型不支援努力時不存在。
 
 #### 權杖計數器
 
@@ -328,6 +443,9 @@ Claude Code 匯出以下指標：
 * 所有[標準屬性](#standard-attributes)
 * `type`：（`"input"`、`"output"`、`"cacheRead"`、`"cacheCreation"`）
 * `model`：模型識別碼（例如，"claude-sonnet-4-6"）
+* `query_source`：發出請求的子系統的類別。`"main"`、`"subagent"` 或 `"auxiliary"` 之一
+* `speed`：當請求使用快速模式時為 `"fast"`。否則不存在
+* `effort`：應用於請求的[努力等級](/zh-TW/model-config#adjust-effort-level)。詳見[成本計數器](#cost-counter)。
 
 #### 程式碼編輯工具決定計數器
 
@@ -382,6 +500,8 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
 * `prompt_length`：提示的長度
 * `prompt`：提示內容（預設為編輯，使用 `OTEL_LOG_USER_PROMPTS=1` 啟用）
+* `command_name`：當提示叫用命令時的命令名稱。內建和捆綁的命令名稱（例如 `compact` 或 `debug`）按原樣發出；別名（例如 `reset`）按輸入方式發出而不是規範名稱。自訂、plugin 和 MCP 命令名稱除非設定 `OTEL_LOG_TOOL_DETAILS=1`，否則會摺疊為 `custom` 或 `mcp`
+* `command_source`：命令的來源（如果存在）：`builtin`、`custom` 或 `mcp`。Plugin 提供的命令報告為 `custom`
 
 #### 工具結果事件
 
@@ -398,7 +518,8 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * `tool_name`：工具的名稱
 * `success`：`"true"` 或 `"false"`
 * `duration_ms`：執行時間（毫秒）
-* `error`：錯誤訊息（如果失敗）
+* `error_type`：工具失敗時的錯誤類別字串，例如 `"Error:ENOENT"` 或 `"ShellError"`
+* `error`（當 `OTEL_LOG_TOOL_DETAILS=1` 時）：工具失敗時的完整錯誤訊息
 * `decision_type`：`"accept"` 或 `"reject"`
 * `decision_source`：決定來源 - `"config"`、`"hook"`、`"user_permanent"`、`"user_temporary"`、`"user_abort"` 或 `"user_reject"`
 * `tool_result_size_bytes`：工具結果的大小（位元組）
@@ -407,6 +528,7 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
   * 對於 Bash 工具：包括 `bash_command`、`full_command`、`timeout`、`description`、`dangerouslyDisableSandbox` 和 `git_commit_id`（git commit 命令成功時的提交 SHA）
   * 對於 MCP 工具：包括 `mcp_server_name`、`mcp_tool_name`
   * 對於 Skill 工具：包括 `skill_name`
+  * 對於 Task 工具：包括 `subagent_type`
 * `tool_input`（當 `OTEL_LOG_TOOL_DETAILS=1` 時）：JSON 序列化的工具引數。超過 512 個字元的個別值會被截斷，整個承載的上限約為 4 K 字元。適用於所有工具，包括 MCP 工具。
 
 #### API 請求事件
@@ -428,7 +550,10 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * `output_tokens`：輸出權杖數
 * `cache_read_tokens`：從快取讀取的權杖數
 * `cache_creation_tokens`：用於快取建立的權杖數
+* `request_id`：來自回應的 `request-id` 標頭的 Anthropic API 請求 ID，例如 `"req_011..."`。僅當 API 傳回時才存在。
 * `speed`：`"fast"` 或 `"normal"`，指示是否啟用了快速模式
+* `query_source`：發出請求的子系統，例如 `"repl_main_thread"`、`"compact"` 或子代理名稱
+* `effort`：應用於請求的[努力等級](/zh-TW/model-config#adjust-effort-level)：`"low"`、`"medium"`、`"high"`、`"xhigh"` 或 `"max"`。當模型不支援努力時不存在。
 
 #### API 錯誤事件
 
@@ -446,8 +571,50 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * `error`：錯誤訊息
 * `status_code`：HTTP 狀態碼（字串形式），或 `"undefined"` 用於非 HTTP 錯誤
 * `duration_ms`：請求持續時間（毫秒）
-* `attempt`：嘗試次數（用於重試的請求）
+* `attempt`：進行的嘗試總次數，包括初始請求（`1` 表示未發生重試）
+* `request_id`：來自回應的 `request-id` 標頭的 Anthropic API 請求 ID，例如 `"req_011..."`。僅當 API 傳回時才存在。
 * `speed`：`"fast"` 或 `"normal"`，指示是否啟用了快速模式
+* `query_source`：發出請求的子系統，例如 `"repl_main_thread"`、`"compact"` 或子代理名稱
+* `effort`：應用於請求的[努力等級](/zh-TW/model-config#adjust-effort-level)。當模型不支援努力時不存在。
+
+#### API 請求主體事件
+
+當設定 `OTEL_LOG_RAW_API_BODIES` 時，為每個 API 請求嘗試記錄。每次嘗試發出一個事件，因此使用調整參數的重試各自產生自己的事件。
+
+**事件名稱**：`claude_code.api_request_body`
+
+**屬性**：
+
+* 所有[標準屬性](#standard-attributes)
+* `event.name`：`"api_request_body"`
+* `event.timestamp`：ISO 8601 時間戳
+* `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
+* `body`：JSON 序列化的 Messages API 請求參數（系統提示、訊息、工具等），在 60 KB 處截斷。先前助手輪次中的擴展思考內容被編輯。僅在內聯模式下發出（`OTEL_LOG_RAW_API_BODIES=1`）。
+* `body_ref`：包含未截斷主體的 `<dir>/<uuid>.request.json` 檔案的絕對路徑。僅在檔案模式下發出（`OTEL_LOG_RAW_API_BODIES=file:<dir>`）。
+* `body_length`：未截斷的主體長度。當 `OTEL_LOG_RAW_API_BODIES=file:<dir>` 時為 UTF-8 位元組，或當 `=1` 時為 UTF-16 程式碼單位
+* `body_truncated`：當發生內聯截斷時為 `"true"`。在檔案模式下和未發生截斷時不存在。
+* `model`：來自請求參數的模型識別碼
+* `query_source`：發出請求的子系統（例如，`"compact"`）
+
+#### API 回應主體事件
+
+當設定 `OTEL_LOG_RAW_API_BODIES` 時，為每個成功的 API 回應記錄。
+
+**事件名稱**：`claude_code.api_response_body`
+
+**屬性**：
+
+* 所有[標準屬性](#standard-attributes)
+* `event.name`：`"api_response_body"`
+* `event.timestamp`：ISO 8601 時間戳
+* `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
+* `body`：JSON 序列化的 Messages API 回應（id、內容區塊、使用情況、停止原因），在 60 KB 處截斷。擴展思考內容被編輯。僅在內聯模式下發出（`OTEL_LOG_RAW_API_BODIES=1`）。
+* `body_ref`：包含未截斷主體的 `<dir>/<request_id>.response.json` 檔案的絕對路徑。僅在檔案模式下發出（`OTEL_LOG_RAW_API_BODIES=file:<dir>`）。
+* `body_length`：未截斷的主體長度。當 `OTEL_LOG_RAW_API_BODIES=file:<dir>` 時為 UTF-8 位元組，或當 `=1` 時為 UTF-16 程式碼單位
+* `body_truncated`：當發生內聯截斷時為 `"true"`。在檔案模式下和未發生截斷時不存在。
+* `model`：模型識別碼
+* `query_source`：發出請求的子系統
+* `request_id`：來自回應的 `request-id` 標頭的 Anthropic API 請求 ID，例如 `"req_011..."`。僅當 API 傳回時才存在。
 
 #### 工具決定事件
 
@@ -464,6 +631,191 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * `tool_name`：工具的名稱（例如，"Read"、"Edit"、"Write"、"NotebookEdit"）
 * `decision`：`"accept"` 或 `"reject"`
 * `source`：決定來源 - `"config"`、`"hook"`、`"user_permanent"`、`"user_temporary"`、`"user_abort"` 或 `"user_reject"`
+
+#### 權限模式變更事件
+
+當權限模式變更時記錄，例如從 `Shift+Tab` 循環、退出計畫模式或自動模式閘道檢查。
+
+**事件名稱**：`claude_code.permission_mode_changed`
+
+**屬性**：
+
+* 所有[標準屬性](#standard-attributes)
+* `event.name`：`"permission_mode_changed"`
+* `event.timestamp`：ISO 8601 時間戳
+* `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
+* `from_mode`：先前的權限模式，例如 `"default"`、`"plan"`、`"acceptEdits"`、`"auto"` 或 `"bypassPermissions"`
+* `to_mode`：新的權限模式
+* `trigger`：導致變更的原因。`"shift_tab"`、`"exit_plan_mode"`、`"auto_gate_denied"` 或 `"auto_opt_in"` 之一。當轉換來自 SDK 或橋接時不存在。
+
+#### 身份驗證事件
+
+當 `/login` 或 `/logout` 完成時記錄。
+
+**事件名稱**：`claude_code.auth`
+
+**屬性**：
+
+* 所有[標準屬性](#standard-attributes)
+* `event.name`：`"auth"`
+* `event.timestamp`：ISO 8601 時間戳
+* `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
+* `action`：`"login"` 或 `"logout"`
+* `success`：`"true"` 或 `"false"`
+* `auth_method`：身份驗證方法，例如 `"oauth"`
+* `error_category`：操作失敗時的分類錯誤類型。永遠不包括原始錯誤訊息
+* `status_code`：操作因 HTTP 錯誤而失敗時的 HTTP 狀態碼（字串形式）
+
+#### MCP 伺服器連線事件
+
+當 MCP 伺服器連線、斷開連線或無法連線時記錄。
+
+**事件名稱**：`claude_code.mcp_server_connection`
+
+**屬性**：
+
+* 所有[標準屬性](#standard-attributes)
+* `event.name`：`"mcp_server_connection"`
+* `event.timestamp`：ISO 8601 時間戳
+* `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
+* `status`：`"connected"`、`"failed"` 或 `"disconnected"`
+* `transport_type`：伺服器傳輸，例如 `"stdio"`、`"sse"` 或 `"http"`
+* `server_scope`：伺服器配置的範圍，例如 `"user"`、`"project"` 或 `"local"`
+* `duration_ms`：連線嘗試持續時間（毫秒）
+* `error_code`：連線失敗時的錯誤碼
+* `server_name`（當 `OTEL_LOG_TOOL_DETAILS=1` 時）：配置的伺服器名稱
+* `error`（當 `OTEL_LOG_TOOL_DETAILS=1` 時）：連線失敗時的完整錯誤訊息
+
+#### 內部錯誤事件
+
+當 Claude Code 捕捉到意外的內部錯誤時記錄。僅記錄錯誤類別名稱和 errno 樣式碼。永遠不包括錯誤訊息和堆疊追蹤。當針對 Bedrock、Vertex 或 Foundry 執行或設定 `DISABLE_ERROR_REPORTING` 時，不會發出此事件。
+
+**事件名稱**：`claude_code.internal_error`
+
+**屬性**：
+
+* 所有[標準屬性](#standard-attributes)
+* `event.name`：`"internal_error"`
+* `event.timestamp`：ISO 8601 時間戳
+* `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
+* `error_name`：錯誤類別名稱，例如 `"TypeError"` 或 `"SyntaxError"`
+* `error_code`：Node.js errno 碼，例如 `"ENOENT"`（如果存在於錯誤上）
+
+#### Plugin 已安裝事件
+
+當 plugin 完成安裝時記錄，來自 `claude plugin install` CLI 命令和互動式 `/plugin` UI。
+
+**事件名稱**：`claude_code.plugin_installed`
+
+**屬性**：
+
+* 所有[標準屬性](#standard-attributes)
+* `event.name`：`"plugin_installed"`
+* `event.timestamp`：ISO 8601 時間戳
+* `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
+* `marketplace.is_official`：如果市場是官方 Anthropic 市場，則為 `"true"`，否則為 `"false"`
+* `install.trigger`：`"cli"` 或 `"ui"`
+* `plugin.name`：已安裝 plugin 的名稱。對於第三方市場，僅當 `OTEL_LOG_TOOL_DETAILS=1` 時才包含
+* `plugin.version`：Plugin 版本（如果在市場條目中宣告）。對於第三方市場，僅當 `OTEL_LOG_TOOL_DETAILS=1` 時才包含
+* `marketplace.name`：安裝 plugin 的市場。對於第三方市場，僅當 `OTEL_LOG_TOOL_DETAILS=1` 時才包含
+
+#### Skill 已啟動事件
+
+當叫用 skill 時記錄。
+
+**事件名稱**：`claude_code.skill_activated`
+
+**屬性**：
+
+* 所有[標準屬性](#standard-attributes)
+* `event.name`：`"skill_activated"`
+* `event.timestamp`：ISO 8601 時間戳
+* `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
+* `skill.name`：Skill 的名稱。對於使用者定義和第三方 plugin skill，除非 `OTEL_LOG_TOOL_DETAILS=1`，否則值為預留位置 `"custom_skill"`
+* `skill.source`：Skill 的載入位置（例如，`"bundled"`、`"userSettings"`、`"projectSettings"`、`"plugin"`）
+* `plugin.name`（當 `OTEL_LOG_TOOL_DETAILS=1` 或 plugin 來自官方市場時）：當 skill 由 plugin 提供時的擁有 plugin 名稱
+* `marketplace.name`（當 `OTEL_LOG_TOOL_DETAILS=1` 或 plugin 來自官方市場時）：當 skill 由 plugin 提供時，擁有 plugin 的安裝市場
+
+#### API 重試已耗盡事件
+
+當 API 請求在多次嘗試後失敗時記錄一次。與最終 `api_error` 事件一起發出。
+
+**事件名稱**：`claude_code.api_retries_exhausted`
+
+**屬性**：
+
+* 所有[標準屬性](#standard-attributes)
+* `event.name`：`"api_retries_exhausted"`
+* `event.timestamp`：ISO 8601 時間戳
+* `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
+* `model`：使用的模型
+* `error`：最終錯誤訊息
+* `status_code`：HTTP 狀態碼（字串形式）
+* `total_attempts`：進行的嘗試總次數
+* `total_retry_duration_ms`：所有嘗試的總牆上時間
+* `speed`：`"fast"` 或 `"normal"`
+
+#### Hook 執行開始事件
+
+當一個或多個 hook 開始為 hook 事件執行時記錄。
+
+**事件名稱**：`claude_code.hook_execution_start`
+
+**屬性**：
+
+* 所有[標準屬性](#standard-attributes)
+* `event.name`：`"hook_execution_start"`
+* `event.timestamp`：ISO 8601 時間戳
+* `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
+* `hook_event`：Hook 事件類型，例如 `"PreToolUse"` 或 `"PostToolUse"`
+* `hook_name`：完整 hook 名稱，包括匹配器，例如 `"PreToolUse:Write"`
+* `num_hooks`：匹配 hook 命令的數量
+* `managed_only`：當僅允許受管原則 hook 時為 `"true"`
+* `hook_source`：`"policySettings"` 或 `"merged"`
+* `hook_definitions`：JSON 序列化的 hook 配置。僅當詳細 beta 追蹤和 `OTEL_LOG_TOOL_DETAILS=1` 都啟用時才包含
+
+#### Hook 執行完成事件
+
+當 hook 事件的所有 hook 完成時記錄。
+
+**事件名稱**：`claude_code.hook_execution_complete`
+
+**屬性**：
+
+* 所有[標準屬性](#standard-attributes)
+* `event.name`：`"hook_execution_complete"`
+* `event.timestamp`：ISO 8601 時間戳
+* `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
+* `hook_event`：Hook 事件類型
+* `hook_name`：完整 hook 名稱，包括匹配器
+* `num_hooks`：匹配 hook 命令的數量
+* `num_success`：成功完成的計數
+* `num_blocking`：傳回阻止決定的計數
+* `num_non_blocking_error`：在不阻止的情況下失敗的計數
+* `num_cancelled`：在完成前取消的計數
+* `total_duration_ms`：所有匹配 hook 的牆上時間持續時間
+* `managed_only`：當僅允許受管原則 hook 時為 `"true"`
+* `hook_source`：`"policySettings"` 或 `"merged"`
+* `hook_definitions`：JSON 序列化的 hook 配置。僅當詳細 beta 追蹤和 `OTEL_LOG_TOOL_DETAILS=1` 都啟用時才包含
+
+#### 壓縮事件
+
+當對話壓縮完成時記錄。
+
+**事件名稱**：`claude_code.compaction`
+
+**屬性**：
+
+* 所有[標準屬性](#standard-attributes)
+* `event.name`：`"compaction"`
+* `event.timestamp`：ISO 8601 時間戳
+* `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
+* `trigger`：`"auto"` 或 `"manual"`
+* `success`：`"true"` 或 `"false"`
+* `duration_ms`：壓縮持續時間
+* `pre_tokens`：壓縮前的近似權杖計數
+* `post_tokens`：壓縮後的近似權杖計數
+* `error`：壓縮失敗時的錯誤訊息
 
 ## 解釋指標和事件資料
 
@@ -498,6 +850,14 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * 來自特定使用者的高工作階段量
 
 所有指標都可以按 `user.account_uuid`、`user.account_id`、`organization.id`、`session.id`、`model` 和 `app.version` 進行分段。
+
+### 偵測重試耗盡
+
+Claude Code 在內部重試失敗的 API 請求，並僅在放棄後才發出單個 `claude_code.api_error` 事件，因此事件本身是該請求的終端訊號。中間重試嘗試不會作為單獨的事件記錄。
+
+事件上的 `attempt` 屬性記錄進行的嘗試總次數。大於 `CLAUDE_CODE_MAX_RETRIES`（預設 `10`）的值表示請求在暫時性錯誤上耗盡了所有重試。較低的值表示不可重試的錯誤，例如 `400` 回應。
+
+若要區分從一個恢復的工作階段與停滯的工作階段，請按 `session.id` 分組事件，並檢查錯誤後是否存在更晚的 `api_request` 事件。
 
 ### 事件分析
 
@@ -559,8 +919,9 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * 原始檔案內容和程式碼片段不包含在指標或事件中。追蹤跨度是單獨的資料路徑：請參閱下面的 `OTEL_LOG_TOOL_CONTENT` 項目
 * 透過 OAuth 驗證時，`user.email` 包含在遙測屬性中。如果這對您的組織是個問題，請與您的遙測後端合作以篩選或編輯此欄位
 * 預設不收集使用者提示內容。僅記錄提示長度。若要包含提示內容，請設定 `OTEL_LOG_USER_PROMPTS=1`
-* 工具輸入引數和參數預設不記錄。若要包含它們，請設定 `OTEL_LOG_TOOL_DETAILS=1`。啟用時，`tool_result` 事件包含 `tool_parameters` 屬性，其中包含 Bash 命令、MCP 伺服器和工具名稱以及技能名稱，以及包含檔案路徑、URL、搜尋模式和其他引數的 `tool_input` 屬性。超過 512 個字元的個別值會被截斷，總計上限約為 4 K 字元，但引數仍可能包含敏感值。根據需要配置您的遙測後端以篩選或編輯這些屬性
+* 工具輸入引數和參數預設不記錄。若要包含它們，請設定 `OTEL_LOG_TOOL_DETAILS=1`。啟用時，`tool_result` 事件包含 `tool_parameters` 屬性，其中包含 Bash 命令、MCP 伺服器和工具名稱以及技能名稱，以及包含檔案路徑、URL、搜尋模式和其他引數的 `tool_input` 屬性。`user_prompt` 事件包含自訂、plugin 和 MCP 命令的逐字 `command_name`。追蹤跨度包含相同的 `tool_input` 屬性和輸入衍生屬性，例如 `file_path`。超過 512 個字元的個別值會被截斷，總計上限約為 4 K 字元，但引數仍可能包含敏感值。根據需要配置您的遙測後端以篩選或編輯這些屬性
 * 工具輸入和輸出內容預設不在追蹤跨度中記錄。若要包含它，請設定 `OTEL_LOG_TOOL_CONTENT=1`。啟用時，跨度事件包含完整工具輸入和輸出內容，在每個跨度處截斷 60 KB。這可以包含來自 Read 工具結果的原始檔案內容和 Bash 命令輸出。根據需要配置您的遙測後端以篩選或編輯這些屬性
+* 原始 Anthropic Messages API 請求和回應主體預設不記錄。若要包含它們，請設定 `OTEL_LOG_RAW_API_BODIES`。使用 `=1` 時，每個 API 呼叫發出 `api_request_body` 和 `api_response_body` 日誌事件，其 `body` 屬性是 JSON 序列化的承載，在 60 KB 處截斷。使用 `=file:<dir>` 時，未截斷的主體寫入該目錄下的 `.request.json` 和 `.response.json` 檔案，事件帶有 `body_ref` 路徑而不是內聯主體。使用日誌收集器或邊車傳送目錄，而不是透過遙測流。在兩種模式中，主體包含完整的對話歷史記錄（系統提示、每個先前的使用者和助手輪次、工具結果），因此啟用此選項意味著同意其他 `OTEL_LOG_*` 內容旗標會揭露的所有內容。Claude 的擴展思考內容始終從這些主體中編輯，無論其他設定如何
 
 ## 在 Amazon Bedrock 上監控 Claude Code
 

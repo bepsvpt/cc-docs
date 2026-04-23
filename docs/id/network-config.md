@@ -104,22 +104,20 @@ export CLAUDE_CODE_CLIENT_KEY_PASSPHRASE="your-passphrase"
 
 ## Persyaratan akses jaringan
 
-Claude Code memerlukan akses ke URL berikut:
+Claude Code memerlukan akses ke URL berikut. Izinkan URL ini dalam konfigurasi proxy dan aturan firewall Anda, terutama di lingkungan jaringan terkontainer atau terbatas.
 
-* `api.anthropic.com`: Titik akhir Claude API
-* `claude.ai`: autentikasi untuk akun claude.ai
-* `platform.claude.com`: autentikasi untuk akun Anthropic Console
+| URL                            | Diperlukan untuk                                                                                   |
+| ------------------------------ | -------------------------------------------------------------------------------------------------- |
+| `api.anthropic.com`            | Permintaan Claude API                                                                              |
+| `claude.ai`                    | Autentikasi akun claude.ai                                                                         |
+| `platform.claude.com`          | Autentikasi akun Anthropic Console                                                                 |
+| `downloads.claude.ai`          | Unduhan plugin yang dapat dieksekusi; penginstal asli dan pembaruan otomatis asli                  |
+| `storage.googleapis.com`       | {/* max-version: 2.1.115 */}Penginstal asli dan pembaruan otomatis asli pada versi sebelum 2.1.116 |
+| `bridge.claudeusercontent.com` | Jembatan WebSocket ekstensi [Claude di Chrome](/id/chrome)                                         |
 
-Pastikan URL ini diizinkan dalam konfigurasi proxy dan aturan firewall Anda. Ini sangat penting ketika menggunakan Claude Code di lingkungan jaringan terkontainer atau terbatas.
+Jika Anda menginstal Claude Code melalui npm atau mengelola distribusi biner Anda sendiri, pengguna akhir mungkin tidak memerlukan akses ke `downloads.claude.ai` atau `storage.googleapis.com`.
 
-Saat menggunakan [Bedrock](/id/amazon-bedrock), [Vertex AI](/id/google-vertex-ai), atau [Foundry](/id/microsoft-foundry), lalu lintas model menuju penyedia Anda alih-alih `api.anthropic.com`. Alat WebFetch masih memanggil `api.anthropic.com` untuk [pemeriksaan keamanan domainnya](/id/data-usage#webfetch-domain-safety-check) kecuali Anda menetapkan `skipWebFetchPreflight: true` di [pengaturan](/id/settings).
-
-Penginstal asli dan pemeriksaan pembaruan juga memerlukan URL berikut. Izinkan keduanya, karena klien yang menjalankan versi Claude Code yang lebih lama mengambil dari `storage.googleapis.com`. Jika Anda menginstal Claude Code melalui npm atau mengelola distribusi biner Anda sendiri, pengguna akhir mungkin tidak memerlukan akses:
-
-* `downloads.claude.ai`: host unduhan untuk biner Claude Code, pembaruan otomatis, penunjuk versi, manifes, skrip instalasi, kunci penandatanganan, dan file yang dapat dieksekusi plugin
-* `storage.googleapis.com`: host unduhan warisan yang digunakan oleh klien yang lebih lama
-
-Integrasi [Chrome](/id/chrome) terhubung ke ekstensi browser melalui jembatan WebSocket. Jika Anda menggunakan Claude di Chrome, izinkan `bridge.claudeusercontent.com` untuk koneksi WebSocket keluar.
+Saat menggunakan [Amazon Bedrock](/id/amazon-bedrock), [Google Vertex AI](/id/google-vertex-ai), atau [Microsoft Foundry](/id/microsoft-foundry), lalu lintas model dan autentikasi menuju penyedia Anda alih-alih `api.anthropic.com`, `claude.ai`, atau `platform.claude.com`. Alat WebFetch masih memanggil `api.anthropic.com` untuk [pemeriksaan keamanan domainnya](/id/data-usage#webfetch-domain-safety-check) kecuali Anda menetapkan `skipWebFetchPreflight: true` di [pengaturan](/id/settings).
 
 [Claude Code di web](/id/claude-code-on-the-web) dan [Code Review](/id/code-review) terhubung ke repositori Anda dari infrastruktur yang dikelola Anthropic. Jika organisasi GitHub Enterprise Cloud Anda membatasi akses berdasarkan alamat IP, aktifkan [pewarisan daftar izin IP untuk GitHub Apps yang diinstal](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps). Claude GitHub App mendaftarkan rentang IP-nya, jadi mengaktifkan pengaturan ini memungkinkan akses tanpa konfigurasi manual. Untuk [menambahkan rentang ke daftar izin Anda secara manual](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address) sebagai gantinya, atau untuk mengonfigurasi firewall lainnya, lihat [Alamat IP API Anthropic](https://platform.claude.com/docs/en/api/ip-addresses).
 

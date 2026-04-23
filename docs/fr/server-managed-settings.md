@@ -2,7 +2,7 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Configurer les paramètres gérés par le serveur (bêta publique)
+# Configurer les paramètres gérés par le serveur
 
 > Configurez centralement Claude Code pour votre organisation via des paramètres livrés par le serveur, sans nécessiter d'infrastructure de gestion des appareils.
 
@@ -11,7 +11,7 @@ Les paramètres gérés par le serveur permettent aux administrateurs de configu
 Cette approche est conçue pour les organisations qui n'ont pas d'infrastructure de gestion des appareils en place, ou qui ont besoin de gérer les paramètres pour les utilisateurs sur des appareils non gérés.
 
 <Note>
-  Les paramètres gérés par le serveur sont en bêta publique et disponibles pour les clients [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) et [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise). Les fonctionnalités peuvent évoluer avant la disponibilité générale.
+  Les paramètres gérés par le serveur sont disponibles pour les clients [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) et [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise).
 </Note>
 
 ## Conditions requises
@@ -93,7 +93,7 @@ Si vos appareils sont inscrits dans une solution MDM ou de gestion des points de
     }
     ```
 
-    Parce que les hooks exécutent des commandes shell, les utilisateurs voient une [boîte de dialogue d'approbation de sécurité](#security-approval-dialogs) avant qu'elles ne soient appliquées. Consultez [Configurer le classificateur du mode auto](/fr/permissions#configure-the-auto-mode-classifier) pour savoir comment les entrées `autoMode` affectent ce que le classificateur bloque et les avertissements importants concernant les champs `allow` et `soft_deny`.
+    Parce que les hooks exécutent des commandes shell, les utilisateurs voient une [boîte de dialogue d'approbation de sécurité](#security-approval-dialogs) avant qu'elles ne soient appliquées. Consultez [Configurer le mode auto](/fr/auto-mode-config) pour savoir comment les entrées `autoMode` affectent ce que le classificateur bloque et les avertissements importants concernant les champs `allow` et `soft_deny`.
   </Step>
 
   <Step title="Enregistrer et déployer">
@@ -120,7 +120,7 @@ La plupart des [clés de paramètres](/fr/settings#available-settings) fonctionn
 
 ### Limitations actuelles
 
-Les paramètres gérés par le serveur ont les limitations suivantes pendant la période bêta :
+Les paramètres gérés par le serveur ont les limitations suivantes :
 
 * Les paramètres s'appliquent uniformément à tous les utilisateurs de l'organisation. Les configurations par groupe ne sont pas encore prises en charge.
 * Les [configurations de serveur MCP](/fr/mcp#managed-mcp-configuration) ne peuvent pas être distribuées via les paramètres gérés par le serveur.
@@ -152,6 +152,22 @@ Claude Code récupère les paramètres à partir des serveurs d'Anthropic au dé
 * Les paramètres en cache persistent en cas de défaillance réseau
 
 Claude Code applique les mises à jour des paramètres automatiquement sans redémarrage, sauf pour les paramètres avancés comme la configuration OpenTelemetry, qui nécessitent un redémarrage complet pour prendre effet.
+
+### Appliquer un démarrage fermé par défaut
+
+Par défaut, si la récupération des paramètres distants échoue au démarrage, l'interface de ligne de commande continue sans paramètres gérés. Pour les environnements où cette brève fenêtre non appliquée est inacceptable, définissez `forceRemoteSettingsRefresh: true` dans vos paramètres gérés.
+
+Lorsque ce paramètre est actif, l'interface de ligne de commande se bloque au démarrage jusqu'à ce que les paramètres distants soient récupérés à nouveau. Si la récupération échoue, l'interface de ligne de commande se ferme plutôt que de continuer sans la stratégie. Ce paramètre s'auto-perpétue : une fois livré par le serveur, il est également mis en cache localement afin que les démarrages ultérieurs appliquent le même comportement même avant la première récupération réussie d'une nouvelle session.
+
+Pour activer cela, ajoutez la clé à votre configuration de paramètres gérés :
+
+```json theme={null}
+{
+  "forceRemoteSettingsRefresh": true
+}
+```
+
+Avant d'activer ce paramètre, assurez-vous que vos stratégies réseau permettent la connectivité à `api.anthropic.com`. Si ce point de terminaison est inaccessible, l'interface de ligne de commande se ferme au démarrage et les utilisateurs ne peuvent pas démarrer Claude Code.
 
 ### Boîtes de dialogue d'approbation de sécurité
 
@@ -186,13 +202,13 @@ Les événements d'audit incluent le type d'action effectuée, le compte et l'ap
 
 Les paramètres gérés par le serveur fournissent une application de stratégie centralisée, mais ils fonctionnent comme un contrôle côté client. Sur les appareils non gérés, les utilisateurs ayant un accès administrateur ou sudo peuvent modifier le binaire Claude Code, le système de fichiers ou la configuration réseau.
 
-| Scénario                                                            | Comportement                                                                                                                                            |
-| :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| L'utilisateur modifie le fichier de paramètres en cache             | Le fichier falsifié s'applique au démarrage, mais les paramètres corrects se restaurent lors de la prochaine récupération du serveur                    |
-| L'utilisateur supprime le fichier de paramètres en cache            | Le comportement du premier lancement se produit : les paramètres sont récupérés de manière asynchrone avec une brève fenêtre non appliquée              |
-| L'API est indisponible                                              | Les paramètres en cache s'appliquent s'ils sont disponibles, sinon les paramètres gérés ne sont pas appliqués jusqu'à la prochaine récupération réussie |
-| L'utilisateur s'authentifie avec une organisation différente        | Les paramètres ne sont pas livrés pour les comptes en dehors de l'organisation gérée                                                                    |
-| L'utilisateur définit un `ANTHROPIC_BASE_URL` non défini par défaut | Les paramètres gérés par le serveur sont contournés lors de l'utilisation de fournisseurs d'API tiers                                                   |
+| Scénario                                                            | Comportement                                                                                                                                                                                                                                                     |
+| :------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| L'utilisateur modifie le fichier de paramètres en cache             | Le fichier falsifié s'applique au démarrage, mais les paramètres corrects se restaurent lors de la prochaine récupération du serveur                                                                                                                             |
+| L'utilisateur supprime le fichier de paramètres en cache            | Le comportement du premier lancement se produit : les paramètres sont récupérés de manière asynchrone avec une brève fenêtre non appliquée                                                                                                                       |
+| L'API est indisponible                                              | Les paramètres en cache s'appliquent s'ils sont disponibles, sinon les paramètres gérés ne sont pas appliqués jusqu'à la prochaine récupération réussie. Avec `forceRemoteSettingsRefresh: true`, l'interface de ligne de commande se ferme au lieu de continuer |
+| L'utilisateur s'authentifie avec une organisation différente        | Les paramètres ne sont pas livrés pour les comptes en dehors de l'organisation gérée                                                                                                                                                                             |
+| L'utilisateur définit un `ANTHROPIC_BASE_URL` non défini par défaut | Les paramètres gérés par le serveur sont contournés lors de l'utilisation de fournisseurs d'API tiers                                                                                                                                                            |
 
 Pour détecter les modifications de configuration au moment de l'exécution, utilisez les [hooks `ConfigChange`](/fr/hooks#configchange) pour enregistrer les modifications ou bloquer les modifications non autorisées avant qu'elles ne prennent effet.
 

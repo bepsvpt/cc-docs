@@ -583,7 +583,7 @@ Teams 或 Enterprise 計畫上的組織可以透過管理員主控台控制、�
 | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
 | `permissions.disableBypassPermissionsMode` | 設定為 `"disable"` 以防止使用者啟用略過權限模式。                                                                                                   |
 | `disableAutoMode`                          | 設定為 `"disable"` 以防止使用者啟用 [Auto](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode) 模式。從模式選擇器中移除 Auto。也在 `permissions` 下接受。 |
-| `autoMode`                                 | 自訂 auto 模式分類器在您的組織中信任和阻止的內容。請參閱[配置 auto 模式分類器](/zh-TW/permissions#configure-the-auto-mode-classifier)。                            |
+| `autoMode`                                 | 自訂 auto 模式分類器在您的組織中信任和阻止的內容。請參閱[配置 auto 模式](/zh-TW/auto-mode-config)。                                                             |
 | `sshConfigs`                               | 預先配置[SSH 連線](#pre-configure-ssh-connections-for-your-team)，在環境下拉式選單中顯示。使用者無法編輯或刪除受管連線。                                            |
 
 `permissions.disableBypassPermissionsMode` 和 `disableAutoMode` 也在使用者和專案設定中運作，但將它們放在受管設定中可防止使用者覆蓋它們。`autoMode` 從使用者設定、`.claude/settings.local.json` 和受管設定讀取，但不從簽入的 `.claude/settings.json` 讀取：複製的儲存庫無法注入自己的分類器規則。有關受管專用設定（包括 `allowManagedPermissionRulesOnly` 和 `allowManagedHooksOnly`）的完整清單，請參閱[受管專用設定](/zh-TW/permissions#managed-only-settings)。

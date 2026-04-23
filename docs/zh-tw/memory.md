@@ -47,7 +47,7 @@ CLAUDE.md 檔案是 markdown 檔案，為專案、您的個人工作流程或整
 * 您在聊天中輸入的相同更正或澄清是您上個工作階段輸入的
 * 新的團隊成員需要相同的上下文才能提高生產力
 
-將其保持為 Claude 應該在每個工作階段中保留的事實：建置命令、慣例、專案佈局、「始終執行 X」規則。如果一個條目是多步驟程序或僅對程式碼庫的一部分重要，請將其移到 [skill](/zh-TW/skills) 或 [路徑範圍規則](#organize-rules-with-clauderules) 代替。[擴展概述](/zh-TW/features-overview#build-your-setup-over-time)涵蓋何時使用每個機制。
+將其保持為 Claude 應該在每個工作階段中保留的事實：建置命令、慣例、專案佈局、「始終執行 X」規則。如果一個條目是多步驟程序或僅對程式碼庫的一部分重要，請將其移到 [skill](/zh-TW/skills) 或 [路徑範圍規則](#organize-rules-with-claude/rules/) 代替。[擴展概述](/zh-TW/features-overview#build-your-setup-over-time)涵蓋何時使用每個機制。
 
 ### 選擇 CLAUDE.md 檔案的位置
 
@@ -62,7 +62,7 @@ CLAUDE.md 檔案可以位於多個位置，每個位置都有不同的範圍。�
 
 工作目錄上方目錄層級中的 CLAUDE.md 和 CLAUDE.local.md 檔案在啟動時完整載入。子目錄中的檔案在 Claude 讀取這些目錄中的檔案時按需載入。有關完整的解析順序，請參閱 [CLAUDE.md 檔案如何載入](#how-claude-md-files-load)。
 
-對於大型專案，您可以使用 [專案規則](#organize-rules-with-clauderules) 將指令分解為主題特定的檔案。規則讓您將指令範圍限定於特定檔案類型或子目錄。
+對於大型專案，您可以使用 [專案規則](#organize-rules-with-claude/rules/) 將指令分解為主題特定的檔案。規則讓您將指令範圍限定於特定檔案類型或子目錄。
 
 ### 設定專案 CLAUDE.md
 
@@ -78,7 +78,7 @@ CLAUDE.md 檔案可以位於多個位置，每個位置都有不同的範圍。�
 
 CLAUDE.md 檔案在每個工作階段開始時載入到 context window 中，與您的對話一起消耗令牌。[context window 視覺化](/zh-TW/context-window)顯示 CLAUDE.md 相對於其餘啟動上下文的載入位置。因為它們是上下文而不是強制配置，您編寫指令的方式會影響 Claude 遵循它們的可靠性。具體、簡潔、結構良好的指令效果最好。
 
-**大小**：目標是每個 CLAUDE.md 檔案少於 200 行。較長的檔案消耗更多上下文並降低遵守度。如果您的指令變得很大，請使用 [匯入](#import-additional-files) 或 [`.claude/rules/`](#organize-rules-with-clauderules) 檔案進行分割。
+**大小**：目標是每個 CLAUDE.md 檔案少於 200 行。較長的檔案消耗更多上下文並降低遵守度。如果您的指令變得很大，請使用 [路徑範圍規則](#path-specific-rules) 以便指令只在 Claude 處理匹配檔案時載入。您也可以將內容分割成 [匯入](#import-additional-files) 以進行組織，儘管匯入的檔案仍然會載入並在啟動時進入 context window。
 
 **結構**：使用 markdown 標題和項目符號來分組相關指令。Claude 掃描結構的方式與讀者相同：組織良好的部分比密集的段落更容易遵循。
 
@@ -88,7 +88,7 @@ CLAUDE.md 檔案在每個工作階段開始時載入到 context window 中，與
 * 「在提交前執行 `npm test`」而不是「測試您的變更」
 * 「API 處理程式位於 `src/api/handlers/`」而不是「保持檔案組織」
 
-**一致性**：如果兩個規則相互矛盾，Claude 可能會任意選擇一個。定期檢查您的 CLAUDE.md 檔案、子目錄中的巢狀 CLAUDE.md 檔案和 [`.claude/rules/`](#organize-rules-with-clauderules)，以移除過時或衝突的指令。在 monorepos 中，使用 [`claudeMdExcludes`](#exclude-specific-claude-md-files) 跳過與您的工作無關的其他團隊的 CLAUDE.md 檔案。
+**一致性**：如果兩個規則相互矛盾，Claude 可能會任意選擇一個。定期檢查您的 CLAUDE.md 檔案、子目錄中的巢狀 CLAUDE.md 檔案和 [`.claude/rules/`](#organize-rules-with-claude/rules/)，以移除過時或衝突的指令。在 monorepos 中，使用 [`claudeMdExcludes`](#exclude-specific-claude-md-files) 跳過與您的工作無關的其他團隊的 CLAUDE.md 檔案。
 
 ### 匯入其他檔案
 
@@ -118,7 +118,7 @@ CLAUDE.md 檔案可以使用 `@path/to/import` 語法匯入其他檔案。匯入
   Claude Code 第一次在專案中遇到外部匯入時，它會顯示一個核准對話，列出檔案。如果您拒絕，匯入將保持禁用狀態，對話不會再次出現。
 </Warning>
 
-有關組織指令的更結構化方法，請參閱 [`.claude/rules/`](#organize-rules-with-clauderules)。
+有關組織指令的更結構化方法，請參閱 [`.claude/rules/`](#organize-rules-with-claude/rules/)。
 
 ### AGENTS.md
 
@@ -390,7 +390,7 @@ CLAUDE.md 內容作為系統提示後的使用者訊息傳遞，而不是系統�
 
 ### 我的 CLAUDE.md 太大了
 
-超過 200 行的檔案消耗更多上下文，可能會降低遵守度。將詳細內容移到使用 `@path` 匯入參考的單獨檔案（請參閱 [匯入其他檔案](#import-additional-files)），或將您的指令分割到 `.claude/rules/` 檔案中。
+超過 200 行的檔案消耗更多上下文，可能會降低遵守度。使用 [路徑範圍規則](#path-specific-rules) 僅在 Claude 處理符合的檔案時載入指令，或修剪不是每個工作階段都需要的內容。分割成 [`@path` 匯入](#import-additional-files) 有助於組織，但不會減少上下文，因為匯入的檔案在啟動時載入。
 
 ### 指令在 `/compact` 後似乎丟失了
 
@@ -398,7 +398,7 @@ CLAUDE.md 內容作為系統提示後的使用者訊息傳遞，而不是系統�
 
 如果指令在壓縮後消失，它要麼只在對話中給出，要麼位於尚未重新載入的巢狀 CLAUDE.md 中。將對話專用指令新增到 CLAUDE.md 以使其持久化。有關完整的細目，請參閱 [壓縮後倖存的內容](/zh-TW/context-window#what-survives-compaction)。
 
-有關大小、結構和具體性的指導，請參閱 [編寫有效的指令](#write-effective-instructions)。
+請參閱 [編寫有效的指令](#write-effective-instructions) 以取得有關大小、結構和具體性的指導。
 
 ## 相關資源
 

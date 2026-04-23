@@ -68,27 +68,28 @@ claude
 
 ### 일반적인 구성 변수
 
-| 환경 변수                                               | 설명                                                                                      | 예제 값                                    |
-| --------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------- |
-| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | 원격 측정 수집 활성화 (필수)                                                                       | `1`                                     |
-| `OTEL_METRICS_EXPORTER`                             | 메트릭 내보내기 유형 (쉼표로 구분). `none`을 사용하여 비활성화                                                 | `console`, `otlp`, `prometheus`, `none` |
-| `OTEL_LOGS_EXPORTER`                                | 로그/이벤트 내보내기 유형 (쉼표로 구분). `none`을 사용하여 비활성화                                              | `console`, `otlp`, `none`               |
-| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | OTLP 내보내기 프로토콜 (모든 신호에 적용)                                                              | `grpc`, `http/json`, `http/protobuf`    |
-| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | 모든 신호에 대한 OTLP 수집기 엔드포인트                                                                | `http://localhost:4317`                 |
-| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | 메트릭 프로토콜 (일반 설정 재정의)                                                                    | `grpc`, `http/json`, `http/protobuf`    |
-| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | OTLP 메트릭 엔드포인트 (일반 설정 재정의)                                                              | `http://localhost:4318/v1/metrics`      |
-| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | 로그 프로토콜 (일반 설정 재정의)                                                                     | `grpc`, `http/json`, `http/protobuf`    |
-| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | OTLP 로그 엔드포인트 (일반 설정 재정의)                                                               | `http://localhost:4318/v1/logs`         |
-| `OTEL_EXPORTER_OTLP_HEADERS`                        | OTLP용 인증 헤더                                                                             | `Authorization=Bearer token`            |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | mTLS 인증용 클라이언트 키                                                                        | 클라이언트 키 파일 경로                           |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | mTLS 인증용 클라이언트 인증서                                                                      | 클라이언트 인증서 파일 경로                         |
-| `OTEL_METRIC_EXPORT_INTERVAL`                       | 내보내기 간격 (밀리초 단위, 기본값: 60000)                                                            | `5000`, `60000`                         |
-| `OTEL_LOGS_EXPORT_INTERVAL`                         | 로그 내보내기 간격 (밀리초 단위, 기본값: 5000)                                                          | `1000`, `10000`                         |
-| `OTEL_LOG_USER_PROMPTS`                             | 사용자 프롬프트 콘텐츠 로깅 활성화 (기본값: 비활성화)                                                         | `1`로 활성화                                |
-| `OTEL_LOG_TOOL_DETAILS`                             | 도구 이벤트에서 도구 매개변수 및 입력 인수 로깅 활성화: Bash 명령, MCP 서버 및 도구 이름, 스킬 이름 및 도구 입력 (기본값: 비활성화)     | `1`로 활성화                                |
-| `OTEL_LOG_TOOL_CONTENT`                             | 스팬 이벤트에서 도구 입력 및 출력 콘텐츠 로깅 활성화 (기본값: 비활성화). [추적](#traces-beta)이 필요합니다. 콘텐츠는 60KB에서 잘립니다 | `1`로 활성화                                |
-| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | 메트릭 시간성 선호도 (기본값: `delta`). 백엔드가 누적 시간성을 예상하는 경우 `cumulative`로 설정                       | `delta`, `cumulative`                   |
-| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | 동적 헤더 새로 고침 간격 (기본값: 1740000ms / 29분)                                                   | `900000`                                |
+| 환경 변수                                               | 설명                                                                                                                                                                                                                                             | 예제 값                                                                        |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | 원격 측정 수집 활성화 (필수)                                                                                                                                                                                                                              | `1`                                                                         |
+| `OTEL_METRICS_EXPORTER`                             | 메트릭 내보내기 유형 (쉼표로 구분). `none`을 사용하여 비활성화                                                                                                                                                                                                        | `console`, `otlp`, `prometheus`, `none`                                     |
+| `OTEL_LOGS_EXPORTER`                                | 로그/이벤트 내보내기 유형 (쉼표로 구분). `none`을 사용하여 비활성화                                                                                                                                                                                                     | `console`, `otlp`, `none`                                                   |
+| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | OTLP 내보내기 프로토콜 (모든 신호에 적용)                                                                                                                                                                                                                     | `grpc`, `http/json`, `http/protobuf`                                        |
+| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | 모든 신호에 대한 OTLP 수집기 엔드포인트                                                                                                                                                                                                                       | `http://localhost:4317`                                                     |
+| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | 메트릭 프로토콜 (일반 설정 재정의)                                                                                                                                                                                                                           | `grpc`, `http/json`, `http/protobuf`                                        |
+| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | OTLP 메트릭 엔드포인트 (일반 설정 재정의)                                                                                                                                                                                                                     | `http://localhost:4318/v1/metrics`                                          |
+| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | 로그 프로토콜 (일반 설정 재정의)                                                                                                                                                                                                                            | `grpc`, `http/json`, `http/protobuf`                                        |
+| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | OTLP 로그 엔드포인트 (일반 설정 재정의)                                                                                                                                                                                                                      | `http://localhost:4318/v1/logs`                                             |
+| `OTEL_EXPORTER_OTLP_HEADERS`                        | OTLP용 인증 헤더                                                                                                                                                                                                                                    | `Authorization=Bearer token`                                                |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | mTLS 인증용 클라이언트 키                                                                                                                                                                                                                               | 클라이언트 키 파일 경로                                                               |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | mTLS 인증용 클라이언트 인증서                                                                                                                                                                                                                             | 클라이언트 인증서 파일 경로                                                             |
+| `OTEL_METRIC_EXPORT_INTERVAL`                       | 내보내기 간격 (밀리초 단위, 기본값: 60000)                                                                                                                                                                                                                   | `5000`, `60000`                                                             |
+| `OTEL_LOGS_EXPORT_INTERVAL`                         | 로그 내보내기 간격 (밀리초 단위, 기본값: 5000)                                                                                                                                                                                                                 | `1000`, `10000`                                                             |
+| `OTEL_LOG_USER_PROMPTS`                             | 사용자 프롬프트 콘텐츠 로깅 활성화 (기본값: 비활성화)                                                                                                                                                                                                                | `1`로 활성화                                                                    |
+| `OTEL_LOG_TOOL_DETAILS`                             | 도구 이벤트 및 추적 스팬 속성에서 도구 매개변수 및 입력 인수 로깅 활성화: Bash 명령, MCP 서버 및 도구 이름, 스킬 이름 및 도구 입력. 또한 `OTEL_LOG_TOOL_DETAILS=1`이 설정된 경우 `user_prompt` 이벤트에서 사용자 정의, 플러그인 및 MCP 명령 이름을 활성화합니다 (기본값: 비활성화)                                                      | `1`로 활성화                                                                    |
+| `OTEL_LOG_TOOL_CONTENT`                             | 스팬 이벤트에서 도구 입력 및 출력 콘텐츠 로깅 활성화 (기본값: 비활성화). [추적](#traces-beta)이 필요합니다. 콘텐츠는 60KB에서 잘립니다                                                                                                                                                        | `1`로 활성화                                                                    |
+| `OTEL_LOG_RAW_API_BODIES`                           | 전체 Anthropic Messages API 요청 및 응답 JSON을 `api_request_body` / `api_response_body` 로그 이벤트로 내보냅니다 (기본값: 비활성화). 본문에는 전체 대화 기록이 포함됩니다. 이를 활성화하면 `OTEL_LOG_USER_PROMPTS`, `OTEL_LOG_TOOL_DETAILS` 및 `OTEL_LOG_TOOL_CONTENT`가 공개할 모든 것에 동의하는 것을 의미합니다 | `1`로 60KB에서 잘린 인라인 본문, 또는 `file:<dir>`로 디스크의 잘리지 않은 본문과 이벤트의 `body_ref` 포인터 |
+| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | 메트릭 시간성 선호도 (기본값: `delta`). 백엔드가 누적 시간성을 예상하는 경우 `cumulative`로 설정                                                                                                                                                                              | `delta`, `cumulative`                                                       |
+| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | 동적 헤더 새로 고침 간격 (기본값: 1740000ms / 29분)                                                                                                                                                                                                          | `900000`                                                                    |
 
 ### 메트릭 카디널리티 제어
 
@@ -116,7 +117,117 @@ claude
 | `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`  | OTLP 추적 엔드포인트 (`OTEL_EXPORTER_OTLP_ENDPOINT` 재정의)     | `http://localhost:4318/v1/traces`    |
 | `OTEL_TRACES_EXPORT_INTERVAL`         | 스팬 배치 내보내기 간격 (밀리초 단위, 기본값: 5000)                     | `1000`, `10000`                      |
 
-스팬은 기본적으로 사용자 프롬프트 텍스트 및 도구 콘텐츠를 수정합니다. `OTEL_LOG_USER_PROMPTS=1` 및 `OTEL_LOG_TOOL_CONTENT=1`을 설정하여 포함합니다.
+스팬은 기본적으로 사용자 프롬프트 텍스트, 도구 입력 세부 정보 및 도구 콘텐츠를 수정합니다. `OTEL_LOG_USER_PROMPTS=1`, `OTEL_LOG_TOOL_DETAILS=1` 및 `OTEL_LOG_TOOL_CONTENT=1`을 설정하여 포함합니다.
+
+추적이 활성화되면 Bash 및 PowerShell 하위 프로세스는 활성 도구 실행 스팬의 W3C 추적 컨텍스트를 포함하는 `TRACEPARENT` 환경 변수를 자동으로 상속합니다. 이를 통해 `TRACEPARENT`를 읽는 모든 하위 프로세스가 자신의 스팬을 동일한 추적 아래에 부모로 지정할 수 있으므로 Claude가 실행하는 스크립트 및 명령을 통한 엔드투엔드 분산 추적이 가능합니다.
+
+Agent SDK 및 `-p`로 시작된 비대화형 세션에서 Claude Code는 각 상호 작용 스팬을 시작할 때 자신의 환경에서 `TRACEPARENT` 및 `TRACESTATE`를 읽습니다. 이를 통해 임베딩 프로세스가 활성 W3C 추적 컨텍스트를 하위 프로세스에 전달할 수 있으므로 Claude Code의 스팬이 호출자의 분산 추적의 자식으로 나타납니다. 대화형 세션은 CI 또는 컨테이너 환경의 주변 값을 실수로 상속하는 것을 피하기 위해 인바운드 `TRACEPARENT`를 무시합니다.
+
+#### 스팬 계층 구조
+
+각 사용자 프롬프트는 `claude_code.interaction` 루트 스팬을 시작합니다. API 호출, 도구 호출 및 훅 실행은 자식으로 기록됩니다. 도구 스팬에는 권한 결정 대기 시간과 실행 자체에 대한 두 개의 자식 스팬이 있습니다. Task 도구가 하위 에이전트를 생성하면 하위 에이전트의 API 및 도구 스팬은 부모의 `claude_code.tool` 스팬 아래에 중첩됩니다.
+
+```text theme={null}
+claude_code.interaction
+├── claude_code.llm_request
+├── claude_code.hook                    (상세 베타 추적 필요)
+└── claude_code.tool
+    ├── claude_code.tool.blocked_on_user
+    ├── claude_code.tool.execution
+    └── (Task 도구) 하위 에이전트 claude_code.llm_request / claude_code.tool 스팬
+```
+
+Agent SDK 및 `claude -p` 세션에서 `TRACEPARENT`가 환경에 설정되면 `claude_code.interaction` 자체가 호출자의 스팬의 자식이 됩니다.
+
+#### 스팬 속성
+
+모든 스팬은 [표준 속성](#standard-attributes)과 이름과 일치하는 `span.type` 속성을 전달합니다. 아래 표는 각 스팬에 설정된 추가 속성을 나열합니다. `llm_request`, `tool.execution` 및 `hook` 스팬은 실패를 기록할 때 OpenTelemetry 상태 `ERROR`를 설정합니다. 다른 스팬은 항상 상태 `UNSET`으로 끝납니다.
+
+**`claude_code.interaction`**
+
+| 속성                        | 설명                                         | 게이트 대상                  |
+| ------------------------- | ------------------------------------------ | ----------------------- |
+| `user_prompt`             | 프롬프트 텍스트. 게이트가 설정되지 않으면 값은 `<REDACTED>`입니다 | `OTEL_LOG_USER_PROMPTS` |
+| `user_prompt_length`      | 프롬프트 길이 (문자 단위)                            |                         |
+| `interaction.sequence`    | 이 세션의 상호 작용 1 기반 카운터                       |                         |
+| `interaction.duration_ms` | 턴의 벽시계 지속 시간                               |                         |
+
+**`claude_code.llm_request`**
+
+| 속성                       | 설명                                                   | 게이트 대상 |
+| ------------------------ | ---------------------------------------------------- | ------ |
+| `model`                  | 모델 식별자                                               |        |
+| `gen_ai.system`          | 항상 `anthropic`. OpenTelemetry GenAI 의미론적 규칙          |        |
+| `gen_ai.request.model`   | `model`과 동일한 값. OpenTelemetry GenAI 의미론적 규칙          |        |
+| `query_source`           | 요청을 발급한 하위 시스템 (예: `repl_main_thread` 또는 하위 에이전트 이름) |        |
+| `speed`                  | `fast` 또는 `normal`                                   |        |
+| `llm_request.context`    | 부모 스팬에 따라 `interaction`, `tool` 또는 `standalone`      |        |
+| `duration_ms`            | 재시도를 포함한 벽시계 지속 시간                                   |        |
+| `ttft_ms`                | 첫 번째 토큰까지의 시간 (밀리초)                                  |        |
+| `input_tokens`           | API 사용 블록의 입력 토큰 수                                   |        |
+| `output_tokens`          | 출력 토큰 수                                              |        |
+| `cache_read_tokens`      | 프롬프트 캐시에서 읽은 토큰                                      |        |
+| `cache_creation_tokens`  | 프롬프트 캐시에 기록된 토큰                                      |        |
+| `request_id`             | `request-id` 응답 헤더의 Anthropic API 요청 ID              |        |
+| `gen_ai.response.id`     | `request_id`와 동일한 값. OpenTelemetry GenAI 의미론적 규칙     |        |
+| `client_request_id`      | 최종 시도의 클라이언트 생성 `x-client-request-id`                |        |
+| `attempt`                | 이 요청에 대해 수행된 총 시도                                    |        |
+| `success`                | `true` 또는 `false`                                    |        |
+| `status_code`            | 요청이 실패했을 때 HTTP 상태 코드                                |        |
+| `error`                  | 요청이 실패했을 때 오류 메시지                                    |        |
+| `response.has_tool_call` | 응답에 도구 사용 블록이 포함되었을 때 `true`                         |        |
+
+각 재시도 시도는 `attempt` 및 `client_request_id` 속성이 있는 `gen_ai.request.attempt` 스팬 이벤트로도 기록됩니다.
+
+**`claude_code.tool`**
+
+| 속성              | 설명                              | 게이트 대상                  |
+| --------------- | ------------------------------- | ----------------------- |
+| `tool_name`     | 도구 이름                           |                         |
+| `duration_ms`   | 권한 대기 및 실행을 포함한 벽시계 지속 시간       |                         |
+| `result_tokens` | 도구 결과의 대략적인 토큰 크기               |                         |
+| `file_path`     | Read, Edit 및 Write 도구의 대상 파일 경로 | `OTEL_LOG_TOOL_DETAILS` |
+| `full_command`  | Bash 도구의 명령 문자열                 | `OTEL_LOG_TOOL_DETAILS` |
+| `skill_name`    | Skill 도구의 스킬 이름                 | `OTEL_LOG_TOOL_DETAILS` |
+| `subagent_type` | Task 도구의 하위 에이전트 유형             | `OTEL_LOG_TOOL_DETAILS` |
+
+`OTEL_LOG_TOOL_CONTENT=1`일 때 이 스팬은 속성에 도구의 입력 및 출력 본문을 포함하는 `tool.output` 스팬 이벤트도 기록합니다 (속성당 60KB에서 잘림).
+
+**`claude_code.tool.blocked_on_user`**
+
+| 속성            | 설명                              | 게이트 대상 |
+| ------------- | ------------------------------- | ------ |
+| `duration_ms` | 권한 결정 대기 시간                     |        |
+| `decision`    | `accept` 또는 `reject`            |        |
+| `source`      | 결정 출처 (`tool_decision` 이벤트와 일치) |        |
+
+**`claude_code.tool.execution`**
+
+| 속성            | 설명                                                                                   | 게이트 대상                  |
+| ------------- | ------------------------------------------------------------------------------------ | ----------------------- |
+| `duration_ms` | 도구 본문 실행 시간                                                                          |                         |
+| `success`     | `true` 또는 `false`                                                                    |                         |
+| `error`       | 실행이 실패했을 때 오류 범주 문자열 (예: `Error:ENOENT` 또는 `ShellError`). 게이트가 설정되면 전체 오류 메시지를 포함합니다 | `OTEL_LOG_TOOL_DETAILS` |
+
+**`claude_code.hook`**
+
+이 스팬은 상세 베타 추적이 활성화되어 있을 때만 내보내지며, 이는 위의 추적 내보내기 구성 외에 `ENABLE_BETA_TRACING_DETAILED=1` 및 `BETA_TRACING_ENDPOINT`가 필요합니다. 대화형 CLI 세션에서는 조직이 이 기능에 대해 허용 목록에 있어야 합니다. Agent SDK 및 비대화형 `-p` 세션은 게이트되지 않습니다. `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA`만 설정되어 있을 때는 내보내지지 않습니다.
+
+| 속성                       | 설명                              | 게이트 대상                  |
+| ------------------------ | ------------------------------- | ----------------------- |
+| `hook_event`             | 훅 이벤트 유형 (예: `PreToolUse`)      |                         |
+| `hook_name`              | 전체 훅 이름 (예: `PreToolUse:Write`) |                         |
+| `num_hooks`              | 실행된 일치하는 훅 명령 수                 |                         |
+| `hook_definitions`       | JSON 직렬화된 훅 구성                  | `OTEL_LOG_TOOL_DETAILS` |
+| `duration_ms`            | 모든 일치하는 훅의 벽시계 지속 시간            |                         |
+| `num_success`            | 성공적으로 완료된 훅 수                   |                         |
+| `num_blocking`           | 차단 결정을 반환한 훅 수                  |                         |
+| `num_non_blocking_error` | 차단 없이 실패한 훅 수                   |                         |
+| `num_cancelled`          | 완료 전에 취소된 훅 수                   |                         |
+
+<Note>
+  `new_context`, `system_prompt_preview`, `tool_input` 및 `response.model_output`과 같은 추가 콘텐츠 포함 속성은 상세 베타 추적이 활성화되어 있을 때만 내보내집니다. 이들은 안정적인 스팬 스키마의 일부가 아닙니다.
+</Note>
 
 ### 동적 헤더
 
@@ -284,6 +395,7 @@ Claude Code는 다음 메트릭을 내보냅니다:
 **속성**:
 
 * 모든 [표준 속성](#standard-attributes)
+* `start_type`: 세션이 시작된 방식. `"fresh"`, `"resume"` 또는 `"continue"` 중 하나
 
 #### 코드 라인 카운터
 
@@ -318,6 +430,9 @@ Claude Code를 통해 git 커밋을 생성할 때 증가합니다.
 
 * 모든 [표준 속성](#standard-attributes)
 * `model`: 모델 식별자 (예: "claude-sonnet-4-6")
+* `query_source`: 요청을 발급한 하위 시스템의 범주. `"main"`, `"subagent"` 또는 `"auxiliary"` 중 하나
+* `speed`: 요청이 빠른 모드를 사용했을 때 `"fast"`. 그 외에는 없음
+* `effort`: 요청에 적용된 [노력 수준](/ko/model-config#adjust-effort-level): `"low"`, `"medium"`, `"high"`, `"xhigh"` 또는 `"max"`. 모델이 노력을 지원하지 않을 때는 없음
 
 #### 토큰 카운터
 
@@ -328,6 +443,9 @@ Claude Code를 통해 git 커밋을 생성할 때 증가합니다.
 * 모든 [표준 속성](#standard-attributes)
 * `type`: (`"input"`, `"output"`, `"cacheRead"`, `"cacheCreation"`)
 * `model`: 모델 식별자 (예: "claude-sonnet-4-6")
+* `query_source`: 요청을 발급한 하위 시스템의 범주. `"main"`, `"subagent"` 또는 `"auxiliary"` 중 하나
+* `speed`: 요청이 빠른 모드를 사용했을 때 `"fast"`. 그 외에는 없음
+* `effort`: 요청에 적용된 [노력 수준](/ko/model-config#adjust-effort-level). [비용 카운터](#cost-counter)의 세부 정보를 참조하세요.
 
 #### 코드 편집 도구 결정 카운터
 
@@ -382,6 +500,8 @@ Claude Code는 OpenTelemetry 로그/이벤트를 통해 다음 이벤트를 내�
 * `event.sequence`: 세션 내 이벤트 순서 지정을 위한 단조 증가 카운터
 * `prompt_length`: 프롬프트의 길이
 * `prompt`: 프롬프트 콘텐츠 (기본적으로 수정됨, `OTEL_LOG_USER_PROMPTS=1`로 활성화)
+* `command_name`: 프롬프트가 명령을 호출할 때 명령 이름. `compact` 또는 `debug`와 같은 기본 제공 및 번들 명령 이름은 그대로 내보내집니다. `reset`과 같은 별칭은 정규 이름이 아닌 입력한 대로 내보냅니다. 사용자 정의, 플러그인 및 MCP 명령 이름은 `OTEL_LOG_TOOL_DETAILS=1`이 설정되지 않으면 `custom` 또는 `mcp`로 축소됩니다
+* `command_source`: 명령이 있을 때 명령의 출처: `builtin`, `custom` 또는 `mcp`. 플러그인 제공 명령은 `custom`으로 보고합니다
 
 #### 도구 결과 이벤트
 
@@ -398,7 +518,8 @@ Claude Code는 OpenTelemetry 로그/이벤트를 통해 다음 이벤트를 내�
 * `tool_name`: 도구의 이름
 * `success`: `"true"` 또는 `"false"`
 * `duration_ms`: 실행 시간 (밀리초)
-* `error`: 오류 메시지 (실패한 경우)
+* `error_type`: 도구가 실패했을 때 오류 범주 문자열 (예: `"Error:ENOENT"` 또는 `"ShellError"`)
+* `error` (`OTEL_LOG_TOOL_DETAILS=1`일 때): 도구가 실패했을 때 전체 오류 메시지
 * `decision_type`: `"accept"` 또는 `"reject"`
 * `decision_source`: 결정 출처 - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` 또는 `"user_reject"`
 * `tool_result_size_bytes`: 도구 결과의 크기 (바이트)
@@ -407,6 +528,7 @@ Claude Code는 OpenTelemetry 로그/이벤트를 통해 다음 이벤트를 내�
   * Bash 도구의 경우: `bash_command`, `full_command`, `timeout`, `description`, `dangerouslyDisableSandbox` 및 `git_commit_id` (git commit 명령이 성공할 때 커밋 SHA) 포함
   * MCP 도구의 경우: `mcp_server_name`, `mcp_tool_name` 포함
   * Skill 도구의 경우: `skill_name` 포함
+  * Task 도구의 경우: `subagent_type` 포함
 * `tool_input` (`OTEL_LOG_TOOL_DETAILS=1`일 때): JSON 직렬화된 도구 인수입니다. 512자를 초과하는 개별 값은 잘리고, 전체 페이로드는 약 4K 문자로 제한됩니다. MCP 도구를 포함한 모든 도구에 적용됩니다.
 
 #### API 요청 이벤트
@@ -428,7 +550,10 @@ Claude에 대한 각 API 요청에 대해 기록됩니다.
 * `output_tokens`: 출력 토큰 수
 * `cache_read_tokens`: 캐시에서 읽은 토큰 수
 * `cache_creation_tokens`: 캐시 생성에 사용된 토큰 수
+* `request_id`: 응답의 `request-id` 헤더의 Anthropic API 요청 ID (예: `"req_011..."`). API가 반환할 때만 표시됩니다.
 * `speed`: 빠른 모드가 활성화되었는지 여부를 나타내는 `"fast"` 또는 `"normal"`
+* `query_source`: 요청을 발급한 하위 시스템 (예: `"repl_main_thread"`, `"compact"` 또는 하위 에이전트 이름)
+* `effort`: 요청에 적용된 [노력 수준](/ko/model-config#adjust-effort-level): `"low"`, `"medium"`, `"high"`, `"xhigh"` 또는 `"max"`. 모델이 노력을 지원하지 않을 때는 없음
 
 #### API 오류 이벤트
 
@@ -446,8 +571,50 @@ Claude에 대한 API 요청이 실패할 때 기록됩니다.
 * `error`: 오류 메시지
 * `status_code`: HTTP 상태 코드 (문자열) 또는 HTTP가 아닌 오류의 경우 `"undefined"`
 * `duration_ms`: 요청 지속 시간 (밀리초)
-* `attempt`: 시도 번호 (재시도된 요청의 경우)
+* `attempt`: 초기 요청을 포함한 총 시도 횟수 (`1`은 재시도가 발생하지 않았음을 의미)
+* `request_id`: 응답의 `request-id` 헤더의 Anthropic API 요청 ID (예: `"req_011..."`). API가 반환할 때만 표시됩니다.
 * `speed`: 빠른 모드가 활성화되었는지 여부를 나타내는 `"fast"` 또는 `"normal"`
+* `query_source`: 요청을 발급한 하위 시스템 (예: `"repl_main_thread"`, `"compact"` 또는 하위 에이전트 이름)
+* `effort`: 요청에 적용된 [노력 수준](/ko/model-config#adjust-effort-level). 모델이 노력을 지원하지 않을 때는 없음
+
+#### API 요청 본문 이벤트
+
+`OTEL_LOG_RAW_API_BODIES`가 설정되어 있을 때 각 API 요청 시도에 대해 기록됩니다. 조정된 매개변수를 사용한 재시도는 각각 자신의 이벤트를 생성하므로 시도당 하나의 이벤트가 내보내집니다.
+
+**이벤트 이름**: `claude_code.api_request_body`
+
+**속성**:
+
+* 모든 [표준 속성](#standard-attributes)
+* `event.name`: `"api_request_body"`
+* `event.timestamp`: ISO 8601 타임스탬프
+* `event.sequence`: 세션 내 이벤트 순서 지정을 위한 단조 증가 카운터
+* `body`: JSON 직렬화된 Messages API 요청 매개변수 (시스템 프롬프트, 메시지, 도구 등) (60KB에서 잘림). 이전 어시스턴트 턴의 확장 사고 콘텐츠는 수정됩니다. 인라인 모드 (`OTEL_LOG_RAW_API_BODIES=1`)에서만 내보내집니다.
+* `body_ref`: 잘리지 않은 본문을 포함하는 `<dir>/<uuid>.request.json` 파일의 절대 경로. 파일 모드 (`OTEL_LOG_RAW_API_BODIES=file:<dir>`)에서만 내보내집니다.
+* `body_length`: 잘리지 않은 본문 길이. `OTEL_LOG_RAW_API_BODIES=file:<dir>`일 때 UTF-8 바이트, `=1`일 때 UTF-16 코드 단위
+* `body_truncated`: 인라인 잘림이 발생했을 때 `"true"`. 파일 모드 및 잘림이 발생하지 않았을 때는 없음
+* `model`: 요청 매개변수의 모델 식별자
+* `query_source`: 요청을 발급한 하위 시스템 (예: `"compact"`)
+
+#### API 응답 본문 이벤트
+
+`OTEL_LOG_RAW_API_BODIES`가 설정되어 있을 때 각 성공적인 API 응답에 대해 기록됩니다.
+
+**이벤트 이름**: `claude_code.api_response_body`
+
+**속성**:
+
+* 모든 [표준 속성](#standard-attributes)
+* `event.name`: `"api_response_body"`
+* `event.timestamp`: ISO 8601 타임스탬프
+* `event.sequence`: 세션 내 이벤트 순서 지정을 위한 단조 증가 카운터
+* `body`: JSON 직렬화된 Messages API 응답 (id, 콘텐츠 블록, 사용, 중지 이유) (60KB에서 잘림). 확장 사고 콘텐츠는 수정됩니다. 인라인 모드 (`OTEL_LOG_RAW_API_BODIES=1`)에서만 내보내집니다.
+* `body_ref`: 잘리지 않은 본문을 포함하는 `<dir>/<request_id>.response.json` 파일의 절대 경로. 파일 모드 (`OTEL_LOG_RAW_API_BODIES=file:<dir>`)에서만 내보내집니다.
+* `body_length`: 잘리지 않은 본문 길이. `OTEL_LOG_RAW_API_BODIES=file:<dir>`일 때 UTF-8 바이트, `=1`일 때 UTF-16 코드 단위
+* `body_truncated`: 인라인 잘림이 발생했을 때 `"true"`. 파일 모드 및 잘림이 발생하지 않았을 때는 없음
+* `model`: 모델 식별자
+* `query_source`: 요청을 발급한 하위 시스템
+* `request_id`: 응답의 `request-id` 헤더의 Anthropic API 요청 ID (예: `"req_011..."`). API가 반환할 때만 표시됩니다.
 
 #### 도구 결정 이벤트
 
@@ -464,6 +631,191 @@ Claude에 대한 API 요청이 실패할 때 기록됩니다.
 * `tool_name`: 도구의 이름 (예: "Read", "Edit", "Write", "NotebookEdit")
 * `decision`: `"accept"` 또는 `"reject"`
 * `source`: 결정 출처 - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` 또는 `"user_reject"`
+
+#### 권한 모드 변경 이벤트
+
+권한 모드가 변경될 때 기록됩니다 (예: `Shift+Tab` 순환, 계획 모드 종료 또는 자동 모드 게이트 확인).
+
+**이벤트 이름**: `claude_code.permission_mode_changed`
+
+**속성**:
+
+* 모든 [표준 속성](#standard-attributes)
+* `event.name`: `"permission_mode_changed"`
+* `event.timestamp`: ISO 8601 타임스탬프
+* `event.sequence`: 세션 내 이벤트 순서 지정을 위한 단조 증가 카운터
+* `from_mode`: 이전 권한 모드 (예: `"default"`, `"plan"`, `"acceptEdits"`, `"auto"` 또는 `"bypassPermissions"`)
+* `to_mode`: 새 권한 모드
+* `trigger`: 변경을 야기한 것. `"shift_tab"`, `"exit_plan_mode"`, `"auto_gate_denied"` 또는 `"auto_opt_in"` 중 하나. SDK 또는 브리지에서 전환이 시작될 때는 없음
+
+#### 인증 이벤트
+
+`/login` 또는 `/logout`이 완료될 때 기록됩니다.
+
+**이벤트 이름**: `claude_code.auth`
+
+**속성**:
+
+* 모든 [표준 속성](#standard-attributes)
+* `event.name`: `"auth"`
+* `event.timestamp`: ISO 8601 타임스탬프
+* `event.sequence`: 세션 내 이벤트 순서 지정을 위한 단조 증가 카운터
+* `action`: `"login"` 또는 `"logout"`
+* `success`: `"true"` 또는 `"false"`
+* `auth_method`: 인증 방법 (예: `"oauth"`)
+* `error_category`: 작업이 실패했을 때 범주별 오류 종류. 원본 오류 메시지는 포함되지 않습니다
+* `status_code`: 작업이 HTTP 오류로 실패했을 때 HTTP 상태 코드 (문자열)
+
+#### MCP 서버 연결 이벤트
+
+MCP 서버가 연결, 연결 해제 또는 연결 실패할 때 기록됩니다.
+
+**이벤트 이름**: `claude_code.mcp_server_connection`
+
+**속성**:
+
+* 모든 [표준 속성](#standard-attributes)
+* `event.name`: `"mcp_server_connection"`
+* `event.timestamp`: ISO 8601 타임스탬프
+* `event.sequence`: 세션 내 이벤트 순서 지정을 위한 단조 증가 카운터
+* `status`: `"connected"`, `"failed"` 또는 `"disconnected"`
+* `transport_type`: 서버 전송 (예: `"stdio"`, `"sse"` 또는 `"http"`)
+* `server_scope`: 서버가 구성된 범위 (예: `"user"`, `"project"` 또는 `"local"`)
+* `duration_ms`: 연결 시도 지속 시간 (밀리초)
+* `error_code`: 연결이 실패했을 때 오류 코드
+* `server_name` (`OTEL_LOG_TOOL_DETAILS=1`일 때): 구성된 서버 이름
+* `error` (`OTEL_LOG_TOOL_DETAILS=1`일 때): 연결이 실패했을 때 전체 오류 메시지
+
+#### 내부 오류 이벤트
+
+Claude Code가 예상치 못한 내부 오류를 포착할 때 기록됩니다. 오류 클래스 이름과 errno 스타일 코드만 기록됩니다. 오류 메시지 및 스택 추적은 포함되지 않습니다. 이 이벤트는 Bedrock, Vertex 또는 Foundry에 대해 실행하거나 `DISABLE_ERROR_REPORTING`이 설정되어 있을 때는 내보내지지 않습니다.
+
+**이벤트 이름**: `claude_code.internal_error`
+
+**속성**:
+
+* 모든 [표준 속성](#standard-attributes)
+* `event.name`: `"internal_error"`
+* `event.timestamp`: ISO 8601 타임스탬프
+* `event.sequence`: 세션 내 이벤트 순서 지정을 위한 단조 증가 카운터
+* `error_name`: 오류 클래스 이름 (예: `"TypeError"` 또는 `"SyntaxError"`)
+* `error_code`: 오류에 있을 때 Node.js errno 코드 (예: `"ENOENT"`)
+
+#### 플러그인 설치됨 이벤트
+
+플러그인이 설치를 완료할 때 기록됩니다 (`claude plugin install` CLI 명령 및 대화형 `/plugin` UI 모두).
+
+**이벤트 이름**: `claude_code.plugin_installed`
+
+**속성**:
+
+* 모든 [표준 속성](#standard-attributes)
+* `event.name`: `"plugin_installed"`
+* `event.timestamp`: ISO 8601 타임스탬프
+* `event.sequence`: 세션 내 이벤트 순서 지정을 위한 단조 증가 카운터
+* `marketplace.is_official`: 마켓플레이스가 공식 Anthropic 마켓플레이스인 경우 `"true"`, 그 외에는 `"false"`
+* `install.trigger`: `"cli"` 또는 `"ui"`
+* `plugin.name`: 설치된 플러그인의 이름. 타사 마켓플레이스의 경우 `OTEL_LOG_TOOL_DETAILS=1`일 때만 포함됩니다
+* `plugin.version`: 마켓플레이스 항목에 선언된 경우 플러그인 버전. 타사 마켓플레이스의 경우 `OTEL_LOG_TOOL_DETAILS=1`일 때만 포함됩니다
+* `marketplace.name`: 플러그인이 설치된 마켓플레이스. 타사 마켓플레이스의 경우 `OTEL_LOG_TOOL_DETAILS=1`일 때만 포함됩니다
+
+#### 스킬 활성화됨 이벤트
+
+스킬이 호출될 때 기록됩니다.
+
+**이벤트 이름**: `claude_code.skill_activated`
+
+**속성**:
+
+* 모든 [표준 속성](#standard-attributes)
+* `event.name`: `"skill_activated"`
+* `event.timestamp`: ISO 8601 타임스탬프
+* `event.sequence`: 세션 내 이벤트 순서 지정을 위한 단조 증가 카운터
+* `skill.name`: 스킬의 이름. 사용자 정의 및 타사 플러그인 스킬의 경우 `OTEL_LOG_TOOL_DETAILS=1`이 아니면 값은 자리 표시자 `"custom_skill"`입니다
+* `skill.source`: 스킬이 로드된 위치 (예: `"bundled"`, `"userSettings"`, `"projectSettings"`, `"plugin"`)
+* `plugin.name` (`OTEL_LOG_TOOL_DETAILS=1`이거나 플러그인이 공식 마켓플레이스에서 온 경우): 스킬이 플러그인에서 제공될 때 소유 플러그인의 이름
+* `marketplace.name` (`OTEL_LOG_TOOL_DETAILS=1`이거나 플러그인이 공식 마켓플레이스에서 온 경우): 스킬이 플러그인에서 제공될 때 소유 플러그인이 설치된 마켓플레이스
+
+#### API 재시도 소진됨 이벤트
+
+API 요청이 두 번 이상 시도 후 실패할 때 한 번 기록됩니다. 최종 `api_error` 이벤트와 함께 내보내집니다.
+
+**이벤트 이름**: `claude_code.api_retries_exhausted`
+
+**속성**:
+
+* 모든 [표준 속성](#standard-attributes)
+* `event.name`: `"api_retries_exhausted"`
+* `event.timestamp`: ISO 8601 타임스탬프
+* `event.sequence`: 세션 내 이벤트 순서 지정을 위한 단조 증가 카운터
+* `model`: 사용된 모델
+* `error`: 최종 오류 메시지
+* `status_code`: HTTP 상태 코드 (문자열)
+* `total_attempts`: 수행된 총 시도 횟수
+* `total_retry_duration_ms`: 모든 시도에 걸친 총 벽시계 시간
+* `speed`: `"fast"` 또는 `"normal"`
+
+#### 훅 실행 시작 이벤트
+
+하나 이상의 훅이 훅 이벤트에 대해 실행을 시작할 때 기록됩니다.
+
+**이벤트 이름**: `claude_code.hook_execution_start`
+
+**속성**:
+
+* 모든 [표준 속성](#standard-attributes)
+* `event.name`: `"hook_execution_start"`
+* `event.timestamp`: ISO 8601 타임스탬프
+* `event.sequence`: 세션 내 이벤트 순서 지정을 위한 단조 증가 카운터
+* `hook_event`: 훅 이벤트 유형 (예: `"PreToolUse"` 또는 `"PostToolUse"`)
+* `hook_name`: 매처를 포함한 전체 훅 이름 (예: `"PreToolUse:Write"`)
+* `num_hooks`: 일치하는 훅 명령 수
+* `managed_only`: 관리 정책 훅만 허용될 때 `"true"`
+* `hook_source`: `"policySettings"` 또는 `"merged"`
+* `hook_definitions`: JSON 직렬화된 훅 구성. 상세 베타 추적과 `OTEL_LOG_TOOL_DETAILS=1`이 모두 활성화되어 있을 때만 포함됨
+
+#### 훅 실행 완료 이벤트
+
+훅 이벤트의 모든 훅이 완료되었을 때 기록됩니다.
+
+**이벤트 이름**: `claude_code.hook_execution_complete`
+
+**속성**:
+
+* 모든 [표준 속성](#standard-attributes)
+* `event.name`: `"hook_execution_complete"`
+* `event.timestamp`: ISO 8601 타임스탬프
+* `event.sequence`: 세션 내 이벤트 순서 지정을 위한 단조 증가 카운터
+* `hook_event`: 훅 이벤트 유형
+* `hook_name`: 매처를 포함한 전체 훅 이름
+* `num_hooks`: 일치하는 훅 명령 수
+* `num_success`: 성공적으로 완료된 수
+* `num_blocking`: 차단 결정을 반환한 수
+* `num_non_blocking_error`: 차단 없이 실패한 수
+* `num_cancelled`: 완료 전에 취소된 수
+* `total_duration_ms`: 모든 일치하는 훅의 벽시계 지속 시간
+* `managed_only`: 관리 정책 훅만 허용될 때 `"true"`
+* `hook_source`: `"policySettings"` 또는 `"merged"`
+* `hook_definitions`: JSON 직렬화된 훅 구성. 상세 베타 추적과 `OTEL_LOG_TOOL_DETAILS=1`이 모두 활성화되어 있을 때만 포함됨
+
+#### 압축 이벤트
+
+대화 압축이 완료될 때 기록됩니다.
+
+**이벤트 이름**: `claude_code.compaction`
+
+**속성**:
+
+* 모든 [표준 속성](#standard-attributes)
+* `event.name`: `"compaction"`
+* `event.timestamp`: ISO 8601 타임스탬프
+* `event.sequence`: 세션 내 이벤트 순서 지정을 위한 단조 증가 카운터
+* `trigger`: `"auto"` 또는 `"manual"`
+* `success`: `"true"` 또는 `"false"`
+* `duration_ms`: 압축 지속 시간
+* `pre_tokens`: 압축 전 대략적인 토큰 수
+* `post_tokens`: 압축 후 대략적인 토큰 수
+* `error`: 압축이 실패했을 때 오류 메시지
 
 ## 메트릭 및 이벤트 데이터 해석
 
@@ -498,6 +850,14 @@ Claude에 대한 API 요청이 실패할 때 기록됩니다.
 * 특정 사용자의 높은 세션 볼륨
 
 모든 메트릭은 `user.account_uuid`, `user.account_id`, `organization.id`, `session.id`, `model` 및 `app.version`으로 세분화할 수 있습니다.
+
+### 재시도 소진 감지
+
+Claude Code는 실패한 API 요청을 내부적으로 재시도하고 포기한 후에만 단일 `claude_code.api_error` 이벤트를 내보내므로 이벤트 자체가 해당 요청의 최종 신호입니다. 중간 재시도 시도는 별도의 이벤트로 기록되지 않습니다.
+
+이벤트의 `attempt` 속성은 총 시도 횟수를 기록합니다. `CLAUDE_CODE_MAX_RETRIES` (기본값 `10`)보다 큰 값은 요청이 일시적 오류에 대한 모든 재시도를 소진했음을 나타냅니다. 더 낮은 값은 `400` 응답과 같은 재시도 불가능한 오류를 나타냅니다.
+
+복구된 세션과 정체된 세션을 구분하려면 `session.id`로 이벤트를 그룹화하고 오류 후 나중에 `api_request` 이벤트가 존재하는지 확인합니다.
 
 ### 이벤트 분석
 
@@ -559,8 +919,9 @@ Claude에 대한 API 요청이 실패할 때 기록됩니다.
 * 원본 파일 콘텐츠 및 코드 스니펫은 메트릭 또는 이벤트에 포함되지 않습니다. 추적 스팬은 별도의 데이터 경로입니다: 아래의 `OTEL_LOG_TOOL_CONTENT` 항목을 참조하세요
 * OAuth를 통해 인증된 경우 `user.email`이 원격 측정 속성에 포함됩니다. 조직에서 이것이 우려 사항인 경우 원격 측정 백엔드와 함께 작업하여 이 필드를 필터링하거나 수정합니다
 * 사용자 프롬프트 콘텐츠는 기본적으로 수집되지 않습니다. 프롬프트 길이만 기록됩니다. 프롬프트 콘텐츠를 포함하려면 `OTEL_LOG_USER_PROMPTS=1`을 설정합니다
-* 도구 입력 인수 및 매개변수는 기본적으로 기록되지 않습니다. 이를 포함하려면 `OTEL_LOG_TOOL_DETAILS=1`을 설정합니다. 활성화되면 `tool_result` 이벤트는 Bash 명령, MCP 서버 및 도구 이름, 스킬 이름이 포함된 `tool_parameters` 속성과 파일 경로, URL, 검색 패턴 및 기타 인수가 포함된 `tool_input` 속성을 포함합니다. 512자를 초과하는 개별 값은 잘리고 전체는 약 4K 문자로 제한되지만 인수에는 여전히 민감한 값이 포함될 수 있습니다. 필요에 따라 이러한 속성을 필터링하거나 수정하도록 원격 측정 백엔드를 구성합니다
+* 도구 입력 인수 및 매개변수는 기본적으로 기록되지 않습니다. 이를 포함하려면 `OTEL_LOG_TOOL_DETAILS=1`을 설정합니다. 활성화되면 `tool_result` 이벤트는 Bash 명령, MCP 서버 및 도구 이름, 스킬 이름이 포함된 `tool_parameters` 속성과 파일 경로, URL, 검색 패턴 및 기타 인수가 포함된 `tool_input` 속성을 포함합니다. `user_prompt` 이벤트는 사용자 정의, 플러그인 및 MCP 명령의 축자 `command_name`을 포함합니다. 추적 스팬은 동일한 `tool_input` 속성 및 `file_path`와 같은 입력 파생 속성을 포함합니다. 512자를 초과하는 개별 값은 잘리고 전체는 약 4K 문자로 제한되지만 인수에는 여전히 민감한 값이 포함될 수 있습니다. 필요에 따라 이러한 속성을 필터링하거나 수정하도록 원격 측정 백엔드를 구성합니다
 * 도구 입력 및 출력 콘텐츠는 기본적으로 추적 스팬에 기록되지 않습니다. 이를 포함하려면 `OTEL_LOG_TOOL_CONTENT=1`을 설정합니다. 활성화되면 스팬 이벤트는 스팬당 60KB에서 잘린 전체 도구 입력 및 출력 콘텐츠를 포함합니다. 여기에는 Read 도구 결과의 원본 파일 콘텐츠 및 Bash 명령 출력이 포함될 수 있습니다. 필요에 따라 이러한 속성을 필터링하거나 수정하도록 원격 측정 백엔드를 구성합니다
+* 원본 Anthropic Messages API 요청 및 응답 본문은 기본적으로 기록되지 않습니다. 이를 포함하려면 `OTEL_LOG_RAW_API_BODIES`를 설정합니다. `=1`일 때 각 API 호출은 `body` 속성이 JSON 직렬화된 페이로드 (60KB에서 잘림)인 `api_request_body` 및 `api_response_body` 로그 이벤트를 내보냅니다. `=file:<dir>`일 때 잘리지 않은 본문은 해당 디렉토리 아래의 `.request.json` 및 `.response.json` 파일에 기록되고 이벤트는 인라인 본문 대신 `body_ref` 경로를 전달합니다. 로그 수집기 또는 사이드카와 함께 디렉토리를 배포하되 원격 측정 스트림을 통해서는 배포하지 마세요. 두 모드 모두에서 본문에는 전체 대화 기록 (시스템 프롬프트, 모든 이전 사용자 및 어시스턴트 턴, 도구 결과)이 포함되므로 이를 활성화하면 다른 `OTEL_LOG_*` 콘텐츠 플래그가 공개할 모든 것에 동의하는 것을 의미합니다. Claude의 확장 사고 콘텐츠는 다른 설정에 관계없이 항상 이러한 본문에서 수정됩니다
 
 ## Amazon Bedrock에서 Claude Code 모니터링
 

@@ -299,128 +299,13 @@ Hook 决定不会绕过权限规则。Deny 和 ask 规则在 hook 返回 `"allow
 | `pluginTrustMessage`                           | 自定义消息，附加到安装前显示的插件信任警告                                                                                                                        |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | 当为 `true` 时，仅尊重来自托管设置的 `filesystem.allowRead` 路径。`denyRead` 仍然从所有来源合并                                                                        |
 | `sandbox.network.allowManagedDomainsOnly`      | 当为 `true` 时，仅尊重来自托管设置的 `allowedDomains` 和 `WebFetch(domain:...)` allow 规则。非允许的域被自动阻止，不提示用户。被拒绝的域仍然从所有来源合并                                    |
-| `strictKnownMarketplaces`                      | 控制用户可以添加哪些插件市场。请参见[托管市场限制](/zh-CN/plugin-marketplaces#managed-marketplace-restrictions)                                                      |
+| `strictKnownMarketplaces`                      | 控制用户可以添加和安装插件的插件市场来源。请参见[托管市场限制](/zh-CN/plugin-marketplaces#managed-marketplace-restrictions)                                                |
 
 `disableBypassPermissionsMode` 通常放在托管设置中以强制执行组织策略，但它可以从任何范围工作。用户可以在自己的设置中设置它以将自己锁定在绕过模式之外。
 
 <Note>
   对[远程控制](/zh-CN/remote-control)和[网络会话](/zh-CN/claude-code-on-the-web)的访问不由托管设置密钥控制。在 Team 和 Enterprise 计划上，管理员在[Claude Code 管理设置](https://claude.ai/admin-settings/claude-code)中启用或禁用这些功能。
 </Note>
-
-## 审查自动模式拒绝
-
-当[自动模式](/zh-CN/permission-modes#eliminate-prompts-with-auto-mode)拒绝工具调用时，会出现通知，被拒绝的操作被记录在 `/permissions` 下的"最近拒绝"选项卡中。在被拒绝的操作上按 `r` 将其标记为重试：当您退出对话框时，Claude Code 发送一条消息告诉模型它可能重试该工具调用并恢复对话。
-
-要以编程方式对拒绝做出反应，请使用 [`PermissionDenied` hook](/zh-CN/hooks#permissiondenied)。
-
-## 配置自动模式分类器
-
-[自动模式](/zh-CN/permission-modes#eliminate-prompts-with-auto-mode)使用分类器模型来决定每个操作是否可以安全运行而无需提示。开箱即用，它仅信任工作目录和（如果存在）当前存储库的远程。诸如推送到您公司的源代码控制组织或写入团队云存储桶之类的操作将被阻止为潜在的数据泄露。
-
-要调整分类器允许或阻止的内容，请向您的 [CLAUDE.md](/zh-CN/memory) 文件添加说明。分类器从对话旁边的受信任目录中读取 CLAUDE.md，因此诸如"永远不要强制推送"之类的说明同时指导 Claude 和分类器。从项目约定和行为规则开始。
-
-对于适用于多个项目的规则，例如受信任的基础设施或组织范围的拒绝规则，请使用 `autoMode` 设置块。分类器从用户设置、`.claude/settings.local.json` 和托管设置中读取 `autoMode`。它不从 `.claude/settings.json` 中的共享项目设置中读取，因为已检入的存储库可能会注入自己的 allow 规则。
-
-| 范围          | 文件                            | 用于                        |
-| :---------- | :---------------------------- | :------------------------ |
-| 一个开发人员      | `~/.claude/settings.json`     | 个人信任的基础设施                 |
-| 一个项目，一个开发人员 | `.claude/settings.local.json` | 每个项目的信任的存储桶或服务，gitignored |
-| 组织范围        | 托管设置                          | 为所有开发人员强制执行的信任基础设施        |
-
-来自每个范围的条目被合并。开发人员可以使用个人条目扩展 `environment`、`allow` 和 `soft_deny`，但无法删除托管设置提供的条目。因为 allow 规则在分类器内充当阻止规则的例外，开发人员添加的 `allow` 条目可以覆盖组织 `soft_deny` 条目：组合是加法的，不是硬策略边界。如果您需要开发人员无法绕过的规则，请改用托管设置中的 `permissions.deny`，它在分类器被咨询之前阻止操作。
-
-### 定义信任的基础设施
-
-对于大多数组织，`autoMode.environment` 是您需要设置的唯一字段。它告诉分类器哪些存储库、存储桶和域是信任的，而不触及内置的阻止和 allow 规则。分类器使用 `environment` 来决定"外部"的含义：任何未列出的目标都是潜在的泄露目标。
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Source control: github.example.com/acme-corp and all repos under it",
-      "Trusted cloud buckets: s3://acme-build-artifacts, gs://acme-ml-datasets",
-      "Trusted internal domains: *.corp.example.com, api.internal.example.com",
-      "Key internal services: Jenkins at ci.example.com, Artifactory at artifacts.example.com"
-    ]
-  }
-}
-```
-
-条目是散文，不是正则表达式或工具模式。分类器将它们作为自然语言规则读取。按照您向新工程师描述基础设施的方式编写它们。彻底的环境部分涵盖：
-
-* **组织**：您的公司名称以及 Claude Code 主要用于什么，如软件开发、基础设施自动化或数据工程
-* **源代码控制**：您的开发人员推送到的每个 GitHub、GitLab 或 Bitbucket 组织
-* **云提供商和信任的存储桶**：Claude 应该能够读取和写入的存储桶名称或前缀
-* **信任的内部域**：您网络内的 API、仪表板和服务的主机名，如 `*.internal.example.com`
-* **关键内部服务**：CI、工件注册表、内部包索引、事件工具
-* **其他上下文**：受管制行业的约束、多租户基础设施或影响分类器应将什么视为风险的合规要求
-
-一个有用的起始模板：填入括号中的字段并删除任何不适用的行：
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Organization: {COMPANY_NAME}. Primary use: {PRIMARY_USE_CASE, e.g. software development, infrastructure automation}",
-      "Source control: {SOURCE_CONTROL, e.g. GitHub org github.example.com/acme-corp}",
-      "Cloud provider(s): {CLOUD_PROVIDERS, e.g. AWS, GCP, Azure}",
-      "Trusted cloud buckets: {TRUSTED_BUCKETS, e.g. s3://acme-builds, gs://acme-datasets}",
-      "Trusted internal domains: {TRUSTED_DOMAINS, e.g. *.internal.example.com, api.example.com}",
-      "Key internal services: {SERVICES, e.g. Jenkins at ci.example.com, Artifactory at artifacts.example.com}",
-      "Additional context: {EXTRA, e.g. regulated industry, multi-tenant infrastructure, compliance requirements}"
-    ]
-  }
-}
-```
-
-您提供的上下文越具体，分类器就越能区分常规内部操作和泄露尝试。
-
-您不需要一次性填写所有内容。合理的推出：从默认值开始，添加您的源代码控制组织和关键内部服务，这解决了最常见的误报，如推送到您自己的存储库。接下来添加信任的域和云存储桶。当阻止出现时填写其余部分。
-
-### 覆盖阻止和 allow 规则
-
-两个额外的字段让您替换分类器的内置规则列表：`autoMode.soft_deny` 控制被阻止的内容，`autoMode.allow` 控制哪些例外适用。每个都是散文描述的数组，作为自然语言规则读取。
-
-在分类器内，优先级是：`soft_deny` 规则首先阻止，然后 `allow` 规则作为例外覆盖，然后显式用户意图覆盖两者。如果用户的消息直接且具体地描述 Claude 即将采取的确切操作，分类器允许它，即使 `soft_deny` 规则匹配。一般请求不计数：要求 Claude"清理存储库"不授权强制推送，但要求 Claude"强制推送此分支"则授权。
-
-要放松：当默认值阻止您的管道已通过 PR 审查、CI 或暂存环境保护的内容时，从 `soft_deny` 中删除规则，或当分类器重复标记默认例外不涵盖的常规模式时添加到 `allow`。要收紧：添加到 `soft_deny` 以应对您的环境特有的风险，默认值遗漏，或从 `allow` 中删除以对阻止规则保持默认例外。在所有情况下，运行 `claude auto-mode defaults` 以获取完整的默认列表，然后复制和编辑：永远不要从空列表开始。
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Source control: github.example.com/acme-corp and all repos under it"
-    ],
-    "allow": [
-      "Deploying to the staging namespace is allowed: staging is isolated from production and resets nightly",
-      "Writing to s3://acme-scratch/ is allowed: ephemeral bucket with a 7-day lifecycle policy"
-    ],
-    "soft_deny": [
-      "Never run database migrations outside the migrations CLI, even against dev databases",
-      "Never modify files under infra/terraform/prod/: production infrastructure changes go through the review workflow",
-      "...copy full default soft_deny list here first, then add your rules..."
-    ]
-  }
-}
-```
-
-<Danger>
-  设置 `allow` 或 `soft_deny` 替换该部分的整个默认列表。如果您使用单个条目设置 `soft_deny`，每个内置阻止规则都被丢弃：强制推送、数据泄露、`curl | bash`、生产部署和所有其他默认阻止规则变为允许。为了安全地自定义，运行 `claude auto-mode defaults` 以打印内置规则，将它们复制到您的设置文件中，然后根据您自己的管道和风险容限审查每个规则。仅删除您的基础设施已经缓解的风险的规则。
-</Danger>
-
-三个部分被独立评估，因此仅设置 `environment` 保留默认的 `allow` 和 `soft_deny` 列表完整。
-
-### 检查默认值和您的有效配置
-
-因为设置 `allow` 或 `soft_deny` 替换默认值，通过复制完整的默认列表开始任何自定义。三个 CLI 子命令帮助您检查和验证：
-
-```bash theme={null}
-claude auto-mode defaults  # the built-in environment, allow, and soft_deny rules
-claude auto-mode config    # what the classifier actually uses: your settings where set, defaults otherwise
-claude auto-mode critique  # get AI feedback on your custom allow and soft_deny rules
-```
-
-将 `claude auto-mode defaults` 的输出保存到文件，编辑列表以匹配您的策略，并将结果粘贴到您的设置文件中。保存后，运行 `claude auto-mode config` 以确认有效规则是您期望的。如果您编写了自定义规则，`claude auto-mode critique` 审查它们并标记模糊、冗余或可能导致误报的条目。
 
 ## 设置优先级
 
@@ -443,6 +328,7 @@ claude auto-mode critique  # get AI feedback on your custom allow and soft_deny 
 ## 另请参见
 
 * [Settings](/zh-CN/settings)：完整的配置参考，包括权限设置表
+* [Configure auto mode](/zh-CN/auto-mode-config)：告诉自动模式分类器您的组织信任哪些基础设施
 * [Sandboxing](/zh-CN/sandboxing)：Bash 命令的 OS 级文件系统和网络隔离
 * [Authentication](/zh-CN/authentication)：设置用户对 Claude Code 的访问
 * [Security](/zh-CN/security)：安全保障和最佳实践

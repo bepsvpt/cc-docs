@@ -78,7 +78,7 @@ Un CLAUDE.md de projet peut être stocké dans `./CLAUDE.md` ou `./.claude/CLAUD
 
 Les fichiers CLAUDE.md sont chargés dans la fenêtre de contexte au début de chaque session, consommant des tokens aux côtés de votre conversation. La [visualisation de la fenêtre de contexte](/fr/context-window) montre où CLAUDE.md se charge par rapport au reste du contexte de démarrage. Parce qu'ils sont du contexte plutôt qu'une configuration appliquée, la façon dont vous écrivez les instructions affecte la fiabilité avec laquelle Claude les suit. Les instructions spécifiques, concises et bien structurées fonctionnent mieux.
 
-**Taille** : visez moins de 200 lignes par fichier CLAUDE.md. Les fichiers plus longs consomment plus de contexte et réduisent l'adhérence. Si vos instructions deviennent trop grandes, divisez-les en utilisant les [imports](#import-additional-files) ou les fichiers [`.claude/rules/`](#organize-rules-with-claude/rules/).
+**Taille** : visez moins de 200 lignes par fichier CLAUDE.md. Les fichiers plus longs consomment plus de contexte et réduisent l'adhérence. Si vos instructions deviennent trop grandes, utilisez les [règles limitées au chemin](#path-specific-rules) pour que les instructions ne se chargent que quand Claude travaille avec des fichiers correspondants, réduisant le bruit et économisant l'espace de contexte. Vous pouvez également diviser le contenu en [imports](#import-additional-files) pour l'organisation, bien que les fichiers importés se chargent toujours et entrent dans la fenêtre de contexte au lancement.
 
 **Structure** : utilisez les en-têtes markdown et les puces pour regrouper les instructions connexes. Claude scanne la structure de la même manière que les lecteurs : les sections organisées sont plus faciles à suivre que les paragraphes denses.
 
@@ -390,7 +390,7 @@ Exécutez `/memory` et sélectionnez le dossier de mémoire automatique pour par
 
 ### Mon CLAUDE.md est trop volumineux
 
-Les fichiers de plus de 200 lignes consomment plus de contexte et peuvent réduire l'adhérence. Déplacez le contenu détaillé dans des fichiers séparés référencés avec les imports `@path` (consultez [Importer des fichiers supplémentaires](#import-additional-files)), ou divisez vos instructions entre les fichiers `.claude/rules/`.
+Les fichiers de plus de 200 lignes consomment plus de contexte et peuvent réduire l'adhérence. Utilisez les [règles spécifiques au chemin](#path-specific-rules) pour charger les instructions uniquement lorsque Claude travaille avec des fichiers correspondants, ou réduisez le contenu qui n'est pas nécessaire dans chaque session. La division en [imports `@path`](#import-additional-files) aide à l'organisation mais ne réduit pas le contexte, puisque les fichiers importés se chargent au lancement.
 
 ### Les instructions semblent perdues après `/compact`
 

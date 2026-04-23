@@ -89,6 +89,8 @@ To install Claude Code, use one of the following methods:
   </Tab>
 </Tabs>
 
+You can also install with [apt, dnf, or apk](/en/setup#install-with-linux-package-managers) on Debian, Fedora, RHEL, and Alpine.
+
 설치가 완료된 후 작업하려는 프로젝트에서 터미널을 열고 Claude Code를 시작하세요:
 
 ```bash theme={null}
@@ -171,14 +173,14 @@ Claude Code는 Pro, Max, Team, Enterprise 또는 Console 계정이 필요합니�
 
 ## Claude Code 업데이트
 
-네이티브 설치는 백그라운드에서 자동으로 업데이트됩니다. [릴리스 채널을 구성](#configure-release-channel)하여 즉시 업데이트를 받을지 또는 지연된 안정적인 일정으로 받을지 제어하거나 [자동 업데이트를 비활성화](#disable-auto-updates)할 수 있습니다. Homebrew 및 WinGet 설치는 수동 업데이트가 필요합니다.
+네이티브 설치는 백그라운드에서 자동으로 업데이트됩니다. [릴리스 채널을 구성](#configure-release-channel)하여 즉시 업데이트를 받을지 또는 지연된 안정적인 일정으로 받을지 제어하거나, [자동 업데이트를 비활성화](#disable-auto-updates)할 수 있습니다. Homebrew, WinGet 및 [Linux 패키지 관리자](#install-with-linux-package-managers) 설치는 수동 업데이트가 필요합니다.
 
 ### 자동 업데이트
 
 Claude Code는 시작 시 및 실행 중에 주기적으로 업데이트를 확인합니다. 업데이트는 백그라운드에서 다운로드 및 설치되며 다음 번에 Claude Code를 시작할 때 적용됩니다.
 
 <Note>
-  Homebrew 및 WinGet 설치는 자동으로 업데이트되지 않습니다. Homebrew의 경우 `brew upgrade claude-code` 또는 `brew upgrade claude-code@latest`를 실행하세요(설치한 cask에 따라 다름). WinGet의 경우 `winget upgrade Anthropic.ClaudeCode`를 실행하세요.
+  Homebrew, WinGet, apt, dnf 및 apk 설치는 자동으로 업데이트되지 않습니다. Homebrew의 경우 `brew upgrade claude-code` 또는 `brew upgrade claude-code@latest`를 실행하세요(설치한 cask에 따라 다름). WinGet의 경우 `winget upgrade Anthropic.ClaudeCode`를 실행하세요. Linux 패키지 관리자의 경우 [Linux 패키지 관리자로 설치](#install-with-linux-package-managers)의 업그레이드 명령을 참조하세요.
 
   **알려진 문제:** Claude Code는 새 버전이 이러한 패키지 관리자에서 사용 가능하기 전에 업데이트를 알릴 수 있습니다. 업그레이드가 실패하면 잠시 기다렸다가 나중에 다시 시도하세요.
 
@@ -243,7 +245,7 @@ claude update
 
 ## 고급 설치 옵션
 
-이러한 옵션은 버전 고정, npm에서 마이그레이션 및 바이너리 무결성 확인을 위한 것입니다.
+이러한 옵션은 버전 고정, Linux 패키지 관리자, npm 및 바이너리 무결성 확인을 위한 것입니다.
 
 ### 특정 버전 설치
 
@@ -315,6 +317,67 @@ claude update
   </Tab>
 </Tabs>
 
+### Linux 패키지 관리자로 설치
+
+Claude Code는 서명된 apt, dnf 및 apk 저장소를 게시합니다. 롤링 채널의 경우 `stable`을 `latest`로 바꾸세요. 패키지 관리자 설치는 Claude Code를 통해 자동 업데이트되지 않습니다. 업데이트는 일반적인 시스템 업그레이드 워크플로우를 통해 제공됩니다.
+
+모든 저장소는 [Claude Code 릴리스 서명 키](#binary-integrity-and-code-signing)로 서명됩니다. 키를 신뢰하기 전에 각 탭에 설명된 대로 확인하세요.
+
+<Tabs>
+  <Tab title="apt">
+    Debian 및 Ubuntu용입니다. 롤링 채널을 사용하려면 `deb` 줄의 두 `stable` 항목을 변경하세요: URL 경로 및 제품군 이름입니다.
+
+    ```bash theme={null}
+    sudo install -d -m 0755 /etc/apt/keyrings
+    sudo curl -fsSL https://downloads.claude.ai/keys/claude-code.asc \
+      -o /etc/apt/keyrings/claude-code.asc
+    echo "deb [signed-by=/etc/apt/keyrings/claude-code.asc] https://downloads.claude.ai/claude-code/apt/stable stable main" \
+      | sudo tee /etc/apt/sources.list.d/claude-code.list
+    sudo apt update
+    sudo apt install claude-code
+    ```
+
+    신뢰하기 전에 GPG 키 지문을 확인하세요: `gpg --show-keys /etc/apt/keyrings/claude-code.asc`는 `31DD DE24 DDFA B679 F42D 7BD2 BAA9 29FF 1A7E CACE`를 보고해야 합니다.
+
+    나중에 업그레이드하려면 `sudo apt update && sudo apt upgrade claude-code`를 실행하세요.
+  </Tab>
+
+  <Tab title="dnf">
+    Fedora 및 RHEL용입니다:
+
+    ```bash theme={null}
+    sudo tee /etc/yum.repos.d/claude-code.repo <<'EOF'
+    [claude-code]
+    name=Claude Code
+    baseurl=https://downloads.claude.ai/claude-code/rpm/stable
+    enabled=1
+    gpgcheck=1
+    gpgkey=https://downloads.claude.ai/keys/claude-code.asc
+    EOF
+    sudo dnf install claude-code
+    ```
+
+    dnf는 첫 설치 시 키를 다운로드하고 지문을 확인하도록 요청합니다. `31DD DE24 DDFA B679 F42D 7BD2 BAA9 29FF 1A7E CACE`와 일치하는지 확인한 후 수락하세요.
+
+    나중에 업그레이드하려면 `sudo dnf upgrade claude-code`를 실행하세요.
+  </Tab>
+
+  <Tab title="apk">
+    Alpine Linux용입니다:
+
+    ```sh theme={null}
+    wget -O /etc/apk/keys/claude-code.rsa.pub \
+      https://downloads.claude.ai/keys/claude-code.rsa.pub
+    echo "https://downloads.claude.ai/claude-code/apk/stable" >> /etc/apk/repositories
+    apk add claude-code
+    ```
+
+    `sha256sum /etc/apk/keys/claude-code.rsa.pub`로 다운로드한 키를 확인하세요. 이는 `395759c1f7449ef4cdef305a42e820f3c766d6090d142634ebdb049f113168b6`을 보고해야 합니다.
+
+    나중에 업그레이드하려면 `apk update && apk upgrade claude-code`를 실행하세요.
+  </Tab>
+</Tabs>
+
 ### npm으로 설치
 
 Claude Code를 전역 npm 패키지로 설치할 수도 있습니다. 패키지에는 [Node.js 18 이상](https://nodejs.org/en/download)이 필요합니다.
@@ -328,7 +391,7 @@ npm 패키지는 독립 실행형 설치 프로그램과 동일한 네이티브 
 지원되는 npm 설치 플랫폼은 `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64` 및 `win32-arm64`입니다. 패키지 관리자는 선택적 종속성을 허용해야 합니다. 설치 후 바이너리가 누락된 경우 [문제 해결](/ko/troubleshooting#native-binary-not-found-after-npm-install)을 참조하세요.
 
 <Warning>
-  `sudo npm install -g`를 사용하지 마세요. 이는 권한 문제 및 보안 위험으로 이어질 수 있습니다. 권한 오류가 발생하면 [권한 오류 문제 해결](/ko/troubleshooting#permission-errors-during-installation)을 참조하세요.
+  `sudo npm install -g`를 사용하지 마세요. 이는 권한 문제 및 보안 위험으로 이어질 수 있습니다. 권한 오류가 발생하면 [설치 중 권한 오류 문제 해결](/ko/troubleshooting#permission-errors-during-installation)을 참조하세요.
 </Warning>
 
 ### 바이너리 무결성 및 코드 서명
@@ -364,7 +427,7 @@ npm 패키지는 독립 실행형 설치 프로그램과 동일한 네이티브 
     `VERSION`을 확인하려는 릴리스로 설정하세요.
 
     ```bash theme={null}
-    REPO=https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases
+    REPO=https://downloads.claude.ai/claude-code-releases
     VERSION=2.1.89
     curl -fsSLO "$REPO/$VERSION/manifest.json"
     curl -fsSLO "$REPO/$VERSION/manifest.json.sig"
@@ -418,7 +481,7 @@ npm 패키지는 독립 실행형 설치 프로그램과 동일한 네이티브 
 
 * **macOS**: "Anthropic PBC"에서 서명하고 Apple에서 공증합니다. `codesign --verify --verbose ./claude`로 확인하세요.
 * **Windows**: "Anthropic, PBC"에서 서명합니다. `Get-AuthenticodeSignature .\claude.exe`로 확인하세요.
-* **Linux**: 위의 매니페스트 서명을 사용하여 무결성을 확인하세요. Linux 바이너리는 개별적으로 코드 서명되지 않습니다.
+* **Linux**: 바이너리는 개별적으로 코드 서명되지 않습니다. `claude-code-releases` 버킷에서 직접 다운로드하거나 네이티브 설치 프로그램을 사용하는 경우 위의 매니페스트 서명으로 무결성을 확인하세요. [apt, dnf 또는 apk](#install-with-linux-package-managers)로 설치하는 경우 패키지 관리자가 저장소 서명 키를 사용하여 서명을 자동으로 확인합니다.
 
 ## Claude Code 제거
 
@@ -465,6 +528,34 @@ WinGet 패키지를 제거하세요:
 ```powershell theme={null}
 winget uninstall Anthropic.ClaudeCode
 ```
+
+### apt / dnf / apk
+
+패키지 및 저장소 구성을 제거하세요:
+
+<Tabs>
+  <Tab title="apt">
+    ```bash theme={null}
+    sudo apt remove claude-code
+    sudo rm /etc/apt/sources.list.d/claude-code.list /etc/apt/keyrings/claude-code.asc
+    ```
+  </Tab>
+
+  <Tab title="dnf">
+    ```bash theme={null}
+    sudo dnf remove claude-code
+    sudo rm /etc/yum.repos.d/claude-code.repo
+    ```
+  </Tab>
+
+  <Tab title="apk">
+    ```sh theme={null}
+    apk del claude-code
+    sed -i '\|downloads.claude.ai/claude-code/apk|d' /etc/apk/repositories
+    rm /etc/apk/keys/claude-code.rsa.pub
+    ```
+  </Tab>
+</Tabs>
 
 ### npm
 

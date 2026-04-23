@@ -677,7 +677,7 @@ Use `".*"` como `pathPattern` para permitir qualquer caminho de sistema de arqui
 
 #### Como as restrições funcionam
 
-As restrições são validadas no início do processo de instalação de plugin, antes de qualquer solicitação de rede ou operação de sistema de arquivos ocorrer. Isso previne tentativas de acesso não autorizado a marketplace.
+As restrições são verificadas antes de qualquer operação de rede ou sistema de arquivos. A verificação é executada na adição de marketplace e na instalação, atualização, atualização e auto-atualização de plugin. Se um marketplace foi adicionado antes da política ser configurada e sua fonte não corresponder mais à lista de permissões, Claude Code recusa instalar ou atualizar plugins a partir dele. A mesma aplicação se aplica a `blockedMarketplaces`.
 
 A lista de permissões usa correspondência exata para a maioria dos tipos de fonte. Para um marketplace ser permitido, todos os campos especificados devem corresponder exatamente:
 

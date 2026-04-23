@@ -68,27 +68,28 @@ claude
 
 ### 常见配置变量
 
-| 环境变量                                                | 描述                                                                      | 示例值                                  |
-| --------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------ |
-| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | 启用遥测收集（必需）                                                              | `1`                                  |
-| `OTEL_METRICS_EXPORTER`                             | 指标导出器类型，逗号分隔。使用 `none` 禁用                                               | `console`、`otlp`、`prometheus`、`none` |
-| `OTEL_LOGS_EXPORTER`                                | 日志/事件导出器类型，逗号分隔。使用 `none` 禁用                                            | `console`、`otlp`、`none`              |
-| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | OTLP 导出器的协议，适用于所有信号                                                     | `grpc`、`http/json`、`http/protobuf`   |
-| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | 所有信号的 OTLP 收集器端点                                                        | `http://localhost:4317`              |
-| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | 指标协议，覆盖常规设置                                                             | `grpc`、`http/json`、`http/protobuf`   |
-| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | OTLP 指标端点，覆盖常规设置                                                        | `http://localhost:4318/v1/metrics`   |
-| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | 日志协议，覆盖常规设置                                                             | `grpc`、`http/json`、`http/protobuf`   |
-| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | OTLP 日志端点，覆盖常规设置                                                        | `http://localhost:4318/v1/logs`      |
-| `OTEL_EXPORTER_OTLP_HEADERS`                        | OTLP 的身份验证标头                                                            | `Authorization=Bearer token`         |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | mTLS 身份验证的客户端密钥                                                         | 客户端密钥文件的路径                           |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | mTLS 身份验证的客户端证书                                                         | 客户端证书文件的路径                           |
-| `OTEL_METRIC_EXPORT_INTERVAL`                       | 导出间隔（毫秒）（默认：60000）                                                      | `5000`、`60000`                       |
-| `OTEL_LOGS_EXPORT_INTERVAL`                         | 日志导出间隔（毫秒）（默认：5000）                                                     | `1000`、`10000`                       |
-| `OTEL_LOG_USER_PROMPTS`                             | 启用用户提示内容的日志记录（默认：禁用）                                                    | `1` 启用                               |
-| `OTEL_LOG_TOOL_DETAILS`                             | 启用在工具事件中记录工具参数和输入参数：Bash 命令、MCP 服务器和工具名称、技能名称和工具输入（默认：禁用）               | `1` 启用                               |
-| `OTEL_LOG_TOOL_CONTENT`                             | 启用在 span 事件中记录工具输入和输出内容（默认：禁用）。需要 [tracing](#traces-beta)。内容在 60 KB 处截断 | `1` 启用                               |
-| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | 指标时间性偏好（默认：`delta`）。如果您的后端期望累积时间性，请设置为 `cumulative`                     | `delta`、`cumulative`                 |
-| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | 刷新动态标头的间隔（默认：1740000ms / 29 分钟）                                         | `900000`                             |
+| 环境变量                                                | 描述                                                                                                                                                                                                        | 示例值                                                                   |
+| --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | 启用遥测收集（必需）                                                                                                                                                                                                | `1`                                                                   |
+| `OTEL_METRICS_EXPORTER`                             | 指标导出器类型，逗号分隔。使用 `none` 禁用                                                                                                                                                                                 | `console`、`otlp`、`prometheus`、`none`                                  |
+| `OTEL_LOGS_EXPORTER`                                | 日志/事件导出器类型，逗号分隔。使用 `none` 禁用                                                                                                                                                                              | `console`、`otlp`、`none`                                               |
+| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | OTLP 导出器的协议，适用于所有信号                                                                                                                                                                                       | `grpc`、`http/json`、`http/protobuf`                                    |
+| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | 所有信号的 OTLP 收集器端点                                                                                                                                                                                          | `http://localhost:4317`                                               |
+| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | 指标协议，覆盖常规设置                                                                                                                                                                                               | `grpc`、`http/json`、`http/protobuf`                                    |
+| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | OTLP 指标端点，覆盖常规设置                                                                                                                                                                                          | `http://localhost:4318/v1/metrics`                                    |
+| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | 日志协议，覆盖常规设置                                                                                                                                                                                               | `grpc`、`http/json`、`http/protobuf`                                    |
+| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | OTLP 日志端点，覆盖常规设置                                                                                                                                                                                          | `http://localhost:4318/v1/logs`                                       |
+| `OTEL_EXPORTER_OTLP_HEADERS`                        | OTLP 的身份验证标头                                                                                                                                                                                              | `Authorization=Bearer token`                                          |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | mTLS 身份验证的客户端密钥                                                                                                                                                                                           | 客户端密钥文件的路径                                                            |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | mTLS 身份验证的客户端证书                                                                                                                                                                                           | 客户端证书文件的路径                                                            |
+| `OTEL_METRIC_EXPORT_INTERVAL`                       | 导出间隔（毫秒）（默认：60000）                                                                                                                                                                                        | `5000`、`60000`                                                        |
+| `OTEL_LOGS_EXPORT_INTERVAL`                         | 日志导出间隔（毫秒）（默认：5000）                                                                                                                                                                                       | `1000`、`10000`                                                        |
+| `OTEL_LOG_USER_PROMPTS`                             | 启用用户提示内容的日志记录（默认：禁用）                                                                                                                                                                                      | `1` 启用                                                                |
+| `OTEL_LOG_TOOL_DETAILS`                             | 启用在工具事件和 trace span 属性中记录工具参数和输入参数：Bash 命令、MCP 服务器和工具名称、技能名称和工具输入。还在 `user_prompt` 事件上启用自定义、插件和 MCP 命令名称（默认：禁用）                                                                                           | `1` 启用                                                                |
+| `OTEL_LOG_TOOL_CONTENT`                             | 启用在 span 事件中记录工具输入和输出内容（默认：禁用）。需要 [tracing](#traces-beta)。内容在 60 KB 处截断                                                                                                                                   | `1` 启用                                                                |
+| `OTEL_LOG_RAW_API_BODIES`                           | 将完整的 Anthropic Messages API 请求和响应 JSON 作为 `api_request_body` / `api_response_body` 日志事件发出（默认：禁用）。主体包括整个对话历史。启用此选项意味着同意 `OTEL_LOG_USER_PROMPTS`、`OTEL_LOG_TOOL_DETAILS` 和 `OTEL_LOG_TOOL_CONTENT` 会揭示的所有内容 | `1` 用于在 60 KB 处截断的内联主体，或 `file:<dir>` 用于磁盘上的未截断主体，事件中带有 `body_ref` 指针 |
+| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | 指标时间性偏好（默认：`delta`）。如果您的后端期望累积时间性，请设置为 `cumulative`                                                                                                                                                       | `delta`、`cumulative`                                                  |
+| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | 刷新动态标头的间隔（默认：1740000ms / 29 分钟）                                                                                                                                                                           | `900000`                                                              |
 
 ### 指标基数控制
 
@@ -116,7 +117,117 @@ claude
 | `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`  | OTLP traces 端点，覆盖 `OTEL_EXPORTER_OTLP_ENDPOINT`     | `http://localhost:4318/v1/traces`  |
 | `OTEL_TRACES_EXPORT_INTERVAL`         | Span 批量导出间隔（毫秒）（默认：5000）                            | `1000`、`10000`                     |
 
-Spans 默认编辑用户提示文本和工具内容。设置 `OTEL_LOG_USER_PROMPTS=1` 和 `OTEL_LOG_TOOL_CONTENT=1` 以包含它们。
+Spans 默认编辑用户提示文本、工具输入详情和工具内容。设置 `OTEL_LOG_USER_PROMPTS=1`、`OTEL_LOG_TOOL_DETAILS=1` 和 `OTEL_LOG_TOOL_CONTENT=1` 以包含它们。
+
+当跟踪处于活动状态时，Bash 和 PowerShell 子进程会自动继承包含活动工具执行 span 的 W3C trace 上下文的 `TRACEPARENT` 环境变量。这让任何读取 `TRACEPARENT` 的子进程可以在同一 trace 下将其自己的 span 作为父级，通过 Claude 运行的脚本和命令启用端到端分布式跟踪。
+
+在 Agent SDK 和使用 `-p` 启动的非交互式会话中，Claude Code 还在启动每个交互 span 时从其自己的环境中读取 `TRACEPARENT` 和 `TRACESTATE`。这让嵌入过程可以将其活动的 W3C trace 上下文传递到子进程中，以便 Claude Code 的 span 显示为调用者分布式跟踪的子级。交互式会话忽略入站 `TRACEPARENT` 以避免意外继承来自 CI 或容器环境的环境值。
+
+#### Span 层次结构
+
+每个用户提示启动一个 `claude_code.interaction` 根 span。API 调用、工具调用和 hook 执行被记录为其子级。工具 span 有两个自己的子 span：一个用于等待权限决策所花费的时间，一个用于执行本身。当 Task 工具生成子代理时，子代理的 API 和工具 span 嵌套在父级的 `claude_code.tool` span 下。
+
+```text theme={null}
+claude_code.interaction
+├── claude_code.llm_request
+├── claude_code.hook                    (需要详细的测试版跟踪)
+└── claude_code.tool
+    ├── claude_code.tool.blocked_on_user
+    ├── claude_code.tool.execution
+    └── (Task 工具) 子代理 claude_code.llm_request / claude_code.tool span
+```
+
+在 Agent SDK 和 `claude -p` 会话中，当在环境中设置 `TRACEPARENT` 时，`claude_code.interaction` 本身成为调用者 span 的子级。
+
+#### Span 属性
+
+每个 span 都携带 [标准属性](#standard-attributes) 加上与其名称匹配的 `span.type` 属性。下表列出了在每个 span 上设置的其他属性。`llm_request`、`tool.execution` 和 `hook` span 在记录失败时设置 OpenTelemetry 状态 `ERROR`；其他 span 始终以状态 `UNSET` 结束。
+
+**`claude_code.interaction`**
+
+| 属性                        | 描述                               | 门控条件                    |
+| ------------------------- | -------------------------------- | ----------------------- |
+| `user_prompt`             | 提示文本。除非设置了门控条件，否则值为 `<REDACTED>` | `OTEL_LOG_USER_PROMPTS` |
+| `user_prompt_length`      | 提示长度（字符数）                        |                         |
+| `interaction.sequence`    | 此会话中交互的基于 1 的计数器                 |                         |
+| `interaction.duration_ms` | 轮次的实际时钟持续时间                      |                         |
+
+**`claude_code.llm_request`**
+
+| 属性                       | 描述                                            | 门控条件 |
+| ------------------------ | --------------------------------------------- | ---- |
+| `model`                  | 模型标识符                                         |      |
+| `gen_ai.system`          | 始终为 `anthropic`。OpenTelemetry GenAI 语义约定      |      |
+| `gen_ai.request.model`   | 与 `model` 相同的值。OpenTelemetry GenAI 语义约定       |      |
+| `query_source`           | 发出请求的子系统，例如 `repl_main_thread` 或子代理名称         |      |
+| `speed`                  | `fast` 或 `normal`                             |      |
+| `llm_request.context`    | `interaction`、`tool` 或 `standalone`，取决于父 span |      |
+| `duration_ms`            | 包括重试的实际时钟持续时间                                 |      |
+| `ttft_ms`                | 首个令牌的时间（毫秒）                                   |      |
+| `input_tokens`           | API 使用块中的输入令牌计数                               |      |
+| `output_tokens`          | 输出令牌计数                                        |      |
+| `cache_read_tokens`      | 从提示缓存读取的令牌                                    |      |
+| `cache_creation_tokens`  | 写入提示缓存的令牌                                     |      |
+| `request_id`             | 来自 `request-id` 响应标头的 Anthropic API 请求 ID     |      |
+| `gen_ai.response.id`     | 与 `request_id` 相同的值。OpenTelemetry GenAI 语义约定  |      |
+| `client_request_id`      | 最后一次尝试的客户端生成的 `x-client-request-id`           |      |
+| `attempt`                | 为此请求进行的总尝试次数                                  |      |
+| `success`                | `true` 或 `false`                              |      |
+| `status_code`            | 请求失败时的 HTTP 状态代码                              |      |
+| `error`                  | 请求失败时的错误消息                                    |      |
+| `response.has_tool_call` | 当响应包含工具使用块时为 `true`                           |      |
+
+每次重试尝试也被记录为 `gen_ai.request.attempt` span 事件，具有 `attempt` 和 `client_request_id` 属性。
+
+**`claude_code.tool`**
+
+| 属性              | 描述                          | 门控条件                    |
+| --------------- | --------------------------- | ----------------------- |
+| `tool_name`     | 工具名称                        |                         |
+| `duration_ms`   | 包括权限等待和执行的实际时钟持续时间          |                         |
+| `result_tokens` | 工具结果的近似令牌大小                 |                         |
+| `file_path`     | Read、Edit 和 Write 工具的目标文件路径 | `OTEL_LOG_TOOL_DETAILS` |
+| `full_command`  | Bash 工具的命令字符串               | `OTEL_LOG_TOOL_DETAILS` |
+| `skill_name`    | Skill 工具的技能名称               | `OTEL_LOG_TOOL_DETAILS` |
+| `subagent_type` | Task 工具的子代理类型               | `OTEL_LOG_TOOL_DETAILS` |
+
+当 `OTEL_LOG_TOOL_CONTENT=1` 时，此 span 还记录一个 `tool.output` span 事件，其属性包含工具的输入和输出主体，在每个属性处截断为 60 KB。
+
+**`claude_code.tool.blocked_on_user`**
+
+| 属性            | 描述                          | 门控条件 |
+| ------------- | --------------------------- | ---- |
+| `duration_ms` | 等待权限决策所花费的时间                |      |
+| `decision`    | `accept` 或 `reject`         |      |
+| `source`      | 决策来源，与 `tool_decision` 事件匹配 |      |
+
+**`claude_code.tool.execution`**
+
+| 属性            | 描述                                                               | 门控条件                    |
+| ------------- | ---------------------------------------------------------------- | ----------------------- |
+| `duration_ms` | 运行工具主体所花费的时间                                                     |                         |
+| `success`     | `true` 或 `false`                                                 |                         |
+| `error`       | 执行失败时的错误类别字符串，例如 `Error:ENOENT` 或 `ShellError`。当设置了门控条件时包含完整错误消息 | `OTEL_LOG_TOOL_DETAILS` |
+
+**`claude_code.hook`**
+
+此 span 仅在详细的测试版跟踪处于活动状态时发出，这需要 `ENABLE_BETA_TRACING_DETAILED=1` 和 `BETA_TRACING_ENDPOINT` 以及上述跟踪导出器配置。在交互式 CLI 会话中，这还需要您的组织被列入该功能的白名单。Agent SDK 和非交互式 `-p` 会话不受限制。仅设置 `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA` 时不会发出。
+
+| 属性                       | 描述                               | 门控条件                    |
+| ------------------------ | -------------------------------- | ----------------------- |
+| `hook_event`             | Hook 事件类型，例如 `PreToolUse`        |                         |
+| `hook_name`              | 完整 hook 名称，例如 `PreToolUse:Write` |                         |
+| `num_hooks`              | 执行的匹配 hook 命令数                   |                         |
+| `hook_definitions`       | JSON 序列化的 hook 配置                | `OTEL_LOG_TOOL_DETAILS` |
+| `duration_ms`            | 所有匹配 hook 的实际时钟持续时间              |                         |
+| `num_success`            | 成功完成的 hook 计数                    |                         |
+| `num_blocking`           | 返回阻止决策的 hook 计数                  |                         |
+| `num_non_blocking_error` | 失败但未阻止的 hook 计数                  |                         |
+| `num_cancelled`          | 在完成前取消的 hook 计数                  |                         |
+
+<Note>
+  其他内容承载属性，例如 `new_context`、`system_prompt_preview`、`tool_input` 和 `response.model_output`，仅在详细的测试版跟踪处于活动状态时发出。它们不是稳定 span 架构的一部分。
+</Note>
 
 ### 动态标头
 
@@ -284,6 +395,7 @@ Claude Code 导出以下指标：
 **属性**：
 
 * 所有 [标准属性](#standard-attributes)
+* `start_type`：会话的启动方式。`"fresh"`、`"resume"` 或 `"continue"` 之一
 
 #### 代码行计数器
 
@@ -318,6 +430,9 @@ Claude Code 导出以下指标：
 
 * 所有 [标准属性](#standard-attributes)
 * `model`：模型标识符（例如，"claude-sonnet-4-6"）
+* `query_source`：发出请求的子系统的类别。`"main"`、`"subagent"` 或 `"auxiliary"` 之一
+* `speed`：当请求使用快速模式时为 `"fast"`。否则不存在
+* `effort`：应用于请求的 [努力级别](/zh-CN/model-config#adjust-effort-level)：`"low"`、`"medium"`、`"high"`、`"xhigh"` 或 `"max"`。当模型不支持努力时不存在。
 
 #### 令牌计数器
 
@@ -328,6 +443,9 @@ Claude Code 导出以下指标：
 * 所有 [标准属性](#standard-attributes)
 * `type`：（`"input"`、`"output"`、`"cacheRead"`、`"cacheCreation"`）
 * `model`：模型标识符（例如，"claude-sonnet-4-6"）
+* `query_source`：发出请求的子系统的类别。`"main"`、`"subagent"` 或 `"auxiliary"` 之一
+* `speed`：当请求使用快速模式时为 `"fast"`。否则不存在
+* `effort`：应用于请求的 [努力级别](/zh-CN/model-config#adjust-effort-level)。有关详情，请参阅 [成本计数器](#cost-counter)。
 
 #### 代码编辑工具决策计数器
 
@@ -382,6 +500,8 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * `event.sequence`：单调递增的计数器，用于在会话内排序事件
 * `prompt_length`：提示的长度
 * `prompt`：提示内容（默认为已编辑，使用 `OTEL_LOG_USER_PROMPTS=1` 启用）
+* `command_name`：当提示调用命令时的命令名称。内置和捆绑的命令名称（例如 `compact` 或 `debug`）按原样发出；别名（例如 `reset`）按输入方式发出而不是规范名称。自定义、插件和 MCP 命令名称折叠为 `custom` 或 `mcp`，除非设置了 `OTEL_LOG_TOOL_DETAILS=1`
+* `command_source`：命令存在时的来源：`builtin`、`custom` 或 `mcp`。插件提供的命令报告为 `custom`
 
 #### 工具结果事件
 
@@ -398,7 +518,8 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * `tool_name`：工具的名称
 * `success`：`"true"` 或 `"false"`
 * `duration_ms`：执行时间（毫秒）
-* `error`：错误消息（如果失败）
+* `error_type`：工具失败时的错误类别字符串，例如 `"Error:ENOENT"` 或 `"ShellError"`
+* `error`（当 `OTEL_LOG_TOOL_DETAILS=1` 时）：工具失败时的完整错误消息
 * `decision_type`：`"accept"` 或 `"reject"`
 * `decision_source`：决策来源 - `"config"`、`"hook"`、`"user_permanent"`、`"user_temporary"`、`"user_abort"` 或 `"user_reject"`
 * `tool_result_size_bytes`：工具结果的大小（字节）
@@ -407,6 +528,7 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
   * 对于 Bash 工具：包括 `bash_command`、`full_command`、`timeout`、`description`、`dangerouslyDisableSandbox` 和 `git_commit_id`（git commit 命令成功时的提交 SHA）
   * 对于 MCP 工具：包括 `mcp_server_name`、`mcp_tool_name`
   * 对于 Skill 工具：包括 `skill_name`
+  * 对于 Task 工具：包括 `subagent_type`
 * `tool_input`（当 `OTEL_LOG_TOOL_DETAILS=1` 时）：JSON 序列化的工具参数。超过 512 个字符的单个值被截断，完整有效负载限制为约 4 K 字符。适用于所有工具，包括 MCP 工具。
 
 #### API 请求事件
@@ -428,7 +550,10 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * `output_tokens`：输出令牌数
 * `cache_read_tokens`：从缓存读取的令牌数
 * `cache_creation_tokens`：用于缓存创建的令牌数
+* `request_id`：来自响应的 `request-id` 标头的 Anthropic API 请求 ID，例如 `"req_011..."`。仅当 API 返回时存在。
 * `speed`：`"fast"` 或 `"normal"`，指示是否启用了快速模式
+* `query_source`：发出请求的子系统，例如 `"repl_main_thread"`、`"compact"` 或子代理名称
+* `effort`：应用于请求的 [努力级别](/zh-CN/model-config#adjust-effort-level)：`"low"`、`"medium"`、`"high"`、`"xhigh"` 或 `"max"`。当模型不支持努力时不存在。
 
 #### API 错误事件
 
@@ -446,8 +571,50 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * `error`：错误消息
 * `status_code`：HTTP 状态代码（字符串形式），或 `"undefined"` 用于非 HTTP 错误
 * `duration_ms`：请求持续时间（毫秒）
-* `attempt`：尝试次数（对于重试的请求）
+* `attempt`：进行的总尝试次数，包括初始请求（`1` 表示没有发生重试）
+* `request_id`：来自响应的 `request-id` 标头的 Anthropic API 请求 ID，例如 `"req_011..."`。仅当 API 返回时存在。
 * `speed`：`"fast"` 或 `"normal"`，指示是否启用了快速模式
+* `query_source`：发出请求的子系统，例如 `"repl_main_thread"`、`"compact"` 或子代理名称
+* `effort`：应用于请求的 [努力级别](/zh-CN/model-config#adjust-effort-level)。当模型不支持努力时不存在。
+
+#### API 请求主体事件
+
+当设置了 `OTEL_LOG_RAW_API_BODIES` 时，为每个 API 请求尝试记录。每次尝试发出一个事件，因此使用调整参数的重试各自产生自己的事件。
+
+**事件名称**：`claude_code.api_request_body`
+
+**属性**：
+
+* 所有 [标准属性](#standard-attributes)
+* `event.name`：`"api_request_body"`
+* `event.timestamp`：ISO 8601 时间戳
+* `event.sequence`：单调递增的计数器，用于在会话内排序事件
+* `body`：JSON 序列化的 Messages API 请求参数（系统提示、消息、工具等），在 60 KB 处截断。先前助手轮次中的扩展思考内容被编辑。仅在内联模式下发出（`OTEL_LOG_RAW_API_BODIES=1`）。
+* `body_ref`：包含未截断主体的 `<dir>/<uuid>.request.json` 文件的绝对路径。仅在文件模式下发出（`OTEL_LOG_RAW_API_BODIES=file:<dir>`）。
+* `body_length`：未截断的主体长度。当 `OTEL_LOG_RAW_API_BODIES=file:<dir>` 时为 UTF-8 字节，或当 `=1` 时为 UTF-16 代码单位
+* `body_truncated`：当发生内联截断时为 `"true"`。在文件模式下和未发生截断时不存在。
+* `model`：来自请求参数的模型标识符
+* `query_source`：发出请求的子系统（例如，`"compact"`）
+
+#### API 响应主体事件
+
+当设置了 `OTEL_LOG_RAW_API_BODIES` 时，为每个成功的 API 响应记录。
+
+**事件名称**：`claude_code.api_response_body`
+
+**属性**：
+
+* 所有 [标准属性](#standard-attributes)
+* `event.name`：`"api_response_body"`
+* `event.timestamp`：ISO 8601 时间戳
+* `event.sequence`：单调递增的计数器，用于在会话内排序事件
+* `body`：JSON 序列化的 Messages API 响应（id、内容块、使用情况、停止原因），在 60 KB 处截断。扩展思考内容被编辑。仅在内联模式下发出（`OTEL_LOG_RAW_API_BODIES=1`）。
+* `body_ref`：包含未截断主体的 `<dir>/<request_id>.response.json` 文件的绝对路径。仅在文件模式下发出（`OTEL_LOG_RAW_API_BODIES=file:<dir>`）。
+* `body_length`：未截断的主体长度。当 `OTEL_LOG_RAW_API_BODIES=file:<dir>` 时为 UTF-8 字节，或当 `=1` 时为 UTF-16 代码单位
+* `body_truncated`：当发生内联截断时为 `"true"`。在文件模式下和未发生截断时不存在。
+* `model`：模型标识符
+* `query_source`：发出请求的子系统
+* `request_id`：来自响应的 `request-id` 标头的 Anthropic API 请求 ID，例如 `"req_011..."`。仅当 API 返回时存在。
 
 #### 工具决策事件
 
@@ -464,6 +631,191 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * `tool_name`：工具的名称（例如，"Read"、"Edit"、"Write"、"NotebookEdit"）
 * `decision`：`"accept"` 或 `"reject"`
 * `source`：决策来源 - `"config"`、`"hook"`、`"user_permanent"`、`"user_temporary"`、`"user_abort"` 或 `"user_reject"`
+
+#### 权限模式更改事件
+
+当权限模式更改时记录，例如从 `Shift+Tab` 循环、退出计划模式或自动模式门控检查。
+
+**事件名称**：`claude_code.permission_mode_changed`
+
+**属性**：
+
+* 所有 [标准属性](#standard-attributes)
+* `event.name`：`"permission_mode_changed"`
+* `event.timestamp`：ISO 8601 时间戳
+* `event.sequence`：单调递增的计数器，用于在会话内排序事件
+* `from_mode`：前一个权限模式，例如 `"default"`、`"plan"`、`"acceptEdits"`、`"auto"` 或 `"bypassPermissions"`
+* `to_mode`：新权限模式
+* `trigger`：导致更改的原因。`"shift_tab"`、`"exit_plan_mode"`、`"auto_gate_denied"` 或 `"auto_opt_in"` 之一。当转换来自 SDK 或桥接时不存在
+
+#### 身份验证事件
+
+当 `/login` 或 `/logout` 完成时记录。
+
+**事件名称**：`claude_code.auth`
+
+**属性**：
+
+* 所有 [标准属性](#standard-attributes)
+* `event.name`：`"auth"`
+* `event.timestamp`：ISO 8601 时间戳
+* `event.sequence`：单调递增的计数器，用于在会话内排序事件
+* `action`：`"login"` 或 `"logout"`
+* `success`：`"true"` 或 `"false"`
+* `auth_method`：身份验证方法，例如 `"oauth"`
+* `error_category`：操作失败时的分类错误类型。永远不包括原始错误消息
+* `status_code`：操作因 HTTP 错误而失败时的 HTTP 状态代码（字符串形式）
+
+#### MCP 服务器连接事件
+
+当 MCP 服务器连接、断开连接或连接失败时记录。
+
+**事件名称**：`claude_code.mcp_server_connection`
+
+**属性**：
+
+* 所有 [标准属性](#standard-attributes)
+* `event.name`：`"mcp_server_connection"`
+* `event.timestamp`：ISO 8601 时间戳
+* `event.sequence`：单调递增的计数器，用于在会话内排序事件
+* `status`：`"connected"`、`"failed"` 或 `"disconnected"`
+* `transport_type`：服务器传输，例如 `"stdio"`、`"sse"` 或 `"http"`
+* `server_scope`：服务器配置的范围，例如 `"user"`、`"project"` 或 `"local"`
+* `duration_ms`：连接尝试持续时间（毫秒）
+* `error_code`：连接失败时的错误代码
+* `server_name`（当 `OTEL_LOG_TOOL_DETAILS=1` 时）：配置的服务器名称
+* `error`（当 `OTEL_LOG_TOOL_DETAILS=1` 时）：连接失败时的完整错误消息
+
+#### 内部错误事件
+
+当 Claude Code 捕获意外的内部错误时记录。仅记录错误类名和 errno 风格的代码。永远不包括错误消息和堆栈跟踪。在针对 Bedrock、Vertex 或 Foundry 运行或设置了 `DISABLE_ERROR_REPORTING` 时不会发出此事件。
+
+**事件名称**：`claude_code.internal_error`
+
+**属性**：
+
+* 所有 [标准属性](#standard-attributes)
+* `event.name`：`"internal_error"`
+* `event.timestamp`：ISO 8601 时间戳
+* `event.sequence`：单调递增的计数器，用于在会话内排序事件
+* `error_name`：错误类名，例如 `"TypeError"` 或 `"SyntaxError"`
+* `error_code`：Node.js errno 代码，例如错误上存在时的 `"ENOENT"`
+
+#### 插件已安装事件
+
+当插件完成安装时记录，来自 `claude plugin install` CLI 命令和交互式 `/plugin` UI。
+
+**事件名称**：`claude_code.plugin_installed`
+
+**属性**：
+
+* 所有 [标准属性](#standard-attributes)
+* `event.name`：`"plugin_installed"`
+* `event.timestamp`：ISO 8601 时间戳
+* `event.sequence`：单调递增的计数器，用于在会话内排序事件
+* `marketplace.is_official`：如果市场是官方 Anthropic 市场，则为 `"true"`，否则为 `"false"`
+* `install.trigger`：`"cli"` 或 `"ui"`
+* `plugin.name`：已安装插件的名称。对于第三方市场，仅当 `OTEL_LOG_TOOL_DETAILS=1` 时才包含
+* `plugin.version`：在市场条目中声明时的插件版本。对于第三方市场，仅当 `OTEL_LOG_TOOL_DETAILS=1` 时才包含
+* `marketplace.name`：插件安装来源的市场。对于第三方市场，仅当 `OTEL_LOG_TOOL_DETAILS=1` 时才包含
+
+#### 技能激活事件
+
+当调用技能时记录。
+
+**事件名称**：`claude_code.skill_activated`
+
+**属性**：
+
+* 所有 [标准属性](#standard-attributes)
+* `event.name`：`"skill_activated"`
+* `event.timestamp`：ISO 8601 时间戳
+* `event.sequence`：单调递增的计数器，用于在会话内排序事件
+* `skill.name`：技能的名称。对于用户定义和第三方插件技能，除非 `OTEL_LOG_TOOL_DETAILS=1`，否则值为占位符 `"custom_skill"`
+* `skill.source`：技能加载的位置（例如，`"bundled"`、`"userSettings"`、`"projectSettings"`、`"plugin"`）
+* `plugin.name`（当 `OTEL_LOG_TOOL_DETAILS=1` 或插件来自官方市场时）：当技能由插件提供时的拥有插件的名称
+* `marketplace.name`（当 `OTEL_LOG_TOOL_DETAILS=1` 或插件来自官方市场时）：当技能由插件提供时，拥有插件安装来源的市场
+
+#### API 重试耗尽事件
+
+当 API 请求在多次尝试后失败时记录一次。与最终 `api_error` 事件一起发出。
+
+**事件名称**：`claude_code.api_retries_exhausted`
+
+**属性**：
+
+* 所有 [标准属性](#standard-attributes)
+* `event.name`：`"api_retries_exhausted"`
+* `event.timestamp`：ISO 8601 时间戳
+* `event.sequence`：单调递增的计数器，用于在会话内排序事件
+* `model`：使用的模型
+* `error`：最终错误消息
+* `status_code`：HTTP 状态代码（字符串形式）
+* `total_attempts`：进行的总尝试次数
+* `total_retry_duration_ms`：所有尝试的总实际时钟时间
+* `speed`：`"fast"` 或 `"normal"`
+
+#### Hook 执行开始事件
+
+当一个或多个 hook 开始为 hook 事件执行时记录。
+
+**事件名称**：`claude_code.hook_execution_start`
+
+**属性**：
+
+* 所有 [标准属性](#standard-attributes)
+* `event.name`：`"hook_execution_start"`
+* `event.timestamp`：ISO 8601 时间戳
+* `event.sequence`：单调递增的计数器，用于在会话内排序事件
+* `hook_event`：Hook 事件类型，例如 `"PreToolUse"` 或 `"PostToolUse"`
+* `hook_name`：完整 hook 名称，包括匹配器，例如 `"PreToolUse:Write"`
+* `num_hooks`：匹配 hook 命令的数量
+* `managed_only`：当仅允许托管策略 hook 时为 `"true"`
+* `hook_source`：`"policySettings"` 或 `"merged"`
+* `hook_definitions`：JSON 序列化的 hook 配置。仅当启用了详细的测试版跟踪和 `OTEL_LOG_TOOL_DETAILS=1` 时才包含
+
+#### Hook 执行完成事件
+
+当 hook 事件的所有 hook 完成时记录。
+
+**事件名称**：`claude_code.hook_execution_complete`
+
+**属性**：
+
+* 所有 [标准属性](#standard-attributes)
+* `event.name`：`"hook_execution_complete"`
+* `event.timestamp`：ISO 8601 时间戳
+* `event.sequence`：单调递增的计数器，用于在会话内排序事件
+* `hook_event`：Hook 事件类型
+* `hook_name`：完整 hook 名称，包括匹配器
+* `num_hooks`：匹配 hook 命令的数量
+* `num_success`：成功完成的计数
+* `num_blocking`：返回阻止决策的计数
+* `num_non_blocking_error`：失败但未阻止的计数
+* `num_cancelled`：在完成前取消的计数
+* `total_duration_ms`：所有匹配 hook 的实际时钟持续时间
+* `managed_only`：当仅允许托管策略 hook 时为 `"true"`
+* `hook_source`：`"policySettings"` 或 `"merged"`
+* `hook_definitions`：JSON 序列化的 hook 配置。仅当启用了详细的测试版跟踪和 `OTEL_LOG_TOOL_DETAILS=1` 时才包含
+
+#### 压缩事件
+
+当对话压缩完成时记录。
+
+**事件名称**：`claude_code.compaction`
+
+**属性**：
+
+* 所有 [标准属性](#standard-attributes)
+* `event.name`：`"compaction"`
+* `event.timestamp`：ISO 8601 时间戳
+* `event.sequence`：单调递增的计数器，用于在会话内排序事件
+* `trigger`：`"auto"` 或 `"manual"`
+* `success`：`"true"` 或 `"false"`
+* `duration_ms`：压缩持续时间
+* `pre_tokens`：压缩前的近似令牌计数
+* `post_tokens`：压缩后的近似令牌计数
+* `error`：压缩失败时的错误消息
 
 ## 解释指标和事件数据
 
@@ -498,6 +850,14 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * 来自特定用户的高会话量
 
 所有指标都可以按 `user.account_uuid`、`user.account_id`、`organization.id`、`session.id`、`model` 和 `app.version` 进行分段。
+
+### 检测重试耗尽
+
+Claude Code 在内部重试失败的 API 请求，仅在放弃后才发出单个 `claude_code.api_error` 事件，因此事件本身是该请求的终端信号。中间重试尝试不会作为单独的事件记录。
+
+事件上的 `attempt` 属性记录进行的总尝试次数。大于 `CLAUDE_CODE_MAX_RETRIES`（默认 `10`）的值表示请求在瞬时错误上耗尽了所有重试。较低的值表示不可重试的错误，例如 `400` 响应。
+
+要区分从一个恢复的会话与停滞的会话，按 `session.id` 分组事件，并检查错误后是否存在更晚的 `api_request` 事件。
 
 ### 事件分析
 
@@ -559,8 +919,9 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * 原始文件内容和代码片段不包含在指标或事件中。Trace spans 是一个单独的数据路径：请参阅下面的 `OTEL_LOG_TOOL_CONTENT` 项目符号
 * 通过 OAuth 认证时，`user.email` 包含在遥测属性中。如果这对您的组织是一个问题，请与您的遥测后端合作以过滤或编辑此字段
 * 默认情况下不收集用户提示内容。仅记录提示长度。要包含提示内容，请设置 `OTEL_LOG_USER_PROMPTS=1`
-* 默认情况下不记录工具输入参数。要包含它们，请设置 `OTEL_LOG_TOOL_DETAILS=1`。启用后，`tool_result` 事件包含 `tool_parameters` 属性，其中包含 Bash 命令、MCP 服务器和工具名称、技能名称，以及包含文件路径、URL、搜索模式和其他参数的 `tool_input` 属性。超过 512 个字符的单个值被截断，总数限制为约 4 K 字符，但参数仍可能包含敏感值。根据需要配置您的遥测后端以过滤或编辑这些属性
+* 默认情况下不记录工具输入参数和参数。要包含它们，请设置 `OTEL_LOG_TOOL_DETAILS=1`。启用后，`tool_result` 事件包含 `tool_parameters` 属性，其中包含 Bash 命令、MCP 服务器和工具名称、技能名称，以及包含文件路径、URL、搜索模式和其他参数的 `tool_input` 属性。`user_prompt` 事件包含自定义、插件和 MCP 命令的逐字 `command_name`。Trace spans 包含相同的 `tool_input` 属性和输入派生属性，例如 `file_path`。超过 512 个字符的单个值被截断，总数限制为约 4 K 字符，但参数仍可能包含敏感值。根据需要配置您的遥测后端以过滤或编辑这些属性
 * 默认情况下，trace spans 中不记录工具输入和输出内容。要包含它，请设置 `OTEL_LOG_TOOL_CONTENT=1`。启用后，span 事件包含完整的工具输入和输出内容，在每个 span 处截断为 60 KB。这可能包括 Read 工具结果中的原始文件内容和 Bash 命令输出。根据需要配置您的遥测后端以过滤或编辑这些属性
+* 默认情况下不记录原始 Anthropic Messages API 请求和响应主体。要包含它们，请设置 `OTEL_LOG_RAW_API_BODIES`。使用 `=1` 时，每个 API 调用发出 `api_request_body` 和 `api_response_body` 日志事件，其 `body` 属性是 JSON 序列化的有效负载，在 60 KB 处截断。使用 `=file:<dir>` 时，未截断的主体写入该目录下的 `.request.json` 和 `.response.json` 文件，事件携带 `body_ref` 路径而不是内联主体。使用日志收集器或 sidecar 而不是通过遥测流传输目录。在两种模式下，主体包含完整的对话历史（系统提示、每个先前的用户和助手轮次、工具结果），因此启用此选项意味着同意其他 `OTEL_LOG_*` 内容标志会揭示的所有内容。Claude 的扩展思考内容始终从这些主体中编辑，无论其他设置如何
 
 ## 在 Amazon Bedrock 上监控 Claude Code
 

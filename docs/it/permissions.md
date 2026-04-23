@@ -299,7 +299,7 @@ Le seguenti impostazioni sono efficaci solo nelle impostazioni gestite. Posizion
 | `pluginTrustMessage`                           | Messaggio personalizzato aggiunto all'avviso di fiducia del plugin mostrato prima dell'installazione                                                                                                                                                                                                             |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Quando `true`, solo i percorsi `filesystem.allowRead` dalle impostazioni gestite sono rispettati. `denyRead` si unisce comunque da tutte le fonti                                                                                                                                                                |
 | `sandbox.network.allowManagedDomainsOnly`      | Quando `true`, solo `allowedDomains` e le regole allow `WebFetch(domain:...)` dalle impostazioni gestite sono rispettate. I domini non consentiti vengono bloccati automaticamente senza richiedere all'utente. I domini negati si uniscono comunque da tutte le fonti                                           |
-| `strictKnownMarketplaces`                      | Controlla quali marketplace di plugin gli utenti possono aggiungere. Vedi [restrizioni marketplace gestite](/it/plugin-marketplaces#managed-marketplace-restrictions)                                                                                                                                            |
+| `strictKnownMarketplaces`                      | Controlla quali marketplace di plugin gli utenti possono aggiungere e installare plugin da. Vedi [restrizioni marketplace gestite](/it/plugin-marketplaces#managed-marketplace-restrictions)                                                                                                                     |
 
 `disableBypassPermissionsMode` è tipicamente posizionato nelle impostazioni gestite per applicare la politica organizzativa, ma funziona da qualsiasi ambito. Un utente può impostarlo nelle proprie impostazioni per bloccarsi dalla modalità bypass.
 
@@ -443,6 +443,7 @@ Questo [repository](https://github.com/anthropics/claude-code/tree/main/examples
 ## Vedi anche
 
 * [Settings](/it/settings): riferimento di configurazione completo inclusa la tabella delle impostazioni di autorizzazione
+* [Configure auto mode](/it/auto-mode-config): comunica al classificatore della modalità auto quale infrastruttura la tua organizzazione ritiene affidabile
 * [Sandboxing](/it/sandboxing): isolamento del filesystem e della rete a livello del sistema operativo per i comandi Bash
 * [Authentication](/it/authentication): configura l'accesso utente a Claude Code
 * [Security](/it/security): salvaguardie di sicurezza e best practice

@@ -24,7 +24,13 @@ Los subagentes le ayudan a:
 
 Claude utiliza la descripción de cada subagente para decidir cuándo delegar tareas. Cuando crea un subagente, escriba una descripción clara para que Claude sepa cuándo usarlo.
 
-Claude Code incluye varios subagentes integrados como **Explore**, **Plan** y **general-purpose**. También puede crear subagentes personalizados para manejar tareas específicas. Esta página cubre los [subagentes integrados](#built-in-subagents), [cómo crear los suyos](#quickstart-create-your-first-subagent), [opciones de configuración completas](#configure-subagents), [patrones para trabajar con subagentes](#work-with-subagents) y [subagentes de ejemplo](#example-subagents).
+Claude Code incluye varios subagentes integrados como **Explore**, **Plan** y **general-purpose**. También puede crear subagentes personalizados para manejar tareas específicas. Esta página cubre:
+
+* [Subagentes integrados](#built-in-subagents)
+* [Cómo crear los suyos](#quickstart-create-your-first-subagent)
+* [Opciones de configuración completas](#configure-subagents)
+* [Patrones para trabajar con subagentes](#work-with-subagents)
+* [Subagentes de ejemplo](#example-subagents)
 
 ## Subagentes integrados
 
@@ -320,6 +326,15 @@ Si `Agent` se omite completamente de la lista `tools`, el agente no puede genera
 #### Alcance de servidores MCP a un subagente
 
 Use el campo `mcpServers` para dar a un subagente acceso a servidores [MCP](/es/mcp) que no están disponibles en la conversación principal. Los servidores en línea definidos aquí se conectan cuando el subagente comienza y se desconectan cuando termina. Las referencias de cadena comparten la conexión de la sesión principal.
+
+<Note>
+  El campo `mcpServers` se aplica en ambos contextos donde un archivo de agente puede ejecutarse:
+
+  * Como un subagente, generado a través de la herramienta Agent o una @-mención
+  * Como la sesión principal, lanzada con [`--agent`](#invoke-subagents-explicitly) o la configuración `agent`
+
+  Cuando el agente es la sesión principal, las definiciones de servidor en línea se conectan al inicio junto con servidores de [`.mcp.json`](/es/mcp) y archivos de configuración.
+</Note>
 
 Cada entrada en la lista es una definición de servidor en línea o una cadena que hace referencia a un servidor MCP ya configurado en su sesión:
 

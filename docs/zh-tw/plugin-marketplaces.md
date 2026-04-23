@@ -677,7 +677,7 @@ CLAUDE_CODE_PLUGIN_CACHE_DIR=/opt/claude-seed claude plugin install my-tool@your
 
 #### 限制如何運作
 
-限制在 plugin 安裝過程的早期進行驗證，在任何網路請求或檔案系統操作之前。這可防止未授權的 marketplace 存取嘗試。
+限制在任何網路或檔案系統操作之前進行檢查。檢查在 marketplace 新增以及 plugin 安裝、更新、重新整理和自動更新時執行。如果 marketplace 在配置原則之前被新增，且其來源不再符合允許清單，Claude Code 會拒絕從中安裝或更新 plugin。相同的強制執行也適用於 `blockedMarketplaces`。
 
 允許清單對大多數來源類型使用精確匹配。若要允許 marketplace，所有指定的欄位必須完全相符：
 

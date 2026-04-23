@@ -2,7 +2,7 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Konfigurasi pengaturan yang dikelola server (beta publik)
+# Konfigurasi pengaturan yang dikelola server
 
 > Konfigurasi Claude Code secara terpusat untuk organisasi Anda melalui pengaturan yang dikirimkan server, tanpa memerlukan infrastruktur manajemen perangkat.
 
@@ -11,7 +11,7 @@ Pengaturan yang dikelola server memungkinkan administrator untuk mengonfigurasi 
 Pendekatan ini dirancang untuk organisasi yang tidak memiliki infrastruktur manajemen perangkat, atau perlu mengelola pengaturan untuk pengguna pada perangkat yang tidak dikelola.
 
 <Note>
-  Pengaturan yang dikelola server berada dalam beta publik dan tersedia untuk pelanggan [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) dan [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise). Fitur dapat berkembang sebelum ketersediaan umum.
+  Pengaturan yang dikelola server tersedia untuk pelanggan [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) dan [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise).
 </Note>
 
 ## Persyaratan
@@ -93,7 +93,7 @@ Jika perangkat Anda terdaftar dalam solusi MDM atau manajemen endpoint, pengatur
     }
     ```
 
-    Karena hooks menjalankan perintah shell, pengguna melihat [dialog persetujuan keamanan](#security-approval-dialogs) sebelum diterapkan. Lihat [Konfigurasi pengklasifikasi mode otomatis](/id/permissions#configure-the-auto-mode-classifier) untuk cara entri `autoMode` mempengaruhi apa yang diblokir pengklasifikasi dan peringatan penting tentang bidang `allow` dan `soft_deny`.
+    Karena hooks menjalankan perintah shell, pengguna melihat [dialog persetujuan keamanan](#security-approval-dialogs) sebelum diterapkan. Lihat [Konfigurasi mode otomatis](/id/auto-mode-config) untuk cara entri `autoMode` mempengaruhi apa yang diblokir pengklasifikasi dan peringatan penting tentang bidang `allow` dan `soft_deny`.
   </Step>
 
   <Step title="Simpan dan terapkan">
@@ -120,7 +120,7 @@ Sebagian besar [kunci pengaturan](/id/settings#available-settings) bekerja dalam
 
 ### Batasan saat ini
 
-Pengaturan yang dikelola server memiliki batasan berikut selama periode beta:
+Pengaturan yang dikelola server memiliki batasan berikut:
 
 * Pengaturan berlaku secara seragam untuk semua pengguna dalam organisasi. Konfigurasi per-grup belum didukung.
 * [Konfigurasi server MCP](/id/mcp#managed-mcp-configuration) tidak dapat didistribusikan melalui pengaturan yang dikelola server.
@@ -152,6 +152,22 @@ Claude Code mengambil pengaturan dari server Anthropic pada startup dan melakuka
 * Pengaturan yang di-cache bertahan melalui kegagalan jaringan
 
 Claude Code menerapkan pembaruan pengaturan secara otomatis tanpa restart, kecuali untuk pengaturan lanjutan seperti konfigurasi OpenTelemetry, yang memerlukan restart penuh untuk berlaku.
+
+### Paksakan startup yang tertutup gagal
+
+Secara default, jika pengambilan pengaturan jarak jauh gagal pada startup, CLI melanjutkan tanpa pengaturan terkelola. Untuk lingkungan di mana jendela yang tidak diterapkan singkat ini tidak dapat diterima, atur `forceRemoteSettingsRefresh: true` dalam pengaturan terkelola Anda.
+
+Ketika pengaturan ini aktif, CLI memblokir pada startup hingga pengaturan jarak jauh diambil segar. Jika pengambilan gagal, CLI keluar daripada melanjutkan tanpa kebijakan. Pengaturan ini memperpanjang dirinya sendiri: setelah dikirimkan dari server, pengaturan ini juga di-cache secara lokal sehingga startup berikutnya memberlakukan perilaku yang sama bahkan sebelum pengambilan pertama yang berhasil dari sesi baru.
+
+Untuk mengaktifkan ini, tambahkan kunci ke konfigurasi pengaturan terkelola Anda:
+
+```json theme={null}
+{
+  "forceRemoteSettingsRefresh": true
+}
+```
+
+Sebelum mengaktifkan pengaturan ini, pastikan kebijakan jaringan Anda memungkinkan konektivitas ke `api.anthropic.com`. Jika endpoint tersebut tidak dapat dijangkau, CLI keluar pada startup dan pengguna tidak dapat memulai Claude Code.
 
 ### Dialog persetujuan keamanan
 
@@ -186,13 +202,13 @@ Acara audit mencakup jenis tindakan yang dilakukan, akun dan perangkat yang mela
 
 Pengaturan yang dikelola server menyediakan penegakan kebijakan terpusat, tetapi mereka beroperasi sebagai kontrol sisi klien. Pada perangkat yang tidak dikelola, pengguna dengan akses admin atau sudo dapat memodifikasi biner Claude Code, sistem file, atau konfigurasi jaringan.
 
-| Skenario                                                      | Perilaku                                                                                                                                     |
-| :------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------- |
-| Pengguna mengedit file pengaturan yang di-cache               | File yang dirusak berlaku pada startup, tetapi pengaturan yang benar dipulihkan pada pengambilan server berikutnya                           |
-| Pengguna menghapus file pengaturan yang di-cache              | Perilaku peluncuran pertama terjadi: pengaturan mengambil secara asinkron dengan jendela yang tidak diterapkan singkat                       |
-| API tidak tersedia                                            | Pengaturan yang di-cache berlaku jika tersedia, jika tidak pengaturan terkelola tidak diterapkan sampai pengambilan yang berhasil berikutnya |
-| Pengguna melakukan autentikasi dengan organisasi yang berbeda | Pengaturan tidak dikirimkan untuk akun di luar organisasi yang dikelola                                                                      |
-| Pengguna menetapkan `ANTHROPIC_BASE_URL` non-default          | Pengaturan yang dikelola server dilewati saat menggunakan penyedia API pihak ketiga                                                          |
+| Skenario                                                      | Perilaku                                                                                                                                                                                                                         |
+| :------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Pengguna mengedit file pengaturan yang di-cache               | File yang dirusak berlaku pada startup, tetapi pengaturan yang benar dipulihkan pada pengambilan server berikutnya                                                                                                               |
+| Pengguna menghapus file pengaturan yang di-cache              | Perilaku peluncuran pertama terjadi: pengaturan mengambil secara asinkron dengan jendela yang tidak diterapkan singkat                                                                                                           |
+| API tidak tersedia                                            | Pengaturan yang di-cache berlaku jika tersedia, jika tidak pengaturan terkelola tidak diterapkan sampai pengambilan yang berhasil berikutnya. Dengan `forceRemoteSettingsRefresh: true`, CLI keluar sebagai gantinya melanjutkan |
+| Pengguna melakukan autentikasi dengan organisasi yang berbeda | Pengaturan tidak dikirimkan untuk akun di luar organisasi yang dikelola                                                                                                                                                          |
+| Pengguna menetapkan `ANTHROPIC_BASE_URL` non-default          | Pengaturan yang dikelola server dilewati saat menggunakan penyedia API pihak ketiga                                                                                                                                              |
 
 Untuk mendeteksi perubahan konfigurasi runtime, gunakan [hook `ConfigChange`](/id/hooks#configchange) untuk mencatat modifikasi atau memblokir perubahan yang tidak sah sebelum berlaku.
 

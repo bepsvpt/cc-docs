@@ -78,7 +78,7 @@ CLAUDE.md proyek dapat disimpan di `./CLAUDE.md` atau `./.claude/CLAUDE.md`. Bua
 
 File CLAUDE.md dimuat ke dalam context window di awal setiap sesi, mengonsumsi token bersama percakapan Anda. [Visualisasi context window](/id/context-window) menunjukkan di mana CLAUDE.md dimuat relatif terhadap sisa startup context. Karena mereka adalah konteks daripada konfigurasi yang diberlakukan, cara Anda menulis instruksi mempengaruhi seberapa andal Claude mengikutinya. Instruksi yang spesifik, ringkas, dan terstruktur dengan baik bekerja paling baik.
 
-**Ukuran**: targetkan di bawah 200 baris per file CLAUDE.md. File yang lebih panjang mengonsumsi lebih banyak konteks dan mengurangi kepatuhan. Jika instruksi Anda berkembang besar, pisahkan menggunakan [impor](#import-additional-files) atau file [`.claude/rules/`](#organize-rules-with-claude/rules/).
+**Ukuran**: targetkan di bawah 200 baris per file CLAUDE.md. File yang lebih panjang mengonsumsi lebih banyak konteks dan mengurangi kepatuhan. Jika instruksi Anda berkembang besar, gunakan [aturan bersyarat jalur](#path-specific-rules) sehingga instruksi hanya dimuat ketika Claude bekerja dengan file yang cocok, menghemat ruang konteks. Anda juga dapat membagi konten menjadi [impor](#import-additional-files) untuk organisasi, meskipun file yang diimpor masih dimuat dan memasuki context window saat peluncuran.
 
 **Struktur**: gunakan header markdown dan bullet untuk mengelompokkan instruksi terkait. Claude memindai struktur dengan cara yang sama seperti pembaca: bagian yang terorganisir lebih mudah diikuti daripada paragraf padat.
 
@@ -390,13 +390,13 @@ Jalankan `/memory` dan pilih folder auto memory untuk menelusuri apa yang telah 
 
 ### CLAUDE.md saya terlalu besar
 
-File di atas 200 baris mengonsumsi lebih banyak konteks dan dapat mengurangi kepatuhan. Pindahkan konten terperinci ke file terpisah yang direferensikan dengan impor `@path` (lihat [Impor file tambahan](#import-additional-files)), atau pisahkan instruksi Anda di seluruh file `.claude/rules/`.
+File di atas 200 baris mengonsumsi lebih banyak konteks dan dapat mengurangi kepatuhan. Gunakan [aturan yang dibatasi jalur](#path-specific-rules) untuk memuat instruksi hanya ketika Claude bekerja dengan file yang cocok, atau pangkas konten yang tidak diperlukan dalam setiap sesi. Memisahkan ke dalam [impor `@path`](#import-additional-files) membantu organisasi tetapi tidak mengurangi konteks, karena file yang diimpor dimuat saat peluncuran.
 
 ### Instruksi tampak hilang setelah `/compact`
 
-CLAUDE.md root proyek bertahan dari pemadatan: setelah `/compact`, Claude membaca ulang CLAUDE.md Anda dari disk dan menyuntikkannya kembali segar ke dalam sesi. File CLAUDE.md bersarang di subdirektori tidak disuntikkan kembali secara otomatis; mereka dimuat ulang saat berikutnya Claude membaca file di subdirektori tersebut.
+CLAUDE.md root proyek bertahan dari pemadatan: setelah `/compact`, Claude membaca ulang CLAUDE.md dari disk dan menyuntikkannya kembali ke dalam sesi. File CLAUDE.md bersarang di subdirektori tidak disuntikkan kembali secara otomatis; mereka dimuat ulang saat berikutnya Claude membaca file di subdirektori tersebut.
 
-Jika instruksi hilang setelah pemadatan, itu diberikan hanya dalam percakapan atau berada di CLAUDE.md bersarang yang belum dimuat ulang. Tambahkan instruksi percakapan ke CLAUDE.md untuk membuatnya bertahan lintas sesi. Lihat [Apa yang bertahan pemadatan](/id/context-window#what-survives-compaction) untuk rincian lengkap.
+Jika instruksi hilang setelah pemadatan, itu diberikan hanya dalam percakapan atau berada di CLAUDE.md bersarang yang belum dimuat ulang. Tambahkan instruksi percakapan ke CLAUDE.md untuk membuatnya bertahan. Lihat [Apa yang bertahan pemadatan](/id/context-window#what-survives-compaction) untuk rincian lengkap.
 
 Lihat [Tulis instruksi yang efektif](#write-effective-instructions) untuk panduan tentang ukuran, struktur, dan spesifisitas.
 

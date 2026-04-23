@@ -89,6 +89,8 @@ To install Claude Code, use one of the following methods:
   </Tab>
 </Tabs>
 
+You can also install with [apt, dnf, or apk](/en/setup#install-with-linux-package-managers) on Debian, Fedora, RHEL, and Alpine.
+
 安裝完成後，在您要使用的專案中開啟終端機並啟動 Claude Code：
 
 ```bash theme={null}
@@ -171,14 +173,14 @@ Claude Code 需要 Pro、Max、Team、Enterprise 或 Console 帳戶。免費的 
 
 ## 更新 Claude Code
 
-原生安裝會在背景自動更新。您可以[配置發行版本通道](#configure-release-channel)來控制您是立即接收更新還是按延遲穩定時間表接收，或[完全停用自動更新](#disable-auto-updates)。Homebrew 和 WinGet 安裝需要手動更新。
+原生安裝會在背景自動更新。您可以[配置發行版本通道](#configure-release-channel)來控制您是立即接收更新還是按延遲穩定時間表接收，或[完全停用自動更新](#disable-auto-updates)。Homebrew、WinGet 和[Linux 套件管理員](#install-with-linux-package-managers)安裝需要手動更新。
 
 ### 自動更新
 
 Claude Code 在啟動時和執行期間定期檢查更新。更新會在背景下載和安裝，然後在您下次啟動 Claude Code 時生效。
 
 <Note>
-  Homebrew 和 WinGet 安裝不會自動更新。對於 Homebrew，執行 `brew upgrade claude-code` 或 `brew upgrade claude-code@latest`，取決於您安裝的 cask。對於 WinGet，執行 `winget upgrade Anthropic.ClaudeCode`。
+  Homebrew、WinGet、apt、dnf 和 apk 安裝不會自動更新。對於 Homebrew，執行 `brew upgrade claude-code` 或 `brew upgrade claude-code@latest`，取決於您安裝的 cask。對於 WinGet，執行 `winget upgrade Anthropic.ClaudeCode`。對於 Linux 套件管理員，請參閱[使用 Linux 套件管理員安裝](#install-with-linux-package-managers)中的升級命令。
 
   **已知問題**：Claude Code 可能會在新版本在這些套件管理員中可用之前通知您有更新。如果升級失敗，請稍候並稍後重試。
 
@@ -243,7 +245,7 @@ claude update
 
 ## 進階安裝選項
 
-這些選項適用於版本固定、從 npm 遷移和驗證二進位檔案完整性。
+這些選項適用於版本固定、Linux 套件管理員、npm 和驗證二進位檔案完整性。
 
 ### 安裝特定版本
 
@@ -315,6 +317,67 @@ claude update
   </Tab>
 </Tabs>
 
+### 使用 Linux 套件管理員安裝
+
+Claude Code 發佈已簽署的 apt、dnf 和 apk 儲存庫。將 `stable` 替換為 `latest` 以使用滾動通道。套件管理員安裝不會透過 Claude Code 自動更新；更新會透過您的正常系統升級工作流程進行。
+
+所有儲存庫都使用 [Claude Code 發佈簽署金鑰](#binary-integrity-and-code-signing)簽署。在信任金鑰之前，請按照每個標籤中的說明驗證它。
+
+<Tabs>
+  <Tab title="apt">
+    適用於 Debian 和 Ubuntu。若要使用滾動通道，請變更 `deb` 行中的兩個 `stable` 出現次數：URL 路徑和套件組合名稱。
+
+    ```bash theme={null}
+    sudo install -d -m 0755 /etc/apt/keyrings
+    sudo curl -fsSL https://downloads.claude.ai/keys/claude-code.asc \
+      -o /etc/apt/keyrings/claude-code.asc
+    echo "deb [signed-by=/etc/apt/keyrings/claude-code.asc] https://downloads.claude.ai/claude-code/apt/stable stable main" \
+      | sudo tee /etc/apt/sources.list.d/claude-code.list
+    sudo apt update
+    sudo apt install claude-code
+    ```
+
+    在信任之前驗證 GPG 金鑰指紋：`gpg --show-keys /etc/apt/keyrings/claude-code.asc` 應該報告 `31DD DE24 DDFA B679 F42D 7BD2 BAA9 29FF 1A7E CACE`。
+
+    若要稍後升級，請執行 `sudo apt update && sudo apt upgrade claude-code`。
+  </Tab>
+
+  <Tab title="dnf">
+    適用於 Fedora 和 RHEL：
+
+    ```bash theme={null}
+    sudo tee /etc/yum.repos.d/claude-code.repo <<'EOF'
+    [claude-code]
+    name=Claude Code
+    baseurl=https://downloads.claude.ai/claude-code/rpm/stable
+    enabled=1
+    gpgcheck=1
+    gpgkey=https://downloads.claude.ai/keys/claude-code.asc
+    EOF
+    sudo dnf install claude-code
+    ```
+
+    dnf 在首次安裝時下載金鑰，並提示您確認指紋。在接受之前驗證它是否與 `31DD DE24 DDFA B679 F42D 7BD2 BAA9 29FF 1A7E CACE` 相符。
+
+    若要稍後升級，請執行 `sudo dnf upgrade claude-code`。
+  </Tab>
+
+  <Tab title="apk">
+    適用於 Alpine Linux：
+
+    ```sh theme={null}
+    wget -O /etc/apk/keys/claude-code.rsa.pub \
+      https://downloads.claude.ai/keys/claude-code.rsa.pub
+    echo "https://downloads.claude.ai/claude-code/apk/stable" >> /etc/apk/repositories
+    apk add claude-code
+    ```
+
+    使用 `sha256sum /etc/apk/keys/claude-code.rsa.pub` 驗證下載的金鑰，應該報告 `395759c1f7449ef4cdef305a42e820f3c766d6090d142634ebdb049f113168b6`。
+
+    若要稍後升級，請執行 `apk update && apk upgrade claude-code`。
+  </Tab>
+</Tabs>
+
 ### 使用 npm 安裝
 
 您也可以將 Claude Code 安裝為全域 npm 套件。該套件需要 [Node.js 18 或更新版本](https://nodejs.org/en/download)。
@@ -364,7 +427,7 @@ npm 套件安裝與獨立安裝程式相同的原生二進位檔案。npm 透過
     將 `VERSION` 設定為您要驗證的發佈。
 
     ```bash theme={null}
-    REPO=https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases
+    REPO=https://downloads.claude.ai/claude-code-releases
     VERSION=2.1.89
     curl -fsSLO "$REPO/$VERSION/manifest.json"
     curl -fsSLO "$REPO/$VERSION/manifest.json.sig"
@@ -418,7 +481,7 @@ npm 套件安裝與獨立安裝程式相同的原生二進位檔案。npm 透過
 
 * **macOS**：由「Anthropic PBC」簽署並由 Apple 公證。使用 `codesign --verify --verbose ./claude` 驗證。
 * **Windows**：由「Anthropic, PBC」簽署。使用 `Get-AuthenticodeSignature .\claude.exe` 驗證。
-* **Linux**：使用上面的資訊清單簽名來驗證完整性。Linux 二進位檔案不是單獨程式碼簽署的。
+* **Linux**：二進位檔案不是單獨程式碼簽署的。如果您直接從 `claude-code-releases` 儲存庫下載或使用原生安裝程式，請使用上面的資訊清單簽名驗證完整性。如果您使用 [apt、dnf 或 apk](#install-with-linux-package-managers) 安裝，您的套件管理員會使用儲存庫簽署金鑰自動驗證簽名。
 
 ## 卸載 Claude Code
 
@@ -465,6 +528,34 @@ brew uninstall --cask claude-code@latest
 ```powershell theme={null}
 winget uninstall Anthropic.ClaudeCode
 ```
+
+### apt / dnf / apk
+
+移除套件和儲存庫配置：
+
+<Tabs>
+  <Tab title="apt">
+    ```bash theme={null}
+    sudo apt remove claude-code
+    sudo rm /etc/apt/sources.list.d/claude-code.list /etc/apt/keyrings/claude-code.asc
+    ```
+  </Tab>
+
+  <Tab title="dnf">
+    ```bash theme={null}
+    sudo dnf remove claude-code
+    sudo rm /etc/yum.repos.d/claude-code.repo
+    ```
+  </Tab>
+
+  <Tab title="apk">
+    ```sh theme={null}
+    apk del claude-code
+    sed -i '\|downloads.claude.ai/claude-code/apk|d' /etc/apk/repositories
+    rm /etc/apk/keys/claude-code.rsa.pub
+    ```
+  </Tab>
+</Tabs>
 
 ### npm
 

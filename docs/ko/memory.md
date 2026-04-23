@@ -47,7 +47,7 @@ CLAUDE.md를 다시 설명해야 할 내용을 적어두는 장소로 취급합�
 * 지난 세션에 입력한 것과 같은 수정 또는 설명을 채팅에 입력합니다
 * 새로운 팀원이 생산성을 높이기 위해 같은 컨텍스트가 필요합니다
 
-모든 세션에서 Claude가 보유해야 할 사실로 유지합니다: 빌드 명령, 규칙, 프로젝트 레이아웃, "항상 X를 수행합니다" 규칙. 항목이 다단계 절차이거나 코드베이스의 한 부분에만 중요한 경우 대신 [skill](/ko/skills) 또는 [경로 범위 규칙](#organize-rules-with-clauderules)으로 이동합니다. [확장 개요](/ko/features-overview#build-your-setup-over-time)에서 각 메커니즘을 사용할 시기를 다룹니다.
+모든 세션에서 Claude가 보유해야 할 사실로 유지합니다: 빌드 명령, 규칙, 프로젝트 레이아웃, "항상 X를 수행합니다" 규칙. 항목이 다단계 절차이거나 코드베이스의 한 부분에만 중요한 경우 대신 [skill](/ko/skills) 또는 [경로 범위 규칙](#organize-rules-with-claude/rules/)으로 이동합니다. [확장 개요](/ko/features-overview#build-your-setup-over-time)에서 각 메커니즘을 사용할 시기를 다룹니다.
 
 ### CLAUDE.md 파일을 어디에 배치할지 선택
 
@@ -60,9 +60,9 @@ CLAUDE.md 파일은 여러 위치에 있을 수 있으며, 각각 다른 범위�
 | **사용자 지침**  | `~/.claude/CLAUDE.md`                                                                                                                                                 | 모든 프로젝트에 대한 개인 선호도             | 코드 스타일 선호도, 개인 도구 단축키        | 본인만(모든 프로젝트)   |
 | **로컬 지침**   | `./CLAUDE.local.md`                                                                                                                                                   | 개인 프로젝트별 선호도; `.gitignore`에 추가 | 샌드박스 URL, 선호하는 테스트 데이터       | 본인만(현재 프로젝트)   |
 
-작업 디렉토리 위의 디렉토리 계층 구조에 있는 CLAUDE.md 및 CLAUDE.local.md 파일은 시작 시 전체 로드됩니다. 하위 디렉토리의 파일은 Claude가 해당 디렉토리의 파일을 읽을 때 필요에 따라 로드됩니다. [CLAUDE.md 파일이 로드되는 방식](#how-claudemd-files-load)에서 전체 해석 순서를 참조하세요.
+작업 디렉토리 위의 디렉토리 계층 구조에 있는 CLAUDE.md 및 CLAUDE.local.md 파일은 시작 시 전체 로드됩니다. 하위 디렉토리의 파일은 Claude가 해당 디렉토리의 파일을 읽을 때 필요에 따라 로드됩니다. [CLAUDE.md 파일이 로드되는 방식](#how-claude-md-files-load)에서 전체 해석 순서를 참조하세요.
 
-대규모 프로젝트의 경우 [프로젝트 규칙](#organize-rules-with-clauderules)을 사용하여 지침을 주제별 파일로 나눌 수 있습니다. 규칙을 통해 특정 파일 유형 또는 하위 디렉토리에 지침의 범위를 지정할 수 있습니다.
+대규모 프로젝트의 경우 [프로젝트 규칙](#organize-rules-with-claude/rules/)을 사용하여 지침을 주제별 파일로 나눌 수 있습니다. 규칙을 통해 특정 파일 유형 또는 하위 디렉토리에 지침의 범위를 지정할 수 있습니다.
 
 ### 프로젝트 CLAUDE.md 설정
 
@@ -78,7 +78,7 @@ CLAUDE.md 파일은 여러 위치에 있을 수 있으며, 각각 다른 범위�
 
 CLAUDE.md 파일은 모든 세션의 시작 시 컨텍스트 윈도우에 로드되어 대화와 함께 토큰을 소비합니다. [컨텍스트 윈도우 시각화](/ko/context-window)는 CLAUDE.md가 나머지 시작 컨텍스트를 기준으로 어디에 로드되는지 보여줍니다. 강제된 구성이 아닌 컨텍스트이기 때문에 지침을 작성하는 방식이 Claude가 얼마나 안정적으로 따르는지에 영향을 미칩니다. 구체적이고 간결하며 잘 구조화된 지침이 가장 잘 작동합니다.
 
-**크기**: CLAUDE.md 파일당 200줄 이하를 목표로 합니다. 더 긴 파일은 더 많은 컨텍스트를 소비하고 준수를 줄입니다. 지침이 커지면 [가져오기](#import-additional-files)를 사용하거나 [`.claude/rules/`](#organize-rules-with-clauderules) 파일로 분할합니다.
+**크기**: CLAUDE.md 파일당 200줄 이하를 목표로 합니다. 더 긴 파일은 더 많은 컨텍스트를 소비하고 준수를 줄입니다. 지침이 커지면 [경로 범위 규칙](#path-specific-rules)을 사용하여 Claude가 일치하는 파일로 작업할 때만 지침이 로드되도록 하여 노이즈를 줄이고 컨텍스트 공간을 절약할 수 있습니다. [가져오기](#import-additional-files)를 사용하여 조직을 위해 콘텐츠를 분할할 수도 있지만, 가져온 파일은 여전히 로드되고 시작 시 컨텍스트 윈도우에 들어갑니다.
 
 **구조**: 마크다운 헤더와 글머리 기호를 사용하여 관련 지침을 그룹화합니다. Claude는 독자와 같은 방식으로 구조를 스캔합니다: 구성된 섹션이 조밀한 단락보다 따르기 쉽습니다.
 
@@ -88,7 +88,7 @@ CLAUDE.md 파일은 모든 세션의 시작 시 컨텍스트 윈도우에 로드
 * "변경 사항을 테스트합니다"보다는 "커밋하기 전에 `npm test` 실행"
 * "파일을 정리된 상태로 유지합니다"보다는 "API 핸들러는 `src/api/handlers/`에 있습니다"
 
-**일관성**: 두 규칙이 서로 모순되면 Claude가 하나를 임의로 선택할 수 있습니다. CLAUDE.md 파일, 하위 디렉토리의 중첩된 CLAUDE.md 파일 및 [`.claude/rules/`](#organize-rules-with-clauderules)을 정기적으로 검토하여 오래되었거나 충돌하는 지침을 제거합니다. 모노레포에서는 [`claudeMdExcludes`](#exclude-specific-claudemd-files)를 사용하여 작업과 관련이 없는 다른 팀의 CLAUDE.md 파일을 건너뜁니다.
+**일관성**: 두 규칙이 서로 모순되면 Claude가 하나를 임의로 선택할 수 있습니다. CLAUDE.md 파일, 하위 디렉토리의 중첩된 CLAUDE.md 파일 및 [`.claude/rules/`](#organize-rules-with-claude/rules/)을 정기적으로 검토하여 오래되었거나 충돌하는 지침을 제거합니다. 모노레포에서는 [`claudeMdExcludes`](#exclude-specific-claude-md-files)를 사용하여 작업과 관련이 없는 다른 팀의 CLAUDE.md 파일을 건너뜁니다.
 
 ### 추가 파일 가져오기
 
@@ -118,7 +118,7 @@ README, package.json 및 워크플로우 가이드를 가져오려면 CLAUDE.md�
   Claude Code가 프로젝트에서 외부 가져오기를 처음 만날 때 파일을 나열하는 승인 대화를 표시합니다. 거부하면 가져오기가 비활성화된 상태로 유지되고 대화가 다시 나타나지 않습니다.
 </Warning>
 
-지침을 구성하는 더 구조화된 접근 방식은 [`.claude/rules/`](#organize-rules-with-clauderules)을 참조하세요.
+지침을 구성하는 더 구조화된 접근 방식은 [`.claude/rules/`](#organize-rules-with-claude/rules/)을 참조하세요.
 
 ### AGENTS.md
 
@@ -129,7 +129,7 @@ Claude Code는 `CLAUDE.md`를 읽으며 `AGENTS.md`를 읽지 않습니다. 저�
 
 ## Claude Code
 
-`src/billing/` 아래의 변경 사항에 대해 plan mode를 사용합니다.
+`src/billing/` 아래의 변경 사항에 대해 Plan Mode를 사용합니다.
 ```
 
 ### CLAUDE.md 파일이 로드되는 방식
@@ -140,7 +140,7 @@ Claude Code는 현재 작업 디렉토리에서 디렉토리 트리를 따라 �
 
 Claude는 또한 현재 작업 디렉토리 아래의 하위 디렉토리에서 `CLAUDE.md` 및 `CLAUDE.local.md` 파일을 발견합니다. 시작 시 로드하는 대신 Claude가 해당 하위 디렉토리의 파일을 읽을 때 포함됩니다.
 
-대규모 모노레포에서 작업하고 다른 팀의 CLAUDE.md 파일이 선택되는 경우 [`claudeMdExcludes`](#exclude-specific-claudemd-files)를 사용하여 건너뜁니다.
+대규모 모노레포에서 작업하고 다른 팀의 CLAUDE.md 파일이 선택되는 경우 [`claudeMdExcludes`](#exclude-specific-claude-md-files)를 사용하여 건너뜁니다.
 
 CLAUDE.md 파일의 블록 수준 HTML 주석(`<!-- maintainer notes -->`)은 콘텐츠가 Claude의 컨텍스트에 주입되기 전에 제거됩니다. 컨텍스트 토큰을 소비하지 않고 인간 유지보수자를 위한 노트를 남기는 데 사용합니다. 코드 블록 내의 주석은 보존됩니다. Read 도구로 CLAUDE.md 파일을 직접 열 때 주석이 표시된 상태로 유지됩니다.
 
@@ -374,7 +374,7 @@ CLAUDE.md 콘텐츠는 시스템 프롬프트의 일부가 아니라 시스템 �
 디버깅하려면:
 
 * `/memory`를 실행하여 CLAUDE.md 및 CLAUDE.local.md 파일이 로드되는지 확인합니다. 파일이 나열되지 않으면 Claude가 볼 수 없습니다.
-* 관련 CLAUDE.md가 세션에 대해 로드되는 위치에 있는지 확인합니다([CLAUDE.md 파일을 어디에 배치할지 선택](#choose-where-to-put-claudemd-files) 참조).
+* 관련 CLAUDE.md가 세션에 대해 로드되는 위치에 있는지 확인합니다([CLAUDE.md 파일을 어디에 배치할지 선택](#choose-where-to-put-claude-md-files) 참조).
 * 지침을 더 구체적으로 만듭니다. "2칸 들여쓰기 사용"이 "코드를 제대로 포맷합니다"보다 더 잘 작동합니다.
 * CLAUDE.md 파일 전체에서 충돌하는 지침을 찾습니다. 두 파일이 동일한 동작에 대해 다른 지침을 제공하면 Claude가 하나를 임의로 선택할 수 있습니다.
 
@@ -390,15 +390,15 @@ CLAUDE.md 콘텐츠는 시스템 프롬프트의 일부가 아니라 시스템 �
 
 ### CLAUDE.md가 너무 큽니다
 
-200줄을 초과하는 파일은 더 많은 컨텍스트를 소비하고 준수를 줄일 수 있습니다. `@path` 가져오기로 참조되는 별도의 파일로 자세한 콘텐츠를 이동합니다([추가 파일 가져오기](#import-additional-files) 참조) 또는 `.claude/rules/` 파일 전체에서 지침을 분할합니다.
+200줄을 초과하는 파일은 더 많은 컨텍스트를 소비하고 준수를 줄일 수 있습니다. [경로별 규칙](#path-specific-rules)을 사용하여 Claude가 일치하는 파일로 작업할 때만 지침을 로드하거나 모든 세션에서 필요하지 않은 콘텐츠를 정리합니다. [`@path` 가져오기](#import-additional-files)로 분할하면 조직화에 도움이 되지만 가져온 파일이 시작 시 로드되므로 컨텍스트를 줄이지는 않습니다.
 
 ### `/compact` 후 지침이 손실된 것 같습니다
 
 프로젝트 루트 CLAUDE.md는 압축을 완전히 생존합니다: `/compact` 후 Claude는 디스크에서 CLAUDE.md를 다시 읽고 세션에 새로 다시 주입합니다. 하위 디렉토리의 중첩된 CLAUDE.md 파일은 자동으로 다시 주입되지 않습니다. 해당 하위 디렉토리의 파일을 다시 읽을 때 다음에 다시 로드됩니다.
 
-압축 후 지침이 사라진 경우 CLAUDE.md에 작성되지 않고 대화에서만 제공되었습니다. 세션 간에 지속되도록 CLAUDE.md에 추가합니다. 압축 후 생존하는 항목의 전체 분석은 [압축 후 생존하는 항목](/ko/context-window#what-survives-compaction)을 참조하세요.
+압축 후 지침이 사라진 경우 CLAUDE.md에 작성되지 않고 대화에서만 제공되었거나 아직 다시 로드되지 않은 중첩된 CLAUDE.md에 있습니다. 세션 간에 지속되도록 CLAUDE.md에 대화 전용 지침을 추가합니다. 압축 후 생존하는 항목의 전체 분석은 [압축 후 생존하는 항목](/ko/context-window#what-survives-compaction)을 참조하세요.
 
-효과적인 지침에 대한 지침은 [효과적인 지침 작성](#write-effective-instructions)을 참조하세요.
+[효과적인 지침 작성](#write-effective-instructions)을 참조하여 크기, 구조 및 구체성에 대한 지침을 확인합니다.
 
 ## 관련 리소스
 

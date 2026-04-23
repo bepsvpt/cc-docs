@@ -514,7 +514,7 @@ Gunakan @ untuk dengan cepat menyertakan file atau direktori tanpa menunggu Clau
 
 ## Gunakan extended thinking (thinking mode)
 
-[Extended thinking](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) diaktifkan secara default, memberikan Claude ruang untuk bernalar melalui masalah kompleks langkah demi langkah sebelum merespons. Penalaran ini terlihat dalam verbose mode, yang dapat Anda aktifkan dengan `Ctrl+O`. Selama extended thinking, petunjuk kemajuan muncul di bawah indikator untuk menunjukkan bahwa Claude sedang bekerja secara aktif.
+[Extended thinking](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) diaktifkan secara default, memberikan Claude ruang untuk bernalar melalui masalah kompleks langkah demi langkah sebelum merespons. Penalaran ini terlihat dalam verbose mode, yang dapat Anda aktifkan dengan `Ctrl+O`. Selama extended thinking, spinner menampilkan petunjuk kemajuan inline seperti "still thinking" dan "almost done thinking" untuk menunjukkan bahwa Claude sedang bekerja secara aktif.
 
 Selain itu, [model yang mendukung effort](/id/model-config#adjust-effort-level) menggunakan adaptive reasoning: alih-alih anggaran token thinking yang tetap, model secara dinamis memutuskan apakah dan berapa banyak untuk berpikir berdasarkan pengaturan effort level Anda dan tugas yang dihadapi. Adaptive reasoning memungkinkan Claude merespons lebih cepat untuk prompt rutin dan menyisihkan pemikiran yang lebih dalam untuk langkah-langkah yang mendapat manfaat darinya.
 
@@ -563,6 +563,8 @@ Saat memulai Claude Code, Anda dapat melanjutkan sesi sebelumnya:
 * `claude --from-pr 123` melanjutkan sesi yang ditautkan ke pull request tertentu
 
 Dari dalam sesi aktif, gunakan `/resume` untuk beralih ke percakapan berbeda.
+
+Ketika sesi yang dipilih sudah lama dan cukup besar sehingga membacanya kembali akan mengonsumsi bagian substansial dari batas penggunaan Anda, `--resume`, `--continue`, dan `/resume` menawarkan untuk melanjutkan dari ringkasan alih-alih memuat transkrip lengkap. Prompt ini tidak tersedia di Amazon Bedrock, Google Cloud Vertex AI, atau Microsoft Foundry.
 
 Sesi disimpan per direktori proyek. Secara default, pemilih `/resume` menampilkan sesi interaktif dari worktree saat ini, dengan pintasan keyboard untuk memperluas daftar ke worktrees lain atau proyek, mencari, melihat pratinjau, dan mengganti nama. Lihat [Gunakan pemilih sesi](#use-the-session-picker) di bawah untuk referensi pintasan lengkap.
 

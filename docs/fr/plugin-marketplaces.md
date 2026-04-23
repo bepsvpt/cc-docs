@@ -677,7 +677,7 @@ Utilisez `".*"` comme `pathPattern` pour autoriser n'importe quel chemin du syst
 
 #### Comment fonctionnent les restrictions
 
-Les restrictions sont validées tôt dans le processus d'installation du plugin, avant toute demande réseau ou opération du système de fichiers. Cela empêche les tentatives d'accès non autorisé à la place de marché.
+Les restrictions sont vérifiées avant toute opération réseau ou système de fichiers. La vérification s'exécute lors de l'ajout de place de marché et lors de l'installation, la mise à jour, l'actualisation et la mise à jour automatique du plugin. Si une place de marché a été ajoutée avant la configuration de la politique et que sa source ne correspond plus à la liste d'autorisation, Claude Code refuse d'installer ou de mettre à jour les plugins à partir de celle-ci. L'application de la même restriction s'applique à `blockedMarketplaces`.
 
 La liste d'autorisation utilise la correspondance exacte pour la plupart des types de sources. Pour qu'une place de marché soit autorisée, tous les champs spécifiés doivent correspondre exactement :
 

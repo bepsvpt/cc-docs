@@ -68,27 +68,28 @@ Esempio di configurazione delle impostazioni gestite:
 
 ### Variabili di configurazione comuni
 
-| Variabile di ambiente                               | Descrizione                                                                                                                                                                                                                               | Valori di esempio                        |
-| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | Abilita la raccolta della telemetria (obbligatorio)                                                                                                                                                                                       | `1`                                      |
-| `OTEL_METRICS_EXPORTER`                             | Tipi di esportatore di metriche, separati da virgola. Usa `none` per disabilitare                                                                                                                                                         | `console`, `otlp`, `prometheus`, `none`  |
-| `OTEL_LOGS_EXPORTER`                                | Tipi di esportatore di log/eventi, separati da virgola. Usa `none` per disabilitare                                                                                                                                                       | `console`, `otlp`, `none`                |
-| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | Protocollo per l'esportatore OTLP, si applica a tutti i segnali                                                                                                                                                                           | `grpc`, `http/json`, `http/protobuf`     |
-| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | Endpoint del collettore OTLP per tutti i segnali                                                                                                                                                                                          | `http://localhost:4317`                  |
-| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | Protocollo per le metriche, sostituisce l'impostazione generale                                                                                                                                                                           | `grpc`, `http/json`, `http/protobuf`     |
-| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | Endpoint OTLP per le metriche, sostituisce l'impostazione generale                                                                                                                                                                        | `http://localhost:4318/v1/metrics`       |
-| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | Protocollo per i log, sostituisce l'impostazione generale                                                                                                                                                                                 | `grpc`, `http/json`, `http/protobuf`     |
-| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | Endpoint OTLP per i log, sostituisce l'impostazione generale                                                                                                                                                                              | `http://localhost:4318/v1/logs`          |
-| `OTEL_EXPORTER_OTLP_HEADERS`                        | Intestazioni di autenticazione per OTLP                                                                                                                                                                                                   | `Authorization=Bearer token`             |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | Chiave client per l'autenticazione mTLS                                                                                                                                                                                                   | Percorso del file della chiave client    |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | Certificato client per l'autenticazione mTLS                                                                                                                                                                                              | Percorso del file del certificato client |
-| `OTEL_METRIC_EXPORT_INTERVAL`                       | Intervallo di esportazione in millisecondi (predefinito: 60000)                                                                                                                                                                           | `5000`, `60000`                          |
-| `OTEL_LOGS_EXPORT_INTERVAL`                         | Intervallo di esportazione dei log in millisecondi (predefinito: 5000)                                                                                                                                                                    | `1000`, `10000`                          |
-| `OTEL_LOG_USER_PROMPTS`                             | Abilita la registrazione del contenuto del prompt dell'utente (predefinito: disabilitato)                                                                                                                                                 | `1` per abilitare                        |
-| `OTEL_LOG_TOOL_DETAILS`                             | Abilita la registrazione dei parametri dello strumento e degli argomenti di input negli eventi dello strumento: comandi Bash, nomi dei server MCP e dello strumento, nomi delle skill e input dello strumento (predefinito: disabilitato) | `1` per abilitare                        |
-| `OTEL_LOG_TOOL_CONTENT`                             | Abilita la registrazione del contenuto di input e output dello strumento negli eventi di span (predefinito: disabilitato). Richiede [tracce](#traces-beta). Il contenuto viene troncato a 60 KB                                           | `1` per abilitare                        |
-| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | Preferenza di temporalità delle metriche (predefinito: `delta`). Imposta su `cumulative` se il tuo backend prevede temporalità cumulativa                                                                                                 | `delta`, `cumulative`                    |
-| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | Intervallo per l'aggiornamento delle intestazioni dinamiche (predefinito: 1740000ms / 29 minuti)                                                                                                                                          | `900000`                                 |
+| Variabile di ambiente                               | Descrizione                                                                                                                                                                                                                                                                                                                                                                                                   | Valori di esempio                                                                                                             |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | Abilita la raccolta della telemetria (obbligatorio)                                                                                                                                                                                                                                                                                                                                                           | `1`                                                                                                                           |
+| `OTEL_METRICS_EXPORTER`                             | Tipi di esportatore di metriche, separati da virgola. Usa `none` per disabilitare                                                                                                                                                                                                                                                                                                                             | `console`, `otlp`, `prometheus`, `none`                                                                                       |
+| `OTEL_LOGS_EXPORTER`                                | Tipi di esportatore di log/eventi, separati da virgola. Usa `none` per disabilitare                                                                                                                                                                                                                                                                                                                           | `console`, `otlp`, `none`                                                                                                     |
+| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | Protocollo per l'esportatore OTLP, si applica a tutti i segnali                                                                                                                                                                                                                                                                                                                                               | `grpc`, `http/json`, `http/protobuf`                                                                                          |
+| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | Endpoint del collettore OTLP per tutti i segnali                                                                                                                                                                                                                                                                                                                                                              | `http://localhost:4317`                                                                                                       |
+| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | Protocollo per le metriche, sostituisce l'impostazione generale                                                                                                                                                                                                                                                                                                                                               | `grpc`, `http/json`, `http/protobuf`                                                                                          |
+| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | Endpoint OTLP per le metriche, sostituisce l'impostazione generale                                                                                                                                                                                                                                                                                                                                            | `http://localhost:4318/v1/metrics`                                                                                            |
+| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | Protocollo per i log, sostituisce l'impostazione generale                                                                                                                                                                                                                                                                                                                                                     | `grpc`, `http/json`, `http/protobuf`                                                                                          |
+| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | Endpoint OTLP per i log, sostituisce l'impostazione generale                                                                                                                                                                                                                                                                                                                                                  | `http://localhost:4318/v1/logs`                                                                                               |
+| `OTEL_EXPORTER_OTLP_HEADERS`                        | Intestazioni di autenticazione per OTLP                                                                                                                                                                                                                                                                                                                                                                       | `Authorization=Bearer token`                                                                                                  |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | Chiave client per l'autenticazione mTLS                                                                                                                                                                                                                                                                                                                                                                       | Percorso del file della chiave client                                                                                         |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | Certificato client per l'autenticazione mTLS                                                                                                                                                                                                                                                                                                                                                                  | Percorso del file del certificato client                                                                                      |
+| `OTEL_METRIC_EXPORT_INTERVAL`                       | Intervallo di esportazione in millisecondi (predefinito: 60000)                                                                                                                                                                                                                                                                                                                                               | `5000`, `60000`                                                                                                               |
+| `OTEL_LOGS_EXPORT_INTERVAL`                         | Intervallo di esportazione dei log in millisecondi (predefinito: 5000)                                                                                                                                                                                                                                                                                                                                        | `1000`, `10000`                                                                                                               |
+| `OTEL_LOG_USER_PROMPTS`                             | Abilita la registrazione del contenuto del prompt dell'utente (predefinito: disabilitato)                                                                                                                                                                                                                                                                                                                     | `1` per abilitare                                                                                                             |
+| `OTEL_LOG_TOOL_DETAILS`                             | Abilita la registrazione dei parametri dello strumento e degli argomenti di input negli eventi dello strumento e negli attributi di span di traccia: comandi Bash, nomi dei server MCP e dello strumento, nomi delle skill e input dello strumento. Abilita anche i nomi dei comandi personalizzati, plugin e MCP negli eventi `user_prompt` (predefinito: disabilitato)                                      | `1` per abilitare                                                                                                             |
+| `OTEL_LOG_TOOL_CONTENT`                             | Abilita la registrazione del contenuto di input e output dello strumento negli eventi di span (predefinito: disabilitato). Richiede [tracce](#traces-beta). Il contenuto viene troncato a 60 KB                                                                                                                                                                                                               | `1` per abilitare                                                                                                             |
+| `OTEL_LOG_RAW_API_BODIES`                           | Emetti il corpo completo della richiesta e della risposta JSON dell'API Anthropic Messages come eventi di log `api_request_body` / `api_response_body` (predefinito: disabilitato). I corpi includono l'intera cronologia della conversazione. L'abilitazione di questa opzione implica il consenso a tutto ciò che `OTEL_LOG_USER_PROMPTS`, `OTEL_LOG_TOOL_DETAILS`, e `OTEL_LOG_TOOL_CONTENT` rivelerebbero | `1` per corpi inline troncati a 60 KB, o `file:<dir>` per corpi non troncati su disco con un puntatore `body_ref` nell'evento |
+| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | Preferenza di temporalità delle metriche (predefinito: `delta`). Imposta su `cumulative` se il tuo backend prevede temporalità cumulativa                                                                                                                                                                                                                                                                     | `delta`, `cumulative`                                                                                                         |
+| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | Intervallo per l'aggiornamento delle intestazioni dinamiche (predefinito: 1740000ms / 29 minuti)                                                                                                                                                                                                                                                                                                              | `900000`                                                                                                                      |
 
 ### Controllo della cardinalità delle metriche
 
@@ -116,7 +117,117 @@ Le tracce sono disabilitate per impostazione predefinita. Per abilitarle, impost
 | `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`  | Endpoint OTLP per le tracce, sostituisce `OTEL_EXPORTER_OTLP_ENDPOINT`                           | `http://localhost:4318/v1/traces`    |
 | `OTEL_TRACES_EXPORT_INTERVAL`         | Intervallo di esportazione batch degli span in millisecondi (predefinito: 5000)                  | `1000`, `10000`                      |
 
-Gli span redattano il testo del prompt dell'utente e il contenuto dello strumento per impostazione predefinita. Imposta `OTEL_LOG_USER_PROMPTS=1` e `OTEL_LOG_TOOL_CONTENT=1` per includerli.
+Gli span redattano il testo del prompt dell'utente, i dettagli di input dello strumento e il contenuto dello strumento per impostazione predefinita. Imposta `OTEL_LOG_USER_PROMPTS=1`, `OTEL_LOG_TOOL_DETAILS=1`, e `OTEL_LOG_TOOL_CONTENT=1` per includerli.
+
+Quando la traccia è attiva, i sottoprocessi Bash e PowerShell ereditano automaticamente una variabile di ambiente `TRACEPARENT` contenente il contesto di traccia W3C dello span di esecuzione dello strumento attivo. Ciò consente a qualsiasi sottoprocesso che legge `TRACEPARENT` di far diventare i propri span figli della stessa traccia, abilitando la traccia distribuita end-to-end attraverso script e comandi che Claude esegue.
+
+In Agent SDK e sessioni non interattive avviate con `-p`, Claude Code legge anche `TRACEPARENT` e `TRACESTATE` dal proprio ambiente quando avvia ogni span di interazione. Ciò consente a un processo di incorporamento di passare il suo contesto di traccia W3C attivo nel sottoprocesso in modo che gli span di Claude Code appaiano come figli della traccia distribuita del chiamante. Le sessioni interattive ignorano `TRACEPARENT` in entrata per evitare di ereditare accidentalmente valori ambientali da ambienti CI o container.
+
+#### Gerarchia degli span
+
+Ogni prompt dell'utente avvia uno span radice `claude_code.interaction`. Le chiamate API, le chiamate agli strumenti e le esecuzioni degli hook vengono registrate come suoi figli. Gli span degli strumenti hanno due span figli propri: uno per il tempo trascorso in attesa di una decisione di autorizzazione e uno per l'esecuzione stessa. Quando lo strumento Task genera un subagent, gli span API e degli strumenti del subagent si annidano sotto lo span `claude_code.tool` del genitore.
+
+```text theme={null}
+claude_code.interaction
+├── claude_code.llm_request
+├── claude_code.hook                    (richiede traccia beta dettagliata)
+└── claude_code.tool
+    ├── claude_code.tool.blocked_on_user
+    ├── claude_code.tool.execution
+    └── (Strumento Task) span claude_code.llm_request / claude_code.tool del subagent
+```
+
+In Agent SDK e sessioni `claude -p`, `claude_code.interaction` stesso diventa un figlio dello span del chiamante quando `TRACEPARENT` è impostato nell'ambiente.
+
+#### Attributi degli span
+
+Ogni span porta gli [attributi standard](#standard-attributes) più un attributo `span.type` che corrisponde al suo nome. Le tabelle seguenti elencano gli attributi aggiuntivi impostati su ogni span. Gli span `llm_request`, `tool.execution`, e `hook` impostano lo stato OpenTelemetry `ERROR` quando registrano un errore; gli altri span terminano sempre con stato `UNSET`.
+
+**`claude_code.interaction`**
+
+| Attributo                 | Descrizione                                                                     | Controllato da          |
+| ------------------------- | ------------------------------------------------------------------------------- | ----------------------- |
+| `user_prompt`             | Testo del prompt. Il valore è `<REDACTED>` a meno che il gate non sia impostato | `OTEL_LOG_USER_PROMPTS` |
+| `user_prompt_length`      | Lunghezza del prompt in caratteri                                               |                         |
+| `interaction.sequence`    | Contatore basato su 1 delle interazioni in questa sessione                      |                         |
+| `interaction.duration_ms` | Durata wall-clock del turno                                                     |                         |
+
+**`claude_code.llm_request`**
+
+| Attributo                | Descrizione                                                                            | Controllato da |
+| ------------------------ | -------------------------------------------------------------------------------------- | -------------- |
+| `model`                  | Identificatore del modello                                                             |                |
+| `gen_ai.system`          | Sempre `anthropic`. Convenzione semantica OpenTelemetry GenAI                          |                |
+| `gen_ai.request.model`   | Stesso valore di `model`. Convenzione semantica OpenTelemetry GenAI                    |                |
+| `query_source`           | Sottosistema che ha emesso la richiesta, come `repl_main_thread` o un nome di subagent |                |
+| `speed`                  | `fast` o `normal`                                                                      |                |
+| `llm_request.context`    | `interaction`, `tool`, o `standalone` a seconda dello span genitore                    |                |
+| `duration_ms`            | Durata wall-clock inclusi i tentativi                                                  |                |
+| `ttft_ms`                | Tempo al primo token in millisecondi                                                   |                |
+| `input_tokens`           | Conteggio dei token di input dal blocco di utilizzo dell'API                           |                |
+| `output_tokens`          | Conteggio dei token di output                                                          |                |
+| `cache_read_tokens`      | Token letti dalla cache del prompt                                                     |                |
+| `cache_creation_tokens`  | Token scritti nella cache del prompt                                                   |                |
+| `request_id`             | ID della richiesta API Anthropic dall'intestazione della risposta `request-id`         |                |
+| `gen_ai.response.id`     | Stesso valore di `request_id`. Convenzione semantica OpenTelemetry GenAI               |                |
+| `client_request_id`      | `x-client-request-id` generato dal client del tentativo finale                         |                |
+| `attempt`                | Tentativi totali effettuati per questa richiesta                                       |                |
+| `success`                | `true` o `false`                                                                       |                |
+| `status_code`            | Codice di stato HTTP quando la richiesta non è riuscita                                |                |
+| `error`                  | Messaggio di errore quando la richiesta non è riuscita                                 |                |
+| `response.has_tool_call` | `true` quando la risposta conteneva blocchi di tool-use                                |                |
+
+Ogni tentativo di ripetizione viene anche registrato come evento di span `gen_ai.request.attempt` con attributi `attempt` e `client_request_id`.
+
+**`claude_code.tool`**
+
+| Attributo       | Descrizione                                                            | Controllato da          |
+| --------------- | ---------------------------------------------------------------------- | ----------------------- |
+| `tool_name`     | Nome dello strumento                                                   |                         |
+| `duration_ms`   | Durata wall-clock inclusa l'attesa di autorizzazione e l'esecuzione    |                         |
+| `result_tokens` | Dimensione approssimativa in token del risultato dello strumento       |                         |
+| `file_path`     | Percorso del file di destinazione per gli strumenti Read, Edit e Write | `OTEL_LOG_TOOL_DETAILS` |
+| `full_command`  | Stringa di comando per lo strumento Bash                               | `OTEL_LOG_TOOL_DETAILS` |
+| `skill_name`    | Nome della skill per lo strumento Skill                                | `OTEL_LOG_TOOL_DETAILS` |
+| `subagent_type` | Tipo di subagent per lo strumento Task                                 | `OTEL_LOG_TOOL_DETAILS` |
+
+Quando `OTEL_LOG_TOOL_CONTENT=1`, questo span registra anche un evento di span `tool.output` i cui attributi contengono i corpi di input e output dello strumento, troncati a 60 KB per attributo.
+
+**`claude_code.tool.blocked_on_user`**
+
+| Attributo     | Descrizione                                                      | Controllato da |
+| ------------- | ---------------------------------------------------------------- | -------------- |
+| `duration_ms` | Tempo trascorso in attesa della decisione di autorizzazione      |                |
+| `decision`    | `accept` o `reject`                                              |                |
+| `source`      | Fonte della decisione, corrispondente all'evento `tool_decision` |                |
+
+**`claude_code.tool.execution`**
+
+| Attributo     | Descrizione                                                                                                                                                                | Controllato da          |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| `duration_ms` | Tempo trascorso nell'esecuzione del corpo dello strumento                                                                                                                  |                         |
+| `success`     | `true` o `false`                                                                                                                                                           |                         |
+| `error`       | Stringa di categoria di errore quando l'esecuzione non è riuscita, come `Error:ENOENT` o `ShellError`. Contiene il messaggio di errore completo quando il gate è impostato | `OTEL_LOG_TOOL_DETAILS` |
+
+**`claude_code.hook`**
+
+Questo span viene emesso solo quando la traccia beta dettagliata è attiva, il che richiede `ENABLE_BETA_TRACING_DETAILED=1` e `BETA_TRACING_ENDPOINT` oltre alla configurazione dell'esportatore di tracce sopra. Nelle sessioni CLI interattive, ciò richiede anche che la tua organizzazione sia nella lista di autorizzazione per la funzione. Le sessioni Agent SDK e non interattive `-p` non sono controllate. Non viene emesso quando è impostato solo `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA`.
+
+| Attributo                | Descrizione                                                            | Controllato da          |
+| ------------------------ | ---------------------------------------------------------------------- | ----------------------- |
+| `hook_event`             | Tipo di evento hook, come `PreToolUse`                                 |                         |
+| `hook_name`              | Nome completo dell'hook, come `PreToolUse:Write`                       |                         |
+| `num_hooks`              | Numero di comandi hook corrispondenti eseguiti                         |                         |
+| `hook_definitions`       | Configurazione dell'hook serializzata in JSON                          | `OTEL_LOG_TOOL_DETAILS` |
+| `duration_ms`            | Durata wall-clock di tutti gli hook corrispondenti                     |                         |
+| `num_success`            | Conteggio degli hook completati con successo                           |                         |
+| `num_blocking`           | Conteggio degli hook che hanno restituito una decisione di blocco      |                         |
+| `num_non_blocking_error` | Conteggio degli hook che non hanno avuto esito positivo senza bloccare |                         |
+| `num_cancelled`          | Conteggio degli hook annullati prima del completamento                 |                         |
+
+<Note>
+  Attributi aggiuntivi che portano contenuto come `new_context`, `system_prompt_preview`, `tool_input`, e `response.model_output` vengono emessi solo quando la traccia beta dettagliata è attiva. Non fanno parte dello schema di span stabile.
+</Note>
 
 ### Intestazioni dinamiche
 
@@ -284,6 +395,7 @@ Incrementato all'inizio di ogni sessione.
 **Attributi**:
 
 * Tutti gli [attributi standard](#standard-attributes)
+* `start_type`: Come la sessione è stata avviata. Uno di `"fresh"`, `"resume"`, o `"continue"`
 
 #### Contatore di righe di codice
 
@@ -318,6 +430,9 @@ Incrementato dopo ogni richiesta API.
 
 * Tutti gli [attributi standard](#standard-attributes)
 * `model`: Identificatore del modello (ad esempio, "claude-sonnet-4-6")
+* `query_source`: Categoria del sottosistema che ha emesso la richiesta. Uno di `"main"`, `"subagent"`, o `"auxiliary"`
+* `speed`: `"fast"` quando la richiesta ha utilizzato la modalità veloce. Assente altrimenti
+* `effort`: [Livello di sforzo](/it/model-config#adjust-effort-level) applicato alla richiesta: `"low"`, `"medium"`, `"high"`, `"xhigh"`, o `"max"`. Assente quando il modello non supporta lo sforzo.
 
 #### Contatore di token
 
@@ -328,6 +443,9 @@ Incrementato dopo ogni richiesta API.
 * Tutti gli [attributi standard](#standard-attributes)
 * `type`: (`"input"`, `"output"`, `"cacheRead"`, `"cacheCreation"`)
 * `model`: Identificatore del modello (ad esempio, "claude-sonnet-4-6")
+* `query_source`: Categoria del sottosistema che ha emesso la richiesta. Uno di `"main"`, `"subagent"`, o `"auxiliary"`
+* `speed`: `"fast"` quando la richiesta ha utilizzato la modalità veloce. Assente altrimenti
+* `effort`: [Livello di sforzo](/it/model-config#adjust-effort-level) applicato alla richiesta. Vedi [Contatore di costo](#cost-counter) per i dettagli.
 
 #### Contatore di decisione dello strumento di modifica del codice
 
@@ -382,6 +500,8 @@ Registrato quando un utente invia un prompt.
 * `event.sequence`: Contatore monotonicamente crescente per ordinare gli eventi all'interno di una sessione
 * `prompt_length`: Lunghezza del prompt
 * `prompt`: Contenuto del prompt (redatto per impostazione predefinita, abilita con `OTEL_LOG_USER_PROMPTS=1`)
+* `command_name`: Nome del comando quando il prompt ne invoca uno. I nomi dei comandi incorporati e in bundle come `compact` o `debug` vengono emessi così come sono; gli alias come `reset` vengono emessi come digitati piuttosto che il nome canonico. I nomi dei comandi personalizzati, plugin e MCP si riducono a `custom` o `mcp` a meno che `OTEL_LOG_TOOL_DETAILS=1` non sia impostato
+* `command_source`: Origine del comando quando presente: `builtin`, `custom`, o `mcp`. I comandi forniti dai plugin vengono segnalati come `custom`
 
 #### Evento di risultato dello strumento
 
@@ -398,7 +518,8 @@ Registrato quando uno strumento completa l'esecuzione.
 * `tool_name`: Nome dello strumento
 * `success`: `"true"` o `"false"`
 * `duration_ms`: Tempo di esecuzione in millisecondi
-* `error`: Messaggio di errore (se non riuscito)
+* `error_type`: Stringa di categoria di errore quando lo strumento non è riuscito, come `"Error:ENOENT"` o `"ShellError"`
+* `error` (quando `OTEL_LOG_TOOL_DETAILS=1`): Messaggio di errore completo quando lo strumento non è riuscito
 * `decision_type`: `"accept"` o `"reject"`
 * `decision_source`: Fonte della decisione - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, o `"user_reject"`
 * `tool_result_size_bytes`: Dimensione del risultato dello strumento in byte
@@ -407,6 +528,7 @@ Registrato quando uno strumento completa l'esecuzione.
   * Per lo strumento Bash: include `bash_command`, `full_command`, `timeout`, `description`, `dangerouslyDisableSandbox`, e `git_commit_id` (lo SHA del commit, quando un comando `git commit` ha successo)
   * Per gli strumenti MCP: include `mcp_server_name`, `mcp_tool_name`
   * Per lo strumento Skill: include `skill_name`
+  * Per lo strumento Task: include `subagent_type`
 * `tool_input` (quando `OTEL_LOG_TOOL_DETAILS=1`): Argomenti dello strumento serializzati in JSON. I singoli valori superiori a 512 caratteri vengono troncati, e il payload completo è limitato a circa 4 K caratteri. Si applica a tutti gli strumenti inclusi gli strumenti MCP.
 
 #### Evento di richiesta API
@@ -428,7 +550,10 @@ Registrato per ogni richiesta API a Claude.
 * `output_tokens`: Numero di token di output
 * `cache_read_tokens`: Numero di token letti dalla cache
 * `cache_creation_tokens`: Numero di token utilizzati per la creazione della cache
+* `request_id`: ID della richiesta API Anthropic dall'intestazione `request-id` della risposta, come `"req_011..."`. Presente solo quando l'API ne restituisce uno.
 * `speed`: `"fast"` o `"normal"`, indicando se la modalità veloce era attiva
+* `query_source`: Sottosistema che ha emesso la richiesta, come `"repl_main_thread"`, `"compact"`, o un nome di subagent
+* `effort`: [Livello di sforzo](/it/model-config#adjust-effort-level) applicato alla richiesta: `"low"`, `"medium"`, `"high"`, `"xhigh"`, o `"max"`. Assente quando il modello non supporta lo sforzo.
 
 #### Evento di errore API
 
@@ -446,8 +571,50 @@ Registrato quando una richiesta API a Claude non riesce.
 * `error`: Messaggio di errore
 * `status_code`: Codice di stato HTTP come stringa, o `"undefined"` per errori non-HTTP
 * `duration_ms`: Durata della richiesta in millisecondi
-* `attempt`: Numero di tentativo (per le richieste riprovate)
+* `attempt`: Numero totale di tentativi effettuati, inclusa la richiesta iniziale (`1` significa che non si sono verificati tentativi)
+* `request_id`: ID della richiesta API Anthropic dall'intestazione `request-id` della risposta, come `"req_011..."`. Presente solo quando l'API ne restituisce uno.
 * `speed`: `"fast"` o `"normal"`, indicando se la modalità veloce era attiva
+* `query_source`: Sottosistema che ha emesso la richiesta, come `"repl_main_thread"`, `"compact"`, o un nome di subagent
+* `effort`: [Livello di sforzo](/it/model-config#adjust-effort-level) applicato alla richiesta. Assente quando il modello non supporta lo sforzo.
+
+#### Evento di corpo della richiesta API
+
+Registrato per ogni tentativo di richiesta API quando `OTEL_LOG_RAW_API_BODIES` è impostato. Un evento viene emesso per tentativo, quindi i tentativi con parametri regolati producono ciascuno il proprio evento.
+
+**Nome evento**: `claude_code.api_request_body`
+
+**Attributi**:
+
+* Tutti gli [attributi standard](#standard-attributes)
+* `event.name`: `"api_request_body"`
+* `event.timestamp`: Timestamp ISO 8601
+* `event.sequence`: Contatore monotonicamente crescente per ordinare gli eventi all'interno di una sessione
+* `body`: Parametri della richiesta dell'API Messages serializzati in JSON (prompt di sistema, messaggi, strumenti, ecc.), troncati a 60 KB. Il contenuto del pensiero esteso nei turni dell'assistente precedenti viene redatto. Emesso solo in modalità inline (`OTEL_LOG_RAW_API_BODIES=1`).
+* `body_ref`: Percorso assoluto a un file `<dir>/<uuid>.request.json` contenente il corpo non troncato. Emesso solo in modalità file (`OTEL_LOG_RAW_API_BODIES=file:<dir>`).
+* `body_length`: Lunghezza del corpo non troncato. Byte UTF-8 quando `OTEL_LOG_RAW_API_BODIES=file:<dir>`, o unità di codice UTF-16 quando `=1`
+* `body_truncated`: `"true"` quando si è verificato il troncamento inline. Assente in modalità file e quando non si è verificato alcun troncamento.
+* `model`: Identificatore del modello dai parametri della richiesta
+* `query_source`: Sottosistema che ha emesso la richiesta (ad esempio, `"compact"`)
+
+#### Evento di corpo della risposta API
+
+Registrato per ogni risposta API riuscita quando `OTEL_LOG_RAW_API_BODIES` è impostato.
+
+**Nome evento**: `claude_code.api_response_body`
+
+**Attributi**:
+
+* Tutti gli [attributi standard](#standard-attributes)
+* `event.name`: `"api_response_body"`
+* `event.timestamp`: Timestamp ISO 8601
+* `event.sequence`: Contatore monotonicamente crescente per ordinare gli eventi all'interno di una sessione
+* `body`: Risposta dell'API Messages serializzata in JSON (id, blocchi di contenuto, utilizzo, motivo di arresto), troncata a 60 KB. Il contenuto del pensiero esteso viene redatto. Emesso solo in modalità inline (`OTEL_LOG_RAW_API_BODIES=1`).
+* `body_ref`: Percorso assoluto a un file `<dir>/<request_id>.response.json` contenente il corpo non troncato. Emesso solo in modalità file (`OTEL_LOG_RAW_API_BODIES=file:<dir>`).
+* `body_length`: Lunghezza del corpo non troncato. Byte UTF-8 quando `OTEL_LOG_RAW_API_BODIES=file:<dir>`, o unità di codice UTF-16 quando `=1`
+* `body_truncated`: `"true"` quando si è verificato il troncamento inline. Assente in modalità file e quando non si è verificato alcun troncamento.
+* `model`: Identificatore del modello
+* `query_source`: Sottosistema che ha emesso la richiesta
+* `request_id`: ID della richiesta API Anthropic dall'intestazione `request-id` della risposta, come `"req_011..."`. Presente solo quando l'API ne restituisce uno.
 
 #### Evento di decisione dello strumento
 
@@ -464,6 +631,191 @@ Registrato quando viene presa una decisione di autorizzazione dello strumento (a
 * `tool_name`: Nome dello strumento (ad esempio, "Read", "Edit", "Write", "NotebookEdit")
 * `decision`: `"accept"` o `"reject"`
 * `source`: Fonte della decisione - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, o `"user_reject"`
+
+#### Evento di cambio della modalità di autorizzazione
+
+Registrato quando la modalità di autorizzazione cambia, ad esempio da ciclo Shift+Tab, uscita dalla modalità piano, o un controllo del gate della modalità automatica.
+
+**Nome evento**: `claude_code.permission_mode_changed`
+
+**Attributi**:
+
+* Tutti gli [attributi standard](#standard-attributes)
+* `event.name`: `"permission_mode_changed"`
+* `event.timestamp`: Timestamp ISO 8601
+* `event.sequence`: Contatore monotonicamente crescente per ordinare gli eventi all'interno di una sessione
+* `from_mode`: La modalità di autorizzazione precedente, ad esempio `"default"`, `"plan"`, `"acceptEdits"`, `"auto"`, o `"bypassPermissions"`
+* `to_mode`: La nuova modalità di autorizzazione
+* `trigger`: Cosa ha causato il cambio. Uno di `"shift_tab"`, `"exit_plan_mode"`, `"auto_gate_denied"`, o `"auto_opt_in"`. Assente quando la transizione proviene dall'SDK o dal bridge
+
+#### Evento di autenticazione
+
+Registrato quando `/login` o `/logout` si completa.
+
+**Nome evento**: `claude_code.auth`
+
+**Attributi**:
+
+* Tutti gli [attributi standard](#standard-attributes)
+* `event.name`: `"auth"`
+* `event.timestamp`: Timestamp ISO 8601
+* `event.sequence`: Contatore monotonicamente crescente per ordinare gli eventi all'interno di una sessione
+* `action`: `"login"` o `"logout"`
+* `success`: `"true"` o `"false"`
+* `auth_method`: Metodo di autenticazione, come `"oauth"`
+* `error_category`: Tipo di errore categorico quando l'azione non è riuscita. Il messaggio di errore grezzo non viene mai incluso
+* `status_code`: Codice di stato HTTP come stringa quando l'azione non è riuscita con un errore HTTP
+
+#### Evento di connessione del server MCP
+
+Registrato quando un server MCP si connette, si disconnette o non riesce a connettersi.
+
+**Nome evento**: `claude_code.mcp_server_connection`
+
+**Attributi**:
+
+* Tutti gli [attributi standard](#standard-attributes)
+* `event.name`: `"mcp_server_connection"`
+* `event.timestamp`: Timestamp ISO 8601
+* `event.sequence`: Contatore monotonicamente crescente per ordinare gli eventi all'interno di una sessione
+* `status`: `"connected"`, `"failed"`, o `"disconnected"`
+* `transport_type`: Trasporto del server, come `"stdio"`, `"sse"`, o `"http"`
+* `server_scope`: Ambito in cui il server è configurato, come `"user"`, `"project"`, o `"local"`
+* `duration_ms`: Durata del tentativo di connessione in millisecondi
+* `error_code`: Codice di errore quando la connessione non è riuscita
+* `server_name` (quando `OTEL_LOG_TOOL_DETAILS=1`): Nome del server configurato
+* `error` (quando `OTEL_LOG_TOOL_DETAILS=1`): Messaggio di errore completo quando la connessione non è riuscita
+
+#### Evento di errore interno
+
+Registrato quando Claude Code cattura un errore interno inaspettato. Viene registrato solo il nome della classe di errore e un codice di stile errno. Il messaggio di errore e la traccia dello stack non vengono mai inclusi. Questo evento non viene emesso quando si esegue su Bedrock, Vertex, o Foundry, o quando `DISABLE_ERROR_REPORTING` è impostato.
+
+**Nome evento**: `claude_code.internal_error`
+
+**Attributi**:
+
+* Tutti gli [attributi standard](#standard-attributes)
+* `event.name`: `"internal_error"`
+* `event.timestamp`: Timestamp ISO 8601
+* `event.sequence`: Contatore monotonicamente crescente per ordinare gli eventi all'interno di una sessione
+* `error_name`: Nome della classe di errore, come `"TypeError"` o `"SyntaxError"`
+* `error_code`: Codice errno di Node.js come `"ENOENT"` quando presente nell'errore
+
+#### Evento di plugin installato
+
+Registrato quando un plugin finisce di installarsi, sia dal comando CLI `claude plugin install` che dall'interfaccia utente interattiva `/plugin`.
+
+**Nome evento**: `claude_code.plugin_installed`
+
+**Attributi**:
+
+* Tutti gli [attributi standard](#standard-attributes)
+* `event.name`: `"plugin_installed"`
+* `event.timestamp`: Timestamp ISO 8601
+* `event.sequence`: Contatore monotonicamente crescente per ordinare gli eventi all'interno di una sessione
+* `marketplace.is_official`: `"true"` se il marketplace è un marketplace ufficiale Anthropic, `"false"` altrimenti
+* `install.trigger`: `"cli"` o `"ui"`
+* `plugin.name`: Nome del plugin installato. Per i marketplace di terze parti questo è incluso solo quando `OTEL_LOG_TOOL_DETAILS=1`
+* `plugin.version`: Versione del plugin quando dichiarata nella voce del marketplace. Per i marketplace di terze parti questo è incluso solo quando `OTEL_LOG_TOOL_DETAILS=1`
+* `marketplace.name`: Marketplace da cui è stato installato il plugin. Per i marketplace di terze parti questo è incluso solo quando `OTEL_LOG_TOOL_DETAILS=1`
+
+#### Evento di skill attivata
+
+Registrato quando una skill viene invocata.
+
+**Nome evento**: `claude_code.skill_activated`
+
+**Attributi**:
+
+* Tutti gli [attributi standard](#standard-attributes)
+* `event.name`: `"skill_activated"`
+* `event.timestamp`: Timestamp ISO 8601
+* `event.sequence`: Contatore monotonicamente crescente per ordinare gli eventi all'interno di una sessione
+* `skill.name`: Nome della skill. Per le skill definite dall'utente e di terze parti il valore è il placeholder `"custom_skill"` a meno che `OTEL_LOG_TOOL_DETAILS=1`
+* `skill.source`: Da dove è stata caricata la skill (ad esempio, `"bundled"`, `"userSettings"`, `"projectSettings"`, `"plugin"`)
+* `plugin.name` (quando `OTEL_LOG_TOOL_DETAILS=1` o il plugin è da un marketplace ufficiale): Nome del plugin proprietario quando la skill è fornita da un plugin
+* `marketplace.name` (quando `OTEL_LOG_TOOL_DETAILS=1` o il plugin è da un marketplace ufficiale): Marketplace del plugin proprietario da cui è stato installato, quando la skill è fornita da un plugin
+
+#### Evento di tentativi API esauriti
+
+Registrato una volta quando una richiesta API non riesce dopo più di un tentativo. Emesso insieme all'evento `api_error` finale.
+
+**Nome evento**: `claude_code.api_retries_exhausted`
+
+**Attributi**:
+
+* Tutti gli [attributi standard](#standard-attributes)
+* `event.name`: `"api_retries_exhausted"`
+* `event.timestamp`: Timestamp ISO 8601
+* `event.sequence`: Contatore monotonicamente crescente per ordinare gli eventi all'interno di una sessione
+* `model`: Modello utilizzato
+* `error`: Messaggio di errore finale
+* `status_code`: Codice di stato HTTP come stringa
+* `total_attempts`: Numero totale di tentativi effettuati
+* `total_retry_duration_ms`: Tempo wall-clock totale tra tutti i tentativi
+* `speed`: `"fast"` o `"normal"`
+
+#### Evento di inizio esecuzione dell'hook
+
+Registrato quando uno o più hook iniziano a eseguirsi per un evento hook.
+
+**Nome evento**: `claude_code.hook_execution_start`
+
+**Attributi**:
+
+* Tutti gli [attributi standard](#standard-attributes)
+* `event.name`: `"hook_execution_start"`
+* `event.timestamp`: Timestamp ISO 8601
+* `event.sequence`: Contatore monotonicamente crescente per ordinare gli eventi all'interno di una sessione
+* `hook_event`: Tipo di evento hook, come `"PreToolUse"` o `"PostToolUse"`
+* `hook_name`: Nome completo dell'hook incluso il matcher, come `"PreToolUse:Write"`
+* `num_hooks`: Numero di comandi hook corrispondenti
+* `managed_only`: `"true"` quando sono consentiti solo gli hook della politica gestita
+* `hook_source`: `"policySettings"` o `"merged"`
+* `hook_definitions`: Configurazione dell'hook serializzata in JSON. Incluso solo quando sia la traccia beta dettagliata che `OTEL_LOG_TOOL_DETAILS=1` sono abilitati
+
+#### Evento di completamento esecuzione dell'hook
+
+Registrato quando tutti gli hook per un evento hook hanno terminato.
+
+**Nome evento**: `claude_code.hook_execution_complete`
+
+**Attributi**:
+
+* Tutti gli [attributi standard](#standard-attributes)
+* `event.name`: `"hook_execution_complete"`
+* `event.timestamp`: Timestamp ISO 8601
+* `event.sequence`: Contatore monotonicamente crescente per ordinare gli eventi all'interno di una sessione
+* `hook_event`: Tipo di evento hook
+* `hook_name`: Nome completo dell'hook incluso il matcher
+* `num_hooks`: Numero di comandi hook corrispondenti
+* `num_success`: Conteggio che ha completato con successo
+* `num_blocking`: Conteggio che ha restituito una decisione di blocco
+* `num_non_blocking_error`: Conteggio che non ha avuto esito positivo senza bloccare
+* `num_cancelled`: Conteggio annullato prima del completamento
+* `total_duration_ms`: Durata wall-clock di tutti gli hook corrispondenti
+* `managed_only`: `"true"` quando sono consentiti solo gli hook della politica gestita
+* `hook_source`: `"policySettings"` o `"merged"`
+* `hook_definitions`: Configurazione dell'hook serializzata in JSON. Incluso solo quando sia la traccia beta dettagliata che `OTEL_LOG_TOOL_DETAILS=1` sono abilitati
+
+#### Evento di compattazione
+
+Registrato quando la compattazione della conversazione si completa.
+
+**Nome evento**: `claude_code.compaction`
+
+**Attributi**:
+
+* Tutti gli [attributi standard](#standard-attributes)
+* `event.name`: `"compaction"`
+* `event.timestamp`: Timestamp ISO 8601
+* `event.sequence`: Contatore monotonicamente crescente per ordinare gli eventi all'interno di una sessione
+* `trigger`: `"auto"` o `"manual"`
+* `success`: `"true"` o `"false"`
+* `duration_ms`: Durata della compattazione
+* `pre_tokens`: Conteggio approssimativo dei token prima della compattazione
+* `post_tokens`: Conteggio approssimativo dei token dopo la compattazione
+* `error`: Messaggio di errore quando la compattazione non è riuscita
 
 ## Interpretazione dei dati di metriche e eventi
 
@@ -498,6 +850,14 @@ Avvisi comuni da considerare:
 * Alto volume di sessioni da utenti specifici
 
 Tutte le metriche possono essere segmentate per `user.account_uuid`, `user.account_id`, `organization.id`, `session.id`, `model`, e `app.version`.
+
+### Rilevare l'esaurimento dei tentativi
+
+Claude Code ritenta internamente le richieste API non riuscite ed emette un singolo evento `claude_code.api_error` solo dopo che rinuncia, quindi l'evento stesso è il segnale terminale per quella richiesta. I tentativi di ripetizione intermedi non vengono registrati come eventi separati.
+
+L'attributo `attempt` sull'evento registra quanti tentativi sono stati effettuati in totale. Un valore maggiore di `CLAUDE_CODE_MAX_RETRIES` (predefinito `10`) indica che la richiesta ha esaurito tutti i tentativi su un errore transitorio. Un valore inferiore indica un errore non ritentabile come una risposta `400`.
+
+Per distinguere una sessione che si è ripresa da una che si è bloccata, raggruppa gli eventi per `session.id` e verifica se esiste un evento `api_request` successivo dopo l'errore.
 
 ### Analisi degli eventi
 
@@ -559,8 +919,9 @@ Per una guida completa sulla misurazione del ritorno sull'investimento per Claud
 * I contenuti dei file grezzi e i frammenti di codice non sono inclusi nelle metriche o negli eventi. I percorsi di traccia degli span sono un percorso dati separato: vedi il punto `OTEL_LOG_TOOL_CONTENT` di seguito
 * Quando autenticato tramite OAuth, `user.email` è incluso negli attributi di telemetria. Se questo è una preoccupazione per la tua organizzazione, lavora con il tuo backend di telemetria per filtrare o redarre questo campo
 * Il contenuto del prompt dell'utente non viene raccolto per impostazione predefinita. Viene registrata solo la lunghezza del prompt. Per includere il contenuto del prompt, imposta `OTEL_LOG_USER_PROMPTS=1`
-* Gli argomenti di input dello strumento e i parametri non vengono registrati per impostazione predefinita. Per includerli, imposta `OTEL_LOG_TOOL_DETAILS=1`. Quando abilitato, gli eventi `tool_result` includono un attributo `tool_parameters` con comandi Bash, nomi dei server MCP e dello strumento, e nomi delle skill, più un attributo `tool_input` con percorsi di file, URL, modelli di ricerca e altri argomenti. I singoli valori superiori a 512 caratteri vengono troncati e il totale è limitato a circa 4 K caratteri, ma gli argomenti potrebbero comunque contenere valori sensibili. Configura il tuo backend di telemetria per filtrare o redarre questi attributi secondo necessità
+* Gli argomenti di input dello strumento e i parametri non vengono registrati per impostazione predefinita. Per includerli, imposta `OTEL_LOG_TOOL_DETAILS=1`. Quando abilitato, gli eventi `tool_result` includono un attributo `tool_parameters` con comandi Bash, nomi dei server MCP e dello strumento, e nomi delle skill, più un attributo `tool_input` con percorsi di file, URL, modelli di ricerca e altri argomenti. Gli eventi `user_prompt` includono il `command_name` verbatim per i comandi personalizzati, plugin e MCP. Gli span di traccia includono lo stesso attributo `tool_input` e attributi derivati dall'input come `file_path`. I singoli valori superiori a 512 caratteri vengono troncati e il totale è limitato a circa 4 K caratteri, ma gli argomenti potrebbero comunque contenere valori sensibili. Configura il tuo backend di telemetria per filtrare o redarre questi attributi secondo necessità
 * Il contenuto di input e output dello strumento non viene registrato negli span di traccia per impostazione predefinita. Per includerlo, imposta `OTEL_LOG_TOOL_CONTENT=1`. Quando abilitato, gli eventi di span includono il contenuto completo di input e output dello strumento troncato a 60 KB per span. Questo può includere contenuti di file grezzi dai risultati dello strumento Read e output dei comandi Bash. Configura il tuo backend di telemetria per filtrare o redarre questi attributi secondo necessità
+* I corpi grezzi della richiesta e della risposta dell'API Anthropic Messages non vengono registrati per impostazione predefinita. Per includerli, imposta `OTEL_LOG_RAW_API_BODIES`. Con `=1`, ogni chiamata API emette eventi di log `api_request_body` e `api_response_body` il cui attributo `body` è il payload serializzato in JSON, troncato a 60 KB. Con `=file:<dir>`, i corpi non troncati vengono scritti in file `.request.json` e `.response.json` in quella directory e gli eventi portano un percorso `body_ref` invece del corpo inline. Spedisci la directory con un log collector o sidecar piuttosto che attraverso il flusso di telemetria. In entrambe le modalità, i corpi contengono l'intera cronologia della conversazione (prompt di sistema, ogni turno precedente dell'utente e dell'assistente, risultati degli strumenti), quindi l'abilitazione di questa opzione implica il consenso a tutto ciò che gli altri flag di contenuto `OTEL_LOG_*` rivelerebbero. Il contenuto del pensiero esteso di Claude viene sempre redatto da questi corpi indipendentemente da altre impostazioni
 
 ## Monitoraggio di Claude Code su Amazon Bedrock
 

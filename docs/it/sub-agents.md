@@ -24,7 +24,13 @@ I subagent la aiutano a:
 
 Claude utilizza la descrizione di ogni subagent per decidere quando delegare le attività. Quando crea un subagent, scriva una descrizione chiara in modo che Claude sappia quando utilizzarlo.
 
-Claude Code include diversi subagent integrati come **Explore**, **Plan** e **general-purpose**. Può anche creare subagent personalizzati per gestire attività specifiche. Questa pagina copre i [subagent integrati](#built-in-subagents), [come creare i suoi](#quickstart-create-your-first-subagent), [opzioni di configurazione complete](#configure-subagents), [modelli per lavorare con i subagent](#work-with-subagents) e [subagent di esempio](#example-subagents).
+Claude Code include diversi subagent integrati come **Explore**, **Plan** e **general-purpose**. Può anche creare subagent personalizzati per gestire attività specifiche. Questa pagina copre:
+
+* [Subagent integrati](#built-in-subagents)
+* [Come creare i suoi](#quickstart-create-your-first-subagent)
+* [Opzioni di configurazione complete](#configure-subagents)
+* [Modelli per lavorare con i subagent](#work-with-subagents)
+* [Subagent di esempio](#example-subagents)
 
 ## Subagent integrati
 
@@ -320,6 +326,15 @@ Se `Agent` è completamente omesso dall'elenco `tools`, l'agente non può genera
 #### Limiti i server MCP a un subagent
 
 Usi il campo `mcpServers` per dare a un subagent accesso ai server [MCP](/it/mcp) che non sono disponibili nella conversazione principale. I server inline definiti qui vengono connessi quando il subagent inizia e disconnessi quando finisce. I riferimenti stringa condividono la connessione della sessione principale.
+
+<Note>
+  Il campo `mcpServers` si applica in entrambi i contesti in cui un file agente può essere eseguito:
+
+  * Come subagent, generato tramite lo strumento Agent o un @-mention
+  * Come sessione principale, avviato con [`--agent`](#invoke-subagents-explicitly) o l'impostazione `agent`
+
+  Quando l'agente è la sessione principale, le definizioni di server inline si connettono all'avvio insieme ai server da [`.mcp.json`](/it/mcp) e ai file di impostazioni.
+</Note>
 
 Ogni voce nell'elenco è una definizione di server inline o una stringa che fa riferimento a un server MCP già configurato nella sua sessione:
 

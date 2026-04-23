@@ -2,7 +2,7 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# 配置服务器管理的设置（公开测试版）
+# 配置服务器管理的设置
 
 > 通过 Claude.ai 上基于网络的界面为您的组织集中配置 Claude Code，无需设备管理基础设施。
 
@@ -11,7 +11,7 @@
 这种方法专为没有设备管理基础设施的组织或需要为非托管设备上的用户管理设置的组织而设计。
 
 <Note>
-  服务器管理的设置处于公开测试版，可供 [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) 和 [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise) 客户使用。功能可能在正式发布前进行演变。
+  服务器管理的设置可供 [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) 和 [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise) 客户使用。
 </Note>
 
 ## 要求
@@ -93,7 +93,7 @@ Claude Code 支持两种集中配置方法。服务器管理的设置从 Anthrop
     }
     ```
 
-    由于 hooks 执行 shell 命令，用户在应用前会看到[安全批准对话框](#security-approval-dialogs)。有关 `autoMode` 条目如何影响分类器阻止的内容以及关于 `allow` 和 `soft_deny` 字段的重要警告，请参阅[配置 auto mode 分类器](/zh-CN/permissions#configure-the-auto-mode-classifier)。
+    由于 hooks 执行 shell 命令，用户在应用前会看到[安全批准对话框](#security-approval-dialogs)。有关 `autoMode` 条目如何影响分类器阻止的内容以及关于 `allow` 和 `soft_deny` 字段的重要警告，请参阅[配置 auto mode](/zh-CN/auto-mode-config)。
   </Step>
 
   <Step title="保存并部署">
@@ -120,7 +120,7 @@ Claude Code 支持两种集中配置方法。服务器管理的设置从 Anthrop
 
 ### 当前限制
 
-服务器管理的设置在测试版期间有以下限制：
+服务器管理的设置有以下限制：
 
 * 设置统一应用于组织中的所有用户。尚不支持按组配置。
 * [MCP 服务器配置](/zh-CN/mcp#managed-mcp-configuration)无法通过服务器管理的设置分发。
@@ -152,6 +152,22 @@ Claude Code 在启动时从 Anthropic 的服务器获取设置，并在活动会
 * 缓存的设置通过网络故障持久化
 
 Claude Code 自动应用设置更新而无需重新启动，除了高级设置（如 OpenTelemetry 配置）需要完全重新启动才能生效。
+
+### 强制执行故障关闭启动
+
+默认情况下，如果远程设置获取在启动时失败，CLI 继续运行而不使用托管设置。对于这个简短的未强制执行窗口不可接受的环境，在您的托管设置中设置 `forceRemoteSettingsRefresh: true`。
+
+当此设置处于活动状态时，CLI 在启动时阻止，直到远程设置被新鲜获取。如果获取失败，CLI 退出而不是继续运行而不使用策略。此设置自我延续：一旦从服务器传递，它也会在本地缓存，以便后续启动即使在新会话的首次成功获取之前也强制执行相同的行为。
+
+要启用此功能，请将键添加到您的托管设置配置中：
+
+```json theme={null}
+{
+  "forceRemoteSettingsRefresh": true
+}
+```
+
+在启用此设置之前，请确保您的网络策略允许连接到 `api.anthropic.com`。如果该端点无法访问，CLI 在启动时退出，用户无法启动 Claude Code。
 
 ### 安全批准对话框
 
@@ -186,13 +202,13 @@ Claude Code 自动应用设置更新而无需重新启动，除了高级设置�
 
 服务器管理的设置提供集中的策略强制执行，但它们作为客户端控制运行。在非托管设备上，具有管理员或 sudo 访问权限的用户可以修改 Claude Code 二进制文件、文件系统或网络配置。
 
-| 场景                            | 行为                                |
-| :---------------------------- | :-------------------------------- |
-| 用户编辑缓存的设置文件                   | 篡改的文件在启动时应用，但正确的设置在下次服务器获取时恢复     |
-| 用户删除缓存的设置文件                   | 首次启动行为发生：设置异步获取，有一个简短的未强制执行的窗口    |
-| API 不可用                       | 如果可用，缓存的设置应用，否则托管设置在下次成功获取前不被强制执行 |
-| 用户使用不同的组织进行身份验证               | 不为托管组织外的账户传递设置                    |
-| 用户设置非默认的 `ANTHROPIC_BASE_URL` | 使用第三方 API 提供商时绕过服务器管理的设置          |
+| 场景                            | 行为                                                                                    |
+| :---------------------------- | :------------------------------------------------------------------------------------ |
+| 用户编辑缓存的设置文件                   | 篡改的文件在启动时应用，但正确的设置在下次服务器获取时恢复                                                         |
+| 用户删除缓存的设置文件                   | 首次启动行为发生：设置异步获取，有一个简短的未强制执行的窗口                                                        |
+| API 不可用                       | 如果可用，缓存的设置应用，否则托管设置在下次成功获取前不被强制执行。使用 `forceRemoteSettingsRefresh: true` 时，CLI 退出而不是继续 |
+| 用户使用不同的组织进行身份验证               | 不为托管组织外的账户传递设置                                                                        |
+| 用户设置非默认的 `ANTHROPIC_BASE_URL` | 使用第三方 API 提供商时绕过服务器管理的设置                                                              |
 
 要检测运行时配置更改，请使用 [`ConfigChange` hooks](/zh-CN/hooks#configchange) 来记录修改或在未授权的更改生效前阻止它们。
 

@@ -514,7 +514,7 @@ Verwenden Sie @, um schnell Dateien oder Verzeichnisse einzubeziehen, ohne auf C
 
 ## Verwenden Sie erweitertes Denken (Thinking Mode)
 
-[Erweitertes Denken](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) ist standardmäßig aktiviert und gibt Claude Platz, um komplexe Probleme Schritt für Schritt zu durchdenken, bevor er antwortet. Dieses Denken ist im ausführlichen Modus sichtbar, den Sie mit `Ctrl+O` umschalten können. Während des erweiterten Denkens werden Fortschrittshinweise unter dem Indikator angezeigt, um zu zeigen, dass Claude aktiv arbeitet.
+[Erweitertes Denken](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) ist standardmäßig aktiviert und gibt Claude Platz, um komplexe Probleme Schritt für Schritt zu durchdenken, bevor er antwortet. Dieses Denken ist im ausführlichen Modus sichtbar, den Sie mit `Ctrl+O` umschalten können. Während des erweiterten Denkens zeigt der Spinner Inline-Fortschrittshinweise wie „still thinking" und „almost done thinking" an, um zu zeigen, dass Claude aktiv arbeitet.
 
 Darüber hinaus verwenden [Modelle, die Effort unterstützen](/de/model-config#adjust-effort-level), adaptives Denken: Anstelle eines festen Thinking-Token-Budgets entscheidet das Modell dynamisch, ob und wie viel es denken soll, basierend auf Ihrer Effort-Level-Einstellung und der anstehenden Aufgabe. Adaptives Denken ermöglicht es Claude, schneller auf Routine-Prompts zu reagieren und tieferes Denken für Schritte zu reservieren, die davon profitieren.
 
@@ -563,6 +563,8 @@ Wenn Sie Claude Code starten, können Sie eine vorherige Sitzung fortsetzen:
 * `claude --from-pr 123` setzt Sitzungen fort, die mit einem bestimmten Pull Request verknüpft sind
 
 Verwenden Sie innerhalb einer aktiven Sitzung `/resume`, um zu einem anderen Gespräch zu wechseln.
+
+Wenn die ausgewählte Sitzung alt und groß genug ist, dass das erneute Lesen einen wesentlichen Teil Ihrer Nutzungslimits verbrauchen würde, bieten `--resume`, `--continue` und `/resume` an, statt des vollständigen Transkripts von einer Zusammenfassung aus fortzufahren. Diese Eingabeaufforderung ist nicht auf Amazon Bedrock, Google Cloud Vertex AI oder Microsoft Foundry verfügbar.
 
 Sitzungen werden pro Projektverzeichnis gespeichert. Standardmäßig zeigt die `/resume`-Auswahl interaktive Sitzungen aus dem aktuellen Worktree mit Tastaturkürzeln, um die Liste auf andere Worktrees oder Projekte zu erweitern, zu suchen, in der Vorschau anzuzeigen und umzubenennen. Siehe [Verwenden Sie die Sitzungsauswahl](#use-the-session-picker) unten für die vollständige Tastaturkürzel-Referenz.
 

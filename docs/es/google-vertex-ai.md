@@ -6,6 +6,188 @@
 
 > Aprenda a configurar Claude Code a través de Google Vertex AI, incluida la configuración, la configuración de IAM y la solución de problemas.
 
+export const ContactSalesCard = ({surface}) => {
+  const utm = content => `utm_source=claude_code&utm_medium=docs&utm_content=${surface}_${content}`;
+  const iconArrowRight = (size = 13) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <line x1="5" y1="12" x2="19" y2="12" />
+      <polyline points="12 5 19 12 12 19" />
+    </svg>;
+  const STYLES = `
+.cc-cs {
+  --cs-slate: #141413;
+  --cs-clay: #d97757;
+  --cs-clay-deep: #c6613f;
+  --cs-gray-000: #ffffff;
+  --cs-gray-700: #3d3d3a;
+  --cs-border-default: rgba(31, 30, 29, 0.15);
+  font-family: inherit;
+}
+.dark .cc-cs {
+  --cs-slate: #f0eee6;
+  --cs-gray-000: #262624;
+  --cs-gray-700: #bfbdb4;
+  --cs-border-default: rgba(240, 238, 230, 0.14);
+}
+.cc-cs-card {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 14px 16px; margin: 0;
+  background: var(--cs-gray-000); border: 0.5px solid var(--cs-border-default);
+  border-radius: 8px; flex-wrap: wrap;
+}
+.cc-cs-text { font-size: 13px; color: var(--cs-gray-700); line-height: 1.5; flex: 1; min-width: 240px; }
+.cc-cs-text strong { font-weight: 550; color: var(--cs-slate); }
+.cc-cs-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.cc-cs-btn-clay {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--cs-clay-deep); color: #fff; border: none;
+  border-radius: 8px; padding: 8px 14px;
+  font-size: 13px; font-weight: 500;
+  transition: background-color 0.15s; white-space: nowrap;
+}
+.cc-cs-btn-clay:hover { background: var(--cs-clay); }
+.cc-cs-btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: var(--cs-gray-700);
+  border: 0.5px solid var(--cs-border-default);
+  border-radius: 8px; padding: 8px 14px;
+  font-size: 13px; font-weight: 500;
+}
+.cc-cs-btn-ghost:hover { background: rgba(0, 0, 0, 0.04); }
+.dark .cc-cs-btn-ghost:hover { background: rgba(255, 255, 255, 0.04); }
+@media (max-width: 720px) {
+  .cc-cs-actions { width: 100%; }
+}
+`;
+  return <div className="cc-cs not-prose">
+      <style>{STYLES}</style>
+      <div className="cc-cs-card">
+        <div className="cc-cs-text">
+          <strong>Deploying Claude Code across your organization?</strong> Talk to sales about enterprise plans, SSO, and centralized billing.
+        </div>
+        <div className="cc-cs-actions">
+          <a href={`https://claude.com/pricing?${utm('view_plans')}#plans-business`} className="cc-cs-btn-ghost">
+            View plans
+          </a>
+          <a href={`https://www.anthropic.com/contact-sales?${utm('contact_sales')}`} className="cc-cs-btn-clay">
+            Contact sales {iconArrowRight()}
+          </a>
+        </div>
+      </div>
+    </div>;
+};
+
+export const Experiment = ({flag, treatment, children}) => {
+  const VID_KEY = 'exp_vid';
+  const CONSENT_COUNTRIES = new Set(['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'RE', 'GP', 'MQ', 'GF', 'YT', 'BL', 'MF', 'PM', 'WF', 'PF', 'NC', 'AW', 'CW', 'SX', 'FO', 'GL', 'AX', 'GB', 'UK', 'AI', 'BM', 'IO', 'VG', 'KY', 'FK', 'GI', 'MS', 'PN', 'SH', 'TC', 'GG', 'JE', 'IM', 'CA', 'BR', 'IN']);
+  const fnv1a = s => {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
+    }
+    return h >>> 0;
+  };
+  const bucket = (seed, vid) => fnv1a(fnv1a(seed + vid) + '') % 10000 < 5000 ? 'control' : 'treatment';
+  const [decision] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    const preBucketed = document.documentElement.dataset['gb_' + flag.replace(/-/g, '_')];
+    const force = params.get('gb-force');
+    if (force) {
+      for (const p of force.split(',')) {
+        const [k, v] = p.split(':');
+        if (k === flag) return {
+          variant: v || 'treatment',
+          track: false
+        };
+      }
+    }
+    if (navigator.globalPrivacyControl) {
+      return {
+        variant: 'control',
+        track: false
+      };
+    }
+    const prefsMatch = document.cookie.match(/(?:^|; )anthropic-consent-preferences=([^;]+)/);
+    if (prefsMatch) {
+      try {
+        if (JSON.parse(decodeURIComponent(prefsMatch[1])).analytics !== true) {
+          return {
+            variant: 'control',
+            track: false
+          };
+        }
+      } catch {
+        return {
+          variant: 'control',
+          track: false
+        };
+      }
+    } else {
+      const country = params.get('country')?.toUpperCase() || (document.cookie.match(/(?:^|; )cf_geo=([A-Z]{2})/) || [])[1];
+      if (!country || CONSENT_COUNTRIES.has(country)) {
+        return {
+          variant: 'control',
+          track: false
+        };
+      }
+    }
+    let vid;
+    try {
+      const ajsMatch = document.cookie.match(/(?:^|; )ajs_anonymous_id=([^;]+)/);
+      if (ajsMatch) {
+        vid = decodeURIComponent(ajsMatch[1]).replace(/^"|"$/g, '');
+      } else {
+        vid = localStorage.getItem(VID_KEY);
+        if (!vid) {
+          vid = crypto.randomUUID();
+        }
+        document.cookie = `ajs_anonymous_id=${vid}; domain=.claude.com; path=/; Secure; SameSite=Lax; max-age=31536000`;
+      }
+      try {
+        localStorage.setItem(VID_KEY, vid);
+      } catch {}
+    } catch {
+      return {
+        variant: 'control',
+        track: false
+      };
+    }
+    const variant = preBucketed === '1' ? 'treatment' : preBucketed === '0' ? 'control' : bucket(flag, vid);
+    return {
+      variant,
+      track: true,
+      vid
+    };
+  });
+  useEffect(() => {
+    if (!decision.track) return;
+    fetch('https://api.anthropic.com/api/event_logging/v2/batch', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-service-name': 'claude_code_docs'
+      },
+      body: JSON.stringify({
+        events: [{
+          event_type: 'GrowthbookExperimentEvent',
+          event_data: {
+            device_id: decision.vid,
+            anonymous_id: decision.vid,
+            timestamp: new Date().toISOString(),
+            experiment_id: flag,
+            variation_id: decision.variant === 'treatment' ? 1 : 0,
+            environment: 'production'
+          }
+        }]
+      }),
+      keepalive: true
+    }).catch(() => {});
+  }, []);
+  return decision.variant === 'treatment' ? treatment : children;
+};
+
+<Experiment flag="docs-contact-sales-cta" treatment={<ContactSalesCard surface="vertex" />} />
+
 ## Requisitos previos
 
 Antes de configurar Claude Code con Vertex AI, asegúrese de tener:
@@ -16,19 +198,43 @@ Antes de configurar Claude Code con Vertex AI, asegúrese de tener:
 * Google Cloud SDK (`gcloud`) instalado y configurado
 * Cuota asignada en la región de GCP deseada
 
+Para iniciar sesión con sus propias credenciales de Vertex AI, siga [Iniciar sesión con Vertex AI](#sign-in-with-vertex-ai) a continuación. Para implementar Claude Code en un equipo, utilice los pasos de [configuración manual](#set-up-manually) y [fije las versiones de su modelo](#5-pin-model-versions) antes de implementar.
+
+## Iniciar sesión con Vertex AI
+
+Si tiene credenciales de Google Cloud y desea comenzar a usar Claude Code a través de Vertex AI, el asistente de inicio de sesión lo guía a través del proceso. Completa los requisitos previos del lado de GCP una vez por proyecto; el asistente maneja el lado de Claude Code.
+
 <Note>
-  Si está implementando Claude Code para varios usuarios, [fije las versiones de su modelo](#5-pin-model-versions) para evitar problemas cuando Anthropic lance nuevos modelos.
+  El asistente de configuración de Vertex AI requiere Claude Code v2.1.98 o posterior. Ejecute `claude --version` para verificar.
 </Note>
+
+<Steps>
+  <Step title="Habilitar modelos Claude en su proyecto de GCP">
+    [Habilite la API de Vertex AI](#1-enable-vertex-ai-api) para su proyecto, luego solicite acceso a los modelos Claude que desee en el [Vertex AI Model Garden](https://console.cloud.google.com/vertex-ai/model-garden). Consulte [Configuración de IAM](#iam-configuration) para los permisos que su cuenta necesita.
+  </Step>
+
+  <Step title="Inicie Claude Code y elija Vertex AI">
+    Ejecute `claude`. En el mensaje de inicio de sesión, seleccione **3rd-party platform**, luego **Google Vertex AI**.
+  </Step>
+
+  <Step title="Siga los mensajes del asistente">
+    Elija cómo se autentica en Google Cloud: Credenciales predeterminadas de aplicación de `gcloud`, un archivo de clave de cuenta de servicio, o credenciales ya en su entorno. El asistente detecta su proyecto y región, verifica qué modelos Claude puede invocar su proyecto, y le permite fijarlos. Guarda el resultado en el bloque `env` de su [archivo de configuración de usuario](/es/settings), por lo que no necesita exportar variables de entorno usted mismo.
+  </Step>
+</Steps>
+
+Después de haber iniciado sesión, ejecute `/setup-vertex` en cualquier momento para reabrirlo el asistente y cambiar sus credenciales, proyecto, región o fijaciones de modelo.
 
 ## Configuración de región
 
-Claude Code se puede usar con puntos finales de Vertex AI [globales](https://cloud.google.com/blog/products/ai-machine-learning/global-endpoint-for-claude-models-generally-available-on-vertex-ai) y regionales.
+Claude Code admite puntos finales de Vertex AI [globales](https://cloud.google.com/blog/products/ai-machine-learning/global-endpoint-for-claude-models-generally-available-on-vertex-ai), multirregión y regionales. Establezca `CLOUD_ML_REGION` en `global`, una ubicación multirregión como `eu` o `us`, o una región específica como `us-east5`. Claude Code selecciona el nombre de host correcto de Vertex AI para cada formulario, incluidos los hosts `aiplatform.eu.rep.googleapis.com` y `aiplatform.us.rep.googleapis.com` para ubicaciones multirregión.
 
 <Note>
-  Vertex AI puede no admitir los modelos predeterminados de Claude Code en todas las [regiones](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations#genai-partner-models) o en [puntos finales globales](https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-partner-models#supported_models). Es posible que deba cambiar a una región compatible, usar un punto final regional o especificar un modelo compatible.
+  Vertex AI puede no admitir los modelos predeterminados de Claude Code en todos los tipos de puntos finales. La disponibilidad del modelo varía según [regiones específicas](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations#genai-partner-models), ubicaciones multirregión y [puntos finales globales](https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-partner-models#supported_models). Es posible que deba cambiar a una ubicación compatible o especificar un modelo compatible.
 </Note>
 
-## Configuración
+## Configurar manualmente
+
+Para configurar Vertex AI a través de variables de entorno en lugar del asistente, por ejemplo en CI o una implementación empresarial con script, siga los pasos a continuación.
 
 ### 1. Habilitar la API de Vertex AI
 
@@ -82,20 +288,22 @@ export VERTEX_REGION_CLAUDE_HAIKU_4_5=us-east5
 export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 ```
 
-Cada versión de modelo tiene su propia variable `VERTEX_REGION_CLAUDE_*`. Consulte la [referencia de variables de entorno](/es/env-vars) para obtener la lista completa. Verifique [Vertex Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) para determinar qué modelos admiten puntos finales globales frente a solo regionales.
+La mayoría de las versiones de modelo tienen una variable `VERTEX_REGION_CLAUDE_*` correspondiente. Consulte la [referencia de variables de entorno](/es/env-vars) para obtener la lista completa. Verifique [Vertex Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) para determinar qué modelos admiten puntos finales globales frente a solo regionales.
 
 [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) se admite automáticamente cuando especifica la bandera efímera `cache_control`. Para deshabilitarlo, establezca `DISABLE_PROMPT_CACHING=1`. Para límites de velocidad elevados, póngase en contacto con el soporte de Google Cloud. Al usar Vertex AI, los comandos `/login` y `/logout` están deshabilitados ya que la autenticación se maneja a través de credenciales de Google Cloud.
 
 ### 5. Fijar versiones de modelo
 
 <Warning>
-  Fije versiones de modelo específicas para cada implementación. Si utiliza alias de modelo (`sonnet`, `opus`, `haiku`) sin fijar, Claude Code puede intentar usar una versión de modelo más nueva que no esté habilitada en su proyecto de Vertex AI, lo que romperá los usuarios existentes cuando Anthropic lance actualizaciones.
+  Fije versiones de modelo específicas al implementar para varios usuarios. Sin fijar, alias de modelo como `sonnet` y `opus` se resuelven a la versión más reciente, que puede no estar habilitada aún en su proyecto de Vertex AI cuando Anthropic lanza una actualización. Claude Code [retrocede](#startup-model-checks) a la versión anterior al inicio cuando la más reciente no está disponible, pero fijar le permite controlar cuándo sus usuarios se mueven a un nuevo modelo.
 </Warning>
 
-Establezca estas variables de entorno en ID de modelo específicos de Vertex AI:
+Establezca estas variables de entorno en ID de modelo específicos de Vertex AI.
+
+Sin `ANTHROPIC_DEFAULT_OPUS_MODEL`, el alias `opus` en Vertex se resuelve a Opus 4.6. Establézcalo en el ID de Opus 4.7 para usar el modelo más reciente:
 
 ```bash theme={null}
-export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6'
+export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7'
 export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
 ```
@@ -104,17 +312,25 @@ Para los ID de modelo actuales y heredados, consulte [Descripción general de mo
 
 Claude Code utiliza estos modelos predeterminados cuando no se establecen variables de fijación:
 
-| Tipo de modelo        | Valor predeterminado        |
-| :-------------------- | :-------------------------- |
-| Modelo principal      | `claude-sonnet-4-6`         |
-| Modelo pequeño/rápido | `claude-haiku-4-5@20251001` |
+| Tipo de modelo        | Valor predeterminado         |
+| :-------------------- | :--------------------------- |
+| Modelo principal      | `claude-sonnet-4-5@20250929` |
+| Modelo pequeño/rápido | `claude-haiku-4-5@20251001`  |
 
 Para personalizar aún más los modelos:
 
 ```bash theme={null}
-export ANTHROPIC_MODEL='claude-opus-4-6'
+export ANTHROPIC_MODEL='claude-opus-4-7'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
 ```
+
+## Verificaciones de modelo al inicio
+
+Cuando Claude Code se inicia con Vertex AI configurado, verifica que los modelos que pretende usar sean accesibles en su proyecto. Esta verificación requiere Claude Code v2.1.98 o posterior.
+
+Si ha fijado una versión de modelo que es más antigua que el valor predeterminado actual de Claude Code, y su proyecto puede invocar la versión más reciente, Claude Code le solicita que actualice la fijación. Aceptar escribe el nuevo ID de modelo en su [archivo de configuración de usuario](/es/settings) y reinicia Claude Code. Rechazar se recuerda hasta el próximo cambio de versión predeterminada.
+
+Si no ha fijado un modelo y el valor predeterminado actual no está disponible en su proyecto, Claude Code retrocede a la versión anterior para la sesión actual y muestra un aviso. El retroceso no se persiste. Habilite el modelo más reciente en [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) o [fije una versión](#5-pin-model-versions) para hacer la opción permanente.
 
 ## Configuración de IAM
 
@@ -134,9 +350,9 @@ Para obtener más detalles, consulte la [documentación de IAM de Vertex](https:
 
 ## Ventana de contexto de 1M de tokens
 
-Claude Opus 4.6, Sonnet 4.6, Sonnet 4.5 y Sonnet 4 admiten la [ventana de contexto de 1M de tokens](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window) en Vertex AI. Claude Code habilita automáticamente la ventana de contexto extendida cuando selecciona una variante de modelo de 1M.
+Claude Opus 4.7, Opus 4.6 y Sonnet 4.6 admiten la [ventana de contexto de 1M de tokens](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window) en Vertex AI. Claude Code habilita automáticamente la ventana de contexto extendida cuando selecciona una variante de modelo de 1M.
 
-Para habilitar la ventana de contexto de 1M para su modelo fijado, agregue `[1m]` al ID del modelo. Consulte [Fijar modelos para implementaciones de terceros](/es/model-config#pin-models-for-third-party-deployments) para obtener más detalles.
+El [asistente de configuración](#sign-in-with-vertex-ai) ofrece una opción de contexto de 1M cuando fija modelos. Para habilitarlo para un modelo fijado manualmente en su lugar, agregue `[1m]` al ID del modelo. Consulte [Fijar modelos para implementaciones de terceros](/es/model-config#pin-models-for-third-party-deployments) para obtener detalles.
 
 ## Solución de problemas
 
@@ -147,10 +363,10 @@ Si encuentra problemas de cuota:
 Si encuentra errores "modelo no encontrado" 404:
 
 * Confirme que el modelo está habilitado en [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden)
-* Verifique que tenga acceso a la región especificada
+* Verifique que el modelo esté disponible en la ubicación que especificó. Algunos modelos se ofrecen solo en ubicaciones `global` o multirregión como `eu` y `us`, no en regiones específicas
 * Si utiliza `CLOUD_ML_REGION=global`, verifique que sus modelos admitan puntos finales globales en [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) en "Características compatibles". Para modelos que no admiten puntos finales globales, ya sea:
   * Especifique un modelo compatible a través de `ANTHROPIC_MODEL` o `ANTHROPIC_DEFAULT_HAIKU_MODEL`, o
-  * Establezca un punto final regional usando variables de entorno `VERTEX_REGION_<MODEL_NAME>`
+  * Establezca una región o ubicación multirregión usando variables de entorno `VERTEX_REGION_<MODEL_NAME>`
 
 Si encuentra errores 429:
 

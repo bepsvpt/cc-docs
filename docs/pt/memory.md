@@ -78,7 +78,7 @@ Um CLAUDE.md de projeto pode ser armazenado em `./CLAUDE.md` ou `./.claude/CLAUD
 
 Arquivos CLAUDE.md são carregados na janela de contexto no início de cada sessão, consumindo tokens junto com sua conversa. A [visualização da janela de contexto](/pt/context-window) mostra onde CLAUDE.md é carregado em relação ao resto do contexto de inicialização. Como são contexto em vez de configuração imposta, como você escreve as instruções afeta o quão confiável Claude as segue. Instruções específicas, concisas e bem estruturadas funcionam melhor.
 
-**Tamanho**: alvo de menos de 200 linhas por arquivo CLAUDE.md. Arquivos mais longos consomem mais contexto e reduzem a aderência. Se suas instruções estão crescendo muito, divida-as usando [importações](#import-additional-files) ou arquivos [`.claude/rules/`](#organize-rules-with-claude/rules/).
+**Tamanho**: alvo de menos de 200 linhas por arquivo CLAUDE.md. Arquivos mais longos consomem mais contexto e reduzem a aderência. Se suas instruções estão crescendo muito, use [regras com escopo de caminho](#path-specific-rules) para que as instruções sejam carregadas apenas quando Claude trabalha com arquivos correspondentes. Você também pode dividir conteúdo em [importações](#import-additional-files) para organização, embora arquivos importados ainda sejam carregados e entrem na janela de contexto no lançamento.
 
 **Estrutura**: use cabeçalhos markdown e bullets para agrupar instruções relacionadas. Claude escaneia a estrutura da mesma forma que os leitores fazem: seções organizadas são mais fáceis de seguir do que parágrafos densos.
 
@@ -88,7 +88,7 @@ Arquivos CLAUDE.md são carregados na janela de contexto no início de cada sess
 * "Execute `npm test` antes de fazer commit" em vez de "Teste suas alterações"
 * "Manipuladores de API vivem em `src/api/handlers/`" em vez de "Mantenha os arquivos organizados"
 
-**Consistência**: se duas regras se contradizem, Claude pode escolher uma arbitrariamente. Revise seus arquivos CLAUDE.md, arquivos CLAUDE.md aninhados em subdiretórios e arquivos [`.claude/rules/`](#organize-rules-with-claude/rules/) periodicamente para remover instruções desatualizadas ou conflitantes. Em monorepos, use [`claudeMdExcludes`](#exclude-specific-claude-md-files) para pular arquivos CLAUDE.md de outras equipes que não são relevantes para seu trabalho.
+**Consistência**: se duas regras se contradizem, Claude pode escolher uma arbitrariamente. Revise seus arquivos CLAUDE.md, arquivos CLAUDE.md aninhados em subdiretórios e [`.claude/rules/`](#organize-rules-with-claude/rules/) periodicamente para remover instruções desatualizadas ou conflitantes. Em monorepos, use [`claudeMdExcludes`](#exclude-specific-claude-md-files) para pular arquivos CLAUDE.md de outras equipes que não são relevantes para seu trabalho.
 
 ### Importe arquivos adicionais
 
@@ -390,7 +390,7 @@ Execute `/memory` e selecione a pasta de memória automática para navegar o que
 
 ### Meu CLAUDE.md é muito grande
 
-Arquivos com mais de 200 linhas consomem mais contexto e podem reduzir a aderência. Mova conteúdo detalhado para arquivos separados referenciados com importações `@path` (veja [Importe arquivos adicionais](#import-additional-files)), ou divida suas instruções entre arquivos `.claude/rules/`.
+Arquivos com mais de 200 linhas consomem mais contexto e podem reduzir a aderência. Use [regras com escopo de caminho](#path-specific-rules) para carregar instruções apenas quando Claude trabalha com arquivos correspondentes, ou reduza conteúdo que não é necessário em cada sessão. Dividir em [importações `@path`](#import-additional-files) ajuda na organização, mas não reduz contexto, já que arquivos importados são carregados no lançamento.
 
 ### Instruções parecem perdidas após `/compact`
 

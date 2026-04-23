@@ -2,7 +2,7 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Serververwaltete Einstellungen konfigurieren (öffentliche Beta)
+# Serververwaltete Einstellungen konfigurieren
 
 > Konfigurieren Sie Claude Code zentral für Ihre Organisation durch serververwaltete Einstellungen, ohne dass eine Geräteverwaltungsinfrastruktur erforderlich ist.
 
@@ -11,7 +11,7 @@ Serververwaltete Einstellungen ermöglichen es Administratoren, Claude Code zent
 Dieser Ansatz ist für Organisationen konzipiert, die keine Geräteverwaltungsinfrastruktur haben oder Einstellungen für Benutzer auf nicht verwalteten Geräten verwalten müssen.
 
 <Note>
-  Serververwaltete Einstellungen befinden sich in der öffentlichen Beta und sind für [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) und [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise) Kunden verfügbar. Funktionen können sich vor der allgemeinen Verfügbarkeit noch ändern.
+  Serververwaltete Einstellungen sind für [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) und [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise) Kunden verfügbar.
 </Note>
 
 ## Anforderungen
@@ -93,7 +93,7 @@ Wenn Ihre Geräte in einer MDM- oder Endpunktverwaltungslösung registriert sind
     }
     ```
 
-    Da Hooks Shell-Befehle ausführen, sehen Benutzer einen [Sicherheitsgenehmigungsdialog](#security-approval-dialogs), bevor sie angewendet werden. Siehe [Konfigurieren Sie den Auto-Modus Klassifizierer](/de/permissions#configure-the-auto-mode-classifier), um zu erfahren, wie die `autoMode` Einträge beeinflussen, was der Klassifizierer blockiert, und wichtige Warnungen zu den Feldern `allow` und `soft_deny`.
+    Da Hooks Shell-Befehle ausführen, sehen Benutzer einen [Sicherheitsgenehmigungsdialog](#security-approval-dialogs), bevor sie angewendet werden. Siehe [Auto-Modus konfigurieren](/de/auto-mode-config), um zu erfahren, wie die `autoMode` Einträge beeinflussen, was der Klassifizierer blockiert, und wichtige Warnungen zu den Feldern `allow` und `soft_deny`.
   </Step>
 
   <Step title="Speichern und bereitstellen">
@@ -120,7 +120,7 @@ Die meisten [Einstellungsschlüssel](/de/settings#available-settings) funktionie
 
 ### Aktuelle Einschränkungen
 
-Serververwaltete Einstellungen haben während der Beta-Phase die folgenden Einschränkungen:
+Serververwaltete Einstellungen haben die folgenden Einschränkungen:
 
 * Einstellungen gelten einheitlich für alle Benutzer in der Organisation. Konfigurationen pro Gruppe werden noch nicht unterstützt.
 * [MCP-Serverkonfigurationen](/de/mcp#managed-mcp-configuration) können nicht über serververwaltete Einstellungen verteilt werden.
@@ -152,6 +152,22 @@ Claude Code ruft Einstellungen beim Start von Anthropics Servern ab und fragt st
 * Zwischengespeicherte Einstellungen bleiben bei Netzwerkfehlern erhalten
 
 Claude Code wendet Einstellungsaktualisierungen automatisch ohne Neustart an, außer für erweiterte Einstellungen wie OpenTelemetry-Konfiguration, die einen vollständigen Neustart erfordern, um wirksam zu werden.
+
+### Erzwingen Sie einen Fail-Closed-Start
+
+Standardmäßig wird die CLI ohne verwaltete Einstellungen fortgesetzt, wenn der Abruf der Remote-Einstellungen beim Start fehlschlägt. Für Umgebungen, in denen dieses kurze nicht erzwungene Fenster nicht akzeptabel ist, setzen Sie `forceRemoteSettingsRefresh: true` in Ihren verwalteten Einstellungen.
+
+Wenn diese Einstellung aktiv ist, blockiert die CLI beim Start, bis Remote-Einstellungen neu abgerufen werden. Wenn der Abruf fehlschlägt, wird die CLI beendet, anstatt ohne die Richtlinie fortzufahren. Diese Einstellung perpetuiert sich selbst: Sobald sie vom Server bereitgestellt wird, wird sie auch lokal zwischengespeichert, sodass nachfolgende Starts das gleiche Verhalten erzwingen, auch bevor der erste erfolgreiche Abruf einer neuen Sitzung erfolgt.
+
+Um dies zu aktivieren, fügen Sie den Schlüssel zu Ihrer verwalteten Einstellungskonfiguration hinzu:
+
+```json theme={null}
+{
+  "forceRemoteSettingsRefresh": true
+}
+```
+
+Bevor Sie diese Einstellung aktivieren, stellen Sie sicher, dass Ihre Netzwerkrichtlinien die Konnektivität zu `api.anthropic.com` ermöglichen. Wenn dieser Endpunkt nicht erreichbar ist, wird die CLI beim Start beendet und Benutzer können Claude Code nicht starten.
 
 ### Sicherheitsgenehmigungsdialoge
 
@@ -186,13 +202,13 @@ Audit-Ereignisse enthalten den Typ der durchgeführten Aktion, das Konto und das
 
 Serververwaltete Einstellungen bieten zentralisierte Richtliniendurchsetzung, funktionieren aber als clientseitige Kontrolle. Auf nicht verwalteten Geräten können Benutzer mit Admin- oder Sudo-Zugriff die Claude Code-Binärdatei, das Dateisystem oder die Netzwerkkonfiguration ändern.
 
-| Szenario                                                       | Verhalten                                                                                                                                                                      |
-| :------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Benutzer bearbeitet die zwischengespeicherte Einstellungsdatei | Manipulierte Datei wird beim Start angewendet, aber korrekte Einstellungen werden beim nächsten Serverfetch wiederhergestellt                                                  |
-| Benutzer löscht die zwischengespeicherte Einstellungsdatei     | Verhalten beim ersten Start tritt auf: Einstellungen werden asynchron abgerufen mit einem kurzen nicht erzwungenen Fenster                                                     |
-| API ist nicht verfügbar                                        | Zwischengespeicherte Einstellungen werden angewendet, falls verfügbar, andernfalls werden verwaltete Einstellungen nicht erzwungen, bis der nächste erfolgreiche Abruf erfolgt |
-| Benutzer authentifiziert sich mit einer anderen Organisation   | Einstellungen werden nicht für Konten außerhalb der verwalteten Organisation bereitgestellt                                                                                    |
-| Benutzer setzt eine nicht standardmäßige `ANTHROPIC_BASE_URL`  | Serververwaltete Einstellungen werden umgangen, wenn Drittanbieter-API-Provider verwendet werden                                                                               |
+| Szenario                                                       | Verhalten                                                                                                                                                                                                                                               |
+| :------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Benutzer bearbeitet die zwischengespeicherte Einstellungsdatei | Manipulierte Datei wird beim Start angewendet, aber korrekte Einstellungen werden beim nächsten Serverfetch wiederhergestellt                                                                                                                           |
+| Benutzer löscht die zwischengespeicherte Einstellungsdatei     | Verhalten beim ersten Start tritt auf: Einstellungen werden asynchron abgerufen mit einem kurzen nicht erzwungenen Fenster                                                                                                                              |
+| API ist nicht verfügbar                                        | Zwischengespeicherte Einstellungen werden angewendet, falls verfügbar, andernfalls werden verwaltete Einstellungen nicht erzwungen, bis der nächste erfolgreiche Abruf erfolgt. Mit `forceRemoteSettingsRefresh: true` wird die CLI stattdessen beendet |
+| Benutzer authentifiziert sich mit einer anderen Organisation   | Einstellungen werden nicht für Konten außerhalb der verwalteten Organisation bereitgestellt                                                                                                                                                             |
+| Benutzer setzt eine nicht standardmäßige `ANTHROPIC_BASE_URL`  | Serververwaltete Einstellungen werden umgangen, wenn Drittanbieter-API-Provider verwendet werden                                                                                                                                                        |
 
 Um Laufzeitkonfigurationsänderungen zu erkennen, verwenden Sie [`ConfigChange` hooks](/de/hooks#configchange), um Änderungen zu protokollieren oder nicht autorisierte Änderungen zu blockieren, bevor sie wirksam werden.
 

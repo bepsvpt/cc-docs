@@ -709,6 +709,8 @@ To install Claude Code, use one of the following methods:
   </Tab>
 </Tabs>
 
+You can also install with [apt, dnf, or apk](/en/setup#install-with-linux-package-managers) on Debian, Fedora, RHEL, and Alpine.
+
 ## 단계 2: 계정에 로그인
 
 Claude Code를 사용하려면 계정이 필요합니다. `claude` 명령으로 대화형 세션을 시작할 때 로그인해야 합니다:

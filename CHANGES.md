@@ -1,5 +1,413 @@
 # Documentation Changes
 
+## 2026-04-23
+
+187 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Häufige Workflows** (`common-workflows.md`): 3 lines added, 1 removed
+- **Claude Code Desktop verwenden** (`desktop.md`): 1 lines added, 1 removed
+- **Claude Code auf Google Vertex AI** (`google-vertex-ai.md`): 236 lines added, 20 removed
+  - New section: "## Anmelden mit Vertex AI"
+  - New section: "## Manuelles Setup"
+  - New section: "### 1. Aktivieren Sie die Vertex AI API"
+  - New section: "### 2. Fordern Sie Modellzugriff an"
+  - New section: "### 3. Konfigurieren Sie GCP-Anmeldedaten"
+- **Wie Claude sich Ihr Projekt merkt** (`memory.md`): 3 lines added, 3 removed
+- **Modellkonfiguration** (`model-config.md`): 5 lines added, 1 removed
+- **Überwachung** (`monitoring-usage.md`): 386 lines added, 25 removed
+  - New section: "#### Span-Hierarchie"
+  - New section: "#### Span-Attribute"
+  - New section: "#### API-Anfrage-Text-Ereignis"
+  - New section: "#### API-Antwort-Text-Ereignis"
+  - New section: "#### Berechtigungsmodus-Änderungs-Ereignis"
+- **Enterprise-Netzwerkkonfiguration** (`network-config.md`): 11 lines added, 13 removed
+- **Claude Code Übersicht** (`overview.md`): 2 lines added, 0 removed
+- **Berechtigungen konfigurieren** (`permissions.md`): 1 lines added, 0 removed
+- **Erstellen und Verteilen eines Plugin-Marktplatzes** (`plugin-marketplaces.md`): 2 lines added, 2 removed
+- **Schnellstart** (`quickstart.md`): 2 lines added, 0 removed
+- **Serververwaltete Einstellungen konfigurieren** (`server-managed-settings.md`): 27 lines added, 11 removed
+  - New section: "# Serververwaltete Einstellungen konfigurieren"
+  - New section: "### Erzwingen Sie einen Fail-Closed-Start"
+- **Claude Code-Einstellungen** (`settings.md`): 6 lines added, 6 removed
+- **Erweiterte Einrichtung** (`setup.md`): 96 lines added, 5 removed
+  - New section: "### Mit Linux-Paketmanagern installieren"
+  - New section: "### apt / dnf / apk"
+- **Benutzerdefinierte Subagenten erstellen** (`sub-agents.md`): 16 lines added, 1 removed
+
+### English
+
+
+**Modified**
+
+- **Changelog** (`changelog.md`): 38 lines added, 0 removed
+- **Commands** (`commands.md`): 2 lines added, 2 removed
+- **Common workflows** (`common-workflows.md`): 2 lines added, 0 removed
+- **Use Claude Code Desktop** (`desktop.md`): 1 lines added, 1 removed
+- **Claude Code on Google Vertex AI** (`google-vertex-ai.md`): 4 lines added, 4 removed
+- **Hooks reference** (`hooks.md`): 1 lines added, 1 removed
+- **Interactive mode** (`interactive-mode.md`): 3 lines added, 3 removed
+- **Customize keyboard shortcuts** (`keybindings.md`): 3 lines added, 3 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 4 lines added, 7 removed
+- **How Claude remembers your project** (`memory.md`): 2 lines added, 2 removed
+- **Model configuration** (`model-config.md`): 5 lines added, 1 removed
+- **Monitoring** (`monitoring-usage.md`): 8 lines added, 2 removed
+- **Enterprise network configuration** (`network-config.md`): 11 lines added, 13 removed
+- **Claude Code overview** (`overview.md`): 2 lines added, 0 removed
+- **Configure permissions** (`permissions.md`): 2 lines added, 116 removed
+- **Create and distribute a plugin marketplace** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **Quickstart** (`quickstart.md`): 2 lines added, 0 removed
+- **Continue local sessions from any device with Remote Control** (`remote-control.md`): 1 lines added, 1 removed
+- **Configure server-managed settings** (`server-managed-settings.md`): 1 lines added, 1 removed
+- **Claude Code settings** (`settings.md`): 7 lines added, 6 removed
+- **Advanced setup** (`setup.md`): 95 lines added, 4 removed
+  - New section: "### Install with Linux package managers"
+  - New section: "### apt / dnf / apk"
+- **Create custom subagents** (`sub-agents.md`): 16 lines added, 1 removed
+- **Use Claude Code in VS Code** (`vs-code.md`): 3 lines added, 2 removed
+
+### Español
+
+
+**Modified**
+
+- **Flujos de trabajo comunes** (`common-workflows.md`): 3 lines added, 1 removed
+- **Usar Claude Code Desktop** (`desktop.md`): 1 lines added, 1 removed
+- **Claude Code en Google Vertex AI** (`google-vertex-ai.md`): 233 lines added, 17 removed
+  - New section: "## Iniciar sesión con Vertex AI"
+  - New section: "## Configurar manualmente"
+  - New section: "## Verificaciones de modelo al inicio"
+- **Cómo Claude recuerda su proyecto** (`memory.md`): 2 lines added, 2 removed
+- **Configuración del modelo** (`model-config.md`): 7 lines added, 3 removed
+- **Monitoreo** (`monitoring-usage.md`): 386 lines added, 25 removed
+  - New section: "#### Jerarquía de spans"
+  - New section: "#### Atributos de spans"
+  - New section: "#### Evento de cuerpo de solicitud de API"
+  - New section: "#### Evento de cuerpo de respuesta de API"
+  - New section: "#### Evento de cambio de modo de permiso"
+- **Configuración de red empresarial** (`network-config.md`): 11 lines added, 13 removed
+- **Descripción general de Claude Code** (`overview.md`): 2 lines added, 0 removed
+- **Configurar permisos** (`permissions.md`): 1 lines added, 0 removed
+- **Crear y distribuir un marketplace de plugins** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **Inicio rápido** (`quickstart.md`): 2 lines added, 0 removed
+- **Configurar la configuración administrada por servidor** (`server-managed-settings.md`): 27 lines added, 11 removed
+  - New section: "# Configurar la configuración administrada por servidor"
+  - New section: "### Aplicar inicio cerrado por fallo"
+- **Configuración de Claude Code** (`settings.md`): 6 lines added, 6 removed
+- **Configuración avanzada** (`setup.md`): 97 lines added, 6 removed
+  - New section: "### Instalar con gestores de paquetes de Linux"
+  - New section: "### apt / dnf / apk"
+- **Crear subagentes personalizados** (`sub-agents.md`): 16 lines added, 1 removed
+
+### Français
+
+
+**Modified**
+
+- **Flux de travail courants** (`common-workflows.md`): 6 lines added, 4 removed
+- **Utiliser Claude Code Desktop** (`desktop.md`): 1 lines added, 1 removed
+- **Claude Code sur Google Vertex AI** (`google-vertex-ai.md`): 229 lines added, 13 removed
+  - New section: "## Se connecter avec Vertex AI"
+  - New section: "## Configuration manuelle"
+  - New section: "## Vérifications du modèle au démarrage"
+- **Comment Claude se souvient de votre projet** (`memory.md`): 2 lines added, 2 removed
+- **Configuration du modèle** (`model-config.md`): 5 lines added, 1 removed
+- **Surveillance** (`monitoring-usage.md`): 386 lines added, 25 removed
+  - New section: "#### Hiérarchie des intervalles"
+  - New section: "#### Attributs des intervalles"
+  - New section: "#### Événement de corps de demande d'API"
+  - New section: "#### Événement de corps de réponse d'API"
+  - New section: "#### Événement de changement de mode de permission"
+- **Configuration réseau d'entreprise** (`network-config.md`): 11 lines added, 13 removed
+- **Aperçu de Claude Code** (`overview.md`): 2 lines added, 0 removed
+- **Configurer les autorisations** (`permissions.md`): 2 lines added, 1 removed
+- **Créer et distribuer une place de marché de plugins** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **Démarrage rapide** (`quickstart.md`): 2 lines added, 0 removed
+- **Configurer les paramètres gérés par le serveur** (`server-managed-settings.md`): 27 lines added, 11 removed
+  - New section: "# Configurer les paramètres gérés par le serveur"
+  - New section: "### Appliquer un démarrage fermé par défaut"
+- **Paramètres Claude Code** (`settings.md`): 5 lines added, 5 removed
+- **Configuration avancée** (`setup.md`): 96 lines added, 5 removed
+  - New section: "### Installer avec les gestionnaires de paquets Linux"
+  - New section: "### apt / dnf / apk"
+- **Créer des sous-agents personnalisés** (`sub-agents.md`): 16 lines added, 1 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Alur kerja umum** (`common-workflows.md`): 3 lines added, 1 removed
+- **Gunakan Claude Code Desktop** (`desktop.md`): 1 lines added, 1 removed
+- **Claude Code di Google Vertex AI** (`google-vertex-ai.md`): 235 lines added, 19 removed
+  - New section: "## Masuk dengan Vertex AI"
+  - New section: "## Konfigurasi wilayah"
+  - New section: "## Pengaturan manual"
+  - New section: "## Pemeriksaan model startup"
+  - New section: "## Pemecahan masalah"
+- **Bagaimana Claude mengingat proyek Anda** (`memory.md`): 4 lines added, 4 removed
+- **Konfigurasi model** (`model-config.md`): 8 lines added, 4 removed
+- **Pemantauan** (`monitoring-usage.md`): 386 lines added, 25 removed
+  - New section: "#### Hierarki span"
+  - New section: "#### Atribut span"
+  - New section: "#### Acara badan permintaan API"
+  - New section: "#### Acara badan respons API"
+  - New section: "#### Acara mode izin berubah"
+- **Konfigurasi jaringan enterprise** (`network-config.md`): 11 lines added, 13 removed
+- **Ikhtisar Claude Code** (`overview.md`): 2 lines added, 0 removed
+- **Konfigurasi izin** (`permissions.md`): 3 lines added, 2 removed
+- **Panduan Cepat** (`quickstart.md`): 2 lines added, 0 removed
+- **Konfigurasi pengaturan yang dikelola server** (`server-managed-settings.md`): 27 lines added, 11 removed
+  - New section: "# Konfigurasi pengaturan yang dikelola server"
+  - New section: "### Paksakan startup yang tertutup gagal"
+- **Pengaturan Claude Code** (`settings.md`): 4 lines added, 4 removed
+- **Pengaturan lanjutan** (`setup.md`): 96 lines added, 5 removed
+  - New section: "### Instal dengan manajer paket Linux"
+  - New section: "### apt / dnf / apk"
+- **Buat subagent khusus** (`sub-agents.md`): 17 lines added, 2 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Flussi di lavoro comuni** (`common-workflows.md`): 11 lines added, 1 removed
+  - New section: "## Lavorare in note e cartelle non di codice"
+- **Usa Claude Code Desktop** (`desktop.md`): 1 lines added, 1 removed
+- **Claude Code su Google Vertex AI** (`google-vertex-ai.md`): 229 lines added, 13 removed
+  - New section: "## Accedi con Vertex AI"
+  - New section: "## Configurazione manuale"
+  - New section: "## Controlli del modello all'avvio"
+- **Come Claude ricorda il tuo progetto** (`memory.md`): 2 lines added, 2 removed
+- **Configurazione del modello** (`model-config.md`): 5 lines added, 1 removed
+- **Monitoraggio** (`monitoring-usage.md`): 386 lines added, 25 removed
+  - New section: "#### Gerarchia degli span"
+  - New section: "#### Attributi degli span"
+  - New section: "#### Evento di corpo della richiesta API"
+  - New section: "#### Evento di corpo della risposta API"
+  - New section: "#### Evento di cambio della modalità di autorizzazione"
+- **Configurazione di rete aziendale** (`network-config.md`): 11 lines added, 13 removed
+- **Panoramica di Claude Code** (`overview.md`): 2 lines added, 0 removed
+- **Configurare le autorizzazioni** (`permissions.md`): 2 lines added, 1 removed
+- **Creare e distribuire un marketplace di plugin** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **Guida rapida** (`quickstart.md`): 2 lines added, 0 removed
+- **Configurare le impostazioni gestite dal server** (`server-managed-settings.md`): 27 lines added, 11 removed
+  - New section: "# Configurare le impostazioni gestite dal server"
+  - New section: "### Applicare l'avvio fail-closed"
+- **Impostazioni di Claude Code** (`settings.md`): 6 lines added, 6 removed
+- **Configurazione avanzata** (`setup.md`): 96 lines added, 5 removed
+  - New section: "### Installare con i gestori di pacchetti Linux"
+  - New section: "### apt / dnf / apk"
+- **Creare subagent personalizzati** (`sub-agents.md`): 16 lines added, 1 removed
+
+### 日本語
+
+
+**Modified**
+
+- **一般的なワークフロー** (`common-workflows.md`): 6 lines added, 2 removed
+- **Claude Code Desktop を使用する** (`desktop.md`): 1 lines added, 1 removed
+- **Google Vertex AI 上の Claude Code** (`google-vertex-ai.md`): 233 lines added, 17 removed
+  - New section: "## Vertex AI でサインイン"
+  - New section: "## 手動でセットアップする"
+  - New section: "## 起動時のモデルチェック"
+- **Claude があなたのプロジェクトを記憶する方法** (`memory.md`): 7 lines added, 5 removed
+- **モデル設定** (`model-config.md`): 6 lines added, 2 removed
+- **監視** (`monitoring-usage.md`): 386 lines added, 25 removed
+  - New section: "#### スパン階層"
+  - New section: "#### スパン属性"
+  - New section: "#### API リクエストボディイベント"
+  - New section: "#### API レスポンスボディイベント"
+  - New section: "#### 権限モード変更イベント"
+- **エンタープライズネットワーク設定** (`network-config.md`): 12 lines added, 14 removed
+- **Claude Code の概要** (`overview.md`): 2 lines added, 0 removed
+- **権限を設定する** (`permissions.md`): 1 lines added, 115 removed
+- **プラグインマーケットプレイスの作成と配布** (`plugin-marketplaces.md`): 2 lines added, 2 removed
+- **クイックスタート** (`quickstart.md`): 2 lines added, 0 removed
+- **サーバー管理設定を構成する** (`server-managed-settings.md`): 27 lines added, 11 removed
+  - New section: "# サーバー管理設定を構成する"
+  - New section: "### 強制的にクローズされた起動を適用する"
+- **Claude Code の設定** (`settings.md`): 5 lines added, 5 removed
+- **高度なセットアップ** (`setup.md`): 102 lines added, 11 removed
+  - New section: "### Linux パッケージマネージャーでのインストール"
+  - New section: "### apt / dnf / apk"
+- **カスタムサブエージェントの作成** (`sub-agents.md`): 10 lines added, 1 removed
+
+### 한국어
+
+
+**Modified**
+
+- **일반적인 워크플로우** (`common-workflows.md`): 10 lines added, 0 removed
+  - New section: "## 노트 및 비코드 폴더에서 작업하기"
+- **Claude Code Desktop 사용하기** (`desktop.md`): 1 lines added, 1 removed
+- **Google Vertex AI에서 Claude Code 사용하기** (`google-vertex-ai.md`): 233 lines added, 17 removed
+  - New section: "## Vertex AI로 로그인"
+  - New section: "## 수동 설정"
+  - New section: "## 시작 모델 확인"
+- **Claude가 프로젝트를 기억하는 방법** (`memory.md`): 12 lines added, 12 removed
+- **모델 구성** (`model-config.md`): 6 lines added, 2 removed
+- **모니터링** (`monitoring-usage.md`): 386 lines added, 25 removed
+  - New section: "#### 스팬 계층 구조"
+  - New section: "#### 스팬 속성"
+  - New section: "#### API 요청 본문 이벤트"
+  - New section: "#### API 응답 본문 이벤트"
+  - New section: "#### 권한 모드 변경 이벤트"
+- **엔터프라이즈 네트워크 구성** (`network-config.md`): 11 lines added, 13 removed
+- **Claude Code 개요** (`overview.md`): 2 lines added, 0 removed
+- **권한 구성** (`permissions.md`): 1 lines added, 0 removed
+- **플러그인 마켓플레이스 생성 및 배포** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **빠른 시작** (`quickstart.md`): 2 lines added, 0 removed
+- **서버 관리 설정 구성** (`server-managed-settings.md`): 27 lines added, 11 removed
+  - New section: "# 서버 관리 설정 구성"
+  - New section: "### 강제 실패 폐쇄 시작"
+- **Claude Code 설정** (`settings.md`): 6 lines added, 8 removed
+- **고급 설정** (`setup.md`): 97 lines added, 6 removed
+  - New section: "### Linux 패키지 관리자로 설치"
+  - New section: "### apt / dnf / apk"
+- **사용자 정의 subagent 만들기** (`sub-agents.md`): 16 lines added, 1 removed
+
+### Português
+
+
+**Modified**
+
+- **Fluxos de trabalho comuns** (`common-workflows.md`): 11 lines added, 1 removed
+  - New section: "## Trabalhar em notas e pastas não-código"
+- **Use Claude Code Desktop** (`desktop.md`): 1 lines added, 1 removed
+- **Claude Code no Google Vertex AI** (`google-vertex-ai.md`): 232 lines added, 16 removed
+  - New section: "## Entrar com Vertex AI"
+  - New section: "## Configuração de região"
+  - New section: "## Configurar manualmente"
+  - New section: "## Verificações de modelo na inicialização"
+- **Como Claude se lembra do seu projeto** (`memory.md`): 3 lines added, 3 removed
+- **Configuração de modelo** (`model-config.md`): 7 lines added, 3 removed
+- **Monitoramento** (`monitoring-usage.md`): 391 lines added, 30 removed
+  - New section: "#### Hierarquia de span"
+  - New section: "#### Atributos de span"
+  - New section: "#### Evento de corpo de solicitação de API"
+  - New section: "#### Evento de corpo de resposta de API"
+  - New section: "#### Evento de modo de permissão alterado"
+- **Configuração de rede empresarial** (`network-config.md`): 11 lines added, 13 removed
+- **Visão geral do Claude Code** (`overview.md`): 2 lines added, 0 removed
+- **Configurar permissões** (`permissions.md`): 2 lines added, 116 removed
+- **Criar e distribuir um marketplace de plugins** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **Guia de Início Rápido** (`quickstart.md`): 2 lines added, 0 removed
+- **Configurar configurações gerenciadas pelo servidor** (`server-managed-settings.md`): 27 lines added, 11 removed
+  - New section: "# Configurar configurações gerenciadas pelo servidor"
+  - New section: "### Impor inicialização com falha fechada"
+- **Configurações do Claude Code** (`settings.md`): 4 lines added, 4 removed
+- **Configuração avançada** (`setup.md`): 96 lines added, 5 removed
+  - New section: "### Instalar com gerenciadores de pacotes Linux"
+  - New section: "### apt / dnf / apk"
+- **Criar subagentes personalizados** (`sub-agents.md`): 16 lines added, 1 removed
+
+### Русский
+
+
+**Modified**
+
+- **Распространённые рабочие процессы** (`common-workflows.md`): 4 lines added, 2 removed
+- **Использование Claude Code Desktop** (`desktop.md`): 1 lines added, 1 removed
+- **Claude Code на Google Vertex AI** (`google-vertex-ai.md`): 233 lines added, 17 removed
+  - New section: "## Вход с Vertex AI"
+  - New section: "## Ручная установка"
+  - New section: "## Проверки моделей при запуске"
+- **Как Claude запоминает ваш проект** (`memory.md`): 3 lines added, 3 removed
+- **Конфигурация модели** (`model-config.md`): 8 lines added, 4 removed
+- **Мониторинг** (`monitoring-usage.md`): 387 lines added, 26 removed
+  - New section: "### Traces (beta)"
+  - New section: "#### Иерархия span"
+  - New section: "#### Атрибуты span"
+  - New section: "#### Событие тела запроса API"
+  - New section: "#### Событие тела ответа API"
+- **Конфигурация сети для предприятия** (`network-config.md`): 11 lines added, 13 removed
+- **Обзор Claude Code** (`overview.md`): 2 lines added, 0 removed
+- **Настройка разрешений** (`permissions.md`): 14 lines added, 13 removed
+- **Создание и распространение marketplace плагинов** (`plugin-marketplaces.md`): 2 lines added, 2 removed
+- **Быстрый старт** (`quickstart.md`): 2 lines added, 0 removed
+- **Настройка параметров, управляемых сервером** (`server-managed-settings.md`): 27 lines added, 11 removed
+  - New section: "# Настройка параметров, управляемых сервером"
+  - New section: "### Принудительное закрытие при запуске"
+- **Параметры Claude Code** (`settings.md`): 4 lines added, 4 removed
+- **Расширенная настройка** (`setup.md`): 96 lines added, 5 removed
+  - New section: "### Установка с менеджерами пакетов Linux"
+  - New section: "### apt / dnf / apk"
+- **Создание пользовательских subagents** (`sub-agents.md`): 16 lines added, 1 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **常见工作流程** (`common-workflows.md`): 2 lines added, 0 removed
+- **使用 Claude Code Desktop** (`desktop.md`): 1 lines added, 1 removed
+- **Google Vertex AI 上的 Claude Code** (`google-vertex-ai.md`): 229 lines added, 13 removed
+  - New section: "## 使用 Vertex AI 登录"
+  - New section: "## 手动设置"
+  - New section: "## 启动模型检查"
+- **Claude 如何记住你的项目** (`memory.md`): 10 lines added, 10 removed
+- **模型配置** (`model-config.md`): 5 lines added, 1 removed
+- **监控** (`monitoring-usage.md`): 386 lines added, 25 removed
+  - New section: "#### Span 层次结构"
+  - New section: "#### Span 属性"
+  - New section: "#### API 请求主体事件"
+  - New section: "#### API 响应主体事件"
+  - New section: "#### 权限模式更改事件"
+- **企业网络配置** (`network-config.md`): 11 lines added, 13 removed
+- **Claude Code 概述** (`overview.md`): 2 lines added, 0 removed
+- **配置权限** (`permissions.md`): 2 lines added, 116 removed
+- **创建和分发 plugin marketplace** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **快速开始** (`quickstart.md`): 2 lines added, 0 removed
+- **配置服务器管理的设置** (`server-managed-settings.md`): 27 lines added, 11 removed
+  - New section: "# 配置服务器管理的设置"
+  - New section: "### 强制执行故障关闭启动"
+- **Claude Code 设置** (`settings.md`): 5 lines added, 5 removed
+- **高级设置** (`setup.md`): 96 lines added, 5 removed
+  - New section: "### 使用 Linux 包管理器安装"
+  - New section: "### apt / dnf / apk"
+- **创建自定义 subagents** (`sub-agents.md`): 16 lines added, 1 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **常見工作流程** (`common-workflows.md`): 3 lines added, 1 removed
+- **使用 Claude Code Desktop** (`desktop.md`): 1 lines added, 1 removed
+- **Google Vertex AI 上的 Claude Code** (`google-vertex-ai.md`): 229 lines added, 13 removed
+  - New section: "## 使用 Vertex AI 登入"
+  - New section: "## 手動設定"
+  - New section: "## 啟動模型檢查"
+- **Claude 如何記住您的專案** (`memory.md`): 7 lines added, 7 removed
+- **模型配置** (`model-config.md`): 16 lines added, 12 removed
+- **監控** (`monitoring-usage.md`): 386 lines added, 25 removed
+  - New section: "#### 跨度階層"
+  - New section: "#### 跨度屬性"
+  - New section: "#### API 請求主體事件"
+  - New section: "#### API 回應主體事件"
+  - New section: "#### 權限模式變更事件"
+- **企業網路設定** (`network-config.md`): 11 lines added, 13 removed
+- **Claude Code 概述** (`overview.md`): 2 lines added, 0 removed
+- **設定權限** (`permissions.md`): 2 lines added, 1 removed
+- **建立並分發 plugin marketplace** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **快速入門** (`quickstart.md`): 2 lines added, 0 removed
+- **設定伺服器管理的設定** (`server-managed-settings.md`): 27 lines added, 11 removed
+  - New section: "# 設定伺服器管理的設定"
+  - New section: "### 強制執行失敗關閉啟動"
+- **Claude Code 設定** (`settings.md`): 4 lines added, 4 removed
+- **進階設定** (`setup.md`): 96 lines added, 5 removed
+  - New section: "### 使用 Linux 套件管理員安裝"
+  - New section: "### apt / dnf / apk"
+- **建立自訂 subagents** (`sub-agents.md`): 16 lines added, 1 removed
+
+---
+
 ## 2026-04-22
 
 210 pages modified

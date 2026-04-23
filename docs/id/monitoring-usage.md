@@ -68,27 +68,28 @@ Contoh konfigurasi pengaturan terkelola:
 
 ### Variabel konfigurasi umum
 
-| Variabel Lingkungan                                 | Deskripsi                                                                                                                                                           | Nilai Contoh                            |
-| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | Mengaktifkan pengumpulan telemetri (diperlukan)                                                                                                                     | `1`                                     |
-| `OTEL_METRICS_EXPORTER`                             | Jenis pengekspor metrik, dipisahkan koma. Gunakan `none` untuk menonaktifkan                                                                                        | `console`, `otlp`, `prometheus`, `none` |
-| `OTEL_LOGS_EXPORTER`                                | Jenis pengekspor log/acara, dipisahkan koma. Gunakan `none` untuk menonaktifkan                                                                                     | `console`, `otlp`, `none`               |
-| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | Protokol untuk pengekspor OTLP, berlaku untuk semua sinyal                                                                                                          | `grpc`, `http/json`, `http/protobuf`    |
-| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | Titik akhir pengumpul OTLP untuk semua sinyal                                                                                                                       | `http://localhost:4317`                 |
-| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | Protokol untuk metrik, menimpa pengaturan umum                                                                                                                      | `grpc`, `http/json`, `http/protobuf`    |
-| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | Titik akhir metrik OTLP, menimpa pengaturan umum                                                                                                                    | `http://localhost:4318/v1/metrics`      |
-| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | Protokol untuk log, menimpa pengaturan umum                                                                                                                         | `grpc`, `http/json`, `http/protobuf`    |
-| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | Titik akhir log OTLP, menimpa pengaturan umum                                                                                                                       | `http://localhost:4318/v1/logs`         |
-| `OTEL_EXPORTER_OTLP_HEADERS`                        | Header autentikasi untuk OTLP                                                                                                                                       | `Authorization=Bearer token`            |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | Kunci klien untuk autentikasi mTLS                                                                                                                                  | Jalur ke file kunci klien               |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | Sertifikat klien untuk autentikasi mTLS                                                                                                                             | Jalur ke file sertifikat klien          |
-| `OTEL_METRIC_EXPORT_INTERVAL`                       | Interval ekspor dalam milidetik (default: 60000)                                                                                                                    | `5000`, `60000`                         |
-| `OTEL_LOGS_EXPORT_INTERVAL`                         | Interval ekspor log dalam milidetik (default: 5000)                                                                                                                 | `1000`, `10000`                         |
-| `OTEL_LOG_USER_PROMPTS`                             | Aktifkan pencatatan konten prompt pengguna (default: dinonaktifkan)                                                                                                 | `1` untuk mengaktifkan                  |
-| `OTEL_LOG_TOOL_DETAILS`                             | Aktifkan pencatatan parameter alat dan argumen input dalam acara alat: perintah Bash, nama server MCP dan alat, nama skill, dan input alat (default: dinonaktifkan) | `1` untuk mengaktifkan                  |
-| `OTEL_LOG_TOOL_CONTENT`                             | Aktifkan pencatatan konten input dan output alat dalam acara span (default: dinonaktifkan). Memerlukan [tracing](#traces-beta). Konten dipotong pada 60 KB          | `1` untuk mengaktifkan                  |
-| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | Preferensi temporalitas metrik (default: `delta`). Atur ke `cumulative` jika backend Anda mengharapkan temporalitas kumulatif                                       | `delta`, `cumulative`                   |
-| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | Interval untuk menyegarkan header dinamis (default: 1740000ms / 29 menit)                                                                                           | `900000`                                |
+| Variabel Lingkungan                                 | Deskripsi                                                                                                                                                                                                                                                                                                                                                           | Nilai Contoh                                                                                                                           |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `CLAUDE_CODE_ENABLE_TELEMETRY`                      | Mengaktifkan pengumpulan telemetri (diperlukan)                                                                                                                                                                                                                                                                                                                     | `1`                                                                                                                                    |
+| `OTEL_METRICS_EXPORTER`                             | Jenis pengekspor metrik, dipisahkan koma. Gunakan `none` untuk menonaktifkan                                                                                                                                                                                                                                                                                        | `console`, `otlp`, `prometheus`, `none`                                                                                                |
+| `OTEL_LOGS_EXPORTER`                                | Jenis pengekspor log/acara, dipisahkan koma. Gunakan `none` untuk menonaktifkan                                                                                                                                                                                                                                                                                     | `console`, `otlp`, `none`                                                                                                              |
+| `OTEL_EXPORTER_OTLP_PROTOCOL`                       | Protokol untuk pengekspor OTLP, berlaku untuk semua sinyal                                                                                                                                                                                                                                                                                                          | `grpc`, `http/json`, `http/protobuf`                                                                                                   |
+| `OTEL_EXPORTER_OTLP_ENDPOINT`                       | Titik akhir pengumpul OTLP untuk semua sinyal                                                                                                                                                                                                                                                                                                                       | `http://localhost:4317`                                                                                                                |
+| `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`               | Protokol untuk metrik, menimpa pengaturan umum                                                                                                                                                                                                                                                                                                                      | `grpc`, `http/json`, `http/protobuf`                                                                                                   |
+| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`               | Titik akhir metrik OTLP, menimpa pengaturan umum                                                                                                                                                                                                                                                                                                                    | `http://localhost:4318/v1/metrics`                                                                                                     |
+| `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | Protokol untuk log, menimpa pengaturan umum                                                                                                                                                                                                                                                                                                                         | `grpc`, `http/json`, `http/protobuf`                                                                                                   |
+| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | Titik akhir log OTLP, menimpa pengaturan umum                                                                                                                                                                                                                                                                                                                       | `http://localhost:4318/v1/logs`                                                                                                        |
+| `OTEL_EXPORTER_OTLP_HEADERS`                        | Header autentikasi untuk OTLP                                                                                                                                                                                                                                                                                                                                       | `Authorization=Bearer token`                                                                                                           |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | Kunci klien untuk autentikasi mTLS                                                                                                                                                                                                                                                                                                                                  | Jalur ke file kunci klien                                                                                                              |
+| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | Sertifikat klien untuk autentikasi mTLS                                                                                                                                                                                                                                                                                                                             | Jalur ke file sertifikat klien                                                                                                         |
+| `OTEL_METRIC_EXPORT_INTERVAL`                       | Interval ekspor dalam milidetik (default: 60000)                                                                                                                                                                                                                                                                                                                    | `5000`, `60000`                                                                                                                        |
+| `OTEL_LOGS_EXPORT_INTERVAL`                         | Interval ekspor log dalam milidetik (default: 5000)                                                                                                                                                                                                                                                                                                                 | `1000`, `10000`                                                                                                                        |
+| `OTEL_LOG_USER_PROMPTS`                             | Aktifkan pencatatan konten prompt pengguna (default: dinonaktifkan)                                                                                                                                                                                                                                                                                                 | `1` untuk mengaktifkan                                                                                                                 |
+| `OTEL_LOG_TOOL_DETAILS`                             | Aktifkan pencatatan parameter alat dan argumen input dalam acara alat dan atribut span trace: perintah Bash, nama server MCP dan alat, nama skill, dan input alat. Juga mengaktifkan nama perintah custom, plugin, dan MCP pada acara `user_prompt` (default: dinonaktifkan)                                                                                        | `1` untuk mengaktifkan                                                                                                                 |
+| `OTEL_LOG_TOOL_CONTENT`                             | Aktifkan pencatatan konten input dan output alat dalam acara span (default: dinonaktifkan). Memerlukan [tracing](#traces-beta). Konten dipotong pada 60 KB                                                                                                                                                                                                          | `1` untuk mengaktifkan                                                                                                                 |
+| `OTEL_LOG_RAW_API_BODIES`                           | Emit badan permintaan dan respons JSON API Anthropic Messages lengkap sebagai acara log `api_request_body` / `api_response_body` (default: dinonaktifkan). Badan mencakup seluruh riwayat percakapan. Mengaktifkan ini menyiratkan persetujuan untuk semua yang akan diungkapkan oleh `OTEL_LOG_USER_PROMPTS`, `OTEL_LOG_TOOL_DETAILS`, dan `OTEL_LOG_TOOL_CONTENT` | `1` untuk badan inline dipotong pada 60 KB, atau `file:<dir>` untuk badan tidak dipotong di disk dengan pointer `body_ref` dalam acara |
+| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | Preferensi temporalitas metrik (default: `delta`). Atur ke `cumulative` jika backend Anda mengharapkan temporalitas kumulatif                                                                                                                                                                                                                                       | `delta`, `cumulative`                                                                                                                  |
+| `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | Interval untuk menyegarkan header dinamis (default: 1740000ms / 29 menit)                                                                                                                                                                                                                                                                                           | `900000`                                                                                                                               |
 
 ### Kontrol kardinalitas metrik
 
@@ -116,7 +117,117 @@ Tracing dimatikan secara default. Untuk mengaktifkannya, atur `CLAUDE_CODE_ENABL
 | `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`  | Titik akhir traces OTLP, menimpa `OTEL_EXPORTER_OTLP_ENDPOINT`                     | `http://localhost:4318/v1/traces`    |
 | `OTEL_TRACES_EXPORT_INTERVAL`         | Interval ekspor batch span dalam milidetik (default: 5000)                         | `1000`, `10000`                      |
 
-Spans menyunting teks prompt pengguna dan konten alat secara default. Atur `OTEL_LOG_USER_PROMPTS=1` dan `OTEL_LOG_TOOL_CONTENT=1` untuk menyertakannya.
+Spans menyunting teks prompt pengguna, detail input alat, dan konten alat secara default. Atur `OTEL_LOG_USER_PROMPTS=1`, `OTEL_LOG_TOOL_DETAILS=1`, dan `OTEL_LOG_TOOL_CONTENT=1` untuk menyertakannya.
+
+Saat tracing aktif, subproses Bash dan PowerShell secara otomatis mewarisi variabel lingkungan `TRACEPARENT` yang berisi konteks trace W3C dari span eksekusi alat yang aktif. Ini memungkinkan subproses apa pun yang membaca `TRACEPARENT` untuk membuat parent spans-nya di bawah trace yang sama, memungkinkan distributed tracing end-to-end melalui skrip dan perintah yang dijalankan Claude.
+
+Dalam sesi Agent SDK dan non-interaktif yang dimulai dengan `-p`, Claude Code juga membaca `TRACEPARENT` dan `TRACESTATE` dari lingkungannya sendiri saat memulai setiap span interaksi. Ini memungkinkan proses embedding untuk melewatkan konteks trace W3C aktifnya ke dalam subproses sehingga spans Claude Code muncul sebagai anak dari distributed trace pemanggil. Sesi interaktif mengabaikan `TRACEPARENT` inbound untuk menghindari secara tidak sengaja mewarisi nilai ambient dari lingkungan CI atau container.
+
+#### Hierarki span
+
+Setiap prompt pengguna memulai span root `claude_code.interaction`. Panggilan API, panggilan alat, dan eksekusi hook dicatat sebagai anak-anaknya. Spans alat memiliki dua span anak mereka sendiri: satu untuk waktu yang dihabiskan menunggu keputusan izin dan satu untuk eksekusi itu sendiri. Ketika alat Task menghasilkan subagent, spans API dan alat subagent bersarang di bawah span `claude_code.tool` induk.
+
+```text theme={null}
+claude_code.interaction
+├── claude_code.llm_request
+├── claude_code.hook                    (memerlukan detailed beta tracing)
+└── claude_code.tool
+    ├── claude_code.tool.blocked_on_user
+    ├── claude_code.tool.execution
+    └── (Task tool) subagent claude_code.llm_request / claude_code.tool spans
+```
+
+Dalam sesi Agent SDK dan `claude -p`, `claude_code.interaction` itu sendiri menjadi anak dari span pemanggil saat `TRACEPARENT` diatur dalam lingkungan.
+
+#### Atribut span
+
+Setiap span membawa [atribut standar](#standard-attributes) ditambah atribut `span.type` yang cocok dengan namanya. Tabel di bawah mencantumkan atribut tambahan yang diatur pada setiap span. Spans `llm_request`, `tool.execution`, dan `hook` menetapkan status OpenTelemetry `ERROR` saat mereka mencatat kegagalan; span lainnya selalu berakhir dengan status `UNSET`.
+
+**`claude_code.interaction`**
+
+| Atribut                   | Deskripsi                                                  | Gated by                |
+| ------------------------- | ---------------------------------------------------------- | ----------------------- |
+| `user_prompt`             | Teks prompt. Nilai adalah `<REDACTED>` kecuali gate diatur | `OTEL_LOG_USER_PROMPTS` |
+| `user_prompt_length`      | Panjang prompt dalam karakter                              |                         |
+| `interaction.sequence`    | Penghitung berbasis 1 dari interaksi dalam sesi ini        |                         |
+| `interaction.duration_ms` | Durasi wall-clock dari giliran                             |                         |
+
+**`claude_code.llm_request`**
+
+| Atribut                  | Deskripsi                                                                             | Gated by |
+| ------------------------ | ------------------------------------------------------------------------------------- | -------- |
+| `model`                  | Pengidentifikasi model                                                                |          |
+| `gen_ai.system`          | Selalu `anthropic`. Konvensi semantik GenAI OpenTelemetry                             |          |
+| `gen_ai.request.model`   | Nilai yang sama dengan `model`. Konvensi semantik GenAI OpenTelemetry                 |          |
+| `query_source`           | Subsistem yang mengeluarkan permintaan, seperti `repl_main_thread` atau nama subagent |          |
+| `speed`                  | `fast` atau `normal`                                                                  |          |
+| `llm_request.context`    | `interaction`, `tool`, atau `standalone` tergantung pada span induk                   |          |
+| `duration_ms`            | Durasi wall-clock termasuk retry                                                      |          |
+| `ttft_ms`                | Waktu ke token pertama dalam milidetik                                                |          |
+| `input_tokens`           | Jumlah token input dari blok penggunaan API                                           |          |
+| `output_tokens`          | Jumlah token output                                                                   |          |
+| `cache_read_tokens`      | Token yang dibaca dari prompt cache                                                   |          |
+| `cache_creation_tokens`  | Token yang ditulis ke prompt cache                                                    |          |
+| `request_id`             | ID permintaan API Anthropic dari header respons `request-id`                          |          |
+| `gen_ai.response.id`     | Nilai yang sama dengan `request_id`. Konvensi semantik GenAI OpenTelemetry            |          |
+| `client_request_id`      | `x-client-request-id` yang dihasilkan klien dari upaya terakhir                       |          |
+| `attempt`                | Total upaya yang dilakukan untuk permintaan ini                                       |          |
+| `success`                | `true` atau `false`                                                                   |          |
+| `status_code`            | Kode status HTTP saat permintaan gagal                                                |          |
+| `error`                  | Pesan kesalahan saat permintaan gagal                                                 |          |
+| `response.has_tool_call` | `true` saat respons berisi blok tool-use                                              |          |
+
+Setiap upaya retry juga dicatat sebagai acara span `gen_ai.request.attempt` dengan atribut `attempt` dan `client_request_id`.
+
+**`claude_code.tool`**
+
+| Atribut         | Deskripsi                                           | Gated by                |
+| --------------- | --------------------------------------------------- | ----------------------- |
+| `tool_name`     | Nama alat                                           |                         |
+| `duration_ms`   | Durasi wall-clock termasuk tunggu izin dan eksekusi |                         |
+| `result_tokens` | Ukuran token perkiraan dari hasil alat              |                         |
+| `file_path`     | Jalur file target untuk alat Read, Edit, dan Write  | `OTEL_LOG_TOOL_DETAILS` |
+| `full_command`  | String perintah untuk alat Bash                     | `OTEL_LOG_TOOL_DETAILS` |
+| `skill_name`    | Nama skill untuk alat Skill                         | `OTEL_LOG_TOOL_DETAILS` |
+| `subagent_type` | Jenis subagent untuk alat Task                      | `OTEL_LOG_TOOL_DETAILS` |
+
+Saat `OTEL_LOG_TOOL_CONTENT=1`, span ini juga mencatat acara span `tool.output` yang atributnya berisi badan input dan output alat, dipotong pada 60 KB per atribut.
+
+**`claude_code.tool.blocked_on_user`**
+
+| Atribut       | Deskripsi                                            | Gated by |
+| ------------- | ---------------------------------------------------- | -------- |
+| `duration_ms` | Waktu yang dihabiskan menunggu keputusan izin        |          |
+| `decision`    | `accept` atau `reject`                               |          |
+| `source`      | Sumber keputusan, cocok dengan acara `tool_decision` |          |
+
+**`claude_code.tool.execution`**
+
+| Atribut       | Deskripsi                                                                                                                                                 | Gated by                |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| `duration_ms` | Waktu yang dihabiskan menjalankan badan alat                                                                                                              |                         |
+| `success`     | `true` atau `false`                                                                                                                                       |                         |
+| `error`       | String kategori kesalahan saat eksekusi gagal, seperti `Error:ENOENT` atau `ShellError`. Berisi pesan kesalahan lengkap sebagai gantinya saat gate diatur | `OTEL_LOG_TOOL_DETAILS` |
+
+**`claude_code.hook`**
+
+Span ini dipancarkan hanya saat detailed beta tracing aktif, yang memerlukan `ENABLE_BETA_TRACING_DETAILED=1` dan `BETA_TRACING_ENDPOINT` selain konfigurasi pengekspor trace di atas. Dalam sesi CLI interaktif, ini juga memerlukan organisasi Anda untuk berada dalam daftar putih untuk fitur ini. Sesi Agent SDK dan non-interaktif `-p` tidak gated. Ini tidak dipancarkan saat hanya `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA` yang diatur.
+
+| Atribut                  | Deskripsi                                         | Gated by                |
+| ------------------------ | ------------------------------------------------- | ----------------------- |
+| `hook_event`             | Jenis acara hook, seperti `PreToolUse`            |                         |
+| `hook_name`              | Nama hook lengkap, seperti `PreToolUse:Write`     |                         |
+| `num_hooks`              | Jumlah perintah hook yang cocok dieksekusi        |                         |
+| `hook_definitions`       | Konfigurasi hook yang diserialisasi JSON          | `OTEL_LOG_TOOL_DETAILS` |
+| `duration_ms`            | Durasi wall-clock dari semua hook yang cocok      |                         |
+| `num_success`            | Jumlah hook yang selesai dengan sukses            |                         |
+| `num_blocking`           | Jumlah hook yang mengembalikan keputusan blocking |                         |
+| `num_non_blocking_error` | Jumlah hook yang gagal tanpa blocking             |                         |
+| `num_cancelled`          | Jumlah hook yang dibatalkan sebelum selesai       |                         |
+
+<Note>
+  Atribut tambahan yang mengandung konten seperti `new_context`, `system_prompt_preview`, `tool_input`, dan `response.model_output` dipancarkan hanya saat detailed beta tracing aktif. Mereka bukan bagian dari skema span yang stabil.
+</Note>
 
 ### Header dinamis
 
@@ -284,6 +395,7 @@ Ditingkatkan pada awal setiap sesi.
 **Atribut**:
 
 * Semua [atribut standar](#standard-attributes)
+* `start_type`: Bagaimana sesi dimulai. Salah satu dari `"fresh"`, `"resume"`, atau `"continue"`
 
 #### Penghitung baris kode
 
@@ -318,6 +430,9 @@ Ditingkatkan setelah setiap permintaan API.
 
 * Semua [atribut standar](#standard-attributes)
 * `model`: Pengidentifikasi model (misalnya, "claude-sonnet-4-6")
+* `query_source`: Kategori subsistem yang mengeluarkan permintaan. Salah satu dari `"main"`, `"subagent"`, atau `"auxiliary"`
+* `speed`: `"fast"` saat permintaan menggunakan mode cepat. Tidak ada sebaliknya
+* `effort`: [Tingkat effort](/id/model-config#adjust-effort-level) yang diterapkan pada permintaan: `"low"`, `"medium"`, `"high"`, `"xhigh"`, atau `"max"`. Tidak ada saat model tidak mendukung effort.
 
 #### Penghitung token
 
@@ -328,6 +443,9 @@ Ditingkatkan setelah setiap permintaan API.
 * Semua [atribut standar](#standard-attributes)
 * `type`: (`"input"`, `"output"`, `"cacheRead"`, `"cacheCreation"`)
 * `model`: Pengidentifikasi model (misalnya, "claude-sonnet-4-6")
+* `query_source`: Kategori subsistem yang mengeluarkan permintaan. Salah satu dari `"main"`, `"subagent"`, atau `"auxiliary"`
+* `speed`: `"fast"` saat permintaan menggunakan mode cepat. Tidak ada sebaliknya
+* `effort`: [Tingkat effort](/id/model-config#adjust-effort-level) yang diterapkan pada permintaan. Lihat [Penghitung biaya](#cost-counter) untuk detail.
 
 #### Penghitung keputusan alat pengeditan kode
 
@@ -382,6 +500,8 @@ Dicatat saat pengguna mengirimkan prompt.
 * `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
 * `prompt_length`: Panjang prompt
 * `prompt`: Konten prompt (diredaksi secara default, aktifkan dengan `OTEL_LOG_USER_PROMPTS=1`)
+* `command_name`: Nama perintah saat prompt memanggil satu. Nama perintah built-in dan bundled seperti `compact` atau `debug` dipancarkan apa adanya; alias seperti `reset` dipancarkan sebagai yang diketik daripada nama kanonik. Nama perintah custom, plugin, dan MCP runtuh menjadi `custom` atau `mcp` kecuali `OTEL_LOG_TOOL_DETAILS=1` diatur
+* `command_source`: Asal perintah saat ada: `builtin`, `custom`, atau `mcp`. Perintah yang disediakan plugin melaporkan sebagai `custom`
 
 #### Acara hasil alat
 
@@ -398,7 +518,8 @@ Dicatat saat alat menyelesaikan eksekusi.
 * `tool_name`: Nama alat
 * `success`: `"true"` atau `"false"`
 * `duration_ms`: Waktu eksekusi dalam milidetik
-* `error`: Pesan kesalahan (jika gagal)
+* `error_type`: String kategori kesalahan saat alat gagal, seperti `"Error:ENOENT"` atau `"ShellError"`
+* `error` (saat `OTEL_LOG_TOOL_DETAILS=1`): Pesan kesalahan lengkap saat alat gagal
 * `decision_type`: Baik `"accept"` atau `"reject"`
 * `decision_source`: Sumber keputusan - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, atau `"user_reject"`
 * `tool_result_size_bytes`: Ukuran hasil alat dalam byte
@@ -407,6 +528,7 @@ Dicatat saat alat menyelesaikan eksekusi.
   * Untuk alat Bash: mencakup `bash_command`, `full_command`, `timeout`, `description`, `dangerouslyDisableSandbox`, dan `git_commit_id` (SHA komit, saat perintah `git commit` berhasil)
   * Untuk alat MCP: mencakup `mcp_server_name`, `mcp_tool_name`
   * Untuk alat Skill: mencakup `skill_name`
+  * Untuk alat Task: mencakup `subagent_type`
 * `tool_input` (saat `OTEL_LOG_TOOL_DETAILS=1`): Argumen alat yang diserialisasi JSON. Nilai individual di atas 512 karakter dipotong, dan muatan penuh dibatasi hingga \~4 K karakter. Berlaku untuk semua alat termasuk alat MCP.
 
 #### Acara permintaan API
@@ -428,7 +550,10 @@ Dicatat untuk setiap permintaan API ke Claude.
 * `output_tokens`: Jumlah token output
 * `cache_read_tokens`: Jumlah token yang dibaca dari cache
 * `cache_creation_tokens`: Jumlah token yang digunakan untuk pembuatan cache
+* `request_id`: ID permintaan API Anthropic dari header `request-id` respons, seperti `"req_011..."`. Hadir hanya saat API mengembalikan satu.
 * `speed`: `"fast"` atau `"normal"`, menunjukkan apakah mode cepat aktif
+* `query_source`: Subsistem yang mengeluarkan permintaan, seperti `"repl_main_thread"`, `"compact"`, atau nama subagent
+* `effort`: [Tingkat effort](/id/model-config#adjust-effort-level) yang diterapkan pada permintaan: `"low"`, `"medium"`, `"high"`, `"xhigh"`, atau `"max"`. Tidak ada saat model tidak mendukung effort.
 
 #### Acara kesalahan API
 
@@ -446,8 +571,50 @@ Dicatat saat permintaan API ke Claude gagal.
 * `error`: Pesan kesalahan
 * `status_code`: Kode status HTTP sebagai string, atau `"undefined"` untuk kesalahan non-HTTP
 * `duration_ms`: Durasi permintaan dalam milidetik
-* `attempt`: Nomor upaya (untuk permintaan yang dicoba ulang)
+* `attempt`: Jumlah total upaya yang dilakukan, termasuk permintaan awal (`1` berarti tidak ada retry yang terjadi)
+* `request_id`: ID permintaan API Anthropic dari header `request-id` respons, seperti `"req_011..."`. Hadir hanya saat API mengembalikan satu.
 * `speed`: `"fast"` atau `"normal"`, menunjukkan apakah mode cepat aktif
+* `query_source`: Subsistem yang mengeluarkan permintaan, seperti `"repl_main_thread"`, `"compact"`, atau nama subagent
+* `effort`: [Tingkat effort](/id/model-config#adjust-effort-level) yang diterapkan pada permintaan. Tidak ada saat model tidak mendukung effort.
+
+#### Acara badan permintaan API
+
+Dicatat untuk setiap upaya permintaan API saat `OTEL_LOG_RAW_API_BODIES` diatur. Satu acara dipancarkan per upaya, jadi retry dengan parameter yang disesuaikan masing-masing menghasilkan acara mereka sendiri.
+
+**Nama Acara**: `claude_code.api_request_body`
+
+**Atribut**:
+
+* Semua [atribut standar](#standard-attributes)
+* `event.name`: `"api_request_body"`
+* `event.timestamp`: Stempel waktu ISO 8601
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
+* `body`: Parameter permintaan Messages API yang diserialisasi JSON (system prompt, messages, tools, dll.), dipotong pada 60 KB. Konten extended-thinking dalam giliran asisten sebelumnya diredaksi. Dipancarkan hanya dalam mode inline (`OTEL_LOG_RAW_API_BODIES=1`).
+* `body_ref`: Jalur absolut ke file `<dir>/<uuid>.request.json` yang berisi badan yang tidak dipotong. Dipancarkan hanya dalam mode file (`OTEL_LOG_RAW_API_BODIES=file:<dir>`).
+* `body_length`: Panjang badan yang tidak dipotong. Byte UTF-8 saat `OTEL_LOG_RAW_API_BODIES=file:<dir>`, atau unit kode UTF-16 saat `=1`
+* `body_truncated`: `"true"` saat pemotongan inline terjadi. Tidak ada dalam mode file dan saat tidak ada pemotongan yang terjadi.
+* `model`: Pengidentifikasi model dari parameter permintaan
+* `query_source`: Subsistem yang mengeluarkan permintaan (misalnya, `"compact"`)
+
+#### Acara badan respons API
+
+Dicatat untuk setiap respons API yang berhasil saat `OTEL_LOG_RAW_API_BODIES` diatur.
+
+**Nama Acara**: `claude_code.api_response_body`
+
+**Atribut**:
+
+* Semua [atribut standar](#standard-attributes)
+* `event.name`: `"api_response_body"`
+* `event.timestamp`: Stempel waktu ISO 8601
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
+* `body`: Respons Messages API yang diserialisasi JSON (id, content blocks, usage, stop reason), dipotong pada 60 KB. Konten extended-thinking diredaksi. Dipancarkan hanya dalam mode inline (`OTEL_LOG_RAW_API_BODIES=1`).
+* `body_ref`: Jalur absolut ke file `<dir>/<request_id>.response.json` yang berisi badan yang tidak dipotong. Dipancarkan hanya dalam mode file (`OTEL_LOG_RAW_API_BODIES=file:<dir>`).
+* `body_length`: Panjang badan yang tidak dipotong. Byte UTF-8 saat `OTEL_LOG_RAW_API_BODIES=file:<dir>`, atau unit kode UTF-16 saat `=1`
+* `body_truncated`: `"true"` saat pemotongan inline terjadi. Tidak ada dalam mode file dan saat tidak ada pemotongan yang terjadi.
+* `model`: Pengidentifikasi model
+* `query_source`: Subsistem yang mengeluarkan permintaan
+* `request_id`: ID permintaan API Anthropic dari header `request-id` respons, seperti `"req_011..."`. Hadir hanya saat API mengembalikan satu.
 
 #### Acara keputusan alat
 
@@ -464,6 +631,191 @@ Dicatat saat keputusan izin alat dibuat (terima/tolak).
 * `tool_name`: Nama alat (misalnya, "Read", "Edit", "Write", "NotebookEdit")
 * `decision`: Baik `"accept"` atau `"reject"`
 * `source`: Sumber keputusan - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, atau `"user_reject"`
+
+#### Acara mode izin berubah
+
+Dicatat saat mode izin berubah, misalnya dari siklus Shift+Tab, keluar dari plan mode, atau pemeriksaan gate mode otomatis.
+
+**Nama Acara**: `claude_code.permission_mode_changed`
+
+**Atribut**:
+
+* Semua [atribut standar](#standard-attributes)
+* `event.name`: `"permission_mode_changed"`
+* `event.timestamp`: Stempel waktu ISO 8601
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
+* `from_mode`: Mode izin sebelumnya, misalnya `"default"`, `"plan"`, `"acceptEdits"`, `"auto"`, atau `"bypassPermissions"`
+* `to_mode`: Mode izin baru
+* `trigger`: Apa yang menyebabkan perubahan. Salah satu dari `"shift_tab"`, `"exit_plan_mode"`, `"auto_gate_denied"`, atau `"auto_opt_in"`. Tidak ada saat transisi berasal dari SDK atau bridge
+
+#### Acara auth
+
+Dicatat saat `/login` atau `/logout` selesai.
+
+**Nama Acara**: `claude_code.auth`
+
+**Atribut**:
+
+* Semua [atribut standar](#standard-attributes)
+* `event.name`: `"auth"`
+* `event.timestamp`: Stempel waktu ISO 8601
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
+* `action`: `"login"` atau `"logout"`
+* `success`: `"true"` atau `"false"`
+* `auth_method`: Metode autentikasi, seperti `"oauth"`
+* `error_category`: Jenis kesalahan kategori saat tindakan gagal. Pesan kesalahan mentah tidak pernah disertakan
+* `status_code`: Kode status HTTP sebagai string saat tindakan gagal dengan kesalahan HTTP
+
+#### Acara koneksi server MCP
+
+Dicatat saat server MCP terhubung, terputus, atau gagal terhubung.
+
+**Nama Acara**: `claude_code.mcp_server_connection`
+
+**Atribut**:
+
+* Semua [atribut standar](#standard-attributes)
+* `event.name`: `"mcp_server_connection"`
+* `event.timestamp`: Stempel waktu ISO 8601
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
+* `status`: `"connected"`, `"failed"`, atau `"disconnected"`
+* `transport_type`: Transport server, seperti `"stdio"`, `"sse"`, atau `"http"`
+* `server_scope`: Cakupan server dikonfigurasi di, seperti `"user"`, `"project"`, atau `"local"`
+* `duration_ms`: Durasi upaya koneksi dalam milidetik
+* `error_code`: Kode kesalahan saat koneksi gagal
+* `server_name` (saat `OTEL_LOG_TOOL_DETAILS=1`): Nama server yang dikonfigurasi
+* `error` (saat `OTEL_LOG_TOOL_DETAILS=1`): Pesan kesalahan lengkap saat koneksi gagal
+
+#### Acara kesalahan internal
+
+Dicatat saat Claude Code menangkap kesalahan internal yang tidak terduga. Hanya nama kelas kesalahan dan kode gaya errno yang dicatat. Pesan kesalahan dan stack trace tidak pernah disertakan. Acara ini tidak dipancarkan saat berjalan terhadap Bedrock, Vertex, atau Foundry, atau saat `DISABLE_ERROR_REPORTING` diatur.
+
+**Nama Acara**: `claude_code.internal_error`
+
+**Atribut**:
+
+* Semua [atribut standar](#standard-attributes)
+* `event.name`: `"internal_error"`
+* `event.timestamp`: Stempel waktu ISO 8601
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
+* `error_name`: Nama kelas kesalahan, seperti `"TypeError"` atau `"SyntaxError"`
+* `error_code`: Kode errno Node.js seperti `"ENOENT"` saat ada pada kesalahan
+
+#### Acara plugin terinstal
+
+Dicatat saat plugin selesai menginstal, dari perintah CLI `claude plugin install` dan UI interaktif `/plugin`.
+
+**Nama Acara**: `claude_code.plugin_installed`
+
+**Atribut**:
+
+* Semua [atribut standar](#standard-attributes)
+* `event.name`: `"plugin_installed"`
+* `event.timestamp`: Stempel waktu ISO 8601
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
+* `marketplace.is_official`: `"true"` jika marketplace adalah marketplace Anthropic resmi, `"false"` sebaliknya
+* `install.trigger`: `"cli"` atau `"ui"`
+* `plugin.name`: Nama plugin yang diinstal. Untuk marketplace pihak ketiga ini disertakan hanya saat `OTEL_LOG_TOOL_DETAILS=1`
+* `plugin.version`: Versi plugin saat dideklarasikan dalam entri marketplace. Untuk marketplace pihak ketiga ini disertakan hanya saat `OTEL_LOG_TOOL_DETAILS=1`
+* `marketplace.name`: Marketplace plugin diinstal dari. Untuk marketplace pihak ketiga ini disertakan hanya saat `OTEL_LOG_TOOL_DETAILS=1`
+
+#### Acara skill diaktifkan
+
+Dicatat saat skill dipanggil.
+
+**Nama Acara**: `claude_code.skill_activated`
+
+**Atribut**:
+
+* Semua [atribut standar](#standard-attributes)
+* `event.name`: `"skill_activated"`
+* `event.timestamp`: Stempel waktu ISO 8601
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
+* `skill.name`: Nama skill. Untuk skill yang ditentukan pengguna dan plugin pihak ketiga nilainya adalah placeholder `"custom_skill"` kecuali `OTEL_LOG_TOOL_DETAILS=1`
+* `skill.source`: Tempat skill dimuat dari (misalnya, `"bundled"`, `"userSettings"`, `"projectSettings"`, `"plugin"`)
+* `plugin.name` (saat `OTEL_LOG_TOOL_DETAILS=1` atau plugin dari marketplace resmi): Nama plugin pemilik saat skill disediakan oleh plugin
+* `marketplace.name` (saat `OTEL_LOG_TOOL_DETAILS=1` atau plugin dari marketplace resmi): Marketplace plugin pemilik diinstal dari, saat skill disediakan oleh plugin
+
+#### Acara retry API habis
+
+Dicatat sekali saat permintaan API gagal setelah lebih dari satu upaya. Dipancarkan bersama acara `api_error` terakhir.
+
+**Nama Acara**: `claude_code.api_retries_exhausted`
+
+**Atribut**:
+
+* Semua [atribut standar](#standard-attributes)
+* `event.name`: `"api_retries_exhausted"`
+* `event.timestamp`: Stempel waktu ISO 8601
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
+* `model`: Model yang digunakan
+* `error`: Pesan kesalahan terakhir
+* `status_code`: Kode status HTTP sebagai string
+* `total_attempts`: Jumlah total upaya yang dilakukan
+* `total_retry_duration_ms`: Total waktu wall-clock di semua upaya
+* `speed`: `"fast"` atau `"normal"`
+
+#### Acara mulai eksekusi hook
+
+Dicatat saat satu atau lebih hook mulai dieksekusi untuk acara hook.
+
+**Nama Acara**: `claude_code.hook_execution_start`
+
+**Atribut**:
+
+* Semua [atribut standar](#standard-attributes)
+* `event.name`: `"hook_execution_start"`
+* `event.timestamp`: Stempel waktu ISO 8601
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
+* `hook_event`: Jenis acara hook, seperti `"PreToolUse"` atau `"PostToolUse"`
+* `hook_name`: Nama hook lengkap termasuk matcher, seperti `"PreToolUse:Write"`
+* `num_hooks`: Jumlah perintah hook yang cocok
+* `managed_only`: `"true"` saat hanya hook kebijakan terkelola yang diizinkan
+* `hook_source`: `"policySettings"` atau `"merged"`
+* `hook_definitions`: Konfigurasi hook yang diserialisasi JSON. Disertakan hanya saat detailed beta tracing dan `OTEL_LOG_TOOL_DETAILS=1` keduanya diaktifkan
+
+#### Acara eksekusi hook selesai
+
+Dicatat saat semua hook untuk acara hook selesai.
+
+**Nama Acara**: `claude_code.hook_execution_complete`
+
+**Atribut**:
+
+* Semua [atribut standar](#standard-attributes)
+* `event.name`: `"hook_execution_complete"`
+* `event.timestamp`: Stempel waktu ISO 8601
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
+* `hook_event`: Jenis acara hook
+* `hook_name`: Nama hook lengkap termasuk matcher
+* `num_hooks`: Jumlah perintah hook yang cocok
+* `num_success`: Jumlah yang selesai dengan sukses
+* `num_blocking`: Jumlah yang mengembalikan keputusan blocking
+* `num_non_blocking_error`: Jumlah yang gagal tanpa blocking
+* `num_cancelled`: Jumlah dibatalkan sebelum selesai
+* `total_duration_ms`: Durasi wall-clock dari semua hook yang cocok
+* `managed_only`: `"true"` saat hanya hook kebijakan terkelola yang diizinkan
+* `hook_source`: `"policySettings"` atau `"merged"`
+* `hook_definitions`: Konfigurasi hook yang diserialisasi JSON. Disertakan hanya saat detailed beta tracing dan `OTEL_LOG_TOOL_DETAILS=1` keduanya diaktifkan
+
+#### Acara pemadatan
+
+Dicatat saat pemadatan percakapan selesai.
+
+**Nama Acara**: `claude_code.compaction`
+
+**Atribut**:
+
+* Semua [atribut standar](#standard-attributes)
+* `event.name`: `"compaction"`
+* `event.timestamp`: Stempel waktu ISO 8601
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
+* `trigger`: `"auto"` atau `"manual"`
+* `success`: `"true"` atau `"false"`
+* `duration_ms`: Durasi pemadatan
+* `pre_tokens`: Jumlah token perkiraan sebelum pemadatan
+* `post_tokens`: Jumlah token perkiraan setelah pemadatan
+* `error`: Pesan kesalahan saat pemadatan gagal
 
 ## Menafsirkan data metrik dan acara
 
@@ -498,6 +850,14 @@ Peringatan umum untuk dipertimbangkan:
 * Volume sesi tinggi dari pengguna tertentu
 
 Semua metrik dapat disegmentasikan berdasarkan `user.account_uuid`, `user.account_id`, `organization.id`, `session.id`, `model`, dan `app.version`.
+
+### Deteksi kelelahan retry
+
+Claude Code mencoba ulang permintaan API yang gagal secara internal dan hanya memancarkan acara `claude_code.api_error` tunggal setelah menyerah, jadi acara itu sendiri adalah sinyal terminal untuk permintaan tersebut. Upaya retry perantara tidak dicatat sebagai acara terpisah.
+
+Atribut `attempt` pada acara mencatat berapa banyak upaya yang dilakukan secara total. Nilai yang lebih besar dari `CLAUDE_CODE_MAX_RETRIES` (default `10`) menunjukkan permintaan menghabiskan semua retry pada kesalahan transien. Nilai yang lebih rendah menunjukkan kesalahan yang tidak dapat dicoba ulang seperti respons `400`.
+
+Untuk membedakan sesi yang pulih dari sesi yang terhenti, kelompokkan acara berdasarkan `session.id` dan periksa apakah acara `api_request` yang lebih baru ada setelah kesalahan.
 
 ### Analisis acara
 
@@ -559,8 +919,9 @@ Untuk panduan komprehensif tentang mengukur pengembalian investasi untuk Claude 
 * Konten file mentah dan cuplikan kode tidak disertakan dalam metrik atau acara. Trace spans adalah jalur data terpisah: lihat poin `OTEL_LOG_TOOL_CONTENT` di bawah
 * Saat diautentikasi melalui OAuth, `user.email` disertakan dalam atribut telemetri. Jika ini menjadi perhatian bagi organisasi Anda, bekerja dengan backend telemetri Anda untuk memfilter atau menyunting bidang ini
 * Konten prompt pengguna tidak dikumpulkan secara default. Hanya panjang prompt yang dicatat. Untuk menyertakan konten prompt, atur `OTEL_LOG_USER_PROMPTS=1`
-* Argumen input alat dan parameter tidak dicatat secara default. Untuk menyertakannya, atur `OTEL_LOG_TOOL_DETAILS=1`. Saat diaktifkan, acara `tool_result` menyertakan atribut `tool_parameters` dengan perintah Bash, nama server MCP dan alat, dan nama skill, ditambah atribut `tool_input` dengan jalur file, URL, pola pencarian, dan argumen lainnya. Nilai individual di atas 512 karakter dipotong dan total dibatasi hingga \~4 K karakter, tetapi argumen mungkin masih berisi nilai sensitif. Konfigurasikan backend telemetri Anda untuk memfilter atau menyunting atribut ini sesuai kebutuhan
+* Argumen input alat dan parameter tidak dicatat secara default. Untuk menyertakannya, atur `OTEL_LOG_TOOL_DETAILS=1`. Saat diaktifkan, acara `tool_result` menyertakan atribut `tool_parameters` dengan perintah Bash, nama server MCP dan alat, dan nama skill, ditambah atribut `tool_input` dengan jalur file, URL, pola pencarian, dan argumen lainnya. Acara `user_prompt` menyertakan `command_name` verbatim untuk perintah custom, plugin, dan MCP. Trace spans menyertakan atribut `tool_input` yang sama dan atribut yang diturunkan dari input seperti `file_path`. Nilai individual di atas 512 karakter dipotong dan total dibatasi hingga \~4 K karakter, tetapi argumen mungkin masih berisi nilai sensitif. Konfigurasikan backend telemetri Anda untuk memfilter atau menyunting atribut ini sesuai kebutuhan
 * Konten input dan output alat tidak dicatat dalam trace spans secara default. Untuk menyertakannya, atur `OTEL_LOG_TOOL_CONTENT=1`. Saat diaktifkan, acara span menyertakan konten input dan output alat lengkap dipotong pada 60 KB per span. Ini dapat mencakup konten file mentah dari hasil alat Read dan output perintah Bash. Konfigurasikan backend telemetri Anda untuk memfilter atau menyunting atribut ini sesuai kebutuhan
+* Badan permintaan dan respons API Anthropic Messages mentah tidak dicatat secara default. Untuk menyertakannya, atur `OTEL_LOG_RAW_API_BODIES`. Dengan `=1`, setiap panggilan API memancarkan acara log `api_request_body` dan `api_response_body` yang atribut `body`-nya adalah muatan yang diserialisasi JSON, dipotong pada 60 KB. Dengan `=file:<dir>`, badan yang tidak dipotong ditulis ke file `.request.json` dan `.response.json` di bawah direktori tersebut dan acara membawa jalur `body_ref` sebagai gantinya dari badan inline. Kirim direktori dengan pengumpul log atau sidecar daripada melalui aliran telemetri. Dalam kedua mode, badan berisi riwayat percakapan lengkap (system prompt, setiap giliran pengguna dan asisten sebelumnya, hasil alat), jadi mengaktifkan ini menyiratkan persetujuan untuk semua yang akan diungkapkan oleh flag konten `OTEL_LOG_*` lainnya. Konten extended-thinking Claude selalu diredaksi dari badan ini terlepas dari pengaturan lain
 
 ## Memantau Claude Code di Amazon Bedrock
 

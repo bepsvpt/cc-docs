@@ -514,7 +514,7 @@ Utilisez @ pour inclure rapidement des fichiers ou des répertoires sans attendr
 
 ## Utiliser la réflexion étendue (mode de réflexion)
 
-[La réflexion étendue](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) est activée par défaut, donnant à Claude l'espace pour raisonner à travers des problèmes complexes étape par étape avant de répondre. Ce raisonnement est visible en mode verbeux, que vous pouvez activer avec `Ctrl+O`. Pendant la réflexion étendue, des indices de progression apparaissent sous l'indicateur pour montrer que Claude travaille activement.
+[La réflexion étendue](https://platform.claude.com/docs/fr/build-with-claude/extended-thinking) est activée par défaut, donnant à Claude l'espace pour raisonner à travers des problèmes complexes étape par étape avant de répondre. Ce raisonnement est visible en mode verbeux, que vous pouvez activer avec `Ctrl+O`. Pendant la réflexion étendue, l'indicateur de progression affiche des indices de progression en ligne tels que « still thinking » et « almost done thinking » pour indiquer que Claude travaille activement.
 
 De plus, les [modèles qui prennent en charge l'effort](/fr/model-config#adjust-effort-level) utilisent le raisonnement adaptatif : au lieu d'un budget de jetons de réflexion fixe, le modèle décide dynamiquement s'il faut penser et combien en fonction de votre paramètre de niveau d'effort et de la tâche à accomplir. Le raisonnement adaptatif permet à Claude de répondre plus rapidement aux prompts de routine et de réserver une réflexion plus profonde pour les étapes qui en bénéficient.
 
@@ -564,7 +564,9 @@ Lors du démarrage de Claude Code, vous pouvez reprendre une session précédent
 
 À partir d'une session active, utilisez `/resume` pour basculer vers une conversation différente.
 
-Les sessions sont stockées par répertoire de projet. Par défaut, le sélecteur `/resume` affiche les sessions interactives du même référentiel git, y compris les worktrees. Les sessions créées par `claude -p` ou les invocations SDK n'apparaissent pas dans le sélecteur, mais vous pouvez toujours en reprendre une en passant son ID de session directement à `claude --resume <session-id>`.
+Lorsque la session sélectionnée est ancienne et suffisamment volumineuse pour que sa relecture consommerait une part substantielle de vos limites d'utilisation, `--resume`, `--continue` et `/resume` proposent de reprendre à partir d'un résumé au lieu de charger la transcription complète. Cette invite n'est pas disponible sur Amazon Bedrock, Google Cloud Vertex AI ou Microsoft Foundry.
+
+Les sessions sont stockées par répertoire de projet. Par défaut, le sélecteur `/resume` affiche les sessions interactives du worktree actuel, avec des raccourcis clavier pour élargir la liste à d'autres worktrees ou projets, rechercher, prévisualiser et renommer. Consultez [Utiliser le sélecteur de session](#use-the-session-picker) ci-dessous pour la référence complète des raccourcis.
 
 Lorsque vous sélectionnez une session à partir d'un autre worktree du même référentiel, Claude Code la reprend directement sans vous obliger à d'abord basculer les répertoires. La sélection d'une session à partir d'un projet non lié copie une commande `cd` et de reprise dans votre presse-papiers à la place.
 
@@ -579,7 +581,7 @@ Les sessions créées par `claude -p` ou les invocations SDK n'apparaissent pas 
 Donnez aux sessions des noms descriptifs pour les trouver plus tard. C'est une bonne pratique lorsque vous travaillez sur plusieurs tâches ou fonctionnalités.
 
 <Steps>
-  <Step title="Nommez la session au démarrage">
+  <Step title="Nommez la session">
     Nommez une session au démarrage avec `-n` :
 
     ```bash theme={null}
@@ -639,7 +641,7 @@ Le sélecteur affiche les sessions avec des métadonnées utiles :
 * Branche Git (le cas échéant)
 * Chemin du projet, affiché après élargissement à tous les projets avec `Ctrl+A`
 
-Les sessions bifurquées (créées avec `/branch`, `/rewind`, ou `--fork-session`) sont groupées ensemble sous leur session racine, ce qui facilite la recherche de conversations connexes.
+Les sessions bifurquées (créées avec `/branch`, `/rewind` ou `--fork-session`) sont groupées ensemble sous leur session racine, ce qui facilite la recherche de conversations connexes.
 
 <Tip>
   Conseils :

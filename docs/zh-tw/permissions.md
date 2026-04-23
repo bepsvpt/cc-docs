@@ -299,7 +299,7 @@ Hook 決定不會繞過權限規則。Deny 和 ask 規則在 hook 返回 `"allow
 | `pluginTrustMessage`                           | 自訂訊息，附加到安裝前顯示的外掛信任警告                                                                                                                                                    |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | 當為 `true` 時，僅尊重受管理設定中的 `filesystem.allowRead` 路徑。`denyRead` 仍然從所有來源合併                                                                                                   |
 | `sandbox.network.allowManagedDomainsOnly`      | 當為 `true` 時，僅尊重來自受管理設定的 `allowedDomains` 和 `WebFetch(domain:...)` allow 規則。非允許的網域會自動被阻止，無需提示使用者。被拒絕的網域仍然從所有來源合併                                                         |
-| `strictKnownMarketplaces`                      | 控制使用者可以新增哪些外掛市場。請參閱 [managed marketplace restrictions](/zh-TW/plugin-marketplaces#managed-marketplace-restrictions)                                                     |
+| `strictKnownMarketplaces`                      | 控制使用者可以新增和安裝外掛的外掛市場來源。請參閱 [managed marketplace restrictions](/zh-TW/plugin-marketplaces#managed-marketplace-restrictions)                                               |
 
 `disableBypassPermissionsMode` 通常放在受管理設定中以強制執行組織原則，但它可以從任何範圍工作。使用者可以在自己的設定中設定它以鎖定自己的繞過模式。
 
@@ -443,6 +443,7 @@ claude auto-mode critique  # get AI feedback on your custom allow and soft_deny 
 ## 另請參閱
 
 * [Settings](/zh-TW/settings)：完整設定參考，包括權限設定表
+* [Configure auto mode](/zh-TW/auto-mode-config)：告訴 auto mode 分類器您的組織信任哪些基礎設施
 * [Sandboxing](/zh-TW/sandboxing)：Bash 命令的作業系統級別檔案系統和網路隔離
 * [Authentication](/zh-TW/authentication)：設定使用者對 Claude Code 的存取
 * [Security](/zh-TW/security)：安全防護措施和最佳實踐

@@ -78,7 +78,7 @@ Un CLAUDE.md de proyecto puede almacenarse en `./CLAUDE.md` o `./.claude/CLAUDE.
 
 Los archivos CLAUDE.md se cargan en la ventana de contexto al inicio de cada sesión, consumiendo tokens junto con su conversación. La [visualización de la ventana de contexto](/es/context-window) muestra dónde se carga CLAUDE.md en relación con el resto del contexto de inicio. Debido a que son contexto en lugar de configuración forzada, cómo escribe las instrucciones afecta qué tan confiablemente Claude las sigue. Las instrucciones específicas, concisas y bien estructuradas funcionan mejor.
 
-**Tamaño**: apunte a menos de 200 líneas por archivo CLAUDE.md. Los archivos más largos consumen más contexto y reducen la adherencia. Si sus instrucciones están creciendo mucho, divídalas usando [importaciones](#import-additional-files) o archivos [`.claude/rules/`](#organize-rules-with-claude/rules/).
+**Tamaño**: apunte a menos de 200 líneas por archivo CLAUDE.md. Los archivos más largos consumen más contexto y reducen la adherencia. Si sus instrucciones están creciendo mucho, use [reglas con alcance de ruta](#path-specific-rules) para que las instrucciones se carguen solo cuando Claude trabaje con archivos coincidentes. También puede dividir contenido en [importaciones](#import-additional-files) para organización, aunque los archivos importados aún se cargan e ingresan a la ventana de contexto al iniciar.
 
 **Estructura**: use encabezados y viñetas de markdown para agrupar instrucciones relacionadas. Claude escanea la estructura de la misma manera que los lectores: las secciones organizadas son más fáciles de seguir que los párrafos densos.
 
@@ -390,7 +390,7 @@ Ejecute `/memory` y seleccione la carpeta de auto memory para examinar lo que Cl
 
 ### Mi CLAUDE.md es demasiado grande
 
-Los archivos de más de 200 líneas consumen más contexto y pueden reducir la adherencia. Mueva contenido detallado a archivos separados referenciados con importaciones `@path` (consulte [Importar archivos adicionales](#import-additional-files)), o divida sus instrucciones entre archivos `.claude/rules/`.
+Los archivos de más de 200 líneas consumen más contexto y pueden reducir la adherencia. Use [reglas con alcance de ruta](#path-specific-rules) para cargar instrucciones solo cuando Claude trabaja con archivos coincidentes, o recorte contenido que no sea necesario en cada sesión. Dividir en [importaciones `@path`](#import-additional-files) ayuda a la organización pero no reduce el contexto, ya que los archivos importados se cargan al iniciar.
 
 ### Las instrucciones parecen perdidas después de `/compact`
 

@@ -49,6 +49,10 @@
 3. **环境变量** - 设置 `ANTHROPIC_MODEL=<alias|name>`
 4. **设置** - 在设置文件中使用 `model` 字段永久配置。
 
+您的 `/model` 选择已保存到用户设置，并在重启后持续保留。从 v2.1.117 开始，如果项目的 `.claude/settings.json` 固定了不同的模型，Claude Code 也会将您的选择写入 `.claude/settings.local.json`，以便在重启后在该项目中继续应用。托管设置优先级最高，并在下次启动时重新应用。
+
+当启动时的活跃模型来自项目或托管设置而不是您自己的选择时，启动标题会显示哪个设置文件设置了它。运行 `/model` 以覆盖当前会话。
+
 使用示例：
 
 ```bash theme={null}
@@ -160,7 +164,7 @@ Opus 4.7、Opus 4.6 和 Sonnet 4.6 支持工作量。可用的级别取决于模
 
 如果您设置活跃模型不支持的级别，Claude Code 会回退到您设置的级别或以下的最高支持级别。例如，`xhigh` 在 Opus 4.6 上运行为 `high`。
 
-在 Opus 4.7 上，所有计划和提供商的默认工作量是 `xhigh`。在 Opus 4.6 和 Sonnet 4.6 上，默认值是 `high`，或在 Pro 和 Max 上为 `medium`。
+从 v2.1.117 开始，Opus 4.7 上的默认工作量是 `xhigh`，Opus 4.6 和 Sonnet 4.6 上的默认工作量是 `high`。
 
 当您首次运行 Opus 4.7 时，Claude Code 会应用 `xhigh`，即使您之前为 Opus 4.6 或 Sonnet 4.6 设置了不同的工作量级别。切换后再次运行 `/effort` 以选择不同的级别。
 

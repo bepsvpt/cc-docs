@@ -78,7 +78,7 @@ Eine Projekt-CLAUDE.md kann entweder in `./CLAUDE.md` oder `./.claude/CLAUDE.md`
 
 CLAUDE.md-Dateien werden zu Beginn jeder Sitzung in das Context Window geladen und verbrauchen Token zusammen mit Ihrer Konversation. Die [Context Window-Visualisierung](/de/context-window) zeigt, wo CLAUDE.md relativ zum Rest des Startup-Kontexts geladen wird. Da sie Kontext statt erzwungene Konfiguration sind, beeinflusst die Art, wie Sie Anweisungen schreiben, wie zuverlässig Claude ihnen folgt. Spezifische, prägnante, gut strukturierte Anweisungen funktionieren am besten.
 
-**Größe**: Ziel unter 200 Zeilen pro CLAUDE.md-Datei. Längere Dateien verbrauchen mehr Kontext und reduzieren die Einhaltung. Wenn Ihre Anweisungen zu groß werden, teilen Sie sie mit [Importen](#import-additional-files) oder [`.claude/rules/`](#organize-rules-with-claude/rules/)-Dateien auf.
+**Größe**: Ziel unter 200 Zeilen pro CLAUDE.md-Datei. Längere Dateien verbrauchen mehr Kontext und reduzieren die Einhaltung. Wenn Ihre Anweisungen zu groß werden, verwenden Sie [pfadgebundene Regeln](#path-specific-rules), damit Anweisungen nur geladen werden, wenn Claude mit übereinstimmenden Dateien arbeitet, um Rauschen zu reduzieren und Kontextraum zu sparen. Sie können auch Inhalte in [Importe](#import-additional-files) aufteilen, um sie zu organisieren, obwohl importierte Dateien immer noch geladen werden und beim Start in das Context Window eingehen.
 
 **Struktur**: Verwenden Sie Markdown-Header und Aufzählungszeichen, um verwandte Anweisungen zu gruppieren. Claude scannt die Struktur genauso wie Leser: organisierte Abschnitte sind leichter zu befolgen als dichte Absätze.
 
@@ -105,7 +105,7 @@ Siehe @README für Projektübersicht und @package.json für verfügbare npm-Befe
 - Git-Workflow @docs/git-instructions.md
 ```
 
-Für persönliche Vorlieben, die Sie nicht einchecken möchten, erstellen Sie eine `CLAUDE.local.md` im Projektstammverzeichnis. Sie wird zusammen mit `CLAUDE.md` geladen und wird auf die gleiche Weise behandelt. Fügen Sie `CLAUDE.local.md` zu Ihrer `.gitignore` hinzu, damit sie nicht committed wird; das Ausführen von `/init` und das Auswählen der persönlichen Option tut dies für Sie.
+Für persönliche Vorlieben pro Projekt, die nicht in die Versionskontrolle eingecheckt werden sollten, erstellen Sie eine `CLAUDE.local.md` im Projektstammverzeichnis. Sie wird zusammen mit `CLAUDE.md` geladen und wird auf die gleiche Weise behandelt. Fügen Sie `CLAUDE.local.md` zu Ihrer `.gitignore` hinzu, damit sie nicht committed wird; das Ausführen von `/init` und das Auswählen der persönlichen Option tut dies für Sie.
 
 Wenn Sie über mehrere Git-Worktrees desselben Repositories arbeiten, existiert eine gitignorierte `CLAUDE.local.md` nur in dem Worktree, in dem Sie sie erstellt haben. Um persönliche Anweisungen über Worktrees hinweg zu teilen, importieren Sie stattdessen eine Datei aus Ihrem Home-Verzeichnis:
 
@@ -390,7 +390,7 @@ Führen Sie `/memory` aus und wählen Sie den Auto-Memory-Ordner aus, um zu durc
 
 ### Meine CLAUDE.md ist zu groß
 
-Dateien über 200 Zeilen verbrauchen mehr Kontext und können die Einhaltung reduzieren. Verschieben Sie detaillierte Inhalte in separate Dateien, auf die mit `@path`-Importen verwiesen wird (siehe [Importieren Sie zusätzliche Dateien](#import-additional-files)), oder teilen Sie Ihre Anweisungen über `.claude/rules/`-Dateien auf.
+Dateien über 200 Zeilen verbrauchen mehr Kontext und können die Einhaltung reduzieren. Verwenden Sie [pfadgebundene Regeln](#path-specific-rules), um Anweisungen nur zu laden, wenn Claude mit übereinstimmenden Dateien arbeitet, oder trimmen Sie Inhalte, die nicht in jeder Sitzung benötigt werden. Das Aufteilen in [`@path`-Importe](#import-additional-files) hilft bei der Organisation, reduziert aber nicht den Kontext, da importierte Dateien beim Start geladen werden.
 
 ### Anweisungen scheinen nach `/compact` verloren zu gehen
 

@@ -104,22 +104,20 @@ export CLAUDE_CODE_CLIENT_KEY_PASSPHRASE="your-passphrase"
 
 ## 网络访问要求
 
-Claude Code 需要访问以下 URL：
+Claude Code 需要访问以下 URL。在您的代理配置和防火墙规则中将这些 URL 列入白名单，特别是在容器化或受限网络环境中。
 
-* `api.anthropic.com`：Claude API 端点
-* `claude.ai`：claude.ai 账户身份验证
-* `platform.claude.com`：Anthropic 控制台账户身份验证
+| URL                            | 用途                                                       |
+| ------------------------------ | -------------------------------------------------------- |
+| `api.anthropic.com`            | Claude API 请求                                            |
+| `claude.ai`                    | claude.ai 账户身份验证                                         |
+| `platform.claude.com`          | Anthropic 控制台账户身份验证                                      |
+| `downloads.claude.ai`          | 插件可执行文件下载；原生安装程序和原生自动更新程序                                |
+| `storage.googleapis.com`       | {/* max-version: 2.1.115 */}2.1.116 版本之前的原生安装程序和原生自动更新程序 |
+| `bridge.claudeusercontent.com` | [Chrome 中的 Claude](/zh-CN/chrome) 扩展 WebSocket 桥接        |
 
-确保这些 URL 在您的代理配置和防火墙规则中被列入白名单。这在容器化或受限网络环境中使用 Claude Code 时尤为重要。
+如果您通过 npm 安装 Claude Code 或管理自己的二进制分发，最终用户可能不需要访问 `downloads.claude.ai` 或 `storage.googleapis.com`。
 
-使用 [Bedrock](/zh-CN/amazon-bedrock)、[Vertex AI](/zh-CN/google-vertex-ai) 或 [Foundry](/zh-CN/microsoft-foundry) 时，模型流量会转到您的提供商而不是 `api.anthropic.com`。WebFetch 工具仍会调用 `api.anthropic.com` 进行其 [域名安全检查](/zh-CN/data-usage#webfetch-domain-safety-check)，除非您在 [settings](/zh-CN/settings) 中设置 `skipWebFetchPreflight: true`。
-
-本机安装程序和更新检查还需要以下 URL。请将两者都列入白名单，因为运行较旧 Claude Code 版本的客户端从 `storage.googleapis.com` 获取。如果您通过 npm 安装 Claude Code 或管理自己的二进制分发，最终用户可能不需要访问：
-
-* `downloads.claude.ai`：Claude Code 二进制文件、自动更新程序、版本指针、清单、安装脚本、签名密钥和插件可执行文件的下载主机
-* `storage.googleapis.com`：较旧客户端使用的旧版下载主机
-
-[Chrome 集成](/zh-CN/chrome) 通过 WebSocket 桥接连接到浏览器扩展。如果您在 Chrome 中使用 Claude，请为出站 WebSocket 连接列入白名单 `bridge.claudeusercontent.com`。
+使用 [Amazon Bedrock](/zh-CN/amazon-bedrock)、[Google Vertex AI](/zh-CN/google-vertex-ai) 或 [Microsoft Foundry](/zh-CN/microsoft-foundry) 时，模型流量和身份验证会转到您的提供商，而不是 `api.anthropic.com`、`claude.ai` 或 `platform.claude.com`。WebFetch 工具仍会调用 `api.anthropic.com` 进行其 [域名安全检查](/zh-CN/data-usage#webfetch-domain-safety-check)，除非您在 [settings](/zh-CN/settings) 中设置 `skipWebFetchPreflight: true`。
 
 [Claude Code on the web](/zh-CN/claude-code-on-the-web) 和 [Code Review](/zh-CN/code-review) 从 Anthropic 管理的基础设施连接到您的存储库。如果您的 GitHub Enterprise Cloud 组织按 IP 地址限制访问，请启用 [已安装 GitHub Apps 的 IP 允许列表继承](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps)。Claude GitHub App 注册了其 IP 范围，因此启用此设置允许访问而无需手动配置。要 [手动将范围添加到您的允许列表](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address)，或配置其他防火墙，请参阅 [Anthropic API IP 地址](https://platform.claude.com/docs/en/api/ip-addresses)。
 

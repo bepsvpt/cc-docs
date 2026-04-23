@@ -24,7 +24,13 @@ Subagenten helfen Ihnen:
 
 Claude verwendet die Beschreibung jedes Subagenten, um zu entscheiden, wann Aufgaben delegiert werden. Wenn Sie einen Subagenten erstellen, schreiben Sie eine klare Beschreibung, damit Claude weiß, wann er ihn verwenden soll.
 
-Claude Code enthält mehrere integrierte Subagenten wie **Explore**, **Plan** und **general-purpose**. Sie können auch benutzerdefinierte Subagenten erstellen, um spezifische Aufgaben zu bearbeiten. Diese Seite behandelt die [integrierten Subagenten](#built-in-subagents), [wie Sie Ihre eigenen erstellen](#quickstart-create-your-first-subagent), [vollständige Konfigurationsoptionen](#configure-subagents), [Muster für die Arbeit mit Subagenten](#work-with-subagents) und [Beispiel-Subagenten](#example-subagents).
+Claude Code enthält mehrere integrierte Subagenten wie **Explore**, **Plan** und **general-purpose**. Sie können auch benutzerdefinierte Subagenten erstellen, um spezifische Aufgaben zu bearbeiten. Diese Seite behandelt:
+
+* [Integrierte Subagenten](#built-in-subagents)
+* [Wie Sie Ihre eigenen erstellen](#quickstart-create-your-first-subagent)
+* [Vollständige Konfigurationsoptionen](#configure-subagents)
+* [Muster für die Arbeit mit Subagenten](#work-with-subagents)
+* [Beispiel-Subagenten](#example-subagents)
 
 ## Integrierte Subagenten
 
@@ -320,6 +326,15 @@ Wenn `Agent` vollständig aus der `tools`-Liste weggelassen wird, kann der Agent
 #### Umfang von MCP-Servern auf einen Subagenten
 
 Verwenden Sie das `mcpServers`-Feld, um einem Subagenten Zugriff auf [MCP](/de/mcp)-Server zu geben, die in der Hauptkonversation nicht verfügbar sind. Inline-Server, die hier definiert sind, werden verbunden, wenn der Subagent startet, und getrennt, wenn er endet. String-Verweise teilen die Verbindung der übergeordneten Sitzung.
+
+<Note>
+  Das `mcpServers`-Feld gilt in beiden Kontexten, in denen eine Agent-Datei ausgeführt werden kann:
+
+  * Als Subagent, gespawnt durch das Agent-Werkzeug oder eine @-Erwähnung
+  * Als Hauptsitzung, gestartet mit [`--agent`](#invoke-subagents-explicitly) oder der `agent`-Einstellung
+
+  Wenn der Agent die Hauptsitzung ist, verbinden sich Inline-Server-Definitionen beim Start zusammen mit Servern aus [`.mcp.json`](/de/mcp) und Einstellungsdateien.
+</Note>
 
 Jeder Eintrag in der Liste ist entweder eine Inline-Server-Definition oder ein String, der auf einen bereits konfigurierten MCP-Server in Ihrer Sitzung verweist:
 

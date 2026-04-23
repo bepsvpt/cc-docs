@@ -2,7 +2,7 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# 서버 관리 설정 구성(공개 베타)
+# 서버 관리 설정 구성
 
 > 기기 관리 인프라 없이 Claude.ai의 웹 기반 인터페이스를 통해 조직을 위해 Claude Code를 중앙에서 구성합니다.
 
@@ -11,7 +11,7 @@
 이 방식은 기기 관리 인프라가 없거나 관리되지 않는 기기의 사용자를 위해 설정을 관리해야 하는 조직을 위해 설계되었습니다.
 
 <Note>
-  서버 관리 설정은 공개 베타 상태이며 [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) 및 [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise) 고객에게 제공됩니다. 일반 공개 전에 기능이 변경될 수 있습니다.
+  서버 관리 설정은 [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) 및 [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise) 고객에게 제공됩니다.
 </Note>
 
 ## 요구사항
@@ -93,7 +93,7 @@ Claude Code는 중앙 집중식 구성을 위한 두 가지 방식을 지원합�
     }
     ```
 
-    Hook은 셸 명령을 실행하므로 사용자는 적용되기 전에 [보안 승인 대화](#security-approval-dialogs)를 봅니다. `autoMode` 항목이 분류기가 차단하는 것에 어떻게 영향을 미치는지, 그리고 `allow` 및 `soft_deny` 필드에 대한 중요한 경고는 [자동 모드 분류기 구성](/ko/permissions#configure-the-auto-mode-classifier)을 참조하십시오.
+    Hook은 셸 명령을 실행하므로 사용자는 적용되기 전에 [보안 승인 대화](#security-approval-dialogs)를 봅니다. `autoMode` 항목이 분류기가 차단하는 것에 어떻게 영향을 미치는지, 그리고 `allow` 및 `soft_deny` 필드에 대한 중요한 경고는 [자동 모드 구성](/ko/auto-mode-config)을 참조하십시오.
   </Step>
 
   <Step title="저장 및 배포">
@@ -120,7 +120,7 @@ Claude Code는 중앙 집중식 구성을 위한 두 가지 방식을 지원합�
 
 ### 현재 제한사항
 
-서버 관리 설정은 베타 기간 동안 다음과 같은 제한사항이 있습니다.
+서버 관리 설정은 다음과 같은 제한사항이 있습니다.
 
 * 설정은 조직의 모든 사용자에게 균일하게 적용됩니다. 그룹별 구성은 아직 지원되지 않습니다.
 * [MCP 서버 구성](/ko/mcp#managed-mcp-configuration)은 서버 관리 설정을 통해 배포할 수 없습니다.
@@ -152,6 +152,22 @@ Claude Code는 시작 시 Anthropic의 서버에서 설정을 가져오고 활�
 * 캐시된 설정은 네트워크 장애를 통해 유지됩니다.
 
 Claude Code는 OpenTelemetry 구성과 같은 고급 설정을 제외하고 재시작 없이 설정 업데이트를 자동으로 적용하며, 이는 적용되려면 전체 재시작이 필요합니다.
+
+### 강제 실패 폐쇄 시작
+
+기본적으로 시작 시 원격 설정 가져오기가 실패하면 CLI는 관리 설정 없이 계속됩니다. 이 짧은 적용되지 않은 시간이 허용되지 않는 환경의 경우, 관리 설정에서 `forceRemoteSettingsRefresh: true`를 설정합니다.
+
+이 설정이 활성화되면 CLI는 시작 시 원격 설정이 새로 가져올 때까지 차단됩니다. 가져오기가 실패하면 정책 없이 진행하는 대신 CLI가 종료됩니다. 이 설정은 자체 영속성을 가집니다. 서버에서 전달되면 로컬로도 캐시되므로 새 세션의 첫 번째 성공적인 가져오기 전에도 이후 시작이 동일한 동작을 적용합니다.
+
+이를 활성화하려면 관리 설정 구성에 키를 추가합니다.
+
+```json theme={null}
+{
+  "forceRemoteSettingsRefresh": true
+}
+```
+
+이 설정을 활성화하기 전에 네트워크 정책이 `api.anthropic.com`에 대한 연결을 허용하는지 확인합니다. 해당 엔드포인트에 도달할 수 없으면 CLI는 시작 시 종료되고 사용자는 Claude Code를 시작할 수 없습니다.
 
 ### 보안 승인 대화
 
@@ -186,13 +202,13 @@ Claude Code는 OpenTelemetry 구성과 같은 고급 설정을 제외하고 재�
 
 서버 관리 설정은 중앙 집중식 정책 적용을 제공하지만 클라이언트 측 제어로 작동합니다. 관리되지 않는 기기에서 관리자 또는 sudo 액세스 권한이 있는 사용자는 Claude Code 바이너리, 파일 시스템 또는 네트워크 구성을 수정할 수 있습니다.
 
-| 시나리오                                  | 동작                                                         |
-| :------------------------------------ | :--------------------------------------------------------- |
-| 사용자가 캐시된 설정 파일을 편집함                   | 변조된 파일이 시작 시 적용되지만 다음 서버 가져오기에서 올바른 설정이 복원됩니다.             |
-| 사용자가 캐시된 설정 파일을 삭제함                   | 첫 시작 동작이 발생합니다. 설정이 비동기적으로 가져오지며 짧은 적용되지 않은 시간이 있습니다.      |
-| API를 사용할 수 없음                         | 캐시된 설정이 있으면 적용되고, 그렇지 않으면 다음 성공적인 가져오기까지 관리 설정이 적용되지 않습니다. |
-| 사용자가 다른 조직으로 인증함                      | 관리 조직 외부의 계정에 대해 설정이 전달되지 않습니다.                            |
-| 사용자가 기본이 아닌 `ANTHROPIC_BASE_URL`을 설정함 | 타사 API 공급자를 사용할 때 서버 관리 설정이 우회됩니다.                         |
+| 시나리오                                  | 동작                                                                                                                      |
+| :------------------------------------ | :---------------------------------------------------------------------------------------------------------------------- |
+| 사용자가 캐시된 설정 파일을 편집함                   | 변조된 파일이 시작 시 적용되지만 다음 서버 가져오기에서 올바른 설정이 복원됩니다.                                                                          |
+| 사용자가 캐시된 설정 파일을 삭제함                   | 첫 시작 동작이 발생합니다. 설정이 비동기적으로 가져오지며 짧은 적용되지 않은 시간이 있습니다.                                                                   |
+| API를 사용할 수 없음                         | 캐시된 설정이 있으면 적용되고, 그렇지 않으면 다음 성공적인 가져오기까지 관리 설정이 적용되지 않습니다. `forceRemoteSettingsRefresh: true`를 사용하면 CLI는 계속하는 대신 종료됩니다. |
+| 사용자가 다른 조직으로 인증함                      | 관리 조직 외부의 계정에 대해 설정이 전달되지 않습니다.                                                                                         |
+| 사용자가 기본이 아닌 `ANTHROPIC_BASE_URL`을 설정함 | 타사 API 공급자를 사용할 때 서버 관리 설정이 우회됩니다.                                                                                      |
 
 런타임 구성 변경을 감지하려면 [`ConfigChange` hooks](/ko/hooks#configchange)를 사용하여 수정 사항을 기록하거나 적용되기 전에 무단 변경을 차단합니다.
 

@@ -49,6 +49,10 @@ Você pode configurar seu modelo de várias maneiras, listadas em ordem de prior
 3. **Variável de ambiente** - Defina `ANTHROPIC_MODEL=<alias|name>`
 4. **Configurações** - Configure permanentemente em seu arquivo de configurações usando o campo `model`.
 
+Sua seleção de `/model` é salva nas configurações do usuário e persiste entre reinicializações. A partir da v2.1.117, se o `.claude/settings.json` do projeto fixar um modelo diferente, Claude Code também escreve sua escolha em `.claude/settings.local.json` para que continue a se aplicar nesse projeto após uma reinicialização. As configurações gerenciadas têm precedência e são reaplicadas no próximo lançamento.
+
+Quando o modelo ativo na inicialização vem das configurações do projeto ou gerenciadas em vez de sua própria seleção, o cabeçalho de inicialização mostra qual arquivo de configurações o definiu. Execute `/model` para substituir pela sessão atual.
+
 Exemplo de uso:
 
 ```bash theme={null}
@@ -140,12 +144,12 @@ Claude Code pode fazer fallback automaticamente para Sonnet se você atingir um 
 
 O alias de modelo `opusplan` fornece uma abordagem híbrida automatizada:
 
-* **No modo de plano** - Usa `opus` para raciocínio complexo e decisões de arquitetura
+* **No Plan Mode** - Usa `opus` para raciocínio complexo e decisões de arquitetura
 * **No modo de execução** - Muda automaticamente para `sonnet` para geração de código e implementação
 
 Isso oferece o melhor dos dois mundos: o raciocínio superior do Opus para planejamento e a eficiência do Sonnet para execução.
 
-A fase Opus do modo de plano é executada com a janela de contexto padrão de 200K. A atualização automática de 1M descrita em [Contexto estendido](#extended-context) se aplica à configuração do modelo `opus` e não se estende a `opusplan`.
+A fase Opus do Plan Mode é executada com a janela de contexto padrão de 200K. A atualização automática de 1M descrita em [Contexto estendido](#extended-context) se aplica à configuração do modelo `opus` e não se estende a `opusplan`.
 
 ### Ajustar nível de esforço
 
@@ -160,7 +164,7 @@ O esforço é suportado em Opus 4.7, Opus 4.6 e Sonnet 4.6. Os níveis disponív
 
 Se você definir um nível que o modelo ativo não suporta, Claude Code volta para o nível mais alto suportado no ou abaixo do que você definiu. Por exemplo, `xhigh` é executado como `high` em Opus 4.6.
 
-Em Opus 4.7, o esforço padrão é `xhigh` para todos os planos e provedores. Em Opus 4.6 e Sonnet 4.6, o padrão é `high`, ou `medium` em Pro e Max.
+A partir da v2.1.117, o esforço padrão é `xhigh` em Opus 4.7 e `high` em Opus 4.6 e Sonnet 4.6.
 
 Quando você executa Opus 4.7 pela primeira vez, Claude Code aplica `xhigh` mesmo que você tenha definido anteriormente um nível de esforço diferente para Opus 4.6 ou Sonnet 4.6. Execute `/effort` novamente para escolher um nível diferente após alternar.
 

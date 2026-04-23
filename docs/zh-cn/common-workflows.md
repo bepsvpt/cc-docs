@@ -564,6 +564,8 @@ Claude Code 可以在任何目录中工作。在笔记库、文档文件夹或�
 
 从活跃会话内，使用 `/resume` 切换到不同的对话。
 
+当选定的会话足够旧且足够大，以至于重新阅读它会消耗您使用限额的大部分时，`--resume`、`--continue` 和 `/resume` 会提供从摘要恢复而不是加载完整记录的选项。此提示在 Amazon Bedrock、Google Cloud Vertex AI 或 Microsoft Foundry 上不可用。
+
 会话按项目目录存储。默认情况下，`/resume` 选择器显示来自当前 worktree 的交互式会话，带有键盘快捷键来扩展列表到其他 worktrees 或项目、搜索、预览和重命名。有关完整的快捷键参考，请参阅下面的[使用会话选择器](#use-the-session-picker)。
 
 当您从同一存储库的另一个 worktree 选择会话时，Claude Code 直接恢复它，无需您首先切换目录。从不相关项目选择会话会将 `cd` 和恢复命令复制到您的剪贴板。

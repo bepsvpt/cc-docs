@@ -2,7 +2,7 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Configurare le impostazioni gestite dal server (beta pubblico)
+# Configurare le impostazioni gestite dal server
 
 > Configurare centralmente Claude Code per la vostra organizzazione tramite impostazioni consegnate dal server, senza richiedere infrastrutture di gestione dei dispositivi.
 
@@ -11,7 +11,7 @@ Le impostazioni gestite dal server consentono agli amministratori di configurare
 Questo approccio è progettato per le organizzazioni che non dispongono di infrastrutture di gestione dei dispositivi, o che hanno la necessità di gestire le impostazioni per gli utenti su dispositivi non gestiti.
 
 <Note>
-  Le impostazioni gestite dal server sono in beta pubblico e disponibili per i clienti di [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) e [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise). Le funzionalità potrebbero evolversi prima della disponibilità generale.
+  Le impostazioni gestite dal server sono disponibili per i clienti di [Claude for Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_teams#team-&-enterprise) e [Claude for Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=server_settings_enterprise).
 </Note>
 
 ## Requisiti
@@ -93,7 +93,7 @@ Se i vostri dispositivi sono registrati in una soluzione MDM o di gestione degli
     }
     ```
 
-    Poiché gli hook eseguono comandi shell, gli utenti vedono una [finestra di dialogo di approvazione della sicurezza](#security-approval-dialogs) prima che vengano applicati. Vedere [Configurare il classificatore della modalità auto](/it/permissions#configure-the-auto-mode-classifier) per come le voci `autoMode` influenzano ciò che il classificatore blocca e avvertimenti importanti sui campi `allow` e `soft_deny`.
+    Poiché gli hook eseguono comandi shell, gli utenti vedono una [finestra di dialogo di approvazione della sicurezza](#security-approval-dialogs) prima che vengano applicati. Vedere [Configurare la modalità auto](/it/auto-mode-config) per come le voci `autoMode` influenzano ciò che il classificatore blocca e avvertimenti importanti sui campi `allow` e `soft_deny`.
   </Step>
 
   <Step title="Salvare e distribuire">
@@ -120,7 +120,7 @@ La maggior parte delle [chiavi di impostazioni](/it/settings#available-settings)
 
 ### Limitazioni attuali
 
-Le impostazioni gestite dal server hanno le seguenti limitazioni durante il periodo beta:
+Le impostazioni gestite dal server hanno le seguenti limitazioni:
 
 * Le impostazioni si applicano uniformemente a tutti gli utenti dell'organizzazione. Le configurazioni per gruppo non sono ancora supportate.
 * Le [configurazioni del server MCP](/it/mcp#managed-mcp-configuration) non possono essere distribuite tramite impostazioni gestite dal server.
@@ -152,6 +152,22 @@ Claude Code recupera le impostazioni dai server di Anthropic all'avvio e esegue 
 * Le impostazioni memorizzate nella cache persistono attraverso i guasti di rete
 
 Claude Code applica gli aggiornamenti delle impostazioni automaticamente senza un riavvio, ad eccezione delle impostazioni avanzate come la configurazione di OpenTelemetry, che richiedono un riavvio completo per avere effetto.
+
+### Applicare l'avvio fail-closed
+
+Per impostazione predefinita, se il recupero delle impostazioni remote non riesce all'avvio, la CLI continua senza impostazioni gestite. Per gli ambienti in cui questa breve finestra non applicata è inaccettabile, impostare `forceRemoteSettingsRefresh: true` nelle impostazioni gestite.
+
+Quando questa impostazione è attiva, la CLI si blocca all'avvio fino a quando le impostazioni remote non vengono recuperate di recente. Se il recupero non riesce, la CLI esce piuttosto che procedere senza la politica. Questa impostazione si auto-perpetua: una volta consegnata dal server, viene anche memorizzata nella cache localmente in modo che gli avvii successivi applichino lo stesso comportamento anche prima del primo recupero riuscito di una nuova sessione.
+
+Per abilitare questa funzione, aggiungere la chiave alla configurazione delle impostazioni gestite:
+
+```json theme={null}
+{
+  "forceRemoteSettingsRefresh": true
+}
+```
+
+Prima di abilitare questa impostazione, assicurarsi che le politiche di rete consentano la connettività a `api.anthropic.com`. Se tale endpoint non è raggiungibile, la CLI esce all'avvio e gli utenti non possono avviare Claude Code.
 
 ### Finestre di dialogo di approvazione della sicurezza
 
@@ -186,13 +202,13 @@ Gli eventi di audit includono il tipo di azione eseguita, l'account e il disposi
 
 Le impostazioni gestite dal server forniscono l'applicazione centralizzata dei criteri, ma operano come un controllo lato client. Su dispositivi non gestiti, gli utenti con accesso amministratore o sudo possono modificare il binario di Claude Code, il filesystem, o la configurazione di rete.
 
-| Scenario                                                          | Comportamento                                                                                                                                                    |
-| :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| L'utente modifica il file di impostazioni memorizzato nella cache | Il file manomesso si applica all'avvio, ma le impostazioni corrette si ripristinano al prossimo recupero dal server                                              |
-| L'utente elimina il file di impostazioni memorizzato nella cache  | Si verifica il comportamento del primo avvio: le impostazioni vengono recuperate in modo asincrono con una breve finestra non applicata                          |
-| L'API non è disponibile                                           | Le impostazioni memorizzate nella cache si applicano se disponibili, altrimenti le impostazioni gestite non vengono applicate fino al prossimo recupero riuscito |
-| L'utente si autentica con un'organizzazione diversa               | Le impostazioni non vengono consegnate per gli account al di fuori dell'organizzazione gestita                                                                   |
-| L'utente imposta un `ANTHROPIC_BASE_URL` non predefinito          | Le impostazioni gestite dal server vengono ignorate quando si utilizzano provider API di terze parti                                                             |
+| Scenario                                                          | Comportamento                                                                                                                                                                                                                              |
+| :---------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| L'utente modifica il file di impostazioni memorizzato nella cache | Il file manomesso si applica all'avvio, ma le impostazioni corrette si ripristinano al prossimo recupero dal server                                                                                                                        |
+| L'utente elimina il file di impostazioni memorizzato nella cache  | Si verifica il comportamento del primo avvio: le impostazioni vengono recuperate in modo asincrono con una breve finestra non applicata                                                                                                    |
+| L'API non è disponibile                                           | Le impostazioni memorizzate nella cache si applicano se disponibili, altrimenti le impostazioni gestite non vengono applicate fino al prossimo recupero riuscito. Con `forceRemoteSettingsRefresh: true`, la CLI esce invece di continuare |
+| L'utente si autentica con un'organizzazione diversa               | Le impostazioni non vengono consegnate per gli account al di fuori dell'organizzazione gestita                                                                                                                                             |
+| L'utente imposta un `ANTHROPIC_BASE_URL` non predefinito          | Le impostazioni gestite dal server vengono ignorate quando si utilizzano provider API di terze parti                                                                                                                                       |
 
 Per rilevare le modifiche della configurazione in fase di esecuzione, utilizzare gli [hook `ConfigChange`](/it/hooks#configchange) per registrare le modifiche o bloccare le modifiche non autorizzate prima che abbiano effetto.
 

@@ -12,7 +12,7 @@ Untuk pengaturan `model` di Claude Code, Anda dapat mengonfigurasi salah satu da
 
 * Sebuah **alias model**
 * Sebuah **nama model**
-  * Anthropic API: Sebuah **[nama model](https://platform.claude.com/docs/en/about-claude/models/overview)** lengkap
+  * Anthropic API: Sebuah **[nama model](https://platform.claude.com/docs/id/about-claude/models/overview)** lengkap
   * Bedrock: ARN profil inferensi
   * Foundry: nama deployment
   * Vertex: nama versi
@@ -28,8 +28,8 @@ Alias model menyediakan cara yang nyaman untuk memilih pengaturan model tanpa pe
 | **`sonnet`**     | Menggunakan model Sonnet terbaru untuk tugas coding sehari-hari                                                                                                            |
 | **`opus`**       | Menggunakan model Opus terbaru untuk tugas penalaran kompleks                                                                                                              |
 | **`haiku`**      | Menggunakan model Haiku yang cepat dan efisien untuk tugas sederhana                                                                                                       |
-| **`sonnet[1m]`** | Menggunakan Sonnet dengan [jendela konteks 1 juta token](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window) untuk sesi panjang |
-| **`opus[1m]`**   | Menggunakan Opus dengan [jendela konteks 1 juta token](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window) untuk sesi panjang   |
+| **`sonnet[1m]`** | Menggunakan Sonnet dengan [jendela konteks 1 juta token](https://platform.claude.com/docs/id/build-with-claude/context-windows#1m-token-context-window) untuk sesi panjang |
+| **`opus[1m]`**   | Menggunakan Opus dengan [jendela konteks 1 juta token](https://platform.claude.com/docs/id/build-with-claude/context-windows#1m-token-context-window) untuk sesi panjang   |
 | **`opusplan`**   | Mode khusus yang menggunakan `opus` selama plan mode, kemudian beralih ke `sonnet` untuk eksekusi                                                                          |
 
 Di Anthropic API, `opus` diselesaikan ke Opus 4.7 dan `sonnet` diselesaikan ke Sonnet 4.6. Di Bedrock, Vertex, dan Foundry, `opus` diselesaikan ke Opus 4.6 dan `sonnet` diselesaikan ke Sonnet 4.5; model yang lebih baru tersedia di penyedia tersebut dengan memilih nama model lengkap secara eksplisit atau mengatur `ANTHROPIC_DEFAULT_OPUS_MODEL` atau `ANTHROPIC_DEFAULT_SONNET_MODEL`.
@@ -48,6 +48,10 @@ Anda dapat mengonfigurasi model Anda dengan beberapa cara, yang tercantum dalam 
 2. **Saat startup** - Luncurkan dengan `claude --model <alias|name>`
 3. **Variabel lingkungan** - Atur `ANTHROPIC_MODEL=<alias|name>`
 4. **Pengaturan** - Konfigurasi secara permanen di file pengaturan Anda menggunakan bidang `model`.
+
+Pilihan `/model` Anda disimpan ke pengaturan pengguna dan bertahan di seluruh restart. Mulai dari v2.1.117, jika `.claude/settings.json` proyek menetapkan model yang berbeda, Claude Code juga menulis pilihan Anda ke `.claude/settings.local.json` sehingga terus berlaku di proyek tersebut setelah restart. Pengaturan yang dikelola memiliki prioritas dan diterapkan kembali pada peluncuran berikutnya.
+
+Ketika model aktif saat startup berasal dari pengaturan proyek atau yang dikelola daripada pilihan Anda sendiri, header startup menunjukkan file pengaturan mana yang menetapkannya. Jalankan `/model` untuk mengganti untuk sesi saat ini.
 
 Contoh penggunaan:
 
@@ -160,7 +164,7 @@ Usaha didukung pada Opus 4.7, Opus 4.6, dan Sonnet 4.6. Tingkat yang tersedia te
 
 Jika Anda menetapkan tingkat yang tidak didukung model aktif, Claude Code kembali ke tingkat tertinggi yang didukung pada atau di bawah tingkat yang Anda tetapkan. Misalnya, `xhigh` berjalan sebagai `high` pada Opus 4.6.
 
-Di Opus 4.7, usaha default adalah `xhigh` untuk semua paket dan penyedia. Di Opus 4.6 dan Sonnet 4.6, default adalah `high`, atau `medium` di Pro dan Max.
+Mulai dari v2.1.117, usaha default adalah `xhigh` pada Opus 4.7 dan `high` pada Opus 4.6 dan Sonnet 4.6.
 
 Ketika Anda pertama kali menjalankan Opus 4.7, Claude Code menerapkan `xhigh` bahkan jika Anda sebelumnya menetapkan tingkat usaha yang berbeda untuk Opus 4.6 atau Sonnet 4.6. Jalankan `/effort` lagi untuk memilih tingkat yang berbeda setelah beralih.
 

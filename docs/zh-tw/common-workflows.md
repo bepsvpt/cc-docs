@@ -514,7 +514,7 @@ Claude Code 可在任何目錄中工作。在筆記保管庫、文件資料夾�
 
 ## 使用擴展思考（Thinking Mode）
 
-[擴展思考](https://platform.claude.com/docs/en/build-with-claude/extended-thinking)預設啟用，為 Claude 提供空間在回應前逐步推理複雜問題。此推理在詳細模式中可見，您可以使用 `Ctrl+O` 切換。在擴展思考期間，進度提示會出現在指示器下方，顯示 Claude 正在積極工作。
+[擴展思考](https://platform.claude.com/docs/zh-TW/build-with-claude/extended-thinking)預設啟用，為 Claude 提供空間在回應前逐步推理複雜問題。此推理在詳細模式中可見，您可以使用 `Ctrl+O` 切換。在擴展思考期間，進度提示會出現在指示器下方，例如「still thinking」和「almost done thinking」，以指示 Claude 正在積極工作。
 
 此外，[支援努力級別的模型](/zh-TW/model-config#adjust-effort-level)使用自適應推理：不是固定的思考令牌預算，而是模型根據您的努力級別設定和手邊的任務動態決定是否以及如何思考。自適應推理讓 Claude 對日常提示回應更快，並為受益於深度思考的步驟保留更深層的思考。
 
@@ -563,6 +563,8 @@ Claude Code 可在任何目錄中工作。在筆記保管庫、文件資料夾�
 * `claude --from-pr 123` 繼續連結到特定提取請求的會話
 
 從活躍會話內，使用 `/resume` 切換到不同的對話。
+
+當選定的會話足夠舊且足夠大，以至於重新閱讀它會消耗您使用限額的大部分時，`--resume`、`--continue` 和 `/resume` 會提供從摘要繼續而不是載入完整記錄的選項。此提示在 Amazon Bedrock、Google Cloud Vertex AI 或 Microsoft Foundry 上不可用。
 
 會話按專案目錄儲存。預設情況下，`/resume` 選擇器顯示來自當前 worktree 的互動式會話，帶有快捷鍵以擴展清單到其他 worktrees 或專案、搜尋、預覽和重新命名。有關完整的快捷鍵參考，請參閱下面的[使用會話選擇器](#use-the-session-picker)。
 

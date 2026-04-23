@@ -47,7 +47,7 @@ CLAUDE.md 文件是 markdown 文件，为项目、你的个人工作流或整个
 * 你在聊天中输入的相同更正或澄清是你上个会话输入的
 * 新队友需要相同的上下文才能提高生产力
 
-将其保持为 Claude 应该在每个会话中保持的事实：构建命令、约定、项目布局、"总是做 X"规则。如果一个条目是多步骤过程或仅对代码库的一部分重要，将其移到 [skill](/zh-CN/skills) 或 [路径范围规则](#organize-rules-with-clauderules) 中。[扩展概述](/zh-CN/features-overview#build-your-setup-over-time)涵盖何时使用每种机制。
+将其保持为 Claude 应该在每个会话中保持的事实：构建命令、约定、项目布局、"总是做 X"规则。如果一个条目是多步骤过程或仅对代码库的一部分重要，将其移到 [skill](/zh-CN/skills) 或 [路径范围规则](#organize-rules-with-claude/rules/) 中。[扩展概述](/zh-CN/features-overview#build-your-setup-over-time)涵盖何时使用每种机制。
 
 ### 选择 CLAUDE.md 文件的位置
 
@@ -60,9 +60,9 @@ CLAUDE.md 文件可以位于多个位置，每个位置有不同的范围。更�
 | **用户指令** | `~/.claude/CLAUDE.md`                                                                                                                                                 | 所有项目的个人偏好                 | 代码样式偏好、个人工具快捷方式  | 仅你（所有项目）     |
 | **本地指令** | `./CLAUDE.local.md`                                                                                                                                                   | 个人项目特定偏好；添加到 `.gitignore` | 你的沙箱 URL、首选测试数据  | 仅你（当前项目）     |
 
-工作目录上方目录层次结构中的 CLAUDE.md 和 CLAUDE.local.md 文件在启动时完整加载。子目录中的文件在 Claude 读取这些目录中的文件时按需加载。有关完整的解析顺序，请参阅 [CLAUDE.md 文件如何加载](#how-claudemd-files-load)。
+工作目录上方目录层次结构中的 CLAUDE.md 和 CLAUDE.local.md 文件在启动时完整加载。子目录中的文件在 Claude 读取这些目录中的文件时按需加载。有关完整的解析顺序，请参阅 [CLAUDE.md 文件如何加载](#how-claude-md-files-load)。
 
-对于大型项目，你可以使用 [项目规则](#organize-rules-with-clauderules) 将指令分解为特定主题的文件。规则让你将指令范围限定到特定文件类型或子目录。
+对于大型项目，你可以使用 [项目规则](#organize-rules-with-claude/rules/) 将指令分解为特定主题的文件。规则让你将指令范围限定到特定文件类型或子目录。
 
 ### 设置项目 CLAUDE.md
 
@@ -78,7 +78,7 @@ CLAUDE.md 文件可以位于多个位置，每个位置有不同的范围。更�
 
 CLAUDE.md 文件在每个会话开始时加载到上下文窗口中，与你的对话一起消耗令牌。[上下文窗口可视化](/zh-CN/context-window)显示 CLAUDE.md 相对于其余启动上下文的加载位置。因为它们是上下文而不是强制配置，你编写指令的方式会影响 Claude 遵循它们的可靠性。具体、简洁、结构良好的指令效果最好。
 
-**大小**：每个 CLAUDE.md 文件目标在 200 行以下。较长的文件消耗更多上下文并降低遵守度。如果你的指令变得很大，使用 [导入](#import-additional-files) 或 [`.claude/rules/`](#organize-rules-with-clauderules) 文件进行分割。
+**大小**：每个 CLAUDE.md 文件目标在 200 行以下。较长的文件消耗更多上下文并降低遵守度。如果你的指令变得很大，使用 [路径范围规则](#path-specific-rules) 以便指令仅在 Claude 处理匹配文件时加载。你也可以将内容分割成 [导入](#import-additional-files) 以便组织，尽管导入的文件仍然加载并在启动时进入上下文窗口。
 
 **结构**：使用 markdown 标题和项目符号来分组相关指令。Claude 扫描结构的方式与读者相同：有组织的部分比密集段落更容易遵循。
 
@@ -88,7 +88,7 @@ CLAUDE.md 文件在每个会话开始时加载到上下文窗口中，与你的�
 * "在提交前运行 `npm test`"而不是"测试你的更改"
 * "API 处理程序位于 `src/api/handlers/`"而不是"保持文件有组织"
 
-**一致性**：如果两条规则相互矛盾，Claude 可能会任意选择一条。定期审查你的 CLAUDE.md 文件、子目录中的嵌套 CLAUDE.md 文件和 [`.claude/rules/`](#organize-rules-with-clauderules) 以删除过时或冲突的指令。在 monorepos 中，使用 [`claudeMdExcludes`](#exclude-specific-claudemd-files) 跳过与你的工作无关的其他团队的 CLAUDE.md 文件。
+**一致性**：如果两条规则相互矛盾，Claude 可能会任意选择一条。定期审查你的 CLAUDE.md 文件、子目录中的嵌套 CLAUDE.md 文件和 [`.claude/rules/`](#organize-rules-with-claude/rules/) 以删除过时或冲突的指令。在 monorepos 中，使用 [`claudeMdExcludes`](#exclude-specific-claude-md-files) 跳过与你的工作无关的其他团队的 CLAUDE.md 文件。
 
 ### 导入其他文件
 
@@ -118,7 +118,7 @@ CLAUDE.md 文件可以使用 `@path/to/import` 语法导入其他文件。导入
   Claude Code 第一次在项目中遇到外部导入时，它会显示一个批准对话框，列出这些文件。如果你拒绝，导入保持禁用状态，对话框不会再出现。
 </Warning>
 
-有关组织指令的更结构化方法，请参阅 [`.claude/rules/`](#organize-rules-with-clauderules)。
+有关组织指令的更结构化方法，请参阅 [`.claude/rules/`](#organize-rules-with-claude/rules/)。
 
 ### AGENTS.md
 
@@ -140,7 +140,7 @@ Claude Code 通过从当前工作目录向上遍历目录树来读取 CLAUDE.md 
 
 Claude 还在当前工作目录下的子目录中发现 `CLAUDE.md` 和 `CLAUDE.local.md` 文件。它们不是在启动时加载，而是在 Claude 读取这些子目录中的文件时包含。
 
-如果你在一个大型 monorepo 中工作，其他团队的 CLAUDE.md 文件被拾取，使用 [`claudeMdExcludes`](#exclude-specific-claudemd-files) 跳过它们。
+如果你在一个大型 monorepo 中工作，其他团队的 CLAUDE.md 文件被拾取，使用 [`claudeMdExcludes`](#exclude-specific-claude-md-files) 跳过它们。
 
 块级 HTML 注释（`<!-- maintainer notes -->`）在 CLAUDE.md 文件中在内容注入到 Claude 的上下文之前被剥离。使用它们为人类维护者留下笔记，而不在它们上花费上下文令牌。代码块内的注释被保留。当你直接用 Read 工具打开 CLAUDE.md 文件时，注释保持可见。
 
@@ -374,7 +374,7 @@ CLAUDE.md 内容作为用户消息在系统提示之后传递，而不是系统�
 要调试：
 
 * 运行 `/memory` 验证你的 CLAUDE.md 和 CLAUDE.local.md 文件被加载。如果文件未列出，Claude 看不到它。
-* 检查相关 CLAUDE.md 是否在为你的会话加载的位置（参见 [选择 CLAUDE.md 文件的位置](#choose-where-to-put-claudemd-files)）。
+* 检查相关 CLAUDE.md 是否在为你的会话加载的位置（参见 [选择 CLAUDE.md 文件的位置](#choose-where-to-put-claude-md-files)）。
 * 使指令更具体。"使用 2 空格缩进"比"格式化代码很好"效果更好。
 * 查找跨 CLAUDE.md 文件的冲突指令。如果两个文件为相同行为提供不同的指导，Claude 可能会任意选择一个。
 
@@ -390,13 +390,13 @@ CLAUDE.md 内容作为用户消息在系统提示之后传递，而不是系统�
 
 ### 我的 CLAUDE.md 太大了
 
-超过 200 行的文件消耗更多上下文并可能降低遵守度。将详细内容移到使用 `@path` 导入引用的单独文件中（参见 [导入其他文件](#import-additional-files)），或将你的指令分割到 `.claude/rules/` 文件中。
+超过 200 行的文件消耗更多上下文并可能降低遵守度。使用 [路径范围规则](#path-specific-rules) 仅在 Claude 处理匹配文件时加载指令，或修剪不是每个会话都需要的内容。分割到 [`@path` 导入](#import-additional-files) 有助于组织，但不会减少上下文，因为导入的文件在启动时加载。
 
 ### 在 `/compact` 后指令似乎丢失了
 
 项目根 CLAUDE.md 在压缩中存活：在 `/compact` 之后，Claude 从磁盘重新读取它并将其重新注入到会话中。子目录中的嵌套 CLAUDE.md 文件不会自动重新注入；它们在 Claude 下次读取该子目录中的文件时重新加载。
 
-如果指令在压缩后消失，它要么仅在对话中给出，要么位于尚未重新加载的嵌套 CLAUDE.md 中。将仅对话的指令添加到 CLAUDE.md 以使其在会话中持久化。有关完整的细分，请参阅 [什么在压缩中存活](/zh-CN/context-window#what-survives-compaction)。
+如果指令在压缩后消失，它要么仅在对话中给出，要么位于尚未重新加载的嵌套 CLAUDE.md 中。将仅对话的指令添加到 CLAUDE.md 以使其持久化。有关完整的细分，请参阅 [什么在压缩中存活](/zh-CN/context-window#what-survives-compaction)。
 
 有关大小、结构和具体性的指导，请参阅 [编写有效的指令](#write-effective-instructions)。
 

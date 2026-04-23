@@ -70,6 +70,8 @@ Claude Code 是一個由 AI 驅動的編碼助手，可幫助您建立功能、�
       </Tab>
     </Tabs>
 
+    You can also install with [apt, dnf, or apk](/en/setup#install-with-linux-package-managers) on Debian, Fedora, RHEL, and Alpine.
+
     然後在任何專案中啟動 Claude Code：
 
     ```bash theme={null}

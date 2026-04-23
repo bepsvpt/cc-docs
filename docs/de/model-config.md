@@ -49,6 +49,10 @@ Sie können Ihr Modell auf mehrere Arten konfigurieren, aufgelistet nach Priorit
 3. **Umgebungsvariable** - Setzen Sie `ANTHROPIC_MODEL=<alias|name>`
 4. **Einstellungen** - Konfigurieren Sie dauerhaft in Ihrer Einstellungsdatei mit dem `model`-Feld.
 
+Ihre `/model`-Auswahl wird in den Benutzereinstellungen gespeichert und bleibt über Neustarts hinweg erhalten. Ab v2.1.117 schreibt Claude Code Ihre Auswahl auch in `.claude/settings.local.json`, wenn die `.claude/settings.json` des Projekts ein anderes Modell festlegt, damit sie nach einem Neustart in diesem Projekt weiterhin gilt. Verwaltete Einstellungen haben Vorrang und werden beim nächsten Start erneut angewendet.
+
+Wenn das aktive Modell beim Start aus Projekt- oder verwalteten Einstellungen stammt und nicht aus Ihrer eigenen Auswahl, zeigt der Startheader an, welche Einstellungsdatei es festgelegt hat. Führen Sie `/model` aus, um es für die aktuelle Sitzung zu überschreiben.
+
 Beispielverwendung:
 
 ```bash theme={null}
@@ -160,7 +164,7 @@ Aufwand wird auf Opus 4.7, Opus 4.6 und Sonnet 4.6 unterstützt. Die verfügbare
 
 Wenn Sie eine Ebene setzen, die das aktive Modell nicht unterstützt, greift Claude Code auf die höchste unterstützte Ebene bei oder unter der von Ihnen gesetzten zurück. Zum Beispiel wird `xhigh` auf Opus 4.6 als `high` ausgeführt.
 
-Bei Opus 4.7 ist der Standard-Aufwand `xhigh` für alle Pläne und Anbieter. Bei Opus 4.6 und Sonnet 4.6 ist der Standard `high` oder `medium` bei Pro und Max.
+Ab v2.1.117 ist der Standard-Aufwand `xhigh` auf Opus 4.7 und `high` auf Opus 4.6 und Sonnet 4.6.
 
 Wenn Sie Opus 4.7 zum ersten Mal ausführen, wendet Claude Code `xhigh` an, auch wenn Sie zuvor ein anderes Aufwandsniveau für Opus 4.6 oder Sonnet 4.6 gesetzt haben. Führen Sie `/effort` erneut aus, um nach dem Wechsel ein anderes Niveau zu wählen.
 

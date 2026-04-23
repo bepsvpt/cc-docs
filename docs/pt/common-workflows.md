@@ -403,6 +403,14 @@ Suponha que você precise adicionar ou atualizar documentação para seu código
 
 ***
 
+## Trabalhar em notas e pastas não-código
+
+Claude Code funciona em qualquer diretório. Execute-o dentro de um cofre de notas, uma pasta de documentação ou qualquer coleção de arquivos markdown para pesquisar, editar e reorganizar conteúdo da mesma forma que você faria com código.
+
+O diretório `.claude/` e `CLAUDE.md` ficam ao lado dos diretórios de configuração de outras ferramentas sem conflito. Claude lê arquivos novamente em cada chamada de ferramenta, então vê edições que você faz em outro aplicativo na próxima vez que lê esse arquivo.
+
+***
+
 ## Trabalhar com imagens
 
 Suponha que você precise trabalhar com imagens em sua base de código e queira ajuda do Claude para analisar o conteúdo da imagem.
@@ -506,7 +514,7 @@ Use @ para incluir rapidamente arquivos ou diretórios sem esperar que Claude os
 
 ## Usar pensamento estendido (thinking mode)
 
-[Pensamento estendido](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) é ativado por padrão, dando ao Claude espaço para raciocinar através de problemas complexos passo a passo antes de responder. Este raciocínio é visível em modo verboso, que você pode ativar com `Ctrl+O`. Durante pensamento estendido, dicas de progresso aparecem abaixo do indicador para mostrar que Claude está trabalhando ativamente.
+[Pensamento estendido](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) é ativado por padrão, dando ao Claude espaço para raciocinar através de problemas complexos passo a passo antes de responder. Este raciocínio é visível em modo verboso, que você pode ativar com `Ctrl+O`. Durante pensamento estendido, o spinner mostra dicas de progresso inline como "still thinking" e "almost done thinking" para indicar que Claude está trabalhando ativamente.
 
 Além disso, [modelos que suportam esforço](/pt/model-config#adjust-effort-level) usam raciocínio adaptativo: em vez de um orçamento de token de pensamento fixo, o modelo decide dinamicamente se e quanto pensar com base em sua configuração de nível de esforço e na tarefa em questão. Raciocínio adaptativo permite que Claude responda mais rápido a prompts rotineiros e reserve pensamento mais profundo para etapas que se beneficiam dele.
 
@@ -555,6 +563,8 @@ Ao iniciar Claude Code, você pode retomar uma sessão anterior:
 * `claude --from-pr 123` retoma sessões vinculadas a uma pull request específica
 
 De dentro de uma sessão ativa, use `/resume` para mudar para uma conversa diferente.
+
+Quando a sessão selecionada é antiga e grande o suficiente que relê-la consumiria uma parte substancial de seus limites de uso, `--resume`, `--continue` e `/resume` oferecem retomar a partir de um resumo em vez de carregar a transcrição completa. Este prompt não está disponível no Amazon Bedrock, Google Cloud Vertex AI ou Microsoft Foundry.
 
 As sessões são armazenadas por diretório de projeto. Por padrão, o seletor `/resume` mostra sessões interativas do worktree atual, com atalhos de teclado para ampliar a lista para outros worktrees ou projetos, pesquisar, visualizar e renomear. Consulte [Use o seletor de sessão](#use-the-session-picker) abaixo para a referência completa de atalhos.
 

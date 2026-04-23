@@ -299,7 +299,7 @@ Les paramètres suivants ne sont efficaces que dans les paramètres gérés. Les
 | `pluginTrustMessage`                           | Message personnalisé ajouté à l'avertissement de confiance du plugin affiché avant l'installation                                                                                                                                                                                                        |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Lorsque `true`, seuls les chemins `filesystem.allowRead` des paramètres gérés sont respectés. `denyRead` fusionne toujours à partir de toutes les sources                                                                                                                                                |
 | `sandbox.network.allowManagedDomainsOnly`      | Lorsque `true`, seuls les `allowedDomains` et les règles d'autorisation `WebFetch(domain:...)` des paramètres gérés sont respectés. Les domaines non autorisés sont bloqués automatiquement sans inviter l'utilisateur. Les domaines refusés fusionnent toujours à partir de toutes les sources          |
-| `strictKnownMarketplaces`                      | Contrôle quels marketplaces de plugins les utilisateurs peuvent ajouter. Consultez [restrictions de marketplace gérées](/fr/plugin-marketplaces#managed-marketplace-restrictions)                                                                                                                        |
+| `strictKnownMarketplaces`                      | Contrôle quels marketplaces de plugins les utilisateurs peuvent ajouter et installer des plugins à partir de. Consultez [restrictions de marketplace gérées](/fr/plugin-marketplaces#managed-marketplace-restrictions)                                                                                   |
 
 `disableBypassPermissionsMode` est généralement placé dans les paramètres gérés pour appliquer la politique organisationnelle, mais il fonctionne à partir de n'importe quelle portée. Un utilisateur peut le définir dans ses propres paramètres pour se verrouiller hors du mode de contournement.
 
@@ -443,6 +443,7 @@ Ce [référentiel](https://github.com/anthropics/claude-code/tree/main/examples/
 ## Voir aussi
 
 * [Paramètres](/fr/settings) : référence de configuration complète incluant le tableau des paramètres d'autorisation
+* [Configurer le mode auto](/fr/auto-mode-config) : dites au classificateur du mode auto quelle infrastructure votre organisation approuve
 * [Sandboxing](/fr/sandboxing) : isolation du système de fichiers et du réseau au niveau du système d'exploitation pour les commandes Bash
 * [Authentification](/fr/authentication) : configurer l'accès utilisateur à Claude Code
 * [Sécurité](/fr/security) : garanties de sécurité et meilleures pratiques

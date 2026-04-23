@@ -24,7 +24,13 @@ Subagent는 다음을 도와줍니다:
 
 Claude는 각 subagent의 설명을 사용하여 작업을 위임할 시기를 결정합니다. Subagent를 만들 때 Claude가 언제 사용할지 알 수 있도록 명확한 설명을 작성하세요.
 
-Claude Code에는 **Explore**, **Plan**, **general-purpose**와 같은 여러 내장 subagent가 포함되어 있습니다. 특정 작업을 처리하기 위해 사용자 정의 subagent를 만들 수도 있습니다. 이 페이지에서는 [내장 subagent](#built-in-subagents), [자신의 subagent를 만드는 방법](#quickstart-create-your-first-subagent), [전체 구성 옵션](#configure-subagents), [subagent 작업 패턴](#work-with-subagents), [예제 subagent](#example-subagents)를 다룹니다.
+Claude Code에는 **Explore**, **Plan**, **general-purpose**와 같은 여러 내장 subagent가 포함되어 있습니다. 특정 작업을 처리하기 위해 사용자 정의 subagent를 만들 수도 있습니다. 이 페이지에서는 다음을 다룹니다:
+
+* [내장 subagent](#built-in-subagents)
+* [자신의 subagent를 만드는 방법](#quickstart-create-your-first-subagent)
+* [전체 구성 옵션](#configure-subagents)
+* [subagent 작업 패턴](#work-with-subagents)
+* [예제 subagent](#example-subagents)
 
 ## 내장 subagent
 
@@ -320,6 +326,15 @@ tools: Agent, Read, Bash
 #### Subagent에 MCP 서버 범위 지정
 
 `mcpServers` 필드를 사용하여 주 대화에서 사용할 수 없는 [MCP](/ko/mcp) 서버에 subagent 액세스 권한을 부여합니다. 여기에 정의된 인라인 서버는 subagent가 시작될 때 연결되고 완료될 때 연결이 끊깁니다. 문자열 참조는 부모 세션의 연결을 공유합니다.
+
+<Note>
+  `mcpServers` 필드는 에이전트 파일이 실행될 수 있는 두 가지 컨텍스트에 적용됩니다:
+
+  * Agent 도구 또는 @-mention을 통해 생성된 subagent
+  * [`--agent`](#invoke-subagents-explicitly) 또는 `agent` 설정으로 시작된 주 세션
+
+  에이전트가 주 세션일 때 인라인 서버 정의는 [`.mcp.json`](/ko/mcp) 및 설정 파일의 서버와 함께 시작 시 연결됩니다.
+</Note>
 
 목록의 각 항목은 인라인 서버 정의 또는 세션에서 이미 구성된 MCP 서버를 참조하는 문자열입니다:
 

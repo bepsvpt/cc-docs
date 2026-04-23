@@ -70,6 +70,8 @@ Claude Code는 기능을 구축하고, 버그를 수정하고, 개발 작업을 
       </Tab>
     </Tabs>
 
+    You can also install with [apt, dnf, or apk](/en/setup#install-with-linux-package-managers) on Debian, Fedora, RHEL, and Alpine.
+
     그런 다음 모든 프로젝트에서 Claude Code를 시작합니다:
 
     ```bash theme={null}

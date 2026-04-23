@@ -299,128 +299,13 @@ As seguintes configurações são lidas apenas de configurações gerenciadas. C
 | `pluginTrustMessage`                           | Mensagem personalizada anexada ao aviso de confiança de plugin mostrado antes da instalação                                                                                                                                                                                               |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Quando `true`, apenas caminhos `filesystem.allowRead` de configurações gerenciadas são respeitados. `denyRead` ainda se mescla de todas as fontes                                                                                                                                         |
 | `sandbox.network.allowManagedDomainsOnly`      | Quando `true`, apenas `allowedDomains` e regras allow `WebFetch(domain:...)` de configurações gerenciadas são respeitados. Domínios não permitidos são bloqueados automaticamente sem solicitar ao usuário. Domínios negados ainda se mesclam de todas as fontes                          |
-| `strictKnownMarketplaces`                      | Controla quais marketplaces de plugin os usuários podem adicionar. Veja [restrições de marketplace gerenciadas](/pt/plugin-marketplaces#managed-marketplace-restrictions)                                                                                                                 |
+| `strictKnownMarketplaces`                      | Controla quais marketplaces de plugin os usuários podem adicionar e instalar plugins. Veja [restrições de marketplace gerenciadas](/pt/plugin-marketplaces#managed-marketplace-restrictions)                                                                                              |
 
 `disableBypassPermissionsMode` é tipicamente colocado em configurações gerenciadas para impor política organizacional, mas funciona de qualquer escopo. Um usuário pode defini-lo em suas próprias configurações para se bloquear do modo bypass.
 
 <Note>
   O acesso a [Remote Control](/pt/remote-control) e [sessões web](/pt/claude-code-on-the-web) não é controlado por uma chave de configurações gerenciadas. Em planos Team e Enterprise, um admin ativa ou desativa esses recursos em [configurações de admin do Claude Code](https://claude.ai/admin-settings/claude-code).
 </Note>
-
-## Revisar negações do modo auto
-
-Quando o [modo auto](/pt/permission-modes#eliminate-prompts-with-auto-mode) nega uma chamada de ferramenta, uma notificação aparece e a ação negada é registrada em `/permissions` sob a aba Recently denied. Pressione `r` em uma ação negada para marcá-la para retry: quando você sair do diálogo, Claude Code envia uma mensagem dizendo ao modelo que pode tentar novamente essa chamada de ferramenta e retoma a conversa.
-
-Para reagir a negações programaticamente, use o hook [`PermissionDenied`](/pt/hooks#permissiondenied).
-
-## Configurar o classificador do modo auto
-
-O [modo auto](/pt/permission-modes#eliminate-prompts-with-auto-mode) usa um modelo classificador para decidir se cada ação é segura para executar sem solicitar. Pronto para uso, ele confia apenas no diretório de trabalho e, se presente, nos remotes do repositório atual. Ações como fazer push para a organização de controle de fonte da sua empresa ou escrever em um bucket de nuvem de equipe serão bloqueadas como possível exfiltração de dados.
-
-Para ajustar o que o classificador permite ou bloqueia, adicione instruções ao seu arquivo [CLAUDE.md](/pt/memory). O classificador lê CLAUDE.md de diretórios confiáveis ao lado da conversa, portanto uma instrução como "nunca force push" orienta tanto Claude quanto o classificador ao mesmo tempo. Comece aqui para convenções de projeto e regras de comportamento.
-
-Para regras que se aplicam em projetos, como infraestrutura confiável ou regras de negação em toda a organização, use o bloco de configurações `autoMode`. O classificador lê `autoMode` de configurações de usuário, `.claude/settings.local.json` e configurações gerenciadas. Ele não lê de configurações de projeto compartilhado em `.claude/settings.json`, porque um repositório verificado poderia injetar suas próprias regras allow.
-
-| Escopo                       | Arquivo                       | Use para                                                       |
-| :--------------------------- | :---------------------------- | :------------------------------------------------------------- |
-| Um desenvolvedor             | `~/.claude/settings.json`     | Infraestrutura confiável pessoal                               |
-| Um projeto, um desenvolvedor | `.claude/settings.local.json` | Buckets ou serviços confiáveis por projeto, gitignored         |
-| Em toda a organização        | Configurações gerenciadas     | Infraestrutura confiável imposta para todos os desenvolvedores |
-
-Entradas de cada escopo são combinadas. Um desenvolvedor pode estender `environment`, `allow` e `soft_deny` com entradas pessoais, mas não pode remover entradas que as configurações gerenciadas fornecem. Porque as regras allow atuam como exceções às regras de bloqueio dentro do classificador, uma entrada `allow` adicionada por desenvolvedor pode substituir uma entrada `soft_deny` da organização: a combinação é aditiva, não um limite de política duro. Se você precisar de uma regra que desenvolvedores não possam contornar, use `permissions.deny` em configurações gerenciadas em vez disso, que bloqueia ações antes do classificador ser consultado.
-
-### Definir infraestrutura confiável
-
-Para a maioria das organizações, `autoMode.environment` é o único campo que você precisa definir. Ele diz ao classificador quais repos, buckets e domínios são confiáveis, sem tocar nas regras de bloqueio e allow integradas. O classificador usa `environment` para decidir o que "externo" significa: qualquer destino não listado é um alvo potencial de exfiltração.
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Source control: github.example.com/acme-corp and all repos under it",
-      "Trusted cloud buckets: s3://acme-build-artifacts, gs://acme-ml-datasets",
-      "Trusted internal domains: *.corp.example.com, api.internal.example.com",
-      "Key internal services: Jenkins at ci.example.com, Artifactory at artifacts.example.com"
-    ]
-  }
-}
-```
-
-Entradas são prosa, não regex ou padrões de ferramenta. O classificador as lê como regras em linguagem natural. Escreva-as da maneira que você descreveria sua infraestrutura para um novo engenheiro. Uma seção de ambiente completa cobre:
-
-* **Organização**: o nome da sua empresa e para o que Claude Code é principalmente usado, como desenvolvimento de software, automação de infraestrutura ou engenharia de dados
-* **Controle de fonte**: cada organização GitHub, GitLab ou Bitbucket para a qual seus desenvolvedores fazem push
-* **Provedores de nuvem e buckets confiáveis**: nomes de bucket ou prefixos que Claude deve ser capaz de ler e escrever
-* **Domínios internos confiáveis**: nomes de host para APIs, dashboards e serviços dentro de sua rede, como `*.internal.example.com`
-* **Serviços internos chave**: CI, registros de artefatos, índices de pacotes internos, ferramentas de incidente
-* **Contexto adicional**: restrições de indústria regulada, infraestrutura multi-tenant ou requisitos de conformidade que afetam o que o classificador deve tratar como arriscado
-
-Um modelo inicial útil: preencha os campos entre colchetes e remova qualquer linha que não se aplique:
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Organization: {COMPANY_NAME}. Primary use: {PRIMARY_USE_CASE, e.g. software development, infrastructure automation}",
-      "Source control: {SOURCE_CONTROL, e.g. GitHub org github.example.com/acme-corp}",
-      "Cloud provider(s): {CLOUD_PROVIDERS, e.g. AWS, GCP, Azure}",
-      "Trusted cloud buckets: {TRUSTED_BUCKETS, e.g. s3://acme-builds, gs://acme-datasets}",
-      "Trusted internal domains: {TRUSTED_DOMAINS, e.g. *.internal.example.com, api.example.com}",
-      "Key internal services: {SERVICES, e.g. Jenkins at ci.example.com, Artifactory at artifacts.example.com}",
-      "Additional context: {EXTRA, e.g. regulated industry, multi-tenant infrastructure, compliance requirements}"
-    ]
-  }
-}
-```
-
-Quanto mais contexto específico você fornecer, melhor o classificador pode distinguir operações internas rotineiras de tentativas de exfiltração.
-
-Você não precisa preencher tudo de uma vez. Um rollout razoável: comece com os padrões e adicione sua organização de controle de fonte e serviços internos chave, que resolve os falsos positivos mais comuns como fazer push para seus próprios repos. Adicione domínios confiáveis e buckets de nuvem em seguida. Preencha o resto conforme bloqueios surgem.
-
-### Substituir as regras de bloqueio e allow
-
-Dois campos adicionais permitem que você substitua as listas de regras integradas do classificador: `autoMode.soft_deny` controla o que é bloqueado e `autoMode.allow` controla quais exceções se aplicam. Cada um é um array de descrições em prosa, lidas como regras em linguagem natural.
-
-Dentro do classificador, a precedência é: regras `soft_deny` bloqueiam primeiro, depois regras `allow` substituem como exceções, depois intenção explícita do usuário substitui ambas. Se a mensagem do usuário descreve direta e especificamente a ação exata que Claude está prestes a tomar, o classificador a permite mesmo se uma regra `soft_deny` corresponder. Solicitações gerais não contam: pedir a Claude para "limpar o repo" não autoriza force-push, mas pedir a Claude para "force-push este branch" autoriza.
-
-Para afrouxar: remova regras de `soft_deny` quando os padrões bloqueiam algo que seu pipeline já protege com revisão de PR, CI ou ambientes de staging, ou adicione a `allow` quando o classificador repetidamente sinaliza um padrão rotineiro que as exceções padrão não cobrem. Para apertar: adicione a `soft_deny` para riscos específicos do seu ambiente que os padrões perdem, ou remova de `allow` para manter uma exceção padrão às regras de bloqueio. Em todos os casos, execute `claude auto-mode defaults` para obter as listas padrão completas, depois copie e edite: nunca comece de uma lista vazia.
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Source control: github.example.com/acme-corp and all repos under it"
-    ],
-    "allow": [
-      "Deploying to the staging namespace is allowed: staging is isolated from production and resets nightly",
-      "Writing to s3://acme-scratch/ is allowed: ephemeral bucket with a 7-day lifecycle policy"
-    ],
-    "soft_deny": [
-      "Never run database migrations outside the migrations CLI, even against dev databases",
-      "Never modify files under infra/terraform/prod/: production infrastructure changes go through the review workflow",
-      "...copy full default soft_deny list here first, then add your rules..."
-    ]
-  }
-}
-```
-
-<Danger>
-  Definir `allow` ou `soft_deny` substitui a lista padrão inteira para essa seção. Se você definir `soft_deny` com uma única entrada, cada regra de bloqueio integrada é descartada: force push, exfiltração de dados, `curl | bash`, deploys de produção e todas as outras regras de bloqueio padrão se tornam permitidas. Para personalizar com segurança, execute `claude auto-mode defaults` para imprimir as regras integradas, copie-as em seu arquivo de configurações, depois revise cada regra contra seu próprio pipeline e tolerância de risco. Apenas remova regras para riscos que sua infraestrutura já mitiga.
-</Danger>
-
-As três seções são avaliadas independentemente, portanto definir `environment` sozinho deixa as listas padrão `allow` e `soft_deny` intactas.
-
-### Inspecionar os padrões e sua configuração efetiva
-
-Porque definir `allow` ou `soft_deny` substitui os padrões, comece qualquer personalização copiando as listas padrão completas. Três subcomandos CLI ajudam você a inspecionar e validar:
-
-```bash theme={null}
-claude auto-mode defaults  # the built-in environment, allow, and soft_deny rules
-claude auto-mode config    # what the classifier actually uses: your settings where set, defaults otherwise
-claude auto-mode critique  # get AI feedback on your custom allow and soft_deny rules
-```
-
-Salve a saída de `claude auto-mode defaults` em um arquivo, edite as listas para corresponder à sua política e cole o resultado em seu arquivo de configurações. Após salvar, execute `claude auto-mode config` para confirmar que as regras efetivas são o que você espera. Se você escreveu regras personalizadas, `claude auto-mode critique` as revisa e sinaliza entradas que são ambíguas, redundantes ou prováveis de causar falsos positivos.
 
 ## Precedência de configurações
 
@@ -443,6 +328,7 @@ Este [repositório](https://github.com/anthropics/claude-code/tree/main/examples
 ## Veja também
 
 * [Settings](/pt/settings): referência de configuração completa incluindo a tabela de configurações de permissão
+* [Configure auto mode](/pt/auto-mode-config): diga ao classificador do modo auto qual infraestrutura sua organização confia
 * [Sandboxing](/pt/sandboxing): isolamento de rede e sistema de arquivos em nível de SO para comandos Bash
 * [Authentication](/pt/authentication): configure o acesso do usuário ao Claude Code
 * [Security](/pt/security): salvaguardas de segurança e melhores práticas

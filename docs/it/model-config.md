@@ -49,6 +49,10 @@ Gli alias puntano alla versione consigliata per il provider e si aggiornano nel 
 3. **Variabile di ambiente** - Impostare `ANTHROPIC_MODEL=<alias|name>`
 4. **Impostazioni** - Configurare in modo permanente nel file delle impostazioni utilizzando il campo `model`.
 
+La selezione `/model` viene salvata nelle impostazioni utente e persiste tra i riavvii. A partire dalla v2.1.117, se il file `.claude/settings.json` del progetto fissa un modello diverso, Claude Code scrive anche la scelta in `.claude/settings.local.json` in modo che continui ad applicarsi in quel progetto dopo un riavvio. Le impostazioni gestite hanno la precedenza e si riapplicano al prossimo avvio.
+
+Quando il modello attivo all'avvio proviene dalle impostazioni del progetto o gestite piuttosto che dalla propria selezione, l'intestazione di avvio mostra quale file di impostazioni lo ha impostato. Eseguire `/model` per eseguire l'override per la sessione corrente.
+
 Esempio di utilizzo:
 
 ```bash theme={null}
@@ -160,7 +164,7 @@ Lo sforzo è supportato su Opus 4.7, Opus 4.6 e Sonnet 4.6. I livelli disponibil
 
 Se imposti un livello che il modello attivo non supporta, Claude Code ricade al livello supportato più alto pari o inferiore a quello impostato. Ad esempio, `xhigh` viene eseguito come `high` su Opus 4.6.
 
-Su Opus 4.7, lo sforzo predefinito è `xhigh` per tutti i piani e i provider. Su Opus 4.6 e Sonnet 4.6, il valore predefinito è `high`, o `medium` su Pro e Max.
+A partire dalla v2.1.117, lo sforzo predefinito è `xhigh` su Opus 4.7 e `high` su Opus 4.6 e Sonnet 4.6.
 
 Quando esegui Opus 4.7 per la prima volta, Claude Code applica `xhigh` anche se hai precedentemente impostato un livello di sforzo diverso per Opus 4.6 o Sonnet 4.6. Esegui `/effort` di nuovo per scegliere un livello diverso dopo il passaggio.
 
