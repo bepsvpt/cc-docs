@@ -6,21 +6,21 @@
 
 > Realice un seguimiento del uso de tokens, establezca límites de gasto del equipo y reduzca los costos de Claude Code con la gestión del contexto, la selección de modelos, la configuración del pensamiento extendido y los hooks de preprocesamiento.
 
-Claude Code consume tokens en cada interacción. Los costos varían según el tamaño de la base de código, la complejidad de la consulta y la duración de la conversación. El costo promedio es de \$6 por desarrollador por día, con costos diarios que se mantienen por debajo de \$12 para el 90% de los usuarios.
+Claude Code cobra por consumo de tokens de API. Para precios de planes de suscripción (Pro, Max, Team, Enterprise), consulte [claude.com/pricing](https://claude.com/pricing). Los costos por desarrollador varían ampliamente según la selección del modelo, el tamaño de la base de código y los patrones de uso, como ejecutar múltiples instancias o automatización.
 
-Para el uso en equipo, Claude Code cobra por consumo de tokens de API. En promedio, Claude Code cuesta aproximadamente \$100-200 por desarrollador por mes con Sonnet 4.6, aunque hay una gran variación dependiendo de cuántas instancias ejecutan los usuarios y si la están utilizando en automatización.
+En implementaciones empresariales, el costo promedio es de alrededor de \$13 por desarrollador por día activo y \$150-250 por desarrollador por mes, con costos que se mantienen por debajo de \$30 por día activo para el 90% de los usuarios. Para estimar el gasto de su equipo, comience con un pequeño grupo piloto y use las herramientas de seguimiento a continuación para establecer una línea base antes de un despliegue más amplio.
 
 Esta página cubre cómo [realizar un seguimiento de sus costos](#track-your-costs), [gestionar costos para equipos](#managing-costs-for-teams) y [reducir el uso de tokens](#reduce-token-usage).
 
 ## Realice un seguimiento de sus costos
 
-### Uso del comando `/cost`
+### Uso del comando `/usage`
 
 <Note>
-  El comando `/cost` muestra el uso de tokens de API y está destinado a usuarios de API. Los suscriptores de Claude Max y Pro tienen el uso incluido en su suscripción, por lo que los datos de `/cost` no son relevantes para fines de facturación. Los suscriptores pueden usar `/stats` para ver patrones de uso.
+  El bloque Session en `/usage` muestra el uso de tokens de API y está destinado a usuarios de API. Los suscriptores de Claude Max y Pro tienen el uso incluido en su suscripción, por lo que la cifra de costo de sesión no es relevante para fines de facturación. Los suscriptores ven barras de uso del plan y estadísticas de actividad en la misma pantalla.
 </Note>
 
-El comando `/cost` proporciona estadísticas detalladas de uso de tokens para su sesión actual:
+El comando `/usage` proporciona estadísticas detalladas de uso de tokens para su sesión actual. La cifra en dólares es una estimación calculada localmente a partir de conteos de tokens y puede diferir de su factura real. Para facturación autorizada, consulte la página de Uso en la [Consola de Claude](https://platform.claude.com/usage).
 
 ```text theme={null}
 Total cost:            $0.55
@@ -35,6 +35,8 @@ Cuando utiliza Claude API, puede [establecer límites de gasto del espacio de tr
 
 <Note>
   Cuando autentica por primera vez Claude Code con su cuenta de Claude Console, se crea automáticamente un espacio de trabajo llamado "Claude Code" para usted. Este espacio de trabajo proporciona seguimiento y gestión centralizada de costos para todo el uso de Claude Code en su organización. No puede crear claves de API para este espacio de trabajo; es exclusivamente para autenticación y uso de Claude Code.
+
+  Para organizaciones con límites de velocidad personalizados, el tráfico de Claude Code en este espacio de trabajo cuenta hacia los límites de velocidad de API generales de su organización. Puede establecer un [límite de velocidad del espacio de trabajo](https://platform.claude.com/docs/es/api/rate-limits#setting-lower-limits-for-workspaces) en la página Limits de este espacio de trabajo en la Consola de Claude para limitar la parte de Claude Code y proteger otras cargas de trabajo de producción.
 </Note>
 
 En Bedrock, Vertex y Foundry, Claude Code no envía métricas desde su nube. Para obtener métricas de costos, varias grandes empresas informaron usar [LiteLLM](/es/llm-gateway#litellm-configuration), que es una herramienta de código abierto que ayuda a las empresas a [realizar un seguimiento del gasto por clave](https://docs.litellm.ai/docs/proxy/virtual_keys#tracking-spend). Este proyecto no está afiliado con Anthropic y no ha sido auditado por seguridad.
@@ -80,7 +82,7 @@ Las siguientes estrategias lo ayudan a mantener el contexto pequeño y reducir l
 
 ### Gestione el contexto de manera proactiva
 
-Use `/cost` para verificar su uso actual de tokens, o [configure su línea de estado](/es/statusline#context-window-usage) para mostrarla continuamente.
+Use `/usage` para verificar su uso actual de tokens, o [configure su línea de estado](/es/statusline#context-window-usage) para mostrarla continuamente.
 
 * **Limpie entre tareas**: Use `/clear` para comenzar de nuevo cuando cambie a trabajo no relacionado. El contexto obsoleto desperdicia tokens en cada mensaje posterior. Use `/rename` antes de limpiar para que pueda encontrar fácilmente la sesión más tarde, luego `/resume` para volver a ella.
 * **Agregue instrucciones de compactación personalizadas**: `/compact Focus on code samples and API usage` le dice a Claude qué preservar durante la summarización.
@@ -99,11 +101,10 @@ Sonnet maneja bien la mayoría de tareas de codificación y cuesta menos que Opu
 
 ### Reduzca la sobrecarga del servidor MCP
 
-Cada servidor MCP agrega definiciones de herramientas a su contexto, incluso cuando está inactivo. Ejecute `/context` para ver qué está consumiendo espacio.
+Las definiciones de herramientas MCP se [difieren por defecto](/es/mcp#scale-with-mcp-tool-search), por lo que solo los nombres de herramientas entran en contexto hasta que Claude usa una herramienta específica. Ejecute `/context` para ver qué está consumiendo espacio.
 
-* **Prefiera herramientas CLI cuando estén disponibles**: Herramientas como `gh`, `aws`, `gcloud` y `sentry-cli` son más eficientes en contexto que los servidores MCP porque no agregan definiciones de herramientas persistentes. Claude puede ejecutar comandos CLI directamente sin la sobrecarga.
+* **Prefiera herramientas CLI cuando estén disponibles**: Herramientas como `gh`, `aws`, `gcloud` y `sentry-cli` son más eficientes en contexto que los servidores MCP porque no agregan ningún listado por herramienta. Claude puede ejecutar comandos CLI directamente.
 * **Deshabilite servidores no utilizados**: Ejecute `/mcp` para ver servidores configurados y deshabilite cualquiera que no esté usando activamente.
-* **La búsqueda de herramientas es automática**: Cuando las descripciones de herramientas MCP exceden el 10% de su ventana de contexto, Claude Code automáticamente las difiere y carga herramientas bajo demanda a través de [búsqueda de herramientas](/es/mcp#scale-with-mcp-tool-search). Dado que las herramientas diferidas solo entran en contexto cuando se usan realmente, un umbral más bajo significa menos definiciones de herramientas inactivas consumiendo espacio. Establezca un umbral más bajo con `ENABLE_TOOL_SEARCH=auto:<N>` (por ejemplo, `auto:5` se activa cuando las herramientas exceden el 5% de su ventana de contexto).
 
 ### Instale plugins de inteligencia de código para lenguajes tipados
 
@@ -161,11 +162,11 @@ Por ejemplo, este hook PreToolUse filtra la salida de prueba para mostrar solo f
 
 ### Mueva instrucciones de CLAUDE.md a skills
 
-Su archivo [CLAUDE.md](/es/memory) se carga en contexto al inicio de la sesión. Si contiene instrucciones detalladas para flujos de trabajo específicos (como revisiones de PR o migraciones de bases de datos), esos tokens están presentes incluso cuando está haciendo trabajo no relacionado. [Skills](/es/skills) se cargan bajo demanda solo cuando se invocan, por lo que mover instrucciones especializadas a skills mantiene su contexto base más pequeño. Apunte a mantener CLAUDE.md bajo aproximadamente \~500 líneas incluyendo solo lo esencial.
+Su archivo [CLAUDE.md](/es/memory) se carga en contexto al inicio de la sesión. Si contiene instrucciones detalladas para flujos de trabajo específicos (como revisiones de PR o migraciones de bases de datos), esos tokens están presentes incluso cuando está haciendo trabajo no relacionado. [Skills](/es/skills) se cargan bajo demanda solo cuando se invocan, por lo que mover instrucciones especializadas a skills mantiene su contexto base más pequeño. Apunte a mantener CLAUDE.md bajo 200 líneas incluyendo solo lo esencial.
 
 ### Ajuste el pensamiento extendido
 
-El pensamiento extendido está habilitado por defecto con un presupuesto de 31,999 tokens porque mejora significativamente el rendimiento en tareas complejas de planificación y razonamiento. Sin embargo, los tokens de pensamiento se facturan como tokens de salida, por lo que para tareas más simples donde el razonamiento profundo no es necesario, puede reducir costos bajando el [nivel de esfuerzo](/es/model-config#adjust-effort-level) con `/effort` o en `/model`, deshabilitando el pensamiento en `/config`, o bajando el presupuesto (por ejemplo, `MAX_THINKING_TOKENS=8000`).
+El pensamiento extendido está habilitado por defecto porque mejora significativamente el rendimiento en tareas complejas de planificación y razonamiento. Los tokens de pensamiento se facturan como tokens de salida, y el presupuesto predeterminado puede ser decenas de miles de tokens por solicitud dependiendo del modelo. Para tareas más simples donde el razonamiento profundo no es necesario, puede reducir costos bajando el [nivel de esfuerzo](/es/model-config#adjust-effort-level) con `/effort` o en `/model`, deshabilitando el pensamiento en `/config`, o bajando el presupuesto con `MAX_THINKING_TOKENS=8000`.
 
 ### Delegue operaciones detalladas a subagents
 
@@ -193,10 +194,10 @@ Para trabajo más largo o más complejo, estos hábitos ayudan a evitar tokens d
 Claude Code usa tokens para algunas funcionalidades en segundo plano incluso cuando está inactivo:
 
 * **Summarización de conversación**: Trabajos en segundo plano que resumen conversaciones anteriores para la característica `claude --resume`
-* **Procesamiento de comandos**: Algunos comandos como `/cost` pueden generar solicitudes para verificar el estado
+* **Procesamiento de comandos**: Algunos comandos como `/usage` pueden generar solicitudes para verificar el estado
 
 Estos procesos en segundo plano consumen una pequeña cantidad de tokens (típicamente menos de \$0.04 por sesión) incluso sin interacción activa.
 
 ## Comprensión de cambios en el comportamiento de Claude Code
 
-Claude Code recibe actualizaciones regularmente que pueden cambiar cómo funcionan las características, incluido el reporte de costos. Ejecute `claude --version` para verificar su versión actual. Para preguntas específicas de facturación, contacte al soporte de Anthropic a través de su [cuenta de Consola](https://platform.claude.com/login). Para implementaciones de equipo, comience con un pequeño grupo piloto para establecer patrones de uso antes de un despliegue más amplio.
+Claude Code recibe actualizaciones regularmente que pueden cambiar cómo funcionan las características, incluido el reporte de costos. Ejecute `claude --version` para verificar su versión actual. Para preguntas específicas de facturación, contacte al soporte de Anthropic a través de su [cuenta de Consola](https://platform.claude.com/login).

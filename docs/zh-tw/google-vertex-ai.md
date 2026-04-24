@@ -68,7 +68,7 @@ export const ContactSalesCard = ({surface}) => {
           <a href={`https://claude.com/pricing?${utm('view_plans')}#plans-business`} className="cc-cs-btn-ghost">
             View plans
           </a>
-          <a href={`https://www.anthropic.com/contact-sales?${utm('contact_sales')}`} className="cc-cs-btn-clay">
+          <a href={`https://claude.com/contact-sales?${utm('contact_sales')}`} className="cc-cs-btn-clay">
             Contact sales {iconArrowRight()}
           </a>
         </div>
@@ -283,6 +283,9 @@ export ANTHROPIC_VERTEX_PROJECT_ID=YOUR-PROJECT-ID
 # 選用：如需要，停用 prompt caching
 export DISABLE_PROMPT_CACHING=1
 
+# 選用：要求 1 小時 prompt cache TTL 而不是 5 分鐘預設值
+export ENABLE_PROMPT_CACHING_1H=1
+
 # 當 CLOUD_ML_REGION=global 時，覆寫不支援全球端點的模型的區域
 export VERTEX_REGION_CLAUDE_HAIKU_4_5=us-east5
 export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
@@ -290,7 +293,7 @@ export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 
 大多數模型版本都有對應的 `VERTEX_REGION_CLAUDE_*` 變數。如需完整清單，請參閱[環境變數參考](/zh-TW/env-vars)。檢查 [Vertex Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) 以確定哪些模型支援全球端點與僅限區域端點。
 
-當您指定 `cache_control` 暫時旗標時，[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) 會自動支援。若要停用它，請設定 `DISABLE_PROMPT_CACHING=1`。如需提高速率限制，請聯絡 Google Cloud 支援。使用 Vertex AI 時，`/login` 和 `/logout` 命令會被停用，因為驗證是透過 Google Cloud 認證處理的。
+[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) 會自動啟用。若要停用它，請設定 `DISABLE_PROMPT_CACHING=1`。若要要求 1 小時 cache TTL 而不是 5 分鐘預設值，請設定 `ENABLE_PROMPT_CACHING_1H=1`；具有 1 小時 TTL 的 cache 寫入會以更高費率計費。如需提高速率限制，請聯絡 Google Cloud 支援。使用 Vertex AI 時，`/login` 和 `/logout` 命令會被停用，因為驗證是透過 Google Cloud 認證處理的。
 
 ### 5. 固定模型版本
 

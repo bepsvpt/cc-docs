@@ -236,13 +236,19 @@ No hay equivalente a nivel de proyecto de la configuración del equipo. Un archi
 
 ### Usar definiciones de subagents para compañeros de equipo
 
-Al generar un compañero de equipo, puede hacer referencia a un tipo de [subagent](/es/sub-agents) de cualquier [alcance de subagent](/es/sub-agents#choose-the-subagent-scope): proyecto, usuario, plugin o definido por CLI. El compañero de equipo hereda el indicador del sistema, herramientas y modelo de ese subagent. Esto le permite definir un rol una vez, como un revisor de seguridad o ejecutor de pruebas, y reutilizarlo tanto como un subagent delegado como un compañero de equipo de equipo de agentes.
+Al generar un compañero de equipo, puede hacer referencia a un tipo de [subagent](/es/sub-agents) de cualquier [alcance de subagent](/es/sub-agents#choose-the-subagent-scope): proyecto, usuario, plugin o definido por CLI. Esto le permite definir un rol una vez, como un revisor de seguridad o ejecutor de pruebas, y reutilizarlo tanto como un subagent delegado como un compañero de equipo de equipo de agentes.
 
 Para usar una definición de subagent, mencione por nombre cuando le pida a Claude que genere el compañero de equipo:
 
 ```text theme={null}
 Genera un compañero de equipo usando el tipo de agente security-reviewer para auditar el módulo de autenticación.
 ```
+
+El compañero de equipo honra los campos `tools` y `model` de esa definición, y el cuerpo de la definición se añade al prompt del sistema del compañero de equipo como instrucciones adicionales en lugar de reemplazarlo. Las herramientas de coordinación de equipos como `SendMessage` y las herramientas de gestión de tareas siempre están disponibles para un compañero de equipo incluso cuando `tools` restringe otras herramientas.
+
+<Note>
+  Los campos `skills` y `mcpServers` en la portada de una definición de subagent no se aplican cuando esa definición se ejecuta como un compañero de equipo. Los compañeros de equipo cargan skills y MCP servers desde su configuración de proyecto y usuario, igual que una sesión regular.
+</Note>
 
 ### Permisos
 
@@ -257,11 +263,9 @@ Cada compañero de equipo tiene su propia ventana de contexto. Cuando se genera,
 * **Entrega automática de mensajes**: cuando los compañeros de equipo envían mensajes, se entregan automáticamente a los destinatarios. El líder no necesita sondear actualizaciones.
 * **Notificaciones de inactividad**: cuando un compañero de equipo termina y se detiene, notifica automáticamente al líder.
 * **Lista de tareas compartida**: todos los agentes pueden ver el estado de la tarea y reclamar trabajo disponible.
+* **Mensajería de compañeros de equipo**: enviar un mensaje a un compañero de equipo específico por nombre. Para llegar a todos, envíe un mensaje por destinatario.
 
-**Mensajería de compañeros de equipo:**
-
-* **message**: enviar un mensaje a un compañero de equipo específico
-* **broadcast**: enviar a todos los compañeros de equipo simultáneamente. Use con moderación, ya que los costos escalan con el tamaño del equipo.
+El líder asigna a cada compañero de equipo un nombre cuando lo genera, y cualquier compañero de equipo puede enviar un mensaje a otro por ese nombre. Para obtener nombres predecibles que pueda referenciar en indicaciones posteriores, dígale al líder cómo llamar a cada compañero de equipo en su instrucción de generación.
 
 ### Uso de tokens
 

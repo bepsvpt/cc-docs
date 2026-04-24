@@ -17,7 +17,7 @@ Claude Code funciona em qualquer terminal sem configuração. Esta página é pa
 
 Esta página é sobre fazer seu terminal enviar os sinais corretos para Claude Code. Para alterar quais teclas Claude Code responde, consulte [atalhos de teclado](/pt/keybindings) em vez disso.
 
-## Enter multiline prompts
+## Inserir prompts multilinhas
 
 Pressionar Enter envia sua mensagem. Para adicionar uma quebra de linha sem enviar, pressione Ctrl+J, ou digite `\` e depois pressione Enter. Ambos funcionam em todos os terminais sem configuração.
 
@@ -29,7 +29,7 @@ Na maioria dos terminais você também pode pressionar Shift+Enter, mas o suport
 | VS Code, Cursor, Windsurf, Alacritty, Zed                                      | Execute `/terminal-setup` uma vez              |
 | Windows Terminal, gnome-terminal, JetBrains IDEs como PyCharm e Android Studio | Não disponível; use Ctrl+J ou `\` depois Enter |
 
-Para VS Code, Cursor, Windsurf, Alacritty e Zed, `/terminal-setup` escreve Shift+Enter e outros atalhos de teclado no arquivo de configuração do terminal. Se ele relatar um conflito como `Found existing VSCode terminal Shift+Enter key binding`, remova essa entrada do arquivo de atalhos de teclado do próprio terminal, por exemplo `keybindings.json` do VS Code, e execute o comando novamente. Execute `/terminal-setup` diretamente no terminal do host em vez de dentro do tmux ou screen, pois ele precisa escrever na configuração do terminal do host.
+Para VS Code, Cursor, Windsurf, Alacritty e Zed, `/terminal-setup` escreve Shift+Enter e outros atalhos de teclado no arquivo de configuração do terminal. Em VS Code, Cursor e Windsurf, também define `terminal.integrated.mouseWheelScrollSensitivity` nas configurações do editor para rolagem mais suave no [modo de tela cheia](/pt/fullscreen). As vinculações e configurações existentes são mantidas no lugar; se você vir uma mensagem como `VSCode terminal Shift+Enter key binding already configured`, nenhuma alteração foi feita. Execute `/terminal-setup` diretamente no terminal do host em vez de dentro do tmux ou screen, pois ele precisa escrever na configuração do terminal do host.
 
 Se você estiver executando dentro do tmux, Shift+Enter também requer a [configuração do tmux abaixo](#configure-tmux) mesmo quando o terminal externo a suporta.
 
@@ -105,11 +105,45 @@ set -as terminal-features 'xterm*:extkeys'
 
 A linha `allow-passthrough` permite que notificações e atualizações de progresso cheguem ao iTerm2, Ghostty ou Kitty em vez de serem engolidas pelo tmux. As linhas `extended-keys` permitem que tmux distinga Shift+Enter de Enter simples para que o atalho de quebra de linha funcione.
 
-## Match the color theme
+## Corresponder ao tema de cores
 
-Use o comando `/theme`, ou o seletor de tema em `/config`, para escolher um tema do Claude Code que corresponda ao seu terminal. Selecionar a opção auto detecta o fundo claro ou escuro do seu terminal, para que o tema siga as mudanças de aparência do SO sempre que seu terminal fizer. Os temas disponíveis são integrados; não há arquivo de tema personalizado. Claude Code não controla o esquema de cores do próprio terminal, que é definido pela aplicação de terminal.
+Use o comando `/theme`, ou o seletor de tema em `/config`, para escolher um tema do Claude Code que corresponda ao seu terminal. Selecionar a opção auto detecta o fundo claro ou escuro do seu terminal, para que o tema siga as mudanças de aparência do SO sempre que seu terminal fizer. Claude Code não controla o esquema de cores do próprio terminal, que é definido pela aplicação de terminal.
 
 Para personalizar o que aparece na parte inferior da interface, configure uma [linha de status personalizada](/pt/statusline) que mostra o modelo atual, diretório de trabalho, branch do git ou outro contexto.
+
+### Criar um tema personalizado
+
+<Note>
+  Temas personalizados requerem Claude Code v2.1.118 ou posterior.
+</Note>
+
+Além dos presets integrados, `/theme` lista todos os temas personalizados que você definiu e quaisquer temas contribuídos por [plugins](/pt/plugins-reference#themes) instalados. Selecione **Novo tema personalizado…** no final da lista para criar um interativamente: você nomeia o tema e depois escolhe tokens de cor individuais para substituir. Pressione `Ctrl+E` enquanto um tema personalizado está destacado para editá-lo.
+
+Cada tema personalizado é um arquivo JSON em `~/.claude/themes/`. O nome do arquivo sem a extensão `.json` é o slug do tema, e selecionar o tema armazena `custom:<slug>` como sua preferência de tema. O arquivo tem três campos opcionais:
+
+| Campo       | Tipo   | Descrição                                                                                                                                     |
+| :---------- | :----- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`      | string | Rótulo de exibição mostrado em `/theme`. Padrão é o slug do nome do arquivo                                                                   |
+| `base`      | string | Preset integrado do qual o tema começa: `dark`, `light`, `dark-daltonized`, `light-daltonized`, `dark-ansi`, ou `light-ansi`. Padrão é `dark` |
+| `overrides` | object | Mapa de nomes de tokens de cor para valores de cor. Tokens não listados aqui caem através do preset base                                      |
+
+Valores de cor aceitam `#rrggbb`, `#rgb`, `rgb(r,g,b)`, `ansi256(n)`, ou `ansi:<name>` onde `<name>` é um dos 16 nomes de cores ANSI padrão como `red` ou `cyanBright`. Tokens desconhecidos e valores de cor inválidos são ignorados, portanto um erro de digitação não pode quebrar a renderização.
+
+O exemplo a seguir define um tema que mantém o preset escuro, mas recolore o acento do prompt, o texto de erro e o texto de sucesso:
+
+```json ~/.claude/themes/dracula.json theme={null}
+{
+  "name": "Dracula",
+  "base": "dark",
+  "overrides": {
+    "claude": "#bd93f9",
+    "error": "#ff5555",
+    "success": "#50fa7b"
+  }
+}
+```
+
+Claude Code monitora `~/.claude/themes/` e recarrega quando um arquivo muda, portanto edições feitas no seu editor se aplicam a uma sessão em execução sem necessidade de reinicialização.
 
 ## Switch to fullscreen rendering
 
@@ -141,11 +175,11 @@ Quando você cola mais de 10.000 caracteres no prompt, Claude Code reduz a entra
 
 O terminal integrado do VS Code pode descartar caracteres de colagens muito grandes antes de chegarem ao Claude Code, então prefira fluxos de trabalho baseados em arquivo lá. Para entradas muito grandes, como arquivos inteiros ou logs longos, escreva o conteúdo em um arquivo e peça ao Claude para lê-lo em vez de colar. Isso mantém a transcrição da conversa legível e permite que Claude referencie o arquivo por caminho em turnos posteriores.
 
-## Edit prompts with Vim keybindings
+## Editar prompts com atalhos de teclado Vim
 
 Claude Code inclui um modo de edição estilo Vim para a entrada do prompt. Ative-o através de `/config` → Editor mode, ou definindo a chave de configuração global [`editorMode`](/pt/settings#global-config-settings) como `"vim"` em `~/.claude.json`. Defina Editor mode de volta para `normal` para desativá-lo.
 
-O modo Vim suporta um subconjunto de motions de modo NORMAL e operadores, como navegação `hjkl` e `d`/`c`/`y` com objetos de texto. Consulte a [referência do modo editor Vim](/pt/interactive-mode#vim-editor-mode) para a tabela de teclas completa. Motions de Vim não são remapeáveis através do arquivo de atalhos de teclado.
+O modo Vim suporta um subconjunto de motions de modo NORMAL e VISUAL e operadores, como navegação `hjkl`, seleção `v`/`V`, e `d`/`c`/`y` com objetos de texto. Consulte a [referência do modo editor Vim](/pt/interactive-mode#vim-editor-mode) para a tabela de teclas completa. Motions de Vim não são remapeáveis através do arquivo de atalhos de teclado.
 
 Pressionar Enter ainda envia seu prompt no modo INSERT, diferentemente do Vim padrão. Use `o` ou `O` no modo NORMAL, ou Ctrl+J, para inserir uma quebra de linha em vez disso.
 

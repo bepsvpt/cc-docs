@@ -7,7 +7,7 @@
 > Continuez une session Claude Code locale depuis votre téléphone, tablette ou n'importe quel navigateur en utilisant Remote Control. Fonctionne avec claude.ai/code et l'application Claude mobile.
 
 <Note>
-  Remote Control est disponible sur tous les plans. Sur Team et Enterprise, il est désactivé par défaut jusqu'à ce qu'un administrateur active le bouton Remote Control dans les [paramètres d'administration Claude Code](https://claude.ai/admin-settings/claude-code).
+  Remote Control est en aperçu de recherche et disponible sur tous les plans. Sur Team et Enterprise, il est désactivé par défaut jusqu'à ce qu'un administrateur active le bouton Remote Control dans les [paramètres d'administration Claude Code](https://claude.ai/admin-settings/claude-code).
 </Note>
 
 Remote Control connecte [claude.ai/code](https://claude.ai/code) ou l'application Claude pour [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) et [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude) à une session Claude Code s'exécutant sur votre machine. Commencez une tâche à votre bureau, puis reprenez-la depuis votre téléphone sur le canapé ou un navigateur sur un autre ordinateur.
@@ -184,11 +184,11 @@ Si les notifications n'arrivent pas :
 
 ## Limitations
 
-* **Une session distante par processus interactif** : en dehors du mode serveur, chaque instance Claude Code prend en charge une session distante à la fois. Utilisez le mode serveur pour exécuter plusieurs sessions concurrentes à partir d'un seul processus.
+* **Une session distante par processus interactif** : en dehors du mode serveur, chaque instance Claude Code prend en charge une session distante à la fois. Utilisez le [mode serveur](#start-a-remote-control-session) pour exécuter plusieurs sessions concurrentes à partir d'un seul processus.
 * **Le processus local doit continuer à s'exécuter** : Remote Control s'exécute en tant que processus local. Si vous fermez le terminal, quittez VS Code, ou arrêtez autrement le processus `claude`, la session se termine.
 * **Panne réseau prolongée** : si votre machine est allumée mais incapable d'atteindre le réseau pendant plus de dix minutes environ, la session expire et le processus se termine. Exécutez `claude remote-control` à nouveau pour démarrer une nouvelle session.
 * **Ultraplan déconnecte Remote Control** : le démarrage d'une session [ultraplan](/fr/ultraplan) déconnecte toute session Remote Control active car les deux fonctionnalités occupent l'interface claude.ai/code et une seule peut être connectée à la fois.
-* **Certaines commandes sont locales uniquement** : les commandes qui ouvrent un sélecteur interactif dans le terminal, telles que `/mcp`, `/plugin`, ou `/resume`, fonctionnent uniquement à partir de la CLI locale. Les commandes qui produisent une sortie textuelle, y compris `/compact`, `/clear`, `/context`, `/cost`, `/exit`, `/extra-usage`, `/recap`, et `/reload-plugins`, fonctionnent à partir du web et du mobile.
+* **Certaines commandes sont locales uniquement** : les commandes qui ouvrent un sélecteur interactif dans le terminal, telles que `/mcp`, `/plugin`, ou `/resume`, fonctionnent uniquement à partir de la CLI locale. Les commandes qui produisent une sortie textuelle, y compris `/compact`, `/clear`, `/context`, `/usage`, `/exit`, `/extra-usage`, `/recap`, et `/reload-plugins`, fonctionnent à partir du mobile et du web.
 
 ## Dépannage
 

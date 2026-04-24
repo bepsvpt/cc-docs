@@ -435,6 +435,7 @@ Matcher ограничивает hook только `ExitPlanMode`, поэтом�
 | `PermissionDenied`    | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
 | `PostToolUse`         | After a tool call succeeds                                                                                                                             |
 | `PostToolUseFailure`  | After a tool call fails                                                                                                                                |
+| `PostToolBatch`       | After a full batch of parallel tool calls resolves, before the next model call                                                                         |
 | `Notification`        | When Claude Code sends a notification                                                                                                                  |
 | `SubagentStart`       | When a subagent is spawned                                                                                                                             |
 | `SubagentStop`        | When a subagent finishes                                                                                                                               |
@@ -457,9 +458,10 @@ Matcher ограничивает hook только `ExitPlanMode`, поэтом�
 
 Когда несколько hooks совпадают, каждый возвращает свой собственный результат. Для решений Claude Code выбирает наиболее ограничивающий ответ. Hook `PreToolUse`, возвращающий `deny`, отменяет вызов инструмента независимо от того, что возвращают остальные. Один hook, возвращающий `ask`, вынуждает запрос разрешения, даже если остальные возвращают `allow`. Текст из `additionalContext` сохраняется от каждого hook и передаётся Claude вместе.
 
-Каждый hook имеет `type`, который определяет, как он запускается. Большинство hooks используют `"type": "command"`, который запускает команду оболочки. Доступны три других типа:
+Каждый hook имеет `type`, который определяет, как он запускается. Большинство hooks используют `"type": "command"`, который запускает команду оболочки. Доступны четыре других типа:
 
 * `"type": "http"`: POST данные события на URL. См. [HTTP hooks](#http-hooks).
+* `"type": "mcp_tool"`: вызвать инструмент на уже подключённом MCP сервере. См. [MCP tool hooks](/ru/hooks#mcp-tool-hook-fields).
 * `"type": "prompt"`: однооборотная оценка LLM. См. [Hooks на основе подсказок](#prompt-based-hooks).
 * `"type": "agent"`: многооборотная проверка с доступом к инструментам. Hooks агентов являются экспериментальными и могут измениться. См. [Hooks на основе агентов](#agent-based-hooks).
 
@@ -504,7 +506,7 @@ exit 0  # exit 0 = позволить продолжить
 
 Код выхода определяет, что происходит дальше:
 
-* **Exit 0**: действие продолжается. Для hooks `UserPromptSubmit` и `SessionStart` всё, что вы пишете в stdout, добавляется в контекст Claude.
+* **Exit 0**: действие продолжается. Для hooks `UserPromptSubmit`, `UserPromptExpansion` и `SessionStart` всё, что вы пишете в stdout, добавляется в контекст Claude.
 * **Exit 2**: действие блокируется. Напишите причину в stderr, и Claude получит её как обратную связь, чтобы он мог скорректировать.
 * **Любой другой код выхода**: действие продолжается. Стенограмма показывает уведомление об ошибке `<hook name> hook error`, за которым следует первая строка stderr; полный stderr переходит в [журнал отладки](/ru/hooks#debug-hooks).
 
@@ -528,7 +530,7 @@ exit 0  # exit 0 = позволить продолжить
 }
 ```
 
-Claude Code читает `permissionDecision` и отменяет вызов инструмента, затем передаёт `permissionDecisionReason` обратно Claude как обратную связь. Эти значения `permissionDecision` специфичны для `PreToolUse`:
+С `"deny"` Claude Code отменяет вызов инструмента и передаёт `permissionDecisionReason` обратно Claude. Эти значения `permissionDecision` специфичны для `PreToolUse`:
 
 * `"allow"`: пропустить интерактивный запрос разрешения. Правила отказа и запроса, включая управляемые списки отказов предприятия, по-прежнему применяются
 * `"deny"`: отменить вызов инструмента и отправить причину Claude
@@ -565,22 +567,23 @@ Matcher `"Edit|Write"` срабатывает только, когда Claude и
 
 Каждый тип события соответствует определённому полю:
 
-| Событие                                                                                                                      | Что фильтрует matcher                                                             | Примеры значений matcher                                                                                                  |
-| :--------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                   | имя инструмента                                                                   | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
-| `SessionStart`                                                                                                               | как начался сеанс                                                                 | `startup`, `resume`, `clear`, `compact`                                                                                   |
-| `SessionEnd`                                                                                                                 | почему закончился сеанс                                                           | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                                               | тип уведомления                                                                   | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                                              | тип агента                                                                        | `Bash`, `Explore`, `Plan` или пользовательские имена агентов                                                              |
-| `PreCompact`, `PostCompact`                                                                                                  | что запустило компактирование                                                     | `manual`, `auto`                                                                                                          |
-| `SubagentStop`                                                                                                               | тип агента                                                                        | те же значения, что и `SubagentStart`                                                                                     |
-| `ConfigChange`                                                                                                               | источник конфигурации                                                             | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
-| `StopFailure`                                                                                                                | тип ошибки                                                                        | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                                                         | причина загрузки                                                                  | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
-| `Elicitation`                                                                                                                | имя MCP сервера                                                                   | ваши настроенные имена MCP серверов                                                                                       |
-| `ElicitationResult`                                                                                                          | имя MCP сервера                                                                   | те же значения, что и `Elicitation`                                                                                       |
-| `FileChanged`                                                                                                                | буквальные имена файлов для наблюдения (см. [FileChanged](/ru/hooks#filechanged)) | `.envrc\|.env`                                                                                                            |
-| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged` | поддержка matcher отсутствует                                                     | всегда срабатывает при каждом возникновении                                                                               |
+| Событие                                                                                                                                       | Что фильтрует matcher                                                             | Примеры значений matcher                                                                                                  |
+| :-------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                                    | имя инструмента                                                                   | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `SessionStart`                                                                                                                                | как начался сеанс                                                                 | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `SessionEnd`                                                                                                                                  | почему закончился сеанс                                                           | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
+| `Notification`                                                                                                                                | тип уведомления                                                                   | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
+| `SubagentStart`                                                                                                                               | тип агента                                                                        | `Bash`, `Explore`, `Plan` или пользовательские имена агентов                                                              |
+| `PreCompact`, `PostCompact`                                                                                                                   | что запустило компактирование                                                     | `manual`, `auto`                                                                                                          |
+| `SubagentStop`                                                                                                                                | тип агента                                                                        | те же значения, что и `SubagentStart`                                                                                     |
+| `ConfigChange`                                                                                                                                | источник конфигурации                                                             | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
+| `StopFailure`                                                                                                                                 | тип ошибки                                                                        | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                                                          | причина загрузки                                                                  | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `Elicitation`                                                                                                                                 | имя MCP сервера                                                                   | ваши настроенные имена MCP серверов                                                                                       |
+| `ElicitationResult`                                                                                                                           | имя MCP сервера                                                                   | те же значения, что и `Elicitation`                                                                                       |
+| `FileChanged`                                                                                                                                 | буквальные имена файлов для наблюдения (см. [FileChanged](/ru/hooks#filechanged)) | `.envrc\|.env`                                                                                                            |
+| `UserPromptExpansion`                                                                                                                         | имя команды                                                                       | ваши имена skill или команд                                                                                               |
+| `UserPromptSubmit`, `PostToolBatch`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged` | поддержка matcher отсутствует                                                     | всегда срабатывает при каждом возникновении                                                                               |
 
 Несколько дополнительных примеров, показывающих matchers на разных типах событий:
 
@@ -687,7 +690,7 @@ Matcher `"Edit|Write"` срабатывает только, когда Claude и
 
 Процесс hook порождается только когда подкоманда команды Bash совпадает с `git *`, или когда команда слишком сложна для анализа в подкоманды. Для составных команд, таких как `npm test && git push`, Claude Code оценивает каждую подкоманду и запускает hook, потому что `git push` совпадает. Поле `if` принимает те же шаблоны, что и правила разрешений: `"Bash(git *)"`, `"Edit(*.ts)"` и так далее. Для соответствия нескольким именам инструментов используйте отдельные обработчики каждый со своим значением `if`, или соответствуйте на уровне `matcher`, где поддерживается чередование трубой.
 
-`if` работает только на событиях инструментов: `PreToolUse`, `PostToolUse`, `PostToolUseFailure` и `PermissionRequest`. Добавление его к любому другому событию предотвращает запуск hook.
+`if` работает только на событиях инструментов: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest` и `PermissionDenied`. Добавление его к любому другому событию предотвращает запуск hook.
 
 ### Настройка местоположения hook
 

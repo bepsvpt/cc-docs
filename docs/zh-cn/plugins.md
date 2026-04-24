@@ -83,12 +83,12 @@ Claude Code 支持两种方式来添加自定义 skills、agents 和 hooks：
     }
     ```
 
-    | 字段            | 目的                                                           |
-    | :------------ | :----------------------------------------------------------- |
-    | `name`        | 唯一标识符和 skill 命名空间。Skills 以此为前缀（例如 `/my-first-plugin:hello`）。 |
-    | `description` | 在浏览或安装插件时在插件管理器中显示。                                          |
-    | `version`     | 使用[语义版本控制](/zh-CN/plugins-reference#version-management)跟踪发布。 |
-    | `author`      | 可选。有助于归属。                                                    |
+    | 字段            | 目的                                                                                                                      |
+    | :------------ | :---------------------------------------------------------------------------------------------------------------------- |
+    | `name`        | 唯一标识符和 skill 命名空间。Skills 以此为前缀（例如 `/my-first-plugin:hello`）。                                                            |
+    | `description` | 在浏览或安装插件时在插件管理器中显示。                                                                                                     |
+    | `version`     | 可选。如果设置，用户仅在你更新此字段时接收更新。如果省略且你的插件通过 git 分发，则使用提交 SHA，每个提交都计为新版本。请参阅[版本管理](/zh-CN/plugins-reference#version-management)。 |
+    | `author`      | 可选。有助于归属。                                                                                                               |
 
     有关 `homepage`、`repository` 和 `license` 等其他字段，请参阅[完整清单架构](/zh-CN/plugins-reference#plugin-manifest-schema)。
   </Step>
@@ -173,7 +173,7 @@ Claude Code 支持两种方式来添加自定义 skills、agents 和 hooks：
 
 ## 插件结构概览
 
-你已创建了一个带有 skill 的插件，但插件可以包含更多内容：自定义 agents、hooks、MCP servers 和 LSP servers。
+你已创建了一个带有 skill 的插件，但插件可以包含更多内容：自定义 agents、hooks、MCP servers、LSP servers 和后台监视器。
 
 <Warning>
   **常见错误**：不要将 `commands/`、`agents/`、`skills/` 或 `hooks/` 放在 `.claude-plugin/` 目录内。只有 `plugin.json` 应该在 `.claude-plugin/` 内。所有其他目录必须在插件根级别。
@@ -328,7 +328,7 @@ claude --plugin-dir ./my-plugin
 当你的插件准备好共享时：
 
 1. **添加文档**：包含一个 `README.md`，其中包含安装和使用说明
-2. **版本化你的插件**：在你的 `plugin.json` 中使用[语义版本控制](/zh-CN/plugins-reference#version-management)
+2. **选择版本控制策略**：决定是设置显式 `version` 还是依赖 git 提交 SHA。请参阅[版本管理](/zh-CN/plugins-reference#version-management)
 3. **创建或使用市场**：通过[插件市场](/zh-CN/plugin-marketplaces)分发以供安装
 4. **与他人测试**：在更广泛分发之前让团队成员测试插件
 

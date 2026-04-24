@@ -68,7 +68,7 @@ export const ContactSalesCard = ({surface}) => {
           <a href={`https://claude.com/pricing?${utm('view_plans')}#plans-business`} className="cc-cs-btn-ghost">
             View plans
           </a>
-          <a href={`https://www.anthropic.com/contact-sales?${utm('contact_sales')}`} className="cc-cs-btn-clay">
+          <a href={`https://claude.com/contact-sales?${utm('contact_sales')}`} className="cc-cs-btn-clay">
             Contact sales {iconArrowRight()}
           </a>
         </div>
@@ -283,6 +283,9 @@ export ANTHROPIC_VERTEX_PROJECT_ID=YOUR-PROJECT-ID
 # Opcional: Deshabilitar el almacenamiento en caché de indicaciones si es necesario
 export DISABLE_PROMPT_CACHING=1
 
+# Opcional: Solicitar TTL de caché de indicaciones de 1 hora en lugar del predeterminado de 5 minutos
+export ENABLE_PROMPT_CACHING_1H=1
+
 # Cuando CLOUD_ML_REGION=global, anule la región para modelos que no admiten puntos finales globales
 export VERTEX_REGION_CLAUDE_HAIKU_4_5=us-east5
 export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
@@ -290,7 +293,7 @@ export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 
 La mayoría de las versiones de modelo tienen una variable `VERTEX_REGION_CLAUDE_*` correspondiente. Consulte la [referencia de variables de entorno](/es/env-vars) para obtener la lista completa. Verifique [Vertex Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) para determinar qué modelos admiten puntos finales globales frente a solo regionales.
 
-[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) se admite automáticamente cuando especifica la bandera efímera `cache_control`. Para deshabilitarlo, establezca `DISABLE_PROMPT_CACHING=1`. Para límites de velocidad elevados, póngase en contacto con el soporte de Google Cloud. Al usar Vertex AI, los comandos `/login` y `/logout` están deshabilitados ya que la autenticación se maneja a través de credenciales de Google Cloud.
+[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) se habilita automáticamente. Para deshabilitarlo, establezca `DISABLE_PROMPT_CACHING=1`. Para solicitar un TTL de caché de 1 hora en lugar del predeterminado de 5 minutos, establezca `ENABLE_PROMPT_CACHING_1H=1`; las escrituras de caché con un TTL de 1 hora se facturan a una tarifa más alta. Para límites de velocidad elevados, póngase en contacto con el soporte de Google Cloud. Al usar Vertex AI, los comandos `/login` y `/logout` están deshabilitados ya que la autenticación se maneja a través de credenciales de Google Cloud.
 
 ### 5. Fijar versiones de modelo
 

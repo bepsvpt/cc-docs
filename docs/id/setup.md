@@ -235,6 +235,8 @@ Atur `DISABLE_AUTOUPDATER` ke `"1"` di kunci `env` dari file [`settings.json`](/
 }
 ```
 
+`DISABLE_AUTOUPDATER` hanya menghentikan pemeriksaan latar belakang; `claude update` dan `claude install` masih berfungsi. Untuk memblokir semua jalur pembaruan, termasuk pembaruan manual, atur [`DISABLE_UPDATES`](/id/env-vars) sebagai gantinya. Gunakan ini ketika Anda mendistribusikan Claude Code melalui saluran Anda sendiri dan perlu pengguna tetap di versi yang Anda sediakan.
+
 ### Perbarui secara manual
 
 Untuk menerapkan pembaruan segera tanpa menunggu pemeriksaan latar belakang berikutnya, jalankan:

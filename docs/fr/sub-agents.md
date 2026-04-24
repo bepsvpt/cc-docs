@@ -30,6 +30,7 @@ Claude Code inclut plusieurs sous-agents intégrés comme **Explore**, **Plan** 
 * [Comment créer les vôtres](#quickstart-create-your-first-subagent)
 * [Options de configuration complètes](#configure-subagents)
 * [Modèles de travail avec les sous-agents](#work-with-subagents)
+* [Sous-agents dupliqués](#fork-the-current-conversation)
 * [Exemples de sous-agents](#example-subagents)
 
 ## Sous-agents intégrés
@@ -654,6 +655,8 @@ Claude décide si les sous-agents s'exécutent au premier plan ou en arrière-pl
 
 Pour désactiver toute la fonctionnalité de tâche en arrière-plan, définissez la variable d'environnement `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` sur `1`. Consultez [Variables d'environnement](/fr/env-vars).
 
+Lorsque le [mode fork](#fork-the-current-conversation) est activé, chaque génération de sous-agent s'exécute en arrière-plan indépendamment du champ `background`. Les forks affichent toujours les invites de permission dans votre terminal au fur et à mesure qu'elles se produisent au lieu de pré-approuver ; les sous-agents nommés suivent le flux de pré-approbation ci-dessus.
+
 ### Modèles courants
 
 #### Isoler les opérations à haut volume
@@ -759,6 +762,59 @@ Les événements de compaction sont enregistrés dans les fichiers de transcript
 ```
 
 La valeur `preTokens` indique le nombre de tokens utilisés avant la compaction.
+
+## Dupliquer la conversation actuelle
+
+<Note>
+  Les sous-agents dupliqués sont expérimentaux et nécessitent Claude Code v2.1.117 ou version ultérieure. Le comportement et la configuration peuvent changer dans les versions futures. Activez-les en définissant la variable d'environnement [`CLAUDE_CODE_FORK_SUBAGENT`](/fr/env-vars) sur `1`.
+</Note>
+
+Un fork est un sous-agent qui hérite de l'intégralité de la conversation jusqu'à présent au lieu de commencer à zéro. Cela supprime l'isolation d'entrée que les sous-agents fournissent autrement : un fork voit la même invite système, les mêmes outils, le même modèle et l'historique des messages que la session principale, vous pouvez donc lui confier une tâche secondaire sans réexpliquer la situation. Les appels d'outils du fork restent en dehors de votre conversation et seul son résultat final revient, donc votre fenêtre de contexte principal reste propre. Utilisez un fork lorsqu'un sous-agent nommé aurait besoin de trop de contexte pour être utile, ou lorsque vous souhaitez essayer plusieurs approches en parallèle à partir du même point de départ.
+
+L'activation du mode fork change Claude Code de trois façons :
+
+* Claude génère un fork chaque fois qu'il utiliserait autrement le sous-agent [general-purpose](#built-in-subagents). Les sous-agents nommés tels que Explore se génèrent comme avant.
+* Chaque génération de sous-agent s'exécute en [arrière-plan](#run-subagents-in-foreground-or-background), qu'il s'agisse d'un fork ou d'un sous-agent nommé. Définissez `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` sur `1` pour garder les générations synchrones.
+* La commande `/fork` génère un fork au lieu d'agir comme un alias pour [`/branch`](/fr/commands).
+
+Vous pouvez démarrer un fork vous-même avec `/fork` suivi d'une directive. Claude Code nomme le fork à partir des premiers mots de la directive. L'exemple suivant duplique la conversation pour rédiger des cas de test pendant que vous continuez avec l'implémentation dans la session principale :
+
+```text theme={null}
+/fork draft unit tests for the parser changes so far
+```
+
+Le fork apparaît dans un panneau sous votre invite et s'exécute en arrière-plan pendant que vous continuez à travailler. Lorsqu'il se termine, son résultat arrive sous forme de message dans votre conversation principale. La section suivante couvre les contrôles du panneau pour observer et diriger les forks pendant qu'ils s'exécutent.
+
+### Observer et diriger les forks en cours d'exécution
+
+Les forks en cours d'exécution apparaissent dans un panneau sous l'entrée d'invite, avec une ligne pour la session principale et une pour chaque fork. Utilisez ces touches pour interagir avec le panneau :
+
+| Touche    | Action                                                                           |
+| :-------- | :------------------------------------------------------------------------------- |
+| `↑` / `↓` | Se déplacer entre les lignes                                                     |
+| `Entrée`  | Ouvrir la transcription du fork sélectionné et lui envoyer des messages de suivi |
+| `x`       | Ignorer un fork terminé ou arrêter un fork en cours d'exécution                  |
+| `Échap`   | Retourner le focus à l'entrée d'invite                                           |
+
+### Comment les forks diffèrent des sous-agents nommés
+
+Un fork hérite de tout ce que la session principale a au moment où il se génère. Un sous-agent nommé démarre à partir de sa propre définition.
+
+|                          | Fork                                        | Sous-agent nommé                                                                                    |
+| :----------------------- | :------------------------------------------ | :-------------------------------------------------------------------------------------------------- |
+| Contexte                 | Historique de conversation complet          | Contexte frais avec l'invite que vous transmettez                                                   |
+| Invite système et outils | Identique à la session principale           | À partir du [fichier de définition](#write-subagent-files) du sous-agent                            |
+| Modèle                   | Identique à la session principale           | À partir du champ `model` du sous-agent                                                             |
+| Permissions              | Les invites s'affichent dans votre terminal | [Pré-approuvées](#run-subagents-in-foreground-or-background) avant le lancement, puis auto-refusées |
+| Cache d'invite           | Partagé avec la session principale          | Cache séparé                                                                                        |
+
+Parce que l'invite système d'un fork et les définitions d'outils sont identiques au parent, sa première demande réutilise le cache d'invite du parent. Cela rend le forking moins cher que la génération d'un sous-agent frais pour les tâches qui ont besoin du même contexte.
+
+Lorsque Claude génère un fork via l'outil Agent, il peut passer `isolation: "worktree"` pour que les modifications de fichiers du fork soient écrites dans un git worktree séparé au lieu de votre extraction.
+
+### Limitations
+
+Le mode fork ne fonctionne que dans les sessions interactives. Il est désactivé en [mode non-interactif](/fr/headless), qui inclut le SDK Agent. Un fork ne peut pas générer d'autres forks.
 
 ## Exemples de sous-agents
 

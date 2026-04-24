@@ -118,6 +118,7 @@ Plugin-Hooks reagieren auf die gleichen Lifecycle-Events wie [benutzerdefinierte
 | `PermissionDenied`    | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
 | `PostToolUse`         | After a tool call succeeds                                                                                                                             |
 | `PostToolUseFailure`  | After a tool call fails                                                                                                                                |
+| `PostToolBatch`       | After a full batch of parallel tool calls resolves, before the next model call                                                                         |
 | `Notification`        | When Claude Code sends a notification                                                                                                                  |
 | `SubagentStart`       | When a subagent is spawned                                                                                                                             |
 | `SubagentStop`        | When a subagent finishes                                                                                                                               |
@@ -142,6 +143,7 @@ Plugin-Hooks reagieren auf die gleichen Lifecycle-Events wie [benutzerdefinierte
 
 * `command`: Shell-Befehle oder Skripte ausführen
 * `http`: Das Event JSON als POST-Anfrage an eine URL senden
+* `mcp_tool`: Ein Tool auf einem konfigurierten [MCP-Server](/de/mcp) aufrufen
 * `prompt`: Ein Prompt mit einem LLM evaluieren (verwendet `$ARGUMENTS` Platzhalter für Kontext)
 * `agent`: Einen agentic Verifier mit Tools für komplexe Verifikationsaufgaben ausführen
 
@@ -305,7 +307,7 @@ Um Monitore inline zu deklarieren, setzen Sie den `monitors` Schlüssel in `plug
 | Feld          | Beschreibung                                                                                                                                     |
 | :------------ | :----------------------------------------------------------------------------------------------------------------------------------------------- |
 | `name`        | Bezeichner eindeutig innerhalb des Plugins. Verhindert doppelte Prozesse, wenn das Plugin neu geladen wird oder ein Skill erneut aufgerufen wird |
-| `command`     | Shell-Befehl, der als persistenter Hintergrund-Prozess in der Session-Arbeitsverzeichnis ausgeführt wird                                         |
+| `command`     | Shell-Befehl, der als persistenter Hintergrund-Prozess im Session-Arbeitsverzeichnis ausgeführt wird                                             |
 | `description` | Kurze Zusammenfassung dessen, was überwacht wird. Wird im Task-Panel und in Benachrichtigungszusammenfassungen angezeigt                         |
 
 **Optionale Felder:**
@@ -317,6 +319,24 @@ Um Monitore inline zu deklarieren, setzen Sie den `monitors` Schlüssel in `plug
 Der `command` Wert unterstützt die gleichen [Variablenersetzungen](#environment-variables) wie MCP- und LSP-Server-Konfigurationen: `${CLAUDE_PLUGIN_ROOT}`, `${CLAUDE_PLUGIN_DATA}`, `${user_config.*}` und alle `${ENV_VAR}` aus der Umgebung. Stellen Sie dem Befehl `cd "${CLAUDE_PLUGIN_ROOT}" && ` voran, wenn das Skript aus dem Plugin-eigenen Verzeichnis ausgeführt werden muss.
 
 Das Deaktivieren eines Plugins während einer Session stoppt nicht die Monitore, die bereits laufen. Sie stoppen, wenn die Session endet.
+
+### Themes
+
+Plugins können Farbthemes versenden, die in `/theme` neben den integrierten Voreinstellungen und den lokalen Themes des Benutzers angezeigt werden. Ein Theme ist eine JSON-Datei in `themes/` mit einer `base` Voreinstellung und einer sparsamen `overrides` Map von Farb-Tokens.
+
+```json theme={null}
+{
+  "name": "Dracula",
+  "base": "dark",
+  "overrides": {
+    "claude": "#bd93f9",
+    "error": "#ff5555",
+    "success": "#50fa7b"
+  }
+}
+```
+
+Das Auswählen eines Plugin-Themes speichert `custom:<plugin-name>:<slug>` in der Konfiguration des Benutzers. Plugin-Themes sind schreibgeschützt; das Drücken von `Ctrl+E` auf einem in `/theme` kopiert es in `~/.claude/themes/`, damit der Benutzer die Kopie bearbeiten kann.
 
 ***
 
@@ -363,6 +383,7 @@ Das Manifest ist optional. Wenn es weggelassen wird, erkennt Claude Code Kompone
   "hooks": "./config/hooks.json",
   "mcpServers": "./mcp-config.json",
   "outputStyles": "./styles/",
+  "themes": "./themes/",
   "lspServers": "./.lsp.json",
   "monitors": "./monitors.json",
   "dependencies": [
@@ -384,15 +405,15 @@ Dieser Name wird für die Namensgebung von Komponenten verwendet. Beispielsweise
 
 ### Metadaten-Felder
 
-| Feld          | Typ    | Beschreibung                                                                                                                       | Beispiel                                           |
-| :------------ | :----- | :--------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------- |
-| `version`     | string | Semantische Version. Wenn auch im Marktplatz-Eintrag gesetzt, hat `plugin.json` Vorrang. Sie müssen es nur an einer Stelle setzen. | `"2.1.0"`                                          |
-| `description` | string | Kurze Erklärung des Plugin-Zwecks                                                                                                  | `"Deployment automation tools"`                    |
-| `author`      | object | Autoreninformationen                                                                                                               | `{"name": "Dev Team", "email": "dev@company.com"}` |
-| `homepage`    | string | Dokumentations-URL                                                                                                                 | `"https://docs.example.com"`                       |
-| `repository`  | string | Quellcode-URL                                                                                                                      | `"https://github.com/user/plugin"`                 |
-| `license`     | string | Lizenzbezeichner                                                                                                                   | `"MIT"`, `"Apache-2.0"`                            |
-| `keywords`    | array  | Discovery-Tags                                                                                                                     | `["deployment", "ci-cd"]`                          |
+| Feld          | Typ    | Beschreibung                                                                                                                                                                                                                                                                                                                                                                                                      | Beispiel                                           |
+| :------------ | :----- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------- |
+| `version`     | string | Optional. Semantische Version. Das Setzen dieser Version fixiert das Plugin auf diese Versionsnummer, sodass Benutzer nur Updates erhalten, wenn Sie diese erhöhen. Wenn weggelassen, greift Claude Code auf den Git-Commit-SHA zurück, sodass jeder Commit als neue Version behandelt wird. Wenn auch im Marktplatz-Eintrag gesetzt, hat `plugin.json` Vorrang. Siehe [Versionsverwaltung](#version-management). | `"2.1.0"`                                          |
+| `description` | string | Kurze Erklärung des Plugin-Zwecks                                                                                                                                                                                                                                                                                                                                                                                 | `"Deployment automation tools"`                    |
+| `author`      | object | Autoreninformationen                                                                                                                                                                                                                                                                                                                                                                                              | `{"name": "Dev Team", "email": "dev@company.com"}` |
+| `homepage`    | string | Dokumentations-URL                                                                                                                                                                                                                                                                                                                                                                                                | `"https://docs.example.com"`                       |
+| `repository`  | string | Quellcode-URL                                                                                                                                                                                                                                                                                                                                                                                                     | `"https://github.com/user/plugin"`                 |
+| `license`     | string | Lizenzbezeichner                                                                                                                                                                                                                                                                                                                                                                                                  | `"MIT"`, `"Apache-2.0"`                            |
+| `keywords`    | array  | Discovery-Tags                                                                                                                                                                                                                                                                                                                                                                                                    | `["deployment", "ci-cd"]`                          |
 
 ### Komponentenpfad-Felder
 
@@ -404,6 +425,7 @@ Dieser Name wird für die Namensgebung von Komponenten verwendet. Beispielsweise
 | `hooks`        | string\|array\|object | Hook-Konfigurationspfade oder Inline-Konfiguration                                                                                                                  | `"./my-extra-hooks.json"`                            |
 | `mcpServers`   | string\|array\|object | MCP-Konfigurationspfade oder Inline-Konfiguration                                                                                                                   | `"./my-extra-mcp-config.json"`                       |
 | `outputStyles` | string\|array         | Benutzerdefinierte Output-Style-Dateien/Verzeichnisse (ersetzt Standard `output-styles/`)                                                                           | `"./styles/"`                                        |
+| `themes`       | string\|array         | Farbthema-Dateien/Verzeichnisse (ersetzt Standard `themes/`). Siehe [Designs](#themes)                                                                              | `"./themes/"`                                        |
 | `lspServers`   | string\|array\|object | [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) Konfigurationen für Code-Intelligenz (Gehe zu Definition, finde Referenzen, etc.) | `"./.lsp.json"`                                      |
 | `monitors`     | string\|array         | Hintergrund-[Monitor](/de/tools-reference#monitor-tool) Konfigurationen, die automatisch starten, wenn das Plugin aktiv ist. Siehe [Monitore](#monitors)            | `"./monitors.json"`                                  |
 | `userConfig`   | object                | Benutzerkonfigurierbare Werte, die bei der Aktivierung abgefragt werden. Siehe [Benutzerkonfiguration](#user-configuration)                                         | Siehe unten                                          |
@@ -480,7 +502,7 @@ Das `server` Feld ist erforderlich und muss einem Schlüssel in den `mcpServers`
 
 ### Pfad-Verhaltensregeln
 
-Für `skills`, `commands`, `agents`, `outputStyles` und `monitors` ersetzt ein benutzerdefinierter Pfad den Standard. Wenn das Manifest `skills` angibt, wird das Standard-Verzeichnis `skills/` nicht gescannt; wenn es `monitors` angibt, wird die Standard-Datei `monitors/monitors.json` nicht geladen. [Hooks](#hooks), [MCP-Server](#mcp-servers) und [LSP-Server](#lsp-servers) haben unterschiedliche Semantiken für die Behandlung mehrerer Quellen.
+Für `skills`, `commands`, `agents`, `outputStyles`, `themes` und `monitors` ersetzt ein benutzerdefinierter Pfad den Standard. Wenn das Manifest `skills` angibt, wird das Standard-Verzeichnis `skills/` nicht gescannt; wenn es `monitors` angibt, wird die Standard-Datei `monitors/monitors.json` nicht geladen. [Hooks](#hooks), [MCP-Server](#mcp-servers) und [LSP-Server](#lsp-servers) haben unterschiedliche Semantiken für die Behandlung mehrerer Quellen.
 
 * Alle Pfade müssen relativ zum Plugin-Root sein und mit `./` beginnen
 * Komponenten aus benutzerdefinierten Pfaden verwenden die gleichen Benennungs- und Namensgebungsregeln
@@ -629,6 +651,8 @@ enterprise-plugin/
 │   └── compliance-checker.md
 ├── output-styles/            # Output-Style-Definitionen
 │   └── terse.md
+├── themes/                   # Farbschema-Definitionen
+│   └── dracula.json
 ├── monitors/                 # Hintergrund-Monitor-Konfigurationen
 │   └── monitors.json
 ├── hooks/                    # Hook-Konfigurationen
@@ -648,7 +672,7 @@ enterprise-plugin/
 ```
 
 <Warning>
-  Das `.claude-plugin/` Verzeichnis enthält die `plugin.json` Datei. Alle anderen Verzeichnisse (commands/, agents/, skills/, output-styles/, monitors/, hooks/) müssen sich im Plugin-Root befinden, nicht innerhalb von `.claude-plugin/`.
+  Das `.claude-plugin/` Verzeichnis enthält die `plugin.json` Datei. Alle anderen Verzeichnisse (commands/, agents/, skills/, output-styles/, themes/, monitors/, hooks/) müssen sich im Plugin-Root befinden, nicht innerhalb von `.claude-plugin/`.
 </Warning>
 
 ### Datei-Speicherorte-Referenz
@@ -660,6 +684,7 @@ enterprise-plugin/
 | **Befehle**             | `commands/`                  | Skills als flache Markdown-Dateien. Verwenden Sie `skills/` für neue Plugins                                                                                                                                        |
 | **Agents**              | `agents/`                    | Subagent Markdown-Dateien                                                                                                                                                                                           |
 | **Output-Styles**       | `output-styles/`             | Output-Style-Definitionen                                                                                                                                                                                           |
+| **Themes**              | `themes/`                    | Farbschema-Definitionen                                                                                                                                                                                             |
 | **Hooks**               | `hooks/hooks.json`           | Hook-Konfiguration                                                                                                                                                                                                  |
 | **MCP-Server**          | `.mcp.json`                  | MCP-Server-Definitionen                                                                                                                                                                                             |
 | **LSP-Server**          | `.lsp.json`                  | Language Server Konfigurationen                                                                                                                                                                                     |
@@ -806,19 +831,36 @@ claude plugin list [options]
 | `--available` | Verfügbare Plugins von Marktplätzen einschließen. Erfordert `--json` |          |
 | `-h, --help`  | Hilfe für Befehl anzeigen                                            |          |
 
+### plugin tag
+
+Erstellen Sie ein Release-Git-Tag für das Plugin im aktuellen Verzeichnis. Führen Sie es im Ordner des Plugins aus. Siehe [Tag-Plugin-Releases](/de/plugin-dependencies#tag-plugin-releases-for-version-resolution).
+
+```bash theme={null}
+claude plugin tag [options]
+```
+
+**Optionen:**
+
+| Option        | Beschreibung                                                                                 | Standard |
+| :------------ | :------------------------------------------------------------------------------------------- | :------- |
+| `--push`      | Pushen Sie das Tag zum Remote nach dem Erstellen                                             |          |
+| `--dry-run`   | Drucken Sie aus, was getaggt würde, ohne das Tag zu erstellen                                |          |
+| `-f, --force` | Erstellen Sie das Tag auch wenn der Arbeitsbaum schmutzig ist oder das Tag bereits existiert |          |
+| `-h, --help`  | Hilfe für Befehl anzeigen                                                                    |          |
+
 ***
 
 ## Debugging- und Entwicklungstools
 
 ### Debugging-Befehle
 
-Verwenden Sie `claude --debug` um Plugin-Lade-Details zu sehen:
+Verwenden Sie `claude --debug`, um Plugin-Lade-Details zu sehen:
 
 Dies zeigt:
 
 * Welche Plugins geladen werden
 * Alle Fehler in Plugin-Manifesten
-* Befehls-, Agent- und Hook-Registrierung
+* Skill-, Agent- und Hook-Registrierung
 * MCP-Server-Initialisierung
 
 ### Häufige Probleme
@@ -859,7 +901,7 @@ Dies zeigt:
 
 1. Überprüfen Sie, dass der Event-Name korrekt ist (Groß-/Kleinschreibung beachten): `PostToolUse`, nicht `postToolUse`
 2. Überprüfen Sie, dass das Matcher-Muster Ihre Tools passt: `"matcher": "Write|Edit"` für Dateivorgänge
-3. Bestätigen Sie, dass der Hook-Typ gültig ist: `command`, `http`, `prompt` oder `agent`
+3. Bestätigen Sie, dass der Hook-Typ gültig ist: `command`, `http`, `mcp_tool`, `prompt` oder `agent`
 
 ### MCP-Server-Fehlerbehebung
 
@@ -905,33 +947,27 @@ Wenn sich Ihre Komponenten in `.claude-plugin/` befinden, verschieben Sie sie in
 
 ### Versionsverwaltung
 
-Folgen Sie semantischer Versionierung für Plugin-Releases:
+Claude Code verwendet die Version des Plugins als Cache-Schlüssel, der bestimmt, ob ein Update verfügbar ist. Wenn Sie `/plugin update` ausführen oder Auto-Update aktiviert ist, berechnet Claude Code die aktuelle Version und überspringt das Update, wenn es mit der bereits installierten Version übereinstimmt.
 
-```json theme={null}
-{
-  "name": "my-plugin",
-  "version": "2.1.0"
-}
-```
+Die Version wird aus dem ersten dieser Felder aufgelöst, das gesetzt ist:
 
-**Versionsformat**: `MAJOR.MINOR.PATCH`
+1. Das Feld `version` in der `plugin.json` des Plugins
+2. Das Feld `version` im Marketplace-Eintrag des Plugins in `marketplace.json`
+3. Der Git-Commit-SHA des Plugin-Quellcodes für `github`, `url`, `git-subdir` und relative-path-Quellen in einem Git-gehosteten Marketplace
+4. `unknown`, für `npm`-Quellen oder lokale Verzeichnisse, die sich nicht in einem Git-Repository befinden
 
-* **MAJOR**: Breaking Changes (inkompatible API-Änderungen)
-* **MINOR**: Neue Features (abwärtskompatible Ergänzungen)
-* **PATCH**: Bugfixes (abwärtskompatible Fixes)
+Dies gibt Ihnen zwei Möglichkeiten, ein Plugin zu versionieren:
 
-**Best Practices**:
-
-* Beginnen Sie mit `1.0.0` für Ihr erstes stabiles Release
-* Aktualisieren Sie die Version in `plugin.json`, bevor Sie Änderungen verteilen
-* Dokumentieren Sie Änderungen in einer `CHANGELOG.md` Datei
-* Verwenden Sie Pre-Release-Versionen wie `2.0.0-beta.1` zum Testen
+| Ansatz                 | Wie                                                                              | Update-Verhalten                                                                                                                                                                          | Am besten für                                       |
+| :--------------------- | :------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------- |
+| **Explizite Version**  | Setzen Sie `"version": "2.1.0"` in `plugin.json`                                 | Benutzer erhalten Updates nur, wenn Sie dieses Feld erhöhen. Das Pushen neuer Commits ohne Erhöhung hat keine Auswirkung, und `/plugin update` meldet „bereits auf der neuesten Version". | Veröffentlichte Plugins mit stabilen Release-Zyklen |
+| **Commit-SHA-Version** | Lassen Sie `version` sowohl in `plugin.json` als auch im Marketplace-Eintrag weg | Benutzer erhalten Updates bei jedem neuen Commit zur Git-Quelle des Plugins                                                                                                               | Interne oder Team-Plugins unter aktiver Entwicklung |
 
 <Warning>
-  Claude Code verwendet die Version, um zu bestimmen, ob Ihr Plugin aktualisiert werden soll. Wenn Sie den Code Ihres Plugins ändern, aber die Version in `plugin.json` nicht erhöhen, werden Ihre bestehenden Plugin-Benutzer Ihre Änderungen aufgrund von Caching nicht sehen.
-
-  Wenn sich Ihr Plugin in einem [Marktplatz](/de/plugin-marketplaces) Verzeichnis befindet, können Sie die Version stattdessen über `marketplace.json` verwalten und das `version` Feld aus `plugin.json` weglassen.
+  Wenn Sie `version` in `plugin.json` setzen, müssen Sie es jedes Mal erhöhen, wenn Benutzer Änderungen erhalten sollen. Das bloße Pushen neuer Commits reicht nicht aus, da Claude Code die gleiche Versionszeichenkette sieht und die zwischengespeicherte Kopie behält. Wenn Sie schnell iterieren, lassen Sie `version` ungesetzt, damit stattdessen der Git-Commit-SHA verwendet wird.
 </Warning>
+
+Wenn Sie explizite Versionen verwenden, folgen Sie [semantischer Versionierung](https://semver.org) (`MAJOR.MINOR.PATCH`): Erhöhen Sie MAJOR für Breaking Changes, MINOR für neue Features, PATCH für Bugfixes. Dokumentieren Sie Änderungen in einer `CHANGELOG.md`.
 
 ***
 

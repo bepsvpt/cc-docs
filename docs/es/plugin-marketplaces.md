@@ -63,6 +63,10 @@ Este ejemplo crea un marketplace con un plugin: una skill `/quality-review` para
       "version": "1.0.0"
     }
     ```
+
+    <Note>
+      Establecer `version` significa que los usuarios solo reciben actualizaciones cuando cambia este campo, así que incremente la versión en cada lanzamiento. Si omite `version` y aloja este marketplace en git, cada commit cuenta automáticamente como una nueva versión. Consulte [Resolución de versiones](#version-resolution-and-release-channels) para elegir el enfoque correcto.
+    </Note>
   </Step>
 
   <Step title="Crear el archivo de marketplace">
@@ -191,18 +195,18 @@ Cada entrada de plugin en el array `plugins` describe un plugin y dónde encontr
 
 **Campos de metadatos estándar:**
 
-| Campo         | Tipo    | Descripción                                                                                                                                               |
-| :------------ | :------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `description` | string  | Descripción breve del plugin                                                                                                                              |
-| `version`     | string  | Versión del plugin                                                                                                                                        |
-| `author`      | object  | Información del autor del plugin (`name` requerido, `email` opcional)                                                                                     |
-| `homepage`    | string  | URL de página de inicio o documentación del plugin                                                                                                        |
-| `repository`  | string  | URL del repositorio de código fuente                                                                                                                      |
-| `license`     | string  | Identificador de licencia SPDX (por ejemplo, MIT, Apache-2.0)                                                                                             |
-| `keywords`    | array   | Etiquetas para descubrimiento y categorización de plugins                                                                                                 |
-| `category`    | string  | Categoría del plugin para organización                                                                                                                    |
-| `tags`        | array   | Etiquetas para búsqueda                                                                                                                                   |
-| `strict`      | boolean | Controla si `plugin.json` es la autoridad para definiciones de componentes (predeterminado: true). Consulte [Modo estricto](#strict-mode) a continuación. |
+| Campo         | Tipo    | Descripción                                                                                                                                                                                                                                                                           |
+| :------------ | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `description` | string  | Descripción breve del plugin                                                                                                                                                                                                                                                          |
+| `version`     | string  | Versión del plugin. Si se establece (aquí o en `plugin.json`), el plugin se fija a esta cadena y los usuarios solo reciben actualizaciones cuando cambia. Omita para recurrir al SHA del commit de git. Consulte [Resolución de versiones](#version-resolution-and-release-channels). |
+| `author`      | object  | Información del autor del plugin (`name` requerido, `email` opcional)                                                                                                                                                                                                                 |
+| `homepage`    | string  | URL de página de inicio o documentación del plugin                                                                                                                                                                                                                                    |
+| `repository`  | string  | URL del repositorio de código fuente                                                                                                                                                                                                                                                  |
+| `license`     | string  | Identificador de licencia SPDX (por ejemplo, MIT, Apache-2.0)                                                                                                                                                                                                                         |
+| `keywords`    | array   | Etiquetas para descubrimiento y categorización de plugins                                                                                                                                                                                                                             |
+| `category`    | string  | Categoría del plugin para organización                                                                                                                                                                                                                                                |
+| `tags`        | array   | Etiquetas para búsqueda                                                                                                                                                                                                                                                               |
+| `strict`      | boolean | Controla si `plugin.json` es la autoridad para definiciones de componentes (predeterminado: true). Consulte [Modo estricto](#strict-mode) a continuación.                                                                                                                             |
 
 **Campos de configuración de componentes:**
 
@@ -212,7 +216,7 @@ Cada entrada de plugin en el array `plugins` describe un plugin y dónde encontr
 | `commands`   | string\|array  | Rutas personalizadas a archivos de skills planos o directorios               |
 | `agents`     | string\|array  | Rutas personalizadas a archivos de agentes                                   |
 | `hooks`      | string\|object | Configuración de hooks personalizada o ruta a archivo de hooks               |
-| `mcpServers` | string\|object | Configuraciones de MCP server o ruta a configuración de MCP                  |
+| `mcpServers` | string\|object | Configuraciones de servidor MCP o ruta a configuración de MCP                |
 | `lspServers` | string\|object | Configuraciones de servidor LSP o ruta a configuración de LSP                |
 
 ## Fuentes de plugins
@@ -693,10 +697,20 @@ Para detalles de configuración completos incluyendo todos los tipos de fuente s
 
 ### Resolución de versiones y canales de lanzamiento
 
-Las versiones de plugins determinan rutas de caché y detección de actualizaciones. Puede especificar la versión en el manifiesto del plugin (`plugin.json`) o en la entrada del marketplace (`marketplace.json`).
+Las versiones de plugins determinan rutas de caché y detección de actualizaciones: si la versión resuelta coincide con lo que un usuario ya tiene, `/plugin update` y auto-actualización omiten el plugin.
+
+Claude Code resuelve la versión de un plugin desde el primero de estos que esté establecido:
+
+1. `version` en el `plugin.json` del plugin
+2. `version` en la entrada del marketplace del plugin
+3. El SHA del commit de git de la fuente del plugin
+
+Para los tipos de fuente basados en git `github`, `url`, `git-subdir` y rutas relativas dentro de un marketplace alojado en git, puede omitir `version` completamente y cada nuevo commit se trata como una nueva versión. Esta es la configuración más simple para plugins internos o en desarrollo activo.
 
 <Warning>
-  Cuando sea posible, evite establecer la versión en ambos lugares. El manifiesto del plugin siempre gana silenciosamente, lo que puede causar que la versión del marketplace sea ignorada. Para plugins de ruta relativa, establezca la versión en la entrada del marketplace. Para todas las otras fuentes de plugins, establézcala en el manifiesto del plugin.
+  Establecer `version` fija el plugin. Si `plugin.json` declara `"version": "1.0.0"`, empujar nuevos commits sin cambiar esa cadena no hace nada para usuarios existentes, porque Claude Code ve la misma versión y mantiene la copia en caché. Aumente el campo en cada lanzamiento, u omítalo para usar el SHA del commit.
+
+  Evite establecer `version` en ambos `plugin.json` y la entrada del marketplace. El valor de `plugin.json` siempre gana silenciosamente, por lo que una versión de manifiesto obsoleta puede enmascarar una versión que estableció en `marketplace.json`.
 </Warning>
 
 #### Configurar canales de lanzamiento
@@ -704,7 +718,7 @@ Las versiones de plugins determinan rutas de caché y detección de actualizacio
 Para soportar canales de lanzamiento "estable" y "último" para sus plugins, puede configurar dos marketplaces que apunten a diferentes refs o SHAs del mismo repositorio. Luego puede asignar los dos marketplaces a diferentes grupos de usuarios a través de [configuración administrada](/es/settings#settings-files).
 
 <Warning>
-  El `plugin.json` del plugin debe declarar una `version` diferente en cada ref o commit fijado. Si dos refs o commits tienen la misma versión de manifiesto, Claude Code los trata como idénticos y omite la actualización.
+  Cada canal debe resolver a una versión diferente. Si usa versiones explícitas, `plugin.json` debe declarar una `version` diferente en cada ref fijado. Si omite `version`, los SHAs de commit distintos ya distinguen los canales. Si dos refs resuelven a la misma cadena de versión, Claude Code los trata como idénticos y omite la actualización.
 </Warning>
 
 ##### Ejemplo
@@ -772,6 +786,10 @@ El grupo de acceso temprano recibe `latest-tools` en su lugar:
   }
 }
 ```
+
+#### Fijar versiones de dependencias
+
+Un plugin puede restringir sus dependencias a un rango semver para que las actualizaciones de una dependencia no rompan el plugin dependiente. Consulte [Restringir versiones de dependencias de plugins](/es/plugin-dependencies) para la convención de etiqueta de git `{plugin-name}--v{version}`, sintaxis de rango y cómo se combinan múltiples restricciones en la misma dependencia.
 
 ## Validación y pruebas
 

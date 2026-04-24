@@ -97,9 +97,9 @@ Lorsque la visionneuse de transcription est ouverte (basculée avec `Ctrl+O`), c
 
 ### Entrée vocale
 
-| Raccourci          | Description         | Notes                                                                                                                                                                     |
-| :----------------- | :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Maintenir `Espace` | Dictée push-to-talk | Nécessite que la [dictée vocale](/fr/voice-dictation) soit activée. La transcription s'insère au curseur. [Réaffectable](/fr/voice-dictation#rebind-the-push-to-talk-key) |
+| Raccourci                         | Description   | Notes                                                                                                                                                                                                                |
+| :-------------------------------- | :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Maintenir ou appuyer sur `Espace` | Dictée vocale | Nécessite que la [dictée vocale](/fr/voice-dictation) soit activée. Maintenez pour enregistrer, ou exécutez `/voice tap` pour le basculement par appui. [Réaffectable](/fr/voice-dictation#rebind-the-dictation-key) |
 
 ## Commandes
 
@@ -113,15 +113,17 @@ Activez l'édition de style vim via `/config` → Mode éditeur.
 
 ### Changement de mode
 
-| Commande | Action                       | Du mode |
-| :------- | :--------------------------- | :------ |
-| `Esc`    | Entrer en mode NORMAL        | INSERT  |
-| `i`      | Insérer avant le curseur     | NORMAL  |
-| `I`      | Insérer au début de la ligne | NORMAL  |
-| `a`      | Insérer après le curseur     | NORMAL  |
-| `A`      | Insérer à la fin de la ligne | NORMAL  |
-| `o`      | Ouvrir une ligne en dessous  | NORMAL  |
-| `O`      | Ouvrir une ligne au-dessus   | NORMAL  |
+| Commande | Action                                                   | Du mode        |
+| :------- | :------------------------------------------------------- | :------------- |
+| `Esc`    | Entrer en mode NORMAL                                    | INSERT, VISUAL |
+| `i`      | Insérer avant le curseur                                 | NORMAL         |
+| `I`      | Insérer au début de la ligne                             | NORMAL         |
+| `a`      | Insérer après le curseur                                 | NORMAL         |
+| `A`      | Insérer à la fin de la ligne                             | NORMAL         |
+| `o`      | Ouvrir une ligne en dessous                              | NORMAL         |
+| `O`      | Ouvrir une ligne au-dessus                               | NORMAL         |
+| `v`      | Commencer une sélection visuelle caractère par caractère | NORMAL         |
+| `V`      | Commencer une sélection visuelle ligne par ligne         | NORMAL         |
 
 ### Navigation (mode NORMAL)
 
@@ -181,6 +183,26 @@ Les objets texte fonctionnent avec les opérateurs comme `d`, `c` et `y` :
 | `i(`/`a(` | Parenthèses intérieures/autour                     |
 | `i[`/`a[` | Crochets intérieurs/autour                         |
 | `i{`/`a{` | Accolades intérieures/autour                       |
+
+### Mode visuel
+
+Appuyez sur `v` pour une sélection caractère par caractère ou `V` pour une sélection ligne par ligne. Les mouvements étendent la sélection, et les opérateurs agissent directement sur elle.
+
+| Commande         | Action                                                                |
+| :--------------- | :-------------------------------------------------------------------- |
+| `d`/`x`          | Supprimer la sélection                                                |
+| `y`              | Copier la sélection                                                   |
+| `c`/`s`          | Changer la sélection                                                  |
+| `p`              | Remplacer la sélection par le contenu du registre                     |
+| `r{char}`        | Remplacer chaque caractère sélectionné par `{char}`                   |
+| `~`/`u`/`U`      | Basculer, minuscules ou majuscules la sélection                       |
+| `>`/`<`          | Indenter ou dédenter les lignes sélectionnées                         |
+| `J`              | Joindre les lignes sélectionnées                                      |
+| `o`              | Échanger le curseur et l'ancre                                        |
+| `iw`/`aw`/`i"`/… | Sélectionner un objet texte                                           |
+| `v`/`V`          | Basculer entre caractère par caractère et ligne par ligne, ou quitter |
+
+Le mode visuel par bloc avec `Ctrl+V` n'est pas pris en charge.
 
 ## Historique des commandes
 
@@ -301,7 +323,7 @@ Appuyez sur **Espace**, **Entrée** ou **Échap** pour rejeter la réponse et re
 
 Lorsque vous travaillez sur un travail complexe en plusieurs étapes, Claude crée une liste de tâches pour suivre la progression. Les tâches apparaissent dans la zone d'état de votre terminal avec des indicateurs montrant ce qui est en attente, en cours ou terminé.
 
-* Appuyez sur `Ctrl+T` pour basculer l'affichage de la liste des tâches. L'affichage montre jusqu'à 10 tâches à la fois
+* Appuyez sur `Ctrl+T` pour basculer l'affichage de la liste des tâches. L'affichage montre jusqu'à 5 tâches à la fois
 * Pour voir toutes les tâches ou les effacer, demandez directement à Claude : « show me all tasks » ou « clear all tasks »
 * Les tâches persistent lors des compactions de contexte, aidant Claude à rester organisé sur les projets plus importants
 * Pour partager une liste de tâches entre les sessions, définissez `CLAUDE_CODE_TASK_LIST_ID` pour utiliser un répertoire nommé dans `~/.claude/tasks/` : `CLAUDE_CODE_TASK_LIST_ID=my-project claude`
@@ -312,7 +334,7 @@ Lorsque vous revenez au terminal après vous être éloigné, Claude Code affich
 
 Exécutez `/recap` pour générer un résumé à la demande. Pour désactiver les récapitulatifs automatiques, ouvrez `/config` et désactivez **Récapitulatif de session**.
 
-Le récapitulatif de session est activé par défaut pour tous les plans et fournisseurs. Pour remplacer le basculement `/config`, définissez [`CLAUDE_CODE_ENABLE_AWAY_SUMMARY`](/fr/env-vars) sur `0` ou `1`. Le récapitulatif est toujours ignoré en mode non interactif.
+Le récapitulatif de session est activé par défaut pour tous les plans et fournisseurs. Le récapitulatif est toujours ignoré en mode non interactif.
 
 ## Statut de révision PR
 

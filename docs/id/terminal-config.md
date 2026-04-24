@@ -29,11 +29,11 @@ Di sebagian besar terminal Anda juga dapat menekan Shift+Enter, tetapi dukungan 
 | VS Code, Cursor, Windsurf, Alacritty, Zed                                           | Jalankan `/terminal-setup` sekali                      |
 | Windows Terminal, gnome-terminal, JetBrains IDEs seperti PyCharm dan Android Studio | Tidak tersedia; gunakan Ctrl+J atau `\` kemudian Enter |
 
-Untuk VS Code, Cursor, Windsurf, Alacritty, dan Zed, `/terminal-setup` menulis Shift+Enter dan keybinding lainnya ke dalam file konfigurasi terminal. Jika melaporkan konflik seperti `Found existing VSCode terminal Shift+Enter key binding`, hapus entri itu dari file keybinding terminal itu sendiri, misalnya `keybindings.json` VS Code, dan jalankan perintah lagi. Jalankan `/terminal-setup` langsung di terminal host daripada di dalam tmux atau screen, karena perlu menulis ke konfigurasi terminal host.
+Untuk VS Code, Cursor, Windsurf, Alacritty, dan Zed, `/terminal-setup` menulis Shift+Enter dan pintasan keyboard lainnya ke dalam file konfigurasi terminal. Di VS Code, Cursor, dan Windsurf, ini juga menetapkan `terminal.integrated.mouseWheelScrollSensitivity` dalam pengaturan editor untuk scrolling yang lebih halus dalam [mode fullscreen](/id/fullscreen). Binding dan pengaturan yang ada dibiarkan tetap ada; jika Anda melihat pesan seperti `VSCode terminal Shift+Enter key binding already configured`, tidak ada perubahan yang dilakukan. Jalankan `/terminal-setup` langsung di terminal host daripada di dalam tmux atau screen, karena perlu menulis ke konfigurasi terminal host.
 
 Jika Anda menjalankan di dalam tmux, Shift+Enter juga memerlukan [konfigurasi tmux di bawah](#configure-tmux) bahkan ketika terminal luar mendukungnya.
 
-Untuk mengikat baris baru ke kunci yang berbeda, atau untuk menukar perilaku sehingga Enter menyisipkan baris baru dan Shift+Enter mengirim, petakan tindakan `chat:newline` dan `chat:submit` di [file keybindings](/id/keybindings) Anda.
+Untuk mengikat baris baru ke kunci yang berbeda, atau untuk menukar perilaku sehingga Enter menyisipkan baris baru dan Shift+Enter mengirim, petakan tindakan `chat:newline` dan `chat:submit` di [file pintasan keyboard](/id/keybindings) Anda.
 
 ## Aktifkan pintasan tombol Option di macOS
 
@@ -107,9 +107,43 @@ Baris `allow-passthrough` memungkinkan notifikasi dan pembaruan kemajuan mencapa
 
 ## Cocokkan tema warna
 
-Gunakan perintah `/theme`, atau pemilih tema di `/config`, untuk memilih tema Claude Code yang cocok dengan terminal Anda. Memilih opsi auto mendeteksi latar belakang terminal Anda yang terang atau gelap, jadi tema mengikuti perubahan penampilan OS kapan pun terminal Anda melakukannya. Tema yang tersedia sudah tertanam; tidak ada file tema khusus. Claude Code tidak mengontrol skema warna terminal itu sendiri, yang diatur oleh aplikasi terminal.
+Gunakan perintah `/theme`, atau pemilih tema di `/config`, untuk memilih tema Claude Code yang cocok dengan terminal Anda. Memilih opsi auto mendeteksi latar belakang terminal Anda yang terang atau gelap, jadi tema mengikuti perubahan penampilan OS kapan pun terminal Anda melakukannya. Claude Code tidak mengontrol skema warna terminal itu sendiri, yang diatur oleh aplikasi terminal.
 
 Untuk menyesuaikan apa yang muncul di bagian bawah antarmuka, konfigurasikan [baris status khusus](/id/statusline) yang menampilkan model saat ini, direktori kerja, cabang git, atau konteks lainnya.
+
+### Buat tema khusus
+
+<Note>
+  Tema khusus memerlukan Claude Code v2.1.118 atau lebih baru.
+</Note>
+
+Selain preset bawaan, `/theme` mencantumkan tema khusus apa pun yang telah Anda tentukan dan tema apa pun yang disumbangkan oleh [plugins](/id/plugins-reference#themes) yang terinstal. Pilih **Tema khusus baru…** di akhir daftar untuk membuat satu secara interaktif: Anda memberi nama tema, kemudian memilih token warna individual untuk ditimpa. Tekan `Ctrl+E` saat tema khusus disorot untuk mengeditnya.
+
+Setiap tema khusus adalah file JSON di `~/.claude/themes/`. Nama file tanpa ekstensi `.json` adalah slug tema, dan memilih tema menyimpan `custom:<slug>` sebagai preferensi tema Anda. File memiliki tiga bidang opsional:
+
+| Bidang      | Tipe   | Deskripsi                                                                                                                                              |
+| :---------- | :----- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`      | string | Label tampilan yang ditampilkan di `/theme`. Defaultnya adalah slug nama file                                                                          |
+| `base`      | string | Preset bawaan yang dimulai dari tema: `dark`, `light`, `dark-daltonized`, `light-daltonized`, `dark-ansi`, atau `light-ansi`. Defaultnya adalah `dark` |
+| `overrides` | object | Peta nama token warna ke nilai warna. Token yang tidak tercantum di sini jatuh kembali ke preset dasar                                                 |
+
+Nilai warna menerima `#rrggbb`, `#rgb`, `rgb(r,g,b)`, `ansi256(n)`, atau `ansi:<name>` di mana `<name>` adalah salah satu dari 16 nama warna ANSI standar seperti `red` atau `cyanBright`. Token yang tidak dikenal dan nilai warna yang tidak valid diabaikan, jadi kesalahan ketik tidak dapat merusak rendering.
+
+Contoh berikut mendefinisikan tema yang mempertahankan preset gelap tetapi mengubah warna aksen prompt, teks kesalahan, dan teks kesuksesan:
+
+```json ~/.claude/themes/dracula.json theme={null}
+{
+  "name": "Dracula",
+  "base": "dark",
+  "overrides": {
+    "claude": "#bd93f9",
+    "error": "#ff5555",
+    "success": "#50fa7b"
+  }
+}
+```
+
+Claude Code memantau `~/.claude/themes/` dan memuat ulang saat file berubah, jadi edit yang dibuat di editor Anda berlaku untuk sesi yang sedang berjalan tanpa restart.
 
 ## Beralih ke rendering fullscreen
 
@@ -141,11 +175,11 @@ Ketika Anda menempel lebih dari 10.000 karakter ke dalam prompt, Claude Code men
 
 Terminal terintegrasi VS Code dapat menjatuhkan karakter dari penempelan sangat besar sebelum mereka mencapai Claude Code, jadi lebih suka alur kerja berbasis file di sana. Untuk input sangat besar seperti seluruh file atau log panjang, tulis konten ke file dan minta Claude untuk membacanya alih-alih menempel. Ini menjaga transkrip percakapan tetap dapat dibaca dan memungkinkan Claude mereferensikan file berdasarkan path di giliran kemudian.
 
-## Edit prompt dengan keybinding Vim
+## Edit prompt dengan pintasan keyboard Vim
 
 Claude Code mencakup mode pengeditan gaya Vim untuk input prompt. Aktifkan melalui `/config` → Editor mode, atau dengan mengatur kunci konfigurasi global [`editorMode`](/id/settings#global-config-settings) ke `"vim"` di `~/.claude.json`. Atur Editor mode kembali ke `normal` untuk mematikannya.
 
-Mode Vim mendukung subset gerakan dan operator mode NORMAL, seperti navigasi `hjkl` dan `d`/`c`/`y` dengan objek teks. Lihat [referensi mode editor Vim](/id/interactive-mode#vim-editor-mode) untuk tabel kunci lengkap. Gerakan Vim tidak dapat dipetakan ulang melalui file keybindings.
+Mode Vim mendukung subset gerakan dan operator mode NORMAL dan VISUAL, seperti navigasi `hjkl`, seleksi `v`/`V`, dan `d`/`c`/`y` dengan objek teks. Lihat [referensi mode editor Vim](/id/interactive-mode#vim-editor-mode) untuk tabel kunci lengkap. Gerakan Vim tidak dapat dipetakan ulang melalui file pintasan keyboard.
 
 Menekan Enter masih mengirimkan prompt Anda dalam mode INSERT, tidak seperti Vim standar. Gunakan `o` atau `O` dalam mode NORMAL, atau Ctrl+J, untuk menyisipkan baris baru sebagai gantinya.
 

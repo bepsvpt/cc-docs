@@ -118,6 +118,7 @@ disallowedTools: Write, Edit
 | `PermissionDenied`    | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
 | `PostToolUse`         | After a tool call succeeds                                                                                                                             |
 | `PostToolUseFailure`  | After a tool call fails                                                                                                                                |
+| `PostToolBatch`       | After a full batch of parallel tool calls resolves, before the next model call                                                                         |
 | `Notification`        | When Claude Code sends a notification                                                                                                                  |
 | `SubagentStart`       | When a subagent is spawned                                                                                                                             |
 | `SubagentStop`        | When a subagent finishes                                                                                                                               |
@@ -142,6 +143,7 @@ disallowedTools: Write, Edit
 
 * `command`: 셸 명령어 또는 스크립트 실행
 * `http`: 이벤트 JSON을 URL로 POST 요청으로 전송
+* `mcp_tool`: 구성된 [MCP server](/ko/mcp)에서 도구 호출
 * `prompt`: LLM으로 프롬프트 평가 (컨텍스트에 대해 `$ARGUMENTS` 플레이스홀더 사용)
 * `agent`: 복잡한 검증 작업을 위해 도구가 있는 에이전트 검증자 실행
 
@@ -318,6 +320,24 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `monitors` 키를 �
 
 세션 중간에 플러그인을 비활성화해도 이미 실행 중인 monitors는 중지되지 않습니다. 세션이 끝날 때 중지됩니다.
 
+### Themes
+
+플러그인은 `/theme`에 기본 제공 프리셋 및 사용자의 로컬 테마와 함께 나타나는 색상 테마를 제공할 수 있습니다. 테마는 `themes/` 디렉토리의 JSON 파일로, `base` 프리셋과 색상 토큰의 sparse `overrides` 맵을 포함합니다.
+
+```json theme={null}
+{
+  "name": "Dracula",
+  "base": "dark",
+  "overrides": {
+    "claude": "#bd93f9",
+    "error": "#ff5555",
+    "success": "#50fa7b"
+  }
+}
+```
+
+플러그인 테마를 선택하면 사용자의 구성에 `custom:<plugin-name>:<slug>`이 유지됩니다. 플러그인 테마는 읽기 전용입니다. `/theme`에서 하나에 `Ctrl+E`를 누르면 `~/.claude/themes/`로 복사되어 사용자가 복사본을 편집할 수 있습니다.
+
 ***
 
 ## 플러그인 설치 범위
@@ -363,6 +383,7 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `monitors` 키를 �
   "hooks": "./config/hooks.json",
   "mcpServers": "./mcp-config.json",
   "outputStyles": "./styles/",
+  "themes": "./themes/",
   "lspServers": "./.lsp.json",
   "monitors": "./monitors.json",
   "dependencies": [
@@ -384,15 +405,15 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `monitors` 키를 �
 
 ### 메타데이터 필드
 
-| 필드            | 타입     | 설명                                                                 | 예시                                                 |
-| :------------ | :----- | :----------------------------------------------------------------- | :------------------------------------------------- |
-| `version`     | string | 의미 있는 버전. 마켓플레이스 항목에도 설정된 경우 `plugin.json`이 우선합니다. 한 곳에만 설정하면 됩니다. | `"2.1.0"`                                          |
-| `description` | string | 플러그인 목적에 대한 간단한 설명                                                 | `"배포 자동화 도구"`                                      |
-| `author`      | object | 작성자 정보                                                             | `{"name": "Dev Team", "email": "dev@company.com"}` |
-| `homepage`    | string | 문서 URL                                                             | `"https://docs.example.com"`                       |
-| `repository`  | string | 소스 코드 URL                                                          | `"https://github.com/user/plugin"`                 |
-| `license`     | string | 라이선스 식별자                                                           | `"MIT"`, `"Apache-2.0"`                            |
-| `keywords`    | array  | 발견 태그                                                              | `["deployment", "ci-cd"]`                          |
+| 필드            | 타입     | 설명                                                                                                                                                                                                               | 예시                                                 |
+| :------------ | :----- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------- |
+| `version`     | string | 선택사항. 의미 있는 버전. 이를 설정하면 플러그인이 해당 버전 문자열로 고정되므로 사용자는 버전을 올릴 때만 업데이트를 받습니다. 생략하면 Claude Code는 git 커밋 SHA로 폴백되므로 모든 커밋이 새 버전으로 취급됩니다. 마켓플레이스 항목에도 설정된 경우 `plugin.json`이 우선합니다. [버전 관리](#version-management)를 참조하세요. | `"2.1.0"`                                          |
+| `description` | string | 플러그인 목적에 대한 간단한 설명                                                                                                                                                                                               | `"배포 자동화 도구"`                                      |
+| `author`      | object | 작성자 정보                                                                                                                                                                                                           | `{"name": "Dev Team", "email": "dev@company.com"}` |
+| `homepage`    | string | 문서 URL                                                                                                                                                                                                           | `"https://docs.example.com"`                       |
+| `repository`  | string | 소스 코드 URL                                                                                                                                                                                                        | `"https://github.com/user/plugin"`                 |
+| `license`     | string | 라이선스 식별자                                                                                                                                                                                                         | `"MIT"`, `"Apache-2.0"`                            |
+| `keywords`    | array  | 발견 태그                                                                                                                                                                                                            | `["deployment", "ci-cd"]`                          |
 
 ### 컴포넌트 경로 필드
 
@@ -404,6 +425,7 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `monitors` 키를 �
 | `hooks`        | string\|array\|object | Hook 구성 경로 또는 인라인 구성                                                                                            | `"./my-extra-hooks.json"`                            |
 | `mcpServers`   | string\|array\|object | MCP 구성 경로 또는 인라인 구성                                                                                             | `"./my-extra-mcp-config.json"`                       |
 | `outputStyles` | string\|array         | 사용자 정의 출력 스타일 파일/디렉토리 (기본 `output-styles/` 대체)                                                                  | `"./styles/"`                                        |
+| `themes`       | string\|array         | 색상 테마 파일/디렉토리 (기본 `themes/` 대체). [테마](#themes) 참조                                                               | `"./themes/"`                                        |
 | `lspServers`   | string\|array\|object | [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) 코드 인텔리전스 구성 (정의로 이동, 참조 찾기 등) | `"./.lsp.json"`                                      |
 | `monitors`     | string\|array         | 플러그인이 활성화될 때 자동으로 시작되는 백그라운드 [Monitor](/ko/tools-reference#monitor-tool) 구성. [Monitors](#monitors) 참조           | `"./monitors.json"`                                  |
 | `userConfig`   | object                | 플러그인이 활성화될 때 사용자에게 프롬프트하는 사용자 구성 가능 값. [사용자 구성](#user-configuration) 참조                                         | 아래 참조                                                |
@@ -480,7 +502,7 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `monitors` 키를 �
 
 ### 경로 동작 규칙
 
-`skills`, `commands`, `agents`, `outputStyles` 및 `monitors`의 경우 사용자 정의 경로는 기본값을 대체합니다. 매니페스트가 `skills`를 지정하면 기본 `skills/` 디렉토리는 스캔되지 않습니다. 매니페스트가 `monitors`를 지정하면 기본 `monitors/monitors.json`은 로드되지 않습니다. [Hooks](#hooks), [MCP servers](#mcp-servers) 및 [LSP servers](#lsp-servers)는 여러 소스를 처리하기 위한 다른 의미를 가집니다.
+`skills`, `commands`, `agents`, `outputStyles`, `themes` 및 `monitors`의 경우 사용자 정의 경로는 기본값을 대체합니다. 매니페스트가 `skills`를 지정하면 기본 `skills/` 디렉토리는 스캔되지 않습니다. 매니페스트가 `monitors`를 지정하면 기본 `monitors/monitors.json`은 로드되지 않습니다. [Hooks](#hooks), [MCP servers](#mcp-servers) 및 [LSP servers](#lsp-servers)는 여러 소스를 처리하기 위한 다른 의미를 가집니다.
 
 * 모든 경로는 플러그인 루트에 상대적이어야 하며 `./`로 시작해야 합니다.
 * 사용자 정의 경로의 컴포넌트는 동일한 명명 및 네임스페이싱 규칙을 사용합니다.
@@ -629,7 +651,9 @@ enterprise-plugin/
 │   └── compliance-checker.md
 ├── output-styles/            # 출력 스타일 정의
 │   └── terse.md
-├── monitors/                 # 백그라운드 monitor 구성
+├── themes/                   # 색상 테마 정의
+│   └── dracula.json
+├── monitors/                 # 백그라운드 모니터 구성
 │   └── monitors.json
 ├── hooks/                    # Hook 구성
 │   ├── hooks.json           # 주 hook 구성
@@ -648,24 +672,25 @@ enterprise-plugin/
 ```
 
 <Warning>
-  `.claude-plugin/` 디렉토리는 `plugin.json` 파일을 포함합니다. 다른 모든 디렉토리 (commands/, agents/, skills/, output-styles/, monitors/, hooks/)는 `.claude-plugin/` 내부가 아닌 플러그인 루트에 있어야 합니다.
+  `.claude-plugin/` 디렉토리는 `plugin.json` 파일을 포함합니다. 다른 모든 디렉토리 (commands/, agents/, skills/, output-styles/, themes/, monitors/, hooks/)는 `.claude-plugin/` 내부가 아닌 플러그인 루트에 있어야 합니다.
 </Warning>
 
 ### 파일 위치 참조
 
-| 컴포넌트              | 기본 위치                        | 목적                                                                                                                             |
-| :---------------- | :--------------------------- | :----------------------------------------------------------------------------------------------------------------------------- |
-| **매니페스트**         | `.claude-plugin/plugin.json` | 플러그인 메타데이터 및 구성 (선택사항)                                                                                                         |
-| **Skills**        | `skills/`                    | `<name>/SKILL.md` 구조의 Skills                                                                                                   |
-| **Commands**      | `commands/`                  | 평면 마크다운 파일로서의 Skills. 새 플러그인에는 `skills/` 사용                                                                                    |
-| **Agents**        | `agents/`                    | Subagent 마크다운 파일                                                                                                               |
-| **Output styles** | `output-styles/`             | 출력 스타일 정의                                                                                                                      |
-| **Hooks**         | `hooks/hooks.json`           | Hook 구성                                                                                                                        |
-| **MCP servers**   | `.mcp.json`                  | MCP 서버 정의                                                                                                                      |
-| **LSP servers**   | `.lsp.json`                  | 언어 서버 구성                                                                                                                       |
-| **Monitors**      | `monitors/monitors.json`     | 백그라운드 monitor 구성                                                                                                               |
-| **Executables**   | `bin/`                       | Bash tool의 `PATH`에 추가된 실행 파일. 여기의 파일은 플러그인이 활성화된 동안 모든 Bash tool 호출에서 bare 명령어로 호출 가능                                          |
-| **Settings**      | `settings.json`              | 플러그인이 활성화될 때 적용되는 기본 구성. 현재 [`agent`](/ko/sub-agents) 및 [`subagentStatusLine`](/ko/statusline#subagent-status-lines) 키만 지원됩니다. |
+| 컴포넌트              | 기본 위치                        | 목적                                                                                                                            |
+| :---------------- | :--------------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
+| **매니페스트**         | `.claude-plugin/plugin.json` | 플러그인 메타데이터 및 구성 (선택사항)                                                                                                        |
+| **Skills**        | `skills/`                    | `<name>/SKILL.md` 구조의 Skills                                                                                                  |
+| **Commands**      | `commands/`                  | 평면 마크다운 파일로서의 Skills. 새 플러그인에는 `skills/` 사용                                                                                   |
+| **Agents**        | `agents/`                    | Subagent 마크다운 파일                                                                                                              |
+| **Output styles** | `output-styles/`             | 출력 스타일 정의                                                                                                                     |
+| **Themes**        | `themes/`                    | 색상 테마 정의                                                                                                                      |
+| **Hooks**         | `hooks/hooks.json`           | Hook 구성                                                                                                                       |
+| **MCP servers**   | `.mcp.json`                  | MCP 서버 정의                                                                                                                     |
+| **LSP servers**   | `.lsp.json`                  | 언어 서버 구성                                                                                                                      |
+| **Monitors**      | `monitors/monitors.json`     | 백그라운드 모니터 구성                                                                                                                  |
+| **Executables**   | `bin/`                       | Bash tool의 `PATH`에 추가된 실행 파일. 여기의 파일은 플러그인이 활성화된 동안 모든 Bash tool 호출에서 bare 명령어로 호출 가능                                         |
+| **Settings**      | `settings.json`              | 플러그인이 활성화될 때 적용되는 기본 구성. 현재 [`agent`](/ko/sub-agents) 및 [`subagentStatusLine`](/ko/statusline#subagent-status-lines) 키만 지원됩니다 |
 
 ***
 
@@ -806,6 +831,23 @@ claude plugin list [options]
 | `--available` | 마켓플레이스에서 사용 가능한 플러그인 포함. `--json` 필요 |     |
 | `-h, --help`  | 명령어 도움말 표시                           |     |
 
+### plugin tag
+
+현재 디렉토리의 플러그인에 대한 릴리스 git 태그를 생성합니다. 플러그인의 폴더 내에서 실행하세요. [플러그인 릴리스 태그 지정](/ko/plugin-dependencies#tag-plugin-releases-for-version-resolution)을 참조하세요.
+
+```bash theme={null}
+claude plugin tag [options]
+```
+
+**옵션:**
+
+| 옵션            | 설명                             | 기본값 |
+| :------------ | :----------------------------- | :-- |
+| `--push`      | 태그를 생성한 후 원격으로 푸시              |     |
+| `--dry-run`   | 태그를 생성하지 않고 태그 지정될 내용 출력       |     |
+| `-f, --force` | 작업 트리가 더티하거나 태그가 이미 존재해도 태그 생성 |     |
+| `-h, --help`  | 명령어 도움말 표시                     |     |
+
 ***
 
 ## 디버깅 및 개발 도구
@@ -859,7 +901,7 @@ claude plugin list [options]
 
 1. 이벤트 이름이 올바른지 확인 (대소문자 구분): `PostToolUse`, `postToolUse` 아님
 2. 매처 패턴이 도구와 일치하는지 확인: 파일 작업의 경우 `"matcher": "Write|Edit"`
-3. Hook 유형이 유효한지 확인: `command`, `http`, `prompt` 또는 `agent`
+3. Hook 유형이 유효한지 확인: `command`, `http`, `mcp_tool`, `prompt` 또는 `agent`
 
 ### MCP 서버 문제 해결
 
@@ -867,7 +909,7 @@ claude plugin list [options]
 
 1. 명령어가 존재하고 실행 가능한지 확인
 2. 모든 경로가 `${CLAUDE_PLUGIN_ROOT}` 변수를 사용하는지 확인
-3. MCP 서버 로그 확인: `claude --debug`는 초기화 오류를 표시합니다.
+3. MCP 서버 로그 확인: `claude --debug`는 초기화 오류를 표시합니다
 4. Claude Code 외부에서 서버를 수동으로 테스트
 
 **서버 도구가 나타나지 않음**:
@@ -895,7 +937,7 @@ my-plugin/
 
 **디버그 체크리스트**:
 
-1. `claude --debug`를 실행하고 "loading plugin" 메시지를 찾으세요.
+1. `claude --debug`를 실행하고 "loading plugin" 메시지를 찾으세요
 2. 각 컴포넌트 디렉토리가 디버그 출력에 나열되는지 확인
 3. 파일 권한이 플러그인 파일 읽기를 허용하는지 확인
 
@@ -905,33 +947,27 @@ my-plugin/
 
 ### 버전 관리
 
-플러그인 릴리스에 대해 의미 있는 버전 관리를 따르세요:
+Claude Code는 플러그인의 버전을 캐시 키로 사용하여 업데이트를 사용할 수 있는지 여부를 결정합니다. `/plugin update`를 실행하거나 자동 업데이트가 실행되면 Claude Code는 현재 버전을 계산하고 이미 설치된 버전과 일치하면 업데이트를 건너뜁니다.
 
-```json theme={null}
-{
-  "name": "my-plugin",
-  "version": "2.1.0"
-}
-```
+버전은 다음 중 설정된 첫 번째 항목에서 확인됩니다:
 
-**버전 형식**: `MAJOR.MINOR.PATCH`
+1. 플러그인의 `plugin.json`에 있는 `version` 필드
+2. `marketplace.json`의 플러그인 마켓플레이스 항목에 있는 `version` 필드
+3. git 호스팅 마켓플레이스의 `github`, `url`, `git-subdir` 및 상대 경로 소스에 대한 플러그인 소스의 git 커밋 SHA
+4. git 저장소 내에 있지 않은 `npm` 소스 또는 로컬 디렉토리의 경우 `unknown`
 
-* **MAJOR**: 주요 변경 사항 (호환되지 않는 API 변경)
-* **MINOR**: 새로운 기능 (하위 호환 추가)
-* **PATCH**: 버그 수정 (하위 호환 수정)
+이는 플러그인을 버전 관리하는 두 가지 방법을 제공합니다:
 
-**모범 사례**:
-
-* 첫 번째 안정 릴리스에서 `1.0.0`으로 시작
-* 변경 사항을 배포하기 전에 `plugin.json`의 버전 업데이트
-* `CHANGELOG.md` 파일에 변경 사항 문서화
-* 테스트를 위해 `2.0.0-beta.1`과 같은 사전 릴리스 버전 사용
+| 접근 방식         | 방법                                          | 업데이트 동작                                                                                             | 최적 사용                    |
+| :------------ | :------------------------------------------ | :-------------------------------------------------------------------------------------------------- | :----------------------- |
+| **명시적 버전**    | `plugin.json`에서 `"version": "2.1.0"`으로 설정   | 사용자는 이 필드를 범프할 때만 업데이트를 받습니다. 이를 범프하지 않고 새 커밋을 푸시하면 효과가 없으며 `/plugin update`는 "이미 최신 버전입니다"를 보고합니다. | 안정적인 릴리스 주기가 있는 게시된 플러그인 |
+| **커밋-SHA 버전** | `plugin.json` 및 마켓플레이스 항목 모두에서 `version` 생략 | 사용자는 플러그인의 git 소스에 대한 모든 새 커밋에서 업데이트를 받습니다                                                          | 활발히 개발 중인 내부 또는 팀 플러그인   |
 
 <Warning>
-  Claude Code는 버전을 사용하여 플러그인을 업데이트할지 여부를 결정합니다. 플러그인의 코드를 변경했지만 `plugin.json`의 버전을 범프하지 않으면 캐싱으로 인해 플러그인의 기존 사용자가 변경 사항을 보지 못합니다.
-
-  플러그인이 [마켓플레이스](/ko/plugin-marketplaces) 디렉토리 내에 있으면 `marketplace.json`을 통해 버전을 관리할 수 있으며 `plugin.json`에서 `version` 필드를 생략할 수 있습니다.
+  `plugin.json`에서 `version`을 설정하면 사용자가 변경 사항을 받기를 원할 때마다 이를 범프해야 합니다. 새 커밋을 푸시하는 것만으로는 충분하지 않습니다. Claude Code가 동일한 버전 문자열을 보고 캐시된 사본을 유지하기 때문입니다. 빠르게 반복하는 경우 `version`을 설정하지 않은 상태로 두어 대신 git 커밋 SHA가 사용되도록 하세요.
 </Warning>
+
+명시적 버전을 사용하는 경우 [의미 있는 버전 관리](https://semver.org)(`MAJOR.MINOR.PATCH`)를 따르세요: 주요 변경 사항의 경우 MAJOR를 범프하고, 새로운 기능의 경우 MINOR를 범프하고, 버그 수정의 경우 PATCH를 범프하세요. `CHANGELOG.md`에서 변경 사항을 문서화하세요.
 
 ***
 

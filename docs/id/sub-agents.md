@@ -30,6 +30,7 @@ Claude Code mencakup beberapa subagent bawaan seperti **Explore**, **Plan**, dan
 * [Cara membuat subagent Anda sendiri](#quickstart-create-your-first-subagent)
 * [Opsi konfigurasi lengkap](#configure-subagents)
 * [Pola untuk bekerja dengan subagent](#work-with-subagents)
+* [Subagent yang di-fork](#fork-the-current-conversation)
 * [Contoh subagent](#example-subagents)
 
 ## Subagent bawaan
@@ -654,6 +655,8 @@ Claude memutuskan apakah akan menjalankan subagent di foreground atau background
 
 Untuk menonaktifkan semua fungsionalitas background task, atur variabel lingkungan `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` ke `1`. Lihat [Environment variables](/id/env-vars).
 
+Ketika [fork mode](#fork-the-current-conversation) diaktifkan, setiap spawn subagent berjalan di background terlepas dari bidang `background`. Fork masih menampilkan prompt izin di terminal Anda saat terjadi daripada pra-persetujuan; subagent bernama mengikuti alur pra-persetujuan di atas.
+
 ### Pola umum
 
 #### Isolasi operasi volume tinggi
@@ -757,6 +760,59 @@ Peristiwa pemadatan dicatat dalam file transkrip subagent:
 ```
 
 Nilai `preTokens` menunjukkan berapa banyak token yang digunakan sebelum pemadatan terjadi.
+
+## Fork percakapan saat ini
+
+<Note>
+  Subagent yang di-fork bersifat eksperimental dan memerlukan Claude Code v2.1.117 atau lebih baru. Perilaku dan konfigurasi mungkin berubah di rilis mendatang. Aktifkan mereka dengan menetapkan variabel lingkungan [`CLAUDE_CODE_FORK_SUBAGENT`](/id/env-vars) ke `1`.
+</Note>
+
+Fork adalah subagent yang mewarisi seluruh percakapan sejauh ini daripada memulai segar. Ini menghilangkan isolasi input yang sebaliknya disediakan subagent: fork melihat prompt sistem yang sama, alat, model, dan riwayat pesan sebagai sesi utama, sehingga Anda dapat menyerahkan tugas sampingan tanpa menjelaskan situasinya lagi. Panggilan alat fork sendiri masih tetap keluar dari percakapan Anda dan hanya hasil akhirnya yang kembali, sehingga jendela konteks utama Anda tetap bersih. Gunakan fork ketika subagent bernama memerlukan terlalu banyak latar belakang untuk berguna, atau ketika Anda ingin mencoba beberapa pendekatan secara paralel dari titik awal yang sama.
+
+Mengaktifkan fork mode mengubah Claude Code dalam tiga cara:
+
+* Claude menelurkan fork setiap kali Claude akan menggunakan subagent [general-purpose](#built-in-subagents). Subagent bernama seperti Explore masih menelurkan seperti sebelumnya.
+* Setiap spawn subagent berjalan di [background](#run-subagents-in-foreground-or-background), apakah itu fork atau subagent bernama. Atur `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` ke `1` untuk menjaga spawn tetap sinkron.
+* Perintah `/fork` menelurkan fork daripada bertindak sebagai alias untuk [`/branch`](/id/commands).
+
+Anda dapat memulai fork sendiri dengan `/fork` diikuti oleh direktif. Claude Code memberi nama fork dari kata-kata pertama direktif. Contoh berikut mem-fork percakapan untuk draft kasus uji sementara Anda melanjutkan dengan implementasi dalam sesi utama:
+
+```text theme={null}
+/fork draft unit tests for the parser changes so far
+```
+
+Fork muncul di panel di bawah prompt Anda dan berjalan di background sementara Anda terus bekerja. Ketika selesai, hasilnya tiba sebagai pesan dalam percakapan utama Anda. Bagian berikutnya mencakup kontrol panel untuk menonton dan mengarahkan fork saat berjalan.
+
+### Amati dan arahkan fork yang sedang berjalan
+
+Fork yang sedang berjalan muncul di panel di bawah input prompt, dengan satu baris untuk sesi utama dan satu untuk setiap fork. Gunakan kunci ini untuk berinteraksi dengan panel:
+
+| Kunci     | Tindakan                                                          |
+| :-------- | :---------------------------------------------------------------- |
+| `↑` / `↓` | Pindah antar baris                                                |
+| `Enter`   | Buka transkrip fork yang dipilih dan kirimkan pesan tindak lanjut |
+| `x`       | Tutup fork yang selesai atau hentikan yang sedang berjalan        |
+| `Esc`     | Kembalikan fokus ke input prompt                                  |
+
+### Bagaimana fork berbeda dari subagent bernama
+
+Fork mewarisi segalanya yang dimiliki sesi utama pada saat spawn. Subagent bernama dimulai dari definisinya sendiri.
+
+|                        | Fork                           | Subagent bernama                                                                                      |
+| :--------------------- | :----------------------------- | :---------------------------------------------------------------------------------------------------- |
+| Konteks                | Riwayat percakapan lengkap     | Konteks segar dengan prompt yang Anda lewatkan                                                        |
+| Prompt sistem dan alat | Sama dengan sesi utama         | Dari [file definisi](#write-subagent-files) subagent                                                  |
+| Model                  | Sama dengan sesi utama         | Dari bidang `model` subagent                                                                          |
+| Izin                   | Prompt muncul di terminal Anda | [Pra-disetujui](#run-subagents-in-foreground-or-background) sebelum peluncuran, kemudian auto-ditolak |
+| Prompt cache           | Dibagikan dengan sesi utama    | Cache terpisah                                                                                        |
+
+Karena prompt sistem fork dan definisi alat identik dengan induk, permintaan pertamanya menggunakan kembali cache prompt induk. Ini membuat forking lebih murah daripada menelurkan subagent segar untuk tugas yang memerlukan konteks yang sama.
+
+Ketika Claude menelurkan fork melalui alat Agent, Claude dapat melewatkan `isolation: "worktree"` sehingga edit file fork ditulis ke git worktree terpisah daripada checkout Anda.
+
+### Keterbatasan
+
+Fork mode hanya berfungsi dalam sesi interaktif. Ini dinonaktifkan dalam [non-interactive mode](/id/headless), yang mencakup Agent SDK. Fork tidak dapat menelurkan fork lebih lanjut.
 
 ## Contoh subagent
 

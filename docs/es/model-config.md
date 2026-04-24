@@ -78,7 +78,7 @@ Archivo de configuración de ejemplo:
 
 Los administradores empresariales pueden utilizar `availableModels` en [configuración administrada o de política](/es/settings#settings-files) para restringir qué modelos pueden seleccionar los usuarios.
 
-Cuando se establece `availableModels`, los usuarios no pueden cambiar a modelos que no estén en la lista a través de `/model`, la bandera `--model`, la herramienta Config o la variable de entorno `ANTHROPIC_MODEL`.
+Cuando se establece `availableModels`, los usuarios no pueden cambiar a modelos que no estén en la lista a través de `/model`, la bandera `--model`, o la variable de entorno `ANTHROPIC_MODEL`.
 
 ```json theme={null}
 {
@@ -310,7 +310,7 @@ El sufijo `[1m]` aplica la ventana de contexto de 1M a todo el uso de ese alias,
 
 Cuando fija un modelo en un proveedor de terceros, el ID específico del proveedor aparece tal cual en el selector `/model` y Claude Code puede no reconocer qué características admite el modelo. Puede anular el nombre de visualización y declarar capacidades con variables de entorno complementarias para cada modelo fijo.
 
-Estas variables solo tienen efecto en proveedores de terceros como Bedrock, Vertex AI y Foundry. No tienen efecto cuando se utiliza la API de Anthropic directamente.
+Estas variables tienen efecto en proveedores de terceros como Bedrock, Vertex AI y Foundry. Las variables `_NAME` y `_DESCRIPTION` también tienen efecto cuando `ANTHROPIC_BASE_URL` apunta a una [puerta de enlace LLM](/es/llm-gateway). No tienen efecto cuando se conecta directamente a `api.anthropic.com`.
 
 | Variable de entorno                                   | Descripción                                                                                                                                 |
 | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -325,7 +325,7 @@ Claude Code habilita características como [niveles de esfuerzo](#adjust-effort-
 | Valor de capacidad     | Habilita                                                                                             |
 | ---------------------- | ---------------------------------------------------------------------------------------------------- |
 | `effort`               | [Niveles de esfuerzo](#adjust-effort-level) y el comando `/effort`                                   |
-| `xhigh_effort`         | El nivel de esfuerzo `xhigh`                                                                         |
+| `xhigh_effort`         | {/* min-version: 2.1.111 */}El nivel de esfuerzo `xhigh`                                             |
 | `max_effort`           | El nivel de esfuerzo `max`                                                                           |
 | `thinking`             | [Pensamiento extendido](/es/common-workflows#use-extended-thinking-thinking-mode)                    |
 | `adaptive_thinking`    | Razonamiento adaptativo que asigna dinámicamente el pensamiento basado en la complejidad de la tarea |

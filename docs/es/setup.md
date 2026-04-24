@@ -235,6 +235,8 @@ Establezca `DISABLE_AUTOUPDATER` en `"1"` en la clave `env` de su archivo [`sett
 }
 ```
 
+`DISABLE_AUTOUPDATER` solo detiene la verificación en segundo plano; `claude update` e `claude install` aún funcionan. Para bloquear todas las rutas de actualización, incluidas las actualizaciones manuales, establezca [`DISABLE_UPDATES`](/es/env-vars) en su lugar. Úselo cuando distribuya Claude Code a través de sus propios canales y necesite que los usuarios permanezcan en la versión que proporciona.
+
 ### Actualizar manualmente
 
 Para aplicar una actualización inmediatamente sin esperar la próxima verificación en segundo plano, ejecute:

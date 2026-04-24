@@ -118,6 +118,7 @@ Plugin hooks 响应与[用户定义的 hooks](/zh-CN/hooks)相同的生命周期
 | `PermissionDenied`    | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
 | `PostToolUse`         | After a tool call succeeds                                                                                                                             |
 | `PostToolUseFailure`  | After a tool call fails                                                                                                                                |
+| `PostToolBatch`       | After a full batch of parallel tool calls resolves, before the next model call                                                                         |
 | `Notification`        | When Claude Code sends a notification                                                                                                                  |
 | `SubagentStart`       | When a subagent is spawned                                                                                                                             |
 | `SubagentStop`        | When a subagent finishes                                                                                                                               |
@@ -142,6 +143,7 @@ Plugin hooks 响应与[用户定义的 hooks](/zh-CN/hooks)相同的生命周期
 
 * `command`：执行 shell 命令或脚本
 * `http`：将事件 JSON 作为 POST 请求发送到 URL
+* `mcp_tool`：在配置的 [MCP server](/zh-CN/mcp) 上调用工具
 * `prompt`：使用 LLM 评估提示（使用 `$ARGUMENTS` 占位符表示上下文）
 * `agent`：运行具有工具的 agentic 验证器以完成复杂验证任务
 
@@ -318,6 +320,24 @@ Plugin monitors 使用与[Monitor tool](/zh-CN/tools-reference#monitor-tool)相�
 
 在会话中途禁用插件不会停止已在运行的 monitors。它们在会话结束时停止。
 
+### Themes
+
+Plugins 可以提供颜色主题，这些主题与内置预设和用户的本地主题一起出现在 `/theme` 中。主题是 `themes/` 中的 JSON 文件，具有 `base` 预设和稀疏的 `overrides` 颜色令牌映射。
+
+```json theme={null}
+{
+  "name": "Dracula",
+  "base": "dark",
+  "overrides": {
+    "claude": "#bd93f9",
+    "error": "#ff5555",
+    "success": "#50fa7b"
+  }
+}
+```
+
+选择 plugin 主题会在用户的配置中持久化 `custom:<plugin-name>:<slug>`。Plugin 主题是只读的；在 `/theme` 中按 `Ctrl+E` 会将其复制到 `~/.claude/themes/`，以便用户可以编辑副本。
+
 ***
 
 ## Plugin 安装范围
@@ -363,6 +383,7 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
   "hooks": "./config/hooks.json",
   "mcpServers": "./mcp-config.json",
   "outputStyles": "./styles/",
+  "themes": "./themes/",
   "lspServers": "./.lsp.json",
   "monitors": "./monitors.json",
   "dependencies": [
@@ -384,15 +405,15 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
 
 ### 元数据字段
 
-| 字段            | 类型     | 描述                                             | 示例                                                 |
-| :------------ | :----- | :--------------------------------------------- | :------------------------------------------------- |
-| `version`     | string | 语义版本。如果也在市场条目中设置，`plugin.json` 优先。您只需在一个地方设置它。 | `"2.1.0"`                                          |
-| `description` | string | plugin 目的的简要说明                                 | `"Deployment automation tools"`                    |
-| `author`      | object | 作者信息                                           | `{"name": "Dev Team", "email": "dev@company.com"}` |
-| `homepage`    | string | 文档 URL                                         | `"https://docs.example.com"`                       |
-| `repository`  | string | 源代码 URL                                        | `"https://github.com/user/plugin"`                 |
-| `license`     | string | 许可证标识符                                         | `"MIT"`、`"Apache-2.0"`                             |
-| `keywords`    | array  | 发现标签                                           | `["deployment", "ci-cd"]`                          |
+| 字段            | 类型     | 描述                                                                                                                                                                       | 示例                                                 |
+| :------------ | :----- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------- |
+| `version`     | string | 可选。语义版本。设置此项会将 plugin 固定到该版本字符串，因此用户仅在您提升版本时才会收到更新。如果省略，Claude Code 会回退到 git commit SHA，因此每个 commit 都被视为新版本。如果也在市场条目中设置，`plugin.json` 优先。请参阅[版本管理](#version-management)。 | `"2.1.0"`                                          |
+| `description` | string | plugin 目的的简要说明                                                                                                                                                           | `"Deployment automation tools"`                    |
+| `author`      | object | 作者信息                                                                                                                                                                     | `{"name": "Dev Team", "email": "dev@company.com"}` |
+| `homepage`    | string | 文档 URL                                                                                                                                                                   | `"https://docs.example.com"`                       |
+| `repository`  | string | 源代码 URL                                                                                                                                                                  | `"https://github.com/user/plugin"`                 |
+| `license`     | string | 许可证标识符                                                                                                                                                                   | `"MIT"`、`"Apache-2.0"`                             |
+| `keywords`    | array  | 发现标签                                                                                                                                                                     | `["deployment", "ci-cd"]`                          |
 
 ### 组件路径字段
 
@@ -404,6 +425,7 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
 | `hooks`        | string\|array\|object | Hook 配置路径或内联配置                                                                                         | `"./my-extra-hooks.json"`                            |
 | `mcpServers`   | string\|array\|object | MCP 配置路径或内联配置                                                                                          | `"./my-extra-mcp-config.json"`                       |
 | `outputStyles` | string\|array         | 自定义输出样式文件/目录（替换默认 `output-styles/`）                                                                    | `"./styles/"`                                        |
+| `themes`       | string\|array         | 颜色主题文件/目录（替换默认 `themes/`）。请参阅[Themes](#themes)                                                         | `"./themes/"`                                        |
 | `lspServers`   | string\|array\|object | [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) 配置用于代码智能（转到定义、查找引用等） | `"./.lsp.json"`                                      |
 | `monitors`     | string\|array         | 后台[Monitor](/zh-CN/tools-reference#monitor-tool)配置，在 plugin 激活时自动启动。请参阅[Monitors](#monitors)           | `"./monitors.json"`                                  |
 | `userConfig`   | object                | 用户可配置的值，在启用时提示。请参阅[用户配置](#user-configuration)                                                          | 见下文                                                  |
@@ -412,7 +434,7 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
 
 ### 用户配置
 
-`userConfig` 字段声明了 Claude Code 在启用插件时提示用户的值。使用此字段而不是要求用户手动编辑 `settings.json`。
+`userConfig` 字段声明了 Claude Code 在启用 plugin 时提示用户的值。使用此字段而不是要求用户手动编辑 `settings.json`。
 
 ```json theme={null}
 {
@@ -445,13 +467,13 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
 | `multiple`    | 否  | 对于 `string` 类型，允许字符串数组                                |
 | `min` / `max` | 否  | `number` 类型的边界                                        |
 
-每个值都可用于在 MCP 和 LSP server 配置、hook 命令和 monitor 命令中作为 `${user_config.KEY}` 进行替换。非敏感值也可以在 skill 和 agent 内容中替换。所有值都作为 `CLAUDE_PLUGIN_OPTION_<KEY>` 环境变量导出到插件子进程。
+每个值都可用于在 MCP 和 LSP server 配置、hook 命令和 monitor 命令中作为 `${user_config.KEY}` 进行替换。非敏感值也可以在 skill 和 agent 内容中替换。所有值都作为 `CLAUDE_PLUGIN_OPTION_<KEY>` 环境变量导出到 plugin 子进程。
 
 非敏感值存储在 `settings.json` 中的 `pluginConfigs[<plugin-id>].options` 下。敏感值进入系统钥匙链（或在钥匙链不可用的地方进入 `~/.claude/.credentials.json`）。钥匙链存储与 OAuth 令牌共享，总限制约为 2 KB，因此请保持敏感值较小。
 
 ### Channels
 
-`channels` 字段允许插件声明一个或多个消息频道，将内容注入到对话中。每个频道绑定到插件提供的 MCP server。
+`channels` 字段允许 plugin 声明一个或多个消息频道，将内容注入到对话中。每个频道绑定到 plugin 提供的 MCP server。
 
 ```json theme={null}
 {
@@ -476,17 +498,17 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
 }
 ```
 
-`server` 字段是必需的，必须与插件的 `mcpServers` 中的键匹配。可选的每个频道 `userConfig` 使用与顶级字段相同的架构，允许插件在启用插件时提示输入机器人令牌或所有者 ID。
+`server` 字段是必需的，必须与 plugin 的 `mcpServers` 中的键匹配。可选的每个频道 `userConfig` 使用与顶级字段相同的架构，允许 plugin 在启用 plugin 时提示输入机器人令牌或所有者 ID。
 
 ### 路径行为规则
 
-对于 `skills`、`commands`、`agents`、`outputStyles` 和 `monitors`，自定义路径替换默认值。如果清单指定 `skills`，则不会扫描默认 `skills/` 目录；如果指定 `monitors`，则不会加载默认 `monitors/monitors.json`。[Hooks](#hooks)、[MCP servers](#mcp-servers) 和[LSP servers](#lsp-servers)对处理多个源有不同的语义。
+对于 `skills`、`commands`、`agents`、`outputStyles`、`themes` 和 `monitors`，自定义路径替换默认值。如果清单指定 `skills`，则不会扫描默认 `skills/` 目录；如果指定 `monitors`，则不会加载默认 `monitors/monitors.json`。[Hooks](#hooks)、[MCP servers](#mcp-servers) 和[LSP servers](#lsp-servers)对处理多个源有不同的语义。
 
 * 所有路径必须相对于 plugin 根目录，并以 `./` 开头
 * 来自自定义路径的组件使用相同的命名和命名空间规则
 * 可以将多个路径指定为数组
 * 要保留默认目录并为 skills、commands、agents 或 output styles 添加更多路径，请在数组中包含默认值：`"skills": ["./skills/", "./extras/"]`
-* 当 skill 路径指向直接包含 `SKILL.md` 的目录时，例如 `"skills": ["./"]` 指向插件根目录，frontmatter 中的 `name` 字段确定 skill 的调用名称。这提供了一个稳定的名称，无论安装目录如何。如果 frontmatter 中未设置 `name`，则使用目录基名作为后备。
+* 当 skill 路径指向直接包含 `SKILL.md` 的目录时，例如 `"skills": ["./"]` 指向 plugin 根目录，frontmatter 中的 `name` 字段确定 skill 的调用名称。这提供了一个稳定的名称，无论安装目录如何。如果 frontmatter 中未设置 `name`，则使用目录基名作为后备。
 
 **路径示例**：
 
@@ -505,11 +527,11 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
 
 ### 环境变量
 
-Claude Code 提供两个变量用于引用插件路径。两者都在 skill 内容、agent 内容、hook 命令、monitor 命令以及 MCP 或 LSP server 配置中出现的任何地方进行内联替换。两者也都作为环境变量导出到 hook 进程和 MCP 或 LSP server 子进程。
+Claude Code 提供两个变量用于引用 plugin 路径。两者都在 skill 内容、agent 内容、hook 命令、monitor 命令以及 MCP 或 LSP server 配置中出现的任何地方进行内联替换。两者也都作为环境变量导出到 hook 进程和 MCP 或 LSP server 子进程。
 
-**`${CLAUDE_PLUGIN_ROOT}`**：插件安装目录的绝对路径。使用此路径引用与插件捆绑的脚本、二进制文件和配置文件。当插件更新时，此路径会更改，因此您在此处写入的文件不会在更新后保留。
+**`${CLAUDE_PLUGIN_ROOT}`**：plugin 安装目录的绝对路径。使用此路径引用与 plugin 捆绑的脚本、二进制文件和配置文件。当 plugin 更新时，此路径会更改，因此您在此处写入的文件不会在更新后保留。
 
-**`${CLAUDE_PLUGIN_DATA}`**：用于插件状态的持久目录，在更新后保留。使用此目录用于已安装的依赖项，如 `node_modules` 或 Python 虚拟环境、生成的代码、缓存以及任何应在插件版本之间保留的其他文件。首次引用此变量时，目录会自动创建。
+**`${CLAUDE_PLUGIN_DATA}`**：用于 plugin 状态的持久目录，在更新后保留。使用此目录用于已安装的依赖项，如 `node_modules` 或 Python 虚拟环境、生成的代码、缓存以及任何应在 plugin 版本之间保留的其他文件。首次引用此变量时，目录会自动创建。
 
 ```json theme={null}
 {
@@ -530,11 +552,11 @@ Claude Code 提供两个变量用于引用插件路径。两者都在 skill 内�
 
 #### 持久数据目录
 
-`${CLAUDE_PLUGIN_DATA}` 目录解析为 `~/.claude/plugins/data/{id}/`，其中 `{id}` 是插件标识符，其中 `a-z`、`A-Z`、`0-9`、`_` 和 `-` 之外的字符被替换为 `-`。对于安装为 `formatter@my-marketplace` 的插件，目录是 `~/.claude/plugins/data/formatter-my-marketplace/`。
+`${CLAUDE_PLUGIN_DATA}` 目录解析为 `~/.claude/plugins/data/{id}/`，其中 `{id}` 是 plugin 标识符，其中 `a-z`、`A-Z`、`0-9`、`_` 和 `-` 之外的字符被替换为 `-`。对于安装为 `formatter@my-marketplace` 的 plugin，目录是 `~/.claude/plugins/data/formatter-my-marketplace/`。
 
-常见用途是一次安装语言依赖项并在会话和插件更新中重复使用它们。由于数据目录的生命周期长于任何单个插件版本，仅检查目录存在性无法检测到更新何时更改了插件的依赖项清单。推荐的模式是将捆绑的清单与数据目录中的副本进行比较，并在它们不同时重新安装。
+常见用途是一次安装语言依赖项并在会话和 plugin 更新中重复使用它们。由于数据目录的生命周期长于任何单个 plugin 版本，仅检查目录存在性无法检测到更新何时更改了 plugin 的依赖项清单。推荐的模式是将捆绑的清单与数据目录中的副本进行比较，并在它们不同时重新安装。
 
-此 `SessionStart` hook 在第一次运行时安装 `node_modules`，并在插件更新包含更改的 `package.json` 时再次安装：
+此 `SessionStart` hook 在第一次运行时安装 `node_modules`，并在 plugin 更新包含更改的 `package.json` 时再次安装：
 
 ```json theme={null}
 {
@@ -571,7 +593,7 @@ Claude Code 提供两个变量用于引用插件路径。两者都在 skill 内�
 }
 ```
 
-当您从最后一个安装了插件的范围卸载插件时，数据目录会自动删除。`/plugin` 界面显示目录大小并在删除前提示。CLI 默认删除；传递 [`--keep-data`](#plugin-uninstall) 以保留它。
+当您从最后一个安装了 plugin 的范围卸载 plugin 时，数据目录会自动删除。`/plugin` 界面显示目录大小并在删除前提示。CLI 默认删除；传递 [`--keep-data`](#plugin-uninstall) 以保留它。
 
 ***
 
@@ -629,6 +651,8 @@ enterprise-plugin/
 │   └── compliance-checker.md
 ├── output-styles/            # 输出样式定义
 │   └── terse.md
+├── themes/                   # 颜色主题定义
+│   └── dracula.json
 ├── monitors/                 # 后台 monitor 配置
 │   └── monitors.json
 ├── hooks/                    # Hook 配置
@@ -648,24 +672,25 @@ enterprise-plugin/
 ```
 
 <Warning>
-  `.claude-plugin/` 目录包含 `plugin.json` 文件。所有其他目录（commands/、agents/、skills/、output-styles/、monitors/、hooks/）必须在 plugin 根目录，而不是在 `.claude-plugin/` 内。
+  `.claude-plugin/` 目录包含 `plugin.json` 文件。所有其他目录（commands/、agents/、skills/、output-styles/、themes/、monitors/、hooks/）必须在 plugin 根目录，而不是在 `.claude-plugin/` 内。
 </Warning>
 
 ### 文件位置参考
 
-| 组件                | 默认位置                         | 目的                                                                                                                    |
-| :---------------- | :--------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
-| **清单**            | `.claude-plugin/plugin.json` | Plugin 元数据和配置（可选）                                                                                                     |
-| **Skills**        | `skills/`                    | 具有 `<name>/SKILL.md` 结构的 Skills                                                                                       |
-| **Commands**      | `commands/`                  | Skills 作为平面 Markdown 文件。新 plugins 使用 `skills/`                                                                        |
-| **Agents**        | `agents/`                    | Subagent Markdown 文件                                                                                                  |
-| **Output styles** | `output-styles/`             | 输出样式定义                                                                                                                |
-| **Hooks**         | `hooks/hooks.json`           | Hook 配置                                                                                                               |
-| **MCP servers**   | `.mcp.json`                  | MCP server 定义                                                                                                         |
-| **LSP servers**   | `.lsp.json`                  | 语言服务器配置                                                                                                               |
-| **Monitors**      | `monitors/monitors.json`     | 后台 monitor 配置                                                                                                         |
-| **Executables**   | `bin/`                       | 添加到 Bash tool 的 `PATH` 的可执行文件。此处的文件在 plugin 启用时可作为任何 Bash tool 调用中的裸命令调用                                              |
-| **Settings**      | `settings.json`              | 启用 plugin 时应用的默认配置。目前仅支持[`agent`](/zh-CN/sub-agents)和[`subagentStatusLine`](/zh-CN/statusline#subagent-status-lines)键 |
+| 组件                | 默认位置                         | 目的                                                                                                                        |
+| :---------------- | :--------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| **清单**            | `.claude-plugin/plugin.json` | Plugin 元数据和配置（可选）                                                                                                         |
+| **Skills**        | `skills/`                    | 具有 `<name>/SKILL.md` 结构的 Skills                                                                                           |
+| **Commands**      | `commands/`                  | Skills 作为平面 Markdown 文件。新 plugins 使用 `skills/`                                                                            |
+| **Agents**        | `agents/`                    | Subagent Markdown 文件                                                                                                      |
+| **Output styles** | `output-styles/`             | 输出样式定义                                                                                                                    |
+| **Themes**        | `themes/`                    | 颜色主题定义                                                                                                                    |
+| **Hooks**         | `hooks/hooks.json`           | Hook 配置                                                                                                                   |
+| **MCP servers**   | `.mcp.json`                  | MCP server 定义                                                                                                             |
+| **LSP servers**   | `.lsp.json`                  | 语言服务器配置                                                                                                                   |
+| **Monitors**      | `monitors/monitors.json`     | 后台 monitor 配置                                                                                                             |
+| **Executables**   | `bin/`                       | 添加到 Bash tool 的 `PATH` 的可执行文件。此处的文件在 plugin 启用时可作为任何 Bash tool 调用中的裸命令调用                                                  |
+| **Settings**      | `settings.json`              | 启用 plugin 时应用的默认配置。目前仅支持 [`agent`](/zh-CN/sub-agents) 和 [`subagentStatusLine`](/zh-CN/statusline#subagent-status-lines) 键 |
 
 ***
 
@@ -806,6 +831,23 @@ claude plugin list [options]
 | `--available` | 包括来自市场的可用 plugins。需要 `--json` |     |
 | `-h, --help`  | 显示命令帮助                        |     |
 
+### plugin tag
+
+为当前目录中的 plugin 创建发布 git 标签。从 plugin 的文件夹内运行。请参阅[标记 plugin 发布](/zh-CN/plugin-dependencies#tag-plugin-releases-for-version-resolution)。
+
+```bash theme={null}
+claude plugin tag [options]
+```
+
+**选项：**
+
+| 选项            | 描述                   | 默认值 |
+| :------------ | :------------------- | :-- |
+| `--push`      | 创建标签后将其推送到远程         |     |
+| `--dry-run`   | 打印将被标记的内容而不创建标签      |     |
+| `-f, --force` | 即使工作树是脏的或标签已存在，也创建标签 |     |
+| `-h, --help`  | 显示命令帮助               |     |
+
 ***
 
 ## 调试和开发工具
@@ -859,7 +901,7 @@ claude plugin list [options]
 
 1. 验证事件名称是否正确（区分大小写）：`PostToolUse`，而不是 `postToolUse`
 2. 检查匹配器模式是否与您的工具匹配：`"matcher": "Write|Edit"` 用于文件操作
-3. 确认 hook 类型有效：`command`、`http`、`prompt` 或 `agent`
+3. 确认 hook 类型有效：`command`、`http`、`mcp_tool`、`prompt` 或 `agent`
 
 ### MCP server 故障排除
 
@@ -905,33 +947,27 @@ my-plugin/
 
 ### 版本管理
 
-遵循语义版本控制进行 plugin 发布：
+Claude Code 使用 plugin 的版本作为缓存键，以确定是否有可用的更新。当你运行 `/plugin update` 或自动更新触发时，Claude Code 会计算当前版本，如果与已安装的版本匹配，则跳过更新。
 
-```json theme={null}
-{
-  "name": "my-plugin",
-  "version": "2.1.0"
-}
-```
+版本从以下第一个设置的字段解析：
 
-**版本格式**：`MAJOR.MINOR.PATCH`
+1. plugin 的 `plugin.json` 中的 `version` 字段
+2. plugin 的 `marketplace.json` 中的市场条目中的 `version` 字段
+3. plugin 源的 git 提交 SHA，用于 git 托管市场中的 `github`、`url`、`git-subdir` 和相对路径源
+4. `unknown`，用于 `npm` 源或不在 git 仓库内的本地目录
 
-* **MAJOR**：破坏性更改（不兼容的 API 更改）
-* **MINOR**：新功能（向后兼容的添加）
-* **PATCH**：错误修复（向后兼容的修复）
+这为你提供了两种方式来对 plugin 进行版本管理：
 
-**最佳实践**：
-
-* 从 `1.0.0` 开始进行第一个稳定版本
-* 在分发更改之前更新 `plugin.json` 中的版本
-* 在 `CHANGELOG.md` 文件中记录更改
-* 使用预发布版本，如 `2.0.0-beta.1` 进行测试
+| 方法            | 如何操作                                     | 更新行为                                                        | 最适合                 |
+| :------------ | :--------------------------------------- | :---------------------------------------------------------- | :------------------ |
+| **显式版本**      | 在 `plugin.json` 中设置 `"version": "2.1.0"` | 用户仅在你提升此字段时获得更新。推送新提交而不提升它没有效果，`/plugin update` 报告"已是最新版本"。 | 具有稳定发布周期的已发布 plugin |
+| **提交 SHA 版本** | 从 `plugin.json` 和市场条目中省略 `version`       | 用户在每次对 plugin 的 git 源进行新提交时获得更新                             | 正在积极开发的内部或团队 plugin |
 
 <Warning>
-  Claude Code 使用版本来确定是否更新您的 plugin。如果您更改了 plugin 的代码但没有在 `plugin.json` 中提升版本，您的 plugin 的现有用户由于缓存而看不到您的更改。
-
-  如果您的 plugin 在[市场](/zh-CN/plugin-marketplaces)目录中，您可以通过 `marketplace.json` 管理版本，而不是从 `plugin.json` 中省略 `version` 字段。
+  如果你在 `plugin.json` 中设置 `version`，你必须在每次想让用户接收更改时提升它。仅推送新提交是不够的，因为 Claude Code 看到相同的版本字符串并保留缓存副本。如果你迭代速度很快，请不设置 `version`，以便改用 git 提交 SHA。
 </Warning>
+
+如果你使用显式版本，请遵循[语义版本控制](https://semver.org)（`MAJOR.MINOR.PATCH`）：为破坏性更改提升 MAJOR，为新功能提升 MINOR，为错误修复提升 PATCH。在 `CHANGELOG.md` 中记录更改。
 
 ***
 

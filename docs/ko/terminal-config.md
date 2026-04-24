@@ -29,7 +29,7 @@ Enter를 누르면 메시지가 제출됩니다. 제출하지 않고 줄 바꿈�
 | VS Code, Cursor, Windsurf, Alacritty, Zed                                    | 한 번 `/terminal-setup` 실행         |
 | Windows Terminal, gnome-terminal, PyCharm 및 Android Studio와 같은 JetBrains IDE | 사용 불가; Ctrl+J 또는 `\` 다음 Enter 사용 |
 
-VS Code, Cursor, Windsurf, Alacritty 및 Zed의 경우 `/terminal-setup`은 Shift+Enter 및 기타 키 바인딩을 터미널의 구성 파일에 씁니다. `Found existing VSCode terminal Shift+Enter key binding`과 같은 충돌을 보고하면 VS Code의 `keybindings.json`과 같은 터미널의 자체 키 바인딩 파일에서 해당 항목을 제거하고 명령을 다시 실행하세요. tmux 또는 screen 내부가 아닌 호스트 터미널에서 직접 `/terminal-setup`을 실행하세요. 호스트 터미널의 구성에 써야 하기 때문입니다.
+VS Code, Cursor, Windsurf, Alacritty 및 Zed의 경우 `/terminal-setup`은 Shift+Enter 및 기타 키 바인딩을 터미널의 구성 파일에 씁니다. VS Code, Cursor 및 Windsurf에서는 [전체 화면 모드](/ko/fullscreen)에서 더 부드러운 스크롤링을 위해 편집기 설정에서 `terminal.integrated.mouseWheelScrollSensitivity`도 설정합니다. 기존 바인딩 및 설정은 그대로 유지됩니다. `VSCode terminal Shift+Enter key binding already configured`와 같은 메시지가 표시되면 변경이 이루어지지 않았습니다. tmux 또는 screen 내부가 아닌 호스트 터미널에서 직접 `/terminal-setup`을 실행하세요. 호스트 터미널의 구성에 써야 하기 때문입니다.
 
 tmux 내에서 실행 중인 경우 외부 터미널이 지원하더라도 Shift+Enter는 아래의 [tmux 구성](#configure-tmux)도 필요합니다.
 
@@ -107,9 +107,43 @@ set -as terminal-features 'xterm*:extkeys'
 
 ## 색상 테마 일치
 
-`/theme` 명령을 사용하거나 `/config`의 테마 선택기를 사용하여 터미널과 일치하는 Claude Code 테마를 선택하세요. 자동 옵션을 선택하면 터미널의 밝은 또는 어두운 배경을 감지하므로 테마는 터미널이 할 때마다 OS 모양 변경을 따릅니다. 사용 가능한 테마는 기본 제공되며 사용자 정의 테마 파일이 없습니다. Claude Code는 터미널 애플리케이션에서 설정하는 터미널의 자체 색상 구성표를 제어하지 않습니다.
+`/theme` 명령을 사용하거나 `/config`의 테마 선택기를 사용하여 터미널과 일치하는 Claude Code 테마를 선택하세요. 자동 옵션을 선택하면 터미널의 밝은 또는 어두운 배경을 감지하므로 테마는 터미널이 할 때마다 OS 모양 변경을 따릅니다. Claude Code는 터미널 애플리케이션에서 설정하는 터미널의 자체 색상 구성표를 제어하지 않습니다.
 
 인터페이스 하단에 표시되는 내용을 사용자 정의하려면 현재 모델, 작업 디렉토리, git 분기 또는 기타 컨텍스트를 표시하는 [사용자 정의 상태 줄](/ko/statusline)을 구성하세요.
+
+### 사용자 정의 테마 만들기
+
+<Note>
+  사용자 정의 테마는 Claude Code v2.1.118 이상이 필요합니다.
+</Note>
+
+기본 제공 사전 설정 외에도 `/theme`는 정의한 모든 사용자 정의 테마와 설치된 [플러그인](/ko/plugins-reference#themes)에서 제공한 모든 테마를 나열합니다. 목록 끝에서 \*\*새 사용자 정의 테마…\*\*를 선택하여 대화형으로 만들 수 있습니다. 테마 이름을 지정한 다음 개별 색상 토큰을 선택하여 재정의합니다. 사용자 정의 테마가 강조 표시되어 있는 동안 `Ctrl+E`를 눌러 편집합니다.
+
+각 사용자 정의 테마는 `~/.claude/themes/`의 JSON 파일입니다. `.json` 확장자를 제외한 파일 이름이 테마의 슬러그이며, 테마를 선택하면 `custom:<slug>`이 테마 기본 설정으로 저장됩니다. 파일에는 세 가지 선택적 필드가 있습니다.
+
+| 필드          | 유형     | 설명                                                                                                                               |
+| :---------- | :----- | :------------------------------------------------------------------------------------------------------------------------------- |
+| `name`      | string | `/theme`에 표시되는 표시 레이블입니다. 파일 이름 슬러그로 기본 설정됩니다.                                                                                   |
+| `base`      | string | 테마가 시작되는 기본 제공 사전 설정입니다: `dark`, `light`, `dark-daltonized`, `light-daltonized`, `dark-ansi`, 또는 `light-ansi`. `dark`로 기본 설정됩니다. |
+| `overrides` | object | 색상 토큰 이름을 색상 값으로 매핑합니다. 여기에 나열되지 않은 토큰은 기본 사전 설정으로 통과합니다.                                                                        |
+
+색상 값은 `#rrggbb`, `#rgb`, `rgb(r,g,b)`, `ansi256(n)`, 또는 `ansi:<name>`을 허용합니다. 여기서 `<name>`은 `red` 또는 `cyanBright`와 같은 16가지 표준 ANSI 색상 이름 중 하나입니다. 알 수 없는 토큰과 잘못된 색상 값은 무시되므로 오타가 렌더링을 손상시킬 수 없습니다.
+
+다음 예제는 어두운 사전 설정을 유지하지만 프롬프트 악센트, 오류 텍스트 및 성공 텍스트를 다시 칠하는 테마를 정의합니다.
+
+```json ~/.claude/themes/dracula.json theme={null}
+{
+  "name": "Dracula",
+  "base": "dark",
+  "overrides": {
+    "claude": "#bd93f9",
+    "error": "#ff5555",
+    "success": "#50fa7b"
+  }
+}
+```
+
+Claude Code는 `~/.claude/themes/`를 감시하고 파일이 변경되면 다시 로드하므로 편집기에서 만든 편집 사항이 다시 시작하지 않고도 실행 중인 세션에 적용됩니다.
 
 ## 전체 화면 렌더링으로 전환
 
@@ -145,7 +179,7 @@ VS Code 통합 터미널은 매우 큰 붙여넣기에서 Claude Code에 도달�
 
 Claude Code는 프롬프트 입력을 위한 Vim 스타일 편집 모드를 포함합니다. `/config` → 편집기 모드를 통해 활성화하거나 [`editorMode`](/ko/settings#global-config-settings) 전역 구성 키를 `~/.claude.json`에서 `"vim"`으로 설정하여 활성화하세요. 편집기 모드를 `normal`로 다시 설정하여 끄세요.
 
-Vim 모드는 `hjkl` 네비게이션 및 텍스트 객체를 사용한 `d`/`c`/`y`와 같은 NORMAL 모드 모션 및 연산자의 부분 집합을 지원합니다. 전체 키 테이블은 [Vim 편집기 모드 참조](/ko/interactive-mode#vim-editor-mode)를 참조하세요. Vim 모션은 키 바인딩 파일을 통해 다시 매핑할 수 없습니다.
+Vim 모드는 `hjkl` 네비게이션, `v`/`V` 선택, 텍스트 객체를 사용한 `d`/`c`/`y`와 같은 NORMAL 모드 및 VISUAL 모드 모션과 연산자의 부분 집합을 지원합니다. 전체 키 테이블은 [Vim 편집기 모드 참조](/ko/interactive-mode#vim-editor-mode)를 참조하세요. Vim 모션은 키 바인딩 파일을 통해 다시 매핑할 수 없습니다.
 
 INSERT 모드에서 Enter를 누르면 표준 Vim과 달리 프롬프트가 여전히 제출됩니다. 대신 NORMAL 모드에서 `o` 또는 `O`를 사용하거나 Ctrl+J를 사용하여 줄 바꿈을 삽입하세요.
 

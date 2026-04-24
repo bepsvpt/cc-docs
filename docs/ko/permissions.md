@@ -287,140 +287,26 @@ Claude Code 구성에 대한 중앙 집중식 제어가 필요한 조직의 경�
 
 다음 설정은 관리형 설정에서만 읽혀집니다. 사용자 또는 프로젝트 설정 파일에 배치하면 효과가 없습니다.
 
-| 설정                                             | 설명                                                                                                                                                                              |
-| :--------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `allowedChannelPlugins`                        | 메시지를 푸시할 수 있는 채널 플러그인의 허용 목록입니다. `channelsEnabled: true`가 필요할 때 기본 Anthropic 허용 목록을 대체합니다. [채널 플러그인이 실행될 수 있는 것을 제한합니다](/ko/channels#restrict-which-channel-plugins-can-run) 참조 |
-| `allowManagedHooksOnly`                        | `true`일 때, 관리형 훅, SDK 훅 및 관리형 설정 `enabledPlugins`에서 강제 활성화된 플러그인의 훅만 로드됩니다. 사용자, 프로젝트 및 다른 모든 플러그인 훅은 차단됩니다                                                                     |
-| `allowManagedMcpServersOnly`                   | `true`일 때, 관리형 설정의 `allowedMcpServers`만 존중됩니다. `deniedMcpServers`는 여전히 모든 소스에서 병합됩니다. [관리형 MCP 구성](/ko/mcp#managed-mcp-configuration) 참조                                        |
-| `allowManagedPermissionRulesOnly`              | `true`일 때, 사용자 및 프로젝트 설정이 `allow`, `ask` 또는 `deny` 권한 규칙을 정의하는 것을 방지합니다. 관리형 설정의 규칙만 적용됩니다                                                                                      |
-| `blockedMarketplaces`                          | 마켓플레이스 소스의 차단 목록입니다. 차단된 소스는 다운로드 전에 확인되므로 파일 시스템에 닿지 않습니다. [관리형 마켓플레이스 제한](/ko/plugin-marketplaces#managed-marketplace-restrictions) 참조                                        |
-| `channelsEnabled`                              | Team 및 Enterprise 사용자를 위한 [채널](/ko/channels)을 허용합니다. 설정되지 않거나 `false`이면 사용자가 `--channels`에 전달하는 것과 관계없이 채널 메시지 전달을 차단합니다                                                        |
-| `forceRemoteSettingsRefresh`                   | `true`일 때, 원격 관리형 설정이 새로 가져올 때까지 CLI 시작을 차단하고 가져오기에 실패하면 종료합니다. [실패 폐쇄 적용](/ko/server-managed-settings#enforce-fail-closed-startup) 참조                                          |
-| `pluginTrustMessage`                           | 설치 전에 표시되는 플러그인 신뢰 경고에 추가되는 사용자 정의 메시지                                                                                                                                          |
-| `sandbox.filesystem.allowManagedReadPathsOnly` | `true`일 때, 관리형 설정의 `filesystem.allowRead` 경로만 존중됩니다. `denyRead`는 여전히 모든 소스에서 병합됩니다                                                                                              |
-| `sandbox.network.allowManagedDomainsOnly`      | `true`일 때, 관리형 설정의 `allowedDomains` 및 `WebFetch(domain:...)` allow 규칙만 존중됩니다. 허용되지 않은 도메인은 사용자에게 프롬프트하지 않고 자동으로 차단됩니다. 거부된 도메인은 여전히 모든 소스에서 병합됩니다                               |
-| `strictKnownMarketplaces`                      | 사용자가 추가할 수 있는 플러그인 마켓플레이스를 제어합니다. [관리형 마켓플레이스 제한](/ko/plugin-marketplaces#managed-marketplace-restrictions) 참조                                                                  |
+| 설정                                             | 설명                                                                                                                                                                                          |
+| :--------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `allowedChannelPlugins`                        | 메시지를 푸시할 수 있는 채널 플러그인의 허용 목록입니다. `channelsEnabled: true`가 필요할 때 기본 Anthropic 허용 목록을 대체합니다. [채널 플러그인이 실행될 수 있는 것을 제한합니다](/ko/channels#restrict-which-channel-plugins-can-run) 참조             |
+| `allowManagedHooksOnly`                        | `true`일 때, 관리형 훅, SDK 훅 및 관리형 설정 `enabledPlugins`에서 강제 활성화된 플러그인의 훅만 로드됩니다. 사용자, 프로젝트 및 다른 모든 플러그인 훅은 차단됩니다                                                                                 |
+| `allowManagedMcpServersOnly`                   | `true`일 때, 관리형 설정의 `allowedMcpServers`만 존중됩니다. `deniedMcpServers`는 여전히 모든 소스에서 병합됩니다. [관리형 MCP 구성](/ko/mcp#managed-mcp-configuration) 참조                                                    |
+| `allowManagedPermissionRulesOnly`              | `true`일 때, 사용자 및 프로젝트 설정이 `allow`, `ask` 또는 `deny` 권한 규칙을 정의하는 것을 방지합니다. 관리형 설정의 규칙만 적용됩니다                                                                                                  |
+| `blockedMarketplaces`                          | 마켓플레이스 소스의 차단 목록입니다. 차단된 소스는 다운로드 전에 확인되므로 파일 시스템에 닿지 않습니다. [관리형 마켓플레이스 제한](/ko/plugin-marketplaces#managed-marketplace-restrictions) 참조                                                    |
+| `channelsEnabled`                              | Team 및 Enterprise 사용자를 위한 [채널](/ko/channels)을 허용합니다. 설정되지 않거나 `false`이면 사용자가 `--channels`에 전달하는 것과 관계없이 채널 메시지 전달을 차단합니다                                                                    |
+| `forceRemoteSettingsRefresh`                   | `true`일 때, 원격 관리형 설정이 새로 가져올 때까지 CLI 시작을 차단하고 가져오기에 실패하면 종료합니다. [실패 폐쇄 적용](/ko/server-managed-settings#enforce-fail-closed-startup) 참조                                                      |
+| `pluginTrustMessage`                           | 설치 전에 표시되는 플러그인 신뢰 경고에 추가되는 사용자 정의 메시지                                                                                                                                                      |
+| `sandbox.filesystem.allowManagedReadPathsOnly` | `true`일 때, 관리형 설정의 `filesystem.allowRead` 경로만 존중됩니다. `denyRead`는 여전히 모든 소스에서 병합됩니다                                                                                                          |
+| `sandbox.network.allowManagedDomainsOnly`      | `true`일 때, 관리형 설정의 `allowedDomains` 및 `WebFetch(domain:...)` allow 규칙만 존중됩니다. 허용되지 않은 도메인은 사용자에게 프롬프트하지 않고 자동으로 차단됩니다. 거부된 도메인은 여전히 모든 소스에서 병합됩니다                                           |
+| `strictKnownMarketplaces`                      | 사용자가 추가할 수 있는 플러그인 마켓플레이스를 제어합니다. [관리형 마켓플레이스 제한](/ko/plugin-marketplaces#managed-marketplace-restrictions) 참조                                                                              |
+| `wslInheritsWindowsSettings`                   | Windows HKLM 레지스트리 키 또는 `C:\Program Files\ClaudeCode\managed-settings.json`에서 `true`일 때, WSL은 `/etc/claude-code`에 추가로 Windows 정책 체인에서 관리형 설정을 읽습니다. [설정 파일](/ko/settings#settings-files) 참조 |
 
 `disableBypassPermissionsMode`는 일반적으로 조직 정책을 적용하기 위해 관리형 설정에 배치되지만 모든 범위에서 작동합니다. 사용자는 자신의 설정에서 이를 설정하여 자신을 우회 모드에서 잠글 수 있습니다.
 
 <Note>
   [Remote Control](/ko/remote-control) 및 [웹 세션](/ko/claude-code-on-the-web)에 대한 액세스는 관리형 설정 키로 제어되지 않습니다. Team 및 Enterprise 플랜에서 관리자는 [Claude Code 관리자 설정](https://claude.ai/admin-settings/claude-code)에서 이러한 기능을 활성화하거나 비활성화합니다.
 </Note>
-
-## 자동 모드 거부 검토
-
-[자동 모드](/ko/permission-modes#eliminate-prompts-with-auto-mode)가 도구 호출을 거부하면 알림이 나타나고 거부된 작업이 `/permissions`의 최근 거부 탭에 기록됩니다. 거부된 작업에서 `r`을 눌러 재시도 표시: 대화 상자를 종료하면 Claude Code가 모델에 해당 도구 호출을 재시도할 수 있음을 알리는 메시지를 보내고 대화를 재개합니다.
-
-거부에 프로그래밍 방식으로 반응하려면 [`PermissionDenied` 훅](/ko/hooks#permissiondenied)을 사용합니다.
-
-## 자동 모드 분류기 구성
-
-[자동 모드](/ko/permission-modes#eliminate-prompts-with-auto-mode)는 분류기 모델을 사용하여 각 작업이 프롬프트 없이 안전하게 실행될 수 있는지 결정합니다. 기본적으로 작업 디렉토리와 현재 저장소의 원격(있는 경우)만 신뢰합니다. 회사의 소스 제어 조직으로 푸시하거나 팀 클라우드 버킷에 쓰기와 같은 작업은 잠재적 데이터 유출로 차단됩니다.
-
-분류기가 허용하거나 차단하는 항목을 조정하려면 [CLAUDE.md](/ko/memory) 파일에 지침을 추가합니다. 분류기는 대화 옆의 신뢰할 수 있는 디렉토리에서 CLAUDE.md를 읽으므로 "절대 강제 푸시하지 마세요"와 같은 지침은 Claude와 분류기를 동시에 조종합니다. 프로젝트 규칙과 동작 규칙을 시작하는 데 여기서 시작합니다.
-
-프로젝트 전체에 적용되는 규칙(예: 신뢰할 수 있는 인프라 또는 조직 전체 거부 규칙)의 경우 `autoMode` 설정 블록을 사용합니다. 분류기는 사용자 설정, `.claude/settings.local.json` 및 관리형 설정에서 `autoMode`를 읽습니다. 체크인된 저장소가 자체 allow 규칙을 주입할 수 있으므로 `.claude/settings.json`의 공유 프로젝트 설정에서는 읽지 않습니다.
-
-| 범위               | 파일                            | 사용 대상                                |
-| :--------------- | :---------------------------- | :----------------------------------- |
-| 한 명의 개발자         | `~/.claude/settings.json`     | 개인 신뢰할 수 있는 인프라                      |
-| 한 프로젝트, 한 명의 개발자 | `.claude/settings.local.json` | 프로젝트별 신뢰할 수 있는 버킷 또는 서비스, gitignored |
-| 조직 전체            | 관리형 설정                        | 모든 개발자에게 적용되는 신뢰할 수 있는 인프라           |
-
-각 범위의 항목이 결합됩니다. 개발자는 `environment`, `allow` 및 `soft_deny`를 개인 항목으로 확장할 수 있지만 관리형 설정이 제공하는 항목을 제거할 수 없습니다. allow 규칙이 분류기 내 차단 규칙에 대한 예외로 작동하므로 개발자가 추가한 `allow` 항목은 조직 `soft_deny` 항목을 재정의할 수 있습니다: 조합은 추가적이며 하드 정책 경계가 아닙니다. 개발자가 우회할 수 없는 규칙이 필요한 경우 대신 관리형 설정에서 `permissions.deny`를 사용하여 분류기가 상담되기 전에 작업을 차단합니다.
-
-### 신뢰할 수 있는 인프라 정의
-
-대부분의 조직의 경우 `autoMode.environment`는 설정해야 할 유일한 필드입니다. 이는 분류기에 신뢰할 수 있는 저장소, 버킷 및 도메인을 알려주며 기본 제공 차단 및 allow 규칙을 건드리지 않습니다. 분류기는 `environment`를 사용하여 "외부"가 무엇인지 결정합니다: 나열되지 않은 모든 대상은 잠재적 유출 대상입니다.
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Source control: github.example.com/acme-corp and all repos under it",
-      "Trusted cloud buckets: s3://acme-build-artifacts, gs://acme-ml-datasets",
-      "Trusted internal domains: *.corp.example.com, api.internal.example.com",
-      "Key internal services: Jenkins at ci.example.com, Artifactory at artifacts.example.com"
-    ]
-  }
-}
-```
-
-항목은 산문이며 정규식이나 도구 패턴이 아닙니다. 분류기는 이들을 자연어 규칙으로 읽습니다. 새로운 엔지니어에게 인프라를 설명하는 방식으로 작성합니다. 철저한 환경 섹션은 다음을 포함합니다:
-
-* **조직**: 회사 이름 및 Claude Code가 주로 사용되는 용도(예: 소프트웨어 개발, 인프라 자동화 또는 데이터 엔지니어링)
-* **소스 제어**: 개발자가 푸시하는 모든 GitHub, GitLab 또는 Bitbucket 조직
-* **클라우드 제공자 및 신뢰할 수 있는 버킷**: Claude가 읽고 쓸 수 있어야 하는 버킷 이름 또는 접두사
-* **신뢰할 수 있는 내부 도메인**: `*.internal.example.com`과 같은 네트워크 내부의 API, 대시보드 및 서비스에 대한 호스트명
-* **주요 내부 서비스**: CI, 아티팩트 레지스트리, 내부 패키지 인덱스, 인시던트 도구
-* **추가 컨텍스트**: 규제 산업 제약, 다중 테넌트 인프라 또는 분류기가 위험으로 취급해야 할 규정 준수 요구사항
-
-유용한 시작 템플릿: 괄호로 묶인 필드를 채우고 적용되지 않는 줄을 제거합니다:
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Organization: {COMPANY_NAME}. Primary use: {PRIMARY_USE_CASE, e.g. software development, infrastructure automation}",
-      "Source control: {SOURCE_CONTROL, e.g. GitHub org github.example.com/acme-corp}",
-      "Cloud provider(s): {CLOUD_PROVIDERS, e.g. AWS, GCP, Azure}",
-      "Trusted cloud buckets: {TRUSTED_BUCKETS, e.g. s3://acme-builds, gs://acme-datasets}",
-      "Trusted internal domains: {TRUSTED_DOMAINS, e.g. *.internal.example.com, api.example.com}",
-      "Key internal services: {SERVICES, e.g. Jenkins at ci.example.com, Artifactory at artifacts.example.com}",
-      "Additional context: {EXTRA, e.g. regulated industry, multi-tenant infrastructure, compliance requirements}"
-    ]
-  }
-}
-```
-
-더 구체적인 컨텍스트를 제공할수록 분류기가 일상적인 내부 작업과 유출 시도를 더 잘 구분할 수 있습니다.
-
-한 번에 모든 것을 채울 필요는 없습니다. 합리적인 롤아웃: 기본값으로 시작하여 소스 제어 조직 및 주요 내부 서비스를 추가합니다. 이는 자신의 저장소로 푸시하는 것과 같은 가장 일반적인 거짓 양성을 해결합니다. 다음으로 신뢰할 수 있는 도메인 및 클라우드 버킷을 추가합니다. 차단이 발생할 때 나머지를 채웁니다.
-
-### 차단 및 allow 규칙 재정의
-
-두 가지 추가 필드를 사용하여 분류기의 기본 제공 규칙 목록을 바꿀 수 있습니다: `autoMode.soft_deny`는 차단되는 항목을 제어하고 `autoMode.allow`는 적용되는 예외를 제어합니다. 각각은 자연어 규칙으로 읽히는 산문 설명의 배열입니다.
-
-분류기 내에서 우선순위는: `soft_deny` 규칙이 먼저 차단하고, `allow` 규칙이 예외로 재정의하고, 명시적 사용자 의도가 둘 다 재정의합니다. 사용자의 메시지가 Claude가 수행하려는 정확한 작업을 직접적이고 구체적으로 설명하면 `soft_deny` 규칙이 일치하더라도 분류기가 허용합니다. 일반적인 요청은 계산되지 않습니다: Claude에게 "저장소 정리"를 요청하는 것은 강제 푸시를 승인하지 않지만 "이 분기를 강제 푸시"를 요청하는 것은 승인합니다.
-
-느슨하게 하려면: 파이프라인이 이미 PR 검토, CI 또는 스테이징 환경으로 보호하는 항목을 차단할 때 `soft_deny`에서 규칙을 제거하거나, 분류기가 기본 예외가 포함하지 않는 일상적인 패턴을 반복적으로 플래그할 때 `allow`에 추가합니다. 더 엄격하게 하려면: 기본값이 놓친 환경에 특정한 위험에 대해 `soft_deny`에 추가하거나 기본 예외를 보류하기 위해 `allow`에서 제거합니다. 모든 경우에 `claude auto-mode defaults`를 실행하여 전체 기본 목록을 가져온 다음 복사하여 편집합니다: 빈 목록에서 시작하지 마십시오.
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Source control: github.example.com/acme-corp and all repos under it"
-    ],
-    "allow": [
-      "Deploying to the staging namespace is allowed: staging is isolated from production and resets nightly",
-      "Writing to s3://acme-scratch/ is allowed: ephemeral bucket with a 7-day lifecycle policy"
-    ],
-    "soft_deny": [
-      "Never run database migrations outside the migrations CLI, even against dev databases",
-      "Never modify files under infra/terraform/prod/: production infrastructure changes go through the review workflow",
-      "...copy full default soft_deny list here first, then add your rules..."
-    ]
-  }
-}
-```
-
-<Danger>
-  `allow` 또는 `soft_deny`를 설정하면 해당 섹션의 전체 기본 목록이 바뀝니다. 단일 항목으로 `soft_deny`를 설정하면 모든 기본 제공 차단 규칙이 삭제됩니다: 강제 푸시, 데이터 유출, `curl | bash`, 프로덕션 배포 및 다른 모든 기본 차단 규칙이 허용됩니다. 안전하게 사용자 정의하려면 `claude auto-mode defaults`를 실행하여 기본 제공 규칙을 인쇄하고, 설정 파일에 복사한 다음, 자신의 파이프라인 및 위험 허용도에 대해 각 규칙을 검토합니다. 인프라가 이미 완화하는 위험에 대해서만 규칙을 제거합니다.
-</Danger>
-
-세 섹션은 독립적으로 평가되므로 `environment`만 설정하면 기본 `allow` 및 `soft_deny` 목록이 그대로 유지됩니다.
-
-### 기본값 및 효과적인 구성 검사
-
-`allow` 또는 `soft_deny`를 설정하면 기본값이 바뀌므로 모든 사용자 정의를 시작할 때 전체 기본 목록을 복사합니다. 세 가지 CLI 서브명령이 검사 및 검증을 도와줍니다:
-
-```bash theme={null}
-claude auto-mode defaults  # the built-in environment, allow, and soft_deny rules
-claude auto-mode config    # what the classifier actually uses: your settings where set, defaults otherwise
-claude auto-mode critique  # get AI feedback on your custom allow and soft_deny rules
-```
-
-`claude auto-mode defaults`의 출력을 파일에 저장하고, 정책과 일치하도록 목록을 편집한 다음, 결과를 설정 파일에 붙여넣습니다. 저장한 후 `claude auto-mode config`를 실행하여 효과적인 규칙이 예상한 것인지 확인합니다. 사용자 정의 규칙을 작성한 경우 `claude auto-mode critique`는 이들을 검토하고 모호하거나 중복되거나 거짓 양성을 일으킬 가능성이 있는 항목을 플래그합니다.
 
 ## 설정 우선순위
 
@@ -443,7 +329,6 @@ claude auto-mode critique  # get AI feedback on your custom allow and soft_deny 
 ## 참고 항목
 
 * [설정](/ko/settings): 권한 설정 테이블을 포함한 완전한 구성 참조
-* [자동 모드 구성](/ko/auto-mode-config): 자동 모드 분류기에 조직이 신뢰하는 인프라를 알려줍니다
 * [샌드박싱](/ko/sandboxing): Bash 명령에 대한 OS 수준 파일 시스템 및 네트워크 격리
 * [인증](/ko/authentication): Claude Code에 대한 사용자 액세스 설정
 * [보안](/ko/security): 보안 보호 및 모범 사례

@@ -7,7 +7,7 @@
 > Setzen Sie eine lokale Claude Code-Sitzung von Ihrem Telefon, Tablet oder einem beliebigen Browser aus mit Remote Control fort. Funktioniert mit claude.ai/code und der Claude-Mobile-App.
 
 <Note>
-  Remote Control ist in allen Plänen verfügbar. Bei Team und Enterprise ist es standardmäßig deaktiviert, bis ein Administrator den Remote Control-Schalter in den [Claude Code-Admin-Einstellungen](https://claude.ai/admin-settings/claude-code) aktiviert.
+  Remote Control ist in der Forschungsvorschau verfügbar und auf allen Plänen verfügbar. Bei Team und Enterprise ist es standardmäßig deaktiviert, bis ein Administrator den Remote Control-Schalter in den [Claude Code-Admin-Einstellungen](https://claude.ai/admin-settings/claude-code) aktiviert.
 </Note>
 
 Remote Control verbindet [claude.ai/code](https://claude.ai/code) oder die Claude-App für [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) und [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude) mit einer Claude Code-Sitzung, die auf Ihrem Computer ausgeführt wird. Starten Sie eine Aufgabe an Ihrem Schreibtisch und setzen Sie sie dann von Ihrem Telefon auf der Couch oder einem Browser auf einem anderen Computer fort.
@@ -188,7 +188,7 @@ Wenn Benachrichtigungen nicht ankommen:
 * **Lokaler Prozess muss weiterhin ausgeführt werden**: Remote Control wird als lokaler Prozess ausgeführt. Wenn Sie das Terminal schließen, VS Code beenden oder den `claude`-Prozess anderweitig beenden, endet die Sitzung.
 * **Längerer Netzwerkausfall**: Wenn Ihr Computer aktiv ist, aber länger als etwa 10 Minuten das Netzwerk nicht erreichen kann, läuft die Sitzung ab und der Prozess wird beendet. Führen Sie `claude remote-control` erneut aus, um eine neue Sitzung zu starten.
 * **Ultraplan trennt Remote Control**: Das Starten einer [ultraplan](/de/ultraplan)-Sitzung trennt jede aktive Remote Control-Sitzung, da beide Funktionen die Schnittstelle claude.ai/code belegen und nur eine gleichzeitig verbunden sein kann.
-* **Einige Befehle sind nur lokal verfügbar**: Befehle, die eine interaktive Auswahl im Terminal öffnen, wie `/mcp`, `/plugin` oder `/resume`, funktionieren nur über die lokale CLI. Befehle, die Textausgabe erzeugen, einschließlich `/compact`, `/clear`, `/context`, `/cost`, `/exit`, `/extra-usage`, `/recap` und `/reload-plugins`, funktionieren von mobil und Web aus.
+* **Einige Befehle sind nur lokal verfügbar**: Befehle, die eine interaktive Auswahl im Terminal öffnen, wie `/mcp`, `/plugin` oder `/resume`, funktionieren nur über die lokale CLI. Befehle, die Textausgabe erzeugen, einschließlich `/compact`, `/clear`, `/context`, `/usage`, `/exit`, `/extra-usage`, `/recap` und `/reload-plugins`, funktionieren von mobil und Web aus.
 
 ## Fehlerbehebung
 

@@ -83,12 +83,12 @@ Dieser Schnellstart führt Sie durch die Erstellung eines Plugins mit einem benu
     }
     ```
 
-    | Feld          | Zweck                                                                                                              |
-    | :------------ | :----------------------------------------------------------------------------------------------------------------- |
-    | `name`        | Eindeutige Kennung und Skill-Namespace. Skills werden mit diesem Präfix versehen (z. B. `/my-first-plugin:hello`). |
-    | `description` | Wird im Plugin-Manager angezeigt, wenn Sie Plugins durchsuchen oder installieren.                                  |
-    | `version`     | Verfolgen Sie Releases mit [semantischer Versionierung](/de/plugins-reference#version-management).                 |
-    | `author`      | Optional. Hilfreich für die Zuordnung.                                                                             |
+    | Feld          | Zweck                                                                                                                                                                                                                                                                                       |
+    | :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+    | `name`        | Eindeutige Kennung und Skill-Namespace. Skills werden mit diesem Präfix versehen (z. B. `/my-first-plugin:hello`).                                                                                                                                                                          |
+    | `description` | Wird im Plugin-Manager angezeigt, wenn Sie Plugins durchsuchen oder installieren.                                                                                                                                                                                                           |
+    | `version`     | Optional. Falls gesetzt, erhalten Benutzer nur Updates, wenn Sie dieses Feld erhöhen. Falls weggelassen und Ihr Plugin wird über Git verteilt, wird der Commit-SHA verwendet und jeder Commit zählt als neue Version. Siehe [Versionsverwaltung](/de/plugins-reference#version-management). |
+    | `author`      | Optional. Hilfreich für die Zuordnung.                                                                                                                                                                                                                                                      |
 
     Für zusätzliche Felder wie `homepage`, `repository` und `license` siehe das [vollständige Manifest-Schema](/de/plugins-reference#plugin-manifest-schema).
   </Step>
@@ -328,7 +328,7 @@ Wenn Ihr Plugin nicht wie erwartet funktioniert:
 Wenn Ihr Plugin bereit zum Teilen ist:
 
 1. **Fügen Sie Dokumentation hinzu**: Fügen Sie eine `README.md` mit Installations- und Verwendungsanweisungen ein
-2. **Versionieren Sie Ihr Plugin**: Verwenden Sie [semantische Versionierung](/de/plugins-reference#version-management) in Ihrer `plugin.json`
+2. **Wählen Sie eine Versionierungsstrategie**: Entscheiden Sie, ob Sie eine explizite `version` setzen oder sich auf den Git-Commit-SHA verlassen. Siehe [Versionsverwaltung](/de/plugins-reference#version-management)
 3. **Erstellen oder verwenden Sie einen Marketplace**: Verteilen Sie über [Plugin-Marketplaces](/de/plugin-marketplaces) zur Installation
 4. **Testen Sie mit anderen**: Lassen Sie Teamkollegen das Plugin vor einer breiteren Verteilung testen
 

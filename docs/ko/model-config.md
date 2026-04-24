@@ -78,7 +78,7 @@ claude --model opus
 
 엔터프라이즈 관리자는 [관리 또는 정책 설정](/ko/settings#settings-files)에서 `availableModels`을 사용하여 사용자가 선택할 수 있는 모델을 제한할 수 있습니다.
 
-`availableModels`이 설정되면 사용자는 `/model`, `--model` 플래그, Config 도구 또는 `ANTHROPIC_MODEL` 환경 변수를 통해 목록에 없는 모델로 전환할 수 없습니다.
+`availableModels`이 설정되면 사용자는 `/model`, `--model` 플래그 또는 `ANTHROPIC_MODEL` 환경 변수를 통해 목록에 없는 모델로 전환할 수 없습니다.
 
 ```json theme={null}
 {
@@ -310,7 +310,7 @@ export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7[1m]'
 
 타사 제공자에서 모델을 고정하면 제공자별 ID가 `/model` 선택기에 그대로 나타나고 Claude Code는 모델이 지원하는 기능을 인식하지 못할 수 있습니다. 각 고정된 모델에 대한 동반 환경 변수로 표시 이름과 기능을 선언할 수 있습니다.
 
-이러한 변수는 Bedrock, Vertex AI 및 Foundry와 같은 타사 제공자에서만 적용됩니다. Anthropic API를 직접 사용할 때는 영향을 주지 않습니다.
+이러한 변수는 Bedrock, Vertex AI 및 Foundry와 같은 타사 제공자에서 적용됩니다. `_NAME` 및 `_DESCRIPTION` 변수는 `ANTHROPIC_BASE_URL`이 [LLM gateway](/ko/llm-gateway)를 가리킬 때도 적용됩니다. `api.anthropic.com`에 직접 연결할 때는 영향을 주지 않습니다.
 
 | 환경 변수                                                 | 설명                                                                         |
 | ----------------------------------------------------- | -------------------------------------------------------------------------- |

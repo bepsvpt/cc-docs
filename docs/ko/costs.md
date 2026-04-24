@@ -6,21 +6,21 @@
 
 > 토큰 사용량을 추적하고, 팀 지출 한도를 설정하며, 컨텍스트 관리, 모델 선택, 확장 사고 설정 및 전처리 hooks를 통해 Claude Code 비용을 절감합니다.
 
-Claude Code는 각 상호작용마다 토큰을 소비합니다. 비용은 코드베이스 크기, 쿼리 복잡도, 대화 길이에 따라 달라집니다. 평균 비용은 개발자당 하루에 $6이며, 90%의 사용자는 일일 비용이 $12 이하로 유지됩니다.
+Claude Code는 API 토큰 소비량으로 청구됩니다. 구독 요금제 가격(Pro, Max, Team, Enterprise)은 [claude.com/pricing](https://claude.com/pricing)을 참조하십시오. 개발자당 비용은 모델 선택, 코드베이스 크기, 여러 인스턴스 실행 또는 자동화와 같은 사용 패턴에 따라 크게 달라집니다.
 
-팀 사용의 경우, Claude Code는 API 토큰 소비량으로 청구됩니다. 평균적으로 Claude Code는 Sonnet 4.6으로 개발자당 월 약 \$100-200의 비용이 발생하지만, 사용자가 실행 중인 인스턴스 수와 자동화에서 사용 여부에 따라 큰 편차가 있습니다.
+엔터프라이즈 배포 전반에 걸쳐 평균 비용은 개발자당 활성 일일 약 $13이며, 개발자당 월 $150-250이고, 90%의 사용자는 활성 일일 비용이 \$30 이하로 유지됩니다. 팀의 지출을 추정하려면 작은 파일럿 그룹으로 시작하고 아래의 추적 도구를 사용하여 더 광범위한 롤아웃 전에 기준선을 설정하십시오.
 
 이 페이지에서는 [비용 추적 방법](#track-your-costs), [팀 비용 관리](#managing-costs-for-teams), [토큰 사용량 감소](#reduce-token-usage) 방법을 다룹니다.
 
 ## 비용 추적
 
-### `/cost` 명령 사용
+### `/usage` 명령 사용
 
 <Note>
-  `/cost` 명령은 API 토큰 사용량을 표시하며 API 사용자를 위한 것입니다. Claude Max 및 Pro 구독자는 구독에 사용량이 포함되어 있으므로 `/cost` 데이터는 청구 목적으로 관련이 없습니다. 구독자는 `/stats`를 사용하여 사용 패턴을 볼 수 있습니다.
+  `/usage`의 Session 블록은 API 토큰 사용량을 표시하며 API 사용자를 위한 것입니다. Claude Max 및 Pro 구독자는 구독에 사용량이 포함되어 있으므로 세션 비용 수치는 청구 목적으로 관련이 없습니다. 구독자는 동일한 화면에서 요금제 사용량 막대 및 활동 통계를 볼 수 있습니다.
 </Note>
 
-`/cost` 명령은 현재 세션에 대한 자세한 토큰 사용량 통계를 제공합니다:
+`/usage` 명령은 현재 세션에 대한 자세한 토큰 사용량 통계를 제공합니다. 달러 수치는 토큰 수에서 로컬로 계산된 추정치이며 실제 청구서와 다를 수 있습니다. 권위 있는 청구를 위해 [Claude Console](https://platform.claude.com/usage)의 사용량 페이지를 참조하십시오.
 
 ```text theme={null}
 Total cost:            $0.55
@@ -31,10 +31,12 @@ Total code changes:    0 lines added, 0 lines removed
 
 ## 팀 비용 관리
 
-Claude API를 사용할 때, [워크스페이스 지출 한도를 설정](https://platform.claude.com/docs/ko/build-with-claude/workspaces#workspace-limits)하여 전체 Claude Code 워크스페이스 지출을 제어할 수 있습니다. 관리자는 Console에서 [비용 및 사용량 보고서를 볼 수 있습니다](https://platform.claude.com/docs/ko/build-with-claude/workspaces#usage-and-cost-tracking).
+Claude API를 사용할 때, 전체 Claude Code 워크스페이스 지출에 대해 [워크스페이스 지출 한도를 설정](https://platform.claude.com/docs/en/build-with-claude/workspaces#workspace-limits)할 수 있습니다. 관리자는 Console에서 [비용 및 사용량 보고서를 볼 수 있습니다](https://platform.claude.com/docs/en/build-with-claude/workspaces#usage-and-cost-tracking).
 
 <Note>
   Claude Code를 Claude Console 계정으로 처음 인증할 때, "Claude Code"라는 워크스페이스가 자동으로 생성됩니다. 이 워크스페이스는 조직의 모든 Claude Code 사용에 대한 중앙 집중식 비용 추적 및 관리를 제공합니다. 이 워크스페이스에 대해 API 키를 생성할 수 없습니다. 이는 Claude Code 인증 및 사용 전용입니다.
+
+  사용자 정의 속도 제한이 있는 조직의 경우, 이 워크스페이스의 Claude Code 트래픽은 조직의 전체 API 속도 제한에 포함됩니다. Claude Console의 이 워크스페이스의 한도 페이지에서 [워크스페이스 속도 제한](https://platform.claude.com/docs/en/api/rate-limits#setting-lower-limits-for-workspaces)을 설정하여 Claude Code의 할당량을 제한하고 다른 프로덕션 워크로드를 보호할 수 있습니다.
 </Note>
 
 Bedrock, Vertex 및 Foundry에서 Claude Code는 클라우드에서 메트릭을 전송하지 않습니다. 비용 메트릭을 얻으려면 여러 대규모 엔터프라이즈에서 [LiteLLM](/ko/llm-gateway#litellm-configuration)을 사용한다고 보고했으며, 이는 회사가 [키별 지출을 추적](https://docs.litellm.ai/docs/proxy/virtual_keys#tracking-spend)하는 데 도움이 되는 오픈소스 도구입니다. 이 프로젝트는 Anthropic과 무관하며 보안 감사를 받지 않았습니다.
@@ -80,7 +82,7 @@ Bedrock, Vertex 및 Foundry에서 Claude Code는 클라우드에서 메트릭을
 
 ### 컨텍스트를 사전에 관리하기
 
-`/cost`를 사용하여 현재 토큰 사용량을 확인하거나, [상태 줄을 구성](/ko/statusline#context-window-usage)하여 지속적으로 표시하십시오.
+`/usage`를 사용하여 현재 토큰 사용량을 확인하거나, [상태 줄을 구성](/ko/statusline#context-window-usage)하여 지속적으로 표시하십시오.
 
 * **작업 간 지우기**: 관련 없는 작업으로 전환할 때 `/clear`를 사용하여 새로 시작하십시오. 오래된 컨텍스트는 이후의 모든 메시지에서 토큰을 낭비합니다. 지우기 전에 `/rename`을 사용하여 나중에 세션을 쉽게 찾을 수 있도록 한 다음, `/resume`을 사용하여 돌아가십시오.
 * **사용자 정의 compaction 지침 추가**: `/compact Focus on code samples and API usage`는 Claude에게 요약 중에 보존할 내용을 알려줍니다.
@@ -99,11 +101,10 @@ Sonnet은 대부분의 코딩 작업을 잘 처리하며 Opus보다 비용이 �
 
 ### MCP server 오버헤드 감소
 
-각 MCP server는 유휴 상태에서도 도구 정의를 컨텍스트에 추가합니다. `/context`를 실행하여 공간을 소비하는 것을 확인하십시오.
+MCP 도구 정의는 [기본적으로 연기됩니다](/ko/mcp#scale-with-mcp-tool-search). 따라서 Claude가 특정 도구를 사용할 때까지 도구 이름만 컨텍스트에 들어갑니다. `/context`를 실행하여 공간을 소비하는 것을 확인하십시오.
 
-* **사용 가능한 경우 CLI 도구 선호**: `gh`, `aws`, `gcloud`, `sentry-cli`와 같은 도구는 지속적인 도구 정의를 추가하지 않기 때문에 MCP server보다 컨텍스트 효율적입니다. Claude는 오버헤드 없이 CLI 명령을 직접 실행할 수 있습니다.
+* **사용 가능한 경우 CLI 도구 선호**: `gh`, `aws`, `gcloud`, `sentry-cli`와 같은 도구는 도구별 목록을 추가하지 않기 때문에 MCP server보다 컨텍스트 효율적입니다. Claude는 CLI 명령을 직접 실행할 수 있습니다.
 * **사용하지 않는 server 비활성화**: `/mcp`를 실행하여 구성된 server를 확인하고 적극적으로 사용하지 않는 것을 비활성화하십시오.
-* **도구 검색은 자동입니다**: MCP 도구 설명이 컨텍스트 윈도우의 10%를 초과할 때, Claude Code는 자동으로 이를 연기하고 [도구 검색](/ko/mcp#scale-with-mcp-tool-search)을 통해 필요에 따라 도구를 로드합니다. 연기된 도구는 실제로 사용될 때만 컨텍스트에 들어가므로, 더 낮은 임계값은 공간을 소비하는 유휴 도구 정의가 더 적다는 의미입니다. `ENABLE_TOOL_SEARCH=auto:<N>`으로 더 낮은 임계값을 설정하십시오(예: `auto:5`는 도구가 컨텍스트 윈도우의 5%를 초과할 때 트리거됨).
 
 ### 타입 언어를 위한 코드 인텔리전스 플러그인 설치
 
@@ -161,11 +162,11 @@ Sonnet은 대부분의 코딩 작업을 잘 처리하며 Opus보다 비용이 �
 
 ### CLAUDE.md에서 skills로 지침 이동
 
-[CLAUDE.md](/ko/memory) 파일은 세션 시작 시 컨텍스트에 로드됩니다. PR 검토 또는 데이터베이스 마이그레이션과 같은 특정 워크플로우에 대한 자세한 지침이 포함되어 있으면, 관련 없는 작업을 수행할 때도 해당 토큰이 존재합니다. [Skills](/ko/skills)는 호출될 때만 필요에 따라 로드되므로, 특화된 지침을 skills로 이동하면 기본 컨텍스트를 더 작게 유지합니다. CLAUDE.md를 필수 항목만 포함하여 약 500줄 이하로 유지하십시오.
+[CLAUDE.md](/ko/memory) 파일은 세션 시작 시 컨텍스트에 로드됩니다. PR 검토 또는 데이터베이스 마이그레이션과 같은 특정 워크플로우에 대한 자세한 지침이 포함되어 있으면, 관련 없는 작업을 수행할 때도 해당 토큰이 존재합니다. [Skills](/ko/skills)는 호출될 때만 필요에 따라 로드되므로, 특화된 지침을 skills로 이동하면 기본 컨텍스트를 더 작게 유지합니다. CLAUDE.md를 필수 항목만 포함하여 약 200줄 이하로 유지하십시오.
 
 ### 확장 사고 조정
 
-확장 사고는 기본적으로 31,999 토큰의 예산으로 활성화되어 있습니다. 복잡한 계획 및 추론 작업의 성능을 크게 향상시키기 때문입니다. 그러나 사고 토큰은 출력 토큰으로 청구되므로, 깊은 추론이 필요하지 않은 더 간단한 작업의 경우, `/effort`를 사용하거나 `/model`에서 [노력 수준](/ko/model-config#adjust-effort-level)을 낮추거나, `/config`에서 사고를 비활성화하거나, 예산을 낮춤으로써(예: `MAX_THINKING_TOKENS=8000`) 비용을 줄일 수 있습니다.
+확장 사고는 기본적으로 활성화되어 있습니다. 복잡한 계획 및 추론 작업의 성능을 크게 향상시키기 때문입니다. 사고 토큰은 출력 토큰으로 청구되며, 기본 예산은 모델에 따라 수만 개의 토큰이 될 수 있습니다. 깊은 추론이 필요하지 않은 더 간단한 작업의 경우, `/effort`를 사용하거나 `/model`에서 [노력 수준](/ko/model-config#adjust-effort-level)을 낮추거나, `/config`에서 사고를 비활성화하거나, `MAX_THINKING_TOKENS=8000`으로 예산을 낮춤으로써 비용을 줄일 수 있습니다.
 
 ### 자세한 작업을 subagents에 위임
 
@@ -193,10 +194,10 @@ Sonnet은 대부분의 코딩 작업을 잘 처리하며 Opus보다 비용이 �
 Claude Code는 유휴 상태에서도 일부 백그라운드 기능에 토큰을 사용합니다:
 
 * **대화 요약**: `claude --resume` 기능을 위해 이전 대화를 요약하는 백그라운드 작업
-* **명령 처리**: `/cost`와 같은 일부 명령은 상태를 확인하기 위해 요청을 생성할 수 있습니다
+* **명령 처리**: `/usage`와 같은 일부 명령은 상태를 확인하기 위해 요청을 생성할 수 있습니다
 
 이러한 백그라운드 프로세스는 활성 상호작용 없이도 세션당 적은 양의 토큰(일반적으로 \$0.04 미만)을 소비합니다.
 
 ## Claude Code 동작 변경 이해
 
-Claude Code는 비용 보고를 포함한 기능 작동 방식을 변경할 수 있는 정기적인 업데이트를 받습니다. `claude --version`을 실행하여 현재 버전을 확인하십시오. 특정 청구 질문의 경우, [Console 계정](https://platform.claude.com/login)을 통해 Anthropic 지원에 문의하십시오. 팀 배포의 경우, 더 광범위한 롤아웃 전에 사용 패턴을 설정하기 위해 작은 파일럿 그룹으로 시작하십시오.
+Claude Code는 비용 보고를 포함한 기능 작동 방식을 변경할 수 있는 정기적인 업데이트를 받습니다. `claude --version`을 실행하여 현재 버전을 확인하십시오. 특정 청구 질문의 경우, [Console 계정](https://platform.claude.com/login)을 통해 Anthropic 지원에 문의하십시오.

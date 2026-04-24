@@ -68,7 +68,7 @@ export const ContactSalesCard = ({surface}) => {
           <a href={`https://claude.com/pricing?${utm('view_plans')}#plans-business`} className="cc-cs-btn-ghost">
             View plans
           </a>
-          <a href={`https://www.anthropic.com/contact-sales?${utm('contact_sales')}`} className="cc-cs-btn-clay">
+          <a href={`https://claude.com/contact-sales?${utm('contact_sales')}`} className="cc-cs-btn-clay">
             Contact sales {iconArrowRight()}
           </a>
         </div>
@@ -283,6 +283,9 @@ export ANTHROPIC_VERTEX_PROJECT_ID=YOUR-PROJECT-ID
 # 선택사항: 필요한 경우 prompt caching 비활성화
 export DISABLE_PROMPT_CACHING=1
 
+# 선택사항: 기본 5분 대신 1시간 prompt cache TTL 요청
+export ENABLE_PROMPT_CACHING_1H=1
+
 # CLOUD_ML_REGION=global일 때, 전역 엔드포인트를 지원하지 않는 모델의 지역 재정의
 export VERTEX_REGION_CLAUDE_HAIKU_4_5=us-east5
 export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
@@ -290,7 +293,7 @@ export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 
 대부분의 모델 버전에는 해당하는 `VERTEX_REGION_CLAUDE_*` 변수가 있습니다. 전체 목록은 [환경 변수 참조](/ko/env-vars)를 참조하십시오. [Vertex Model Garden](https://console.cloud.google.com/vertex-ai/model-garden)에서 어떤 모델이 전역 엔드포인트를 지원하는지 또는 지역 전용인지 확인하십시오.
 
-[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)은 `cache_control` ephemeral 플래그를 지정할 때 자동으로 지원됩니다. 이를 비활성화하려면 `DISABLE_PROMPT_CACHING=1`을 설정하십시오. 높은 속도 제한을 위해 Google Cloud 지원팀에 문의하십시오. Vertex AI를 사용할 때 `/login` 및 `/logout` 명령은 Google Cloud 자격증명을 통해 인증이 처리되므로 비활성화됩니다.
+[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)은 자동으로 활성화됩니다. 이를 비활성화하려면 `DISABLE_PROMPT_CACHING=1`을 설정하십시오. 기본 5분 대신 1시간 캐시 TTL을 요청하려면 `ENABLE_PROMPT_CACHING_1H=1`을 설정하십시오. 1시간 TTL을 사용한 캐시 쓰기는 더 높은 요금으로 청구됩니다. 높은 속도 제한을 위해 Google Cloud 지원팀에 문의하십시오. Vertex AI를 사용할 때 `/login` 및 `/logout` 명령은 Google Cloud 자격증명을 통해 인증이 처리되므로 비활성화됩니다.
 
 ### 5. 모델 버전 고정
 

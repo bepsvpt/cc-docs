@@ -83,12 +83,12 @@ Questo quickstart ti guida attraverso la creazione di un plugin con uno skill pe
     }
     ```
 
-    | Campo         | Scopo                                                                                                                    |
-    | :------------ | :----------------------------------------------------------------------------------------------------------------------- |
-    | `name`        | Identificatore univoco e namespace dello skill. Gli skill sono prefissati con questo (ad es., `/my-first-plugin:hello`). |
-    | `description` | Mostrato nel plugin manager quando si sfogliano o si installano plugin.                                                  |
-    | `version`     | Traccia i rilasci usando il [versionamento semantico](/it/plugins-reference#version-management).                         |
-    | `author`      | Opzionale. Utile per l'attribuzione.                                                                                     |
+    | Campo         | Scopo                                                                                                                                                                                                                                                                                                   |
+    | :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+    | `name`        | Identificatore univoco e namespace dello skill. Gli skill sono prefissati con questo (ad es., `/my-first-plugin:hello`).                                                                                                                                                                                |
+    | `description` | Mostrato nel plugin manager quando si sfogliano o si installano plugin.                                                                                                                                                                                                                                 |
+    | `version`     | Opzionale. Se impostato, gli utenti ricevono aggiornamenti solo quando aumenti questo campo. Se omesso e il tuo plugin è distribuito tramite git, viene utilizzato il commit SHA e ogni commit conta come una nuova versione. Vedi [gestione della versione](/it/plugins-reference#version-management). |
+    | `author`      | Opzionale. Utile per l'attribuzione.                                                                                                                                                                                                                                                                    |
 
     Per campi aggiuntivi come `homepage`, `repository` e `license`, vedi lo [schema manifest completo](/it/plugins-reference#plugin-manifest-schema).
   </Step>
@@ -328,7 +328,7 @@ Se il tuo plugin non funziona come previsto:
 Quando il tuo plugin è pronto per essere condiviso:
 
 1. **Aggiungi documentazione**: Includi un `README.md` con istruzioni di installazione e utilizzo
-2. **Versiona il tuo plugin**: Usa il [versionamento semantico](/it/plugins-reference#version-management) nel tuo `plugin.json`
+2. **Scegli una strategia di versionamento**: Decidi se impostare una `version` esplicita o affidarti al commit SHA di git. Vedi [gestione della versione](/it/plugins-reference#version-management)
 3. **Crea o usa un marketplace**: Distribuisci tramite [marketplace di plugin](/it/plugin-marketplaces) per l'installazione
 4. **Testa con altri**: Fai testare il plugin ai colleghi del team prima di una distribuzione più ampia
 

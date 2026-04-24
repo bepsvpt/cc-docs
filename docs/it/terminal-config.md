@@ -17,7 +17,7 @@ Claude Code funziona in qualsiasi terminale senza configurazione. Questa pagina 
 
 Questa pagina riguarda come far inviare al tuo terminale i segnali giusti a Claude Code. Per modificare i tasti a cui Claude Code stesso risponde, consulta invece [scorciatoie da tastiera](/it/keybindings).
 
-## Enter multiline prompts
+## Inserire prompt multilinea
 
 Premere Invio invia il tuo messaggio. Per aggiungere un'interruzione di riga senza inviare, premi Ctrl+J, oppure digita `\` e poi premi Invio. Entrambi funzionano in ogni terminale senza configurazione.
 
@@ -29,7 +29,7 @@ Nella maggior parte dei terminali puoi anche premere Shift+Invio, ma il supporto
 | VS Code, Cursor, Windsurf, Alacritty, Zed                                      | Esegui `/terminal-setup` una volta          |
 | Windows Terminal, gnome-terminal, JetBrains IDEs come PyCharm e Android Studio | Non disponibile; usa Ctrl+J o `\` poi Invio |
 
-Per VS Code, Cursor, Windsurf, Alacritty e Zed, `/terminal-setup` scrive Shift+Invio e altre scorciatoie da tastiera nel file di configurazione del terminale. Se segnala un conflitto come `Found existing VSCode terminal Shift+Enter key binding`, rimuovi quella voce dal file delle scorciatoie da tastiera del terminale, ad esempio `keybindings.json` di VS Code, ed esegui il comando di nuovo. Esegui `/terminal-setup` direttamente nel terminale host piuttosto che dentro tmux o screen, poiché ha bisogno di scrivere nella configurazione del terminale host.
+Per VS Code, Cursor, Windsurf, Alacritty e Zed, `/terminal-setup` scrive Shift+Invio e altre scorciatoie da tastiera nel file di configurazione del terminale. In VS Code, Cursor e Windsurf imposta anche `terminal.integrated.mouseWheelScrollSensitivity` nelle impostazioni dell'editor per uno scorrimento più fluido in [modalità a schermo intero](/it/fullscreen). I binding e le impostazioni esistenti rimangono in posizione; se vedi un messaggio come `VSCode terminal Shift+Enter key binding already configured`, non è stata apportata alcuna modifica. Esegui `/terminal-setup` direttamente nel terminale host piuttosto che dentro tmux o screen, poiché ha bisogno di scrivere nella configurazione del terminale host.
 
 Se stai eseguendo dentro tmux, Shift+Invio richiede anche la [configurazione tmux di seguito](#configure-tmux) anche quando il terminale esterno la supporta.
 
@@ -105,11 +105,45 @@ set -as terminal-features 'xterm*:extkeys'
 
 La riga `allow-passthrough` consente alle notifiche e agli aggiornamenti di avanzamento di raggiungere iTerm2, Ghostty o Kitty invece di essere inghiottiti da tmux. Le righe `extended-keys` consentono a tmux di distinguere Shift+Invio da Invio semplice in modo che il scorciatoia della nuova riga funzioni.
 
-## Match the color theme
+## Abbina il tema dei colori
 
-Usa il comando `/theme`, o il selettore di tema in `/config`, per scegliere un tema di Claude Code che corrisponda al tuo terminale. Selezionando l'opzione auto rileva lo sfondo chiaro o scuro del tuo terminale, quindi il tema segue i cambiamenti di aspetto del sistema operativo ogni volta che il tuo terminale lo fa. I temi disponibili sono incorporati; non c'è un file di tema personalizzato. Claude Code non controlla lo schema di colori del terminale stesso, che è impostato dall'applicazione del terminale.
+Usa il comando `/theme`, o il selettore di tema in `/config`, per scegliere un tema di Claude Code che corrisponda al tuo terminale. Selezionando l'opzione auto rileva lo sfondo chiaro o scuro del tuo terminale, quindi il tema segue i cambiamenti di aspetto del sistema operativo ogni volta che il tuo terminale lo fa. Claude Code non controlla lo schema di colori del terminale stesso, che è impostato dall'applicazione del terminale.
 
 Per personalizzare ciò che appare in fondo all'interfaccia, configura una [linea di stato personalizzata](/it/statusline) che mostra il modello corrente, la directory di lavoro, il ramo git o altro contesto.
+
+### Crea un tema personalizzato
+
+<Note>
+  I temi personalizzati richiedono Claude Code v2.1.118 o versioni successive.
+</Note>
+
+Oltre ai preset incorporati, `/theme` elenca tutti i temi personalizzati che hai definito e tutti i temi forniti dai [plugin](/it/plugins-reference#themes) installati. Seleziona **Nuovo tema personalizzato…** alla fine dell'elenco per crearne uno in modo interattivo: dai un nome al tema, quindi scegli i singoli token di colore da sovrascrivere. Premi `Ctrl+E` mentre un tema personalizzato è evidenziato per modificarlo.
+
+Ogni tema personalizzato è un file JSON in `~/.claude/themes/`. Il nome del file senza l'estensione `.json` è lo slug del tema, e selezionare il tema memorizza `custom:<slug>` come preferenza del tema. Il file ha tre campi facoltativi:
+
+| Campo       | Tipo   | Descrizione                                                                                                                                         |
+| :---------- | :----- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`      | string | Etichetta di visualizzazione mostrata in `/theme`. Predefinito al nome del file slug                                                                |
+| `base`      | string | Preset incorporato da cui inizia il tema: `dark`, `light`, `dark-daltonized`, `light-daltonized`, `dark-ansi`, o `light-ansi`. Predefinito a `dark` |
+| `overrides` | object | Mappa dei nomi dei token di colore ai valori di colore. I token non elencati qui passano al preset di base                                          |
+
+I valori di colore accettano `#rrggbb`, `#rgb`, `rgb(r,g,b)`, `ansi256(n)`, o `ansi:<name>` dove `<name>` è uno dei 16 nomi di colore ANSI standard come `red` o `cyanBright`. I token sconosciuti e i valori di colore non validi vengono ignorati, quindi un errore di battitura non può interrompere il rendering.
+
+L'esempio seguente definisce un tema che mantiene il preset scuro ma ricolora l'accento del prompt, il testo di errore e il testo di successo:
+
+```json ~/.claude/themes/dracula.json theme={null}
+{
+  "name": "Dracula",
+  "base": "dark",
+  "overrides": {
+    "claude": "#bd93f9",
+    "error": "#ff5555",
+    "success": "#50fa7b"
+  }
+}
+```
+
+Claude Code monitora `~/.claude/themes/` e ricarica quando un file cambia, quindi le modifiche apportate nel tuo editor si applicano a una sessione in esecuzione senza un riavvio.
 
 ## Switch to fullscreen rendering
 
@@ -141,11 +175,11 @@ Quando incolla più di 10.000 caratteri nel prompt, Claude Code comprime l'input
 
 Il terminale integrato di VS Code può perdere caratteri da incollamenti molto grandi prima che raggiungano Claude Code, quindi preferisci flussi di lavoro basati su file lì. Per input molto grandi come interi file o lunghi log, scrivi il contenuto in un file e chiedi a Claude di leggerlo invece di incollare. Questo mantiene la trascrizione della conversazione leggibile e consente a Claude di fare riferimento al file per percorso nei turni successivi.
 
-## Edit prompts with Vim keybindings
+## Modifica i prompt con le scorciatoie da tastiera Vim
 
 Claude Code include una modalità di editing in stile Vim per l'input del prompt. Abilitala tramite `/config` → Editor mode, o impostando la chiave di configurazione globale [`editorMode`](/it/settings#global-config-settings) su `"vim"` in `~/.claude.json`. Imposta Editor mode di nuovo su `normal` per disattivarla.
 
-La modalità Vim supporta un sottoinsieme di motions in modalità NORMAL e operatori, come la navigazione `hjkl` e `d`/`c`/`y` con oggetti di testo. Consulta la [tabella di riferimento della modalità editor Vim](/it/interactive-mode#vim-editor-mode) per la tabella completa dei tasti. I motions Vim non sono rimappabili tramite il file delle scorciatoie da tastiera.
+La modalità Vim supporta un sottoinsieme di motions in modalità NORMAL e VISUAL e operatori, come la navigazione `hjkl`, la selezione `v`/`V`, e `d`/`c`/`y` con oggetti di testo. Consulta la [tabella di riferimento della modalità editor Vim](/it/interactive-mode#vim-editor-mode) per la tabella completa dei tasti. I motions Vim non sono rimappabili tramite il file delle scorciatoie da tastiera.
 
 Premere Invio invia comunque il tuo prompt in modalità INSERT, a differenza di Vim standard. Usa `o` o `O` in modalità NORMAL, o Ctrl+J, per inserire una nuova riga invece.
 

@@ -78,7 +78,7 @@ claude --model opus
 
 企業管理員可以在[受管理或政策設定](/zh-TW/settings#settings-files)中使用 `availableModels` 來限制使用者可以選擇的模型。
 
-設定 `availableModels` 後，使用者無法透過 `/model`、`--model` 旗標、Config 工具或 `ANTHROPIC_MODEL` 環境變數切換到清單中沒有的模型。
+設定 `availableModels` 後，使用者無法透過 `/model`、`--model` 旗標或 `ANTHROPIC_MODEL` 環境變數切換到清單中沒有的模型。
 
 ```json theme={null}
 {
@@ -310,7 +310,7 @@ export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7[1m]'
 
 當您在第三方提供者上固定模型時，提供者特定的 ID 會按原樣出現在 `/model` 選擇器中，Claude Code 可能無法識別模型支援的功能。您可以使用每個固定模型的伴隨環境變數覆蓋顯示名稱並宣告能力。
 
-這些變數僅在 Bedrock、Vertex AI 和 Foundry 等第三方提供者上生效。在直接使用 Anthropic API 時無效。
+這些變數在 Bedrock、Vertex AI 和 Foundry 等第三方提供者上生效。`_NAME` 和 `_DESCRIPTION` 變數在 `ANTHROPIC_BASE_URL` 指向 [LLM gateway](/zh-TW/llm-gateway) 時也會生效。當直接連接到 `api.anthropic.com` 時無效。
 
 | 環境變數                                                  | 描述                                                       |
 | ----------------------------------------------------- | -------------------------------------------------------- |

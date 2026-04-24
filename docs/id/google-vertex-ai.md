@@ -68,7 +68,7 @@ export const ContactSalesCard = ({surface}) => {
           <a href={`https://claude.com/pricing?${utm('view_plans')}#plans-business`} className="cc-cs-btn-ghost">
             View plans
           </a>
-          <a href={`https://www.anthropic.com/contact-sales?${utm('contact_sales')}`} className="cc-cs-btn-clay">
+          <a href={`https://claude.com/contact-sales?${utm('contact_sales')}`} className="cc-cs-btn-clay">
             Contact sales {iconArrowRight()}
           </a>
         </div>
@@ -283,6 +283,9 @@ export ANTHROPIC_VERTEX_PROJECT_ID=YOUR-PROJECT-ID
 # Opsional: Nonaktifkan prompt caching jika diperlukan
 export DISABLE_PROMPT_CACHING=1
 
+# Opsional: Minta TTL cache prompt 1 jam alih-alih default 5 menit
+export ENABLE_PROMPT_CACHING_1H=1
+
 # Ketika CLOUD_ML_REGION=global, timpa wilayah untuk model yang tidak mendukung titik akhir global
 export VERTEX_REGION_CLAUDE_HAIKU_4_5=us-east5
 export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
@@ -290,7 +293,7 @@ export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 
 Sebagian besar versi model memiliki variabel `VERTEX_REGION_CLAUDE_*` yang sesuai. Lihat [referensi variabel lingkungan](/id/env-vars) untuk daftar lengkap. Periksa [Vertex Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) untuk menentukan model mana yang mendukung titik akhir global versus regional saja.
 
-[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) didukung secara otomatis ketika Anda menentukan flag ephemeral `cache_control`. Untuk menonaktifkannya, atur `DISABLE_PROMPT_CACHING=1`. Untuk batas laju yang lebih tinggi, hubungi dukungan Google Cloud. Saat menggunakan Vertex AI, perintah `/login` dan `/logout` dinonaktifkan karena autentikasi ditangani melalui kredensial Google Cloud.
+[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) diaktifkan secara otomatis. Untuk menonaktifkannya, atur `DISABLE_PROMPT_CACHING=1`. Untuk meminta TTL cache 1 jam alih-alih default 5 menit, atur `ENABLE_PROMPT_CACHING_1H=1`; penulisan cache dengan TTL 1 jam ditagih dengan tarif yang lebih tinggi. Untuk batas laju yang lebih tinggi, hubungi dukungan Google Cloud. Saat menggunakan Vertex AI, perintah `/login` dan `/logout` dinonaktifkan karena autentikasi ditangani melalui kredensial Google Cloud.
 
 ### 5. Pin versi model
 

@@ -1,5 +1,620 @@
 # Documentation Changes
 
+## 2026-04-24
+
+272 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Orchestrieren Sie Teams von Claude Code-Sitzungen** (`agent-teams.md`): 13 lines added, 9 removed
+- **Claude Code auf Amazon Bedrock** (`amazon-bedrock.md`): 317 lines added, 16 removed
+  - New section: "## Mit Bedrock anmelden"
+  - New section: "## Manuelles Setup"
+  - New section: "# Optional: Region für das kleine/schnelle Modell (Haiku) überschreiben."
+  - New section: "# Gilt auch für Bedrock Mantle."
+  - New section: "# Optional: 1-Stunden-Prompt-Cache-TTL statt der 5-Minuten-Standard anfordern"
+- **CLI-Referenz** (`cli-reference.md`): 69 lines added, 63 removed
+- **Kosten effektiv verwalten** (`costs.md`): 15 lines added, 14 removed
+  - New section: "### Verwenden des `/usage`-Befehls"
+- **Datennutzung** (`data-usage.md`): 12 lines added, 3 removed
+- **Claude Code auf Google Vertex AI** (`google-vertex-ai.md`): 5 lines added, 2 removed
+  - New section: "# Optional: Fordern Sie eine 1-Stunden-Prompt-Cache-TTL statt des 5-Minuten-Standards an"
+- **Automatisieren Sie Workflows mit Hooks** (`hooks-guide.md`): 23 lines added, 20 removed
+- **Hooks-Referenz** (`hooks.md`): 153 lines added, 50 removed
+  - New section: "#### MCP-Tool-Hook-Felder"
+  - New section: "### PostToolBatch"
+  - New section: "#### PostToolBatch-Eingabe"
+  - New section: "#### PostToolBatch-Entscheidungskontrolle"
+- **Interaktiver Modus** (`interactive-mode.md`): 37 lines added, 15 removed
+  - New section: "### Visueller Modus"
+- **Claude Code auf Microsoft Foundry** (`microsoft-foundry.md`): 210 lines added, 7 removed
+  - New section: "# export ANTHROPIC_FOUNDRY_BASE_URL=https://{resource}.services.ai.azure.com/anthropic"
+- **Modellkonfiguration** (`model-config.md`): 3 lines added, 39 removed
+  - New section: "### Anzeige und Funktionen des fixierten Modells anpassen"
+- **Berechtigungen konfigurieren** (`permissions.md`): 1 lines added, 0 removed
+- **Erstellen und Verteilen eines Plugin-Marktplatzes** (`plugin-marketplaces.md`): 33 lines added, 15 removed
+  - New section: "#### Abhängigkeitsversionen anheften"
+- **Plugins-Referenz** (`plugins-reference.md`): 71 lines added, 35 removed
+  - New section: "### Themes"
+  - New section: "### plugin tag"
+- **Plugins erstellen** (`plugins.md`): 7 lines added, 7 removed
+- **Lokale Sitzungen von jedem Gerät aus mit Remote Control fortsetzen** (`remote-control.md`): 2 lines added, 2 removed
+- **Prompts nach Zeitplan ausführen** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Claude Code-Einstellungen** (`settings.md`): 6 lines added, 4 removed
+- **Erweiterte Einrichtung** (`setup.md`): 2 lines added, 0 removed
+- **Passen Sie Ihre Statuszeile an** (`statusline.md`): 1 lines added, 1 removed
+- **Benutzerdefinierte Subagenten erstellen** (`sub-agents.md`): 56 lines added, 0 removed
+  - New section: "## Gegabelte Konversation"
+  - New section: "### Beobachten und lenken Sie laufende Forks"
+  - New section: "### Wie sich Forks von benannten Subagenten unterscheiden"
+  - New section: "### Einschränkungen"
+- **Konfigurieren Sie Ihr Terminal für Claude Code** (`terminal-config.md`): 37 lines added, 3 removed
+  - New section: "### Erstellen Sie ein benutzerdefiniertes Design"
+
+### English
+
+
+**Modified**
+
+- **Orchestrate teams of Claude Code sessions** (`agent-teams.md`): 1 lines added, 5 removed
+- **Claude Code on Amazon Bedrock** (`amazon-bedrock.md`): 5 lines added, 2 removed
+  - New section: "# Optional: Request 1-hour prompt cache TTL instead of the 5-minute default"
+- **Changelog** (`changelog.md`): 54 lines added, 0 removed
+- **CLI reference** (`cli-reference.md`): 3 lines added, 2 removed
+- **Commands** (`commands.md`): 7 lines added, 7 removed
+- **Common workflows** (`common-workflows.md`): 1 lines added, 1 removed
+- **Manage costs effectively** (`costs.md`): 5 lines added, 5 removed
+  - New section: "### Using the `/usage` command"
+- **Data usage** (`data-usage.md`): 13 lines added, 4 removed
+- **Environment variables** (`env-vars.md`): 3 lines added, 1 removed
+- **Extend Claude Code** (`features-overview.md`): 30 lines added, 10 removed
+- **Claude Code on Google Vertex AI** (`google-vertex-ai.md`): 5 lines added, 2 removed
+  - New section: "# Optional: Request 1-hour prompt cache TTL instead of the 5-minute default"
+- **Automate workflows with hooks** (`hooks-guide.md`): 21 lines added, 19 removed
+- **Hooks reference** (`hooks.md`): 150 lines added, 47 removed
+  - New section: "#### MCP tool hook fields"
+  - New section: "### PostToolBatch"
+  - New section: "#### PostToolBatch input"
+  - New section: "#### PostToolBatch decision control"
+- **Interactive mode** (`interactive-mode.md`): 31 lines added, 9 removed
+  - New section: "### Visual mode"
+- **Customize keyboard shortcuts** (`keybindings.md`): 8 lines added, 6 removed
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 7 lines added, 1 removed
+- **Model configuration** (`model-config.md`): 2 lines added, 2 removed
+- **Configure permissions** (`permissions.md`): 14 lines added, 13 removed
+- **Create and distribute a plugin marketplace** (`plugin-marketplaces.md`): 33 lines added, 15 removed
+  - New section: "#### Pin dependency versions"
+- **Plugins reference** (`plugins-reference.md`): 68 lines added, 32 removed
+  - New section: "### Themes"
+  - New section: "### plugin tag"
+- **Create plugins** (`plugins.md`): 7 lines added, 7 removed
+- **Continue local sessions from any device with Remote Control** (`remote-control.md`): 1 lines added, 1 removed
+- **Run prompts on a schedule** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Claude Code settings** (`settings.md`): 3 lines added, 2 removed
+- **Advanced setup** (`setup.md`): 2 lines added, 0 removed
+- **Customize your status line** (`statusline.md`): 1 lines added, 1 removed
+- **Create custom subagents** (`sub-agents.md`): 56 lines added, 0 removed
+  - New section: "## Fork the current conversation"
+  - New section: "### Observe and steer running forks"
+  - New section: "### How forks differ from named subagents"
+  - New section: "### Limitations"
+- **Configure your terminal for Claude Code** (`terminal-config.md`): 36 lines added, 2 removed
+  - New section: "### Create a custom theme"
+- **Enterprise deployment overview** (`third-party-integrations.md`): 1 lines added, 1 removed
+
+### Español
+
+
+**Modified**
+
+- **Orquestar equipos de sesiones de Claude Code** (`agent-teams.md`): 9 lines added, 5 removed
+- **Claude Code en Amazon Bedrock** (`amazon-bedrock.md`): 322 lines added, 21 removed
+  - New section: "## Iniciar sesión con Bedrock"
+  - New section: "## Configurar manualmente"
+  - New section: "### 1. Enviar detalles del caso de uso"
+  - New section: "### 2. Configurar credenciales de AWS"
+  - New section: "### 3. Configurar Claude Code"
+- **Referencia de CLI** (`cli-reference.md`): 69 lines added, 63 removed
+- **Gestionar costos de manera efectiva** (`costs.md`): 14 lines added, 13 removed
+  - New section: "### Uso del comando `/usage`"
+- **Uso de datos** (`data-usage.md`): 13 lines added, 4 removed
+- **Claude Code en Google Vertex AI** (`google-vertex-ai.md`): 5 lines added, 2 removed
+  - New section: "# Opcional: Solicitar TTL de caché de indicaciones de 1 hora en lugar del predeterminado de 5 minutos"
+- **Automatizar flujos de trabajo con hooks** (`hooks-guide.md`): 41 lines added, 26 removed
+- **Referencia de hooks** (`hooks.md`): 153 lines added, 50 removed
+  - New section: "#### Campos de hook de herramienta MCP"
+  - New section: "### PostToolBatch"
+  - New section: "#### Entrada de PostToolBatch"
+  - New section: "#### Control de decisión de PostToolBatch"
+- **Modo interactivo** (`interactive-mode.md`): 36 lines added, 14 removed
+  - New section: "### Modo visual"
+- **Claude Code en Microsoft Foundry** (`microsoft-foundry.md`): 225 lines added, 22 removed
+  - New section: "# export ANTHROPIC_FOUNDRY_BASE_URL=https://{resource}.services.ai.azure.com/anthropic"
+- **Configuración del modelo** (`model-config.md`): 3 lines added, 3 removed
+- **Configurar permisos** (`permissions.md`): 2 lines added, 1 removed
+- **Crear y distribuir un marketplace de plugins** (`plugin-marketplaces.md`): 34 lines added, 16 removed
+  - New section: "#### Fijar versiones de dependencias"
+- **Referencia de plugins** (`plugins-reference.md`): 76 lines added, 40 removed
+  - New section: "### Themes"
+  - New section: "### plugin tag"
+- **Crear plugins** (`plugins.md`): 7 lines added, 7 removed
+- **Continúe sesiones locales desde cualquier dispositivo con Remote Control** (`remote-control.md`): 2 lines added, 2 removed
+- **Ejecutar prompts en un horario** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Configuración de Claude Code** (`settings.md`): 5 lines added, 3 removed
+- **Configuración avanzada** (`setup.md`): 2 lines added, 0 removed
+- **Personaliza tu línea de estado** (`statusline.md`): 1 lines added, 1 removed
+- **Crear subagentes personalizados** (`sub-agents.md`): 56 lines added, 0 removed
+  - New section: "## Bifurcar la conversación actual"
+  - New section: "### Observar y dirigir forks en ejecución"
+  - New section: "### Cómo los forks difieren de los subagentes nombrados"
+  - New section: "### Limitaciones"
+- **Configura tu terminal para Claude Code** (`terminal-config.md`): 37 lines added, 3 removed
+  - New section: "### Crea un tema personalizado"
+
+### Français
+
+
+**Modified**
+
+- **Orchestrer des équipes de sessions Claude Code** (`agent-teams.md`): 11 lines added, 7 removed
+- **Claude Code sur Amazon Bedrock** (`amazon-bedrock.md`): 317 lines added, 16 removed
+  - New section: "## Se connecter avec Bedrock"
+  - New section: "## Configuration manuelle"
+  - New section: "# Optional: Override the region for the small/fast model (Haiku)."
+  - New section: "# Also applies to Bedrock Mantle."
+  - New section: "# Optional: Request 1-hour prompt cache TTL instead of the 5-minute default"
+- **Référence CLI** (`cli-reference.md`): 69 lines added, 63 removed
+- **Gérer les coûts efficacement** (`costs.md`): 14 lines added, 13 removed
+  - New section: "### Utiliser la commande `/usage`"
+- **Utilisation des données** (`data-usage.md`): 13 lines added, 4 removed
+- **Claude Code sur Google Vertex AI** (`google-vertex-ai.md`): 5 lines added, 2 removed
+  - New section: "# Optionnel : Demandez une TTL de cache d'invites d'1 heure au lieu de la valeur par défaut de 5 minutes"
+- **Automatiser les workflows avec les hooks** (`hooks-guide.md`): 22 lines added, 19 removed
+- **Référence des hooks** (`hooks.md`): 153 lines added, 50 removed
+  - New section: "#### Champs des hooks de l'outil MCP"
+  - New section: "### PostToolBatch"
+  - New section: "#### Entrée PostToolBatch"
+  - New section: "#### Contrôle de décision PostToolBatch"
+- **Mode interactif** (`interactive-mode.md`): 36 lines added, 14 removed
+  - New section: "### Mode visuel"
+- **Claude Code sur Microsoft Foundry** (`microsoft-foundry.md`): 209 lines added, 6 removed
+  - New section: "# export ANTHROPIC_FOUNDRY_BASE_URL=https://{resource}.services.ai.azure.com/anthropic"
+- **Configuration du modèle** (`model-config.md`): 2 lines added, 2 removed
+- **Configurer les autorisations** (`permissions.md`): 1 lines added, 0 removed
+- **Créer et distribuer une place de marché de plugins** (`plugin-marketplaces.md`): 33 lines added, 15 removed
+  - New section: "#### Épingler les versions des dépendances"
+- **Référence des plugins** (`plugins-reference.md`): 68 lines added, 32 removed
+  - New section: "### Thèmes"
+  - New section: "### plugin tag"
+- **Créer des plugins** (`plugins.md`): 7 lines added, 7 removed
+- **Continuer les sessions locales depuis n'importe quel appareil avec Remote Control** (`remote-control.md`): 3 lines added, 3 removed
+- **Exécuter des prompts selon un calendrier** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Paramètres Claude Code** (`settings.md`): 5 lines added, 3 removed
+- **Configuration avancée** (`setup.md`): 2 lines added, 0 removed
+- **Personnalisez votre barre de statut** (`statusline.md`): 1 lines added, 1 removed
+- **Créer des sous-agents personnalisés** (`sub-agents.md`): 56 lines added, 0 removed
+  - New section: "## Dupliquer la conversation actuelle"
+  - New section: "### Observer et diriger les forks en cours d'exécution"
+  - New section: "### Comment les forks diffèrent des sous-agents nommés"
+  - New section: "### Limitations"
+- **Configurez votre terminal pour Claude Code** (`terminal-config.md`): 37 lines added, 3 removed
+  - New section: "### Créer un thème personnalisé"
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Koordinasikan tim Claude Code sessions** (`agent-teams.md`): 11 lines added, 7 removed
+- **Claude Code di Amazon Bedrock** (`amazon-bedrock.md`): 318 lines added, 17 removed
+  - New section: "## Masuk dengan Bedrock"
+  - New section: "## Pengaturan manual"
+  - New section: "# Opsional: Ganti wilayah untuk model kecil/cepat (Haiku)."
+  - New section: "# Juga berlaku untuk Bedrock Mantle."
+  - New section: "# Opsional: Minta TTL cache prompt 1 jam alih-alih default 5 menit"
+- **Referensi CLI** (`cli-reference.md`): 69 lines added, 63 removed
+- **Kelola biaya secara efektif** (`costs.md`): 14 lines added, 13 removed
+  - New section: "### Menggunakan perintah `/usage`"
+- **Penggunaan data** (`data-usage.md`): 13 lines added, 4 removed
+- **Claude Code di Google Vertex AI** (`google-vertex-ai.md`): 5 lines added, 2 removed
+  - New section: "# Opsional: Minta TTL cache prompt 1 jam alih-alih default 5 menit"
+- **Otomatisasi alur kerja dengan hooks** (`hooks-guide.md`): 22 lines added, 19 removed
+- **Referensi hooks** (`hooks.md`): 153 lines added, 50 removed
+  - New section: "#### Bidang MCP tool hook"
+  - New section: "### PostToolBatch"
+  - New section: "#### Input PostToolBatch"
+  - New section: "#### Kontrol keputusan PostToolBatch"
+- **Mode interaktif** (`interactive-mode.md`): 36 lines added, 14 removed
+  - New section: "### Mode visual"
+- **Claude Code di Microsoft Foundry** (`microsoft-foundry.md`): 209 lines added, 6 removed
+  - New section: "# export ANTHROPIC_FOUNDRY_BASE_URL=https://{resource}.services.ai.azure.com/anthropic"
+- **Konfigurasi model** (`model-config.md`): 3 lines added, 3 removed
+- **Konfigurasi izin** (`permissions.md`): 1 lines added, 0 removed
+- **Buat dan distribusikan marketplace plugin** (`plugin-marketplaces.md`): 34 lines added, 16 removed
+  - New section: "#### Sematkan versi dependensi"
+- **Referensi Plugins** (`plugins-reference.md`): 70 lines added, 34 removed
+  - New section: "### Themes"
+  - New section: "### plugin tag"
+- **Buat plugins** (`plugins.md`): 7 lines added, 7 removed
+- **Lanjutkan sesi lokal dari perangkat apa pun dengan Remote Control** (`remote-control.md`): 2 lines added, 2 removed
+- **Jalankan prompt sesuai jadwal** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Pengaturan Claude Code** (`settings.md`): 7 lines added, 5 removed
+- **Pengaturan lanjutan** (`setup.md`): 2 lines added, 0 removed
+- **Sesuaikan baris status Anda** (`statusline.md`): 1 lines added, 1 removed
+- **Buat subagent khusus** (`sub-agents.md`): 56 lines added, 0 removed
+  - New section: "## Fork percakapan saat ini"
+  - New section: "### Amati dan arahkan fork yang sedang berjalan"
+  - New section: "### Bagaimana fork berbeda dari subagent bernama"
+  - New section: "### Keterbatasan"
+- **Konfigurasi terminal Anda untuk Claude Code** (`terminal-config.md`): 39 lines added, 5 removed
+  - New section: "### Buat tema khusus"
+  - New section: "## Edit prompt dengan pintasan keyboard Vim"
+
+### Italiano
+
+
+**Modified**
+
+- **Orchestrare team di sessioni Claude Code** (`agent-teams.md`): 9 lines added, 5 removed
+- **Claude Code su Amazon Bedrock** (`amazon-bedrock.md`): 317 lines added, 16 removed
+  - New section: "## Accedi con Bedrock"
+  - New section: "## Configurazione manuale"
+  - New section: "# Facoltativo: Sovrascrivi la regione per il modello piccolo/veloce (Haiku)."
+  - New section: "# Si applica anche a Bedrock Mantle."
+  - New section: "# Facoltativo: Richiedi una TTL della cache dei prompt di 1 ora invece del valore predefinito di 5 minuti"
+- **Riferimento CLI** (`cli-reference.md`): 69 lines added, 63 removed
+- **Gestisci i costi in modo efficace** (`costs.md`): 15 lines added, 14 removed
+  - New section: "### Utilizzo del comando `/usage`"
+- **Utilizzo dei dati** (`data-usage.md`): 12 lines added, 3 removed
+- **Claude Code su Google Vertex AI** (`google-vertex-ai.md`): 5 lines added, 2 removed
+  - New section: "# Facoltativo: Richiedi TTL cache prompt di 1 ora invece del valore predefinito di 5 minuti"
+- **Automatizzare i flussi di lavoro con hooks** (`hooks-guide.md`): 29 lines added, 26 removed
+- **Riferimento dei hooks** (`hooks.md`): 152 lines added, 49 removed
+  - New section: "#### Campi del MCP tool hook"
+  - New section: "#### Campi del prompt hook e agent hook"
+  - New section: "### PostToolBatch"
+  - New section: "#### Input di PostToolBatch"
+  - New section: "#### Controllo della decisione di PostToolBatch"
+- **Modalità interattiva** (`interactive-mode.md`): 36 lines added, 14 removed
+  - New section: "### Modalità visuale"
+- **Claude Code su Microsoft Foundry** (`microsoft-foundry.md`): 209 lines added, 6 removed
+  - New section: "# export ANTHROPIC_FOUNDRY_BASE_URL=https://{resource}.services.ai.azure.com/anthropic"
+- **Configurazione del modello** (`model-config.md`): 4 lines added, 4 removed
+- **Configurare le autorizzazioni** (`permissions.md`): 1 lines added, 0 removed
+- **Creare e distribuire un marketplace di plugin** (`plugin-marketplaces.md`): 33 lines added, 15 removed
+  - New section: "#### Fissa le versioni delle dipendenze"
+- **Riferimento dei plugin** (`plugins-reference.md`): 73 lines added, 37 removed
+  - New section: "### Themes"
+  - New section: "### Channels"
+  - New section: "### plugin tag"
+- **Creare plugin** (`plugins.md`): 7 lines added, 7 removed
+- **Continua le sessioni locali da qualsiasi dispositivo con Remote Control** (`remote-control.md`): 2 lines added, 2 removed
+- **Eseguire prompt in base a una pianificazione** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Impostazioni di Claude Code** (`settings.md`): 7 lines added, 5 removed
+- **Configurazione avanzata** (`setup.md`): 2 lines added, 0 removed
+- **Personalizza la tua barra di stato** (`statusline.md`): 1 lines added, 1 removed
+- **Creare subagent personalizzati** (`sub-agents.md`): 56 lines added, 0 removed
+  - New section: "## Esegua il fork della conversazione corrente"
+  - New section: "### Osservi e dirija i fork in esecuzione"
+  - New section: "### Come i fork differiscono dai subagent denominati"
+  - New section: "### Limitazioni"
+- **Configura il tuo terminale per Claude Code** (`terminal-config.md`): 40 lines added, 6 removed
+  - New section: "## Inserire prompt multilinea"
+  - New section: "## Abbina il tema dei colori"
+  - New section: "### Crea un tema personalizzato"
+  - New section: "## Modifica i prompt con le scorciatoie da tastiera Vim"
+
+### 日本語
+
+
+**Modified**
+
+- **Claude Code セッションのチームを調整する** (`agent-teams.md`): 9 lines added, 5 removed
+- **Amazon Bedrock 上の Claude Code** (`amazon-bedrock.md`): 315 lines added, 14 removed
+  - New section: "## Bedrock でサインイン"
+  - New section: "## 手動でセットアップ"
+  - New section: "# Bedrock Mantle にも適用されます。"
+  - New section: "# オプション：デフォルトの 5 分の代わりに 1 時間のプロンプトキャッシュ TTL をリクエスト"
+  - New section: "## スタートアップモデルチェック"
+- **CLI リファレンス** (`cli-reference.md`): 69 lines added, 63 removed
+- **コストを効果的に管理する** (`costs.md`): 14 lines added, 13 removed
+  - New section: "### `/usage` コマンドを使用する"
+- **データ使用** (`data-usage.md`): 13 lines added, 4 removed
+- **Google Vertex AI 上の Claude Code** (`google-vertex-ai.md`): 5 lines added, 2 removed
+  - New section: "# オプション：デフォルトの 5 分ではなく 1 時間のプロンプトキャッシュ TTL をリクエストする"
+- **hooks でワークフローを自動化する** (`hooks-guide.md`): 21 lines added, 18 removed
+- **Hooks リファレンス** (`hooks.md`): 157 lines added, 52 removed
+  - New section: "#### MCP ツール フック フィールド"
+  - New section: "### PostToolBatch"
+  - New section: "#### PostToolBatch 入力"
+  - New section: "#### PostToolBatch 決定制御"
+- **インタラクティブモード** (`interactive-mode.md`): 36 lines added, 14 removed
+  - New section: "### ビジュアルモード"
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 238 lines added, 35 removed
+  - New section: "### 1. Microsoft Foundry リソースをプロビジョニングする"
+  - New section: "### 2. Azure 認証情報を構成する"
+  - New section: "### 3. Claude Code を構成する"
+  - New section: "# Microsoft Foundry 統合を有効にする"
+  - New section: "# Azure リソース名（{resource} をリソース名に置き換えます）"
+- **モデル設定** (`model-config.md`): 2 lines added, 2 removed
+- **権限を設定する** (`permissions.md`): 14 lines added, 13 removed
+- **プラグインマーケットプレイスの作成と配布** (`plugin-marketplaces.md`): 33 lines added, 15 removed
+  - New section: "#### プラグイン依存関係バージョンをピンする"
+- **プラグインリファレンス** (`plugins-reference.md`): 68 lines added, 32 removed
+  - New section: "### Themes"
+  - New section: "### plugin tag"
+- **プラグインを作成する** (`plugins.md`): 7 lines added, 7 removed
+- **任意のデバイスからローカルセッションを続行する Remote Control** (`remote-control.md`): 3 lines added, 3 removed
+- **スケジュールに従ってプロンプトを実行する** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Claude Code の設定** (`settings.md`): 7 lines added, 5 removed
+- **高度なセットアップ** (`setup.md`): 2 lines added, 0 removed
+- **ステータスラインをカスタマイズする** (`statusline.md`): 1 lines added, 1 removed
+- **カスタムサブエージェントの作成** (`sub-agents.md`): 63 lines added, 1 removed
+  - New section: "## 現在の会話をフォークする"
+  - New section: "### 実行中のフォークを観察して操作する"
+  - New section: "### フォークと名前付きサブエージェントの違い"
+  - New section: "### 制限事項"
+- **Claude Code 用にターミナルを設定する** (`terminal-config.md`): 37 lines added, 3 removed
+  - New section: "### カスタムテーマを作成する"
+
+### 한국어
+
+
+**Modified**
+
+- **Claude Code 세션 팀 조율하기** (`agent-teams.md`): 9 lines added, 5 removed
+- **Amazon Bedrock의 Claude Code** (`amazon-bedrock.md`): 316 lines added, 15 removed
+  - New section: "## Bedrock으로 로그인"
+  - New section: "## 수동으로 설정"
+  - New section: "# Bedrock Mantle에도 적용됩니다."
+  - New section: "# 선택 사항: 5분 기본값 대신 1시간 프롬프트 캐시 TTL 요청"
+  - New section: "## 시작 모델 확인"
+- **CLI 참조** (`cli-reference.md`): 70 lines added, 64 removed
+- **일반적인 워크플로우** (`common-workflows.md`): 1 lines added, 1 removed
+- **비용을 효과적으로 관리하기** (`costs.md`): 15 lines added, 14 removed
+  - New section: "### `/usage` 명령 사용"
+- **데이터 사용** (`data-usage.md`): 13 lines added, 4 removed
+- **Google Vertex AI에서 Claude Code 사용하기** (`google-vertex-ai.md`): 5 lines added, 2 removed
+  - New section: "# 선택사항: 기본 5분 대신 1시간 prompt cache TTL 요청"
+- **hooks를 사용하여 워크플로우 자동화** (`hooks-guide.md`): 26 lines added, 23 removed
+- **Hooks 참조** (`hooks.md`): 151 lines added, 48 removed
+  - New section: "#### MCP 도구 hook 필드"
+  - New section: "### PostToolBatch"
+  - New section: "#### PostToolBatch 입력"
+  - New section: "#### PostToolBatch 결정 제어"
+- **대화형 모드** (`interactive-mode.md`): 36 lines added, 14 removed
+  - New section: "### 시각적 모드"
+- **Microsoft Foundry의 Claude Code** (`microsoft-foundry.md`): 210 lines added, 7 removed
+  - New section: "# export ANTHROPIC_FOUNDRY_BASE_URL=https://{resource}.services.ai.azure.com/anthropic"
+- **모델 구성** (`model-config.md`): 2 lines added, 2 removed
+- **권한 구성** (`permissions.md`): 14 lines added, 129 removed
+- **플러그인 마켓플레이스 생성 및 배포** (`plugin-marketplaces.md`): 34 lines added, 16 removed
+  - New section: "#### 의존성 버전 고정"
+- **플러그인 참조** (`plugins-reference.md`): 84 lines added, 48 removed
+  - New section: "### Themes"
+  - New section: "### plugin tag"
+- **플러그인 만들기** (`plugins.md`): 7 lines added, 7 removed
+- **모든 기기에서 로컬 세션 계속하기 (Remote Control)** (`remote-control.md`): 3 lines added, 3 removed
+- **일정에 따라 프롬프트 실행하기** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Claude Code 설정** (`settings.md`): 7 lines added, 5 removed
+- **고급 설정** (`setup.md`): 2 lines added, 0 removed
+- **상태 표시줄 사용자 정의** (`statusline.md`): 1 lines added, 1 removed
+- **사용자 정의 subagent 만들기** (`sub-agents.md`): 56 lines added, 0 removed
+  - New section: "## 현재 대화 포크"
+  - New section: "### 실행 중인 포크 관찰 및 조종"
+  - New section: "### 포크와 명명된 subagent의 차이점"
+  - New section: "### 제한 사항"
+- **Claude Code를 위한 터미널 구성** (`terminal-config.md`): 37 lines added, 3 removed
+  - New section: "### 사용자 정의 테마 만들기"
+
+### Português
+
+
+**Modified**
+
+- **Orquestre equipes de sessões Claude Code** (`agent-teams.md`): 9 lines added, 5 removed
+- **Claude Code no Amazon Bedrock** (`amazon-bedrock.md`): 317 lines added, 16 removed
+  - New section: "## Entrar com Bedrock"
+  - New section: "## Configurar manualmente"
+  - New section: "# Opcional: Substituir a região para o modelo pequeno/rápido (Haiku)."
+  - New section: "# Também se aplica ao Bedrock Mantle."
+  - New section: "# Opcional: Solicitar TTL de cache de prompt de 1 hora em vez do padrão de 5 minutos"
+- **Referência de CLI** (`cli-reference.md`): 69 lines added, 63 removed
+- **Gerencie custos de forma eficaz** (`costs.md`): 14 lines added, 13 removed
+  - New section: "### Usando o comando `/usage`"
+- **Uso de dados** (`data-usage.md`): 13 lines added, 4 removed
+- **Claude Code no Google Vertex AI** (`google-vertex-ai.md`): 5 lines added, 2 removed
+  - New section: "# Opcional: Solicitar TTL de cache de prompt de 1 hora em vez do padrão de 5 minutos"
+- **Automatizar fluxos de trabalho com hooks** (`hooks-guide.md`): 26 lines added, 23 removed
+- **Referência de hooks** (`hooks.md`): 151 lines added, 48 removed
+  - New section: "#### Campos de hook de ferramenta MCP"
+  - New section: "### PostToolBatch"
+  - New section: "#### Entrada de PostToolBatch"
+  - New section: "#### Controle de decisão de PostToolBatch"
+- **Modo interativo** (`interactive-mode.md`): 36 lines added, 14 removed
+  - New section: "### Modo visual"
+- **Claude Code no Microsoft Foundry** (`microsoft-foundry.md`): 209 lines added, 6 removed
+  - New section: "# export ANTHROPIC_FOUNDRY_BASE_URL=https://{resource}.services.ai.azure.com/anthropic"
+- **Configuração de modelo** (`model-config.md`): 3 lines added, 3 removed
+- **Configurar permissões** (`permissions.md`): 1 lines added, 0 removed
+- **Criar e distribuir um marketplace de plugins** (`plugin-marketplaces.md`): 33 lines added, 15 removed
+  - New section: "#### Fixar versões de dependência"
+- **Referência de plugins** (`plugins-reference.md`): 68 lines added, 32 removed
+  - New section: "### Themes"
+  - New section: "### plugin tag"
+- **Criar plugins** (`plugins.md`): 7 lines added, 7 removed
+- **Continue sessões locais de qualquer dispositivo com Remote Control** (`remote-control.md`): 2 lines added, 2 removed
+- **Executar prompts em um cronograma** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Configurações do Claude Code** (`settings.md`): 6 lines added, 4 removed
+- **Configuração avançada** (`setup.md`): 2 lines added, 0 removed
+- **Personalize sua linha de status** (`statusline.md`): 2 lines added, 2 removed
+- **Criar subagentes personalizados** (`sub-agents.md`): 56 lines added, 0 removed
+  - New section: "## Bifurcar a conversa atual"
+  - New section: "### Observar e orientar bifurcações em execução"
+  - New section: "### Como bifurcações diferem de subagentes nomeados"
+  - New section: "### Limitações"
+- **Configure seu terminal para Claude Code** (`terminal-config.md`): 40 lines added, 6 removed
+  - New section: "## Inserir prompts multilinhas"
+  - New section: "## Corresponder ao tema de cores"
+  - New section: "### Criar um tema personalizado"
+  - New section: "## Editar prompts com atalhos de teclado Vim"
+
+### Русский
+
+
+**Modified**
+
+- **Координируйте команды сеансов Claude Code** (`agent-teams.md`): 11 lines added, 7 removed
+- **Claude Code на Amazon Bedrock** (`amazon-bedrock.md`): 317 lines added, 16 removed
+  - New section: "## Вход с Bedrock"
+  - New section: "## Ручная установка"
+  - New section: "# Optional: Override the region for the small/fast model (Haiku)."
+  - New section: "# Also applies to Bedrock Mantle."
+  - New section: "# Optional: Request 1-hour prompt cache TTL instead of the 5-minute default"
+- **Справочник CLI** (`cli-reference.md`): 69 lines added, 63 removed
+- **Эффективное управление затратами** (`costs.md`): 15 lines added, 14 removed
+  - New section: "### Использование команды `/usage`"
+- **Использование данных** (`data-usage.md`): 14 lines added, 5 removed
+- **Claude Code на Google Vertex AI** (`google-vertex-ai.md`): 5 lines added, 2 removed
+  - New section: "# Опционально: запросите TTL кэша запросов на 1 час вместо стандартного 5-минутного"
+- **Автоматизация рабочих процессов с помощью hooks** (`hooks-guide.md`): 23 lines added, 20 removed
+- **Справочник по hooks** (`hooks.md`): 151 lines added, 48 removed
+  - New section: "#### MCP tool hook fields"
+  - New section: "### PostToolBatch"
+  - New section: "#### PostToolBatch input"
+  - New section: "#### PostToolBatch decision control"
+- **Интерактивный режим** (`interactive-mode.md`): 36 lines added, 14 removed
+  - New section: "### Визуальный режим"
+- **Claude Code на Microsoft Foundry** (`microsoft-foundry.md`): 209 lines added, 6 removed
+  - New section: "# export ANTHROPIC_FOUNDRY_BASE_URL=https://{resource}.services.ai.azure.com/anthropic"
+- **Конфигурация модели** (`model-config.md`): 37 lines added, 1 removed
+  - New section: "### Настройка отображения и возможностей закрепленной модели"
+- **Настройка разрешений** (`permissions.md`): 1 lines added, 115 removed
+- **Создание и распространение marketplace плагинов** (`plugin-marketplaces.md`): 33 lines added, 15 removed
+  - New section: "#### Закрепление версий зависимостей плагинов"
+- **Справочник по плагинам** (`plugins-reference.md`): 73 lines added, 37 removed
+  - New section: "### Themes"
+  - New section: "### plugin tag"
+- **Создание plugins** (`plugins.md`): 7 lines added, 7 removed
+- **Продолжайте локальные сеансы с любого устройства с помощью Remote Control** (`remote-control.md`): 2 lines added, 2 removed
+- **Запуск подсказок по расписанию** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Параметры Claude Code** (`settings.md`): 5 lines added, 3 removed
+- **Расширенная настройка** (`setup.md`): 2 lines added, 0 removed
+- **Настройка строки состояния** (`statusline.md`): 1 lines added, 1 removed
+- **Создание пользовательских subagents** (`sub-agents.md`): 56 lines added, 0 removed
+  - New section: "## Fork the current conversation"
+  - New section: "### Observe and steer running forks"
+  - New section: "### How forks differ from named subagents"
+  - New section: "### Limitations"
+- **Настройте ваш терминал для Claude Code** (`terminal-config.md`): 38 lines added, 4 removed
+  - New section: "### Создайте пользовательскую тему"
+
+### 简体中文
+
+
+**Modified**
+
+- **协调 Claude Code 会话团队** (`agent-teams.md`): 9 lines added, 5 removed
+- **Amazon Bedrock 上的 Claude Code** (`amazon-bedrock.md`): 317 lines added, 16 removed
+  - New section: "## 使用 Bedrock 登录"
+  - New section: "## 手动设置"
+  - New section: "# 可选：覆盖小型/快速模型 (Haiku) 的区域。"
+  - New section: "# 也适用于 Bedrock Mantle。"
+  - New section: "# 可选：请求 1 小时 prompt cache TTL 而不是 5 分钟默认值"
+- **CLI 参考** (`cli-reference.md`): 69 lines added, 63 removed
+- **有效管理成本** (`costs.md`): 15 lines added, 14 removed
+  - New section: "### 使用 `/usage` 命令"
+- **数据使用** (`data-usage.md`): 13 lines added, 4 removed
+- **Google Vertex AI 上的 Claude Code** (`google-vertex-ai.md`): 5 lines added, 2 removed
+  - New section: "# 可选：请求 1 小时的 prompt cache TTL 而不是 5 分钟的默认值"
+- **使用 hooks 自动化工作流** (`hooks-guide.md`): 23 lines added, 20 removed
+- **Hooks 参考** (`hooks.md`): 151 lines added, 48 removed
+  - New section: "#### MCP 工具 hook 字段"
+  - New section: "### PostToolBatch"
+  - New section: "#### PostToolBatch 输入"
+  - New section: "#### PostToolBatch 决定控制"
+- **交互模式** (`interactive-mode.md`): 36 lines added, 14 removed
+  - New section: "### 可视模式"
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 209 lines added, 6 removed
+  - New section: "# export ANTHROPIC_FOUNDRY_BASE_URL=https://{resource}.services.ai.azure.com/anthropic"
+- **模型配置** (`model-config.md`): 2 lines added, 2 removed
+- **配置权限** (`permissions.md`): 14 lines added, 13 removed
+- **创建和分发 plugin marketplace** (`plugin-marketplaces.md`): 33 lines added, 15 removed
+  - New section: "#### 固定依赖版本"
+- **Plugins 参考** (`plugins-reference.md`): 93 lines added, 57 removed
+  - New section: "### Themes"
+  - New section: "### plugin tag"
+- **创建插件** (`plugins.md`): 8 lines added, 8 removed
+- **使用 Remote Control 从任何设备继续本地会话** (`remote-control.md`): 2 lines added, 2 removed
+- **按计划运行提示词** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Claude Code 设置** (`settings.md`): 5 lines added, 3 removed
+- **高级设置** (`setup.md`): 2 lines added, 0 removed
+- **自定义你的状态行** (`statusline.md`): 1 lines added, 1 removed
+- **创建自定义 subagents** (`sub-agents.md`): 56 lines added, 0 removed
+  - New section: "## 分叉当前对话"
+  - New section: "### 观察和引导运行中的分叉"
+  - New section: "### 分叉与命名 subagents 的区别"
+  - New section: "### 限制"
+- **为 Claude Code 配置您的终端** (`terminal-config.md`): 37 lines added, 3 removed
+  - New section: "### 创建自定义主题"
+
+### 繁體中文
+
+
+**Modified**
+
+- **協調 Claude Code 工作階段團隊** (`agent-teams.md`): 11 lines added, 7 removed
+- **Amazon Bedrock 上的 Claude Code** (`amazon-bedrock.md`): 317 lines added, 16 removed
+  - New section: "## 使用 Bedrock 登入"
+  - New section: "## 手動設定"
+  - New section: "# 選用：覆寫小型/快速模型 (Haiku) 的區域。"
+  - New section: "# 也適用於 Bedrock Mantle。"
+  - New section: "# 選用：要求 1 小時 prompt cache TTL 而不是 5 分鐘預設值"
+- **CLI 參考** (`cli-reference.md`): 69 lines added, 63 removed
+- **有效管理成本** (`costs.md`): 19 lines added, 18 removed
+  - New section: "### 使用 `/usage` 命令"
+  - New section: "### 將處理卸載到 hooks 和 skills"
+  - New section: "### 將指示從 CLAUDE.md 移至 skills"
+- **資料使用** (`data-usage.md`): 14 lines added, 5 removed
+- **Google Vertex AI 上的 Claude Code** (`google-vertex-ai.md`): 5 lines added, 2 removed
+  - New section: "# 選用：要求 1 小時 prompt cache TTL 而不是 5 分鐘預設值"
+- **使用 hooks 自動化工作流程** (`hooks-guide.md`): 23 lines added, 20 removed
+- **Hooks 參考** (`hooks.md`): 151 lines added, 48 removed
+  - New section: "#### MCP 工具 hook 欄位"
+  - New section: "### PostToolBatch"
+  - New section: "#### PostToolBatch 輸入"
+  - New section: "#### PostToolBatch 決定控制"
+- **互動模式** (`interactive-mode.md`): 36 lines added, 14 removed
+  - New section: "### 視覺模式"
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 209 lines added, 6 removed
+  - New section: "# export ANTHROPIC_FOUNDRY_BASE_URL=https://{resource}.services.ai.azure.com/anthropic"
+- **模型配置** (`model-config.md`): 2 lines added, 2 removed
+- **設定權限** (`permissions.md`): 14 lines added, 13 removed
+- **建立並分發 plugin marketplace** (`plugin-marketplaces.md`): 33 lines added, 15 removed
+  - New section: "#### 固定依賴版本"
+- **Plugins 參考** (`plugins-reference.md`): 68 lines added, 32 removed
+  - New section: "### Themes"
+  - New section: "### plugin tag"
+- **建立 plugins** (`plugins.md`): 8 lines added, 8 removed
+- **使用 Remote Control 從任何裝置繼續本地會話** (`remote-control.md`): 2 lines added, 2 removed
+- **按排程執行提示** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Claude Code 設定** (`settings.md`): 5 lines added, 3 removed
+- **進階設定** (`setup.md`): 2 lines added, 0 removed
+- **自訂您的狀態列** (`statusline.md`): 1 lines added, 1 removed
+- **建立自訂 subagents** (`sub-agents.md`): 56 lines added, 0 removed
+  - New section: "## Fork 目前的對話"
+  - New section: "### 觀察和引導執行中的 forks"
+  - New section: "### Forks 與命名 subagents 的區別"
+  - New section: "### 限制"
+- **為 Claude Code 配置您的終端機** (`terminal-config.md`): 37 lines added, 3 removed
+  - New section: "### 建立自訂主題"
+
+---
+
 ## 2026-04-23
 
 187 pages modified

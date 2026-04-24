@@ -78,7 +78,7 @@ Exemple de fichier de paramètres :
 
 Les administrateurs d'entreprise peuvent utiliser `availableModels` dans les [paramètres gérés ou de politique](/fr/settings#settings-files) pour restreindre les modèles que les utilisateurs peuvent sélectionner.
 
-Lorsque `availableModels` est défini, les utilisateurs ne peuvent pas basculer vers des modèles ne figurant pas dans la liste via `/model`, le drapeau `--model`, l'outil Config ou la variable d'environnement `ANTHROPIC_MODEL`.
+Lorsque `availableModels` est défini, les utilisateurs ne peuvent pas basculer vers des modèles ne figurant pas dans la liste via `/model`, le drapeau `--model`, ou la variable d'environnement `ANTHROPIC_MODEL`.
 
 ```json theme={null}
 {
@@ -310,7 +310,7 @@ Le suffixe `[1m]` applique la fenêtre de contexte 1M à toute utilisation de ce
 
 Lorsque vous épinglez un modèle sur un fournisseur tiers, l'ID spécifique au fournisseur apparaît tel quel dans le sélecteur `/model` et Claude Code peut ne pas reconnaître les fonctionnalités que le modèle prend en charge. Vous pouvez remplacer le nom d'affichage et déclarer les capacités avec des variables d'environnement complémentaires pour chaque modèle épinglé.
 
-Ces variables ne prennent effet que sur les fournisseurs tiers tels que Bedrock, Vertex AI et Foundry. Elles n'ont aucun effet lors de l'utilisation directe de l'API Anthropic.
+Ces variables prennent effet sur les fournisseurs tiers tels que Bedrock, Vertex AI et Foundry. Les variables `_NAME` et `_DESCRIPTION` prennent également effet lorsque `ANTHROPIC_BASE_URL` pointe vers une [passerelle LLM](/fr/llm-gateway). Elles n'ont aucun effet lors de la connexion directe à `api.anthropic.com`.
 
 | Variable d'environnement                              | Description                                                                                                                                |
 | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |

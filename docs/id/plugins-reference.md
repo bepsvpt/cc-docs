@@ -118,6 +118,7 @@ Plugin hooks merespons peristiwa lifecycle yang sama seperti [hooks yang ditentu
 | `PermissionDenied`    | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
 | `PostToolUse`         | After a tool call succeeds                                                                                                                             |
 | `PostToolUseFailure`  | After a tool call fails                                                                                                                                |
+| `PostToolBatch`       | After a full batch of parallel tool calls resolves, before the next model call                                                                         |
 | `Notification`        | When Claude Code sends a notification                                                                                                                  |
 | `SubagentStart`       | When a subagent is spawned                                                                                                                             |
 | `SubagentStop`        | When a subagent finishes                                                                                                                               |
@@ -142,6 +143,7 @@ Plugin hooks merespons peristiwa lifecycle yang sama seperti [hooks yang ditentu
 
 * `command`: jalankan perintah shell atau scripts
 * `http`: kirim JSON event sebagai POST request ke URL
+* `mcp_tool`: panggil tool pada [MCP server](/id/mcp) yang dikonfigurasi
 * `prompt`: evaluasi prompt dengan LLM (menggunakan placeholder `$ARGUMENTS` untuk konteks)
 * `agent`: jalankan verifier agentic dengan tools untuk tugas verifikasi kompleks
 
@@ -318,6 +320,24 @@ Nilai `command` mendukung [substitusi variabel](#environment-variables) yang sam
 
 Menonaktifkan plugin di tengah sesi tidak menghentikan monitors yang sudah berjalan. Mereka berhenti saat sesi berakhir.
 
+### Themes
+
+Plugins dapat mengirimkan color themes yang muncul di `/theme` bersama preset bawaan dan themes lokal pengguna. Sebuah theme adalah file JSON di `themes/` dengan preset `base` dan peta `overrides` yang sparse dari color tokens.
+
+```json theme={null}
+{
+  "name": "Dracula",
+  "base": "dark",
+  "overrides": {
+    "claude": "#bd93f9",
+    "error": "#ff5555",
+    "success": "#50fa7b"
+  }
+}
+```
+
+Memilih plugin theme menyimpan `custom:<plugin-name>:<slug>` di config pengguna. Plugin themes bersifat read-only; menekan `Ctrl+E` pada salah satu di `/theme` menyalinnya ke `~/.claude/themes/` sehingga pengguna dapat mengedit salinannya.
+
 ***
 
 ## Cakupan instalasi plugin
@@ -363,6 +383,7 @@ Manifest bersifat opsional. Jika dihilangkan, Claude Code secara otomatis menemu
   "hooks": "./config/hooks.json",
   "mcpServers": "./mcp-config.json",
   "outputStyles": "./styles/",
+  "themes": "./themes/",
   "lspServers": "./.lsp.json",
   "monitors": "./monitors.json",
   "dependencies": [
@@ -384,15 +405,15 @@ Nama ini digunakan untuk namespacing komponen. Misalnya, di UI, agent `agent-cre
 
 ### Field metadata
 
-| Field         | Tipe   | Deskripsi                                                                                                                             | Contoh                                             |
-| :------------ | :----- | :------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------- |
-| `version`     | string | Versi semantik. Jika juga diatur di entri marketplace, `plugin.json` memiliki prioritas. Anda hanya perlu mengaturnya di satu tempat. | `"2.1.0"`                                          |
-| `description` | string | Penjelasan singkat tentang tujuan plugin                                                                                              | `"Deployment automation tools"`                    |
-| `author`      | object | Informasi penulis                                                                                                                     | `{"name": "Dev Team", "email": "dev@company.com"}` |
-| `homepage`    | string | URL dokumentasi                                                                                                                       | `"https://docs.example.com"`                       |
-| `repository`  | string | URL kode sumber                                                                                                                       | `"https://github.com/user/plugin"`                 |
-| `license`     | string | Pengenal lisensi                                                                                                                      | `"MIT"`, `"Apache-2.0"`                            |
-| `keywords`    | array  | Tag penemuan                                                                                                                          | `["deployment", "ci-cd"]`                          |
+| Field         | Tipe   | Deskripsi                                                                                                                                                                                                                                                                                                                                                                       | Contoh                                             |
+| :------------ | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------- |
+| `version`     | string | Opsional. Versi semantik. Mengatur ini mengikat plugin ke string versi tersebut, sehingga pengguna hanya menerima update saat Anda menaikkannya. Jika dihilangkan, Claude Code kembali ke SHA commit git, sehingga setiap commit diperlakukan sebagai versi baru. Jika juga diatur di entri marketplace, `plugin.json` menang. Lihat [Version management](#version-management). | `"2.1.0"`                                          |
+| `description` | string | Penjelasan singkat tentang tujuan plugin                                                                                                                                                                                                                                                                                                                                        | `"Deployment automation tools"`                    |
+| `author`      | object | Informasi penulis                                                                                                                                                                                                                                                                                                                                                               | `{"name": "Dev Team", "email": "dev@company.com"}` |
+| `homepage`    | string | URL dokumentasi                                                                                                                                                                                                                                                                                                                                                                 | `"https://docs.example.com"`                       |
+| `repository`  | string | URL kode sumber                                                                                                                                                                                                                                                                                                                                                                 | `"https://github.com/user/plugin"`                 |
+| `license`     | string | Pengenal lisensi                                                                                                                                                                                                                                                                                                                                                                | `"MIT"`, `"Apache-2.0"`                            |
+| `keywords`    | array  | Tag penemuan                                                                                                                                                                                                                                                                                                                                                                    | `["deployment", "ci-cd"]`                          |
 
 ### Field jalur komponen
 
@@ -404,6 +425,7 @@ Nama ini digunakan untuk namespacing komponen. Misalnya, di UI, agent `agent-cre
 | `hooks`        | string\|array\|object | Jalur konfigurasi hook atau konfigurasi inline                                                                                                              | `"./my-extra-hooks.json"`                            |
 | `mcpServers`   | string\|array\|object | Jalur konfigurasi MCP atau konfigurasi inline                                                                                                               | `"./my-extra-mcp-config.json"`                       |
 | `outputStyles` | string\|array         | File/direktori gaya output khusus (menggantikan default `output-styles/`)                                                                                   | `"./styles/"`                                        |
+| `themes`       | string\|array         | File/direktori tema warna (menggantikan default `themes/`). Lihat [Themes](#themes)                                                                         | `"./themes/"`                                        |
 | `lspServers`   | string\|array\|object | Konfigurasi [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) untuk intelijen kode (buka definisi, temukan referensi, dll.) | `"./.lsp.json"`                                      |
 | `monitors`     | string\|array         | Konfigurasi [Monitor](/id/tools-reference#monitor-tool) latar belakang yang dimulai secara otomatis saat plugin aktif. Lihat [Monitors](#monitors)          | `"./monitors.json"`                                  |
 | `userConfig`   | object                | Nilai yang dapat dikonfigurasi pengguna yang diminta saat enable. Lihat [User configuration](#user-configuration)                                           | Lihat di bawah                                       |
@@ -480,7 +502,7 @@ Field `server` diperlukan dan harus cocok dengan kunci di `mcpServers` plugin. F
 
 ### Aturan perilaku jalur
 
-Untuk `skills`, `commands`, `agents`, `outputStyles`, dan `monitors`, jalur khusus menggantikan default. Jika manifest menentukan `skills`, direktori default `skills/` tidak dipindai; jika menentukan `monitors`, default `monitors/monitors.json` tidak dimuat. [Hooks](#hooks), [MCP servers](#mcp-servers), dan [LSP servers](#lsp-servers) memiliki semantik berbeda untuk menangani beberapa sumber.
+Untuk `skills`, `commands`, `agents`, `outputStyles`, `themes`, dan `monitors`, jalur khusus menggantikan default. Jika manifest menentukan `skills`, direktori default `skills/` tidak dipindai; jika menentukan `monitors`, default `monitors/monitors.json` tidak dimuat. [Hooks](#hooks), [MCP servers](#mcp-servers), dan [LSP servers](#lsp-servers) memiliki semantik berbeda untuk menangani beberapa sumber.
 
 * Semua jalur harus relatif terhadap root plugin dan dimulai dengan `./`
 * Komponen dari jalur khusus menggunakan aturan penamaan dan namespacing yang sama
@@ -629,12 +651,14 @@ enterprise-plugin/
 │   └── compliance-checker.md
 ├── output-styles/            # Definisi gaya output
 │   └── terse.md
+├── themes/                   # Definisi tema warna
+│   └── dracula.json
 ├── monitors/                 # Konfigurasi monitor latar belakang
 │   └── monitors.json
-├── hooks/                    # Konfigurasi hook
+├── hooks/                    # Konfigurasi hooks
 │   ├── hooks.json           # Konfigurasi hook utama
 │   └── security-hooks.json  # Hook tambahan
-├── bin/                      # Executables plugin ditambahkan ke PATH
+├── bin/                      # Plugin executables ditambahkan ke PATH
 │   └── my-tool               # Dapat dipanggil sebagai perintah bare di Bash tool
 ├── settings.json            # Pengaturan default untuk plugin
 ├── .mcp.json                # Definisi MCP server
@@ -648,7 +672,7 @@ enterprise-plugin/
 ```
 
 <Warning>
-  Direktori `.claude-plugin/` berisi file `plugin.json`. Semua direktori lainnya (commands/, agents/, skills/, output-styles/, monitors/, hooks/) harus berada di root plugin, bukan di dalam `.claude-plugin/`.
+  Direktori `.claude-plugin/` berisi file `plugin.json`. Semua direktori lainnya (commands/, agents/, skills/, output-styles/, themes/, monitors/, hooks/) harus berada di root plugin, bukan di dalam `.claude-plugin/`.
 </Warning>
 
 ### Referensi lokasi file
@@ -660,6 +684,7 @@ enterprise-plugin/
 | **Commands**      | `commands/`                  | Skills sebagai file Markdown datar. Gunakan `skills/` untuk plugin baru                                                                                                                   |
 | **Agents**        | `agents/`                    | File Markdown Subagent                                                                                                                                                                    |
 | **Output styles** | `output-styles/`             | Definisi gaya output                                                                                                                                                                      |
+| **Themes**        | `themes/`                    | Definisi tema warna                                                                                                                                                                       |
 | **Hooks**         | `hooks/hooks.json`           | Konfigurasi hook                                                                                                                                                                          |
 | **MCP servers**   | `.mcp.json`                  | Definisi MCP server                                                                                                                                                                       |
 | **LSP servers**   | `.lsp.json`                  | Konfigurasi language server                                                                                                                                                               |
@@ -806,6 +831,23 @@ claude plugin list [options]
 | `--available` | Sertakan plugin yang tersedia dari marketplace. Memerlukan `--json` |         |
 | `-h, --help`  | Tampilkan bantuan untuk perintah                                    |         |
 
+### plugin tag
+
+Buat tag rilis git untuk plugin di direktori saat ini. Jalankan dari dalam folder plugin. Lihat [Tag plugin releases](/id/plugin-dependencies#tag-plugin-releases-for-version-resolution).
+
+```bash theme={null}
+claude plugin tag [options]
+```
+
+**Opsi:**
+
+| Opsi          | Deskripsi                                                 | Default |
+| :------------ | :-------------------------------------------------------- | :------ |
+| `--push`      | Dorong tag ke remote setelah membuatnya                   |         |
+| `--dry-run`   | Cetak apa yang akan diberi tag tanpa membuat tag          |         |
+| `-f, --force` | Buat tag bahkan jika pohon kerja kotor atau tag sudah ada |         |
+| `-h, --help`  | Tampilkan bantuan untuk perintah                          |         |
+
 ***
 
 ## Alat debugging dan pengembangan
@@ -859,7 +901,7 @@ Ini menunjukkan:
 
 1. Verifikasi nama event benar (case-sensitive): `PostToolUse`, bukan `postToolUse`
 2. Periksa pola matcher cocok dengan alat Anda: `"matcher": "Write|Edit"` untuk operasi file
-3. Konfirmkan tipe hook valid: `command`, `http`, `prompt`, atau `agent`
+3. Konfirmkan tipe hook valid: `command`, `http`, `mcp_tool`, `prompt`, atau `agent`
 
 ### Troubleshooting MCP server
 
@@ -905,33 +947,27 @@ Jika komponen Anda berada di dalam `.claude-plugin/`, pindahkan ke root plugin.
 
 ### Manajemen versi
 
-Ikuti semantic versioning untuk rilis plugin:
+Claude Code menggunakan versi plugin sebagai cache key yang menentukan apakah pembaruan tersedia. Ketika Anda menjalankan `/plugin update` atau auto-update dipicu, Claude Code menghitung versi saat ini dan melewati pembaruan jika cocok dengan apa yang sudah terpasang.
 
-```json theme={null}
-{
-  "name": "my-plugin",
-  "version": "2.1.0"
-}
-```
+Versi diselesaikan dari yang pertama dari ini yang diatur:
 
-**Format versi**: `MAJOR.MINOR.PATCH`
+1. Field `version` dalam `plugin.json` plugin
+2. Field `version` dalam entri marketplace plugin dalam `marketplace.json`
+3. Git commit SHA dari sumber plugin, untuk sumber `github`, `url`, `git-subdir`, dan relative-path dalam marketplace yang dihosting git
+4. `unknown`, untuk sumber `npm` atau direktori lokal yang tidak berada dalam repositori git
 
-* **MAJOR**: Perubahan breaking (perubahan API yang tidak kompatibel)
-* **MINOR**: Fitur baru (penambahan yang kompatibel ke belakang)
-* **PATCH**: Perbaikan bug (perbaikan yang kompatibel ke belakang)
+Ini memberi Anda dua cara untuk memberi versi pada plugin:
 
-**Best practices**:
-
-* Mulai dari `1.0.0` untuk rilis stabil pertama Anda
-* Perbarui versi di `plugin.json` sebelum mendistribusikan perubahan
-* Dokumentasikan perubahan dalam file `CHANGELOG.md`
-* Gunakan versi pre-release seperti `2.0.0-beta.1` untuk pengujian
+| Pendekatan           | Cara                                                         | Perilaku pembaruan                                                                                                                                                                                 | Terbaik untuk                                         |
+| :------------------- | :----------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------- |
+| **Versi eksplisit**  | Atur `"version": "2.1.0"` dalam `plugin.json`                | Pengguna mendapatkan pembaruan hanya ketika Anda menaikkan field ini. Mendorong commit baru tanpa menaikkannya tidak berpengaruh, dan `/plugin update` melaporkan "already at the latest version". | Plugin yang dipublikasikan dengan siklus rilis stabil |
+| **Versi commit-SHA** | Hilangkan `version` dari `plugin.json` dan entri marketplace | Pengguna mendapatkan pembaruan pada setiap commit baru ke sumber git plugin                                                                                                                        | Plugin internal atau tim di bawah pengembangan aktif  |
 
 <Warning>
-  Claude Code menggunakan versi untuk menentukan apakah akan memperbarui plugin Anda. Jika Anda mengubah kode plugin Anda tetapi tidak meningkatkan versi di `plugin.json`, pengguna plugin Anda yang ada tidak akan melihat perubahan Anda karena caching.
-
-  Jika plugin Anda berada dalam direktori [marketplace](/id/plugin-marketplaces), Anda dapat mengelola versi melalui `marketplace.json` sebagai gantinya dan menghilangkan field `version` dari `plugin.json`.
+  Jika Anda mengatur `version` dalam `plugin.json`, Anda harus menaikkannya setiap kali Anda ingin pengguna menerima perubahan. Mendorong commit baru saja tidak cukup, karena Claude Code melihat string versi yang sama dan menyimpan salinan yang di-cache. Jika Anda melakukan iterasi dengan cepat, biarkan `version` tidak diatur sehingga git commit SHA digunakan sebagai gantinya.
 </Warning>
+
+Jika Anda menggunakan versi eksplisit, ikuti [semantic versioning](https://semver.org) (`MAJOR.MINOR.PATCH`): naikkan MAJOR untuk perubahan breaking, MINOR untuk fitur baru, PATCH untuk perbaikan bug. Dokumentasikan perubahan dalam `CHANGELOG.md`.
 
 ***
 

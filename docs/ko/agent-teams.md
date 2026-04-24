@@ -235,13 +235,19 @@ Claude Code는 팀을 만들 때 이 둘을 자동으로 생성하고 팀원들�
 
 ### 팀원을 위해 subagent 정의 사용
 
-팀원을 생성할 때, 프로젝트, 사용자, 플러그인, 또는 CLI 정의 등 모든 [subagent 범위](/ko/sub-agents#choose-the-subagent-scope)의 [subagent](/ko/sub-agents) 유형을 참조할 수 있습니다. 팀원은 해당 subagent의 시스템 프롬프트, 도구, 모델을 상속합니다. 이를 통해 보안 검토자 또는 테스트 실행자와 같은 역할을 한 번 정의하고 위임된 subagent와 에이전트 팀 팀원 모두로 재사용할 수 있습니다.
+팀원을 생성할 때, 프로젝트, 사용자, 플러그인, 또는 CLI 정의 등 모든 [subagent 범위](/ko/sub-agents#choose-the-subagent-scope)의 [subagent](/ko/sub-agents) 유형을 참조할 수 있습니다. 이를 통해 보안 검토자 또는 테스트 실행자와 같은 역할을 한 번 정의하고 위임된 subagent와 에이전트 팀 팀원 모두로 재사용할 수 있습니다.
 
 subagent 정의를 사용하려면, Claude에게 팀원을 생성하도록 요청할 때 이름으로 언급합니다:
 
 ```text theme={null}
 Spawn a teammate using the security-reviewer agent type to audit the auth module.
 ```
+
+팀원은 해당 정의의 `tools` 허용 목록과 `model`을 준수하며, 정의의 본문은 팀원의 시스템 프롬프트에 추가 지시로 추가되며 이를 대체하지 않습니다. `SendMessage`와 작업 관리 도구와 같은 팀 조율 도구는 `tools`가 다른 도구를 제한할 때에도 팀원이 항상 사용할 수 있습니다.
+
+<Note>
+  subagent 정의의 `skills`과 `mcpServers` frontmatter 필드는 해당 정의가 팀원으로 실행될 때 적용되지 않습니다. 팀원들은 일반 세션과 동일하게 프로젝트 및 사용자 설정에서 skills과 MCP servers를 로드합니다.
+</Note>
 
 ### 권한
 
@@ -256,11 +262,9 @@ Spawn a teammate using the security-reviewer agent type to audit the auth module
 * **자동 메시지 전달**: 팀원들이 메시지를 보낼 때, 자동으로 수신자에게 전달됩니다. 리더가 업데이트를 폴링할 필요가 없습니다.
 * **유휴 알림**: 팀원이 완료되고 중지되면, 자동으로 리더에게 알립니다.
 * **공유 작업 목록**: 모든 에이전트는 작업 상태를 보고 사용 가능한 작업을 요청할 수 있습니다.
+* **팀원 메시징**: 이름으로 특정 팀원 한 명에게 메시지를 보냅니다. 모든 사람에게 도달하려면, 각 수신자에게 하나의 메시지를 보냅니다.
 
-**팀원 메시징:**
-
-* **message**: 특정 팀원 한 명에게 메시지 보내기
-* **broadcast**: 모든 팀원에게 동시에 보내기. 팀 크기에 따라 비용이 증가하므로 드물게 사용합니다.
+리더는 팀원을 생성할 때 각 팀원에게 이름을 할당하며, 모든 팀원은 그 이름으로 다른 팀원에게 메시지를 보낼 수 있습니다. 나중의 프롬프트에서 참조할 수 있는 예측 가능한 이름을 얻으려면, 생성 지시에서 각 팀원을 무엇이라고 부를지 리더에게 말합니다.
 
 ### 토큰 사용
 

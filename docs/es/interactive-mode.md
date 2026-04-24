@@ -97,9 +97,9 @@ Cuando el visor de transcripción está abierto (alternado con `Ctrl+O`), estos 
 
 ### Entrada de voz
 
-| Atajo                         | Descripción                   | Notas                                                                                                                                                                        |
-| :---------------------------- | :---------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Mantener presionado `Espacio` | Dictado de pulsar para hablar | Requiere que [dictado de voz](/es/voice-dictation) esté habilitado. La transcripción se inserta en el cursor. [Reasignable](/es/voice-dictation#rebind-the-push-to-talk-key) |
+| Atajo                                  | Descripción    | Notas                                                                                                                                                                                                             |
+| :------------------------------------- | :------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mantener presionado o pulsar `Espacio` | Dictado de voz | Requiere que [dictado de voz](/es/voice-dictation) esté habilitado. Mantenga presionado para grabar, o ejecute `/voice tap` para alternar con pulsar. [Reasignable](/es/voice-dictation#rebind-the-dictation-key) |
 
 ## Comandos
 
@@ -113,15 +113,17 @@ Habilite la edición de estilo vim a través de `/config` → Editor mode.
 
 ### Cambio de modo
 
-| Comando | Acción                            | Desde el modo |
-| :------ | :-------------------------------- | :------------ |
-| `Esc`   | Entrar en modo NORMAL             | INSERT        |
-| `i`     | Insertar antes del cursor         | NORMAL        |
-| `I`     | Insertar al principio de la línea | NORMAL        |
-| `a`     | Insertar después del cursor       | NORMAL        |
-| `A`     | Insertar al final de la línea     | NORMAL        |
-| `o`     | Abrir línea debajo                | NORMAL        |
-| `O`     | Abrir línea arriba                | NORMAL        |
+| Comando | Acción                                         | Desde el modo  |
+| :------ | :--------------------------------------------- | :------------- |
+| `Esc`   | Entrar en modo NORMAL                          | INSERT, VISUAL |
+| `i`     | Insertar antes del cursor                      | NORMAL         |
+| `I`     | Insertar al principio de la línea              | NORMAL         |
+| `a`     | Insertar después del cursor                    | NORMAL         |
+| `A`     | Insertar al final de la línea                  | NORMAL         |
+| `o`     | Abrir línea debajo                             | NORMAL         |
+| `O`     | Abrir línea arriba                             | NORMAL         |
+| `v`     | Iniciar selección visual carácter por carácter | NORMAL         |
+| `V`     | Iniciar selección visual línea por línea       | NORMAL         |
 
 ### Navegación (modo NORMAL)
 
@@ -181,6 +183,26 @@ Los objetos de texto funcionan con operadores como `d`, `c` e `y`:
 | `i(`/`a(` | Paréntesis interior/alrededor                                  |
 | `i[`/`a[` | Corchetes interior/alrededor                                   |
 | `i{`/`a{` | Llaves interior/alrededor                                      |
+
+### Modo visual
+
+Presione `v` para selección carácter por carácter o `V` para selección línea por línea. Los movimientos extienden la selección, y los operadores actúan sobre ella directamente.
+
+| Comando          | Acción                                                          |
+| :--------------- | :-------------------------------------------------------------- |
+| `d`/`x`          | Eliminar selección                                              |
+| `y`              | Yanquear selección                                              |
+| `c`/`s`          | Cambiar selección                                               |
+| `p`              | Reemplazar selección con contenido del registro                 |
+| `r{char}`        | Reemplazar cada carácter seleccionado con `{char}`              |
+| `~`/`u`/`U`      | Alternar, minúsculas o mayúsculas de selección                  |
+| `>`/`<`          | Indentar o desindentación de líneas seleccionadas               |
+| `J`              | Unir líneas seleccionadas                                       |
+| `o`              | Intercambiar cursor y ancla                                     |
+| `iw`/`aw`/`i"`/… | Seleccionar un objeto de texto                                  |
+| `v`/`V`          | Alternar entre carácter por carácter y línea por línea, o salir |
+
+El modo visual por bloques con `Ctrl+V` no es compatible.
 
 ## Historial de comandos
 
@@ -301,7 +323,7 @@ Presione **Espacio**, **Enter** o **Escape** para descartar la respuesta y volve
 
 Cuando trabaja en trabajo complejo de varios pasos, Claude crea una lista de tareas para rastrear el progreso. Las tareas aparecen en el área de estado de su terminal con indicadores que muestran qué está pendiente, en progreso o completado.
 
-* Presione `Ctrl+T` para alternar la vista de la lista de tareas. La pantalla muestra hasta 10 tareas a la vez
+* Presione `Ctrl+T` para alternar la vista de la lista de tareas. La pantalla muestra hasta 5 tareas a la vez
 * Para ver todas las tareas o borrarlas, pregunte a Claude directamente: "show me all tasks" o "clear all tasks"
 * Las tareas persisten en compactaciones de contexto, ayudando a Claude a mantenerse organizado en proyectos más grandes
 * Para compartir una lista de tareas entre sesiones, establezca `CLAUDE_CODE_TASK_LIST_ID` para usar un directorio nombrado en `~/.claude/tasks/`: `CLAUDE_CODE_TASK_LIST_ID=my-project claude`
@@ -312,7 +334,7 @@ Cuando regresa a la terminal después de alejarse, Claude Code muestra un resume
 
 Ejecute `/recap` para generar un resumen bajo demanda. Para desactivar los resúmenes automáticos, abra `/config` y desactive **Session recap**.
 
-El resumen de sesión está activado de forma predeterminada para todos los planes y proveedores. Para anular el toggle de `/config`, establezca [`CLAUDE_CODE_ENABLE_AWAY_SUMMARY`](/es/env-vars) en `0` o `1`. El resumen siempre se omite en modo no interactivo.
+El resumen de sesión está activado de forma predeterminada para todos los planes y proveedores. El resumen siempre se omite en modo no interactivo.
 
 ## Estado de revisión de PR
 

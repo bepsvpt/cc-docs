@@ -83,12 +83,12 @@ Quickstart ini memandu Anda melalui pembuatan plugin dengan skill kustom. Anda a
     }
     ```
 
-    | Field         | Tujuan                                                                                                     |
-    | :------------ | :--------------------------------------------------------------------------------------------------------- |
-    | `name`        | Pengidentifikasi unik dan namespace skill. Skills diawali dengan ini (misalnya, `/my-first-plugin:hello`). |
-    | `description` | Ditampilkan di plugin manager saat menjelajahi atau memasang plugins.                                      |
-    | `version`     | Lacak rilis menggunakan [semantic versioning](/id/plugins-reference#version-management).                   |
-    | `author`      | Opsional. Membantu untuk atribusi.                                                                         |
+    | Field         | Tujuan                                                                                                                                                                                                                                                                                         |
+    | :------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | `name`        | Pengidentifikasi unik dan namespace skill. Skills diawali dengan ini (misalnya, `/my-first-plugin:hello`).                                                                                                                                                                                     |
+    | `description` | Ditampilkan di plugin manager saat menjelajahi atau memasang plugins.                                                                                                                                                                                                                          |
+    | `version`     | Opsional. Jika diatur, pengguna hanya menerima pembaruan ketika Anda menaikkan field ini. Jika dihilangkan dan plugin Anda didistribusikan melalui git, SHA commit digunakan dan setiap commit dihitung sebagai versi baru. Lihat [manajemen versi](/id/plugins-reference#version-management). |
+    | `author`      | Opsional. Membantu untuk atribusi.                                                                                                                                                                                                                                                             |
 
     Untuk field tambahan seperti `homepage`, `repository`, dan `license`, lihat [skema manifest lengkap](/id/plugins-reference#plugin-manifest-schema).
   </Step>
@@ -328,7 +328,7 @@ Jika plugin Anda tidak bekerja seperti yang diharapkan:
 Ketika plugin Anda siap untuk dibagikan:
 
 1. **Tambahkan dokumentasi**: Sertakan `README.md` dengan instruksi instalasi dan penggunaan
-2. **Versi plugin Anda**: Gunakan [semantic versioning](/id/plugins-reference#version-management) di `plugin.json` Anda
+2. **Pilih strategi versioning**: Tentukan apakah akan menetapkan `version` eksplisit atau mengandalkan SHA commit git. Lihat [manajemen versi](/id/plugins-reference#version-management)
 3. **Buat atau gunakan marketplace**: Distribusikan melalui [plugin marketplaces](/id/plugin-marketplaces) untuk instalasi
 4. **Uji dengan orang lain**: Minta anggota tim menguji plugin sebelum distribusi yang lebih luas
 

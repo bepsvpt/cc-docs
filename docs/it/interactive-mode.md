@@ -97,9 +97,9 @@ Quando il visualizzatore di trascrizione è aperto (attivato con `Ctrl+O`), ques
 
 ### Input vocale
 
-| Scorciatoia           | Descrizione            | Note                                                                                                                                                                             |
-| :-------------------- | :--------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Tieni premuto `Space` | Dettatura push-to-talk | Richiede che la [dettatura vocale](/it/voice-dictation) sia abilitata. La trascrizione si inserisce al cursore. [Riassegnabile](/it/voice-dictation#rebind-the-push-to-talk-key) |
+| Scorciatoia                   | Descrizione      | Note                                                                                                                                                                                                                        |
+| :---------------------------- | :--------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tieni premuto o tocca `Space` | Dettatura vocale | Richiede che la [dettatura vocale](/it/voice-dictation) sia abilitata. Tieni premuto per registrare, o esegui `/voice tap` per attivare/disattivare al tocco. [Riassegnabile](/it/voice-dictation#rebind-the-dictation-key) |
 
 ## Comandi
 
@@ -113,15 +113,17 @@ Abilitate la modifica in stile vim tramite `/config` → Editor mode.
 
 ### Cambio di modalità
 
-| Comando | Azione                          | Dalla modalità |
-| :------ | :------------------------------ | :------------- |
-| `Esc`   | Entra in modalità NORMAL        | INSERT         |
-| `i`     | Inserisci prima del cursore     | NORMAL         |
-| `I`     | Inserisci all'inizio della riga | NORMAL         |
-| `a`     | Inserisci dopo il cursore       | NORMAL         |
-| `A`     | Inserisci alla fine della riga  | NORMAL         |
-| `o`     | Apri riga sotto                 | NORMAL         |
-| `O`     | Apri riga sopra                 | NORMAL         |
+| Comando | Azione                                          | Dalla modalità |
+| :------ | :---------------------------------------------- | :------------- |
+| `Esc`   | Entra in modalità NORMAL                        | INSERT, VISUAL |
+| `i`     | Inserisci prima del cursore                     | NORMAL         |
+| `I`     | Inserisci all'inizio della riga                 | NORMAL         |
+| `a`     | Inserisci dopo il cursore                       | NORMAL         |
+| `A`     | Inserisci alla fine della riga                  | NORMAL         |
+| `o`     | Apri riga sotto                                 | NORMAL         |
+| `O`     | Apri riga sopra                                 | NORMAL         |
+| `v`     | Avvia selezione visuale carattere per carattere | NORMAL         |
+| `V`     | Avvia selezione visuale riga per riga           | NORMAL         |
 
 ### Navigazione (modalità NORMAL)
 
@@ -181,6 +183,26 @@ Gli oggetti di testo funzionano con operatori come `d`, `c` e `y`:
 | `i(`/`a(` | Interno/intorno a parentesi tonde            |
 | `i[`/`a[` | Interno/intorno a parentesi quadre           |
 | `i{`/`a{` | Interno/intorno a parentesi graffe           |
+
+### Modalità visuale
+
+Premete `v` per la selezione carattere per carattere o `V` per la selezione riga per riga. I movimenti estendono la selezione e gli operatori agiscono direttamente su di essa.
+
+| Comando          | Azione                                                               |
+| :--------------- | :------------------------------------------------------------------- |
+| `d`/`x`          | Elimina selezione                                                    |
+| `y`              | Copia selezione                                                      |
+| `c`/`s`          | Cambia selezione                                                     |
+| `p`              | Sostituisci selezione con il contenuto del registro                  |
+| `r{char}`        | Sostituisci ogni carattere selezionato con `{char}`                  |
+| `~`/`u`/`U`      | Attiva/disattiva, minuscole o maiuscole selezione                    |
+| `>`/`<`          | Indenta o dedenta le righe selezionate                               |
+| `J`              | Unisci le righe selezionate                                          |
+| `o`              | Scambia cursore e ancoraggio                                         |
+| `iw`/`aw`/`i"`/… | Seleziona un oggetto di testo                                        |
+| `v`/`V`          | Attiva/disattiva tra carattere per carattere e riga per riga, o esci |
+
+La modalità visuale blocco con `Ctrl+V` non è supportata.
 
 ## Cronologia dei comandi
 
@@ -301,7 +323,7 @@ Premete **Space**, **Enter** o **Escape** per dismissere la risposta e tornare a
 
 Quando lavorate su lavori complessi e multistep, Claude crea un elenco di attività per tracciare l'avanzamento. Le attività appaiono nell'area di stato del vostro terminale con indicatori che mostrano cosa è in sospeso, in corso o completato.
 
-* Premete `Ctrl+T` per attivare/disattivare la visualizzazione dell'elenco delle attività. La visualizzazione mostra fino a 10 attività alla volta
+* Premete `Ctrl+T` per attivare/disattivare la visualizzazione dell'elenco delle attività. La visualizzazione mostra fino a 5 attività alla volta
 * Per visualizzare tutte le attività o cancellarle, chiedete direttamente a Claude: "show me all tasks" o "clear all tasks"
 * Le attività persistono attraverso i compattamenti del contesto, aiutando Claude a rimanere organizzato su progetti più grandi
 * Per condividere un elenco di attività tra sessioni, impostare `CLAUDE_CODE_TASK_LIST_ID` per utilizzare una directory denominata in `~/.claude/tasks/`: `CLAUDE_CODE_TASK_LIST_ID=my-project claude`
@@ -312,7 +334,7 @@ Quando tornate al terminale dopo esservi allontanati, Claude Code mostra un riep
 
 Eseguite `/recap` per generare un riepilogo su richiesta. Per disattivare i riepiloghi automatici, aprite `/config` e disabilitate **Session recap**.
 
-Il riepilogo della sessione è abilitato per impostazione predefinita per ogni piano e provider. Per ignorare l'interruttore `/config`, impostare [`CLAUDE_CODE_ENABLE_AWAY_SUMMARY`](/it/env-vars) su `0` o `1`. Il riepilogo viene sempre saltato in modalità non interattiva.
+Il riepilogo della sessione è abilitato per impostazione predefinita per ogni piano e provider. Il riepilogo viene sempre saltato in modalità non interattiva.
 
 ## Stato della revisione PR
 

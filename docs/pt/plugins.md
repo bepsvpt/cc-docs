@@ -83,12 +83,12 @@ Este início rápido o guia através da criação de um plugin com um skill pers
     }
     ```
 
-    | Campo         | Propósito                                                                                                |
-    | :------------ | :------------------------------------------------------------------------------------------------------- |
-    | `name`        | Identificador único e namespace de skill. Skills são prefixados com isso (ex: `/my-first-plugin:hello`). |
-    | `description` | Mostrado no gerenciador de plugins ao navegar ou instalar plugins.                                       |
-    | `version`     | Rastreie lançamentos usando [versionamento semântico](/pt/plugins-reference#version-management).         |
-    | `author`      | Opcional. Útil para atribuição.                                                                          |
+    | Campo         | Propósito                                                                                                                                                                                                                                                                                    |
+    | :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | `name`        | Identificador único e namespace de skill. Skills são prefixados com isso (ex: `/my-first-plugin:hello`).                                                                                                                                                                                     |
+    | `description` | Mostrado no gerenciador de plugins ao navegar ou instalar plugins.                                                                                                                                                                                                                           |
+    | `version`     | Opcional. Se definido, os usuários recebem atualizações apenas quando você incrementa este campo. Se omitido e seu plugin é distribuído via git, o SHA do commit é usado e cada commit conta como uma nova versão. Veja [gerenciamento de versão](/pt/plugins-reference#version-management). |
+    | `author`      | Opcional. Útil para atribuição.                                                                                                                                                                                                                                                              |
 
     Para campos adicionais como `homepage`, `repository` e `license`, veja o [esquema de manifesto completo](/pt/plugins-reference#plugin-manifest-schema).
   </Step>
@@ -328,7 +328,7 @@ Se seu plugin não está funcionando como esperado:
 Quando seu plugin estiver pronto para compartilhar:
 
 1. **Adicione documentação**: Inclua um `README.md` com instruções de instalação e uso
-2. **Versione seu plugin**: Use [versionamento semântico](/pt/plugins-reference#version-management) em seu `plugin.json`
+2. **Escolha uma estratégia de versionamento**: Decida se deve definir uma `version` explícita ou confiar no SHA do commit git. Veja [gerenciamento de versão](/pt/plugins-reference#version-management)
 3. **Crie ou use um marketplace**: Distribua através de [marketplaces de plugins](/pt/plugin-marketplaces) para instalação
 4. **Teste com outros**: Tenha membros da equipe testarem o plugin antes de distribuição mais ampla
 

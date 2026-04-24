@@ -235,13 +235,19 @@ Não há equivalente em nível de projeto da configuração da equipe. Um arquiv
 
 ### Usar definições de subagent para companheiros de equipe
 
-Ao gerar um companheiro de equipe, você pode referenciar um tipo de [subagent](/pt/sub-agents) de qualquer [escopo de subagent](/pt/sub-agents#choose-the-subagent-scope): projeto, usuário, plugin ou definido por CLI. O companheiro de equipe herda o prompt do sistema, ferramentas e modelo desse subagent. Isso permite que você defina um papel uma vez, como um revisor de segurança ou executor de testes, e o reutilize tanto como um subagent delegado quanto como um companheiro de equipe de equipe de agentes.
+Ao gerar um companheiro de equipe, você pode referenciar um tipo de [subagent](/pt/sub-agents) de qualquer [escopo de subagent](/pt/sub-agents#choose-the-subagent-scope): projeto, usuário, plugin ou definido por CLI. Isso permite que você defina um papel uma vez, como um revisor de segurança ou executor de testes, e o reutilize tanto como um subagent delegado quanto como um companheiro de equipe de equipe de agentes.
 
 Para usar uma definição de subagent, mencione-a pelo nome ao pedir ao Claude para gerar o companheiro de equipe:
 
 ```text theme={null}
 Spawn a teammate using the security-reviewer agent type to audit the auth module.
 ```
+
+O companheiro de equipe honra a lista de permissão `tools` dessa definição e `model`, e o corpo da definição é anexado ao prompt do sistema do companheiro de equipe como instruções adicionais em vez de substituí-lo. Ferramentas de coordenação de equipe como `SendMessage` e as ferramentas de gerenciamento de tarefas estão sempre disponíveis para um companheiro de equipe, mesmo quando `tools` restringe outras ferramentas.
+
+<Note>
+  Os campos frontmatter `skills` e `mcpServers` em uma definição de subagent não são aplicados quando essa definição é executada como um companheiro de equipe. Os companheiros de equipe carregam skills e MCP servers de suas configurações de projeto e usuário, assim como uma sessão regular.
+</Note>
 
 ### Permissões
 
@@ -256,11 +262,9 @@ Cada companheiro de equipe tem sua própria context window. Quando gerado, um co
 * **Entrega automática de mensagens**: quando os companheiros de equipe enviam mensagens, elas são entregues automaticamente aos destinatários. O líder não precisa fazer polling para atualizações.
 * **Notificações de ociosidade**: quando um companheiro de equipe termina e para, ele notifica automaticamente o líder.
 * **Lista de tarefas compartilhada**: todos os agentes podem ver o status da tarefa e reivindicar trabalho disponível.
+* **Mensagens de companheiros de equipe**: envie uma mensagem para um companheiro de equipe específico pelo nome. Para alcançar todos, envie uma mensagem por destinatário.
 
-**Mensagens de companheiros de equipe:**
-
-* **message**: envie uma mensagem para um companheiro de equipe específico
-* **broadcast**: envie para todos os companheiros de equipe simultaneamente. Use com moderação, pois os custos escalam com o tamanho da equipe.
+O líder atribui a cada companheiro de equipe um nome quando o gera, e qualquer companheiro de equipe pode enviar mensagens para qualquer outro por esse nome. Para obter nomes previsíveis que você possa referenciar em prompts posteriores, diga ao líder como chamar cada companheiro de equipe em sua instrução de geração.
 
 ### Uso de tokens
 

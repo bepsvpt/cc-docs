@@ -30,6 +30,7 @@ Claude Code inclui vários subagentes integrados como **Explore**, **Plan** e **
 * [Como criar o seu próprio](#quickstart-create-your-first-subagent)
 * [Opções de configuração completas](#configure-subagents)
 * [Padrões para trabalhar com subagentes](#work-with-subagents)
+* [Subagentes bifurcados](#fork-the-current-conversation)
 * [Subagentes de exemplo](#example-subagents)
 
 ## Subagentes integrados
@@ -654,6 +655,8 @@ Claude decide se deve executar subagentes em foreground ou background baseado na
 
 Para desabilitar toda a funcionalidade de tarefa em background, defina a variável de ambiente `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` para `1`. Veja [Variáveis de ambiente](/pt/env-vars).
 
+Quando [fork mode](#fork-the-current-conversation) está habilitado, cada spawn de subagente é executado em background independentemente do campo `background`. Forks ainda exibem prompts de permissão em seu terminal conforme ocorrem em vez de pré-aprovar; subagentes nomeados seguem o fluxo de pré-aprovação acima.
+
 ### Padrões comuns
 
 #### Isolar operações de alto volume
@@ -759,6 +762,59 @@ Eventos de compactação são registrados em arquivos de transcrição de subage
 ```
 
 O valor `preTokens` mostra quantos tokens foram usados antes da compactação ocorrer.
+
+## Bifurcar a conversa atual
+
+<Note>
+  Subagentes bifurcados são experimentais e requerem Claude Code v2.1.117 ou posterior. O comportamento e a configuração podem mudar em versões futuras. Habilite-os definindo a variável de ambiente [`CLAUDE_CODE_FORK_SUBAGENT`](/pt/env-vars) para `1`.
+</Note>
+
+Uma bifurcação é um subagente que herda toda a conversa até agora em vez de começar do zero. Isso remove o isolamento de entrada que subagentes de outra forma fornecem: uma bifurcação vê o mesmo prompt de sistema, ferramentas, modelo e histórico de mensagens que a sessão principal, para que você possa entregar uma tarefa secundária sem re-explicar a situação. As chamadas de ferramentas da bifurcação ainda ficam fora de sua conversa e apenas seu resultado final volta, para que sua janela de contexto principal permaneça limpa. Use uma bifurcação quando um subagente nomeado precisaria de muito contexto para ser útil, ou quando você quer tentar várias abordagens em paralelo a partir do mesmo ponto de partida.
+
+Habilitar fork mode muda Claude Code de três formas:
+
+* Claude gera uma bifurcação sempre que usaria o subagente [general-purpose](#built-in-subagents). Subagentes nomeados como Explore ainda geram como antes.
+* Cada spawn de subagente é executado em [background](#run-subagents-in-foreground-or-background), seja uma bifurcação ou um subagente nomeado. Defina `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` para `1` para manter spawns síncronos.
+* O comando `/fork` gera uma bifurcação em vez de agir como um alias para [`/branch`](/pt/commands).
+
+Você pode iniciar uma bifurcação você mesmo com `/fork` seguido de uma diretiva. Claude Code nomeia a bifurcação a partir das primeiras palavras da diretiva. O exemplo a seguir bifurca a conversa para rascunhar casos de teste enquanto você continua com a implementação na sessão principal:
+
+```text theme={null}
+/fork draft unit tests for the parser changes so far
+```
+
+A bifurcação aparece em um painel abaixo do seu prompt e é executada em background enquanto você continua trabalhando. Quando termina, seu resultado chega como uma mensagem em sua conversa principal. A próxima seção cobre os controles do painel para observar e orientar bifurcações enquanto são executadas.
+
+### Observar e orientar bifurcações em execução
+
+Bifurcações em execução aparecem em um painel abaixo da entrada de prompt, com uma linha para a sessão principal e uma para cada bifurcação. Use estas teclas para interagir com o painel:
+
+| Key       | Action                                                                             |
+| :-------- | :--------------------------------------------------------------------------------- |
+| `↑` / `↓` | Mover entre linhas                                                                 |
+| `Enter`   | Abrir a transcrição da bifurcação selecionada e enviar mensagens de acompanhamento |
+| `x`       | Descartar uma bifurcação terminada ou parar uma em execução                        |
+| `Esc`     | Retornar foco para a entrada de prompt                                             |
+
+### Como bifurcações diferem de subagentes nomeados
+
+Uma bifurcação herda tudo que a sessão principal tem no momento em que é gerada. Um subagente nomeado começa a partir de sua própria definição.
+
+|                         | Bifurcação                           | Subagente nomeado                                                                                    |
+| :---------------------- | :----------------------------------- | :--------------------------------------------------------------------------------------------------- |
+| Context                 | Histórico de conversa completo       | Contexto fresco com o prompt que você passa                                                          |
+| System prompt and tools | Mesmo que a sessão principal         | Da [definição file](#write-subagent-files) do subagente                                              |
+| Model                   | Mesmo que a sessão principal         | Do campo `model` do subagente                                                                        |
+| Permissions             | Prompts aparecem em seu terminal     | [Pré-aprovados](#run-subagents-in-foreground-or-background) antes do lançamento, depois auto-negados |
+| Prompt cache            | Compartilhado com a sessão principal | Cache separado                                                                                       |
+
+Porque o prompt de sistema de uma bifurcação e as definições de ferramentas são idênticas ao pai, sua primeira solicitação reutiliza o cache de prompt do pai. Isso torna bifurcação mais barata do que gerar um subagente fresco para tarefas que precisam do mesmo contexto.
+
+Quando Claude gera uma bifurcação através da ferramenta Agent, ele pode passar `isolation: "worktree"` para que as edições de arquivo da bifurcação sejam escritas em um git worktree separado em vez de seu checkout.
+
+### Limitações
+
+Fork mode funciona apenas em sessões interativas. Está desabilitado em [modo não-interativo](/pt/headless), que inclui o Agent SDK. Uma bifurcação não pode gerar bifurcações adicionais.
 
 ## Subagentes de exemplo
 

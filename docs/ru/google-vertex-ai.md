@@ -68,7 +68,7 @@ export const ContactSalesCard = ({surface}) => {
           <a href={`https://claude.com/pricing?${utm('view_plans')}#plans-business`} className="cc-cs-btn-ghost">
             View plans
           </a>
-          <a href={`https://www.anthropic.com/contact-sales?${utm('contact_sales')}`} className="cc-cs-btn-clay">
+          <a href={`https://claude.com/contact-sales?${utm('contact_sales')}`} className="cc-cs-btn-clay">
             Contact sales {iconArrowRight()}
           </a>
         </div>
@@ -283,6 +283,9 @@ export ANTHROPIC_VERTEX_PROJECT_ID=YOUR-PROJECT-ID
 # Опционально: отключите кэширование запросов, если необходимо
 export DISABLE_PROMPT_CACHING=1
 
+# Опционально: запросите TTL кэша запросов на 1 час вместо стандартного 5-минутного
+export ENABLE_PROMPT_CACHING_1H=1
+
 # Когда CLOUD_ML_REGION=global, переопределите регион для моделей, которые не поддерживают глобальные конечные точки
 export VERTEX_REGION_CLAUDE_HAIKU_4_5=us-east5
 export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
@@ -290,7 +293,7 @@ export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 
 Большинство версий моделей имеют соответствующую переменную `VERTEX_REGION_CLAUDE_*`. Полный список см. в [справочнике переменных окружения](/ru/env-vars). Проверьте [Vertex Model Garden](https://console.cloud.google.com/vertex-ai/model-garden), чтобы определить, какие модели поддерживают глобальные конечные точки в сравнении с региональными только.
 
-[Кэширование запросов](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) автоматически поддерживается при указании флага `cache_control` ephemeral. Чтобы отключить его, установите `DISABLE_PROMPT_CACHING=1`. Для повышенных лимитов скорости обратитесь в поддержку Google Cloud. При использовании Vertex AI команды `/login` и `/logout` отключены, так как аутентификация обрабатывается через учетные данные Google Cloud.
+[Кэширование запросов](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) включается автоматически. Чтобы отключить его, установите `DISABLE_PROMPT_CACHING=1`. Чтобы запросить TTL кэша на 1 час вместо стандартного 5-минутного, установите `ENABLE_PROMPT_CACHING_1H=1`; записи кэша с TTL на 1 час тарифицируются по более высокому тарифу. Для повышенных лимитов скорости обратитесь в поддержку Google Cloud. При использовании Vertex AI команды `/login` и `/logout` отключены, так как аутентификация обрабатывается через учетные данные Google Cloud.
 
 ### 5. Закрепите версии моделей
 

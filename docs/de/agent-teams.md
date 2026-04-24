@@ -21,8 +21,8 @@ Im Gegensatz zu [subagents](/de/sub-agents), die innerhalb einer einzelnen Sitzu
 Diese Seite behandelt:
 
 * [Wann Agent-Teams verwendet werden](#when-to-use-agent-teams), einschließlich der besten Anwendungsfälle und wie sie sich mit subagents vergleichen
-* [Starten eines Teams](#start-your-first-agent-team)
-* [Kontrolle von Teammates](#control-your-agent-team), einschließlich Anzeigemodi, Aufgabenzuweisung und Delegation
+* [Starten Sie Ihr erstes Agent-Team](#start-your-first-agent-team)
+* [Kontrolle Ihres Agent-Teams](#control-your-agent-team), einschließlich Anzeigemodi, Aufgabenzuweisung und Delegation
 * [Best Practices für parallele Arbeit](#best-practices)
 
 ## Wann Agent-Teams verwendet werden
@@ -235,7 +235,7 @@ Es gibt kein Projekt-Level-Äquivalent der Team-Konfiguration. Eine Datei wie `.
 
 ### Verwenden Sie Subagent-Definitionen für Teammates
 
-Beim Erzeugen eines Teammates können Sie einen [Subagent](/de/sub-agents)-Typ aus jedem [Subagent-Bereich](/de/sub-agents#choose-the-subagent-scope) referenzieren: Projekt, Benutzer, Plugin oder CLI-definiert. Der Teammate erbt den System-Prompt, die Tools und das Modell dieses Subagents. Dies ermöglicht es Ihnen, eine Rolle einmal zu definieren, wie z. B. einen Security-Reviewer oder Test-Runner, und sie sowohl als delegierter Subagent als auch als Agent-Team-Teammate wiederzuverwenden.
+Beim Erzeugen eines Teammates können Sie einen [Subagent](/de/sub-agents)-Typ aus jedem [Subagent-Bereich](/de/sub-agents#choose-the-subagent-scope) referenzieren: Projekt, Benutzer, Plugin oder CLI-definiert. Dies ermöglicht es Ihnen, eine Rolle einmal zu definieren, wie z. B. einen Security-Reviewer oder Test-Runner, und sie sowohl als delegierter Subagent als auch als Agent-Team-Teammate wiederzuverwenden.
 
 Um eine Subagent-Definition zu verwenden, erwähnen Sie sie nach Name, wenn Sie Claude auffordern, den Teammate zu erzeugen:
 
@@ -243,24 +243,28 @@ Um eine Subagent-Definition zu verwenden, erwähnen Sie sie nach Name, wenn Sie 
 Spawn a teammate using the security-reviewer agent type to audit the auth module.
 ```
 
+Der Teammate berücksichtigt die `tools`-Zulassungsliste und das `model` dieser Definition, und der Text der Definition wird an den System-Prompt des Teammates als zusätzliche Anweisungen angehängt, anstatt ihn zu ersetzen. Team-Koordinations-Tools wie `SendMessage` und die Aufgabenverwaltungs-Tools sind immer für einen Teammate verfügbar, auch wenn `tools` andere Tools einschränkt.
+
+<Note>
+  Die `skills`- und `mcpServers`-Frontmatter-Felder in einer Subagent-Definition werden nicht angewendet, wenn diese Definition als Teammate ausgeführt wird. Teammates laden Skills und MCP-Server aus Ihren Projekt- und Benutzereinstellungen, genauso wie eine reguläre Sitzung.
+</Note>
+
 ### Berechtigungen
 
 Teammates starten mit den Berechtigungseinstellungen des Leads. Wenn der Lead mit `--dangerously-skip-permissions` ausgeführt wird, tun dies auch alle Teammates. Nach dem Erzeugen können Sie einzelne Teammate-Modi ändern, aber Sie können keine Pro-Teammate-Modi zum Zeitpunkt des Erzeugung setzen.
 
 ### Kontext und Kommunikation
 
-Jeder Teammate hat sein eigenes Kontextfenster. Beim Erzeugen lädt ein Teammate denselben Projektkontext wie eine reguläre Sitzung: CLAUDE.md, MCP servers und skills. Er erhält auch den Spawn-Prompt vom Lead. Die Gesprächshistorie des Leads wird nicht übertragen.
+Jeder Teammate hat sein eigenes Kontextfenster. Beim Erzeugen lädt ein Teammate denselben Projektkontext wie eine reguläre Sitzung: CLAUDE.md, MCP-Server und Skills. Er erhält auch den Spawn-Prompt vom Lead. Die Gesprächshistorie des Leads wird nicht übertragen.
 
 **Wie Teammates Informationen teilen:**
 
 * **Automatische Nachrichtenlieferung**: wenn Teammates Nachrichten senden, werden sie automatisch an Empfänger geliefert. Der Lead muss nicht auf Updates abfragen.
 * **Untätigkeitsbenachrichtigungen**: wenn ein Teammate fertig ist und stoppt, benachrichtigt er automatisch den Lead.
 * **Gemeinsame Aufgabenliste**: alle Agenten können den Aufgabenstatus sehen und verfügbare Arbeit beanspruchen.
+* **Teammate-Messaging**: senden Sie eine Nachricht an einen bestimmten Teammate nach Name. Um alle zu erreichen, senden Sie eine Nachricht pro Empfänger.
 
-**Teammate-Messaging:**
-
-* **message**: senden Sie eine Nachricht an einen bestimmten Teammate
-* **broadcast**: senden Sie an alle Teammates gleichzeitig. Verwenden Sie sparsam, da die Kosten mit der Teamgröße skalieren.
+Der Lead weist jedem Teammate einen Namen zu, wenn er ihn erzeugt, und jeder Teammate kann jeden anderen nach diesem Namen anschreiben. Um vorhersehbare Namen zu erhalten, die Sie in späteren Prompts referenzieren können, teilen Sie dem Lead mit, wie er jeden Teammate in Ihrer Spawn-Anweisung nennen soll.
 
 ### Token-Nutzung
 
@@ -303,7 +307,7 @@ Mit mehreren unabhängigen Ermittlern, die aktiv versuchen, sich gegenseitig zu 
 
 ### Geben Sie Teammates genug Kontext
 
-Teammates laden Projektkontext automatisch, einschließlich CLAUDE.md, MCP servers und skills, aber sie erben nicht die Gesprächshistorie des Leads. Siehe [Kontext und Kommunikation](#context-and-communication) für Details. Fügen Sie aufgabenspezifische Details in den Spawn-Prompt ein:
+Teammates laden Projektkontext automatisch, einschließlich CLAUDE.md, MCP-Server und Skills, aber sie erben nicht die Gesprächshistorie des Leads. Siehe [Kontext und Kommunikation](#context-and-communication) für Details. Fügen Sie aufgabenspezifische Details in den Spawn-Prompt ein:
 
 ```text theme={null}
 Spawn a security reviewer teammate with the prompt: "Review the authentication module

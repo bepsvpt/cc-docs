@@ -83,12 +83,12 @@ Ce démarrage rapide vous guide dans la création d'un plugin avec un skill pers
     }
     ```
 
-    | Champ         | Objectif                                                                                                                   |
-    | :------------ | :------------------------------------------------------------------------------------------------------------------------- |
-    | `name`        | Identifiant unique et espace de noms du skill. Les skills sont préfixés avec ceci (par exemple, `/my-first-plugin:hello`). |
-    | `description` | Affiché dans le gestionnaire de plugins lors de la navigation ou de l'installation de plugins.                             |
-    | `version`     | Suivez les versions en utilisant le [versioning sémantique](/fr/plugins-reference#version-management).                     |
-    | `author`      | Optionnel. Utile pour l'attribution.                                                                                       |
+    | Champ         | Objectif                                                                                                                                                                                                                                                                                                                              |
+    | :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+    | `name`        | Identifiant unique et espace de noms du skill. Les skills sont préfixés avec ceci (par exemple, `/my-first-plugin:hello`).                                                                                                                                                                                                            |
+    | `description` | Affiché dans le gestionnaire de plugins lors de la navigation ou de l'installation de plugins.                                                                                                                                                                                                                                        |
+    | `version`     | Optionnel. S'il est défini, les utilisateurs ne reçoivent les mises à jour que lorsque vous augmentez ce champ. S'il est omis et que votre plugin est distribué via git, le SHA du commit est utilisé et chaque commit compte comme une nouvelle version. Consultez [gestion des versions](/fr/plugins-reference#version-management). |
+    | `author`      | Optionnel. Utile pour l'attribution.                                                                                                                                                                                                                                                                                                  |
 
     Pour les champs supplémentaires comme `homepage`, `repository` et `license`, consultez le [schéma manifeste complet](/fr/plugins-reference#plugin-manifest-schema).
   </Step>
@@ -328,7 +328,7 @@ Si votre plugin ne fonctionne pas comme prévu :
 Quand votre plugin est prêt à être partagé :
 
 1. **Ajoutez de la documentation** : Incluez un `README.md` avec les instructions d'installation et d'utilisation
-2. **Versionnez votre plugin** : Utilisez le [versioning sémantique](/fr/plugins-reference#version-management) dans votre `plugin.json`
+2. **Choisissez une stratégie de versioning** : Décidez si vous allez définir une `version` explicite ou vous fier au SHA du commit git. Consultez [gestion des versions](/fr/plugins-reference#version-management)
 3. **Créez ou utilisez une marketplace** : Distribuez via des [marketplaces de plugins](/fr/plugin-marketplaces) pour l'installation
 4. **Testez avec d'autres** : Faites tester le plugin par les membres de l'équipe avant une distribution plus large
 

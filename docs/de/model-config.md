@@ -78,7 +78,7 @@ Beispiel-Einstellungsdatei:
 
 Enterprise-Administratoren können `availableModels` in [verwalteten oder Richtlinieneinstellungen](/de/settings#settings-files) verwenden, um einzuschränken, welche Modelle Benutzer auswählen können.
 
-Wenn `availableModels` gesetzt ist, können Benutzer nicht über `/model`, das `--model`-Flag, das Config-Tool oder die `ANTHROPIC_MODEL`-Umgebungsvariable zu Modellen wechseln, die nicht in der Liste enthalten sind.
+Wenn `availableModels` gesetzt ist, können Benutzer nicht über `/model`, das `--model`-Flag oder die `ANTHROPIC_MODEL`-Umgebungsvariable zu Modellen wechseln, die nicht in der Liste enthalten sind.
 
 ```json theme={null}
 {
@@ -306,11 +306,11 @@ Das `[1m]`-Suffix wendet das 1M-Kontextfenster auf alle Verwendungen dieses Alia
   Die `settings.availableModels`-Zulassungsliste gilt weiterhin bei Verwendung von Drittanbieter-Anbietern. Die Filterung stimmt mit dem Modellalias (`opus`, `sonnet`, `haiku`) überein, nicht mit der anbieterspezifischen Modell-ID.
 </Note>
 
-### Modelle für Drittanbieter-Bereitstellungen fixieren
+### Anzeige und Funktionen des fixierten Modells anpassen
 
 Wenn Sie ein Modell bei einem Drittanbieter fixieren, erscheint die anbieterspezifische ID in der `/model`-Auswahl und Claude Code erkennt möglicherweise nicht, welche Funktionen das Modell unterstützt. Sie können den Anzeigenamen und die deklarierten Funktionen mit Begleit-Umgebungsvariablen für jedes fixierte Modell überschreiben.
 
-Diese Variablen wirken sich nur auf Drittanbieter wie Bedrock, Vertex AI und Foundry aus. Sie haben keine Auswirkung bei direkter Verwendung der Anthropic API.
+Diese Variablen wirken sich auf Drittanbieter wie Bedrock, Vertex AI und Foundry aus. Die Variablen `_NAME` und `_DESCRIPTION` wirken sich auch aus, wenn `ANTHROPIC_BASE_URL` auf ein [LLM-Gateway](/de/llm-gateway) verweist. Sie haben keine Auswirkung bei direkter Verbindung zu `api.anthropic.com`.
 
 | Umgebungsvariable                                     | Beschreibung                                                                                                                     |
 | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -367,42 +367,6 @@ Schlüssel müssen Anthropic-Modell-IDs sein, wie in der [Modellübersicht](http
 Überschreibungen ersetzen die integrierten Modell-IDs, die jeden Eintrag in der `/model`-Auswahl unterstützen. Bei Bedrock haben Überschreibungen Vorrang vor allen Inference-Profilen, die Claude Code beim Start automatisch erkennt. Werte, die Sie direkt über `ANTHROPIC_MODEL`, `--model` oder die `ANTHROPIC_DEFAULT_*_MODEL`-Umgebungsvariablen bereitstellen, werden unverändert an den Anbieter übergeben und werden nicht durch `modelOverrides` transformiert.
 
 `modelOverrides` funktioniert zusammen mit `availableModels`. Die Zulassungsliste wird gegen die Anthropic-Modell-ID ausgewertet, nicht gegen den Überschreibungswert, daher ein Eintrag wie `"opus"` in `availableModels` stimmt weiterhin überein, auch wenn Opus-Versionen ARNs zugeordnet sind.
-
-### Anpassung der Anzeige und Funktionen des fixierten Modells
-
-Wenn Sie ein Modell bei einem Drittanbieter fixieren, erscheint die anbieterspezifische ID in der `/model`-Auswahl und Claude Code erkennt möglicherweise nicht, welche Funktionen das Modell unterstützt. Sie können den Anzeigenamen und die deklarierten Funktionen mit Begleit-Umgebungsvariablen für jedes fixierte Modell überschreiben.
-
-Diese Variablen wirken sich nur auf Drittanbieter wie Bedrock, Vertex AI und Foundry aus. Sie haben keine Auswirkung bei direkter Verwendung der Anthropic API.
-
-| Umgebungsvariable                                     | Beschreibung                                                                                                                     |
-| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL_NAME`                   | Anzeigename für das fixierte Opus-Modell in der `/model`-Auswahl. Standardmäßig die Modell-ID, wenn nicht gesetzt                |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION`            | Anzeige-Beschreibung für das fixierte Opus-Modell in der `/model`-Auswahl. Standardmäßig `Custom Opus model`, wenn nicht gesetzt |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES` | Komma-getrennte Liste der Funktionen, die das fixierte Opus-Modell unterstützt                                                   |
-
-Die gleichen `_NAME`-, `_DESCRIPTION`- und `_SUPPORTED_CAPABILITIES`-Suffixe sind für `ANTHROPIC_DEFAULT_SONNET_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL` und `ANTHROPIC_CUSTOM_MODEL_OPTION` verfügbar.
-
-Claude Code aktiviert Funktionen wie [Aufwandsniveaus](#adjust-effort-level) und [erweitertes Denken](/de/common-workflows#use-extended-thinking-thinking-mode) durch Abgleich der Modell-ID mit bekannten Mustern. Anbieterspezifische IDs wie Bedrock-ARNs oder benutzerdefinierte Bereitstellungsnamen stimmen oft nicht mit diesen Mustern überein, wodurch unterstützte Funktionen deaktiviert bleiben. Setzen Sie `_SUPPORTED_CAPABILITIES`, um Claude Code mitzuteilen, welche Funktionen das Modell tatsächlich unterstützt:
-
-| Funktionswert          | Aktiviert                                                                                    |
-| ---------------------- | -------------------------------------------------------------------------------------------- |
-| `effort`               | [Aufwandsniveaus](#adjust-effort-level) und der `/effort`-Befehl                             |
-| `xhigh_effort`         | {/* min-version: 2.1.111 */}Das `xhigh`-Aufwandsniveau                                       |
-| `max_effort`           | Das `max`-Aufwandsniveau                                                                     |
-| `thinking`             | [Erweitertes Denken](/de/common-workflows#use-extended-thinking-thinking-mode)               |
-| `adaptive_thinking`    | Adaptives Reasoning, das das Denken dynamisch basierend auf der Aufgabenkomplexität zuordnet |
-| `interleaved_thinking` | Denken zwischen Tool-Aufrufen                                                                |
-
-Wenn `_SUPPORTED_CAPABILITIES` gesetzt ist, werden aufgelistete Funktionen aktiviert und nicht aufgelistete Funktionen werden für das entsprechende fixierte Modell deaktiviert. Wenn die Variable nicht gesetzt ist, greift Claude Code auf die integrierte Erkennung basierend auf der Modell-ID zurück.
-
-Dieses Beispiel fixiert Opus auf ein benutzerdefiniertes Bedrock-Modell-ARN, setzt einen benutzerfreundlichen Namen und deklariert seine Funktionen:
-
-```bash theme={null}
-export ANTHROPIC_DEFAULT_OPUS_MODEL='arn:aws:bedrock:us-east-1:123456789012:custom-model/abc'
-export ANTHROPIC_DEFAULT_OPUS_MODEL_NAME='Opus via Bedrock'
-export ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION='Opus 4.7 routed through a Bedrock custom endpoint'
-export ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES='effort,xhigh_effort,max_effort,thinking,adaptive_thinking,interleaved_thinking'
-```
 
 ### Prompt-Caching-Konfiguration
 

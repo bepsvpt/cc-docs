@@ -235,13 +235,19 @@ Non esiste un equivalente a livello di progetto della configurazione del team. U
 
 ### Utilizzare definizioni di subagent per i compagni di team
 
-Quando generate un compagno di team, potete fare riferimento a un tipo di [subagent](/it/sub-agents) da qualsiasi [ambito di subagent](/it/sub-agents#choose-the-subagent-scope): progetto, utente, plugin o definito da CLI. Il compagno di team eredita il prompt di sistema, gli strumenti e il modello di quel subagent. Questo vi permette di definire un ruolo una volta, come un security-reviewer o test-runner, e riutilizzarlo sia come subagent delegato che come compagno di team di un team di agenti.
+Quando generate un compagno di team, potete fare riferimento a un tipo di [subagent](/it/sub-agents) da qualsiasi [ambito di subagent](/it/sub-agents#choose-the-subagent-scope): progetto, utente, plugin o definito da CLI. Questo vi permette di definire un ruolo una volta, come un security-reviewer o test-runner, e riutilizzarlo sia come subagent delegato che come compagno di team di un team di agenti.
 
 Per utilizzare una definizione di subagent, menzionatela per nome quando chiedete a Claude di generare il compagno di team:
 
 ```text theme={null}
 Genera un compagno di team utilizzando il tipo di agente security-reviewer per controllare il modulo di autenticazione.
 ```
+
+Il compagno di team onora i `tools` allowlist e il `model` di quella definizione, e il corpo della definizione viene aggiunto al prompt di sistema del compagno di team come istruzioni aggiuntive piuttosto che sostituirlo. Gli strumenti di coordinamento del team come `SendMessage` e gli strumenti di gestione delle attività sono sempre disponibili per un compagno di team anche quando `tools` limita altri strumenti.
+
+<Note>
+  I campi frontmatter `skills` e `mcpServers` in una definizione di subagent non vengono applicati quando quella definizione viene eseguita come compagno di team. I compagni di team caricano skills e MCP servers dalle vostre impostazioni di progetto e utente, come una sessione regolare.
+</Note>
 
 ### Permessi
 
@@ -256,11 +262,9 @@ Ogni compagno di team ha il proprio context window. Quando generato, un compagno
 * **Consegna automatica dei messaggi**: quando i compagni di team inviano messaggi, vengono consegnati automaticamente ai destinatari. Il lead non ha bisogno di eseguire il polling per gli aggiornamenti.
 * **Notifiche di inattività**: quando un compagno di team finisce e si ferma, notifica automaticamente il lead.
 * **Elenco di attività condiviso**: tutti gli agenti possono vedere lo stato delle attività e rivendicare il lavoro disponibile.
+* **Messaggistica dei compagni di team**: invia un messaggio a un compagno di team specifico per nome. Per raggiungere tutti, inviate un messaggio per destinatario.
 
-**Messaggistica dei compagni di team:**
-
-* **message**: invia un messaggio a un compagno di team specifico
-* **broadcast**: invia a tutti i compagni di team simultaneamente. Utilizzate con parsimonia, poiché i costi si scalano con la dimensione del team.
+Il lead assegna a ogni compagno di team un nome quando lo genera, e qualsiasi compagno di team può messaggiare qualsiasi altro per quel nome. Per ottenere nomi prevedibili che potete referenziare nei prompt successivi, dite al lead come chiamare ogni compagno di team nella vostra istruzione di generazione.
 
 ### Utilizzo dei token
 

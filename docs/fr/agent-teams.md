@@ -235,7 +235,7 @@ Il n'y a pas d'équivalent au niveau du projet de la configuration d'équipe. Un
 
 ### Utiliser les définitions de subagents pour les coéquipiers
 
-Lors de la génération d'un coéquipier, vous pouvez référencer un type de [subagent](/fr/sub-agents) de n'importe quelle [portée de subagent](/fr/sub-agents#choose-the-subagent-scope) : projet, utilisateur, plugin ou défini par CLI. Le coéquipier hérite du système prompt, des outils et du modèle de ce subagent. Cela vous permet de définir un rôle une fois, comme un examinateur de sécurité ou un exécuteur de tests, et de le réutiliser à la fois comme subagent délégué et comme coéquipier d'équipe d'agents.
+Lors de la génération d'un coéquipier, vous pouvez référencer un type de [subagent](/fr/sub-agents) de n'importe quelle [portée de subagent](/fr/sub-agents#choose-the-subagent-scope) : projet, utilisateur, plugin ou défini par CLI. Cela vous permet de définir un rôle une fois, comme un examinateur de sécurité ou un exécuteur de tests, et de le réutiliser à la fois comme subagent délégué et comme coéquipier d'équipe d'agents.
 
 Pour utiliser une définition de subagent, mentionnez-la par nom lorsque vous demandez à Claude de générer le coéquipier :
 
@@ -243,24 +243,28 @@ Pour utiliser une définition de subagent, mentionnez-la par nom lorsque vous de
 Générez un coéquipier utilisant le type d'agent security-reviewer pour auditer le module d'authentification.
 ```
 
+Le coéquipier honore les restrictions de la liste d'outils de cette définition et le modèle, et le corps de la définition est ajouté au prompt système du coéquipier en tant qu'instructions supplémentaires plutôt que de le remplacer. Les outils de coordination d'équipe tels que `SendMessage` et les outils de gestion des tâches sont toujours disponibles pour un coéquipier même lorsque `tools` restreint d'autres outils.
+
+<Note>
+  Les champs frontmatter `skills` et `mcpServers` dans une définition de subagent ne sont pas appliqués lorsque cette définition s'exécute en tant que coéquipier. Les coéquipiers chargent les skills et les serveurs MCP à partir de vos paramètres de projet et d'utilisateur, comme une session régulière.
+</Note>
+
 ### Permissions
 
 Les coéquipiers commencent avec les paramètres de permission du chef. Si le chef s'exécute avec `--dangerously-skip-permissions`, tous les coéquipiers le font aussi. Après la génération, vous pouvez modifier les modes de coéquipiers individuels, mais vous ne pouvez pas définir les modes par coéquipier au moment de la génération.
 
 ### Contexte et communication
 
-Chaque coéquipier a sa propre fenêtre de contexte. Lorsqu'il est généré, un coéquipier charge le même contexte de projet qu'une session régulière : CLAUDE.md, MCP servers et skills. Il reçoit également le prompt de génération du chef. L'historique de conversation du chef ne se transporte pas.
+Chaque coéquipier a sa propre fenêtre de contexte. Lorsqu'il est généré, un coéquipier charge le même contexte de projet qu'une session régulière : CLAUDE.md, serveurs MCP et skills. Il reçoit également le prompt de génération du chef. L'historique de conversation du chef ne se transporte pas.
 
 **Comment les coéquipiers partagent les informations :**
 
 * **Livraison automatique de messages** : lorsque les coéquipiers envoient des messages, ils sont livrés automatiquement aux destinataires. Le chef n'a pas besoin d'interroger les mises à jour.
 * **Notifications d'inactivité** : lorsqu'un coéquipier termine et s'arrête, il notifie automatiquement le chef.
 * **Liste de tâches partagée** : tous les agents peuvent voir l'état des tâches et revendiquer le travail disponible.
+* **Messagerie des coéquipiers** : envoyer un message à un coéquipier spécifique par son nom. Pour atteindre tout le monde, envoyez un message par destinataire.
 
-**Messagerie des coéquipiers :**
-
-* **message** : envoyer un message à un coéquipier spécifique
-* **broadcast** : envoyer à tous les coéquipiers simultanément. À utiliser avec parcimonie, car les coûts augmentent avec la taille de l'équipe.
+Le chef assigne à chaque coéquipier un nom lorsqu'il le génère, et n'importe quel coéquipier peut envoyer un message à n'importe quel autre par ce nom. Pour obtenir des noms prévisibles que vous pouvez référencer dans les prompts ultérieurs, dites au chef comment appeler chaque coéquipier dans votre instruction de génération.
 
 ### Utilisation des tokens
 
@@ -303,7 +307,7 @@ Avec plusieurs enquêteurs indépendants essayant activement de réfuter les uns
 
 ### Donner aux coéquipiers suffisamment de contexte
 
-Les coéquipiers chargent automatiquement le contexte du projet, y compris CLAUDE.md, MCP servers et skills, mais ils n'héritent pas de l'historique de conversation du chef. Consultez [Contexte et communication](#context-and-communication) pour les détails. Incluez les détails spécifiques à la tâche dans le prompt de génération :
+Les coéquipiers chargent automatiquement le contexte du projet, y compris CLAUDE.md, serveurs MCP et skills, mais ils n'héritent pas de l'historique de conversation du chef. Consultez [Contexte et communication](#context-and-communication) pour les détails. Incluez les détails spécifiques à la tâche dans le prompt de génération :
 
 ```text theme={null}
 Générez un coéquipier examinateur de sécurité avec le prompt : « Examinez le module d'authentification

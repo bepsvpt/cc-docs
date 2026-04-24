@@ -29,7 +29,7 @@ Claude Code 在任何终端中都可以无需配置而工作。此页面适用�
 | VS Code、Cursor、Windsurf、Alacritty、Zed                                     | 运行一次 `/terminal-setup`       |
 | Windows Terminal、gnome-terminal、JetBrains IDE（如 PyCharm 和 Android Studio） | 不可用；使用 Ctrl+J 或 `\` 然后 Enter |
 
-对于 VS Code、Cursor、Windsurf、Alacritty 和 Zed，`/terminal-setup` 将 Shift+Enter 和其他快捷键写入终端的配置文件。如果它报告冲突，例如 `Found existing VSCode terminal Shift+Enter key binding`，请从终端自己的快捷键文件（例如 VS Code 的 `keybindings.json`）中删除该条目，然后再次运行该命令。在主机终端中直接运行 `/terminal-setup` 而不是在 tmux 或 screen 内运行，因为它需要写入主机终端的配置。
+对于 VS Code、Cursor、Windsurf、Alacritty 和 Zed，`/terminal-setup` 将 Shift+Enter 和其他快捷键写入终端的配置文件。在 VS Code、Cursor 和 Windsurf 中，它还在编辑器设置中设置 `terminal.integrated.mouseWheelScrollSensitivity`，以在[全屏模式](/zh-CN/fullscreen)中实现更平滑的滚动。现有的绑定和设置保持不变；如果您看到诸如 `VSCode terminal Shift+Enter key binding already configured` 之类的消息，则未进行任何更改。在主机终端中直接运行 `/terminal-setup` 而不是在 tmux 或 screen 内运行，因为它需要写入主机终端的配置。
 
 如果您在 tmux 内运行，即使外部终端支持，Shift+Enter 也需要下面的 [tmux 配置](#configure-tmux)。
 
@@ -107,9 +107,43 @@ set -as terminal-features 'xterm*:extkeys'
 
 ## 匹配颜色主题
 
-使用 `/theme` 命令或 `/config` 中的主题选择器来选择与您的终端匹配的 Claude Code 主题。选择自动选项会检测您的终端的浅色或深色背景，因此主题会在您的终端执行时跟随 OS 外观更改。可用的主题是内置的；没有自定义主题文件。Claude Code 不控制终端自己的颜色方案，该方案由终端应用程序设置。
+使用 `/theme` 命令或 `/config` 中的主题选择器来选择与您的终端匹配的 Claude Code 主题。选择自动选项会检测您的终端的浅色或深色背景，因此主题会在您的终端执行时跟随 OS 外观更改。Claude Code 不控制终端自己的颜色方案，该方案由终端应用程序设置。
 
 要自定义界面底部显示的内容，请配置[自定义状态行](/zh-CN/statusline)，显示当前模型、工作目录、git 分支或其他上下文。
+
+### 创建自定义主题
+
+<Note>
+  自定义主题需要 Claude Code v2.1.118 或更高版本。
+</Note>
+
+除了内置预设外，`/theme` 还列出您定义的任何自定义主题以及已安装的 [plugins](/zh-CN/plugins-reference#themes) 贡献的任何主题。选择列表末尾的\*\*新建自定义主题…\*\*以交互方式创建一个：您命名主题，然后选择要覆盖的各个颜色令牌。当自定义主题突出显示时，按 `Ctrl+E` 来编辑它。
+
+每个自定义主题都是 `~/.claude/themes/` 中的 JSON 文件。不带 `.json` 扩展名的文件名是主题的 slug，选择主题会将 `custom:<slug>` 存储为您的主题偏好设置。该文件有三个可选字段：
+
+| 字段          | 类型     | 描述                                                                                                  |
+| :---------- | :----- | :-------------------------------------------------------------------------------------------------- |
+| `name`      | string | 在 `/theme` 中显示的标签。默认为文件名 slug                                                                       |
+| `base`      | string | 主题开始的内置预设：`dark`、`light`、`dark-daltonized`、`light-daltonized`、`dark-ansi` 或 `light-ansi`。默认为 `dark` |
+| `overrides` | object | 颜色令牌名称到颜色值的映射。此处未列出的令牌会回退到基础预设                                                                      |
+
+颜色值接受 `#rrggbb`、`#rgb`、`rgb(r,g,b)`、`ansi256(n)` 或 `ansi:<name>`，其中 `<name>` 是 16 个标准 ANSI 颜色名称之一，例如 `red` 或 `cyanBright`。未知令牌和无效颜色值会被忽略，因此拼写错误不会破坏渲染。
+
+以下示例定义了一个保留深色预设但重新着色提示符强调、错误文本和成功文本的主题：
+
+```json ~/.claude/themes/dracula.json theme={null}
+{
+  "name": "Dracula",
+  "base": "dark",
+  "overrides": {
+    "claude": "#bd93f9",
+    "error": "#ff5555",
+    "success": "#50fa7b"
+  }
+}
+```
+
+Claude Code 监视 `~/.claude/themes/` 并在文件更改时重新加载，因此在您的编辑器中所做的编辑会应用到正在运行的会话中，无需重新启动。
 
 ## 切换到全屏渲染
 
@@ -145,7 +179,7 @@ VS Code 集成终端可能会在非常大的粘贴中丢弃字符，然后才能
 
 Claude Code 包括提示符输入的 Vim 风格编辑模式。通过 `/config` → 编辑器模式启用它，或通过在 `~/.claude.json` 中将 [`editorMode`](/zh-CN/settings#global-config-settings) 全局配置键设置为 `"vim"` 来启用。将编辑器模式设置回 `normal` 以关闭它。
 
-Vim 模式支持 NORMAL 模式动作和运算符的子集，例如 `hjkl` 导航和 `d`/`c`/`y` 与文本对象。请参阅 [Vim 编辑器模式参考](/zh-CN/interactive-mode#vim-editor-mode)了解完整的快捷键表。Vim 动作不可通过快捷键文件重新映射。
+Vim 模式支持 NORMAL 模式和 VISUAL 模式动作和运算符的子集，例如 `hjkl` 导航、`v`/`V` 选择以及 `d`/`c`/`y` 与文本对象。请参阅 [Vim 编辑器模式参考](/zh-CN/interactive-mode#vim-editor-mode)了解完整的快捷键表。Vim 动作不可通过快捷键文件重新映射。
 
 在 INSERT 模式下按 Enter 仍会提交您的提示符，与标准 Vim 不同。在 NORMAL 模式下使用 `o` 或 `O`，或 Ctrl+J，来插入换行。
 

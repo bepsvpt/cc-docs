@@ -59,11 +59,20 @@ Untuk semua pengguna pihak pertama, Anda dapat mempelajari lebih lanjut tentang 
 
 Diagram di bawah menunjukkan bagaimana Claude Code terhubung ke layanan eksternal selama instalasi dan operasi normal. Garis solid menunjukkan koneksi yang diperlukan, sementara garis putus-putus mewakili alur data opsional atau yang dimulai pengguna.
 
-<img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/claude-code-data-flow.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=b3f71c69d743bff63343207dfb7ad6ce" alt="Diagram menunjukkan koneksi eksternal Claude Code: install/update terhubung ke NPM, dan permintaan pengguna terhubung ke layanan Anthropic termasuk auth Console, public-api, dan secara opsional Statsig, Sentry, dan pelaporan bug" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
+<img src="https://mintcdn.com/claude-code/YcBW2H7CArGcduPb/images/claude-code-data-flow.svg?fit=max&auto=format&n=YcBW2H7CArGcduPb&q=85&s=b600a89f84fc86f9ff7be00a466c0635" alt="Diagram menunjukkan koneksi eksternal Claude Code: install/update terhubung ke server distribusi, dan permintaan pengguna terhubung ke layanan Anthropic termasuk auth Console, public-api, dan secara opsional Statsig, Sentry, dan pelaporan bug" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
 
-Claude Code diinstal dari [NPM](https://www.npmjs.com/package/@anthropic-ai/claude-code). Claude Code berjalan secara lokal. Untuk berinteraksi dengan LLM, Claude Code mengirimkan data melalui jaringan. Data ini mencakup semua prompt pengguna dan output model. Data dienkripsi dalam transit melalui TLS dan tidak dienkripsi saat istirahat. Claude Code kompatibel dengan sebagian besar VPN dan proxy LLM populer.
+Claude Code berjalan secara lokal. Untuk berinteraksi dengan LLM, Claude Code mengirimkan data melalui jaringan. Data ini mencakup semua prompt pengguna dan output model, dienkripsi dalam transit melalui TLS 1.2+. Claude Code kompatibel dengan sebagian besar VPN dan proxy LLM populer.
 
-Claude Code dibangun di atas API Anthropic. Untuk detail mengenai kontrol keamanan API kami, termasuk prosedur logging API kami, silakan lihat artefak kepatuhan yang ditawarkan di [Pusat Kepercayaan Anthropic](https://trust.anthropic.com).
+Enkripsi saat istirahat tergantung pada penyedia model Anda:
+
+| Penyedia               | Enkripsi saat istirahat                                                                                                                         |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Anthropic API          | Enkripsi disk tingkat infrastruktur (AES-256). Aktifkan [Zero Data Retention](/id/zero-data-retention) untuk tidak ada persistensi sisi server. |
+| Amazon Bedrock         | AES-256 dengan kunci yang dikelola AWS. Kunci yang dikelola pelanggan tersedia melalui AWS KMS.                                                 |
+| Google Cloud Vertex AI | Kunci enkripsi yang dikelola Google. CMEK tersedia.                                                                                             |
+| Microsoft Foundry      | Permintaan dialihkan ke infrastruktur Anthropic dengan enkripsi disk AES-256.                                                                   |
+
+Claude Code dibangun di atas API Anthropic. Untuk detail mengenai kontrol keamanan API, termasuk prosedur logging API, lihat artefak kepatuhan di [Pusat Kepercayaan Anthropic](https://trust.anthropic.com).
 
 ### Eksekusi cloud: Alur data dan dependensi
 
@@ -82,7 +91,7 @@ Claude Code terhubung dari mesin pengguna ke layanan Statsig untuk mencatat metr
 
 Claude Code terhubung dari mesin pengguna ke Sentry untuk logging kesalahan operasional. Data dienkripsi dalam transit menggunakan TLS dan saat istirahat menggunakan enkripsi AES 256-bit. Baca lebih lanjut di [dokumentasi keamanan Sentry](https://sentry.io/security/). Untuk menolak logging kesalahan, atur variabel lingkungan `DISABLE_ERROR_REPORTING`.
 
-Ketika pengguna menjalankan perintah `/feedback`, salinan riwayat percakapan lengkap mereka termasuk kode dikirim ke Anthropic. Data dienkripsi dalam transit dan saat istirahat. Secara opsional, masalah Github dibuat di repositori publik kami. Untuk menolak, atur variabel lingkungan `DISABLE_FEEDBACK_COMMAND` ke `1`.
+Ketika pengguna menjalankan perintah `/feedback`, salinan riwayat percakapan lengkap mereka termasuk kode dikirim ke Anthropic. Data dienkripsi dalam transit menggunakan TLS. Secara opsional, masalah GitHub dibuat di repositori publik. Untuk menolak, atur variabel lingkungan `DISABLE_FEEDBACK_COMMAND` ke `1`.
 
 ## Perilaku default menurut penyedia API
 

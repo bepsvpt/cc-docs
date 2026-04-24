@@ -435,6 +435,7 @@ Hook-Events werden an bestimmten Lebenszykluspunkten in Claude Code ausgelöst. 
 | `PermissionDenied`    | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
 | `PostToolUse`         | After a tool call succeeds                                                                                                                             |
 | `PostToolUseFailure`  | After a tool call fails                                                                                                                                |
+| `PostToolBatch`       | After a full batch of parallel tool calls resolves, before the next model call                                                                         |
 | `Notification`        | When Claude Code sends a notification                                                                                                                  |
 | `SubagentStart`       | When a subagent is spawned                                                                                                                             |
 | `SubagentStop`        | When a subagent finishes                                                                                                                               |
@@ -457,9 +458,10 @@ Hook-Events werden an bestimmten Lebenszykluspunkten in Claude Code ausgelöst. 
 
 Wenn mehrere Hooks übereinstimmen, gibt jeder sein eigenes Ergebnis zurück. Für Entscheidungen wählt Claude Code die restriktivste Antwort. Ein `PreToolUse`-Hook, der `deny` zurückgibt, bricht den Tool-Aufruf ab, egal was die anderen zurückgeben. Ein Hook, der `ask` zurückgibt, erzwingt die Berechtigungsaufforderung, auch wenn der Rest `allow` zurückgibt. Text aus `additionalContext` wird von jedem Hook beibehalten und zusammen an Claude übergeben.
 
-Jeder Hook hat einen `type`, der bestimmt, wie er ausgeführt wird. Die meisten Hooks verwenden `"type": "command"`, was einen Shell-Befehl ausführt. Drei weitere Typen sind verfügbar:
+Jeder Hook hat einen `type`, der bestimmt, wie er ausgeführt wird. Die meisten Hooks verwenden `"type": "command"`, was einen Shell-Befehl ausführt. Vier weitere Typen sind verfügbar:
 
 * `"type": "http"`: Event-Daten an eine URL POSTen. Siehe [HTTP-Hooks](#http-hooks).
+* `"type": "mcp_tool"`: ein Tool auf einem bereits verbundenen MCP-Server aufrufen. Siehe [MCP-Tool-Hooks](/de/hooks#mcp-tool-hook-fields).
 * `"type": "prompt"`: Single-Turn-LLM-Bewertung. Siehe [Prompt-basierte Hooks](#prompt-based-hooks).
 * `"type": "agent"`: Multi-Turn-Verifizierung mit Tool-Zugriff. Agent-Hooks sind experimentell und können sich ändern. Siehe [Agent-basierte Hooks](#agent-based-hooks).
 
@@ -504,7 +506,7 @@ exit 0  # exit 0 = fortfahren
 
 Der Exit-Code bestimmt, was als nächstes passiert:
 
-* **Exit 0**: die Aktion wird fortgesetzt. Für `UserPromptSubmit`- und `SessionStart`-Hooks wird alles, was Sie auf stdout schreiben, zu Claudes Kontext hinzugefügt.
+* **Exit 0**: die Aktion wird fortgesetzt. Für `UserPromptSubmit`, `UserPromptExpansion` und `SessionStart`-Hooks wird alles, was Sie auf stdout schreiben, zu Claudes Kontext hinzugefügt.
 * **Exit 2**: die Aktion wird blockiert. Schreiben Sie einen Grund auf stderr, und Claude erhält ihn als Feedback, sodass er sich anpassen kann.
 * **Jeder andere Exit-Code**: die Aktion wird fortgesetzt. Das Transkript zeigt eine `<hook name> hook error`-Meldung gefolgt von der ersten Zeile von stderr; das vollständige stderr geht in das [Debug-Protokoll](/de/hooks#debug-hooks).
 
@@ -530,7 +532,7 @@ Beispielsweise kann ein `PreToolUse`-Hook einen Tool-Aufruf ablehnen und Claude 
 
 Mit `"deny"` bricht Claude Code den Tool-Aufruf ab und gibt `permissionDecisionReason` an Claude als Feedback zurück. Diese `permissionDecision`-Werte sind spezifisch für `PreToolUse`:
 
-* `"allow"`: fortfahren, ohne eine Berechtigungsaufforderung anzuzeigen
+* `"allow"`: die interaktive Berechtigungsaufforderung überspringen. Deny- und Ask-Regeln, einschließlich verwalteter Deny-Listen, gelten weiterhin
 * `"deny"`: Tool-Aufruf abbrechen und den Grund an Claude senden
 * `"ask"`: Berechtigungsaufforderung dem Benutzer wie gewohnt anzeigen
 
@@ -565,22 +567,23 @@ Der `"Edit|Write"`-Matcher wird ausgelöst, wenn Claude das `Edit`- oder `Write`
 
 Jeder Event-Typ gleicht ein bestimmtes Feld ab:
 
-| Event                                                                                                                        | Worauf der Matcher filtert                                             | Beispiel-Matcher-Werte                                                                                                    |
-| :--------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                   | Tool-Name                                                              | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
-| `SessionStart`                                                                                                               | wie die Sitzung gestartet wurde                                        | `startup`, `resume`, `clear`, `compact`                                                                                   |
-| `SessionEnd`                                                                                                                 | warum die Sitzung endete                                               | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                                               | Benachrichtigungstyp                                                   | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                                              | Agent-Typ                                                              | `Bash`, `Explore`, `Plan` oder benutzerdefinierte Agent-Namen                                                             |
-| `PreCompact`, `PostCompact`                                                                                                  | was die Komprimierung ausgelöst hat                                    | `manual`, `auto`                                                                                                          |
-| `SubagentStop`                                                                                                               | Agent-Typ                                                              | gleiche Werte wie `SubagentStart`                                                                                         |
-| `ConfigChange`                                                                                                               | Konfigurationsquelle                                                   | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
-| `StopFailure`                                                                                                                | Fehlertyp                                                              | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                                                         | Ladegrund                                                              | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
-| `Elicitation`                                                                                                                | MCP-Servername                                                         | Ihre konfigurierten MCP-Servernamen                                                                                       |
-| `ElicitationResult`                                                                                                          | MCP-Servername                                                         | gleiche Werte wie `Elicitation`                                                                                           |
-| `FileChanged`                                                                                                                | Dateinamen zum Überwachen (siehe [FileChanged](/de/hooks#filechanged)) | `.envrc\|.env`                                                                                                            |
-| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged` | keine Matcher-Unterstützung                                            | wird immer bei jedem Auftreten ausgelöst                                                                                  |
+| Event                                                                                                                                         | Worauf der Matcher filtert                                             | Beispiel-Matcher-Werte                                                                                                    |
+| :-------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                                    | Tool-Name                                                              | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `SessionStart`                                                                                                                                | wie die Sitzung gestartet wurde                                        | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `SessionEnd`                                                                                                                                  | warum die Sitzung endete                                               | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
+| `Notification`                                                                                                                                | Benachrichtigungstyp                                                   | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
+| `SubagentStart`                                                                                                                               | Agent-Typ                                                              | `Bash`, `Explore`, `Plan` oder benutzerdefinierte Agent-Namen                                                             |
+| `PreCompact`, `PostCompact`                                                                                                                   | was die Komprimierung ausgelöst hat                                    | `manual`, `auto`                                                                                                          |
+| `SubagentStop`                                                                                                                                | Agent-Typ                                                              | gleiche Werte wie `SubagentStart`                                                                                         |
+| `ConfigChange`                                                                                                                                | Konfigurationsquelle                                                   | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
+| `StopFailure`                                                                                                                                 | Fehlertyp                                                              | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                                                          | Ladegrund                                                              | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `Elicitation`                                                                                                                                 | MCP-Servername                                                         | Ihre konfigurierten MCP-Servernamen                                                                                       |
+| `ElicitationResult`                                                                                                                           | MCP-Servername                                                         | gleiche Werte wie `Elicitation`                                                                                           |
+| `FileChanged`                                                                                                                                 | Dateinamen zum Überwachen (siehe [FileChanged](/de/hooks#filechanged)) | `.envrc\|.env`                                                                                                            |
+| `UserPromptExpansion`                                                                                                                         | Befehlsname                                                            | Ihre Skill- oder Befehlsnamen                                                                                             |
+| `UserPromptSubmit`, `PostToolBatch`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged` | keine Matcher-Unterstützung                                            | wird immer bei jedem Auftreten ausgelöst                                                                                  |
 
 Ein paar weitere Beispiele, die Matcher auf verschiedene Event-Typen zeigen:
 
@@ -687,7 +690,7 @@ Beispielsweise, um einen Hook nur auszuführen, wenn Claude `git`-Befehle verwen
 
 Der Hook-Prozess spawnt nur, wenn ein Subbefehl des Bash-Befehls mit `git *` übereinstimmt, oder wenn der Befehl zu komplex ist, um ihn in Subcommands zu parsen. Für zusammengesetzte Befehle wie `npm test && git push` wertet Claude Code jeden Subbefehl aus und löst den Hook aus, weil `git push` übereinstimmt. Das Feld `if` akzeptiert die gleichen Muster wie Berechtigungsregeln: `"Bash(git *)"`, `"Edit(*.ts)"` und so weiter. Um mehrere Tool-Namen abzugleichen, verwenden Sie separate Handler, jeder mit seinem eigenen `if`-Wert, oder gleichen Sie auf der `matcher`-Ebene ab, wo Pipe-Alternation unterstützt wird.
 
-`if` funktioniert nur bei Tool-Events: `PreToolUse`, `PostToolUse`, `PostToolUseFailure` und `PermissionRequest`. Das Hinzufügen zu einem anderen Event verhindert, dass der Hook ausgeführt wird.
+`if` funktioniert nur bei Tool-Events: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest` und `PermissionDenied`. Das Hinzufügen zu einem anderen Event verhindert, dass der Hook ausgeführt wird.
 
 ### Hook-Speicherort konfigurieren
 

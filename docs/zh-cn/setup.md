@@ -235,6 +235,8 @@ Homebrew 安装通过 cask 名称而不是此设置来选择渠道：`claude-cod
 }
 ```
 
+`DISABLE_AUTOUPDATER` 仅停止后台检查；`claude update` 和 `claude install` 仍然有效。要阻止所有更新路径（包括手动更新），请改为设置 [`DISABLE_UPDATES`](/zh-CN/env-vars)。当您通过自己的渠道分发 Claude Code 并需要用户保持在您提供的版本上时，请使用此选项。
+
 ### 手动更新
 
 要立即应用更新而不等待下一次后台检查，请运行：

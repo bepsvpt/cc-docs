@@ -6,6 +6,188 @@
 
 > Узнайте о настройке Claude Code через Amazon Bedrock, включая установку, конфигурацию IAM и устранение неполадок.
 
+export const ContactSalesCard = ({surface}) => {
+  const utm = content => `utm_source=claude_code&utm_medium=docs&utm_content=${surface}_${content}`;
+  const iconArrowRight = (size = 13) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <line x1="5" y1="12" x2="19" y2="12" />
+      <polyline points="12 5 19 12 12 19" />
+    </svg>;
+  const STYLES = `
+.cc-cs {
+  --cs-slate: #141413;
+  --cs-clay: #d97757;
+  --cs-clay-deep: #c6613f;
+  --cs-gray-000: #ffffff;
+  --cs-gray-700: #3d3d3a;
+  --cs-border-default: rgba(31, 30, 29, 0.15);
+  font-family: inherit;
+}
+.dark .cc-cs {
+  --cs-slate: #f0eee6;
+  --cs-gray-000: #262624;
+  --cs-gray-700: #bfbdb4;
+  --cs-border-default: rgba(240, 238, 230, 0.14);
+}
+.cc-cs-card {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 14px 16px; margin: 0;
+  background: var(--cs-gray-000); border: 0.5px solid var(--cs-border-default);
+  border-radius: 8px; flex-wrap: wrap;
+}
+.cc-cs-text { font-size: 13px; color: var(--cs-gray-700); line-height: 1.5; flex: 1; min-width: 240px; }
+.cc-cs-text strong { font-weight: 550; color: var(--cs-slate); }
+.cc-cs-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.cc-cs-btn-clay {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--cs-clay-deep); color: #fff; border: none;
+  border-radius: 8px; padding: 8px 14px;
+  font-size: 13px; font-weight: 500;
+  transition: background-color 0.15s; white-space: nowrap;
+}
+.cc-cs-btn-clay:hover { background: var(--cs-clay); }
+.cc-cs-btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: var(--cs-gray-700);
+  border: 0.5px solid var(--cs-border-default);
+  border-radius: 8px; padding: 8px 14px;
+  font-size: 13px; font-weight: 500;
+}
+.cc-cs-btn-ghost:hover { background: rgba(0, 0, 0, 0.04); }
+.dark .cc-cs-btn-ghost:hover { background: rgba(255, 255, 255, 0.04); }
+@media (max-width: 720px) {
+  .cc-cs-actions { width: 100%; }
+}
+`;
+  return <div className="cc-cs not-prose">
+      <style>{STYLES}</style>
+      <div className="cc-cs-card">
+        <div className="cc-cs-text">
+          <strong>Deploying Claude Code across your organization?</strong> Talk to sales about enterprise plans, SSO, and centralized billing.
+        </div>
+        <div className="cc-cs-actions">
+          <a href={`https://claude.com/pricing?${utm('view_plans')}#plans-business`} className="cc-cs-btn-ghost">
+            View plans
+          </a>
+          <a href={`https://claude.com/contact-sales?${utm('contact_sales')}`} className="cc-cs-btn-clay">
+            Contact sales {iconArrowRight()}
+          </a>
+        </div>
+      </div>
+    </div>;
+};
+
+export const Experiment = ({flag, treatment, children}) => {
+  const VID_KEY = 'exp_vid';
+  const CONSENT_COUNTRIES = new Set(['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'RE', 'GP', 'MQ', 'GF', 'YT', 'BL', 'MF', 'PM', 'WF', 'PF', 'NC', 'AW', 'CW', 'SX', 'FO', 'GL', 'AX', 'GB', 'UK', 'AI', 'BM', 'IO', 'VG', 'KY', 'FK', 'GI', 'MS', 'PN', 'SH', 'TC', 'GG', 'JE', 'IM', 'CA', 'BR', 'IN']);
+  const fnv1a = s => {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
+    }
+    return h >>> 0;
+  };
+  const bucket = (seed, vid) => fnv1a(fnv1a(seed + vid) + '') % 10000 < 5000 ? 'control' : 'treatment';
+  const [decision] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    const preBucketed = document.documentElement.dataset['gb_' + flag.replace(/-/g, '_')];
+    const force = params.get('gb-force');
+    if (force) {
+      for (const p of force.split(',')) {
+        const [k, v] = p.split(':');
+        if (k === flag) return {
+          variant: v || 'treatment',
+          track: false
+        };
+      }
+    }
+    if (navigator.globalPrivacyControl) {
+      return {
+        variant: 'control',
+        track: false
+      };
+    }
+    const prefsMatch = document.cookie.match(/(?:^|; )anthropic-consent-preferences=([^;]+)/);
+    if (prefsMatch) {
+      try {
+        if (JSON.parse(decodeURIComponent(prefsMatch[1])).analytics !== true) {
+          return {
+            variant: 'control',
+            track: false
+          };
+        }
+      } catch {
+        return {
+          variant: 'control',
+          track: false
+        };
+      }
+    } else {
+      const country = params.get('country')?.toUpperCase() || (document.cookie.match(/(?:^|; )cf_geo=([A-Z]{2})/) || [])[1];
+      if (!country || CONSENT_COUNTRIES.has(country)) {
+        return {
+          variant: 'control',
+          track: false
+        };
+      }
+    }
+    let vid;
+    try {
+      const ajsMatch = document.cookie.match(/(?:^|; )ajs_anonymous_id=([^;]+)/);
+      if (ajsMatch) {
+        vid = decodeURIComponent(ajsMatch[1]).replace(/^"|"$/g, '');
+      } else {
+        vid = localStorage.getItem(VID_KEY);
+        if (!vid) {
+          vid = crypto.randomUUID();
+        }
+        document.cookie = `ajs_anonymous_id=${vid}; domain=.claude.com; path=/; Secure; SameSite=Lax; max-age=31536000`;
+      }
+      try {
+        localStorage.setItem(VID_KEY, vid);
+      } catch {}
+    } catch {
+      return {
+        variant: 'control',
+        track: false
+      };
+    }
+    const variant = preBucketed === '1' ? 'treatment' : preBucketed === '0' ? 'control' : bucket(flag, vid);
+    return {
+      variant,
+      track: true,
+      vid
+    };
+  });
+  useEffect(() => {
+    if (!decision.track) return;
+    fetch('https://api.anthropic.com/api/event_logging/v2/batch', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-service-name': 'claude_code_docs'
+      },
+      body: JSON.stringify({
+        events: [{
+          event_type: 'GrowthbookExperimentEvent',
+          event_data: {
+            device_id: decision.vid,
+            anonymous_id: decision.vid,
+            timestamp: new Date().toISOString(),
+            experiment_id: flag,
+            variation_id: decision.variant === 'treatment' ? 1 : 0,
+            environment: 'production'
+          }
+        }]
+      }),
+      keepalive: true
+    }).catch(() => {});
+  }, []);
+  return decision.variant === 'treatment' ? treatment : children;
+};
+
+<Experiment flag="docs-contact-sales-cta" treatment={<ContactSalesCard surface="bedrock" />} />
+
 ## Предварительные требования
 
 Перед настройкой Claude Code с Bedrock убедитесь, что у вас есть:
@@ -15,20 +197,42 @@
 * AWS CLI установлен и настроен (опционально - требуется только если у вас нет другого механизма получения учетных данных)
 * Соответствующие разрешения IAM
 
-<Note>
-  Если вы развертываете Claude Code для нескольких пользователей, [закрепите версии вашей модели](#4-pin-model-versions), чтобы предотвратить сбои при выпуске Anthropic новых моделей.
-</Note>
+Чтобы войти со своими собственными учетными данными Bedrock, следуйте инструкциям [Вход с Bedrock](#sign-in-with-bedrock) ниже. Чтобы развернуть Claude Code в команде, используйте шаги [ручной установки](#set-up-manually) и [закрепите версии вашей модели](#4-pin-model-versions) перед развертыванием.
 
-## Установка
+## Вход с Bedrock
+
+Если у вас есть учетные данные AWS и вы хотите начать использовать Claude Code через Bedrock, мастер входа проведет вас через процесс. Вы выполняете предварительные требования на стороне AWS один раз на учетную запись; мастер обрабатывает сторону Claude Code.
+
+<Steps>
+  <Step title="Включите модели Anthropic в вашей учетной записи AWS">
+    В [консоли Amazon Bedrock](https://console.aws.amazon.com/bedrock/) откройте каталог моделей, выберите модель Anthropic и отправьте форму варианта использования. Доступ предоставляется сразу же после отправки. См. [Отправьте детали варианта использования](#1-submit-use-case-details) для AWS Organizations и [конфигурацию IAM](#iam-configuration) для разрешений, которые требуются вашей роли.
+  </Step>
+
+  <Step title="Запустите Claude Code и выберите Bedrock">
+    Запустите `claude`. При запросе входа выберите **3rd-party platform**, затем **Amazon Bedrock**.
+  </Step>
+
+  <Step title="Следуйте подсказкам мастера">
+    Выберите способ аутентификации в AWS: профиль AWS, обнаруженный из вашей директории `~/.aws`, ключ API Bedrock, ключ доступа и секрет, или учетные данные уже в вашей среде. Мастер выбирает ваш регион, проверяет, какие модели Claude может вызывать ваша учетная запись, и позволяет вам их закрепить. Он сохраняет результат в блок `env` вашего [файла параметров пользователя](/ru/settings), поэтому вам не нужно самостоятельно экспортировать переменные окружения.
+  </Step>
+</Steps>
+
+После входа запустите `/setup-bedrock` в любое время, чтобы снова открыть мастер и изменить ваши учетные данные, регион или закрепления моделей.
+
+## Ручная установка
+
+Чтобы настроить Bedrock через переменные окружения вместо мастера, например в CI или при развертывании в масштабе предприятия, следуйте шагам ниже.
 
 ### 1. Отправьте детали варианта использования
 
-Пользователи, впервые использующие модели Anthropic, должны отправить детали варианта использования перед вызовом модели. Это делается один раз на учетную запись.
+Пользователи, впервые использующие модели Anthropic, должны отправить детали варианта использования перед вызовом модели. Это делается один раз на учетную запись AWS.
 
-1. Убедитесь, что у вас есть правильные разрешения IAM (см. подробнее ниже)
+1. Убедитесь, что у вас есть правильные разрешения IAM, описанные ниже
 2. Перейдите на [консоль Amazon Bedrock](https://console.aws.amazon.com/bedrock/)
-3. Выберите **Chat/Text playground**
-4. Выберите любую модель Anthropic и вам будет предложено заполнить форму варианта использования
+3. Выберите модель Anthropic из **Model catalog**
+4. Заполните форму варианта использования. Доступ предоставляется сразу же после отправки.
+
+Если вы используете AWS Organizations, вы можете отправить форму один раз из учетной записи управления, используя [`PutUseCaseForModelAccess` API](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_PutUseCaseForModelAccess.html). Этот вызов требует разрешение IAM `bedrock:PutUseCaseForModelAccess`. Одобрение автоматически распространяется на дочерние учетные записи.
 
 ### 2. Настройте учетные данные AWS
 
@@ -114,7 +318,8 @@ Claude Code поддерживает автоматическое обновле
 export CLAUDE_CODE_USE_BEDROCK=1
 export AWS_REGION=us-east-1  # or your preferred region
 
-# Optional: Override the region for the small/fast model (Haiku)
+# Optional: Override the region for the small/fast model (Haiku).
+# Also applies to Bedrock Mantle.
 export ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION=us-west-2
 
 # Optional: Override the Bedrock endpoint URL for custom endpoints or gateways
@@ -130,13 +335,15 @@ export ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION=us-west-2
 ### 4. Закрепите версии моделей
 
 <Warning>
-  Закрепите конкретные версии моделей для каждого развертывания. Если вы используете псевдонимы моделей (`sonnet`, `opus`, `haiku`) без закрепления, Claude Code может попытаться использовать более новую версию модели, которая недоступна в вашей учетной записи Bedrock, нарушив работу существующих пользователей при выпуске обновлений Anthropic.
+  Закрепите конкретные версии моделей при развертывании для нескольких пользователей. Без закрепления псевдонимы моделей, такие как `sonnet` и `opus`, разрешаются на последнюю версию, которая может быть еще недоступна в вашей учетной записи Bedrock при выпуске обновления Anthropic. Claude Code [возвращается](#startup-model-checks) к предыдущей версии при запуске, когда последняя недоступна, но закрепление позволяет вам контролировать, когда ваши пользователи переходят на новую модель.
 </Warning>
 
-Установите эти переменные окружения на конкретные ID моделей Bedrock:
+Установите эти переменные окружения на конкретные ID моделей Bedrock.
+
+Без `ANTHROPIC_DEFAULT_OPUS_MODEL` псевдоним `opus` на Bedrock разрешается на Opus 4.6. Установите его на ID Opus 4.7, чтобы использовать последнюю модель:
 
 ```bash theme={null}
-export ANTHROPIC_DEFAULT_OPUS_MODEL='us.anthropic.claude-opus-4-6-v1'
+export ANTHROPIC_DEFAULT_OPUS_MODEL='us.anthropic.claude-opus-4-7'
 export ANTHROPIC_DEFAULT_SONNET_MODEL='us.anthropic.claude-sonnet-4-6'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='us.anthropic.claude-haiku-4-5-20251001-v1:0'
 ```
@@ -162,19 +369,23 @@ export ANTHROPIC_MODEL='arn:aws:bedrock:us-east-2:your-account-id:application-in
 
 # Optional: Disable prompt caching if needed
 export DISABLE_PROMPT_CACHING=1
+
+# Optional: Request 1-hour prompt cache TTL instead of the 5-minute default
+export ENABLE_PROMPT_CACHING_1H=1
 ```
 
-<Note>[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) может быть недоступен во всех регионах.</Note>
+<Note>[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) может быть недоступен во всех регионах. Записи кэша с TTL в 1 час выставляются по более высокому тарифу, чем записи в 5 минут.</Note>
 
 #### Сопоставьте каждую версию модели с профилем вывода
 
 Переменные окружения `ANTHROPIC_DEFAULT_*_MODEL` настраивают один профиль вывода на семейство моделей. Если вашей организации необходимо предоставить несколько версий одного семейства в средстве выбора `/model`, каждая маршрутизируется на свой ARN профиля вывода приложения, используйте вместо этого параметр `modelOverrides` в вашем [файле параметров](/ru/settings#settings-files).
 
-Этот пример сопоставляет три версии Opus с отдельными ARN, чтобы пользователи могли переключаться между ними без обхода профилей вывода вашей организации:
+Этот пример сопоставляет четыре версии Opus с отдельными ARN, чтобы пользователи могли переключаться между ними без обхода профилей вывода вашей организации:
 
 ```json theme={null}
 {
   "modelOverrides": {
+    "claude-opus-4-7": "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/opus-47-prod",
     "claude-opus-4-6": "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/opus-46-prod",
     "claude-opus-4-5-20251101": "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/opus-45-prod",
     "claude-opus-4-1-20250805": "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/opus-41-prod"
@@ -183,6 +394,14 @@ export DISABLE_PROMPT_CACHING=1
 ```
 
 Когда пользователь выбирает одну из этих версий в `/model`, Claude Code вызывает Bedrock с сопоставленным ARN. Версии без переопределения возвращаются к встроенному ID модели Bedrock или любому соответствующему профилю вывода, обнаруженному при запуске. См. [Override model IDs per version](/ru/model-config#override-model-ids-per-version) для получения подробной информации о том, как переопределения взаимодействуют с `availableModels` и другими параметрами модели.
+
+## Проверки моделей при запуске
+
+Когда Claude Code запускается с настроенным Bedrock, он проверяет, что модели, которые он намеревается использовать, доступны в вашей учетной записи. Эта проверка требует Claude Code v2.1.94 или более поздней версии.
+
+Если вы закрепили версию модели, которая старше текущего значения по умолчанию Claude Code, и ваша учетная запись может вызывать более новую версию, Claude Code предлагает вам обновить закрепление. Принятие записывает новый ID модели в ваш [файл параметров пользователя](/ru/settings) и перезапускает Claude Code. Отклонение запоминается до следующего изменения версии по умолчанию. Закрепления, указывающие на [ARN профиля вывода приложения](#map-each-model-version-to-an-inference-profile), пропускаются, так как они управляются вашим администратором.
+
+Если вы не закрепили модель и текущее значение по умолчанию недоступно в вашей учетной записи, Claude Code возвращается к предыдущей версии для текущего сеанса и показывает уведомление. Возврат не сохраняется. Включите более новую модель в вашей учетной записи Bedrock или [закрепите версию](#4-pin-model-versions), чтобы сделать выбор постоянным.
 
 ## Конфигурация IAM
 
@@ -234,9 +453,9 @@ export DISABLE_PROMPT_CACHING=1
 
 ## Окно контекста 1M токенов
 
-Claude Opus 4.6 и Sonnet 4.6 поддерживают [окно контекста 1M токенов](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window) на Amazon Bedrock. Claude Code автоматически включает расширенное окно контекста при выборе варианта модели 1M.
+Claude Opus 4.7, Opus 4.6 и Sonnet 4.6 поддерживают [окно контекста 1M токенов](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window) на Amazon Bedrock. Claude Code автоматически включает расширенное окно контекста при выборе варианта модели 1M.
 
-Чтобы включить окно контекста 1M для вашей закрепленной модели, добавьте `[1m]` к ID модели. См. [Pin models for third-party deployments](/ru/model-config#pin-models-for-third-party-deployments) для получения подробной информации.
+[Мастер установки](#sign-in-with-bedrock) предлагает опцию контекста 1M при закреплении моделей. Чтобы включить его для вручную закрепленной модели вместо этого, добавьте `[1m]` к ID модели. См. [Pin models for third-party deployments](/ru/model-config#pin-models-for-third-party-deployments) для получения подробной информации.
 
 ## AWS Guardrails
 
@@ -251,6 +470,79 @@ Claude Opus 4.6 и Sonnet 4.6 поддерживают [окно контекс�
   }
 }
 ```
+
+## Используйте конечную точку Mantle
+
+Mantle - это конечная точка Amazon Bedrock, которая обслуживает модели Claude через форму собственного API Anthropic, а не через Bedrock Invoke API. Она использует те же учетные данные AWS, разрешения IAM и конфигурацию `awsAuthRefresh`, описанные ранее на этой странице.
+
+<Note>
+  Mantle требует Claude Code v2.1.94 или более поздней версии. Запустите `claude --version`, чтобы проверить.
+</Note>
+
+### Включите Mantle
+
+С уже настроенными учетными данными AWS установите `CLAUDE_CODE_USE_MANTLE` для маршрутизации запросов на конечную точку Mantle:
+
+```bash theme={null}
+export CLAUDE_CODE_USE_MANTLE=1
+export AWS_REGION=us-east-1
+```
+
+Claude Code конструирует URL конечной точки из `AWS_REGION`. Чтобы переопределить его для пользовательской конечной точки или шлюза, установите `ANTHROPIC_BEDROCK_MANTLE_BASE_URL`.
+
+Запустите `/status` внутри Claude Code для подтверждения. Строка поставщика показывает `Amazon Bedrock (Mantle)`, когда Mantle активен.
+
+### Выберите модель Mantle
+
+Mantle использует ID моделей с префиксом `anthropic.` и без суффикса версии, например `anthropic.claude-haiku-4-5`. Модели, доступные вашей учетной записи, зависят от того, что вам было предоставлено вашей организацией; дополнительные ID моделей указаны в ваших материалах по подключению от AWS. Свяжитесь с вашей командой учетной записи AWS, чтобы запросить доступ к разрешенным моделям.
+
+Установите модель с флагом `--model` или с `/model` внутри Claude Code:
+
+```bash theme={null}
+claude --model anthropic.claude-haiku-4-5
+```
+
+### Запустите Mantle рядом с Invoke API
+
+Модели, доступные вам на Mantle, могут не включать каждую модель, которую вы используете сегодня. Установка как `CLAUDE_CODE_USE_BEDROCK`, так и `CLAUDE_CODE_USE_MANTLE` позволяет Claude Code вызывать обе конечные точки из одного сеанса. ID моделей, соответствующие формату Mantle, маршрутизируются на Mantle, а все остальные ID моделей идут на Bedrock Invoke API.
+
+```bash theme={null}
+export CLAUDE_CODE_USE_BEDROCK=1
+export CLAUDE_CODE_USE_MANTLE=1
+```
+
+Чтобы отобразить модель Mantle в средстве выбора `/model`, перечислите ее ID в `availableModels` в вашем [файле параметров](/ru/settings). Этот параметр также ограничивает средство выбора перечисленными записями, поэтому включите каждый псевдоним, который вы хотите сохранить доступным:
+
+```json theme={null}
+{
+  "availableModels": ["opus", "sonnet", "haiku", "anthropic.claude-haiku-4-5"]
+}
+```
+
+Записи с префиксом `anthropic.` добавляются как пользовательские опции средства выбора и маршрутизируются на Mantle. Замените `anthropic.claude-haiku-4-5` на ID модели, который была предоставлена вашей учетной записи. См. [Restrict model selection](/ru/model-config#restrict-model-selection) для получения информации о том, как `availableModels` взаимодействует с другими параметрами модели.
+
+Когда оба поставщика активны, `/status` показывает `Amazon Bedrock + Amazon Bedrock (Mantle)`.
+
+### Маршрутизируйте Mantle через шлюз
+
+Если ваша организация маршрутизирует трафик модели через централизованный [LLM gateway](/ru/llm-gateway), который внедряет учетные данные AWS на стороне сервера, отключите аутентификацию на стороне клиента, чтобы Claude Code отправлял запросы без подписей SigV4 или заголовков `x-api-key`:
+
+```bash theme={null}
+export CLAUDE_CODE_USE_MANTLE=1
+export CLAUDE_CODE_SKIP_MANTLE_AUTH=1
+export ANTHROPIC_BEDROCK_MANTLE_BASE_URL=https://your-gateway.example.com
+```
+
+### Переменные окружения Mantle
+
+Эти переменные специфичны для конечной точки Mantle. См. [Environment variables](/ru/env-vars) для полного списка.
+
+| Переменная                              | Назначение                                                          |
+| :-------------------------------------- | :------------------------------------------------------------------ |
+| `CLAUDE_CODE_USE_MANTLE`                | Включите конечную точку Mantle. Установите на `1` или `true`.       |
+| `ANTHROPIC_BEDROCK_MANTLE_BASE_URL`     | Переопределите URL конечной точки Mantle по умолчанию               |
+| `CLAUDE_CODE_SKIP_MANTLE_AUTH`          | Пропустите аутентификацию на стороне клиента для настроек прокси    |
+| `ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION` | Переопределите регион AWS для модели класса Haiku (общее с Bedrock) |
 
 ## Устранение неполадок
 
@@ -274,10 +566,19 @@ Claude Opus 4.6 и Sonnet 4.6 поддерживают [окно контекс�
 
 Claude Code использует Bedrock [Invoke API](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_InvokeModelWithResponseStream.html) и не поддерживает Converse API.
 
+### Ошибки конечной точки Mantle
+
+Если `/status` не показывает `Amazon Bedrock (Mantle)` после установки `CLAUDE_CODE_USE_MANTLE`, переменная не достигает процесса. Подтвердите, что она экспортирована в оболочке, где вы запустили `claude`, или установите ее в блоке `env` вашего [файла параметров](/ru/settings).
+
+`403` от конечной точки Mantle с действительными учетными данными означает, что вашей учетной записи AWS не был предоставлен доступ к запрошенной модели. Свяжитесь с вашей командой учетной записи AWS, чтобы запросить доступ.
+
+`400`, который называет ID модели, означает, что эта модель не обслуживается на Mantle. Mantle имеет свой собственный набор моделей, отдельный от стандартного каталога Bedrock, поэтому ID профилей вывода, такие как `us.anthropic.claude-sonnet-4-6`, не будут работать. Используйте ID формата Mantle или включите [обе конечные точки](#run-mantle-alongside-the-invoke-api), чтобы Claude Code маршрутизировал каждый запрос на конечную точку, где модель доступна.
+
 ## Дополнительные ресурсы
 
 * [Документация Bedrock](https://docs.aws.amazon.com/bedrock/)
 * [Цены Bedrock](https://aws.amazon.com/bedrock/pricing/)
 * [Профили вывода Bedrock](https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-support.html)
+* [Burndown токенов Bedrock и квоты](https://docs.aws.amazon.com/bedrock/latest/userguide/quotas-token-burndown.html)
 * [Claude Code на Amazon Bedrock: Quick Setup Guide](https://community.aws/content/2tXkZKrZzlrlu0KfH8gST5Dkppq/claude-code-on-amazon-bedrock-quick-setup-guide)
 * [Claude Code Monitoring Implementation (Bedrock)](https://github.com/aws-solutions-library-samples/guidance-for-claude-code-with-amazon-bedrock/blob/main/assets/docs/MONITORING.md)

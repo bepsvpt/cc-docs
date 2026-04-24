@@ -63,6 +63,10 @@
       "version": "1.0.0"
     }
     ```
+
+    <Note>
+      `version`을 설정하면 사용자는 이 필드를 변경할 때만 업데이트를 받으므로, 모든 릴리스에서 이를 증가시킵니다. `version`을 생략하고 이 마켓플레이스를 git에서 호스팅하면, 모든 커밋이 자동으로 새 버전으로 계산됩니다. [버전 해석](#version-resolution-and-release-channels)을 참조하여 올바른 접근 방식을 선택합니다.
+    </Note>
   </Step>
 
   <Step title="마켓플레이스 파일 생성">
@@ -103,7 +107,7 @@
   </Step>
 </Steps>
 
-hooks, 에이전트, MCP 서버 및 LSP 서버를 포함하여 플러그인이 수행할 수 있는 작업에 대해 자세히 알아보려면 [플러그인](/ko/plugins)을 참조하세요.
+플러그인이 수행할 수 있는 작업(hooks, 에이전트, MCP 서버 및 LSP 서버 포함)에 대해 자세히 알아보려면 [플러그인](/ko/plugins)을 참조하세요.
 
 <Note>
   **플러그인 설치 방법**: 사용자가 플러그인을 설치하면 Claude Code는 플러그인 디렉터리를 캐시 위치에 복사합니다. 이는 `../shared-utils`와 같은 경로를 사용하여 플러그인 디렉터리 외부의 파일을 참조할 수 없다는 의미입니다. 왜냐하면 해당 파일이 복사되지 않기 때문입니다.
@@ -191,18 +195,18 @@ hooks, 에이전트, MCP 서버 및 LSP 서버를 포함하여 플러그인이 �
 
 **표준 메타데이터 필드:**
 
-| 필드            | 유형      | 설명                                                                                        |
-| :------------ | :------ | :---------------------------------------------------------------------------------------- |
-| `description` | string  | 간단한 플러그인 설명                                                                               |
-| `version`     | string  | 플러그인 버전                                                                                   |
-| `author`      | object  | 플러그인 작성자 정보(`name` 필수, `email` 선택)                                                        |
-| `homepage`    | string  | 플러그인 홈페이지 또는 문서 URL                                                                       |
-| `repository`  | string  | 소스 코드 저장소 URL                                                                             |
-| `license`     | string  | SPDX 라이선스 식별자(예: MIT, Apache-2.0)                                                         |
-| `keywords`    | array   | 플러그인 검색 및 분류를 위한 태그                                                                       |
-| `category`    | string  | 조직을 위한 플러그인 카테고리                                                                          |
-| `tags`        | array   | 검색 가능성을 위한 태그                                                                             |
-| `strict`      | boolean | `plugin.json`이 구성 요소 정의의 권한인지 여부를 제어합니다(기본값: true). 아래의 [Strict 모드](#strict-mode)를 참조하세요. |
+| 필드            | 유형      | 설명                                                                                                                                                                  |
+| :------------ | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `description` | string  | 간단한 플러그인 설명                                                                                                                                                         |
+| `version`     | string  | 플러그인 버전. 설정된 경우(여기 또는 `plugin.json`에서), 플러그인은 이 문자열로 고정되며 사용자는 변경될 때만 업데이트를 받습니다. 생략하면 git 커밋 SHA로 돌아갑니다. [버전 해석](#version-resolution-and-release-channels)을 참조하세요. |
+| `author`      | object  | 플러그인 작성자 정보(`name` 필수, `email` 선택)                                                                                                                                  |
+| `homepage`    | string  | 플러그인 홈페이지 또는 문서 URL                                                                                                                                                 |
+| `repository`  | string  | 소스 코드 저장소 URL                                                                                                                                                       |
+| `license`     | string  | SPDX 라이선스 식별자(예: MIT, Apache-2.0)                                                                                                                                   |
+| `keywords`    | array   | 플러그인 검색 및 분류를 위한 태그                                                                                                                                                 |
+| `category`    | string  | 조직을 위한 플러그인 카테고리                                                                                                                                                    |
+| `tags`        | array   | 검색 가능성을 위한 태그                                                                                                                                                       |
+| `strict`      | boolean | `plugin.json`이 구성 요소 정의의 권한인지 여부를 제어합니다(기본값: true). 아래의 [Strict 모드](#strict-mode)를 참조하세요.                                                                           |
 
 **구성 요소 구성 필드:**
 
@@ -692,10 +696,20 @@ CLAUDE_CODE_PLUGIN_CACHE_DIR=/opt/claude-seed claude plugin install my-tool@your
 
 ### 버전 해석 및 릴리스 채널
 
-플러그인 버전은 캐시 경로 및 업데이트 감지를 결정합니다. 플러그인 매니페스트(`plugin.json`) 또는 마켓플레이스 항목(`marketplace.json`)에서 버전을 지정할 수 있습니다.
+플러그인 버전은 캐시 경로 및 업데이트 감지를 결정합니다. 해석된 버전이 사용자가 이미 가지고 있는 것과 일치하면 `/plugin update` 및 자동 업데이트는 플러그인을 건너뜁니다.
+
+Claude Code는 다음 중 설정된 첫 번째 항목에서 플러그인의 버전을 해석합니다:
+
+1. 플러그인의 `plugin.json`의 `version`
+2. 플러그인의 마켓플레이스 항목의 `version`
+3. 플러그인 소스의 git 커밋 SHA
+
+git 기반 소스 유형 `github`, `url`, `git-subdir` 및 git 호스팅 마켓플레이스 내의 상대 경로의 경우 `version`을 완전히 생략할 수 있으며 모든 새 커밋은 새 버전으로 취급됩니다. 이는 내부 또는 활발하게 개발 중인 플러그인에 대한 가장 간단한 설정입니다.
 
 <Warning>
-  가능하면 두 위치에서 버전을 설정하지 마세요. 플러그인 매니페스트가 항상 자동으로 우선합니다. 이는 마켓플레이스 버전이 무시될 수 있습니다. 상대 경로 플러그인의 경우 마켓플레이스 항목에서 버전을 설정합니다. 다른 모든 플러그인 소스의 경우 플러그인 매니페스트에서 설정합니다.
+  `version`을 설정하면 플러그인이 고정됩니다. `plugin.json`이 `"version": "1.0.0"`을 선언하면 해당 문자열을 변경하지 않고 새 커밋을 푸시해도 기존 사용자에게는 아무것도 하지 않습니다. Claude Code가 동일한 버전을 보고 캐시된 복사본을 유지하기 때문입니다. 모든 릴리스에서 필드를 범프하거나 커밋 SHA를 사용하도록 생략합니다.
+
+  `plugin.json` 및 마켓플레이스 항목 모두에서 `version`을 설정하지 마세요. `plugin.json` 값이 항상 자동으로 우선하므로 오래된 매니페스트 버전이 `marketplace.json`에서 설정한 버전을 숨길 수 있습니다.
 </Warning>
 
 #### 릴리스 채널 설정
@@ -703,7 +717,7 @@ CLAUDE_CODE_PLUGIN_CACHE_DIR=/opt/claude-seed claude plugin install my-tool@your
 플러그인에 대한 "stable" 및 "latest" 릴리스 채널을 지원하려면 동일한 저장소의 다양한 refs 또는 SHA를 가리키는 두 개의 마켓플레이스를 설정할 수 있습니다. 그런 다음 [관리되는 설정](/ko/settings#settings-files)을 통해 두 마켓플레이스를 다양한 사용자 그룹에 할당할 수 있습니다.
 
 <Warning>
-  플러그인의 `plugin.json`은 각 고정된 ref 또는 커밋에서 다양한 `version`을 선언해야 합니다. 두 refs 또는 커밋이 동일한 매니페스트 버전을 가지면 Claude Code는 이들을 동일한 것으로 취급하고 업데이트를 건너뜁니다.
+  각 채널은 다른 버전으로 해석되어야 합니다. 명시적 버전을 사용하는 경우 `plugin.json`은 각 고정된 ref에서 다른 `version`을 선언해야 합니다. `version`을 생략하면 서로 다른 커밋 SHA가 이미 채널을 구분합니다. 두 refs가 동일한 버전 문자열로 해석되면 Claude Code는 이들을 동일한 것으로 취급하고 업데이트를 건너뜁니다.
 </Warning>
 
 ##### 예제
@@ -771,6 +785,10 @@ early-access 그룹은 대신 `latest-tools`를 받습니다:
   }
 }
 ```
+
+#### 의존성 버전 고정
+
+플러그인은 의존성에 대한 semver 범위를 제한하여 의존성 업데이트가 종속 플러그인을 손상시키지 않도록 할 수 있습니다. `{plugin-name}--v{version}` git 태그 규칙, 범위 구문 및 동일한 의존성에 대한 여러 제약 조건이 어떻게 결합되는지에 대해서는 [플러그인 의존성 버전 제한](/ko/plugin-dependencies)을 참조하세요.
 
 ## 검증 및 테스트
 

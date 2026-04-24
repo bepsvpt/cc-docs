@@ -7,7 +7,7 @@
 > Continúe una sesión local de Claude Code desde su teléfono, tableta o cualquier navegador usando Remote Control. Funciona con claude.ai/code y la aplicación móvil de Claude.
 
 <Note>
-  Remote Control está disponible en todos los planes. En Team y Enterprise, está deshabilitado de forma predeterminada hasta que un administrador habilite el botón de alternancia de Remote Control en [configuración de administración de Claude Code](https://claude.ai/admin-settings/claude-code).
+  Remote Control está en vista previa de investigación y está disponible en todos los planes. En Team y Enterprise, está deshabilitado de forma predeterminada hasta que un administrador habilite el botón de alternancia de Remote Control en [configuración de administración de Claude Code](https://claude.ai/admin-settings/claude-code).
 </Note>
 
 Remote Control conecta [claude.ai/code](https://claude.ai/code) o la aplicación Claude para [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) y [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude) a una sesión de Claude Code que se ejecuta en su máquina. Inicie una tarea en su escritorio y luego continúela desde su teléfono en el sofá o desde un navegador en otra computadora.
@@ -188,7 +188,7 @@ Si las notificaciones no llegan:
 * **El proceso local debe seguir ejecutándose**: Remote Control se ejecuta como un proceso local. Si cierra la terminal, cierra VS Code, o detiene el proceso `claude` de otra manera, la sesión finaliza.
 * **Interrupción de red extendida**: si su máquina está despierta pero no puede alcanzar la red durante más de aproximadamente 10 minutos, la sesión agota el tiempo de espera y el proceso se cierra. Ejecute `claude remote-control` nuevamente para iniciar una nueva sesión.
 * **Ultraplan desconecta Remote Control**: iniciar una sesión de [ultraplan](/es/ultraplan) desconecta cualquier sesión de Remote Control activa porque ambas características ocupan la interfaz claude.ai/code y solo una puede estar conectada a la vez.
-* **Algunos comandos son solo locales**: comandos que abren un selector interactivo en la terminal, como `/mcp`, `/plugin`, o `/resume`, funcionan solo desde la CLI local. Los comandos que producen salida de texto, incluyendo `/compact`, `/clear`, `/context`, `/cost`, `/exit`, `/extra-usage`, `/recap`, y `/reload-plugins`, funcionan desde móvil y web.
+* **Algunos comandos son solo locales**: comandos que abren un selector interactivo en la terminal, como `/mcp`, `/plugin`, o `/resume`, funcionan solo desde la CLI local. Los comandos que producen salida de texto, incluyendo `/compact`, `/clear`, `/context`, `/usage`, `/exit`, `/extra-usage`, `/recap`, y `/reload-plugins`, funcionan desde móvil y web.
 
 ## Solución de problemas
 

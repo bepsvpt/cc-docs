@@ -30,6 +30,7 @@ Claude Code 包括幾個內建 subagents，如 **Explore**、**Plan** 和 **gene
 * [如何建立您自己的](#quickstart-create-your-first-subagent)
 * [完整配置選項](#configure-subagents)
 * [使用 subagents 的模式](#work-with-subagents)
+* [Forked subagents](#fork-the-current-conversation)
 * [範例 subagents](#example-subagents)
 
 ## 內建 subagents
@@ -654,6 +655,8 @@ Claude 根據任務決定是否在前景或背景中執行 subagents。您也可
 
 若要禁用所有背景任務功能，請將 `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` 環境變數設定為 `1`。請參閱 [Environment variables](/zh-TW/env-vars)。
 
+當 [fork mode](#fork-the-current-conversation) 啟用時，每個 subagent 產生都在背景中執行，無論 `background` 欄位如何。Forks 仍然在您的終端中出現權限提示，而不是預先批准；命名 subagents 遵循上述預先批准流程。
+
 ### 常見模式
 
 #### 隔離高容量操作
@@ -759,6 +762,59 @@ Subagents 支援使用與主要對話相同的邏輯進行自動壓縮。預設�
 ```
 
 `preTokens` 值顯示壓縮發生前使用了多少個 tokens。
+
+## Fork 目前的對話
+
+<Note>
+  Forked subagents 是實驗性的，需要 Claude Code v2.1.117 或更新版本。行為和配置可能在未來版本中變更。透過將 [`CLAUDE_CODE_FORK_SUBAGENT`](/zh-TW/env-vars) 環境變數設定為 `1` 來啟用它們。
+</Note>
+
+Fork 是一個 subagent，它繼承到目前為止的整個對話，而不是從頭開始。這會放棄 subagents 否則提供的輸入隔離：fork 看到與主工作階段相同的系統提示、工具、模型和訊息歷史記錄，因此您可以將側面任務交給它，而無需重新解釋情況。Fork 自己的工具呼叫仍然保持在您的對話之外，只有其最終結果返回，因此您的主要上下文視窗保持乾淨。當命名 subagent 需要太多背景才能有用時，或當您想從相同的起點並行嘗試多種方法時，使用 fork。
+
+啟用 fork mode 以三種方式改變 Claude Code：
+
+* Claude 在它否則會使用 [general-purpose](#built-in-subagents) subagent 時產生 fork。命名 subagents，如 Explore 仍然像以前一樣產生。
+* 每個 subagent 產生都在 [background](#run-subagents-in-foreground-or-background) 中執行，無論它是 fork 還是命名 subagent。設定 `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` 為 `1` 以保持產生同步。
+* `/fork` 命令產生 fork 而不是充當 [`/branch`](/zh-TW/commands) 的別名。
+
+您可以使用 `/fork` 後跟指令自己啟動 fork。Claude Code 從指令的前幾個詞命名 fork。以下範例 forks 對話以在您在主工作階段中繼續實現時草擬測試案例：
+
+```text theme={null}
+/fork draft unit tests for the parser changes so far
+```
+
+Fork 出現在提示下方的面板中，並在您繼續工作時在背景中執行。完成後，其結果作為訊息到達您的主要對話。下一部分涵蓋面板控制項，用於在 forks 執行時觀察和引導它們。
+
+### 觀察和引導執行中的 forks
+
+執行中的 forks 出現在提示輸入下方的面板中，主工作階段有一行，每個 fork 有一行。使用這些鍵與面板互動：
+
+| Key       | Action                  |
+| :-------- | :---------------------- |
+| `↑` / `↓` | 在行之間移動                  |
+| `Enter`   | 開啟選定 fork 的文字並向其發送後續訊息  |
+| `x`       | 關閉完成的 fork 或停止執行中的 fork |
+| `Esc`     | 將焦點返回到提示輸入              |
+
+### Forks 與命名 subagents 的區別
+
+Fork 繼承主工作階段在產生時擁有的所有內容。命名 subagent 從自己的定義開始。
+
+|              | Fork       | 命名 subagent                                                            |
+| :----------- | :--------- | :--------------------------------------------------------------------- |
+| Context      | 完整對話歷史記錄   | 新鮮上下文，帶有您傳遞的提示                                                         |
+| 系統提示和工具      | 與主工作階段相同   | 來自 subagent 的 [definition file](#write-subagent-files)                 |
+| Model        | 與主工作階段相同   | 來自 subagent 的 `model` 欄位                                               |
+| Permissions  | 提示出現在您的終端中 | [Pre-approved](#run-subagents-in-foreground-or-background) 在啟動前，然後自動拒絕 |
+| Prompt cache | 與主工作階段共享   | 單獨的快取                                                                  |
+
+因為 fork 的系統提示和工具定義與父級相同，其第一個請求重複使用父級的提示快取。這使得 forking 比為需要相同上下文的任務產生新 subagent 更便宜。
+
+當 Claude 透過 Agent 工具產生 fork 時，它可以傳遞 `isolation: "worktree"`，以便 fork 的檔案編輯被寫入單獨的 git worktree 而不是您的簽出。
+
+### 限制
+
+Fork mode 僅在互動式工作階段中工作。它在 [non-interactive mode](/zh-TW/headless) 中被禁用，其中包括 Agent SDK。Fork 無法產生進一步的 forks。
 
 ## 範例 subagents
 

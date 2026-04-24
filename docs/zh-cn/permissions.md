@@ -287,19 +287,20 @@ Hook 决定不会绕过权限规则。Deny 和 ask 规则在 hook 返回 `"allow
 
 以下设置仅在托管设置中有效。将它们放在用户或项目设置文件中无效。
 
-| 设置                                             | 描述                                                                                                                                           |
-| :--------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------- |
-| `allowedChannelPlugins`                        | 可能推送消息的频道插件的允许列表。设置时替换默认 Anthropic 允许列表。需要 `channelsEnabled: true`。请参见[限制哪些频道插件可以运行](/zh-CN/channels#restrict-which-channel-plugins-can-run) |
-| `allowManagedHooksOnly`                        | 当为 `true` 时，仅加载托管 hooks、SDK hooks 和托管设置 `enabledPlugins` 中强制启用的插件中的 hooks。用户、项目和所有其他插件 hooks 被阻止                                             |
-| `allowManagedMcpServersOnly`                   | 当为 `true` 时，仅尊重来自托管设置的 `allowedMcpServers`。`deniedMcpServers` 仍然从所有来源合并。请参见[托管 MCP 配置](/zh-CN/mcp#managed-mcp-configuration)                 |
-| `allowManagedPermissionRulesOnly`              | 当为 `true` 时，防止用户和项目设置定义 `allow`、`ask` 或 `deny` 权限规则。仅应用托管设置中的规则                                                                              |
-| `blockedMarketplaces`                          | 市场来源的黑名单。在下载前检查被阻止的来源，因此它们永远不会接触文件系统。请参见[托管市场限制](/zh-CN/plugin-marketplaces#managed-marketplace-restrictions)                                |
-| `channelsEnabled`                              | 允许 Team 和 Enterprise 用户使用[频道](/zh-CN/channels)。未设置或 `false` 会阻止频道消息传递，无论用户传递什么给 `--channels`                                                 |
-| `forceRemoteSettingsRefresh`                   | 当为 `true` 时，阻止 CLI 启动直到远程托管设置被新鲜获取，如果获取失败则退出。请参见[故障关闭强制执行](/zh-CN/server-managed-settings#enforce-fail-closed-startup)                       |
-| `pluginTrustMessage`                           | 自定义消息，附加到安装前显示的插件信任警告                                                                                                                        |
-| `sandbox.filesystem.allowManagedReadPathsOnly` | 当为 `true` 时，仅尊重来自托管设置的 `filesystem.allowRead` 路径。`denyRead` 仍然从所有来源合并                                                                        |
-| `sandbox.network.allowManagedDomainsOnly`      | 当为 `true` 时，仅尊重来自托管设置的 `allowedDomains` 和 `WebFetch(domain:...)` allow 规则。非允许的域被自动阻止，不提示用户。被拒绝的域仍然从所有来源合并                                    |
-| `strictKnownMarketplaces`                      | 控制用户可以添加和安装插件的插件市场来源。请参见[托管市场限制](/zh-CN/plugin-marketplaces#managed-marketplace-restrictions)                                                |
+| 设置                                             | 描述                                                                                                                                                                                      |
+| :--------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `allowedChannelPlugins`                        | 可能推送消息的频道插件的允许列表。设置时替换默认 Anthropic 允许列表。需要 `channelsEnabled: true`。请参见[限制哪些频道插件可以运行](/zh-CN/channels#restrict-which-channel-plugins-can-run)                                            |
+| `allowManagedHooksOnly`                        | 当为 `true` 时，仅加载托管 hooks、SDK hooks 和托管设置 `enabledPlugins` 中强制启用的插件中的 hooks。用户、项目和所有其他插件 hooks 被阻止                                                                                        |
+| `allowManagedMcpServersOnly`                   | 当为 `true` 时，仅尊重来自托管设置的 `allowedMcpServers`。`deniedMcpServers` 仍然从所有来源合并。请参见[托管 MCP 配置](/zh-CN/mcp#managed-mcp-configuration)                                                            |
+| `allowManagedPermissionRulesOnly`              | 当为 `true` 时，防止用户和项目设置定义 `allow`、`ask` 或 `deny` 权限规则。仅应用托管设置中的规则                                                                                                                         |
+| `blockedMarketplaces`                          | 市场来源的黑名单。在下载前检查被阻止的来源，因此它们永远不会接触文件系统。请参见[托管市场限制](/zh-CN/plugin-marketplaces#managed-marketplace-restrictions)                                                                           |
+| `channelsEnabled`                              | 允许 Team 和 Enterprise 用户使用[频道](/zh-CN/channels)。未设置或 `false` 会阻止频道消息传递，无论用户传递什么给 `--channels`                                                                                            |
+| `forceRemoteSettingsRefresh`                   | 当为 `true` 时，阻止 CLI 启动直到远程托管设置被新鲜获取，如果获取失败则退出。请参见[故障关闭强制执行](/zh-CN/server-managed-settings#enforce-fail-closed-startup)                                                                  |
+| `pluginTrustMessage`                           | 自定义消息，附加到安装前显示的插件信任警告                                                                                                                                                                   |
+| `sandbox.filesystem.allowManagedReadPathsOnly` | 当为 `true` 时，仅尊重来自托管设置的 `filesystem.allowRead` 路径。`denyRead` 仍然从所有来源合并                                                                                                                   |
+| `sandbox.network.allowManagedDomainsOnly`      | 当为 `true` 时，仅尊重来自托管设置的 `allowedDomains` 和 `WebFetch(domain:...)` allow 规则。非允许的域被自动阻止，不提示用户。被拒绝的域仍然从所有来源合并                                                                               |
+| `strictKnownMarketplaces`                      | 控制用户可以添加和安装插件的插件市场来源。请参见[托管市场限制](/zh-CN/plugin-marketplaces#managed-marketplace-restrictions)                                                                                           |
+| `wslInheritsWindowsSettings`                   | 当在 Windows HKLM 注册表项或 `C:\Program Files\ClaudeCode\managed-settings.json` 中为 `true` 时，WSL 除了从 `/etc/claude-code` 读取托管设置外，还从 Windows 策略链读取托管设置。请参见[设置文件](/zh-CN/settings#settings-files) |
 
 `disableBypassPermissionsMode` 通常放在托管设置中以强制执行组织策略，但它可以从任何范围工作。用户可以在自己的设置中设置它以将自己锁定在绕过模式之外。
 

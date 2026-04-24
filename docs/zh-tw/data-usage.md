@@ -59,15 +59,24 @@ Anthropic 根據您的帳戶類型和偏好設定保留 Claude Code 資料。
 
 下圖顯示 Claude Code 在安裝和正常操作期間如何連接到外部服務。實線表示必需的連接，而虛線表示可選或使用者啟動的資料流。
 
-<img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/claude-code-data-flow.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=b3f71c69d743bff63343207dfb7ad6ce" alt="顯示 Claude Code 外部連接的圖表：安裝/更新連接到 NPM，使用者請求連接到 Anthropic 服務，包括 Console 驗證、public-api，以及可選的 Statsig、Sentry 和錯誤報告" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
+<img src="https://mintcdn.com/claude-code/YcBW2H7CArGcduPb/images/claude-code-data-flow.svg?fit=max&auto=format&n=YcBW2H7CArGcduPb&q=85&s=b600a89f84fc86f9ff7be00a466c0635" alt="顯示 Claude Code 外部連接的圖表：安裝/更新連接到發佈伺服器，使用者請求連接到 Anthropic 服務，包括 Console 驗證、public-api，以及可選的 Statsig、Sentry 和錯誤報告" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
 
-Claude Code 從 [NPM](https://www.npmjs.com/package/@anthropic-ai/claude-code) 安裝。Claude Code 在本機執行。為了與 LLM 互動，Claude Code 透過網路發送資料。此資料包括所有使用者提示和模型輸出。資料在傳輸中透過 TLS 加密，在靜止時未加密。Claude Code 與大多數流行的 VPN 和 LLM 代理相容。
+Claude Code 在本機執行。為了與 LLM 互動，Claude Code 透過網路發送資料。此資料包括所有使用者提示和模型輸出，在傳輸中透過 TLS 1.2+ 加密。Claude Code 與大多數流行的 VPN 和 LLM 代理相容。
 
-Claude Code 建立在 Anthropic 的 API 上。有關我們 API 的安全控制詳細資訊，包括我們的 API 記錄程序，請參閱 [Anthropic 信任中心](https://trust.anthropic.com)中提供的合規性文件。
+靜止時的加密取決於您的模型提供者：
+
+| 提供者                    | 靜止時加密                                                                 |
+| ---------------------- | --------------------------------------------------------------------- |
+| Anthropic API          | 基礎設施層級磁碟加密 (AES-256)。啟用[零資料保留](/zh-TW/zero-data-retention)以避免伺服器端持久化。 |
+| Amazon Bedrock         | AES-256 搭配 AWS 管理的金鑰。客戶管理的金鑰可透過 AWS KMS 取得。                           |
+| Google Cloud Vertex AI | Google 管理的加密金鑰。CMEK 可用。                                               |
+| Microsoft Foundry      | 請求路由到 Anthropic 基礎設施，具有 AES-256 磁碟加密。                                 |
+
+Claude Code 建立在 Anthropic 的 API 上。有關 API 安全控制的詳細資訊，包括 API 記錄程序，請參閱 [Anthropic 信任中心](https://trust.anthropic.com)中的合規性文件。
 
 ### 雲端執行：資料流和相依性
 
-使用[網路上的 Claude Code](/zh-TW/claude-code-on-the-web) 時，工作階段在 Anthropic 管理的虛擬機器中執行，而不是在本機執行。在雲端環境中：
+使用[網路上的 Claude Code](/zh-TW/claude-code-on-the-web)時，工作階段在 Anthropic 管理的虛擬機器中執行，而不是在本機執行。在雲端環境中：
 
 * \*\*程式碼和資料儲存：\*\*您的儲存庫被複製到隔離的 VM。程式碼和工作階段資料受您帳戶類型的保留和使用政策約束（請參閱上面的資料保留部分）
 * \*\*認證：\*\*GitHub 驗證透過安全代理進行；您的 GitHub 認證永遠不會進入沙箱
@@ -82,7 +91,7 @@ Claude Code 從使用者的機器連接到 Statsig 服務，以記錄延遲、�
 
 Claude Code 從使用者的機器連接到 Sentry 進行操作錯誤記錄。資料在傳輸中使用 TLS 加密，在靜止時使用 256 位 AES 加密。在 [Sentry 安全文件](https://sentry.io/security/)中閱讀更多資訊。若要選擇退出錯誤記錄，請設定 `DISABLE_ERROR_REPORTING` 環境變數。
 
-當使用者執行 `/feedback` 命令時，他們的完整對話歷史記錄（包括程式碼）的副本會發送到 Anthropic。資料在傳輸中和靜止時加密。可選地，在我們的公開儲存庫中建立 Github 問題。若要選擇退出，請設定 `DISABLE_FEEDBACK_COMMAND` 環境變數為 `1`。
+當使用者執行 `/feedback` 命令時，他們的完整對話歷史記錄（包括程式碼）的副本會發送到 Anthropic。資料在傳輸中使用 TLS 加密。可選地，在公開儲存庫中建立 GitHub 問題。若要選擇退出，請設定 `DISABLE_FEEDBACK_COMMAND` 環境變數為 `1`。
 
 ## 按 API 提供者的預設行為
 

@@ -63,6 +63,10 @@ Contoh ini membuat marketplace dengan satu plugin: skill `/quality-review` untuk
       "version": "1.0.0"
     }
     ```
+
+    <Note>
+      Menetapkan `version` berarti pengguna hanya menerima pembaruan ketika Anda mengubah bidang ini, jadi tingkatkan pada setiap rilis. Jika Anda menghilangkan `version` dan menghosting marketplace ini di git, setiap commit secara otomatis dihitung sebagai versi baru. Lihat [Version resolution](#version-resolution-and-release-channels) untuk memilih pendekatan yang tepat.
+    </Note>
   </Step>
 
   <Step title="Buat file marketplace">
@@ -191,18 +195,18 @@ Setiap entri plugin dalam array `plugins` mendeskripsikan plugin dan di mana men
 
 **Field metadata standar:**
 
-| Field         | Type    | Deskripsi                                                                                                                            |
-| :------------ | :------ | :----------------------------------------------------------------------------------------------------------------------------------- |
-| `description` | string  | Deskripsi plugin singkat                                                                                                             |
-| `version`     | string  | Versi plugin                                                                                                                         |
-| `author`      | object  | Informasi penulis plugin (`name` diperlukan, `email` opsional)                                                                       |
-| `homepage`    | string  | URL homepage atau dokumentasi plugin                                                                                                 |
-| `repository`  | string  | URL repositori kode sumber                                                                                                           |
-| `license`     | string  | Identifier lisensi SPDX (misalnya, MIT, Apache-2.0)                                                                                  |
-| `keywords`    | array   | Tag untuk penemuan dan kategorisasi plugin                                                                                           |
-| `category`    | string  | Kategori plugin untuk organisasi                                                                                                     |
-| `tags`        | array   | Tag untuk kemudahan pencarian                                                                                                        |
-| `strict`      | boolean | Mengontrol apakah `plugin.json` adalah otoritas untuk definisi komponen (default: true). Lihat [Strict mode](#strict-mode) di bawah. |
+| Field         | Type    | Deskripsi                                                                                                                                                                                                                                                       |
+| :------------ | :------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `description` | string  | Deskripsi plugin singkat                                                                                                                                                                                                                                        |
+| `version`     | string  | Versi plugin. Jika diatur (di sini atau di `plugin.json`), plugin disematkan ke string ini dan pengguna hanya menerima pembaruan saat berubah. Hilangkan untuk kembali ke SHA commit git. Lihat [Version resolution](#version-resolution-and-release-channels). |
+| `author`      | object  | Informasi penulis plugin (`name` diperlukan, `email` opsional)                                                                                                                                                                                                  |
+| `homepage`    | string  | URL homepage atau dokumentasi plugin                                                                                                                                                                                                                            |
+| `repository`  | string  | URL repositori kode sumber                                                                                                                                                                                                                                      |
+| `license`     | string  | Identifier lisensi SPDX (misalnya, MIT, Apache-2.0)                                                                                                                                                                                                             |
+| `keywords`    | array   | Tag untuk penemuan dan kategorisasi plugin                                                                                                                                                                                                                      |
+| `category`    | string  | Kategori plugin untuk organisasi                                                                                                                                                                                                                                |
+| `tags`        | array   | Tag untuk kemudahan pencarian                                                                                                                                                                                                                                   |
+| `strict`      | boolean | Mengontrol apakah `plugin.json` adalah otoritas untuk definisi komponen (default: true). Lihat [Strict mode](#strict-mode) di bawah.                                                                                                                            |
 
 **Field konfigurasi komponen:**
 
@@ -677,7 +681,7 @@ Gunakan `".*"` sebagai `pathPattern` untuk mengizinkan jalur filesystem apa pun 
 
 #### Cara pembatasan bekerja
 
-Pembatasan divalidasi awal dalam proses instalasi plugin, sebelum permintaan jaringan atau operasi filesystem apa pun terjadi. Ini mencegah upaya akses marketplace yang tidak sah.
+Pembatasan diperiksa sebelum operasi jaringan atau filesystem apa pun. Pemeriksaan berjalan pada marketplace add dan pada plugin install, update, refresh, dan auto-update. Jika marketplace ditambahkan sebelum kebijakan dikonfigurasi dan sumbernya tidak lagi cocok dengan daftar izin, Claude Code menolak untuk memasang atau memperbarui plugin darinya. Penegakan yang sama berlaku untuk `blockedMarketplaces`.
 
 Daftar izin menggunakan pencocokan tepat untuk sebagian besar jenis sumber. Agar marketplace diizinkan, semua field yang ditentukan harus cocok secara tepat:
 
@@ -692,10 +696,20 @@ Untuk detail konfigurasi lengkap termasuk semua jenis sumber yang didukung dan p
 
 ### Resolusi versi dan saluran rilis
 
-Versi plugin menentukan jalur cache dan deteksi pembaruan. Anda dapat menentukan versi dalam manifest plugin (`plugin.json`) atau dalam entri marketplace (`marketplace.json`).
+Versi plugin menentukan jalur cache dan deteksi pembaruan: jika versi yang diselesaikan cocok dengan apa yang sudah dimiliki pengguna, `/plugin update` dan auto-update melewati plugin.
+
+Claude Code menyelesaikan versi plugin dari yang pertama dari ini yang diatur:
+
+1. `version` dalam `plugin.json` plugin
+2. `version` dalam entri marketplace plugin
+3. SHA commit git dari sumber plugin
+
+Untuk jenis sumber berbasis git `github`, `url`, `git-subdir`, dan jalur relatif di dalam marketplace yang dihosting git, Anda dapat menghilangkan `version` sepenuhnya dan setiap commit baru diperlakukan sebagai versi baru. Ini adalah setup paling sederhana untuk plugin internal atau yang sedang dikembangkan secara aktif.
 
 <Warning>
-  Jika memungkinkan, hindari menetapkan versi di kedua tempat. Manifest plugin selalu menang secara diam-diam, yang dapat menyebabkan versi marketplace diabaikan. Untuk plugin jalur relatif, atur versi dalam entri marketplace. Untuk semua sumber plugin lainnya, atur dalam manifest plugin.
+  Menetapkan `version` menyematkan plugin. Jika `plugin.json` mendeklarasikan `"version": "1.0.0"`, mendorong commit baru tanpa mengubah string itu tidak melakukan apa pun untuk pengguna yang ada, karena Claude Code melihat versi yang sama dan menyimpan salinan cache. Bump field pada setiap rilis, atau hilangkan untuk menggunakan SHA commit.
+
+  Hindari menetapkan `version` di kedua `plugin.json` dan entri marketplace. Nilai `plugin.json` selalu menang secara diam-diam, jadi versi manifest yang basi dapat menyembunyikan versi yang Anda atur di `marketplace.json`.
 </Warning>
 
 #### Siapkan saluran rilis
@@ -703,7 +717,7 @@ Versi plugin menentukan jalur cache dan deteksi pembaruan. Anda dapat menentukan
 Untuk mendukung saluran rilis "stable" dan "latest" untuk plugin Anda, Anda dapat menyiapkan dua marketplace yang menunjuk ke refs atau SHA berbeda dari repo yang sama. Anda kemudian dapat menetapkan dua marketplace ke grup pengguna berbeda melalui [pengaturan yang dikelola](/id/settings#settings-files).
 
 <Warning>
-  `plugin.json` plugin harus mendeklarasikan `version` berbeda di setiap ref atau commit yang disematkan. Jika dua refs atau commits memiliki versi manifest yang sama, Claude Code memperlakukannya sebagai identik dan melewati pembaruan.
+  Setiap saluran harus diselesaikan ke versi yang berbeda. Jika Anda menggunakan versi eksplisit, `plugin.json` harus mendeklarasikan `version` berbeda di setiap ref yang disematkan. Jika Anda menghilangkan `version`, SHA commit yang berbeda sudah membedakan saluran. Jika dua refs diselesaikan ke string versi yang sama, Claude Code memperlakukannya sebagai identik dan melewati pembaruan.
 </Warning>
 
 ##### Contoh
@@ -771,6 +785,10 @@ Grup early-access menerima `latest-tools` sebagai gantinya:
   }
 }
 ```
+
+#### Sematkan versi dependensi
+
+Plugin dapat membatasi dependensinya ke rentang semver sehingga pembaruan dependensi tidak merusak plugin yang bergantung. Lihat [Batasi versi dependensi plugin](/id/plugin-dependencies) untuk konvensi git-tag `{plugin-name}--v{version}`, sintaks rentang, dan bagaimana beberapa batasan pada dependensi yang sama digabungkan.
 
 ## Validasi dan pengujian
 

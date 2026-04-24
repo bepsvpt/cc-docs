@@ -30,6 +30,7 @@ Claude Code 包括几个内置 subagents，如 **Explore**、**Plan** 和 **gene
 * [如何创建您自己的](#quickstart-create-your-first-subagent)
 * [完整配置选项](#configure-subagents)
 * [使用 subagents 的模式](#work-with-subagents)
+* [分叉 subagents](#fork-the-current-conversation)
 * [示例 subagents](#example-subagents)
 
 ## 内置 subagents
@@ -654,6 +655,8 @@ Claude 根据任务决定是否在前台或后台运行 subagents。您也可以
 
 要禁用所有后台任务功能，请将 `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` 环境变量设置为 `1`。请参阅 [Environment variables](/zh-CN/env-vars)。
 
+当 [fork mode](#fork-the-current-conversation) 启用时，每个 subagent 生成都在后台运行，无论 `background` 字段如何。分叉仍然在您的终端中出现权限提示，而不是预先批准；命名 subagents 遵循上面的预批准流程。
+
 ### 常见模式
 
 #### 隔离高容量操作
@@ -759,6 +762,59 @@ Subagents 支持使用与主对话相同的逻辑进行自动压缩。默认情�
 ```
 
 `preTokens` 值显示压缩发生前使用了多少令牌。
+
+## 分叉当前对话
+
+<Note>
+  分叉 subagents 是实验性的，需要 Claude Code v2.1.117 或更高版本。行为和配置可能在未来版本中更改。通过将 [`CLAUDE_CODE_FORK_SUBAGENT`](/zh-CN/env-vars) 环境变量设置为 `1` 来启用它们。
+</Note>
+
+分叉是一个 subagent，它继承到目前为止的整个对话，而不是从头开始。这消除了 subagents 通常提供的输入隔离：分叉看到与主会话相同的系统提示、工具、模型和消息历史，因此您可以将其交给一个辅助任务而无需重新解释情况。分叉自己的工具调用仍然保持在您的对话之外，只有其最终结果返回，因此您的主 context window 保持干净。当命名 subagent 需要太多背景才能有用时，或当您想从相同的起点并行尝试多种方法时，使用分叉。
+
+启用分叉模式以三种方式改变 Claude Code：
+
+* Claude 在它会使用 [general-purpose](#built-in-subagents) subagent 时生成分叉。命名 subagents 如 Explore 仍然像以前一样生成。
+* 每个 subagent 生成都在 [background](#run-subagents-in-foreground-or-background) 中运行，无论它是分叉还是命名 subagent。设置 `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` 为 `1` 以保持生成同步。
+* `/fork` 命令生成分叉而不是充当 [`/branch`](/zh-CN/commands) 的别名。
+
+您可以使用 `/fork` 后跟指令自己启动分叉。Claude Code 从指令的前几个单词命名分叉。以下示例分叉对话以在您继续主会话中的实现时草拟测试用例：
+
+```text theme={null}
+/fork draft unit tests for the parser changes so far
+```
+
+分叉出现在提示下方的面板中，并在您继续工作时在后台运行。完成后，其结果作为消息到达您的主对话。下一部分涵盖了在分叉运行时观察和引导它们的面板控制。
+
+### 观察和引导运行中的分叉
+
+运行中的分叉出现在提示输入下方的面板中，主会话有一行，每个分叉有一行。使用这些键与面板交互：
+
+| Key       | Action             |
+| :-------- | :----------------- |
+| `↑` / `↓` | 在行之间移动             |
+| `Enter`   | 打开所选分叉的转录并向其发送后续消息 |
+| `x`       | 关闭完成的分叉或停止运行中的分叉   |
+| `Esc`     | 将焦点返回到提示输入         |
+
+### 分叉与命名 subagents 的区别
+
+分叉继承主会话在生成时拥有的一切。命名 subagent 从自己的定义开始。
+
+|              | 分叉         | 命名 subagent                                                            |
+| :----------- | :--------- | :--------------------------------------------------------------------- |
+| 上下文          | 完整的对话历史    | 新鲜上下文，带有您传递的提示                                                         |
+| 系统提示和工具      | 与主会话相同     | 来自 subagent 的 [definition file](#write-subagent-files)                 |
+| 模型           | 与主会话相同     | 来自 subagent 的 `model` 字段                                               |
+| 权限           | 提示在您的终端中出现 | [Pre-approved](#run-subagents-in-foreground-or-background) 在启动前，然后自动拒绝 |
+| Prompt cache | 与主会话共享     | 单独的缓存                                                                  |
+
+因为分叉的系统提示和工具定义与父级相同，其第一个请求重用父级的 prompt cache。这使得分叉比为需要相同上下文的任务生成新 subagent 更便宜。
+
+当 Claude 通过 Agent 工具生成分叉时，它可以传递 `isolation: "worktree"` 以便分叉的文件编辑被写入单独的 git worktree 而不是您的检出。
+
+### 限制
+
+分叉模式仅在交互式会话中工作。它在 [non-interactive mode](/zh-CN/headless) 中被禁用，其中包括 Agent SDK。分叉无法生成进一步的分叉。
 
 ## 示例 subagents
 

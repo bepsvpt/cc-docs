@@ -63,6 +63,10 @@ Dieses Beispiel erstellt einen Marktplatz mit einem Plugin: ein `/quality-review
       "version": "1.0.0"
     }
     ```
+
+    <Note>
+      Das Festlegen von `version` bedeutet, dass Benutzer nur Updates erhalten, wenn Sie dieses Feld ändern. Erhöhen Sie es daher bei jeder Veröffentlichung. Wenn Sie `version` weglassen und diesen Marktplatz in Git hosten, zählt jeder Commit automatisch als neue Version. Siehe [Versionsauflösung](#version-resolution-and-release-channels), um den richtigen Ansatz zu wählen.
+    </Note>
   </Step>
 
   <Step title="Erstellen Sie die Marktplatzdatei">
@@ -191,18 +195,18 @@ Jeder Plugin-Eintrag im `plugins`-Array beschreibt ein Plugin und wo man es find
 
 **Standard-Metadatenfelder:**
 
-| Feld          | Typ     | Beschreibung                                                                                                                       |
-| :------------ | :------ | :--------------------------------------------------------------------------------------------------------------------------------- |
-| `description` | string  | Kurze Plugin-Beschreibung                                                                                                          |
-| `version`     | string  | Plugin-Version                                                                                                                     |
-| `author`      | object  | Plugin-Autoreninformationen (`name` erforderlich, `email` optional)                                                                |
-| `homepage`    | string  | Plugin-Homepage oder Dokumentations-URL                                                                                            |
-| `repository`  | string  | Quellcode-Repository-URL                                                                                                           |
-| `license`     | string  | SPDX-Lizenz-Identifier (z. B. MIT, Apache-2.0)                                                                                     |
-| `keywords`    | array   | Tags für Plugin-Entdeckung und Kategorisierung                                                                                     |
-| `category`    | string  | Plugin-Kategorie zur Organisation                                                                                                  |
-| `tags`        | array   | Tags für Suchbarkeit                                                                                                               |
-| `strict`      | boolean | Steuert, ob `plugin.json` die Autorität für Komponentendefinitionen ist (Standard: true). Siehe [Strict Mode](#strict-mode) unten. |
+| Feld          | Typ     | Beschreibung                                                                                                                                                                                                                                                                                      |
+| :------------ | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `description` | string  | Kurze Plugin-Beschreibung                                                                                                                                                                                                                                                                         |
+| `version`     | string  | Plugin-Version. Falls gesetzt (hier oder in `plugin.json`), wird das Plugin auf diese Zeichenkette festgelegt und Benutzer erhalten Updates nur, wenn sie sich ändert. Weglassen, um auf den Git-Commit-SHA zurückzugreifen. Siehe [Versionsauflösung](#version-resolution-and-release-channels). |
+| `author`      | object  | Plugin-Autoreninformationen (`name` erforderlich, `email` optional)                                                                                                                                                                                                                               |
+| `homepage`    | string  | Plugin-Homepage oder Dokumentations-URL                                                                                                                                                                                                                                                           |
+| `repository`  | string  | Quellcode-Repository-URL                                                                                                                                                                                                                                                                          |
+| `license`     | string  | SPDX-Lizenz-Identifier (z. B. MIT, Apache-2.0)                                                                                                                                                                                                                                                    |
+| `keywords`    | array   | Tags für Plugin-Entdeckung und Kategorisierung                                                                                                                                                                                                                                                    |
+| `category`    | string  | Plugin-Kategorie zur Organisation                                                                                                                                                                                                                                                                 |
+| `tags`        | array   | Tags für Suchbarkeit                                                                                                                                                                                                                                                                              |
+| `strict`      | boolean | Steuert, ob `plugin.json` die Autorität für Komponentendefinitionen ist (Standard: true). Siehe [Strict Mode](#strict-mode) unten.                                                                                                                                                                |
 
 **Komponenten-Konfigurationsfelder:**
 
@@ -692,10 +696,20 @@ Für vollständige Konfigurationsdetails einschließlich aller unterstützten Qu
 
 ### Versionsauflösung und Release-Kanäle
 
-Plugin-Versionen bestimmen Cache-Pfade und Update-Erkennung. Sie können die Version im Plugin-Manifest (`plugin.json`) oder im Marktplatz-Eintrag (`marketplace.json`) angeben.
+Plugin-Versionen bestimmen Cache-Pfade und Update-Erkennung: Wenn die aufgelöste Version mit dem übereinstimmt, was ein Benutzer bereits hat, überspringen `/plugin update` und Auto-Update das Plugin.
+
+Claude Code löst die Version eines Plugins aus dem ersten dieser Punkte auf, der festgelegt ist:
+
+1. `version` in der `plugin.json` des Plugins
+2. `version` im Marktplatz-Eintrag des Plugins
+3. Der Git-Commit-SHA der Plugin-Quelle
+
+Für die Git-basierten Quellentypen `github`, `url`, `git-subdir` und relative Pfade innerhalb eines Git-gehosteten Marktplatzes können Sie `version` ganz weglassen und jeder neue Commit wird als neue Version behandelt. Dies ist die einfachste Einrichtung für interne oder aktiv entwickelte Plugins.
 
 <Warning>
-  Vermeiden Sie nach Möglichkeit, die Version an beiden Stellen festzulegen. Das Plugin-Manifest gewinnt immer stillschweigend, was dazu führen kann, dass die Marktplatz-Version ignoriert wird. Für Plugins mit relativen Pfaden legen Sie die Version im Marktplatz-Eintrag fest. Für alle anderen Plugin-Quellen legen Sie die Version im Plugin-Manifest fest.
+  Das Festlegen von `version` heftet das Plugin an. Wenn `plugin.json` `"version": "1.0.0"` deklariert, führt das Pushen neuer Commits ohne Änderung dieser Zeichenkette für bestehende Benutzer zu nichts, da Claude Code die gleiche Version sieht und die zwischengespeicherte Kopie behält. Erhöhen Sie das Feld bei jeder Veröffentlichung, oder lassen Sie es weg, um den Commit-SHA zu verwenden.
+
+  Vermeiden Sie das Festlegen von `version` sowohl in `plugin.json` als auch im Marktplatz-Eintrag. Der `plugin.json`-Wert gewinnt immer stillschweigend, daher kann eine veraltete Manifest-Version eine Version maskieren, die Sie in `marketplace.json` festgelegt haben.
 </Warning>
 
 #### Richten Sie Release-Kanäle ein
@@ -703,7 +717,7 @@ Plugin-Versionen bestimmen Cache-Pfade und Update-Erkennung. Sie können die Ver
 Um "stabile" und "neueste" Release-Kanäle für Ihre Plugins zu unterstützen, können Sie zwei Marktplätze einrichten, die auf verschiedene Refs oder SHAs desselben Repos verweisen. Sie können dann die beiden Marktplätze verschiedenen Benutzergruppen über [verwaltete Einstellungen](/de/settings#settings-files) zuweisen.
 
 <Warning>
-  Die `plugin.json` des Plugins muss eine andere `version` bei jedem angehefteten Ref oder Commit deklarieren. Wenn zwei Refs oder Commits die gleiche Manifest-Version haben, behandelt Claude Code sie als identisch und überspringt das Update.
+  Jeder Kanal muss sich zu einer anderen Version auflösen. Wenn Sie explizite Versionen verwenden, muss `plugin.json` eine andere `version` bei jedem angehefteten Ref deklarieren. Wenn Sie `version` weglassen, unterscheiden die unterschiedlichen Commit-SHAs bereits die Kanäle. Wenn zwei Refs sich zu der gleichen Versionskette auflösen, behandelt Claude Code sie als identisch und überspringt das Update.
 </Warning>
 
 ##### Beispiel
@@ -771,6 +785,10 @@ Die Early-Access-Gruppe erhält stattdessen `latest-tools`:
   }
 }
 ```
+
+#### Abhängigkeitsversionen anheften
+
+Ein Plugin kann seine Abhängigkeiten auf einen Semver-Bereich beschränken, damit Updates einer Abhängigkeit das abhängige Plugin nicht unterbrechen. Siehe [Plugin-Abhängigkeitsversionen einschränken](/de/plugin-dependencies) für die `{plugin-name}--v{version}` Git-Tag-Konvention, Bereichssyntax und wie mehrere Einschränkungen auf die gleiche Abhängigkeit kombiniert werden.
 
 ## Validierung und Tests
 

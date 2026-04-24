@@ -18,7 +18,7 @@ Hooks срабатывают в определённых точках во вр�
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/NgDeMMkM7ZmaRibg/images/hooks-lifecycle.svg?fit=max&auto=format&n=NgDeMMkM7ZmaRibg&q=85&s=ec53c77f9943a6470cb2c8ecace6d809" alt="Диаграмма жизненного цикла hook, показывающая SessionStart, затем цикл за ход, содержащий UserPromptSubmit, UserPromptExpansion для slash commands, вложенный агентный цикл (PreToolUse, PermissionRequest, PostToolUse, PostToolUseFailure, SubagentStart/Stop, TaskCreated, TaskCompleted) и Stop или StopFailure, за которым следуют TeammateIdle, PreCompact, PostCompact и SessionEnd, с Elicitation и ElicitationResult вложенными внутри выполнения MCP tool, PermissionDenied как боковая ветвь от PermissionRequest для автоматических отказов, и WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged и FileChanged как отдельные асинхронные события" width="520" height="1155" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/_SQ1BnFTP0QUrae-/images/hooks-lifecycle.svg?fit=max&auto=format&n=_SQ1BnFTP0QUrae-&q=85&s=75bd3d4bdefd4f08a7d736167243fd78" alt="Диаграмма жизненного цикла hook, показывающая SessionStart, затем цикл за ход, содержащий UserPromptSubmit, UserPromptExpansion для slash commands, вложенный агентный цикл (PreToolUse, PermissionRequest, PostToolUse, PostToolUseFailure, PostToolBatch, SubagentStart/Stop, TaskCreated, TaskCompleted) и Stop или StopFailure, за которым следуют TeammateIdle, PreCompact, PostCompact и SessionEnd, с Elicitation и ElicitationResult вложенными внутри выполнения MCP tool, PermissionDenied как боковая ветвь от PermissionRequest для автоматических отказов, и WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged и FileChanged как отдельные асинхронные события" width="520" height="1228" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
@@ -34,6 +34,7 @@ Hooks срабатывают в определённых точках во вр�
 | `PermissionDenied`    | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
 | `PostToolUse`         | After a tool call succeeds                                                                                                                             |
 | `PostToolUseFailure`  | After a tool call fails                                                                                                                                |
+| `PostToolBatch`       | After a full batch of parallel tool calls resolves, before the next model call                                                                         |
 | `Notification`        | When Claude Code sends a notification                                                                                                                  |
 | `SubagentStart`       | When a subagent is spawned                                                                                                                             |
 | `SubagentStop`        | When a subagent finishes                                                                                                                               |
@@ -154,7 +155,7 @@ Hooks определяются в JSON файлах настроек. Конфи
 См. [Как разрешается hook](#how-a-hook-resolves) выше для полного пошагового руководства с аннотированным примером.
 
 <Note>
-  На этой странице используются специальные термины для каждого уровня: **hook event** для точки жизненного цикла, **matcher group** для фильтра и **hook handler** для команды оболочки, конечной точки HTTP, подсказки или агента, который запускается. "Hook" сам по себе относится к общей функции.
+  На этой странице используются специальные термины для каждого уровня: **hook event** для точки жизненного цикла, **matcher group** для фильтра и **hook handler** для команды оболочки, конечной точки HTTP, инструмента MCP, подсказки или агента, который запускается. "Hook" сам по себе относится к общей функции.
 </Note>
 
 ### Расположение hook
@@ -186,24 +187,24 @@ Hooks определяются в JSON файлах настроек. Конфи
 
 Каждый тип события совпадает с другим полем:
 
-| Событие                                                                                                        | На что фильтр влияет                                                     | Примеры значений фильтра                                                                                                  |
-| :------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                     | имя инструмента                                                          | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
-| `SessionStart`                                                                                                 | как сеанс начался                                                        | `startup`, `resume`, `clear`, `compact`                                                                                   |
-| `SessionEnd`                                                                                                   | почему сеанс закончился                                                  | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                                 | тип уведомления                                                          | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                                | тип агента                                                               | `Bash`, `Explore`, `Plan` или пользовательские имена агентов                                                              |
-| `PreCompact`, `PostCompact`                                                                                    | что вызвало компактирование                                              | `manual`, `auto`                                                                                                          |
-| `SubagentStop`                                                                                                 | тип агента                                                               | те же значения, что и `SubagentStart`                                                                                     |
-| `ConfigChange`                                                                                                 | источник конфигурации                                                    | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
-| `CwdChanged`                                                                                                   | поддержка фильтра отсутствует                                            | всегда срабатывает при каждом изменении каталога                                                                          |
-| `FileChanged`                                                                                                  | буквальные имена файлов для наблюдения (см. [FileChanged](#filechanged)) | `.envrc\|.env`                                                                                                            |
-| `StopFailure`                                                                                                  | тип ошибки                                                               | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                                           | причина загрузки                                                         | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
-| `UserPromptExpansion`                                                                                          | имя команды                                                              | ваши имена skills или команд                                                                                              |
-| `Elicitation`                                                                                                  | имя MCP сервера                                                          | ваши настроенные имена MCP серверов                                                                                       |
-| `ElicitationResult`                                                                                            | имя MCP сервера                                                          | те же значения, что и `Elicitation`                                                                                       |
-| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | поддержка фильтра отсутствует                                            | всегда срабатывает при каждом вхождении                                                                                   |
+| Событие                                                                                                                         | На что фильтр влияет                                                     | Примеры значений фильтра                                                                                                  |
+| :------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                      | имя инструмента                                                          | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `SessionStart`                                                                                                                  | как сеанс начался                                                        | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `SessionEnd`                                                                                                                    | почему сеанс закончился                                                  | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
+| `Notification`                                                                                                                  | тип уведомления                                                          | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
+| `SubagentStart`                                                                                                                 | тип агента                                                               | `Bash`, `Explore`, `Plan` или пользовательские имена агентов                                                              |
+| `PreCompact`, `PostCompact`                                                                                                     | что вызвало компактирование                                              | `manual`, `auto`                                                                                                          |
+| `SubagentStop`                                                                                                                  | тип агента                                                               | те же значения, что и `SubagentStart`                                                                                     |
+| `ConfigChange`                                                                                                                  | источник конфигурации                                                    | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
+| `CwdChanged`                                                                                                                    | поддержка фильтра отсутствует                                            | всегда срабатывает при каждом изменении каталога                                                                          |
+| `FileChanged`                                                                                                                   | буквальные имена файлов для наблюдения (см. [FileChanged](#filechanged)) | `.envrc\|.env`                                                                                                            |
+| `StopFailure`                                                                                                                   | тип ошибки                                                               | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                                            | причина загрузки                                                         | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `UserPromptExpansion`                                                                                                           | имя команды                                                              | ваши имена skills или команд                                                                                              |
+| `Elicitation`                                                                                                                   | имя MCP сервера                                                          | ваши настроенные имена MCP серверов                                                                                       |
+| `ElicitationResult`                                                                                                             | имя MCP сервера                                                          | те же значения, что и `Elicitation`                                                                                       |
+| `UserPromptSubmit`, `PostToolBatch`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | поддержка фильтра отсутствует                                            | всегда срабатывает при каждом вхождении                                                                                   |
 
 Фильтр запускается против поля из [JSON входа](#hook-input-and-output), который Claude Code отправляет вашему hook на stdin. Для событий инструмента это поле — `tool_name`. Каждый раздел [hook event](#hook-events) перечисляет полный набор значений фильтра и схему входа для этого события.
 
@@ -227,7 +228,7 @@ Hooks определяются в JSON файлах настроек. Конфи
 }
 ```
 
-`UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` и `CwdChanged` не поддерживают фильтры и всегда срабатывают при каждом вхождении. Если вы добавите поле `matcher` к этим событиям, оно будет молча проигнорировано.
+`UserPromptSubmit`, `PostToolBatch`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` и `CwdChanged` не поддерживают фильтры и всегда срабатывают при каждом вхождении. Если вы добавите поле `matcher` к этим событиям, оно будет молча проигнорировано.
 
 Для событий инструмента вы можете фильтровать более узко, установив поле [`if`](#common-fields) на отдельных обработчиках hook. `if` использует [синтаксис правила разрешения](/ru/permissions) для совпадения с именем инструмента и аргументами вместе, поэтому `"Bash(git *)"` запускается когда любая подкоманда входа Bash совпадает с `git *` и `"Edit(*.ts)"` запускается только для файлов TypeScript.
 
@@ -277,10 +278,11 @@ MCP инструменты следуют шаблону именования `m
 
 ### Hook handler fields
 
-Каждый объект во внутреннем массиве `hooks` — это hook handler: команда оболочки, конечная точка HTTP, подсказка LLM или агент, который запускается при совпадении фильтра. Есть четыре типа:
+Каждый объект во внутреннем массиве `hooks` — это hook handler: команда оболочки, конечная точка HTTP, инструмент MCP, подсказка LLM или агент, который запускается при совпадении фильтра. Есть пять типов:
 
 * **[Command hooks](#command-hook-fields)** (`type: "command"`): запускают команду оболочки. Ваш скрипт получает [JSON входные данные](#hook-input-and-output) события на stdin и передаёт результаты обратно через коды выхода и stdout.
 * **[HTTP hooks](#http-hook-fields)** (`type: "http"`): отправляют JSON входные данные события как HTTP POST запрос на URL. Конечная точка передаёт результаты обратно через тело ответа, используя тот же [JSON формат выхода](#json-output), что и command hooks.
+* **[MCP tool hooks](#mcp-tool-hook-fields)** (`type: "mcp_tool"`): вызывают инструмент на уже подключённом [MCP сервере](/ru/mcp). Текстовый вывод инструмента обрабатывается как stdout command hook.
 * **[Prompt hooks](#prompt-and-agent-hook-fields)** (`type: "prompt"`): отправляют подсказку модели Claude для однооборотной оценки. Модель возвращает решение да/нет как JSON. См. [Prompt-based hooks](#prompt-based-hooks).
 * **[Agent hooks](#prompt-and-agent-hook-fields)** (`type: "agent"`): порождают subagent, который может использовать инструменты, такие как Read, Grep и Glob, для проверки условий перед возвратом решения. Agent hooks являются экспериментальными и могут измениться. См. [Agent-based hooks](#agent-based-hooks).
 
@@ -288,13 +290,13 @@ MCP инструменты следуют шаблону именования `m
 
 Эти поля применяются ко всем типам hooks:
 
-| Поле            | Обязательно | Описание                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| :-------------- | :---------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`          | да          | `"command"`, `"http"`, `"prompt"` или `"agent"`                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| `if`            | нет         | Синтаксис правила разрешения для фильтрации срабатывания этого hook, такой как `"Bash(git *)"` или `"Edit(*.ts)"`. Hook запускается только если вызов инструмента совпадает с шаблоном, или если команда Bash слишком сложна для анализа. Оценивается только на событиях инструмента: `PreToolUse`, `PostToolUse`, `PostToolUseFailure` и `PermissionRequest`. На других событиях hook с установленным `if` никогда не запускается. Использует тот же синтаксис, что и [правила разрешения](/ru/permissions) |
-| `timeout`       | нет         | Секунды перед отменой. Значения по умолчанию: 600 для command, 30 для prompt, 60 для agent                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| `statusMessage` | нет         | Пользовательское сообщение спиннера, отображаемое во время выполнения hook                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| `once`          | нет         | Если `true`, запускается один раз за сеанс, затем удаляется. Только для hooks, объявленных в [skill frontmatter](#hooks-in-skills-and-agents); игнорируется в файлах настроек и agent frontmatter                                                                                                                                                                                                                                                                                                            |
+| Поле            | Обязательно | Описание                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| :-------------- | :---------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`          | да          | `"command"`, `"http"`, `"mcp_tool"`, `"prompt"` или `"agent"`                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `if`            | нет         | Синтаксис правила разрешения для фильтрации срабатывания этого hook, такой как `"Bash(git *)"` или `"Edit(*.ts)"`. Hook запускается только если вызов инструмента совпадает с шаблоном, или если команда Bash слишком сложна для анализа. Оценивается только на событиях инструмента: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest` и `PermissionDenied`. На других событиях hook с установленным `if` никогда не запускается. Использует тот же синтаксис, что и [правила разрешения](/ru/permissions) |
+| `timeout`       | нет         | Секунды перед отменой. Значения по умолчанию: 600 для command, 30 для prompt, 60 для agent                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `statusMessage` | нет         | Пользовательское сообщение спиннера, отображаемое во время выполнения hook                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `once`          | нет         | Если `true`, запускается один раз за сеанс, затем удаляется. Только для hooks, объявленных в [skill frontmatter](#hooks-in-skills-and-agents); игнорируется в файлах настроек и agent frontmatter                                                                                                                                                                                                                                                                                                                                |
 
 Поле `if` содержит ровно одно правило разрешения. Нет синтаксиса `&&`, `||` или списка для объединения правил; чтобы применить несколько условий, определите отдельный обработчик hook для каждого. Для Bash правило сравнивается с каждой подкомандой входа инструмента после удаления ведущих присваиваний `VAR=value`, поэтому `if: "Bash(git push *)"` совпадает как с `FOO=bar git push`, так и с `npm test && git push`. Hook запускается если любая подкоманда совпадает, и всегда запускается когда команда слишком сложна для анализа.
 
@@ -340,6 +342,42 @@ Claude Code отправляет [JSON входные данные](#hook-input-
               "Authorization": "Bearer $MY_TOKEN"
             },
             "allowedEnvVars": ["MY_TOKEN"]
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+#### MCP tool hook fields
+
+В дополнение к [общим полям](#common-fields), MCP tool hooks принимают эти поля:
+
+| Поле     | Обязательно | Описание                                                                                                                                                                       |
+| :------- | :---------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `server` | да          | Имя настроенного MCP сервера. Сервер должен быть уже подключён; hook никогда не запускает поток OAuth или подключения                                                          |
+| `tool`   | да          | Имя инструмента для вызова на этом сервере                                                                                                                                     |
+| `input`  | нет         | Аргументы, передаваемые инструменту. Строковые значения поддерживают подстановку `${path}` из [JSON входа](#hook-input-and-output) hook, такую как `"${tool_input.file_path}"` |
+
+Текстовое содержимое инструмента обрабатывается как stdout command hook: если оно анализируется как действительный [JSON выход](#json-output), оно обрабатывается как решение, в противном случае оно показывается как простой текст. Если названный сервер не подключён или инструмент возвращает `isError: true`, hook производит неблокирующую ошибку и выполнение продолжается.
+
+MCP tool hooks доступны на каждом hook событии после того, как Claude Code подключился к вашим MCP серверам. `SessionStart` и `Setup` обычно срабатывают до завершения подключения серверов, поэтому hooks на этих событиях должны ожидать ошибку "не подключено" при первом запуске.
+
+Этот пример вызывает инструмент `security_scan` на MCP сервере `my_server` после каждого `Write` или `Edit`, передавая путь отредактированного файла:
+
+```json theme={null}
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "mcp_tool",
+            "server": "my_server",
+            "tool": "security_scan",
+            "input": { "file_path": "${tool_input.file_path}" }
           }
         ]
       }
@@ -448,7 +486,7 @@ Agents используют тот же формат в своём YAML frontmat
 
 Введите `/hooks` в Claude Code, чтобы открыть браузер только для чтения ваших настроенных hooks. Меню показывает каждое hook событие с количеством настроенных hooks, позволяет вам углубиться в фильтры и показывает полные детали каждого hook обработчика. Используйте его для проверки конфигурации, проверки того, из какого файла настроек пришёл hook, или проверки команды, подсказки или URL hook.
 
-Меню отображает все четыре типа hook: `command`, `prompt`, `agent` и `http`. Каждый hook помечен префиксом `[type]` и источником, указывающим, где он был определён:
+Меню отображает все пять типов hook: `command`, `prompt`, `agent`, `http` и `mcp_tool`. Каждый hook помечен префиксом `[type]` и источником, указывающим, где он был определён:
 
 * `User`: из `~/.claude/settings.json`
 * `Project`: из `.claude/settings.json`
@@ -558,6 +596,7 @@ Exit code 2 — это способ hook сигнализировать "сто�
 | `StopFailure`         | Нет                | Выход и код выхода игнорируются                                                                                                                                 |
 | `PostToolUse`         | Нет                | Показывает stderr Claude (инструмент уже запустился)                                                                                                            |
 | `PostToolUseFailure`  | Нет                | Показывает stderr Claude (инструмент уже не удался)                                                                                                             |
+| `PostToolBatch`       | Да                 | Останавливает цикл агента перед следующим вызовом модели                                                                                                        |
 | `PermissionDenied`    | Нет                | Код выхода и stderr игнорируются (отказ уже произошёл). Используйте JSON `hookSpecificOutput.retry: true` для сообщения модели, что она может повторить попытку |
 | `Notification`        | Нет                | Показывает stderr только пользователю                                                                                                                           |
 | `SubagentStart`       | Нет                | Показывает stderr только пользователю                                                                                                                           |
@@ -620,23 +659,23 @@ JSON объект поддерживает три вида полей:
 
 Не каждое событие поддерживает блокировку или управление поведением через JSON. События, которые это делают, каждое использует другой набор полей для выражения этого решения. Используйте эту таблицу как быструю ссылку перед написанием hook:
 
-| События                                                                                                              | Шаблон решения                  | Ключевые поля                                                                                                                                                                       |
-| :------------------------------------------------------------------------------------------------------------------- | :------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| UserPromptSubmit, UserPromptExpansion, PostToolUse, PostToolUseFailure, Stop, SubagentStop, ConfigChange, PreCompact | Верхнеуровневое `decision`      | `decision: "block"`, `reason`                                                                                                                                                       |
-| TeammateIdle, TaskCreated, TaskCompleted                                                                             | Exit code или `continue: false` | Exit code 2 блокирует действие с обратной связью stderr. JSON `{"continue": false, "stopReason": "..."}` также полностью останавливает товарища, соответствуя поведению hook `Stop` |
-| PreToolUse                                                                                                           | `hookSpecificOutput`            | `permissionDecision` (allow/deny/ask/defer), `permissionDecisionReason`                                                                                                             |
-| PermissionRequest                                                                                                    | `hookSpecificOutput`            | `decision.behavior` (allow/deny)                                                                                                                                                    |
-| PermissionDenied                                                                                                     | `hookSpecificOutput`            | `retry: true` говорит модели, что она может повторить попытку отклонённого вызова инструмента                                                                                       |
-| WorktreeCreate                                                                                                       | path return                     | Command hook выводит путь на stdout; HTTP hook возвращает `hookSpecificOutput.worktreePath`. Сбой hook или отсутствие пути вызывает сбой создания                                   |
-| Elicitation                                                                                                          | `hookSpecificOutput`            | `action` (accept/decline/cancel), `content` (значения полей формы для accept)                                                                                                       |
-| ElicitationResult                                                                                                    | `hookSpecificOutput`            | `action` (accept/decline/cancel), `content` (переопределение значений полей формы)                                                                                                  |
-| WorktreeRemove, Notification, SessionEnd, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged      | Нет                             | Нет управления решением. Используется для побочных эффектов, таких как логирование или очистка                                                                                      |
+| События                                                                                                                             | Шаблон решения                  | Ключевые поля                                                                                                                                                                       |
+| :---------------------------------------------------------------------------------------------------------------------------------- | :------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| UserPromptSubmit, UserPromptExpansion, PostToolUse, PostToolUseFailure, PostToolBatch, Stop, SubagentStop, ConfigChange, PreCompact | Верхнеуровневое `decision`      | `decision: "block"`, `reason`                                                                                                                                                       |
+| TeammateIdle, TaskCreated, TaskCompleted                                                                                            | Exit code или `continue: false` | Exit code 2 блокирует действие с обратной связью stderr. JSON `{"continue": false, "stopReason": "..."}` также полностью останавливает товарища, соответствуя поведению hook `Stop` |
+| PreToolUse                                                                                                                          | `hookSpecificOutput`            | `permissionDecision` (allow/deny/ask/defer), `permissionDecisionReason`                                                                                                             |
+| PermissionRequest                                                                                                                   | `hookSpecificOutput`            | `decision.behavior` (allow/deny)                                                                                                                                                    |
+| PermissionDenied                                                                                                                    | `hookSpecificOutput`            | `retry: true` говорит модели, что она может повторить попытку отклонённого вызова инструмента                                                                                       |
+| WorktreeCreate                                                                                                                      | path return                     | Command hook выводит путь на stdout; HTTP hook возвращает `hookSpecificOutput.worktreePath`. Сбой hook или отсутствие пути вызывает сбой создания                                   |
+| Elicitation                                                                                                                         | `hookSpecificOutput`            | `action` (accept/decline/cancel), `content` (значения полей формы для accept)                                                                                                       |
+| ElicitationResult                                                                                                                   | `hookSpecificOutput`            | `action` (accept/decline/cancel), `content` (переопределение значений полей формы)                                                                                                  |
+| WorktreeRemove, Notification, SessionEnd, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged                     | Нет                             | Нет управления решением. Используется для побочных эффектов, таких как логирование или очистка                                                                                      |
 
 Вот примеры каждого шаблона в действии:
 
 <Tabs>
   <Tab title="Top-level decision">
-    Используется `UserPromptSubmit`, `UserPromptExpansion`, `PostToolUse`, `PostToolUseFailure`, `Stop`, `SubagentStop`, `ConfigChange` и `PreCompact`. Единственное значение — `"block"`. Чтобы разрешить действию продолжаться, опустите `decision` из вашего JSON или выйдите с 0 без какого-либо JSON вообще:
+    Используется `UserPromptSubmit`, `UserPromptExpansion`, `PostToolUse`, `PostToolUseFailure`, `PostToolBatch`, `Stop`, `SubagentStop`, `ConfigChange` и `PreCompact`. Единственное значение — `"block"`. Чтобы разрешить действию продолжаться, опустите `decision` из вашего JSON или выйдите с 0 без какого-либо JSON вообще:
 
     ```json theme={null}
     {
@@ -689,7 +728,7 @@ JSON объект поддерживает три вида полей:
 
 Запускается при запуске Claude Code нового сеанса или возобновлении существующего сеанса. Полезно для загрузки контекста разработки, такого как существующие проблемы или недавние изменения в вашей кодовой базе, или установки переменных окружения. Для статического контекста, который не требует скрипта, используйте [CLAUDE.md](/ru/memory) вместо этого.
 
-SessionStart запускается при каждом сеансе, поэтому держите эти hooks быстрыми. Поддерживаются только hooks `type: "command"`.
+SessionStart запускается при каждом сеансе, поэтому держите эти hooks быстрыми. Поддерживаются только hooks `type: "command"` и `type: "mcp_tool"`.
 
 Значение фильтра соответствует тому, как был инициирован сеанс:
 
@@ -1092,7 +1131,7 @@ Hooks `PreToolUse` могут управлять тем, продолжаетс�
 }
 ```
 
-Нет таймаута или лимита повторных попыток. Сеанс остаётся на диске до возобновления. Если ответ не готов при возобновлении, hook может вернуть `"defer"` снова и процесс выходит так же. Вызывающий процесс управляет тем, когда разорвать цикл, в конечном итоге возвращая `"allow"` или `"deny"` из hook.
+Нет таймаута или лимита повторных попыток. Сеанс остаётся на диске до возобновления, в соответствии с операцией очистки [`cleanupPeriodDays`](/ru/settings#available-settings), которая удаляет файлы сеанса через 30 дней по умолчанию. Если ответ не готов при возобновлении, hook может вернуть `"defer"` снова и процесс выходит так же. Вызывающий процесс управляет тем, когда разорвать цикл, в конечном итоге возвращая `"allow"` или `"deny"` из hook.
 
 `"defer"` работает только когда Claude делает один вызов инструмента в ходе. Если Claude делает несколько вызовов инструментов одновременно, `"defer"` игнорируется с предупреждением и инструмент проходит через обычный поток разрешений. Ограничение существует потому что возобновление может только повторно запустить один инструмент: нет способа отложить один вызов из пакета без оставления других неразрешённых.
 
@@ -1291,6 +1330,69 @@ Hooks `PostToolUseFailure` могут предоставить контекст 
   }
 }
 ```
+
+### PostToolBatch
+
+Запускается один раз после разрешения каждого вызова инструмента в пакете, перед отправкой Claude Code следующего запроса модели. `PostToolUse` срабатывает один раз за инструмент, что означает, что он срабатывает одновременно, когда Claude делает параллельные вызовы инструментов. `PostToolBatch` срабатывает ровно один раз со всем пакетом, поэтому это правильное место для внедрения контекста, который зависит от набора инструментов, которые запустились, а не от какого-либо одного инструмента. Нет фильтра для этого события.
+
+#### PostToolBatch input
+
+В дополнение к [общим полям входа](#common-input-fields), PostToolBatch hooks получают `tool_calls`, массив, описывающий каждый вызов инструмента в пакете:
+
+```json theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "cwd": "/Users/...",
+  "permission_mode": "default",
+  "hook_event_name": "PostToolBatch",
+  "tool_calls": [
+    {
+      "tool_name": "Read",
+      "tool_input": {"file_path": "/.../ledger/accounts.py"},
+      "tool_use_id": "toolu_01...",
+      "tool_response": "     1\tfrom __future__ import annotations\n     2\t..."
+    },
+    {
+      "tool_name": "Read",
+      "tool_input": {"file_path": "/.../ledger/transactions.py"},
+      "tool_use_id": "toolu_02...",
+      "tool_response": "     1\tfrom __future__ import annotations\n     2\t..."
+    }
+  ]
+}
+```
+
+`tool_response` содержит то же содержимое, которое модель получает в соответствующем блоке `tool_result`. Значение — это сериализованная строка или массив блоков содержимого, ровно как инструмент его выдал. Для `Read` это означает текст с префиксом номера строки, а не необработанное содержимое файла. Ответы могут быть большими, поэтому анализируйте только нужные вам поля.
+
+<Note>
+  Форма `tool_response` отличается от `PostToolUse`. `PostToolUse` передаёт структурированный объект `Output` инструмента, такой как `{filePath: "...", success: true}` для `Write`; `PostToolBatch` передаёт сериализованное содержимое `tool_result`, которое видит модель.
+</Note>
+
+#### PostToolBatch decision control
+
+Hooks `PostToolBatch` могут внедрить контекст для Claude. В дополнение к [JSON полям выхода](#json-output), доступным для всех hooks, ваш скрипт hook может вернуть эти поля, специфичные для события:
+
+| Поле                | Описание                                                             |
+| :------------------ | :------------------------------------------------------------------- |
+| `additionalContext` | Строка контекста, внедрённая один раз перед следующим вызовом модели |
+
+```json theme={null}
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PostToolBatch",
+    "additionalContext": "These files are part of the ledger module. Run pytest before marking the task complete."
+  }
+}
+```
+
+<Note>
+  Внедрённый `additionalContext` сохраняется в транскрипт сеанса. При `--continue` или `--resume` сохранённый текст воспроизводится с диска и hook не повторно запускается для прошлых ходов. Предпочитайте статический контекст, такой как соглашения или руководство по типам файлов, динамическим значениям, таким как временные метки или текущий SHA коммита, так как они становятся устаревшими при возобновлении.
+
+  Формулируйте контекст как фактическую информацию, а не как императивные системные инструкции. Текст, написанный как внеполосные системные команды, может запустить защиту Claude от внедрения подсказок, которая выводит внедрение пользователю вместо действия на нём.
+</Note>
+
+Возврат `decision: "block"` или `continue: false` останавливает агентный цикл перед следующим вызовом модели.
 
 ### PermissionDenied
 
@@ -2120,11 +2222,12 @@ Exit code 2 блокирует ответ, изменяя эффективное
 
 ## Prompt-based hooks
 
-В дополнение к command и HTTP hooks, Claude Code поддерживает prompt-based hooks (`type: "prompt"`), которые используют LLM для оценки разрешения или блокировки действия, и agent hooks (`type: "agent"`), которые порождают агентного верификатора с доступом к инструментам. Не все события поддерживают каждый тип hook.
+В дополнение к command, HTTP и MCP tool hooks, Claude Code поддерживает prompt-based hooks (`type: "prompt"`), которые используют LLM для оценки разрешения или блокировки действия, и agent hooks (`type: "agent"`), которые порождают агентного верификатора с доступом к инструментам. Не все события поддерживают каждый тип hook.
 
-События, которые поддерживают все четыре типа hook (`command`, `http`, `prompt` и `agent`):
+События, которые поддерживают все пять типов hook (`command`, `http`, `mcp_tool`, `prompt` и `agent`):
 
 * `PermissionRequest`
+* `PostToolBatch`
 * `PostToolUse`
 * `PostToolUseFailure`
 * `PreToolUse`
@@ -2135,7 +2238,7 @@ Exit code 2 блокирует ответ, изменяя эффективное
 * `UserPromptExpansion`
 * `UserPromptSubmit`
 
-События, которые поддерживают `command` и `http` hooks, но не `prompt` или `agent`:
+События, которые поддерживают `command`, `http` и `mcp_tool` hooks, но не `prompt` или `agent`:
 
 * `ConfigChange`
 * `CwdChanged`
@@ -2154,7 +2257,7 @@ Exit code 2 блокирует ответ, изменяя эффективное
 * `WorktreeCreate`
 * `WorktreeRemove`
 
-`SessionStart` поддерживает только `command` hooks.
+`SessionStart` и `Setup` поддерживают `command` и `mcp_tool` hooks. Они не поддерживают `http`, `prompt` или `agent` hooks.
 
 ### How prompt-based hooks work
 

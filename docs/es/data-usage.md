@@ -59,11 +59,20 @@ Para todos los usuarios de primera parte, puede obtener más información sobre 
 
 El diagrama a continuación muestra cómo Claude Code se conecta a servicios externos durante la instalación y operación normal. Las líneas sólidas indican conexiones requeridas, mientras que las líneas punteadas representan flujos de datos opcionales o iniciados por el usuario.
 
-<img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/claude-code-data-flow.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=b3f71c69d743bff63343207dfb7ad6ce" alt="Diagrama que muestra las conexiones externas de Claude Code: instalar/actualizar se conecta a NPM, y las solicitudes del usuario se conectan a servicios de Anthropic incluyendo autenticación de consola, API pública, y opcionalmente Statsig, Sentry e informes de errores" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
+<img src="https://mintcdn.com/claude-code/YcBW2H7CArGcduPb/images/claude-code-data-flow.svg?fit=max&auto=format&n=YcBW2H7CArGcduPb&q=85&s=b600a89f84fc86f9ff7be00a466c0635" alt="Diagrama que muestra las conexiones externas de Claude Code: instalar/actualizar se conecta al servidor de distribución, y las solicitudes del usuario se conectan a servicios de Anthropic incluyendo autenticación de consola, API pública, y opcionalmente Statsig, Sentry e informes de errores" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
 
-Claude Code se instala desde [NPM](https://www.npmjs.com/package/@anthropic-ai/claude-code). Claude Code se ejecuta localmente. Para interactuar con el LLM, Claude Code envía datos a través de la red. Estos datos incluyen todos los indicadores del usuario y salidas del modelo. Los datos se cifran en tránsito a través de TLS y no se cifran en reposo. Claude Code es compatible con la mayoría de VPN y proxies LLM populares.
+Claude Code se ejecuta localmente. Para interactuar con el LLM, Claude Code envía datos a través de la red. Estos datos incluyen todos los indicadores del usuario y salidas del modelo, cifrados en tránsito a través de TLS 1.2+. Claude Code es compatible con la mayoría de VPN y proxies LLM populares.
 
-Claude Code se construye sobre las API de Anthropic. Para obtener detalles sobre los controles de seguridad de nuestra API, incluidos nuestros procedimientos de registro de API, consulte los artefactos de cumplimiento ofrecidos en el [Anthropic Trust Center](https://trust.anthropic.com).
+El cifrado en reposo depende de su proveedor de modelo:
+
+| Proveedor              | Cifrado en reposo                                                                                                                                          |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Anthropic API          | Cifrado de disco a nivel de infraestructura (AES-256). Habilite [Zero Data Retention](/es/zero-data-retention) para no persistencia del lado del servidor. |
+| Amazon Bedrock         | AES-256 con claves administradas por AWS. Claves administradas por el cliente disponibles a través de AWS KMS.                                             |
+| Google Cloud Vertex AI | Claves de cifrado administradas por Google. CMEK disponible.                                                                                               |
+| Microsoft Foundry      | Las solicitudes se enrutan a la infraestructura de Anthropic con cifrado de disco AES-256.                                                                 |
+
+Claude Code se construye sobre las API de Anthropic. Para obtener detalles sobre los controles de seguridad de la API, incluyendo procedimientos de registro de API, consulte los artefactos de cumplimiento en el [Anthropic Trust Center](https://trust.anthropic.com).
 
 ### Cloud execution: Flujo de datos y dependencias
 
@@ -82,7 +91,7 @@ Claude Code se conecta desde las máquinas de los usuarios al servicio Statsig p
 
 Claude Code se conecta desde las máquinas de los usuarios a Sentry para el registro de errores operativos. Los datos se cifran en tránsito usando TLS y en reposo usando cifrado AES de 256 bits. Lea más en la [documentación de seguridad de Sentry](https://sentry.io/security/). Para optar por no participar en el registro de errores, establezca la variable de entorno `DISABLE_ERROR_REPORTING`.
 
-Cuando los usuarios ejecutan el comando `/feedback`, se envía una copia de su historial de conversación completo incluyendo código a Anthropic. Los datos se cifran en tránsito y en reposo. Opcionalmente, se crea un problema de Github en nuestro repositorio público. Para optar por no participar, establezca la variable de entorno `DISABLE_FEEDBACK_COMMAND` a `1`.
+Cuando los usuarios ejecutan el comando `/feedback`, se envía una copia de su historial de conversación completo incluyendo código a Anthropic. Los datos se cifran en tránsito usando TLS. Opcionalmente, se crea un problema de GitHub en el repositorio público. Para optar por no participar, establezca la variable de entorno `DISABLE_FEEDBACK_COMMAND` a `1`.
 
 ## Comportamientos predeterminados por proveedor de API
 

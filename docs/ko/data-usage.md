@@ -59,11 +59,20 @@ Anthropic은 계정 유형 및 선호도에 따라 Claude Code 데이터를 보�
 
 아래 다이어그램은 설치 및 정상 작동 중에 Claude Code가 외부 서비스에 어떻게 연결되는지 보여줍니다. 실선은 필수 연결을 나타내고, 점선은 선택적 또는 사용자가 시작한 데이터 흐름을 나타냅니다.
 
-<img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/claude-code-data-flow.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=b3f71c69d743bff63343207dfb7ad6ce" alt="Claude Code의 외부 연결을 보여주는 다이어그램: 설치/업데이트는 NPM에 연결되고, 사용자 요청은 Console auth, public-api, 그리고 선택적으로 Statsig, Sentry, 버그 보고를 포함한 Anthropic 서비스에 연결됩니다" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
+<img src="https://mintcdn.com/claude-code/YcBW2H7CArGcduPb/images/claude-code-data-flow.svg?fit=max&auto=format&n=YcBW2H7CArGcduPb&q=85&s=b600a89f84fc86f9ff7be00a466c0635" alt="Claude Code의 외부 연결을 보여주는 다이어그램: 설치/업데이트는 배포 서버에 연결되고, 사용자 요청은 Console auth, public-api, 그리고 선택적으로 Statsig, Sentry, 버그 보고를 포함한 Anthropic 서비스에 연결됩니다" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
 
-Claude Code는 [NPM](https://www.npmjs.com/package/@anthropic-ai/claude-code)에서 설치됩니다. Claude Code는 로컬에서 실행됩니다. LLM과 상호작용하기 위해 Claude Code는 네트워크를 통해 데이터를 전송합니다. 이 데이터에는 모든 사용자 프롬프트 및 모델 출력이 포함됩니다. 데이터는 TLS를 통해 전송 중에 암호화되며 저장 시에는 암호화되지 않습니다. Claude Code는 대부분의 인기 있는 VPN 및 LLM 프록시와 호환됩니다.
+Claude Code는 로컬에서 실행됩니다. LLM과 상호작용하기 위해 Claude Code는 네트워크를 통해 데이터를 전송합니다. 이 데이터에는 모든 사용자 프롬프트 및 모델 출력이 포함되며, TLS 1.2+ 이상을 통해 전송 중에 암호화됩니다. Claude Code는 대부분의 인기 있는 VPN 및 LLM 프록시와 호환됩니다.
 
-Claude Code는 Anthropic의 API를 기반으로 구축되었습니다. API 로깅 절차를 포함한 API의 보안 제어에 대한 자세한 내용은 [Anthropic Trust Center](https://trust.anthropic.com)에서 제공하는 규정 준수 아티팩트를 참조하세요.
+저장 시 암호화는 모델 제공자에 따라 달라집니다:
+
+| 제공자                    | 저장 시 암호화                                                                                          |
+| ---------------------- | ------------------------------------------------------------------------------------------------- |
+| Anthropic API          | 인프라 수준 디스크 암호화(AES-256). [Zero Data Retention](/ko/zero-data-retention)을 활성화하여 서버 측 지속성이 없도록 합니다. |
+| Amazon Bedrock         | AWS 관리 키를 사용한 AES-256. AWS KMS를 통해 고객 관리 키를 사용할 수 있습니다.                                           |
+| Google Cloud Vertex AI | Google 관리 암호화 키. CMEK를 사용할 수 있습니다.                                                                |
+| Microsoft Foundry      | 요청은 AES-256 디스크 암호화를 사용하는 Anthropic 인프라로 라우팅됩니다.                                                  |
+
+Claude Code는 Anthropic의 API를 기반으로 구축되었습니다. API 로깅 절차를 포함한 API 보안 제어에 대한 자세한 내용은 [Anthropic Trust Center](https://trust.anthropic.com)의 규정 준수 아티팩트를 참조하세요.
 
 ### 클라우드 실행: 데이터 흐름 및 종속성
 
@@ -82,7 +91,7 @@ Claude Code는 사용자의 머신에서 Statsig 서비스에 연결하여 지�
 
 Claude Code는 사용자의 머신에서 Sentry에 연결하여 운영 오류 로깅을 수행합니다. 데이터는 TLS를 사용하여 전송 중에 암호화되고 256비트 AES 암호화를 사용하여 저장 시에 암호화됩니다. [Sentry 보안 문서](https://sentry.io/security/)에서 자세히 알아보세요. 오류 로깅을 거부하려면 `DISABLE_ERROR_REPORTING` 환경 변수를 설정합니다.
 
-사용자가 `/feedback` 명령을 실행하면 코드를 포함한 전체 대화 기록의 복사본이 Anthropic으로 전송됩니다. 데이터는 전송 중 및 저장 시에 암호화됩니다. 선택적으로 공개 저장소에 Github 이슈가 생성됩니다. 거부하려면 `DISABLE_FEEDBACK_COMMAND` 환경 변수를 `1`로 설정합니다.
+사용자가 `/feedback` 명령을 실행하면 코드를 포함한 전체 대화 기록의 복사본이 Anthropic으로 전송됩니다. 데이터는 전송 중 TLS를 통해 암호화됩니다. 선택적으로 공개 저장소에 GitHub 이슈가 생성됩니다. 거부하려면 `DISABLE_FEEDBACK_COMMAND` 환경 변수를 `1`로 설정합니다.
 
 ## API 제공자별 기본 동작
 

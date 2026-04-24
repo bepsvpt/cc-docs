@@ -83,12 +83,12 @@ Claude Code는 사용자 정의 skills, agents, hooks를 추가하는 두 가지
     }
     ```
 
-    | 필드            | 목적                                                                           |
-    | :------------ | :--------------------------------------------------------------------------- |
-    | `name`        | 고유 식별자 및 skill 네임스페이스. Skills는 이것으로 접두사가 붙습니다 (예: `/my-first-plugin:hello`). |
-    | `description` | 플러그인을 검색하거나 설치할 때 플러그인 관리자에 표시됩니다.                                           |
-    | `version`     | [의미 있는 버전 관리](/ko/plugins-reference#version-management)를 사용하여 릴리스를 추적합니다.    |
-    | `author`      | 선택 사항. 속성에 유용합니다.                                                            |
+    | 필드            | 목적                                                                                                                                                                 |
+    | :------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | `name`        | 고유 식별자 및 skill 네임스페이스. Skills는 이것으로 접두사가 붙습니다 (예: `/my-first-plugin:hello`).                                                                                       |
+    | `description` | 플러그인을 검색하거나 설치할 때 플러그인 관리자에 표시됩니다.                                                                                                                                 |
+    | `version`     | 선택 사항. 설정된 경우 사용자는 이 필드를 변경할 때만 업데이트를 받습니다. 생략되고 플러그인이 git을 통해 배포되는 경우 커밋 SHA가 사용되며 모든 커밋이 새 버전으로 계산됩니다. [버전 관리](/ko/plugins-reference#version-management)를 참조하세요. |
+    | `author`      | 선택 사항. 속성에 유용합니다.                                                                                                                                                  |
 
     `homepage`, `repository`, `license`와 같은 추가 필드는 [전체 매니페스트 스키마](/ko/plugins-reference#plugin-manifest-schema)를 참조하세요.
   </Step>
@@ -328,7 +328,7 @@ claude --plugin-dir ./my-plugin
 플러그인을 공유할 준비가 되면:
 
 1. **문서 추가**: 설치 및 사용 지침이 포함된 `README.md`를 포함하세요
-2. **플러그인 버전 관리**: `plugin.json`에서 [의미 있는 버전 관리](/ko/plugins-reference#version-management)를 사용하세요
+2. **버전 관리 전략 선택**: 명시적 `version`을 설정할지 또는 git 커밋 SHA에 의존할지 결정하세요. [버전 관리](/ko/plugins-reference#version-management)를 참조하세요
 3. **마켓플레이스 만들기 또는 사용**: [플러그인 마켓플레이스](/ko/plugin-marketplaces)를 통해 배포하여 설치하세요
 4. **다른 사람과 테스트**: 더 광범위한 배포 전에 팀원이 플러그인을 테스트하도록 하세요
 

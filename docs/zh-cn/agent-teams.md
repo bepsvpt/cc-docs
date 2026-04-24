@@ -235,13 +235,19 @@ Claude Code 在你创建团队时自动生成这两个，并在队友加入、�
 
 ### 为队友使用 subagent 定义
 
-生成队友时，你可以引用来自任何 [subagent 范围](/zh-CN/sub-agents#choose-the-subagent-scope) 的 [subagent](/zh-CN/sub-agents) 类型：项目、用户、插件或 CLI 定义。队友继承该 subagent 的系统提示、工具和模型。这让你定义一个角色一次，例如安全审查员或测试运行器，并将其同时重用为委派的 subagent 和 agent team 队友。
+生成队友时，你可以引用来自任何 [subagent 范围](/zh-CN/sub-agents#choose-the-subagent-scope) 的 [subagent](/zh-CN/sub-agents) 类型：项目、用户、插件或 CLI 定义。这让你定义一个角色一次，例如安全审查员或测试运行器，并将其同时重用为委派的 subagent 和 agent team 队友。
 
 要使用 subagent 定义，在要求 Claude 生成队友时按名称提及它：
 
 ```text theme={null}
 Spawn a teammate using the security-reviewer agent type to audit the auth module.
 ```
+
+队友遵守该定义的 `tools` 允许列表和 `model`，定义的主体被附加到队友的系统提示作为额外指示，而不是替换它。Team coordination tools 例如 `SendMessage` 和任务管理工具始终对队友可用，即使 `tools` 限制其他工具。
+
+<Note>
+  subagent 定义中的 `skills` 和 `mcpServers` frontmatter 字段在该定义作为队友运行时不被应用。队友从你的项目和用户设置加载 skills 和 MCP servers，与常规会话相同。
+</Note>
 
 ### 权限
 
@@ -256,11 +262,9 @@ Spawn a teammate using the security-reviewer agent type to audit the auth module
 * **自动消息传递**：当队友发送消息时，它们会自动传递给收件人。负责人不需要轮询更新。
 * **空闲通知**：当队友完成并停止时，他们会自动通知负责人。
 * **共享任务列表**：所有代理都可以看到任务状态并认领可用工作。
+* **队友消息传递**：按名称向一个特定的队友发送消息。要联系所有人，请为每个收件人发送一条消息。
 
-**队友消息传递：**
-
-* **message**：向一个特定的队友发送消息
-* **broadcast**：同时发送给所有队友。谨慎使用，因为成本随团队规模而增加。
+负责人在生成队友时为其分配一个名称，任何队友都可以按该名称向任何其他队友发送消息。要获得可预测的名称，你可以在后续提示中引用，在你的生成指令中告诉负责人如何称呼每个队友。
 
 ### 令牌使用
 

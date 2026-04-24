@@ -7,7 +7,7 @@
 > 使用 Remote Control 从您的手机、平板电脑或任何浏览器继续本地 Claude Code 会话。适用于 claude.ai/code 和 Claude 移动应用。
 
 <Note>
-  Remote Control 在所有计划中都可用。在 Team 和 Enterprise 上，在管理员在 [Claude Code 管理员设置](https://claude.ai/admin-settings/claude-code)中启用 Remote Control 切换之前，它默认处于关闭状态。
+  Remote Control 处于研究预览阶段，在所有计划中都可用。在 Team 和 Enterprise 上，在管理员在 [Claude Code 管理员设置](https://claude.ai/admin-settings/claude-code)中启用 Remote Control 切换之前，它默认处于关闭状态。
 </Note>
 
 Remote Control 将 [claude.ai/code](https://claude.ai/code) 或 Claude 应用（[iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) 和 [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude)）连接到在您的机器上运行的 Claude Code 会话。在您的办公桌上启动一个任务，然后从沙发上的手机或另一台计算机上的浏览器继续。
@@ -188,7 +188,7 @@ Claude 决定何时推送。它通常在长时间运行的任务完成或需要�
 * **本地进程必须保持运行**：Remote Control 作为本地进程运行。如果您关闭终端、退出 VS Code 或以其他方式停止 `claude` 进程，会话结束。
 * **扩展网络中断**：如果您的机器处于唤醒状态但无法在大约 10 分钟以上的时间内到达网络，会话超时并且进程退出。再次运行 `claude remote-control` 以启动新会话。
 * **Ultraplan 断开 Remote Control**：启动 [ultraplan](/zh-CN/ultraplan) 会话会断开任何活动的 Remote Control 会话，因为两个功能都占据 claude.ai/code 界面，一次只能连接一个。
-* **某些命令仅限本地**：在终端中打开交互式选择器的命令，例如 `/mcp`、`/plugin` 或 `/resume`，仅从本地 CLI 工作。生成文本输出的命令，包括 `/compact`、`/clear`、`/context`、`/cost`、`/exit`、`/extra-usage`、`/recap` 和 `/reload-plugins`，可从移动和网络工作。
+* **某些命令仅限本地**：在终端中打开交互式选择器的命令，例如 `/mcp`、`/plugin` 或 `/resume`，仅从本地 CLI 工作。生成文本输出的命令，包括 `/compact`、`/clear`、`/context`、`/usage`、`/exit`、`/extra-usage`、`/recap` 和 `/reload-plugins`，可从移动和网络工作。
 
 ## 故障排除
 

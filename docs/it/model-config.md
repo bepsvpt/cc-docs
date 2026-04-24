@@ -78,7 +78,7 @@ File delle impostazioni di esempio:
 
 Gli amministratori aziendali possono utilizzare `availableModels` nelle [impostazioni gestite o di policy](/it/settings#settings-files) per limitare quali modelli gli utenti possono selezionare.
 
-Quando `availableModels` è impostato, gli utenti non possono passare a modelli non presenti nell'elenco tramite `/model`, il flag `--model`, lo strumento Config o la variabile di ambiente `ANTHROPIC_MODEL`.
+Quando `availableModels` è impostato, gli utenti non possono passare a modelli non presenti nell'elenco tramite `/model`, il flag `--model`, o la variabile di ambiente `ANTHROPIC_MODEL`.
 
 ```json theme={null}
 {
@@ -281,7 +281,7 @@ Quando si distribuisce Claude Code tramite [Bedrock](/it/amazon-bedrock), [Verte
 Senza fissaggio, Claude Code utilizza alias di modelli (`sonnet`, `opus`, `haiku`) che si risolvono nella versione più recente. Quando Anthropic rilascia un nuovo modello che non è ancora abilitato nell'account di un utente, gli utenti Bedrock e Vertex AI vedono un avviso e ricadono nella versione precedente per quella sessione, mentre gli utenti Foundry vedono errori perché Foundry non ha alcun controllo di avvio equivalente.
 
 <Warning>
-  Impostare tutte e tre le variabili di ambiente del modello su ID di versione specifici come parte della configurazione iniziale. Il fissaggio ti consente di controllare quando i tuoi utenti passano a un nuovo modello.
+  Impostare tutte e tre le variabili di ambiente del modello su ID di versione specifici come parte della configurazione iniziale. Il fissaggio consente di controllare quando i tuoi utenti passano a un nuovo modello.
 </Warning>
 
 Utilizzare le seguenti variabili di ambiente con ID di modello specifici della versione per il provider:
@@ -310,7 +310,7 @@ Il suffisso `[1m]` applica la finestra di contesto 1M a tutto l'utilizzo di quel
 
 Quando si fissa un modello su un provider di terze parti, l'ID specifico del provider appare così com'è nel selettore `/model` e Claude Code potrebbe non riconoscere quali funzionalità il modello supporta. È possibile sovrascrivere il nome di visualizzazione e dichiarare le capacità con variabili di ambiente complementari per ogni modello fissato.
 
-Queste variabili hanno effetto solo su provider di terze parti come Bedrock, Vertex AI e Foundry. Non hanno effetto quando si utilizza l'API Anthropic direttamente.
+Queste variabili hanno effetto su provider di terze parti come Bedrock, Vertex AI e Foundry. Le variabili `_NAME` e `_DESCRIPTION` hanno effetto anche quando `ANTHROPIC_BASE_URL` punta a un [gateway LLM](/it/llm-gateway). Non hanno effetto quando si effettua la connessione direttamente a `api.anthropic.com`.
 
 | Variabile di ambiente                                 | Descrizione                                                                                                                                              |
 | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -379,4 +379,4 @@ Claude Code utilizza automaticamente la [prompt caching](https://platform.claude
 | `DISABLE_PROMPT_CACHING_SONNET` | Impostare su `1` per disabilitare la prompt caching solo per i modelli Sonnet                                             |
 | `DISABLE_PROMPT_CACHING_OPUS`   | Impostare su `1` per disabilitare la prompt caching solo per i modelli Opus                                               |
 
-Queste variabili di ambiente ti danno un controllo granulare sul comportamento della prompt caching. L'impostazione globale `DISABLE_PROMPT_CACHING` ha la precedenza sulle impostazioni specifiche del modello, consentendoti di disabilitare rapidamente tutta la caching quando necessario. Le impostazioni per modello sono utili per il controllo selettivo, ad esempio quando si esegue il debug di modelli specifici o si lavora con provider cloud che potrebbero avere implementazioni di caching diverse.
+Queste variabili di ambiente forniscono un controllo granulare sul comportamento della prompt caching. L'impostazione globale `DISABLE_PROMPT_CACHING` ha la precedenza sulle impostazioni specifiche del modello, consentendo di disabilitare rapidamente tutta la caching quando necessario. Le impostazioni per modello sono utili per il controllo selettivo, ad esempio quando si esegue il debug di modelli specifici o si lavora con provider cloud che potrebbero avere implementazioni di caching diverse.

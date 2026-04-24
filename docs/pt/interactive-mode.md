@@ -97,9 +97,9 @@ Quando o visualizador de transcrição está aberto (alternado com `Ctrl+O`), es
 
 ### Entrada de voz
 
-| Atalho         | Descrição            | Notas                                                                                                                                                                |
-| :------------- | :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Manter `Space` | Ditação push-to-talk | Requer que [ditação de voz](/pt/voice-dictation) esteja ativada. A transcrição é inserida no cursor. [Reatribuível](/pt/voice-dictation#rebind-the-push-to-talk-key) |
+| Atalho                  | Descrição      | Notas                                                                                                                                                                                                               |
+| :---------------------- | :------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Manter ou tocar `Space` | Ditação de voz | Requer que [ditação de voz](/pt/voice-dictation) esteja ativada. Mantenha pressionado para gravar, ou execute `/voice tap` para alternância por toque. [Reatribuível](/pt/voice-dictation#rebind-the-dictation-key) |
 
 ## Comandos
 
@@ -113,15 +113,17 @@ Ative edição no estilo vim via `/config` → Editor mode.
 
 ### Alternância de modo
 
-| Comando | Ação                       | Do modo |
-| :------ | :------------------------- | :------ |
-| `Esc`   | Entrar no modo NORMAL      | INSERT  |
-| `i`     | Inserir antes do cursor    | NORMAL  |
-| `I`     | Inserir no início da linha | NORMAL  |
-| `a`     | Inserir após o cursor      | NORMAL  |
-| `A`     | Inserir no final da linha  | NORMAL  |
-| `o`     | Abrir linha abaixo         | NORMAL  |
-| `O`     | Abrir linha acima          | NORMAL  |
+| Comando | Ação                                 | Do modo        |
+| :------ | :----------------------------------- | :------------- |
+| `Esc`   | Entrar no modo NORMAL                | INSERT, VISUAL |
+| `i`     | Inserir antes do cursor              | NORMAL         |
+| `I`     | Inserir no início da linha           | NORMAL         |
+| `a`     | Inserir após o cursor                | NORMAL         |
+| `A`     | Inserir no final da linha            | NORMAL         |
+| `o`     | Abrir linha abaixo                   | NORMAL         |
+| `O`     | Abrir linha acima                    | NORMAL         |
+| `v`     | Iniciar seleção visual por caractere | NORMAL         |
+| `V`     | Iniciar seleção visual por linha     | NORMAL         |
 
 ### Navegação (modo NORMAL)
 
@@ -181,6 +183,26 @@ Objetos de texto funcionam com operadores como `d`, `c` e `y`:
 | `i(`/`a(` | Parênteses internos/ao redor                               |
 | `i[`/`a[` | Colchetes internos/ao redor                                |
 | `i{`/`a{` | Chaves internas/ao redor                                   |
+
+### Modo visual
+
+Pressione `v` para seleção por caractere ou `V` para seleção por linha. Os movimentos estendem a seleção e os operadores atuam diretamente sobre ela.
+
+| Comando          | Ação                                                      |
+| :--------------- | :-------------------------------------------------------- |
+| `d`/`x`          | Deletar seleção                                           |
+| `y`              | Yancar seleção                                            |
+| `c`/`s`          | Mudar seleção                                             |
+| `p`              | Substituir seleção pelo conteúdo do registro              |
+| `r{char}`        | Substituir cada caractere selecionado por `{char}`        |
+| `~`/`u`/`U`      | Alternar, minúsculas ou maiúsculas na seleção             |
+| `>`/`<`          | Indentar ou desindentação de linhas selecionadas          |
+| `J`              | Juntar linhas selecionadas                                |
+| `o`              | Trocar cursor e âncora                                    |
+| `iw`/`aw`/`i"`/… | Selecionar um objeto de texto                             |
+| `v`/`V`          | Alternar entre seleção por caractere e por linha, ou sair |
+
+O modo visual por bloco com `Ctrl+V` não é suportado.
 
 ## Histórico de comandos
 
@@ -301,7 +323,7 @@ Pressione **Space**, **Enter** ou **Escape** para descartar a resposta e retorna
 
 Ao trabalhar em trabalho complexo e multi-etapas, Claude cria uma lista de tarefas para rastrear progresso. As tarefas aparecem na área de status do seu terminal com indicadores mostrando o que está pendente, em progresso ou completo.
 
-* Pressione `Ctrl+T` para alternar a visualização da lista de tarefas. A exibição mostra até 10 tarefas por vez
+* Pressione `Ctrl+T` para alternar a visualização da lista de tarefas. A exibição mostra até 5 tarefas por vez
 * Para ver todas as tarefas ou limpá-las, peça ao Claude diretamente: "show me all tasks" ou "clear all tasks"
 * As tarefas persistem através de compactações de contexto, ajudando Claude a se manter organizado em projetos maiores
 * Para compartilhar uma lista de tarefas entre sessões, defina `CLAUDE_CODE_TASK_LIST_ID` para usar um diretório nomeado em `~/.claude/tasks/`: `CLAUDE_CODE_TASK_LIST_ID=my-project claude`
@@ -312,7 +334,7 @@ Quando você retorna ao terminal após se afastar, Claude Code mostra um resumo 
 
 Execute `/recap` para gerar um resumo sob demanda. Para desativar resumos automáticos, abra `/config` e desabilite **Session recap**.
 
-O resumo de sessão está ativado por padrão para todos os planos e provedores. Para substituir a alternância `/config`, defina [`CLAUDE_CODE_ENABLE_AWAY_SUMMARY`](/pt/env-vars) para `0` ou `1`. O resumo é sempre pulado em modo não interativo.
+O resumo de sessão está ativado por padrão para todos os planos e provedores. O resumo é sempre pulado em modo não interativo.
 
 ## Status de revisão de PR
 

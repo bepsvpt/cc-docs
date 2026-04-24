@@ -97,9 +97,9 @@ Ketika penampil transkrip terbuka (dialihkan dengan `Ctrl+O`), pintasan ini ters
 
 ### Input suara
 
-| Pintasan      | Deskripsi              | Catatan                                                                                                                                                             |
-| :------------ | :--------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Tahan `Space` | Dictation push-to-talk | Memerlukan [voice dictation](/id/voice-dictation) untuk diaktifkan. Transkrip disisipkan di kursor. [Dapat diubah](/id/voice-dictation#rebind-the-push-to-talk-key) |
+| Pintasan                 | Deskripsi       | Catatan                                                                                                                                                                                               |
+| :----------------------- | :-------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tahan atau ketuk `Space` | Dictation suara | Memerlukan [voice dictation](/id/voice-dictation) untuk diaktifkan. Tahan untuk merekam, atau jalankan `/voice tap` untuk tap-to-toggle. [Dapat diubah](/id/voice-dictation#rebind-the-dictation-key) |
 
 ## Perintah
 
@@ -113,15 +113,17 @@ Aktifkan pengeditan gaya vim melalui `/config` → Editor mode.
 
 ### Pengalihan mode
 
-| Perintah | Tindakan                | Dari mode |
-| :------- | :---------------------- | :-------- |
-| `Esc`    | Masuk mode NORMAL       | INSERT    |
-| `i`      | Sisipkan sebelum kursor | NORMAL    |
-| `I`      | Sisipkan di awal baris  | NORMAL    |
-| `a`      | Sisipkan setelah kursor | NORMAL    |
-| `A`      | Sisipkan di akhir baris | NORMAL    |
-| `o`      | Buka baris di bawah     | NORMAL    |
-| `O`      | Buka baris di atas      | NORMAL    |
+| Perintah | Tindakan                                    | Dari mode      |
+| :------- | :------------------------------------------ | :------------- |
+| `Esc`    | Masuk mode NORMAL                           | INSERT, VISUAL |
+| `i`      | Sisipkan sebelum kursor                     | NORMAL         |
+| `I`      | Sisipkan di awal baris                      | NORMAL         |
+| `a`      | Sisipkan setelah kursor                     | NORMAL         |
+| `A`      | Sisipkan di akhir baris                     | NORMAL         |
+| `o`      | Buka baris di bawah                         | NORMAL         |
+| `O`      | Buka baris di atas                          | NORMAL         |
+| `v`      | Mulai pemilihan visual berdasarkan karakter | NORMAL         |
+| `V`      | Mulai pemilihan visual berdasarkan baris    | NORMAL         |
 
 ### Navigasi (mode NORMAL)
 
@@ -181,6 +183,26 @@ Objek teks bekerja dengan operator seperti `d`, `c`, dan `y`:
 | `i(`/`a(` | Dalam/sekitar tanda kurung               |
 | `i[`/`a[` | Dalam/sekitar kurung siku                |
 | `i{`/`a{` | Dalam/sekitar kurung kurawal             |
+
+### Mode visual
+
+Tekan `v` untuk pemilihan berdasarkan karakter atau `V` untuk pemilihan berdasarkan baris. Gerakan memperluas pemilihan, dan operator bertindak langsung padanya.
+
+| Perintah         | Tindakan                                                               |
+| :--------------- | :--------------------------------------------------------------------- |
+| `d`/`x`          | Hapus pemilihan                                                        |
+| `y`              | Yank pemilihan                                                         |
+| `c`/`s`          | Ubah pemilihan                                                         |
+| `p`              | Ganti pemilihan dengan isi register                                    |
+| `r{char}`        | Ganti setiap karakter yang dipilih dengan `{char}`                     |
+| `~`/`u`/`U`      | Alihkan, huruf kecil, atau huruf besar pemilihan                       |
+| `>`/`<`          | Indentasi atau kurangi indentasi baris yang dipilih                    |
+| `J`              | Gabungkan baris yang dipilih                                           |
+| `o`              | Tukar kursor dan jangkar                                               |
+| `iw`/`aw`/`i"`/… | Pilih objek teks                                                       |
+| `v`/`V`          | Alihkan antara berdasarkan karakter dan berdasarkan baris, atau keluar |
+
+Mode visual berdasarkan blok dengan `Ctrl+V` tidak didukung.
 
 ## Riwayat perintah
 
@@ -301,7 +323,7 @@ Tekan **Space**, **Enter**, atau **Escape** untuk menolak jawaban dan kembali ke
 
 Ketika mengerjakan pekerjaan yang kompleks dan multi-langkah, Claude membuat daftar tugas untuk melacak kemajuan. Tugas muncul di area status terminal Anda dengan indikator yang menunjukkan apa yang tertunda, sedang berlangsung, atau selesai.
 
-* Tekan `Ctrl+T` untuk mengalihkan tampilan daftar tugas. Tampilan menampilkan hingga 10 tugas sekaligus
+* Tekan `Ctrl+T` untuk mengalihkan tampilan daftar tugas. Tampilan menampilkan hingga 5 tugas sekaligus
 * Untuk melihat semua tugas atau menghapusnya, minta Claude secara langsung: "show me all tasks" atau "clear all tasks"
 * Tugas bertahan di seluruh pemadatan konteks, membantu Claude tetap terorganisir pada proyek yang lebih besar
 * Untuk berbagi daftar tugas di seluruh sesi, atur `CLAUDE_CODE_TASK_LIST_ID` untuk menggunakan direktori bernama di `~/.claude/tasks/`: `CLAUDE_CODE_TASK_LIST_ID=my-project claude`
@@ -312,7 +334,7 @@ Ketika Anda kembali ke terminal setelah pergi, Claude Code menampilkan ringkasan
 
 Jalankan `/recap` untuk menghasilkan ringkasan sesuai permintaan. Untuk mematikan ringkasan otomatis, buka `/config` dan nonaktifkan **Session recap**.
 
-Ringkasan sesi aktif secara default untuk setiap paket dan penyedia. Untuk mengganti alihan `/config`, atur [`CLAUDE_CODE_ENABLE_AWAY_SUMMARY`](/id/env-vars) ke `0` atau `1`. Ringkasan selalu dilewati dalam mode non-interaktif.
+Ringkasan sesi aktif secara default untuk setiap paket dan penyedia. Ringkasan selalu dilewati dalam mode non-interaktif.
 
 ## Status tinjauan PR
 

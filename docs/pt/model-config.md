@@ -78,7 +78,7 @@ Exemplo de arquivo de configurações:
 
 Os administradores corporativos podem usar `availableModels` em [configurações gerenciadas ou de política](/pt/settings#settings-files) para restringir quais modelos os usuários podem selecionar.
 
-Quando `availableModels` é definido, os usuários não podem alternar para modelos que não estão na lista via `/model`, sinalizador `--model`, ferramenta Config ou variável de ambiente `ANTHROPIC_MODEL`.
+Quando `availableModels` é definido, os usuários não podem alternar para modelos que não estão na lista via `/model`, sinalizador `--model` ou variável de ambiente `ANTHROPIC_MODEL`.
 
 ```json theme={null}
 {
@@ -310,7 +310,7 @@ O sufixo `[1m]` aplica a janela de contexto 1M a todo o uso desse alias, incluin
 
 Quando você fixa um modelo em um provedor de terceiros, o ID específico do provedor aparece como está no seletor `/model` e Claude Code pode não reconhecer quais recursos o modelo suporta. Você pode substituir o nome de exibição e declarar capacidades com variáveis de ambiente complementares para cada modelo fixado.
 
-Essas variáveis só têm efeito em provedores de terceiros, como Bedrock, Vertex AI e Foundry. Elas não têm efeito ao usar a API Anthropic diretamente.
+Essas variáveis têm efeito em provedores de terceiros, como Bedrock, Vertex AI e Foundry. As variáveis `_NAME` e `_DESCRIPTION` também têm efeito quando `ANTHROPIC_BASE_URL` aponta para um [gateway LLM](/pt/llm-gateway). Elas não têm efeito ao conectar diretamente a `api.anthropic.com`.
 
 | Variável de ambiente                                  | Descrição                                                                                                                |
 | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
@@ -325,7 +325,7 @@ Claude Code habilita recursos como [níveis de esforço](#adjust-effort-level) e
 | Valor de capacidade    | Habilita                                                                                      |
 | ---------------------- | --------------------------------------------------------------------------------------------- |
 | `effort`               | [Níveis de esforço](#adjust-effort-level) e o comando `/effort`                               |
-| `xhigh_effort`         | O nível de esforço `xhigh`                                                                    |
+| `xhigh_effort`         | {/* min-version: 2.1.111 */}O nível de esforço `xhigh`                                        |
 | `max_effort`           | O nível de esforço `max`                                                                      |
 | `thinking`             | [Pensamento estendido](/pt/common-workflows#use-extended-thinking-thinking-mode)              |
 | `adaptive_thinking`    | Raciocínio adaptativo que aloca dinamicamente o pensamento com base na complexidade da tarefa |

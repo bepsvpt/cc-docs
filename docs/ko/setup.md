@@ -235,6 +235,8 @@ Homebrew 설치는 이 설정 대신 cask 이름으로 채널을 선택합니다
 }
 ```
 
+`DISABLE_AUTOUPDATER`는 백그라운드 확인만 중지합니다. `claude update` 및 `claude install`은 계속 작동합니다. 수동 업데이트를 포함한 모든 업데이트 경로를 차단하려면 [`DISABLE_UPDATES`](/ko/env-vars)를 대신 설정하세요. Claude Code를 자신의 채널을 통해 배포하고 사용자가 제공하는 버전에 머물러야 할 때 이를 사용하세요.
+
 ### 수동으로 업데이트
 
 다음 백그라운드 확인을 기다리지 않고 즉시 업데이트를 적용하려면 다음을 실행하세요:

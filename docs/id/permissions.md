@@ -300,6 +300,7 @@ Pengaturan berikut hanya dibaca dari pengaturan terkelola. Menempatkan mereka da
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Ketika `true`, hanya jalur `filesystem.allowRead` dari pengaturan terkelola yang dihormati. `denyRead` masih digabung dari semua sumber                                                                                                                   |
 | `sandbox.network.allowManagedDomainsOnly`      | Ketika `true`, hanya `allowedDomains` dan aturan allow `WebFetch(domain:...)` dari pengaturan terkelola yang dihormati. Domain yang tidak diizinkan diblokir secara otomatis tanpa meminta pengguna. Domain yang ditolak masih digabung dari semua sumber |
 | `strictKnownMarketplaces`                      | Mengontrol sumber marketplace plugin mana yang dapat ditambahkan dan diinstal pengguna. Lihat [managed marketplace restrictions](/id/plugin-marketplaces#managed-marketplace-restrictions)                                                                |
+| `wslInheritsWindowsSettings`                   | Ketika `true` dalam kunci registri Windows HKLM atau `C:\Program Files\ClaudeCode\managed-settings.json`, WSL membaca pengaturan terkelola dari rantai kebijakan Windows selain `/etc/claude-code`. Lihat [Settings files](/id/settings#settings-files)   |
 
 `disableBypassPermissionsMode` biasanya ditempatkan dalam pengaturan terkelola untuk memberlakukan kebijakan organisasi, tetapi berfungsi dari cakupan apa pun. Pengguna dapat mengaturnya dalam pengaturan mereka sendiri untuk mengunci diri mereka sendiri dari mode bypass.
 

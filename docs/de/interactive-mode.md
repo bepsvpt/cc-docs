@@ -97,9 +97,9 @@ Wenn der Transkript-Viewer offen ist (umgeschaltet mit `Ctrl+O`), sind diese Kü
 
 ### Spracheingabe
 
-| Kürzel         | Beschreibung           | Notizen                                                                                                                                                                                   |
-| :------------- | :--------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Space` halten | Push-to-Talk-Diktieren | Erfordert, dass [Sprach-Diktieren](/de/voice-dictation) aktiviert ist. Transkript wird an der Cursor-Position eingefügt. [Neu zuweisbar](/de/voice-dictation#rebind-the-push-to-talk-key) |
+| Kürzel                     | Beschreibung     | Notizen                                                                                                                                                                                                                          |
+| :------------------------- | :--------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Space` halten oder tippen | Sprach-Diktieren | Erfordert, dass [Sprach-Diktieren](/de/voice-dictation) aktiviert ist. Halten Sie gedrückt zum Aufnehmen, oder führen Sie `/voice tap` aus für Tap-zum-Umschalten. [Neu zuweisbar](/de/voice-dictation#rebind-the-dictation-key) |
 
 ## Befehle
 
@@ -113,15 +113,17 @@ Aktivieren Sie Vim-ähnliche Bearbeitung über `/config` → Editor mode.
 
 ### Modusumschaltung
 
-| Befehl | Aktion                       | Aus Modus |
-| :----- | :--------------------------- | :-------- |
-| `Esc`  | NORMAL-Modus eingeben        | INSERT    |
-| `i`    | Vor Cursor einfügen          | NORMAL    |
-| `I`    | Am Anfang der Zeile einfügen | NORMAL    |
-| `a`    | Nach Cursor einfügen         | NORMAL    |
-| `A`    | Am Ende der Zeile einfügen   | NORMAL    |
-| `o`    | Zeile unten öffnen           | NORMAL    |
-| `O`    | Zeile oben öffnen            | NORMAL    |
+| Befehl | Aktion                                | Aus Modus      |
+| :----- | :------------------------------------ | :------------- |
+| `Esc`  | NORMAL-Modus eingeben                 | INSERT, VISUAL |
+| `i`    | Vor Cursor einfügen                   | NORMAL         |
+| `I`    | Am Anfang der Zeile einfügen          | NORMAL         |
+| `a`    | Nach Cursor einfügen                  | NORMAL         |
+| `A`    | Am Ende der Zeile einfügen            | NORMAL         |
+| `o`    | Zeile unten öffnen                    | NORMAL         |
+| `O`    | Zeile oben öffnen                     | NORMAL         |
+| `v`    | Zeichenweise visuelle Auswahl starten | NORMAL         |
+| `V`    | Zeilenweise visuelle Auswahl starten  | NORMAL         |
 
 ### Navigation (NORMAL-Modus)
 
@@ -181,6 +183,26 @@ Textobjekte funktionieren mit Operatoren wie `d`, `c` und `y`:
 | `i(`/`a(` | Inneres/um Klammern                    |
 | `i[`/`a[` | Inneres/um eckige Klammern             |
 | `i{`/`a{` | Inneres/um geschweifte Klammern        |
+
+### Visueller Modus
+
+Drücken Sie `v` für zeichenweise Auswahl oder `V` für zeilenweise Auswahl. Bewegungen erweitern die Auswahl, und Operatoren wirken direkt darauf.
+
+| Befehl           | Aktion                                                        |
+| :--------------- | :------------------------------------------------------------ |
+| `d`/`x`          | Auswahl löschen                                               |
+| `y`              | Auswahl yanken                                                |
+| `c`/`s`          | Auswahl ändern                                                |
+| `p`              | Auswahl durch Registerinhalt ersetzen                         |
+| `r{char}`        | Jedes ausgewählte Zeichen durch `{char}` ersetzen             |
+| `~`/`u`/`U`      | Auswahl umschalten, Kleinbuchstaben oder Großbuchstaben       |
+| `>`/`<`          | Ausgewählte Zeilen einrücken oder ausrücken                   |
+| `J`              | Ausgewählte Zeilen verbinden                                  |
+| `o`              | Cursor und Anker tauschen                                     |
+| `iw`/`aw`/`i"`/… | Ein Textobjekt auswählen                                      |
+| `v`/`V`          | Zwischen zeichenweise und zeilenweise umschalten oder beenden |
+
+Der blockweise visuelle Modus mit `Ctrl+V` wird nicht unterstützt.
 
 ## Befehlsverlauf
 
@@ -301,8 +323,8 @@ Drücken Sie **Space**, **Enter** oder **Escape**, um die Antwort zu verwerfen u
 
 Bei der Arbeit an komplexen, mehrstufigen Aufgaben erstellt Claude eine Task-Liste, um den Fortschritt zu verfolgen. Tasks erscheinen im Statusbereich Ihres Terminals mit Indikatoren, die zeigen, was ausstehend, in Bearbeitung oder abgeschlossen ist.
 
-* Drücken Sie `Ctrl+T`, um die Task-Listen-Ansicht umzuschalten. Die Anzeige zeigt bis zu 10 Tasks gleichzeitig
-* Um alle Tasks anzuzeigen oder zu löschen, fragen Sie Claude direkt: „show me all tasks" oder „clear all tasks"
+* Drücken Sie `Ctrl+T`, um die Task-Listen-Ansicht umzuschalten. Die Anzeige zeigt bis zu 5 Tasks gleichzeitig
+* Um alle Tasks anzuzeigen oder zu löschen, fragen Sie Claude direkt: "show me all tasks" oder "clear all tasks"
 * Tasks bleiben über Kontext-Kompaktionen hinweg bestehen und helfen Claude, bei größeren Projekten organisiert zu bleiben
 * Um eine Task-Liste über Sitzungen hinweg zu teilen, setzen Sie `CLAUDE_CODE_TASK_LIST_ID`, um ein benanntes Verzeichnis in `~/.claude/tasks/` zu verwenden: `CLAUDE_CODE_TASK_LIST_ID=my-project claude`
 
@@ -312,7 +334,7 @@ Wenn Sie zum Terminal zurückkehren, nachdem Sie sich entfernt haben, zeigt Clau
 
 Führen Sie `/recap` aus, um eine Zusammenfassung auf Anfrage zu generieren. Um automatische Zusammenfassungen auszuschalten, öffnen Sie `/config` und deaktivieren Sie **Session recap**.
 
-Die Sitzungs-Zusammenfassung ist standardmäßig für jeden Plan und Provider aktiviert. Um die `/config`-Umschaltung zu überschreiben, setzen Sie [`CLAUDE_CODE_ENABLE_AWAY_SUMMARY`](/de/env-vars) auf `0` oder `1`. Die Zusammenfassung wird im nicht-interaktiven Modus immer übersprungen.
+Die Sitzungs-Zusammenfassung ist standardmäßig für jeden Plan und Provider aktiviert. Die Zusammenfassung wird im nicht-interaktiven Modus immer übersprungen.
 
 ## PR-Review-Status
 

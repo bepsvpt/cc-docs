@@ -63,6 +63,10 @@
       "version": "1.0.0"
     }
     ```
+
+    <Note>
+      設定 `version` 表示使用者只會在您變更此欄位時收到更新，因此在每次發行時都要提升版本。如果您省略 `version` 並在 git 中託管此 marketplace，每次提交都會自動計為新版本。請參閱 [Version resolution](#version-resolution-and-release-channels) 以選擇正確的方法。
+    </Note>
   </Step>
 
   <Step title="建立 marketplace 檔案">
@@ -191,18 +195,18 @@
 
 **標準中繼資料欄位：**
 
-| 欄位            | 類型      | 描述                                                                        |
-| :------------ | :------ | :------------------------------------------------------------------------ |
-| `description` | string  | 簡短的 plugin 描述                                                             |
-| `version`     | string  | Plugin 版本                                                                 |
-| `author`      | object  | Plugin 作者資訊（`name` 必需，`email` 選用）                                         |
-| `homepage`    | string  | Plugin 首頁或文件 URL                                                          |
-| `repository`  | string  | 原始碼儲存庫 URL                                                                |
-| `license`     | string  | SPDX 授權識別碼（例如，MIT、Apache-2.0）                                             |
-| `keywords`    | array   | 用於 plugin 發現和分類的標籤                                                        |
-| `category`    | string  | Plugin 類別以供組織                                                             |
-| `tags`        | array   | 用於可搜尋性的標籤                                                                 |
-| `strict`      | boolean | 控制 `plugin.json` 是否為元件定義的權威（預設值：true）。請參閱下面的 [Strict mode](#strict-mode)。 |
+| 欄位            | 類型      | 描述                                                                                                                                                 |
+| :------------ | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `description` | string  | 簡短的 plugin 描述                                                                                                                                      |
+| `version`     | string  | Plugin 版本。如果設定（在此處或在 `plugin.json` 中），plugin 會固定到此字串，使用者只有在版本變更時才會收到更新。省略以回退到 git commit SHA。請參閱 [版本解析](#version-resolution-and-release-channels)。 |
+| `author`      | object  | Plugin 作者資訊（`name` 必需，`email` 選用）                                                                                                                  |
+| `homepage`    | string  | Plugin 首頁或文件 URL                                                                                                                                   |
+| `repository`  | string  | 原始碼儲存庫 URL                                                                                                                                         |
+| `license`     | string  | SPDX 授權識別碼（例如，MIT、Apache-2.0）                                                                                                                      |
+| `keywords`    | array   | 用於 plugin 發現和分類的標籤                                                                                                                                 |
+| `category`    | string  | Plugin 類別以供組織                                                                                                                                      |
+| `tags`        | array   | 用於可搜尋性的標籤                                                                                                                                          |
+| `strict`      | boolean | 控制 `plugin.json` 是否為元件定義的權威（預設值：true）。請參閱下面的 [Strict mode](#strict-mode)。                                                                          |
 
 **元件配置欄位：**
 
@@ -692,10 +696,20 @@ CLAUDE_CODE_PLUGIN_CACHE_DIR=/opt/claude-seed claude plugin install my-tool@your
 
 ### 版本解析和發行通道
 
-Plugin 版本決定快取路徑和更新偵測。您可以在 plugin manifest（`plugin.json`）或 marketplace 項目（`marketplace.json`）中指定版本。
+Plugin 版本決定快取路徑和更新偵測：如果解析的版本與使用者已有的版本相符，`/plugin update` 和自動更新會跳過 plugin。
+
+Claude Code 從以下第一個設定的項目解析 plugin 的版本：
+
+1. plugin 的 `plugin.json` 中的 `version`
+2. plugin 的 marketplace 項目中的 `version`
+3. plugin 來源的 git 提交 SHA
+
+對於 git 型來源類型 `github`、`url`、`git-subdir` 和 git 託管 marketplace 內的相對路徑，您可以完全省略 `version`，每個新提交都被視為新版本。這是內部或積極開發的 plugin 的最簡單設定。
 
 <Warning>
-  盡可能避免在兩個地方設定版本。plugin manifest 總是無聲地獲勝，這可能導致 marketplace 版本被忽略。對於相對路徑 plugin，在 marketplace 項目中設定版本。對於所有其他 plugin 來源，在 plugin manifest 中設定它。
+  設定 `version` 會固定 plugin。如果 `plugin.json` 宣告 `"version": "1.0.0"`，推送新提交而不更改該字串對現有使用者沒有任何作用，因為 Claude Code 看到相同的版本並保留快取副本。在每次發行時提升該欄位，或省略它以使用提交 SHA。
+
+  避免在 `plugin.json` 和 marketplace 項目中同時設定 `version`。`plugin.json` 值總是無聲地獲勝，因此過時的 manifest 版本可能會掩蓋您在 `marketplace.json` 中設定的版本。
 </Warning>
 
 #### 設定發行通道
@@ -703,7 +717,7 @@ Plugin 版本決定快取路徑和更新偵測。您可以在 plugin manifest（
 若要為您的 plugin 支援「穩定」和「最新」發行通道，您可以設定兩個指向同一儲存庫的不同 ref 或 SHA 的 marketplace。然後，您可以透過[受管設定](/zh-TW/settings#settings-files)將兩個 marketplace 指派給不同的使用者群組。
 
 <Warning>
-  plugin 的 `plugin.json` 必須在每個固定的 ref 或提交處宣告不同的 `version`。如果兩個 ref 或提交具有相同的 manifest 版本，Claude Code 會將它們視為相同並跳過更新。
+  每個通道必須解析為不同的版本。如果您使用明確版本，`plugin.json` 必須在每個固定的 ref 處宣告不同的 `version`。如果您省略 `version`，不同的提交 SHA 已經區分通道。如果兩個 ref 解析為相同的版本字串，Claude Code 會將它們視為相同並跳過更新。
 </Warning>
 
 ##### 範例
@@ -771,6 +785,10 @@ Plugin 版本決定快取路徑和更新偵測。您可以在 plugin manifest（
   }
 }
 ```
+
+#### 固定依賴版本
+
+Plugin 可以將其依賴限制在 semver 範圍內，以便依賴的更新不會破壞依賴 plugin。請參閱[限制 plugin 依賴版本](/zh-TW/plugin-dependencies)以了解 `{plugin-name}--v{version}` git 標籤慣例、範圍語法，以及如何組合對同一依賴的多個限制。
 
 ## 驗證和測試
 

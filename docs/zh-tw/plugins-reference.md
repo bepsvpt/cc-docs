@@ -118,6 +118,7 @@ Plugin hooks 回應與 [user-defined hooks](/zh-TW/hooks) 相同的生命週期�
 | `PermissionDenied`    | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
 | `PostToolUse`         | After a tool call succeeds                                                                                                                             |
 | `PostToolUseFailure`  | After a tool call fails                                                                                                                                |
+| `PostToolBatch`       | After a full batch of parallel tool calls resolves, before the next model call                                                                         |
 | `Notification`        | When Claude Code sends a notification                                                                                                                  |
 | `SubagentStart`       | When a subagent is spawned                                                                                                                             |
 | `SubagentStop`        | When a subagent finishes                                                                                                                               |
@@ -142,6 +143,7 @@ Plugin hooks 回應與 [user-defined hooks](/zh-TW/hooks) 相同的生命週期�
 
 * `command`：執行 shell 命令或指令碼
 * `http`：將事件 JSON 作為 POST 請求傳送到 URL
+* `mcp_tool`：在已設定的 [MCP server](/zh-TW/mcp) 上呼叫工具
 * `prompt`：使用 LLM 評估提示（使用 `$ARGUMENTS` 佔位符表示上下文）
 * `agent`：執行具有工具的 agentic 驗證器以進行複雜驗證任務
 
@@ -318,6 +320,24 @@ Plugin monitors 使用與 [Monitor tool](/zh-TW/tools-reference#monitor-tool) �
 
 在工作階段中途停用 plugin 不會停止已在執行的 monitors。它們在工作階段結束時停止。
 
+### Themes
+
+Plugins 可以提供顏色主題，這些主題與內建預設值和使用者的本機主題一起出現在 `/theme` 中。主題是 `themes/` 中的 JSON 檔案，具有 `base` 預設值和稀疏的 `overrides` 顏色令牌對應。
+
+```json theme={null}
+{
+  "name": "Dracula",
+  "base": "dark",
+  "overrides": {
+    "claude": "#bd93f9",
+    "error": "#ff5555",
+    "success": "#50fa7b"
+  }
+}
+```
+
+選擇 plugin 主題會在使用者的設定中保留 `custom:<plugin-name>:<slug>`。Plugin 主題是唯讀的；在 `/theme` 中按 `Ctrl+E` 會將其複製到 `~/.claude/themes/`，以便使用者可以編輯副本。
+
 ***
 
 ## Plugin 安裝範圍
@@ -363,6 +383,7 @@ manifest 是選用的。如果省略，Claude Code 會自動探索 [預設位置
   "hooks": "./config/hooks.json",
   "mcpServers": "./mcp-config.json",
   "outputStyles": "./styles/",
+  "themes": "./themes/",
   "lspServers": "./.lsp.json",
   "monitors": "./monitors.json",
   "dependencies": [
@@ -384,15 +405,15 @@ manifest 是選用的。如果省略，Claude Code 會自動探索 [預設位置
 
 ### 中繼資料欄位
 
-| 欄位            | 類型     | 描述                                                        | 範例                                                 |
-| :------------ | :----- | :-------------------------------------------------------- | :------------------------------------------------- |
-| `version`     | string | 語義版本。如果也在 marketplace 項目中設定，`plugin.json` 優先。您只需在一個位置設定它。 | `"2.1.0"`                                          |
-| `description` | string | plugin 用途的簡短說明                                            | `"Deployment automation tools"`                    |
-| `author`      | object | 作者資訊                                                      | `{"name": "Dev Team", "email": "dev@company.com"}` |
-| `homepage`    | string | 文件 URL                                                    | `"https://docs.example.com"`                       |
-| `repository`  | string | 原始程式碼 URL                                                 | `"https://github.com/user/plugin"`                 |
-| `license`     | string | 授權識別碼                                                     | `"MIT"`、`"Apache-2.0"`                             |
-| `keywords`    | array  | 探索標籤                                                      | `["deployment", "ci-cd"]`                          |
+| 欄位            | 類型     | 描述                                                                                                                                                                                                | 範例                                                 |
+| :------------ | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------- |
+| `version`     | string | 選用。語義版本。設定此項會將 plugin 固定到該版本字串，因此使用者只會在您提升版本時收到更新。如果省略，Claude Code 會回退到 git commit SHA，因此每個 commit 都被視為新版本。如果也在 marketplace 項目中設定，`plugin.json` 優先。請參閱 [Version management](#version-management)。 | `"2.1.0"`                                          |
+| `description` | string | plugin 用途的簡短說明                                                                                                                                                                                    | `"Deployment automation tools"`                    |
+| `author`      | object | 作者資訊                                                                                                                                                                                              | `{"name": "Dev Team", "email": "dev@company.com"}` |
+| `homepage`    | string | 文件 URL                                                                                                                                                                                            | `"https://docs.example.com"`                       |
+| `repository`  | string | 原始程式碼 URL                                                                                                                                                                                         | `"https://github.com/user/plugin"`                 |
+| `license`     | string | 授權識別碼                                                                                                                                                                                             | `"MIT"`、`"Apache-2.0"`                             |
+| `keywords`    | array  | 探索標籤                                                                                                                                                                                              | `["deployment", "ci-cd"]`                          |
 
 ### 元件路徑欄位
 
@@ -404,6 +425,7 @@ manifest 是選用的。如果省略，Claude Code 會自動探索 [預設位置
 | `hooks`        | string\|array\|object | Hook 設定路徑或內聯設定                                                                                                  | `"./my-extra-hooks.json"`                            |
 | `mcpServers`   | string\|array\|object | MCP 設定路徑或內聯設定                                                                                                   | `"./my-extra-mcp-config.json"`                       |
 | `outputStyles` | string\|array         | 自訂輸出樣式檔案/目錄（取代預設 `output-styles/`）                                                                              | `"./styles/"`                                        |
+| `themes`       | string\|array         | 色彩主題檔案/目錄（取代預設 `themes/`）。請參閱 [Themes](#themes)                                                                 | `"./themes/"`                                        |
 | `lspServers`   | string\|array\|object | [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) 設定，用於程式碼智慧（前往定義、尋找參考等）        | `"./.lsp.json"`                                      |
 | `monitors`     | string\|array         | 背景 [Monitor](/zh-TW/tools-reference#monitor-tool) 設定，在 plugin 啟用時自動啟動。請參閱 [Monitors](#monitors)                 | `"./monitors.json"`                                  |
 | `userConfig`   | object                | 在啟用時提示使用者的使用者可設定值。請參閱 [User configuration](#user-configuration)                                                 | 請參閱下方                                                |
@@ -480,7 +502,7 @@ manifest 是選用的。如果省略，Claude Code 會自動探索 [預設位置
 
 ### 路徑行為規則
 
-對於 `skills`、`commands`、`agents`、`outputStyles` 和 `monitors`，自訂路徑取代預設值。如果 manifest 指定 `skills`，預設 `skills/` 目錄不會被掃描；如果它指定 `monitors`，預設 `monitors/monitors.json` 不會被載入。[Hooks](#hooks)、[MCP servers](#mcp-servers) 和 [LSP servers](#lsp-servers) 有不同的語義來處理多個來源。
+對於 `skills`、`commands`、`agents`、`outputStyles`、`themes` 和 `monitors`，自訂路徑取代預設值。如果 manifest 指定 `skills`，預設 `skills/` 目錄不會被掃描；如果它指定 `monitors`，預設 `monitors/monitors.json` 不會被載入。[Hooks](#hooks)、[MCP servers](#mcp-servers) 和 [LSP servers](#lsp-servers) 有不同的語義來處理多個來源。
 
 * 所有路徑必須相對於 plugin 根目錄，並以 `./` 開頭
 * 來自自訂路徑的元件使用相同的命名和命名空間規則
@@ -629,6 +651,8 @@ enterprise-plugin/
 │   └── compliance-checker.md
 ├── output-styles/            # Output style definitions
 │   └── terse.md
+├── themes/                   # Color theme definitions
+│   └── dracula.json
 ├── monitors/                 # Background monitor configurations
 │   └── monitors.json
 ├── hooks/                    # Hook configurations
@@ -648,7 +672,7 @@ enterprise-plugin/
 ```
 
 <Warning>
-  `.claude-plugin/` 目錄包含 `plugin.json` 檔案。所有其他目錄（commands/、agents/、skills/、output-styles/、monitors/、hooks/）必須位於 plugin 根目錄，而不是在 `.claude-plugin/` 內。
+  `.claude-plugin/` 目錄包含 `plugin.json` 檔案。所有其他目錄（commands/、agents/、skills/、output-styles/、themes/、monitors/、hooks/）必須位於 plugin 根目錄，而不是在 `.claude-plugin/` 內。
 </Warning>
 
 ### 檔案位置參考
@@ -660,6 +684,7 @@ enterprise-plugin/
 | **Commands**      | `commands/`                  | 作為平面 Markdown 檔案的 Skills。新 plugins 使用 `skills/`                                                                            |
 | **Agents**        | `agents/`                    | Subagent Markdown 檔案                                                                                                       |
 | **Output styles** | `output-styles/`             | 輸出樣式定義                                                                                                                     |
+| **Themes**        | `themes/`                    | 色彩主題定義                                                                                                                     |
 | **Hooks**         | `hooks/hooks.json`           | Hook 設定                                                                                                                    |
 | **MCP servers**   | `.mcp.json`                  | MCP server 定義                                                                                                              |
 | **LSP servers**   | `.lsp.json`                  | 語言伺服器設定                                                                                                                    |
@@ -806,6 +831,23 @@ claude plugin list [options]
 | `--available` | 包含來自 marketplaces 的可用 plugins。需要 `--json` |    |
 | `-h, --help`  | 顯示命令說明                                    |    |
 
+### plugin tag
+
+為目前目錄中的 plugin 建立發行版 git 標籤。從 plugin 的資料夾內執行。請參閱 [Tag plugin releases](/zh-TW/plugin-dependencies#tag-plugin-releases-for-version-resolution)。
+
+```bash theme={null}
+claude plugin tag [options]
+```
+
+**選項：**
+
+| 選項            | 描述                 | 預設 |
+| :------------ | :----------------- | :- |
+| `--push`      | 建立標籤後將其推送到遠端       |    |
+| `--dry-run`   | 列印將被標籤的內容而不建立標籤    |    |
+| `-f, --force` | 即使工作樹髒污或標籤已存在也建立標籤 |    |
+| `-h, --help`  | 顯示命令說明             |    |
+
 ***
 
 ## 偵錯和開發工具
@@ -859,7 +901,7 @@ claude plugin list [options]
 
 1. 驗證事件名稱是否正確（區分大小寫）：`PostToolUse`，而不是 `postToolUse`
 2. 檢查匹配器模式是否與您的工具相符：`"matcher": "Write|Edit"` 用於檔案操作
-3. 確認 hook 類型有效：`command`、`http`、`prompt` 或 `agent`
+3. 確認 hook 類型有效：`command`、`http`、`mcp_tool`、`prompt` 或 `agent`
 
 ### MCP server 疑難排解
 
@@ -905,33 +947,27 @@ my-plugin/
 
 ### 版本管理
 
-遵循 plugin 發行的語義版本控制：
+Claude Code 使用 plugin 的版本作為快取金鑰，以決定是否有可用的更新。當您執行 `/plugin update` 或自動更新觸發時，Claude Code 會計算目前版本，如果與已安裝的版本相符，則跳過更新。
 
-```json theme={null}
-{
-  "name": "my-plugin",
-  "version": "2.1.0"
-}
-```
+版本會從以下第一個設定的項目解析：
 
-**版本格式**：`MAJOR.MINOR.PATCH`
+1. Plugin 的 `plugin.json` 中的 `version` 欄位
+2. Plugin 在 `marketplace.json` 中的 marketplace 項目中的 `version` 欄位
+3. Plugin 來源的 git commit SHA，適用於 git 託管 marketplace 中的 `github`、`url`、`git-subdir` 和相對路徑來源
+4. `unknown`，適用於 `npm` 來源或不在 git 儲存庫內的本機目錄
 
-* **MAJOR**：破壞性變更（不相容的 API 變更）
-* **MINOR**：新功能（向後相容的新增）
-* **PATCH**：錯誤修正（向後相容的修正）
+這為您提供了兩種方式來版本化 plugin：
 
-**最佳實踐**：
-
-* 從 `1.0.0` 開始進行第一個穩定版本
-* 在發佈變更前更新 `plugin.json` 中的版本
-* 在 `CHANGELOG.md` 檔案中記錄變更
-* 使用預發行版本（如 `2.0.0-beta.1`）進行測試
+| 方法                | 如何操作                                          | 更新行為                                                                     | 最適合                  |
+| :---------------- | :-------------------------------------------- | :----------------------------------------------------------------------- | :------------------- |
+| **明確版本**          | 在 `plugin.json` 中設定 `"version": "2.1.0"`      | 使用者只有在您提升此欄位時才會獲得更新。推送新的 commit 而不提升版本沒有效果，`/plugin update` 會報告「已是最新版本」。 | 具有穩定發行週期的已發佈 plugin  |
+| **Commit-SHA 版本** | 從 `plugin.json` 和 marketplace 項目中省略 `version` | 使用者在每次 plugin 的 git 來源有新 commit 時都會獲得更新                                  | 正在積極開發中的內部或團隊 plugin |
 
 <Warning>
-  Claude Code 使用版本來決定是否更新您的 plugin。如果您變更 plugin 的程式碼但未在 `plugin.json` 中提升版本，您的 plugin 的現有使用者將因為快取而看不到您的變更。
-
-  如果您的 plugin 在 [marketplace](/zh-TW/plugin-marketplaces) 目錄中，您可以改為透過 `marketplace.json` 管理版本，並從 `plugin.json` 中省略 `version` 欄位。
+  如果您在 `plugin.json` 中設定 `version`，每次您想讓使用者接收變更時，都必須提升它。僅推送新的 commit 是不夠的，因為 Claude Code 會看到相同的版本字串並保留快取副本。如果您正在快速迭代，請保持 `version` 未設定，以便改為使用 git commit SHA。
 </Warning>
+
+如果您使用明確版本，請遵循 [semantic versioning](https://semver.org)（`MAJOR.MINOR.PATCH`）：針對破壞性變更提升 MAJOR，針對新功能提升 MINOR，針對錯誤修正提升 PATCH。在 `CHANGELOG.md` 中記錄變更。
 
 ***
 

@@ -6,21 +6,21 @@
 
 > 跟踪令牌使用情况，设置团队支出限制，并通过上下文管理、模型选择、扩展思考设置和预处理 hooks 来降低 Claude Code 成本。
 
-Claude Code 在每次交互中消耗令牌。成本因代码库大小、查询复杂性和对话长度而异。平均成本为每个开发者每天 $6，90% 的用户每日成本保持在 $12 以下。
+Claude Code 按 API 令牌消耗收费。有关订阅计划定价（Pro、Max、Team、Enterprise），请参阅 [claude.com/pricing](https://claude.com/pricing)。每个开发者的成本差异很大，取决于模型选择、代码库大小和使用模式，例如运行多个实例或自动化。
 
-对于团队使用，Claude Code 按 API 令牌消耗收费。平均而言，使用 Sonnet 4.6 的 Claude Code 成本约为每个开发者每月 \$100-200，但根据用户运行的实例数量以及是否在自动化中使用，成本差异很大。
+在企业部署中，平均成本约为每个开发者每个活跃日 $13，每个开发者每月 $150-250，90% 的用户每个活跃日成本保持在 \$30 以下。要估计您自己团队的支出，请从一个小的试点团体开始，并使用下面的跟踪工具建立基线，然后再进行更广泛的推出。
 
 本页面介绍如何[跟踪成本](#track-your-costs)、[管理团队成本](#managing-costs-for-teams)和[减少令牌使用](#reduce-token-usage)。
 
 ## 跟踪成本
 
-### 使用 `/cost` 命令
+### 使用 `/usage` 命令
 
 <Note>
-  `/cost` 命令显示 API 令牌使用情况，适用于 API 用户。Claude Max 和 Pro 订阅者的使用情况包含在订阅中，因此 `/cost` 数据与计费无关。订阅者可以使用 `/stats` 查看使用模式。
+  `/usage` 中的 Session 块显示 API 令牌使用情况，适用于 API 用户。Claude Max 和 Pro 订阅者的使用情况包含在订阅中，因此会话成本数据与计费无关。订阅者在同一屏幕上看到计划使用条和活动统计。
 </Note>
 
-`/cost` 命令为您的当前会话提供详细的令牌使用统计：
+`/usage` 命令为您的当前会话提供详细的令牌使用统计。美元数字是从令牌计数本地计算的估计值，可能与您的实际账单不同。有关权威计费，请参阅 [Claude Console](https://platform.claude.com/usage) 中的使用情况页面。
 
 ```text theme={null}
 Total cost:            $0.55
@@ -31,10 +31,12 @@ Total code changes:    0 lines added, 0 lines removed
 
 ## 管理团队成本
 
-使用 Claude API 时，您可以在 Claude Console 上[设置工作区支出限制](https://platform.claude.com/docs/zh-CN/build-with-claude/workspaces#workspace-limits)，以限制总体 Claude Code 工作区支出。管理员可以在 Console 中[查看成本和使用情况报告](https://platform.claude.com/docs/zh-CN/build-with-claude/workspaces#usage-and-cost-tracking)。
+使用 Claude API 时，您可以在 Claude Code 工作区上[设置工作区支出限制](https://platform.claude.com/docs/zh-CN/build-with-claude/workspaces#workspace-limits)。管理员可以在 Console 中[查看成本和使用情况报告](https://platform.claude.com/docs/zh-CN/build-with-claude/workspaces#usage-and-cost-tracking)。
 
 <Note>
   当您首次使用 Claude Console 账户对 Claude Code 进行身份验证时，会自动为您创建一个名为"Claude Code"的工作区。此工作区为您的组织中的所有 Claude Code 使用情况提供集中式成本跟踪和管理。您无法为此工作区创建 API 密钥；它专门用于 Claude Code 身份验证和使用。
+
+  对于具有自定义速率限制的组织，此工作区中的 Claude Code 流量计入您的组织整体 API 速率限制。您可以在 Claude Console 的此工作区的 Limits 页面上设置[工作区速率限制](https://platform.claude.com/docs/zh-CN/api/rate-limits#setting-lower-limits-for-workspaces)，以限制 Claude Code 的份额并保护其他生产工作负载。
 </Note>
 
 在 Bedrock、Vertex 和 Foundry 上，Claude Code 不会从您的云中发送指标。为了获取成本指标，几家大型企业报告使用[LiteLLM](/zh-CN/llm-gateway#litellm-configuration)，这是一个开源工具，可帮助公司[按密钥跟踪支出](https://docs.litellm.ai/docs/proxy/virtual_keys#tracking-spend)。此项目与 Anthropic 无关，尚未进行安全审计。
@@ -80,7 +82,7 @@ Total code changes:    0 lines added, 0 lines removed
 
 ### 主动管理上下文
 
-使用 `/cost` 检查您当前的令牌使用情况，或[配置您的状态行](/zh-CN/statusline#context-window-usage)以连续显示它。
+使用 `/usage` 检查您当前的令牌使用情况，或[配置您的状态行](/zh-CN/statusline#context-window-usage)以连续显示它。
 
 * **在任务之间清除**：使用 `/clear` 在切换到不相关的工作时重新开始。陈旧的上下文会在随后的每条消息上浪费令牌。在清除之前使用 `/rename` 以便您稍后可以轻松找到会话，然后使用 `/resume` 返回到它。
 * **添加自定义 compaction 指令**：`/compact Focus on code samples and API usage` 告诉 Claude 在总结期间保留什么。
@@ -99,11 +101,10 @@ Sonnet 处理大多数编码任务效果很好，成本低于 Opus。为复杂�
 
 ### 减少 MCP server 开销
 
-每个 MCP server 都会向您的上下文添加工具定义，即使处于空闲状态。运行 `/context` 查看占用空间的内容。
+MCP 工具定义[默认被延迟](/zh-CN/mcp#scale-with-mcp-tool-search)，因此只有工具名称进入上下文，直到 Claude 使用特定工具。运行 `/context` 查看占用空间的内容。
 
-* **在可用时优先使用 CLI 工具**：`gh`、`aws`、`gcloud` 和 `sentry-cli` 等工具比 MCP servers 更节省上下文，因为它们不添加持久工具定义。Claude 可以直接运行 CLI 命令，无需开销。
+* **在可用时优先使用 CLI 工具**：`gh`、`aws`、`gcloud` 和 `sentry-cli` 等工具比 MCP servers 更节省上下文，因为它们不添加任何每工具列表。Claude 可以直接运行 CLI 命令。
 * **禁用未使用的 servers**：运行 `/mcp` 查看配置的 servers 并禁用您未积极使用的任何 servers。
-* **工具搜索是自动的**：当 MCP 工具描述超过您的上下文窗口的 10% 时，Claude Code 会自动延迟它们并通过[工具搜索](/zh-CN/mcp#scale-with-mcp-tool-search)按需加载工具。由于延迟的工具仅在实际使用时进入上下文，较低的阈值意味着较少的空闲工具定义消耗空间。使用 `ENABLE_TOOL_SEARCH=auto:<N>` 设置较低的阈值（例如，`auto:5` 在工具超过您的上下文窗口的 5% 时触发）。
 
 ### 为类型化语言安装代码智能插件
 
@@ -161,11 +162,11 @@ Sonnet 处理大多数编码任务效果很好，成本低于 Opus。为复杂�
 
 ### 将指令从 CLAUDE.md 移动到 skills
 
-您的[CLAUDE.md](/zh-CN/memory)文件在会话开始时加载到上下文中。如果它包含特定工作流的详细指令（如 PR 审查或数据库迁移），即使您在做不相关的工作时，这些令牌也会存在。[Skills](/zh-CN/skills)仅在调用时按需加载，因此将专门指令移动到 skills 中可以保持您的基础上下文较小。目标是通过仅包含必要内容来将 CLAUDE.md 保持在约 500 行以下。
+您的[CLAUDE.md](/zh-CN/memory)文件在会话开始时加载到上下文中。如果它包含特定工作流的详细指令（如 PR 审查或数据库迁移），即使您在做不相关的工作时，这些令牌也会存在。[Skills](/zh-CN/skills)仅在调用时按需加载，因此将专门指令移动到 skills 中可以保持您的基础上下文较小。目标是通过仅包含必要内容来将 CLAUDE.md 保持在 200 行以下。
 
 ### 调整扩展思考
 
-扩展思考默认启用，预算为 31,999 个令牌，因为它显著改进了复杂规划和推理任务的性能。但是，思考令牌作为输出令牌计费，因此对于不需要深度推理的更简单任务，您可以通过在 `/effort` 中或在 `/model` 中降低[努力级别](/zh-CN/model-config#adjust-effort-level)、在 `/config` 中禁用思考或降低预算（例如，`MAX_THINKING_TOKENS=8000`）来降低成本。
+扩展思考默认启用，因为它显著改进了复杂规划和推理任务的性能。思考令牌作为输出令牌计费，默认预算可能是每个请求数万个令牌，具体取决于模型。对于不需要深度推理的更简单任务，您可以通过在 `/effort` 中或在 `/model` 中降低[努力级别](/zh-CN/model-config#adjust-effort-level)、在 `/config` 中禁用思考或使用 `MAX_THINKING_TOKENS=8000` 降低预算来降低成本。
 
 ### 将冗长的操作委托给 subagents
 
@@ -193,10 +194,10 @@ Sonnet 处理大多数编码任务效果很好，成本低于 Opus。为复杂�
 Claude Code 即使在空闲时也会为某些后台功能使用令牌：
 
 * **对话总结**：为 `claude --resume` 功能总结以前对话的后台作业
-* **命令处理**：某些命令（如 `/cost`）可能会生成请求以检查状态
+* **命令处理**：某些命令（如 `/usage`）可能会生成请求以检查状态
 
 这些后台进程即使没有活跃交互也会消耗少量令牌（通常每个会话不到 \$0.04）。
 
 ## 了解 Claude Code 行为的变化
 
-Claude Code 定期接收可能改变功能工作方式的更新，包括成本报告。运行 `claude --version` 检查您的当前版本。如有具体计费问题，请通过您的[Console 账户](https://platform.claude.com/login)联系 Anthropic 支持。对于团队部署，在更广泛的推出之前，从一个小的试点团体开始以建立使用模式。
+Claude Code 定期接收可能改变功能工作方式的更新，包括成本报告。运行 `claude --version` 检查您的当前版本。如有具体计费问题，请通过您的[Console 账户](https://platform.claude.com/login)联系 Anthropic 支持。

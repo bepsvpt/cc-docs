@@ -29,7 +29,7 @@ En la mayoría de terminales también puedes presionar Shift+Enter, pero el sopo
 | VS Code, Cursor, Windsurf, Alacritty, Zed                                         | Ejecuta `/terminal-setup` una vez           |
 | Windows Terminal, gnome-terminal, IDEs de JetBrains como PyCharm y Android Studio | No disponible; usa Ctrl+J o `\` luego Enter |
 
-Para VS Code, Cursor, Windsurf, Alacritty y Zed, `/terminal-setup` escribe Shift+Enter y otros atajos de teclado en el archivo de configuración de la terminal. Si reporta un conflicto como `Found existing VSCode terminal Shift+Enter key binding`, elimina esa entrada del archivo de atajos de teclado de la terminal, por ejemplo `keybindings.json` de VS Code, y ejecuta el comando nuevamente. Ejecuta `/terminal-setup` directamente en la terminal del host en lugar de dentro de tmux o screen, ya que necesita escribir en la configuración de la terminal del host.
+Para VS Code, Cursor, Windsurf, Alacritty y Zed, `/terminal-setup` escribe Shift+Enter y otros atajos de teclado en el archivo de configuración de la terminal. En VS Code, Cursor y Windsurf también establece `terminal.integrated.mouseWheelScrollSensitivity` en la configuración del editor para un desplazamiento más suave en [modo pantalla completa](/es/fullscreen). Los enlaces existentes y la configuración se dejan en su lugar; si ve un mensaje como `VSCode terminal Shift+Enter key binding already configured`, no se realizó ningún cambio. Ejecuta `/terminal-setup` directamente en la terminal del host en lugar de dentro de tmux o screen, ya que necesita escribir en la configuración de la terminal del host.
 
 Si estás ejecutando dentro de tmux, Shift+Enter también requiere la [configuración de tmux a continuación](#configure-tmux) incluso cuando la terminal externa la soporta.
 
@@ -107,9 +107,43 @@ La línea `allow-passthrough` permite que las notificaciones y actualizaciones d
 
 ## Haz coincidir el tema de color
 
-Usa el comando `/theme`, o el selector de tema en `/config`, para elegir un tema de Claude Code que coincida con tu terminal. Seleccionar la opción auto detecta el fondo claro u oscuro de tu terminal, por lo que el tema sigue los cambios de apariencia del SO siempre que tu terminal lo haga. Los temas disponibles están integrados; no hay archivo de tema personalizado. Claude Code no controla el esquema de color de la terminal, que se establece por la aplicación de terminal.
+Usa el comando `/theme`, o el selector de tema en `/config`, para elegir un tema de Claude Code que coincida con tu terminal. Seleccionar la opción auto detecta el fondo claro u oscuro de tu terminal, por lo que el tema sigue los cambios de apariencia del SO siempre que tu terminal lo haga. Claude Code no controla el esquema de color de la terminal, que se establece por la aplicación de terminal.
 
 Para personalizar lo que aparece en la parte inferior de la interfaz, configura una [línea de estado personalizada](/es/statusline) que muestre el modelo actual, directorio de trabajo, rama de git u otro contexto.
+
+### Crea un tema personalizado
+
+<Note>
+  Los temas personalizados requieren Claude Code v2.1.118 o posterior.
+</Note>
+
+Además de los preajustes integrados, `/theme` enumera cualquier tema personalizado que hayas definido y cualquier tema contribuido por los [plugins](/es/plugins-reference#themes) instalados. Selecciona **Nuevo tema personalizado…** al final de la lista para crear uno de forma interactiva: nombras el tema y luego seleccionas tokens de color individuales para anular. Presiona `Ctrl+E` mientras un tema personalizado está resaltado para editarlo.
+
+Cada tema personalizado es un archivo JSON en `~/.claude/themes/`. El nombre de archivo sin la extensión `.json` es el slug del tema, y seleccionar el tema almacena `custom:<slug>` como tu preferencia de tema. El archivo tiene tres campos opcionales:
+
+| Campo       | Tipo   | Descripción                                                                                                                                                   |
+| :---------- | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `name`      | string | Etiqueta de visualización mostrada en `/theme`. Por defecto es el slug del nombre de archivo                                                                  |
+| `base`      | string | Preajuste integrado desde el que comienza el tema: `dark`, `light`, `dark-daltonized`, `light-daltonized`, `dark-ansi`, o `light-ansi`. Por defecto es `dark` |
+| `overrides` | object | Mapa de nombres de tokens de color a valores de color. Los tokens no enumerados aquí se transfieren al preajuste base                                         |
+
+Los valores de color aceptan `#rrggbb`, `#rgb`, `rgb(r,g,b)`, `ansi256(n)`, o `ansi:<name>` donde `<name>` es uno de los 16 nombres de color ANSI estándar como `red` o `cyanBright`. Los tokens desconocidos y los valores de color inválidos se ignoran, por lo que un error tipográfico no puede romper la representación.
+
+El siguiente ejemplo define un tema que mantiene el preajuste oscuro pero recolora el acento del prompt, el texto de error y el texto de éxito:
+
+```json ~/.claude/themes/dracula.json theme={null}
+{
+  "name": "Dracula",
+  "base": "dark",
+  "overrides": {
+    "claude": "#bd93f9",
+    "error": "#ff5555",
+    "success": "#50fa7b"
+  }
+}
+```
+
+Claude Code observa `~/.claude/themes/` y recarga cuando un archivo cambia, por lo que las ediciones realizadas en tu editor se aplican a una sesión en ejecución sin necesidad de reiniciar.
 
 ## Cambia a renderizado a pantalla completa
 
@@ -145,7 +179,7 @@ La terminal integrada de VS Code puede soltar caracteres de pegados muy grandes 
 
 Claude Code incluye un modo de edición de estilo Vim para la entrada del indicador. Habilítalo a través de `/config` → Editor mode, o estableciendo la clave de configuración global [`editorMode`](/es/settings#global-config-settings) en `"vim"` en `~/.claude.json`. Establece Editor mode de nuevo en `normal` para desactivarlo.
 
-El modo Vim soporta un subconjunto de movimientos y operadores de modo NORMAL, como navegación `hjkl` y `d`/`c`/`y` con objetos de texto. Consulta la [referencia del modo editor Vim](/es/interactive-mode#vim-editor-mode) para la tabla de teclas completa. Los movimientos Vim no son remapeables a través del archivo de atajos de teclado.
+El modo Vim soporta un subconjunto de movimientos y operadores de modo NORMAL y VISUAL, como navegación `hjkl`, selección `v`/`V`, y `d`/`c`/`y` con objetos de texto. Consulta la [referencia del modo editor Vim](/es/interactive-mode#vim-editor-mode) para la tabla de teclas completa. Los movimientos Vim no son remapeables a través del archivo de atajos de teclado.
 
 Presionar Enter aún envía tu indicador en modo INSERT, a diferencia del Vim estándar. Usa `o` u `O` en modo NORMAL, o Ctrl+J, para insertar un salto de línea en su lugar.
 

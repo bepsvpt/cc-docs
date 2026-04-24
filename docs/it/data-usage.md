@@ -59,9 +59,18 @@ Per tutti gli utenti di prima parte, potete scoprire di più su quali dati vengo
 
 Il diagramma sottostante mostra come Claude Code si connette ai servizi esterni durante l'installazione e il funzionamento normale. Le linee continue indicano connessioni richieste, mentre le linee tratteggiate rappresentano flussi di dati facoltativi o avviati dall'utente.
 
-<img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/claude-code-data-flow.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=b3f71c69d743bff63343207dfb7ad6ce" alt="Diagramma che mostra le connessioni esterne di Claude Code: install/update si connette a NPM e le richieste dell'utente si connettono ai servizi Anthropic inclusi Console auth, public-api e facoltativamente Statsig, Sentry e bug reporting" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
+<img src="https://mintcdn.com/claude-code/YcBW2H7CArGcduPb/images/claude-code-data-flow.svg?fit=max&auto=format&n=YcBW2H7CArGcduPb&q=85&s=b600a89f84fc86f9ff7be00a466c0635" alt="Diagramma che mostra le connessioni esterne di Claude Code: install/update si connette al server di distribuzione e le richieste dell'utente si connettono ai servizi Anthropic inclusi Console auth, public-api e facoltativamente Statsig, Sentry e bug reporting" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
 
-Claude Code viene installato da [NPM](https://www.npmjs.com/package/@anthropic-ai/claude-code). Claude Code viene eseguito localmente. Per interagire con l'LLM, Claude Code invia dati sulla rete. Questi dati includono tutti i prompt dell'utente e gli output del modello. I dati vengono crittografati in transito tramite TLS e non vengono crittografati a riposo. Claude Code è compatibile con la maggior parte dei VPN e dei proxy LLM più diffusi.
+Claude Code viene eseguito localmente. Per interagire con l'LLM, Claude Code invia dati sulla rete. Questi dati includono tutti i prompt dell'utente e gli output del modello, crittografati in transito tramite TLS 1.2+. Claude Code è compatibile con la maggior parte dei VPN e dei proxy LLM più diffusi.
+
+La crittografia a riposo dipende dal vostro provider di modelli:
+
+| Provider               | Crittografia a riposo                                                                                                                                       |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Anthropic API          | Crittografia del disco a livello di infrastruttura (AES-256). Abilitate [Zero Data Retention](/it/zero-data-retention) per nessuna persistenza lato server. |
+| Amazon Bedrock         | AES-256 con chiavi gestite da AWS. Chiavi gestite dal cliente disponibili tramite AWS KMS.                                                                  |
+| Google Cloud Vertex AI | Chiavi di crittografia gestite da Google. CMEK disponibile.                                                                                                 |
+| Microsoft Foundry      | Le richieste vengono instradate all'infrastruttura Anthropic con crittografia del disco AES-256.                                                            |
 
 Claude Code è costruito sulle API di Anthropic. Per i dettagli sui controlli di sicurezza della nostra API, incluse le nostre procedure di registrazione dell'API, consultate gli artefatti di conformità offerti nel [Anthropic Trust Center](https://trust.anthropic.com).
 
@@ -82,7 +91,7 @@ Claude Code si connette dalle macchine degli utenti al servizio Statsig per regi
 
 Claude Code si connette dalle macchine degli utenti a Sentry per la registrazione degli errori operativi. I dati vengono crittografati in transito utilizzando TLS e a riposo utilizzando la crittografia AES a 256 bit. Scopri di più nella [documentazione sulla sicurezza di Sentry](https://sentry.io/security/). Per rinunciare alla registrazione degli errori, impostate la variabile di ambiente `DISABLE_ERROR_REPORTING`.
 
-Quando gli utenti eseguono il comando `/feedback`, una copia della loro cronologia completa della conversazione incluso il codice viene inviata ad Anthropic. I dati vengono crittografati in transito e a riposo. Facoltativamente, viene creato un problema Github nel nostro repository pubblico. Per rinunciare, impostate la variabile di ambiente `DISABLE_FEEDBACK_COMMAND` su `1`.
+Quando gli utenti eseguono il comando `/feedback`, una copia della loro cronologia completa della conversazione incluso il codice viene inviata ad Anthropic. I dati vengono crittografati in transito via TLS. Facoltativamente, viene creato un problema GitHub nel repository pubblico. Per rinunciare, impostate la variabile di ambiente `DISABLE_FEEDBACK_COMMAND` su `1`.
 
 ## Comportamenti predefiniti per provider API
 

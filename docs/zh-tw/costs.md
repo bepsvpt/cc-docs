@@ -6,21 +6,21 @@
 
 > 追蹤 token 使用情況、設定團隊支出限制，並透過上下文管理、模型選擇、延伸思考設定和預處理 hooks 來降低 Claude Code 成本。
 
-Claude Code 在每次互動時都會消耗 token。成本因程式碼庫大小、查詢複雜性和對話長度而異。平均成本為每位開發人員每天 $6，90% 的使用者每日成本保持在 $12 以下。
+Claude Code 按 API token 消耗量計費。如需訂閱計畫定價（Pro、Max、Team、Enterprise），請參閱 [claude.com/pricing](https://claude.com/pricing)。每位開發人員的成本差異很大，取決於模型選擇、程式碼庫大小和使用模式，例如執行多個執行個體或自動化。
 
-對於團隊使用，Claude Code 按 API token 消耗量計費。平均而言，Claude Code 使用 Sonnet 4.6 時的成本約為每位開發人員每月 \$100-200，但根據使用者執行的執行個體數量以及他們是否在自動化中使用它，成本差異很大。
+在企業部署中，平均成本約為每位開發人員每個活躍日 $13，每位開發人員每月 $150-250，90% 的使用者成本保持在每個活躍日 \$30 以下。若要估計您自己團隊的支出，請從小型試點群組開始，並使用下面的追蹤工具建立基準，然後再進行更廣泛的推出。
 
 本頁涵蓋如何[追蹤您的成本](#track-your-costs)、[管理團隊成本](#managing-costs-for-teams)和[減少 token 使用](#reduce-token-usage)。
 
 ## 追蹤您的成本
 
-### 使用 `/cost` 命令
+### 使用 `/usage` 命令
 
 <Note>
-  `/cost` 命令顯示 API token 使用情況，適用於 API 使用者。Claude Max 和 Pro 訂閱者的使用情況已包含在其訂閱中，因此 `/cost` 資料與計費無關。訂閱者可以使用 `/stats` 來檢視使用模式。
+  `/usage` 中的 Session 區塊顯示 API token 使用情況，適用於 API 使用者。Claude Max 和 Pro 訂閱者的使用情況已包含在其訂閱中，因此工作階段成本數字與計費無關。訂閱者會在同一畫面上看到計畫使用情況列和活動統計資訊。
 </Note>
 
-`/cost` 命令為您目前的工作階段提供詳細的 token 使用統計資訊：
+`/usage` 命令為您目前的工作階段提供詳細的 token 使用統計資訊。美元數字是根據 token 計數在本地計算的估計值，可能與您的實際帳單不同。如需權威計費資訊，請參閱 [Claude Console](https://platform.claude.com/usage) 中的「使用情況」頁面。
 
 ```text theme={null}
 Total cost:            $0.55
@@ -31,10 +31,12 @@ Total code changes:    0 lines added, 0 lines removed
 
 ## 管理團隊成本
 
-使用 Claude API 時，您可以在 Claude Code 工作區支出上[設定工作區支出限制](https://platform.claude.com/docs/zh-TW/build-with-claude/workspaces#workspace-limits)。管理員可以在主控台中[檢視成本和使用情況報告](https://platform.claude.com/docs/zh-TW/build-with-claude/workspaces#usage-and-cost-tracking)。
+使用 Claude API 時，您可以在 Claude Code 工作區支出上[設定工作區支出限制](https://platform.claude.com/docs/zh-TW/build-with-claude/workspaces#workspace-limits)。管理員可以在 Console 中[檢視成本和使用情況報告](https://platform.claude.com/docs/zh-TW/build-with-claude/workspaces#usage-and-cost-tracking)。
 
 <Note>
   當您首次使用 Claude Console 帳戶驗證 Claude Code 時，系統會自動為您建立一個名為「Claude Code」的工作區。此工作區為您的組織中所有 Claude Code 使用情況提供集中式成本追蹤和管理。您無法為此工作區建立 API 金鑰；它專門用於 Claude Code 驗證和使用。
+
+  對於具有自訂速率限制的組織，此工作區中的 Claude Code 流量計入您的組織整體 API 速率限制。您可以在 Claude Console 的此工作區的「限制」頁面上設定[工作區速率限制](https://platform.claude.com/docs/zh-TW/api/rate-limits#setting-lower-limits-for-workspaces)，以限制 Claude Code 的份額並保護其他生產工作負載。
 </Note>
 
 在 Bedrock、Vertex 和 Foundry 上，Claude Code 不會從您的雲端傳送指標。若要取得成本指標，多家大型企業報告使用[LiteLLM](/zh-TW/llm-gateway#litellm-configuration)，這是一個開源工具，可幫助公司[按金鑰追蹤支出](https://docs.litellm.ai/docs/proxy/virtual_keys#tracking-spend)。此專案與 Anthropic 無關，且尚未進行安全審計。
@@ -68,7 +70,7 @@ Total code changes:    0 lines added, 0 lines removed
 
 * 為隊友使用 Sonnet。它為協調任務平衡了功能和成本。
 * 保持團隊規模小。每位隊友執行自己的上下文視窗，因此 token 使用量大致與團隊規模成正比。
-* 保持產生提示的焦點。隊友會自動載入 CLAUDE.md、MCP 伺服器和技能，但產生提示中的所有內容都會從一開始就新增到其上下文中。
+* 保持產生提示的焦點。隊友會自動載入 CLAUDE.md、MCP 伺服器和 skills，但產生提示中的所有內容都會從一開始就新增到其上下文中。
 * 工作完成時清理團隊。活躍的隊友即使閒置也會繼續消耗 token。
 * Agent 團隊預設為停用。在您的[settings.json](/zh-TW/settings)或環境中設定 `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` 以啟用它們。請參閱[啟用 agent 團隊](/zh-TW/agent-teams#enable-agent-teams)。
 
@@ -80,7 +82,7 @@ Token 成本隨上下文大小而擴展：Claude 處理的上下文越多，您�
 
 ### 主動管理上下文
 
-使用 `/cost` 檢查您目前的 token 使用情況，或[設定您的狀態行](/zh-TW/statusline#context-window-usage)以持續顯示它。
+使用 `/usage` 檢查您目前的 token 使用情況，或[設定您的狀態行](/zh-TW/statusline#context-window-usage)以持續顯示它。
 
 * **在任務之間清除**：切換到不相關的工作時，使用 `/clear` 重新開始。過時的上下文會在後續的每條訊息上浪費 token。在清除之前使用 `/rename` 以便稍後輕鬆找到工作階段，然後使用 `/resume` 返回到它。
 * **新增自訂壓縮指示**：`/compact Focus on code samples and API usage` 告訴 Claude 在總結期間要保留什麼。
@@ -99,21 +101,20 @@ Sonnet 能很好地處理大多數編碼任務，成本低於 Opus。為複雜�
 
 ### 減少 MCP 伺服器開銷
 
-每個 MCP 伺服器都會將工具定義新增到您的上下文中，即使在閒置時也是如此。執行 `/context` 以查看消耗空間的內容。
+MCP 工具定義[預設為延遲](/zh-TW/mcp#scale-with-mcp-tool-search)，因此只有工具名稱進入上下文，直到 Claude 使用特定工具。執行 `/context` 以查看消耗空間的內容。
 
-* **在可用時偏好 CLI 工具**：`gh`、`aws`、`gcloud` 和 `sentry-cli` 等工具比 MCP 伺服器更具上下文效率，因為它們不會新增持久的工具定義。Claude 可以直接執行 CLI 命令，無需開銷。
+* **在可用時偏好 CLI 工具**：`gh`、`aws`、`gcloud` 和 `sentry-cli` 等工具比 MCP 伺服器更具上下文效率，因為它們不會新增任何每個工具的列表。Claude 可以直接執行 CLI 命令。
 * **停用未使用的伺服器**：執行 `/mcp` 以查看已設定的伺服器，並停用任何您未主動使用的伺服器。
-* **工具搜尋是自動的**：當 MCP 工具描述超過您的上下文視窗的 10% 時，Claude Code 會自動延遲它們，並透過[工具搜尋](/zh-TW/mcp#scale-with-mcp-tool-search)按需載入工具。由於延遲的工具只在實際使用時進入上下文，較低的閾值意味著較少的閒置工具定義消耗空間。使用 `ENABLE_TOOL_SEARCH=auto:<N>` 設定較低的閾值（例如，`auto:5` 在工具超過您的上下文視窗的 5% 時觸發）。
 
 ### 為型別化語言安裝程式碼智慧外掛
 
 [程式碼智慧外掛](/zh-TW/discover-plugins#code-intelligence)為 Claude 提供精確的符號導航，而不是基於文字的搜尋，在探索不熟悉的程式碼時減少不必要的檔案讀取。單一「前往定義」呼叫取代了可能需要的 grep 後跟讀取多個候選檔案。已安裝的語言伺服器也會在編輯後自動報告型別錯誤，因此 Claude 無需執行編譯器即可捕捉錯誤。
 
-### 將處理卸載到 hooks 和技能
+### 將處理卸載到 hooks 和 skills
 
 自訂[hooks](/zh-TW/hooks)可以在 Claude 看到資料之前對其進行預處理。Claude 不是讀取 10,000 行日誌檔案來尋找錯誤，hook 可以 grep `ERROR` 並僅返回匹配的行，將上下文從數萬個 token 減少到數百個。
 
-[技能](/zh-TW/skills)可以為 Claude 提供領域知識，因此它不必進行探索。例如，「codebase-overview」技能可以描述您的專案架構、關鍵目錄和命名慣例。當 Claude 呼叫該技能時，它會立即獲得此上下文，而不是花費 token 讀取多個檔案來理解結構。
+[skill](/zh-TW/skills)可以為 Claude 提供領域知識，因此它不必進行探索。例如，「codebase-overview」skill 可以描述您的專案架構、關鍵目錄和命名慣例。當 Claude 呼叫該 skill 時，它會立即獲得此上下文，而不是花費 token 讀取多個檔案來理解結構。
 
 例如，此 PreToolUse hook 篩選測試輸出以僅顯示失敗：
 
@@ -159,13 +160,13 @@ Sonnet 能很好地處理大多數編碼任務，成本低於 Opus。為複雜�
   </Tab>
 </Tabs>
 
-### 將指示從 CLAUDE.md 移至技能
+### 將指示從 CLAUDE.md 移至 skills
 
-您的[CLAUDE.md](/zh-TW/memory)檔案在工作階段開始時載入到上下文中。如果它包含特定工作流程的詳細指示（例如 PR 審查或資料庫遷移），即使您在進行不相關的工作時，這些 token 也會存在。[技能](/zh-TW/skills)僅在呼叫時按需載入，因此將專門指示移至技能可以保持您的基本上下文較小。目標是透過僅包含必要內容來將 CLAUDE.md 保持在約 500 行以下。
+您的[CLAUDE.md](/zh-TW/memory)檔案在工作階段開始時載入到上下文中。如果它包含特定工作流程的詳細指示（例如 PR 審查或資料庫遷移），即使您在進行不相關的工作時，這些 token 也會存在。[Skills](/zh-TW/skills)僅在呼叫時按需載入，因此將專門指示移至 skills 可以保持您的基本上下文較小。目標是透過僅包含必要內容來將 CLAUDE.md 保持在 200 行以下。
 
 ### 調整延伸思考
 
-延伸思考預設為啟用，預算為 31,999 個 token，因為它可以顯著改善複雜規劃和推理任務的效能。但是，思考 token 會作為輸出 token 計費，因此對於不需要深度推理的較簡單任務，您可以透過在 `/effort` 中降低[努力等級](/zh-TW/model-config#adjust-effort-level)或在 `/model` 中降低、在 `/config` 中停用思考或降低預算（例如，`MAX_THINKING_TOKENS=8000`）來降低成本。
+延伸思考預設為啟用，因為它可以顯著改善複雜規劃和推理任務的效能。思考 token 會作為輸出 token 計費，預設預算可能是每個請求數萬個 token，取決於模型。對於不需要深度推理的較簡單任務，您可以透過在 `/effort` 中降低[努力等級](/zh-TW/model-config#adjust-effort-level)或在 `/model` 中降低、在 `/config` 中停用思考或降低預算（例如，`MAX_THINKING_TOKENS=8000`）來降低成本。
 
 ### 將詳細操作委派給 subagents
 
@@ -193,10 +194,10 @@ Sonnet 能很好地處理大多數編碼任務，成本低於 Opus。為複雜�
 Claude Code 即使在閒置時也會為某些背景功能使用 token：
 
 * **對話總結**：為 `claude --resume` 功能總結先前對話的背景工作
-* **命令處理**：某些命令（例如 `/cost`）可能會產生檢查狀態的請求
+* **命令處理**：某些命令（例如 `/usage`）可能會產生檢查狀態的請求
 
 這些背景程序即使沒有主動互動也會消耗少量 token（通常每個工作階段不到 \$0.04）。
 
 ## 瞭解 Claude Code 行為的變化
 
-Claude Code 定期接收可能改變功能工作方式的更新，包括成本報告。執行 `claude --version` 以檢查您目前的版本。如有具體計費問題，請透過您的[主控台帳戶](https://platform.claude.com/login)聯絡 Anthropic 支援。對於團隊部署，請從小型試點群組開始，以在更廣泛的推出前建立使用模式。
+Claude Code 定期接收可能改變功能工作方式的更新，包括成本報告。執行 `claude --version` 以檢查您目前的版本。如有具體計費問題，請透過您的[Console 帳戶](https://platform.claude.com/login)聯絡 Anthropic 支援。

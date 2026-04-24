@@ -59,11 +59,20 @@ Pour tous les utilisateurs propriétaires, vous pouvez en savoir plus sur les do
 
 Le diagramme ci-dessous montre comment Claude Code se connecte aux services externes lors de l'installation et du fonctionnement normal. Les lignes pleines indiquent les connexions requises, tandis que les lignes pointillées représentent les flux de données optionnels ou initiés par l'utilisateur.
 
-<img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/claude-code-data-flow.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=b3f71c69d743bff63343207dfb7ad6ce" alt="Diagramme montrant les connexions externes de Claude Code : l'installation/mise à jour se connecte à NPM, et les demandes des utilisateurs se connectent aux services Anthropic, y compris l'authentification Console, l'API publique, et optionnellement Statsig, Sentry et les rapports de bogues" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
+<img src="https://mintcdn.com/claude-code/YcBW2H7CArGcduPb/images/claude-code-data-flow.svg?fit=max&auto=format&n=YcBW2H7CArGcduPb&q=85&s=b600a89f84fc86f9ff7be00a466c0635" alt="Diagramme montrant les connexions externes de Claude Code : l'installation/mise à jour se connecte au serveur de distribution, et les demandes des utilisateurs se connectent aux services Anthropic, y compris l'authentification Console, l'API publique, et optionnellement Statsig, Sentry et les rapports de bogues" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
 
-Claude Code est installé à partir de [NPM](https://www.npmjs.com/package/@anthropic-ai/claude-code). Claude Code s'exécute localement. Pour interagir avec le LLM, Claude Code envoie des données sur le réseau. Ces données incluent tous les invites utilisateur et les sorties du modèle. Les données sont chiffrées en transit via TLS et ne sont pas chiffrées au repos. Claude Code est compatible avec la plupart des VPN et proxies LLM populaires.
+Claude Code s'exécute localement. Pour interagir avec le LLM, Claude Code envoie des données sur le réseau. Ces données incluent tous les invites utilisateur et les sorties du modèle, chiffrées en transit via TLS 1.2+. Claude Code est compatible avec la plupart des VPN et proxies LLM populaires.
 
-Claude Code est construit sur les API d'Anthropic. Pour plus de détails concernant les contrôles de sécurité de notre API, y compris nos procédures de journalisation des API, veuillez consulter les artefacts de conformité offerts dans le [Centre de confiance Anthropic](https://trust.anthropic.com).
+Le chiffrement au repos dépend de votre fournisseur de modèle :
+
+| Fournisseur            | Chiffrement au repos                                                                                                                                          |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Anthropic API          | Chiffrement des disques au niveau de l'infrastructure (AES-256). Activez [Zero Data Retention](/fr/zero-data-retention) pour aucune persistance côté serveur. |
+| Amazon Bedrock         | AES-256 avec clés gérées par AWS. Clés gérées par le client disponibles via AWS KMS.                                                                          |
+| Google Cloud Vertex AI | Clés de chiffrement gérées par Google. CMEK disponible.                                                                                                       |
+| Microsoft Foundry      | Les demandes sont acheminées vers l'infrastructure Anthropic avec chiffrement des disques AES-256.                                                            |
+
+Claude Code est construit sur les API d'Anthropic. Pour plus de détails concernant les contrôles de sécurité de l'API, y compris les procédures de journalisation des API, consultez les artefacts de conformité dans le [Centre de confiance Anthropic](https://trust.anthropic.com).
 
 ### Exécution cloud : flux de données et dépendances
 
@@ -82,7 +91,7 @@ Claude Code se connecte à partir des machines des utilisateurs au service Stats
 
 Claude Code se connecte à partir des machines des utilisateurs à Sentry pour la journalisation des erreurs opérationnelles. Les données sont chiffrées en transit à l'aide de TLS et au repos à l'aide du chiffrement AES 256 bits. Lisez-en plus dans la [documentation de sécurité Sentry](https://sentry.io/security/). Pour refuser la journalisation des erreurs, définissez la variable d'environnement `DISABLE_ERROR_REPORTING`.
 
-Lorsque les utilisateurs exécutent la commande `/feedback`, une copie de leur historique de conversation complet, y compris le code, est envoyée à Anthropic. Les données sont chiffrées en transit et au repos. Optionnellement, un problème Github est créé dans notre référentiel public. Pour refuser, définissez la variable d'environnement `DISABLE_FEEDBACK_COMMAND` sur `1`.
+Lorsque les utilisateurs exécutent la commande `/feedback`, une copie de leur historique de conversation complet, y compris le code, est envoyée à Anthropic. Les données sont chiffrées en transit à l'aide de TLS. Optionnellement, un problème GitHub est créé dans le référentiel public. Pour refuser, définissez la variable d'environnement `DISABLE_FEEDBACK_COMMAND` sur `1`.
 
 ## Comportements par défaut par fournisseur d'API
 

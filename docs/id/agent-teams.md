@@ -7,7 +7,7 @@
 > Koordinasikan beberapa instance Claude Code yang bekerja bersama sebagai tim, dengan tugas bersama, pesan antar-agent, dan manajemen terpusat.
 
 <Warning>
-  Tim agent bersifat eksperimental dan dinonaktifkan secara default. Aktifkan dengan menambahkan `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` ke [settings.json](/id/settings) atau environment Anda. Tim agent memiliki [keterbatasan yang diketahui](#limitations) seputar resumption session, koordinasi tugas, dan perilaku shutdown.
+  Tim agent bersifat eksperimental dan dinonaktifkan secara default. Aktifkan dengan menambahkan `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` ke [settings.json](/id/settings) atau environment Anda. Tim agent memiliki [keterbatasan yang diketahui](#limitations) seputar session resumption, koordinasi tugas, dan perilaku shutdown.
 </Warning>
 
 Tim agent memungkinkan Anda mengoordinasikan beberapa instance Claude Code yang bekerja bersama. Satu session bertindak sebagai team lead, mengoordinasikan pekerjaan, menugaskan tugas, dan mensintesis hasil. Rekan tim bekerja secara independen, masing-masing dalam context window-nya sendiri, dan berkomunikasi langsung satu sama lain.
@@ -32,7 +32,7 @@ Tim agent paling efektif untuk tugas di mana eksplorasi paralel menambah nilai n
 * **Penelitian dan review**: beberapa rekan tim dapat menyelidiki aspek berbeda dari masalah secara bersamaan, kemudian berbagi dan menantang temuan satu sama lain
 * **Modul atau fitur baru**: rekan tim dapat masing-masing memiliki bagian terpisah tanpa saling mengganggu
 * **Debugging dengan hipotesis bersaing**: rekan tim menguji teori berbeda secara paralel dan berkumpul pada jawaban lebih cepat
-* **Koordinasi lintas-layer**: perubahan yang mencakup frontend, backend, dan test, masing-masing dimiliki oleh rekan tim berbeda
+* **Koordinasi lintas-layer**: perubahan yang mencakup frontend, backend, dan tests, masing-masing dimiliki oleh rekan tim berbeda
 
 Tim agent menambah overhead koordinasi dan menggunakan token secara signifikan lebih banyak daripada satu session. Mereka bekerja paling baik ketika rekan tim dapat beroperasi secara independen. Untuk tugas sekuensial, edit file yang sama, atau pekerjaan dengan banyak dependensi, satu session atau [subagents](/id/sub-agents) lebih efektif.
 
@@ -235,13 +235,19 @@ Tidak ada padanan tingkat proyek dari konfigurasi tim. File seperti `.claude/tea
 
 ### Gunakan subagent definitions untuk rekan tim
 
-Ketika menelurkan rekan tim, Anda dapat mereferensikan tipe [subagent](/id/sub-agents) dari [subagent scope](/id/sub-agents#choose-the-subagent-scope) apa pun: proyek, pengguna, plugin, atau CLI-defined. Rekan tim mewarisi system prompt, tools, dan model subagent itu. Ini memungkinkan Anda mendefinisikan peran sekali, seperti security-reviewer atau test-runner, dan menggunakannya kembali baik sebagai subagent yang didelegasikan maupun sebagai rekan tim agent team.
+Ketika menelurkan rekan tim, Anda dapat mereferensikan tipe [subagent](/id/sub-agents) dari [subagent scope](/id/sub-agents#choose-the-subagent-scope) apa pun: proyek, pengguna, plugin, atau CLI-defined. Ini memungkinkan Anda mendefinisikan peran sekali, seperti security-reviewer atau test-runner, dan menggunakannya kembali baik sebagai subagent yang didelegasikan maupun sebagai rekan tim agent team.
 
 Untuk menggunakan subagent definition, sebutkan berdasarkan nama ketika meminta Claude untuk menelurkan rekan tim:
 
 ```text theme={null}
 Hasilkan rekan tim menggunakan tipe agent security-reviewer untuk mengaudit modul auth.
 ```
+
+Rekan tim menghormati allowlist `tools` definisi itu dan `model`, dan body definisi ditambahkan ke system prompt rekan tim sebagai instruksi tambahan daripada menggantinya. Team coordination tools seperti `SendMessage` dan task management tools selalu tersedia untuk rekan tim bahkan ketika `tools` membatasi tools lain.
+
+<Note>
+  Field frontmatter `skills` dan `mcpServers` dalam subagent definition tidak diterapkan ketika definisi itu berjalan sebagai rekan tim. Rekan tim memuat skills dan MCP servers dari pengaturan proyek dan pengguna Anda, sama seperti session reguler.
+</Note>
 
 ### Izin
 
@@ -256,11 +262,9 @@ Setiap rekan tim memiliki context window-nya sendiri. Ketika dihasilkan, rekan t
 * **Pengiriman pesan otomatis**: ketika rekan tim mengirim pesan, mereka dikirimkan secara otomatis ke penerima. Lead tidak perlu polling untuk update.
 * **Notifikasi idle**: ketika rekan tim selesai dan berhenti, mereka secara otomatis memberi tahu lead.
 * **Daftar tugas bersama**: semua agent dapat melihat status tugas dan mengklaim pekerjaan yang tersedia.
+* **Pesan rekan tim**: kirim pesan ke satu rekan tim spesifik berdasarkan nama. Untuk menjangkau semua orang, kirim satu pesan per penerima.
 
-**Pesan rekan tim:**
-
-* **message**: kirim pesan ke satu rekan tim spesifik
-* **broadcast**: kirim ke semua rekan tim secara bersamaan. Gunakan dengan hemat, karena biaya skala dengan ukuran tim.
+Lead menugaskan setiap rekan tim nama ketika menelurkannya, dan rekan tim mana pun dapat mengirim pesan ke yang lain berdasarkan nama itu. Untuk mendapatkan nama yang dapat diprediksi yang dapat Anda referensikan dalam prompt kemudian, beri tahu lead apa yang harus dipanggil setiap rekan tim dalam instruksi spawn Anda.
 
 ### Penggunaan token
 

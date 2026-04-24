@@ -78,7 +78,7 @@ Contoh file pengaturan:
 
 Administrator enterprise dapat menggunakan `availableModels` dalam [pengaturan terkelola atau kebijakan](/id/settings#settings-files) untuk membatasi model mana yang dapat dipilih pengguna.
 
-Ketika `availableModels` diatur, pengguna tidak dapat beralih ke model yang tidak ada dalam daftar melalui `/model`, flag `--model`, alat Config, atau variabel lingkungan `ANTHROPIC_MODEL`.
+Ketika `availableModels` diatur, pengguna tidak dapat beralih ke model yang tidak ada dalam daftar melalui `/model`, flag `--model`, atau variabel lingkungan `ANTHROPIC_MODEL`.
 
 ```json theme={null}
 {
@@ -310,7 +310,7 @@ Akhiran `[1m]` menerapkan jendela konteks 1M ke semua penggunaan alias tersebut,
 
 Ketika Anda menetapkan model pada penyedia pihak ketiga, ID spesifik penyedia muncul apa adanya di pemilih `/model` dan Claude Code mungkin tidak mengenali fitur mana yang didukung model. Anda dapat mengganti nama tampilan dan mendeklarasikan kemampuan dengan variabel lingkungan pendamping untuk setiap model yang ditetapkan.
 
-Variabel ini hanya berlaku pada penyedia pihak ketiga seperti Bedrock, Vertex AI, dan Foundry. Mereka tidak berpengaruh saat menggunakan Anthropic API secara langsung.
+Variabel ini berlaku pada penyedia pihak ketiga seperti Bedrock, Vertex AI, dan Foundry. Variabel `_NAME` dan `_DESCRIPTION` juga berlaku ketika `ANTHROPIC_BASE_URL` menunjuk ke [gateway LLM](/id/llm-gateway). Mereka tidak berpengaruh saat menghubungkan langsung ke `api.anthropic.com`.
 
 | Variabel lingkungan                                   | Deskripsi                                                                                                                 |
 | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
@@ -325,7 +325,7 @@ Claude Code mengaktifkan fitur seperti [tingkat usaha](#adjust-effort-level) dan
 | Nilai kemampuan        | Mengaktifkan                                                                                  |
 | ---------------------- | --------------------------------------------------------------------------------------------- |
 | `effort`               | [Tingkat usaha](#adjust-effort-level) dan perintah `/effort`                                  |
-| `xhigh_effort`         | Tingkat usaha `xhigh`                                                                         |
+| `xhigh_effort`         | {/* min-version: 2.1.111 */}Tingkat usaha `xhigh`                                             |
 | `max_effort`           | Tingkat usaha `max`                                                                           |
 | `thinking`             | [Extended thinking](/id/common-workflows#use-extended-thinking-thinking-mode)                 |
 | `adaptive_thinking`    | Penalaran adaptif yang secara dinamis mengalokasikan pemikiran berdasarkan kompleksitas tugas |

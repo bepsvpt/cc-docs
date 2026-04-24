@@ -235,6 +235,8 @@ Impostate `DISABLE_AUTOUPDATER` a `"1"` nella chiave `env` del vostro file [`set
 }
 ```
 
+`DISABLE_AUTOUPDATER` arresta solo il controllo in background; `claude update` e `claude install` continuano a funzionare. Per bloccare tutti i percorsi di aggiornamento, inclusi gli aggiornamenti manuali, impostate invece [`DISABLE_UPDATES`](/it/env-vars). Utilizzate questo quando distribuite Claude Code attraverso i vostri canali e avete bisogno che gli utenti rimangano sulla versione che fornite.
+
 ### Aggiornare manualmente
 
 Per applicare un aggiornamento immediatamente senza attendere il prossimo controllo in background, eseguite:

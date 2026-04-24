@@ -433,6 +433,7 @@ Hook 이벤트는 Claude Code의 라이프사이클의 특정 지점에서 발�
 | `PermissionDenied`    | When a tool call is denied by the auto mode classifier. Return `{retry: true}` to tell the model it may retry the denied tool call                     |
 | `PostToolUse`         | After a tool call succeeds                                                                                                                             |
 | `PostToolUseFailure`  | After a tool call fails                                                                                                                                |
+| `PostToolBatch`       | After a full batch of parallel tool calls resolves, before the next model call                                                                         |
 | `Notification`        | When Claude Code sends a notification                                                                                                                  |
 | `SubagentStart`       | When a subagent is spawned                                                                                                                             |
 | `SubagentStop`        | When a subagent finishes                                                                                                                               |
@@ -455,9 +456,10 @@ Hook 이벤트는 Claude Code의 라이프사이클의 특정 지점에서 발�
 
 여러 hooks가 일치하면 각각 자신의 결과를 반환합니다. 결정의 경우 Claude Code는 가장 제한적인 답변을 선택합니다. `PreToolUse` hook이 `deny`를 반환하면 다른 것이 반환하는 것과 관계없이 도구 호출이 취소됩니다. 하나의 hook이 `ask`를 반환하면 나머지가 `allow`를 반환하더라도 권한 프롬프트가 강제됩니다. `additionalContext`의 텍스트는 모든 hook에서 유지되고 Claude와 함께 전달됩니다.
 
-각 hook에는 실행 방식을 결정하는 `type`이 있습니다. 대부분의 hooks는 `"type": "command"`를 사용하여 셸 명령을 실행합니다. 세 가지 다른 유형을 사용할 수 있습니다:
+각 hook에는 실행 방식을 결정하는 `type`이 있습니다. 대부분의 hooks는 `"type": "command"`를 사용하여 셸 명령을 실행합니다. 네 가지 다른 유형을 사용할 수 있습니다:
 
 * `"type": "http"`: 이벤트 데이터를 URL에 POST합니다. [HTTP hooks](#http-hooks)를 참조하세요.
+* `"type": "mcp_tool"`: 이미 연결된 MCP 서버에서 도구를 호출합니다. [MCP tool hooks](/ko/hooks#mcp-tool-hook-fields)를 참조하세요.
 * `"type": "prompt"`: 단일 턴 LLM 평가. [프롬프트 기반 hooks](#prompt-based-hooks)를 참조하세요.
 * `"type": "agent"`: 도구 액세스를 통한 다중 턴 검증. 에이전트 hooks는 실험적이며 변경될 수 있습니다. [에이전트 기반 hooks](#agent-based-hooks)를 참조하세요.
 
@@ -493,16 +495,16 @@ INPUT=$(cat)
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
 
 if echo "$COMMAND" | grep -q "drop table"; then
-  echo "Blocked: dropping tables is not allowed" >&2  # stderr는 Claude의 피드백이 됩니다
-  exit 2 # exit 2 = 작업 차단
+  echo "Blocked: dropping tables is not allowed" >&2  // stderr는 Claude의 피드백이 됩니다
+  exit 2 // exit 2 = 작업 차단
 fi
 
-exit 0  # exit 0 = 진행 허용
+exit 0  // exit 0 = 진행 허용
 ```
 
 종료 코드는 다음에 일어날 일을 결정합니다:
 
-* **Exit 0**: 작업이 진행됩니다. `UserPromptSubmit` 및 `SessionStart` hooks의 경우 stdout에 쓰는 모든 것이 Claude의 컨텍스트에 추가됩니다.
+* **Exit 0**: 작업이 진행됩니다. `UserPromptSubmit`, `UserPromptExpansion` 및 `SessionStart` hooks의 경우 stdout에 쓰는 모든 것이 Claude의 컨텍스트에 추가됩니다.
 * **Exit 2**: 작업이 차단됩니다. stderr에 이유를 쓰면 Claude가 피드백으로 받아 조정할 수 있습니다.
 * **다른 종료 코드**: 작업이 진행됩니다. 트랜스크립트는 `<hook name> hook error` 공지를 표시한 후 stderr의 첫 번째 줄을 표시합니다. 전체 stderr는 [디버그 로그](/ko/hooks#debug-hooks)로 이동합니다.
 
@@ -563,22 +565,23 @@ Matcher가 없으면 hook은 이벤트의 모든 발생에서 발생합니다. M
 
 각 이벤트 유형은 특정 필드에서 일치합니다:
 
-| 이벤트                                                                                                                          | Matcher가 필터링하는 것                                        | 예제 matcher 값                                                                                                              |
-| :--------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                   | 도구 이름                                                   | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
-| `SessionStart`                                                                                                               | 세션이 시작된 방식                                              | `startup`, `resume`, `clear`, `compact`                                                                                   |
-| `SessionEnd`                                                                                                                 | 세션이 종료된 이유                                              | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                                               | 알림 유형                                                   | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                                              | 에이전트 유형                                                 | `Bash`, `Explore`, `Plan` 또는 사용자 정의 에이전트 이름                                                                               |
-| `PreCompact`, `PostCompact`                                                                                                  | 압축을 트리거한 것                                              | `manual`, `auto`                                                                                                          |
-| `SubagentStop`                                                                                                               | 에이전트 유형                                                 | `SubagentStart`와 동일한 값                                                                                                    |
-| `ConfigChange`                                                                                                               | 구성 소스                                                   | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
-| `StopFailure`                                                                                                                | 오류 유형                                                   | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                                                         | 로드 이유                                                   | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
-| `Elicitation`                                                                                                                | MCP 서버 이름                                               | 구성된 MCP 서버 이름                                                                                                             |
-| `ElicitationResult`                                                                                                          | MCP 서버 이름                                               | `Elicitation`과 동일한 값                                                                                                      |
-| `FileChanged`                                                                                                                | 감시할 리터럴 파일 이름 ([FileChanged](/ko/hooks#filechanged) 참조) | `.envrc\|.env`                                                                                                            |
-| `UserPromptSubmit`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged` | matcher 지원 없음                                           | 모든 발생에서 항상 발생                                                                                                             |
+| 이벤트                                                                                                                                           | Matcher가 필터링하는 것                                        | 예제 matcher 값                                                                                                              |
+| :-------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                                    | 도구 이름                                                   | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
+| `SessionStart`                                                                                                                                | 세션이 시작된 방식                                              | `startup`, `resume`, `clear`, `compact`                                                                                   |
+| `SessionEnd`                                                                                                                                  | 세션이 종료된 이유                                              | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
+| `Notification`                                                                                                                                | 알림 유형                                                   | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
+| `SubagentStart`                                                                                                                               | 에이전트 유형                                                 | `Bash`, `Explore`, `Plan` 또는 사용자 정의 에이전트 이름                                                                               |
+| `PreCompact`, `PostCompact`                                                                                                                   | 압축을 트리거한 것                                              | `manual`, `auto`                                                                                                          |
+| `SubagentStop`                                                                                                                                | 에이전트 유형                                                 | `SubagentStart`와 동일한 값                                                                                                    |
+| `ConfigChange`                                                                                                                                | 구성 소스                                                   | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
+| `StopFailure`                                                                                                                                 | 오류 유형                                                   | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                                                          | 로드 이유                                                   | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
+| `Elicitation`                                                                                                                                 | MCP 서버 이름                                               | 구성된 MCP 서버 이름                                                                                                             |
+| `ElicitationResult`                                                                                                                           | MCP 서버 이름                                               | `Elicitation`과 동일한 값                                                                                                      |
+| `FileChanged`                                                                                                                                 | 감시할 리터럴 파일 이름 ([FileChanged](/ko/hooks#filechanged) 참조) | `.envrc\|.env`                                                                                                            |
+| `UserPromptExpansion`                                                                                                                         | 명령 이름                                                   | skill 또는 명령 이름                                                                                                            |
+| `UserPromptSubmit`, `PostToolBatch`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged` | matcher 지원 없음                                           | 모든 발생에서 항상 발생                                                                                                             |
 
 다양한 이벤트 유형에서 matchers를 보여주는 몇 가지 추가 예제:
 
@@ -608,7 +611,7 @@ Matcher가 없으면 hook은 이벤트의 모든 발생에서 발생합니다. M
   <Tab title="MCP 도구 일치">
     MCP 도구는 기본 제공 도구와 다른 명명 규칙을 사용합니다: `mcp__<server>__<tool>`. 여기서 `<server>`는 MCP 서버 이름이고 `<tool>`은 제공하는 도구입니다. 예를 들어 `mcp__github__search_repositories` 또는 `mcp__filesystem__read_file`. 정규식 matcher를 사용하여 특정 서버의 모든 도구를 대상으로 하거나 `mcp__.*__write.*`와 같은 패턴으로 서버 전체에서 일치합니다. 참조의 [MCP 도구 일치](/ko/hooks#match-mcp-tools)를 참조하여 전체 예제 목록을 확인하세요.
 
-    아래 명령은 hook의 JSON 입력에서 `jq`를 사용하여 도구 이름을 추출하고 stderr에 씁니다. stderr는 [디버그 로그](/ko/hooks#debug-hooks)로 이동합니다:
+    아래 명령은 hook의 JSON 입력에서 `jq`를 사용하여 도구 이름을 추출하고 stderr에 씁니다. stderr는 stdout을 깨끗하게 유지하고 메시지를 [디버그 로그](/ko/hooks#debug-hooks)로 보냅니다:
 
     ```json theme={null}
     {
@@ -685,7 +688,7 @@ Matcher가 없으면 hook은 이벤트의 모든 발생에서 발생합니다. M
 
 Hook 프로세스는 Bash 명령의 서브명령이 `git *`과 일치할 때만 생성되거나 명령이 서브명령으로 구문 분석하기에 너무 복잡할 때 생성됩니다. `npm test && git push`와 같은 복합 명령의 경우 Claude Code는 각 서브명령을 평가하고 `git push`가 일치하기 때문에 hook을 발생시킵니다. `if` 필드는 권한 규칙과 동일한 패턴을 허용합니다: `"Bash(git *)"`, `"Edit(*.ts)"` 등. 여러 도구 이름을 일치시키려면 각각 자신의 `if` 값을 가진 별도의 핸들러를 사용하거나 파이프 교대가 지원되는 `matcher` 수준에서 일치합니다.
 
-`if`는 도구 이벤트에서만 작동합니다: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`. 다른 이벤트에 추가하면 hook이 실행되지 않습니다.
+`if`는 도구 이벤트에서만 작동합니다: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest` 및 `PermissionDenied`. 다른 이벤트에 추가하면 hook이 실행되지 않습니다.
 
 ### Hook 위치 구성
 

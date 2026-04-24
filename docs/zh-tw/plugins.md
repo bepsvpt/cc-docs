@@ -83,12 +83,12 @@ Claude Code 支援兩種方式來新增自訂 skills、agents 和 hooks：
     }
     ```
 
-    | 欄位            | 用途                                                           |
-    | :------------ | :----------------------------------------------------------- |
-    | `name`        | 唯一識別碼和 skill 命名空間。Skills 以此為前綴（例如 `/my-first-plugin:hello`）。 |
-    | `description` | 在瀏覽或安裝 plugins 時在 plugin 管理器中顯示。                             |
-    | `version`     | 使用[語義版本控制](/zh-TW/plugins-reference#version-management)追蹤發佈。 |
-    | `author`      | 選用。有助於歸屬。                                                    |
+    | 欄位            | 用途                                                                                                                                         |
+    | :------------ | :----------------------------------------------------------------------------------------------------------------------------------------- |
+    | `name`        | 唯一識別碼和 skill 命名空間。Skills 以此為前綴（例如 `/my-first-plugin:hello`）。                                                                               |
+    | `description` | 在瀏覽或安裝 plugins 時在 plugin 管理器中顯示。                                                                                                           |
+    | `version`     | 選用。如果設定，使用者只會在您更新此欄位時收到更新。如果省略且您的 plugin 透過 git 分發，則使用 commit SHA，每個 commit 都算作新版本。請參閱[版本管理](/zh-TW/plugins-reference#version-management)。 |
+    | `author`      | 選用。有助於歸屬。                                                                                                                                  |
 
     如需 `homepage`、`repository` 和 `license` 等其他欄位，請參閱[完整清單架構](/zh-TW/plugins-reference#plugin-manifest-schema)。
   </Step>
@@ -173,7 +173,7 @@ Claude Code 支援兩種方式來新增自訂 skills、agents 和 hooks：
 
 ## Plugin 結構概述
 
-您已建立了具有 skill 的 plugin，但 plugins 可以包含更多內容：自訂 agents、hooks、MCP servers 和 LSP servers。
+您已建立了具有 skill 的 plugin，但 plugins 可以包含更多內容：自訂 agents、hooks、MCP servers、LSP servers 和背景監視器。
 
 <Warning>
   **常見錯誤**：不要將 `commands/`、`agents/`、`skills/` 或 `hooks/` 放在 `.claude-plugin/` 目錄內。只有 `plugin.json` 應該在 `.claude-plugin/` 內。所有其他目錄必須位於 plugin 根目錄級別。
@@ -328,7 +328,7 @@ claude --plugin-dir ./my-plugin
 當您的 plugin 準備好共享時：
 
 1. **新增文件**：包含 `README.md`，其中包含安裝和使用說明
-2. **版本化您的 plugin**：在您的 `plugin.json` 中使用[語義版本控制](/zh-TW/plugins-reference#version-management)
+2. **選擇版本控制策略**：決定是否在 `plugin.json` 中設定明確的 `version` 或依賴 git commit SHA。請參閱[版本管理](/zh-TW/plugins-reference#version-management)
 3. **建立或使用市場**：透過 [plugin 市場](/zh-TW/plugin-marketplaces) 進行分發以進行安裝
 4. **與他人測試**：在更廣泛的分發之前讓團隊成員測試 plugin
 

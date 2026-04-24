@@ -21,8 +21,8 @@ Agent teams 讓您協調多個 Claude Code 實例一起工作。一個工作階�
 本頁涵蓋：
 
 * [何時使用 agent teams](#when-to-use-agent-teams)，包括最佳使用案例以及與 subagents 的比較
-* [啟動團隊](#start-your-first-agent-team)
-* [控制隊友](#control-your-agent-team)，包括顯示模式、任務分配和委派
+* [啟動您的第一個 agent team](#start-your-first-agent-team)
+* [控制您的 agent team](#control-your-agent-team)，包括顯示模式、任務分配和委派
 * [並行工作的最佳實踐](#best-practices)
 
 ## 何時使用 agent teams
@@ -235,13 +235,19 @@ Claude Code 在您建立團隊時自動生成這兩者，並在隊友加入、�
 
 ### 為隊友使用 subagent 定義
 
-生成隊友時，您可以參考來自任何 [subagent 範圍](/zh-TW/sub-agents#choose-the-subagent-scope)的 [subagent](/zh-TW/sub-agents) 類型：專案、使用者、plugin 或 CLI 定義。隊友繼承該 subagent 的系統提示、工具和模型。這讓您定義一個角色一次，例如安全審查者或測試執行者，並將其同時重複使用為委派的 subagent 和 agent team 隊友。
+生成隊友時，您可以參考來自任何 [subagent 範圍](/zh-TW/sub-agents#choose-the-subagent-scope)的 [subagent](/zh-TW/sub-agents) 類型：專案、使用者、plugin 或 CLI 定義。這讓您定義一個角色一次，例如安全審查者或測試執行者，並將其同時重複使用為委派的 subagent 和 agent team 隊友。
 
 若要使用 subagent 定義，在要求 Claude 生成隊友時按名稱提及它：
 
 ```text theme={null}
 Spawn a teammate using the security-reviewer agent type to audit the auth module.
 ```
+
+隊友遵守該定義的 `tools` 允許清單和 `model`，並且定義的主體會附加到隊友的系統提示中作為額外指示，而不是替換它。Team coordination tools 例如 `SendMessage` 和任務管理工具始終對隊友可用，即使 `tools` 限制其他工具。
+
+<Note>
+  Subagent 定義中的 `skills` 和 `mcpServers` frontmatter 欄位在該定義作為隊友運行時不適用。隊友從您的專案和使用者設定中載入 skills 和 MCP servers，與常規工作階段相同。
+</Note>
 
 ### 權限
 
@@ -256,11 +262,9 @@ Spawn a teammate using the security-reviewer agent type to audit the auth module
 * **自動訊息傳遞**：當隊友發送訊息時，它們會自動傳遞給收件人。主管不需要輪詢更新。
 * **閒置通知**：當隊友完成並停止時，他們會自動通知主管。
 * **共享任務列表**：所有代理都可以看到任務狀態並認領可用工作。
+* **隊友訊息傳遞**：按名稱向一個特定隊友發送訊息。若要聯繫所有人，請為每個收件人發送一條訊息。
 
-**隊友訊息傳遞：**
-
-* **message**：向一個特定隊友發送訊息
-* **broadcast**：同時發送給所有隊友。謹慎使用，因為成本隨團隊規模而增加。
+主管在生成隊友時為其分配名稱，任何隊友都可以按該名稱向任何其他隊友傳送訊息。若要獲得可在稍後提示中參考的可預測名稱，請在您的生成指示中告訴主管如何稱呼每個隊友。
 
 ### Token 使用
 

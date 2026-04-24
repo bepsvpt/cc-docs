@@ -30,6 +30,7 @@ Claude Code에는 **Explore**, **Plan**, **general-purpose**와 같은 여러 �
 * [자신의 subagent를 만드는 방법](#quickstart-create-your-first-subagent)
 * [전체 구성 옵션](#configure-subagents)
 * [subagent 작업 패턴](#work-with-subagents)
+* [포크된 subagent](#fork-the-current-conversation)
 * [예제 subagent](#example-subagents)
 
 ## 내장 subagent
@@ -654,6 +655,8 @@ Claude는 작업을 기반으로 subagent를 foreground 또는 background에서 
 
 모든 background 작업 기능을 비활성화하려면 `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` 환경 변수를 `1`로 설정합니다. [환경 변수](/ko/env-vars)를 참조하세요.
 
+[fork mode](#fork-the-current-conversation)가 활성화되면 모든 subagent 생성이 `background` 필드와 관계없이 background에서 실행됩니다. Fork는 여전히 터미널에서 발생하는 권한 프롬프트를 표시하는 대신 사전 승인합니다. 명명된 subagent는 위의 사전 승인 흐름을 따릅니다.
+
 ### 일반적인 패턴
 
 #### 대량 작업 격리
@@ -757,6 +760,59 @@ Subagent는 주 대화와 동일한 논리를 사용하여 자동 압축을 지�
 ```
 
 `preTokens` 값은 압축이 발생하기 전에 사용된 토큰 수를 보여줍니다.
+
+## 현재 대화 포크
+
+<Note>
+  포크된 subagent는 실험적이며 Claude Code v2.1.117 이상이 필요합니다. 동작 및 구성은 향후 릴리스에서 변경될 수 있습니다. [`CLAUDE_CODE_FORK_SUBAGENT`](/ko/env-vars) 환경 변수를 `1`로 설정하여 활성화합니다.
+</Note>
+
+포크는 새로 시작하는 대신 지금까지의 전체 대화를 상속하는 subagent입니다. 이렇게 하면 subagent가 일반적으로 제공하는 입력 격리가 떨어집니다: 포크는 주 세션과 동일한 시스템 프롬프트, 도구, 모델 및 메시지 기록을 보므로 상황을 다시 설명할 필요 없이 부작업을 전달할 수 있습니다. 포크의 자체 도구 호출은 여전히 대화에서 벗어나고 최종 결과만 돌아오므로 주 컨텍스트 윈도우가 깨끗하게 유지됩니다. 명명된 subagent가 유용하기에는 너무 많은 배경이 필요하거나 동일한 시작점에서 여러 접근 방식을 병렬로 시도하려는 경우 포크를 사용합니다.
+
+포크 모드를 활성화하면 Claude Code가 세 가지 방식으로 변경됩니다:
+
+* Claude는 [general-purpose](#built-in-subagents) subagent를 사용할 때마다 포크를 생성합니다. Explore와 같은 명명된 subagent는 이전과 같이 생성됩니다.
+* 모든 subagent 생성이 [background](#run-subagents-in-foreground-or-background)에서 실행됩니다. 포크든 명명된 subagent든 상관없습니다. 생성을 동기식으로 유지하려면 `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`를 `1`로 설정합니다.
+* `/fork` 명령은 [`/branch`](/ko/commands)의 별칭으로 작동하는 대신 포크를 생성합니다.
+
+`/fork` 다음에 지시문을 사용하여 포크를 직접 시작할 수 있습니다. Claude Code는 지시문의 첫 단어에서 포크의 이름을 지정합니다. 다음 예제는 주 세션에서 구현을 계속하는 동안 포크가 테스트 케이스를 작성하도록 포크합니다:
+
+```text theme={null}
+/fork draft unit tests for the parser changes so far
+```
+
+포크는 프롬프트 입력 아래의 패널에 나타나고 계속 작업하는 동안 background에서 실행됩니다. 완료되면 결과가 주 대화의 메시지로 도착합니다. 다음 섹션에서는 포크가 실행되는 동안 포크를 관찰하고 조종하기 위한 패널 컨트롤을 다룹니다.
+
+### 실행 중인 포크 관찰 및 조종
+
+실행 중인 포크는 프롬프트 입력 아래의 패널에 나타나며, 주 세션에 대한 행과 각 포크에 대한 행이 있습니다. 이 키를 사용하여 패널과 상호 작용합니다:
+
+| 키         | 작업                           |
+| :-------- | :--------------------------- |
+| `↑` / `↓` | 행 간 이동                       |
+| `Enter`   | 선택한 포크의 트랜스크립트를 열고 후속 메시지 전송 |
+| `x`       | 완료된 포크를 닫거나 실행 중인 포크 중지      |
+| `Esc`     | 프롬프트 입력으로 포커스 반환             |
+
+### 포크와 명명된 subagent의 차이점
+
+포크는 생성 시점의 주 세션의 모든 것을 상속합니다. 명명된 subagent는 자신의 정의에서 시작합니다.
+
+|               | 포크             | 명명된 subagent                                                        |
+| :------------ | :------------- | :------------------------------------------------------------------ |
+| 컨텍스트          | 전체 대화 기록       | 전달하는 프롬프트를 사용한 새로운 컨텍스트                                             |
+| 시스템 프롬프트 및 도구 | 주 세션과 동일       | [정의 파일](#write-subagent-files)에서                                    |
+| 모델            | 주 세션과 동일       | Subagent의 `model` 필드에서                                              |
+| 권한            | 프롬프트가 터미널에 표시됨 | 시작 전 [사전 승인](#run-subagents-in-foreground-or-background), 그 후 자동 거부 |
+| 프롬프트 캐시       | 주 세션과 공유       | 별도 캐시                                                               |
+
+포크의 시스템 프롬프트 및 도구 정의가 부모와 동일하기 때문에 첫 번째 요청은 부모의 프롬프트 캐시를 재사용합니다. 이렇게 하면 동일한 컨텍스트가 필요한 작업에 대해 새로운 subagent를 생성하는 것보다 포크가 더 저렴합니다.
+
+Claude가 Agent 도구를 통해 포크를 생성할 때 `isolation: "worktree"`를 전달하여 포크의 파일 편집이 체크아웃 대신 별도의 git worktree에 기록되도록 할 수 있습니다.
+
+### 제한 사항
+
+포크 모드는 대화형 세션에서만 작동합니다. [비대화형 모드](/ko/headless)에서는 비활성화되며, 여기에는 Agent SDK가 포함됩니다. 포크는 추가 포크를 생성할 수 없습니다.
 
 ## 예제 subagent
 
