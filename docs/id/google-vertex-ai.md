@@ -295,6 +295,8 @@ Sebagian besar versi model memiliki variabel `VERTEX_REGION_CLAUDE_*` yang sesua
 
 [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) diaktifkan secara otomatis. Untuk menonaktifkannya, atur `DISABLE_PROMPT_CACHING=1`. Untuk meminta TTL cache 1 jam alih-alih default 5 menit, atur `ENABLE_PROMPT_CACHING_1H=1`; penulisan cache dengan TTL 1 jam ditagih dengan tarif yang lebih tinggi. Untuk batas laju yang lebih tinggi, hubungi dukungan Google Cloud. Saat menggunakan Vertex AI, perintah `/login` dan `/logout` dinonaktifkan karena autentikasi ditangani melalui kredensial Google Cloud.
 
+[Pencarian alat MCP](/id/mcp#scale-with-mcp-tool-search) dinonaktifkan secara default di Vertex AI karena titik akhir tidak menerima header beta yang diperlukan. Semua definisi alat MCP dimuat di muka sebagai gantinya. Untuk memilih, atur `ENABLE_TOOL_SEARCH=true`.
+
 ### 5. Pin versi model
 
 <Warning>

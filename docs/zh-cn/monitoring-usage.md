@@ -516,12 +516,14 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * `event.timestamp`：ISO 8601 时间戳
 * `event.sequence`：单调递增的计数器，用于在会话内排序事件
 * `tool_name`：工具的名称
+* `tool_use_id`：此工具调用的唯一标识符。与传递给 hooks 的 `tool_use_id` 匹配，允许在 OTel 事件和 hook 捕获的数据之间进行关联。
 * `success`：`"true"` 或 `"false"`
 * `duration_ms`：执行时间（毫秒）
 * `error_type`：工具失败时的错误类别字符串，例如 `"Error:ENOENT"` 或 `"ShellError"`
 * `error`（当 `OTEL_LOG_TOOL_DETAILS=1` 时）：工具失败时的完整错误消息
 * `decision_type`：`"accept"` 或 `"reject"`
 * `decision_source`：决策来源 - `"config"`、`"hook"`、`"user_permanent"`、`"user_temporary"`、`"user_abort"` 或 `"user_reject"`
+* `tool_input_size_bytes`：JSON 序列化工具输入的大小（字节）
 * `tool_result_size_bytes`：工具结果的大小（字节）
 * `mcp_server_scope`：MCP 服务器范围标识符（用于 MCP 工具）
 * `tool_parameters`（当 `OTEL_LOG_TOOL_DETAILS=1` 时）：包含工具特定参数的 JSON 字符串：
@@ -629,6 +631,7 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * `event.timestamp`：ISO 8601 时间戳
 * `event.sequence`：单调递增的计数器，用于在会话内排序事件
 * `tool_name`：工具的名称（例如，"Read"、"Edit"、"Write"、"NotebookEdit"）
+* `tool_use_id`：此工具调用的唯一标识符。与传递给 hooks 的 `tool_use_id` 匹配，允许在 OTel 事件和 hook 捕获的数据之间进行关联。
 * `decision`：`"accept"` 或 `"reject"`
 * `source`：决策来源 - `"config"`、`"hook"`、`"user_permanent"`、`"user_temporary"`、`"user_abort"` 或 `"user_reject"`
 

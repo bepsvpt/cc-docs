@@ -516,12 +516,14 @@ Registrato quando uno strumento completa l'esecuzione.
 * `event.timestamp`: Timestamp ISO 8601
 * `event.sequence`: Contatore monotonicamente crescente per ordinare gli eventi all'interno di una sessione
 * `tool_name`: Nome dello strumento
+* `tool_use_id`: Identificatore univoco per questa invocazione dello strumento. Corrisponde al `tool_use_id` passato agli hooks, consentendo la correlazione tra gli eventi OTel e i dati acquisiti dagli hooks.
 * `success`: `"true"` o `"false"`
 * `duration_ms`: Tempo di esecuzione in millisecondi
 * `error_type`: Stringa di categoria di errore quando lo strumento non è riuscito, come `"Error:ENOENT"` o `"ShellError"`
 * `error` (quando `OTEL_LOG_TOOL_DETAILS=1`): Messaggio di errore completo quando lo strumento non è riuscito
 * `decision_type`: `"accept"` o `"reject"`
 * `decision_source`: Fonte della decisione - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, o `"user_reject"`
+* `tool_input_size_bytes`: Dimensione dell'input dello strumento serializzato in JSON in byte
 * `tool_result_size_bytes`: Dimensione del risultato dello strumento in byte
 * `mcp_server_scope`: Identificatore dell'ambito del server MCP (per gli strumenti MCP)
 * `tool_parameters` (quando `OTEL_LOG_TOOL_DETAILS=1`): Stringa JSON contenente parametri specifici dello strumento:
@@ -629,6 +631,7 @@ Registrato quando viene presa una decisione di autorizzazione dello strumento (a
 * `event.timestamp`: Timestamp ISO 8601
 * `event.sequence`: Contatore monotonicamente crescente per ordinare gli eventi all'interno di una sessione
 * `tool_name`: Nome dello strumento (ad esempio, "Read", "Edit", "Write", "NotebookEdit")
+* `tool_use_id`: Identificatore univoco per questa invocazione dello strumento. Corrisponde al `tool_use_id` passato agli hooks, consentendo la correlazione tra gli eventi OTel e i dati acquisiti dagli hooks.
 * `decision`: `"accept"` o `"reject"`
 * `source`: Fonte della decisione - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, o `"user_reject"`
 

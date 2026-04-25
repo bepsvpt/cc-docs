@@ -516,12 +516,14 @@ Enregistré lorsqu'un outil termine son exécution.
 * `event.timestamp` : Horodatage ISO 8601
 * `event.sequence` : Compteur monotone croissant pour ordonner les événements au sein d'une session
 * `tool_name` : Nom de l'outil
+* `tool_use_id` : Identifiant unique pour cette invocation d'outil. Correspond au `tool_use_id` passé aux hooks, permettant la corrélation entre les événements OTel et les données capturées par les hooks.
 * `success` : `"true"` ou `"false"`
 * `duration_ms` : Temps d'exécution en millisecondes
 * `error_type` : Chaîne de catégorie d'erreur lorsque l'outil a échoué, telle que `"Error:ENOENT"` ou `"ShellError"`
 * `error` (lorsque `OTEL_LOG_TOOL_DETAILS=1`) : Message d'erreur complet lorsque l'outil a échoué
 * `decision_type` : Soit `"accept"` soit `"reject"`
 * `decision_source` : Source de la décision - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, ou `"user_reject"`
+* `tool_input_size_bytes` : Taille de l'entrée d'outil sérialisée en JSON en octets
 * `tool_result_size_bytes` : Taille du résultat de l'outil en octets
 * `mcp_server_scope` : Identifiant de portée du serveur MCP (pour les outils MCP)
 * `tool_parameters` (lorsque `OTEL_LOG_TOOL_DETAILS=1`) : Chaîne JSON contenant les paramètres spécifiques à l'outil :
@@ -629,6 +631,7 @@ Enregistré lorsqu'une décision de permission d'outil est prise (accepter/rejet
 * `event.timestamp` : Horodatage ISO 8601
 * `event.sequence` : Compteur monotone croissant pour ordonner les événements au sein d'une session
 * `tool_name` : Nom de l'outil (par exemple, « Read », « Edit », « Write », « NotebookEdit »)
+* `tool_use_id` : Identifiant unique pour cette invocation d'outil. Correspond au `tool_use_id` passé aux hooks, permettant la corrélation entre les événements OTel et les données capturées par les hooks.
 * `decision` : Soit `"accept"` soit `"reject"`
 * `source` : Source de la décision - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, ou `"user_reject"`
 

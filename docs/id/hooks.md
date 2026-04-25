@@ -1255,9 +1255,14 @@ Hooks `PostToolUse` dijalankan setelah tool sudah dijalankan dengan sukses. Inpu
     "filePath": "/path/to/file.txt",
     "success": true
   },
-  "tool_use_id": "toolu_01ABC123..."
+  "tool_use_id": "toolu_01ABC123...",
+  "duration_ms": 12
 }
 ```
+
+| Bidang        | Deskripsi                                                                                                                 |
+| :------------ | :------------------------------------------------------------------------------------------------------------------------ |
+| `duration_ms` | Opsional. Waktu eksekusi tool dalam milidetik. Mengecualikan waktu yang dihabiskan dalam prompt izin dan PreToolUse hooks |
 
 #### Kontrol keputusan PostToolUse
 
@@ -1305,14 +1310,16 @@ PostToolUseFailure hooks menerima bidang `tool_name` dan `tool_input` yang sama 
   },
   "tool_use_id": "toolu_01ABC123...",
   "error": "Command exited with non-zero status code 1",
-  "is_interrupt": false
+  "is_interrupt": false,
+  "duration_ms": 4187
 }
 ```
 
-| Bidang         | Deskripsi                                                                        |
-| :------------- | :------------------------------------------------------------------------------- |
-| `error`        | String menjelaskan apa yang salah                                                |
-| `is_interrupt` | Boolean opsional menunjukkan apakah kegagalan disebabkan oleh interupsi pengguna |
+| Bidang         | Deskripsi                                                                                                                 |
+| :------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `error`        | String menjelaskan apa yang salah                                                                                         |
+| `is_interrupt` | Boolean opsional menunjukkan apakah kegagalan disebabkan oleh interupsi pengguna                                          |
+| `duration_ms`  | Opsional. Waktu eksekusi tool dalam milidetik. Mengecualikan waktu yang dihabiskan dalam prompt izin dan PreToolUse hooks |
 
 #### Kontrol keputusan PostToolUseFailure
 

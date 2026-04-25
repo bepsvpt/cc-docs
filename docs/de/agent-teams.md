@@ -101,7 +101,7 @@ Agent-Teams unterstützen zwei Anzeigemodi:
   `tmux` hat bekannte Einschränkungen auf bestimmten Betriebssystemen und funktioniert traditionell am besten auf macOS. Die Verwendung von `tmux -CC` in iTerm2 ist der empfohlene Einstiegspunkt in `tmux`.
 </Note>
 
-Der Standard ist `"auto"`, der Split Panes verwendet, wenn Sie bereits in einer tmux-Sitzung ausgeführt werden, und ansonsten In-Process. Die Einstellung `"tmux"` aktiviert den Split-Pane-Modus und erkennt automatisch, ob tmux oder iTerm2 basierend auf Ihrem Terminal verwendet werden soll. Um zu überschreiben, setzen Sie `teammateMode` in Ihrer [globalen Konfiguration](/de/settings#global-config-settings) unter `~/.claude.json`:
+Der Standard ist `"auto"`, der Split Panes verwendet, wenn Sie bereits in einer tmux-Sitzung ausgeführt werden, und ansonsten In-Process. Die Einstellung `"tmux"` aktiviert den Split-Pane-Modus und erkennt automatisch, ob tmux oder iTerm2 basierend auf Ihrem Terminal verwendet werden soll. Um zu überschreiben, setzen Sie [`teammateMode`](/de/settings#available-settings) in `~/.claude/settings.json`:
 
 ```json theme={null}
 {
@@ -184,9 +184,9 @@ Dies entfernt die gemeinsamen Teamressourcen. Wenn der Lead die Bereinigung ausf
   Verwenden Sie immer den Lead zum Bereinigen. Teammates sollten keine Bereinigung ausführen, da ihr Teamkontext möglicherweise nicht korrekt aufgelöst wird, was möglicherweise Ressourcen in einem inkonsistenten Zustand hinterlässt.
 </Warning>
 
-### Erzwingen Sie Qualitätsgates mit hooks
+### Erzwingen Sie Qualitätsgates mit Hooks
 
-Verwenden Sie [hooks](/de/hooks), um Regeln durchzusetzen, wenn Teammates ihre Arbeit abschließen oder Aufgaben erstellt oder abgeschlossen werden:
+Verwenden Sie [Hooks](/de/hooks), um Regeln durchzusetzen, wenn Teammates ihre Arbeit abschließen oder Aufgaben erstellt oder abgeschlossen werden:
 
 * [`TeammateIdle`](/de/hooks#teammateidle): wird ausgeführt, wenn ein Teammate im Begriff ist, untätig zu werden. Beenden Sie mit Code 2, um Feedback zu senden und den Teammate weiterarbeiten zu lassen.
 * [`TaskCreated`](/de/hooks#taskcreated): wird ausgeführt, wenn eine Aufgabe erstellt wird. Beenden Sie mit Code 2, um die Erstellung zu verhindern und Feedback zu senden.

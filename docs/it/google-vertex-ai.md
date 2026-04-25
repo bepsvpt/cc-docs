@@ -295,6 +295,8 @@ La maggior parte delle versioni del modello ha una variabile `VERTEX_REGION_CLAU
 
 [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) è abilitato automaticamente. Per disabilitarlo, imposta `DISABLE_PROMPT_CACHING=1`. Per richiedere un TTL cache di 1 ora invece del valore predefinito di 5 minuti, imposta `ENABLE_PROMPT_CACHING_1H=1`; le scritture della cache con TTL di 1 ora vengono fatturate a una tariffa più elevata. Per limiti di velocità aumentati, contatta il supporto di Google Cloud. Quando utilizzi Vertex AI, i comandi `/login` e `/logout` sono disabilitati poiché l'autenticazione è gestita tramite le credenziali di Google Cloud.
 
+[MCP tool search](/it/mcp#scale-with-mcp-tool-search) è disabilitato per impostazione predefinita su Vertex AI perché l'endpoint non accetta l'intestazione beta richiesta. Tutte le definizioni degli strumenti MCP vengono caricate in anticipo. Per acconsentire, imposta `ENABLE_TOOL_SEARCH=true`.
+
 ### 5. Fissa le versioni del modello
 
 <Warning>

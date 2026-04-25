@@ -95,7 +95,7 @@ Contoh di bawah memutar suara sistem di macOS. Panduan tertaut memiliki perintah
 
 ## Konfigurasi tmux
 
-Ketika Claude Code berjalan di dalam tmux, dua hal rusak secara default: Shift+Enter mengirim alih-alih menyisipkan baris baru, dan notifikasi desktop dan [progress bar](/id/settings#global-config-settings) tidak pernah mencapai terminal luar. Tambahkan baris-baris ini ke `~/.tmux.conf`, kemudian jalankan `tmux source-file ~/.tmux.conf` untuk menerapkannya ke server yang berjalan:
+Ketika Claude Code berjalan di dalam tmux, dua hal rusak secara default: Shift+Enter mengirim alih-alih menyisipkan baris baru, dan notifikasi desktop dan [progress bar](/id/settings#available-settings) tidak pernah mencapai terminal luar. Tambahkan baris-baris ini ke `~/.tmux.conf`, kemudian jalankan `tmux source-file ~/.tmux.conf` untuk menerapkannya ke server yang berjalan:
 
 ```bash ~/.tmux.conf theme={null}
 set -g allow-passthrough on
@@ -177,7 +177,7 @@ Terminal terintegrasi VS Code dapat menjatuhkan karakter dari penempelan sangat 
 
 ## Edit prompt dengan pintasan keyboard Vim
 
-Claude Code mencakup mode pengeditan gaya Vim untuk input prompt. Aktifkan melalui `/config` → Editor mode, atau dengan mengatur kunci konfigurasi global [`editorMode`](/id/settings#global-config-settings) ke `"vim"` di `~/.claude.json`. Atur Editor mode kembali ke `normal` untuk mematikannya.
+Claude Code mencakup mode pengeditan gaya Vim untuk input prompt. Aktifkan melalui `/config` → Editor mode, atau dengan mengatur [`editorMode`](/id/settings#available-settings) ke `"vim"` di `~/.claude/settings.json`. Atur Editor mode kembali ke `normal` untuk mematikannya.
 
 Mode Vim mendukung subset gerakan dan operator mode NORMAL dan VISUAL, seperti navigasi `hjkl`, seleksi `v`/`V`, dan `d`/`c`/`y` dengan objek teks. Lihat [referensi mode editor Vim](/id/interactive-mode#vim-editor-mode) untuk tabel kunci lengkap. Gerakan Vim tidak dapat dipetakan ulang melalui file pintasan keyboard.
 

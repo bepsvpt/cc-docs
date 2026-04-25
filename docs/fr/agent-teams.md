@@ -101,7 +101,7 @@ Les équipes d'agents supportent deux modes d'affichage :
   `tmux` a des limitations connues sur certains systèmes d'exploitation et fonctionne traditionnellement mieux sur macOS. L'utilisation de `tmux -CC` dans iTerm2 est le point d'entrée suggéré dans `tmux`.
 </Note>
 
-La valeur par défaut est `"auto"`, qui utilise les volets divisés si vous êtes déjà en train de s'exécuter dans une session tmux, et in-process sinon. Le paramètre `"tmux"` active le mode volets divisés et détecte automatiquement s'il faut utiliser tmux ou iTerm2 en fonction de votre terminal. Pour remplacer, définissez `teammateMode` dans votre [configuration globale](/fr/settings#global-config-settings) à `~/.claude.json` :
+La valeur par défaut est `"auto"`, qui utilise les volets divisés si vous êtes déjà en train de s'exécuter dans une session tmux, et in-process sinon. Le paramètre `"tmux"` active le mode volets divisés et détecte automatiquement s'il faut utiliser tmux ou iTerm2 en fonction de votre terminal. Pour remplacer, définissez [`teammateMode`](/fr/settings#available-settings) dans `~/.claude/settings.json` :
 
 ```json theme={null}
 {

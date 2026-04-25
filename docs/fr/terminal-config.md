@@ -95,7 +95,7 @@ L'exemple ci-dessous joue un son système sur macOS. Le guide lié contient des 
 
 ## Configurer tmux
 
-Lorsque Claude Code s'exécute à l'intérieur de tmux, deux choses se cassent par défaut : Maj+Entrée soumet au lieu d'insérer un saut de ligne, et les notifications de bureau et la [barre de progression](/fr/settings#global-config-settings) n'atteignent jamais le terminal externe. Ajoutez ces lignes à `~/.tmux.conf`, puis exécutez `tmux source-file ~/.tmux.conf` pour les appliquer au serveur en cours d'exécution :
+Lorsque Claude Code s'exécute à l'intérieur de tmux, deux choses se cassent par défaut : Maj+Entrée soumet au lieu d'insérer un saut de ligne, et les notifications de bureau et la [barre de progression](/fr/settings#available-settings) n'atteignent jamais le terminal externe. Ajoutez ces lignes à `~/.tmux.conf`, puis exécutez `tmux source-file ~/.tmux.conf` pour les appliquer au serveur en cours d'exécution :
 
 ```bash ~/.tmux.conf theme={null}
 set -g allow-passthrough on
@@ -177,7 +177,7 @@ Le terminal intégré VS Code peut supprimer des caractères des très grands co
 
 ## Éditer les invites avec les liaisons de clavier Vim
 
-Claude Code inclut un mode d'édition de style Vim pour l'entrée d'invite. Activez-le via `/config` → Editor mode, ou en définissant la clé de configuration globale [`editorMode`](/fr/settings#global-config-settings) sur `"vim"` dans `~/.claude.json`. Définissez Editor mode à nouveau sur `normal` pour le désactiver.
+Claude Code inclut un mode d'édition de style Vim pour l'entrée d'invite. Activez-le via `/config` → Editor mode, ou en définissant [`editorMode`](/fr/settings#available-settings) sur `"vim"` dans `~/.claude/settings.json`. Définissez Editor mode à nouveau sur `normal` pour le désactiver.
 
 Le mode Vim supporte un sous-ensemble de motions et d'opérateurs en mode NORMAL et VISUAL, tels que la navigation `hjkl`, la sélection `v`/`V`, et `d`/`c`/`y` avec des objets texte. Consultez la [référence du mode éditeur Vim](/fr/interactive-mode#vim-editor-mode) pour la table de clés complète. Les motions Vim ne sont pas remappables via le fichier keybindings.
 

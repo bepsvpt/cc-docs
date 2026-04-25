@@ -165,6 +165,8 @@ Claude Code sendet die folgenden JSON-Felder über stdin an Ihr Skript:
 | `context_window.remaining_percentage`                                            | Vorberechneter Prozentsatz des verbleibenden Kontextfensters                                                                                                                                                                                                                     |
 | `context_window.current_usage`                                                   | Token-Zählungen aus dem letzten API-Aufruf, beschrieben in [Kontextfenster-Felder](#context-window-fields)                                                                                                                                                                       |
 | `exceeds_200k_tokens`                                                            | Ob die Gesamttoken-Zählung (Eingabe-, Cache- und Ausgabe-Token kombiniert) aus der letzten API-Antwort 200k überschreitet. Dies ist ein fester Schwellenwert unabhängig von der tatsächlichen Kontextfenstergröße.                                                               |
+| `effort.level`                                                                   | Aktueller Reasoning-Aufwand (`low`, `medium`, `high`, `xhigh` oder `max`). Spiegelt den Live-Sitzungswert wider, einschließlich Änderungen von `/effort` während der Sitzung. Fehlt, wenn das aktuelle Modell den Effort-Parameter nicht unterstützt                             |
+| `thinking.enabled`                                                               | Ob erweitertes Denken für die Sitzung aktiviert ist                                                                                                                                                                                                                              |
 | `rate_limits.five_hour.used_percentage`, `rate_limits.seven_day.used_percentage` | Prozentsatz des 5-Stunden- oder 7-Tage-Ratenlimits verbraucht, von 0 bis 100                                                                                                                                                                                                     |
 | `rate_limits.five_hour.resets_at`, `rate_limits.seven_day.resets_at`             | Unix-Epochensekunden, wenn das 5-Stunden- oder 7-Tage-Ratenlimit-Fenster zurückgesetzt wird                                                                                                                                                                                      |
 | `session_id`                                                                     | Eindeutige Sitzungskennung                                                                                                                                                                                                                                                       |
@@ -224,6 +226,12 @@ Claude Code sendet die folgenden JSON-Felder über stdin an Ihr Skript:
       }
     },
     "exceeds_200k_tokens": false,
+    "effort": {
+      "level": "high"
+    },
+    "thinking": {
+      "enabled": true
+    },
     "rate_limits": {
       "five_hour": {
         "used_percentage": 23.5,
@@ -254,6 +262,7 @@ Claude Code sendet die folgenden JSON-Felder über stdin an Ihr Skript:
 
   * `session_name`: erscheint nur, wenn ein benutzerdefinierter Name mit `--name` oder `/rename` gesetzt wurde
   * `workspace.git_worktree`: erscheint nur, wenn sich das aktuelle Verzeichnis in einem verknüpften Git-Worktree befindet
+  * `effort`: erscheint nur, wenn das aktuelle Modell den Reasoning-Effort-Parameter unterstützt
   * `vim`: erscheint nur, wenn Vim-Modus aktiviert ist
   * `agent`: erscheint nur bei Ausführung mit dem `--agent` Flag oder konfigurierter Agent-Einstellung
   * `worktree`: erscheint nur während `--worktree` Sitzungen. Wenn vorhanden, können `branch` und `original_branch` auch bei Hook-basierten Worktrees fehlen

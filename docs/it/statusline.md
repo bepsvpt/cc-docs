@@ -165,6 +165,8 @@ Claude Code invia i seguenti campi JSON al tuo script tramite stdin:
 | `context_window.remaining_percentage`                                            | Percentuale pre-calcolata della finestra di contesto rimanente                                                                                                                                                                                                                    |
 | `context_window.current_usage`                                                   | Conteggi dei token dall'ultima chiamata API, descritti in [campi della finestra di contesto](#context-window-fields)                                                                                                                                                              |
 | `exceeds_200k_tokens`                                                            | Se il conteggio totale dei token (token di input, cache e output combinati) dalla risposta API più recente supera 200k. Questo è un limite fisso indipendentemente dalla dimensione effettiva della finestra di contesto.                                                         |
+| `effort.level`                                                                   | Livello di sforzo di ragionamento corrente (`low`, `medium`, `high`, `xhigh`, o `max`). Riflette il valore della sessione attiva, inclusi i cambiamenti di `/effort` durante la sessione. Assente quando il modello corrente non supporta il parametro effort                     |
+| `thinking.enabled`                                                               | Se il pensiero esteso è abilitato per la sessione                                                                                                                                                                                                                                 |
 | `rate_limits.five_hour.used_percentage`, `rate_limits.seven_day.used_percentage` | Percentuale del limite di velocità di 5 ore o 7 giorni consumato, da 0 a 100                                                                                                                                                                                                      |
 | `rate_limits.five_hour.resets_at`, `rate_limits.seven_day.resets_at`             | Secondi di epoca Unix quando la finestra del limite di velocità di 5 ore o 7 giorni si ripristina                                                                                                                                                                                 |
 | `session_id`                                                                     | Identificatore univoco della sessione                                                                                                                                                                                                                                             |
@@ -224,6 +226,12 @@ Claude Code invia i seguenti campi JSON al tuo script tramite stdin:
       }
     },
     "exceeds_200k_tokens": false,
+    "effort": {
+      "level": "high"
+    },
+    "thinking": {
+      "enabled": true
+    },
     "rate_limits": {
       "five_hour": {
         "used_percentage": 23.5,
@@ -254,6 +262,7 @@ Claude Code invia i seguenti campi JSON al tuo script tramite stdin:
 
   * `session_name`: appare solo quando un nome personalizzato è stato impostato con `--name` o `/rename`
   * `workspace.git_worktree`: appare solo quando la directory corrente si trova all'interno di un git worktree collegato
+  * `effort`: appare solo quando il modello corrente supporta il parametro di sforzo di ragionamento
   * `vim`: appare solo quando la modalità vim è abilitata
   * `agent`: appare solo quando si esegue con il flag `--agent` o le impostazioni dell'agente configurate
   * `worktree`: appare solo durante le sessioni `--worktree`. Quando presente, `branch` e `original_branch` potrebbero anche essere assenti per i worktree basati su hook

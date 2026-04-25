@@ -224,6 +224,12 @@ Claude Code envoie les champs JSON suivants à votre script via stdin :
       }
     },
     "exceeds_200k_tokens": false,
+    "effort": {
+      "level": "high"
+    },
+    "thinking": {
+      "enabled": true
+    },
     "rate_limits": {
       "five_hour": {
         "used_percentage": 23.5,
@@ -254,6 +260,7 @@ Claude Code envoie les champs JSON suivants à votre script via stdin :
 
   * `session_name` : apparaît uniquement quand un nom personnalisé a été défini avec `--name` ou `/rename`
   * `workspace.git_worktree` : apparaît uniquement quand le répertoire actuel se trouve à l'intérieur d'un git worktree lié
+  * `effort` : apparaît uniquement quand le modèle actuel supporte le paramètre d'effort de raisonnement
   * `vim` : apparaît uniquement quand le mode vim est activé
   * `agent` : apparaît uniquement lors de l'exécution avec l'indicateur `--agent` ou les paramètres d'agent configurés
   * `worktree` : apparaît uniquement pendant les sessions `--worktree`. Quand présent, `branch` et `original_branch` peuvent aussi être absents pour les worktrees basés sur des hooks

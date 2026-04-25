@@ -101,7 +101,7 @@ teammate on UX, one on technical architecture, one playing devil's advocate.
   `tmux`는 특정 운영 체제에서 알려진 제한 사항이 있으며 전통적으로 macOS에서 가장 잘 작동합니다. iTerm2에서 `tmux -CC`를 사용하는 것이 `tmux`로의 권장 진입점입니다.
 </Note>
 
-기본값은 `"auto"`이며, 이미 tmux 세션 내에서 실행 중이면 분할 창을 사용하고, 그렇지 않으면 in-process를 사용합니다. `"tmux"` 설정은 분할 창 모드를 활성화하고 터미널에 따라 tmux 또는 iTerm2를 사용할지 자동으로 감지합니다. 재정의하려면 [전역 구성](/ko/settings#global-config-settings)에서 `~/.claude.json`의 `teammateMode`를 설정합니다:
+기본값은 `"auto"`이며, 이미 tmux 세션 내에서 실행 중이면 분할 창을 사용하고, 그렇지 않으면 in-process를 사용합니다. `"tmux"` 설정은 분할 창 모드를 활성화하고 터미널에 따라 tmux 또는 iTerm2를 사용할지 자동으로 감지합니다. 재정의하려면 `~/.claude/settings.json`에서 [`teammateMode`](/ko/settings#available-settings)를 설정합니다:
 
 ```json theme={null}
 {

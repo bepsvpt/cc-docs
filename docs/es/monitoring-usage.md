@@ -516,12 +516,14 @@ Se registra cuando una herramienta completa la ejecución.
 * `event.timestamp`: Marca de tiempo ISO 8601
 * `event.sequence`: Contador monotónicamente creciente para ordenar eventos dentro de una sesión
 * `tool_name`: Nombre de la herramienta
+* `tool_use_id`: Identificador único para esta invocación de herramienta. Coincide con el `tool_use_id` pasado a hooks, permitiendo correlación entre eventos OTel y datos capturados por hooks.
 * `success`: `"true"` o `"false"`
 * `duration_ms`: Tiempo de ejecución en milisegundos
 * `error_type`: Cadena de categoría de error cuando la herramienta falló, como `"Error:ENOENT"` o `"ShellError"`
 * `error` (cuando `OTEL_LOG_TOOL_DETAILS=1`): Mensaje de error completo cuando la herramienta falló
 * `decision_type`: Ya sea `"accept"` o `"reject"`
 * `decision_source`: Fuente de decisión - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, o `"user_reject"`
+* `tool_input_size_bytes`: Tamaño de la entrada de herramienta serializada en JSON en bytes
 * `tool_result_size_bytes`: Tamaño del resultado de la herramienta en bytes
 * `mcp_server_scope`: Identificador de alcance del servidor MCP (para herramientas MCP)
 * `tool_parameters` (cuando `OTEL_LOG_TOOL_DETAILS=1`): Cadena JSON que contiene parámetros específicos de la herramienta:
@@ -629,6 +631,7 @@ Se registra cuando se toma una decisión de permiso de herramienta (aceptar/rech
 * `event.timestamp`: Marca de tiempo ISO 8601
 * `event.sequence`: Contador monotónicamente creciente para ordenar eventos dentro de una sesión
 * `tool_name`: Nombre de la herramienta (por ejemplo, "Read", "Edit", "Write", "NotebookEdit")
+* `tool_use_id`: Identificador único para esta invocación de herramienta. Coincide con el `tool_use_id` pasado a hooks, permitiendo correlación entre eventos OTel y datos capturados por hooks.
 * `decision`: Ya sea `"accept"` o `"reject"`
 * `source`: Fuente de decisión - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, o `"user_reject"`
 

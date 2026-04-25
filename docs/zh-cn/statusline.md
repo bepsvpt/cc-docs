@@ -165,6 +165,8 @@ Claude Code 通过 stdin 向你的脚本发送以下 JSON 字段：
 | `context_window.remaining_percentage`                                            | 预计算的剩余上下文窗口百分比                                                                                                                       |
 | `context_window.current_usage`                                                   | 来自最后一次 API 调用的令牌计数，在[上下文窗口字段](#context-window-fields)中描述                                                                             |
 | `exceeds_200k_tokens`                                                            | 最近一次 API 响应中的总令牌计数（输入、缓存和输出令牌合并）是否超过 200k。这是一个固定阈值，与实际上下文窗口大小无关。                                                                     |
+| `effort.level`                                                                   | 当前推理工作量（`low`、`medium`、`high`、`xhigh` 或 `max`）。反映实时会话值，包括中途 `/effort` 更改。当当前模型不支持工作量参数时不存在                                           |
+| `thinking.enabled`                                                               | 是否为会话启用了扩展思考                                                                                                                         |
 | `rate_limits.five_hour.used_percentage`, `rate_limits.seven_day.used_percentage` | 消耗的 5 小时或 7 天速率限制的百分比，从 0 到 100                                                                                                      |
 | `rate_limits.five_hour.resets_at`, `rate_limits.seven_day.resets_at`             | Unix 纪元秒，当 5 小时或 7 天速率限制窗口重置时                                                                                                        |
 | `session_id`                                                                     | 唯一的会话标识符                                                                                                                             |
@@ -224,6 +226,12 @@ Claude Code 通过 stdin 向你的脚本发送以下 JSON 字段：
       }
     },
     "exceeds_200k_tokens": false,
+    "effort": {
+      "level": "high"
+    },
+    "thinking": {
+      "enabled": true
+    },
     "rate_limits": {
       "five_hour": {
         "used_percentage": 23.5,
@@ -254,6 +262,7 @@ Claude Code 通过 stdin 向你的脚本发送以下 JSON 字段：
 
   * `session_name`：仅在使用 `--name` 或 `/rename` 设置自定义名称时出现
   * `workspace.git_worktree`：仅当当前目录在链接的 git worktree 内时出现
+  * `effort`：仅当当前模型支持推理工作量参数时出现
   * `vim`：仅在启用 vim 模式时出现
   * `agent`：仅在使用 `--agent` 标志或配置的代理设置运行时出现
   * `worktree`：仅在 `--worktree` 会话期间出现。当存在时，`branch` 和 `original_branch` 对于基于钩子的 worktree 也可能不存在

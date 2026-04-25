@@ -516,12 +516,14 @@ Protokolliert, wenn ein Tool die Ausführung abgeschlossen hat.
 * `event.timestamp`: ISO 8601-Zeitstempel
 * `event.sequence`: monoton steigende Zähler zur Sortierung von Ereignissen innerhalb einer Sitzung
 * `tool_name`: Name des Tools
+* `tool_use_id`: Eindeutige Kennung für diese Tool-Invokation. Entspricht der `tool_use_id`, die an Hooks übergeben wird, und ermöglicht die Korrelation zwischen OTel-Ereignissen und Hook-erfassten Daten.
 * `success`: `"true"` oder `"false"`
 * `duration_ms`: Ausführungszeit in Millisekunden
 * `error_type`: Fehler-Kategoriezeichenkette, wenn das Tool fehlgeschlagen ist, wie `"Error:ENOENT"` oder `"ShellError"`
 * `error` (wenn `OTEL_LOG_TOOL_DETAILS=1`): Vollständige Fehlermeldung, wenn das Tool fehlgeschlagen ist
 * `decision_type`: Entweder `"accept"` oder `"reject"`
 * `decision_source`: Entscheidungsquelle - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` oder `"user_reject"`
+* `tool_input_size_bytes`: Größe der JSON-serialisierten Tool-Eingabe in Bytes
 * `tool_result_size_bytes`: Größe des Tool-Ergebnisses in Bytes
 * `mcp_server_scope`: MCP-Server-Scope-Kennung (für MCP-Tools)
 * `tool_parameters` (wenn `OTEL_LOG_TOOL_DETAILS=1`): JSON-Zeichenkette mit Tool-spezifischen Parametern:
@@ -629,6 +631,7 @@ Protokolliert, wenn eine Tool-Berechtigungsentscheidung getroffen wird (akzeptie
 * `event.timestamp`: ISO 8601-Zeitstempel
 * `event.sequence`: monoton steigende Zähler zur Sortierung von Ereignissen innerhalb einer Sitzung
 * `tool_name`: Name des Tools (zum Beispiel "Read", "Edit", "Write", "NotebookEdit")
+* `tool_use_id`: Eindeutige Kennung für diese Tool-Invokation. Entspricht der `tool_use_id`, die an Hooks übergeben wird, und ermöglicht die Korrelation zwischen OTel-Ereignissen und Hook-erfassten Daten.
 * `decision`: Entweder `"accept"` oder `"reject"`
 * `source`: Entscheidungsquelle - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` oder `"user_reject"`
 

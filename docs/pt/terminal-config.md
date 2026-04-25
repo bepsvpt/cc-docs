@@ -95,7 +95,7 @@ O exemplo abaixo reproduz um som do sistema no macOS. O guia vinculado tem coman
 
 ## Configure tmux
 
-Quando Claude Code é executado dentro do tmux, duas coisas quebram por padrão: Shift+Enter envia em vez de inserir uma quebra de linha, e notificações de desktop e a [barra de progresso](/pt/settings#global-config-settings) nunca chegam ao terminal externo. Adicione estas linhas a `~/.tmux.conf`, depois execute `tmux source-file ~/.tmux.conf` para aplicá-las ao servidor em execução:
+Quando Claude Code é executado dentro do tmux, duas coisas quebram por padrão: Shift+Enter envia em vez de inserir uma quebra de linha, e notificações de desktop e a [barra de progresso](/pt/settings#available-settings) nunca chegam ao terminal externo. Adicione estas linhas a `~/.tmux.conf`, depois execute `tmux source-file ~/.tmux.conf` para aplicá-las ao servidor em execução:
 
 ```bash ~/.tmux.conf theme={null}
 set -g allow-passthrough on
@@ -177,7 +177,7 @@ O terminal integrado do VS Code pode descartar caracteres de colagens muito gran
 
 ## Editar prompts com atalhos de teclado Vim
 
-Claude Code inclui um modo de edição estilo Vim para a entrada do prompt. Ative-o através de `/config` → Editor mode, ou definindo a chave de configuração global [`editorMode`](/pt/settings#global-config-settings) como `"vim"` em `~/.claude.json`. Defina Editor mode de volta para `normal` para desativá-lo.
+Claude Code inclui um modo de edição estilo Vim para a entrada do prompt. Ative-o através de `/config` → Editor mode, ou definindo [`editorMode`](/pt/settings#available-settings) como `"vim"` em `~/.claude/settings.json`. Defina Editor mode de volta para `normal` para desativá-lo.
 
 O modo Vim suporta um subconjunto de motions de modo NORMAL e VISUAL e operadores, como navegação `hjkl`, seleção `v`/`V`, e `d`/`c`/`y` com objetos de texto. Consulte a [referência do modo editor Vim](/pt/interactive-mode#vim-editor-mode) para a tabela de teclas completa. Motions de Vim não são remapeáveis através do arquivo de atalhos de teclado.
 

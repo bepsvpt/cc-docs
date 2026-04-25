@@ -1255,9 +1255,14 @@ Gli hook `PostToolUse` si attivano dopo che uno strumento è già stato eseguito
     "filePath": "/path/to/file.txt",
     "success": true
   },
-  "tool_use_id": "toolu_01ABC123..."
+  "tool_use_id": "toolu_01ABC123...",
+  "duration_ms": 12
 }
 ```
+
+| Campo         | Descrizione                                                                                                                                       |
+| :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `duration_ms` | Facoltativo. Tempo di esecuzione dello strumento in millisecondi. Esclude il tempo trascorso nei prompt di autorizzazione e negli hook PreToolUse |
 
 #### Controllo della decisione di PostToolUse
 
@@ -1305,14 +1310,16 @@ Gli hook PostToolUseFailure ricevono gli stessi campi `tool_name` e `tool_input`
   },
   "tool_use_id": "toolu_01ABC123...",
   "error": "Command exited with non-zero status code 1",
-  "is_interrupt": false
+  "is_interrupt": false,
+  "duration_ms": 4187
 }
 ```
 
-| Campo          | Descrizione                                                                                |
-| :------------- | :----------------------------------------------------------------------------------------- |
-| `error`        | Stringa che descrive cosa è andato storto                                                  |
-| `is_interrupt` | Booleano facoltativo che indica se il guasto è stato causato dall'interruzione dell'utente |
+| Campo          | Descrizione                                                                                                                                       |
+| :------------- | :------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `error`        | Stringa che descrive cosa è andato storto                                                                                                         |
+| `is_interrupt` | Booleano facoltativo che indica se il guasto è stato causato dall'interruzione dell'utente                                                        |
+| `duration_ms`  | Facoltativo. Tempo di esecuzione dello strumento in millisecondi. Esclude il tempo trascorso nei prompt di autorizzazione e negli hook PreToolUse |
 
 #### Controllo della decisione di PostToolUseFailure
 

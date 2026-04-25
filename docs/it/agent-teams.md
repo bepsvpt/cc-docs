@@ -101,7 +101,7 @@ I team di agenti supportano due modalità di visualizzazione:
   `tmux` ha limitazioni note su certi sistemi operativi e tradizionalmente funziona meglio su macOS. Utilizzare `tmux -CC` in iTerm2 è il punto di ingresso suggerito in `tmux`.
 </Note>
 
-L'impostazione predefinita è `"auto"`, che utilizza split panes se state già eseguendo all'interno di una sessione tmux, e in-process altrimenti. L'impostazione `"tmux"` abilita la modalità split-pane e rileva automaticamente se utilizzare tmux o iTerm2 in base al vostro terminale. Per sovrascrivere, impostate `teammateMode` nel vostro [global config](/it/settings#global-config-settings) a `~/.claude.json`:
+L'impostazione predefinita è `"auto"`, che utilizza split panes se state già eseguendo all'interno di una sessione tmux, e in-process altrimenti. L'impostazione `"tmux"` abilita la modalità split-pane e rileva automaticamente se utilizzare tmux o iTerm2 in base al vostro terminale. Per sovrascrivere, impostate [`teammateMode`](/it/settings#available-settings) in `~/.claude/settings.json`:
 
 ```json theme={null}
 {

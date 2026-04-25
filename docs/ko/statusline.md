@@ -165,6 +165,8 @@ Claude Code는 stdin을 통해 스크립트에 다음 JSON 필드를 보냅니�
 | `context_window.remaining_percentage`                                            | 남은 컨텍스트 윈도우의 사전 계산된 백분율                                                                                                                                         |
 | `context_window.current_usage`                                                   | 마지막 API 호출의 토큰 수([컨텍스트 윈도우 필드](#context-window-fields)에 설명됨)                                                                                                    |
 | `exceeds_200k_tokens`                                                            | 가장 최근 API 응답의 총 토큰 수(입력, 캐시 및 출력 토큰 결합)가 200k를 초과하는지 여부. 이는 실제 컨텍스트 윈도우 크기와 관계없이 고정된 임계값입니다.                                                                    |
+| `effort.level`                                                                   | 현재 추론 노력(`low`, `medium`, `high`, `xhigh` 또는 `max`). 중간 세션 `/effort` 변경을 포함한 라이브 세션 값을 반영합니다. 현재 모델이 노력 매개변수를 지원하지 않을 때는 없습니다                                   |
+| `thinking.enabled`                                                               | 세션에 대해 확장된 사고가 활성화되어 있는지 여부                                                                                                                                     |
 | `rate_limits.five_hour.used_percentage`, `rate_limits.seven_day.used_percentage` | 5시간 또는 7일 속도 제한의 소비된 백분율(0\~100)                                                                                                                                |
 | `rate_limits.five_hour.resets_at`, `rate_limits.seven_day.resets_at`             | 5시간 또는 7일 속도 제한 윈도우가 재설정되는 Unix epoch 초                                                                                                                         |
 | `session_id`                                                                     | 고유 세션 식별자                                                                                                                                                       |
@@ -224,6 +226,12 @@ Claude Code는 stdin을 통해 스크립트에 다음 JSON 필드를 보냅니�
       }
     },
     "exceeds_200k_tokens": false,
+    "effort": {
+      "level": "high"
+    },
+    "thinking": {
+      "enabled": true
+    },
     "rate_limits": {
       "five_hour": {
         "used_percentage": 23.5,
@@ -254,6 +262,7 @@ Claude Code는 stdin을 통해 스크립트에 다음 JSON 필드를 보냅니�
 
   * `session_name`: `--name` 또는 `/rename`으로 사용자 정의 이름이 설정되었을 때만 나타남
   * `workspace.git_worktree`: 현재 디렉토리가 연결된 git worktree 내에 있을 때만 나타남
+  * `effort`: 현재 모델이 추론 노력 매개변수를 지원할 때만 나타남
   * `vim`: vim 모드가 활성화되어 있을 때만 나타남
   * `agent`: `--agent` 플래그 또는 에이전트 설정이 구성되어 있을 때만 나타남
   * `worktree`: `--worktree` 세션 중에만 나타남. 존재할 때 `branch` 및 `original_branch`도 훅 기반 worktree의 경우 없을 수 있습니다

@@ -362,7 +362,7 @@ Todas as métricas e eventos compartilham esses atributos padrão:
 | `user.account_id`   | ID da conta em formato marcado correspondendo às APIs de administrador Anthropic (quando autenticado), como `user_01BWBeN28...` | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (padrão: true) |
 | `user.id`           | Identificador anônimo de dispositivo/instalação, gerado por instalação do Claude Code                                           | Sempre incluído                                    |
 | `user.email`        | Endereço de email do usuário (quando autenticado via OAuth)                                                                     | Sempre incluído quando disponível                  |
-| `terminal.type`     | Tipo de terminal, como `iTerm.app`, `vscode`, `cursor`, ou `tmux`                                                               | Sempre incluído quando detectado                   |
+| `terminal.type`     | Tipo de terminal, como `iTerm.app`, `vscode`, `cursor` ou `tmux`                                                                | Sempre incluído quando detectado                   |
 
 Os eventos incluem adicionalmente os seguintes atributos. Estes nunca são anexados a métricas porque causariam cardinalidade ilimitada:
 
@@ -480,7 +480,7 @@ Quando um usuário envia um prompt, Claude Code pode fazer múltiplas chamadas d
 | ----------- | ---------------------------------------------------------------------------------------------------- |
 | `prompt.id` | Identificador UUID v4 vinculando todos os eventos produzidos ao processar um único prompt do usuário |
 
-Para rastrear toda a atividade acionada por um único prompt, filtre seus eventos por um valor específico de `prompt.id`. Isso retorna o evento user\_prompt, quaisquer eventos api\_request, e quaisquer eventos tool\_result que ocorreram ao processar esse prompt.
+Para rastrear toda a atividade acionada por um único prompt, filtre seus eventos por um valor específico de `prompt.id`. Isso retorna o evento user\_prompt, quaisquer eventos api\_request e quaisquer eventos tool\_result que ocorreram ao processar esse prompt.
 
 <Note>
   `prompt.id` é intencionalmente excluído de métricas porque cada prompt gera um ID único, o que criaria um número sempre crescente de séries temporais. Use-o apenas para análise em nível de evento e trilhas de auditoria.
@@ -516,12 +516,14 @@ Registrado quando uma ferramenta conclui a execução.
 * `event.timestamp`: Timestamp ISO 8601
 * `event.sequence`: Contador monotonicamente crescente para ordenar eventos dentro de uma sessão
 * `tool_name`: Nome da ferramenta
+* `tool_use_id`: Identificador único para esta invocação de ferramenta. Corresponde ao `tool_use_id` passado para hooks, permitindo correlação entre eventos OTel e dados capturados por hook.
 * `success`: `"true"` ou `"false"`
 * `duration_ms`: Tempo de execução em milissegundos
 * `error_type`: String de categoria de erro quando a ferramenta falhou, como `"Error:ENOENT"` ou `"ShellError"`
 * `error` (quando `OTEL_LOG_TOOL_DETAILS=1`): Mensagem de erro completa quando a ferramenta falhou
 * `decision_type`: Ou `"accept"` ou `"reject"`
 * `decision_source`: Fonte de decisão - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` ou `"user_reject"`
+* `tool_input_size_bytes`: Tamanho da entrada da ferramenta serializada em JSON em bytes
 * `tool_result_size_bytes`: Tamanho do resultado da ferramenta em bytes
 * `mcp_server_scope`: Identificador de escopo do servidor MCP (para ferramentas MCP)
 * `tool_parameters` (quando `OTEL_LOG_TOOL_DETAILS=1`): String JSON contendo parâmetros específicos da ferramenta:
@@ -629,6 +631,7 @@ Registrado quando uma decisão de permissão da ferramenta é feita (aceitar/rej
 * `event.timestamp`: Timestamp ISO 8601
 * `event.sequence`: Contador monotonicamente crescente para ordenar eventos dentro de uma sessão
 * `tool_name`: Nome da ferramenta (por exemplo, "Read", "Edit", "Write", "NotebookEdit")
+* `tool_use_id`: Identificador único para esta invocação de ferramenta. Corresponde ao `tool_use_id` passado para hooks, permitindo correlação entre eventos OTel e dados capturados por hook.
 * `decision`: Ou `"accept"` ou `"reject"`
 * `source`: Fonte de decisão - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` ou `"user_reject"`
 

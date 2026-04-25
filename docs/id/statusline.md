@@ -165,6 +165,8 @@ Claude Code mengirim bidang JSON berikut ke skrip Anda melalui stdin:
 | `context_window.remaining_percentage`                                            | Persentase jendela konteks yang tersisa yang telah dihitung sebelumnya                                                                                                                                                                                     |
 | `context_window.current_usage`                                                   | Jumlah token dari panggilan API terakhir, dijelaskan dalam [bidang jendela konteks](#context-window-fields)                                                                                                                                                |
 | `exceeds_200k_tokens`                                                            | Apakah jumlah token total (input, cache, dan output token digabungkan) dari respons API terbaru melebihi 200k. Ini adalah ambang batas tetap terlepas dari ukuran jendela konteks aktual.                                                                  |
+| `effort.level`                                                                   | Tingkat upaya penalaran saat ini (`low`, `medium`, `high`, `xhigh`, atau `max`). Mencerminkan nilai sesi langsung, termasuk perubahan `/effort` pertengahan sesi. Tidak ada ketika model saat ini tidak mendukung parameter upaya                          |
+| `thinking.enabled`                                                               | Apakah pemikiran diperpanjang diaktifkan untuk sesi                                                                                                                                                                                                        |
 | `rate_limits.five_hour.used_percentage`, `rate_limits.seven_day.used_percentage` | Persentase batas laju 5 jam atau 7 hari yang dikonsumsi, dari 0 hingga 100                                                                                                                                                                                 |
 | `rate_limits.five_hour.resets_at`, `rate_limits.seven_day.resets_at`             | Detik epoch Unix ketika jendela batas laju 5 jam atau 7 hari direset                                                                                                                                                                                       |
 | `session_id`                                                                     | Pengidentifikasi sesi unik                                                                                                                                                                                                                                 |
@@ -224,6 +226,12 @@ Claude Code mengirim bidang JSON berikut ke skrip Anda melalui stdin:
       }
     },
     "exceeds_200k_tokens": false,
+    "effort": {
+      "level": "high"
+    },
+    "thinking": {
+      "enabled": true
+    },
     "rate_limits": {
       "five_hour": {
         "used_percentage": 23.5,
@@ -254,6 +262,7 @@ Claude Code mengirim bidang JSON berikut ke skrip Anda melalui stdin:
 
   * `session_name`: muncul hanya ketika nama khusus telah ditetapkan dengan `--name` atau `/rename`
   * `workspace.git_worktree`: muncul hanya ketika direktori saat ini berada di dalam linked git worktree
+  * `effort`: muncul hanya ketika model saat ini mendukung parameter upaya penalaran
   * `vim`: muncul hanya ketika vim mode diaktifkan
   * `agent`: muncul hanya saat menjalankan dengan bendera `--agent` atau pengaturan agen dikonfigurasi
   * `worktree`: muncul hanya selama sesi `--worktree`. Ketika ada, `branch` dan `original_branch` juga mungkin tidak ada untuk worktree berbasis hook

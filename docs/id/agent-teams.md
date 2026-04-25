@@ -101,7 +101,7 @@ Tim agent mendukung dua mode tampilan:
   `tmux` memiliki keterbatasan yang diketahui pada sistem operasi tertentu dan secara tradisional bekerja paling baik di macOS. Menggunakan `tmux -CC` di iTerm2 adalah entrypoint yang disarankan ke `tmux`.
 </Note>
 
-Default adalah `"auto"`, yang menggunakan split panes jika Anda sudah berjalan di dalam session tmux, dan in-process sebaliknya. Pengaturan `"tmux"` mengaktifkan mode split-pane dan auto-detects apakah akan menggunakan tmux atau iTerm2 berdasarkan terminal Anda. Untuk mengganti, atur `teammateMode` di [global config](/id/settings#global-config-settings) Anda di `~/.claude.json`:
+Default adalah `"auto"`, yang menggunakan split panes jika Anda sudah berjalan di dalam session tmux, dan in-process sebaliknya. Pengaturan `"tmux"` mengaktifkan mode split-pane dan auto-detects apakah akan menggunakan tmux atau iTerm2 berdasarkan terminal Anda. Untuk mengganti, atur [`teammateMode`](/id/settings#available-settings) di `~/.claude/settings.json`:
 
 ```json theme={null}
 {

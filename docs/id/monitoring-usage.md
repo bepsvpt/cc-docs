@@ -516,12 +516,14 @@ Dicatat saat alat menyelesaikan eksekusi.
 * `event.timestamp`: Stempel waktu ISO 8601
 * `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
 * `tool_name`: Nama alat
+* `tool_use_id`: Pengidentifikasi unik untuk invokasi alat ini. Cocok dengan `tool_use_id` yang diteruskan ke hooks, memungkinkan korelasi antara acara OTel dan data yang ditangkap hook.
 * `success`: `"true"` atau `"false"`
 * `duration_ms`: Waktu eksekusi dalam milidetik
 * `error_type`: String kategori kesalahan saat alat gagal, seperti `"Error:ENOENT"` atau `"ShellError"`
 * `error` (saat `OTEL_LOG_TOOL_DETAILS=1`): Pesan kesalahan lengkap saat alat gagal
 * `decision_type`: Baik `"accept"` atau `"reject"`
 * `decision_source`: Sumber keputusan - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, atau `"user_reject"`
+* `tool_input_size_bytes`: Ukuran input alat yang diserialisasi JSON dalam byte
 * `tool_result_size_bytes`: Ukuran hasil alat dalam byte
 * `mcp_server_scope`: Pengidentifikasi cakupan server MCP (untuk alat MCP)
 * `tool_parameters` (saat `OTEL_LOG_TOOL_DETAILS=1`): String JSON yang berisi parameter khusus alat:
@@ -629,6 +631,7 @@ Dicatat saat keputusan izin alat dibuat (terima/tolak).
 * `event.timestamp`: Stempel waktu ISO 8601
 * `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
 * `tool_name`: Nama alat (misalnya, "Read", "Edit", "Write", "NotebookEdit")
+* `tool_use_id`: Pengidentifikasi unik untuk invokasi alat ini. Cocok dengan `tool_use_id` yang diteruskan ke hooks, memungkinkan korelasi antara acara OTel dan data yang ditangkap hook.
 * `decision`: Baik `"accept"` atau `"reject"`
 * `source`: Sumber keputusan - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, atau `"user_reject"`
 

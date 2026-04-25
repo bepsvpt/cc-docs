@@ -295,6 +295,8 @@ Die meisten Modellversionen haben eine entsprechende `VERTEX_REGION_CLAUDE_*`-Va
 
 [Prompt Caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) wird automatisch aktiviert. Um es zu deaktivieren, legen Sie `DISABLE_PROMPT_CACHING=1` fest. Um eine 1-Stunden-Cache-TTL statt des 5-Minuten-Standards anzufordern, legen Sie `ENABLE_PROMPT_CACHING_1H=1` fest; Cache-Schreibvorgänge mit einer 1-Stunden-TTL werden mit einem höheren Satz abgerechnet. Für erhöhte Ratenlimits wenden Sie sich an den Google Cloud-Support. Bei Verwendung von Vertex AI sind die Befehle `/login` und `/logout` deaktiviert, da die Authentifizierung über Google Cloud-Anmeldedaten erfolgt.
 
+[MCP-Toolsuche](/de/mcp#scale-with-mcp-tool-search) ist standardmäßig auf Vertex AI deaktiviert, da der Endpunkt den erforderlichen Beta-Header nicht akzeptiert. Alle MCP-Tool-Definitionen werden stattdessen beim Start geladen. Um sich anzumelden, legen Sie `ENABLE_TOOL_SEARCH=true` fest.
+
 ### 5. Fixieren Sie Modellversionen
 
 <Warning>

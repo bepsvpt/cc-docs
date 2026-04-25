@@ -1255,9 +1255,14 @@ Hooks `PostToolUse` disparam após uma ferramenta já ter executado com sucesso.
     "filePath": "/path/to/file.txt",
     "success": true
   },
-  "tool_use_id": "toolu_01ABC123..."
+  "tool_use_id": "toolu_01ABC123...",
+  "duration_ms": 12
 }
 ```
+
+| Campo         | Descrição                                                                                                                 |
+| :------------ | :------------------------------------------------------------------------------------------------------------------------ |
+| `duration_ms` | Opcional. Tempo de execução da ferramenta em milissegundos. Exclui tempo gasto em prompts de permissão e hooks PreToolUse |
 
 #### Controle de decisão de PostToolUse
 
@@ -1305,14 +1310,16 @@ Hooks PostToolUseFailure recebem os mesmos campos `tool_name` e `tool_input` que
   },
   "tool_use_id": "toolu_01ABC123...",
   "error": "Command exited with non-zero status code 1",
-  "is_interrupt": false
+  "is_interrupt": false,
+  "duration_ms": 4187
 }
 ```
 
-| Campo          | Descrição                                                                    |
-| :------------- | :--------------------------------------------------------------------------- |
-| `error`        | String descrevendo o que deu errado                                          |
-| `is_interrupt` | Boolean opcional indicando se a falha foi causada por interrupção do usuário |
+| Campo          | Descrição                                                                                                                 |
+| :------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `error`        | String descrevendo o que deu errado                                                                                       |
+| `is_interrupt` | Boolean opcional indicando se a falha foi causada por interrupção do usuário                                              |
+| `duration_ms`  | Opcional. Tempo de execução da ferramenta em milissegundos. Exclui tempo gasto em prompts de permissão e hooks PreToolUse |
 
 #### Controle de decisão de PostToolUseFailure
 

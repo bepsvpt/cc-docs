@@ -102,7 +102,7 @@ Los equipos de agentes admiten dos modos de visualización:
   `tmux` tiene limitaciones conocidas en ciertos sistemas operativos y tradicionalmente funciona mejor en macOS. Usar `tmux -CC` en iTerm2 es el punto de entrada sugerido en `tmux`.
 </Note>
 
-El valor predeterminado es `"auto"`, que usa paneles divididos si ya está ejecutándose dentro de una sesión tmux, y en proceso de lo contrario. La configuración `"tmux"` habilita el modo de panel dividido y detecta automáticamente si usar tmux o iTerm2 según su terminal. Para anular, configure `teammateMode` en su [configuración global](/es/settings#global-config-settings) en `~/.claude.json`:
+El valor predeterminado es `"auto"`, que usa paneles divididos si ya está ejecutándose dentro de una sesión tmux, y en proceso de lo contrario. La configuración `"tmux"` habilita el modo de panel dividido y detecta automáticamente si usar tmux o iTerm2 según su terminal. Para anular, configure [`teammateMode`](/es/settings#available-settings) en `~/.claude/settings.json`:
 
 ```json theme={null}
 {

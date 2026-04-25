@@ -1255,9 +1255,14 @@ Passt auf Tool-Namen, gleiche Werte wie PreToolUse.
     "filePath": "/path/to/file.txt",
     "success": true
   },
-  "tool_use_id": "toolu_01ABC123..."
+  "tool_use_id": "toolu_01ABC123...",
+  "duration_ms": 12
 }
 ```
+
+| Feld          | Beschreibung                                                                                                                               |
+| :------------ | :----------------------------------------------------------------------------------------------------------------------------------------- |
+| `duration_ms` | Optional. Tool-Ausführungszeit in Millisekunden. Schließt Zeit aus, die in Berechtigungsaufforderungen und PreToolUse-Hooks verbracht wird |
 
 #### PostToolUse-Entscheidungskontrolle
 
@@ -1305,14 +1310,16 @@ PostToolUseFailure-Hooks erhalten die gleichen `tool_name`- und `tool_input`-Fel
   },
   "tool_use_id": "toolu_01ABC123...",
   "error": "Command exited with non-zero status code 1",
-  "is_interrupt": false
+  "is_interrupt": false,
+  "duration_ms": 4187
 }
 ```
 
-| Feld           | Beschreibung                                                                                |
-| :------------- | :------------------------------------------------------------------------------------------ |
-| `error`        | Zeichenkette, die beschreibt, was schief gelaufen ist                                       |
-| `is_interrupt` | Optionaler Boolesch, der angibt, ob der Fehler durch Benutzerunterbrechung verursacht wurde |
+| Feld           | Beschreibung                                                                                                                               |
+| :------------- | :----------------------------------------------------------------------------------------------------------------------------------------- |
+| `error`        | Zeichenkette, die beschreibt, was schief gelaufen ist                                                                                      |
+| `is_interrupt` | Optionaler Boolesch, der angibt, ob der Fehler durch Benutzerunterbrechung verursacht wurde                                                |
+| `duration_ms`  | Optional. Tool-Ausführungszeit in Millisekunden. Schließt Zeit aus, die in Berechtigungsaufforderungen und PreToolUse-Hooks verbracht wird |
 
 #### PostToolUseFailure-Entscheidungskontrolle
 

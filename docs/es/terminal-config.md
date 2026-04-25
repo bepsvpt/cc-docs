@@ -95,7 +95,7 @@ El ejemplo a continuación reproduce un sonido del sistema en macOS. La guía vi
 
 ## Configura tmux
 
-Cuando Claude Code se ejecuta dentro de tmux, dos cosas se rompen por defecto: Shift+Enter envía en lugar de insertar un salto de línea, y las notificaciones de escritorio y la [barra de progreso](/es/settings#global-config-settings) nunca llegan a la terminal externa. Agrega estas líneas a `~/.tmux.conf`, luego ejecuta `tmux source-file ~/.tmux.conf` para aplicarlas al servidor en ejecución:
+Cuando Claude Code se ejecuta dentro de tmux, dos cosas se rompen por defecto: Shift+Enter envía en lugar de insertar un salto de línea, y las notificaciones de escritorio y la [barra de progreso](/es/settings#available-settings) nunca llegan a la terminal externa. Agrega estas líneas a `~/.tmux.conf`, luego ejecuta `tmux source-file ~/.tmux.conf` para aplicarlas al servidor en ejecución:
 
 ```bash ~/.tmux.conf theme={null}
 set -g allow-passthrough on
@@ -177,7 +177,7 @@ La terminal integrada de VS Code puede soltar caracteres de pegados muy grandes 
 
 ## Edita indicadores con atajos de teclado Vim
 
-Claude Code incluye un modo de edición de estilo Vim para la entrada del indicador. Habilítalo a través de `/config` → Editor mode, o estableciendo la clave de configuración global [`editorMode`](/es/settings#global-config-settings) en `"vim"` en `~/.claude.json`. Establece Editor mode de nuevo en `normal` para desactivarlo.
+Claude Code incluye un modo de edición de estilo Vim para la entrada del indicador. Habilítalo a través de `/config` → Editor mode, o estableciendo [`editorMode`](/es/settings#available-settings) en `"vim"` en `~/.claude/settings.json`. Establece Editor mode de nuevo en `normal` para desactivarlo.
 
 El modo Vim soporta un subconjunto de movimientos y operadores de modo NORMAL y VISUAL, como navegación `hjkl`, selección `v`/`V`, y `d`/`c`/`y` con objetos de texto. Consulta la [referencia del modo editor Vim](/es/interactive-mode#vim-editor-mode) para la tabla de teclas completa. Los movimientos Vim no son remapeables a través del archivo de atajos de teclado.
 

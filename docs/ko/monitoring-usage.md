@@ -516,12 +516,14 @@ Claude Code는 OpenTelemetry 로그/이벤트를 통해 다음 이벤트를 내�
 * `event.timestamp`: ISO 8601 타임스탬프
 * `event.sequence`: 세션 내 이벤트 순서 지정을 위한 단조 증가 카운터
 * `tool_name`: 도구의 이름
+* `tool_use_id`: 이 도구 호출의 고유 식별자. 훅에 전달된 `tool_use_id`와 일치하여 OTel 이벤트와 훅 캡처 데이터 간의 상관관계를 허용합니다.
 * `success`: `"true"` 또는 `"false"`
 * `duration_ms`: 실행 시간 (밀리초)
 * `error_type`: 도구가 실패했을 때 오류 범주 문자열 (예: `"Error:ENOENT"` 또는 `"ShellError"`)
 * `error` (`OTEL_LOG_TOOL_DETAILS=1`일 때): 도구가 실패했을 때 전체 오류 메시지
 * `decision_type`: `"accept"` 또는 `"reject"`
 * `decision_source`: 결정 출처 - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` 또는 `"user_reject"`
+* `tool_input_size_bytes`: JSON 직렬화된 도구 입력의 크기 (바이트)
 * `tool_result_size_bytes`: 도구 결과의 크기 (바이트)
 * `mcp_server_scope`: MCP 서버 범위 식별자 (MCP 도구의 경우)
 * `tool_parameters` (`OTEL_LOG_TOOL_DETAILS=1`일 때): 도구별 매개변수를 포함하는 JSON 문자열:
@@ -629,6 +631,7 @@ Claude에 대한 API 요청이 실패할 때 기록됩니다.
 * `event.timestamp`: ISO 8601 타임스탬프
 * `event.sequence`: 세션 내 이벤트 순서 지정을 위한 단조 증가 카운터
 * `tool_name`: 도구의 이름 (예: "Read", "Edit", "Write", "NotebookEdit")
+* `tool_use_id`: 이 도구 호출의 고유 식별자. 훅에 전달된 `tool_use_id`와 일치하여 OTel 이벤트와 훅 캡처 데이터 간의 상관관계를 허용합니다.
 * `decision`: `"accept"` 또는 `"reject"`
 * `source`: 결정 출처 - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` 또는 `"user_reject"`
 

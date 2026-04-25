@@ -1254,9 +1254,14 @@ Hook 可以回显它接收的 `permission_suggestions` 之一作为其自己的 
     "filePath": "/path/to/file.txt",
     "success": true
   },
-  "tool_use_id": "toolu_01ABC123..."
+  "tool_use_id": "toolu_01ABC123...",
+  "duration_ms": 12
 }
 ```
+
+| 字段            | 描述                                             |
+| :------------ | :--------------------------------------------- |
+| `duration_ms` | 可选。工具执行时间（毫秒）。不包括权限提示和 PreToolUse hooks 中花费的时间 |
 
 #### PostToolUse 决定控制
 
@@ -1304,14 +1309,16 @@ PostToolUseFailure hooks 接收与 PostToolUse 相同的 `tool_name` 和 `tool_i
   },
   "tool_use_id": "toolu_01ABC123...",
   "error": "Command exited with non-zero status code 1",
-  "is_interrupt": false
+  "is_interrupt": false,
+  "duration_ms": 4187
 }
 ```
 
-| 字段             | 描述                   |
-| :------------- | :------------------- |
-| `error`        | 描述出错原因的字符串           |
-| `is_interrupt` | 可选的布尔值，指示失败是否由用户中断引起 |
+| 字段             | 描述                                             |
+| :------------- | :--------------------------------------------- |
+| `error`        | 描述出错原因的字符串                                     |
+| `is_interrupt` | 可选的布尔值，指示失败是否由用户中断引起                           |
+| `duration_ms`  | 可选。工具执行时间（毫秒）。不包括权限提示和 PreToolUse hooks 中花费的时间 |
 
 #### PostToolUseFailure 决定控制
 

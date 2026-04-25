@@ -95,7 +95,7 @@ L'esempio di seguito riproduce un suono di sistema su macOS. La guida collegata 
 
 ## Configure tmux
 
-Quando Claude Code viene eseguito dentro tmux, due cose si rompono per impostazione predefinita: Shift+Invio invia invece di inserire una nuova riga, e le notifiche desktop e la [barra di avanzamento](/it/settings#global-config-settings) non raggiungono mai il terminale esterno. Aggiungi queste righe a `~/.tmux.conf`, poi esegui `tmux source-file ~/.tmux.conf` per applicarle al server in esecuzione:
+Quando Claude Code viene eseguito dentro tmux, due cose si rompono per impostazione predefinita: Shift+Invio invia invece di inserire una nuova riga, e le notifiche desktop e la [barra di avanzamento](/it/settings#available-settings) non raggiungono mai il terminale esterno. Aggiungi queste righe a `~/.tmux.conf`, poi esegui `tmux source-file ~/.tmux.conf` per applicarle al server in esecuzione:
 
 ```bash ~/.tmux.conf theme={null}
 set -g allow-passthrough on
@@ -103,7 +103,7 @@ set -s extended-keys on
 set -as terminal-features 'xterm*:extkeys'
 ```
 
-La riga `allow-passthrough` consente alle notifiche e agli aggiornamenti di avanzamento di raggiungere iTerm2, Ghostty o Kitty invece di essere inghiottiti da tmux. Le righe `extended-keys` consentono a tmux di distinguere Shift+Invio da Invio semplice in modo che il scorciatoia della nuova riga funzioni.
+La riga `allow-passthrough` consente alle notifiche e agli aggiornamenti di avanzamento di raggiungere iTerm2, Ghostty o Kitty invece di essere inghiottiti da tmux. Le righe `extended-keys` consentono a tmux di distinguere Shift+Invio da Invio semplice in modo che la scorciatoia della nuova riga funzioni.
 
 ## Abbina il tema dei colori
 
@@ -177,7 +177,7 @@ Il terminale integrato di VS Code può perdere caratteri da incollamenti molto g
 
 ## Modifica i prompt con le scorciatoie da tastiera Vim
 
-Claude Code include una modalità di editing in stile Vim per l'input del prompt. Abilitala tramite `/config` → Editor mode, o impostando la chiave di configurazione globale [`editorMode`](/it/settings#global-config-settings) su `"vim"` in `~/.claude.json`. Imposta Editor mode di nuovo su `normal` per disattivarla.
+Claude Code include una modalità di editing in stile Vim per l'input del prompt. Abilitala tramite `/config` → Editor mode, o impostando [`editorMode`](/it/settings#available-settings) su `"vim"` in `~/.claude/settings.json`. Imposta Editor mode di nuovo su `normal` per disattivarla.
 
 La modalità Vim supporta un sottoinsieme di motions in modalità NORMAL e VISUAL e operatori, come la navigazione `hjkl`, la selezione `v`/`V`, e `d`/`c`/`y` con oggetti di testo. Consulta la [tabella di riferimento della modalità editor Vim](/it/interactive-mode#vim-editor-mode) per la tabella completa dei tasti. I motions Vim non sono rimappabili tramite il file delle scorciatoie da tastiera.
 

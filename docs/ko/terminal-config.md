@@ -95,7 +95,7 @@ Claude Code는 Ghostty, Kitty 및 iTerm2에서만 데스크톱 알림을 보냅�
 
 ## tmux 구성
 
-Claude Code가 tmux 내에서 실행될 때 기본적으로 두 가지가 손상됩니다: Shift+Enter가 줄 바꿈을 삽입하는 대신 제출하고, 데스크톱 알림 및 [진행률 표시줄](/ko/settings#global-config-settings)이 외부 터미널에 도달하지 않습니다. `~/.tmux.conf`에 이 줄을 추가한 후 `tmux source-file ~/.tmux.conf`를 실행하여 실행 중인 서버에 적용하세요:
+Claude Code가 tmux 내에서 실행될 때 기본적으로 두 가지가 손상됩니다: Shift+Enter가 줄 바꿈을 삽입하는 대신 제출하고, 데스크톱 알림 및 [진행률 표시줄](/ko/settings#available-settings)이 외부 터미널에 도달하지 않습니다. `~/.tmux.conf`에 이 줄을 추가한 후 `tmux source-file ~/.tmux.conf`를 실행하여 실행 중인 서버에 적용하세요:
 
 ```bash ~/.tmux.conf theme={null}
 set -g allow-passthrough on
@@ -177,7 +177,7 @@ VS Code 통합 터미널은 매우 큰 붙여넣기에서 Claude Code에 도달�
 
 ## Vim 키 바인딩으로 프롬프트 편집
 
-Claude Code는 프롬프트 입력을 위한 Vim 스타일 편집 모드를 포함합니다. `/config` → 편집기 모드를 통해 활성화하거나 [`editorMode`](/ko/settings#global-config-settings) 전역 구성 키를 `~/.claude.json`에서 `"vim"`으로 설정하여 활성화하세요. 편집기 모드를 `normal`로 다시 설정하여 끄세요.
+Claude Code는 프롬프트 입력을 위한 Vim 스타일 편집 모드를 포함합니다. `/config` → 편집기 모드를 통해 활성화하거나 [`editorMode`](/ko/settings#available-settings)를 `~/.claude/settings.json`에서 `"vim"`으로 설정하여 활성화하세요. 편집기 모드를 `normal`로 다시 설정하여 끄세요.
 
 Vim 모드는 `hjkl` 네비게이션, `v`/`V` 선택, 텍스트 객체를 사용한 `d`/`c`/`y`와 같은 NORMAL 모드 및 VISUAL 모드 모션과 연산자의 부분 집합을 지원합니다. 전체 키 테이블은 [Vim 편집기 모드 참조](/ko/interactive-mode#vim-editor-mode)를 참조하세요. Vim 모션은 키 바인딩 파일을 통해 다시 매핑할 수 없습니다.
 

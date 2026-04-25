@@ -214,6 +214,8 @@ export const MCPServersTable = ({platform = "all"}) => {
 
 Claude Code는 AI 도구 통합을 위한 오픈 소스 표준인 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction)를 통해 수백 개의 외부 도구 및 데이터 소스에 연결할 수 있습니다. MCP 서버는 Claude Code에 도구, 데이터베이스 및 API에 대한 액세스를 제공합니다.
 
+다른 도구(예: 이슈 추적기 또는 모니터링 대시보드)에서 채팅으로 데이터를 복사하는 자신을 발견할 때 서버를 연결하세요. 연결되면 Claude는 붙여넣은 내용에서 작업하는 대신 해당 시스템을 직접 읽고 작동할 수 있습니다.
+
 ## MCP로 할 수 있는 것
 
 MCP 서버가 연결되면 Claude Code에 다음을 요청할 수 있습니다:
@@ -327,6 +329,10 @@ claude mcp remove github
 
 Claude Code는 MCP `list_changed` 알림을 지원하므로 MCP 서버가 연결을 끊었다가 다시 연결할 필요 없이 사용 가능한 도구, 프롬프트 및 리소스를 동적으로 업데이트할 수 있습니다. MCP 서버가 `list_changed` 알림을 보내면 Claude Code는 해당 서버에서 사용 가능한 기능을 자동으로 새로 고칩니다.
 
+### 자동 재연결
+
+HTTP 또는 SSE 서버가 세션 중에 연결이 끊어지면 Claude Code는 지수 백오프를 사용하여 자동으로 재연결합니다: 최대 5번의 시도, 1초 지연으로 시작하여 매번 두 배씩 증가합니다. 서버는 재연결이 진행 중인 동안 `/mcp`에서 보류 중으로 나타납니다. 5번의 실패 시도 후 서버는 실패로 표시되며 `/mcp`에서 수동으로 다시 시도할 수 있습니다. Stdio 서버는 로컬 프로세스이며 자동으로 재연결되지 않습니다.
+
 ### 채널을 사용한 메시지 푸시
 
 MCP 서버는 또한 메시지를 세션에 직접 푸시할 수 있으므로 Claude는 CI 결과, 모니터링 경고 또는 채팅 메시지와 같은 외부 이벤트에 반응할 수 있습니다. 이를 활성화하려면 서버가 `claude/channel` 기능을 선언하고 시작 시 `--channels` 플래그로 옵트인합니다. 공식적으로 지원되는 채널을 사용하려면 [채널](/ko/channels)을 참조하거나, 자신만의 채널을 구축하려면 [채널 참조](/ko/channels-reference)를 참조하세요.
@@ -343,17 +349,6 @@ MCP 서버는 또한 메시지를 세션에 직접 푸시할 수 있으므로 Cl
   * Claude Code는 MCP 도구 출력이 10,000 토큰을 초과할 때 경고를 표시합니다. 이 제한을 늘리려면 `MAX_MCP_OUTPUT_TOKENS` 환경 변수를 설정하세요 (예: `MAX_MCP_OUTPUT_TOKENS=50000`)
   * OAuth 2.0 인증이 필요한 원격 서버로 인증하려면 `/mcp`를 사용하세요
 </Tip>
-
-<Warning>
-  **Windows 사용자**: 기본 Windows (WSL 아님)에서 `npx`를 사용하는 로컬 MCP 서버는 올바른 실행을 보장하기 위해 `cmd /c` 래퍼가 필요합니다.
-
-  ```bash theme={null}
-  # 이는 Windows가 실행할 수 있는 command="cmd"를 생성합니다
-  claude mcp add --transport stdio my-server -- cmd /c npx -y @some/package
-  ```
-
-  `cmd /c` 래퍼가 없으면 Windows가 `npx`를 직접 실행할 수 없기 때문에 "Connection closed" 오류가 발생합니다. (위의 참고 사항에서 `--` 매개변수에 대한 설명을 참조하세요.)
-</Warning>
 
 ### 플러그인 제공 MCP 서버
 
@@ -424,11 +419,17 @@ MCP 서버는 또한 메시지를 세션에 직접 푸시할 수 있으므로 Cl
 
 ## MCP 설치 범위
 
-MCP 서버는 서버 접근성 및 공유를 관리하기 위해 세 가지 다른 범위 수준에서 구성할 수 있습니다. 이러한 범위를 이해하면 특정 요구 사항에 맞게 서버를 구성하는 최선의 방법을 결정하는 데 도움이 됩니다.
+MCP 서버는 세 가지 범위에서 구성할 수 있습니다. 선택한 범위는 서버가 로드되는 프로젝트와 구성이 팀과 공유되는지 여부를 제어합니다.
+
+| 범위                     | 로드 위치    | 팀과 공유        | 저장 위치                |
+| ---------------------- | -------- | ------------ | -------------------- |
+| [로컬](#local-scope)     | 현재 프로젝트만 | 아니오          | `~/.claude.json`     |
+| [프로젝트](#project-scope) | 현재 프로젝트만 | 예, 버전 제어를 통해 | 프로젝트 루트의 `.mcp.json` |
+| [사용자](#user-scope)     | 모든 프로젝트  | 아니오          | `~/.claude.json`     |
 
 ### 로컬 범위
 
-로컬 범위 서버는 기본 구성 수준을 나타내며 프로젝트 경로 아래 `~/.claude.json`에 저장됩니다. 이러한 서버는 사용자에게만 비공개이며 현재 프로젝트 디렉토리 내에서 작업할 때만 액세스할 수 있습니다. 이 범위는 개인 개발 서버, 실험적 구성 또는 공유하면 안 되는 민감한 자격 증명을 포함하는 서버에 이상적입니다.
+로컬 범위는 기본값입니다. 로컬 범위 서버는 추가한 프로젝트에서만 로드되며 사용자에게만 비공개입니다. Claude Code는 해당 프로젝트의 경로 아래 `~/.claude.json`에 저장하므로 다른 프로젝트에는 동일한 서버가 나타나지 않습니다. 개인 개발 서버, 실험적 구성 또는 버전 제어에 포함하고 싶지 않은 자격 증명이 있는 서버에 로컬 범위를 사용하세요.
 
 <Note>
   MCP 서버의 "로컬 범위"라는 용어는 일반 로컬 설정과 다릅니다. MCP 로컬 범위 서버는 `~/.claude.json` (홈 디렉토리)에 저장되고, 일반 로컬 설정은 `.claude/settings.local.json` (프로젝트 디렉토리)을 사용합니다. 설정 파일 위치에 대한 자세한 내용은 [설정](/ko/settings#settings-files)을 참조하세요.
@@ -440,6 +441,23 @@ claude mcp add --transport http stripe https://mcp.stripe.com
 
 # 명시적으로 로컬 범위 지정
 claude mcp add --transport http stripe --scope local https://mcp.stripe.com
+```
+
+`/path/to/your/project`에서 실행할 때 명령은 `~/.claude.json` 내의 현재 프로젝트 항목에 서버를 작성합니다. 아래 예는 결과를 보여줍니다:
+
+```json theme={null}
+{
+  "projects": {
+    "/path/to/your/project": {
+      "mcpServers": {
+        "stripe": {
+          "type": "http",
+          "url": "https://mcp.stripe.com"
+        }
+      }
+    }
+  }
+}
 ```
 
 ### 프로젝트 범위
@@ -476,27 +494,17 @@ claude mcp add --transport http paypal --scope project https://mcp.paypal.com/mc
 claude mcp add --transport http hubspot --scope user https://mcp.hubspot.com/anthropic
 ```
 
-### 올바른 범위 선택
-
-다음을 기반으로 범위를 선택하세요:
-
-* **로컬 범위**: 개인 서버, 실험적 구성 또는 한 프로젝트에만 해당하는 민감한 자격 증명
-* **프로젝트 범위**: 팀 공유 서버, 프로젝트 특정 도구 또는 협업에 필요한 서비스
-* **사용자 범위**: 여러 프로젝트에서 필요한 개인 유틸리티, 개발 도구 또는 자주 사용하는 서비스
-
-<Note>
-  **MCP 서버는 어디에 저장되나요?**
-
-  * **사용자 및 로컬 범위**: `~/.claude.json` (`mcpServers` 필드 또는 프로젝트 경로 아래)
-  * **프로젝트 범위**: 프로젝트 루트의 `.mcp.json` (소스 제어에 체크인됨)
-  * **관리됨**: 시스템 디렉토리의 `managed-mcp.json` ([관리되는 MCP 구성](#managed-mcp-configuration) 참조)
-</Note>
-
 ### 범위 계층 및 우선순위
 
-MCP 서버 구성은 명확한 우선순위 계층을 따릅니다. 동일한 이름의 서버가 여러 범위에 존재할 때 시스템은 로컬 범위 서버를 먼저 우선시하고, 그 다음 프로젝트 범위 서버, 마지막으로 사용자 범위 서버를 우선시하여 충돌을 해결합니다. 이 설계는 필요할 때 개인 구성이 공유 구성을 재정의할 수 있도록 합니다.
+동일한 이름의 서버가 둘 이상의 위치에 정의되면 Claude Code는 가장 높은 우선순위 소스의 정의를 사용하여 한 번 연결합니다:
 
-서버가 로컬로 구성되고 [claude.ai 커넥터](#use-mcp-servers-from-claude-ai)를 통해서도 구성된 경우 로컬 구성이 우선순위를 가지며 커넥터 항목은 건너뜁니다.
+1. 로컬 범위
+2. 프로젝트 범위
+3. 사용자 범위
+4. [플러그인 제공 서버](/ko/plugins)
+5. [Claude.ai 커넥터](#use-mcp-servers-from-claude-ai)
+
+세 범위는 이름으로 중복을 일치시킵니다. 플러그인과 커넥터는 엔드포인트로 일치하므로 위의 서버와 동일한 URL 또는 명령을 가리키는 것은 중복으로 처리됩니다.
 
 ### `.mcp.json`의 환경 변수 확장
 
@@ -582,14 +590,11 @@ Sentry 계정으로 인증합니다:
 
 ### 예: 코드 검토를 위해 GitHub에 연결
 
+GitHub의 원격 MCP 서버는 헤더로 전달된 GitHub 개인 액세스 토큰으로 인증합니다. 하나를 얻으려면 [GitHub 토큰 설정](https://github.com/settings/personal-access-tokens)을 열고, Claude가 작업하려는 리포지토리에 액세스할 수 있는 새로운 세분화된 토큰을 생성한 다음 서버를 추가하세요:
+
 ```bash theme={null}
-claude mcp add --transport http github https://api.githubcopilot.com/mcp/
-```
-
-필요한 경우 GitHub에 대해 "인증"을 선택하여 인증합니다:
-
-```text theme={null}
-/mcp
+claude mcp add --transport http github https://api.githubcopilot.com/mcp/ \
+  --header "Authorization: Bearer YOUR_GITHUB_PAT"
 ```
 
 그런 다음 GitHub로 작업합니다:
@@ -747,7 +752,7 @@ claude mcp add --transport http \
 
 ### OAuth 메타데이터 검색 재정의
 
-MCP 서버의 표준 OAuth 메타데이터 엔드포인트가 오류를 반환하지만 작동하는 OIDC 엔드포인트를 노출하는 경우 Claude Code에 특정 메타데이터 URL을 가리켜 기본 검색 체인을 우회할 수 있습니다. 기본적으로 Claude Code는 먼저 `/.well-known/oauth-protected-resource`에서 RFC 9728 보호된 리소스 메타데이터를 확인한 다음 `/.well-known/oauth-authorization-server`에서 RFC 8414 인증 서버 메타데이터로 돌아갑니다.
+특정 OAuth 인증 서버 메타데이터 URL을 가리켜 기본 검색 체인을 우회하도록 Claude Code를 설정합니다. MCP 서버의 표준 엔드포인트가 오류를 반환하거나 내부 프록시를 통해 검색을 라우팅하려는 경우에 설정합니다. 기본적으로 Claude Code는 먼저 `/.well-known/oauth-protected-resource`에서 RFC 9728 보호된 리소스 메타데이터를 확인한 다음 `/.well-known/oauth-authorization-server`에서 RFC 8414 인증 서버 메타데이터로 돌아갑니다.
 
 `.mcp.json`의 서버 구성의 `oauth` 객체에 `authServerMetadataUrl`을 설정합니다:
 
@@ -765,9 +770,33 @@ MCP 서버의 표준 OAuth 메타데이터 엔드포인트가 오류를 반환�
 }
 ```
 
-URL은 `https://`를 사용해야 합니다. 이 옵션은 Claude Code v2.1.64 이상이 필요합니다.
+URL은 `https://`를 사용해야 합니다. `authServerMetadataUrl`은 Claude Code v2.1.64 이상이 필요합니다. 메타데이터 URL의 `scopes_supported`는 업스트림 서버가 광고하는 범위를 재정의합니다.
 
-### 사용자 정의 헤더를 사용한 동적 인증
+### OAuth 범위 제한
+
+`oauth.scopes`를 설정하여 인증 흐름 중에 Claude Code가 요청하는 범위를 고정합니다. 이는 업스트림 인증 서버가 광고하는 것보다 더 많은 범위를 부여하고 싶지 않을 때 MCP 서버를 보안 팀이 승인한 부분 집합으로 제한하는 지원되는 방법입니다. 값은 RFC 6749 §3.3의 `scope` 매개변수 형식과 일치하는 단일 공백으로 구분된 문자열입니다.
+
+```json theme={null}
+{
+  "mcpServers": {
+    "slack": {
+      "type": "http",
+      "url": "https://mcp.slack.com/mcp",
+      "oauth": {
+        "scopes": "channels:read chat:write search:read"
+      }
+    }
+  }
+}
+```
+
+`oauth.scopes`는 `authServerMetadataUrl`과 서버가 `/.well-known`에서 검색하는 범위 모두보다 우선합니다. 설정하지 않으면 MCP 서버가 요청된 범위 집합을 결정합니다.
+
+인증 서버가 `scopes_supported`에서 `offline_access`를 광고하면 Claude Code는 액세스 토큰을 새로운 브라우저 로그인 없이 새로 고칠 수 있도록 고정된 범위에 추가합니다.
+
+서버가 나중에 도구 호출에 대해 403 `insufficient_scope`을 반환하면 Claude Code는 동일한 고정된 범위로 다시 인증합니다. 필요한 도구가 고정된 범위 외의 범위를 요구할 때 `oauth.scopes`를 확대합니다.
+
+### 사용자 정의 인증을 위한 동적 헤더 사용
 
 MCP 서버가 OAuth (예: Kerberos, 단기 토큰 또는 내부 SSO)가 아닌 다른 인증 체계를 사용하는 경우 `headersHelper`를 사용하여 연결 시간에 요청 헤더를 생성합니다. Claude Code는 명령을 실행하고 출력을 연결 헤더에 병합합니다.
 
@@ -893,7 +922,7 @@ Claude Desktop에서 MCP 서버를 이미 구성한 경우 가져올 수 있습�
 
 <Steps>
   <Step title="Claude.ai에서 MCP 서버 구성">
-    [claude.ai/settings/connectors](https://claude.ai/settings/connectors)에서 서버를 추가합니다. Team 및 Enterprise 플랜에서는 관리자만 서버를 추가할 수 있습니다.
+    [claude.ai/customize/connectors](https://claude.ai/customize/connectors)에서 서버를 추가합니다. Team 및 Enterprise 플랜에서는 관리자만 서버를 추가할 수 있습니다.
   </Step>
 
   <Step title="MCP 서버 인증">
@@ -983,11 +1012,11 @@ MCP 도구가 큰 출력을 생성할 때 Claude Code는 토큰 사용량을 관
 * **출력 경고 임계값**: Claude Code는 MCP 도구 출력이 10,000 토큰을 초과할 때 경고를 표시합니다
 * **구성 가능한 제한**: `MAX_MCP_OUTPUT_TOKENS` 환경 변수를 사용하여 최대 허용 MCP 출력 토큰을 조정할 수 있습니다
 * **기본 제한**: 기본 최대값은 25,000 토큰입니다
+* **범위**: 환경 변수는 자신의 제한을 선언하지 않는 도구에 적용됩니다. [`anthropic/maxResultSizeChars`](#raise-the-limit-for-a-specific-tool)를 설정하는 도구는 `MAX_MCP_OUTPUT_TOKENS`이 설정된 것과 관계없이 텍스트 콘텐츠에 대해 해당 값을 사용합니다. 이미지 데이터를 반환하는 도구는 여전히 `MAX_MCP_OUTPUT_TOKENS`의 영향을 받습니다
 
 큰 출력을 생성하는 도구의 제한을 늘리려면:
 
 ```bash theme={null}
-# MCP 도구 출력의 제한을 높게 설정
 export MAX_MCP_OUTPUT_TOKENS=50000
 claude
 ```
@@ -998,8 +1027,26 @@ claude
 * 상세한 보고서 또는 문서 생성
 * 광범위한 로그 파일 또는 디버깅 정보 처리
 
+### 특정 도구의 제한 늘리기
+
+MCP 서버를 구축하는 경우 도구의 `tools/list` 응답 항목에서 `_meta["anthropic/maxResultSizeChars"]`를 설정하여 개별 도구가 기본 디스크 유지 임계값보다 큰 결과를 반환할 수 있습니다. Claude Code는 해당 도구의 임계값을 주석 처리된 값으로 올립니다 (최대 500,000자의 하드 상한까지).
+
+이는 데이터베이스 스키마 또는 전체 파일 트리와 같이 본질적으로 크지만 필요한 출력을 반환하는 도구에 유용합니다. 주석 처리 없이 기본 임계값을 초과하는 결과는 디스크에 유지되고 대화에서 파일 참조로 대체됩니다.
+
+```json theme={null}
+{
+  "name": "get_schema",
+  "description": "Returns the full database schema",
+  "_meta": {
+    "anthropic/maxResultSizeChars": 200000
+  }
+}
+```
+
+주석 처리는 텍스트 콘텐츠에 대해 `MAX_MCP_OUTPUT_TOKENS`과 독립적으로 적용되므로 사용자는 도구가 선언하는 도구에 대해 환경 변수를 올릴 필요가 없습니다. 이미지 데이터를 반환하는 도구는 여전히 토큰 제한의 영향을 받습니다.
+
 <Warning>
-  특정 MCP 서버에서 자주 출력 경고가 발생하면 제한을 늘리거나 서버를 구성하여 응답을 페이지 매김하거나 필터링하는 것을 고려하세요.
+  특정 MCP 서버에서 자주 출력 경고가 발생하면 `MAX_MCP_OUTPUT_TOKENS` 제한을 늘리는 것을 고려하세요. 또한 서버 작성자에게 `anthropic/maxResultSizeChars` 주석을 추가하거나 응답을 페이지 매김하도록 요청할 수 있습니다. 주석은 이미지 콘텐츠를 반환하는 도구에는 영향을 주지 않습니다. 이러한 경우 `MAX_MCP_OUTPUT_TOKENS`을 올리는 것이 유일한 옵션입니다.
 </Warning>
 
 ## MCP 리소스 요청에 응답
@@ -1080,17 +1127,17 @@ Claude Code는 도구 설명 및 서버 지침을 각각 2KB에서 자릅니다.
 
 ### Tool Search 구성
 
-Tool Search는 기본적으로 활성화됩니다: MCP 도구는 연기되고 필요에 따라 검색됩니다. `ANTHROPIC_BASE_URL`이 비 자사 호스트를 가리킬 때 Tool Search는 기본적으로 비활성화됩니다. 대부분의 프록시가 `tool_reference` 블록을 전달하지 않기 때문입니다. 프록시가 전달하는 경우 `ENABLE_TOOL_SEARCH`를 명시적으로 설정하세요. 이 기능은 `tool_reference` 블록을 지원하는 모델이 필요합니다: Sonnet 4 이상 또는 Opus 4 이상. Haiku 모델은 Tool Search를 지원하지 않습니다.
+Tool Search는 기본적으로 활성화됩니다: MCP 도구는 연기되고 필요에 따라 검색됩니다. Vertex AI에서는 기본적으로 비활성화되어 있습니다 (도구 검색 베타 헤더를 허용하지 않음). `ANTHROPIC_BASE_URL`이 비 자사 호스트를 가리킬 때도 비활성화됩니다 (대부분의 프록시가 `tool_reference` 블록을 전달하지 않기 때문). 명시적으로 `ENABLE_TOOL_SEARCH`를 설정하여 옵트인합니다. 이 기능은 `tool_reference` 블록을 지원하는 모델이 필요합니다: Sonnet 4 이상 또는 Opus 4 이상. Haiku 모델은 Tool Search를 지원하지 않습니다.
 
 `ENABLE_TOOL_SEARCH` 환경 변수로 Tool Search 동작을 제어합니다:
 
-| 값          | 동작                                                                      |
-| :--------- | :---------------------------------------------------------------------- |
-| (설정되지 않음)  | 모든 MCP 도구 연기되고 필요에 따라 로드됨. `ANTHROPIC_BASE_URL`이 비 자사 호스트일 때 미리 로드로 돌아감 |
-| `true`     | 모든 MCP 도구 연기, 비 자사 `ANTHROPIC_BASE_URL` 포함                              |
-| `auto`     | 임계값 모드: 도구가 컨텍스트 윈도우의 10% 이내에 맞으면 미리 로드, 그렇지 않으면 연기                     |
-| `auto:<N>` | 사용자 정의 백분율을 사용한 임계값 모드, `<N>`은 0-100 (예: `auto:5`는 5%)                  |
-| `false`    | 모든 MCP 도구 미리 로드, 연기 없음                                                  |
+| 값          | 동작                                                                                   |
+| :--------- | :----------------------------------------------------------------------------------- |
+| (설정되지 않음)  | 모든 MCP 도구 연기되고 필요에 따라 로드됨. Vertex AI 또는 `ANTHROPIC_BASE_URL`이 비 자사 호스트일 때 미리 로드로 돌아감 |
+| `true`     | 모든 MCP 도구 연기, Vertex AI 및 비 자사 `ANTHROPIC_BASE_URL` 포함                               |
+| `auto`     | 임계값 모드: 도구가 컨텍스트 윈도우의 10% 이내에 맞으면 미리 로드, 그렇지 않으면 연기                                  |
+| `auto:<N>` | 사용자 정의 백분율을 사용한 임계값 모드, `<N>`은 0-100 (예: `auto:5`는 5%)                               |
+| `false`    | 모든 MCP 도구 미리 로드, 연기 없음                                                               |
 
 ```bash theme={null}
 # 사용자 정의 5% 임계값 사용

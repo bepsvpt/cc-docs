@@ -214,6 +214,8 @@ export const MCPServersTable = ({platform = "all"}) => {
 
 Claude Code dapat terhubung ke ratusan alat eksternal dan sumber data melalui [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction), standar sumber terbuka untuk integrasi AI-alat. Server MCP memberikan Claude Code akses ke alat, database, dan API Anda.
 
+Hubungkan server ketika Anda menemukan diri Anda menyalin data ke dalam chat dari alat lain, seperti pelacak masalah atau dasbor pemantauan. Setelah terhubung, Claude dapat membaca dan bertindak pada sistem tersebut secara langsung alih-alih bekerja dari apa yang Anda tempel.
+
 ## Apa yang dapat Anda lakukan dengan MCP
 
 Dengan server MCP yang terhubung, Anda dapat meminta Claude Code untuk:
@@ -329,6 +331,10 @@ claude mcp remove github
 
 Claude Code mendukung notifikasi `list_changed` MCP, memungkinkan server MCP untuk secara dinamis memperbarui alat, prompt, dan sumber daya yang tersedia tanpa memerlukan Anda untuk memutuskan dan menghubungkan kembali. Ketika server MCP mengirim notifikasi `list_changed`, Claude Code secara otomatis menyegarkan kemampuan yang tersedia dari server tersebut.
 
+### Koneksi ulang otomatis
+
+Jika server HTTP atau SSE terputus di tengah sesi, Claude Code secara otomatis menghubungkan kembali dengan backoff eksponensial: hingga lima upaya, dimulai dengan penundaan satu detik dan berlipat ganda setiap kali. Server muncul sebagai tertunda dalam `/mcp` saat koneksi ulang sedang berlangsung. Setelah lima upaya gagal, server ditandai sebagai gagal dan Anda dapat mencoba lagi secara manual dari `/mcp`. Server stdio adalah proses lokal dan tidak dihubungkan kembali secara otomatis.
+
 ### Dorong pesan dengan saluran
 
 Server MCP juga dapat mendorong pesan langsung ke dalam sesi Anda sehingga Claude dapat bereaksi terhadap peristiwa eksternal seperti hasil CI, peringatan pemantauan, atau pesan obrolan. Untuk mengaktifkan ini, server Anda mendeklarasikan kemampuan `claude/channel` dan Anda memilihnya dengan flag `--channels` saat startup. Lihat [Saluran](/id/channels) untuk menggunakan saluran yang didukung secara resmi, atau [Referensi saluran](/id/channels-reference) untuk membangun saluran Anda sendiri.
@@ -345,17 +351,6 @@ Server MCP juga dapat mendorong pesan langsung ke dalam sesi Anda sehingga Claud
   * Claude Code akan menampilkan peringatan ketika output alat MCP melebihi 10.000 token. Untuk meningkatkan batas ini, atur variabel lingkungan `MAX_MCP_OUTPUT_TOKENS` (misalnya, `MAX_MCP_OUTPUT_TOKENS=50000`)
   * Gunakan `/mcp` untuk autentikasi dengan server jarak jauh yang memerlukan autentikasi OAuth 2.0
 </Tip>
-
-<Warning>
-  **Pengguna Windows**: Pada Windows asli (bukan WSL), server MCP lokal yang menggunakan `npx` memerlukan pembungkus `cmd /c` untuk memastikan eksekusi yang tepat.
-
-  ```bash theme={null}
-  # Ini membuat command="cmd" yang dapat dieksekusi Windows
-  claude mcp add --transport stdio my-server -- cmd /c npx -y @some/package
-  ```
-
-  Tanpa pembungkus `cmd /c`, Anda akan mengalami kesalahan "Connection closed" karena Windows tidak dapat langsung menjalankan `npx`. (Lihat catatan di atas untuk penjelasan parameter `--`.)
-</Warning>
 
 ### Server MCP yang disediakan plugin
 
@@ -426,11 +421,17 @@ Lihat [referensi komponen plugin](/id/plugins-reference#mcp-servers) untuk detai
 
 ## Cakupan instalasi MCP
 
-Server MCP dapat dikonfigurasi pada tiga tingkat cakupan yang berbeda, masing-masing melayani tujuan yang berbeda untuk mengelola aksesibilitas server dan berbagi. Memahami cakupan ini membantu Anda menentukan cara terbaik untuk mengonfigurasi server sesuai kebutuhan spesifik Anda.
+Server MCP dapat dikonfigurasi pada tiga cakupan berbeda. Cakupan yang Anda pilih mengontrol proyek mana tempat server dimuat dan apakah konfigurasi dibagikan dengan tim Anda.
+
+| Cakupan                  | Dimuat dalam          | Dibagikan dengan tim      | Disimpan dalam             |
+| ------------------------ | --------------------- | ------------------------- | -------------------------- |
+| [Lokal](#local-scope)    | Hanya proyek saat ini | Tidak                     | `~/.claude.json`           |
+| [Proyek](#project-scope) | Hanya proyek saat ini | Ya, melalui kontrol versi | `.mcp.json` di root proyek |
+| [Pengguna](#user-scope)  | Semua proyek Anda     | Tidak                     | `~/.claude.json`           |
 
 ### Cakupan lokal
 
-Server dengan cakupan lokal mewakili tingkat konfigurasi default dan disimpan dalam `~/.claude.json` di bawah jalur proyek Anda. Server ini tetap pribadi untuk Anda dan hanya dapat diakses saat bekerja dalam direktori proyek saat ini. Cakupan ini ideal untuk server pengembangan pribadi, konfigurasi eksperimental, atau server yang berisi kredensial sensitif yang tidak boleh dibagikan.
+Cakupan lokal adalah default. Server dengan cakupan lokal hanya dimuat di proyek tempat Anda menambahkannya dan tetap pribadi untuk Anda. Claude Code menyimpannya dalam `~/.claude.json` di bawah jalur proyek tersebut, jadi server yang sama tidak akan muncul di proyek lain Anda. Gunakan cakupan lokal untuk server pengembangan pribadi, konfigurasi eksperimental, atau server dengan kredensial yang tidak ingin Anda masukkan ke dalam kontrol versi.
 
 <Note>
   Istilah "cakupan lokal" untuk server MCP berbeda dari pengaturan lokal umum. Server MCP dengan cakupan lokal disimpan dalam `~/.claude.json` (direktori home Anda), sementara pengaturan lokal umum menggunakan `.claude/settings.local.json` (di direktori proyek). Lihat [Pengaturan](/id/settings#settings-files) untuk detail tentang lokasi file pengaturan.
@@ -442,6 +443,23 @@ claude mcp add --transport http stripe https://mcp.stripe.com
 
 # Tentukan cakupan lokal secara eksplisit
 claude mcp add --transport http stripe --scope local https://mcp.stripe.com
+```
+
+Perintah menulis server ke dalam entri untuk proyek saat ini di dalam `~/.claude.json`. Contoh di bawah menunjukkan hasilnya ketika Anda menjalankannya dari `/path/to/your/project`:
+
+```json theme={null}
+{
+  "projects": {
+    "/path/to/your/project": {
+      "mcpServers": {
+        "stripe": {
+          "type": "http",
+          "url": "https://mcp.stripe.com"
+        }
+      }
+    }
+  }
+}
 ```
 
 ### Cakupan proyek
@@ -478,27 +496,17 @@ Server dengan cakupan pengguna disimpan dalam `~/.claude.json` dan menyediakan a
 claude mcp add --transport http hubspot --scope user https://mcp.hubspot.com/anthropic
 ```
 
-### Memilih cakupan yang tepat
-
-Pilih cakupan Anda berdasarkan:
-
-* **Cakupan lokal**: Server pribadi, konfigurasi eksperimental, atau kredensial sensitif khusus untuk satu proyek
-* **Cakupan proyek**: Server bersama tim, alat khusus proyek, atau layanan yang diperlukan untuk kolaborasi
-* **Cakupan pengguna**: Utilitas pribadi yang diperlukan di berbagai proyek, alat pengembangan, atau layanan yang sering digunakan
-
-<Note>
-  **Di mana server MCP disimpan?**
-
-  * **Cakupan pengguna dan lokal**: `~/.claude.json` (dalam field `mcpServers` atau di bawah jalur proyek)
-  * **Cakupan proyek**: `.mcp.json` di root proyek Anda (diperiksa ke dalam kontrol sumber)
-  * **Dikelola**: `managed-mcp.json` di direktori sistem (lihat [Konfigurasi MCP yang dikelola](#managed-mcp-configuration))
-</Note>
-
 ### Hierarki cakupan dan prioritas
 
-Konfigurasi server MCP mengikuti hierarki prioritas yang jelas. Ketika server dengan nama yang sama ada di berbagai cakupan, sistem menyelesaikan konflik dengan memprioritaskan server dengan cakupan lokal terlebih dahulu, diikuti oleh server dengan cakupan proyek, dan akhirnya server dengan cakupan pengguna. Desain ini memastikan bahwa konfigurasi pribadi dapat mengganti yang dibagikan jika diperlukan.
+Ketika server yang sama ditentukan di lebih dari satu tempat, Claude Code terhubung ke server tersebut sekali, menggunakan definisi dari sumber dengan prioritas tertinggi:
 
-Jika server dikonfigurasi baik secara lokal maupun melalui [konektor claude.ai](#use-mcp-servers-from-claude-ai), konfigurasi lokal mengambil prioritas dan entri konektor dilewati.
+1. Cakupan lokal
+2. Cakupan proyek
+3. Cakupan pengguna
+4. [Server yang disediakan plugin](/id/plugins)
+5. [Konektor claude.ai](#use-mcp-servers-from-claude-ai)
+
+Tiga cakupan mencocokkan duplikat berdasarkan nama. Plugin dan konektor mencocokkan berdasarkan endpoint, jadi yang menunjuk ke URL atau perintah yang sama dengan server di atas diperlakukan sebagai duplikat.
 
 ### Ekspansi variabel lingkungan dalam `.mcp.json`
 
@@ -584,14 +592,11 @@ Which deployment introduced these new errors?
 
 ### Contoh: Hubungkan ke GitHub untuk tinjauan kode
 
+Token akses pribadi GitHub MCP server jarak jauh diautentikasi dengan token akses pribadi GitHub yang diteruskan sebagai header. Untuk mendapatkan satu, buka [pengaturan token GitHub Anda](https://github.com/settings/personal-access-tokens), hasilkan token baru yang bagus dengan akses ke repositori yang ingin Claude kerjakan, kemudian tambahkan server:
+
 ```bash theme={null}
-claude mcp add --transport http github https://api.githubcopilot.com/mcp/
-```
-
-Autentikasi jika diperlukan dengan memilih "Authenticate" untuk GitHub:
-
-```text theme={null}
-/mcp
+claude mcp add --transport http github https://api.githubcopilot.com/mcp/ \
+  --header "Authorization: Bearer YOUR_GITHUB_PAT"
 ```
 
 Kemudian bekerja dengan GitHub:
@@ -749,7 +754,7 @@ Beberapa server MCP tidak mendukung pengaturan OAuth otomatis melalui Dynamic Cl
 
 ### Ganti penemuan metadata OAuth
 
-Jika endpoint metadata OAuth standar server MCP Anda mengembalikan kesalahan tetapi server mengekspos endpoint OIDC yang berfungsi, Anda dapat mengarahkan Claude Code ke URL metadata tertentu untuk melewati rantai penemuan standar. Secara default, Claude Code pertama kali memeriksa Protected Resource Metadata RFC 9728 di `/.well-known/oauth-protected-resource`, kemudian kembali ke metadata server otorisasi RFC 8414 di `/.well-known/oauth-authorization-server`.
+Arahkan Claude Code ke URL metadata otorisasi OAuth tertentu untuk melewati rantai penemuan default. Atur `authServerMetadataUrl` ketika endpoint standar server MCP mengembalikan kesalahan, atau ketika Anda ingin merutekan penemuan melalui proxy internal. Secara default, Claude Code pertama kali memeriksa Protected Resource Metadata RFC 9728 di `/.well-known/oauth-protected-resource`, kemudian kembali ke metadata server otorisasi RFC 8414 di `/.well-known/oauth-authorization-server`.
 
 Atur `authServerMetadataUrl` dalam objek `oauth` dari konfigurasi server Anda di `.mcp.json`:
 
@@ -767,7 +772,31 @@ Atur `authServerMetadataUrl` dalam objek `oauth` dari konfigurasi server Anda di
 }
 ```
 
-URL harus menggunakan `https://`. Opsi ini memerlukan Claude Code v2.1.64 atau lebih baru.
+URL harus menggunakan `https://`. `authServerMetadataUrl` memerlukan Claude Code v2.1.64 atau lebih baru. `scopes_supported` dari URL metadata mengganti cakupan yang diiklankan server upstream.
+
+### Batasi cakupan OAuth
+
+Atur `oauth.scopes` untuk menyematkan cakupan yang diminta Claude Code selama alur otorisasi. Ini adalah cara yang didukung untuk membatasi server MCP ke subset yang disetujui tim keamanan ketika server otorisasi upstream mengiklankan lebih banyak cakupan daripada yang ingin Anda berikan. Nilainya adalah string tunggal yang dipisahkan spasi, cocok dengan format parameter `scope` dalam RFC 6749 §3.3.
+
+```json theme={null}
+{
+  "mcpServers": {
+    "slack": {
+      "type": "http",
+      "url": "https://mcp.slack.com/mcp",
+      "oauth": {
+        "scopes": "channels:read chat:write search:read"
+      }
+    }
+  }
+}
+```
+
+`oauth.scopes` mengambil prioritas atas `authServerMetadataUrl` dan cakupan yang ditemukan server di `/.well-known`. Biarkan tidak diatur untuk membiarkan server MCP menentukan set cakupan yang diminta.
+
+Jika server otorisasi mengiklankan `offline_access` dalam `scopes_supported`, Claude Code menambahkannya ke cakupan yang disematkan sehingga token akses dapat disegarkan tanpa login browser baru.
+
+Jika server kemudian mengembalikan 403 `insufficient_scope` untuk panggilan alat, Claude Code melakukan autentikasi ulang dengan cakupan yang disematkan yang sama. Perluas `oauth.scopes` ketika alat yang Anda butuhkan memerlukan cakupan di luar pin.
 
 ### Gunakan header dinamis untuk autentikasi khusus
 
@@ -895,7 +924,7 @@ Jika Anda telah masuk ke Claude Code dengan akun [Claude.ai](https://claude.ai),
 
 <Steps>
   <Step title="Konfigurasi server MCP di Claude.ai">
-    Tambahkan server di [claude.ai/settings/connectors](https://claude.ai/settings/connectors). Pada paket Tim dan Enterprise, hanya admin yang dapat menambahkan server.
+    Tambahkan server di [claude.ai/customize/connectors](https://claude.ai/customize/connectors). Pada paket Tim dan Enterprise, hanya admin yang dapat menambahkan server.
   </Step>
 
   <Step title="Autentikasi server MCP">
@@ -985,11 +1014,11 @@ Ketika alat MCP menghasilkan output besar, Claude Code membantu mengelola penggu
 * **Ambang batas peringatan output**: Claude Code menampilkan peringatan ketika output alat MCP apa pun melebihi 10.000 token
 * **Batas yang dapat dikonfigurasi**: Anda dapat menyesuaikan token output MCP maksimum yang diizinkan menggunakan variabel lingkungan `MAX_MCP_OUTPUT_TOKENS`
 * **Batas default**: Maksimum default adalah 25.000 token
+* **Cakupan**: Variabel lingkungan berlaku untuk alat yang tidak mendeklarasikan batas mereka sendiri. Alat yang menetapkan [`anthropic/maxResultSizeChars`](#raise-the-limit-for-a-specific-tool) menggunakan nilai itu sebagai gantinya untuk konten teks, terlepas dari apa yang `MAX_MCP_OUTPUT_TOKENS` diatur. Alat yang mengembalikan data gambar masih tunduk pada `MAX_MCP_OUTPUT_TOKENS`
 
 Untuk meningkatkan batas untuk alat yang menghasilkan output besar:
 
 ```bash theme={null}
-# Atur batas lebih tinggi untuk output alat MCP
 export MAX_MCP_OUTPUT_TOKENS=50000
 claude
 ```
@@ -1000,8 +1029,26 @@ Ini sangat berguna saat bekerja dengan server MCP yang:
 * Menghasilkan laporan atau dokumentasi terperinci
 * Memproses file log atau informasi debugging yang luas
 
+### Naikkan batas untuk alat tertentu
+
+Jika Anda membangun server MCP, Anda dapat mengizinkan alat individual untuk mengembalikan hasil yang lebih besar dari ambang batas default dengan menetapkan `_meta["anthropic/maxResultSizeChars"]` dalam entri `tools/list` alat. Claude Code menaikkan ambang batas alat tersebut ke nilai yang dianotasi, hingga batas keras 500.000 karakter.
+
+Ini berguna untuk alat yang mengembalikan output yang secara inheren besar tetapi diperlukan, seperti skema database atau pohon file lengkap. Tanpa anotasi, hasil yang melebihi ambang batas default disimpan ke disk dan diganti dengan referensi file dalam percakapan.
+
+```json theme={null}
+{
+  "name": "get_schema",
+  "description": "Returns the full database schema",
+  "_meta": {
+    "anthropic/maxResultSizeChars": 200000
+  }
+}
+```
+
+Anotasi berlaku secara independen dari `MAX_MCP_OUTPUT_TOKENS` untuk konten teks, jadi pengguna tidak perlu menaikkan variabel lingkungan untuk alat yang mendeklarasikannya. Alat yang mengembalikan data gambar masih tunduk pada batas token.
+
 <Warning>
-  Jika Anda sering mengalami peringatan output dengan server MCP tertentu, pertimbangkan untuk meningkatkan batas atau mengonfigurasi server untuk membuat halaman atau memfilter responsnya.
+  Jika Anda sering mengalami peringatan output dengan server MCP tertentu yang tidak Anda kontrol, pertimbangkan untuk meningkatkan batas `MAX_MCP_OUTPUT_TOKENS`. Anda juga dapat meminta penulis server untuk menambahkan anotasi `anthropic/maxResultSizeChars` atau untuk membuat halaman respons mereka. Anotasi tidak berpengaruh pada alat yang mengembalikan konten gambar; untuk itu, menaikkan `MAX_MCP_OUTPUT_TOKENS` adalah satu-satunya opsi.
 </Warning>
 
 ## Tanggapi permintaan elicitasi MCP
@@ -1082,17 +1129,17 @@ Claude Code memotong deskripsi alat dan instruksi server pada 2KB masing-masing.
 
 ### Konfigurasi pencarian alat
 
-Pencarian alat diaktifkan secara default: alat MCP ditangguhkan dan ditemukan sesuai permintaan. Ketika `ANTHROPIC_BASE_URL` menunjuk ke host non-pihak pertama, pencarian alat dinonaktifkan secara default karena sebagian besar proxy tidak meneruskan blok `tool_reference`. Atur `ENABLE_TOOL_SEARCH` secara eksplisit jika proxy Anda melakukannya. Fitur ini memerlukan model yang mendukung blok `tool_reference`: Sonnet 4 dan lebih baru, atau Opus 4 dan lebih baru. Model Haiku tidak mendukung pencarian alat.
+Pencarian alat diaktifkan secara default: alat MCP ditangguhkan dan ditemukan sesuai permintaan. Pencarian alat dinonaktifkan secara default di Vertex AI, yang tidak menerima header beta pencarian alat, dan ketika `ANTHROPIC_BASE_URL` menunjuk ke host non-pihak pertama, karena sebagian besar proxy tidak meneruskan blok `tool_reference`. Atur `ENABLE_TOOL_SEARCH` secara eksplisit untuk memilih. Fitur ini memerlukan model yang mendukung blok `tool_reference`: Sonnet 4 dan lebih baru, atau Opus 4 dan lebih baru. Model Haiku tidak mendukung pencarian alat.
 
 Kontrol perilaku pencarian alat dengan variabel lingkungan `ENABLE_TOOL_SEARCH`:
 
-| Nilai          | Perilaku                                                                                                                                           |
-| :------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| (tidak diatur) | Semua alat MCP ditangguhkan dan dimuat sesuai permintaan. Kembali ke pemuatan sebelumnya ketika `ANTHROPIC_BASE_URL` adalah host non-pihak pertama |
-| `true`         | Semua alat MCP ditangguhkan, termasuk untuk `ANTHROPIC_BASE_URL` non-pihak pertama                                                                 |
-| `auto`         | Mode ambang batas: alat dimuat sebelumnya jika cocok dalam 10% jendela konteks, ditangguhkan sebaliknya                                            |
-| `auto:<N>`     | Mode ambang batas dengan persentase khusus, di mana `<N>` adalah 0-100 (misalnya, `auto:5` untuk 5%)                                               |
-| `false`        | Semua alat MCP dimuat sebelumnya, tidak ada penundaan                                                                                              |
+| Nilai          | Perilaku                                                                                                                                                             |
+| :------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (tidak diatur) | Semua alat MCP ditangguhkan dan dimuat sesuai permintaan. Kembali ke pemuatan sebelumnya di Vertex AI atau ketika `ANTHROPIC_BASE_URL` adalah host non-pihak pertama |
+| `true`         | Semua alat MCP ditangguhkan, termasuk di Vertex AI dan untuk `ANTHROPIC_BASE_URL` non-pihak pertama                                                                  |
+| `auto`         | Mode ambang batas: alat dimuat sebelumnya jika cocok dalam 10% jendela konteks, ditangguhkan sebaliknya                                                              |
+| `auto:<N>`     | Mode ambang batas dengan persentase khusus, di mana `<N>` adalah 0-100 (misalnya, `auto:5` untuk 5%)                                                                 |
+| `false`        | Semua alat MCP dimuat sebelumnya, tidak ada penundaan                                                                                                                |
 
 ```bash theme={null}
 # Gunakan ambang batas khusus 5%

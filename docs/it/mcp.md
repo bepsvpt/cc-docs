@@ -214,6 +214,8 @@ export const MCPServersTable = ({platform = "all"}) => {
 
 Claude Code può connettersi a centinaia di strumenti e fonti di dati esterni attraverso il [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction), uno standard open source per le integrazioni AI-tool. I server MCP danno a Claude Code accesso ai tuoi strumenti, database e API.
 
+Connetti un server quando ti trovi a copiare dati in chat da un altro strumento, come un issue tracker o un dashboard di monitoraggio. Una volta connesso, Claude può leggere e agire su quel sistema direttamente invece di lavorare da quello che incolla.
+
 ## Cosa puoi fare con MCP
 
 Con i server MCP connessi, puoi chiedere a Claude Code di:
@@ -329,6 +331,10 @@ claude mcp remove github
 
 Claude Code supporta le notifiche `list_changed` di MCP, consentendo ai server MCP di aggiornare dinamicamente i loro strumenti, prompt e risorse disponibili senza richiedere di disconnettersi e riconnettersi. Quando un server MCP invia una notifica `list_changed`, Claude Code aggiorna automaticamente le capacità disponibili da quel server.
 
+### Riconnessione automatica
+
+Se un server HTTP o SSE si disconnette durante una sessione, Claude Code si riconnette automaticamente con backoff esponenziale: fino a cinque tentativi, a partire da un ritardo di un secondo e raddoppiando ogni volta. Il server appare come in sospeso in `/mcp` mentre la riconnessione è in corso. Dopo cinque tentativi falliti il server è contrassegnato come non riuscito e puoi riprovare manualmente da `/mcp`. I server stdio sono processi locali e non vengono riconnessi automaticamente.
+
 ### Invia messaggi con canali
 
 Un server MCP può anche inviare messaggi direttamente nella tua sessione in modo che Claude possa reagire a eventi esterni come risultati CI, avvisi di monitoraggio o messaggi di chat. Per abilitare questa funzionalità, il tuo server dichiara la capacità `claude/channel` e tu la abiliti con il flag `--channels` all'avvio. Vedi [Canali](/it/channels) per utilizzare un canale ufficialmente supportato, oppure [Riferimento canali](/it/channels-reference) per costruire il tuo.
@@ -345,17 +351,6 @@ Un server MCP può anche inviare messaggi direttamente nella tua sessione in mod
   * Claude Code visualizzerà un avviso quando l'output dello strumento MCP supera 10.000 token. Per aumentare questo limite, imposta la variabile di ambiente `MAX_MCP_OUTPUT_TOKENS` (per esempio, `MAX_MCP_OUTPUT_TOKENS=50000`)
   * Utilizza `/mcp` per autenticarti con server remoti che richiedono l'autenticazione OAuth 2.0
 </Tip>
-
-<Warning>
-  **Utenti Windows**: Su Windows nativo (non WSL), i server MCP locali che utilizzano `npx` richiedono il wrapper `cmd /c` per garantire l'esecuzione corretta.
-
-  ```bash theme={null}
-  # Questo crea command="cmd" che Windows può eseguire
-  claude mcp add --transport stdio my-server -- cmd /c npx -y @some/package
-  ```
-
-  Senza il wrapper `cmd /c`, incontrerai errori "Connection closed" perché Windows non può eseguire direttamente `npx`. (Vedi la nota sopra per una spiegazione del parametro `--`.)
-</Warning>
 
 ### Server MCP forniti da plugin
 
@@ -426,11 +421,17 @@ Vedi il [riferimento dei componenti del plugin](/it/plugins-reference#mcp-server
 
 ## Ambiti di installazione MCP
 
-I server MCP possono essere configurati a tre diversi livelli di ambito, ognuno dei quali serve scopi distinti per gestire l'accessibilità e la condivisione dei server. Comprendere questi ambiti ti aiuta a determinare il modo migliore per configurare i server per le tue esigenze specifiche.
+I server MCP possono essere configurati a tre ambiti diversi. L'ambito che scegli controlla in quali progetti il server viene caricato e se la configurazione è condivisa con il tuo team.
+
+| Ambito                     | Carica in                 | Condiviso con il team                | Archiviato in                         |
+| -------------------------- | ------------------------- | ------------------------------------ | ------------------------------------- |
+| [Locale](#local-scope)     | Solo il progetto corrente | No                                   | `~/.claude.json`                      |
+| [Progetto](#project-scope) | Solo il progetto corrente | Sì, tramite controllo della versione | `.mcp.json` nella radice del progetto |
+| [Utente](#user-scope)      | Tutti i tuoi progetti     | No                                   | `~/.claude.json`                      |
 
 ### Ambito locale
 
-I server con ambito locale rappresentano il livello di configurazione predefinito e vengono archiviati in `~/.claude.json` nel percorso del tuo progetto. Questi server rimangono privati per te e sono accessibili solo quando lavori all'interno della directory del progetto corrente. Questo ambito è ideale per server di sviluppo personali, configurazioni sperimentali o server contenenti credenziali sensibili che non dovrebbero essere condivise.
+L'ambito locale è il predefinito. Un server con ambito locale viene caricato solo nel progetto in cui lo hai aggiunto e rimane privato per te. Claude Code lo archivia in `~/.claude.json` nel percorso di quel progetto, quindi lo stesso server non apparirà nei tuoi altri progetti. Utilizza l'ambito locale per server di sviluppo personali, configurazioni sperimentali o server con credenziali che non desideri nel controllo della versione.
 
 <Note>
   Il termine "ambito locale" per i server MCP differisce dalle impostazioni locali generali. I server MCP con ambito locale vengono archiviati in `~/.claude.json` (la tua directory home), mentre le impostazioni locali generali utilizzano `.claude/settings.local.json` (nella directory del progetto). Vedi [Impostazioni](/it/settings#settings-files) per i dettagli sui percorsi dei file di impostazioni.
@@ -444,12 +445,29 @@ claude mcp add --transport http stripe https://mcp.stripe.com
 claude mcp add --transport http stripe --scope local https://mcp.stripe.com
 ```
 
+Il comando scrive il server nella voce per il tuo progetto corrente all'interno di `~/.claude.json`. L'esempio seguente mostra il risultato quando lo esegui da `/path/to/your/project`:
+
+```json theme={null}
+{
+  "projects": {
+    "/path/to/your/project": {
+      "mcpServers": {
+        "stripe": {
+          "type": "http",
+          "url": "https://mcp.stripe.com"
+        }
+      }
+    }
+  }
+}
+```
+
 ### Ambito del progetto
 
 I server con ambito del progetto abilitano la collaborazione del team archiviando le configurazioni in un file `.mcp.json` nella directory radice del tuo progetto. Questo file è progettato per essere archiviato nel controllo della versione, assicurando che tutti i membri del team abbiano accesso agli stessi strumenti e servizi MCP. Quando aggiungi un server con ambito del progetto, Claude Code crea o aggiorna automaticamente questo file con la struttura di configurazione appropriata.
 
 ```bash theme={null}
-# Aggiungi un server con ambito del progetto
+# Aggiungi un server con ambio del progetto
 claude mcp add --transport http paypal --scope project https://mcp.paypal.com/mcp
 ```
 
@@ -478,27 +496,17 @@ I server con ambito utente vengono archiviati in `~/.claude.json` e forniscono a
 claude mcp add --transport http hubspot --scope user https://mcp.hubspot.com/anthropic
 ```
 
-### Scelta dell'ambito giusto
-
-Seleziona il tuo ambito in base a:
-
-* **Ambito locale**: Server personali, configurazioni sperimentali o credenziali sensibili specifici di un progetto
-* **Ambito del progetto**: Server condivisi dal team, strumenti specifici del progetto o servizi necessari per la collaborazione
-* **Ambito utente**: Utilità personali necessarie in più progetti, strumenti di sviluppo o servizi utilizzati frequentemente
-
-<Note>
-  **Dove vengono archiviati i server MCP?**
-
-  * **Ambito utente e locale**: `~/.claude.json` (nel campo `mcpServers` o nei percorsi del progetto)
-  * **Ambito del progetto**: `.mcp.json` nella radice del tuo progetto (archiviato nel controllo della versione)
-  * **Gestito**: `managed-mcp.json` nelle directory di sistema (vedi [Configurazione MCP gestita](#managed-mcp-configuration))
-</Note>
-
 ### Gerarchia e precedenza dell'ambito
 
-Le configurazioni del server MCP seguono una chiara gerarchia di precedenza. Quando server con lo stesso nome esistono in più ambiti, il sistema risolve i conflitti dando priorità ai server con ambito locale per primi, seguiti dai server con ambito del progetto e infine dai server con ambito utente. Questo design assicura che le configurazioni personali possano sovrascrivere quelle condivise quando necessario.
+Quando lo stesso server è definito in più di un posto, Claude Code si connette ad esso una volta, utilizzando la definizione dalla fonte con la precedenza più alta:
 
-Se un server è configurato sia localmente che tramite un [connettore claude.ai](#use-mcp-servers-from-claude-ai), la configurazione locale ha la precedenza e la voce del connettore viene saltata.
+1. Ambito locale
+2. Ambito del progetto
+3. Ambito utente
+4. [Server forniti da plugin](/it/plugins)
+5. [Connettori claude.ai](#use-mcp-servers-from-claude-ai)
+
+I tre ambiti corrispondono ai duplicati per nome. I plugin e i connettori corrispondono per endpoint, quindi uno che punta allo stesso URL o comando di un server sopra è trattato come un duplicato.
 
 ### Espansione delle variabili di ambiente in `.mcp.json`
 
@@ -584,14 +592,11 @@ Quale deployment ha introdotto questi nuovi errori?
 
 ### Esempio: Connettiti a GitHub per le revisioni del codice
 
+Il server MCP remoto di GitHub si autentica con un token di accesso personale GitHub passato come header. Per ottenerne uno, apri le [impostazioni del token GitHub](https://github.com/settings/personal-access-tokens), genera un nuovo token con granularità fine con accesso ai repository con cui desideri che Claude lavori, quindi aggiungi il server:
+
 ```bash theme={null}
-claude mcp add --transport http github https://api.githubcopilot.com/mcp/
-```
-
-Autenticati se necessario selezionando "Authenticate" per GitHub:
-
-```text theme={null}
-/mcp
+claude mcp add --transport http github https://api.githubcopilot.com/mcp/ \
+  --header "Authorization: Bearer YOUR_GITHUB_PAT"
 ```
 
 Quindi lavora con GitHub:
@@ -749,7 +754,7 @@ Alcuni server MCP non supportano la configurazione OAuth automatica tramite Dyna
 
 ### Sovrascrivi la scoperta dei metadati OAuth
 
-Se il tuo server MCP restituisce errori sull'endpoint dei metadati OAuth standard ma espone un endpoint OIDC funzionante, puoi indirizzare Claude Code a un URL di metadati specifico per bypassare la catena di scoperta predefinita. Per impostazione predefinita, Claude Code controlla prima i metadati della risorsa protetta RFC 9728 su `/.well-known/oauth-protected-resource`, quindi ricade sui metadati del server di autorizzazione RFC 8414 su `/.well-known/oauth-authorization-server`.
+Indirizza Claude Code a un URL di metadati OAuth specifico per bypassare la catena di scoperta predefinita. Imposta `authServerMetadataUrl` quando gli endpoint standard del server MCP generano errori, o quando desideri instradare la scoperta attraverso un proxy interno. Per impostazione predefinita, Claude Code controlla prima i metadati della risorsa protetta RFC 9728 su `/.well-known/oauth-protected-resource`, quindi ricade sui metadati del server di autorizzazione RFC 8414 su `/.well-known/oauth-authorization-server`.
 
 Imposta `authServerMetadataUrl` nell'oggetto `oauth` della configurazione del tuo server in `.mcp.json`:
 
@@ -767,7 +772,31 @@ Imposta `authServerMetadataUrl` nell'oggetto `oauth` della configurazione del tu
 }
 ```
 
-L'URL deve utilizzare `https://`. Questa opzione richiede Claude Code v2.1.64 o successiva.
+L'URL deve utilizzare `https://`. `authServerMetadataUrl` richiede Claude Code v2.1.64 o successiva. L'`scopes_supported` dell'URL dei metadati sovrascrive gli ambiti che il server upstream pubblicizza.
+
+### Limita gli ambiti OAuth
+
+Imposta `oauth.scopes` per fissare gli ambiti che Claude Code richiede durante il flusso di autorizzazione. Questo è il modo supportato per limitare un server MCP a un sottoinsieme approvato dal team di sicurezza quando il server di autorizzazione upstream pubblicizza più ambiti di quelli che desideri concedere. Il valore è una singola stringa separata da spazi, corrispondente al formato del parametro `scope` in RFC 6749 §3.3.
+
+```json theme={null}
+{
+  "mcpServers": {
+    "slack": {
+      "type": "http",
+      "url": "https://mcp.slack.com/mcp",
+      "oauth": {
+        "scopes": "channels:read chat:write search:read"
+      }
+    }
+  }
+}
+```
+
+`oauth.scopes` ha la precedenza sia su `authServerMetadataUrl` che sugli ambiti che il server scopre su `/.well-known`. Lascialo non impostato per consentire al server MCP di determinare l'insieme di ambiti richiesti.
+
+Se il server di autorizzazione pubblicizza `offline_access` in `scopes_supported`, Claude Code lo aggiunge agli ambiti fissati in modo che il token di accesso possa essere aggiornato senza un nuovo accesso al browser.
+
+Se il server successivamente restituisce un 403 `insufficient_scope` per una chiamata di strumento, Claude Code si autentica di nuovo con gli stessi ambiti fissati. Amplia `oauth.scopes` quando uno strumento di cui hai bisogno richiede un ambito al di fuori del pin.
 
 ### Utilizza intestazioni dinamiche per l'autenticazione personalizzata
 
@@ -895,7 +924,7 @@ Se hai effettuato l'accesso a Claude Code con un account [Claude.ai](https://cla
 
 <Steps>
   <Step title="Configura server MCP in Claude.ai">
-    Aggiungi server su [claude.ai/settings/connectors](https://claude.ai/settings/connectors). Nei piani Team ed Enterprise, solo gli amministratori possono aggiungere server.
+    Aggiungi server su [claude.ai/customize/connectors](https://claude.ai/customize/connectors). Nei piani Team ed Enterprise, solo gli amministratori possono aggiungere server.
   </Step>
 
   <Step title="Autentica il server MCP">
@@ -985,11 +1014,11 @@ Quando gli strumenti MCP producono output di grandi dimensioni, Claude Code aiut
 * **Soglia di avviso di output**: Claude Code visualizza un avviso quando l'output di qualsiasi strumento MCP supera 10.000 token
 * **Limite configurabile**: Puoi regolare il massimo di token di output MCP consentiti utilizzando la variabile di ambiente `MAX_MCP_OUTPUT_TOKENS`
 * **Limite predefinito**: Il massimo predefinito è 25.000 token
+* **Ambito**: La variabile di ambiente si applica agli strumenti che non dichiarano il loro limite. Gli strumenti che impostano [`anthropic/maxResultSizeChars`](#raise-the-limit-for-a-specific-tool) utilizzano quel valore invece per il contenuto di testo, indipendentemente da ciò che `MAX_MCP_OUTPUT_TOKENS` è impostato. Gli strumenti che restituiscono dati di immagine sono ancora soggetti a `MAX_MCP_OUTPUT_TOKENS`
 
 Per aumentare il limite per gli strumenti che producono output di grandi dimensioni:
 
 ```bash theme={null}
-# Imposta un limite più alto per gli output degli strumenti MCP
 export MAX_MCP_OUTPUT_TOKENS=50000
 claude
 ```
@@ -1000,8 +1029,26 @@ Questo è particolarmente utile quando si lavora con server MCP che:
 * Generano report o documentazione dettagliati
 * Elaborano file di log estesi o informazioni di debug
 
+### Aumenta il limite per uno strumento specifico
+
+Se stai costruendo un server MCP, puoi consentire ai singoli strumenti di restituire risultati più grandi della soglia predefinita impostando `_meta["anthropic/maxResultSizeChars"]` nella voce dello strumento nella risposta `tools/list`. Claude Code aumenta la soglia di quello strumento al valore annotato, fino a un limite massimo di 500.000 caratteri.
+
+Questo è utile per strumenti che restituiscono output intrinsecamente grandi ma necessari, come schemi di database o alberi di file completi. Senza l'annotazione, i risultati che superano la soglia predefinita vengono persistiti su disco e sostituiti con un riferimento a file nella conversazione.
+
+```json theme={null}
+{
+  "name": "get_schema",
+  "description": "Returns the full database schema",
+  "_meta": {
+    "anthropic/maxResultSizeChars": 200000
+  }
+}
+```
+
+L'annotazione si applica indipendentemente da `MAX_MCP_OUTPUT_TOKENS` per il contenuto di testo, quindi gli utenti non hanno bisogno di aumentare la variabile di ambiente per gli strumenti che la dichiarano. Gli strumenti che restituiscono dati di immagine sono ancora soggetti al limite di token.
+
 <Warning>
-  Se incontri frequentemente avvisi di output con server MCP specifici, considera di aumentare il limite o configurare il server per impaginare o filtrare le sue risposte.
+  Se incontri frequentemente avvisi di output con server MCP specifici che non controlli, considera di aumentare il limite `MAX_MCP_OUTPUT_TOKENS`. Puoi anche chiedere all'autore del server di aggiungere l'annotazione `anthropic/maxResultSizeChars` o di impaginare le loro risposte. L'annotazione non ha effetto sugli strumenti che restituiscono contenuto di immagine; per quelli, aumentare `MAX_MCP_OUTPUT_TOKENS` è l'unica opzione.
 </Warning>
 
 ## Rispondi alle richieste di elicitazione MCP
@@ -1082,17 +1129,17 @@ Claude Code tronca le descrizioni degli strumenti e le istruzioni del server a 2
 
 ### Configura tool search
 
-Tool search è abilitato per impostazione predefinita: gli strumenti MCP vengono rimandati e scoperti su richiesta. Quando `ANTHROPIC_BASE_URL` punta a un host non di prima parte, tool search è disabilitato per impostazione predefinita perché la maggior parte dei proxy non inoltrano blocchi `tool_reference`. Imposta `ENABLE_TOOL_SEARCH` esplicitamente se il tuo proxy lo fa. Questa funzionalità richiede modelli che supportano blocchi `tool_reference`: Sonnet 4 e successivi, oppure Opus 4 e successivi. I modelli Haiku non supportano tool search.
+Tool search è abilitato per impostazione predefinita: gli strumenti MCP vengono rimandati e scoperti su richiesta. È disabilitato per impostazione predefinita su Vertex AI, che non accetta l'intestazione beta tool search, e quando `ANTHROPIC_BASE_URL` punta a un host non di prima parte, poiché la maggior parte dei proxy non inoltrano blocchi `tool_reference`. Imposta `ENABLE_TOOL_SEARCH` esplicitamente per opt-in. Questa funzionalità richiede modelli che supportano blocchi `tool_reference`: Sonnet 4 e successivi, oppure Opus 4 e successivi. I modelli Haiku non supportano tool search.
 
 Controlla il comportamento di tool search con la variabile di ambiente `ENABLE_TOOL_SEARCH`:
 
-| Valore          | Comportamento                                                                                                                                         |
-| :-------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| (non impostato) | Tutti gli strumenti MCP rimandati e caricati su richiesta. Ricade al caricamento in anticipo quando `ANTHROPIC_BASE_URL` è un host non di prima parte |
-| `true`          | Tutti gli strumenti MCP rimandati, incluso per `ANTHROPIC_BASE_URL` non di prima parte                                                                |
-| `auto`          | Modalità soglia: gli strumenti vengono caricati in anticipo se si adattano entro il 10% della finestra di contesto, rimandati altrimenti              |
-| `auto:<N>`      | Modalità soglia con una percentuale personalizzata, dove `<N>` è 0-100 (ad es. `auto:5` per il 5%)                                                    |
-| `false`         | Tutti gli strumenti MCP caricati in anticipo, nessun rinvio                                                                                           |
+| Valore          | Comportamento                                                                                                                                                        |
+| :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (non impostato) | Tutti gli strumenti MCP rimandati e caricati su richiesta. Ricade al caricamento in anticipo su Vertex AI o quando `ANTHROPIC_BASE_URL` è un host non di prima parte |
+| `true`          | Tutti gli strumenti MCP rimandati, incluso su Vertex AI e per `ANTHROPIC_BASE_URL` non di prima parte                                                                |
+| `auto`          | Modalità soglia: gli strumenti vengono caricati in anticipo se si adattano entro il 10% della finestra di contesto, rimandati altrimenti                             |
+| `auto:<N>`      | Modalità soglia con una percentuale personalizzata, dove `<N>` è 0-100 (ad es. `auto:5` per il 5%)                                                                   |
+| `false`         | Tutti gli strumenti MCP caricati in anticipo, nessun rinvio                                                                                                          |
 
 ```bash theme={null}
 # Utilizza una soglia personalizzata del 5%

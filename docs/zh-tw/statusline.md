@@ -165,6 +165,8 @@ Claude Code 透過 stdin 將以下 JSON 欄位傳送到您的指令碼：
 | `context_window.remaining_percentage`                                            | 預先計算的剩餘 context window 百分比                                                                                                              |
 | `context_window.current_usage`                                                   | 最後一次 API 呼叫中的令牌計數，在 [context window 欄位](#context-window-fields)中描述                                                                      |
 | `exceeds_200k_tokens`                                                            | 最近 API 回應中的總令牌計數（輸入、快取和輸出令牌合併）是否超過 200k。這是一個固定閾值，與實際 context window 大小無關。                                                               |
+| `effort.level`                                                                   | 目前的推理努力等級（`low`、`medium`、`high`、`xhigh` 或 `max`）。反映即時工作階段值，包括工作階段中途的 `/effort` 變更。當目前模型不支援努力參數時不存在                                      |
+| `thinking.enabled`                                                               | 是否為工作階段啟用擴展思考                                                                                                                           |
 | `rate_limits.five_hour.used_percentage`, `rate_limits.seven_day.used_percentage` | 消耗的 5 小時或 7 天速率限制的百分比，從 0 到 100                                                                                                         |
 | `rate_limits.five_hour.resets_at`, `rate_limits.seven_day.resets_at`             | 5 小時或 7 天速率限制視窗重設時的 Unix 紀元秒數                                                                                                           |
 | `session_id`                                                                     | 唯一的工作階段識別碼                                                                                                                              |
@@ -224,6 +226,12 @@ Claude Code 透過 stdin 將以下 JSON 欄位傳送到您的指令碼：
       }
     },
     "exceeds_200k_tokens": false,
+    "effort": {
+      "level": "high"
+    },
+    "thinking": {
+      "enabled": true
+    },
     "rate_limits": {
       "five_hour": {
         "used_percentage": 23.5,
@@ -254,6 +262,7 @@ Claude Code 透過 stdin 將以下 JSON 欄位傳送到您的指令碼：
 
   * `session_name`：僅在使用 `--name` 或 `/rename` 設定自訂名稱時出現
   * `workspace.git_worktree`：僅當目前目錄位於連結 git worktree 內時出現
+  * `effort`：僅當目前模型支援推理努力參數時出現
   * `vim`：僅在啟用 vim 模式時出現
   * `agent`：僅在使用 `--agent` 旗標或設定的代理設定執行時出現
   * `worktree`：僅在 `--worktree` 工作階段期間出現。存在時，`branch` 和 `original_branch` 對於基於 hook 的 worktree 也可能不存在

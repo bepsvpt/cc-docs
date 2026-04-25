@@ -95,7 +95,7 @@ Das folgende Beispiel spielt einen Systemton auf macOS ab. Der verlinkte Leitfad
 
 ## Konfigurieren Sie tmux
 
-Wenn Claude Code in tmux ausgeführt wird, brechen zwei Dinge standardmäßig: Shift+Enter sendet statt einen Zeilenumbruch einzufügen, und Desktop-Benachrichtigungen und die [Fortschrittsleiste](/de/settings#global-config-settings) erreichen niemals das äußere Terminal. Fügen Sie diese Zeilen zu `~/.tmux.conf` hinzu und führen Sie dann `tmux source-file ~/.tmux.conf` aus, um sie auf den laufenden Server anzuwenden:
+Wenn Claude Code in tmux ausgeführt wird, brechen zwei Dinge standardmäßig: Shift+Enter sendet statt einen Zeilenumbruch einzufügen, und Desktop-Benachrichtigungen und die [Fortschrittsleiste](/de/settings#available-settings) erreichen niemals das äußere Terminal. Fügen Sie diese Zeilen zu `~/.tmux.conf` hinzu und führen Sie dann `tmux source-file ~/.tmux.conf` aus, um sie auf den laufenden Server anzuwenden:
 
 ```bash ~/.tmux.conf theme={null}
 set -g allow-passthrough on
@@ -177,7 +177,7 @@ Das integrierte VS Code-Terminal kann Zeichen aus sehr großen Einfügungen verl
 
 ## Bearbeiten Sie Eingabeaufforderungen mit Vim-Tastenbelegungen
 
-Claude Code enthält einen Vim-ähnlichen Bearbeitungsmodus für die Eingabeaufforderungseingabe. Aktivieren Sie ihn über `/config` → Editor-Modus, oder indem Sie den globalen Konfigurationsschlüssel [`editorMode`](/de/settings#global-config-settings) auf `"vim"` in `~/.claude.json` setzen. Setzen Sie den Editor-Modus zurück auf `normal`, um ihn auszuschalten.
+Claude Code enthält einen Vim-ähnlichen Bearbeitungsmodus für die Eingabeaufforderungseingabe. Aktivieren Sie ihn über `/config` → Editor-Modus, oder indem Sie [`editorMode`](/de/settings#available-settings) auf `"vim"` in `~/.claude/settings.json` setzen. Setzen Sie den Editor-Modus zurück auf `normal`, um ihn auszuschalten.
 
 Der Vim-Modus unterstützt eine Teilmenge von NORMAL- und VISUAL-Modus-Bewegungen und Operatoren, wie z. B. `hjkl`-Navigation, `v`/`V`-Auswahl und `d`/`c`/`y` mit Textobjekten. Siehe die [Vim-Editor-Modus-Referenz](/de/interactive-mode#vim-editor-mode) für die vollständige Schlüsseltabelle. Vim-Bewegungen können nicht über die Tastenbelegungsdatei neu zugeordnet werden.
 

@@ -101,7 +101,7 @@ Agent teams 支援兩種顯示模式：
   `tmux` 在某些作業系統上有已知限制，傳統上在 macOS 上效果最佳。在 iTerm2 中使用 `tmux -CC` 是進入 `tmux` 的建議入口點。
 </Note>
 
-預設值是 `"auto"`，如果您已在 tmux 工作階段內運行，則使用分割窗格，否則使用 in-process。`"tmux"` 設定啟用分割窗格模式，並根據您的終端自動偵測是否使用 tmux 或 iTerm2。若要覆蓋，請在 [global config](/zh-TW/settings#global-config-settings) 的 `~/.claude.json` 中設定 `teammateMode`：
+預設值是 `"auto"`，如果您已在 tmux 工作階段內運行，則使用分割窗格，否則使用 in-process。`"tmux"` 設定啟用分割窗格模式，並根據您的終端自動偵測是否使用 tmux 或 iTerm2。若要覆蓋，請在 `~/.claude/settings.json` 中設定 [`teammateMode`](/zh-TW/settings#available-settings)：
 
 ```json theme={null}
 {

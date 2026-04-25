@@ -295,6 +295,8 @@ export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 
 [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) 會自動啟用。若要停用它，請設定 `DISABLE_PROMPT_CACHING=1`。若要要求 1 小時 cache TTL 而不是 5 分鐘預設值，請設定 `ENABLE_PROMPT_CACHING_1H=1`；具有 1 小時 TTL 的 cache 寫入會以更高費率計費。如需提高速率限制，請聯絡 Google Cloud 支援。使用 Vertex AI 時，`/login` 和 `/logout` 命令會被停用，因為驗證是透過 Google Cloud 認證處理的。
 
+[MCP tool search](/zh-TW/mcp#scale-with-mcp-tool-search) 在 Vertex AI 上預設為停用，因為端點不接受所需的 beta 標頭。所有 MCP 工具定義會改為預先載入。若要選擇加入，請設定 `ENABLE_TOOL_SEARCH=true`。
+
 ### 5. 固定模型版本
 
 <Warning>

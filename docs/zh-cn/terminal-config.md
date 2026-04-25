@@ -95,7 +95,7 @@ Claude Code 仅在 Ghostty、Kitty 和 iTerm2 中发送桌面通知；所有其�
 
 ## 配置 tmux
 
-当 Claude Code 在 tmux 内运行时，默认情况下两件事会中断：Shift+Enter 提交而不是插入换行，桌面通知和[进度条](/zh-CN/settings#global-config-settings)永远无法到达外部终端。将这些行添加到 `~/.tmux.conf`，然后运行 `tmux source-file ~/.tmux.conf` 将它们应用到运行的服务器：
+当 Claude Code 在 tmux 内运行时，默认情况下两件事会中断：Shift+Enter 提交而不是插入换行，桌面通知和[进度条](/zh-CN/settings#available-settings)永远无法到达外部终端。将这些行添加到 `~/.tmux.conf`，然后运行 `tmux source-file ~/.tmux.conf` 将它们应用到运行的服务器：
 
 ```bash ~/.tmux.conf theme={null}
 set -g allow-passthrough on
@@ -177,7 +177,7 @@ VS Code 集成终端可能会在非常大的粘贴中丢弃字符，然后才能
 
 ## 使用 Vim 快捷键编辑提示符
 
-Claude Code 包括提示符输入的 Vim 风格编辑模式。通过 `/config` → 编辑器模式启用它，或通过在 `~/.claude.json` 中将 [`editorMode`](/zh-CN/settings#global-config-settings) 全局配置键设置为 `"vim"` 来启用。将编辑器模式设置回 `normal` 以关闭它。
+Claude Code 包括提示符输入的 Vim 风格编辑模式。通过 `/config` → 编辑器模式启用它，或通过在 `~/.claude/settings.json` 中将 [`editorMode`](/zh-CN/settings#available-settings) 设置为 `"vim"` 来启用。将编辑器模式设置回 `normal` 以关闭它。
 
 Vim 模式支持 NORMAL 模式和 VISUAL 模式动作和运算符的子集，例如 `hjkl` 导航、`v`/`V` 选择以及 `d`/`c`/`y` 与文本对象。请参阅 [Vim 编辑器模式参考](/zh-CN/interactive-mode#vim-editor-mode)了解完整的快捷键表。Vim 动作不可通过快捷键文件重新映射。
 

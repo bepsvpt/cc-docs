@@ -214,6 +214,8 @@ export const MCPServersTable = ({platform = "all"}) => {
 
 Claude Code 可以通过 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction)（一个用于 AI 工具集成的开源标准）连接到数百个外部工具和数据源。MCP 服务器为 Claude Code 提供对您的工具、数据库和 API 的访问权限。
 
+当您发现自己从另一个工具（如问题跟踪器或监控仪表板）复制数据到聊天中时，请连接一个服务器。连接后，Claude 可以直接读取和操作该系统，而不是从您粘贴的内容中工作。
+
 ## 使用 MCP 可以做什么
 
 连接 MCP 服务器后，您可以要求 Claude Code：
@@ -327,6 +329,10 @@ claude mcp remove github
 
 Claude Code 支持 MCP `list_changed` 通知，允许 MCP 服务器动态更新其可用工具、提示和资源，而无需您断开连接并重新连接。当 MCP 服务器发送 `list_changed` 通知时，Claude Code 会自动刷新来自该服务器的可用功能。
 
+### 自动重新连接
+
+如果 HTTP 或 SSE 服务器在会话中途断开连接，Claude Code 会自动以指数退避方式重新连接：最多五次尝试，从一秒延迟开始，每次加倍。服务器在 `/mcp` 中显示为待处理状态，同时重新连接正在进行中。五次失败尝试后，服务器被标记为失败，您可以从 `/mcp` 手动重试。Stdio 服务器是本地进程，不会自动重新连接。
+
 ### 使用频道推送消息
 
 MCP 服务器也可以直接将消息推送到您的会话中，以便 Claude 可以对外部事件（如 CI 结果、监控警报或聊天消息）做出反应。要启用此功能，您的服务器声明 `claude/channel` 功能，并在启动时使用 `--channels` 标志选择加入。请参阅[频道](/zh-CN/channels)以使用官方支持的频道，或[频道参考](/zh-CN/channels-reference)以构建您自己的频道。
@@ -343,17 +349,6 @@ MCP 服务器也可以直接将消息推送到您的会话中，以便 Claude �
   * 当 MCP 工具输出超过 10,000 个令牌时，Claude Code 将显示警告。要增加此限制，请设置 `MAX_MCP_OUTPUT_TOKENS` 环境变量（例如，`MAX_MCP_OUTPUT_TOKENS=50000`）
   * 使用 `/mcp` 对需要 OAuth 2.0 身份验证的远程服务器进行身份验证
 </Tip>
-
-<Warning>
-  **Windows 用户**：在本机 Windows（不是 WSL）上，使用 `npx` 的本地 MCP 服务器需要 `cmd /c` 包装器以确保正确执行。
-
-  ```bash theme={null}
-  # 这创建了 Windows 可以执行的 command="cmd"
-  claude mcp add --transport stdio my-server -- cmd /c npx -y @some/package
-  ```
-
-  没有 `cmd /c` 包装器，您会遇到"连接已关闭"错误，因为 Windows 无法直接执行 `npx`。（有关 `--` 参数的说明，请参阅上面的注释。）
-</Warning>
 
 ### 插件提供的 MCP 服务器
 
@@ -424,11 +419,17 @@ MCP 服务器也可以直接将消息推送到您的会话中，以便 Claude �
 
 ## MCP 安装范围
 
-MCP 服务器可以在三个不同的范围级别进行配置，每个级别都用于管理服务器可访问性和共享的不同目的。了解这些范围可以帮助您确定为特定需求配置服务器的最佳方式。
+MCP 服务器可以在三个不同的范围级别进行配置。您选择的范围控制服务器在哪些项目中加载以及配置是否与您的团队共享。
+
+| 范围                   | 加载位置   | 与团队共享    | 存储位置                |
+| -------------------- | ------ | -------- | ------------------- |
+| [本地](#local-scope)   | 仅当前项目  | 否        | `~/.claude.json`    |
+| [项目](#project-scope) | 仅当前项目  | 是，通过版本控制 | 项目根目录中的 `.mcp.json` |
+| [用户](#user-scope)    | 您的所有项目 | 否        | `~/.claude.json`    |
 
 ### 本地范围
 
-本地范围的服务器代表默认配置级别，存储在您项目路径下的 `~/.claude.json` 中。这些服务器对您保持私密，仅在当前项目目录中工作时可访问。此范围非常适合个人开发服务器、实验配置或包含不应共享的敏感凭据的服务器。
+本地范围是默认范围。本地范围的服务器仅在您添加它的项目中加载，并对您保持私密。Claude Code 将其存储在 `~/.claude.json` 中该项目的路径下，因此相同的服务器不会出现在您的其他项目中。对个人开发服务器、实验配置或包含您不想在版本控制中的凭据的服务器使用本地范围。
 
 <Note>
   MCP 服务器的"本地范围"术语与一般本地设置不同。MCP 本地范围的服务器存储在 `~/.claude.json`（您的主目录）中，而一般本地设置使用 `.claude/settings.local.json`（在项目目录中）。有关设置文件位置的详细信息，请参阅[设置](/zh-CN/settings#settings-files)。
@@ -440,6 +441,23 @@ claude mcp add --transport http stripe https://mcp.stripe.com
 
 # 显式指定本地范围
 claude mcp add --transport http stripe --scope local https://mcp.stripe.com
+```
+
+从 `/path/to/your/project` 运行时，该命令将服务器写入 `~/.claude.json` 中您当前项目的条目。下面的示例显示结果：
+
+```json theme={null}
+{
+  "projects": {
+    "/path/to/your/project": {
+      "mcpServers": {
+        "stripe": {
+          "type": "http",
+          "url": "https://mcp.stripe.com"
+        }
+      }
+    }
+  }
+}
 ```
 
 ### 项目范围
@@ -476,27 +494,17 @@ claude mcp add --transport http paypal --scope project https://mcp.paypal.com/mc
 claude mcp add --transport http hubspot --scope user https://mcp.hubspot.com/anthropic
 ```
 
-### 选择正确的范围
-
-根据以下条件选择您的范围：
-
-* **本地范围**：个人服务器、实验配置或特定于一个项目的敏感凭据
-* **项目范围**：团队共享的服务器、项目特定的工具或协作所需的服务
-* **用户范围**：跨多个项目需要的个人实用程序、开发工具或经常使用的服务
-
-<Note>
-  **MCP 服务器存储在哪里？**
-
-  * **用户和本地范围**：`~/.claude.json`（在 `mcpServers` 字段或项目路径下）
-  * **项目范围**：项目根目录中的 `.mcp.json`（检入源代码控制）
-  * **托管**：系统目录中的 `managed-mcp.json`（请参阅[托管 MCP 配置](#managed-mcp-configuration)）
-</Note>
-
 ### 范围层次结构和优先级
 
-MCP 服务器配置遵循清晰的优先级层次结构。当具有相同名称的服务器存在于多个范围时，系统通过首先优先考虑本地范围的服务器、其次是项目范围的服务器，最后是用户范围的服务器来解决冲突。此设计确保个人配置可以在需要时覆盖共享配置。
+当具有相同名称的服务器在多个位置定义时，Claude Code 连接到它一次，使用来自最高优先级源的定义：
 
-如果服务器既在本地配置，也通过 [claude.ai 连接器](#use-mcp-servers-from-claude-ai)配置，本地配置优先，连接器条目被跳过。
+1. 本地范围
+2. 项目范围
+3. 用户范围
+4. [插件提供的服务器](/zh-CN/plugins)
+5. [claude.ai 连接器](#use-mcp-servers-from-claude-ai)
+
+三个范围按名称匹配重复项。插件和连接器按端点匹配，因此指向与上述服务器相同的 URL 或命令的连接器被视为重复项。
 
 ### `.mcp.json` 中的环境变量扩展
 
@@ -582,14 +590,11 @@ claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
 
 ### 示例：连接到 GitHub 进行代码审查
 
+GitHub 的远程 MCP 服务器使用作为标头传递的 GitHub 个人访问令牌进行身份验证。要获取一个，请打开您的 [GitHub 令牌设置](https://github.com/settings/personal-access-tokens)，生成一个新的细粒度令牌，具有对您希望 Claude 使用的存储库的访问权限，然后添加服务器：
+
 ```bash theme={null}
-claude mcp add --transport http github https://api.githubcopilot.com/mcp/
-```
-
-如果需要，通过为 GitHub 选择"身份验证"进行身份验证：
-
-```text theme={null}
-/mcp
+claude mcp add --transport http github https://api.githubcopilot.com/mcp/ \
+  --header "Authorization: Bearer YOUR_GITHUB_PAT"
 ```
 
 然后使用 GitHub：
@@ -747,7 +752,7 @@ claude mcp add --transport http \
 
 ### 覆盖 OAuth 元数据发现
 
-如果您的 MCP 服务器的标准 OAuth 元数据端点返回错误，但服务器公开了工作的 OIDC 端点，您可以指向 Claude Code 一个特定的元数据 URL 以绕过默认发现链。默认情况下，Claude Code 首先检查 RFC 9728 受保护资源元数据（位于 `/.well-known/oauth-protected-resource`），然后回退到 RFC 8414 授权服务器元数据（位于 `/.well-known/oauth-authorization-server`）。
+指向 Claude Code 一个特定的 OAuth 授权服务器元数据 URL 以绕过默认发现链。当 MCP 服务器的标准端点出错时，或当您想通过内部代理路由发现时，设置 `authServerMetadataUrl`。默认情况下，Claude Code 首先检查 RFC 9728 受保护资源元数据（位于 `/.well-known/oauth-protected-resource`），然后回退到 RFC 8414 授权服务器元数据（位于 `/.well-known/oauth-authorization-server`）。
 
 在您的服务器配置中的 `.mcp.json` 的 `oauth` 对象中设置 `authServerMetadataUrl`：
 
@@ -765,7 +770,31 @@ claude mcp add --transport http \
 }
 ```
 
-URL 必须使用 `https://`。此选项需要 Claude Code v2.1.64 或更高版本。
+URL 必须使用 `https://`。`authServerMetadataUrl` 需要 Claude Code v2.1.64 或更高版本。元数据 URL 的 `scopes_supported` 覆盖上游服务器公开的范围。
+
+### 限制 OAuth 范围
+
+设置 `oauth.scopes` 以固定 Claude Code 在授权流程中请求的范围。这是限制 MCP 服务器到安全团队批准的子集的支持方式，当上游授权服务器公开的范围超过您想要授予的范围时。该值是单个空格分隔的字符串，与 RFC 6749 §3.3 中的 `scope` 参数格式匹配。
+
+```json theme={null}
+{
+  "mcpServers": {
+    "slack": {
+      "type": "http",
+      "url": "https://mcp.slack.com/mcp",
+      "oauth": {
+        "scopes": "channels:read chat:write search:read"
+      }
+    }
+  }
+}
+```
+
+`oauth.scopes` 优先于 `authServerMetadataUrl` 和服务器在 `/.well-known` 发现的范围。将其保留未设置以让 MCP 服务器确定请求的范围集。
+
+如果授权服务器在 `scopes_supported` 中公开 `offline_access`，Claude Code 会将其附加到固定范围，以便可以在没有新浏览器登录的情况下刷新访问令牌。
+
+如果服务器稍后为工具调用返回 403 `insufficient_scope`，Claude Code 会使用相同的固定范围重新进行身份验证。当您需要的工具需要固定范围之外的范围时，扩展 `oauth.scopes`。
 
 ### 使用动态标头进行自定义身份验证
 
@@ -893,7 +922,7 @@ Claude Code 在执行助手时设置这些环境变量：
 
 <Steps>
   <Step title="在 Claude.ai 中配置 MCP 服务器">
-    在 [claude.ai/settings/connectors](https://claude.ai/settings/connectors) 添加服务器。在 Team 和 Enterprise 计划上，仅管理员可以添加服务器。
+    在 [claude.ai/customize/connectors](https://claude.ai/customize/connectors) 添加服务器。在 Team 和 Enterprise 计划上，仅管理员可以添加服务器。
   </Step>
 
   <Step title="对 MCP 服务器进行身份验证">
@@ -983,11 +1012,11 @@ claude mcp serve
 * **输出警告阈值**：当任何 MCP 工具输出超过 10,000 个令牌时，Claude Code 显示警告
 * **可配置限制**：您可以使用 `MAX_MCP_OUTPUT_TOKENS` 环境变量调整最大允许的 MCP 输出令牌
 * **默认限制**：默认最大值为 25,000 个令牌
+* **范围**：环境变量适用于不声明自己限制的工具。声明 [`anthropic/maxResultSizeChars`](#raise-the-limit-for-a-specific-tool) 的工具对文本内容使用该值，无论 `MAX_MCP_OUTPUT_TOKENS` 设置为什么。返回图像数据的工具仍受 `MAX_MCP_OUTPUT_TOKENS` 限制
 
 要为产生大量输出的工具增加限制：
 
 ```bash theme={null}
-# 为 MCP 工具输出设置更高的限制
 export MAX_MCP_OUTPUT_TOKENS=50000
 claude
 ```
@@ -998,8 +1027,26 @@ claude
 * 生成详细的报告或文档
 * 处理广泛的日志文件或调试信息
 
+### 为特定工具提高限制
+
+如果您正在构建 MCP 服务器，您可以通过在工具的 `tools/list` 响应条目中设置 `_meta["anthropic/maxResultSizeChars"]` 来允许单个工具返回大于默认持久化到磁盘阈值的结果。Claude Code 将该工具的阈值提高到注释值，最高为 500,000 个字符的硬上限。
+
+这对于返回本质上很大但必要的输出的工具很有用，例如数据库架构或完整文件树。没有注释，超过默认阈值的结果会被持久化到磁盘，并在对话中被文件引用替换。
+
+```json theme={null}
+{
+  "name": "get_schema",
+  "description": "Returns the full database schema",
+  "_meta": {
+    "anthropic/maxResultSizeChars": 200000
+  }
+}
+```
+
+对于文本内容，注释独立于 `MAX_MCP_OUTPUT_TOKENS` 应用，因此用户不需要为声明它的工具提高环境变量。返回图像数据的工具仍受令牌限制。
+
 <Warning>
-  如果您经常遇到特定 MCP 服务器的输出警告，请考虑增加限制或配置服务器以分页或过滤其响应。
+  如果您经常遇到特定 MCP 服务器的输出警告，而您不控制这些服务器，请考虑增加 `MAX_MCP_OUTPUT_TOKENS` 限制。您也可以要求服务器作者添加 `anthropic/maxResultSizeChars` 注释或对其响应进行分页。注释对返回图像内容的工具没有影响；对于这些，提高 `MAX_MCP_OUTPUT_TOKENS` 是唯一的选择。
 </Warning>
 
 ## 响应 MCP 引发请求
@@ -1080,17 +1127,17 @@ Claude Code 将工具描述和服务器说明截断为每个 2KB。保持它们�
 
 ### 配置工具搜索
 
-工具搜索默认启用：MCP 工具被延迟并按需发现。当 `ANTHROPIC_BASE_URL` 指向非第一方主机时，工具搜索默认禁用，因为大多数代理不转发 `tool_reference` 块。如果您的代理转发，请显式设置 `ENABLE_TOOL_SEARCH`。此功能需要支持 `tool_reference` 块的模型：Sonnet 4 及更高版本，或 Opus 4 及更高版本。Haiku 模型不支持工具搜索。
+工具搜索默认启用：MCP 工具被延迟并按需发现。在 Vertex AI 上默认禁用，它不接受工具搜索 beta 标头，以及当 `ANTHROPIC_BASE_URL` 指向非第一方主机时，因为大多数代理不转发 `tool_reference` 块。显式设置 `ENABLE_TOOL_SEARCH` 以选择加入。此功能需要支持 `tool_reference` 块的模型：Sonnet 4 及更高版本，或 Opus 4 及更高版本。Haiku 模型不支持工具搜索。
 
 使用 `ENABLE_TOOL_SEARCH` 环境变量控制工具搜索行为：
 
-| 值          | 行为                                                       |
-| :--------- | :------------------------------------------------------- |
-| （未设置）      | 所有 MCP 工具被延迟并按需加载。当 `ANTHROPIC_BASE_URL` 是非第一方主机时回退到预先加载 |
-| `true`     | 所有 MCP 工具被延迟，包括对于非第一方 `ANTHROPIC_BASE_URL`               |
-| `auto`     | 阈值模式：如果工具适合上下文窗口的 10% 内，则预先加载，否则延迟                       |
-| `auto:<N>` | 阈值模式，带有自定义百分比，其中 `<N>` 是 0-100（例如，`auto:5` 表示 5%）        |
-| `false`    | 所有 MCP 工具预先加载，无延迟                                        |
+| 值          | 行为                                                                     |
+| :--------- | :--------------------------------------------------------------------- |
+| （未设置）      | 所有 MCP 工具被延迟并按需加载。在 Vertex AI 上或当 `ANTHROPIC_BASE_URL` 是非第一方主机时回退到预先加载 |
+| `true`     | 所有 MCP 工具被延迟，包括在 Vertex AI 上和对于非第一方 `ANTHROPIC_BASE_URL`               |
+| `auto`     | 阈值模式：如果工具适合上下文窗口的 10% 内，则预先加载，否则延迟                                     |
+| `auto:<N>` | 阈值模式，带有自定义百分比，其中 `<N>` 是 0-100（例如，`auto:5` 表示 5%）                      |
+| `false`    | 所有 MCP 工具预先加载，无延迟                                                      |
 
 ```bash theme={null}
 # 使用自定义 5% 阈值

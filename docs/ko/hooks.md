@@ -1255,9 +1255,14 @@ hook은 받은 `permission_suggestions` 중 하나를 자신의 `updatedPermissi
     "filePath": "/path/to/file.txt",
     "success": true
   },
-  "tool_use_id": "toolu_01ABC123..."
+  "tool_use_id": "toolu_01ABC123...",
+  "duration_ms": 12
 }
 ```
+
+| 필드            | 설명                                                        |
+| :------------ | :-------------------------------------------------------- |
+| `duration_ms` | 선택적. 도구 실행 시간 (밀리초). 권한 프롬프트 및 PreToolUse hook에 소요된 시간 제외 |
 
 #### PostToolUse 결정 제어
 
@@ -1305,14 +1310,16 @@ PostToolUseFailure hook은 PostToolUse와 동일한 `tool_name` 및 `tool_input`
   },
   "tool_use_id": "toolu_01ABC123...",
   "error": "Command exited with non-zero status code 1",
-  "is_interrupt": false
+  "is_interrupt": false,
+  "duration_ms": 4187
 }
 ```
 
-| 필드             | 설명                                    |
-| :------------- | :------------------------------------ |
-| `error`        | 무엇이 잘못되었는지 설명하는 문자열                   |
-| `is_interrupt` | 선택적 부울로 실패가 사용자 중단으로 인한 것인지 여부를 나타냅니다 |
+| 필드             | 설명                                                        |
+| :------------- | :-------------------------------------------------------- |
+| `error`        | 무엇이 잘못되었는지 설명하는 문자열                                       |
+| `is_interrupt` | 선택적 부울로 실패가 사용자 중단으로 인한 것인지 여부를 나타냅니다                     |
+| `duration_ms`  | 선택적. 도구 실행 시간 (밀리초). 권한 프롬프트 및 PreToolUse hook에 소요된 시간 제외 |
 
 #### PostToolUseFailure 결정 제어
 

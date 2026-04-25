@@ -1255,9 +1255,14 @@ Los hooks `PostToolUse` se activan después de que una herramienta ya se ha ejec
     "filePath": "/path/to/file.txt",
     "success": true
   },
-  "tool_use_id": "toolu_01ABC123..."
+  "tool_use_id": "toolu_01ABC123...",
+  "duration_ms": 12
 }
 ```
+
+| Campo         | Descripción                                                                                                                             |
+| :------------ | :-------------------------------------------------------------------------------------------------------------------------------------- |
+| `duration_ms` | Opcional. Tiempo de ejecución de la herramienta en milisegundos. Excluye el tiempo dedicado a solicitudes de permiso y hooks PreToolUse |
 
 #### Control de decisión de PostToolUse
 
@@ -1305,14 +1310,16 @@ Los hooks PostToolUseFailure reciben los mismos campos `tool_name` y `tool_input
   },
   "tool_use_id": "toolu_01ABC123...",
   "error": "Command exited with non-zero status code 1",
-  "is_interrupt": false
+  "is_interrupt": false,
+  "duration_ms": 4187
 }
 ```
 
-| Campo          | Descripción                                                                       |
-| :------------- | :-------------------------------------------------------------------------------- |
-| `error`        | Cadena que describe qué salió mal                                                 |
-| `is_interrupt` | Booleano opcional que indica si el fallo fue causado por interrupción del usuario |
+| Campo          | Descripción                                                                                                                             |
+| :------------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
+| `error`        | Cadena que describe qué salió mal                                                                                                       |
+| `is_interrupt` | Booleano opcional que indica si el fallo fue causado por interrupción del usuario                                                       |
+| `duration_ms`  | Opcional. Tiempo de ejecución de la herramienta en milisegundos. Excluye el tiempo dedicado a solicitudes de permiso y hooks PreToolUse |
 
 #### Control de decisión de PostToolUseFailure
 

@@ -1,5 +1,211 @@
 # Documentation Changes
 
+## 2026-04-25
+
+110 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Orchestrieren Sie Teams von Claude Code-Sitzungen** (`agent-teams.md`): 3 lines added, 3 removed
+  - New section: "### Erzwingen Sie Qualitätsgates mit Hooks"
+- **CLI-Referenz** (`cli-reference.md`): 1 lines added, 1 removed
+- **Claude Code auf Google Vertex AI** (`google-vertex-ai.md`): 2 lines added, 0 removed
+- **Hooks-Referenz** (`hooks.md`): 13 lines added, 6 removed
+- **Claude Code mit Tools über MCP verbinden** (`mcp.md`): 99 lines added, 52 removed
+  - New section: "### Automatische Wiederverbindung"
+- **Überwachung** (`monitoring-usage.md`): 3 lines added, 0 removed
+- **Claude Code-Einstellungen** (`settings.md`): 16 lines added, 11 removed
+- **Passen Sie Ihre Statuszeile an** (`statusline.md`): 9 lines added, 0 removed
+- **Konfigurieren Sie Ihr Terminal für Claude Code** (`terminal-config.md`): 2 lines added, 2 removed
+
+### English
+
+
+**Modified**
+
+- **Orchestrate teams of Claude Code sessions** (`agent-teams.md`): 1 lines added, 1 removed
+- **CLI reference** (`cli-reference.md`): 1 lines added, 1 removed
+- **Environment variables** (`env-vars.md`): 2 lines added, 1 removed
+- **Claude Code on Google Vertex AI** (`google-vertex-ai.md`): 2 lines added, 0 removed
+- **Hooks reference** (`hooks.md`): 13 lines added, 6 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 8 lines added, 19 removed
+- **Monitoring** (`monitoring-usage.md`): 3 lines added, 0 removed
+- **Claude Code settings** (`settings.md`): 16 lines added, 11 removed
+- **Customize your status line** (`statusline.md`): 9 lines added, 0 removed
+- **Configure your terminal for Claude Code** (`terminal-config.md`): 2 lines added, 2 removed
+- **Tools reference** (`tools-reference.md`): 0 lines added, 1 removed
+
+### Español
+
+
+**Modified**
+
+- **Orquestar equipos de sesiones de Claude Code** (`agent-teams.md`): 1 lines added, 1 removed
+- **Referencia de CLI** (`cli-reference.md`): 1 lines added, 1 removed
+- **Claude Code en Google Vertex AI** (`google-vertex-ai.md`): 2 lines added, 0 removed
+- **Referencia de hooks** (`hooks.md`): 13 lines added, 6 removed
+- **Conectar Claude Code a herramientas mediante MCP** (`mcp.md`): 98 lines added, 51 removed
+  - New section: "### Reconexión automática"
+- **Monitoreo** (`monitoring-usage.md`): 3 lines added, 0 removed
+- **Configuración de Claude Code** (`settings.md`): 16 lines added, 11 removed
+- **Personaliza tu línea de estado** (`statusline.md`): 9 lines added, 0 removed
+- **Configura tu terminal para Claude Code** (`terminal-config.md`): 2 lines added, 2 removed
+
+### Français
+
+
+**Modified**
+
+- **Orchestrer des équipes de sessions Claude Code** (`agent-teams.md`): 1 lines added, 1 removed
+- **Référence CLI** (`cli-reference.md`): 1 lines added, 1 removed
+- **Claude Code sur Google Vertex AI** (`google-vertex-ai.md`): 2 lines added, 0 removed
+- **Référence des hooks** (`hooks.md`): 13 lines added, 6 removed
+- **Connecter Claude Code aux outils via MCP** (`mcp.md`): 100 lines added, 53 removed
+  - New section: "### Reconnexion automatique"
+- **Surveillance** (`monitoring-usage.md`): 3 lines added, 0 removed
+- **Paramètres Claude Code** (`settings.md`): 16 lines added, 11 removed
+- **Personnalisez votre barre de statut** (`statusline.md`): 7 lines added, 0 removed
+- **Configurez votre terminal pour Claude Code** (`terminal-config.md`): 2 lines added, 2 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Koordinasikan tim Claude Code sessions** (`agent-teams.md`): 1 lines added, 1 removed
+- **Referensi CLI** (`cli-reference.md`): 1 lines added, 1 removed
+- **Claude Code di Google Vertex AI** (`google-vertex-ai.md`): 2 lines added, 0 removed
+- **Referensi hooks** (`hooks.md`): 13 lines added, 6 removed
+- **Hubungkan Claude Code ke alat melalui MCP** (`mcp.md`): 98 lines added, 51 removed
+  - New section: "### Koneksi ulang otomatis"
+- **Pemantauan** (`monitoring-usage.md`): 3 lines added, 0 removed
+- **Pengaturan Claude Code** (`settings.md`): 16 lines added, 11 removed
+- **Sesuaikan baris status Anda** (`statusline.md`): 9 lines added, 0 removed
+- **Konfigurasi terminal Anda untuk Claude Code** (`terminal-config.md`): 2 lines added, 2 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Orchestrare team di sessioni Claude Code** (`agent-teams.md`): 1 lines added, 1 removed
+- **Riferimento CLI** (`cli-reference.md`): 1 lines added, 1 removed
+- **Claude Code su Google Vertex AI** (`google-vertex-ai.md`): 2 lines added, 0 removed
+- **Riferimento dei hooks** (`hooks.md`): 13 lines added, 6 removed
+- **Connetti Claude Code ai tuoi strumenti tramite MCP** (`mcp.md`): 99 lines added, 52 removed
+  - New section: "### Riconnessione automatica"
+  - New section: "# Aggiungi un server con ambio del progetto"
+- **Monitoraggio** (`monitoring-usage.md`): 3 lines added, 0 removed
+- **Impostazioni di Claude Code** (`settings.md`): 17 lines added, 12 removed
+- **Personalizza la tua barra di stato** (`statusline.md`): 9 lines added, 0 removed
+- **Configura il tuo terminale per Claude Code** (`terminal-config.md`): 3 lines added, 3 removed
+
+### 日本語
+
+
+**Modified**
+
+- **Claude Code セッションのチームを調整する** (`agent-teams.md`): 1 lines added, 1 removed
+- **CLI リファレンス** (`cli-reference.md`): 1 lines added, 1 removed
+- **Google Vertex AI 上の Claude Code** (`google-vertex-ai.md`): 2 lines added, 0 removed
+- **Hooks リファレンス** (`hooks.md`): 13 lines added, 6 removed
+- **MCP を使用して Claude Code をツールに接続する** (`mcp.md`): 98 lines added, 51 removed
+  - New section: "### 自動再接続"
+- **監視** (`monitoring-usage.md`): 3 lines added, 0 removed
+- **Claude Code の設定** (`settings.md`): 16 lines added, 11 removed
+- **ステータスラインをカスタマイズする** (`statusline.md`): 9 lines added, 0 removed
+- **Claude Code 用にターミナルを設定する** (`terminal-config.md`): 2 lines added, 2 removed
+
+### 한국어
+
+
+**Modified**
+
+- **Claude Code 세션 팀 조율하기** (`agent-teams.md`): 1 lines added, 1 removed
+- **CLI 참조** (`cli-reference.md`): 1 lines added, 1 removed
+- **Google Vertex AI에서 Claude Code 사용하기** (`google-vertex-ai.md`): 2 lines added, 0 removed
+- **Hooks 참조** (`hooks.md`): 13 lines added, 6 removed
+- **MCP를 통해 Claude Code를 도구에 연결하기** (`mcp.md`): 99 lines added, 52 removed
+  - New section: "### 자동 재연결"
+- **모니터링** (`monitoring-usage.md`): 3 lines added, 0 removed
+- **Claude Code 설정** (`settings.md`): 17 lines added, 12 removed
+- **상태 표시줄 사용자 정의** (`statusline.md`): 9 lines added, 0 removed
+- **Claude Code를 위한 터미널 구성** (`terminal-config.md`): 2 lines added, 2 removed
+
+### Português
+
+
+**Modified**
+
+- **Orquestre equipes de sessões Claude Code** (`agent-teams.md`): 1 lines added, 1 removed
+- **Referência de CLI** (`cli-reference.md`): 1 lines added, 1 removed
+- **Claude Code no Google Vertex AI** (`google-vertex-ai.md`): 2 lines added, 0 removed
+- **Referência de hooks** (`hooks.md`): 13 lines added, 6 removed
+- **Conectar Claude Code a ferramentas via MCP** (`mcp.md`): 100 lines added, 53 removed
+  - New section: "### Reconexão automática"
+- **Monitoramento** (`monitoring-usage.md`): 5 lines added, 2 removed
+- **Configurações do Claude Code** (`settings.md`): 16 lines added, 11 removed
+- **Personalize sua linha de status** (`statusline.md`): 9 lines added, 0 removed
+- **Configure seu terminal para Claude Code** (`terminal-config.md`): 2 lines added, 2 removed
+
+### Русский
+
+
+**Modified**
+
+- **Координируйте команды сеансов Claude Code** (`agent-teams.md`): 1 lines added, 1 removed
+- **Справочник CLI** (`cli-reference.md`): 1 lines added, 1 removed
+- **Claude Code на Google Vertex AI** (`google-vertex-ai.md`): 2 lines added, 0 removed
+- **Справочник по hooks** (`hooks.md`): 13 lines added, 6 removed
+- **Подключите Claude Code к инструментам через MCP** (`mcp.md`): 100 lines added, 53 removed
+  - New section: "### Автоматическое переподключение"
+- **Мониторинг** (`monitoring-usage.md`): 4 lines added, 1 removed
+- **Параметры Claude Code** (`settings.md`): 16 lines added, 11 removed
+- **Настройка строки состояния** (`statusline.md`): 9 lines added, 0 removed
+- **Настройте ваш терминал для Claude Code** (`terminal-config.md`): 2 lines added, 2 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **协调 Claude Code 会话团队** (`agent-teams.md`): 1 lines added, 1 removed
+- **CLI 参考** (`cli-reference.md`): 1 lines added, 1 removed
+- **Google Vertex AI 上的 Claude Code** (`google-vertex-ai.md`): 2 lines added, 0 removed
+- **Hooks 参考** (`hooks.md`): 13 lines added, 6 removed
+- **通过 MCP 将 Claude Code 连接到工具** (`mcp.md`): 98 lines added, 51 removed
+  - New section: "### 自动重新连接"
+- **监控** (`monitoring-usage.md`): 3 lines added, 0 removed
+- **Claude Code 设置** (`settings.md`): 16 lines added, 11 removed
+- **自定义你的状态行** (`statusline.md`): 9 lines added, 0 removed
+- **为 Claude Code 配置您的终端** (`terminal-config.md`): 2 lines added, 2 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **協調 Claude Code 工作階段團隊** (`agent-teams.md`): 1 lines added, 1 removed
+- **CLI 參考** (`cli-reference.md`): 1 lines added, 1 removed
+- **Google Vertex AI 上的 Claude Code** (`google-vertex-ai.md`): 2 lines added, 0 removed
+- **Hooks 參考** (`hooks.md`): 13 lines added, 6 removed
+- **透過 MCP 將 Claude Code 連接到工具** (`mcp.md`): 101 lines added, 54 removed
+  - New section: "### 自動重新連接"
+  - New section: "### Local scope"
+  - New section: "### Project scope"
+  - New section: "# 新增 project scope 的 server"
+  - New section: "### User scope"
+- **監控** (`monitoring-usage.md`): 3 lines added, 0 removed
+- **Claude Code 設定** (`settings.md`): 19 lines added, 14 removed
+- **自訂您的狀態列** (`statusline.md`): 9 lines added, 0 removed
+- **為 Claude Code 配置您的終端機** (`terminal-config.md`): 2 lines added, 2 removed
+
+---
+
 ## 2026-04-24
 
 272 pages modified
