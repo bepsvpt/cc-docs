@@ -1,5 +1,180 @@
 # Documentation Changes
 
+## 2026-04-26
+
+36 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Claude Code mit Chrome verwenden (Beta)** (`chrome.md`): 13 lines added, 4 removed
+- **Konfigurieren Sie Ihr Terminal für Claude Code** (`terminal-config.md`): 86 lines added, 0 removed
+  - New section: "#### Text- und Akzentfarben"
+  - New section: "#### Statusfarben"
+  - New section: "#### Eingabefeld und Modusindikatoren"
+  - New section: "#### Diff-Rendering"
+  - New section: "#### Vollbildmodus"
+
+### English
+
+
+**Modified**
+
+- **Use Claude Code with Chrome (beta)** (`chrome.md`): 1 lines added, 1 removed
+- **Commands** (`commands.md`): 85 lines added, 85 removed
+- **Get started with the desktop app** (`desktop-quickstart.md`): 1 lines added, 1 removed
+- **Use Claude Code Desktop** (`desktop.md`): 35 lines added, 35 removed
+- **Extend Claude with skills** (`skills.md`): 1 lines added, 1 removed
+- **Configure your terminal for Claude Code** (`terminal-config.md`): 86 lines added, 0 removed
+  - New section: "#### Text and accent colors"
+  - New section: "#### Status colors"
+  - New section: "#### Input box and mode indicators"
+  - New section: "#### Diff rendering"
+  - New section: "#### Fullscreen mode"
+
+### Español
+
+
+**Modified**
+
+- **Usar Claude Code con Chrome (beta)** (`chrome.md`): 12 lines added, 4 removed
+- **Ampliar Claude con skills** (`skills.md`): 1 lines added, 1 removed
+- **Configura tu terminal para Claude Code** (`terminal-config.md`): 86 lines added, 0 removed
+  - New section: "#### Colores de texto y acento"
+  - New section: "#### Colores de estado"
+  - New section: "#### Cuadro de entrada e indicadores de modo"
+  - New section: "#### Representación de diff"
+  - New section: "#### Modo de pantalla completa"
+
+### Français
+
+
+**Modified**
+
+- **Utiliser Claude Code avec Chrome (bêta)** (`chrome.md`): 12 lines added, 4 removed
+- **Configurez votre terminal pour Claude Code** (`terminal-config.md`): 86 lines added, 0 removed
+  - New section: "#### Couleurs de texte et d'accent"
+  - New section: "#### Couleurs de statut"
+  - New section: "#### Boîte d'entrée et indicateurs de mode"
+  - New section: "#### Rendu des diffs"
+  - New section: "#### Mode plein écran"
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Gunakan Claude Code dengan Chrome (beta)** (`chrome.md`): 13 lines added, 4 removed
+- **Perluas Claude dengan skills** (`skills.md`): 1 lines added, 1 removed
+- **Konfigurasi terminal Anda untuk Claude Code** (`terminal-config.md`): 86 lines added, 0 removed
+  - New section: "#### Warna teks dan aksen"
+  - New section: "#### Warna status"
+  - New section: "#### Kotak input dan indikator mode"
+  - New section: "#### Rendering diff"
+  - New section: "#### Mode layar penuh"
+
+### Italiano
+
+
+**Modified**
+
+- **Usa Claude Code con Chrome (beta)** (`chrome.md`): 13 lines added, 4 removed
+- **Estendi Claude con skills** (`skills.md`): 1 lines added, 1 removed
+- **Configura il tuo terminale per Claude Code** (`terminal-config.md`): 86 lines added, 0 removed
+  - New section: "#### Colori di testo e accento"
+  - New section: "#### Colori di stato"
+  - New section: "#### Casella di input e indicatori di modalità"
+  - New section: "#### Rendering diff"
+  - New section: "#### Modalità a schermo intero"
+
+### 日本語
+
+
+**Modified**
+
+- **Chrome で Claude Code を使用する（ベータ版）** (`chrome.md`): 15 lines added, 6 removed
+- **スキルで Claude を拡張する** (`skills.md`): 1 lines added, 1 removed
+- **Claude Code 用にターミナルを設定する** (`terminal-config.md`): 86 lines added, 0 removed
+  - New section: "#### テキストとアクセントカラー"
+  - New section: "#### ステータスカラー"
+  - New section: "#### 入力ボックスとモードインジケーター"
+  - New section: "#### Diff レンダリング"
+  - New section: "#### 全画面モード"
+
+### 한국어
+
+
+**Modified**
+
+- **Chrome에서 Claude Code 사용하기 (베타)** (`chrome.md`): 13 lines added, 4 removed
+- **Claude Code를 위한 터미널 구성** (`terminal-config.md`): 86 lines added, 0 removed
+  - New section: "#### 텍스트 및 악센트 색상"
+  - New section: "#### 상태 색상"
+  - New section: "#### 입력 상자 및 모드 표시기"
+  - New section: "#### Diff 렌더링"
+  - New section: "#### 전체 화면 모드"
+
+### Português
+
+
+**Modified**
+
+- **Use Claude Code with Chrome (beta)** (`chrome.md`): 14 lines added, 5 removed
+- **Estenda Claude com skills** (`skills.md`): 1 lines added, 1 removed
+- **Configure seu terminal para Claude Code** (`terminal-config.md`): 86 lines added, 0 removed
+  - New section: "#### Cores de texto e acento"
+  - New section: "#### Cores de status"
+  - New section: "#### Caixa de entrada e indicadores de modo"
+  - New section: "#### Renderização de diff"
+  - New section: "#### Modo tela cheia"
+
+### Русский
+
+
+**Modified**
+
+- **Использование Claude Code с Chrome (бета)** (`chrome.md`): 13 lines added, 4 removed
+- **Расширьте Claude с помощью skills** (`skills.md`): 1 lines added, 1 removed
+- **Настройте ваш терминал для Claude Code** (`terminal-config.md`): 86 lines added, 0 removed
+  - New section: "#### Text and accent colors"
+  - New section: "#### Status colors"
+  - New section: "#### Input box and mode indicators"
+  - New section: "#### Diff rendering"
+  - New section: "#### Fullscreen mode"
+
+### 简体中文
+
+
+**Modified**
+
+- **在 Chrome 中使用 Claude Code（测试版）** (`chrome.md`): 14 lines added, 5 removed
+- **使用 skills 扩展 Claude** (`skills.md`): 1 lines added, 1 removed
+- **为 Claude Code 配置您的终端** (`terminal-config.md`): 86 lines added, 0 removed
+  - New section: "#### 文本和强调颜色"
+  - New section: "#### 状态颜色"
+  - New section: "#### 输入框和模式指示器"
+  - New section: "#### Diff 渲染"
+  - New section: "#### 全屏模式"
+
+### 繁體中文
+
+
+**Modified**
+
+- **在 Chrome 中使用 Claude Code（測試版）** (`chrome.md`): 13 lines added, 4 removed
+- **使用 skills 擴展 Claude** (`skills.md`): 1 lines added, 1 removed
+- **為 Claude Code 配置您的終端機** (`terminal-config.md`): 86 lines added, 0 removed
+  - New section: "#### 文字和重點色彩"
+  - New section: "#### 狀態色彩"
+  - New section: "#### 輸入框和模式指示器"
+  - New section: "#### Diff 呈現"
+  - New section: "#### 全螢幕模式"
+
+---
+
 ## 2026-04-25
 
 110 pages modified

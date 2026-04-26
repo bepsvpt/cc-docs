@@ -145,6 +145,92 @@ O exemplo a seguir define um tema que mantém o preset escuro, mas recolore o ac
 
 Claude Code monitora `~/.claude/themes/` e recarrega quando um arquivo muda, portanto edições feitas no seu editor se aplicam a uma sessão em execução sem necessidade de reinicialização.
 
+Abaixo está a lista completa de personalizações que você pode definir em `overrides`. O editor interativo em `/theme` mostra os mesmos tokens com uma visualização ao vivo, incluindo um pequeno número de tokens internos não cobertos aqui.
+
+<Accordion title="Referência de tokens de cor">
+  O exemplo a seguir combina tokens de vários dos grupos abaixo: o acento da marca, a borda do modo de plano, os fundos de diff e o fundo da mensagem em tela cheia.
+
+  ```json ~/.claude/themes/midnight.json theme={null}
+  {
+    "name": "Midnight",
+    "base": "dark",
+    "overrides": {
+      "claude": "#a78bfa",
+      "planMode": "#38bdf8",
+      "diffAdded": "#14532d",
+      "diffRemoved": "#7f1d1d",
+      "userMessageBackground": "#1e1b4b"
+    }
+  }
+  ```
+
+  #### Cores de texto e acento
+
+  Controle o acento da marca primária e as tonalidades de texto em primeiro plano usadas em toda a interface.
+
+  | Token         | Controla                                                              |
+  | :------------ | :-------------------------------------------------------------------- |
+  | `claude`      | Acento da marca primária, usado para o spinner e rótulo do assistente |
+  | `text`        | Texto em primeiro plano padrão                                        |
+  | `inverseText` | Texto desenhado sobre um fundo colorido, como badges de status        |
+  | `inactive`    | Texto secundário como dicas, timestamps e itens desabilitados         |
+  | `subtle`      | Bordas fracas e texto secundário de-enfatizado                        |
+  | `permission`  | Bordas de diálogo, incluindo prompts de permissão e seletores         |
+  | `remember`    | Indicadores de memória e `CLAUDE.md`                                  |
+
+  #### Cores de status
+
+  Sinalize estados de sucesso, falha e aviso em mensagens e indicadores.
+
+  | Token     | Controla                                            |
+  | :-------- | :-------------------------------------------------- |
+  | `success` | Mensagens de sucesso e verificações aprovadas       |
+  | `error`   | Mensagens de erro e falhas                          |
+  | `warning` | Avisos, mensagens de cautela e a borda do modo auto |
+  | `merged`  | Status de pull request mesclado                     |
+
+  #### Caixa de entrada e indicadores de modo
+
+  Defina a cor da borda da caixa de entrada e o acento mostrado enquanto um modo de permissão ou indicador está ativo.
+
+  | Token          | Controla                                                  |
+  | :------------- | :-------------------------------------------------------- |
+  | `promptBorder` | Borda da caixa de entrada no modo de permissão padrão     |
+  | `planMode`     | Acento e borda do modo de plano                           |
+  | `autoAccept`   | Acento e borda do modo aceitar-edições                    |
+  | `bashBorder`   | Borda da caixa de entrada ao inserir um comando shell `!` |
+  | `ide`          | Indicador de conexão IDE                                  |
+  | `fastMode`     | Indicador de modo rápido                                  |
+
+  #### Renderização de diff
+
+  Colora código adicionado e removido em edições e revisões de arquivo.
+
+  | Token               | Controla                                                    |
+  | :------------------ | :---------------------------------------------------------- |
+  | `diffAdded`         | Fundo de linhas adicionadas                                 |
+  | `diffRemoved`       | Fundo de linhas removidas                                   |
+  | `diffAddedDimmed`   | Fundo de contexto inalterado perto de linhas adicionadas    |
+  | `diffRemovedDimmed` | Fundo de contexto inalterado perto de linhas removidas      |
+  | `diffAddedWord`     | Destaque em nível de palavra dentro de uma linha adicionada |
+  | `diffRemovedWord`   | Destaque em nível de palavra dentro de uma linha removida   |
+
+  #### Modo tela cheia
+
+  Aplique apenas no [modo de renderização em tela cheia](/pt/fullscreen), onde as mensagens têm um preenchimento de fundo.
+
+  | Token                   | Controla                                     |
+  | :---------------------- | :------------------------------------------- |
+  | `userMessageBackground` | Fundo atrás de suas mensagens na transcrição |
+  | `selectionBg`           | Fundo do texto selecionado com o mouse       |
+
+  #### Variantes de shimmer e cores de subagentes
+
+  Vários tokens têm uma variante `Shimmer` emparelhada, como `claudeShimmer` e `warningShimmer`, que fornece a cor mais clara usada no gradiente animado do spinner. Substitua o shimmer junto com seu token base se a animação parecer incompatível.
+
+  Cada [subagente](/pt/sub-agents) e tarefa paralela é mostrado em uma das oito cores nomeadas para que você possa diferenciá-los na transcrição. Os nomes dos tokens seguem o padrão `<color>_FOR_SUBAGENTS_ONLY`, onde `<color>` é `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, ou `cyan`. Substitua estes para alterar a aparência de cada cor nomeada. Por exemplo, um subagente com `color: blue` em sua definição é desenhado usando o valor `blue_FOR_SUBAGENTS_ONLY`.
+</Accordion>
+
 ## Switch to fullscreen rendering
 
 Se a exibição piscar ou a posição de rolagem pular enquanto Claude está trabalhando, mude para o [modo de renderização em tela cheia](/pt/fullscreen). Ele desenha em uma tela separada que o terminal reserva para aplicativos em tela cheia em vez de anexar ao seu scrollback normal, o que mantém o uso de memória plano e adiciona suporte a mouse para rolagem e seleção. Neste modo você rola com o mouse ou PageUp dentro do Claude Code em vez de com o scrollback nativo do seu terminal; consulte a [página de tela cheia](/pt/fullscreen#search-and-review-the-conversation) para saber como pesquisar e copiar.

@@ -145,6 +145,92 @@ El siguiente ejemplo define un tema que mantiene el preajuste oscuro pero recolo
 
 Claude Code observa `~/.claude/themes/` y recarga cuando un archivo cambia, por lo que las ediciones realizadas en tu editor se aplican a una sesión en ejecución sin necesidad de reiniciar.
 
+A continuación se muestra la lista completa de personalizaciones que puedes establecer en `overrides`. El editor interactivo en `/theme` muestra los mismos tokens con una vista previa en vivo, incluido un pequeño número de tokens internos no cubiertos aquí.
+
+<Accordion title="Referencia de tokens de color">
+  El siguiente ejemplo combina tokens de varios de los grupos a continuación: el acento de marca, el borde del modo plan, los fondos de diff y el fondo del mensaje de pantalla completa.
+
+  ```json ~/.claude/themes/midnight.json theme={null}
+  {
+    "name": "Midnight",
+    "base": "dark",
+    "overrides": {
+      "claude": "#a78bfa",
+      "planMode": "#38bdf8",
+      "diffAdded": "#14532d",
+      "diffRemoved": "#7f1d1d",
+      "userMessageBackground": "#1e1b4b"
+    }
+  }
+  ```
+
+  #### Colores de texto y acento
+
+  Controla el acento de marca principal y los matices de texto de primer plano utilizados en toda la interfaz.
+
+  | Token         | Controla                                                                         |
+  | :------------ | :------------------------------------------------------------------------------- |
+  | `claude`      | Acento de marca principal, utilizado para el spinner y la etiqueta del asistente |
+  | `text`        | Texto de primer plano predeterminado                                             |
+  | `inverseText` | Texto dibujado sobre un fondo de color, como insignias de estado                 |
+  | `inactive`    | Texto secundario como sugerencias, marcas de tiempo y elementos deshabilitados   |
+  | `subtle`      | Bordes tenues y texto secundario de énfasis reducido                             |
+  | `permission`  | Bordes de diálogo, incluidas solicitudes de permiso y selectores                 |
+  | `remember`    | Indicadores de memoria y `CLAUDE.md`                                             |
+
+  #### Colores de estado
+
+  Señala estados de éxito, fallo y advertencia en mensajes e indicadores.
+
+  | Token     | Controla                                                      |
+  | :-------- | :------------------------------------------------------------ |
+  | `success` | Mensajes de éxito y comprobaciones aprobadas                  |
+  | `error`   | Mensajes de error y fallos                                    |
+  | `warning` | Advertencias, mensajes de precaución y el borde del modo auto |
+  | `merged`  | Estado de solicitud de extracción fusionada                   |
+
+  #### Cuadro de entrada e indicadores de modo
+
+  Establece el color del borde del cuadro de entrada y el acento mostrado mientras un modo de permiso o indicador está activo.
+
+  | Token          | Controla                                                         |
+  | :------------- | :--------------------------------------------------------------- |
+  | `promptBorder` | Borde del cuadro de entrada en el modo de permiso predeterminado |
+  | `planMode`     | Acento y borde del modo plan                                     |
+  | `autoAccept`   | Acento y borde del modo aceptar ediciones                        |
+  | `bashBorder`   | Borde del cuadro de entrada al ingresar un comando de shell `!`  |
+  | `ide`          | Indicador de conexión IDE                                        |
+  | `fastMode`     | Indicador del modo rápido                                        |
+
+  #### Representación de diff
+
+  Colorea el código añadido y eliminado en ediciones y revisiones de archivos.
+
+  | Token               | Controla                                                   |
+  | :------------------ | :--------------------------------------------------------- |
+  | `diffAdded`         | Fondo de líneas añadidas                                   |
+  | `diffRemoved`       | Fondo de líneas eliminadas                                 |
+  | `diffAddedDimmed`   | Fondo de contexto sin cambios cerca de líneas añadidas     |
+  | `diffRemovedDimmed` | Fondo de contexto sin cambios cerca de líneas eliminadas   |
+  | `diffAddedWord`     | Resaltado a nivel de palabra dentro de una línea añadida   |
+  | `diffRemovedWord`   | Resaltado a nivel de palabra dentro de una línea eliminada |
+
+  #### Modo de pantalla completa
+
+  Se aplica solo en [modo de representación de pantalla completa](/es/fullscreen), donde los mensajes tienen un relleno de fondo.
+
+  | Token                   | Controla                                         |
+  | :---------------------- | :----------------------------------------------- |
+  | `userMessageBackground` | Fondo detrás de tus mensajes en la transcripción |
+  | `selectionBg`           | Fondo del texto seleccionado con el ratón        |
+
+  #### Variantes de shimmer y colores de subagentes
+
+  Varios tokens tienen una variante `Shimmer` emparejada, como `claudeShimmer` y `warningShimmer`, que proporciona el color más claro utilizado en el gradiente animado del spinner. Anula el shimmer junto con su token base si la animación se ve desajustada.
+
+  Cada [subagente](/es/sub-agents) y tarea paralela se muestra en uno de ocho colores nombrados para que puedas distinguirlos en la transcripción. Los nombres de los tokens siguen el patrón `<color>_FOR_SUBAGENTS_ONLY`, donde `<color>` es `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, o `cyan`. Anula estos para cambiar el aspecto de cada color nombrado. Por ejemplo, un subagente con `color: blue` en su definición se dibuja usando el valor `blue_FOR_SUBAGENTS_ONLY`.
+</Accordion>
+
 ## Cambia a renderizado a pantalla completa
 
 Si la pantalla parpadea o la posición de desplazamiento salta mientras Claude está trabajando, cambia al [modo de renderizado a pantalla completa](/es/fullscreen). Dibuja en una pantalla separada que la terminal reserva para aplicaciones a pantalla completa en lugar de agregar a tu desplazamiento normal, lo que mantiene el uso de memoria plano y agrega soporte de ratón para desplazamiento y selección. En este modo desplazas con el ratón o PageUp dentro de Claude Code en lugar de con el desplazamiento nativo de tu terminal; consulta la [página de pantalla completa](/es/fullscreen#search-and-review-the-conversation) para saber cómo buscar y copiar.

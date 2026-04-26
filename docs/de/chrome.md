@@ -6,12 +6,12 @@
 
 > Verbinden Sie Claude Code mit Ihrem Chrome-Browser, um Web-Apps zu testen, mit Konsolenprotokollen zu debuggen, Formularausfüllungen zu automatisieren und Daten von Webseiten zu extrahieren.
 
-Claude Code integriert sich mit der Claude in Chrome Browser-Erweiterung, um Ihnen Browser-Automatisierungsfunktionen über die CLI oder die [VS Code-Erweiterung](/de/vs-code#automate-browser-tasks-with-chrome) bereitzustellen. Erstellen Sie Ihren Code und testen und debuggen Sie ihn dann im Browser, ohne den Kontext zu wechseln.
+Claude Code integriert sich mit der [Claude in Chrome Browser-Erweiterung](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn), um Ihnen Browser-Automatisierungsfunktionen über die CLI oder die [VS Code-Erweiterung](/de/vs-code#automate-browser-tasks-with-chrome) bereitzustellen. Erstellen Sie Ihren Code und testen und debuggen Sie ihn dann im Browser, ohne den Kontext zu wechseln.
 
 Claude öffnet neue Registerkarten für Browser-Aufgaben und teilt den Anmeldestatus Ihres Browsers, sodass er auf alle Websites zugreifen kann, bei denen Sie bereits angemeldet sind. Browser-Aktionen werden in Echtzeit in einem sichtbaren Chrome-Fenster ausgeführt. Wenn Claude auf eine Anmeldeseite oder ein CAPTCHA trifft, wird es angehalten und fordert Sie auf, es manuell zu bearbeiten.
 
 <Note>
-  Die Chrome-Integration befindet sich in der Beta-Phase und funktioniert derzeit nur mit Google Chrome. Sie wird noch nicht auf Brave, Arc oder anderen Chromium-basierten Browsern unterstützt. WSL (Windows Subsystem for Linux) wird ebenfalls nicht unterstützt.
+  Die Chrome-Integration befindet sich in der Beta-Phase und funktioniert derzeit mit Google Chrome und Microsoft Edge. Sie wird noch nicht auf Brave, Arc oder anderen Chromium-basierten Browsern unterstützt. WSL (Windows Subsystem for Linux) wird ebenfalls nicht unterstützt.
 </Note>
 
 ## Funktionen
@@ -30,8 +30,8 @@ Mit verbundenem Chrome können Sie Browser-Aktionen mit Codierungsaufgaben in ei
 
 Bevor Sie Claude Code mit Chrome verwenden, benötigen Sie:
 
-* [Google Chrome](https://www.google.com/chrome/) Browser
-* [Claude in Chrome-Erweiterung](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) Version 1.0.36 oder höher
+* [Google Chrome](https://www.google.com/chrome/) oder [Microsoft Edge](https://www.microsoft.com/edge) Browser
+* [Claude in Chrome-Erweiterung](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) Version 1.0.36 oder höher, verfügbar im Chrome Web Store für beide Browser
 * [Claude Code](/de/quickstart#step-1-install-claude-code) Version 2.0.73 oder höher
 * Einen direkten Anthropic-Plan (Pro, Max, Team oder Enterprise)
 
@@ -180,9 +180,17 @@ Wenn Sie die Chrome-Integration zum ersten Mal aktivieren, installiert Claude Co
 
 Wenn die Verbindung weiterhin fehlschlägt, überprüfen Sie, ob die Host-Konfigurationsdatei vorhanden ist unter:
 
+Für Chrome:
+
 * **macOS**: `~/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
 * **Linux**: `~/.config/google-chrome/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
 * **Windows**: Überprüfen Sie `HKCU\Software\Google\Chrome\NativeMessagingHosts\` in der Windows-Registrierung
+
+Für Edge:
+
+* **macOS**: `~/Library/Application Support/Microsoft Edge/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
+* **Linux**: `~/.config/microsoft-edge/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
+* **Windows**: Überprüfen Sie `HKCU\Software\Microsoft\Edge\NativeMessagingHosts\` in der Windows-Registrierung
 
 ### Browser antwortet nicht
 
@@ -216,6 +224,7 @@ Dies sind die am häufigsten auftretenden Fehler und wie man sie behebt:
 
 ## Siehe auch
 
+* [Computernutzung](/de/computer-use): Steuern Sie native macOS-Apps, wenn eine Aufgabe nicht in einem Browser ausgeführt werden kann
 * [Claude Code in VS Code verwenden](/de/vs-code#automate-browser-tasks-with-chrome): Browser-Automatisierung in der VS Code-Erweiterung
 * [CLI-Referenz](/de/cli-reference): Befehlszeilenflags einschließlich `--chrome`
 * [Häufige Workflows](/de/common-workflows): Weitere Möglichkeiten zur Verwendung von Claude Code

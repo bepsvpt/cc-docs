@@ -6,12 +6,12 @@
 
 > 將 Claude Code 連接到您的 Chrome 瀏覽器，以測試網頁應用程式、使用控制台日誌進行除錯、自動填充表單，以及從網頁中提取資料。
 
-Claude Code 與 Claude in Chrome 瀏覽器擴充功能整合，為您提供從 CLI 或 [VS Code 擴充功能](/zh-TW/vs-code#automate-browser-tasks-with-chrome) 進行瀏覽器自動化的功能。建立您的程式碼，然後在瀏覽器中測試和除錯，無需切換上下文。
+Claude Code 與 [Claude in Chrome 瀏覽器擴充功能](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn)整合，為您提供從 CLI 或 [VS Code 擴充功能](/zh-TW/vs-code#automate-browser-tasks-with-chrome) 進行瀏覽器自動化的功能。建立您的程式碼，然後在瀏覽器中測試和除錯，無需切換上下文。
 
 Claude 為瀏覽器任務開啟新標籤頁，並共享您瀏覽器的登入狀態，因此它可以存取您已登入的任何網站。瀏覽器操作在可見的 Chrome 視窗中即時執行。當 Claude 遇到登入頁面或 CAPTCHA 時，它會暫停並要求您手動處理。
 
 <Note>
-  Chrome 整合處於測試版，目前僅適用於 Google Chrome。尚不支援 Brave、Arc 或其他基於 Chromium 的瀏覽器。也不支援 WSL（Windows Subsystem for Linux）。
+  Chrome 整合處於測試版，目前適用於 Google Chrome 和 Microsoft Edge。尚不支援 Brave、Arc 或其他基於 Chromium 的瀏覽器。也不支援 WSL（Windows Subsystem for Linux）。
 </Note>
 
 ## 功能
@@ -30,8 +30,8 @@ Claude 為瀏覽器任務開啟新標籤頁，並共享您瀏覽器的登入狀�
 
 在使用 Claude Code 與 Chrome 之前，您需要：
 
-* [Google Chrome](https://www.google.com/chrome/) 瀏覽器
-* [Claude in Chrome 擴充功能](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) 版本 1.0.36 或更高版本
+* [Google Chrome](https://www.google.com/chrome/) 或 [Microsoft Edge](https://www.microsoft.com/edge) 瀏覽器
+* [Claude in Chrome 擴充功能](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) 版本 1.0.36 或更高版本，可在 Chrome Web Store 中為兩個瀏覽器取得
 * [Claude Code](/zh-TW/quickstart#step-1-install-claude-code) 版本 2.0.73 或更高版本
 * 直接 Anthropic 計畫（Pro、Max、Team 或 Enterprise）
 
@@ -180,9 +180,17 @@ Claude 錄製互動序列並將其儲存為 GIF 檔案。
 
 如果連接仍然失敗，請驗證主機設定檔是否存在於：
 
+對於 Chrome：
+
 * **macOS**：`~/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
 * **Linux**：`~/.config/google-chrome/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
 * **Windows**：在 Windows 登錄中檢查 `HKCU\Software\Google\Chrome\NativeMessagingHosts\`
+
+對於 Edge：
+
+* **macOS**：`~/Library/Application Support/Microsoft Edge/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
+* **Linux**：`~/.config/microsoft-edge/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
+* **Windows**：在 Windows 登錄中檢查 `HKCU\Software\Microsoft\Edge\NativeMessagingHosts\`
 
 ### 瀏覽器無回應
 
@@ -216,6 +224,7 @@ Chrome 擴充功能的服務工作者可能在延長的工作階段期間進入�
 
 ## 另請參閱
 
+* [電腦使用](/zh-TW/computer-use)：當任務無法在瀏覽器中完成時控制原生 macOS 應用程式
 * [在 VS Code 中使用 Claude Code](/zh-TW/vs-code#automate-browser-tasks-with-chrome)：VS Code 擴充功能中的瀏覽器自動化
 * [CLI 參考](/zh-TW/cli-reference)：命令列標誌，包括 `--chrome`
 * [常見工作流程](/zh-TW/common-workflows)：更多使用 Claude Code 的方式

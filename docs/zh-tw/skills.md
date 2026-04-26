@@ -91,7 +91,7 @@ Claude Code 包含一組捆綁的 skills，在每個工作階段中都可用，�
 | 專案 | `.claude/skills/<skill-name>/SKILL.md`    | 僅此專案       |
 | 外掛 | `<plugin>/skills/<skill-name>/SKILL.md`   | 啟用外掛的位置    |
 
-當 skills 在各個層級共享相同名稱時，優先級較高的位置獲勝：企業 > 個人 > 專案。外掛 skills 使用 `plugin-name:skill-name` 命名空間，因此它們不能與其他層級衝突。如果您在 `.claude/commands/` 中有檔案，它們的運作方式相同，但如果 skill 和命令共享相同名稱，skill 優先。
+當 skills 在各個層級共享相同名稱時，企業會覆蓋個人，個人會覆蓋專案。外掛 skills 使用 `plugin-name:skill-name` 命名空間，因此它們不能與其他層級衝突。如果您在 `.claude/commands/` 中有檔案，它們的運作方式相同，但如果 skill 和命令共享相同名稱，skill 優先。
 
 #### 即時變更偵測
 

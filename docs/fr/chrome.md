@@ -6,12 +6,12 @@
 
 > Connectez Claude Code à votre navigateur Chrome pour tester des applications web, déboguer avec les journaux de console, automatiser le remplissage de formulaires et extraire des données des pages web.
 
-Claude Code s'intègre à l'extension Claude in Chrome du navigateur pour vous offrir des capacités d'automatisation du navigateur depuis la CLI ou l'[extension VS Code](/fr/vs-code#automate-browser-tasks-with-chrome). Créez votre code, puis testez et déboguez dans le navigateur sans changer de contexte.
+Claude Code s'intègre à l'[extension Claude in Chrome du navigateur](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) pour vous offrir des capacités d'automatisation du navigateur depuis la CLI ou l'[extension VS Code](/fr/vs-code#automate-browser-tasks-with-chrome). Créez votre code, puis testez et déboguez dans le navigateur sans changer de contexte.
 
 Claude ouvre de nouveaux onglets pour les tâches du navigateur et partage l'état de connexion de votre navigateur, ce qui lui permet d'accéder à n'importe quel site auquel vous êtes déjà connecté. Les actions du navigateur s'exécutent en temps réel dans une fenêtre Chrome visible. Lorsque Claude rencontre une page de connexion ou un CAPTCHA, il s'arrête et vous demande de le gérer manuellement.
 
 <Note>
-  L'intégration Chrome est en bêta et fonctionne actuellement avec Google Chrome uniquement. Elle n'est pas encore prise en charge sur Brave, Arc ou d'autres navigateurs basés sur Chromium. WSL (Windows Subsystem for Linux) n'est pas non plus pris en charge.
+  L'intégration Chrome est en bêta et fonctionne actuellement avec Google Chrome et Microsoft Edge. Elle n'est pas encore prise en charge sur Brave, Arc ou d'autres navigateurs basés sur Chromium. WSL (Windows Subsystem for Linux) n'est pas non plus pris en charge.
 </Note>
 
 ## Capacités
@@ -30,8 +30,8 @@ Avec Chrome connecté, vous pouvez enchaîner les actions du navigateur avec les
 
 Avant d'utiliser Claude Code avec Chrome, vous avez besoin de :
 
-* Navigateur [Google Chrome](https://www.google.com/chrome/)
-* Extension [Claude in Chrome](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) version 1.0.36 ou supérieure
+* Navigateur [Google Chrome](https://www.google.com/chrome/) ou [Microsoft Edge](https://www.microsoft.com/edge)
+* Extension [Claude in Chrome](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) version 1.0.36 ou supérieure, disponible dans le Chrome Web Store pour les deux navigateurs
 * [Claude Code](/fr/quickstart#step-1-install-claude-code) version 2.0.73 ou supérieure
 * Un plan Anthropic direct (Pro, Max, Team ou Enterprise)
 
@@ -180,9 +180,17 @@ La première fois que vous activez l'intégration Chrome, Claude Code installe u
 
 Si la connexion échoue toujours, vérifiez que le fichier de configuration d'hôte existe à :
 
+Pour Chrome :
+
 * **macOS** : `~/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
 * **Linux** : `~/.config/google-chrome/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
 * **Windows** : vérifiez `HKCU\Software\Google\Chrome\NativeMessagingHosts\` dans le Registre Windows
+
+Pour Edge :
+
+* **macOS** : `~/Library/Application Support/Microsoft Edge/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
+* **Linux** : `~/.config/microsoft-edge/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
+* **Windows** : vérifiez `HKCU\Software\Microsoft\Edge\NativeMessagingHosts\` dans le Registre Windows
 
 ### Le navigateur ne répond pas
 

@@ -91,7 +91,7 @@ Tempat Anda menyimpan skill menentukan siapa yang dapat menggunakannya:
 | Proyek     | `.claude/skills/<skill-name>/SKILL.md`                    | Proyek ini saja                   |
 | Plugin     | `<plugin>/skills/<skill-name>/SKILL.md`                   | Tempat plugin diaktifkan          |
 
-Ketika skills berbagi nama yang sama di berbagai level, lokasi prioritas lebih tinggi menang: enterprise > pribadi > proyek. Skills plugin menggunakan namespace `plugin-name:skill-name`, jadi mereka tidak dapat bertentangan dengan level lain. Jika Anda memiliki file di `.claude/commands/`, file tersebut bekerja dengan cara yang sama, tetapi jika skill dan perintah berbagi nama yang sama, skill mengambil alih.
+Ketika skills berbagi nama yang sama di berbagai level, enterprise menggantikan pribadi, dan pribadi menggantikan proyek. Skills plugin menggunakan namespace `plugin-name:skill-name`, jadi mereka tidak dapat bertentangan dengan level lain. Jika Anda memiliki file di `.claude/commands/`, file tersebut bekerja dengan cara yang sama, tetapi jika skill dan perintah berbagi nama yang sama, skill mengambil alih.
 
 #### Deteksi perubahan langsung
 

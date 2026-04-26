@@ -6,12 +6,12 @@
 
 > Подключите Claude Code к браузеру Chrome для тестирования веб-приложений, отладки с помощью логов консоли, автоматизации заполнения форм и извлечения данных со страниц.
 
-Claude Code интегрируется с расширением Claude in Chrome для браузера, чтобы предоставить вам возможности автоматизации браузера из CLI или [расширения VS Code](/ru/vs-code#automate-browser-tasks-with-chrome). Создавайте свой код, а затем тестируйте и отлаживайте его в браузере без переключения контекста.
+Claude Code интегрируется с [расширением Claude in Chrome для браузера](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn), чтобы предоставить вам возможности автоматизации браузера из CLI или [расширения VS Code](/ru/vs-code#automate-browser-tasks-with-chrome). Создавайте свой код, а затем тестируйте и отлаживайте его в браузере без переключения контекста.
 
 Claude открывает новые вкладки для задач браузера и использует состояние входа вашего браузера, поэтому он может получить доступ к любому сайту, на который вы уже вошли. Действия браузера выполняются в видимом окне Chrome в реальном времени. Когда Claude встречает страницу входа или CAPTCHA, он приостанавливается и просит вас обработать это вручную.
 
 <Note>
-  Интеграция с Chrome находится в бета-версии и в настоящее время работает только с Google Chrome. Она еще не поддерживается на Brave, Arc или других браузерах на основе Chromium. WSL (Windows Subsystem for Linux) также не поддерживается.
+  Интеграция с Chrome находится в бета-версии и в настоящее время работает с Google Chrome и Microsoft Edge. Она еще не поддерживается на Brave, Arc или других браузерах на основе Chromium. WSL (Windows Subsystem for Linux) также не поддерживается.
 </Note>
 
 ## Возможности
@@ -30,8 +30,8 @@ Claude открывает новые вкладки для задач брауз
 
 Перед использованием Claude Code с Chrome вам необходимо:
 
-* Браузер [Google Chrome](https://www.google.com/chrome/)
-* Расширение [Claude in Chrome](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) версии 1.0.36 или выше
+* Браузер [Google Chrome](https://www.google.com/chrome/) или [Microsoft Edge](https://www.microsoft.com/edge)
+* Расширение [Claude in Chrome](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) версии 1.0.36 или выше, доступное в Chrome Web Store для обоих браузеров
 * [Claude Code](/ru/quickstart#step-1-install-claude-code) версии 2.0.73 или выше
 * Прямой план Anthropic (Pro, Max, Team или Enterprise)
 
@@ -180,9 +180,17 @@ Claude записывает последовательность взаимод�
 
 Если соединение по-прежнему не удаётся, убедитесь, что файл конфигурации хоста существует в:
 
+Для Chrome:
+
 * **macOS**: `~/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
 * **Linux**: `~/.config/google-chrome/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
 * **Windows**: проверьте `HKCU\Software\Google\Chrome\NativeMessagingHosts\` в реестре Windows
+
+Для Edge:
+
+* **macOS**: `~/Library/Application Support/Microsoft Edge/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
+* **Linux**: `~/.config/microsoft-edge/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
+* **Windows**: проверьте `HKCU\Software\Microsoft\Edge\NativeMessagingHosts\` в реестре Windows
 
 ### Браузер не отвечает
 
@@ -216,6 +224,7 @@ Service worker расширения Chrome может перейти в режи
 
 ## See also
 
+* [Использование компьютера](/ru/computer-use): управление собственными приложениями macOS, когда задача не может быть выполнена в браузере
 * [Использование Claude Code в VS Code](/ru/vs-code#automate-browser-tasks-with-chrome): автоматизация браузера в расширении VS Code
 * [Справочник CLI](/ru/cli-reference): флаги командной строки, включая `--chrome`
 * [Распространённые рабочие процессы](/ru/common-workflows): дополнительные способы использования Claude Code

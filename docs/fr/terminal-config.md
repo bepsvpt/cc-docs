@@ -145,6 +145,92 @@ L'exemple suivant définit un thème qui conserve le preset sombre mais recolore
 
 Claude Code surveille `~/.claude/themes/` et recharge lorsqu'un fichier change, de sorte que les modifications apportées dans votre éditeur s'appliquent à une session en cours sans redémarrage.
 
+Ci-dessous se trouve la liste complète des personnalisations que vous pouvez définir dans `overrides`. L'éditeur interactif dans `/theme` affiche les mêmes jetons avec un aperçu en direct, y compris un petit nombre de jetons internes non couverts ici.
+
+<Accordion title="Référence des jetons de couleur">
+  L'exemple suivant combine les jetons de plusieurs groupes ci-dessous : l'accent de marque, la bordure du mode plan, les arrière-plans de diff et l'arrière-plan du message en plein écran.
+
+  ```json ~/.claude/themes/midnight.json theme={null}
+  {
+    "name": "Midnight",
+    "base": "dark",
+    "overrides": {
+      "claude": "#a78bfa",
+      "planMode": "#38bdf8",
+      "diffAdded": "#14532d",
+      "diffRemoved": "#7f1d1d",
+      "userMessageBackground": "#1e1b4b"
+    }
+  }
+  ```
+
+  #### Couleurs de texte et d'accent
+
+  Contrôlez l'accent de marque principal et les nuances de texte de premier plan utilisées dans toute l'interface.
+
+  | Jeton         | Contrôle                                                                         |
+  | :------------ | :------------------------------------------------------------------------------- |
+  | `claude`      | Accent de marque principal, utilisé pour le spinner et l'étiquette d'assistant   |
+  | `text`        | Texte de premier plan par défaut                                                 |
+  | `inverseText` | Texte dessiné sur un arrière-plan coloré, comme les badges de statut             |
+  | `inactive`    | Texte secondaire tel que les indices, les horodatages et les éléments désactivés |
+  | `subtle`      | Bordures faibles et texte secondaire désaccentué                                 |
+  | `permission`  | Bordures de dialogue, y compris les invites de permission et les sélecteurs      |
+  | `remember`    | Indicateurs de mémoire et `CLAUDE.md`                                            |
+
+  #### Couleurs de statut
+
+  Signalez les états de succès, d'échec et d'avertissement dans les messages et les indicateurs.
+
+  | Jeton     | Contrôle                                                     |
+  | :-------- | :----------------------------------------------------------- |
+  | `success` | Messages de succès et vérifications réussies                 |
+  | `error`   | Messages d'erreur et échecs                                  |
+  | `warning` | Avertissements, messages de prudence et bordure du mode auto |
+  | `merged`  | Statut de demande de tirage fusionnée                        |
+
+  #### Boîte d'entrée et indicateurs de mode
+
+  Définissez la couleur de bordure de la boîte d'entrée et l'accent affiché tandis qu'un mode de permission ou un indicateur est actif.
+
+  | Jeton          | Contrôle                                                               |
+  | :------------- | :--------------------------------------------------------------------- |
+  | `promptBorder` | Bordure de la boîte d'entrée en mode permission par défaut             |
+  | `planMode`     | Accent et bordure du mode plan                                         |
+  | `autoAccept`   | Accent et bordure du mode acceptation des modifications                |
+  | `bashBorder`   | Bordure de la boîte d'entrée lors de l'entrée d'une commande shell `!` |
+  | `ide`          | Indicateur de connexion IDE                                            |
+  | `fastMode`     | Indicateur du mode rapide                                              |
+
+  #### Rendu des diffs
+
+  Colorez le code ajouté et supprimé dans les modifications et révisions de fichiers.
+
+  | Jeton               | Contrôle                                                     |
+  | :------------------ | :----------------------------------------------------------- |
+  | `diffAdded`         | Arrière-plan des lignes ajoutées                             |
+  | `diffRemoved`       | Arrière-plan des lignes supprimées                           |
+  | `diffAddedDimmed`   | Arrière-plan du contexte inchangé près des lignes ajoutées   |
+  | `diffRemovedDimmed` | Arrière-plan du contexte inchangé près des lignes supprimées |
+  | `diffAddedWord`     | Surbrillance au niveau des mots dans une ligne ajoutée       |
+  | `diffRemovedWord`   | Surbrillance au niveau des mots dans une ligne supprimée     |
+
+  #### Mode plein écran
+
+  S'applique uniquement en [mode de rendu plein écran](/fr/fullscreen), où les messages ont un remplissage d'arrière-plan.
+
+  | Jeton                   | Contrôle                                                 |
+  | :---------------------- | :------------------------------------------------------- |
+  | `userMessageBackground` | Arrière-plan derrière vos messages dans la transcription |
+  | `selectionBg`           | Arrière-plan du texte sélectionné à la souris            |
+
+  #### Variantes de scintillement et couleurs des sous-agents
+
+  Plusieurs jetons ont une variante `Shimmer` appariée, telle que `claudeShimmer` et `warningShimmer`, qui fournit la couleur plus claire utilisée dans le dégradé animé du spinner. Remplacez le scintillement aux côtés de son jeton de base si l'animation semble mal assortie.
+
+  Chaque [sous-agent](/fr/sub-agents) et tâche parallèle est affiché dans l'une des huit couleurs nommées afin que vous puissiez les distinguer dans la transcription. Les noms de jetons suivent le modèle `<color>_FOR_SUBAGENTS_ONLY`, où `<color>` est `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, ou `cyan`. Remplacez-les pour modifier l'apparence de chaque couleur nommée. Par exemple, un sous-agent avec `color: blue` dans sa définition est dessiné en utilisant la valeur `blue_FOR_SUBAGENTS_ONLY`.
+</Accordion>
+
 ## Basculer vers le rendu en plein écran
 
 Si l'affichage scintille ou la position de défilement saute pendant que Claude travaille, basculez vers le [mode de rendu en plein écran](/fr/fullscreen). Il dessine sur un écran séparé que le terminal réserve aux applications en plein écran au lieu d'ajouter à votre défilement normal, ce qui maintient l'utilisation de la mémoire plate et ajoute le support de la souris pour le défilement et la sélection. Dans ce mode, vous faites défiler avec la souris ou PageUp à l'intérieur de Claude Code plutôt qu'avec le défilement natif de votre terminal ; consultez la [page plein écran](/fr/fullscreen#search-and-review-the-conversation) pour savoir comment rechercher et copier.

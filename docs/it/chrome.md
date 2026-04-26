@@ -6,12 +6,12 @@
 
 > Connetti Claude Code al tuo browser Chrome per testare app web, eseguire il debug con i log della console, automatizzare la compilazione di moduli ed estrarre dati dalle pagine web.
 
-Claude Code si integra con l'estensione Claude in Chrome per darti capacità di automazione del browser dalla CLI o dall'[estensione VS Code](/it/vs-code#automate-browser-tasks-with-chrome). Costruisci il tuo codice, quindi testa ed esegui il debug nel browser senza cambiare contesto.
+Claude Code si integra con l'[estensione Claude in Chrome](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) per darti capacità di automazione del browser dalla CLI o dall'[estensione VS Code](/it/vs-code#automate-browser-tasks-with-chrome). Costruisci il tuo codice, quindi testa ed esegui il debug nel browser senza cambiare contesto.
 
 Claude apre nuove schede per le attività del browser e condivide lo stato di accesso del tuo browser, quindi può accedere a qualsiasi sito in cui sei già connesso. Le azioni del browser vengono eseguite in una finestra Chrome visibile in tempo reale. Quando Claude incontra una pagina di accesso o un CAPTCHA, si ferma e ti chiede di gestirlo manualmente.
 
 <Note>
-  L'integrazione con Chrome è in beta e attualmente funziona solo con Google Chrome. Non è ancora supportata su Brave, Arc o altri browser basati su Chromium. Anche WSL (Windows Subsystem for Linux) non è supportato.
+  L'integrazione con Chrome è in beta e attualmente funziona con Google Chrome e Microsoft Edge. Non è ancora supportata su Brave, Arc o altri browser basati su Chromium. Anche WSL (Windows Subsystem for Linux) non è supportato.
 </Note>
 
 ## Capacità
@@ -30,8 +30,8 @@ Con Chrome connesso, puoi concatenare azioni del browser con attività di codifi
 
 Prima di utilizzare Claude Code con Chrome, hai bisogno di:
 
-* Browser [Google Chrome](https://www.google.com/chrome/)
-* Estensione [Claude in Chrome](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) versione 1.0.36 o superiore
+* Browser [Google Chrome](https://www.google.com/chrome/) o [Microsoft Edge](https://www.microsoft.com/edge)
+* Estensione [Claude in Chrome](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) versione 1.0.36 o superiore, disponibile nel Chrome Web Store per entrambi i browser
 * [Claude Code](/it/quickstart#step-1-install-claude-code) versione 2.0.73 o superiore
 * Un piano Anthropic diretto (Pro, Max, Team o Enterprise)
 
@@ -180,9 +180,17 @@ La prima volta che abiliti l'integrazione con Chrome, Claude Code installa un fi
 
 Se la connessione continua a non funzionare, verifica che il file di configurazione dell'host esista in:
 
+Per Chrome:
+
 * **macOS**: `~/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
 * **Linux**: `~/.config/google-chrome/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
 * **Windows**: controlla `HKCU\Software\Google\Chrome\NativeMessagingHosts\` nel Registro di Windows
+
+Per Edge:
+
+* **macOS**: `~/Library/Application Support/Microsoft Edge/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
+* **Linux**: `~/.config/microsoft-edge/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
+* **Windows**: controlla `HKCU\Software\Microsoft\Edge\NativeMessagingHosts\` nel Registro di Windows
 
 ### Browser non risponde
 
@@ -216,6 +224,7 @@ Questi sono gli errori più frequentemente riscontrati e come risolverli:
 
 ## Vedi anche
 
+* [Uso del computer](/it/computer-use): controlla le app macOS native quando un'attività non può essere eseguita in un browser
 * [Usa Claude Code in VS Code](/it/vs-code#automate-browser-tasks-with-chrome): automazione del browser nell'estensione VS Code
 * [Riferimento CLI](/it/cli-reference): flag della riga di comando incluso `--chrome`
 * [Flussi di lavoro comuni](/it/common-workflows): altri modi per utilizzare Claude Code

@@ -6,12 +6,12 @@
 
 > Conecta Claude Code a tu navegador Chrome para probar aplicaciones web, depurar con registros de consola, automatizar el relleno de formularios y extraer datos de páginas web.
 
-Claude Code se integra con la extensión del navegador Claude en Chrome para brindarte capacidades de automatización del navegador desde la CLI o la [extensión de VS Code](/es/vs-code#automate-browser-tasks-with-chrome). Construye tu código, luego prueba y depura en el navegador sin cambiar de contexto.
+Claude Code se integra con la [extensión del navegador Claude en Chrome](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) para brindarte capacidades de automatización del navegador desde la CLI o la [extensión de VS Code](/es/vs-code#automate-browser-tasks-with-chrome). Construye tu código, luego prueba y depura en el navegador sin cambiar de contexto.
 
 Claude abre nuevas pestañas para tareas del navegador y comparte el estado de inicio de sesión de tu navegador, por lo que puede acceder a cualquier sitio en el que ya hayas iniciado sesión. Las acciones del navegador se ejecutan en una ventana de Chrome visible en tiempo real. Cuando Claude encuentra una página de inicio de sesión o CAPTCHA, se detiene y te pide que lo manejes manualmente.
 
 <Note>
-  La integración de Chrome está en beta y actualmente funciona solo con Google Chrome. Aún no es compatible con Brave, Arc u otros navegadores basados en Chromium. WSL (Subsistema de Windows para Linux) tampoco es compatible.
+  La integración de Chrome está en beta y actualmente funciona con Google Chrome y Microsoft Edge. Aún no es compatible con Brave, Arc u otros navegadores basados en Chromium. WSL (Subsistema de Windows para Linux) tampoco es compatible.
 </Note>
 
 ## Capacidades
@@ -30,8 +30,8 @@ Con Chrome conectado, puedes encadenar acciones del navegador con tareas de codi
 
 Antes de usar Claude Code con Chrome, necesitas:
 
-* Navegador [Google Chrome](https://www.google.com/chrome/)
-* Extensión [Claude en Chrome](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) versión 1.0.36 o superior
+* Navegador [Google Chrome](https://www.google.com/chrome/) o [Microsoft Edge](https://www.microsoft.com/edge)
+* Extensión [Claude en Chrome](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) versión 1.0.36 o superior, disponible en la Chrome Web Store para ambos navegadores
 * [Claude Code](/es/quickstart#step-1-install-claude-code) versión 2.0.73 o superior
 * Un plan directo de Anthropic (Pro, Max, Team o Enterprise)
 
@@ -180,9 +180,17 @@ La primera vez que habilitas la integración de Chrome, Claude Code instala un a
 
 Si la conexión aún falla, verifica que el archivo de configuración del host exista en:
 
+Para Chrome:
+
 * **macOS**: `~/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
 * **Linux**: `~/.config/google-chrome/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
 * **Windows**: comprueba `HKCU\Software\Google\Chrome\NativeMessagingHosts\` en el Registro de Windows
+
+Para Edge:
+
+* **macOS**: `~/Library/Application Support/Microsoft Edge/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
+* **Linux**: `~/.config/microsoft-edge/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
+* **Windows**: comprueba `HKCU\Software\Microsoft\Edge\NativeMessagingHosts\` en el Registro de Windows
 
 ### El navegador no responde
 

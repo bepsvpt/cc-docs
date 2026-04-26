@@ -91,7 +91,7 @@ Claude Code 包括一组捆绑 skills，在每个会话中都可用，包括 `/s
 | 项目 | `.claude/skills/<skill-name>/SKILL.md`    | 仅此项目       |
 | 插件 | `<plugin>/skills/<skill-name>/SKILL.md`   | 启用插件的位置    |
 
-当 skills 在各个级别共享相同的名称时，更高优先级的位置获胜：企业 > 个人 > 项目。插件 skills 使用 `plugin-name:skill-name` 命名空间，因此它们不能与其他级别冲突。如果你在 `.claude/commands/` 中有文件，它们的工作方式相同，但如果 skill 和命令共享相同的名称，skill 优先。
+当 skills 在各个级别共享相同的名称时，企业覆盖个人，个人覆盖项目。插件 skills 使用 `plugin-name:skill-name` 命名空间，因此它们不能与其他级别冲突。如果你在 `.claude/commands/` 中有文件，它们的工作方式相同，但如果 skill 和命令共享相同的名称，skill 优先。
 
 #### 实时变更检测
 

@@ -6,12 +6,12 @@
 
 > Conecte Claude Code ao seu navegador Chrome para testar aplicativos web, depurar com logs de console, automatizar preenchimento de formulários e extrair dados de páginas web.
 
-Claude Code integra-se com a extensão Claude in Chrome do navegador para oferecer recursos de automação de navegador a partir da CLI ou da [extensão VS Code](/pt/vs-code#automate-browser-tasks-with-chrome). Construa seu código, depois teste e depure no navegador sem trocar de contexto.
+Claude Code integra-se com a [extensão Claude in Chrome do navegador](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) para oferecer recursos de automação de navegador a partir da CLI ou da [extensão VS Code](/pt/vs-code#automate-browser-tasks-with-chrome). Construa seu código, depois teste e depure no navegador sem trocar de contexto.
 
 Claude abre novas abas para tarefas do navegador e compartilha o estado de login do seu navegador, para que possa acessar qualquer site em que você já esteja conectado. As ações do navegador são executadas em uma janela Chrome visível em tempo real. Quando Claude encontra uma página de login ou CAPTCHA, ele pausa e pede que você a manipule manualmente.
 
 <Note>
-  A integração com Chrome está em beta e atualmente funciona apenas com Google Chrome. Ainda não é suportada em Brave, Arc ou outros navegadores baseados em Chromium. WSL (Windows Subsystem for Linux) também não é suportado.
+  A integração com Chrome está em beta e atualmente funciona com Google Chrome e Microsoft Edge. Ainda não é suportada em Brave, Arc ou outros navegadores baseados em Chromium. WSL (Windows Subsystem for Linux) também não é suportado.
 </Note>
 
 ## Recursos
@@ -30,8 +30,8 @@ Com Chrome conectado, você pode encadear ações do navegador com tarefas de co
 
 Antes de usar Claude Code com Chrome, você precisa de:
 
-* Navegador [Google Chrome](https://www.google.com/chrome/)
-* Extensão [Claude in Chrome](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) versão 1.0.36 ou superior
+* Navegador [Google Chrome](https://www.google.com/chrome/) ou [Microsoft Edge](https://www.microsoft.com/edge)
+* Extensão [Claude in Chrome](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) versão 1.0.36 ou superior, disponível na Chrome Web Store para ambos os navegadores
 * [Claude Code](/pt/quickstart#step-1-install-claude-code) versão 2.0.73 ou superior
 * Um plano Anthropic direto (Pro, Max, Team ou Enterprise)
 
@@ -180,15 +180,23 @@ Na primeira vez que você ativa a integração com Chrome, Claude Code instala u
 
 Se a conexão ainda falhar, verifique se o arquivo de configuração do host existe em:
 
+Para Chrome:
+
 * **macOS**: `~/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
 * **Linux**: `~/.config/google-chrome/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
 * **Windows**: verifique `HKCU\Software\Google\Chrome\NativeMessagingHosts\` no Registro do Windows
+
+Para Edge:
+
+* **macOS**: `~/Library/Application Support/Microsoft Edge/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
+* **Linux**: `~/.config/microsoft-edge/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
+* **Windows**: verifique `HKCU\Software\Microsoft\Edge\NativeMessagingHosts\` no Registro do Windows
 
 ### Navegador não respondendo
 
 Se os comandos do navegador de Claude pararem de funcionar:
 
-1. Verifique se uma caixa de diálogo modal (alerta, confirmação, prompt) está bloqueando a página. Caixas de diálogo JavaScript bloqueiam eventos do navegador e impedem que Claude receba comandos. Feche a caixa de diálogo manualmente e diga a Claude para continuar.
+1. Verifique se uma caixa de diálogo modal (alerta, confirmação, prompt) está bloqueando a página. Caixas de diálogo JavaScript bloqueiam eventos do navegador e impedem que Claude receba comandos. Feche a caixa de diálogo manualmente, depois diga a Claude para continuar.
 2. Peça a Claude para criar uma nova aba e tentar novamente
 3. Reinicie a extensão Chrome desativando-a e reativando-a em `chrome://extensions`
 
@@ -216,6 +224,7 @@ Estes são os erros mais frequentemente encontrados e como resolvê-los:
 
 ## Veja também
 
+* [Computer use](/pt/computer-use): controle aplicativos nativos do macOS quando uma tarefa não pode ser feita em um navegador
 * [Use Claude Code in VS Code](/pt/vs-code#automate-browser-tasks-with-chrome): automação de navegador na extensão VS Code
 * [Referência CLI](/pt/cli-reference): flags de linha de comando incluindo `--chrome`
 * [Fluxos de trabalho comuns](/pt/common-workflows): mais maneiras de usar Claude Code

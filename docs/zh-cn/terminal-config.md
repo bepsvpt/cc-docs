@@ -145,6 +145,92 @@ set -as terminal-features 'xterm*:extkeys'
 
 Claude Code 监视 `~/.claude/themes/` 并在文件更改时重新加载，因此在您的编辑器中所做的编辑会应用到正在运行的会话中，无需重新启动。
 
+以下是您可以在 `overrides` 中设置的完整自定义列表。`/theme` 中的交互式编辑器显示相同的令牌，并带有实时预览，包括此处未涵盖的少量内部令牌。
+
+<Accordion title="颜色令牌参考">
+  以下示例结合了以下几个组中的令牌：品牌强调、Plan Mode 边框、diff 背景和全屏消息背景。
+
+  ```json ~/.claude/themes/midnight.json theme={null}
+  {
+    "name": "Midnight",
+    "base": "dark",
+    "overrides": {
+      "claude": "#a78bfa",
+      "planMode": "#38bdf8",
+      "diffAdded": "#14532d",
+      "diffRemoved": "#7f1d1d",
+      "userMessageBackground": "#1e1b4b"
+    }
+  }
+  ```
+
+  #### 文本和强调颜色
+
+  控制整个界面中使用的主要品牌强调和前景文本阴影。
+
+  | 令牌            | 控制                  |
+  | :------------ | :------------------ |
+  | `claude`      | 主要品牌强调，用于微调器和助手标签   |
+  | `text`        | 默认前景文本              |
+  | `inverseText` | 绘制在彩色背景顶部的文本，例如状态徽章 |
+  | `inactive`    | 次要文本，例如提示、时间戳和禁用项   |
+  | `subtle`      | 淡色边框和去强调的次要文本       |
+  | `permission`  | 对话框边框，包括权限提示和选择器    |
+  | `remember`    | 内存和 `CLAUDE.md` 指示器 |
+
+  #### 状态颜色
+
+  在消息和指示器中发出成功、失败和警告状态信号。
+
+  | 令牌        | 控制             |
+  | :-------- | :------------- |
+  | `success` | 成功消息和通过的检查     |
+  | `error`   | 错误消息和失败        |
+  | `warning` | 警告、注意消息和自动模式边框 |
+  | `merged`  | 合并的拉取请求状态      |
+
+  #### 输入框和模式指示器
+
+  设置输入框边框颜色和权限模式或指示器处于活动状态时显示的强调。
+
+  | 令牌             | 控制                     |
+  | :------------- | :--------------------- |
+  | `promptBorder` | 默认权限模式下的输入框边框          |
+  | `planMode`     | Plan Mode 强调和边框        |
+  | `autoAccept`   | 接受编辑模式强调和边框            |
+  | `bashBorder`   | 输入 `!` shell 命令时的输入框边框 |
+  | `ide`          | IDE 连接指示器              |
+  | `fastMode`     | 快速模式指示器                |
+
+  #### Diff 渲染
+
+  在文件编辑和审查中为添加和删除的代码着色。
+
+  | 令牌                  | 控制             |
+  | :------------------ | :------------- |
+  | `diffAdded`         | 添加行的背景         |
+  | `diffRemoved`       | 删除行的背景         |
+  | `diffAddedDimmed`   | 添加行附近未更改上下文的背景 |
+  | `diffRemovedDimmed` | 删除行附近未更改上下文的背景 |
+  | `diffAddedWord`     | 添加行内的字级突出显示    |
+  | `diffRemovedWord`   | 删除行内的字级突出显示    |
+
+  #### 全屏模式
+
+  仅在[全屏渲染模式](/zh-CN/fullscreen)中应用，其中消息具有背景填充。
+
+  | 令牌                      | 控制            |
+  | :---------------------- | :------------ |
+  | `userMessageBackground` | 成绩单中您的消息后面的背景 |
+  | `selectionBg`           | 用鼠标选择的文本的背景   |
+
+  #### 微光变体和子代理颜色
+
+  多个令牌具有配对的 `Shimmer` 变体，例如 `claudeShimmer` 和 `warningShimmer`，它们提供微调器动画梯度中使用的较浅颜色。如果动画看起来不匹配，请与其基础令牌一起覆盖微光。
+
+  每个[子代理](/zh-CN/sub-agents)和并行任务以八种命名颜色之一显示，以便您可以在成绩单中区分它们。令牌名称遵循 `<color>_FOR_SUBAGENTS_ONLY` 的模式，其中 `<color>` 是 `red`、`blue`、`green`、`yellow`、`purple`、`orange`、`pink` 或 `cyan`。覆盖这些以更改每个命名颜色的外观。例如，定义中具有 `color: blue` 的子代理使用 `blue_FOR_SUBAGENTS_ONLY` 值绘制。
+</Accordion>
+
 ## 切换到全屏渲染
 
 如果显示闪烁或在 Claude 工作时滚动位置跳跃，请切换到[全屏渲染模式](/zh-CN/fullscreen)。它绘制到终端为全屏应用程序保留的单独屏幕，而不是附加到您的正常滚动条，这保持内存使用平稳并为滚动和选择添加鼠标支持。在此模式下，您使用鼠标或 PageUp 在 Claude Code 内滚动，而不是使用您的终端的本机滚动条；请参阅[全屏页面](/zh-CN/fullscreen#search-and-review-the-conversation)了解如何搜索和复制。

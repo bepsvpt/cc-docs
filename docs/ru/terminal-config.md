@@ -145,6 +145,92 @@ set -as terminal-features 'xterm*:extkeys'
 
 Claude Code отслеживает `~/.claude/themes/` и перезагружает при изменении файла, поэтому изменения, сделанные в вашем редакторе, применяются к работающему сеансу без перезагрузки.
 
+Ниже приведён полный список настроек, которые вы можете установить в `overrides`. Интерактивный редактор в `/theme` показывает те же токены с живым предпросмотром, включая небольшое количество внутренних токенов, не описанных здесь.
+
+<Accordion title="Color token reference">
+  Следующий пример объединяет токены из нескольких групп ниже: фирменный акцент, граница режима Plan Mode, фоны diff и фон полноэкранного сообщения.
+
+  ```json ~/.claude/themes/midnight.json theme={null}
+  {
+    "name": "Midnight",
+    "base": "dark",
+    "overrides": {
+      "claude": "#a78bfa",
+      "planMode": "#38bdf8",
+      "diffAdded": "#14532d",
+      "diffRemoved": "#7f1d1d",
+      "userMessageBackground": "#1e1b4b"
+    }
+  }
+  ```
+
+  #### Text and accent colors
+
+  Управляйте основным фирменным акцентом и оттенками переднего плана текста, используемыми во всём интерфейсе.
+
+  | Token         | Controls                                                         |
+  | :------------ | :--------------------------------------------------------------- |
+  | `claude`      | Primary brand accent, used for the spinner and assistant label   |
+  | `text`        | Default foreground text                                          |
+  | `inverseText` | Text drawn on top of a colored background, such as status badges |
+  | `inactive`    | Secondary text such as hints, timestamps, and disabled items     |
+  | `subtle`      | Faint borders and de-emphasized secondary text                   |
+  | `permission`  | Dialog borders, including permission prompts and pickers         |
+  | `remember`    | Memory and `CLAUDE.md` indicators                                |
+
+  #### Status colors
+
+  Сигнализируйте об успехе, сбое и состояниях предупреждения в сообщениях и индикаторах.
+
+  | Token     | Controls                                             |
+  | :-------- | :--------------------------------------------------- |
+  | `success` | Success messages and passing checks                  |
+  | `error`   | Error messages and failures                          |
+  | `warning` | Warnings, caution messages, and the auto mode border |
+  | `merged`  | Merged pull request status                           |
+
+  #### Input box and mode indicators
+
+  Установите цвет границы поля ввода и акцент, отображаемый при активном режиме разрешения или индикаторе.
+
+  | Token          | Controls                                           |
+  | :------------- | :------------------------------------------------- |
+  | `promptBorder` | Input box border in the default permission mode    |
+  | `planMode`     | Plan mode accent and border                        |
+  | `autoAccept`   | Accept-edits mode accent and border                |
+  | `bashBorder`   | Input box border when entering a `!` shell command |
+  | `ide`          | IDE connection indicator                           |
+  | `fastMode`     | Fast mode indicator                                |
+
+  #### Diff rendering
+
+  Раскрасьте добавленный и удалённый код в редактировании файлов и рецензировании.
+
+  | Token               | Controls                                           |
+  | :------------------ | :------------------------------------------------- |
+  | `diffAdded`         | Background of added lines                          |
+  | `diffRemoved`       | Background of removed lines                        |
+  | `diffAddedDimmed`   | Background of unchanged context near added lines   |
+  | `diffRemovedDimmed` | Background of unchanged context near removed lines |
+  | `diffAddedWord`     | Word-level highlight within an added line          |
+  | `diffRemovedWord`   | Word-level highlight within a removed line         |
+
+  #### Fullscreen mode
+
+  Применяется только в [режиме полноэкранной отрисовки](/ru/fullscreen), где сообщения имеют заливку фона.
+
+  | Token                   | Controls                                          |
+  | :---------------------- | :------------------------------------------------ |
+  | `userMessageBackground` | Background behind your messages in the transcript |
+  | `selectionBg`           | Background of text selected with the mouse        |
+
+  #### Shimmer variants and subagent colors
+
+  Несколько токенов имеют парный вариант `Shimmer`, такой как `claudeShimmer` и `warningShimmer`, который предоставляет более светлый цвет, используемый в анимированном градиенте спиннера. Переопределите shimmer вместе с его базовым токеном, если анимация выглядит несоответствующей.
+
+  Каждый [subagent](/ru/sub-agents) и параллельная задача отображаются в одном из восьми именованных цветов, чтобы вы могли различить их в транскрипте. Имена токенов следуют шаблону `<color>_FOR_SUBAGENTS_ONLY`, где `<color>` — это `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink` или `cyan`. Переопределите их, чтобы изменить внешний вид каждого именованного цвета. Например, subagent с `color: blue` в его определении отображается с использованием значения `blue_FOR_SUBAGENTS_ONLY`.
+</Accordion>
+
 ## Переключитесь на полноэкранный рендеринг
 
 Если дисплей мерцает или позиция прокрутки прыгает, пока Claude работает, переключитесь на [режим полноэкранного рендеринга](/ru/fullscreen). Он рисует на отдельном экране, который терминал зарезервировал для полноэкранных приложений, вместо добавления в вашу обычную прокрутку, что сохраняет использование памяти на плоском уровне и добавляет поддержку мыши для прокрутки и выделения. В этом режиме вы прокручиваете с помощью мыши или PageUp внутри Claude Code, а не с помощью встроенной прокрутки вашего терминала; см. [страницу полноэкранного режима](/ru/fullscreen#search-and-review-the-conversation) для того, как искать и копировать.

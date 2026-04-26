@@ -6,12 +6,12 @@
 
 > Claude Code를 Chrome 브라우저에 연결하여 웹 앱을 테스트하고, 콘솔 로그로 디버깅하며, 양식 작성을 자동화하고, 웹 페이지에서 데이터를 추출합니다.
 
-Claude Code는 Claude in Chrome 브라우저 확장 프로그램과 통합되어 CLI 또는 [VS Code 확장 프로그램](/ko/vs-code#automate-browser-tasks-with-chrome)에서 브라우저 자동화 기능을 제공합니다. 코드를 작성한 후 컨텍스트를 전환하지 않고 브라우저에서 테스트하고 디버깅합니다.
+Claude Code는 [Claude in Chrome 브라우저 확장 프로그램](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn)과 통합되어 CLI 또는 [VS Code 확장 프로그램](/ko/vs-code#automate-browser-tasks-with-chrome)에서 브라우저 자동화 기능을 제공합니다. 코드를 작성한 후 컨텍스트를 전환하지 않고 브라우저에서 테스트하고 디버깅합니다.
 
 Claude는 브라우저 작업을 위해 새 탭을 열고 브라우저의 로그인 상태를 공유하므로 이미 로그인한 모든 사이트에 액세스할 수 있습니다. 브라우저 작업은 실시간으로 표시되는 Chrome 창에서 실행됩니다. Claude가 로그인 페이지나 CAPTCHA를 만나면 일시 중지하고 수동으로 처리하도록 요청합니다.
 
 <Note>
-  Chrome 통합은 베타 버전이며 현재 Google Chrome에서만 작동합니다. Brave, Arc 또는 기타 Chromium 기반 브라우저에서는 아직 지원되지 않습니다. WSL(Windows Subsystem for Linux)도 지원되지 않습니다.
+  Chrome 통합은 베타 버전이며 현재 Google Chrome 및 Microsoft Edge에서 작동합니다. Brave, Arc 또는 기타 Chromium 기반 브라우저에서는 아직 지원되지 않습니다. WSL(Windows Subsystem for Linux)도 지원되지 않습니다.
 </Note>
 
 ## 기능
@@ -30,8 +30,8 @@ Chrome이 연결되면 단일 워크플로우에서 브라우저 작업과 코�
 
 Chrome에서 Claude Code를 사용하기 전에 다음이 필요합니다.
 
-* [Google Chrome](https://www.google.com/chrome/) 브라우저
-* [Claude in Chrome 확장 프로그램](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) 버전 1.0.36 이상
+* [Google Chrome](https://www.google.com/chrome/) 또는 [Microsoft Edge](https://www.microsoft.com/edge) 브라우저
+* [Claude in Chrome 확장 프로그램](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) 버전 1.0.36 이상(Chrome 웹 스토어에서 두 브라우저 모두에 사용 가능)
 * [Claude Code](/ko/quickstart#step-1-install-claude-code) 버전 2.0.73 이상
 * 직접 Anthropic 플랜 (Pro, Max, Team 또는 Enterprise)
 
@@ -180,9 +180,17 @@ Chrome 통합을 처음 활성화할 때 Claude Code는 네이티브 메시징 �
 
 연결이 계속 실패하면 다음 위치에 호스트 구성 파일이 있는지 확인합니다.
 
+Chrome의 경우:
+
 * **macOS**: `~/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
 * **Linux**: `~/.config/google-chrome/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
 * **Windows**: Windows 레지스트리에서 `HKCU\Software\Google\Chrome\NativeMessagingHosts\`를 확인합니다.
+
+Edge의 경우:
+
+* **macOS**: `~/Library/Application Support/Microsoft Edge/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
+* **Linux**: `~/.config/microsoft-edge/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
+* **Windows**: Windows 레지스트리에서 `HKCU\Software\Microsoft\Edge\NativeMessagingHosts\`를 확인합니다.
 
 ### 브라우저가 응답하지 않음
 
@@ -216,6 +224,7 @@ Windows에서 다음을 만날 수 있습니다.
 
 ## 참고 항목
 
+* [컴퓨터 사용](/ko/computer-use): 브라우저에서 작업을 수행할 수 없을 때 네이티브 macOS 앱을 제어합니다.
 * [VS Code에서 Claude Code 사용](/ko/vs-code#automate-browser-tasks-with-chrome): VS Code 확장 프로그램의 브라우저 자동화
 * [CLI 참조](/ko/cli-reference): `--chrome`을 포함한 명령줄 플래그
 * [일반적인 워크플로우](/ko/common-workflows): Claude Code를 사용하는 더 많은 방법

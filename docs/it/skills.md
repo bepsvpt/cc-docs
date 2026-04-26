@@ -91,7 +91,7 @@ Dove archivi una skill determina chi può usarla:
 | Progetto   | `.claude/skills/<skill-name>/SKILL.md`                   | Solo questo progetto                      |
 | Plugin     | `<plugin>/skills/<skill-name>/SKILL.md`                  | Dove il plugin è abilitato                |
 
-Quando le skills condividono lo stesso nome tra i livelli, le posizioni con priorità più alta vincono: enterprise > personale > progetto. Le skills dei plugin utilizzano uno spazio dei nomi `plugin-name:skill-name`, quindi non possono entrare in conflitto con altri livelli. Se hai file in `.claude/commands/`, funzionano allo stesso modo, ma se una skill e un comando condividono lo stesso nome, la skill ha la precedenza.
+Quando le skills condividono lo stesso nome tra i livelli, enterprise ha la priorità su personale, e personale ha la priorità su progetto. Le skills dei plugin utilizzano uno spazio dei nomi `plugin-name:skill-name`, quindi non possono entrare in conflitto con altri livelli. Se hai file in `.claude/commands/`, funzionano allo stesso modo, ma se una skill e un comando condividono lo stesso nome, la skill ha la precedenza.
 
 #### Rilevamento dei cambiamenti in tempo reale
 

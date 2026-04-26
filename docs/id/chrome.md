@@ -6,12 +6,12 @@
 
 > Hubungkan Claude Code ke browser Chrome Anda untuk menguji aplikasi web, debug dengan console logs, otomatisasi pengisian formulir, dan ekstrak data dari halaman web.
 
-Claude Code terintegrasi dengan ekstensi Claude in Chrome browser untuk memberikan Anda kemampuan otomasi browser dari CLI atau [ekstensi VS Code](/id/vs-code#automate-browser-tasks-with-chrome). Bangun kode Anda, kemudian uji dan debug di browser tanpa beralih konteks.
+Claude Code terintegrasi dengan [ekstensi Claude in Chrome browser](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) untuk memberikan Anda kemampuan otomasi browser dari CLI atau [ekstensi VS Code](/id/vs-code#automate-browser-tasks-with-chrome). Bangun kode Anda, kemudian uji dan debug di browser tanpa beralih konteks.
 
 Claude membuka tab baru untuk tugas browser dan berbagi status login browser Anda, sehingga dapat mengakses situs apa pun yang sudah Anda masuki. Tindakan browser berjalan di jendela Chrome yang terlihat secara real-time. Ketika Claude menemukan halaman login atau CAPTCHA, ia berhenti dan meminta Anda menanganinya secara manual.
 
 <Note>
-  Integrasi Chrome sedang dalam beta dan saat ini hanya bekerja dengan Google Chrome. Belum didukung di Brave, Arc, atau browser berbasis Chromium lainnya. WSL (Windows Subsystem for Linux) juga tidak didukung.
+  Integrasi Chrome sedang dalam beta dan saat ini bekerja dengan Google Chrome dan Microsoft Edge. Belum didukung di Brave, Arc, atau browser berbasis Chromium lainnya. WSL (Windows Subsystem for Linux) juga tidak didukung.
 </Note>
 
 ## Kemampuan
@@ -30,8 +30,8 @@ Dengan Chrome terhubung, Anda dapat menggabungkan tindakan browser dengan tugas 
 
 Sebelum menggunakan Claude Code dengan Chrome, Anda memerlukan:
 
-* Browser [Google Chrome](https://www.google.com/chrome/)
-* Ekstensi [Claude in Chrome](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) versi 1.0.36 atau lebih tinggi
+* Browser [Google Chrome](https://www.google.com/chrome/) atau [Microsoft Edge](https://www.microsoft.com/edge)
+* Ekstensi [Claude in Chrome](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) versi 1.0.36 atau lebih tinggi, tersedia di Chrome Web Store untuk kedua browser
 * [Claude Code](/id/quickstart#step-1-install-claude-code) versi 2.0.73 atau lebih tinggi
 * Paket Anthropic langsung (Pro, Max, Team, atau Enterprise)
 
@@ -180,9 +180,17 @@ Pertama kali Anda mengaktifkan integrasi Chrome, Claude Code menginstal file kon
 
 Jika koneksi masih gagal, verifikasi file konfigurasi host ada di:
 
+Untuk Chrome:
+
 * **macOS**: `~/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
 * **Linux**: `~/.config/google-chrome/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
 * **Windows**: periksa `HKCU\Software\Google\Chrome\NativeMessagingHosts\` di Windows Registry
+
+Untuk Edge:
+
+* **macOS**: `~/Library/Application Support/Microsoft Edge/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
+* **Linux**: `~/.config/microsoft-edge/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json`
+* **Windows**: periksa `HKCU\Software\Microsoft\Edge\NativeMessagingHosts\` di Windows Registry
 
 ### Browser tidak merespons
 
@@ -216,6 +224,7 @@ Ini adalah kesalahan yang paling sering dihadapi dan cara menyelesaikannya:
 
 ## Lihat juga
 
+* [Computer use](/id/computer-use): kontrol aplikasi macOS asli ketika tugas tidak dapat dilakukan di browser
 * [Gunakan Claude Code di VS Code](/id/vs-code#automate-browser-tasks-with-chrome): otomasi browser di ekstensi VS Code
 * [Referensi CLI](/id/cli-reference): flag baris perintah termasuk `--chrome`
 * [Alur kerja umum](/id/common-workflows): lebih banyak cara untuk menggunakan Claude Code

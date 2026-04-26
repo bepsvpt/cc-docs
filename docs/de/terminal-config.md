@@ -145,6 +145,92 @@ Das folgende Beispiel definiert ein Design, das die dunkle Voreinstellung beibeh
 
 Claude Code überwacht `~/.claude/themes/` und lädt neu, wenn sich eine Datei ändert, sodass Änderungen, die in Ihrem Editor vorgenommen werden, auf eine laufende Sitzung angewendet werden, ohne dass ein Neustart erforderlich ist.
 
+Nachfolgend finden Sie die vollständige Liste der Anpassungen, die Sie in `overrides` festlegen können. Der interaktive Editor in `/theme` zeigt die gleichen Token mit einer Live-Vorschau an, einschließlich einer kleinen Anzahl von internen Token, die hier nicht behandelt werden.
+
+<Accordion title="Farbtoken-Referenz">
+  Das folgende Beispiel kombiniert Token aus mehreren der folgenden Gruppen: der Brand-Akzent, der Plan Mode-Rahmen, die Diff-Hintergründe und der Vollbildmeldungs-Hintergrund.
+
+  ```json ~/.claude/themes/midnight.json theme={null}
+  {
+    "name": "Midnight",
+    "base": "dark",
+    "overrides": {
+      "claude": "#a78bfa",
+      "planMode": "#38bdf8",
+      "diffAdded": "#14532d",
+      "diffRemoved": "#7f1d1d",
+      "userMessageBackground": "#1e1b4b"
+    }
+  }
+  ```
+
+  #### Text- und Akzentfarben
+
+  Steuern Sie den primären Brand-Akzent und die Vordergrund-Textschattierungen, die in der gesamten Benutzeroberfläche verwendet werden.
+
+  | Token         | Steuert                                                                          |
+  | :------------ | :------------------------------------------------------------------------------- |
+  | `claude`      | Primärer Brand-Akzent, verwendet für den Spinner und die Assistenten-Bezeichnung |
+  | `text`        | Standard-Vordergrundtext                                                         |
+  | `inverseText` | Text, der auf einem farbigen Hintergrund gezeichnet wird, z. B. Statusabzeichen  |
+  | `inactive`    | Sekundärer Text wie Hinweise, Zeitstempel und deaktivierte Elemente              |
+  | `subtle`      | Schwache Rahmen und de-betonte sekundäre Texte                                   |
+  | `permission`  | Dialograhmen, einschließlich Berechtigungsaufforderungen und Auswahlfelder       |
+  | `remember`    | Speicher- und `CLAUDE.md`-Indikatoren                                            |
+
+  #### Statusfarben
+
+  Signalisieren Sie Erfolgs-, Fehler- und Warnzustände über Meldungen und Indikatoren.
+
+  | Token     | Steuert                                                |
+  | :-------- | :----------------------------------------------------- |
+  | `success` | Erfolgsmeldungen und bestandene Überprüfungen          |
+  | `error`   | Fehlermeldungen und Fehler                             |
+  | `warning` | Warnungen, Vorsichtsmeldungen und der Auto Mode-Rahmen |
+  | `merged`  | Zusammengeführter Pull Request-Status                  |
+
+  #### Eingabefeld und Modusindikatoren
+
+  Legen Sie die Eingabefeld-Rahmenfarbe und den Akzent fest, der angezeigt wird, während ein Berechtigungsmodus oder Indikator aktiv ist.
+
+  | Token          | Steuert                                                  |
+  | :------------- | :------------------------------------------------------- |
+  | `promptBorder` | Eingabefeld-Rahmen im Standard-Berechtigungsmodus        |
+  | `planMode`     | Plan Mode-Akzent und Rahmen                              |
+  | `autoAccept`   | Accept-edits Mode-Akzent und Rahmen                      |
+  | `bashBorder`   | Eingabefeld-Rahmen beim Eingeben eines `!` Shell-Befehls |
+  | `ide`          | IDE-Verbindungsindikator                                 |
+  | `fastMode`     | Fast Mode-Indikator                                      |
+
+  #### Diff-Rendering
+
+  Färben Sie hinzugefügte und entfernte Code in Dateibearbeitungen und Überprüfungen.
+
+  | Token               | Steuert                                                                 |
+  | :------------------ | :---------------------------------------------------------------------- |
+  | `diffAdded`         | Hintergrund hinzugefügter Zeilen                                        |
+  | `diffRemoved`       | Hintergrund entfernter Zeilen                                           |
+  | `diffAddedDimmed`   | Hintergrund des unveränderten Kontexts in der Nähe hinzugefügter Zeilen |
+  | `diffRemovedDimmed` | Hintergrund des unveränderten Kontexts in der Nähe entfernter Zeilen    |
+  | `diffAddedWord`     | Hervorhebung auf Wortebene innerhalb einer hinzugefügten Zeile          |
+  | `diffRemovedWord`   | Hervorhebung auf Wortebene innerhalb einer entfernten Zeile             |
+
+  #### Vollbildmodus
+
+  Gilt nur im [Vollbild-Rendering-Modus](/de/fullscreen), in dem Meldungen einen Hintergrund-Füllung haben.
+
+  | Token                   | Steuert                                                 |
+  | :---------------------- | :------------------------------------------------------ |
+  | `userMessageBackground` | Hintergrund hinter Ihren Meldungen im Transkript        |
+  | `selectionBg`           | Hintergrund von Text, der mit der Maus ausgewählt wurde |
+
+  #### Shimmer-Varianten und Subagent-Farben
+
+  Mehrere Token haben eine gepaarte `Shimmer`-Variante, wie `claudeShimmer` und `warningShimmer`, die die hellere Farbe liefert, die im animierten Farbverlauf des Spinners verwendet wird. Überschreiben Sie den Shimmer zusammen mit seinem Basis-Token, wenn die Animation nicht übereinstimmend aussieht.
+
+  Jeder [Subagent](/de/sub-agents) und jede parallele Aufgabe wird in einer von acht benannten Farben angezeigt, damit Sie sie im Transkript unterscheiden können. Die Token-Namen folgen dem Muster `<color>_FOR_SUBAGENTS_ONLY`, wobei `<color>` `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink` oder `cyan` ist. Überschreiben Sie diese, um zu ändern, wie jede benannte Farbe aussieht. Beispielsweise wird ein Subagent mit `color: blue` in seiner Definition mit dem Wert `blue_FOR_SUBAGENTS_ONLY` gezeichnet.
+</Accordion>
+
 ## Wechseln Sie zum Vollbildrendering
 
 Wenn die Anzeige flimmert oder die Scrollposition springt, während Claude arbeitet, wechseln Sie zum [Vollbildrendering-Modus](/de/fullscreen). Es zeichnet auf einen separaten Bildschirm, den das Terminal für Vollbild-Apps reserviert, anstatt an Ihren normalen Scrollback anzuhängen, was die Speichernutzung flach hält und Mausunterstützung zum Scrollen und Auswählen hinzufügt. In diesem Modus scrollen Sie mit der Maus oder PageUp in Claude Code, nicht mit dem nativen Scrollback Ihres Terminals; siehe die [Vollbildseite](/de/fullscreen#search-and-review-the-conversation) für die Suche und das Kopieren.

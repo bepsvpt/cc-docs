@@ -145,6 +145,92 @@ Contoh berikut mendefinisikan tema yang mempertahankan preset gelap tetapi mengu
 
 Claude Code memantau `~/.claude/themes/` dan memuat ulang saat file berubah, jadi edit yang dibuat di editor Anda berlaku untuk sesi yang sedang berjalan tanpa restart.
 
+Di bawah ini adalah daftar lengkap kustomisasi yang dapat Anda atur di `overrides`. Editor interaktif di `/theme` menampilkan token yang sama dengan pratinjau langsung, termasuk sejumlah kecil token internal yang tidak tercakup di sini.
+
+<Accordion title="Referensi token warna">
+  Contoh berikut menggabungkan token dari beberapa grup di bawah: aksen merek, batas mode rencana, latar belakang diff, dan latar belakang pesan layar penuh.
+
+  ```json ~/.claude/themes/midnight.json theme={null}
+  {
+    "name": "Midnight",
+    "base": "dark",
+    "overrides": {
+      "claude": "#a78bfa",
+      "planMode": "#38bdf8",
+      "diffAdded": "#14532d",
+      "diffRemoved": "#7f1d1d",
+      "userMessageBackground": "#1e1b4b"
+    }
+  }
+  ```
+
+  #### Warna teks dan aksen
+
+  Kontrol aksen merek utama dan nuansa teks latar depan yang digunakan di seluruh antarmuka.
+
+  | Token         | Kontrol                                                                    |
+  | :------------ | :------------------------------------------------------------------------- |
+  | `claude`      | Aksen merek utama, digunakan untuk spinner dan label asisten               |
+  | `text`        | Teks latar depan default                                                   |
+  | `inverseText` | Teks yang digambar di atas latar belakang berwarna, seperti lencana status |
+  | `inactive`    | Teks sekunder seperti petunjuk, stempel waktu, dan item yang dinonaktifkan |
+  | `subtle`      | Batas samar dan teks sekunder yang dikurangi penekanannya                  |
+  | `permission`  | Batas dialog, termasuk prompt izin dan pemilih                             |
+  | `remember`    | Indikator memori dan `CLAUDE.md`                                           |
+
+  #### Warna status
+
+  Sinyal keberhasilan, kegagalan, dan status peringatan di seluruh pesan dan indikator.
+
+  | Token     | Kontrol                                              |
+  | :-------- | :--------------------------------------------------- |
+  | `success` | Pesan kesuksesan dan pemeriksaan yang lulus          |
+  | `error`   | Pesan kesalahan dan kegagalan                        |
+  | `warning` | Peringatan, pesan hati-hati, dan batas mode otomatis |
+  | `merged`  | Status permintaan tarik yang digabungkan             |
+
+  #### Kotak input dan indikator mode
+
+  Atur warna batas kotak input dan aksen yang ditampilkan saat mode izin atau indikator aktif.
+
+  | Token          | Kontrol                                              |
+  | :------------- | :--------------------------------------------------- |
+  | `promptBorder` | Batas kotak input dalam mode izin default            |
+  | `planMode`     | Aksen dan batas mode rencana                         |
+  | `autoAccept`   | Aksen dan batas mode terima-edit                     |
+  | `bashBorder`   | Batas kotak input saat memasukkan perintah shell `!` |
+  | `ide`          | Indikator koneksi IDE                                |
+  | `fastMode`     | Indikator mode cepat                                 |
+
+  #### Rendering diff
+
+  Warna kode yang ditambahkan dan dihapus dalam edit dan ulasan file.
+
+  | Token               | Kontrol                                                                   |
+  | :------------------ | :------------------------------------------------------------------------ |
+  | `diffAdded`         | Latar belakang baris yang ditambahkan                                     |
+  | `diffRemoved`       | Latar belakang baris yang dihapus                                         |
+  | `diffAddedDimmed`   | Latar belakang konteks yang tidak berubah di dekat baris yang ditambahkan |
+  | `diffRemovedDimmed` | Latar belakang konteks yang tidak berubah di dekat baris yang dihapus     |
+  | `diffAddedWord`     | Sorotan tingkat kata dalam baris yang ditambahkan                         |
+  | `diffRemovedWord`   | Sorotan tingkat kata dalam baris yang dihapus                             |
+
+  #### Mode layar penuh
+
+  Terapkan hanya dalam [mode rendering layar penuh](/id/fullscreen), di mana pesan memiliki isian latar belakang.
+
+  | Token                   | Kontrol                                            |
+  | :---------------------- | :------------------------------------------------- |
+  | `userMessageBackground` | Latar belakang di balik pesan Anda dalam transkrip |
+  | `selectionBg`           | Latar belakang teks yang dipilih dengan mouse      |
+
+  #### Varian shimmer dan warna subagen
+
+  Beberapa token memiliki varian `Shimmer` berpasangan, seperti `claudeShimmer` dan `warningShimmer`, yang menyediakan warna yang lebih ringan yang digunakan dalam gradien animasi spinner. Timpa shimmer bersama token dasarnya jika animasi terlihat tidak cocok.
+
+  Setiap [subagen](/id/sub-agents) dan tugas paralel ditampilkan dalam salah satu dari delapan warna bernama sehingga Anda dapat membedakannya dalam transkrip. Nama token mengikuti pola `<color>_FOR_SUBAGENTS_ONLY`, di mana `<color>` adalah `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, atau `cyan`. Timpa ini untuk mengubah tampilan setiap warna bernama. Misalnya, subagen dengan `color: blue` dalam definisinya digambar menggunakan nilai `blue_FOR_SUBAGENTS_ONLY`.
+</Accordion>
+
 ## Beralih ke rendering fullscreen
 
 Jika tampilan berkedip atau posisi scroll melompat saat Claude sedang bekerja, beralih ke [mode rendering fullscreen](/id/fullscreen). Ini menggambar ke layar terpisah yang terminal cadangkan untuk aplikasi full-screen alih-alih menambahkan ke scrollback normal Anda, yang menjaga penggunaan memori tetap datar dan menambahkan dukungan mouse untuk scrolling dan seleksi. Dalam mode ini Anda scroll dengan mouse atau PageUp di dalam Claude Code daripada dengan scrollback native terminal Anda; lihat [halaman fullscreen](/id/fullscreen#search-and-review-the-conversation) untuk cara mencari dan menyalin.
