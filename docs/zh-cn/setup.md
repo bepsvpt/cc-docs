@@ -20,7 +20,7 @@ Claude Code 在以下平台和配置上运行：
   * Alpine Linux 3.19+
 * **硬件**：4 GB+ RAM、x64 或 ARM64 处理器
 * **网络**：需要互联网连接。请参阅[网络配置](/zh-CN/network-config#network-access-requirements)。
-* **Shell**：Bash、Zsh、PowerShell 或 CMD。原生 Windows 设置需要 [Git for Windows](https://git-scm.com/downloads/win)。WSL 设置不需要。
+* **Shell**：Bash、Zsh、PowerShell 或 CMD。在原生 Windows 上，建议使用 [Git for Windows](https://git-scm.com/downloads/win)；当 Git Bash 不存在时，Claude Code 会回退到 PowerShell。WSL 设置不需要 Git for Windows。
 * **位置**：[Anthropic 支持的国家/地区](https://www.anthropic.com/supported-countries)
 
 ### 其他依赖项
@@ -59,7 +59,7 @@ To install Claude Code, use one of the following methods:
 
     If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell. Your prompt shows `PS C:\` when you're in PowerShell and `C:\` without the `PS` when you're in CMD.
 
-    **Native Windows setups require [Git for Windows](https://git-scm.com/downloads/win).** Install it first if you don't have it. WSL setups do not need it.
+    [Git for Windows](https://git-scm.com/downloads/win) is recommended on native Windows so Claude Code can use the Bash tool. If Git for Windows is not installed, Claude Code uses PowerShell as the shell tool instead. WSL setups do not need Git for Windows.
 
     <Info>
       Native installations automatically update in the background to keep you on the latest version.
@@ -97,17 +97,17 @@ You can also install with [apt, dnf, or apk](/en/setup#install-with-linux-packag
 claude
 ```
 
-如果在安装过程中遇到任何问题，请参阅[故障排除指南](/zh-CN/troubleshooting)。
+如果在安装过程中遇到任何问题，请参阅[故障排除安装和登录](/zh-CN/troubleshoot-install)。
 
 ### 在 Windows 上设置
 
 您可以在 Windows 上原生运行 Claude Code，也可以在 WSL 中运行。根据您的项目位置和所需的功能进行选择：
 
-| 选项         | 需要                                                   | [沙箱](/zh-CN/sandboxing) | 何时使用             |
-| ---------- | ---------------------------------------------------- | ----------------------- | ---------------- |
-| 原生 Windows | [Git for Windows](https://git-scm.com/downloads/win) | 不支持                     | Windows 原生项目和工具  |
-| WSL 2      | WSL 2 已启用                                            | 支持                      | Linux 工具链或沙箱命令执行 |
-| WSL 1      | WSL 1 已启用                                            | 不支持                     | 如果 WSL 2 不可用     |
+| 选项         | 需要                                                                         | [沙箱](/zh-CN/sandboxing) | 何时使用             |
+| ---------- | -------------------------------------------------------------------------- | ----------------------- | ---------------- |
+| 原生 Windows | [Git for Windows](https://git-scm.com/downloads/win) 推荐；如果没有则使用 PowerShell | 不支持                     | Windows 原生项目和工具  |
+| WSL 2      | WSL 2 已启用                                                                  | 支持                      | Linux 工具链或沙箱命令执行 |
+| WSL 1      | WSL 1 已启用                                                                  | 不支持                     | 如果 WSL 2 不可用     |
 
 **选项 1：使用 Git Bash 的原生 Windows**
 
@@ -115,7 +115,7 @@ claude
 
 无论您从 PowerShell 还是 CMD 安装，只会影响您运行的安装命令。您的提示在 PowerShell 中显示为 `PS C:\Users\YourName>`，在 CMD 中显示为 `C:\Users\YourName>`（不带 `PS`）。如果您是终端新手，[终端指南](/zh-CN/terminal-guide#windows)会逐步讲解每个步骤。
 
-安装后，从 PowerShell、CMD 或 Git Bash 启动 `claude`。Claude Code 在内部使用 Git Bash 来执行命令，无论您从哪里启动它。如果 Claude Code 找不到您的 Git Bash 安装，请在您的 [settings.json 文件](/zh-CN/settings)中设置路径：
+安装后，从 PowerShell、CMD 或 Git Bash 启动 `claude`。安装 Git Bash 后，Claude Code 在内部使用它来执行命令，无论您从哪里启动它。如果 Claude Code 找不到您的 Git Bash 安装，请在您的 [settings.json 文件](/zh-CN/settings)中设置路径：
 
 ```json theme={null}
 {
@@ -125,7 +125,7 @@ claude
 }
 ```
 
-Claude Code 也可以在 Windows 上原生运行 PowerShell。PowerShell 工具正在逐步推出；设置 `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` 以选择加入或 `0` 以选择退出。有关设置和限制，请参阅 [PowerShell 工具](/zh-CN/tools-reference#powershell-tool)。
+Claude Code 也可以在 Windows 上原生运行 PowerShell。安装 Git Bash 后，PowerShell 工具正在逐步推出作为额外选项：设置 `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` 以选择加入或 `0` 以选择退出。有关设置和限制，请参阅 [PowerShell 工具](/zh-CN/tools-reference#powershell-tool)。
 
 **选项 2：WSL**
 
@@ -158,6 +158,8 @@ apk add libgcc libstdc++ ripgrep
 ```bash theme={null}
 claude --version
 ```
+
+如果此命令失败并显示 `command not found` 或其他错误，请参阅[排查安装和登录问题](/zh-CN/troubleshoot-install)。
 
 要更详细地检查您的安装和配置，请运行 [`claude doctor`](/zh-CN/troubleshooting#get-more-help)：
 
@@ -390,10 +392,10 @@ npm install -g @anthropic-ai/claude-code
 
 npm 包安装与独立安装程序相同的原生二进制文件。npm 通过每个平台的可选依赖项（如 `@anthropic-ai/claude-code-darwin-arm64`）拉取二进制文件，并通过 postinstall 步骤将其链接到位。已安装的 `claude` 二进制文件本身不调用 Node。
 
-支持的 npm 安装平台是 `darwin-arm64`、`darwin-x64`、`linux-x64`、`linux-arm64`、`linux-x64-musl`、`linux-arm64-musl`、`win32-x64` 和 `win32-arm64`。您的包管理器必须允许可选依赖项。如果安装后二进制文件丢失，请参阅[故障排除](/zh-CN/troubleshooting#native-binary-not-found-after-npm-install)。
+支持的 npm 安装平台是 `darwin-arm64`、`darwin-x64`、`linux-x64`、`linux-arm64`、`linux-x64-musl`、`linux-arm64-musl`、`win32-x64` 和 `win32-arm64`。您的包管理器必须允许可选依赖项。如果安装后二进制文件丢失，请参阅[故障排除](/zh-CN/troubleshoot-install#native-binary-not-found-after-npm-install)。
 
 <Warning>
-  不要使用 `sudo npm install -g`，因为这可能导致权限问题和安全风险。如果遇到权限错误，请参阅[故障排除权限错误](/zh-CN/troubleshooting#permission-errors-during-installation)。
+  不要使用 `sudo npm install -g`，因为这可能导致权限问题和安全风险。如果遇到权限错误，请参阅[故障排除权限错误](/zh-CN/troubleshoot-install#permission-errors-during-installation)。
 </Warning>
 
 ### 二进制完整性和代码签名

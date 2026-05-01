@@ -426,6 +426,7 @@ Hook 이벤트는 Claude Code의 라이프사이클의 특정 지점에서 발�
 | Event                 | When it fires                                                                                                                                          |
 | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `SessionStart`        | When a session begins or resumes                                                                                                                       |
+| `Setup`               | When you start Claude Code with `--init-only`, or with `--init` or `--maintenance` in `-p` mode. For one-time preparation in CI or scripts             |
 | `UserPromptSubmit`    | When you submit a prompt, before Claude processes it                                                                                                   |
 | `UserPromptExpansion` | When a user-typed command expands into a prompt, before it reaches Claude. Can block the expansion                                                     |
 | `PreToolUse`          | Before a tool call executes. Can block it                                                                                                              |
@@ -495,17 +496,17 @@ INPUT=$(cat)
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
 
 if echo "$COMMAND" | grep -q "drop table"; then
-  echo "Blocked: dropping tables is not allowed" >&2  // stderr는 Claude의 피드백이 됩니다
-  exit 2 // exit 2 = 작업 차단
+  echo "Blocked: dropping tables is not allowed" >&2  # stderr는 Claude의 피드백이 됩니다
+  exit 2 # exit 2 = 작업 차단
 fi
 
-exit 0  // exit 0 = 진행 허용
+exit 0  # exit 0 = 진행 허용
 ```
 
 종료 코드는 다음에 일어날 일을 결정합니다:
 
 * **Exit 0**: 작업이 진행됩니다. `UserPromptSubmit`, `UserPromptExpansion` 및 `SessionStart` hooks의 경우 stdout에 쓰는 모든 것이 Claude의 컨텍스트에 추가됩니다.
-* **Exit 2**: 작업이 차단됩니다. stderr에 이유를 쓰면 Claude가 피드백으로 받아 조정할 수 있습니다.
+* **Exit 2**: 작업이 차단됩니다. stderr에 이유를 쓰면 Claude가 피드백으로 받아 조정할 수 있습니다. 일부 이벤트는 차단될 수 없습니다: `SessionStart`, `Setup`, `Notification` 및 기타의 경우 exit 2는 stderr를 사용자에게 표시하고 실행이 계속됩니다. 이벤트별 전체 목록은 [이벤트별 exit 코드 2 동작](/ko/hooks#exit-code-2-behavior-per-event)을 참조하세요.
 * **다른 종료 코드**: 작업이 진행됩니다. 트랜스크립트는 `<hook name> hook error` 공지를 표시한 후 stderr의 첫 번째 줄을 표시합니다. 전체 stderr는 [디버그 로그](/ko/hooks#debug-hooks)로 이동합니다.
 
 #### 구조화된 JSON 출력
@@ -563,25 +564,30 @@ Matcher가 없으면 hook은 이벤트의 모든 발생에서 발생합니다. M
 
 `"Edit|Write"` matcher는 Claude가 `Edit` 또는 `Write` 도구를 사용할 때만 발생하고 `Bash`, `Read` 또는 다른 도구를 사용할 때는 발생하지 않습니다. [Matcher 패턴](/ko/hooks#matcher-patterns)을 참조하여 일반 이름과 정규식이 평가되는 방식을 확인하세요.
 
+<Note>
+  Claude는 또한 `Bash` 도구를 통해 셸 명령을 실행하여 파일을 생성하거나 수정할 수 있습니다. Hook이 규정 준수 스캔 또는 감사 로깅과 같이 모든 파일 변경을 확인해야 하는 경우 턴당 한 번 작업 트리를 스캔하는 [`Stop`](/ko/hooks#stop) hook을 추가합니다. 호출당 범위를 대신 원하면 `Bash`도 일치시키고 스크립트가 `git status --porcelain`으로 수정되고 추적되지 않은 파일을 나열하도록 합니다.
+</Note>
+
 각 이벤트 유형은 특정 필드에서 일치합니다:
 
-| 이벤트                                                                                                                                           | Matcher가 필터링하는 것                                        | 예제 matcher 값                                                                                                              |
-| :-------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                                    | 도구 이름                                                   | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
-| `SessionStart`                                                                                                                                | 세션이 시작된 방식                                              | `startup`, `resume`, `clear`, `compact`                                                                                   |
-| `SessionEnd`                                                                                                                                  | 세션이 종료된 이유                                              | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                                                                | 알림 유형                                                   | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                                                               | 에이전트 유형                                                 | `Bash`, `Explore`, `Plan` 또는 사용자 정의 에이전트 이름                                                                               |
-| `PreCompact`, `PostCompact`                                                                                                                   | 압축을 트리거한 것                                              | `manual`, `auto`                                                                                                          |
-| `SubagentStop`                                                                                                                                | 에이전트 유형                                                 | `SubagentStart`와 동일한 값                                                                                                    |
-| `ConfigChange`                                                                                                                                | 구성 소스                                                   | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
-| `StopFailure`                                                                                                                                 | 오류 유형                                                   | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                                                                          | 로드 이유                                                   | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
-| `Elicitation`                                                                                                                                 | MCP 서버 이름                                               | 구성된 MCP 서버 이름                                                                                                             |
-| `ElicitationResult`                                                                                                                           | MCP 서버 이름                                               | `Elicitation`과 동일한 값                                                                                                      |
-| `FileChanged`                                                                                                                                 | 감시할 리터럴 파일 이름 ([FileChanged](/ko/hooks#filechanged) 참조) | `.envrc\|.env`                                                                                                            |
-| `UserPromptExpansion`                                                                                                                         | 명령 이름                                                   | skill 또는 명령 이름                                                                                                            |
-| `UserPromptSubmit`, `PostToolBatch`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged` | matcher 지원 없음                                           | 모든 발생에서 항상 발생                                                                                                             |
+| 이벤트                                                                                                                                           | Matcher가 필터링하는 것                                        | 예제 matcher 값                                                                                                                                       |
+| :-------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                                    | 도구 이름                                                   | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                                                   |
+| `SessionStart`                                                                                                                                | 세션이 시작된 방식                                              | `startup`, `resume`, `clear`, `compact`                                                                                                            |
+| `Setup`                                                                                                                                       | 어떤 CLI 플래그가 설정을 트리거했는지                                  | `init`, `maintenance`                                                                                                                              |
+| `SessionEnd`                                                                                                                                  | 세션이 종료된 이유                                              | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                                           |
+| `Notification`                                                                                                                                | 알림 유형                                                   | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`, `elicitation_complete`, `elicitation_response`                           |
+| `SubagentStart`                                                                                                                               | 에이전트 유형                                                 | `general-purpose`, `Explore`, `Plan` 또는 사용자 정의 에이전트 이름                                                                                             |
+| `PreCompact`, `PostCompact`                                                                                                                   | 압축을 트리거한 것                                              | `manual`, `auto`                                                                                                                                   |
+| `SubagentStop`                                                                                                                                | 에이전트 유형                                                 | `SubagentStart`와 동일한 값                                                                                                                             |
+| `ConfigChange`                                                                                                                                | 구성 소스                                                   | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                                                 |
+| `StopFailure`                                                                                                                                 | 오류 유형                                                   | `rate_limit`, `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                                                          | 로드 이유                                                   | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                                                       |
+| `Elicitation`                                                                                                                                 | MCP 서버 이름                                               | 구성된 MCP 서버 이름                                                                                                                                      |
+| `ElicitationResult`                                                                                                                           | MCP 서버 이름                                               | `Elicitation`과 동일한 값                                                                                                                               |
+| `FileChanged`                                                                                                                                 | 감시할 리터럴 파일 이름 ([FileChanged](/ko/hooks#filechanged) 참조) | `.envrc\|.env`                                                                                                                                     |
+| `UserPromptExpansion`                                                                                                                         | 명령 이름                                                   | skill 또는 명령 이름                                                                                                                                     |
+| `UserPromptSubmit`, `PostToolBatch`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged` | matcher 지원 없음                                           | 모든 발생에서 항상 발생                                                                                                                                      |
 
 다양한 이벤트 유형에서 matchers를 보여주는 몇 가지 추가 예제:
 

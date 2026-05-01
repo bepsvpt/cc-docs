@@ -428,6 +428,7 @@ Hook 事件在 Claude Code 的特定生命週期點觸發。當事件觸發時�
 | Event                 | When it fires                                                                                                                                          |
 | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `SessionStart`        | When a session begins or resumes                                                                                                                       |
+| `Setup`               | When you start Claude Code with `--init-only`, or with `--init` or `--maintenance` in `-p` mode. For one-time preparation in CI or scripts             |
 | `UserPromptSubmit`    | When you submit a prompt, before Claude processes it                                                                                                   |
 | `UserPromptExpansion` | When a user-typed command expands into a prompt, before it reaches Claude. Can block the expansion                                                     |
 | `PreToolUse`          | Before a tool call executes. Can block it                                                                                                              |
@@ -463,7 +464,7 @@ Hook 事件在 Claude Code 的特定生命週期點觸發。當事件觸發時�
 * `"type": "http"`：POST 事件資料到 URL。請參閱 [HTTP hooks](#http-hooks)。
 * `"type": "mcp_tool"`：在已連接的 MCP 伺服器上呼叫工具。請參閱 [MCP tool hooks](/zh-TW/hooks#mcp-tool-hook-fields)。
 * `"type": "prompt"`：單輪 LLM 評估。請參閱[基於提示的 hooks](#prompt-based-hooks)。
-* `"type": "agent"`：具有工具存取的多輪驗證。代理 hooks 是實驗性的，可能會改變。請參閱[基於代理的 hooks](#agent-based-hooks)。
+* `"type": "agent"`：具有工具存取的多輪驗證。Agent hooks 是實驗性的，可能會改變。請參閱[基於 Agent 的 hooks](#agent-based-hooks)。
 
 ### 讀取輸入並傳回輸出
 
@@ -507,7 +508,7 @@ exit 0  # exit 0 = 讓它繼續
 退出代碼決定接下來會發生什麼：
 
 * **Exit 0**：操作繼續。對於 `UserPromptSubmit`、`UserPromptExpansion` 和 `SessionStart` hooks，您寫入 stdout 的任何內容都會新增到 Claude 的上下文中。
-* **Exit 2**：操作被阻止。寫入原因到 stderr，Claude 會收到它作為回饋，以便它可以調整。
+* **Exit 2**：操作被阻止。寫入原因到 stderr，Claude 會收到它作為回饋，以便它可以調整。某些事件無法被阻止：對於 `SessionStart`、`Setup`、`Notification` 和其他事件，exit 2 會向使用者顯示 stderr，執行繼續。有關完整清單，請參閱[每個事件的 exit code 2 行為](/zh-TW/hooks#exit-code-2-behavior-per-event)。
 * **任何其他退出代碼**：操作繼續。文字記錄顯示 `<hook name> hook error` 通知，後面跟著 stderr 的第一行；完整的 stderr 進入[除錯日誌](/zh-TW/hooks#debug-hooks)。
 
 #### 結構化 JSON 輸出
@@ -565,25 +566,30 @@ exit 0  # exit 0 = 讓它繼續
 
 `"Edit|Write"` 匹配器只在 Claude 使用 `Edit` 或 `Write` 工具時觸發，而不是在它使用 `Bash`、`Read` 或任何其他工具時。請參閱[匹配器模式](/zh-TW/hooks#matcher-patterns)以了解純名稱和正規表達式如何被評估。
 
+<Note>
+  Claude 也可以透過 `Bash` 工具執行 shell 命令來建立或修改檔案。如果您的 hook 必須看到每個檔案變更，例如用於合規掃描或稽核日誌，請新增一個[`Stop`](/zh-TW/hooks#stop) hook，它每輪掃描一次工作樹。為了獲得每次呼叫的覆蓋範圍，也請匹配 `Bash` 並讓您的指令使用 `git status --porcelain` 列出修改和未追蹤的檔案。
+</Note>
+
 每個事件類型都在特定欄位上進行匹配：
 
-| 事件                                                                                                                                    | 匹配器篩選的內容                                               | 範例匹配器值                                                                                                              |
-| :------------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`、`PostToolUse`、`PostToolUseFailure`、`PermissionRequest`、`PermissionDenied`                                                | 工具名稱                                                   | `Bash`、`Edit\|Write`、`mcp__.*`                                                                                      |
-| `SessionStart`                                                                                                                        | 工作階段如何開始                                               | `startup`、`resume`、`clear`、`compact`                                                                                |
-| `SessionEnd`                                                                                                                          | 工作階段為什麼結束                                              | `clear`、`resume`、`logout`、`prompt_input_exit`、`bypass_permissions_disabled`、`other`                                 |
-| `Notification`                                                                                                                        | 通知類型                                                   | `permission_prompt`、`idle_prompt`、`auth_success`、`elicitation_dialog`                                               |
-| `SubagentStart`                                                                                                                       | 代理類型                                                   | `Bash`、`Explore`、`Plan` 或自訂代理名稱                                                                                     |
-| `PreCompact`、`PostCompact`                                                                                                            | 什麼觸發了壓縮                                                | `manual`、`auto`                                                                                                     |
-| `SubagentStop`                                                                                                                        | 代理類型                                                   | 與 `SubagentStart` 相同的值                                                                                              |
-| `ConfigChange`                                                                                                                        | 配置來源                                                   | `user_settings`、`project_settings`、`local_settings`、`policy_settings`、`skills`                                      |
-| `StopFailure`                                                                                                                         | 錯誤類型                                                   | `rate_limit`、`authentication_failed`、`billing_error`、`invalid_request`、`server_error`、`max_output_tokens`、`unknown` |
-| `InstructionsLoaded`                                                                                                                  | 載入原因                                                   | `session_start`、`nested_traversal`、`path_glob_match`、`include`、`compact`                                            |
-| `Elicitation`                                                                                                                         | MCP 伺服器名稱                                              | 您配置的 MCP 伺服器名稱                                                                                                      |
-| `ElicitationResult`                                                                                                                   | MCP 伺服器名稱                                              | 與 `Elicitation` 相同的值                                                                                                |
-| `FileChanged`                                                                                                                         | 字面檔案名稱以監視（請參閱 [FileChanged](/zh-TW/hooks#filechanged)） | `.envrc\|.env`                                                                                                      |
-| `UserPromptExpansion`                                                                                                                 | 命令名稱                                                   | 您的 skill 或命令名稱                                                                                                      |
-| `UserPromptSubmit`、`PostToolBatch`、`Stop`、`TeammateIdle`、`TaskCreated`、`TaskCompleted`、`WorktreeCreate`、`WorktreeRemove`、`CwdChanged` | 不支援匹配器                                                 | 始終在每次出現時觸發                                                                                                          |
+| 事件                                                                                                                                    | 匹配器篩選的內容                                               | 範例匹配器值                                                                                                                                      |
+| :------------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`、`PostToolUse`、`PostToolUseFailure`、`PermissionRequest`、`PermissionDenied`                                                | 工具名稱                                                   | `Bash`、`Edit\|Write`、`mcp__.*`                                                                                                              |
+| `SessionStart`                                                                                                                        | 工作階段如何開始                                               | `startup`、`resume`、`clear`、`compact`                                                                                                        |
+| `Setup`                                                                                                                               | 哪個 CLI 旗標觸發了設定                                         | `init`、`maintenance`                                                                                                                        |
+| `SessionEnd`                                                                                                                          | 工作階段為什麼結束                                              | `clear`、`resume`、`logout`、`prompt_input_exit`、`bypass_permissions_disabled`、`other`                                                         |
+| `Notification`                                                                                                                        | 通知類型                                                   | `permission_prompt`、`idle_prompt`、`auth_success`、`elicitation_dialog`、`elicitation_complete`、`elicitation_response`                         |
+| `SubagentStart`                                                                                                                       | Agent 類型                                               | `general-purpose`、`Explore`、`Plan` 或自訂 Agent 名稱                                                                                             |
+| `PreCompact`、`PostCompact`                                                                                                            | 什麼觸發了壓縮                                                | `manual`、`auto`                                                                                                                             |
+| `SubagentStop`                                                                                                                        | Agent 類型                                               | 與 `SubagentStart` 相同的值                                                                                                                      |
+| `ConfigChange`                                                                                                                        | 配置來源                                                   | `user_settings`、`project_settings`、`local_settings`、`policy_settings`、`skills`                                                              |
+| `StopFailure`                                                                                                                         | 錯誤類型                                                   | `rate_limit`、`authentication_failed`、`oauth_org_not_allowed`、`billing_error`、`invalid_request`、`server_error`、`max_output_tokens`、`unknown` |
+| `InstructionsLoaded`                                                                                                                  | 載入原因                                                   | `session_start`、`nested_traversal`、`path_glob_match`、`include`、`compact`                                                                    |
+| `Elicitation`                                                                                                                         | MCP 伺服器名稱                                              | 您配置的 MCP 伺服器名稱                                                                                                                              |
+| `ElicitationResult`                                                                                                                   | MCP 伺服器名稱                                              | 與 `Elicitation` 相同的值                                                                                                                        |
+| `FileChanged`                                                                                                                         | 字面檔案名稱以監視（請參閱 [FileChanged](/zh-TW/hooks#filechanged)） | `.envrc\|.env`                                                                                                                              |
+| `UserPromptExpansion`                                                                                                                 | 命令名稱                                                   | 您的 skill 或命令名稱                                                                                                                              |
+| `UserPromptSubmit`、`PostToolBatch`、`Stop`、`TeammateIdle`、`TaskCreated`、`TaskCompleted`、`WorktreeCreate`、`WorktreeRemove`、`CwdChanged` | 不支援匹配器                                                 | 始終在每次出現時觸發                                                                                                                                  |
 
 顯示不同事件類型上匹配器的更多範例：
 
@@ -696,14 +702,14 @@ hook 程序只在 Bash 命令的子命令與 `git *` 相符時生成，或當命
 
 您新增 hook 的位置決定了其範圍：
 
-| 位置                                                          | 範圍                 | 可共享          |
-| :---------------------------------------------------------- | :----------------- | :----------- |
-| `~/.claude/settings.json`                                   | 您的所有專案             | 否，本機到您的機器    |
-| `.claude/settings.json`                                     | 單個專案               | 是，可以提交到儲存庫   |
-| `.claude/settings.local.json`                               | 單個專案               | 否，gitignored |
-| 受管理的原則設定                                                    | 組織範圍               | 是，由管理員控制     |
-| [Plugin](/zh-TW/plugins) `hooks/hooks.json`                 | 啟用外掛時              | 是，與外掛捆綁      |
-| [Skill](/zh-TW/skills) 或[代理](/zh-TW/sub-agents) frontmatter | 當 skill 或代理處於活動狀態時 | 是，在元件檔案中定義   |
+| 位置                                                             | 範圍                      | 可共享          |
+| :------------------------------------------------------------- | :---------------------- | :----------- |
+| `~/.claude/settings.json`                                      | 您的所有專案                  | 否，本機到您的機器    |
+| `.claude/settings.json`                                        | 單個專案                    | 是，可以提交到儲存庫   |
+| `.claude/settings.local.json`                                  | 單個專案                    | 否，gitignored |
+| 受管理的原則設定                                                       | 組織範圍                    | 是，由管理員控制     |
+| [Plugin](/zh-TW/plugins) `hooks/hooks.json`                    | 啟用外掛時                   | 是，與外掛捆綁      |
+| [Skill](/zh-TW/skills) 或[Agent](/zh-TW/sub-agents) frontmatter | 當 skill 或 Agent 處於活動狀態時 | 是，在元件檔案中定義   |
 
 在 Claude Code 中執行 [`/hooks`](/zh-TW/hooks#the-hooks-menu) 以瀏覽按事件分組的所有配置的 hooks。若要一次禁用所有 hooks，請在設定檔中設定 `"disableAllHooks": true`。
 

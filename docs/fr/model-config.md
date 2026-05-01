@@ -247,7 +247,7 @@ Vous pouvez voir quel modèle vous utilisez actuellement de plusieurs façons :
 
 ## Ajouter une option de modèle personnalisé
 
-Utilisez `ANTHROPIC_CUSTOM_MODEL_OPTION` pour ajouter une seule entrée personnalisée au sélecteur `/model` sans remplacer les alias intégrés. Ceci est utile pour les déploiements de passerelle LLM ou pour tester les ID de modèle que Claude Code ne répertorie pas par défaut.
+Utilisez `ANTHROPIC_CUSTOM_MODEL_OPTION` pour ajouter une seule entrée personnalisée au sélecteur `/model` sans remplacer les alias intégrés. Ceci est utile pour tester les ID de modèle que Claude Code ne répertorie pas par défaut. Pour les déploiements de passerelle LLM, Claude Code remplit automatiquement le sélecteur à partir du point de terminaison `/v1/models` de la passerelle, donc cette variable n'est nécessaire que lorsque la découverte ne retourne pas le modèle que vous souhaitez. Voir [Sélection du modèle de passerelle LLM](/fr/llm-gateway#model-selection).
 
 Cet exemple définit les trois variables pour rendre un déploiement Opus acheminé par passerelle sélectionnable :
 

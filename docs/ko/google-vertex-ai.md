@@ -263,6 +263,8 @@ Claude Code는 표준 Google Cloud 인증을 사용합니다.
 
 자세한 내용은 [Google Cloud 인증 설명서](https://cloud.google.com/docs/authentication)를 참조하십시오.
 
+Claude Code v2.1.121 이상은 동일한 Application Default Credentials 체인을 통해 [X.509 인증서 기반 Workload Identity Federation](https://cloud.google.com/iam/docs/workload-identity-federation-with-x509-certificates)을 지원합니다. `GOOGLE_APPLICATION_CREDENTIALS`를 자격증명 구성 파일의 경로로 설정합니다.
+
 <Note>
   인증할 때 Claude Code는 `ANTHROPIC_VERTEX_PROJECT_ID` 환경 변수에서 프로젝트 ID를 자동으로 사용합니다. 이를 재정의하려면 다음 환경 변수 중 하나를 설정하십시오: `GCLOUD_PROJECT`, `GOOGLE_CLOUD_PROJECT` 또는 `GOOGLE_APPLICATION_CREDENTIALS`.
 </Note>

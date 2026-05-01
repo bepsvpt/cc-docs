@@ -48,6 +48,8 @@ Beberapa pintasan Claude Code menggunakan tombol Option, seperti Option+Enter un
 
   <Tab title="iTerm2">
     Buka Settings → Profiles → Keys → General dan atur Left Option key dan Right Option key ke "Esc+".
+
+    Menjalankan `/terminal-setup` di iTerm2 mengaktifkan "Applications in terminal may access clipboard" di bawah Settings → General → Selection sehingga perintah `/copy` dapat menulis ke clipboard sistem Anda. Perintah mendeteksi iTerm2 bahkan ketika dijalankan dari dalam tmux. Mulai ulang iTerm2 agar perubahan berlaku.
   </Tab>
 
   <Tab title="VS Code">

@@ -247,7 +247,7 @@ Se l'account supporta il contesto 1M, l'opzione appare nel selettore di modelli 
 
 ## Aggiungere un'opzione di modello personalizzato
 
-Utilizzare `ANTHROPIC_CUSTOM_MODEL_OPTION` per aggiungere una singola voce personalizzata al selettore `/model` senza sostituire gli alias incorporati. Questo è utile per distribuzioni di gateway LLM o per testare ID di modello che Claude Code non elenca per impostazione predefinita.
+Utilizzare `ANTHROPIC_CUSTOM_MODEL_OPTION` per aggiungere una singola voce personalizzata al selettore `/model` senza sostituire gli alias incorporati. Questo è utile per testare ID di modello che Claude Code non elenca per impostazione predefinita. Per le distribuzioni di gateway LLM, Claude Code popola il selettore automaticamente dall'endpoint `/v1/models` del gateway, quindi questa variabile è necessaria solo quando la scoperta non restituisce il modello desiderato. Vedere [Selezione del modello del gateway LLM](/it/llm-gateway#model-selection).
 
 Questo esempio imposta tutte e tre le variabili per rendere selezionabile una distribuzione Opus instradata tramite gateway:
 

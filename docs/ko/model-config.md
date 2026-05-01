@@ -247,7 +247,7 @@ Opus 4.7, Opus 4.6 및 Sonnet 4.6은 대규모 코드베이스를 사용한 긴 
 
 ## 사용자 정의 모델 옵션 추가
 
-`ANTHROPIC_CUSTOM_MODEL_OPTION`을 사용하여 기본 제공 별칭을 대체하지 않고 `/model` 선택기에 단일 사용자 정의 항목을 추가합니다. 이는 LLM 게이트웨이 배포 또는 Claude Code가 기본적으로 나열하지 않는 모델 ID 테스트에 유용합니다.
+`ANTHROPIC_CUSTOM_MODEL_OPTION`을 사용하여 기본 제공 별칭을 대체하지 않고 `/model` 선택기에 단일 사용자 정의 항목을 추가합니다. 이는 Claude Code가 기본적으로 나열하지 않는 모델 ID를 테스트하는 데 유용합니다. LLM 게이트웨이 배포의 경우, Claude Code는 게이트웨이의 `/v1/models` 엔드포인트에서 선택기를 자동으로 채우므로, 이 변수는 검색에서 원하는 모델을 반환하지 않을 때만 필요합니다. [LLM 게이트웨이 모델 선택](/ko/llm-gateway#model-selection)을 참조하십시오.
 
 이 예시는 게이트웨이 라우팅된 Opus 배포를 선택 가능하게 하기 위해 세 가지 변수를 모두 설정합니다:
 

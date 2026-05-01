@@ -175,10 +175,13 @@ Ogni voce di plugin ha bisogno almeno di un `name` e di una `source` (da dove re
 
 | Campo                                 | Tipo   | Descrizione                                                                                                                                                                                                                                                                            |
 | :------------------------------------ | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `metadata.description`                | string | Breve descrizione del marketplace                                                                                                                                                                                                                                                      |
-| `metadata.version`                    | string | Versione del marketplace                                                                                                                                                                                                                                                               |
+| `$schema`                             | string | URL dello schema JSON per l'autocompletamento dell'editor e la convalida. Claude Code ignora questo campo al momento del caricamento.                                                                                                                                                  |
+| `description`                         | string | Breve descrizione del marketplace                                                                                                                                                                                                                                                      |
+| `version`                             | string | Versione del manifest del marketplace                                                                                                                                                                                                                                                  |
 | `metadata.pluginRoot`                 | string | Directory di base anteposta ai percorsi di fonte del plugin relativo (ad esempio, `"./plugins"` ti consente di scrivere `"source": "formatter"` invece di `"source": "./plugins/formatter"`)                                                                                           |
 | `allowCrossMarketplaceDependenciesOn` | array  | Altri marketplace su cui i plugin in questo marketplace possono dipendere. Le dipendenze da un marketplace non elencato qui sono bloccate all'installazione. Vedi [Dipendi da un plugin di un altro marketplace](/it/plugin-dependencies#depend-on-a-plugin-from-another-marketplace). |
+
+`description` e `version` sono accettati anche sotto `metadata` per compatibilità con le versioni precedenti.
 
 ## Voci di plugin
 
@@ -958,7 +961,7 @@ Esegui `claude plugin validate .` o `/plugin validate .` dalla directory del tuo
 **Avvisi** (non bloccanti):
 
 * `Marketplace has no plugins defined`: aggiungi almeno un plugin all'array `plugins`
-* `No marketplace description provided`: aggiungi `metadata.description` per aiutare gli utenti a comprendere il tuo marketplace
+* `No marketplace description provided`: aggiungi una `description` di livello superiore per aiutare gli utenti a comprendere il tuo marketplace
 * `Plugin name "x" is not kebab-case`: il nome del plugin contiene lettere maiuscole, spazi o caratteri speciali. Rinomina in lettere minuscole, cifre e trattini solo (ad esempio, `my-plugin`). Claude Code accetta altre forme, ma la sincronizzazione del marketplace Claude.ai le rifiuta.
 
 ### Errori di installazione del plugin
@@ -991,6 +994,20 @@ Per gli aggiornamenti automatici in background:
 * Per GitHub, assicurati che il token abbia lo scope `repo` per i repository privati
 * Per GitLab, assicurati che il token abbia almeno lo scope `read_repository`
 * Verifica che il token non sia scaduto
+
+### Gli aggiornamenti del marketplace non riescono in ambienti offline
+
+**Sintomi**: Il `git pull` del marketplace non riesce e Claude Code cancella la cache esistente, causando l'indisponibilità dei plugin.
+
+**Causa**: Per impostazione predefinita, quando un `git pull` non riesce, Claude Code rimuove il clone obsoleto e tenta di ri-clonare. In ambienti offline o airgapped, la ri-clonazione non riesce allo stesso modo, lasciando la directory del marketplace vuota.
+
+**Soluzione**: Imposta `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` per mantenere la cache esistente quando il pull non riesce invece di cancellarla:
+
+```bash theme={null}
+export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
+```
+
+Con questa variabile impostata, Claude Code mantiene il clone obsoleto del marketplace in caso di fallimento di `git pull` e continua a utilizzare lo stato ultimo noto come buono. Per distribuzioni completamente offline in cui il repository non sarà mai raggiungibile, utilizza [`CLAUDE_CODE_PLUGIN_SEED_DIR`](#pre-populate-plugins-for-containers) per pre-popolare la directory dei plugin al momento della compilazione.
 
 ### Le operazioni Git scadono
 

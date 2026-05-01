@@ -48,6 +48,8 @@ Einige Claude Code-Verknüpfungen verwenden die Option-Taste, z. B. Option+Enter
 
   <Tab title="iTerm2">
     Öffnen Sie Einstellungen → Profile → Tasten → Allgemein und stellen Sie die linke Option-Taste und die rechte Option-Taste auf 'Esc+" ein.
+
+    Das Ausführen von `/terminal-setup` in iTerm2 aktiviert „Anwendungen im Terminal können auf die Zwischenablage zugreifen" unter Einstellungen → Allgemein → Auswahl, damit der Befehl `/copy` in Ihre Systemzwischenablage schreiben kann. Der Befehl erkennt iTerm2 auch, wenn er von innerhalb von tmux ausgeführt wird. Starten Sie iTerm2 neu, damit die Änderung wirksam wird.
   </Tab>
 
   <Tab title="VS Code">

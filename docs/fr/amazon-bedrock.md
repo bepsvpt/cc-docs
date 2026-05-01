@@ -417,7 +417,8 @@ Créez une politique IAM avec les autorisations requises pour Claude Code :
       "Action": [
         "bedrock:InvokeModel",
         "bedrock:InvokeModelWithResponseStream",
-        "bedrock:ListInferenceProfiles"
+        "bedrock:ListInferenceProfiles",
+        "bedrock:GetInferenceProfile"
       ],
       "Resource": [
         "arn:aws:bedrock:*:*:inference-profile/*",
@@ -444,6 +445,10 @@ Créez une politique IAM avec les autorisations requises pour Claude Code :
 ```
 
 Pour des autorisations plus restrictives, vous pouvez limiter la ressource à des ARN de profil d'inférence spécifiques.
+
+`bedrock:GetInferenceProfile` permet à Claude Code de résoudre un [ARN de profil d'inférence d'application](#map-each-model-version-to-an-inference-profile) vers son modèle de fondation de support, qui est utilisé pour sélectionner la forme de requête correcte pour ce modèle.
+
+Si le jeton ne dispose pas de cette autorisation, Claude Code se rétablit automatiquement en réessayant une fois avec la forme alternative, de sorte que les requêtes réussissent toujours mais chaque nouveau modèle ajoute un aller-retour supplémentaire. L'octroi de l'autorisation évite la nouvelle tentative. Cela s'applique le plus souvent aux déploiements `AWS_BEARER_TOKEN_BEDROCK`, où la politique du jeton est généralement plus étroite qu'un rôle IAM complet.
 
 Pour plus de détails, voir [Documentation IAM Bedrock](https://docs.aws.amazon.com/bedrock/latest/userguide/security-iam.html).
 

@@ -6,7 +6,7 @@
 
 > Utilice el Agent SDK para ejecutar Claude Code mediante programación desde la CLI, Python o TypeScript.
 
-El [Agent SDK](https://platform.claude.com/docs/es/agent-sdk/overview) le proporciona las mismas herramientas, bucle de agente y gestión de contexto que potencian Claude Code. Está disponible como CLI para scripts e CI/CD, o como paquetes de [Python](https://platform.claude.com/docs/es/agent-sdk/python) y [TypeScript](https://platform.claude.com/docs/es/agent-sdk/typescript) para control programático completo.
+El [Agent SDK](/es/agent-sdk/overview) le proporciona las mismas herramientas, bucle de agente y gestión de contexto que potencian Claude Code. Está disponible como CLI para scripts e CI/CD, o como paquetes de [Python](/es/agent-sdk/python) y [TypeScript](/es/agent-sdk/typescript) para control programático completo.
 
 <Note>
   La CLI se llamaba anteriormente "modo sin interfaz". La bandera `-p` y todas las opciones de CLI funcionan de la misma manera.
@@ -18,7 +18,7 @@ Para ejecutar Claude Code mediante programación desde la CLI, pase `-p` con su 
 claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"
 ```
 
-Esta página cubre el uso del Agent SDK a través de la CLI (`claude -p`). Para los paquetes SDK de Python y TypeScript con salidas estructuradas, devoluciones de llamada de aprobación de herramientas y objetos de mensaje nativos, consulte la [documentación completa del Agent SDK](https://platform.claude.com/docs/es/agent-sdk/overview).
+Esta página cubre el uso del Agent SDK a través de la CLI (`claude -p`). Para los paquetes SDK de Python y TypeScript con salidas estructuradas, devoluciones de llamada de aprobación de herramientas y objetos de mensaje nativos, consulte la [documentación completa del Agent SDK](/es/agent-sdk/overview).
 
 ## Uso básico
 
@@ -34,9 +34,37 @@ Este ejemplo le pregunta a Claude sobre su base de código e imprime la respuest
 claude -p "What does the auth module do?"
 ```
 
+### Comenzar más rápido con modo bare
+
+Agregue `--bare` para reducir el tiempo de inicio omitiendo el descubrimiento automático de hooks, skills, plugins, servidores MCP, memoria automática y CLAUDE.md. Sin él, `claude -p` carga el mismo [contexto](/es/how-claude-code-works#the-context-window) que una sesión interactiva, incluyendo cualquier cosa configurada en el directorio de trabajo o `~/.claude`.
+
+El modo bare es útil para CI y scripts donde necesita el mismo resultado en cada máquina. Un hook en el `~/.claude` de un compañero de equipo o un servidor MCP en el `.mcp.json` del proyecto no se ejecutarán, porque el modo bare nunca los lee. Solo las banderas que pasa explícitamente tienen efecto.
+
+Este ejemplo ejecuta una tarea de resumen única en modo bare y aprueba previamente la herramienta Read para que la llamada se complete sin una solicitud de permiso:
+
+```bash theme={null}
+claude --bare -p "Summarize this file" --allowedTools "Read"
+```
+
+En modo bare Claude tiene acceso a las herramientas Bash, lectura de archivos y edición de archivos. Pase cualquier contexto que necesite con una bandera:
+
+| Para cargar                         | Utilice                                                 |
+| ----------------------------------- | ------------------------------------------------------- |
+| Adiciones de indicación del sistema | `--append-system-prompt`, `--append-system-prompt-file` |
+| Configuración                       | `--settings <file-or-json>`                             |
+| Servidores MCP                      | `--mcp-config <file-or-json>`                           |
+| Agentes personalizados              | `--agents <json>`                                       |
+| Un directorio de plugin             | `--plugin-dir <path>`                                   |
+
+El modo bare omite lecturas de OAuth y llavero. La autenticación de Anthropic debe provenir de `ANTHROPIC_API_KEY` o un `apiKeyHelper` en el JSON pasado a `--settings`. Bedrock, Vertex y Foundry utilizan sus credenciales de proveedor habituales.
+
+<Note>
+  `--bare` es el modo recomendado para llamadas con scripts y SDK, y se convertirá en el predeterminado para `-p` en una versión futura.
+</Note>
+
 ## Ejemplos
 
-Estos ejemplos destacan patrones comunes de CLI.
+Estos ejemplos destacan patrones comunes de CLI. Para CI y otras llamadas con scripts, agregue [`--bare`](#start-faster-with-bare-mode) para que no recojan lo que esté configurado localmente.
 
 ### Obtener salida estructurada
 
@@ -92,7 +120,40 @@ claude -p "Write a poem" --output-format stream-json --verbose --include-partial
   jq -rj 'select(.type == "stream_event" and .event.delta.type? == "text_delta") | .event.delta.text'
 ```
 
-Para transmisión programática con devoluciones de llamada y objetos de mensaje, consulte [Transmitir respuestas en tiempo real](https://platform.claude.com/docs/es/agent-sdk/streaming-output) en la documentación del Agent SDK.
+Cuando una solicitud de API falla con un error reintentable, Claude Code emite un evento `system/api_retry` antes de reintentar. Puede usar esto para mostrar el progreso del reintento o implementar lógica de retroceso personalizada.
+
+| Campo            | Tipo          | Descripción                                                                                                                                                              |
+| ---------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `type`           | `"system"`    | tipo de mensaje                                                                                                                                                          |
+| `subtype`        | `"api_retry"` | identifica esto como un evento de reintento                                                                                                                              |
+| `attempt`        | entero        | número de intento actual, comenzando en 1                                                                                                                                |
+| `max_retries`    | entero        | reintentos totales permitidos                                                                                                                                            |
+| `retry_delay_ms` | entero        | milisegundos hasta el siguiente intento                                                                                                                                  |
+| `error_status`   | entero o nulo | código de estado HTTP, o `null` para errores de conexión sin respuesta HTTP                                                                                              |
+| `error`          | cadena        | categoría de error: `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `rate_limit`, `invalid_request`, `server_error`, `max_output_tokens`, o `unknown` |
+| `uuid`           | cadena        | identificador único del evento                                                                                                                                           |
+| `session_id`     | cadena        | sesión a la que pertenece el evento                                                                                                                                      |
+
+El evento `system/init` informa metadatos de sesión incluyendo el modelo, herramientas, servidores MCP y plugins cargados. Es el primer evento en la transmisión a menos que [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/es/env-vars) esté configurado, en cuyo caso los eventos `plugin_install` lo preceden. Use los campos de plugin para fallar CI cuando un plugin no se cargó:
+
+| Campo           | Tipo   | Descripción                                                                                                                                                                                                                            |
+| --------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plugins`       | matriz | plugins que se cargaron exitosamente, cada uno con `name` y `path`                                                                                                                                                                     |
+| `plugin_errors` | matriz | errores de tiempo de carga de plugin como una versión de dependencia insatisfecha, cada uno con `plugin`, `type` y `message`. Los plugins afectados se degradan y están ausentes de `plugins`. La clave se omite cuando no hay errores |
+
+Cuando [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/es/env-vars) está configurado, Claude Code emite eventos `system/plugin_install` mientras los plugins del marketplace se instalan antes del primer turno. Use estos para mostrar el progreso de instalación en su propia interfaz de usuario.
+
+| Campo        | Tipo                                                    | Descripción                                                                                                    |
+| ------------ | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `type`       | `"system"`                                              | tipo de mensaje                                                                                                |
+| `subtype`    | `"plugin_install"`                                      | identifica esto como un evento de instalación de plugin                                                        |
+| `status`     | `"started"`, `"installed"`, `"failed"`, o `"completed"` | `started` y `completed` enmarcan la instalación general; `installed` y `failed` reportan mercados individuales |
+| `name`       | cadena, opcional                                        | nombre del marketplace, presente en `installed` y `failed`                                                     |
+| `error`      | cadena, opcional                                        | mensaje de fallo, presente en `failed`                                                                         |
+| `uuid`       | cadena                                                  | identificador único del evento                                                                                 |
+| `session_id` | cadena                                                  | sesión a la que pertenece el evento                                                                            |
+
+Para transmisión programática con devoluciones de llamada y objetos de mensaje, consulte [Transmitir respuestas en tiempo real](/es/agent-sdk/streaming-output) en la documentación del Agent SDK.
 
 ### Aprobar herramientas automáticamente
 
@@ -101,6 +162,12 @@ Utilice `--allowedTools` para permitir que Claude use ciertas herramientas sin s
 ```bash theme={null}
 claude -p "Run the test suite and fix any failures" \
   --allowedTools "Bash,Read,Edit"
+```
+
+Para establecer una línea base para toda la sesión en lugar de enumerar herramientas individuales, pase un [modo de permiso](/es/permission-modes). `dontAsk` deniega cualquier cosa que no esté en sus reglas `permissions.allow` o el [conjunto de comandos de solo lectura](/es/permissions#read-only-commands), que es útil para ejecuciones de CI bloqueadas. `acceptEdits` permite que Claude escriba archivos sin solicitar y también aprueba automáticamente comandos comunes del sistema de archivos como `mkdir`, `touch`, `mv` y `cp`. Otros comandos de shell y solicitudes de red aún necesitan una entrada `--allowedTools` o una regla `permissions.allow`, de lo contrario la ejecución se aborta cuando se intenta uno:
+
+```bash theme={null}
+claude -p "Apply the lint fixes" --permission-mode acceptEdits
 ```
 
 ### Crear una confirmación
@@ -152,7 +219,7 @@ claude -p "Continue that review" --resume "$session_id"
 
 ## Próximos pasos
 
-* [Inicio rápido del Agent SDK](https://platform.claude.com/docs/es/agent-sdk/quickstart): construya su primer agente con Python o TypeScript
+* [Inicio rápido del Agent SDK](/es/agent-sdk/quickstart): construya su primer agente con Python o TypeScript
 * [Referencia de CLI](/es/cli-reference): todas las banderas y opciones de CLI
 * [GitHub Actions](/es/github-actions): utilice el Agent SDK en flujos de trabajo de GitHub
 * [GitLab CI/CD](/es/gitlab-ci-cd): utilice el Agent SDK en canalizaciones de GitLab

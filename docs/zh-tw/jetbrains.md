@@ -23,9 +23,9 @@ Claude Code 外掛程式適用於大多數 JetBrains IDEs，包括：
 
 * **快速啟動**：使用 `Cmd+Esc`（Mac）或 `Ctrl+Esc`（Windows/Linux）直接從編輯器開啟 Claude Code，或點擊 UI 中的 Claude Code 按鈕
 * **差異檢視**：程式碼變更可直接在 IDE 差異檢視器中顯示，而不是在終端機中
-* **選擇內容共享**：IDE 中的目前選擇/分頁會自動與 Claude Code 共享
-* **檔案參考快捷方式**：使用 `Cmd+Option+K`（Mac）或 `Alt+Ctrl+K`（Linux/Windows）插入檔案參考（例如 @File#L1-99）
-* **診斷共享**：IDE 中的診斷錯誤（lint、語法等）會在您工作時自動與 Claude 共享
+* **選擇內容共享**：IDE 中的目前選擇或分頁會自動與 Claude Code 共享
+* **檔案參考快捷方式**：使用 `Cmd+Option+K`（Mac）或 `Alt+Ctrl+K`（Linux/Windows）插入檔案參考，例如 `@src/auth.ts#L1-99`
+* **診斷共享**：IDE 中的診斷錯誤（例如 lint 和語法錯誤）會在您工作時自動與 Claude 共享
 
 ## 安裝
 
@@ -33,7 +33,7 @@ Claude Code 外掛程式適用於大多數 JetBrains IDEs，包括：
 
 從 JetBrains marketplace 尋找並安裝 [Claude Code 外掛程式](https://plugins.jetbrains.com/plugin/27310-claude-code-beta-)，然後重新啟動您的 IDE。
 
-如果您還未安裝 Claude Code，請參閱[我們的快速入門指南](/zh-TW/quickstart)以取得安裝說明。
+如果您還未安裝 Claude Code，請參閱[快速入門指南](/zh-TW/quickstart)以取得安裝說明。
 
 <Note>
   安裝外掛程式後，您可能需要完全重新啟動 IDE 才能使其生效。
@@ -67,7 +67,7 @@ claude
 
 1. 執行 `claude`
 2. 輸入 `/config` 命令
-3. 將差異工具設定為 `auto` 以進行自動 IDE 偵測
+3. 將差異工具設定為 `auto` 以在 IDE 中顯示差異，或設定為 `terminal` 以在終端機中保留差異
 
 ### 外掛程式設定
 
@@ -75,10 +75,10 @@ claude
 
 #### 一般設定
 
-* **Claude 命令**：指定自訂命令以執行 Claude（例如 `claude`、`/usr/local/bin/claude` 或 `npx @anthropic/claude`）
+* **Claude 命令**：指定自訂命令以執行 Claude，例如 `claude`、`/usr/local/bin/claude` 或 `npx @anthropic-ai/claude-code`
 * **抑制找不到 Claude 命令的通知**：略過有關找不到 Claude 命令的通知
-* **啟用使用 Option+Enter 進行多行提示**（僅限 macOS）：啟用時，Option+Enter 會在 Claude Code 提示中插入新行。如果遇到 Option 鍵被意外捕獲的問題，請停用此選項（需要終端機重新啟動）
-* **啟用自動更新**：自動檢查並安裝外掛程式更新（在重新啟動時套用）
+* **啟用使用 Option+Enter 進行多行提示**：僅限 macOS。啟用時，Option+Enter 會在 Claude Code 提示中插入新行。如果遇到 Option 鍵被意外捕獲的問題，請停用此選項。需要終端機重新啟動。
+* **啟用自動更新**：自動檢查並安裝外掛程式更新，在重新啟動時套用
 
 <Tip>
   對於 WSL 使用者：將 `wsl -d Ubuntu -- bash -lic "claude"` 設定為您的 Claude 命令（將 `Ubuntu` 替換為您的 WSL 發行版名稱）
@@ -108,19 +108,54 @@ claude
 
 ### WSL 設定
 
-<Warning>
-  WSL 使用者可能需要額外設定才能使 IDE 偵測正常運作。請參閱我們的 [WSL 疑難排解指南](/zh-TW/troubleshooting#jetbrains-ide-not-detected-on-wsl2)以取得詳細的設定說明。
-</Warning>
+如果您在 WSL2 上使用 Claude Code 搭配 JetBrains IDE，並看到「未偵測到可用的 IDEs」，原因通常是 WSL2 的 NAT 網路或 Windows 防火牆阻止了 WSL2 與在 Windows 主機上執行的 IDE 之間的連線。WSL1 直接使用主機的網路，不受影響。
 
-WSL 設定可能需要：
+#### 允許 WSL2 流量通過 Windows 防火牆
 
-* 適當的終端機設定
-* 網路模式調整
-* 防火牆設定更新
+這是建議的修復方式，因為它保持您現有的 WSL2 網路模式。
+
+<Steps>
+  <Step title="尋找您的 WSL2 IP 位址">
+    從您的 WSL shell 內執行：
+
+    ```bash theme={null}
+    hostname -I
+    ```
+
+    記下子網路，例如 `172.21.123.45` 在 `172.21.0.0/16` 中。
+  </Step>
+
+  <Step title="建立防火牆規則">
+    以系統管理員身份開啟 PowerShell 並執行以下命令，調整 IP 範圍以符合您的子網路：
+
+    ```powershell theme={null}
+    New-NetFirewallRule -DisplayName "Allow WSL2 Internal Traffic" -Direction Inbound -Protocol TCP -Action Allow -RemoteAddress 172.21.0.0/16 -LocalAddress 172.21.0.0/16
+    ```
+  </Step>
+
+  <Step title="重新啟動您的 IDE 和 Claude Code">
+    關閉並重新開啟兩者，以使新規則生效。
+  </Step>
+</Steps>
+
+#### 將 WSL2 切換為鏡像網路
+
+鏡像網路需要 Windows 11 22H2 或更新版本。如果您使用 Windows 10，請改用上述防火牆規則。
+
+將以下內容新增到您 Windows 使用者目錄中的 `.wslconfig`：
+
+```ini theme={null}
+[wsl2]
+networkingMode=mirrored
+```
+
+然後從 PowerShell 使用 `wsl --shutdown` 重新啟動 WSL。
 
 ## 疑難排解
 
 ### 外掛程式無法運作
+
+如果外掛程式已安裝但 Claude Code 功能未出現在您的 IDE 中：
 
 * 確保您從專案根目錄執行 Claude Code
 * 檢查 JetBrains 外掛程式在 IDE 設定中是否已啟用
@@ -129,16 +164,18 @@ WSL 設定可能需要：
 
 ### IDE 未被偵測
 
+如果執行 `claude` 顯示「未偵測到可用的 IDEs」：
+
 * 驗證外掛程式已安裝並啟用
 * 完全重新啟動 IDE
 * 檢查您是否從整合終端機執行 Claude Code
-* 對於 WSL 使用者，請參閱 [WSL 疑難排解指南](/zh-TW/troubleshooting#jetbrains-ide-not-detected-on-wsl2)
+* 對於 WSL 使用者，請參閱上方的 [WSL 設定](#wsl-設定)
 
 ### 找不到命令
 
 如果點擊 Claude 圖示顯示「找不到命令」：
 
-1. 驗證 Claude Code 已安裝：`npm list -g @anthropic-ai/claude-code`
+1. 透過在終端機中執行 `claude --version` 驗證 Claude Code 已安裝
 2. 在外掛程式設定中設定 Claude 命令路徑
 3. 對於 WSL 使用者，使用設定部分中提到的 WSL 命令格式
 
@@ -152,4 +189,4 @@ WSL 設定可能需要：
 * 特別注意確保 Claude 僅與受信任的提示一起使用
 * 注意 Claude Code 有權限修改的檔案
 
-如需其他協助，請參閱我們的[疑難排解指南](/zh-TW/troubleshooting)。
+如需 IDE 外的 Claude Code 安裝或登入問題，請參閱[疑難排解安裝和登入](/zh-TW/troubleshoot-install)。

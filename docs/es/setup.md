@@ -20,7 +20,7 @@ Claude Code se ejecuta en las siguientes plataformas y configuraciones:
   * Alpine Linux 3.19+
 * **Hardware**: 4 GB+ de RAM, procesador x64 o ARM64
 * **Red**: se requiere conexión a Internet. Consulte [configuración de red](/es/network-config#network-access-requirements).
-* **Shell**: Bash, Zsh, PowerShell o CMD. Las configuraciones nativas de Windows requieren [Git for Windows](https://git-scm.com/downloads/win). Las configuraciones de WSL no.
+* **Shell**: Bash, Zsh, PowerShell o CMD. En Windows nativo, se recomienda [Git for Windows](https://git-scm.com/downloads/win); Claude Code recurre a PowerShell cuando Git Bash no está presente. Las configuraciones de WSL no requieren Git for Windows.
 * **Ubicación**: [países compatibles con Anthropic](https://www.anthropic.com/supported-countries)
 
 ### Dependencias adicionales
@@ -59,7 +59,7 @@ To install Claude Code, use one of the following methods:
 
     If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell. Your prompt shows `PS C:\` when you're in PowerShell and `C:\` without the `PS` when you're in CMD.
 
-    **Native Windows setups require [Git for Windows](https://git-scm.com/downloads/win).** Install it first if you don't have it. WSL setups do not need it.
+    [Git for Windows](https://git-scm.com/downloads/win) is recommended on native Windows so Claude Code can use the Bash tool. If Git for Windows is not installed, Claude Code uses PowerShell as the shell tool instead. WSL setups do not need Git for Windows.
 
     <Info>
       Native installations automatically update in the background to keep you on the latest version.
@@ -97,17 +97,17 @@ Después de que se complete la instalación, abra una terminal en el proyecto en
 claude
 ```
 
-Si encuentra algún problema durante la instalación, consulte la [guía de solución de problemas](/es/troubleshooting).
+Si encuentra algún problema durante la instalación, consulte [Solucionar problemas de instalación e inicio de sesión](/es/troubleshoot-install).
 
 ### Configurar en Windows
 
 Puede ejecutar Claude Code de forma nativa en Windows o dentro de WSL. Elija según dónde se encuentren sus proyectos y qué características necesite:
 
-| Opción         | Requiere                                             | [Sandboxing](/es/sandboxing) | Cuándo usar                                                         |
-| -------------- | ---------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------- |
-| Windows nativo | [Git for Windows](https://git-scm.com/downloads/win) | No compatible                | Proyectos y herramientas nativas de Windows                         |
-| WSL 2          | WSL 2 habilitado                                     | Compatible                   | Cadenas de herramientas de Linux o ejecución de comandos en sandbox |
-| WSL 1          | WSL 1 habilitado                                     | No compatible                | Si WSL 2 no está disponible                                         |
+| Opción         | Requiere                                                                                                      | [Sandboxing](/es/sandboxing) | Cuándo usar                                                         |
+| -------------- | ------------------------------------------------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------- |
+| Windows nativo | [Git for Windows](https://git-scm.com/downloads/win) recomendado; PowerShell se utiliza si no está disponible | No compatible                | Proyectos y herramientas nativas de Windows                         |
+| WSL 2          | WSL 2 habilitado                                                                                              | Compatible                   | Cadenas de herramientas de Linux o ejecución de comandos en sandbox |
+| WSL 1          | WSL 1 habilitado                                                                                              | No compatible                | Si WSL 2 no está disponible                                         |
 
 **Opción 1: Windows nativo con Git Bash**
 
@@ -115,7 +115,7 @@ Instale [Git for Windows](https://git-scm.com/downloads/win) y luego ejecute el 
 
 Ya sea que instale desde PowerShell o CMD solo afecta qué comando de instalación ejecuta. Su indicador muestra `PS C:\Users\YourName>` en PowerShell y `C:\Users\YourName>` sin el `PS` en CMD. Si es nuevo en la terminal, la [guía de terminal](/es/terminal-guide#windows) le guía a través de cada paso.
 
-Después de la instalación, inicie `claude` desde PowerShell, CMD o Git Bash. Claude Code utiliza Git Bash internamente para ejecutar comandos independientemente de dónde lo inicie. Si Claude Code no puede encontrar su instalación de Git Bash, establezca la ruta en su [archivo settings.json](/es/settings):
+Después de la instalación, inicie `claude` desde PowerShell, CMD o Git Bash. Cuando Git Bash está instalado, Claude Code lo utiliza internamente para ejecutar comandos independientemente de dónde lo inicie. Si Claude Code no puede encontrar su instalación de Git Bash, establezca la ruta en su [archivo settings.json](/es/settings):
 
 ```json theme={null}
 {
@@ -125,7 +125,7 @@ Después de la instalación, inicie `claude` desde PowerShell, CMD o Git Bash. C
 }
 ```
 
-Claude Code también puede ejecutar PowerShell de forma nativa en Windows. La herramienta PowerShell se está implementando progresivamente; establezca `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` para participar o `0` para no participar. Consulte [herramienta PowerShell](/es/tools-reference#powershell-tool) para configuración y limitaciones.
+Claude Code también puede ejecutar PowerShell de forma nativa en Windows. Cuando Git Bash está instalado, la herramienta PowerShell se está implementando progresivamente como una opción adicional: establezca `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` para participar o `0` para no participar. Consulte [herramienta PowerShell](/es/tools-reference#powershell-tool) para configuración y limitaciones.
 
 **Opción 2: WSL**
 
@@ -158,6 +158,8 @@ Después de instalar, confirme que Claude Code está funcionando:
 ```bash theme={null}
 claude --version
 ```
+
+Si esto falla con `command not found` u otro error, consulte [Solucionar problemas de instalación e inicio de sesión](/es/troubleshoot-install).
 
 Para una verificación más detallada de su instalación y configuración, ejecute [`claude doctor`](/es/troubleshooting#get-more-help):
 
@@ -390,10 +392,10 @@ npm install -g @anthropic-ai/claude-code
 
 El paquete npm instala el mismo binario nativo que el instalador independiente. npm extrae el binario a través de una dependencia opcional por plataforma como `@anthropic-ai/claude-code-darwin-arm64`, y un paso postinstall lo vincula en su lugar. El binario `claude` instalado no invoca Node en sí mismo.
 
-Las plataformas de instalación npm compatibles son `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64` y `win32-arm64`. Su gestor de paquetes debe permitir dependencias opcionales. Consulte [solución de problemas](/es/troubleshooting#native-binary-not-found-after-npm-install) si falta el binario después de la instalación.
+Las plataformas de instalación npm compatibles son `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64` y `win32-arm64`. Su gestor de paquetes debe permitir dependencias opcionales. Consulte [solución de problemas](/es/troubleshoot-install#native-binary-not-found-after-npm-install) si falta el binario después de la instalación.
 
 <Warning>
-  NO use `sudo npm install -g` ya que esto puede causar problemas de permisos y riesgos de seguridad. Si encuentra errores de permisos, consulte [solución de problemas de errores de permisos](/es/troubleshooting#permission-errors-during-installation).
+  NO use `sudo npm install -g` ya que esto puede causar problemas de permisos y riesgos de seguridad. Si encuentra errores de permisos, consulte [solución de problemas de errores de permisos](/es/troubleshoot-install#permission-errors-during-installation).
 </Warning>
 
 ### Integridad binaria y firma de código

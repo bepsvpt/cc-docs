@@ -263,6 +263,8 @@ Claude Code 使用標準的 Google Cloud 驗證。
 
 如需詳細資訊，請參閱 [Google Cloud 驗證文件](https://cloud.google.com/docs/authentication)。
 
+Claude Code v2.1.121 或更新版本透過相同的 Application Default Credentials 鏈支援 [X.509 憑證型 Workload Identity Federation](https://cloud.google.com/iam/docs/workload-identity-federation-with-x509-certificates)。將 `GOOGLE_APPLICATION_CREDENTIALS` 設定為您的認證設定檔案路徑。
+
 <Note>
   進行驗證時，Claude Code 將自動使用 `ANTHROPIC_VERTEX_PROJECT_ID` 環境變數中的專案 ID。若要覆寫此設定，請設定下列其中一個環境變數：`GCLOUD_PROJECT`、`GOOGLE_CLOUD_PROJECT` 或 `GOOGLE_APPLICATION_CREDENTIALS`。
 </Note>

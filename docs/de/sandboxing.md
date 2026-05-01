@@ -87,6 +87,10 @@ Auf **Linux und WSL2** installieren Sie zuerst die erforderlichen Pakete:
   </Tab>
 </Tabs>
 
+WSL1 unterstützt Sandboxing nicht, da es die erforderlichen Linux-Namespace-Primitive fehlen. Wenn Sie `Sandboxing requires WSL2` sehen, aktualisieren Sie Ihre Distribution auf WSL2 oder führen Sie Claude Code ohne Sandboxing aus.
+
+Auf WSL2 können Sandbox-Befehle keine Windows-Binärdateien wie `cmd.exe`, `powershell.exe` oder etwas unter `/mnt/c/` starten. WSL übergibt diese über einen Unix-Socket an den Windows-Host, den die Sandbox blockiert. Wenn ein Befehl eine Windows-Binärdatei aufrufen muss, fügen Sie ihn zu [`excludedCommands`](/de/settings#sandbox-settings) hinzu, damit er außerhalb der Sandbox ausgeführt wird.
+
 ### Sandboxing aktivieren
 
 Sie können Sandboxing durch Ausführung des `/sandbox`-Befehls aktivieren:
@@ -97,13 +101,13 @@ Sie können Sandboxing durch Ausführung des `/sandbox`-Befehls aktivieren:
 
 Dies öffnet ein Menü, in dem Sie zwischen Sandbox-Modi wählen können. Wenn erforderliche Abhängigkeiten fehlen (wie `bubblewrap` oder `socat` auf Linux), zeigt das Menü Installationsanweisungen für Ihre Plattform an.
 
-Standardmäßig zeigt Claude Code eine Warnung an und führt Befehle ohne Sandboxing aus, wenn die Sandbox nicht gestartet werden kann (fehlende Abhängigkeiten, nicht unterstützte Plattform oder Plattformbeschränkungen). Um dies stattdessen zu einem Hard Failure zu machen, setzen Sie [`sandbox.failIfUnavailable`](/de/settings#sandbox-settings) auf `true`. Dies ist für verwaltete Bereitstellungen vorgesehen, die Sandboxing als Sicherheits-Gate erfordern.
+Standardmäßig zeigt Claude Code eine Warnung an und führt Befehle ohne Sandboxing aus, wenn die Sandbox nicht gestartet werden kann (fehlende Abhängigkeiten oder nicht unterstützte Plattform). Um dies stattdessen zu einem Hard Failure zu machen, setzen Sie [`sandbox.failIfUnavailable`](/de/settings#sandbox-settings) auf `true`. Dies ist für verwaltete Bereitstellungen vorgesehen, die Sandboxing als Sicherheits-Gate erfordern.
 
 ### Sandbox-Modi
 
 Claude Code bietet zwei Sandbox-Modi:
 
-**Auto-Allow-Modus**: Bash-Befehle werden versuchen, innerhalb der Sandbox ausgeführt zu werden und sind automatisch zulässig, ohne dass eine Genehmigung erforderlich ist. Befehle, die nicht in der Sandbox ausgeführt werden können (wie solche, die Netzwerkzugriff auf nicht zulässige Hosts benötigen), fallen auf den regulären Genehmigungsfluss zurück. Explizite Deny-Regeln werden immer respektiert. Ask-Regeln gelten nur für Befehle, die auf den regulären Genehmigungsfluss zurückfallen.
+**Auto-Allow-Modus**: Bash-Befehle werden versuchen, innerhalb der Sandbox ausgeführt zu werden und sind automatisch zulässig, ohne dass eine Genehmigung erforderlich ist. Befehle, die nicht in der Sandbox ausgeführt werden können (wie solche, die Netzwerkzugriff auf nicht zulässige Hosts benötigen), fallen auf den regulären Genehmigungsfluss zurück. Explizite Deny-Regeln werden immer respektiert, und `rm`- oder `rmdir`-Befehle, die auf `/`, Ihr Home-Verzeichnis oder andere kritische Systempfade abzielen, lösen immer noch eine Genehmigungsaufforderung aus. Ask-Regeln gelten nur für Befehle, die auf den regulären Genehmigungsfluss zurückfallen.
 
 **Regulärer Genehmigungsmodus**: Alle Bash-Befehle durchlaufen den Standard-Genehmigungsfluss, auch wenn sie in der Sandbox ausgeführt werden. Dies bietet mehr Kontrolle, erfordert aber mehr Genehmigungen.
 

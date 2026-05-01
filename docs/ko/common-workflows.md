@@ -842,12 +842,14 @@ Worktree 격리는 기본적으로 git과 함께 작동합니다. SVN, Perforce 
   <Step title="선택적으로 matcher 좁히기">
     기본적으로 hook은 모든 알림 유형에 대해 발생합니다. 특정 이벤트에만 발생하도록 하려면 `matcher` 필드를 다음 값 중 하나로 설정합니다:
 
-    | Matcher              | 발생 시기                       |
-    | :------------------- | :-------------------------- |
-    | `permission_prompt`  | Claude가 도구 사용을 승인하도록 요청할 때  |
-    | `idle_prompt`        | Claude가 완료되고 다음 프롬프트를 기다릴 때 |
-    | `auth_success`       | 인증이 완료될 때                   |
-    | `elicitation_dialog` | Claude가 질문을 할 때             |
+    | Matcher                | 발생 시기                       |
+    | :--------------------- | :-------------------------- |
+    | `permission_prompt`    | Claude가 도구 사용을 승인하도록 요청할 때  |
+    | `idle_prompt`          | Claude가 완료되고 다음 프롬프트를 기다릴 때 |
+    | `auth_success`         | 인증이 완료될 때                   |
+    | `elicitation_dialog`   | MCP 서버가 질문 양식을 열 때          |
+    | `elicitation_complete` | MCP 질문 양식이 제출되거나 닫힐 때       |
+    | `elicitation_response` | MCP 질문 응답이 서버로 다시 전송될 때     |
   </Step>
 
   <Step title="hook 검증하기">

@@ -35,8 +35,8 @@ Claude Code 的使用受 [Anthropic 使用政策](https://www.anthropic.com/lega
 
 Claude Code 使用 OAuth 令牌或 API 密钥与 Anthropic 的服务器进行身份验证。这些身份验证方法有不同的用途：
 
-* **OAuth 身份验证**（用于 Free、Pro 和 Max 计划）仅供 Claude Code 和 Claude.ai 使用。不允许在任何其他产品、工具或服务中使用通过 Claude Free、Pro 或 Max 账户获得的 OAuth 令牌，包括 [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview)，这样做构成对 [消费者服务条款](https://www.anthropic.com/legal/consumer-terms) 的违反。
-* **开发者**构建与 Claude 功能交互的产品或服务，包括使用 [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview) 的产品或服务，应通过 [Claude Console](https://platform.claude.com/) 或受支持的云提供商使用 API 密钥身份验证。Anthropic 不允许第三方开发者提供 Claude.ai 登录或代表其用户通过 Free、Pro 或 Max 计划凭证路由请求。
+* **OAuth 身份验证**仅供 Claude Free、Pro、Max、Team 和 Enterprise 订阅计划的购买者使用，旨在支持 Claude Code 和其他原生 Anthropic 应用程序的普通使用。有关用户如何使用 OAuth 令牌进行身份验证的更多信息，请参阅 [登录您的 Claude 账户](https://support.claude.com/en/articles/13189465-logging-in-to-your-claude-account)。
+* **开发者**构建与 Claude 功能交互的产品或服务，包括使用 [Agent SDK](/zh-CN/agent-sdk/overview) 的产品或服务，应通过 [Claude Console](https://platform.claude.com/) 或受支持的云提供商使用 API 密钥身份验证。Anthropic 不允许第三方开发者提供 Claude.ai 登录或代表其用户通过 Free、Pro 或 Max 计划凭证路由请求。
 
 Anthropic 保留采取措施执行这些限制的权利，并可能在不事先通知的情况下这样做。
 
@@ -50,7 +50,7 @@ Anthropic 保留采取措施执行这些限制的权利，并可能在不事先�
 
 ### 安全漏洞报告
 
-Anthropic 通过 HackerOne 管理我们的安全计划。[使用此表单报告漏洞](https://hackerone.com/anthropic-vdp/reports/new?type=team\&report_type=vulnerability)。
+Anthropic 通过 HackerOne 管理我们的安全计划。[使用此表单报告漏洞](https://hackerone.com/4f1f16ba-10d3-4d09-9ecc-c721aad90f24/embedded_submissions/new)。
 
 ***
 

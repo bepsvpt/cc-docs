@@ -40,13 +40,12 @@ Contoh ini membuat skill yang mengajarkan Claude menjelaskan kode menggunakan di
   </Step>
 
   <Step title="Tulis SKILL.md">
-    Setiap skill memerlukan file `SKILL.md` dengan dua bagian: frontmatter YAML (antara penanda `---`) yang memberi tahu Claude kapan menggunakan skill, dan konten markdown dengan instruksi yang diikuti Claude saat skill diinvokasinya. Bidang `name` menjadi `/slash-command`, dan `description` membantu Claude memutuskan kapan memuatnya secara otomatis.
+    Setiap skill memerlukan file `SKILL.md` dengan dua bagian: frontmatter YAML (antara penanda `---`) yang memberi tahu Claude kapan menggunakan skill, dan konten markdown dengan instruksi yang diikuti Claude saat skill diinvokasinya. Nama direktori menjadi `/slash-command`, dan `description` membantu Claude memutuskan kapan memuatnya secara otomatis.
 
     Buat `~/.claude/skills/explain-code/SKILL.md`:
 
     ```yaml theme={null}
     ---
-    name: explain-code
     description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
     ---
 
@@ -215,6 +214,7 @@ Skills mendukung substitusi string untuk nilai dinamis dalam konten skill:
 | `$N`                   | Singkat untuk `$ARGUMENTS[N]`, seperti `$0` untuk argumen pertama atau `$1` untuk argumen kedua.                                                                                                                                                                                     |
 | `$name`                | Argumen bernama yang dideklarasikan dalam daftar frontmatter [`arguments`](#frontmatter-reference). Nama memetakan ke posisi secara berurutan, jadi dengan `arguments: [issue, branch]` placeholder `$issue` berkembang menjadi argumen pertama dan `$branch` menjadi argumen kedua. |
 | `${CLAUDE_SESSION_ID}` | ID sesi saat ini. Berguna untuk logging, membuat file khusus sesi, atau mengkorelasikan output skill dengan sesi.                                                                                                                                                                    |
+| `${CLAUDE_EFFORT}`     | Effort level saat ini: `low`, `medium`, `high`, `xhigh`, atau `max`. Gunakan ini untuk menyesuaikan instruksi skill dengan pengaturan effort aktif.                                                                                                                                  |
 | `${CLAUDE_SKILL_DIR}`  | Direktori yang berisi file `SKILL.md` skill. Untuk skills plugin, ini adalah subdirektori skill dalam plugin, bukan root plugin. Gunakan ini dalam perintah injeksi bash untuk mereferensikan script atau file yang dikemas dengan skill, terlepas dari direktori kerja saat ini.    |
 
 Argumen yang diindeks menggunakan quoting gaya shell, jadi bungkus nilai multi-kata dalam tanda kutip untuk meneruskannya sebagai argumen tunggal. Misalnya, `/my-skill "hello world" second` membuat `$0` berkembang menjadi `hello world` dan `$1` menjadi `second`. Placeholder `$ARGUMENTS` selalu berkembang menjadi string argumen lengkap seperti yang diketik.

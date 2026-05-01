@@ -154,28 +154,30 @@ Setiap span membawa [atribut standar](#standard-attributes) ditambah atribut `sp
 
 **`claude_code.llm_request`**
 
-| Atribut                  | Deskripsi                                                                             | Gated by |
-| ------------------------ | ------------------------------------------------------------------------------------- | -------- |
-| `model`                  | Pengidentifikasi model                                                                |          |
-| `gen_ai.system`          | Selalu `anthropic`. Konvensi semantik GenAI OpenTelemetry                             |          |
-| `gen_ai.request.model`   | Nilai yang sama dengan `model`. Konvensi semantik GenAI OpenTelemetry                 |          |
-| `query_source`           | Subsistem yang mengeluarkan permintaan, seperti `repl_main_thread` atau nama subagent |          |
-| `speed`                  | `fast` atau `normal`                                                                  |          |
-| `llm_request.context`    | `interaction`, `tool`, atau `standalone` tergantung pada span induk                   |          |
-| `duration_ms`            | Durasi wall-clock termasuk retry                                                      |          |
-| `ttft_ms`                | Waktu ke token pertama dalam milidetik                                                |          |
-| `input_tokens`           | Jumlah token input dari blok penggunaan API                                           |          |
-| `output_tokens`          | Jumlah token output                                                                   |          |
-| `cache_read_tokens`      | Token yang dibaca dari prompt cache                                                   |          |
-| `cache_creation_tokens`  | Token yang ditulis ke prompt cache                                                    |          |
-| `request_id`             | ID permintaan API Anthropic dari header respons `request-id`                          |          |
-| `gen_ai.response.id`     | Nilai yang sama dengan `request_id`. Konvensi semantik GenAI OpenTelemetry            |          |
-| `client_request_id`      | `x-client-request-id` yang dihasilkan klien dari upaya terakhir                       |          |
-| `attempt`                | Total upaya yang dilakukan untuk permintaan ini                                       |          |
-| `success`                | `true` atau `false`                                                                   |          |
-| `status_code`            | Kode status HTTP saat permintaan gagal                                                |          |
-| `error`                  | Pesan kesalahan saat permintaan gagal                                                 |          |
-| `response.has_tool_call` | `true` saat respons berisi blok tool-use                                              |          |
+| Atribut                          | Deskripsi                                                                                                               | Gated by |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | -------- |
+| `model`                          | Pengidentifikasi model                                                                                                  |          |
+| `gen_ai.system`                  | Selalu `anthropic`. Konvensi semantik GenAI OpenTelemetry                                                               |          |
+| `gen_ai.request.model`           | Nilai yang sama dengan `model`. Konvensi semantik GenAI OpenTelemetry                                                   |          |
+| `query_source`                   | Subsistem yang mengeluarkan permintaan, seperti `repl_main_thread` atau nama subagent                                   |          |
+| `speed`                          | `fast` atau `normal`                                                                                                    |          |
+| `llm_request.context`            | `interaction`, `tool`, atau `standalone` tergantung pada span induk                                                     |          |
+| `duration_ms`                    | Durasi wall-clock termasuk retry                                                                                        |          |
+| `ttft_ms`                        | Waktu ke token pertama dalam milidetik                                                                                  |          |
+| `input_tokens`                   | Jumlah token input dari blok penggunaan API                                                                             |          |
+| `output_tokens`                  | Jumlah token output                                                                                                     |          |
+| `cache_read_tokens`              | Token yang dibaca dari prompt cache                                                                                     |          |
+| `cache_creation_tokens`          | Token yang ditulis ke prompt cache                                                                                      |          |
+| `request_id`                     | ID permintaan API Anthropic dari header respons `request-id`                                                            |          |
+| `gen_ai.response.id`             | Nilai yang sama dengan `request_id`. Konvensi semantik GenAI OpenTelemetry                                              |          |
+| `client_request_id`              | `x-client-request-id` yang dihasilkan klien dari upaya terakhir                                                         |          |
+| `attempt`                        | Total upaya yang dilakukan untuk permintaan ini                                                                         |          |
+| `success`                        | `true` atau `false`                                                                                                     |          |
+| `status_code`                    | Kode status HTTP saat permintaan gagal                                                                                  |          |
+| `error`                          | Pesan kesalahan saat permintaan gagal                                                                                   |          |
+| `response.has_tool_call`         | `true` saat respons berisi blok tool-use                                                                                |          |
+| `stop_reason`                    | API response `stop_reason`, seperti `end_turn`, `tool_use`, `max_tokens`, `stop_sequence`, `pause_turn`, atau `refusal` |          |
+| `gen_ai.response.finish_reasons` | Nilai yang sama dengan `stop_reason`, dibungkus dalam array string. Konvensi semantik GenAI OpenTelemetry               |          |
 
 Setiap upaya retry juga dicatat sebagai acara span `gen_ai.request.attempt` dengan atribut `attempt` dan `client_request_id`.
 
@@ -226,7 +228,7 @@ Span ini dipancarkan hanya saat detailed beta tracing aktif, yang memerlukan `EN
 | `num_cancelled`          | Jumlah hook yang dibatalkan sebelum selesai       |                         |
 
 <Note>
-  Atribut tambahan yang mengandung konten seperti `new_context`, `system_prompt_preview`, `tool_input`, dan `response.model_output` dipancarkan hanya saat detailed beta tracing aktif. Mereka bukan bagian dari skema span yang stabil.
+  Atribut tambahan yang mengandung konten seperti `new_context`, `system_prompt_preview`, `user_system_prompt`, `tool_input`, dan `response.model_output` dipancarkan hanya saat detailed beta tracing aktif. Mereka bukan bagian dari skema span yang stabil. `user_system_prompt` juga memerlukan `OTEL_LOG_USER_PROMPTS=1`. Ini membawa hanya teks prompt sistem yang Anda berikan melalui opsi SDK `systemPrompt` atau flag `--system-prompt` dan `--append-system-prompt`, dipotong pada 60 KB, dan dipancarkan sekali per sesi daripada per permintaan.
 </Note>
 
 ### Header dinamis
@@ -571,7 +573,7 @@ Dicatat saat permintaan API ke Claude gagal.
 * `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
 * `model`: Model yang digunakan (misalnya, "claude-sonnet-4-6")
 * `error`: Pesan kesalahan
-* `status_code`: Kode status HTTP sebagai string, atau `"undefined"` untuk kesalahan non-HTTP
+* `status_code`: Kode status HTTP sebagai angka. Tidak ada untuk kesalahan non-HTTP seperti kegagalan koneksi.
 * `duration_ms`: Durasi permintaan dalam milidetik
 * `attempt`: Jumlah total upaya yang dilakukan, termasuk permintaan awal (`1` berarti tidak ada retry yang terjadi)
 * `request_id`: ID permintaan API Anthropic dari header `request-id` respons, seperti `"req_011..."`. Hadir hanya saat API mengembalikan satu.
@@ -724,7 +726,7 @@ Dicatat saat plugin selesai menginstal, dari perintah CLI `claude plugin install
 
 #### Acara skill diaktifkan
 
-Dicatat saat skill dipanggil.
+Dicatat saat skill dipanggil, baik Claude memanggilnya melalui alat Skill atau Anda menjalankannya sebagai perintah `/`.
 
 **Nama Acara**: `claude_code.skill_activated`
 
@@ -735,9 +737,25 @@ Dicatat saat skill dipanggil.
 * `event.timestamp`: Stempel waktu ISO 8601
 * `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
 * `skill.name`: Nama skill. Untuk skill yang ditentukan pengguna dan plugin pihak ketiga nilainya adalah placeholder `"custom_skill"` kecuali `OTEL_LOG_TOOL_DETAILS=1`
+* `invocation_trigger`: Bagaimana skill dipicu (`"user-slash"`, `"claude-proactive"`, atau `"nested-skill"`)
 * `skill.source`: Tempat skill dimuat dari (misalnya, `"bundled"`, `"userSettings"`, `"projectSettings"`, `"plugin"`)
 * `plugin.name` (saat `OTEL_LOG_TOOL_DETAILS=1` atau plugin dari marketplace resmi): Nama plugin pemilik saat skill disediakan oleh plugin
 * `marketplace.name` (saat `OTEL_LOG_TOOL_DETAILS=1` atau plugin dari marketplace resmi): Marketplace plugin pemilik diinstal dari, saat skill disediakan oleh plugin
+
+#### Acara mention @
+
+Dicatat saat Claude Code menyelesaikan mention `@` dalam prompt. Tidak setiap mention memancarkan acara: jalur early-exit seperti penolakan izin, file berukuran besar, lampiran referensi PDF, dan kegagalan listing direktori kembali tanpa logging.
+
+**Nama Acara**: `claude_code.at_mention`
+
+**Atribut**:
+
+* Semua [atribut standar](#standard-attributes)
+* `event.name`: `"at_mention"`
+* `event.timestamp`: Stempel waktu ISO 8601
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
+* `mention_type`: Jenis mention (`"file"`, `"directory"`, `"agent"`, `"mcp_resource"`)
+* `success`: Apakah mention berhasil diselesaikan (`"true"` atau `"false"`)
 
 #### Acara retry API habis
 
@@ -753,14 +771,14 @@ Dicatat sekali saat permintaan API gagal setelah lebih dari satu upaya. Dipancar
 * `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
 * `model`: Model yang digunakan
 * `error`: Pesan kesalahan terakhir
-* `status_code`: Kode status HTTP sebagai string
+* `status_code`: Kode status HTTP sebagai angka. Tidak ada untuk kesalahan non-HTTP.
 * `total_attempts`: Jumlah total upaya yang dilakukan
 * `total_retry_duration_ms`: Total waktu wall-clock di semua upaya
 * `speed`: `"fast"` atau `"normal"`
 
 #### Acara mulai eksekusi hook
 
-Dicatat saat satu atau lebih hook mulai dieksekusi untuk acara hook.
+Dicatat saat satu atau lebih hooks mulai dieksekusi untuk acara hook.
 
 **Nama Acara**: `claude_code.hook_execution_start`
 
@@ -773,13 +791,13 @@ Dicatat saat satu atau lebih hook mulai dieksekusi untuk acara hook.
 * `hook_event`: Jenis acara hook, seperti `"PreToolUse"` atau `"PostToolUse"`
 * `hook_name`: Nama hook lengkap termasuk matcher, seperti `"PreToolUse:Write"`
 * `num_hooks`: Jumlah perintah hook yang cocok
-* `managed_only`: `"true"` saat hanya hook kebijakan terkelola yang diizinkan
+* `managed_only`: `"true"` saat hanya hooks kebijakan terkelola yang diizinkan
 * `hook_source`: `"policySettings"` atau `"merged"`
 * `hook_definitions`: Konfigurasi hook yang diserialisasi JSON. Disertakan hanya saat detailed beta tracing dan `OTEL_LOG_TOOL_DETAILS=1` keduanya diaktifkan
 
 #### Acara eksekusi hook selesai
 
-Dicatat saat semua hook untuk acara hook selesai.
+Dicatat saat semua hooks untuk acara hook selesai.
 
 **Nama Acara**: `claude_code.hook_execution_complete`
 
@@ -796,8 +814,8 @@ Dicatat saat semua hook untuk acara hook selesai.
 * `num_blocking`: Jumlah yang mengembalikan keputusan blocking
 * `num_non_blocking_error`: Jumlah yang gagal tanpa blocking
 * `num_cancelled`: Jumlah dibatalkan sebelum selesai
-* `total_duration_ms`: Durasi wall-clock dari semua hook yang cocok
-* `managed_only`: `"true"` saat hanya hook kebijakan terkelola yang diizinkan
+* `total_duration_ms`: Durasi wall-clock dari semua hooks yang cocok
+* `managed_only`: `"true"` saat hanya hooks kebijakan terkelola yang diizinkan
 * `hook_source`: `"policySettings"` atau `"merged"`
 * `hook_definitions`: Konfigurasi hook yang diserialisasi JSON. Disertakan hanya saat detailed beta tracing dan `OTEL_LOG_TOOL_DETAILS=1` keduanya diaktifkan
 
@@ -918,7 +936,7 @@ Untuk panduan komprehensif tentang mengukur pengembalian investasi untuk Claude 
 
 ## Keamanan dan privasi
 
-* Telemetri adalah opt-in dan memerlukan konfigurasi eksplisit
+* Ekspor OpenTelemetry ke backend Anda adalah opt-in dan memerlukan konfigurasi eksplisit. Untuk telemetri operasional terpisah Anthropic dan cara menonaktifkannya, lihat [Penggunaan data](/id/data-usage#telemetry-services)
 * Konten file mentah dan cuplikan kode tidak disertakan dalam metrik atau acara. Trace spans adalah jalur data terpisah: lihat poin `OTEL_LOG_TOOL_CONTENT` di bawah
 * Saat diautentikasi melalui OAuth, `user.email` disertakan dalam atribut telemetri. Jika ini menjadi perhatian bagi organisasi Anda, bekerja dengan backend telemetri Anda untuk memfilter atau menyunting bidang ini
 * Konten prompt pengguna tidak dikumpulkan secara default. Hanya panjang prompt yang dicatat. Untuk menyertakan konten prompt, atur `OTEL_LOG_USER_PROMPTS=1`

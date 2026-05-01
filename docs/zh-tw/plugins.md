@@ -271,7 +271,7 @@ LSP（語言伺服器協議）plugins 為 Claude 提供即時程式碼智慧。�
 ]
 ```
 
-來自 `command` 的每個 stdout 行都會在工作階段期間作為通知傳遞給 Claude。如需完整的架構，包括 `when` 觸發器和變數替換，請參閱[監視器](/zh-TW/plugins-reference#monitors)。
+來自 `command` 的每個 stdout 行都會在工作階段期間作為通知傳遞給 Claude。如需完整的架構，包括 `when` 觸發器和變數替換，請參閱 [Monitors](/zh-TW/plugins-reference#monitors)。
 
 ### 使用您的 plugin 提供預設設定
 
@@ -321,18 +321,18 @@ claude --plugin-dir ./my-plugin
 
 1. **檢查結構**：確保您的目錄位於 plugin 根目錄，而不是在 `.claude-plugin/` 內
 2. **個別測試元件**：分別檢查每個 skill、agent 和 hook
-3. **使用驗證和偵錯工具**：如需 CLI 命令和故障排除技術，請參閱[偵錯和開發工具](/zh-TW/plugins-reference#debugging-and-development-tools)
+3. **使用驗證和偵錯工具**：如需 CLI 命令和故障排除技術，請參閱 [Debugging and development tools](/zh-TW/plugins-reference#debugging-and-development-tools)
 
 ### 共享您的 plugins
 
 當您的 plugin 準備好共享時：
 
 1. **新增文件**：包含 `README.md`，其中包含安裝和使用說明
-2. **選擇版本控制策略**：決定是否在 `plugin.json` 中設定明確的 `version` 或依賴 git commit SHA。請參閱[版本管理](/zh-TW/plugins-reference#version-management)
-3. **建立或使用市場**：透過 [plugin 市場](/zh-TW/plugin-marketplaces) 進行分發以進行安裝
+2. **選擇版本控制策略**：決定是否設定明確的 `version` 或依賴 git commit SHA。請參閱 [version management](/zh-TW/plugins-reference#version-management)
+3. **建立或使用市場**：透過 [plugin marketplaces](/zh-TW/plugin-marketplaces) 進行分發以進行安裝
 4. **與他人測試**：在更廣泛的分發之前讓團隊成員測試 plugin
 
-一旦您的 plugin 在市場中，其他人可以使用[探索和安裝 plugins](/zh-TW/discover-plugins) 中的說明進行安裝。
+一旦您的 plugin 在市場中，其他人可以使用 [Discover and install plugins](/zh-TW/discover-plugins) 中的說明進行安裝。若要將 plugin 保持在您的團隊內部，請在 [private repository](/zh-TW/plugin-marketplaces#private-repositories) 中託管市場。
 
 ### 將您的 plugin 提交到官方市場
 
@@ -341,10 +341,10 @@ claude --plugin-dir ./my-plugin
 * **Claude.ai**：[claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
 * **Console**：[platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
 
-一旦您的 plugin 被列出，您可以讓您自己的 CLI 提示 Claude Code 使用者安裝它。請參閱[從您的 CLI 推薦您的 plugin](/zh-TW/plugin-hints)。
+一旦您的 plugin 被列出，您可以讓您自己的 CLI 提示 Claude Code 使用者安裝它。請參閱 [Recommend your plugin from your CLI](/zh-TW/plugin-hints)。
 
 <Note>
-  如需完整的技術規格、偵錯技術和分發策略，請參閱 [Plugins 參考](/zh-TW/plugins-reference)。
+  如需完整的技術規格、偵錯技術和分發策略，請參閱 [Plugins reference](/zh-TW/plugins-reference)。
 </Note>
 
 ## 將現有配置轉換為 plugins

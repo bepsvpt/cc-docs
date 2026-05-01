@@ -768,7 +768,7 @@ Pour la coordination automatisée des sessions parallèles avec des tâches part
 
 ## Recevez une notification quand Claude a besoin de votre attention
 
-Lorsque vous lancez une tâche longue et que vous basculez vers une autre fenêtre, vous pouvez configurer des notifications de bureau afin de savoir quand Claude se termine ou a besoin de votre entrée. Cela utilise l'événement de hook `Notification` [](/fr/hooks-guide#get-notified-when-claude-needs-input), qui se déclenche chaque fois que Claude attend une permission, est inactif et prêt pour un nouveau prompt, ou complète l'authentification.
+Lorsque vous lancez une tâche longue et que vous basculez vers une autre fenêtre, vous pouvez configurer des notifications de bureau afin de savoir quand Claude se termine ou a besoin de votre entrée. Cela utilise l'événement de hook `Notification` [hook event](/fr/hooks-guide#get-notified-when-claude-needs-input), qui se déclenche chaque fois que Claude attend une permission, est inactif et prêt pour un nouveau prompt, ou complète l'authentification.
 
 <Steps>
   <Step title="Ajoutez le hook à vos paramètres">
@@ -842,12 +842,14 @@ Lorsque vous lancez une tâche longue et que vous basculez vers une autre fenêt
   <Step title="Affinez éventuellement le matcher">
     Par défaut, le hook se déclenche sur tous les types de notifications. Pour se déclencher uniquement pour des événements spécifiques, définissez le champ `matcher` sur l'une de ces valeurs :
 
-    | Matcher              | Se déclenche quand                                          |
-    | :------------------- | :---------------------------------------------------------- |
-    | `permission_prompt`  | Claude a besoin que vous approuviez une utilisation d'outil |
-    | `idle_prompt`        | Claude a terminé et attend votre prochain prompt            |
-    | `auth_success`       | L'authentification se termine                               |
-    | `elicitation_dialog` | Claude vous pose une question                               |
+    | Matcher                | Se déclenche quand                                          |
+    | :--------------------- | :---------------------------------------------------------- |
+    | `permission_prompt`    | Claude a besoin que vous approuviez une utilisation d'outil |
+    | `idle_prompt`          | Claude a terminé et attend votre prochain prompt            |
+    | `auth_success`         | L'authentification se termine                               |
+    | `elicitation_dialog`   | Un serveur MCP ouvre un formulaire d'élicitation            |
+    | `elicitation_complete` | Un formulaire d'élicitation MCP est soumis ou fermé         |
+    | `elicitation_response` | Une réponse d'élicitation MCP est renvoyée au serveur       |
   </Step>
 
   <Step title="Vérifiez le hook">

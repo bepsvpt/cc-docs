@@ -117,6 +117,8 @@ Claude Code 需要存取以下 URL。請在您的代理設定和防火牆規則�
 
 如果您透過 npm 安裝 Claude Code 或管理自己的二進位分發，終端使用者可能不需要存取 `downloads.claude.ai` 或 `storage.googleapis.com`。
 
+Claude Code 預設也會傳送選用的操作遙測，您可以使用環境變數停用此功能。請參閱[遙測服務](/zh-TW/data-usage#telemetry-services)以了解如何在完成允許清單之前停用它。
+
 使用 [Amazon Bedrock](/zh-TW/amazon-bedrock)、[Google Vertex AI](/zh-TW/google-vertex-ai) 或 [Microsoft Foundry](/zh-TW/microsoft-foundry) 時，模型流量和驗證會傳送到您的提供者，而不是 `api.anthropic.com`、`claude.ai` 或 `platform.claude.com`。WebFetch 工具仍會呼叫 `api.anthropic.com` 進行其[網域安全檢查](/zh-TW/data-usage#webfetch-domain-safety-check)，除非您在[設定](/zh-TW/settings)中設定 `skipWebFetchPreflight: true`。
 
 [Claude Code on the web](/zh-TW/claude-code-on-the-web) 和 [Code Review](/zh-TW/code-review) 從 Anthropic 管理的基礎設施連線到您的儲存庫。如果您的 GitHub Enterprise Cloud 組織按 IP 位址限制存取，請啟用[已安裝 GitHub Apps 的 IP 允許清單繼承](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps)。Claude GitHub App 會註冊其 IP 範圍，因此啟用此設定可允許存取而無需手動設定。若要[手動將範圍新增到允許清單](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address)，或設定其他防火牆，請參閱 [Anthropic API IP 位址](https://platform.claude.com/docs/en/api/ip-addresses)。

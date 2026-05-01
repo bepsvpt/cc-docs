@@ -35,8 +35,8 @@ Penggunaan Claude Code tunduk pada [Kebijakan Penggunaan Anthropic](https://www.
 
 Claude Code melakukan autentikasi dengan server Anthropic menggunakan token OAuth atau kunci API. Metode autentikasi ini melayani tujuan yang berbeda:
 
-* **Autentikasi OAuth** (digunakan dengan paket Free, Pro, dan Max) dimaksudkan secara eksklusif untuk Claude Code dan Claude.ai. Menggunakan token OAuth yang diperoleh melalui akun Claude Free, Pro, atau Max di produk, alat, atau layanan lain apa pun — termasuk [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview) — tidak diizinkan dan merupakan pelanggaran [Syarat Layanan Konsumen](https://www.anthropic.com/legal/consumer-terms).
-* **Pengembang** yang membangun produk atau layanan yang berinteraksi dengan kemampuan Claude, termasuk mereka yang menggunakan [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview), harus menggunakan autentikasi kunci API melalui [Claude Console](https://platform.claude.com/) atau penyedia cloud yang didukung. Anthropic tidak mengizinkan pengembang pihak ketiga untuk menawarkan login Claude.ai atau untuk merutekan permintaan melalui kredensial paket Free, Pro, atau Max atas nama pengguna mereka.
+* **Autentikasi OAuth** dimaksudkan secara eksklusif untuk pembeli paket langganan Claude Free, Pro, Max, Team, dan Enterprise dan dirancang untuk mendukung penggunaan biasa Claude Code dan aplikasi asli Anthropic lainnya. Informasi lebih lanjut tentang bagaimana pengguna dapat melakukan autentikasi dengan token OAuth dapat ditemukan di [Masuk ke akun Claude Anda](https://support.claude.com/en/articles/13189465-logging-in-to-your-claude-account).
+* **Pengembang** yang membangun produk atau layanan yang berinteraksi dengan kemampuan Claude, termasuk mereka yang menggunakan [Agent SDK](/id/agent-sdk/overview), harus menggunakan autentikasi kunci API melalui [Claude Console](https://platform.claude.com/) atau penyedia cloud yang didukung. Anthropic tidak mengizinkan pengembang pihak ketiga untuk menawarkan login Claude.ai atau untuk merutekan permintaan melalui kredensial paket Free, Pro, atau Max atas nama pengguna mereka.
 
 Anthropic berhak mengambil langkah untuk memberlakukan pembatasan ini dan dapat melakukannya tanpa pemberitahuan sebelumnya.
 
@@ -50,7 +50,7 @@ Anda dapat menemukan informasi lebih lanjut di [Pusat Kepercayaan Anthropic](htt
 
 ### Pelaporan kerentanan keamanan
 
-Anthropic mengelola program keamanan kami melalui HackerOne. [Gunakan formulir ini untuk melaporkan kerentanan](https://hackerone.com/anthropic-vdp/reports/new?type=team\&report_type=vulnerability).
+Anthropic mengelola program keamanan kami melalui HackerOne. [Gunakan formulir ini untuk melaporkan kerentanan](https://hackerone.com/4f1f16ba-10d3-4d09-9ecc-c721aad90f24/embedded_submissions/new).
 
 ***
 

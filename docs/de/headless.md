@@ -6,7 +6,7 @@
 
 > Verwenden Sie das Agent SDK, um Claude Code programmgesteuert über die CLI, Python oder TypeScript auszuführen.
 
-Das [Agent SDK](https://platform.claude.com/docs/de/agent-sdk/overview) bietet Ihnen die gleichen Tools, die Agent-Schleife und das Kontextmanagement, die Claude Code antreiben. Es ist als CLI für Skripte und CI/CD verfügbar oder als [Python](https://platform.claude.com/docs/de/agent-sdk/python)- und [TypeScript](https://platform.claude.com/docs/de/agent-sdk/typescript)-Pakete für vollständige programmgesteuerte Kontrolle.
+Das [Agent SDK](/de/agent-sdk/overview) bietet Ihnen die gleichen Tools, die Agent-Schleife und das Kontextmanagement, die Claude Code antreiben. Es ist als CLI für Skripte und CI/CD verfügbar oder als [Python](/de/agent-sdk/python)- und [TypeScript](/de/agent-sdk/typescript)-Pakete für vollständige programmgesteuerte Kontrolle.
 
 <Note>
   Die CLI hieß früher „Headless-Modus". Das Flag `-p` und alle CLI-Optionen funktionieren auf die gleiche Weise.
@@ -18,7 +18,7 @@ Um Claude Code programmgesteuert über die CLI auszuführen, übergeben Sie `-p`
 claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"
 ```
 
-Diese Seite behandelt die Verwendung des Agent SDK über die CLI (`claude -p`). Für die Python- und TypeScript-SDK-Pakete mit strukturierten Ausgaben, Tool-Genehmigungsrückrufen und nativen Nachrichtenobjekten siehe die [vollständige Agent SDK-Dokumentation](https://platform.claude.com/docs/de/agent-sdk/overview).
+Diese Seite behandelt die Verwendung des Agent SDK über die CLI (`claude -p`). Für die Python- und TypeScript-SDK-Pakete mit strukturierten Ausgaben, Tool-Genehmigungsrückrufen und nativen Nachrichtenobjekten siehe die [vollständige Agent SDK-Dokumentation](/de/agent-sdk/overview).
 
 ## Grundlegende Verwendung
 
@@ -34,9 +34,37 @@ Dieses Beispiel stellt Claude eine Frage zu Ihrer Codebasis und gibt die Antwort
 claude -p "What does the auth module do?"
 ```
 
+### Schneller starten mit Bare-Modus
+
+Fügen Sie `--bare` hinzu, um die Startzeit zu verkürzen, indem Sie die automatische Erkennung von hooks, skills, plugins, MCP-Servern, automatischem Speicher und CLAUDE.md überspringen. Ohne diese Option lädt `claude -p` den gleichen [Kontext](/de/how-claude-code-works#the-context-window), den eine interaktive Sitzung hätte, einschließlich alles, was im Arbeitsverzeichnis oder in `~/.claude` konfiguriert ist.
+
+Der Bare-Modus ist nützlich für CI und Skripte, bei denen Sie auf jedem Computer das gleiche Ergebnis benötigen. Ein hook in der `~/.claude` eines Teamkollegen oder ein MCP-Server in der `.mcp.json` des Projekts werden nicht ausgeführt, da der Bare-Modus diese nie liest. Nur Flags, die Sie explizit übergeben, haben Auswirkungen.
+
+Dieses Beispiel führt eine einmalige Zusammenfassungsaufgabe im Bare-Modus aus und genehmigt das Read-Tool vorab, damit der Aufruf ohne Berechtigungsaufforderung abgeschlossen wird:
+
+```bash theme={null}
+claude --bare -p "Summarize this file" --allowedTools "Read"
+```
+
+Im Bare-Modus hat Claude Zugriff auf die Bash-, Dateilesungs- und Dateibearbeitungstools. Übergeben Sie jeden Kontext, den Sie benötigen, mit einem Flag:
+
+| Zum Laden                  | Verwenden Sie                                           |
+| -------------------------- | ------------------------------------------------------- |
+| Systemanfrage-Ergänzungen  | `--append-system-prompt`, `--append-system-prompt-file` |
+| Einstellungen              | `--settings <file-or-json>`                             |
+| MCP-Server                 | `--mcp-config <file-or-json>`                           |
+| Benutzerdefinierte Agenten | `--agents <json>`                                       |
+| Ein Plugin-Verzeichnis     | `--plugin-dir <path>`                                   |
+
+Der Bare-Modus überspringt OAuth und Keychain-Lesevorgänge. Die Anthropic-Authentifizierung muss von `ANTHROPIC_API_KEY` oder einem `apiKeyHelper` in der an `--settings` übergebenen JSON stammen. Bedrock, Vertex und Foundry verwenden ihre üblichen Anmeldedaten des Anbieters.
+
+<Note>
+  `--bare` ist der empfohlene Modus für skriptgesteuerte und SDK-Aufrufe und wird in einer zukünftigen Version zum Standard für `-p`.
+</Note>
+
 ## Beispiele
 
-Diese Beispiele zeigen häufige CLI-Muster.
+Diese Beispiele zeigen häufige CLI-Muster. Für CI und andere skriptgesteuerte Aufrufe fügen Sie [`--bare`](#start-faster-with-bare-mode) hinzu, damit sie nicht abhängig von lokalen Konfigurationen sind.
 
 ### Strukturierte Ausgabe abrufen
 
@@ -92,7 +120,40 @@ claude -p "Write a poem" --output-format stream-json --verbose --include-partial
   jq -rj 'select(.type == "stream_event" and .event.delta.type? == "text_delta") | .event.delta.text'
 ```
 
-Für programmgesteuertes Streaming mit Rückrufen und Nachrichtenobjekten siehe [Antworten in Echtzeit streamen](https://platform.claude.com/docs/de/agent-sdk/streaming-output) in der Agent SDK-Dokumentation.
+Wenn eine API-Anfrage mit einem wiederholbaren Fehler fehlschlägt, gibt Claude Code ein `system/api_retry`-Ereignis vor dem erneuten Versuch aus. Sie können dies verwenden, um Wiederholungsfortschritt anzuzeigen oder benutzerdefinierte Backoff-Logik zu implementieren.
+
+| Feld             | Typ                | Beschreibung                                                                                                                                                            |
+| ---------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`           | `"system"`         | Nachrichtentyp                                                                                                                                                          |
+| `subtype`        | `"api_retry"`      | identifiziert dies als Wiederholungsereignis                                                                                                                            |
+| `attempt`        | Ganzzahl           | aktuelle Versuchsnummer, beginnend bei 1                                                                                                                                |
+| `max_retries`    | Ganzzahl           | insgesamt zulässige Wiederholungen                                                                                                                                      |
+| `retry_delay_ms` | Ganzzahl           | Millisekunden bis zum nächsten Versuch                                                                                                                                  |
+| `error_status`   | Ganzzahl oder null | HTTP-Statuscode oder `null` für Verbindungsfehler ohne HTTP-Antwort                                                                                                     |
+| `error`          | Zeichenkette       | Fehlerkategorie: `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `rate_limit`, `invalid_request`, `server_error`, `max_output_tokens` oder `unknown` |
+| `uuid`           | Zeichenkette       | eindeutige Ereigniskennung                                                                                                                                              |
+| `session_id`     | Zeichenkette       | Sitzung, zu der das Ereignis gehört                                                                                                                                     |
+
+Das `system/init`-Ereignis meldet Sitzungsmetadaten einschließlich des Modells, Tools, MCP-Server und geladener Plugins. Es ist das erste Ereignis im Stream, es sei denn, [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/de/env-vars) ist gesetzt. In diesem Fall gehen `plugin_install`-Ereignisse voraus. Verwenden Sie die Plugin-Felder, um CI fehlschlagen zu lassen, wenn ein Plugin nicht geladen wurde:
+
+| Feld            | Typ   | Beschreibung                                                                                                                                                                                                                          |
+| --------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plugins`       | Array | Plugins, die erfolgreich geladen wurden, jeweils mit `name` und `path`                                                                                                                                                                |
+| `plugin_errors` | Array | Plugin-Ladefehler wie eine nicht erfüllte Abhängigkeitsversion, jeweils mit `plugin`, `type` und `message`. Betroffene Plugins werden herabgestuft und fehlen in `plugins`. Der Schlüssel wird weggelassen, wenn es keine Fehler gibt |
+
+Wenn [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/de/env-vars) gesetzt ist, gibt Claude Code `system/plugin_install`-Ereignisse aus, während Marketplace-Plugins vor dem ersten Zug installiert werden. Verwenden Sie diese, um Installationsfortschritt in Ihrer eigenen Benutzeroberfläche anzuzeigen.
+
+| Feld         | Typ                                                       | Beschreibung                                                                                                       |
+| ------------ | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `type`       | `"system"`                                                | Nachrichtentyp                                                                                                     |
+| `subtype`    | `"plugin_install"`                                        | identifiziert dies als Plugin-Installationsereignis                                                                |
+| `status`     | `"started"`, `"installed"`, `"failed"` oder `"completed"` | `started` und `completed` rahmen die Gesamtinstallation ein; `installed` und `failed` melden einzelne Marketplaces |
+| `name`       | Zeichenkette, optional                                    | Marketplace-Name, vorhanden bei `installed` und `failed`                                                           |
+| `error`      | Zeichenkette, optional                                    | Fehlermeldung, vorhanden bei `failed`                                                                              |
+| `uuid`       | Zeichenkette                                              | eindeutige Ereigniskennung                                                                                         |
+| `session_id` | Zeichenkette                                              | Sitzung, zu der das Ereignis gehört                                                                                |
+
+Für programmgesteuertes Streaming mit Rückrufen und Nachrichtenobjekten siehe [Antworten in Echtzeit streamen](/de/agent-sdk/streaming-output) in der Agent SDK-Dokumentation.
 
 ### Tools automatisch genehmigen
 
@@ -101,6 +162,12 @@ Verwenden Sie `--allowedTools`, um Claude die Verwendung bestimmter Tools ohne A
 ```bash theme={null}
 claude -p "Run the test suite and fix any failures" \
   --allowedTools "Bash,Read,Edit"
+```
+
+Um einen Baseline für die gesamte Sitzung festzulegen, anstatt einzelne Tools aufzulisten, übergeben Sie einen [Berechtigungsmodus](/de/permission-modes). `dontAsk` verweigert alles, das nicht in Ihren `permissions.allow`-Regeln oder dem [schreibgeschützten Befehlssatz](/de/permissions#read-only-commands) enthalten ist, was für gesperrte CI-Läufe nützlich ist. `acceptEdits` ermöglicht Claude, Dateien ohne Aufforderung zu schreiben, und genehmigt auch automatisch häufige Dateisystembefehle wie `mkdir`, `touch`, `mv` und `cp`. Andere Shell-Befehle und Netzwerkanfragen benötigen immer noch einen `--allowedTools`-Eintrag oder eine `permissions.allow`-Regel, andernfalls wird der Lauf abgebrochen, wenn einer versucht wird:
+
+```bash theme={null}
+claude -p "Apply the lint fixes" --permission-mode acceptEdits
 ```
 
 ### Einen Commit erstellen
@@ -152,7 +219,7 @@ claude -p "Continue that review" --resume "$session_id"
 
 ## Nächste Schritte
 
-* [Agent SDK Schnellstart](https://platform.claude.com/docs/de/agent-sdk/quickstart): Erstellen Sie Ihren ersten Agent mit Python oder TypeScript
+* [Agent SDK Schnellstart](/de/agent-sdk/quickstart): Erstellen Sie Ihren ersten Agent mit Python oder TypeScript
 * [CLI-Referenz](/de/cli-reference): alle CLI-Flags und Optionen
 * [GitHub Actions](/de/github-actions): Verwenden Sie das Agent SDK in GitHub-Workflows
 * [GitLab CI/CD](/de/gitlab-ci-cd): Verwenden Sie das Agent SDK in GitLab-Pipelines

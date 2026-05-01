@@ -23,9 +23,9 @@ Plugin Claude Code bekerja dengan sebagian besar JetBrains IDEs, termasuk:
 
 * **Peluncuran cepat**: Gunakan `Cmd+Esc` (Mac) atau `Ctrl+Esc` (Windows/Linux) untuk membuka Claude Code langsung dari editor Anda, atau klik tombol Claude Code di UI
 * **Tampilan diff**: Perubahan kode dapat ditampilkan langsung di penampil diff IDE alih-alih terminal
-* **Konteks seleksi**: Seleksi/tab saat ini di IDE secara otomatis dibagikan dengan Claude Code
-* **Pintasan referensi file**: Gunakan `Cmd+Option+K` (Mac) atau `Alt+Ctrl+K` (Linux/Windows) untuk menyisipkan referensi file (misalnya, @File#L1-99)
-* **Berbagi diagnostik**: Kesalahan diagnostik (lint, sintaks, dll.) dari IDE secara otomatis dibagikan dengan Claude saat Anda bekerja
+* **Konteks seleksi**: Seleksi atau tab saat ini di IDE secara otomatis dibagikan dengan Claude Code
+* **Pintasan referensi file**: Gunakan `Cmd+Option+K` (Mac) atau `Alt+Ctrl+K` (Linux/Windows) untuk menyisipkan referensi file seperti `@src/auth.ts#L1-99`
+* **Berbagi diagnostik**: Kesalahan diagnostik dari IDE, seperti lint dan kesalahan sintaks, secara otomatis dibagikan dengan Claude saat Anda bekerja
 
 ## Instalasi
 
@@ -33,7 +33,7 @@ Plugin Claude Code bekerja dengan sebagian besar JetBrains IDEs, termasuk:
 
 Temukan dan instal [plugin Claude Code](https://plugins.jetbrains.com/plugin/27310-claude-code-beta-) dari marketplace JetBrains dan mulai ulang IDE Anda.
 
-Jika Anda belum menginstal Claude Code, lihat [panduan quickstart kami](/id/quickstart) untuk instruksi instalasi.
+Jika Anda belum menginstal Claude Code, lihat [panduan quickstart](/id/quickstart) untuk instruksi instalasi.
 
 <Note>
   Setelah menginstal plugin, Anda mungkin perlu memulai ulang IDE Anda sepenuhnya agar dapat diterapkan.
@@ -67,7 +67,7 @@ Konfigurasikan integrasi IDE melalui pengaturan Claude Code:
 
 1. Jalankan `claude`
 2. Masukkan perintah `/config`
-3. Atur alat diff ke `auto` untuk deteksi IDE otomatis
+3. Atur alat diff ke `auto` untuk menampilkan diff di IDE, atau `terminal` untuk menyimpannya di terminal
 
 ### Pengaturan Plugin
 
@@ -75,10 +75,10 @@ Konfigurasikan plugin Claude Code dengan membuka **Settings → Tools → Claude
 
 #### Pengaturan Umum
 
-* **Perintah Claude**: Tentukan perintah khusus untuk menjalankan Claude (misalnya, `claude`, `/usr/local/bin/claude`, atau `npx @anthropic/claude`)
+* **Perintah Claude**: Tentukan perintah khusus untuk menjalankan Claude, misalnya `claude`, `/usr/local/bin/claude`, atau `npx @anthropic-ai/claude-code`
 * **Tekan notifikasi untuk perintah Claude tidak ditemukan**: Lewati notifikasi tentang tidak menemukan perintah Claude
-* **Aktifkan penggunaan Option+Enter untuk prompt multi-baris** (hanya macOS): Ketika diaktifkan, Option+Enter menyisipkan baris baru dalam prompt Claude Code. Nonaktifkan jika mengalami masalah dengan tombol Option yang ditangkap secara tidak terduga (memerlukan restart terminal)
-* **Aktifkan pembaruan otomatis**: Secara otomatis periksa dan instal pembaruan plugin (diterapkan saat restart)
+* **Aktifkan penggunaan Option+Enter untuk prompt multi-baris**: Hanya di macOS. Ketika diaktifkan, Option+Enter menyisipkan baris baru dalam prompt Claude Code. Nonaktifkan jika tombol Option ditangkap secara tidak terduga. Memerlukan restart terminal.
+* **Aktifkan pembaruan otomatis**: Secara otomatis periksa dan instal pembaruan plugin, diterapkan saat restart
 
 <Tip>
   Untuk pengguna WSL: Atur `wsl -d Ubuntu -- bash -lic "claude"` sebagai perintah Claude Anda (ganti `Ubuntu` dengan nama distribusi WSL Anda)
@@ -108,37 +108,74 @@ Plugin harus diinstal di host jarak jauh, bukan di mesin klien lokal Anda.
 
 ### Konfigurasi WSL
 
-<Warning>
-  Pengguna WSL mungkin memerlukan konfigurasi tambahan agar deteksi IDE berfungsi dengan baik. Lihat [panduan troubleshooting WSL kami](/id/troubleshooting#jetbrains-ide-not-detected-on-wsl2) untuk instruksi setup terperinci.
-</Warning>
+Jika Anda menggunakan Claude Code di WSL2 dengan JetBrains IDE dan melihat "No available IDEs detected", penyebabnya biasanya adalah jaringan NAT WSL2 atau Windows Firewall yang memblokir koneksi antara WSL2 dan IDE yang berjalan di host Windows. WSL1 menggunakan jaringan host secara langsung dan tidak terpengaruh.
 
-Konfigurasi WSL mungkin memerlukan:
+#### Izinkan lalu lintas WSL2 melalui Windows Firewall
 
-* Konfigurasi terminal yang tepat
-* Penyesuaian mode jaringan
-* Pembaruan pengaturan firewall
+Ini adalah perbaikan yang direkomendasikan karena mempertahankan mode jaringan WSL2 yang ada.
+
+<Steps>
+  <Step title="Temukan alamat IP WSL2 Anda">
+    Dari dalam shell WSL Anda, jalankan:
+
+    ```bash theme={null}
+    hostname -I
+    ```
+
+    Catat subnet, misalnya `172.21.123.45` berada di `172.21.0.0/16`.
+  </Step>
+
+  <Step title="Buat aturan firewall">
+    Buka PowerShell sebagai Administrator dan jalankan yang berikut, sesuaikan rentang IP untuk mencocokkan subnet Anda:
+
+    ```powershell theme={null}
+    New-NetFirewallRule -DisplayName "Allow WSL2 Internal Traffic" -Direction Inbound -Protocol TCP -Action Allow -RemoteAddress 172.21.0.0/16 -LocalAddress 172.21.0.0/16
+    ```
+  </Step>
+
+  <Step title="Mulai ulang IDE dan Claude Code Anda">
+    Tutup dan buka kembali keduanya agar aturan baru berlaku.
+  </Step>
+</Steps>
+
+#### Alihkan WSL2 ke jaringan mirrored
+
+Jaringan mirrored memerlukan Windows 11 22H2 atau lebih baru. Jika Anda menggunakan Windows 10, gunakan aturan firewall di atas.
+
+Tambahkan ini ke `.wslconfig` di direktori pengguna Windows Anda:
+
+```ini theme={null}
+[wsl2]
+networkingMode=mirrored
+```
+
+Kemudian mulai ulang WSL dengan `wsl --shutdown` dari PowerShell.
 
 ## Troubleshooting
 
-### Plugin Tidak Berfungsi
+### Plugin tidak berfungsi
+
+Jika plugin diinstal tetapi fitur Claude Code tidak muncul di IDE Anda:
 
 * Pastikan Anda menjalankan Claude Code dari direktori root proyek
 * Periksa bahwa plugin JetBrains diaktifkan dalam pengaturan IDE
 * Mulai ulang IDE sepenuhnya (Anda mungkin perlu melakukan ini beberapa kali)
 * Untuk Remote Development, pastikan plugin diinstal di host jarak jauh
 
-### IDE Tidak Terdeteksi
+### IDE tidak terdeteksi
+
+Jika menjalankan `claude` menunjukkan "No available IDEs detected":
 
 * Verifikasi plugin diinstal dan diaktifkan
 * Mulai ulang IDE sepenuhnya
 * Periksa bahwa Anda menjalankan Claude Code dari terminal terintegrasi
-* Untuk pengguna WSL, lihat [panduan troubleshooting WSL](/id/troubleshooting#jetbrains-ide-not-detected-on-wsl2)
+* Untuk pengguna WSL, lihat [konfigurasi WSL](#wsl-configuration) di atas
 
-### Perintah Tidak Ditemukan
+### Perintah tidak ditemukan
 
 Jika mengklik ikon Claude menunjukkan "command not found":
 
-1. Verifikasi Claude Code diinstal: `npm list -g @anthropic-ai/claude-code`
+1. Verifikasi Claude Code diinstal dengan menjalankan `claude --version` di terminal
 2. Konfigurasikan jalur perintah Claude dalam pengaturan plugin
 3. Untuk pengguna WSL, gunakan format perintah WSL yang disebutkan di bagian konfigurasi
 
@@ -152,4 +189,4 @@ Saat berjalan di JetBrains IDEs, pertimbangkan:
 * Berhati-hati ekstra untuk memastikan Claude hanya digunakan dengan prompt terpercaya
 * Menyadari file mana yang Claude Code memiliki akses untuk memodifikasi
 
-Untuk bantuan tambahan, lihat [panduan troubleshooting kami](/id/troubleshooting).
+Untuk masalah instalasi atau login Claude Code di luar IDE, lihat [Troubleshoot installation and login](/id/troubleshoot-install).

@@ -28,7 +28,7 @@
 | `Ctrl+X Ctrl+K`                                   | Kill all background agents. Press twice within 3 seconds to confirm | Background agent control                                                                                                                                                                                                                                                                               |
 | `Ctrl+D`                                          | Exit Claude Code session                                            | EOF signal                                                                                                                                                                                                                                                                                             |
 | `Ctrl+G` or `Ctrl+X Ctrl+E`                       | Open in default text editor                                         | Edit your prompt or custom response in your default text editor. `Ctrl+X Ctrl+E` is the readline-native binding. Turn on Show last response in external editor in `/config` to prepend Claude's previous reply as `#`-commented context above your prompt; the comment block is stripped when you save |
-| `Ctrl+L`                                          | Clear prompt input and redraw screen                                | Clears typed text and forces a full terminal redraw. Conversation history is kept. Use this to recover if the display becomes garbled or partially blank                                                                                                                                               |
+| `Ctrl+L`                                          | Redraw screen                                                       | Forces a full terminal redraw. Input and conversation history are kept. Use this to recover if the display becomes garbled or partially blank                                                                                                                                                          |
 | `Ctrl+O`                                          | Toggle transcript viewer                                            | Shows detailed tool usage and execution. Also expands MCP calls, which collapse to a single line like "Called slack 3 times" by default                                                                                                                                                                |
 | `Ctrl+R`                                          | Reverse search command history                                      | Search through previous commands interactively                                                                                                                                                                                                                                                         |
 | `Ctrl+V` or `Cmd+V` (iTerm2) or `Alt+V` (Windows) | Paste image from clipboard                                          | Inserts an `[Image #N]` chip at the cursor so you can reference it positionally in your prompt                                                                                                                                                                                                         |
@@ -81,7 +81,7 @@
 | Shortcut     | Description       | Notes                                                         |
 | :----------- | :---------------- | :------------------------------------------------------------ |
 | `/` at start | Command or skill  | See [commands](#commands) and [skills](/en/skills)            |
-| `!` at start | Bash mode         | Run commands directly and add execution output to the session |
+| `!` at start | Shell mode        | Run commands directly and add execution output to the session |
 | `@`          | File path mention | Trigger file path autocomplete                                |
 
 ### Transcript viewer
@@ -220,10 +220,11 @@ Press `Ctrl+R` to interactively search through your command history:
 1. **Start search**: press `Ctrl+R` to activate reverse history search
 2. **Type query**: enter text to search for in previous commands. The search term is highlighted in matching results
 3. **Navigate matches**: press `Ctrl+R` again to cycle through older matches
-4. **Accept match**:
+4. **Change scope**: press `Ctrl+S` to cycle between this session, this project, and all projects
+5. **Accept match**:
    * Press `Tab` or `Esc` to accept the current match and continue editing
    * Press `Enter` to accept and execute the command immediately
-5. **Cancel search**:
+6. **Cancel search**:
    * Press `Ctrl+C` to cancel and restore your original input
    * Press `Backspace` on empty search to cancel
 
@@ -259,9 +260,9 @@ To disable all background task functionality, set the `CLAUDE_CODE_DISABLE_BACKG
 * Development servers
 * Long-running processes (docker, terraform)
 
-### Bash mode with `!` prefix
+### Shell mode with `!` prefix
 
-Run bash commands directly without going through Claude by prefixing your input with `!`:
+Run shell commands directly without going through Claude by prefixing your input with `!`:
 
 ```bash theme={null}
 ! npm test
@@ -269,7 +270,7 @@ Run bash commands directly without going through Claude by prefixing your input 
 ! ls -la
 ```
 
-Bash mode:
+Shell mode:
 
 * Adds the command and its output to the conversation context
 * Shows real-time progress and output
@@ -277,7 +278,7 @@ Bash mode:
 * Does not require Claude to interpret or approve the command
 * Supports history-based autocomplete: type a partial command and press **Tab** to complete from previous `!` commands in the current project
 * Exit with `Escape`, `Backspace`, or `Ctrl+U` on an empty prompt
-* Pasting text that starts with `!` into an empty prompt enters bash mode automatically, matching typed `!` behavior
+* Pasting text that starts with `!` into an empty prompt enters shell mode automatically, matching typed `!` behavior
 
 This is useful for quick shell operations while maintaining conversation context.
 

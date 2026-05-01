@@ -417,7 +417,8 @@ export ENABLE_PROMPT_CACHING_1H=1
       "Action": [
         "bedrock:InvokeModel",
         "bedrock:InvokeModelWithResponseStream",
-        "bedrock:ListInferenceProfiles"
+        "bedrock:ListInferenceProfiles",
+        "bedrock:GetInferenceProfile"
       ],
       "Resource": [
         "arn:aws:bedrock:*:*:inference-profile/*",
@@ -444,6 +445,10 @@ export ENABLE_PROMPT_CACHING_1H=1
 ```
 
 Для более ограничительных разрешений вы можете ограничить Resource конкретными ARN профилей вывода.
+
+`bedrock:GetInferenceProfile` позволяет Claude Code разрешить [ARN профиля вывода приложения](#map-each-model-version-to-an-inference-profile) в его базовую модель фундамента, которая используется для выбора правильной формы запроса для этой модели.
+
+Если токену не хватает этого разрешения, Claude Code автоматически восстанавливается, повторив попытку один раз с альтернативной формой, поэтому запросы все еще успешны, но каждая новая модель добавляет дополнительный обход туда и обратно. Предоставление разрешения избегает повтора. Это применяется чаще всего к развертываниям `AWS_BEARER_TOKEN_BEDROCK`, где политика токена обычно уже, чем полная роль IAM.
 
 Для получения подробной информации см. [документацию Bedrock IAM](https://docs.aws.amazon.com/bedrock/latest/userguide/security-iam.html).
 

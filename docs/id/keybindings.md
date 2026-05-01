@@ -99,21 +99,22 @@ Tindakan untuk menavigasi riwayat perintah:
 
 Tindakan yang tersedia dalam konteks `Chat`:
 
-| Tindakan              | Default                   | Deskripsi                                             |
-| :-------------------- | :------------------------ | :---------------------------------------------------- |
-| `chat:cancel`         | Escape                    | Batalkan input saat ini                               |
-| `chat:clearInput`     | Ctrl+L                    | Hapus input prompt dan paksa gambar ulang layar penuh |
-| `chat:killAgents`     | Ctrl+X Ctrl+K             | Matikan semua agen latar belakang                     |
-| `chat:cycleMode`      | Shift+Tab\*               | Mode izin siklus                                      |
-| `chat:modelPicker`    | Cmd+P / Meta+P            | Buka pemilih model                                    |
-| `chat:fastMode`       | Meta+O                    | Alihkan mode cepat                                    |
-| `chat:thinkingToggle` | Cmd+T / Meta+T            | Alihkan pemikiran yang diperluas                      |
-| `chat:submit`         | Enter                     | Kirim pesan                                           |
-| `chat:newline`        | Ctrl+J                    | Sisipkan baris baru tanpa mengirim                    |
-| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | Batalkan tindakan terakhir                            |
-| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Buka di editor eksternal                              |
-| `chat:stash`          | Ctrl+S                    | Simpan prompt saat ini                                |
-| `chat:imagePaste`     | Ctrl+V (Alt+V di Windows) | Tempel gambar                                         |
+| Tindakan              | Default                   | Deskripsi                                                                                                                                                                            |
+| :-------------------- | :------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `chat:cancel`         | Escape                    | Batalkan input saat ini                                                                                                                                                              |
+| `chat:clearInput`     | Ctrl+L                    | Paksa gambar ulang layar penuh, mempertahankan input. Dalam [rendering fullscreen](/id/fullscreen#clear-the-conversation), tekan dua kali dalam dua detik untuk menjalankan `/clear` |
+| `chat:clearScreen`    | Cmd+K                     | Dalam [rendering fullscreen](/id/fullscreen#clear-the-conversation), tekan dua kali dalam dua detik untuk menjalankan `/clear`                                                       |
+| `chat:killAgents`     | Ctrl+X Ctrl+K             | Matikan semua agen latar belakang                                                                                                                                                    |
+| `chat:cycleMode`      | Shift+Tab\*               | Mode izin siklus                                                                                                                                                                     |
+| `chat:modelPicker`    | Meta+P                    | Buka pemilih model                                                                                                                                                                   |
+| `chat:fastMode`       | Meta+O                    | Alihkan mode cepat                                                                                                                                                                   |
+| `chat:thinkingToggle` | Meta+T                    | Alihkan pemikiran yang diperluas                                                                                                                                                     |
+| `chat:submit`         | Enter                     | Kirim pesan                                                                                                                                                                          |
+| `chat:newline`        | Ctrl+J                    | Sisipkan baris baru tanpa mengirim                                                                                                                                                   |
+| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | Batalkan tindakan terakhir                                                                                                                                                           |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Buka di editor eksternal                                                                                                                                                             |
+| `chat:stash`          | Ctrl+S                    | Simpan prompt saat ini                                                                                                                                                               |
+| `chat:imagePaste`     | Ctrl+V (Alt+V di Windows) | Tempel gambar                                                                                                                                                                        |
 
 \*Di Windows tanpa mode VT (Node \<24.2.0/\<22.17.0, Bun \<1.2.23), default ke Meta+M.
 
@@ -165,12 +166,13 @@ Tindakan yang tersedia dalam konteks `Transcript`:
 
 Tindakan yang tersedia dalam konteks `HistorySearch`:
 
-| Tindakan                | Default     | Deskripsi                      |
-| :---------------------- | :---------- | :----------------------------- |
-| `historySearch:next`    | Ctrl+R      | Kecocokan berikutnya           |
-| `historySearch:accept`  | Escape, Tab | Terima pilihan                 |
-| `historySearch:cancel`  | Ctrl+C      | Batalkan pencarian             |
-| `historySearch:execute` | Enter       | Jalankan perintah yang dipilih |
+| Tindakan                   | Default     | Deskripsi                                  |
+| :------------------------- | :---------- | :----------------------------------------- |
+| `historySearch:next`       | Ctrl+R      | Kecocokan berikutnya                       |
+| `historySearch:accept`     | Escape, Tab | Terima pilihan                             |
+| `historySearch:cancel`     | Ctrl+C      | Batalkan pencarian                         |
+| `historySearch:execute`    | Enter       | Jalankan perintah yang dipilih             |
+| `historySearch:cycleScope` | Ctrl+S      | Siklus cakupan: sesi, proyek, di mana saja |
 
 ### Tindakan tugas
 
@@ -295,13 +297,21 @@ Tindakan yang tersedia dalam konteks `Settings`:
 | `settings:retry`  | R       | Coba muat ulang data penggunaan (saat terjadi kesalahan)                               |
 | `settings:close`  | Enter   | Simpan perubahan dan tutup panel konfigurasi. Escape membatalkan perubahan dan menutup |
 
+### Tindakan dokter
+
+Tindakan yang tersedia dalam konteks `Doctor`:
+
+| Tindakan     | Default | Deskripsi                                                                                                          |
+| :----------- | :------ | :----------------------------------------------------------------------------------------------------------------- |
+| `doctor:fix` | F       | Kirim laporan diagnostik ke Claude untuk memperbaiki masalah yang dilaporkan. Hanya aktif ketika masalah ditemukan |
+
 ### Tindakan suara
 
 Tindakan yang tersedia dalam konteks `Chat` ketika [dikte suara](/id/voice-dictation) diaktifkan:
 
-| Tindakan           | Default | Deskripsi                   |
-| :----------------- | :------ | :-------------------------- |
-| `voice:pushToTalk` | Space   | Tahan untuk mendikte prompt |
+| Tindakan           | Default | Deskripsi                                      |
+| :----------------- | :------ | :--------------------------------------------- |
+| `voice:pushToTalk` | Space   | Tahan atau ketuk tergantung pada mode `/voice` |
 
 ### Tindakan scroll
 
@@ -335,16 +345,18 @@ Tindakan yang tersedia dalam konteks `Scroll` ketika [rendering fullscreen](/id/
 Gunakan tombol pengubah dengan pemisah `+`:
 
 * `ctrl` atau `control` - Tombol Control
-* `alt`, `opt`, atau `option` - Tombol Alt/Option
 * `shift` - Tombol Shift
-* `meta`, `cmd`, atau `command` - Tombol Meta/Command
+* `alt`, `opt`, `option`, atau `meta` - Tombol Alt pada Windows dan Linux, tombol Option pada macOS
+* `cmd`, `command`, `super`, atau `win` - Tombol Command pada macOS, tombol Windows pada Windows, tombol Super pada Linux
+
+Grup `cmd` hanya terdeteksi di terminal yang melaporkan pengubah Super, seperti yang mendukung protokol keyboard Kitty atau mode `modifyOtherKeys` xterm. Sebagian besar terminal tidak mengirimnya, jadi gunakan `ctrl` atau `meta` untuk binding yang ingin Anda gunakan di mana saja.
 
 Sebagai contoh:
 
 ```text theme={null}
-ctrl+k          Tombol tunggal dengan pengubah
+ctrl+k          Ctrl + K
 shift+tab       Shift + Tab
-meta+p          Command/Meta + P
+meta+p          Option + P pada macOS, Alt + P di tempat lain
 ctrl+shift+c    Pengubah ganda
 ```
 
@@ -411,11 +423,12 @@ Jika Anda membatalkan beberapa tetapi tidak semua chord pada awalan, menekan awa
 
 Pintasan ini tidak dapat diikat ulang:
 
-| Pintasan | Alasan                                                  |
-| :------- | :------------------------------------------------------ |
-| Ctrl+C   | Interrupt/cancel yang dikodekan keras                   |
-| Ctrl+D   | Exit yang dikodekan keras                               |
-| Ctrl+M   | Identik dengan Enter di terminal (keduanya mengirim CR) |
+| Pintasan  | Alasan                                                  |
+| :-------- | :------------------------------------------------------ |
+| Ctrl+C    | Interrupt/cancel yang dikodekan keras                   |
+| Ctrl+D    | Exit yang dikodekan keras                               |
+| Ctrl+M    | Identik dengan Enter di terminal (keduanya mengirim CR) |
+| Caps Lock | Tidak dikirimkan ke aplikasi terminal                   |
 
 ## Konflik terminal
 

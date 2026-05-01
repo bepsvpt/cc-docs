@@ -40,13 +40,12 @@ Claude Code 包括一组捆绑 skills，在每个会话中都可用，包括 `/s
   </Step>
 
   <Step title="编写 SKILL.md">
-    每个 skill 都需要一个 `SKILL.md` 文件，包含两部分：YAML frontmatter（在 `---` 标记之间）告诉 Claude 何时使用该 skill，以及包含 Claude 在调用该 skill 时遵循的说明的 markdown 内容。`name` 字段变成 `/slash-command`，`description` 帮助 Claude 决定何时自动加载它。
+    每个 skill 都需要一个 `SKILL.md` 文件，包含两部分：YAML frontmatter（在 `---` 标记之间）告诉 Claude 何时使用该 skill，以及包含 Claude 在调用该 skill 时遵循的说明的 markdown 内容。目录名称变成 `/slash-command`，`description` 帮助 Claude 决定何时自动加载它。
 
     创建 `~/.claude/skills/explain-code/SKILL.md`：
 
     ```yaml theme={null}
     ---
-    name: explain-code
     description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
     ---
 
@@ -215,6 +214,7 @@ Skills 支持 skill 内容中动态值的字符串替换：
 | `$N`                   | `$ARGUMENTS[N]` 的简写，如 `$0` 表示第一个参数或 `$1` 表示第二个参数。                                                                                                       |
 | `$name`                | 在 [`arguments`](#frontmatter-reference) frontmatter 列表中声明的命名参数。名称按顺序映射到位置，因此使用 `arguments: [issue, branch]` 时，占位符 `$issue` 扩展为第一个参数，`$branch` 扩展为第二个参数。 |
 | `${CLAUDE_SESSION_ID}` | 当前会话 ID。适用于日志记录、创建会话特定文件或将 skill 输出与会话关联。                                                                                                               |
+| `${CLAUDE_EFFORT}`     | 当前工作量级别：`low`、`medium`、`high`、`xhigh` 或 `max`。使用此来根据活动工作量设置调整 skill 说明。                                                                                 |
 | `${CLAUDE_SKILL_DIR}`  | 包含 skill 的 `SKILL.md` 文件的目录。对于插件 skills，这是插件内 skill 的子目录，而不是插件根目录。在 bash 注入命令中使用它来引用与 skill 捆绑的脚本或文件，无论当前工作目录如何。                                        |
 
 索引参数使用 shell 风格的引用，因此用引号包装多词值以将其作为单个参数传递。例如，`/my-skill "hello world" second` 使 `$0` 扩展为 `hello world`，`$1` 扩展为 `second`。`$ARGUMENTS` 占位符始终扩展为完整的参数字符串，如输入的那样。

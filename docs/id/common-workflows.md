@@ -842,12 +842,14 @@ Ketika Anda memulai tugas yang berjalan lama dan beralih ke jendela lain, Anda d
   <Step title="Secara opsional sempit matcher">
     Secara default hook diaktifkan pada semua jenis notifikasi. Untuk diaktifkan hanya untuk event tertentu, atur bidang `matcher` ke salah satu nilai ini:
 
-    | Matcher              | Diaktifkan ketika                                        |
-    | :------------------- | :------------------------------------------------------- |
-    | `permission_prompt`  | Claude membutuhkan Anda untuk menyetujui penggunaan alat |
-    | `idle_prompt`        | Claude selesai dan menunggu prompt berikutnya Anda       |
-    | `auth_success`       | Autentikasi selesai                                      |
-    | `elicitation_dialog` | Claude mengajukan pertanyaan kepada Anda                 |
+    | Matcher                | Diaktifkan ketika                                        |
+    | :--------------------- | :------------------------------------------------------- |
+    | `permission_prompt`    | Claude membutuhkan Anda untuk menyetujui penggunaan alat |
+    | `idle_prompt`          | Claude selesai dan menunggu prompt berikutnya Anda       |
+    | `auth_success`         | Autentikasi selesai                                      |
+    | `elicitation_dialog`   | Server MCP membuka formulir elicitation                  |
+    | `elicitation_complete` | Formulir elicitation MCP dikirimkan atau ditutup         |
+    | `elicitation_response` | Respons elicitation MCP dikirim kembali ke server        |
   </Step>
 
   <Step title="Verifikasi hook">

@@ -14,7 +14,7 @@ After [installing Claude Code](/en/setup#install-claude-code), run `claude` in y
 
 If the browser doesn't open automatically, press `c` to copy the login URL to your clipboard, then paste it into your browser.
 
-If your browser shows a login code instead of redirecting back after you sign in, paste it into the terminal at the `Paste code here if prompted` prompt.
+If your browser shows a login code instead of redirecting back after you sign in, paste it into the terminal at the `Paste code here if prompted` prompt. This happens when the browser can't reach Claude Code's local callback server, which is common in WSL2, SSH sessions, and containers.
 
 You can authenticate with any of these account types:
 
@@ -25,7 +25,7 @@ You can authenticate with any of these account types:
 
 To log out and re-authenticate, type `/logout` at the Claude Code prompt.
 
-If you're having trouble logging in, see [authentication troubleshooting](/en/troubleshooting#authentication-issues).
+If you're having trouble logging in, see [authentication troubleshooting](/en/troubleshoot-install#login-and-authentication).
 
 ## Set up team authentication
 

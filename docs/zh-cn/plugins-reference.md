@@ -111,6 +111,7 @@ Plugin hooks 响应与[用户定义的 hooks](/zh-CN/hooks)相同的生命周期
 | Event                 | When it fires                                                                                                                                          |
 | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `SessionStart`        | When a session begins or resumes                                                                                                                       |
+| `Setup`               | When you start Claude Code with `--init-only`, or with `--init` or `--maintenance` in `-p` mode. For one-time preparation in CI or scripts             |
 | `UserPromptSubmit`    | When you submit a prompt, before Claude processes it                                                                                                   |
 | `UserPromptExpansion` | When a user-typed command expands into a prompt, before it reaches Claude. Can block the expansion                                                     |
 | `PreToolUse`          | Before a tool call executes. Can block it                                                                                                              |
@@ -405,15 +406,16 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
 
 ### 元数据字段
 
-| 字段            | 类型     | 描述                                                                                                                                                                       | 示例                                                 |
-| :------------ | :----- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------- |
-| `version`     | string | 可选。语义版本。设置此项会将 plugin 固定到该版本字符串，因此用户仅在您提升版本时才会收到更新。如果省略，Claude Code 会回退到 git commit SHA，因此每个 commit 都被视为新版本。如果也在市场条目中设置，`plugin.json` 优先。请参阅[版本管理](#version-management)。 | `"2.1.0"`                                          |
-| `description` | string | plugin 目的的简要说明                                                                                                                                                           | `"Deployment automation tools"`                    |
-| `author`      | object | 作者信息                                                                                                                                                                     | `{"name": "Dev Team", "email": "dev@company.com"}` |
-| `homepage`    | string | 文档 URL                                                                                                                                                                   | `"https://docs.example.com"`                       |
-| `repository`  | string | 源代码 URL                                                                                                                                                                  | `"https://github.com/user/plugin"`                 |
-| `license`     | string | 许可证标识符                                                                                                                                                                   | `"MIT"`、`"Apache-2.0"`                             |
-| `keywords`    | array  | 发现标签                                                                                                                                                                     | `["deployment", "ci-cd"]`                          |
+| 字段            | 类型     | 描述                                                                                                                                                                       | 示例                                                                |
+| :------------ | :----- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
+| `$schema`     | string | 用于编辑器自动完成和验证的 JSON Schema URL。Claude Code 在加载时忽略此字段。                                                                                                                     | `"https://json.schemastore.org/claude-code-plugin-manifest.json"` |
+| `version`     | string | 可选。语义版本。设置此项会将 plugin 固定到该版本字符串，因此用户仅在您提升版本时才会收到更新。如果省略，Claude Code 会回退到 git commit SHA，因此每个 commit 都被视为新版本。如果也在市场条目中设置，`plugin.json` 优先。请参阅[版本管理](#version-management)。 | `"2.1.0"`                                                         |
+| `description` | string | plugin 目的的简要说明                                                                                                                                                           | `"Deployment automation tools"`                                   |
+| `author`      | object | 作者信息                                                                                                                                                                     | `{"name": "Dev Team", "email": "dev@company.com"}`                |
+| `homepage`    | string | 文档 URL                                                                                                                                                                   | `"https://docs.example.com"`                                      |
+| `repository`  | string | 源代码 URL                                                                                                                                                                  | `"https://github.com/user/plugin"`                                |
+| `license`     | string | 许可证标识符                                                                                                                                                                   | `"MIT"`、`"Apache-2.0"`                                            |
+| `keywords`    | array  | 发现标签                                                                                                                                                                     | `["deployment", "ci-cd"]`                                         |
 
 ### 组件路径字段
 
@@ -746,15 +748,42 @@ claude plugin uninstall <plugin> [options]
 
 **选项：**
 
-| 选项                    | 描述                                        | 默认值    |
-| :-------------------- | :---------------------------------------- | :----- |
-| `-s, --scope <scope>` | 从范围卸载：`user`、`project` 或 `local`          | `user` |
-| `--keep-data`         | 保留插件的[持久数据目录](#persistent-data-directory) |        |
-| `-h, --help`          | 显示命令帮助                                    |        |
+| 选项                    | 描述                                                          | 默认值    |
+| :-------------------- | :---------------------------------------------------------- | :----- |
+| `-s, --scope <scope>` | 从范围卸载：`user`、`project` 或 `local`                            | `user` |
+| `--keep-data`         | 保留插件的[持久数据目录](#persistent-data-directory)                   |        |
+| `--prune`             | 同时删除其他 plugin 不需要的自动安装依赖项。请参阅 [plugin prune](#plugin-prune) |        |
+| `-y, --yes`           | 跳过 `--prune` 确认提示。当 stdin 不是 TTY 时需要                        |        |
+| `-h, --help`          | 显示命令帮助                                                      |        |
 
 **别名：** `remove`、`rm`
 
 默认情况下，从最后一个剩余范围卸载也会删除插件的 `${CLAUDE_PLUGIN_DATA}` 目录。使用 `--keep-data` 保留它，例如在测试新版本后重新安装时。
+
+### plugin prune
+
+删除不再被任何已安装 plugin 需要的自动安装 plugin 依赖项。Claude Code 为满足另一个 plugin 的 [`dependencies`](/zh-CN/plugin-dependencies) 字段而引入的依赖项将被删除；您直接安装的 plugin 永远不会被触及。
+
+```bash theme={null}
+claude plugin prune [options]
+```
+
+**选项：**
+
+| 选项                    | 描述                                | 默认值    |
+| :-------------------- | :-------------------------------- | :----- |
+| `-s, --scope <scope>` | 在范围处修剪：`user`、`project` 或 `local` | `user` |
+| `--dry-run`           | 列出将被删除的内容而不实际删除                   |        |
+| `-y, --yes`           | 跳过确认提示。当 stdin 不是 TTY 时需要         |        |
+| `-h, --help`          | 显示命令帮助                            |        |
+
+**别名：** `autoremove`
+
+该命令列出孤立的依赖项，并在删除前要求确认。要在一个步骤中删除 plugin 并清理其依赖项，请运行 `claude plugin uninstall <plugin> --prune`。
+
+<Note>
+  `claude plugin prune` 需要 Claude Code v2.1.121 或更高版本。
+</Note>
 
 ### plugin enable
 

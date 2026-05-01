@@ -247,7 +247,7 @@ Opus 4.7、Opus 4.6 和 Sonnet 4.6 支援[100 萬個 token 的 context window](h
 
 ## 新增自訂模型選項
 
-使用 `ANTHROPIC_CUSTOM_MODEL_OPTION` 將單一自訂項目新增到 `/model` 選擇器，而無需取代內建別名。這對於 LLM 閘道部署或測試 Claude Code 預設不列出的模型 ID 很有用。
+使用 `ANTHROPIC_CUSTOM_MODEL_OPTION` 將單一自訂項目新增到 `/model` 選擇器，而無需取代內建別名。這對於測試 Claude Code 預設不列出的模型 ID 很有用。對於 LLM 閘道部署，Claude Code 會自動從閘道的 `/v1/models` 端點填入選擇器，因此只有在探索未傳回您想要的模型時，才需要此變數。請參閱 [LLM 閘道模型選擇](/zh-TW/llm-gateway#model-selection)。
 
 此範例設定所有三個變數以使閘道路由的 Opus 部署可選擇：
 

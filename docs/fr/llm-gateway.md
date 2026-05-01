@@ -37,13 +37,29 @@ L'absence de transfert d'en-têtes ou la non-préservation des champs du corps p
   Claude Code détermine les fonctionnalités à activer en fonction du format API. Lors de l'utilisation du format Anthropic Messages avec Bedrock ou Vertex, vous devrez peut-être définir la variable d'environnement `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`.
 </Note>
 
+**En-têtes de requête**
+
+Claude Code inclut les en-têtes suivants sur chaque requête API :
+
+| En-tête                    | Description                                                                                                                                                                                  |
+| :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `X-Claude-Code-Session-Id` | Un identifiant unique pour la session Claude Code actuelle. Les proxies peuvent utiliser ceci pour agréger toutes les requêtes API d'une seule session sans analyser le corps de la requête. |
+
+Claude Code ajoute également un court bloc d'attribution au début de l'invite système contenant la version du client et une empreinte dérivée de la conversation. L'API Anthropic supprime ce bloc avant le traitement, il n'affecte donc pas la mise en cache des invites de première partie. Si votre passerelle implémente son propre cache d'invite basé sur le corps complet de la requête, définissez [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/fr/env-vars) pour l'omettre.
+
 ## Configuration
 
 ### Sélection du modèle
 
-Par défaut, Claude Code utilisera les noms de modèles standard pour le format API sélectionné.
+Par défaut, Claude Code utilise les noms de modèles standard pour le format API sélectionné.
 
-Si vous avez configuré des noms de modèles personnalisés dans votre passerelle, utilisez les variables d'environnement documentées dans [Configuration du modèle](/fr/model-config) pour correspondre à vos noms personnalisés.
+Lorsque `ANTHROPIC_BASE_URL` pointe vers une passerelle qui expose le format Messages d'Anthropic, Claude Code interroge le point de terminaison `/v1/models` de la passerelle au démarrage et ajoute les modèles retournés au sélecteur `/model`. Chaque entrée découverte est étiquetée « From gateway » et utilise le champ `display_name` de la réponse lorsqu'un est fourni. Cela nécessite Claude Code v2.1.126 ou version ultérieure.
+
+La découverte s'applique uniquement au format Messages d'Anthropic. Elle ne s'exécute pas pour les points de terminaison de passage Bedrock ou Vertex, et elle ne s'exécute pas lorsque `ANTHROPIC_BASE_URL` n'est pas défini ou pointe vers `api.anthropic.com`.
+
+La demande de découverte s'authentifie de la même manière que les demandes d'inférence : elle envoie `ANTHROPIC_AUTH_TOKEN` en tant que jeton porteur, ou `ANTHROPIC_API_KEY` en tant qu'en-tête `x-api-key` lorsqu'aucun jeton d'authentification n'est défini, ainsi que tous les en-têtes de `ANTHROPIC_CUSTOM_HEADERS`. Seuls les modèles dont l'ID commence par `claude` ou `anthropic` sont ajoutés au sélecteur. Les résultats sont mis en cache dans `~/.claude/cache/gateway-models.json` et actualisés à chaque démarrage. Si la demande échoue ou si la passerelle n'implémente pas `/v1/models`, le sélecteur revient à la liste mise en cache du démarrage précédent ou à la liste de modèles intégrée.
+
+Si votre passerelle utilise des noms de modèles qui ne correspondent pas au filtre de découverte, utilisez les variables d'environnement documentées dans [Configuration du modèle](/fr/model-config) pour les ajouter manuellement.
 
 ## Configuration de LiteLLM
 

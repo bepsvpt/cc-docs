@@ -32,17 +32,17 @@ Les règles sont évaluées dans l'ordre : **deny -> ask -> allow**. La premièr
 
 Claude Code prend en charge plusieurs modes d'autorisation qui contrôlent la façon dont les outils sont approuvés. Consultez [Modes d'autorisation](/fr/permission-modes) pour savoir quand utiliser chacun. Définissez le `defaultMode` dans vos [fichiers de paramètres](/fr/settings#settings-files) :
 
-| Mode                | Description                                                                                                                                                                                                  |
-| :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `default`           | Comportement standard : demande une autorisation à la première utilisation de chaque outil                                                                                                                   |
-| `acceptEdits`       | Accepte automatiquement les éditions de fichiers et les commandes courantes du système de fichiers (`mkdir`, `touch`, `mv`, `cp`, etc.) pour les chemins du répertoire de travail ou `additionalDirectories` |
-| `plan`              | Plan Mode : Claude peut analyser mais pas modifier les fichiers ou exécuter les commandes                                                                                                                    |
-| `auto`              | Approuve automatiquement les appels d'outils avec des vérifications de sécurité en arrière-plan qui vérifient que les actions s'alignent avec votre demande. Actuellement un aperçu de recherche             |
-| `dontAsk`           | Refuse automatiquement les outils sauf s'ils sont pré-approuvés via `/permissions` ou les règles `permissions.allow`                                                                                         |
-| `bypassPermissions` | Ignore les invites d'autorisation sauf pour les écritures dans les répertoires protégés (voir l'avertissement ci-dessous)                                                                                    |
+| Mode                | Description                                                                                                                                                                                                    |
+| :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `default`           | Comportement standard : demande une autorisation à la première utilisation de chaque outil                                                                                                                     |
+| `acceptEdits`       | Accepte automatiquement les éditions de fichiers et les commandes courantes du système de fichiers (`mkdir`, `touch`, `mv`, `cp`, etc.) pour les chemins du répertoire de travail ou `additionalDirectories`   |
+| `plan`              | Plan Mode : Claude peut analyser mais pas modifier les fichiers ou exécuter les commandes                                                                                                                      |
+| `auto`              | Approuve automatiquement les appels d'outils avec des vérifications de sécurité en arrière-plan qui vérifient que les actions s'alignent avec votre demande. Actuellement un aperçu de recherche               |
+| `dontAsk`           | Refuse automatiquement les outils sauf s'ils sont pré-approuvés via `/permissions` ou les règles `permissions.allow`                                                                                           |
+| `bypassPermissions` | Ignore tous les invites d'autorisation. Les suppressions ciblant la racine du système de fichiers ou le répertoire personnel, comme `rm -rf /` et `rm -rf ~`, demandent toujours comme disjoncteur de sécurité |
 
 <Warning>
-  Le mode `bypassPermissions` ignore les invites d'autorisation. Les écritures dans les répertoires `.git`, `.claude`, `.vscode`, `.idea` et `.husky` demandent toujours une confirmation pour éviter la corruption accidentelle de l'état du référentiel, de la configuration de l'éditeur et des hooks git. Les écritures dans `.claude/commands`, `.claude/agents` et `.claude/skills` sont exemptées et ne demandent pas, car Claude écrit régulièrement là lors de la création de skills, de subagents et de commandes. Utilisez ce mode uniquement dans des environnements isolés comme les conteneurs ou les machines virtuelles où Claude Code ne peut pas causer de dommages. Les administrateurs peuvent empêcher ce mode en définissant `permissions.disableBypassPermissionsMode` sur `"disable"` dans les [paramètres gérés](#managed-settings).
+  Le mode `bypassPermissions` ignore tous les invites d'autorisation, y compris les écritures dans `.git`, `.claude`, `.vscode`, `.idea` et `.husky`. Les suppressions ciblant la racine du système de fichiers ou le répertoire personnel, comme `rm -rf /` et `rm -rf ~`, demandent toujours comme disjoncteur de sécurité contre l'erreur du modèle. Utilisez ce mode uniquement dans des environnements isolés comme les conteneurs ou les machines virtuelles où Claude Code ne peut pas causer de dommages. Les administrateurs peuvent empêcher ce mode en définissant `permissions.disableBypassPermissionsMode` sur `"disable"` dans les [paramètres gérés](#managed-settings).
 </Warning>
 
 Pour empêcher le mode `bypassPermissions` ou `auto` d'être utilisé, définissez `permissions.disableBypassPermissionsMode` ou `permissions.disableAutoMode` sur `"disable"` dans n'importe quel [fichier de paramètres](/fr/settings#settings-files). Ces paramètres sont particulièrement utiles dans les [paramètres gérés](#managed-settings) où ils ne peuvent pas être remplacés.
@@ -157,6 +157,28 @@ Un `cd` dans un chemin à l'intérieur de votre répertoire de travail ou d'un [
 
   Notez que l'utilisation de WebFetch seul n'empêche pas l'accès au réseau. Si Bash est autorisé, Claude peut toujours utiliser `curl`, `wget` ou d'autres outils pour atteindre n'importe quelle URL.
 </Warning>
+
+### PowerShell
+
+Les règles d'autorisation PowerShell utilisent la même forme que les règles Bash. Les caractères génériques avec `*` correspondent à n'importe quelle position, le suffixe `:*` est équivalent à un ` *` de fin, et un `PowerShell` nu ou `PowerShell(*)` correspond à chaque commande. Cette configuration permet les commandes `Get-ChildItem` et `git commit` tout en bloquant `Remove-Item` :
+
+```json theme={null}
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(git commit *)"
+    ],
+    "deny": [
+      "PowerShell(Remove-Item *)"
+    ]
+  }
+}
+```
+
+Les alias courants sont canonicalisés avant la correspondance. Une règle écrite pour le nom de la cmdlet correspond également à ses alias, donc `PowerShell(Get-ChildItem *)` correspond à `gci`, `ls` et `dir` aussi. La correspondance est insensible à la casse.
+
+Claude Code analyse l'AST PowerShell et vérifie chaque commande dans une commande composée indépendamment. Les opérateurs de pipeline `|`, les séparateurs d'instruction `;` et sur PowerShell 7+ les opérateurs de chaîne `&&` et `||` divisent une commande composée en sous-commandes. Une règle doit correspondre à chaque sous-commande pour que la commande composée soit autorisée.
 
 ### Read et Edit
 

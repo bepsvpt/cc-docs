@@ -6,7 +6,7 @@
 
 > Используйте Agent SDK для программного запуска Claude Code из CLI, Python или TypeScript.
 
-[Agent SDK](https://platform.claude.com/docs/ru/agent-sdk/overview) предоставляет вам те же инструменты, цикл агента и управление контекстом, которые питают Claude Code. Он доступен как CLI для скриптов и CI/CD, или как пакеты [Python](https://platform.claude.com/docs/ru/agent-sdk/python) и [TypeScript](https://platform.claude.com/docs/ru/agent-sdk/typescript) для полного программного управления.
+[Agent SDK](/ru/agent-sdk/overview) предоставляет вам те же инструменты, цикл агента и управление контекстом, которые питают Claude Code. Он доступен как CLI для скриптов и CI/CD, или как пакеты [Python](/ru/agent-sdk/python) и [TypeScript](/ru/agent-sdk/typescript) для полного программного управления.
 
 <Note>
   CLI ранее назывался "headless mode". Флаг `-p` и все параметры CLI работают так же.
@@ -18,7 +18,7 @@
 claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"
 ```
 
-На этой странице рассматривается использование Agent SDK через CLI (`claude -p`). Для пакетов Python и TypeScript SDK со структурированными выходами, обратными вызовами одобрения инструментов и собственными объектами сообщений см. [полную документацию Agent SDK](https://platform.claude.com/docs/ru/agent-sdk/overview).
+На этой странице рассматривается использование Agent SDK через CLI (`claude -p`). Для пакетов Python и TypeScript SDK со структурированными выходами, обратными вызовами одобрения инструментов и собственными объектами сообщений см. [полную документацию Agent SDK](/ru/agent-sdk/overview).
 
 ## Базовое использование
 
@@ -34,9 +34,37 @@ claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"
 claude -p "What does the auth module do?"
 ```
 
+### Начните быстрее с режимом bare
+
+Добавьте `--bare` для сокращения времени запуска путём пропуска автоматического обнаружения hooks, skills, plugins, MCP серверов, автоматической памяти и CLAUDE.md. Без этого `claude -p` загружает тот же [контекст](/ru/how-claude-code-works#the-context-window), что и интерактивная сессия, включая всё, что настроено в рабочем каталоге или `~/.claude`.
+
+Режим bare полезен для CI и скриптов, где вам нужен одинаковый результат на каждой машине. Hook в `~/.claude` коллеги или MCP сервер в `.mcp.json` проекта не будут запущены, потому что режим bare никогда их не читает. Действуют только явно переданные флаги.
+
+Этот пример запускает одноразовую задачу суммирования в режиме bare и предварительно одобряет инструмент Read, чтобы вызов завершился без запроса разрешения:
+
+```bash theme={null}
+claude --bare -p "Summarize this file" --allowedTools "Read"
+```
+
+В режиме bare Claude имеет доступ к инструментам Bash, чтения файлов и редактирования файлов. Передайте любой необходимый контекст с флагом:
+
+| Для загрузки                  | Используйте                                             |
+| ----------------------------- | ------------------------------------------------------- |
+| Дополнения системного запроса | `--append-system-prompt`, `--append-system-prompt-file` |
+| Параметры                     | `--settings <file-or-json>`                             |
+| MCP серверы                   | `--mcp-config <file-or-json>`                           |
+| Пользовательские агенты       | `--agents <json>`                                       |
+| Каталог плагина               | `--plugin-dir <path>`                                   |
+
+Режим bare пропускает OAuth и чтение из связки ключей. Аутентификация Anthropic должна поступать из `ANTHROPIC_API_KEY` или `apiKeyHelper` в JSON, переданном в `--settings`. Bedrock, Vertex и Foundry используют обычные учётные данные поставщика.
+
+<Note>
+  `--bare` — это рекомендуемый режим для скриптовых и SDK вызовов, и он станет режимом по умолчанию для `-p` в будущем выпуске.
+</Note>
+
 ## Примеры
 
-Эти примеры выделяют общие паттерны CLI.
+Эти примеры выделяют общие паттерны CLI. Для CI и других скриптовых вызовов добавьте [`--bare`](#start-faster-with-bare-mode), чтобы они не подхватывали то, что случайно настроено локально.
 
 ### Получение структурированного вывода
 
@@ -92,7 +120,40 @@ claude -p "Write a poem" --output-format stream-json --verbose --include-partial
   jq -rj 'select(.type == "stream_event" and .event.delta.type? == "text_delta") | .event.delta.text'
 ```
 
-Для программной потоковой передачи с обратными вызовами и объектами сообщений см. [Stream responses in real-time](https://platform.claude.com/docs/ru/agent-sdk/streaming-output) в документации Agent SDK.
+Когда запрос API завершается с повторяемой ошибкой, Claude Code выдаёт событие `system/api_retry` перед повторной попыткой. Вы можете использовать это для отображения прогресса повторной попытки или реализации пользовательской логики отката.
+
+| Поле             | Тип                  | Описание                                                                                                                                                                |
+| ---------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`           | `"system"`           | тип сообщения                                                                                                                                                           |
+| `subtype`        | `"api_retry"`        | определяет это как событие повторной попытки                                                                                                                            |
+| `attempt`        | целое число          | номер текущей попытки, начиная с 1                                                                                                                                      |
+| `max_retries`    | целое число          | всего разрешённых повторных попыток                                                                                                                                     |
+| `retry_delay_ms` | целое число          | миллисекунды до следующей попытки                                                                                                                                       |
+| `error_status`   | целое число или null | код состояния HTTP или `null` для ошибок соединения без HTTP ответа                                                                                                     |
+| `error`          | строка               | категория ошибки: `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `rate_limit`, `invalid_request`, `server_error`, `max_output_tokens` или `unknown` |
+| `uuid`           | строка               | уникальный идентификатор события                                                                                                                                        |
+| `session_id`     | строка               | сессия, к которой принадлежит событие                                                                                                                                   |
+
+Событие `system/init` сообщает метаданные сессии, включая модель, инструменты, MCP серверы и загруженные плагины. Это первое событие в потоке, если не установлена [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/ru/env-vars), в этом случае события `plugin_install` предшествуют ему. Используйте поля плагина для отказа CI, когда плагин не загрузился:
+
+| Поле            | Тип    | Описание                                                                                                                                                                                                              |
+| --------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plugins`       | массив | плагины, которые успешно загрузились, каждый с `name` и `path`                                                                                                                                                        |
+| `plugin_errors` | массив | ошибки загрузки плагина, такие как неудовлетворённая версия зависимости, каждая с `plugin`, `type` и `message`. Затронутые плагины понижены в приоритете и отсутствуют в `plugins`. Ключ опускается, когда ошибок нет |
+
+Когда установлена [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/ru/env-vars), Claude Code выдаёт события `system/plugin_install` во время установки плагинов marketplace перед первым ходом. Используйте их для отображения прогресса установки в вашем собственном пользовательском интерфейсе.
+
+| Поле         | Тип                                                      | Описание                                                                                                      |
+| ------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `type`       | `"system"`                                               | тип сообщения                                                                                                 |
+| `subtype`    | `"plugin_install"`                                       | определяет это как событие установки плагина                                                                  |
+| `status`     | `"started"`, `"installed"`, `"failed"` или `"completed"` | `started` и `completed` охватывают общую установку; `installed` и `failed` сообщают об отдельных marketplaces |
+| `name`       | строка, опционально                                      | имя marketplace, присутствует на `installed` и `failed`                                                       |
+| `error`      | строка, опционально                                      | сообщение об ошибке, присутствует на `failed`                                                                 |
+| `uuid`       | строка                                                   | уникальный идентификатор события                                                                              |
+| `session_id` | строка                                                   | сессия, к которой принадлежит событие                                                                         |
+
+Для программной потоковой передачи с обратными вызовами и объектами сообщений см. [Stream responses in real-time](/ru/agent-sdk/streaming-output) в документации Agent SDK.
 
 ### Автоматическое одобрение инструментов
 
@@ -101,6 +162,12 @@ claude -p "Write a poem" --output-format stream-json --verbose --include-partial
 ```bash theme={null}
 claude -p "Run the test suite and fix any failures" \
   --allowedTools "Bash,Read,Edit"
+```
+
+Чтобы установить базовый уровень для всей сессии вместо перечисления отдельных инструментов, передайте [режим разрешений](/ru/permission-modes). `dontAsk` отклоняет всё, что не входит в ваши правила `permissions.allow` или [набор команд только для чтения](/ru/permissions#read-only-commands), что полезно для заблокированных CI запусков. `acceptEdits` позволяет Claude писать файлы без запроса и также автоматически одобряет общие команды файловой системы, такие как `mkdir`, `touch`, `mv` и `cp`. Другие команды оболочки и сетевые запросы по-прежнему требуют записи `--allowedTools` или правила `permissions.allow`, иначе запуск прерывается при попытке выполнить одну из них:
+
+```bash theme={null}
+claude -p "Apply the lint fixes" --permission-mode acceptEdits
 ```
 
 ### Создание коммита
@@ -152,7 +219,7 @@ claude -p "Continue that review" --resume "$session_id"
 
 ## Следующие шаги
 
-* [Agent SDK quickstart](https://platform.claude.com/docs/ru/agent-sdk/quickstart): создайте своего первого агента с помощью Python или TypeScript
+* [Agent SDK quickstart](/ru/agent-sdk/quickstart): создайте своего первого агента с помощью Python или TypeScript
 * [CLI reference](/ru/cli-reference): все флаги и параметры CLI
 * [GitHub Actions](/ru/github-actions): используйте Agent SDK в рабочих процессах GitHub
 * [GitLab CI/CD](/ru/gitlab-ci-cd): используйте Agent SDK в конвейерах GitLab

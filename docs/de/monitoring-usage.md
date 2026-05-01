@@ -154,28 +154,30 @@ Jeder Span trägt die [Standardattribute](#standardattribute) plus ein `span.typ
 
 **`claude_code.llm_request`**
 
-| Attribut                 | Beschreibung                                                                           | Gated durch |
-| ------------------------ | -------------------------------------------------------------------------------------- | ----------- |
-| `model`                  | Modellkennung                                                                          |             |
-| `gen_ai.system`          | Immer `anthropic`. OpenTelemetry GenAI semantische Konvention                          |             |
-| `gen_ai.request.model`   | Gleicher Wert wie `model`. OpenTelemetry GenAI semantische Konvention                  |             |
-| `query_source`           | Subsystem, das die Anfrage gestellt hat, wie `repl_main_thread` oder ein Subagent-Name |             |
-| `speed`                  | `fast` oder `normal`                                                                   |             |
-| `llm_request.context`    | `interaction`, `tool` oder `standalone` je nach übergeordnetem Span                    |             |
-| `duration_ms`            | Wanduhr-Dauer einschließlich Wiederholungen                                            |             |
-| `ttft_ms`                | Zeit bis zum ersten Token in Millisekunden                                             |             |
-| `input_tokens`           | Eingabe-Token-Anzahl aus dem API-Nutzungsblock                                         |             |
-| `output_tokens`          | Ausgabe-Token-Anzahl                                                                   |             |
-| `cache_read_tokens`      | Aus dem Prompt-Cache gelesene Token                                                    |             |
-| `cache_creation_tokens`  | In den Prompt-Cache geschriebene Token                                                 |             |
-| `request_id`             | Anthropic API-Anfrage-ID aus dem `request-id` Response-Header                          |             |
-| `gen_ai.response.id`     | Gleicher Wert wie `request_id`. OpenTelemetry GenAI semantische Konvention             |             |
-| `client_request_id`      | Client-generierte `x-client-request-id` des letzten Versuchs                           |             |
-| `attempt`                | Gesamtzahl der Versuche für diese Anfrage                                              |             |
-| `success`                | `true` oder `false`                                                                    |             |
-| `status_code`            | HTTP-Statuscode, wenn die Anfrage fehlgeschlagen ist                                   |             |
-| `error`                  | Fehlermeldung, wenn die Anfrage fehlgeschlagen ist                                     |             |
-| `response.has_tool_call` | `true`, wenn die Antwort Tool-Use-Blöcke enthielt                                      |             |
+| Attribut                         | Beschreibung                                                                                                      | Gated durch |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----------- |
+| `model`                          | Modellkennung                                                                                                     |             |
+| `gen_ai.system`                  | Immer `anthropic`. OpenTelemetry GenAI semantische Konvention                                                     |             |
+| `gen_ai.request.model`           | Gleicher Wert wie `model`. OpenTelemetry GenAI semantische Konvention                                             |             |
+| `query_source`                   | Subsystem, das die Anfrage gestellt hat, wie `repl_main_thread` oder ein Subagent-Name                            |             |
+| `speed`                          | `fast` oder `normal`                                                                                              |             |
+| `llm_request.context`            | `interaction`, `tool` oder `standalone` je nach übergeordnetem Span                                               |             |
+| `duration_ms`                    | Wanduhr-Dauer einschließlich Wiederholungen                                                                       |             |
+| `ttft_ms`                        | Zeit bis zum ersten Token in Millisekunden                                                                        |             |
+| `input_tokens`                   | Eingabe-Token-Anzahl aus dem API-Nutzungsblock                                                                    |             |
+| `output_tokens`                  | Ausgabe-Token-Anzahl                                                                                              |             |
+| `cache_read_tokens`              | Aus dem Prompt-Cache gelesene Token                                                                               |             |
+| `cache_creation_tokens`          | In den Prompt-Cache geschriebene Token                                                                            |             |
+| `request_id`                     | Anthropic API-Anfrage-ID aus dem `request-id` Response-Header                                                     |             |
+| `gen_ai.response.id`             | Gleicher Wert wie `request_id`. OpenTelemetry GenAI semantische Konvention                                        |             |
+| `client_request_id`              | Client-generierte `x-client-request-id` des letzten Versuchs                                                      |             |
+| `attempt`                        | Gesamtzahl der Versuche für diese Anfrage                                                                         |             |
+| `success`                        | `true` oder `false`                                                                                               |             |
+| `status_code`                    | HTTP-Statuscode, wenn die Anfrage fehlgeschlagen ist                                                              |             |
+| `error`                          | Fehlermeldung, wenn die Anfrage fehlgeschlagen ist                                                                |             |
+| `response.has_tool_call`         | `true`, wenn die Antwort Tool-Use-Blöcke enthielt                                                                 |             |
+| `stop_reason`                    | API-Antwort `stop_reason`, wie `end_turn`, `tool_use`, `max_tokens`, `stop_sequence`, `pause_turn` oder `refusal` |             |
+| `gen_ai.response.finish_reasons` | Gleicher Wert wie `stop_reason`, in einem String-Array verpackt. OpenTelemetry GenAI semantische Konvention       |             |
 
 Jeder Wiederholungsversuch wird auch als `gen_ai.request.attempt` Span-Ereignis mit `attempt` und `client_request_id` Attributen aufgezeichnet.
 
@@ -226,7 +228,7 @@ Dieser Span wird nur ausgegeben, wenn detailliertes Beta-Tracing aktiv ist, was 
 | `num_cancelled`          | Anzahl der Hooks, die vor Abschluss abgebrochen wurden                  |                         |
 
 <Note>
-  Zusätzliche inhaltshaltige Attribute wie `new_context`, `system_prompt_preview`, `tool_input` und `response.model_output` werden nur ausgegeben, wenn detailliertes Beta-Tracing aktiv ist. Sie sind nicht Teil des stabilen Span-Schemas.
+  Zusätzliche inhaltshaltige Attribute wie `new_context`, `system_prompt_preview`, `user_system_prompt`, `tool_input` und `response.model_output` werden nur ausgegeben, wenn detailliertes Beta-Tracing aktiv ist. Sie sind nicht Teil des stabilen Span-Schemas. `user_system_prompt` erfordert zusätzlich `OTEL_LOG_USER_PROMPTS=1`. Es trägt nur den System-Prompt-Text, den Sie über die `systemPrompt` SDK-Option oder die Flags `--system-prompt` und `--append-system-prompt` bereitstellen, gekürzt bei 60 KB, und wird einmal pro Sitzung statt pro Anfrage ausgegeben.
 </Note>
 
 ### Dynamische Header
@@ -571,7 +573,7 @@ Protokolliert, wenn eine API-Anfrage an Claude fehlschlägt.
 * `event.sequence`: monoton steigende Zähler zur Sortierung von Ereignissen innerhalb einer Sitzung
 * `model`: Verwendetes Modell (zum Beispiel "claude-sonnet-4-6")
 * `error`: Fehlermeldung
-* `status_code`: HTTP-Statuscode als Zeichenkette oder `"undefined"` für Nicht-HTTP-Fehler
+* `status_code`: HTTP-Statuscode als Zahl. Nicht vorhanden für Nicht-HTTP-Fehler wie Verbindungsfehler.
 * `duration_ms`: Anfragedauer in Millisekunden
 * `attempt`: Gesamtzahl der Versuche, einschließlich der ursprünglichen Anfrage (`1` bedeutet, dass keine Wiederholungen aufgetreten sind)
 * `request_id`: Anthropic API-Anfrage-ID aus dem Response-Header `request-id`, wie `"req_011..."`. Nur vorhanden, wenn die API eine zurückgibt.
@@ -724,7 +726,7 @@ Protokolliert, wenn ein Plugin die Installation abgeschlossen hat, sowohl vom `c
 
 #### Skill-Aktiviert-Ereignis
 
-Protokolliert, wenn ein Skill aufgerufen wird.
+Protokolliert, wenn ein Skill aufgerufen wird, ob Claude ihn über das Skill-Tool aufruft oder Sie ihn als `/` Befehl ausführen.
 
 **Ereignisname**: `claude_code.skill_activated`
 
@@ -735,9 +737,25 @@ Protokolliert, wenn ein Skill aufgerufen wird.
 * `event.timestamp`: ISO 8601-Zeitstempel
 * `event.sequence`: monoton steigende Zähler zur Sortierung von Ereignissen innerhalb einer Sitzung
 * `skill.name`: Name des Skills. Für benutzerdefinierte und Drittanbieter-Plugin-Skills ist der Wert der Platzhalter `"custom_skill"`, es sei denn, `OTEL_LOG_TOOL_DETAILS=1`
+* `invocation_trigger`: Wie der Skill ausgelöst wurde (`"user-slash"`, `"claude-proactive"` oder `"nested-skill"`)
 * `skill.source`: Wo der Skill geladen wurde (zum Beispiel `"bundled"`, `"userSettings"`, `"projectSettings"`, `"plugin"`)
 * `plugin.name` (wenn `OTEL_LOG_TOOL_DETAILS=1` oder das Plugin ist von einem offiziellen Marketplace): Name des besitzenden Plugins, wenn der Skill von einem Plugin bereitgestellt wird
 * `marketplace.name` (wenn `OTEL_LOG_TOOL_DETAILS=1` oder das Plugin ist von einem offiziellen Marketplace): Marketplace des besitzenden Plugins, wenn der Skill von einem Plugin bereitgestellt wird
+
+#### At-Mention-Ereignis
+
+Protokolliert, wenn Claude Code ein `@`-Mention in einem Prompt auflöst. Nicht jedes Mention gibt ein Ereignis aus: Early-Exit-Pfade wie Berechtigungsverweigerungen, übergroße Dateien, PDF-Referenz-Anhänge und Fehler beim Auflisten von Verzeichnissen werden zurückgegeben, ohne zu protokollieren.
+
+**Ereignisname**: `claude_code.at_mention`
+
+**Attribute**:
+
+* Alle [Standardattribute](#standardattribute)
+* `event.name`: `"at_mention"`
+* `event.timestamp`: ISO 8601-Zeitstempel
+* `event.sequence`: monoton steigende Zähler zur Sortierung von Ereignissen innerhalb einer Sitzung
+* `mention_type`: Typ des Mentions (`"file"`, `"directory"`, `"agent"`, `"mcp_resource"`)
+* `success`: Ob das Mention erfolgreich aufgelöst wurde (`"true"` oder `"false"`)
 
 #### API-Wiederholungen-Erschöpft-Ereignis
 
@@ -753,7 +771,7 @@ Protokolliert einmal, wenn eine API-Anfrage nach mehr als einem Versuch fehlschl
 * `event.sequence`: monoton steigende Zähler zur Sortierung von Ereignissen innerhalb einer Sitzung
 * `model`: Verwendetes Modell
 * `error`: Letzte Fehlermeldung
-* `status_code`: HTTP-Statuscode als Zeichenkette
+* `status_code`: HTTP-Statuscode als Zahl. Nicht vorhanden für Nicht-HTTP-Fehler.
 * `total_attempts`: Gesamtzahl der Versuche
 * `total_retry_duration_ms`: Gesamte Wanduhr-Zeit über alle Versuche
 * `speed`: `"fast"` oder `"normal"`
@@ -918,7 +936,7 @@ Für einen umfassenden Leitfaden zur Messung der Kapitalrendite für Claude Code
 
 ## Sicherheit und Datenschutz
 
-* Telemetrie ist opt-in und erfordert explizite Konfiguration
+* OpenTelemetry-Export zu Ihrem Backend ist opt-in und erfordert explizite Konfiguration. Informationen zu Anthropics separater operativer Telemetrie und wie Sie diese deaktivieren, finden Sie unter [Datennutzung](/de/data-usage#telemetry-services)
 * Rohe Dateiinhalte und Code-Snippets sind nicht in Metriken oder Ereignissen enthalten. Trace-Spans sind ein separater Datenpfad: siehe die Aufzählung `OTEL_LOG_TOOL_CONTENT` unten
 * Wenn über OAuth authentifiziert, ist `user.email` in Telemetrie-Attributen enthalten. Wenn dies ein Problem für Ihre Organisation darstellt, arbeiten Sie mit Ihrem Telemetrie-Backend zusammen, um dieses Feld zu filtern oder zu schwärzen
 * Benutzer-Prompt-Inhalte werden standardmäßig nicht erfasst. Nur die Prompt-Länge wird aufgezeichnet. Um Benutzer-Prompt-Inhalte einzubeziehen, setzen Sie `OTEL_LOG_USER_PROMPTS=1`

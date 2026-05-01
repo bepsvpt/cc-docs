@@ -263,6 +263,8 @@ Claude Code utiliza la autenticación estándar de Google Cloud.
 
 Para obtener más información, consulte la [documentación de autenticación de Google Cloud](https://cloud.google.com/docs/authentication).
 
+Claude Code v2.1.121 o posterior admite [Federación de identidad de carga de trabajo basada en certificados X.509](https://cloud.google.com/iam/docs/workload-identity-federation-with-x509-certificates) a través de la misma cadena de credenciales de aplicación predeterminada. Establezca `GOOGLE_APPLICATION_CREDENTIALS` en la ruta de su archivo de configuración de credenciales.
+
 <Note>
   Al autenticarse, Claude Code utilizará automáticamente el ID de proyecto de la variable de entorno `ANTHROPIC_VERTEX_PROJECT_ID`. Para anular esto, establezca una de estas variables de entorno: `GCLOUD_PROJECT`, `GOOGLE_CLOUD_PROJECT` o `GOOGLE_APPLICATION_CREDENTIALS`.
 </Note>

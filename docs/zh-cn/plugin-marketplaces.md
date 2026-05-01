@@ -175,10 +175,13 @@
 
 | 字段                                    | 类型     | 描述                                                                                                                                                                                      |
 | :------------------------------------ | :----- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `metadata.description`                | string | 简短的 marketplace 描述                                                                                                                                                                      |
-| `metadata.version`                    | string | Marketplace 版本                                                                                                                                                                          |
+| `$schema`                             | string | 用于编辑器自动完成和验证的 JSON Schema URL。Claude Code 在加载时忽略此字段。                                                                                                                                    |
+| `description`                         | string | 简短的 marketplace 描述                                                                                                                                                                      |
+| `version`                             | string | Marketplace 清单版本                                                                                                                                                                        |
 | `metadata.pluginRoot`                 | string | 前置到相对 plugin 源路径的基目录（例如，`"./plugins"` 让你写 `"source": "formatter"` 而不是 `"source": "./plugins/formatter"`）                                                                                |
 | `allowCrossMarketplaceDependenciesOn` | array  | 此 marketplace 中的 plugins 可能依赖的其他 marketplaces。来自此处未列出的 marketplace 的依赖项在安装时被阻止。见[依赖来自另一个 marketplace 的 plugin](/zh-CN/plugin-dependencies#depend-on-a-plugin-from-another-marketplace)。 |
+
+`description` 和 `version` 也可以在 `metadata` 下接受，以实现向后兼容性。
 
 ## Plugin 条目
 
@@ -958,7 +961,7 @@ claude plugin marketplace update [name]
 **警告**（非阻止）：
 
 * `Marketplace has no plugins defined`：将至少一个 plugin 添加到 `plugins` 数组
-* `No marketplace description provided`：添加 `metadata.description` 以帮助用户理解你的 marketplace
+* `No marketplace description provided`：添加顶级 `description` 以帮助用户理解你的 marketplace
 * `Plugin name "x" is not kebab-case`：plugin 名称包含大写字母、空格或特殊字符。重命名为仅包含小写字母、数字和连字符（例如，`my-plugin`）。Claude Code 接受其他形式，但 Claude.ai marketplace 同步会拒绝它们。
 
 ### Plugin 安装失败
@@ -1018,7 +1021,7 @@ export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
 export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000  # 5 minutes
 ```
 
-### 相对路径 Plugins 在基于 URL 的 marketplaces 中失败
+### 相对路径 Plugins 在基于 URL 的 Marketplaces 中失败
 
 **症状**：通过 URL（如 `https://example.com/marketplace.json`）添加了 marketplace，但具有相对路径源（如 `"./plugins/my-plugin"`）的 plugins 无法安装，出现"path not found"错误。
 
@@ -1030,7 +1033,7 @@ export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000  # 5 minutes
   ```json theme={null}
   { "name": "my-plugin", "source": { "source": "github", "repo": "owner/repo" } }
   ```
-* **使用基于 Git 的 marketplace**：在 Git 存储库中托管你的 marketplace 并使用 git URL 添加它。基于 Git 的 marketplaces 克隆整个存储库，使相对路径有效。
+* **使用基于 Git 的 Marketplace**：在 Git 存储库中托管你的 marketplace 并使用 git URL 添加它。基于 Git 的 marketplaces 克隆整个存储库，使相对路径有效。
 
 ### 安装后文件未找到
 

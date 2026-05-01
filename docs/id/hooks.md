@@ -18,7 +18,7 @@ Hooks dijalankan pada titik-titik tertentu selama sesi Claude Code. Ketika event
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/_SQ1BnFTP0QUrae-/images/hooks-lifecycle.svg?fit=max&auto=format&n=_SQ1BnFTP0QUrae-&q=85&s=75bd3d4bdefd4f08a7d736167243fd78" alt="Diagram siklus hidup hook menunjukkan SessionStart, kemudian loop per-turn yang berisi UserPromptSubmit, UserPromptExpansion untuk slash commands, loop agentic bersarang (PreToolUse, PermissionRequest, PostToolUse, PostToolUseFailure, PostToolBatch, SubagentStart/Stop, TaskCreated, TaskCompleted), dan Stop atau StopFailure, diikuti TeammateIdle, PreCompact, PostCompact, dan SessionEnd, dengan Elicitation dan ElicitationResult bersarang di dalam eksekusi MCP tool, PermissionDenied sebagai cabang samping dari PermissionRequest untuk penolakan mode otomatis, dan WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged, dan FileChanged sebagai event asinkron mandiri" width="520" height="1228" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/ZIW26Z9pnpsXLhbS/images/hooks-lifecycle.svg?fit=max&auto=format&n=ZIW26Z9pnpsXLhbS&q=85&s=ee23691324deb6501df09bfdae560b64" alt="Diagram siklus hidup hook menunjukkan Setup opsional yang mengalir ke SessionStart, kemudian loop per-turn yang berisi UserPromptSubmit, UserPromptExpansion untuk slash commands, loop agentic bersarang (PreToolUse, PermissionRequest, PostToolUse, PostToolUseFailure, PostToolBatch, SubagentStart/Stop, TaskCreated, TaskCompleted), dan Stop atau StopFailure, diikuti TeammateIdle, PreCompact, PostCompact, dan SessionEnd, dengan Elicitation dan ElicitationResult bersarang di dalam eksekusi MCP tool, PermissionDenied sebagai cabang samping dari PermissionRequest untuk penolakan mode otomatis, dan WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged, dan FileChanged sebagai event asinkron mandiri" width="520" height="1228" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
@@ -27,6 +27,7 @@ Tabel di bawah merangkum kapan setiap event dijalankan. Bagian [Hook events](#ho
 | Event                 | When it fires                                                                                                                                          |
 | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `SessionStart`        | When a session begins or resumes                                                                                                                       |
+| `Setup`               | When you start Claude Code with `--init-only`, or with `--init` or `--maintenance` in `-p` mode. For one-time preparation in CI or scripts             |
 | `UserPromptSubmit`    | When you submit a prompt, before Claude processes it                                                                                                   |
 | `UserPromptExpansion` | When a user-typed command expands into a prompt, before it reaches Claude. Can block the expansion                                                     |
 | `PreToolUse`          | Before a tool call executes. Can block it                                                                                                              |
@@ -187,24 +188,25 @@ Event `FileChanged` tidak mengikuti aturan ini saat membangun daftar watch-nya. 
 
 Setiap tipe event cocok pada bidang yang berbeda:
 
-| Event                                                                                                                           | Apa yang difilter matcher                                            | Contoh nilai matcher                                                                                                      |
-| :------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                      | nama tool                                                            | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
-| `SessionStart`                                                                                                                  | bagaimana sesi dimulai                                               | `startup`, `resume`, `clear`, `compact`                                                                                   |
-| `SessionEnd`                                                                                                                    | mengapa sesi berakhir                                                | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                                                  | tipe notifikasi                                                      | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                                                 | tipe agent                                                           | `Bash`, `Explore`, `Plan`, atau nama agent kustom                                                                         |
-| `PreCompact`, `PostCompact`                                                                                                     | apa yang memicu compaction                                           | `manual`, `auto`                                                                                                          |
-| `SubagentStop`                                                                                                                  | tipe agent                                                           | nilai yang sama seperti `SubagentStart`                                                                                   |
-| `ConfigChange`                                                                                                                  | sumber konfigurasi                                                   | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
-| `CwdChanged`                                                                                                                    | tidak ada dukungan matcher                                           | selalu dijalankan pada setiap perubahan direktori                                                                         |
-| `FileChanged`                                                                                                                   | nama file literal untuk ditonton (lihat [FileChanged](#filechanged)) | `.envrc\|.env`                                                                                                            |
-| `StopFailure`                                                                                                                   | tipe kesalahan                                                       | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                                                            | alasan load                                                          | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
-| `UserPromptExpansion`                                                                                                           | nama command                                                         | nama skill atau command Anda                                                                                              |
-| `Elicitation`                                                                                                                   | nama server MCP                                                      | nama server MCP yang dikonfigurasi Anda                                                                                   |
-| `ElicitationResult`                                                                                                             | nama server MCP                                                      | nilai yang sama seperti `Elicitation`                                                                                     |
-| `UserPromptSubmit`, `PostToolBatch`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | tidak ada dukungan matcher                                           | selalu dijalankan pada setiap kemunculan                                                                                  |
+| Event                                                                                                                           | Apa yang difilter matcher                                            | Contoh nilai matcher                                                                                                                               |
+| :------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                      | nama tool                                                            | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                                                   |
+| `SessionStart`                                                                                                                  | bagaimana sesi dimulai                                               | `startup`, `resume`, `clear`, `compact`                                                                                                            |
+| `Setup`                                                                                                                         | flag CLI mana yang memicu setup                                      | `init`, `maintenance`                                                                                                                              |
+| `SessionEnd`                                                                                                                    | mengapa sesi berakhir                                                | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                                           |
+| `Notification`                                                                                                                  | tipe notifikasi                                                      | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`, `elicitation_complete`, `elicitation_response`                           |
+| `SubagentStart`                                                                                                                 | tipe agent                                                           | `general-purpose`, `Explore`, `Plan`, atau nama agent kustom                                                                                       |
+| `PreCompact`, `PostCompact`                                                                                                     | apa yang memicu compaction                                           | `manual`, `auto`                                                                                                                                   |
+| `SubagentStop`                                                                                                                  | tipe agent                                                           | nilai yang sama seperti `SubagentStart`                                                                                                            |
+| `ConfigChange`                                                                                                                  | sumber konfigurasi                                                   | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                                                 |
+| `CwdChanged`                                                                                                                    | tidak ada dukungan matcher                                           | selalu dijalankan pada setiap perubahan direktori                                                                                                  |
+| `FileChanged`                                                                                                                   | nama file literal untuk ditonton (lihat [FileChanged](#filechanged)) | `.envrc\|.env`                                                                                                                                     |
+| `StopFailure`                                                                                                                   | tipe kesalahan                                                       | `rate_limit`, `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                                            | alasan load                                                          | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                                                       |
+| `UserPromptExpansion`                                                                                                           | nama command                                                         | nama skill atau command Anda                                                                                                                       |
+| `Elicitation`                                                                                                                   | nama server MCP                                                      | nama server MCP yang dikonfigurasi Anda                                                                                                            |
+| `ElicitationResult`                                                                                                             | nama server MCP                                                      | nilai yang sama seperti `Elicitation`                                                                                                              |
+| `UserPromptSubmit`, `PostToolBatch`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | tidak ada dukungan matcher                                           | selalu dijalankan pada setiap kemunculan                                                                                                           |
 
 Matcher dijalankan terhadap bidang dari [JSON input](#hook-input-and-output) yang Claude Code kirimkan ke hook Anda di stdin. Untuk tool events, bidang itu adalah `tool_name`. Setiap bagian [hook event](#hook-events) mencantumkan set lengkap nilai matcher dan skema input untuk event itu.
 
@@ -601,6 +603,7 @@ Kode keluar 2 adalah cara hook menandakan "berhenti, jangan lakukan ini." Efekny
 | `Notification`        | Tidak           | Menampilkan stderr ke pengguna saja                                                                                                                      |
 | `SubagentStart`       | Tidak           | Menampilkan stderr ke pengguna saja                                                                                                                      |
 | `SessionStart`        | Tidak           | Menampilkan stderr ke pengguna saja                                                                                                                      |
+| `Setup`               | Tidak           | Menampilkan stderr ke pengguna saja                                                                                                                      |
 | `SessionEnd`          | Tidak           | Menampilkan stderr ke pengguna saja                                                                                                                      |
 | `CwdChanged`          | Tidak           | Menampilkan stderr ke pengguna saja                                                                                                                      |
 | `FileChanged`         | Tidak           | Menampilkan stderr ke pengguna saja                                                                                                                      |
@@ -654,6 +657,41 @@ Untuk menghentikan Claude sepenuhnya terlepas dari tipe event:
 ```json theme={null}
 { "continue": false, "stopReason": "Build failed, fix errors before continuing" }
 ```
+
+#### Tambahkan konteks untuk Claude
+
+Bidang `additionalContext` meneruskan string dari hook Anda ke jendela konteks Claude. Claude Code membungkus string dalam pengingat sistem dan menyisipkannya ke dalam percakapan pada titik di mana hook dijalankan. Claude membaca pengingat pada permintaan model berikutnya, tetapi itu tidak muncul sebagai pesan chat dalam antarmuka.
+
+Kembalikan `additionalContext` di dalam `hookSpecificOutput` bersama nama event:
+
+```json theme={null}
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PostToolUse",
+    "additionalContext": "This file is generated. Edit src/schema.ts and run `bun generate` instead."
+  }
+}
+```
+
+Di mana pengingat muncul tergantung pada event:
+
+* [SessionStart](#sessionstart), [Setup](#setup), dan [SubagentStart](#subagentstart): di awal percakapan, sebelum prompt pertama
+* [UserPromptSubmit](#userpromptsubmit) dan [UserPromptExpansion](#userpromptexpansion): bersama prompt yang dikirimkan
+* [PreToolUse](#pretooluse), [PostToolUse](#posttooluse), [PostToolUseFailure](#posttoolusefailure), dan [PostToolBatch](#posttoolbatch): di sebelah hasil tool
+
+Ketika beberapa hooks mengembalikan `additionalContext` untuk event yang sama, Claude menerima semua nilai. Jika nilai melebihi 10.000 karakter, Claude Code menulis teks lengkap ke file di direktori sesi dan meneruskan Claude path file dengan pratinjau singkat sebagai gantinya.
+
+Gunakan `additionalContext` untuk informasi yang harus diketahui Claude tentang keadaan saat ini lingkungan Anda atau operasi yang baru saja dijalankan:
+
+* **Keadaan lingkungan**: branch saat ini, target deployment, atau flag fitur aktif
+* **Aturan proyek bersyarat**: perintah test mana yang berlaku untuk file yang baru diedit, direktori mana yang read-only di worktree ini
+* **Data eksternal**: masalah terbuka yang ditugaskan kepada Anda, hasil CI terbaru, konten yang diambil dari layanan internal
+
+Untuk instruksi yang tidak pernah berubah, lebih suka [CLAUDE.md](/id/memory). Itu dimuat tanpa menjalankan skrip dan merupakan tempat standar untuk konvensi proyek statis.
+
+Tulis teks sebagai pernyataan faktual daripada instruksi sistem imperatif. Frasa seperti "Target deployment adalah production" atau "Repo ini menggunakan `bun test`" dibaca sebagai informasi proyek. Teks yang dibingkai sebagai perintah sistem out-of-band dapat memicu pertahanan injeksi prompt Claude, yang menyebabkan Claude menampilkan teks kepada Anda alih-alih memperlakukannya sebagai konteks.
+
+Setelah disuntikkan, teks disimpan dalam transkrip sesi. Untuk events mid-session seperti `PostToolUse` atau `UserPromptSubmit`, melanjutkan dengan `--continue` atau `--resume` memutar ulang teks yang disimpan daripada menjalankan kembali hook untuk giliran masa lalu, jadi nilai seperti timestamp atau commit SHA menjadi usang pada resume. Hook `SessionStart` dijalankan lagi pada resume dengan `source` diatur ke `"resume"`, jadi mereka dapat menyegarkan konteks mereka.
 
 #### Kontrol keputusan
 
@@ -758,18 +796,20 @@ Selain [bidang input umum](#common-input-fields), SessionStart hooks menerima `s
 
 Teks apa pun yang dicetak skrip hook ke stdout ditambahkan sebagai konteks untuk Claude. Selain [bidang output JSON](#json-output) yang tersedia untuk semua hooks, Anda dapat mengembalikan bidang spesifik event ini:
 
-| Bidang              | Deskripsi                                                                   |
-| :------------------ | :-------------------------------------------------------------------------- |
-| `additionalContext` | String ditambahkan ke konteks Claude. Nilai dari beberapa hooks digabungkan |
+| Bidang              | Deskripsi                                                                                                                                                                                                    |
+| :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `additionalContext` | String ditambahkan ke konteks Claude pada awal percakapan, sebelum prompt pertama. Lihat [Tambahkan konteks untuk Claude](#add-context-for-claude) untuk cara teks disampaikan dan apa yang harus dimasukkan |
 
 ```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
-    "additionalContext": "My additional context here"
+    "additionalContext": "Current branch: feat/auth-refactor\nUncommitted changes: src/auth.ts, src/login.tsx\nActive issue: #4211 Migrate to OAuth2"
   }
 }
 ```
+
+Karena plain stdout sudah mencapai Claude untuk event ini, hook yang hanya memuat konteks dapat mencetak ke stdout secara langsung tanpa membangun JSON. Gunakan bentuk JSON ketika Anda perlu menggabungkan konteks dengan bidang lain seperti `suppressOutput`.
 
 #### Pertahankan variabel lingkungan
 
@@ -811,8 +851,56 @@ exit 0
 Variabel apa pun yang ditulis ke file ini akan tersedia dalam semua perintah Bash berikutnya yang dijalankan Claude Code selama sesi.
 
 <Note>
-  `CLAUDE_ENV_FILE` tersedia untuk SessionStart, [CwdChanged](#cwdchanged), dan [FileChanged](#filechanged) hooks. Tipe hook lainnya tidak memiliki akses ke variabel ini.
+  `CLAUDE_ENV_FILE` tersedia untuk SessionStart, [Setup](#setup), [CwdChanged](#cwdchanged), dan [FileChanged](#filechanged) hooks. Tipe hook lainnya tidak memiliki akses ke variabel ini.
 </Note>
+
+### Setup
+
+Dijalankan hanya ketika Anda meluncurkan Claude Code dengan `--init-only`, atau dengan `--init` atau `--maintenance` dalam mode print (`-p`). Itu tidak dijalankan pada startup normal. Gunakan untuk instalasi dependensi satu kali atau pembersihan terjadwal yang Anda picu secara eksplisit dari CI atau skrip, terpisah dari startup sesi normal. Untuk inisialisasi per-sesi, gunakan [SessionStart](#sessionstart) sebagai gantinya.
+
+Nilai matcher sesuai dengan flag CLI yang memicu hook:
+
+| Matcher       | Kapan dijalankan                             |
+| :------------ | :------------------------------------------- |
+| `init`        | `claude --init-only` atau `claude -p --init` |
+| `maintenance` | `claude -p --maintenance`                    |
+
+`--init-only` menjalankan Setup hooks dan SessionStart hooks dengan matcher `startup`, kemudian keluar tanpa memulai percakapan. `--init` dan `--maintenance` menjalankan Setup hooks hanya ketika digabungkan dengan `-p` (mode print); dalam sesi interaktif dua flag itu saat ini tidak menjalankan Setup hooks.
+
+Karena Setup tidak dijalankan pada setiap peluncuran, plugin yang memerlukan dependensi yang diinstal tidak dapat mengandalkan Setup saja. Pola praktis adalah memeriksa dependensi pada penggunaan pertama dan menginstal jika tidak ada, misalnya hook atau skill yang menguji `${CLAUDE_PLUGIN_DATA}/node_modules` dan menjalankan `npm install` jika tidak ada. Lihat [direktori data persisten](/id/plugins-reference#persistent-data-directory) untuk tempat menyimpan dependensi yang diinstal.
+
+#### Input Setup
+
+Selain [bidang input umum](#common-input-fields), Setup hooks menerima bidang `trigger` yang diatur ke `"init"` atau `"maintenance"`:
+
+```json theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "cwd": "/Users/...",
+  "hook_event_name": "Setup",
+  "trigger": "init"
+}
+```
+
+#### Kontrol keputusan Setup
+
+Setup hooks tidak dapat memblokir. Pada kode keluar 2, stderr ditampilkan kepada pengguna; pada kode keluar non-nol lainnya, stderr muncul hanya ketika Anda meluncurkan dengan `--verbose`. Dalam kedua kasus eksekusi berlanjut. Untuk meneruskan informasi ke konteks Claude, kembalikan `additionalContext` dalam output JSON; plain stdout ditulis ke debug log saja. Selain [bidang output JSON](#json-output) yang tersedia untuk semua hooks, Anda dapat mengembalikan bidang spesifik event ini:
+
+| Bidang              | Deskripsi                                                                   |
+| :------------------ | :-------------------------------------------------------------------------- |
+| `additionalContext` | String ditambahkan ke konteks Claude. Nilai dari beberapa hooks digabungkan |
+
+```json theme={null}
+{
+  "hookSpecificOutput": {
+    "hookEventName": "Setup",
+    "additionalContext": "Dependencies installed: node_modules, .venv"
+  }
+}
+```
+
+Setup hooks memiliki akses ke `CLAUDE_ENV_FILE`. Variabel yang ditulis ke file itu bertahan ke perintah Bash berikutnya untuk sesi, sama seperti dalam [SessionStart hooks](#persist-environment-variables). Hanya hooks `type: "command"` dan `type: "mcp_tool"` yang didukung.
 
 ### InstructionsLoaded
 
@@ -881,12 +969,12 @@ Plain stdout ditampilkan sebagai output hook dalam transkrip. Bidang `additional
 
 Untuk memblokir prompt, kembalikan objek JSON dengan `decision` diatur ke `"block"`:
 
-| Bidang              | Deskripsi                                                                                                                          |
-| :------------------ | :--------------------------------------------------------------------------------------------------------------------------------- |
-| `decision`          | `"block"` mencegah prompt diproses dan menghapusnya dari konteks. Hilangkan untuk mengizinkan prompt dilanjutkan                   |
-| `reason`            | Ditampilkan ke pengguna saat `decision` adalah `"block"`. Tidak ditambahkan ke konteks                                             |
-| `additionalContext` | String ditambahkan ke konteks Claude                                                                                               |
-| `sessionTitle`      | Menetapkan judul sesi, efek yang sama seperti `/rename`. Gunakan untuk memberi nama sesi secara otomatis berdasarkan konten prompt |
+| Bidang              | Deskripsi                                                                                                                                                                                      |
+| :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `decision`          | `"block"` mencegah prompt diproses dan menghapusnya dari konteks. Hilangkan untuk mengizinkan prompt dilanjutkan                                                                               |
+| `reason`            | Ditampilkan ke pengguna saat `decision` adalah `"block"`. Tidak ditambahkan ke konteks                                                                                                         |
+| `additionalContext` | String ditambahkan ke konteks Claude bersama prompt yang dikirimkan. Lihat [Tambahkan konteks untuk Claude](#add-context-for-claude) untuk cara teks disampaikan dan apa yang harus dimasukkan |
+| `sessionTitle`      | Menetapkan judul sesi, efek yang sama seperti `/rename`. Gunakan untuk memberi nama sesi secara otomatis berdasarkan konten prompt                                                             |
 
 ```json theme={null}
 {
@@ -935,11 +1023,11 @@ Selain [bidang input umum](#common-input-fields), UserPromptExpansion hooks mene
 
 Hooks `UserPromptExpansion` dapat memblokir ekspansi atau menambahkan konteks. Semua [bidang output JSON](#json-output) tersedia.
 
-| Bidang              | Deskripsi                                                                               |
-| :------------------ | :-------------------------------------------------------------------------------------- |
-| `decision`          | `"block"` mencegah slash command berkembang. Hilangkan untuk mengizinkannya dilanjutkan |
-| `reason`            | Ditampilkan ke pengguna saat `decision` adalah `"block"`                                |
-| `additionalContext` | String ditambahkan ke konteks Claude bersama prompt yang berkembang                     |
+| Bidang              | Deskripsi                                                                                                                            |
+| :------------------ | :----------------------------------------------------------------------------------------------------------------------------------- |
+| `decision`          | `"block"` mencegah slash command berkembang. Hilangkan untuk mengizinkannya dilanjutkan                                              |
+| `reason`            | Ditampilkan ke pengguna saat `decision` adalah `"block"`                                                                             |
+| `additionalContext` | String ditambahkan ke konteks Claude bersama prompt yang berkembang. Lihat [Tambahkan konteks untuk Claude](#add-context-for-claude) |
 
 ```json theme={null}
 {
@@ -1073,7 +1161,7 @@ Hooks `PreToolUse` dapat mengontrol apakah pemanggilan tool dilanjutkan. Tidak s
 | `permissionDecision`       | `"allow"` melewati prompt izin. `"deny"` mencegah pemanggilan tool. `"ask"` meminta pengguna untuk mengkonfirmasi. `"defer"` keluar dengan baik sehingga tool dapat dilanjutkan nanti. [Deny and ask rules](/id/permissions#manage-permissions) masih berlaku terlepas dari apa yang dikembalikan hook         |
 | `permissionDecisionReason` | Untuk `"allow"` dan `"ask"`, ditampilkan ke pengguna tetapi bukan Claude. Untuk `"deny"`, ditampilkan ke Claude. Untuk `"defer"`, diabaikan                                                                                                                                                                    |
 | `updatedInput`             | Memodifikasi parameter input tool sebelum eksekusi. Menggantikan seluruh objek input, jadi sertakan bidang yang tidak berubah bersama yang dimodifikasi. Gabungkan dengan `"allow"` untuk persetujuan otomatis, atau `"ask"` untuk menampilkan input yang dimodifikasi ke pengguna. Untuk `"defer"`, diabaikan |
-| `additionalContext`        | String ditambahkan ke konteks Claude sebelum tool dijalankan. Untuk `"defer"`, diabaikan                                                                                                                                                                                                                       |
+| `additionalContext`        | String ditambahkan ke konteks Claude bersama hasil tool. Diabaikan ketika `permissionDecision` adalah `"defer"`. Lihat [Tambahkan konteks untuk Claude](#add-context-for-claude)                                                                                                                               |
 
 Ketika beberapa PreToolUse hooks mengembalikan keputusan berbeda, prioritas adalah `deny` > `defer` > `ask` > `allow`.
 
@@ -1268,23 +1356,36 @@ Hooks `PostToolUse` dijalankan setelah tool sudah dijalankan dengan sukses. Inpu
 
 Hooks `PostToolUse` dapat memberikan umpan balik ke Claude setelah eksekusi tool. Selain [bidang output JSON](#json-output) yang tersedia untuk semua hooks, skrip hook Anda dapat mengembalikan bidang spesifik event ini:
 
-| Bidang                 | Deskripsi                                                                                    |
-| :--------------------- | :------------------------------------------------------------------------------------------- |
-| `decision`             | `"block"` meminta Claude dengan `reason`. Hilangkan untuk mengizinkan tindakan dilanjutkan   |
-| `reason`               | Penjelasan ditampilkan ke Claude saat `decision` adalah `"block"`                            |
-| `additionalContext`    | Konteks tambahan untuk Claude pertimbangkan                                                  |
-| `updatedMCPToolOutput` | Untuk [MCP tools](#match-mcp-tools) saja: mengganti output tool dengan nilai yang disediakan |
+| Bidang                 | Deskripsi                                                                                                                 |
+| :--------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `decision`             | `"block"` meminta Claude dengan `reason`. Hilangkan untuk mengizinkan tindakan dilanjutkan                                |
+| `reason`               | Penjelasan ditampilkan ke Claude saat `decision` adalah `"block"`                                                         |
+| `additionalContext`    | String ditambahkan ke konteks Claude bersama hasil tool. Lihat [Tambahkan konteks untuk Claude](#add-context-for-claude)  |
+| `updatedToolOutput`    | Mengganti output tool dengan nilai yang disediakan sebelum dikirim ke Claude. Nilai harus cocok dengan bentuk output tool |
+| `updatedMCPToolOutput` | Mengganti output untuk [MCP tools](#match-mcp-tools) saja. Lebih suka `updatedToolOutput`, yang bekerja untuk semua tools |
+
+Contoh di bawah mengganti output pemanggilan `Bash`. Nilai pengganti cocok dengan bentuk output tool `Bash`:
 
 ```json theme={null}
 {
-  "decision": "block",
-  "reason": "Explanation for decision",
   "hookSpecificOutput": {
     "hookEventName": "PostToolUse",
-    "additionalContext": "Additional information for Claude"
+    "additionalContext": "Additional information for Claude",
+    "updatedToolOutput": {
+      "stdout": "[redacted]",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false
+    }
   }
 }
 ```
+
+<Warning>
+  `updatedToolOutput` hanya mengubah apa yang dilihat Claude. Tool sudah dijalankan pada saat hook dijalankan, jadi file apa pun yang ditulis, perintah yang dijalankan, atau permintaan jaringan yang dikirim sudah berlaku. Telemetri seperti span tool OpenTelemetry dan acara analitik juga menangkap output asli sebelum hook dijalankan. Untuk mencegah atau memodifikasi pemanggilan tool sebelum dijalankan, gunakan hook [PreToolUse](#pretooluse) sebagai gantinya.
+
+  Nilai pengganti harus cocok dengan bentuk output tool. Tools bawaan mengembalikan objek terstruktur daripada string biasa. Misalnya, `Bash` mengembalikan objek dengan bidang `stdout`, `stderr`, `interrupted`, dan `isImage`. Untuk tools bawaan, nilai yang tidak cocok dengan skema output tool diabaikan dan output asli digunakan. Output tool MCP dilewatkan tanpa validasi skema. Menghapus detail kesalahan yang Claude butuhkan dapat menyebabkannya melanjutkan dengan asumsi yang salah.
+</Warning>
 
 ### PostToolUseFailure
 
@@ -1325,9 +1426,9 @@ PostToolUseFailure hooks menerima bidang `tool_name` dan `tool_input` yang sama 
 
 Hooks `PostToolUseFailure` dapat memberikan konteks ke Claude setelah kegagalan tool. Selain [bidang output JSON](#json-output) yang tersedia untuk semua hooks, skrip hook Anda dapat mengembalikan bidang spesifik event ini:
 
-| Bidang              | Deskripsi                                                     |
-| :------------------ | :------------------------------------------------------------ |
-| `additionalContext` | Konteks tambahan untuk Claude pertimbangkan bersama kesalahan |
+| Bidang              | Deskripsi                                                                                                               |
+| :------------------ | :---------------------------------------------------------------------------------------------------------------------- |
+| `additionalContext` | String ditambahkan ke konteks Claude bersama kesalahan. Lihat [Tambahkan konteks untuk Claude](#add-context-for-claude) |
 
 ```json theme={null}
 {
@@ -1380,9 +1481,9 @@ Selain [bidang input umum](#common-input-fields), PostToolBatch hooks menerima `
 
 Hooks `PostToolBatch` dapat menyuntikkan konteks untuk Claude. Selain [bidang output JSON](#json-output) yang tersedia untuk semua hooks, skrip hook Anda dapat mengembalikan bidang spesifik event ini:
 
-| Bidang              | Deskripsi                                                                 |
-| :------------------ | :------------------------------------------------------------------------ |
-| `additionalContext` | String konteks yang disuntikkan sekali sebelum panggilan model berikutnya |
+| Bidang              | Deskripsi                                                                                                                                                                                                                                               |
+| :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `additionalContext` | String konteks yang disuntikkan sekali sebelum panggilan model berikutnya. Lihat [Tambahkan konteks untuk Claude](#add-context-for-claude) untuk detail pengiriman, apa yang harus dimasukkan, dan cara sesi yang dilanjutkan menangani nilai masa lalu |
 
 ```json theme={null}
 {
@@ -1392,12 +1493,6 @@ Hooks `PostToolBatch` dapat menyuntikkan konteks untuk Claude. Selain [bidang ou
   }
 }
 ```
-
-<Note>
-  `additionalContext` yang disuntikkan dipertahankan ke transkrip sesi. Pada `--continue` atau `--resume`, teks yang disimpan diputar ulang dari disk dan hook tidak dijalankan kembali untuk giliran masa lalu. Lebih suka konteks statis seperti konvensi atau panduan tipe file daripada nilai dinamis seperti timestamp atau SHA commit saat ini, karena nilai tersebut menjadi usang pada resume.
-
-  Bingkai konteks sebagai informasi faktual daripada instruksi sistem imperatif. Teks yang ditulis sebagai perintah sistem out-of-band dapat memicu pertahanan injeksi prompt Claude, yang menampilkan injeksi ke pengguna alih-alih bertindak atasnya.
-</Note>
 
 Mengembalikan `decision: "block"` atau `continue: false` menghentikan loop agentic sebelum panggilan model berikutnya.
 
@@ -1449,7 +1544,7 @@ Ketika `retry` adalah `true`, Claude Code menambahkan pesan ke percakapan member
 
 ### Notification
 
-Dijalankan ketika Claude Code mengirimkan notifikasi. Cocok pada tipe notifikasi: `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`. Hilangkan matcher untuk menjalankan hooks untuk semua tipe notifikasi.
+Dijalankan ketika Claude Code mengirimkan notifikasi. Cocok pada tipe notifikasi: `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`, `elicitation_complete`, `elicitation_response`. Hilangkan matcher untuk menjalankan hooks untuk semua tipe notifikasi.
 
 Gunakan matchers terpisah untuk menjalankan handler berbeda tergantung pada tipe notifikasi. Konfigurasi ini memicu skrip alert khusus izin ketika Claude memerlukan persetujuan izin dan notifikasi berbeda ketika Claude telah idle:
 
@@ -1496,19 +1591,15 @@ Selain [bidang input umum](#common-input-fields), Notification hooks menerima `m
 }
 ```
 
-Notification hooks tidak dapat memblokir atau memodifikasi notifikasi. Selain [bidang output JSON](#json-output) yang tersedia untuk semua hooks, Anda dapat mengembalikan `additionalContext` untuk menambahkan konteks ke percakapan:
-
-| Bidang              | Deskripsi                            |
-| :------------------ | :----------------------------------- |
-| `additionalContext` | String ditambahkan ke konteks Claude |
+Notification hooks tidak dapat memblokir atau memodifikasi notifikasi. Mereka dimaksudkan untuk efek samping seperti meneruskan notifikasi ke layanan eksternal. [Bidang output JSON](#json-output) umum seperti `systemMessage` berlaku.
 
 ### SubagentStart
 
-Dijalankan ketika subagent Claude Code dispawn melalui tool Agent. Mendukung matchers untuk memfilter berdasarkan nama tipe agent (agent bawaan seperti `Bash`, `Explore`, `Plan`, atau nama agent kustom dari `.claude/agents/`).
+Dijalankan ketika subagent Claude Code dispawn melalui tool Agent. Mendukung matchers untuk memfilter berdasarkan nama tipe agent (agent bawaan seperti `general-purpose`, `Explore`, `Plan`, atau nama agent kustom dari `.claude/agents/`).
 
 #### Input SubagentStart
 
-Selain [bidang input umum](#common-input-fields), SubagentStart hooks menerima `agent_id` dengan pengenal unik untuk subagent dan `agent_type` dengan nama agent (agent bawaan seperti `"Bash"`, `"Explore"`, `"Plan"`, atau nama agent kustom).
+Selain [bidang input umum](#common-input-fields), SubagentStart hooks menerima `agent_id` dengan pengenal unik untuk subagent dan `agent_type` dengan nama agent (agent bawaan seperti `"general-purpose"`, `"Explore"`, `"Plan"`, atau nama agent kustom).
 
 ```json theme={null}
 {
@@ -1523,9 +1614,9 @@ Selain [bidang input umum](#common-input-fields), SubagentStart hooks menerima `
 
 SubagentStart hooks tidak dapat memblokir pembuatan subagent, tetapi mereka dapat menyuntikkan konteks ke subagent. Selain [bidang output JSON](#json-output) yang tersedia untuk semua hooks, Anda dapat mengembalikan:
 
-| Bidang              | Deskripsi                              |
-| :------------------ | :------------------------------------- |
-| `additionalContext` | String ditambahkan ke konteks subagent |
+| Bidang              | Deskripsi                                                                                                                                                  |
+| :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `additionalContext` | String ditambahkan ke konteks subagent pada awal percakapannya, sebelum prompt pertamanya. Lihat [Tambahkan konteks untuk Claude](#add-context-for-claude) |
 
 ```json theme={null}
 {
@@ -1718,7 +1809,7 @@ Selain [bidang input umum](#common-input-fields), StopFailure hooks menerima `er
 
 | Bidang                   | Deskripsi                                                                                                                                                                                                                                                             |
 | :----------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `error`                  | Tipe kesalahan: `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, atau `unknown`                                                                                                                        |
+| `error`                  | Tipe kesalahan: `rate_limit`, `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, atau `unknown`                                                                                               |
 | `error_details`          | Detail tambahan tentang kesalahan, ketika tersedia                                                                                                                                                                                                                    |
 | `last_assistant_message` | Teks kesalahan yang dirender ditampilkan dalam percakapan. Tidak seperti `Stop` dan `SubagentStop`, di mana bidang ini menyimpan output percakapan Claude, untuk `StopFailure` itu berisi string kesalahan API itu sendiri, seperti `"API Error: Rate limit reached"` |
 

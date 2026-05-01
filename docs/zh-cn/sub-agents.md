@@ -235,24 +235,24 @@ Frontmatter 定义了 subagent 的元数据和配置。正文成为指导 subage
 
 以下字段可以在 YAML frontmatter 中使用。只有 `name` 和 `description` 是必需的。
 
-| Field             | Required | Description                                                                                                                                                                   |
-| :---------------- | :------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`            | Yes      | 使用小写字母和连字符的唯一标识符                                                                                                                                                              |
-| `description`     | Yes      | Claude 何时应该委托给此 subagent                                                                                                                                                      |
-| `tools`           | No       | [Tools](#available-tools) subagent 可以使用。如果省略，继承所有工具                                                                                                                           |
-| `disallowedTools` | No       | 要拒绝的工具，从继承或指定的列表中删除                                                                                                                                                           |
-| `model`           | No       | [Model](#choose-a-model) 使用：`sonnet`、`opus`、`haiku`、完整模型 ID（例如，`claude-opus-4-7`）或 `inherit`。默认为 `inherit`                                                                    |
-| `permissionMode`  | No       | [Permission mode](#permission-modes)：`default`、`acceptEdits`、`auto`、`dontAsk`、`bypassPermissions` 或 `plan`                                                                    |
-| `maxTurns`        | No       | subagent 停止前的最大代理轮数                                                                                                                                                           |
-| `skills`          | No       | [Skills](/zh-CN/skills) 在启动时加载到 subagent 的上下文中。注入完整的技能内容，而不仅仅是可用于调用。Subagents 不继承来自父对话的技能                                                                                     |
-| `mcpServers`      | No       | [MCP servers](/zh-CN/mcp) 对此 subagent 可用。每个条目要么是引用已配置服务器的服务器名称（例如，`"slack"`），要么是内联定义，其中服务器名称为键，完整的 [MCP server config](/zh-CN/mcp#installing-mcp-servers) 为值                  |
-| `hooks`           | No       | [Lifecycle hooks](#define-hooks-for-subagents) 限定于此 subagent                                                                                                                  |
-| `memory`          | No       | [Persistent memory scope](#enable-persistent-memory)：`user`、`project` 或 `local`。启用跨会话学习                                                                                       |
-| `background`      | No       | 设置为 `true` 以始终将此 subagent 作为 [background task](#run-subagents-in-foreground-or-background) 运行。默认：`false`                                                                      |
-| `effort`          | No       | 此 subagent 活跃时的努力级别。覆盖会话努力级别。默认：从会话继承。选项：`low`、`medium`、`high`、`xhigh`、`max`；可用级别取决于模型                                                                                        |
-| `isolation`       | No       | 设置为 `worktree` 以在临时 [git worktree](/zh-CN/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) 中运行 subagent，为其提供存储库的隔离副本。如果 subagent 不进行任何更改，worktree 会自动清理 |
-| `color`           | No       | Subagent 在任务列表和转录中的显示颜色。接受 `red`、`blue`、`green`、`yellow`、`purple`、`orange`、`pink` 或 `cyan`                                                                                    |
-| `initialPrompt`   | No       | 当此代理作为主会话代理运行时（通过 `--agent` 或 `agent` 设置），自动提交为第一个用户轮次。[Commands](/zh-CN/commands) 和 [skills](/zh-CN/skills) 被处理。前置于任何用户提供的提示                                                 |
+| Field             | Required | Description                                                                                                                                                                                                        |
+| :---------------- | :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`            | Yes      | 使用小写字母和连字符的唯一标识符                                                                                                                                                                                                   |
+| `description`     | Yes      | Claude 何时应该委托给此 subagent                                                                                                                                                                                           |
+| `tools`           | No       | [Tools](#available-tools) subagent 可以使用。如果省略，继承所有工具                                                                                                                                                                |
+| `disallowedTools` | No       | 要拒绝的工具，从继承或指定的列表中删除                                                                                                                                                                                                |
+| `model`           | No       | [Model](#choose-a-model) 使用：`sonnet`、`opus`、`haiku`、完整模型 ID（例如，`claude-opus-4-7`）或 `inherit`。默认为 `inherit`                                                                                                         |
+| `permissionMode`  | No       | [Permission mode](#permission-modes)：`default`、`acceptEdits`、`auto`、`dontAsk`、`bypassPermissions` 或 `plan`。对于 [plugin subagents](#choose-the-subagent-scope) 被忽略                                                   |
+| `maxTurns`        | No       | subagent 停止前的最大代理轮数                                                                                                                                                                                                |
+| `skills`          | No       | [Skills](/zh-CN/skills) 在启动时加载到 subagent 的上下文中。注入完整的技能内容，而不仅仅是可用于调用。Subagents 不继承来自父对话的技能                                                                                                                          |
+| `mcpServers`      | No       | [MCP servers](/zh-CN/mcp) 对此 subagent 可用。每个条目要么是引用已配置服务器的服务器名称（例如，`"slack"`），要么是内联定义，其中服务器名称为键，完整的 [MCP server config](/zh-CN/mcp#installing-mcp-servers) 为值。对于 [plugin subagents](#choose-the-subagent-scope) 被忽略 |
+| `hooks`           | No       | [Lifecycle hooks](#define-hooks-for-subagents) 限定于此 subagent。对于 [plugin subagents](#choose-the-subagent-scope) 被忽略                                                                                                 |
+| `memory`          | No       | [Persistent memory scope](#enable-persistent-memory)：`user`、`project` 或 `local`。启用跨会话学习                                                                                                                            |
+| `background`      | No       | 设置为 `true` 以始终将此 subagent 作为 [background task](#run-subagents-in-foreground-or-background) 运行。默认：`false`                                                                                                           |
+| `effort`          | No       | 此 subagent 活跃时的努力级别。覆盖会话努力级别。默认：从会话继承。选项：`low`、`medium`、`high`、`xhigh`、`max`；可用级别取决于模型                                                                                                                             |
+| `isolation`       | No       | 设置为 `worktree` 以在临时 [git worktree](/zh-CN/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) 中运行 subagent，为其提供存储库的隔离副本。如果 subagent 不进行任何更改，worktree 会自动清理                                      |
+| `color`           | No       | Subagent 在任务列表和转录中的显示颜色。接受 `red`、`blue`、`green`、`yellow`、`purple`、`orange`、`pink` 或 `cyan`                                                                                                                         |
+| `initialPrompt`   | No       | 当此代理作为主会话代理运行时（通过 `--agent` 或 `agent` 设置），自动提交为第一个用户轮次。[Commands](/zh-CN/commands) 和 [skills](/zh-CN/skills) 被处理。前置于任何用户提供的提示                                                                                      |
 
 ### 选择模型
 
@@ -374,7 +374,7 @@ Use the Playwright tools to navigate, screenshot, and interact with pages.
 | `plan`              | Plan mode（只读探索）                                                                          |
 
 <Warning>
-  谨慎使用 `bypassPermissions`。它跳过权限提示，允许 subagent 在没有批准的情况下执行操作。对 `.git`、`.claude`、`.vscode`、`.idea` 和 `.husky` 目录的写入仍然会提示确认，除了 `.claude/commands`、`.claude/agents` 和 `.claude/skills`。有关详细信息，请参阅 [permission modes](/zh-CN/permission-modes#skip-all-checks-with-bypasspermissions-mode)。
+  谨慎使用 `bypassPermissions`。它跳过权限提示，允许 subagent 在没有批准的情况下执行操作，包括对 `.git`、`.claude`、`.vscode`、`.idea` 和 `.husky` 的写入。根目录和主目录删除（如 `rm -rf /`）仍然会作为断路器提示。有关详细信息，请参阅 [permission modes](/zh-CN/permission-modes#skip-all-checks-with-bypasspermissions-mode)。
 </Warning>
 
 如果父级使用 `bypassPermissions` 或 `acceptEdits`，这优先并且无法被覆盖。如果父级使用 [auto mode](/zh-CN/permission-modes#eliminate-prompts-with-auto-mode)，subagent 继承 auto mode，其 frontmatter 中的任何 `permissionMode` 被忽略：分类器使用与父会话相同的块和允许规则评估 subagent 的工具调用。
@@ -766,7 +766,7 @@ Subagents 支持使用与主对话相同的逻辑进行自动压缩。默认情�
 ## 分叉当前对话
 
 <Note>
-  分叉 subagents 是实验性的，需要 Claude Code v2.1.117 或更高版本。行为和配置可能在未来版本中更改。通过将 [`CLAUDE_CODE_FORK_SUBAGENT`](/zh-CN/env-vars) 环境变量设置为 `1` 来启用它们。
+  分叉 subagents 是实验性的，需要 Claude Code v2.1.117 或更高版本。行为和配置可能在未来版本中更改。通过将 [`CLAUDE_CODE_FORK_SUBAGENT`](/zh-CN/env-vars) 环境变量设置为 `1` 来启用它们。该变量在交互模式以及通过 SDK 或 `claude -p` 中被遵守。
 </Note>
 
 分叉是一个 subagent，它继承到目前为止的整个对话，而不是从头开始。这消除了 subagents 通常提供的输入隔离：分叉看到与主会话相同的系统提示、工具、模型和消息历史，因此您可以将其交给一个辅助任务而无需重新解释情况。分叉自己的工具调用仍然保持在您的对话之外，只有其最终结果返回，因此您的主 context window 保持干净。当命名 subagent 需要太多背景才能有用时，或当您想从相同的起点并行尝试多种方法时，使用分叉。
@@ -814,7 +814,7 @@ Subagents 支持使用与主对话相同的逻辑进行自动压缩。默认情�
 
 ### 限制
 
-分叉模式仅在交互式会话中工作。它在 [non-interactive mode](/zh-CN/headless) 中被禁用，其中包括 Agent SDK。分叉无法生成进一步的分叉。
+设置 `CLAUDE_CODE_FORK_SUBAGENT=1` 在交互式会话、[non-interactive mode](/zh-CN/headless) 和 Agent SDK 中启用分叉模式。分叉无法生成进一步的分叉。
 
 ## 示例 subagents
 

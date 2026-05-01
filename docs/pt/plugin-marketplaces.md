@@ -175,10 +175,13 @@ Cada entrada de plugin precisa no mínimo de um `name` e `source` (onde buscá-l
 
 | Campo                                 | Tipo   | Descrição                                                                                                                                                                                                                                                               |
 | :------------------------------------ | :----- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `metadata.description`                | string | Breve descrição do marketplace                                                                                                                                                                                                                                          |
-| `metadata.version`                    | string | Versão do marketplace                                                                                                                                                                                                                                                   |
+| `$schema`                             | string | URL do JSON Schema para autocompletar e validação do editor. Claude Code ignora este campo no momento do carregamento.                                                                                                                                                  |
+| `description`                         | string | Breve descrição do marketplace                                                                                                                                                                                                                                          |
+| `version`                             | string | Versão do manifesto do marketplace                                                                                                                                                                                                                                      |
 | `metadata.pluginRoot`                 | string | Diretório base adicionado aos caminhos de fonte de plugin relativos (por exemplo, `"./plugins"` permite escrever `"source": "formatter"` em vez de `"source": "./plugins/formatter"`)                                                                                   |
 | `allowCrossMarketplaceDependenciesOn` | array  | Outros marketplaces que plugins neste marketplace podem depender. Dependências de um marketplace não listado aqui são bloqueadas na instalação. Veja [Depender de um plugin de outro marketplace](/pt/plugin-dependencies#depend-on-a-plugin-from-another-marketplace). |
+
+`description` e `version` também são aceitos sob `metadata` para compatibilidade com versões anteriores.
 
 ## Entradas de plugin
 
@@ -958,7 +961,7 @@ Execute `claude plugin validate .` ou `/plugin validate .` do seu diretório de 
 **Avisos** (não bloqueadores):
 
 * `Marketplace has no plugins defined`: adicione pelo menos um plugin ao array `plugins`
-* `No marketplace description provided`: adicione `metadata.description` para ajudar os usuários a entender seu marketplace
+* `No marketplace description provided`: adicione uma `description` de nível superior para ajudar os usuários a entender seu marketplace
 * `Plugin name "x" is not kebab-case`: o nome do plugin contém letras maiúsculas, espaços ou caracteres especiais. Renomeie para apenas letras minúsculas, dígitos e hífens (por exemplo, `my-plugin`). Claude Code aceita outras formas, mas a sincronização de marketplace do Claude.ai as rejeita.
 
 ### Falhas de instalação de plugin

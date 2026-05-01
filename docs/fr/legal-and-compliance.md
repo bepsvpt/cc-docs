@@ -35,8 +35,8 @@ L'utilisation de Claude Code est soumise à la [politique d'utilisation d'Anthro
 
 Claude Code s'authentifie auprès des serveurs d'Anthropic en utilisant des jetons OAuth ou des clés API. Ces méthodes d'authentification servent des objectifs différents :
 
-* **L'authentification OAuth** (utilisée avec les plans Free, Pro et Max) est destinée exclusivement à Claude Code et Claude.ai. L'utilisation de jetons OAuth obtenus via des comptes Claude Free, Pro ou Max dans tout autre produit, outil ou service — y compris le [SDK Agent](https://platform.claude.com/docs/en/agent-sdk/overview) — n'est pas autorisée et constitue une violation des [Conditions d'utilisation pour les consommateurs](https://www.anthropic.com/legal/consumer-terms).
-* **Les développeurs** créant des produits ou services qui interagissent avec les capacités de Claude, y compris ceux utilisant le [SDK Agent](https://platform.claude.com/docs/en/agent-sdk/overview), doivent utiliser l'authentification par clé API via la [Console Claude](https://platform.claude.com/) ou un fournisseur cloud pris en charge. Anthropic n'autorise pas les développeurs tiers à proposer la connexion Claude.ai ou à acheminer les demandes via les identifiants des plans Free, Pro ou Max au nom de leurs utilisateurs.
+* **L'authentification OAuth** est destinée exclusivement aux acheteurs des plans d'abonnement Claude Free, Pro, Max, Team et Enterprise et est conçue pour soutenir l'utilisation ordinaire de Claude Code et d'autres applications natives d'Anthropic. Plus d'informations sur la façon dont les utilisateurs peuvent s'authentifier avec des jetons OAuth peuvent être trouvées dans [Connexion à votre compte Claude](https://support.claude.com/en/articles/13189465-logging-in-to-your-claude-account).
+* **Les développeurs** créant des produits ou services qui interagissent avec les capacités de Claude, y compris ceux utilisant le [SDK Agent](/fr/agent-sdk/overview), doivent utiliser l'authentification par clé API via la [Console Claude](https://platform.claude.com/) ou un fournisseur cloud pris en charge. Anthropic n'autorise pas les développeurs tiers à proposer la connexion Claude.ai ou à acheminer les demandes via les identifiants des plans Free, Pro ou Max au nom de leurs utilisateurs.
 
 Anthropic se réserve le droit de prendre des mesures pour appliquer ces restrictions et peut le faire sans préavis.
 
@@ -50,7 +50,7 @@ Vous pouvez trouver plus d'informations dans le [Centre de confiance d'Anthropic
 
 ### Signalement des vulnérabilités de sécurité
 
-Anthropic gère notre programme de sécurité via HackerOne. [Utilisez ce formulaire pour signaler les vulnérabilités](https://hackerone.com/anthropic-vdp/reports/new?type=team\&report_type=vulnerability).
+Anthropic gère notre programme de sécurité via HackerOne. [Utilisez ce formulaire pour signaler les vulnérabilités](https://hackerone.com/4f1f16ba-10d3-4d09-9ecc-c721aad90f24/embedded_submissions/new).
 
 ***
 

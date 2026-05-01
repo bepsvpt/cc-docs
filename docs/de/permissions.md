@@ -32,17 +32,17 @@ Regeln werden in dieser Reihenfolge ausgewertet: **deny -> ask -> allow**. Die e
 
 Claude Code unterstützt mehrere Berechtigungsmodi, die steuern, wie Werkzeuge genehmigt werden. Siehe [Berechtigungsmodi](/de/permission-modes) für den Zeitpunkt der Verwendung jedes Modus. Legen Sie den `defaultMode` in Ihren [Einstellungsdateien](/de/settings#settings-files) fest:
 
-| Modus               | Beschreibung                                                                                                                                                                |
-| :------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `default`           | Standardverhalten: fordert Genehmigung bei der ersten Verwendung jedes Werkzeugs auf                                                                                        |
-| `acceptEdits`       | Akzeptiert automatisch Dateiberechtigungen und häufige Dateisystem-Befehle (`mkdir`, `touch`, `mv`, `cp` usw.) für Pfade im Arbeitsverzeichnis oder `additionalDirectories` |
-| `plan`              | Plan Mode: Claude kann Dateien analysieren, aber nicht ändern oder Befehle ausführen                                                                                        |
-| `auto`              | Genehmigt Werkzeugaufrufe automatisch mit Hintergrund-Sicherheitsprüfungen, die überprüfen, ob Aktionen mit Ihrer Anfrage übereinstimmen. Derzeit eine Forschungsvorschau   |
-| `dontAsk`           | Verweigert Werkzeuge automatisch, es sei denn, sie sind vorab über `/permissions` oder `permissions.allow`-Regeln genehmigt                                                 |
-| `bypassPermissions` | Überspringt Berechtigungsaufforderungen außer für Schreibvorgänge in geschützte Verzeichnisse (siehe Warnung unten)                                                         |
+| Modus               | Beschreibung                                                                                                                                                                                    |
+| :------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `default`           | Standardverhalten: fordert Genehmigung bei der ersten Verwendung jedes Werkzeugs auf                                                                                                            |
+| `acceptEdits`       | Akzeptiert automatisch Dateiberechtigungen und häufige Dateisystem-Befehle (`mkdir`, `touch`, `mv`, `cp` usw.) für Pfade im Arbeitsverzeichnis oder `additionalDirectories`                     |
+| `plan`              | Plan Mode: Claude kann Dateien analysieren, aber nicht ändern oder Befehle ausführen                                                                                                            |
+| `auto`              | Genehmigt Werkzeugaufrufe automatisch mit Hintergrund-Sicherheitsprüfungen, die überprüfen, ob Aktionen mit Ihrer Anfrage übereinstimmen. Derzeit eine Forschungsvorschau                       |
+| `dontAsk`           | Verweigert Werkzeuge automatisch, es sei denn, sie sind vorab über `/permissions` oder `permissions.allow`-Regeln genehmigt                                                                     |
+| `bypassPermissions` | Überspringt alle Berechtigungsaufforderungen. Entfernungen von Dateisystem-Root oder Home-Verzeichnis wie `rm -rf /` und `rm -rf ~` fordern weiterhin auf als Schutzschalter gegen Modellfehler |
 
 <Warning>
-  Der Modus `bypassPermissions` überspringt Berechtigungsaufforderungen. Schreibvorgänge in die Verzeichnisse `.git`, `.claude`, `.vscode`, `.idea` und `.husky` fordern weiterhin eine Bestätigung auf, um eine versehentliche Beschädigung des Repository-Status, der Editor-Konfiguration und der Git-Hooks zu verhindern. Schreibvorgänge in `.claude/commands`, `.claude/agents` und `.claude/skills` sind ausgenommen und fordern nicht auf, da Claude routinemäßig dort schreibt, wenn Skills, Subagents und Befehle erstellt werden. Verwenden Sie diesen Modus nur in isolierten Umgebungen wie Containern oder VMs, in denen Claude Code keinen Schaden anrichten kann. Administratoren können diesen Modus verhindern, indem sie `permissions.disableBypassPermissionsMode` in [verwalteten Einstellungen](#managed-settings) auf `"disable"` setzen.
+  Der Modus `bypassPermissions` überspringt alle Berechtigungsaufforderungen, einschließlich Schreibvorgänge in `.git`, `.claude`, `.vscode`, `.idea` und `.husky`. Entfernungen, die auf das Dateisystem-Root oder Home-Verzeichnis abzielen, wie `rm -rf /` und `rm -rf ~`, fordern weiterhin auf als Schutzschalter gegen Modellfehler. Verwenden Sie diesen Modus nur in isolierten Umgebungen wie Containern oder VMs, in denen Claude Code keinen Schaden anrichten kann. Administratoren können diesen Modus verhindern, indem sie `permissions.disableBypassPermissionsMode` in [verwalteten Einstellungen](#managed-settings) auf `"disable"` setzen.
 </Warning>
 
 Um zu verhindern, dass der Modus `bypassPermissions` oder `auto` verwendet wird, setzen Sie `permissions.disableBypassPermissionsMode` oder `permissions.disableAutoMode` in einer beliebigen [Einstellungsdatei](/de/settings#settings-files) auf `"disable"`. Diese sind am nützlichsten in [verwalteten Einstellungen](#managed-settings), wo sie nicht überschrieben werden können.
@@ -157,6 +157,28 @@ Ein `cd` in einen Pfad innerhalb Ihres Arbeitsverzeichnisses oder eines [zusätz
 
   Beachten Sie, dass die alleinige Verwendung von WebFetch keinen Netzwerkzugriff verhindert. Wenn Bash zulässig ist, kann Claude immer noch `curl`, `wget` oder andere Werkzeuge verwenden, um auf jede URL zuzugreifen.
 </Warning>
+
+### PowerShell
+
+PowerShell-Berechtigungsregeln verwenden die gleiche Form wie Bash-Regeln. Platzhalter mit `*` gleichen an jeder Position ab, das Suffix `:*` ist gleichwertig mit einem nachgestellten ` *`, und ein bloßes `PowerShell` oder `PowerShell(*)` gleicht jeden Befehl ab. Diese Konfiguration ermöglicht `Get-ChildItem`- und `git commit`-Befehle, blockiert aber `Remove-Item`:
+
+```json theme={null}
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(git commit *)"
+    ],
+    "deny": [
+      "PowerShell(Remove-Item *)"
+    ]
+  }
+}
+```
+
+Häufige Aliase werden vor dem Abgleich kanonisiert. Eine Regel, die für den Cmdlet-Namen geschrieben wurde, gleicht auch seine Aliase ab, daher gleicht `PowerShell(Get-ChildItem *)` auch `gci`, `ls` und `dir` ab. Der Abgleich ist nicht case-sensitiv.
+
+Claude Code analysiert die PowerShell-AST und überprüft jeden Befehl in einem zusammengesetzten Befehl unabhängig. Pipeline-Operatoren `|`, Anweisungstrennzeichen `;` und auf PowerShell 7+ die Kettenoperatoren `&&` und `||` teilen einen zusammengesetzten Befehl in Unterbefehle auf. Eine Regel muss jeden Unterbefehl abgleichen, damit der zusammengesetzte Befehl zulässig ist.
 
 ### Read und Edit
 
@@ -307,121 +329,6 @@ Die folgenden Einstellungen sind nur in verwalteten Einstellungen wirksam. Das P
 <Note>
   Der Zugriff auf [Remote Control](/de/remote-control) und [Web-Sitzungen](/de/claude-code-on-the-web) wird nicht durch einen Schlüssel für verwaltete Einstellungen gesteuert. Bei Team- und Enterprise-Plänen aktiviert oder deaktiviert ein Administrator diese Funktionen in [Claude Code-Administratoreinstellungen](https://claude.ai/admin-settings/claude-code).
 </Note>
-
-## Überprüfen Sie Auto-Mode-Ablehnungen
-
-Wenn [Auto Mode](/de/permission-modes#eliminate-prompts-with-auto-mode) einen Werkzeugaufruf ablehnt, wird eine Benachrichtigung angezeigt und die abgelehnte Aktion wird in `/permissions` unter der Registerkarte „Kürzlich abgelehnt" aufgezeichnet. Drücken Sie `r` auf einer abgelehnten Aktion, um sie zum Wiederholen zu markieren: Wenn Sie das Dialogfeld beenden, sendet Claude Code eine Nachricht, die dem Modell mitteilt, dass es diesen Werkzeugaufruf wiederholen kann, und setzt das Gespräch fort.
-
-Um auf Ablehnungen programmgesteuert zu reagieren, verwenden Sie den [`PermissionDenied`-Hook](/de/hooks#permissiondenied).
-
-## Konfigurieren Sie den Auto-Mode-Klassifizierer
-
-[Auto Mode](/de/permission-modes#eliminate-prompts-with-auto-mode) verwendet ein Klassifizierermodell, um zu entscheiden, ob jede Aktion sicher ausgeführt werden kann, ohne zu fragen. Standardmäßig vertraut es nur dem Arbeitsverzeichnis und, falls vorhanden, den Remotes des aktuellen Repos. Aktionen wie das Pushen zu Ihrer Unternehmens-Quellcode-Org oder das Schreiben in einen Team-Cloud-Bucket werden als potenzielle Datenexfiltration blockiert.
-
-Um anzupassen, was der Klassifizierer zulässt oder blockiert, fügen Sie Anweisungen zu Ihrer [CLAUDE.md](/de/memory)-Datei hinzu. Der Klassifizierer liest CLAUDE.md aus vertrauenswürdigen Verzeichnissen neben dem Gespräch, daher steuert eine Anweisung wie „niemals Force-Push" sowohl Claude als auch den Klassifizierer gleichzeitig. Beginnen Sie hier mit Projektkonventionen und Verhaltensregeln.
-
-Für Regeln, die projektübergreifend gelten, wie vertrauenswürdige Infrastruktur oder organisationsweite Ablehnungsregeln, verwenden Sie den `autoMode`-Einstellungsblock. Der Klassifizierer liest `autoMode` aus Benutzereinstellungen, `.claude/settings.local.json` und verwalteten Einstellungen. Er liest nicht aus gemeinsamen Projekteinstellungen in `.claude/settings.json`, da ein eingechecktes Repo sonst seine eigenen Allow-Regeln injizieren könnte.
-
-| Bereich                     | Datei                         | Verwendung für                                                          |
-| :-------------------------- | :---------------------------- | :---------------------------------------------------------------------- |
-| Ein Entwickler              | `~/.claude/settings.json`     | Persönliche vertrauenswürdige Infrastruktur                             |
-| Ein Projekt, ein Entwickler | `.claude/settings.local.json` | Pro-Projekt vertrauenswürdige Buckets oder Services, gitignored         |
-| Organisationsweit           | Verwaltete Einstellungen      | Vertrauenswürdige Infrastruktur, die für alle Entwickler erzwungen wird |
-
-Einträge aus jedem Bereich werden kombiniert. Ein Entwickler kann `environment`, `allow` und `soft_deny` mit persönlichen Einträgen erweitern, kann aber Einträge, die verwaltete Einstellungen bereitstellen, nicht entfernen. Da Allow-Regeln als Ausnahmen zu Block-Regeln innerhalb des Klassifizierers fungieren, kann ein von einem Entwickler hinzugefügter `allow`-Eintrag einen Organisations-`soft_deny`-Eintrag überschreiben: Die Kombination ist additiv, nicht eine harte Richtliniengrenze. Wenn Sie eine Regel benötigen, die Entwickler nicht umgehen können, verwenden Sie stattdessen `permissions.deny` in verwalteten Einstellungen, was Aktionen blockiert, bevor der Klassifizierer konsultiert wird.
-
-### Definieren Sie vertrauenswürdige Infrastruktur
-
-Für die meisten Organisationen ist `autoMode.environment` das einzige Feld, das Sie festlegen müssen. Es teilt dem Klassifizierer mit, welche Repos, Buckets und Domänen vertrauenswürdig sind, ohne die integrierten Block- und Allow-Regeln zu berühren. Der Klassifizierer verwendet `environment`, um zu entscheiden, was „extern" bedeutet: Jedes Ziel, das nicht aufgelistet ist, ist ein potenzielles Exfiltrationsziel.
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Source control: github.example.com/acme-corp and all repos under it",
-      "Trusted cloud buckets: s3://acme-build-artifacts, gs://acme-ml-datasets",
-      "Trusted internal domains: *.corp.example.com, api.internal.example.com",
-      "Key internal services: Jenkins at ci.example.com, Artifactory at artifacts.example.com"
-    ]
-  }
-}
-```
-
-Einträge sind Prosa, keine Regex oder Werkzeugmuster. Der Klassifizierer liest sie als natürlichsprachige Regeln. Schreiben Sie sie so, wie Sie Ihre Infrastruktur einem neuen Ingenieur beschreiben würden. Ein gründlicher Umgebungsabschnitt deckt ab:
-
-* **Organisation**: Ihr Unternehmensname und wofür Claude Code hauptsächlich verwendet wird, wie Softwareentwicklung, Infrastrukturautomatisierung oder Datentechnik
-* **Quellkontrolle**: jede GitHub-, GitLab- oder Bitbucket-Org, zu der Ihre Entwickler pushen
-* **Cloud-Provider und vertrauenswürdige Buckets**: Bucketnamen oder Präfixe, aus denen Claude lesen und in die Claude schreiben kann
-* **Vertrauenswürdige interne Domänen**: Hostnamen für APIs, Dashboards und Services in Ihrem Netzwerk, wie `*.internal.example.com`
-* **Wichtige interne Services**: CI, Artifact-Registries, interne Paketindizes, Incident-Tools
-* **Zusätzlicher Kontext**: Einschränkungen der regulierten Industrie, Multi-Tenant-Infrastruktur oder Compliance-Anforderungen, die beeinflussen, was der Klassifizierer als riskant behandeln sollte
-
-Eine nützliche Startvorlage: Füllen Sie die eingeklammerten Felder aus und entfernen Sie alle Zeilen, die nicht zutreffen:
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Organization: {COMPANY_NAME}. Primary use: {PRIMARY_USE_CASE, e.g. software development, infrastructure automation}",
-      "Source control: {SOURCE_CONTROL, e.g. GitHub org github.example.com/acme-corp}",
-      "Cloud provider(s): {CLOUD_PROVIDERS, e.g. AWS, GCP, Azure}",
-      "Trusted cloud buckets: {TRUSTED_BUCKETS, e.g. s3://acme-builds, gs://acme-datasets}",
-      "Trusted internal domains: {TRUSTED_DOMAINS, e.g. *.internal.example.com, api.example.com}",
-      "Key internal services: {SERVICES, e.g. Jenkins at ci.example.com, Artifactory at artifacts.example.com}",
-      "Additional context: {EXTRA, e.g. regulated industry, multi-tenant infrastructure, compliance requirements}"
-    ]
-  }
-}
-```
-
-Je spezifischer der Kontext, den Sie geben, desto besser kann der Klassifizierer Routine-Internaloperationen von Exfiltrationversuchen unterscheiden.
-
-Sie müssen nicht alles auf einmal ausfüllen. Ein angemessener Rollout: Beginnen Sie mit den Standardeinstellungen und fügen Sie Ihre Quellkontroll-Org und wichtige interne Services hinzu, was die häufigsten falschen Positive wie das Pushen zu Ihren eigenen Repos behebt. Fügen Sie als nächstes vertrauenswürdige Domänen und Cloud-Buckets hinzu. Füllen Sie den Rest aus, wenn Blockierungen auftreten.
-
-### Überschreiben Sie die Block- und Allow-Regeln
-
-Zwei zusätzliche Felder ermöglichen es Ihnen, die integrierten Regellisten des Klassifizierers zu ersetzen: `autoMode.soft_deny` steuert, was blockiert wird, und `autoMode.allow` steuert, welche Ausnahmen gelten. Jedes ist ein Array von Prosabeschreibungen, das als natürlichsprachige Regeln gelesen wird.
-
-Innerhalb des Klassifizierers ist die Priorität: `soft_deny`-Regeln blockieren zuerst, dann `allow`-Regeln überschreiben als Ausnahmen, dann explizite Benutzerabsicht überschreibt beide. Wenn die Nachricht des Benutzers direkt und spezifisch die genaue Aktion beschreibt, die Claude ausführen wird, lässt der Klassifizierer sie zu, selbst wenn eine `soft_deny`-Regel passt. Allgemeine Anfragen zählen nicht: Claude zu bitten, das Repo zu „bereinigen", autorisiert kein Force-Push, aber Claude zu bitten, „diesen Branch zu force-pushen", tut es.
-
-Um zu lockern: Entfernen Sie Regeln aus `soft_deny`, wenn die Standardeinstellungen etwas blockieren, das Ihre Pipeline bereits mit PR-Review, CI oder Staging-Umgebungen schützt, oder fügen Sie zu `allow` hinzu, wenn der Klassifizierer wiederholt ein Routinemuster kennzeichnet, das die Standard-Ausnahmen nicht abdecken. Um zu verschärfen: Fügen Sie zu `soft_deny` für Risiken hinzu, die für Ihre Umgebung spezifisch sind und die Standardeinstellungen vermissen, oder entfernen Sie aus `allow`, um eine Standard-Ausnahme zu den Block-Regeln zu halten. Führen Sie in allen Fällen `claude auto-mode defaults` aus, um die vollständigen Standard-Listen zu erhalten, kopieren Sie sie dann und bearbeiten Sie sie: Beginnen Sie niemals mit einer leeren Liste.
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Source control: github.example.com/acme-corp and all repos under it"
-    ],
-    "allow": [
-      "Deploying to the staging namespace is allowed: staging is isolated from production and resets nightly",
-      "Writing to s3://acme-scratch/ is allowed: ephemeral bucket with a 7-day lifecycle policy"
-    ],
-    "soft_deny": [
-      "Never run database migrations outside the migrations CLI, even against dev databases",
-      "Never modify files under infra/terraform/prod/: production infrastructure changes go through the review workflow",
-      "...copy full default soft_deny list here first, then add your rules..."
-    ]
-  }
-}
-```
-
-<Danger>
-  Das Festlegen von `allow` oder `soft_deny` ersetzt die gesamte Standard-Liste für diesen Abschnitt. Wenn Sie `soft_deny` mit einem einzelnen Eintrag festlegen, wird jede integrierte Block-Regel verworfen: Force Push, Datenexfiltration, `curl | bash`, Production-Deploys und alle anderen Standard-Block-Regeln werden zulässig. Um sicher anzupassen, führen Sie `claude auto-mode defaults` aus, um die integrierten Regeln zu drucken, kopieren Sie sie in Ihre Einstellungsdatei, überprüfen Sie dann jede Regel gegen Ihre eigene Pipeline und Risikotoleranz. Entfernen Sie nur Regeln für Risiken, die Ihre Infrastruktur bereits mindert.
-</Danger>
-
-Die drei Abschnitte werden unabhängig ausgewertet, daher lässt das Festlegen von `environment` allein die Standard-`allow`- und `soft_deny`-Listen intakt.
-
-### Überprüfen Sie die Standardeinstellungen und Ihre effektive Konfiguration
-
-Da das Festlegen von `allow` oder `soft_deny` die Standardeinstellungen ersetzt, beginnen Sie jede Anpassung, indem Sie die vollständigen Standard-Listen kopieren. Drei CLI-Unterbefehle helfen Ihnen, zu überprüfen und zu validieren:
-
-```bash theme={null}
-claude auto-mode defaults  # the built-in environment, allow, and soft_deny rules
-claude auto-mode config    # what the classifier actually uses: your settings where set, defaults otherwise
-claude auto-mode critique  # get AI feedback on your custom allow and soft_deny rules
-```
-
-Speichern Sie die Ausgabe von `claude auto-mode defaults` in einer Datei, bearbeiten Sie die Listen, um Ihre Richtlinie zu entsprechen, und fügen Sie das Ergebnis in Ihre Einstellungsdatei ein. Nach dem Speichern führen Sie `claude auto-mode config` aus, um zu bestätigen, dass die effektiven Regeln das sind, was Sie erwarten. Wenn Sie benutzerdefinierte Regeln geschrieben haben, überprüft `claude auto-mode critique` sie und kennzeichnet Einträge, die mehrdeutig, redundant oder wahrscheinlich zu falschen Positiven führen.
 
 ## Einstellungspriorität
 

@@ -175,10 +175,13 @@ Chaque entrée de plugin a besoin au minimum d'un `name` et d'une `source` (où 
 
 | Champ                                 | Type   | Description                                                                                                                                                                                                                                                                                                      |
 | :------------------------------------ | :----- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `metadata.description`                | string | Brève description de la place de marché                                                                                                                                                                                                                                                                          |
-| `metadata.version`                    | string | Version de la place de marché                                                                                                                                                                                                                                                                                    |
+| `$schema`                             | string | URL du schéma JSON pour l'autocomplétion et la validation de l'éditeur. Claude Code ignore ce champ au moment du chargement.                                                                                                                                                                                     |
+| `description`                         | string | Brève description de la place de marché                                                                                                                                                                                                                                                                          |
+| `version`                             | string | Version du manifeste de la place de marché                                                                                                                                                                                                                                                                       |
 | `metadata.pluginRoot`                 | string | Répertoire de base ajouté aux chemins de source de plugin relatifs (par exemple, `"./plugins"` vous permet d'écrire `"source": "formatter"` au lieu de `"source": "./plugins/formatter"`)                                                                                                                        |
 | `allowCrossMarketplaceDependenciesOn` | array  | Autres places de marché sur lesquelles les plugins de cette place de marché peuvent dépendre. Les dépendances d'une place de marché non listée ici sont bloquées à l'installation. Voir [Dépendre d'un plugin d'une autre place de marché](/fr/plugin-dependencies#depend-on-a-plugin-from-another-marketplace). |
+
+`description` et `version` sont également acceptés sous `metadata` pour la compatibilité rétroactive.
 
 ## Entrées de plugin
 
@@ -958,7 +961,7 @@ Exécutez `claude plugin validate .` ou `/plugin validate .` à partir de votre 
 **Avertissements** (non bloquants) :
 
 * `Marketplace has no plugins defined` : ajoutez au moins un plugin au tableau `plugins`
-* `No marketplace description provided` : ajoutez `metadata.description` pour aider les utilisateurs à comprendre votre place de marché
+* `No marketplace description provided` : ajoutez une `description` au niveau supérieur pour aider les utilisateurs à comprendre votre place de marché
 * `Plugin name "x" is not kebab-case` : le nom du plugin contient des lettres majuscules, des espaces ou des caractères spéciaux. Renommez en minuscules, chiffres et tirets uniquement (par exemple, `my-plugin`). Claude Code accepte d'autres formes, mais la synchronisation de la place de marché Claude.ai les rejette.
 
 ### Échecs d'installation de plugins

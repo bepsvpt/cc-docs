@@ -75,7 +75,7 @@ Claude Code 只拥有您授予它的权限。您负责在批准前审查建议�
 2. 避免直接将不受信任的内容通过管道传递给 Claude
 3. 验证对关键文件的建议更改
 4. 使用虚拟机 (VM) 运行脚本并进行工具调用，特别是在与外部 Web 服务交互时
-5. 使用 `/bug` 报告可疑行为
+5. 使用 `/feedback` 报告可疑行为
 
 <Warning>
   虽然这些保护措施大大降低了风险，但没有系统完全免疫所有攻击。在使用任何 AI 工具时，始终保持良好的安全实践。
@@ -112,7 +112,7 @@ Claude Code 允许用户配置 Model Context Protocol (MCP) servers。允许的 
 
 * 在批准前审查所有建议的更改
 * 为敏感存储库使用项目特定的权限设置
-* 考虑使用 [devcontainers](/zh-CN/devcontainer) 以获得额外隔离
+* 考虑使用 [dev containers](/zh-CN/devcontainer) 以获得额外隔离
 * 使用 `/permissions` 定期审计您的权限设置
 
 ### 团队安全
@@ -128,7 +128,7 @@ Claude Code 允许用户配置 Model Context Protocol (MCP) servers。允许的 
 如果您在 Claude Code 中发现安全漏洞：
 
 1. 不要公开披露
-2. 通过我们的 [HackerOne program](https://hackerone.com/anthropic-vdp/reports/new?type=team\&report_type=vulnerability) 报告
+2. 通过我们的 [HackerOne program](https://hackerone.com/4f1f16ba-10d3-4d09-9ecc-c721aad90f24/embedded_submissions/new) 报告
 3. 包括详细的复现步骤
 4. 在公开披露前给我们时间来解决问题
 

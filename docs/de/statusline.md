@@ -25,7 +25,7 @@ Diese Seite führt Sie durch [das Einrichten einer grundlegenden Statuszeile](#s
 
 ## Richten Sie eine Statuszeile ein
 
-Verwenden Sie den [`/statusline` Befehl](#use-the-statusline-command), um Claude Code ein Skript für Sie generieren zu lassen, oder [erstellen Sie manuell ein Skript](#manually-configure-a-status-line) und fügen Sie es zu Ihren Einstellungen hinzu.
+Verwenden Sie den [`/statusline` Befehl](#use-the-%2Fstatusline-command), um Claude Code ein Skript für Sie generieren zu lassen, oder [erstellen Sie manuell ein Skript](#manually-configure-a-status-line) und fügen Sie es zu Ihren Einstellungen hinzu.
 
 ### Verwenden Sie den /statusline Befehl
 
@@ -63,6 +63,8 @@ Das `command` Feld wird in einer Shell ausgeführt, sodass Sie auch Inline-Befeh
 Das optionale `padding` Feld fügt zusätzlichen horizontalen Abstand (in Zeichen) zum Inhalt der Statuszeile hinzu. Standardmäßig `0`. Dieser Abstand wird zusätzlich zum integrierten Abstand der Benutzeroberfläche hinzugefügt, sodass er die relative Einrückung steuert, anstatt den absoluten Abstand vom Terminalrand.
 
 Das optionale `refreshInterval` Feld führt Ihren Befehl zusätzlich zu den [ereignisgesteuerten Aktualisierungen](#how-status-lines-work) alle N Sekunden erneut aus. Das Minimum ist `1`. Setzen Sie dies, wenn Ihre Statuszeile zeitbasierte Daten wie eine Uhr anzeigt, oder wenn Hintergrund-Subagenten den Git-Status ändern, während die Hauptsitzung untätig ist. Lassen Sie es ungesetzt, um nur bei Ereignissen auszuführen.
+
+Das optionale `hideVimModeIndicator` Feld unterdrückt den integrierten `-- INSERT --` Text unter der Eingabeaufforderung. Setzen Sie dies auf `true`, wenn Ihr Skript [`vim.mode`](#available-data) selbst rendert, sodass der Modus nicht zweimal angezeigt wird.
 
 ### Deaktivieren Sie die Statuszeile
 
@@ -914,7 +916,7 @@ Jedes Skript prüft, ob die Cache-Datei fehlt oder älter als 5 Sekunden ist, be
 
 ### Windows-Konfiguration
 
-Unter Windows führt Claude Code Statuszeilen-Befehle über Git Bash aus. Sie können PowerShell von dieser Shell aus aufrufen:
+Unter Windows führt Claude Code Statuszeilen-Befehle über Git Bash aus, wenn Git Bash installiert ist, oder über PowerShell, wenn Git Bash nicht vorhanden ist. Um ein PowerShell-Skript als Statuszeile auszuführen, rufen Sie es über `powershell` auf; dies funktioniert von beiden Shells aus:
 
 <CodeGroup>
   ```json settings.json theme={null}

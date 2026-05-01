@@ -910,4 +910,4 @@ Lihat [referensi tools](/id/tools-reference) untuk daftar lengkap dan detail per
 * [Permissions](/id/permissions): sistem izin, sintaks aturan, pola spesifik tool, dan kebijakan yang dikelola
 * [Authentication](/id/authentication): atur akses pengguna ke Claude Code
 * [Debug your configuration](/id/debug-your-config): diagnosis mengapa pengaturan, hook, atau server MCP tidak berlaku
-* [Troubleshooting](/id/troubleshooting): masalah instalasi, autentikasi, dan platform
+* [Troubleshoot installation and login](/id/troubleshoot-install): instalasi, autentikasi, dan masalah platform

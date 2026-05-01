@@ -136,7 +136,7 @@ Claude Code 讀取 `CLAUDE.md`，而不是 `AGENTS.md`。如果您的儲存庫�
 
 Claude Code 透過從您目前的工作目錄向上走目錄樹來讀取 CLAUDE.md 檔案，檢查沿途的每個目錄中是否有 `CLAUDE.md` 和 `CLAUDE.local.md` 檔案。這意味著如果您在 `foo/bar/` 中執行 Claude Code，它會從 `foo/bar/CLAUDE.md`、`foo/CLAUDE.md` 和沿途的任何 `CLAUDE.local.md` 檔案載入指令。
 
-所有發現的檔案都被連接到上下文中，而不是相互覆蓋。在每個目錄中，`CLAUDE.local.md` 附加在 `CLAUDE.md` 之後，因此當指令衝突時，您的個人筆記是 Claude 在該級別讀取的最後一件事。
+所有發現的檔案都被連接到上下文中，而不是相互覆蓋。在目錄樹中，內容按照從檔案系統根目錄到您的工作目錄的順序排列。對於 `foo/bar/` 示例，`foo/CLAUDE.md` 在上下文中出現在 `foo/bar/CLAUDE.md` 之前，因此更接近您啟動 Claude 的位置的指令最後被讀取。在每個目錄中，`CLAUDE.local.md` 附加在 `CLAUDE.md` 之後，因此您的個人筆記是 Claude 在該級別讀取的最後一件事。
 
 Claude 也會在您目前工作目錄下的子目錄中發現 `CLAUDE.md` 和 `CLAUDE.local.md` 檔案。它們不是在啟動時載入，而是在 Claude 讀取這些子目錄中的檔案時包含。
 

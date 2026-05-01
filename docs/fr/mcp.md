@@ -335,6 +335,8 @@ Claude Code supporte les notifications MCP `list_changed`, permettant aux serveu
 
 Si un serveur HTTP ou SSE se déconnecte en cours de session, Claude Code se reconnecte automatiquement avec un backoff exponentiel : jusqu'à cinq tentatives, en commençant par un délai d'une seconde et en doublant à chaque fois. Le serveur apparaît comme en attente dans `/mcp` pendant que la reconnexion est en cours. Après cinq tentatives échouées, le serveur est marqué comme échoué et vous pouvez réessayer manuellement à partir de `/mcp`. Les serveurs Stdio sont des processus locaux et ne sont pas reconnectés automatiquement.
 
+Le même backoff s'applique lorsqu'un serveur HTTP ou SSE échoue sa connexion initiale au démarrage. À partir de la v2.1.121, Claude Code réessaie la connexion initiale jusqu'à trois fois sur les erreurs transitoires telles qu'une réponse 5xx, une connexion refusée ou un délai d'expiration, puis marque le serveur comme échoué s'il ne peut toujours pas se connecter. Les erreurs d'authentification et les erreurs de non-trouvé ne sont pas réessayées car elles nécessitent une modification de la configuration pour être résolues.
+
 ### Pousser des messages avec des canaux
 
 Un serveur MCP peut également pousser des messages directement dans votre session afin que Claude puisse réagir aux événements externes comme les résultats CI, les alertes de surveillance ou les messages de chat. Pour activer cela, votre serveur déclare la capacité `claude/channel` et vous l'activez avec le drapeau `--channels` au démarrage. Consultez [Canaux](/fr/channels) pour utiliser un canal officiellement supporté, ou [Référence des canaux](/fr/channels-reference) pour créer le vôtre.
@@ -1160,6 +1162,26 @@ Vous pouvez également désactiver l'outil `ToolSearch` spécifiquement :
   }
 }
 ```
+
+### Exempter un serveur du différé
+
+Si les outils d'un serveur doivent toujours être visibles pour Claude sans une étape de recherche, définissez `alwaysLoad` à `true` dans la configuration de ce serveur. Chaque outil de ce serveur se charge alors dans le contexte au démarrage de la session indépendamment du paramètre `ENABLE_TOOL_SEARCH`. Utilisez ceci pour un petit nombre d'outils que Claude doit utiliser à chaque tour, car chaque outil à l'avance consomme du contexte qui serait autrement disponible pour votre conversation.
+
+L'entrée `.mcp.json` suivante exempte un serveur HTTP tout en laissant les autres serveurs différés :
+
+```json theme={null}
+{
+  "mcpServers": {
+    "core-tools": {
+      "type": "http",
+      "url": "https://mcp.example.com/mcp",
+      "alwaysLoad": true
+    }
+  }
+}
+```
+
+Le champ `alwaysLoad` est disponible sur tous les types de serveurs et nécessite Claude Code v2.1.121 ou ultérieur. Un serveur MCP peut également marquer les outils individuels comme toujours chargés en incluant `"anthropic/alwaysLoad": true` dans l'objet `_meta` de l'outil, ce qui a le même effet pour cet outil uniquement.
 
 ## Utiliser les prompts MCP comme commandes
 

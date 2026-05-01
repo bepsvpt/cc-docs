@@ -247,7 +247,7 @@ Anda dapat melihat model mana yang sedang Anda gunakan dengan beberapa cara:
 
 ## Tambahkan opsi model kustom
 
-Gunakan `ANTHROPIC_CUSTOM_MODEL_OPTION` untuk menambahkan satu entri kustom ke pemilih `/model` tanpa mengganti alias bawaan. Ini berguna untuk deployment gateway LLM atau pengujian ID model yang tidak tercantum Claude Code secara default.
+Gunakan `ANTHROPIC_CUSTOM_MODEL_OPTION` untuk menambahkan satu entri kustom ke pemilih `/model` tanpa mengganti alias bawaan. Ini berguna untuk pengujian ID model yang tidak tercantum Claude Code secara default. Untuk deployment gateway LLM, Claude Code mengisi pemilih secara otomatis dari endpoint `/v1/models` gateway, jadi variabel ini diperlukan hanya ketika penemuan tidak mengembalikan model yang Anda inginkan. Lihat [pemilihan model gateway LLM](/id/llm-gateway#model-selection).
 
 Contoh ini menetapkan ketiga variabel untuk membuat deployment Opus yang dirutekan gateway dapat dipilih:
 

@@ -111,6 +111,7 @@ disallowedTools: Write, Edit
 | Event                 | When it fires                                                                                                                                          |
 | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `SessionStart`        | When a session begins or resumes                                                                                                                       |
+| `Setup`               | When you start Claude Code with `--init-only`, or with `--init` or `--maintenance` in `-p` mode. For one-time preparation in CI or scripts             |
 | `UserPromptSubmit`    | When you submit a prompt, before Claude processes it                                                                                                   |
 | `UserPromptExpansion` | When a user-typed command expands into a prompt, before it reaches Claude. Can block the expansion                                                     |
 | `PreToolUse`          | Before a tool call executes. Can block it                                                                                                              |
@@ -405,15 +406,16 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `monitors` 키를 �
 
 ### 메타데이터 필드
 
-| 필드            | 타입     | 설명                                                                                                                                                                                                               | 예시                                                 |
-| :------------ | :----- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------- |
-| `version`     | string | 선택사항. 의미 있는 버전. 이를 설정하면 플러그인이 해당 버전 문자열로 고정되므로 사용자는 버전을 올릴 때만 업데이트를 받습니다. 생략하면 Claude Code는 git 커밋 SHA로 폴백되므로 모든 커밋이 새 버전으로 취급됩니다. 마켓플레이스 항목에도 설정된 경우 `plugin.json`이 우선합니다. [버전 관리](#version-management)를 참조하세요. | `"2.1.0"`                                          |
-| `description` | string | 플러그인 목적에 대한 간단한 설명                                                                                                                                                                                               | `"배포 자동화 도구"`                                      |
-| `author`      | object | 작성자 정보                                                                                                                                                                                                           | `{"name": "Dev Team", "email": "dev@company.com"}` |
-| `homepage`    | string | 문서 URL                                                                                                                                                                                                           | `"https://docs.example.com"`                       |
-| `repository`  | string | 소스 코드 URL                                                                                                                                                                                                        | `"https://github.com/user/plugin"`                 |
-| `license`     | string | 라이선스 식별자                                                                                                                                                                                                         | `"MIT"`, `"Apache-2.0"`                            |
-| `keywords`    | array  | 발견 태그                                                                                                                                                                                                            | `["deployment", "ci-cd"]`                          |
+| 필드            | 타입     | 설명                                                                                                                                                                                                               | 예시                                                                |
+| :------------ | :----- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
+| `$schema`     | string | 편집기 자동 완성 및 검증을 위한 JSON Schema URL. Claude Code는 로드 시 이 필드를 무시합니다.                                                                                                                                               | `"https://json.schemastore.org/claude-code-plugin-manifest.json"` |
+| `version`     | string | 선택사항. 의미 있는 버전. 이를 설정하면 플러그인이 해당 버전 문자열로 고정되므로 사용자는 버전을 올릴 때만 업데이트를 받습니다. 생략하면 Claude Code는 git 커밋 SHA로 폴백되므로 모든 커밋이 새 버전으로 취급됩니다. 마켓플레이스 항목에도 설정된 경우 `plugin.json`이 우선합니다. [버전 관리](#version-management)를 참조하세요. | `"2.1.0"`                                                         |
+| `description` | string | 플러그인 목적에 대한 간단한 설명                                                                                                                                                                                               | `"배포 자동화 도구"`                                                     |
+| `author`      | object | 작성자 정보                                                                                                                                                                                                           | `{"name": "Dev Team", "email": "dev@company.com"}`                |
+| `homepage`    | string | 문서 URL                                                                                                                                                                                                           | `"https://docs.example.com"`                                      |
+| `repository`  | string | 소스 코드 URL                                                                                                                                                                                                        | `"https://github.com/user/plugin"`                                |
+| `license`     | string | 라이선스 식별자                                                                                                                                                                                                         | `"MIT"`, `"Apache-2.0"`                                           |
+| `keywords`    | array  | 발견 태그                                                                                                                                                                                                            | `["deployment", "ci-cd"]`                                         |
 
 ### 컴포넌트 경로 필드
 
@@ -746,15 +748,42 @@ claude plugin uninstall <plugin> [options]
 
 **옵션:**
 
-| 옵션                    | 설명                                                 | 기본값    |
-| :-------------------- | :------------------------------------------------- | :----- |
-| `-s, --scope <scope>` | 범위에서 제거: `user`, `project` 또는 `local`              | `user` |
-| `--keep-data`         | 플러그인의 [영구 데이터 디렉토리](#persistent-data-directory) 유지 |        |
-| `-h, --help`          | 명령어 도움말 표시                                         |        |
+| 옵션                    | 설명                                                                     | 기본값    |
+| :-------------------- | :--------------------------------------------------------------------- | :----- |
+| `-s, --scope <scope>` | 범위에서 제거: `user`, `project` 또는 `local`                                  | `user` |
+| `--keep-data`         | 플러그인의 [영구 데이터 디렉토리](#persistent-data-directory) 유지                     |        |
+| `--prune`             | 다른 플러그인이 필요로 하지 않는 자동 설치된 종속성도 제거합니다. [plugin prune](#plugin-prune) 참조 |        |
+| `-y, --yes`           | `--prune` 확인 프롬프트 건너뛰기. stdin이 TTY가 아닐 때 필수                            |        |
+| `-h, --help`          | 명령어 도움말 표시                                                             |        |
 
 **별칭:** `remove`, `rm`
 
 기본적으로 마지막 남은 범위에서 제거하면 플러그인의 `${CLAUDE_PLUGIN_DATA}` 디렉토리도 삭제됩니다. 새 버전 테스트 후 재설치할 때와 같이 유지하려면 `--keep-data`를 사용하세요.
+
+### plugin prune
+
+더 이상 설치된 플러그인에서 필요로 하지 않는 자동 설치된 플러그인 종속성을 제거합니다. Claude Code가 다른 플러그인의 [`dependencies`](/ko/plugin-dependencies) 필드를 만족하기 위해 가져온 종속성은 제거되며, 직접 설치한 플러그인은 절대 건드리지 않습니다.
+
+```bash theme={null}
+claude plugin prune [options]
+```
+
+**옵션:**
+
+| 옵션                    | 설명                                    | 기본값    |
+| :-------------------- | :------------------------------------ | :----- |
+| `-s, --scope <scope>` | 범위에서 정리: `user`, `project` 또는 `local` | `user` |
+| `--dry-run`           | 제거될 항목을 나열하되 실제로 제거하지 않음              |        |
+| `-y, --yes`           | 확인 프롬프트 건너뛰기. stdin이 TTY가 아닐 때 필수     |        |
+| `-h, --help`          | 명령어 도움말 표시                            |        |
+
+**별칭:** `autoremove`
+
+명령어는 고아 종속성을 나열하고 제거하기 전에 확인을 요청합니다. 플러그인을 제거하고 한 단계에서 종속성을 정리하려면 `claude plugin uninstall <plugin> --prune`을 실행하세요.
+
+<Note>
+  `claude plugin prune`은 Claude Code v2.1.121 이상이 필요합니다.
+</Note>
 
 ### plugin enable
 

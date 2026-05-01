@@ -87,6 +87,10 @@ Sur **Linux et WSL2**, installez d'abord les packages requis :
   </Tab>
 </Tabs>
 
+WSL1 ne supporte pas le sandboxing car il manque les primitives d'espace de noms Linux requises. Si vous voyez `Sandboxing requires WSL2`, mettez à niveau votre distribution vers WSL2 ou exécutez Claude Code sans sandboxing.
+
+Sur WSL2, les commandes sandboxées ne peuvent pas lancer les binaires Windows tels que `cmd.exe`, `powershell.exe`, ou quoi que ce soit sous `/mnt/c/`. WSL les transmet à l'hôte Windows via un socket Unix, que le sandbox bloque. Si une commande doit invoquer un binaire Windows, ajoutez-le à [`excludedCommands`](/fr/settings#sandbox-settings) pour qu'il s'exécute en dehors du sandbox.
+
 ### Activer le sandboxing
 
 Vous pouvez activer le sandboxing en exécutant la commande `/sandbox` :
@@ -97,13 +101,13 @@ Vous pouvez activer le sandboxing en exécutant la commande `/sandbox` :
 
 Cela ouvre un menu où vous pouvez choisir entre les modes de sandbox. Si les dépendances requises sont manquantes (comme `bubblewrap` ou `socat` sur Linux), le menu affiche les instructions d'installation pour votre plateforme.
 
-Par défaut, si le sandbox ne peut pas démarrer (dépendances manquantes, plateforme non supportée ou restrictions de plateforme), Claude Code affiche un avertissement et exécute les commandes sans sandboxing. Pour en faire un échec dur à la place, définissez [`sandbox.failIfUnavailable`](/fr/settings#sandbox-settings) sur `true`. Ceci est destiné aux déploiements gérés qui nécessitent le sandboxing comme porte de sécurité.
+Par défaut, si le sandbox ne peut pas démarrer (dépendances manquantes ou plateforme non supportée), Claude Code affiche un avertissement et exécute les commandes sans sandboxing. Pour en faire un échec dur à la place, définissez [`sandbox.failIfUnavailable`](/fr/settings#sandbox-settings) sur `true`. Ceci est destiné aux déploiements gérés qui nécessitent le sandboxing comme porte de sécurité.
 
 ### Modes de sandbox
 
 Claude Code offre deux modes de sandbox :
 
-**Mode auto-allow** : Les commandes Bash tenteront de s'exécuter dans le sandbox et sont automatiquement autorisées sans nécessiter de permission. Les commandes qui ne peuvent pas être sandboxées (comme celles nécessitant un accès réseau à des hôtes non autorisés) reviennent au flux de permission régulier. Les règles d'ask/deny explicites que vous avez configurées sont toujours respectées.
+**Mode auto-allow** : Les commandes Bash tenteront de s'exécuter dans le sandbox et sont automatiquement autorisées sans nécessiter de permission. Les commandes qui ne peuvent pas être sandboxées (comme celles nécessitant un accès réseau à des hôtes non autorisés) reviennent au flux de permission régulier. Les règles de refus explicites sont toujours respectées, et les commandes `rm` ou `rmdir` qui ciblent `/`, votre répertoire personnel ou d'autres chemins système critiques déclenchent toujours une invite de permission. Les règles Ask s'appliquent uniquement aux commandes qui reviennent au flux de permission régulier.
 
 **Mode permissions régulières** : Toutes les commandes bash passent par le flux de permission standard, même lorsqu'elles sont sandboxées. Cela offre plus de contrôle mais nécessite plus d'approbations.
 

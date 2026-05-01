@@ -25,7 +25,15 @@
 
 ### 세션 품질 설문조사
 
-Claude Code에서 "Claude가 이 세션을 어떻게 수행하고 있나요?"라는 메시지가 표시될 때, 이 설문조사에 응답하면("Dismiss" 선택 포함) 숫자 등급(1, 2, 3 또는 dismiss)만 기록됩니다. 이 설문조사의 일부로 대화 기록, 입력, 출력 또는 기타 세션 데이터를 수집하거나 저장하지 않습니다. 엄지손가락 위/아래 피드백이나 `/feedback` 보고서와 달리, 이 세션 품질 설문조사는 간단한 제품 만족도 지표입니다. 이 설문조사에 대한 응답은 데이터 학습 선호도에 영향을 주지 않으며 AI 모델을 학습하는 데 사용될 수 없습니다.
+Claude Code에서 "Claude가 이 세션을 어떻게 수행하고 있나요?"라는 메시지가 표시될 때, 이 설문조사에 응답하면("Dismiss" 선택 포함) 숫자 등급만 기록됩니다. 이 설문조사의 일부로 대화 기록, 입력, 출력 또는 기타 세션 데이터를 수집하거나 저장하지 않습니다. 엄지손가락 위/아래 피드백이나 `/feedback` 보고서와 달리, 이 세션 품질 설문조사는 간단한 제품 만족도 지표입니다.
+
+등급 메시지 이후에 "Anthropic이 세션 기록을 확인하여 Claude Code를 개선하는 데 도움을 줄 수 있나요?"라는 별도의 후속 질문이 표시될 수 있습니다. 이는 등급과 구별되는 선택적 두 번째 단계입니다:
+
+* **예**: 대화 기록, 모든 서브에이전트 기록, 디스크의 원본 세션 로그 파일을 Anthropic에 업로드합니다. 알려진 API 키 및 토큰 패턴은 업로드 전에 제거됩니다. 소스 코드, 파일 내용 및 기타 대화 내용은 그대로 업로드됩니다. 공유된 기록은 최대 6개월 동안 보관됩니다.
+* **아니오**: 아무것도 보내지 않고 거절합니다.
+* **다시 묻지 않기**: 거절하고 향후 세션에서 이 후속 질문이 표시되지 않도록 합니다.
+
+**예**를 명시적으로 선택하지 않으면 아무것도 업로드되지 않습니다. [Zero data retention](/ko/zero-data-retention)이 있는 조직이거나 조직 정책에 의해 제품 피드백이 비활성화된 조직은 이 후속 질문을 볼 수 없습니다. 등급 메시지 이후 제출된 세션 기록을 포함한 이 설문조사에 대한 응답은 데이터 학습 선호도에 영향을 주지 않으며 AI 모델을 학습하는 데 사용될 수 없습니다.
 
 이러한 설문조사를 비활성화하려면 `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`을 설정합니다. `DISABLE_TELEMETRY` 또는 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`이 설정되면 설문조사도 비활성화됩니다. 빈도를 제어하려면 설정 파일에서 [`feedbackSurveyRate`](/ko/settings#available-settings)를 `0`과 `1` 사이의 확률로 설정합니다.
 
@@ -106,6 +114,8 @@ Claude Code는 사용자의 머신에서 Sentry에 연결하여 운영 오류 �
 | **WebFetch 도메인 안전 검사**          | 기본 켜짐.<br />[settings](/ko/settings)에서 `skipWebFetchPreflight: true`로 비활성화합니다. | 기본 켜짐.<br />[settings](/ko/settings)에서 `skipWebFetchPreflight: true`로 비활성화합니다. | 기본 켜짐.<br />[settings](/ko/settings)에서 `skipWebFetchPreflight: true`로 비활성화합니다. | 기본 켜짐.<br />[settings](/ko/settings)에서 `skipWebFetchPreflight: true`로 비활성화합니다. |
 
 모든 환경 변수는 `settings.json`에 체크인할 수 있습니다([settings reference](/ko/settings) 참조).
+
+v2.1.126부터 호스트 플랫폼이 `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`를 설정하면, Statsig 메트릭은 Vertex, Bedrock 및 Foundry에서 기본적으로 켜지며 표준 `DISABLE_TELEMETRY` 거부 옵션을 따릅니다. Sentry 오류 보고 및 `/feedback` 보고는 해당 제공자에서 기본적으로 꺼진 상태로 유지됩니다.
 
 ### WebFetch 도메인 안전 검사
 

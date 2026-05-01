@@ -25,7 +25,15 @@ Si elige enviarnos comentarios sobre Claude Code usando el comando `/feedback`, 
 
 ### Encuestas de calidad de sesión
 
-Cuando ve el mensaje "¿Cómo está funcionando Claude en esta sesión?" en Claude Code, responder a esta encuesta (incluyendo seleccionar "Descartar"), solo se registra su calificación numérica (1, 2, 3 o descartar). No recopilamos ni almacenamos transcripciones de conversación, entradas, salidas u otros datos de sesión como parte de esta encuesta. A diferencia de los comentarios de pulgar hacia arriba/abajo o los informes `/feedback`, esta encuesta de calidad de sesión es una métrica simple de satisfacción del producto. Sus respuestas a esta encuesta no afectan sus preferencias de entrenamiento de datos y no se pueden utilizar para entrenar nuestros modelos de IA.
+Cuando ve el mensaje "¿Cómo está funcionando Claude en esta sesión?" en Claude Code, responder a esta encuesta, incluyendo seleccionar "Descartar", registra solo su calificación. No recopilamos ni almacenamos transcripciones de conversación, entradas, salidas u otros datos de sesión como parte de la solicitud de calificación en sí. A diferencia de los comentarios de pulgar hacia arriba/abajo o los informes `/feedback`, esta encuesta de calidad de sesión es una métrica simple de satisfacción del producto.
+
+Después de la solicitud de calificación, puede ver una pregunta de seguimiento separada que pregunta "¿Puede Anthropic ver su transcripción de sesión para ayudarnos a mejorar Claude Code?". Este es un segundo paso opcional distinto de la calificación:
+
+* **Sí**: carga su transcripción de conversación, cualquier transcripción de subagente y el archivo de registro de sesión sin procesar del disco a Anthropic. Los patrones de clave API y token conocidos se redactan antes de la carga. El código fuente, el contenido del archivo y otro contenido de conversación se cargan tal cual. Las transcripciones compartidas se retienen hasta 6 meses.
+* **No**: rechaza sin enviar nada
+* **No preguntar de nuevo**: rechaza y evita que este seguimiento aparezca en futuras sesiones
+
+Nada se carga a menos que seleccione explícitamente **Sí**. Las organizaciones con [zero data retention](/es/zero-data-retention), o donde los comentarios del producto están deshabilitados por política de la organización, nunca ven este seguimiento. Sus respuestas a esta encuesta, incluyendo transcripciones de sesión enviadas después de la solicitud de calificación, no afectan sus preferencias de entrenamiento de datos y no se pueden utilizar para entrenar nuestros modelos de IA.
 
 Para desactivar estas encuestas, establezca `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`. La encuesta también se desactiva cuando se establece `DISABLE_TELEMETRY` o `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`. Para controlar la frecuencia en lugar de desactivar, establezca [`feedbackSurveyRate`](/es/settings#available-settings) en su archivo de configuración a una probabilidad entre `0` y `1`.
 
@@ -106,6 +114,8 @@ De forma predeterminada, los informes de errores, la telemetría y los informes 
 | **Verificación de seguridad del dominio WebFetch** | Activado de forma predeterminada.<br />`skipWebFetchPreflight: true` en [settings](/es/settings) para desactivar. | Activado de forma predeterminada.<br />`skipWebFetchPreflight: true` en [settings](/es/settings) para desactivar. | Activado de forma predeterminada.<br />`skipWebFetchPreflight: true` en [settings](/es/settings) para desactivar. | Activado de forma predeterminada.<br />`skipWebFetchPreflight: true` en [settings](/es/settings) para desactivar. |
 
 Todas las variables de entorno se pueden verificar en `settings.json` (consulte [referencia de configuración](/es/settings)).
+
+A partir de v2.1.126, cuando una plataforma host establece `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`, las métricas de Statsig se activan de forma predeterminada para Vertex, Bedrock y Foundry, y siguen el opt-out estándar de `DISABLE_TELEMETRY`. Los informes de errores de Sentry y los informes `/feedback` permanecen desactivados de forma predeterminada en esos proveedores.
 
 ### Verificación de seguridad del dominio WebFetch
 

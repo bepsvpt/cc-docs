@@ -75,7 +75,7 @@ Para obtener detalles completos, consulte nuestros [Términos de Servicio Comerc
 2. Evite canalizar contenido no confiable directamente a Claude
 3. Verifique los cambios propuestos en archivos críticos
 4. Utilice máquinas virtuales (VMs) para ejecutar scripts y realizar llamadas de herramientas, especialmente cuando interactúe con servicios web externos
-5. Reporte comportamiento sospechoso con `/bug`
+5. Reporte comportamiento sospechoso con `/feedback`
 
 <Warning>
   Aunque estas protecciones reducen significativamente el riesgo, ningún sistema es completamente
@@ -114,7 +114,7 @@ Las sesiones de [Remote Control](/es/remote-control) funcionan de manera diferen
 
 * Revise todos los cambios sugeridos antes de aprobarlos
 * Utilice configuración de permisos específica del proyecto para repositorios sensibles
-* Considere utilizar [devcontainers](/es/devcontainer) para aislamiento adicional
+* Considere utilizar [dev containers](/es/devcontainer) para aislamiento adicional
 * Audite regularmente su configuración de permisos con `/permissions`
 
 ### Seguridad del equipo
@@ -130,7 +130,7 @@ Las sesiones de [Remote Control](/es/remote-control) funcionan de manera diferen
 Si descubre una vulnerabilidad de seguridad en Claude Code:
 
 1. No la divulgue públicamente
-2. Repórtela a través de nuestro [programa HackerOne](https://hackerone.com/anthropic-vdp/reports/new?type=team\&report_type=vulnerability)
+2. Repórtela a través de nuestro [programa HackerOne](https://hackerone.com/4f1f16ba-10d3-4d09-9ecc-c721aad90f24/embedded_submissions/new)
 3. Incluya pasos de reproducción detallados
 4. Permita tiempo para que abordemos el problema antes de la divulgación pública
 

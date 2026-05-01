@@ -136,7 +136,7 @@ Verwenden Sie Plan Mode für Änderungen unter `src/billing/`.
 
 Claude Code liest CLAUDE.md-Dateien, indem es die Verzeichnisstruktur von Ihrem aktuellen Arbeitsverzeichnis aus durchläuft und jedes Verzeichnis unterwegs auf `CLAUDE.md`- und `CLAUDE.local.md`-Dateien überprüft. Das bedeutet, wenn Sie Claude Code in `foo/bar/` ausführen, lädt es Anweisungen aus `foo/bar/CLAUDE.md`, `foo/CLAUDE.md` und allen `CLAUDE.local.md`-Dateien daneben.
 
-Alle entdeckten Dateien werden in den Kontext verkettet, statt sich gegenseitig zu überschreiben. Innerhalb jedes Verzeichnisses wird `CLAUDE.local.md` nach `CLAUDE.md` angehängt, sodass Ihre persönlichen Notizen das letzte sind, das Claude auf dieser Ebene liest, wenn Anweisungen in Konflikt geraten.
+Alle entdeckten Dateien werden in den Kontext verkettet, statt sich gegenseitig zu überschreiben. Innerhalb der Verzeichnishierarchie wird Inhalt vom Dateisystem-Root bis zu Ihrem Arbeitsverzeichnis geordnet. Für das Beispiel `foo/bar/` erscheint `foo/CLAUDE.md` im Kontext vor `foo/bar/CLAUDE.md`, sodass Anweisungen näher an dem Ort, an dem Sie Claude gestartet haben, zuletzt gelesen werden. Innerhalb jedes Verzeichnisses wird `CLAUDE.local.md` nach `CLAUDE.md` angehängt, sodass Ihre persönlichen Notizen das letzte sind, das Claude auf dieser Ebene liest.
 
 Claude entdeckt auch `CLAUDE.md`- und `CLAUDE.local.md`-Dateien in Unterverzeichnissen unter Ihrem aktuellen Arbeitsverzeichnis. Statt sie beim Start zu laden, werden sie eingebunden, wenn Claude Dateien in diesen Unterverzeichnissen liest.
 

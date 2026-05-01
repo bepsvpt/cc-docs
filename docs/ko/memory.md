@@ -136,7 +136,7 @@ Claude Code는 `CLAUDE.md`를 읽으며 `AGENTS.md`를 읽지 않습니다. 저�
 
 Claude Code는 현재 작업 디렉토리에서 디렉토리 트리를 따라 올라가며 CLAUDE.md 파일을 읽고 각 디렉토리를 확인합니다. 즉, `foo/bar/`에서 Claude Code를 실행하면 `foo/bar/CLAUDE.md`, `foo/CLAUDE.md` 및 그 옆의 모든 `CLAUDE.local.md` 파일에서 지침을 로드합니다.
 
-발견된 모든 파일은 서로를 재정의하지 않고 컨텍스트에 연결됩니다. 각 디렉토리 내에서 `CLAUDE.local.md`는 `CLAUDE.md` 후에 추가되므로 지침이 충돌할 때 개인 노트가 해당 수준에서 Claude가 읽는 마지막 것입니다.
+발견된 모든 파일은 서로를 재정의하지 않고 컨텍스트에 연결됩니다. 디렉토리 트리 전체에서 콘텐츠는 파일 시스템 루트에서 작업 디렉토리까지 순서대로 정렬됩니다. `foo/bar/` 예제의 경우 `foo/CLAUDE.md`가 `foo/bar/CLAUDE.md`보다 먼저 컨텍스트에 나타나므로 Claude를 시작한 위치에 더 가까운 지침이 마지막에 읽힙니다. 각 디렉토리 내에서 `CLAUDE.local.md`는 `CLAUDE.md` 후에 추가되므로 개인 노트가 해당 수준에서 Claude가 읽는 마지막 것입니다.
 
 Claude는 또한 현재 작업 디렉토리 아래의 하위 디렉토리에서 `CLAUDE.md` 및 `CLAUDE.local.md` 파일을 발견합니다. 시작 시 로드하는 대신 Claude가 해당 하위 디렉토리의 파일을 읽을 때 포함됩니다.
 

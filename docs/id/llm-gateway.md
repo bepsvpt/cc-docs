@@ -37,13 +37,29 @@ Kegagalan untuk meneruskan header atau mempertahankan bidang badan dapat mengaki
   Claude Code menentukan fitur mana yang akan diaktifkan berdasarkan format API. Saat menggunakan format Anthropic Messages dengan Bedrock atau Vertex, Anda mungkin perlu mengatur variabel lingkungan `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`.
 </Note>
 
+**Header permintaan**
+
+Claude Code menyertakan header berikut pada setiap permintaan API:
+
+| Header                     | Deskripsi                                                                                                                                                                     |
+| :------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `X-Claude-Code-Session-Id` | Pengidentifikasi unik untuk sesi Claude Code saat ini. Proxy dapat menggunakan ini untuk mengagregasi semua permintaan API dari sesi tunggal tanpa mengurai badan permintaan. |
+
+Claude Code juga menambahkan blok atribusi singkat ke prompt sistem yang berisi versi klien dan sidik jari yang berasal dari percakapan. API Anthropic menghapus blok ini sebelum memproses, sehingga tidak mempengaruhi prompt caching pihak pertama. Jika gateway Anda menerapkan cache prompt sendiri yang dikunci pada badan permintaan lengkap, atur [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/id/env-vars) untuk menghilangkannya.
+
 ## Konfigurasi
 
 ### Pemilihan model
 
-Secara default, Claude Code akan menggunakan nama model standar untuk format API yang dipilih.
+Secara default, Claude Code menggunakan nama model standar untuk format API yang dipilih.
 
-Jika Anda telah mengonfigurasi nama model khusus di gateway Anda, gunakan variabel lingkungan yang didokumentasikan dalam [Konfigurasi Model](/id/model-config) untuk mencocokkan nama khusus Anda.
+Ketika `ANTHROPIC_BASE_URL` menunjuk ke gateway yang mengekspos format Anthropic Messages, Claude Code menanyakan endpoint `/v1/models` gateway saat startup dan menambahkan model yang dikembalikan ke pemilih `/model`. Setiap entri yang ditemukan diberi label "From gateway" dan menggunakan field `display_name` dari respons ketika satu disediakan. Ini memerlukan Claude Code v2.1.126 atau lebih baru.
+
+Penemuan hanya berlaku untuk format Anthropic Messages. Ini tidak berjalan untuk endpoint pass-through Bedrock atau Vertex, dan tidak berjalan ketika `ANTHROPIC_BASE_URL` tidak diatur atau menunjuk ke `api.anthropic.com`.
+
+Permintaan penemuan mengautentikasi dengan cara yang sama seperti permintaan inferensi: ia mengirimkan `ANTHROPIC_AUTH_TOKEN` sebagai token bearer, atau `ANTHROPIC_API_KEY` sebagai header `x-api-key` ketika tidak ada token auth yang diatur, bersama dengan header apa pun dari `ANTHROPIC_CUSTOM_HEADERS`. Hanya model yang ID-nya dimulai dengan `claude` atau `anthropic` yang ditambahkan ke pemilih. Hasil disimpan dalam cache ke `~/.claude/cache/gateway-models.json` dan disegarkan pada setiap startup. Jika permintaan gagal atau gateway tidak mengimplementasikan `/v1/models`, pemilih kembali ke daftar cache dari startup sebelumnya atau ke daftar model bawaan.
+
+Jika gateway Anda menggunakan nama model yang tidak cocok dengan filter penemuan, gunakan variabel lingkungan yang didokumentasikan dalam [Konfigurasi Model](/id/model-config) untuk menambahkannya secara manual.
 
 ## Konfigurasi LiteLLM
 

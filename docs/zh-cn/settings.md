@@ -910,4 +910,4 @@ Claude Code 可以访问一组用于读取、编辑、搜索、运行命令和�
 * [权限](/zh-CN/permissions)：权限系统、规则语法、工具特定模式和 managed 策略
 * [身份验证](/zh-CN/authentication)：设置用户对 Claude Code 的访问
 * [调试您的配置](/zh-CN/debug-your-config)：诊断为什么设置、hook 或 MCP 服务器没有生效
-* [故障排除](/zh-CN/troubleshooting)：安装、身份验证和平台问题
+* [故障排除安装和登录](/zh-CN/troubleshoot-install)：安装、身份验证和平台问题

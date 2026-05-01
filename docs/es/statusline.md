@@ -64,6 +64,8 @@ El campo `padding` opcional agrega espaciado horizontal adicional (en caracteres
 
 El campo `refreshInterval` opcional vuelve a ejecutar tu comando cada N segundos además de las [actualizaciones impulsadas por eventos](#how-status-lines-work). El mínimo es `1`. Establece esto cuando tu línea de estado muestra datos basados en tiempo, como un reloj, o cuando los subagentes de fondo cambian el estado de git mientras la sesión principal está inactiva. Déjalo sin establecer para ejecutar solo en eventos.
 
+El campo `hideVimModeIndicator` opcional suprime el texto integrado `-- INSERT --` debajo del prompt. Establece esto en `true` cuando tu script renderiza [`vim.mode`](#available-data) por sí mismo, para que el modo no se muestre dos veces.
+
 ### Desactivar la línea de estado
 
 Ejecuta `/statusline` y pídele que elimine o borre tu línea de estado (por ejemplo, `/statusline delete`, `/statusline clear`, `/statusline remove it`). También puedes eliminar manualmente el campo `statusLine` de tu settings.json.
@@ -914,7 +916,7 @@ Cada script verifica si el archivo de caché falta o es más antiguo que 5 segun
 
 ### Configuración de Windows
 
-En Windows, Claude Code ejecuta comandos de línea de estado a través de Git Bash. Puedes invocar PowerShell desde ese shell:
+En Windows, Claude Code ejecuta comandos de línea de estado a través de Git Bash cuando Git Bash está instalado, o a través de PowerShell cuando Git Bash está ausente. Para ejecutar un script de PowerShell como tu línea de estado, invócalo mediante `powershell`; esto funciona desde cualquier shell:
 
 <CodeGroup>
   ```json settings.json theme={null}
@@ -941,7 +943,7 @@ En Windows, Claude Code ejecuta comandos de línea de estado a través de Git Ba
   ```
 </CodeGroup>
 
-O ejecuta un script de Bash directamente:
+O, cuando Git Bash está instalado, ejecuta un script de Bash directamente:
 
 <CodeGroup>
   ```json settings.json theme={null}

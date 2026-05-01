@@ -25,7 +25,15 @@ Se você optar por nos enviar feedback sobre Claude Code usando o comando `/feed
 
 ### Pesquisas de qualidade de sessão
 
-Quando você vê o prompt "How is Claude doing this session?" (Como Claude está se saindo nesta sessão?) em Claude Code, responder a esta pesquisa (inclusive selecionando "Dismiss"), apenas sua classificação numérica (1, 2, 3 ou dismiss) é registrada. Não coletamos ou armazenamos nenhuma transcrição de conversa, entradas, saídas ou outros dados de sessão como parte desta pesquisa. Diferentemente do feedback com polegar para cima/para baixo ou relatórios `/feedback`, esta pesquisa de qualidade de sessão é uma métrica simples de satisfação do produto. Suas respostas a esta pesquisa não afetam suas preferências de treinamento de dados e não podem ser usadas para treinar nossos modelos de IA.
+Quando você vê o prompt "How is Claude doing this session?" em Claude Code, responder a esta pesquisa, inclusive selecionando "Dismiss", registra apenas sua classificação. Não coletamos ou armazenamos nenhuma transcrição de conversa, entradas, saídas ou outros dados de sessão como parte da pesquisa de classificação em si. Diferentemente do feedback com polegar para cima/para baixo ou relatórios `/feedback`, esta pesquisa de qualidade de sessão é uma métrica simples de satisfação do produto.
+
+Após a pesquisa de classificação, você pode ver uma pergunta de acompanhamento separada perguntando "Can Anthropic look at your session transcript to help us improve Claude Code?" (Pode a Anthropic examinar sua transcrição de sessão para nos ajudar a melhorar Claude Code?). Esta é uma segunda etapa opcional distinta da classificação:
+
+* **Yes** (Sim): carrega sua transcrição de conversa, qualquer transcrição de subagentos e o arquivo de log de sessão bruto do disco para a Anthropic. Padrões conhecidos de chave de API e token são redatados antes do carregamento. Código-fonte, conteúdo de arquivo e outro conteúdo de conversa são carregados como estão. As transcrições compartilhadas são retidas por até 6 meses.
+* **No** (Não): recusa sem enviar nada
+* **Don't ask again** (Não perguntar novamente): recusa e impede que este acompanhamento apareça em futuras sessões
+
+Nada é carregado a menos que você selecione explicitamente **Yes**. Organizações com [zero data retention](/pt/zero-data-retention), ou onde o feedback de produto é desabilitado pela política da organização, nunca veem este acompanhamento. Suas respostas a esta pesquisa, inclusive transcrições de sessão enviadas após a pesquisa de classificação, não afetam suas preferências de treinamento de dados e não podem ser usadas para treinar nossos modelos de IA.
 
 Para desabilitar essas pesquisas, defina `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`. A pesquisa também é desabilitada quando `DISABLE_TELEMETRY` ou `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` está definido. Para controlar a frequência em vez de desabilitar, defina [`feedbackSurveyRate`](/pt/settings#available-settings) em seu arquivo de configurações para uma probabilidade entre `0` e `1`.
 
@@ -106,6 +114,8 @@ Por padrão, relatório de erros, telemetria e relatório de bugs são desabilit
 | **Verificação de segurança de domínio WebFetch** | Padrão ativado.<br />`skipWebFetchPreflight: true` em [settings](/pt/settings) para desabilitar. | Padrão ativado.<br />`skipWebFetchPreflight: true` em [settings](/pt/settings) para desabilitar. | Padrão ativado.<br />`skipWebFetchPreflight: true` em [settings](/pt/settings) para desabilitar. | Padrão ativado.<br />`skipWebFetchPreflight: true` em [settings](/pt/settings) para desabilitar. |
 
 Todas as variáveis de ambiente podem ser verificadas em `settings.json` (consulte [referência de configurações](/pt/settings)).
+
+A partir da v2.1.126, quando uma plataforma host define `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`, as métricas Statsig são ativadas por padrão para Vertex, Bedrock e Foundry, e seguem o opt-out padrão `DISABLE_TELEMETRY`. O relatório de erros Sentry e os relatórios `/feedback` permanecem desativados por padrão nesses provedores.
 
 ### Verificação de segurança de domínio WebFetch
 

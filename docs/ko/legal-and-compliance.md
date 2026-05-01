@@ -35,8 +35,8 @@ Claude Code 사용은 [Anthropic 사용 정책](https://www.anthropic.com/legal/
 
 Claude Code는 OAuth 토큰 또는 API 키를 사용하여 Anthropic의 서버로 인증합니다. 이러한 인증 방법은 서로 다른 목적으로 사용됩니다:
 
-* **OAuth 인증**(Free, Pro 및 Max 플랜과 함께 사용됨)은 Claude Code 및 Claude.ai 전용입니다. Claude Free, Pro 또는 Max 계정을 통해 획득한 OAuth 토큰을 [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview)를 포함한 다른 제품, 도구 또는 서비스에서 사용하는 것은 허용되지 않으며 [소비자 서비스 약관](https://www.anthropic.com/legal/consumer-terms) 위반입니다.
-* **개발자**가 [Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview)를 사용하는 것을 포함하여 Claude의 기능과 상호 작용하는 제품 또는 서비스를 구축하는 경우, [Claude Console](https://platform.claude.com/) 또는 지원되는 클라우드 제공자를 통해 API 키 인증을 사용해야 합니다. Anthropic은 제3자 개발자가 Claude.ai 로그인을 제공하거나 사용자를 대신하여 Free, Pro 또는 Max 플랜 자격 증명을 통해 요청을 라우팅하는 것을 허용하지 않습니다.
+* **OAuth 인증**은 Claude Free, Pro, Max, Team 및 Enterprise 구독 플랜의 구매자를 위해 독점적으로 의도되었으며, Claude Code 및 기타 네이티브 Anthropic 애플리케이션의 일반적인 사용을 지원하도록 설계되었습니다. 사용자가 OAuth 토큰으로 인증하는 방법에 대한 자세한 정보는 [Claude 계정에 로그인](https://support.claude.com/en/articles/13189465-logging-in-to-your-claude-account)에서 찾을 수 있습니다.
+* **개발자**가 [Agent SDK](/ko/agent-sdk/overview)를 사용하는 것을 포함하여 Claude의 기능과 상호 작용하는 제품 또는 서비스를 구축하는 경우, [Claude Console](https://platform.claude.com/) 또는 지원되는 클라우드 제공자를 통해 API 키 인증을 사용해야 합니다. Anthropic은 제3자 개발자가 Claude.ai 로그인을 제공하거나 사용자를 대신하여 Free, Pro 또는 Max 플랜 자격 증명을 통해 요청을 라우팅하는 것을 허용하지 않습니다.
 
 Anthropic은 이러한 제한을 시행하기 위한 조치를 취할 권리를 보유하며, 사전 통지 없이 이를 수행할 수 있습니다.
 
@@ -50,7 +50,7 @@ Anthropic은 이러한 제한을 시행하기 위한 조치를 취할 권리를 
 
 ### 보안 취약점 보고
 
-Anthropic은 HackerOne을 통해 보안 프로그램을 관리합니다. [이 양식을 사용하여 취약점을 보고](https://hackerone.com/anthropic-vdp/reports/new?type=team\&report_type=vulnerability)하십시오.
+Anthropic은 HackerOne을 통해 보안 프로그램을 관리합니다. [이 양식을 사용하여 취약점을 보고](https://hackerone.com/4f1f16ba-10d3-4d09-9ecc-c721aad90f24/embedded_submissions/new)하십시오.
 
 ***
 

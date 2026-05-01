@@ -75,7 +75,7 @@ Claude Code는 사용자가 부여한 권한만 가집니다. 승인 전에 제�
 2. 신뢰할 수 없는 콘텐츠를 Claude에 직접 파이프하지 않기
 3. 중요한 파일에 대한 제안된 변경 사항 확인
 4. 가상 머신(VM)을 사용하여 스크립트를 실행하고 도구 호출을 수행합니다. 특히 외부 웹 서비스와 상호 작용할 때
-5. `/bug`를 사용하여 의심스러운 동작 보고
+5. `/feedback`을 사용하여 의심스러운 동작 보고
 
 <Warning>
   이러한 보호 기능이 위험을 크게 줄이지만, 모든 공격에 완전히 면역인 시스템은 없습니다. 모든 AI 도구로 작업할 때 항상 좋은 보안 관행을 유지하십시오.
@@ -112,8 +112,8 @@ IDE에서 Claude Code를 실행하는 방법에 대한 자세한 내용은 [VS C
 
 * 승인 전에 제안된 모든 변경 사항 검토
 * 민감한 저장소에 프로젝트별 권한 설정 사용
-* 추가 격리를 위해 [devcontainers](/ko/devcontainer) 사용 고려
-* `/permissions`를 사용하여 권한 설정을 정기적으로 감사합니다.
+* 추가 격리를 위해 [dev containers](/ko/devcontainer) 사용 고려
+* `/permissions`를 사용하여 권한 설정을 정기적으로 감사합니다
 
 ### 팀 보안
 
@@ -127,10 +127,10 @@ IDE에서 Claude Code를 실행하는 방법에 대한 자세한 내용은 [VS C
 
 Claude Code에서 보안 취약점을 발견한 경우:
 
-1. 공개적으로 공개하지 마십시오.
-2. [HackerOne 프로그램](https://hackerone.com/anthropic-vdp/reports/new?type=team\&report_type=vulnerability)을 통해 보고합니다.
+1. 공개적으로 공개하지 마십시오
+2. [HackerOne 프로그램](https://hackerone.com/4f1f16ba-10d3-4d09-9ecc-c721aad90f24/embedded_submissions/new)을 통해 보고합니다
 3. 자세한 재현 단계 포함
-4. 공개 공개 전에 문제를 해결할 시간을 허용합니다.
+4. 공개 공개 전에 문제를 해결할 시간을 허용합니다
 
 ## 관련 리소스
 

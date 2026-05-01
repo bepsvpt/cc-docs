@@ -175,10 +175,13 @@ Cada entrada de plugin necesita como mínimo un `name` y `source` (dónde obtene
 
 | Campo                                 | Tipo   | Descripción                                                                                                                                                                                                                                                                                 |
 | :------------------------------------ | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `metadata.description`                | string | Descripción breve del marketplace                                                                                                                                                                                                                                                           |
-| `metadata.version`                    | string | Versión del marketplace                                                                                                                                                                                                                                                                     |
+| `$schema`                             | string | URL del esquema JSON para autocompletado y validación del editor. Claude Code ignora este campo al cargar.                                                                                                                                                                                  |
+| `description`                         | string | Descripción breve del marketplace                                                                                                                                                                                                                                                           |
+| `version`                             | string | Versión del manifiesto del marketplace                                                                                                                                                                                                                                                      |
 | `metadata.pluginRoot`                 | string | Directorio base antepuesto a rutas de fuente de plugin relativas (por ejemplo, `"./plugins"` le permite escribir `"source": "formatter"` en lugar de `"source": "./plugins/formatter"`)                                                                                                     |
 | `allowCrossMarketplaceDependenciesOn` | array  | Otros marketplaces en los que los plugins en este marketplace pueden depender. Las dependencias de un marketplace no listado aquí se bloquean en la instalación. Consulte [Depender de un plugin de otro marketplace](/es/plugin-dependencies#depend-on-a-plugin-from-another-marketplace). |
+
+`description` y `version` también se aceptan bajo `metadata` para compatibilidad con versiones anteriores.
 
 ## Entradas de plugins
 
@@ -959,7 +962,7 @@ Ejecute `claude plugin validate .` o `/plugin validate .` desde su directorio de
 **Advertencias** (no bloqueantes):
 
 * `Marketplace has no plugins defined`: agregue al menos un plugin al array `plugins`
-* `No marketplace description provided`: agregue `metadata.description` para ayudar a los usuarios a entender su marketplace
+* `No marketplace description provided`: agregue una `description` de nivel superior para ayudar a los usuarios a entender su marketplace
 * `Plugin name "x" is not kebab-case`: el nombre del plugin contiene letras mayúsculas, espacios o caracteres especiales. Renombre a letras minúsculas, dígitos y guiones solamente (por ejemplo, `my-plugin`). Claude Code acepta otras formas, pero la sincronización del marketplace de Claude.ai las rechaza.
 
 ### Fallos de instalación de plugins

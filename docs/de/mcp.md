@@ -335,6 +335,8 @@ Claude Code unterstützt MCP-`list_changed`-Benachrichtigungen, die es MCP-Serve
 
 Wenn ein HTTP- oder SSE-Server während einer Sitzung die Verbindung trennt, verbindet sich Claude Code automatisch mit exponentiellem Backoff wieder: bis zu fünf Versuche, beginnend mit einer Verzögerung von einer Sekunde und sich jedes Mal verdoppelnd. Der Server wird als ausstehend in `/mcp` angezeigt, während die Wiederverbindung läuft. Nach fünf fehlgeschlagenen Versuchen wird der Server als fehlgeschlagen markiert und Sie können ihn manuell von `/mcp` aus erneut versuchen. Stdio-Server sind lokale Prozesse und werden nicht automatisch wiederverbunden.
 
+Das gleiche Backoff gilt, wenn ein HTTP- oder SSE-Server beim Start seine anfängliche Verbindung nicht herstellt. Ab v2.1.121 versucht Claude Code die anfängliche Verbindung bis zu dreimal bei vorübergehenden Fehlern wie einer 5xx-Antwort, einer Verbindungsverweigerung oder einem Timeout erneut, markiert den Server dann als fehlgeschlagen, wenn er immer noch keine Verbindung herstellen kann. Authentifizierungs- und Not-Found-Fehler werden nicht erneut versucht, da sie eine Konfigurationsänderung erfordern, um behoben zu werden.
+
 ### Push-Nachrichten mit Kanälen
 
 Ein MCP-Server kann auch Nachrichten direkt in Ihre Sitzung pushen, sodass Claude auf externe Ereignisse wie CI-Ergebnisse, Überwachungswarnungen oder Chat-Nachrichten reagieren kann. Um dies zu aktivieren, deklariert Ihr Server die Funktion `claude/channel` und Sie aktivieren sie mit dem Flag `--channels` beim Start. Siehe [Kanäle](/de/channels), um einen offiziell unterstützten Kanal zu verwenden, oder [Kanäle-Referenz](/de/channels-reference), um Ihren eigenen zu erstellen.
@@ -1127,7 +1129,7 @@ Fügen Sie klare, aussagekräftige Server-Anweisungen hinzu, die erklären:
 
 Claude Code schneidet Tool-Beschreibungen und Server-Anweisungen bei 2 KB ab. Halten Sie sie prägnant, um Kürzungen zu vermeiden, und platzieren Sie kritische Details am Anfang.
 
-### Konfigurieren Sie die Tool-Suche
+### Tool-Suche konfigurieren
 
 Die Tool-Suche ist standardmäßig aktiviert: MCP-Tools werden aufgeschoben und bei Bedarf entdeckt. Sie ist standardmäßig auf Vertex AI deaktiviert, das den Tool-Search-Beta-Header nicht akzeptiert, und wenn `ANTHROPIC_BASE_URL` auf einen Host von Drittanbietern verweist, da die meisten Proxys `tool_reference`-Blöcke nicht weiterleiten. Legen Sie `ENABLE_TOOL_SEARCH` explizit fest, um sich anzumelden. Diese Funktion erfordert Modelle, die `tool_reference`-Blöcke unterstützen: Sonnet 4 und später oder Opus 4 und später. Haiku-Modelle unterstützen die Tool-Suche nicht.
 
@@ -1160,6 +1162,26 @@ Sie können das `ToolSearch`-Tool auch spezifisch deaktivieren:
   }
 }
 ```
+
+### Einen Server von der Verschiebung ausnehmen
+
+Wenn die Tools eines Servers für Claude immer sichtbar sein sollten, ohne einen Suchschritt durchzuführen, setzen Sie `alwaysLoad` in der Konfiguration dieses Servers auf `true`. Jedes Tool von diesem Server wird dann beim Sitzungsstart in den Kontext geladen, unabhängig von der Einstellung `ENABLE_TOOL_SEARCH`. Verwenden Sie dies für eine kleine Anzahl von Tools, die Claude bei jedem Durchgang benötigt, da jedes vorab geladene Tool Kontext verbraucht, der sonst für Ihr Gespräch verfügbar wäre.
+
+Der folgende `.mcp.json`-Eintrag nimmt einen HTTP-Server von der Verschiebung aus, während andere Server aufgeschoben bleiben:
+
+```json theme={null}
+{
+  "mcpServers": {
+    "core-tools": {
+      "type": "http",
+      "url": "https://mcp.example.com/mcp",
+      "alwaysLoad": true
+    }
+  }
+}
+```
+
+Das Feld `alwaysLoad` ist auf allen Server-Typen verfügbar und erfordert Claude Code v2.1.121 oder später. Ein MCP-Server kann auch einzelne Tools als immer geladen markieren, indem `"anthropic/alwaysLoad": true` im `_meta`-Objekt des Tools enthalten ist, was denselben Effekt nur für dieses Tool hat.
 
 ## MCP-Prompts als Befehle verwenden
 

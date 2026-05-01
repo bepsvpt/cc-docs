@@ -48,6 +48,8 @@ Algunos atajos de Claude Code usan la tecla Option, como Option+Enter para un sa
 
   <Tab title="iTerm2">
     Abre Configuración → Perfiles → Teclas → General y establece la tecla Option Izquierda y la tecla Option Derecha en "Esc+".
+
+    Ejecutar `/terminal-setup` en iTerm2 habilita "Applications in terminal may access clipboard" en Configuración → General → Selection para que el comando `/copy` pueda escribir en tu portapapeles del sistema. El comando detecta iTerm2 incluso cuando se ejecuta desde dentro de tmux. Reinicia iTerm2 para que el cambio surta efecto.
   </Tab>
 
   <Tab title="VS Code">

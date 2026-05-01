@@ -40,13 +40,12 @@ Claude Code включает набор встроенных skills, котор�
   </Step>
 
   <Step title="Напишите SKILL.md">
-    Каждому skill нужен файл `SKILL.md` с двумя частями: YAML frontmatter (между маркерами `---`), который говорит Claude, когда использовать skill, и содержимое markdown с инструкциями, которые Claude следует при вызове skill. Поле `name` становится `/slash-command`, а `description` помогает Claude решить, когда загружать его автоматически.
+    Каждому skill нужен файл `SKILL.md` с двумя частями: YAML frontmatter (между маркерами `---`), который говорит Claude, когда использовать skill, и содержимое markdown с инструкциями, которые Claude следует при вызове skill. Имя каталога становится `/slash-command`, а `description` помогает Claude решить, когда загружать его автоматически.
 
     Создайте `~/.claude/skills/explain-code/SKILL.md`:
 
     ```yaml theme={null}
     ---
-    name: explain-code
     description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
     ---
 
@@ -215,6 +214,7 @@ Skills поддерживают подстановку строк для дин�
 | `$N`                   | Сокращение для `$ARGUMENTS[N]`, например `$0` для первого аргумента или `$1` для второго.                                                                                                                                                                    |
 | `$name`                | Именованный аргумент, объявленный в списке frontmatter [`arguments`](#frontmatter-reference). Имена соответствуют позициям по порядку, поэтому с `arguments: [issue, branch]` заполнитель `$issue` расширяется до первого аргумента и `$branch` ко второму.  |
 | `${CLAUDE_SESSION_ID}` | Текущий ID сессии. Полезно для логирования, создания файлов, специфичных для сессии, или корреляции выходных данных skill с сессиями.                                                                                                                        |
+| `${CLAUDE_EFFORT}`     | Текущий уровень усилий: `low`, `medium`, `high`, `xhigh` или `max`. Используйте это, чтобы адаптировать инструкции skill к активному параметру усилий.                                                                                                       |
 | `${CLAUDE_SKILL_DIR}`  | Каталог, содержащий файл `SKILL.md` skill. Для plugin skills это подкаталог skill в плагине, а не корень плагина. Используйте это в командах bash injection для ссылки на скрипты или файлы, поставляемые с skill, независимо от текущего рабочего каталога. |
 
 Индексированные аргументы используют кавычки в стиле shell, поэтому оборачивайте многословные значения в кавычки, чтобы передать их как один аргумент. Например, `/my-skill "hello world" second` заменяет `$0` на `hello world` и `$1` на `second`. Заполнитель `$ARGUMENTS` всегда расширяется до полной строки аргумента в том виде, в котором она была введена.

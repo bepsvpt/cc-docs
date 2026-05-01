@@ -87,6 +87,10 @@ Claude Code 具有原生沙箱功能，为代理执行提供更安全的环境�
   </Tab>
 </Tabs>
 
+WSL1 不支持沙箱，因为它缺少所需的 Linux 命名空间原语。如果您看到 `Sandboxing requires WSL2`，请将您的发行版升级到 WSL2 或在没有沙箱的情况下运行 Claude Code。
+
+在 WSL2 上，沙箱化命令无法启动 Windows 二进制文件，例如 `cmd.exe`、`powershell.exe` 或 `/mnt/c/` 下的任何内容。WSL 通过 Unix 套接字将这些交给 Windows 主机，沙箱会阻止这些。如果命令需要调用 Windows 二进制文件，请将其添加到 [`excludedCommands`](/zh-CN/settings#sandbox-settings)，以便它在沙箱外运行。
+
 ### 启用沙箱
 
 您可以通过运行 `/sandbox` 命令来启用沙箱：
@@ -97,13 +101,13 @@ Claude Code 具有原生沙箱功能，为代理执行提供更安全的环境�
 
 这会打开一个菜单，您可以在其中选择沙箱模式。如果缺少所需的依赖项（例如 Linux 上的 `bubblewrap` 或 `socat`），菜单会显示您平台的安装说明。
 
-默认情况下，如果沙箱无法启动（缺少依赖项、不支持的平台或平台限制），Claude Code 会显示警告并在没有沙箱的情况下运行命令。要使其成为硬失败，请将 [`sandbox.failIfUnavailable`](/zh-CN/settings#sandbox-settings) 设置为 `true`。这适用于需要沙箱作为安全门的托管部署。
+默认情况下，如果沙箱无法启动（缺少依赖项或不支持的平台），Claude Code 会显示警告并在没有沙箱的情况下运行命令。要使其成为硬失败，请将 [`sandbox.failIfUnavailable`](/zh-CN/settings#sandbox-settings) 设置为 `true`。这适用于需要沙箱作为安全门的托管部署。
 
 ### 沙箱模式
 
 Claude Code 提供两种沙箱模式：
 
-**自动允许模式**：Bash 命令将尝试在沙箱内运行，并自动允许而无需权限。无法沙箱化的命令（例如需要访问非允许主机的网络访问的命令）会回退到常规权限流程。显式拒绝规则始终被尊重。询问规则仅适用于回退到常规权限流程的命令。
+**自动允许模式**：Bash 命令将尝试在沙箱内运行，并自动允许而无需权限。无法沙箱化的命令（例如需要访问非允许主机的网络访问的命令）会回退到常规权限流程。显式拒绝规则始终被尊重，针对 `/`、您的主目录或其他关键系统路径的 `rm` 或 `rmdir` 命令仍会触发权限提示。询问规则仅适用于回退到常规权限流程的命令。
 
 **常规权限模式**：所有 bash 命令都通过标准权限流程，即使是沙箱化的。这提供了更多控制，但需要更多批准。
 
@@ -283,7 +287,7 @@ Claude Code 提供两种沙箱模式：
 沙箱 bash 工具与以下工具配合使用：
 
 * **权限规则**：与 [permission settings](/zh-CN/permissions) 结合以实现深度防御
-* **开发容器**：与 [devcontainers](/zh-CN/devcontainer) 一起使用以获得额外隔离
+* **开发容器**：与 [dev containers](/zh-CN/devcontainer) 一起使用以获得额外隔离
 * **企业策略**：通过 [managed settings](/zh-CN/settings#settings-precedence) 强制执行沙箱配置
 
 ## 最佳实践

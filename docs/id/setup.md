@@ -20,7 +20,7 @@ Claude Code berjalan pada platform dan konfigurasi berikut:
   * Alpine Linux 3.19+
 * **Perangkat keras**: RAM 4 GB+, prosesor x64 atau ARM64
 * **Jaringan**: koneksi internet diperlukan. Lihat [konfigurasi jaringan](/id/network-config#network-access-requirements).
-* **Shell**: Bash, Zsh, PowerShell, atau CMD. Pengaturan Windows asli memerlukan [Git for Windows](https://git-scm.com/downloads/win). Pengaturan WSL tidak.
+* **Shell**: Bash, Zsh, PowerShell, atau CMD. Pada Windows asli, [Git for Windows](https://git-scm.com/downloads/win) direkomendasikan; Claude Code kembali ke PowerShell ketika Git Bash tidak ada. Pengaturan WSL tidak memerlukan Git for Windows.
 * **Lokasi**: [negara yang didukung Anthropic](https://www.anthropic.com/supported-countries)
 
 ### Dependensi tambahan
@@ -59,7 +59,7 @@ To install Claude Code, use one of the following methods:
 
     If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell. Your prompt shows `PS C:\` when you're in PowerShell and `C:\` without the `PS` when you're in CMD.
 
-    **Native Windows setups require [Git for Windows](https://git-scm.com/downloads/win).** Install it first if you don't have it. WSL setups do not need it.
+    [Git for Windows](https://git-scm.com/downloads/win) is recommended on native Windows so Claude Code can use the Bash tool. If Git for Windows is not installed, Claude Code uses PowerShell as the shell tool instead. WSL setups do not need Git for Windows.
 
     <Info>
       Native installations automatically update in the background to keep you on the latest version.
@@ -97,17 +97,17 @@ Setelah instalasi selesai, buka terminal di proyek yang ingin Anda kerjakan dan 
 claude
 ```
 
-Jika Anda mengalami masalah apa pun selama instalasi, lihat [panduan troubleshooting](/id/troubleshooting).
+Jika Anda mengalami masalah apa pun selama instalasi, lihat [Troubleshoot installation and login](/id/troubleshoot-install).
 
 ### Pengaturan di Windows
 
 Anda dapat menjalankan Claude Code secara asli di Windows atau di dalam WSL. Pilih berdasarkan di mana proyek Anda berada dan fitur apa yang Anda butuhkan:
 
-| Opsi         | Memerlukan                                           | [Sandboxing](/id/sandboxing) | Kapan digunakan                                   |
-| ------------ | ---------------------------------------------------- | ---------------------------- | ------------------------------------------------- |
-| Windows Asli | [Git for Windows](https://git-scm.com/downloads/win) | Tidak didukung               | Proyek dan alat Windows asli                      |
-| WSL 2        | WSL 2 diaktifkan                                     | Didukung                     | Toolchain Linux atau eksekusi perintah bersandbox |
-| WSL 1        | WSL 1 diaktifkan                                     | Tidak didukung               | Jika WSL 2 tidak tersedia                         |
+| Opsi         | Memerlukan                                                                                                 | [Sandboxing](/id/sandboxing) | Kapan digunakan                                   |
+| ------------ | ---------------------------------------------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------- |
+| Windows Asli | [Git for Windows](https://git-scm.com/downloads/win) direkomendasikan; PowerShell digunakan jika tidak ada | Tidak didukung               | Proyek dan alat Windows asli                      |
+| WSL 2        | WSL 2 diaktifkan                                                                                           | Didukung                     | Toolchain Linux atau eksekusi perintah bersandbox |
+| WSL 1        | WSL 1 diaktifkan                                                                                           | Tidak didukung               | Jika WSL 2 tidak tersedia                         |
 
 **Opsi 1: Windows Asli dengan Git Bash**
 
@@ -115,7 +115,7 @@ Instal [Git for Windows](https://git-scm.com/downloads/win), kemudian jalankan p
 
 Apakah Anda menginstal dari PowerShell atau CMD hanya mempengaruhi perintah instalasi mana yang Anda jalankan. Prompt Anda menampilkan `PS C:\Users\YourName>` di PowerShell dan `C:\Users\YourName>` tanpa `PS` di CMD. Jika Anda baru mengenal terminal, [panduan terminal](/id/terminal-guide#windows) memandu setiap langkah.
 
-Setelah instalasi, luncurkan `claude` dari PowerShell, CMD, atau Git Bash. Claude Code menggunakan Git Bash secara internal untuk menjalankan perintah terlepas dari tempat Anda meluncurkannya. Jika Claude Code tidak dapat menemukan instalasi Git Bash Anda, atur jalur di [file settings.json](/id/settings) Anda:
+Setelah instalasi, luncurkan `claude` dari PowerShell, CMD, atau Git Bash. Ketika Git Bash diinstal, Claude Code menggunakannya secara internal untuk menjalankan perintah terlepas dari tempat Anda meluncurkannya. Jika Claude Code tidak dapat menemukan instalasi Git Bash Anda, atur jalur di [file settings.json](/id/settings) Anda:
 
 ```json theme={null}
 {
@@ -125,7 +125,7 @@ Setelah instalasi, luncurkan `claude` dari PowerShell, CMD, atau Git Bash. Claud
 }
 ```
 
-Claude Code juga dapat menjalankan PowerShell secara asli di Windows. Alat PowerShell sedang diluncurkan secara progresif; atur `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` untuk memilih masuk atau `0` untuk memilih keluar. Lihat [PowerShell tool](/id/tools-reference#powershell-tool) untuk pengaturan dan batasan.
+Claude Code juga dapat menjalankan PowerShell secara asli di Windows. Ketika Git Bash diinstal, alat PowerShell sedang diluncurkan secara progresif sebagai opsi tambahan: atur `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` untuk memilih masuk atau `0` untuk memilih keluar. Lihat [PowerShell tool](/id/tools-reference#powershell-tool) untuk pengaturan dan batasan.
 
 **Opsi 2: WSL**
 
@@ -158,6 +158,8 @@ Setelah menginstal, konfirmkan Claude Code berfungsi:
 ```bash theme={null}
 claude --version
 ```
+
+Jika ini gagal dengan `command not found` atau kesalahan lainnya, lihat [Troubleshoot installation and login](/id/troubleshoot-install).
 
 Untuk pemeriksaan yang lebih terperinci tentang instalasi dan konfigurasi Anda, jalankan [`claude doctor`](/id/troubleshooting#get-more-help):
 
@@ -390,10 +392,10 @@ npm install -g @anthropic-ai/claude-code
 
 Paket npm menginstal biner asli yang sama dengan penginstal standalone. npm menarik biner melalui dependensi opsional per-platform seperti `@anthropic-ai/claude-code-darwin-arm64`, dan langkah postinstall menautkannya ke tempat. Biner `claude` yang terinstal tidak sendiri memanggil Node.
 
-Platform instalasi npm yang didukung adalah `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64`, dan `win32-arm64`. Manajer paket Anda harus memungkinkan dependensi opsional. Lihat [troubleshooting](/id/troubleshooting#native-binary-not-found-after-npm-install) jika biner hilang setelah instalasi.
+Platform instalasi npm yang didukung adalah `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64`, dan `win32-arm64`. Manajer paket Anda harus memungkinkan dependensi opsional. Lihat [troubleshooting](/id/troubleshoot-install#native-binary-not-found-after-npm-install) jika biner hilang setelah instalasi.
 
 <Warning>
-  JANGAN gunakan `sudo npm install -g` karena ini dapat menyebabkan masalah izin dan risiko keamanan. Jika Anda mengalami kesalahan izin, lihat [troubleshooting kesalahan izin](/id/troubleshooting#permission-errors-during-installation).
+  JANGAN gunakan `sudo npm install -g` karena ini dapat menyebabkan masalah izin dan risiko keamanan. Jika Anda mengalami kesalahan izin, lihat [troubleshooting kesalahan izin](/id/troubleshoot-install#permission-errors-during-installation).
 </Warning>
 
 ### Integritas biner dan penandatanganan kode

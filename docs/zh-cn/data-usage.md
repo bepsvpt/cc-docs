@@ -25,7 +25,15 @@
 
 ### 会话质量调查
 
-当您在 Claude Code 中看到"Claude 在本次会话中表现如何？"提示时，对此调查的回应（包括选择"关闭"）仅记录您的数字评分（1、2、3 或关闭）。作为此调查的一部分，我们不收集或存储任何对话记录、输入、输出或其他会话数据。与竖起大拇指/竖起大拇指向下反馈或 `/feedback` 报告不同，此会话质量调查是一个简单的产品满意度指标。您对此调查的回应不会影响您的数据训练偏好，也不能用于训练我们的 AI 模型。
+当您在 Claude Code 中看到"Claude 在本次会话中表现如何？"提示时，对此调查的回应（包括选择"关闭"）仅记录您的评分。作为此评分提示本身的一部分，我们不收集或存储任何对话记录、输入、输出或其他会话数据。与竖起大拇指/竖起大拇指向下反馈或 `/feedback` 报告不同，此会话质量调查是一个简单的产品满意度指标。
+
+在评分提示之后，您可能会看到一个单独的后续问题，询问"Anthropic 可以查看您的会话记录以帮助我们改进 Claude Code 吗？"。这是一个与评分不同的可选第二步：
+
+* **是**：将您的对话记录、任何子代理记录和来自磁盘的原始会话日志文件上传到 Anthropic。已知的 API 密钥和令牌模式在上传前被编辑。源代码、文件内容和其他对话内容按原样上传。共享的记录保留最多 6 个月。
+* **否**：拒绝而不发送任何内容
+* **不再询问**：拒绝并停止此后续在未来会话中出现
+
+除非您明确选择**是**，否则不会上传任何内容。具有[零数据保留](/zh-CN/zero-data-retention)的组织，或组织政策禁用产品反馈的组织，永远不会看到此后续。您对此调查的回应（包括评分提示后提交的会话记录）不会影响您的数据训练偏好，也不能用于训练我们的 AI 模型。
 
 要禁用这些调查，请设置 `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`。当设置 `DISABLE_TELEMETRY` 或 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 时，调查也会被禁用。要控制频率而不是禁用，请在您的设置文件中将 [`feedbackSurveyRate`](/zh-CN/settings#available-settings) 设置为 `0` 到 `1` 之间的概率。
 
@@ -106,6 +114,8 @@ Claude Code 从用户的机器连接到 Sentry 以进行操作错误日志记录
 | **WebFetch 域安全检查**             | 默认开启。<br />[settings](/zh-CN/settings) 中 `skipWebFetchPreflight: true` 禁用。 | 默认开启。<br />[settings](/zh-CN/settings) 中 `skipWebFetchPreflight: true` 禁用。 | 默认开启。<br />[settings](/zh-CN/settings) 中 `skipWebFetchPreflight: true` 禁用。 | 默认开启。<br />[settings](/zh-CN/settings) 中 `skipWebFetchPreflight: true` 禁用。 |
 
 所有环境变量都可以检查到 `settings.json`（请参阅 [settings 参考](/zh-CN/settings)）。
+
+从 v2.1.126 开始，当主机平台设置 `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST` 时，Statsig 指标对于 Vertex、Bedrock 和 Foundry 默认开启，并遵循标准的 `DISABLE_TELEMETRY` 选择退出。Sentry 错误报告和 `/feedback` 报告在这些提供商上仍然默认关闭。
 
 ### WebFetch 域安全检查
 

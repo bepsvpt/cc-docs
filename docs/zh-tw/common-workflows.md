@@ -842,12 +842,14 @@ Worktree 隔離預設使用 git。對於其他版本控制系統（如 SVN、Per
   <Step title="可選地縮小匹配器範圍">
     預設情況下，hook 在所有通知類型上觸發。要僅針對特定事件觸發，請將 `matcher` 欄位設定為以下值之一：
 
-    | 匹配器                  | 觸發時機                |
-    | :------------------- | :------------------ |
-    | `permission_prompt`  | Claude 需要您批准工具使用    |
-    | `idle_prompt`        | Claude 完成並等待您的下一個提示 |
-    | `auth_success`       | 身份驗證完成              |
-    | `elicitation_dialog` | Claude 在問您一個問題      |
+    | 匹配器                    | 觸發時機                |
+    | :--------------------- | :------------------ |
+    | `permission_prompt`    | Claude 需要您批准工具使用    |
+    | `idle_prompt`          | Claude 完成並等待您的下一個提示 |
+    | `auth_success`         | 身份驗證完成              |
+    | `elicitation_dialog`   | MCP 伺服器開啟引發表單       |
+    | `elicitation_complete` | MCP 引發表單已提交或關閉      |
+    | `elicitation_response` | MCP 引發回應已傳送回伺服器     |
   </Step>
 
   <Step title="驗證 hook">

@@ -25,7 +25,7 @@
 
 ## 상태 표시줄 설정
 
-[`/statusline` 명령](#use-the-statusline-command)을 사용하여 Claude Code가 스크립트를 생성하도록 하거나, [수동으로 스크립트를 만들고](#manually-configure-a-status-line) 설정에 추가합니다.
+[`/statusline` 명령](#use-the-%2Fstatusline-command)을 사용하여 Claude Code가 스크립트를 생성하도록 하거나, [수동으로 스크립트를 만들고](#manually-configure-a-status-line) 설정에 추가합니다.
 
 ### /statusline 명령 사용
 
@@ -63,6 +63,8 @@
 선택적 `padding` 필드는 상태 표시줄 콘텐츠에 추가 수평 간격(문자 단위)을 추가합니다. 기본값은 `0`입니다. 이 패딩은 인터페이스의 기본 제공 간격에 추가되므로 터미널 가장자리로부터의 절대 거리가 아닌 상대 들여쓰기를 제어합니다.
 
 선택적 `refreshInterval` 필드는 [이벤트 기반 업데이트](#how-status-lines-work)에 추가로 N초마다 명령을 다시 실행합니다. 최소값은 `1`입니다. 상태 표시줄이 시계와 같은 시간 기반 데이터를 표시하거나 주 세션이 유휴 상태일 때 백그라운드 서브에이전트가 git 상태를 변경할 때 이를 설정합니다. 이벤트에서만 실행하려면 설정하지 않은 상태로 두세요.
+
+선택적 `hideVimModeIndicator` 필드는 프롬프트 아래의 기본 제공 `-- INSERT --` 텍스트를 숨깁니다. 스크립트가 [`vim.mode`](#available-data) 자체를 렌더링할 때 이를 `true`로 설정하여 모드가 두 번 표시되지 않도록 합니다.
 
 ### 상태 표시줄 비활성화
 
@@ -914,7 +916,7 @@ Claude.ai 구독 속도 제한 사용량을 상태 표시줄에 표시합니다.
 
 ### Windows 구성
 
-Windows에서 Claude Code는 Git Bash를 통해 상태 표시줄 명령을 실행합니다. 해당 셸에서 PowerShell을 호출할 수 있습니다:
+Windows에서 Claude Code는 Git Bash가 설치되어 있을 때 Git Bash를 통해 상태 표시줄 명령을 실행하거나, Git Bash가 없을 때 PowerShell을 통해 실행합니다. PowerShell 스크립트를 상태 표시줄로 실행하려면 `powershell`을 통해 호출하세요. 이는 두 셸 모두에서 작동합니다:
 
 <CodeGroup>
   ```json settings.json theme={null}
@@ -941,7 +943,7 @@ Windows에서 Claude Code는 Git Bash를 통해 상태 표시줄 명령을 실�
   ```
 </CodeGroup>
 
-또는 Bash 스크립트를 직접 실행합니다:
+또는 Git Bash가 설치되어 있을 때 Bash 스크립트를 직접 실행합니다:
 
 <CodeGroup>
   ```json settings.json theme={null}

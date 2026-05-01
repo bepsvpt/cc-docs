@@ -332,7 +332,7 @@ Ketika plugin Anda siap untuk dibagikan:
 3. **Buat atau gunakan marketplace**: Distribusikan melalui [plugin marketplaces](/id/plugin-marketplaces) untuk instalasi
 4. **Uji dengan orang lain**: Minta anggota tim menguji plugin sebelum distribusi yang lebih luas
 
-Setelah plugin Anda berada di marketplace, orang lain dapat memasangnya menggunakan instruksi di [Temukan dan pasang plugins](/id/discover-plugins).
+Setelah plugin Anda berada di marketplace, orang lain dapat memasangnya menggunakan instruksi di [Temukan dan pasang plugins](/id/discover-plugins). Untuk menjaga plugin tetap internal bagi tim Anda, hosting marketplace di [private repository](/id/plugin-marketplaces#private-repositories).
 
 ### Kirimkan plugin Anda ke marketplace resmi
 

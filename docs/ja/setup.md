@@ -20,7 +20,7 @@ Claude Code は以下のプラットフォームと構成で実行されます�
   * Alpine Linux 3.19 以上
 * **ハードウェア**: 4 GB 以上の RAM、x64 または ARM64 プロセッサ
 * **ネットワーク**: インターネット接続が必要です。[ネットワーク構成](/ja/network-config#network-access-requirements)を参照してください。
-* **シェル**: Bash、Zsh、PowerShell、または CMD。Windows ネイティブセットアップには [Git for Windows](https://git-scm.com/downloads/win)が必要です。WSL セットアップは不要です。
+* **シェル**: Bash、Zsh、PowerShell、または CMD。Windows ネイティブセットアップには [Git for Windows](https://git-scm.com/downloads/win) が Git Bash に必要です。WSL セットアップは Git for Windows を必要としません。
 * **場所**: [Anthropic サポート対象国](https://www.anthropic.com/supported-countries)
 
 ### 追加の依存関係
@@ -59,7 +59,7 @@ To install Claude Code, use one of the following methods:
 
     If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell. Your prompt shows `PS C:\` when you're in PowerShell and `C:\` without the `PS` when you're in CMD.
 
-    **Native Windows setups require [Git for Windows](https://git-scm.com/downloads/win).** Install it first if you don't have it. WSL setups do not need it.
+    [Git for Windows](https://git-scm.com/downloads/win) is recommended on native Windows so Claude Code can use the Bash tool. If Git for Windows is not installed, Claude Code uses PowerShell as the shell tool instead. WSL setups do not need Git for Windows.
 
     <Info>
       Native installations automatically update in the background to keep you on the latest version.
@@ -97,17 +97,17 @@ You can also install with [apt, dnf, or apk](/en/setup#install-with-linux-packag
 claude
 ```
 
-インストール中に問題が発生した場合は、[トラブルシューティングガイド](/ja/troubleshooting)を参照してください。
+インストール中に問題が発生した場合は、[インストールとログインのトラブルシューティング](/ja/troubleshoot-install)を参照してください。
 
 ### Windows でのセットアップ
 
 Claude Code をネイティブに Windows で実行することも、WSL 内で実行することもできます。プロジェクトの場所と必要な機能に基づいて選択してください。
 
-| オプション         | 必須                                                   | [サンドボックス](/ja/sandboxing) | 使用時期                              |
-| ------------- | ---------------------------------------------------- | ------------------------- | --------------------------------- |
-| ネイティブ Windows | [Git for Windows](https://git-scm.com/downloads/win) | サポートされていません               | Windows ネイティブプロジェクトとツール           |
-| WSL 2         | WSL 2 有効                                             | サポートされています                | Linux ツールチェーンまたはサンドボックス化されたコマンド実行 |
-| WSL 1         | WSL 1 有効                                             | サポートされていません               | WSL 2 が利用できない場合                   |
+| オプション         | 必須                                                                           | [サンドボックス](/ja/sandboxing) | 使用時期                              |
+| ------------- | ---------------------------------------------------------------------------- | ------------------------- | --------------------------------- |
+| ネイティブ Windows | [Git for Windows](https://git-scm.com/downloads/win)推奨；不在の場合は PowerShell を使用 | サポートされていません               | Windows ネイティブプロジェクトとツール           |
+| WSL 2         | WSL 2 有効                                                                     | サポートされています                | Linux ツールチェーンまたはサンドボックス化されたコマンド実行 |
+| WSL 1         | WSL 1 有効                                                                     | サポートされていません               | WSL 2 が利用できない場合                   |
 
 **オプション 1: Git Bash を使用したネイティブ Windows**
 
@@ -115,7 +115,7 @@ Claude Code をネイティブに Windows で実行することも、WSL 内で�
 
 PowerShell または CMD からインストールするかどうかは、実行するインストールコマンドにのみ影響します。プロンプトは PowerShell では `PS C:\Users\YourName>` と表示され、CMD では `PS` なしで `C:\Users\YourName>` と表示されます。ターミナルが初めての場合は、[ターミナルガイド](/ja/terminal-guide#windows)で各ステップを説明しています。
 
-インストール後、PowerShell、CMD、または Git Bash から `claude` を起動します。Claude Code は、起動元に関係なく、内部的に Git Bash を使用してコマンドを実行します。Claude Code が Git Bash インストールを見つけられない場合は、[settings.json ファイル](/ja/settings)でパスを設定します。
+インストール後、PowerShell、CMD、または Git Bash から `claude` を起動します。Git Bash がインストールされている場合、Claude Code は起動元に関係なく、内部的に Git Bash を使用してコマンドを実行します。Claude Code が Git Bash インストールを見つけられない場合は、[settings.json ファイル](/ja/settings)でパスを設定します。
 
 ```json theme={null}
 {
@@ -125,7 +125,7 @@ PowerShell または CMD からインストールするかどうかは、実行�
 }
 ```
 
-Claude Code は Windows でネイティブに PowerShell を実行することもできます。PowerShell ツールは段階的にロールアウトされています。オプトインするには `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` を設定するか、オプトアウトするには `0` を設定します。セットアップと制限については、[PowerShell ツール](/ja/tools-reference#powershell-tool)を参照してください。
+Claude Code は Windows でネイティブに PowerShell を実行することもできます。Git Bash がインストールされている場合、PowerShell ツールは追加オプションとして段階的にロールアウトされています。オプトインするには `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` を設定するか、オプトアウトするには `0` を設定します。セットアップと制限については、[PowerShell ツール](/ja/tools-reference#powershell-tool)を参照してください。
 
 **オプション 2: WSL**
 
@@ -158,6 +158,8 @@ apk add libgcc libstdc++ ripgrep
 ```bash theme={null}
 claude --version
 ```
+
+これが `command not found` または別のエラーで失敗する場合は、[インストールとログインのトラブルシューティング](/ja/troubleshoot-install)を参照してください。
 
 インストールと構成をより詳しく確認するには、[`claude doctor`](/ja/troubleshooting#get-more-help)を実行します。
 
@@ -390,10 +392,10 @@ npm install -g @anthropic-ai/claude-code
 
 npm パッケージは、スタンドアロンインストーラーと同じネイティブバイナリをインストールします。npm は `@anthropic-ai/claude-code-darwin-arm64` などのプラットフォーム固有のオプション依存関係を通じてバイナリをプルし、postinstall ステップがそれを所定の位置にリンクします。インストールされた `claude` バイナリ自体は Node を呼び出しません。
 
-サポートされている npm インストールプラットフォームは `darwin-arm64`、`darwin-x64`、`linux-x64`、`linux-arm64`、`linux-x64-musl`、`linux-arm64-musl`、`win32-x64`、および `win32-arm64` です。パッケージマネージャーはオプション依存関係を許可する必要があります。インストール後にバイナリが見つからない場合は、[トラブルシューティング](/ja/troubleshooting#native-binary-not-found-after-npm-install)を参照してください。
+サポートされている npm インストールプラットフォームは `darwin-arm64`、`darwin-x64`、`linux-x64`、`linux-arm64`、`linux-x64-musl`、`linux-arm64-musl`、`win32-x64`、および `win32-arm64` です。パッケージマネージャーはオプション依存関係を許可する必要があります。インストール後にバイナリが見つからない場合は、[トラブルシューティング](/ja/troubleshoot-install#native-binary-not-found-after-npm-install)を参照してください。
 
 <Warning>
-  `sudo npm install -g` を使用しないでください。これはアクセス許可の問題とセキュリティリスクにつながる可能性があります。アクセス許可エラーが発生した場合は、[トラブルシューティングアクセス許可エラー](/ja/troubleshooting#permission-errors-during-installation)を参照してください。
+  `sudo npm install -g` を使用しないでください。これはアクセス許可の問題とセキュリティリスクにつながる可能性があります。アクセス許可エラーが発生した場合は、[トラブルシューティングアクセス許可エラー](/ja/troubleshoot-install#permission-errors-during-installation)を参照してください。
 </Warning>
 
 ### バイナリ整合性とコード署名

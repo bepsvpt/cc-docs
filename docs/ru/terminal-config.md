@@ -48,6 +48,8 @@ Claude Code работает в любом терминале без конфи�
 
   <Tab title="iTerm2">
     Откройте Settings → Profiles → Keys → General и установите Left Option key и Right Option key на "Esc+".
+
+    Запуск `/terminal-setup` в iTerm2 включает "Applications in terminal may access clipboard" в Settings → General → Selection, чтобы команда `/copy` могла писать в буфер обмена вашей системы. Команда обнаруживает iTerm2 даже при запуске изнутри tmux. Перезагрузите iTerm2, чтобы изменение вступило в силу.
   </Tab>
 
   <Tab title="VS Code">

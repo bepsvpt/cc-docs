@@ -48,6 +48,8 @@ Claude Code 在任何终端中都可以无需配置而工作。此页面适用�
 
   <Tab title="iTerm2">
     打开设置 → 配置文件 → 快捷键 → 常规并将左 Option 快捷键和右 Option 快捷键设置为"Esc+"。
+
+    在 iTerm2 中运行 `/terminal-setup` 会在设置 → 常规 → 选择下启用"终端中的应用程序可以访问剪贴板"，以便 `/copy` 命令可以写入您的系统剪贴板。该命令即使在 tmux 内运行时也能检测到 iTerm2。重启 iTerm2 以使更改生效。
   </Tab>
 
   <Tab title="VS Code">

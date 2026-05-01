@@ -48,6 +48,8 @@ tmux 내에서 실행 중인 경우 외부 터미널이 지원하더라도 Shift
 
   <Tab title="iTerm2">
     설정 → 프로필 → 키 → 일반을 열고 왼쪽 Option 키와 오른쪽 Option 키를 "Esc+"로 설정하세요.
+
+    iTerm2에서 `/terminal-setup`을 실행하면 설정 → 일반 → 선택 아래에서 "터미널의 애플리케이션이 클립보드에 액세스할 수 있음"을 활성화하여 `/copy` 명령이 시스템 클립보드에 쓸 수 있도록 합니다. 이 명령은 tmux 내부에서 실행되는 경우에도 iTerm2를 감지합니다. 변경 사항을 적용하려면 iTerm2를 다시 시작하세요.
   </Tab>
 
   <Tab title="VS Code">

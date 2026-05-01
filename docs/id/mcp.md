@@ -335,6 +335,8 @@ Claude Code mendukung notifikasi `list_changed` MCP, memungkinkan server MCP unt
 
 Jika server HTTP atau SSE terputus di tengah sesi, Claude Code secara otomatis menghubungkan kembali dengan backoff eksponensial: hingga lima upaya, dimulai dengan penundaan satu detik dan berlipat ganda setiap kali. Server muncul sebagai tertunda dalam `/mcp` saat koneksi ulang sedang berlangsung. Setelah lima upaya gagal, server ditandai sebagai gagal dan Anda dapat mencoba lagi secara manual dari `/mcp`. Server stdio adalah proses lokal dan tidak dihubungkan kembali secara otomatis.
 
+Backoff yang sama berlaku ketika server HTTP atau SSE gagal koneksi awalnya saat startup. Mulai dari v2.1.121, Claude Code mencoba ulang koneksi awal hingga tiga kali pada kesalahan transien seperti respons 5xx, koneksi ditolak, atau timeout, kemudian menandai server sebagai gagal jika masih tidak dapat terhubung. Kesalahan autentikasi dan not-found tidak dicoba ulang karena memerlukan perubahan konfigurasi untuk diselesaikan.
+
 ### Dorong pesan dengan saluran
 
 Server MCP juga dapat mendorong pesan langsung ke dalam sesi Anda sehingga Claude dapat bereaksi terhadap peristiwa eksternal seperti hasil CI, peringatan pemantauan, atau pesan obrolan. Untuk mengaktifkan ini, server Anda mendeklarasikan kemampuan `claude/channel` dan Anda memilihnya dengan flag `--channels` saat startup. Lihat [Saluran](/id/channels) untuk menggunakan saluran yang didukung secara resmi, atau [Referensi saluran](/id/channels-reference) untuk membangun saluran Anda sendiri.
@@ -1160,6 +1162,26 @@ Anda juga dapat menonaktifkan alat ToolSearch secara khusus:
   }
 }
 ```
+
+### Keluarkan server dari penundaan
+
+Jika alat server harus selalu terlihat oleh Claude tanpa langkah pencarian, atur `alwaysLoad` ke `true` dalam konfigurasi server tersebut. Setiap alat dari server tersebut kemudian dimuat ke konteks saat startup sesi terlepas dari pengaturan `ENABLE_TOOL_SEARCH`. Gunakan ini untuk sejumlah kecil alat yang Claude butuhkan di setiap putaran, karena setiap alat sebelumnya mengonsumsi konteks yang sebaliknya akan tersedia untuk percakapan Anda.
+
+Entri `.mcp.json` berikut mengecualikan satu server HTTP sambil membiarkan server lain ditangguhkan:
+
+```json theme={null}
+{
+  "mcpServers": {
+    "core-tools": {
+      "type": "http",
+      "url": "https://mcp.example.com/mcp",
+      "alwaysLoad": true
+    }
+  }
+}
+```
+
+Field `alwaysLoad` tersedia di semua jenis server dan memerlukan Claude Code v2.1.121 atau lebih baru. Server MCP juga dapat menandai alat individual sebagai selalu-dimuat dengan menyertakan `"anthropic/alwaysLoad": true` dalam objek `_meta` alat, yang memiliki efek yang sama hanya untuk alat tersebut.
 
 ## Gunakan prompt MCP sebagai perintah
 

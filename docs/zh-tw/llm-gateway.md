@@ -37,13 +37,29 @@ gateway 必須向客戶端公開以下至少一種 API 格式：
   Claude Code 根據 API 格式確定要啟用的功能。使用 Bedrock 或 Vertex 的 Anthropic Messages 格式時，您可能需要設置環境變數 `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`。
 </Note>
 
+**請求標頭**
+
+Claude Code 在每個 API 請求上包含以下標頭：
+
+| 標頭                         | 描述                                                               |
+| :------------------------- | :--------------------------------------------------------------- |
+| `X-Claude-Code-Session-Id` | 當前 Claude Code 會話的唯一識別符。代理可以使用此識別符來聚合來自單個會話的所有 API 請求，而無需解析請求正文。 |
+
+Claude Code 還在系統提示前面添加了一個簡短的歸屬塊，其中包含客戶端版本和從對話派生的指紋。Anthropic API 在處理前會刪除此塊，因此不會影響第一方提示快取。如果您的 gateway 實現了自己的提示快取，其密鑰基於完整請求正文，請設置 [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/zh-TW/env-vars) 以省略它。
+
 ## 配置
 
 ### 模型選擇
 
-默認情況下，Claude Code 將為選定的 API 格式使用標準模型名稱。
+默認情況下，Claude Code 使用所選 API 格式的標準模型名稱。
 
-如果您在 gateway 中配置了自定義模型名稱，請使用 [模型配置](/zh-TW/model-config) 中記錄的環境變數來匹配您的自定義名稱。
+當 `ANTHROPIC_BASE_URL` 指向公開 Anthropic Messages 格式的 gateway 時，Claude Code 在啟動時會查詢 gateway 的 `/v1/models` 端點，並將返回的模型添加到 `/model` 選擇器中。每個發現的條目都標記為「From gateway」，並在提供時使用響應中的 `display_name` 欄位。這需要 Claude Code v2.1.126 或更高版本。
+
+發現功能僅適用於 Anthropic Messages 格式。它不會針對 Bedrock 或 Vertex 傳遞端點運行，也不會在 `ANTHROPIC_BASE_URL` 未設置或指向 `api.anthropic.com` 時運行。
+
+發現請求的身份驗證方式與推理請求相同：它將 `ANTHROPIC_AUTH_TOKEN` 作為 bearer token 發送，或在未設置身份驗證令牌時將 `ANTHROPIC_API_KEY` 作為 `x-api-key` 標頭發送，以及來自 `ANTHROPIC_CUSTOM_HEADERS` 的任何標頭。只有 ID 以 `claude` 或 `anthropic` 開頭的模型才會添加到選擇器中。結果被緩存到 `~/.claude/cache/gateway-models.json`，並在每次啟動時刷新。如果請求失敗或 gateway 未實現 `/v1/models`，選擇器將回退到上次啟動時的緩存列表或內置模型列表。
+
+如果您的 gateway 使用與發現篩選器不匹配的模型名稱，請使用 [模型配置](/zh-TW/model-config) 中記錄的環境變數手動添加它們。
 
 ## LiteLLM 配置
 

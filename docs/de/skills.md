@@ -40,13 +40,12 @@ Dieses Beispiel erstellt einen Skill, der Claude beibringt, Code mit visuellen D
   </Step>
 
   <Step title="Schreiben Sie SKILL.md">
-    Jeder Skill benötigt eine `SKILL.md`-Datei mit zwei Teilen: YAML-Frontmatter (zwischen `---`-Markierungen), das Claude mitteilt, wann der Skill verwendet werden soll, und Markdown-Inhalt mit Anweisungen, die Claude befolgt, wenn der Skill aufgerufen wird. Das `name`-Feld wird zum `/slash-command`, und die `description` hilft Claude zu entscheiden, wann der Skill automatisch geladen werden soll.
+    Jeder Skill benötigt eine `SKILL.md`-Datei mit zwei Teilen: YAML-Frontmatter (zwischen `---`-Markierungen), das Claude mitteilt, wann der Skill verwendet werden soll, und Markdown-Inhalt mit Anweisungen, die Claude befolgt, wenn der Skill aufgerufen wird. Das Verzeichnisname wird zum `/slash-command`, und die `description` hilft Claude zu entscheiden, wann der Skill automatisch geladen werden soll.
 
     Erstellen Sie `~/.claude/skills/explain-code/SKILL.md`:
 
     ```yaml theme={null}
     ---
-    name: explain-code
     description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
     ---
 
@@ -91,7 +90,7 @@ Wo Sie einen Skill speichern, bestimmt, wer ihn verwenden kann:
 | Projekt     | `.claude/skills/<skill-name>/SKILL.md`                        | Nur dieses Projekt                  |
 | Plugin      | `<plugin>/skills/<skill-name>/SKILL.md`                       | Wo das Plugin aktiviert ist         |
 
-Wenn Skills auf verschiedenen Ebenen denselben Namen haben, gewinnen Orte mit höherer Priorität: Unternehmen > Persönlich > Projekt. Plugin-Skills verwenden einen `plugin-name:skill-name`-Namespace, sodass sie nicht mit anderen Ebenen in Konflikt geraten können. Wenn Sie Dateien in `.claude/commands/` haben, funktionieren diese auf die gleiche Weise, aber wenn ein Skill und ein Befehl denselben Namen haben, hat der Skill Vorrang.
+Wenn Skills auf verschiedenen Ebenen denselben Namen haben, gewinnt Unternehmen gegenüber Persönlich, und Persönlich gewinnt gegenüber Projekt. Plugin-Skills verwenden einen `plugin-name:skill-name`-Namespace, sodass sie nicht mit anderen Ebenen in Konflikt geraten können. Wenn Sie Dateien in `.claude/commands/` haben, funktionieren diese auf die gleiche Weise, aber wenn ein Skill und ein Befehl denselben Namen haben, hat der Skill Vorrang.
 
 #### Live-Änderungserkennung
 
@@ -215,6 +214,7 @@ Skills unterstützen String-Substitution für dynamische Werte im Skill-Inhalt:
 | `$N`                   | Kurzform für `$ARGUMENTS[N]`, z. B. `$0` für das erste Argument oder `$1` für das zweite.                                                                                                                                                                                                                                     |
 | `$name`                | Benanntes Argument, das in der [`arguments`](#frontmatter-reference)-Frontmatter-Liste deklariert ist. Namen werden in Reihenfolge auf Positionen abgebildet, daher wird mit `arguments: [issue, branch]` der Platzhalter `$issue` zum ersten Argument erweitert und `$branch` zum zweiten.                                   |
 | `${CLAUDE_SESSION_ID}` | Die aktuelle Sitzungs-ID. Nützlich zum Protokollieren, Erstellen sitzungsspezifischer Dateien oder Korrelieren der Skill-Ausgabe mit Sitzungen.                                                                                                                                                                               |
+| `${CLAUDE_EFFORT}`     | Die aktuelle Anstrengungsstufe: `low`, `medium`, `high`, `xhigh` oder `max`. Verwenden Sie dies, um Skill-Anweisungen an die aktive Anstrengungseinstellung anzupassen.                                                                                                                                                       |
 | `${CLAUDE_SKILL_DIR}`  | Das Verzeichnis, das die `SKILL.md`-Datei des Skills enthält. Für Plugin-Skills ist dies das Skill-Unterverzeichnis im Plugin, nicht das Plugin-Root. Verwenden Sie dies in Bash-Injektionsbefehlen, um auf Scripts oder Dateien zu verweisen, die mit dem Skill gebündelt sind, unabhängig vom aktuellen Arbeitsverzeichnis. |
 
 Indizierte Argumente verwenden Shell-ähnliche Anführungszeichen, daher müssen Sie mehrteilige Werte in Anführungszeichen setzen, um sie als einzelnes Argument zu übergeben. Zum Beispiel macht `/my-skill "hello world" second` `$0` zu `hello world` und `$1` zu `second`. Der `$ARGUMENTS`-Platzhalter wird immer zur vollständigen Argumentzeichenkette erweitert, wie eingegeben.

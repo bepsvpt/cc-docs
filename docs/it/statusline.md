@@ -64,6 +64,8 @@ Il campo opzionale `padding` aggiunge spazi orizzontali extra (in caratteri) al 
 
 Il campo opzionale `refreshInterval` esegue nuovamente il tuo comando ogni N secondi oltre agli [aggiornamenti guidati da eventi](#how-status-lines-work). Il minimo è `1`. Impostalo quando la tua barra di stato mostra dati basati sul tempo come un orologio, o quando i subagent in background cambiano lo stato git mentre la sessione principale è inattiva. Lascialo non impostato per eseguire solo su eventi.
 
+Il campo opzionale `hideVimModeIndicator` sopprime il testo integrato `-- INSERT --` sotto il prompt. Impostalo su `true` quando il tuo script renderizza [`vim.mode`](#available-data) stesso, in modo che la modalità non venga visualizzata due volte.
+
 ### Disabilita la barra di stato
 
 Esegui `/statusline` e chiedigli di rimuovere o cancellare la tua barra di stato (ad esempio, `/statusline delete`, `/statusline clear`, `/statusline remove it`). Puoi anche eliminare manualmente il campo `statusLine` dal tuo settings.json.
@@ -914,7 +916,7 @@ Ogni script verifica se il file di cache è mancante o più vecchio di 5 secondi
 
 ### Configurazione Windows
 
-Su Windows, Claude Code esegue i comandi della barra di stato tramite Git Bash. Puoi invocare PowerShell da quella shell:
+Su Windows, Claude Code esegue i comandi della barra di stato tramite Git Bash quando Git Bash è installato, o tramite PowerShell quando Git Bash è assente. Per eseguire uno script PowerShell come barra di stato, invocalo tramite `powershell`; questo funziona da entrambi i shell:
 
 <CodeGroup>
   ```json settings.json theme={null}
@@ -941,7 +943,7 @@ Su Windows, Claude Code esegue i comandi della barra di stato tramite Git Bash. 
   ```
 </CodeGroup>
 
-Oppure esegui uno script Bash direttamente:
+Oppure, quando Git Bash è installato, esegui uno script Bash direttamente:
 
 <CodeGroup>
   ```json settings.json theme={null}

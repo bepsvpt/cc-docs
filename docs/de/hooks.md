@@ -18,7 +18,7 @@ Hooks werden an bestimmten Punkten während einer Claude Code-Sitzung ausgelöst
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/_SQ1BnFTP0QUrae-/images/hooks-lifecycle.svg?fit=max&auto=format&n=_SQ1BnFTP0QUrae-&q=85&s=75bd3d4bdefd4f08a7d736167243fd78" alt="Hook-Lebenszyklus-Diagramm, das SessionStart zeigt, dann eine Pro-Runde-Schleife mit UserPromptSubmit, UserPromptExpansion für Slash-Befehle, die verschachtelte agentengesteuerte Schleife (PreToolUse, PermissionRequest, PostToolUse, PostToolUseFailure, PostToolBatch, SubagentStart/Stop, TaskCreated, TaskCompleted) und Stop oder StopFailure, gefolgt von TeammateIdle, PreCompact, PostCompact und SessionEnd, mit Elicitation und ElicitationResult verschachtelt in MCP-Tool-Ausführung, PermissionDenied als Seitenzweig von PermissionRequest für Auto-Mode-Ablehnungen und WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged und FileChanged als eigenständige asynchrone Ereignisse" width="520" height="1228" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/ZIW26Z9pnpsXLhbS/images/hooks-lifecycle.svg?fit=max&auto=format&n=ZIW26Z9pnpsXLhbS&q=85&s=ee23691324deb6501df09bfdae560b64" alt="Hook-Lebenszyklus-Diagramm, das optionales Setup zeigt, das in SessionStart führt, dann eine Pro-Runde-Schleife mit UserPromptSubmit, UserPromptExpansion für Slash-Befehle, die verschachtelte agentengesteuerte Schleife (PreToolUse, PermissionRequest, PostToolUse, PostToolUseFailure, PostToolBatch, SubagentStart/Stop, TaskCreated, TaskCompleted) und Stop oder StopFailure, gefolgt von TeammateIdle, PreCompact, PostCompact und SessionEnd, mit Elicitation und ElicitationResult verschachtelt in MCP-Tool-Ausführung, PermissionDenied als Seitenzweig von PermissionRequest für Auto-Mode-Ablehnungen und WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged und FileChanged als eigenständige asynchrone Ereignisse" width="520" height="1228" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
@@ -27,6 +27,7 @@ Die folgende Tabelle fasst zusammen, wann jedes Ereignis ausgelöst wird. Der Ab
 | Event                 | When it fires                                                                                                                                          |
 | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `SessionStart`        | When a session begins or resumes                                                                                                                       |
+| `Setup`               | When you start Claude Code with `--init-only`, or with `--init` or `--maintenance` in `-p` mode. For one-time preparation in CI or scripts             |
 | `UserPromptSubmit`    | When you submit a prompt, before Claude processes it                                                                                                   |
 | `UserPromptExpansion` | When a user-typed command expands into a prompt, before it reaches Claude. Can block the expansion                                                     |
 | `PreToolUse`          | Before a tool call executes. Can block it                                                                                                              |
@@ -187,24 +188,25 @@ Das Ereignis `FileChanged` folgt diesen Regeln nicht, wenn es seine Überwachung
 
 Jeder Ereignistyp passt auf ein anderes Feld:
 
-| Ereignis                                                                                                                        | Worauf der Matcher filtert                                    | Beispiel-Matcher-Werte                                                                                                    |
-| :------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                      | Tool-Name                                                     | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                          |
-| `SessionStart`                                                                                                                  | Wie die Sitzung gestartet wurde                               | `startup`, `resume`, `clear`, `compact`                                                                                   |
-| `SessionEnd`                                                                                                                    | Warum die Sitzung endete                                      | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                  |
-| `Notification`                                                                                                                  | Benachrichtigungstyp                                          | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`                                                  |
-| `SubagentStart`                                                                                                                 | Agent-Typ                                                     | `Bash`, `Explore`, `Plan` oder benutzerdefinierte Agent-Namen                                                             |
-| `PreCompact`, `PostCompact`                                                                                                     | Was die Komprimierung ausgelöst hat                           | `manual`, `auto`                                                                                                          |
-| `SubagentStop`                                                                                                                  | Agent-Typ                                                     | gleiche Werte wie `SubagentStart`                                                                                         |
-| `ConfigChange`                                                                                                                  | Konfigurationsquelle                                          | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                        |
-| `CwdChanged`                                                                                                                    | Keine Matcher-Unterstützung                                   | wird immer bei jedem Verzeichniswechsel ausgelöst                                                                         |
-| `FileChanged`                                                                                                                   | Dateinamen zum Überwachen (siehe [FileChanged](#filechanged)) | `.envrc\|.env`                                                                                                            |
-| `StopFailure`                                                                                                                   | Fehlertyp                                                     | `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                                                            | Ladegrund                                                     | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                              |
-| `UserPromptExpansion`                                                                                                           | Befehlsname                                                   | Ihre Skill- oder Befehlsnamen                                                                                             |
-| `Elicitation`                                                                                                                   | MCP-Server-Name                                               | Ihre konfigurierten MCP-Server-Namen                                                                                      |
-| `ElicitationResult`                                                                                                             | MCP-Server-Name                                               | gleiche Werte wie `Elicitation`                                                                                           |
-| `UserPromptSubmit`, `PostToolBatch`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | Keine Matcher-Unterstützung                                   | wird immer bei jedem Auftreten ausgelöst                                                                                  |
+| Ereignis                                                                                                                        | Worauf der Matcher filtert                                    | Beispiel-Matcher-Werte                                                                                                                             |
+| :------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                      | Tool-Name                                                     | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                                                   |
+| `SessionStart`                                                                                                                  | Wie die Sitzung gestartet wurde                               | `startup`, `resume`, `clear`, `compact`                                                                                                            |
+| `Setup`                                                                                                                         | Welches CLI-Flag das Setup ausgelöst hat                      | `init`, `maintenance`                                                                                                                              |
+| `SessionEnd`                                                                                                                    | Warum die Sitzung endete                                      | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                                           |
+| `Notification`                                                                                                                  | Benachrichtigungstyp                                          | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`, `elicitation_complete`, `elicitation_response`                           |
+| `SubagentStart`                                                                                                                 | Agent-Typ                                                     | `general-purpose`, `Explore`, `Plan` oder benutzerdefinierte Agent-Namen                                                                           |
+| `PreCompact`, `PostCompact`                                                                                                     | Was die Komprimierung ausgelöst hat                           | `manual`, `auto`                                                                                                                                   |
+| `SubagentStop`                                                                                                                  | Agent-Typ                                                     | gleiche Werte wie `SubagentStart`                                                                                                                  |
+| `ConfigChange`                                                                                                                  | Konfigurationsquelle                                          | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                                                 |
+| `CwdChanged`                                                                                                                    | Keine Matcher-Unterstützung                                   | wird immer bei jedem Verzeichniswechsel ausgelöst                                                                                                  |
+| `FileChanged`                                                                                                                   | Dateinamen zum Überwachen (siehe [FileChanged](#filechanged)) | `.envrc\|.env`                                                                                                                                     |
+| `StopFailure`                                                                                                                   | Fehlertyp                                                     | `rate_limit`, `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                                            | Ladegrund                                                     | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                                                       |
+| `UserPromptExpansion`                                                                                                           | Befehlsname                                                   | Ihre Skill- oder Befehlsnamen                                                                                                                      |
+| `Elicitation`                                                                                                                   | MCP-Server-Name                                               | Ihre konfigurierten MCP-Server-Namen                                                                                                               |
+| `ElicitationResult`                                                                                                             | MCP-Server-Name                                               | gleiche Werte wie `Elicitation`                                                                                                                    |
+| `UserPromptSubmit`, `PostToolBatch`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | Keine Matcher-Unterstützung                                   | wird immer bei jedem Auftreten ausgelöst                                                                                                           |
 
 Der Matcher wird gegen ein Feld aus der [JSON-Eingabe](#hook-input-and-output) ausgeführt, die Claude Code an Ihren Hook über stdin sendet. Für Tool-Ereignisse ist dieses Feld `tool_name`. Jeder Abschnitt [Hook-Ereignis](#hook-events) listet den vollständigen Satz von Matcher-Werten und das Eingabeschema für dieses Ereignis auf.
 
@@ -601,6 +603,7 @@ Exit-Code 2 ist die Art, wie ein Hook signalisiert „Stopp, mach das nicht." Di
 | `Notification`        | Nein                   | Zeigt stderr nur dem Benutzer an                                                                                                                                                                 |
 | `SubagentStart`       | Nein                   | Zeigt stderr nur dem Benutzer an                                                                                                                                                                 |
 | `SessionStart`        | Nein                   | Zeigt stderr nur dem Benutzer an                                                                                                                                                                 |
+| `Setup`               | Nein                   | Zeigt stderr nur dem Benutzer an                                                                                                                                                                 |
 | `SessionEnd`          | Nein                   | Zeigt stderr nur dem Benutzer an                                                                                                                                                                 |
 | `CwdChanged`          | Nein                   | Zeigt stderr nur dem Benutzer an                                                                                                                                                                 |
 | `FileChanged`         | Nein                   | Zeigt stderr nur dem Benutzer an                                                                                                                                                                 |
@@ -654,6 +657,41 @@ Um Claude unabhängig vom Ereignistyp vollständig zu stoppen:
 ```json theme={null}
 { "continue": false, "stopReason": "Build failed, fix errors before continuing" }
 ```
+
+#### Kontext für Claude hinzufügen
+
+Das Feld `additionalContext` übergibt einen String aus Ihrem Hook in Claudes Kontextfenster. Claude Code umhüllt den String in eine Systemerinnerung und fügt ihn in das Gespräch an dem Punkt ein, an dem der Hook ausgelöst wurde. Claude liest die Erinnerung bei der nächsten Modellanfrage, aber sie wird nicht als Chat-Nachricht in der Benutzeroberfläche angezeigt.
+
+Geben Sie `additionalContext` innerhalb von `hookSpecificOutput` neben dem Ereignisnamen zurück:
+
+```json theme={null}
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PostToolUse",
+    "additionalContext": "This file is generated. Edit src/schema.ts and run `bun generate` instead."
+  }
+}
+```
+
+Wo die Erinnerung angezeigt wird, hängt vom Ereignis ab:
+
+* [SessionStart](#sessionstart), [Setup](#setup) und [SubagentStart](#subagentstart): am Anfang des Gesprächs, vor der ersten Eingabeaufforderung
+* [UserPromptSubmit](#userpromptsubmit) und [UserPromptExpansion](#userpromptexpansion): neben der eingereichten Eingabeaufforderung
+* [PreToolUse](#pretooluse), [PostToolUse](#posttooluse), [PostToolUseFailure](#posttoolusefailure) und [PostToolBatch](#posttoolbatch): neben dem Tool-Ergebnis
+
+Wenn mehrere Hooks `additionalContext` für das gleiche Ereignis zurückgeben, erhält Claude alle Werte. Wenn ein Wert 10.000 Zeichen überschreitet, schreibt Claude Code den vollständigen Text in eine Datei im Sitzungsverzeichnis und übergibt Claude stattdessen den Dateipfad mit einer kurzen Vorschau.
+
+Verwenden Sie `additionalContext` für Informationen, die Claude über den aktuellen Zustand Ihrer Umgebung oder die gerade ausgeführte Operation wissen sollte:
+
+* **Umgebungszustand**: der aktuelle Branch, das Bereitstellungsziel oder aktive Feature-Flags
+* **Bedingte Projektregeln**: welcher Test-Befehl für die gerade bearbeitete Datei gilt, welche Verzeichnisse in diesem Worktree schreibgeschützt sind
+* **Externe Daten**: offene Probleme, die Ihnen zugewiesen sind, aktuelle CI-Ergebnisse, Inhalte, die von einem internen Service abgerufen wurden
+
+Für Anweisungen, die sich nie ändern, bevorzugen Sie [CLAUDE.md](/de/memory). Es wird ohne Ausführung eines Skripts geladen und ist der Standardort für statische Projektkonventionen.
+
+Schreiben Sie den Text als sachliche Aussagen statt als imperative Systembefehle. Formulierungen wie „Das Bereitstellungsziel ist Produktion" oder „Dieses Repo verwendet `bun test`" werden als Projektinformationen gelesen. Text, der als Out-of-Band-Systembefehle formuliert ist, kann Claudes Prompt-Injection-Abwehr auslösen, was dazu führt, dass Claude den Text an Sie zurückgibt, anstatt ihn als Kontext zu behandeln.
+
+Nach der Injektion wird der Text im Sitzungstranskript gespeichert. Für Mid-Session-Ereignisse wie `PostToolUse` oder `UserPromptSubmit` wird beim Fortsetzen mit `--continue` oder `--resume` der gespeicherte Text erneut abgespielt, anstatt den Hook für vergangene Umdrehungen erneut auszuführen, sodass Werte wie Zeitstempel oder Commit-SHAs beim Fortsetzen veraltet werden. `SessionStart`-Hooks werden beim Fortsetzen mit `source` auf `"resume"` gesetzt erneut ausgeführt, sodass sie ihren Kontext aktualisieren können.
 
 #### Entscheidungskontrolle
 
@@ -758,18 +796,20 @@ Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten S
 
 Jeder Text, den Ihr Hook-Skript auf stdout ausgibt, wird als Kontext für Claude hinzugefügt. Zusätzlich zu den [JSON-Ausgabefeldern](#json-output), die für alle Hooks verfügbar sind, können Sie diese ereignisspezifischen Felder zurückgeben:
 
-| Feld                | Beschreibung                                                                                 |
-| :------------------ | :------------------------------------------------------------------------------------------- |
-| `additionalContext` | Zeichenkette, die zu Claudes Kontext hinzugefügt wird. Werte mehrerer Hooks werden verkettet |
+| Feld                | Beschreibung                                                                                                                                                                                                                                              |
+| :------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `additionalContext` | Zeichenkette, die zu Claudes Kontext am Anfang des Gesprächs hinzugefügt wird, vor dem ersten Prompt. Siehe [Kontext für Claude hinzufügen](#add-context-for-claude), um zu erfahren, wie der Text bereitgestellt wird und was Sie darin einfügen sollten |
 
 ```json theme={null}
 {
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
-    "additionalContext": "My additional context here"
+    "additionalContext": "Current branch: feat/auth-refactor\nUncommitted changes: src/auth.ts, src/login.tsx\nActive issue: #4211 Migrate to OAuth2"
   }
 }
 ```
+
+Da einfacher stdout bereits Claude für dieses Ereignis erreicht, kann ein Hook, der nur Kontext lädt, direkt auf stdout drucken, ohne JSON zu erstellen. Verwenden Sie die JSON-Form, wenn Sie Kontext mit anderen Feldern wie `suppressOutput` kombinieren müssen.
 
 #### Umgebungsvariablen beibehalten
 
@@ -811,8 +851,56 @@ exit 0
 Alle Variablen, die in diese Datei geschrieben werden, sind in allen nachfolgenden Bash-Befehlen verfügbar, die Claude Code während der Sitzung ausführt.
 
 <Note>
-  `CLAUDE_ENV_FILE` ist für SessionStart-, [CwdChanged](#cwdchanged)- und [FileChanged](#filechanged)-Hooks verfügbar. Andere Hook-Typen haben keinen Zugriff auf diese Variable.
+  `CLAUDE_ENV_FILE` ist für SessionStart-, [Setup](#setup)-, [CwdChanged](#cwdchanged)- und [FileChanged](#filechanged)-Hooks verfügbar. Andere Hook-Typen haben keinen Zugriff auf diese Variable.
 </Note>
+
+### Setup
+
+Wird nur ausgelöst, wenn Sie Claude Code mit `--init-only` starten oder mit `--init` oder `--maintenance` im Print-Modus (`-p`). Es wird nicht beim normalen Start ausgelöst. Verwenden Sie es für einmalige Abhängigkeitsinstallation oder geplante Bereinigung, die Sie explizit von CI oder Skripten aus auslösen, getrennt vom normalen Sitzungsstart. Für Initialisierung pro Sitzung verwenden Sie stattdessen [SessionStart](#sessionstart).
+
+Der Matcher-Wert entspricht dem CLI-Flag, das den Hook ausgelöst hat:
+
+| Matcher       | Wann es ausgelöst wird                       |
+| :------------ | :------------------------------------------- |
+| `init`        | `claude --init-only` oder `claude -p --init` |
+| `maintenance` | `claude -p --maintenance`                    |
+
+`--init-only` führt Setup-Hooks und SessionStart-Hooks mit dem `startup`-Matcher aus und beendet sich dann, ohne ein Gespräch zu starten. `--init` und `--maintenance` lösen Setup-Hooks nur aus, wenn sie mit `-p` (Print-Modus) kombiniert werden; in einer interaktiven Sitzung lösen diese beiden Flags derzeit keine Setup-Hooks aus.
+
+Da Setup nicht bei jedem Start ausgelöst wird, kann ein Plugin, das eine Abhängigkeit installiert benötigt, sich nicht allein auf Setup verlassen. Das praktische Muster ist, die Abhängigkeit bei der ersten Verwendung zu überprüfen und bei Fehlen zu installieren, zum Beispiel ein Hook oder eine Skill, die auf `${CLAUDE_PLUGIN_DATA}/node_modules` testet und `npm install` ausführt, wenn es fehlt. Siehe das [Verzeichnis für persistente Daten](/de/plugins-reference#persistent-data-directory), um zu erfahren, wo Sie installierte Abhängigkeiten speichern können.
+
+#### Setup-Eingabe
+
+Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten Setup-Hooks ein Feld `trigger`, das auf `"init"` oder `"maintenance"` gesetzt ist:
+
+```json theme={null}
+{
+  "session_id": "abc123",
+  "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
+  "cwd": "/Users/...",
+  "hook_event_name": "Setup",
+  "trigger": "init"
+}
+```
+
+#### Setup-Entscheidungskontrolle
+
+Setup-Hooks können nicht blockieren. Bei Exit-Code 2 wird stderr dem Benutzer angezeigt; bei jedem anderen Nicht-Null-Exit-Code wird stderr nur angezeigt, wenn Sie mit `--verbose` starten. In beiden Fällen wird die Ausführung fortgesetzt. Um Informationen in Claudes Kontext zu übergeben, geben Sie `additionalContext` in der JSON-Ausgabe zurück; einfacher stdout wird nur in das Debug-Protokoll geschrieben. Zusätzlich zu den [JSON-Ausgabefeldern](#json-output), die für alle Hooks verfügbar sind, können Sie diese ereignisspezifischen Felder zurückgeben:
+
+| Feld                | Beschreibung                                                                                 |
+| :------------------ | :------------------------------------------------------------------------------------------- |
+| `additionalContext` | Zeichenkette, die zu Claudes Kontext hinzugefügt wird. Werte mehrerer Hooks werden verkettet |
+
+```json theme={null}
+{
+  "hookSpecificOutput": {
+    "hookEventName": "Setup",
+    "additionalContext": "Dependencies installed: node_modules, .venv"
+  }
+}
+```
+
+Setup-Hooks haben Zugriff auf `CLAUDE_ENV_FILE`. Variablen, die in diese Datei geschrieben werden, bleiben in nachfolgenden Bash-Befehlen für die Sitzung erhalten, genau wie in [SessionStart-Hooks](#persist-environment-variables). Nur `type: "command"` und `type: "mcp_tool"` Hooks werden unterstützt.
 
 ### InstructionsLoaded
 
@@ -881,12 +969,12 @@ Plain-stdout wird als Hook-Ausgabe im Transkript angezeigt. Das Feld `additional
 
 Um einen Prompt zu blockieren, geben Sie ein JSON-Objekt mit `decision` auf `"block"` zurück:
 
-| Feld                | Beschreibung                                                                                                                                   |
-| :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------- |
-| `decision`          | `"block"` verhindert die Verarbeitung des Prompts und löscht ihn aus dem Kontext. Weglassen, um den Prompt fortzusetzen                        |
-| `reason`            | Wird dem Benutzer angezeigt, wenn `decision` `"block"` ist. Wird nicht zum Kontext hinzugefügt                                                 |
-| `additionalContext` | Zeichenkette, die zu Claudes Kontext hinzugefügt wird                                                                                          |
-| `sessionTitle`      | Setzt den Sitzungstitel, gleiche Auswirkung wie `/rename`. Verwenden Sie, um Sitzungen automatisch basierend auf dem Prompt-Inhalt zu benennen |
+| Feld                | Beschreibung                                                                                                                                                 |
+| :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `decision`          | `"block"` verhindert die Verarbeitung des Prompts und löscht ihn aus dem Kontext. Weglassen, um den Prompt fortzusetzen                                      |
+| `reason`            | Wird dem Benutzer angezeigt, wenn `decision` `"block"` ist. Wird nicht zum Kontext hinzugefügt                                                               |
+| `additionalContext` | Zeichenkette, die zu Claudes Kontext hinzugefügt wird, zusammen mit dem eingereichten Prompt. Siehe [Kontext für Claude hinzufügen](#add-context-for-claude) |
+| `sessionTitle`      | Setzt den Sitzungstitel, gleiche Auswirkung wie `/rename`. Verwenden Sie, um Sitzungen automatisch basierend auf dem Prompt-Inhalt zu benennen               |
 
 ```json theme={null}
 {
@@ -935,11 +1023,11 @@ Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten U
 
 `UserPromptExpansion`-Hooks können die Erweiterung blockieren oder Kontext hinzufügen. Alle [JSON-Ausgabefelder](#json-output) sind verfügbar.
 
-| Feld                | Beschreibung                                                                              |
-| :------------------ | :---------------------------------------------------------------------------------------- |
-| `decision`          | `"block"` verhindert die Erweiterung des Slash-Befehls. Weglassen, um ihn fortzusetzen    |
-| `reason`            | Wird dem Benutzer angezeigt, wenn `decision` `"block"` ist                                |
-| `additionalContext` | Zeichenkette, die zu Claudes Kontext zusammen mit dem erweiterten Prompt hinzugefügt wird |
+| Feld                | Beschreibung                                                                                                                                              |
+| :------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `decision`          | `"block"` verhindert die Erweiterung des Slash-Befehls. Weglassen, um ihn fortzusetzen                                                                    |
+| `reason`            | Wird dem Benutzer angezeigt, wenn `decision` `"block"` ist                                                                                                |
+| `additionalContext` | Zeichenkette, die zu Claudes Kontext zusammen mit dem erweiterten Prompt hinzugefügt wird. Siehe [Kontext für Claude hinzufügen](#add-context-for-claude) |
 
 ```json theme={null}
 {
@@ -1073,7 +1161,7 @@ Stellt dem Benutzer eine bis vier Multiple-Choice-Fragen.
 | `permissionDecision`       | `"allow"` umgeht die Berechtigungsaufforderung. `"deny"` verhindert den Tool-Aufruf. `"ask"` fordert den Benutzer zur Bestätigung auf. `"defer"` beendet den Hook elegant, damit das Tool später fortgesetzt werden kann. [Deny- und Ask-Regeln](/de/permissions#manage-permissions) gelten weiterhin, wenn ein Hook `"allow"` zurückgibt |
 | `permissionDecisionReason` | Für `"allow"` und `"ask"`, dem Benutzer angezeigt, aber nicht Claude. Für `"deny"`, Claude angezeigt. Für `"defer"`, ignoriert                                                                                                                                                                                                            |
 | `updatedInput`             | Ändert die Tool-Eingabeparameter vor der Ausführung. Ersetzt das gesamte Eingabeobjekt, daher müssen Sie unveränderte Felder zusammen mit geänderten einbeziehen. Kombinieren Sie mit `"allow"`, um automatisch zu genehmigen, oder mit `"ask"`, um die geänderte Eingabe dem Benutzer zu zeigen. Für `"defer"`, ignoriert                |
-| `additionalContext`        | Zeichenkette, die zu Claudes Kontext vor der Tool-Ausführung hinzugefügt wird. Für `"defer"`, ignoriert                                                                                                                                                                                                                                   |
+| `additionalContext`        | Zeichenkette, die zu Claudes Kontext vor der Tool-Ausführung hinzugefügt wird. Für `"defer"`, ignoriert. Siehe [Kontext für Claude hinzufügen](#add-context-for-claude)                                                                                                                                                                   |
 
 Wenn mehrere PreToolUse-Hooks unterschiedliche Entscheidungen zurückgeben, ist die Priorität `deny` > `defer` > `ask` > `allow`.
 
@@ -1268,23 +1356,36 @@ Passt auf Tool-Namen, gleiche Werte wie PreToolUse.
 
 `PostToolUse`-Hooks können Claude nach der Tool-Ausführung Feedback geben. Zusätzlich zu den [JSON-Ausgabefeldern](#json-output), die für alle Hooks verfügbar sind, kann Ihr Hook-Skript diese ereignisspezifischen Felder zurückgeben:
 
-| Feld                   | Beschreibung                                                                                         |
-| :--------------------- | :--------------------------------------------------------------------------------------------------- |
-| `decision`             | `"block"` fordert Claude mit dem `reason` auf. Weglassen, um die Aktion fortzusetzen                 |
-| `reason`               | Erklärung, die Claude angezeigt wird, wenn `decision` `"block"` ist                                  |
-| `additionalContext`    | Zusätzlicher Kontext für Claude zu berücksichtigen                                                   |
-| `updatedMCPToolOutput` | Nur für [MCP-Tools](#match-mcp-tools): ersetzt die Ausgabe des Tools durch den bereitgestellten Wert |
+| Feld                   | Beschreibung                                                                                                                                         |
+| :--------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `decision`             | `"block"` fordert Claude mit dem `reason` auf. Weglassen, um die Aktion fortzusetzen                                                                 |
+| `reason`               | Erklärung, die Claude angezeigt wird, wenn `decision` `"block"` ist                                                                                  |
+| `additionalContext`    | Zeichenkette, die zu Claudes Kontext zusammen mit dem Tool-Ergebnis hinzugefügt wird. Siehe [Kontext für Claude hinzufügen](#add-context-for-claude) |
+| `updatedToolOutput`    | Ersetzt die Ausgabe des Tools durch den bereitgestellten Wert vor dem Senden an Claude. Der Wert muss der Ausgabeform des Tools entsprechen          |
+| `updatedMCPToolOutput` | Ersetzt die Ausgabe nur für [MCP-Tools](#match-mcp-tools). Bevorzugen Sie `updatedToolOutput`, das für alle Tools funktioniert                       |
+
+Das Beispiel unten ersetzt die Ausgabe eines `Bash`-Aufrufs. Der Ersatzwert entspricht der Ausgabeform des `Bash`-Tools:
 
 ```json theme={null}
 {
-  "decision": "block",
-  "reason": "Explanation for decision",
   "hookSpecificOutput": {
     "hookEventName": "PostToolUse",
-    "additionalContext": "Additional information for Claude"
+    "additionalContext": "Additional information for Claude",
+    "updatedToolOutput": {
+      "stdout": "[redacted]",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false
+    }
   }
 }
 ```
+
+<Warning>
+  `updatedToolOutput` ändert nur das, was Claude sieht. Das Tool ist bereits ausgeführt worden, wenn der Hook ausgelöst wird, daher haben alle geschriebenen Dateien, ausgeführten Befehle oder gesendeten Netzwerkanfragen bereits Auswirkungen. Telemetrie wie OpenTelemetry-Tool-Spans und Analyseereignisse erfassen auch die ursprüngliche Ausgabe, bevor der Hook ausgeführt wird. Um einen Tool-Aufruf zu verhindern oder zu ändern, bevor er ausgeführt wird, verwenden Sie stattdessen einen [PreToolUse](#pretooluse)-Hook.
+
+  Der Ersatzwert muss der Ausgabeform des Tools entsprechen. Eingebaute Tools geben strukturierte Objekte anstelle von einfachen Zeichenketten zurück. Zum Beispiel gibt `Bash` ein Objekt mit `stdout`-, `stderr`-, `interrupted`- und `isImage`-Feldern zurück. Für eingebaute Tools wird ein Wert, der nicht dem Ausgabeschema des Tools entspricht, ignoriert und die ursprüngliche Ausgabe wird verwendet. MCP-Tool-Ausgabe wird ohne Schema-Validierung durchgeleitet. Das Entfernen von Fehlerdetails, die Claude benötigt, kann dazu führen, dass er bei einer falschen Annahme fortfährt.
+</Warning>
 
 ### PostToolUseFailure
 
@@ -1325,9 +1426,9 @@ PostToolUseFailure-Hooks erhalten die gleichen `tool_name`- und `tool_input`-Fel
 
 `PostToolUseFailure`-Hooks können Claude nach einem Tool-Fehler Kontext geben. Zusätzlich zu den [JSON-Ausgabefeldern](#json-output), die für alle Hooks verfügbar sind, kann Ihr Hook-Skript diese ereignisspezifischen Felder zurückgeben:
 
-| Feld                | Beschreibung                                                        |
-| :------------------ | :------------------------------------------------------------------ |
-| `additionalContext` | Zusätzlicher Kontext für Claude zu berücksichtigen neben dem Fehler |
+| Feld                | Beschreibung                                                                                                                                  |
+| :------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+| `additionalContext` | Zeichenkette, die zu Claudes Kontext zusammen mit dem Fehler hinzugefügt wird. Siehe [Kontext für Claude hinzufügen](#add-context-for-claude) |
 
 ```json theme={null}
 {
@@ -1380,9 +1481,9 @@ Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten P
 
 `PostToolBatch`-Hooks können Kontext für Claude einfügen. Zusätzlich zu den [JSON-Ausgabefeldern](#json-output), die für alle Hooks verfügbar sind, kann Ihr Hook-Skript diese ereignisspezifischen Felder zurückgeben:
 
-| Feld                | Beschreibung                                                                   |
-| :------------------ | :----------------------------------------------------------------------------- |
-| `additionalContext` | Kontext-Zeichenkette, die einmal vor dem nächsten Modell-Aufruf eingefügt wird |
+| Feld                | Beschreibung                                                                                                                                                                                                                                               |
+| :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `additionalContext` | Kontext-Zeichenkette, die einmal vor dem nächsten Modell-Aufruf eingefügt wird. Siehe [Kontext für Claude hinzufügen](#add-context-for-claude) für Lieferdetails, was Sie darin einfügen sollten und wie fortgesetzte Sitzungen vergangene Werte handhaben |
 
 ```json theme={null}
 {
@@ -1392,12 +1493,6 @@ Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten P
   }
 }
 ```
-
-<Note>
-  Eingefügter `additionalContext` wird im Session-Transkript persistiert. Bei `--continue` oder `--resume` wird der gespeicherte Text von der Festplatte wiedergegeben und der Hook wird nicht erneut für vergangene Runden ausgeführt. Bevorzugen Sie statischen Kontext wie Konventionen oder Datei-Typ-Anleitung gegenüber dynamischen Werten wie Zeitstempeln oder dem aktuellen Commit-SHA, da diese bei Resume veraltet werden.
-
-  Formulieren Sie den Kontext als sachliche Information anstelle von imperativen Systembefehlen. Text, der als Out-of-Band-Systembefehle geschrieben ist, kann Claudes Prompt-Injection-Abwehr auslösen, was die Injection dem Benutzer anstelle von Handlung anzeigt.
-</Note>
 
 Das Zurückgeben von `decision: "block"` oder `continue: false` stoppt die agentengesteuerte Schleife vor dem nächsten Modell-Aufruf.
 
@@ -1449,7 +1544,7 @@ Wenn `retry` `true` ist, fügt Claude Code eine Nachricht zum Gespräch hinzu, d
 
 ### Notification
 
-Wird ausgeführt, wenn Claude Code Benachrichtigungen sendet. Passt auf Benachrichtigungstyp: `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`. Matcher weglassen, um Hooks für alle Benachrichtigungstypen auszuführen.
+Wird ausgeführt, wenn Claude Code Benachrichtigungen sendet. Passt auf Benachrichtigungstyp: `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`, `elicitation_complete`, `elicitation_response`. Matcher weglassen, um Hooks für alle Benachrichtigungstypen auszuführen.
 
 Verwenden Sie separate Matcher, um verschiedene Handler je nach Benachrichtigungstyp auszuführen. Diese Konfiguration löst ein berechtigungsspezifisches Warnungsskript aus, wenn Claude Genehmigung benötigt, und eine andere Benachrichtigung, wenn Claude untätig war:
 
@@ -1496,19 +1591,15 @@ Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten N
 }
 ```
 
-Notification-Hooks können Benachrichtigungen nicht blockieren oder ändern. Zusätzlich zu den [JSON-Ausgabefeldern](#json-output), die für alle Hooks verfügbar sind, können Sie `additionalContext` zurückgeben, um Kontext zum Gespräch hinzuzufügen:
-
-| Feld                | Beschreibung                                          |
-| :------------------ | :---------------------------------------------------- |
-| `additionalContext` | Zeichenkette, die zu Claudes Kontext hinzugefügt wird |
+Notification-Hooks können Benachrichtigungen nicht blockieren oder ändern. Sie sind für Nebenwirkungen wie das Weiterleiten der Benachrichtigung an einen externen Service vorgesehen. Die [gemeinsamen JSON-Ausgabefelder](#json-output) wie `systemMessage` gelten.
 
 ### SubagentStart
 
-Wird ausgeführt, wenn ein Claude Code-Subagent über das Agent-Tool spawnt wird. Unterstützt Matcher zum Filtern nach Agent-Typname (eingebaute Agents wie `Bash`, `Explore`, `Plan` oder benutzerdefinierte Agent-Namen aus `.claude/agents/`).
+Wird ausgeführt, wenn ein Claude Code-Subagent über das Agent-Tool spawnt wird. Unterstützt Matcher zum Filtern nach Agent-Typname (eingebaute Agents wie `general-purpose`, `Explore`, `Plan` oder benutzerdefinierte Agent-Namen aus `.claude/agents/`).
 
 #### SubagentStart-Eingabe
 
-Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten SubagentStart-Hooks `agent_id` mit der eindeutigen Kennung für den Subagenten und `agent_type` mit dem Agent-Namen (eingebaute Agents wie `"Bash"`, `"Explore"`, `"Plan"` oder benutzerdefinierte Agent-Namen).
+Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten SubagentStart-Hooks `agent_id` mit der eindeutigen Kennung für den Subagenten und `agent_type` mit dem Agent-Namen (eingebaute Agents wie `"general-purpose"`, `"Explore"`, `"Plan"` oder benutzerdefinierte Agent-Namen).
 
 ```json theme={null}
 {
@@ -1523,9 +1614,9 @@ Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten S
 
 SubagentStart-Hooks können die Subagenten-Erstellung nicht blockieren, können aber Kontext in den Subagenten injizieren. Zusätzlich zu den [JSON-Ausgabefeldern](#json-output), die für alle Hooks verfügbar sind, können Sie zurückgeben:
 
-| Feld                | Beschreibung                                                  |
-| :------------------ | :------------------------------------------------------------ |
-| `additionalContext` | Zeichenkette, die zum Kontext des Subagenten hinzugefügt wird |
+| Feld                | Beschreibung                                                                                                                                                                           |
+| :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `additionalContext` | Zeichenkette, die zu Claudes Kontext am Anfang des Gesprächs des Subagenten hinzugefügt wird, vor seinem ersten Prompt. Siehe [Kontext für Claude hinzufügen](#add-context-for-claude) |
 
 ```json theme={null}
 {
@@ -1718,7 +1809,7 @@ Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten S
 
 | Feld                     | Beschreibung                                                                                                                                                                                                                                                         |
 | :----------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `error`                  | Fehlertyp: `rate_limit`, `authentication_failed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens` oder `unknown`                                                                                                                             |
+| `error`                  | Fehlertyp: `rate_limit`, `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens` oder `unknown`                                                                                                    |
 | `error_details`          | Zusätzliche Details zum Fehler, falls verfügbar                                                                                                                                                                                                                      |
 | `last_assistant_message` | Der gerenderte Fehlertext, der in der Konversation angezeigt wird. Im Gegensatz zu `Stop` und `SubagentStop`, wo dieses Feld Claudes Gesprächsausgabe enthält, enthält es für `StopFailure` die API-Fehlerzeichenkette selbst, wie `"API Error: Rate limit reached"` |
 
@@ -1855,7 +1946,7 @@ ConfigChange-Hooks können Konfigurationsänderungen von der Anwendung blockiere
 
 Wird ausgeführt, wenn das Arbeitsverzeichnis während einer Sitzung wechselt, zum Beispiel wenn Claude einen `cd`-Befehl ausführt. Verwenden Sie dies, um auf Verzeichniswechsel zu reagieren: Laden Sie Umgebungsvariablen neu, aktivieren Sie projektspezifische Toolchains oder führen Sie Setup-Skripte automatisch aus. Paare mit [FileChanged](#filechanged) für Tools wie [direnv](https://direnv.net/), die verzeichnisspezifische Umgebungen verwalten.
 
-CwdChanged-Hooks haben Zugriff auf `CLAUDE_ENV_FILE`. Variablen, die in diese Datei geschrieben werden, bleiben in nachfolgenden Bash-Befehlen für die Sitzung erhalten, genau wie in [SessionStart-Hooks](#persist-environment-variables). Nur `type: "command"` Hooks werden unterstützt.
+CwdChanged-Hooks haben Zugriff auf `CLAUDE_ENV_FILE`. Variablen, die in diese Datei geschrieben werden, bleiben in nachfolgenden Bash-Befehlen für die Sitzung erhalten, genau wie in [SessionStart-Hooks](#persist-environment-variables).
 
 CwdChanged unterstützt keine Matcher und wird bei jedem Verzeichniswechsel ausgelöst.
 
@@ -1893,7 +1984,7 @@ Das Feld `matcher` für dieses Ereignis dient zwei Zwecken:
 * **Erstellen Sie die Überwachungsliste**: Der Wert wird auf `|` aufgeteilt und jedes Segment wird als Dateiname im Arbeitsverzeichnis registriert, daher überwacht `".envrc|.env"` genau diese zwei Dateien. Regex-Muster sind hier nicht nützlich: Ein Wert wie `^\.env` würde eine Datei überwachen, die buchstäblich `^\.env` heißt.
 * **Filtern Sie, welche Hooks ausgeführt werden**: Wenn sich eine überwachte Datei ändert, wird der gleiche Wert verwendet, um zu filtern, welche Hook-Gruppen ausgeführt werden, wobei die Standard-[Matcher-Regeln](#matcher-patterns) gegen den Basename der geänderten Datei verwendet werden.
 
-FileChanged-Hooks haben Zugriff auf `CLAUDE_ENV_FILE`. Variablen, die in diese Datei geschrieben werden, bleiben in nachfolgenden Bash-Befehlen für die Sitzung erhalten, genau wie in [SessionStart-Hooks](#persist-environment-variables). Nur `type: "command"` Hooks werden unterstützt.
+FileChanged-Hooks haben Zugriff auf `CLAUDE_ENV_FILE`. Variablen, die in diese Datei geschrieben werden, bleiben in nachfolgenden Bash-Befehlen für die Sitzung erhalten, genau wie in [SessionStart-Hooks](#persist-environment-variables).
 
 #### FileChanged-Eingabe
 

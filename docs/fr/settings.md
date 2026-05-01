@@ -910,4 +910,4 @@ Voir la [référence des outils](/fr/tools-reference) pour la liste complète et
 * [Permissions](/fr/permissions) : système de permissions, syntaxe des règles, modèles spécifiques aux outils, et politiques gérées
 * [Authentification](/fr/authentication) : configurer l'accès utilisateur à Claude Code
 * [Déboguer votre configuration](/fr/debug-your-config) : diagnostiquer pourquoi un paramètre, un hook, ou un serveur MCP ne prend pas effet
-* [Dépannage](/fr/troubleshooting) : problèmes d'installation, d'authentification, et de plateforme
+* [Dépannage de l'installation et de la connexion](/fr/troubleshoot-install) : problèmes d'installation, d'authentification, et de plateforme

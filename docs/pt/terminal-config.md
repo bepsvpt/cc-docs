@@ -35,7 +35,7 @@ Se você estiver executando dentro do tmux, Shift+Enter também requer a [config
 
 Para vincular quebra de linha a uma tecla diferente, ou para trocar o comportamento para que Enter insira uma quebra de linha e Shift+Enter envie, mapeie as ações `chat:newline` e `chat:submit` em seu [arquivo de atalhos de teclado](/pt/keybindings).
 
-## Enable Option key shortcuts on macOS
+## Ativar atalhos de tecla Option no macOS
 
 Alguns atalhos do Claude Code usam a tecla Option, como Option+Enter para uma quebra de linha ou Option+P para trocar modelos. No macOS, a maioria dos terminais não envia Option como um modificador por padrão, então esses atalhos não funcionam até que você o ative. A configuração do terminal para isso geralmente é rotulada como "Use Option as Meta Key"; Meta é o nome histórico do Unix para a tecla agora rotulada como Option ou Alt.
 
@@ -48,6 +48,8 @@ Alguns atalhos do Claude Code usam a tecla Option, como Option+Enter para uma qu
 
   <Tab title="iTerm2">
     Abra Configurações → Perfis → Teclas → Geral e defina a tecla Option Esquerda e a tecla Option Direita como "Esc+".
+
+    Executar `/terminal-setup` no iTerm2 ativa "Applications in terminal may access clipboard" em Configurações → Geral → Seleção para que o comando `/copy` possa escrever na sua área de transferência do sistema. O comando detecta iTerm2 mesmo quando executado dentro do tmux. Reinicie o iTerm2 para que a alteração tenha efeito.
   </Tab>
 
   <Tab title="VS Code">

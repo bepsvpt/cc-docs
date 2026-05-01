@@ -417,7 +417,8 @@ Erstellen Sie eine IAM-Richtlinie mit den erforderlichen Berechtigungen für Cla
       "Action": [
         "bedrock:InvokeModel",
         "bedrock:InvokeModelWithResponseStream",
-        "bedrock:ListInferenceProfiles"
+        "bedrock:ListInferenceProfiles",
+        "bedrock:GetInferenceProfile"
       ],
       "Resource": [
         "arn:aws:bedrock:*:*:inference-profile/*",
@@ -444,6 +445,10 @@ Erstellen Sie eine IAM-Richtlinie mit den erforderlichen Berechtigungen für Cla
 ```
 
 Für restriktivere Berechtigungen können Sie die Ressource auf spezifische Inferenzprofil-ARNs beschränken.
+
+`bedrock:GetInferenceProfile` ermöglicht es Claude Code, eine [Anwendungs-Inferenzprofil-ARN](#map-each-model-version-to-an-inference-profile) in ihr zugrunde liegendes Foundation-Modell aufzulösen, das verwendet wird, um die richtige Anforderungsform für dieses Modell auszuwählen.
+
+Wenn dem Token diese Berechtigung fehlt, wird Claude Code automatisch wiederhergestellt, indem es einmal mit der alternativen Form erneut versucht wird, sodass Anfragen weiterhin erfolgreich sind, aber jedes neue Modell einen zusätzlichen Roundtrip hinzufügt. Die Gewährung der Berechtigung vermeidet den Wiederholungsversuch. Dies gilt am häufigsten für `AWS_BEARER_TOKEN_BEDROCK`-Bereitstellungen, bei denen die Richtlinie des Tokens typischerweise enger ist als eine vollständige IAM-Rolle.
 
 Weitere Details finden Sie in der [Bedrock IAM-Dokumentation](https://docs.aws.amazon.com/bedrock/latest/userguide/security-iam.html).
 

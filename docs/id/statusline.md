@@ -64,6 +64,8 @@ Bidang `padding` opsional menambahkan spasi horizontal ekstra (dalam karakter) k
 
 Bidang `refreshInterval` opsional menjalankan kembali perintah Anda setiap N detik selain [pembaruan berbasis peristiwa](#how-status-lines-work). Minimum adalah `1`. Atur ini ketika baris status Anda menampilkan data berbasis waktu seperti jam, atau ketika subagen latar belakang mengubah keadaan git sementara sesi utama menganggur. Biarkan tidak diatur untuk hanya berjalan pada peristiwa.
 
+Bidang `hideVimModeIndicator` opsional menekan teks `-- INSERT --` bawaan di bawah prompt. Atur ini ke `true` ketika skrip Anda merender [`vim.mode`](#available-data) itu sendiri, sehingga mode tidak ditampilkan dua kali.
+
 ### Nonaktifkan baris status
 
 Jalankan `/statusline` dan minta untuk menghapus atau menghapus baris status Anda (misalnya, `/statusline delete`, `/statusline clear`, `/statusline remove it`). Anda juga dapat secara manual menghapus bidang `statusLine` dari settings.json Anda.
@@ -914,7 +916,7 @@ Setiap skrip memeriksa apakah file cache hilang atau lebih lama dari 5 detik seb
 
 ### Konfigurasi Windows
 
-Di Windows, Claude Code menjalankan perintah baris status melalui Git Bash. Anda dapat memanggil PowerShell dari shell itu:
+Di Windows, Claude Code menjalankan perintah baris status melalui Git Bash ketika Git Bash diinstal, atau melalui PowerShell ketika Git Bash tidak ada. Untuk menjalankan skrip PowerShell sebagai baris status Anda, panggil melalui `powershell`; ini berfungsi dari shell mana pun:
 
 <CodeGroup>
   ```json settings.json theme={null}
@@ -941,7 +943,7 @@ Di Windows, Claude Code menjalankan perintah baris status melalui Git Bash. Anda
   ```
 </CodeGroup>
 
-Atau jalankan skrip Bash secara langsung:
+Atau, ketika Git Bash diinstal, jalankan skrip Bash secara langsung:
 
 <CodeGroup>
   ```json settings.json theme={null}

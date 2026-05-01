@@ -40,13 +40,12 @@ Claude Code 包含一組捆綁的 skills，在每個工作階段中都可用，�
   </Step>
 
   <Step title="編寫 SKILL.md">
-    每個 skill 都需要一個 `SKILL.md` 檔案，包含兩部分：YAML frontmatter（在 `---` 標記之間），告訴 Claude 何時使用該 skill，以及包含 Claude 在叫用該 skill 時遵循的說明的 markdown 內容。`name` 欄位變成 `/slash-command`，`description` 幫助 Claude 決定何時自動載入它。
+    每個 skill 都需要一個 `SKILL.md` 檔案，包含兩部分：YAML frontmatter（在 `---` 標記之間），告訴 Claude 何時使用該 skill，以及包含 Claude 在叫用該 skill 時遵循的說明的 markdown 內容。目錄名稱變成 `/slash-command`，`description` 幫助 Claude 決定何時自動載入它。
 
     建立 `~/.claude/skills/explain-code/SKILL.md`：
 
     ```yaml theme={null}
     ---
-    name: explain-code
     description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
     ---
 
@@ -215,6 +214,7 @@ Skills 支援 skill 內容中動態值的字串替換：
 | `$N`                   | `$ARGUMENTS[N]` 的簡寫，例如 `$0` 表示第一個引數或 `$1` 表示第二個引數。                                                                                                       |
 | `$name`                | 在 [`arguments`](#frontmatter-reference) frontmatter 清單中宣告的具名引數。名稱按順序對應到位置，因此使用 `arguments: [issue, branch]` 時，預留位置 `$issue` 擴展為第一個引數，`$branch` 擴展為第二個引數。 |
 | `${CLAUDE_SESSION_ID}` | 目前的工作階段 ID。適用於記錄、建立工作階段特定檔案或將 skill 輸出與工作階段相關聯。                                                                                                          |
+| `${CLAUDE_EFFORT}`     | 目前的努力級別：`low`、`medium`、`high`、`xhigh` 或 `max`。使用此來根據作用中的努力設定調整 skill 說明。                                                                                 |
 | `${CLAUDE_SKILL_DIR}`  | 包含 skill 的 `SKILL.md` 檔案的目錄。對於外掛 skills，這是外掛中 skill 的子目錄，而不是外掛根目錄。在 bash 注入命令中使用此來參考與 skill 捆綁的指令碼或檔案，無論目前的工作目錄如何。                                       |
 
 索引引數使用 shell 風格的引用，因此將多字值包裝在引號中以將其作為單個引數傳遞。例如，`/my-skill "hello world" second` 使 `$0` 擴展為 `hello world`，`$1` 擴展為 `second`。`$ARGUMENTS` 預留位置始終擴展為輸入的完整引數字串。

@@ -87,6 +87,10 @@ Di **Linux dan WSL2**, instal paket yang diperlukan terlebih dahulu:
   </Tab>
 </Tabs>
 
+WSL1 tidak mendukung sandboxing karena kurangnya primitif namespace Linux yang diperlukan. Jika Anda melihat `Sandboxing requires WSL2`, tingkatkan distribusi Anda ke WSL2 atau jalankan Claude Code tanpa sandboxing.
+
+Di WSL2, perintah sandboxed tidak dapat meluncurkan binari Windows seperti `cmd.exe`, `powershell.exe`, atau apa pun di bawah `/mnt/c/`. WSL menyerahkan ini ke host Windows melalui soket Unix, yang sandbox blokir. Jika perintah perlu memanggil binari Windows, tambahkan ke [`excludedCommands`](/id/settings#sandbox-settings) sehingga berjalan di luar sandbox.
+
 ### Aktifkan sandboxing
 
 Anda dapat mengaktifkan sandboxing dengan menjalankan perintah `/sandbox`:
@@ -97,13 +101,13 @@ Anda dapat mengaktifkan sandboxing dengan menjalankan perintah `/sandbox`:
 
 Ini membuka menu di mana Anda dapat memilih antara mode sandbox. Jika dependensi yang diperlukan hilang (seperti `bubblewrap` atau `socat` di Linux), menu menampilkan instruksi instalasi untuk platform Anda.
 
-Secara default, jika sandbox tidak dapat dimulai (dependensi yang hilang, platform yang tidak didukung, atau pembatasan platform), Claude Code menampilkan peringatan dan menjalankan perintah tanpa sandboxing. Untuk menjadikan ini kegagalan keras sebagai gantinya, atur [`sandbox.failIfUnavailable`](/id/settings#sandbox-settings) ke `true`. Ini dimaksudkan untuk penyebaran terkelola yang memerlukan sandboxing sebagai gerbang keamanan.
+Secara default, jika sandbox tidak dapat dimulai (dependensi yang hilang atau platform yang tidak didukung), Claude Code menampilkan peringatan dan menjalankan perintah tanpa sandboxing. Untuk menjadikan ini kegagalan keras sebagai gantinya, atur [`sandbox.failIfUnavailable`](/id/settings#sandbox-settings) ke `true`. Ini dimaksudkan untuk penyebaran terkelola yang memerlukan sandboxing sebagai gerbang keamanan.
 
 ### Mode sandbox
 
 Claude Code menawarkan dua mode sandbox:
 
-**Mode izin otomatis**: Perintah Bash akan mencoba berjalan di dalam sandbox dan secara otomatis diizinkan tanpa memerlukan izin. Perintah yang tidak dapat di-sandbox (seperti yang memerlukan akses jaringan ke host yang tidak diizinkan) kembali ke alur izin reguler. Aturan tanya/tolak eksplisit yang telah Anda konfigurasi selalu dihormati.
+**Mode izin otomatis**: Perintah Bash akan mencoba berjalan di dalam sandbox dan secara otomatis diizinkan tanpa memerlukan izin. Perintah yang tidak dapat di-sandbox (seperti yang memerlukan akses jaringan ke host yang tidak diizinkan) kembali ke alur izin reguler. Aturan penolakan eksplisit selalu dihormati, dan perintah `rm` atau `rmdir` yang menargetkan `/`, direktori home Anda, atau jalur sistem kritis lainnya masih memicu permintaan izin. Aturan Ask hanya berlaku untuk perintah yang kembali ke alur izin reguler.
 
 **Mode izin reguler**: Semua perintah bash melalui alur izin standar, bahkan saat di-sandbox. Ini memberikan lebih banyak kontrol tetapi memerlukan lebih banyak persetujuan.
 

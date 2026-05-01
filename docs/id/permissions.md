@@ -39,10 +39,10 @@ Claude Code mendukung beberapa mode izin yang mengontrol bagaimana alat disetuju
 | `plan`              | Plan Mode: Claude dapat menganalisis tetapi tidak memodifikasi file atau menjalankan perintah                                                                                  |
 | `auto`              | Secara otomatis menyetujui panggilan alat dengan pemeriksaan keamanan latar belakang yang memverifikasi tindakan selaras dengan permintaan Anda. Saat ini pratinjau penelitian |
 | `dontAsk`           | Secara otomatis menolak alat kecuali pra-disetujui melalui `/permissions` atau aturan `permissions.allow`                                                                      |
-| `bypassPermissions` | Melewati prompt izin kecuali untuk penulisan ke direktori yang dilindungi (lihat peringatan di bawah)                                                                          |
+| `bypassPermissions` | Melewati semua prompt izin. Penghapusan direktori root dan home seperti `rm -rf /` masih meminta sebagai circuit breaker                                                       |
 
 <Warning>
-  Mode `bypassPermissions` melewati prompt izin. Penulisan ke direktori `.git`, `.claude`, `.vscode`, `.idea`, dan `.husky` masih meminta konfirmasi untuk mencegah kerusakan tidak disengaja pada status repositori, konfigurasi editor, dan git hooks. Penulisan ke `.claude/commands`, `.claude/agents`, dan `.claude/skills` dikecualikan dan tidak meminta, karena Claude secara rutin menulis di sana saat membuat skills, subagents, dan commands. Hanya gunakan mode ini di lingkungan terisolasi seperti kontainer atau VM tempat Claude Code tidak dapat menyebabkan kerusakan. Administrator dapat mencegah mode ini dengan mengatur `permissions.disableBypassPermissionsMode` ke `"disable"` dalam [pengaturan terkelola](#managed-settings).
+  Mode `bypassPermissions` melewati semua prompt izin, termasuk penulisan ke `.git`, `.claude`, `.vscode`, `.idea`, dan `.husky`. Penghapusan yang menargetkan akar sistem file atau direktori home, seperti `rm -rf /` dan `rm -rf ~`, masih meminta sebagai circuit breaker terhadap kesalahan model. Hanya gunakan mode ini di lingkungan terisolasi seperti kontainer atau VM tempat Claude Code tidak dapat menyebabkan kerusakan. Administrator dapat mencegah mode ini dengan mengatur `permissions.disableBypassPermissionsMode` ke `"disable"` dalam [pengaturan terkelola](#managed-settings).
 </Warning>
 
 Untuk mencegah `bypassPermissions` atau mode `auto` digunakan, atur `permissions.disableBypassPermissionsMode` atau `permissions.disableAutoMode` ke `"disable"` dalam [file pengaturan](/id/settings#settings-files) apa pun. Ini paling berguna dalam [pengaturan terkelola](#managed-settings) di mana mereka tidak dapat ditimpa.
@@ -157,6 +157,28 @@ Pola glob yang tidak dikutip diizinkan untuk perintah yang setiap flagnya hanya 
 
   Perhatikan bahwa menggunakan WebFetch saja tidak mencegah akses jaringan. Jika Bash diizinkan, Claude masih dapat menggunakan `curl`, `wget`, atau alat lain untuk menjangkau URL apa pun.
 </Warning>
+
+### PowerShell
+
+Aturan izin PowerShell menggunakan bentuk yang sama dengan aturan Bash. Wildcard dengan `*` cocok di posisi mana pun, akhiran `:*` setara dengan trailing ` *`, dan PowerShell telanjang atau `PowerShell(*)` cocok dengan setiap perintah. Konfigurasi ini memungkinkan perintah `Get-ChildItem` dan `git commit` sambil memblokir `Remove-Item`:
+
+```json theme={null}
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(git commit *)"
+    ],
+    "deny": [
+      "PowerShell(Remove-Item *)"
+    ]
+  }
+}
+```
+
+Alias umum dikanonikalisasi sebelum pencocokan. Aturan yang ditulis untuk nama cmdlet juga cocok dengan aliasnya, jadi `PowerShell(Get-ChildItem *)` cocok dengan `gci`, `ls`, dan `dir` juga. Pencocokan tidak peka huruf besar-kecil.
+
+Claude Code mengurai AST PowerShell dan memeriksa setiap perintah dalam perintah gabungan secara independen. Operator pipeline `|`, pemisah pernyataan `;`, dan pada PowerShell 7+ operator rantai `&&` dan `||` membagi perintah gabungan menjadi subperintah. Aturan harus cocok dengan setiap subperintah agar perintah gabungan diizinkan.
 
 ### Read dan Edit
 
@@ -307,121 +329,6 @@ Pengaturan berikut hanya dibaca dari pengaturan terkelola. Menempatkan mereka da
 <Note>
   Akses ke [Remote Control](/id/remote-control) dan [sesi web](/id/claude-code-on-the-web) tidak dikendalikan oleh kunci pengaturan terkelola. Pada paket Team dan Enterprise, admin mengaktifkan atau menonaktifkan fitur ini dalam [pengaturan admin Claude Code](https://claude.ai/admin-settings/claude-code).
 </Note>
-
-## Tinjau penolakan mode auto
-
-Ketika [mode auto](/id/permission-modes#eliminate-prompts-with-auto-mode) menolak panggilan alat, notifikasi muncul dan tindakan yang ditolak dicatat dalam `/permissions` di bawah tab Recently denied. Tekan `r` pada tindakan yang ditolak untuk menandainya untuk retry: ketika Anda keluar dari dialog, Claude Code mengirim pesan memberi tahu model bahwa mungkin dapat mencoba ulang panggilan alat itu dan melanjutkan percakapan.
-
-Untuk bereaksi terhadap penolakan secara terprogram, gunakan [hook `PermissionDenied`](/id/hooks#permissiondenied).
-
-## Konfigurasi pengklasifikasi mode auto
-
-[Mode auto](/id/permission-modes#eliminate-prompts-with-auto-mode) menggunakan model pengklasifikasi untuk memutuskan apakah setiap tindakan aman untuk dijalankan tanpa meminta. Dari kotak itu mempercayai hanya direktori kerja dan, jika ada, remote repositori saat ini. Tindakan seperti mendorong ke org kontrol sumber perusahaan Anda atau menulis ke bucket cloud tim akan diblokir sebagai potensi exfiltration data.
-
-Untuk menyesuaikan apa yang diizinkan atau diblokir pengklasifikasi, tambahkan instruksi ke file [CLAUDE.md](/id/memory) Anda. Pengklasifikasi membaca CLAUDE.md dari direktori terpercaya bersama percakapan, jadi instruksi seperti "jangan pernah force push" mengarahkan Claude dan pengklasifikasi pada saat yang bersamaan. Mulai di sini untuk konvensi proyek dan aturan perilaku.
-
-Untuk aturan yang berlaku di seluruh proyek, seperti infrastruktur terpercaya atau aturan deny organisasi-lebar, gunakan blok pengaturan `autoMode`. Pengklasifikasi membaca `autoMode` dari pengaturan pengguna, `.claude/settings.local.json`, dan pengaturan terkelola. Ini tidak membaca dari pengaturan proyek bersama di `.claude/settings.json`, karena repositori yang diperiksa masuk dapat sebaliknya menyuntikkan aturan allow-nya sendiri.
-
-| Cakupan                      | File                          | Gunakan untuk                                                     |
-| :--------------------------- | :---------------------------- | :---------------------------------------------------------------- |
-| Satu pengembang              | `~/.claude/settings.json`     | Infrastruktur terpercaya pribadi                                  |
-| Satu proyek, satu pengembang | `.claude/settings.local.json` | Bucket atau layanan terpercaya per-proyek, gitignored             |
-| Seluruh organisasi           | Pengaturan terkelola          | Infrastruktur terpercaya yang diberlakukan untuk semua pengembang |
-
-Entri dari setiap cakupan digabungkan. Pengembang dapat memperluas `environment`, `allow`, dan `soft_deny` dengan entri pribadi tetapi tidak dapat menghapus entri yang disediakan pengaturan terkelola. Karena aturan allow bertindak sebagai pengecualian untuk aturan blokir di dalam pengklasifikasi, entri `allow` yang ditambahkan pengembang dapat menimpa entri `soft_deny` organisasi: kombinasinya aditif, bukan batas kebijakan keras. Jika Anda memerlukan aturan yang tidak dapat dilewati pengembang, gunakan `permissions.deny` dalam pengaturan terkelola sebagai gantinya, yang memblokir tindakan sebelum pengklasifikasi dikonsultasikan.
-
-### Tentukan infrastruktur terpercaya
-
-Untuk sebagian besar organisasi, `autoMode.environment` adalah satu-satunya bidang yang perlu Anda atur. Ini memberi tahu pengklasifikasi repositori, bucket, dan domain mana yang dipercaya, tanpa menyentuh aturan blokir dan allow bawaan. Pengklasifikasi menggunakan `environment` untuk memutuskan apa arti "eksternal": tujuan apa pun yang tidak terdaftar adalah target exfiltration potensial.
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Source control: github.example.com/acme-corp and all repos under it",
-      "Trusted cloud buckets: s3://acme-build-artifacts, gs://acme-ml-datasets",
-      "Trusted internal domains: *.corp.example.com, api.internal.example.com",
-      "Key internal services: Jenkins at ci.example.com, Artifactory at artifacts.example.com"
-    ]
-  }
-}
-```
-
-Entri adalah prosa, bukan regex atau pola alat. Pengklasifikasi membacanya sebagai aturan bahasa alami. Tulislah cara Anda akan mendeskripsikan infrastruktur Anda kepada insinyur baru. Bagian lingkungan yang menyeluruh mencakup:
-
-* **Organisasi**: nama perusahaan Anda dan apa Claude Code terutama digunakan, seperti pengembangan perangkat lunak, otomasi infrastruktur, atau rekayasa data
-* **Kontrol sumber**: setiap GitHub, GitLab, atau org Bitbucket yang didorong pengembang Anda
-* **Penyedia cloud dan bucket terpercaya**: nama bucket atau awalan yang Claude harus dapat membaca dan menulis
-* **Domain internal terpercaya**: nama host untuk API, dashboard, dan layanan di dalam jaringan Anda, seperti `*.internal.example.com`
-* **Layanan internal kunci**: CI, registri artefak, indeks paket internal, tooling insiden
-* **Konteks tambahan**: batasan industri yang diatur, infrastruktur multi-tenant, atau persyaratan kepatuhan yang mempengaruhi apa yang harus diperlakukan pengklasifikasi sebagai berisiko
-
-Template awal yang berguna: isi bidang dalam tanda kurung dan hapus baris apa pun yang tidak berlaku:
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Organization: {COMPANY_NAME}. Primary use: {PRIMARY_USE_CASE, e.g. software development, infrastructure automation}",
-      "Source control: {SOURCE_CONTROL, e.g. GitHub org github.example.com/acme-corp}",
-      "Cloud provider(s): {CLOUD_PROVIDERS, e.g. AWS, GCP, Azure}",
-      "Trusted cloud buckets: {TRUSTED_BUCKETS, e.g. s3://acme-builds, gs://acme-datasets}",
-      "Trusted internal domains: {TRUSTED_DOMAINS, e.g. *.internal.example.com, api.example.com}",
-      "Key internal services: {SERVICES, e.g. Jenkins at ci.example.com, Artifactory at artifacts.example.com}",
-      "Additional context: {EXTRA, e.g. regulated industry, multi-tenant infrastructure, compliance requirements}"
-    ]
-  }
-}
-```
-
-Semakin spesifik konteks yang Anda berikan, semakin baik pengklasifikasi dapat membedakan operasi internal rutin dari upaya exfiltration.
-
-Anda tidak perlu mengisinya sekaligus. Rollout yang masuk akal: mulai dengan default dan tambahkan org kontrol sumber Anda dan layanan internal kunci, yang menyelesaikan false positive paling umum seperti mendorong ke repositori Anda sendiri. Tambahkan domain terpercaya dan bucket cloud berikutnya. Isi sisanya saat blokir muncul.
-
-### Timpa aturan blokir dan allow
-
-Dua bidang tambahan memungkinkan Anda mengganti daftar aturan bawaan pengklasifikasi: `autoMode.soft_deny` mengontrol apa yang diblokir, dan `autoMode.allow` mengontrol pengecualian mana yang berlaku. Masing-masing adalah array deskripsi prosa, dibaca sebagai aturan bahasa alami.
-
-Di dalam pengklasifikasi, prioritasnya adalah: aturan `soft_deny` memblokir terlebih dahulu, kemudian aturan `allow` menimpa sebagai pengecualian, kemudian niat pengguna eksplisit menimpa keduanya. Jika pesan pengguna secara langsung dan spesifik mendeskripsikan tindakan yang tepat Claude akan lakukan, pengklasifikasi mengizinkannya bahkan jika aturan `soft_deny` cocok. Permintaan umum tidak dihitung: meminta Claude untuk "membersihkan repositori" tidak mengotorisasi force-push, tetapi meminta Claude untuk "force-push cabang ini" melakukannya.
-
-Untuk melonggarkan: hapus aturan dari `soft_deny` ketika default memblokir sesuatu yang sudah dijaga pipeline Anda dengan review PR, CI, atau lingkungan staging, atau tambahkan ke `allow` ketika pengklasifikasi berulang kali menandai pola rutin yang pengecualian default tidak mencakup. Untuk mengencangkan: tambahkan ke `soft_deny` untuk risiko spesifik lingkungan Anda yang default lewatkan, atau hapus dari `allow` untuk menahan pengecualian default ke aturan blokir. Dalam semua kasus, jalankan `claude auto-mode defaults` untuk mendapatkan daftar default lengkap, kemudian salin dan edit: jangan pernah mulai dari daftar kosong.
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Source control: github.example.com/acme-corp and all repos under it"
-    ],
-    "allow": [
-      "Deploying to the staging namespace is allowed: staging is isolated from production and resets nightly",
-      "Writing to s3://acme-scratch/ is allowed: ephemeral bucket with a 7-day lifecycle policy"
-    ],
-    "soft_deny": [
-      "Never run database migrations outside the migrations CLI, even against dev databases",
-      "Never modify files under infra/terraform/prod/: production infrastructure changes go through the review workflow",
-      "...copy full default soft_deny list here first, then add your rules..."
-    ]
-  }
-}
-```
-
-<Danger>
-  Mengatur `allow` atau `soft_deny` mengganti seluruh daftar default untuk bagian itu. Jika Anda mengatur `soft_deny` dengan satu entri, setiap aturan blokir bawaan dibuang: force push, exfiltration data, `curl | bash`, production deploys, dan semua aturan blokir default lainnya menjadi diizinkan. Untuk menyesuaikan dengan aman, jalankan `claude auto-mode defaults` untuk mencetak aturan bawaan, salin ke file pengaturan Anda, kemudian tinjau setiap aturan terhadap pipeline Anda sendiri dan toleransi risiko. Hanya hapus aturan untuk risiko yang infrastruktur Anda sudah mitigasi.
-</Danger>
-
-Tiga bagian dievaluasi secara independen, jadi mengatur `environment` saja meninggalkan daftar `allow` dan `soft_deny` default utuh.
-
-### Periksa default dan konfigurasi efektif Anda
-
-Karena mengatur `allow` atau `soft_deny` mengganti default, mulai kustomisasi apa pun dengan menyalin daftar default lengkap. Tiga subperintah CLI membantu Anda memeriksa dan memvalidasi:
-
-```bash theme={null}
-claude auto-mode defaults  # the built-in environment, allow, and soft_deny rules
-claude auto-mode config    # what the classifier actually uses: your settings where set, defaults otherwise
-claude auto-mode critique  # get AI feedback on your custom allow and soft_deny rules
-```
-
-Simpan output `claude auto-mode defaults` ke file, edit daftar untuk mencocokkan kebijakan Anda, dan tempel hasilnya ke file pengaturan Anda. Setelah menyimpan, jalankan `claude auto-mode config` untuk mengonfirmasi aturan efektif adalah apa yang Anda harapkan. Jika Anda telah menulis aturan kustom, `claude auto-mode critique` meninjau mereka dan menandai entri yang ambigu, berlebihan, atau mungkin menyebabkan false positive.
 
 ## Prioritas pengaturan
 

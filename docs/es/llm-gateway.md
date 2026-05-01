@@ -37,13 +37,29 @@ El incumplimiento de reenvío de encabezados o la preservación de campos del cu
   Claude Code determina qué características habilitar en función del formato de API. Al usar el formato Anthropic Messages con Bedrock o Vertex, es posible que necesites establecer la variable de entorno `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`.
 </Note>
 
+**Encabezados de solicitud**
+
+Claude Code incluye los siguientes encabezados en cada solicitud de API:
+
+| Encabezado                 | Descripción                                                                                                                                                                                    |
+| :------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `X-Claude-Code-Session-Id` | Un identificador único para la sesión actual de Claude Code. Los proxies pueden usar esto para agregar todas las solicitudes de API de una sola sesión sin analizar el cuerpo de la solicitud. |
+
+Claude Code también antepone un bloque de atribución corto al mensaje del sistema que contiene la versión del cliente y una huella digital derivada de la conversación. La API de Anthropic elimina este bloque antes de procesarlo, por lo que no afecta el almacenamiento en caché de solicitudes de primer nivel. Si tu puerta de enlace implementa su propio caché de solicitudes con clave en el cuerpo de la solicitud completa, establece [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/es/env-vars) para omitirlo.
+
 ## Configuración
 
 ### Selección de modelo
 
-Por defecto, Claude Code utilizará nombres de modelo estándar para el formato de API seleccionado.
+Por defecto, Claude Code utiliza nombres de modelo estándar para el formato de API seleccionado.
 
-Si has configurado nombres de modelo personalizados en tu puerta de enlace, utiliza las variables de entorno documentadas en [Configuración de modelo](/es/model-config) para que coincidan con tus nombres personalizados.
+Cuando `ANTHROPIC_BASE_URL` apunta a una puerta de enlace que expone el formato de Mensajes de Anthropic, Claude Code consulta el punto final `/v1/models` de la puerta de enlace al inicio y añade los modelos devueltos al selector `/model`. Cada entrada descubierta se etiqueta como "Desde puerta de enlace" y utiliza el campo `display_name` de la respuesta cuando se proporciona uno. Esto requiere Claude Code v2.1.126 o posterior.
+
+El descubrimiento se aplica solo al formato de Mensajes de Anthropic. No se ejecuta para puntos finales de paso a través de Bedrock o Vertex, y no se ejecuta cuando `ANTHROPIC_BASE_URL` no está configurado o apunta a `api.anthropic.com`.
+
+La solicitud de descubrimiento se autentica de la misma manera que las solicitudes de inferencia: envía `ANTHROPIC_AUTH_TOKEN` como un token portador, o `ANTHROPIC_API_KEY` como el encabezado `x-api-key` cuando no hay un token de autenticación configurado, junto con cualquier encabezado de `ANTHROPIC_CUSTOM_HEADERS`. Solo se añaden al selector los modelos cuyo ID comienza con `claude` o `anthropic`. Los resultados se almacenan en caché en `~/.claude/cache/gateway-models.json` y se actualizan en cada inicio. Si la solicitud falla o la puerta de enlace no implementa `/v1/models`, el selector vuelve a la lista en caché del inicio anterior o a la lista de modelos integrada.
+
+Si tu puerta de enlace utiliza nombres de modelo que no coinciden con el filtro de descubrimiento, utiliza las variables de entorno documentadas en [Configuración de modelo](/es/model-config) para añadirlos manualmente.
 
 ## Configuración de LiteLLM
 

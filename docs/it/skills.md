@@ -40,13 +40,12 @@ Questo esempio crea una skill che insegna a Claude di spiegare il codice usando 
   </Step>
 
   <Step title="Scrivi SKILL.md">
-    Ogni skill ha bisogno di un file `SKILL.md` con due parti: frontmatter YAML (tra i marcatori `---`) che dice a Claude quando usare la skill, e contenuto markdown con istruzioni che Claude segue quando la skill viene invocata. Il campo `name` diventa il `/slash-command`, e la `description` aiuta Claude a decidere quando caricarla automaticamente.
+    Ogni skill ha bisogno di un file `SKILL.md` con due parti: frontmatter YAML (tra i marcatori `---`) che dice a Claude quando usare la skill, e contenuto markdown con istruzioni che Claude segue quando la skill viene invocata. Il nome della directory diventa il `/slash-command`, e la `description` aiuta Claude a decidere quando caricarla automaticamente.
 
     Crea `~/.claude/skills/explain-code/SKILL.md`:
 
     ```yaml theme={null}
     ---
-    name: explain-code
     description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
     ---
 
@@ -215,6 +214,7 @@ Le skills supportano la sostituzione di stringhe per valori dinamici nel contenu
 | `$N`                   | Abbreviazione per `$ARGUMENTS[N]`, come `$0` per il primo argomento o `$1` per il secondo.                                                                                                                                                                                                                                              |
 | `$name`                | Argomento denominato dichiarato nell'elenco frontmatter [`arguments`](#frontmatter-reference). I nomi si mappano alle posizioni in ordine, quindi con `arguments: [issue, branch]` il placeholder `$issue` si espande al primo argomento e `$branch` al secondo.                                                                        |
 | `${CLAUDE_SESSION_ID}` | L'ID della sessione attuale. Utile per il logging, la creazione di file specifici della sessione, o la correlazione dell'output della skill con le sessioni.                                                                                                                                                                            |
+| `${CLAUDE_EFFORT}`     | Il livello di sforzo attuale: `low`, `medium`, `high`, `xhigh`, o `max`. Usa questo per adattare le istruzioni della skill all'impostazione di sforzo attiva.                                                                                                                                                                           |
 | `${CLAUDE_SKILL_DIR}`  | La directory contenente il file `SKILL.md` della skill. Per le skills dei plugin, questa è la sottodirectory della skill all'interno del plugin, non la radice del plugin. Usa questo nei comandi di iniezione bash per fare riferimento a script o file raggruppati con la skill, indipendentemente dalla directory di lavoro attuale. |
 
 Gli argomenti indicizzati utilizzano le virgolette in stile shell, quindi racchiudi i valori multi-parola tra virgolette per passarli come un singolo argomento. Ad esempio, `/my-skill "hello world" second` fa sì che `$0` si espanda a `hello world` e `$1` a `second`. Il placeholder `$ARGUMENTS` si espande sempre alla stringa di argomenti completa come digitata.

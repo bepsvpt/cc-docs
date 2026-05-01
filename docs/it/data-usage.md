@@ -25,7 +25,15 @@ Se scegliete di inviarci feedback su Claude Code utilizzando il comando `/feedba
 
 ### Sondaggi sulla qualità della sessione
 
-Quando vedete il prompt "Come sta andando Claude in questa sessione?" in Claude Code, rispondendo a questo sondaggio (inclusa la selezione di "Ignora"), viene registrato solo il vostro voto numerico (1, 2, 3 o ignora). Non raccogliamo né archiviamo alcun transcript di conversazione, input, output o altri dati di sessione come parte di questo sondaggio. A differenza del feedback con pollice su/giù o dei report `/feedback`, questo sondaggio sulla qualità della sessione è una semplice metrica di soddisfazione del prodotto. Le vostre risposte a questo sondaggio non influiscono sulle vostre preferenze di addestramento dei dati e non possono essere utilizzate per addestrare i nostri modelli di IA.
+Quando vedete il prompt "Come sta andando Claude in questa sessione?" in Claude Code, rispondendo a questo sondaggio, inclusa la selezione di "Ignora", viene registrato solo il vostro voto. Non raccogliamo né archiviamo alcun transcript di conversazione, input, output o altri dati di sessione come parte del prompt di valutazione stesso. A differenza del feedback con pollice su/giù o dei report `/feedback`, questo sondaggio sulla qualità della sessione è una semplice metrica di soddisfazione del prodotto.
+
+Dopo il prompt di valutazione, potete vedere una domanda di follow-up separata che chiede "Anthropic può guardare il transcript della vostra sessione per aiutarci a migliorare Claude Code?". Questo è un secondo passaggio facoltativo distinto dalla valutazione:
+
+* **Sì**: carica il transcript della vostra conversazione, i transcript di qualsiasi subagent e il file di log della sessione non elaborato dal disco su Anthropic. I modelli di chiave API e token noti vengono oscurati prima del caricamento. Il codice sorgente, i contenuti dei file e altri contenuti della conversazione vengono caricati così come sono. I transcript condivisi vengono conservati fino a 6 mesi.
+* **No**: rifiuta senza inviare nulla
+* **Non chiedere più**: rifiuta e impedisce che questo follow-up appaia nelle sessioni future
+
+Nulla viene caricato a meno che non selezioniate esplicitamente **Sì**. Le organizzazioni con [zero data retention](/it/zero-data-retention), o dove il feedback sui prodotti è disabilitato dalla politica dell'organizzazione, non vedono mai questo follow-up. Le vostre risposte a questo sondaggio, inclusi i transcript delle sessioni inviati dopo il prompt di valutazione, non influiscono sulle vostre preferenze di addestramento dei dati e non possono essere utilizzate per addestrare i nostri modelli di IA.
 
 Per disabilitare questi sondaggi, impostate `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`. Il sondaggio viene anche disabilitato quando `DISABLE_TELEMETRY` o `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` è impostato. Per controllare la frequenza invece di disabilitare, impostate [`feedbackSurveyRate`](/it/settings#available-settings) nel vostro file di impostazioni su una probabilità tra `0` e `1`.
 
@@ -106,6 +114,8 @@ Per impostazione predefinita, la segnalazione degli errori, la telemetria e la s
 | **Controllo di sicurezza del dominio WebFetch** | Attivo per impostazione predefinita.<br />`skipWebFetchPreflight: true` in [settings](/it/settings) per disabilitare. | Attivo per impostazione predefinita.<br />`skipWebFetchPreflight: true` in [settings](/it/settings) per disabilitare. | Attivo per impostazione predefinita.<br />`skipWebFetchPreflight: true` in [settings](/it/settings) per disabilitare. | Attivo per impostazione predefinita.<br />`skipWebFetchPreflight: true` in [settings](/it/settings) per disabilitare. |
 
 Tutte le variabili di ambiente possono essere controllate in `settings.json` (consultate [riferimento delle impostazioni](/it/settings)).
+
+A partire dalla v2.1.126, quando una piattaforma host imposta `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`, le metriche Statsig sono attive per impostazione predefinita per Vertex, Bedrock e Foundry, e seguono l'opt-out standard `DISABLE_TELEMETRY`. La segnalazione degli errori Sentry e i report `/feedback` rimangono disattivi per impostazione predefinita su questi provider.
 
 ### Controllo di sicurezza del dominio WebFetch
 

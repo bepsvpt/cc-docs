@@ -75,7 +75,7 @@ Für vollständige Details überprüfen Sie bitte unsere [Commercial Terms of Se
 2. Vermeiden Sie es, nicht vertrauenswürdige Inhalte direkt an Claude zu pipen
 3. Überprüfen Sie vorgeschlagene Änderungen an kritischen Dateien
 4. Verwenden Sie virtuelle Maschinen (VMs), um Skripte auszuführen und Tool-Aufrufe zu tätigen, besonders bei der Interaktion mit externen Webdiensten
-5. Melden Sie verdächtiges Verhalten mit `/bug`
+5. Melden Sie verdächtiges Verhalten mit `/feedback`
 
 <Warning>
   Während diese Schutzmaßnahmen das Risiko erheblich reduzieren, ist kein System
@@ -114,7 +114,7 @@ Weitere Details zur Cloud-Ausführung finden Sie unter [Claude Code im Web](/de/
 
 * Überprüfen Sie alle vorgeschlagenen Änderungen vor der Genehmigung
 * Verwenden Sie projektspezifische Berechtigungseinstellungen für sensible Repositories
-* Erwägen Sie die Verwendung von [devcontainers](/de/devcontainer) für zusätzliche Isolierung
+* Erwägen Sie die Verwendung von [Dev Containern](/de/devcontainer) für zusätzliche Isolierung
 * Überprüfen Sie regelmäßig Ihre Berechtigungseinstellungen mit `/permissions`
 
 ### Team-Sicherheit
@@ -130,7 +130,7 @@ Weitere Details zur Cloud-Ausführung finden Sie unter [Claude Code im Web](/de/
 Wenn Sie eine Sicherheitslücke in Claude Code entdecken:
 
 1. Offenbaren Sie sie nicht öffentlich
-2. Melden Sie sie über unser [HackerOne-Programm](https://hackerone.com/anthropic-vdp/reports/new?type=team\&report_type=vulnerability)
+2. Melden Sie sie über unser [HackerOne-Programm](https://hackerone.com/4f1f16ba-10d3-4d09-9ecc-c721aad90f24/embedded_submissions/new)
 3. Fügen Sie detaillierte Reproduktionsschritte ein
 4. Geben Sie uns Zeit, das Problem zu beheben, bevor Sie es öffentlich offenbaren
 

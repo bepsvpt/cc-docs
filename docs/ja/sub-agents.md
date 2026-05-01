@@ -235,24 +235,24 @@ specific, actionable feedback on quality, security, and best practices.
 
 以下のフィールドは YAML フロントマターで使用できます。`name` と `description` のみが必須です。
 
-| フィールド             | 必須  | 説明                                                                                                                                                                                            |
-| :---------------- | :-- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`            | はい  | 小文字とハイフンを使用した一意の識別子                                                                                                                                                                           |
-| `description`     | はい  | Claude がこのサブエージェントに委譲する場合                                                                                                                                                                     |
-| `tools`           | いいえ | サブエージェントが使用できる[ツール](#available-tools)。省略した場合はすべてのツールを継承                                                                                                                                       |
-| `disallowedTools` | いいえ | 拒否するツール。継承または指定されたリストから削除                                                                                                                                                                     |
-| `model`           | いいえ | 使用する[モデル](#choose-a-model)：`sonnet`、`opus`、`haiku`、完全なモデル ID（例：`claude-opus-4-7`）、または `inherit`。デフォルトは `inherit`                                                                              |
-| `permissionMode`  | いいえ | [権限モード](#permission-modes)：`default`、`acceptEdits`、`auto`、`dontAsk`、`bypassPermissions`、または `plan`                                                                                            |
-| `maxTurns`        | いいえ | サブエージェントが停止する前の最大エージェントターン数                                                                                                                                                                   |
-| `skills`          | いいえ | スタートアップ時にサブエージェントのコンテキストに読み込む[スキル](/ja/skills)。呼び出しのために利用可能にするだけでなく、完全なスキルコンテンツが注入されます。サブエージェントは親の会話からスキルを継承しません                                                                              |
-| `mcpServers`      | いいえ | このサブエージェントで利用可能な[MCP サーバー](/ja/mcp)。各エントリは、既に設定されたサーバーを参照するサーバー名（例：`"slack"`）または、サーバー名をキーとし、完全な[MCP サーバー設定](/ja/mcp#installing-mcp-servers)を値とするインライン定義のいずれかです                                |
-| `hooks`           | いいえ | このサブエージェントにスコープされた[ライフサイクルフック](#define-hooks-for-subagents)                                                                                                                                   |
-| `memory`          | いいえ | [永続メモリスコープ](#enable-persistent-memory)：`user`、`project`、または `local`。クロスセッション学習を有効にします                                                                                                         |
-| `background`      | いいえ | `true` に設定して、このサブエージェントを常に[バックグラウンドタスク](#run-subagents-in-foreground-or-background)として実行します。デフォルト：`false`                                                                                     |
-| `effort`          | いいえ | このサブエージェントがアクティブな場合の努力レベル。セッション努力レベルをオーバーライドします。デフォルト：セッションから継承。オプション：`low`、`medium`、`high`、`xhigh`、`max`。利用可能なレベルはモデルに依存します                                                                  |
-| `isolation`       | いいえ | `worktree` に設定して、サブエージェントを一時的な[git worktree](/ja/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees)で実行し、リポジトリの分離されたコピーを提供します。サブエージェントが変更を加えない場合、worktree は自動的にクリーンアップされます |
-| `color`           | いいえ | タスクリストとトランスクリプトでサブエージェントの表示色。`red`、`blue`、`green`、`yellow`、`purple`、`orange`、`pink`、または `cyan` を受け入れます                                                                                        |
-| `initialPrompt`   | いいえ | このエージェントがメインセッションエージェント（`--agent` または `agent` 設定を通じて）として実行される場合、最初のユーザーターンとして自動送信されます。[コマンド](/ja/commands)および[スキル](/ja/skills)が処理されます。ユーザーが提供するプロンプトの前に付加されます                                 |
+| フィールド             | 必須  | 説明                                                                                                                                                                                                                 |
+| :---------------- | :-- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`            | はい  | 小文字とハイフンを使用した一意の識別子                                                                                                                                                                                                |
+| `description`     | はい  | Claude がこのサブエージェントに委譲する場合                                                                                                                                                                                          |
+| `tools`           | いいえ | サブエージェントが使用できる[ツール](#available-tools)。省略した場合はすべてのツールを継承                                                                                                                                                            |
+| `disallowedTools` | いいえ | 拒否するツール。継承または指定されたリストから削除                                                                                                                                                                                          |
+| `model`           | いいえ | 使用する[モデル](#choose-a-model)：`sonnet`、`opus`、`haiku`、完全なモデル ID（例：`claude-opus-4-7`）、または `inherit`。デフォルトは `inherit`                                                                                                   |
+| `permissionMode`  | いいえ | [権限モード](#permission-modes)：`default`、`acceptEdits`、`auto`、`dontAsk`、`bypassPermissions`、または `plan`。[プラグインサブエージェント](#choose-the-subagent-scope)では無視されます                                                             |
+| `maxTurns`        | いいえ | サブエージェントが停止する前の最大 agentic ターン数                                                                                                                                                                                     |
+| `skills`          | いいえ | スタートアップ時にサブエージェントのコンテキストに読み込む[スキル](/ja/skills)。呼び出しのために利用可能にするだけでなく、完全なスキルコンテンツが注入されます。サブエージェントは親の会話からスキルを継承しません                                                                                                   |
+| `mcpServers`      | いいえ | このサブエージェントで利用可能な[MCP サーバー](/ja/mcp)。各エントリは、既に設定されたサーバーを参照するサーバー名（例：`"slack"`）または、サーバー名をキーとし、完全な[MCP サーバー設定](/ja/mcp#installing-mcp-servers)を値とするインライン定義のいずれかです。[プラグインサブエージェント](#choose-the-subagent-scope)では無視されます |
+| `hooks`           | いいえ | このサブエージェントにスコープされた[ライフサイクルフック](#define-hooks-for-subagents)。[プラグインサブエージェント](#choose-the-subagent-scope)では無視されます                                                                                                    |
+| `memory`          | いいえ | [永続メモリスコープ](#enable-persistent-memory)：`user`、`project`、または `local`。クロスセッション学習を有効にします                                                                                                                              |
+| `background`      | いいえ | `true` に設定して、このサブエージェントを常に[バックグラウンドタスク](#run-subagents-in-foreground-or-background)として実行します。デフォルト：`false`                                                                                                          |
+| `effort`          | いいえ | このサブエージェントがアクティブな場合の努力レベル。セッション努力レベルをオーバーライドします。デフォルト：セッションから継承。オプション：`low`、`medium`、`high`、`xhigh`、`max`。利用可能なレベルはモデルに依存します                                                                                       |
+| `isolation`       | いいえ | `worktree` に設定して、サブエージェントを一時的な[git worktree](/ja/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees)で実行し、リポジトリの分離されたコピーを提供します。サブエージェントが変更を加えない場合、worktree は自動的にクリーンアップされます                      |
+| `color`           | いいえ | タスクリストとトランスクリプトでサブエージェントの表示色。`red`、`blue`、`green`、`yellow`、`purple`、`orange`、`pink`、または `cyan` を受け入れます                                                                                                             |
+| `initialPrompt`   | いいえ | このエージェントがメインセッションエージェント（`--agent` または `agent` 設定を通じて）として実行される場合、最初のユーザーターンとして自動送信されます。[コマンド](/ja/commands)および[スキル](/ja/skills)が処理されます。ユーザーが提供するプロンプトの前に付加されます                                                      |
 
 ### モデルを選択する
 
@@ -374,7 +374,7 @@ MCP サーバーをメイン会話から完全に除外し、そのツール説�
 | `plan`              | プランモード（読み取り専用探索）                                                                                   |
 
 <Warning>
-  `bypassPermissions` は注意して使用してください。権限プロンプトをスキップし、サブエージェントが承認なしで操作を実行できるようにします。`.git`、`.claude`、`.vscode`、`.idea`、および `.husky` ディレクトリへの書き込みは、`.claude/commands`、`.claude/agents`、および `.claude/skills` を除き、確認を求めるプロンプトが表示されます。詳細については、[権限モード](/ja/permission-modes#skip-all-checks-with-bypasspermissions-mode)を参照してください。
+  `bypassPermissions` は注意して使用してください。権限プロンプトをスキップし、サブエージェントが承認なしで操作を実行できるようにします。`.git`、`.claude`、`.vscode`、`.idea`、および `.husky` ディレクトリへの書き込みを含む、承認なしで操作を実行できるようにします。`/` や `/root` などのルートおよびホームディレクトリの削除は、サーキットブレーカーとしてプロンプトが表示されます。詳細については、[権限モード](/ja/permission-modes#skip-all-checks-with-bypasspermissions-mode)を参照してください。
 </Warning>
 
 親が `bypassPermissions` または `acceptEdits` を使用する場合、これが優先され、オーバーライドできません。親が[自動モード](/ja/permission-modes#eliminate-prompts-with-auto-mode)を使用する場合、サブエージェントは自動モードを継承し、フロントマター内の `permissionMode` は無視されます：分類器は、親セッションと同じブロックおよび許可ルールを使用してサブエージェントのツール呼び出しを評価します。
@@ -766,7 +766,7 @@ Continue that code review and now analyze the authorization logic
 ## 現在の会話をフォークする
 
 <Note>
-  フォークされたサブエージェントは実験的であり、Claude Code v2.1.117 以降が必要です。動作と設定は将来のリリースで変更される可能性があります。[`CLAUDE_CODE_FORK_SUBAGENT`](/ja/env-vars)環境変数を `1` に設定して有効にします。
+  フォークされたサブエージェントは実験的であり、Claude Code v2.1.117 以降が必要です。動作と設定は将来のリリースで変更される可能性があります。[`CLAUDE_CODE_FORK_SUBAGENT`](/ja/env-vars) 環境変数を `1` に設定して有効にしてください。この変数はインタラクティブモードおよび SDK または `claude -p` 経由で有効になります。
 </Note>
 
 フォークは、これまでの会話全体を継承するサブエージェントです。これにより、サブエージェントが通常提供する入力分離が削除されます。フォークはメインセッションと同じシステムプロンプト、ツール、モデル、およびメッセージ履歴を表示するため、状況を再度説明することなく、サイドタスクを渡すことができます。フォークのツール呼び出しはまだ会話から除外され、最終結果のみが返されるため、メインコンテキストウィンドウはクリーンなままです。フォークを使用する場合は、名前付きサブエージェントが有用であるには背景が多すぎる場合、または同じ開始点から複数のアプローチを並行して試したい場合です。
@@ -774,8 +774,8 @@ Continue that code review and now analyze the authorization logic
 フォークモードを有効にすると、Claude Code が 3 つの方法で変更されます：
 
 * Claude は、[general-purpose](#built-in-subagents) サブエージェントを使用する場合にフォークを生成します。Explore などの名前付きサブエージェントは以前と同じように生成されます。
-* すべてのサブエージェント生成は、`background` フィールドに関係なく[バックグラウンド](#run-subagents-in-foreground-or-background)で実行されます。`CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` を `1` に設定して、生成を同期的に保つことができます。
-* `/fork` コマンドは、[`/branch`](/ja/commands)のエイリアスとして機能するのではなく、フォークを生成します。
+* すべてのサブエージェント生成は、[バックグラウンド](#run-subagents-in-foreground-or-background)で実行されます。`CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` を `1` に設定して、生成を同期的に保つことができます。
+* `/fork` コマンドは、[`/branch`](/ja/commands) のエイリアスとして機能するのではなく、フォークを生成します。
 
 `/fork` の後に指示を続けて、フォークを自分で開始できます。Claude Code はフォークに指示の最初の単語から名前を付けます。次の例は、メインセッションで実装を続ける間に、フォークが会話をドラフトテストケースに分岐させます：
 
@@ -803,7 +803,7 @@ Continue that code review and now analyze the authorization logic
 |               | フォーク           | 名前付きサブエージェント                                                   |
 | :------------ | :------------- | :------------------------------------------------------------- |
 | コンテキスト        | 完全な会話履歴        | 渡すプロンプトを使用した新しいコンテキスト                                          |
-| システムプロンプトとツール | メインセッションと同じ    | [定義ファイル](#write-subagent-files)から                              |
+| システムプロンプトとツール | メインセッションと同じ    | [定義ファイル](#write-subagent-files) から                             |
 | モデル           | メインセッションと同じ    | サブエージェントの `model` フィールドから                                      |
 | 権限            | プロンプトがターミナルに表示 | 起動前に[事前承認](#run-subagents-in-foreground-or-background)、その後自動拒否 |
 | プロンプトキャッシュ    | メインセッションと共有    | 別のキャッシュ                                                        |
@@ -814,7 +814,7 @@ Claude がフォークを Agent ツール経由で生成するときに、`isola
 
 ### 制限事項
 
-フォークモードはインタラクティブセッションでのみ機能します。[非インタラクティブモード](/ja/headless)（Agent SDK を含む）では無効になります。フォークはさらにフォークを生成できません。
+`CLAUDE_CODE_FORK_SUBAGENT=1` を設定すると、インタラクティブセッション、[非インタラクティブモード](/ja/headless)、および Agent SDK でフォークモードが有効になります。フォークはさらにフォークを生成できません。
 
 ## サブエージェントの例
 

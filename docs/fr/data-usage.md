@@ -25,7 +25,15 @@ Si vous choisissez de nous envoyer des retours d'information sur Claude Code à 
 
 ### Sondages de qualité de session
 
-Lorsque vous voyez l'invite « Comment Claude s'en sort-il cette session ? » dans Claude Code, répondre à ce sondage (y compris en sélectionnant « Ignorer »), seule votre note numérique (1, 2, 3 ou ignorer) est enregistrée. Nous ne collectons ni ne stockons de transcriptions de conversation, d'entrées, de sorties ou d'autres données de session dans le cadre de ce sondage. Contrairement aux retours d'information avec pouces vers le haut/bas ou aux rapports `/feedback`, ce sondage de qualité de session est une simple métrique de satisfaction du produit. Vos réponses à ce sondage n'affectent pas vos préférences de formation aux données et ne peuvent pas être utilisées pour former nos modèles d'IA.
+Lorsque vous voyez l'invite « Comment Claude s'en sort-il cette session ? » dans Claude Code, répondre à ce sondage, y compris en sélectionnant « Ignorer », enregistre uniquement votre note. Nous ne collectons ni ne stockons de transcriptions de conversation, d'entrées, de sorties ou d'autres données de session dans le cadre de l'invite de notation elle-même. Contrairement aux retours d'information avec pouces vers le haut/bas ou aux rapports `/feedback`, ce sondage de qualité de session est une simple métrique de satisfaction du produit.
+
+Après l'invite de notation, vous pouvez voir une question de suivi distincte demandant « Anthropic peut-il consulter votre transcription de session pour nous aider à améliorer Claude Code ? ». Ceci est une deuxième étape optionnelle distincte de la notation :
+
+* **Oui** : télécharge votre transcription de conversation, toute transcription de sous-agent et le fichier journal de session brut du disque vers Anthropic. Les modèles de clé API et de jeton connus sont masqués avant le téléchargement. Le code source, le contenu des fichiers et tout autre contenu de conversation sont téléchargés tels quels. Les transcriptions partagées sont conservées jusqu'à 6 mois.
+* **Non** : refuse sans rien envoyer
+* **Ne plus demander** : refuse et arrête cette question de suivi d'apparaître dans les futures sessions
+
+Rien n'est téléchargé à moins que vous ne sélectionniez explicitement **Oui**. Les organisations avec [conservation zéro des données](/fr/zero-data-retention), ou où les retours d'information sur les produits sont désactivés par la politique de l'organisation, ne voient jamais cette question de suivi. Vos réponses à ce sondage, y compris les transcriptions de session soumises après l'invite de notation, n'affectent pas vos préférences de formation aux données et ne peuvent pas être utilisées pour former nos modèles d'IA.
 
 Pour désactiver ces sondages, définissez `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`. Le sondage est également désactivé lorsque `DISABLE_TELEMETRY` ou `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` est défini. Pour contrôler la fréquence au lieu de désactiver, définissez [`feedbackSurveyRate`](/fr/settings#available-settings) dans votre fichier de paramètres sur une probabilité entre `0` et `1`.
 
@@ -106,6 +114,8 @@ Par défaut, les rapports d'erreurs, la télémétrie et les rapports de bogues 
 | **Vérification de sécurité du domaine WebFetch** | Activé par défaut.<br />`skipWebFetchPreflight: true` dans [paramètres](/fr/settings) pour désactiver. | Activé par défaut.<br />`skipWebFetchPreflight: true` dans [paramètres](/fr/settings) pour désactiver. | Activé par défaut.<br />`skipWebFetchPreflight: true` dans [paramètres](/fr/settings) pour désactiver. | Activé par défaut.<br />`skipWebFetchPreflight: true` dans [paramètres](/fr/settings) pour désactiver. |
 
 Toutes les variables d'environnement peuvent être vérifiées dans `settings.json` (voir [référence des paramètres](/fr/settings)).
+
+À partir de la v2.1.126, lorsqu'une plateforme hôte définit `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`, les métriques Statsig sont activées par défaut pour Vertex, Bedrock et Foundry, et suivent l'option de refus standard `DISABLE_TELEMETRY`. Les rapports d'erreurs Sentry et les rapports `/feedback` restent désactivés par défaut sur ces fournisseurs.
 
 ### Vérification de sécurité du domaine WebFetch
 

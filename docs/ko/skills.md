@@ -40,13 +40,12 @@ Claude Code에는 모든 세션에서 사용 가능한 번들 skills 세트가 �
   </Step>
 
   <Step title="SKILL.md 작성">
-    모든 skill에는 두 부분이 있는 `SKILL.md` 파일이 필요합니다: Claude에게 skill을 언제 사용할지 알려주는 YAML frontmatter (`---` 마커 사이)와 skill이 호출될 때 Claude가 따르는 지침이 있는 markdown 콘텐츠입니다. `name` 필드는 `/slash-command`가 되고, `description`은 Claude가 자동으로 로드할 시기를 결정하는 데 도움이 됩니다.
+    모든 skill에는 두 부분이 있는 `SKILL.md` 파일이 필요합니다: Claude에게 skill을 언제 사용할지 알려주는 YAML frontmatter (`---` 마커 사이)와 skill이 호출될 때 Claude가 따르는 지침이 있는 markdown 콘텐츠입니다. 디렉토리 이름이 `/slash-command`가 되고, `description`은 Claude가 자동으로 로드할 시기를 결정하는 데 도움이 됩니다.
 
     `~/.claude/skills/explain-code/SKILL.md` 생성:
 
     ```yaml theme={null}
     ---
-    name: explain-code
     description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
     ---
 
@@ -91,7 +90,7 @@ skill을 저장하는 위치에 따라 누가 사용할 수 있는지가 결정�
 | Project    | `.claude/skills/<skill-name>/SKILL.md`   | 이 프로젝트만       |
 | Plugin     | `<plugin>/skills/<skill-name>/SKILL.md`  | 플러그인이 활성화된 위치 |
 
-Skills가 여러 수준에서 같은 이름을 공유할 때, 우선순위가 높은 위치가 우선합니다: enterprise > personal > project. Plugin skills는 `plugin-name:skill-name` 네임스페이스를 사용하므로 다른 수준과 충돌할 수 없습니다. `.claude/commands/`에 파일이 있으면 동일한 방식으로 작동하지만, skill과 명령어가 같은 이름을 공유하면 skill이 우선합니다.
+Skills가 여러 수준에서 같은 이름을 공유할 때, enterprise가 personal을 재정의하고, personal이 project를 재정의합니다. Plugin skills는 `plugin-name:skill-name` 네임스페이스를 사용하므로 다른 수준과 충돌할 수 없습니다. `.claude/commands/`에 파일이 있으면 동일한 방식으로 작동하지만, skill과 명령어가 같은 이름을 공유하면 skill이 우선합니다.
 
 #### 라이브 변경 감지
 
@@ -215,6 +214,7 @@ Skills는 skill 콘텐츠의 동적 값에 대한 문자열 치환을 지원합�
 | `$N`                   | `$ARGUMENTS[N]`의 약자(예: `$0`은 첫 번째 인수, `$1`은 두 번째 인수).                                                                                                                               |
 | `$name`                | [`arguments`](#frontmatter-reference) frontmatter 목록에서 선언된 명명된 인수. 이름은 순서대로 위치에 매핑되므로, `arguments: [issue, branch]`를 사용하면 플레이스홀더 `$issue`는 첫 번째 인수로 확장되고 `$branch`는 두 번째 인수로 확장됩니다. |
 | `${CLAUDE_SESSION_ID}` | 현재 세션 ID. 로깅, 세션별 파일 생성 또는 skill 출력을 세션과 연관시키는 데 유용합니다.                                                                                                                             |
+| `${CLAUDE_EFFORT}`     | 현재 노력 수준: `low`, `medium`, `high`, `xhigh` 또는 `max`. 이를 사용하여 활성 노력 설정에 맞게 skill 지침을 조정합니다.                                                                                          |
 | `${CLAUDE_SKILL_DIR}`  | skill의 `SKILL.md` 파일을 포함하는 디렉토리. plugin skills의 경우, 이는 plugin 루트가 아닌 plugin 내의 skill 하위 디렉토리입니다. bash 주입 명령어에서 현재 작업 디렉토리와 관계없이 skill과 함께 번들된 스크립트 또는 파일을 참조하는 데 사용합니다.             |
 
 인덱싱된 인수는 shell 스타일 인용을 사용하므로 다중 단어 값을 따옴표로 감싸서 단일 인수로 전달합니다. 예를 들어, `/my-skill "hello world" second`는 `$0`을 `hello world`로, `$1`을 `second`로 확장합니다. `$ARGUMENTS` 플레이스홀더는 항상 입력한 전체 인수 문자열로 확장됩니다.

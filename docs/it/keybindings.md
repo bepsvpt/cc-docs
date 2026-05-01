@@ -99,21 +99,22 @@ Azioni per navigare nella cronologia dei comandi:
 
 Azioni disponibili nel contesto `Chat`:
 
-| Azione                | Predefinito               | Descrizione                                                       |
-| :-------------------- | :------------------------ | :---------------------------------------------------------------- |
-| `chat:cancel`         | Escape                    | Annulla l'input corrente                                          |
-| `chat:clearInput`     | Ctrl+L                    | Cancella l'input del prompt e forza un ridisegno a schermo intero |
-| `chat:killAgents`     | Ctrl+X Ctrl+K             | Termina tutti gli agenti in background                            |
-| `chat:cycleMode`      | Shift+Tab\*               | Cicla le modalità di permesso                                     |
-| `chat:modelPicker`    | Cmd+P / Meta+P            | Apri il selezionatore di modelli                                  |
-| `chat:fastMode`       | Meta+O                    | Attiva/disattiva la modalità veloce                               |
-| `chat:thinkingToggle` | Cmd+T / Meta+T            | Attiva/disattiva il pensiero esteso                               |
-| `chat:submit`         | Invio                     | Invia il messaggio                                                |
-| `chat:newline`        | Ctrl+J                    | Inserisci una nuova riga senza inviare                            |
-| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | Annulla l'ultima azione                                           |
-| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Apri nell'editor esterno                                          |
-| `chat:stash`          | Ctrl+S                    | Nascondi il prompt corrente                                       |
-| `chat:imagePaste`     | Ctrl+V (Alt+V su Windows) | Incolla immagine                                                  |
+| Azione                | Predefinito               | Descrizione                                                                                                                                                                                |
+| :-------------------- | :------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `chat:cancel`         | Escape                    | Annulla l'input corrente                                                                                                                                                                   |
+| `chat:clearInput`     | Ctrl+L                    | Forza un ridisegno a schermo intero, preservando l'input. Nel [rendering a schermo intero](/it/fullscreen#clear-the-conversation), premi due volte entro due secondi per eseguire `/clear` |
+| `chat:clearScreen`    | Cmd+K                     | Nel [rendering a schermo intero](/it/fullscreen#clear-the-conversation), premi due volte entro due secondi per eseguire `/clear`                                                           |
+| `chat:killAgents`     | Ctrl+X Ctrl+K             | Termina tutti gli agenti in background                                                                                                                                                     |
+| `chat:cycleMode`      | Shift+Tab\*               | Cicla le modalità di permesso                                                                                                                                                              |
+| `chat:modelPicker`    | Meta+P                    | Apri il selezionatore di modelli                                                                                                                                                           |
+| `chat:fastMode`       | Meta+O                    | Attiva/disattiva la modalità veloce                                                                                                                                                        |
+| `chat:thinkingToggle` | Meta+T                    | Attiva/disattiva il pensiero esteso                                                                                                                                                        |
+| `chat:submit`         | Invio                     | Invia il messaggio                                                                                                                                                                         |
+| `chat:newline`        | Ctrl+J                    | Inserisci una nuova riga senza inviare                                                                                                                                                     |
+| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | Annulla l'ultima azione                                                                                                                                                                    |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | Apri nell'editor esterno                                                                                                                                                                   |
+| `chat:stash`          | Ctrl+S                    | Nascondi il prompt corrente                                                                                                                                                                |
+| `chat:imagePaste`     | Ctrl+V (Alt+V su Windows) | Incolla immagine                                                                                                                                                                           |
 
 \*Su Windows senza modalità VT (Node \<24.2.0/\<22.17.0, Bun \<1.2.23), il valore predefinito è Meta+M.
 
@@ -165,12 +166,13 @@ Azioni disponibili nel contesto `Transcript`:
 
 Azioni disponibili nel contesto `HistorySearch`:
 
-| Azione                  | Predefinito | Descrizione                   |
-| :---------------------- | :---------- | :---------------------------- |
-| `historySearch:next`    | Ctrl+R      | Corrispondenza successiva     |
-| `historySearch:accept`  | Escape, Tab | Accetta la selezione          |
-| `historySearch:cancel`  | Ctrl+C      | Annulla la ricerca            |
-| `historySearch:execute` | Invio       | Esegui il comando selezionato |
+| Azione                     | Predefinito | Descrizione                                 |
+| :------------------------- | :---------- | :------------------------------------------ |
+| `historySearch:next`       | Ctrl+R      | Corrispondenza successiva                   |
+| `historySearch:accept`     | Escape, Tab | Accetta la selezione                        |
+| `historySearch:cancel`     | Ctrl+C      | Annulla la ricerca                          |
+| `historySearch:execute`    | Invio       | Esegui il comando selezionato               |
+| `historySearch:cycleScope` | Ctrl+S      | Cicla l'ambito: sessione, progetto, ovunque |
 
 ### Azioni delle attività
 
@@ -307,9 +309,9 @@ Azioni disponibili nel contesto `Doctor`:
 
 Azioni disponibili nel contesto `Chat` quando la [dettatura vocale](/it/voice-dictation) è abilitata:
 
-| Azione             | Predefinito | Descrizione                         |
-| :----------------- | :---------- | :---------------------------------- |
-| `voice:pushToTalk` | Spazio      | Tieni premuto per dettare un prompt |
+| Azione             | Predefinito | Descrizione                                             |
+| :----------------- | :---------- | :------------------------------------------------------ |
+| `voice:pushToTalk` | Spazio      | Tieni premuto o tocca a seconda della modalità `/voice` |
 
 ### Azioni di scorrimento
 
@@ -343,16 +345,18 @@ Azioni disponibili nel contesto `Scroll` quando il [rendering a schermo intero](
 Utilizzare i tasti modificatori con il separatore `+`:
 
 * `ctrl` o `control` - Tasto Control
-* `alt`, `opt`, o `option` - Tasto Alt/Option
 * `shift` - Tasto Shift
-* `meta`, `cmd`, o `command` - Tasto Meta/Command
+* `alt`, `opt`, `option`, o `meta` - Tasto Alt su Windows e Linux, tasto Option su macOS
+* `cmd`, `command`, `super`, o `win` - Tasto Command su macOS, tasto Windows su Windows, tasto Super su Linux
+
+Il gruppo `cmd` viene rilevato solo nei terminali che segnalano il modificatore Super, come quelli che supportano il protocollo della tastiera Kitty o la modalità `modifyOtherKeys` di xterm. La maggior parte dei terminali non lo invia, quindi utilizzare `ctrl` o `meta` per i binding che si desidera funzionino ovunque.
 
 Ad esempio:
 
 ```text theme={null}
-ctrl+k          Singolo tasto con modificatore
+ctrl+k          Ctrl + K
 shift+tab       Shift + Tab
-meta+p          Command/Meta + P
+meta+p          Option + P su macOS, Alt + P altrove
 ctrl+shift+c    Più modificatori
 ```
 
@@ -424,6 +428,7 @@ Queste scorciatoie non possono essere riassociate:
 | Ctrl+C      | Interrupt/annullamento hardcoded                     |
 | Ctrl+D      | Uscita hardcoded                                     |
 | Ctrl+M      | Identico a Invio nei terminali (entrambi inviano CR) |
+| Caps Lock   | Non consegnato alle applicazioni terminali           |
 
 ## Conflitti del terminale
 

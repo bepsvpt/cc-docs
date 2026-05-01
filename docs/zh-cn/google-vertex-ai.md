@@ -263,6 +263,8 @@ Claude Code 使用标准的 Google Cloud 身份验证。
 
 有关更多信息，请参阅 [Google Cloud 身份验证文档](https://cloud.google.com/docs/authentication)。
 
+Claude Code v2.1.121 或更高版本通过相同的应用默认凭证链支持[基于 X.509 证书的工作负载身份联合](https://cloud.google.com/iam/docs/workload-identity-federation-with-x509-certificates)。将 `GOOGLE_APPLICATION_CREDENTIALS` 设置为您的凭证配置文件的路径。
+
 <Note>
   进行身份验证时，Claude Code 将自动使用 `ANTHROPIC_VERTEX_PROJECT_ID` 环境变量中的项目 ID。要覆盖此设置，请设置以下环境变量之一：`GCLOUD_PROJECT`、`GOOGLE_CLOUD_PROJECT` 或 `GOOGLE_APPLICATION_CREDENTIALS`。
 </Note>
@@ -315,7 +317,7 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
 
 有关当前和旧版模型 ID，请参阅[模型概览](https://platform.claude.com/docs/en/about-claude/models/overview)。有关完整的环境变量列表，请参阅[模型配置](/zh-CN/model-config#pin-models-for-third-party-deployments)。
 
-当未设置固定变量时，Claude Code 使用这些默认模型：
+Claude Code 在未设置固定变量时使用这些默认模型：
 
 | 模型类型    | 默认值                          |
 | :------ | :--------------------------- |

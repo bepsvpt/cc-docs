@@ -842,12 +842,14 @@ Wenn Sie eine lange laufende Aufgabe starten und zu einem anderen Fenster wechse
   <Step title="Grenzen Sie den Matcher optional ein">
     Standardmäßig wird der Hook bei allen Benachrichtigungstypen ausgelöst. Um nur für bestimmte Ereignisse ausgelöst zu werden, setzen Sie das Feld `matcher` auf einen dieser Werte:
 
-    | Matcher              | Wird ausgelöst, wenn                                   |
-    | :------------------- | :----------------------------------------------------- |
-    | `permission_prompt`  | Claude benötigt Ihre Genehmigung für eine Tool-Nutzung |
-    | `idle_prompt`        | Claude ist fertig und wartet auf Ihren nächsten Prompt |
-    | `auth_success`       | Die Authentifizierung ist abgeschlossen                |
-    | `elicitation_dialog` | Claude stellt Ihnen eine Frage                         |
+    | Matcher                | Wird ausgelöst, wenn                                            |
+    | :--------------------- | :-------------------------------------------------------------- |
+    | `permission_prompt`    | Claude benötigt Ihre Genehmigung für eine Tool-Nutzung          |
+    | `idle_prompt`          | Claude ist fertig und wartet auf Ihren nächsten Prompt          |
+    | `auth_success`         | Die Authentifizierung ist abgeschlossen                         |
+    | `elicitation_dialog`   | Ein MCP-Server öffnet ein Elicitierungsformular                 |
+    | `elicitation_complete` | Ein MCP-Elicitierungsformular wird eingereicht oder verworfen   |
+    | `elicitation_response` | Eine MCP-Elicitierungsantwort wird an den Server zurückgesendet |
   </Step>
 
   <Step title="Überprüfen Sie den Hook">

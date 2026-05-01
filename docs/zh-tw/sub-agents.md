@@ -235,24 +235,24 @@ Frontmatter 定義 subagent 的中繼資料和配置。主體成為指導 subage
 
 以下欄位可用於 YAML frontmatter。只有 `name` 和 `description` 是必需的。
 
-| Field             | Required | Description                                                                                                                                                                   |
-| :---------------- | :------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`            | Yes      | 使用小寫字母和連字號的唯一識別碼                                                                                                                                                              |
-| `description`     | Yes      | Claude 何時應委派給此 subagent                                                                                                                                                       |
-| `tools`           | No       | [Tools](#available-tools) subagent 可以使用。如果省略，繼承所有工具                                                                                                                           |
-| `disallowedTools` | No       | 要拒絕的工具，從繼承或指定的清單中移除                                                                                                                                                           |
-| `model`           | No       | [Model](#choose-a-model) 使用：`sonnet`、`opus`、`haiku`、完整模型 ID（例如，`claude-opus-4-7`）或 `inherit`。預設為 `inherit`                                                                    |
-| `permissionMode`  | No       | [Permission mode](#permission-modes)：`default`、`acceptEdits`、`auto`、`dontAsk`、`bypassPermissions` 或 `plan`                                                                    |
-| `maxTurns`        | No       | subagent 停止前的最大代理轉數                                                                                                                                                           |
-| `skills`          | No       | [Skills](/zh-TW/skills) 在啟動時載入到 subagent 的上下文中。注入完整技能內容，而不僅僅是可供呼叫。Subagents 不從父對話繼承技能                                                                                         |
-| `mcpServers`      | No       | [MCP servers](/zh-TW/mcp) 可用於此 subagent。每個條目要麼是參考已配置伺服器的伺服器名稱（例如，`"slack"`），要麼是內聯定義，其中伺服器名稱為鍵，完整 [MCP server config](/zh-TW/mcp#installing-mcp-servers) 為值                    |
-| `hooks`           | No       | [Lifecycle hooks](#define-hooks-for-subagents) 限定於此 subagent                                                                                                                  |
-| `memory`          | No       | [Persistent memory scope](#enable-persistent-memory)：`user`、`project` 或 `local`。啟用跨工作階段學習                                                                                     |
-| `background`      | No       | 設定為 `true` 以始終將此 subagent 作為 [background task](#run-subagents-in-foreground-or-background) 執行。預設：`false`                                                                      |
-| `effort`          | No       | 此 subagent 活動時的努力程度。覆蓋工作階段努力程度。預設：從工作階段繼承。選項：`low`、`medium`、`high`、`xhigh`、`max`；可用的層級取決於模型                                                                                   |
-| `isolation`       | No       | 設定為 `worktree` 以在臨時 [git worktree](/zh-TW/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) 中執行 subagent，為其提供儲存庫的隔離副本。如果 subagent 不進行任何更改，worktree 會自動清理 |
-| `color`           | No       | Subagent 在任務清單和文字中的顯示顏色。接受 `red`、`blue`、`green`、`yellow`、`purple`、`orange`、`pink` 或 `cyan`                                                                                    |
-| `initialPrompt`   | No       | 當此代理作為主工作階段代理執行時（透過 `--agent` 或 `agent` 設定），自動提交為第一個使用者轉數。[Commands](/zh-TW/commands) 和 [skills](/zh-TW/skills) 會被處理。前置於任何使用者提供的提示                                            |
+| Field             | Required | Description                                                                                                                                                                                                      |
+| :---------------- | :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`            | Yes      | 使用小寫字母和連字號的唯一識別碼                                                                                                                                                                                                 |
+| `description`     | Yes      | Claude 何時應委派給此 subagent                                                                                                                                                                                          |
+| `tools`           | No       | [Tools](#available-tools) subagent 可以使用。如果省略，繼承所有工具                                                                                                                                                              |
+| `disallowedTools` | No       | 要拒絕的工具，從繼承或指定的清單中移除                                                                                                                                                                                              |
+| `model`           | No       | [Model](#choose-a-model) 使用：`sonnet`、`opus`、`haiku`、完整模型 ID（例如，`claude-opus-4-7`）或 `inherit`。預設為 `inherit`                                                                                                       |
+| `permissionMode`  | No       | [Permission mode](#permission-modes)：`default`、`acceptEdits`、`auto`、`dontAsk`、`bypassPermissions` 或 `plan`。針對 [plugin subagents](#choose-the-subagent-scope) 被忽略                                                 |
+| `maxTurns`        | No       | subagent 停止前的最大代理轉數                                                                                                                                                                                              |
+| `skills`          | No       | [Skills](/zh-TW/skills) 在啟動時載入到 subagent 的上下文中。注入完整技能內容，而不僅僅是可供呼叫。Subagents 不從父對話繼承技能                                                                                                                            |
+| `mcpServers`      | No       | [MCP servers](/zh-TW/mcp) 可用於此 subagent。每個條目要麼是參考已配置伺服器的伺服器名稱（例如，`"slack"`），要麼是內聯定義，其中伺服器名稱為鍵，完整 [MCP server config](/zh-TW/mcp#installing-mcp-servers) 為值。針對 [plugin subagents](#choose-the-subagent-scope) 被忽略 |
+| `hooks`           | No       | [Lifecycle hooks](#define-hooks-for-subagents) 限定於此 subagent。針對 [plugin subagents](#choose-the-subagent-scope) 被忽略                                                                                               |
+| `memory`          | No       | [Persistent memory scope](#enable-persistent-memory)：`user`、`project` 或 `local`。啟用跨工作階段學習                                                                                                                        |
+| `background`      | No       | 設定為 `true` 以始終將此 subagent 作為 [background task](#run-subagents-in-foreground-or-background) 執行。預設：`false`                                                                                                         |
+| `effort`          | No       | 此 subagent 活動時的努力程度。覆蓋工作階段努力程度。預設：從工作階段繼承。選項：`low`、`medium`、`high`、`xhigh`、`max`；可用的層級取決於模型                                                                                                                      |
+| `isolation`       | No       | 設定為 `worktree` 以在臨時 [git worktree](/zh-TW/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) 中執行 subagent，為其提供儲存庫的隔離副本。如果 subagent 不進行任何更改，worktree 會自動清理                                    |
+| `color`           | No       | Subagent 在任務清單和文字中的顯示顏色。接受 `red`、`blue`、`green`、`yellow`、`purple`、`orange`、`pink` 或 `cyan`                                                                                                                       |
+| `initialPrompt`   | No       | 當此代理作為主工作階段代理執行時（透過 `--agent` 或 `agent` 設定），自動提交為第一個使用者轉數。[Commands](/zh-TW/commands) 和 [skills](/zh-TW/skills) 會被處理。前置於任何使用者提供的提示                                                                               |
 
 ### 選擇模型
 
@@ -374,7 +374,7 @@ Use the Playwright tools to navigate, screenshot, and interact with pages.
 | `plan`              | Plan mode（唯讀探索）                                                                         |
 
 <Warning>
-  謹慎使用 `bypassPermissions`。它跳過權限提示，允許 subagent 執行操作而無需批准。寫入 `.git`、`.claude`、`.vscode`、`.idea` 和 `.husky` 目錄仍然會提示確認，除了 `.claude/commands`、`.claude/agents` 和 `.claude/skills`。請參閱 [permission modes](/zh-TW/permission-modes#skip-all-checks-with-bypasspermissions-mode) 以了解詳細資訊。
+  謹慎使用 `bypassPermissions`。它跳過權限提示，允許 subagent 執行操作而無需批准，包括寫入 `.git`、`.claude`、`.vscode`、`.idea` 和 `.husky`。根和主目錄移除（例如 `rm -rf /`）仍然會提示作為斷路器。請參閱 [permission modes](/zh-TW/permission-modes#skip-all-checks-with-bypasspermissions-mode) 以了解詳細資訊。
 </Warning>
 
 如果父級使用 `bypassPermissions` 或 `acceptEdits`，這優先並且無法被覆蓋。如果父級使用 [auto mode](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode)，subagent 繼承 auto mode，其 frontmatter 中的任何 `permissionMode` 都會被忽略：分類器使用與父工作階段相同的阻止和允許規則評估 subagent 的工具呼叫。
@@ -766,7 +766,7 @@ Subagents 支援使用與主要對話相同的邏輯進行自動壓縮。預設�
 ## Fork 目前的對話
 
 <Note>
-  Forked subagents 是實驗性的，需要 Claude Code v2.1.117 或更新版本。行為和配置可能在未來版本中變更。透過將 [`CLAUDE_CODE_FORK_SUBAGENT`](/zh-TW/env-vars) 環境變數設定為 `1` 來啟用它們。
+  Forked subagents 是實驗性的，需要 Claude Code v2.1.117 或更新版本。行為和配置可能在未來版本中變更。透過將 [`CLAUDE_CODE_FORK_SUBAGENT`](/zh-TW/env-vars) 環境變數設定為 `1` 來啟用它們。該變數在互動模式中以及透過 SDK 或 `claude -p` 被接受。
 </Note>
 
 Fork 是一個 subagent，它繼承到目前為止的整個對話，而不是從頭開始。這會放棄 subagents 否則提供的輸入隔離：fork 看到與主工作階段相同的系統提示、工具、模型和訊息歷史記錄，因此您可以將側面任務交給它，而無需重新解釋情況。Fork 自己的工具呼叫仍然保持在您的對話之外，只有其最終結果返回，因此您的主要上下文視窗保持乾淨。當命名 subagent 需要太多背景才能有用時，或當您想從相同的起點並行嘗試多種方法時，使用 fork。
@@ -789,12 +789,12 @@ Fork 出現在提示下方的面板中，並在您繼續工作時在背景中執
 
 執行中的 forks 出現在提示輸入下方的面板中，主工作階段有一行，每個 fork 有一行。使用這些鍵與面板互動：
 
-| Key       | Action                  |
-| :-------- | :---------------------- |
-| `↑` / `↓` | 在行之間移動                  |
-| `Enter`   | 開啟選定 fork 的文字並向其發送後續訊息  |
-| `x`       | 關閉完成的 fork 或停止執行中的 fork |
-| `Esc`     | 將焦點返回到提示輸入              |
+| Key       | Action                   |
+| :-------- | :----------------------- |
+| `↑` / `↓` | 在行之間移動                   |
+| `Enter`   | 開啟選定 fork 的文字記錄並向其發送後續訊息 |
+| `x`       | 關閉完成的 fork 或停止執行中的 fork  |
+| `Esc`     | 將焦點返回到提示輸入               |
 
 ### Forks 與命名 subagents 的區別
 
@@ -814,7 +814,7 @@ Fork 繼承主工作階段在產生時擁有的所有內容。命名 subagent �
 
 ### 限制
 
-Fork mode 僅在互動式工作階段中工作。它在 [non-interactive mode](/zh-TW/headless) 中被禁用，其中包括 Agent SDK。Fork 無法產生進一步的 forks。
+設定 `CLAUDE_CODE_FORK_SUBAGENT=1` 在互動式工作階段、[non-interactive mode](/zh-TW/headless) 和 Agent SDK 中啟用 fork mode。Fork 無法產生進一步的 forks。
 
 ## 範例 subagents
 

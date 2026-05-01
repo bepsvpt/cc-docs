@@ -25,7 +25,15 @@ Jika Anda memilih untuk mengirimkan umpan balik kepada kami tentang Claude Code 
 
 ### Survei kualitas sesi
 
-Ketika Anda melihat prompt "Bagaimana Claude melakukan ini di sesi ini?" di Claude Code, merespons survei ini (termasuk memilih "Abaikan"), hanya peringkat numerik Anda (1, 2, 3, atau abaikan) yang dicatat. Kami tidak mengumpulkan atau menyimpan transkrip percakapan, input, output, atau data sesi lainnya sebagai bagian dari survei ini. Tidak seperti umpan balik jempol ke atas/ke bawah atau laporan `/feedback`, survei kualitas sesi ini adalah metrik kepuasan produk sederhana. Respons Anda terhadap survei ini tidak mempengaruhi preferensi pelatihan data Anda dan tidak dapat digunakan untuk melatih model AI kami.
+Ketika Anda melihat prompt "Bagaimana Claude melakukan ini di sesi ini?" di Claude Code, merespons survei ini, termasuk memilih "Abaikan", hanya peringkat Anda yang dicatat. Kami tidak mengumpulkan atau menyimpan transkrip percakapan, input, output, atau data sesi lainnya sebagai bagian dari prompt penilaian itu sendiri. Tidak seperti umpan balik jempol ke atas/ke bawah atau laporan `/feedback`, survei kualitas sesi ini adalah metrik kepuasan produk sederhana.
+
+Setelah prompt penilaian, Anda mungkin melihat pertanyaan tindak lanjut terpisah yang menanyakan "Dapatkah Anthropic melihat transkrip sesi Anda untuk membantu kami meningkatkan Claude Code?". Ini adalah langkah kedua opsional yang berbeda dari penilaian:
+
+* **Ya**: mengunggah transkrip percakapan Anda, transkrip subagen apa pun, dan file log sesi mentah dari disk ke Anthropic. Pola kunci API dan token yang dikenal diredaksi sebelum pengunggahan. Kode sumber, konten file, dan konten percakapan lainnya diunggah apa adanya. Transkrip yang dibagikan disimpan hingga 6 bulan.
+* **Tidak**: menolak tanpa mengirim apa pun
+* **Jangan tanya lagi**: menolak dan menghentikan pertanyaan tindak lanjut ini agar tidak muncul di sesi mendatang
+
+Tidak ada yang diunggah kecuali Anda secara eksplisit memilih **Ya**. Organisasi dengan [retensi data nol](/id/zero-data-retention), atau di mana umpan balik produk dinonaktifkan oleh kebijakan organisasi, tidak pernah melihat pertanyaan tindak lanjut ini. Respons Anda terhadap survei ini, termasuk transkrip sesi yang dikirimkan setelah prompt penilaian, tidak mempengaruhi preferensi pelatihan data Anda dan tidak dapat digunakan untuk melatih model AI kami.
 
 Untuk menonaktifkan survei ini, atur `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`. Survei juga dinonaktifkan ketika `DISABLE_TELEMETRY` atau `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` diatur. Untuk mengontrol frekuensi alih-alih menonaktifkan, atur [`feedbackSurveyRate`](/id/settings#available-settings) dalam file pengaturan Anda ke probabilitas antara `0` dan `1`.
 
@@ -106,6 +114,8 @@ Secara default, pelaporan kesalahan, telemetri, dan pelaporan bug dinonaktifkan 
 | **Pemeriksaan keamanan domain WebFetch** | Default aktif.<br />`skipWebFetchPreflight: true` di [settings](/id/settings) untuk menonaktifkan. | Default aktif.<br />`skipWebFetchPreflight: true` di [settings](/id/settings) untuk menonaktifkan. | Default aktif.<br />`skipWebFetchPreflight: true` di [settings](/id/settings) untuk menonaktifkan. | Default aktif.<br />`skipWebFetchPreflight: true` di [settings](/id/settings) untuk menonaktifkan. |
 
 Semua variabel lingkungan dapat diperiksa ke dalam `settings.json` (lihat [referensi settings](/id/settings)).
+
+Mulai dari v2.1.126, ketika platform host mengatur `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`, metrik Statsig default aktif untuk Vertex, Bedrock, dan Foundry, dan mengikuti opt-out standar `DISABLE_TELEMETRY`. Pelaporan kesalahan Sentry dan laporan `/feedback` tetap nonaktif secara default pada penyedia tersebut.
 
 ### Pemeriksaan keamanan domain WebFetch
 

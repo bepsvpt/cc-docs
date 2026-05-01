@@ -332,7 +332,7 @@ Wenn Ihr Plugin bereit zum Teilen ist:
 3. **Erstellen oder verwenden Sie einen Marketplace**: Verteilen Sie über [Plugin-Marketplaces](/de/plugin-marketplaces) zur Installation
 4. **Testen Sie mit anderen**: Lassen Sie Teamkollegen das Plugin vor einer breiteren Verteilung testen
 
-Sobald Ihr Plugin in einem Marketplace ist, können andere es mit den Anweisungen in [Plugins entdecken und installieren](/de/discover-plugins) installieren.
+Sobald Ihr Plugin in einem Marketplace ist, können andere es mit den Anweisungen in [Plugins entdecken und installieren](/de/discover-plugins) installieren. Um ein Plugin intern für Ihr Team zu halten, hosten Sie den Marketplace in einem [privaten Repository](/de/plugin-marketplaces#private-repositories).
 
 ### Reichen Sie Ihr Plugin beim offiziellen Marketplace ein
 

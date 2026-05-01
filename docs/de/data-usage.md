@@ -25,7 +25,15 @@ Wenn Sie uns Feedback zu Claude Code mit dem `/feedback`-Befehl senden, können 
 
 ### Sitzungsqualitätsumfragen
 
-Wenn Sie in Claude Code die Eingabeaufforderung „Wie macht Claude das in dieser Sitzung?" sehen, wird bei der Beantwortung dieser Umfrage (einschließlich der Auswahl von „Verwerfen") nur Ihre numerische Bewertung (1, 2, 3 oder Verwerfen) aufgezeichnet. Wir erfassen oder speichern keine Gesprächstranskripte, Eingaben, Ausgaben oder andere Sitzungsdaten als Teil dieser Umfrage. Im Gegensatz zu Daumen-hoch/runter-Feedback oder `/feedback`-Berichten ist diese Sitzungsqualitätsumfrage eine einfache Produktzufriedenheitsmetrik. Ihre Antworten auf diese Umfrage beeinflussen nicht Ihre Datentrainingseinstellungen und können nicht zum Trainieren unserer KI-Modelle verwendet werden.
+Wenn Sie in Claude Code die Eingabeaufforderung „Wie macht Claude das in dieser Sitzung?" sehen, wird bei der Beantwortung dieser Umfrage (einschließlich der Auswahl von „Verwerfen") nur Ihre Bewertung aufgezeichnet. Wir erfassen oder speichern keine Gesprächstranskripte, Eingaben, Ausgaben oder andere Sitzungsdaten als Teil der Bewertungsaufforderung selbst. Im Gegensatz zu Daumen-hoch/runter-Feedback oder `/feedback`-Berichten ist diese Sitzungsqualitätsumfrage eine einfache Produktzufriedenheitsmetrik.
+
+Nach der Bewertungsaufforderung sehen Sie möglicherweise eine separate Folgefrage: „Kann Anthropic Ihr Sitzungstranskript ansehen, um uns bei der Verbesserung von Claude Code zu helfen?". Dies ist ein optionaler zweiter Schritt, der sich von der Bewertung unterscheidet:
+
+* **Ja**: lädt Ihr Gesprächstranskript, alle Subagenten-Transkripte und die Raw-Sitzungsprotokoll-Datei von der Festplatte zu Anthropic hoch. Bekannte API-Schlüssel- und Token-Muster werden vor dem Hochladen redigiert. Quellcode, Dateiinhalte und andere Gesprächsinhalte werden unverändert hochgeladen. Freigegebene Transkripte werden bis zu 6 Monate lang aufbewahrt.
+* **Nein**: lehnt ab, ohne etwas zu senden
+* **Nicht erneut fragen**: lehnt ab und verhindert, dass diese Folgefrage in zukünftigen Sitzungen angezeigt wird
+
+Nichts wird hochgeladen, es sei denn, Sie wählen explizit **Ja**. Organisationen mit [Zero Data Retention](/de/zero-data-retention) oder bei denen Produktfeedback durch Organisationsrichtlinie deaktiviert ist, sehen diese Folgefrage nie. Ihre Antworten auf diese Umfrage, einschließlich Sitzungstranskripte, die nach der Bewertungsaufforderung eingereicht werden, beeinflussen nicht Ihre Datentrainingseinstellungen und können nicht zum Trainieren unserer KI-Modelle verwendet werden.
 
 Um diese Umfragen zu deaktivieren, setzen Sie `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`. Die Umfrage wird auch deaktiviert, wenn `DISABLE_TELEMETRY` oder `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` gesetzt ist. Um die Häufigkeit zu steuern, anstatt zu deaktivieren, setzen Sie [`feedbackSurveyRate`](/de/settings#available-settings) in Ihrer Einstellungsdatei auf eine Wahrscheinlichkeit zwischen `0` und `1`.
 
@@ -42,7 +50,7 @@ Anthropic speichert Claude Code-Daten basierend auf Ihrem Kontotyp und Ihren Ein
 **Kommerzielle Nutzer (Team, Enterprise und API)**:
 
 * Standard: 30-tägige Aufbewahrungsfrist
-* [Zero data retention](/de/zero-data-retention): verfügbar für Claude Code auf Claude for Enterprise. ZDR wird auf Organisationsbasis aktiviert; jede neue Organisation muss ZDR separat von Ihrem Account-Team aktivieren lassen
+* [Zero Data Retention](/de/zero-data-retention): verfügbar für Claude Code auf Claude for Enterprise. ZDR wird auf Organisationsbasis aktiviert; jede neue Organisation muss ZDR separat von Ihrem Account-Team aktivieren lassen
 * Lokales Caching: Claude Code-Clients speichern Sitzungstranskripte lokal im Klartext unter `~/.claude/projects/` für standardmäßig 30 Tage, um die Sitzungswiederaufnahme zu ermöglichen. Passen Sie den Zeitraum mit `cleanupPeriodDays` an. Siehe [Anwendungsdaten](/de/claude-directory#application-data) für das, was gespeichert wird und wie man es löscht.
 
 Sie können einzelne Claude Code-Websitzungen jederzeit löschen. Das Löschen einer Sitzung entfernt die Ereignisdaten der Sitzung dauerhaft. Anweisungen zum Löschen von Sitzungen finden Sie unter [Sitzungen löschen](/de/claude-code-on-the-web#delete-sessions).
@@ -106,6 +114,8 @@ Standardmäßig sind Fehlerberichterstattung, Telemetrie und Bug-Berichterstattu
 | **WebFetch-Domänensicherheitsprüfung** | Standardmäßig aktiviert.<br />`skipWebFetchPreflight: true` in [Einstellungen](/de/settings) zum Deaktivieren. | Standardmäßig aktiviert.<br />`skipWebFetchPreflight: true` in [Einstellungen](/de/settings) zum Deaktivieren. | Standardmäßig aktiviert.<br />`skipWebFetchPreflight: true` in [Einstellungen](/de/settings) zum Deaktivieren. | Standardmäßig aktiviert.<br />`skipWebFetchPreflight: true` in [Einstellungen](/de/settings) zum Deaktivieren. |
 
 Alle Umgebungsvariablen können in `settings.json` eingecheckt werden (siehe [Einstellungsreferenz](/de/settings)).
+
+Ab v2.1.126 werden Statsig-Metriken standardmäßig aktiviert für Vertex, Bedrock und Foundry, wenn eine Host-Plattform `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST` setzt, und folgen der Standard-Abmeldeoption `DISABLE_TELEMETRY`. Sentry-Fehlerberichterstattung und `/feedback`-Berichte bleiben standardmäßig auf diesen Anbietern deaktiviert.
 
 ### WebFetch-Domänensicherheitsprüfung
 

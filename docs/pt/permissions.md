@@ -39,10 +39,10 @@ Claude Code suporta vários modos de permissão que controlam como as ferramenta
 | `plan`              | Plan Mode: Claude pode analisar mas não modificar arquivos ou executar comandos                                                                                                                 |
 | `auto`              | Aprova automaticamente chamadas de ferramentas com verificações de segurança em segundo plano que verificam se as ações se alinham com sua solicitação. Atualmente uma visualização de pesquisa |
 | `dontAsk`           | Nega automaticamente ferramentas a menos que pré-aprovadas via `/permissions` ou regras `permissions.allow`                                                                                     |
-| `bypassPermissions` | Ignora prompts de permissão exceto para escritas em diretórios protegidos (veja aviso abaixo)                                                                                                   |
+| `bypassPermissions` | Ignora todos os prompts de permissão. Remoções de diretório raiz e diretório inicial como `rm -rf /` ainda solicitam como um disjuntor                                                          |
 
 <Warning>
-  O modo `bypassPermissions` ignora prompts de permissão. Escritas em diretórios `.git`, `.claude`, `.vscode`, `.idea` e `.husky` ainda solicitam confirmação para evitar corrupção acidental do estado do repositório, configuração do editor e git hooks. Escritas em `.claude/commands`, `.claude/agents` e `.claude/skills` são isentas e não solicitam, porque Claude rotineiramente escreve lá ao criar skills, subagents e comandos. Use este modo apenas em ambientes isolados como contêineres ou VMs onde Claude Code não pode causar danos. Administradores podem impedir este modo definindo `permissions.disableBypassPermissionsMode` como `"disable"` em [configurações gerenciadas](#managed-settings).
+  O modo `bypassPermissions` ignora todos os prompts de permissão, incluindo escritas em `.git`, `.claude`, `.vscode`, `.idea` e `.husky`. Remoções direcionadas ao diretório raiz do sistema de arquivos ou diretório inicial, como `rm -rf /` e `rm -rf ~`, ainda solicitam como um disjuntor contra erro do modelo. Use este modo apenas em ambientes isolados como contêineres ou VMs onde Claude Code não pode causar danos. Administradores podem impedir este modo definindo `permissions.disableBypassPermissionsMode` como `"disable"` em [configurações gerenciadas](#managed-settings).
 </Warning>
 
 Para evitar que o modo `bypassPermissions` ou `auto` seja usado, defina `permissions.disableBypassPermissionsMode` ou `permissions.disableAutoMode` como `"disable"` em qualquer [arquivo de configuração](/pt/settings#settings-files). Estes são mais úteis em [configurações gerenciadas](#managed-settings) onde não podem ser substituídos.
@@ -157,6 +157,28 @@ Um `cd` em um caminho dentro do seu diretório de trabalho ou um [diretório adi
 
   Observe que usar WebFetch sozinho não impede acesso à rede. Se Bash for permitido, Claude ainda pode usar `curl`, `wget` ou outras ferramentas para alcançar qualquer URL.
 </Warning>
+
+### PowerShell
+
+As regras de permissão PowerShell usam a mesma forma que as regras Bash. Caracteres curinga com `*` correspondem em qualquer posição, o sufixo `:*` é equivalente a um ` *` final, e um `PowerShell` simples ou `PowerShell(*)` corresponde a cada comando. Esta configuração permite comandos `Get-ChildItem` e `git commit` enquanto bloqueia `Remove-Item`:
+
+```json theme={null}
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(git commit *)"
+    ],
+    "deny": [
+      "PowerShell(Remove-Item *)"
+    ]
+  }
+}
+```
+
+Aliases comuns são canonicalizados antes da correspondência. Uma regra escrita para o nome do cmdlet também corresponde a seus aliases, portanto `PowerShell(Get-ChildItem *)` corresponde a `gci`, `ls` e `dir` também. A correspondência é insensível a maiúsculas e minúsculas.
+
+Claude Code analisa o AST do PowerShell e verifica cada comando em um comando composto independentemente. Os operadores de pipeline `|`, separadores de instrução `;` e nos operadores de cadeia PowerShell 7+ `&&` e `||` dividem um comando composto em subcomandos. Uma regra deve corresponder a cada subcomando para que o comando composto seja permitido.
 
 ### Read e Edit
 

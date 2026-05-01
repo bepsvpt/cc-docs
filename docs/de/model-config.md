@@ -247,7 +247,7 @@ Sie können sehen, welches Modell Sie derzeit verwenden, auf mehrere Arten:
 
 ## Benutzerdefinierte Modelloption hinzufügen
 
-Verwenden Sie `ANTHROPIC_CUSTOM_MODEL_OPTION`, um einen einzelnen benutzerdefinierten Eintrag zur `/model`-Auswahl hinzuzufügen, ohne die integrierten Aliase zu ersetzen. Dies ist nützlich für LLM-Gateway-Bereitstellungen oder zum Testen von Modell-IDs, die Claude Code standardmäßig nicht auflistet.
+Verwenden Sie `ANTHROPIC_CUSTOM_MODEL_OPTION`, um einen einzelnen benutzerdefinierten Eintrag zur `/model`-Auswahl hinzuzufügen, ohne die integrierten Aliase zu ersetzen. Dies ist nützlich zum Testen von Modell-IDs, die Claude Code standardmäßig nicht auflistet. Für LLM-Gateway-Bereitstellungen füllt Claude Code die Auswahl automatisch vom `/v1/models`-Endpunkt des Gateways auf, daher ist diese Variable nur erforderlich, wenn die Erkennung das gewünschte Modell nicht zurückgibt. Siehe [LLM-Gateway-Modellauswahl](/de/llm-gateway#model-selection).
 
 Dieses Beispiel setzt alle drei Variablen, um eine Gateway-gesteuerte Opus-Bereitstellung auswählbar zu machen:
 

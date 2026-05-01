@@ -75,7 +75,7 @@ Pour plus de détails, veuillez consulter nos [Conditions commerciales](https://
 2. Évitez de diriger le contenu non fiable directement vers Claude
 3. Vérifiez les modifications proposées aux fichiers critiques
 4. Utilisez des machines virtuelles (VM) pour exécuter des scripts et effectuer des appels d'outils, en particulier lors de l'interaction avec des services web externes
-5. Signalez les comportements suspects avec `/bug`
+5. Signalez les comportements suspects avec `/feedback`
 
 <Warning>
   Bien que ces protections réduisent considérablement les risques, aucun système n'est complètement
@@ -130,7 +130,7 @@ Les sessions de [Contrôle à distance](/fr/remote-control) fonctionnent différ
 Si vous découvrez une vulnérabilité de sécurité dans Claude Code :
 
 1. Ne la divulguez pas publiquement
-2. Signalez-la via notre [programme HackerOne](https://hackerone.com/anthropic-vdp/reports/new?type=team\&report_type=vulnerability)
+2. Signalez-la via notre [programme HackerOne](https://hackerone.com/4f1f16ba-10d3-4d09-9ecc-c721aad90f24/embedded_submissions/new)
 3. Incluez les étapes de reproduction détaillées
 4. Accordez-nous du temps pour résoudre le problème avant la divulgation publique
 

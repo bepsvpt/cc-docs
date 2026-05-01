@@ -417,7 +417,8 @@ export ENABLE_PROMPT_CACHING_1H=1
       "Action": [
         "bedrock:InvokeModel",
         "bedrock:InvokeModelWithResponseStream",
-        "bedrock:ListInferenceProfiles"
+        "bedrock:ListInferenceProfiles",
+        "bedrock:GetInferenceProfile"
       ],
       "Resource": [
         "arn:aws:bedrock:*:*:inference-profile/*",
@@ -444,6 +445,10 @@ export ENABLE_PROMPT_CACHING_1H=1
 ```
 
 如需更嚴格的權限，您可以將資源限制為特定的推論設定檔 ARN。
+
+`bedrock:GetInferenceProfile` 讓 Claude Code 將[應用程式推論設定檔 ARN](#map-each-model-version-to-an-inference-profile) 解析為其支援的基礎模型，用於為該模型選擇正確的請求形狀。
+
+如果權杖缺少此權限，Claude Code 會透過使用替代形狀重試一次來自動復原，因此請求仍會成功，但每個新模型都會增加額外的往返。授予權限可避免重試。這最常適用於 `AWS_BEARER_TOKEN_BEDROCK` 部署，其中權杖的政策通常比完整 IAM 角色更狹隘。
 
 如需詳細資訊，請參閱 [Bedrock IAM 文件](https://docs.aws.amazon.com/bedrock/latest/userguide/security-iam.html)。
 

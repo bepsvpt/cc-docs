@@ -64,6 +64,8 @@ Le champ optionnel `padding` ajoute un espacement horizontal supplémentaire (en
 
 Le champ optionnel `refreshInterval` réexécute votre commande toutes les N secondes en plus des [mises à jour basées sur les événements](#how-status-lines-work). Le minimum est `1`. Définissez ceci quand votre barre de statut affiche des données basées sur le temps comme une horloge, ou quand les sous-agents en arrière-plan modifient l'état git pendant que la session principale est inactive. Laissez-le non défini pour s'exécuter uniquement sur les événements.
 
+Le champ optionnel `hideVimModeIndicator` supprime le texte intégré `-- INSERT --` sous l'invite. Définissez ceci sur `true` quand votre script affiche [`vim.mode`](#available-data) lui-même, afin que le mode ne soit pas affiché deux fois.
+
 ### Désactiver la barre de statut
 
 Exécutez `/statusline` et demandez-lui de supprimer ou d'effacer votre barre de statut (par exemple, `/statusline delete`, `/statusline clear`, `/statusline remove it`). Vous pouvez aussi supprimer manuellement le champ `statusLine` de votre settings.json.
@@ -912,7 +914,7 @@ Chaque script vérifie si le fichier de cache est manquant ou plus ancien que 5 
 
 ### Configuration Windows
 
-Sur Windows, Claude Code exécute les commandes de barre de statut via Git Bash. Vous pouvez invoquer PowerShell à partir de ce shell :
+Sur Windows, Claude Code exécute les commandes de barre de statut via Git Bash quand Git Bash est installé, ou via PowerShell quand Git Bash est absent. Pour exécuter un script PowerShell comme votre barre de statut, invoquez-le via `powershell` ; cela fonctionne à partir de l'un ou l'autre shell :
 
 <CodeGroup>
   ```json settings.json theme={null}
@@ -939,7 +941,7 @@ Sur Windows, Claude Code exécute les commandes de barre de statut via Git Bash.
   ```
 </CodeGroup>
 
-Ou exécutez un script Bash directement :
+Ou, quand Git Bash est installé, exécutez un script Bash directement :
 
 <CodeGroup>
   ```json settings.json theme={null}

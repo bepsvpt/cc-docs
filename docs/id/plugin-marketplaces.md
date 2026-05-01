@@ -175,10 +175,13 @@ Setiap entri plugin memerlukan minimal `name` dan `source` (di mana mengambilnya
 
 | Field                                 | Type   | Deskripsi                                                                                                                                                                                                                                                                              |
 | :------------------------------------ | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `metadata.description`                | string | Deskripsi marketplace singkat                                                                                                                                                                                                                                                          |
-| `metadata.version`                    | string | Versi marketplace                                                                                                                                                                                                                                                                      |
+| `$schema`                             | string | URL JSON Schema untuk autocomplete dan validasi editor. Claude Code mengabaikan field ini saat waktu muat.                                                                                                                                                                             |
+| `description`                         | string | Deskripsi marketplace singkat                                                                                                                                                                                                                                                          |
+| `version`                             | string | Versi manifest marketplace                                                                                                                                                                                                                                                             |
 | `metadata.pluginRoot`                 | string | Direktori dasar yang ditambahkan ke jalur sumber plugin relatif (misalnya, `"./plugins"` memungkinkan Anda menulis `"source": "formatter"` alih-alih `"source": "./plugins/formatter"`)                                                                                                |
 | `allowCrossMarketplaceDependenciesOn` | array  | Marketplace lain yang plugin di marketplace ini dapat bergantung padanya. Dependensi dari marketplace yang tidak tercantum di sini diblokir saat instalasi. Lihat [Bergantung pada plugin dari marketplace lain](/id/plugin-dependencies#depend-on-a-plugin-from-another-marketplace). |
+
+`description` dan `version` juga diterima di bawah `metadata` untuk kompatibilitas mundur.
 
 ## Entri plugin
 
@@ -958,7 +961,7 @@ Jalankan `claude plugin validate .` atau `/plugin validate .` dari direktori mar
 **Peringatan** (non-blocking):
 
 * `Marketplace has no plugins defined`: tambahkan setidaknya satu plugin ke array `plugins`
-* `No marketplace description provided`: tambahkan `metadata.description` untuk membantu pengguna memahami marketplace Anda
+* `No marketplace description provided`: tambahkan `description` tingkat atas untuk membantu pengguna memahami marketplace Anda
 * `Plugin name "x" is not kebab-case`: nama plugin berisi huruf besar, spasi, atau karakter khusus. Ubah nama menjadi huruf kecil, digit, dan tanda hubung saja (misalnya, `my-plugin`). Claude Code menerima bentuk lain, tetapi sinkronisasi marketplace Claude.ai menolaknya.
 
 ### Kegagalan instalasi plugin

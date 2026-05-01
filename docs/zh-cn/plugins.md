@@ -271,7 +271,7 @@ LSP（Language Server Protocol）插件为 Claude 提供实时代码智能。如
 ]
 ```
 
-来自 `command` 的每个 stdout 行在会话期间作为通知传递给 Claude。有关完整的架构，包括 `when` 触发器和变量替换，请参阅[监视器](/zh-CN/plugins-reference#monitors)。
+来自 `command` 的每个 stdout 行在会话期间作为通知传递给 Claude。有关完整的架构，包括 `when` 触发器和变量替换，请参阅 [Monitors](/zh-CN/plugins-reference#monitors)。
 
 ### 使用你的插件提供默认设置
 
@@ -289,7 +289,7 @@ LSP（Language Server Protocol）插件为 Claude 提供实时代码智能。如
 
 ### 组织复杂的插件
 
-对于具有许多组件的插件，按功能组织你的目录结构。有关完整的目录布局和组织模式，请参阅[插件目录结构](/zh-CN/plugins-reference#plugin-directory-structure)。
+对于具有许多组件的插件，按功能组织你的目录结构。有关完整的目录布局和组织模式，请参阅 [Plugin directory structure](/zh-CN/plugins-reference#plugin-directory-structure)。
 
 ### 在本地测试你的插件
 
@@ -321,18 +321,18 @@ claude --plugin-dir ./my-plugin
 
 1. **检查结构**：确保你的目录在插件根目录，而不是在 `.claude-plugin/` 内
 2. **单独测试组件**：分别检查每个 skill、agent 和 hook
-3. **使用验证和调试工具**：有关 CLI 命令和故障排除技术，请参阅[调试和开发工具](/zh-CN/plugins-reference#debugging-and-development-tools)
+3. **使用验证和调试工具**：有关 CLI 命令和故障排除技术，请参阅 [Debugging and development tools](/zh-CN/plugins-reference#debugging-and-development-tools)
 
 ### 共享你的插件
 
 当你的插件准备好共享时：
 
 1. **添加文档**：包含一个 `README.md`，其中包含安装和使用说明
-2. **选择版本控制策略**：决定是设置显式 `version` 还是依赖 git 提交 SHA。请参阅[版本管理](/zh-CN/plugins-reference#version-management)
-3. **创建或使用市场**：通过[插件市场](/zh-CN/plugin-marketplaces)分发以供安装
+2. **选择版本控制策略**：决定是设置显式 `version` 还是依赖 git 提交 SHA。请参阅 [version management](/zh-CN/plugins-reference#version-management)
+3. **创建或使用市场**：通过 [plugin marketplaces](/zh-CN/plugin-marketplaces) 分发以供安装
 4. **与他人测试**：在更广泛分发之前让团队成员测试插件
 
-一旦你的插件在市场中，其他人可以使用[发现和安装插件](/zh-CN/discover-plugins)中的说明安装它。
+一旦你的插件在市场中，其他人可以使用 [Discover and install plugins](/zh-CN/discover-plugins) 中的说明安装它。要将插件保持在你的团队内部，请在 [private repository](/zh-CN/plugin-marketplaces#private-repositories) 中托管市场。
 
 ### 向官方市场提交你的插件
 
@@ -341,10 +341,10 @@ claude --plugin-dir ./my-plugin
 * **Claude.ai**：[claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
 * **Console**：[platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
 
-一旦你的插件被列出，你可以拥有自己的 CLI 提示 Claude Code 用户安装它。请参阅[从你的 CLI 推荐你的插件](/zh-CN/plugin-hints)。
+一旦你的插件被列出，你可以拥有自己的 CLI 提示 Claude Code 用户安装它。请参阅 [Recommend your plugin from your CLI](/zh-CN/plugin-hints)。
 
 <Note>
-  有关完整的技术规范、调试技术和分发策略，请参阅[插件参考](/zh-CN/plugins-reference)。
+  有关完整的技术规范、调试技术和分发策略，请参阅 [Plugins reference](/zh-CN/plugins-reference)。
 </Note>
 
 ## 将现有配置转换为插件

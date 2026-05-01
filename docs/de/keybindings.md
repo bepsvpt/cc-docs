@@ -99,21 +99,22 @@ Aktionen zum Navigieren im Befehlsverlauf:
 
 Aktionen verfügbar im `Chat`-Kontext:
 
-| Aktion                | Standard                     | Beschreibung                                                      |
-| :-------------------- | :--------------------------- | :---------------------------------------------------------------- |
-| `chat:cancel`         | Escape                       | Aktuelle Eingabe abbrechen                                        |
-| `chat:clearInput`     | Ctrl+L                       | Eingabeaufforderung löschen und Bildschirm neu zeichnen erzwingen |
-| `chat:killAgents`     | Ctrl+X Ctrl+K                | Alle Hintergrund-Agenten beenden                                  |
-| `chat:cycleMode`      | Shift+Tab\*                  | Berechtigungsmodi durchlaufen                                     |
-| `chat:modelPicker`    | Cmd+P / Meta+P               | Modell-Picker öffnen                                              |
-| `chat:fastMode`       | Meta+O                       | Schnellmodus umschalten                                           |
-| `chat:thinkingToggle` | Cmd+T / Meta+T               | Erweitertes Denken umschalten                                     |
-| `chat:submit`         | Enter                        | Nachricht senden                                                  |
-| `chat:newline`        | Ctrl+J                       | Zeilenumbruch einfügen, ohne zu senden                            |
-| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-        | Letzte Aktion rückgängig machen                                   |
-| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E        | In externem Editor öffnen                                         |
-| `chat:stash`          | Ctrl+S                       | Aktuelle Eingabeaufforderung speichern                            |
-| `chat:imagePaste`     | Ctrl+V (Alt+V unter Windows) | Bild einfügen                                                     |
+| Aktion                | Standard                     | Beschreibung                                                                                                                                                                                            |
+| :-------------------- | :--------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `chat:cancel`         | Escape                       | Aktuelle Eingabe abbrechen                                                                                                                                                                              |
+| `chat:clearInput`     | Ctrl+L                       | Vollständiges Bildschirm-Neuzeichnen erzwingen, Eingabe beibehalten. Im [Vollbildrendering](/de/fullscreen#clear-the-conversation) zweimal innerhalb von zwei Sekunden drücken, um `/clear` auszuführen |
+| `chat:clearScreen`    | Cmd+K                        | Im [Vollbildrendering](/de/fullscreen#clear-the-conversation) zweimal innerhalb von zwei Sekunden drücken, um `/clear` auszuführen                                                                      |
+| `chat:killAgents`     | Ctrl+X Ctrl+K                | Alle Hintergrund-Agenten beenden                                                                                                                                                                        |
+| `chat:cycleMode`      | Shift+Tab\*                  | Berechtigungsmodi durchlaufen                                                                                                                                                                           |
+| `chat:modelPicker`    | Meta+P                       | Modell-Picker öffnen                                                                                                                                                                                    |
+| `chat:fastMode`       | Meta+O                       | Schnellmodus umschalten                                                                                                                                                                                 |
+| `chat:thinkingToggle` | Meta+T                       | Erweitertes Denken umschalten                                                                                                                                                                           |
+| `chat:submit`         | Enter                        | Nachricht senden                                                                                                                                                                                        |
+| `chat:newline`        | Ctrl+J                       | Zeilenumbruch einfügen, ohne zu senden                                                                                                                                                                  |
+| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-        | Letzte Aktion rückgängig machen                                                                                                                                                                         |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E        | In externem Editor öffnen                                                                                                                                                                               |
+| `chat:stash`          | Ctrl+S                       | Aktuelle Eingabeaufforderung speichern                                                                                                                                                                  |
+| `chat:imagePaste`     | Ctrl+V (Alt+V unter Windows) | Bild einfügen                                                                                                                                                                                           |
 
 \*Unter Windows ohne VT-Modus (Node \<24.2.0/\<22.17.0, Bun \<1.2.23) Standard auf Meta+M.
 
@@ -165,12 +166,13 @@ Aktionen verfügbar im `Transcript`-Kontext:
 
 Aktionen verfügbar im `HistorySearch`-Kontext:
 
-| Aktion                  | Standard    | Beschreibung                  |
-| :---------------------- | :---------- | :---------------------------- |
-| `historySearch:next`    | Ctrl+R      | Nächster Treffer              |
-| `historySearch:accept`  | Escape, Tab | Auswahl akzeptieren           |
-| `historySearch:cancel`  | Ctrl+C      | Suche abbrechen               |
-| `historySearch:execute` | Enter       | Ausgewählten Befehl ausführen |
+| Aktion                     | Standard    | Beschreibung                                   |
+| :------------------------- | :---------- | :--------------------------------------------- |
+| `historySearch:next`       | Ctrl+R      | Nächster Treffer                               |
+| `historySearch:accept`     | Escape, Tab | Auswahl akzeptieren                            |
+| `historySearch:cancel`     | Ctrl+C      | Suche abbrechen                                |
+| `historySearch:execute`    | Enter       | Ausgewählten Befehl ausführen                  |
+| `historySearch:cycleScope` | Ctrl+S      | Bereich durchlaufen: Sitzung, Projekt, überall |
 
 ### Aufgaben-Aktionen
 
@@ -307,9 +309,9 @@ Aktionen verfügbar im `Doctor`-Kontext:
 
 Aktionen verfügbar im `Chat`-Kontext, wenn [Sprachdiktat](/de/voice-dictation) aktiviert ist:
 
-| Aktion             | Standard  | Beschreibung                                                  |
-| :----------------- | :-------- | :------------------------------------------------------------ |
-| `voice:pushToTalk` | Leertaste | Halten Sie gedrückt, um eine Eingabeaufforderung zu diktieren |
+| Aktion             | Standard  | Beschreibung                                                             |
+| :----------------- | :-------- | :----------------------------------------------------------------------- |
+| `voice:pushToTalk` | Leertaste | Eingabeaufforderung diktieren. Halten oder tippen je nach `/voice`-Modus |
 
 ### Scroll-Aktionen
 
@@ -343,22 +345,24 @@ Aktionen verfügbar im `Scroll`-Kontext, wenn [Vollbildrendering](/de/fullscreen
 Verwenden Sie Modifizierer-Tasten mit dem `+`-Trennzeichen:
 
 * `ctrl` oder `control` - Strg-Taste
-* `alt`, `opt`, oder `option` - Alt/Option-Taste
 * `shift` - Umschalt-Taste
-* `meta`, `cmd`, oder `command` - Meta/Befehlstaste
+* `alt`, `opt`, `option` oder `meta` - Alt-Taste unter Windows und Linux, Option-Taste unter macOS
+* `cmd`, `command`, `super` oder `win` - Befehlstaste unter macOS, Windows-Taste unter Windows, Super-Taste unter Linux
+
+Die `cmd`-Gruppe wird nur in Terminals erkannt, die den Super-Modifizierer melden, wie z. B. solche, die das Kitty-Tastaturprotokoll oder den `modifyOtherKeys`-Modus von xterm unterstützen. Die meisten Terminals senden ihn nicht, daher verwenden Sie `ctrl` oder `meta` für Bindungen, die überall funktionieren sollen.
 
 Beispiele:
 
 ```text theme={null}
-ctrl+k          Einzelne Taste mit Modifizierer
+ctrl+k          Strg + K
 shift+tab       Umschalt + Tab
-meta+p          Befehl/Meta + P
+meta+p          Option + P unter macOS, Alt + P anderswo
 ctrl+shift+c    Mehrere Modifizierer
 ```
 
 ### Großbuchstaben
 
-Ein eigenständiger Großbuchstabe impliziert Umschalt. Zum Beispiel ist `K` gleichbedeutend mit `shift+k`. Dies ist nützlich für Vim-ähnliche Bindings, bei denen Groß- und Kleinbuchstaben unterschiedliche Bedeutungen haben.
+Ein eigenständiger Großbuchstabe impliziert Umschalt. Zum Beispiel ist `K` gleichbedeutend mit `shift+k`. Dies ist nützlich für Vim-ähnliche Bindungen, bei denen Groß- und Kleinbuchstaben unterschiedliche Bedeutungen haben.
 
 Großbuchstaben mit Modifizierern (z. B. `ctrl+K`) werden als stilistisch behandelt und implizieren **nicht** Umschalt: `ctrl+K` ist dasselbe wie `ctrl+k`.
 
@@ -367,7 +371,7 @@ Großbuchstaben mit Modifizierern (z. B. `ctrl+K`) werden als stilistisch behand
 Akkorde sind Sequenzen von Tastenkombinationen, die durch Leerzeichen getrennt sind:
 
 ```text theme={null}
-ctrl+k ctrl+s   Drücken Sie Ctrl+K, loslassen, dann Ctrl+S
+ctrl+k ctrl+s   Drücken Sie Strg+K, loslassen, dann Strg+S
 ```
 
 ### Spezielle Tasten
@@ -419,11 +423,12 @@ Wenn Sie einige, aber nicht alle Akkorde auf einem Präfix aufheben, führt das 
 
 Diese Kürzel können nicht neu gebunden werden:
 
-| Kürzel | Grund                                              |
-| :----- | :------------------------------------------------- |
-| Ctrl+C | Hardcodierter Interrupt/Abbruch                    |
-| Ctrl+D | Hardcodierter Ausstieg                             |
-| Ctrl+M | Identisch mit Enter in Terminals (beide senden CR) |
+| Kürzel    | Grund                                              |
+| :-------- | :------------------------------------------------- |
+| Ctrl+C    | Hardcodierter Interrupt/Abbruch                    |
+| Ctrl+D    | Hardcodierter Ausstieg                             |
+| Ctrl+M    | Identisch mit Enter in Terminals (beide senden CR) |
+| Caps Lock | Nicht an Terminalanwendungen übermittelt           |
 
 ## Terminal-Konflikte
 

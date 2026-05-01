@@ -111,6 +111,7 @@ Los hooks del plugin responden a los mismos eventos del ciclo de vida que los [h
 | Event                 | When it fires                                                                                                                                          |
 | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `SessionStart`        | When a session begins or resumes                                                                                                                       |
+| `Setup`               | When you start Claude Code with `--init-only`, or with `--init` or `--maintenance` in `-p` mode. For one-time preparation in CI or scripts             |
 | `UserPromptSubmit`    | When you submit a prompt, before Claude processes it                                                                                                   |
 | `UserPromptExpansion` | When a user-typed command expands into a prompt, before it reaches Claude. Can block the expansion                                                     |
 | `PreToolUse`          | Before a tool call executes. Can block it                                                                                                              |
@@ -405,15 +406,16 @@ Este nombre se utiliza para espacios de nombres de componentes. Por ejemplo, en 
 
 ### Campos de metadatos
 
-| Campo         | Tipo   | Descripción                                                                                                                                                                                                                                                                                                                                                                                                          | Ejemplo                                            |
-| :------------ | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------- |
-| `version`     | string | Opcional. Versión semántica. Establecer esto fija el plugin a esa cadena de versión, por lo que los usuarios solo reciben actualizaciones cuando la incrementas. Si se omite, Claude Code recurre al SHA del commit de git, por lo que cada commit se trata como una nueva versión. Si también se establece en la entrada del marketplace, `plugin.json` gana. Consulta [Gestión de versiones](#version-management). | `"2.1.0"`                                          |
-| `description` | string | Explicación breve del propósito del plugin                                                                                                                                                                                                                                                                                                                                                                           | `"Deployment automation tools"`                    |
-| `author`      | object | Información del autor                                                                                                                                                                                                                                                                                                                                                                                                | `{"name": "Dev Team", "email": "dev@company.com"}` |
-| `homepage`    | string | URL de documentación                                                                                                                                                                                                                                                                                                                                                                                                 | `"https://docs.example.com"`                       |
-| `repository`  | string | URL del código fuente                                                                                                                                                                                                                                                                                                                                                                                                | `"https://github.com/user/plugin"`                 |
-| `license`     | string | Identificador de licencia                                                                                                                                                                                                                                                                                                                                                                                            | `"MIT"`, `"Apache-2.0"`                            |
-| `keywords`    | array  | Etiquetas de descubrimiento                                                                                                                                                                                                                                                                                                                                                                                          | `["deployment", "ci-cd"]`                          |
+| Campo         | Tipo   | Descripción                                                                                                                                                                                                                                                                                                                                                                                                          | Ejemplo                                                           |
+| :------------ | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
+| `$schema`     | string | URL del esquema JSON para autocompletado y validación del editor. Claude Code ignora este campo en el momento de la carga.                                                                                                                                                                                                                                                                                           | `"https://json.schemastore.org/claude-code-plugin-manifest.json"` |
+| `version`     | string | Opcional. Versión semántica. Establecer esto fija el plugin a esa cadena de versión, por lo que los usuarios solo reciben actualizaciones cuando la incrementas. Si se omite, Claude Code recurre al SHA del commit de git, por lo que cada commit se trata como una nueva versión. Si también se establece en la entrada del marketplace, `plugin.json` gana. Consulta [Gestión de versiones](#version-management). | `"2.1.0"`                                                         |
+| `description` | string | Explicación breve del propósito del plugin                                                                                                                                                                                                                                                                                                                                                                           | `"Deployment automation tools"`                                   |
+| `author`      | object | Información del autor                                                                                                                                                                                                                                                                                                                                                                                                | `{"name": "Dev Team", "email": "dev@company.com"}`                |
+| `homepage`    | string | URL de documentación                                                                                                                                                                                                                                                                                                                                                                                                 | `"https://docs.example.com"`                                      |
+| `repository`  | string | URL del código fuente                                                                                                                                                                                                                                                                                                                                                                                                | `"https://github.com/user/plugin"`                                |
+| `license`     | string | Identificador de licencia                                                                                                                                                                                                                                                                                                                                                                                            | `"MIT"`, `"Apache-2.0"`                                           |
+| `keywords`    | array  | Etiquetas de descubrimiento                                                                                                                                                                                                                                                                                                                                                                                          | `["deployment", "ci-cd"]`                                         |
 
 ### Campos de ruta de componentes
 
@@ -746,15 +748,42 @@ claude plugin uninstall <plugin> [options]
 
 **Opciones:**
 
-| Opción                | Descripción                                             | Predeterminado |
-| :-------------------- | :------------------------------------------------------ | :------------- |
-| `-s, --scope <scope>` | Desinstalar del alcance: `user`, `project`, o `local`   | `user`         |
-| `--keep-data`         | Preservar el directorio de datos persistente del plugin |                |
-| `-h, --help`          | Mostrar ayuda para el comando                           |                |
+| Opción                | Descripción                                                                                                                          | Predeterminado |
+| :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------- | :------------- |
+| `-s, --scope <scope>` | Desinstalar del alcance: `user`, `project`, o `local`                                                                                | `user`         |
+| `--keep-data`         | Preservar el directorio de datos persistente del plugin                                                                              |                |
+| `--prune`             | También eliminar las dependencias instaladas automáticamente que ningún otro plugin requiere. Consulta [plugin prune](#plugin-prune) |                |
+| `-y, --yes`           | Omitir la solicitud de confirmación de `--prune`. Requerido cuando stdin no es un TTY                                                |                |
+| `-h, --help`          | Mostrar ayuda para el comando                                                                                                        |                |
 
 **Alias:** `remove`, `rm`
 
 Por defecto, desinstalar del último alcance restante también elimina el directorio `${CLAUDE_PLUGIN_DATA}` del plugin. Usa `--keep-data` para preservarlo, por ejemplo cuando reinstales después de probar una nueva versión.
+
+### plugin prune
+
+Elimina las dependencias de plugins instaladas automáticamente que ya no son requeridas por ningún plugin instalado. Las dependencias que Claude Code incluyó para satisfacer el campo [`dependencies`](/es/plugin-dependencies) de otro plugin se eliminan; los plugins que instalaste directamente nunca se tocan.
+
+```bash theme={null}
+claude plugin prune [options]
+```
+
+**Opciones:**
+
+| Opción                | Descripción                                                              | Predeterminado |
+| :-------------------- | :----------------------------------------------------------------------- | :------------- |
+| `-s, --scope <scope>` | Limpiar en alcance: `user`, `project`, o `local`                         | `user`         |
+| `--dry-run`           | Listar lo que se eliminaría sin eliminar nada                            |                |
+| `-y, --yes`           | Omitir la solicitud de confirmación. Requerido cuando stdin no es un TTY |                |
+| `-h, --help`          | Mostrar ayuda para el comando                                            |                |
+
+**Alias:** `autoremove`
+
+El comando lista las dependencias huérfanas y solicita confirmación antes de eliminarlas. Para eliminar un plugin y limpiar sus dependencias en un paso, ejecuta `claude plugin uninstall <plugin> --prune`.
+
+<Note>
+  `claude plugin prune` requiere Claude Code v2.1.121 o posterior.
+</Note>
 
 ### plugin enable
 

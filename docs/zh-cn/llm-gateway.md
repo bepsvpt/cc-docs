@@ -37,13 +37,29 @@ LLM gateway 提供了 Claude Code 和模型提供商之间的集中代理层，�
   Claude Code 根据 API 格式确定要启用的功能。当使用 Bedrock 或 Vertex 的 Anthropic Messages 格式时，您可能需要设置环境变量 `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`。
 </Note>
 
+**请求头**
+
+Claude Code 在每个 API 请求上包含以下请求头：
+
+| 请求头                        | 描述                                                              |
+| :------------------------- | :-------------------------------------------------------------- |
+| `X-Claude-Code-Session-Id` | 当前 Claude Code 会话的唯一标识符。代理可以使用此标识符来聚合来自单个会话的所有 API 请求，而无需解析请求体。 |
+
+Claude Code 还会在系统提示前面添加一个简短的归属块，其中包含客户端版本和从对话派生的指纹。Anthropic API 在处理前会删除此块，因此不会影响第一方提示缓存。如果您的网关实现了自己的提示缓存（以完整请求体为键），请设置 [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/zh-CN/env-vars) 以省略它。
+
 ## 配置
 
 ### 模型选择
 
-默认情况下，Claude Code 将为选定的 API 格式使用标准模型名称。
+默认情况下，Claude Code 使用所选 API 格式的标准模型名称。
 
-如果您在网关中配置了自定义模型名称，请使用 [模型配置](/zh-CN/model-config) 中记录的环境变量来匹配您的自定义名称。
+当 `ANTHROPIC_BASE_URL` 指向一个公开 Anthropic Messages 格式的网关时，Claude Code 在启动时会查询网关的 `/v1/models` 端点，并将返回的模型添加到 `/model` 选择器中。每个发现的条目都标记为"From gateway"，并在响应中提供 `display_name` 字段时使用该字段。这需要 Claude Code v2.1.126 或更高版本。
+
+发现功能仅适用于 Anthropic Messages 格式。它不会对 Bedrock 或 Vertex 直通端点运行，也不会在 `ANTHROPIC_BASE_URL` 未设置或指向 `api.anthropic.com` 时运行。
+
+发现请求的身份验证方式与推理请求相同：它将 `ANTHROPIC_AUTH_TOKEN` 作为 bearer 令牌发送，或在未设置身份验证令牌时将 `ANTHROPIC_API_KEY` 作为 `x-api-key` 标头发送，以及来自 `ANTHROPIC_CUSTOM_HEADERS` 的任何标头。只有 ID 以 `claude` 或 `anthropic` 开头的模型才会被添加到选择器中。结果被缓存到 `~/.claude/cache/gateway-models.json`，并在每次启动时刷新。如果请求失败或网关未实现 `/v1/models`，选择器将回退到上一次启动时的缓存列表或内置模型列表。
+
+如果您的网关使用与发现过滤器不匹配的模型名称，请使用 [模型配置](/zh-CN/model-config) 中记录的环境变量来手动添加它们。
 
 ## LiteLLM 配置
 

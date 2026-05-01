@@ -910,4 +910,4 @@ Claude Code имеет доступ к набору инструментов д�
 * [Permissions](/ru/permissions): система разрешений, синтаксис правил, шаблоны, специфичные для инструментов, и управляемые политики
 * [Authentication](/ru/authentication): настройка доступа пользователей к Claude Code
 * [Debug your configuration](/ru/debug-your-config): диагностика причин, по которым параметр, hook или MCP сервер не вступают в силу
-* [Troubleshooting](/ru/troubleshooting): проблемы установки, аутентификации и платформы
+* [Troubleshoot installation and login](/ru/troubleshoot-install): установка, аутентификация и проблемы платформы

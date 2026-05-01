@@ -154,28 +154,30 @@ Agent SDK および `claude -p` セッションでは、`TRACEPARENT` が環境�
 
 **`claude_code.llm_request`**
 
-| 属性                       | 説明                                                  | ゲート |
-| ------------------------ | --------------------------------------------------- | --- |
-| `model`                  | モデル識別子                                              |     |
-| `gen_ai.system`          | 常に `anthropic`。OpenTelemetry GenAI セマンティック規約        |     |
-| `gen_ai.request.model`   | `model` と同じ値。OpenTelemetry GenAI セマンティック規約          |     |
-| `query_source`           | リクエストを発行したサブシステム。例: `repl_main_thread` またはサブエージェント名 |     |
-| `speed`                  | `fast` または `normal`                                 |     |
-| `llm_request.context`    | 親スパンに応じて `interaction`、`tool`、または `standalone`      |     |
-| `duration_ms`            | 再試行を含む実時間                                           |     |
-| `ttft_ms`                | 最初のトークンまでの時間 (ミリ秒単位)                                |     |
-| `input_tokens`           | API 使用ブロックからの入力トークン数                                |     |
-| `output_tokens`          | 出力トークン数                                             |     |
-| `cache_read_tokens`      | プロンプトキャッシュから読み取られたトークン                              |     |
-| `cache_creation_tokens`  | プロンプトキャッシュに書き込まれたトークン                               |     |
-| `request_id`             | レスポンスヘッダーの `request-id` からの Anthropic API リクエスト ID  |     |
-| `gen_ai.response.id`     | `request_id` と同じ値。OpenTelemetry GenAI セマンティック規約     |     |
-| `client_request_id`      | 最終試行のクライアント生成 `x-client-request-id`                 |     |
-| `attempt`                | このリクエストに対して行われた総試行回数                                |     |
-| `success`                | `true` または `false`                                  |     |
-| `status_code`            | リクエストが失敗した場合の HTTP ステータスコード                         |     |
-| `error`                  | リクエストが失敗した場合のエラーメッセージ                               |     |
-| `response.has_tool_call` | レスポンスにツール使用ブロックが含まれている場合は `true`                    |     |
+| 属性                               | 説明                                                                                                       | ゲート |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------- | --- |
+| `model`                          | モデル識別子                                                                                                   |     |
+| `gen_ai.system`                  | 常に `anthropic`。OpenTelemetry GenAI セマンティック規約                                                             |     |
+| `gen_ai.request.model`           | `model` と同じ値。OpenTelemetry GenAI セマンティック規約                                                               |     |
+| `query_source`                   | リクエストを発行したサブシステム。例: `repl_main_thread` またはサブエージェント名                                                      |     |
+| `speed`                          | `fast` または `normal`                                                                                      |     |
+| `llm_request.context`            | 親スパンに応じて `interaction`、`tool`、または `standalone`                                                           |     |
+| `duration_ms`                    | 再試行を含む実時間                                                                                                |     |
+| `ttft_ms`                        | 最初のトークンまでの時間 (ミリ秒単位)                                                                                     |     |
+| `input_tokens`                   | API 使用ブロックからの入力トークン数                                                                                     |     |
+| `output_tokens`                  | 出力トークン数                                                                                                  |     |
+| `cache_read_tokens`              | プロンプトキャッシュから読み取られたトークン                                                                                   |     |
+| `cache_creation_tokens`          | プロンプトキャッシュに書き込まれたトークン                                                                                    |     |
+| `request_id`                     | レスポンスヘッダーの `request-id` からの Anthropic API リクエスト ID                                                       |     |
+| `gen_ai.response.id`             | `request_id` と同じ値。OpenTelemetry GenAI セマンティック規約                                                          |     |
+| `client_request_id`              | 最終試行のクライアント生成 `x-client-request-id`                                                                      |     |
+| `attempt`                        | このリクエストに対して行われた総試行回数                                                                                     |     |
+| `success`                        | `true` または `false`                                                                                       |     |
+| `status_code`                    | リクエストが失敗した場合の HTTP ステータスコード                                                                              |     |
+| `error`                          | リクエストが失敗した場合のエラーメッセージ                                                                                    |     |
+| `response.has_tool_call`         | レスポンスにツール使用ブロックが含まれている場合は `true`                                                                         |     |
+| `stop_reason`                    | API レスポンス `stop_reason`。例: `end_turn`、`tool_use`、`max_tokens`、`stop_sequence`、`pause_turn`、または `refusal` |     |
+| `gen_ai.response.finish_reasons` | `stop_reason` と同じ値。文字列配列でラップされています。OpenTelemetry GenAI セマンティック規約                                         |     |
 
 各再試行試行は、`attempt` および `client_request_id` 属性を持つ `gen_ai.request.attempt` スパンイベントとしても記録されます。
 
@@ -226,7 +228,7 @@ Agent SDK および `claude -p` セッションでは、`TRACEPARENT` が環境�
 | `num_cancelled`          | 完了前にキャンセルされたフックの数             |                         |
 
 <Note>
-  `new_context`、`system_prompt_preview`、`tool_input`、`response.model_output` などの追加のコンテンツを含む属性は、詳細なベータトレースがアクティブな場合にのみ出力されます。これらは安定したスパンスキーマの一部ではありません。
+  `new_context`、`system_prompt_preview`、`user_system_prompt`、`tool_input`、`response.model_output` などの追加のコンテンツを含む属性は、詳細なベータトレースがアクティブな場合にのみ出力されます。これらは安定したスパンスキーマの一部ではありません。`user_system_prompt` はさらに `OTEL_LOG_USER_PROMPTS=1` が必要です。これは `systemPrompt` SDK オプションまたは `--system-prompt` および `--append-system-prompt` フラグを通じて提供するシステムプロンプトテキストのみを含み、60 KB で切り詰められ、リクエストごとではなくセッションごとに 1 回出力されます。
 </Note>
 
 ### 動的ヘッダー
@@ -571,9 +573,9 @@ Claude への API リクエストが失敗するときにログされます。
 * `event.sequence`: セッション内のイベントを順序付けするための単調増加カウンター
 * `model`: 使用されたモデル (例: "claude-sonnet-4-6")
 * `error`: エラーメッセージ
-* `status_code`: HTTP ステータスコード (文字列)、または非 HTTP エラーの場合は `"undefined"`
+* `status_code`: HTTP ステータスコード (数値)。接続失敗などの非 HTTP エラーの場合は存在しません。
 * `duration_ms`: リクエスト期間 (ミリ秒単位)
-* `attempt`: 試行番号 (初期リクエストを含む。`1` は再試行が発生しなかったことを意味します)
+* `attempt`: 試行の総数 (初期リクエストを含む。`1` は再試行が発生しなかったことを意味します)
 * `request_id`: レスポンスの `request-id` ヘッダーからの Anthropic API リクエスト ID。例: `"req_011..."`。API が返す場合のみ存在します。
 * `speed`: `"fast"` または `"normal"`、高速モードがアクティブであったかどうかを示します
 * `query_source`: リクエストを発行したサブシステム。例: `"repl_main_thread"`、`"compact"`、またはサブエージェント名
@@ -724,7 +726,7 @@ Claude Code が予期しない内部エラーをキャッチするときにロ�
 
 #### スキル有効化イベント
 
-スキルが呼び出されるときにログされます。
+スキルが呼び出されるときにログされます。Claude が Skill ツールを通じてそれを呼び出すか、`/` コマンドとして実行するかどうかにかかわらず。
 
 **イベント名**: `claude_code.skill_activated`
 
@@ -735,9 +737,25 @@ Claude Code が予期しない内部エラーをキャッチするときにロ�
 * `event.timestamp`: ISO 8601 タイムスタンプ
 * `event.sequence`: セッション内のイベントを順序付けするための単調増加カウンター
 * `skill.name`: スキルの名前。ユーザー定義およびサードパーティプラグインスキルの場合、`OTEL_LOG_TOOL_DETAILS=1` が設定されていない限り値はプレースホルダー `"custom_skill"` です
+* `invocation_trigger`: スキルがどのようにトリガーされたか (`"user-slash"`、`"claude-proactive"`、または `"nested-skill"`)
 * `skill.source`: スキルが読み込まれた場所 (例: `"bundled"`、`"userSettings"`、`"projectSettings"`、`"plugin"`)
 * `plugin.name` (`OTEL_LOG_TOOL_DETAILS=1` またはプラグインが公式マーケットプレイスからの場合): スキルがプラグインによって提供される場合の所有プラグインの名前
 * `marketplace.name` (`OTEL_LOG_TOOL_DETAILS=1` またはプラグインが公式マーケットプレイスからの場合): スキルがプラグインによって提供される場合、所有プラグインがインストールされたマーケットプレイス
+
+#### @ メンションイベント
+
+Claude Code がプロンプト内の `@` メンションを解決するときにログされます。すべてのメンションがイベントを出力するわけではありません。権限拒否、ファイルサイズ超過、PDF 参照添付、ディレクトリリスト失敗などの早期終了パスはログなしで返されます。
+
+**イベント名**: `claude_code.at_mention`
+
+**属性**:
+
+* すべての[標準属性](#standard-attributes)
+* `event.name`: `"at_mention"`
+* `event.timestamp`: ISO 8601 タイムスタンプ
+* `event.sequence`: セッション内のイベントを順序付けするための単調増加カウンター
+* `mention_type`: メンションのタイプ (`"file"`、`"directory"`、`"agent"`、`"mcp_resource"`)
+* `success`: メンションが正常に解決されたかどうか (`"true"` または `"false"`)
 
 #### API 再試行枯渇イベント
 
@@ -753,7 +771,7 @@ API リクエストが複数回の試行後に失敗した場合に 1 回ログ�
 * `event.sequence`: セッション内のイベントを順序付けするための単調増加カウンター
 * `model`: 使用されたモデル
 * `error`: 最終エラーメッセージ
-* `status_code`: HTTP ステータスコード (文字列)
+* `status_code`: HTTP ステータスコード (数値)。非 HTTP エラーの場合は存在しません。
 * `total_attempts`: 試行の総数
 * `total_retry_duration_ms`: すべての試行にわたる実時間
 * `speed`: `"fast"` または `"normal"`
@@ -918,13 +936,13 @@ Claude Code は失敗した API リクエストを内部的に再試行し、あ
 
 ## セキュリティとプライバシー
 
-* テレメトリはオプトインであり、明示的な設定が必要です
+* OpenTelemetry エクスポートはオプトインであり、明示的な設定が必要です。Anthropic の個別の運用テレメトリと無効化方法については、[データ使用](/ja/data-usage#telemetry-services)を参照してください
 * 生のファイルコンテンツとコードスニペットはメトリクスやイベントに含まれません。トレーススパンは別のデータパスです: 以下の `OTEL_LOG_TOOL_CONTENT` の項目を参照してください
 * OAuth 経由で認証された場合、`user.email` はテレメトリ属性に含まれます。これが組織にとって懸念事項である場合は、テレメトリバックエンドと協力してこのフィールドをフィルタリングまたはマスクしてください
 * ユーザープロンプトコンテンツはデフォルトでは収集されません。プロンプト長のみが記録されます。プロンプトコンテンツを含めるには、`OTEL_LOG_USER_PROMPTS=1` を設定します
 * ツール入力引数とパラメーターはデフォルトではログされません。これらを含めるには、`OTEL_LOG_TOOL_DETAILS=1` を設定します。有効にすると、`tool_result` イベントには Bash コマンド、MCP サーバーとツール名、スキル名を含む `tool_parameters` 属性、およびファイルパス、URL、検索パターン、その他の引数を含む `tool_input` 属性が含まれます。`user_prompt` イベントには、カスタム、プラグイン、MCP コマンドの逐語的な `command_name` が含まれます。トレーススパンには同じ `tool_input` 属性と `file_path` などの入力派生属性が含まれます。512 文字を超える個別の値は切り詰められ、合計は約 4 K 文字に制限されますが、引数には機密値が含まれる可能性があります。必要に応じてこれらの属性をフィルタリングまたはマスクするようにテレメトリバックエンドを設定してください
 * ツール入力と出力コンテンツはデフォルトではトレーススパンでログされません。これを含めるには、`OTEL_LOG_TOOL_CONTENT=1` を設定します。有効にすると、スパンイベントには 60 KB で切り詰められたツール入力と出力コンテンツが含まれます。これには Read ツール結果からの生のファイルコンテンツと Bash コマンド出力が含まれる可能性があります。必要に応じてこれらの属性をフィルタリングまたはマスクするようにテレメトリバックエンドを設定してください
-* 生の Anthropic Messages API リクエストとレスポンスボディはデフォルトではログされません。これらを含めるには、`OTEL_LOG_RAW_API_BODIES` を設定します。`=1` の場合、各 API 呼び出しは `api_request_body` および `api_response_body` ログイベントを出力し、その `body` 属性は JSON シリアル化されたペイロードで、60 KB で切り詰められます。`=file:<dir>` の場合、切り詰められていないボディはそのディレクトリの下の `.request.json` および `.response.json` ファイルに書き込まれ、イベントはテレメトリストリームではなくログコレクターまたはサイドカーで配信されるディレクトリを含む `body_ref` パスを持ちます。両方のモードで、ボディには完全な会話履歴 (システムプロンプト、すべての前のユーザーとアシスタントターン、ツール結果) が含まれるため、これを有効にすることは他の `OTEL_LOG_*` コンテンツフラグが明かすすべてのものに同意することを意味します。Claude の拡張思考コンテンツは、他の設定に関係なく、これらのボディから常にマスクされます
+* 生の Anthropic Messages API リクエストとレスポンスボディはデフォルトではログされません。これらを含めるには、`OTEL_LOG_RAW_API_BODIES` を設定します。`=1` の場合、各 API 呼び出しは `api_request_body` および `api_response_body` ログイベントを出力し、その `body` 属性は JSON シリアル化されたペイロードで、60 KB で切り詰められます。`=file:<dir>` の場合、切り詰められていないボディはそのディレクトリの下の `.request.json` および `.response.json` ファイルに書き込まれ、イベントはテレメトリストリームではなくログコレクターまたはサイドカーで配信されるディレクトリを含む `body_ref` パスを持ちます。両方のモードで、ボディには完全な会話履歴（システムプロンプト、すべての前のユーザーとアシスタントターン、ツール結果）が含まれるため、これを有効にすることは他の `OTEL_LOG_*` コンテンツフラグが明かすすべてのものに同意することを意味します。Claude の拡張思考コンテンツは、他の設定に関係なく、これらのボディから常にマスクされます
 
 ## Amazon Bedrock での Claude Code の監視
 

@@ -4,78 +4,191 @@
 
 # Conteneurs de développement
 
-> Découvrez le conteneur de développement Claude Code pour les équipes qui ont besoin d'environnements cohérents et sécurisés.
+> Exécutez Claude Code dans un conteneur de développement pour des environnements cohérents et isolés dans toute votre équipe.
 
-La [configuration devcontainer](https://github.com/anthropics/claude-code/tree/main/.devcontainer) de référence et le [Dockerfile](https://github.com/anthropics/claude-code/blob/main/.devcontainer/Dockerfile) associé offrent un conteneur de développement préconfigué que vous pouvez utiliser tel quel ou personnaliser selon vos besoins. Ce devcontainer fonctionne avec l'extension [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers) de Visual Studio Code et des outils similaires.
+Un [conteneur de développement](https://containers.dev/), ou dev container, vous permet de définir un environnement identique et isolé que chaque ingénieur de votre équipe peut exécuter. Avec Claude Code installé dans ce conteneur, les commandes que Claude exécute s'exécutent à l'intérieur plutôt que sur la machine hôte, tandis que les modifications apportées à vos fichiers de projet apparaissent dans votre référentiel local au fur et à mesure que vous travaillez.
 
-Les mesures de sécurité renforcées du conteneur (isolation et règles de pare-feu) vous permettent d'exécuter `claude --dangerously-skip-permissions` pour contourner les invites de permission pour un fonctionnement sans surveillance.
+Cette page couvre [l'installation de Claude Code dans un dev container](#add-claude-code-to-your-dev-container) et les rubriques de configuration qui suivent. Chaque rubrique est autonome, donc accédez à celles qui correspondent à ce que vous devez configurer :
+
+* [Persister l'authentification et les paramètres entre les reconstructions](#persist-authentication-and-settings-across-rebuilds)
+* [Appliquer la politique organisationnelle](#enforce-organization-policy)
+* [Restreindre la sortie réseau](#restrict-network-egress)
+* [Exécuter sans invites de permission](#run-without-permission-prompts)
 
 <Warning>
-  Bien que le devcontainer offre des protections substantielles, aucun système n'est complètement immunisé contre toutes les attaques.
-  Lorsqu'il est exécuté avec `--dangerously-skip-permissions`, les devcontainers n'empêchent pas un projet malveillant d'exfiltrer quoi que ce soit d'accessible dans le devcontainer, y compris les identifiants Claude Code.
-  Nous recommandons d'utiliser les devcontainers uniquement lors du développement avec des référentiels de confiance.
-  Maintenez toujours de bonnes pratiques de sécurité et surveillez les activités de Claude.
+  Bien que le dev container offre des protections substantielles, aucun système n'est complètement immunisé contre toutes les attaques.
+  Lorsqu'il est exécuté avec `--dangerously-skip-permissions`, les dev containers n'empêchent pas un projet malveillant d'exfiltrer quoi que ce soit d'accessible à l'intérieur du conteneur, y compris les identifiants Claude Code stockés dans [`~/.claude`](/fr/claude-directory).
+  Utilisez les dev containers uniquement lors du développement avec des référentiels de confiance, et surveillez les activités de Claude.
+  Évitez de monter les secrets de l'hôte tels que `~/.ssh` ou les fichiers d'identifiants cloud dans le conteneur ; préférez les jetons limités au référentiel ou à courte durée de vie.
 </Warning>
 
-## Caractéristiques principales
+<Accordion title="Comment les dev containers fonctionnent avec votre éditeur">
+  <img src="https://mintcdn.com/claude-code/YvJyjZfd9yMihr0i/images/devcontainer-architecture.svg?fit=max&auto=format&n=YvJyjZfd9yMihr0i&q=85&s=9017b1d16a446c6cc37ba562f35b9aae" className="dark:hidden" alt="Diagramme montrant un éditeur sur l'hôte se connectant à un dev container Docker. Claude Code, le terminal et les outils de compilation s'exécutent à l'intérieur du conteneur. Le référentiel hôte est monté en bind dans le conteneur en tant qu'espace de travail." width="640" height="300" data-path="images/devcontainer-architecture.svg" />
 
-* **Node.js prêt pour la production** : Basé sur Node.js 20 avec les dépendances de développement essentielles
-* **Sécurité par conception** : Pare-feu personnalisé limitant l'accès réseau aux seuls services nécessaires
-* **Outils conviviaux pour les développeurs** : Inclut git, ZSH avec améliorations de productivité, fzf, et plus
-* **Intégration transparente de VS Code** : Extensions préconfigurées et paramètres optimisés
-* **Persistance de session** : Préserve l'historique des commandes et les configurations entre les redémarrages du conteneur
-* **Fonctionne partout** : Compatible avec les environnements de développement macOS, Windows et Linux
+  <img src="https://mintcdn.com/claude-code/YvJyjZfd9yMihr0i/images/devcontainer-architecture-dark.svg?fit=max&auto=format&n=YvJyjZfd9yMihr0i&q=85&s=ef00c8e25b1ea7a3a152895f1488831b" className="hidden dark:block" alt="Diagramme montrant un éditeur sur l'hôte se connectant à un dev container Docker. Claude Code, le terminal et les outils de compilation s'exécutent à l'intérieur du conteneur. Le référentiel hôte est monté en bind dans le conteneur en tant qu'espace de travail." width="640" height="300" data-path="images/devcontainer-architecture-dark.svg" />
 
-## Démarrage en 4 étapes
+  Un dev container s'exécute en tant que conteneur Docker, soit sur votre machine, soit sur un hôte cloud tel que GitHub Codespaces. Un éditeur qui prend en charge la spécification Dev Containers, tel que VS Code, GitHub Codespaces, un IDE JetBrains ou Cursor, se connecte à ce conteneur : vous parcourez et modifiez les fichiers dans l'éditeur comme d'habitude, mais le terminal intégré, les serveurs de langage et les outils de compilation s'exécutent tous à l'intérieur du conteneur plutôt que sur votre hôte. Les éditeurs sans support de dev container, tels que Vim simple, ne font pas partie de ce flux de travail.
 
-1. Installez VS Code et l'extension Remote - Containers
-2. Clonez le référentiel de l'[implémentation de référence Claude Code](https://github.com/anthropics/claude-code/tree/main/.devcontainer)
-3. Ouvrez le référentiel dans VS Code
-4. Lorsque vous y êtes invité, cliquez sur « Rouvrir dans le conteneur » (ou utilisez la Palette de commandes : Cmd+Shift+P → « Remote-Containers: Reopen in Container »)
+  Claude Code s'exécute à l'intérieur du conteneur, il voit donc les mêmes fichiers, dépendances et outils que le reste de la chaîne d'outils de votre projet. Dans VS Code, vous pouvez utiliser soit le [panneau d'extension Claude Code](/fr/vs-code), soit exécuter `claude` dans le terminal intégré ; les deux s'exécutent à l'intérieur du conteneur et partagent la même configuration `~/.claude`.
+</Accordion>
 
-## Analyse de la configuration
+## Ajouter Claude Code à votre dev container
 
-La configuration devcontainer se compose de trois composants principaux :
+Claude Code s'installe dans n'importe quel dev container via la [Fonctionnalité Claude Code Dev Container](https://github.com/anthropics/devcontainer-features/tree/main/src/claude-code).
 
-* [**devcontainer.json**](https://github.com/anthropics/claude-code/blob/main/.devcontainer/devcontainer.json) : Contrôle les paramètres du conteneur, les extensions et les montages de volume
-* [**Dockerfile**](https://github.com/anthropics/claude-code/blob/main/.devcontainer/Dockerfile) : Définit l'image du conteneur et les outils installés
-* [**init-firewall.sh**](https://github.com/anthropics/claude-code/blob/main/.devcontainer/init-firewall.sh) : Établit les règles de sécurité réseau
+Les paramètres fonctionnent avec n'importe quel outil qui prend en charge la spécification Dev Containers, tel que VS Code, GitHub Codespaces ou les IDE JetBrains. Les étapes ci-dessous utilisent VS Code comme exemple.
 
-## Fonctionnalités de sécurité
+Lorsque vous ouvrez le conteneur dans VS Code ou Codespaces, la fonctionnalité ajoute également l'extension VS Code Claude Code ; les autres éditeurs ignorent cette partie.
 
-Le conteneur implémente une approche de sécurité multicouche avec sa configuration de pare-feu :
+<Tip>
+  Nouveau dans les dev containers ? Le [tutoriel VS Code Dev Containers](https://code.visualstudio.com/docs/devcontainers/tutorial) vous guide à travers l'installation de Docker, l'extension et l'ouverture de votre premier conteneur. Pour un exemple plus complet et renforcé avec un pare-feu et des volumes persistants, voir [Essayer le conteneur de référence](#try-the-reference-container).
+</Tip>
 
-* **Contrôle d'accès précis** : Limite les connexions sortantes aux domaines autorisés uniquement (registre npm, GitHub, API Claude, etc.)
-* **Connexions sortantes autorisées** : Le pare-feu autorise les connexions DNS et SSH sortantes
-* **Politique de refus par défaut** : Bloque tous les autres accès réseau externes
-* **Vérification au démarrage** : Valide les règles de pare-feu lors de l'initialisation du conteneur
-* **Isolation** : Crée un environnement de développement sécurisé séparé de votre système principal
+<Steps>
+  <Step title="Créer ou mettre à jour devcontainer.json">
+    Enregistrez ce qui suit en tant que `.devcontainer/devcontainer.json` dans votre référentiel, ou ajoutez le bloc `features` à votre fichier existant.
 
-## Options de personnalisation
+    La balise de version à la fin, telle que `:1.0`, épingle le script d'installation de la fonctionnalité, pas la version de Claude Code. La fonctionnalité installe la dernière version de Claude Code, et Claude Code se met à jour automatiquement à l'intérieur du conteneur par défaut.
 
-La configuration devcontainer est conçue pour être adaptable à vos besoins :
+    Pour épingler la version CLI ou désactiver la mise à jour automatique, voir [Appliquer la politique organisationnelle](#enforce-organization-policy).
 
-* Ajoutez ou supprimez des extensions VS Code en fonction de votre flux de travail
-* Modifiez les allocations de ressources pour différents environnements matériels
-* Ajustez les permissions d'accès réseau
-* Personnalisez les configurations de shell et les outils de développement
+    ```json .devcontainer/devcontainer.json theme={null}
+    {
+      "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+      "features": {
+        "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
+      }
+    }
+    ```
 
-## Exemples de cas d'utilisation
+    Remplacez la ligne `image` par l'image de base de votre projet ou supprimez-la si votre fichier existant utilise un Dockerfile.
+  </Step>
 
-### Travail client sécurisé
+  <Step title="Reconstruire le conteneur">
+    Ouvrez la Palette de commandes VS Code avec `Cmd+Shift+P` sur Mac ou `Ctrl+Shift+P` sur Windows et Linux, et exécutez **Dev Containers: Rebuild Container**.
 
-Utilisez les devcontainers pour isoler différents projets clients, en veillant à ce que le code et les identifiants ne se mélangent jamais entre les environnements.
+    Pour les autres outils, suivez l'action de reconstruction de cet outil : voir [reconstruction dans GitHub Codespaces](https://docs.github.com/en/codespaces/developing-in-a-codespace/rebuilding-the-container-in-a-codespace), la [CLI Dev Containers](https://github.com/devcontainers/cli), ou la documentation de dev container de votre IDE.
+  </Step>
 
-### Intégration d'équipe
+  <Step title="Se connecter à Claude Code">
+    Ouvrez un terminal dans le conteneur reconstruit et exécutez `claude`, puis suivez l'invite d'authentification.
+  </Step>
+</Steps>
 
-Les nouveaux membres de l'équipe peuvent obtenir un environnement de développement entièrement configuré en quelques minutes, avec tous les outils et paramètres nécessaires préinstallés.
+Ce que vous voyez à l'invite d'authentification dépend de votre fournisseur :
 
-### Environnements CI/CD cohérents
+* **Anthropic** : connectez-vous via un navigateur avec votre compte Claude ou Anthropic Console
+* **[Amazon Bedrock, Google Vertex AI ou Microsoft Foundry](/fr/third-party-integrations)** : Claude Code utilise vos identifiants de fournisseur cloud, sans invite de navigateur
 
-Reflétez votre configuration devcontainer dans les pipelines CI/CD pour assurer que les environnements de développement et de production correspondent.
+Pour les fournisseurs cloud, transmettez les identifiants dans le conteneur en tant que variables d'environnement via `containerEnv`, un secret Codespaces ou l'identité de charge de travail de votre cloud plutôt que de monter les fichiers d'identifiants depuis l'hôte. Voir [Amazon Bedrock](/fr/amazon-bedrock), [Google Vertex AI](/fr/google-vertex-ai) ou [Microsoft Foundry](/fr/microsoft-foundry) pour la chaîne d'identifiants que Claude Code lit.
 
-## Ressources connexes
+Voir [Choisir votre fournisseur d'API](/fr/admin-setup#choose-your-api-provider) pour décider quel chemin convient à votre organisation.
 
-* [Documentation VS Code devcontainers](https://code.visualstudio.com/docs/devcontainers/containers)
-* [Meilleures pratiques de sécurité Claude Code](/fr/security)
-* [Configuration réseau d'entreprise](/fr/network-config)
+<Note>
+  Si la connexion au navigateur se termine mais le rappel n'atteint jamais le conteneur, copiez le code affiché dans le navigateur et collez-le à l'invite `Paste code here if prompted` dans le terminal. Cela peut se produire lorsque la redirection de port de l'éditeur n'achemine pas le rappel localhost.
+</Note>
+
+## Persister l'authentification et les paramètres entre les reconstructions
+
+Par défaut, le répertoire personnel du conteneur est supprimé lors de la reconstruction, les ingénieurs doivent donc se reconnecter à chaque fois. Claude Code stocke son jeton d'authentification, les paramètres utilisateur et l'historique de session sous [`~/.claude`](/fr/claude-directory). Montez un volume nommé à ce chemin pour conserver cet état entre les reconstructions.
+
+L'exemple suivant monte un volume au répertoire personnel de l'utilisateur `node` :
+
+```json devcontainer.json theme={null}
+"mounts": [
+  "source=claude-code-config,target=/home/node/.claude,type=volume"
+]
+```
+
+Remplacez `/home/node` par le répertoire personnel de l'utilisateur `remoteUser` de votre conteneur. Si vous montez le volume ailleurs que `~/.claude`, définissez [`CLAUDE_CONFIG_DIR`](/fr/env-vars) sur le chemin de montage afin que Claude Code y lise et écrive.
+
+Pour isoler l'état par projet plutôt que de partager un volume sur tous les référentiels, incluez la variable `${devcontainerId}` dans le nom de la source. La [configuration de référence](https://github.com/anthropics/claude-code/blob/main/.devcontainer/devcontainer.json) utilise `source=claude-code-config-${devcontainerId}` à cette fin.
+
+Dans GitHub Codespaces, `~/.claude` persiste lors de l'arrêt et du redémarrage d'un codespace, mais est toujours effacé lorsque vous reconstruisez le conteneur, donc le montage de volume ci-dessus s'applique également là. Pour conserver l'authentification entre les codespaces, stockez `ANTHROPIC_API_KEY` ou un `CLAUDE_CODE_OAUTH_TOKEN` de [`claude setup-token`](/fr/authentication#generate-a-long-lived-token) en tant que [secret Codespaces](https://docs.github.com/en/codespaces/managing-your-codespaces/managing-your-account-specific-secrets-for-github-codespaces) ; Codespaces rend les secrets disponibles en tant que variables d'environnement à l'intérieur du conteneur automatiquement.
+
+## Appliquer la politique organisationnelle
+
+Un dev container est un endroit pratique pour appliquer la politique organisationnelle, car la même image et configuration s'exécutent sur la machine de chaque ingénieur.
+
+Claude Code lit `/etc/claude-code/managed-settings.json` sur Linux et l'applique avec la plus haute priorité dans la [hiérarchie des paramètres](/fr/settings#how-scopes-interact), donc les valeurs là-bas remplacent tout ce qu'un ingénieur définit dans `~/.claude` ou le répertoire `.claude/` du projet. Copiez le fichier en place depuis votre Dockerfile :
+
+```dockerfile Dockerfile theme={null}
+RUN mkdir -p /etc/claude-code
+COPY managed-settings.json /etc/claude-code/managed-settings.json
+```
+
+Parce que le Dockerfile vit dans le référentiel, n'importe qui ayant accès en écriture peut modifier ou supprimer cette étape. Pour une politique que les ingénieurs ne peuvent pas contourner en modifiant les fichiers du référentiel, livrez les paramètres gérés via [paramètres gérés par le serveur](/fr/server-managed-settings) ou votre MDM à la place. Voir [fichiers de paramètres gérés](/fr/settings#settings-files) pour les clés disponibles et les autres chemins de livraison.
+
+Pour définir les [variables d'environnement](/fr/env-vars) qui s'appliquent à chaque session Claude Code dans le conteneur, ajoutez-les à `containerEnv` dans votre `devcontainer.json`. L'exemple suivant désactive la télémétrie et les rapports d'erreur et empêche Claude Code de se mettre à jour automatiquement après l'installation :
+
+```json devcontainer.json theme={null}
+"containerEnv": {
+  "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+  "DISABLE_AUTOUPDATER": "1"
+}
+```
+
+La Fonctionnalité Dev Container installe toujours la dernière version de Claude Code. Pour épingler une version spécifique de Claude Code pour des builds reproductibles, installez-la depuis votre Dockerfile avec `npm install -g @anthropic-ai/claude-code@X.Y.Z` au lieu d'utiliser la fonctionnalité, et définissez `DISABLE_AUTOUPDATER` comme indiqué ci-dessus.
+
+Pour la liste complète des contrôles de politique incluant les règles de permission, les restrictions d'outils et les listes blanches de serveurs MCP, voir [Configurer Claude Code pour votre organisation](/fr/admin-setup).
+
+Pour rendre les [serveurs MCP](/fr/mcp) disponibles à l'intérieur du conteneur, définissez-les à [portée du projet](/fr/mcp#mcp-installation-scopes) dans un fichier `.mcp.json` à la racine du référentiel afin qu'ils soient vérifiés aux côtés de votre configuration de dev container. Installez tous les binaires sur lesquels les serveurs stdio locaux dépendent dans votre Dockerfile, et ajoutez les domaines de serveur distant à votre liste blanche réseau.
+
+## Restreindre la sortie réseau
+
+Vous pouvez limiter le trafic sortant du conteneur aux seuls domaines dont Claude Code a besoin. Voir [Exigences d'accès réseau](/fr/network-config#network-access-requirements) pour les domaines d'inférence et d'authentification, et [Services de télémétrie](/fr/data-usage#telemetry-services) pour les connexions de télémétrie et de rapport d'erreur optionnelles et comment les désactiver.
+
+Le conteneur de référence inclut un script [`init-firewall.sh`](https://github.com/anthropics/claude-code/blob/main/.devcontainer/init-firewall.sh) qui bloque tout le trafic sortant sauf les domaines dont Claude Code et vos outils de développement ont besoin. L'exécution d'un pare-feu à l'intérieur d'un conteneur nécessite des permissions supplémentaires, donc la référence ajoute les capacités `NET_ADMIN` et `NET_RAW` via `runArgs`. Le script de pare-feu et ces capacités ne sont pas requis pour Claude Code lui-même : vous pouvez les laisser de côté et vous fier à vos propres contrôles réseau à la place.
+
+## Exécuter sans invites de permission
+
+Parce que le conteneur exécute Claude Code en tant qu'utilisateur non-root et confine l'exécution des commandes au conteneur, vous pouvez passer `--dangerously-skip-permissions` pour un fonctionnement sans surveillance. La CLI rejette cet indicateur lorsqu'elle est lancée en tant que root, donc confirmez que `remoteUser` est défini sur un compte non-root.
+
+Ignorer les invites de permission supprime votre opportunité d'examiner les appels d'outils avant qu'ils ne s'exécutent. Claude peut toujours modifier n'importe quel fichier dans l'espace de travail monté en bind, qui apparaît directement sur votre hôte, et atteindre tout ce que la politique réseau du conteneur permet. Associez cet indicateur aux [restrictions de sortie réseau](#restrict-network-egress) ci-dessus pour limiter ce qu'une session contournée peut atteindre.
+
+Si vous voulez moins d'invites sans désactiver les contrôles de sécurité, envisagez plutôt le [mode auto](/fr/permission-modes#eliminate-prompts-with-auto-mode), qui a un classificateur examinant les actions avant qu'elles ne s'exécutent. Pour empêcher les ingénieurs d'utiliser `--dangerously-skip-permissions` du tout, définissez `permissions.disableBypassPermissionsMode` sur `"disable"` dans les [paramètres gérés](/fr/settings#permission-settings).
+
+## Essayer le conteneur de référence
+
+Le référentiel [`anthropics/claude-code`](https://github.com/anthropics/claude-code/tree/main/.devcontainer) inclut un exemple de dev container qui combine la CLI, le pare-feu de sortie, les volumes persistants et un shell basé sur Zsh. Il est fourni comme exemple fonctionnant plutôt que comme image de base maintenue ; utilisez-le pour voir comment les pièces s'assemblent avant de les appliquer à votre propre configuration.
+
+<Steps>
+  <Step title="Installer les prérequis">
+    Installez VS Code et l'[extension Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers).
+  </Step>
+
+  <Step title="Cloner la référence">
+    Clonez le [référentiel Claude Code](https://github.com/anthropics/claude-code) et ouvrez-le dans VS Code.
+  </Step>
+
+  <Step title="Rouvrir dans le conteneur">
+    Lorsque vous y êtes invité, cliquez sur **Rouvrir dans le conteneur**, ou exécutez **Dev Containers: Reopen in Container** depuis la Palette de commandes.
+  </Step>
+
+  <Step title="Démarrer Claude Code">
+    Une fois la construction du conteneur terminée, ouvrez un terminal avec `` Ctrl+` `` et exécutez `claude` pour vous connecter et démarrer votre première session.
+  </Step>
+</Steps>
+
+Pour utiliser cette configuration avec votre propre projet, copiez le répertoire `.devcontainer/` dans votre référentiel et ajustez le Dockerfile pour votre chaîne d'outils, ou retournez à [Ajouter Claude Code à votre dev container](#add-claude-code-to-your-dev-container) pour ajouter uniquement la fonctionnalité à une configuration que vous avez déjà.
+
+La configuration de référence se compose de trois fichiers. Aucun d'eux n'est requis lorsque vous ajoutez Claude Code à votre propre dev container via la fonctionnalité, mais ils montrent une façon de combiner les pièces.
+
+| Fichier                                                                                                    | Objectif                                                                      |
+| ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| [`devcontainer.json`](https://github.com/anthropics/claude-code/blob/main/.devcontainer/devcontainer.json) | Montages de volume, capacités `runArgs`, extensions VS Code et `containerEnv` |
+| [`Dockerfile`](https://github.com/anthropics/claude-code/blob/main/.devcontainer/Dockerfile)               | Image de base, outils de développement et l'installation de Claude Code       |
+| [`init-firewall.sh`](https://github.com/anthropics/claude-code/blob/main/.devcontainer/init-firewall.sh)   | Bloque tout le trafic réseau sortant sauf les domaines autorisés              |
+
+## Étapes suivantes
+
+Une fois Claude Code en cours d'exécution dans votre dev container, les pages ci-dessous couvrent le reste d'un déploiement organisationnel : choisir un chemin d'authentification, livrer une politique gérée en dehors du référentiel, surveiller l'utilisation et comprendre ce que Claude Code stocke et envoie.
+
+* [Configurer Claude Code pour votre organisation](/fr/admin-setup) : choisir un fournisseur d'authentification, décider comment la politique atteint les appareils et planifier le déploiement
+* [Paramètres gérés par le serveur](/fr/server-managed-settings) : livrer une politique gérée depuis la console d'administration Claude.ai afin que les ingénieurs ne puissent pas la contourner en modifiant les fichiers du référentiel
+* [Surveiller l'utilisation et l'activité d'audit](/fr/monitoring-usage) : exporter les métriques OpenTelemetry et examiner ce que votre équipe exécute
+* [Exigences d'accès réseau](/fr/network-config#network-access-requirements) : la liste complète des domaines pour les proxies et les pare-feu
+* [Services de télémétrie et désactivation](/fr/data-usage#telemetry-services) : ce que Claude Code envoie par défaut et les variables d'environnement qui le désactivent
+* [Explorer le répertoire `.claude`](/fr/claude-directory) : ce que le montage de volume contient, y compris les identifiants, les paramètres et l'historique de session
+* [Modèle de sécurité](/fr/security) : comment le système de permission de Claude Code, le sandboxing et les protections contre l'injection de prompt s'assemblent
+* [Modes de permission](/fr/permission-modes) : la gamme complète du mode plan au mode auto au contournement, et quand utiliser chacun

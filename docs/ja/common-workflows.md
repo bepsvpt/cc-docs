@@ -842,12 +842,14 @@ Worktree 分離はデフォルトで git で機能します。SVN、Perforce、M
   <Step title="オプションでマッチャーを絞り込む">
     デフォルトでは、フックはすべての通知タイプで発火します。特定のイベントのみで発火させるには、`matcher` フィールドを次のいずれかの値に設定します：
 
-    | マッチャー                | 発火する場合                      |
-    | :------------------- | :-------------------------- |
-    | `permission_prompt`  | Claude がツール使用を承認する必要がある場合   |
-    | `idle_prompt`        | Claude が完了し、次のプロンプトを待っている場合 |
-    | `auth_success`       | 認証が完了する場合                   |
-    | `elicitation_dialog` | Claude があなたに質問している場合        |
+    | マッチャー                  | 発火する場合                      |
+    | :--------------------- | :-------------------------- |
+    | `permission_prompt`    | Claude がツール使用を承認する必要がある場合   |
+    | `idle_prompt`          | Claude が完了し、次のプロンプトを待っている場合 |
+    | `auth_success`         | 認証が完了する場合                   |
+    | `elicitation_dialog`   | MCP サーバーが誘導フォームを開く場合        |
+    | `elicitation_complete` | MCP 誘導フォームが送信またはキャンセルされる場合  |
+    | `elicitation_response` | MCP 誘導応答がサーバーに送り返される場合      |
   </Step>
 
   <Step title="フックを検証する">

@@ -910,4 +910,4 @@ Claude Code는 파일 읽기, 편집, 검색, 명령 실행 및 subagents 조율
 * [권한](/ko/permissions): 권한 시스템, 규칙 구문, 도구 특정 패턴 및 관리형 정책
 * [인증](/ko/authentication): Claude Code에 대한 사용자 액세스 설정
 * [구성 디버깅](/ko/debug-your-config): 설정, 훅 또는 MCP 서버가 적용되지 않는 이유를 진단합니다
-* [문제 해결](/ko/troubleshooting): 설치, 인증 및 플랫폼 문제
+* [설치 및 로그인 문제 해결](/ko/troubleshoot-install): 설치, 인증 및 플랫폼 문제

@@ -247,7 +247,7 @@ Você pode ver qual modelo está usando atualmente de várias maneiras:
 
 ## Adicionar uma opção de modelo personalizado
 
-Use `ANTHROPIC_CUSTOM_MODEL_OPTION` para adicionar uma única entrada personalizada ao seletor `/model` sem substituir os aliases integrados. Isso é útil para implantações de gateway LLM ou teste de IDs de modelo que Claude Code não lista por padrão.
+Use `ANTHROPIC_CUSTOM_MODEL_OPTION` para adicionar uma única entrada personalizada ao seletor `/model` sem substituir os aliases integrados. Isso é útil para testar IDs de modelo que Claude Code não lista por padrão. Para implantações de gateway LLM, Claude Code popula o seletor automaticamente a partir do endpoint `/v1/models` do gateway, portanto essa variável é necessária apenas quando a descoberta não retorna o modelo que você deseja. Consulte [Seleção de modelo de gateway LLM](/pt/llm-gateway#model-selection).
 
 Este exemplo define todas as três variáveis para tornar uma implantação Opus roteada por gateway selecionável:
 

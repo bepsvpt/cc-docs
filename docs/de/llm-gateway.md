@@ -37,13 +37,29 @@ Das Nichtweiterleiten von Headern oder das Nichtbeibehalten von Body-Feldern kan
   Claude Code bestimmt, welche Funktionen aktiviert werden sollen, basierend auf dem API-Format. Bei Verwendung des Anthropic Messages-Formats mit Bedrock oder Vertex müssen Sie möglicherweise die Umgebungsvariable `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1` setzen.
 </Note>
 
+**Request-Header**
+
+Claude Code enthält die folgenden Header bei jeder API-Anfrage:
+
+| Header                     | Beschreibung                                                                                                                                                                                           |
+| :------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `X-Claude-Code-Session-Id` | Ein eindeutiger Bezeichner für die aktuelle Claude Code-Sitzung. Proxies können dies verwenden, um alle API-Anfragen aus einer einzelnen Sitzung zu aggregieren, ohne den Request-Body zu analysieren. |
+
+Claude Code stellt auch einen kurzen Attributionsblock dem System-Prompt voran, der die Client-Version und einen Fingerabdruck aus dem Gespräch enthält. Die Anthropic API entfernt diesen Block vor der Verarbeitung, sodass er sich nicht auf First-Party-Prompt-Caching auswirkt. Wenn Ihr Gateway seinen eigenen Prompt-Cache mit dem vollständigen Request-Body als Schlüssel implementiert, setzen Sie [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/de/env-vars), um ihn auszulassen.
+
 ## Konfiguration
 
 ### Modellauswahl
 
 Standardmäßig verwendet Claude Code Standard-Modellnamen für das ausgewählte API-Format.
 
-Wenn Sie benutzerdefinierte Modellnamen in Ihrem Gateway konfiguriert haben, verwenden Sie die in [Modellkonfiguration](/de/model-config) dokumentierten Umgebungsvariablen, um Ihre benutzerdefinierten Namen zu entsprechen.
+Wenn `ANTHROPIC_BASE_URL` auf ein Gateway verweist, das das Anthropic Messages-Format bereitstellt, fragt Claude Code beim Start den `/v1/models`-Endpunkt des Gateways ab und fügt die zurückgegebenen Modelle zur `/model`-Auswahl hinzu. Jeder erkannte Eintrag ist mit „Aus Gateway" gekennzeichnet und verwendet das Feld `display_name` aus der Antwort, wenn eines bereitgestellt wird. Dies erfordert Claude Code v2.1.126 oder später.
+
+Die Erkennung gilt nur für das Anthropic Messages-Format. Sie wird nicht für Bedrock- oder Vertex-Pass-Through-Endpunkte ausgeführt und wird nicht ausgeführt, wenn `ANTHROPIC_BASE_URL` nicht gesetzt ist oder auf `api.anthropic.com` verweist.
+
+Die Erkennungsanfrage authentifiziert sich auf die gleiche Weise wie Inferenzanfragen: Sie sendet `ANTHROPIC_AUTH_TOKEN` als Bearer-Token oder `ANTHROPIC_API_KEY` als `x-api-key`-Header, wenn kein Auth-Token gesetzt ist, zusammen mit allen Headern aus `ANTHROPIC_CUSTOM_HEADERS`. Nur Modelle, deren ID mit `claude` oder `anthropic` beginnt, werden zur Auswahl hinzugefügt. Die Ergebnisse werden in `~/.claude/cache/gateway-models.json` zwischengespeichert und bei jedem Start aktualisiert. Wenn die Anfrage fehlschlägt oder das Gateway `/v1/models` nicht implementiert, wird die Auswahl auf die zwischengespeicherte Liste vom vorherigen Start oder auf die integrierte Modellliste zurückgesetzt.
+
+Wenn Ihr Gateway Modellnamen verwendet, die nicht dem Erkennungsfilter entsprechen, verwenden Sie die in [Modellkonfiguration](/de/model-config) dokumentierten Umgebungsvariablen, um sie manuell hinzuzufügen.
 
 ## LiteLLM-Konfiguration
 

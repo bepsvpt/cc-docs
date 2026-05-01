@@ -842,12 +842,14 @@ Quando você inicia uma tarefa de longa duração e muda para outra janela, voc�
   <Step title="Opcionalmente, estreite o matcher">
     Por padrão, o hook dispara em todos os tipos de notificação. Para disparar apenas para eventos específicos, defina o campo `matcher` para um destes valores:
 
-    | Matcher              | Dispara quando                                      |
-    | :------------------- | :-------------------------------------------------- |
-    | `permission_prompt`  | Claude precisa que você aprove um uso de ferramenta |
-    | `idle_prompt`        | Claude terminou e está esperando seu próximo prompt |
-    | `auth_success`       | Autenticação completa                               |
-    | `elicitation_dialog` | Claude está fazendo uma pergunta                    |
+    | Matcher                | Dispara quando                                                |
+    | :--------------------- | :------------------------------------------------------------ |
+    | `permission_prompt`    | Claude precisa que você aprove um uso de ferramenta           |
+    | `idle_prompt`          | Claude terminou e está esperando seu próximo prompt           |
+    | `auth_success`         | Autenticação completa                                         |
+    | `elicitation_dialog`   | Um servidor MCP abre um formulário de elicitação              |
+    | `elicitation_complete` | Um formulário de elicitação MCP é enviado ou descartado       |
+    | `elicitation_response` | Uma resposta de elicitação MCP é enviada de volta ao servidor |
   </Step>
 
   <Step title="Verifique o hook">

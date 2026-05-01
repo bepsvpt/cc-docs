@@ -64,6 +64,8 @@
 
 可选的 `refreshInterval` 字段除了[事件驱动的更新](#how-status-lines-work)外，每 N 秒重新运行一次你的命令。最小值为 `1`。当你的状态行显示基于时间的数据（如时钟）或后台子代理在主会话空闲时更改 git 状态时，设置此选项。如果不设置，则仅在事件上运行。
 
+可选的 `hideVimModeIndicator` 字段会抑制提示符下方的内置 `-- INSERT --` 文本。当你的脚本自己呈现 [`vim.mode`](#available-data) 时，将此设置为 `true`，这样模式就不会显示两次。
+
 ### 禁用状态行
 
 运行 `/statusline` 并要求它删除或清除你的状态行（例如，`/statusline delete`、`/statusline clear`、`/statusline remove it`）。你也可以手动从 settings.json 中删除 `statusLine` 字段。
@@ -914,7 +916,7 @@ Bash 示例使用 [`jq`](https://jqlang.github.io/jq/) 来解析 JSON。Python �
 
 ### Windows 配置
 
-在 Windows 上，Claude Code 通过 Git Bash 运行状态行命令。你可以从该 shell 调用 PowerShell：
+在 Windows 上，Claude Code 通过 Git Bash 运行状态行命令（如果已安装 Git Bash），或在没有 Git Bash 时通过 PowerShell 运行。要将 PowerShell 脚本作为状态行运行，请通过 `powershell` 调用它；这在任一 shell 中都有效：
 
 <CodeGroup>
   ```json settings.json theme={null}
@@ -941,7 +943,7 @@ Bash 示例使用 [`jq`](https://jqlang.github.io/jq/) 来解析 JSON。Python �
   ```
 </CodeGroup>
 
-或直接运行 Bash 脚本：
+或者，当安装了 Git Bash 时，直接运行 Bash 脚本：
 
 <CodeGroup>
   ```json settings.json theme={null}

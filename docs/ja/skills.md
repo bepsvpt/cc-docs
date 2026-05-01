@@ -40,13 +40,12 @@ Claude Code には、すべてのセッションで利用可能な一連のバ�
   </Step>
 
   <Step title="SKILL.md を記述する">
-    すべてのスキルには `SKILL.md` ファイルが必要です。2 つの部分があります。YAML フロントマター（`---` マーカー間）は Claude にスキルをいつ使用するかを伝え、マークダウンコンテンツはスキルが呼び出されるときに Claude が従う指示です。`name` フィールドは `/slash-command` になり、`description` は Claude がスキルを自動的に読み込むかどうかを決定するのに役立ちます。
+    すべてのスキルには `SKILL.md` ファイルが必要です。2 つの部分があります。YAML フロントマター（`---` マーカー間）は Claude にスキルをいつ使用するかを伝え、マークダウンコンテンツはスキルが呼び出されるときに Claude が従う指示です。ディレクトリ名は `/slash-command` になり、`description` は Claude がスキルを自動的に読み込むかどうかを決定するのに役立ちます。
 
     `~/.claude/skills/explain-code/SKILL.md` を作成します：
 
     ```yaml theme={null}
     ---
-    name: explain-code
     description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
     ---
 
@@ -215,6 +214,7 @@ Your skill instructions here...
 | `$N`                   | `$ARGUMENTS[N]` の短縮形（例：最初の引数の場合は `$0`、2 番目の引数の場合は `$1`）。                                                                                                                  |
 | `$name`                | [`arguments`](#frontmatter-reference) フロントマターリストで宣言された名前付き引数。名前は順序で位置にマップされるため、`arguments: [issue, branch]` の場合、プレースホルダー `$issue` は最初の引数に展開され、`$branch` は 2 番目の引数に展開されます。 |
 | `${CLAUDE_SESSION_ID}` | 現在のセッション ID。ログ、セッション固有のファイルの作成、またはスキル出力とセッションの相関付けに便利です。                                                                                                                  |
+| `${CLAUDE_EFFORT}`     | 現在の努力レベル：`low`、`medium`、`high`、`xhigh`、または `max`。スキル指示をアクティブな努力設定に適応させるために使用します。                                                                                          |
 | `${CLAUDE_SKILL_DIR}`  | スキルの `SKILL.md` ファイルを含むディレクトリ。プラグインスキルの場合、これはプラグインルートではなく、プラグイン内のスキルのサブディレクトリです。bash インジェクションコマンドでこれを使用して、現在の作業ディレクトリに関係なく、スキルにバンドルされたスクリプトまたはファイルを参照します。                 |
 
 インデックス付き引数はシェルスタイルのクォートを使用するため、複数単語の値をシングル引数として渡すためにクォートで囲みます。たとえば、`/my-skill "hello world" second` は `$0` を `hello world` に、`$1` を `second` に展開します。`$ARGUMENTS` プレースホルダーは常に、入力されたとおりの完全な引数文字列に展開されます。

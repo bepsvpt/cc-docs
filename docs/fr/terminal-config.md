@@ -48,6 +48,8 @@ Certains raccourcis de Claude Code utilisent la touche Option, comme Option+Entr
 
   <Tab title="iTerm2">
     Ouvrez Paramètres → Profils → Touches → Général et définissez la touche Option gauche et la touche Option droite sur « Esc+ ».
+
+    L'exécution de `/terminal-setup` dans iTerm2 active « Applications in terminal may access clipboard » sous Paramètres → Général → Sélection afin que la commande `/copy` puisse écrire dans votre presse-papiers système. La commande détecte iTerm2 même lorsqu'elle est exécutée depuis tmux. Redémarrez iTerm2 pour que la modification prenne effet.
   </Tab>
 
   <Tab title="VS Code">

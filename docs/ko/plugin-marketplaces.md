@@ -173,12 +173,15 @@
 
 ### 선택적 필드
 
-| 필드                                    | 유형     | 설명                                                                                                                                                                          |
-| :------------------------------------ | :----- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `metadata.description`                | string | 간단한 마켓플레이스 설명                                                                                                                                                               |
-| `metadata.version`                    | string | 마켓플레이스 버전                                                                                                                                                                   |
-| `metadata.pluginRoot`                 | string | 상대 플러그인 소스 경로에 앞에 붙는 기본 디렉터리(예: `"./plugins"`를 사용하면 `"source": "./plugins/formatter"` 대신 `"source": "formatter"`를 작성할 수 있습니다)                                               |
-| `allowCrossMarketplaceDependenciesOn` | array  | 이 마켓플레이스의 플러그인이 의존할 수 있는 다른 마켓플레이스. 여기에 나열되지 않은 마켓플레이스의 종속성은 설치 시 차단됩니다. [다른 마켓플레이스의 플러그인에 의존](/ko/plugin-dependencies#depend-on-a-plugin-from-another-marketplace)을 참조하세요. |
+| 필드                                    | 유형     | 설명                                                                                                                                                                             |
+| :------------------------------------ | :----- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `$schema`                             | string | 편집기 자동 완성 및 유효성 검사를 위한 JSON Schema URL입니다. Claude Code는 로드 시 이 필드를 무시합니다.                                                                                                      |
+| `description`                         | string | 간단한 마켓플레이스 설명                                                                                                                                                                  |
+| `version`                             | string | 마켓플레이스 매니페스트 버전                                                                                                                                                                |
+| `metadata.pluginRoot`                 | string | 상대 플러그인 소스 경로에 앞에 붙는 기본 디렉터리(예: `"./plugins"`를 사용하면 `"source": "./plugins/formatter"` 대신 `"source": "formatter"`를 작성할 수 있습니다)                                                  |
+| `allowCrossMarketplaceDependenciesOn` | array  | 이 마켓플레이스의 플러그인이 의존할 수 있는 다른 마켓플레이스입니다. 여기에 나열되지 않은 마켓플레이스의 종속성은 설치 시 차단됩니다. [다른 마켓플레이스의 플러그인에 의존](/ko/plugin-dependencies#depend-on-a-plugin-from-another-marketplace)을 참조하세요. |
+
+`description` 및 `version`은 이전 버전과의 호환성을 위해 `metadata` 아래에서도 허용됩니다.
 
 ## 플러그인 항목
 
@@ -939,7 +942,7 @@ claude plugin marketplace update [name]
 
 * 마켓플레이스 URL이 액세스 가능한지 확인합니다
 * `.claude-plugin/marketplace.json`이 지정된 경로에 있는지 확인합니다
-* `claude plugin validate` 또는 `/plugin validate`를 사용하여 JSON 구문이 유효한지 확인합니다
+* `claude plugin validate` 또는 `/plugin validate`를 사용하여 JSON 구문이 유효하고 frontmatter가 잘 형성되었는지 확인합니다
 * 개인 저장소의 경우 액세스 권한이 있는지 확인합니다
 
 ### 마켓플레이스 검증 오류
@@ -949,7 +952,7 @@ claude plugin marketplace update [name]
 | 오류                                                | 원인                                  | 해결책                                                                |
 | :------------------------------------------------ | :---------------------------------- | :----------------------------------------------------------------- |
 | `File not found: .claude-plugin/marketplace.json` | 누락된 매니페스트                           | 필수 필드를 사용하여 `.claude-plugin/marketplace.json` 생성                   |
-| `Invalid JSON syntax: Unexpected token...`        | JSON 구문 오류 marketplace.json에서       | 누락된 쉼표, 추가 쉼표 또는 인용되지 않은 문자열 확인                                    |
+| `Invalid JSON syntax: Unexpected token...`        | marketplace.json의 JSON 구문 오류        | 누락된 쉼표, 추가 쉼표 또는 인용되지 않은 문자열 확인                                    |
 | `Duplicate plugin name "x" found in marketplace`  | 두 플러그인이 동일한 이름을 공유합니다               | 각 플러그인에 고유한 `name` 값 지정                                            |
 | `plugins[0].source: Path contains ".."`           | 소스 경로에 `..` 포함                      | 마켓플레이스 루트에 상대적인 경로를 `..` 없이 사용합니다. [상대 경로](#relative-paths) 참조     |
 | `YAML frontmatter failed to parse: ...`           | skill, agent 또는 command 파일의 YAML 무효 | frontmatter 블록의 YAML 구문을 수정합니다. 런타임에 이 파일은 메타데이터 없이 로드됩니다.         |
@@ -958,7 +961,7 @@ claude plugin marketplace update [name]
 **경고**(차단하지 않음):
 
 * `Marketplace has no plugins defined`: `plugins` 배열에 최소한 하나의 플러그인 추가
-* `No marketplace description provided`: 사용자가 마켓플레이스를 이해하도록 돕기 위해 `metadata.description` 추가
+* `No marketplace description provided`: 사용자가 마켓플레이스를 이해하도록 돕기 위해 최상위 `description` 추가
 * `Plugin name "x" is not kebab-case`: 플러그인 이름에 대문자, 공백 또는 특수 문자가 포함되어 있습니다. 소문자, 숫자 및 하이픈만 사용하도록 이름을 바꿉니다(예: `my-plugin`). Claude Code는 다른 형식을 허용하지만 Claude.ai 마켓플레이스 동기화는 이를 거부합니다.
 
 ### 플러그인 설치 실패

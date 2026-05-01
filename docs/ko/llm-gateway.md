@@ -37,13 +37,29 @@ Gateway는 클라이언트에 다음 API 형식 중 최소 하나를 노출해�
   Claude Code는 API 형식을 기반으로 활성화할 기능을 결정합니다. Bedrock 또는 Vertex와 함께 Anthropic Messages 형식을 사용할 때 환경 변수 `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`을 설정해야 할 수 있습니다.
 </Note>
 
+**요청 헤더**
+
+Claude Code는 모든 API 요청에 다음 헤더를 포함합니다:
+
+| 헤더                         | 설명                                                                                         |
+| :------------------------- | :----------------------------------------------------------------------------------------- |
+| `X-Claude-Code-Session-Id` | 현재 Claude Code 세션의 고유 식별자입니다. 프록시는 이를 사용하여 요청 본문을 구문 분석하지 않고 단일 세션의 모든 API 요청을 집계할 수 있습니다. |
+
+Claude Code는 또한 클라이언트 버전과 대화에서 파생된 지문을 포함하는 짧은 속성 블록을 시스템 프롬프트 앞에 추가합니다. Anthropic API는 처리 전에 이 블록을 제거하므로 자사 프롬프트 캐싱에 영향을 주지 않습니다. Gateway가 전체 요청 본문을 기반으로 키가 지정된 자체 프롬프트 캐시를 구현하는 경우 [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/ko/env-vars)을 설정하여 이를 생략합니다.
+
 ## 구성
 
 ### 모델 선택
 
 기본적으로 Claude Code는 선택한 API 형식에 대해 표준 모델 이름을 사용합니다.
 
-Gateway에서 사용자 정의 모델 이름을 구성한 경우 [모델 구성](/ko/model-config)에 문서화된 환경 변수를 사용하여 사용자 정의 이름과 일치시킵니다.
+`ANTHROPIC_BASE_URL`이 Anthropic Messages 형식을 노출하는 게이트웨이를 가리킬 때, Claude Code는 시작 시 게이트웨이의 `/v1/models` 엔드포인트를 쿼리하고 반환된 모델을 `/model` 선택기에 추가합니다. 발견된 각 항목은 "From gateway"로 레이블이 지정되며, 응답에서 제공될 때 `display_name` 필드를 사용합니다. 이는 Claude Code v2.1.126 이상이 필요합니다.
+
+발견은 Anthropic Messages 형식에만 적용됩니다. Bedrock 또는 Vertex 통과 엔드포인트에서는 실행되지 않으며, `ANTHROPIC_BASE_URL`이 설정되지 않았거나 `api.anthropic.com`을 가리킬 때도 실행되지 않습니다.
+
+발견 요청은 추론 요청과 동일한 방식으로 인증됩니다. 인증 토큰이 설정되지 않았을 때 `ANTHROPIC_AUTH_TOKEN`을 베어러 토큰으로 또는 `ANTHROPIC_API_KEY`를 `x-api-key` 헤더로 보내며, `ANTHROPIC_CUSTOM_HEADERS`의 모든 헤더와 함께 보냅니다. ID가 `claude` 또는 `anthropic`으로 시작하는 모델만 선택기에 추가됩니다. 결과는 `~/.claude/cache/gateway-models.json`에 캐시되며 각 시작 시 새로고침됩니다. 요청이 실패하거나 게이트웨이가 `/v1/models`을 구현하지 않으면, 선택기는 이전 시작의 캐시된 목록 또는 기본 제공 모델 목록으로 폴백됩니다.
+
+게이트웨이가 발견 필터와 일치하지 않는 모델 이름을 사용하는 경우, [모델 구성](/ko/model-config)에 문서화된 환경 변수를 사용하여 수동으로 추가합니다.
 
 ## LiteLLM 구성
 

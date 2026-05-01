@@ -25,7 +25,15 @@
 
 ### 工作階段品質調查
 
-當您在 Claude Code 中看到「Claude 在此工作階段中表現如何？」提示時，回應此調查（包括選擇「關閉」），只會記錄您的數字評分（1、2、3 或關閉）。我們不會作為此調查的一部分收集或儲存任何對話文字記錄、輸入、輸出或其他工作階段資料。與豎起大拇指/向下大拇指回饋或 `/feedback` 報告不同，此工作階段品質調查是一個簡單的產品滿意度指標。您對此調查的回應不會影響您的資料訓練偏好設定，也不能用於訓練我們的 AI 模型。
+當您在 Claude Code 中看到「Claude 在此工作階段中表現如何？」提示時，回應此調查（包括選擇「關閉」），只會記錄您的評分。我們不會作為此評分提示本身的一部分收集或儲存任何對話文字記錄、輸入、輸出或其他工作階段資料。與豎起大拇指/向下大拇指回饋或 `/feedback` 報告不同，此工作階段品質調查是一個簡單的產品滿意度指標。
+
+在評分提示之後，您可能會看到一個單獨的後續提問「Anthropic 可以查看您的工作階段文字記錄以幫助我們改進 Claude Code 嗎？」。這是一個與評分不同的可選第二步：
+
+* **是**：將您的對話文字記錄、任何子代理文字記錄和磁碟中的原始工作階段日誌檔案上傳至 Anthropic。已知的 API 金鑰和權杖模式在上傳前會被編輯。原始程式碼、檔案內容和其他對話內容會按原樣上傳。共享的文字記錄會保留最多 6 個月。
+* **否**：拒絕而不發送任何內容
+* **不再詢問**：拒絕並停止此後續提問在未來工作階段中出現
+
+除非您明確選擇**是**，否則不會上傳任何內容。具有[零資料保留](/zh-TW/zero-data-retention)的組織，或組織政策停用產品回饋的組織，永遠不會看到此後續提問。您對此調查的回應（包括評分提示後提交的工作階段文字記錄）不會影響您的資料訓練偏好設定，也不能用於訓練我們的 AI 模型。
 
 若要停用這些調查，請設定 `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`。當設定 `DISABLE_TELEMETRY` 或 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 時，調查也會停用。若要控制頻率而不是停用，請在您的設定檔中設定 [`feedbackSurveyRate`](/zh-TW/settings#available-settings) 為 `0` 到 `1` 之間的機率。
 
@@ -106,6 +114,8 @@ Claude Code 從使用者的機器連接到 Sentry 進行操作錯誤記錄。資
 | **WebFetch 網域安全檢查**            | 預設開啟。<br />[設定](/zh-TW/settings)中的 `skipWebFetchPreflight: true` 以停用。 | 預設開啟。<br />[設定](/zh-TW/settings)中的 `skipWebFetchPreflight: true` 以停用。 | 預設開啟。<br />[設定](/zh-TW/settings)中的 `skipWebFetchPreflight: true` 以停用。 | 預設開啟。<br />[設定](/zh-TW/settings)中的 `skipWebFetchPreflight: true` 以停用。 |
 
 所有環境變數都可以簽入 `settings.json`（請參閱[設定參考](/zh-TW/settings)）。
+
+自 v2.1.126 起，當主機平台設定 `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST` 時，Statsig 指標在 Vertex、Bedrock 和 Foundry 上預設為開啟，並遵循標準 `DISABLE_TELEMETRY` 選擇退出。Sentry 錯誤報告和 `/feedback` 報告在這些提供者上仍預設為關閉。
 
 ### WebFetch 網域安全檢查
 

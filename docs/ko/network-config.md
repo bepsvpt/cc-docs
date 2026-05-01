@@ -117,6 +117,8 @@ Claude Code는 다음 URL에 대한 액세스가 필요합니다. 특히 컨테�
 
 npm을 통해 Claude Code를 설치하거나 자신의 바이너리 배포를 관리하는 경우 최종 사용자는 `downloads.claude.ai` 또는 `storage.googleapis.com`에 대한 액세스가 필요하지 않을 수 있습니다.
 
+Claude Code는 기본적으로 선택적 운영 원격 분석을 전송하며, 환경 변수를 사용하여 이를 비활성화할 수 있습니다. 허용 목록을 최종 확정하기 전에 원격 분석을 비활성화하는 방법은 [원격 분석 서비스](/ko/data-usage#telemetry-services)를 참조하십시오.
+
 [Amazon Bedrock](/ko/amazon-bedrock), [Google Vertex AI](/ko/google-vertex-ai) 또는 [Microsoft Foundry](/ko/microsoft-foundry)를 사용할 때 모델 트래픽 및 인증은 `api.anthropic.com`, `claude.ai` 또는 `platform.claude.com` 대신 공급자로 이동합니다. WebFetch 도구는 [설정](/ko/settings)에서 `skipWebFetchPreflight: true`를 설정하지 않는 한 [도메인 안전 검사](/ko/data-usage#webfetch-domain-safety-check)를 위해 여전히 `api.anthropic.com`을 호출합니다.
 
 [웹의 Claude Code](/ko/claude-code-on-the-web) 및 [Code Review](/ko/code-review)는 Anthropic 관리 인프라에서 리포지토리에 연결합니다. GitHub Enterprise Cloud 조직이 IP 주소로 액세스를 제한하는 경우 [설치된 GitHub Apps에 대한 IP 허용 목록 상속 활성화](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#allowing-access-by-github-apps)를 수행하십시오. Claude GitHub App은 IP 범위를 등록하므로 이 설정을 활성화하면 수동 구성 없이 액세스할 수 있습니다. 대신 [범위를 허용 목록에 수동으로 추가](https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-allowed-ip-addresses-for-your-organization#adding-an-allowed-ip-address)하거나 다른 방화벽을 구성하려면 [Anthropic API IP 주소](https://platform.claude.com/docs/en/api/ip-addresses)를 참조하십시오.

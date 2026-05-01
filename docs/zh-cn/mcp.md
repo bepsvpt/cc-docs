@@ -333,6 +333,8 @@ Claude Code 支持 MCP `list_changed` 通知，允许 MCP 服务器动态更新�
 
 如果 HTTP 或 SSE 服务器在会话中途断开连接，Claude Code 会自动以指数退避方式重新连接：最多五次尝试，从一秒延迟开始，每次加倍。服务器在 `/mcp` 中显示为待处理状态，同时重新连接正在进行中。五次失败尝试后，服务器被标记为失败，您可以从 `/mcp` 手动重试。Stdio 服务器是本地进程，不会自动重新连接。
 
+相同的退避策略也适用于 HTTP 或 SSE 服务器在启动时初始连接失败的情况。从 v2.1.121 开始，Claude Code 在瞬时错误（如 5xx 响应、连接被拒绝或超时）上最多重试初始连接三次，如果仍然无法连接，则将服务器标记为失败。身份验证和未找到错误不会重试，因为它们需要配置更改才能解决。
+
 ### 使用频道推送消息
 
 MCP 服务器也可以直接将消息推送到您的会话中，以便 Claude 可以对外部事件（如 CI 结果、监控警报或聊天消息）做出反应。要启用此功能，您的服务器声明 `claude/channel` 功能，并在启动时使用 `--channels` 标志选择加入。请参阅[频道](/zh-CN/channels)以使用官方支持的频道，或[频道参考](/zh-CN/channels-reference)以构建您自己的频道。
@@ -1158,6 +1160,26 @@ ENABLE_TOOL_SEARCH=false claude
   }
 }
 ```
+
+### 豁免服务器延迟
+
+如果服务器的工具应始终对 Claude 可见而无需搜索步骤，请在该服务器的配置中将 `alwaysLoad` 设置为 `true`。来自该服务器的每个工具随后在会话启动时加载到上下文中，无论 `ENABLE_TOOL_SEARCH` 设置如何。对于 Claude 在每个回合都需要的少量工具，请使用此选项，因为每个预先加载的工具会消耗本来可用于您的对话的上下文。
+
+以下 `.mcp.json` 条目豁免一个 HTTP 服务器，同时保持其他服务器延迟：
+
+```json theme={null}
+{
+  "mcpServers": {
+    "core-tools": {
+      "type": "http",
+      "url": "https://mcp.example.com/mcp",
+      "alwaysLoad": true
+    }
+  }
+}
+```
+
+`alwaysLoad` 字段在所有服务器类型上可用，需要 Claude Code v2.1.121 或更高版本。MCP 服务器也可以通过在工具的 `_meta` 对象中包含 `"anthropic/alwaysLoad": true` 来标记单个工具为始终加载，这对该工具仅具有相同的效果。
 
 ## 将 MCP 提示用作命令
 

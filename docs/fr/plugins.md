@@ -332,7 +332,7 @@ Quand votre plugin est prêt à être partagé :
 3. **Créez ou utilisez une marketplace** : Distribuez via des [marketplaces de plugins](/fr/plugin-marketplaces) pour l'installation
 4. **Testez avec d'autres** : Faites tester le plugin par les membres de l'équipe avant une distribution plus large
 
-Une fois que votre plugin est dans une marketplace, d'autres peuvent l'installer en utilisant les instructions dans [Découvrir et installer des plugins](/fr/discover-plugins).
+Une fois que votre plugin est dans une marketplace, d'autres peuvent l'installer en utilisant les instructions dans [Découvrir et installer des plugins](/fr/discover-plugins). Pour garder un plugin interne à votre équipe, hébergez la marketplace dans un [référentiel privé](/fr/plugin-marketplaces#private-repositories).
 
 ### Soumettez votre plugin à la marketplace officielle
 

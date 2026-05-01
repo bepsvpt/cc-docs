@@ -87,6 +87,10 @@ Su **Linux e WSL2**, installa prima i pacchetti richiesti:
   </Tab>
 </Tabs>
 
+WSL1 non supporta il sandboxing perché manca dei primitivi dello spazio dei nomi Linux richiesti. Se vedi `Sandboxing requires WSL2`, aggiorna la tua distribuzione a WSL2 o esegui Claude Code senza sandboxing.
+
+Su WSL2, i comandi sandboxati non possono avviare binari Windows come `cmd.exe`, `powershell.exe`, o qualsiasi cosa sotto `/mnt/c/`. WSL li passa all'host Windows su un socket Unix, che la sandbox blocca. Se un comando ha bisogno di invocare un binario Windows, aggiungilo a [`excludedCommands`](/it/settings#sandbox-settings) in modo che venga eseguito al di fuori della sandbox.
+
 ### Abilita il sandboxing
 
 È possibile abilitare il sandboxing eseguendo il comando `/sandbox`:
@@ -97,13 +101,13 @@ Su **Linux e WSL2**, installa prima i pacchetti richiesti:
 
 Questo apre un menu in cui è possibile scegliere tra le modalità sandbox. Se le dipendenze richieste sono mancanti (come `bubblewrap` o `socat` su Linux), il menu visualizza le istruzioni di installazione per la piattaforma.
 
-Per impostazione predefinita, se la sandbox non può avviarsi (dipendenze mancanti, piattaforma non supportata o restrizioni della piattaforma), Claude Code mostra un avviso ed esegue i comandi senza sandboxing. Per rendere questo un errore grave, imposta [`sandbox.failIfUnavailable`](/it/settings#sandbox-settings) su `true`. Questo è destinato a distribuzioni gestite che richiedono il sandboxing come gate di sicurezza.
+Per impostazione predefinita, se la sandbox non può avviarsi (dipendenze mancanti o piattaforma non supportata), Claude Code mostra un avviso ed esegue i comandi senza sandboxing. Per rendere questo un errore grave, imposta [`sandbox.failIfUnavailable`](/it/settings#sandbox-settings) su `true`. Questo è destinato a distribuzioni gestite che richiedono il sandboxing come gate di sicurezza.
 
 ### Modalità sandbox
 
 Claude Code offre due modalità sandbox:
 
-**Modalità auto-allow**: I comandi Bash tenteranno di eseguire all'interno della sandbox e sono automaticamente consentiti senza richiedere autorizzazione. I comandi che non possono essere sandboxati (come quelli che necessitano di accesso alla rete a host non consentiti) ricadono nel flusso di autorizzazione regolare. Le regole di chiesta/negazione esplicite che hai configurato sono sempre rispettate.
+**Modalità auto-allow**: I comandi Bash tenteranno di eseguire all'interno della sandbox e sono automaticamente consentiti senza richiedere autorizzazione. I comandi che non possono essere sandboxati (come quelli che necessitano di accesso alla rete a host non consentiti) ricadono nel flusso di autorizzazione regolare. Le regole di negazione esplicita sono sempre rispettate, e i comandi `rm` o `rmdir` che puntano a `/`, alla tua directory home o ad altri percorsi critici del sistema attivano comunque una richiesta di autorizzazione. Le regole Ask si applicano solo ai comandi che ricadono nel flusso di autorizzazione regolare.
 
 **Modalità autorizzazioni regolari**: Tutti i comandi bash passano attraverso il flusso di autorizzazione standard, anche quando sandboxati. Questo fornisce più controllo ma richiede più approvazioni.
 
@@ -146,7 +150,7 @@ I prefissi di percorso controllano come i percorsi vengono risolti:
 
 Il prefisso precedente `//path` per i percorsi assoluti funziona ancora. Se in precedenza hai utilizzato `/path` aspettandoti una risoluzione relativa al progetto, passa a `./path`. Questa sintassi differisce dalle [regole di autorizzazione Read e Edit](/it/permissions#read-and-edit), che utilizzano `//path` per assoluto e `/path` per relativo al progetto. I percorsi del filesystem della sandbox utilizzano convenzioni standard: `/tmp/build` è un percorso assoluto.
 
-È inoltre possibile negare l'accesso in scrittura o lettura utilizzando `sandbox.filesystem.denyWrite` e `sandbox.filesystem.denyRead`. Questi vengono uniti con qualsiasi percorso dalle regole di autorizzazione `Edit(...)` e `Read(...)`. Per ri-consentire la lettura di percorsi specifici all'interno di una regione `denyRead`, utilizza `sandbox.filesystem.allowRead`, che ha la precedenza su `denyRead`. Quando `allowManagedReadPathsOnly` è abilitato nelle impostazioni gestite, solo le voci `allowRead` gestite sono rispettate; le voci `allowRead` dell'utente, del progetto e locali vengono ignorate. `denyRead` continua a unirsi da tutte le fonti.
+È inoltre possibile negare l'accesso in scrittura o lettura utilizzando `sandbox.filesystem.denyWrite` e `sandbox.filesystem.denyRead`. Questi vengono uniti con qualsiasi percorso dalle regole di autorizzazione `Edit(...)` e `Read(...)`. Per ri-consentire la lettura di percorsi specifici all'interno di una regione negata, utilizza `sandbox.filesystem.allowRead`, che ha la precedenza su `denyRead`. Quando `allowManagedReadPathsOnly` è abilitato nelle impostazioni gestite, solo le voci `allowRead` gestite sono rispettate; le voci `allowRead` dell'utente, del progetto e locali vengono ignorate. `denyRead` continua a unirsi da tutte le fonti.
 
 Ad esempio, per bloccare la lettura dall'intera directory home consentendo comunque letture dal progetto corrente, aggiungi questo al `.claude/settings.json` del tuo progetto:
 
@@ -283,7 +287,7 @@ Per le organizzazioni che richiedono una sicurezza di rete avanzata, è possibil
 Lo strumento bash in sandbox funziona insieme a:
 
 * **Regole di autorizzazione**: Combina con [impostazioni di autorizzazione](/it/permissions) per la difesa in profondità
-* **Contenitori di sviluppo**: Utilizza con [devcontainers](/it/devcontainer) per un isolamento aggiuntivo
+* **Contenitori di sviluppo**: Utilizza con [dev containers](/it/devcontainer) per un isolamento aggiuntivo
 * **Politiche aziendali**: Applica le configurazioni della sandbox tramite [impostazioni gestite](/it/settings#settings-precedence)
 
 ## Best practice

@@ -111,6 +111,7 @@ Plugin hooks 回應與 [user-defined hooks](/zh-TW/hooks) 相同的生命週期�
 | Event                 | When it fires                                                                                                                                          |
 | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `SessionStart`        | When a session begins or resumes                                                                                                                       |
+| `Setup`               | When you start Claude Code with `--init-only`, or with `--init` or `--maintenance` in `-p` mode. For one-time preparation in CI or scripts             |
 | `UserPromptSubmit`    | When you submit a prompt, before Claude processes it                                                                                                   |
 | `UserPromptExpansion` | When a user-typed command expands into a prompt, before it reaches Claude. Can block the expansion                                                     |
 | `PreToolUse`          | Before a tool call executes. Can block it                                                                                                              |
@@ -405,15 +406,16 @@ manifest 是選用的。如果省略，Claude Code 會自動探索 [預設位置
 
 ### 中繼資料欄位
 
-| 欄位            | 類型     | 描述                                                                                                                                                                                                | 範例                                                 |
-| :------------ | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------- |
-| `version`     | string | 選用。語義版本。設定此項會將 plugin 固定到該版本字串，因此使用者只會在您提升版本時收到更新。如果省略，Claude Code 會回退到 git commit SHA，因此每個 commit 都被視為新版本。如果也在 marketplace 項目中設定，`plugin.json` 優先。請參閱 [Version management](#version-management)。 | `"2.1.0"`                                          |
-| `description` | string | plugin 用途的簡短說明                                                                                                                                                                                    | `"Deployment automation tools"`                    |
-| `author`      | object | 作者資訊                                                                                                                                                                                              | `{"name": "Dev Team", "email": "dev@company.com"}` |
-| `homepage`    | string | 文件 URL                                                                                                                                                                                            | `"https://docs.example.com"`                       |
-| `repository`  | string | 原始程式碼 URL                                                                                                                                                                                         | `"https://github.com/user/plugin"`                 |
-| `license`     | string | 授權識別碼                                                                                                                                                                                             | `"MIT"`、`"Apache-2.0"`                             |
-| `keywords`    | array  | 探索標籤                                                                                                                                                                                              | `["deployment", "ci-cd"]`                          |
+| 欄位            | 類型     | 描述                                                                                                                                                                                                | 範例                                                                |
+| :------------ | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :---------------------------------------------------------------- |
+| `$schema`     | string | JSON Schema URL，用於編輯器自動完成和驗證。Claude Code 在載入時忽略此欄位。                                                                                                                                               | `"https://json.schemastore.org/claude-code-plugin-manifest.json"` |
+| `version`     | string | 選用。語義版本。設定此項會將 plugin 固定到該版本字串，因此使用者只會在您提升版本時收到更新。如果省略，Claude Code 會回退到 git commit SHA，因此每個 commit 都被視為新版本。如果也在 marketplace 項目中設定，`plugin.json` 優先。請參閱 [Version management](#version-management)。 | `"2.1.0"`                                                         |
+| `description` | string | plugin 用途的簡短說明                                                                                                                                                                                    | `"Deployment automation tools"`                                   |
+| `author`      | object | 作者資訊                                                                                                                                                                                              | `{"name": "Dev Team", "email": "dev@company.com"}`                |
+| `homepage`    | string | 文件 URL                                                                                                                                                                                            | `"https://docs.example.com"`                                      |
+| `repository`  | string | 原始程式碼 URL                                                                                                                                                                                         | `"https://github.com/user/plugin"`                                |
+| `license`     | string | 授權識別碼                                                                                                                                                                                             | `"MIT"`、`"Apache-2.0"`                                            |
+| `keywords`    | array  | 探索標籤                                                                                                                                                                                              | `["deployment", "ci-cd"]`                                         |
 
 ### 元件路徑欄位
 
@@ -750,11 +752,38 @@ claude plugin uninstall <plugin> [options]
 | :-------------------- | :------------------------------------------------------------------ | :----- |
 | `-s, --scope <scope>` | 從範圍卸載：`user`、`project` 或 `local`                                    | `user` |
 | `--keep-data`         | 保留 plugin 的 [persistent data directory](#persistent-data-directory) |        |
+| `--prune`             | 同時移除其他 plugin 不需要的自動安裝相依性。請參閱 [plugin prune](#plugin-prune)         |        |
+| `-y, --yes`           | 跳過 `--prune` 確認提示。當 stdin 不是 TTY 時為必需                               |        |
 | `-h, --help`          | 顯示命令說明                                                              |        |
 
 **別名：** `remove`、`rm`
 
 預設情況下，從最後一個剩餘範圍卸載也會刪除 plugin 的 `${CLAUDE_PLUGIN_DATA}` 目錄。使用 `--keep-data` 保留它，例如在測試新版本後重新安裝時。
+
+### plugin prune
+
+移除不再被任何已安裝 plugin 所需的自動安裝 plugin 相依性。Claude Code 為滿足另一個 plugin 的 [`dependencies`](/zh-TW/plugin-dependencies) 欄位而引入的相依性會被移除；您直接安裝的 plugins 永遠不會被觸及。
+
+```bash theme={null}
+claude plugin prune [options]
+```
+
+**選項：**
+
+| 選項                    | 描述                                 | 預設     |
+| :-------------------- | :--------------------------------- | :----- |
+| `-s, --scope <scope>` | 在範圍進行修剪：`user`、`project` 或 `local` | `user` |
+| `--dry-run`           | 列出將被移除的內容而不實際移除                    |        |
+| `-y, --yes`           | 跳過確認提示。當 stdin 不是 TTY 時為必需         |        |
+| `-h, --help`          | 顯示命令說明                             |        |
+
+**別名：** `autoremove`
+
+該命令列出孤立的相依性並在移除前要求確認。若要在一個步驟中移除 plugin 並清理其相依性，請執行 `claude plugin uninstall <plugin> --prune`。
+
+<Note>
+  `claude plugin prune` 需要 Claude Code v2.1.121 或更新版本。
+</Note>
 
 ### plugin enable
 

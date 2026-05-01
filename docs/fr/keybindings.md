@@ -99,21 +99,22 @@ Actions pour naviguer dans l'historique des commandes :
 
 Actions disponibles dans le contexte `Chat` :
 
-| Action                | Par défaut                  | Description                                                           |
-| :-------------------- | :-------------------------- | :-------------------------------------------------------------------- |
-| `chat:cancel`         | Échappement                 | Annuler l'entrée actuelle                                             |
-| `chat:clearInput`     | Ctrl+L                      | Effacer l'entrée d'invite et forcer un redessinage complet de l'écran |
-| `chat:killAgents`     | Ctrl+X Ctrl+K               | Arrêter tous les agents de fond                                       |
-| `chat:cycleMode`      | Maj+Tab\*                   | Cycler les modes de permission                                        |
-| `chat:modelPicker`    | Cmd+P / Meta+P              | Ouvrir le sélecteur de modèle                                         |
-| `chat:fastMode`       | Meta+O                      | Basculer le mode rapide                                               |
-| `chat:thinkingToggle` | Cmd+T / Meta+T              | Basculer la réflexion étendue                                         |
-| `chat:submit`         | Entrée                      | Soumettre le message                                                  |
-| `chat:newline`        | Ctrl+J                      | Insérer une nouvelle ligne sans soumettre                             |
-| `chat:undo`           | Ctrl+\_, Ctrl+Maj+-         | Annuler la dernière action                                            |
-| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E       | Ouvrir dans un éditeur externe                                        |
-| `chat:stash`          | Ctrl+S                      | Mettre en cache l'invite actuelle                                     |
-| `chat:imagePaste`     | Ctrl+V (Alt+V sous Windows) | Coller une image                                                      |
+| Action                | Par défaut                  | Description                                                                                                                                                                                     |
+| :-------------------- | :-------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `chat:cancel`         | Échappement                 | Annuler l'entrée actuelle                                                                                                                                                                       |
+| `chat:clearInput`     | Ctrl+L                      | Forcer un redessinage complet de l'écran, en préservant l'entrée. Dans le [rendu plein écran](/fr/fullscreen#clear-the-conversation), appuyez deux fois en deux secondes pour exécuter `/clear` |
+| `chat:clearScreen`    | Cmd+K                       | Dans le [rendu plein écran](/fr/fullscreen#clear-the-conversation), appuyez deux fois en deux secondes pour exécuter `/clear`                                                                   |
+| `chat:killAgents`     | Ctrl+X Ctrl+K               | Arrêter tous les agents de fond                                                                                                                                                                 |
+| `chat:cycleMode`      | Maj+Tab\*                   | Cycler les modes de permission                                                                                                                                                                  |
+| `chat:modelPicker`    | Meta+P                      | Ouvrir le sélecteur de modèle                                                                                                                                                                   |
+| `chat:fastMode`       | Meta+O                      | Basculer le mode rapide                                                                                                                                                                         |
+| `chat:thinkingToggle` | Meta+T                      | Basculer la réflexion étendue                                                                                                                                                                   |
+| `chat:submit`         | Entrée                      | Soumettre le message                                                                                                                                                                            |
+| `chat:newline`        | Ctrl+J                      | Insérer une nouvelle ligne sans soumettre                                                                                                                                                       |
+| `chat:undo`           | Ctrl+\_, Ctrl+Maj+-         | Annuler la dernière action                                                                                                                                                                      |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E       | Ouvrir dans un éditeur externe                                                                                                                                                                  |
+| `chat:stash`          | Ctrl+S                      | Mettre en cache l'invite actuelle                                                                                                                                                               |
+| `chat:imagePaste`     | Ctrl+V (Alt+V sous Windows) | Coller une image                                                                                                                                                                                |
 
 \*Sous Windows sans mode VT (Node \<24.2.0/\<22.17.0, Bun \<1.2.23), la valeur par défaut est Meta+M.
 
@@ -165,12 +166,13 @@ Actions disponibles dans le contexte `Transcript` :
 
 Actions disponibles dans le contexte `HistorySearch` :
 
-| Action                  | Par défaut       | Description                       |
-| :---------------------- | :--------------- | :-------------------------------- |
-| `historySearch:next`    | Ctrl+R           | Correspondance suivante           |
-| `historySearch:accept`  | Échappement, Tab | Accepter la sélection             |
-| `historySearch:cancel`  | Ctrl+C           | Annuler la recherche              |
-| `historySearch:execute` | Entrée           | Exécuter la commande sélectionnée |
+| Action                     | Par défaut       | Description                                 |
+| :------------------------- | :--------------- | :------------------------------------------ |
+| `historySearch:next`       | Ctrl+R           | Correspondance suivante                     |
+| `historySearch:accept`     | Échappement, Tab | Accepter la sélection                       |
+| `historySearch:cancel`     | Ctrl+C           | Annuler la recherche                        |
+| `historySearch:execute`    | Entrée           | Exécuter la commande sélectionnée           |
+| `historySearch:cycleScope` | Ctrl+S           | Cycler la portée : session, projet, partout |
 
 ### Actions de tâche
 
@@ -307,9 +309,9 @@ Actions disponibles dans le contexte `Doctor` :
 
 Actions disponibles dans le contexte `Chat` lorsque la [dictée vocale](/fr/voice-dictation) est activée :
 
-| Action             | Par défaut | Description                      |
-| :----------------- | :--------- | :------------------------------- |
-| `voice:pushToTalk` | Espace     | Maintenez pour dicter une invite |
+| Action             | Par défaut | Description                                                    |
+| :----------------- | :--------- | :------------------------------------------------------------- |
+| `voice:pushToTalk` | Espace     | Dicter une invite. Maintenez ou appuyez selon le mode `/voice` |
 
 ### Actions de défilement
 
@@ -343,16 +345,18 @@ Actions disponibles dans le contexte `Scroll` lorsque le [rendu plein écran](/f
 Utilisez les touches de modification avec le séparateur `+` :
 
 * `ctrl` ou `control` - Touche Contrôle
-* `alt`, `opt`, ou `option` - Touche Alt/Option
 * `shift` - Touche Maj
-* `meta`, `cmd`, ou `command` - Touche Meta/Commande
+* `alt`, `opt`, `option`, ou `meta` - Touche Alt sur Windows et Linux, touche Option sur macOS
+* `cmd`, `command`, `super`, ou `win` - Touche Commande sur macOS, touche Windows sur Windows, touche Super sur Linux
+
+Le groupe `cmd` n'est détecté que dans les terminaux qui signalent le modificateur Super, comme ceux prenant en charge le protocole clavier Kitty ou le mode `modifyOtherKeys` de xterm. La plupart des terminaux ne l'envoient pas, donc utilisez `ctrl` ou `meta` pour les liaisons que vous voulez que fonctionnent partout.
 
 Par exemple :
 
 ```text theme={null}
-ctrl+k          Touche unique avec modificateur
+ctrl+k          Ctrl + K
 shift+tab       Maj + Tab
-meta+p          Commande/Meta + P
+meta+p          Option + P sur macOS, Alt + P ailleurs
 ctrl+shift+c    Plusieurs modificateurs
 ```
 
@@ -360,7 +364,7 @@ ctrl+shift+c    Plusieurs modificateurs
 
 Une lettre majuscule autonome implique Maj. Par exemple, `K` est équivalent à `shift+k`. Ceci est utile pour les liaisons de style vim où les touches majuscules et minuscules ont des significations différentes.
 
-Les lettres majuscules avec des modificateurs (par exemple, `ctrl+K`) sont traitées comme stylistiques et n'impliquent **pas** Maj — `ctrl+K` est identique à `ctrl+k`.
+Les lettres majuscules avec des modificateurs (par exemple, `ctrl+K`) sont traitées comme stylistiques et n'impliquent **pas** Maj : `ctrl+K` est identique à `ctrl+k`.
 
 ### Accords
 
@@ -424,6 +428,7 @@ Ces raccourcis ne peuvent pas être reliés :
 | Ctrl+C    | Interruption/annulation codée en dur                         |
 | Ctrl+D    | Sortie codée en dur                                          |
 | Ctrl+M    | Identique à Entrée dans les terminaux (les deux envoient CR) |
+| Caps Lock | Non livré aux applications de terminal                       |
 
 ## Conflits de terminal
 

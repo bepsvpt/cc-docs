@@ -64,6 +64,8 @@
 
 オプションの `refreshInterval` フィールドは、[イベント駆動更新](#how-status-lines-work) に加えて、N 秒ごとにコマンドを再実行します。最小値は `1` です。ステータスラインが時計などの時間ベースのデータを表示する場合、またはメインセッションがアイドル状態の間にバックグラウンドサブエージェントが git 状態を変更する場合に設定します。イベントのみで実行する場合は設定しないままにします。
 
+オプションの `hideVimModeIndicator` フィールドは、プロンプトの下にある組み込みの `-- INSERT --` テキストを非表示にします。スクリプトが [`vim.mode`](#available-data) 自体をレンダリングする場合は、これを `true` に設定して、モードが 2 回表示されないようにします。
+
 ### ステータスラインを無効にする
 
 `/statusline` を実行し、ステータスラインを削除またはクリアするよう指示します（例：`/statusline delete`、`/statusline clear`、`/statusline remove it`）。settings.json から `statusLine` フィールドを手動で削除することもできます。
@@ -914,7 +916,7 @@ Claude.ai サブスクリプションのレート制限使用状況をステー�
 
 ### Windows 設定
 
-Windows では、Claude Code はステータスラインコマンドを Git Bash 経由で実行します。そのシェルから PowerShell を呼び出すことができます：
+Windows では、Claude Code はステータスラインコマンドを Git Bash 経由で実行します。Git Bash がインストールされている場合、または Git Bash がない場合は PowerShell を通じて実行します。PowerShell スクリプトをステータスラインとして実行するには、`powershell` 経由で呼び出します。これはどちらのシェルからでも機能します：
 
 <CodeGroup>
   ```json settings.json theme={null}
@@ -941,7 +943,7 @@ Windows では、Claude Code はステータスラインコマンドを Git Bash
   ```
 </CodeGroup>
 
-または Bash スクリプトを直接実行します：
+または、Git Bash がインストールされている場合は、Bash スクリプトを直接実行します：
 
 <CodeGroup>
   ```json settings.json theme={null}

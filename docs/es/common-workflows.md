@@ -842,12 +842,14 @@ Cuando inicia una tarea de larga duración y cambia a otra ventana, puede config
   <Step title="Opcionalmente, reduzca el matcher">
     De forma predeterminada, el hook se activa en todos los tipos de notificación. Para activarse solo para eventos específicos, establezca el campo `matcher` en uno de estos valores:
 
-    | Matcher              | Se activa cuando                                    |
-    | :------------------- | :-------------------------------------------------- |
-    | `permission_prompt`  | Claude necesita que apruebe un uso de herramienta   |
-    | `idle_prompt`        | Claude está hecho y esperando su próxima indicación |
-    | `auth_success`       | La autenticación se completa                        |
-    | `elicitation_dialog` | Claude le está haciendo una pregunta                |
+    | Matcher                | Se activa cuando                                            |
+    | :--------------------- | :---------------------------------------------------------- |
+    | `permission_prompt`    | Claude necesita que apruebe un uso de herramienta           |
+    | `idle_prompt`          | Claude está hecho y esperando su próxima indicación         |
+    | `auth_success`         | La autenticación se completa                                |
+    | `elicitation_dialog`   | Un servidor MCP abre un formulario de elicitación           |
+    | `elicitation_complete` | Un formulario de elicitación de MCP se envía o se descarta  |
+    | `elicitation_response` | Una respuesta de elicitación de MCP se devuelve al servidor |
   </Step>
 
   <Step title="Verifique el hook">

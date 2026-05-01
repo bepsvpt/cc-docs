@@ -75,7 +75,7 @@ Untuk detail lengkap, silakan tinjau [Commercial Terms of Service](https://www.a
 2. Hindari piping konten yang tidak dipercaya langsung ke Claude
 3. Verifikasi perubahan yang diusulkan pada file kritis
 4. Gunakan mesin virtual (VM) untuk menjalankan skrip dan membuat panggilan alat, terutama saat berinteraksi dengan layanan web eksternal
-5. Laporkan perilaku mencurigakan dengan `/bug`
+5. Laporkan perilaku mencurigakan dengan `/feedback`
 
 <Warning>
   Meskipun perlindungan ini secara signifikan mengurangi risiko, tidak ada sistem yang
@@ -114,7 +114,7 @@ Sesi [Remote Control](/id/remote-control) bekerja berbeda: antarmuka web terhubu
 
 * Tinjau semua perubahan yang disarankan sebelum persetujuan
 * Gunakan pengaturan izin khusus proyek untuk repositori sensitif
-* Pertimbangkan menggunakan [devcontainers](/id/devcontainer) untuk isolasi tambahan
+* Pertimbangkan menggunakan [dev containers](/id/devcontainer) untuk isolasi tambahan
 * Audit secara teratur pengaturan izin Anda dengan `/permissions`
 
 ### Keamanan tim
@@ -130,7 +130,7 @@ Sesi [Remote Control](/id/remote-control) bekerja berbeda: antarmuka web terhubu
 Jika Anda menemukan kerentanan keamanan di Claude Code:
 
 1. Jangan ungkapkan secara publik
-2. Laporkan melalui [program HackerOne](https://hackerone.com/anthropic-vdp/reports/new?type=team\&report_type=vulnerability) kami
+2. Laporkan melalui [program HackerOne](https://hackerone.com/4f1f16ba-10d3-4d09-9ecc-c721aad90f24/embedded_submissions/new) kami
 3. Sertakan langkah reproduksi terperinci
 4. Berikan waktu bagi kami untuk mengatasi masalah sebelum pengungkapan publik
 

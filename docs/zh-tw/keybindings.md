@@ -99,21 +99,22 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 
 在 `Chat` 上下文中可用的動作：
 
-| 動作                    | 預設值                       | 說明                  |
-| :-------------------- | :------------------------ | :------------------ |
-| `chat:cancel`         | Escape                    | 取消目前輸入              |
-| `chat:clearInput`     | Ctrl+L                    | 清除提示輸入並強制進行完整螢幕重新繪製 |
-| `chat:killAgents`     | Ctrl+X Ctrl+K             | 終止所有背景代理            |
-| `chat:cycleMode`      | Shift+Tab\*               | 循環權限模式              |
-| `chat:modelPicker`    | Cmd+P / Meta+P            | 開啟模型選擇器             |
-| `chat:fastMode`       | Meta+O                    | 切換快速模式              |
-| `chat:thinkingToggle` | Cmd+T / Meta+T            | 切換延伸思考              |
-| `chat:submit`         | Enter                     | 提交訊息                |
-| `chat:newline`        | Ctrl+J                    | 插入換行符而不提交           |
-| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | 復原上一個動作             |
-| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | 在外部編輯器中開啟           |
-| `chat:stash`          | Ctrl+S                    | 暫存目前提示              |
-| `chat:imagePaste`     | Ctrl+V (Windows 上為 Alt+V) | 貼上影像                |
+| 動作                    | 預設值                       | 說明                                                                                        |
+| :-------------------- | :------------------------ | :---------------------------------------------------------------------------------------- |
+| `chat:cancel`         | Escape                    | 取消目前輸入                                                                                    |
+| `chat:clearInput`     | Ctrl+L                    | 強制進行完整螢幕重新繪製，保留輸入。在[全螢幕渲染](/zh-TW/fullscreen#clear-the-conversation)中，在兩秒內按兩次以執行 `/clear` |
+| `chat:clearScreen`    | Cmd+K                     | 在[全螢幕渲染](/zh-TW/fullscreen#clear-the-conversation)中，在兩秒內按兩次以執行 `/clear`                   |
+| `chat:killAgents`     | Ctrl+X Ctrl+K             | 終止所有背景代理                                                                                  |
+| `chat:cycleMode`      | Shift+Tab\*               | 循環權限模式                                                                                    |
+| `chat:modelPicker`    | Meta+P                    | 開啟模型選擇器                                                                                   |
+| `chat:fastMode`       | Meta+O                    | 切換快速模式                                                                                    |
+| `chat:thinkingToggle` | Meta+T                    | 切換延伸思考                                                                                    |
+| `chat:submit`         | Enter                     | 提交訊息                                                                                      |
+| `chat:newline`        | Ctrl+J                    | 插入換行符而不提交                                                                                 |
+| `chat:undo`           | Ctrl+\_, Ctrl+Shift+-     | 復原上一個動作                                                                                   |
+| `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E     | 在外部編輯器中開啟                                                                                 |
+| `chat:stash`          | Ctrl+S                    | 暫存目前提示                                                                                    |
+| `chat:imagePaste`     | Ctrl+V (Windows 上為 Alt+V) | 貼上影像                                                                                      |
 
 \*在沒有 VT 模式的 Windows 上（Node \<24.2.0/\<22.17.0、Bun \<1.2.23），預設為 Meta+M。
 
@@ -165,12 +166,13 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 
 在 `HistorySearch` 上下文中可用的動作：
 
-| 動作                      | 預設值         | 說明      |
-| :---------------------- | :---------- | :------ |
-| `historySearch:next`    | Ctrl+R      | 下一個符合項目 |
-| `historySearch:accept`  | Escape, Tab | 接受選擇    |
-| `historySearch:cancel`  | Ctrl+C      | 取消搜尋    |
-| `historySearch:execute` | Enter       | 執行選定的命令 |
+| 動作                         | 預設值         | 說明                |
+| :------------------------- | :---------- | :---------------- |
+| `historySearch:next`       | Ctrl+R      | 下一個符合項目           |
+| `historySearch:accept`     | Escape, Tab | 接受選擇              |
+| `historySearch:cancel`     | Ctrl+C      | 取消搜尋              |
+| `historySearch:execute`    | Enter       | 執行選定的命令           |
+| `historySearch:cycleScope` | Ctrl+S      | 循環範圍：工作階段、專案、任何地方 |
 
 ### 工作動作
 
@@ -196,7 +198,7 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 | :------------- | :----- | :----- |
 | `help:dismiss` | Escape | 關閉說明選單 |
 
-### 標籤動作
+### Tabs 動作
 
 在 `Tabs` 上下文中可用的動作：
 
@@ -241,7 +243,7 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 | `messageSelector:bottom` | Ctrl+Down, Shift+Down, Meta+Down, Shift+J | 跳至底部     |
 | `messageSelector:select` | Enter                                     | 選擇訊息     |
 
-### 差異動作
+### Diff 動作
 
 在 `DiffDialog` 上下文中可用的動作：
 
@@ -307,9 +309,9 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 
 在啟用[語音聽寫](/zh-TW/voice-dictation)時，在 `Chat` 上下文中可用的動作：
 
-| 動作                 | 預設值   | 說明      |
-| :----------------- | :---- | :------ |
-| `voice:pushToTalk` | Space | 按住以聽寫提示 |
+| 動作                 | 預設值   | 說明                       |
+| :----------------- | :---- | :----------------------- |
+| `voice:pushToTalk` | Space | 聽寫提示。根據 `/voice` 模式按住或點選 |
 
 ### 滾動動作
 
@@ -343,16 +345,18 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 使用 `+` 分隔符搭配修飾鍵：
 
 * `ctrl` 或 `control` - Control 鍵
-* `alt`、`opt` 或 `option` - Alt/Option 鍵
 * `shift` - Shift 鍵
-* `meta`、`cmd` 或 `command` - Meta/Command 鍵
+* `alt`、`opt`、`option` 或 `meta` - Windows 和 Linux 上的 Alt 鍵，macOS 上的 Option 鍵
+* `cmd`、`command`、`super` 或 `win` - macOS 上的 Command 鍵，Windows 上的 Windows 鍵，Linux 上的 Super 鍵
+
+`cmd` 群組只在報告 Super 修飾鍵的終端機中被偵測，例如支援 Kitty 鍵盤協議或 xterm 的 `modifyOtherKeys` 模式的終端機。大多數終端機不會發送它，因此對於您想在任何地方都能運作的繫結，請使用 `ctrl` 或 `meta`。
 
 例如：
 
 ```text theme={null}
-ctrl+k          單一鍵搭配修飾鍵
+ctrl+k          Ctrl + K
 shift+tab       Shift + Tab
-meta+p          Command/Meta + P
+meta+p          macOS 上的 Option + P，其他地方為 Alt + P
 ctrl+shift+c    多個修飾鍵
 ```
 
@@ -360,7 +364,7 @@ ctrl+shift+c    多個修飾鍵
 
 獨立的大寫字母表示 Shift。例如，`K` 等同於 `shift+k`。這對於 vim 風格的繫結很有用，其中大寫和小寫鍵有不同的含義。
 
-搭配修飾鍵的大寫字母（例如 `ctrl+K`）被視為風格上的，**不**表示 Shift — `ctrl+K` 與 `ctrl+k` 相同。
+搭配修飾鍵的大寫字母（例如 `ctrl+K`）被視為風格上的，**不**表示 Shift：`ctrl+K` 與 `ctrl+k` 相同。
 
 ### 和弦
 
@@ -419,11 +423,12 @@ ctrl+k ctrl+s   按 Ctrl+K，放開，然後按 Ctrl+S
 
 這些快捷鍵無法重新繫結：
 
-| 快捷鍵    | 原因                        |
-| :----- | :------------------------ |
-| Ctrl+C | 硬編碼的中斷/取消                 |
-| Ctrl+D | 硬編碼的結束                    |
-| Ctrl+M | 與終端機中的 Enter 相同（兩者都傳送 CR） |
+| 快捷鍵       | 原因                        |
+| :-------- | :------------------------ |
+| Ctrl+C    | 硬編碼的中斷/取消                 |
+| Ctrl+D    | 硬編碼的結束                    |
+| Ctrl+M    | 與終端機中的 Enter 相同（兩者都傳送 CR） |
+| Caps Lock | 未傳遞至終端機應用程式               |
 
 ## 終端機衝突
 

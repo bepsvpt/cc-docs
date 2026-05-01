@@ -910,4 +910,4 @@ Claude Code 可以存取一組工具，用於讀取、編輯、搜尋、執行�
 * [Permissions](/zh-TW/permissions)：權限系統、規則語法、工具特定模式和 managed 政策
 * [Authentication](/zh-TW/authentication)：設定使用者對 Claude Code 的存取
 * [Debug your configuration](/zh-TW/debug-your-config)：診斷為什麼設定、hook 或 MCP server 未生效
-* [Troubleshooting](/zh-TW/troubleshooting)：安裝、authentication 和平台問題
+* [Troubleshoot installation and login](/zh-TW/troubleshoot-install)：安裝、authentication 和平台問題

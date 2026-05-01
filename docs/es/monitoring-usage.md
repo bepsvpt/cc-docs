@@ -125,7 +125,7 @@ En sesiones del SDK de Agent y no interactivas iniciadas con `-p`, Claude Code t
 
 #### Jerarquía de spans
 
-Cada mensaje del usuario inicia un span raíz `claude_code.interaction`. Las llamadas de API, llamadas de herramientas y ejecuciones de hooks se registran como sus hijos. Los spans de herramientas tienen dos spans hijos propios: uno para el tiempo dedicado a esperar una decisión de permiso y otro para la ejecución en sí. Cuando la herramienta Task genera un subagenteagente, los spans de API y herramienta del subagenteagente se anidan bajo el span `claude_code.tool` del padre.
+Cada mensaje del usuario inicia un span raíz `claude_code.interaction`. Las llamadas de API, llamadas de herramientas y ejecuciones de hooks se registran como sus hijos. Los spans de herramientas tienen dos spans hijos propios: uno para el tiempo dedicado a esperar una decisión de permiso y otro para la ejecución en sí. Cuando la herramienta Task genera un subagente, los spans de API y herramienta del subagente se anidan bajo el span `claude_code.tool` del padre.
 
 ```text theme={null}
 claude_code.interaction
@@ -134,7 +134,7 @@ claude_code.interaction
 └── claude_code.tool
     ├── claude_code.tool.blocked_on_user
     ├── claude_code.tool.execution
-    └── (herramienta Task) spans de claude_code.llm_request / claude_code.tool del subagenteagente
+    └── (herramienta Task) spans de claude_code.llm_request / claude_code.tool del subagente
 ```
 
 En sesiones del SDK de Agent y `claude -p`, `claude_code.interaction` en sí se convierte en un hijo del span del llamador cuando `TRACEPARENT` se establece en el entorno.
@@ -154,28 +154,30 @@ Cada span lleva los [atributos estándar](#standard-attributes) más un atributo
 
 **`claude_code.llm_request`**
 
-| Atributo                 | Descripción                                                                                | Controlado Por |
-| ------------------------ | ------------------------------------------------------------------------------------------ | -------------- |
-| `model`                  | Identificador de modelo                                                                    |                |
-| `gen_ai.system`          | Siempre `anthropic`. Convención semántica de GenAI de OpenTelemetry                        |                |
-| `gen_ai.request.model`   | Mismo valor que `model`. Convención semántica de GenAI de OpenTelemetry                    |                |
-| `query_source`           | Subsistema que emitió la solicitud, como `repl_main_thread` o un nombre de subagenteagente |                |
-| `speed`                  | `fast` o `normal`                                                                          |                |
-| `llm_request.context`    | `interaction`, `tool`, o `standalone` dependiendo del span padre                           |                |
-| `duration_ms`            | Duración de pared incluyendo reintentos                                                    |                |
-| `ttft_ms`                | Tiempo al primer token en milisegundos                                                     |                |
-| `input_tokens`           | Recuento de tokens de entrada del bloque de uso de API                                     |                |
-| `output_tokens`          | Recuento de tokens de salida                                                               |                |
-| `cache_read_tokens`      | Tokens leídos del caché de mensaje                                                         |                |
-| `cache_creation_tokens`  | Tokens escritos en el caché de mensaje                                                     |                |
-| `request_id`             | ID de solicitud de API de Anthropic del encabezado de respuesta `request-id`               |                |
-| `gen_ai.response.id`     | Mismo valor que `request_id`. Convención semántica de GenAI de OpenTelemetry               |                |
-| `client_request_id`      | `x-client-request-id` generado por cliente del intento final                               |                |
-| `attempt`                | Intentos totales realizados para esta solicitud                                            |                |
-| `success`                | `true` o `false`                                                                           |                |
-| `status_code`            | Código de estado HTTP cuando la solicitud falló                                            |                |
-| `error`                  | Mensaje de error cuando la solicitud falló                                                 |                |
-| `response.has_tool_call` | `true` cuando la respuesta contenía bloques de uso de herramientas                         |                |
+| Atributo                         | Descripción                                                                                                           | Controlado Por |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------- | -------------- |
+| `model`                          | Identificador de modelo                                                                                               |                |
+| `gen_ai.system`                  | Siempre `anthropic`. Convención semántica de GenAI de OpenTelemetry                                                   |                |
+| `gen_ai.request.model`           | Mismo valor que `model`. Convención semántica de GenAI de OpenTelemetry                                               |                |
+| `query_source`                   | Subsistema que emitió la solicitud, como `repl_main_thread` o un nombre de subagente                                  |                |
+| `speed`                          | `fast` o `normal`                                                                                                     |                |
+| `llm_request.context`            | `interaction`, `tool`, o `standalone` dependiendo del span padre                                                      |                |
+| `duration_ms`                    | Duración de pared incluyendo reintentos                                                                               |                |
+| `ttft_ms`                        | Tiempo al primer token en milisegundos                                                                                |                |
+| `input_tokens`                   | Recuento de tokens de entrada del bloque de uso de API                                                                |                |
+| `output_tokens`                  | Recuento de tokens de salida                                                                                          |                |
+| `cache_read_tokens`              | Tokens leídos del caché de mensaje                                                                                    |                |
+| `cache_creation_tokens`          | Tokens escritos en el caché de mensaje                                                                                |                |
+| `request_id`                     | ID de solicitud de API de Anthropic del encabezado de respuesta `request-id`                                          |                |
+| `gen_ai.response.id`             | Mismo valor que `request_id`. Convención semántica de GenAI de OpenTelemetry                                          |                |
+| `client_request_id`              | `x-client-request-id` generado por cliente del intento final                                                          |                |
+| `attempt`                        | Intentos totales realizados para esta solicitud                                                                       |                |
+| `success`                        | `true` o `false`                                                                                                      |                |
+| `status_code`                    | Código de estado HTTP cuando la solicitud falló                                                                       |                |
+| `error`                          | Mensaje de error cuando la solicitud falló                                                                            |                |
+| `response.has_tool_call`         | `true` cuando la respuesta contenía bloques de uso de herramientas                                                    |                |
+| `stop_reason`                    | Respuesta de API `stop_reason`, como `end_turn`, `tool_use`, `max_tokens`, `stop_sequence`, `pause_turn`, o `refusal` |                |
+| `gen_ai.response.finish_reasons` | Mismo valor que `stop_reason`, envuelto en una matriz de cadena. Convención semántica de GenAI de OpenTelemetry       |                |
 
 Cada intento de reintento también se registra como un evento de span `gen_ai.request.attempt` con atributos `attempt` e `client_request_id`.
 
@@ -189,7 +191,7 @@ Cada intento de reintento también se registra como un evento de span `gen_ai.re
 | `file_path`     | Ruta de archivo de destino para herramientas Read, Edit, y Write | `OTEL_LOG_TOOL_DETAILS` |
 | `full_command`  | Cadena de comando para la herramienta Bash                       | `OTEL_LOG_TOOL_DETAILS` |
 | `skill_name`    | Nombre de habilidad para la herramienta Skill                    | `OTEL_LOG_TOOL_DETAILS` |
-| `subagent_type` | Tipo de subagenteagente para la herramienta Task                 | `OTEL_LOG_TOOL_DETAILS` |
+| `subagent_type` | Tipo de subagente para la herramienta Task                       | `OTEL_LOG_TOOL_DETAILS` |
 
 Cuando `OTEL_LOG_TOOL_CONTENT=1`, este span también registra un evento de span `tool.output` cuyos atributos contienen los cuerpos de entrada y salida de la herramienta, truncados en 60 KB por atributo.
 
@@ -226,7 +228,7 @@ Este span se emite solo cuando el trazado beta detallado está activo, lo que re
 | `num_cancelled`          | Recuento de hooks cancelados antes de completarse         |                         |
 
 <Note>
-  Atributos adicionales que contienen contenido como `new_context`, `system_prompt_preview`, `tool_input`, y `response.model_output` se emiten solo cuando el trazado beta detallado está activo. No son parte del esquema de span estable.
+  Atributos adicionales que contienen contenido como `new_context`, `system_prompt_preview`, `user_system_prompt`, `tool_input`, y `response.model_output` se emiten solo cuando el trazado beta detallado está activo. No son parte del esquema de span estable. `user_system_prompt` además requiere `OTEL_LOG_USER_PROMPTS=1`. Lleva solo el texto del mensaje del sistema que proporcionas a través de la opción `systemPrompt` del SDK o las banderas `--system-prompt` y `--append-system-prompt`, truncado en 60 KB, y se emite una vez por sesión en lugar de por solicitud.
 </Note>
 
 ### Encabezados dinámicos
@@ -571,7 +573,7 @@ Se registra cuando una solicitud de API a Claude falla.
 * `event.sequence`: Contador monotónicamente creciente para ordenar eventos dentro de una sesión
 * `model`: Modelo utilizado (por ejemplo, "claude-sonnet-4-6")
 * `error`: Mensaje de error
-* `status_code`: Código de estado HTTP como cadena, o `"undefined"` para errores no HTTP
+* `status_code`: Código de estado HTTP como número. Ausente para errores no HTTP como fallos de conexión.
 * `duration_ms`: Duración de la solicitud en milisegundos
 * `attempt`: Número total de intentos realizados, incluyendo la solicitud inicial (`1` significa que no ocurrieron reintentos)
 * `request_id`: ID de solicitud de API de Anthropic del encabezado `request-id` de la respuesta, como `"req_011..."`. Presente solo cuando la API devuelve uno.
@@ -724,7 +726,7 @@ Se registra cuando un plugin termina de instalarse, tanto desde el comando CLI `
 
 #### Evento de habilidad activada
 
-Se registra cuando se invoca una habilidad.
+Se registra cuando se invoca una habilidad, ya sea que Claude la llame a través de la herramienta Skill o que la ejecutes como un comando `/`.
 
 **Nombre del Evento**: `claude_code.skill_activated`
 
@@ -735,9 +737,25 @@ Se registra cuando se invoca una habilidad.
 * `event.timestamp`: Marca de tiempo ISO 8601
 * `event.sequence`: Contador monotónicamente creciente para ordenar eventos dentro de una sesión
 * `skill.name`: Nombre de la habilidad. Para habilidades definidas por el usuario y de plugin de terceros el valor es el marcador de posición `"custom_skill"` a menos que `OTEL_LOG_TOOL_DETAILS=1`
+* `invocation_trigger`: Cómo se activó la habilidad (`"user-slash"`, `"claude-proactive"`, o `"nested-skill"`)
 * `skill.source`: De dónde se cargó la habilidad (por ejemplo, `"bundled"`, `"userSettings"`, `"projectSettings"`, `"plugin"`)
 * `plugin.name` (cuando `OTEL_LOG_TOOL_DETAILS=1` o el plugin es de un mercado oficial): Nombre del plugin propietario cuando la habilidad es proporcionada por un plugin
-* `marketplace.name` (cuando `OTEL_LOG_TOOL_DETAILS=1` o el plugin es de un mercado oficial): Mercado del plugin propietario fue instalado desde, cuando la habilidad es proporcionada por un plugin
+* `marketplace.name` (cuando `OTEL_LOG_TOOL_DETAILS=1` o el plugin es de un mercado oficial): Mercado desde el que se instaló el plugin propietario, cuando la habilidad es proporcionada por un plugin
+
+#### Evento de mención @
+
+Se registra cuando Claude Code resuelve una mención `@` en un mensaje. No todas las menciones emiten un evento: las rutas de salida anticipada como denegaciones de permisos, archivos de tamaño excesivo, archivos adjuntos de referencia PDF, y fallos de listado de directorios se devuelven sin registrar.
+
+**Nombre del Evento**: `claude_code.at_mention`
+
+**Atributos**:
+
+* Todos los [atributos estándar](#standard-attributes)
+* `event.name`: `"at_mention"`
+* `event.timestamp`: Marca de tiempo ISO 8601
+* `event.sequence`: Contador monotónicamente creciente para ordenar eventos dentro de una sesión
+* `mention_type`: Tipo de mención (`"file"`, `"directory"`, `"agent"`, `"mcp_resource"`)
+* `success`: Si la mención se resolvió exitosamente (`"true"` o `"false"`)
 
 #### Evento de reintentos de API agotados
 
@@ -753,7 +771,7 @@ Se registra una vez cuando una solicitud de API falla después de más de un int
 * `event.sequence`: Contador monotónicamente creciente para ordenar eventos dentro de una sesión
 * `model`: Modelo utilizado
 * `error`: Mensaje de error final
-* `status_code`: Código de estado HTTP como cadena
+* `status_code`: Código de estado HTTP como número. Ausente para errores no HTTP.
 * `total_attempts`: Número total de intentos realizados
 * `total_retry_duration_ms`: Tiempo total de pared en todos los intentos
 * `speed`: `"fast"` o `"normal"`
@@ -918,11 +936,11 @@ Para una guía completa sobre cómo medir el retorno de inversión para Claude C
 
 ## Seguridad y privacidad
 
-* La telemetría es opcional y requiere configuración explícita
+* La exportación de OpenTelemetry a tu backend es opcional y requiere configuración explícita. Para la telemetría operativa separada de Anthropic y cómo deshabilitarla, consulta [Uso de datos](/es/data-usage#telemetry-services)
 * Los contenidos de archivos sin procesar y fragmentos de código no se incluyen en métricas o eventos. Las trazas de span son una ruta de datos separada: consulta la viñeta `OTEL_LOG_TOOL_CONTENT` a continuación
 * Cuando está autenticado a través de OAuth, `user.email` se incluye en atributos de telemetría. Si esto es una preocupación para tu organización, trabaja con tu backend de telemetría para filtrar o redactar este campo
 * El contenido del mensaje del usuario no se recopila por defecto. Solo se registra la longitud del mensaje. Para incluir contenido del mensaje, establece `OTEL_LOG_USER_PROMPTS=1`
-* Los argumentos de entrada de herramientas y parámetros no se registran por defecto. Para incluirlos, establece `OTEL_LOG_TOOL_DETAILS=1`. Cuando está habilitado, los eventos `tool_result` incluyen un atributo `tool_parameters` con comandos Bash, nombres de servidor MCP y herramienta, y nombres de habilidades, más un atributo `tool_input` con rutas de archivo, URLs, patrones de búsqueda y otros argumentos. Los eventos `user_prompt` incluyen el `command_name` verbatim para comandos personalizados, de plugin y MCP. Los spans de traza incluyen el mismo atributo `tool_input` y atributos derivados de entrada como `file_path`. Los valores individuales superiores a 512 caracteres se truncan y el total está limitado a aproximadamente 4 K caracteres, pero los argumentos aún pueden contener valores sensibles. Configura tu backend de telemetría para filtrar o redactar estos atributos según sea necesario
+* Los argumentos de entrada de herramientas y parámetros no se registran por defecto. Para incluirlos, establece `OTEL_LOG_TOOL_DETAILS=1`. Cuando está habilitado, los eventos `tool_result` incluyen un atributo `tool_parameters` con comandos Bash, nombres de servidor MCP y herramienta, y nombres de skills, más un atributo `tool_input` con rutas de archivo, URLs, patrones de búsqueda y otros argumentos. Los eventos `user_prompt` incluyen el `command_name` verbatim para comandos personalizados, de plugin y MCP. Los spans de traza incluyen el mismo atributo `tool_input` y atributos derivados de entrada como `file_path`. Los valores individuales superiores a 512 caracteres se truncan y el total está limitado a aproximadamente 4 K caracteres, pero los argumentos aún pueden contener valores sensibles. Configura tu backend de telemetría para filtrar o redactar estos atributos según sea necesario
 * El contenido de entrada y salida de herramientas no se registra en spans de trazas por defecto. Para incluirlo, establece `OTEL_LOG_TOOL_CONTENT=1`. Cuando está habilitado, los eventos de span incluyen contenido completo de entrada y salida de herramientas truncado en 60 KB por span. Esto puede incluir contenidos de archivo sin procesar de resultados de herramienta Read y salida de comandos Bash. Configura tu backend de telemetría para filtrar o redactar estos atributos según sea necesario
 * Los cuerpos de solicitud y respuesta de la API de Mensajes de Anthropic sin procesar no se registran por defecto. Para incluirlos, establece `OTEL_LOG_RAW_API_BODIES`. Con `=1`, cada llamada de API emite eventos de registro `api_request_body` y `api_response_body` cuyo atributo `body` es la carga útil serializada en JSON, truncada en 60 KB. Con `=file:<dir>`, los cuerpos sin truncar se escriben en archivos `.request.json` y `.response.json` bajo ese directorio y los eventos llevan una ruta `body_ref` en su lugar del cuerpo en línea. Envía el directorio con un recopilador de registros o sidecar en lugar de a través del flujo de telemetría. En ambos modos, los cuerpos contienen el historial de conversación completo (mensaje del sistema, cada turno anterior de usuario y asistente, resultados de herramientas), por lo que habilitar esto implica consentimiento a todo lo que las otras banderas de contenido `OTEL_LOG_*` revelarían. El contenido de pensamiento extendido de Claude siempre se redacta de estos cuerpos independientemente de otras configuraciones
 

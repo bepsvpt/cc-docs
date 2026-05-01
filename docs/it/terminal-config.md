@@ -35,7 +35,7 @@ Se stai eseguendo dentro tmux, Shift+Invio richiede anche la [configurazione tmu
 
 Per associare la nuova riga a un tasto diverso, o per scambiare il comportamento in modo che Invio inserisca una nuova riga e Shift+Invio invii, mappa le azioni `chat:newline` e `chat:submit` nel tuo [file delle scorciatoie da tastiera](/it/keybindings).
 
-## Enable Option key shortcuts on macOS
+## Abilita le scorciatoie da tastiera Option su macOS
 
 Alcuni scorciatoie di Claude Code utilizzano il tasto Option, come Option+Invio per una nuova riga o Option+P per cambiare modelli. Su macOS, la maggior parte dei terminali non invia Option come modificatore per impostazione predefinita, quindi questi scorciatoie non funzionano finché non lo abiliti. L'impostazione del terminale per questo è solitamente etichettata "Use Option as Meta Key"; Meta è il nome storico Unix per il tasto ora etichettato come Option o Alt.
 
@@ -48,6 +48,8 @@ Alcuni scorciatoie di Claude Code utilizzano il tasto Option, come Option+Invio 
 
   <Tab title="iTerm2">
     Apri Impostazioni → Profili → Tasti → Generale e imposta il tasto Option sinistro e il tasto Option destro su "Esc+".
+
+    L'esecuzione di `/terminal-setup` in iTerm2 abilita "Applications in terminal may access clipboard" in Impostazioni → Generale → Selezione in modo che il comando `/copy` possa scrivere negli appunti di sistema. Il comando rileva iTerm2 anche quando eseguito da dentro tmux. Riavvia iTerm2 affinché la modifica abbia effetto.
   </Tab>
 
   <Tab title="VS Code">

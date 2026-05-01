@@ -87,6 +87,10 @@ En **Linux y WSL2**, instale primero los paquetes requeridos:
   </Tab>
 </Tabs>
 
+WSL1 no admite sandboxing porque carece de las primitivas de espacio de nombres de Linux requeridas. Si ve `Sandboxing requires WSL2`, actualice su distribución a WSL2 o ejecute Claude Code sin sandboxing.
+
+En WSL2, los comandos aislados no pueden lanzar binarios de Windows como `cmd.exe`, `powershell.exe`, o cualquier cosa bajo `/mnt/c/`. WSL entrega estos al host de Windows a través de un socket Unix, que el sandbox bloquea. Si un comando necesita invocar un binario de Windows, agréguelo a [`excludedCommands`](/es/settings#sandbox-settings) para que se ejecute fuera del sandbox.
+
 ### Habilitar sandboxing
 
 Puede habilitar el sandboxing ejecutando el comando `/sandbox`:
@@ -97,13 +101,13 @@ Puede habilitar el sandboxing ejecutando el comando `/sandbox`:
 
 Esto abre un menú donde puede elegir entre modos de sandbox. Si faltan dependencias requeridas (como `bubblewrap` o `socat` en Linux), el menú muestra instrucciones de instalación para su plataforma.
 
-De forma predeterminada, si el sandbox no puede iniciarse (dependencias faltantes, plataforma no compatible o restricciones de plataforma), Claude Code muestra una advertencia y ejecuta comandos sin sandboxing. Para hacer que esto sea un error grave en su lugar, configure [`sandbox.failIfUnavailable`](/es/settings#sandbox-settings) a `true`. Esto está destinado a implementaciones administradas que requieren sandboxing como una puerta de seguridad.
+De forma predeterminada, si el sandbox no puede iniciarse (dependencias faltantes o plataforma no compatible), Claude Code muestra una advertencia y ejecuta comandos sin sandboxing. Para hacer que esto sea un error grave en su lugar, configure [`sandbox.failIfUnavailable`](/es/settings#sandbox-settings) a `true`. Esto está destinado a implementaciones administradas que requieren sandboxing como una puerta de seguridad.
 
 ### Modos de sandbox
 
 Claude Code ofrece dos modos de sandbox:
 
-**Modo de auto-permitir**: Los comandos Bash intentarán ejecutarse dentro del sandbox y se permitirán automáticamente sin requerir permiso. Los comandos que no se pueden aislar (como aquellos que necesitan acceso a la red a hosts no permitidos) vuelven al flujo de permiso regular. Las reglas de denegación explícitas siempre se respetan. Las reglas de solicitud se aplican solo a comandos que vuelven al flujo de permiso regular.
+**Modo de auto-permitir**: Los comandos Bash intentarán ejecutarse dentro del sandbox y se permitirán automáticamente sin requerir permiso. Los comandos que no se pueden aislar (como aquellos que necesitan acceso a la red a hosts no permitidos) vuelven al flujo de permiso regular. Las reglas de denegación explícitas siempre se respetan, y los comandos `rm` o `rmdir` que apunten a `/`, su directorio de inicio u otras rutas críticas del sistema aún desencadenan un aviso de permiso. Las reglas de solicitud se aplican solo a comandos que vuelven al flujo de permiso regular.
 
 **Modo de permisos regulares**: Todos los comandos bash pasan por el flujo de permiso estándar, incluso cuando están aislados. Esto proporciona más control pero requiere más aprobaciones.
 

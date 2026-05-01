@@ -335,6 +335,8 @@ Claude Code 支援 MCP `list_changed` 通知，允許 MCP servers 動態更新�
 
 如果 HTTP 或 SSE server 在 session 中途斷開連接，Claude Code 會自動以指數退避方式重新連接：最多五次嘗試，從一秒延遲開始，每次加倍。在 `/mcp` 中，server 會顯示為待處理狀態，同時重新連接正在進行中。五次失敗嘗試後，server 被標記為失敗，您可以從 `/mcp` 手動重試。Stdio servers 是本機程序，不會自動重新連接。
 
+相同的退避策略適用於 HTTP 或 SSE server 在啟動時初始連接失敗的情況。自 v2.1.121 起，Claude Code 在暫時性錯誤（例如 5xx 回應、連接被拒絕或逾時）上最多重試初始連接三次，如果仍無法連接，則將 server 標記為失敗。驗證和找不到錯誤不會重試，因為它們需要配置變更才能解決。
+
 ### 使用 channels 推送訊息
 
 MCP server 也可以直接將訊息推送到您的 session 中，以便 Claude 可以回應外部事件，例如 CI 結果、監控警報或聊天訊息。若要啟用此功能，您的 server 宣告 `claude/channel` 功能，並在啟動時使用 `--channels` 旗標選擇加入。請參閱 [Channels](/zh-TW/channels) 以使用官方支援的 channel，或 [Channels reference](/zh-TW/channels-reference) 以建立您自己的。
@@ -398,7 +400,7 @@ MCP server 也可以直接將訊息推送到您的 session 中，以便 Claude �
 **Plugin MCP 功能**：
 
 * **自動生命週期**：在 session 啟動時，已啟用 plugins 的 servers 會自動連接。如果您在 session 期間啟用或停用 plugin，請執行 `/reload-plugins` 以連接或斷開其 MCP servers
-* **環境變數**：使用 `${CLAUDE_PLUGIN_ROOT}` 表示 plugin 相對路徑，以及 `${CLAUDE_PLUGIN_DATA}` 表示 [persistent state](/zh-TW/plugins-reference#persistent-data-directory) 在 plugin 更新後仍然存在
+* **環境變數**：使用 `${CLAUDE_PLUGIN_ROOT}` 表示 plugin 根目錄中的捆綁 plugin 檔案，以及 `${CLAUDE_PLUGIN_DATA}` 表示 [persistent state](/zh-TW/plugins-reference#persistent-data-directory) 在 plugin 更新後仍然存在
 * **使用者環境存取**：存取與手動配置的 servers 相同的環境變數
 * **多種傳輸類型**：支援 stdio、SSE 和 HTTP 傳輸 (傳輸支援可能因 server 而異)
 
@@ -1160,6 +1162,26 @@ ENABLE_TOOL_SEARCH=false claude
   }
 }
 ```
+
+### 豁免伺服器延遲
+
+如果伺服器的工具應始終對 Claude 可見而無需搜尋步驟，請在該伺服器的配置中將 `alwaysLoad` 設定為 `true`。該伺服器的每個工具隨後都會在 session 啟動時載入到內容中，無論 `ENABLE_TOOL_SEARCH` 設定如何。對於 Claude 在每個回合都需要的少量工具，請使用此選項，因為每個預先載入的工具會消耗內容，否則這些內容將可用於您的對話。
+
+以下 `.mcp.json` 項目豁免一個 HTTP 伺服器，同時保持其他伺服器延遲：
+
+```json theme={null}
+{
+  "mcpServers": {
+    "core-tools": {
+      "type": "http",
+      "url": "https://mcp.example.com/mcp",
+      "alwaysLoad": true
+    }
+  }
+}
+```
+
+`alwaysLoad` 欄位在所有伺服器類型上可用，需要 Claude Code v2.1.121 或更新版本。MCP 伺服器也可以透過在工具的 `_meta` 物件中包含 `"anthropic/alwaysLoad": true` 來標記個別工具為始終載入，這對該工具只有相同的效果。
 
 ## 使用 MCP 提示作為命令
 

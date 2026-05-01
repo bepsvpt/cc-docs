@@ -28,7 +28,7 @@
 | `Ctrl+X Ctrl+K`                                   | Arrêter tous les agents en arrière-plan. Appuyez deux fois dans les 3 secondes pour confirmer | Contrôle des agents en arrière-plan                                                                                                                                                                                                                                                                                                                                                            |
 | `Ctrl+D`                                          | Quitter la session Claude Code                                                                | Signal EOF                                                                                                                                                                                                                                                                                                                                                                                     |
 | `Ctrl+G` ou `Ctrl+X Ctrl+E`                       | Ouvrir dans l'éditeur de texte par défaut                                                     | Modifiez votre invite ou réponse personnalisée dans votre éditeur de texte par défaut. `Ctrl+X Ctrl+E` est la liaison readline native. Activez Afficher la dernière réponse dans l'éditeur externe dans `/config` pour ajouter la réponse précédente de Claude en tant que contexte commenté avec `#` au-dessus de votre invite ; le bloc de commentaire est supprimé lorsque vous enregistrez |
-| `Ctrl+L`                                          | Effacer l'entrée d'invite et redessiner l'écran                                               | Efface le texte saisi et force un redessinage complet du terminal. L'historique de la conversation est conservé. Utilisez ceci pour récupérer si l'affichage devient brouillé ou partiellement vide                                                                                                                                                                                            |
+| `Ctrl+L`                                          | Redessiner l'écran                                                                            | Force un redessinage complet du terminal. L'entrée et l'historique de la conversation sont conservés. Utilisez ceci pour récupérer si l'affichage devient brouillé ou partiellement vide                                                                                                                                                                                                       |
 | `Ctrl+O`                                          | Basculer la visionneuse de transcription                                                      | Affiche l'utilisation détaillée des outils et l'exécution. Développe également les appels MCP, qui se réduisent à une seule ligne comme « Called slack 3 times » par défaut                                                                                                                                                                                                                    |
 | `Ctrl+R`                                          | Recherche inversée dans l'historique des commandes                                            | Recherchez les commandes précédentes de manière interactive                                                                                                                                                                                                                                                                                                                                    |
 | `Ctrl+V` ou `Cmd+V` (iTerm2) ou `Alt+V` (Windows) | Coller une image du presse-papiers                                                            | Insère une puce `[Image #N]` au curseur afin que vous puissiez la référencer positionnellement dans votre invite                                                                                                                                                                                                                                                                               |
@@ -81,7 +81,7 @@
 | Raccourci    | Description                  | Notes                                                                            |
 | :----------- | :--------------------------- | :------------------------------------------------------------------------------- |
 | `/` au début | Commande ou skill            | Consultez les [commandes](#commands) et les [skills](/fr/skills)                 |
-| `!` au début | Mode Bash                    | Exécutez les commandes directement et ajoutez la sortie d'exécution à la session |
+| `!` au début | Mode shell                   | Exécutez les commandes directement et ajoutez la sortie d'exécution à la session |
 | `@`          | Mention de chemin de fichier | Déclencher l'autocomplétion du chemin de fichier                                 |
 
 ### Visionneuse de transcription
@@ -220,10 +220,11 @@ Appuyez sur `Ctrl+R` pour rechercher de manière interactive dans votre historiq
 1. **Démarrer la recherche** : appuyez sur `Ctrl+R` pour activer la recherche d'historique inversée
 2. **Tapez la requête** : entrez le texte à rechercher dans les commandes précédentes. Le terme de recherche est mis en évidence dans les résultats correspondants
 3. **Naviguer dans les correspondances** : appuyez à nouveau sur `Ctrl+R` pour parcourir les correspondances plus anciennes
-4. **Accepter la correspondance** :
+4. **Changer la portée** : appuyez sur `Ctrl+S` pour basculer entre cette session, ce projet et tous les projets
+5. **Accepter la correspondance** :
    * Appuyez sur `Tab` ou `Esc` pour accepter la correspondance actuelle et continuer l'édition
    * Appuyez sur `Entrée` pour accepter et exécuter la commande immédiatement
-5. **Annuler la recherche** :
+6. **Annuler la recherche** :
    * Appuyez sur `Ctrl+C` pour annuler et restaurer votre entrée d'origine
    * Appuyez sur `Retour arrière` sur une recherche vide pour annuler
 
@@ -259,9 +260,9 @@ Pour désactiver toutes les fonctionnalités de tâche en arrière-plan, défini
 * Serveurs de développement
 * Processus de longue durée (docker, terraform)
 
-### Mode Bash avec le préfixe `!`
+### Mode shell avec le préfixe `!`
 
-Exécutez les commandes bash directement sans passer par Claude en préfixant votre entrée avec `!` :
+Exécutez les commandes shell directement sans passer par Claude en préfixant votre entrée avec `!` :
 
 ```bash theme={null}
 ! npm test
@@ -269,7 +270,7 @@ Exécutez les commandes bash directement sans passer par Claude en préfixant vo
 ! ls -la
 ```
 
-Mode Bash :
+Mode shell :
 
 * Ajoute la commande et sa sortie au contexte de la conversation
 * Affiche la progression et la sortie en temps réel
@@ -277,7 +278,7 @@ Mode Bash :
 * Ne nécessite pas que Claude interprète ou approuve la commande
 * Prend en charge l'autocomplétion basée sur l'historique : tapez une commande partielle et appuyez sur **Tab** pour compléter à partir des commandes `!` précédentes du projet actuel
 * Quittez avec `Échap`, `Retour arrière` ou `Ctrl+U` sur une invite vide
-* Coller du texte commençant par `!` dans une invite vide entre en mode bash automatiquement, correspondant au comportement du texte tapé `!`
+* Coller du texte commençant par `!` dans une invite vide entre en mode shell automatiquement, correspondant au comportement du texte tapé `!`
 
 Ceci est utile pour les opérations shell rapides tout en maintenant le contexte de la conversation.
 

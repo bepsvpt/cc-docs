@@ -39,10 +39,10 @@ Claude Code는 도구 승인 방식을 제어하는 여러 권한 모드를 지�
 | `plan`              | Plan Mode: Claude는 파일을 분석할 수 있지만 수정하거나 명령을 실행할 수 없습니다                                                         |
 | `auto`              | 배경 안전 검사를 통해 도구 호출을 자동으로 승인하여 작업이 요청과 일치하는지 확인합니다. 현재 연구 미리보기입니다                                              |
 | `dontAsk`           | `/permissions` 또는 `permissions.allow` 규칙을 통해 사전 승인되지 않은 한 도구를 자동으로 거부합니다                                      |
-| `bypassPermissions` | 보호된 디렉토리에 대한 쓰기를 제외한 모든 권한 프롬프트를 건너뜁니다(아래 경고 참조)                                                              |
+| `bypassPermissions` | 모든 권한 프롬프트를 건너뜁니다. 파일 시스템 루트 또는 홈 디렉토리 제거(예: `rm -rf /` 및 `rm -rf ~`)는 모델 오류에 대한 회로 차단기로 여전히 프롬프트합니다          |
 
 <Warning>
-  `bypassPermissions` 모드는 권한 프롬프트를 건너뜁니다. `.git`, `.claude`, `.vscode`, `.idea` 및 `.husky` 디렉토리에 대한 쓰기는 여전히 확인을 요청하여 저장소 상태, 편집기 구성 및 git 훅의 실수로 인한 손상을 방지합니다. `.claude/commands`, `.claude/agents` 및 `.claude/skills`에 대한 쓰기는 면제되며 프롬프트하지 않습니다. Claude는 기술, 서브에이전트 및 명령을 만들 때 정기적으로 여기에 씁니다. 컨테이너나 VM과 같은 Claude Code가 손상을 일으킬 수 없는 격리된 환경에서만 이 모드를 사용합니다. 관리자는 [관리형 설정](#managed-settings)에서 `permissions.disableBypassPermissionsMode`를 `"disable"`로 설정하여 이 모드를 방지할 수 있습니다.
+  `bypassPermissions` 모드는 `.git`, `.claude`, `.vscode`, `.idea` 및 `.husky`에 대한 쓰기를 포함한 모든 권한 프롬프트를 건너뜁니다. 파일 시스템 루트 또는 홈 디렉토리를 대상으로 하는 제거(예: `rm -rf /` 및 `rm -rf ~`)는 모델 오류에 대한 회로 차단기로 여전히 프롬프트합니다. 이 모드는 Claude Code가 손상을 일으킬 수 없는 컨테이너 또는 VM과 같은 격리된 환경에서만 사용합니다. 관리자는 [관리형 설정](#managed-settings)에서 `permissions.disableBypassPermissionsMode`를 `"disable"`로 설정하여 이 모드를 방지할 수 있습니다.
 </Warning>
 
 `bypassPermissions` 또는 `auto` 모드가 사용되는 것을 방지하려면 [설정 파일](/ko/settings#settings-files)에서 `permissions.disableBypassPermissionsMode` 또는 `permissions.disableAutoMode`를 `"disable"`로 설정합니다. 이들은 재정의될 수 없는 [관리형 설정](#managed-settings)에서 가장 유용합니다.
@@ -157,6 +157,28 @@ Claude Code는 기본 제공 Bash 명령 집합을 읽기 전용으로 인식하
 
   WebFetch만 사용하는 것은 네트워크 액세스를 방지하지 않습니다. Bash가 허용되면 Claude는 여전히 `curl`, `wget` 또는 다른 도구를 사용하여 모든 URL에 도달할 수 있습니다.
 </Warning>
+
+### PowerShell
+
+PowerShell 권한 규칙은 Bash 규칙과 동일한 형태를 사용합니다. `*`를 사용한 와일드카드는 어느 위치에나 일치하고, `:*` 접미사는 후행 ` *`와 동등하며, 베어 `PowerShell` 또는 `PowerShell(*)`는 모든 명령과 일치합니다. 이 구성은 `Get-ChildItem` 및 `git commit` 명령을 허용하면서 `Remove-Item`을 차단합니다:
+
+```json theme={null}
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(git commit *)"
+    ],
+    "deny": [
+      "PowerShell(Remove-Item *)"
+    ]
+  }
+}
+```
+
+일반적인 별칭은 일치하기 전에 정규화됩니다. cmdlet 이름에 대해 작성된 규칙은 해당 별칭과도 일치하므로 `PowerShell(Get-ChildItem *)`는 `gci`, `ls` 및 `dir`과도 일치합니다. 일치는 대소문자를 구분하지 않습니다.
+
+Claude Code는 PowerShell AST를 구문 분석하고 복합 명령의 각 명령을 독립적으로 확인합니다. 파이프라인 연산자 `|`, 문 구분자 `;` 및 PowerShell 7+ 이상의 체인 연산자 `&&` 및 `||`는 복합 명령을 서브명령으로 분할합니다. 복합 명령이 허용되려면 규칙이 모든 서브명령과 일치해야 합니다.
 
 ### Read 및 Edit
 

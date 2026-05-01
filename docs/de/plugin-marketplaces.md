@@ -175,10 +175,13 @@ Jeder Plugin-Eintrag benötigt mindestens einen `name` und eine `source` (wo man
 
 | Feld                                  | Typ    | Beschreibung                                                                                                                                                                                                                                                                                                                 |
 | :------------------------------------ | :----- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `metadata.description`                | string | Kurze Marktplatzbeschreibung                                                                                                                                                                                                                                                                                                 |
-| `metadata.version`                    | string | Marktplatz-Version                                                                                                                                                                                                                                                                                                           |
+| `$schema`                             | string | JSON-Schema-URL für Editor-Autovervollständigung und Validierung. Claude Code ignoriert dieses Feld beim Laden.                                                                                                                                                                                                              |
+| `description`                         | string | Kurze Marktplatzbeschreibung                                                                                                                                                                                                                                                                                                 |
+| `version`                             | string | Marktplatz-Manifest-Version                                                                                                                                                                                                                                                                                                  |
 | `metadata.pluginRoot`                 | string | Basisverzeichnis, das relativen Plugin-Quellpfaden vorangestellt wird (z. B. `"./plugins"` ermöglicht es Ihnen, `"source": "formatter"` statt `"source": "./plugins/formatter"` zu schreiben)                                                                                                                                |
 | `allowCrossMarketplaceDependenciesOn` | array  | Andere Marktplätze, von denen Plugins in diesem Marktplatz abhängen können. Abhängigkeiten von einem Marktplatz, der hier nicht aufgelistet ist, werden bei der Installation blockiert. Siehe [Von einem Plugin aus einem anderen Marktplatz abhängen](/de/plugin-dependencies#depend-on-a-plugin-from-another-marketplace). |
+
+`description` und `version` werden auch unter `metadata` für Rückwärtskompatibilität akzeptiert.
 
 ## Plugin-Einträge
 
@@ -958,7 +961,7 @@ Führen Sie `claude plugin validate .` oder `/plugin validate .` aus Ihrem Markt
 **Warnungen** (nicht blockierend):
 
 * `Marketplace has no plugins defined`: Fügen Sie mindestens ein Plugin zum `plugins`-Array hinzu
-* `No marketplace description provided`: Fügen Sie `metadata.description` hinzu, um Benutzern zu helfen, Ihren Marktplatz zu verstehen
+* `No marketplace description provided`: Fügen Sie eine Top-Level-`description` hinzu, um Benutzern zu helfen, Ihren Marktplatz zu verstehen
 * `Plugin name "x" is not kebab-case`: Der Plugin-Name enthält Großbuchstaben, Leerzeichen oder Sonderzeichen. Benennen Sie in Kleinbuchstaben, Ziffern und Bindestriche um (z. B. `my-plugin`). Claude Code akzeptiert andere Formen, aber die Claude.ai-Marktplatz-Synchronisierung lehnt sie ab.
 
 ### Plugin-Installationsfehler

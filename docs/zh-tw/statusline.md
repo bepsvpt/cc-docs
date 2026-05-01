@@ -25,7 +25,7 @@
 
 ## 設定狀態列
 
-使用[`/statusline` 命令](#use-the-statusline-command)讓 Claude Code 為您產生指令碼，或[手動建立指令碼](#manually-configure-a-status-line)並將其新增到您的設定。
+使用[`/statusline` 命令](#use-the-%2Fstatusline-command)讓 Claude Code 為您產生指令碼，或[手動建立指令碼](#manually-configure-a-status-line)並將其新增到您的設定。
 
 ### 使用 /statusline 命令
 
@@ -63,6 +63,8 @@
 可選的 `padding` 欄位為狀態列內容新增額外的水平間距（以字元為單位）。預設為 `0`。此填充是在介面的內建間距之外，因此它控制相對縮排而不是距離終端邊緣的絕對距離。
 
 可選的 `refreshInterval` 欄位除了[事件驅動的更新](#how-status-lines-work)外，每 N 秒重新執行一次您的命令。最小值為 `1`。當您的狀態列顯示基於時間的資料（例如時鐘）或背景子代理在主工作階段閒置時變更 git 狀態時，請設定此項。保持未設定以僅在事件上執行。
+
+可選的 `hideVimModeIndicator` 欄位會隱藏提示下方的內建 `-- INSERT --` 文字。當您的指令碼自行呈現 [`vim.mode`](#available-data) 時，請將此設定為 `true`，以便模式不會顯示兩次。
 
 ### 停用狀態列
 
@@ -469,7 +471,7 @@ Bash 範例使用 [`jq`](https://jqlang.github.io/jq/) 來解析 JSON。Python �
 
 ### 成本和持續時間追蹤
 
-追蹤您的工作階段 API 成本和經過的時間。`cost.total_cost_usd` 欄位累積目前工作階段中所有 API 呼叫的成本。`cost.total_duration_ms` 欄位測量自工作階段開始以來的總經過時間，而 `cost.total_api_duration_ms` 僅追蹤等待 API 回應所花費的時間。
+追蹤您的工作階段 API 成本和經過的時間。`cost.total_cost_usd` 欄位累積目前工作階段中所有 API 呼叫的估計成本。`cost.total_duration_ms` 欄位測量自工作階段開始以來的總經過時間，而 `cost.total_api_duration_ms` 僅追蹤等待 API 回應所花費的時間。
 
 每個指令碼將成本格式化為貨幣，並將毫秒轉換為分鐘和秒：
 
@@ -914,7 +916,7 @@ Bash 範例使用 [`jq`](https://jqlang.github.io/jq/) 來解析 JSON。Python �
 
 ### Windows 設定
 
-在 Windows 上，Claude Code 透過 Git Bash 執行狀態列命令。您可以從該 shell 呼叫 PowerShell：
+在 Windows 上，Claude Code 透過 Git Bash 執行狀態列命令（如果已安裝 Git Bash），或在 Git Bash 不存在時透過 PowerShell 執行。若要執行 PowerShell 指令碼作為您的狀態列，請透過 `powershell` 呼叫它；這在任一 shell 中都有效：
 
 <CodeGroup>
   ```json settings.json theme={null}
@@ -941,7 +943,7 @@ Bash 範例使用 [`jq`](https://jqlang.github.io/jq/) 來解析 JSON。Python �
   ```
 </CodeGroup>
 
-或直接執行 Bash 指令碼：
+或者，當已安裝 Git Bash 時，直接執行 Bash 指令碼：
 
 <CodeGroup>
   ```json settings.json theme={null}

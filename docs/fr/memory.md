@@ -136,7 +136,7 @@ Utilisez le mode plan pour les modifications sous `src/billing/`.
 
 Claude Code lit les fichiers CLAUDE.md en remontant l'arborescence des répertoires à partir de votre répertoire de travail actuel, en vérifiant chaque répertoire en chemin pour les fichiers `CLAUDE.md` et `CLAUDE.local.md`. Cela signifie que si vous exécutez Claude Code dans `foo/bar/`, il charge les instructions de `foo/bar/CLAUDE.md`, `foo/CLAUDE.md` et tous les fichiers `CLAUDE.local.md` à côté d'eux.
 
-Tous les fichiers découverts sont concaténés dans le contexte plutôt que de se remplacer les uns les autres. Dans chaque répertoire, `CLAUDE.local.md` est ajouté après `CLAUDE.md`, donc quand les instructions entrent en conflit, vos notes personnelles sont la dernière chose que Claude lit à ce niveau.
+Tous les fichiers découverts sont concaténés dans le contexte plutôt que de se remplacer les uns les autres. Dans l'arborescence des répertoires, le contenu est ordonné de la racine du système de fichiers jusqu'à votre répertoire de travail. Pour l'exemple `foo/bar/`, `foo/CLAUDE.md` apparaît dans le contexte avant `foo/bar/CLAUDE.md`, donc les instructions plus proches de l'endroit où vous avez lancé Claude sont lues en dernier. Dans chaque répertoire, `CLAUDE.local.md` est ajouté après `CLAUDE.md`, donc vos notes personnelles sont la dernière chose que Claude lit à ce niveau.
 
 Claude découvre également les fichiers `CLAUDE.md` et `CLAUDE.local.md` dans les sous-répertoires sous votre répertoire de travail actuel. Au lieu de les charger au lancement, ils sont inclus quand Claude lit les fichiers de ces sous-répertoires.
 

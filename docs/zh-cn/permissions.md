@@ -39,10 +39,10 @@ Claude Code 支持多种权限模式来控制工具的批准方式。请参阅[�
 | `plan`              | Plan Mode：Claude 可以分析但不能修改文件或执行命令                                                |
 | `auto`              | 自动批准工具调用，并进行后台安全检查以验证操作与您的请求一致。目前处于研究预览阶段                                        |
 | `dontAsk`           | 自动拒绝工具，除非通过 `/permissions` 或 `permissions.allow` 规则预先批准                          |
-| `bypassPermissions` | 跳过权限提示，除了对受保护目录的写入（请参见下面的警告）                                                     |
+| `bypassPermissions` | 跳过所有权限提示。根目录和主目录删除操作（如 `rm -rf /`）仍会作为断路器提示                                      |
 
 <Warning>
-  `bypassPermissions` 模式跳过权限提示。对 `.git`、`.claude`、`.vscode`、`.idea` 和 `.husky` 目录的写入仍然会提示确认，以防止意外损坏存储库状态、编辑器配置和 git hooks。对 `.claude/commands`、`.claude/agents` 和 `.claude/skills` 的写入被豁免，不会提示，因为 Claude 在创建技能、子代理和命令时经常在那里写入。仅在隔离环境（如容器或虚拟机）中使用此模式，其中 Claude Code 无法造成损害。管理员可以通过在[托管设置](#managed-settings)中将 `permissions.disableBypassPermissionsMode` 设置为 `"disable"` 来防止此模式。
+  `bypassPermissions` 模式跳过所有权限提示，包括对 `.git`、`.claude`、`.vscode`、`.idea` 和 `.husky` 的写入。针对文件系统根目录或主目录的删除操作（如 `rm -rf /` 和 `rm -rf ~`）仍会作为断路器提示以防止模型错误。仅在隔离环境（如容器或虚拟机）中使用此模式，其中 Claude Code 无法造成损害。管理员可以通过在[托管设置](#managed-settings)中将 `permissions.disableBypassPermissionsMode` 设置为 `"disable"` 来防止此模式。
 </Warning>
 
 为了防止使用 `bypassPermissions` 或 `auto` 模式，在任何[设置文件](/zh-CN/settings#settings-files)中将 `permissions.disableBypassPermissionsMode` 或 `permissions.disableAutoMode` 设置为 `"disable"`。这些在[托管设置](#managed-settings)中最有用，因为它们无法被覆盖。
@@ -157,6 +157,28 @@ Claude Code 将一组内置 Bash 命令识别为只读，并在每种模式下�
 
   请注意，仅使用 WebFetch 不会阻止网络访问。如果允许 Bash，Claude 仍然可以使用 `curl`、`wget` 或其他工具来访问任何 URL。
 </Warning>
+
+### PowerShell
+
+PowerShell 权限规则使用与 Bash 规则相同的形式。带有 `*` 的通配符可以在任何位置匹配，`:*` 后缀等同于尾部 ` *`，而裸 `PowerShell` 或 `PowerShell(*)` 匹配每个命令。此配置允许 `Get-ChildItem` 和 `git commit` 命令，同时阻止 `Remove-Item`：
+
+```json theme={null}
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(git commit *)"
+    ],
+    "deny": [
+      "PowerShell(Remove-Item *)"
+    ]
+  }
+}
+```
+
+常见别名在匹配前被规范化。为 cmdlet 名称编写的规则也匹配其别名，因此 `PowerShell(Get-ChildItem *)` 匹配 `gci`、`ls` 和 `dir`。匹配不区分大小写。
+
+Claude Code 解析 PowerShell AST 并独立检查复合命令中的每个命令。管道运算符 `|`、语句分隔符 `;` 和 PowerShell 7+ 上的链运算符 `&&` 和 `||` 将复合命令分割为子命令。规则必须匹配每个子命令才能允许复合命令。
 
 ### Read 和 Edit
 

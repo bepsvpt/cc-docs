@@ -28,7 +28,7 @@
 | `Ctrl+X Ctrl+K`                                 | Terminar todos los agentes de fondo. Presione dos veces en 3 segundos para confirmar | Control de agentes de fondo                                                                                                                                                                                                                                                                                                                                   |
 | `Ctrl+D`                                        | Salir de la sesión de Claude Code                                                    | Señal EOF                                                                                                                                                                                                                                                                                                                                                     |
 | `Ctrl+G` o `Ctrl+X Ctrl+E`                      | Abrir en el editor de texto predeterminado                                           | Edite su indicación o respuesta personalizada en su editor de texto predeterminado. `Ctrl+X Ctrl+E` es el enlace nativo de readline. Active Mostrar última respuesta en editor externo en `/config` para anteponer la respuesta anterior de Claude como contexto comentado con `#` encima de su indicación; el bloque de comentarios se elimina cuando guarda |
-| `Ctrl+L`                                        | Borrar entrada de indicación y redibujar pantalla                                    | Borra el texto escrito y fuerza un redibujado completo de la terminal. El historial de conversación se mantiene. Use esto para recuperarse si la pantalla se vuelve distorsionada o parcialmente en blanco                                                                                                                                                    |
+| `Ctrl+L`                                        | Redibujar pantalla                                                                   | Fuerza un redibujado completo de la terminal. La entrada y el historial de conversación se mantienen. Use esto para recuperarse si la pantalla se vuelve distorsionada o parcialmente en blanco                                                                                                                                                               |
 | `Ctrl+O`                                        | Alternar visor de transcripción                                                      | Muestra el uso y la ejecución detallada de herramientas. También expande las llamadas de MCP, que se contraen a una sola línea como "Llamó a slack 3 veces" de forma predeterminada                                                                                                                                                                           |
 | `Ctrl+R`                                        | Búsqueda inversa del historial de comandos                                           | Buscar a través de comandos anteriores de forma interactiva                                                                                                                                                                                                                                                                                                   |
 | `Ctrl+V` o `Cmd+V` (iTerm2) o `Alt+V` (Windows) | Pegar imagen desde el portapapeles                                                   | Inserta un chip `[Image #N]` en el cursor para que pueda hacer referencia a él posicionalmente en su indicación                                                                                                                                                                                                                                               |
@@ -220,10 +220,11 @@ Presione `Ctrl+R` para buscar de forma interactiva a través de su historial de 
 1. **Iniciar búsqueda**: presione `Ctrl+R` para activar la búsqueda de historial inverso
 2. **Escribir consulta**: ingrese texto para buscar en comandos anteriores. El término de búsqueda se resalta en los resultados coincidentes
 3. **Navegar coincidencias**: presione `Ctrl+R` nuevamente para ciclar a través de coincidencias más antiguas
-4. **Aceptar coincidencia**:
+4. **Cambiar alcance**: presione `Ctrl+S` para ciclar entre esta sesión, este proyecto y todos los proyectos
+5. **Aceptar coincidencia**:
    * Presione `Tab` o `Esc` para aceptar la coincidencia actual y continuar editando
    * Presione `Enter` para aceptar y ejecutar el comando inmediatamente
-5. **Cancelar búsqueda**:
+6. **Cancelar búsqueda**:
    * Presione `Ctrl+C` para cancelar y restaurar su entrada original
    * Presione `Backspace` en búsqueda vacía para cancelar
 
@@ -259,9 +260,9 @@ Para deshabilitar toda la funcionalidad de tareas de fondo, establezca la variab
 * Servidores de desarrollo
 * Procesos de larga duración (docker, terraform)
 
-### Modo Bash con prefijo `!`
+### Modo shell con prefijo `!`
 
-Ejecute comandos bash directamente sin pasar por Claude prefijando su entrada con `!`:
+Ejecute comandos shell directamente sin pasar por Claude prefijando su entrada con `!`:
 
 ```bash theme={null}
 ! npm test
@@ -269,7 +270,7 @@ Ejecute comandos bash directamente sin pasar por Claude prefijando su entrada co
 ! ls -la
 ```
 
-Modo Bash:
+Modo shell:
 
 * Agrega el comando y su salida al contexto de la conversación
 * Muestra el progreso y la salida en tiempo real
@@ -277,7 +278,7 @@ Modo Bash:
 * No requiere que Claude interprete o apruebe el comando
 * Admite autocompletado basado en historial: escriba un comando parcial y presione **Tab** para completar desde comandos `!` anteriores en el proyecto actual
 * Salir con `Escape`, `Backspace` o `Ctrl+U` en un indicador vacío
-* Pegar texto que comienza con `!` en un indicador vacío entra automáticamente en modo bash, coincidiendo con el comportamiento de `!` escrito
+* Pegar texto que comienza con `!` en un indicador vacío entra automáticamente en modo shell, coincidiendo con el comportamiento de `!` escrito
 
 Esto es útil para operaciones rápidas de shell mientras se mantiene el contexto de la conversación.
 

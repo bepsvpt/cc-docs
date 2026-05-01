@@ -40,14 +40,13 @@ Este exemplo cria uma skill que ensina Claude a explicar código usando diagrama
   </Step>
 
   <Step title="Escreva SKILL.md">
-    Cada skill precisa de um arquivo `SKILL.md` com duas partes: frontmatter YAML (entre marcadores `---`) que diz ao Claude quando usar a skill, e conteúdo markdown com instruções que Claude segue quando a skill é invocada. O campo `name` se torna o `/slash-command`, e a `description` ajuda Claude a decidir quando carregá-la automaticamente.
+    Cada skill precisa de um arquivo `SKILL.md` com duas partes: frontmatter YAML (entre marcadores `---`) que diz ao Claude quando usar a skill, e conteúdo markdown com instruções que Claude segue quando a skill é invocada. O nome do diretório se torna o `/slash-command`, e a `description` ajuda Claude a decidir quando carregá-la automaticamente.
 
     Crie `~/.claude/skills/explain-code/SKILL.md`:
 
     ```yaml theme={null}
     ---
-    name: explain-code
-    description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
+    description: "Explica código com diagramas visuais e analogias. Use ao explicar como o código funciona, ensinando sobre uma base de código, ou quando o usuário pergunta 'como isso funciona?'"
     ---
 
     When explaining code, always include:
@@ -215,6 +214,7 @@ Skills suportam substituição de string para valores dinâmicos no conteúdo da
 | `$N`                   | Abreviação para `$ARGUMENTS[N]`, como `$0` para o primeiro argumento ou `$1` para o segundo.                                                                                                                                                                                                         |
 | `$name`                | Argumento nomeado declarado na lista de frontmatter [`arguments`](#frontmatter-reference). Nomes mapeiam para posições em ordem, então com `arguments: [issue, branch]` o placeholder `$issue` expande para o primeiro argumento e `$branch` para o segundo.                                         |
 | `${CLAUDE_SESSION_ID}` | O ID da sessão atual. Útil para logging, criação de arquivos específicos da sessão, ou correlação de saída de skill com sessões.                                                                                                                                                                     |
+| `${CLAUDE_EFFORT}`     | O nível de esforço atual: `low`, `medium`, `high`, `xhigh`, ou `max`. Use isso para adaptar instruções de skill à configuração de esforço ativo.                                                                                                                                                     |
 | `${CLAUDE_SKILL_DIR}`  | O diretório contendo o arquivo `SKILL.md` da skill. Para skills de plugin, este é o subdiretório da skill dentro do plugin, não a raiz do plugin. Use isso em comandos de injeção bash para referenciar scripts ou arquivos agrupados com a skill, independentemente do diretório de trabalho atual. |
 
 Argumentos indexados usam quoting no estilo shell, então envolva valores de múltiplas palavras em aspas para passá-los como um único argumento. Por exemplo, `/my-skill "hello world" second` faz `$0` expandir para `hello world` e `$1` para `second`. O placeholder `$ARGUMENTS` sempre expande para a string de argumento completa conforme digitada.

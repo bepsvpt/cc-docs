@@ -75,7 +75,7 @@ Per i dettagli completi, consultare i nostri [Termini di servizio commerciali](h
 2. Evitare di inviare contenuti non attendibili direttamente a Claude tramite pipe
 3. Verificare le modifiche proposte ai file critici
 4. Utilizzare macchine virtuali (VM) per eseguire script e effettuare chiamate di strumenti, soprattutto quando si interagisce con servizi web esterni
-5. Segnalare comportamenti sospetti con `/bug`
+5. Segnalare comportamenti sospetti con `/feedback`
 
 <Warning>
   Sebbene queste protezioni riducano significativamente il rischio, nessun sistema è completamente
@@ -114,7 +114,7 @@ Le sessioni di [Remote Control](/it/remote-control) funzionano diversamente: l'i
 
 * Rivedere tutte le modifiche suggerite prima dell'approvazione
 * Utilizzare impostazioni di permesso specifiche del progetto per repository sensibili
-* Considerare l'utilizzo di [devcontainers](/it/devcontainer) per un isolamento aggiuntivo
+* Considerare l'utilizzo di [dev containers](/it/devcontainer) per un isolamento aggiuntivo
 * Controllare regolarmente le impostazioni di permesso con `/permissions`
 
 ### Sicurezza del team
@@ -130,7 +130,7 @@ Le sessioni di [Remote Control](/it/remote-control) funzionano diversamente: l'i
 Se scoprite una vulnerabilità di sicurezza in Claude Code:
 
 1. Non divulgatela pubblicamente
-2. Segnalatela tramite il nostro [programma HackerOne](https://hackerone.com/anthropic-vdp/reports/new?type=team\&report_type=vulnerability)
+2. Segnalatela tramite il nostro [programma HackerOne](https://hackerone.com/4f1f16ba-10d3-4d09-9ecc-c721aad90f24/embedded_submissions/new)
 3. Includete i passaggi di riproduzione dettagliati
 4. Concedete il tempo necessario per affrontare il problema prima della divulgazione pubblica
 

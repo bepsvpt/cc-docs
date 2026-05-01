@@ -417,7 +417,8 @@ export ENABLE_PROMPT_CACHING_1H=1
       "Action": [
         "bedrock:InvokeModel",
         "bedrock:InvokeModelWithResponseStream",
-        "bedrock:ListInferenceProfiles"
+        "bedrock:ListInferenceProfiles",
+        "bedrock:GetInferenceProfile"
       ],
       "Resource": [
         "arn:aws:bedrock:*:*:inference-profile/*",
@@ -444,6 +445,10 @@ export ENABLE_PROMPT_CACHING_1H=1
 ```
 
 为了获得更严格的权限，您可以将资源限制为特定的推理配置文件 ARN。
+
+`bedrock:GetInferenceProfile` 让 Claude Code 能够将[应用推理配置文件 ARN](#map-each-model-version-to-an-inference-profile) 解析为其支持的基础模型，该模型用于为该模型选择正确的请求形状。
+
+如果令牌缺少此权限，Claude Code 会通过使用备用形状重试一次来自动恢复，因此请求仍然会成功，但每个新模型都会增加一个额外的往返。授予该权限可以避免重试。这最常适用于 `AWS_BEARER_TOKEN_BEDROCK` 部署，其中令牌的策略通常比完整的 IAM 角色更窄。
 
 有关详情，请参阅 [Bedrock IAM 文档](https://docs.aws.amazon.com/bedrock/latest/userguide/security-iam.html)。
 

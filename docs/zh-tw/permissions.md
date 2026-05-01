@@ -39,10 +39,10 @@ Claude Code 支援多種權限模式來控制工具的批准方式。請參閱 [
 | `plan`              | Plan Mode：Claude 可以分析但不能修改檔案或執行命令                                                |
 | `auto`              | 自動批准工具呼叫，並進行背景安全檢查以驗證操作是否符合您的要求。目前為研究預覽版                                         |
 | `dontAsk`           | 自動拒絕工具，除非透過 `/permissions` 或 `permissions.allow` 規則預先批准                          |
-| `bypassPermissions` | 跳過權限提示，除了對受保護目錄的寫入（請參閱下方警告）                                                      |
+| `bypassPermissions` | 跳過所有權限提示。根目錄和主目錄移除（例如 `rm -rf /`）仍會作為斷路器提示                                       |
 
 <Warning>
-  `bypassPermissions` 模式會跳過權限提示。對 `.git`、`.claude`、`.vscode`、`.idea` 和 `.husky` 目錄的寫入仍會提示確認，以防止意外損壞儲存庫狀態、編輯器設定和 git hooks。對 `.claude/commands`、`.claude/agents` 和 `.claude/skills` 的寫入被豁免，不會提示，因為 Claude 在建立技能、子代理和命令時會定期寫入這些位置。僅在隔離環境（如容器或虛擬機）中使用此模式，其中 Claude Code 無法造成損害。管理員可以透過在 [managed settings](#managed-settings) 中將 `permissions.disableBypassPermissionsMode` 設定為 `"disable"` 來防止此模式。
+  `bypassPermissions` 模式會跳過所有權限提示，包括對 `.git`、`.claude`、`.vscode`、`.idea` 和 `.husky` 的寫入。針對檔案系統根目錄或主目錄的移除，例如 `rm -rf /` 和 `rm -rf ~`，仍會作為斷路器提示以防止模型錯誤。僅在隔離環境（如容器或虛擬機）中使用此模式，其中 Claude Code 無法造成損害。管理員可以透過在 [managed settings](#managed-settings) 中將 `permissions.disableBypassPermissionsMode` 設定為 `"disable"` 來防止此模式。
 </Warning>
 
 若要防止 `bypassPermissions` 或 `auto` 模式被使用，請在任何 [settings files](/zh-TW/settings#settings-files) 中將 `permissions.disableBypassPermissionsMode` 或 `permissions.disableAutoMode` 設定為 `"disable"`。這些在 [managed settings](#managed-settings) 中最有用，因為它們無法被覆蓋。
@@ -157,6 +157,28 @@ Claude Code 將一組內建的 Bash 命令識別為唯讀，並在每種模式�
 
   請注意，單獨使用 WebFetch 不會防止網路存取。如果允許 Bash，Claude 仍然可以使用 `curl`、`wget` 或其他工具來存取任何 URL。
 </Warning>
+
+### PowerShell
+
+PowerShell 權限規則使用與 Bash 規則相同的形式。使用 `*` 的萬用字元在任何位置符合，`:*` 後綴等同於尾部 ` *`，而裸 `PowerShell` 或 `PowerShell(*)` 符合每個命令。此設定允許 `Get-ChildItem` 和 `git commit` 命令，同時阻止 `Remove-Item`：
+
+```json theme={null}
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(git commit *)"
+    ],
+    "deny": [
+      "PowerShell(Remove-Item *)"
+    ]
+  }
+}
+```
+
+常見別名在符合前會被正規化。為 cmdlet 名稱編寫的規則也符合其別名，所以 `PowerShell(Get-ChildItem *)` 符合 `gci`、`ls` 和 `dir`。符合不區分大小寫。
+
+Claude Code 解析 PowerShell AST 並獨立檢查複合命令中的每個命令。管道運算子 `|`、陳述式分隔符 `;` 和在 PowerShell 7+ 上的鏈運算子 `&&` 和 `||` 將複合命令分割為子命令。規則必須符合每個子命令才能允許複合命令。
 
 ### Read 和 Edit
 
@@ -307,121 +329,6 @@ Hook 決定不會繞過權限規則。Deny 和 ask 規則在 hook 返回 `"allow
 <Note>
   [Remote Control](/zh-TW/remote-control) 和 [web sessions](/zh-TW/claude-code-on-the-web) 的存取不由受管理設定金鑰控制。在 Team 和 Enterprise 方案上，管理員在 [Claude Code admin settings](https://claude.ai/admin-settings/claude-code) 中啟用或停用這些功能。
 </Note>
-
-## 檢視 auto mode 拒絕
-
-當 [auto mode](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode) 拒絕工具呼叫時，會出現通知，被拒絕的操作會記錄在 `/permissions` 的「最近拒絕」標籤下。在被拒絕的操作上按 `r` 以標記它以供重試：當您退出對話框時，Claude Code 會傳送一條訊息告訴模型它可能重試該工具呼叫並繼續對話。
-
-若要以程式設計方式對拒絕做出反應，請使用 [`PermissionDenied` hook](/zh-TW/hooks#permissiondenied)。
-
-## 設定 auto mode 分類器
-
-[Auto mode](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode) 使用分類器模型來決定每個操作是否可以安全執行而無需提示。開箱即用，它僅信任工作目錄和（如果存在）目前儲存庫的遠端。推送到您公司的原始碼控制組織或寫入團隊雲端儲存桶等操作將被阻止為潛在的資料外洩。
-
-若要調整分類器允許或阻止的內容，請在您的 [CLAUDE.md](/zh-TW/memory) 檔案中新增指示。分類器從信任的目錄旁邊的對話中讀取 CLAUDE.md，因此像「永遠不要強制推送」這樣的指示同時引導 Claude 和分類器。從專案慣例和行為規則開始。
-
-對於跨專案應用的規則，例如信任的基礎設施或組織範圍的拒絕規則，請使用 `autoMode` 設定區塊。分類器從使用者設定、`.claude/settings.local.json` 和受管理設定中讀取 `autoMode`。它不從 `.claude/settings.json` 中的共用專案設定讀取，因為簽入的儲存庫可能會注入自己的 allow 規則。
-
-| 範圍          | 檔案                            | 用於                       |
-| :---------- | :---------------------------- | :----------------------- |
-| 一個開發人員      | `~/.claude/settings.json`     | 個人信任的基礎設施                |
-| 一個專案，一個開發人員 | `.claude/settings.local.json` | 每個專案的信任儲存桶或服務，gitignored |
-| 組織範圍        | 受管理設定                         | 為所有開發人員強制執行的信任基礎設施       |
-
-來自每個範圍的項目會被合併。開發人員可以使用個人項目擴展 `environment`、`allow` 和 `soft_deny`，但無法移除受管理設定提供的項目。因為 allow 規則在分類器內充當對 block 規則的例外，開發人員新增的 `allow` 項目可以覆蓋組織 `soft_deny` 項目：組合是加法的，不是硬原則邊界。如果您需要開發人員無法繞過的規則，請改用受管理設定中的 `permissions.deny`，它會在分類器被諮詢之前阻止操作。
-
-### 定義信任的基礎設施
-
-對於大多數組織，`autoMode.environment` 是您唯一需要設定的欄位。它告訴分類器哪些儲存庫、儲存桶和網域是信任的，而不涉及內建的 block 和 allow 規則。分類器使用 `environment` 來決定「外部」的含義：任何未列出的目的地都是潛在的外洩目標。
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Source control: github.example.com/acme-corp and all repos under it",
-      "Trusted cloud buckets: s3://acme-build-artifacts, gs://acme-ml-datasets",
-      "Trusted internal domains: *.corp.example.com, api.internal.example.com",
-      "Key internal services: Jenkins at ci.example.com, Artifactory at artifacts.example.com"
-    ]
-  }
-}
-```
-
-項目是散文，不是正規表達式或工具模式。分類器將它們讀作自然語言規則。以您向新工程師描述基礎設施的方式編寫它們。徹底的環境部分涵蓋：
-
-* **組織**：您的公司名稱以及 Claude Code 主要用於什麼，如軟體開發、基礎設施自動化或資料工程
-* **原始碼控制**：您的開發人員推送到的每個 GitHub、GitLab 或 Bitbucket 組織
-* **雲端提供商和信任的儲存桶**：Claude 應該能夠讀取和寫入的儲存桶名稱或前綴
-* **信任的內部網域**：您網路內的 API、儀表板和服務的主機名稱，如 `*.internal.example.com`
-* **關鍵內部服務**：CI、工件登錄、內部套件索引、事件工具
-* **其他背景**：受管制行業限制、多租戶基礎設施或影響分類器應將什麼視為風險的合規要求
-
-有用的起始範本：填入括號欄位並移除不適用的任何行：
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Organization: {COMPANY_NAME}. Primary use: {PRIMARY_USE_CASE, e.g. software development, infrastructure automation}",
-      "Source control: {SOURCE_CONTROL, e.g. GitHub org github.example.com/acme-corp}",
-      "Cloud provider(s): {CLOUD_PROVIDERS, e.g. AWS, GCP, Azure}",
-      "Trusted cloud buckets: {TRUSTED_BUCKETS, e.g. s3://acme-builds, gs://acme-datasets}",
-      "Trusted internal domains: {TRUSTED_DOMAINS, e.g. *.internal.example.com, api.example.com}",
-      "Key internal services: {SERVICES, e.g. Jenkins at ci.example.com, Artifactory at artifacts.example.com}",
-      "Additional context: {EXTRA, e.g. regulated industry, multi-tenant infrastructure, compliance requirements}"
-    ]
-  }
-}
-```
-
-您提供的背景越具體，分類器就越能區分常規內部操作和外洩嘗試。
-
-您不需要一次填入所有內容。合理的推出：從預設值開始，新增您的原始碼控制組織和關鍵內部服務，這解決了最常見的誤報，如推送到您自己的儲存庫。接下來新增信任的網域和雲端儲存桶。當出現阻止時填入其餘部分。
-
-### 覆蓋 block 和 allow 規則
-
-兩個額外的欄位讓您替換分類器的內建規則清單：`autoMode.soft_deny` 控制被阻止的內容，`autoMode.allow` 控制哪些例外適用。每個都是散文描述的陣列，讀作自然語言規則。
-
-在分類器內，優先順序是：`soft_deny` 規則首先阻止，然後 `allow` 規則覆蓋為例外，然後明確的使用者意圖覆蓋兩者。如果使用者的訊息直接且具體地描述 Claude 即將採取的確切操作，分類器允許它，即使 `soft_deny` 規則符合。一般請求不計算：要求 Claude「清理儲存庫」不授權強制推送，但要求 Claude「強制推送此分支」則授權。
-
-若要放寬：當預設值阻止您的管道已透過 PR 審查、CI 或暫存環境防護的內容時，從 `soft_deny` 移除規則，或當分類器重複標記預設例外不涵蓋的常規模式時新增到 `allow`。若要收緊：新增到 `soft_deny` 以應對預設值遺漏的特定於您環境的風險，或從 `allow` 移除以對 block 規則保持預設例外。在所有情況下，執行 `claude auto-mode defaults` 以取得完整的預設清單，然後複製和編輯：永遠不要從空清單開始。
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Source control: github.example.com/acme-corp and all repos under it"
-    ],
-    "allow": [
-      "Deploying to the staging namespace is allowed: staging is isolated from production and resets nightly",
-      "Writing to s3://acme-scratch/ is allowed: ephemeral bucket with a 7-day lifecycle policy"
-    ],
-    "soft_deny": [
-      "Never run database migrations outside the migrations CLI, even against dev databases",
-      "Never modify files under infra/terraform/prod/: production infrastructure changes go through the review workflow",
-      "...copy full default soft_deny list here first, then add your rules..."
-    ]
-  }
-}
-```
-
-<Danger>
-  設定 `allow` 或 `soft_deny` 會替換該部分的整個預設清單。如果您使用單一項目設定 `soft_deny`，每個內建 block 規則都會被丟棄：強制推送、資料外洩、`curl | bash`、生產部署和所有其他預設 block 規則變成允許。若要安全地自訂，執行 `claude auto-mode defaults` 以列印內建規則，將它們複製到您的設定檔案，然後根據您自己的管道和風險容限審查每個規則。僅移除您的基礎設施已減輕的風險的規則。
-</Danger>
-
-三個部分是獨立評估的，所以單獨設定 `environment` 會保留預設的 `allow` 和 `soft_deny` 清單。
-
-### 檢查預設值和您的有效設定
-
-因為設定 `allow` 或 `soft_deny` 會替換預設值，請透過複製完整的預設清單開始任何自訂。三個 CLI 子命令可幫助您檢查和驗證：
-
-```bash theme={null}
-claude auto-mode defaults  # the built-in environment, allow, and soft_deny rules
-claude auto-mode config    # what the classifier actually uses: your settings where set, defaults otherwise
-claude auto-mode critique  # get AI feedback on your custom allow and soft_deny rules
-```
-
-將 `claude auto-mode defaults` 的輸出儲存到檔案，編輯清單以符合您的原則，並將結果貼到您的設定檔案中。儲存後，執行 `claude auto-mode config` 以確認有效規則是您期望的。如果您已編寫自訂規則，`claude auto-mode critique` 會審查它們並標記模糊、冗餘或可能導致誤報的項目。
 
 ## 設定優先順序
 

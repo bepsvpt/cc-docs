@@ -247,7 +247,7 @@ Puede ver qué modelo está utilizando actualmente de varias formas:
 
 ## Agregar una opción de modelo personalizado
 
-Utilice `ANTHROPIC_CUSTOM_MODEL_OPTION` para agregar una única entrada personalizada al selector `/model` sin reemplazar los alias integrados. Esto es útil para implementaciones de puerta de enlace LLM o prueba de IDs de modelo que Claude Code no enumera de forma predeterminada.
+Utilice `ANTHROPIC_CUSTOM_MODEL_OPTION` para agregar una única entrada personalizada al selector `/model` sin reemplazar los alias integrados. Esto es útil para probar IDs de modelo que Claude Code no enumera de forma predeterminada. Para implementaciones de puerta de enlace LLM, Claude Code completa automáticamente el selector desde el punto final `/v1/models` de la puerta de enlace, por lo que esta variable solo es necesaria cuando el descubrimiento no devuelve el modelo que desea. Consulte [Selección de modelo de puerta de enlace LLM](/es/llm-gateway#model-selection).
 
 Este ejemplo establece las tres variables para hacer que una implementación de Opus enrutada por puerta de enlace sea seleccionable:
 

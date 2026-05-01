@@ -175,10 +175,13 @@
 
 | Поле                                  | Тип    | Описание                                                                                                                                                                                                                                                                        |
 | :------------------------------------ | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `metadata.description`                | string | Краткое описание marketplace                                                                                                                                                                                                                                                    |
-| `metadata.version`                    | string | Версия marketplace                                                                                                                                                                                                                                                              |
+| `$schema`                             | string | URL JSON Schema для автодополнения редактора и валидации. Claude Code игнорирует это поле при загрузке.                                                                                                                                                                         |
+| `description`                         | string | Краткое описание marketplace                                                                                                                                                                                                                                                    |
+| `version`                             | string | Версия манифеста marketplace                                                                                                                                                                                                                                                    |
 | `metadata.pluginRoot`                 | string | Базовый каталог, добавляемый к относительным путям источников плагинов (например, `"./plugins"` позволяет вам писать `"source": "formatter"` вместо `"source": "./plugins/formatter"`)                                                                                          |
 | `allowCrossMarketplaceDependenciesOn` | array  | Другие marketplace, на которые плагины в этом marketplace могут зависеть. Зависимости от marketplace, не указанного здесь, блокируются при установке. См. [Зависимость от плагина из другого marketplace](/ru/plugin-dependencies#depend-on-a-plugin-from-another-marketplace). |
+
+`description` и `version` также принимаются в `metadata` для обратной совместимости.
 
 ## Записи плагинов
 
@@ -958,7 +961,7 @@ claude plugin marketplace update [name]
 **Предупреждения** (не блокирующие):
 
 * `Marketplace has no plugins defined`: добавьте хотя бы один плагин в массив `plugins`
-* `No marketplace description provided`: добавьте `metadata.description`, чтобы помочь пользователям понять ваш marketplace
+* `No marketplace description provided`: добавьте описание верхнего уровня `description`, чтобы помочь пользователям понять ваш marketplace
 * `Plugin name "x" is not kebab-case`: имя плагина содержит прописные буквы, пробелы или специальные символы. Переименуйте в строчные буквы, цифры и дефисы только (например, `my-plugin`). Claude Code принимает другие формы, но синхронизация marketplace Claude.ai их отклоняет.
 
 ### Ошибки установки плагина

@@ -154,28 +154,30 @@ claude_code.interaction
 
 **`claude_code.llm_request`**
 
-| 屬性                       | 描述                                           | 由以下控制 |
-| ------------------------ | -------------------------------------------- | ----- |
-| `model`                  | 模型識別碼                                        |       |
-| `gen_ai.system`          | 始終為 `anthropic`。OpenTelemetry GenAI 語義慣例     |       |
-| `gen_ai.request.model`   | 與 `model` 相同的值。OpenTelemetry GenAI 語義慣例      |       |
-| `query_source`           | 發出請求的子系統，例如 `repl_main_thread` 或子代理名稱        |       |
-| `speed`                  | `fast` 或 `normal`                            |       |
-| `llm_request.context`    | `interaction`、`tool` 或 `standalone`，取決於父跨度   |       |
-| `duration_ms`            | 包括重試的牆上時間持續時間                                |       |
-| `ttft_ms`                | 首個權杖的時間（毫秒）                                  |       |
-| `input_tokens`           | 來自 API 使用區塊的輸入權杖計數                           |       |
-| `output_tokens`          | 輸出權杖計數                                       |       |
-| `cache_read_tokens`      | 從提示快取讀取的權杖                                   |       |
-| `cache_creation_tokens`  | 寫入提示快取的權杖                                    |       |
-| `request_id`             | 來自 `request-id` 回應標頭的 Anthropic API 請求 ID    |       |
-| `gen_ai.response.id`     | 與 `request_id` 相同的值。OpenTelemetry GenAI 語義慣例 |       |
-| `client_request_id`      | 最後一次嘗試的用戶端產生的 `x-client-request-id`          |       |
-| `attempt`                | 為此請求進行的總嘗試次數                                 |       |
-| `success`                | `true` 或 `false`                             |       |
-| `status_code`            | 請求失敗時的 HTTP 狀態碼                              |       |
-| `error`                  | 請求失敗時的錯誤訊息                                   |       |
-| `response.has_tool_call` | 當回應包含工具使用區塊時為 `true`                         |       |
+| 屬性                               | 描述                                                                                                  | 由以下控制 |
+| -------------------------------- | --------------------------------------------------------------------------------------------------- | ----- |
+| `model`                          | 模型識別碼                                                                                               |       |
+| `gen_ai.system`                  | 始終為 `anthropic`。OpenTelemetry GenAI 語義慣例                                                            |       |
+| `gen_ai.request.model`           | 與 `model` 相同的值。OpenTelemetry GenAI 語義慣例                                                             |       |
+| `query_source`                   | 發出請求的子系統，例如 `repl_main_thread` 或子代理名稱                                                               |       |
+| `speed`                          | `fast` 或 `normal`                                                                                   |       |
+| `llm_request.context`            | `interaction`、`tool` 或 `standalone`，取決於父跨度                                                          |       |
+| `duration_ms`                    | 包括重試的牆上時間持續時間                                                                                       |       |
+| `ttft_ms`                        | 首個權杖的時間（毫秒）                                                                                         |       |
+| `input_tokens`                   | 來自 API 使用區塊的輸入權杖計數                                                                                  |       |
+| `output_tokens`                  | 輸出權杖計數                                                                                              |       |
+| `cache_read_tokens`              | 從提示快取讀取的權杖                                                                                          |       |
+| `cache_creation_tokens`          | 寫入提示快取的權杖                                                                                           |       |
+| `request_id`                     | 來自 `request-id` 回應標頭的 Anthropic API 請求 ID                                                           |       |
+| `gen_ai.response.id`             | 與 `request_id` 相同的值。OpenTelemetry GenAI 語義慣例                                                        |       |
+| `client_request_id`              | 最後一次嘗試的用戶端產生的 `x-client-request-id`                                                                 |       |
+| `attempt`                        | 為此請求進行的總嘗試次數                                                                                        |       |
+| `success`                        | `true` 或 `false`                                                                                    |       |
+| `status_code`                    | 請求失敗時的 HTTP 狀態碼                                                                                     |       |
+| `error`                          | 請求失敗時的錯誤訊息                                                                                          |       |
+| `response.has_tool_call`         | 當回應包含工具使用區塊時為 `true`                                                                                |       |
+| `stop_reason`                    | API 回應 `stop_reason`，例如 `end_turn`、`tool_use`、`max_tokens`、`stop_sequence`、`pause_turn` 或 `refusal` |       |
+| `gen_ai.response.finish_reasons` | 與 `stop_reason` 相同的值，包裝在字串陣列中。OpenTelemetry GenAI 語義慣例                                              |       |
 
 每次重試嘗試也被記錄為具有 `attempt` 和 `client_request_id` 屬性的 `gen_ai.request.attempt` 跨度事件。
 
@@ -226,7 +228,7 @@ claude_code.interaction
 | `num_cancelled`          | 在完成前取消的 hook 計數                  |                         |
 
 <Note>
-  其他內容承載屬性，例如 `new_context`、`system_prompt_preview`、`tool_input` 和 `response.model_output`，僅在詳細 beta 追蹤處於活動狀態時發出。它們不是穩定跨度架構的一部分。
+  其他內容承載屬性，例如 `new_context`、`system_prompt_preview`、`user_system_prompt`、`tool_input` 和 `response.model_output`，僅在詳細 beta 追蹤處於活動狀態時發出。它們不是穩定跨度架構的一部分。`user_system_prompt` 另外需要 `OTEL_LOG_USER_PROMPTS=1`。它僅包含您透過 `systemPrompt` SDK 選項或 `--system-prompt` 和 `--append-system-prompt` 旗標提供的系統提示文字，在 60 KB 處截斷，並且每個工作階段發出一次而不是每個請求發出一次。
 </Note>
 
 ### 動態標頭
@@ -571,7 +573,7 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
 * `model`：使用的模型（例如，"claude-sonnet-4-6"）
 * `error`：錯誤訊息
-* `status_code`：HTTP 狀態碼（字串形式），或 `"undefined"` 用於非 HTTP 錯誤
+* `status_code`：HTTP 狀態碼（數字形式）。對於非 HTTP 錯誤（例如連線失敗），不存在。
 * `duration_ms`：請求持續時間（毫秒）
 * `attempt`：進行的嘗試總次數，包括初始請求（`1` 表示未發生重試）
 * `request_id`：來自回應的 `request-id` 標頭的 Anthropic API 請求 ID，例如 `"req_011..."`。僅當 API 傳回時才存在。
@@ -724,7 +726,7 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 
 #### Skill 已啟動事件
 
-當叫用 skill 時記錄。
+當叫用 skill 時記錄，無論 Claude 是透過 Skill 工具呼叫它，還是您將其作為 `/` 命令執行。
 
 **事件名稱**：`claude_code.skill_activated`
 
@@ -735,9 +737,25 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * `event.timestamp`：ISO 8601 時間戳
 * `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
 * `skill.name`：Skill 的名稱。對於使用者定義和第三方 plugin skill，除非 `OTEL_LOG_TOOL_DETAILS=1`，否則值為預留位置 `"custom_skill"`
+* `invocation_trigger`：Skill 的觸發方式（`"user-slash"`、`"claude-proactive"` 或 `"nested-skill"`）
 * `skill.source`：Skill 的載入位置（例如，`"bundled"`、`"userSettings"`、`"projectSettings"`、`"plugin"`）
 * `plugin.name`（當 `OTEL_LOG_TOOL_DETAILS=1` 或 plugin 來自官方市場時）：當 skill 由 plugin 提供時的擁有 plugin 名稱
 * `marketplace.name`（當 `OTEL_LOG_TOOL_DETAILS=1` 或 plugin 來自官方市場時）：當 skill 由 plugin 提供時，擁有 plugin 的安裝市場
+
+#### @ 提及事件
+
+當 Claude Code 解析提示中的 `@` 提及時記錄。並非每個提及都會發出事件：早期退出路徑（例如權限拒絕、超大檔案、PDF 參考附件和目錄列表失敗）會在不記錄的情況下返回。
+
+**事件名稱**：`claude_code.at_mention`
+
+**屬性**：
+
+* 所有[標準屬性](#standard-attributes)
+* `event.name`：`"at_mention"`
+* `event.timestamp`：ISO 8601 時間戳
+* `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
+* `mention_type`：提及的類型（`"file"`、`"directory"`、`"agent"`、`"mcp_resource"`）
+* `success`：提及是否成功解析（`"true"` 或 `"false"`）
 
 #### API 重試已耗盡事件
 
@@ -753,7 +771,7 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
 * `model`：使用的模型
 * `error`：最終錯誤訊息
-* `status_code`：HTTP 狀態碼（字串形式）
+* `status_code`：HTTP 狀態碼（數字形式）。對於非 HTTP 錯誤，不存在。
 * `total_attempts`：進行的嘗試總次數
 * `total_retry_duration_ms`：所有嘗試的總牆上時間
 * `speed`：`"fast"` 或 `"normal"`
@@ -918,7 +936,7 @@ Claude Code 在內部重試失敗的 API 請求，並僅在放棄後才發出單
 
 ## 安全性和隱私
 
-* 遙測是選擇加入的，需要明確配置
+* OpenTelemetry 匯出到您的後端是選擇加入的，需要明確配置。如需了解 Anthropic 的獨立營運遙測以及如何停用它，請參閱[資料使用](/zh-TW/data-usage#telemetry-services)
 * 原始檔案內容和程式碼片段不包含在指標或事件中。追蹤跨度是單獨的資料路徑：請參閱下面的 `OTEL_LOG_TOOL_CONTENT` 項目
 * 透過 OAuth 驗證時，`user.email` 包含在遙測屬性中。如果這對您的組織是個問題，請與您的遙測後端合作以篩選或編輯此欄位
 * 預設不收集使用者提示內容。僅記錄提示長度。若要包含提示內容，請設定 `OTEL_LOG_USER_PROMPTS=1`

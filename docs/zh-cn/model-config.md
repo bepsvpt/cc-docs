@@ -247,7 +247,7 @@ Opus 4.7、Opus 4.6 和 Sonnet 4.6 支持[100 万令牌上下文窗口](https://
 
 ## 添加自定义模型选项
 
-使用 `ANTHROPIC_CUSTOM_MODEL_OPTION` 向 `/model` 选择器添加单个自定义条目，而无需替换内置别名。这对于 LLM 网关部署或测试 Claude Code 默认不列出的模型 ID 很有用。
+使用 `ANTHROPIC_CUSTOM_MODEL_OPTION` 向 `/model` 选择器添加单个自定义条目，而无需替换内置别名。这对于测试 Claude Code 默认不列出的模型 ID 很有用。对于 LLM 网关部署，Claude Code 会从网关的 `/v1/models` 端点自动填充选择器，因此仅当发现未返回您想要的模型时才需要此变量。请参阅 [LLM 网关模型选择](/zh-CN/llm-gateway#model-selection)。
 
 此示例设置所有三个变量以使网关路由的 Opus 部署可选择：
 

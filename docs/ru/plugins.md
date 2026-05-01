@@ -332,7 +332,7 @@ claude --plugin-dir ./my-plugin
 3. **Создайте или используйте marketplace**: Распространяйте через [plugin marketplaces](/ru/plugin-marketplaces) для установки
 4. **Протестируйте с другими**: Попросите членов команды протестировать plugin перед более широким распространением
 
-Когда ваш plugin находится в marketplace, другие могут установить его, используя инструкции в [Обнаружение и установка plugins](/ru/discover-plugins).
+Когда ваш plugin находится в marketplace, другие могут установить его, используя инструкции в [Обнаружение и установка plugins](/ru/discover-plugins). Чтобы сохранить plugin внутри вашей команды, разместите marketplace в [приватном репозитории](/ru/plugin-marketplaces#private-repositories).
 
 ### Отправьте ваш plugin на официальный marketplace
 

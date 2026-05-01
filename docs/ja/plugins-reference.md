@@ -111,6 +111,7 @@ disallowedTools: Write, Edit
 | Event                 | When it fires                                                                                                                                          |
 | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `SessionStart`        | When a session begins or resumes                                                                                                                       |
+| `Setup`               | When you start Claude Code with `--init-only`, or with `--init` or `--maintenance` in `-p` mode. For one-time preparation in CI or scripts             |
 | `UserPromptSubmit`    | When you submit a prompt, before Claude processes it                                                                                                   |
 | `UserPromptExpansion` | When a user-typed command expands into a prompt, before it reaches Claude. Can block the expansion                                                     |
 | `PreToolUse`          | Before a tool call executes. Can block it                                                                                                              |
@@ -405,15 +406,16 @@ monitors をインラインで宣言するには、`plugin.json` の `monitors` 
 
 ### メタデータフィールド
 
-| フィールド         | 型      | 説明                                                                                                                                                                                                                                                   | 例                                                  |
-| :------------ | :----- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------- |
-| `version`     | string | オプション。セマンティックバージョン。これを設定するとプラグインをそのバージョン文字列にピン留めするため、ユーザーはバージョンをバンプしたときのみ更新を受け取ります。省略された場合、Claude Code は git コミット SHA にフォールバックするため、すべてのコミットが新しいバージョンとして扱われます。マーケットプレイスエントリにも設定されている場合、`plugin.json` が優先されます。[バージョン管理](#version-management)を参照してください。 | `"2.1.0"`                                          |
-| `description` | string | プラグインの目的の簡潔な説明                                                                                                                                                                                                                                       | `"Deployment automation tools"`                    |
-| `author`      | object | 著者情報                                                                                                                                                                                                                                                 | `{"name": "Dev Team", "email": "dev@company.com"}` |
-| `homepage`    | string | ドキュメント URL                                                                                                                                                                                                                                           | `"https://docs.example.com"`                       |
-| `repository`  | string | ソースコード URL                                                                                                                                                                                                                                           | `"https://github.com/user/plugin"`                 |
-| `license`     | string | ライセンス識別子                                                                                                                                                                                                                                             | `"MIT"`、`"Apache-2.0"`                             |
-| `keywords`    | array  | 検出タグ                                                                                                                                                                                                                                                 | `["deployment", "ci-cd"]`                          |
+| フィールド         | 型      | 説明                                                                                                                                                                                                                                                   | 例                                                                 |
+| :------------ | :----- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
+| `$schema`     | string | エディタのオートコンプリートと検証用の JSON Schema URL。Claude Code はロード時にこのフィールドを無視します。                                                                                                                                                                                 | `"https://json.schemastore.org/claude-code-plugin-manifest.json"` |
+| `version`     | string | オプション。セマンティックバージョン。これを設定するとプラグインをそのバージョン文字列にピン留めするため、ユーザーはバージョンをバンプしたときのみ更新を受け取ります。省略された場合、Claude Code は git コミット SHA にフォールバックするため、すべてのコミットが新しいバージョンとして扱われます。マーケットプレイスエントリにも設定されている場合、`plugin.json` が優先されます。[バージョン管理](#version-management)を参照してください。 | `"2.1.0"`                                                         |
+| `description` | string | プラグインの目的の簡潔な説明                                                                                                                                                                                                                                       | `"Deployment automation tools"`                                   |
+| `author`      | object | 著者情報                                                                                                                                                                                                                                                 | `{"name": "Dev Team", "email": "dev@company.com"}`                |
+| `homepage`    | string | ドキュメント URL                                                                                                                                                                                                                                           | `"https://docs.example.com"`                                      |
+| `repository`  | string | ソースコード URL                                                                                                                                                                                                                                           | `"https://github.com/user/plugin"`                                |
+| `license`     | string | ライセンス識別子                                                                                                                                                                                                                                             | `"MIT"`、`"Apache-2.0"`                                            |
+| `keywords`    | array  | 検出タグ                                                                                                                                                                                                                                                 | `["deployment", "ci-cd"]`                                         |
 
 ### コンポーネントパスフィールド
 
@@ -746,15 +748,42 @@ claude plugin uninstall <plugin> [options]
 
 **オプション:**
 
-| オプション                 | 説明                                                 | デフォルト  |
-| :-------------------- | :------------------------------------------------- | :----- |
-| `-s, --scope <scope>` | スコープからアンインストール: `user`、`project`、または `local`       | `user` |
-| `--keep-data`         | プラグインの[永続データディレクトリ](#persistent-data-directory)を保持 |        |
-| `-h, --help`          | コマンドのヘルプを表示                                        |        |
+| オプション                 | 説明                                                                       | デフォルト  |
+| :-------------------- | :----------------------------------------------------------------------- | :----- |
+| `-s, --scope <scope>` | スコープからアンインストール: `user`、`project`、または `local`                             | `user` |
+| `--keep-data`         | プラグインの[永続データディレクトリ](#persistent-data-directory)を保持                       |        |
+| `--prune`             | 他のプラグインが必要としない自動インストール依存関係も削除します。[plugin prune](#plugin-prune) を参照してください |        |
+| `-y, --yes`           | `--prune` 確認プロンプトをスキップします。stdin が TTY でない場合は必須です                         |        |
+| `-h, --help`          | コマンドのヘルプを表示                                                              |        |
 
 **エイリアス:** `remove`、`rm`
 
 デフォルトでは、最後に残っているスコープからアンインストールすると、プラグインの `${CLAUDE_PLUGIN_DATA}` ディレクトリも削除されます。たとえば、新しいバージョンをテストした後に再インストールする場合は、`--keep-data` を使用して保持します。
+
+### plugin prune
+
+インストール済みプラグインによって不要になった自動インストール プラグイン依存関係を削除します。Claude Code が別のプラグインの [`dependencies`](/ja/plugin-dependencies) フィールドを満たすために取得した依存関係は削除されます。直接インストールしたプラグインは決して削除されません。
+
+```bash theme={null}
+claude plugin prune [options]
+```
+
+**オプション:**
+
+| オプション                 | 説明                                      | デフォルト  |
+| :-------------------- | :-------------------------------------- | :----- |
+| `-s, --scope <scope>` | スコープでプルーン: `user`、`project`、または `local` | `user` |
+| `--dry-run`           | 削除されるものをリストアップします。実際には削除しません            |        |
+| `-y, --yes`           | 確認プロンプトをスキップします。stdin が TTY でない場合は必須です  |        |
+| `-h, --help`          | コマンドのヘルプを表示                             |        |
+
+**エイリアス:** `autoremove`
+
+このコマンドは孤立した依存関係をリストアップし、削除する前に確認を求めます。プラグインを削除し、その依存関係をクリーンアップする場合は、1 ステップで `claude plugin uninstall <plugin> --prune` を実行します。
+
+<Note>
+  `claude plugin prune` には Claude Code v2.1.121 以降が必要です。
+</Note>
 
 ### plugin enable
 
@@ -825,11 +854,11 @@ claude plugin list [options]
 
 **オプション:**
 
-| オプション         | 説明                                      | デフォルト |
-| :------------ | :-------------------------------------- | :---- |
-| `--json`      | JSON として出力                              |       |
-| `--available` | マーケットプレイスから利用可能なプラグインを含めます。`--json` が必要 |       |
-| `-h, --help`  | コマンドのヘルプを表示                             |       |
+| オプション         | 説明                                        | デフォルト |
+| :------------ | :---------------------------------------- | :---- |
+| `--json`      | JSON として出力                                |       |
+| `--available` | マーケットプレイスから利用可能なプラグインを含めます。`--json` が必要です |       |
+| `-h, --help`  | コマンドのヘルプを表示                               |       |
 
 ### plugin tag
 
@@ -841,12 +870,12 @@ claude plugin tag [options]
 
 **オプション:**
 
-| オプション         | 説明                                   | デフォルト |
-| :------------ | :----------------------------------- | :---- |
-| `--push`      | タグを作成した後、リモートにプッシュ                   |       |
-| `--dry-run`   | タグを作成せずに、タグ付けされる内容を出力                |       |
-| `-f, --force` | ワーキングツリーがダーティであるか、タグが既に存在する場合でもタグを作成 |       |
-| `-h, --help`  | コマンドのヘルプを表示                          |       |
+| オプション         | 説明                                      | デフォルト |
+| :------------ | :-------------------------------------- | :---- |
+| `--push`      | タグを作成した後、リモートにプッシュします                   |       |
+| `--dry-run`   | タグを作成せずに、タグ付けされる内容を出力します                |       |
+| `-f, --force` | ワーキングツリーがダーティであるか、タグが既に存在する場合でもタグを作成します |       |
+| `-h, --help`  | コマンドのヘルプを表示                             |       |
 
 ***
 

@@ -48,6 +48,8 @@ Claude Code 在任何終端機中都可以無需配置而運作。此頁面適�
 
   <Tab title="iTerm2">
     開啟設定 → 設定檔 → 快捷鍵 → 一般並將左 Option 快捷鍵和右 Option 快捷鍵設置為「Esc+」。
+
+    在 iTerm2 中執行 `/terminal-setup` 會在設定 → 一般 → 選取範圍下啟用「終端機中的應用程式可以存取剪貼簿」，以便 `/copy` 命令可以寫入您的系統剪貼簿。該命令即使在 tmux 內執行時也能偵測 iTerm2。重新啟動 iTerm2 以使變更生效。
   </Tab>
 
   <Tab title="VS Code">

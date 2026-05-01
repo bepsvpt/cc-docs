@@ -175,10 +175,13 @@
 
 | 欄位                                    | 類型     | 描述                                                                                                                                                                                      |
 | :------------------------------------ | :----- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `metadata.description`                | string | 簡短的 marketplace 描述                                                                                                                                                                      |
-| `metadata.version`                    | string | Marketplace 版本                                                                                                                                                                          |
+| `$schema`                             | string | JSON Schema URL，用於編輯器自動完成和驗證。Claude Code 在載入時會忽略此欄位。                                                                                                                                    |
+| `description`                         | string | 簡短的 marketplace 描述                                                                                                                                                                      |
+| `version`                             | string | Marketplace 版本                                                                                                                                                                          |
 | `metadata.pluginRoot`                 | string | 前置於相對 plugin 來源路徑的基本目錄（例如，`"./plugins"` 可讓您寫入 `"source": "formatter"` 而不是 `"source": "./plugins/formatter"`）                                                                            |
 | `allowCrossMarketplaceDependenciesOn` | array  | 此 marketplace 中的 plugin 可能依賴的其他 marketplace。來自此處未列出的 marketplace 的相依性在安裝時被阻止。請參閱[依賴來自另一個 marketplace 的 plugin](/zh-TW/plugin-dependencies#depend-on-a-plugin-from-another-marketplace)。 |
+
+`description` 和 `version` 也可在 `metadata` 下接受，以保持向後相容性。
 
 ## Plugin 項目
 
@@ -958,7 +961,7 @@ claude plugin marketplace update [name]
 **警告**（非阻止性）：
 
 * `Marketplace has no plugins defined`：將至少一個 plugin 新增到 `plugins` 陣列
-* `No marketplace description provided`：新增 `metadata.description` 以幫助使用者瞭解您的 marketplace
+* `No marketplace description provided`：新增頂層 `description` 以幫助使用者瞭解您的 marketplace
 * `Plugin name "x" is not kebab-case`：plugin 名稱包含大寫字母、空格或特殊字元。重新命名為僅包含小寫字母、數字和連字號（例如，`my-plugin`）。Claude Code 接受其他形式，但 Claude.ai marketplace 同步會拒絕它們。
 
 ### Plugin 安裝失敗
@@ -1040,7 +1043,7 @@ export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000  # 5 分鐘
 
 **解決方案**：有關解決方案（包括符號連結和目錄重組），請參閱 [Plugin caching and file resolution](/zh-TW/plugins-reference#plugin-caching-and-file-resolution)。
 
-有關其他偵錯工具和常見問題，請參閱[Debugging and development tools](/zh-TW/plugins-reference#debugging-and-development-tools)。
+有關其他偵錯工具和常見問題，請參閱 [Debugging and development tools](/zh-TW/plugins-reference#debugging-and-development-tools)。
 
 ## 另請參閱
 

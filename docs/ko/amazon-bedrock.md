@@ -417,7 +417,8 @@ Claude Code에 필요한 권한이 있는 IAM 정책을 만드십시오:
       "Action": [
         "bedrock:InvokeModel",
         "bedrock:InvokeModelWithResponseStream",
-        "bedrock:ListInferenceProfiles"
+        "bedrock:ListInferenceProfiles",
+        "bedrock:GetInferenceProfile"
       ],
       "Resource": [
         "arn:aws:bedrock:*:*:inference-profile/*",
@@ -444,6 +445,10 @@ Claude Code에 필요한 권한이 있는 IAM 정책을 만드십시오:
 ```
 
 더 제한적인 권한의 경우 리소스를 특정 추론 프로필 ARN으로 제한할 수 있습니다.
+
+`bedrock:GetInferenceProfile`을 사용하면 Claude Code가 [애플리케이션 추론 프로필 ARN](#map-each-model-version-to-an-inference-profile)을 해당 백업 기초 모델로 확인할 수 있으며, 이는 해당 모델에 대한 올바른 요청 형태를 선택하는 데 사용됩니다.
+
+토큰에 이 권한이 없으면 Claude Code는 대체 형태로 한 번 재시도하여 자동으로 복구되므로 요청은 여전히 성공하지만 각 새로운 모델은 추가 왕복을 추가합니다. 권한을 부여하면 재시도를 피할 수 있습니다. 이는 토큰의 정책이 일반적으로 전체 IAM 역할보다 좁은 `AWS_BEARER_TOKEN_BEDROCK` 배포에 가장 자주 적용됩니다.
 
 자세한 내용은 [Bedrock IAM 설명서](https://docs.aws.amazon.com/bedrock/latest/userguide/security-iam.html)를 참조하십시오.
 

@@ -111,6 +111,7 @@ Plugin hooks merespons peristiwa lifecycle yang sama seperti [hooks yang ditentu
 | Event                 | When it fires                                                                                                                                          |
 | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `SessionStart`        | When a session begins or resumes                                                                                                                       |
+| `Setup`               | When you start Claude Code with `--init-only`, or with `--init` or `--maintenance` in `-p` mode. For one-time preparation in CI or scripts             |
 | `UserPromptSubmit`    | When you submit a prompt, before Claude processes it                                                                                                   |
 | `UserPromptExpansion` | When a user-typed command expands into a prompt, before it reaches Claude. Can block the expansion                                                     |
 | `PreToolUse`          | Before a tool call executes. Can block it                                                                                                              |
@@ -405,15 +406,16 @@ Nama ini digunakan untuk namespacing komponen. Misalnya, di UI, agent `agent-cre
 
 ### Field metadata
 
-| Field         | Tipe   | Deskripsi                                                                                                                                                                                                                                                                                                                                                                       | Contoh                                             |
-| :------------ | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------- |
-| `version`     | string | Opsional. Versi semantik. Mengatur ini mengikat plugin ke string versi tersebut, sehingga pengguna hanya menerima update saat Anda menaikkannya. Jika dihilangkan, Claude Code kembali ke SHA commit git, sehingga setiap commit diperlakukan sebagai versi baru. Jika juga diatur di entri marketplace, `plugin.json` menang. Lihat [Version management](#version-management). | `"2.1.0"`                                          |
-| `description` | string | Penjelasan singkat tentang tujuan plugin                                                                                                                                                                                                                                                                                                                                        | `"Deployment automation tools"`                    |
-| `author`      | object | Informasi penulis                                                                                                                                                                                                                                                                                                                                                               | `{"name": "Dev Team", "email": "dev@company.com"}` |
-| `homepage`    | string | URL dokumentasi                                                                                                                                                                                                                                                                                                                                                                 | `"https://docs.example.com"`                       |
-| `repository`  | string | URL kode sumber                                                                                                                                                                                                                                                                                                                                                                 | `"https://github.com/user/plugin"`                 |
-| `license`     | string | Pengenal lisensi                                                                                                                                                                                                                                                                                                                                                                | `"MIT"`, `"Apache-2.0"`                            |
-| `keywords`    | array  | Tag penemuan                                                                                                                                                                                                                                                                                                                                                                    | `["deployment", "ci-cd"]`                          |
+| Field         | Tipe   | Deskripsi                                                                                                                                                                                                                                                                                                                                                                       | Contoh                                                            |
+| :------------ | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :---------------------------------------------------------------- |
+| `$schema`     | string | URL JSON Schema untuk autocomplete dan validasi editor. Claude Code mengabaikan field ini saat waktu load.                                                                                                                                                                                                                                                                      | `"https://json.schemastore.org/claude-code-plugin-manifest.json"` |
+| `version`     | string | Opsional. Versi semantik. Mengatur ini mengikat plugin ke string versi tersebut, sehingga pengguna hanya menerima update saat Anda menaikkannya. Jika dihilangkan, Claude Code kembali ke SHA commit git, sehingga setiap commit diperlakukan sebagai versi baru. Jika juga diatur di entri marketplace, `plugin.json` menang. Lihat [Version management](#version-management). | `"2.1.0"`                                                         |
+| `description` | string | Penjelasan singkat tentang tujuan plugin                                                                                                                                                                                                                                                                                                                                        | `"Deployment automation tools"`                                   |
+| `author`      | object | Informasi penulis                                                                                                                                                                                                                                                                                                                                                               | `{"name": "Dev Team", "email": "dev@company.com"}`                |
+| `homepage`    | string | URL dokumentasi                                                                                                                                                                                                                                                                                                                                                                 | `"https://docs.example.com"`                                      |
+| `repository`  | string | URL kode sumber                                                                                                                                                                                                                                                                                                                                                                 | `"https://github.com/user/plugin"`                                |
+| `license`     | string | Pengenal lisensi                                                                                                                                                                                                                                                                                                                                                                | `"MIT"`, `"Apache-2.0"`                                           |
+| `keywords`    | array  | Tag penemuan                                                                                                                                                                                                                                                                                                                                                                    | `["deployment", "ci-cd"]`                                         |
 
 ### Field jalur komponen
 
@@ -746,15 +748,42 @@ claude plugin uninstall <plugin> [options]
 
 **Opsi:**
 
-| Opsi                  | Deskripsi                                                                 | Default |
-| :-------------------- | :------------------------------------------------------------------------ | :------ |
-| `-s, --scope <scope>` | Hapus dari cakupan: `user`, `project`, atau `local`                       | `user`  |
-| `--keep-data`         | Pertahankan [direktori data persisten](#persistent-data-directory) plugin |         |
-| `-h, --help`          | Tampilkan bantuan untuk perintah                                          |         |
+| Opsi                  | Deskripsi                                                                                                           | Default |
+| :-------------------- | :------------------------------------------------------------------------------------------------------------------ | :------ |
+| `-s, --scope <scope>` | Hapus dari cakupan: `user`, `project`, atau `local`                                                                 | `user`  |
+| `--keep-data`         | Pertahankan [direktori data persisten](#persistent-data-directory) plugin                                           |         |
+| `--prune`             | Juga hapus dependensi yang dipasang otomatis yang tidak diperlukan plugin lain. Lihat [plugin prune](#plugin-prune) |         |
+| `-y, --yes`           | Lewati prompt konfirmasi `--prune`. Diperlukan ketika stdin bukan TTY                                               |         |
+| `-h, --help`          | Tampilkan bantuan untuk perintah                                                                                    |         |
 
 **Alias:** `remove`, `rm`
 
 Secara default, menghapus dari cakupan terakhir yang tersisa juga menghapus direktori `${CLAUDE_PLUGIN_DATA}` plugin. Gunakan `--keep-data` untuk mempertahankannya, misalnya saat memasang ulang setelah menguji versi baru.
+
+### plugin prune
+
+Hapus dependensi plugin yang dipasang otomatis yang tidak lagi diperlukan oleh plugin yang dipasang. Dependensi yang Claude Code tarik untuk memenuhi bidang [`dependencies`](/id/plugin-dependencies) plugin lain dihapus; plugin yang Anda pasang secara langsung tidak pernah disentuh.
+
+```bash theme={null}
+claude plugin prune [options]
+```
+
+**Opsi:**
+
+| Opsi                  | Deskripsi                                                   | Default |
+| :-------------------- | :---------------------------------------------------------- | :------ |
+| `-s, --scope <scope>` | Prune pada cakupan: `user`, `project`, atau `local`         | `user`  |
+| `--dry-run`           | Daftar apa yang akan dihapus tanpa menghapus apa pun        |         |
+| `-y, --yes`           | Lewati prompt konfirmasi. Diperlukan ketika stdin bukan TTY |         |
+| `-h, --help`          | Tampilkan bantuan untuk perintah                            |         |
+
+**Alias:** `autoremove`
+
+Perintah ini mencantumkan dependensi yatim piatu dan meminta konfirmasi sebelum menghapusnya. Untuk menghapus plugin dan membersihkan dependensinya dalam satu langkah, jalankan `claude plugin uninstall <plugin> --prune`.
+
+<Note>
+  `claude plugin prune` memerlukan Claude Code v2.1.121 atau lebih baru.
+</Note>
 
 ### plugin enable
 

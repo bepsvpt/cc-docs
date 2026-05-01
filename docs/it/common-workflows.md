@@ -842,12 +842,14 @@ Quando avvii un'attività a lunga esecuzione e passi a un'altra finestra, puoi c
   <Step title="Facoltativamente restringere il matcher">
     Per impostazione predefinita l'hook si attiva su tutti i tipi di notifica. Per attivarsi solo per eventi specifici, imposta il campo `matcher` su uno di questi valori:
 
-    | Matcher              | Si attiva quando                                             |
-    | :------------------- | :----------------------------------------------------------- |
-    | `permission_prompt`  | Claude ha bisogno che tu approvi un utilizzo dello strumento |
-    | `idle_prompt`        | Claude ha finito ed è in attesa del tuo prossimo prompt      |
-    | `auth_success`       | L'autenticazione si completa                                 |
-    | `elicitation_dialog` | Claude ti sta facendo una domanda                            |
+    | Matcher                | Si attiva quando                                             |
+    | :--------------------- | :----------------------------------------------------------- |
+    | `permission_prompt`    | Claude ha bisogno che tu approvi un utilizzo dello strumento |
+    | `idle_prompt`          | Claude ha finito ed è in attesa del tuo prossimo prompt      |
+    | `auth_success`         | L'autenticazione si completa                                 |
+    | `elicitation_dialog`   | Un server MCP apre un modulo di elicitazione                 |
+    | `elicitation_complete` | Un modulo di elicitazione MCP viene inviato o chiuso         |
+    | `elicitation_response` | Una risposta di elicitazione MCP viene inviata al server     |
   </Step>
 
   <Step title="Verificare l'hook">
