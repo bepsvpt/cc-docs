@@ -380,7 +380,7 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
   "keywords": ["keyword1", "keyword2"],
   "skills": "./custom/skills/",
   "commands": ["./custom/commands/special.md"],
-  "agents": "./custom/agents/",
+  "agents": ["./custom/agents/reviewer.md"],
   "hooks": "./config/hooks.json",
   "mcpServers": "./mcp-config.json",
   "outputStyles": "./styles/",

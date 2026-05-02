@@ -6,7 +6,7 @@
 
 > Tirez le meilleur parti de Claude Code Desktop : sessions parallèles avec isolation Git, disposition des volets par glisser-déposer, terminal intégré et éditeur de fichiers, chats latéraux, utilisation informatique, sessions Dispatch depuis votre téléphone, examen visuel des différences, aperçus d'applications, surveillance des PR, connecteurs et configuration d'entreprise.
 
-L'onglet Code dans l'application Claude Desktop vous permet d'utiliser Claude Code via une interface graphique au lieu du terminal.
+L'application Claude Desktop a trois onglets : **Chat** pour les conversations, **Cowork** pour [Dispatch et les travaux agentiques plus longs](https://claude.com/product/cowork), et **Code** pour le développement logiciel. Cette page est la référence pour l'onglet Code.
 
 <CardGroup cols={2}>
   <Card title="Download for macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
@@ -18,29 +18,21 @@ L'onglet Code dans l'application Claude Desktop vous permet d'utiliser Claude Co
   </Card>
 </CardGroup>
 
-For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). Linux is not supported.
+For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). The desktop app is not available on Linux; use the [CLI](/en/quickstart) instead.
 
-Après l'installation, lancez Claude, connectez-vous et cliquez sur l'onglet **Code**. Consultez le [guide Démarrer](/fr/desktop-quickstart) pour une présentation complète de votre première session.
+Après l'installation, lancez Claude, connectez-vous et cliquez sur l'onglet **Code**. La première fois que vous l'ouvrez sur Windows, vous devez avoir [Git for Windows](https://git-scm.com/downloads/win) installé ; redémarrez l'application après l'installation. Pour une présentation de votre première session, consultez le [guide Démarrer](/fr/desktop-quickstart).
 
-Desktop ajoute ces capacités à l'expérience standard de Claude Code :
+Dans l'onglet Code, chaque conversation est une **session** : elle a son propre historique de chat, dossier de projet et modifications de code, indépendants de toute autre session. La barre latérale répertorie vos sessions et vous permet d'en exécuter plusieurs en parallèle. Au sein d'une session, vous pouvez :
 
-* [Sessions parallèles](#work-in-parallel-with-sessions) avec isolation automatique des Git worktrees
-* [Disposition par glisser-déposer](#arrange-your-workspace) avec terminal intégré, éditeur de fichiers et volet d'aperçu
-* [Chats latéraux](#ask-a-side-question-without-derailing-the-session) qui se ramifient sans affecter le fil principal
-* [Examen visuel des différences](#review-changes-with-diff-view) avec commentaires en ligne
-* [Aperçu d'application en direct](#preview-your-app) avec serveurs de développement, fichiers HTML et PDF
-* [Utilisation informatique](#let-claude-use-your-computer) pour ouvrir des applications et contrôler votre écran sur macOS et Windows
-* [Surveillance des demandes de tirage GitHub](#monitor-pull-request-status) avec correction automatique, fusion automatique et archivage automatique
-* [Dispatch](#sessions-from-dispatch) intégration : envoyez une tâche depuis votre téléphone, obtenez une session ici
-* [Tâches planifiées](/fr/desktop-scheduled-tasks) qui exécutent Claude selon un calendrier récurrent
-* [Connecteurs](#connect-external-tools) pour GitHub, Slack, Linear et bien d'autres
-* Environnements locaux, [SSH](#ssh-sessions) et [cloud](#run-long-running-tasks-remotely)
+* [Examiner et commenter les différences](#review-changes-with-diff-view), puis [surveiller la PR résultante via CI](#monitor-pull-request-status)
+* [Prévisualiser votre application en cours d'exécution](#preview-your-app) dans un navigateur intégré tandis que Claude vérifie ses propres modifications
+* [Arranger les volets](#arrange-your-workspace) pour le chat, la différence, l'aperçu, le terminal et l'éditeur de fichiers côte à côte
+* Poser une [question latérale](#ask-a-side-question-without-derailing-the-session) qui utilise le contexte de la session sans la dérailler
+* [Connecter des outils externes](#connect-external-tools) comme GitHub, Slack et Linear
+* Laisser Claude [ouvrir des applications et contrôler votre écran](#let-claude-use-your-computer)
+* Exécuter sur votre machine, dans le [cloud](#run-long-running-tasks-remotely), ou via [SSH](#ssh-sessions)
 
-<Note>
-  La disposition de l'espace de travail, le terminal, l'éditeur de fichiers, les chats latéraux et les modes d'affichage décrits sur cette page nécessitent Claude Desktop v1.2581.0 ou ultérieur. Ouvrez **Claude → Vérifier les mises à jour** sur macOS ou **Aide → Vérifier les mises à jour** sur Windows pour mettre à jour.
-</Note>
-
-Cette page couvre [travailler avec le code](#work-with-code), [arranger votre espace de travail](#arrange-your-workspace), [utilisation informatique](#let-claude-use-your-computer), [gérer les sessions](#manage-sessions), [étendre Claude Code](#extend-claude-code) et [configuration](#environment-configuration). Elle inclut également une [comparaison CLI](#coming-from-the-cli) et [dépannage](#troubleshooting).
+Pour [les travaux récurrents planifiés](/fr/desktop-scheduled-tasks), [les raccourcis clavier](#keyboard-shortcuts), ou [l'envoi de tâches depuis votre téléphone](#sessions-from-dispatch), consultez les pages et sections liées. Si vous utilisez déjà le CLI basé sur le terminal, consultez la [comparaison CLI](#coming-from-the-cli) pour voir ce qui est transféré.
 
 ## Démarrer une session
 
@@ -84,6 +76,10 @@ Les modes de permission contrôlent le niveau d'autonomie de Claude pendant une 
 
 Le mode de permission `dontAsk` est disponible uniquement dans la [CLI](/fr/permission-modes#allow-only-pre-approved-tools-with-dontask-mode).
 
+<span id="auto-mode-availability" />
+
+Auto mode est un aperçu de recherche disponible sur les plans Max, Team, Enterprise et API. Il n'est pas disponible sur les plans Pro ou les fournisseurs tiers. Sur les plans Team, Enterprise et API, il nécessite Claude Sonnet 4.6, Opus 4.6 ou Opus 4.7. Sur les plans Max, il nécessite Claude Opus 4.7.
+
 <Tip title="Bonne pratique">
   Commencez les tâches complexes en Plan mode pour que Claude trace une approche avant de faire des modifications. Une fois que vous approuvez le plan, passez à Accepter automatiquement les modifications ou Demander les permissions pour l'exécuter. Voir [explorer d'abord, puis planifier, puis coder](/fr/best-practices#explore-first-then-plan-then-code) pour plus d'informations sur ce flux de travail.
 </Tip>
@@ -96,7 +92,7 @@ Les administrateurs d'entreprise peuvent restreindre les modes de permission dis
 
 Claude peut démarrer un serveur de développement et ouvrir un navigateur intégré pour vérifier ses modifications. Ceci fonctionne pour les applications web frontend ainsi que les serveurs backend : Claude peut tester les points de terminaison API, afficher les journaux du serveur et itérer sur les problèmes qu'il trouve. Dans la plupart des cas, Claude démarre le serveur automatiquement après la modification des fichiers du projet. Vous pouvez également demander à Claude de prévisualiser à tout moment. Par défaut, Claude [vérifie automatiquement](#auto-verify-changes) les modifications après chaque modification.
 
-Le volet d'aperçu peut également ouvrir des fichiers HTML statiques, des PDF et des images de votre projet. Cliquez sur un chemin HTML, PDF ou image dans le chat pour l'ouvrir dans l'aperçu.
+Le volet d'aperçu peut également ouvrir des fichiers HTML statiques, des PDF, des images et des vidéos de votre projet. Cliquez sur un chemin HTML, PDF, image ou vidéo dans le chat pour l'ouvrir dans l'aperçu.
 
 À partir du volet d'aperçu, vous pouvez :
 
@@ -144,7 +140,11 @@ Utilisez les bascules **Correction automatique** et **Fusion automatique** dans 
 
 ## Arranger votre espace de travail
 
-L'application de bureau est construite autour de volets que vous pouvez arranger dans n'importe quelle disposition : chat, différence, aperçu, terminal, fichier, plan, tâches et sous-agent. Glissez un volet par son en-tête pour le repositionner, ou glissez un bord de volet pour le redimensionner. Appuyez sur **Cmd+\\** sur macOS ou **Ctrl+\\** sur Windows pour fermer le volet actif. Ouvrez des volets supplémentaires à partir du menu **Vues** dans la barre d'outils de la session.
+L'onglet Code est construit autour de volets que vous pouvez arranger dans n'importe quelle disposition : chat, différence, aperçu, terminal, fichier, plan, tâches et sous-agent. Glissez un volet par son en-tête pour le repositionner, ou glissez un bord de volet pour le redimensionner. Appuyez sur **Cmd+\\** sur macOS ou **Ctrl+\\** sur Windows pour fermer le volet actif. Ouvrez des volets supplémentaires à partir du menu **Vues** dans la barre d'outils de la session.
+
+<Note>
+  La disposition des volets, le terminal, l'éditeur de fichiers et les modes d'affichage dans cette section nécessitent Claude Desktop v1.2581.0 ou une version ultérieure. Ouvrez **Claude → Vérifier les mises à jour** sur macOS ou **Aide → Vérifier les mises à jour** sur Windows pour mettre à jour.
+</Note>
 
 ### Exécuter les commandes dans le terminal
 
@@ -152,7 +152,7 @@ Le terminal intégré vous permet d'exécuter les commandes aux côtés de votre
 
 ### Ouvrir et modifier les fichiers
 
-Cliquez sur un chemin de fichier dans le chat ou la visionneuse de différences pour l'ouvrir dans le volet de fichier. Les chemins HTML, PDF et image s'ouvrent dans le [volet d'aperçu](#preview-your-app) à la place. Effectuez des modifications ponctuelles et cliquez sur **Enregistrer** pour les écrire. Si le fichier a changé sur le disque depuis que vous l'avez ouvert, le volet vous avertit et vous permet de remplacer ou d'abandonner. Cliquez sur **Abandonner** pour annuler vos modifications, ou cliquez sur le chemin dans l'en-tête du volet pour copier le chemin absolu.
+Cliquez sur un chemin de fichier dans le chat ou la visionneuse de différences pour l'ouvrir dans le volet de fichier. Les chemins HTML, PDF, image et vidéo s'ouvrent dans le [volet d'aperçu](#preview-your-app) à la place. Effectuez des modifications ponctuelles et cliquez sur **Enregistrer** pour les écrire. Si le fichier a changé sur le disque depuis que vous l'avez ouvert, le volet vous avertit et vous permet de remplacer ou d'abandonner. Cliquez sur **Abandonner** pour annuler vos modifications, ou cliquez sur le chemin dans l'en-tête du volet pour copier le chemin absolu.
 
 Le volet de fichier est disponible dans les sessions locales et SSH. Pour les sessions distantes, demandez à Claude de faire la modification.
 
@@ -278,7 +278,7 @@ Vous pouvez configurer deux paramètres dans **Paramètres > Général** (sous *
 
 ## Gérer les sessions
 
-Chaque session est une conversation indépendante avec son propre contexte et ses propres modifications. Vous pouvez exécuter plusieurs sessions en parallèle, envoyer du travail vers le cloud ou laisser Dispatch démarrer des sessions pour vous depuis votre téléphone.
+Chaque session est une conversation indépendante avec son propre contexte et ses propres modifications. Vous pouvez exécuter plusieurs sessions en parallèle, créer des chats latéraux, envoyer du travail vers le cloud ou laisser Dispatch démarrer des sessions pour vous depuis votre téléphone.
 
 ### Travailler en parallèle avec les sessions
 
@@ -289,7 +289,7 @@ Les worktrees sont stockés dans `<project-root>/.claude/worktrees/` par défaut
 Pour inclure les fichiers ignorés par git comme `.env` dans les nouveaux worktrees, créez un [fichier `.worktreeinclude`](/fr/common-workflows#copy-gitignored-files-to-worktrees) à la racine de votre projet.
 
 <Note>
-  L'isolation des sessions nécessite [Git](https://git-scm.com/downloads). La plupart des Macs incluent Git par défaut. Exécutez `git --version` dans Terminal pour vérifier. Sur Windows, Git est requis pour que l'onglet Code fonctionne : [téléchargez Git pour Windows](https://git-scm.com/downloads/win), installez-le et redémarrez l'application. Si vous rencontrez des erreurs Git, essayez une session Cowork pour aider à dépanner votre configuration.
+  L'isolation des sessions nécessite [Git](https://git-scm.com/downloads). La plupart des Macs incluent Git par défaut. Exécutez `git --version` dans Terminal pour vérifier. Sur Windows, Git est requis pour que l'onglet Code fonctionne : [téléchargez Git pour Windows](https://git-scm.com/downloads/win), installez-le et redémarrez l'application. Si vous rencontrez des erreurs Git, demandez à Claude dans l'[onglet Cowork](https://claude.com/product/cowork) de vous aider à dépanner votre configuration.
 </Note>
 
 Utilisez les contrôles en haut de la barre latérale pour filtrer les sessions par statut, projet ou environnement, et pour grouper les sessions par projet. Pour renommer une session, cliquez sur le titre de la session dans la barre d'outils en haut de la session active. Pour vérifier l'utilisation du contexte, voir [Vérifier l'utilisation](#check-usage). Quand le contexte se remplit, Claude résume automatiquement la conversation et continue de travailler. Vous pouvez également taper `/compact` pour déclencher la compaction plus tôt et libérer de l'espace de contexte. Voir [la fenêtre de contexte](/fr/how-claude-code-works#the-context-window) pour les détails sur le fonctionnement de la compaction.
@@ -337,7 +337,7 @@ Dispatch est l'une de plusieurs façons de travailler avec Claude quand vous êt
 
 ## Étendre Claude Code
 
-Connectez les services externes, ajoutez des flux de travail réutilisables, personnalisez le comportement de Claude et configurez les serveurs d'aperçu.
+Connectez les services externes, ajoutez des flux de travail réutilisables, personnalisez le comportement de Claude et configurez les serveurs d'aperçu. Pour gérer les connecteurs, les skills et les plugins au même endroit, cliquez sur **Personnaliser** dans la barre latérale.
 
 ### Connecter les outils externes
 
@@ -537,7 +537,7 @@ Pour ajouter une connexion SSH, cliquez sur la liste déroulante d'environnement
 
 Une fois ajoutée, la connexion apparaît dans la liste déroulante d'environnement. Sélectionnez-la pour démarrer une session sur cette machine. Claude s'exécute sur la machine distante avec accès à ses fichiers et outils.
 
-La machine distante doit exécuter Linux ou macOS, et Claude Code doit être installé sur elle. Une fois connecté, les sessions SSH supportent les modes de permission, les connecteurs, les plugins et les serveurs MCP.
+La machine distante doit exécuter Linux ou macOS. L'application de bureau installe Claude Code sur la machine distante automatiquement la première fois que vous vous connectez. Une fois connecté, les sessions SSH supportent les modes de permission, les connecteurs, les plugins et les serveurs MCP.
 
 #### Pré-configurer les connexions SSH pour votre équipe
 
@@ -586,9 +586,9 @@ Les paramètres gérés remplacent les paramètres du projet et de l'utilisateur
 | `autoMode`                                 | personnalisez ce que le classificateur du mode auto fait confiance et bloque dans votre organisation. Voir [Configurer le mode auto](/fr/auto-mode-config).                                                                  |
 | `sshConfigs`                               | pré-configurez les [connexions SSH](#pre-configure-ssh-connections-for-your-team) qui apparaissent dans la liste déroulante de l'environnement. Les utilisateurs ne peuvent pas modifier ou supprimer les connexions gérées. |
 
-`permissions.disableBypassPermissionsMode` et `disableAutoMode` fonctionnent également dans les paramètres utilisateur et projet, mais les placer dans les paramètres gérés empêche les utilisateurs de les remplacer. `autoMode` est lu à partir des paramètres utilisateur, `.claude/settings.local.json` et des paramètres gérés, mais pas à partir du `.claude/settings.json` coché : un référentiel cloné ne peut pas injecter ses propres règles de classificateur. Pour la liste complète des paramètres gérés uniquement, y compris `allowManagedPermissionRulesOnly` et `allowManagedHooksOnly`, voir [paramètres gérés uniquement](/fr/permissions#managed-only-settings).
+Un fichier de paramètres gérés déployé sur le disque de chaque machine s'applique aux sessions Desktop. Les paramètres gérés poussés à distance via la console d'administration atteignent actuellement uniquement les sessions CLI et IDE, donc pour les déploiements Desktop, distribuez le fichier via MDM ou utilisez les [contrôles de la console d'administration](#admin-console-controls) ci-dessus.
 
-Les paramètres gérés distants téléchargés via la console d'administration s'appliquent actuellement uniquement aux sessions CLI et IDE. Pour les restrictions spécifiques à Desktop, utilisez les contrôles de la console d'administration ci-dessus.
+`permissions.disableBypassPermissionsMode` et `disableAutoMode` fonctionnent également dans les paramètres utilisateur et projet, mais les placer dans les paramètres gérés empêche les utilisateurs de les remplacer. `autoMode` est lu à partir des paramètres utilisateur, `.claude/settings.local.json` et des paramètres gérés, mais pas à partir du `.claude/settings.json` coché : un référentiel cloné ne peut pas injecter ses propres règles de classificateur. Pour la liste complète des paramètres gérés uniquement, y compris `allowManagedPermissionRulesOnly` et `allowManagedHooksOnly`, voir [paramètres gérés uniquement](/fr/permissions#managed-only-settings).
 
 ### Politiques de gestion des appareils
 
@@ -637,8 +637,8 @@ Ce tableau montre l'équivalent de l'application de bureau pour les drapeaux CLI
 | `--permission-mode`                            | Sélecteur de mode à côté du bouton d'envoi                                                                                                                                                         |
 | `--dangerously-skip-permissions`               | Mode Contourner les permissions. Activez dans Paramètres → Claude Code → « Autoriser le mode de contournement des permissions ». Les administrateurs d'entreprise peuvent désactiver ce paramètre. |
 | `--add-dir`                                    | Ajouter plusieurs référentiels avec le bouton **+** dans les sessions distantes                                                                                                                    |
-| `--allowedTools`, `--disallowedTools`          | Non disponible dans Desktop                                                                                                                                                                        |
-| `--verbose`                                    | [Mode d'affichage Verbose](#switch-view-modes) dans la liste déroulante Vue de la transcription                                                                                                    |
+| `--allowedTools`, `--disallowedTools`          | Aucun équivalent par session. Les règles de permission dans les [fichiers de paramètres](/fr/settings) s'appliquent toujours.                                                                      |
+| `--verbose`                                    | Mode d'affichage [Verbose](#switch-view-modes) dans la liste déroulante Vue de la transcription                                                                                                    |
 | `--print`, `--output-format`                   | Non disponible. Desktop est interactif uniquement.                                                                                                                                                 |
 | Variable d'environnement `ANTHROPIC_MODEL`     | Liste déroulante de modèle à côté du bouton d'envoi                                                                                                                                                |
 | Variable d'environnement `MAX_THINKING_TOKENS` | Définissez dans l'éditeur d'environnement local. Voir [configuration de l'environnement](#environment-configuration).                                                                              |
@@ -682,7 +682,7 @@ Ce tableau compare les capacités principales entre la CLI et Desktop. Pour une 
 Les fonctionnalités suivantes sont disponibles uniquement dans la CLI ou l'extension VS Code :
 
 * **Fournisseurs tiers** : Desktop se connecte à l'API d'Anthropic par défaut. Les déploiements d'entreprise peuvent configurer Vertex AI et les fournisseurs de passerelle via [paramètres gérés](https://support.claude.com/en/articles/12622667-enterprise-configuration). Pour Bedrock ou Foundry, utilisez la [CLI](/fr/quickstart).
-* **Linux** : l'application de bureau est disponible sur macOS et Windows uniquement.
+* **Linux** : l'application de bureau est disponible sur macOS et Windows uniquement. Sur Linux, utilisez la [CLI](/fr/quickstart).
 * **Suggestions de code en ligne** : Desktop ne fournit pas de suggestions de style autocomplétion. Il fonctionne via des prompts conversationnels et des modifications de code explicites.
 * **Équipes d'agents** : l'orchestration multi-agents est disponible via la [CLI](/fr/agent-teams) et [Agent SDK](/fr/headless), pas dans Desktop.
 

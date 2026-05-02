@@ -6,7 +6,7 @@
 
 > Aproveche al máximo Claude Code Desktop: sesiones paralelas con aislamiento de Git, diseño de panel de arrastrar y soltar, terminal integrada y editor de archivos, chats laterales, uso de computadora, envíe sesiones desde su teléfono, revisión visual de diferencias, vistas previas de aplicaciones, monitoreo de PR, conectores y configuración empresarial.
 
-La pestaña Code dentro de la aplicación Claude Desktop le permite usar Claude Code a través de una interfaz gráfica en lugar de la terminal.
+La aplicación Claude Desktop tiene tres pestañas: **Chat** para conversaciones, **Cowork** para [Dispatch y trabajo agentico más largo](https://claude.com/product/cowork), y **Code** para desarrollo de software. Esta página es la referencia para la pestaña Code.
 
 <CardGroup cols={2}>
   <Card title="Download for macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
@@ -18,29 +18,21 @@ La pestaña Code dentro de la aplicación Claude Desktop le permite usar Claude 
   </Card>
 </CardGroup>
 
-For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). Linux is not supported.
+For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). The desktop app is not available on Linux; use the [CLI](/en/quickstart) instead.
 
-Después de instalar, inicie Claude, inicie sesión y haga clic en la pestaña **Code**. Consulte la [guía de introducción](/es/desktop-quickstart) para obtener un recorrido completo de su primera sesión.
+Después de instalar, inicie Claude, inicie sesión y haga clic en la pestaña **Code**. La primera vez que la abra en Windows, necesita tener [Git for Windows](https://git-scm.com/downloads/win) instalado; reinicie la aplicación después de instalarlo. Para un recorrido de su primera sesión, consulte la [guía de introducción](/es/desktop-quickstart).
 
-Desktop añade estas capacidades además de la experiencia estándar de Claude Code:
+En la pestaña Code, cada conversación es una **sesión**: tiene su propio historial de chat, carpeta de proyecto y cambios de código, independiente de cualquier otra sesión. La barra lateral enumera sus sesiones y le permite ejecutar varias en paralelo. Dentro de una sesión puede:
 
-* [Sesiones paralelas](#work-in-parallel-with-sessions) con aislamiento automático de Git worktree
-* [Diseño de arrastrar y soltar](#arrange-your-workspace) con terminal integrada, editor de archivos y panel de vista previa
-* [Chats laterales](#ask-a-side-question-without-derailing-the-session) que se ramifican sin afectar el hilo principal
-* [Revisión visual de diferencias](#review-changes-with-diff-view) con comentarios en línea
-* [Vista previa de aplicación en vivo](#preview-your-app) con servidores de desarrollo, archivos HTML y PDF
-* [Uso de computadora](#let-claude-use-your-computer) para abrir aplicaciones y controlar su pantalla en macOS y Windows
-* [Monitoreo de PR de GitHub](#monitor-pull-request-status) con corrección automática, fusión automática y archivo automático
-* [Dispatch](#sessions-from-dispatch) integración: envíe una tarea desde su teléfono, obtenga una sesión aquí
-* [Tareas programadas](/es/desktop-scheduled-tasks) que ejecutan Claude en un horario recurrente
-* [Conectores](#connect-external-tools) para GitHub, Slack, Linear y más
-* Entornos locales, [SSH](#ssh-sessions) y [en la nube](#run-long-running-tasks-remotely)
+* [Revisar y comentar en diffs](#review-changes-with-diff-view), luego [monitorear el PR resultante a través de CI](#monitor-pull-request-status)
+* [Obtener una vista previa de su aplicación en ejecución](#preview-your-app) en un navegador integrado mientras Claude verifica sus propios cambios
+* [Organizar paneles](#arrange-your-workspace) para el chat, diff, vista previa, terminal y editor de archivos lado a lado
+* Hacer una [pregunta lateral](#ask-a-side-question-without-derailing-the-session) que use el contexto de la sesión sin desviarse
+* [Conectar herramientas externas](#connect-external-tools) como GitHub, Slack y Linear
+* Permitir que Claude [abra aplicaciones y controle su pantalla](#let-claude-use-your-computer)
+* Ejecutar en su máquina, en la [nube](#run-long-running-tasks-remotely), o sobre [SSH](#ssh-sessions)
 
-<Note>
-  El diseño del espacio de trabajo, terminal, editor de archivos, chats laterales y modos de vista descritos en esta página requieren Claude Desktop v1.2581.0 o posterior. Abra **Claude → Check for Updates** en macOS o **Help → Check for Updates** en Windows para actualizar.
-</Note>
-
-Esta página cubre [trabajar con código](#work-with-code), [organizar su espacio de trabajo](#arrange-your-workspace), [uso de computadora](#let-claude-use-your-computer), [gestionar sesiones](#manage-sessions), [extender Claude Code](#extend-claude-code) y [configuración](#environment-configuration). También incluye una [comparación de CLI](#coming-from-the-cli) y [solución de problemas](#troubleshooting).
+Para [trabajo recurrente programado](/es/desktop-scheduled-tasks), [atajos de teclado](#keyboard-shortcuts), o [enviar tareas desde su teléfono](#sessions-from-dispatch), consulte las páginas y secciones vinculadas. Si ya usa la CLI basada en terminal, consulte la [comparación de CLI](#coming-from-the-cli) para ver qué se transfiere.
 
 ## Iniciar una sesión
 
@@ -74,15 +66,19 @@ El cuadro de solicitud admite dos formas de traer contexto externo:
 
 Los modos de permisos controlan cuánta autonomía tiene Claude durante una sesión: si pregunta antes de editar archivos, ejecutar comandos o ambos. Puede cambiar de modo en cualquier momento usando el selector de modo junto al botón de envío. Comience con Ask permissions para ver exactamente qué hace Claude, luego pase a Auto accept edits o Plan mode a medida que se sienta cómodo.
 
-| Modo                   | Clave de configuración | Comportamiento                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| ---------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Ask permissions**    | `default`              | Claude pregunta antes de editar archivos o ejecutar comandos. Usted ve una diferencia y puede aceptar o rechazar cada cambio. Recomendado para nuevos usuarios.                                                                                                                                                                                                                                                                                                                                                               |
-| **Auto accept edits**  | `acceptEdits`          | Claude acepta automáticamente ediciones de archivos y comandos comunes del sistema de archivos como `mkdir`, `touch` y `mv`, pero aún pregunta antes de ejecutar otros comandos de terminal. Use esto cuando confíe en cambios de archivos y desee una iteración más rápida.                                                                                                                                                                                                                                                  |
-| **Plan mode**          | `plan`                 | Claude lee archivos y ejecuta comandos para explorar, luego propone un plan sin editar su código fuente. Bueno para tareas complejas donde desea revisar el enfoque primero.                                                                                                                                                                                                                                                                                                                                                  |
-| **Auto**               | `auto`                 | Claude ejecuta todas las acciones con verificaciones de seguridad en segundo plano que verifican la alineación con su solicitud. Reduce solicitudes de permisos mientras mantiene supervisión. Actualmente una vista previa de investigación. Disponible en planes Max, Team, Enterprise y API. Requiere Claude Sonnet 4.6, Opus 4.6 u Opus 4.7 en planes Team, Enterprise y API; Claude Opus 4.7 solamente en planes Max. No disponible en planes Pro o proveedores de terceros. Habilite en su Configuración → Claude Code. |
-| **Bypass permissions** | `bypassPermissions`    | Claude se ejecuta sin ningún aviso de permisos, equivalente a `--dangerously-skip-permissions` en la CLI. Habilite en su Configuración → Claude Code bajo "Allow bypass permissions mode". Use solo en contenedores o máquinas virtuales sandboxed. Los administradores empresariales pueden deshabilitar esta opción.                                                                                                                                                                                                        |
+| Modo                   | Clave de configuración | Comportamiento                                                                                                                                                                                                                                                                                                              |
+| ---------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Ask permissions**    | `default`              | Claude pregunta antes de editar archivos o ejecutar comandos. Usted ve una diferencia y puede aceptar o rechazar cada cambio. Recomendado para nuevos usuarios.                                                                                                                                                             |
+| **Auto accept edits**  | `acceptEdits`          | Claude acepta automáticamente ediciones de archivos y comandos comunes del sistema de archivos como `mkdir`, `touch` y `mv`, pero aún pregunta antes de ejecutar otros comandos de terminal. Use esto cuando confíe en cambios de archivos y desee una iteración más rápida.                                                |
+| **Plan mode**          | `plan`                 | Claude lee archivos y ejecuta comandos para explorar, luego propone un plan sin editar su código fuente. Bueno para tareas complejas donde desea revisar el enfoque primero.                                                                                                                                                |
+| **Auto**               | `auto`                 | Claude ejecuta todas las acciones con verificaciones de seguridad en segundo plano que verifican la alineación con su solicitud. Reduce solicitudes de permisos mientras mantiene supervisión. Habilite en su Configuración → Claude Code. Consulte [requisitos de disponibilidad](#auto-mode-availability) a continuación. |
+| **Bypass permissions** | `bypassPermissions`    | Claude se ejecuta sin ningún aviso de permisos, equivalente a `--dangerously-skip-permissions` en la CLI. Habilite en su Configuración → Claude Code bajo "Allow bypass permissions mode". Use solo en contenedores o máquinas virtuales sandboxed. Los administradores empresariales pueden deshabilitar esta opción.      |
 
 El modo de permisos `dontAsk` está disponible solo en la [CLI](/es/permission-modes#allow-only-pre-approved-tools-with-dontask-mode).
+
+<span id="auto-mode-availability" />
+
+Auto mode es una vista previa de investigación disponible en planes Max, Team, Enterprise y API. No está disponible en planes Pro o proveedores de terceros. En planes Team, Enterprise y API requiere Claude Sonnet 4.6, Opus 4.6 u Opus 4.7. En planes Max requiere Claude Opus 4.7.
 
 <Tip title="Mejor práctica">
   Comience tareas complejas en Plan mode para que Claude mapee un enfoque antes de realizar cambios. Una vez que apruebe el plan, cambie a Auto accept edits o Ask permissions para ejecutarlo. Consulte [explorar primero, luego planificar, luego codificar](/es/best-practices#explore-first-then-plan-then-code) para obtener más información sobre este flujo de trabajo.
@@ -96,7 +92,7 @@ Los administradores empresariales pueden restringir qué modos de permisos está
 
 Claude puede iniciar un servidor de desarrollo y abrir un navegador integrado para verificar sus cambios. Esto funciona tanto para aplicaciones web frontend como para servidores backend: Claude puede probar puntos finales de API, ver registros del servidor e iterar sobre problemas que encuentra. En la mayoría de los casos, Claude inicia el servidor automáticamente después de editar archivos del proyecto. También puede pedirle a Claude que haga una vista previa en cualquier momento. De forma predeterminada, Claude [verifica automáticamente](#auto-verify-changes) cambios después de cada edición.
 
-El panel de vista previa también puede abrir archivos HTML estáticos, PDF e imágenes de su proyecto. Haga clic en una ruta HTML, PDF o imagen en el chat para abrirla en vista previa.
+El panel de vista previa también puede abrir archivos HTML estáticos, PDF, imágenes y videos de su proyecto. Haga clic en una ruta HTML, PDF, imagen o video en el chat para abrirla en vista previa.
 
 Desde el panel de vista previa, puede:
 
@@ -144,7 +140,11 @@ Use los controles deslizantes **Auto-fix** y **Auto-merge** en la barra de estad
 
 ## Organizar su espacio de trabajo
 
-La aplicación de escritorio está construida alrededor de paneles que puede organizar en cualquier diseño: chat, diferencia, vista previa, terminal, archivo, plan, tareas y subagente. Arrastre un panel por su encabezado para reposicionarlo, o arrastre un borde de panel para redimensionarlo. Presione **Cmd+\\** en macOS o **Ctrl+\\** en Windows para cerrar el panel enfocado. Abra paneles adicionales desde el menú **Views** en la barra de herramientas de la sesión.
+La pestaña Code está construida alrededor de paneles que puede organizar en cualquier diseño: chat, diferencia, vista previa, terminal, archivo, plan, tareas y subagente. Arrastre un panel por su encabezado para reposicionarlo, o arrastre un borde de panel para redimensionarlo. Presione **Cmd+\\** en macOS o **Ctrl+\\** en Windows para cerrar el panel enfocado. Abra paneles adicionales desde el menú **Views** en la barra de herramientas de la sesión.
+
+<Note>
+  El diseño del panel, terminal, editor de archivos y modos de vista en esta sección requieren Claude Desktop v1.2581.0 o posterior. Abra **Claude → Check for Updates** en macOS o **Help → Check for Updates** en Windows para actualizar.
+</Note>
 
 ### Ejecutar comandos en la terminal
 
@@ -152,7 +152,7 @@ La terminal integrada le permite ejecutar comandos junto a su sesión sin cambia
 
 ### Abrir y editar archivos
 
-Haga clic en una ruta de archivo en el chat o visor de diferencias para abrirlo en el panel de archivos. Las rutas HTML, PDF e imagen se abren en el [panel de vista previa](#preview-your-app) en su lugar. Realice ediciones puntuales y haga clic en **Save** para escribirlas de vuelta. Si el archivo cambió en el disco desde que lo abrió, el panel le advierte y le permite anular o descartar. Haga clic en **Discard** para revertir sus ediciones, o haga clic en la ruta en el encabezado del panel para copiar la ruta absoluta.
+Haga clic en una ruta de archivo en el chat o visor de diferencias para abrirlo en el panel de archivos. Las rutas HTML, PDF, imagen y vídeo se abren en el [panel de vista previa](#preview-your-app) en su lugar. Realice ediciones puntuales y haga clic en **Save** para escribirlas de vuelta. Si el archivo cambió en el disco desde que lo abrió, el panel le advierte y le permite anular o descartar. Haga clic en **Discard** para revertir sus ediciones, o haga clic en la ruta en el encabezado del panel para copiar la ruta absoluta.
 
 El panel de archivos está disponible en sesiones locales y SSH. Para sesiones remotas, pídale a Claude que realice el cambio.
 
@@ -289,7 +289,7 @@ Los worktrees se almacenan en `<project-root>/.claude/worktrees/` de forma prede
 Para incluir archivos ignorados por git como `.env` en nuevos worktrees, cree un [archivo `.worktreeinclude`](/es/common-workflows#copy-gitignored-files-to-worktrees) en la raíz de su proyecto.
 
 <Note>
-  El aislamiento de sesión requiere [Git](https://git-scm.com/downloads). La mayoría de las Macs incluyen Git de forma predeterminada. Ejecute `git --version` en Terminal para verificar. En Windows, Git es necesario para que la pestaña Code funcione: [descargue Git para Windows](https://git-scm.com/downloads/win), instálelo y reinicie la aplicación. Si encuentra errores de Git, intente una sesión de Cowork para ayudar a solucionar problemas de su configuración.
+  El aislamiento de sesión requiere [Git](https://git-scm.com/downloads). La mayoría de las Macs incluyen Git de forma predeterminada. Ejecute `git --version` en Terminal para verificar. En Windows, Git es necesario para que la pestaña Code funcione: [descargue Git para Windows](https://git-scm.com/downloads/win), instálelo y reinicie la aplicación. Si encuentra errores de Git, pida ayuda a Claude en la [pestaña Cowork](https://claude.com/product/cowork) para solucionar problemas de su configuración.
 </Note>
 
 Use los controles en la parte superior de la barra lateral para filtrar sesiones por estado, proyecto o entorno, y para agrupar sesiones por proyecto. Para renombrar una sesión, haga clic en el título de la sesión en la barra de herramientas en la parte superior de la sesión activa. Para verificar el uso del contexto, consulte [Verificar uso](#check-usage). Cuando el contexto se llena, Claude resume automáticamente la conversación y continúa trabajando. También puede escribir `/compact` para activar la compresión antes y liberar espacio de contexto. Consulte [la ventana de contexto](/es/how-claude-code-works#the-context-window) para obtener detalles sobre cómo funciona la compresión.
@@ -337,7 +337,7 @@ Dispatch es una de varias formas de trabajar con Claude cuando está lejos de su
 
 ## Extender Claude Code
 
-Conecte servicios externos, agregue flujos de trabajo reutilizables, personalice el comportamiento de Claude y configure servidores de vista previa.
+Conecte servicios externos, agregue flujos de trabajo reutilizables, personalice el comportamiento de Claude y configure servidores de vista previa. Para administrar conectores, skills y plugins en un solo lugar, haga clic en **Customize** en la barra lateral.
 
 ### Conectar herramientas externas
 
@@ -537,7 +537,7 @@ Para agregar una conexión SSH, haga clic en el menú desplegable de entorno ant
 
 Una vez agregada, la conexión aparece en el menú desplegable de entorno. Selecciónela para iniciar una sesión en esa máquina. Claude se ejecuta en la máquina remota con acceso a sus archivos y herramientas.
 
-La máquina remota debe ejecutar Linux o macOS, y Claude Code debe estar instalado en ella. Una vez conectado, las sesiones SSH admiten modos de permisos, conectores, plugins y MCP servers.
+La máquina remota debe ejecutar Linux o macOS. La aplicación de escritorio instala Claude Code en la máquina remota automáticamente la primera vez que se conecta. Una vez conectado, las sesiones SSH admiten modos de permisos, conectores, plugins y servidores MCP.
 
 #### Pre-configurar conexiones SSH para su equipo
 
@@ -586,9 +586,9 @@ La configuración administrada anula la configuración del proyecto y usuario y 
 | `autoMode`                                 | personalice lo que el clasificador de modo auto confía y bloquea en toda su organización. Consulte [Configurar el modo auto](/es/auto-mode-config).                                                             |
 | `sshConfigs`                               | pre-configure [conexiones SSH](#pre-configure-ssh-connections-for-your-team) que aparecen en el menú desplegable de entorno. Los usuarios no pueden editar ni eliminar conexiones administradas.                |
 
-`permissions.disableBypassPermissionsMode` y `disableAutoMode` también funcionan en configuración de usuario y proyecto, pero colocarlos en configuración administrada evita que los usuarios los anulen. `autoMode` se lee desde configuración de usuario, `.claude/settings.local.json` y configuración administrada, pero no desde `.claude/settings.json` verificado: un repositorio clonado no puede inyectar sus propias reglas de clasificador. Para la lista completa de configuraciones solo administradas incluyendo `allowManagedPermissionRulesOnly` y `allowManagedHooksOnly`, consulte [configuraciones solo administradas](/es/permissions#managed-only-settings).
+Un archivo de configuración administrada implementado en disco en cada máquina se aplica a sesiones de Desktop. La configuración administrada enviada de forma remota a través de la consola de administración actualmente solo llega a sesiones de CLI e IDE, por lo que para implementaciones de Desktop distribuya el archivo a través de MDM o use los [controles de consola de administración](#admin-console-controls) anteriores.
 
-La configuración administrada remota cargada a través de la consola de administración actualmente se aplica solo a sesiones de CLI e IDE. Para restricciones específicas de Desktop, use los controles de consola de administración anteriores.
+`permissions.disableBypassPermissionsMode` y `disableAutoMode` también funcionan en configuración de usuario y proyecto, pero colocarlos en configuración administrada evita que los usuarios los anulen. `autoMode` se lee desde configuración de usuario, `.claude/settings.local.json` y configuración administrada, pero no desde `.claude/settings.json` verificado: un repositorio clonado no puede inyectar sus propias reglas de clasificador. Para la lista completa de configuraciones solo administradas incluyendo `allowManagedPermissionRulesOnly` y `allowManagedHooksOnly`, consulte [configuraciones solo administradas](/es/permissions#managed-only-settings).
 
 ### Políticas de gestión de dispositivos
 
@@ -637,8 +637,8 @@ Esta tabla muestra el equivalente de la aplicación de escritorio para banderas 
 | `--permission-mode`                       | Selector de modo junto al botón de envío                                                                                                                                      |
 | `--dangerously-skip-permissions`          | Modo Bypass permissions. Habilite en Configuración → Claude Code → "Allow bypass permissions mode". Los administradores empresariales pueden deshabilitar esta configuración. |
 | `--add-dir`                               | Agregue múltiples repositorios con el botón **+** en sesiones remotas                                                                                                         |
-| `--allowedTools`, `--disallowedTools`     | No disponible en Desktop                                                                                                                                                      |
-| `--verbose`                               | Modo de vista [Verbose](#switch-view-modes) en el menú desplegable Transcript view                                                                                            |
+| `--allowedTools`, `--disallowedTools`     | Sin equivalente por sesión. Las reglas de permisos en [archivos de configuración](/es/settings) aún se aplican.                                                               |
+| `--verbose`                               | Modo de vista [Verbose](#switch-view-modes) en el menú desplegable de vista de transcripción                                                                                  |
 | `--print`, `--output-format`              | No disponible. Desktop es solo interactivo.                                                                                                                                   |
 | Variable de entorno `ANTHROPIC_MODEL`     | Menú desplegable de modelo junto al botón de envío                                                                                                                            |
 | Variable de entorno `MAX_THINKING_TOKENS` | Establezca en el editor de entorno local. Consulte [configuración del entorno](#environment-configuration).                                                                   |
@@ -682,7 +682,7 @@ Esta tabla compara capacidades principales entre la CLI y Desktop. Para una list
 Las siguientes características están disponibles solo en la CLI o extensión de VS Code:
 
 * **Proveedores de terceros**: Desktop se conecta a la API de Anthropic de forma predeterminada. Las implementaciones empresariales pueden configurar Vertex AI y proveedores de puerta de enlace a través de [configuración administrada](https://support.claude.com/en/articles/12622667-enterprise-configuration). Para Bedrock o Foundry, use la [CLI](/es/quickstart).
-* **Linux**: la aplicación de escritorio está disponible solo en macOS y Windows.
+* **Linux**: la aplicación de escritorio está disponible solo en macOS y Windows. En Linux, use la [CLI](/es/quickstart).
 * **Sugerencias de código en línea**: Desktop no proporciona sugerencias de estilo autocompletado. Funciona a través de solicitudes conversacionales y cambios de código explícitos.
 * **Equipos de agentes**: la orquestación de múltiples agentes está disponible a través de la [CLI](/es/agent-teams) y [Agent SDK](/es/headless), no en Desktop.
 

@@ -6,7 +6,7 @@
 
 > Dapatkan lebih banyak dari Claude Code Desktop: sesi paralel dengan isolasi Git, tata letak pane drag-and-drop, terminal terintegrasi dan editor file, side chats, computer use, Dispatch sessions dari ponsel Anda, tinjauan diff visual, pratinjau aplikasi, pemantauan PR, konektor, dan konfigurasi enterprise.
 
-Tab Code dalam aplikasi Claude Desktop memungkinkan Anda menggunakan Claude Code melalui antarmuka grafis alih-alih terminal.
+Aplikasi Claude Desktop memiliki tiga tab: **Chat** untuk percakapan, **Cowork** untuk [Dispatch dan pekerjaan agentic yang lebih panjang](https://claude.com/product/cowork), dan **Code** untuk pengembangan perangkat lunak. Halaman ini adalah referensi untuk tab Code.
 
 <CardGroup cols={2}>
   <Card title="Download for macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
@@ -18,29 +18,21 @@ Tab Code dalam aplikasi Claude Desktop memungkinkan Anda menggunakan Claude Code
   </Card>
 </CardGroup>
 
-For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). Linux is not supported.
+For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). The desktop app is not available on Linux; use the [CLI](/en/quickstart) instead.
 
-Setelah menginstal, luncurkan Claude, masuk, dan klik tab **Code**. Lihat [panduan Memulai](/id/desktop-quickstart) untuk panduan lengkap sesi pertama Anda.
+Setelah menginstal, luncurkan Claude, masuk, dan klik tab **Code**. Pertama kali Anda membukanya di Windows, Anda perlu menginstal [Git for Windows](https://git-scm.com/downloads/win); mulai ulang aplikasi setelah menginstalnya. Untuk panduan sesi pertama Anda, lihat [panduan Memulai](/id/desktop-quickstart).
 
-Desktop menambahkan kemampuan ini di atas pengalaman Claude Code standar:
+Di tab Code, setiap percakapan adalah sebuah **sesi**: ia memiliki riwayat chat sendiri, folder proyek, dan perubahan kode, independen dari sesi lainnya. Bilah sisi mencantumkan sesi Anda dan memungkinkan Anda menjalankan beberapa secara paralel. Dalam sesi Anda dapat:
 
-* [Sesi paralel](#work-in-parallel-with-sessions) dengan isolasi Git worktree otomatis
-* [Tata letak drag-and-drop](#arrange-your-workspace) dengan terminal terintegrasi, editor file, dan pane pratinjau
-* [Side chats](#ask-a-side-question-without-derailing-the-session) yang bercabang tanpa mempengaruhi thread utama
-* [Tinjauan diff visual](#review-changes-with-diff-view) dengan komentar inline
-* [Pratinjau aplikasi langsung](#preview-your-app) dengan dev server, file HTML, dan PDF
-* [Computer use](#let-claude-use-your-computer) untuk membuka aplikasi dan mengontrol layar Anda di macOS dan Windows
-* [Pemantauan PR GitHub](#monitor-pull-request-status) dengan auto-fix, auto-merge, dan auto-archive
-* [Dispatch](#sessions-from-dispatch) integration: kirim tugas dari ponsel Anda, dapatkan sesi di sini
-* [Tugas terjadwal](/id/desktop-scheduled-tasks) yang menjalankan Claude sesuai jadwal berulang
-* [Konektor](#connect-external-tools) untuk GitHub, Slack, Linear, dan lainnya
-* Lingkungan lokal, [SSH](#ssh-sessions), dan [cloud](#run-long-running-tasks-remotely)
+* [Meninjau dan mengomentari diff](#review-changes-with-diff-view), kemudian [memantau PR yang dihasilkan melalui CI](#monitor-pull-request-status)
+* [Pratinjau aplikasi yang berjalan](#preview-your-app) di browser tertanam sementara Claude memverifikasi perubahan miliknya sendiri
+* [Mengatur pane](#arrange-your-workspace) untuk chat, diff, pratinjau, terminal, dan editor file berdampingan
+* Mengajukan [pertanyaan sampingan](#ask-a-side-question-without-derailing-the-session) yang menggunakan konteks sesi tanpa mengganggu alurnya
+* [Menghubungkan alat eksternal](#connect-external-tools) seperti GitHub, Slack, dan Linear
+* Biarkan Claude [membuka aplikasi dan mengontrol layar Anda](#let-claude-use-your-computer)
+* Jalankan di mesin Anda, di [cloud](#run-long-running-tasks-remotely), atau melalui [SSH](#ssh-sessions)
 
-<Note>
-  Tata letak workspace, terminal, editor file, side chats, dan mode tampilan yang dijelaskan di halaman ini memerlukan Claude Desktop v1.2581.0 atau lebih baru. Buka **Claude → Check for Updates** di macOS atau **Help → Check for Updates** di Windows untuk memperbarui.
-</Note>
-
-Halaman ini mencakup [bekerja dengan kode](#work-with-code), [mengatur workspace Anda](#arrange-your-workspace), [computer use](#let-claude-use-your-computer), [mengelola sesi](#manage-sessions), [memperluas Claude Code](#extend-claude-code), dan [konfigurasi](#environment-configuration). Halaman ini juga mencakup [perbandingan CLI](#coming-from-the-cli) dan [pemecahan masalah](#troubleshooting).
+Untuk [pekerjaan berulang terjadwal](/id/desktop-scheduled-tasks), [pintasan keyboard](#keyboard-shortcuts), atau [mengirim tugas dari ponsel Anda](#sessions-from-dispatch), lihat halaman dan bagian yang ditautkan. Jika Anda sudah menggunakan CLI berbasis terminal, lihat [perbandingan CLI](#coming-from-the-cli) untuk apa yang berlanjut.
 
 ## Mulai sesi
 
@@ -74,15 +66,19 @@ Kotak prompt mendukung dua cara untuk membawa konteks eksternal:
 
 Permission modes mengontrol berapa banyak otonomi yang dimiliki Claude selama sesi: apakah itu meminta izin sebelum mengedit file, menjalankan perintah, atau keduanya. Anda dapat beralih mode kapan saja menggunakan pemilih mode di sebelah tombol kirim. Mulai dengan Ask permissions untuk melihat dengan tepat apa yang dilakukan Claude, kemudian pindah ke Auto accept edits atau Plan mode saat Anda merasa nyaman.
 
-| Mode                   | Settings key        | Behavior                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| ---------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Ask permissions**    | `default`           | Claude meminta izin sebelum mengedit file atau menjalankan perintah. Anda melihat diff dan dapat menerima atau menolak setiap perubahan. Direkomendasikan untuk pengguna baru.                                                                                                                                                                                                                                                                                                                                       |
-| **Auto accept edits**  | `acceptEdits`       | Claude secara otomatis menerima edit file dan perintah filesystem umum seperti `mkdir`, `touch`, dan `mv`, tetapi masih meminta izin sebelum menjalankan perintah terminal lainnya. Gunakan ini ketika Anda mempercayai perubahan file dan menginginkan iterasi yang lebih cepat.                                                                                                                                                                                                                                    |
-| **Plan mode**          | `plan`              | Claude membaca file dan menjalankan perintah untuk menjelajahi, kemudian mengusulkan rencana tanpa mengedit kode sumber Anda. Bagus untuk tugas kompleks di mana Anda ingin meninjau pendekatan terlebih dahulu.                                                                                                                                                                                                                                                                                                     |
-| **Auto**               | `auto`              | Claude mengeksekusi semua tindakan dengan pemeriksaan keamanan latar belakang yang memverifikasi keselarasan dengan permintaan Anda. Mengurangi prompt izin sambil mempertahankan pengawasan. Saat ini pratinjau penelitian. Tersedia di rencana Max, Team, Enterprise, dan API. Memerlukan Claude Sonnet 4.6, Opus 4.6, atau Opus 4.7 di rencana Team, Enterprise, dan API; Claude Opus 4.7 saja di rencana Max. Tidak tersedia di rencana Pro atau penyedia pihak ketiga. Aktifkan di Settings → Claude Code Anda. |
-| **Bypass permissions** | `bypassPermissions` | Claude berjalan tanpa prompt izin apa pun, setara dengan `--dangerously-skip-permissions` di CLI. Aktifkan di Settings → Claude Code Anda di bawah "Allow bypass permissions mode". Hanya gunakan ini di kontainer atau VM yang disandbox. Admin enterprise dapat menonaktifkan opsi ini.                                                                                                                                                                                                                            |
+| Mode                   | Settings key        | Behavior                                                                                                                                                                                                                                                                                                    |
+| ---------------------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Ask permissions**    | `default`           | Claude meminta izin sebelum mengedit file atau menjalankan perintah. Anda melihat diff dan dapat menerima atau menolak setiap perubahan. Direkomendasikan untuk pengguna baru.                                                                                                                              |
+| **Auto accept edits**  | `acceptEdits`       | Claude secara otomatis menerima edit file dan perintah filesystem umum seperti `mkdir`, `touch`, dan `mv`, tetapi masih meminta izin sebelum menjalankan perintah terminal lainnya. Gunakan ini ketika Anda mempercayai perubahan file dan menginginkan iterasi yang lebih cepat.                           |
+| **Plan mode**          | `plan`              | Claude membaca file dan menjalankan perintah untuk menjelajahi, kemudian mengusulkan rencana tanpa mengedit kode sumber Anda. Bagus untuk tugas kompleks di mana Anda ingin meninjau pendekatan terlebih dahulu.                                                                                            |
+| **Auto**               | `auto`              | Claude mengeksekusi semua tindakan dengan pemeriksaan keamanan latar belakang yang memverifikasi keselarasan dengan permintaan Anda. Mengurangi prompt izin sambil mempertahankan pengawasan. Aktifkan di Settings → Claude Code Anda. Lihat [availability requirements](#auto-mode-availability) di bawah. |
+| **Bypass permissions** | `bypassPermissions` | Claude berjalan tanpa prompt izin apa pun, setara dengan `--dangerously-skip-permissions` di CLI. Aktifkan di Settings → Claude Code Anda di bawah "Allow bypass permissions mode". Hanya gunakan ini di kontainer atau VM yang disandbox. Admin enterprise dapat menonaktifkan opsi ini.                   |
 
 Mode izin `dontAsk` hanya tersedia di [CLI](/id/permission-modes#allow-only-pre-approved-tools-with-dontask-mode).
+
+<span id="auto-mode-availability" />
+
+Auto mode adalah pratinjau penelitian yang tersedia di rencana Max, Team, Enterprise, dan API. Tidak tersedia di rencana Pro atau penyedia pihak ketiga. Di rencana Team, Enterprise, dan API memerlukan Claude Sonnet 4.6, Opus 4.6, atau Opus 4.7. Di rencana Max memerlukan Claude Opus 4.7.
 
 <Tip title="Best practice">
   Mulai tugas kompleks di Plan mode sehingga Claude memetakan pendekatan sebelum membuat perubahan. Setelah Anda menyetujui rencana, beralih ke Auto accept edits atau Ask permissions untuk menjalankannya. Lihat [explore first, then plan, then code](/id/best-practices#explore-first-then-plan-then-code) untuk informasi lebih lanjut tentang alur kerja ini.
@@ -96,7 +92,7 @@ Admin enterprise dapat membatasi permission modes mana yang tersedia. Lihat [ent
 
 Claude dapat memulai dev server dan membuka browser tertanam untuk memverifikasi perubahannya. Ini berfungsi untuk aplikasi web frontend serta server backend: Claude dapat menguji endpoint API, melihat log server, dan mengulangi masalah yang ditemukannya. Dalam kebanyakan kasus, Claude memulai server secara otomatis setelah mengedit file proyek. Anda juga dapat meminta Claude untuk pratinjau kapan saja. Secara default, Claude [auto-verifies](#auto-verify-changes) perubahan setelah setiap edit.
 
-Pane pratinjau juga dapat membuka file HTML statis, PDF, dan gambar dari proyek Anda. Klik path HTML, PDF, atau gambar di chat untuk membukanya di pratinjau.
+Pane pratinjau juga dapat membuka file HTML statis, PDF, gambar, dan video dari proyek Anda. Klik path HTML, PDF, gambar, atau video di chat untuk membukanya di pratinjau.
 
 Dari pane pratinjau, Anda dapat:
 
@@ -144,7 +140,11 @@ Gunakan toggle **Auto-fix** dan **Auto-merge** di bilah status CI untuk mengakti
 
 ## Atur workspace Anda
 
-Aplikasi desktop dibangun di sekitar pane yang dapat Anda atur dalam tata letak apa pun: chat, diff, preview, terminal, file, plan, tasks, dan subagent. Seret pane dengan headernya untuk memposisikan ulang, atau seret tepi pane untuk mengubah ukurannya. Tekan **Cmd+\\** di macOS atau **Ctrl+\\** di Windows untuk menutup pane yang fokus. Buka pane tambahan dari menu **Views** di toolbar sesi.
+Tab Code dibangun di sekitar pane yang dapat Anda atur dalam tata letak apa pun: chat, diff, preview, terminal, file, plan, tasks, dan subagent. Seret pane dengan headernya untuk memposisikan ulang, atau seret tepi pane untuk mengubah ukurannya. Tekan **Cmd+\\** di macOS atau **Ctrl+\\** di Windows untuk menutup pane yang fokus. Buka pane tambahan dari menu **Views** di toolbar sesi.
+
+<Note>
+  Tata letak pane, terminal, editor file, dan view modes di bagian ini memerlukan Claude Desktop v1.2581.0 atau lebih baru. Buka **Claude → Check for Updates** di macOS atau **Help → Check for Updates** di Windows untuk memperbarui.
+</Note>
 
 ### Jalankan perintah di terminal
 
@@ -152,7 +152,7 @@ Terminal terintegrasi memungkinkan Anda menjalankan perintah bersama sesi Anda t
 
 ### Buka dan edit file
 
-Klik path file di chat atau diff viewer untuk membukanya di pane file. Path HTML, PDF, dan gambar terbuka di [pane pratinjau](#preview-your-app) sebagai gantinya. Buat edit spot dan klik **Save** untuk menulisnya kembali. Jika file berubah di disk sejak Anda membukanya, pane memperingatkan Anda dan memungkinkan Anda menimpa atau membuang. Klik **Discard** untuk mengembalikan edit Anda, atau klik path di header pane untuk menyalin path absolut.
+Klik path file di chat atau diff viewer untuk membukanya di pane file. Path HTML, PDF, gambar, dan video terbuka di [pane preview](#preview-your-app) sebagai gantinya. Buat edit spot dan klik **Save** untuk menulisnya kembali. Jika file berubah di disk sejak Anda membukanya, pane memperingatkan Anda dan memungkinkan Anda menimpa atau membuang. Klik **Discard** untuk mengembalikan edit Anda, atau klik path di header pane untuk menyalin path absolut.
 
 Pane file tersedia di sesi lokal dan SSH. Untuk sesi jarak jauh, minta Claude untuk membuat perubahan.
 
@@ -190,8 +190,8 @@ Tekan **Cmd+/** di macOS atau **Ctrl+/** di Windows untuk melihat semua pintasan
 | `Cmd` `Shift` `]` / `Cmd` `Shift` `[` | Sesi berikutnya atau sebelumnya |
 | `Esc`                                 | Hentikan respons Claude         |
 | `Cmd` `Shift` `D`                     | Alihkan pane diff               |
-| `Cmd` `Shift` `P`                     | Alihkan pane pratinjau          |
-| `Cmd` `Shift` `S`                     | Pilih elemen di pratinjau       |
+| `Cmd` `Shift` `P`                     | Alihkan pane preview            |
+| `Cmd` `Shift` `S`                     | Pilih elemen di preview         |
 | `Ctrl` `` ` ``                        | Alihkan pane terminal           |
 | `Cmd` `\`                             | Tutup pane yang fokus           |
 | `Cmd` `;`                             | Buka side chat                  |
@@ -278,7 +278,7 @@ Anda dapat mengonfigurasi dua pengaturan di **Settings > General** (di bawah **D
 
 ## Kelola sesi
 
-Setiap sesi adalah percakapan independen dengan konteks dan perubahannya sendiri. Anda dapat menjalankan beberapa sesi secara paralel, mengirim pekerjaan ke cloud, atau membiarkan Dispatch memulai sesi untuk Anda dari ponsel Anda.
+Setiap sesi adalah percakapan independen dengan konteks dan perubahannya sendiri. Anda dapat menjalankan beberapa sesi secara paralel, membuat side chat, mengirim pekerjaan ke cloud, atau membiarkan Dispatch memulai sesi untuk Anda dari ponsel Anda.
 
 ### Bekerja secara paralel dengan sesi
 
@@ -289,7 +289,7 @@ Worktrees disimpan di `<project-root>/.claude/worktrees/` secara default. Anda d
 Untuk menyertakan file yang diabaikan git seperti `.env` di worktree baru, buat file [`.worktreeinclude`](/id/common-workflows#copy-gitignored-files-to-worktrees) di root proyek Anda.
 
 <Note>
-  Isolasi sesi memerlukan [Git](https://git-scm.com/downloads). Sebagian besar Mac menyertakan Git secara default. Jalankan `git --version` di Terminal untuk memeriksa. Di Windows, Git diperlukan agar tab Code berfungsi: [unduh Git untuk Windows](https://git-scm.com/downloads/win), pasang, dan mulai ulang aplikasi. Jika Anda mengalami kesalahan Git, coba sesi Cowork untuk membantu memecahkan masalah setup Anda.
+  Isolasi sesi memerlukan [Git](https://git-scm.com/downloads). Sebagian besar Mac menyertakan Git secara default. Jalankan `git --version` di Terminal untuk memeriksa. Di Windows, Git diperlukan agar tab Code berfungsi: [unduh Git untuk Windows](https://git-scm.com/downloads/win), pasang, dan mulai ulang aplikasi. Jika Anda mengalami kesalahan Git, tanyakan Claude di tab [Cowork](https://claude.com/product/cowork) untuk membantu memecahkan masalah setup Anda.
 </Note>
 
 Gunakan kontrol di bagian atas sidebar untuk memfilter sesi berdasarkan status, proyek, atau lingkungan, dan untuk mengelompokkan sesi berdasarkan proyek. Untuk mengganti nama sesi, klik judul sesi di toolbar di bagian atas sesi aktif. Untuk memeriksa penggunaan konteks, lihat [Check usage](#check-usage). Ketika konteks penuh, Claude secara otomatis merangkum percakapan dan terus bekerja. Anda juga dapat mengetik `/compact` untuk memicu perangkuman lebih awal dan membebaskan ruang konteks. Lihat [jendela konteks](/id/how-claude-code-works#the-context-window) untuk detail tentang cara pemadatan bekerja.
@@ -337,17 +337,17 @@ Dispatch adalah salah satu dari beberapa cara untuk bekerja dengan Claude ketika
 
 ## Perluas Claude Code
 
-Hubungkan layanan eksternal, tambahkan alur kerja yang dapat digunakan kembali, sesuaikan perilaku Claude, dan konfigurasikan server pratinjau.
+Hubungkan layanan eksternal, tambahkan alur kerja yang dapat digunakan kembali, sesuaikan perilaku Claude, dan konfigurasikan server pratinjau. Untuk mengelola connectors, skills, dan plugins di satu tempat, klik **Customize** di sidebar.
 
 ### Hubungkan alat eksternal
 
-Untuk sesi lokal dan [SSH](#ssh-sessions), klik tombol **+** di sebelah kotak prompt dan pilih **Connectors** untuk menambahkan integrasi seperti Google Calendar, Slack, GitHub, Linear, Notion, dan lainnya. Anda dapat menambahkan konektor sebelum atau selama sesi. Tombol **+** tidak tersedia di sesi jarak jauh, tetapi [routines](/id/routines) mengonfigurasi konektor pada waktu pembuatan routine.
+Untuk sesi lokal dan [SSH](#ssh-sessions), klik tombol **+** di sebelah kotak prompt dan pilih **Connectors** untuk menambahkan integrasi seperti Google Calendar, Slack, GitHub, Linear, Notion, dan lainnya. Anda dapat menambahkan connectors sebelum atau selama sesi. Tombol **+** tidak tersedia di sesi jarak jauh, tetapi [routines](/id/routines) mengonfigurasi connectors pada waktu pembuatan routine.
 
-Untuk mengelola atau memutuskan konektor, buka Settings → Connectors di aplikasi desktop, atau pilih **Manage connectors** dari menu Connectors di kotak prompt.
+Untuk mengelola atau memutuskan connectors, buka Settings → Connectors di aplikasi desktop, atau pilih **Manage connectors** dari menu Connectors di kotak prompt.
 
 Setelah terhubung, Claude dapat membaca kalender Anda, mengirim pesan, membuat masalah, dan berinteraksi dengan alat Anda secara langsung. Anda dapat meminta Claude konektor apa yang dikonfigurasi di sesi Anda.
 
-Konektor adalah [MCP servers](/id/mcp) dengan alur pengaturan grafis. Gunakan untuk integrasi cepat dengan layanan yang didukung. Untuk integrasi yang tidak tercantum di Connectors, tambahkan MCP servers secara manual melalui [file pengaturan](/id/mcp#installing-mcp-servers). Anda juga dapat [membuat konektor kustom](https://support.claude.com/en/articles/11175166-getting-started-with-custom-connectors-using-remote-mcp).
+Connectors adalah [MCP servers](/id/mcp) dengan alur pengaturan grafis. Gunakan untuk integrasi cepat dengan layanan yang didukung. Untuk integrasi yang tidak tercantum di Connectors, tambahkan MCP servers secara manual melalui [file pengaturan](/id/mcp#installing-mcp-servers). Anda juga dapat [membuat custom connectors](https://support.claude.com/en/articles/11175166-getting-started-with-custom-connectors-using-remote-mcp).
 
 ### Gunakan skills
 
@@ -537,7 +537,7 @@ Untuk menambahkan koneksi SSH, klik dropdown lingkungan sebelum memulai sesi dan
 
 Setelah ditambahkan, koneksi muncul di dropdown lingkungan. Pilih untuk memulai sesi di mesin itu. Claude berjalan di mesin jarak jauh dengan akses ke file dan alatnya.
 
-Mesin jarak jauh harus menjalankan Linux atau macOS, dan Claude Code harus diinstal di atasnya. Setelah terhubung, sesi SSH mendukung permission modes, connectors, plugins, dan MCP servers.
+Mesin jarak jauh harus menjalankan Linux atau macOS. Desktop menginstal Claude Code di mesin jarak jauh secara otomatis saat pertama kali Anda terhubung. Setelah terhubung, sesi SSH mendukung permission modes, connectors, plugins, dan MCP servers.
 
 #### Pre-configure SSH connections for your team
 
@@ -586,9 +586,9 @@ Pengaturan yang dikelola menimpa pengaturan proyek dan pengguna dan berlaku keti
 | `autoMode`                                 | sesuaikan apa yang dipercaya dan diblokir oleh pengklasifikasi auto mode di seluruh organisasi Anda. Lihat [Configure auto mode](/id/auto-mode-config).                                                   |
 | `sshConfigs`                               | pre-configure [SSH connections](#pre-configure-ssh-connections-for-your-team) yang muncul di dropdown lingkungan. Pengguna tidak dapat mengedit atau menghapus koneksi yang dikelola.                     |
 
-`permissions.disableBypassPermissionsMode` dan `disableAutoMode` juga bekerja di pengaturan pengguna dan proyek, tetapi menempatkannya di pengaturan yang dikelola mencegah pengguna dari menimpanya. `autoMode` dibaca dari pengaturan pengguna, `.claude/settings.local.json`, dan pengaturan yang dikelola, tetapi bukan dari `.claude/settings.json` yang diperiksa: repositori yang diklon tidak dapat menyuntikkan aturan pengklasifikasinya sendiri. Untuk daftar lengkap pengaturan khusus yang dikelola termasuk `allowManagedPermissionRulesOnly` dan `allowManagedHooksOnly`, lihat [managed-only settings](/id/permissions#managed-only-settings).
+File pengaturan yang dikelola yang disebarkan ke disk pada setiap mesin berlaku untuk sesi Desktop. Pengaturan yang dikelola yang didorong dari jarak jauh melalui konsol admin saat ini hanya mencapai sesi CLI dan IDE, jadi untuk penyebaran Desktop baik distribusikan file melalui MDM atau gunakan [kontrol konsol admin](#admin-console-controls) di atas.
 
-Pengaturan yang dikelola jarak jauh yang diunggah melalui konsol admin saat ini berlaku untuk sesi CLI dan IDE saja. Untuk pembatasan khusus Desktop, gunakan kontrol konsol admin di atas.
+`permissions.disableBypassPermissionsMode` dan `disableAutoMode` juga bekerja di pengaturan pengguna dan proyek, tetapi menempatkannya di pengaturan yang dikelola mencegah pengguna dari menimpanya. `autoMode` dibaca dari pengaturan pengguna, `.claude/settings.local.json`, dan pengaturan yang dikelola, tetapi bukan dari `.claude/settings.json` yang diperiksa: repositori yang diklon tidak dapat menyuntikkan aturan pengklasifikasinya sendiri. Untuk daftar lengkap pengaturan khusus yang dikelola termasuk `allowManagedPermissionRulesOnly` dan `allowManagedHooksOnly`, lihat [managed-only settings](/id/permissions#managed-only-settings).
 
 ### Kebijakan manajemen perangkat
 
@@ -616,7 +616,7 @@ Untuk konfigurasi jaringan seperti pengaturan proxy, allowlist firewall, dan LLM
 
 Untuk referensi konfigurasi enterprise lengkap, lihat [enterprise configuration guide](https://support.claude.com/en/articles/12622667-enterprise-configuration).
 
-## Coming from the CLI?
+## Datang dari CLI?
 
 Jika Anda sudah menggunakan CLI Claude Code, Desktop menjalankan mesin yang sama dengan antarmuka grafis. Anda dapat menjalankan keduanya secara bersamaan di mesin yang sama, bahkan di proyek yang sama. Masing-masing mempertahankan riwayat sesi terpisah, tetapi mereka berbagi konfigurasi dan memori proyek melalui file CLAUDE.md.
 
@@ -626,24 +626,24 @@ Untuk memindahkan sesi CLI ke Desktop, jalankan `/desktop` di terminal. Claude m
   Kapan menggunakan Desktop vs CLI: gunakan Desktop ketika Anda ingin mengelola sesi paralel di satu jendela, mengatur pane berdampingan, atau meninjau perubahan secara visual. Gunakan CLI ketika Anda memerlukan scripting, otomasi, atau lebih suka alur kerja terminal.
 </Tip>
 
-### CLI flag equivalents
+### Setara flag CLI
 
 Tabel ini menunjukkan setara aplikasi desktop untuk flag CLI umum. Flag yang tidak tercantum tidak memiliki setara desktop karena dirancang untuk scripting atau otomasi.
 
-| CLI                                   | Desktop equivalent                                                                                                                                  |
+| CLI                                   | Setara Desktop                                                                                                                                      |
 | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--model sonnet`                      | Model dropdown di sebelah tombol kirim                                                                                                              |
+| `--model sonnet`                      | Dropdown model di sebelah tombol kirim                                                                                                              |
 | `--resume`, `--continue`              | Klik sesi di sidebar                                                                                                                                |
-| `--permission-mode`                   | Mode selector di sebelah tombol kirim                                                                                                               |
+| `--permission-mode`                   | Pemilih mode di sebelah tombol kirim                                                                                                                |
 | `--dangerously-skip-permissions`      | Bypass permissions mode. Aktifkan di Settings → Claude Code → "Allow bypass permissions mode". Admin enterprise dapat menonaktifkan pengaturan ini. |
 | `--add-dir`                           | Tambahkan beberapa repo dengan tombol **+** di sesi jarak jauh                                                                                      |
-| `--allowedTools`, `--disallowedTools` | Tidak tersedia di Desktop                                                                                                                           |
-| `--verbose`                           | [Verbose view mode](#switch-view-modes) di dropdown Transcript view                                                                                 |
+| `--allowedTools`, `--disallowedTools` | Tidak ada setara per-sesi. Aturan izin di [file pengaturan](/id/settings) masih berlaku.                                                            |
+| `--verbose`                           | [Mode tampilan verbose](#switch-view-modes) di dropdown tampilan Transcript                                                                         |
 | `--print`, `--output-format`          | Tidak tersedia. Desktop hanya interaktif.                                                                                                           |
-| `ANTHROPIC_MODEL` env var             | Model dropdown di sebelah tombol kirim                                                                                                              |
-| `MAX_THINKING_TOKENS` env var         | Atur di editor lingkungan lokal. Lihat [environment configuration](#environment-configuration).                                                     |
+| `ANTHROPIC_MODEL` env var             | Dropdown model di sebelah tombol kirim                                                                                                              |
+| `MAX_THINKING_TOKENS` env var         | Atur di editor lingkungan lokal. Lihat [konfigurasi lingkungan](#environment-configuration).                                                        |
 
-### Shared configuration
+### Konfigurasi bersama
 
 Desktop dan CLI membaca file konfigurasi yang sama, jadi setup Anda terbawa:
 
@@ -651,40 +651,40 @@ Desktop dan CLI membaca file konfigurasi yang sama, jadi setup Anda terbawa:
 * **[MCP servers](/id/mcp)** yang dikonfigurasi di `~/.claude.json` atau `.mcp.json` bekerja di keduanya
 * **[Hooks](/id/hooks)** dan **[skills](/id/skills)** yang ditentukan dalam pengaturan berlaku untuk keduanya
 * **[Settings](/id/settings)** di `~/.claude.json` dan `~/.claude/settings.json` dibagikan. Aturan izin, alat yang diizinkan, dan pengaturan lainnya di `settings.json` berlaku untuk sesi Desktop.
-* **Models**: Sonnet, Opus, dan Haiku tersedia di keduanya. Di Desktop, pilih model dari dropdown di sebelah tombol kirim. Anda dapat mengubah model selama sesi.
+* **Models**: Sonnet, Opus, dan Haiku tersedia di keduanya. Di Desktop, pilih model dari dropdown di sebelah tombol kirim. Anda dapat mengubah model selama sesi dari dropdown yang sama.
 
 <Note>
-  **MCP servers: desktop chat app vs Claude Code**: MCP servers yang dikonfigurasi untuk aplikasi chat Claude Desktop di `claude_desktop_config.json` terpisah dari Claude Code dan tidak akan muncul di tab Code. Untuk menggunakan MCP servers di Claude Code, konfigurasikan di `~/.claude.json` atau file `.mcp.json` proyek Anda. Lihat [MCP configuration](/id/mcp#installing-mcp-servers) untuk detail.
+  **MCP servers: aplikasi chat desktop vs Claude Code**: MCP servers yang dikonfigurasi untuk aplikasi chat Claude Desktop di `claude_desktop_config.json` terpisah dari Claude Code dan tidak akan muncul di tab Code. Untuk menggunakan MCP servers di Claude Code, konfigurasikan di `~/.claude.json` atau file `.mcp.json` proyek Anda. Lihat [konfigurasi MCP](/id/mcp#installing-mcp-servers) untuk detail.
 </Note>
 
-### Feature comparison
+### Perbandingan fitur
 
-Tabel ini membandingkan kemampuan inti antara CLI dan Desktop. Untuk daftar lengkap flag CLI, lihat [CLI reference](/id/cli-reference).
+Tabel ini membandingkan kemampuan inti antara CLI dan Desktop. Untuk daftar lengkap flag CLI, lihat [referensi CLI](/id/cli-reference).
 
-| Feature                                               | CLI                                                       | Desktop                                                                                                                                                                                                                        |
-| ----------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Permission modes                                      | Semua mode termasuk `dontAsk`                             | Ask permissions, Auto accept edits, Plan mode, Auto, dan Bypass permissions via Settings                                                                                                                                       |
-| `--dangerously-skip-permissions`                      | CLI flag                                                  | Bypass permissions mode. Aktifkan di Settings → Claude Code → "Allow bypass permissions mode"                                                                                                                                  |
-| [Third-party providers](/id/third-party-integrations) | Bedrock, Vertex, Foundry                                  | Anthropic's API secara default. Enterprise deployments dapat mengonfigurasi Vertex AI dan gateway providers. Lihat [enterprise configuration guide](https://support.claude.com/en/articles/12622667-enterprise-configuration). |
-| [MCP servers](/id/mcp)                                | Konfigurasikan di file pengaturan                         | Connectors UI untuk sesi lokal dan SSH, atau file pengaturan                                                                                                                                                                   |
-| [Plugins](/id/plugins)                                | `/plugin` command                                         | Plugin manager UI                                                                                                                                                                                                              |
-| @mention files                                        | Berbasis teks                                             | Dengan autocomplete; sesi lokal dan SSH saja                                                                                                                                                                                   |
-| File attachments                                      | Tidak tersedia                                            | Gambar, PDF                                                                                                                                                                                                                    |
-| Session isolation                                     | [`--worktree`](/id/cli-reference) flag                    | Automatic worktrees                                                                                                                                                                                                            |
-| Multiple sessions                                     | Terminal terpisah                                         | Sidebar tabs                                                                                                                                                                                                                   |
-| Recurring tasks                                       | Cron jobs, CI pipelines                                   | [Scheduled tasks](/id/desktop-scheduled-tasks)                                                                                                                                                                                 |
-| Computer use                                          | [Enable via `/mcp`](/id/computer-use) di macOS            | [App and screen control](#let-claude-use-your-computer) di macOS dan Windows                                                                                                                                                   |
-| Dispatch integration                                  | Tidak tersedia                                            | [Dispatch sessions](#sessions-from-dispatch) di sidebar                                                                                                                                                                        |
-| Scripting and automation                              | [`--print`](/id/cli-reference), [Agent SDK](/id/headless) | Tidak tersedia                                                                                                                                                                                                                 |
+| Fitur                                                 | CLI                                                       | Desktop                                                                                                                                                                                                                   |
+| ----------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mode izin                                             | Semua mode termasuk `dontAsk`                             | Tanyakan izin, Terima otomatis edit, Plan Mode, Auto, dan Bypass permissions via Settings                                                                                                                                 |
+| `--dangerously-skip-permissions`                      | Flag CLI                                                  | Bypass permissions mode. Aktifkan di Settings → Claude Code → "Allow bypass permissions mode"                                                                                                                             |
+| [Penyedia pihak ketiga](/id/third-party-integrations) | Bedrock, Vertex, Foundry                                  | API Anthropic secara default. Penerapan enterprise dapat mengonfigurasi Vertex AI dan penyedia gateway. Lihat [panduan konfigurasi enterprise](https://support.claude.com/en/articles/12622667-enterprise-configuration). |
+| [MCP servers](/id/mcp)                                | Konfigurasikan di file pengaturan                         | UI Connectors untuk sesi lokal dan SSH, atau file pengaturan                                                                                                                                                              |
+| [Plugins](/id/plugins)                                | Perintah `/plugin`                                        | UI plugin manager                                                                                                                                                                                                         |
+| File @mention                                         | Berbasis teks                                             | Dengan autocomplete; hanya sesi lokal dan SSH                                                                                                                                                                             |
+| Lampiran file                                         | Tidak tersedia                                            | Gambar, PDF                                                                                                                                                                                                               |
+| Isolasi sesi                                          | Flag [`--worktree`](/id/cli-reference)                    | Worktrees otomatis                                                                                                                                                                                                        |
+| Sesi ganda                                            | Terminal terpisah                                         | Tab sidebar                                                                                                                                                                                                               |
+| Tugas berulang                                        | Cron jobs, CI pipelines                                   | [Tugas terjadwal](/id/desktop-scheduled-tasks)                                                                                                                                                                            |
+| Penggunaan komputer                                   | [Aktifkan via `/mcp`](/id/computer-use) di macOS          | [Kontrol aplikasi dan layar](#let-claude-use-your-computer) di macOS dan Windows                                                                                                                                          |
+| Integrasi Dispatch                                    | Tidak tersedia                                            | [Sesi Dispatch](#sessions-from-dispatch) di sidebar                                                                                                                                                                       |
+| Scripting dan otomasi                                 | [`--print`](/id/cli-reference), [Agent SDK](/id/headless) | Tidak tersedia                                                                                                                                                                                                            |
 
-### What's not available in Desktop
+### Apa yang tidak tersedia di Desktop
 
-Fitur berikut hanya tersedia di CLI atau VS Code extension:
+Fitur berikut hanya tersedia di CLI atau ekstensi VS Code:
 
-* **Third-party providers**: Desktop terhubung ke Anthropic's API secara default. Enterprise deployments dapat mengonfigurasi Vertex AI dan gateway providers via [managed settings](https://support.claude.com/en/articles/12622667-enterprise-configuration). Untuk Bedrock atau Foundry, gunakan [CLI](/id/quickstart).
-* **Linux**: aplikasi desktop hanya tersedia di macOS dan Windows.
-* **Inline code suggestions**: Desktop tidak menyediakan saran gaya autocomplete. Ini bekerja melalui prompt percakapan dan perubahan kode eksplisit.
-* **Agent teams**: orkestrasi multi-agent tersedia melalui [CLI](/id/agent-teams) dan [Agent SDK](/id/headless), bukan di Desktop.
+* **Penyedia pihak ketiga**: Desktop terhubung ke API Anthropic secara default. Penerapan enterprise dapat mengonfigurasi Vertex AI dan penyedia gateway melalui [pengaturan terkelola](https://support.claude.com/en/articles/12622667-enterprise-configuration). Untuk Bedrock atau Foundry, gunakan [CLI](/id/quickstart).
+* **Linux**: aplikasi desktop hanya tersedia di macOS dan Windows. Di Linux, gunakan [CLI](/id/quickstart).
+* **Saran kode inline**: Desktop tidak menyediakan saran gaya autocomplete. Ini bekerja melalui prompt percakapan dan perubahan kode eksplisit.
+* **Tim agent**: orkestrasi multi-agent tersedia melalui [CLI](/id/agent-teams) dan [Agent SDK](/id/headless), bukan di Desktop.
 
 ## Troubleshooting
 

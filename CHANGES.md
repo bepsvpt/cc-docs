@@ -1,5 +1,132 @@
 # Documentation Changes
 
+## 2026-05-02
+
+37 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Erste Schritte mit der Desktop-App** (`desktop-quickstart.md`): 1 lines added, 1 removed
+- **Claude Code Desktop verwenden** (`desktop.md`): 48 lines added, 48 removed
+- **Plugins-Referenz** (`plugins-reference.md`): 1 lines added, 1 removed
+
+### English
+
+
+**Modified**
+
+- **Get started with the desktop app** (`desktop-quickstart.md`): 1 lines added, 1 removed
+- **Use Claude Code Desktop** (`desktop.md`): 2 lines added, 2 removed
+- **Environment variables** (`env-vars.md`): 1 lines added, 1 removed
+- **Plugins reference** (`plugins-reference.md`): 1 lines added, 1 removed
+
+### Español
+
+
+**Modified**
+
+- **Comenzar con la aplicación de escritorio** (`desktop-quickstart.md`): 1 lines added, 1 removed
+- **Usar Claude Code Desktop** (`desktop.md`): 38 lines added, 38 removed
+- **Referencia de plugins** (`plugins-reference.md`): 1 lines added, 1 removed
+
+### Français
+
+
+**Modified**
+
+- **Démarrer avec l'application de bureau** (`desktop-quickstart.md`): 1 lines added, 1 removed
+- **Utiliser Claude Code Desktop** (`desktop.md`): 32 lines added, 32 removed
+- **Référence des plugins** (`plugins-reference.md`): 1 lines added, 1 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Memulai dengan aplikasi desktop** (`desktop-quickstart.md`): 1 lines added, 1 removed
+- **Gunakan Claude Code Desktop** (`desktop.md`): 81 lines added, 81 removed
+  - New section: "## Datang dari CLI?"
+  - New section: "### Setara flag CLI"
+  - New section: "### Konfigurasi bersama"
+  - New section: "### Perbandingan fitur"
+  - New section: "### Apa yang tidak tersedia di Desktop"
+- **Referensi Plugins** (`plugins-reference.md`): 1 lines added, 1 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Iniziare con l'app desktop** (`desktop-quickstart.md`): 1 lines added, 1 removed
+- **Usa Claude Code Desktop** (`desktop.md`): 45 lines added, 43 removed
+  - New section: "## Provieni dalla CLI?"
+  - New section: "### Equivalenti dei flag CLI"
+  - New section: "### Configurazione condivisa"
+  - New section: "### Confronto delle funzionalità"
+  - New section: "### Cosa non è disponibile in Desktop"
+- **Riferimento dei plugin** (`plugins-reference.md`): 1 lines added, 1 removed
+
+### 日本語
+
+
+**Modified**
+
+- **デスクトップアプリを始める** (`desktop-quickstart.md`): 1 lines added, 1 removed
+- **Claude Code Desktop を使用する** (`desktop.md`): 56 lines added, 54 removed
+  - New section: "### メインセッションを脱線させずにサイドクエスチョンを尋ねる"
+- **プラグインリファレンス** (`plugins-reference.md`): 1 lines added, 1 removed
+
+### 한국어
+
+
+**Modified**
+
+- **데스크톱 앱 시작하기** (`desktop-quickstart.md`): 1 lines added, 1 removed
+- **Claude Code Desktop 사용하기** (`desktop.md`): 47 lines added, 39 removed
+- **플러그인 참조** (`plugins-reference.md`): 1 lines added, 1 removed
+
+### Português
+
+
+**Modified**
+
+- **Comece com o aplicativo de desktop** (`desktop-quickstart.md`): 1 lines added, 1 removed
+- **Use Claude Code Desktop** (`desktop.md`): 56 lines added, 56 removed
+- **Referência de plugins** (`plugins-reference.md`): 1 lines added, 1 removed
+
+### Русский
+
+
+**Modified**
+
+- **Начало работы с настольным приложением** (`desktop-quickstart.md`): 1 lines added, 1 removed
+- **Использование Claude Code Desktop** (`desktop.md`): 41 lines added, 39 removed
+- **Справочник по плагинам** (`plugins-reference.md`): 1 lines added, 1 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **开始使用桌面应用** (`desktop-quickstart.md`): 1 lines added, 1 removed
+- **使用 Claude Code Desktop** (`desktop.md`): 53 lines added, 53 removed
+- **Plugins 参考** (`plugins-reference.md`): 1 lines added, 1 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **開始使用桌面應用程式** (`desktop-quickstart.md`): 1 lines added, 1 removed
+- **使用 Claude Code Desktop** (`desktop.md`): 56 lines added, 56 removed
+- **Plugins 參考** (`plugins-reference.md`): 1 lines added, 1 removed
+
+---
+
 ## 2026-05-01
 
 424 pages modified

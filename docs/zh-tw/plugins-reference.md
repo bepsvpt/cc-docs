@@ -380,7 +380,7 @@ manifest 是選用的。如果省略，Claude Code 會自動探索 [預設位置
   "keywords": ["keyword1", "keyword2"],
   "skills": "./custom/skills/",
   "commands": ["./custom/commands/special.md"],
-  "agents": "./custom/agents/",
+  "agents": ["./custom/agents/reviewer.md"],
   "hooks": "./config/hooks.json",
   "mcpServers": "./mcp-config.json",
   "outputStyles": "./styles/",

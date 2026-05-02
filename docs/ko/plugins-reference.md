@@ -380,7 +380,7 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `monitors` 키를 �
   "keywords": ["keyword1", "keyword2"],
   "skills": "./custom/skills/",
   "commands": ["./custom/commands/special.md"],
-  "agents": "./custom/agents/",
+  "agents": ["./custom/agents/reviewer.md"],
   "hooks": "./config/hooks.json",
   "mcpServers": "./mcp-config.json",
   "outputStyles": "./styles/",

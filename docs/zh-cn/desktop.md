@@ -6,7 +6,7 @@
 
 > 充分利用 Claude Code Desktop：使用 Git 隔离的并行会话、拖放窗格布局、集成终端和文件编辑器、侧边聊天、计算机使用、从手机 Dispatch 会话、可视化 diff 审查、应用预览、PR 监控、连接器和企业配置。
 
-Claude Desktop 应用中的 Code 选项卡让你可以通过图形界面而不是终端来使用 Claude Code。
+Claude Desktop 应用有三个选项卡：**Chat** 用于对话，**Cowork** 用于 [Dispatch 和更长的代理工作](https://claude.com/product/cowork)，**Code** 用于软件开发。本页是 Code 选项卡的参考。
 
 <CardGroup cols={2}>
   <Card title="Download for macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
@@ -18,29 +18,21 @@ Claude Desktop 应用中的 Code 选项卡让你可以通过图形界面而不�
   </Card>
 </CardGroup>
 
-For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). Linux is not supported.
+For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). The desktop app is not available on Linux; use the [CLI](/en/quickstart) instead.
 
-安装后，启动 Claude，登录，然后点击 **Code** 选项卡。有关首次会话的完整演练，请参阅[快速开始指南](/zh-CN/desktop-quickstart)。
+安装后，启动 Claude，登录，然后点击 **Code** 选项卡。第一次在 Windows 上打开它时，你需要安装 [Git for Windows](https://git-scm.com/downloads/win)；安装后重启应用。有关首次会话的演练，请参阅[快速开始指南](/zh-CN/desktop-quickstart)。
 
-Desktop 在标准 Claude Code 体验的基础上添加了这些功能：
+在 Code 选项卡中，每个对话都是一个**会话**：它有自己的聊天历史、项目文件夹和代码更改，独立于任何其他会话。侧边栏列出你的会话，让你可以并行运行多个会话。在一个会话中，你可以：
 
-* [并行会话](#work-in-parallel-with-sessions)，支持自动 Git worktree 隔离
-* [拖放布局](#arrange-your-workspace)，支持集成终端、文件编辑器和预览窗格
-* [侧边聊天](#ask-a-side-question-without-derailing-the-session)，分支而不影响主线程
-* [可视化 diff 审查](#review-changes-with-diff-view)，支持内联注释
-* [实时应用预览](#preview-your-app)，支持开发服务器、HTML 文件和 PDF
-* [计算机使用](#let-claude-use-your-computer)，在 macOS 和 Windows 上打开应用和控制屏幕
-* [GitHub PR 监控](#monitor-pull-request-status)，支持自动修复、自动合并和自动存档
-* [Dispatch](#sessions-from-dispatch) 集成：从手机发送任务，在此处获得会话
-* [计划任务](/zh-CN/desktop-scheduled-tasks)，按定期计划运行 Claude
-* [连接器](#connect-external-tools)，支持 GitHub、Slack、Linear 等
-* 本地、[SSH](#ssh-sessions) 和[云](#run-long-running-tasks-remotely)环境
+* [使用 diff 视图审查和评论更改](#review-changes-with-diff-view)，然后[通过 CI 监控生成的 PR](#monitor-pull-request-status)
+* [在嵌入式浏览器中预览你的运行应用](#preview-your-app)，同时 Claude 验证自己的更改
+* [整理窗格](#arrange-your-workspace)，将聊天、diff、预览、终端和文件编辑器并排放置
+* 提出[侧边问题](#ask-a-side-question-without-derailing-the-session)，使用会话的上下文而不偏离主线
+* [连接外部工具](#connect-external-tools)，如 GitHub、Slack 和 Linear
+* 让 Claude [打开应用和控制你的屏幕](#let-claude-use-your-computer)
+* 在你的机器上、[云中](#run-long-running-tasks-remotely)或通过 [SSH](#ssh-sessions) 运行
 
-<Note>
-  本页描述的工作区布局、终端、文件编辑器、侧边聊天和视图模式需要 Claude Desktop v1.2581.0 或更高版本。在 macOS 上打开 **Claude → Check for Updates**，或在 Windows 上打开 **Help → Check for Updates** 来更新。
-</Note>
-
-本页涵盖[使用代码](#work-with-code)、[整理工作区](#arrange-your-workspace)、[计算机使用](#let-claude-use-your-computer)、[管理会话](#manage-sessions)、[扩展 Claude Code](#extend-claude-code) 和[配置](#environment-configuration)。它还包括 [CLI 比较](#coming-from-the-cli) 和[故障排除](#troubleshooting)。
+有关[计划的定期工作](/zh-CN/desktop-scheduled-tasks)、[快捷键](#keyboard-shortcuts)或[从手机发送任务](#sessions-from-dispatch)，请参阅链接的页面和部分。如果你已经使用基于终端的 CLI，请参阅 [CLI 比较](#coming-from-the-cli)了解哪些内容可以继续使用。
 
 ## 启动会话
 
@@ -74,15 +66,19 @@ Desktop 在标准 Claude Code 体验的基础上添加了这些功能：
 
 权限模式控制 Claude 在会话期间拥有多少自主权：它是否在编辑文件、运行命令或两者之前询问。你可以随时使用发送按钮旁的模式选择器切换模式。从"询问权限"开始以准确查看 Claude 的操作，然后随着你变得更舒适，转移到"自动接受编辑"或 Plan Mode。
 
-| 模式            | 设置键                 | 行为                                                                                                                                                                                                                                         |
-| ------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **询问权限**      | `default`           | Claude 在编辑文件或运行命令之前询问。你会看到一个 diff，可以接受或拒绝每个更改。推荐给新用户。                                                                                                                                                                                      |
-| **自动接受编辑**    | `acceptEdits`       | Claude 自动接受文件编辑和常见的文件系统命令，如 `mkdir`、`touch` 和 `mv`，但在运行其他终端命令之前仍然询问。当你信任文件更改并想要更快的迭代时，使用此选项。                                                                                                                                               |
-| **Plan Mode** | `plan`              | Claude 读取文件并运行命令来探索，然后提出计划而不编辑你的源代码。适合复杂任务，你想先审查方法。                                                                                                                                                                                        |
-| **Auto**      | `auto`              | Claude 执行所有操作，并进行后台安全检查以验证与你的请求的一致性。减少权限提示，同时保持监督。目前是研究预览版。在 Max、Team、Enterprise 和 API 计划上可用。需要 Claude Sonnet 4.6、Opus 4.6 或 Opus 4.7 在 Team、Enterprise 和 API 计划上；在 Max 计划上仅需 Claude Opus 4.7。在 Pro 计划或第三方提供商上不可用。在你的设置 → Claude Code 中启用。 |
-| **绕过权限**      | `bypassPermissions` | Claude 运行时没有任何权限提示，等同于 CLI 中的 `--dangerously-skip-permissions`。在设置 → Claude Code 中的"允许绕过权限模式"下启用。仅在沙箱容器或虚拟机中使用。企业管理员可以禁用此选项。                                                                                                               |
+| 模式            | 设置键                 | 行为                                                                                                                           |
+| ------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **询问权限**      | `default`           | Claude 在编辑文件或运行命令之前询问。你会看到一个 diff，可以接受或拒绝每个更改。推荐给新用户。                                                                        |
+| **自动接受编辑**    | `acceptEdits`       | Claude 自动接受文件编辑和常见的文件系统命令，如 `mkdir`、`touch` 和 `mv`，但在运行其他终端命令之前仍然询问。当你信任文件更改并想要更快的迭代时，使用此选项。                                 |
+| **Plan Mode** | `plan`              | Claude 读取文件并运行命令来探索，然后提出计划而不编辑你的源代码。适合复杂任务，你想先审查方法。                                                                          |
+| **Auto**      | `auto`              | Claude 执行所有操作，并进行后台安全检查以验证与你的请求的一致性。减少权限提示，同时保持监督。在你的设置 → Claude Code 中启用。请参阅下面的[可用性要求](#auto-mode-availability)。            |
+| **绕过权限**      | `bypassPermissions` | Claude 运行时没有任何权限提示，等同于 CLI 中的 `--dangerously-skip-permissions`。在设置 → Claude Code 中的"允许绕过权限模式"下启用。仅在沙箱容器或虚拟机中使用。企业管理员可以禁用此选项。 |
 
 `dontAsk` 权限模式仅在 [CLI](/zh-CN/permission-modes#allow-only-pre-approved-tools-with-dontask-mode) 中可用。
+
+<span id="auto-mode-availability" />
+
+Auto mode 是一个研究预览版，在 Max、Team、Enterprise 和 API 计划上可用。在 Pro 计划或第三方提供商上不可用。在 Team、Enterprise 和 API 计划上，它需要 Claude Sonnet 4.6、Opus 4.6 或 Opus 4.7。在 Max 计划上，它需要 Claude Opus 4.7。
 
 <Tip title="最佳实践">
   在 Plan Mode 中启动复杂任务，以便 Claude 在进行更改之前制定方法。一旦你批准计划，切换到"自动接受编辑"或"询问权限"来执行它。有关此工作流的更多信息，请参阅[先探索，然后计划，然后编码](/zh-CN/best-practices#explore-first-then-plan-then-code)。
@@ -96,7 +92,7 @@ Desktop 在标准 Claude Code 体验的基础上添加了这些功能：
 
 Claude 可以启动开发服务器并打开嵌入式浏览器来验证其更改。这适用于前端 Web 应用以及后端服务器：Claude 可以测试 API 端点、查看服务器日志并迭代它发现的问题。在大多数情况下，Claude 在编辑项目文件后自动启动服务器。你也可以随时要求 Claude 预览。默认情况下，Claude [自动验证](#auto-verify-changes)每次编辑后的更改。
 
-预览窗格也可以打开项目中的静态 HTML 文件、PDF 和图像。点击聊天中的 HTML、PDF 或图像路径在预览中打开它。
+预览窗格也可以打开项目中的静态 HTML 文件、PDF、图像和视频。点击聊天中的 HTML、PDF、图像或视频路径在预览中打开它。
 
 从预览窗格，你可以：
 
@@ -144,7 +140,11 @@ Claude 读取你的注释并进行请求的更改，这些更改显示为你可�
 
 ## 整理工作区
 
-桌面应用围绕你可以以任何布局排列的窗格构建：聊天、diff、预览、终端、文件、计划、任务和子代理。通过其标题拖动窗格来重新定位它，或拖动窗格边缘来调整大小。在 macOS 上按 **Cmd+\\** 或在 Windows 上按 **Ctrl+\\** 来关闭焦点窗格。从会话工具栏中的 **Views** 菜单打开其他窗格。
+Code 选项卡围绕你可以以任何布局排列的窗格构建：聊天、diff、预览、终端、文件、plan、tasks 和 subagent。通过其标题拖动窗格来重新定位它，或拖动窗格边缘来调整大小。在 macOS 上按 **Cmd+\\** 或在 Windows 上按 **Ctrl+\\** 来关闭焦点窗格。从会话工具栏中的 **Views** 菜单打开其他窗格。
+
+<Note>
+  本部分中的窗格布局、终端、文件编辑器和视图模式需要 Claude Desktop v1.2581.0 或更高版本。在 macOS 上打开 **Claude → Check for Updates** 或在 Windows 上打开 **Help → Check for Updates** 来更新。
+</Note>
 
 ### 在终端中运行命令
 
@@ -152,7 +152,7 @@ Claude 读取你的注释并进行请求的更改，这些更改显示为你可�
 
 ### 打开和编辑文件
 
-点击聊天或 diff 查看器中的文件路径在文件窗格中打开它。HTML、PDF 和图像路径改为在[预览窗格](#preview-your-app)中打开。进行现场编辑并点击 **Save** 来写回。如果文件自你打开它以来在磁盘上更改，窗格会警告你并让你覆盖或丢弃。点击 **Discard** 来恢复你的编辑，或点击窗格标题中的路径来复制绝对路径。
+点击聊天或 diff 查看器中的文件路径在文件窗格中打开它。HTML、PDF、图像和视频路径改为在[预览窗格](#preview-your-app)中打开。进行现场编辑并点击 **Save** 来写回。如果文件自你打开它以来在磁盘上更改，窗格会警告你并让你覆盖或丢弃。点击 **Discard** 来恢复你的编辑，或点击窗格标题中的路径来复制绝对路径。
 
 文件窗格在本地和 SSH 会话中可用。对于远程会话，要求 Claude 进行更改。
 
@@ -160,10 +160,10 @@ Claude 读取你的注释并进行请求的更改，这些更改显示为你可�
 
 右键点击聊天、diff 查看器或文件窗格中的任何文件路径来打开上下文菜单：
 
-* **附加为上下文**：将文件添加到你的下一个提示
-* **打开方式**：在已安装的编辑器（如 VS Code、Cursor 或 Zed）中打开文件
-* **在 Finder 中显示**（macOS）、**在 Explorer 中显示**（Windows）：打开包含文件夹
-* **复制路径**：将绝对路径复制到你的剪贴板
+* **Attach as context**：将文件添加到你的下一个提示
+* **Open in**：在已安装的编辑器（如 VS Code、Cursor 或 Zed）中打开文件
+* **Show in Finder**（macOS）、**Show in Explorer**（Windows）：打开包含文件夹
+* **Copy path**：将绝对路径复制到你的剪贴板
 
 ### 切换视图模式
 
@@ -289,7 +289,7 @@ Worktrees 默认存储在 `<project-root>/.claude/worktrees/` 中。你可以在
 要在新 worktrees 中包含 gitignored 文件（如 `.env`），在你的项目根目录中创建一个[`.worktreeinclude` 文件](/zh-CN/common-workflows#copy-gitignored-files-to-worktrees)。
 
 <Note>
-  会话隔离需要 [Git](https://git-scm.com/downloads)。大多数 Mac 默认包含 Git。在终端中运行 `git --version` 来检查。在 Windows 上，Git 是 Code 选项卡工作所必需的：[下载 Git for Windows](https://git-scm.com/downloads/win)，安装它，然后重启应用。如果你遇到 Git 错误，请尝试 Cowork 会话来帮助排除你的设置。
+  会话隔离需要 [Git](https://git-scm.com/downloads)。大多数 Mac 默认包含 Git。在终端中运行 `git --version` 来检查。在 Windows 上，Git 是 Code 选项卡工作所必需的：[下载 Git for Windows](https://git-scm.com/downloads/win)，安装它，然后重启应用。如果你遇到 Git 错误，请在 [Cowork 选项卡](https://claude.com/product/cowork) 中询问 Claude 来帮助排除你的设置。
 </Note>
 
 使用侧边栏顶部的控制来按状态、项目或环境过滤会话，并按项目分组会话。要重命名会话，点击活跃会话顶部工具栏中的会话标题。要检查上下文使用情况，请参阅[检查使用情况](#check-usage)。当上下文填满时，Claude 自动总结对话并继续工作。你也可以输入 `/compact` 来更早触发总结并释放上下文空间。有关压缩工作原理的详细信息，请参阅[上下文窗口](/zh-CN/how-claude-code-works#the-context-window)。
@@ -337,7 +337,7 @@ Dispatch 是远离终端时与 Claude 合作的几种方式之一。请参阅[�
 
 ## 扩展 Claude Code
 
-连接外部服务、添加可重用工作流、自定义 Claude 的行为并配置预览服务器。
+连接外部服务、添加可重用工作流、自定义 Claude 的行为并配置预览服务器。要在一个地方管理连接器、skills 和插件，请点击侧边栏中的**自定义**。
 
 ### 连接外部工具
 
@@ -537,7 +537,7 @@ SSH 会话让你在远程机器上运行 Claude Code，同时使用桌面应用�
 
 添加后，连接出现在环境下拉菜单中。选择它在该机器上启动会话。Claude 在远程机器上运行，可以访问其文件和工具。
 
-远程机器必须运行 Linux 或 macOS，并且 Claude Code 必须安装在其上。连接后，SSH 会话支持权限模式、连接器、plugins 和 MCP servers。
+远程机器必须运行 Linux 或 macOS。桌面应用在你第一次连接时会自动在远程机器上安装 Claude Code。连接后，SSH 会话支持权限模式、连接器、plugins 和 MCP servers。
 
 #### 为你的团队预配置 SSH 连接
 
@@ -586,9 +586,9 @@ Teams 或 Enterprise 计划上的组织可以通过管理员控制台控制、�
 | `autoMode`                                 | 自定义 auto 模式分类器在你的组织中信任和阻止的内容。请参阅[配置 auto 模式](/zh-CN/auto-mode-config)。                                                           |
 | `sshConfigs`                               | 预配置[SSH 连接](#pre-configure-ssh-connections-for-your-team)，在环境下拉菜单中显示。用户无法编辑或删除托管连接。                                              |
 
-`permissions.disableBypassPermissionsMode` 和 `disableAutoMode` 也在用户和项目设置中工作，但将它们放在托管设置中可防止用户覆盖它们。`autoMode` 从用户设置、`.claude/settings.local.json` 和托管设置中读取，但不从已检入的 `.claude/settings.json` 中读取：克隆的存储库无法注入其自己的分类器规则。有关托管专用设置的完整列表，包括 `allowManagedPermissionRulesOnly` 和 `allowManagedHooksOnly`，请参阅[托管专用设置](/zh-CN/permissions#managed-only-settings)。
+部署到每台机器上磁盘的托管设置文件适用于 Desktop 会话。通过管理员控制台远程推送的托管设置目前仅适用于 CLI 和 IDE 会话，因此对于 Desktop 部署，要么通过 MDM 分发文件，要么使用上面的[管理员控制台控制](#admin-console-controls)。
 
-通过管理员控制台上传的远程托管设置目前仅适用于 CLI 和 IDE 会话。对于 Desktop 特定的限制，使用上面的管理员控制台控制。
+`permissions.disableBypassPermissionsMode` 和 `disableAutoMode` 也在用户和项目设置中工作，但将它们放在托管设置中可防止用户覆盖它们。`autoMode` 从用户设置、`.claude/settings.local.json` 和托管设置中读取，但不从已检入的 `.claude/settings.json` 中读取：克隆的存储库无法注入其自己的分类器规则。有关托管专用设置的完整列表，包括 `allowManagedPermissionRulesOnly` 和 `allowManagedHooksOnly`，请参阅[托管专用设置](/zh-CN/permissions#managed-only-settings)。
 
 ### 设备管理策略
 
@@ -630,18 +630,18 @@ Desktop 可以通过企业部署工具分发：
 
 此表显示了常见 CLI 标志的桌面应用等效项。未列出的标志没有桌面等效项，因为它们是为脚本或自动化设计的。
 
-| CLI                                   | Desktop 等效项                                               |
-| ------------------------------------- | --------------------------------------------------------- |
-| `--model sonnet`                      | 发送按钮旁的模型下拉菜单                                              |
-| `--resume`, `--continue`              | 点击侧边栏中的会话                                                 |
-| `--permission-mode`                   | 发送按钮旁的模式选择器                                               |
-| `--dangerously-skip-permissions`      | 绕过权限模式。在设置 → Claude Code → "允许绕过权限模式"中启用。企业管理员可以禁用此设置。    |
-| `--add-dir`                           | 在远程会话中使用 **+** 按钮添加多个存储库                                  |
-| `--allowedTools`, `--disallowedTools` | 在 Desktop 中不可用                                            |
-| `--verbose`                           | [Verbose 视图模式](#switch-view-modes)在 Transcript view 下拉菜单中 |
-| `--print`, `--output-format`          | 不可用。Desktop 仅是交互式的。                                       |
-| `ANTHROPIC_MODEL` 环境变量                | 发送按钮旁的模型下拉菜单                                              |
-| `MAX_THINKING_TOKENS` 环境变量            | 在本地环境编辑器中设置。请参阅[环境配置](#environment-configuration)。        |
+| CLI                                   | Desktop 等效项                                            |
+| ------------------------------------- | ------------------------------------------------------ |
+| `--model sonnet`                      | 发送按钮旁的模型下拉菜单                                           |
+| `--resume`, `--continue`              | 点击侧边栏中的会话                                              |
+| `--permission-mode`                   | 发送按钮旁的模式选择器                                            |
+| `--dangerously-skip-permissions`      | 绕过权限模式。在设置 → Claude Code → "允许绕过权限模式"中启用。企业管理员可以禁用此设置。 |
+| `--add-dir`                           | 在远程会话中使用 **+** 按钮添加多个存储库                               |
+| `--allowedTools`, `--disallowedTools` | 无每个会话的等效项。[设置文件](/zh-CN/settings)中的权限规则仍然适用。           |
+| `--verbose`                           | [Verbose 视图模式](#switch-view-modes)在 Transcript 视图下拉菜单中 |
+| `--print`, `--output-format`          | 不可用。Desktop 仅是交互式的。                                    |
+| `ANTHROPIC_MODEL` 环境变量                | 发送按钮旁的模型下拉菜单                                           |
+| `MAX_THINKING_TOKENS` 环境变量            | 在本地环境编辑器中设置。请参阅[环境配置](#environment-configuration)。     |
 
 ### 共享配置
 
@@ -681,8 +681,8 @@ Desktop 和 CLI 读取相同的配置文件，因此你的设置会转移：
 
 以下功能仅在 CLI 或 VS Code 扩展中可用：
 
-* **第三方提供商**：Desktop 默认连接到 Anthropic 的 API。企业部署可以配置 Vertex AI 和网关提供商。对于 Bedrock 或 Foundry，使用 [CLI](/zh-CN/quickstart)。
-* **Linux**：桌面应用仅在 macOS 和 Windows 上可用。
+* **第三方提供商**：Desktop 默认连接到 Anthropic 的 API。企业部署可以配置 Vertex AI 和网关提供商，通过[托管设置](https://support.claude.com/en/articles/12622667-enterprise-configuration)。对于 Bedrock 或 Foundry，使用 [CLI](/zh-CN/quickstart)。
+* **Linux**：桌面应用仅在 macOS 和 Windows 上可用。在 Linux 上，使用 [CLI](/zh-CN/quickstart)。
 * **内联代码建议**：Desktop 不提供自动完成风格的建议。它通过对话提示和显式代码更改工作。
 * **Agent teams**：多 agent 编排通过 [CLI](/zh-CN/agent-teams) 和 [Agent SDK](/zh-CN/headless) 可用，不在 Desktop 中。
 

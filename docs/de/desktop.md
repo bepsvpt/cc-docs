@@ -6,7 +6,7 @@
 
 > Nutzen Sie Claude Code Desktop optimal: parallele Sitzungen mit Git-Isolation, Drag-and-Drop-Pane-Layout, integriertes Terminal und Datei-Editor, Seitenchats, Computernutzung, Dispatch-Sitzungen von Ihrem Telefon, visuelle Diff-Überprüfung, App-Vorschau, PR-Überwachung, Konnektoren und Unternehmenskonfiguration.
 
-Die Registerkarte „Code" in der Claude Desktop-App ermöglicht es Ihnen, Claude Code über eine grafische Benutzeroberfläche statt über das Terminal zu verwenden.
+Die Claude Desktop-App hat drei Registerkarten: **Chat** für Gespräche, **Cowork** für [Dispatch und längere agentengestützte Arbeiten](https://claude.com/product/cowork) und **Code** für Softwareentwicklung. Diese Seite ist die Referenz für die Registerkarte „Code".
 
 <CardGroup cols={2}>
   <Card title="Download for macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
@@ -18,29 +18,21 @@ Die Registerkarte „Code" in der Claude Desktop-App ermöglicht es Ihnen, Claud
   </Card>
 </CardGroup>
 
-For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). Linux is not supported.
+For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). The desktop app is not available on Linux; use the [CLI](/en/quickstart) instead.
 
-Nach der Installation starten Sie Claude, melden sich an und klicken auf die Registerkarte **Code**. Siehe den [Leitfaden „Erste Schritte"](/de/desktop-quickstart) für eine vollständige Anleitung zu Ihrer ersten Sitzung.
+Nach der Installation starten Sie Claude, melden sich an und klicken auf die Registerkarte **Code**. Beim ersten Öffnen unter Windows benötigen Sie [Git für Windows](https://git-scm.com/downloads/win) installiert; starten Sie die App nach der Installation neu. Eine Anleitung für Ihre erste Sitzung finden Sie im [Leitfaden „Erste Schritte"](/de/desktop-quickstart).
 
-Desktop bietet diese Funktionen zusätzlich zur Standard-Claude-Code-Erfahrung:
+In der Registerkarte „Code" ist jedes Gespräch eine **Sitzung**: Es hat seinen eigenen Chat-Verlauf, Projektordner und Code-Änderungen, unabhängig von jeder anderen Sitzung. Die Seitenleiste listet Ihre Sitzungen auf und ermöglicht es Ihnen, mehrere parallel auszuführen. Innerhalb einer Sitzung können Sie:
 
-* [Parallele Sitzungen](#work-in-parallel-with-sessions) mit automatischer Git-Worktree-Isolation
-* [Drag-and-Drop-Layout](#arrange-your-workspace) mit integriertem Terminal, Datei-Editor und Vorschau-Pane
-* [Seitenchats](#ask-a-side-question-without-derailing-the-session), die sich verzweigen, ohne den Hauptthread zu beeinflussen
-* [Visuelle Diff-Überprüfung](#review-changes-with-diff-view) mit Inline-Kommentaren
-* [Live-App-Vorschau](#preview-your-app) mit Dev-Servern, HTML-Dateien und PDFs
-* [Computernutzung](#let-claude-use-your-computer) zum Öffnen von Apps und Steuern Ihres Bildschirms auf macOS und Windows
-* [GitHub-PR-Überwachung](#monitor-pull-request-status) mit automatischer Fehlerbehebung, automatischem Merge und automatischem Archivieren
-* [Dispatch](#sessions-from-dispatch)-Integration: Senden Sie eine Aufgabe von Ihrem Telefon, erhalten Sie eine Sitzung hier
-* [Geplante Aufgaben](/de/desktop-scheduled-tasks), die Claude nach einem wiederkehrenden Zeitplan ausführen
-* [Konnektoren](#connect-external-tools) für GitHub, Slack, Linear und mehr
-* Lokale, [SSH](#ssh-sessions)- und [Cloud](#run-long-running-tasks-remotely)-Umgebungen
+* [Diffs überprüfen und kommentieren](#review-changes-with-diff-view), dann [den resultierenden PR durch CI überwachen](#monitor-pull-request-status)
+* [Ihre laufende App](#preview-your-app) in einem eingebetteten Browser in der Vorschau anzeigen, während Claude seine eigenen Änderungen überprüft
+* [Panes anordnen](#arrange-your-workspace) für Chat, Diff, Vorschau, Terminal und Datei-Editor nebeneinander
+* Eine [Seitenfrage](#ask-a-side-question-without-derailing-the-session) stellen, die den Kontext der Sitzung nutzt, ohne sie zu beeinträchtigen
+* [Externe Tools verbinden](#connect-external-tools) wie GitHub, Slack und Linear
+* Claude [Apps öffnen und Ihren Bildschirm steuern lassen](#let-claude-use-your-computer)
+* Auf Ihrem Computer, in der [Cloud](#run-long-running-tasks-remotely) oder über [SSH](#ssh-sessions) ausführen
 
-<Note>
-  Das Workspace-Layout, Terminal, Datei-Editor, Seitenchats und Ansichtsmodi, die auf dieser Seite beschrieben werden, erfordern Claude Desktop v1.2581.0 oder später. Öffnen Sie **Claude → Nach Updates suchen** auf macOS oder **Hilfe → Nach Updates suchen** auf Windows, um zu aktualisieren.
-</Note>
-
-Diese Seite behandelt [Arbeiten mit Code](#work-with-code), [Anordnen Ihres Arbeitsbereichs](#arrange-your-workspace), [Computernutzung](#let-claude-use-your-computer), [Verwalten von Sitzungen](#manage-sessions), [Erweitern von Claude Code](#extend-claude-code) und [Konfiguration](#environment-configuration). Sie enthält auch einen [CLI-Vergleich](#coming-from-the-cli) und [Fehlerbehebung](#troubleshooting).
+Für [geplante wiederkehrende Arbeiten](/de/desktop-scheduled-tasks), [Tastaturkürzel](#keyboard-shortcuts) oder [Aufgaben von Ihrem Telefon senden](#sessions-from-dispatch) siehe die verlinkten Seiten und Abschnitte. Wenn Sie bereits die Terminal-basierte CLI verwenden, siehe den [CLI-Vergleich](#coming-from-the-cli) für das, was übertragen wird.
 
 ## Sitzung starten
 
@@ -74,15 +66,19 @@ Das Eingabefeld unterstützt zwei Möglichkeiten, um externen Kontext einzubinde
 
 Berechtigungsmodi kontrollieren, wie viel Autonomie Claude während einer Sitzung hat: ob es vor dem Bearbeiten von Dateien, dem Ausführen von Befehlen oder beidem fragt. Sie können Modi jederzeit mit dem Moduswahlschalter neben der Schaltfläche „Senden" wechseln. Beginnen Sie mit „Berechtigungen erfragen", um genau zu sehen, was Claude tut, und wechseln Sie dann zu „Bearbeitungen automatisch akzeptieren" oder „Plan Mode", wenn Sie sich wohler fühlen.
 
-| Modus                                     | Einstellungsschlüssel | Verhalten                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| ----------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Berechtigungen erfragen**               | `default`             | Claude fragt vor dem Bearbeiten von Dateien oder dem Ausführen von Befehlen. Sie sehen einen Diff und können jede Änderung akzeptieren oder ablehnen. Empfohlen für neue Benutzer.                                                                                                                                                                                                                                                                                                                                                      |
-| **Bearbeitungen automatisch akzeptieren** | `acceptEdits`         | Claude akzeptiert Dateibearbeitungen automatisch und häufige Dateisystem-Befehle wie `mkdir`, `touch` und `mv`, fragt aber immer noch vor dem Ausführen anderer Terminal-Befehle. Verwenden Sie dies, wenn Sie Dateiänderungen vertrauen und schnellere Iterationen wünschen.                                                                                                                                                                                                                                                           |
-| **Plan Mode**                             | `plan`                | Claude liest Dateien und führt Befehle aus, um zu erkunden, schlägt dann einen Plan vor, ohne Ihren Quellcode zu bearbeiten. Gut für komplexe Aufgaben, bei denen Sie den Ansatz zuerst überprüfen möchten.                                                                                                                                                                                                                                                                                                                             |
-| **Auto**                                  | `auto`                | Claude führt alle Aktionen mit Hintergrund-Sicherheitsprüfungen aus, die die Ausrichtung mit Ihrer Anfrage überprüfen. Reduziert Berechtigungsaufforderungen bei Beibehaltung der Überwachung. Derzeit eine Forschungsvorschau. Verfügbar in Max-, Team-, Enterprise- und API-Plänen. Erfordert Claude Sonnet 4.6, Opus 4.6 oder Opus 4.7 in Team-, Enterprise- und API-Plänen; Claude Opus 4.7 nur in Max-Plänen. Nicht verfügbar in Pro-Plänen oder bei Drittanbieter-Providern. Aktivieren Sie in Ihren Einstellungen → Claude Code. |
-| **Berechtigungen umgehen**                | `bypassPermissions`   | Claude läuft ohne Berechtigungsaufforderungen, äquivalent zu `--dangerously-skip-permissions` in der CLI. Aktivieren Sie dies in Ihren Einstellungen → Claude Code unter „Bypass-Berechtigungsmodus zulassen". Verwenden Sie dies nur in sandboxierten Containern oder VMs. Enterprise-Administratoren können diese Option deaktivieren.                                                                                                                                                                                                |
+| Modus                                     | Einstellungsschlüssel | Verhalten                                                                                                                                                                                                                                                                                                                                |
+| ----------------------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Berechtigungen erfragen**               | `default`             | Claude fragt vor dem Bearbeiten von Dateien oder dem Ausführen von Befehlen. Sie sehen einen Diff und können jede Änderung akzeptieren oder ablehnen. Empfohlen für neue Benutzer.                                                                                                                                                       |
+| **Bearbeitungen automatisch akzeptieren** | `acceptEdits`         | Claude akzeptiert Dateibearbeitungen automatisch und häufige Dateisystem-Befehle wie `mkdir`, `touch` und `mv`, fragt aber immer noch vor dem Ausführen anderer Terminal-Befehle. Verwenden Sie dies, wenn Sie Dateiänderungen vertrauen und schnellere Iterationen wünschen.                                                            |
+| **Plan Mode**                             | `plan`                | Claude liest Dateien und führt Befehle aus, um zu erkunden, schlägt dann einen Plan vor, ohne Ihren Quellcode zu bearbeiten. Gut für komplexe Aufgaben, bei denen Sie den Ansatz zuerst überprüfen möchten.                                                                                                                              |
+| **Auto**                                  | `auto`                | Claude führt alle Aktionen mit Hintergrund-Sicherheitsprüfungen aus, die die Ausrichtung mit Ihrer Anfrage überprüfen. Reduziert Berechtigungsaufforderungen bei Beibehaltung der Überwachung. Aktivieren Sie in Ihren Einstellungen → Claude Code. Siehe [Verfügbarkeitsanforderungen](#auto-mode-availability) unten.                  |
+| **Berechtigungen umgehen**                | `bypassPermissions`   | Claude läuft ohne Berechtigungsaufforderungen, äquivalent zu `--dangerously-skip-permissions` in der CLI. Aktivieren Sie dies in Ihren Einstellungen → Claude Code unter „Bypass-Berechtigungsmodus zulassen". Verwenden Sie dies nur in sandboxierten Containern oder VMs. Enterprise-Administratoren können diese Option deaktivieren. |
 
 Der Berechtigungsmodus `dontAsk` ist nur in der [CLI](/de/permission-modes#allow-only-pre-approved-tools-with-dontask-mode) verfügbar.
+
+<span id="auto-mode-availability" />
+
+Auto Mode ist eine Forschungsvorschau, die auf Max-, Team-, Enterprise- und API-Plänen verfügbar ist. Es ist nicht auf Pro-Plänen oder bei Drittanbieter-Providern verfügbar. Auf Team-, Enterprise- und API-Plänen ist Claude Sonnet 4.6, Opus 4.6 oder Opus 4.7 erforderlich. Auf Max-Plänen ist Claude Opus 4.7 erforderlich.
 
 <Tip title="Best Practice">
   Beginnen Sie komplexe Aufgaben im Plan Mode, damit Claude einen Ansatz abbildet, bevor Änderungen vorgenommen werden. Sobald Sie den Plan genehmigen, wechseln Sie zu 'Bearbeitungen automatisch akzeptieren" oder „Berechtigungen erfragen", um ihn auszuführen. Siehe [Zuerst erkunden, dann planen, dann codieren](/de/best-practices#explore-first-then-plan-then-code) für mehr zu diesem Workflow.
@@ -96,7 +92,7 @@ Enterprise-Administratoren können einschränken, welche Berechtigungsmodi verf�
 
 Claude kann einen Dev-Server starten und einen eingebetteten Browser öffnen, um seine Änderungen zu überprüfen. Dies funktioniert sowohl für Frontend-Web-Apps als auch für Backend-Server: Claude kann API-Endpunkte testen, Server-Protokolle anzeigen und Probleme, die er findet, iterieren. In den meisten Fällen startet Claude den Server automatisch nach dem Bearbeiten von Projektdateien. Sie können Claude auch jederzeit bitten, eine Vorschau anzuzeigen. Standardmäßig [überprüft Claude automatisch](#auto-verify-changes) Änderungen nach jeder Bearbeitung.
 
-Das Vorschau-Pane kann auch statische HTML-Dateien, PDFs und Bilder aus Ihrem Projekt öffnen. Klicken Sie auf einen HTML-, PDF- oder Bildpfad im Chat, um ihn in der Vorschau zu öffnen.
+Das Vorschau-Pane kann auch statische HTML-Dateien, PDFs, Bilder und Videos aus Ihrem Projekt öffnen. Klicken Sie auf einen HTML-, PDF-, Bild- oder Videopfad im Chat, um ihn in der Vorschau zu öffnen.
 
 Aus dem Vorschau-Pane können Sie:
 
@@ -144,7 +140,11 @@ Verwenden Sie die Umschalter **Automatische Fehlerbehebung** und **Automatisches
 
 ## Anordnen Ihres Arbeitsbereichs
 
-Die Desktop-App ist um Panes aufgebaut, die Sie in jedem Layout anordnen können: Chat, Diff, Vorschau, Terminal, Datei, Plan, Aufgaben und Subagent. Ziehen Sie ein Pane an seiner Kopfzeile, um es zu verschieben, oder ziehen Sie eine Pane-Kante, um es zu vergrößern. Drücken Sie **Cmd+\\** auf macOS oder **Ctrl+\\** auf Windows, um das fokussierte Pane zu schließen. Öffnen Sie zusätzliche Panes aus dem Menü **Ansichten** in der Sitzungs-Symbolleiste.
+Die Code-Registerkarte ist um Panes aufgebaut, die Sie in jedem Layout anordnen können: Chat, Diff, Vorschau, Terminal, Datei, Plan, Aufgaben und Subagent. Ziehen Sie ein Pane an seiner Kopfzeile, um es zu verschieben, oder ziehen Sie eine Pane-Kante, um es zu vergrößern. Drücken Sie **Cmd+\\** auf macOS oder **Ctrl+\\** auf Windows, um das fokussierte Pane zu schließen. Öffnen Sie zusätzliche Panes aus dem Menü **Ansichten** in der Sitzungs-Symbolleiste.
+
+<Note>
+  Das Pane-Layout, Terminal, Datei-Editor und Ansichtsmodi in diesem Abschnitt erfordern Claude Desktop v1.2581.0 oder später. Öffnen Sie **Claude → Nach Updates suchen** auf macOS oder **Hilfe → Nach Updates suchen** auf Windows, um zu aktualisieren.
+</Note>
 
 ### Führen Sie Befehle im Terminal aus
 
@@ -152,7 +152,7 @@ Das integrierte Terminal ermöglicht es Ihnen, Befehle neben Ihrer Sitzung auszu
 
 ### Öffnen und bearbeiten Sie Dateien
 
-Klicken Sie auf einen Dateipfad im Chat oder Diff-Viewer, um ihn im Datei-Pane zu öffnen. HTML-, PDF- und Bildpfade öffnen sich stattdessen im [Vorschau-Pane](#preview-your-app). Nehmen Sie Spot-Bearbeitungen vor und klicken Sie auf **Speichern**, um sie zurückzuschreiben. Wenn sich die Datei auf der Festplatte geändert hat, seit Sie sie geöffnet haben, warnt Sie das Pane und lässt Sie überschreiben oder verwerfen. Klicken Sie auf **Verwerfen**, um Ihre Bearbeitungen rückgängig zu machen, oder klicken Sie auf den Pfad in der Pane-Kopfzeile, um den absoluten Pfad zu kopieren.
+Klicken Sie auf einen Dateipfad im Chat oder Diff-Viewer, um ihn im Datei-Pane zu öffnen. HTML-, PDF-, Bild- und Videopfade öffnen sich stattdessen im [Vorschau-Pane](#preview-your-app). Nehmen Sie Spot-Bearbeitungen vor und klicken Sie auf **Speichern**, um sie zurückzuschreiben. Wenn sich die Datei auf der Festplatte geändert hat, seit Sie sie geöffnet haben, warnt Sie das Pane und lässt Sie überschreiben oder verwerfen. Klicken Sie auf **Verwerfen**, um Ihre Bearbeitungen rückgängig zu machen, oder klicken Sie auf den Pfad in der Pane-Kopfzeile, um den absoluten Pfad zu kopieren.
 
 Das Datei-Pane ist in lokalen und SSH-Sitzungen verfügbar. Für Remote-Sitzungen bitten Sie Claude, die Änderung vorzunehmen.
 
@@ -289,7 +289,7 @@ Worktrees werden standardmäßig in `<project-root>/.claude/worktrees/` gespeich
 Um gitignorierte Dateien wie `.env` in neue Worktrees einzubeziehen, erstellen Sie eine [`.worktreeinclude`-Datei](/de/common-workflows#copy-gitignored-files-to-worktrees) in Ihrem Projektstammverzeichnis.
 
 <Note>
-  Die Sitzungsisolation erfordert [Git](https://git-scm.com/downloads). Die meisten Macs enthalten Git standardmäßig. Führen Sie `git --version` im Terminal aus, um zu überprüfen. Unter Windows ist Git erforderlich, damit die Registerkarte „Code" funktioniert: [Laden Sie Git für Windows herunter](https://git-scm.com/downloads/win), installieren Sie es und starten Sie die App neu. Wenn Sie auf Git-Fehler stoßen, versuchen Sie eine Cowork-Sitzung, um Ihr Setup zu beheben.
+  Die Sitzungsisolation erfordert [Git](https://git-scm.com/downloads). Die meisten Macs enthalten Git standardmäßig. Führen Sie `git --version` im Terminal aus, um zu überprüfen. Unter Windows ist Git erforderlich, damit die Registerkarte „Code" funktioniert: [Laden Sie Git für Windows herunter](https://git-scm.com/downloads/win), installieren Sie es und starten Sie die App neu. Wenn Sie auf Git-Fehler stoßen, bitten Sie Claude im [Cowork-Tab](https://claude.com/product/cowork), Ihnen bei der Behebung Ihres Setups zu helfen.
 </Note>
 
 Verwenden Sie die Steuerelemente oben in der Seitenleiste, um Sitzungen nach Status, Projekt oder Umgebung zu filtern, und um Sitzungen nach Projekt zu gruppieren. Um eine Sitzung umzubenennen, klicken Sie auf den Sitzungstitel in der Symbolleiste oben in der aktiven Sitzung. Um die Kontext-Nutzung zu überprüfen, siehe [Überprüfen Sie die Nutzung](#check-usage). Wenn der Kontext voll wird, fasst Claude das Gespräch automatisch zusammen und arbeitet weiter. Sie können auch `/compact` eingeben, um die Zusammenfassung früher auszulösen und Kontextraum freizugeben. Siehe [das Kontextfenster](/de/how-claude-code-works#the-context-window) für Details, wie die Komprimierung funktioniert.
@@ -337,7 +337,7 @@ Dispatch ist eine von mehreren Möglichkeiten, mit Claude zu arbeiten, wenn Sie 
 
 ## Erweitern Sie Claude Code
 
-Verbinden Sie externe Dienste, fügen Sie wiederverwendbare Workflows hinzu, passen Sie Claudes Verhalten an und konfigurieren Sie Vorschau-Server.
+Verbinden Sie externe Dienste, fügen Sie wiederverwendbare Workflows hinzu, passen Sie Claudes Verhalten an und konfigurieren Sie Vorschau-Server. Um Konnektoren, Skills und Plugins an einem Ort zu verwalten, klicken Sie auf **Anpassen** in der Seitenleiste.
 
 ### Verbinden Sie externe Tools
 
@@ -537,7 +537,7 @@ Um eine SSH-Verbindung hinzuzufügen, klicken Sie auf das Umgebungs-Dropdown vor
 
 Nach dem Hinzufügen wird die Verbindung im Umgebungs-Dropdown angezeigt. Wählen Sie sie aus, um eine Sitzung auf diesem Computer zu starten. Claude läuft auf dem Remote-Computer mit Zugriff auf seine Dateien und Tools.
 
-Der Remote-Computer muss Linux oder macOS ausführen, und Claude Code muss darauf installiert sein. Nach der Verbindung unterstützen SSH-Sitzungen Berechtigungsmodi, Konnektoren, Plugins und MCP-Server.
+Der Remote-Computer muss Linux oder macOS ausführen. Die Desktop-App installiert Claude Code auf dem Remote-Computer automatisch beim ersten Verbindungsaufbau. Nach der Verbindung unterstützen SSH-Sitzungen Berechtigungsmodi, Konnektoren, Plugins und MCP-Server.
 
 #### SSH-Verbindungen für Ihr Team vorkonfigurieren
 
@@ -586,9 +586,9 @@ Verwaltete Einstellungen überschreiben Projekt- und Benutzereinstellungen und g
 | `autoMode`                                 | passen Sie an, was der Auto-Modus-Klassifizierer über Ihre Organisation vertraut und blockiert. Siehe [Auto-Modus konfigurieren](/de/auto-mode-config).                                                                    |
 | `sshConfigs`                               | vorkonfigurieren Sie [SSH-Verbindungen](#pre-configure-ssh-connections-for-your-team), die in der Umgebungs-Dropdown angezeigt werden. Benutzer können verwaltete Verbindungen nicht bearbeiten oder löschen.              |
 
-`permissions.disableBypassPermissionsMode` und `disableAutoMode` funktionieren auch in Benutzer- und Projekteinstellungen, aber das Platzieren in verwalteten Einstellungen verhindert, dass Benutzer sie überschreiben. `autoMode` wird aus Benutzereinstellungen, `.claude/settings.local.json` und verwalteten Einstellungen gelesen, aber nicht aus der eingecheckten `.claude/settings.json`: ein geklontes Repo kann seine eigenen Klassifiziererregeln nicht injizieren. Für die vollständige Liste der verwalteten Einstellungen einschließlich `allowManagedPermissionRulesOnly` und `allowManagedHooksOnly` siehe [verwaltete Einstellungen](/de/permissions#managed-only-settings).
+Eine verwaltete Einstellungsdatei, die auf jedem Computer auf der Festplatte bereitgestellt wird, gilt für Desktop-Sitzungen. Verwaltete Einstellungen, die remote über die Admin-Konsole hochgeladen werden, erreichen derzeit nur CLI- und IDE-Sitzungen. Für Desktop-Bereitstellungen verteilen Sie die Datei daher über MDM oder verwenden Sie die [Admin-Konsolen-Steuerelemente](#admin-console-controls) oben.
 
-Remote-verwaltete Einstellungen, die über die Admin-Konsole hochgeladen werden, gelten derzeit nur für CLI- und IDE-Sitzungen. Für Desktop-spezifische Einschränkungen verwenden Sie die Admin-Konsolen-Steuerelemente oben.
+`permissions.disableBypassPermissionsMode` und `disableAutoMode` funktionieren auch in Benutzer- und Projekteinstellungen, aber das Platzieren in verwalteten Einstellungen verhindert, dass Benutzer sie überschreiben. `autoMode` wird aus Benutzereinstellungen, `.claude/settings.local.json` und verwalteten Einstellungen gelesen, aber nicht aus der eingecheckten `.claude/settings.json`: ein geklontes Repo kann seine eigenen Klassifiziererregeln nicht injizieren. Für die vollständige Liste der verwalteten Einstellungen einschließlich `allowManagedPermissionRulesOnly` und `allowManagedHooksOnly` siehe [verwaltete Einstellungen](/de/permissions#managed-only-settings).
 
 ### Geräteverwaltungsrichtlinien
 
@@ -637,11 +637,11 @@ Diese Tabelle zeigt das Desktop-App-Äquivalent für häufige CLI-Flags. Flags, 
 | `--permission-mode`                     | Moduswahlschalter neben der Schaltfläche „Senden"                                                                                                                                  |
 | `--dangerously-skip-permissions`        | Bypass-Berechtigungsmodus. Aktivieren Sie in Einstellungen → Claude Code → „Bypass-Berechtigungsmodus zulassen". Enterprise-Administratoren können diese Einstellung deaktivieren. |
 | `--add-dir`                             | Fügen Sie mehrere Repos mit der Schaltfläche **+** in Remote-Sitzungen hinzu                                                                                                       |
-| `--allowedTools`, `--disallowedTools`   | nicht in Desktop verfügbar                                                                                                                                                         |
+| `--allowedTools`, `--disallowedTools`   | Kein Pro-Sitzungs-Äquivalent. Berechtigungsregeln in [Einstellungsdateien](/de/settings) gelten weiterhin.                                                                         |
 | `--verbose`                             | [Ausführliche Ansichtsmodus](#switch-view-modes) im Dropdown „Transkript-Ansicht"                                                                                                  |
-| `--print`, `--output-format`            | nicht verfügbar. Desktop ist nur interaktiv.                                                                                                                                       |
+| `--print`, `--output-format`            | Nicht verfügbar. Desktop ist nur interaktiv.                                                                                                                                       |
 | `ANTHROPIC_MODEL` Umgebungsvariable     | Modell-Dropdown neben der Schaltfläche „Senden"                                                                                                                                    |
-| `MAX_THINKING_TOKENS` Umgebungsvariable | im lokalen Umgebungs-Editor festlegen. Siehe [Umgebungskonfiguration](#environment-configuration).                                                                                 |
+| `MAX_THINKING_TOKENS` Umgebungsvariable | Im lokalen Umgebungs-Editor festlegen. Siehe [Umgebungskonfiguration](#environment-configuration).                                                                                 |
 
 ### Gemeinsame Konfiguration
 
@@ -666,23 +666,23 @@ Diese Tabelle vergleicht Kernfunktionen zwischen CLI und Desktop. Für eine voll
 | Berechtigungsmodi                                      | Alle Modi einschließlich `dontAsk`                        | Berechtigungen erfragen, Bearbeitungen automatisch akzeptieren, Plan Mode, Auto und Bypass-Berechtigungen über Einstellungen                                                                                                            |
 | `--dangerously-skip-permissions`                       | CLI-Flag                                                  | Bypass-Berechtigungsmodus. Aktivieren Sie in Einstellungen → Claude Code → „Bypass-Berechtigungsmodus zulassen"                                                                                                                         |
 | [Drittanbieter-Provider](/de/third-party-integrations) | Bedrock, Vertex, Foundry                                  | Anthropics API standardmäßig. Enterprise-Bereitstellungen können Vertex AI und Gateway-Provider konfigurieren. Siehe das [Enterprise-Konfigurationshandbuch](https://support.claude.com/en/articles/12622667-enterprise-configuration). |
-| [MCP-Server](/de/mcp)                                  | in Einstellungsdateien konfigurieren                      | Konnektoren-UI für lokale und SSH-Sitzungen oder Einstellungsdateien                                                                                                                                                                    |
+| [MCP-Server](/de/mcp)                                  | In Einstellungsdateien konfigurieren                      | Konnektoren-UI für lokale und SSH-Sitzungen oder Einstellungsdateien                                                                                                                                                                    |
 | [Plugins](/de/plugins)                                 | `/plugin`-Befehl                                          | Plugin-Manager-UI                                                                                                                                                                                                                       |
-| @mention-Dateien                                       | textbasiert                                               | mit Autovervollständigung; lokale und SSH-Sitzungen nur                                                                                                                                                                                 |
-| Dateianhänge                                           | nicht verfügbar                                           | Bilder, PDFs                                                                                                                                                                                                                            |
-| Sitzungsisolation                                      | [`--worktree`](/de/cli-reference)-Flag                    | automatische Worktrees                                                                                                                                                                                                                  |
-| Mehrere Sitzungen                                      | separate Terminals                                        | Seitenleisten-Tabs                                                                                                                                                                                                                      |
-| Wiederkehrende Aufgaben                                | Cron-Jobs, CI-Pipelines                                   | [geplante Aufgaben](/de/desktop-scheduled-tasks)                                                                                                                                                                                        |
+| @mention-Dateien                                       | Textbasiert                                               | Mit Autovervollständigung; lokale und SSH-Sitzungen nur                                                                                                                                                                                 |
+| Dateianhänge                                           | Nicht verfügbar                                           | Bilder, PDFs                                                                                                                                                                                                                            |
+| Sitzungsisolation                                      | [`--worktree`](/de/cli-reference)-Flag                    | Automatische Worktrees                                                                                                                                                                                                                  |
+| Mehrere Sitzungen                                      | Separate Terminals                                        | Seitenleisten-Tabs                                                                                                                                                                                                                      |
+| Wiederkehrende Aufgaben                                | Cron-Jobs, CI-Pipelines                                   | [Geplante Aufgaben](/de/desktop-scheduled-tasks)                                                                                                                                                                                        |
 | Computernutzung                                        | [Aktivieren über `/mcp`](/de/computer-use) auf macOS      | [App- und Bildschirmsteuerung](#let-claude-use-your-computer) auf macOS und Windows                                                                                                                                                     |
-| Dispatch-Integration                                   | nicht verfügbar                                           | [Dispatch-Sitzungen](#sessions-from-dispatch) in der Seitenleiste                                                                                                                                                                       |
-| Scripting und Automatisierung                          | [`--print`](/de/cli-reference), [Agent SDK](/de/headless) | nicht verfügbar                                                                                                                                                                                                                         |
+| Dispatch-Integration                                   | Nicht verfügbar                                           | [Dispatch-Sitzungen](#sessions-from-dispatch) in der Seitenleiste                                                                                                                                                                       |
+| Scripting und Automatisierung                          | [`--print`](/de/cli-reference), [Agent SDK](/de/headless) | Nicht verfügbar                                                                                                                                                                                                                         |
 
 ### Was ist nicht in Desktop verfügbar
 
 Die folgenden Funktionen sind nur in der CLI oder VS Code-Erweiterung verfügbar:
 
-* **Drittanbieter-Provider**: Desktop verbindet sich mit Anthropics API standardmäßig. Enterprise-Bereitstellungen können Vertex AI und Gateway-Provider konfigurieren. Für Bedrock oder Foundry verwenden Sie die [CLI](/de/quickstart).
-* **Linux**: Die Desktop-App ist nur auf macOS und Windows verfügbar.
+* **Drittanbieter-Provider**: Desktop verbindet sich mit Anthropics API standardmäßig. Enterprise-Bereitstellungen können Vertex AI und Gateway-Provider über [verwaltete Einstellungen](https://support.claude.com/en/articles/12622667-enterprise-configuration) konfigurieren. Für Bedrock oder Foundry verwenden Sie die [CLI](/de/quickstart).
+* **Linux**: Die Desktop-App ist nur auf macOS und Windows verfügbar. Verwenden Sie unter Linux die [CLI](/de/quickstart).
 * **Inline-Code-Vorschläge**: Desktop bietet keine Autovervollständigungs-ähnlichen Vorschläge. Es funktioniert durch Gesprächseingaben und explizite Code-Änderungen.
 * **Agent-Teams**: Multi-Agent-Orchestrierung ist über die [CLI](/de/agent-teams) und [Agent SDK](/de/headless) verfügbar, nicht in Desktop.
 
