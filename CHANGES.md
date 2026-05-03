@@ -1,5 +1,332 @@
 # Documentation Changes
 
+## 2026-05-03
+
+114 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Code Review** (`code-review.md`): 66 lines added, 25 removed
+  - New section: "### Bewertung und Antwort auf Erkenntnisse"
+  - New section: "#### Was Sie optimieren können"
+  - New section: "#### Beispiel"
+  - New section: "# Review-Anweisungen"
+  - New section: "## Was Wichtig hier bedeutet"
+- **Claude Code GitHub Actions** (`github-actions.md`): 11 lines added, 11 removed
+  - New section: "## Verwendung mit Amazon Bedrock & Google Vertex AI"
+  - New section: "#### Für Amazon Bedrock:"
+  - New section: "#### Für Amazon Bedrock"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 11 lines added, 11 removed
+  - New section: "## Verwendung mit Amazon Bedrock & Google Vertex AI"
+  - New section: "# Für Amazon Bedrock:"
+  - New section: "### Amazon Bedrock-Job-Beispiel (OIDC)"
+- **Rechtliche Bestimmungen und Compliance** (`legal-and-compliance.md`): 1 lines added, 1 removed
+- **Überwachung** (`monitoring-usage.md`): 1 lines added, 1 removed
+- **Claude Code-Einstellungen** (`settings.md`): 2 lines added, 1 removed
+- **Claude Code in VS Code verwenden** (`vs-code.md`): 33 lines added, 8 removed
+- **Null-Datenspeicherung** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### English
+
+
+**Modified**
+
+- **Orchestrate teams of Claude Code sessions** (`agent-teams.md`): 1 lines added, 1 removed
+- **Best practices for Claude Code** (`best-practices.md`): 17 lines added, 23 removed
+  - New section: "# Best practices for Claude Code"
+- **Checkpointing** (`checkpointing.md`): 1 lines added, 1 removed
+- **CLI reference** (`cli-reference.md`): 1 lines added, 1 removed
+- **Code Review** (`code-review.md`): 1 lines added, 1 removed
+- **Commands** (`commands.md`): 1 lines added, 1 removed
+- **Common workflows** (`common-workflows.md`): 85 lines added, 589 removed
+  - New section: "## Prompt recipes"
+  - New section: "### Understand new codebases"
+  - New section: "#### Get a quick codebase overview"
+  - New section: "#### Find relevant code"
+  - New section: "### Fix bugs efficiently"
+- **Manage costs effectively** (`costs.md`): 1 lines added, 1 removed
+- **Use Claude Code Desktop** (`desktop.md`): 3 lines added, 3 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 10 lines added, 10 removed
+  - New section: "## Using with Amazon Bedrock & Google Vertex AI"
+  - New section: "#### For Amazon Bedrock:"
+  - New section: "#### For Amazon Bedrock"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 10 lines added, 10 removed
+  - New section: "## Using with Amazon Bedrock & Google Vertex AI"
+  - New section: "# For Amazon Bedrock:"
+  - New section: "### Amazon Bedrock job example (OIDC)"
+- **Run Claude Code programmatically** (`headless.md`): 26 lines added, 0 removed
+  - New section: "### Pipe data through Claude"
+  - New section: "### Add Claude to a build script"
+- **Automate workflows with hooks** (`hooks-guide.md`): 13 lines added, 0 removed
+- **Hooks reference** (`hooks.md`): 1 lines added, 1 removed
+- **How Claude Code works** (`how-claude-code-works.md`): 4 lines added, 12 removed
+- **Legal and compliance** (`legal-and-compliance.md`): 1 lines added, 1 removed
+- **Model configuration** (`model-config.md`): 17 lines added, 3 removed
+  - New section: "#### Use ultrathink for one-off deep reasoning"
+  - New section: "### Extended thinking"
+- **Monitoring** (`monitoring-usage.md`): 1 lines added, 1 removed
+- **Claude Code overview** (`overview.md`): 1 lines added, 1 removed
+- **Continue local sessions from any device with Remote Control** (`remote-control.md`): 8 lines added, 8 removed
+- **Claude Code settings** (`settings.md`): 78 lines added, 78 removed
+- **Extend Claude with skills** (`skills.md`): 50 lines added, 45 removed
+  - New section: "## Current changes"
+  - New section: "## Instructions"
+- **Create custom subagents** (`sub-agents.md`): 2 lines added, 2 removed
+- **Tools reference** (`tools-reference.md`): 37 lines added, 37 removed
+- **Use Claude Code in VS Code** (`vs-code.md`): 32 lines added, 8 removed
+- **Zero data retention** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### Español
+
+
+**Modified**
+
+- **Code Review** (`code-review.md`): 67 lines added, 26 removed
+  - New section: "### Calificar y responder a hallazgos"
+  - New section: "#### Qué puede ajustar"
+  - New section: "#### Ejemplo"
+  - New section: "# Instrucciones de revisión"
+  - New section: "## Qué significa Importante aquí"
+- **Claude Code GitHub Actions** (`github-actions.md`): 11 lines added, 11 removed
+  - New section: "## Usar con Amazon Bedrock y Google Vertex AI"
+  - New section: "#### Para Amazon Bedrock:"
+  - New section: "#### Para Amazon Bedrock"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 11 lines added, 11 removed
+  - New section: "## Usar con Amazon Bedrock y Google Vertex AI"
+  - New section: "# Para Amazon Bedrock:"
+  - New section: "### Ejemplo de trabajo de Amazon Bedrock (OIDC)"
+- **Legal y cumplimiento** (`legal-and-compliance.md`): 1 lines added, 1 removed
+- **Monitoreo** (`monitoring-usage.md`): 4 lines added, 4 removed
+- **Configuración de Claude Code** (`settings.md`): 1 lines added, 0 removed
+- **Usar Claude Code en VS Code** (`vs-code.md`): 32 lines added, 7 removed
+- **Retención cero de datos** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### Français
+
+
+**Modified**
+
+- **Révision de code** (`code-review.md`): 70 lines added, 28 removed
+  - New section: "### Évaluer et répondre aux résultats"
+  - New section: "#### Ce que vous pouvez affiner"
+  - New section: "#### Exemple"
+  - New section: "# Instructions de révision"
+  - New section: "## Ce que Important signifie ici"
+- **Claude Code GitHub Actions** (`github-actions.md`): 5 lines added, 5 removed
+  - New section: "## Utilisation avec Amazon Bedrock et Google Vertex AI"
+  - New section: "#### Pour Amazon Bedrock :"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 11 lines added, 11 removed
+  - New section: "## Utilisation avec Amazon Bedrock et Google Vertex AI"
+  - New section: "# Pour Amazon Bedrock :"
+  - New section: "### Exemple de tâche Amazon Bedrock (OIDC)"
+- **Aspects juridiques et conformité** (`legal-and-compliance.md`): 1 lines added, 1 removed
+- **Surveillance** (`monitoring-usage.md`): 1 lines added, 1 removed
+- **Paramètres Claude Code** (`settings.md`): 2 lines added, 1 removed
+- **Utiliser Claude Code dans VS Code** (`vs-code.md`): 32 lines added, 7 removed
+- **Zéro conservation des données** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Code Review** (`code-review.md`): 68 lines added, 26 removed
+  - New section: "### Menilai dan membalas temuan"
+  - New section: "#### Apa yang dapat Anda sesuaikan"
+  - New section: "#### Contoh"
+  - New section: "# Instruksi ulasan"
+  - New section: "## Apa yang Penting berarti di sini"
+- **Claude Code GitHub Actions** (`github-actions.md`): 10 lines added, 10 removed
+  - New section: "## Menggunakan dengan Amazon Bedrock & Google Vertex AI"
+  - New section: "#### Untuk Amazon Bedrock:"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 11 lines added, 11 removed
+  - New section: "## Menggunakan dengan Amazon Bedrock & Google Vertex AI"
+  - New section: "# Untuk Amazon Bedrock:"
+  - New section: "### Contoh pekerjaan Amazon Bedrock (OIDC)"
+- **Hukum dan kepatuhan** (`legal-and-compliance.md`): 1 lines added, 1 removed
+- **Pemantauan** (`monitoring-usage.md`): 1 lines added, 1 removed
+- **Pengaturan Claude Code** (`settings.md`): 2 lines added, 1 removed
+- **Gunakan Claude Code di VS Code** (`vs-code.md`): 32 lines added, 7 removed
+- **Retensi data nol** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Code Review** (`code-review.md`): 67 lines added, 26 removed
+  - New section: "### Valutare e rispondere ai risultati"
+  - New section: "#### Cosa puoi regolare"
+  - New section: "#### Esempio"
+  - New section: "# Istruzioni di revisione"
+  - New section: "## Cosa significa Importante qui"
+- **Claude Code GitHub Actions** (`github-actions.md`): 10 lines added, 10 removed
+  - New section: "## Utilizzo con Amazon Bedrock e Google Vertex AI"
+  - New section: "#### Per Amazon Bedrock:"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 11 lines added, 11 removed
+  - New section: "## Utilizzo con Amazon Bedrock e Google Vertex AI"
+  - New section: "# Per Amazon Bedrock:"
+  - New section: "### Esempio di lavoro Amazon Bedrock (OIDC)"
+- **Aspetti legali e conformità** (`legal-and-compliance.md`): 1 lines added, 1 removed
+- **Monitoraggio** (`monitoring-usage.md`): 1 lines added, 1 removed
+- **Impostazioni di Claude Code** (`settings.md`): 1 lines added, 0 removed
+- **Usa Claude Code in VS Code** (`vs-code.md`): 33 lines added, 8 removed
+- **Zero data retention** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### 日本語
+
+
+**Modified**
+
+- **Code Review** (`code-review.md`): 61 lines added, 25 removed
+  - New section: "### 結果に対する評価と返信"
+  - New section: "#### チューニング可能な内容"
+  - New section: "#### 例"
+  - New section: "# レビュー指示"
+  - New section: "## ここで Important が意味するもの"
+- **Claude Code GitHub Actions** (`github-actions.md`): 5 lines added, 5 removed
+  - New section: "## Amazon Bedrock と Google Vertex AI での使用"
+  - New section: "#### Amazon Bedrock の場合："
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 11 lines added, 11 removed
+  - New section: "## Amazon Bedrock & Google Vertex AI での使用"
+  - New section: "# Amazon Bedrock の場合："
+  - New section: "### Amazon Bedrock ジョブの例（OIDC）"
+- **法的および規制対応** (`legal-and-compliance.md`): 1 lines added, 1 removed
+- **監視** (`monitoring-usage.md`): 1 lines added, 1 removed
+- **Claude Code の設定** (`settings.md`): 77 lines added, 76 removed
+- **VS Code で Claude Code を使用する** (`vs-code.md`): 33 lines added, 8 removed
+- **ゼロデータ保持** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### 한국어
+
+
+**Modified**
+
+- **Code Review** (`code-review.md`): 61 lines added, 25 removed
+  - New section: "### 결과에 대한 평가 및 응답"
+  - New section: "#### 조정할 수 있는 항목"
+  - New section: "#### 예시"
+  - New section: "# 검토 지침"
+  - New section: "## Important가 여기서 의미하는 바"
+- **Claude Code GitHub Actions** (`github-actions.md`): 11 lines added, 11 removed
+  - New section: "## Amazon Bedrock & Google Vertex AI 사용"
+  - New section: "#### Amazon Bedrock의 경우:"
+  - New section: "#### Amazon Bedrock의 경우"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 11 lines added, 11 removed
+  - New section: "## Amazon Bedrock & Google Vertex AI 사용"
+  - New section: "# Amazon Bedrock의 경우:"
+  - New section: "### Amazon Bedrock 작업 예제 (OIDC)"
+- **법률 및 규정 준수** (`legal-and-compliance.md`): 1 lines added, 1 removed
+- **모니터링** (`monitoring-usage.md`): 1 lines added, 1 removed
+- **Claude Code 설정** (`settings.md`): 77 lines added, 76 removed
+- **VS Code에서 Claude Code 사용하기** (`vs-code.md`): 32 lines added, 7 removed
+- **Zero data retention** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### Português
+
+
+**Modified**
+
+- **Code Review** (`code-review.md`): 65 lines added, 26 removed
+  - New section: "### Avaliar e responder a descobertas"
+  - New section: "#### O que você pode ajustar"
+  - New section: "#### Exemplo"
+  - New section: "# Instruções de revisão"
+  - New section: "## O que Importante significa aqui"
+- **Claude Code GitHub Actions** (`github-actions.md`): 11 lines added, 11 removed
+  - New section: "## Usando com Amazon Bedrock & Google Vertex AI"
+  - New section: "#### Para Amazon Bedrock:"
+  - New section: "#### Para Amazon Bedrock"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 11 lines added, 11 removed
+  - New section: "## Usando com Amazon Bedrock & Google Vertex AI"
+  - New section: "# Para Amazon Bedrock:"
+  - New section: "### Exemplo de trabalho Amazon Bedrock (OIDC)"
+- **Legal e conformidade** (`legal-and-compliance.md`): 1 lines added, 1 removed
+- **Monitoramento** (`monitoring-usage.md`): 1 lines added, 1 removed
+- **Configurações do Claude Code** (`settings.md`): 1 lines added, 0 removed
+- **Use Claude Code in VS Code** (`vs-code.md`): 34 lines added, 9 removed
+  - New section: "## Comandos e atalhos de teclado do VS Code"
+  - New section: "### Inicie uma aba VS Code a partir de outras ferramentas"
+- **Retenção zero de dados** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### Русский
+
+
+**Modified**
+
+- **Code Review** (`code-review.md`): 67 lines added, 26 removed
+  - New section: "### Оценка и ответ на результаты"
+  - New section: "#### Что вы можете настроить"
+  - New section: "#### Пример"
+  - New section: "# Инструкции проверки"
+  - New section: "## Что Important означает здесь"
+- **Claude Code GitHub Actions** (`github-actions.md`): 5 lines added, 5 removed
+  - New section: "## Использование с Amazon Bedrock и Google Vertex AI"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 11 lines added, 11 removed
+  - New section: "## Использование с Amazon Bedrock и Google Vertex AI"
+  - New section: "# Для Amazon Bedrock:"
+  - New section: "### Пример задания Amazon Bedrock (OIDC)"
+- **Правовые и нормативные требования** (`legal-and-compliance.md`): 1 lines added, 1 removed
+- **Мониторинг** (`monitoring-usage.md`): 1 lines added, 1 removed
+- **Параметры Claude Code** (`settings.md`): 2 lines added, 1 removed
+- **Использование Claude Code в VS Code** (`vs-code.md`): 32 lines added, 7 removed
+- **Нулевое хранение данных** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **Code Review** (`code-review.md`): 62 lines added, 26 removed
+  - New section: "### 对发现进行评分和回复"
+  - New section: "#### 您可以调整的内容"
+  - New section: "#### 示例"
+  - New section: "# 审查说明"
+  - New section: "## 重要在这里的含义"
+- **Claude Code GitHub Actions** (`github-actions.md`): 10 lines added, 10 removed
+  - New section: "## 使用 Amazon Bedrock 和 Google Vertex AI"
+  - New section: "#### 对于 Amazon Bedrock："
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 11 lines added, 11 removed
+  - New section: "## 使用 Amazon Bedrock 和 Google Vertex AI"
+  - New section: "# 对于 Amazon Bedrock："
+  - New section: "### Amazon Bedrock 作业示例（OIDC）"
+- **法律和合规** (`legal-and-compliance.md`): 1 lines added, 1 removed
+- **监控** (`monitoring-usage.md`): 1 lines added, 1 removed
+- **Claude Code 设置** (`settings.md`): 77 lines added, 76 removed
+- **在 VS Code 中使用 Claude Code** (`vs-code.md`): 36 lines added, 11 removed
+- **零数据保留** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **Code Review** (`code-review.md`): 63 lines added, 27 removed
+  - New section: "### 對發現進行評分和回覆"
+  - New section: "#### 您可以調整什麼"
+  - New section: "#### 示例"
+  - New section: "# 審查指令"
+  - New section: "## 重要在這裡意味著什麼"
+- **Claude Code GitHub Actions** (`github-actions.md`): 11 lines added, 11 removed
+  - New section: "## 使用 Amazon Bedrock 和 Google Vertex AI"
+  - New section: "#### 對於 Amazon Bedrock："
+  - New section: "#### 對於 Amazon Bedrock"
+- **Claude Code GitLab CI/CD** (`gitlab-ci-cd.md`): 11 lines added, 11 removed
+  - New section: "## 使用 Amazon Bedrock 和 Google Vertex AI"
+  - New section: "# 對於 Amazon Bedrock："
+  - New section: "### Amazon Bedrock 工作範例 (OIDC)"
+- **法律和合規** (`legal-and-compliance.md`): 1 lines added, 1 removed
+- **監控** (`monitoring-usage.md`): 1 lines added, 1 removed
+- **Claude Code 設定** (`settings.md`): 77 lines added, 76 removed
+- **在 VS Code 中使用 Claude Code** (`vs-code.md`): 32 lines added, 7 removed
+- **零數據保留** (`zero-data-retention.md`): 1 lines added, 1 removed
+
+---
+
 ## 2026-05-02
 
 37 pages modified

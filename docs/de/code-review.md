@@ -29,7 +29,7 @@ Diese Seite behandelt:
 
 Sobald ein Administrator [Code Review aktiviert](#set-up-code-review) für Ihre Organisation, werden Reviews ausgelöst, wenn ein PR geöffnet wird, bei jedem Push oder auf manuelle Anfrage, je nach konfiguriertem Verhalten des Repositorys. Das Kommentieren von `@claude review` [startet Reviews auf einem PR](#manually-trigger-reviews) in jedem Modus.
 
-Wenn ein Review ausgeführt wird, analysieren mehrere Agenten parallel den Diff und den umgebenden Code auf Anthropic-Infrastruktur. Jeder Agent sucht nach einer anderen Klasse von Problemen, dann überprüft ein Verifizierungsschritt Kandidaten gegen das tatsächliche Codeverhalten, um falsch positive Ergebnisse zu filtern. Die Ergebnisse werden dedupliziert, nach Schweregrad eingestuft und als Inline-Kommentare auf den spezifischen Zeilen veröffentlicht, auf denen Probleme gefunden wurden. Wenn keine Probleme gefunden werden, veröffentlicht Claude einen kurzen Bestätigungskommentar auf dem PR.
+Wenn ein Review ausgeführt wird, analysieren mehrere Agenten parallel den Diff und den umgebenden Code auf Anthropic-Infrastruktur. Jeder Agent sucht nach einer anderen Klasse von Problemen, dann überprüft ein Verifizierungsschritt Kandidaten gegen das tatsächliche Codeverhalten, um falsch positive Ergebnisse zu filtern. Die Ergebnisse werden dedupliziert, nach Schweregrad eingestuft und als Inline-Kommentare auf den spezifischen Zeilen veröffentlicht, auf denen Probleme gefunden wurden, mit einer Zusammenfassung im Review-Text. Wenn keine Probleme gefunden werden, veröffentlicht Claude einen kurzen Bestätigungskommentar auf dem PR.
 
 Reviews skalieren in den Kosten mit PR-Größe und Komplexität und werden im Durchschnitt in 20 Minuten abgeschlossen. Administratoren können Review-Aktivität und Ausgaben über das [Analytics-Dashboard](#view-usage) überwachen.
 
@@ -44,6 +44,12 @@ Jede Erkenntnis wird mit einer Schweregrad-Stufe gekennzeichnet:
 | 🟣     | Bereits vorhanden | Ein Fehler, der in der Codebasis vorhanden ist, aber nicht durch diesen PR eingeführt wurde |
 
 Erkenntnisse enthalten einen ausklappbaren erweiterten Reasoning-Bereich, den Sie erweitern können, um zu verstehen, warum Claude das Problem gekennzeichnet hat und wie es das Problem überprüft hat.
+
+### Bewertung und Antwort auf Erkenntnisse
+
+Jeder Review-Kommentar von Claude kommt bereits mit 👍 und 👎 angehängt, sodass beide Schaltflächen in der GitHub-Benutzeroberfläche für Ein-Klick-Bewertung angezeigt werden. Klicken Sie auf 👍, wenn die Erkenntnis nützlich war, oder auf 👎, wenn sie falsch oder störend war. Anthropic sammelt Reaktionszählungen nach dem Zusammenführen des PR und verwendet sie, um den Reviewer zu optimieren. Reaktionen lösen keine Neuüberprüfung aus oder ändern etwas auf dem PR.
+
+Das Antworten auf einen Inline-Kommentar veranlasst Claude nicht, zu antworten oder den PR zu aktualisieren. Um auf eine Erkenntnis zu reagieren, beheben Sie den Code und pushen Sie. Wenn der PR für Push-ausgelöste Reviews abonniert ist, löst die nächste Ausführung den Thread auf, wenn das Problem behoben ist. Um eine neue Überprüfung ohne Pushen anzufordern, kommentieren Sie `@claude review once` als [Top-Level-PR-Kommentar](#manually-trigger-reviews).
 
 ### Check-Run-Ausgabe
 
@@ -135,14 +141,14 @@ Wenn bereits eine Überprüfung auf diesem PR läuft, wird die Anfrage in die Wa
 
 ## Anpassung von Reviews
 
-Code Review liest zwei Dateien aus Ihrem Repository, um zu steuern, was es kennzeichnet. Beide sind zusätzlich zu den standardmäßigen Korrektheitsprüfungen:
+Code Review liest zwei Dateien aus Ihrem Repository, um zu steuern, was es kennzeichnet. Sie unterscheiden sich darin, wie stark sie die Überprüfung beeinflussen:
 
-* **`CLAUDE.md`**: gemeinsame Projektanweisungen, die Claude Code für alle Aufgaben verwendet, nicht nur für Reviews. Verwenden Sie es, wenn Anleitungen auch für interaktive Claude Code Sitzungen gelten.
-* **`REVIEW.md`**: Review-spezifische Anleitungen, die ausschließlich während Code Reviews gelesen werden. Verwenden Sie es für Regeln, die streng damit zu tun haben, was während der Überprüfung gekennzeichnet oder übersprungen werden soll, und würden Ihre allgemeine `CLAUDE.md` überladen.
+* **`CLAUDE.md`**: gemeinsame Projektanweisungen, die Claude Code für alle Aufgaben verwendet, nicht nur für Reviews. Code Review liest sie als Projektkontext und kennzeichnet neu eingeführte Verstöße als Nits.
+* **`REVIEW.md`**: Review-spezifische Anweisungen, die direkt in jeden Agent in der Review-Pipeline als höchste Priorität eingefügt werden. Verwenden Sie es, um zu ändern, was gekennzeichnet wird, mit welchem Schweregrad und wie Erkenntnisse gemeldet werden.
 
 ### CLAUDE.md
 
-Code Review liest Ihre Repository-`CLAUDE.md` Dateien und behandelt neu eingeführte Verstöße als Nit-Level-Erkenntnisse. Dies funktioniert bidirektional: Wenn Ihr PR Code auf eine Weise ändert, die eine `CLAUDE.md` Aussage veraltet macht, kennzeichnet Claude, dass die Dokumentation aktualisiert werden muss.
+Code Review liest Ihre Repository-`CLAUDE.md` Dateien und behandelt neu eingeführte Verstöße als [Nit-Level](#severity-levels) Erkenntnisse. Dies funktioniert bidirektional: Wenn Ihr PR Code auf eine Weise ändert, die eine `CLAUDE.md` Aussage veraltet macht, kennzeichnet Claude, dass die Dokumentation aktualisiert werden muss.
 
 Claude liest `CLAUDE.md` Dateien auf jeder Ebene Ihrer Verzeichnishierarchie, sodass Regeln in einer Unterverzeichnis-`CLAUDE.md` nur auf Dateien unter diesem Pfad angewendet werden. Weitere Informationen zur Funktionsweise von `CLAUDE.md` finden Sie in der [Memory-Dokumentation](/de/memory).
 
@@ -150,33 +156,64 @@ Für Review-spezifische Anleitungen, die Sie nicht auf allgemeine Claude Code Si
 
 ### REVIEW\.md
 
-Fügen Sie eine `REVIEW.md` Datei zu Ihrem Repository-Root hinzu, um Review-spezifische Regeln zu erstellen. Verwenden Sie es zum Kodieren von:
+`REVIEW.md` ist eine Datei in Ihrem Repository-Root, die überschreibt, wie Code Review auf Ihrem Repo verhält. Sein Inhalt wird in den System-Prompt jedes Agenten in der Review-Pipeline als höchste Prioritäts-Anweisungsblock eingefügt und hat Vorrang vor der Standard-Review-Anleitung.
 
-* Unternehmens- oder Team-Stilrichtlinien: "frühe Returns gegenüber verschachtelten Bedingungen bevorzugen"
-* Sprach- oder Framework-spezifische Konventionen, die nicht von Lintern abgedeckt werden
-* Dinge, die Claude immer kennzeichnen sollte: "jede neue API-Route muss einen Integrationtest haben"
-* Dinge, die Claude überspringen sollte: "keine Kommentare zur Formatierung in generiertem Code unter `/gen/`"
+Da es wörtlich eingefügt wird, ist `REVIEW.md` einfache Anweisungen: [`@` Import-Syntax](/de/memory#import-additional-files) wird nicht erweitert, und referenzierte Dateien werden nicht in den Prompt gelesen. Setzen Sie die Regeln, die Sie durchgesetzt haben möchten, direkt in die Datei.
 
-Beispiel `REVIEW.md`:
+#### Was Sie optimieren können
+
+`REVIEW.md` ist freies Markdown, sodass alles, was Sie als Review-Anweisung ausdrücken können, im Umfang liegt. Die folgenden Muster haben die meiste praktische Auswirkung.
+
+**Schweregrad**: Definieren Sie neu, was 🔴 Wichtig für Ihr Repo bedeutet. Die Standard-Kalibrierung zielt auf Produktionscode ab; ein Docs-Repo, ein Config-Repo oder ein Prototyp möchte möglicherweise eine viel engere Definition. Geben Sie explizit an, welche Klassen von Erkenntnissen Wichtig sind und welche höchstens Nit sind. Sie können auch in die andere Richtung eskalieren, zum Beispiel jeden `CLAUDE.md` Verstoß als Wichtig statt des Standard-Nits behandeln.
+
+**Nit-Volumen**: Begrenzen Sie, wie viele 🟡 Nit-Kommentare eine einzelne Überprüfung veröffentlicht. Prosa- und Config-Dateien können für immer poliert werden. Eine Obergrenze wie 'höchstens fünf Nits melden, den Rest als Zählung in der Zusammenfassung erwähnen" hält Reviews umsetzbar.
+
+**Skip-Regeln**: Listen Sie Pfade, Branch-Muster und Erkenntniskategorien auf, bei denen Claude keine Erkenntnisse veröffentlichen sollte. Häufige Kandidaten sind generierter Code, Lockfiles, vendorte Abhängigkeiten und maschinengeschriebene Branches, zusammen mit allem, das Ihr CI bereits durchsetzt, wie Linting oder Rechtschreibprüfung. Für Pfade, die einige Überprüfung verdienen, aber nicht vollständige Überprüfung, setzen Sie stattdessen eine höhere Messlatte: „in `scripts/`, nur melden, wenn nahezu sicher und schwerwiegend."
+
+**Repo-spezifische Überprüfungen**: Fügen Sie Regeln hinzu, die Sie auf jedem PR gekennzeichnet haben möchten, wie „neue API-Routen müssen einen Integrationtest haben." Da `REVIEW.md` als höchste Priorität eingefügt wird, landen diese zuverlässiger als die gleichen Regeln in einem langen `CLAUDE.md`.
+
+**Verifizierungsbalken**: Fordern Sie Beweise an, bevor eine Erkenntnisklasse veröffentlicht wird. Zum Beispiel, „Verhaltensansprüche benötigen eine `file:line` Zitierung in der Quelle, nicht eine Inferenz aus Benennung" reduziert falsch positive Ergebnisse, die sonst den Autor eine Runde kosten würden.
+
+**Re-Review-Konvergenz**: Sagen Sie Claude, wie er sich verhalten soll, wenn ein PR bereits überprüft wurde. Eine Regel wie „nach der ersten Überprüfung, neue Nits unterdrücken und nur Wichtig-Erkenntnisse veröffentlichen" stoppt eine einzeilige Korrektur von Runde sieben allein auf Stil.
+
+**Zusammenfassungsform**: Bitten Sie darum, dass der Review-Text mit einer einzeiligen Tally wie `2 faktisch, 4 Stil` beginnt, und führen Sie mit „keine faktischen Probleme" an, wenn das der Fall ist. Der Autor möchte die Form der Arbeit vor den Details wissen.
+
+#### Beispiel
+
+Dieses `REVIEW.md` kalibriert den Schweregrad für einen Backend-Service neu, begrenzt Nits, überspringt generierte Dateien und fügt Repo-spezifische Überprüfungen hinzu.
 
 ```markdown theme={null}
-# Code Review Richtlinien
+# Review-Anweisungen
+
+## Was Wichtig hier bedeutet
+
+Reservieren Sie Wichtig für Erkenntnisse, die Verhalten unterbrechen würden, Daten lecken würden,
+oder einen Rollback blockieren würden: falsche Logik, unscoped Datenbankabfragen, PII
+in Logs oder Fehlermeldungen, und Migrationen, die nicht rückwärtskompatibel sind. Stil, Benennung und Refactoring-Vorschläge sind höchstens Nit.
+
+## Begrenzen Sie die Nits
+
+Melden Sie höchstens fünf Nits pro Überprüfung. Wenn Sie mehr gefunden haben, sagen Sie „plus N
+ähnliche Elemente" in der Zusammenfassung statt sie inline zu veröffentlichen. Wenn
+alles, was Sie gefunden haben, ein Nit ist, führen Sie die Zusammenfassung mit „Keine blockierenden
+Probleme" an.
+
+## Nicht melden
+
+- Alles, das CI bereits durchsetzt: Lint, Formatierung, Typfehler
+- Generierte Dateien unter `src/gen/` und jede `*.lock` Datei
+- Nur-Test-Code, der absichtlich Produktionsregeln verletzt
 
 ## Immer überprüfen
-- Neue API-Endpunkte haben entsprechende Integrationstests
-- Datenbankmigrationen sind rückwärtskompatibel
-- Fehlermeldungen geben keine internen Details an Benutzer preis
 
-## Stil
-- `match` Anweisungen gegenüber verketteten `isinstance` Überprüfungen bevorzugen
-- Strukturiertes Logging verwenden, nicht f-String-Interpolation in Log-Aufrufen
-
-## Überspringen
-- Generierte Dateien unter `src/gen/`
-- Nur Formatierungsänderungen in `*.lock` Dateien
+- Neue API-Routen haben einen Integrationtest
+- Log-Zeilen enthalten keine E-Mail-Adressen, Benutzer-IDs oder Request-Bodies
+- Datenbankabfragen sind auf den Aufrufer des Mandanten beschränkt
 ```
 
-Claude erkennt `REVIEW.md` automatisch im Repository-Root. Keine Konfiguration erforderlich.
+#### Halten Sie es fokussiert
+
+Länge hat einen Preis: Ein langer `REVIEW.md` verwässert die Regeln, die am meisten zählen. Halten Sie es auf Anweisungen, die Review-Verhalten ändern, und lassen Sie allgemeinen Projektkontext in `CLAUDE.md`.
 
 ## Nutzung anzeigen
 
@@ -189,7 +226,7 @@ Gehen Sie zu [claude.ai/analytics/code-review](https://claude.ai/analytics/code-
 | Feedback             | Anzahl der Review-Kommentare, die automatisch aufgelöst wurden, weil ein Entwickler das Problem behoben hat |
 | Repository breakdown | Pro-Repo-Anzahl der überprüften PRs und aufgelösten Kommentare                                              |
 
-Die Repositorys-Tabelle in den Admin-Einstellungen zeigt auch die durchschnittlichen Kosten pro Review für jedes Repo.
+Die Repositorys-Tabelle in den Admin-Einstellungen zeigt auch die durchschnittlichen Kosten pro Review für jedes Repo. Dashboard-Kostenzahlen sind Schätzungen zur Überwachung der Aktivität; für rechnungsgenaue Ausgaben beziehen Sie sich auf Ihre Anthropic-Rechnung.
 
 ## Preisgestaltung
 
@@ -203,7 +240,7 @@ Der Review-Trigger, den Sie wählen, beeinflusst die Gesamtkosten:
 
 In jedem Modus führt das Kommentieren von `@claude review` [den PR in Push-ausgelöste Reviews auf](#manually-trigger-reviews), sodass zusätzliche Kosten pro Push nach diesem Kommentar anfallen. Um eine einzelne Überprüfung auszuführen, ohne sich für zukünftige Pushes zu abonnieren, kommentieren Sie stattdessen `@claude review once`.
 
-Kosten erscheinen auf Ihrer Anthropic-Rechnung, unabhängig davon, ob Ihre Organisation AWS Bedrock oder Google Vertex AI für andere Claude Code Funktionen verwendet. Um eine monatliche Ausgabenbegrenzung für Code Review festzulegen, gehen Sie zu [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) und konfigurieren Sie das Limit für den Claude Code Review Service.
+Kosten erscheinen auf Ihrer Anthropic-Rechnung, unabhängig davon, ob Ihre Organisation Amazon Bedrock oder Google Vertex AI für andere Claude Code Funktionen verwendet. Um eine monatliche Ausgabenbegrenzung für Code Review festzulegen, gehen Sie zu [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) und konfigurieren Sie das Limit für den Claude Code Review Service.
 
 Überwachen Sie die Ausgaben über das wöchentliche Kostendiagramm in [analytics](#view-usage) oder die durchschnittliche Kostenspalte pro Repo in den Admin-Einstellungen.
 
@@ -218,6 +255,10 @@ Wenn die Review-Infrastruktur auf einen internen Fehler trifft oder ihr Zeitlimi
 Um die Überprüfung erneut auszuführen, kommentieren Sie `@claude review once` auf dem PR. Dies startet eine neue Überprüfung, ohne den PR für zukünftige Pushes zu abonnieren. Wenn der PR bereits für Push-ausgelöste Reviews abonniert ist, startet das Pushen eines neuen Commits auch eine neue Überprüfung.
 
 Die Schaltfläche **Re-run** in Githubs Checks-Registerkarte löst Code Review nicht erneut aus. Verwenden Sie stattdessen den Kommentarbefehl oder einen neuen Push.
+
+### Überprüfung wurde nicht ausgeführt und der PR zeigt eine Ausgabenbegrenzungs-Nachricht
+
+Wenn die monatliche Ausgabenbegrenzung Ihrer Organisation erreicht ist, veröffentlicht Code Review einen einzelnen Kommentar auf dem PR, der erklärt, dass die Überprüfung übersprungen wurde. Reviews werden automatisch am Anfang des nächsten Abrechnungszeitraums fortgesetzt, oder sofort, wenn ein Administrator die Obergrenze bei [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) erhöht.
 
 ### Finden Sie Probleme, die nicht als Inline-Kommentare angezeigt werden
 

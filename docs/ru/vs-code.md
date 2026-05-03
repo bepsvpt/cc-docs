@@ -246,13 +246,35 @@ Claude открывает новые вкладки для задач брауз
 
 Расширение регистрирует обработчик URI в `vscode://anthropic.claude-code/open`. Используйте его для открытия новой вкладки Claude Code из вашего собственного инструментария: псевдонима оболочки, букмарклета браузера или любого скрипта, который может открыть URL. Если VS Code ещё не запущен, открытие URL сначала запускает его. Если VS Code уже запущен, URL открывается в окне, которое в данный момент сфокусировано.
 
-Вызовите обработчик с помощью открывателя URL вашей операционной системы. На macOS:
+Вызовите обработчик с помощью открывателя URL вашей операционной системы.
 
-```bash theme={null}
-open "vscode://anthropic.claude-code/open"
-```
+<Tabs>
+  <Tab title="macOS">
+    ```bash theme={null}
+    open "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
 
-Используйте `xdg-open` на Linux или `start` на Windows.
+  <Tab title="Linux">
+    ```bash theme={null}
+    xdg-open "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
+
+  <Tab title="Windows">
+    В PowerShell:
+
+    ```powershell theme={null}
+    Start-Process "vscode://anthropic.claude-code/open"
+    ```
+
+    В `cmd.exe`, `start` рассматривает свой первый аргумент в кавычках как заголовок окна, поэтому передайте пустой заголовок перед URL:
+
+    ```cmd theme={null}
+    start "" "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
+</Tabs>
 
 Обработчик принимает два необязательных параметра запроса:
 
@@ -266,6 +288,8 @@ open "vscode://anthropic.claude-code/open"
 ```text theme={null}
 vscode://anthropic.claude-code/open?prompt=review%20my%20changes
 ```
+
+Чтобы запустить сеанс терминала вместо вкладки VS Code, используйте обработчик CLI `claude-cli://`. См. [Launch sessions from links](/ru/deep-links).
 
 ## Настройка параметров
 
@@ -340,10 +364,11 @@ Claude Code доступен как расширение VS Code (графиче
 
 MCP (Model Context Protocol) servers дают Claude доступ к внешним инструментам, базам данных и API.
 
-Чтобы добавить MCP server, откройте встроенный терминал (`` Ctrl+` `` или `` Cmd+` ``) и выполните:
+Чтобы добавить MCP server, откройте встроенный терминал (`` Ctrl+` `` или `` Cmd+` ``) и выполните `claude mcp add`. Приведённый ниже пример добавляет удалённый MCP server GitHub, который выполняет аутентификацию с помощью [личного токена доступа](https://github.com/settings/personal-access-tokens), передаваемого в качестве заголовка:
 
 ```bash theme={null}
-claude mcp add --transport http github https://api.githubcopilot.com/mcp/
+claude mcp add --transport http github https://api.githubcopilot.com/mcp/ \
+  --header "Authorization: Bearer YOUR_GITHUB_PAT"
 ```
 
 После настройки попросите Claude использовать инструменты (например, "Review PR #456").

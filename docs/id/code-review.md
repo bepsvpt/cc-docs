@@ -7,7 +7,7 @@
 > Siapkan ulasan PR otomatis yang menangkap kesalahan logika, kerentanan keamanan, dan regresi menggunakan analisis multi-agen dari seluruh basis kode Anda
 
 <Note>
-  Code Review sedang dalam pratinjau penelitian, tersedia untuk langganan [Teams dan Enterprise](https://claude.ai/admin-settings/claude-code). Tidak tersedia untuk organisasi dengan [Zero Data Retention](/id/zero-data-retention) yang diaktifkan.
+  Code Review sedang dalam pratinjau penelitian, tersedia untuk langganan [Team dan Enterprise](https://claude.ai/admin-settings/claude-code). Tidak tersedia untuk organisasi dengan [Zero Data Retention](/id/zero-data-retention) yang diaktifkan.
 </Note>
 
 Code Review menganalisis permintaan tarik GitHub Anda dan memposting temuan sebagai komentar sebaris pada baris kode tempat ditemukannya masalah. Armada agen khusus memeriksa perubahan kode dalam konteks basis kode lengkap Anda, mencari kesalahan logika, kerentanan keamanan, kasus tepi yang rusak, dan regresi halus.
@@ -29,7 +29,7 @@ Halaman ini mencakup:
 
 Setelah admin [mengaktifkan Code Review](#set-up-code-review) untuk organisasi Anda, ulasan dipicu ketika PR dibuka, pada setiap push, atau ketika diminta secara manual, tergantung pada perilaku yang dikonfigurasi repositori. Mengomentari `@claude review` [memulai ulasan pada PR](#manually-trigger-reviews) dalam mode apa pun.
 
-Ketika ulasan berjalan, beberapa agen menganalisis diff dan kode sekitarnya secara paralel pada infrastruktur Anthropic. Setiap agen mencari kelas masalah yang berbeda, kemudian langkah verifikasi memeriksa kandidat terhadap perilaku kode aktual untuk menyaring positif palsu. Hasilnya dideduplikasi, diurutkan berdasarkan tingkat keparahan, dan diposting sebagai komentar sebaris pada baris spesifik tempat masalah ditemukan. Jika tidak ada masalah yang ditemukan, Claude memposting komentar konfirmasi singkat pada PR.
+Ketika ulasan berjalan, beberapa agen menganalisis diff dan kode sekitarnya secara paralel pada infrastruktur Anthropic. Setiap agen mencari kelas masalah yang berbeda, kemudian langkah verifikasi memeriksa kandidat terhadap perilaku kode aktual untuk menyaring positif palsu. Hasilnya dideduplikasi, diurutkan berdasarkan tingkat keparahan, dan diposting sebagai komentar sebaris pada baris spesifik tempat masalah ditemukan, dengan ringkasan dalam badan ulasan. Jika tidak ada masalah yang ditemukan, Claude memposting komentar konfirmasi singkat pada PR.
 
 Ulasan diskalakan dalam biaya dengan ukuran dan kompleksitas PR, selesai rata-rata dalam 20 menit. Admin dapat memantau aktivitas ulasan dan pengeluaran melalui [dasbor analitik](#view-usage).
 
@@ -44,6 +44,12 @@ Setiap temuan diberi tag dengan tingkat keparahan:
 | 🟣      | Sudah ada sebelumnya | Bug yang ada di basis kode tetapi tidak diperkenalkan oleh PR ini |
 
 Temuan mencakup bagian penalaran yang dapat diperluas yang dapat Anda perluas untuk memahami mengapa Claude menandai masalah dan bagaimana Claude memverifikasi masalah.
+
+### Menilai dan membalas temuan
+
+Setiap komentar ulasan dari Claude tiba dengan 👍 dan 👎 sudah terpasang sehingga kedua tombol muncul di UI GitHub untuk penilaian satu klik. Klik 👍 jika temuan berguna atau 👎 jika salah atau bising. Anthropic mengumpulkan hitungan reaksi setelah PR digabungkan dan menggunakannya untuk menyetel pengulas. Reaksi tidak memicu ulasan kembali atau mengubah apa pun pada PR.
+
+Membalas komentar sebaris tidak mendorong Claude untuk merespons atau memperbarui PR. Untuk bertindak atas temuan, perbaiki kode dan push. Jika PR berlangganan ulasan yang dipicu push, jalankan berikutnya menyelesaikan utas ketika masalah diperbaiki. Untuk meminta ulasan segar tanpa push, komentari `@claude review once` sebagai [komentar PR tingkat atas](#manually-trigger-reviews).
 
 ### Output jalankan pemeriksaan
 
@@ -135,14 +141,14 @@ Jika ulasan sudah berjalan pada PR tersebut, permintaan antri sampai ulasan yang
 
 ## Sesuaikan ulasan
 
-Code Review membaca dua file dari repositori Anda untuk memandu apa yang ditandai. Keduanya bersifat aditif di atas pemeriksaan kebenaran default:
+Code Review membaca dua file dari repositori Anda untuk memandu apa yang ditandai. Keduanya berbeda dalam seberapa kuat mereka mempengaruhi ulasan:
 
-* **`CLAUDE.md`**: instruksi proyek bersama yang digunakan Claude Code untuk semua tugas, bukan hanya ulasan. Gunakan ketika panduan juga berlaku untuk sesi Claude Code interaktif.
-* **`REVIEW.md`**: panduan khusus ulasan, dibaca secara eksklusif selama ulasan kode. Gunakan untuk aturan yang ketat tentang apa yang ditandai atau dilewati selama ulasan dan akan mengacaukan `CLAUDE.md` umum Anda.
+* **`CLAUDE.md`**: instruksi proyek bersama yang digunakan Claude Code untuk semua tugas, bukan hanya ulasan. Code Review membacanya sebagai konteks proyek dan menandai pelanggaran yang baru diperkenalkan sebagai nit.
+* **`REVIEW.md`**: instruksi khusus ulasan, disuntikkan langsung ke setiap agen dalam saluran ulasan sebagai prioritas tertinggi. Gunakan untuk mengubah apa yang ditandai, pada tingkat keparahan apa, dan bagaimana temuan dilaporkan.
 
 ### CLAUDE.md
 
-Code Review membaca file `CLAUDE.md` repositori Anda dan memperlakukan pelanggaran yang baru diperkenalkan sebagai temuan tingkat nit. Ini berfungsi dua arah: jika PR Anda mengubah kode dengan cara yang membuat pernyataan `CLAUDE.md` ketinggalan zaman, Claude menandai bahwa dokumen perlu diperbarui juga.
+Code Review membaca file `CLAUDE.md` repositori Anda dan memperlakukan pelanggaran yang baru diperkenalkan sebagai temuan tingkat [nit](#severity-levels). Ini berfungsi dua arah: jika PR Anda mengubah kode dengan cara yang membuat pernyataan `CLAUDE.md` ketinggalan zaman, Claude menandai bahwa dokumen perlu diperbarui juga.
 
 Claude membaca file `CLAUDE.md` di setiap tingkat hierarki direktori Anda, jadi aturan di `CLAUDE.md` subdirektori hanya berlaku untuk file di bawah jalur tersebut. Lihat [dokumentasi memori](/id/memory) untuk lebih lanjut tentang cara kerja `CLAUDE.md`.
 
@@ -150,33 +156,65 @@ Untuk panduan khusus ulasan yang tidak ingin Anda terapkan pada sesi Claude Code
 
 ### REVIEW\.md
 
-Tambahkan file `REVIEW.md` ke akar repositori Anda untuk aturan khusus ulasan. Gunakan untuk mengkodekan:
+`REVIEW.md` adalah file di akar repositori Anda yang mengganti cara Code Review berperilaku di repo Anda. Isinya disuntikkan ke dalam prompt sistem setiap agen dalam saluran ulasan sebagai blok instruksi prioritas tertinggi, mengambil alih dari panduan ulasan default.
 
-* Panduan gaya perusahaan atau tim: "lebih suka pengembalian awal daripada kondisional bersarang"
-* Konvensi khusus bahasa atau kerangka kerja yang tidak dicakup oleh linter
-* Hal-hal yang Claude harus selalu tandai: "rute API baru harus memiliki tes integrasi"
-* Hal-hal yang Claude harus lewati: "jangan berkomentar tentang pemformatan dalam kode yang dihasilkan di bawah `/gen/`"
+Karena ditempel verbatim, `REVIEW.md` adalah instruksi biasa: sintaks [`@` import](/id/memory#import-additional-files) tidak diperluas, dan file yang direferensikan tidak dibaca ke dalam prompt. Letakkan aturan yang ingin Anda terapkan langsung di file.
 
-Contoh `REVIEW.md`:
+#### Apa yang dapat Anda sesuaikan
+
+`REVIEW.md` adalah markdown bentuk bebas, jadi apa pun yang dapat Anda ekspresikan sebagai instruksi ulasan berada dalam cakupan. Pola di bawah ini memiliki dampak paling besar dalam praktik.
+
+**Keparahan**: tentukan ulang apa yang 🔴 Penting berarti untuk repo Anda. Kalibrasi default menargetkan kode produksi; repo dokumen, repo konfigurasi, atau prototipe mungkin menginginkan definisi yang jauh lebih sempit. Nyatakan secara eksplisit kelas temuan mana yang Penting dan mana yang paling banyak Nit. Anda juga dapat meningkatkan ke arah lain, misalnya memperlakukan pelanggaran `CLAUDE.md` apa pun sebagai Penting daripada nit default.
+
+**Volume nit**: batasi berapa banyak komentar 🟡 Nit yang diposting ulasan tunggal. Prosa dan file konfigurasi dapat dipoles selamanya. Batas seperti "laporkan paling banyak lima nit, sebutkan sisanya sebagai hitungan dalam ringkasan" membuat ulasan dapat ditindaklanjuti.
+
+**Aturan lewati**: daftar jalur, pola cabang, dan kategori temuan di mana Claude tidak boleh memposting temuan. Kandidat umum adalah kode yang dihasilkan, lockfile, dependensi yang dijual, dan cabang yang dibuat mesin, bersama dengan apa pun yang CI Anda sudah terapkan seperti linting atau pemeriksaan ejaan. Untuk jalur yang memerlukan beberapa ulasan tetapi bukan pengawasan penuh, tetapkan standar yang lebih tinggi alih-alih melewati sepenuhnya: "di `scripts/`, hanya laporkan jika hampir pasti dan parah."
+
+**Pemeriksaan khusus repo**: tambahkan aturan yang ingin Anda tandai pada setiap PR, seperti "rute API baru harus memiliki tes integrasi." Karena `REVIEW.md` disuntikkan sebagai prioritas tertinggi, ini mendarat lebih andal daripada aturan yang sama dalam `CLAUDE.md` yang panjang.
+
+**Bilah verifikasi**: memerlukan bukti sebelum kelas temuan diposting. Misalnya, "klaim perilaku memerlukan kutipan `file:line` dalam sumber, bukan inferensi dari penamaan" mengurangi positif palsu yang akan menghabiskan penulis putaran perjalanan.
+
+**Konvergensi ulasan kembali**: beri tahu Claude cara berperilaku ketika PR sudah ditinjau. Aturan seperti "setelah ulasan pertama, tekan nit baru dan posting temuan Penting saja" menghentikan perbaikan satu baris dari mencapai putaran ketujuh hanya berdasarkan gaya.
+
+**Bentuk ringkasan**: minta badan ulasan untuk dibuka dengan tally satu baris seperti `2 faktual, 4 gaya`, dan untuk memimpin dengan "tidak ada masalah faktual" ketika itu kasusnya. Penulis ingin mengetahui bentuk pekerjaan sebelum detail.
+
+#### Contoh
+
+`REVIEW.md` ini mengkalibrasi ulang keparahan untuk layanan backend, membatasi nit, melewati file yang dihasilkan, dan menambahkan pemeriksaan khusus repo.
 
 ```markdown theme={null}
-# Panduan Ulasan Kode
+# Instruksi ulasan
+
+## Apa yang Penting berarti di sini
+
+Cadangkan Penting untuk temuan yang akan merusak perilaku, membocorkan data,
+atau memblokir rollback: logika yang tidak benar, kueri basis data yang tidak terbatas, PII
+dalam log atau pesan kesalahan, dan migrasi yang tidak kompatibel
+ke belakang. Gaya, penamaan, dan saran refactoring adalah Nit paling
+banyak.
+
+## Batasi nit
+
+Laporkan paling banyak lima Nit per ulasan. Jika Anda menemukan lebih banyak, katakan "plus N
+item serupa" dalam ringkasan alih-alih mempostingnya sebaris. Jika
+semuanya yang Anda temukan adalah Nit, pimpin ringkasan dengan "Tidak ada masalah pemblokiran."
+
+## Jangan laporkan
+
+- Apa pun yang CI sudah terapkan: lint, pemformatan, kesalahan tipe
+- File yang dihasilkan di bawah `src/gen/` dan file `*.lock` apa pun
+- Kode khusus pengujian yang sengaja melanggar aturan produksi
 
 ## Selalu periksa
-- Titik akhir API baru memiliki tes integrasi yang sesuai
-- Migrasi basis data kompatibel ke belakang
-- Pesan kesalahan tidak membocorkan detail internal kepada pengguna
 
-## Gaya
-- Lebih suka pernyataan `match` daripada pemeriksaan `isinstance` berantai
-- Gunakan logging terstruktur, bukan interpolasi f-string dalam panggilan log
-
-## Lewati
-- File yang dihasilkan di bawah `src/gen/`
-- Perubahan hanya pemformatan dalam file `*.lock`
+- Rute API baru memiliki tes integrasi
+- Baris log tidak menyertakan alamat email, ID pengguna, atau badan permintaan
+- Kueri basis data dibatasi ke penyewa pemanggil
 ```
 
-Claude secara otomatis menemukan `REVIEW.md` di akar repositori. Tidak ada konfigurasi yang diperlukan.
+#### Jaga agar tetap fokus
+
+Panjang memiliki biaya: `REVIEW.md` yang panjang mengencerkan aturan yang paling penting. Jaga agar tetap pada instruksi yang mengubah perilaku ulasan, dan tinggalkan konteks proyek umum di `CLAUDE.md`.
 
 ## Lihat penggunaan
 
@@ -189,7 +227,7 @@ Buka [claude.ai/analytics/code-review](https://claude.ai/analytics/code-review) 
 | Feedback             | Hitungan komentar ulasan yang secara otomatis diselesaikan karena pengembang mengatasi masalah |
 | Repository breakdown | Hitungan per-repo PR yang ditinjau dan komentar yang diselesaikan                              |
 
-Tabel repositori di pengaturan admin juga menampilkan biaya rata-rata per ulasan untuk setiap repo.
+Tabel repositori di pengaturan admin juga menampilkan biaya rata-rata per ulasan untuk setiap repo. Angka biaya dasbor adalah perkiraan untuk memantau aktivitas; untuk pengeluaran yang akurat pada tagihan, lihat tagihan Anthropic Anda.
 
 ## Harga
 
@@ -203,7 +241,7 @@ Pemicu ulasan yang Anda pilih mempengaruhi biaya total:
 
 Dalam mode apa pun, mengomentari `@claude review` [memilih PR ke dalam ulasan yang dipicu push](#manually-trigger-reviews), jadi biaya tambahan terjadi per push setelah komentar tersebut. Untuk menjalankan ulasan tunggal tanpa berlangganan ke push masa depan, komentari `@claude review once` sebagai gantinya.
 
-Biaya muncul pada tagihan Anthropic Anda terlepas dari apakah organisasi Anda menggunakan AWS Bedrock atau Google Vertex AI untuk fitur Claude Code lainnya. Untuk menetapkan batas pengeluaran bulanan untuk Code Review, buka [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) dan konfigurasikan batas untuk layanan Claude Code Review.
+Biaya muncul pada tagihan Anthropic Anda terlepas dari apakah organisasi Anda menggunakan Amazon Bedrock atau Google Vertex AI untuk fitur Claude Code lainnya. Untuk menetapkan batas pengeluaran bulanan untuk Code Review, buka [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) dan konfigurasikan batas untuk layanan Claude Code Review.
 
 Pantau pengeluaran melalui bagan biaya mingguan di [analitik](#view-usage) atau kolom biaya rata-rata per-repo di pengaturan admin.
 
@@ -218,6 +256,10 @@ Ketika infrastruktur ulasan mengalami kesalahan internal atau melampaui batas wa
 Untuk menjalankan ulasan lagi, komentari `@claude review once` pada PR. Ini memulai ulasan segar tanpa berlangganan PR ke push masa depan. Jika PR sudah berlangganan ulasan yang dipicu push, push komit baru juga memulai ulasan baru.
 
 Tombol **Re-run** di tab Checks GitHub tidak memicu ulang Code Review. Gunakan perintah komentar atau push baru sebagai gantinya.
+
+### Ulasan tidak berjalan dan PR menampilkan pesan batas pengeluaran
+
+Ketika batas pengeluaran bulanan organisasi Anda tercapai, Code Review memposting komentar tunggal pada PR yang menjelaskan bahwa ulasan dilewati. Ulasan dilanjutkan secara otomatis pada awal periode penagihan berikutnya, atau segera ketika admin menaikkan batas di [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage).
 
 ### Temukan masalah yang tidak ditampilkan sebagai komentar sebaris
 

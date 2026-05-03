@@ -17,7 +17,7 @@ Seu uso do Claude Code está sujeito a:
 
 ### Acordos comerciais
 
-Se você está usando a Claude API diretamente (1P) ou acessando-a através do AWS Bedrock ou Google Vertex (3P), seu acordo comercial existente será aplicado ao uso do Claude Code, a menos que tenhamos acordado mutuamente de outra forma.
+Se você está usando a Claude API diretamente (1P) ou acessando-a através do Amazon Bedrock ou Google Vertex (3P), seu acordo comercial existente será aplicado ao uso do Claude Code, a menos que tenhamos acordado mutuamente de outra forma.
 
 ## Conformidade
 

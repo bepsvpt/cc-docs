@@ -246,13 +246,35 @@ Certains raccourcis dépendent du panneau qui est « actif » (recevant l'entré
 
 L'extension enregistre un gestionnaire URI à `vscode://anthropic.claude-code/open`. Utilisez-le pour ouvrir un nouvel onglet Claude Code à partir de vos propres outils : un alias shell, un signet de navigateur ou tout script capable d'ouvrir une URL. Si VS Code n'est pas déjà en cours d'exécution, l'ouverture de l'URL le lance d'abord. Si VS Code est déjà en cours d'exécution, l'URL s'ouvre dans la fenêtre actuellement active.
 
-Invoquez le gestionnaire avec l'ouvreur d'URL de votre système d'exploitation. Sur macOS :
+Invoquez le gestionnaire avec l'ouvreur d'URL de votre système d'exploitation.
 
-```bash theme={null}
-open "vscode://anthropic.claude-code/open"
-```
+<Tabs>
+  <Tab title="macOS">
+    ```bash theme={null}
+    open "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
 
-Utilisez `xdg-open` sur Linux ou `start` sur Windows.
+  <Tab title="Linux">
+    ```bash theme={null}
+    xdg-open "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
+
+  <Tab title="Windows">
+    Dans PowerShell :
+
+    ```powershell theme={null}
+    Start-Process "vscode://anthropic.claude-code/open"
+    ```
+
+    Dans `cmd.exe`, `start` traite son premier argument entre guillemets comme un titre de fenêtre, donc passez un titre vide avant l'URL :
+
+    ```cmd theme={null}
+    start "" "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
+</Tabs>
 
 Le gestionnaire accepte deux paramètres de requête optionnels :
 
@@ -266,6 +288,8 @@ Par exemple, pour ouvrir un onglet pré-rempli avec « review my changes » :
 ```text theme={null}
 vscode://anthropic.claude-code/open?prompt=review%20my%20changes
 ```
+
+Pour lancer une session terminal au lieu d'un onglet VS Code, utilisez le gestionnaire `claude-cli://` de la CLI. Consultez [Lancer des sessions à partir de liens](/fr/deep-links).
 
 ## Configurer les paramètres
 
@@ -340,10 +364,11 @@ Lorsque Claude exécute des commandes longues, l'extension affiche la progressio
 
 Les serveurs MCP (Model Context Protocol) donnent à Claude accès à des outils externes, des bases de données et des API.
 
-Pour ajouter un serveur MCP, ouvrez le terminal intégré (`` Ctrl+` `` ou `` Cmd+` ``) et exécutez :
+Pour ajouter un serveur MCP, ouvrez le terminal intégré (`` Ctrl+` `` ou `` Cmd+` ``) et exécutez `claude mcp add`. L'exemple ci-dessous ajoute le serveur MCP distant de GitHub, qui s'authentifie avec un [jeton d'accès personnel](https://github.com/settings/personal-access-tokens) transmis en tant qu'en-tête :
 
 ```bash theme={null}
-claude mcp add --transport http github https://api.githubcopilot.com/mcp/
+claude mcp add --transport http github https://api.githubcopilot.com/mcp/ \
+  --header "Authorization: Bearer YOUR_GITHUB_PAT"
 ```
 
 Une fois configuré, demandez à Claude d'utiliser les outils (par exemple, « Review PR #456 »).

@@ -9,11 +9,11 @@
 Claude Code GitHub Actions apporte l'automatisation alimentée par l'IA à votre flux de travail GitHub. Avec une simple mention `@claude` dans n'importe quelle PR ou issue, Claude peut analyser votre code, créer des pull requests, implémenter des fonctionnalités et corriger des bugs - tout en respectant les normes de votre projet. Pour les révisions automatiques publiées sur chaque PR sans déclencheur, consultez [GitHub Code Review](/fr/code-review).
 
 <Note>
-  Claude Code GitHub Actions est construit sur le [Claude Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview), qui permet l'intégration programmatique de Claude Code dans vos applications. Vous pouvez utiliser le SDK pour créer des flux de travail d'automatisation personnalisés au-delà de GitHub Actions.
+  Claude Code GitHub Actions est construit sur le [Claude Agent SDK](/fr/agent-sdk/overview), qui permet l'intégration programmatique de Claude Code dans vos applications. Vous pouvez utiliser le SDK pour créer des flux de travail d'automatisation personnalisés au-delà de GitHub Actions.
 </Note>
 
 <Info>
-  **Claude Opus 4.6 est maintenant disponible.** Claude Code GitHub Actions utilise par défaut Sonnet. Pour utiliser Opus 4.6, configurez le [paramètre model](#breaking-changes-reference) pour utiliser `claude-opus-4-6`.
+  **Claude Opus 4.7 est maintenant disponible.** Claude Code GitHub Actions utilise par défaut Sonnet. Pour utiliser Opus 4.7, configurez le [paramètre model](#breaking-changes-reference) pour utiliser `claude-opus-4-7`.
 </Info>
 
 ## Pourquoi utiliser Claude Code GitHub Actions ?
@@ -45,7 +45,7 @@ Cette commande vous guidera à travers la configuration de l'application GitHub 
 <Note>
   * Vous devez être administrateur du repository pour installer l'application GitHub et ajouter des secrets
   * L'application GitHub demandera des permissions de lecture et d'écriture pour Contents, Issues et Pull requests
-  * Cette méthode de démarrage rapide n'est disponible que pour les utilisateurs directs de l'API Claude. Si vous utilisez AWS Bedrock ou Google Vertex AI, veuillez consulter la section [Utilisation avec AWS Bedrock et Google Vertex AI](#using-with-aws-bedrock-%26-google-vertex-ai).
+  * Cette méthode de démarrage rapide n'est disponible que pour les utilisateurs directs de l'API Claude. Si vous utilisez Amazon Bedrock ou Google Vertex AI, veuillez consulter la section [Utilisation avec Amazon Bedrock et Google Vertex AI](#using-with-amazon-bedrock-%26-google-vertex-ai).
 </Note>
 
 ## Configuration manuelle
@@ -274,7 +274,7 @@ Visitez le [répertoire d'exemples](https://github.com/anthropics/claude-code-ac
   Lorsque vous répondez à des commentaires d'issue ou de PR, Claude répond automatiquement aux mentions @claude. Pour les autres événements, utilisez le paramètre `prompt` pour fournir des instructions.
 </Tip>
 
-## Utilisation avec AWS Bedrock et Google Vertex AI
+## Utilisation avec Amazon Bedrock et Google Vertex AI
 
 Pour les environnements d'entreprise, vous pouvez utiliser Claude Code GitHub Actions avec votre propre infrastructure cloud. Cette approche vous donne le contrôle sur la résidence des données et la facturation tout en maintenant les mêmes fonctionnalités.
 
@@ -289,7 +289,7 @@ Avant de configurer Claude Code GitHub Actions avec les fournisseurs cloud, vous
 3. Un compte de service avec les permissions requises
 4. Une application GitHub (recommandée) ou utilisez le GITHUB\_TOKEN par défaut
 
-#### Pour AWS Bedrock :
+#### Pour Amazon Bedrock :
 
 1. Un compte AWS avec Amazon Bedrock activé
 2. GitHub OIDC Identity Provider configuré dans AWS

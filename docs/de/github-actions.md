@@ -9,11 +9,11 @@
 Claude Code GitHub Actions bringt KI-gestützte Automatisierung in Ihren GitHub-Workflow. Mit einer einfachen `@claude`-Erwähnung in einem beliebigen PR oder Issue kann Claude Ihren Code analysieren, Pull Requests erstellen, Features implementieren und Bugs beheben – alles während er die Standards Ihres Projekts befolgt. Für automatische Reviews, die auf jedem PR ohne Trigger gepostet werden, siehe [GitHub Code Review](/de/code-review).
 
 <Note>
-  Claude Code GitHub Actions basiert auf dem [Claude Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview), das die programmgesteuerte Integration von Claude Code in Ihre Anwendungen ermöglicht. Sie können das SDK verwenden, um benutzerdefinierte Automatisierungs-Workflows über GitHub Actions hinaus zu erstellen.
+  Claude Code GitHub Actions basiert auf dem [Claude Agent SDK](/de/agent-sdk/overview), das die programmgesteuerte Integration von Claude Code in Ihre Anwendungen ermöglicht. Sie können das SDK verwenden, um benutzerdefinierte Automatisierungs-Workflows über GitHub Actions hinaus zu erstellen.
 </Note>
 
 <Info>
-  **Claude Opus 4.6 ist jetzt verfügbar.** Claude Code GitHub Actions verwenden standardmäßig Sonnet. Um Opus 4.6 zu verwenden, konfigurieren Sie den [Model-Parameter](#breaking-changes-reference) auf `claude-opus-4-6`.
+  **Claude Opus 4.7 ist jetzt verfügbar.** Claude Code GitHub Actions verwenden standardmäßig Sonnet. Um Opus 4.7 zu verwenden, konfigurieren Sie den [Model-Parameter](#breaking-changes-reference) auf `claude-opus-4-7`.
 </Info>
 
 ## Warum Claude Code GitHub Actions verwenden?
@@ -45,7 +45,7 @@ Dieser Befehl führt Sie durch die Einrichtung der GitHub-App und erforderlichen
 <Note>
   * Sie müssen ein Repository-Admin sein, um die GitHub-App zu installieren und Secrets hinzuzufügen
   * Die GitHub-App fordert Lese- und Schreibberechtigungen für Contents, Issues und Pull Requests an
-  * Diese Schnellstart-Methode ist nur für direkte Claude API-Benutzer verfügbar. Wenn Sie AWS Bedrock oder Google Vertex AI verwenden, siehe bitte den Abschnitt [Verwendung mit AWS Bedrock & Google Vertex AI](#using-with-aws-bedrock-%26-google-vertex-ai).
+  * Diese Schnellstart-Methode ist nur für direkte Claude API-Benutzer verfügbar. Wenn Sie Amazon Bedrock oder Google Vertex AI verwenden, siehe bitte den Abschnitt [Verwendung mit Amazon Bedrock & Google Vertex AI](#using-with-amazon-bedrock-%26-google-vertex-ai).
 </Note>
 
 ## Manuelles Setup
@@ -274,7 +274,7 @@ Besuchen Sie das [Beispielverzeichnis](https://github.com/anthropics/claude-code
   Wenn Claude auf Issue- oder PR-Kommentare antwortet, antwortet er automatisch auf @claude-Erwähnungen. Für andere Events verwenden Sie den `prompt`-Parameter, um Anweisungen bereitzustellen.
 </Tip>
 
-## Verwendung mit AWS Bedrock & Google Vertex AI
+## Verwendung mit Amazon Bedrock & Google Vertex AI
 
 Für Unternehmensumgebungen können Sie Claude Code GitHub Actions mit Ihrer eigenen Cloud-Infrastruktur verwenden. Dieser Ansatz gibt Ihnen Kontrolle über Datenresidenz und Abrechnung, während Sie die gleiche Funktionalität beibehalten.
 
@@ -289,7 +289,7 @@ Bevor Sie Claude Code GitHub Actions mit Cloud-Providern einrichten, benötigen 
 3. Ein Service-Konto mit erforderlichen Berechtigungen
 4. Eine GitHub-App (empfohlen) oder verwenden Sie das Standard-GITHUB\_TOKEN
 
-#### Für AWS Bedrock:
+#### Für Amazon Bedrock:
 
 1. Ein AWS-Konto mit aktiviertem Amazon Bedrock
 2. GitHub OIDC Identity Provider in AWS konfiguriert
@@ -340,7 +340,7 @@ Bevor Sie Claude Code GitHub Actions mit Cloud-Providern einrichten, benötigen 
     Wählen Sie Ihren Cloud-Provider und richten Sie sichere Authentifizierung ein:
 
     <AccordionGroup>
-      <Accordion title="AWS Bedrock">
+      <Accordion title="Amazon Bedrock">
         **Konfigurieren Sie AWS, um GitHub Actions die sichere Authentifizierung ohne Speicherung von Anmeldedaten zu ermöglichen.**
 
         > **Sicherheitshinweis**: Verwenden Sie Repository-spezifische Konfigurationen und gewähren Sie nur die minimal erforderlichen Berechtigungen.
@@ -439,7 +439,7 @@ Bevor Sie Claude Code GitHub Actions mit Cloud-Providern einrichten, benötigen 
        * `APP_ID`: Die ID Ihrer GitHub-App
        * `APP_PRIVATE_KEY`: Der Inhalt des privaten Schlüssels (.pem)
 
-    #### Für AWS Bedrock
+    #### Für Amazon Bedrock
 
     1. **Für AWS-Authentifizierung**:
        * `AWS_ROLE_TO_ASSUME`
@@ -450,13 +450,13 @@ Bevor Sie Claude Code GitHub Actions mit Cloud-Providern einrichten, benötigen 
   </Step>
 
   <Step title="Erstellen Sie Workflow-Dateien">
-    Erstellen Sie GitHub Actions-Workflow-Dateien, die sich in Ihren Cloud-Provider integrieren. Die folgenden Beispiele zeigen vollständige Konfigurationen für AWS Bedrock und Google Vertex AI:
+    Erstellen Sie GitHub Actions-Workflow-Dateien, die sich in Ihren Cloud-Provider integrieren. Die folgenden Beispiele zeigen vollständige Konfigurationen für Amazon Bedrock und Google Vertex AI:
 
     <AccordionGroup>
-      <Accordion title="AWS Bedrock-Workflow">
+      <Accordion title="Amazon Bedrock-Workflow">
         **Voraussetzungen:**
 
-        * AWS Bedrock-Zugriff aktiviert mit Claude-Modell-Berechtigungen
+        * Amazon Bedrock-Zugriff aktiviert mit Claude-Modell-Berechtigungen
         * GitHub als OIDC-Identity-Provider in AWS konfiguriert
         * IAM-Rolle mit Bedrock-Berechtigungen, die GitHub Actions vertraut
 
@@ -628,7 +628,7 @@ Die Claude Code Action v1 verwendet eine vereinfachte Konfiguration:
 | `anthropic_api_key` | Claude API-Schlüssel                                                | Ja\*\*       |
 | `github_token`      | GitHub-Token für API-Zugriff                                        | Nein         |
 | `trigger_phrase`    | Benutzerdefinierte Trigger-Phrase (Standard: "@claude")             | Nein         |
-| `use_bedrock`       | Verwenden Sie AWS Bedrock statt Claude API                          | Nein         |
+| `use_bedrock`       | Verwenden Sie Amazon Bedrock statt Claude API                       | Nein         |
 | `use_vertex`        | Verwenden Sie Google Vertex AI statt Claude API                     | Nein         |
 
 \*Prompt ist optional – wenn für Issue/PR-Kommentare weggelassen, antwortet Claude auf Trigger-Phrase\

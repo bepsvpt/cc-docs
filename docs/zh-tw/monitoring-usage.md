@@ -859,7 +859,7 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * 識別高使用量工作階段以進行最佳化
 
 <Note>
-  成本指標是近似值。如需官方帳單資料，請參閱您的 API 提供者（Claude Console、AWS Bedrock 或 Google Cloud Vertex）。
+  成本指標是近似值。如需官方帳單資料，請參閱您的 API 提供者（Claude Console、Amazon Bedrock 或 Google Cloud Vertex）。
 </Note>
 
 ### 警報和分段

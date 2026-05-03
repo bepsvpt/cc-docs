@@ -246,13 +246,35 @@ Einige Tastaturkürzel hängen davon ab, welches Panel „fokussiert" ist (Tasta
 
 Die Erweiterung registriert einen URI-Handler unter `vscode://anthropic.claude-code/open`. Verwenden Sie ihn, um eine neue Claude Code-Registerkarte von Ihrem eigenen Tooling aus zu öffnen: ein Shell-Alias, ein Browser-Lesezeichen oder ein beliebiges Skript, das eine URL öffnen kann. Wenn VS Code nicht bereits ausgeführt wird, wird es beim Öffnen der URL zuerst gestartet. Wenn VS Code bereits ausgeführt wird, wird die URL in dem Fenster geöffnet, das derzeit fokussiert ist.
 
-Rufen Sie den Handler mit dem URL-Opener Ihres Betriebssystems auf. Auf macOS:
+Rufen Sie den Handler mit dem URL-Opener Ihres Betriebssystems auf.
 
-```bash theme={null}
-open "vscode://anthropic.claude-code/open"
-```
+<Tabs>
+  <Tab title="macOS">
+    ```bash theme={null}
+    open "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
 
-Verwenden Sie `xdg-open` unter Linux oder `start` unter Windows.
+  <Tab title="Linux">
+    ```bash theme={null}
+    xdg-open "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
+
+  <Tab title="Windows">
+    In PowerShell:
+
+    ```powershell theme={null}
+    Start-Process "vscode://anthropic.claude-code/open"
+    ```
+
+    In `cmd.exe` behandelt `start` sein erstes Argument in Anführungszeichen als Fenstertitel, daher übergeben Sie einen leeren Titel vor der URL:
+
+    ```cmd theme={null}
+    start "" "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
+</Tabs>
 
 Der Handler akzeptiert zwei optionale Abfrageparameter:
 
@@ -266,6 +288,8 @@ Um beispielsweise eine Registerkarte mit „review my changes" vorausgefüllt zu
 ```text theme={null}
 vscode://anthropic.claude-code/open?prompt=review%20my%20changes
 ```
+
+Um stattdessen eine Terminal-Sitzung zu starten, verwenden Sie den CLI-Handler `claude-cli://`. Siehe [Sitzungen von Links aus starten](/de/deep-links).
 
 ## Konfigurieren Sie Einstellungen
 
@@ -302,7 +326,7 @@ Claude Code ist sowohl als VS Code-Erweiterung (grafisches Panel) als auch als C
 
 | Funktion                 | CLI                  | VS Code-Erweiterung                                                                                   |
 | ------------------------ | -------------------- | ----------------------------------------------------------------------------------------------------- |
-| Befehle und skills       | [Alle](/de/commands) | Teilmenge (geben Sie `/` ein, um verfügbare anzuzeigen)                                               |
+| Befehle und Skills       | [Alle](/de/commands) | Teilmenge (geben Sie `/` ein, um verfügbare anzuzeigen)                                               |
 | MCP server-Konfiguration | Ja                   | Teilweise (fügen Sie Server über CLI hinzu; verwalten Sie vorhandene Server mit `/mcp` im Chat-Panel) |
 | Checkpoints              | Ja                   | Ja                                                                                                    |
 | `!` Bash-Tastaturkürzel  | Ja                   | Nein                                                                                                  |
@@ -340,10 +364,11 @@ Wenn Claude lange laufende Befehle ausführt, zeigt die Erweiterung den Fortschr
 
 MCP (Model Context Protocol) servers geben Claude Zugriff auf externe Tools, Datenbanken und APIs.
 
-Um einen MCP server hinzuzufügen, öffnen Sie das integrierte Terminal (`` Ctrl+` `` oder `` Cmd+` ``) und führen Sie aus:
+Um einen MCP server hinzuzufügen, öffnen Sie das integrierte Terminal (`` Ctrl+` `` oder `` Cmd+` ``) und führen Sie `claude mcp add` aus. Das folgende Beispiel fügt Githubs Remote-MCP-Server hinzu, der sich mit einem [persönlichen Zugangstoken](https://github.com/settings/personal-access-tokens) authentifiziert, das als Header übergeben wird:
 
 ```bash theme={null}
-claude mcp add --transport http github https://api.githubcopilot.com/mcp/
+claude mcp add --transport http github https://api.githubcopilot.com/mcp/ \
+  --header "Authorization: Bearer YOUR_GITHUB_PAT"
 ```
 
 Nach der Konfiguration bitten Sie Claude, die Tools zu verwenden (z. B. „Review PR #456").

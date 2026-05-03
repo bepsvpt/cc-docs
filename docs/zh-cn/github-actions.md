@@ -9,11 +9,11 @@
 Claude Code GitHub Actions 为您的 GitHub 工作流带来了 AI 驱动的自动化。只需在任何 PR 或 issue 中简单地提及 `@claude`，Claude 就可以分析您的代码、创建拉取请求、实现功能和修复错误 - 所有这些都遵循您项目的标准。如需在每个 PR 上自动发布评论而无需触发器，请参阅 [GitHub Code Review](/zh-CN/code-review)。
 
 <Note>
-  Claude Code GitHub Actions 建立在 [Claude Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview) 之上，该 SDK 支持将 Claude Code 以编程方式集成到您的应用程序中。您可以使用该 SDK 构建超越 GitHub Actions 的自定义自动化工作流。
+  Claude Code GitHub Actions 建立在 [Claude Agent SDK](/zh-CN/agent-sdk/overview) 之上，该 SDK 支持将 Claude Code 以编程方式集成到您的应用程序中。您可以使用该 SDK 构建超越 GitHub Actions 的自定义自动化工作流。
 </Note>
 
 <Info>
-  **Claude Opus 4.6 现已推出。** Claude Code GitHub Actions 默认使用 Sonnet。要使用 Opus 4.6，请配置 [model 参数](#breaking-changes-reference)以使用 `claude-opus-4-6`。
+  **Claude Opus 4.7 现已推出。** Claude Code GitHub Actions 默认使用 Sonnet。要使用 Opus 4.7，请配置 [model 参数](#breaking-changes-reference)以使用 `claude-opus-4-7`。
 </Info>
 
 ## 为什么使用 Claude Code GitHub Actions？
@@ -45,7 +45,7 @@ Claude Code 提供了一个强大的 GitHub Action，改变了您处理代码的
 <Note>
   * 您必须是仓库管理员才能安装 GitHub 应用并添加密钥
   * GitHub 应用将请求对内容、Issue 和拉取请求的读写权限
-  * 此快速启动方法仅适用于直接 Claude API 用户。如果您使用 AWS Bedrock 或 Google Vertex AI，请参阅 [使用 AWS Bedrock 和 Google Vertex AI](#using-with-aws-bedrock-%26-google-vertex-ai) 部分。
+  * 此快速启动方法仅适用于直接 Claude API 用户。如果您使用 Amazon Bedrock 或 Google Vertex AI，请参阅 [使用 Amazon Bedrock 和 Google Vertex AI](#using-with-amazon-bedrock-%26-google-vertex-ai) 部分。
 </Note>
 
 ## 手动设置
@@ -274,7 +274,7 @@ Claude Code Action v1 使用统一参数简化了配置：
   当响应 issue 或 PR 评论时，Claude 会自动响应 @claude 提及。对于其他事件，使用 `prompt` 参数提供说明。
 </Tip>
 
-## 使用 AWS Bedrock 和 Google Vertex AI
+## 使用 Amazon Bedrock 和 Google Vertex AI
 
 对于企业环境，您可以将 Claude Code GitHub Actions 与您自己的云基础设施一起使用。这种方法让您可以控制数据驻留和计费，同时保持相同的功能。
 
@@ -289,7 +289,7 @@ Claude Code Action v1 使用统一参数简化了配置：
 3. 具有所需权限的服务账户
 4. GitHub 应用（推荐）或使用默认 GITHUB\_TOKEN
 
-#### 对于 AWS Bedrock：
+#### 对于 Amazon Bedrock：
 
 1. 启用了 Amazon Bedrock 的 AWS 账户
 2. 在 AWS 中配置的 GitHub OIDC 身份提供商
@@ -340,7 +340,7 @@ Claude Code Action v1 使用统一参数简化了配置：
     选择您的云提供商并设置安全身份验证：
 
     <AccordionGroup>
-      <Accordion title="AWS Bedrock">
+      <Accordion title="Amazon Bedrock">
         **配置 AWS 以允许 GitHub Actions 安全地进行身份验证，而无需存储凭证。**
 
         > **安全说明**：使用特定于仓库的配置并仅授予最少所需的权限。
@@ -450,13 +450,13 @@ Claude Code Action v1 使用统一参数简化了配置：
   </Step>
 
   <Step title="创建工作流文件">
-    创建与您的云提供商集成的 GitHub Actions 工作流文件。下面的示例显示了 AWS Bedrock 和 Google Vertex AI 的完整配置：
+    创建与您的云提供商集成的 GitHub Actions 工作流文件。下面的示例显示了 Amazon Bedrock 和 Google Vertex AI 的完整配置：
 
     <AccordionGroup>
-      <Accordion title="AWS Bedrock 工作流">
+      <Accordion title="Amazon Bedrock 工作流">
         **前置条件：**
 
-        * 启用了 AWS Bedrock 访问权限，具有 Claude 模型权限
+        * 启用了 Amazon Bedrock 访问权限，具有 Claude 模型权限
         * GitHub 在 AWS 中配置为 OIDC 身份提供商
         * 具有 Bedrock 权限的 IAM 角色，信任 GitHub Actions
 
@@ -628,7 +628,7 @@ Claude Code Action v1 使用简化的配置：
 | `anthropic_api_key` | Claude API 密钥                              | 是\*\* |
 | `github_token`      | 用于 API 访问的 GitHub 令牌                       | 否     |
 | `trigger_phrase`    | 自定义触发短语（默认："@claude"）                      | 否     |
-| `use_bedrock`       | 使用 AWS Bedrock 而不是 Claude API              | 否     |
+| `use_bedrock`       | 使用 Amazon Bedrock 而不是 Claude API           | 否     |
 | `use_vertex`        | 使用 Google Vertex AI 而不是 Claude API         | 否     |
 
 \*提示是可选的 - 当对 issue/PR 评论省略时，Claude 响应触发短语\

@@ -7,7 +7,7 @@
 > Configurez des révisions de PR automatisées qui détectent les erreurs logiques, les vulnérabilités de sécurité et les régressions en utilisant l'analyse multi-agents de votre base de code complète
 
 <Note>
-  Code Review est en aperçu de recherche, disponible pour les abonnements [Teams et Enterprise](https://claude.ai/admin-settings/claude-code). Il n'est pas disponible pour les organisations avec [Zero Data Retention](/fr/zero-data-retention) activé.
+  Code Review est en aperçu de recherche, disponible pour les abonnements [Team et Enterprise](https://claude.ai/admin-settings/claude-code). Il n'est pas disponible pour les organisations avec [Zero Data Retention](/fr/zero-data-retention) activé.
 </Note>
 
 Code Review analyse vos pull requests GitHub et publie les résultats sous forme de commentaires en ligne sur les lignes de code où il a trouvé des problèmes. Une flotte d'agents spécialisés examine les modifications de code dans le contexte de votre base de code complète, en recherchant les erreurs logiques, les vulnérabilités de sécurité, les cas limites cassés et les régressions subtiles.
@@ -29,7 +29,7 @@ Cette page couvre :
 
 Une fois qu'un administrateur [active Code Review](#set-up-code-review) pour votre organisation, les révisions se déclenchent à l'ouverture d'une PR, à chaque push, ou sur demande manuelle, selon le comportement configuré du référentiel. Commenter `@claude review` [démarre les révisions sur une PR](#manually-trigger-reviews) dans n'importe quel mode.
 
-Lorsqu'une révision s'exécute, plusieurs agents analysent le diff et le code environnant en parallèle sur l'infrastructure Anthropic. Chaque agent recherche une classe de problème différente, puis une étape de vérification vérifie les candidats par rapport au comportement réel du code pour filtrer les faux positifs. Les résultats sont dédupliqués, classés par gravité et publiés sous forme de commentaires en ligne sur les lignes spécifiques où les problèmes ont été trouvés. Si aucun problème n'est trouvé, Claude publie un court commentaire de confirmation sur la PR.
+Lorsqu'une révision s'exécute, plusieurs agents analysent le diff et le code environnant en parallèle sur l'infrastructure Anthropic. Chaque agent recherche une classe de problème différente, puis une étape de vérification vérifie les candidats par rapport au comportement réel du code pour filtrer les faux positifs. Les résultats sont dédupliqués, classés par gravité et publiés sous forme de commentaires en ligne sur les lignes spécifiques où les problèmes ont été trouvés, avec un résumé dans le corps de la révision. Si aucun problème n'est trouvé, Claude publie un court commentaire de confirmation sur la PR.
 
 Les révisions s'adaptent en coût à la taille et à la complexité de la PR, se complétant en moyenne en 20 minutes. Les administrateurs peuvent surveiller l'activité de révision et les dépenses via le [tableau de bord analytique](#view-usage).
 
@@ -44,6 +44,12 @@ Chaque résultat est étiqueté avec un niveau de gravité :
 | 🟣       | Préexistant | Un bug qui existe dans la base de code mais n'a pas été introduit par cette PR |
 
 Les résultats incluent une section de raisonnement étendu réductible que vous pouvez développer pour comprendre pourquoi Claude a signalé le problème et comment il a vérifié le problème.
+
+### Évaluer et répondre aux résultats
+
+Chaque commentaire de révision de Claude arrive avec 👍 et 👎 déjà attachés de sorte que les deux boutons apparaissent dans l'interface utilisateur GitHub pour un classement en un clic. Cliquez sur 👍 si le résultat était utile ou 👎 s'il était incorrect ou bruyant. Anthropic collecte les comptages de réactions après la fusion de la PR et les utilise pour affiner le réviseur. Les réactions ne déclenchent pas une re-révision ou ne changent rien sur la PR.
+
+Répondre à un commentaire en ligne ne pousse pas Claude à répondre ou à mettre à jour la PR. Pour agir sur un résultat, corrigez le code et poussez. Si la PR est abonnée aux révisions déclenchées par push, la prochaine exécution résout le thread quand le problème est corrigé. Pour demander une révision fraîche sans pousser, commentez `@claude review once` comme un [commentaire PR de haut niveau](#manually-trigger-reviews).
 
 ### Sortie de l'exécution de vérification
 
@@ -135,14 +141,14 @@ Si une révision s'exécute déjà sur cette PR, la demande est mise en file d'a
 
 ## Personnaliser les révisions
 
-Code Review lit deux fichiers de votre référentiel pour guider ce qu'il signale. Les deux s'ajoutent aux vérifications de correction par défaut :
+Code Review lit deux fichiers de votre référentiel pour guider ce qu'il signale. Ils diffèrent dans la force avec laquelle ils influencent la révision :
 
-* **`CLAUDE.md`** : instructions de projet partagées que Claude Code utilise pour toutes les tâches, pas seulement les révisions. Utilisez-le quand la guidance s'applique également aux sessions Claude Code interactives.
-* **`REVIEW.md`** : guidance de révision uniquement, lue exclusivement lors des révisions de code. Utilisez-le pour les règles qui concernent strictement ce qu'il faut signaler ou ignorer lors de la révision et qui encombreraient votre `CLAUDE.md` général.
+* **`CLAUDE.md`** : instructions de projet partagées que Claude Code utilise pour toutes les tâches, pas seulement les révisions. Code Review le lit comme contexte de projet et signale les violations nouvellement introduites comme des nits.
+* **`REVIEW.md`** : instructions de révision uniquement, injectées directement dans chaque agent du pipeline de révision comme priorité la plus élevée. Utilisez-le pour modifier ce qui est signalé, à quelle gravité, et comment les résultats sont rapportés.
 
 ### CLAUDE.md
 
-Code Review lit vos fichiers `CLAUDE.md` du référentiel et traite les violations nouvellement introduites comme des résultats au niveau nit. Cela fonctionne bidirectionnellement : si votre PR modifie le code d'une manière qui rend une déclaration `CLAUDE.md` obsolète, Claude signale que les docs doivent être mises à jour aussi.
+Code Review lit vos fichiers `CLAUDE.md` du référentiel et traite les violations nouvellement introduites comme des [résultats au niveau nit](#severity-levels). Cela fonctionne bidirectionnellement : si votre PR modifie le code d'une manière qui rend une déclaration `CLAUDE.md` obsolète, Claude signale que les docs doivent être mises à jour aussi.
 
 Claude lit les fichiers `CLAUDE.md` à chaque niveau de votre hiérarchie de répertoires, donc les règles dans le `CLAUDE.md` d'un sous-répertoire s'appliquent uniquement aux fichiers sous ce chemin. Consultez la [documentation de mémoire](/fr/memory) pour plus d'informations sur le fonctionnement de `CLAUDE.md`.
 
@@ -150,33 +156,65 @@ Pour la guidance spécifique à la révision que vous ne souhaitez pas appliquer
 
 ### REVIEW\.md
 
-Ajoutez un fichier `REVIEW.md` à la racine de votre référentiel pour les règles spécifiques à la révision. Utilisez-le pour encoder :
+`REVIEW.md` est un fichier à la racine de votre référentiel qui remplace le comportement de Code Review sur votre référentiel. Son contenu est injecté dans l'invite système de chaque agent du pipeline de révision comme bloc d'instruction de priorité la plus élevée, prenant précédence sur la guidance de révision par défaut.
 
-* Directives de style de l'entreprise ou de l'équipe : « préférer les retours précoces aux conditionnels imbriqués »
-* Conventions spécifiques au langage ou au framework non couvertes par les linters
-* Choses que Claude devrait toujours signaler : « tout nouvel itinéraire API doit avoir un test d'intégration »
-* Choses que Claude devrait ignorer : « ne pas commenter le formatage dans le code généré sous `/gen/` »
+Parce qu'il est collé verbatim, `REVIEW.md` est des instructions simples : la [syntaxe `@` import](/fr/memory#import-additional-files) n'est pas développée, et les fichiers référencés ne sont pas lus dans l'invite. Mettez les règles que vous souhaitez appliquer directement dans le fichier.
 
-Exemple `REVIEW.md` :
+#### Ce que vous pouvez affiner
+
+`REVIEW.md` est du markdown libre, donc tout ce que vous pouvez exprimer comme une instruction de révision est dans le champ d'application. Les modèles ci-dessous ont le plus d'impact en pratique.
+
+**Gravité** : redéfinissez ce que 🔴 Important signifie pour votre référentiel. L'étalonnage par défaut cible le code de production ; un référentiel de docs, un référentiel de config, ou un prototype pourrait vouloir une définition beaucoup plus étroite. Énoncez explicitement quelles classes de résultats sont Important et lesquelles sont Nit au maximum. Vous pouvez également escalader dans l'autre direction, par exemple en traitant toute violation `CLAUDE.md` comme Important plutôt que le nit par défaut.
+
+**Volume de nit** : limitez le nombre de commentaires 🟡 Nit qu'une seule révision publie. La prose et les fichiers de config peuvent être polis à jamais. Un plafond comme « signaler au maximum cinq nits, mentionner le reste comme un comptage dans le résumé » garde les révisions actionnables.
+
+**Règles de saut** : listez les chemins, les modèles de branche et les catégories de résultats où Claude ne devrait publier aucun résultat. Les candidats courants sont le code généré, les lockfiles, les dépendances vendues, et les branches créées par machine, ainsi que tout ce que votre CI applique déjà comme le linting ou la vérification orthographique. Pour les chemins qui méritent une certaine révision mais pas un examen complet, définissez une barre plus élevée au lieu de sauter entièrement : « dans `scripts/`, signaler uniquement si proche de certain et grave. »
+
+**Vérifications spécifiques au référentiel** : ajoutez des règles que vous souhaitez signaler sur chaque PR, comme « les nouveaux itinéraires API doivent avoir un test d'intégration. » Parce que `REVIEW.md` est injecté comme priorité la plus élevée, ceux-ci atterrissent plus fiablement que les mêmes règles dans un long `CLAUDE.md`.
+
+**Barre de vérification** : exigez des preuves avant qu'une classe de résultat soit publiée. Par exemple, « les affirmations de comportement ont besoin d'une citation `file:line` dans la source, pas une inférence à partir de la dénomination » réduit les faux positifs qui coûteraient autrement à l'auteur un aller-retour.
+
+**Convergence de re-révision** : dites à Claude comment se comporter quand une PR a déjà été révisée. Une règle comme « après la première révision, supprimez les nouveaux nits et publiez les résultats Important uniquement » empêche un correctif d'une ligne d'atteindre la septième manche sur le style seul.
+
+**Forme du résumé** : demandez au corps de la révision de s'ouvrir avec un comptage d'une ligne comme `2 factual, 4 style`, et de commencer par « aucun problème factuel » quand c'est le cas. L'auteur veut connaître la forme du travail avant les détails.
+
+#### Exemple
+
+Ce `REVIEW.md` recalibre la gravité pour un service backend, limite les nits, saute les fichiers générés, et ajoute des vérifications spécifiques au référentiel.
 
 ```markdown theme={null}
-# Code Review Guidelines
+# Instructions de révision
 
-## Always check
-- New API endpoints have corresponding integration tests
-- Database migrations are backward-compatible
-- Error messages don't leak internal details to users
+## Ce que Important signifie ici
 
-## Style
-- Prefer `match` statements over chained `isinstance` checks
-- Use structured logging, not f-string interpolation in log calls
+Réservez Important aux résultats qui cassent le comportement, fuient les données,
+ou bloquent un rollback : logique incorrecte, requêtes de base de données non scoped, PII
+dans les logs ou les messages d'erreur, et les migrations qui ne sont pas backward
+compatible. Le style, la dénomination, et les suggestions de refactorisation sont Nit au
+maximum.
 
-## Skip
-- Generated files under `src/gen/`
-- Formatting-only changes in `*.lock` files
+## Limiter les nits
+
+Signaler au maximum cinq Nits par révision. Si vous en avez trouvé plus, dites « plus N
+éléments similaires » dans le résumé au lieu de les publier en ligne. Si
+tout ce que vous avez trouvé est un Nit, commencez le résumé par « Aucun problème bloquant. »
+
+## Ne pas signaler
+
+- Tout ce que CI applique déjà : lint, formatage, erreurs de type
+- Fichiers générés sous `src/gen/` et tout fichier `*.lock`
+- Code de test uniquement qui viole intentionnellement les règles de production
+
+## Toujours vérifier
+
+- Les nouveaux itinéraires API ont un test d'intégration
+- Les lignes de log n'incluent pas les adresses e-mail, les ID utilisateur, ou les corps de requête
+- Les requêtes de base de données sont scoped au tenant de l'appelant
 ```
 
-Claude découvre automatiquement `REVIEW.md` à la racine du référentiel. Aucune configuration nécessaire.
+#### Gardez-le concentré
+
+La longueur a un coût : un long `REVIEW.md` dilue les règles qui importent le plus. Gardez-le aux instructions qui changent le comportement de révision, et laissez le contexte de projet général dans `CLAUDE.md`.
 
 ## Afficher l'utilisation
 
@@ -189,11 +227,11 @@ Allez à [claude.ai/analytics/code-review](https://claude.ai/analytics/code-revi
 | Feedback             | Nombre de commentaires de révision qui ont été auto-résolus parce qu'un développeur a résolu le problème |
 | Repository breakdown | Comptages par référentiel des PR examinées et des commentaires résolus                                   |
 
-Le tableau des référentiels dans les paramètres d'administration affiche également le coût moyen par révision pour chaque référentiel.
+Le tableau des référentiels dans les paramètres d'administration affiche également le coût moyen par révision pour chaque référentiel. Les chiffres de coût du tableau de bord sont des estimations pour surveiller l'activité ; pour les dépenses exactes de facture, consultez votre facture Anthropic.
 
 ## Tarification
 
-Code Review est facturé en fonction de l'utilisation des tokens. Chaque révision coûte en moyenne 15 à 25 dollars, s'adaptant à la taille de la PR, à la complexité de la base de code et au nombre de problèmes nécessitant une vérification. L'utilisation de Code Review est facturée séparément via [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) et ne compte pas par rapport à l'utilisation incluse de votre plan.
+Code Review est facturé en fonction de l'utilisation des tokens. Chaque révision coûte en moyenne 15 à 25 dollars, s'adaptant à la taille de la PR, à la complexité de la base de code, et au nombre de problèmes nécessitant une vérification. L'utilisation de Code Review est facturée séparément via [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) et ne compte pas par rapport à l'utilisation incluse de votre plan.
 
 Le déclencheur de révision que vous choisissez affecte le coût total :
 
@@ -203,7 +241,7 @@ Le déclencheur de révision que vous choisissez affecte le coût total :
 
 Dans n'importe quel mode, commenter `@claude review` [opte la PR dans les révisions déclenchées par push](#manually-trigger-reviews), de sorte que des coûts supplémentaires s'accumulent par push après ce commentaire. Pour exécuter une seule révision sans abonner à des pushes futurs, commentez `@claude review once` à la place.
 
-Les coûts apparaissent sur votre facture Anthropic quel que soit le fait que votre organisation utilise AWS Bedrock ou Google Vertex AI pour d'autres fonctionnalités Claude Code. Pour définir un plafond de dépenses mensuelles pour Code Review, allez à [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) et configurez la limite pour le service Claude Code Review.
+Les coûts apparaissent sur votre facture Anthropic quel que soit le fait que votre organisation utilise Amazon Bedrock ou Google Vertex AI pour d'autres fonctionnalités Claude Code. Pour définir un plafond de dépenses mensuelles pour Code Review, allez à [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) et configurez la limite pour le service Claude Code Review.
 
 Surveillez les dépenses via le graphique de coût hebdomadaire dans [analytics](#view-usage) ou la colonne de coût moyen par référentiel dans les paramètres d'administration.
 
@@ -219,11 +257,15 @@ Pour exécuter la révision à nouveau, commentez `@claude review once` sur la P
 
 Le bouton **Re-run** dans l'onglet Checks de GitHub ne redéclenche pas Code Review. Utilisez la commande de commentaire ou un nouveau push à la place.
 
+### Révision n'a pas s'exécuté et la PR affiche un message de plafond de dépenses
+
+Quand le plafond de dépenses mensuelles de votre organisation est atteint, Code Review publie un seul commentaire sur la PR expliquant que la révision a été ignorée. Les révisions reprennent automatiquement au début de la prochaine période de facturation, ou immédiatement quand un administrateur augmente le plafond à [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage).
+
 ### Trouver les problèmes qui ne s'affichent pas comme des commentaires en ligne
 
 Si le titre de l'exécution de vérification dit que des problèmes ont été trouvés mais que vous ne voyez pas de commentaires de révision en ligne sur le diff, cherchez dans ces autres emplacements où les résultats sont surfacés :
 
-* **Check run Details** : cliquez sur **Details** à côté de la vérification Claude Code Review dans l'onglet Checks. Le tableau de gravité liste chaque résultat avec son fichier, sa ligne et son résumé quel que soit le fait que le commentaire en ligne ait été accepté.
+* **Check run Details** : cliquez sur **Details** à côté de la vérification Claude Code Review dans l'onglet Checks. Le tableau de gravité liste chaque résultat avec son fichier, sa ligne, et son résumé quel que soit le fait que le commentaire en ligne ait été accepté.
 * **Files changed annotations** : ouvrez l'onglet **Files changed** sur la PR. Les résultats s'affichent comme des annotations attachées directement aux lignes de diff, séparées des commentaires de révision.
 * **Review body** : si vous avez poussé vers la PR pendant qu'une révision s'exécutait, certains résultats peuvent référencer des lignes qui n'existent plus dans le diff actuel. Ceux-ci apparaissent sous un titre **Additional findings** dans le texte du corps de révision plutôt que comme des commentaires en ligne.
 

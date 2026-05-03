@@ -15,7 +15,7 @@ ZDR sur Claude for Enterprise donne aux clients d'entreprise la possibilité d'u
 * [Paramètres gérés par le serveur](/fr/server-managed-settings)
 * Journaux d'audit
 
-ZDR pour Claude Code sur Claude for Enterprise s'applique uniquement à la plateforme directe d'Anthropic. Pour les déploiements de Claude sur AWS Bedrock, Google Vertex AI ou Microsoft Foundry, consultez les politiques de conservation des données de ces plateformes.
+ZDR pour Claude Code sur Claude for Enterprise s'applique uniquement à la plateforme directe d'Anthropic. Pour les déploiements de Claude sur Amazon Bedrock, Google Vertex AI ou Microsoft Foundry, consultez les politiques de conservation des données de ces plateformes.
 
 ## Portée de ZDR
 

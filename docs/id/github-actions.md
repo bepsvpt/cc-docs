@@ -9,11 +9,11 @@
 Claude Code GitHub Actions membawa otomasi bertenaga AI ke alur kerja GitHub Anda. Dengan penyebutan `@claude` sederhana di PR atau issue apa pun, Claude dapat menganalisis kode Anda, membuat pull request, mengimplementasikan fitur, dan memperbaiki bug - semuanya sambil mengikuti standar proyek Anda. Untuk ulasan otomatis yang diposting di setiap PR tanpa pemicu, lihat [GitHub Code Review](/id/code-review).
 
 <Note>
-  Claude Code GitHub Actions dibangun di atas [Claude Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview), yang memungkinkan integrasi programatik Claude Code ke dalam aplikasi Anda. Anda dapat menggunakan SDK untuk membangun alur kerja otomasi kustom di luar GitHub Actions.
+  Claude Code GitHub Actions dibangun di atas [Claude Agent SDK](/id/agent-sdk/overview), yang memungkinkan integrasi programatik Claude Code ke dalam aplikasi Anda. Anda dapat menggunakan SDK untuk membangun alur kerja otomasi kustom di luar GitHub Actions.
 </Note>
 
 <Info>
-  **Claude Opus 4.6 sekarang tersedia.** Claude Code GitHub Actions default ke Sonnet. Untuk menggunakan Opus 4.6, konfigurasikan [parameter model](#breaking-changes-reference) untuk menggunakan `claude-opus-4-6`.
+  **Claude Opus 4.7 sekarang tersedia.** Claude Code GitHub Actions default ke Sonnet. Untuk menggunakan Opus 4.7, konfigurasikan [parameter model](#breaking-changes-reference) untuk menggunakan `claude-opus-4-7`.
 </Info>
 
 ## Mengapa menggunakan Claude Code GitHub Actions?
@@ -45,7 +45,7 @@ Perintah ini akan memandu Anda melalui penyiapan aplikasi GitHub dan rahasia yan
 <Note>
   * Anda harus menjadi admin repositori untuk menginstal aplikasi GitHub dan menambahkan rahasia
   * Aplikasi GitHub akan meminta izin baca & tulis untuk Contents, Issues, dan Pull requests
-  * Metode quickstart ini hanya tersedia untuk pengguna Claude API langsung. Jika Anda menggunakan AWS Bedrock atau Google Vertex AI, silakan lihat bagian [Using with AWS Bedrock & Google Vertex AI](#using-with-aws-bedrock-%26-google-vertex-ai).
+  * Metode quickstart ini hanya tersedia untuk pengguna Claude API langsung. Jika Anda menggunakan Amazon Bedrock atau Google Vertex AI, silakan lihat bagian [Using with Amazon Bedrock & Google Vertex AI](#using-with-amazon-bedrock-%26-google-vertex-ai).
 </Note>
 
 ## Penyiapan manual
@@ -274,7 +274,7 @@ Kunjungi [direktori examples](https://github.com/anthropics/claude-code-action/t
   Saat merespons komentar issue atau PR, Claude secara otomatis merespons penyebutan @claude. Untuk event lainnya, gunakan parameter `prompt` untuk memberikan instruksi.
 </Tip>
 
-## Menggunakan dengan AWS Bedrock & Google Vertex AI
+## Menggunakan dengan Amazon Bedrock & Google Vertex AI
 
 Untuk lingkungan enterprise, Anda dapat menggunakan Claude Code GitHub Actions dengan infrastruktur cloud Anda sendiri. Pendekatan ini memberi Anda kontrol atas residensi data dan penagihan sambil mempertahankan fungsionalitas yang sama.
 
@@ -289,7 +289,7 @@ Sebelum menyiapkan Claude Code GitHub Actions dengan penyedia cloud, Anda memerl
 3. Akun layanan dengan izin yang diperlukan
 4. Aplikasi GitHub (direkomendasikan) atau gunakan GITHUB\_TOKEN default
 
-#### Untuk AWS Bedrock:
+#### Untuk Amazon Bedrock:
 
 1. Akun AWS dengan Amazon Bedrock diaktifkan
 2. GitHub OIDC Identity Provider dikonfigurasi di AWS
@@ -340,7 +340,7 @@ Sebelum menyiapkan Claude Code GitHub Actions dengan penyedia cloud, Anda memerl
     Pilih penyedia cloud Anda dan siapkan autentikasi aman:
 
     <AccordionGroup>
-      <Accordion title="AWS Bedrock">
+      <Accordion title="Amazon Bedrock">
         **Konfigurasikan AWS untuk memungkinkan GitHub Actions mengautentikasi dengan aman tanpa menyimpan kredensial.**
 
         > **Security Note**: Gunakan konfigurasi khusus repositori dan berikan hanya izin minimum yang diperlukan.
@@ -450,13 +450,13 @@ Sebelum menyiapkan Claude Code GitHub Actions dengan penyedia cloud, Anda memerl
   </Step>
 
   <Step title="Buat file workflow">
-    Buat file workflow GitHub Actions yang terintegrasi dengan penyedia cloud Anda. Contoh di bawah menunjukkan konfigurasi lengkap untuk AWS Bedrock dan Google Vertex AI:
+    Buat file workflow GitHub Actions yang terintegrasi dengan penyedia cloud Anda. Contoh di bawah menunjukkan konfigurasi lengkap untuk Amazon Bedrock dan Google Vertex AI:
 
     <AccordionGroup>
-      <Accordion title="Workflow AWS Bedrock">
+      <Accordion title="Workflow Amazon Bedrock">
         **Prasyarat:**
 
-        * Akses AWS Bedrock diaktifkan dengan izin model Claude
+        * Akses Amazon Bedrock diaktifkan dengan izin model Claude
         * GitHub dikonfigurasi sebagai penyedia identitas OIDC di AWS
         * Peran IAM dengan izin Bedrock yang mempercayai GitHub Actions
 
@@ -628,7 +628,7 @@ Claude Code Action v1 menggunakan konfigurasi yang disederhanakan:
 | `anthropic_api_key` | Kunci Claude API                                                  | Yes\*\*  |
 | `github_token`      | Token GitHub untuk akses API                                      | No       |
 | `trigger_phrase`    | Frasa pemicu kustom (default: "@claude")                          | No       |
-| `use_bedrock`       | Gunakan AWS Bedrock alih-alih Claude API                          | No       |
+| `use_bedrock`       | Gunakan Amazon Bedrock alih-alih Claude API                       | No       |
 | `use_vertex`        | Gunakan Google Vertex AI alih-alih Claude API                     | No       |
 
 \*Prompt opsional - saat dihilangkan untuk komentar issue/PR, Claude merespons frasa pemicu\

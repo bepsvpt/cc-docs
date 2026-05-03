@@ -9,11 +9,11 @@
 Claude Code GitHub Actions привносит автоматизацию на основе ИИ в ваш рабочий процесс GitHub. С простым упоминанием `@claude` в любом PR или issue, Claude может анализировать ваш код, создавать pull requests, реализовывать функции и исправлять ошибки — всё при соблюдении стандартов вашего проекта. Для автоматических проверок, размещаемых на каждом PR без триггера, см. [GitHub Code Review](/ru/code-review).
 
 <Note>
-  Claude Code GitHub Actions построен на основе [Claude Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview), который обеспечивает программную интеграцию Claude Code в ваши приложения. Вы можете использовать SDK для создания пользовательских рабочих процессов автоматизации за пределами GitHub Actions.
+  Claude Code GitHub Actions построен на основе [Claude Agent SDK](/ru/agent-sdk/overview), который обеспечивает программную интеграцию Claude Code в ваши приложения. Вы можете использовать SDK для создания пользовательских рабочих процессов автоматизации за пределами GitHub Actions.
 </Note>
 
 <Info>
-  **Claude Opus 4.6 теперь доступен.** Claude Code GitHub Actions по умолчанию используют Sonnet. Для использования Opus 4.6 настройте [параметр модели](#breaking-changes-reference) на использование `claude-opus-4-6`.
+  **Claude Opus 4.7 теперь доступен.** Claude Code GitHub Actions по умолчанию используют Sonnet. Для использования Opus 4.7 настройте [параметр модели](#breaking-changes-reference) на использование `claude-opus-4-7`.
 </Info>
 
 ## Зачем использовать Claude Code GitHub Actions?
@@ -45,7 +45,7 @@ Claude Code предоставляет мощный GitHub Action, которы�
 <Note>
   * Вы должны быть администратором репозитория для установки GitHub app и добавления секретов
   * GitHub app будет запрашивать права на чтение и запись для Contents, Issues и Pull requests
-  * Этот метод быстрого старта доступен только для прямых пользователей Claude API. Если вы используете AWS Bedrock или Google Vertex AI, см. раздел [Использование с AWS Bedrock и Google Vertex AI](#using-with-aws-bedrock-%26-google-vertex-ai).
+  * Этот метод быстрого старта доступен только для прямых пользователей Claude API. Если вы используете Amazon Bedrock или Google Vertex AI, см. раздел [Использование с Amazon Bedrock и Google Vertex AI](#using-with-amazon-bedrock-%26-google-vertex-ai).
 </Note>
 
 ## Ручная настройка
@@ -274,7 +274,7 @@ Claude Code Action v1 упрощает конфигурацию с унифиц�
   При ответе на комментарии issue или PR, Claude автоматически отвечает на упоминания @claude. Для других событий используйте параметр `prompt` для предоставления инструкций.
 </Tip>
 
-## Использование с AWS Bedrock и Google Vertex AI
+## Использование с Amazon Bedrock и Google Vertex AI
 
 Для корпоративных сред вы можете использовать Claude Code GitHub Actions с вашей собственной облачной инфраструктурой. Этот подход даёт вам контроль над местоположением данных и выставлением счётов при сохранении той же функциональности.
 
@@ -340,7 +340,7 @@ Claude Code Action v1 упрощает конфигурацию с унифиц�
     Выберите вашего облачного провайдера и установите безопасную аутентификацию:
 
     <AccordionGroup>
-      <Accordion title="AWS Bedrock">
+      <Accordion title="Amazon Bedrock">
         **Настройте AWS, чтобы разрешить GitHub Actions безопасно аутентифицироваться без сохранения учётных данных.**
 
         > **Примечание по безопасности**: Используйте конфигурации, специфичные для репозитория, и предоставляйте только минимально необходимые разрешения.

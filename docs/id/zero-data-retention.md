@@ -15,7 +15,7 @@ ZDR di Claude for Enterprise memberikan pelanggan enterprise kemampuan untuk men
 * [Server-managed settings](/id/server-managed-settings)
 * Audit logs
 
-ZDR untuk Claude Code di Claude for Enterprise hanya berlaku untuk platform langsung Anthropic. Untuk penerapan Claude di AWS Bedrock, Google Vertex AI, atau Microsoft Foundry, lihat kebijakan retensi data platform tersebut.
+ZDR untuk Claude Code di Claude for Enterprise hanya berlaku untuk platform langsung Anthropic. Untuk penerapan Claude di Amazon Bedrock, Google Vertex AI, atau Microsoft Foundry, lihat kebijakan retensi data platform tersebut.
 
 ## Cakupan ZDR
 

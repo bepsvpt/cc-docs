@@ -220,7 +220,7 @@ Claude abre novas abas para tarefas do navegador e compartilha o estado de login
 
 Para instruções de configuração, a lista completa de capacidades e solução de problemas, consulte [Use Claude Code with Chrome](/pt/chrome).
 
-## VS Code commands and shortcuts
+## Comandos e atalhos de teclado do VS Code
 
 Abra a Paleta de Comandos (`Cmd+Shift+P` no Mac ou `Ctrl+Shift+P` no Windows/Linux) e digite "Claude Code" para ver todos os comandos VS Code disponíveis para a extensão Claude Code.
 
@@ -242,17 +242,39 @@ Alguns atalhos dependem de qual painel está "focused" (recebendo entrada de tec
 | Show Logs                  | -                                                        | Visualize logs de depuração da extensão                                                                          |
 | Logout                     | -                                                        | Saia de sua conta Anthropic                                                                                      |
 
-### Launch a VS Code tab from other tools
+### Inicie uma aba VS Code a partir de outras ferramentas
 
 A extensão registra um manipulador de URI em `vscode://anthropic.claude-code/open`. Use-o para abrir uma nova aba Claude Code a partir de suas próprias ferramentas: um alias de shell, um bookmarklet de navegador ou qualquer script que possa abrir uma URL. Se VS Code não estiver já em execução, abrir a URL o inicia primeiro. Se VS Code já estiver em execução, a URL abre na janela que está atualmente focada.
 
-Invoque o manipulador com o abridor de URL do seu sistema operacional. No macOS:
+Invoque o manipulador com o abridor de URL do seu sistema operacional.
 
-```bash theme={null}
-open "vscode://anthropic.claude-code/open"
-```
+<Tabs>
+  <Tab title="macOS">
+    ```bash theme={null}
+    open "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
 
-Use `xdg-open` no Linux ou `start` no Windows.
+  <Tab title="Linux">
+    ```bash theme={null}
+    xdg-open "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
+
+  <Tab title="Windows">
+    No PowerShell:
+
+    ```powershell theme={null}
+    Start-Process "vscode://anthropic.claude-code/open"
+    ```
+
+    No `cmd.exe`, `start` trata seu primeiro argumento entre aspas como um título de janela, então passe um título vazio antes da URL:
+
+    ```cmd theme={null}
+    start "" "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
+</Tabs>
 
 O manipulador aceita dois parâmetros de consulta opcionais:
 
@@ -266,6 +288,8 @@ Por exemplo, para abrir uma aba pré-preenchida com "review my changes":
 ```text theme={null}
 vscode://anthropic.claude-code/open?prompt=review%20my%20changes
 ```
+
+Para iniciar uma sessão de terminal em vez de uma aba VS Code, use o manipulador `claude-cli://` da CLI. Consulte [Launch sessions from links](/pt/deep-links).
 
 ## Configure settings
 
@@ -340,10 +364,11 @@ Quando Claude executa comandos de longa duração, a extensão mostra progresso 
 
 MCP (Model Context Protocol) servers dão ao Claude acesso a ferramentas externas, bancos de dados e APIs.
 
-Para adicionar um MCP server, abra o terminal integrado (`` Ctrl+` `` ou `` Cmd+` ``) e execute:
+Para adicionar um MCP server, abra o terminal integrado (`` Ctrl+` `` ou `` Cmd+` ``) e execute `claude mcp add`. O exemplo abaixo adiciona o MCP server remoto do GitHub, que autentica com um [personal access token](https://github.com/settings/personal-access-tokens) passado como um cabeçalho:
 
 ```bash theme={null}
-claude mcp add --transport http github https://api.githubcopilot.com/mcp/
+claude mcp add --transport http github https://api.githubcopilot.com/mcp/ \
+  --header "Authorization: Bearer YOUR_GITHUB_PAT"
 ```
 
 Uma vez configurado, peça ao Claude para usar as ferramentas (por exemplo, "Review PR #456").

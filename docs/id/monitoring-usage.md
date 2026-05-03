@@ -859,7 +859,7 @@ Metrik `claude_code.cost.usage` membantu dengan:
 * Mengidentifikasi sesi penggunaan tinggi untuk optimasi
 
 <Note>
-  Metrik biaya adalah perkiraan. Untuk data penagihan resmi, lihat penyedia API Anda (Claude Console, AWS Bedrock, atau Google Cloud Vertex).
+  Metrik biaya adalah perkiraan. Untuk data penagihan resmi, lihat penyedia API Anda (Claude Console, Amazon Bedrock, atau Google Cloud Vertex).
 </Note>
 
 ### Peringatan dan segmentasi

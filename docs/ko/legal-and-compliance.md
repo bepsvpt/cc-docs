@@ -17,7 +17,7 @@ Claude Code의 사용은 다음의 적용을 받습니다:
 
 ### 상용 계약
 
-Claude API를 직접 사용하든(1P) AWS Bedrock 또는 Google Vertex를 통해 접근하든(3P), 기존 상용 계약이 Claude Code 사용에 적용되며, 달리 상호 합의하지 않는 한 그러합니다.
+Claude API를 직접 사용하든(1P) Amazon Bedrock 또는 Google Vertex를 통해 접근하든(3P), 기존 상용 계약이 Claude Code 사용에 적용되며, 달리 상호 합의하지 않는 한 그러합니다.
 
 ## 규정 준수
 

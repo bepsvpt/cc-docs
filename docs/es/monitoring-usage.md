@@ -859,7 +859,7 @@ La métrica `claude_code.cost.usage` ayuda con:
 * Identificar sesiones de alto uso para optimización
 
 <Note>
-  Las métricas de costo son aproximaciones. Para datos de facturación oficiales, consulta tu proveedor de API (Claude Console, AWS Bedrock, o Google Cloud Vertex).
+  Las métricas de costo son aproximaciones. Para datos de facturación oficiales, consulte su proveedor de API (Claude Console, Amazon Bedrock, o Google Cloud Vertex).
 </Note>
 
 ### Alertas y segmentación
@@ -878,20 +878,20 @@ Claude Code reintenta solicitudes de API fallidas internamente y emite un único
 
 El atributo `attempt` en el evento registra cuántos intentos se realizaron en total. Un valor mayor que `CLAUDE_CODE_MAX_RETRIES` (predeterminado `10`) indica que la solicitud agotó todos los reintentos en un error transitorio. Un valor más bajo indica un error no reintentable como una respuesta `400`.
 
-Para distinguir una sesión que se recuperó de una que se estancó, agrupa eventos por `session.id` y verifica si existe un evento `api_request` posterior después del error.
+Para distinguir una sesión que se recuperó de una que se estancó, agrupe eventos por `session.id` y verifique si existe un evento `api_request` posterior después del error.
 
 ### Análisis de eventos
 
 Los datos de eventos proporcionan información detallada sobre las interacciones de Claude Code:
 
-**Patrones de Uso de Herramientas**: analizar eventos de resultado de herramientas para identificar:
+**Patrones de Uso de Herramientas**: analice eventos de resultado de herramientas para identificar:
 
 * Herramientas más utilizadas frecuentemente
 * Tasas de éxito de herramientas
 * Tiempos de ejecución promedio de herramientas
 * Patrones de error por tipo de herramienta
 
-**Monitoreo de Rendimiento**: rastrear duraciones de solicitudes de API y tiempos de ejecución de herramientas para identificar cuellos de botella de rendimiento.
+**Monitoreo de Rendimiento**: rastreé duraciones de solicitudes de API y tiempos de ejecución de herramientas para identificar cuellos de botella de rendimiento.
 
 ## Consideraciones de backend
 

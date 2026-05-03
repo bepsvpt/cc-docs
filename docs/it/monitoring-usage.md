@@ -859,7 +859,7 @@ La metrica `claude_code.cost.usage` aiuta con:
 * Identificare sessioni ad alto utilizzo per l'ottimizzazione
 
 <Note>
-  Le metriche di costo sono approssimazioni. Per i dati di fatturazione ufficiali, consulta il tuo provider API (Claude Console, AWS Bedrock, o Google Cloud Vertex).
+  Le metriche di costo sono approssimazioni. Per i dati di fatturazione ufficiali, consulta il tuo provider API (Claude Console, Amazon Bedrock, o Google Cloud Vertex).
 </Note>
 
 ### Avvisi e segmentazione

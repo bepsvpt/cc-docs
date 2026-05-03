@@ -246,26 +246,50 @@ Claude 为浏览器任务打开新选项卡并共享您的浏览器登录状态�
 
 该扩展在 `vscode://anthropic.claude-code/open` 处注册了一个 URI 处理程序。使用它从您自己的工具中打开新的 Claude Code 选项卡：shell 别名、浏览器书签或任何可以打开 URL 的脚本。如果 VS Code 尚未运行，打开 URL 会首先启动它。如果 VS Code 已在运行，URL 会在当前获得焦点的窗口中打开。
 
-使用您的操作系统的 URL 打开器调用处理程序。在 macOS 上：
+使用您的操作系统的 URL 打开器调用处理程序。
 
-```bash theme={null}
-open "vscode://anthropic.claude-code/open"
-```
+<Tabs>
+  <Tab title="macOS">
+    ```bash theme={null}
+    open "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
 
-在 Linux 上使用 `xdg-open` 或在 Windows 上使用 `start`。
+  <Tab title="Linux">
+    ```bash theme={null}
+    xdg-open "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
+
+  <Tab title="Windows">
+    在 PowerShell 中：
+
+    ```powershell theme={null}
+    Start-Process "vscode://anthropic.claude-code/open"
+    ```
+
+    在 `cmd.exe` 中，`start` 将其第一个带引号的参数视为窗口标题，因此在 URL 之前传递一个空标题：
+
+    ```cmd theme={null}
+    start "" "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
+</Tabs>
 
 处理程序接受两个可选的查询参数：
 
-| 参数        | 描述                                                                                                                                                  |
-| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `prompt`  | 要在提示框中预填充的文本。必须进行 URL 编码。提示框被预填充但不会自动提交。                                                                                                            |
-| `session` | 要恢复的会话 ID，而不是启动新对话。会话必须属于 VS Code 中当前打开的工作区。如果找不到会话，将启动新的对话。如果会话已在选项卡中打开，该选项卡将获得焦点。要以编程方式捕获会话 ID，请参阅[继续对话](/zh-CN/headless#continue-conversations)。 |
+| 参数        | 描述                                                                                                                                                   |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `prompt`  | 要在提示框中预填充的文本。必须进行 URL 编码。提示框被预填充但不会自动提交。                                                                                                             |
+| `session` | 要恢复的会话 ID，而不是启动新对话。会话必须属于 VS Code 中当前打开的工作区。如果找不到会话，将启动新的对话。如果会话已在选项卡中打开，该选项卡将获得焦点。要以编程方式捕获会话 ID，请参阅 [继续对话](/zh-CN/headless#continue-conversations)。 |
 
 例如，要打开一个预填充"review my changes"的选项卡：
 
 ```text theme={null}
 vscode://anthropic.claude-code/open?prompt=review%20my%20changes
 ```
+
+要启动终端会话而不是 VS Code 选项卡，请使用 CLI 的 `claude-cli://` 处理程序。请参阅 [从链接启动会话](/zh-CN/deep-links)。
 
 ## 配置设置
 
@@ -340,10 +364,11 @@ VS Code 扩展支持 checkpoints，它们跟踪 Claude 的文件编辑并让您�
 
 MCP（Model Context Protocol）servers 为 Claude 提供对外部工具、数据库和 API 的访问。
 
-要添加 MCP server，请打开集成终端（`` Ctrl+` `` 或 `` Cmd+` ``）并运行：
+要添加 MCP server，请打开集成终端（`` Ctrl+` `` 或 `` Cmd+` ``）并运行 `claude mcp add`。下面的示例添加了 GitHub 的远程 MCP server，它使用作为标头传递的[个人访问令牌](https://github.com/settings/personal-access-tokens)进行身份验证：
 
 ```bash theme={null}
-claude mcp add --transport http github https://api.githubcopilot.com/mcp/
+claude mcp add --transport http github https://api.githubcopilot.com/mcp/ \
+  --header "Authorization: Bearer YOUR_GITHUB_PAT"
 ```
 
 配置后，要求 Claude 使用这些工具（例如，"审查 PR #456"）。

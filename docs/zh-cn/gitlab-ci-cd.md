@@ -13,7 +13,7 @@
 </Info>
 
 <Note>
-  此集成基于 [Claude Code CLI and Agent SDK](https://platform.claude.com/docs/zh-CN/agent-sdk/overview) 构建，可在您的 CI/CD 作业和自定义自动化工作流中以编程方式使用 Claude。
+  此集成基于 [Claude Code CLI and Agent SDK](/zh-CN/agent-sdk/overview) 构建，可在您的 CI/CD 作业和自定义自动化工作流中以编程方式使用 Claude。
 </Note>
 
 ## 为什么在 GitLab 中使用 Claude Code？
@@ -22,7 +22,7 @@
 * **自动化实现**：使用单个命令或提及将问题转化为可工作的代码
 * **项目感知**：Claude 遵循您的 `CLAUDE.md` 指南和现有代码模式
 * **简单设置**：向 `.gitlab-ci.yml` 添加一个作业和一个掩码 CI/CD 变量
-* **企业就绪**：选择 Claude API、AWS Bedrock 或 Google Vertex AI 以满足数据驻留和采购需求
+* **企业就绪**：选择 Claude API、Amazon Bedrock 或 Google Vertex AI 以满足数据驻留和采购需求
 * **默认安全**：在您的 GitLab runners 中运行，具有您的分支保护和批准
 
 ## 工作原理
@@ -33,7 +33,7 @@ Claude Code 使用 GitLab CI/CD 在隔离的作业中运行 AI 任务，并通�
 
 2. **提供商抽象**：使用适合您环境的提供商：
    * Claude API (SaaS)
-   * AWS Bedrock（基于 IAM 的访问、跨区域选项）
+   * Amazon Bedrock（基于 IAM 的访问、跨区域选项）
    * Google Vertex AI（GCP 原生、Workload Identity Federation）
 
 3. **沙箱执行**：每次交互都在具有严格网络和文件系统规则的容器中运行。Claude Code 强制执行工作区范围的权限以限制写入。每项更改都通过 MR 流动，以便审查者可以看到差异，批准仍然适用。
@@ -98,7 +98,7 @@ claude:
 添加作业和您的 `ANTHROPIC_API_KEY` 变量后，通过从 **CI/CD** → **Pipelines** 手动运行作业进行测试，或从 MR 触发它，让 Claude 在分支中提议更新并在需要时打开 MR。
 
 <Note>
-  要改为在 AWS Bedrock 或 Google Vertex AI 上运行而不是 Claude API，请参阅下面的 [Using with AWS Bedrock & Google Vertex AI](#using-with-aws-bedrock--google-vertex-ai) 部分，了解身份验证和环境设置。
+  要改为在 Amazon Bedrock 或 Google Vertex AI 上运行而不是 Claude API，请参阅下面的 [Using with Amazon Bedrock & Google Vertex AI](#using-with-amazon-bedrock--google-vertex-ai) 部分，了解身份验证和环境设置。
 </Note>
 
 ### 手动设置（建议用于生产）
@@ -107,7 +107,7 @@ claude:
 
 1. **配置提供商访问**：
    * **Claude API**：创建并将 `ANTHROPIC_API_KEY` 存储为掩码 CI/CD 变量
-   * **AWS Bedrock**：**Configure GitLab** → **AWS OIDC** 并为 Bedrock 创建 IAM 角色
+   * **Amazon Bedrock**：**Configure GitLab** → **AWS OIDC** 并为 Bedrock 创建 IAM 角色
    * **Google Vertex AI**：**Configure Workload Identity Federation for GitLab** → **GCP**
 
 2. **为 GitLab API 操作添加项目凭证**：
@@ -152,15 +152,15 @@ Claude 提议更改，添加具有适当缓存的代码，并更新 MR。
 
 Claude 定位错误，实现修复，并更新分支或打开新 MR。
 
-## 使用 AWS Bedrock 和 Google Vertex AI
+## 使用 Amazon Bedrock 和 Google Vertex AI
 
 对于企业环境，您可以在云基础设施上完全运行 Claude Code，具有相同的开发者体验。
 
 <Tabs>
-  <Tab title="AWS Bedrock">
+  <Tab title="Amazon Bedrock">
     ### 前置条件
 
-    在使用 AWS Bedrock 设置 Claude Code 之前，您需要：
+    在使用 Amazon Bedrock 设置 Claude Code 之前，您需要：
 
     1. 具有对所需 Claude 模型的 Amazon Bedrock 访问权限的 AWS 账户
     2. 在 AWS IAM 中配置为 OIDC 身份提供商的 GitLab
@@ -188,12 +188,12 @@ Claude 定位错误，实现修复，并更新分支或打开新 MR。
     在 Settings → CI/CD → Variables 中添加变量：
 
     ```yaml theme={null}
-    # 对于 AWS Bedrock：
+    # 对于 Amazon Bedrock：
     - AWS_ROLE_TO_ASSUME
     - AWS_REGION
     ```
 
-    使用上面的 AWS Bedrock 作业示例在运行时交换 GitLab 作业令牌以获取临时 AWS 凭证。
+    使用上面的 Amazon Bedrock 作业示例在运行时交换 GitLab 作业令牌以获取临时 AWS 凭证。
   </Tab>
 
   <Tab title="Google Vertex AI">
@@ -271,7 +271,7 @@ claude:
   # Claude Code 将使用 CI/CD 变量中的 ANTHROPIC_API_KEY
 ```
 
-### AWS Bedrock 作业示例（OIDC）
+### Amazon Bedrock 作业示例（OIDC）
 
 **前置条件：**
 

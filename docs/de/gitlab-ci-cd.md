@@ -13,7 +13,7 @@
 </Info>
 
 <Note>
-  Diese Integration basiert auf der [Claude Code CLI und Agent SDK](https://platform.claude.com/docs/de/agent-sdk/overview) und ermöglicht die programmgesteuerte Nutzung von Claude in Ihren CI/CD-Jobs und benutzerdefinierten Automatisierungs-Workflows.
+  Diese Integration basiert auf der [Claude Code CLI und Agent SDK](/de/agent-sdk/overview) und ermöglicht die programmgesteuerte Nutzung von Claude in Ihren CI/CD-Jobs und benutzerdefinierten Automatisierungs-Workflows.
 </Note>
 
 ## Warum Claude Code mit GitLab verwenden?
@@ -22,7 +22,7 @@
 * **Automatisierte Implementierung**: Verwandeln Sie Probleme mit einem einzigen Befehl oder einer Erwähnung in funktionierenden Code
 * **Projektbewusst**: Claude folgt Ihren `CLAUDE.md`-Richtlinien und vorhandenen Code-Mustern
 * **Einfaches Setup**: Fügen Sie einen Job zu `.gitlab-ci.yml` und eine maskierte CI/CD-Variable hinzu
-* **Enterprise-ready**: Wählen Sie Claude API, AWS Bedrock oder Google Vertex AI, um Anforderungen an Datenresidenz und Beschaffung zu erfüllen
+* **Enterprise-ready**: Wählen Sie Claude API, Amazon Bedrock oder Google Vertex AI, um Anforderungen an Datenresidenz und Beschaffung zu erfüllen
 * **Standardmäßig sicher**: Läuft in Ihren GitLab-Runnern mit Ihrem Branch-Schutz und Genehmigungen
 
 ## Wie es funktioniert
@@ -33,7 +33,7 @@ Claude Code verwendet GitLab CI/CD, um KI-Aufgaben in isolierten Jobs auszuführ
 
 2. **Provider-Abstraktion**: Verwenden Sie den Provider, der zu Ihrer Umgebung passt:
    * Claude API (SaaS)
-   * AWS Bedrock (IAM-basierter Zugriff, regionsübergreifende Optionen)
+   * Amazon Bedrock (IAM-basierter Zugriff, regionsübergreifende Optionen)
    * Google Vertex AI (GCP-nativ, Workload Identity Federation)
 
 3. **Sandboxed-Ausführung**: Jede Interaktion läuft in einem Container mit strikten Netzwerk- und Dateisystem-Regeln. Claude Code erzwingt Workspace-bezogene Berechtigungen, um Schreibvorgänge einzuschränken. Jede Änderung fließt durch einen MR, damit Reviewer den Diff sehen und Genehmigungen weiterhin gelten.
@@ -98,7 +98,7 @@ claude:
 Nach dem Hinzufügen des Jobs und Ihrer `ANTHROPIC_API_KEY`-Variable testen Sie, indem Sie den Job manuell von **CI/CD** → **Pipelines** ausführen, oder lösen Sie ihn von einem MR aus, um Claude zu ermöglichen, Updates in einem Branch vorzuschlagen und bei Bedarf einen MR zu öffnen.
 
 <Note>
-  Um stattdessen auf AWS Bedrock oder Google Vertex AI auszuführen, siehe den Abschnitt [Verwendung mit AWS Bedrock & Google Vertex AI](#using-with-aws-bedrock--google-vertex-ai) unten für Authentifizierung und Umgebungssetup.
+  Um stattdessen auf Amazon Bedrock oder Google Vertex AI auszuführen, siehe den Abschnitt [Verwendung mit Amazon Bedrock & Google Vertex AI](#using-with-amazon-bedrock--google-vertex-ai) unten für Authentifizierung und Umgebungssetup.
 </Note>
 
 ### Manuelles Setup (empfohlen für Produktion)
@@ -107,7 +107,7 @@ Wenn Sie ein kontrolliertes Setup bevorzugen oder Enterprise-Provider benötigen
 
 1. **Konfigurieren Sie Provider-Zugriff**:
    * **Claude API**: Erstellen und speichern Sie `ANTHROPIC_API_KEY` als maskierte CI/CD-Variable
-   * **AWS Bedrock**: **Konfigurieren Sie GitLab** → **AWS OIDC** und erstellen Sie eine IAM-Rolle für Bedrock
+   * **Amazon Bedrock**: **Konfigurieren Sie GitLab** → **AWS OIDC** und erstellen Sie eine IAM-Rolle für Bedrock
    * **Google Vertex AI**: **Konfigurieren Sie Workload Identity Federation für GitLab** → **GCP**
 
 2. **Fügen Sie Projekt-Anmeldedaten für GitLab API-Operationen hinzu**:
@@ -152,15 +152,15 @@ In einem Problem- oder MR-Kommentar:
 
 Claude lokalisiert den Bug, implementiert eine Korrektur und aktualisiert den Branch oder öffnet einen neuen MR.
 
-## Verwendung mit AWS Bedrock & Google Vertex AI
+## Verwendung mit Amazon Bedrock & Google Vertex AI
 
 Für Enterprise-Umgebungen können Sie Claude Code vollständig auf Ihrer Cloud-Infrastruktur mit der gleichen Entwicklererfahrung ausführen.
 
 <Tabs>
-  <Tab title="AWS Bedrock">
+  <Tab title="Amazon Bedrock">
     ### Voraussetzungen
 
-    Bevor Sie Claude Code mit AWS Bedrock einrichten, benötigen Sie:
+    Bevor Sie Claude Code mit Amazon Bedrock einrichten, benötigen Sie:
 
     1. Ein AWS-Konto mit Amazon Bedrock-Zugriff auf die gewünschten Claude-Modelle
     2. GitLab als OIDC-Identitätsanbieter in AWS IAM konfiguriert
@@ -188,12 +188,12 @@ Für Enterprise-Umgebungen können Sie Claude Code vollständig auf Ihrer Cloud-
     Fügen Sie Variablen in Einstellungen → CI/CD → Variablen hinzu:
 
     ```yaml theme={null}
-    # Für AWS Bedrock:
+    # Für Amazon Bedrock:
     - AWS_ROLE_TO_ASSUME
     - AWS_REGION
     ```
 
-    Verwenden Sie das AWS Bedrock-Job-Beispiel oben, um das GitLab-Job-Token gegen temporäre AWS-Anmeldedaten zur Laufzeit auszutauschen.
+    Verwenden Sie das Amazon Bedrock-Job-Beispiel oben, um das GitLab-Job-Token gegen temporäre AWS-Anmeldedaten zur Laufzeit auszutauschen.
   </Tab>
 
   <Tab title="Google Vertex AI">
@@ -271,7 +271,7 @@ claude:
   # Claude Code wird ANTHROPIC_API_KEY aus CI/CD-Variablen verwenden
 ```
 
-### AWS Bedrock-Job-Beispiel (OIDC)
+### Amazon Bedrock-Job-Beispiel (OIDC)
 
 **Voraussetzungen:**
 

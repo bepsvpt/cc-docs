@@ -17,7 +17,7 @@ Ihre Nutzung von Claude Code unterliegt:
 
 ### Kommerzielle Vereinbarungen
 
-Unabhängig davon, ob Sie die Claude API direkt (1P) nutzen oder über AWS Bedrock oder Google Vertex (3P) darauf zugreifen, gilt Ihre bestehende kommerzielle Vereinbarung für die Nutzung von Claude Code, sofern wir nicht etwas anderes gegenseitig vereinbart haben.
+Unabhängig davon, ob Sie die Claude API direkt (1P) nutzen oder über Amazon Bedrock oder Google Vertex (3P) darauf zugreifen, gilt Ihre bestehende kommerzielle Vereinbarung für die Nutzung von Claude Code, sofern wir nicht etwas anderes gegenseitig vereinbart haben.
 
 ## Compliance
 

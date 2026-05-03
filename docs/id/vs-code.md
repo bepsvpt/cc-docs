@@ -246,13 +246,35 @@ Beberapa pintasan tergantung pada panel mana yang "focused" (menerima input keyb
 
 Ekstensi mendaftarkan URI handler di `vscode://anthropic.claude-code/open`. Gunakan untuk membuka tab Claude Code baru dari tooling Anda sendiri: alias shell, bookmarklet browser, atau script apa pun yang dapat membuka URL. Jika VS Code belum berjalan, membuka URL meluncurkannya terlebih dahulu. Jika VS Code sudah berjalan, URL terbuka di jendela mana pun yang saat ini difokuskan.
 
-Panggil handler dengan pembuka URL sistem operasi Anda. Di macOS:
+Panggil handler dengan pembuka URL sistem operasi Anda.
 
-```bash theme={null}
-open "vscode://anthropic.claude-code/open"
-```
+<Tabs>
+  <Tab title="macOS">
+    ```bash theme={null}
+    open "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
 
-Gunakan `xdg-open` di Linux atau `start` di Windows.
+  <Tab title="Linux">
+    ```bash theme={null}
+    xdg-open "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
+
+  <Tab title="Windows">
+    Di PowerShell:
+
+    ```powershell theme={null}
+    Start-Process "vscode://anthropic.claude-code/open"
+    ```
+
+    Di `cmd.exe`, `start` memperlakukan argumen pertama yang dikutip sebagai judul jendela, jadi berikan judul kosong sebelum URL:
+
+    ```cmd theme={null}
+    start "" "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
+</Tabs>
 
 Handler menerima dua parameter query opsional:
 
@@ -266,6 +288,8 @@ Misalnya, untuk membuka tab yang di-pre-fill dengan "review my changes":
 ```text theme={null}
 vscode://anthropic.claude-code/open?prompt=review%20my%20changes
 ```
+
+Untuk meluncurkan sesi terminal alih-alih tab VS Code, gunakan handler `claude-cli://` CLI. Lihat [Launch sessions from links](/id/deep-links).
 
 ## Konfigurasi pengaturan
 
@@ -340,10 +364,11 @@ Saat Claude menjalankan perintah yang berjalan lama, ekstensi menampilkan kemaju
 
 MCP (Model Context Protocol) servers memberikan Claude akses ke alat eksternal, database, dan API.
 
-Untuk menambahkan MCP server, buka terminal terintegrasi (`` Ctrl+` `` atau `` Cmd+` ``) dan jalankan:
+Untuk menambahkan MCP server, buka terminal terintegrasi (`` Ctrl+` `` atau `` Cmd+` ``) dan jalankan `claude mcp add`. Contoh di bawah ini menambahkan MCP server jarak jauh GitHub, yang melakukan autentikasi dengan [personal access token](https://github.com/settings/personal-access-tokens) yang diteruskan sebagai header:
 
 ```bash theme={null}
-claude mcp add --transport http github https://api.githubcopilot.com/mcp/
+claude mcp add --transport http github https://api.githubcopilot.com/mcp/ \
+  --header "Authorization: Bearer YOUR_GITHUB_PAT"
 ```
 
 Setelah dikonfigurasi, minta Claude untuk menggunakan alat (misalnya, "Review PR #456").

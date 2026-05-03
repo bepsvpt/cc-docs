@@ -7,7 +7,7 @@
 > 다중 에이전트 분석을 통해 전체 코드베이스를 검토하여 논리 오류, 보안 취약점 및 회귀를 감지하는 자동화된 PR 검토를 설정합니다
 
 <Note>
-  Code Review는 연구 미리보기 상태이며 [Teams 및 Enterprise](https://claude.ai/admin-settings/claude-code) 구독에서 사용 가능합니다. [Zero Data Retention](/ko/zero-data-retention)이 활성화된 조직에서는 사용할 수 없습니다.
+  Code Review는 연구 미리보기 상태이며 [Team 및 Enterprise](https://claude.ai/admin-settings/claude-code) 구독에서 사용 가능합니다. [Zero Data Retention](/ko/zero-data-retention)이 활성화된 조직에서는 사용할 수 없습니다.
 </Note>
 
 Code Review는 GitHub 풀 요청을 분석하고 문제를 발견한 코드 라인에 인라인 댓글로 결과를 게시합니다. 전문화된 에이전트 집합이 전체 코드베이스의 맥락에서 코드 변경 사항을 검토하여 논리 오류, 보안 취약점, 손상된 엣지 케이스 및 미묘한 회귀를 찾습니다.
@@ -44,6 +44,12 @@ Code Review는 GitHub 풀 요청을 분석하고 문제를 발견한 코드 라�
 | 🟣 | Pre-existing | 코드베이스에 존재하지만 이 PR에서 도입되지 않은 버그 |
 
 결과에는 확장 가능한 확장 추론 섹션이 포함되어 있으므로 Claude가 문제를 플래그한 이유와 문제를 검증한 방법을 이해할 수 있습니다.
+
+### 결과에 대한 평가 및 응답
+
+Claude의 각 검토 댓글은 이미 👍 및 👎가 첨부되어 있으므로 두 버튼 모두 GitHub UI에 나타나 한 번의 클릭으로 평가할 수 있습니다. 결과가 유용했으면 👍을 클릭하고 잘못되었거나 노이즈가 많으면 👎를 클릭합니다. Anthropic은 PR이 병합된 후 반응 개수를 수집하고 이를 사용하여 검토자를 조정합니다. 반응은 재검토를 트리거하거나 PR의 어떤 것도 변경하지 않습니다.
+
+인라인 댓글에 응답해도 Claude가 응답하거나 PR을 업데이트하도록 프롬프트하지 않습니다. 결과에 대해 조치하려면 코드를 수정하고 푸시합니다. PR이 푸시 트리거 검토에 구독되어 있으면 다음 실행이 문제가 수정되었을 때 스레드를 해결합니다. 푸시하지 않고 새로운 검토를 요청하려면 [최상위 PR 댓글](#manually-trigger-reviews)로 `@claude review once`를 댓글로 작성합니다.
 
 ### 확인 실행 출력
 
@@ -135,14 +141,14 @@ PR의 현재 상태에 대한 피드백을 원하지만 이후의 모든 푸시�
 
 ## 검토 사용자 정의
 
-Code Review는 리포지토리에서 두 개의 파일을 읽어 플래그할 항목을 안내합니다. 둘 다 기본 정확성 확인 위에 추가됩니다:
+Code Review는 리포지토리에서 두 개의 파일을 읽어 플래그할 항목을 안내합니다. 이들은 검토에 영향을 미치는 강도가 다릅니다:
 
-* **`CLAUDE.md`**: Claude Code가 검토뿐만 아니라 모든 작업에 사용하는 공유 프로젝트 지침입니다. 지침이 대화형 Claude Code 세션에도 적용될 때 사용하십시오.
-* **`REVIEW.md`**: 검토 전용 지침으로 코드 검토 중에만 읽습니다. 플래그하거나 검토 중에 건너뛸 항목에 대한 규칙이 일반 `CLAUDE.md`를 복잡하게 만들 때 사용하십시오.
+* **`CLAUDE.md`**: Claude Code가 검토뿐만 아니라 모든 작업에 사용하는 공유 프로젝트 지침입니다. Code Review는 이를 프로젝트 컨텍스트로 읽고 새로 도입된 위반을 nit으로 플래그합니다.
+* **`REVIEW.md`**: 검토 전용 지침으로 검토 파이프라인의 모든 에이전트에 최우선 순위로 직접 주입됩니다. 이를 사용하여 플래그되는 항목, 심각도 및 결과 보고 방식을 변경합니다.
 
 ### CLAUDE.md
 
-Code Review는 리포지토리의 `CLAUDE.md` 파일을 읽고 새로 도입된 위반을 nit 수준 결과로 처리합니다. 이는 양방향으로 작동합니다: PR이 `CLAUDE.md` 문을 오래된 것으로 만드는 방식으로 코드를 변경하면 Claude는 문서도 업데이트해야 한다고 플래그합니다.
+Code Review는 리포지토리의 `CLAUDE.md` 파일을 읽고 새로 도입된 위반을 [nit 수준](#severity-levels) 결과로 처리합니다. 이는 양방향으로 작동합니다: PR이 `CLAUDE.md` 문을 오래된 것으로 만드는 방식으로 코드를 변경하면 Claude는 문서도 업데이트해야 한다고 플래그합니다.
 
 Claude는 디렉토리 계층 구조의 모든 수준에서 `CLAUDE.md` 파일을 읽으므로 하위 디렉토리의 `CLAUDE.md`의 규칙은 해당 경로 아래의 파일에만 적용됩니다. `CLAUDE.md` 작동 방식에 대한 자세한 내용은 [메모리 설명서](/ko/memory)를 참조하십시오.
 
@@ -150,33 +156,59 @@ Claude는 디렉토리 계층 구조의 모든 수준에서 `CLAUDE.md` 파일�
 
 ### REVIEW\.md
 
-검토 전용 규칙을 위해 리포지토리 루트에 `REVIEW.md` 파일을 추가합니다. 다음을 인코딩하는 데 사용합니다:
+`REVIEW.md`는 리포지토리 루트의 파일로 Code Review가 리포지토리에서 어떻게 작동하는지를 재정의합니다. 그 내용은 검토 파이프라인의 모든 에이전트의 시스템 프롬프트에 최우선 순위 지침 블록으로 주입되어 기본 검토 지침보다 우선합니다.
 
-* 회사 또는 팀 스타일 가이드라인: "중첩된 조건부보다 조기 반환 선호"
-* 린터에서 다루지 않는 언어 또는 프레임워크별 규칙
-* Claude가 항상 플래그해야 할 항목: "모든 새 API 경로에는 통합 테스트가 있어야 함"
-* Claude가 건너뛸 항목: "생성된 코드 아래 `/gen/`의 형식 지정에 대해 댓글을 달지 마십시오"
+그것이 그대로 붙여넣어지기 때문에 `REVIEW.md`는 일반 지침입니다: [`@` import 구문](/ko/memory#import-additional-files)은 확장되지 않으며 참조된 파일은 프롬프트로 읽혀지지 않습니다. 적용하려는 규칙을 파일에 직접 입력합니다.
 
-`REVIEW.md` 예시:
+#### 조정할 수 있는 항목
+
+`REVIEW.md`는 자유 형식 마크다운이므로 검토 지침으로 표현할 수 있는 모든 것이 범위 내입니다. 아래 패턴은 실제로 가장 큰 영향을 미칩니다.
+
+**심각도**: 리포지토리에 대해 🔴 Important가 의미하는 바를 재정의합니다. 기본 보정은 프로덕션 코드를 대상으로 합니다. 문서 리포지토리, 구성 리포지토리 또는 프로토타입은 훨씬 더 좁은 정의를 원할 수 있습니다. Important인 결과 클래스와 최대 Nit인 결과 클래스를 명시적으로 명시합니다. 다른 방향으로도 확대할 수 있습니다. 예를 들어 기본 nit이 아닌 Important로 `CLAUDE.md` 위반을 처리합니다.
+
+**Nit 볼륨**: 단일 검토가 게시하는 🟡 Nit 댓글의 수를 제한합니다. 산문 및 구성 파일은 영원히 다듬어질 수 있습니다. "최대 5개의 nit을 보고하고 나머지를 요약에 개수로 언급"과 같은 제한은 검토를 실행 가능하게 유지합니다.
+
+**규칙 건너뛰기**: Claude가 결과를 게시하지 않아야 하는 경로, 분기 패턴 및 결과 카테고리를 나열합니다. 일반적인 후보는 생성된 코드, lockfile, 공급된 종속성 및 기계 작성 분기이며, linting 또는 맞춤법 검사와 같이 CI가 이미 적용하는 모든 것입니다. 완전한 정밀 검사를 보장하지 않지만 일부 검토를 보장하는 경로의 경우 완전히 건너뛰는 대신 더 높은 기준을 설정합니다: "`scripts/`에서는 거의 확실하고 심각한 경우에만 보고합니다."
+
+**리포지토리별 확인**: 모든 PR에서 플래그하려는 규칙을 추가합니다. 예: "새 API 경로에는 통합 테스트가 있어야 합니다." `REVIEW.md`가 최우선 순위로 주입되기 때문에 이들은 긴 `CLAUDE.md`의 동일한 규칙보다 더 안정적으로 도착합니다.
+
+**검증 기준**: 결과 클래스가 게시되기 전에 증거를 요구합니다. 예를 들어 "동작 주장은 명명에서의 추론이 아닌 소스의 `file:line` 인용이 필요합니다"는 그렇지 않으면 작성자에게 왕복을 비용으로 하는 거짓 양성을 줄입니다.
+
+**재검토 수렴**: PR이 이미 검토되었을 때 Claude가 어떻게 작동해야 하는지 알려줍니다. "첫 번째 검토 후 새로운 nit을 억제하고 Important 결과만 게시"와 같은 규칙은 한 줄 수정이 스타일만으로 7라운드에 도달하는 것을 방지합니다.
+
+**요약 형태**: 검토 본문이 `2 factual, 4 style`과 같은 한 줄 집계로 시작하도록 요청하고 그것이 경우일 때 "factual 문제 없음"으로 시작하도록 요청합니다. 작성자는 세부 사항 전에 작업의 형태를 알고 싶어합니다.
+
+#### 예시
+
+이 `REVIEW.md`는 백엔드 서비스의 심각도를 재보정하고, nit을 제한하고, 생성된 파일을 건너뛰고, 리포지토리별 확인을 추가합니다.
 
 ```markdown theme={null}
-# Code Review Guidelines
+# 검토 지침
 
-## Always check
-- New API endpoints have corresponding integration tests
-- Database migrations are backward-compatible
-- Error messages don't leak internal details to users
+## Important가 여기서 의미하는 바
 
-## Style
-- Prefer `match` statements over chained `isinstance` checks
-- Use structured logging, not f-string interpolation in log calls
+동작을 중단하거나 데이터를 유출하거나 롤백을 차단할 결과에 대해 Important를 예약합니다: 잘못된 논리, 범위가 지정되지 않은 데이터베이스 쿼리, 로그 또는 오류 메시지의 PII, 그리고 역호환되지 않는 마이그레이션입니다. 스타일, 명명 및 리팩토링 제안은 최대 Nit입니다.
 
-## Skip
-- Generated files under `src/gen/`
-- Formatting-only changes in `*.lock` files
+## Nit 제한
+
+검토당 최대 5개의 Nit을 보고합니다. 더 많이 발견한 경우 인라인으로 게시하는 대신 요약에서 "plus N similar items"라고 말합니다. 발견한 모든 것이 Nit인 경우 "No blocking issues"로 요약을 시작합니다.
+
+## 보고하지 않음
+
+- CI가 이미 적용하는 모든 것: lint, 형식, 타입 오류
+- `src/gen/` 아래의 생성된 파일 및 모든 `*.lock` 파일
+- 의도적으로 프로덕션 규칙을 위반하는 테스트 전용 코드
+
+## 항상 확인
+
+- 새 API 경로에는 통합 테스트가 있습니다
+- 로그 라인에 이메일 주소, 사용자 ID 또는 요청 본문이 포함되지 않습니다
+- 데이터베이스 쿼리는 호출자의 테넌트로 범위가 지정됩니다
 ```
 
-Claude는 리포지토리 루트에서 `REVIEW.md`를 자동으로 검색합니다. 구성이 필요하지 않습니다.
+#### 초점 유지
+
+길이는 비용이 있습니다: 긴 `REVIEW.md`는 가장 중요한 규칙을 희석합니다. 검토 동작을 변경하는 지침으로 유지하고 일반 프로젝트 컨텍스트는 `CLAUDE.md`에 남겨둡니다.
 
 ## 사용량 보기
 
@@ -189,7 +221,7 @@ Claude는 리포지토리 루트에서 `REVIEW.md`를 자동으로 검색합니�
 | Feedback             | 개발자가 문제를 해결하여 자동으로 해결된 검토 댓글의 개수 |
 | Repository breakdown | 리포지토리별 검토된 PR 개수 및 해결된 댓글        |
 
-관리자 설정의 리포지토리 테이블은 각 리포지토리의 검토당 평균 비용도 표시합니다.
+관리자 설정의 리포지토리 테이블은 각 리포지토리의 검토당 평균 비용도 표시합니다. 대시보드 비용 수치는 활동 모니터링을 위한 추정치입니다. 청구서 정확한 지출의 경우 Anthropic 청구서를 참조하십시오.
 
 ## 가격
 
@@ -203,7 +235,7 @@ Code Review는 토큰 사용량을 기반으로 청구됩니다. 각 검토는 �
 
 모든 모드에서 `@claude review`를 [댓글로 작성](#manually-trigger-reviews)하면 PR이 푸시 트리거 검토에 옵트인되므로 해당 댓글 이후 푸시당 추가 비용이 발생합니다. 향후 푸시에 구독하지 않고 단일 검토를 실행하려면 대신 `@claude review once`를 댓글로 작성하십시오.
 
-비용은 조직이 다른 Claude Code 기능에 AWS Bedrock 또는 Google Vertex AI를 사용하는지 여부와 관계없이 Anthropic 청구서에 나타납니다. Code Review의 월간 지출 한도를 설정하려면 [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage)로 이동하여 Claude Code Review 서비스의 한도를 구성합니다.
+비용은 조직이 다른 Claude Code 기능에 Amazon Bedrock 또는 Google Vertex AI를 사용하는지 여부와 관계없이 Anthropic 청구서에 나타납니다. Code Review의 월간 지출 한도를 설정하려면 [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage)로 이동하여 Claude Code Review 서비스의 한도를 구성합니다.
 
 [분석](#view-usage)의 주간 비용 차트 또는 관리자 설정의 리포지토리별 평균 비용 열을 통해 지출을 모니터링합니다.
 
@@ -218,6 +250,10 @@ Code Review는 토큰 사용량을 기반으로 청구됩니다. 각 검토는 �
 검토를 다시 실행하려면 PR에서 `@claude review once`를 댓글로 작성하십시오. 이렇게 하면 PR을 향후 푸시에 구독하지 않고 새로운 검토를 시작합니다. PR이 이미 푸시 트리거 검토에 구독되어 있으면 새 커밋을 푸시하면 새 검토도 시작됩니다.
 
 GitHub의 Checks 탭의 **Re-run** 버튼은 Code Review를 재트리거하지 않습니다. 댓글 명령이나 새 푸시를 대신 사용하십시오.
+
+### 검토가 실행되지 않았고 PR이 지출 한도 메시지를 표시합니다
+
+조직의 월간 지출 한도에 도달하면 Code Review는 검토가 건너뛰어졌음을 설명하는 단일 댓글을 PR에 게시합니다. 검토는 다음 청구 기간의 시작 시 자동으로 재개되거나 관리자가 [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage)에서 한도를 높일 때 즉시 재개됩니다.
 
 ### 인라인 댓글로 표시되지 않는 문제 찾기
 

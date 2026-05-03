@@ -17,7 +17,7 @@
 
 ### 商業協議
 
-無論您是直接使用 Claude API（1P）還是通過 AWS Bedrock 或 Google Vertex（3P）存取，您現有的商業協議將適用於 Claude Code 使用，除非我們已相互同意另行安排。
+無論您是直接使用 Claude API（1P）還是通過 Amazon Bedrock 或 Google Vertex（3P）存取，您現有的商業協議將適用於 Claude Code 使用，除非我們已相互同意另行安排。
 
 ## 合規
 

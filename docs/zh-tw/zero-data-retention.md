@@ -15,7 +15,7 @@ Claude for Enterprise 上的 ZDR 使企業客戶能夠使用 Claude Code 並實�
 * [服務器管理的設置](/zh-TW/server-managed-settings)
 * 審計日誌
 
-Claude for Enterprise 上 Claude Code 的 ZDR 僅適用於 Anthropic 的直接平台。對於在 AWS Bedrock、Google Vertex AI 或 Microsoft Foundry 上的 Claude 部署，請參考這些平台的數據保留政策。
+Claude for Enterprise 上 Claude Code 的 ZDR 僅適用於 Anthropic 的直接平台。對於在 Amazon Bedrock、Google Vertex AI 或 Microsoft Foundry 上的 Claude 部署，請參考這些平台的數據保留政策。
 
 ## ZDR 範圍
 

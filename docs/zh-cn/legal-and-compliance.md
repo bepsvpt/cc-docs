@@ -17,7 +17,7 @@
 
 ### 商业协议
 
-无论您是直接使用 Claude API（1P）还是通过 AWS Bedrock 或 Google Vertex（3P）访问，您现有的商业协议将适用于 Claude Code 的使用，除非我们已相互同意另行安排。
+无论您是直接使用 Claude API（1P）还是通过 Amazon Bedrock 或 Google Vertex（3P）访问，您现有的商业协议将适用于 Claude Code 的使用，除非我们已相互同意另行安排。
 
 ## 合规
 

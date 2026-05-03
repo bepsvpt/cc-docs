@@ -246,13 +246,35 @@ Claude는 브라우저 작업을 위해 새 탭을 열고 브라우저의 로그
 
 확장 프로그램은 `vscode://anthropic.claude-code/open`에서 URI 핸들러를 등록합니다. 이를 사용하여 자신의 도구에서 새 Claude Code 탭을 열 수 있습니다: 셸 별칭, 브라우저 북마크렛 또는 URL을 열 수 있는 모든 스크립트입니다. VS Code가 아직 실행 중이 아니면 URL을 열면 먼저 시작됩니다. VS Code가 이미 실행 중이면 URL은 현재 포커스된 창에서 열립니다.
 
-운영 체제의 URL 오프너로 핸들러를 호출합니다. macOS에서:
+운영 체제의 URL 오프너로 핸들러를 호출합니다.
 
-```bash theme={null}
-open "vscode://anthropic.claude-code/open"
-```
+<Tabs>
+  <Tab title="macOS">
+    ```bash theme={null}
+    open "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
 
-Linux에서 `xdg-open`을 사용하거나 Windows에서 `start`를 사용합니다.
+  <Tab title="Linux">
+    ```bash theme={null}
+    xdg-open "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
+
+  <Tab title="Windows">
+    PowerShell에서:
+
+    ```powershell theme={null}
+    Start-Process "vscode://anthropic.claude-code/open"
+    ```
+
+    `cmd.exe`에서 `start`는 첫 번째 따옴표로 묶인 인수를 창 제목으로 처리하므로 URL 앞에 빈 제목을 전달합니다:
+
+    ```cmd theme={null}
+    start "" "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
+</Tabs>
 
 핸들러는 두 개의 선택적 쿼리 매개변수를 허용합니다:
 
@@ -266,6 +288,8 @@ Linux에서 `xdg-open`을 사용하거나 Windows에서 `start`를 사용합니�
 ```text theme={null}
 vscode://anthropic.claude-code/open?prompt=review%20my%20changes
 ```
+
+터미널 세션을 VS Code 탭 대신 시작하려면 CLI의 `claude-cli://` 핸들러를 사용합니다. [링크에서 세션 시작](/ko/deep-links)을 참조하십시오.
 
 ## 설정 구성
 
@@ -340,10 +364,11 @@ Claude가 장기 실행 명령을 실행할 때 확장 프로그램은 상태 �
 
 MCP(Model Context Protocol) 서버는 Claude에게 외부 도구, 데이터베이스 및 API에 대한 액세스를 제공합니다.
 
-MCP 서버를 추가하려면 통합 터미널(`` Ctrl+` `` 또는 `` Cmd+` ``)을 열고 다음을 실행합니다:
+MCP 서버를 추가하려면 통합 터미널(`` Ctrl+` `` 또는 `` Cmd+` ``)을 열고 `claude mcp add`를 실행합니다. 아래 예제는 GitHub의 원격 MCP 서버를 추가하며, 이는 헤더로 전달된 [개인 액세스 토큰](https://github.com/settings/personal-access-tokens)으로 인증합니다:
 
 ```bash theme={null}
-claude mcp add --transport http github https://api.githubcopilot.com/mcp/
+claude mcp add --transport http github https://api.githubcopilot.com/mcp/ \
+  --header "Authorization: Bearer YOUR_GITHUB_PAT"
 ```
 
 구성되면 Claude에게 도구를 사용하도록 요청합니다(예: "Review PR #456").

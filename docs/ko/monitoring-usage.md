@@ -859,7 +859,7 @@ API 요청이 두 번 이상 시도 후 실패할 때 한 번 기록됩니다. �
 * 최적화를 위한 높은 사용 세션 식별
 
 <Note>
-  비용 메트릭은 근사값입니다. 공식 청구 데이터는 API 제공자 (Claude Console, AWS Bedrock 또는 Google Cloud Vertex)를 참조하세요.
+  비용 메트릭은 근사값입니다. 공식 청구 데이터는 API 제공자 (Claude Console, Amazon Bedrock 또는 Google Cloud Vertex)를 참조하세요.
 </Note>
 
 ### 경고 및 세분화

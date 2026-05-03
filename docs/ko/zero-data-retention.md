@@ -15,7 +15,7 @@ Claude for Enterprise의 ZDR은 엔터프라이즈 고객에게 Zero Data Retent
 * [서버 관리 설정](/ko/server-managed-settings)
 * 감사 로그
 
-Claude for Enterprise의 Claude Code에 대한 ZDR은 Anthropic의 직접 플랫폼에만 적용됩니다. AWS Bedrock, Google Vertex AI 또는 Microsoft Foundry의 Claude 배포의 경우 해당 플랫폼의 데이터 보존 정책을 참조하세요.
+Claude for Enterprise의 Claude Code에 대한 ZDR은 Anthropic의 직접 플랫폼에만 적용됩니다. Amazon Bedrock, Google Vertex AI 또는 Microsoft Foundry의 Claude 배포의 경우 해당 플랫폼의 데이터 보존 정책을 참조하세요.
 
 ## ZDR 범위
 

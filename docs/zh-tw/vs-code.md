@@ -246,13 +246,35 @@ Claude 為瀏覽器任務開啟新標籤並共享您的瀏覽器登入狀態，�
 
 擴充功能在 `vscode://anthropic.claude-code/open` 註冊 URI 處理程式。使用它從您自己的工具開啟新的 Claude Code 標籤：shell 別名、瀏覽器書籤，或任何可以開啟 URL 的指令碼。如果 VS Code 尚未執行，開啟 URL 會先啟動它。如果 VS Code 已在執行，URL 會在目前獲得焦點的視窗中開啟。
 
-使用您的作業系統的 URL 開啟程式叫用處理程式。在 macOS 上：
+使用您的作業系統的 URL 開啟程式叫用處理程式。
 
-```bash theme={null}
-open "vscode://anthropic.claude-code/open"
-```
+<Tabs>
+  <Tab title="macOS">
+    ```bash theme={null}
+    open "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
 
-在 Linux 上使用 `xdg-open` 或在 Windows 上使用 `start`。
+  <Tab title="Linux">
+    ```bash theme={null}
+    xdg-open "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
+
+  <Tab title="Windows">
+    在 PowerShell 中：
+
+    ```powershell theme={null}
+    Start-Process "vscode://anthropic.claude-code/open"
+    ```
+
+    在 `cmd.exe` 中，`start` 將其第一個引號引數視為視窗標題，因此在 URL 之前傳遞空標題：
+
+    ```cmd theme={null}
+    start "" "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
+</Tabs>
 
 處理程式接受兩個選擇性查詢參數：
 
@@ -266,6 +288,8 @@ open "vscode://anthropic.claude-code/open"
 ```text theme={null}
 vscode://anthropic.claude-code/open?prompt=review%20my%20changes
 ```
+
+若要啟動終端機工作階段而不是 VS Code 標籤，請使用 CLI 的 `claude-cli://` 處理程式。請參閱[從連結啟動工作階段](/zh-TW/deep-links)。
 
 ## 配置設定
 
@@ -340,10 +364,11 @@ VS Code 擴充功能支援 checkpoints，它們追蹤 Claude 的檔案編輯並�
 
 MCP（Model Context Protocol）servers 讓 Claude 存取外部工具、資料庫和 API。
 
-若要添加 MCP server，請開啟整合終端機（`` Ctrl+` `` 或 `` Cmd+` ``）並執行：
+若要添加 MCP server，請開啟整合終端機（`` Ctrl+` `` 或 `` Cmd+` ``）並執行 `claude mcp add`。下面的範例添加了 GitHub 的遠端 MCP server，它使用作為標頭傳遞的[個人存取令牌](https://github.com/settings/personal-access-tokens)進行身份驗證：
 
 ```bash theme={null}
-claude mcp add --transport http github https://api.githubcopilot.com/mcp/
+claude mcp add --transport http github https://api.githubcopilot.com/mcp/ \
+  --header "Authorization: Bearer YOUR_GITHUB_PAT"
 ```
 
 配置後，要求 Claude 使用工具（例如「Review PR #456」）。

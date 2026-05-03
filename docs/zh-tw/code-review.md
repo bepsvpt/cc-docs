@@ -7,7 +7,7 @@
 > 設定自動化 PR 審查，使用多代理分析您的完整程式碼庫來捕捉邏輯錯誤、安全漏洞和迴歸
 
 <Note>
-  Code Review 處於研究預覽階段，適用於 [Teams 和 Enterprise](https://claude.ai/admin-settings/claude-code) 訂閱。對於啟用了 [Zero Data Retention](/zh-TW/zero-data-retention) 的組織，此功能不可用。
+  Code Review 處於研究預覽階段，適用於 [Team 和 Enterprise](https://claude.ai/admin-settings/claude-code) 訂閱。對於啟用了 [Zero Data Retention](/zh-TW/zero-data-retention) 的組織，此功能不可用。
 </Note>
 
 Code Review 分析您的 GitHub pull request，並在發現問題的程式碼行上發佈內聯評論。一群專門的代理在您完整程式碼庫的背景下檢查程式碼變更，尋找邏輯錯誤、安全漏洞、破損的邊界情況和細微的迴歸。
@@ -29,7 +29,7 @@ Code Review 分析您的 GitHub pull request，並在發現問題的程式碼行
 
 一旦管理員為您的組織[啟用 Code Review](#set-up-code-review)，審查將在 PR 開啟時、每次推送時或手動請求時觸發，具體取決於存儲庫的配置行為。在任何模式下，評論 `@claude review` [在 PR 上啟動審查](#manually-trigger-reviews)。
 
-當審查運行時，多個代理在 Anthropic 基礎設施上並行分析差異和周圍程式碼。每個代理尋找不同類別的問題，然後驗證步驟檢查候選項目是否符合實際程式碼行為，以過濾掉誤報。結果被去重、按嚴重程度排名，並作為內聯評論發佈在發現問題的特定行上。如果未發現問題，Claude 會在 PR 上發佈簡短的確認評論。
+當審查運行時，多個代理在 Anthropic 基礎設施上並行分析差異和周圍程式碼。每個代理尋找不同類別的問題，然後驗證步驟檢查候選項目是否符合實際程式碼行為，以過濾掉誤報。結果被去重、按嚴重程度排名，並作為內聯評論發佈在發現問題的特定行上，並在審查正文中提供摘要。如果未發現問題，Claude 會在 PR 上發佈簡短的確認評論。
 
 審查成本隨著 PR 大小和複雜性而擴展，平均在 20 分鐘內完成。管理員可以通過 [分析儀表板](#view-usage) 監控審查活動和支出。
 
@@ -44,6 +44,12 @@ Code Review 分析您的 GitHub pull request，並在發現問題的程式碼行
 | 🟣 | 預先存在 | 程式碼庫中存在但未由此 PR 引入的錯誤 |
 
 發現包括可折疊的擴展推理部分，您可以展開以了解 Claude 為什麼標記該問題以及它如何驗證問題。
+
+### 對發現進行評分和回覆
+
+每個來自 Claude 的審查評論都已附加 👍 和 👎，因此兩個按鈕都會在 GitHub UI 中出現，以便一鍵評分。如果發現有用，請點擊 👍；如果發現錯誤或嘈雜，請點擊 👎。Anthropic 在 PR 合併後收集反應計數，並使用它們來調整審查者。反應不會觸發重新審查或更改 PR 上的任何內容。
+
+回覆內聯評論不會提示 Claude 回應或更新 PR。要對發現採取行動，請修復程式碼並推送。如果 PR 訂閱了推送觸發的審查，下一次運行將在問題修復時解決線程。要在不推送的情況下請求新審查，請作為 [頂級 PR 評論](#manually-trigger-reviews) 評論 `@claude review once`。
 
 ### 檢查運行輸出
 
@@ -135,14 +141,14 @@ gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \
 
 ## 自訂審查
 
-Code Review 從您的存儲庫讀取兩個文件來指導它標記的內容。兩者都是在默認正確性檢查之上的附加：
+Code Review 從您的存儲庫讀取兩個文件來指導它標記的內容。它們在強度上有所不同：
 
-* **`CLAUDE.md`**：Claude Code 用於所有任務的共享項目指令，不僅僅是審查。當指導也適用於互動式 Claude Code 會話時使用它。
-* **`REVIEW.md`**：僅審查指導，在程式碼審查期間專門讀取。對於嚴格關於在審查期間標記或跳過什麼的規則，以及會使您的一般 `CLAUDE.md` 混亂的規則，使用它。
+* **`CLAUDE.md`**：Claude Code 用於所有任務的共享項目指令，不僅僅是審查。Code Review 將其讀取為項目背景，並將新引入的違規標記為細節。
+* **`REVIEW.md`**：僅審查指導，直接注入到審查管道中每個代理的系統提示中作為最高優先級。使用它來改變標記的內容、嚴重程度以及發現的報告方式。
 
 ### CLAUDE.md
 
-Code Review 讀取您存儲庫的 `CLAUDE.md` 文件，並將新引入的違規視為細節級別的發現。這是雙向工作的：如果您的 PR 以使 `CLAUDE.md` 陳述過時的方式更改程式碼，Claude 會標記文件需要更新。
+Code Review 讀取您存儲庫的 `CLAUDE.md` 文件，並將新引入的違規視為 [細節級別](#severity-levels) 的發現。這是雙向工作的：如果您的 PR 以使 `CLAUDE.md` 陳述過時的方式更改程式碼，Claude 會標記文件需要更新。
 
 Claude 在目錄層次結構的每個級別讀取 `CLAUDE.md` 文件，因此子目錄的 `CLAUDE.md` 中的規則僅適用於該路徑下的文件。有關 `CLAUDE.md` 如何運作的更多信息，請參閱 [memory 文檔](/zh-TW/memory)。
 
@@ -150,33 +156,59 @@ Claude 在目錄層次結構的每個級別讀取 `CLAUDE.md` 文件，因此子
 
 ### REVIEW\.md
 
-將 `REVIEW.md` 文件添加到您的存儲庫根目錄以獲取審查特定規則。使用它來編碼：
+`REVIEW.md` 是位於您存儲庫根目錄的文件，它覆蓋 Code Review 在您的存儲庫上的行為方式。其內容被注入到審查管道中每個代理的系統提示中作為最高優先級指令塊，優先於默認審查指導。
 
-* 公司或團隊風格指南："優先使用早期返回而不是嵌套條件"
-* 語言或框架特定的約定，不被 linter 覆蓋
-* Claude 應始終標記的內容："任何新 API 路由必須有集成測試"
-* Claude 應跳過的內容："不要評論 `/gen/` 下生成程式碼中的格式設置"
+因為它是逐字粘貼的，`REVIEW.md` 是純指令：[`@` 導入語法](/zh-TW/memory#import-additional-files) 不會展開，引用的文件不會讀入提示中。將您想要強制執行的規則直接放在文件中。
 
-示例 `REVIEW.md`：
+#### 您可以調整什麼
+
+`REVIEW.md` 是自由格式的 markdown，因此任何您可以表達為審查指令的內容都在範圍內。下面的模式在實踐中影響最大。
+
+**嚴重程度**：重新定義 🔴 重要對您的存儲庫意味著什麼。默認校準針對生產程式碼；文檔存儲庫、配置存儲庫或原型可能想要更窄的定義。明確說明哪些類別的發現是重要的，哪些最多是細節。您也可以向另一個方向升級，例如將任何 `CLAUDE.md` 違規視為重要而不是默認細節。
+
+**細節量**：限制單次審查發佈的 🟡 細節評論數量。散文和配置文件可以永遠被打磨。像「最多報告五個細節，在摘要中提及其餘的計數」這樣的上限使審查可操作。
+
+**跳過規則**：列出 Claude 應該不發佈任何發現的路徑、分支模式和發現類別。常見候選是生成的程式碼、lockfiles、供應商依賴和機器編寫的分支，以及您的 CI 已經強制執行的任何內容，如 linting 或拼寫檢查。對於值得進行某些審查但不完全審查的路徑，設定更高的標準而不是完全跳過：「在 `scripts/` 中，僅在接近確定且嚴重時報告。」
+
+**存儲庫特定檢查**：添加您想在每個 PR 上標記的規則，例如「新 API 路由必須有集成測試。」因為 `REVIEW.md` 被注入為最高優先級，這些比長 `CLAUDE.md` 中的相同規則更可靠地著陸。
+
+**驗證標準**：在發佈發現類別之前需要證據。例如，「行為聲明需要源中的 `file:line` 引用，而不是從命名推斷」減少了否則會花費作者往返的誤報。
+
+**重新審查收斂**：告訴 Claude 當 PR 已經被審查時如何表現。像「在第一次審查後，抑制新細節並僅發佈重要發現」這樣的規則阻止一行修復從僅風格達到第七輪。
+
+**摘要形狀**：要求審查正文以一行計數開頭，例如 `2 factual, 4 style`，並在這種情況下以「沒有事實問題」開頭。作者想在詳細信息之前知道工作的形狀。
+
+#### 示例
+
+此 `REVIEW.md` 為後端服務重新校準嚴重程度，限制細節，跳過生成的文件，並添加存儲庫特定檢查。
 
 ```markdown theme={null}
-# Code Review Guidelines
+# 審查指令
 
-## Always check
-- New API endpoints have corresponding integration tests
-- Database migrations are backward-compatible
-- Error messages don't leak internal details to users
+## 重要在這裡意味著什麼
 
-## Style
-- Prefer `match` statements over chained `isinstance` checks
-- Use structured logging, not f-string interpolation in log calls
+保留重要用於會破壞行為、洩露數據或阻止回滾的發現：不正確的邏輯、無範圍的數據庫查詢、日誌或錯誤消息中的 PII，以及不向後兼容的遷移。風格、命名和重構建議最多是細節。
 
-## Skip
-- Generated files under `src/gen/`
-- Formatting-only changes in `*.lock` files
+## 限制細節
+
+每次審查最多報告五個細節。如果您發現更多，請在摘要中說「加上 N 個類似項目」而不是內聯發佈它們。如果您發現的一切都是細節，請以「沒有阻止問題」開頭摘要。
+
+## 不要報告
+
+- CI 已經強制執行的任何內容：lint、格式化、類型錯誤
+- `src/gen/` 下的生成文件和任何 `*.lock` 文件
+- 故意違反生產規則的僅測試程式碼
+
+## 始終檢查
+
+- 新 API 路由有集成測試
+- 日誌行不包括電子郵件地址、用戶 ID 或請求正文
+- 數據庫查詢的範圍限於調用者的租戶
 ```
 
-Claude 在存儲庫根目錄自動發現 `REVIEW.md`。無需配置。
+#### 保持專注
+
+長度有成本：長 `REVIEW.md` 會稀釋最重要的規則。將其保留為改變審查行為的指令，並將一般項目背景留在 `CLAUDE.md` 中。
 
 ## 查看使用情況
 
@@ -189,11 +221,11 @@ Claude 在存儲庫根目錄自動發現 `REVIEW.md`。無需配置。
 | Feedback             | 因開發人員解決問題而自動解決的審查評論計數          |
 | Repository breakdown | 每個存儲庫審查的 PR 計數和解決的評論           |
 
-管理員設定中的存儲庫表也顯示每個存儲庫的平均審查成本。
+管理員設定中的存儲庫表也顯示每個存儲庫的平均審查成本。儀表板成本數字是用於監控活動的估計；對於發票準確的支出，請參閱您的 Anthropic 帳單。
 
 ## 定價
 
-Code Review 根據令牌使用情況計費。審查平均 \$15-25，隨著 PR 大小、程式碼庫複雜性和需要驗證的問題數量而擴展。Code Review 使用通過 [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) 單獨計費，不計入您計劃的包含使用情況。
+Code Review 根據令牌使用情況計費。每次審查平均花費 \$15-25，隨著 PR 大小、程式碼庫複雜性和需要驗證的問題數量而擴展。Code Review 使用通過 [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) 單獨計費，不計入您計劃的包含使用情況。
 
 您選擇的審查觸發器影響總成本：
 
@@ -203,7 +235,7 @@ Code Review 根據令牌使用情況計費。審查平均 \$15-25，隨著 PR �
 
 在任何模式下，評論 `@claude review` [選擇 PR 進入推送觸發的審查](#manually-trigger-reviews)，因此在該評論之後每次推送都會產生額外成本。要運行單次審查而不訂閱未來推送，請改為評論 `@claude review once`。
 
-成本出現在您的 Anthropic 帳單上，無論您的組織是否為其他 Claude Code 功能使用 AWS Bedrock 或 Google Vertex AI。要為 Code Review 設定月度支出上限，請前往 [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) 並為 Claude Code Review 服務配置限制。
+成本出現在您的 Anthropic 帳單上，無論您的組織是否為其他 Claude Code 功能使用 Amazon Bedrock 或 Google Vertex AI。要為 Code Review 設定月度支出上限，請前往 [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) 並為 Claude Code Review 服務配置限制。
 
 通過 [analytics](#view-usage) 中的每週成本圖表或管理員設定中的每個存儲庫平均成本列監控支出。
 
@@ -218,6 +250,10 @@ Code Review 根據令牌使用情況計費。審查平均 \$15-25，隨著 PR �
 要再次運行審查，在 PR 上評論 `@claude review once`。這啟動一個新的審查，不訂閱 PR 以進行未來推送。如果 PR 已訂閱推送觸發的審查，推送新提交也會啟動新審查。
 
 GitHub 的 Checks 標籤中的 **Re-run** 按鈕不會重新觸發 Code Review。改用評論命令或新推送。
+
+### 審查未運行，PR 顯示支出上限消息
+
+當您的組織的月度支出上限達到時，Code Review 在 PR 上發佈單個評論，解釋審查被跳過。審查在下一個計費期開始時自動恢復，或當管理員在 [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) 提高上限時立即恢復。
 
 ### 查找未顯示為內聯評論的問題
 

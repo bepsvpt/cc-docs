@@ -17,7 +17,7 @@ Penggunaan Claude Code Anda tunduk pada:
 
 ### Perjanjian komersial
 
-Baik Anda menggunakan Claude API secara langsung (1P) atau mengaksesnya melalui AWS Bedrock atau Google Vertex (3P), perjanjian komersial yang ada akan berlaku untuk penggunaan Claude Code, kecuali kami telah menyetujui sebaliknya.
+Baik Anda menggunakan Claude API secara langsung (1P) atau mengaksesnya melalui Amazon Bedrock atau Google Vertex (3P), perjanjian komersial yang ada akan berlaku untuk penggunaan Claude Code, kecuali kami telah menyetujui sebaliknya.
 
 ## Kepatuhan
 

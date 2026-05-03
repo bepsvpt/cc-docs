@@ -7,7 +7,7 @@
 > 设置自动化 PR 审查，通过对完整代码库的多代理分析来捕获逻辑错误、安全漏洞和回归问题
 
 <Note>
-  Code Review 处于研究预览阶段，仅适用于 [Teams 和 Enterprise](https://claude.ai/admin-settings/claude-code) 订阅。对于启用了 [Zero Data Retention](/zh-CN/zero-data-retention) 的组织，此功能不可用。
+  Code Review 处于研究预览阶段，仅适用于 [Team 和 Enterprise](https://claude.ai/admin-settings/claude-code) 订阅。对于启用了 [Zero Data Retention](/zh-CN/zero-data-retention) 的组织，此功能不可用。
 </Note>
 
 Code Review 分析您的 GitHub pull request，并在发现问题的代码行上发布内联评论。一支由专业代理组成的团队在完整代码库的上下文中检查代码更改，寻找逻辑错误、安全漏洞、破损的边界情况和微妙的回归问题。
@@ -29,7 +29,7 @@ Code Review 分析您的 GitHub pull request，并在发现问题的代码行上
 
 一旦管理员为您的组织[启用 Code Review](#set-up-code-review)，审查将在 PR 打开时、每次推送时或手动请求时触发，具体取决于存储库的配置行为。在任何模式下，注释 `@claude review` 可以[在 PR 上启动审查](#manually-trigger-reviews)。
 
-当审查运行时，多个代理在 Anthropic 基础设施上并行分析差异和周围代码。每个代理寻找不同类别的问题，然后验证步骤检查候选项是否与实际代码行为相符，以过滤掉误报。结果被去重、按严重程度排序，并作为内联评论发布在发现问题的特定行上。如果未发现问题，Claude 会在 PR 上发布简短的确认评论。
+当审查运行时，多个代理在 Anthropic 基础设施上并行分析差异和周围代码。每个代理寻找不同类别的问题，然后验证步骤检查候选项是否与实际代码行为相符，以过滤掉误报。结果被去重、按严重程度排序，并作为内联评论发布在发现问题的特定行上，并在审查正文中包含摘要。如果未发现问题，Claude 会在 PR 上发布简短的确认评论。
 
 审查成本随 PR 大小和复杂性而扩展，平均在 20 分钟内完成。管理员可以通过[分析仪表板](#view-usage)监控审查活动和支出。
 
@@ -44,6 +44,12 @@ Code Review 分析您的 GitHub pull request，并在发现问题的代码行上
 | 🟣 | 预先存在 | 代码库中存在但不是由此 PR 引入的错误 |
 
 发现包括可折叠的扩展推理部分，您可以展开以了解 Claude 为什么标记该问题以及它如何验证问题。
+
+### 对发现进行评分和回复
+
+Claude 的每条审查评论都已附加 👍 和 👎，因此两个按钮都会在 GitHub UI 中出现，以便一键评分。如果发现有用，请点击 👍；如果发现错误或嘈杂，请点击 👎。Anthropic 在 PR 合并后收集反应计数，并使用它们来调整审查者。反应不会触发重新审查或更改 PR 上的任何内容。
+
+回复内联评论不会提示 Claude 响应或更新 PR。要对发现采取行动，请修复代码并推送。如果 PR 订阅了推送触发的审查，下一次运行将在问题修复时解决线程。要请求新审查而不推送，请作为[顶级 PR 评论](#manually-trigger-reviews)注释 `@claude review once`。
 
 ### 检查运行输出
 
@@ -135,14 +141,14 @@ gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \
 
 ## 自定义审查
 
-Code Review 从您的存储库读取两个文件来指导它标记的内容。两者都是在默认正确性检查之上的附加内容：
+Code Review 从您的存储库读取两个文件来指导它标记的内容。它们在如何强烈影响审查方面有所不同：
 
-* **`CLAUDE.md`**：共享项目说明，Claude Code 用于所有任务，不仅仅是审查。当指导也适用于交互式 Claude Code 会话时使用它。
-* **`REVIEW.md`**：仅审查指导，在代码审查期间专门读取。对于严格关于在审查期间标记或跳过什么的规则，以及会使您的常规 `CLAUDE.md` 混乱的规则，使用它。
+* **`CLAUDE.md`**：共享项目说明，Claude Code 用于所有任务，不仅仅是审查。Code Review 将其作为项目上下文读取，并将新引入的违规标记为小问题。
+* **`REVIEW.md`**：仅审查说明，直接注入到审查管道中的每个代理中作为最高优先级。使用它来改变标记的内容、严重程度以及如何报告发现。
 
 ### CLAUDE.md
 
-Code Review 读取您的存储库的 `CLAUDE.md` 文件，并将新引入的违规视为小问题级别的发现。这是双向工作的：如果您的 PR 以使 `CLAUDE.md` 语句过时的方式更改代码，Claude 会标记文档需要更新。
+Code Review 读取您的存储库的 `CLAUDE.md` 文件，并将新引入的违规视为[小问题级别](#severity-levels)的发现。这是双向工作的：如果您的 PR 以使 `CLAUDE.md` 语句过时的方式更改代码，Claude 会标记文档需要更新。
 
 Claude 在目录层次结构的每个级别读取 `CLAUDE.md` 文件，因此子目录的 `CLAUDE.md` 中的规则仅适用于该路径下的文件。有关 `CLAUDE.md` 如何工作的更多信息，请参阅[内存文档](/zh-CN/memory)。
 
@@ -150,33 +156,59 @@ Claude 在目录层次结构的每个级别读取 `CLAUDE.md` 文件，因此子
 
 ### REVIEW\.md
 
-将 `REVIEW.md` 文件添加到您的存储库根目录以获取仅审查规则。使用它来编码：
+`REVIEW.md` 是位于您的存储库根目录的文件，它覆盖 Code Review 在您的存储库上的行为方式。其内容被注入到审查管道中每个代理的系统提示中，作为最高优先级指令块，优先于默认审查指导。
 
-* 公司或团队风格指南："优先使用早期返回而不是嵌套条件"
-* 语言或框架特定的约定，不被 linter 覆盖
-* Claude 应始终标记的内容："任何新 API 路由必须有集成测试"
-* Claude 应跳过的内容："不要对 `/gen/` 下生成的代码中的格式进行注释"
+因为它是逐字粘贴的，`REVIEW.md` 是纯说明：[`@` 导入语法](/zh-CN/memory#import-additional-files)不会展开，引用的文件不会读入提示。将您想要强制执行的规则直接放在文件中。
 
-示例 `REVIEW.md`：
+#### 您可以调整的内容
+
+`REVIEW.md` 是自由格式的 markdown，因此任何您可以表达为审查说明的内容都在范围内。下面的模式在实践中影响最大。
+
+**严重程度**：为您的存储库重新定义 🔴 重要的含义。默认校准针对生产代码；文档存储库、配置存储库或原型可能想要更窄的定义。明确说明哪些类别的发现是重要的，哪些最多是小问题。您也可以向另一个方向升级，例如将任何 `CLAUDE.md` 违规视为重要而不是默认小问题。
+
+**小问题数量**：限制单次审查发布的 🟡 小问题评论数量。散文和配置文件可以永远被打磨。像"最多报告五个小问题，在摘要中提及其余的计数"这样的上限使审查可操作。
+
+**跳过规则**：列出 Claude 应该不发布任何发现的路径、分支模式和发现类别。常见候选是生成的代码、lockfiles、供应商依赖和机器创作的分支，以及您的 CI 已经强制执行的任何内容，如 linting 或拼写检查。对于值得一些审查但不需要完全审查的路径，设置更高的标准而不是完全跳过："在 `scripts/` 中，仅在接近确定且严重时报告。"
+
+**存储库特定检查**：添加您想在每个 PR 上标记的规则，如"新 API 路由必须有集成测试。"因为 `REVIEW.md` 被注入为最高优先级，这些比长 `CLAUDE.md` 中的相同规则更可靠地着陆。
+
+**验证标准**：在发布发现类别之前需要证据。例如，"行为声明需要源中的 `file:line` 引用，而不是从命名推断"会减少否则会花费作者往返的误报。
+
+**重新审查收敛**：告诉 Claude 当 PR 已经被审查时如何表现。像"在第一次审查后，抑制新的小问题并仅发布重要发现"这样的规则会阻止单行修复仅因风格而达到第七轮。
+
+**摘要形状**：要求审查正文以一行计数开头，如 `2 factual, 4 style`，并在这种情况下以"没有事实问题"开头。作者想在详细信息之前知道工作的形状。
+
+#### 示例
+
+这个 `REVIEW.md` 为后端服务重新校准严重程度，限制小问题，跳过生成的文件，并添加存储库特定检查。
 
 ```markdown theme={null}
-# Code Review Guidelines
+# 审查说明
 
-## Always check
-- New API endpoints have corresponding integration tests
-- Database migrations are backward-compatible
-- Error messages don't leak internal details to users
+## 重要在这里的含义
 
-## Style
-- Prefer `match` statements over chained `isinstance` checks
-- Use structured logging, not f-string interpolation in log calls
+保留重要用于会破坏行为、泄露数据或阻止回滚的发现：不正确的逻辑、无范围的数据库查询、日志或错误消息中的 PII，以及不向后兼容的迁移。风格、命名和重构建议最多是小问题。
 
-## Skip
-- Generated files under `src/gen/`
-- Formatting-only changes in `*.lock` files
+## 限制小问题
+
+每次审查最多报告五个小问题。如果您发现了更多，请在摘要中说"加上 N 个类似项目"而不是内联发布它们。如果您发现的一切都是小问题，请以"没有阻止问题"开头摘要。
+
+## 不要报告
+
+- CI 已经强制执行的任何内容：lint、格式化、类型错误
+- `src/gen/` 下生成的文件和任何 `*.lock` 文件
+- 故意违反生产规则的仅测试代码
+
+## 始终检查
+
+- 新 API 路由有集成测试
+- 日志行不包括电子邮件地址、用户 ID 或请求正文
+- 数据库查询的范围限定为调用者的租户
 ```
 
-Claude 在存储库根目录自动发现 `REVIEW.md`。无需配置。
+#### 保持专注
+
+长度有成本：长 `REVIEW.md` 会稀释最重要的规则。将其保持为改变审查行为的说明，并将常规项目上下文留在 `CLAUDE.md` 中。
 
 ## 查看使用情况
 
@@ -189,7 +221,7 @@ Claude 在存储库根目录自动发现 `REVIEW.md`。无需配置。
 | 反馈     | 因开发人员解决问题而自动解决的审查评论计数        |
 | 存储库分解  | 每个存储库的审查 PR 计数和已解决评论         |
 
-管理员设置中的存储库表也显示每个存储库的平均审查成本。
+管理员设置中的存储库表也显示每个存储库的平均审查成本。仪表板成本数字是用于监控活动的估计；对于发票准确的支出，请参考您的 Anthropic 账单。
 
 ## 定价
 
@@ -203,7 +235,7 @@ Code Review 根据令牌使用情况计费。审查平均花费 \$15-25，随 PR
 
 在任何模式下，注释 `@claude review` [选择 PR 进入推送触发审查](#manually-trigger-reviews)，因此在该注释后每次推送都会产生额外成本。要运行单次审查而不订阅未来推送，请改为注释 `@claude review once`。
 
-无论您的组织是否为其他 Claude Code 功能使用 AWS Bedrock 或 Google Vertex AI，成本都会出现在您的 Anthropic 账单上。要为 Code Review 设置每月支出上限，请转到 [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) 并为 Claude Code Review 服务配置限制。
+无论您的组织是否为其他 Claude Code 功能使用 Amazon Bedrock 或 Google Vertex AI，成本都会出现在您的 Anthropic 账单上。要为 Code Review 设置每月支出上限，请转到 [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) 并为 Claude Code Review 服务配置限制。
 
 通过[分析](#view-usage)中的每周成本图表或管理员设置中的每个存储库平均成本列监控支出。
 
@@ -218,6 +250,10 @@ Code Review 根据令牌使用情况计费。审查平均花费 \$15-25，随 PR
 要再次运行审查，在 PR 上注释 `@claude review once`。这启动一个新的审查，不订阅 PR 到未来推送。如果 PR 已订阅推送触发审查，推送新提交也会启动新审查。
 
 GitHub 检查选项卡中的**重新运行**按钮不会重新触发 Code Review。改用注释命令或新推送。
+
+### 审查未运行，PR 显示支出上限消息
+
+当您的组织的每月支出上限达到时，Code Review 在 PR 上发布单条评论，解释审查被跳过。审查在下一个计费周期开始时自动恢复，或当管理员在 [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) 提高上限时立即恢复。
 
 ### 查找未显示为内联评论的问题
 

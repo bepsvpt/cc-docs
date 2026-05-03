@@ -224,7 +224,7 @@ Per le istruzioni di configurazione, l'elenco completo delle funzionalità e la 
 
 Apri la Tavolozza dei comandi (`Cmd+Shift+P` su Mac o `Ctrl+Shift+P` su Windows/Linux) e digita "Claude Code" per vedere tutti i comandi VS Code disponibili per l'estensione Claude Code.
 
-Alcuni scorciatoie dipendono da quale pannello è "focalizzato" (riceve input da tastiera). Quando il tuo cursore è in un file di codice, l'editor è focalizzato. Quando il tuo cursore è nella casella dei prompt di Claude, Claude è focalizzato. Usa `Cmd+Esc` / `Ctrl+Esc` per alternare tra loro.
+Alcune scorciatoie dipendono da quale pannello è "focalizzato" (riceve input da tastiera). Quando il tuo cursore è in un file di codice, l'editor è focalizzato. Quando il tuo cursore è nella casella dei prompt di Claude, Claude è focalizzato. Usa `Cmd+Esc` / `Ctrl+Esc` per alternare tra loro.
 
 <Note>
   Questi sono comandi VS Code per controllare l'estensione. Non tutti i comandi Claude Code incorporati sono disponibili nell'estensione. Consulta [Estensione VS Code vs. Claude Code CLI](#vs-code-extension-vs-claude-code-cli) per i dettagli.
@@ -246,13 +246,35 @@ Alcuni scorciatoie dipendono da quale pannello è "focalizzato" (riceve input da
 
 L'estensione registra un gestore URI in `vscode://anthropic.claude-code/open`. Usalo per aprire una nuova scheda Claude Code dal tuo strumento: un alias shell, un bookmarklet del browser o qualsiasi script che possa aprire un URL. Se VS Code non è già in esecuzione, l'apertura dell'URL lo avvia prima. Se VS Code è già in esecuzione, l'URL si apre nella finestra attualmente focalizzata.
 
-Richiama il gestore con l'opener URL del tuo sistema operativo. Su macOS:
+Richiama il gestore con l'opener URL del tuo sistema operativo.
 
-```bash theme={null}
-open "vscode://anthropic.claude-code/open"
-```
+<Tabs>
+  <Tab title="macOS">
+    ```bash theme={null}
+    open "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
 
-Usa `xdg-open` su Linux o `start` su Windows.
+  <Tab title="Linux">
+    ```bash theme={null}
+    xdg-open "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
+
+  <Tab title="Windows">
+    In PowerShell:
+
+    ```powershell theme={null}
+    Start-Process "vscode://anthropic.claude-code/open"
+    ```
+
+    In `cmd.exe`, `start` tratta il suo primo argomento tra virgolette come titolo della finestra, quindi passa un titolo vuoto prima dell'URL:
+
+    ```cmd theme={null}
+    start "" "vscode://anthropic.claude-code/open"
+    ```
+  </Tab>
+</Tabs>
 
 Il gestore accetta due parametri di query facoltativi:
 
@@ -266,6 +288,8 @@ Ad esempio, per aprire una scheda pre-compilata con "review my changes":
 ```text theme={null}
 vscode://anthropic.claude-code/open?prompt=review%20my%20changes
 ```
+
+Per avviare una sessione terminale invece di una scheda VS Code, usa il gestore `claude-cli://` della CLI. Consulta [Avvia sessioni dai link](/it/deep-links).
 
 ## Configura le impostazioni
 
@@ -340,10 +364,11 @@ Quando Claude esegue comandi di lunga durata, l'estensione mostra l'avanzamento 
 
 I server MCP (Model Context Protocol) danno a Claude accesso a strumenti esterni, database e API.
 
-Per aggiungere un server MCP, apri il terminale integrato (`` Ctrl+` `` o `` Cmd+` ``) ed esegui:
+Per aggiungere un server MCP, apri il terminale integrato (`` Ctrl+` `` o `` Cmd+` ``) ed esegui `claude mcp add`. L'esempio seguente aggiunge il server MCP remoto di GitHub, che si autentica con un [token di accesso personale](https://github.com/settings/personal-access-tokens) passato come intestazione:
 
 ```bash theme={null}
-claude mcp add --transport http github https://api.githubcopilot.com/mcp/
+claude mcp add --transport http github https://api.githubcopilot.com/mcp/ \
+  --header "Authorization: Bearer YOUR_GITHUB_PAT"
 ```
 
 Una volta configurato, chiedi a Claude di utilizzare gli strumenti (ad es. "Review PR #456").

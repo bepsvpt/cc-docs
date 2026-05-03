@@ -859,7 +859,7 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * 识别高使用会话以进行优化
 
 <Note>
-  成本指标是近似值。有关官方计费数据，请参阅您的 API 提供商（Claude 控制台、AWS Bedrock 或 Google Cloud Vertex）。
+  成本指标是近似值。有关官方计费数据，请参阅您的 API 提供商（Claude 控制台、Amazon Bedrock 或 Google Cloud Vertex）。
 </Note>
 
 ### 警报和分段
