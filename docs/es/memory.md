@@ -319,7 +319,7 @@ Para deshabilitar auto memory a través de variable de entorno, establezca `CLAU
 
 Cada proyecto obtiene su propio directorio de memoria en `~/.claude/projects/<project>/memory/`. La ruta `<project>` se deriva del repositorio git, por lo que todos los worktrees y subdirectorios dentro del mismo repositorio comparten un directorio de auto memory. Fuera de un repositorio git, se usa la raíz del proyecto en su lugar.
 
-Para almacenar auto memory en una ubicación diferente, establezca `autoMemoryDirectory` en la configuración de usuario o local:
+Para almacenar auto memory en una ubicación diferente, establezca `autoMemoryDirectory` en la configuración de usuario en `~/.claude/settings.json`:
 
 ```json theme={null}
 {
@@ -327,7 +327,7 @@ Para almacenar auto memory en una ubicación diferente, establezca `autoMemoryDi
 }
 ```
 
-Esta configuración se acepta desde la política, local y configuración de usuario. No se acepta desde la configuración del proyecto (`.claude/settings.json`) para evitar que un proyecto compartido redirija escrituras de auto memory a ubicaciones sensibles.
+El valor debe ser una ruta absoluta o comenzar con `~/`. Esta configuración se acepta desde la política y la configuración de usuario, y desde la bandera `--settings`. No se acepta desde la configuración del proyecto o local, ya que ambos archivos viven dentro del directorio del proyecto y un repositorio clonado podría proporcionar cualquiera de ellos para redirigir las escrituras de auto memory a ubicaciones sensibles.
 
 El directorio contiene un punto de entrada `MEMORY.md` y archivos de tema opcionales:
 

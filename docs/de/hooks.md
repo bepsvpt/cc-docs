@@ -2020,7 +2020,7 @@ FileChanged-Hooks haben keine Entscheidungskontrolle. Sie können die Dateiände
 
 Wenn Sie `claude --worktree` ausführen oder ein [Subagent `isolation: "worktree"` verwendet](/de/sub-agents#choose-the-subagent-scope), erstellt Claude Code eine isolierte Arbeitskopie mit `git worktree`. Wenn Sie einen WorktreeCreate-Hook konfigurieren, ersetzt er das Standard-Git-Verhalten und ermöglicht es Ihnen, ein anderes Versionskontrollsystem wie SVN, Perforce oder Mercurial zu verwenden.
 
-Da der Hook das Standard-Verhalten vollständig ersetzt, wird [`.worktreeinclude`](/de/common-workflows#copy-gitignored-files-to-worktrees) nicht verarbeitet. Wenn Sie lokale Konfigurationsdateien wie `.env` in den neuen Worktree kopieren müssen, tun Sie dies in Ihrem Hook-Skript.
+Da der Hook das Standard-Verhalten vollständig ersetzt, wird [`.worktreeinclude`](/de/worktrees#copy-gitignored-files-into-worktrees) nicht verarbeitet. Wenn Sie lokale Konfigurationsdateien wie `.env` in den neuen Worktree kopieren müssen, tun Sie dies in Ihrem Hook-Skript.
 
 Der Hook muss den absoluten Pfad zum erstellten Worktree-Verzeichnis zurückgeben. Claude Code verwendet diesen Pfad als Arbeitsverzeichnis für die isolierte Sitzung. Command-Hooks geben ihn auf stdout aus; HTTP-Hooks geben ihn über `hookSpecificOutput.worktreePath` zurück.
 
@@ -2406,10 +2406,12 @@ Das LLM muss mit JSON antworten, das Folgendes enthält:
 }
 ```
 
-| Feld     | Beschreibung                                                              |
-| :------- | :------------------------------------------------------------------------ |
-| `ok`     | `true` erlaubt die Aktion, `false` verhindert sie                         |
-| `reason` | Erforderlich, wenn `ok` `false` ist. Erklärung, die Claude angezeigt wird |
+| Feld     | Beschreibung                                                       |
+| :------- | :----------------------------------------------------------------- |
+| `ok`     | `true` erlaubt die Aktion, `false` verhindert sie                  |
+| `reason` | Erforderlich, wenn `ok` `false` ist. Erklärung für die Blockierung |
+
+Für `Stop` und `SubagentStop` wird ein `ok: false` Grund an Claude als nächste Anweisung zurückgegeben und der Turn wird fortgesetzt. Für alle anderen unterstützten Ereignisse endet der Turn und der Grund wird im Chat als Warnzeile angezeigt; Claude sieht ihn nicht. Dies ist gleichbedeutend mit der Rückgabe von `"continue": false` aus einem Command-Hook. Wenn Sie unterschiedliche Blockierungssemantiken bei diesen Ereignissen benötigen, verwenden Sie einen [Command-Hook](#command-hook-fields) mit den ereignisspezifischen Feldern, die in [Entscheidungskontrolle](#decision-control) beschrieben sind.
 
 ### Beispiel: Multi-Kriterien-Stop-Hook
 

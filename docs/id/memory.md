@@ -319,7 +319,7 @@ Untuk menonaktifkan auto memory melalui variabel lingkungan, atur `CLAUDE_CODE_D
 
 Setiap proyek mendapatkan direktori memori sendiri di `~/.claude/projects/<project>/memory/`. Jalur `<project>` berasal dari repositori git, jadi semua worktrees dan subdirektori dalam repo yang sama berbagi satu direktori auto memory. Di luar repo git, root proyek digunakan sebagai gantinya.
 
-Untuk menyimpan auto memory di lokasi berbeda, atur `autoMemoryDirectory` dalam pengaturan pengguna atau lokal Anda:
+Untuk menyimpan auto memory di lokasi berbeda, atur `autoMemoryDirectory` dalam pengaturan pengguna Anda di `~/.claude/settings.json`:
 
 ```json theme={null}
 {
@@ -327,7 +327,7 @@ Untuk menyimpan auto memory di lokasi berbeda, atur `autoMemoryDirectory` dalam 
 }
 ```
 
-Pengaturan ini diterima dari pengaturan kebijakan, lokal, dan pengguna. Itu tidak diterima dari pengaturan proyek (`.claude/settings.json`) untuk mencegah proyek bersama mengarahkan ulang penulisan auto memory ke lokasi sensitif.
+Nilai harus berupa jalur absolut atau dimulai dengan `~/`. Pengaturan ini diterima dari pengaturan kebijakan dan pengguna, dan dari flag `--settings`. Itu tidak diterima dari pengaturan proyek atau lokal, karena kedua file berada di dalam direktori proyek dan repositori yang dikloning dapat menyediakan salah satu untuk mengarahkan ulang penulisan auto memory ke lokasi sensitif.
 
 Direktori berisi titik masuk `MEMORY.md` dan file topik opsional:
 

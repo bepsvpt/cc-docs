@@ -2025,7 +2025,7 @@ FileChanged hooks 沒有決定控制。它們無法阻止檔案變更的發生�
 
 當您執行 `claude --worktree` 或 [subagent 使用 `isolation: "worktree"`](/zh-TW/sub-agents#choose-the-subagent-scope) 時，Claude Code 使用 `git worktree` 建立隔離的工作副本。如果您配置 WorktreeCreate hook，它會替換預設的 git 行為，讓您使用不同的版本控制系統，如 SVN、Perforce 或 Mercurial。
 
-因為 hook 完全替換預設行為，[`.worktreeinclude`](/zh-TW/common-workflows#copy-gitignored-files-to-worktrees) 不被處理。如果您需要將本機配置檔案（如 `.env`）複製到新 worktree，請在您的 hook 指令碼內執行。
+因為 hook 完全替換預設行為，[`.worktreeinclude`](/zh-TW/worktrees#copy-gitignored-files-into-worktrees) 不被處理。如果您需要將本機配置檔案（如 `.env`）複製到新 worktree，請在您的 hook 指令碼內執行。
 
 Hook 必須返回建立的 worktree 目錄的絕對路徑。Claude Code 使用此路徑作為隔離工作階段的工作目錄。命令 hooks 在 stdout 上列印它；HTTP hooks 通過 `hookSpecificOutput.worktreePath` 返回它。
 

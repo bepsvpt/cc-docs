@@ -171,6 +171,19 @@ Hook ini menggunakan acara `Notification`, yang aktif ketika Claude menunggu inp
   </Tab>
 </Tabs>
 
+Matcher kosong `matcher` aktif pada semua jenis notifikasi. Untuk aktif hanya pada acara tertentu, atur ke salah satu nilai berikut:
+
+| Matcher                | Aktif ketika                                            |
+| :--------------------- | :------------------------------------------------------ |
+| `permission_prompt`    | Claude memerlukan Anda untuk menyetujui penggunaan alat |
+| `idle_prompt`          | Claude selesai dan menunggu prompt berikutnya Anda      |
+| `auth_success`         | Autentikasi selesai                                     |
+| `elicitation_dialog`   | Server MCP membuka formulir elicitation                 |
+| `elicitation_complete` | Formulir elicitation MCP dikirimkan atau ditutup        |
+| `elicitation_response` | Respons elicitation MCP dikirim kembali ke server       |
+
+Ketik `/hooks` dan pilih `Notification` untuk mengonfirmasi hook terdaftar. Untuk skema acara lengkap, lihat [Notification reference](/id/hooks#notification).
+
 ### Auto-format kode setelah edit
 
 Jalankan [Prettier](https://prettier.io/) secara otomatis pada setiap file yang Claude edit, sehingga pemformatan tetap konsisten tanpa intervensi manual.
@@ -722,7 +735,7 @@ Untuk keputusan yang memerlukan penilaian daripada aturan deterministik, gunakan
 Satu-satunya pekerjaan model adalah mengembalikan keputusan ya/tidak sebagai JSON:
 
 * `"ok": true`: tindakan berlanjut
-* `"ok": false`: tindakan diblokir. `"reason"` model diberi makan kembali ke Claude sehingga dapat menyesuaikan.
+* `"ok": false`: tindakan diblokir. Untuk hook `Stop` dan `SubagentStop`, `reason` diberi makan kembali ke Claude sehingga terus bekerja. Untuk peristiwa lainnya, giliran berakhir dan `reason` muncul dalam obrolan sebagai baris peringatan. Claude tidak melihatnya.
 
 Contoh ini menggunakan hook `Stop` untuk menanyakan kepada model apakah semua tugas yang diminta selesai. Jika model mengembalikan `"ok": false`, Claude terus bekerja dan menggunakan `reason` sebagai instruksi berikutnya:
 

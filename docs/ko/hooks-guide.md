@@ -171,6 +171,19 @@ Claude가 작업을 완료하고 입력이 필요할 때마다 데스크톱 알�
   </Tab>
 </Tabs>
 
+빈 `matcher`는 모든 알림 유형에서 발생합니다. 특정 이벤트에서만 발생하도록 하려면 다음 값 중 하나로 설정합니다:
+
+| Matcher                | 발생 시점                       |
+| :--------------------- | :-------------------------- |
+| `permission_prompt`    | Claude가 도구 사용을 승인하도록 요청할 때  |
+| `idle_prompt`          | Claude가 완료되고 다음 프롬프트를 기다릴 때 |
+| `auth_success`         | 인증이 완료될 때                   |
+| `elicitation_dialog`   | MCP 서버가 유도 양식을 열 때          |
+| `elicitation_complete` | MCP 유도 양식이 제출되거나 닫힐 때       |
+| `elicitation_response` | MCP 유도 응답이 서버로 다시 전송될 때     |
+
+`/hooks`를 입력하고 `Notification`을 선택하여 hook이 등록되었는지 확인합니다. 전체 이벤트 스키마는 [Notification 참조](/ko/hooks#notification)를 참조하세요.
+
 ### 편집 후 코드 자동 형식 지정
 
 Claude가 편집하는 모든 파일에서 [Prettier](https://prettier.io/)를 자동으로 실행하여 수동 개입 없이 형식이 일관되게 유지되도록 합니다.
@@ -344,6 +357,8 @@ Matcher는 구성 유형으로 필터링합니다: `user_settings`, `project_set
   }
 }
 ```
+
+`direnv allow`를 `.envrc`가 있는 각 디렉토리에서 한 번 실행하여 direnv가 이를 로드할 수 있도록 허용합니다. direnv 대신 devbox 또는 nix를 사용하는 경우 `direnv export bash` 대신 `devbox shellenv` 또는 `devbox global shellenv`를 사용하면 동일한 패턴이 작동합니다.
 
 모든 디렉토리 변경이 아닌 특정 파일에 반응하려면 `FileChanged`를 `matcher`와 함께 사용하여 감시할 파일 이름을 나열합니다 (파이프로 구분). 감시 목록을 구성하기 위해 이 값은 정규식으로 평가되지 않고 리터럴 파일 이름으로 분할됩니다. [FileChanged](/ko/hooks#filechanged)를 참조하여 파일이 변경될 때 어떤 hook 그룹이 실행되는지 필터링하는 방법도 확인하세요. 이 예제는 작업 디렉토리에서 `.envrc` 및 `.env`를 감시합니다:
 
@@ -715,12 +730,12 @@ Claude Code가 실행 중인 동안 설정 파일을 직접 편집하면 파일 
 
 ## 프롬프트 기반 hooks
 
-결정론적 규칙이 아닌 판단이 필요한 결정의 경우 `type: "prompt"` hooks를 사용합니다. 셸 명령을 실행하는 대신 Claude Code는 프롬프트와 hook의 입력 데이터를 Claude 모델 (기본적으로 Haiku)에 전송하여 결정을 내립니다. 더 많은 기능이 필요한 경우 `model` 필드로 다른 모델을 지정할 수 있습니다.
+결정론적 규칙이 아닌 판단이 필요한 결정의 경우 `type: "prompt"` hooks를 사용합니다. 셸 명령을 실행하는 대신 Claude Code는 프롬프트와 hook의 입력 데이터를 Claude 모델(기본적으로 Haiku)에 전송하여 결정을 내립니다. 더 많은 기능이 필요한 경우 `model` 필드로 다른 모델을 지정할 수 있습니다.
 
 모델의 유일한 작업은 yes/no 결정을 JSON으로 반환하는 것입니다:
 
 * `"ok": true`: 작업이 진행됩니다
-* `"ok": false`: 작업이 차단됩니다. 모델의 `"reason"`은 Claude가 조정할 수 있도록 피드백으로 전달됩니다.
+* `"ok": false`: 작업이 차단됩니다. `Stop` 및 `SubagentStop` hooks의 경우 `reason`이 Claude에게 피드백으로 전달되어 계속 작업합니다. 다른 이벤트의 경우 턴이 종료되고 `reason`이 경고 줄로 채팅에 나타납니다. Claude는 이를 보지 못합니다.
 
 이 예제는 `Stop` hook을 사용하여 모든 요청된 작업이 완료되었는지 모델에 묻습니다. 모델이 `"ok": false`를 반환하면 Claude는 계속 작업하고 `reason`을 다음 지침으로 사용합니다:
 

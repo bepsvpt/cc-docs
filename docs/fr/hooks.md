@@ -2020,7 +2020,7 @@ Les hooks FileChanged n'ont pas de contrôle de décision. Ils ne peuvent pas bl
 
 Lorsque vous exécutez `claude --worktree` ou qu'un [subagent utilise `isolation: "worktree"`](/fr/sub-agents#choose-the-subagent-scope), Claude Code crée une copie de travail isolée en utilisant `git worktree`. Si vous configurez un hook WorktreeCreate, il remplace le comportement git par défaut, vous permettant d'utiliser un système de contrôle de version différent comme SVN, Perforce ou Mercurial.
 
-Parce que le hook remplace le comportement par défaut entièrement, [`.worktreeinclude`](/fr/common-workflows#copy-gitignored-files-to-worktrees) n'est pas traité. Si vous avez besoin de copier les fichiers de configuration locaux comme `.env` dans le nouveau worktree, faites-le à l'intérieur de votre script de hook.
+Parce que le hook remplace le comportement par défaut entièrement, [`.worktreeinclude`](/fr/worktrees#copy-gitignored-files-into-worktrees) n'est pas traité. Si vous avez besoin de copier les fichiers de configuration locaux comme `.env` dans le nouveau worktree, faites-le à l'intérieur de votre script de hook.
 
 Le hook doit retourner le chemin absolu du répertoire du worktree créé. Claude Code utilise ce chemin comme répertoire de travail pour la session isolée. Les hooks de commande l'impriment sur stdout ; les hooks HTTP le retournent via `hookSpecificOutput.worktreePath`.
 
@@ -2406,10 +2406,12 @@ Le LLM doit répondre avec JSON contenant :
 }
 ```
 
-| Champ    | Description                                                    |
-| :------- | :------------------------------------------------------------- |
-| `ok`     | `true` autorise l'action, `false` l'empêche                    |
-| `reason` | Requis lorsque `ok` est `false`. Explication affichée à Claude |
+| Champ    | Description                                                   |
+| :------- | :------------------------------------------------------------ |
+| `ok`     | `true` autorise l'action, `false` l'empêche                   |
+| `reason` | Requis lorsque `ok` est `false`. Explication pour la décision |
+
+Pour `Stop` et `SubagentStop`, une raison `ok: false` est renvoyée à Claude comme sa prochaine instruction et le tour continue. Pour tous les autres événements supportés, le tour se termine et la raison apparaît dans le chat comme une ligne d'avertissement ; Claude ne la voit pas. Ceci est équivalent à retourner `"continue": false` d'un hook de commande. Si vous avez besoin de sémantiques de blocage différentes sur ces événements, utilisez un [hook de commande](#command-hook-fields) avec les champs par événement décrits dans [Contrôle de décision](#decision-control).
 
 ### Exemple : Hook Stop multi-critères
 

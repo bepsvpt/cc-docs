@@ -2019,7 +2019,7 @@ FileChanged hooks 没有决定控制。它们无法阻止文件更改的发生�
 
 当您运行 `claude --worktree` 或[subagent 使用 `isolation: "worktree"`](/zh-CN/sub-agents#choose-the-subagent-scope)时，Claude Code 使用 `git worktree` 创建隔离的工作副本。如果您配置 WorktreeCreate hook，它替换默认的 git 行为，让您使用不同的版本控制系统，如 SVN、Perforce 或 Mercurial。
 
-因为 hook 完全替换默认行为，[`.worktreeinclude`](/zh-CN/common-workflows#copy-gitignored-files-to-worktrees)不被处理。如果您需要将本地配置文件（如 `.env`）复制到新 worktree，请在您的 hook 脚本内执行。
+因为 hook 完全替换默认行为，[`.worktreeinclude`](/zh-CN/worktrees#copy-gitignored-files-into-worktrees)不被处理。如果您需要将本地配置文件（如 `.env`）复制到新 worktree，请在您的 hook 脚本内执行。
 
 Hook 必须返回创建的 worktree 目录的绝对路径。Claude Code 使用此路径作为隔离会话的工作目录。命令 hooks 在 stdout 上打印它；HTTP hooks 通过 `hookSpecificOutput.worktreePath` 返回它。
 
@@ -2405,14 +2405,16 @@ LLM 必须使用包含以下内容的 JSON 响应：
 }
 ```
 
-| 字段       | 描述                                  |
-| :------- | :---------------------------------- |
-| `ok`     | `true` 允许操作，`false` 防止它             |
-| `reason` | 当 `ok` 为 `false` 时必需。向 Claude 显示的解释 |
+| 字段       | 描述                         |
+| :------- | :------------------------- |
+| `ok`     | `true` 允许操作，`false` 防止它    |
+| `reason` | 当 `ok` 为 `false` 时必需。阻止的解释 |
+
+对于 `Stop` 和 `SubagentStop`，`ok: false` 的原因被反馈给 Claude 作为其下一条指令，转轮继续。对于所有其他支持的事件，转轮结束，原因在聊天中显示为警告行；Claude 看不到它。这等同于从命令 hook 返回 `"continue": false`。如果您需要对这些事件使用不同的阻止语义，请使用[命令 hook](#command-hook-fields)，其中包含[决定控制](#decision-control)中描述的每个事件字段。
 
 ### 示例：多条件 Stop hook
 
-此 `Stop` hook 使用详细提示检查三个条件，然后允许 Claude 停止。如果 `"ok"` 为 `false`，Claude 继续工作，提供的原因作为其下一条指令。`SubagentStop` hooks 使用相同的格式来评估 [subagent](/zh-CN/sub-agents) 是否应该停止：
+此 `Stop` hook 使用详细提示检查三个条件，然后允许 Claude 停止。如果 `"ok"` 为 `false`，Claude 继续工作，提供的原因作为其下一条指令。`SubagentStop` hooks 使用相同的格式来评估[子代理](/zh-CN/sub-agents)是否应该停止：
 
 ```json theme={null}
 {

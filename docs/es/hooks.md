@@ -2020,7 +2020,7 @@ Los hooks FileChanged no tienen control de decisión. No pueden bloquear el camb
 
 Cuando ejecuta `claude --worktree` o un [subagente usa `isolation: "worktree"`](/es/sub-agents#choose-the-subagent-scope), Claude Code crea una copia de trabajo aislada usando `git worktree`. Si configura un hook WorktreeCreate, reemplaza el comportamiento predeterminado de git, permitiéndole usar un sistema de control de versiones diferente como SVN, Perforce o Mercurial.
 
-Debido a que el hook reemplaza el comportamiento predeterminado completamente, [`.worktreeinclude`](/es/common-workflows#copy-gitignored-files-to-worktrees) no se procesa. Si necesita copiar archivos de configuración local como `.env` en el nuevo worktree, hágalo dentro de su script de hook.
+Debido a que el hook reemplaza el comportamiento predeterminado completamente, [`.worktreeinclude`](/es/worktrees#copy-gitignored-files-into-worktrees) no se procesa. Si necesita copiar archivos de configuración local como `.env` en el nuevo worktree, hágalo dentro de su script de hook.
 
 El hook debe devolver la ruta absoluta al directorio de worktree creado. Claude Code usa esta ruta como el directorio de trabajo para la sesión aislada. Los hooks de comando la imprimen en stdout; los hooks HTTP la devuelven a través de `hookSpecificOutput.worktreePath`.
 
@@ -2406,10 +2406,12 @@ El LLM debe responder con JSON que contenga:
 }
 ```
 
-| Campo    | Descripción                                                     |
-| :------- | :-------------------------------------------------------------- |
-| `ok`     | `true` permite la acción, `false` la previene                   |
-| `reason` | Requerido cuando `ok` es `false`. Explicación mostrada a Claude |
+| Campo    | Descripción                                                    |
+| :------- | :------------------------------------------------------------- |
+| `ok`     | `true` permite la acción, `false` la previene                  |
+| `reason` | Requerido cuando `ok` es `false`. Explicación para la decisión |
+
+Para `Stop` y `SubagentStop`, una razón `ok: false` se retroalimenta a Claude como su siguiente instrucción y el turno continúa. Para todos los otros eventos admitidos, el turno termina y la razón aparece en el chat como una línea de advertencia; Claude no la ve. Esto es equivalente a devolver `"continue": false` desde un hook de comando. Si necesita semántica de bloqueo diferente en esos eventos, use un [hook de comando](#command-hook-fields) con los campos por evento descritos en [Control de decisión](#decision-control).
 
 ### Ejemplo: Hook Stop de múltiples criterios
 

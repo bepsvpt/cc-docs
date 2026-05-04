@@ -171,6 +171,19 @@ Este hook usa o evento `Notification`, que dispara quando Claude está aguardand
   </Tab>
 </Tabs>
 
+O `matcher` vazio dispara em todos os tipos de notificação. Para disparar apenas em eventos específicos, defina-o como um destes valores:
+
+| Matcher                | Dispara quando                                                |
+| :--------------------- | :------------------------------------------------------------ |
+| `permission_prompt`    | Claude precisa que você aprove um uso de ferramenta           |
+| `idle_prompt`          | Claude terminou e está aguardando seu próximo prompt          |
+| `auth_success`         | A autenticação é concluída                                    |
+| `elicitation_dialog`   | Um servidor MCP abre um formulário de elicitação              |
+| `elicitation_complete` | Um formulário de elicitação MCP é enviado ou descartado       |
+| `elicitation_response` | Uma resposta de elicitação MCP é enviada de volta ao servidor |
+
+Digite `/hooks` e selecione `Notification` para confirmar que o hook está registrado. Para o esquema de evento completo, consulte a [referência de Notification](/pt/hooks#notification).
+
 ### Formatar código automaticamente após edições
 
 Execute automaticamente [Prettier](https://prettier.io/) em cada arquivo que Claude edita, para que a formatação permaneça consistente sem intervenção manual.
@@ -722,7 +735,7 @@ Para decisões que exigem julgamento em vez de regras determinísticas, use hook
 O único trabalho do modelo é retornar uma decisão sim/não como JSON:
 
 * `"ok": true`: a ação prossegue
-* `"ok": false`: a ação é bloqueada. O `"reason"` do modelo é alimentado de volta ao Claude para que possa se ajustar.
+* `"ok": false`: a ação é bloqueada. Para hooks `Stop` e `SubagentStop`, o `reason` é alimentado de volta ao Claude para que ele continue trabalhando. Para outros eventos, o turno termina e o `reason` aparece no chat como uma linha de aviso. Claude não o vê.
 
 Este exemplo usa um hook `Stop` para perguntar ao modelo se todas as tarefas solicitadas estão completas. Se o modelo retornar `"ok": false`, Claude continua trabalhando e usa o `reason` como sua próxima instrução:
 

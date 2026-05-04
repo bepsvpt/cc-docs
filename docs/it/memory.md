@@ -319,7 +319,7 @@ Per disabilitare la memoria automatica tramite variabile di ambiente, imposta `C
 
 Ogni progetto ottiene la propria directory di memoria in `~/.claude/projects/<project>/memory/`. Il percorso `<project>` è derivato dal repository git, quindi tutti i worktrees e le sottodirectory all'interno dello stesso repo condividono una directory di memoria automatica. Al di fuori di un repository git, viene utilizzata la radice del progetto.
 
-Per archiviare la memoria automatica in una posizione diversa, imposta `autoMemoryDirectory` nelle impostazioni dell'utente o locali:
+Per archiviare la memoria automatica in una posizione diversa, imposta `autoMemoryDirectory` nelle impostazioni dell'utente in `~/.claude/settings.json`:
 
 ```json theme={null}
 {
@@ -327,7 +327,7 @@ Per archiviare la memoria automatica in una posizione diversa, imposta `autoMemo
 }
 ```
 
-Questa impostazione è accettata dalle impostazioni di politica, locali e utente. Non è accettata dalle impostazioni di progetto (`.claude/settings.json`) per evitare che un progetto condiviso reindirizza le scritture di memoria automatica a posizioni sensibili.
+Il valore deve essere un percorso assoluto o iniziare con `~/`. Questa impostazione è accettata dalle impostazioni di politica e utente, e dal flag `--settings`. Non è accettata dalle impostazioni di progetto o locali, poiché entrambi i file si trovano all'interno della directory del progetto e un repository clonato potrebbe fornire uno di essi per reindirizzare le scritture di memoria automatica a posizioni sensibili.
 
 La directory contiene un punto di ingresso `MEMORY.md` e file di argomento opzionali:
 

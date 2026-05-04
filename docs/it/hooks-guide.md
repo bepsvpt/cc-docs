@@ -171,6 +171,19 @@ Questo hook utilizza l'evento `Notification`, che si attiva quando Claude sta as
   </Tab>
 </Tabs>
 
+Il matcher vuoto si attiva su tutti i tipi di notifica. Per attivarsi solo su eventi specifici, impostatelo a uno di questi valori:
+
+| Matcher                | Si attiva quando                                            |
+| :--------------------- | :---------------------------------------------------------- |
+| `permission_prompt`    | Claude ha bisogno che approviate un uso dello strumento     |
+| `idle_prompt`          | Claude ha finito e sta aspettando il vostro prossimo prompt |
+| `auth_success`         | L'autenticazione si completa                                |
+| `elicitation_dialog`   | Un server MCP apre un modulo di elicitazione                |
+| `elicitation_complete` | Un modulo di elicitazione MCP viene inviato o chiuso        |
+| `elicitation_response` | Una risposta di elicitazione MCP viene inviata al server    |
+
+Digitate `/hooks` e selezionate `Notification` per confermare che l'hook è registrato. Per lo schema completo dell'evento, consultate il [riferimento Notification](/it/hooks#notification).
+
 ### Formattare automaticamente il codice dopo le modifiche
 
 Eseguite automaticamente [Prettier](https://prettier.io/) su ogni file che Claude modifica, in modo che la formattazione rimanga coerente senza intervento manuale.
@@ -722,7 +735,7 @@ Per decisioni che richiedono giudizio piuttosto che regole deterministiche, util
 L'unico lavoro del modello è restituire una decisione sì/no come JSON:
 
 * `"ok": true`: l'azione procede
-* `"ok": false`: l'azione è bloccata. Il `"reason"` del modello viene alimentato di nuovo a Claude in modo da poter adattarsi.
+* `"ok": false`: l'azione è bloccata. Per gli hook `Stop` e `SubagentStop`, il `reason` viene alimentato di nuovo a Claude in modo che continui a lavorare. Per altri eventi, il turno termina e il `reason` appare nella chat come una riga di avviso. Claude non lo vede.
 
 Questo esempio utilizza un hook `Stop` per chiedere al modello se tutti i compiti richiesti sono completi. Se il modello restituisce `"ok": false`, Claude continua a lavorare e utilizza il `reason` come sua prossima istruzione:
 

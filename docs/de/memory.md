@@ -319,7 +319,7 @@ Um Auto-Memory über eine Umgebungsvariable zu deaktivieren, setzen Sie `CLAUDE_
 
 Jedes Projekt erhält sein eigenes Memory-Verzeichnis unter `~/.claude/projects/<project>/memory/`. Der Pfad `<project>` wird aus dem Git-Repository abgeleitet, sodass alle Worktrees und Unterverzeichnisse innerhalb desselben Repos ein Auto-Memory-Verzeichnis teilen. Außerhalb eines Git-Repos wird stattdessen das Projektstammverzeichnis verwendet.
 
-Um Auto-Memory an einem anderen Ort zu speichern, setzen Sie `autoMemoryDirectory` in Ihren Benutzer- oder lokalen Einstellungen:
+Um Auto-Memory an einem anderen Ort zu speichern, setzen Sie `autoMemoryDirectory` in Ihren Benutzereinstellungen unter `~/.claude/settings.json`:
 
 ```json theme={null}
 {
@@ -327,7 +327,7 @@ Um Auto-Memory an einem anderen Ort zu speichern, setzen Sie `autoMemoryDirector
 }
 ```
 
-Diese Einstellung wird von Richtlinien-, lokalen und Benutzereinstellungen akzeptiert. Sie wird nicht von Projekteinstellungen (`.claude/settings.json`) akzeptiert, um zu verhindern, dass ein gemeinsames Projekt Auto-Memory-Schreibvorgänge an sensible Orte umleitet.
+Der Wert muss ein absoluter Pfad sein oder mit `~/` beginnen. Diese Einstellung wird von Richtlinien- und Benutzereinstellungen sowie vom Flag `--settings` akzeptiert. Sie wird nicht von Projekt- oder lokalen Einstellungen akzeptiert, da beide Dateien im Projektverzeichnis gespeichert sind und ein geklontes Repository entweder zum Umleiten von Auto-Memory-Schreibvorgängen an sensible Orte bereitstellen könnte.
 
 Das Verzeichnis enthält einen `MEMORY.md`-Einstiegspunkt und optionale Themadateien:
 

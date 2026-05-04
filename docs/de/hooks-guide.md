@@ -171,6 +171,19 @@ Dieser Hook verwendet das `Notification`-Event, das ausgelöst wird, wenn Claude
   </Tab>
 </Tabs>
 
+Der leere `matcher` wird bei allen Benachrichtigungstypen ausgelöst. Um nur bei bestimmten Events ausgelöst zu werden, setzen Sie ihn auf einen dieser Werte:
+
+| Matcher                | Wird ausgelöst, wenn                                           |
+| :--------------------- | :------------------------------------------------------------- |
+| `permission_prompt`    | Claude benötigt Ihre Genehmigung für einen Tool-Einsatz        |
+| `idle_prompt`          | Claude ist fertig und wartet auf Ihre nächste Eingabe          |
+| `auth_success`         | Authentifizierung ist abgeschlossen                            |
+| `elicitation_dialog`   | Ein MCP-Server öffnet ein Elicitation-Formular                 |
+| `elicitation_complete` | Ein MCP-Elicitation-Formular wird eingereicht oder verworfen   |
+| `elicitation_response` | Eine MCP-Elicitation-Antwort wird an den Server zurückgesendet |
+
+Geben Sie `/hooks` ein und wählen Sie `Notification` aus, um zu bestätigen, dass der Hook registriert ist. Für das vollständige Event-Schema siehe die [Notification-Referenz](/de/hooks#notification).
+
 ### Code nach Bearbeitungen automatisch formatieren
 
 Führen Sie [Prettier](https://prettier.io/) automatisch auf jeder Datei aus, die Claude bearbeitet, damit die Formatierung konsistent bleibt, ohne manuelle Eingriffe.
@@ -722,7 +735,7 @@ Für Entscheidungen, die Urteilsvermögen erfordern, anstatt deterministischer R
 Die einzige Aufgabe des Modells ist, eine Ja/Nein-Entscheidung als JSON zurückzugeben:
 
 * `"ok": true`: die Aktion wird fortgesetzt
-* `"ok": false`: die Aktion wird blockiert. Der `"reason"` des Modells wird an Claude zurückgegeben, sodass es sich anpassen kann.
+* `"ok": false`: die Aktion wird blockiert. Für `Stop`- und `SubagentStop`-Hooks wird der `reason` an Claude zurückgegeben, sodass es weiterarbeitet. Für andere Ereignisse endet der Zug und der `reason` erscheint im Chat als Warnzeile. Claude sieht ihn nicht.
 
 Dieses Beispiel verwendet einen `Stop`-Hook, um das Modell zu fragen, ob alle angeforderten Aufgaben abgeschlossen sind. Wenn das Modell `"ok": false` zurückgibt, arbeitet Claude weiter und verwendet den `reason` als nächste Anweisung:
 

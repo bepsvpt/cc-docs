@@ -2020,7 +2020,7 @@ FileChanged hooks tidak memiliki kontrol keputusan. Mereka tidak dapat memblokir
 
 Ketika Anda menjalankan `claude --worktree` atau [subagent menggunakan `isolation: "worktree"`](/id/sub-agents#choose-the-subagent-scope), Claude Code membuat salinan kerja terisolasi menggunakan `git worktree`. Jika Anda mengonfigurasi hook WorktreeCreate, itu menggantikan perilaku git default, memungkinkan Anda menggunakan sistem kontrol versi berbeda seperti SVN, Perforce, atau Mercurial.
 
-Karena hook menggantikan perilaku default sepenuhnya, [`.worktreeinclude`](/id/common-workflows#copy-gitignored-files-to-worktrees) tidak diproses. Jika Anda perlu menyalin file konfigurasi lokal seperti `.env` ke worktree baru, lakukan di dalam skrip hook Anda.
+Karena hook menggantikan perilaku default sepenuhnya, [`.worktreeinclude`](/id/worktrees#copy-gitignored-files-into-worktrees) tidak diproses. Jika Anda perlu menyalin file konfigurasi lokal seperti `.env` ke worktree baru, lakukan di dalam skrip hook Anda.
 
 Hook harus mengembalikan path absolut ke direktori worktree yang dibuat. Claude Code menggunakan path ini sebagai direktori kerja untuk sesi terisolasi. Command hooks mencetaknya di stdout; HTTP hooks mengembalikannya melalui `hookSpecificOutput.worktreePath`.
 
@@ -2406,10 +2406,12 @@ LLM harus merespons dengan JSON yang berisi:
 }
 ```
 
-| Bidang   | Deskripsi                                                             |
-| :------- | :-------------------------------------------------------------------- |
-| `ok`     | `true` mengizinkan tindakan, `false` mencegahnya                      |
-| `reason` | Diperlukan saat `ok` adalah `false`. Penjelasan ditampilkan ke Claude |
+| Bidang   | Deskripsi                                                         |
+| :------- | :---------------------------------------------------------------- |
+| `ok`     | `true` mengizinkan tindakan, `false` mencegahnya                  |
+| `reason` | Diperlukan saat `ok` adalah `false`. Penjelasan untuk pemblokiran |
+
+Untuk `Stop` dan `SubagentStop`, alasan `ok: false` diumpankan kembali ke Claude sebagai instruksi berikutnya dan giliran berlanjut. Untuk semua events yang didukung lainnya, giliran berakhir dan alasan muncul dalam chat sebagai baris peringatan; Claude tidak melihatnya. Ini setara dengan mengembalikan `"continue": false` dari command hook. Jika Anda memerlukan semantik pemblokiran yang berbeda pada events tersebut, gunakan [command hook](#command-hook-fields) dengan bidang per-event yang dijelaskan dalam [Decision control](#decision-control).
 
 ### Contoh: Multi-criteria Stop hook
 

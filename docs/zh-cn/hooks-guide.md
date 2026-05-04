@@ -171,6 +171,19 @@ Hooks 让你在 Claude Code 生命周期中的关键点运行代码：编辑后�
   </Tab>
 </Tabs>
 
+空的 `matcher` 对所有通知类型触发。要仅在特定事件上触发，请将其设置为以下值之一：
+
+| Matcher                | 触发时机                |
+| :--------------------- | :------------------ |
+| `permission_prompt`    | Claude 需要你批准工具使用    |
+| `idle_prompt`          | Claude 完成并等待你的下一个提示 |
+| `auth_success`         | 身份验证完成              |
+| `elicitation_dialog`   | MCP 服务器打开引导表单       |
+| `elicitation_complete` | MCP 引导表单被提交或关闭      |
+| `elicitation_response` | MCP 引导响应被发送回服务器     |
+
+输入 `/hooks` 并选择 `Notification` 以确认 hook 已注册。有关完整的事件架构，请参阅 [Notification 参考](/zh-CN/hooks#notification)。
+
 ### 编辑后自动格式化代码
 
 在 Claude 编辑的每个文件上自动运行 [Prettier](https://prettier.io/)，以便格式保持一致而无需手动干预。
@@ -722,7 +735,7 @@ hook 进程仅在 Bash 命令的子命令与 `git *` 匹配时生成，或当命
 模型的唯一工作是返回一个是/否决策作为 JSON：
 
 * `"ok": true`：操作继续
-* `"ok": false`：操作被阻止。模型的 `"reason"` 被反馈给 Claude，以便它可以调整。
+* `"ok": false`：操作被阻止。对于 `Stop` 和 `SubagentStop` hooks，`reason` 被反馈给 Claude，以便它继续工作。对于其他事件，回合结束，`reason` 在聊天中显示为警告行。Claude 看不到它。
 
 此示例使用 `Stop` hook 询问模型是否所有请求的任务都已完成。如果模型返回 `"ok": false`，Claude 继续工作并使用 `reason` 作为其下一条指令：
 

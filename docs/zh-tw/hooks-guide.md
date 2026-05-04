@@ -171,6 +171,19 @@ Hooks 讓您在 Claude Code 生命週期的關鍵點執行程式碼：編輯後�
   </Tab>
 </Tabs>
 
+空的 `matcher` 會在所有通知類型上觸發。若要僅在特定事件上觸發，請將其設定為以下其中一個值：
+
+| Matcher                | 觸發時機                |
+| :--------------------- | :------------------ |
+| `permission_prompt`    | Claude 需要您批准工具使用    |
+| `idle_prompt`          | Claude 完成並等待您的下一個提示 |
+| `auth_success`         | 驗證完成                |
+| `elicitation_dialog`   | MCP 伺服器開啟引導表單       |
+| `elicitation_complete` | MCP 引導表單被提交或關閉      |
+| `elicitation_response` | MCP 引導回應被發送回伺服器     |
+
+輸入 `/hooks` 並選擇 `Notification` 以確認 hook 已註冊。有關完整的事件架構，請參閱 [Notification 參考](/zh-TW/hooks#notification)。
+
 ### 編輯後自動格式化程式碼
 
 在 Claude 編輯的每個檔案上自動執行 [Prettier](https://prettier.io/)，以便格式保持一致而無需手動干預。
@@ -722,7 +735,7 @@ hook 程序只在 Bash 命令的子命令與 `git *` 相符時生成，或當命
 模型的唯一工作是傳回 yes/no 決策作為 JSON：
 
 * `"ok": true`：操作繼續
-* `"ok": false`：操作被阻止。模型的 `"reason"` 被回饋給 Claude，以便它可以調整。
+* `"ok": false`：操作被阻止。對於 `Stop` 和 `SubagentStop` hooks，`reason` 被回饋給 Claude，以便它繼續工作。對於其他事件，回合結束，`reason` 在聊天中顯示為警告行。Claude 看不到它。
 
 此範例使用 `Stop` hook 詢問模型是否所有請求的任務都已完成。如果模型傳回 `"ok": false`，Claude 會繼續工作並使用 `reason` 作為其下一個指令：
 

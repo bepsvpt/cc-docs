@@ -1,5 +1,133 @@
 # Documentation Changes
 
+## 2026-05-04
+
+49 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Automatisieren Sie Workflows mit Hooks** (`hooks-guide.md`): 14 lines added, 1 removed
+- **Hooks-Referenz** (`hooks.md`): 7 lines added, 5 removed
+- **Wie Claude sich Ihr Projekt merkt** (`memory.md`): 2 lines added, 2 removed
+- **Claude Code-Einstellungen** (`settings.md`): 78 lines added, 78 removed
+
+### English
+
+
+**Modified**
+
+- **Discover and install prebuilt plugins through marketplaces** (`discover-plugins.md`): 1 lines added, 1 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 1 lines added, 1 removed
+- **Hooks reference** (`hooks.md`): 6 lines added, 4 removed
+- **How Claude remembers your project** (`memory.md`): 2 lines added, 2 removed
+- **Claude Code settings** (`settings.md`): 1 lines added, 1 removed
+
+### Español
+
+
+**Modified**
+
+- **Automatizar flujos de trabajo con hooks** (`hooks-guide.md`): 14 lines added, 1 removed
+- **Referencia de hooks** (`hooks.md`): 7 lines added, 5 removed
+- **Cómo Claude recuerda su proyecto** (`memory.md`): 2 lines added, 2 removed
+- **Configuración de Claude Code** (`settings.md`): 78 lines added, 78 removed
+
+### Français
+
+
+**Modified**
+
+- **Automatiser les workflows avec les hooks** (`hooks-guide.md`): 14 lines added, 1 removed
+- **Référence des hooks** (`hooks.md`): 7 lines added, 5 removed
+- **Comment Claude se souvient de votre projet** (`memory.md`): 2 lines added, 2 removed
+- **Paramètres Claude Code** (`settings.md`): 78 lines added, 78 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Otomatisasi alur kerja dengan hooks** (`hooks-guide.md`): 14 lines added, 1 removed
+- **Referensi hooks** (`hooks.md`): 7 lines added, 5 removed
+- **Bagaimana Claude mengingat proyek Anda** (`memory.md`): 2 lines added, 2 removed
+- **Pengaturan Claude Code** (`settings.md`): 78 lines added, 78 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Automatizzare i flussi di lavoro con hooks** (`hooks-guide.md`): 14 lines added, 1 removed
+- **Riferimento dei hooks** (`hooks.md`): 7 lines added, 5 removed
+- **Come Claude ricorda il tuo progetto** (`memory.md`): 2 lines added, 2 removed
+- **Impostazioni di Claude Code** (`settings.md`): 78 lines added, 78 removed
+
+### 日本語
+
+
+**Modified**
+
+- **hooks でワークフローを自動化する** (`hooks-guide.md`): 16 lines added, 1 removed
+- **Hooks リファレンス** (`hooks.md`): 7 lines added, 5 removed
+- **Claude があなたのプロジェクトを記憶する方法** (`memory.md`): 4 lines added, 4 removed
+- **Claude Code の設定** (`settings.md`): 6 lines added, 6 removed
+
+### 한국어
+
+
+**Modified**
+
+- **hooks를 사용하여 워크플로우 자동화** (`hooks-guide.md`): 17 lines added, 2 removed
+- **Hooks 참조** (`hooks.md`): 6 lines added, 4 removed
+- **Claude가 프로젝트를 기억하는 방법** (`memory.md`): 3 lines added, 3 removed
+- **Claude Code 설정** (`settings.md`): 5 lines added, 5 removed
+
+### Português
+
+
+**Modified**
+
+- **Automatizar fluxos de trabalho com hooks** (`hooks-guide.md`): 14 lines added, 1 removed
+- **Referência de hooks** (`hooks.md`): 7 lines added, 5 removed
+- **Como Claude se lembra do seu projeto** (`memory.md`): 2 lines added, 2 removed
+- **Configurações do Claude Code** (`settings.md`): 78 lines added, 78 removed
+
+### Русский
+
+
+**Modified**
+
+- **Автоматизация рабочих процессов с помощью hooks** (`hooks-guide.md`): 14 lines added, 1 removed
+- **Справочник по hooks** (`hooks.md`): 6 lines added, 4 removed
+- **Как Claude запоминает ваш проект** (`memory.md`): 2 lines added, 2 removed
+- **Параметры Claude Code** (`settings.md`): 78 lines added, 78 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **使用 hooks 自动化工作流** (`hooks-guide.md`): 14 lines added, 1 removed
+- **Hooks 参考** (`hooks.md`): 8 lines added, 6 removed
+- **Claude 如何记住你的项目** (`memory.md`): 3 lines added, 3 removed
+- **Claude Code 设置** (`settings.md`): 5 lines added, 5 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **使用 hooks 自動化工作流程** (`hooks-guide.md`): 14 lines added, 1 removed
+- **Hooks 參考** (`hooks.md`): 1 lines added, 1 removed
+- **Claude 如何記住您的專案** (`memory.md`): 5 lines added, 5 removed
+- **Claude Code 設定** (`settings.md`): 5 lines added, 5 removed
+
+---
+
 ## 2026-05-03
 
 114 pages modified

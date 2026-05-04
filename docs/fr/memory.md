@@ -319,7 +319,7 @@ Pour désactiver la mémoire automatique via une variable d'environnement, défi
 
 Chaque projet obtient son propre répertoire de mémoire à `~/.claude/projects/<project>/memory/`. Le chemin `<project>` est dérivé du référentiel git, donc tous les worktrees et sous-répertoires dans le même référentiel partagent un répertoire de mémoire automatique. En dehors d'un référentiel git, la racine du projet est utilisée à la place.
 
-Pour stocker la mémoire automatique dans un emplacement différent, définissez `autoMemoryDirectory` dans vos paramètres utilisateur ou locaux :
+Pour stocker la mémoire automatique dans un emplacement différent, définissez `autoMemoryDirectory` dans vos paramètres utilisateur à `~/.claude/settings.json` :
 
 ```json theme={null}
 {
@@ -327,7 +327,7 @@ Pour stocker la mémoire automatique dans un emplacement différent, définissez
 }
 ```
 
-Ce paramètre est accepté à partir des paramètres de politique, locaux et utilisateur. Il n'est pas accepté à partir des paramètres de projet (`.claude/settings.json`) pour empêcher un projet partagé de rediriger les écritures de mémoire automatique vers des emplacements sensibles.
+La valeur doit être un chemin absolu ou commencer par `~/`. Ce paramètre est accepté à partir des paramètres de politique et utilisateur, et à partir du drapeau `--settings`. Il n'est pas accepté à partir des paramètres de projet ou locaux, car les deux fichiers se trouvent à l'intérieur du répertoire du projet et un référentiel cloné pourrait fournir l'un ou l'autre pour rediriger les écritures de mémoire automatique vers des emplacements sensibles.
 
 Le répertoire contient un point d'entrée `MEMORY.md` et des fichiers de sujet optionnels :
 

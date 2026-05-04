@@ -319,7 +319,7 @@ ln -s ~/company-standards/security.md .claude/rules/security.md
 
 각 프로젝트는 `~/.claude/projects/<project>/memory/`에서 자신의 메모리 디렉토리를 가집니다. `<project>` 경로는 git 저장소에서 파생되므로 동일한 저장소 내의 모든 worktree 및 하위 디렉토리는 하나의 자동 메모리 디렉토리를 공유합니다. git 저장소 외부에서는 프로젝트 루트가 대신 사용됩니다.
 
-자동 메모리를 다른 위치에 저장하려면 사용자 또는 로컬 설정에서 `autoMemoryDirectory`를 설정합니다:
+자동 메모리를 다른 위치에 저장하려면 사용자 설정의 `~/.claude/settings.json`에서 `autoMemoryDirectory`를 설정합니다:
 
 ```json theme={null}
 {
@@ -327,7 +327,7 @@ ln -s ~/company-standards/security.md .claude/rules/security.md
 }
 ```
 
-이 설정은 정책, 로컬 및 사용자 설정에서 허용됩니다. 공유 프로젝트가 자동 메모리 쓰기를 민감한 위치로 리디렉션하는 것을 방지하기 위해 프로젝트 설정(`.claude/settings.json`)에서는 허용되지 않습니다.
+값은 절대 경로이거나 `~/`로 시작해야 합니다. 이 설정은 정책 및 사용자 설정과 `--settings` 플래그에서 허용됩니다. 프로젝트 디렉토리 내에 있는 두 파일 모두 복제된 저장소가 자동 메모리 쓰기를 민감한 위치로 리디렉션하는 것을 방지하기 위해 프로젝트 또는 로컬 설정에서는 허용되지 않습니다.
 
 디렉토리에는 `MEMORY.md` 진입점과 선택적 주제 파일이 포함됩니다:
 
@@ -347,7 +347,7 @@ ln -s ~/company-standards/security.md .claude/rules/security.md
 
 `MEMORY.md`의 처음 200줄 또는 처음 25KB(둘 중 먼저 오는 것)는 모든 대화의 시작 시 로드됩니다. 해당 임계값을 초과하는 콘텐츠는 세션 시작 시 로드되지 않습니다. Claude는 자세한 노트를 별도의 주제 파일로 이동하여 `MEMORY.md`를 간결하게 유지합니다.
 
-이 200줄 제한은 `MEMORY.md`에만 적용됩니다. CLAUDE.md 파일은 길이에 관계없이 전체 로드되지만 더 짧은 파일이 더 나은 준수를 생성합니다.
+이 제한은 `MEMORY.md`에만 적용됩니다. CLAUDE.md 파일은 길이에 관계없이 전체 로드되지만 더 짧은 파일이 더 나은 준수를 생성합니다.
 
 `debugging.md` 또는 `patterns.md`와 같은 주제 파일은 시작 시 로드되지 않습니다. Claude는 필요한 정보가 필요할 때 표준 파일 도구를 사용하여 필요에 따라 읽습니다.
 

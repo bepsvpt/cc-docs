@@ -317,9 +317,9 @@ ln -s ~/company-standards/security.md .claude/rules/security.md
 
 ### 儲存位置
 
-每個專案在 `~/.claude/projects/<project>/memory/` 獲得自己的記憶目錄。`<project>` 路徑源自 git 儲存庫，因此同一儲存庫內的所有工作樹和子目錄共享一個自動記憶目錄。在 git 儲存庫外，改用專案根目錄。
+每個專案在 `~/.claude/projects/<project>/memory/` 獲得自己的記憶目錄。`<project>` 路徑源自 git 儲存庫，因此同一儲存庫內的所有 worktrees 和子目錄共享一個自動記憶目錄。在 git 儲存庫外，改用專案根目錄。
 
-要將自動記憶儲存在不同位置，請在您的使用者或本地設定中設定 `autoMemoryDirectory`：
+要將自動記憶儲存在不同位置，請在您的使用者設定中設定 `autoMemoryDirectory`，位置在 `~/.claude/settings.json`：
 
 ```json theme={null}
 {
@@ -327,7 +327,7 @@ ln -s ~/company-standards/security.md .claude/rules/security.md
 }
 ```
 
-此設定從原則、本地和使用者設定接受。它不從專案設定（`.claude/settings.json`）接受，以防止共享專案將自動記憶寫入重定向到敏感位置。
+此值必須是絕對路徑或以 `~/` 開頭。此設定從原則和使用者設定接受，以及從 `--settings` 旗標接受。它不從專案或本地設定接受，因為兩個檔案都位於專案目錄內，複製的儲存庫可能提供任一個以將自動記憶寫入重定向到敏感位置。
 
 目錄包含 `MEMORY.md` 進入點和可選的主題檔案：
 
@@ -341,11 +341,11 @@ ln -s ~/company-standards/security.md .claude/rules/security.md
 
 `MEMORY.md` 充當記憶目錄的索引。Claude 在您的工作階段中讀取和寫入此目錄中的檔案，使用 `MEMORY.md` 追蹤儲存的內容。
 
-自動記憶是機器本地的。同一 git 儲存庫內的所有工作樹和子目錄共享一個自動記憶目錄。檔案不在機器或雲端環境之間共享。
+自動記憶是機器本地的。同一 git 儲存庫內的所有 worktrees 和子目錄共享一個自動記憶目錄。檔案不在機器或雲端環境之間共享。
 
 ### 它如何運作
 
-`MEMORY.md` 的前 200 行或前 25KB（以先到者為準）在每次對話開始時載入。第 200 行或 25KB 之外的內容在工作階段開始時不載入。Claude 透過將詳細筆記移到單獨的主題檔案中來保持 `MEMORY.md` 簡潔。
+`MEMORY.md` 的前 200 行或前 25KB（以先到者為準）在每次對話開始時載入。超過該閾值的內容在工作階段開始時不載入。Claude 透過將詳細筆記移到單獨的主題檔案中來保持 `MEMORY.md` 簡潔。
 
 此限制僅適用於 `MEMORY.md`。CLAUDE.md 檔案無論長度如何都完整載入，儘管較短的檔案會產生更好的遵守度。
 

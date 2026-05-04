@@ -319,7 +319,7 @@ ln -s ~/company-standards/security.md .claude/rules/security.md
 
 每个项目在 `~/.claude/projects/<project>/memory/` 获得自己的记忆目录。`<project>` 路径来自 git 存储库，因此同一存储库中的所有 worktrees 和子目录共享一个自动记忆目录。在 git 存储库外，改用项目根目录。
 
-要将自动记忆存储在不同位置，在你的用户或本地设置中设置 `autoMemoryDirectory`：
+要将自动记忆存储在不同位置，在你的用户设置 `~/.claude/settings.json` 中设置 `autoMemoryDirectory`：
 
 ```json theme={null}
 {
@@ -327,7 +327,7 @@ ln -s ~/company-standards/security.md .claude/rules/security.md
 }
 ```
 
-此设置从策略、本地和用户设置接受。它不从项目设置（`.claude/settings.json`）接受，以防止共享项目将自动记忆写入重定向到敏感位置。
+该值必须是绝对路径或以 `~/` 开头。此设置从策略和用户设置以及 `--settings` 标志接受。它不从项目或本地设置接受，因为两个文件都位于项目目录内，克隆的存储库可能会提供任一文件以将自动记忆写入重定向到敏感位置。
 
 目录包含一个 `MEMORY.md` 入口点和可选的主题文件：
 
@@ -345,7 +345,7 @@ ln -s ~/company-standards/security.md .claude/rules/security.md
 
 ### 它如何工作
 
-`MEMORY.md` 的前 200 行或前 25KB（以先到者为准）在每次对话开始时加载。第 200 行之外的内容在会话开始时不加载。Claude 通过将详细笔记移到单独的主题文件中来保持 `MEMORY.md` 简洁。
+`MEMORY.md` 的前 200 行或前 25KB（以先到者为准）在每次对话开始时加载。超过该阈值的内容在会话开始时不加载。Claude 通过将详细笔记移到单独的主题文件中来保持 `MEMORY.md` 简洁。
 
 此限制仅适用于 `MEMORY.md`。CLAUDE.md 文件无论长度如何都完整加载，尽管较短的文件产生更好的遵守度。
 
