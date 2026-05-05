@@ -95,7 +95,7 @@ VS Code 扩展为 Claude Code 提供了原生图形界面，直接集成到您�
 * **权限模式**：点击提示框底部的模式指示器以切换模式。在正常模式下，Claude 在每个操作前请求许可。在 Plan mode 中，Claude 描述它将做什么，并在进行更改前等待批准。VS Code 会自动将计划作为完整的 markdown 文档打开，您可以添加内联注释以在 Claude 开始前提供反馈。在自动接受模式下，Claude 进行编辑而不询问。在 VS Code 设置中的 `claudeCode.initialPermissionMode` 下设置默认值。
 * **命令菜单**：点击 `/` 或输入 `/` 以打开命令菜单。选项包括附加文件、切换模型、切换扩展思考、查看计划使用情况（`/usage`）以及启动 [Remote Control](/zh-CN/remote-control) 会话（`/remote-control`）。自定义部分提供对 MCP servers、hooks、memory、permissions 和 plugins 的访问。带有终端图标的项目在集成终端中打开。
 * **上下文指示器**：提示框显示您使用了多少 Claude 的 context window。Claude 在需要时自动压缩，或者您可以手动运行 `/compact`。
-* **扩展思考**：让 Claude 花更多时间推理复杂问题。通过命令菜单（`/`）切换它。Claude 的推理在对话中显示为折叠块：点击一个块来阅读它，或按 `Ctrl+O` 以展开或折叠会话中的每个思考块。有关详细信息，请参阅[扩展思考](/zh-CN/common-workflows#use-extended-thinking-thinking-mode)。
+* **扩展思考**：让 Claude 花更多时间推理复杂问题。通过命令菜单（`/`）切换它。Claude 的推理在对话中显示为折叠块：点击一个块来阅读它，或按 `Ctrl+O` 以展开或折叠会话中的每个思考块。有关详细信息，请参阅[扩展思考](/zh-CN/model-config#extended-thinking)。
 * **多行输入**：按 `Shift+Enter` 添加新行而不发送。这也适用于问题对话框的"其他"自由文本输入。
 
 ### 引用文件和文件夹
@@ -115,7 +115,7 @@ VS Code 扩展为 Claude Code 提供了原生图形界面，直接集成到您�
 
 ### 恢复过去的对话
 
-点击 Claude Code 面板顶部的**会话历史**按钮以访问您的对话历史记录。您可以按关键字搜索或按时间浏览（今天、昨天、过去 7 天等）。点击任何对话以使用完整的消息历史记录恢复它。新会话根据您的第一条消息接收 AI 生成的标题。将鼠标悬停在会话上以显示重命名和删除操作：重命名以给它一个描述性标题，或删除以将其从列表中删除。有关恢复会话的更多信息，请参阅[常见工作流](/zh-CN/common-workflows#resume-previous-conversations)。
+点击 Claude Code 面板顶部的**会话历史**按钮以访问您的对话历史记录。您可以按关键字搜索或按时间浏览（今天、昨天、过去 7 天等）。点击任何对话以使用完整的消息历史记录恢复它。新会话根据您的第一条消息接收 AI 生成的标题。将鼠标悬停在会话上以显示重命名和删除操作：重命名以给它一个描述性标题，或删除以将其从列表中删除。有关恢复会话的更多信息，请参阅[管理会话](/zh-CN/sessions)。
 
 ### 从 Claude.ai 恢复远程会话
 
@@ -399,7 +399,7 @@ Claude 可以暂存更改、编写提交消息并根据您的工作创建拉取�
 claude --worktree feature-auth
 ```
 
-每个 worktree 维护独立的文件状态，同时共享 git 历史记录。这可以防止 Claude 实例在处理不同任务时相互干扰。有关更多详细信息，请参阅[使用 Git worktrees 运行并行 Claude Code 会话](/zh-CN/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees)。
+每个 worktree 维护独立的文件状态，同时共享 git 历史记录。这可以防止 Claude 实例在处理不同任务时相互干扰。有关更多详细信息，请参阅[使用 Git worktrees 运行并行会话](/zh-CN/worktrees)。
 
 ## 使用第三方提供商
 
@@ -475,6 +475,16 @@ Spark 图标在**编辑器工具栏**（编辑器右上角）中出现，当您�
 5. **检查工作区信任**：扩展在受限模式下不工作
 
 或者，点击**状态栏**（右下角）中的"✱ Claude Code"。即使没有打开文件也可以使用。您也可以使用**命令面板**（`Cmd+Shift+P` / `Ctrl+Shift+P`）并输入"Claude Code"。
+
+### macOS 上 Cmd+Esc 无效
+
+在 macOS Tahoe 及更高版本上，系统游戏覆盖快捷键默认绑定到 `Cmd+Esc`，并在按键到达 VS Code 之前拦截它。要释放此快捷键：
+
+1. 打开系统设置
+2. 转到键盘，然后键盘快捷键，然后游戏控制器
+3. 清除游戏覆盖复选框
+
+或者，将扩展重新绑定到不同的键：打开 VS Code [键盘快捷键编辑器](https://code.visualstudio.com/docs/configure/keybindings)（`Cmd+K Cmd+S`），搜索 `Claude Code: Focus input`，并分配新的绑定。
 
 ### Claude Code 从不响应
 

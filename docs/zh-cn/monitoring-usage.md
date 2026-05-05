@@ -197,11 +197,11 @@ claude_code.interaction
 
 **`claude_code.tool.blocked_on_user`**
 
-| 属性            | 描述                          | 门控条件 |
-| ------------- | --------------------------- | ---- |
-| `duration_ms` | 等待权限决策所花费的时间                |      |
-| `decision`    | `accept` 或 `reject`         |      |
-| `source`      | 决策来源，与 `tool_decision` 事件匹配 |      |
+| 属性            | 描述                                                    | 门控条件 |
+| ------------- | ----------------------------------------------------- | ---- |
+| `duration_ms` | 等待权限决策所花费的时间                                          |      |
+| `decision`    | `accept` 或 `reject`                                   |      |
+| `source`      | 决策来源，与 [Tool decision event](#tool-decision-event) 匹配 |      |
 
 **`claude_code.tool.execution`**
 
@@ -458,7 +458,7 @@ Claude Code 导出以下指标：
 * 所有 [标准属性](#standard-attributes)
 * `tool_name`：工具名称（`"Edit"`、`"Write"`、`"NotebookEdit"`）
 * `decision`：用户决策（`"accept"`、`"reject"`）
-* `source`：决策来源 - `"config"`、`"hook"`、`"user_permanent"`、`"user_temporary"`、`"user_abort"` 或 `"user_reject"`
+* `source`：决策来源。`"config"`、`"hook"`、`"user_permanent"`、`"user_temporary"`、`"user_abort"` 或 `"user_reject"` 之一。请参阅 [工具决策事件](#tool-decision-event) 了解每个值的含义。
 * `language`：编辑文件的编程语言，例如 `"TypeScript"`、`"Python"`、`"JavaScript"` 或 `"Markdown"`。对于无法识别的文件扩展名，返回 `"unknown"`。
 
 #### 活跃时间计数器
@@ -524,7 +524,7 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * `error_type`：工具失败时的错误类别字符串，例如 `"Error:ENOENT"` 或 `"ShellError"`
 * `error`（当 `OTEL_LOG_TOOL_DETAILS=1` 时）：工具失败时的完整错误消息
 * `decision_type`：`"accept"` 或 `"reject"`
-* `decision_source`：决策来源 - `"config"`、`"hook"`、`"user_permanent"`、`"user_temporary"`、`"user_abort"` 或 `"user_reject"`
+* `decision_source`：决策来源。`"config"`、`"hook"`、`"user_permanent"`、`"user_temporary"`、`"user_abort"` 或 `"user_reject"` 之一。请参阅 [工具决策事件](#tool-decision-event) 了解每个值的含义。
 * `tool_input_size_bytes`：JSON 序列化工具输入的大小（字节）
 * `tool_result_size_bytes`：工具结果的大小（字节）
 * `mcp_server_scope`：MCP 服务器范围标识符（用于 MCP 工具）
@@ -635,7 +635,13 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * `tool_name`：工具的名称（例如，"Read"、"Edit"、"Write"、"NotebookEdit"）
 * `tool_use_id`：此工具调用的唯一标识符。与传递给 hooks 的 `tool_use_id` 匹配，允许在 OTel 事件和 hook 捕获的数据之间进行关联。
 * `decision`：`"accept"` 或 `"reject"`
-* `source`：决策来源 - `"config"`、`"hook"`、`"user_permanent"`、`"user_temporary"`、`"user_abort"` 或 `"user_reject"`
+* `source`：决策来源：
+  * `"config"`：基于项目设置、企业托管策略、`--allowedTools` 或 `--disallowedTools` 标志、活跃权限模式或因为工具本身是安全的，自动决策而不提示。
+  * `"hook"`：`PreToolUse` 或 `PermissionRequest` hook 返回了决策。
+  * `"user_permanent"`：当用户在提示时选择"始终允许"时发出，将规则保存到其个人设置。也为与该保存规则匹配的后续调用发出。视为接受。
+  * `"user_temporary"`：当用户在提示时选择"是"或"是，仅此会话"时发出，不保存规则。也为同一会话中与该会话范围允许匹配的后续调用发出。视为接受。
+  * `"user_abort"`：当用户关闭权限提示而不回答时发出。视为拒绝。
+  * `"user_reject"`：当用户选择"否"时发出，或调用与其个人设置中的拒绝规则匹配。视为拒绝。
 
 #### 权限模式更改事件
 

@@ -51,7 +51,7 @@ Claude Code включает встроенные subagents, которые Clau
   </Tab>
 
   <Tab title="Plan">
-    Исследовательский агент, используемый во время [plan mode](/ru/common-workflows#use-plan-mode-for-safe-code-analysis) для сбора контекста перед представлением плана.
+    Исследовательский агент, используемый во время [plan mode](/ru/permission-modes#analyze-before-you-edit-with-plan-mode) для сбора контекста перед представлением плана.
 
     * **Model**: Наследуется из основного разговора
     * **Tools**: Инструменты только для чтения (запрещён доступ к инструментам Write и Edit)
@@ -76,7 +76,7 @@ Claude Code включает встроенные subagents, которые Clau
     | Agent             | Model  | Когда Claude его использует                                      |
     | :---------------- | :----- | :--------------------------------------------------------------- |
     | statusline-setup  | Sonnet | Когда вы запускаете `/statusline` для настройки строки состояния |
-    | Claude Code Guide | Haiku  | Когда вы задаёте вопросы о функциях Claude Code                  |
+    | claude-code-guide | Haiku  | Когда вы задаёте вопросы о функциях Claude Code                  |
   </Tab>
 </Tabs>
 
@@ -180,20 +180,43 @@ Project subagents обнаруживаются путём прохода вве�
 
 **CLI-определённые subagents** передаются как JSON при запуске Claude Code. Они существуют только для этой сессии и не сохраняются на диск, что делает их полезными для быстрого тестирования или скриптов автоматизации. Вы можете определить несколько subagents в одном вызове `--agents`:
 
-```bash theme={null}
-claude --agents '{
-  "code-reviewer": {
-    "description": "Expert code reviewer. Use proactively after code changes.",
-    "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
-    "tools": ["Read", "Grep", "Glob", "Bash"],
-    "model": "sonnet"
-  },
-  "debugger": {
-    "description": "Debugging specialist for errors and test failures.",
-    "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
-  }
-}'
-```
+<Tabs>
+  <Tab title="macOS, Linux, WSL">
+    ```bash theme={null}
+    claude --agents '{
+      "code-reviewer": {
+        "description": "Expert code reviewer. Use proactively after code changes.",
+        "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
+        "tools": ["Read", "Grep", "Glob", "Bash"],
+        "model": "sonnet"
+      },
+      "debugger": {
+        "description": "Debugging specialist for errors and test failures.",
+        "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
+      }
+    }'
+    ```
+  </Tab>
+
+  <Tab title="Windows PowerShell">
+    ```powershell theme={null}
+    claude --agents @'
+    {
+      "code-reviewer": {
+        "description": "Expert code reviewer. Use proactively after code changes.",
+        "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
+        "tools": ["Read", "Grep", "Glob", "Bash"],
+        "model": "sonnet"
+      },
+      "debugger": {
+        "description": "Debugging specialist for errors and test failures.",
+        "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
+      }
+    }
+    '@
+    ```
+  </Tab>
+</Tabs>
 
 Флаг `--agents` принимает JSON с теми же полями [frontmatter](#supported-frontmatter-fields), что и файловые subagents: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `initialPrompt`, `memory`, `effort`, `background`, `isolation` и `color`. Используйте `prompt` для системного приглашения, эквивалентного телу markdown в файловых subagents.
 
@@ -212,7 +235,7 @@ claude --agents '{
 Файлы subagent используют YAML frontmatter для конфигурации, за которым следует системное приглашение в Markdown:
 
 <Note>
-  Subagents загружаются при запуске сессии. Если вы создаёте subagent путём ручного добавления файла, перезагрузите сессию или используйте `/agents` для немедленной загрузки.
+  Subagents загружаются при запуске сессии. Если вы добавляете или редактируете файл subagent напрямую на диск, перезагрузите сессию для его загрузки. Subagents, созданные через интерфейс `/agents`, вступают в силу немедленно без перезагрузки.
 </Note>
 
 ```markdown theme={null}
@@ -250,7 +273,7 @@ Subagent начинает работу в текущей рабочей дире
 | `memory`          | No       | [Область постоянной памяти](#enable-persistent-memory): `user`, `project` или `local`. Включает кросс-сессионное обучение                                                                                                                                                                                                                                                  |
 | `background`      | No       | Установите на `true`, чтобы всегда запускать этот subagent как [фоновую задачу](#run-subagents-in-foreground-or-background). По умолчанию: `false`                                                                                                                                                                                                                         |
 | `effort`          | No       | Уровень усилий, когда этот subagent активен. Переопределяет уровень усилий сессии. По умолчанию: наследуется из сессии. Параметры: `low`, `medium`, `high`, `xhigh`, `max`; доступные уровни зависят от модели                                                                                                                                                             |
-| `isolation`       | No       | Установите на `worktree`, чтобы запустить subagent во временном [git worktree](/ru/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees), дав ему изолированную копию репозитория. Worktree автоматически очищается, если subagent не вносит изменения                                                                                                    |
+| `isolation`       | No       | Установите на `worktree`, чтобы запустить subagent во временном [git worktree](/ru/worktrees), дав ему изолированную копию репозитория. Worktree автоматически очищается, если subagent не вносит изменения                                                                                                                                                                |
 | `color`           | No       | Цвет отображения для subagent в списке задач и транскрипте. Принимает `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink` или `cyan`                                                                                                                                                                                                                              |
 | `initialPrompt`   | No       | Автоматически отправляется как первый ход пользователя, когда этот агент работает как основной агент сессии (через `--agent` или параметр `agent`). [Commands](/ru/commands) и [skills](/ru/skills) обрабатываются. Добавляется в начало любого предоставленного пользователем приглашения                                                                                 |
 
@@ -484,7 +507,7 @@ fi
 exit 0
 ```
 
-См. [Hook input](/ru/hooks#pretooluse-input) для полной схемы входных данных и [exit codes](/ru/hooks#exit-code-output) для того, как коды выхода влияют на поведение.
+См. [Hook input](/ru/hooks#pretooluse-input) для полной схемы входных данных и [exit codes](/ru/hooks#exit-code-output) для того, как коды выхода влияют на поведение. На Windows напишите скрипты hook в PowerShell и добавьте `shell: powershell` к записи hook, как показано в [запуске hooks в PowerShell](/ru/hooks#windows-powershell-tool).
 
 #### Отключите конкретные subagents
 
@@ -994,11 +1017,13 @@ fi
 exit 0
 ```
 
-Сделайте скрипт исполняемым:
+На macOS и Linux сделайте скрипт исполняемым:
 
 ```bash theme={null}
 chmod +x ./scripts/validate-readonly-query.sh
 ```
+
+На Windows напишите скрипт валидации на PowerShell и добавьте `shell: powershell` к записи hook. См. [запуск hooks в PowerShell](/ru/hooks#windows-powershell-tool).
 
 Hook получает JSON через stdin с командой Bash в `tool_input.command`. Код выхода 2 блокирует операцию и передаёт сообщение об ошибке обратно Claude. См. [Hooks](/ru/hooks#exit-code-output) для деталей кодов выхода и [Hook input](/ru/hooks#pretooluse-input) для полной схемы входных данных.
 

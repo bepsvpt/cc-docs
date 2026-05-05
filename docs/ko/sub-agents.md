@@ -51,7 +51,7 @@ Claude Code에는 Claude가 적절할 때 자동으로 사용하는 내장 subag
   </Tab>
 
   <Tab title="Plan">
-    [plan mode](/ko/common-workflows#use-plan-mode-for-safe-code-analysis) 중에 계획을 제시하기 전에 컨텍스트를 수집하는 데 사용되는 연구 에이전트입니다.
+    [plan mode](/ko/permission-modes#analyze-before-you-edit-with-plan-mode) 중에 계획을 제시하기 전에 컨텍스트를 수집하는 데 사용되는 연구 에이전트입니다.
 
     * **모델**: 주 대화에서 상속
     * **도구**: 읽기 전용 도구 (Write 및 Edit 도구에 대한 액세스 거부)
@@ -76,7 +76,7 @@ Claude Code에는 Claude가 적절할 때 자동으로 사용하는 내장 subag
     | 에이전트              | 모델     | Claude가 사용하는 경우                   |
     | :---------------- | :----- | :-------------------------------- |
     | statusline-setup  | Sonnet | `/statusline`을 실행하여 상태 표시줄을 구성할 때 |
-    | Claude Code Guide | Haiku  | Claude Code 기능에 대한 질문을 할 때        |
+    | claude-code-guide | Haiku  | Claude Code 기능에 대한 질문을 할 때        |
   </Tab>
 </Tabs>
 
@@ -180,20 +180,43 @@ Subagent는 YAML frontmatter가 있는 Markdown 파일입니다. 범위에 따�
 
 **CLI 정의 subagent**는 Claude Code를 시작할 때 JSON으로 전달됩니다. 해당 세션에만 존재하며 디스크에 저장되지 않으므로 빠른 테스트 또는 자동화 스크립트에 유용합니다. 단일 `--agents` 호출에서 여러 subagent를 정의할 수 있습니다:
 
-```bash theme={null}
-claude --agents '{
-  "code-reviewer": {
-    "description": "Expert code reviewer. Use proactively after code changes.",
-    "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
-    "tools": ["Read", "Grep", "Glob", "Bash"],
-    "model": "sonnet"
-  },
-  "debugger": {
-    "description": "Debugging specialist for errors and test failures.",
-    "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
-  }
-}'
-```
+<Tabs>
+  <Tab title="macOS, Linux, WSL">
+    ```bash theme={null}
+    claude --agents '{
+      "code-reviewer": {
+        "description": "Expert code reviewer. Use proactively after code changes.",
+        "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
+        "tools": ["Read", "Grep", "Glob", "Bash"],
+        "model": "sonnet"
+      },
+      "debugger": {
+        "description": "Debugging specialist for errors and test failures.",
+        "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
+      }
+    }'
+    ```
+  </Tab>
+
+  <Tab title="Windows PowerShell">
+    ```powershell theme={null}
+    claude --agents @'
+    {
+      "code-reviewer": {
+        "description": "Expert code reviewer. Use proactively after code changes.",
+        "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
+        "tools": ["Read", "Grep", "Glob", "Bash"],
+        "model": "sonnet"
+      },
+      "debugger": {
+        "description": "Debugging specialist for errors and test failures.",
+        "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
+      }
+    }
+    '@
+    ```
+  </Tab>
+</Tabs>
 
 `--agents` 플래그는 파일 기반 subagent와 동일한 [frontmatter](#supported-frontmatter-fields) 필드를 가진 JSON을 허용합니다: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `initialPrompt`, `memory`, `effort`, `background`, `isolation`, `color`. 시스템 프롬프트에는 `prompt`를 사용하며, 이는 파일 기반 subagent의 markdown 본문과 동등합니다.
 
@@ -212,7 +235,7 @@ claude --agents '{
 Subagent 파일은 구성을 위한 YAML frontmatter를 사용하고 그 뒤에 Markdown의 시스템 프롬프트가 옵니다:
 
 <Note>
-  Subagent는 세션 시작 시 로드됩니다. 파일을 수동으로 추가하여 subagent를 만드는 경우 세션을 다시 시작하거나 `/agents`를 사용하여 즉시 로드합니다.
+  Subagent는 세션 시작 시 로드됩니다. 디스크에서 subagent 파일을 직접 추가하거나 편집하면 세션을 다시 시작하여 로드합니다. `/agents` 인터페이스를 통해 생성된 subagent는 다시 시작하지 않고도 즉시 적용됩니다.
 </Note>
 
 ```markdown theme={null}
@@ -250,7 +273,7 @@ Subagent는 주 대화의 현재 작업 디렉토리에서 시작합니다. Suba
 | `memory`          | 아니오 | [지속적 메모리 범위](#enable-persistent-memory): `user`, `project`, 또는 `local`. 교차 세션 학습 활성화                                                                                                                                                |
 | `background`      | 아니오 | 이 subagent를 항상 [background task](#run-subagents-in-foreground-or-background)로 실행하려면 `true`로 설정합니다. 기본값: `false`                                                                                                                     |
 | `effort`          | 아니오 | 이 subagent가 활성화될 때의 노력 수준. 세션 노력 수준을 재정의합니다. 기본값: 세션에서 상속. 옵션: `low`, `medium`, `high`, `xhigh`, `max` (사용 가능한 수준은 모델에 따라 다름)                                                                                                       |
-| `isolation`       | 아니오 | Subagent를 임시 [git worktree](/ko/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees)에서 실행하려면 `worktree`로 설정하여 저장소의 격리된 복사본을 제공합니다. Subagent가 변경 사항을 만들지 않으면 worktree가 자동으로 정리됩니다                                  |
+| `isolation`       | 아니오 | Subagent를 임시 [git worktree](/ko/worktrees)에서 실행하려면 `worktree`로 설정하여 저장소의 격리된 복사본을 제공합니다. Subagent가 변경 사항을 만들지 않으면 worktree가 자동으로 정리됩니다                                                                                              |
 | `color`           | 아니오 | 작업 목록 및 트랜스크립트에서 subagent의 표시 색상입니다. `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, 또는 `cyan`을 허용합니다                                                                                                                 |
 | `initialPrompt`   | 아니오 | 이 에이전트가 주 세션 에이전트로 실행될 때 (`--agent` 또는 `agent` 설정을 통해) 첫 번째 사용자 턴으로 자동 제출됩니다. [Commands](/ko/commands) 및 [Skills](/ko/skills)가 처리됩니다. 사용자 제공 프롬프트에 앞에 붙습니다                                                                          |
 
@@ -484,7 +507,7 @@ fi
 exit 0
 ```
 
-전체 입력 스키마는 [Hook input](/ko/hooks#pretooluse-input)을 참조하고 종료 코드가 동작에 미치는 영향은 [exit codes](/ko/hooks#exit-code-output)를 참조하세요.
+전체 입력 스키마는 [Hook input](/ko/hooks#pretooluse-input)을 참조하고 종료 코드가 동작에 미치는 영향은 [exit codes](/ko/hooks#exit-code-output)를 참조하세요. Windows에서는 PowerShell로 hook 스크립트를 작성하고 [PowerShell에서 hook 실행](/ko/hooks#windows-powershell-tool)에 표시된 대로 hook 항목에 `shell: powershell`을 추가합니다.
 
 #### 특정 subagent 비활성화
 
@@ -829,7 +852,7 @@ Claude가 Agent 도구를 통해 포크를 생성할 때 `isolation: "worktree"`
 
 ### 코드 검토자
 
-수정하지 않고 코드를 검토하는 읽기 전용 subagent입니다. 이 예제는 제한된 도구 액세스 (Edit 또는 Write 없음)와 정확히 무엇을 찾을지 및 출력 형식을 지정하는 자세한 프롬프트를 사용하여 집중된 subagent를 설계하는 방법을 보여줍니다.
+수정하지 않고 코드를 검토하는 읽기 전용 subagent입니다. 이 예제는 제한된 도구 액세스(Edit 또는 Write 없음)와 정확히 무엇을 찾을지 및 출력 형식을 지정하는 자세한 프롬프트를 사용하여 집중된 subagent를 설계하는 방법을 보여줍니다.
 
 ```markdown theme={null}
 ---
@@ -903,7 +926,7 @@ Focus on fixing the underlying issue, not the symptoms.
 
 ### 데이터 과학자
 
-데이터 분석 작업을 위한 도메인별 subagent입니다. 이 예제는 일반적인 코딩 작업 외에 특화된 워크플로우를 위해 subagent를 만드는 방법을 보여줍니다. 명시적으로 `model: sonnet`을 설정하여 더 유능한 분석을 수행합니다.
+데이터 분석 작업을 위한 도메인별 subagent입니다. 이 예제는 일반적인 코딩 작업 외에 특화된 워크플로우를 위해 subagent를 만드는 방법을 보여줍니다. 더 유능한 분석을 위해 명시적으로 `model: sonnet`을 설정합니다.
 
 ```markdown theme={null}
 ---
@@ -992,13 +1015,15 @@ fi
 exit 0
 ```
 
-스크립트를 실행 가능하게 만듭니다:
+macOS 및 Linux에서 스크립트를 실행 가능하게 만듭니다:
 
 ```bash theme={null}
 chmod +x ./scripts/validate-readonly-query.sh
 ```
 
-Hook은 stdin을 통해 JSON을 받으며 Bash 명령은 `tool_input.command`에 있습니다. 종료 코드 2는 작업을 차단하고 오류 메시지를 Claude에 피드백합니다. 종료 코드 및 [Hook input](/ko/hooks#pretooluse-input)에 대한 자세한 내용은 [Hooks](/ko/hooks#exit-code-output)를 참조하세요.
+Windows에서는 검증 스크립트를 PowerShell로 작성하고 hook 항목에 `shell: powershell`을 추가합니다. [PowerShell에서 hook 실행](/ko/hooks#windows-powershell-tool)을 참조하세요.
+
+Hook은 stdin을 통해 JSON을 받으며 Bash 명령은 `tool_input.command`에 있습니다. 종료 코드 2는 작업을 차단하고 오류 메시지를 Claude에 피드백합니다. 종료 코드 및 출력에 대한 자세한 내용은 [Hooks](/ko/hooks#exit-code-output)를 참조하고 [Hook input](/ko/hooks#pretooluse-input)에서 전체 입력 스키마를 확인하세요.
 
 ## 다음 단계
 

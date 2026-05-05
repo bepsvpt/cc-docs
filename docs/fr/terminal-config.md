@@ -63,7 +63,9 @@ Pour Ghostty, Kitty et d'autres terminaux, recherchez un paramètre Option-as-Al
 
 Lorsque Claude termine une tâche ou s'arrête pour une invite de permission, il déclenche un événement de notification. Afficher cela comme une cloche de terminal ou une notification de bureau vous permet de passer à d'autres tâches pendant qu'une longue tâche s'exécute.
 
-Claude Code envoie une notification de bureau uniquement dans Ghostty, Kitty et iTerm2 ; tous les autres terminaux ont besoin d'un [hook Notification](#play-a-sound-with-a-notification-hook) à la place. La notification atteint également votre machine locale via SSH, donc une session distante peut toujours vous alerter. Ghostty et Kitty la transmettent à votre centre de notifications du système d'exploitation sans configuration supplémentaire. iTerm2 nécessite que vous activiez la transmission :
+Par défaut, Claude Code envoie une notification de bureau uniquement dans Ghostty, Kitty et iTerm2. Dans les autres terminaux, définissez [`preferredNotifChannel`](/fr/settings#available-settings) sur `"terminal_bell"` pour sonner la cloche du terminal à la place, ou configurez un [hook Notification](#play-a-sound-with-a-notification-hook) pour un son personnalisé ou une commande.
+
+La notification de bureau atteint votre machine locale via SSH, donc une session distante peut toujours vous alerter. Ghostty et Kitty la transmettent à votre centre de notifications du système d'exploitation sans configuration supplémentaire. iTerm2 nécessite que vous activiez la transmission :
 
 <Steps>
   <Step title="Ouvrir les paramètres de notification iTerm2">
@@ -79,7 +81,7 @@ Si les notifications n'apparaissent toujours pas, confirmez que votre applicatio
 
 ### Jouer un son avec un hook Notification
 
-Dans n'importe quel terminal, vous pouvez configurer un [hook Notification](/fr/hooks-guide#get-notified-when-claude-needs-input) pour jouer un son ou exécuter une commande personnalisée lorsque Claude a besoin de votre attention. Les hooks s'exécutent aux côtés de la notification de bureau plutôt que de la remplacer. Les terminaux tels que Warp ou Apple Terminal s'appuient sur un hook seul puisque Claude Code ne leur envoie pas de notification de bureau.
+Dans n'importe quel terminal, vous pouvez configurer un [hook Notification](/fr/hooks-guide#get-notified-when-claude-needs-input) pour jouer un son ou exécuter une commande personnalisée lorsque Claude a besoin de votre attention. Les hooks s'exécutent aux côtés de la notification de bureau plutôt que de la remplacer, donc les terminaux qui ne reçoivent pas de notification de bureau, comme Warp ou le terminal intégré de VS Code, peuvent utiliser un hook ou définir `preferredNotifChannel` sur `"terminal_bell"` à la place.
 
 L'exemple ci-dessous joue un son système sur macOS. Le guide lié contient des commandes de notification de bureau pour macOS, Linux et Windows.
 
@@ -147,7 +149,7 @@ L'exemple suivant définit un thème qui conserve le preset sombre mais recolore
 
 Claude Code surveille `~/.claude/themes/` et recharge lorsqu'un fichier change, de sorte que les modifications apportées dans votre éditeur s'appliquent à une session en cours sans redémarrage.
 
-Ci-dessous se trouve la liste complète des personnalisations que vous pouvez définir dans `overrides`. L'éditeur interactif dans `/theme` affiche les mêmes jetons avec un aperçu en direct, y compris un petit nombre de jetons internes non couverts ici.
+La référence ci-dessous couvre les jetons que vous pouvez définir dans `overrides`. L'éditeur interactif dans `/theme` affiche les mêmes jetons avec un aperçu en direct, plus quelques accents à usage unique tels que les couleurs de l'écran d'intégration qui sont omis ici.
 
 <Accordion title="Référence des jetons de couleur">
   L'exemple suivant combine les jetons de plusieurs groupes ci-dessous : l'accent de marque, la bordure du mode plan, les arrière-plans de diff et l'arrière-plan du message en plein écran.
@@ -177,6 +179,7 @@ Ci-dessous se trouve la liste complète des personnalisations que vous pouvez d�
   | `inverseText` | Texte dessiné sur un arrière-plan coloré, comme les badges de statut             |
   | `inactive`    | Texte secondaire tel que les indices, les horodatages et les éléments désactivés |
   | `subtle`      | Bordures faibles et texte secondaire désaccentué                                 |
+  | `suggestion`  | Suggestions d'autocomplétion et surbrillance de sélection dans les sélecteurs    |
   | `permission`  | Bordures de dialogue, y compris les invites de permission et les sélecteurs      |
   | `remember`    | Indicateurs de mémoire et `CLAUDE.md`                                            |
 
@@ -221,16 +224,40 @@ Ci-dessous se trouve la liste complète des personnalisations que vous pouvez d�
 
   S'applique uniquement en [mode de rendu plein écran](/fr/fullscreen), où les messages ont un remplissage d'arrière-plan.
 
-  | Jeton                   | Contrôle                                                 |
-  | :---------------------- | :------------------------------------------------------- |
-  | `userMessageBackground` | Arrière-plan derrière vos messages dans la transcription |
-  | `selectionBg`           | Arrière-plan du texte sélectionné à la souris            |
+  | Jeton                        | Contrôle                                                                            |
+  | :--------------------------- | :---------------------------------------------------------------------------------- |
+  | `userMessageBackground`      | Arrière-plan derrière vos messages dans la transcription                            |
+  | `userMessageBackgroundHover` | Arrière-plan derrière un message lors du survol ou de l'expansion                   |
+  | `messageActionsBackground`   | Arrière-plan derrière le message sélectionné lorsque la barre d'actions est ouverte |
+  | `bashMessageBackgroundColor` | Arrière-plan derrière les entrées de commande shell `!` dans la transcription       |
+  | `memoryBackgroundColor`      | Arrière-plan derrière les entrées de mémoire `#` dans la transcription              |
+  | `selectionBg`                | Arrière-plan du texte sélectionné à la souris                                       |
+
+  #### Jauge d'utilisation et étiquettes de haut-parleur
+
+  Ajustez la barre affichée dans la vue `/usage` et les étiquettes qui distinguent vos messages de ceux de Claude.
+
+  | Jeton              | Contrôle                                                     |
+  | :----------------- | :----------------------------------------------------------- |
+  | `rate_limit_fill`  | Portion remplie de la jauge d'utilisation                    |
+  | `rate_limit_empty` | Portion non remplie de la jauge d'utilisation                |
+  | `briefLabelYou`    | Couleur de l'étiquette `You` sur vos messages                |
+  | `briefLabelClaude` | Couleur de l'étiquette `Claude` sur les messages d'assistant |
 
   #### Variantes de scintillement et couleurs des sous-agents
 
-  Plusieurs jetons ont une variante `Shimmer` appariée, telle que `claudeShimmer` et `warningShimmer`, qui fournit la couleur plus claire utilisée dans le dégradé animé du spinner. Remplacez le scintillement aux côtés de son jeton de base si l'animation semble mal assortie.
+  Plusieurs jetons ont une variante de scintillement appariée qui fournit la couleur plus claire utilisée dans le dégradé animé du spinner. Remplacez le scintillement aux côtés de son jeton de base si l'animation semble mal assortie.
+
+  * `claude` et `claudeShimmer`
+  * `warning` et `warningShimmer`
+  * `permission` et `permissionShimmer`
+  * `promptBorder` et `promptBorderShimmer`
+  * `inactive` et `inactiveShimmer`
+  * `fastMode` et `fastModeShimmer`
 
   Chaque [sous-agent](/fr/sub-agents) et tâche parallèle est affiché dans l'une des huit couleurs nommées afin que vous puissiez les distinguer dans la transcription. Les noms de jetons suivent le modèle `<color>_FOR_SUBAGENTS_ONLY`, où `<color>` est `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, ou `cyan`. Remplacez-les pour modifier l'apparence de chaque couleur nommée. Par exemple, un sous-agent avec `color: blue` dans sa définition est dessiné en utilisant la valeur `blue_FOR_SUBAGENTS_ONLY`.
+
+  Les mots-clés [`ultrathink`](/fr/model-config#use-ultrathink-for-one-off-deep-reasoning) et [`ultraplan`](/fr/ultraplan) dans l'entrée d'invite sont rendus avec un dégradé arc-en-ciel à sept couleurs. Les noms de jetons suivent le modèle `rainbow_<color>` et `rainbow_<color>_shimmer`, où `<color>` est `red`, `orange`, `yellow`, `green`, `blue`, `indigo`, ou `violet`.
 </Accordion>
 
 ## Basculer vers le rendu en plein écran

@@ -93,9 +93,9 @@ VS Code 擴充功能為 Claude Code 提供了原生圖形介面，直接整合�
 提示框支援多項功能：
 
 * **許可模式**：點擊提示框底部的模式指示器以切換模式。在正常模式下，Claude 在每個操作前要求許可。在 Plan Mode 中，Claude 描述它將做什麼，並在進行變更前等待批准。VS Code 會自動將計畫作為完整 markdown 文件開啟，您可以在其中添加內聯評論以在 Claude 開始前提供反饋。在自動接受模式下，Claude 進行編輯而不詢問。在 VS Code 設定中的 `claudeCode.initialPermissionMode` 下設定預設值。
-* **命令菜單**：點擊 `/` 或輸入 `/` 以開啟命令菜單。選項包括附加檔案、切換模型、切換擴展思考、查看計畫使用情況（`/usage`）以及啟動 [Remote Control](/zh-TW/remote-control) 工作階段（`/remote-control`）。'自訂'部分提供對 MCP servers、hooks、memory、permissions 和 plugins 的存取。帶有終端機圖示的項目在整合終端機中開啟。
+* **命令菜單**：點擊 `/` 或輸入 `/` 以開啟命令菜單。選項包括附加檔案、切換模型、切換擴展思考、查看計畫使用情況（`/usage`）以及啟動 [Remote Control](/zh-TW/remote-control) 工作階段（`/remote-control`）。自訂部分提供對 MCP servers、hooks、memory、permissions 和 plugins 的存取。帶有終端機圖示的項目在整合終端機中開啟。
 * **上下文指示器**：提示框顯示您使用了多少 Claude 的 context window。Claude 在需要時會自動壓縮，或您可以手動執行 `/compact`。
-* **擴展思考**：讓 Claude 花更多時間推理複雜問題。透過命令菜單（`/`）切換它。Claude 的推理在對話中顯示為摺疊的區塊：點擊一個區塊以讀取它，或按 `Ctrl+O` 以展開或摺疊工作階段中的每個思考區塊。有關詳細資訊，請參閱[擴展思考](/zh-TW/common-workflows#use-extended-thinking-thinking-mode)。
+* **擴展思考**：讓 Claude 花更多時間推理複雜問題。透過命令菜單（`/`）切換它。Claude 的推理在對話中顯示為摺疊的區塊：點擊一個區塊以讀取它，或按 `Ctrl+O` 以展開或摺疊工作階段中的每個思考區塊。有關詳細資訊，請參閱 [Extended thinking](/zh-TW/model-config#extended-thinking)。
 * **多行輸入**：按 `Shift+Enter` 以添加新行而不傳送。這也適用於問題對話框的'其他'自由文字輸入。
 
 ### 參考檔案和資料夾
@@ -115,7 +115,7 @@ VS Code 擴充功能為 Claude Code 提供了原生圖形介面，直接整合�
 
 ### 恢復過去的對話
 
-點擊 Claude Code 面板頂部的**工作階段歷史記錄**按鈕以存取您的對話歷史記錄。您可以按關鍵字搜尋或按時間瀏覽（今天、昨天、過去 7 天等）。點擊任何對話以使用完整訊息歷史記錄恢復它。新工作階段會根據您的第一條訊息接收 AI 生成的標題。將滑鼠懸停在工作階段上以顯示重新命名和移除操作：重新命名以給它一個描述性標題，或移除以將其從清單中刪除。有關恢復工作階段的更多資訊，請參閱[常見工作流程](/zh-TW/common-workflows#resume-previous-conversations)。
+點擊 Claude Code 面板頂部的**工作階段歷史記錄**按鈕以存取您的對話歷史記錄。您可以按關鍵字搜尋或按時間瀏覽（今天、昨天、過去 7 天等）。點擊任何對話以使用完整訊息歷史記錄恢復它。新工作階段會根據您的第一條訊息接收 AI 生成的標題。將滑鼠懸停在工作階段上以顯示重新命名和移除操作：重新命名以給它一個描述性標題，或移除以將其從清單中刪除。有關恢復工作階段的更多資訊，請參閱 [Manage sessions](/zh-TW/sessions)。
 
 ### 從 Claude.ai 恢復遠端工作階段
 
@@ -399,7 +399,7 @@ Claude 可以暫存變更、編寫提交訊息並根據您的工作建立拉取�
 claude --worktree feature-auth
 ```
 
-每個 worktree 維護獨立的檔案狀態，同時共享 git 歷史記錄。這可防止 Claude 實例在處理不同任務時相互干擾。有關更多詳細資訊，請參閱[使用 Git worktrees 執行並行 Claude Code 工作階段](/zh-TW/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees)。
+每個 worktree 維護獨立的檔案狀態，同時共享 git 歷史記錄。這可防止 Claude 實例在處理不同任務時相互干擾。有關更多詳細資訊，請參閱[使用 Git worktrees 執行並行工作階段](/zh-TW/worktrees)。
 
 ## 使用第三方提供者
 
@@ -475,6 +475,16 @@ claude --worktree feature-auth
 5. **檢查工作區信任**：擴充功能在受限模式下不工作
 
 或者，點擊**狀態列**（右下角）中的「✱ Claude Code」。即使沒有開啟檔案，這也有效。您也可以使用**命令面板**（`Cmd+Shift+P` / `Ctrl+Shift+P`）並輸入「Claude Code」。
+
+### macOS 上的 Cmd+Esc 無法執行任何操作
+
+在 macOS Tahoe 及更新版本上，系統遊戲覆蓋快捷鍵預設綁定到 `Cmd+Esc`，並在按鍵到達 VS Code 之前攔截它。若要釋放快捷鍵：
+
+1. 開啟系統設定
+2. 前往鍵盤，然後鍵盤快捷鍵，然後遊戲控制器
+3. 清除遊戲覆蓋核取方塊
+
+或者，將擴充功能重新綁定到不同的鍵：開啟 VS Code [鍵盤快捷鍵編輯器](https://code.visualstudio.com/docs/configure/keybindings)（`Cmd+K Cmd+S`），搜尋 `Claude Code: Focus input`，並指派新的綁定。
 
 ### Claude Code 從不回應
 

@@ -95,7 +95,7 @@ Kotak prompt mendukung beberapa fitur:
 * **Mode izin**: klik indikator mode di bagian bawah kotak prompt untuk beralih mode. Dalam mode normal, Claude meminta izin sebelum setiap tindakan. Dalam Plan mode, Claude menjelaskan apa yang akan dilakukan dan menunggu persetujuan sebelum membuat perubahan. VS Code secara otomatis membuka rencana sebagai dokumen markdown penuh di mana Anda dapat menambahkan komentar inline untuk memberikan umpan balik sebelum Claude mulai. Dalam mode auto-accept, Claude membuat edit tanpa bertanya. Atur default di pengaturan VS Code di bawah `claudeCode.initialPermissionMode`.
 * **Menu perintah**: klik `/` atau ketik `/` untuk membuka menu perintah. Opsi termasuk melampirkan file, beralih model, mengalihkan extended thinking, melihat penggunaan rencana (`/usage`), dan memulai sesi [Remote Control](/id/remote-control) (`/remote-control`). Bagian Customize menyediakan akses ke MCP servers, hooks, memory, permissions, dan plugins. Item dengan ikon terminal terbuka di terminal terintegrasi.
 * **Indikator konteks**: kotak prompt menunjukkan berapa banyak context window Claude yang Anda gunakan. Claude secara otomatis melakukan compact saat diperlukan, atau Anda dapat menjalankan `/compact` secara manual.
-* **Extended thinking**: memungkinkan Claude menghabiskan lebih banyak waktu untuk bernalar melalui masalah kompleks. Alihkan melalui menu perintah (`/`). Penalaran Claude muncul dalam percakapan sebagai blok yang dilipat: klik blok untuk membacanya, atau tekan `Ctrl+O` untuk memperluas atau melipat setiap blok thinking dalam sesi. Lihat [Extended thinking](/id/common-workflows#use-extended-thinking-thinking-mode) untuk detail.
+* **Extended thinking**: memungkinkan Claude menghabiskan lebih banyak waktu untuk bernalar melalui masalah kompleks. Alihkan melalui menu perintah (`/`). Penalaran Claude muncul dalam percakapan sebagai blok yang dilipat: klik blok untuk membacanya, atau tekan `Ctrl+O` untuk memperluas atau melipat setiap blok thinking dalam sesi. Lihat [Extended thinking](/id/model-config#extended-thinking) untuk detail.
 * **Input multi-baris**: tekan `Shift+Enter` untuk menambahkan baris baru tanpa mengirim. Ini juga berfungsi di input teks bebas "Other" dari dialog pertanyaan.
 
 ### Referensikan file dan folder
@@ -115,7 +115,7 @@ Anda juga dapat menahan `Shift` sambil menyeret file ke kotak prompt untuk menam
 
 ### Lanjutkan percakapan masa lalu
 
-Klik tombol **Session history** di bagian atas panel Claude Code untuk mengakses riwayat percakapan Anda. Anda dapat mencari berdasarkan kata kunci atau menelusuri berdasarkan waktu (Today, Yesterday, Last 7 days, dll.). Klik percakapan apa pun untuk melanjutkannya dengan riwayat pesan lengkap. Sesi baru menerima judul yang dihasilkan AI berdasarkan pesan pertama Anda. Arahkan kursor ke sesi untuk mengungkapkan tindakan rename dan remove: rename untuk memberikan judul deskriptif, atau remove untuk menghapusnya dari daftar. Untuk lebih lanjut tentang melanjutkan sesi, lihat [Alur kerja umum](/id/common-workflows#resume-previous-conversations).
+Klik tombol **Session history** di bagian atas panel Claude Code untuk mengakses riwayat percakapan Anda. Anda dapat mencari berdasarkan kata kunci atau menelusuri berdasarkan waktu (Today, Yesterday, Last 7 days, dll.). Klik percakapan apa pun untuk melanjutkannya dengan riwayat pesan lengkap. Sesi baru menerima judul yang dihasilkan AI berdasarkan pesan pertama Anda. Arahkan kursor ke sesi untuk mengungkapkan tindakan rename dan remove: rename untuk memberikan judul deskriptif, atau remove untuk menghapusnya dari daftar. Untuk lebih lanjut tentang melanjutkan sesi, lihat [Kelola sesi](/id/sessions).
 
 ### Lanjutkan sesi jarak jauh dari Claude.ai
 
@@ -399,7 +399,7 @@ Gunakan flag `--worktree` (`-w`) untuk memulai Claude di worktree terisolasi den
 claude --worktree feature-auth
 ```
 
-Setiap worktree mempertahankan status file independen sambil berbagi riwayat git. Ini mencegah instance Claude saling mengganggu saat bekerja pada tugas berbeda. Untuk detail lebih lanjut, lihat [Jalankan sesi Claude paralel dengan Git worktrees](/id/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees).
+Setiap worktree mempertahankan status file independen sambil berbagi riwayat git. Ini mencegah instance Claude saling mengganggu saat bekerja pada tugas berbeda. Untuk detail lebih lanjut, lihat [Jalankan sesi paralel dengan Git worktrees](/id/worktrees).
 
 ## Gunakan penyedia pihak ketiga
 
@@ -475,6 +475,16 @@ Ikon Spark muncul di **Editor Toolbar** (kanan atas editor) saat Anda memiliki f
 5. **Periksa kepercayaan workspace**: Ekstensi tidak berfungsi dalam Restricted Mode
 
 Alternatifnya, klik "✱ Claude Code" di **Status Bar** (sudut kanan bawah). Ini berfungsi bahkan tanpa file terbuka. Anda juga dapat menggunakan **Command Palette** (`Cmd+Shift+P` / `Ctrl+Shift+P`) dan ketik "Claude Code".
+
+### Cmd+Esc tidak melakukan apa pun di macOS
+
+Di macOS Tahoe dan yang lebih baru, pintasan Game Overlay sistem terikat ke `Cmd+Esc` secara default dan mengintersepsi penekanan tombol sebelum mencapai VS Code. Untuk membebaskan pintasan:
+
+1. Buka System Settings
+2. Buka Keyboard, kemudian Keyboard Shortcuts, kemudian Game Controllers
+3. Hapus centang Game Overlay
+
+Alternatifnya, ikat ulang ekstensi ke tombol yang berbeda: buka editor [Keyboard Shortcuts](https://code.visualstudio.com/docs/configure/keybindings) VS Code (`Cmd+K Cmd+S`), cari `Claude Code: Focus input`, dan tetapkan pengikatan baru.
 
 ### Claude Code tidak pernah merespons
 

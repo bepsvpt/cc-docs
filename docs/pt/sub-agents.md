@@ -51,7 +51,7 @@ Claude Code inclui subagentes integrados que Claude usa automaticamente quando a
   </Tab>
 
   <Tab title="Plan">
-    Um agente de pesquisa usado durante [plan mode](/pt/common-workflows#use-plan-mode-for-safe-code-analysis) para reunir contexto antes de apresentar um plano.
+    Um agente de pesquisa usado durante [plan mode](/pt/permission-modes#analyze-before-you-edit-with-plan-mode) para reunir contexto antes de apresentar um plano.
 
     * **Model**: Herda da conversa principal
     * **Tools**: Ferramentas somente leitura (acesso negado a ferramentas Write e Edit)
@@ -76,7 +76,7 @@ Claude Code inclui subagentes integrados que Claude usa automaticamente quando a
     | Agent             | Model  | When Claude uses it                                                   |
     | :---------------- | :----- | :-------------------------------------------------------------------- |
     | statusline-setup  | Sonnet | Quando você executa `/statusline` para configurar sua linha de status |
-    | Claude Code Guide | Haiku  | Quando você faz perguntas sobre recursos do Claude Code               |
+    | claude-code-guide | Haiku  | Quando você faz perguntas sobre recursos do Claude Code               |
   </Tab>
 </Tabs>
 
@@ -180,20 +180,43 @@ Subagentes de projeto são descobertos caminhando para cima a partir do diretór
 
 **Subagentes definidos por CLI** são passados como JSON ao iniciar Claude Code. Eles existem apenas para essa sessão e não são salvos em disco, tornando-os úteis para testes rápidos ou scripts de automação. Você pode definir múltiplos subagentes em uma única chamada `--agents`:
 
-```bash theme={null}
-claude --agents '{
-  "code-reviewer": {
-    "description": "Expert code reviewer. Use proactively after code changes.",
-    "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
-    "tools": ["Read", "Grep", "Glob", "Bash"],
-    "model": "sonnet"
-  },
-  "debugger": {
-    "description": "Debugging specialist for errors and test failures.",
-    "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
-  }
-}'
-```
+<Tabs>
+  <Tab title="macOS, Linux, WSL">
+    ```bash theme={null}
+    claude --agents '{
+      "code-reviewer": {
+        "description": "Expert code reviewer. Use proactively after code changes.",
+        "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
+        "tools": ["Read", "Grep", "Glob", "Bash"],
+        "model": "sonnet"
+      },
+      "debugger": {
+        "description": "Debugging specialist for errors and test failures.",
+        "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
+      }
+    }'
+    ```
+  </Tab>
+
+  <Tab title="Windows PowerShell">
+    ```powershell theme={null}
+    claude --agents @'
+    {
+      "code-reviewer": {
+        "description": "Expert code reviewer. Use proactively after code changes.",
+        "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
+        "tools": ["Read", "Grep", "Glob", "Bash"],
+        "model": "sonnet"
+      },
+      "debugger": {
+        "description": "Debugging specialist for errors and test failures.",
+        "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
+      }
+    }
+    '@
+    ```
+  </Tab>
+</Tabs>
 
 O flag `--agents` aceita JSON com os mesmos campos de [frontmatter](#supported-frontmatter-fields) que subagentes baseados em arquivo: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `initialPrompt`, `memory`, `effort`, `background`, `isolation` e `color`. Use `prompt` para o prompt de sistema, equivalente ao corpo markdown em subagentes baseados em arquivo.
 
@@ -212,7 +235,7 @@ Definições de subagente de qualquer um desses escopos também estão disponív
 Arquivos de subagente usam frontmatter YAML para configuração, seguido pelo prompt de sistema em Markdown:
 
 <Note>
-  Subagentes são carregados no início da sessão. Se você criar um subagente adicionando manualmente um arquivo, reinicie sua sessão ou use `/agents` para carregá-lo imediatamente.
+  Subagentes são carregados no início da sessão. Se você adicionar ou editar um arquivo de subagente diretamente no disco, reinicie sua sessão para carregá-lo. Subagentes criados através da interface `/agents` entram em efeito imediatamente sem uma reinicialização.
 </Note>
 
 ```markdown theme={null}
@@ -250,7 +273,7 @@ Os seguintes campos podem ser usados no frontmatter YAML. Apenas `name` e `descr
 | `memory`          | No       | [Escopo de memória persistente](#enable-persistent-memory): `user`, `project`, ou `local`. Habilita aprendizado entre sessões                                                                                                                                                                                                                                                   |
 | `background`      | No       | Defina como `true` para sempre executar este subagente como uma [tarefa em background](#run-subagents-in-foreground-or-background). Padrão: `false`                                                                                                                                                                                                                             |
 | `effort`          | No       | Nível de esforço quando este subagente está ativo. Sobrescreve o nível de esforço da sessão. Padrão: herda da sessão. Opções: `low`, `medium`, `high`, `xhigh`, `max`; os níveis disponíveis dependem do modelo                                                                                                                                                                 |
-| `isolation`       | No       | Defina como `worktree` para executar o subagente em um [git worktree](/pt/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) temporário, dando-lhe uma cópia isolada do repositório. O worktree é automaticamente limpo se o subagente não fizer alterações                                                                                                 |
+| `isolation`       | No       | Defina como `worktree` para executar o subagente em um [git worktree](/pt/worktrees) temporário, dando-lhe uma cópia isolada do repositório. O worktree é automaticamente limpo se o subagente não fizer alterações                                                                                                                                                             |
 | `color`           | No       | Cor de exibição para o subagente na lista de tarefas e transcrição. Aceita `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, ou `cyan`                                                                                                                                                                                                                              |
 | `initialPrompt`   | No       | Auto-enviado como o primeiro turno do usuário quando este agente é executado como o agente da sessão principal (via `--agent` ou a configuração `agent`). [Comandos](/pt/commands) e [skills](/pt/skills) são processados. Preposto a qualquer prompt fornecido pelo usuário                                                                                                    |
 
@@ -484,7 +507,7 @@ fi
 exit 0
 ```
 
-Veja [Hook input](/pt/hooks#pretooluse-input) para o schema de entrada completo e [exit codes](/pt/hooks#exit-code-output) para como códigos de saída afetam o comportamento.
+Veja [Hook input](/pt/hooks#pretooluse-input) para o schema de entrada completo e [exit codes](/pt/hooks#exit-code-output) para como códigos de saída afetam o comportamento. No Windows, escreva scripts de hook em PowerShell e adicione `shell: powershell` à entrada de hook conforme mostrado em [executando hooks em PowerShell](/pt/hooks#windows-powershell-tool).
 
 #### Desabilitar subagentes específicos
 
@@ -994,11 +1017,13 @@ fi
 exit 0
 ```
 
-Torne o script executável:
+No macOS e Linux, torne o script executável:
 
 ```bash theme={null}
 chmod +x ./scripts/validate-readonly-query.sh
 ```
+
+No Windows, escreva o script de validação em PowerShell e adicione `shell: powershell` à entrada de hook. Veja [executando hooks em PowerShell](/pt/hooks#windows-powershell-tool).
 
 O hook recebe JSON via stdin com o comando Bash em `tool_input.command`. Código de saída 2 bloqueia a operação e alimenta a mensagem de erro de volta para Claude. Veja [Hooks](/pt/hooks#exit-code-output) para detalhes sobre códigos de saída e [Hook input](/pt/hooks#pretooluse-input) para o schema de entrada completo.
 

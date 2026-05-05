@@ -63,7 +63,9 @@ Claude Code работает в любом терминале без конфи�
 
 Когда Claude завершает задачу или делает паузу для приглашения разрешения, он отправляет событие уведомления. Отображение этого как звукового сигнала терминала или уведомления рабочего стола позволяет вам переключиться на другую работу, пока выполняется длительная задача.
 
-Claude Code отправляет уведомление рабочего стола только в Ghostty, Kitty и iTerm2; каждый другой терминал требует [хук Notification](#play-a-sound-with-a-notification-hook) вместо этого. Уведомление также достигает вашей локальной машины через SSH, поэтому удалённый сеанс всё ещё может вас оповестить. Ghostty и Kitty перенаправляют его в центр уведомлений вашей ОС без дополнительной настройки. iTerm2 требует, чтобы вы включили перенаправление:
+По умолчанию Claude Code отправляет уведомление рабочего стола только в Ghostty, Kitty и iTerm2. В других терминалах установите [`preferredNotifChannel`](/ru/settings#available-settings) на `"terminal_bell"` для звукового сигнала терминала или настройте [хук Notification](#play-a-sound-with-a-notification-hook) для пользовательского звука или команды.
+
+Уведомление рабочего стола достигает вашей локальной машины через SSH, поэтому удалённый сеанс всё ещё может вас оповестить. Ghostty и Kitty перенаправляют его в центр уведомлений вашей ОС без дополнительной настройки. iTerm2 требует, чтобы вы включили перенаправление:
 
 <Steps>
   <Step title="Откройте параметры уведомлений iTerm2">
@@ -79,7 +81,7 @@ Claude Code отправляет уведомление рабочего сто�
 
 ### Воспроизведите звук с помощью хука Notification
 
-В любом терминале вы можете настроить [хук Notification](/ru/hooks-guide#get-notified-when-claude-needs-input) для воспроизведения звука или запуска пользовательской команды, когда Claude нуждается в вашем внимании. Хуки работают вместе с уведомлением рабочего стола, а не заменяя его. Терминалы, такие как Warp или Apple Terminal, полагаются только на хук, так как Claude Code не отправляет им уведомление рабочего стола.
+В любом терминале вы можете настроить [хук Notification](/ru/hooks-guide#get-notified-when-claude-needs-input) для воспроизведения звука или запуска пользовательской команды, когда Claude нуждается в вашем внимании. Хуки работают вместе с уведомлением рабочего стола, а не заменяя его, поэтому терминалы, которые не получают уведомление рабочего стола, такие как Warp или интегрированный терминал VS Code, могут использовать хук или установить `preferredNotifChannel` на `"terminal_bell"` вместо этого.
 
 Пример ниже воспроизводит системный звук на macOS. Связанное руководство содержит команды уведомлений рабочего стола для macOS, Linux и Windows.
 
@@ -116,7 +118,7 @@ set -as terminal-features 'xterm*:extkeys'
 ### Создайте пользовательскую тему
 
 <Note>
-  Custom themes require Claude Code v2.1.118 or later.
+  Пользовательские темы требуют Claude Code v2.1.118 или более поздней версии.
 </Note>
 
 В дополнение к встроенным предустановкам, `/theme` отображает любые пользовательские темы, которые вы определили, и любые темы, предоставленные установленными [plugins](/ru/plugins-reference#themes). Выберите **New custom theme…** в конце списка, чтобы создать её интерактивно: вы назовёте тему, а затем выберете отдельные цветовые токены для переопределения. Нажмите `Ctrl+E`, пока выделена пользовательская тема, чтобы отредактировать её.
@@ -147,7 +149,7 @@ set -as terminal-features 'xterm*:extkeys'
 
 Claude Code отслеживает `~/.claude/themes/` и перезагружает при изменении файла, поэтому изменения, сделанные в вашем редакторе, применяются к работающему сеансу без перезагрузки.
 
-Ниже приведён полный список настроек, которые вы можете установить в `overrides`. Интерактивный редактор в `/theme` показывает те же токены с живым предпросмотром, включая небольшое количество внутренних токенов, не описанных здесь.
+Ниже приведён полный список настроек, которые вы можете установить в `overrides`. Интерактивный редактор в `/theme` показывает те же токены с живым предпросмотром, плюс несколько однозначных акцентов, таких как цвета экрана адаптации, которые опущены здесь.
 
 <Accordion title="Color token reference">
   Следующий пример объединяет токены из нескольких групп ниже: фирменный акцент, граница режима Plan Mode, фоны diff и фон полноэкранного сообщения.
@@ -177,6 +179,7 @@ Claude Code отслеживает `~/.claude/themes/` и перезагружа
   | `inverseText` | Text drawn on top of a colored background, such as status badges |
   | `inactive`    | Secondary text such as hints, timestamps, and disabled items     |
   | `subtle`      | Faint borders and de-emphasized secondary text                   |
+  | `suggestion`  | Autocomplete suggestions and selection highlight in pickers      |
   | `permission`  | Dialog borders, including permission prompts and pickers         |
   | `remember`    | Memory and `CLAUDE.md` indicators                                |
 
@@ -221,16 +224,40 @@ Claude Code отслеживает `~/.claude/themes/` и перезагружа
 
   Применяется только в [режиме полноэкранной отрисовки](/ru/fullscreen), где сообщения имеют заливку фона.
 
-  | Token                   | Controls                                          |
-  | :---------------------- | :------------------------------------------------ |
-  | `userMessageBackground` | Background behind your messages in the transcript |
-  | `selectionBg`           | Background of text selected with the mouse        |
+  | Token                        | Controls                                                           |
+  | :--------------------------- | :----------------------------------------------------------------- |
+  | `userMessageBackground`      | Background behind your messages in the transcript                  |
+  | `userMessageBackgroundHover` | Background behind a message while hovered or expanded              |
+  | `messageActionsBackground`   | Background behind the selected message when the action bar is open |
+  | `bashMessageBackgroundColor` | Background behind `!` shell command entries in the transcript      |
+  | `memoryBackgroundColor`      | Background behind `#` memory entries in the transcript             |
+  | `selectionBg`                | Background of text selected with the mouse                         |
+
+  #### Usage meter and speaker labels
+
+  Отрегулируйте полосу, показанную в представлении `/usage`, и метки, которые отличают ваши сообщения от сообщений Claude.
+
+  | Token              | Controls                                          |
+  | :----------------- | :------------------------------------------------ |
+  | `rate_limit_fill`  | Filled portion of the usage meter                 |
+  | `rate_limit_empty` | Unfilled portion of the usage meter               |
+  | `briefLabelYou`    | Color of the `You` label on your messages         |
+  | `briefLabelClaude` | Color of the `Claude` label on assistant messages |
 
   #### Shimmer variants and subagent colors
 
-  Несколько токенов имеют парный вариант `Shimmer`, такой как `claudeShimmer` и `warningShimmer`, который предоставляет более светлый цвет, используемый в анимированном градиенте спиннера. Переопределите shimmer вместе с его базовым токеном, если анимация выглядит несоответствующей.
+  Несколько токенов имеют парный вариант shimmer, который предоставляет более светлый цвет, используемый в анимированном градиенте спиннера. Переопределите shimmer вместе с его базовым токеном, если анимация выглядит несоответствующей.
+
+  * `claude` и `claudeShimmer`
+  * `warning` и `warningShimmer`
+  * `permission` и `permissionShimmer`
+  * `promptBorder` и `promptBorderShimmer`
+  * `inactive` и `inactiveShimmer`
+  * `fastMode` и `fastModeShimmer`
 
   Каждый [subagent](/ru/sub-agents) и параллельная задача отображаются в одном из восьми именованных цветов, чтобы вы могли различить их в транскрипте. Имена токенов следуют шаблону `<color>_FOR_SUBAGENTS_ONLY`, где `<color>` — это `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink` или `cyan`. Переопределите их, чтобы изменить внешний вид каждого именованного цвета. Например, subagent с `color: blue` в его определении отображается с использованием значения `blue_FOR_SUBAGENTS_ONLY`.
+
+  Ключевые слова [`ultrathink`](/ru/model-config#use-ultrathink-for-one-off-deep-reasoning) и [`ultraplan`](/ru/ultraplan) в поле ввода приглашения отображаются с семицветным радужным градиентом. Имена токенов следуют шаблону `rainbow_<color>` и `rainbow_<color>_shimmer`, где `<color>` — это `red`, `orange`, `yellow`, `green`, `blue`, `indigo` или `violet`.
 </Accordion>
 
 ## Переключитесь на полноэкранный рендеринг

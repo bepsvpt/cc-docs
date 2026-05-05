@@ -1,5 +1,210 @@
 # Documentation Changes
 
+## 2026-05-05
+
+83 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Claude Code erweitern** (`features-overview.md`): 57 lines added, 20 removed
+  - New section: "### Bauen Sie Ihr Setup im Laufe der Zeit auf"
+  - New section: "### Vergleichen Sie ähnliche Funktionen"
+  - New section: "### Kombinieren Sie Funktionen"
+- **Automatisieren Sie Workflows mit Hooks** (`hooks-guide.md`): 4 lines added, 1 removed
+- **Hooks-Referenz** (`hooks.md`): 10 lines added, 2 removed
+- **Überwachung** (`monitoring-usage.md`): 14 lines added, 8 removed
+- **Benutzerdefinierte Subagenten erstellen** (`sub-agents.md`): 45 lines added, 20 removed
+- **Konfigurieren Sie Ihr Terminal für Claude Code** (`terminal-config.md`): 35 lines added, 8 removed
+  - New section: "#### Nutzungsmesser und Sprecherbeschriftungen"
+
+### English
+
+
+**Modified**
+
+- **Changelog** (`changelog.md`): 40 lines added, 0 removed
+- **Extend Claude Code** (`features-overview.md`): 6 lines added, 5 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 4 lines added, 1 removed
+- **Hooks reference** (`hooks.md`): 10 lines added, 2 removed
+- **Monitoring** (`monitoring-usage.md`): 14 lines added, 8 removed
+- **Create custom subagents** (`sub-agents.md`): 43 lines added, 18 removed
+- **Configure your terminal for Claude Code** (`terminal-config.md`): 31 lines added, 6 removed
+  - New section: "#### Usage meter and speaker labels"
+- **Use Claude Code in VS Code** (`vs-code.md`): 10 lines added, 0 removed
+  - New section: "### Cmd+Esc does nothing on macOS"
+
+### Español
+
+
+**Modified**
+
+- **Extender Claude Code** (`features-overview.md`): 53 lines added, 16 removed
+  - New section: "### Construir su configuración con el tiempo"
+- **Automatizar flujos de trabajo con hooks** (`hooks-guide.md`): 4 lines added, 1 removed
+- **Referencia de hooks** (`hooks.md`): 19 lines added, 11 removed
+- **Monitoreo** (`monitoring-usage.md`): 14 lines added, 8 removed
+- **Crear subagentes personalizados** (`sub-agents.md`): 46 lines added, 21 removed
+- **Configura tu terminal para Claude Code** (`terminal-config.md`): 41 lines added, 14 removed
+  - New section: "### Reproduzca un sonido con un gancho de Notificación"
+  - New section: "#### Medidor de uso y etiquetas de altavoz"
+- **Usar Claude Code en VS Code** (`vs-code.md`): 13 lines added, 3 removed
+  - New section: "### Cmd+Esc no hace nada en macOS"
+
+### Français
+
+
+**Modified**
+
+- **Étendre Claude Code** (`features-overview.md`): 55 lines added, 18 removed
+  - New section: "### Construire votre configuration au fil du temps"
+- **Automatiser les workflows avec les hooks** (`hooks-guide.md`): 4 lines added, 1 removed
+- **Référence des hooks** (`hooks.md`): 15 lines added, 7 removed
+- **Surveillance** (`monitoring-usage.md`): 14 lines added, 8 removed
+- **Créer des sous-agents personnalisés** (`sub-agents.md`): 45 lines added, 20 removed
+- **Configurez votre terminal pour Claude Code** (`terminal-config.md`): 35 lines added, 8 removed
+  - New section: "#### Jauge d'utilisation et étiquettes de haut-parleur"
+- **Utiliser Claude Code dans VS Code** (`vs-code.md`): 13 lines added, 3 removed
+  - New section: "### Cmd+Esc ne fait rien sur macOS"
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Perluas Claude Code** (`features-overview.md`): 61 lines added, 24 removed
+  - New section: "### Bangun setup Anda seiring waktu"
+- **Otomatisasi alur kerja dengan hooks** (`hooks-guide.md`): 4 lines added, 1 removed
+- **Referensi hooks** (`hooks.md`): 15 lines added, 7 removed
+- **Pemantauan** (`monitoring-usage.md`): 14 lines added, 8 removed
+- **Buat subagent khusus** (`sub-agents.md`): 51 lines added, 26 removed
+- **Konfigurasi terminal Anda untuk Claude Code** (`terminal-config.md`): 35 lines added, 8 removed
+  - New section: "#### Meter penggunaan dan label pembicara"
+- **Gunakan Claude Code di VS Code** (`vs-code.md`): 13 lines added, 3 removed
+  - New section: "### Cmd+Esc tidak melakukan apa pun di macOS"
+
+### Italiano
+
+
+**Modified**
+
+- **Estendi Claude Code** (`features-overview.md`): 55 lines added, 18 removed
+  - New section: "### Costruite la vostra configurazione nel tempo"
+- **Automatizzare i flussi di lavoro con hooks** (`hooks-guide.md`): 4 lines added, 1 removed
+- **Riferimento dei hooks** (`hooks.md`): 15 lines added, 7 removed
+- **Monitoraggio** (`monitoring-usage.md`): 14 lines added, 8 removed
+- **Creare subagent personalizzati** (`sub-agents.md`): 45 lines added, 20 removed
+- **Configura il tuo terminale per Claude Code** (`terminal-config.md`): 36 lines added, 9 removed
+  - New section: "## Ottieni un campanello del terminale o una notifica"
+  - New section: "#### Misuratore di utilizzo e etichette degli altoparlanti"
+- **Usa Claude Code in VS Code** (`vs-code.md`): 13 lines added, 3 removed
+  - New section: "### Cmd+Esc non fa nulla su macOS"
+
+### 日本語
+
+
+**Modified**
+
+- **Claude Code を拡張する** (`features-overview.md`): 67 lines added, 30 removed
+  - New section: "### セットアップを時間をかけて構築する"
+- **hooks でワークフローを自動化する** (`hooks-guide.md`): 4 lines added, 1 removed
+- **Hooks リファレンス** (`hooks.md`): 10 lines added, 2 removed
+- **監視** (`monitoring-usage.md`): 14 lines added, 8 removed
+- **カスタムサブエージェントの作成** (`sub-agents.md`): 47 lines added, 22 removed
+- **Claude Code 用にターミナルを設定する** (`terminal-config.md`): 36 lines added, 9 removed
+  - New section: "#### 使用量メーターとスピーカーラベル"
+- **VS Code で Claude Code を使用する** (`vs-code.md`): 23 lines added, 13 removed
+  - New section: "### macOS で Cmd+Esc が機能しない"
+
+### 한국어
+
+
+**Modified**
+
+- **Claude Code 확장하기** (`features-overview.md`): 59 lines added, 22 removed
+  - New section: "### 시간이 지남에 따라 설정 구축하기"
+- **Hooks 참조** (`hooks.md`): 10 lines added, 2 removed
+- **모니터링** (`monitoring-usage.md`): 14 lines added, 8 removed
+- **사용자 정의 subagent 만들기** (`sub-agents.md`): 48 lines added, 23 removed
+- **Claude Code를 위한 터미널 구성** (`terminal-config.md`): 38 lines added, 11 removed
+  - New section: "#### 사용량 미터 및 스피커 레이블"
+- **VS Code에서 Claude Code 사용하기** (`vs-code.md`): 13 lines added, 3 removed
+  - New section: "### macOS에서 Cmd+Esc가 작동하지 않음"
+
+### Português
+
+
+**Modified**
+
+- **Estender Claude Code** (`features-overview.md`): 54 lines added, 17 removed
+  - New section: "### Construir sua configuração ao longo do tempo"
+- **Automatizar fluxos de trabalho com hooks** (`hooks-guide.md`): 4 lines added, 1 removed
+- **Referência de hooks** (`hooks.md`): 10 lines added, 2 removed
+- **Monitoramento** (`monitoring-usage.md`): 14 lines added, 8 removed
+- **Criar subagentes personalizados** (`sub-agents.md`): 45 lines added, 20 removed
+- **Configure seu terminal para Claude Code** (`terminal-config.md`): 45 lines added, 18 removed
+  - New section: "## Obtenha um sino de terminal ou notificação"
+  - New section: "#### Medidor de uso e rótulos de alto-falante"
+- **Use Claude Code in VS Code** (`vs-code.md`): 17 lines added, 7 removed
+  - New section: "## Trabalhar com git"
+  - New section: "### Criar commits e pull requests"
+  - New section: "### Usar git worktrees para tarefas paralelas"
+  - New section: "## Corrigir problemas comuns"
+  - New section: "### Cmd+Esc does nothing on macOS"
+
+### Русский
+
+
+**Modified**
+
+- **Расширение Claude Code** (`features-overview.md`): 53 lines added, 16 removed
+  - New section: "### Сформируйте вашу настройку со временем"
+- **Автоматизация рабочих процессов с помощью hooks** (`hooks-guide.md`): 4 lines added, 1 removed
+- **Справочник по hooks** (`hooks.md`): 16 lines added, 8 removed
+- **Мониторинг** (`monitoring-usage.md`): 14 lines added, 8 removed
+- **Создание пользовательских subagents** (`sub-agents.md`): 45 lines added, 20 removed
+- **Настройте ваш терминал для Claude Code** (`terminal-config.md`): 36 lines added, 9 removed
+  - New section: "#### Usage meter and speaker labels"
+- **Использование Claude Code в VS Code** (`vs-code.md`): 13 lines added, 3 removed
+  - New section: "### Cmd+Esc ничего не делает на macOS"
+
+### 简体中文
+
+
+**Modified**
+
+- **扩展 Claude Code** (`features-overview.md`): 61 lines added, 24 removed
+  - New section: "### 随时间推移构建您的设置"
+- **使用 hooks 自动化工作流** (`hooks-guide.md`): 4 lines added, 1 removed
+- **Hooks 参考** (`hooks.md`): 11 lines added, 3 removed
+- **监控** (`monitoring-usage.md`): 14 lines added, 8 removed
+- **创建自定义 subagents** (`sub-agents.md`): 46 lines added, 21 removed
+- **为 Claude Code 配置您的终端** (`terminal-config.md`): 35 lines added, 8 removed
+  - New section: "#### 使用量计量器和发言人标签"
+- **在 VS Code 中使用 Claude Code** (`vs-code.md`): 13 lines added, 3 removed
+  - New section: "### macOS 上 Cmd+Esc 无效"
+
+### 繁體中文
+
+
+**Modified**
+
+- **擴展 Claude Code** (`features-overview.md`): 61 lines added, 24 removed
+  - New section: "### 隨著時間推移構建您的設置"
+- **使用 hooks 自動化工作流程** (`hooks-guide.md`): 4 lines added, 1 removed
+- **Hooks 參考** (`hooks.md`): 15 lines added, 5 removed
+- **監控** (`monitoring-usage.md`): 14 lines added, 8 removed
+- **建立自訂 subagents** (`sub-agents.md`): 46 lines added, 21 removed
+- **為 Claude Code 配置您的終端機** (`terminal-config.md`): 35 lines added, 8 removed
+  - New section: "#### 使用量計量和說話者標籤"
+- **在 VS Code 中使用 Claude Code** (`vs-code.md`): 14 lines added, 4 removed
+  - New section: "### macOS 上的 Cmd+Esc 無法執行任何操作"
+
+---
+
 ## 2026-05-04
 
 49 pages modified

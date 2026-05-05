@@ -197,11 +197,11 @@ Quando `OTEL_LOG_TOOL_CONTENT=1`, este span também registra um evento de span `
 
 **`claude_code.tool.blocked_on_user`**
 
-| Atributo      | Descrição                                                  | Controlado Por |
-| ------------- | ---------------------------------------------------------- | -------------- |
-| `duration_ms` | Tempo gasto esperando a decisão de permissão               |                |
-| `decision`    | `accept` ou `reject`                                       |                |
-| `source`      | Fonte de decisão, correspondendo ao evento `tool_decision` |                |
+| Atributo      | Descrição                                                                              | Controlado Por |
+| ------------- | -------------------------------------------------------------------------------------- | -------------- |
+| `duration_ms` | Tempo gasto esperando a decisão de permissão                                           |                |
+| `decision`    | `accept` ou `reject`                                                                   |                |
+| `source`      | Fonte de decisão, correspondendo ao evento [Tool decision event](#tool-decision-event) |                |
 
 **`claude_code.tool.execution`**
 
@@ -458,7 +458,7 @@ Incrementado quando o usuário aceita ou rejeita o uso da ferramenta Edit, Write
 * Todos os [atributos padrão](#atributos-padrão)
 * `tool_name`: Nome da ferramenta (`"Edit"`, `"Write"`, `"NotebookEdit"`)
 * `decision`: Decisão do usuário (`"accept"`, `"reject"`)
-* `source`: Fonte de decisão - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` ou `"user_reject"`
+* `source`: Onde a decisão veio. Um de `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` ou `"user_reject"`. Veja o [Evento de decisão da ferramenta](#evento-de-decisão-da-ferramenta) para o que cada valor significa.
 * `language`: Linguagem de programação do arquivo editado, como `"TypeScript"`, `"Python"`, `"JavaScript"` ou `"Markdown"`. Retorna `"unknown"` para extensões de arquivo não reconhecidas.
 
 #### Contador de tempo ativo
@@ -524,7 +524,7 @@ Registrado quando uma ferramenta conclui a execução.
 * `error_type`: String de categoria de erro quando a ferramenta falhou, como `"Error:ENOENT"` ou `"ShellError"`
 * `error` (quando `OTEL_LOG_TOOL_DETAILS=1`): Mensagem de erro completa quando a ferramenta falhou
 * `decision_type`: Ou `"accept"` ou `"reject"`
-* `decision_source`: Fonte de decisão - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` ou `"user_reject"`
+* `decision_source`: Onde a decisão veio. Um de `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` ou `"user_reject"`. Veja o [Evento de decisão da ferramenta](#evento-de-decisão-da-ferramenta) para o que cada valor significa.
 * `tool_input_size_bytes`: Tamanho da entrada da ferramenta serializada em JSON em bytes
 * `tool_result_size_bytes`: Tamanho do resultado da ferramenta em bytes
 * `mcp_server_scope`: Identificador de escopo do servidor MCP (para ferramentas MCP)
@@ -635,7 +635,13 @@ Registrado quando uma decisão de permissão da ferramenta é feita (aceitar/rej
 * `tool_name`: Nome da ferramenta (por exemplo, "Read", "Edit", "Write", "NotebookEdit")
 * `tool_use_id`: Identificador único para esta invocação de ferramenta. Corresponde ao `tool_use_id` passado para hooks, permitindo correlação entre eventos OTel e dados capturados por hook.
 * `decision`: Ou `"accept"` ou `"reject"`
-* `source`: Fonte de decisão - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` ou `"user_reject"`
+* `source`: Onde a decisão veio:
+  * `"config"`: Decidido automaticamente sem avisar, baseado em configurações de projeto, política gerenciada corporativa, sinalizadores `--allowedTools` ou `--disallowedTools`, o modo de permissão ativo ou porque a ferramenta é inerentemente segura.
+  * `"hook"`: Um hook `PreToolUse` ou `PermissionRequest` retornou a decisão.
+  * `"user_permanent"`: Emitido quando o usuário escolheu "Sempre permitir" quando solicitado, salvando uma regra em suas configurações pessoais. Também emitido para chamadas posteriores que correspondem a essa regra salva. Tratado como uma aceitação.
+  * `"user_temporary"`: Emitido quando o usuário escolheu "Sim" ou "Sim, para esta sessão" quando solicitado, sem salvar uma regra. Também emitido para chamadas posteriores na mesma sessão que correspondem a essa permissão com escopo de sessão. Tratado como uma aceitação.
+  * `"user_abort"`: Emitido quando o usuário descartou o aviso de permissão sem responder. Tratado como uma rejeição.
+  * `"user_reject"`: Emitido quando o usuário escolheu "Não" quando solicitado, ou uma chamada correspondeu a uma regra de negação em suas configurações pessoais. Tratado como uma rejeição.
 
 #### Evento de modo de permissão alterado
 

@@ -63,7 +63,9 @@ Untuk Ghostty, Kitty, dan terminal lainnya, cari pengaturan Option-as-Alt atau O
 
 Ketika Claude menyelesaikan tugas atau berhenti untuk prompt izin, ia mengirimkan acara notifikasi. Menampilkan ini sebagai bel terminal atau notifikasi desktop memungkinkan Anda beralih ke pekerjaan lain saat tugas panjang berjalan.
 
-Claude Code mengirimkan notifikasi desktop hanya di Ghostty, Kitty, dan iTerm2; setiap terminal lain memerlukan [hook Notification](#play-a-sound-with-a-notification-hook) sebagai gantinya. Notifikasi juga mencapai mesin lokal Anda melalui SSH, jadi sesi jarak jauh masih dapat memperingatkan Anda. Ghostty dan Kitty meneruskannya ke pusat notifikasi OS Anda tanpa setup lebih lanjut. iTerm2 memerlukan Anda untuk mengaktifkan penerusan:
+Secara default Claude Code mengirimkan notifikasi desktop hanya di Ghostty, Kitty, dan iTerm2. Di terminal lain, atur [`preferredNotifChannel`](/id/settings#available-settings) ke `"terminal_bell"` untuk membunyikan bel terminal sebagai gantinya, atau konfigurasikan [hook Notification](#play-a-sound-with-a-notification-hook) untuk suara khusus atau perintah.
+
+Notifikasi desktop mencapai mesin lokal Anda melalui SSH, jadi sesi jarak jauh masih dapat memperingatkan Anda. Ghostty dan Kitty meneruskannya ke pusat notifikasi OS Anda tanpa setup lebih lanjut. iTerm2 memerlukan Anda untuk mengaktifkan penerusan:
 
 <Steps>
   <Step title="Buka pengaturan notifikasi iTerm2">
@@ -79,7 +81,7 @@ Jika notifikasi masih tidak muncul, konfirmasi bahwa aplikasi terminal Anda memi
 
 ### Putar suara dengan hook Notification
 
-Di terminal apa pun Anda dapat mengonfigurasi [hook Notification](/id/hooks-guide#get-notified-when-claude-needs-input) untuk memutar suara atau menjalankan perintah khusus ketika Claude memerlukan perhatian Anda. Hook berjalan bersama notifikasi desktop daripada menggantinya. Terminal seperti Warp atau Apple Terminal mengandalkan hook saja karena Claude Code tidak mengirimkan mereka notifikasi desktop.
+Di terminal apa pun Anda dapat mengonfigurasi [hook Notification](/id/hooks-guide#get-notified-when-claude-needs-input) untuk memutar suara atau menjalankan perintah khusus ketika Claude memerlukan perhatian Anda. Hook berjalan bersama notifikasi desktop daripada menggantinya, jadi terminal yang tidak menerima notifikasi desktop, seperti Warp atau terminal terintegrasi VS Code, dapat menggunakan hook atau mengatur `preferredNotifChannel` ke `"terminal_bell"` sebagai gantinya.
 
 Contoh di bawah memutar suara sistem di macOS. Panduan tertaut memiliki perintah notifikasi desktop untuk macOS, Linux, dan Windows.
 
@@ -147,7 +149,7 @@ Contoh berikut mendefinisikan tema yang mempertahankan preset gelap tetapi mengu
 
 Claude Code memantau `~/.claude/themes/` dan memuat ulang saat file berubah, jadi edit yang dibuat di editor Anda berlaku untuk sesi yang sedang berjalan tanpa restart.
 
-Di bawah ini adalah daftar lengkap kustomisasi yang dapat Anda atur di `overrides`. Editor interaktif di `/theme` menampilkan token yang sama dengan pratinjau langsung, termasuk sejumlah kecil token internal yang tidak tercakup di sini.
+Referensi di bawah mencakup token yang dapat Anda atur di `overrides`. Editor interaktif di `/theme` menampilkan token yang sama dengan pratinjau langsung, ditambah beberapa aksen tujuan tunggal seperti warna layar onboarding yang dihilangkan di sini.
 
 <Accordion title="Referensi token warna">
   Contoh berikut menggabungkan token dari beberapa grup di bawah: aksen merek, batas mode rencana, latar belakang diff, dan latar belakang pesan layar penuh.
@@ -177,6 +179,7 @@ Di bawah ini adalah daftar lengkap kustomisasi yang dapat Anda atur di `override
   | `inverseText` | Teks yang digambar di atas latar belakang berwarna, seperti lencana status |
   | `inactive`    | Teks sekunder seperti petunjuk, stempel waktu, dan item yang dinonaktifkan |
   | `subtle`      | Batas samar dan teks sekunder yang dikurangi penekanannya                  |
+  | `suggestion`  | Saran pelengkapan otomatis dan sorotan pilihan dalam pemilih               |
   | `permission`  | Batas dialog, termasuk prompt izin dan pemilih                             |
   | `remember`    | Indikator memori dan `CLAUDE.md`                                           |
 
@@ -221,16 +224,40 @@ Di bawah ini adalah daftar lengkap kustomisasi yang dapat Anda atur di `override
 
   Terapkan hanya dalam [mode rendering layar penuh](/id/fullscreen), di mana pesan memiliki isian latar belakang.
 
-  | Token                   | Kontrol                                            |
-  | :---------------------- | :------------------------------------------------- |
-  | `userMessageBackground` | Latar belakang di balik pesan Anda dalam transkrip |
-  | `selectionBg`           | Latar belakang teks yang dipilih dengan mouse      |
+  | Token                        | Kontrol                                                                |
+  | :--------------------------- | :--------------------------------------------------------------------- |
+  | `userMessageBackground`      | Latar belakang di balik pesan Anda dalam transkrip                     |
+  | `userMessageBackgroundHover` | Latar belakang di balik pesan saat diarahkan atau diperluas            |
+  | `messageActionsBackground`   | Latar belakang di balik pesan yang dipilih saat bilah tindakan terbuka |
+  | `bashMessageBackgroundColor` | Latar belakang di balik entri perintah shell `!` dalam transkrip       |
+  | `memoryBackgroundColor`      | Latar belakang di balik entri memori `#` dalam transkrip               |
+  | `selectionBg`                | Latar belakang teks yang dipilih dengan mouse                          |
+
+  #### Meter penggunaan dan label pembicara
+
+  Sesuaikan bilah yang ditampilkan dalam tampilan `/usage` dan label yang membedakan pesan Anda dari Claude.
+
+  | Token              | Kontrol                                       |
+  | :----------------- | :-------------------------------------------- |
+  | `rate_limit_fill`  | Bagian yang diisi dari meter penggunaan       |
+  | `rate_limit_empty` | Bagian yang tidak diisi dari meter penggunaan |
+  | `briefLabelYou`    | Warna label `You` pada pesan Anda             |
+  | `briefLabelClaude` | Warna label `Claude` pada pesan asisten       |
 
   #### Varian shimmer dan warna subagen
 
-  Beberapa token memiliki varian `Shimmer` berpasangan, seperti `claudeShimmer` dan `warningShimmer`, yang menyediakan warna yang lebih ringan yang digunakan dalam gradien animasi spinner. Timpa shimmer bersama token dasarnya jika animasi terlihat tidak cocok.
+  Beberapa token memiliki varian shimmer berpasangan yang menyediakan warna yang lebih ringan yang digunakan dalam gradien animasi spinner. Timpa shimmer bersama token dasarnya jika animasi terlihat tidak cocok.
+
+  * `claude` dan `claudeShimmer`
+  * `warning` dan `warningShimmer`
+  * `permission` dan `permissionShimmer`
+  * `promptBorder` dan `promptBorderShimmer`
+  * `inactive` dan `inactiveShimmer`
+  * `fastMode` dan `fastModeShimmer`
 
   Setiap [subagen](/id/sub-agents) dan tugas paralel ditampilkan dalam salah satu dari delapan warna bernama sehingga Anda dapat membedakannya dalam transkrip. Nama token mengikuti pola `<color>_FOR_SUBAGENTS_ONLY`, di mana `<color>` adalah `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, atau `cyan`. Timpa ini untuk mengubah tampilan setiap warna bernama. Misalnya, subagen dengan `color: blue` dalam definisinya digambar menggunakan nilai `blue_FOR_SUBAGENTS_ONLY`.
+
+  Kata kunci [`ultrathink`](/id/model-config#use-ultrathink-for-one-off-deep-reasoning) dan [`ultraplan`](/id/ultraplan) dalam input prompt dirender dengan gradien pelangi tujuh warna. Nama token mengikuti pola `rainbow_<color>` dan `rainbow_<color>_shimmer`, di mana `<color>` adalah `red`, `orange`, `yellow`, `green`, `blue`, `indigo`, atau `violet`.
 </Accordion>
 
 ## Beralih ke rendering fullscreen

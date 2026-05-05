@@ -735,7 +735,10 @@ Untuk keputusan yang memerlukan penilaian daripada aturan deterministik, gunakan
 Satu-satunya pekerjaan model adalah mengembalikan keputusan ya/tidak sebagai JSON:
 
 * `"ok": true`: tindakan berlanjut
-* `"ok": false`: tindakan diblokir. Untuk hook `Stop` dan `SubagentStop`, `reason` diberi makan kembali ke Claude sehingga terus bekerja. Untuk peristiwa lainnya, giliran berakhir dan `reason` muncul dalam obrolan sebagai baris peringatan. Claude tidak melihatnya.
+* `"ok": false`: apa yang terjadi tergantung pada peristiwa:
+  * `Stop` dan `SubagentStop`: `reason` diberi makan kembali ke Claude sehingga terus bekerja
+  * `PreToolUse`: panggilan alat ditolak dan `reason` dikembalikan ke Claude sebagai kesalahan alat, sehingga dapat menyesuaikan dan melanjutkan
+  * `PostToolUse`, `PostToolBatch`, `UserPromptSubmit`, dan `UserPromptExpansion`: giliran berakhir dan `reason` muncul dalam obrolan sebagai baris peringatan
 
 Contoh ini menggunakan hook `Stop` untuk menanyakan kepada model apakah semua tugas yang diminta selesai. Jika model mengembalikan `"ok": false`, Claude terus bekerja dan menggunakan `reason` sebagai instruksi berikutnya:
 

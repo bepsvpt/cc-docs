@@ -12,7 +12,7 @@ Claude Code 结合了一个能够推理代码的模型和[内置工具](/zh-CN/h
   有关核心代理循环如何工作的信息，请参阅 [Claude Code 如何工作](/zh-CN/how-claude-code-works)。
 </Note>
 
-**初次使用 Claude Code？** 从 [CLAUDE.md](/zh-CN/memory) 开始了解项目约定。根据需要添加其他扩展。
+**初次使用 Claude Code？** 从 [CLAUDE.md](/zh-CN/memory) 开始了解项目约定，然后根据需要添加其他扩展[当特定触发器出现时](#build-your-setup-over-time)。
 
 ## 概述
 
@@ -23,7 +23,7 @@ Claude Code 结合了一个能够推理代码的模型和[内置工具](/zh-CN/h
 * **[MCP](/zh-CN/mcp)** 将 Claude 连接到外部服务和工具
 * **[Subagents](/zh-CN/sub-agents)** 在隔离的上下文中运行自己的循环，返回摘要
 * **[Agent teams](/zh-CN/agent-teams)** 协调多个独立会话，具有共享任务和点对点消息传递
-* **[Hooks](/zh-CN/hooks)** 完全在循环外作为确定性脚本运行
+* **[Hooks](/zh-CN/hooks-guide)** 在生命周期事件上触发，可以运行脚本、HTTP 请求、提示或 subagent
 * **[Plugins](/zh-CN/plugins)** 和 **[marketplaces](/zh-CN/plugin-marketplaces)** 打包和分发这些功能
 
 [Skills](/zh-CN/skills) 是最灵活的扩展。Skill 是一个包含知识、工作流或说明的 markdown 文件。您可以使用 `/deploy` 之类的命令调用 skills，或者 Claude 可以在相关时自动加载它们。Skills 可以在您当前的对话中运行，也可以通过 subagents 在隔离的上下文中运行。
@@ -32,16 +32,32 @@ Claude Code 结合了一个能够推理代码的模型和[内置工具](/zh-CN/h
 
 功能范围从 Claude 每个会话都能看到的始终开启的上下文，到您或 Claude 可以调用的按需功能，再到在特定事件上运行的后台自动化。下表显示了可用的功能以及何时使用每个功能。
 
-| 功能                                    | 作用                     | 何时使用                  | 示例                                      |
-| ------------------------------------- | ---------------------- | --------------------- | --------------------------------------- |
-| **CLAUDE.md**                         | 每次对话加载的持久上下文           | 项目约定、"始终执行 X" 规则      | "使用 pnpm，而不是 npm。提交前运行测试。"              |
-| **Skill**                             | Claude 可以使用的说明、知识和工作流  | 可重用内容、参考文档、可重复的任务     | `/deploy` 运行您的部署清单；包含端点模式的 API 文档 skill |
-| **Subagent**                          | 返回摘要结果的隔离执行上下文         | 上下文隔离、并行任务、专门的工作者     | 读取许多文件但仅返回关键发现的研究任务                     |
-| **[Agent teams](/zh-CN/agent-teams)** | 协调多个独立的 Claude Code 会话 | 并行研究、新功能开发、使用竞争假设进行调试 | 生成审查者同时检查安全性、性能和测试                      |
-| **MCP**                               | 连接到外部服务                | 外部数据或操作               | 查询您的数据库、发布到 Slack、控制浏览器                 |
-| **Hook**                              | 在事件上运行的确定性脚本           | 可预测的自动化，不涉及 LLM       | 每次文件编辑后运行 ESLint                        |
+| 功能                                    | 作用                            | 何时使用                  | 示例                                      |
+| ------------------------------------- | ----------------------------- | --------------------- | --------------------------------------- |
+| **CLAUDE.md**                         | 每次对话加载的持久上下文                  | 项目约定、"始终执行 X" 规则      | "使用 pnpm，而不是 npm。提交前运行测试。"              |
+| **Skill**                             | Claude 可以使用的说明、知识和工作流         | 可重用内容、参考文档、可重复的任务     | `/deploy` 运行您的部署清单；包含端点模式的 API 文档 skill |
+| **Subagent**                          | 返回摘要结果的隔离执行上下文                | 上下文隔离、并行任务、专门的工作者     | 读取许多文件但仅返回关键发现的研究任务                     |
+| **[Agent teams](/zh-CN/agent-teams)** | 协调多个独立的 Claude Code 会话        | 并行研究、新功能开发、使用竞争假设进行调试 | 生成审查者同时检查安全性、性能和测试                      |
+| **MCP**                               | 连接到外部服务                       | 外部数据或操作               | 查询您的数据库、发布到 Slack、控制浏览器                 |
+| **Hook**                              | 由事件触发的脚本、HTTP 请求、提示或 subagent | 必须在每个匹配事件上运行的自动化      | 每次文件编辑后运行 ESLint                        |
 
 **[Plugins](/zh-CN/plugins)** 是打包层。Plugin 将 skills、hooks、subagents 和 MCP servers 捆绑到单个可安装单元中。Plugin skills 是命名空间的（如 `/my-plugin:review`），因此多个 plugins 可以共存。当您想在多个存储库中重用相同的设置或通过 **[marketplace](/zh-CN/plugin-marketplaces)** 分发给他人时，使用 plugins。
+
+### 随时间推移构建您的设置
+
+您不需要提前配置所有内容。每个功能都有一个可识别的触发器，大多数团队大致按以下顺序添加它们：
+
+| 触发器                         | 添加                                   |
+| :-------------------------- | :----------------------------------- |
+| Claude 两次出错约定或命令            | 将其添加到 [CLAUDE.md](/zh-CN/memory)     |
+| 您一直在输入相同的提示来启动任务            | 将其保存为用户可调用的 [skill](/zh-CN/skills)   |
+| 您第三次将相同的剧本或多步骤过程粘贴到聊天中      | 将其捕获为 [skill](/zh-CN/skills)         |
+| 您一直在从 Claude 看不到的浏览器标签页复制数据 | 将该系统连接为 [MCP server](/zh-CN/mcp)     |
+| 一个辅助任务用您不会再次引用的输出淹没您的对话     | 通过 [subagent](/zh-CN/sub-agents) 路由它 |
+| 您希望每次都发生某事而无需询问             | 编写 [hook](/zh-CN/hooks-guide)        |
+| 第二个存储库需要相同的设置               | 将其打包为 [plugin](/zh-CN/plugins)       |
+
+相同的触发器告诉您何时更新您已有的内容。重复的错误或反复出现的审查评论是 CLAUDE.md 编辑，而不是聊天中的一次性更正。您一直手动调整的工作流是需要另一次修订的 skill。
 
 ### 比较相似的功能
 
@@ -54,11 +70,12 @@ Claude Code 结合了一个能够推理代码的模型和[内置工具](/zh-CN/h
     * **Skills** 是可重用的内容，您可以将其加载到任何上下文中
     * **Subagents** 是与您的主对话分开运行的隔离工作者
 
-    | 方面       | Skill         | Subagent              |
-    | -------- | ------------- | --------------------- |
-    | **它是什么** | 可重用的说明、知识或工作流 | 具有自己上下文的隔离工作者         |
-    | **关键优势** | 在上下文之间共享内容    | 上下文隔离。工作单独进行，仅返回摘要    |
-    | **最适合**  | 参考材料、可调用的工作流  | 读取许多文件的任务、并行工作、专门的工作者 |
+    | 方面                                   | Skill         | Subagent              |
+    | ------------------------------------ | ------------- | --------------------- |
+    | **它是什么**                             | 可重用的说明、知识或工作流 | 具有自己上下文的隔离工作者         |
+    | **关键优势**                             | 在上下文之间共享内容    | 上下文隔离。工作单独进行，仅返回摘要    |
+    | **[上下文窗口](/zh-CN/context-window)影响** | 添加到您的主窗口      | 使用具有自己输入和输出令牌的单独窗口    |
+    | **最适合**                              | 参考材料、可调用的工作流  | 读取许多文件的任务、并行工作、专门的工作者 |
 
     **Skills 可以是参考或操作。** 参考 skills 提供 Claude 在整个会话中使用的知识（如您的 API 风格指南）。操作 skills 告诉 Claude 执行特定操作（如运行您的部署工作流的 `/deploy`）。
 
@@ -142,6 +159,26 @@ Claude Code 结合了一个能够推理代码的模型和[内置工具](/zh-CN/h
 
     示例：MCP 服务器将 Claude 连接到您的数据库。Skill 教导 Claude 您的数据模型、常见查询模式以及用于不同任务的表。
   </Tab>
+
+  <Tab title="Hook vs Skill">
+    Hook 在生命周期事件上触发；skill 被加载到上下文中供 Claude 应用。
+
+    | 方面        | Hook                                                                | Skill                              |
+    | --------- | ------------------------------------------------------------------- | ---------------------------------- |
+    | **运行**    | Shell 命令、HTTP 请求、LLM 提示或 subagent                                   | Claude 读取和遵循的说明                    |
+    | **由以下触发** | [生命周期事件](/zh-CN/hooks#hook-events)，如 `PostToolUse` 或 `SessionStart` | 您输入 `/<name>`，或 Claude 将描述与您的任务相匹配 |
+    | **确定性**   | 总是在其事件上触发；触发器是有保证的                                                  | Claude 解释说明；结果可能会有所不同              |
+    | **上下文成本** | 零，除非 hook 返回输出                                                      | 描述在每个会话加载；使用时加载完整内容                |
+    | **最适合**   | 每次都以相同方式运行且不需要 Claude 思考的操作                                         | 需要推理的工作流、参考材料、多步骤任务                |
+
+    **当操作必须每次都以相同方式发生且不需要 Claude 思考时，使用 hook**。例如：保存时格式化、拒绝 `rm -rf /`、在会话结束时发布 Slack 消息。
+
+    **当 Claude 应该决定如何应用步骤或内容是知识而不是脚本时，使用 skill**。例如：`/release` 清单、您的 API 风格指南、调试剧本。
+
+    **将护栏放在 hooks 中。** CLAUDE.md 或 skill 中的"永远不要编辑 `.env`"之类的说明是请求，而不是保证。阻止编辑的 `PreToolUse` hook 是强制执行。如果规则必须每次都成立，将其作为 hook 而不是提示说明。
+
+    **Hook 输出进入上下文。** 运行您的 linter 的 `PostToolUse` hook 将结果作为 Claude 读取的文本反馈；`/fix-lint` skill 告诉 Claude 如何解决它们。
+  </Tab>
 </Tabs>
 
 ### 了解功能如何分层
@@ -151,7 +188,7 @@ Claude Code 结合了一个能够推理代码的模型和[内置工具](/zh-CN/h
 * **CLAUDE.md 文件** 是累加的：所有级别同时向 Claude 的上下文贡献内容。来自您的工作目录及以上的文件在启动时加载；子目录在您在其中工作时加载。当说明冲突时，Claude 使用判断来协调它们，更具体的说明通常优先。有关详细信息，请参阅 [CLAUDE.md 文件如何加载](/zh-CN/memory#how-claudemd-files-load)。
 * **Skills 和 subagents** 按名称覆盖：当相同的名称存在于多个级别时，一个定义根据优先级获胜（对于 skills 为托管 > 用户 > 项目；对于 subagents 为托管 > CLI 标志 > 项目 > 用户 > plugin）。Plugin skills 是 [命名空间的](/zh-CN/plugins#add-skills-to-your-plugin) 以避免冲突。有关详细信息，请参阅 [skill 发现](/zh-CN/skills#where-skills-live) 和 [subagent 范围](/zh-CN/sub-agents#choose-the-subagent-scope)。
 * **MCP 服务器** 按名称覆盖：本地 > 项目 > 用户。有关详细信息，请参阅 [MCP 范围](/zh-CN/mcp#scope-hierarchy-and-precedence)。
-* **Hooks** 合并：所有注册的 hooks 为其匹配的事件触发，无论来源如何。有关详细信息，请参阅 [hooks](/zh-CN/hooks)。
+* **Hooks** 合并：所有注册的 hooks 为其匹配的事件触发，无论来源如何。有关详细信息，请参阅 [hooks](/zh-CN/hooks-guide)。
 
 ### 组合功能
 
@@ -168,7 +205,7 @@ Claude Code 结合了一个能够推理代码的模型和[内置工具](/zh-CN/h
 
 ## 了解上下文成本
 
-您添加的每个功能都会消耗 Claude 的一些上下文。太多可能会填满您的上下文窗口，但它也可能增加噪音，使 Claude 效率降低；skills 可能无法正确触发，或 Claude 可能会失去对您的约定的跟踪。了解这些权衡有助于您构建有效的设置。
+您添加的每个功能都会消耗 Claude 的一些上下文。太多可能会填满您的上下文窗口，但它也可能增加噪音，使 Claude 效率降低；skills 可能无法正确触发，或 Claude 可能会失去对您的约定的跟踪。了解这些权衡有助于您构建有效的设置。有关这些功能如何在运行会话中组合的交互式视图，请参阅 [探索上下文窗口](/zh-CN/context-window)。
 
 ### 按功能的上下文成本
 
@@ -178,7 +215,7 @@ Claude Code 结合了一个能够推理代码的模型和[内置工具](/zh-CN/h
 | ------------- | ---------- | ------------------ | ----------------- |
 | **CLAUDE.md** | 会话开始       | 完整内容               | 每个请求              |
 | **Skills**    | 会话开始 + 使用时 | 启动时的描述，使用时的完整内容    | 低（每个请求的描述）\*      |
-| **MCP 服务器**   | 会话开始       | 所有工具定义和 JSON 架构    | 每个请求              |
+| **MCP 服务器**   | 会话开始       | 工具名称；完整架构按需        | 低，直到使用工具          |
 | **Subagents** | 生成时        | 具有指定 skills 的新鲜上下文 | 与主会话隔离            |
 | **Hooks**     | 触发时        | 无（外部运行）            | 零，除非 hook 返回额外上下文 |
 
@@ -188,7 +225,7 @@ Claude Code 结合了一个能够推理代码的模型和[内置工具](/zh-CN/h
 
 每个功能在会话的不同点加载。下面的选项卡解释了每个功能何时加载以及什么进入上下文。
 
-<img src="https://mintcdn.com/claude-code/6yTCYq1p37ZB8-CQ/images/context-loading.svg?fit=max&auto=format&n=6yTCYq1p37ZB8-CQ&q=85&s=5a58ce953a35a2412892015e2ad6cb67" alt="上下文加载：CLAUDE.md 和 MCP 在会话开始时加载并保留在每个请求中。Skills 在启动时加载描述，在调用时加载完整内容。Subagents 获得隔离的上下文。Hooks 外部运行。" width="720" height="410" data-path="images/context-loading.svg" />
+<img src="https://mintcdn.com/claude-code/6yTCYq1p37ZB8-CQ/images/context-loading.svg?fit=max&auto=format&n=6yTCYq1p37ZB8-CQ&q=85&s=5a58ce953a35a2412892015e2ad6cb67" alt="上下文加载：CLAUDE.md 在会话开始时加载并保留在每个请求中。MCP 工具名称在启动时加载，完整架构延迟到使用。Skills 在启动时加载描述，在调用时加载完整内容。Subagents 获得隔离的上下文。Hooks 外部运行。" width="720" height="410" data-path="images/context-loading.svg" />
 
 <Tabs>
   <Tab title="CLAUDE.md">
@@ -202,7 +239,7 @@ Claude Code 结合了一个能够推理代码的模型和[内置工具](/zh-CN/h
   </Tab>
 
   <Tab title="Skills">
-    Skills 是 Claude 工具包中的额外功能。它们可以是参考材料（如 API 风格指南）或可调用的工作流，您可以使用 `/<name>` 触发（如 `/deploy`）。Claude Code 附带 [捆绑的 skills](/zh-CN/skills#bundled-skills)，如 `/simplify`、`/batch` 和 `/debug`，可以开箱即用。您也可以创建自己的。Claude 在适当时使用 skills，或者您可以直接调用一个。
+    Skills 是 Claude 工具包中的额外功能。它们可以是参考材料（如 API 风格指南）或可调用的工作流，您可以使用 `/<name>` 触发（如 `/deploy`）。Claude Code 包括 [捆绑的 skills](/zh-CN/commands)，如 `/simplify`、`/batch` 和 `/debug`，可以开箱即用。您也可以创建自己的。Claude 在适当时使用 skills，或者您可以直接调用一个。
 
     **何时：** 取决于 skill 的配置。默认情况下，描述在会话开始时加载，完整内容在使用时加载。对于仅用户 skills（`disable-model-invocation: true`），在您调用它们之前不加载任何内容。
 
@@ -220,9 +257,9 @@ Claude Code 结合了一个能够推理代码的模型和[内置工具](/zh-CN/h
   <Tab title="MCP 服务器">
     **何时：** 会话开始。
 
-    **加载内容：** 来自连接的服务器的所有工具定义和 JSON 架构。
+    **加载内容：** 来自连接的服务器的工具名称。完整的 JSON 架构保持延迟，直到 Claude 需要特定工具。
 
-    **上下文成本：** [工具搜索](/zh-CN/mcp#scale-with-mcp-tool-search)（默认启用）将 MCP 工具加载到上下文的 10%，并延迟其余部分直到需要。
+    **上下文成本：** [工具搜索](/zh-CN/mcp#scale-with-mcp-tool-search)默认启用，因此空闲 MCP 工具消耗最少的上下文。
 
     **可靠性说明：** MCP 连接可能在会话中途无声地失败。如果服务器断开连接，其工具会无警告地消失。Claude 可能尝试使用不再存在的工具。如果您注意到 Claude 无法使用它之前可以访问的 MCP 工具，请使用 `/mcp` 检查连接。
 
@@ -245,9 +282,9 @@ Claude Code 结合了一个能够推理代码的模型和[内置工具](/zh-CN/h
   </Tab>
 
   <Tab title="Hooks">
-    **何时：** 触发时。Hooks 在特定的生命周期事件上触发，如工具执行、会话边界、提示提交、权限请求和压缩。有关完整列表，请参阅 [Hooks](/zh-CN/hooks)。
+    **何时：** 触发时。Hooks 在特定的生命周期事件上触发，如工具执行、会话边界、提示提交、权限请求和压缩。有关完整列表，请参阅 [Hooks](/zh-CN/hooks-guide)。
 
-    **加载内容：** 默认情况下无。Hooks 作为外部脚本运行。
+    **加载内容：** 默认情况下无。Hooks 在主对话外执行。
 
     **上下文成本：** 零，除非 hook 返回作为消息添加到您的对话中的输出。
 

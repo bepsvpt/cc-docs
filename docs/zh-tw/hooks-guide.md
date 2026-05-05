@@ -735,7 +735,10 @@ hook 程序只在 Bash 命令的子命令與 `git *` 相符時生成，或當命
 模型的唯一工作是傳回 yes/no 決策作為 JSON：
 
 * `"ok": true`：操作繼續
-* `"ok": false`：操作被阻止。對於 `Stop` 和 `SubagentStop` hooks，`reason` 被回饋給 Claude，以便它繼續工作。對於其他事件，回合結束，`reason` 在聊天中顯示為警告行。Claude 看不到它。
+* `"ok": false`：發生的情況取決於事件：
+  * `Stop` 和 `SubagentStop`：`reason` 被回饋給 Claude，以便它繼續工作
+  * `PreToolUse`：工具呼叫被拒絕，`reason` 作為工具錯誤傳回給 Claude，以便它可以調整並繼續
+  * `PostToolUse`、`PostToolBatch`、`UserPromptSubmit` 和 `UserPromptExpansion`：回合結束，`reason` 在聊天中顯示為警告行
 
 此範例使用 `Stop` hook 詢問模型是否所有請求的任務都已完成。如果模型傳回 `"ok": false`，Claude 會繼續工作並使用 `reason` 作為其下一個指令：
 

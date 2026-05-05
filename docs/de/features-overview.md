@@ -12,7 +12,7 @@ Claude Code kombiniert ein Modell, das über Ihren Code nachdenkt, mit [integrie
   Informationen zur Funktionsweise der Kern-Agentenschleife finden Sie unter [How Claude Code works](/de/how-claude-code-works).
 </Note>
 
-**Neu bei Claude Code?** Beginnen Sie mit [CLAUDE.md](/de/memory) für Projektkonventionen. Fügen Sie andere Erweiterungen nach Bedarf hinzu.
+**Neu bei Claude Code?** Beginnen Sie mit [CLAUDE.md](/de/memory) für Projektkonventionen. Fügen Sie dann andere Erweiterungen [hinzu, wenn spezifische Trigger auftreten](#build-your-setup-over-time).
 
 ## Übersicht
 
@@ -23,7 +23,7 @@ Erweiterungen verbinden sich mit verschiedenen Teilen der Agentenschleife:
 * **[MCP](/de/mcp)** verbindet Claude mit externen Diensten und Tools
 * **[Subagents](/de/sub-agents)** führen ihre eigenen Schleifen in isoliertem Kontext aus und geben Zusammenfassungen zurück
 * **[Agent teams](/de/agent-teams)** koordinieren mehrere unabhängige Sitzungen mit gemeinsamen Aufgaben und Peer-to-Peer-Messaging
-* **[Hooks](/de/hooks)** laufen vollständig außerhalb der Schleife als deterministische Skripte
+* **[Hooks](/de/hooks-guide)** werden bei Lebenszyklusereignissen ausgelöst und können ein Skript, eine HTTP-Anfrage, einen Prompt oder einen Subagent ausführen
 * **[Plugins](/de/plugins)** und **[Marketplaces](/de/plugin-marketplaces)** verpacken und verteilen diese Funktionen
 
 [Skills](/de/skills) sind die flexibelste Erweiterung. Ein Skill ist eine Markdown-Datei, die Wissen, Workflows oder Anweisungen enthält. Sie können Skills mit einem Befehl wie `/deploy` aufrufen, oder Claude kann sie automatisch laden, wenn sie relevant sind. Skills können in Ihrer aktuellen Konversation oder in einem isolierten Kontext über Subagents ausgeführt werden.
@@ -39,11 +39,27 @@ Funktionen reichen von immer aktivem Kontext, den Claude in jeder Sitzung sieht,
 | **Subagent**                       | Isolierter Ausführungskontext, der zusammengefasste Ergebnisse zurückgibt | Kontextisolation, parallele Aufgaben, spezialisierte Worker                              | Recherche-Aufgabe, die viele Dateien liest, aber nur wichtige Erkenntnisse zurückgibt    |
 | **[Agent teams](/de/agent-teams)** | Koordinieren Sie mehrere unabhängige Claude Code-Sitzungen                | Parallele Recherche, neue Funktionsentwicklung, Debugging mit konkurrierenden Hypothesen | Spawnen Sie Reviewer, um Sicherheit, Leistung und Tests gleichzeitig zu überprüfen       |
 | **MCP**                            | Verbindung zu externen Diensten                                           | Externe Daten oder Aktionen                                                              | Abfrage Ihrer Datenbank, Posten auf Slack, Steuerung eines Browsers                      |
-| **Hook**                           | Deterministisches Skript, das bei Ereignissen ausgeführt wird             | Vorhersagbare Automatisierung, kein LLM beteiligt                                        | Führen Sie ESLint nach jeder Dateibearbeitung aus                                        |
+| **Hook**                           | Skript, HTTP-Anfrage, Prompt oder Subagent, ausgelöst durch Ereignisse    | Automatisierung, die bei jedem übereinstimmenden Ereignis ausgeführt werden muss         | Führen Sie ESLint nach jeder Dateibearbeitung aus                                        |
 
 **[Plugins](/de/plugins)** sind die Verpackungsebene. Ein Plugin bündelt Skills, Hooks, Subagents und MCP-Server in eine einzelne installierbare Einheit. Plugin-Skills sind namensgebunden (wie `/my-plugin:review`), sodass mehrere Plugins nebeneinander existieren können. Verwenden Sie Plugins, wenn Sie dasselbe Setup über mehrere Repositories hinweg wiederverwenden möchten oder es über einen **[Marketplace](/de/plugin-marketplaces)** an andere verteilen möchten.
 
-### Ähnliche Funktionen vergleichen
+### Bauen Sie Ihr Setup im Laufe der Zeit auf
+
+Sie müssen nicht alles im Voraus konfigurieren. Jede Funktion hat einen erkennbaren Trigger, und die meisten Teams fügen sie ungefähr in dieser Reihenfolge hinzu:
+
+| Trigger                                                                                               | Hinzufügen                                                 |
+| :---------------------------------------------------------------------------------------------------- | :--------------------------------------------------------- |
+| Claude bekommt eine Konvention oder einen Befehl zweimal falsch                                       | Fügen Sie es zu [CLAUDE.md](/de/memory) hinzu              |
+| Sie tippen immer wieder denselben Prompt, um eine Aufgabe zu starten                                  | Speichern Sie es als benutzer-aufrufen [Skill](/de/skills) |
+| Sie fügen zum dritten Mal dasselbe Playbook oder mehrstufige Verfahren in den Chat ein                | Erfassen Sie es als [Skill](/de/skills)                    |
+| Sie kopieren immer wieder Daten aus einer Browser-Registerkarte, die Claude nicht sehen kann          | Verbinden Sie dieses System als [MCP-Server](/de/mcp)      |
+| Eine Nebenaufgabe überschwemmt Ihre Konversation mit Ausgabe, auf die Sie nicht mehr verweisen werden | Leiten Sie sie durch einen [Subagent](/de/sub-agents)      |
+| Sie möchten, dass etwas jedes Mal passiert, ohne zu fragen                                            | Schreiben Sie einen [Hook](/de/hooks-guide)                |
+| Ein zweites Repository benötigt dasselbe Setup                                                        | Verpacken Sie es als [Plugin](/de/plugins)                 |
+
+Die gleichen Trigger sagen Ihnen, wann Sie das aktualisieren, was Sie bereits haben. Ein wiederholter Fehler oder ein wiederkehrender Review-Kommentar ist eine CLAUDE.md-Bearbeitung, keine einmalige Korrektur im Chat. Ein Workflow, den Sie immer wieder von Hand anpassen, ist ein Skill, der eine weitere Überarbeitung benötigt.
+
+### Vergleichen Sie ähnliche Funktionen
 
 Einige Funktionen können ähnlich wirken. Hier erfahren Sie, wie Sie sie unterscheiden.
 
@@ -54,15 +70,16 @@ Einige Funktionen können ähnlich wirken. Hier erfahren Sie, wie Sie sie unters
     * **Skills** sind wiederverwendbare Inhalte, die Sie in jeden Kontext laden können
     * **Subagents** sind isolierte Worker, die separat von Ihrer Hauptkonversation ausgeführt werden
 
-    | Aspekt            | Skill                                                | Subagent                                                                                 |
-    | ----------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-    | **Was es ist**    | Wiederverwendbare Anweisungen, Wissen oder Workflows | Isolierter Worker mit eigenem Kontext                                                    |
-    | **Hauptvorteil**  | Inhalte über Kontexte hinweg teilen                  | Kontextisolation. Die Arbeit erfolgt separat, nur die Zusammenfassung wird zurückgegeben |
-    | **Am besten für** | Referenzmaterial, aufrufbare Workflows               | Aufgaben, die viele Dateien lesen, parallele Arbeit, spezialisierte Worker               |
+    | Aspekt                                              | Skill                                                | Subagent                                                                                 |
+    | --------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+    | **Was es ist**                                      | Wiederverwendbare Anweisungen, Wissen oder Workflows | Isolierter Worker mit eigenem Kontext                                                    |
+    | **Hauptvorteil**                                    | Inhalte über Kontexte hinweg teilen                  | Kontextisolation. Die Arbeit erfolgt separat, nur die Zusammenfassung wird zurückgegeben |
+    | **[Kontextfenster](/de/context-window) Auswirkung** | Wird zu Ihrem Hauptfenster hinzugefügt               | Verwendet ein separates Fenster mit eigenen Input- und Output-Tokens                     |
+    | **Am besten für**                                   | Referenzmaterial, aufrufbare Workflows               | Aufgaben, die viele Dateien lesen, parallele Arbeit, spezialisierte Worker               |
 
     **Skills können Referenz oder Aktion sein.** Referenz-Skills bieten Wissen, das Claude während Ihrer Sitzung nutzt (wie Ihr API-Stilhandbuch). Action-Skills sagen Claude, etwas Bestimmtes zu tun (wie `/deploy`, das Ihren Bereitstellungs-Workflow ausführt).
 
-    **Verwenden Sie einen Subagent**, wenn Sie Kontextisolation benötigen oder wenn Ihr Kontextfenster voll wird. Der Subagent könnte Dutzende von Dateien lesen oder umfangreiche Suchen durchführen, aber Ihre Hauptkonversation erhält nur eine Zusammenfassung. Da die Arbeit des Subagent Ihren Hauptkontext nicht verbraucht, ist dies auch nützlich, wenn Sie nicht möchten, dass die Zwischenarbeit sichtbar bleibt. Benutzerdefinierte Subagents können ihre eigenen Anweisungen haben und Skills vorladen.
+    **Verwenden Sie einen Subagent**, wenn Sie Kontextisolation benötigen oder wenn Ihr Kontextfenster voll wird. Der Subagent könnte Dutzende von Dateien lesen oder umfangreiche Suchen durchführen, aber Ihre Hauptkonversation erhält nur eine Zusammenfassung. Da die Arbeit des Subagent Ihren Hauptkontext nicht verbraucht, ist dies auch nützlich, wenn Sie nicht möchten, dass die Zwischenarbeit sichtbar bleibt. Benutzerdefinierte Subagents können ihre eigenen Anweisungen haben und können Skills vorladen.
 
     **Sie können sich kombinieren.** Ein Subagent kann spezifische Skills vorladen (`skills:`-Feld). Ein Skill kann in isoliertem Kontext mit `context: fork` ausgeführt werden. Weitere Informationen finden Sie unter [Skills](/de/skills).
   </Tab>
@@ -142,6 +159,26 @@ Einige Funktionen können ähnlich wirken. Hier erfahren Sie, wie Sie sie unters
 
     Beispiel: Ein MCP-Server verbindet Claude mit Ihrer Datenbank. Ein Skill lehrt Claude Ihr Datenmodell, häufige Abfragemuster und welche Tabellen für verschiedene Aufgaben verwendet werden.
   </Tab>
+
+  <Tab title="Hook vs Skill">
+    Ein Hook wird bei einem Lebenszyklusereignis ausgelöst; ein Skill wird in den Kontext geladen, damit Claude ihn anwendet.
+
+    | Aspekt              | Hook                                                                                    | Skill                                                                        |
+    | ------------------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+    | **Läuft**           | Ein Shell-Befehl, eine HTTP-Anfrage, ein LLM-Prompt oder ein Subagent                   | Anweisungen, die Claude liest und befolgt                                    |
+    | **Ausgelöst durch** | [Lebenszyklusereignisse](/de/hooks#hook-events) wie `PostToolUse` oder `SessionStart`   | Sie tippen `/<name>`, oder Claude passt die Beschreibung zu Ihrer Aufgabe an |
+    | **Determinismus**   | Wird immer bei seinem Ereignis ausgelöst; der Trigger ist garantiert                    | Claude interpretiert die Anweisungen; das Ergebnis kann variieren            |
+    | **Kontextkosten**   | Null, es sei denn, der Hook gibt Ausgabe zurück                                         | Beschreibung lädt jede Sitzung; vollständiger Inhalt lädt bei Verwendung     |
+    | **Am besten für**   | Linting nach Bearbeitungen, Blockierung unsicherer Befehle, Logging, Benachrichtigungen | Workflows, die Überlegung benötigen, Referenzmaterial, mehrstufige Aufgaben  |
+
+    **Verwenden Sie einen Hook**, wenn die Aktion jedes Mal auf die gleiche Weise erfolgen muss und Claude nicht denken muss. Beispiel: Formatierung beim Speichern, Ablehnung von `rm -rf /`, Posten einer Slack-Nachricht, wenn eine Sitzung endet.
+
+    **Verwenden Sie einen Skill**, wenn Claude entscheiden sollte, wie die Schritte angewendet werden, oder wenn der Inhalt eher Wissen als ein Skript ist. Beispiel: eine `/release`-Checkliste, Ihr API-Stilhandbuch, ein Debugging-Playbook.
+
+    **Setzen Sie Schutzmaßnahmen in Hooks.** Eine Anweisung wie „niemals `.env` bearbeiten" in CLAUDE.md oder einem Skill ist eine Anfrage, keine Garantie. Ein `PreToolUse`-Hook, der die Bearbeitung blockiert, ist Durchsetzung. Wenn eine Regel jedes Mal gelten muss, machen Sie sie zu einem Hook statt zu einer Prompt-Anweisung.
+
+    **Hook-Ausgabe landet im Kontext.** Ein `PostToolUse`-Hook, der Ihren Linter ausführt, gibt Ergebnisse als Text zurück, den Claude liest; ein `/fix-lint`-Skill sagt Claude, wie sie zu beheben sind.
+  </Tab>
 </Tabs>
 
 ### Verstehen Sie, wie Funktionen sich schichten
@@ -153,7 +190,7 @@ Funktionen können auf mehreren Ebenen definiert werden: benutzerübergreifend, 
 * **MCP-Server** überschreiben nach Name: lokal > Projekt > Benutzer. Siehe [MCP-Umfang](/de/mcp#scope-hierarchy-and-precedence).
 * **Hooks** zusammenführen: alle registrierten Hooks werden für ihre übereinstimmenden Ereignisse unabhängig von der Quelle ausgelöst. Siehe [Hooks](/de/hooks).
 
-### Funktionen kombinieren
+### Kombinieren Sie Funktionen
 
 Jede Erweiterung löst ein anderes Problem: CLAUDE.md behandelt immer aktivem Kontext, Skills behandeln On-Demand-Wissen und Workflows, MCP behandelt externe Verbindungen, Subagents behandeln Isolation und Hooks behandeln Automatisierung. Echte Setups kombinieren sie basierend auf Ihrem Workflow.
 
@@ -163,12 +200,12 @@ Beispielsweise könnten Sie CLAUDE.md für Projektkonventionen, einen Skill für
 | ---------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | **Skill + MCP**        | MCP bietet die Verbindung; ein Skill lehrt Claude, sie gut zu nutzen                            | MCP verbindet sich mit Ihrer Datenbank, ein Skill dokumentiert Ihr Schema und Abfragemuster               |
 | **Skill + Subagent**   | Ein Skill spawnt Subagents für parallele Arbeit                                                 | `/audit`-Skill startet Sicherheits-, Leistungs- und Style-Subagents, die in isoliertem Kontext arbeiten   |
-| **CLAUDE.md + Skills** | CLAUDE.md hält immer aktivem Regeln; Skills halten Referenzmaterial, das On Demand geladen wird | CLAUDE.md sagt 'folgen Sie unseren API-Konventionen", ein Skill enthält das vollständige API-Stilhandbuch |
+| **CLAUDE.md + Skills** | CLAUDE.md hält immer aktivem Regeln; Skills halten Referenzmaterial, das On Demand geladen wird | CLAUDE.md sagt „folgen Sie unseren API-Konventionen", ein Skill enthält das vollständige API-Stilhandbuch |
 | **Hook + MCP**         | Ein Hook löst externe Aktionen über MCP aus                                                     | Post-Edit-Hook sendet eine Slack-Benachrichtigung, wenn Claude kritische Dateien ändert                   |
 
 ## Verstehen Sie Kontextkosten
 
-Jede Funktion, die Sie hinzufügen, verbraucht etwas von Claudes Kontext. Zu viel kann Ihr Kontextfenster füllen, aber es kann auch Rauschen hinzufügen, das Claude weniger effektiv macht; Skills werden möglicherweise nicht korrekt ausgelöst, oder Claude kann Ihre Konventionen aus den Augen verlieren. Das Verständnis dieser Kompromisse hilft Ihnen, ein effektives Setup zu erstellen.
+Jede Funktion, die Sie hinzufügen, verbraucht etwas von Claudes Kontext. Zu viel kann Ihr Kontextfenster füllen, aber es kann auch Rauschen hinzufügen, das Claude weniger effektiv macht; Skills werden möglicherweise nicht korrekt ausgelöst, oder Claude kann Ihre Konventionen aus den Augen verlieren. Das Verständnis dieser Kompromisse hilft Ihnen, ein effektives Setup zu erstellen. Für eine interaktive Ansicht, wie diese Funktionen in einer laufenden Sitzung kombiniert werden, siehe [Erkunden Sie das Kontextfenster](/de/context-window).
 
 ### Kontextkosten nach Funktion
 
@@ -178,7 +215,7 @@ Jede Funktion hat eine andere Ladestrategie und Kontextkosten:
 | -------------- | ------------------------------ | -------------------------------------------------------------- | -------------------------------------------------------- |
 | **CLAUDE.md**  | Sitzungsstart                  | Vollständiger Inhalt                                           | Jede Anfrage                                             |
 | **Skills**     | Sitzungsstart + wenn verwendet | Beschreibungen beim Start, vollständiger Inhalt bei Verwendung | Niedrig (Beschreibungen jede Anfrage)\*                  |
-| **MCP-Server** | Sitzungsstart                  | Alle Tool-Definitionen und Schemas                             | Jede Anfrage                                             |
+| **MCP-Server** | Sitzungsstart                  | Tool-Namen; vollständige Schemas bei Bedarf                    | Niedrig bis ein Tool verwendet wird                      |
 | **Subagents**  | Wenn gespawnt                  | Frischer Kontext mit angegebenen Skills                        | Isoliert von Hauptsitzung                                |
 | **Hooks**      | Bei Auslösung                  | Nichts (läuft extern)                                          | Null, es sei denn, Hook gibt zusätzlichen Kontext zurück |
 
@@ -186,9 +223,9 @@ Jede Funktion hat eine andere Ladestrategie und Kontextkosten:
 
 ### Verstehen Sie, wie Funktionen geladen werden
 
-Jede Funktion wird an verschiedenen Punkten in Ihrer Sitzung geladen. Die folgenden Registerkarten erklären, wann jede geladen wird und was in den Kontext geht.
+Jede Funktion wird an verschiedenen Punkten in Ihrer Sitzung geladen. Die Registerkarten unten erklären, wann jede geladen wird und was in den Kontext geht.
 
-<img src="https://mintcdn.com/claude-code/6yTCYq1p37ZB8-CQ/images/context-loading.svg?fit=max&auto=format&n=6yTCYq1p37ZB8-CQ&q=85&s=5a58ce953a35a2412892015e2ad6cb67" alt="Kontextladung: CLAUDE.md und MCP werden beim Sitzungsstart geladen und bleiben in jeder Anfrage. Skills laden Beschreibungen beim Start, vollständigen Inhalt bei Aufruf. Subagents erhalten isolierten Kontext. Hooks laufen extern." width="720" height="410" data-path="images/context-loading.svg" />
+<img src="https://mintcdn.com/claude-code/6yTCYq1p37ZB8-CQ/images/context-loading.svg?fit=max&auto=format&n=6yTCYq1p37ZB8-CQ&q=85&s=5a58ce953a35a2412892015e2ad6cb67" alt="Kontextladung: CLAUDE.md lädt beim Sitzungsstart und bleibt in jeder Anfrage. MCP-Tool-Namen laden beim Start mit vollständigen Schemas, die bis zur Verwendung aufgeschoben werden. Skills laden Beschreibungen beim Start, vollständigen Inhalt bei Aufruf. Subagents erhalten isolierten Kontext. Hooks laufen extern." width="720" height="410" data-path="images/context-loading.svg" />
 
 <Tabs>
   <Tab title="CLAUDE.md">
@@ -202,7 +239,7 @@ Jede Funktion wird an verschiedenen Punkten in Ihrer Sitzung geladen. Die folgen
   </Tab>
 
   <Tab title="Skills">
-    Skills sind zusätzliche Funktionen in Claudes Toolkit. Sie können Referenzmaterial sein (wie ein API-Stilhandbuch) oder aufrufbare Workflows, die Sie mit `/<name>` auslösen (wie `/deploy`). Claude Code wird mit [gebündelten Skills](/de/skills#bundled-skills) wie `/simplify`, `/batch` und `/debug` ausgeliefert, die sofort funktionieren. Sie können auch Ihre eigenen erstellen. Claude verwendet Skills, wenn angemessen, oder Sie können einen direkt aufrufen.
+    Skills sind zusätzliche Funktionen in Claudes Toolkit. Sie können Referenzmaterial sein (wie ein API-Stilhandbuch) oder aufrufbare Workflows, die Sie mit `/<name>` auslösen (wie `/deploy`). Claude Code wird mit [gebündelten Skills](/de/commands) wie `/simplify`, `/batch` und `/debug` ausgeliefert, die sofort funktionieren. Sie können auch Ihre eigenen erstellen. Claude verwendet Skills, wenn angemessen, oder Sie können einen direkt aufrufen.
 
     **Wann:** Hängt von der Konfiguration des Skills ab. Standardmäßig werden Beschreibungen beim Sitzungsstart geladen und vollständiger Inhalt bei Verwendung. Für nur-Benutzer-Skills (`disable-model-invocation: true`) wird nichts geladen, bis Sie sie aufrufen.
 
@@ -220,9 +257,9 @@ Jede Funktion wird an verschiedenen Punkten in Ihrer Sitzung geladen. Die folgen
   <Tab title="MCP-Server">
     **Wann:** Sitzungsstart.
 
-    **Was lädt:** Alle Tool-Definitionen und JSON-Schemas von verbundenen Servern.
+    **Was lädt:** Tool-Namen von verbundenen Servern. Vollständige JSON-Schemas bleiben aufgeschoben, bis Claude ein bestimmtes Tool benötigt.
 
-    **Kontextkosten:** [Tool-Suche](/de/mcp#scale-with-mcp-tool-search) (standardmäßig aktiviert) lädt MCP-Tools bis zu 10% des Kontexts und verschiebt den Rest bis zur Notwendigkeit.
+    **Kontextkosten:** [Tool-Suche](/de/mcp#scale-with-mcp-tool-search) ist standardmäßig aktiviert, sodass untätige MCP-Tools minimalen Kontext verbrauchen.
 
     **Zuverlässigkeitshinweis:** MCP-Verbindungen können während einer Sitzung stillschweigend fehlschlagen. Wenn ein Server die Verbindung trennt, verschwinden seine Tools ohne Warnung. Claude kann versuchen, ein Tool zu verwenden, das nicht mehr vorhanden ist. Wenn Sie bemerken, dass Claude ein MCP-Tool nicht verwenden kann, auf das es zuvor zugreifen konnte, überprüfen Sie die Verbindung mit `/mcp`.
 
@@ -247,7 +284,7 @@ Jede Funktion wird an verschiedenen Punkten in Ihrer Sitzung geladen. Die folgen
   <Tab title="Hooks">
     **Wann:** Bei Auslösung. Hooks werden bei bestimmten Lebenszyklusereignissen ausgelöst, wie Tool-Ausführung, Sitzungsgrenzen, Prompt-Einreichung, Berechtigungsanfragen und Komprimierung. Siehe [Hooks](/de/hooks) für die vollständige Liste.
 
-    **Was lädt:** Standardmäßig nichts. Hooks laufen als externe Skripte.
+    **Was lädt:** Standardmäßig nichts. Hooks laufen außerhalb der Hauptkonversation.
 
     **Kontextkosten:** Null, es sei denn, der Hook gibt Ausgabe zurück, die als Nachrichten zu Ihrer Konversation hinzugefügt wird.
 

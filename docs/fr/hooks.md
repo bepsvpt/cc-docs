@@ -969,12 +969,12 @@ Le stdout brut est affiché comme sortie de hook dans la transcription. Le champ
 
 Pour bloquer un prompt, retournez un objet JSON avec `decision` défini à `"block"` :
 
-| Champ               | Description                                                                                                                                  |
-| :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------- |
-| `decision`          | `"block"` empêche le prompt d'être traité et l'efface du contexte. Omettez pour autoriser le prompt à procéder                               |
-| `reason`            | Affiché à l'utilisateur lorsque `decision` est `"block"`. Non ajouté au contexte                                                             |
-| `additionalContext` | Chaîne ajoutée au contexte de Claude aux côtés du prompt soumis. Consultez [Ajouter du contexte pour Claude](#add-context-for-claude)        |
-| `sessionTitle`      | Définit le titre de la session, même effet que `/rename`. Utilisez pour nommer les sessions automatiquement en fonction du contenu du prompt |
+| Champ               | Description                                                                                                                           |
+| :------------------ | :------------------------------------------------------------------------------------------------------------------------------------ |
+| `decision`          | `"block"` empêche le prompt d'être traité et l'efface du contexte. Omettez pour autoriser le prompt à procéder                        |
+| `reason`            | Affiché à l'utilisateur lorsque `decision` est `"block"`. Non ajouté au contexte                                                      |
+| `additionalContext` | Chaîne ajoutée au contexte de Claude aux côtés du prompt soumis. Consultez [Ajouter du contexte pour Claude](#add-context-for-claude) |
+| `sessionTitle`      | Définit le titre de la session. Utilisez pour nommer les sessions automatiquement en fonction du contenu du prompt                    |
 
 ```json theme={null}
 {
@@ -2411,7 +2411,15 @@ Le LLM doit répondre avec JSON contenant :
 | `ok`     | `true` autorise l'action, `false` l'empêche                   |
 | `reason` | Requis lorsque `ok` est `false`. Explication pour la décision |
 
-Pour `Stop` et `SubagentStop`, une raison `ok: false` est renvoyée à Claude comme sa prochaine instruction et le tour continue. Pour tous les autres événements supportés, le tour se termine et la raison apparaît dans le chat comme une ligne d'avertissement ; Claude ne la voit pas. Ceci est équivalent à retourner `"continue": false` d'un hook de commande. Si vous avez besoin de sémantiques de blocage différentes sur ces événements, utilisez un [hook de commande](#command-hook-fields) avec les champs par événement décrits dans [Contrôle de décision](#decision-control).
+Ce qui se passe sur `ok: false` dépend de l'événement :
+
+* `Stop` et `SubagentStop` : la raison est renvoyée à Claude comme sa prochaine instruction et le tour continue
+* `PreToolUse` : l'appel d'outil est refusé et la raison est retournée à Claude comme l'erreur de l'outil, équivalent à un hook de commande avec `permissionDecision: "deny"`
+* `PostToolUse`, `PostToolBatch`, `UserPromptSubmit` et `UserPromptExpansion` : le tour se termine et la raison apparaît dans le chat comme une ligne d'avertissement, équivalent à retourner `"continue": false` d'un hook de commande
+* `PostToolUseFailure`, `TaskCreated` et `TaskCompleted` : la raison est retournée à Claude comme une erreur d'outil, similaire à `PreToolUse`
+* `PermissionRequest` : `ok: false` n'a aucun effet. Pour refuser une approbation d'un hook, utilisez un [hook de commande](#command-hook-fields) retournant `hookSpecificOutput.decision.behavior: "deny"`
+
+Si vous avez besoin d'un contrôle plus fin sur un événement quelconque, utilisez un [hook de commande](#command-hook-fields) avec les champs par événement décrits dans [Contrôle de décision](#decision-control).
 
 ### Exemple : Hook Stop multi-critères
 

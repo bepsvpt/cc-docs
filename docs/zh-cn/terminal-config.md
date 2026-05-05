@@ -63,7 +63,9 @@ Claude Code 在任何终端中都可以无需配置而工作。此页面适用�
 
 当 Claude 完成任务或暂停以获得权限提示时，它会触发通知事件。将其显示为终端铃声或桌面通知可让您在长任务运行时切换到其他工作。
 
-Claude Code 仅在 Ghostty、Kitty 和 iTerm2 中发送桌面通知；所有其他终端需要[通知钩子](#play-a-sound-with-a-notification-hook)。通知也通过 SSH 到达您的本地机器，因此远程会话仍然可以提醒您。Ghostty 和 Kitty 无需进一步设置即可将其转发到您的 OS 通知中心。iTerm2 要求您启用转发：
+默认情况下，Claude Code 仅在 Ghostty、Kitty 和 iTerm2 中发送桌面通知。在其他终端中，将 [`preferredNotifChannel`](/zh-CN/settings#available-settings) 设置为 `"terminal_bell"` 以改为响铃终端铃声，或配置[通知钩子](#play-a-sound-with-a-notification-hook)以获得自定义声音或命令。
+
+桌面通知通过 SSH 到达您的本地机器，因此远程会话仍然可以提醒您。Ghostty 和 Kitty 无需进一步设置即可将其转发到您的 OS 通知中心。iTerm2 要求您启用转发：
 
 <Steps>
   <Step title="打开 iTerm2 通知设置">
@@ -79,7 +81,7 @@ Claude Code 仅在 Ghostty、Kitty 和 iTerm2 中发送桌面通知；所有其�
 
 ### 使用通知钩子播放声音
 
-在任何终端中，您可以配置[通知钩子](/zh-CN/hooks-guide#get-notified-when-claude-needs-input)以在 Claude 需要您的注意时播放声音或运行自定义命令。钩子与桌面通知一起运行，而不是替代它。Warp 或 Apple Terminal 等终端仅依赖钩子，因为 Claude Code 不向它们发送桌面通知。
+在任何终端中，您可以配置[通知钩子](/zh-CN/hooks-guide#get-notified-when-claude-needs-input)以在 Claude 需要您的注意时播放声音或运行自定义命令。钩子与内置通知一起运行，而不是替代它，因此不接收桌面通知的终端（如 Warp 或 VS Code 集成终端）可以使用钩子或将 `preferredNotifChannel` 设置为 `"terminal_bell"` 代替。
 
 下面的示例在 macOS 上播放系统声音。链接的指南包含 macOS、Linux 和 Windows 的桌面通知命令。
 
@@ -147,7 +149,7 @@ set -as terminal-features 'xterm*:extkeys'
 
 Claude Code 监视 `~/.claude/themes/` 并在文件更改时重新加载，因此在您的编辑器中所做的编辑会应用到正在运行的会话中，无需重新启动。
 
-以下是您可以在 `overrides` 中设置的完整自定义列表。`/theme` 中的交互式编辑器显示相同的令牌，并带有实时预览，包括此处未涵盖的少量内部令牌。
+以下参考涵盖了您可以在 `overrides` 中设置的令牌。`/theme` 中的交互式编辑器显示相同的令牌，并带有实时预览，以及一些单一用途的强调，例如此处未涵盖的入门屏幕颜色。
 
 <Accordion title="颜色令牌参考">
   以下示例结合了以下几个组中的令牌：品牌强调、Plan Mode 边框、diff 背景和全屏消息背景。
@@ -177,6 +179,7 @@ Claude Code 监视 `~/.claude/themes/` 并在文件更改时重新加载，因�
   | `inverseText` | 绘制在彩色背景顶部的文本，例如状态徽章 |
   | `inactive`    | 次要文本，例如提示、时间戳和禁用项   |
   | `subtle`      | 淡色边框和去强调的次要文本       |
+  | `suggestion`  | 自动完成建议和选择器中的选择突出显示  |
   | `permission`  | 对话框边框，包括权限提示和选择器    |
   | `remember`    | 内存和 `CLAUDE.md` 指示器 |
 
@@ -221,16 +224,40 @@ Claude Code 监视 `~/.claude/themes/` 并在文件更改时重新加载，因�
 
   仅在[全屏渲染模式](/zh-CN/fullscreen)中应用，其中消息具有背景填充。
 
-  | 令牌                      | 控制            |
-  | :---------------------- | :------------ |
-  | `userMessageBackground` | 成绩单中您的消息后面的背景 |
-  | `selectionBg`           | 用鼠标选择的文本的背景   |
+  | 令牌                           | 控制                       |
+  | :--------------------------- | :----------------------- |
+  | `userMessageBackground`      | 成绩单中您的消息后面的背景            |
+  | `userMessageBackgroundHover` | 成绩单中悬停或展开消息时消息后面的背景      |
+  | `messageActionsBackground`   | 操作栏打开时所选消息后面的背景          |
+  | `bashMessageBackgroundColor` | 成绩单中 `!` shell 命令条目后面的背景 |
+  | `memoryBackgroundColor`      | 成绩单中 `#` 内存条目后面的背景       |
+  | `selectionBg`                | 用鼠标选择的文本的背景              |
+
+  #### 使用量计量器和发言人标签
+
+  调整 `/usage` 视图中显示的条形图以及区分您的消息和 Claude 消息的标签。
+
+  | 令牌                 | 控制                    |
+  | :----------------- | :-------------------- |
+  | `rate_limit_fill`  | 使用量计量器的填充部分           |
+  | `rate_limit_empty` | 使用量计量器的未填充部分          |
+  | `briefLabelYou`    | 您的消息上的 `You` 标签的颜色    |
+  | `briefLabelClaude` | 助手消息上的 `Claude` 标签的颜色 |
 
   #### 微光变体和子代理颜色
 
-  多个令牌具有配对的 `Shimmer` 变体，例如 `claudeShimmer` 和 `warningShimmer`，它们提供微调器动画梯度中使用的较浅颜色。如果动画看起来不匹配，请与其基础令牌一起覆盖微光。
+  多个令牌具有配对的微光变体，提供微调器动画梯度中使用的较浅颜色。如果动画看起来不匹配，请与其基础令牌一起覆盖微光。
+
+  * `claude` 和 `claudeShimmer`
+  * `warning` 和 `warningShimmer`
+  * `permission` 和 `permissionShimmer`
+  * `promptBorder` 和 `promptBorderShimmer`
+  * `inactive` 和 `inactiveShimmer`
+  * `fastMode` 和 `fastModeShimmer`
 
   每个[子代理](/zh-CN/sub-agents)和并行任务以八种命名颜色之一显示，以便您可以在成绩单中区分它们。令牌名称遵循 `<color>_FOR_SUBAGENTS_ONLY` 的模式，其中 `<color>` 是 `red`、`blue`、`green`、`yellow`、`purple`、`orange`、`pink` 或 `cyan`。覆盖这些以更改每个命名颜色的外观。例如，定义中具有 `color: blue` 的子代理使用 `blue_FOR_SUBAGENTS_ONLY` 值绘制。
+
+  [`ultrathink`](/zh-CN/model-config#use-ultrathink-for-one-off-deep-reasoning) 和 [`ultraplan`](/zh-CN/ultraplan) 关键字在提示输入中使用七色彩虹梯度渲染。令牌名称遵循 `rainbow_<color>` 和 `rainbow_<color>_shimmer` 的模式，其中 `<color>` 是 `red`、`orange`、`yellow`、`green`、`blue`、`indigo` 或 `violet`。
 </Accordion>
 
 ## 切换到全屏渲染

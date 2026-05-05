@@ -197,11 +197,11 @@ claude_code.interaction
 
 **`claude_code.tool.blocked_on_user`**
 
-| 屬性            | 描述                         | 由以下控制 |
-| ------------- | -------------------------- | ----- |
-| `duration_ms` | 等待權限決定所花費的時間               |       |
-| `decision`    | `accept` 或 `reject`        |       |
-| `source`      | 決定來源，符合 `tool_decision` 事件 |       |
+| 屬性            | 描述                                    | 由以下控制 |
+| ------------- | ------------------------------------- | ----- |
+| `duration_ms` | 等待權限決定所花費的時間                          |       |
+| `decision`    | `accept` 或 `reject`                   |       |
+| `source`      | 決定來源，符合[工具決定事件](#tool-decision-event) |       |
 
 **`claude_code.tool.execution`**
 
@@ -458,7 +458,7 @@ Claude Code 匯出以下指標：
 * 所有[標準屬性](#standard-attributes)
 * `tool_name`：工具名稱（`"Edit"`、`"Write"`、`"NotebookEdit"`）
 * `decision`：使用者決定（`"accept"`、`"reject"`）
-* `source`：決定來源 - `"config"`、`"hook"`、`"user_permanent"`、`"user_temporary"`、`"user_abort"` 或 `"user_reject"`
+* `source`：決定來源。`"config"`、`"hook"`、`"user_permanent"`、`"user_temporary"`、`"user_abort"` 或 `"user_reject"` 之一。詳見[工具決定事件](#tool-decision-event)以了解每個值的含義。
 * `language`：編輯檔案的程式設計語言，例如 `"TypeScript"`、`"Python"`、`"JavaScript"` 或 `"Markdown"`。對於無法識別的副檔名，傳回 `"unknown"`。
 
 #### 活躍時間計數器
@@ -524,7 +524,7 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * `error_type`：工具失敗時的錯誤類別字串，例如 `"Error:ENOENT"` 或 `"ShellError"`
 * `error`（當 `OTEL_LOG_TOOL_DETAILS=1` 時）：工具失敗時的完整錯誤訊息
 * `decision_type`：`"accept"` 或 `"reject"`
-* `decision_source`：決定來源 - `"config"`、`"hook"`、`"user_permanent"`、`"user_temporary"`、`"user_abort"` 或 `"user_reject"`
+* `decision_source`：決定來源。`"config"`、`"hook"`、`"user_permanent"`、`"user_temporary"`、`"user_abort"` 或 `"user_reject"` 之一。詳見[工具決定事件](#tool-decision-event)以了解每個值的含義。
 * `tool_input_size_bytes`：JSON 序列化工具輸入的大小（位元組）
 * `tool_result_size_bytes`：工具結果的大小（位元組）
 * `mcp_server_scope`：MCP 伺服器範圍識別碼（用於 MCP 工具）
@@ -635,7 +635,13 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * `tool_name`：工具的名稱（例如，"Read"、"Edit"、"Write"、"NotebookEdit"）
 * `tool_use_id`：此工具叫用的唯一識別碼。符合傳遞給 hooks 的 `tool_use_id`，允許 OTel 事件和 hook 擷取資料之間的關聯。
 * `decision`：`"accept"` 或 `"reject"`
-* `source`：決定來源 - `"config"`、`"hook"`、`"user_permanent"`、`"user_temporary"`、`"user_abort"` 或 `"user_reject"`
+* `source`：決定來源：
+  * `"config"`：根據專案設定、企業受管原則、`--allowedTools` 或 `--disallowedTools` 旗標、活躍權限模式或因為工具本身是安全的，自動決定而不提示。
+  * `"hook"`：`PreToolUse` 或 `PermissionRequest` hook 傳回了決定。
+  * `"user_permanent"`：當使用者在提示時選擇「始終允許」時發出，將規則儲存到其個人設定。也針對符合該儲存規則的後續呼叫發出。視為接受。
+  * `"user_temporary"`：當使用者在提示時選擇「是」或「是，此工作階段」時發出，不儲存規則。也針對同一工作階段中符合該工作階段範圍允許的後續呼叫發出。視為接受。
+  * `"user_abort"`：當使用者關閉權限提示而不回答時發出。視為拒絕。
+  * `"user_reject"`：當使用者選擇「否」時發出，或呼叫符合其個人設定中的拒絕規則。視為拒絕。
 
 #### 權限模式變更事件
 

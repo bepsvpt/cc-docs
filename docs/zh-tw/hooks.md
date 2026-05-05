@@ -974,7 +974,7 @@ InstructionsLoaded hooks 沒有決定控制。它們無法阻止或修改指令�
 | `decision`          | `"block"` 防止提示被處理並從上下文中清除它。省略以允許提示進行                                     |
 | `reason`            | 當 `decision` 為 `"block"` 時向使用者顯示。不新增到上下文                                 |
 | `additionalContext` | 新增到 Claude 上下文的字串，與提交的提示一起。請參閱 [為 Claude 新增上下文](#add-context-for-claude) |
-| `sessionTitle`      | 設定工作階段標題，與 `/rename` 相同的效果。使用此項根據提示內容自動命名工作階段                            |
+| `sessionTitle`      | 設定工作階段標題。使用此項根據提示內容自動命名工作階段                                              |
 
 ```json theme={null}
 {
@@ -2411,10 +2411,20 @@ LLM 必須以包含以下內容的 JSON 回應：
 }
 ```
 
-| 欄位       | 描述                                  |
-| :------- | :---------------------------------- |
-| `ok`     | `true` 允許操作，`false` 防止它             |
-| `reason` | 當 `ok` 為 `false` 時必需。向 Claude 顯示的解釋 |
+| 欄位       | 描述                         |
+| :------- | :------------------------- |
+| `ok`     | `true` 允許操作，`false` 防止它    |
+| `reason` | 當 `ok` 為 `false` 時必需。阻止的解釋 |
+
+`ok: false` 時發生的情況取決於事件：
+
+* `Stop` 和 `SubagentStop`：原因被反饋給 Claude 作為其下一個指令，轉換繼續
+* `PreToolUse`：工具呼叫被拒絕，原因作為工具錯誤返回給 Claude，相當於命令 hook 的 `permissionDecision: "deny"`
+* `PostToolUse`、`PostToolBatch`、`UserPromptSubmit` 和 `UserPromptExpansion`：轉換結束，原因在聊天中顯示為警告行，相當於從命令 hook 返回 `"continue": false`
+* `PostToolUseFailure`、`TaskCreated` 和 `TaskCompleted`：原因作為工具錯誤返回給 Claude，類似於 `PreToolUse`
+* `PermissionRequest`：`ok: false` 沒有效果。要從 hook 拒絕批准，請使用[命令 hook](#command-hook-fields)返回 `hookSpecificOutput.decision.behavior: "deny"`
+
+如果您需要對任何事件進行更精細的控制，請使用[命令 hook](#command-hook-fields)，其中包含[決定控制](#decision-control)中描述的每個事件欄位。
 
 ### 範例：多條件 Stop hook
 

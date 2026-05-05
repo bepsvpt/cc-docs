@@ -95,7 +95,7 @@ La zone de saisie prend en charge plusieurs fonctionnalités :
 * **Modes de permission** : cliquez sur l'indicateur de mode en bas de la zone de saisie pour changer de mode. En mode normal, Claude demande une permission avant chaque action. En Plan Mode, Claude décrit ce qu'il fera et attend l'approbation avant d'apporter des modifications. VS Code ouvre automatiquement le plan en tant que document markdown complet où vous pouvez ajouter des commentaires en ligne pour donner des commentaires avant que Claude ne commence. En mode acceptation automatique, Claude apporte des modifications sans demander. Définissez la valeur par défaut dans les paramètres VS Code sous `claudeCode.initialPermissionMode`.
 * **Menu de commandes** : cliquez sur `/` ou tapez `/` pour ouvrir le menu de commandes. Les options incluent l'attachement de fichiers, le changement de modèles, l'activation de la réflexion étendue, l'affichage de l'utilisation du plan (`/usage`) et le démarrage d'une session [Remote Control](/fr/remote-control) (`/remote-control`). La section Personnaliser fournit l'accès aux serveurs MCP, hooks, mémoire, permissions et plugins. Les éléments avec une icône de terminal s'ouvrent dans le terminal intégré.
 * **Indicateur de contexte** : la zone de saisie affiche la quantité de fenêtre de contexte de Claude que vous utilisez. Claude se compacte automatiquement si nécessaire, ou vous pouvez exécuter `/compact` manuellement.
-* **Réflexion étendue** : permet à Claude de consacrer plus de temps à raisonner sur des problèmes complexes. Activez-la via le menu de commandes (`/`). Le raisonnement de Claude apparaît dans la conversation sous forme de blocs réduits : cliquez sur un bloc pour le lire, ou appuyez sur `Ctrl+O` pour développer ou réduire chaque bloc de réflexion dans la session. Consultez [Réflexion étendue](/fr/common-workflows#use-extended-thinking-thinking-mode) pour plus de détails.
+* **Réflexion étendue** : permet à Claude de consacrer plus de temps à raisonner sur des problèmes complexes. Activez-la via le menu de commandes (`/`). Le raisonnement de Claude apparaît dans la conversation sous forme de blocs réduits : cliquez sur un bloc pour le lire, ou appuyez sur `Ctrl+O` pour développer ou réduire chaque bloc de réflexion dans la session. Consultez [Réflexion étendue](/fr/model-config#extended-thinking) pour plus de détails.
 * **Entrée multiligne** : appuyez sur `Shift+Entrée` pour ajouter une nouvelle ligne sans envoyer. Cela fonctionne également dans l'entrée en texte libre ' Autre ' des dialogues de question.
 
 ### Référencer des fichiers et des dossiers
@@ -115,7 +115,7 @@ Vous pouvez également maintenir `Shift` enfoncé tout en faisant glisser des fi
 
 ### Reprendre les conversations passées
 
-Cliquez sur le bouton **Historique des sessions** en haut du panneau Claude Code pour accéder à votre historique de conversations. Vous pouvez rechercher par mot-clé ou parcourir par heure (Aujourd'hui, Hier, 7 derniers jours, etc.). Cliquez sur n'importe quelle conversation pour la reprendre avec l'historique complet des messages. Les nouvelles sessions reçoivent des titres générés par l'IA en fonction de votre premier message. Survolez une session pour révéler les actions de renommage et de suppression : renommez pour lui donner un titre descriptif, ou supprimez pour la supprimer de la liste. Pour plus d'informations sur la reprise des sessions, consultez [Flux de travail courants](/fr/common-workflows#resume-previous-conversations).
+Cliquez sur le bouton **Historique des sessions** en haut du panneau Claude Code pour accéder à votre historique de conversations. Vous pouvez rechercher par mot-clé ou parcourir par heure (Aujourd'hui, Hier, 7 derniers jours, etc.). Cliquez sur n'importe quelle conversation pour la reprendre avec l'historique complet des messages. Les nouvelles sessions reçoivent des titres générés par l'IA en fonction de votre premier message. Survolez une session pour révéler les actions de renommage et de suppression : renommez pour lui donner un titre descriptif, ou supprimez pour la supprimer de la liste. Pour plus d'informations sur la reprise des sessions, consultez [Gérer les sessions](/fr/sessions).
 
 ### Reprendre les sessions distantes de Claude.ai
 
@@ -399,7 +399,7 @@ Utilisez l'indicateur `--worktree` (`-w`) pour démarrer Claude dans un worktree
 claude --worktree feature-auth
 ```
 
-Chaque worktree maintient un état de fichier indépendant tout en partageant l'historique git. Cela empêche les instances de Claude d'interférer les unes avec les autres lorsqu'elles travaillent sur différentes tâches. Pour plus de détails, consultez [Exécuter des sessions Claude Code parallèles avec Git worktrees](/fr/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees).
+Chaque worktree maintient un état de fichier indépendant tout en partageant l'historique git. Cela empêche les instances de Claude d'interférer les unes avec les autres lorsqu'elles travaillent sur différentes tâches. Pour plus de détails, consultez [Exécuter des sessions parallèles avec Git worktrees](/fr/worktrees).
 
 ## Utiliser des fournisseurs tiers
 
@@ -475,6 +475,16 @@ L'icône Spark apparaît dans la **Barre d'outils de l'éditeur** (coin supérie
 5. **Vérifier la confiance de l'espace de travail** : L'extension ne fonctionne pas en Mode restreint
 
 Vous pouvez également cliquer sur « ✱ Claude Code » dans la **Barre d'état** (coin inférieur droit). Cela fonctionne même sans fichier ouvert. Vous pouvez également utiliser la **Palette de commandes** (`Cmd+Shift+P` / `Ctrl+Shift+P`) et taper « Claude Code ».
+
+### Cmd+Esc ne fait rien sur macOS
+
+Sur macOS Tahoe et versions ultérieures, le raccourci système Game Overlay est lié à `Cmd+Esc` par défaut et intercepte la frappe avant qu'elle n'atteigne VS Code. Pour libérer le raccourci :
+
+1. Ouvrez Paramètres système
+2. Allez à Clavier, puis Raccourcis clavier, puis Contrôleurs de jeu
+3. Décochez la case Game Overlay
+
+Vous pouvez également réassigner l'extension à une touche différente : ouvrez l'[éditeur de raccourcis clavier](https://code.visualstudio.com/docs/configure/keybindings) de VS Code (`Cmd+K Cmd+S`), recherchez `Claude Code: Focus input`, et assignez une nouvelle liaison.
 
 ### Claude Code ne répond jamais
 

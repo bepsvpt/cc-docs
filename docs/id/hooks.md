@@ -969,12 +969,12 @@ Plain stdout ditampilkan sebagai output hook dalam transkrip. Bidang `additional
 
 Untuk memblokir prompt, kembalikan objek JSON dengan `decision` diatur ke `"block"`:
 
-| Bidang              | Deskripsi                                                                                                                                                                                      |
-| :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `decision`          | `"block"` mencegah prompt diproses dan menghapusnya dari konteks. Hilangkan untuk mengizinkan prompt dilanjutkan                                                                               |
-| `reason`            | Ditampilkan ke pengguna saat `decision` adalah `"block"`. Tidak ditambahkan ke konteks                                                                                                         |
-| `additionalContext` | String ditambahkan ke konteks Claude bersama prompt yang dikirimkan. Lihat [Tambahkan konteks untuk Claude](#add-context-for-claude) untuk cara teks disampaikan dan apa yang harus dimasukkan |
-| `sessionTitle`      | Menetapkan judul sesi, efek yang sama seperti `/rename`. Gunakan untuk memberi nama sesi secara otomatis berdasarkan konten prompt                                                             |
+| Bidang              | Deskripsi                                                                                                                            |
+| :------------------ | :----------------------------------------------------------------------------------------------------------------------------------- |
+| `decision`          | `"block"` mencegah prompt diproses dan menghapusnya dari konteks. Hilangkan untuk mengizinkan prompt dilanjutkan                     |
+| `reason`            | Ditampilkan ke pengguna saat `decision` adalah `"block"`. Tidak ditambahkan ke konteks                                               |
+| `additionalContext` | String ditambahkan ke konteks Claude bersama prompt yang dikirimkan. Lihat [Tambahkan konteks untuk Claude](#add-context-for-claude) |
+| `sessionTitle`      | Menetapkan judul sesi. Gunakan untuk memberi nama sesi secara otomatis berdasarkan konten prompt                                     |
 
 ```json theme={null}
 {
@@ -2411,7 +2411,15 @@ LLM harus merespons dengan JSON yang berisi:
 | `ok`     | `true` mengizinkan tindakan, `false` mencegahnya                  |
 | `reason` | Diperlukan saat `ok` adalah `false`. Penjelasan untuk pemblokiran |
 
-Untuk `Stop` dan `SubagentStop`, alasan `ok: false` diumpankan kembali ke Claude sebagai instruksi berikutnya dan giliran berlanjut. Untuk semua events yang didukung lainnya, giliran berakhir dan alasan muncul dalam chat sebagai baris peringatan; Claude tidak melihatnya. Ini setara dengan mengembalikan `"continue": false` dari command hook. Jika Anda memerlukan semantik pemblokiran yang berbeda pada events tersebut, gunakan [command hook](#command-hook-fields) dengan bidang per-event yang dijelaskan dalam [Decision control](#decision-control).
+Apa yang terjadi pada `ok: false` tergantung pada event:
+
+* `Stop` dan `SubagentStop`: alasan diumpankan kembali ke Claude sebagai instruksi berikutnya dan giliran berlanjut
+* `PreToolUse`: panggilan tool ditolak dan alasan dikembalikan ke Claude sebagai kesalahan tool, setara dengan command hook's `permissionDecision: "deny"`
+* `PostToolUse`, `PostToolBatch`, `UserPromptSubmit`, dan `UserPromptExpansion`: giliran berakhir dan alasan muncul dalam chat sebagai baris peringatan, setara dengan mengembalikan `"continue": false` dari command hook
+* `PostToolUseFailure`, `TaskCreated`, dan `TaskCompleted`: alasan dikembalikan ke Claude sebagai kesalahan tool, mirip dengan `PreToolUse`
+* `PermissionRequest`: `ok: false` tidak berpengaruh. Untuk menolak persetujuan dari hook, gunakan [command hook](#command-hook-fields) yang mengembalikan `hookSpecificOutput.decision.behavior: "deny"`
+
+Jika Anda memerlukan kontrol yang lebih halus pada event apa pun, gunakan [command hook](#command-hook-fields) dengan bidang per-event yang dijelaskan dalam [Decision control](#decision-control).
 
 ### Contoh: Multi-criteria Stop hook
 

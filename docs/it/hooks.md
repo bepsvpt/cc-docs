@@ -969,12 +969,12 @@ Lo stdout semplice viene mostrato come output del hook nella trascrizione. Il ca
 
 Per bloccare un prompt, restituire un oggetto JSON con `decision` impostato su `"block"`:
 
-| Campo               | Descrizione                                                                                                                                          |
-| :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `decision`          | `"block"` impedisce l'elaborazione del prompt e lo cancella dal contesto. Omettere per consentire al prompt di procedere                             |
-| `reason`            | Mostrato all'utente quando `decision` è `"block"`. Non aggiunto al contesto                                                                          |
-| `additionalContext` | Stringa aggiunta al contesto di Claude insieme al prompt inviato. Consultare [Aggiungere contesto per Claude](#add-context-for-claude)               |
-| `sessionTitle`      | Imposta il titolo della sessione, stesso effetto di `/rename`. Utilizzare per denominare automaticamente le sessioni in base al contenuto del prompt |
+| Campo               | Descrizione                                                                                                                            |
+| :------------------ | :------------------------------------------------------------------------------------------------------------------------------------- |
+| `decision`          | `"block"` impedisce l'elaborazione del prompt e lo cancella dal contesto. Omettere per consentire al prompt di procedere               |
+| `reason`            | Mostrato all'utente quando `decision` è `"block"`. Non aggiunto al contesto                                                            |
+| `additionalContext` | Stringa aggiunta al contesto di Claude insieme al prompt inviato. Consultare [Aggiungere contesto per Claude](#add-context-for-claude) |
+| `sessionTitle`      | Imposta il titolo della sessione. Utilizzare per denominare automaticamente le sessioni in base al contenuto del prompt                |
 
 ```json theme={null}
 {
@@ -2411,7 +2411,15 @@ L'LLM deve rispondere con JSON contenente:
 | `ok`     | `true` consente l'azione, `false` la impedisce                |
 | `reason` | Obbligatorio quando `ok` è `false`. Spiegazione per il blocco |
 
-Per `Stop` e `SubagentStop`, un motivo `ok: false` viene reinviato a Claude come sua prossima istruzione e il turno continua. Per tutti gli altri eventi supportati, il turno termina e il motivo appare nella chat come una riga di avviso; Claude non lo vede. Questo è equivalente a restituire `"continue": false` da un hook di comando. Se hai bisogno di semantiche di blocco diverse su questi eventi, utilizza un [hook di comando](#command-hook-fields) con i campi per evento descritti in [Controllo delle decisioni](#decision-control).
+Ciò che accade con `ok: false` dipende dall'evento:
+
+* `Stop` e `SubagentStop`: il motivo viene reinviato a Claude come sua prossima istruzione e il turno continua
+* `PreToolUse`: la chiamata dello strumento viene negata e il motivo viene restituito a Claude come errore dello strumento, equivalente a un hook di comando con `permissionDecision: "deny"`
+* `PostToolUse`, `PostToolBatch`, `UserPromptSubmit` e `UserPromptExpansion`: il turno termina e il motivo appare nella chat come una riga di avviso, equivalente a restituire `"continue": false` da un hook di comando
+* `PostToolUseFailure`, `TaskCreated` e `TaskCompleted`: il motivo viene restituito a Claude come errore dello strumento, simile a `PreToolUse`
+* `PermissionRequest`: `ok: false` non ha effetto. Per negare un'approvazione da un hook, utilizzare un [hook di comando](#command-hook-fields) che restituisce `hookSpecificOutput.decision.behavior: "deny"`
+
+Se hai bisogno di un controllo più fine su qualsiasi evento, utilizza un [hook di comando](#command-hook-fields) con i campi per evento descritti in [Controllo delle decisioni](#decision-control).
 
 ### Esempio: Hook Stop con criteri multipli
 

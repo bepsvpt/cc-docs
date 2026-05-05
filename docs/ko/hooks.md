@@ -974,7 +974,7 @@ InstructionsLoaded hook은 결정 제어가 없습니다. 명령 로드를 차�
 | `decision`          | `"block"`은 프롬프트가 처리되는 것을 방지하고 컨텍스트에서 지웁니다. 생략하여 프롬프트를 진행하도록 허용               |
 | `reason`            | `decision`이 `"block"`일 때 사용자에게 표시됩니다. 컨텍스트에 추가되지 않음                          |
 | `additionalContext` | Claude의 컨텍스트에 추가되는 문자열. [Claude를 위한 컨텍스트 추가](#add-context-for-claude)를 참조하세요 |
-| `sessionTitle`      | 세션 제목을 설정합니다. `/rename`과 동일한 효과입니다. 프롬프트 내용을 기반으로 세션을 자동으로 이름 지정하는 데 사용합니다   |
+| `sessionTitle`      | 세션 제목을 설정합니다. 프롬프트 내용을 기반으로 세션을 자동으로 이름 지정하는 데 사용합니다                         |
 
 ```json theme={null}
 {
@@ -2409,7 +2409,15 @@ LLM은 다음을 포함하는 JSON으로 응답해야 합니다:
 | `ok`     | `true`는 작업을 허용하고 `false`는 방지합니다   |
 | `reason` | `ok`가 `false`일 때 필수입니다. 차단에 대한 설명 |
 
-`Stop` 및 `SubagentStop`의 경우, `ok: false` 이유는 Claude의 다음 명령으로 피드백되며 턴이 계속됩니다. 지원되는 다른 모든 이벤트의 경우, 턴이 끝나고 이유는 경고 줄로 채팅에 나타납니다. Claude는 이를 보지 못합니다. 이는 명령 hook에서 `"continue": false`를 반환하는 것과 동일합니다. 이러한 이벤트에서 다른 차단 의미론이 필요한 경우, [결정 제어](#decision-control)에 설명된 이벤트별 필드가 있는 [명령 hook](#command-hook-fields)을 사용합니다.
+`ok: false`에서 발생하는 상황은 이벤트에 따라 다릅니다:
+
+* `Stop` 및 `SubagentStop`: 이유는 Claude의 다음 명령으로 피드백되며 턴이 계속됩니다
+* `PreToolUse`: tool 호출이 거부되고 이유는 Claude에 tool 오류로 반환되며, 이는 명령 hook의 `permissionDecision: "deny"`와 동일합니다
+* `PostToolUse`, `PostToolBatch`, `UserPromptSubmit` 및 `UserPromptExpansion`: 턴이 끝나고 이유는 채팅에 경고 줄로 나타나며, 이는 명령 hook에서 `"continue": false`를 반환하는 것과 동일합니다
+* `PostToolUseFailure`, `TaskCreated` 및 `TaskCompleted`: 이유는 Claude에 tool 오류로 반환되며, `PreToolUse`와 유사합니다
+* `PermissionRequest`: `ok: false`는 효과가 없습니다. hook에서 승인을 거부하려면 `hookSpecificOutput.decision.behavior: "deny"`를 반환하는 [명령 hook](#command-hook-fields)을 사용합니다
+
+이벤트에 대해 더 세밀한 제어가 필요한 경우 [결정 제어](#decision-control)에 설명된 이벤트별 필드가 있는 [명령 hook](#command-hook-fields)을 사용합니다.
 
 ### 예제: 다중 기준 Stop hook
 

@@ -974,7 +974,7 @@ InstructionsLoaded hooks 没有决定控制。它们无法阻止或修改指令�
 | `decision`          | `"block"` 防止提示被处理并从上下文中删除。省略以允许提示继续                                      |
 | `reason`            | 当 `decision` 为 `"block"` 时向用户显示。不添加到上下文                                  |
 | `additionalContext` | 添加到 Claude 上下文的字符串，与提交的提示一起。请参阅[为 Claude 添加上下文](#add-context-for-claude) |
-| `sessionTitle`      | 设置会话标题，与 `/rename` 相同的效果。使用此根据提示内容自动命名会话                                 |
+| `sessionTitle`      | 设置会话标题。使用此根据提示内容自动命名会话                                                   |
 
 ```json theme={null}
 {
@@ -2407,10 +2407,18 @@ LLM 必须使用包含以下内容的 JSON 响应：
 
 | 字段       | 描述                         |
 | :------- | :------------------------- |
-| `ok`     | `true` 允许操作，`false` 防止它    |
+| `ok`     | `true` 允许操作，`false` 阻止它    |
 | `reason` | 当 `ok` 为 `false` 时必需。阻止的解释 |
 
-对于 `Stop` 和 `SubagentStop`，`ok: false` 的原因被反馈给 Claude 作为其下一条指令，转轮继续。对于所有其他支持的事件，转轮结束，原因在聊天中显示为警告行；Claude 看不到它。这等同于从命令 hook 返回 `"continue": false`。如果您需要对这些事件使用不同的阻止语义，请使用[命令 hook](#command-hook-fields)，其中包含[决定控制](#decision-control)中描述的每个事件字段。
+`ok: false` 时发生的情况取决于事件：
+
+* `Stop` 和 `SubagentStop`：原因被反馈给 Claude 作为其下一条指令，转轮继续
+* `PreToolUse`：工具调用被拒绝，原因作为工具错误返回给 Claude，等同于命令 hook 的 `permissionDecision: "deny"`
+* `PostToolUse`、`PostToolBatch`、`UserPromptSubmit` 和 `UserPromptExpansion`：转轮结束，原因在聊天中显示为警告行，等同于从命令 hook 返回 `"continue": false`
+* `PostToolUseFailure`、`TaskCreated` 和 `TaskCompleted`：原因作为工具错误返回给 Claude，类似于 `PreToolUse`
+* `PermissionRequest`：`ok: false` 无效。要从 hook 拒绝批准，请使用[命令 hook](#command-hook-fields)，返回 `hookSpecificOutput.decision.behavior: "deny"`
+
+如果您需要对任何事件进行更精细的控制，请使用[命令 hook](#command-hook-fields)，其中包含[决定控制](#decision-control)中描述的每个事件字段。
 
 ### 示例：多条件 Stop hook
 

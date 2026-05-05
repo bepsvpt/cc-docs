@@ -95,7 +95,7 @@ A caixa de prompt suporta vários recursos:
 * **Permission modes**: clique no indicador de modo na parte inferior da caixa de prompt para alternar modos. No modo normal, Claude pede permissão antes de cada ação. Em Plan Mode, Claude descreve o que fará e aguarda aprovação antes de fazer alterações. VS Code abre automaticamente o plano como um documento markdown completo onde você pode adicionar comentários inline para fornecer feedback antes de Claude começar. Em modo auto-accept, Claude faz edições sem perguntar. Defina o padrão nas configurações do VS Code em `claudeCode.initialPermissionMode`.
 * **Command menu**: clique em `/` ou digite `/` para abrir o menu de comandos. As opções incluem anexar arquivos, alternar modelos, alternar pensamento estendido, visualizar uso de plano (`/usage`) e iniciar uma sessão de [Remote Control](/pt/remote-control) (`/remote-control`). A seção Customize fornece acesso a MCP servers, hooks, memory, permissions e plugins. Itens com um ícone de terminal abrem no terminal integrado.
 * **Context indicator**: a caixa de prompt mostra quanto da context window do Claude você está usando. Claude compacta automaticamente quando necessário, ou você pode executar `/compact` manualmente.
-* **Extended thinking**: permite que Claude gaste mais tempo raciocinando sobre problemas complexos. Alterne-o via menu de comandos (`/`). O raciocínio do Claude aparece na conversa como blocos recolhidos: clique em um bloco para lê-lo, ou pressione `Ctrl+O` para expandir ou recolher cada bloco de pensamento na sessão. Consulte [Extended thinking](/pt/common-workflows#use-extended-thinking-thinking-mode) para detalhes.
+* **Extended thinking**: permite que Claude gaste mais tempo raciocinando sobre problemas complexos. Alterne-o via menu de comandos (`/`). O raciocínio do Claude aparece na conversa como blocos recolhidos: clique em um bloco para lê-lo, ou pressione `Ctrl+O` para expandir ou recolher cada bloco de pensamento na sessão. Consulte [Extended thinking](/pt/model-config#extended-thinking) para detalhes.
 * **Multi-line input**: pressione `Shift+Enter` para adicionar uma nova linha sem enviar. Isso também funciona na entrada de texto livre "Other" de diálogos de pergunta.
 
 ### Reference files and folders
@@ -115,7 +115,7 @@ Você também pode manter `Shift` pressionado enquanto arrasta arquivos para a c
 
 ### Resume past conversations
 
-Clique no botão **Session history** na parte superior do painel Claude Code para acessar seu histórico de conversas. Você pode pesquisar por palavra-chave ou navegar por tempo (Today, Yesterday, Last 7 days, etc.). Clique em qualquer conversa para retomá-la com o histórico completo de mensagens. Novas sessões recebem títulos gerados por IA com base em sua primeira mensagem. Passe o mouse sobre uma sessão para revelar ações de renomear e remover: renomeie para dar um título descritivo, ou remova para deletá-la da lista. Para mais sobre retomar sessões, consulte [Common workflows](/pt/common-workflows#resume-previous-conversations).
+Clique no botão **Session history** na parte superior do painel Claude Code para acessar seu histórico de conversas. Você pode pesquisar por palavra-chave ou navegar por tempo (Today, Yesterday, Last 7 days, etc.). Clique em qualquer conversa para retomá-la com o histórico completo de mensagens. Novas sessões recebem títulos gerados por IA com base em sua primeira mensagem. Passe o mouse sobre uma sessão para revelar ações de renomear e remover: renomeie para dar um título descritivo, ou remova para deletá-la da lista. Para mais sobre retomar sessões, consulte [Manage sessions](/pt/sessions).
 
 ### Resume remote sessions from Claude.ai
 
@@ -375,11 +375,11 @@ Uma vez configurado, peça ao Claude para usar as ferramentas (por exemplo, "Rev
 
 Para gerenciar MCP servers sem sair do VS Code, digite `/mcp` no painel de chat. O diálogo de gerenciamento de MCP permite que você habilite ou desabilite servidores, reconecte a um servidor e gerencie autenticação OAuth. Consulte a [MCP documentation](/pt/mcp) para servidores disponíveis.
 
-## Work with git
+## Trabalhar com git
 
 Claude Code se integra com git para ajudar com fluxos de trabalho de controle de versão diretamente no VS Code. Peça ao Claude para fazer commit de alterações, criar pull requests ou trabalhar em branches.
 
-### Create commits and pull requests
+### Criar commits e pull requests
 
 Claude pode preparar alterações, escrever mensagens de commit e criar pull requests com base em seu trabalho:
 
@@ -391,7 +391,7 @@ Claude pode preparar alterações, escrever mensagens de commit e criar pull req
 
 Ao criar pull requests, Claude gera descrições com base nas alterações de código reais e pode adicionar contexto sobre testes ou decisões de implementação.
 
-### Use git worktrees for parallel tasks
+### Usar git worktrees para tarefas paralelas
 
 Use a flag `--worktree` (`-w`) para iniciar Claude em um worktree isolado com seus próprios arquivos e branch:
 
@@ -399,7 +399,7 @@ Use a flag `--worktree` (`-w`) para iniciar Claude em um worktree isolado com se
 claude --worktree feature-auth
 ```
 
-Cada worktree mantém estado de arquivo independente enquanto compartilha histórico git. Isso evita que instâncias do Claude interfiram uma com a outra ao trabalhar em diferentes tarefas. Para mais detalhes, consulte [Run parallel sessions with Git worktrees](/pt/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees).
+Cada worktree mantém estado de arquivo independente enquanto compartilha histórico git. Isso evita que instâncias do Claude interfiram uma com a outra ao trabalhar em diferentes tarefas. Para mais detalhes, consulte [Run parallel sessions with Git worktrees](/pt/worktrees).
 
 ## Use third-party providers
 
@@ -456,7 +456,7 @@ O servidor é nomeado `ide` e está oculto de `/mcp` porque não há nada para c
 
 <a id="troubleshooting" />
 
-## Fix common issues
+## Corrigir problemas comuns
 
 ### Extension won't install
 
@@ -475,6 +475,16 @@ O ícone Spark aparece na **Editor Toolbar** (canto superior direito do editor) 
 5. **Check workspace trust**: A extensão não funciona em Restricted Mode
 
 Alternativamente, clique em "✱ Claude Code" na **Status Bar** (canto inferior direito). Isso funciona mesmo sem um arquivo aberto. Você também pode usar a **Command Palette** (`Cmd+Shift+P` / `Ctrl+Shift+P`) e digitar "Claude Code".
+
+### Cmd+Esc does nothing on macOS
+
+No macOS Tahoe e posterior, o atalho do sistema Game Overlay está vinculado a `Cmd+Esc` por padrão e intercepta a tecla antes que chegue ao VS Code. Para liberar o atalho:
+
+1. Abra System Settings
+2. Vá para Keyboard, depois Keyboard Shortcuts, depois Game Controllers
+3. Desmarque a caixa de seleção Game Overlay
+
+Alternativamente, reassine a extensão para uma chave diferente: abra o editor de [Keyboard Shortcuts](https://code.visualstudio.com/docs/configure/keybindings) do VS Code (`Cmd+K Cmd+S`), procure por `Claude Code: Focus input`, e atribua uma nova vinculação.
 
 ### Claude Code never responds
 

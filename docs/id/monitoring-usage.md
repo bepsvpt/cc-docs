@@ -197,11 +197,11 @@ Saat `OTEL_LOG_TOOL_CONTENT=1`, span ini juga mencatat acara span `tool.output` 
 
 **`claude_code.tool.blocked_on_user`**
 
-| Atribut       | Deskripsi                                            | Gated by |
-| ------------- | ---------------------------------------------------- | -------- |
-| `duration_ms` | Waktu yang dihabiskan menunggu keputusan izin        |          |
-| `decision`    | `accept` atau `reject`                               |          |
-| `source`      | Sumber keputusan, cocok dengan acara `tool_decision` |          |
+| Atribut       | Deskripsi                                                                        | Gated by |
+| ------------- | -------------------------------------------------------------------------------- | -------- |
+| `duration_ms` | Waktu yang dihabiskan menunggu keputusan izin                                    |          |
+| `decision`    | `accept` atau `reject`                                                           |          |
+| `source`      | Sumber keputusan, cocok dengan acara [Tool decision event](#tool-decision-event) |          |
 
 **`claude_code.tool.execution`**
 
@@ -458,7 +458,7 @@ Ditingkatkan saat pengguna menerima atau menolak penggunaan alat Edit, Write, at
 * Semua [atribut standar](#standard-attributes)
 * `tool_name`: Nama alat (`"Edit"`, `"Write"`, `"NotebookEdit"`)
 * `decision`: Keputusan pengguna (`"accept"`, `"reject"`)
-* `source`: Sumber keputusan - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, atau `"user_reject"`
+* `source`: Sumber keputusan. Salah satu dari `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, atau `"user_reject"`. Lihat [Acara keputusan alat](#tool-decision-event) untuk mengetahui apa arti setiap nilai.
 * `language`: Bahasa pemrograman file yang diedit, seperti `"TypeScript"`, `"Python"`, `"JavaScript"`, atau `"Markdown"`. Mengembalikan `"unknown"` untuk ekstensi file yang tidak dikenali.
 
 #### Penghitung waktu aktif
@@ -524,7 +524,7 @@ Dicatat saat alat menyelesaikan eksekusi.
 * `error_type`: String kategori kesalahan saat alat gagal, seperti `"Error:ENOENT"` atau `"ShellError"`
 * `error` (saat `OTEL_LOG_TOOL_DETAILS=1`): Pesan kesalahan lengkap saat alat gagal
 * `decision_type`: Baik `"accept"` atau `"reject"`
-* `decision_source`: Sumber keputusan - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, atau `"user_reject"`
+* `decision_source`: Sumber keputusan. Salah satu dari `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, atau `"user_reject"`. Lihat [Acara keputusan alat](#tool-decision-event) untuk mengetahui apa arti setiap nilai.
 * `tool_input_size_bytes`: Ukuran input alat yang diserialisasi JSON dalam byte
 * `tool_result_size_bytes`: Ukuran hasil alat dalam byte
 * `mcp_server_scope`: Pengidentifikasi cakupan server MCP (untuk alat MCP)
@@ -635,7 +635,13 @@ Dicatat saat keputusan izin alat dibuat (terima/tolak).
 * `tool_name`: Nama alat (misalnya, "Read", "Edit", "Write", "NotebookEdit")
 * `tool_use_id`: Pengidentifikasi unik untuk invokasi alat ini. Cocok dengan `tool_use_id` yang diteruskan ke hooks, memungkinkan korelasi antara acara OTel dan data yang ditangkap hook.
 * `decision`: Baik `"accept"` atau `"reject"`
-* `source`: Sumber keputusan - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, atau `"user_reject"`
+* `source`: Sumber keputusan:
+  * `"config"`: Diputuskan secara otomatis tanpa diminta, berdasarkan pengaturan proyek, kebijakan terkelola perusahaan, flag `--allowedTools` atau `--disallowedTools`, mode izin aktif, atau karena alat itu aman secara inheren.
+  * `"hook"`: Hook `PreToolUse` atau `PermissionRequest` mengembalikan keputusan.
+  * `"user_permanent"`: Dipancarkan saat pengguna memilih "Selalu izinkan" saat diminta, menyimpan aturan ke pengaturan pribadi mereka. Juga dipancarkan untuk panggilan nanti yang cocok dengan aturan tersimpan itu. Diperlakukan sebagai penerimaan.
+  * `"user_temporary"`: Dipancarkan saat pengguna memilih "Ya" atau "Ya, untuk sesi ini" saat diminta, tanpa menyimpan aturan. Juga dipancarkan untuk panggilan nanti dalam sesi yang sama yang cocok dengan izin berskop sesi itu. Diperlakukan sebagai penerimaan.
+  * `"user_abort"`: Dipancarkan saat pengguna menutup prompt izin tanpa menjawab. Diperlakukan sebagai penolakan.
+  * `"user_reject"`: Dipancarkan saat pengguna memilih "Tidak" saat diminta, atau panggilan cocok dengan aturan penolakan dalam pengaturan pribadi mereka. Diperlakukan sebagai penolakan.
 
 #### Acara mode izin berubah
 

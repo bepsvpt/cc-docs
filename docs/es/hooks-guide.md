@@ -735,7 +735,10 @@ Para decisiones que requieren criterio en lugar de reglas deterministas, usa hoo
 El único trabajo del modelo es devolver una decisión sí/no como JSON:
 
 * `"ok": true`: la acción procede
-* `"ok": false`: la acción se bloquea. Para hooks `Stop` y `SubagentStop`, la `reason` se alimenta de vuelta a Claude para que siga trabajando. Para otros eventos, el turno termina y la `reason` aparece en el chat como una línea de advertencia. Claude no la ve.
+* `"ok": false`: lo que sucede depende del evento:
+  * `Stop` y `SubagentStop`: la `reason` se alimenta de vuelta a Claude para que siga trabajando
+  * `PreToolUse`: la llamada de herramienta se deniega y la `reason` se devuelve a Claude como el error de la herramienta, para que pueda ajustarse y continuar
+  * `PostToolUse`, `PostToolBatch`, `UserPromptSubmit` y `UserPromptExpansion`: el turno termina y la `reason` aparece en el chat como una línea de advertencia
 
 Este ejemplo usa un hook `Stop` para preguntarle al modelo si todas las tareas solicitadas están completas. Si el modelo devuelve `"ok": false`, Claude sigue trabajando y usa la `reason` como su siguiente instrucción:
 

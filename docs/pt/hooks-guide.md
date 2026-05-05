@@ -735,7 +735,10 @@ Para decisões que exigem julgamento em vez de regras determinísticas, use hook
 O único trabalho do modelo é retornar uma decisão sim/não como JSON:
 
 * `"ok": true`: a ação prossegue
-* `"ok": false`: a ação é bloqueada. Para hooks `Stop` e `SubagentStop`, o `reason` é alimentado de volta ao Claude para que ele continue trabalhando. Para outros eventos, o turno termina e o `reason` aparece no chat como uma linha de aviso. Claude não o vê.
+* `"ok": false`: o que acontece depende do evento:
+  * `Stop` e `SubagentStop`: o `reason` é alimentado de volta ao Claude para que ele continue trabalhando
+  * `PreToolUse`: a chamada de ferramenta é negada e o `reason` é retornado ao Claude como o erro da ferramenta, para que ele possa se ajustar e continuar
+  * `PostToolUse`, `PostToolBatch`, `UserPromptSubmit` e `UserPromptExpansion`: o turno termina e o `reason` aparece no chat como uma linha de aviso
 
 Este exemplo usa um hook `Stop` para perguntar ao modelo se todas as tarefas solicitadas estão completas. Se o modelo retornar `"ok": false`, Claude continua trabalhando e usa o `reason` como sua próxima instrução:
 

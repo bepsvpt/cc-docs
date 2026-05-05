@@ -735,7 +735,10 @@ Per decisioni che richiedono giudizio piuttosto che regole deterministiche, util
 L'unico lavoro del modello è restituire una decisione sì/no come JSON:
 
 * `"ok": true`: l'azione procede
-* `"ok": false`: l'azione è bloccata. Per gli hook `Stop` e `SubagentStop`, il `reason` viene alimentato di nuovo a Claude in modo che continui a lavorare. Per altri eventi, il turno termina e il `reason` appare nella chat come una riga di avviso. Claude non lo vede.
+* `"ok": false`: ciò che accade dipende dall'evento:
+  * `Stop` e `SubagentStop`: il `reason` viene alimentato di nuovo a Claude in modo che continui a lavorare
+  * `PreToolUse`: la chiamata dello strumento viene negata e il `reason` viene restituito a Claude come errore dello strumento, in modo che possa adattarsi e continuare
+  * `PostToolUse`, `PostToolBatch`, `UserPromptSubmit` e `UserPromptExpansion`: il turno termina e il `reason` appare nella chat come una riga di avviso
 
 Questo esempio utilizza un hook `Stop` per chiedere al modello se tutti i compiti richiesti sono completi. Se il modello restituisce `"ok": false`, Claude continua a lavorare e utilizza il `reason` come sua prossima istruzione:
 

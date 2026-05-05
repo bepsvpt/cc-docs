@@ -12,7 +12,7 @@ Claude Code combina un modelo que razona sobre su código con [herramientas inte
   Para saber cómo funciona el bucle agentico central, consulte [Cómo funciona Claude Code](/es/how-claude-code-works).
 </Note>
 
-**¿Nuevo en Claude Code?** Comience con [CLAUDE.md](/es/memory) para convenciones de proyecto. Agregue otras extensiones según sea necesario.
+**¿Nuevo en Claude Code?** Comience con [CLAUDE.md](/es/memory) para convenciones de proyecto, luego agregue otras extensiones [según surjan desencadenantes específicos](#build-your-setup-over-time).
 
 ## Descripción general
 
@@ -23,7 +23,7 @@ Las extensiones se conectan a diferentes partes del bucle agentico:
 * **[MCP](/es/mcp)** conecta Claude a servicios y herramientas externas
 * **[Subagents](/es/sub-agents)** ejecutan sus propios bucles en contexto aislado, devolviendo resúmenes
 * **[Agent teams](/es/agent-teams)** coordinan múltiples sesiones independientes con tareas compartidas y mensajería punto a punto
-* **[Hooks](/es/hooks)** se ejecutan fuera del bucle completamente como scripts deterministas
+* **[Hooks](/es/hooks-guide)** se disparan en eventos del ciclo de vida y pueden ejecutar un script, solicitud HTTP, prompt o subagent
 * **[Plugins](/es/plugins)** y **[marketplaces](/es/plugin-marketplaces)** empaquetan y distribuyen estas características
 
 [Skills](/es/skills) son la extensión más flexible. Una skill es un archivo markdown que contiene conocimiento, flujos de trabajo o instrucciones. Puede invocar skills con un comando como `/deploy`, o Claude puede cargarlas automáticamente cuando sea relevante. Las skills pueden ejecutarse en su conversación actual o en un contexto aislado a través de subagents.
@@ -39,9 +39,25 @@ Las características van desde contexto siempre activo que Claude ve en cada ses
 | **Subagent**                       | Contexto de ejecución aislado que devuelve resultados resumidos       | Aislamiento de contexto, tareas paralelas, trabajadores especializados                              | Tarea de investigación que lee muchos archivos pero devuelve solo hallazgos clave                              |
 | **[Agent teams](/es/agent-teams)** | Coordinar múltiples sesiones independientes de Claude Code            | Investigación paralela, desarrollo de nuevas características, depuración con hipótesis competidoras | Generar revisores para verificar seguridad, rendimiento y pruebas simultáneamente                              |
 | **MCP**                            | Conectar a servicios externos                                         | Datos o acciones externas                                                                           | Consultar su base de datos, publicar en Slack, controlar un navegador                                          |
-| **Hook**                           | Script determinista que se ejecuta en eventos                         | Automatización predecible, sin LLM involucrado                                                      | Ejecutar ESLint después de cada edición de archivo                                                             |
+| **Hook**                           | Script, solicitud HTTP, prompt o subagent desencadenado por eventos   | Automatización que debe ejecutarse en cada evento coincidente                                       | Ejecutar ESLint después de cada edición de archivo                                                             |
 
 **[Plugins](/es/plugins)** son la capa de empaquetamiento. Un plugin agrupa skills, hooks, subagents y servidores MCP en una única unidad instalable. Las skills de plugin tienen espacios de nombres (como `/my-plugin:review`) para que múltiples plugins puedan coexistir. Use plugins cuando desee reutilizar la misma configuración en múltiples repositorios o distribuir a otros a través de un **[marketplace](/es/plugin-marketplaces)**.
+
+### Construir su configuración con el tiempo
+
+No necesita configurar todo de antemano. Cada característica tiene un desencadenante reconocible, y la mayoría de los equipos las agregan en aproximadamente este orden:
+
+| Desencadenante                                                                    | Agregar                                                        |
+| :-------------------------------------------------------------------------------- | :------------------------------------------------------------- |
+| Claude se equivoca en una convención o comando dos veces                          | Agréguelo a [CLAUDE.md](/es/memory)                            |
+| Sigue escribiendo el mismo prompt para iniciar una tarea                          | Guárdelo como una [skill](/es/skills) invocable por el usuario |
+| Pega el mismo manual o procedimiento de varios pasos en el chat por tercera vez   | Capturarlo como una [skill](/es/skills)                        |
+| Sigue copiando datos de una pestaña del navegador que Claude no puede ver         | Conecte ese sistema como un [servidor MCP](/es/mcp)            |
+| Una tarea secundaria inunda su conversación con salida que no volverá a consultar | Enrutarlo a través de un [subagent](/es/sub-agents)            |
+| Desea que algo suceda cada vez sin preguntar                                      | Escriba un [hook](/es/hooks-guide)                             |
+| Un segundo repositorio necesita la misma configuración                            | Empaquételo como un [plugin](/es/plugins)                      |
+
+Los mismos desencadenantes le dicen cuándo actualizar lo que ya tiene. Un error repetido o un comentario de revisión recurrente es una edición de CLAUDE.md, no una corrección única en el chat. Un flujo de trabajo que sigue ajustando manualmente es una skill que necesita otra revisión.
 
 ### Comparar características similares
 
@@ -54,11 +70,12 @@ Algunas características pueden parecer similares. Aquí se explica cómo distin
     * **Skills** son contenido reutilizable que puede cargar en cualquier contexto
     * **Subagents** son trabajadores aislados que se ejecutan separadamente de su conversación principal
 
-    | Aspecto             | Skill                                                         | Subagent                                                                       |
-    | ------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-    | **Qué es**          | Instrucciones, conocimiento o flujos de trabajo reutilizables | Trabajador aislado con su propio contexto                                      |
-    | **Beneficio clave** | Compartir contenido entre contextos                           | Aislamiento de contexto. El trabajo ocurre por separado, solo devuelve resumen |
-    | **Mejor para**      | Material de referencia, flujos de trabajo invocables          | Tareas que leen muchos archivos, trabajo paralelo, trabajadores especializados |
+    | Aspecto                                                  | Skill                                                         | Subagent                                                                       |
+    | -------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+    | **Qué es**                                               | Instrucciones, conocimiento o flujos de trabajo reutilizables | Trabajador aislado con su propio contexto                                      |
+    | **Beneficio clave**                                      | Compartir contenido entre contextos                           | Aislamiento de contexto. El trabajo ocurre por separado, solo devuelve resumen |
+    | **Impacto de [ventana de contexto](/es/context-window)** | Se agrega a su ventana principal                              | Usa una ventana separada con sus propios tokens de entrada y salida            |
+    | **Mejor para**                                           | Material de referencia, flujos de trabajo invocables          | Tareas que leen muchos archivos, trabajo paralelo, trabajadores especializados |
 
     **Las skills pueden ser de referencia o acción.** Las skills de referencia proporcionan conocimiento que Claude usa en toda su sesión (como su guía de estilo de API). Las skills de acción le dicen a Claude que haga algo específico (como `/deploy` que ejecuta su flujo de trabajo de implementación).
 
@@ -131,7 +148,7 @@ Algunas características pueden parecer similares. Aquí se explica cómo distin
     | Aspecto         | MCP                                                                    | Skill                                                                                                  |
     | --------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
     | **Qué es**      | Protocolo para conectar a servicios externos                           | Conocimiento, flujos de trabajo y material de referencia                                               |
-    | **Proporciona** | Acceso a herramientas y datos                                          | Conocimiento, flujos de trabajo, material de referencia                                                |
+    | **Proporciona** | Herramientas y acceso a datos                                          | Conocimiento, flujos de trabajo, material de referencia                                                |
     | **Ejemplos**    | Integración de Slack, consultas de base de datos, control de navegador | Lista de verificación de revisión de código, flujo de trabajo de implementación, guía de estilo de API |
 
     Estos resuelven problemas diferentes y funcionan bien juntos:
@@ -141,6 +158,26 @@ Algunas características pueden parecer similares. Aquí se explica cómo distin
     **Skills** le dan a Claude conocimiento sobre cómo usar esas herramientas de manera efectiva, además de flujos de trabajo que puede desencadenar con `/<name>`. Una skill podría incluir el esquema de base de datos de su equipo y patrones de consulta, o un flujo de trabajo `/post-to-slack` con las reglas de formato de mensaje de su equipo.
 
     Ejemplo: Un servidor MCP conecta Claude a su base de datos. Una skill enseña a Claude su modelo de datos, patrones de consulta comunes y qué tablas usar para diferentes tareas.
+  </Tab>
+
+  <Tab title="Hook vs Skill">
+    Un hook se dispara en un evento del ciclo de vida; una skill se carga en contexto para que Claude la aplique.
+
+    | Aspecto               | Hook                                                                                   | Skill                                                                                        |
+    | --------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+    | **Se ejecuta**        | Un comando shell, solicitud HTTP, prompt LLM o subagent                                | Instrucciones que Claude lee y sigue                                                         |
+    | **Desencadenado por** | [Eventos del ciclo de vida](/es/hooks#hook-events) como `PostToolUse` o `SessionStart` | Usted escribiendo `/<name>`, o Claude haciendo coincidir la descripción con su tarea         |
+    | **Determinismo**      | Siempre se dispara en su evento; el desencadenante está garantizado                    | Claude interpreta las instrucciones; el resultado puede variar                               |
+    | **Costo de contexto** | Cero a menos que el hook devuelva salida                                               | La descripción se carga cada sesión; el contenido completo se carga cuando se usa            |
+    | **Mejor para**        | Linting después de ediciones, bloquear comandos inseguros, logging, notificaciones     | Flujos de trabajo que necesitan razonamiento, material de referencia, tareas de varios pasos |
+
+    **Use un hook** cuando la acción debe suceder de la misma manera cada vez y no necesita que Claude piense. Por ejemplo: formatear al guardar, rechazar `rm -rf /`, publicar un mensaje de Slack cuando termina una sesión.
+
+    **Use una skill** cuando Claude debe decidir cómo aplicar los pasos, o cuando el contenido es conocimiento en lugar de un script. Por ejemplo: una lista de verificación `/release`, su guía de estilo de API, un manual de depuración.
+
+    **Ponga guardrails en hooks.** Una instrucción como "nunca edite `.env`" en CLAUDE.md o una skill es una solicitud, no una garantía. Un hook `PreToolUse` que bloquea la edición es cumplimiento. Si una regla debe mantenerse cada vez, hágala un hook en lugar de una instrucción de prompt.
+
+    **La salida del hook aterriza en contexto.** Un hook `PostToolUse` que ejecuta su linter alimenta resultados de vuelta como texto que Claude lee; una skill `/fix-lint` le dice a Claude cómo resolverlos.
   </Tab>
 </Tabs>
 
@@ -168,7 +205,7 @@ Por ejemplo, podría usar CLAUDE.md para convenciones de proyecto, una skill par
 
 ## Entender costos de contexto
 
-Cada característica que agrega consume algo del contexto de Claude. Demasiado puede llenar su ventana de contexto, pero también puede agregar ruido que hace que Claude sea menos efectivo; las skills pueden no desencadenarse correctamente, o Claude puede perder de vista sus convenciones. Entender estos compromisos lo ayuda a construir una configuración efectiva.
+Cada característica que agrega consume algo del contexto de Claude. Demasiado puede llenar su ventana de contexto, pero también puede agregar ruido que hace que Claude sea menos efectivo; las skills pueden no desencadenarse correctamente, o Claude puede perder de vista sus convenciones. Entender estos compromisos lo ayuda a construir una configuración efectiva. Para una vista interactiva de cómo estas características se combinan en una sesión en ejecución, consulte [Explorar la ventana de contexto](/es/context-window).
 
 ### Costo de contexto por característica
 
@@ -178,7 +215,7 @@ Cada característica tiene una estrategia de carga y costo de contexto diferente
 | ------------------ | -------------------------------- | --------------------------------------------------------- | ----------------------------------------------------- |
 | **CLAUDE.md**      | Inicio de sesión                 | Contenido completo                                        | Cada solicitud                                        |
 | **Skills**         | Inicio de sesión + cuando se usa | Descripciones al inicio, contenido completo cuando se usa | Bajo (descripciones cada solicitud)\*                 |
-| **Servidores MCP** | Inicio de sesión                 | Todas las definiciones de herramientas y esquemas         | Cada solicitud                                        |
+| **Servidores MCP** | Inicio de sesión                 | Nombres de herramientas; esquemas completos bajo demanda  | Bajo hasta que se usa una herramienta                 |
 | **Subagents**      | Cuando se generan                | Contexto fresco con skills especificadas                  | Aislado de la sesión principal                        |
 | **Hooks**          | Al desencadenar                  | Nada (se ejecuta externamente)                            | Cero, a menos que el hook devuelva contexto adicional |
 
@@ -188,7 +225,7 @@ Cada característica tiene una estrategia de carga y costo de contexto diferente
 
 Cada característica se carga en diferentes puntos de su sesión. Las pestañas a continuación explican cuándo se carga cada una y qué entra en contexto.
 
-<img src="https://mintcdn.com/claude-code/6yTCYq1p37ZB8-CQ/images/context-loading.svg?fit=max&auto=format&n=6yTCYq1p37ZB8-CQ&q=85&s=5a58ce953a35a2412892015e2ad6cb67" alt="Carga de contexto: CLAUDE.md y MCP se cargan al inicio de sesión y permanecen en cada solicitud. Las skills cargan descripciones al inicio, contenido completo al invocar. Los subagents obtienen contexto aislado. Los hooks se ejecutan externamente." width="720" height="410" data-path="images/context-loading.svg" />
+<img src="https://mintcdn.com/claude-code/6yTCYq1p37ZB8-CQ/images/context-loading.svg?fit=max&auto=format&n=6yTCYq1p37ZB8-CQ&q=85&s=5a58ce953a35a2412892015e2ad6cb67" alt="Carga de contexto: CLAUDE.md se carga al inicio de sesión y permanece en cada solicitud. Los nombres de herramientas MCP se cargan al inicio con esquemas completos diferidos hasta el uso. Las skills cargan descripciones al inicio, contenido completo al invocar. Los subagents obtienen contexto aislado. Los hooks se ejecutan externamente." width="720" height="410" data-path="images/context-loading.svg" />
 
 <Tabs>
   <Tab title="CLAUDE.md">
@@ -202,7 +239,7 @@ Cada característica se carga en diferentes puntos de su sesión. Las pestañas 
   </Tab>
 
   <Tab title="Skills">
-    Las skills son capacidades adicionales en el kit de herramientas de Claude. Pueden ser material de referencia (como una guía de estilo de API) o flujos de trabajo invocables que desencadena con `/<name>` (como `/deploy`). Claude Code se envía con [skills incluidas](/es/skills#bundled-skills) como `/simplify`, `/batch` y `/debug` que funcionan de inmediato. También puede crear las suyas propias. Claude usa skills cuando es apropiado, o puede invocar una directamente.
+    Las skills son capacidades adicionales en el kit de herramientas de Claude. Pueden ser material de referencia (como una guía de estilo de API) o flujos de trabajo invocables que desencadena con `/<name>` (como `/deploy`). Claude Code incluye [skills incluidas](/es/commands) como `/simplify`, `/batch` y `/debug` que funcionan de inmediato. También puede crear las suyas propias. Claude usa skills cuando es apropiado, o puede invocar una directamente.
 
     **Cuándo:** Depende de la configuración de la skill. Por defecto, las descripciones se cargan al inicio de sesión y el contenido completo se carga cuando se usa. Para skills solo de usuario (`disable-model-invocation: true`), nada se carga hasta que las invoque.
 
@@ -220,9 +257,9 @@ Cada característica se carga en diferentes puntos de su sesión. Las pestañas 
   <Tab title="Servidores MCP">
     **Cuándo:** Inicio de sesión.
 
-    **Qué se carga:** Todas las definiciones de herramientas y esquemas JSON de servidores conectados.
+    **Qué se carga:** Nombres de herramientas de servidores conectados. Los esquemas JSON completos permanecen diferidos hasta que Claude necesita una herramienta específica.
 
-    **Costo de contexto:** [Búsqueda de herramientas](/es/mcp#scale-with-mcp-tool-search) (habilitada por defecto) carga herramientas MCP hasta el 10% del contexto y difiere el resto hasta que sea necesario.
+    **Costo de contexto:** [Búsqueda de herramientas](/es/mcp#scale-with-mcp-tool-search) está habilitada por defecto, por lo que las herramientas MCP inactivas consumen contexto mínimo.
 
     **Nota de confiabilidad:** Las conexiones MCP pueden fallar silenciosamente a mitad de sesión. Si un servidor se desconecta, sus herramientas desaparecen sin advertencia. Claude puede intentar usar una herramienta que ya no existe. Si nota que Claude no puede usar una herramienta MCP a la que podía acceder anteriormente, verifique la conexión con `/mcp`.
 
@@ -247,7 +284,7 @@ Cada característica se carga en diferentes puntos de su sesión. Las pestañas 
   <Tab title="Hooks">
     **Cuándo:** Al desencadenar. Los hooks se disparan en eventos de ciclo de vida específicos como ejecución de herramientas, límites de sesión, envío de prompt, solicitudes de permiso y compactación. Consulte [Hooks](/es/hooks) para la lista completa.
 
-    **Qué se carga:** Nada por defecto. Los hooks se ejecutan como scripts externos.
+    **Qué se carga:** Nada por defecto. Los hooks se ejecutan fuera de la conversación principal.
 
     **Costo de contexto:** Cero, a menos que el hook devuelva salida que se agregue como mensajes a su conversación.
 

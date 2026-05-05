@@ -969,12 +969,12 @@ El stdout plano se muestra como salida de hook en la transcripción. El campo `a
 
 Para bloquear un prompt, devuelva un objeto JSON con `decision` establecido en `"block"`:
 
-| Campo               | Descripción                                                                                                                                     |
-| :------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `decision`          | `"block"` evita que el prompt se procese y lo borra del contexto. Omita para permitir que el prompt continúe                                    |
-| `reason`            | Se muestra al usuario cuando `decision` es `"block"`. No se agrega al contexto                                                                  |
-| `additionalContext` | Cadena agregada al contexto de Claude junto con el prompt enviado. Consulte [Agregar contexto para Claude](#add-context-for-claude)             |
-| `sessionTitle`      | Establece el título de la sesión, el mismo efecto que `/rename`. Use para nombrar sesiones automáticamente basándose en el contenido del prompt |
+| Campo               | Descripción                                                                                                                         |
+| :------------------ | :---------------------------------------------------------------------------------------------------------------------------------- |
+| `decision`          | `"block"` evita que el prompt se procese y lo borra del contexto. Omita para permitir que el prompt continúe                        |
+| `reason`            | Se muestra al usuario cuando `decision` es `"block"`. No se agrega al contexto                                                      |
+| `additionalContext` | Cadena agregada al contexto de Claude junto con el prompt enviado. Consulte [Agregar contexto para Claude](#add-context-for-claude) |
+| `sessionTitle`      | Establece el título de la sesión. Use para nombrar sesiones automáticamente basándose en el contenido del prompt                    |
 
 ```json theme={null}
 {
@@ -2406,12 +2406,20 @@ El LLM debe responder con JSON que contenga:
 }
 ```
 
-| Campo    | Descripción                                                    |
-| :------- | :------------------------------------------------------------- |
-| `ok`     | `true` permite la acción, `false` la previene                  |
-| `reason` | Requerido cuando `ok` es `false`. Explicación para la decisión |
+| Campo    | Descripción                                                   |
+| :------- | :------------------------------------------------------------ |
+| `ok`     | `true` permite la acción, `false` la bloquea                  |
+| `reason` | Requerido cuando `ok` es `false`. Explicación para el bloqueo |
 
-Para `Stop` y `SubagentStop`, una razón `ok: false` se retroalimenta a Claude como su siguiente instrucción y el turno continúa. Para todos los otros eventos admitidos, el turno termina y la razón aparece en el chat como una línea de advertencia; Claude no la ve. Esto es equivalente a devolver `"continue": false` desde un hook de comando. Si necesita semántica de bloqueo diferente en esos eventos, use un [hook de comando](#command-hook-fields) con los campos por evento descritos en [Control de decisión](#decision-control).
+Lo que sucede en `ok: false` depende del evento:
+
+* `Stop` y `SubagentStop`: la razón se retroalimenta a Claude como su siguiente instrucción y el turno continúa
+* `PreToolUse`: la llamada de herramienta se deniega y la razón se devuelve a Claude como el error de la herramienta, equivalente a un hook de comando con `permissionDecision: "deny"`
+* `PostToolUse`, `PostToolBatch`, `UserPromptSubmit` y `UserPromptExpansion`: el turno termina y la razón aparece en el chat como una línea de advertencia, equivalente a devolver `"continue": false` desde un hook de comando
+* `PostToolUseFailure`, `TaskCreated` y `TaskCompleted`: la razón se devuelve a Claude como un error de herramienta, similar a `PreToolUse`
+* `PermissionRequest`: `ok: false` no tiene efecto. Para denegar una aprobación desde un hook, use un [hook de comando](#command-hook-fields) que devuelva `hookSpecificOutput.decision.behavior: "deny"`
+
+Si necesita un control más fino en cualquier evento, use un [hook de comando](#command-hook-fields) con los campos por evento descritos en [Control de decisión](#decision-control).
 
 ### Ejemplo: Hook Stop de múltiples criterios
 

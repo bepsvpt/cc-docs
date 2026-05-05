@@ -59,11 +59,13 @@ Alguns atalhos do Claude Code usam a tecla Option, como Option+Enter para uma qu
 
 Para Ghostty, Kitty e outros terminais, procure por uma configuração Option-as-Alt ou Option-as-Meta no arquivo de configuração do terminal.
 
-## Get a terminal bell or notification
+## Obtenha um sino de terminal ou notificação
 
 Quando Claude termina uma tarefa ou pausa para um prompt de permissão, ele dispara um evento de notificação. Exibir isso como um sino de terminal ou notificação de desktop permite que você mude para outro trabalho enquanto uma tarefa longa é executada.
 
-Claude Code envia uma notificação de desktop apenas em Ghostty, Kitty e iTerm2; todos os outros terminais precisam de um [hook de Notificação](#play-a-sound-with-a-notification-hook) em vez disso. A notificação também chega à sua máquina local via SSH, então uma sessão remota ainda pode alertá-lo. Ghostty e Kitty a encaminham para seu centro de notificações do SO sem configuração adicional. iTerm2 requer que você ative o encaminhamento:
+Por padrão, Claude Code envia uma notificação de desktop apenas em Ghostty, Kitty e iTerm2. Em outros terminais, defina [`preferredNotifChannel`](/pt/settings#available-settings) como `"terminal_bell"` para tocar o sino do terminal, ou configure um [hook de Notificação](#play-a-sound-with-a-notification-hook) para um som personalizado ou comando.
+
+A notificação de desktop chega à sua máquina local via SSH, portanto uma sessão remota ainda pode alertá-lo. Ghostty e Kitty a encaminham para seu centro de notificações do SO sem configuração adicional. iTerm2 requer que você ative o encaminhamento:
 
 <Steps>
   <Step title="Abra as configurações de notificação do iTerm2">
@@ -79,7 +81,7 @@ Se as notificações ainda não aparecerem, confirme que seu aplicativo de termi
 
 ### Play a sound with a Notification hook
 
-Em qualquer terminal você pode configurar um [hook de Notificação](/pt/hooks-guide#get-notified-when-claude-needs-input) para reproduzir um som ou executar um comando personalizado quando Claude precisar de sua atenção. Hooks são executados junto com a notificação de desktop em vez de substituí-la. Terminais como Warp ou Apple Terminal dependem apenas de um hook, pois Claude Code não envia uma notificação de desktop para eles.
+Em qualquer terminal você pode configurar um [hook de Notificação](/pt/hooks-guide#get-notified-when-claude-needs-input) para reproduzir um som ou executar um comando personalizado quando Claude precisar de sua atenção. Hooks são executados junto com a notificação de desktop em vez de substituí-la, portanto terminais que não recebem uma notificação de desktop, como Warp ou o terminal integrado do VS Code, podem usar um hook ou definir `preferredNotifChannel` como `"terminal_bell"` em vez disso.
 
 O exemplo abaixo reproduz um som do sistema no macOS. O guia vinculado tem comandos de notificação de desktop para macOS, Linux e Windows.
 
@@ -147,7 +149,7 @@ O exemplo a seguir define um tema que mantém o preset escuro, mas recolore o ac
 
 Claude Code monitora `~/.claude/themes/` e recarrega quando um arquivo muda, portanto edições feitas no seu editor se aplicam a uma sessão em execução sem necessidade de reinicialização.
 
-Abaixo está a lista completa de personalizações que você pode definir em `overrides`. O editor interativo em `/theme` mostra os mesmos tokens com uma visualização ao vivo, incluindo um pequeno número de tokens internos não cobertos aqui.
+A referência abaixo cobre os tokens que você pode definir em `overrides`. O editor interativo em `/theme` mostra os mesmos tokens com uma visualização ao vivo, além de alguns acentos de propósito único, como cores de tela de integração, que são omitidas aqui.
 
 <Accordion title="Referência de tokens de cor">
   O exemplo a seguir combina tokens de vários dos grupos abaixo: o acento da marca, a borda do modo de plano, os fundos de diff e o fundo da mensagem em tela cheia.
@@ -170,15 +172,16 @@ Abaixo está a lista completa de personalizações que você pode definir em `ov
 
   Controle o acento da marca primária e as tonalidades de texto em primeiro plano usadas em toda a interface.
 
-  | Token         | Controla                                                              |
-  | :------------ | :-------------------------------------------------------------------- |
-  | `claude`      | Acento da marca primária, usado para o spinner e rótulo do assistente |
-  | `text`        | Texto em primeiro plano padrão                                        |
-  | `inverseText` | Texto desenhado sobre um fundo colorido, como badges de status        |
-  | `inactive`    | Texto secundário como dicas, timestamps e itens desabilitados         |
-  | `subtle`      | Bordas fracas e texto secundário de-enfatizado                        |
-  | `permission`  | Bordas de diálogo, incluindo prompts de permissão e seletores         |
-  | `remember`    | Indicadores de memória e `CLAUDE.md`                                  |
+  | Token         | Controla                                                                 |
+  | :------------ | :----------------------------------------------------------------------- |
+  | `claude`      | Acento da marca primária, usado para o spinner e rótulo do assistente    |
+  | `text`        | Texto em primeiro plano padrão                                           |
+  | `inverseText` | Texto desenhado sobre um fundo colorido, como badges de status           |
+  | `inactive`    | Texto secundário como dicas, timestamps e itens desabilitados            |
+  | `subtle`      | Bordas fracas e texto secundário de-enfatizado                           |
+  | `suggestion`  | Sugestões de preenchimento automático e destaque de seleção em seletores |
+  | `permission`  | Bordas de diálogo, incluindo prompts de permissão e seletores            |
+  | `remember`    | Indicadores de memória e `CLAUDE.md`                                     |
 
   #### Cores de status
 
@@ -221,16 +224,40 @@ Abaixo está a lista completa de personalizações que você pode definir em `ov
 
   Aplique apenas no [modo de renderização em tela cheia](/pt/fullscreen), onde as mensagens têm um preenchimento de fundo.
 
-  | Token                   | Controla                                     |
-  | :---------------------- | :------------------------------------------- |
-  | `userMessageBackground` | Fundo atrás de suas mensagens na transcrição |
-  | `selectionBg`           | Fundo do texto selecionado com o mouse       |
+  | Token                        | Controla                                                                |
+  | :--------------------------- | :---------------------------------------------------------------------- |
+  | `userMessageBackground`      | Fundo atrás de suas mensagens na transcrição                            |
+  | `userMessageBackgroundHover` | Fundo atrás de uma mensagem enquanto pairada ou expandida               |
+  | `messageActionsBackground`   | Fundo atrás da mensagem selecionada quando a barra de ações está aberta |
+  | `bashMessageBackgroundColor` | Fundo atrás de entradas de comando shell `!` na transcrição             |
+  | `memoryBackgroundColor`      | Fundo atrás de entradas de memória `#` na transcrição                   |
+  | `selectionBg`                | Fundo do texto selecionado com o mouse                                  |
+
+  #### Medidor de uso e rótulos de alto-falante
+
+  Ajuste a barra mostrada na visualização `/usage` e os rótulos que distinguem suas mensagens das de Claude.
+
+  | Token              | Controla                                          |
+  | :----------------- | :------------------------------------------------ |
+  | `rate_limit_fill`  | Porção preenchida do medidor de uso               |
+  | `rate_limit_empty` | Porção não preenchida do medidor de uso           |
+  | `briefLabelYou`    | Cor do rótulo `You` em suas mensagens             |
+  | `briefLabelClaude` | Cor do rótulo `Claude` em mensagens do assistente |
 
   #### Variantes de shimmer e cores de subagentes
 
-  Vários tokens têm uma variante `Shimmer` emparelhada, como `claudeShimmer` e `warningShimmer`, que fornece a cor mais clara usada no gradiente animado do spinner. Substitua o shimmer junto com seu token base se a animação parecer incompatível.
+  Vários tokens têm uma variante de shimmer emparelhada que fornece a cor mais clara usada no gradiente animado do spinner. Substitua o shimmer junto com seu token base se a animação parecer incompatível.
+
+  * `claude` e `claudeShimmer`
+  * `warning` e `warningShimmer`
+  * `permission` e `permissionShimmer`
+  * `promptBorder` e `promptBorderShimmer`
+  * `inactive` e `inactiveShimmer`
+  * `fastMode` e `fastModeShimmer`
 
   Cada [subagente](/pt/sub-agents) e tarefa paralela é mostrado em uma das oito cores nomeadas para que você possa diferenciá-los na transcrição. Os nomes dos tokens seguem o padrão `<color>_FOR_SUBAGENTS_ONLY`, onde `<color>` é `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, ou `cyan`. Substitua estes para alterar a aparência de cada cor nomeada. Por exemplo, um subagente com `color: blue` em sua definição é desenhado usando o valor `blue_FOR_SUBAGENTS_ONLY`.
+
+  As palavras-chave [`ultrathink`](/pt/model-config#use-ultrathink-for-one-off-deep-reasoning) e [`ultraplan`](/pt/ultraplan) na entrada do prompt são renderizadas com um gradiente arco-íris de sete cores. Os nomes dos tokens seguem o padrão `rainbow_<color>` e `rainbow_<color>_shimmer`, onde `<color>` é `red`, `orange`, `yellow`, `green`, `blue`, `indigo`, ou `violet`.
 </Accordion>
 
 ## Switch to fullscreen rendering

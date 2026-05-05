@@ -197,11 +197,11 @@ Cuando `OTEL_LOG_TOOL_CONTENT=1`, este span también registra un evento de span 
 
 **`claude_code.tool.blocked_on_user`**
 
-| Atributo      | Descripción                                                    | Controlado Por |
-| ------------- | -------------------------------------------------------------- | -------------- |
-| `duration_ms` | Tiempo dedicado a esperar la decisión de permiso               |                |
-| `decision`    | `accept` o `reject`                                            |                |
-| `source`      | Fuente de decisión, coincidiendo con el evento `tool_decision` |                |
+| Atributo      | Descripción                                                                                | Controlado Por |
+| ------------- | ------------------------------------------------------------------------------------------ | -------------- |
+| `duration_ms` | Tiempo dedicado a esperar la decisión de permiso                                           |                |
+| `decision`    | `accept` o `reject`                                                                        |                |
+| `source`      | Fuente de decisión, coincidiendo con el evento [Tool decision event](#tool-decision-event) |                |
 
 **`claude_code.tool.execution`**
 
@@ -458,7 +458,7 @@ Se incrementa cuando el usuario acepta o rechaza el uso de herramientas Edit, Wr
 * Todos los [atributos estándar](#standard-attributes)
 * `tool_name`: Nombre de la herramienta (`"Edit"`, `"Write"`, `"NotebookEdit"`)
 * `decision`: Decisión del usuario (`"accept"`, `"reject"`)
-* `source`: Fuente de decisión - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, o `"user_reject"`
+* `source`: Fuente de decisión. Uno de `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, o `"user_reject"`. Consulta el [Evento de decisión de herramienta](#tool-decision-event) para saber qué significa cada valor.
 * `language`: Lenguaje de programación del archivo editado, como `"TypeScript"`, `"Python"`, `"JavaScript"`, o `"Markdown"`. Devuelve `"unknown"` para extensiones de archivo no reconocidas.
 
 #### Contador de tiempo activo
@@ -524,7 +524,7 @@ Se registra cuando una herramienta completa la ejecución.
 * `error_type`: Cadena de categoría de error cuando la herramienta falló, como `"Error:ENOENT"` o `"ShellError"`
 * `error` (cuando `OTEL_LOG_TOOL_DETAILS=1`): Mensaje de error completo cuando la herramienta falló
 * `decision_type`: Ya sea `"accept"` o `"reject"`
-* `decision_source`: Fuente de decisión - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, o `"user_reject"`
+* `decision_source`: Fuente de decisión. Uno de `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, o `"user_reject"`. Consulta el [Evento de decisión de herramienta](#tool-decision-event) para saber qué significa cada valor.
 * `tool_input_size_bytes`: Tamaño de la entrada de herramienta serializada en JSON en bytes
 * `tool_result_size_bytes`: Tamaño del resultado de la herramienta en bytes
 * `mcp_server_scope`: Identificador de alcance del servidor MCP (para herramientas MCP)
@@ -635,7 +635,13 @@ Se registra cuando se toma una decisión de permiso de herramienta (aceptar/rech
 * `tool_name`: Nombre de la herramienta (por ejemplo, "Read", "Edit", "Write", "NotebookEdit")
 * `tool_use_id`: Identificador único para esta invocación de herramienta. Coincide con el `tool_use_id` pasado a hooks, permitiendo correlación entre eventos OTel y datos capturados por hooks.
 * `decision`: Ya sea `"accept"` o `"reject"`
-* `source`: Fuente de decisión - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"`, o `"user_reject"`
+* `source`: Fuente de decisión:
+  * `"config"`: Decidido automáticamente sin solicitar, basado en configuración del proyecto, política administrada empresarial, banderas `--allowedTools` o `--disallowedTools`, el modo de permiso activo, o porque la herramienta es inherentemente segura.
+  * `"hook"`: Un hook `PreToolUse` o `PermissionRequest` devolvió la decisión.
+  * `"user_permanent"`: Se emite cuando el usuario eligió "Siempre permitir" cuando se le solicitó, guardando una regla en su configuración personal. También se emite para llamadas posteriores que coincidan con esa regla guardada. Se trata como una aceptación.
+  * `"user_temporary"`: Se emite cuando el usuario eligió "Sí" o "Sí, para esta sesión" cuando se le solicitó, sin guardar una regla. También se emite para llamadas posteriores en la misma sesión que coincidan con esa permisión con alcance de sesión. Se trata como una aceptación.
+  * `"user_abort"`: Se emite cuando el usuario descartó el mensaje de permiso sin responder. Se trata como un rechazo.
+  * `"user_reject"`: Se emite cuando el usuario eligió "No" cuando se le solicitó, o una llamada coincidió con una regla de denegación en su configuración personal. Se trata como un rechazo.
 
 #### Evento de cambio de modo de permiso
 

@@ -59,11 +59,13 @@ Alcuni scorciatoie di Claude Code utilizzano il tasto Option, come Option+Invio 
 
 Per Ghostty, Kitty e altri terminali, cerca un'impostazione Option-as-Alt o Option-as-Meta nel file di configurazione del terminale.
 
-## Get a terminal bell or notification
+## Ottieni un campanello del terminale o una notifica
 
 Quando Claude finisce un'attività o si mette in pausa per un prompt di autorizzazione, attiva un evento di notifica. Visualizzare questo come un campanello del terminale o una notifica desktop ti consente di passare ad altro lavoro mentre un'attività lunga è in esecuzione.
 
-Claude Code invia una notifica desktop solo in Ghostty, Kitty e iTerm2; ogni altro terminale ha bisogno di un [hook Notification](#play-a-sound-with-a-notification-hook) invece. La notifica raggiunge anche la tua macchina locale tramite SSH, quindi una sessione remota può comunque avvertirti. Ghostty e Kitty la inoltrano al tuo centro notifiche del sistema operativo senza ulteriore configurazione. iTerm2 richiede che tu abiliti l'inoltro:
+Per impostazione predefinita Claude Code invia una notifica desktop solo in Ghostty, Kitty e iTerm2. In altri terminali, imposta [`preferredNotifChannel`](/it/settings#available-settings) su `"terminal_bell"` per far suonare il campanello del terminale, oppure configura un [hook Notification](#play-a-sound-with-a-notification-hook) per un suono personalizzato o un comando.
+
+La notifica desktop raggiunge la tua macchina locale tramite SSH, quindi una sessione remota può comunque avvertirti. Ghostty e Kitty la inoltrano al tuo centro notifiche del sistema operativo senza ulteriore configurazione. iTerm2 richiede che tu abiliti l'inoltro:
 
 <Steps>
   <Step title="Apri le impostazioni di notifica di iTerm2">
@@ -79,7 +81,7 @@ Se le notifiche ancora non appaiono, conferma che la tua applicazione di termina
 
 ### Play a sound with a Notification hook
 
-In qualsiasi terminale puoi configurare un [hook Notification](/it/hooks-guide#get-notified-when-claude-needs-input) per riprodurre un suono o eseguire un comando personalizzato quando Claude ha bisogno della tua attenzione. Gli hook vengono eseguiti insieme alla notifica desktop piuttosto che sostituirla. I terminali come Warp o Apple Terminal si affidano a un hook da solo poiché Claude Code non invia loro una notifica desktop.
+In qualsiasi terminale puoi configurare un [hook Notification](/it/hooks-guide#get-notified-when-claude-needs-input) per riprodurre un suono o eseguire un comando personalizzato quando Claude ha bisogno della tua attenzione. Gli hook vengono eseguiti insieme alla notifica desktop piuttosto che sostituirla, quindi i terminali che non ricevono una notifica desktop, come Warp o il terminale integrato di VS Code, possono utilizzare un hook o impostare `preferredNotifChannel` su `"terminal_bell"` invece.
 
 L'esempio di seguito riproduce un suono di sistema su macOS. La guida collegata ha comandi di notifica desktop per macOS, Linux e Windows.
 
@@ -147,7 +149,7 @@ L'esempio seguente definisce un tema che mantiene il preset scuro ma ricolora l'
 
 Claude Code monitora `~/.claude/themes/` e ricarica quando un file cambia, quindi le modifiche apportate nel tuo editor si applicano a una sessione in esecuzione senza un riavvio.
 
-Di seguito è riportato l'elenco completo delle personalizzazioni che puoi impostare in `overrides`. L'editor interattivo in `/theme` mostra gli stessi token con un'anteprima dal vivo, incluso un piccolo numero di token interni non trattati qui.
+Il riferimento di seguito copre i token che puoi impostare in `overrides`. L'editor interattivo in `/theme` mostra gli stessi token con un'anteprima dal vivo, più alcuni accenti monouso come i colori della schermata di onboarding che vengono omessi qui.
 
 <Accordion title="Riferimento token di colore">
   L'esempio seguente combina token da diversi gruppi sottostanti: l'accento del marchio, il bordo della modalità piano, gli sfondi diff e lo sfondo del messaggio a schermo intero.
@@ -177,6 +179,7 @@ Di seguito è riportato l'elenco completo delle personalizzazioni che puoi impos
   | `inverseText` | Testo disegnato sopra uno sfondo colorato, come i badge di stato                        |
   | `inactive`    | Testo secondario come suggerimenti, timestamp e elementi disabilitati                   |
   | `subtle`      | Bordi sfumati e testo secondario de-enfatizzato                                         |
+  | `suggestion`  | Suggerimenti di completamento automatico e evidenziazione della selezione nei selettori |
   | `permission`  | Bordi della finestra di dialogo, inclusi i prompt di autorizzazione e i selettori       |
   | `remember`    | Indicatori di memoria e `CLAUDE.md`                                                     |
 
@@ -221,16 +224,40 @@ Di seguito è riportato l'elenco completo delle personalizzazioni che puoi impos
 
   Applicare solo in [modalità di rendering a schermo intero](/it/fullscreen), dove i messaggi hanno un riempimento di sfondo.
 
-  | Token                   | Controlla                                        |
-  | :---------------------- | :----------------------------------------------- |
-  | `userMessageBackground` | Sfondo dietro i tuoi messaggi nella trascrizione |
-  | `selectionBg`           | Sfondo del testo selezionato con il mouse        |
+  | Token                        | Controlla                                                                    |
+  | :--------------------------- | :--------------------------------------------------------------------------- |
+  | `userMessageBackground`      | Sfondo dietro i tuoi messaggi nella trascrizione                             |
+  | `userMessageBackgroundHover` | Sfondo dietro un messaggio mentre è al passaggio del mouse o espanso         |
+  | `messageActionsBackground`   | Sfondo dietro il messaggio selezionato quando la barra delle azioni è aperta |
+  | `bashMessageBackgroundColor` | Sfondo dietro le voci di comando shell `!` nella trascrizione                |
+  | `memoryBackgroundColor`      | Sfondo dietro le voci di memoria `#` nella trascrizione                      |
+  | `selectionBg`                | Sfondo del testo selezionato con il mouse                                    |
+
+  #### Misuratore di utilizzo e etichette degli altoparlanti
+
+  Regola la barra mostrata nella vista `/usage` e le etichette che distinguono i tuoi messaggi da quelli di Claude.
+
+  | Token              | Controlla                                                   |
+  | :----------------- | :---------------------------------------------------------- |
+  | `rate_limit_fill`  | Porzione riempita del misuratore di utilizzo                |
+  | `rate_limit_empty` | Porzione non riempita del misuratore di utilizzo            |
+  | `briefLabelYou`    | Colore dell'etichetta `You` sui tuoi messaggi               |
+  | `briefLabelClaude` | Colore dell'etichetta `Claude` sui messaggi dell'assistente |
 
   #### Varianti shimmer e colori dei subagent
 
-  Diversi token hanno una variante `Shimmer` accoppiata, come `claudeShimmer` e `warningShimmer`, che fornisce il colore più chiaro utilizzato nel gradiente animato dello spinner. Sovrascrivi lo shimmer insieme al suo token di base se l'animazione appare non corrispondente.
+  Diversi token hanno una variante shimmer accoppiata che fornisce il colore più chiaro utilizzato nel gradiente animato dello spinner. Sovrascrivi lo shimmer insieme al suo token di base se l'animazione appare non corrispondente.
+
+  * `claude` e `claudeShimmer`
+  * `warning` e `warningShimmer`
+  * `permission` e `permissionShimmer`
+  * `promptBorder` e `promptBorderShimmer`
+  * `inactive` e `inactiveShimmer`
+  * `fastMode` e `fastModeShimmer`
 
   Ogni [subagent](/it/sub-agents) e attività parallela viene mostrata in uno degli otto colori denominati in modo che tu possa distinguerli nella trascrizione. I nomi dei token seguono il modello `<color>_FOR_SUBAGENTS_ONLY`, dove `<color>` è `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, o `cyan`. Sovrascrivi questi per cambiare l'aspetto di ogni colore denominato. Ad esempio, un subagent con `color: blue` nella sua definizione viene disegnato utilizzando il valore `blue_FOR_SUBAGENTS_ONLY`.
+
+  Le parole chiave [`ultrathink`](/it/model-config#use-ultrathink-for-one-off-deep-reasoning) e [`ultraplan`](/it/ultraplan) nell'input del prompt vengono renderizzate con un gradiente arcobaleno a sette colori. I nomi dei token seguono il modello `rainbow_<color>` e `rainbow_<color>_shimmer`, dove `<color>` è `red`, `orange`, `yellow`, `green`, `blue`, `indigo`, o `violet`.
 </Accordion>
 
 ## Switch to fullscreen rendering

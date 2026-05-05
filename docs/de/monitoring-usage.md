@@ -197,11 +197,11 @@ Wenn `OTEL_LOG_TOOL_CONTENT=1`, zeichnet dieser Span auch ein `tool.output` Span
 
 **`claude_code.tool.blocked_on_user`**
 
-| Attribut      | Beschreibung                                                   | Gated durch |
-| ------------- | -------------------------------------------------------------- | ----------- |
-| `duration_ms` | Zeit, die auf die Berechtigungsentscheidung gewartet wird      |             |
-| `decision`    | `accept` oder `reject`                                         |             |
-| `source`      | Entscheidungsquelle, entsprechend dem `tool_decision` Ereignis |             |
+| Attribut      | Beschreibung                                                                              | Gated durch |
+| ------------- | ----------------------------------------------------------------------------------------- | ----------- |
+| `duration_ms` | Zeit, die auf die Berechtigungsentscheidung gewartet wird                                 |             |
+| `decision`    | `accept` oder `reject`                                                                    |             |
+| `source`      | Entscheidungsquelle, entsprechend dem [Tool-Entscheidungs-Ereignis](#tool-decision-event) |             |
 
 **`claude_code.tool.execution`**
 
@@ -458,7 +458,7 @@ Wird erhöht, wenn der Benutzer die Verwendung des Edit-, Write- oder NotebookEd
 * Alle [Standardattribute](#standardattribute)
 * `tool_name`: Tool-Name (`"Edit"`, `"Write"`, `"NotebookEdit"`)
 * `decision`: Benutzerentscheidung (`"accept"`, `"reject"`)
-* `source`: Entscheidungsquelle - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` oder `"user_reject"`
+* `source`: Entscheidungsquelle. Einer von `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` oder `"user_reject"`. Siehe das [Tool-Entscheidungs-Ereignis](#tool-entscheidungs-ereignis) für die Bedeutung jedes Wertes.
 * `language`: Programmiersprache der bearbeiteten Datei, wie `"TypeScript"`, `"Python"`, `"JavaScript"` oder `"Markdown"`. Gibt `"unknown"` für nicht erkannte Dateierweiterungen zurück.
 
 #### Aktive-Zeit-Zähler
@@ -524,7 +524,7 @@ Protokolliert, wenn ein Tool die Ausführung abgeschlossen hat.
 * `error_type`: Fehler-Kategoriezeichenkette, wenn das Tool fehlgeschlagen ist, wie `"Error:ENOENT"` oder `"ShellError"`
 * `error` (wenn `OTEL_LOG_TOOL_DETAILS=1`): Vollständige Fehlermeldung, wenn das Tool fehlgeschlagen ist
 * `decision_type`: Entweder `"accept"` oder `"reject"`
-* `decision_source`: Entscheidungsquelle - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` oder `"user_reject"`
+* `decision_source`: Entscheidungsquelle. Einer von `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` oder `"user_reject"`. Siehe das [Tool-Entscheidungs-Ereignis](#tool-entscheidungs-ereignis) für die Bedeutung jedes Wertes.
 * `tool_input_size_bytes`: Größe der JSON-serialisierten Tool-Eingabe in Bytes
 * `tool_result_size_bytes`: Größe des Tool-Ergebnisses in Bytes
 * `mcp_server_scope`: MCP-Server-Scope-Kennung (für MCP-Tools)
@@ -635,7 +635,13 @@ Protokolliert, wenn eine Tool-Berechtigungsentscheidung getroffen wird (akzeptie
 * `tool_name`: Name des Tools (zum Beispiel "Read", "Edit", "Write", "NotebookEdit")
 * `tool_use_id`: Eindeutige Kennung für diese Tool-Invokation. Entspricht der `tool_use_id`, die an Hooks übergeben wird, und ermöglicht die Korrelation zwischen OTel-Ereignissen und Hook-erfassten Daten.
 * `decision`: Entweder `"accept"` oder `"reject"`
-* `source`: Entscheidungsquelle - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` oder `"user_reject"`
+* `source`: Entscheidungsquelle:
+  * `"config"`: Automatisch entschieden, ohne Aufforderung, basierend auf Projekteinstellungen, verwalteter Unternehmensrichtlinie, `--allowedTools` oder `--disallowedTools` Flags, dem aktiven Berechtigungsmodus oder weil das Tool inhärent sicher ist.
+  * `"hook"`: Ein `PreToolUse` oder `PermissionRequest` Hook hat die Entscheidung zurückgegeben.
+  * `"user_permanent"`: Wird ausgegeben, wenn der Benutzer "Immer zulassen" wählte, wenn aufgefordert, und eine Regel in seinen persönlichen Einstellungen speichert. Auch für spätere Aufrufe ausgegeben, die dieser gespeicherten Regel entsprechen. Wird als Akzeptanz behandelt.
+  * `"user_temporary"`: Wird ausgegeben, wenn der Benutzer "Ja" oder "Ja, für diese Sitzung" wählte, wenn aufgefordert, ohne eine Regel zu speichern. Auch für spätere Aufrufe in der gleichen Sitzung ausgegeben, die dieser sitzungsbegrenzten Zulassung entsprechen. Wird als Akzeptanz behandelt.
+  * `"user_abort"`: Wird ausgegeben, wenn der Benutzer die Berechtigungsaufforderung geschlossen hat, ohne zu antworten. Wird als Ablehnung behandelt.
+  * `"user_reject"`: Wird ausgegeben, wenn der Benutzer "Nein" wählte, wenn aufgefordert, oder ein Aufruf einer Ablehnungsregel in seinen persönlichen Einstellungen entsprach. Wird als Ablehnung behandelt.
 
 #### Berechtigungsmodus-Änderungs-Ereignis
 

@@ -95,7 +95,7 @@ La casella dei prompt supporta diverse funzioni:
 * **Modalità di permesso**: fai clic sull'indicatore di modalità in fondo alla casella dei prompt per cambiare modalità. In modalità normale, Claude chiede il permesso prima di ogni azione. In Plan Mode, Claude descrive cosa farà e attende l'approvazione prima di apportare modifiche. VS Code apre automaticamente il piano come documento markdown completo dove puoi aggiungere commenti inline per fornire feedback prima che Claude inizi. In modalità auto-accept, Claude apporta modifiche senza chiedere. Imposta il valore predefinito nelle impostazioni di VS Code in `claudeCode.initialPermissionMode`.
 * **Menu dei comandi**: fai clic su `/` o digita `/` per aprire il menu dei comandi. Le opzioni includono l'allegato di file, il cambio di modelli, l'attivazione del pensiero esteso, la visualizzazione dell'utilizzo del piano (`/usage`) e l'avvio di una sessione [Remote Control](/it/remote-control) (`/remote-control`). La sezione Personalizza fornisce accesso ai server MCP, hooks, memoria, autorizzazioni e plugin. Gli elementi con un'icona del terminale si aprono nel terminale integrato.
 * **Indicatore di contesto**: la casella dei prompt mostra quanto della finestra di contesto di Claude stai utilizzando. Claude si compatta automaticamente quando necessario, oppure puoi eseguire `/compact` manualmente.
-* **Pensiero esteso**: consente a Claude di dedicare più tempo al ragionamento su problemi complessi. Attivalo tramite il menu dei comandi (`/`). Il ragionamento di Claude appare nella conversazione come blocchi compressi: fai clic su un blocco per leggerlo, oppure premi `Ctrl+O` per espandere o comprimere ogni blocco di pensiero nella sessione. Consulta [Pensiero esteso](/it/common-workflows#use-extended-thinking-thinking-mode) per i dettagli.
+* **Pensiero esteso**: consente a Claude di dedicare più tempo al ragionamento su problemi complessi. Attivalo tramite il menu dei comandi (`/`). Il ragionamento di Claude appare nella conversazione come blocchi compressi: fai clic su un blocco per leggerlo, oppure premi `Ctrl+O` per espandere o comprimere ogni blocco di pensiero nella sessione. Consulta [Pensiero esteso](/it/model-config#extended-thinking) per i dettagli.
 * **Input multi-riga**: premi `Shift+Enter` per aggiungere una nuova riga senza inviare. Funziona anche nell'input di testo libero "Altro" dei dialoghi delle domande.
 
 ### Riferisci file e cartelle
@@ -115,7 +115,7 @@ Puoi anche tenere premuto `Shift` mentre trascini i file nella casella dei promp
 
 ### Riprendi conversazioni passate
 
-Fai clic sul pulsante **Cronologia sessioni** in cima al pannello Claude Code per accedere alla cronologia delle conversazioni. Puoi cercare per parola chiave o sfogliare per tempo (Oggi, Ieri, Ultimi 7 giorni, ecc.). Fai clic su qualsiasi conversazione per riprenderla con la cronologia completa dei messaggi. Le nuove sessioni ricevono titoli generati dall'IA in base al tuo primo messaggio. Passa il mouse su una sessione per rivelare le azioni di rinomina e rimozione: rinomina per darle un titolo descrittivo, o rimuovi per eliminarla dall'elenco. Per ulteriori informazioni sulla ripresa delle sessioni, consulta [Flussi di lavoro comuni](/it/common-workflows#resume-previous-conversations).
+Fai clic sul pulsante **Cronologia sessioni** in cima al pannello Claude Code per accedere alla cronologia delle conversazioni. Puoi cercare per parola chiave o sfogliare per tempo (Oggi, Ieri, Ultimi 7 giorni, ecc.). Fai clic su qualsiasi conversazione per riprenderla con la cronologia completa dei messaggi. Le nuove sessioni ricevono titoli generati dall'IA in base al tuo primo messaggio. Passa il mouse su una sessione per rivelare le azioni di rinomina e rimozione: rinomina per darle un titolo descrittivo, o rimuovi per eliminarla dall'elenco. Per ulteriori informazioni sulla ripresa delle sessioni, consulta [Gestisci sessioni](/it/sessions).
 
 ### Riprendi sessioni remote da Claude.ai
 
@@ -399,7 +399,7 @@ Usa il flag `--worktree` (`-w`) per avviare Claude in un worktree isolato con i 
 claude --worktree feature-auth
 ```
 
-Ogni worktree mantiene uno stato di file indipendente mentre condivide la cronologia di git. Ciò impedisce alle istanze di Claude di interferire l'una con l'altra quando lavorano su diversi compiti. Per ulteriori dettagli, consulta [Esegui sessioni parallele di Claude Code con Git worktrees](/it/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees).
+Ogni worktree mantiene uno stato di file indipendente mentre condivide la cronologia di git. Ciò impedisce alle istanze di Claude di interferire l'una con l'altra quando lavorano su diversi compiti. Per ulteriori dettagli, consulta [Esegui sessioni parallele con Git worktrees](/it/worktrees).
 
 ## Usa provider di terze parti
 
@@ -475,6 +475,16 @@ L'icona Spark appare nella **Barra degli strumenti dell'editor** (in alto a dest
 5. **Controlla l'affidabilità dell'area di lavoro**: L'estensione non funziona in Modalità limitata
 
 In alternativa, fai clic su "✱ Claude Code" nella **Barra di stato** (angolo in basso a destra). Funziona anche senza un file aperto. Puoi anche usare la **Tavolozza dei comandi** (`Cmd+Shift+P` / `Ctrl+Shift+P`) e digitare "Claude Code".
+
+### Cmd+Esc non fa nulla su macOS
+
+Su macOS Tahoe e versioni successive, la scorciatoia di sistema Game Overlay è associata a `Cmd+Esc` per impostazione predefinita e intercetta la pressione del tasto prima che raggiunga VS Code. Per liberare la scorciatoia:
+
+1. Apri Impostazioni di sistema
+2. Vai a Tastiera, quindi Scorciatoie da tastiera, quindi Controller di gioco
+3. Deseleziona la casella di controllo Game Overlay
+
+In alternativa, riassegna l'estensione a un tasto diverso: apri l'editor [Scorciatoie da tastiera](https://code.visualstudio.com/docs/configure/keybindings) di VS Code (`Cmd+K Cmd+S`), cerca `Claude Code: Focus input` e assegna una nuova associazione.
 
 ### Claude Code non risponde mai
 

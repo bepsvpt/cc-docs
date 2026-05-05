@@ -197,11 +197,11 @@ Agent SDK 및 `claude -p` 세션에서 `TRACEPARENT`가 환경에 설정되면 `
 
 **`claude_code.tool.blocked_on_user`**
 
-| 속성            | 설명                              | 게이트 대상 |
-| ------------- | ------------------------------- | ------ |
-| `duration_ms` | 권한 결정 대기 시간                     |        |
-| `decision`    | `accept` 또는 `reject`            |        |
-| `source`      | 결정 출처 (`tool_decision` 이벤트와 일치) |        |
+| 속성            | 설명                                                      | 게이트 대상 |
+| ------------- | ------------------------------------------------------- | ------ |
+| `duration_ms` | 권한 결정 대기 시간                                             |        |
+| `decision`    | `accept` 또는 `reject`                                    |        |
+| `source`      | 결정 출처 ([Tool decision event](#tool-decision-event)와 일치) |        |
 
 **`claude_code.tool.execution`**
 
@@ -458,7 +458,7 @@ Claude Code를 통해 git 커밋을 생성할 때 증가합니다.
 * 모든 [표준 속성](#standard-attributes)
 * `tool_name`: 도구 이름 (`"Edit"`, `"Write"`, `"NotebookEdit"`)
 * `decision`: 사용자 결정 (`"accept"`, `"reject"`)
-* `source`: 결정 출처 - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` 또는 `"user_reject"`
+* `source`: 결정 출처. `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` 또는 `"user_reject"` 중 하나. [도구 결정 이벤트](#tool-decision-event)를 참조하여 각 값의 의미를 확인하세요.
 * `language`: 편집된 파일의 프로그래밍 언어 (예: `"TypeScript"`, `"Python"`, `"JavaScript"`, `"Markdown"`). 인식되지 않는 파일 확장자의 경우 `"unknown"`을 반환합니다.
 
 #### 활성 시간 카운터
@@ -524,7 +524,7 @@ Claude Code는 OpenTelemetry 로그/이벤트를 통해 다음 이벤트를 내�
 * `error_type`: 도구가 실패했을 때 오류 범주 문자열 (예: `"Error:ENOENT"` 또는 `"ShellError"`)
 * `error` (`OTEL_LOG_TOOL_DETAILS=1`일 때): 도구가 실패했을 때 전체 오류 메시지
 * `decision_type`: `"accept"` 또는 `"reject"`
-* `decision_source`: 결정 출처 - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` 또는 `"user_reject"`
+* `decision_source`: 결정 출처. `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` 또는 `"user_reject"` 중 하나. [도구 결정 이벤트](#tool-decision-event)를 참조하여 각 값의 의미를 확인하세요.
 * `tool_input_size_bytes`: JSON 직렬화된 도구 입력의 크기 (바이트)
 * `tool_result_size_bytes`: 도구 결과의 크기 (바이트)
 * `mcp_server_scope`: MCP 서버 범위 식별자 (MCP 도구의 경우)
@@ -635,7 +635,13 @@ Claude에 대한 API 요청이 실패할 때 기록됩니다.
 * `tool_name`: 도구의 이름 (예: "Read", "Edit", "Write", "NotebookEdit")
 * `tool_use_id`: 이 도구 호출의 고유 식별자. 훅에 전달된 `tool_use_id`와 일치하여 OTel 이벤트와 훅 캡처 데이터 간의 상관관계를 허용합니다.
 * `decision`: `"accept"` 또는 `"reject"`
-* `source`: 결정 출처 - `"config"`, `"hook"`, `"user_permanent"`, `"user_temporary"`, `"user_abort"` 또는 `"user_reject"`
+* `source`: 결정 출처:
+  * `"config"`: 프로젝트 설정, 엔터프라이즈 관리 정책, `--allowedTools` 또는 `--disallowedTools` 플래그, 활성 권한 모드 또는 도구가 본질적으로 안전하기 때문에 프롬프트 없이 자동으로 결정됨.
+  * `"hook"`: `PreToolUse` 또는 `PermissionRequest` 훅이 결정을 반환함.
+  * `"user_permanent"`: 사용자가 프롬프트될 때 "항상 허용"을 선택하여 개인 설정에 규칙을 저장했을 때 내보내집니다. 또한 해당 저장된 규칙과 일치하는 이후 호출에 대해서도 내보내집니다. 수락으로 처리됨.
+  * `"user_temporary"`: 사용자가 프롬프트될 때 "예" 또는 "이 세션에만"을 선택했지만 규칙을 저장하지 않았을 때 내보내집니다. 또한 해당 세션 범위 허용과 일치하는 같은 세션의 이후 호출에 대해서도 내보내집니다. 수락으로 처리됨.
+  * `"user_abort"`: 사용자가 답변 없이 권한 프롬프트를 닫았을 때 내보내집니다. 거부로 처리됨.
+  * `"user_reject"`: 사용자가 프롬프트될 때 "아니오"를 선택했거나 호출이 개인 설정의 거부 규칙과 일치했을 때 내보내집니다. 거부로 처리됨.
 
 #### 권한 모드 변경 이벤트
 

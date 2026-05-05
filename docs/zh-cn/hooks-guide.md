@@ -735,7 +735,10 @@ hook 进程仅在 Bash 命令的子命令与 `git *` 匹配时生成，或当命
 模型的唯一工作是返回一个是/否决策作为 JSON：
 
 * `"ok": true`：操作继续
-* `"ok": false`：操作被阻止。对于 `Stop` 和 `SubagentStop` hooks，`reason` 被反馈给 Claude，以便它继续工作。对于其他事件，回合结束，`reason` 在聊天中显示为警告行。Claude 看不到它。
+* `"ok": false`：发生的情况取决于事件：
+  * `Stop` 和 `SubagentStop`：`reason` 被反馈给 Claude，以便它继续工作
+  * `PreToolUse`：工具调用被拒绝，`reason` 作为工具错误返回给 Claude，以便它可以调整并继续
+  * `PostToolUse`、`PostToolBatch`、`UserPromptSubmit` 和 `UserPromptExpansion`：回合结束，`reason` 在聊天中显示为警告行
 
 此示例使用 `Stop` hook 询问模型是否所有请求的任务都已完成。如果模型返回 `"ok": false`，Claude 继续工作并使用 `reason` 作为其下一条指令：
 

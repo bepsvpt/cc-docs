@@ -974,7 +974,7 @@ Para bloquear um prompt, retorne um objeto JSON com `decision` definido para `"b
 | `decision`          | `"block"` previne o prompt de ser processado e o apaga do contexto. Omita para permitir que o prompt prossiga                            |
 | `reason`            | Mostrado ao usuário quando `decision` é `"block"`. Não adicionado ao contexto                                                            |
 | `additionalContext` | String adicionada ao contexto de Claude junto com o prompt submetido. Consulte [Adicionar contexto para Claude](#add-context-for-claude) |
-| `sessionTitle`      | Define o título da sessão, mesmo efeito que `/rename`. Use para nomear sessões automaticamente baseado no conteúdo do prompt             |
+| `sessionTitle`      | Define o título da sessão. Use para nomear sessões automaticamente baseado no conteúdo do prompt                                         |
 
 ```json theme={null}
 {
@@ -2411,7 +2411,15 @@ O LLM deve responder com JSON contendo:
 | `ok`     | `true` permite a ação, `false` a bloqueia                     |
 | `reason` | Obrigatório quando `ok` é `false`. Explicação para o bloqueio |
 
-Para `Stop` e `SubagentStop`, uma razão `ok: false` é retornada a Claude como sua próxima instrução e o turno continua. Para todos os outros eventos suportados, o turno termina e a razão aparece no chat como uma linha de aviso; Claude não a vê. Isto é equivalente a retornar `"continue": false` de um hook de comando. Se você precisar de semântica de bloqueio diferente nesses eventos, use um [hook de comando](#command-hook-fields) com os campos por evento descritos em [Controle de decisão](#decision-control).
+O que acontece em `ok: false` depende do evento:
+
+* `Stop` e `SubagentStop`: a razão é retornada a Claude como sua próxima instrução e o turno continua
+* `PreToolUse`: a chamada de ferramenta é negada e a razão é retornada a Claude como o erro da ferramenta, equivalente a um hook de comando com `permissionDecision: "deny"`
+* `PostToolUse`, `PostToolBatch`, `UserPromptSubmit` e `UserPromptExpansion`: o turno termina e a razão aparece no chat como uma linha de aviso, equivalente a retornar `"continue": false` de um hook de comando
+* `PostToolUseFailure`, `TaskCreated` e `TaskCompleted`: a razão é retornada a Claude como um erro de ferramenta, similar a `PreToolUse`
+* `PermissionRequest`: `ok: false` não tem efeito. Para negar uma aprovação de um hook, use um [hook de comando](#command-hook-fields) retornando `hookSpecificOutput.decision.behavior: "deny"`
+
+Se você precisar de controle mais fino em qualquer evento, use um [hook de comando](#command-hook-fields) com os campos por evento descritos em [Controle de decisão](#decision-control).
 
 ### Exemplo: Hook Stop com múltiplos critérios
 

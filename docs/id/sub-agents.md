@@ -42,8 +42,8 @@ Claude Code mencakup subagent bawaan yang Claude gunakan secara otomatis jika se
     Agen cepat yang dioptimalkan hanya-baca untuk mencari dan menganalisis basis kode.
 
     * **Model**: Haiku (cepat, latensi rendah)
-    * **Alat**: Alat hanya-baca (akses ditolak ke alat Write dan Edit)
-    * **Tujuan**: Penemuan file, pencarian kode, eksplorasi basis kode
+    * **Tools**: Alat hanya-baca (akses ditolak ke alat Write dan Edit)
+    * **Purpose**: Penemuan file, pencarian kode, eksplorasi basis kode
 
     Claude mendelegasikan ke Explore ketika perlu mencari atau memahami basis kode tanpa membuat perubahan. Ini menjaga hasil eksplorasi di luar konteks percakapan utama Anda.
 
@@ -51,11 +51,11 @@ Claude Code mencakup subagent bawaan yang Claude gunakan secara otomatis jika se
   </Tab>
 
   <Tab title="Plan">
-    Agen penelitian yang digunakan selama [plan mode](/id/common-workflows#use-plan-mode-for-safe-code-analysis) untuk mengumpulkan konteks sebelum menyajikan rencana.
+    Agen penelitian yang digunakan selama [plan mode](/id/permission-modes#analyze-before-you-edit-with-plan-mode) untuk mengumpulkan konteks sebelum menyajikan rencana.
 
     * **Model**: Mewarisi dari percakapan utama
-    * **Alat**: Alat hanya-baca (akses ditolak ke alat Write dan Edit)
-    * **Tujuan**: Penelitian basis kode untuk perencanaan
+    * **Tools**: Alat hanya-baca (akses ditolak ke alat Write dan Edit)
+    * **Purpose**: Penelitian basis kode untuk perencanaan
 
     Ketika Anda dalam plan mode dan Claude perlu memahami basis kode Anda, Claude mendelegasikan penelitian ke subagent Plan. Ini mencegah nesting tak terbatas (subagent tidak dapat menelurkan subagent lain) sambil tetap mengumpulkan konteks yang diperlukan.
   </Tab>
@@ -64,8 +64,8 @@ Claude Code mencakup subagent bawaan yang Claude gunakan secara otomatis jika se
     Agen yang mampu untuk tugas kompleks multi-langkah yang memerlukan eksplorasi dan tindakan.
 
     * **Model**: Mewarisi dari percakapan utama
-    * **Alat**: Semua alat
-    * **Tujuan**: Penelitian kompleks, operasi multi-langkah, modifikasi kode
+    * **Tools**: Semua alat
+    * **Purpose**: Penelitian kompleks, operasi multi-langkah, modifikasi kode
 
     Claude mendelegasikan ke general-purpose ketika tugas memerlukan eksplorasi dan modifikasi, penalaran kompleks untuk menafsirkan hasil, atau beberapa langkah yang saling bergantung.
   </Tab>
@@ -76,7 +76,7 @@ Claude Code mencakup subagent bawaan yang Claude gunakan secara otomatis jika se
     | Agen              | Model  | Kapan Claude menggunakannya                                                  |
     | :---------------- | :----- | :--------------------------------------------------------------------------- |
     | statusline-setup  | Sonnet | Ketika Anda menjalankan `/statusline` untuk mengonfigurasi baris status Anda |
-    | Claude Code Guide | Haiku  | Ketika Anda mengajukan pertanyaan tentang fitur Claude Code                  |
+    | claude-code-guide | Haiku  | Ketika Anda mengajukan pertanyaan tentang fitur Claude Code                  |
   </Tab>
 </Tabs>
 
@@ -180,20 +180,43 @@ Subagent proyek ditemukan dengan berjalan naik dari direktori kerja saat ini. Di
 
 **Subagent yang ditentukan CLI** dilewatkan sebagai JSON saat meluncurkan Claude Code. Mereka hanya ada untuk sesi itu dan tidak disimpan ke disk, menjadikannya berguna untuk pengujian cepat atau skrip otomasi. Anda dapat mendefinisikan beberapa subagent dalam satu panggilan `--agents`:
 
-```bash theme={null}
-claude --agents '{
-  "code-reviewer": {
-    "description": "Expert code reviewer. Use proactively after code changes.",
-    "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
-    "tools": ["Read", "Grep", "Glob", "Bash"],
-    "model": "sonnet"
-  },
-  "debugger": {
-    "description": "Debugging specialist for errors and test failures.",
-    "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
-  }
-}'
-```
+<Tabs>
+  <Tab title="macOS, Linux, WSL">
+    ```bash theme={null}
+    claude --agents '{
+      "code-reviewer": {
+        "description": "Expert code reviewer. Use proactively after code changes.",
+        "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
+        "tools": ["Read", "Grep", "Glob", "Bash"],
+        "model": "sonnet"
+      },
+      "debugger": {
+        "description": "Debugging specialist for errors and test failures.",
+        "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
+      }
+    }'
+    ```
+  </Tab>
+
+  <Tab title="Windows PowerShell">
+    ```powershell theme={null}
+    claude --agents @'
+    {
+      "code-reviewer": {
+        "description": "Expert code reviewer. Use proactively after code changes.",
+        "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
+        "tools": ["Read", "Grep", "Glob", "Bash"],
+        "model": "sonnet"
+      },
+      "debugger": {
+        "description": "Debugging specialist for errors and test failures.",
+        "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
+      }
+    }
+    '@
+    ```
+  </Tab>
+</Tabs>
 
 Flag `--agents` menerima JSON dengan [frontmatter](#supported-frontmatter-fields) yang sama bidang file-based subagent: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `initialPrompt`, `memory`, `effort`, `background`, `isolation`, dan `color`. Gunakan `prompt` untuk prompt sistem, setara dengan badan markdown dalam subagent berbasis file.
 
@@ -212,7 +235,7 @@ Definisi subagent dari salah satu cakupan ini juga tersedia untuk [tim agen](/id
 File subagent menggunakan frontmatter YAML untuk konfigurasi, diikuti oleh prompt sistem dalam Markdown:
 
 <Note>
-  Subagent dimuat saat awal sesi. Jika Anda membuat subagent dengan menambahkan file secara manual, restart sesi Anda atau gunakan `/agents` untuk memuatnya segera.
+  Subagent dimuat saat awal sesi. Jika Anda menambah atau mengedit file subagent secara langsung di disk, restart sesi Anda untuk memuatnya. Subagent yang dibuat melalui antarmuka `/agents` berlaku segera tanpa restart.
 </Note>
 
 ```markdown theme={null}
@@ -250,7 +273,7 @@ Bidang berikut dapat digunakan dalam frontmatter YAML. Hanya `name` dan `descrip
 | `memory`          | Tidak      | [Cakupan memori persisten](#enable-persistent-memory): `user`, `project`, atau `local`. Memungkinkan pembelajaran lintas sesi                                                                                                                                                                                                                                         |
 | `background`      | Tidak      | Atur ke `true` untuk selalu menjalankan subagent ini sebagai [background task](#run-subagents-in-foreground-or-background). Default: `false`                                                                                                                                                                                                                          |
 | `effort`          | Tidak      | Tingkat usaha ketika subagent ini aktif. Menimpa tingkat usaha sesi. Default: mewarisi dari sesi. Opsi: `low`, `medium`, `high`, `xhigh`, `max`; tingkat yang tersedia tergantung pada model                                                                                                                                                                          |
-| `isolation`       | Tidak      | Atur ke `worktree` untuk menjalankan subagent dalam [git worktree](/id/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) sementara, memberikannya salinan repositori yang terisolasi. Worktree secara otomatis dibersihkan jika subagent tidak membuat perubahan                                                                                 |
+| `isolation`       | Tidak      | Atur ke `worktree` untuk menjalankan subagent dalam [git worktree](/id/worktrees) sementara, memberikannya salinan repositori yang terisolasi. Worktree secara otomatis dibersihkan jika subagent tidak membuat perubahan                                                                                                                                             |
 | `color`           | Tidak      | Warna tampilan untuk subagent dalam daftar tugas dan transkrip. Menerima `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, atau `cyan`                                                                                                                                                                                                                    |
 | `initialPrompt`   | Tidak      | Auto-submitted sebagai putaran pengguna pertama ketika agen ini berjalan sebagai agen sesi utama (melalui `--agent` atau pengaturan `agent`). [Commands](/id/commands) dan [skills](/id/skills) diproses. Ditambahkan di depan prompt yang disediakan pengguna apa pun                                                                                                |
 
@@ -484,7 +507,7 @@ fi
 exit 0
 ```
 
-Lihat [Hook input](/id/hooks#pretooluse-input) untuk skema input lengkap dan [exit codes](/id/hooks#exit-code-output) untuk bagaimana kode keluar mempengaruhi perilaku.
+Lihat [Hook input](/id/hooks#pretooluse-input) untuk skema input lengkap dan [exit codes](/id/hooks#exit-code-output) untuk bagaimana kode keluar mempengaruhi perilaku. Di Windows, tulis skrip hook dalam PowerShell dan tambahkan `shell: powershell` ke entri hook seperti yang ditunjukkan dalam [menjalankan hooks dalam PowerShell](/id/hooks#windows-powershell-tool).
 
 #### Nonaktifkan subagent tertentu
 
@@ -992,11 +1015,13 @@ fi
 exit 0
 ```
 
-Buat skrip dapat dieksekusi:
+Di macOS dan Linux, buat skrip dapat dieksekusi:
 
 ```bash theme={null}
 chmod +x ./scripts/validate-readonly-query.sh
 ```
+
+Di Windows, tulis skrip validasi dalam PowerShell dan tambahkan `shell: powershell` ke entri hook. Lihat [menjalankan hooks dalam PowerShell](/id/hooks#windows-powershell-tool).
 
 Hook menerima JSON melalui stdin dengan perintah Bash dalam `tool_input.command`. Kode keluar 2 memblokir operasi dan mengirimkan pesan kesalahan kembali ke Claude. Lihat [Hooks](/id/hooks#exit-code-output) untuk detail tentang kode keluar dan [Hook input](/id/hooks#pretooluse-input) untuk skema input lengkap.
 

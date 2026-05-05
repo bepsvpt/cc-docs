@@ -63,7 +63,9 @@ Claude Code 在任何終端機中都可以無需配置而運作。此頁面適�
 
 當 Claude 完成工作或暫停以進行權限提示時，它會觸發通知事件。將其顯示為終端機鈴聲或桌面通知可讓您在長工作執行時切換到其他工作。
 
-Claude Code 僅在 Ghostty、Kitty 和 iTerm2 中發送桌面通知；所有其他終端機都需要[通知 hook](#play-a-sound-with-a-notification-hook)。通知也會透過 SSH 到達您的本機，因此遠端工作階段仍然可以提醒您。Ghostty 和 Kitty 無需進一步設置即可將其轉發到您的 OS 通知中心。iTerm2 要求您啟用轉發：
+Claude Code 預設僅在 Ghostty、Kitty 和 iTerm2 中發送桌面通知。在其他終端機中，將 [`preferredNotifChannel`](/zh-TW/settings#available-settings) 設定為 `"terminal_bell"` 以改為響起終端機鈴聲，或配置[通知 hook](#play-a-sound-with-a-notification-hook) 以獲得自訂聲音或命令。
+
+桌面通知透過 SSH 到達您的本機，因此遠端工作階段仍然可以提醒您。Ghostty 和 Kitty 無需進一步設置即可將其轉發到您的 OS 通知中心。iTerm2 要求您啟用轉發：
 
 <Steps>
   <Step title="開啟 iTerm2 通知設定">
@@ -79,7 +81,7 @@ Claude Code 僅在 Ghostty、Kitty 和 iTerm2 中發送桌面通知；所有其�
 
 ### 使用通知 hook 播放聲音
 
-在任何終端機中，您可以配置[通知 hook](/zh-TW/hooks-guide#get-notified-when-claude-needs-input) 以在 Claude 需要您的注意時播放聲音或執行自訂命令。Hooks 與桌面通知一起執行，而不是替代它。Warp 或 Apple Terminal 等終端機依賴 hook 單獨運作，因為 Claude Code 不會向它們發送桌面通知。
+在任何終端機中，您可以配置[通知 hook](/zh-TW/hooks-guide#get-notified-when-claude-needs-input) 以在 Claude 需要您的注意時播放聲音或執行自訂命令。Hooks 與內建通知一起執行，而不是替代它，因此不會收到桌面通知的終端機（例如 Warp 或 VS Code 整合終端機）可以使用 hook 或將 `preferredNotifChannel` 設定為 `"terminal_bell"` 代替。
 
 下面的範例在 macOS 上播放系統聲音。連結的指南包含 macOS、Linux 和 Windows 的桌面通知命令。
 
@@ -147,7 +149,7 @@ set -as terminal-features 'xterm*:extkeys'
 
 Claude Code 監視 `~/.claude/themes/` 並在檔案變更時重新載入，因此在您的編輯器中所做的編輯會在執行中的工作階段中應用，無需重新啟動。
 
-以下是您可以在 `overrides` 中設定的完整自訂清單。`/theme` 中的互動編輯器顯示相同的令牌，並提供即時預覽，包括此處未涵蓋的少量內部令牌。
+以下參考涵蓋了您可以在 `overrides` 中設定的令牌。`/theme` 中的互動編輯器顯示相同的令牌，並提供即時預覽，加上此處未涵蓋的少數單一用途重點，例如上線畫面色彩。
 
 <Accordion title="色彩令牌參考">
   以下範例結合了下列幾個群組中的令牌：品牌重點、Plan Mode 邊框、diff 背景和全螢幕訊息背景。
@@ -177,6 +179,7 @@ Claude Code 監視 `~/.claude/themes/` 並在檔案變更時重新載入，因�
   | `inverseText` | 繪製在彩色背景上的文字，例如狀態徽章   |
   | `inactive`    | 次要文字，例如提示、時間戳記和停用的項目 |
   | `subtle`      | 淡色邊框和去強調的次要文字        |
+  | `suggestion`  | 自動完成建議和選擇器中的選擇突出顯示   |
   | `permission`  | 對話方塊邊框，包括權限提示和選擇器    |
   | `remember`    | 記憶體和 `CLAUDE.md` 指示器 |
 
@@ -221,16 +224,40 @@ Claude Code 監視 `~/.claude/themes/` 並在檔案變更時重新載入，因�
 
   僅在[全螢幕呈現模式](/zh-TW/fullscreen)中套用，其中訊息具有背景填充。
 
-  | 令牌                      | 控制項            |
-  | :---------------------- | :------------- |
-  | `userMessageBackground` | 文字記錄中您的訊息後面的背景 |
-  | `selectionBg`           | 使用滑鼠選取的文字背景    |
+  | 令牌                           | 控制項                       |
+  | :--------------------------- | :------------------------ |
+  | `userMessageBackground`      | 文字記錄中您的訊息後面的背景            |
+  | `userMessageBackgroundHover` | 訊息被懸停或展開時其後面的背景           |
+  | `messageActionsBackground`   | 動作列開啟時所選訊息後面的背景           |
+  | `bashMessageBackgroundColor` | 文字記錄中 `!` shell 命令項目後面的背景 |
+  | `memoryBackgroundColor`      | 文字記錄中 `#` 記憶體項目後面的背景      |
+  | `selectionBg`                | 使用滑鼠選取的文字背景               |
+
+  #### 使用量計量和說話者標籤
+
+  調整 `/usage` 檢視中顯示的列，以及區分您的訊息與 Claude 訊息的標籤。
+
+  | 令牌                 | 控制項                  |
+  | :----------------- | :------------------- |
+  | `rate_limit_fill`  | 使用量計量的填充部分           |
+  | `rate_limit_empty` | 使用量計量的未填充部分          |
+  | `briefLabelYou`    | 您的訊息上 `You` 標籤的色彩    |
+  | `briefLabelClaude` | 助手訊息上 `Claude` 標籤的色彩 |
 
   #### 微光變體和子代理色彩
 
-  多個令牌具有配對的 `Shimmer` 變體，例如 `claudeShimmer` 和 `warningShimmer`，可提供微調器動畫漸層中使用的較淺色彩。如果動畫看起來不相符，請與其基礎令牌一起覆蓋微光。
+  多個令牌具有配對的微光變體，可提供微調器動畫漸層中使用的較淺色彩。如果動畫看起來不相符，請與其基礎令牌一起覆蓋微光。
+
+  * `claude` 和 `claudeShimmer`
+  * `warning` 和 `warningShimmer`
+  * `permission` 和 `permissionShimmer`
+  * `promptBorder` 和 `promptBorderShimmer`
+  * `inactive` 和 `inactiveShimmer`
+  * `fastMode` 和 `fastModeShimmer`
 
   每個[子代理](/zh-TW/sub-agents)和平行工作都以八個命名色彩之一顯示，以便您可以在文字記錄中區分它們。令牌名稱遵循 `<color>_FOR_SUBAGENTS_ONLY` 的模式，其中 `<color>` 是 `red`、`blue`、`green`、`yellow`、`purple`、`orange`、`pink` 或 `cyan`。覆蓋這些以變更每個命名色彩的外觀。例如，定義中具有 `color: blue` 的子代理使用 `blue_FOR_SUBAGENTS_ONLY` 值繪製。
+
+  [`ultrathink`](/zh-TW/model-config#use-ultrathink-for-one-off-deep-reasoning) 和 [`ultraplan`](/zh-TW/ultraplan) 提示輸入中的關鍵字使用七色彩虹漸層呈現。令牌名稱遵循 `rainbow_<color>` 和 `rainbow_<color>_shimmer` 的模式，其中 `<color>` 是 `red`、`orange`、`yellow`、`green`、`blue`、`indigo` 或 `violet`。
 </Accordion>
 
 ## 切換到全螢幕渲染

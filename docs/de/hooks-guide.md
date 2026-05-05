@@ -735,7 +735,10 @@ Für Entscheidungen, die Urteilsvermögen erfordern, anstatt deterministischer R
 Die einzige Aufgabe des Modells ist, eine Ja/Nein-Entscheidung als JSON zurückzugeben:
 
 * `"ok": true`: die Aktion wird fortgesetzt
-* `"ok": false`: die Aktion wird blockiert. Für `Stop`- und `SubagentStop`-Hooks wird der `reason` an Claude zurückgegeben, sodass es weiterarbeitet. Für andere Ereignisse endet der Zug und der `reason` erscheint im Chat als Warnzeile. Claude sieht ihn nicht.
+* `"ok": false`: was passiert, hängt vom Ereignis ab:
+  * `Stop` und `SubagentStop`: der `reason` wird an Claude zurückgegeben, sodass es weiterarbeitet
+  * `PreToolUse`: der Tool-Aufruf wird verweigert und der `reason` wird an Claude als Tool-Fehler zurückgegeben, sodass es sich anpassen und fortfahren kann
+  * `PostToolUse`, `PostToolBatch`, `UserPromptSubmit` und `UserPromptExpansion`: der Zug endet und der `reason` erscheint im Chat als Warnzeile
 
 Dieses Beispiel verwendet einen `Stop`-Hook, um das Modell zu fragen, ob alle angeforderten Aufgaben abgeschlossen sind. Wenn das Modell `"ok": false` zurückgibt, arbeitet Claude weiter und verwendet den `reason` als nächste Anweisung:
 

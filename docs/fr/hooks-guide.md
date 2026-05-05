@@ -735,7 +735,10 @@ Pour les décisions qui nécessitent un jugement plutôt que des règles déterm
 Le seul travail du modèle est de retourner une décision oui/non en JSON :
 
 * `"ok": true` : l'action se poursuit
-* `"ok": false` : l'action est bloquée. Pour les hooks `Stop` et `SubagentStop`, la `reason` est renvoyée à Claude afin qu'il continue à travailler. Pour les autres événements, le tour se termine et la `reason` apparaît dans le chat sous forme de ligne d'avertissement. Claude ne la voit pas.
+* `"ok": false` : ce qui se passe dépend de l'événement :
+  * `Stop` et `SubagentStop` : la `reason` est renvoyée à Claude afin qu'il continue à travailler
+  * `PreToolUse` : l'appel d'outil est refusé et la `reason` est retournée à Claude comme erreur d'outil, afin qu'il puisse s'ajuster et continuer
+  * `PostToolUse`, `PostToolBatch`, `UserPromptSubmit` et `UserPromptExpansion` : le tour se termine et la `reason` apparaît dans le chat sous forme de ligne d'avertissement
 
 Cet exemple utilise un hook `Stop` pour demander au modèle si toutes les tâches demandées sont complètes. Si le modèle retourne `"ok": false`, Claude continue à travailler et utilise la `reason` comme sa prochaine instruction :
 

@@ -974,7 +974,7 @@ Um einen Prompt zu blockieren, geben Sie ein JSON-Objekt mit `decision` auf `"bl
 | `decision`          | `"block"` verhindert die Verarbeitung des Prompts und löscht ihn aus dem Kontext. Weglassen, um den Prompt fortzusetzen                                      |
 | `reason`            | Wird dem Benutzer angezeigt, wenn `decision` `"block"` ist. Wird nicht zum Kontext hinzugefügt                                                               |
 | `additionalContext` | Zeichenkette, die zu Claudes Kontext hinzugefügt wird, zusammen mit dem eingereichten Prompt. Siehe [Kontext für Claude hinzufügen](#add-context-for-claude) |
-| `sessionTitle`      | Setzt den Sitzungstitel, gleiche Auswirkung wie `/rename`. Verwenden Sie, um Sitzungen automatisch basierend auf dem Prompt-Inhalt zu benennen               |
+| `sessionTitle`      | Setzt den Sitzungstitel. Verwenden Sie, um Sitzungen automatisch basierend auf dem Prompt-Inhalt zu benennen                                                 |
 
 ```json theme={null}
 {
@@ -2411,7 +2411,15 @@ Das LLM muss mit JSON antworten, das Folgendes enthält:
 | `ok`     | `true` erlaubt die Aktion, `false` verhindert sie                  |
 | `reason` | Erforderlich, wenn `ok` `false` ist. Erklärung für die Blockierung |
 
-Für `Stop` und `SubagentStop` wird ein `ok: false` Grund an Claude als nächste Anweisung zurückgegeben und der Turn wird fortgesetzt. Für alle anderen unterstützten Ereignisse endet der Turn und der Grund wird im Chat als Warnzeile angezeigt; Claude sieht ihn nicht. Dies ist gleichbedeutend mit der Rückgabe von `"continue": false` aus einem Command-Hook. Wenn Sie unterschiedliche Blockierungssemantiken bei diesen Ereignissen benötigen, verwenden Sie einen [Command-Hook](#command-hook-fields) mit den ereignisspezifischen Feldern, die in [Entscheidungskontrolle](#decision-control) beschrieben sind.
+Was bei `ok: false` passiert, hängt vom Ereignis ab:
+
+* `Stop` und `SubagentStop`: der Grund wird an Claude als nächste Anweisung zurückgegeben und der Turn wird fortgesetzt
+* `PreToolUse`: der Tool-Aufruf wird verweigert und der Grund wird an Claude als Tool-Fehler zurückgegeben, gleichbedeutend mit einem Command-Hook mit `permissionDecision: "deny"`
+* `PostToolUse`, `PostToolBatch`, `UserPromptSubmit` und `UserPromptExpansion`: der Turn endet und der Grund wird im Chat als Warnzeile angezeigt, gleichbedeutend mit der Rückgabe von `"continue": false` aus einem Command-Hook
+* `PostToolUseFailure`, `TaskCreated` und `TaskCompleted`: der Grund wird an Claude als Tool-Fehler zurückgegeben, ähnlich wie `PreToolUse`
+* `PermissionRequest`: `ok: false` hat keine Auswirkung. Um eine Genehmigung von einem Hook zu verweigern, verwenden Sie einen [Command-Hook](#command-hook-fields) mit `hookSpecificOutput.decision.behavior: "deny"`
+
+Wenn Sie eine feinere Kontrolle bei einem Ereignis benötigen, verwenden Sie einen [Command-Hook](#command-hook-fields) mit den ereignisspezifischen Feldern, die in [Entscheidungskontrolle](#decision-control) beschrieben sind.
 
 ### Beispiel: Multi-Kriterien-Stop-Hook
 

@@ -95,7 +95,7 @@ El cuadro de mensaje admite varias características:
 * **Modos de permiso**: haz clic en el indicador de modo en la parte inferior del cuadro de mensaje para cambiar de modo. En modo normal, Claude solicita permiso antes de cada acción. En Plan Mode, Claude describe lo que hará y espera aprobación antes de realizar cambios. VS Code abre automáticamente el plan como un documento markdown completo donde puedes agregar comentarios en línea para dar retroalimentación antes de que Claude comience. En modo de aceptación automática, Claude realiza ediciones sin preguntar. Establece el valor predeterminado en la configuración de VS Code en `claudeCode.initialPermissionMode`.
 * **Menú de comandos**: haz clic en `/` o escribe `/` para abrir el menú de comandos. Las opciones incluyen adjuntar archivos, cambiar modelos, alternar pensamiento extendido, ver uso del plan (`/usage`) e iniciar una sesión de [Control remoto](/es/remote-control) (`/remote-control`). La sección Personalizar proporciona acceso a MCP servers, hooks, memoria, permisos y plugins. Los elementos con un icono de terminal se abren en la terminal integrada.
 * **Indicador de contexto**: el cuadro de mensaje muestra cuánto de la ventana de contexto de Claude estás utilizando. Claude se compacta automáticamente cuando es necesario, o puedes ejecutar `/compact` manualmente.
-* **Pensamiento extendido**: permite que Claude dedique más tiempo a razonar sobre problemas complejos. Actívalo a través del menú de comandos (`/`). El razonamiento de Claude aparece en la conversación como bloques contraídos: haz clic en un bloque para leerlo, o presiona `Ctrl+O` para expandir o contraer cada bloque de pensamiento en la sesión. Consulta [Pensamiento extendido](/es/common-workflows#usar-pensamiento-extendido-thinking-mode) para obtener más detalles.
+* **Pensamiento extendido**: permite que Claude dedique más tiempo a razonar sobre problemas complejos. Actívalo a través del menú de comandos (`/`). El razonamiento de Claude aparece en la conversación como bloques contraídos: haz clic en un bloque para leerlo, o presiona `Ctrl+O` para expandir o contraer cada bloque de pensamiento en la sesión. Consulta [Pensamiento extendido](/es/model-config#extended-thinking) para obtener más detalles.
 * **Entrada multilínea**: presiona `Shift+Enter` para agregar una nueva línea sin enviar. Esto también funciona en la entrada de texto libre "Otro" de los diálogos de preguntas.
 
 ### Referenciar archivos y carpetas
@@ -115,7 +115,7 @@ También puedes mantener presionado `Shift` mientras arrastras archivos al cuadr
 
 ### Reanudar conversaciones pasadas
 
-Haz clic en el botón **Historial de sesiones** en la parte superior del panel de Claude Code para acceder a tu historial de conversaciones. Puedes buscar por palabra clave o examinar por tiempo (Hoy, Ayer, Últimos 7 días, etc.). Haz clic en cualquier conversación para reanudarla con el historial de mensajes completo. Las nuevas sesiones reciben títulos generados por IA basados en tu primer mensaje. Pasa el cursor sobre una sesión para revelar acciones de cambio de nombre y eliminación: cambia el nombre para darle un título descriptivo, o elimina para borrarlo de la lista. Para más información sobre cómo reanudar sesiones, consulta [Flujos de trabajo comunes](/es/common-workflows#reanudar-conversaciones-anteriores).
+Haz clic en el botón **Historial de sesiones** en la parte superior del panel de Claude Code para acceder a tu historial de conversaciones. Puedes buscar por palabra clave o examinar por tiempo (Hoy, Ayer, Últimos 7 días, etc.). Haz clic en cualquier conversación para reanudarla con el historial de mensajes completo. Las nuevas sesiones reciben títulos generados por IA basados en tu primer mensaje. Pasa el cursor sobre una sesión para revelar acciones de cambio de nombre y eliminación: cambia el nombre para darle un título descriptivo, o elimina para borrarlo de la lista. Para más información sobre cómo reanudar sesiones, consulta [Administrar sesiones](/es/sessions).
 
 ### Reanudar sesiones remotas desde Claude.ai
 
@@ -399,7 +399,7 @@ Usa la bandera `--worktree` (`-w`) para iniciar Claude en un worktree aislado co
 claude --worktree feature-auth
 ```
 
-Cada worktree mantiene un estado de archivo independiente mientras comparte el historial de git. Esto evita que las instancias de Claude interfieran entre sí cuando trabajan en diferentes tareas. Para más detalles, consulta [Ejecutar sesiones paralelas de Claude Code con Git worktrees](/es/common-workflows#ejecutar-sesiones-paralelas-de-claude-code-con-git-worktrees).
+Cada worktree mantiene un estado de archivo independiente mientras comparte el historial de git. Esto evita que las instancias de Claude interfieran entre sí cuando trabajan en diferentes tareas. Para más detalles, consulta [Ejecutar sesiones paralelas con Git worktrees](/es/worktrees).
 
 ## Usar proveedores de terceros
 
@@ -475,6 +475,16 @@ El icono Spark aparece en la **Barra de herramientas del editor** (esquina super
 5. **Verifica la confianza del espacio de trabajo**: La extensión no funciona en Modo restringido
 
 Alternativamente, haz clic en "✱ Claude Code" en la **Barra de estado** (esquina inferior derecha). Esto funciona incluso sin un archivo abierto. También puedes usar la **Paleta de comandos** (`Cmd+Shift+P` / `Ctrl+Shift+P`) y escribir "Claude Code".
+
+### Cmd+Esc no hace nada en macOS
+
+En macOS Tahoe y posterior, el atajo del sistema Game Overlay está vinculado a `Cmd+Esc` de forma predeterminada e intercepta la pulsación de tecla antes de que llegue a VS Code. Para liberar el atajo:
+
+1. Abre Configuración del sistema
+2. Ve a Teclado, luego Atajos de teclado, luego Controladores de juegos
+3. Desactiva la casilla de verificación Game Overlay
+
+Alternativamente, vuelve a vincular la extensión a una tecla diferente: abre el editor de [Atajos de teclado](https://code.visualstudio.com/docs/configure/keybindings) de VS Code (`Cmd+K Cmd+S`), busca `Claude Code: Focus input`, y asigna un nuevo atajo.
 
 ### Claude Code nunca responde
 

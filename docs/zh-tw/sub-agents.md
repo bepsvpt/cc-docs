@@ -51,7 +51,7 @@ Claude Code 包括內建 subagents，Claude 在適當時會自動使用。每個
   </Tab>
 
   <Tab title="Plan">
-    一個研究代理，在 [plan mode](/zh-TW/common-workflows#use-plan-mode-for-safe-code-analysis) 期間使用，以在呈現計畫之前收集上下文。
+    一個研究代理，在 [plan mode](/zh-TW/permission-modes#analyze-before-you-edit-with-plan-mode) 期間使用，以在呈現計畫之前收集上下文。
 
     * **Model**：從主要對話繼承
     * **Tools**：唯讀工具（拒絕存取 Write 和 Edit 工具）
@@ -76,7 +76,7 @@ Claude Code 包括內建 subagents，Claude 在適當時會自動使用。每個
     | Agent             | Model  | Claude 何時使用它                 |
     | :---------------- | :----- | :--------------------------- |
     | statusline-setup  | Sonnet | 當您執行 `/statusline` 來配置您的狀態行時 |
-    | Claude Code Guide | Haiku  | 當您提出有關 Claude Code 功能的問題時    |
+    | claude-code-guide | Haiku  | 當您提出有關 Claude Code 功能的問題時    |
   </Tab>
 </Tabs>
 
@@ -180,20 +180,43 @@ Subagents 是具有 YAML frontmatter 的 Markdown 檔案。根據範圍將它們
 
 **CLI 定義的 subagents** 在啟動 Claude Code 時作為 JSON 傳遞。它們僅存在於該工作階段，不會儲存到磁碟，使其適用於快速測試或自動化指令碼。您可以在單一 `--agents` 呼叫中定義多個 subagents：
 
-```bash theme={null}
-claude --agents '{
-  "code-reviewer": {
-    "description": "Expert code reviewer. Use proactively after code changes.",
-    "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
-    "tools": ["Read", "Grep", "Glob", "Bash"],
-    "model": "sonnet"
-  },
-  "debugger": {
-    "description": "Debugging specialist for errors and test failures.",
-    "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
-  }
-}'
-```
+<Tabs>
+  <Tab title="macOS, Linux, WSL">
+    ```bash theme={null}
+    claude --agents '{
+      "code-reviewer": {
+        "description": "Expert code reviewer. Use proactively after code changes.",
+        "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
+        "tools": ["Read", "Grep", "Glob", "Bash"],
+        "model": "sonnet"
+      },
+      "debugger": {
+        "description": "Debugging specialist for errors and test failures.",
+        "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
+      }
+    }'
+    ```
+  </Tab>
+
+  <Tab title="Windows PowerShell">
+    ```powershell theme={null}
+    claude --agents @'
+    {
+      "code-reviewer": {
+        "description": "Expert code reviewer. Use proactively after code changes.",
+        "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
+        "tools": ["Read", "Grep", "Glob", "Bash"],
+        "model": "sonnet"
+      },
+      "debugger": {
+        "description": "Debugging specialist for errors and test failures.",
+        "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
+      }
+    }
+    '@
+    ```
+  </Tab>
+</Tabs>
 
 `--agents` 標誌接受 JSON，具有與基於檔案的 subagents 相同的 [frontmatter](#supported-frontmatter-fields) 欄位：`description`、`prompt`、`tools`、`disallowedTools`、`model`、`permissionMode`、`mcpServers`、`hooks`、`maxTurns`、`skills`、`initialPrompt`、`memory`、`effort`、`background`、`isolation` 和 `color`。使用 `prompt` 作為系統提示，等同於基於檔案的 subagents 中的 markdown 主體。
 
@@ -212,7 +235,7 @@ claude --agents '{
 Subagent 檔案使用 YAML frontmatter 進行配置，後面跟著 Markdown 中的系統提示：
 
 <Note>
-  Subagents 在工作階段開始時載入。如果您透過手動新增檔案來建立 subagent，請重新啟動您的工作階段或使用 `/agents` 立即載入它。
+  Subagents 在工作階段開始時載入。如果您直接在磁碟上新增或編輯 subagent 檔案，請重新啟動您的工作階段以載入它。透過 `/agents` 介面建立的 Subagents 會立即生效，無需重新啟動。
 </Note>
 
 ```markdown theme={null}
@@ -250,7 +273,7 @@ Frontmatter 定義 subagent 的中繼資料和配置。主體成為指導 subage
 | `memory`          | No       | [Persistent memory scope](#enable-persistent-memory)：`user`、`project` 或 `local`。啟用跨工作階段學習                                                                                                                        |
 | `background`      | No       | 設定為 `true` 以始終將此 subagent 作為 [background task](#run-subagents-in-foreground-or-background) 執行。預設：`false`                                                                                                         |
 | `effort`          | No       | 此 subagent 活動時的努力程度。覆蓋工作階段努力程度。預設：從工作階段繼承。選項：`low`、`medium`、`high`、`xhigh`、`max`；可用的層級取決於模型                                                                                                                      |
-| `isolation`       | No       | 設定為 `worktree` 以在臨時 [git worktree](/zh-TW/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) 中執行 subagent，為其提供儲存庫的隔離副本。如果 subagent 不進行任何更改，worktree 會自動清理                                    |
+| `isolation`       | No       | 設定為 `worktree` 以在臨時 [git worktree](/zh-TW/worktrees) 中執行 subagent，為其提供儲存庫的隔離副本。如果 subagent 不進行任何更改，worktree 會自動清理                                                                                                |
 | `color`           | No       | Subagent 在任務清單和文字中的顯示顏色。接受 `red`、`blue`、`green`、`yellow`、`purple`、`orange`、`pink` 或 `cyan`                                                                                                                       |
 | `initialPrompt`   | No       | 當此代理作為主工作階段代理執行時（透過 `--agent` 或 `agent` 設定），自動提交為第一個使用者轉數。[Commands](/zh-TW/commands) 和 [skills](/zh-TW/skills) 會被處理。前置於任何使用者提供的提示                                                                               |
 
@@ -484,7 +507,7 @@ fi
 exit 0
 ```
 
-請參閱 [Hook input](/zh-TW/hooks#pretooluse-input) 以了解完整的輸入架構，以及 [exit codes](/zh-TW/hooks#exit-code-output) 以了解退出代碼如何影響行為。
+請參閱 [Hook input](/zh-TW/hooks#pretooluse-input) 以了解完整的輸入架構，以及 [exit codes](/zh-TW/hooks#exit-code-output) 以了解退出代碼如何影響行為。在 Windows 上，在 PowerShell 中編寫 hook 指令碼，並在 hook 條目中新增 `shell: powershell`，如 [在 PowerShell 中執行 hooks](/zh-TW/hooks#windows-powershell-tool) 所示。
 
 #### 禁用特定 subagents
 
@@ -994,13 +1017,15 @@ fi
 exit 0
 ```
 
-使指令碼可執行：
+在 macOS 和 Linux 上，使指令碼可執行：
 
 ```bash theme={null}
 chmod +x ./scripts/validate-readonly-query.sh
 ```
 
-Hook 透過 stdin 接收 JSON，Bash 命令在 `tool_input.command` 中。退出代碼 2 阻止操作並將錯誤訊息反饋給 Claude。請參閱 [Hooks](/zh-TW/hooks#exit-code-output) 以了解退出代碼詳細資訊，以及 [Hook input](/zh-TW/hooks#pretooluse-input) 以了解完整的輸入架構。
+在 Windows 上，使用 PowerShell 編寫驗證指令碼，並將 `shell: powershell` 新增至 hook 項目。請參閱 [在 PowerShell 中執行 hooks](/zh-TW/hooks#windows-powershell-tool)。
+
+Hook 透過 stdin 接收 JSON，Bash 命令在 `tool_input.command` 中。退出代碼 2 阻止操作並將錯誤訊息反饋給 Claude。請參閱 [Hooks](/zh-TW/hooks#exit-code-output) 以了解退出代碼和 [Hook input](/zh-TW/hooks#pretooluse-input) 以了解完整的輸入架構。
 
 ## 後續步驟
 

@@ -63,23 +63,25 @@ Para Ghostty, Kitty y otras terminales, busca una configuración de Option-as-Al
 
 Cuando Claude termina una tarea o se pausa para un indicador de permiso, dispara un evento de notificación. Mostrar esto como una campana de terminal o notificación de escritorio te permite cambiar a otro trabajo mientras se ejecuta una tarea larga.
 
-Claude Code envía una notificación de escritorio solo en Ghostty, Kitty e iTerm2; cada otra terminal necesita un [gancho de Notificación](#play-a-sound-with-a-notification-hook) en su lugar. La notificación también llega a tu máquina local sobre SSH, por lo que una sesión remota aún puede alertarte. Ghostty y Kitty la reenvían a tu centro de notificaciones del SO sin configuración adicional. iTerm2 requiere que habilites el reenvío:
+Por defecto, Claude Code envía una notificación de escritorio solo en Ghostty, Kitty e iTerm2. En otras terminales, establezca [`preferredNotifChannel`](/es/settings#available-settings) en `"terminal_bell"` para sonar la campana de terminal en su lugar, o configure un [gancho de Notificación](#play-a-sound-with-a-notification-hook) para un sonido personalizado o comando.
+
+La notificación de escritorio llega a su máquina local a través de SSH, por lo que una sesión remota aún puede alertarle. Ghostty y Kitty la reenvían a su centro de notificaciones del SO sin configuración adicional. iTerm2 requiere que habilite el reenvío:
 
 <Steps>
-  <Step title="Abre la configuración de notificaciones de iTerm2">
-    Ve a Configuración → Perfiles → Terminal.
+  <Step title="Abra la configuración de notificaciones de iTerm2">
+    Vaya a Configuración → Perfiles → Terminal.
   </Step>
 
-  <Step title="Habilita alertas">
-    Marca "Notification Center Alerts", luego haz clic en "Filter Alerts" y habilita "Send escape sequence-generated alerts".
+  <Step title="Habilite alertas">
+    Marque "Notification Center Alerts", luego haga clic en "Filter Alerts" y habilite "Send escape sequence-generated alerts".
   </Step>
 </Steps>
 
-Si las notificaciones aún no aparecen, confirma que tu aplicación de terminal tenga permiso de notificación en tu configuración del SO, y si estás ejecutando dentro de tmux, [habilita passthrough](#configure-tmux).
+Si las notificaciones aún no aparecen, confirme que su aplicación de terminal tenga permiso de notificación en su configuración del SO, y si está ejecutando dentro de tmux, [habilite passthrough](#configure-tmux).
 
-### Reproduce un sonido con un gancho de Notificación
+### Reproduzca un sonido con un gancho de Notificación
 
-En cualquier terminal puedes configurar un [gancho de Notificación](/es/hooks-guide#get-notified-when-claude-needs-input) para reproducir un sonido o ejecutar un comando personalizado cuando Claude necesite tu atención. Los ganchos se ejecutan junto con la notificación de escritorio en lugar de reemplazarla. Terminales como Warp o Apple Terminal dependen de un gancho solo ya que Claude Code no les envía una notificación de escritorio.
+En cualquier terminal puede configurar un [gancho de Notificación](/es/hooks-guide#get-notified-when-claude-needs-input) para reproducir un sonido o ejecutar un comando personalizado cuando Claude necesite su atención. Los ganchos se ejecutan junto con la notificación de escritorio en lugar de reemplazarla, por lo que las terminales que no reciben una notificación de escritorio, como Warp o la terminal integrada de VS Code, pueden usar un gancho o establecer `preferredNotifChannel` en `"terminal_bell"` en su lugar.
 
 El ejemplo a continuación reproduce un sonido del sistema en macOS. La guía vinculada tiene comandos de notificación de escritorio para macOS, Linux y Windows.
 
@@ -147,7 +149,7 @@ El siguiente ejemplo define un tema que mantiene el preajuste oscuro pero recolo
 
 Claude Code observa `~/.claude/themes/` y recarga cuando un archivo cambia, por lo que las ediciones realizadas en tu editor se aplican a una sesión en ejecución sin necesidad de reiniciar.
 
-A continuación se muestra la lista completa de personalizaciones que puedes establecer en `overrides`. El editor interactivo en `/theme` muestra los mismos tokens con una vista previa en vivo, incluido un pequeño número de tokens internos no cubiertos aquí.
+La referencia a continuación cubre los tokens que puede establecer en `overrides`. El editor interactivo en `/theme` muestra los mismos tokens con una vista previa en vivo, además de algunos acentos de propósito único como colores de pantalla de incorporación que se omiten aquí.
 
 <Accordion title="Referencia de tokens de color">
   El siguiente ejemplo combina tokens de varios de los grupos a continuación: el acento de marca, el borde del modo plan, los fondos de diff y el fondo del mensaje de pantalla completa.
@@ -177,6 +179,7 @@ A continuación se muestra la lista completa de personalizaciones que puedes est
   | `inverseText` | Texto dibujado sobre un fondo de color, como insignias de estado                 |
   | `inactive`    | Texto secundario como sugerencias, marcas de tiempo y elementos deshabilitados   |
   | `subtle`      | Bordes tenues y texto secundario de énfasis reducido                             |
+  | `suggestion`  | Sugerencias de autocompletado y resaltado de selección en selectores             |
   | `permission`  | Bordes de diálogo, incluidas solicitudes de permiso y selectores                 |
   | `remember`    | Indicadores de memoria y `CLAUDE.md`                                             |
 
@@ -221,16 +224,40 @@ A continuación se muestra la lista completa de personalizaciones que puedes est
 
   Se aplica solo en [modo de representación de pantalla completa](/es/fullscreen), donde los mensajes tienen un relleno de fondo.
 
-  | Token                   | Controla                                         |
-  | :---------------------- | :----------------------------------------------- |
-  | `userMessageBackground` | Fondo detrás de tus mensajes en la transcripción |
-  | `selectionBg`           | Fondo del texto seleccionado con el ratón        |
+  | Token                        | Controla                                                                       |
+  | :--------------------------- | :----------------------------------------------------------------------------- |
+  | `userMessageBackground`      | Fondo detrás de tus mensajes en la transcripción                               |
+  | `userMessageBackgroundHover` | Fondo detrás de un mensaje mientras está desplazado o expandido                |
+  | `messageActionsBackground`   | Fondo detrás del mensaje seleccionado cuando la barra de acciones está abierta |
+  | `bashMessageBackgroundColor` | Fondo detrás de entradas de comando de shell `!` en la transcripción           |
+  | `memoryBackgroundColor`      | Fondo detrás de entradas de memoria `#` en la transcripción                    |
+  | `selectionBg`                | Fondo del texto seleccionado con el ratón                                      |
+
+  #### Medidor de uso y etiquetas de altavoz
+
+  Ajusta la barra mostrada en la vista `/usage` y las etiquetas que distinguen tus mensajes de los de Claude.
+
+  | Token              | Controla                                                    |
+  | :----------------- | :---------------------------------------------------------- |
+  | `rate_limit_fill`  | Porción llena del medidor de uso                            |
+  | `rate_limit_empty` | Porción vacía del medidor de uso                            |
+  | `briefLabelYou`    | Color de la etiqueta `You` en tus mensajes                  |
+  | `briefLabelClaude` | Color de la etiqueta `Claude` en los mensajes del asistente |
 
   #### Variantes de shimmer y colores de subagentes
 
-  Varios tokens tienen una variante `Shimmer` emparejada, como `claudeShimmer` y `warningShimmer`, que proporciona el color más claro utilizado en el gradiente animado del spinner. Anula el shimmer junto con su token base si la animación se ve desajustada.
+  Varios tokens tienen una variante de shimmer emparejada que proporciona el color más claro utilizado en el gradiente animado del spinner. Anula el shimmer junto con su token base si la animación se ve desajustada.
+
+  * `claude` y `claudeShimmer`
+  * `warning` y `warningShimmer`
+  * `permission` y `permissionShimmer`
+  * `promptBorder` y `promptBorderShimmer`
+  * `inactive` e `inactiveShimmer`
+  * `fastMode` y `fastModeShimmer`
 
   Cada [subagente](/es/sub-agents) y tarea paralela se muestra en uno de ocho colores nombrados para que puedas distinguirlos en la transcripción. Los nombres de los tokens siguen el patrón `<color>_FOR_SUBAGENTS_ONLY`, donde `<color>` es `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, o `cyan`. Anula estos para cambiar el aspecto de cada color nombrado. Por ejemplo, un subagente con `color: blue` en su definición se dibuja usando el valor `blue_FOR_SUBAGENTS_ONLY`.
+
+  Las palabras clave [`ultrathink`](/es/model-config#use-ultrathink-for-one-off-deep-reasoning) y [`ultraplan`](/es/ultraplan) en la entrada del prompt se representan con un gradiente arcoíris de siete colores. Los nombres de los tokens siguen el patrón `rainbow_<color>` y `rainbow_<color>_shimmer`, donde `<color>` es `red`, `orange`, `yellow`, `green`, `blue`, `indigo`, o `violet`.
 </Accordion>
 
 ## Cambia a renderizado a pantalla completa
