@@ -23,7 +23,7 @@ Sobald Ihr Marktplatz live ist, können Sie ihn aktualisieren, indem Sie Änderu
 
 ## Anleitung: Erstellen Sie einen lokalen Marktplatz
 
-Dieses Beispiel erstellt einen Marktplatz mit einem Plugin: ein `/quality-review` skill für Code-Reviews. Sie erstellen die Verzeichnisstruktur, fügen ein skill hinzu, erstellen das Plugin-Manifest und den Marktplatzkatalog und installieren und testen ihn dann.
+Dieses Beispiel erstellt einen Marktplatz mit einem Plugin: ein `quality-review` skill für Code-Reviews. Sie erstellen die Verzeichnisstruktur, fügen ein skill hinzu, erstellen das Plugin-Manifest und den Marktplatzkatalog und installieren und testen ihn dann.
 
 <Steps>
   <Step title="Erstellen Sie die Verzeichnisstruktur">
@@ -35,7 +35,7 @@ Dieses Beispiel erstellt einen Marktplatz mit einem Plugin: ein `/quality-review
   </Step>
 
   <Step title="Erstellen Sie das skill">
-    Erstellen Sie eine `SKILL.md`-Datei, die definiert, was das `/quality-review` skill tut.
+    Erstellen Sie eine `SKILL.md`-Datei, die definiert, was das `quality-review` skill tut.
 
     ```markdown my-marketplace/plugins/quality-review-plugin/skills/quality-review/SKILL.md theme={null}
     ---
@@ -59,7 +59,7 @@ Dieses Beispiel erstellt einen Marktplatz mit einem Plugin: ein `/quality-review
     ```json my-marketplace/plugins/quality-review-plugin/.claude-plugin/plugin.json theme={null}
     {
       "name": "quality-review-plugin",
-      "description": "Adds a /quality-review skill for quick code reviews",
+      "description": "Adds a quality-review skill for quick code reviews",
       "version": "1.0.0"
     }
     ```
@@ -82,7 +82,7 @@ Dieses Beispiel erstellt einen Marktplatz mit einem Plugin: ein `/quality-review
         {
           "name": "quality-review-plugin",
           "source": "./plugins/quality-review-plugin",
-          "description": "Adds a /quality-review skill for quick code reviews"
+          "description": "Adds a quality-review skill for quick code reviews"
         }
       ]
     }
@@ -99,10 +99,10 @@ Dieses Beispiel erstellt einen Marktplatz mit einem Plugin: ein `/quality-review
   </Step>
 
   <Step title="Probieren Sie es aus">
-    Wählen Sie etwas Code in Ihrem Editor aus und führen Sie Ihr neues skill aus.
+    Wählen Sie etwas Code in Ihrem Editor aus und führen Sie Ihr neues skill aus. Plugin-skills sind mit dem Plugin-Namen namespaced.
 
     ```shell theme={null}
-    /quality-review
+    /quality-review-plugin:quality-review
     ```
   </Step>
 </Steps>
@@ -692,6 +692,8 @@ Die Zulassungsliste verwendet exakten Abgleich für die meisten Quellentypen. Da
 * Für URL-Quellen: Die vollständige URL muss genau übereinstimmen
 * Für `hostPattern`-Quellen: Der Marktplatz-Host wird gegen das Regex-Muster abgeglichen
 * Für `pathPattern`-Quellen: Der Dateisystempfad des Marktplatzes wird gegen das Regex-Muster abgeglichen
+
+Exakter Abgleich normalisiert URLs nicht: Ein nachgestellter Schrägstrich, `.git`-Suffix oder `ssh://` versus `https://`-Form werden als unterschiedliche Werte behandelt. Wenn Ihr Organisations-Marktplatz durch mehr als eine URL-Form geklont werden kann, bevorzugen Sie einen `hostPattern`-Eintrag gegenüber einer literalen URL, damit alle Formen übereinstimmen.
 
 Da `strictKnownMarketplaces` in [verwalteten Einstellungen](/de/settings#settings-files) festgelegt ist, können einzelne Benutzer und Projektkonfigurationen diese Einschränkungen nicht überschreiben.
 

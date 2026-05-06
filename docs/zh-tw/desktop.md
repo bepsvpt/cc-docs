@@ -282,11 +282,13 @@ Claude 第一次需要使用應用程式時，會在您的會話中出現提示�
 
 ### 使用會話並行工作
 
-點擊側邊欄中的 **+ New session**，或在 macOS 上按 **Cmd+N** 或在 Windows 上按 **Ctrl+N**，以並行處理多個任務。按 **Ctrl+Tab** 和 **Ctrl+Shift+Tab** 以循環瀏覽側邊欄中的會話。對於 Git 儲存庫，每個會話都會使用 [Git worktrees](/zh-TW/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) 獲得自己的隔離專案副本，因此一個會話中的變更不會影響其他會話，直到您提交它們。
+點擊側邊欄中的 **+ New session**，或在 macOS 上按 **Cmd+N** 或在 Windows 上按 **Ctrl+N**，以並行處理多個任務。按 **Ctrl+Tab** 和 **Ctrl+Shift+Tab** 以循環瀏覽側邊欄中的會話。對於 Git 儲存庫，每個會話都會使用 [Git worktrees](/zh-TW/worktrees) 獲得自己的隔離專案副本，因此一個會話中的變更不會影響其他會話，直到您提交它們。
+
+若要同時檢視兩個會話，請在 macOS 上按住 **Cmd** 或在 Windows 上按住 **Ctrl**，然後點擊側邊欄中的會話。會話會在您已開啟的會話旁邊的第二個窗格中開啟。當分割處於活動狀態時，點擊另一個側邊欄會話會取代具有焦點的窗格。在 macOS 上按 **Cmd+\\** 或在 Windows 上按 **Ctrl+\\** 以關閉焦點窗格並返回單一會話。
 
 Worktrees 預設儲存在 `<project-root>/.claude/worktrees/` 中。您可以在「設定」→「Claude Code」下的「Worktree location」中將其變更為自訂目錄。您也可以設定一個分支前綴，該前綴會被加在每個 worktree 分支名稱前面，這對於保持 Claude 建立的分支井然有序很有用。若要在完成後移除 worktree，請將滑鼠懸停在側邊欄中的會話上，然後點擊存檔圖示。若要在 PR 合併或關閉後自動存檔會話，請在「設定」→「Claude Code」中開啟 **Auto-archive after PR merge or close**。自動存檔僅適用於已完成執行的本機會話。
 
-若要在新 worktrees 中包含 gitignored 檔案（如 `.env`），請在您的專案根目錄中建立 [`.worktreeinclude` 檔案](/zh-TW/common-workflows#copy-gitignored-files-to-worktrees)。
+若要在新 worktrees 中包含 gitignored 檔案（如 `.env`），請在您的專案根目錄中建立 [`.worktreeinclude` 檔案](/zh-TW/worktrees#copy-gitignored-files-into-worktrees)。
 
 <Note>
   會話隔離需要 [Git](https://git-scm.com/downloads)。大多數 Mac 預設包含 Git。在終端機中執行 `git --version` 進行檢查。在 Windows 上，Code 標籤需要 Git 才能運作：[下載 Git for Windows](https://git-scm.com/downloads/win)、安裝它，然後重新啟動應用程式。如果您遇到 Git 錯誤，請在 [Cowork 標籤](https://claude.com/product/cowork) 中詢問 Claude 以幫助排除您的設定問題。
@@ -516,7 +518,7 @@ Claude 會自動偵測您的開發伺服器設定，並將配置儲存在您開�
 
 若要在任何平台上為本機會話和開發伺服器設定環境變數，請在提示框中開啟環境下拉式選單，將滑鼠懸停在 **Local** 上，然後點擊齒輪圖示以開啟本機環境編輯器。您在此處儲存的變數會在您的機器上加密儲存，並適用於您啟動的每個本機會話和預覽伺服器。您也可以將變數新增到 `~/.claude/settings.json` 檔案中的 `env` 金鑰，儘管這些僅到達 Claude 會話而不是開發伺服器。有關支援的變數的完整清單，請參閱[環境變數](/zh-TW/env-vars)。
 
-[擴展思考](/zh-TW/common-workflows#use-extended-thinking-thinking-mode)預設啟用，這改進了複雜推理任務的效能，但使用額外的 tokens。若要完全停用思考，請在本機環境編輯器中將 `MAX_THINKING_TOKENS` 設定為 `0`。在具有[自適應推理](/zh-TW/model-config#adjust-effort-level)的模型上，任何其他 `MAX_THINKING_TOKENS` 值都會被忽略，因為自適應推理控制思考深度。在 Opus 4.6 和 Sonnet 4.6 上，將 `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` 設定為 `1` 以使用固定思考預算；Opus 4.7 始終使用自適應推理，沒有固定預算模式。
+[擴展思考](/zh-TW/model-config#extended-thinking)預設啟用，這改進了複雜推理任務的效能，但使用額外的 tokens。若要完全停用思考，請在本機環境編輯器中將 `MAX_THINKING_TOKENS` 設定為 `0`。在具有[自適應推理](/zh-TW/model-config#adjust-effort-level)的模型上，任何其他 `MAX_THINKING_TOKENS` 值都會被忽略，因為自適應推理控制思考深度。在 Opus 4.6 和 Sonnet 4.6 上，將 `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` 設定為 `1` 以使用固定思考預算；Opus 4.7 始終使用自適應推理，沒有固定預算模式。
 
 ### 遠端會話
 

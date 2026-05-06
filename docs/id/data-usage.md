@@ -67,7 +67,7 @@ Untuk semua pengguna pihak pertama, Anda dapat mempelajari lebih lanjut tentang 
 
 Diagram di bawah menunjukkan bagaimana Claude Code terhubung ke layanan eksternal selama instalasi dan operasi normal. Garis solid menunjukkan koneksi yang diperlukan, sementara garis putus-putus mewakili alur data opsional atau yang dimulai pengguna.
 
-<img src="https://mintcdn.com/claude-code/YcBW2H7CArGcduPb/images/claude-code-data-flow.svg?fit=max&auto=format&n=YcBW2H7CArGcduPb&q=85&s=b600a89f84fc86f9ff7be00a466c0635" alt="Diagram menunjukkan koneksi eksternal Claude Code: install/update terhubung ke server distribusi, dan permintaan pengguna terhubung ke layanan Anthropic termasuk auth Console, public-api, dan secara opsional Statsig, Sentry, dan pelaporan bug" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
+<img src="https://mintcdn.com/claude-code/RcOyXc06Ja8cuvMZ/images/claude-code-data-flow.svg?fit=max&auto=format&n=RcOyXc06Ja8cuvMZ&q=85&s=b5be40abf333defe984993af89546c19" alt="Diagram menunjukkan koneksi eksternal Claude Code: install/update terhubung ke server distribusi, dan permintaan pengguna terhubung ke layanan Anthropic termasuk auth Console, public-api, dan secara opsional Statsig, Sentry, dan pelaporan bug" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
 
 Claude Code berjalan secara lokal. Untuk berinteraksi dengan LLM, Claude Code mengirimkan data melalui jaringan. Data ini mencakup semua prompt pengguna dan output model, dienkripsi dalam transit melalui TLS 1.2+. Claude Code kompatibel dengan sebagian besar VPN dan proxy LLM populer.
 

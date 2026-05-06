@@ -67,7 +67,7 @@ Anthropic 根据您的账户类型和偏好保留 Claude Code 数据。
 
 下面的图表显示了 Claude Code 在安装和正常操作期间如何连接到外部服务。实线表示必需的连接，而虚线表示可选或用户启动的数据流。
 
-<img src="https://mintcdn.com/claude-code/YcBW2H7CArGcduPb/images/claude-code-data-flow.svg?fit=max&auto=format&n=YcBW2H7CArGcduPb&q=85&s=b600a89f84fc86f9ff7be00a466c0635" alt="显示 Claude Code 外部连接的图表：安装/更新连接到分发服务器，用户请求连接到 Anthropic 服务，包括 Console 身份验证、public-api，以及可选的 Statsig、Sentry 和错误报告" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
+<img src="https://mintcdn.com/claude-code/RcOyXc06Ja8cuvMZ/images/claude-code-data-flow.svg?fit=max&auto=format&n=RcOyXc06Ja8cuvMZ&q=85&s=b5be40abf333defe984993af89546c19" alt="显示 Claude Code 外部连接的图表：安装/更新连接到分发服务器，用户请求连接到 Anthropic 服务，包括 Console 身份验证、public-api，以及可选的 Statsig、Sentry 和错误报告" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
 
 Claude Code 在本地运行。为了与 LLM 交互，Claude Code 通过网络发送数据。此数据包括所有用户提示和模型输出，通过 TLS 1.2+ 在传输中加密。Claude Code 与大多数流行的 VPN 和 LLM 代理兼容。
 

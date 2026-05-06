@@ -261,11 +261,11 @@ A integração LSP fornece:
 
 **Plugins LSP disponíveis:**
 
-| Plugin           | Servidor de linguagem      | Comando de instalação                                                                        |
-| :--------------- | :------------------------- | :------------------------------------------------------------------------------------------- |
-| `pyright-lsp`    | Pyright (Python)           | `pip install pyright` ou `npm install -g pyright`                                            |
-| `typescript-lsp` | TypeScript Language Server | `npm install -g typescript-language-server typescript`                                       |
-| `rust-lsp`       | rust-analyzer              | [Veja instalação de rust-analyzer](https://rust-analyzer.github.io/manual.html#installation) |
+| Plugin              | Servidor de linguagem      | Comando de instalação                                                                        |
+| :------------------ | :------------------------- | :------------------------------------------------------------------------------------------- |
+| `pyright-lsp`       | Pyright (Python)           | `pip install pyright` ou `npm install -g pyright`                                            |
+| `typescript-lsp`    | TypeScript Language Server | `npm install -g typescript-language-server typescript`                                       |
+| `rust-analyzer-lsp` | rust-analyzer              | [Veja instalação de rust-analyzer](https://rust-analyzer.github.io/manual.html#installation) |
 
 Instale o servidor de linguagem primeiro, depois instale o plugin do marketplace.
 
@@ -531,7 +531,9 @@ Para `skills`, `commands`, `agents`, `outputStyles`, `themes` e `monitors`, um c
 
 Claude Code fornece duas variáveis para referenciar caminhos de plugin. Ambas são substituídas inline em qualquer lugar que apareçam em conteúdo de skill, conteúdo de agent, comandos de hook, comandos de monitor e configurações de servidor MCP ou LSP. Ambas também são exportadas como variáveis de ambiente para processos de hook e subprocessos de servidor MCP ou LSP.
 
-**`${CLAUDE_PLUGIN_ROOT}`**: o caminho absoluto para o diretório de instalação do seu plugin. Use isso para referenciar scripts, binários e arquivos de configuração agrupados com o plugin. Este caminho muda quando o plugin é atualizado, então arquivos que você escreve aqui não sobrevivem a uma atualização.
+**`${CLAUDE_PLUGIN_ROOT}`**: o caminho absoluto para o diretório de instalação do seu plugin. Use isso para referenciar scripts, binários e arquivos de configuração agrupados com o plugin. Este caminho muda quando o plugin é atualizado. O diretório da versão anterior permanece no disco por aproximadamente sete dias após uma atualização antes da limpeza, mas trate-o como efêmero e não escreva estado aqui.
+
+Quando um plugin é atualizado no meio de uma sessão, comandos de hook, monitors, servidores MCP e servidores LSP continuam usando o caminho da versão anterior. Execute `/reload-plugins` para alternar hooks, servidores MCP e servidores LSP para o novo caminho; monitors requerem uma reinicialização de sessão.
 
 **`${CLAUDE_PLUGIN_DATA}`**: um diretório persistente para estado do plugin que sobrevive a atualizações. Use isso para dependências instaladas como `node_modules` ou ambientes virtuais Python, código gerado, caches e quaisquer outros arquivos que devem persistir entre versões de plugin. O diretório é criado automaticamente na primeira vez que esta variável é referenciada.
 
@@ -676,6 +678,8 @@ enterprise-plugin/
 <Warning>
   O diretório `.claude-plugin/` contém o arquivo `plugin.json`. Todos os outros diretórios (commands/, agents/, skills/, output-styles/, themes/, monitors/, hooks/) devem estar na raiz do plugin, não dentro de `.claude-plugin/`.
 </Warning>
+
+Um arquivo `CLAUDE.md` na raiz do plugin não é carregado como contexto do projeto. Os plugins contribuem contexto através de skills, agents e hooks em vez de CLAUDE.md. Para enviar instruções que sejam carregadas no contexto do Claude, coloque-as em uma [skill](#skills).
 
 ### Referência de localizações de arquivo
 

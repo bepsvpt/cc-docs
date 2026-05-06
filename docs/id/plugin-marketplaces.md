@@ -23,7 +23,7 @@ Setelah marketplace Anda aktif, Anda dapat memperbaruinya dengan mendorong perub
 
 ## Panduan: buat marketplace lokal
 
-Contoh ini membuat marketplace dengan satu plugin: skill `/quality-review` untuk ulasan kode. Anda akan membuat struktur direktori, menambahkan skill, membuat manifest plugin dan katalog marketplace, kemudian memasang dan mengujinya.
+Contoh ini membuat marketplace dengan satu plugin: skill `quality-review` untuk ulasan kode. Anda akan membuat struktur direktori, menambahkan skill, membuat manifest plugin dan katalog marketplace, kemudian memasang dan mengujinya.
 
 <Steps>
   <Step title="Buat struktur direktori">
@@ -35,7 +35,7 @@ Contoh ini membuat marketplace dengan satu plugin: skill `/quality-review` untuk
   </Step>
 
   <Step title="Buat skill">
-    Buat file `SKILL.md` yang mendefinisikan apa yang dilakukan skill `/quality-review`.
+    Buat file `SKILL.md` yang mendefinisikan apa yang dilakukan skill `quality-review`.
 
     ```markdown my-marketplace/plugins/quality-review-plugin/skills/quality-review/SKILL.md theme={null}
     ---
@@ -59,7 +59,7 @@ Contoh ini membuat marketplace dengan satu plugin: skill `/quality-review` untuk
     ```json my-marketplace/plugins/quality-review-plugin/.claude-plugin/plugin.json theme={null}
     {
       "name": "quality-review-plugin",
-      "description": "Adds a /quality-review skill for quick code reviews",
+      "description": "Adds a quality-review skill for quick code reviews",
       "version": "1.0.0"
     }
     ```
@@ -82,7 +82,7 @@ Contoh ini membuat marketplace dengan satu plugin: skill `/quality-review` untuk
         {
           "name": "quality-review-plugin",
           "source": "./plugins/quality-review-plugin",
-          "description": "Adds a /quality-review skill for quick code reviews"
+          "description": "Adds a quality-review skill for quick code reviews"
         }
       ]
     }
@@ -99,10 +99,10 @@ Contoh ini membuat marketplace dengan satu plugin: skill `/quality-review` untuk
   </Step>
 
   <Step title="Coba">
-    Pilih beberapa kode di editor Anda dan jalankan skill baru Anda.
+    Pilih beberapa kode di editor Anda dan jalankan skill baru Anda. Plugin skills memiliki namespace dengan nama plugin.
 
     ```shell theme={null}
-    /quality-review
+    /quality-review-plugin:quality-review
     ```
   </Step>
 </Steps>
@@ -692,6 +692,8 @@ Daftar izin menggunakan pencocokan tepat untuk sebagian besar jenis sumber. Agar
 * Untuk sumber URL: URL lengkap harus cocok secara tepat
 * Untuk sumber `hostPattern`: host marketplace dicocokkan dengan pola regex
 * Untuk sumber `pathPattern`: jalur filesystem marketplace dicocokkan dengan pola regex
+
+Pencocokan tepat tidak menormalkan URL: garis miring trailing, akhiran `.git`, atau bentuk `ssh://` versus `https://` diperlakukan sebagai nilai berbeda. Jika marketplace organisasi Anda dapat diklon oleh lebih dari satu bentuk URL, lebih suka entri `hostPattern` daripada URL literal sehingga semua bentuk cocok.
 
 Karena `strictKnownMarketplaces` diatur dalam [pengaturan yang dikelola](/id/settings#settings-files), konfigurasi pengguna individual dan proyek tidak dapat mengganti pembatasan ini.
 

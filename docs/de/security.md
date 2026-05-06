@@ -27,7 +27,7 @@ Um Risiken in agentengestützten Systemen zu mindern:
 * **Sandbox-Bash-Tool**: [Sandbox](/de/sandboxing) Bash-Befehle mit Dateisystem- und Netzwerkisolation, wodurch Berechtigungsaufforderungen reduziert werden, während die Sicherheit gewährleistet bleibt. Aktivieren Sie mit `/sandbox`, um Grenzen zu definieren, in denen Claude Code autonom arbeiten kann
 * **Schreibzugriffsbeschränkung**: Claude Code kann nur in den Ordner schreiben, in dem es gestartet wurde, und in dessen Unterordner – es kann Dateien in übergeordneten Verzeichnissen nicht ohne explizite Genehmigung ändern. Während Claude Code Dateien außerhalb des Arbeitsverzeichnisses lesen kann (nützlich für den Zugriff auf Systembibliotheken und Abhängigkeiten), sind Schreibvorgänge streng auf den Projektumfang beschränkt und schaffen eine klare Sicherheitsgrenze
 * **Minderung von Genehmigungsmüdigkeit**: Unterstützung für das Zulassen häufig verwendeter sicherer Befehle pro Benutzer, pro Codebasis oder pro Organisation
-* **Accept Edits-Modus**: Mehrere Bearbeitungen stapelweise akzeptieren, während Berechtigungsaufforderungen für Befehle mit Nebenwirkungen beibehalten werden
+* **Accept Edits-Modus**: Genehmigt automatisch Dateibearbeitungen und einen festen Satz von Dateisystem-Bash-Befehlen wie `mkdir`, `touch`, `rm`, `mv`, `cp` und `sed` für Pfade im Arbeitsverzeichnis. Andere Bash-Befehle und Pfade außerhalb des Umfangs werden weiterhin angefordert
 
 ### Benutzerverantwortung
 

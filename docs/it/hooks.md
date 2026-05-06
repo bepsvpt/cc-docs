@@ -1358,7 +1358,7 @@ Gli hook `PostToolUse` possono fornire feedback a Claude dopo l'esecuzione dello
 
 | Campo                  | Descrizione                                                                                                                                                    |
 | :--------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `decision`             | `"block"` richiede a Claude con il `reason`. Omettere per consentire all'azione di procedere                                                                   |
+| `decision`             | `"block"` aggiunge il `reason` accanto al risultato dello strumento. Claude vede ancora l'output originale; per sostituirlo, utilizzare `updatedToolOutput`    |
 | `reason`               | Spiegazione mostrata a Claude quando `decision` è `"block"`                                                                                                    |
 | `additionalContext`    | Stringa aggiunta al contesto di Claude insieme al risultato dello strumento. Consultare [Aggiungere contesto per Claude](#add-context-for-claude)              |
 | `updatedToolOutput`    | Sostituisce l'output dello strumento con il valore fornito prima che venga inviato a Claude. Il valore deve corrispondere alla forma di output dello strumento |
@@ -2406,10 +2406,10 @@ L'LLM deve rispondere con JSON contenente:
 }
 ```
 
-| Campo    | Descrizione                                                   |
-| :------- | :------------------------------------------------------------ |
-| `ok`     | `true` consente l'azione, `false` la impedisce                |
-| `reason` | Obbligatorio quando `ok` è `false`. Spiegazione per il blocco |
+| Campo    | Descrizione                                                                                   |
+| :------- | :-------------------------------------------------------------------------------------------- |
+| `ok`     | `true` consente l'azione, `false` la impedisce. Vedere il comportamento per evento di seguito |
+| `reason` | Obbligatorio quando `ok` è `false`. Spiegazione per la decisione                              |
 
 Ciò che accade con `ok: false` dipende dall'evento:
 

@@ -1358,7 +1358,7 @@ Hooks `PostToolUse` podem fornecer feedback ao Claude após execução de ferram
 
 | Campo                  | Descrição                                                                                                                                       |
 | :--------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `decision`             | `"block"` solicita ao Claude com a `reason`. Omita para permitir que a ação prossiga                                                            |
+| `decision`             | `"block"` adiciona a `reason` próxima ao resultado da ferramenta. Claude ainda vê a saída original; para substituí-la, use `updatedToolOutput`  |
 | `reason`               | Explicação mostrada ao Claude quando `decision` é `"block"`                                                                                     |
 | `additionalContext`    | String adicionada ao contexto de Claude junto com o resultado da ferramenta. Consulte [Adicionar contexto para Claude](#add-context-for-claude) |
 | `updatedToolOutput`    | Substitui a saída da ferramenta pelo valor fornecido antes de ser enviado ao Claude. O valor deve corresponder à forma de saída da ferramenta   |
@@ -2406,10 +2406,10 @@ O LLM deve responder com JSON contendo:
 }
 ```
 
-| Campo    | Descrição                                                     |
-| :------- | :------------------------------------------------------------ |
-| `ok`     | `true` permite a ação, `false` a bloqueia                     |
-| `reason` | Obrigatório quando `ok` é `false`. Explicação para o bloqueio |
+| Campo    | Descrição                                                                         |
+| :------- | :-------------------------------------------------------------------------------- |
+| `ok`     | `true` permite a ação, `false` a bloqueia. Veja o comportamento por evento abaixo |
+| `reason` | Obrigatório quando `ok` é `false`. Explicação para a decisão                      |
 
 O que acontece em `ok: false` depende do evento:
 

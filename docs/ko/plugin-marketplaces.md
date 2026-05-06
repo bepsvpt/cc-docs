@@ -23,7 +23,7 @@
 
 ## 연습: 로컬 마켓플레이스 생성
 
-이 예제에서는 하나의 플러그인으로 마켓플레이스를 생성합니다: 코드 리뷰를 위한 `/quality-review` skill입니다. 디렉터리 구조를 생성하고, skill을 추가하고, 플러그인 매니페스트와 마켓플레이스 카탈로그를 생성한 다음, 설치하고 테스트합니다.
+이 예제에서는 하나의 플러그인으로 마켓플레이스를 생성합니다: 코드 리뷰를 위한 `quality-review` skill입니다. 디렉터리 구조를 생성하고, skill을 추가하고, 플러그인 매니페스트와 마켓플레이스 카탈로그를 생성한 다음, 설치하고 테스트합니다.
 
 <Steps>
   <Step title="디렉터리 구조 생성">
@@ -35,7 +35,7 @@
   </Step>
 
   <Step title="skill 생성">
-    `/quality-review` skill이 수행하는 작업을 정의하는 `SKILL.md` 파일을 생성합니다.
+    `quality-review` skill이 수행하는 작업을 정의하는 `SKILL.md` 파일을 생성합니다.
 
     ```markdown my-marketplace/plugins/quality-review-plugin/skills/quality-review/SKILL.md theme={null}
     ---
@@ -59,7 +59,7 @@
     ```json my-marketplace/plugins/quality-review-plugin/.claude-plugin/plugin.json theme={null}
     {
       "name": "quality-review-plugin",
-      "description": "빠른 코드 리뷰를 위한 /quality-review skill 추가",
+      "description": "빠른 코드 리뷰를 위한 quality-review skill 추가",
       "version": "1.0.0"
     }
     ```
@@ -82,7 +82,7 @@
         {
           "name": "quality-review-plugin",
           "source": "./plugins/quality-review-plugin",
-          "description": "빠른 코드 리뷰를 위한 /quality-review skill 추가"
+          "description": "빠른 코드 리뷰를 위한 quality-review skill 추가"
         }
       ]
     }
@@ -99,10 +99,10 @@
   </Step>
 
   <Step title="시도해보기">
-    편집기에서 일부 코드를 선택하고 새 skill을 실행합니다.
+    편집기에서 일부 코드를 선택하고 새 skill을 실행합니다. 플러그인 skill은 플러그인 이름으로 네임스페이스됩니다.
 
     ```shell theme={null}
-    /quality-review
+    /quality-review-plugin:quality-review
     ```
   </Step>
 </Steps>
@@ -692,6 +692,8 @@ CLAUDE_CODE_PLUGIN_CACHE_DIR=/opt/claude-seed claude plugin install my-tool@your
 * URL 소스의 경우: 전체 URL이 정확히 일치해야 합니다
 * `hostPattern` 소스의 경우: 마켓플레이스 호스트가 정규식 패턴과 일치합니다
 * `pathPattern` 소스의 경우: 마켓플레이스의 파일 시스템 경로가 정규식 패턴과 일치합니다
+
+정확한 일치는 URL을 정규화하지 않습니다. 후행 슬래시, `.git` 접미사 또는 `ssh://` 대 `https://` 형식은 다른 값으로 취급됩니다. 조직의 마켓플레이스를 둘 이상의 URL 형식으로 복제할 수 있는 경우 모든 형식이 일치하도록 리터럴 URL보다 `hostPattern` 항목을 선호합니다.
 
 `strictKnownMarketplaces`는 [관리되는 설정](/ko/settings#settings-files)에서 설정되므로 개별 사용자 및 프로젝트 구성은 이러한 제한을 재정의할 수 없습니다.
 

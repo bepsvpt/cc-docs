@@ -71,6 +71,8 @@ Claude Code 使用**範圍系統**來決定設定的適用位置和共享對象�
 | **Plugins**     | `~/.claude/settings.json` | `.claude/settings.json`           | `.claude/settings.local.json` |
 | **CLAUDE.md**   | `~/.claude/CLAUDE.md`     | `CLAUDE.md` 或 `.claude/CLAUDE.md` | `CLAUDE.local.md`             |
 
+在 Windows 上，顯示為 `~/.claude` 的路徑會解析為 `%USERPROFILE%\.claude`。
+
 ***
 
 ## 設定檔案
@@ -166,6 +168,7 @@ Claude Code 使用**範圍系統**來決定設定的適用位置和共享對象�
 | `apiKeyHelper`                    | 自訂指令碼，在 `/bin/sh` 中執行，以產生驗證值。此值將作為 `X-Api-Key` 和 `Authorization: Bearer` 標頭傳送以進行模型請求                                                                                                                                                                                                                                          | `/bin/generate_temp_api_key.sh`                                                                                               |
 | `attribution`                     | 自訂 git 提交和拉取請求的歸屬。請參閱[歸屬設定](#attribution-settings)                                                                                                                                                                                                                                                                            | `{"commit": "🤖 Generated with Claude Code", "pr": ""}`                                                                       |
 | `autoMemoryDirectory`             | [自動記憶](/zh-TW/memory#storage-location)儲存的自訂目錄。接受絕對路徑或 `~/` 前綴的路徑。從政策和使用者設定以及 `--settings` 旗標接受。不從專案或本機設定接受，因為複製的儲存庫可能提供任一檔案以將記憶寫入重定向到敏感位置                                                                                                                                                                                     | `"~/my-memory-dir"`                                                                                                           |
+| `autoMemoryEnabled`               | 啟用[自動記憶](/zh-TW/memory#enable-or-disable-auto-memory)。當為 `false` 時，Claude 不會從自動記憶目錄讀取或寫入。預設：`true`。您也可以在工作階段期間使用 `/memory` 切換此設定                                                                                                                                                                                              | `false`                                                                                                                       |
 | `autoMode`                        | 自訂[自動模式](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode)分類器阻止和允許的內容。包含 `environment`、`allow` 和 `soft_deny` 陣列的散文規則。在陣列中包含字面字串 `"$defaults"` 以在該位置繼承內建規則。請參閱[設定自動模式](/zh-TW/auto-mode-config)。不從共享專案設定讀取                                                                                                             | `{"soft_deny": ["$defaults", "Never run terraform apply"]}`                                                                   |
 | `autoScrollEnabled`               | 在[全螢幕渲染](/zh-TW/fullscreen)中，跟隨新輸出到對話的底部。預設：`true`。在 `/config` 中顯示為**自動捲軸**。當此設定關閉時，權限提示仍會捲軸進入檢視                                                                                                                                                                                                                              | `false`                                                                                                                       |
 | `autoUpdatesChannel`              | 遵循更新的發行頻道。使用 `"stable"` 以取得通常約一週舊的版本並跳過有重大迴歸的版本，或 `"latest"`（預設）以取得最新版本                                                                                                                                                                                                                                                       | `"stable"`                                                                                                                    |
@@ -174,7 +177,7 @@ Claude Code 使用**範圍系統**來決定設定的適用位置和共享對象�
 | `awsAuthRefresh`                  | 修改 `.aws` 目錄的自訂指令碼（請參閱[進階認證設定](/zh-TW/amazon-bedrock#advanced-credential-configuration)）                                                                                                                                                                                                                                      | `aws sso login --profile myprofile`                                                                                           |
 | `awsCredentialExport`             | 輸出包含 AWS 認證的 JSON 的自訂指令碼（請參閱[進階認證設定](/zh-TW/amazon-bedrock#advanced-credential-configuration)）                                                                                                                                                                                                                                | `/bin/generate_aws_grant.sh`                                                                                                  |
 | `blockedMarketplaces`             | （Managed 設定僅限）marketplace 來源的黑名單。在下載前檢查被阻止的來源，因此它們永遠不會接觸檔案系統。請參閱 [Managed marketplace 限制](/zh-TW/plugin-marketplaces#managed-marketplace-restrictions)                                                                                                                                                                        | `[{ "source": "github", "repo": "untrusted/plugins" }]`                                                                       |
-| `channelsEnabled`                 | （Managed 設定僅限）允許 Team 和 Enterprise 使用者使用[頻道](/zh-TW/channels)。未設定或 `false` 會阻止頻道訊息傳遞，無論使用者傳遞什麼給 `--channels`                                                                                                                                                                                                                  | `true`                                                                                                                        |
+| `channelsEnabled`                 | （Managed 設定僅限）允許組織使用[頻道](/zh-TW/channels)。在 claude.ai Team 和 Enterprise 方案上，當此設定未設定或為 `false` 時，頻道會被阻止。對於使用 API 金鑰驗證的 [Anthropic Console](/zh-TW/authentication#claude-console-authentication) 帳戶，除非您的組織部署 managed 設定（在這種情況下此金鑰必須設定為 `true`），否則預設允許頻道                                                                         | `true`                                                                                                                        |
 | `cleanupPeriodDays`               | 非使用中超過此期間的工作階段在啟動時刪除（預設：30 天，最少 1 天）。設定為 `0` 會被拒絕並出現驗證錯誤。也控制[孤立 subagent worktrees](/zh-TW/worktrees#clean-up-worktrees) 在啟動時自動移除的年齡截止。若要完全停用文字記錄寫入，請設定 [`CLAUDE_CODE_SKIP_PROMPT_HISTORY`](/zh-TW/env-vars) 環境變數，或在非互動模式（`-p`）中使用 `--no-session-persistence` 旗標或 `persistSession: false` SDK 選項。                             | `20`                                                                                                                          |
 | `companyAnnouncements`            | 在啟動時向使用者顯示的公告。如果提供多個公告，它們將隨機循環。                                                                                                                                                                                                                                                                                               | `["Welcome to Acme Corp! Review our code guidelines at docs.acme.com"]`                                                       |
 | `defaultShell`                    | 輸入框 `!` 命令的預設 shell。接受 `"bash"`（預設）或 `"powershell"`。設定 `"powershell"` 會在 Windows 上透過 PowerShell 路由互動式 `!` 命令。需要 `CLAUDE_CODE_USE_POWERSHELL_TOOL=1`。請參閱 [PowerShell tool](/zh-TW/tools-reference#powershell-tool)                                                                                                             | `"powershell"`                                                                                                                |
@@ -183,6 +186,7 @@ Claude Code 使用**範圍系統**來決定設定的適用位置和共享對象�
 | `disableAutoMode`                 | 設定為 `"disable"` 以防止[自動模式](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode)被啟用。從 `Shift+Tab` 循環中移除 `auto` 並在啟動時拒絕 `--permission-mode auto`。在[managed 設定](/zh-TW/permissions#managed-settings)中最有用，使用者無法覆蓋它                                                                                                            | `"disable"`                                                                                                                   |
 | `disableDeepLinkRegistration`     | 設定為 `"disable"` 以防止 Claude Code 在啟動時向作業系統註冊 `claude-cli://` 協議處理程式。[深層連結](/zh-TW/deep-links)讓外部工具透過預先填入的提示開啟 Claude Code 工作階段。在協議處理程式註冊受限或單獨管理的環境中很有用                                                                                                                                                                         | `"disable"`                                                                                                                   |
 | `disabledMcpjsonServers`          | 要拒絕的 `.mcp.json` 檔案中特定 MCP servers 的清單                                                                                                                                                                                                                                                                                        | `["filesystem"]`                                                                                                              |
+| `disableRemoteControl`            | {/* min-version: 2.1.128 */}停用[遠端控制](/zh-TW/remote-control)：阻止 `claude remote-control`、`--remote-control` 旗標、自動啟動和工作階段內切換。通常放在[managed 設定](/zh-TW/permissions#managed-settings)中以進行每個裝置的 MDM 強制執行，但適用於任何範圍。需要 Claude Code v2.1.128 或更新版本                                                                                      | `true`                                                                                                                        |
 | `disableSkillShellExecution`      | 停用 [skills](/zh-TW/skills) 和來自使用者、專案、plugin 或其他目錄來源的自訂命令中的內嵌 shell 執行（`` !`...` `` 和 ` ```! ` 區塊）。命令會被替換為 `[shell command execution disabled by policy]` 而不是被執行。Bundled 和 managed skills 不受影響。在[managed 設定](/zh-TW/permissions#managed-settings)中最有用，使用者無法覆蓋它                                                                 | `true`                                                                                                                        |
 | `editorMode`                      | 輸入提示的快捷鍵模式：`"normal"` 或 `"vim"`。預設：`"normal"`。在 `/config` 中顯示為**編輯器模式**                                                                                                                                                                                                                                                       | `"vim"`                                                                                                                       |
 | `effortLevel`                     | 跨工作階段持久化[努力等級](/zh-TW/model-config#adjust-effort-level)。接受 `"low"`、`"medium"`、`"high"` 或 `"xhigh"`。當您執行 `/effort` 時自動寫入，其中包含其中一個值。請參閱[調整努力等級](/zh-TW/model-config#adjust-effort-level)以了解支援的模型                                                                                                                                | `"xhigh"`                                                                                                                     |
@@ -550,8 +554,10 @@ Claude Code 支援 plugin 系統，可讓您使用 skills、agents、hooks 和 M
   },
   "extraKnownMarketplaces": {
     "acme-tools": {
-      "source": "github",
-      "repo": "acme-corp/claude-plugins"
+      "source": {
+        "source": "github",
+        "repo": "acme-corp/claude-plugins"
+      }
     }
   }
 }
@@ -567,6 +573,12 @@ Claude Code 支援 plugin 系統，可讓您使用 skills、agents、hooks 和 M
 * **專案設定**（`.claude/settings.json`）：與團隊共享的專案特定 plugins
 * **本機設定**（`.claude/settings.local.json`）：每台機器的覆蓋（未提交）
 * **Managed 設定**（`managed-settings.json`）：組織範圍的政策覆蓋，在所有範圍阻止安裝並從 marketplace 隱藏 plugin
+
+<Note>
+  專案設定優先於使用者設定，因此在 `~/.claude/settings.json` 中將 plugin 設定為 `false` 不會停用專案的 `.claude/settings.json` 啟用的 plugin。若要在您的機器上選擇退出專案啟用的 plugin，請改在 `.claude/settings.local.json` 中將其設定為 `false`。
+
+  由 managed 設定強制啟用的 plugins 無法以此方式停用，因為 managed 設定會覆蓋本機設定。
+</Note>
 
 **範例**：
 
@@ -659,7 +671,7 @@ Claude Code 支援 plugin 系統，可讓您使用 skills、agents、hooks 和 M
 * 僅在 managed 設定（`managed-settings.json`）中可用
 * 無法被使用者或專案設定覆蓋（最高優先順序）
 * 在網路/檔案系統操作之前強制執行（被阻止的來源永遠不會執行）
-* 對來源規格使用精確匹配（包括 git 來源的 `ref`、`path`），除了 `hostPattern`，它使用正規表達式匹配
+* 對來源規格使用精確匹配（包括 git 來源的 `ref`、`path`），除了 `hostPattern` 和 `pathPattern`，它們使用正規表達式匹配
 
 **白名單行為**：
 
@@ -669,7 +681,7 @@ Claude Code 支援 plugin 系統，可讓您使用 skills、agents、hooks 和 M
 
 **所有支援的來源類型**：
 
-白名單支援多種 marketplace 來源類型。大多數來源使用精確匹配，而 `hostPattern` 使用正規表達式匹配 marketplace 主機。
+白名單支援多種 marketplace 來源類型。大多數來源使用精確匹配，而 `hostPattern` 和 `pathPattern` 分別使用正規表達式匹配 marketplace 主機和檔案系統路徑。
 
 1. **GitHub 儲存庫**：
 
@@ -748,6 +760,17 @@ Claude Code 支援 plugin 系統，可讓您使用 skills、agents、hooks 和 M
 * `git`：從 URL 提取主機名稱（支援 HTTPS 和 SSH 格式）
 * `url`：從 URL 提取主機名稱
 * `npm`、`file`、`directory`：不支援主機模式匹配
+
+8. **路徑模式匹配**：
+
+```json theme={null}
+{ "source": "pathPattern", "pathPattern": "^/opt/approved/" }
+{ "source": "pathPattern", "pathPattern": ".*" }
+```
+
+欄位：`pathPattern`（必需：與 `file` 和 `directory` 來源的 `path` 欄位相符的正規表達式模式）
+
+使用路徑模式匹配來允許檔案系統型 marketplaces 與網路來源的 `hostPattern` 限制並行。設定 `".*"` 以允許所有本機路徑，或設定更窄的模式以限制到特定目錄。
 
 **設定範例**：
 

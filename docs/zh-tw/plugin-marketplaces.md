@@ -23,7 +23,7 @@
 
 ## 逐步解說：建立本機 marketplace
 
-此範例建立一個包含一個 plugin 的 marketplace：用於程式碼審查的 `/quality-review` skill。您將建立目錄結構、新增 skill、建立 plugin manifest 和 marketplace 目錄，然後安裝並測試它。
+此範例建立一個包含一個 plugin 的 marketplace：用於程式碼審查的 `quality-review` skill。您將建立目錄結構、新增 skill、建立 plugin manifest 和 marketplace 目錄，然後安裝並測試它。
 
 <Steps>
   <Step title="建立目錄結構">
@@ -35,7 +35,7 @@
   </Step>
 
   <Step title="建立 skill">
-    建立 `SKILL.md` 檔案，定義 `/quality-review` skill 的功能。
+    建立 `SKILL.md` 檔案，定義 `quality-review` skill 的功能。
 
     ```markdown my-marketplace/plugins/quality-review-plugin/skills/quality-review/SKILL.md theme={null}
     ---
@@ -59,7 +59,7 @@
     ```json my-marketplace/plugins/quality-review-plugin/.claude-plugin/plugin.json theme={null}
     {
       "name": "quality-review-plugin",
-      "description": "新增 /quality-review skill 以進行快速程式碼審查",
+      "description": "新增 quality-review skill 以進行快速程式碼審查",
       "version": "1.0.0"
     }
     ```
@@ -82,7 +82,7 @@
         {
           "name": "quality-review-plugin",
           "source": "./plugins/quality-review-plugin",
-          "description": "新增 /quality-review skill 以進行快速程式碼審查"
+          "description": "新增 quality-review skill 以進行快速程式碼審查"
         }
       ]
     }
@@ -99,10 +99,10 @@
   </Step>
 
   <Step title="試試看">
-    在編輯器中選擇一些程式碼並執行您的新 skill。
+    在編輯器中選擇一些程式碼並執行您的新 skill。Plugin skills 使用 plugin 名稱進行命名空間。
 
     ```shell theme={null}
-    /quality-review
+    /quality-review-plugin:quality-review
     ```
   </Step>
 </Steps>
@@ -692,6 +692,8 @@ CLAUDE_CODE_PLUGIN_CACHE_DIR=/opt/claude-seed claude plugin install my-tool@your
 * 對於 URL 來源：完整 URL 必須完全相符
 * 對於 `hostPattern` 來源：marketplace 主機與正規表達式模式相符
 * 對於 `pathPattern` 來源：marketplace 的檔案系統路徑與正規表達式模式相符
+
+精確匹配不會正規化 URL：尾部斜線、`.git` 後綴或 `ssh://` 與 `https://` 形式被視為不同的值。如果您的組織 marketplace 可以透過多個 URL 形式複製，請優先使用 `hostPattern` 項目而不是字面 URL，以便所有形式都相符。
 
 因為 `strictKnownMarketplaces` 在[受管設定](/zh-TW/settings#settings-files)中設定，個別使用者和專案配置無法覆蓋這些限制。
 

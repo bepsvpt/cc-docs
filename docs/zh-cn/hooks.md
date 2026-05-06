@@ -1355,13 +1355,13 @@ Hook 可以回显它接收的 `permission_suggestions` 之一作为其自己的 
 
 `PostToolUse` hooks 可以在工具执行后向 Claude 提供反馈。除了所有 hooks 可用的[JSON 输出字段](#json-output)外，您的 hook 脚本可以返回这些事件特定字段：
 
-| 字段                     | 描述                                                                      |
-| :--------------------- | :---------------------------------------------------------------------- |
-| `decision`             | `"block"` 用 `reason` 提示 Claude。省略以允许操作继续                                |
-| `reason`               | 当 `decision` 为 `"block"` 时向 Claude 显示的解释                                |
-| `additionalContext`    | 添加到 Claude 上下文的字符串，与工具结果一起。请参阅[为 Claude 添加上下文](#add-context-for-claude) |
-| `updatedToolOutput`    | 用提供的值替换工具的输出，然后将其发送给 Claude。该值必须与工具的输出形状匹配                              |
-| `updatedMCPToolOutput` | 仅对[MCP 工具](#match-mcp-tools)替换输出。优先使用 `updatedToolOutput`，它适用于所有工具      |
+| 字段                     | 描述                                                                         |
+| :--------------------- | :------------------------------------------------------------------------- |
+| `decision`             | `"block"` 用 `reason` 提示 Claude。Claude 仍然看到原始输出；要替换它，使用 `updatedToolOutput` |
+| `reason`               | 当 `decision` 为 `"block"` 时向 Claude 显示的解释                                   |
+| `additionalContext`    | 添加到 Claude 上下文的字符串，与工具结果一起。请参阅[为 Claude 添加上下文](#add-context-for-claude)    |
+| `updatedToolOutput`    | 用提供的值替换工具的输出，然后将其发送给 Claude。该值必须与工具的输出形状匹配                                 |
+| `updatedMCPToolOutput` | 仅对[MCP 工具](#match-mcp-tools)替换输出。优先使用 `updatedToolOutput`，它适用于所有工具         |
 
 下面的示例替换 `Bash` 调用的输出。替换值与 `Bash` 工具的输出形状匹配：
 
@@ -2405,10 +2405,10 @@ LLM 必须使用包含以下内容的 JSON 响应：
 }
 ```
 
-| 字段       | 描述                         |
-| :------- | :------------------------- |
-| `ok`     | `true` 允许操作，`false` 阻止它    |
-| `reason` | 当 `ok` 为 `false` 时必需。阻止的解释 |
+| 字段       | 描述                                |
+| :------- | :-------------------------------- |
+| `ok`     | `true` 允许，`false` 阻止。请参阅下面的每个事件行为 |
+| `reason` | 当 `ok` 为 `false` 时必需。决定的解释        |
 
 `ok: false` 时发生的情况取决于事件：
 

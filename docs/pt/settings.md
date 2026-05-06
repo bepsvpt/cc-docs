@@ -37,7 +37,7 @@ O escopo **User** é melhor para:
 
 O escopo **Project** é melhor para:
 
-* Configurações compartilhadas pela equipe (permissões, hooks, MCP servers)
+* Configurações compartilhadas pela equipe (permissões, hooks, servidores MCP)
 * Plugins que toda a equipe deve ter
 * Padronização de ferramentas entre colaboradores
 
@@ -70,6 +70,8 @@ Os escopos se aplicam a muitos recursos do Claude Code:
 | **MCP servers** | `~/.claude.json`          | `.mcp.json`                        | `~/.claude.json` (por projeto) |
 | **Plugins**     | `~/.claude/settings.json` | `.claude/settings.json`            | `.claude/settings.local.json`  |
 | **CLAUDE.md**   | `~/.claude/CLAUDE.md`     | `CLAUDE.md` ou `.claude/CLAUDE.md` | `CLAUDE.local.md`              |
+
+No Windows, os caminhos mostrados como `~/.claude` são resolvidos para `%USERPROFILE%\.claude`.
 
 ***
 
@@ -166,6 +168,7 @@ O esquema publicado é atualizado periodicamente e pode não incluir configuraç
 | `apiKeyHelper`                    | Script personalizado, a ser executado em `/bin/sh`, para gerar um valor de autenticação. Este valor será enviado como cabeçalhos `X-Api-Key` e `Authorization: Bearer` para solicitações de modelo                                                                                                                                                                                                                                                                                                                                                                         | `/bin/generate_temp_api_key.sh`                                                                                                |
 | `attribution`                     | Personalizar atribuição para commits git e pull requests. Veja [Configurações de atribuição](#attribution-settings)                                                                                                                                                                                                                                                                                                                                                                                                                                                        | `{"commit": "🤖 Generated with Claude Code", "pr": ""}`                                                                        |
 | `autoMemoryDirectory`             | Diretório personalizado para armazenamento de [memória automática](/pt/memory#storage-location). Aceita um caminho absoluto ou um caminho com prefixo `~/`. Aceito de configurações de política e usuário, e da flag `--settings`. Não aceito de configurações de projeto ou local, já que um repositório clonado poderia fornecer qualquer arquivo para redirecionar escritas de memória para locais sensíveis                                                                                                                                                            | `"~/my-memory-dir"`                                                                                                            |
+| `autoMemoryEnabled`               | Ativar [memória automática](/pt/memory#enable-or-disable-auto-memory). Quando `false`, Claude não lê ou escreve no diretório de memória automática. Padrão: `true`. Você também pode alternar isto com `/memory` durante uma sessão                                                                                                                                                                                                                                                                                                                                        | `false`                                                                                                                        |
 | `autoMode`                        | Personalizar o que o classificador de [modo automático](/pt/permission-modes#eliminate-prompts-with-auto-mode) bloqueia e permite. Contém arrays `environment`, `allow`, e `soft_deny` de regras em prosa. Inclua a string literal `"$defaults"` em um array para herdar as regras integradas nessa posição. Veja [Configurar modo automático](/pt/auto-mode-config). Não lido de configurações de projeto compartilhadas                                                                                                                                                  | `{"soft_deny": ["$defaults", "Never run terraform apply"]}`                                                                    |
 | `autoScrollEnabled`               | Em [renderização fullscreen](/pt/fullscreen), seguir nova saída até o fundo da conversa. Padrão: `true`. Aparece em `/config` como **Auto-scroll**. Prompts de permissão ainda rolam para a vista quando isto está desligado                                                                                                                                                                                                                                                                                                                                               | `false`                                                                                                                        |
 | `autoUpdatesChannel`              | Canal de lançamento a seguir para atualizações. Use `"stable"` para uma versão que é tipicamente cerca de uma semana antiga e pula versões com regressões maiores, ou `"latest"` (padrão) para o lançamento mais recente                                                                                                                                                                                                                                                                                                                                                   | `"stable"`                                                                                                                     |
@@ -174,7 +177,7 @@ O esquema publicado é atualizado periodicamente e pode não incluir configuraç
 | `awsAuthRefresh`                  | Script personalizado que modifica o diretório `.aws` (veja [configuração avançada de credenciais](/pt/amazon-bedrock#advanced-credential-configuration))                                                                                                                                                                                                                                                                                                                                                                                                                   | `aws sso login --profile myprofile`                                                                                            |
 | `awsCredentialExport`             | Script personalizado que produz JSON com credenciais AWS (veja [configuração avançada de credenciais](/pt/amazon-bedrock#advanced-credential-configuration))                                                                                                                                                                                                                                                                                                                                                                                                               | `/bin/generate_aws_grant.sh`                                                                                                   |
 | `blockedMarketplaces`             | (Apenas configurações gerenciadas) Lista de negação de fontes de marketplace. Aplicado em adição de marketplace e em instalação, atualização, atualização e auto-atualização de plugin, então um marketplace adicionado antes da política ser definida não pode ser usado para buscar plugins. Fontes bloqueadas são verificadas antes do download, então nunca tocam o sistema de arquivos. Veja [Restrições de marketplace gerenciado](/pt/plugin-marketplaces#managed-marketplace-restrictions)                                                                         | `[{ "source": "github", "repo": "untrusted/plugins" }]`                                                                        |
-| `channelsEnabled`                 | (Apenas configurações gerenciadas) Permitir [channels](/pt/channels) para usuários de Team e Enterprise. Indefinido ou `false` bloqueia entrega de mensagens de canal independentemente do que os usuários passam para `--channels`                                                                                                                                                                                                                                                                                                                                        | `true`                                                                                                                         |
+| `channelsEnabled`                 | (Apenas configurações gerenciadas) Permitir [channels](/pt/channels) para a organização. Em planos Claude.ai Team e Enterprise, channels são bloqueados quando isto está indefinido ou `false`. Para contas [Anthropic Console](/pt/authentication#claude-console-authentication) usando autenticação de chave de API, channels são permitidos por padrão a menos que sua organização implante configurações gerenciadas, nesse caso esta chave deve ser definida como `true`                                                                                              | `true`                                                                                                                         |
 | `cleanupPeriodDays`               | Arquivos de sessão mais antigos que este período são deletados na inicialização (padrão: 30 dias, mínimo 1). Definir como `0` é rejeitado com um erro de validação. Também controla o corte de idade para remoção automática de [worktrees de subagent órfãos](/pt/worktrees#clean-up-worktrees) na inicialização. Para desabilitar escritas de transcrição completamente, defina a variável de ambiente [`CLAUDE_CODE_SKIP_PROMPT_HISTORY`](/pt/env-vars), ou em modo não interativo (`-p`) use a flag `--no-session-persistence` ou a opção SDK `persistSession: false`. | `20`                                                                                                                           |
 | `companyAnnouncements`            | Anúncio a ser exibido aos usuários na inicialização. Se múltiplos anúncios forem fornecidos, eles serão alternados aleatoriamente.                                                                                                                                                                                                                                                                                                                                                                                                                                         | `["Welcome to Acme Corp! Review our code guidelines at docs.acme.com"]`                                                        |
 | `defaultShell`                    | Shell padrão para comandos `!` da caixa de entrada. Aceita `"bash"` (padrão) ou `"powershell"`. Definir `"powershell"` roteia comandos `!` interativos através do PowerShell no Windows. Requer `CLAUDE_CODE_USE_POWERSHELL_TOOL=1`. Veja [Ferramenta PowerShell](/pt/tools-reference#powershell-tool)                                                                                                                                                                                                                                                                     | `"powershell"`                                                                                                                 |
@@ -183,6 +186,7 @@ O esquema publicado é atualizado periodicamente e pode não incluir configuraç
 | `disableAutoMode`                 | Defina como `"disable"` para impedir que o [modo automático](/pt/permission-modes#eliminate-prompts-with-auto-mode) seja ativado. Remove `auto` do ciclo `Shift+Tab` e rejeita `--permission-mode auto` na inicialização. Mais útil em [configurações gerenciadas](/pt/permissions#managed-settings) onde os usuários não podem substituir                                                                                                                                                                                                                                 | `"disable"`                                                                                                                    |
 | `disableDeepLinkRegistration`     | Defina como `"disable"` para impedir que o Claude Code registre o manipulador de protocolo `claude-cli://` com o sistema operacional na inicialização. [Deep links](/pt/deep-links) permitem que ferramentas externas abram uma sessão do Claude Code com um prompt pré-preenchido. Útil em ambientes onde o registro de manipulador de protocolo é restrito ou gerenciado separadamente                                                                                                                                                                                   | `"disable"`                                                                                                                    |
 | `disabledMcpjsonServers`          | Lista de MCP servers específicos de arquivos `.mcp.json` para rejeitar                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | `["filesystem"]`                                                                                                               |
+| `disableRemoteControl`            | {/* min-version: 2.1.128 */}Desabilitar [Controle Remoto](/pt/remote-control): bloqueia `claude remote-control`, a flag `--remote-control`, auto-start, e o toggle em sessão. Tipicamente colocado em [configurações gerenciadas](/pt/permissions#managed-settings) para aplicação de MDM por dispositivo, mas funciona de qualquer escopo. Requer Claude Code v2.1.128 ou posterior                                                                                                                                                                                       | `true`                                                                                                                         |
 | `disableSkillShellExecution`      | Desabilitar execução de shell inline para blocos `` !`...` `` e ` ```! ` em [skills](/pt/skills) e comandos personalizados de fontes de usuário, projeto, plugin ou diretório adicional. Comandos são substituídos por `[shell command execution disabled by policy]` em vez de serem executados. Skills agrupadas e gerenciadas não são afetadas. Mais útil em [configurações gerenciadas](/pt/permissions#managed-settings) onde os usuários não podem substituir                                                                                                        | `true`                                                                                                                         |
 | `editorMode`                      | Modo de atalho de teclado para o prompt de entrada: `"normal"` ou `"vim"`. Padrão: `"normal"`. Aparece em `/config` como **Editor mode**                                                                                                                                                                                                                                                                                                                                                                                                                                   | `"vim"`                                                                                                                        |
 | `effortLevel`                     | Persistir o [nível de esforço](/pt/model-config#adjust-effort-level) entre sessões. Aceita `"low"`, `"medium"`, `"high"`, ou `"xhigh"`. Escrito automaticamente quando você executa `/effort` com um desses valores. Veja [Ajustar nível de esforço](/pt/model-config#adjust-effort-level) para modelos suportados                                                                                                                                                                                                                                                         | `"xhigh"`                                                                                                                      |
@@ -550,8 +554,10 @@ Configurações relacionadas a plugin em `settings.json`:
   },
   "extraKnownMarketplaces": {
     "acme-tools": {
-      "source": "github",
-      "repo": "acme-corp/claude-plugins"
+      "source": {
+        "source": "github",
+        "repo": "acme-corp/claude-plugins"
+      }
     }
   }
 }
@@ -567,6 +573,12 @@ Controla quais plugins estão habilitados. Formato: `"plugin-name@marketplace-na
 * **Configurações de projeto** (`.claude/settings.json`): Plugins específicos do projeto compartilhados com equipe
 * **Configurações locais** (`.claude/settings.local.json`): Substituições por máquina (não confirmadas)
 * **Configurações gerenciadas** (`managed-settings.json`): Substituições de política em toda a organização que bloqueiam instalação em todos os escopos e ocultam o plugin do marketplace
+
+<Note>
+  As configurações de projeto têm precedência sobre as configurações de usuário, portanto, definir um plugin como `false` em `~/.claude/settings.json` não desabilita um plugin que o `.claude/settings.json` do projeto habilita. Para optar por não usar um plugin habilitado pelo projeto em sua máquina, defina-o como `false` em `.claude/settings.local.json` em vez disso.
+
+  Plugins forçadamente habilitados por configurações gerenciadas não podem ser desabilitados desta forma, pois as configurações gerenciadas substituem as configurações locais.
+</Note>
 
 **Exemplo**:
 
@@ -659,7 +671,7 @@ Use `source: 'settings'` para declarar um pequeno conjunto de plugins inline sem
 * Apenas disponível em configurações gerenciadas (`managed-settings.json`)
 * Não pode ser substituída por configurações de usuário ou projeto (precedência mais alta)
 * Aplicada ANTES de operações de rede/sistema de arquivos (fontes bloqueadas nunca executam)
-* Usa correspondência exata para especificações de fonte (incluindo `ref`, `path` para fontes git), exceto `hostPattern`, que usa correspondência regex
+* Usa correspondência exata para especificações de fonte (incluindo `ref`, `path` para fontes git), exceto `hostPattern` e `pathPattern`, que usam correspondência regex
 
 **Comportamento de lista de permissões**:
 
@@ -669,7 +681,7 @@ Use `source: 'settings'` para declarar um pequeno conjunto de plugins inline sem
 
 **Todos os tipos de fonte suportados**:
 
-A lista de permissões suporta múltiplos tipos de fonte de marketplace. A maioria das fontes usa correspondência exata, enquanto `hostPattern` usa correspondência regex contra o host do marketplace.
+A lista de permissões suporta múltiplos tipos de fonte de marketplace. A maioria das fontes usa correspondência exata, enquanto `hostPattern` e `pathPattern` usam correspondência regex contra o host do marketplace e caminho do sistema de arquivos respectivamente.
 
 1. **Repositórios GitHub**:
 
@@ -748,6 +760,17 @@ Extração de host por tipo de fonte:
 * `git`: extrai nome de host da URL (suporta formatos HTTPS e SSH)
 * `url`: extrai nome de host da URL
 * `npm`, `file`, `directory`: não suportado para correspondência de padrão de host
+
+8. **Correspondência de padrão de caminho**:
+
+```json theme={null}
+{ "source": "pathPattern", "pathPattern": "^/opt/approved/" }
+{ "source": "pathPattern", "pathPattern": ".*" }
+```
+
+Campos: `pathPattern` (obrigatório: padrão regex correspondido contra o campo `path` de fontes `file` e `directory`)
+
+Use correspondência de padrão de caminho para permitir marketplaces baseados em sistema de arquivos junto com restrições `hostPattern` para fontes de rede. Defina `".*"` para permitir todos os caminhos locais, ou um padrão mais estreito para restringir a diretórios específicos.
 
 **Exemplos de configuração**:
 

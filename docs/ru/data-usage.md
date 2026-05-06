@@ -67,7 +67,7 @@ Anthropic сохраняет данные Claude Code в зависимости 
 
 На диаграмме ниже показано, как Claude Code подключается к внешним сервисам во время установки и нормальной работы. Сплошные линии указывают на обязательные соединения, а пунктирные линии представляют дополнительные или инициированные пользователем потоки данных.
 
-<img src="https://mintcdn.com/claude-code/YcBW2H7CArGcduPb/images/claude-code-data-flow.svg?fit=max&auto=format&n=YcBW2H7CArGcduPb&q=85&s=b600a89f84fc86f9ff7be00a466c0635" alt="Диаграмма, показывающая внешние соединения Claude Code: установка/обновление подключается к серверу распределения, а запросы пользователя подключаются к сервисам Anthropic, включая Console auth, public-api, и опционально Statsig, Sentry и отчёты об ошибках" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
+<img src="https://mintcdn.com/claude-code/RcOyXc06Ja8cuvMZ/images/claude-code-data-flow.svg?fit=max&auto=format&n=RcOyXc06Ja8cuvMZ&q=85&s=b5be40abf333defe984993af89546c19" alt="Диаграмма, показывающая внешние соединения Claude Code: установка/обновление подключается к серверу распределения, а запросы пользователя подключаются к сервисам Anthropic, включая Console auth, public-api, и опционально Statsig, Sentry и отчёты об ошибках" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
 
 Claude Code работает локально. Для взаимодействия с LLM Claude Code отправляет данные по сети. Эти данные включают все подсказки пользователя и выходные данные модели, зашифрованные при передаче через TLS 1.2+. Claude Code совместим с большинством популярных VPN и прокси LLM.
 

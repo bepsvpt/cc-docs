@@ -36,7 +36,7 @@ Claude Code 支持多种权限模式来控制工具的批准方式。请参阅[�
 | :------------------ | :------------------------------------------------------------------------------- |
 | `default`           | 标准行为：在首次使用每个工具时提示权限                                                              |
 | `acceptEdits`       | 自动接受工作目录或 `additionalDirectories` 中路径的文件编辑和常见文件系统命令（`mkdir`、`touch`、`mv`、`cp` 等） |
-| `plan`              | Plan Mode：Claude 可以分析但不能修改文件或执行命令                                                |
+| `plan`              | Plan Mode：Claude 读取文件并运行只读 shell 命令来探索，但不编辑您的源文件                                 |
 | `auto`              | 自动批准工具调用，并进行后台安全检查以验证操作与您的请求一致。目前处于研究预览阶段                                        |
 | `dontAsk`           | 自动拒绝工具，除非通过 `/permissions` 或 `permissions.allow` 规则预先批准                          |
 | `bypassPermissions` | 跳过所有权限提示。根目录和主目录删除操作（如 `rm -rf /`）仍会作为断路器提示                                      |
@@ -296,7 +296,7 @@ Hook 决定不会绕过权限规则。Deny 和 ask 规则在 hook 返回 `"allow
 
 * 权限 deny 规则阻止 Claude 甚至尝试访问受限资源
 * 沙箱限制防止 Bash 命令到达定义边界之外的资源，即使提示注入绕过 Claude 的决策制定
-* 沙箱中的文件系统限制使用 Read 和 Edit deny 规则，而不是单独的沙箱配置
+* 沙箱中的文件系统限制结合 [`sandbox.filesystem`](/zh-CN/sandboxing) 设置与 Read 和 Edit deny 规则；两者都合并到最终的沙箱边界中
 * 网络限制结合 WebFetch 权限规则与沙箱的 `allowedDomains` 和 `deniedDomains` 列表
 
 当沙箱启用 `autoAllowBashIfSandboxed: true`（这是默认值）时，沙箱化的 Bash 命令无需提示即可运行，即使您的权限包括 `ask: Bash(*)`。沙箱边界替代了每个命令的提示。显式 deny 规则仍然适用，针对 `/`、您的主目录或其他关键系统路径的 `rm` 或 `rmdir` 命令仍然会触发提示。请参见[沙箱模式](/zh-CN/sandboxing#sandbox-modes)以更改此行为。
@@ -316,7 +316,7 @@ Hook 决定不会绕过权限规则。Deny 和 ask 规则在 hook 返回 `"allow
 | `allowManagedMcpServersOnly`                   | 当为 `true` 时，仅尊重来自托管设置的 `allowedMcpServers`。`deniedMcpServers` 仍然从所有来源合并。请参见[托管 MCP 配置](/zh-CN/mcp#managed-mcp-configuration)                                                            |
 | `allowManagedPermissionRulesOnly`              | 当为 `true` 时，防止用户和项目设置定义 `allow`、`ask` 或 `deny` 权限规则。仅应用托管设置中的规则                                                                                                                         |
 | `blockedMarketplaces`                          | 市场来源的黑名单。在下载前检查被阻止的来源，因此它们永远不会接触文件系统。请参见[托管市场限制](/zh-CN/plugin-marketplaces#managed-marketplace-restrictions)                                                                           |
-| `channelsEnabled`                              | 允许 Team 和 Enterprise 用户使用[频道](/zh-CN/channels)。未设置或 `false` 会阻止频道消息传递，无论用户传递什么给 `--channels`                                                                                            |
+| `channelsEnabled`                              | 允许为组织启用[频道](/zh-CN/channels)。请参见[企业控制](/zh-CN/channels#enterprise-controls)了解每个计划的默认设置                                                                                                  |
 | `forceRemoteSettingsRefresh`                   | 当为 `true` 时，阻止 CLI 启动直到远程托管设置被新鲜获取，如果获取失败则退出。请参见[故障关闭强制执行](/zh-CN/server-managed-settings#enforce-fail-closed-startup)                                                                  |
 | `pluginTrustMessage`                           | 自定义消息，附加到安装前显示的插件信任警告                                                                                                                                                                   |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | 当为 `true` 时，仅尊重来自托管设置的 `filesystem.allowRead` 路径。`denyRead` 仍然从所有来源合并                                                                                                                   |
@@ -327,7 +327,7 @@ Hook 决定不会绕过权限规则。Deny 和 ask 规则在 hook 返回 `"allow
 `disableBypassPermissionsMode` 通常放在托管设置中以强制执行组织策略，但它可以从任何范围工作。用户可以在自己的设置中设置它以将自己锁定在绕过模式之外。
 
 <Note>
-  对[远程控制](/zh-CN/remote-control)和[网络会话](/zh-CN/claude-code-on-the-web)的访问不由托管设置密钥控制。在 Team 和 Enterprise 计划上，管理员在[Claude Code 管理设置](https://claude.ai/admin-settings/claude-code)中启用或禁用这些功能。
+  在 Team 和 Enterprise 计划上，管理员在[Claude Code 管理设置](https://claude.ai/admin-settings/claude-code)中启用或禁用[远程控制](/zh-CN/remote-control)和[网络会话](/zh-CN/claude-code-on-the-web)。远程控制还可以通过 [`disableRemoteControl`](/zh-CN/settings#available-settings) 托管设置按设备禁用。网络会话没有按设备托管设置密钥。
 </Note>
 
 ## 设置优先级

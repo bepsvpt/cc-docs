@@ -23,7 +23,7 @@ Une fois votre place de marché en ligne, vous pouvez la mettre à jour en pouss
 
 ## Procédure pas à pas : créer une place de marché locale
 
-Cet exemple crée une place de marché avec un plugin : une compétence `/quality-review` pour les révisions de code. Vous allez créer la structure de répertoires, ajouter une compétence, créer le manifeste du plugin et le catalogue de la place de marché, puis l'installer et la tester.
+Cet exemple crée une place de marché avec un plugin : une compétence `quality-review` pour les révisions de code. Vous allez créer la structure de répertoires, ajouter une compétence, créer le manifeste du plugin et le catalogue de la place de marché, puis l'installer et la tester.
 
 <Steps>
   <Step title="Créer la structure de répertoires">
@@ -35,7 +35,7 @@ Cet exemple crée une place de marché avec un plugin : une compétence `/qualit
   </Step>
 
   <Step title="Créer la compétence">
-    Créez un fichier `SKILL.md` qui définit ce que fait la compétence `/quality-review`.
+    Créez un fichier `SKILL.md` qui définit ce que fait la compétence `quality-review`.
 
     ```markdown my-marketplace/plugins/quality-review-plugin/skills/quality-review/SKILL.md theme={null}
     ---
@@ -59,7 +59,7 @@ Cet exemple crée une place de marché avec un plugin : une compétence `/qualit
     ```json my-marketplace/plugins/quality-review-plugin/.claude-plugin/plugin.json theme={null}
     {
       "name": "quality-review-plugin",
-      "description": "Adds a /quality-review skill for quick code reviews",
+      "description": "Adds a quality-review skill for quick code reviews",
       "version": "1.0.0"
     }
     ```
@@ -82,7 +82,7 @@ Cet exemple crée une place de marché avec un plugin : une compétence `/qualit
         {
           "name": "quality-review-plugin",
           "source": "./plugins/quality-review-plugin",
-          "description": "Adds a /quality-review skill for quick code reviews"
+          "description": "Adds a quality-review skill for quick code reviews"
         }
       ]
     }
@@ -99,10 +99,10 @@ Cet exemple crée une place de marché avec un plugin : une compétence `/qualit
   </Step>
 
   <Step title="Essayer">
-    Sélectionnez du code dans votre éditeur et exécutez votre nouvelle compétence.
+    Sélectionnez du code dans votre éditeur et exécutez votre nouvelle compétence. Les compétences des plugins sont espacées avec le nom du plugin.
 
     ```shell theme={null}
-    /quality-review
+    /quality-review-plugin:quality-review
     ```
   </Step>
 </Steps>
@@ -692,6 +692,8 @@ La liste d'autorisation utilise la correspondance exacte pour la plupart des typ
 * Pour les sources URL : l'URL complète doit correspondre exactement
 * Pour les sources `hostPattern` : l'hôte de la place de marché est comparé au motif regex
 * Pour les sources `pathPattern` : le chemin du système de fichiers de la place de marché est comparé au motif regex
+
+La correspondance exacte ne normalise pas les URL : une barre oblique finale, un suffixe `.git` ou une forme `ssh://` par rapport à `https://` sont traités comme des valeurs différentes. Si la place de marché de votre organisation peut être clonée par plus d'une forme d'URL, préférez une entrée `hostPattern` à une URL littérale afin que toutes les formes correspondent.
 
 Parce que `strictKnownMarketplaces` est défini dans les [paramètres gérés](/fr/settings#settings-files), les configurations individuelles des utilisateurs et des projets ne peuvent pas contourner ces restrictions.
 

@@ -36,7 +36,7 @@ Claude Code suporta vários modos de permissão que controlam como as ferramenta
 | :------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `default`           | Comportamento padrão: solicita permissão no primeiro uso de cada ferramenta                                                                                                                     |
 | `acceptEdits`       | Aceita automaticamente edições de arquivo e comandos comuns do sistema de arquivos (`mkdir`, `touch`, `mv`, `cp`, etc.) para caminhos no diretório de trabalho ou `additionalDirectories`       |
-| `plan`              | Plan Mode: Claude pode analisar mas não modificar arquivos ou executar comandos                                                                                                                 |
+| `plan`              | Plan Mode: Claude lê arquivos e executa comandos shell somente leitura para explorar, mas não edita seus arquivos de origem                                                                     |
 | `auto`              | Aprova automaticamente chamadas de ferramentas com verificações de segurança em segundo plano que verificam se as ações se alinham com sua solicitação. Atualmente uma visualização de pesquisa |
 | `dontAsk`           | Nega automaticamente ferramentas a menos que pré-aprovadas via `/permissions` ou regras `permissions.allow`                                                                                     |
 | `bypassPermissions` | Ignora todos os prompts de permissão. Remoções de diretório raiz e diretório inicial como `rm -rf /` ainda solicitam como um disjuntor                                                          |
@@ -296,7 +296,7 @@ Use ambos para defesa em profundidade:
 
 * As regras deny de permissão bloqueiam Claude de até tentar acessar recursos restritos
 * As restrições de sandbox impedem que comandos Bash alcancem recursos fora dos limites definidos, mesmo se uma injeção de prompt contornar a tomada de decisão de Claude
-* As restrições de sistema de arquivos no sandbox usam regras deny de Read e Edit, não configuração de sandbox separada
+* As restrições de sistema de arquivos no sandbox combinam as configurações [`sandbox.filesystem`](/pt/sandboxing) com regras deny de Read e Edit; ambas são mescladas no limite final do sandbox
 * As restrições de rede combinam regras de permissão WebFetch com as listas `allowedDomains` e `deniedDomains` do sandbox
 
 Quando o sandboxing é ativado com `autoAllowBashIfSandboxed: true`, que é o padrão, comandos Bash em sandbox são executados sem solicitar mesmo se suas permissões incluem `ask: Bash(*)`. O limite do sandbox substitui o prompt por comando. Regras deny explícitas ainda se aplicam, e comandos `rm` ou `rmdir` que visam `/`, seu diretório inicial ou outros caminhos críticos do sistema ainda acionam um prompt. Veja [modos de sandbox](/pt/sandboxing#sandbox-modes) para alterar este comportamento.
@@ -316,7 +316,7 @@ As seguintes configurações são lidas apenas de configurações gerenciadas. C
 | `allowManagedMcpServersOnly`                   | Quando `true`, apenas `allowedMcpServers` de configurações gerenciadas são respeitados. `deniedMcpServers` ainda se mescla de todas as fontes. Veja [Configuração MCP gerenciada](/pt/mcp#managed-mcp-configuration)                                                                      |
 | `allowManagedPermissionRulesOnly`              | Quando `true`, impede que configurações de usuário e projeto definam regras de permissão `allow`, `ask` ou `deny`. Apenas regras em configurações gerenciadas se aplicam                                                                                                                  |
 | `blockedMarketplaces`                          | Lista de bloqueio de fontes de marketplace. Fontes bloqueadas são verificadas antes do download, portanto nunca tocam o sistema de arquivos. Veja [restrições de marketplace gerenciadas](/pt/plugin-marketplaces#managed-marketplace-restrictions)                                       |
-| `channelsEnabled`                              | Permitir [channels](/pt/channels) para usuários Team e Enterprise. Não definido ou `false` bloqueia entrega de mensagem de canal independentemente do que os usuários passam para `--channels`                                                                                            |
+| `channelsEnabled`                              | Permitir [channels](/pt/channels) para a organização. Veja [controles empresariais](/pt/channels#enterprise-controls) para o padrão em cada plano                                                                                                                                         |
 | `forceRemoteSettingsRefresh`                   | Quando `true`, bloqueia a inicialização da CLI até que as configurações gerenciadas remotas sejam buscadas recentemente e sai se a busca falhar. Veja [imposição fail-closed](/pt/server-managed-settings#enforce-fail-closed-startup)                                                    |
 | `pluginTrustMessage`                           | Mensagem personalizada anexada ao aviso de confiança de plugin mostrado antes da instalação                                                                                                                                                                                               |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Quando `true`, apenas caminhos `filesystem.allowRead` de configurações gerenciadas são respeitados. `denyRead` ainda se mescla de todas as fontes                                                                                                                                         |
@@ -327,7 +327,7 @@ As seguintes configurações são lidas apenas de configurações gerenciadas. C
 `disableBypassPermissionsMode` é tipicamente colocado em configurações gerenciadas para impor política organizacional, mas funciona de qualquer escopo. Um usuário pode defini-lo em suas próprias configurações para se bloquear do modo bypass.
 
 <Note>
-  O acesso a [Remote Control](/pt/remote-control) e [sessões web](/pt/claude-code-on-the-web) não é controlado por uma chave de configurações gerenciadas. Em planos Team e Enterprise, um admin ativa ou desativa esses recursos em [configurações de admin do Claude Code](https://claude.ai/admin-settings/claude-code).
+  Em planos Team e Enterprise, um admin ativa ou desativa [Remote Control](/pt/remote-control) e [sessões web](/pt/claude-code-on-the-web) em toda a organização em [configurações de admin do Claude Code](https://claude.ai/admin-settings/claude-code). Remote Control pode ser adicionalmente desativado por dispositivo com a configuração gerenciada [`disableRemoteControl`](/pt/settings#available-settings). Sessões web não têm chave de configurações gerenciadas por dispositivo.
 </Note>
 
 ## Precedência de configurações

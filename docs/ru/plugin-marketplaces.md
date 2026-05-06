@@ -23,7 +23,7 @@
 
 ## Пошаговое руководство: создание локального marketplace
 
-Этот пример создает marketplace с одним плагином: skill `/quality-review` для проверки кода. Вы создадите структуру каталогов, добавите skill, создадите манифест плагина и каталог marketplace, затем установите и протестируете его.
+Этот пример создает marketplace с одним плагином: skill `quality-review` для проверки кода. Вы создадите структуру каталогов, добавите skill, создадите манифест плагина и каталог marketplace, затем установите и протестируете его.
 
 <Steps>
   <Step title="Создание структуры каталогов">
@@ -35,7 +35,7 @@
   </Step>
 
   <Step title="Создание skill">
-    Создайте файл `SKILL.md`, который определяет, что делает skill `/quality-review`.
+    Создайте файл `SKILL.md`, который определяет, что делает skill `quality-review`.
 
     ```markdown my-marketplace/plugins/quality-review-plugin/skills/quality-review/SKILL.md theme={null}
     ---
@@ -59,7 +59,7 @@
     ```json my-marketplace/plugins/quality-review-plugin/.claude-plugin/plugin.json theme={null}
     {
       "name": "quality-review-plugin",
-      "description": "Добавляет skill /quality-review для быстрой проверки кода",
+      "description": "Добавляет skill quality-review для быстрой проверки кода",
       "version": "1.0.0"
     }
     ```
@@ -82,7 +82,7 @@
         {
           "name": "quality-review-plugin",
           "source": "./plugins/quality-review-plugin",
-          "description": "Добавляет skill /quality-review для быстрой проверки кода"
+          "description": "Добавляет skill quality-review для быстрой проверки кода"
         }
       ]
     }
@@ -99,10 +99,10 @@
   </Step>
 
   <Step title="Попробуйте">
-    Выберите некоторый код в вашем редакторе и запустите вашу новую skill.
+    Выберите некоторый код в вашем редакторе и запустите вашу новую skill. Plugin skills имеют пространство имен с именем плагина.
 
     ```shell theme={null}
-    /quality-review
+    /quality-review-plugin:quality-review
     ```
   </Step>
 </Steps>
@@ -692,6 +692,8 @@ CLAUDE_CODE_PLUGIN_CACHE_DIR=/opt/claude-seed claude plugin install my-tool@your
 * Для источников URL: полный URL должен совпадать точно
 * Для источников `hostPattern`: хост marketplace сопоставляется с шаблоном регулярного выражения
 * Для источников `pathPattern`: путь файловой системы marketplace сопоставляется с шаблоном регулярного выражения
+
+Точное сопоставление не нормализует URL: конечная косая черта, суффикс `.git` или форма `ssh://` в сравнении с `https://` рассматриваются как разные значения. Если marketplace вашей организации можно клонировать более чем одной формой URL, предпочтите запись `hostPattern` буквальному URL, чтобы все формы совпадали.
 
 Поскольку `strictKnownMarketplaces` установлен в [управляемых параметрах](/ru/settings#settings-files), отдельные пользователи и конфигурации проекта не могут переопределить эти ограничения.
 

@@ -36,7 +36,7 @@ Claude Code 支援多種權限模式來控制工具的批准方式。請參閱 [
 | :------------------ | :------------------------------------------------------------------------------- |
 | `default`           | 標準行為：在首次使用每個工具時提示權限                                                              |
 | `acceptEdits`       | 自動接受工作目錄或 `additionalDirectories` 中路徑的檔案編輯和常見檔案系統命令（`mkdir`、`touch`、`mv`、`cp` 等） |
-| `plan`              | Plan Mode：Claude 可以分析但不能修改檔案或執行命令                                                |
+| `plan`              | Plan Mode：Claude 讀取檔案並執行唯讀 shell 命令以探索，但不編輯您的原始檔案                                |
 | `auto`              | 自動批准工具呼叫，並進行背景安全檢查以驗證操作是否符合您的要求。目前為研究預覽版                                         |
 | `dontAsk`           | 自動拒絕工具，除非透過 `/permissions` 或 `permissions.allow` 規則預先批准                          |
 | `bypassPermissions` | 跳過所有權限提示。根目錄和主目錄移除（例如 `rm -rf /`）仍會作為斷路器提示                                       |
@@ -296,7 +296,7 @@ Hook 決定不會繞過權限規則。Deny 和 ask 規則在 hook 返回 `"allow
 
 * 權限 deny 規則阻止 Claude 甚至嘗試存取受限資源
 * 沙箱限制防止 Bash 命令到達定義邊界外的資源，即使提示注入繞過 Claude 的決策制定
-* 沙箱中的檔案系統限制使用 Read 和 Edit deny 規則，而不是單獨的沙箱設定
+* 沙箱中的檔案系統限制結合 [`sandbox.filesystem`](/zh-TW/sandboxing) 設定與 Read 和 Edit deny 規則；兩者都合併到最終沙箱邊界中
 * 網路限制結合 WebFetch 權限規則與沙箱的 `allowedDomains` 和 `deniedDomains` 清單
 
 當沙箱啟用 `autoAllowBashIfSandboxed: true`（預設值）時，沙箱化 Bash 命令無需提示即可執行，即使您的權限包括 `ask: Bash(*)`。沙箱邊界替代每個命令提示。明確的 deny 規則仍然適用，以及針對 `/`、您的主目錄或其他關鍵系統路徑的 `rm` 或 `rmdir` 命令仍然會觸發提示。請參閱 [sandbox modes](/zh-TW/sandboxing#sandbox-modes) 以變更此行為。
@@ -316,7 +316,7 @@ Hook 決定不會繞過權限規則。Deny 和 ask 規則在 hook 返回 `"allow
 | `allowManagedMcpServersOnly`                   | 當為 `true` 時，僅尊重受管理設定中的 `allowedMcpServers`。`deniedMcpServers` 仍然從所有來源合併。請參閱 [Managed MCP configuration](/zh-TW/mcp#managed-mcp-configuration)                                             |
 | `allowManagedPermissionRulesOnly`              | 當為 `true` 時，防止使用者和專案設定定義 `allow`、`ask` 或 `deny` 權限規則。僅套用受管理設定中的規則                                                                                                                         |
 | `blockedMarketplaces`                          | 市場來源的封鎖清單。在下載前檢查被封鎖的來源，因此它們永遠不會接觸檔案系統。請參閱 [managed marketplace restrictions](/zh-TW/plugin-marketplaces#managed-marketplace-restrictions)                                                 |
-| `channelsEnabled`                              | 允許 Team 和 Enterprise 使用者使用 [channels](/zh-TW/channels)。未設定或 `false` 會阻止頻道訊息傳遞，無論使用者傳遞什麼給 `--channels`                                                                                     |
+| `channelsEnabled`                              | 允許組織使用 [channels](/zh-TW/channels)。請參閱 [enterprise controls](/zh-TW/channels#enterprise-controls) 以了解每個方案的預設值                                                                             |
 | `forceRemoteSettingsRefresh`                   | 當為 `true` 時，阻止 CLI 啟動直到遠端受管理設定被新鮮擷取，如果擷取失敗則退出。請參閱 [fail-closed enforcement](/zh-TW/server-managed-settings#enforce-fail-closed-startup)                                                   |
 | `pluginTrustMessage`                           | 自訂訊息，附加到安裝前顯示的外掛信任警告                                                                                                                                                                      |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | 當為 `true` 時，僅尊重受管理設定中的 `filesystem.allowRead` 路徑。`denyRead` 仍然從所有來源合併                                                                                                                     |
@@ -327,7 +327,7 @@ Hook 決定不會繞過權限規則。Deny 和 ask 規則在 hook 返回 `"allow
 `disableBypassPermissionsMode` 通常放在受管理設定中以強制執行組織原則，但它可以從任何範圍工作。使用者可以在自己的設定中設定它以鎖定自己的繞過模式。
 
 <Note>
-  [Remote Control](/zh-TW/remote-control) 和 [web sessions](/zh-TW/claude-code-on-the-web) 的存取不由受管理設定金鑰控制。在 Team 和 Enterprise 方案上，管理員在 [Claude Code admin settings](https://claude.ai/admin-settings/claude-code) 中啟用或停用這些功能。
+  在 Team 和 Enterprise 方案上，管理員在 [Claude Code admin settings](https://claude.ai/admin-settings/claude-code) 中啟用或停用 [Remote Control](/zh-TW/remote-control) 和 [web sessions](/zh-TW/claude-code-on-the-web)。Remote Control 可以另外透過 [`disableRemoteControl`](/zh-TW/settings#available-settings) 受管理設定按裝置停用。Web sessions 沒有按裝置受管理設定金鑰。
 </Note>
 
 ## 設定優先順序

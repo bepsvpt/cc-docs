@@ -2406,10 +2406,10 @@ Das LLM muss mit JSON antworten, das Folgendes enthält:
 }
 ```
 
-| Feld     | Beschreibung                                                       |
-| :------- | :----------------------------------------------------------------- |
-| `ok`     | `true` erlaubt die Aktion, `false` verhindert sie                  |
-| `reason` | Erforderlich, wenn `ok` `false` ist. Erklärung für die Blockierung |
+| Feld     | Beschreibung                                                                                     |
+| :------- | :----------------------------------------------------------------------------------------------- |
+| `ok`     | `true` erlaubt die Aktion, `false` verhindert sie. Siehe das ereignisspezifische Verhalten unten |
+| `reason` | Erforderlich, wenn `ok` `false` ist. Erklärung für die Entscheidung                              |
 
 Was bei `ok: false` passiert, hängt vom Ereignis ab:
 

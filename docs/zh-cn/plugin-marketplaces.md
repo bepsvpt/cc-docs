@@ -23,7 +23,7 @@
 
 ## 演练：创建本地 marketplace
 
-此示例创建一个包含一个 plugin 的 marketplace：一个用于代码审查的 `/quality-review` skill。你将创建目录结构、添加 skill、创建 plugin manifest 和 marketplace 目录，然后安装并测试它。
+此示例创建一个包含一个 plugin 的 marketplace：一个用于代码审查的 `quality-review` skill。你将创建目录结构、添加 skill、创建 plugin manifest 和 marketplace 目录，然后安装并测试它。
 
 <Steps>
   <Step title="创建目录结构">
@@ -35,7 +35,7 @@
   </Step>
 
   <Step title="创建 skill">
-    创建一个 `SKILL.md` 文件，定义 `/quality-review` skill 的功能。
+    创建一个 `SKILL.md` 文件，定义 `quality-review` skill 的功能。
 
     ```markdown my-marketplace/plugins/quality-review-plugin/skills/quality-review/SKILL.md theme={null}
     ---
@@ -59,7 +59,7 @@
     ```json my-marketplace/plugins/quality-review-plugin/.claude-plugin/plugin.json theme={null}
     {
       "name": "quality-review-plugin",
-      "description": "Adds a /quality-review skill for quick code reviews",
+      "description": "Adds a quality-review skill for quick code reviews",
       "version": "1.0.0"
     }
     ```
@@ -82,7 +82,7 @@
         {
           "name": "quality-review-plugin",
           "source": "./plugins/quality-review-plugin",
-          "description": "Adds a /quality-review skill for quick code reviews"
+          "description": "Adds a quality-review skill for quick code reviews"
         }
       ]
     }
@@ -99,10 +99,10 @@
   </Step>
 
   <Step title="尝试一下">
-    在编辑器中选择一些代码并运行你的新 skill。
+    在编辑器中选择一些代码并运行你的新 skill。Plugin skills 使用 plugin 名称进行命名空间划分。
 
     ```shell theme={null}
-    /quality-review
+    /quality-review-plugin:quality-review
     ```
   </Step>
 </Steps>
@@ -692,6 +692,8 @@ CLAUDE_CODE_PLUGIN_CACHE_DIR=/opt/claude-seed claude plugin install my-tool@your
 * 对于 URL 源：完整 URL 必须完全匹配
 * 对于 `hostPattern` 源：marketplace 主机与正则表达式模式匹配
 * 对于 `pathPattern` 源：marketplace 的文件系统路径与正则表达式模式匹配
+
+精确匹配不规范化 URL：尾部斜杠、`.git` 后缀或 `ssh://` 与 `https://` 形式被视为不同的值。如果你的组织的 marketplace 可以通过多个 URL 形式克隆，优先使用 `hostPattern` 条目而不是字面 URL，以便所有形式都匹配。
 
 因为 `strictKnownMarketplaces` 在[托管设置](/zh-CN/settings#settings-files)中设置，个别用户和项目配置无法覆盖这些限制。
 

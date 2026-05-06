@@ -282,11 +282,13 @@ Claude 第一次需要使用应用时，会话中会出现提示。点击**允�
 
 ### 使用会话并行工作
 
-点击侧边栏中的 **+ New session**，或在 macOS 上按 **Cmd+N** 或在 Windows 上按 **Ctrl+N**，来并行处理多个任务。按 **Ctrl+Tab** 和 **Ctrl+Shift+Tab** 来循环侧边栏中的会话。对于 Git 存储库，每个会话使用 [Git worktrees](/zh-CN/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) 获得自己的项目隔离副本，因此一个会话中的更改不会影响其他会话，直到你提交它们。
+点击侧边栏中的 **+ New session**，或在 macOS 上按 **Cmd+N** 或在 Windows 上按 **Ctrl+N**，来并行处理多个任务。按 **Ctrl+Tab** 和 **Ctrl+Shift+Tab** 来循环侧边栏中的会话。对于 Git 存储库，每个会话使用 [Git worktrees](/zh-CN/worktrees) 获得自己的项目隔离副本，因此一个会话中的更改不会影响其他会话，直到你提交它们。
 
-Worktrees 默认存储在 `<project-root>/.claude/worktrees/` 中。你可以在设置 → Claude Code 中的"Worktree location"下将其更改为自定义目录。你也可以设置一个分支前缀，该前缀会添加到每个 worktree 分支名称前面，这对于保持 Claude 创建的分支有组织很有用。要在完成后删除 worktree，请将鼠标悬停在侧边栏中的会话上并点击存档图标。要在 PR 合并或关闭时让会话自动存档，在设置 → Claude Code 中打开**PR 合并或关闭后自动存档**。自动存档仅适用于已完成运行的本地会话。
+要同时查看两个会话，在 macOS 上按住 **Cmd** 或在 Windows 上按住 **Ctrl** 并点击侧边栏中的会话。会话在第二个窗格中打开，与你已经打开的窗格并排。当分割处于活跃状态时，点击另一个侧边栏会话会替换具有焦点的窗格。在 macOS 上按 **Cmd+\\** 或在 Windows 上按 **Ctrl+\\** 来关闭焦点窗格并返回到单个会话。
 
-要在新 worktrees 中包含 gitignored 文件（如 `.env`），在你的项目根目录中创建一个[`.worktreeinclude` 文件](/zh-CN/common-workflows#copy-gitignored-files-to-worktrees)。
+Worktrees 默认存储在 `<project-root>/.claude/worktrees/` 中。你可以在设置 → Claude Code 中的"Worktree location"下将其更改为自定义目录。你也可以设置一个分支前缀，该前缀会添加到每个 worktree 分支名称前面，这对于保持 Claude 创建的分支有组织很有用。要在完成后删除 worktree，请将鼠标悬停在侧边栏中的会话上并点击存档图标。要在 PR 合并或关闭时让会话自动存档，在设置 → Claude Code 中打开 **Auto-archive after PR merge or close**。自动存档仅适用于已完成运行的本地会话。
+
+要在新 worktrees 中包含 gitignored 文件（如 `.env`），在你的项目根目录中创建一个 [`.worktreeinclude` 文件](/zh-CN/worktrees#copy-gitignored-files-into-worktrees)。
 
 <Note>
   会话隔离需要 [Git](https://git-scm.com/downloads)。大多数 Mac 默认包含 Git。在终端中运行 `git --version` 来检查。在 Windows 上，Git 是 Code 选项卡工作所必需的：[下载 Git for Windows](https://git-scm.com/downloads/win)，安装它，然后重启应用。如果你遇到 Git 错误，请在 [Cowork 选项卡](https://claude.com/product/cowork) 中询问 Claude 来帮助排除你的设置。
@@ -312,7 +314,7 @@ Worktrees 默认存储在 `<project-root>/.claude/worktrees/` 中。你可以在
 
 远程会话也支持多个存储库。选择云环境后，点击存储库 pill 旁的 **+** 按钮向会话添加其他存储库。每个存储库都有自己的分支选择器。这对于跨越多个代码库的任务很有用，例如更新共享库及其使用者。
 
-有关远程会话如何工作的更多信息，请参阅[Web 上的 Claude Code](/zh-CN/claude-code-on-the-web)。
+有关远程会话如何工作的更多信息，请参阅 [Web 上的 Claude Code](/zh-CN/claude-code-on-the-web)。
 
 ### 在另一个表面继续
 
@@ -516,7 +518,7 @@ Claude 自动检测你的开发服务器设置并将配置存储在启动会话�
 
 要在任何平台上为本地会话和开发服务器设置环境变量，在提示框中打开环境下拉菜单，将鼠标悬停在 **Local** 上，然后点击齿轮图标来打开本地环境编辑器。你在此处保存的变量在你的机器上加密存储，并适用于你启动的每个本地会话和预览服务器。你也可以将变量添加到你的 `~/.claude/settings.json` 文件中的 `env` 键，尽管这些仅到达 Claude 会话而不是开发服务器。有关支持的变量的完整列表，请参阅[环境变量](/zh-CN/env-vars)。
 
-[扩展思考](/zh-CN/common-workflows#use-extended-thinking-thinking-mode)默认启用，这改进了复杂推理任务的性能，但使用额外的令牌。要完全禁用思考，在本地环境编辑器中将 `MAX_THINKING_TOKENS` 设置为 `0`。在具有[自适应推理](/zh-CN/model-config#adjust-effort-level)的模型上，任何其他 `MAX_THINKING_TOKENS` 值都被忽略，因为自适应推理控制思考深度。在 Opus 4.6 和 Sonnet 4.6 上，设置 `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` 为 `1` 来使用固定思考预算；Opus 4.7 始终使用自适应推理，没有固定预算模式。
+[扩展思考](/zh-CN/model-config#extended-thinking)默认启用，这改进了复杂推理任务的性能，但使用额外的令牌。要完全禁用思考，在本地环境编辑器中将 `MAX_THINKING_TOKENS` 设置为 `0`。在具有[自适应推理](/zh-CN/model-config#adjust-effort-level)的模型上，任何其他 `MAX_THINKING_TOKENS` 值都被忽略，因为自适应推理控制思考深度。在 Opus 4.6 和 Sonnet 4.6 上，设置 `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` 为 `1` 来使用固定思考预算；Opus 4.7 始终使用自适应推理，没有固定预算模式。
 
 ### 远程会话
 

@@ -1,5 +1,201 @@
 # Documentation Changes
 
+## 2026-05-06
+
+111 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Datennutzung** (`data-usage.md`): 1 lines added, 1 removed
+- **Claude Code Desktop verwenden** (`desktop.md`): 7 lines added, 5 removed
+- **Hooks-Referenz** (`hooks.md`): 4 lines added, 4 removed
+- **Berechtigungen konfigurieren** (`permissions.md`): 5 lines added, 5 removed
+- **Erstellen und Verteilen eines Plugin-Marktplatzes** (`plugin-marketplaces.md`): 8 lines added, 6 removed
+- **Plugins-Referenz** (`plugins-reference.md`): 10 lines added, 6 removed
+- **Sicherheit** (`security.md`): 1 lines added, 1 removed
+- **Claude Code-Einstellungen** (`settings.md`): 28 lines added, 5 removed
+
+### English
+
+
+**Modified**
+
+- **Authentication** (`authentication.md`): 5 lines added, 1 removed
+- **Changelog** (`changelog.md`): 35 lines added, 0 removed
+- **Use Claude Code on the web** (`claude-code-on-the-web.md`): 2 lines added, 0 removed
+- **CLI reference** (`cli-reference.md`): 1 lines added, 1 removed
+- **Commands** (`commands.md`): 3 lines added, 3 removed
+- **Data usage** (`data-usage.md`): 4 lines added, 4 removed
+- **Use Claude Code Desktop** (`desktop.md`): 2 lines added, 0 removed
+- **Environment variables** (`env-vars.md`): 3 lines added, 3 removed
+- **Run Claude Code programmatically** (`headless.md`): 8 lines added, 4 removed
+- **Hooks reference** (`hooks.md`): 11 lines added, 11 removed
+- **Interactive mode** (`interactive-mode.md`): 1 lines added, 0 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 6 lines added, 0 removed
+- **Monitoring** (`monitoring-usage.md`): 76 lines added, 4 removed
+  - New section: "### mTLS authentication"
+  - New section: "## Audit security events"
+  - New section: "### Attribute actions to users"
+  - New section: "### Audit MCP activity"
+  - New section: "### Map security questions to events"
+- **Enterprise network configuration** (`network-config.md`): 9 lines added, 12 removed
+- **Configure permissions** (`permissions.md`): 4 lines added, 4 removed
+- **Create and distribute a plugin marketplace** (`plugin-marketplaces.md`): 8 lines added, 6 removed
+- **Plugins reference** (`plugins-reference.md`): 10 lines added, 6 removed
+- **Continue local sessions from any device with Remote Control** (`remote-control.md`): 4 lines added, 3 removed
+- **Run prompts on a schedule** (`scheduled-tasks.md`): 2 lines added, 2 removed
+- **Security** (`security.md`): 1 lines added, 1 removed
+- **Claude Code settings** (`settings.md`): 28 lines added, 5 removed
+- **Extend Claude with skills** (`skills.md`): 2 lines added, 0 removed
+- **Customize your status line** (`statusline.md`): 3 lines added, 3 removed
+- **Tools reference** (`tools-reference.md`): 38 lines added, 37 removed
+
+### Español
+
+
+**Modified**
+
+- **Uso de datos** (`data-usage.md`): 1 lines added, 1 removed
+- **Usar Claude Code Desktop** (`desktop.md`): 5 lines added, 3 removed
+- **Referencia de hooks** (`hooks.md`): 4 lines added, 4 removed
+- **Configurar permisos** (`permissions.md`): 5 lines added, 120 removed
+  - New section: "## Configuración de precedencia"
+- **Crear y distribuir un marketplace de plugins** (`plugin-marketplaces.md`): 8 lines added, 6 removed
+- **Referencia de plugins** (`plugins-reference.md`): 10 lines added, 6 removed
+- **Seguridad** (`security.md`): 1 lines added, 1 removed
+- **Configuración de Claude Code** (`settings.md`): 28 lines added, 5 removed
+
+### Français
+
+
+**Modified**
+
+- **Utilisation des données** (`data-usage.md`): 1 lines added, 1 removed
+- **Utiliser Claude Code Desktop** (`desktop.md`): 5 lines added, 3 removed
+- **Référence des hooks** (`hooks.md`): 4 lines added, 4 removed
+- **Configurer les autorisations** (`permissions.md`): 4 lines added, 119 removed
+- **Créer et distribuer une place de marché de plugins** (`plugin-marketplaces.md`): 8 lines added, 6 removed
+- **Référence des plugins** (`plugins-reference.md`): 10 lines added, 6 removed
+- **Sécurité** (`security.md`): 1 lines added, 1 removed
+- **Paramètres Claude Code** (`settings.md`): 28 lines added, 5 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Penggunaan data** (`data-usage.md`): 1 lines added, 1 removed
+- **Gunakan Claude Code Desktop** (`desktop.md`): 5 lines added, 3 removed
+- **Referensi hooks** (`hooks.md`): 5 lines added, 5 removed
+- **Konfigurasi izin** (`permissions.md`): 5 lines added, 5 removed
+- **Buat dan distribusikan marketplace plugin** (`plugin-marketplaces.md`): 8 lines added, 6 removed
+- **Referensi Plugins** (`plugins-reference.md`): 10 lines added, 6 removed
+- **Keamanan** (`security.md`): 1 lines added, 1 removed
+- **Pengaturan Claude Code** (`settings.md`): 29 lines added, 6 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Utilizzo dei dati** (`data-usage.md`): 1 lines added, 1 removed
+- **Usa Claude Code Desktop** (`desktop.md`): 5 lines added, 3 removed
+- **Riferimento dei hooks** (`hooks.md`): 5 lines added, 5 removed
+- **Configurare le autorizzazioni** (`permissions.md`): 4 lines added, 119 removed
+- **Creare e distribuire un marketplace di plugin** (`plugin-marketplaces.md`): 9 lines added, 7 removed
+- **Riferimento dei plugin** (`plugins-reference.md`): 10 lines added, 6 removed
+- **Sicurezza** (`security.md`): 1 lines added, 1 removed
+- **Impostazioni di Claude Code** (`settings.md`): 28 lines added, 5 removed
+
+### 日本語
+
+
+**Modified**
+
+- **データ使用** (`data-usage.md`): 1 lines added, 1 removed
+- **Claude Code Desktop を使用する** (`desktop.md`): 5 lines added, 3 removed
+- **権限を設定する** (`permissions.md`): 8 lines added, 8 removed
+- **プラグインマーケットプレイスの作成と配布** (`plugin-marketplaces.md`): 8 lines added, 6 removed
+- **プラグインリファレンス** (`plugins-reference.md`): 10 lines added, 6 removed
+- **セキュリティ** (`security.md`): 1 lines added, 1 removed
+- **Claude Code の設定** (`settings.md`): 28 lines added, 5 removed
+
+### 한국어
+
+
+**Modified**
+
+- **데이터 사용** (`data-usage.md`): 1 lines added, 1 removed
+- **Claude Code Desktop 사용하기** (`desktop.md`): 7 lines added, 10 removed
+- **Hooks 참조** (`hooks.md`): 4 lines added, 4 removed
+- **권한 구성** (`permissions.md`): 6 lines added, 6 removed
+- **플러그인 마켓플레이스 생성 및 배포** (`plugin-marketplaces.md`): 8 lines added, 6 removed
+- **플러그인 참조** (`plugins-reference.md`): 10 lines added, 6 removed
+- **보안** (`security.md`): 1 lines added, 1 removed
+- **Claude Code 설정** (`settings.md`): 29 lines added, 6 removed
+
+### Português
+
+
+**Modified**
+
+- **Uso de dados** (`data-usage.md`): 1 lines added, 1 removed
+- **Use Claude Code Desktop** (`desktop.md`): 5 lines added, 3 removed
+- **Referência de hooks** (`hooks.md`): 5 lines added, 5 removed
+- **Configurar permissões** (`permissions.md`): 4 lines added, 4 removed
+- **Criar e distribuir um marketplace de plugins** (`plugin-marketplaces.md`): 8 lines added, 6 removed
+- **Referência de plugins** (`plugins-reference.md`): 10 lines added, 6 removed
+- **Segurança** (`security.md`): 1 lines added, 1 removed
+- **Configurações do Claude Code** (`settings.md`): 29 lines added, 6 removed
+
+### Русский
+
+
+**Modified**
+
+- **Использование данных** (`data-usage.md`): 1 lines added, 1 removed
+- **Использование Claude Code Desktop** (`desktop.md`): 5 lines added, 3 removed
+- **Справочник по hooks** (`hooks.md`): 11 lines added, 11 removed
+- **Настройка разрешений** (`permissions.md`): 11 lines added, 11 removed
+- **Создание и распространение marketplace плагинов** (`plugin-marketplaces.md`): 8 lines added, 6 removed
+- **Справочник по плагинам** (`plugins-reference.md`): 10 lines added, 6 removed
+- **Безопасность** (`security.md`): 1 lines added, 1 removed
+- **Параметры Claude Code** (`settings.md`): 28 lines added, 5 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **数据使用** (`data-usage.md`): 1 lines added, 1 removed
+- **使用 Claude Code Desktop** (`desktop.md`): 7 lines added, 5 removed
+- **Hooks 参考** (`hooks.md`): 11 lines added, 11 removed
+- **配置权限** (`permissions.md`): 4 lines added, 4 removed
+- **创建和分发 plugin marketplace** (`plugin-marketplaces.md`): 8 lines added, 6 removed
+- **Plugins 参考** (`plugins-reference.md`): 10 lines added, 6 removed
+- **安全性** (`security.md`): 1 lines added, 1 removed
+- **Claude Code 设置** (`settings.md`): 28 lines added, 5 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **資料使用** (`data-usage.md`): 1 lines added, 1 removed
+- **使用 Claude Code Desktop** (`desktop.md`): 5 lines added, 3 removed
+- **Hooks 參考** (`hooks.md`): 4 lines added, 4 removed
+- **設定權限** (`permissions.md`): 4 lines added, 4 removed
+- **建立並分發 plugin marketplace** (`plugin-marketplaces.md`): 8 lines added, 6 removed
+- **Plugins 參考** (`plugins-reference.md`): 10 lines added, 6 removed
+- **安全性** (`security.md`): 1 lines added, 1 removed
+- **Claude Code 設定** (`settings.md`): 28 lines added, 5 removed
+
+---
+
 ## 2026-05-05
 
 83 pages modified

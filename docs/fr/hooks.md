@@ -2406,10 +2406,10 @@ Le LLM doit répondre avec JSON contenant :
 }
 ```
 
-| Champ    | Description                                                   |
-| :------- | :------------------------------------------------------------ |
-| `ok`     | `true` autorise l'action, `false` l'empêche                   |
-| `reason` | Requis lorsque `ok` est `false`. Explication pour la décision |
+| Champ    | Description                                                                                |
+| :------- | :----------------------------------------------------------------------------------------- |
+| `ok`     | `true` autorise l'action, `false` l'empêche. Voir le comportement par événement ci-dessous |
+| `reason` | Requis lorsque `ok` est `false`. Explication pour la décision                              |
 
 Ce qui se passe sur `ok: false` dépend de l'événement :
 

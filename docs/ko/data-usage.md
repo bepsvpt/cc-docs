@@ -67,7 +67,7 @@ Anthropic은 계정 유형 및 선호도에 따라 Claude Code 데이터를 보�
 
 아래 다이어그램은 설치 및 정상 작동 중에 Claude Code가 외부 서비스에 어떻게 연결되는지 보여줍니다. 실선은 필수 연결을 나타내고, 점선은 선택적 또는 사용자가 시작한 데이터 흐름을 나타냅니다.
 
-<img src="https://mintcdn.com/claude-code/YcBW2H7CArGcduPb/images/claude-code-data-flow.svg?fit=max&auto=format&n=YcBW2H7CArGcduPb&q=85&s=b600a89f84fc86f9ff7be00a466c0635" alt="Claude Code의 외부 연결을 보여주는 다이어그램: 설치/업데이트는 배포 서버에 연결되고, 사용자 요청은 Console auth, public-api, 그리고 선택적으로 Statsig, Sentry, 버그 보고를 포함한 Anthropic 서비스에 연결됩니다" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
+<img src="https://mintcdn.com/claude-code/RcOyXc06Ja8cuvMZ/images/claude-code-data-flow.svg?fit=max&auto=format&n=RcOyXc06Ja8cuvMZ&q=85&s=b5be40abf333defe984993af89546c19" alt="Claude Code의 외부 연결을 보여주는 다이어그램: 설치/업데이트는 배포 서버에 연결되고, 사용자 요청은 Console auth, public-api, 그리고 선택적으로 Statsig, Sentry, 버그 보고를 포함한 Anthropic 서비스에 연결됩니다" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
 
 Claude Code는 로컬에서 실행됩니다. LLM과 상호작용하기 위해 Claude Code는 네트워크를 통해 데이터를 전송합니다. 이 데이터에는 모든 사용자 프롬프트 및 모델 출력이 포함되며, TLS 1.2+ 이상을 통해 전송 중에 암호화됩니다. Claude Code는 대부분의 인기 있는 VPN 및 LLM 프록시와 호환됩니다.
 

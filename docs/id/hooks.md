@@ -1358,7 +1358,7 @@ Hooks `PostToolUse` dapat memberikan umpan balik ke Claude setelah eksekusi tool
 
 | Bidang                 | Deskripsi                                                                                                                 |
 | :--------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `decision`             | `"block"` meminta Claude dengan `reason`. Hilangkan untuk mengizinkan tindakan dilanjutkan                                |
+| `decision`             | `"block"` menambahkan `reason` di sebelah hasil tool. Hilangkan untuk mengizinkan tindakan dilanjutkan                    |
 | `reason`               | Penjelasan ditampilkan ke Claude saat `decision` adalah `"block"`                                                         |
 | `additionalContext`    | String ditambahkan ke konteks Claude bersama hasil tool. Lihat [Tambahkan konteks untuk Claude](#add-context-for-claude)  |
 | `updatedToolOutput`    | Mengganti output tool dengan nilai yang disediakan sebelum dikirim ke Claude. Nilai harus cocok dengan bentuk output tool |
@@ -2406,10 +2406,10 @@ LLM harus merespons dengan JSON yang berisi:
 }
 ```
 
-| Bidang   | Deskripsi                                                         |
-| :------- | :---------------------------------------------------------------- |
-| `ok`     | `true` mengizinkan tindakan, `false` mencegahnya                  |
-| `reason` | Diperlukan saat `ok` adalah `false`. Penjelasan untuk pemblokiran |
+| Bidang   | Deskripsi                                                                            |
+| :------- | :----------------------------------------------------------------------------------- |
+| `ok`     | `true` untuk mengizinkan, `false` untuk memblokir. Lihat perilaku per-event di bawah |
+| `reason` | Diperlukan saat `ok` adalah `false`. Penjelasan untuk keputusan                      |
 
 Apa yang terjadi pada `ok: false` tergantung pada event:
 

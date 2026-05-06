@@ -27,7 +27,7 @@ Para mitigar riesgos en sistemas agénticos:
 * **Herramienta bash en sandbox**: [Sandbox](/es/sandboxing) comandos bash con aislamiento del sistema de archivos y red, reduciendo solicitudes de permiso mientras se mantiene la seguridad. Habilite con `/sandbox` para definir límites donde Claude Code puede trabajar de forma autónoma
 * **Restricción de acceso de escritura**: Claude Code solo puede escribir en la carpeta donde se inició y sus subcarpetas—no puede modificar archivos en directorios principales sin permiso explícito. Aunque Claude Code puede leer archivos fuera del directorio de trabajo (útil para acceder a bibliotecas del sistema y dependencias), las operaciones de escritura están estrictamente limitadas al alcance del proyecto, creando un límite de seguridad claro
 * **Mitigación de fatiga de solicitudes**: Soporte para listas de permitidos de comandos seguros frecuentemente utilizados por usuario, por base de código u por organización
-* **Modo Aceptar Ediciones**: Aceptar por lotes múltiples ediciones mientras se mantienen solicitudes de permiso para comandos con efectos secundarios
+* **Modo Aceptar Ediciones**: Aprueba automáticamente ediciones de archivos y un conjunto fijo de comandos Bash del sistema de archivos como `mkdir`, `touch`, `rm`, `mv`, `cp`, y `sed` para rutas en el directorio de trabajo. Otros comandos Bash y rutas fuera del alcance aún solicitan aprobación
 
 ### Responsabilidad del usuario
 

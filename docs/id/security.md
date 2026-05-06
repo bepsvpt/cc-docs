@@ -27,7 +27,7 @@ Untuk mengurangi risiko dalam sistem agentic:
 * **Alat bash bersandbox**: [Sandbox](/id/sandboxing) perintah bash dengan isolasi filesystem dan jaringan, mengurangi permintaan izin sambil mempertahankan keamanan. Aktifkan dengan `/sandbox` untuk menentukan batas tempat Claude Code dapat bekerja secara otonom
 * **Pembatasan akses tulis**: Claude Code hanya dapat menulis ke folder tempat dimulai dan subfolder-nya—tidak dapat memodifikasi file di direktori induk tanpa izin eksplisit. Meskipun Claude Code dapat membaca file di luar direktori kerja (berguna untuk mengakses perpustakaan sistem dan dependensi), operasi tulis dibatasi ketat pada cakupan proyek, menciptakan batas keamanan yang jelas
 * **Mitigasi kelelahan permintaan**: Dukungan untuk allowlisting perintah aman yang sering digunakan per-pengguna, per-codebase, atau per-organisasi
-* **Mode Accept Edits**: Batch menerima beberapa edit sambil mempertahankan permintaan izin untuk perintah dengan efek samping
+* **Mode Accept Edits**: Persetujuan otomatis untuk edit file dan serangkaian perintah Bash filesystem tetap seperti `mkdir`, `touch`, `rm`, `mv`, `cp`, dan `sed` untuk jalur di direktori kerja. Perintah Bash lainnya dan jalur di luar cakupan masih meminta persetujuan
 
 ### Tanggung jawab pengguna
 

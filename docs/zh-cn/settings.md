@@ -71,6 +71,8 @@ Claude Code 使用**作用域系统**来确定配置应用的位置以及与谁�
 | **Plugins**     | `~/.claude/settings.json` | `.claude/settings.json`           | `.claude/settings.local.json` |
 | **CLAUDE.md**   | `~/.claude/CLAUDE.md`     | `CLAUDE.md` 或 `.claude/CLAUDE.md` | `CLAUDE.local.md`             |
 
+在 Windows 上，显示为 `~/.claude` 的路径解析为 `%USERPROFILE%\.claude`。
+
 ***
 
 ## 设置文件
@@ -166,6 +168,7 @@ Claude Code 使用**作用域系统**来确定配置应用的位置以及与谁�
 | `apiKeyHelper`                    | 自定义脚本，在 `/bin/sh` 中执行，以生成身份验证值。此值将作为 `X-Api-Key` 和 `Authorization: Bearer` 标头发送用于模型请求                                                                                                                                                                                                                                    | `/bin/generate_temp_api_key.sh`                                                                                               |
 | `attribution`                     | 自定义 git 提交和拉取请求的归属。请参阅[归属设置](#attribution-settings)                                                                                                                                                                                                                                                                      | `{"commit": "🤖 Generated with Claude Code", "pr": ""}`                                                                       |
 | `autoMemoryDirectory`             | [自动内存](/zh-CN/memory#storage-location)存储的自定义目录。接受绝对路径或 `~/` 前缀的路径。从策略和用户设置以及 `--settings` 标志接受。不从项目或本地设置接受，因为克隆的存储库可能提供任一文件以将内存写入重定向到敏感位置                                                                                                                                                                                | `"~/my-memory-dir"`                                                                                                           |
+| `autoMemoryEnabled`               | 启用[自动内存](/zh-CN/memory#enable-or-disable-auto-memory)。当为 `false` 时，Claude 不从自动内存目录读取或写入。默认：`true`。您也可以在会话期间使用 `/memory` 切换此选项                                                                                                                                                                                            | `false`                                                                                                                       |
 | `autoMode`                        | 自定义[自动模式](/zh-CN/permission-modes#eliminate-prompts-with-auto-mode)分类器阻止和允许的内容。包含 `environment`、`allow` 和 `soft_deny` 散文规则数组。在数组中包含字面字符串 `"$defaults"` 以在该位置继承内置规则。请参阅[配置自动模式](/zh-CN/auto-mode-config)。不从共享项目设置读取                                                                                                       | `{"soft_deny": ["$defaults", "Never run terraform apply"]}`                                                                   |
 | `autoScrollEnabled`               | 在[全屏渲染](/zh-CN/fullscreen)中，跟随新输出到对话的底部。默认：`true`。在 `/config` 中显示为**自动滚动**。权限提示仍在此关闭时滚动到视图中                                                                                                                                                                                                                              | `false`                                                                                                                       |
 | `autoUpdatesChannel`              | 遵循更新的发布渠道。使用 `"stable"` 获取通常约一周前的版本并跳过有主要回归的版本，或使用 `"latest"`（默认）获取最新版本                                                                                                                                                                                                                                                  | `"stable"`                                                                                                                    |
@@ -174,7 +177,7 @@ Claude Code 使用**作用域系统**来确定配置应用的位置以及与谁�
 | `awsAuthRefresh`                  | 修改 `.aws` 目录的自定义脚本（请参阅[高级凭证配置](/zh-CN/amazon-bedrock#advanced-credential-configuration)）                                                                                                                                                                                                                                 | `aws sso login --profile myprofile`                                                                                           |
 | `awsCredentialExport`             | 输出包含 AWS 凭证的 JSON 的自定义脚本（请参阅[高级凭证配置](/zh-CN/amazon-bedrock#advanced-credential-configuration)）                                                                                                                                                                                                                           | `/bin/generate_aws_grant.sh`                                                                                                  |
 | `blockedMarketplaces`             | （仅 Managed 设置）市场源的阻止列表。在市场添加和插件安装、更新、刷新和自动更新时强制执行，因此在设置策略之前添加的市场无法用于获取插件。被阻止的源在下载前被检查，因此它们永远不会接触文件系统。请参阅 [Managed 市场限制](/zh-CN/plugin-marketplaces#managed-marketplace-restrictions)                                                                                                                                     | `[{ "source": "github", "repo": "untrusted/plugins" }]`                                                                       |
-| `channelsEnabled`                 | （仅 Managed 设置）为 Team 和 Enterprise 用户允许 [channels](/zh-CN/channels)。未设置或 `false` 会阻止频道消息传递，无论用户传递什么给 `--channels`                                                                                                                                                                                                         | `true`                                                                                                                        |
+| `channelsEnabled`                 | （仅 Managed 设置）为组织允许 [channels](/zh-CN/channels)。在 claude.ai Team 和 Enterprise 计划上，当此项未设置或为 `false` 时，channels 被阻止。对于使用 API 密钥身份验证的 [Anthropic Console](/zh-CN/authentication#claude-console-authentication) 账户，channels 默认被允许，除非您的组织部署 managed 设置，在这种情况下此键必须设置为 `true`                                                   | `true`                                                                                                                        |
 | `cleanupPeriodDays`               | 非活跃时间超过此期间的会话在启动时被删除（默认：30 天，最少 1 天）。设置为 `0` 会被拒绝并显示验证错误。也控制[孤立 subagent worktrees](/zh-CN/worktrees#clean-up-worktrees) 在启动时自动删除的年龄截止。要完全禁用记录写入，请设置 [`CLAUDE_CODE_SKIP_PROMPT_HISTORY`](/zh-CN/env-vars) 环境变量，或在非交互模式（`-p`）中使用 `--no-session-persistence` 标志或 `persistSession: false` SDK 选项。                           | `20`                                                                                                                          |
 | `companyAnnouncements`            | 在启动时显示给用户的公告。如果提供多个公告，它们将随机循环显示。                                                                                                                                                                                                                                                                                         | `["Welcome to Acme Corp! Review our code guidelines at docs.acme.com"]`                                                       |
 | `defaultShell`                    | 输入框 `!` 命令的默认 shell。接受 `"bash"`（默认）或 `"powershell"`。设置 `"powershell"` 会在 Windows 上通过 PowerShell 路由交互式 `!` 命令。需要 `CLAUDE_CODE_USE_POWERSHELL_TOOL=1`。请参阅 [PowerShell tool](/zh-CN/tools-reference#powershell-tool)                                                                                                        | `"powershell"`                                                                                                                |
@@ -183,6 +186,7 @@ Claude Code 使用**作用域系统**来确定配置应用的位置以及与谁�
 | `disableAutoMode`                 | 设置为 `"disable"` 以防止[自动模式](/zh-CN/permission-modes#eliminate-prompts-with-auto-mode)被激活。从 `Shift+Tab` 循环中删除 `auto` 并在启动时拒绝 `--permission-mode auto`。在[managed 设置](/zh-CN/permissions#managed-settings)中最有用，用户无法覆盖它                                                                                                        | `"disable"`                                                                                                                   |
 | `disableDeepLinkRegistration`     | 设置为 `"disable"` 以防止 Claude Code 在启动时向操作系统注册 `claude-cli://` 协议处理程序。[深链接](/zh-CN/deep-links)让外部工具通过预填充的提示打开 Claude Code 会话。在协议处理程序注册受限或单独管理的环境中很有用                                                                                                                                                                        | `"disable"`                                                                                                                   |
 | `disabledMcpjsonServers`          | 要拒绝的 `.mcp.json` 文件中特定 MCP servers 的列表                                                                                                                                                                                                                                                                                   | `["filesystem"]`                                                                                                              |
+| `disableRemoteControl`            | {/* min-version: 2.1.128 */}禁用[远程控制](/zh-CN/remote-control)：阻止 `claude remote-control`、`--remote-control` 标志、自动启动和会话内切换。通常放在[managed 设置](/zh-CN/permissions#managed-settings)中用于每设备 MDM 强制执行，但适用于任何作用域。需要 Claude Code v2.1.128 或更高版本                                                                                     | `true`                                                                                                                        |
 | `disableSkillShellExecution`      | 禁用 [skills](/zh-CN/skills) 和来自用户、项目、插件或额外目录源的自定义命令中的 `` !`...` `` 和 ` ```! ` 块的内联 shell 执行。命令被替换为 `[shell command execution disabled by policy]` 而不是被运行。捆绑和 managed skills 不受影响。在[managed 设置](/zh-CN/permissions#managed-settings)中最有用，用户无法覆盖它                                                                           | `true`                                                                                                                        |
 | `editorMode`                      | 输入提示的快捷键模式：`"normal"` 或 `"vim"`。默认：`"normal"`。在 `/config` 中显示为**快捷键模式**                                                                                                                                                                                                                                                  | `"vim"`                                                                                                                       |
 | `effortLevel`                     | 跨会话持久化[努力级别](/zh-CN/model-config#adjust-effort-level)。接受 `"low"`、`"medium"`、`"high"` 或 `"xhigh"`。当您运行 `/effort` 时自动写入，带有这些值之一。请参阅[调整努力级别](/zh-CN/model-config#adjust-effort-level)了解支持的模型                                                                                                                                | `"xhigh"`                                                                                                                     |
@@ -550,8 +554,10 @@ Claude Code 支持一个插件系统，让您可以使用 skills、agents、hook
   },
   "extraKnownMarketplaces": {
     "acme-tools": {
-      "source": "github",
-      "repo": "acme-corp/claude-plugins"
+      "source": {
+        "source": "github",
+        "repo": "acme-corp/claude-plugins"
+      }
     }
   }
 }
@@ -567,6 +573,12 @@ Claude Code 支持一个插件系统，让您可以使用 skills、agents、hook
 * **项目设置**（`.claude/settings.json`）：与团队共享的项目特定插件
 * **本地设置**（`.claude/settings.local.json`）：每台机器的覆盖（未提交）
 * **Managed 设置**（`managed-settings.json`）：组织范围的策略覆盖，在所有作用域中阻止安装并从市场隐藏插件
+
+<Note>
+  项目设置优先于用户设置，因此在 `~/.claude/settings.json` 中将插件设置为 `false` 不会禁用项目的 `.claude/settings.json` 启用的插件。要在您的机器上选择退出项目启用的插件，请改为在 `.claude/settings.local.json` 中将其设置为 `false`。
+
+  由 managed 设置强制启用的插件无法以这种方式禁用，因为 managed 设置会覆盖本地设置。
+</Note>
 
 **示例**：
 
@@ -659,7 +671,7 @@ Claude Code 支持一个插件系统，让您可以使用 skills、agents、hook
 * 仅在 managed 设置（`managed-settings.json`）中可用
 * 无法被用户或项目设置覆盖（最高优先级）
 * 在网络/文件系统操作之前强制执行（被阻止的源永远不会执行）
-* 对源规范使用精确匹配（包括 `ref`、`path` 用于 git 源），除了 `hostPattern`，它使用正则表达式匹配
+* 对源规范使用精确匹配（包括 `ref`、`path` 用于 git 源），除了 `hostPattern` 和 `pathPattern`，它们使用正则表达式匹配
 
 **允许列表行为**：
 
@@ -669,7 +681,7 @@ Claude Code 支持一个插件系统，让您可以使用 skills、agents、hook
 
 **所有支持的源类型**：
 
-允许列表支持多种市场源类型。大多数源使用精确匹配，而 `hostPattern` 使用正则表达式匹配市场主机。
+允许列表支持多种市场源类型。大多数源使用精确匹配，而 `hostPattern` 和 `pathPattern` 分别使用正则表达式匹配市场主机和文件系统路径。
 
 1. **GitHub 存储库**：
 
@@ -748,6 +760,17 @@ Claude Code 支持一个插件系统，让您可以使用 skills、agents、hook
 * `git`：从 URL 提取主机名（支持 HTTPS 和 SSH 格式）
 * `url`：从 URL 提取主机名
 * `npm`、`file`、`directory`：不支持主机模式匹配
+
+8. **路径模式匹配**：
+
+```json theme={null}
+{ "source": "pathPattern", "pathPattern": "^/opt/approved/" }
+{ "source": "pathPattern", "pathPattern": ".*" }
+```
+
+字段：`pathPattern`（必需：与 `file` 和 `directory` 源的 `path` 字段匹配的正则表达式模式）
+
+使用路径模式匹配来允许基于文件系统的市场与网络源的 `hostPattern` 限制一起使用。设置 `".*"` 以允许所有本地路径，或使用更窄的模式来限制特定目录。
 
 **配置示例**：
 

@@ -36,7 +36,7 @@ Claude Code mendukung beberapa mode izin yang mengontrol bagaimana alat disetuju
 | :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `default`           | Perilaku standar: meminta izin pada penggunaan pertama setiap alat                                                                                                             |
 | `acceptEdits`       | Secara otomatis menerima edit file dan perintah sistem file umum (`mkdir`, `touch`, `mv`, `cp`, dll.) untuk jalur di direktori kerja atau `additionalDirectories`              |
-| `plan`              | Plan Mode: Claude dapat menganalisis tetapi tidak memodifikasi file atau menjalankan perintah                                                                                  |
+| `plan`              | Plan Mode: Claude membaca file dan menjalankan perintah shell hanya-baca untuk menjelajahi tetapi tidak mengedit file sumber Anda                                              |
 | `auto`              | Secara otomatis menyetujui panggilan alat dengan pemeriksaan keamanan latar belakang yang memverifikasi tindakan selaras dengan permintaan Anda. Saat ini pratinjau penelitian |
 | `dontAsk`           | Secara otomatis menolak alat kecuali pra-disetujui melalui `/permissions` atau aturan `permissions.allow`                                                                      |
 | `bypassPermissions` | Melewati semua prompt izin. Penghapusan direktori root dan home seperti `rm -rf /` masih meminta sebagai circuit breaker                                                       |
@@ -45,7 +45,7 @@ Claude Code mendukung beberapa mode izin yang mengontrol bagaimana alat disetuju
   Mode `bypassPermissions` melewati semua prompt izin, termasuk penulisan ke `.git`, `.claude`, `.vscode`, `.idea`, dan `.husky`. Penghapusan yang menargetkan akar sistem file atau direktori home, seperti `rm -rf /` dan `rm -rf ~`, masih meminta sebagai circuit breaker terhadap kesalahan model. Hanya gunakan mode ini di lingkungan terisolasi seperti kontainer atau VM tempat Claude Code tidak dapat menyebabkan kerusakan. Administrator dapat mencegah mode ini dengan mengatur `permissions.disableBypassPermissionsMode` ke `"disable"` dalam [pengaturan terkelola](#managed-settings).
 </Warning>
 
-Untuk mencegah `bypassPermissions` atau mode `auto` digunakan, atur `permissions.disableBypassPermissionsMode` atau `permissions.disableAutoMode` ke `"disable"` dalam [file pengaturan](/id/settings#settings-files) apa pun. Ini paling berguna dalam [pengaturan terkelola](#managed-settings) di mana mereka tidak dapat ditimpa.
+Untuk mencegah mode `bypassPermissions` atau `auto` digunakan, atur `permissions.disableBypassPermissionsMode` atau `permissions.disableAutoMode` ke `"disable"` dalam [file pengaturan](/id/settings#settings-files) apa pun. Ini paling berguna dalam [pengaturan terkelola](#managed-settings) di mana mereka tidak dapat ditimpa.
 
 ## Sintaks aturan izin
 
@@ -296,7 +296,7 @@ Gunakan keduanya untuk pertahanan berlapis:
 
 * Aturan deny izin memblokir Claude dari bahkan mencoba mengakses sumber daya terbatas
 * Pembatasan sandbox mencegah perintah Bash menjangkau sumber daya di luar batas yang ditentukan, bahkan jika injeksi prompt melewati pengambilan keputusan Claude
-* Pembatasan sistem file di sandbox menggunakan aturan deny Read dan Edit, bukan konfigurasi sandbox terpisah
+* Pembatasan sistem file di sandbox menggabungkan pengaturan [`sandbox.filesystem`](/id/sandboxing) dengan aturan deny Read dan Edit; keduanya digabungkan ke dalam batas sandbox akhir
 * Pembatasan jaringan menggabungkan aturan izin WebFetch dengan daftar `allowedDomains` dan `deniedDomains` sandbox
 
 Ketika sandboxing diaktifkan dengan `autoAllowBashIfSandboxed: true`, yang merupakan default, perintah Bash yang di-sandbox berjalan tanpa meminta bahkan jika izin Anda mencakup `ask: Bash(*)`. Batas sandbox menggantikan prompt per-perintah. Aturan deny eksplisit masih berlaku, dan perintah `rm` atau `rmdir` yang menargetkan `/`, direktori home Anda, atau jalur sistem kritis lainnya masih memicu prompt. Lihat [sandbox modes](/id/sandboxing#sandbox-modes) untuk mengubah perilaku ini.
@@ -316,7 +316,7 @@ Pengaturan berikut hanya dibaca dari pengaturan terkelola. Menempatkan mereka da
 | `allowManagedMcpServersOnly`                   | Ketika `true`, hanya `allowedMcpServers` dari pengaturan terkelola yang dihormati. `deniedMcpServers` masih digabung dari semua sumber. Lihat [Managed MCP configuration](/id/mcp#managed-mcp-configuration)                                              |
 | `allowManagedPermissionRulesOnly`              | Ketika `true`, mencegah pengaturan pengguna dan proyek dari mendefinisikan aturan izin `allow`, `ask`, atau `deny`. Hanya aturan dalam pengaturan terkelola yang berlaku                                                                                  |
 | `blockedMarketplaces`                          | Daftar blokir sumber marketplace. Sumber yang diblokir diperiksa sebelum mengunduh, jadi mereka tidak pernah menyentuh sistem file. Lihat [managed marketplace restrictions](/id/plugin-marketplaces#managed-marketplace-restrictions)                    |
-| `channelsEnabled`                              | Izinkan [channels](/id/channels) untuk pengguna Team dan Enterprise. Tidak diatur atau `false` memblokir pengiriman pesan saluran terlepas dari apa yang dilewatkan pengguna ke `--channels`                                                              |
+| `channelsEnabled`                              | Izinkan [channels](/id/channels) untuk organisasi. Lihat [enterprise controls](/id/channels#enterprise-controls) untuk default pada setiap paket                                                                                                          |
 | `forceRemoteSettingsRefresh`                   | Ketika `true`, memblokir startup CLI hingga pengaturan terkelola jarak jauh segar diambil dan keluar jika pengambilan gagal. Lihat [fail-closed enforcement](/id/server-managed-settings#enforce-fail-closed-startup)                                     |
 | `pluginTrustMessage`                           | Pesan kustom ditambahkan ke peringatan kepercayaan plugin yang ditampilkan sebelum instalasi                                                                                                                                                              |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Ketika `true`, hanya jalur `filesystem.allowRead` dari pengaturan terkelola yang dihormati. `denyRead` masih digabung dari semua sumber                                                                                                                   |
@@ -327,7 +327,7 @@ Pengaturan berikut hanya dibaca dari pengaturan terkelola. Menempatkan mereka da
 `disableBypassPermissionsMode` biasanya ditempatkan dalam pengaturan terkelola untuk memberlakukan kebijakan organisasi, tetapi berfungsi dari cakupan apa pun. Pengguna dapat mengaturnya dalam pengaturan mereka sendiri untuk mengunci diri mereka sendiri dari mode bypass.
 
 <Note>
-  Akses ke [Remote Control](/id/remote-control) dan [sesi web](/id/claude-code-on-the-web) tidak dikendalikan oleh kunci pengaturan terkelola. Pada paket Team dan Enterprise, admin mengaktifkan atau menonaktifkan fitur ini dalam [pengaturan admin Claude Code](https://claude.ai/admin-settings/claude-code).
+  Pada paket Team dan Enterprise, admin mengaktifkan atau menonaktifkan [Remote Control](/id/remote-control) dan [sesi web](/id/claude-code-on-the-web) di seluruh organisasi dalam [pengaturan admin Claude Code](https://claude.ai/admin-settings/claude-code). Remote Control dapat secara tambahan dinonaktifkan per perangkat dengan pengaturan terkelola [`disableRemoteControl`](/id/settings#available-settings). Sesi web tidak memiliki kunci pengaturan terkelola per perangkat.
 </Note>
 
 ## Prioritas pengaturan

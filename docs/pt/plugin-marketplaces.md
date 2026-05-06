@@ -23,7 +23,7 @@ Depois que seu marketplace estiver ativo, você pode atualizá-lo fazendo push d
 
 ## Passo a passo: criar um marketplace local
 
-Este exemplo cria um marketplace com um plugin: uma skill `/quality-review` para revisões de código. Você criará a estrutura de diretórios, adicionará uma skill, criará o manifesto do plugin e o catálogo do marketplace, depois instalará e testará.
+Este exemplo cria um marketplace com um plugin: uma skill `quality-review` para revisões de código. Você criará a estrutura de diretórios, adicionará uma skill, criará o manifesto do plugin e o catálogo do marketplace, depois instalará e testará.
 
 <Steps>
   <Step title="Criar a estrutura de diretórios">
@@ -35,7 +35,7 @@ Este exemplo cria um marketplace com um plugin: uma skill `/quality-review` para
   </Step>
 
   <Step title="Criar a skill">
-    Crie um arquivo `SKILL.md` que define o que a skill `/quality-review` faz.
+    Crie um arquivo `SKILL.md` que define o que a skill `quality-review` faz.
 
     ```markdown my-marketplace/plugins/quality-review-plugin/skills/quality-review/SKILL.md theme={null}
     ---
@@ -59,7 +59,7 @@ Este exemplo cria um marketplace com um plugin: uma skill `/quality-review` para
     ```json my-marketplace/plugins/quality-review-plugin/.claude-plugin/plugin.json theme={null}
     {
       "name": "quality-review-plugin",
-      "description": "Adiciona uma skill /quality-review para revisões rápidas de código",
+      "description": "Adiciona uma skill quality-review para revisões rápidas de código",
       "version": "1.0.0"
     }
     ```
@@ -82,7 +82,7 @@ Este exemplo cria um marketplace com um plugin: uma skill `/quality-review` para
         {
           "name": "quality-review-plugin",
           "source": "./plugins/quality-review-plugin",
-          "description": "Adiciona uma skill /quality-review para revisões rápidas de código"
+          "description": "Adiciona uma skill quality-review para revisões rápidas de código"
         }
       ]
     }
@@ -99,10 +99,10 @@ Este exemplo cria um marketplace com um plugin: uma skill `/quality-review` para
   </Step>
 
   <Step title="Experimentar">
-    Selecione algum código em seu editor e execute sua nova skill.
+    Selecione algum código em seu editor e execute sua nova skill. As skills do plugin são nomeadas com o nome do plugin.
 
     ```shell theme={null}
-    /quality-review
+    /quality-review-plugin:quality-review
     ```
   </Step>
 </Steps>
@@ -692,6 +692,8 @@ A lista de permissões usa correspondência exata para a maioria dos tipos de fo
 * Para fontes de URL: a URL completa deve corresponder exatamente
 * Para fontes `hostPattern`: o host do marketplace é correspondido contra o padrão regex
 * Para fontes `pathPattern`: o caminho do sistema de arquivos do marketplace é correspondido contra o padrão regex
+
+A correspondência exata não normaliza URLs: uma barra à direita, sufixo `.git` ou forma `ssh://` versus `https://` são tratados como valores diferentes. Se o marketplace da sua organização pode ser clonado por mais de uma forma de URL, prefira uma entrada `hostPattern` em vez de uma URL literal para que todas as formas correspondam.
 
 Como `strictKnownMarketplaces` é definido em [configurações gerenciadas](/pt/settings#settings-files), configurações individuais de usuários e projetos não podem substituir essas restrições.
 

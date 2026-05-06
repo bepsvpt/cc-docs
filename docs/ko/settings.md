@@ -71,6 +71,8 @@ Claude Code는 **범위 시스템**을 사용하여 구성이 어디에 적용�
 | **Plugins**     | `~/.claude/settings.json` | `.claude/settings.json`            | `.claude/settings.local.json` |
 | **CLAUDE.md**   | `~/.claude/CLAUDE.md`     | `CLAUDE.md` 또는 `.claude/CLAUDE.md` | `CLAUDE.local.md`             |
 
+Windows에서 `~/.claude`로 표시된 경로는 `%USERPROFILE%\.claude`로 확인됩니다.
+
 ***
 
 ## 설정 파일
@@ -166,6 +168,7 @@ Claude Code는 **범위 시스템**을 사용하여 구성이 어디에 적용�
 | `apiKeyHelper`                    | `/bin/sh`에서 실행될 사용자 정의 스크립트로 인증 값을 생성합니다. 이 값은 모델 요청에 대해 `X-Api-Key` 및 `Authorization: Bearer` 헤더로 전송됩니다                                                                                                                                                                                                                                                                             | `/bin/generate_temp_api_key.sh`                                                                                                |
 | `attribution`                     | git 커밋 및 pull request에 대한 attribution을 사용자 정의합니다. [Attribution 설정](#attribution-settings)을 참조하세요                                                                                                                                                                                                                                                                                     | `{"commit": "🤖 Generated with Claude Code", "pr": ""}`                                                                        |
 | `autoMemoryDirectory`             | [자동 메모리](/ko/memory#storage-location) 저장소를 위한 사용자 정의 디렉토리입니다. 절대 경로 또는 `~/` 접두사 경로를 허용합니다. 정책 및 사용자 설정과 `--settings` 플래그에서 허용됩니다. 복제된 저장소가 메모리 쓰기를 민감한 위치로 리디렉션할 수 있으므로 프로젝트 또는 local 설정에서는 허용되지 않습니다                                                                                                                                                                                | `"~/my-memory-dir"`                                                                                                            |
+| `autoMemoryEnabled`               | [자동 메모리](/ko/memory#enable-or-disable-auto-memory)를 활성화합니다. `false`일 때 Claude는 자동 메모리 디렉토리에서 읽거나 쓰지 않습니다. 기본값: `true`. 세션 중에 `/memory`로도 전환할 수 있습니다                                                                                                                                                                                                                                  | `false`                                                                                                                        |
 | `autoMode`                        | [자동 모드](/ko/permission-modes#eliminate-prompts-with-auto-mode) 분류기가 차단하고 허용하는 것을 사용자 정의합니다. `environment`, `allow` 및 `soft_deny` 배열의 산문 규칙을 포함합니다. 배열에 리터럴 문자열 `"$defaults"`를 포함하여 해당 위치에서 기본 제공 규칙을 상속합니다. [자동 모드 구성](/ko/auto-mode-config)을 참조하세요. 공유 프로젝트 설정에서는 읽지 않음                                                                                                             | `{"soft_deny": ["$defaults", "Never run terraform apply"]}`                                                                    |
 | `autoScrollEnabled`               | [fullscreen 렌더링](/ko/fullscreen)에서 새 출력을 대화의 맨 아래로 따릅니다. 기본값: `true`. `/config`에 **자동 스크롤**로 표시됩니다. 이것이 꺼져 있을 때도 권한 프롬프트는 여전히 보기로 스크롤됩니다                                                                                                                                                                                                                                             | `false`                                                                                                                        |
 | `autoUpdatesChannel`              | 업데이트를 따를 릴리스 채널입니다. 일반적으로 약 1주일 된 버전이고 주요 회귀가 있는 버전을 건너뛰는 `"stable"`을 사용하거나 가장 최근 릴리스인 `"latest"` (기본값)을 사용합니다                                                                                                                                                                                                                                                                       | `"stable"`                                                                                                                     |
@@ -174,8 +177,8 @@ Claude Code는 **범위 시스템**을 사용하여 구성이 어디에 적용�
 | `awsAuthRefresh`                  | `.aws` 디렉토리를 수정하는 사용자 정의 스크립트 ([고급 자격 증명 구성](/ko/amazon-bedrock#advanced-credential-configuration) 참조)                                                                                                                                                                                                                                                                               | `aws sso login --profile myprofile`                                                                                            |
 | `awsCredentialExport`             | AWS 자격 증명이 포함된 JSON을 출력하는 사용자 정의 스크립트 ([고급 자격 증명 구성](/ko/amazon-bedrock#advanced-credential-configuration) 참조)                                                                                                                                                                                                                                                                       | `/bin/generate_aws_grant.sh`                                                                                                   |
 | `blockedMarketplaces`             | (Managed 설정만) 마켓플레이스 소스의 차단 목록입니다. 마켓플레이스 추가 및 플러그인 설치, 업데이트, 새로고침 및 자동 업데이트에 적용되므로 정책이 설정되기 전에 추가된 마켓플레이스는 플러그인을 가져오는 데 사용할 수 없습니다. 차단된 소스는 다운로드 전에 확인되므로 파일 시스템에 닿지 않습니다. [Managed 마켓플레이스 제한](/ko/plugin-marketplaces#managed-marketplace-restrictions)을 참조하세요                                                                                                                     | `[{ "source": "github", "repo": "untrusted/plugins" }]`                                                                        |
-| `channelsEnabled`                 | (Managed 설정만) Team 및 Enterprise 사용자를 위해 [channels](/ko/channels)를 허용합니다. 설정되지 않거나 `false`이면 사용자가 `--channels`에 전달하는 것과 관계없이 채널 메시지 전달을 차단합니다                                                                                                                                                                                                                                         | `true`                                                                                                                         |
-| `cleanupPeriodDays`               | 이 기간보다 오래 비활성 상태인 세션 파일은 시작 시 삭제됩니다 (기본값: 30일, 최소 1). `0`으로 설정하면 검증 오류가 발생합니다. 또한 시작 시 [고아 subagent worktrees](/ko/worktrees#clean-up-worktrees)의 자동 제거에 대한 나이 기준을 제어합니다. 트랜스크립트 쓰기를 완전히 비활성화하려면 [`CLAUDE_CODE_SKIP_PROMPT_HISTORY`](/ko/env-vars) 환경 변수를 설정하거나 비대화형 모드 (`-p`)에서 `--no-session-persistence` 플래그 또는 `persistSession: false` SDK 옵션을 사용합니다.                            | `20`                                                                                                                           |
+| `channelsEnabled`                 | (Managed 설정만) 조직을 위해 [channels](/ko/channels)를 허용합니다. Claude.ai Team 및 Enterprise 플랜에서 설정되지 않거나 `false`이면 채널이 차단됩니다. [Anthropic Console](/ko/authentication#claude-console-authentication) 계정이 API 키 인증을 사용하는 경우 조직이 managed 설정을 배포하지 않으면 기본적으로 채널이 허용되며, 이 경우 이 키를 `true`로 설정해야 합니다                                                                                                 | `true`                                                                                                                         |
+| `cleanupPeriodDays`               | 이 기간보다 오래된 세션 파일은 시작 시 삭제됩니다 (기본값: 30일, 최소 1). `0`으로 설정하면 검증 오류가 발생합니다. 또한 시작 시 [고아 subagent worktrees](/ko/worktrees#clean-up-worktrees)의 자동 제거에 대한 나이 기준을 제어합니다. 트랜스크립트 쓰기를 완전히 비활성화하려면 [`CLAUDE_CODE_SKIP_PROMPT_HISTORY`](/ko/env-vars) 환경 변수를 설정하거나 비대화형 모드 (`-p`)에서 `--no-session-persistence` 플래그 또는 `persistSession: false` SDK 옵션을 사용합니다.                                   | `20`                                                                                                                           |
 | `companyAnnouncements`            | 시작 시 사용자에게 표시할 공지사항입니다. 여러 공지사항이 제공되면 무작위로 순환됩니다.                                                                                                                                                                                                                                                                                                                                    | `["Welcome to Acme Corp! Review our code guidelines at docs.acme.com"]`                                                        |
 | `defaultShell`                    | 입력 상자 `!` 명령의 기본 셸입니다. `"bash"` (기본값) 또는 `"powershell"`을 허용합니다. `"powershell"`을 설정하면 Windows에서 대화형 `!` 명령을 PowerShell을 통해 라우팅합니다. `CLAUDE_CODE_USE_POWERSHELL_TOOL=1`이 필요합니다. [PowerShell 도구](/ko/tools-reference#powershell-tool)를 참조하세요                                                                                                                                            | `"powershell"`                                                                                                                 |
 | `deniedMcpServers`                | Managed 설정에서 설정되면 명시적으로 차단된 MCP 서버의 거부 목록입니다. Managed 서버를 포함한 모든 범위에 적용됩니다. 거부 목록이 허용 목록보다 우선합니다. [Managed MCP 구성](/ko/mcp#managed-mcp-configuration)을 참조하세요                                                                                                                                                                                                                         | `[{ "serverName": "filesystem" }]`                                                                                             |
@@ -183,6 +186,7 @@ Claude Code는 **범위 시스템**을 사용하여 구성이 어디에 적용�
 | `disableAutoMode`                 | [자동 모드](/ko/permission-modes#eliminate-prompts-with-auto-mode)가 활성화되는 것을 방지하려면 `"disable"`로 설정합니다. `Shift+Tab` 순환에서 `auto`를 제거하고 시작 시 `--permission-mode auto`를 거부합니다. [managed 설정](/ko/permissions#managed-settings)에서 사용자가 재정의할 수 없을 때 가장 유용합니다                                                                                                                                    | `"disable"`                                                                                                                    |
 | `disableDeepLinkRegistration`     | Claude Code가 시작 시 운영 체제에 `claude-cli://` 프로토콜 핸들러를 등록하는 것을 방지하려면 `"disable"`로 설정합니다. [Deep links](/ko/deep-links)를 사용하면 외부 도구가 사전 채워진 프롬프트로 Claude Code 세션을 열 수 있습니다. 프로토콜 핸들러 등록이 제한되거나 별도로 관리되는 환경에서 유용합니다                                                                                                                                                                         | `"disable"`                                                                                                                    |
 | `disabledMcpjsonServers`          | `.mcp.json` 파일에서 거부할 특정 MCP 서버 목록                                                                                                                                                                                                                                                                                                                                                    | `["filesystem"]`                                                                                                               |
+| `disableRemoteControl`            | {/* min-version: 2.1.128 */}[Remote Control](/ko/remote-control) 비활성화: `claude remote-control`, `--remote-control` 플래그, 자동 시작 및 세션 내 전환을 차단합니다. 일반적으로 장치별 MDM 적용을 위해 [managed 설정](/ko/permissions#managed-settings)에 배치되지만 모든 범위에서 작동합니다. Claude Code v2.1.128 이상이 필요합니다                                                                                                             | `true`                                                                                                                         |
 | `disableSkillShellExecution`      | [skills](/ko/skills) 및 사용자, 프로젝트, 플러그인 또는 추가 디렉토리 소스의 사용자 정의 명령에서 `` !`...` `` 및 ` ```! ` 블록에 대한 인라인 셸 실행을 비활성화합니다. 명령은 실행되는 대신 `[shell command execution disabled by policy]`로 대체됩니다. 번들 및 managed skills는 영향을 받지 않습니다. [managed 설정](/ko/permissions#managed-settings)에서 사용자가 재정의할 수 없을 때 가장 유용합니다                                                                                  | `true`                                                                                                                         |
 | `editorMode`                      | 입력 프롬프트의 키 바인딩 모드: `"normal"` 또는 `"vim"`. 기본값: `"normal"`. `/config`에 **편집기 모드**로 표시됩니다                                                                                                                                                                                                                                                                                              | `"vim"`                                                                                                                        |
 | `effortLevel`                     | [노력 수준](/ko/model-config#adjust-effort-level)을 세션 간에 유지합니다. `"low"`, `"medium"`, `"high"` 또는 `"xhigh"`를 허용합니다. `/effort`를 이러한 값 중 하나로 실행할 때 자동으로 작성됩니다. [노력 수준 조정](/ko/model-config#adjust-effort-level)에서 지원되는 모델을 참조하세요                                                                                                                                                            | `"xhigh"`                                                                                                                      |
@@ -550,8 +554,10 @@ Claude Code는 skills, agents, hooks 및 MCP servers로 기능을 확장할 수 
   },
   "extraKnownMarketplaces": {
     "acme-tools": {
-      "source": "github",
-      "repo": "acme-corp/claude-plugins"
+      "source": {
+        "source": "github",
+        "repo": "acme-corp/claude-plugins"
+      }
     }
   }
 }
@@ -567,6 +573,12 @@ Claude Code는 skills, agents, hooks 및 MCP servers로 기능을 확장할 수 
 * **프로젝트 설정** (`.claude/settings.json`): 팀과 공유되는 프로젝트 특정 플러그인
 * **Local 설정** (`.claude/settings.local.json`): 머신별 재정의 (커밋되지 않음)
 * **Managed 설정** (`managed-settings.json`): 모든 범위에서 설치를 차단하고 마켓플레이스에서 플러그인을 숨기는 조직 전체 정책 재정의
+
+<Note>
+  프로젝트 설정은 사용자 설정보다 우선순위가 높으므로 `~/.claude/settings.json`에서 플러그인을 `false`로 설정해도 프로젝트의 `.claude/settings.json`이 활성화하는 플러그인은 비활성화되지 않습니다. 머신에서 프로젝트 활성화 플러그인을 거부하려면 대신 `.claude/settings.local.json`에서 `false`로 설정합니다.
+
+  Managed 설정으로 강제 활성화된 플러그인은 managed 설정이 local 설정을 재정의하므로 이 방식으로 비활성화할 수 없습니다.
+</Note>
 
 **예제**:
 
@@ -659,7 +671,7 @@ Claude Code는 skills, agents, hooks 및 MCP servers로 기능을 확장할 수 
 * Managed 설정 (`managed-settings.json`)에서만 사용 가능
 * 사용자 또는 프로젝트 설정으로 재정의할 수 없음 (최고 우선순위)
 * 네트워크/파일 시스템 작업 전에 적용됨 (차단된 소스는 실행되지 않음)
-* `hostPattern`을 제외한 소스 사양에 대해 정확한 일치를 사용합니다. `hostPattern`은 정규식 일치를 사용합니다
+* `hostPattern` 및 `pathPattern`을 제외한 소스 사양에 대해 정확한 일치를 사용합니다. `hostPattern` 및 `pathPattern`은 정규식 일치를 사용합니다
 
 **허용 목록 동작**:
 
@@ -669,7 +681,7 @@ Claude Code는 skills, agents, hooks 및 MCP servers로 기능을 확장할 수 
 
 **지원되는 모든 소스 유형**:
 
-허용 목록은 여러 마켓플레이스 소스 유형을 지원합니다. 대부분의 소스는 정확한 일치를 사용하는 반면 `hostPattern`은 마켓플레이스 호스트에 대한 정규식 일치를 사용합니다.
+허용 목록은 여러 마켓플레이스 소스 유형을 지원합니다. 대부분의 소스는 정확한 일치를 사용하는 반면 `hostPattern` 및 `pathPattern`은 마켓플레이스 호스트 및 파일 시스템 경로에 대한 정규식 일치를 각각 사용합니다.
 
 1. **GitHub 저장소**:
 
@@ -748,6 +760,17 @@ Claude Code는 skills, agents, hooks 및 MCP servers로 기능을 확장할 수 
 * `git`: URL에서 호스트 이름 추출 (HTTPS 및 SSH 형식 지원)
 * `url`: URL에서 호스트 이름 추출
 * `npm`, `file`, `directory`: 호스트 패턴 일치에 지원되지 않음
+
+8. **경로 패턴 일치**:
+
+```json theme={null}
+{ "source": "pathPattern", "pathPattern": "^/opt/approved/" }
+{ "source": "pathPattern", "pathPattern": ".*" }
+```
+
+필드: `pathPattern` (필수: `file` 및 `directory` 소스의 `path` 필드와 일치하는 정규식 패턴)
+
+네트워크 소스에 대한 `hostPattern` 제한과 함께 파일 시스템 기반 마켓플레이스를 허용하려면 경로 패턴 일치를 사용합니다. 모든 로컬 경로를 허용하려면 `".*"`를 설정하거나 특정 디렉토리로 제한하려면 더 좁은 패턴을 설정합니다.
 
 **구성 예제**:
 

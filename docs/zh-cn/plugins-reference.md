@@ -261,11 +261,11 @@ LSP 集成提供：
 
 **可用的 LSP plugins：**
 
-| Plugin           | 语言服务器                      | 安装命令                                                                            |
-| :--------------- | :------------------------- | :------------------------------------------------------------------------------ |
-| `pyright-lsp`    | Pyright (Python)           | `pip install pyright` 或 `npm install -g pyright`                                |
-| `typescript-lsp` | TypeScript Language Server | `npm install -g typescript-language-server typescript`                          |
-| `rust-lsp`       | rust-analyzer              | [参阅 rust-analyzer 安装](https://rust-analyzer.github.io/manual.html#installation) |
+| Plugin              | 语言服务器                      | 安装命令                                                                            |
+| :------------------ | :------------------------- | :------------------------------------------------------------------------------ |
+| `pyright-lsp`       | Pyright (Python)           | `pip install pyright` 或 `npm install -g pyright`                                |
+| `typescript-lsp`    | TypeScript Language Server | `npm install -g typescript-language-server typescript`                          |
+| `rust-analyzer-lsp` | rust-analyzer              | [参阅 rust-analyzer 安装](https://rust-analyzer.github.io/manual.html#installation) |
 
 首先安装语言服务器，然后从市场安装 plugin。
 
@@ -531,7 +531,9 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
 
 Claude Code 提供两个变量用于引用 plugin 路径。两者都在 skill 内容、agent 内容、hook 命令、monitor 命令以及 MCP 或 LSP server 配置中出现的任何地方进行内联替换。两者也都作为环境变量导出到 hook 进程和 MCP 或 LSP server 子进程。
 
-**`${CLAUDE_PLUGIN_ROOT}`**：plugin 安装目录的绝对路径。使用此路径引用与 plugin 捆绑的脚本、二进制文件和配置文件。当 plugin 更新时，此路径会更改，因此您在此处写入的文件不会在更新后保留。
+**`${CLAUDE_PLUGIN_ROOT}`**：plugin 安装目录的绝对路径。使用此路径引用与 plugin 捆绑的脚本、二进制文件和配置文件。当 plugin 更新时，此路径会更改。前一个版本的目录在更新后约七天内保留在磁盘上以进行清理，但应将其视为临时的，不要在此处写入状态。
+
+当 plugin 在会话中期更新时，hook 命令、monitors、MCP servers 和 LSP servers 继续使用前一个版本的路径。运行 `/reload-plugins` 以将 hooks、MCP servers 和 LSP servers 切换到新路径；monitors 需要会话重启。
 
 **`${CLAUDE_PLUGIN_DATA}`**：用于 plugin 状态的持久目录，在更新后保留。使用此目录用于已安装的依赖项，如 `node_modules` 或 Python 虚拟环境、生成的代码、缓存以及任何应在 plugin 版本之间保留的其他文件。首次引用此变量时，目录会自动创建。
 
@@ -676,6 +678,8 @@ enterprise-plugin/
 <Warning>
   `.claude-plugin/` 目录包含 `plugin.json` 文件。所有其他目录（commands/、agents/、skills/、output-styles/、themes/、monitors/、hooks/）必须在 plugin 根目录，而不是在 `.claude-plugin/` 内。
 </Warning>
+
+plugin 根目录中的 `CLAUDE.md` 文件不会作为项目上下文加载。Plugins 通过 skills、agents 和 hooks 而不是 CLAUDE.md 来贡献上下文。要提供加载到 Claude 上下文中的说明，请将其放在 [skill](#skills) 中。
 
 ### 文件位置参考
 

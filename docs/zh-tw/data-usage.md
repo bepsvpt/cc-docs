@@ -67,7 +67,7 @@ Anthropic 根據您的帳戶類型和偏好設定保留 Claude Code 資料。
 
 下圖顯示 Claude Code 在安裝和正常操作期間如何連接到外部服務。實線表示必需的連接，而虛線表示可選或使用者啟動的資料流。
 
-<img src="https://mintcdn.com/claude-code/YcBW2H7CArGcduPb/images/claude-code-data-flow.svg?fit=max&auto=format&n=YcBW2H7CArGcduPb&q=85&s=b600a89f84fc86f9ff7be00a466c0635" alt="顯示 Claude Code 外部連接的圖表：安裝/更新連接到發佈伺服器，使用者請求連接到 Anthropic 服務，包括 Console 驗證、public-api，以及可選的 Statsig、Sentry 和錯誤報告" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
+<img src="https://mintcdn.com/claude-code/RcOyXc06Ja8cuvMZ/images/claude-code-data-flow.svg?fit=max&auto=format&n=RcOyXc06Ja8cuvMZ&q=85&s=b5be40abf333defe984993af89546c19" alt="顯示 Claude Code 外部連接的圖表：安裝/更新連接到發佈伺服器，使用者請求連接到 Anthropic 服務，包括 Console 驗證、public-api，以及可選的 Statsig、Sentry 和錯誤報告" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
 
 Claude Code 在本機執行。為了與 LLM 互動，Claude Code 透過網路發送資料。此資料包括所有使用者提示和模型輸出，在傳輸中透過 TLS 1.2+ 加密。Claude Code 與大多數流行的 VPN 和 LLM 代理相容。
 

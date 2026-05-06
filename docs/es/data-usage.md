@@ -67,7 +67,7 @@ Para todos los usuarios de primera parte, puede obtener más información sobre 
 
 El diagrama a continuación muestra cómo Claude Code se conecta a servicios externos durante la instalación y operación normal. Las líneas sólidas indican conexiones requeridas, mientras que las líneas punteadas representan flujos de datos opcionales o iniciados por el usuario.
 
-<img src="https://mintcdn.com/claude-code/YcBW2H7CArGcduPb/images/claude-code-data-flow.svg?fit=max&auto=format&n=YcBW2H7CArGcduPb&q=85&s=b600a89f84fc86f9ff7be00a466c0635" alt="Diagrama que muestra las conexiones externas de Claude Code: instalar/actualizar se conecta al servidor de distribución, y las solicitudes del usuario se conectan a servicios de Anthropic incluyendo autenticación de consola, API pública, y opcionalmente Statsig, Sentry e informes de errores" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
+<img src="https://mintcdn.com/claude-code/RcOyXc06Ja8cuvMZ/images/claude-code-data-flow.svg?fit=max&auto=format&n=RcOyXc06Ja8cuvMZ&q=85&s=b5be40abf333defe984993af89546c19" alt="Diagrama que muestra las conexiones externas de Claude Code: instalar/actualizar se conecta al servidor de distribución, y las solicitudes del usuario se conectan a servicios de Anthropic incluyendo autenticación de consola, API pública, y opcionalmente Statsig, Sentry e informes de errores" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
 
 Claude Code se ejecuta localmente. Para interactuar con el LLM, Claude Code envía datos a través de la red. Estos datos incluyen todos los indicadores del usuario y salidas del modelo, cifrados en tránsito a través de TLS 1.2+. Claude Code es compatible con la mayoría de VPN y proxies LLM populares.
 

@@ -282,11 +282,13 @@ Terminal, Finder 또는 File Explorer, System Settings 또는 Settings와 같이
 
 ### 세션으로 병렬 작업하기
 
-사이드바에서 **+ New session**을 클릭하거나 macOS에서 **Cmd+N**을 누르거나 Windows에서 **Ctrl+N**을 눌러 여러 작업을 병렬로 작업합니다. **Ctrl+Tab** 및 **Ctrl+Shift+Tab**을 눌러 사이드바의 세션을 순환합니다. Git 저장소의 경우 각 세션은 [Git worktrees](/ko/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees)를 사용하여 프로젝트의 자신의 격리된 복사본을 가져오므로 한 세션의 변경 사항이 커밋할 때까지 다른 세션에 영향을 주지 않습니다.
+사이드바에서 **+ New session**을 클릭하거나 macOS에서 **Cmd+N**을 누르거나 Windows에서 **Ctrl+N**을 눌러 여러 작업을 병렬로 작업합니다. **Ctrl+Tab** 및 **Ctrl+Shift+Tab**을 눌러 사이드바의 세션을 순환합니다. Git 저장소의 경우 각 세션은 [Git worktrees](/ko/worktrees)를 사용하여 프로젝트의 자신의 격리된 복사본을 가져오므로 한 세션의 변경 사항이 커밋할 때까지 다른 세션에 영향을 주지 않습니다.
+
+두 세션을 동시에 보려면 macOS에서 **Cmd**를 누르거나 Windows에서 **Ctrl**을 누르고 사이드바의 세션을 클릭합니다. 세션이 이미 열려 있는 창 옆에 두 번째 창에서 열립니다. 분할이 활성화되어 있는 동안 다른 사이드바 세션을 클릭하면 포커스가 있는 창을 바꿉니다. macOS에서 \*\*Cmd+\\\*\*를 누르거나 Windows에서 \*\*Ctrl+\\\*\*를 눌러 포커스된 창을 닫고 단일 세션으로 돌아갑니다.
 
 Worktrees는 기본적으로 `<project-root>/.claude/worktrees/`에 저장됩니다. Settings → Claude Code의 "Worktree location"에서 사용자 정의 디렉토리로 변경할 수 있습니다. 또한 모든 worktree 브랜치 이름 앞에 추가되는 브랜치 접두사를 설정할 수 있으며, 이는 Claude가 만든 브랜치를 정리하는 데 유용합니다. 완료되면 사이드바의 세션 위에 마우스를 올리고 아카이브 아이콘을 클릭하여 worktree를 제거합니다. PR이 병합되거나 닫힌 후 세션이 자동으로 아카이브되도록 하려면 Settings → Claude Code에서 **Auto-archive after PR merge or close**를 켭니다. 자동 아카이브는 실행을 완료한 로컬 세션에만 적용됩니다.
 
-gitignored 파일 (예: `.env`)을 새 worktrees에 포함하려면 프로젝트 루트에 [`.worktreeinclude` 파일](/ko/common-workflows#copy-gitignored-files-to-worktrees)을 만듭니다.
+gitignored 파일 (예: `.env`)을 새 worktrees에 포함하려면 프로젝트 루트에 [`.worktreeinclude` 파일](/ko/worktrees#copy-gitignored-files-into-worktrees)을 만듭니다.
 
 <Note>
   세션 격리에는 [Git](https://git-scm.com/downloads)이 필요합니다. 대부분의 Mac에는 기본적으로 Git이 포함되어 있습니다. Terminal에서 `git --version`을 실행하여 확인합니다. Windows에서는 Code 탭이 작동하려면 Git이 필요합니다: [Windows용 Git 다운로드](https://git-scm.com/downloads/win), 설치 및 앱 재시작. Git 오류가 발생하면 [Cowork 탭](https://claude.com/product/cowork)에서 Claude에게 설정을 문제 해결하도록 요청하세요.
@@ -334,12 +336,6 @@ macOS에서 \*\*Cmd+;\*\*를 누르거나 Windows에서 \*\*Ctrl+;\*\*를 누르
 설정, 페어링, Dispatch 설정은 [Dispatch 도움말 문서](https://support.claude.com/en/articles/13947068)를 참조하세요. Dispatch는 Pro 또는 Max 계획이 필요하며 Team 또는 Enterprise 계획에서는 사용할 수 없습니다.
 
 Dispatch는 터미널에서 멀리 떨어져 있을 때 Claude와 작업하는 여러 방법 중 하나입니다. [플랫폼 및 통합](/ko/platforms#work-when-you-are-away-from-your-terminal)을 참조하여 Remote Control, Channels, Slack, 예약된 작업과 비교하세요.
-
-***
-
-title: "Claude Code 확장하기"
-description: "외부 서비스를 연결하고, 재사용 가능한 워크플로우를 추가하고, Claude의 동작을 사용자 정의하고, 미리보기 서버를 구성합니다."
----------------------------------------------------------------------------------------
 
 ## Claude Code 확장하기
 
@@ -514,15 +510,15 @@ Claude가 다른 포트를 선택하면 할당된 포트를 `PORT` 환경 변수
 
 * **Local**: 머신에서 실행되며 파일에 직접 액세스합니다
 * **Remote**: Anthropic의 클라우드 인프라에서 실행됩니다. 앱을 닫아도 세션이 계속됩니다.
-* **SSH**: SSH를 통해 연결하는 원격 머신 (예: 자신의 서버, 클라우드 VM 또는 개발 컨테이너)에서 실행됩니다
+* **SSH**: SSH를 통해 연결하는 원격 머신(예: 자신의 서버, 클라우드 VM 또는 개발 컨테이너)에서 실행됩니다
 
 ### 로컬 세션
 
-데스크톱 앱이 항상 전체 셸 환경을 상속하지는 않습니다. macOS에서 Dock 또는 Finder에서 앱을 실행하면 `~/.zshrc` 또는 `~/.bashrc`와 같은 셸 프로필을 읽어 `PATH` 및 고정된 Claude Code 변수 집합을 추출하지만 거기에 내보낸 다른 변수는 선택되지 않습니다. Windows에서 앱은 사용자 및 시스템 환경 변수를 상속하지만 PowerShell 프로필을 읽지 않습니다.
+데스크톱 앱이 항상 전체 셸 환경을 상속하지는 않습니다. macOS에서 Dock 또는 Finder에서 앱을 실행하면 `~/.zshrc` 또는 `~/.bashrc`와 같은 셸 프로필을 읽어 `PATH` 및 고정된 Claude Code 변수 집합을 추출하지만, 거기에 내보낸 다른 변수는 선택되지 않습니다. Windows에서 앱은 사용자 및 시스템 환경 변수를 상속하지만 PowerShell 프로필을 읽지 않습니다.
 
 로컬 세션 및 개발 서버에 대한 환경 변수를 설정하려면 프롬프트 상자의 환경 드롭다운을 열고 **Local** 위에 마우스를 올린 다음 기어 아이콘을 클릭하여 로컬 환경 편집기를 엽니다. 여기에 저장한 변수는 머신에 암호화되어 저장되며 시작하는 모든 로컬 세션 및 미리보기 서버에 적용됩니다. `~/.claude/settings.json` 파일의 `env` 키에 변수를 추가할 수도 있습니다. 단, 이는 Claude 세션에만 도달하고 개발 서버에는 도달하지 않습니다. 지원되는 변수의 전체 목록은 [환경 변수](/ko/env-vars)를 참조하세요.
 
-[Extended thinking](/ko/common-workflows#use-extended-thinking-thinking-mode)은 기본적으로 활성화되어 있으며, 복잡한 추론 작업의 성능을 향상시키지만 추가 토큰을 사용합니다. 생각을 완전히 비활성화하려면 로컬 환경 편집기에서 `MAX_THINKING_TOKENS`을 `0`으로 설정합니다. [적응형 추론](/ko/model-config#adjust-effort-level)이 있는 모델에서는 적응형 추론이 생각 깊이를 제어하기 때문에 다른 `MAX_THINKING_TOKENS` 값은 무시됩니다. Opus 4.6 및 Sonnet 4.6에서는 `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING`을 `1`로 설정하여 고정 생각 예산을 사용합니다. Opus 4.7은 항상 적응형 추론을 사용하며 고정 예산 모드가 없습니다.
+[Extended thinking](/ko/model-config#extended-thinking)은 기본적으로 활성화되어 있으며, 복잡한 추론 작업의 성능을 향상시키지만 추가 토큰을 사용합니다. 생각을 완전히 비활성화하려면 로컬 환경 편집기에서 `MAX_THINKING_TOKENS`을 `0`으로 설정합니다. [적응형 추론](/ko/model-config#adjust-effort-level)이 있는 모델에서는 적응형 추론이 생각 깊이를 제어하기 때문에 다른 `MAX_THINKING_TOKENS` 값은 무시됩니다. Opus 4.6 및 Sonnet 4.6에서는 `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING`을 `1`로 설정하여 고정 생각 예산을 사용합니다. Opus 4.7은 항상 적응형 추론을 사용하며 고정 예산 모드가 없습니다.
 
 ### 원격 세션
 

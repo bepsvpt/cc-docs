@@ -261,11 +261,11 @@ La integración de LSP proporciona:
 
 **Plugins LSP disponibles:**
 
-| Plugin           | Servidor de lenguaje       | Comando de instalación                                                                       |
-| :--------------- | :------------------------- | :------------------------------------------------------------------------------------------- |
-| `pyright-lsp`    | Pyright (Python)           | `pip install pyright` o `npm install -g pyright`                                             |
-| `typescript-lsp` | TypeScript Language Server | `npm install -g typescript-language-server typescript`                                       |
-| `rust-lsp`       | rust-analyzer              | [Ver instalación de rust-analyzer](https://rust-analyzer.github.io/manual.html#installation) |
+| Plugin              | Servidor de lenguaje       | Comando de instalación                                                                       |
+| :------------------ | :------------------------- | :------------------------------------------------------------------------------------------- |
+| `pyright-lsp`       | Pyright (Python)           | `pip install pyright` o `npm install -g pyright`                                             |
+| `typescript-lsp`    | TypeScript Language Server | `npm install -g typescript-language-server typescript`                                       |
+| `rust-analyzer-lsp` | rust-analyzer              | [Ver instalación de rust-analyzer](https://rust-analyzer.github.io/manual.html#installation) |
 
 Instale el servidor de lenguaje primero, luego instale el plugin desde el marketplace.
 
@@ -531,7 +531,9 @@ Para `skills`, `commands`, `agents`, `outputStyles`, `themes` y `monitors`, una 
 
 Claude Code proporciona dos variables para hacer referencia a rutas de plugins. Ambas se sustituyen en línea en cualquier lugar donde aparezcan en contenido de skills, contenido de agents, comandos de hooks, comandos de monitores y configuraciones de servidores MCP o LSP. Ambas también se exportan como variables de entorno a procesos de hooks y subprocesos de servidores MCP o LSP.
 
-**`${CLAUDE_PLUGIN_ROOT}`**: la ruta absoluta al directorio de instalación de tu plugin. Úsala para hacer referencia a scripts, binarios y archivos de configuración incluidos con el plugin. Esta ruta cambia cuando se actualiza el plugin, así que los archivos que escribas aquí no sobreviven a una actualización.
+**`${CLAUDE_PLUGIN_ROOT}`**: la ruta absoluta al directorio de instalación de tu plugin. Úsala para hacer referencia a scripts, binarios y archivos de configuración incluidos con el plugin. Esta ruta cambia cuando se actualiza el plugin. El directorio de la versión anterior permanece en el disco durante aproximadamente siete días después de una actualización antes de la limpieza, pero trátalo como efímero y no escribas estado aquí.
+
+Cuando un plugin se actualiza a mitad de sesión, los comandos de hooks, monitores, servidores MCP y servidores LSP siguen usando la ruta de la versión anterior. Ejecuta `/reload-plugins` para cambiar hooks, servidores MCP y servidores LSP a la nueva ruta; los monitores requieren un reinicio de sesión.
 
 **`${CLAUDE_PLUGIN_DATA}`**: un directorio persistente para el estado del plugin que sobrevive a las actualizaciones. Úsalo para dependencias instaladas como `node_modules` o entornos virtuales de Python, código generado, cachés y cualquier otro archivo que deba persistir entre versiones del plugin. El directorio se crea automáticamente la primera vez que se hace referencia a esta variable.
 
@@ -676,6 +678,8 @@ enterprise-plugin/
 <Warning>
   El directorio `.claude-plugin/` contiene el archivo `plugin.json`. Todos los otros directorios (commands/, agents/, skills/, output-styles/, themes/, monitors/, hooks/) deben estar en la raíz del plugin, no dentro de `.claude-plugin/`.
 </Warning>
+
+Un archivo `CLAUDE.md` en la raíz del plugin no se carga como contexto del proyecto. Los plugins contribuyen contexto a través de skills, agents y hooks en lugar de CLAUDE.md. Para enviar instrucciones que se carguen en el contexto de Claude, colóquelas en un [skill](#skills).
 
 ### Referencia de ubicaciones de archivos
 

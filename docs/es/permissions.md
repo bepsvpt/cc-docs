@@ -36,7 +36,7 @@ Claude Code admite varios modos de permisos que controlan cómo se aprueban las 
 | :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `default`           | Comportamiento estándar: solicita permiso en el primer uso de cada herramienta                                                                                                                   |
 | `acceptEdits`       | Acepta automáticamente ediciones de archivos y comandos comunes del sistema de archivos (`mkdir`, `touch`, `mv`, `cp`, etc.) para rutas en el directorio de trabajo o `additionalDirectories`    |
-| `plan`              | Plan Mode: Claude puede analizar pero no modificar archivos ni ejecutar comandos                                                                                                                 |
+| `plan`              | Plan Mode: Claude lee archivos y ejecuta comandos de shell de solo lectura para explorar pero no edita sus archivos de origen                                                                    |
 | `auto`              | Auto-aprueba llamadas de herramientas con comprobaciones de seguridad en segundo plano que verifican que las acciones se alineen con su solicitud. Actualmente una vista previa de investigación |
 | `dontAsk`           | Deniega automáticamente las herramientas a menos que estén preaprobadas a través de `/permissions` o reglas `permissions.allow`                                                                  |
 | `bypassPermissions` | Omite todos los avisos de permisos. Las eliminaciones de directorio raíz y directorio de inicio como `rm -rf /` aún solicitan como un disyuntor de circuito                                      |
@@ -296,7 +296,7 @@ Use ambos para defensa en profundidad:
 
 * Las reglas de negación de permisos bloquean que Claude intente acceder a recursos restringidos
 * Las restricciones de sandbox previenen que comandos Bash alcancen recursos fuera de límites definidos, incluso si una inyección de solicitud omite la toma de decisiones de Claude
-* Las restricciones del sistema de archivos en el sandbox usan reglas de negación Read y Edit, no configuración de sandbox separada
+* Las restricciones del sistema de archivos en el sandbox combinan la configuración [`sandbox.filesystem`](/es/sandboxing) con reglas de negación Read y Edit; ambas se fusionan en el límite final del sandbox
 * Las restricciones de red combinan reglas de permisos WebFetch con las listas `allowedDomains` y `deniedDomains` del sandbox
 
 Cuando el sandboxing está habilitado con `autoAllowBashIfSandboxed: true`, que es el valor predeterminado, los comandos Bash en sandbox se ejecutan sin solicitar incluso si sus permisos incluyen `ask: Bash(*)`. El límite del sandbox sustituye el aviso por comando. Las reglas de negación explícitas aún se aplican, y los comandos `rm` o `rmdir` que apunten a `/`, su directorio de inicio u otras rutas críticas del sistema aún desencadenan un aviso. Consulte [modos de sandbox](/es/sandboxing#sandbox-modes) para cambiar este comportamiento.
@@ -316,7 +316,7 @@ Las siguientes configuraciones solo se leen desde configuración administrada. C
 | `allowManagedMcpServersOnly`                   | Cuando es `true`, solo se respetan `allowedMcpServers` de configuración administrada. `deniedMcpServers` aún se fusiona de todas las fuentes. Consulte [Configuración MCP administrada](/es/mcp#managed-mcp-configuration)                                                                                |
 | `allowManagedPermissionRulesOnly`              | Cuando es `true`, evita que la configuración de usuario y proyecto defina reglas de permisos `allow`, `ask` o `deny`. Solo se aplican las reglas en configuración administrada                                                                                                                            |
 | `blockedMarketplaces`                          | Lista de bloqueo de fuentes de marketplace. Las fuentes bloqueadas se verifican antes de descargar, por lo que nunca tocan el sistema de archivos. Consulte [restricciones de marketplace administradas](/es/plugin-marketplaces#managed-marketplace-restrictions)                                        |
-| `channelsEnabled`                              | Permitir [channels](/es/channels) para usuarios de Team y Enterprise. Sin establecer o `false` bloquea la entrega de mensajes de canal independientemente de lo que los usuarios pasen a `--channels`                                                                                                     |
+| `channelsEnabled`                              | Permitir [channels](/es/channels) para la organización. Consulte [controles empresariales](/es/channels#enterprise-controls) para el valor predeterminado en cada plan                                                                                                                                    |
 | `forceRemoteSettingsRefresh`                   | Cuando es `true`, bloquea el inicio de CLI hasta que la configuración administrada remota se obtenga recientemente y sale si la obtención falla. Consulte [aplicación de cierre de falla](/es/server-managed-settings#enforce-fail-closed-startup)                                                        |
 | `pluginTrustMessage`                           | Mensaje personalizado agregado a la advertencia de confianza de plugin mostrada antes de la instalación                                                                                                                                                                                                   |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Cuando es `true`, solo se respetan rutas `filesystem.allowRead` de configuración administrada. `denyRead` aún se fusiona de todas las fuentes                                                                                                                                                             |
@@ -327,125 +327,10 @@ Las siguientes configuraciones solo se leen desde configuración administrada. C
 `disableBypassPermissionsMode` generalmente se coloca en configuración administrada para aplicar la política organizacional, pero funciona desde cualquier alcance. Un usuario puede establecerlo en su propia configuración para bloquearse a sí mismo del modo de bypass.
 
 <Note>
-  El acceso a [Remote Control](/es/remote-control) y [sesiones web](/es/claude-code-on-the-web) no se controla mediante una clave de configuración administrada. En planes Team y Enterprise, un administrador habilita o deshabilita estas características en [configuración de administrador de Claude Code](https://claude.ai/admin-settings/claude-code).
+  En planes Team y Enterprise, un administrador habilita o deshabilita [Remote Control](/es/remote-control) y [sesiones web](/es/claude-code-on-the-web) en toda la organización en [configuración de administrador de Claude Code](https://claude.ai/admin-settings/claude-code). Remote Control puede deshabilitarse adicionalmente por dispositivo con la configuración administrada [`disableRemoteControl`](/es/settings#available-settings). Las sesiones web no tienen clave de configuración administrada por dispositivo.
 </Note>
 
-## Revisar denegaciones del modo auto
-
-Cuando el [modo auto](/es/permission-modes#eliminate-prompts-with-auto-mode) deniega una llamada de herramienta, aparece una notificación y la acción denegada se registra en `/permissions` bajo la pestaña Recently denied. Presione `r` en una acción denegada para marcarla para reintentar: cuando salga del diálogo, Claude Code envía un mensaje indicando al modelo que puede reintentar esa llamada de herramienta y reanuda la conversación.
-
-Para reaccionar a denegaciones programáticamente, use el [hook `PermissionDenied`](/es/hooks#permissiondenied).
-
-## Configurar el clasificador del modo auto
-
-El [modo auto](/es/permission-modes#eliminate-prompts-with-auto-mode) utiliza un modelo clasificador para decidir si cada acción es segura de ejecutar sin solicitar. De fábrica, solo confía en el directorio de trabajo y, si está presente, los remotos del repositorio actual. Acciones como empujar a la organización de control de fuente de su empresa o escribir en un bucket de nube de equipo serán bloqueadas como posible exfiltración de datos.
-
-Para ajustar lo que el clasificador permite o bloquea, agregue instrucciones a su archivo [CLAUDE.md](/es/memory). El clasificador lee CLAUDE.md desde directorios confiables junto a la conversación, por lo que una instrucción como "nunca force push" dirige tanto a Claude como al clasificador al mismo tiempo. Comience aquí para convenciones de proyecto y reglas de comportamiento.
-
-Para reglas que se aplican en todos los proyectos, como infraestructura confiable o reglas de denegación en toda la organización, use el bloque de configuración `autoMode`. El clasificador lee `autoMode` desde configuración de usuario, `.claude/settings.local.json` y configuración administrada. No lee desde configuración de proyecto compartida en `.claude/settings.json`, porque un repositorio registrado podría inyectar sus propias reglas de permiso.
-
-| Alcance                       | Archivo                       | Usar para                                                         |
-| :---------------------------- | :---------------------------- | :---------------------------------------------------------------- |
-| Un desarrollador              | `~/.claude/settings.json`     | Infraestructura confiable personal                                |
-| Un proyecto, un desarrollador | `.claude/settings.local.json` | Buckets o servicios confiables por proyecto, gitignored           |
-| Organización completa         | Configuración administrada    | Infraestructura confiable aplicada para todos los desarrolladores |
-
-Las entradas de cada alcance se combinan. Un desarrollador puede extender `environment`, `allow` y `soft_deny` con entradas personales pero no puede eliminar entradas que proporciona la configuración administrada. Porque las reglas de permiso actúan como excepciones a las reglas de bloqueo dentro del clasificador, una entrada `allow` agregada por desarrollador puede anular una entrada `soft_deny` de organización: la combinación es aditiva, no un límite de política duro. Si necesita una regla que los desarrolladores no puedan eludir, use `permissions.deny` en configuración administrada en su lugar, que bloquea acciones antes de que se consulte el clasificador.
-
-### Definir infraestructura confiable
-
-Para la mayoría de las organizaciones, `autoMode.environment` es el único campo que necesita establecer. Le dice al clasificador qué repositorios, buckets y dominios son confiables, sin tocar las reglas de bloqueo y permiso integradas. El clasificador usa `environment` para decidir qué significa "externo": cualquier destino no listado es un objetivo potencial de exfiltración.
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Source control: github.example.com/acme-corp and all repos under it",
-      "Trusted cloud buckets: s3://acme-build-artifacts, gs://acme-ml-datasets",
-      "Trusted internal domains: *.corp.example.com, api.internal.example.com",
-      "Key internal services: Jenkins at ci.example.com, Artifactory at artifacts.example.com"
-    ]
-  }
-}
-```
-
-Las entradas son prosa, no regex o patrones de herramienta. El clasificador las lee como reglas de lenguaje natural. Escríbalas de la manera que describiría su infraestructura a un ingeniero nuevo. Una sección de entorno exhaustiva cubre:
-
-* **Organización**: el nombre de su empresa y para qué se usa principalmente Claude Code, como desarrollo de software, automatización de infraestructura o ingeniería de datos
-* **Control de fuente**: cada organización de GitHub, GitLab o Bitbucket a la que sus desarrolladores empujan
-* **Proveedores de nube y buckets confiables**: nombres de buckets o prefijos a los que Claude debería poder leer y escribir
-* **Dominios internos confiables**: nombres de host para APIs, paneles y servicios dentro de su red, como `*.internal.example.com`
-* **Servicios internos clave**: CI, registros de artefactos, índices de paquetes internos, herramientas de incidentes
-* **Contexto adicional**: restricciones de industria regulada, infraestructura multiinquilino o requisitos de cumplimiento que afecten lo que el clasificador debería tratar como riesgoso
-
-Una plantilla de inicio útil: complete los campos entre corchetes y elimine cualquier línea que no se aplique:
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Organization: {COMPANY_NAME}. Primary use: {PRIMARY_USE_CASE, e.g. software development, infrastructure automation}",
-      "Source control: {SOURCE_CONTROL, e.g. GitHub org github.example.com/acme-corp}",
-      "Cloud provider(s): {CLOUD_PROVIDERS, e.g. AWS, GCP, Azure}",
-      "Trusted cloud buckets: {TRUSTED_BUCKETS, e.g. s3://acme-builds, gs://acme-datasets}",
-      "Trusted internal domains: {TRUSTED_DOMAINS, e.g. *.internal.example.com, api.example.com}",
-      "Key internal services: {SERVICES, e.g. Jenkins at ci.example.com, Artifactory at artifacts.example.com}",
-      "Additional context: {EXTRA, e.g. regulated industry, multi-tenant infrastructure, compliance requirements}"
-    ]
-  }
-}
-```
-
-Cuanto más contexto específico proporcione, mejor el clasificador puede distinguir operaciones internas rutinarias de intentos de exfiltración.
-
-No necesita completar todo a la vez. Un despliegue razonable: comience con los valores predeterminados y agregue su organización de control de fuente y servicios internos clave, que resuelve los falsos positivos más comunes como empujar a sus propios repositorios. Agregue dominios confiables y buckets de nube a continuación. Complete el resto a medida que surjan bloqueos.
-
-### Anular las reglas de bloqueo y permiso
-
-Dos campos adicionales le permiten reemplazar las listas de reglas integradas del clasificador: `autoMode.soft_deny` controla qué se bloquea, y `autoMode.allow` controla qué excepciones se aplican. Cada uno es una matriz de descripciones en prosa, leídas como reglas de lenguaje natural.
-
-Dentro del clasificador, la precedencia es: las reglas `soft_deny` bloquean primero, luego las reglas `allow` anulan como excepciones, luego la intención explícita del usuario anula ambas. Si el mensaje del usuario describe directa y específicamente la acción exacta que Claude está a punto de tomar, el clasificador la permite incluso si una regla `soft_deny` coincide. Las solicitudes generales no cuentan: pedir a Claude que "limpie el repositorio" no autoriza un force-push, pero pedir a Claude que "force-push esta rama" sí.
-
-Para aflojar: elimine reglas de `soft_deny` cuando los valores predeterminados bloquean algo que su pipeline ya protege con revisión de PR, CI o entornos de ensayo, o agregue a `allow` cuando el clasificador marca repetidamente un patrón rutinario que las excepciones predeterminadas no cubren. Para apretar: agregue a `soft_deny` para riesgos específicos de su entorno que los valores predeterminados pierden, o elimine de `allow` para mantener una excepción predeterminada a las reglas de bloqueo. En todos los casos, ejecute `claude auto-mode defaults` para obtener las listas predeterminadas completas, luego copie y edite: nunca comience desde una lista vacía.
-
-```json theme={null}
-{
-  "autoMode": {
-    "environment": [
-      "Source control: github.example.com/acme-corp and all repos under it"
-    ],
-    "allow": [
-      "Deploying to the staging namespace is allowed: staging is isolated from production and resets nightly",
-      "Writing to s3://acme-scratch/ is allowed: ephemeral bucket with a 7-day lifecycle policy"
-    ],
-    "soft_deny": [
-      "Never run database migrations outside the migrations CLI, even against dev databases",
-      "Never modify files under infra/terraform/prod/: production infrastructure changes go through the review workflow",
-      "...copy full default soft_deny list here first, then add your rules..."
-    ]
-  }
-}
-```
-
-<Danger>
-  Establecer `allow` o `soft_deny` reemplaza la lista predeterminada completa para esa sección. Si establece `soft_deny` con una sola entrada, cada regla de bloqueo integrada se descarta: force push, exfiltración de datos, `curl | bash`, despliegues de producción y todas las otras reglas de bloqueo predeterminadas se permiten. Para personalizar de forma segura, ejecute `claude auto-mode defaults` para imprimir las reglas integradas, cópielas en su archivo de configuración, luego revise cada regla contra su propio pipeline y tolerancia de riesgo. Solo elimine reglas para riesgos que su infraestructura ya mitiga.
-</Danger>
-
-Las tres secciones se evalúan independientemente, por lo que establecer `environment` solo deja intactas las listas predeterminadas `allow` y `soft_deny`.
-
-### Inspeccionar los valores predeterminados y su configuración efectiva
-
-Porque establecer `allow` o `soft_deny` reemplaza los valores predeterminados, comience cualquier personalización copiando las listas predeterminadas completas. Tres subcomandos CLI lo ayudan a inspeccionar y validar:
-
-```bash theme={null}
-claude auto-mode defaults  # the built-in environment, allow, and soft_deny rules
-claude auto-mode config    # what the classifier actually uses: your settings where set, defaults otherwise
-claude auto-mode critique  # get AI feedback on your custom allow and soft_deny rules
-```
-
-Guarde la salida de `claude auto-mode defaults` en un archivo, edite las listas para que coincidan con su política y pegue el resultado en su archivo de configuración. Después de guardar, ejecute `claude auto-mode config` para confirmar que las reglas efectivas son lo que espera. Si ha escrito reglas personalizadas, `claude auto-mode critique` las revisa y marca entradas que son ambiguas, redundantes o probables de causar falsos positivos.
-
-## Precedencia de configuración
+## Configuración de precedencia
 
 Las reglas de permisos siguen la misma [precedencia de configuración](/es/settings#settings-precedence) que todas las demás configuraciones de Claude Code:
 

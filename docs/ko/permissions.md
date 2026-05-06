@@ -36,7 +36,7 @@ Claude Code는 도구 승인 방식을 제어하는 여러 권한 모드를 지�
 | :------------------ | :------------------------------------------------------------------------------------------------------------ |
 | `default`           | 표준 동작: 각 도구를 처음 사용할 때 권한을 요청합니다                                                                               |
 | `acceptEdits`       | 작업 디렉토리 또는 `additionalDirectories`의 경로에 대해 파일 편집 및 일반적인 파일 시스템 명령(`mkdir`, `touch`, `mv`, `cp` 등)을 자동으로 수락합니다 |
-| `plan`              | Plan Mode: Claude는 파일을 분석할 수 있지만 수정하거나 명령을 실행할 수 없습니다                                                         |
+| `plan`              | Plan Mode: Claude는 파일을 읽고 읽기 전용 셸 명령을 실행하여 탐색하지만 소스 파일을 편집하지 않습니다                                             |
 | `auto`              | 배경 안전 검사를 통해 도구 호출을 자동으로 승인하여 작업이 요청과 일치하는지 확인합니다. 현재 연구 미리보기입니다                                              |
 | `dontAsk`           | `/permissions` 또는 `permissions.allow` 규칙을 통해 사전 승인되지 않은 한 도구를 자동으로 거부합니다                                      |
 | `bypassPermissions` | 모든 권한 프롬프트를 건너뜁니다. 파일 시스템 루트 또는 홈 디렉토리 제거(예: `rm -rf /` 및 `rm -rf ~`)는 모델 오류에 대한 회로 차단기로 여전히 프롬프트합니다          |
@@ -296,8 +296,8 @@ Claude가 심볼릭 링크에 액세스할 때 권한 규칙은 두 경로를 �
 
 * 권한 deny 규칙은 Claude가 제한된 리소스에 액세스하려고 시도하는 것을 차단합니다
 * 샌드박스 제한은 프롬프트 주입이 Claude의 의사 결정을 우회하더라도 Bash 명령이 정의된 경계 외부의 리소스에 도달하는 것을 방지합니다
-* 샌드박스의 파일 시스템 제한은 Read 및 Edit deny 규칙을 사용하며, 별도의 샌드박스 구성은 사용하지 않습니다
-* 네트워크 제한은 WebFetch 권한 규칙과 샌드박스의 `allowedDomains` 및 `deniedDomains` 목록을 결합합니다
+* 샌드박스의 파일 시스템 제한은 [`sandbox.filesystem`](/ko/sandboxing) 설정을 Read 및 Edit deny 규칙과 결합합니다. 둘 다 최종 샌드박스 경계로 병합됩니다
+* 네트워크 제한은 WebFetch 권한 규칙을 샌드박스의 `allowedDomains` 및 `deniedDomains` 목록과 결합합니다
 
 샌드박싱이 `autoAllowBashIfSandboxed: true`로 활성화되면(기본값), 권한에 `ask: Bash(*)`가 포함되어 있어도 샌드박스된 Bash 명령은 프롬프트 없이 실행됩니다. 샌드박스 경계는 명령별 프롬프트를 대체합니다. 명시적 deny 규칙은 여전히 적용되며, `/`, 홈 디렉터리 또는 기타 중요한 시스템 경로를 대상으로 하는 `rm` 또는 `rmdir` 명령은 여전히 프롬프트를 트리거합니다. [샌드박스 모드](/ko/sandboxing#sandbox-modes)를 참조하여 이 동작을 변경합니다.
 
@@ -316,18 +316,18 @@ Claude Code 구성에 대한 중앙 집중식 제어가 필요한 조직의 경�
 | `allowManagedMcpServersOnly`                   | `true`일 때, 관리형 설정의 `allowedMcpServers`만 존중됩니다. `deniedMcpServers`는 여전히 모든 소스에서 병합됩니다. [관리형 MCP 구성](/ko/mcp#managed-mcp-configuration) 참조                                                    |
 | `allowManagedPermissionRulesOnly`              | `true`일 때, 사용자 및 프로젝트 설정이 `allow`, `ask` 또는 `deny` 권한 규칙을 정의하는 것을 방지합니다. 관리형 설정의 규칙만 적용됩니다                                                                                                  |
 | `blockedMarketplaces`                          | 마켓플레이스 소스의 차단 목록입니다. 차단된 소스는 다운로드 전에 확인되므로 파일 시스템에 닿지 않습니다. [관리형 마켓플레이스 제한](/ko/plugin-marketplaces#managed-marketplace-restrictions) 참조                                                    |
-| `channelsEnabled`                              | Team 및 Enterprise 사용자를 위한 [채널](/ko/channels)을 허용합니다. 설정되지 않거나 `false`이면 사용자가 `--channels`에 전달하는 것과 관계없이 채널 메시지 전달을 차단합니다                                                                    |
+| `channelsEnabled`                              | 조직을 위한 [채널](/ko/channels)을 허용합니다. 각 플랜의 기본값은 [엔터프라이즈 제어](/ko/channels#enterprise-controls)를 참조합니다                                                                                           |
 | `forceRemoteSettingsRefresh`                   | `true`일 때, 원격 관리형 설정이 새로 가져올 때까지 CLI 시작을 차단하고 가져오기에 실패하면 종료합니다. [실패 폐쇄 적용](/ko/server-managed-settings#enforce-fail-closed-startup) 참조                                                      |
 | `pluginTrustMessage`                           | 설치 전에 표시되는 플러그인 신뢰 경고에 추가되는 사용자 정의 메시지                                                                                                                                                      |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | `true`일 때, 관리형 설정의 `filesystem.allowRead` 경로만 존중됩니다. `denyRead`는 여전히 모든 소스에서 병합됩니다                                                                                                          |
 | `sandbox.network.allowManagedDomainsOnly`      | `true`일 때, 관리형 설정의 `allowedDomains` 및 `WebFetch(domain:...)` allow 규칙만 존중됩니다. 허용되지 않은 도메인은 사용자에게 프롬프트하지 않고 자동으로 차단됩니다. 거부된 도메인은 여전히 모든 소스에서 병합됩니다                                           |
-| `strictKnownMarketplaces`                      | 사용자가 추가할 수 있는 플러그인 마켓플레이스를 제어합니다. [관리형 마켓플레이스 제한](/ko/plugin-marketplaces#managed-marketplace-restrictions) 참조                                                                              |
+| `strictKnownMarketplaces`                      | 사용자가 추가하고 플러그인을 설치할 수 있는 플러그인 마켓플레이스 소스를 제어합니다. [관리형 마켓플레이스 제한](/ko/plugin-marketplaces#managed-marketplace-restrictions) 참조                                                                |
 | `wslInheritsWindowsSettings`                   | Windows HKLM 레지스트리 키 또는 `C:\Program Files\ClaudeCode\managed-settings.json`에서 `true`일 때, WSL은 `/etc/claude-code`에 추가로 Windows 정책 체인에서 관리형 설정을 읽습니다. [설정 파일](/ko/settings#settings-files) 참조 |
 
 `disableBypassPermissionsMode`는 일반적으로 조직 정책을 적용하기 위해 관리형 설정에 배치되지만 모든 범위에서 작동합니다. 사용자는 자신의 설정에서 이를 설정하여 자신을 우회 모드에서 잠글 수 있습니다.
 
 <Note>
-  [Remote Control](/ko/remote-control) 및 [웹 세션](/ko/claude-code-on-the-web)에 대한 액세스는 관리형 설정 키로 제어되지 않습니다. Team 및 Enterprise 플랜에서 관리자는 [Claude Code 관리자 설정](https://claude.ai/admin-settings/claude-code)에서 이러한 기능을 활성화하거나 비활성화합니다.
+  Team 및 Enterprise 플랜에서 관리자는 [Claude Code 관리자 설정](https://claude.ai/admin-settings/claude-code)에서 [Remote Control](/ko/remote-control) 및 [웹 세션](/ko/claude-code-on-the-web)을 조직 전체에서 활성화하거나 비활성화합니다. Remote Control은 [`disableRemoteControl`](/ko/settings#available-settings) 관리형 설정으로 장치별로 추가로 비활성화할 수 있습니다. 웹 세션에는 장치별 관리형 설정 키가 없습니다.
 </Note>
 
 ## 설정 우선순위

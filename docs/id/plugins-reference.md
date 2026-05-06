@@ -261,11 +261,11 @@ Integrasi LSP menyediakan:
 
 **LSP plugins yang tersedia:**
 
-| Plugin           | Language server            | Perintah instalasi                                                                        |
-| :--------------- | :------------------------- | :---------------------------------------------------------------------------------------- |
-| `pyright-lsp`    | Pyright (Python)           | `pip install pyright` atau `npm install -g pyright`                                       |
-| `typescript-lsp` | TypeScript Language Server | `npm install -g typescript-language-server typescript`                                    |
-| `rust-lsp`       | rust-analyzer              | [Lihat instalasi rust-analyzer](https://rust-analyzer.github.io/manual.html#installation) |
+| Plugin              | Language server            | Perintah instalasi                                                                        |
+| :------------------ | :------------------------- | :---------------------------------------------------------------------------------------- |
+| `pyright-lsp`       | Pyright (Python)           | `pip install pyright` atau `npm install -g pyright`                                       |
+| `typescript-lsp`    | TypeScript Language Server | `npm install -g typescript-language-server typescript`                                    |
+| `rust-analyzer-lsp` | rust-analyzer              | [Lihat instalasi rust-analyzer](https://rust-analyzer.github.io/manual.html#installation) |
 
 Pasang language server terlebih dahulu, kemudian pasang plugin dari marketplace.
 
@@ -531,7 +531,9 @@ Untuk `skills`, `commands`, `agents`, `outputStyles`, `themes`, dan `monitors`, 
 
 Claude Code menyediakan dua variabel untuk mereferensikan jalur plugin. Keduanya disubstitusi inline di mana pun mereka muncul dalam konten skill, konten agent, perintah hook, perintah monitor, dan konfigurasi MCP atau LSP server. Keduanya juga diekspor sebagai variabel lingkungan ke proses hook dan subprocess MCP atau LSP server.
 
-**`${CLAUDE_PLUGIN_ROOT}`**: jalur absolut ke direktori instalasi plugin Anda. Gunakan ini untuk mereferensikan scripts, binaries, dan file konfigurasi yang disertakan dengan plugin. Jalur ini berubah saat plugin diperbarui, jadi file yang Anda tulis di sini tidak bertahan setelah update.
+**`${CLAUDE_PLUGIN_ROOT}`**: jalur absolut ke direktori instalasi plugin Anda. Gunakan ini untuk mereferensikan scripts, binaries, dan file konfigurasi yang disertakan dengan plugin. Jalur ini berubah saat plugin diperbarui. Direktori versi sebelumnya tetap berada di disk selama sekitar tujuh hari setelah update sebelum pembersihan, tetapi perlakukan sebagai ephemeral dan jangan tulis state di sini.
+
+Saat plugin diperbarui di tengah sesi, perintah hook, monitor, MCP server, dan LSP server terus menggunakan jalur versi sebelumnya. Jalankan `/reload-plugins` untuk mengalihkan hooks, MCP server, dan LSP server ke jalur baru; monitor memerlukan restart sesi.
 
 **`${CLAUDE_PLUGIN_DATA}`**: direktori persisten untuk state plugin yang bertahan setelah updates. Gunakan ini untuk dependensi yang dipasang seperti `node_modules` atau Python virtual environments, kode yang dihasilkan, caches, dan file lainnya yang harus bertahan di seluruh versi plugin. Direktori dibuat secara otomatis pertama kali variabel ini direferensikan.
 
@@ -676,6 +678,8 @@ enterprise-plugin/
 <Warning>
   Direktori `.claude-plugin/` berisi file `plugin.json`. Semua direktori lainnya (commands/, agents/, skills/, output-styles/, themes/, monitors/, hooks/) harus berada di root plugin, bukan di dalam `.claude-plugin/`.
 </Warning>
+
+File `CLAUDE.md` di root plugin tidak dimuat sebagai konteks proyek. Plugin berkontribusi konteks melalui skills, agents, dan hooks daripada CLAUDE.md. Untuk mengirimkan instruksi yang dimuat ke dalam konteks Claude, letakkan mereka dalam sebuah [skill](#skills).
 
 ### Referensi lokasi file
 

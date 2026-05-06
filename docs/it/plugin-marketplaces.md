@@ -23,7 +23,7 @@ Una volta che il tuo marketplace è attivo, puoi aggiornarlo eseguendo il push d
 
 ## Procedura dettagliata: creare un marketplace locale
 
-Questo esempio crea un marketplace con un plugin: una skill `/quality-review` per le revisioni del codice. Creerai la struttura delle directory, aggiungerai una skill, creerai il manifest del plugin e il catalogo del marketplace, quindi lo installerai e lo testerai.
+Questo esempio crea un marketplace con un plugin: una skill `quality-review` per le revisioni del codice. Creerai la struttura delle directory, aggiungerai una skill, creerai il manifest del plugin e il catalogo del marketplace, quindi lo installerai e lo testerai.
 
 <Steps>
   <Step title="Crea la struttura delle directory">
@@ -35,7 +35,7 @@ Questo esempio crea un marketplace con un plugin: una skill `/quality-review` pe
   </Step>
 
   <Step title="Crea la skill">
-    Crea un file `SKILL.md` che definisce cosa fa la skill `/quality-review`.
+    Crea un file `SKILL.md` che definisce cosa fa la skill `quality-review`.
 
     ```markdown my-marketplace/plugins/quality-review-plugin/skills/quality-review/SKILL.md theme={null}
     ---
@@ -59,7 +59,7 @@ Questo esempio crea un marketplace con un plugin: una skill `/quality-review` pe
     ```json my-marketplace/plugins/quality-review-plugin/.claude-plugin/plugin.json theme={null}
     {
       "name": "quality-review-plugin",
-      "description": "Aggiunge una skill /quality-review per revisioni rapide del codice",
+      "description": "Aggiunge una skill quality-review per revisioni rapide del codice",
       "version": "1.0.0"
     }
     ```
@@ -82,7 +82,7 @@ Questo esempio crea un marketplace con un plugin: una skill `/quality-review` pe
         {
           "name": "quality-review-plugin",
           "source": "./plugins/quality-review-plugin",
-          "description": "Aggiunge una skill /quality-review per revisioni rapide del codice"
+          "description": "Aggiunge una skill quality-review per revisioni rapide del codice"
         }
       ]
     }
@@ -99,10 +99,10 @@ Questo esempio crea un marketplace con un plugin: una skill `/quality-review` pe
   </Step>
 
   <Step title="Provalo">
-    Seleziona del codice nel tuo editor ed esegui la tua nuova skill.
+    Seleziona del codice nel tuo editor ed esegui la tua nuova skill. Le skill dei plugin sono associate allo spazio dei nomi del nome del plugin.
 
     ```shell theme={null}
-    /quality-review
+    /quality-review-plugin:quality-review
     ```
   </Step>
 </Steps>
@@ -693,6 +693,8 @@ L'elenco di autorizzazione utilizza la corrispondenza esatta per la maggior part
 * Per le fonti `hostPattern`: l'host del marketplace viene confrontato con il modello regex
 * Per le fonti `pathPattern`: il percorso del filesystem del marketplace viene confrontato con il modello regex
 
+La corrispondenza esatta non normalizza gli URL: una barra finale, il suffisso `.git` o il modulo `ssh://` rispetto a `https://` vengono trattati come valori diversi. Se il marketplace della tua organizzazione può essere clonato da più di una forma di URL, preferisci una voce `hostPattern` rispetto a un URL letterale in modo che tutte le forme corrispondano.
+
 Poiché `strictKnownMarketplaces` è impostato nelle [impostazioni gestite](/it/settings#settings-files), le configurazioni individuali degli utenti e dei progetti non possono ignorare queste restrizioni.
 
 Per i dettagli di configurazione completi inclusi tutti i tipi di fonte supportati e il confronto con `extraKnownMarketplaces`, vedi il [riferimento strictKnownMarketplaces](/it/settings#strictknownmarketplaces).
@@ -720,7 +722,7 @@ Per i tipi di fonte basati su git `github`, `url`, `git-subdir` e i percorsi rel
 Per supportare i canali di rilascio "stable" e "latest" per i tuoi plugin, puoi configurare due marketplace che puntano a diversi ref o SHA dello stesso repo. Puoi quindi assegnare i due marketplace a diversi gruppi di utenti tramite [impostazioni gestite](/it/settings#settings-files).
 
 <Warning>
-  Ogni canale deve risolversi a una versione diversa. Se usi versioni esplicite, `plugin.json` deve dichiarare una `version` diversa in ogni ref o SHA fissato. Se ometti `version`, gli SHA dei commit distinti già distinguono i canali. Se due ref si risolvono alla stessa stringa di versione, Claude Code li tratta come identici e salta l'aggiornamento.
+  Ogni canale deve risolversi a una versione diversa. Se usi versioni esplicite, `plugin.json` deve dichiarare una `version` diversa in ogni ref fissato. Se ometti `version`, gli SHA dei commit distinti già distinguono i canali. Se due ref si risolvono alla stessa stringa di versione, Claude Code li tratta come identici e salta l'aggiornamento.
 </Warning>
 
 ##### Esempio

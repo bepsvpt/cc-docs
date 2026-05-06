@@ -27,7 +27,7 @@ Per mitigare i rischi nei sistemi agentici:
 * **Strumento bash in sandbox**: [Sandbox](/it/sandboxing) comandi bash con isolamento del filesystem e della rete, riducendo i prompt di permesso mantenendo la sicurezza. Abilita con `/sandbox` per definire i confini dove Claude Code può lavorare autonomamente
 * **Restrizione dell'accesso in scrittura**: Claude Code può scrivere solo nella cartella in cui è stato avviato e nelle sue sottocartelle, non può modificare file nelle directory padre senza autorizzazione esplicita. Mentre Claude Code può leggere file al di fuori della directory di lavoro (utile per accedere alle librerie di sistema e alle dipendenze), le operazioni di scrittura sono strettamente limitate all'ambito del progetto, creando un chiaro confine di sicurezza
 * **Mitigazione dell'affaticamento da prompt**: Supporto per l'allowlisting di comandi sicuri utilizzati frequentemente per utente, per codebase o per organizzazione
-* **Modalità Accept Edits**: Accetta in batch più modifiche mantenendo i prompt di permesso per i comandi con effetti collaterali
+* **Modalità Accept Edits**: Approva automaticamente le modifiche ai file e un insieme fisso di comandi Bash del filesystem come `mkdir`, `touch`, `rm`, `mv`, `cp` e `sed` per i percorsi nella directory di lavoro. Gli altri comandi Bash e i percorsi fuori ambito richiedono comunque l'approvazione
 
 ### Responsabilità dell'utente
 

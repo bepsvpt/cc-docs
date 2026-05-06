@@ -261,11 +261,11 @@ LSP 통합은 다음을 제공합니다:
 
 **사용 가능한 LSP 플러그인:**
 
-| 플러그인             | 언어 서버                      | 설치 명령어                                                                          |
-| :--------------- | :------------------------- | :------------------------------------------------------------------------------ |
-| `pyright-lsp`    | Pyright (Python)           | `pip install pyright` 또는 `npm install -g pyright`                               |
-| `typescript-lsp` | TypeScript Language Server | `npm install -g typescript-language-server typescript`                          |
-| `rust-lsp`       | rust-analyzer              | [rust-analyzer 설치 참조](https://rust-analyzer.github.io/manual.html#installation) |
+| 플러그인                | 언어 서버                      | 설치 명령어                                                                          |
+| :------------------ | :------------------------- | :------------------------------------------------------------------------------ |
+| `pyright-lsp`       | Pyright (Python)           | `pip install pyright` 또는 `npm install -g pyright`                               |
+| `typescript-lsp`    | TypeScript Language Server | `npm install -g typescript-language-server typescript`                          |
+| `rust-analyzer-lsp` | rust-analyzer              | [rust-analyzer 설치 참조](https://rust-analyzer.github.io/manual.html#installation) |
 
 먼저 언어 서버를 설치한 다음 마켓플레이스에서 플러그인을 설치하세요.
 
@@ -531,7 +531,9 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `monitors` 키를 �
 
 Claude Code는 플러그인 경로를 참조하기 위한 두 가지 변수를 제공합니다. 둘 다 skill 콘텐츠, agent 콘텐츠, hook 명령어, monitor 명령어 및 MCP 또는 LSP 서버 구성에 나타나는 모든 곳에서 인라인으로 대체됩니다. 둘 다 hook 프로세스 및 MCP 또는 LSP 서버 서브프로세스에 환경 변수로 내보내집니다.
 
-**`${CLAUDE_PLUGIN_ROOT}`**: 플러그인 설치 디렉토리의 절대 경로입니다. 플러그인과 함께 번들로 제공되는 스크립트, 바이너리 및 구성 파일을 참조하는 데 사용하세요. 이 경로는 플러그인이 업데이트될 때 변경되므로 여기에 작성하는 파일은 업데이트 후 유지되지 않습니다.
+**`${CLAUDE_PLUGIN_ROOT}`**: 플러그인 설치 디렉토리의 절대 경로입니다. 플러그인과 함께 번들로 제공되는 스크립트, 바이너리 및 구성 파일을 참조하는 데 사용하세요. 이 경로는 플러그인이 업데이트될 때 변경됩니다. 이전 버전의 디렉토리는 업데이트 후 약 7일 동안 디스크에 남아 있지만 이를 임시로 취급하고 여기에 상태를 작성하지 마세요.
+
+플러그인이 세션 중에 업데이트될 때 hook 명령어, monitors, MCP 서버 및 LSP 서버는 이전 버전의 경로를 계속 사용합니다. `/reload-plugins`를 실행하여 hook, MCP 서버 및 LSP 서버를 새 경로로 전환하세요. monitors는 세션 재시작이 필요합니다.
 
 **`${CLAUDE_PLUGIN_DATA}`**: 업데이트 후에도 유지되는 플러그인 상태를 위한 영구 디렉토리입니다. `node_modules` 또는 Python 가상 환경과 같은 설치된 종속성, 생성된 코드, 캐시 및 플러그인 버전 전체에서 유지되어야 하는 기타 파일에 사용하세요. 이 변수가 처음 참조될 때 디렉토리가 자동으로 생성됩니다.
 
@@ -676,6 +678,8 @@ enterprise-plugin/
 <Warning>
   `.claude-plugin/` 디렉토리는 `plugin.json` 파일을 포함합니다. 다른 모든 디렉토리 (commands/, agents/, skills/, output-styles/, themes/, monitors/, hooks/)는 `.claude-plugin/` 내부가 아닌 플러그인 루트에 있어야 합니다.
 </Warning>
+
+`CLAUDE.md` 파일이 플러그인 루트에 있어도 프로젝트 컨텍스트로 로드되지 않습니다. 플러그인은 `CLAUDE.md`가 아닌 skills, agents, hooks를 통해 컨텍스트를 제공합니다. Claude의 컨텍스트에 로드되는 지침을 제공하려면 [skill](#skills)에 배치하십시오.
 
 ### 파일 위치 참조
 
