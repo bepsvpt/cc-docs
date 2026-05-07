@@ -53,7 +53,7 @@ Claude Code juga menambahkan blok atribusi singkat ke prompt sistem yang berisi 
 
 Secara default, Claude Code menggunakan nama model standar untuk format API yang dipilih.
 
-Ketika `ANTHROPIC_BASE_URL` menunjuk ke gateway yang mengekspos format Anthropic Messages, Claude Code menanyakan endpoint `/v1/models` gateway saat startup dan menambahkan model yang dikembalikan ke pemilih `/model`. Setiap entri yang ditemukan diberi label "From gateway" dan menggunakan field `display_name` dari respons ketika satu disediakan. Ini memerlukan Claude Code v2.1.126 atau lebih baru.
+Ketika `ANTHROPIC_BASE_URL` menunjuk ke gateway yang mengekspos format Anthropic Messages, Claude Code dapat menanyakan endpoint `/v1/models` gateway saat startup dan menambahkan model yang dikembalikan ke pemilih `/model`. Atur `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` untuk mengaktifkan ini. Penemuan dimatikan secara default sehingga gateway yang didukung oleh kunci API bersama tidak menampilkan setiap model yang dapat diakses kunci ke setiap pengguna. Setiap entri yang ditemukan diberi label "From gateway" dan menggunakan field `display_name` dari respons ketika satu disediakan. Ini memerlukan Claude Code v2.1.129 atau lebih baru.
 
 Penemuan hanya berlaku untuk format Anthropic Messages. Ini tidak berjalan untuk endpoint pass-through Bedrock atau Vertex, dan tidak berjalan ketika `ANTHROPIC_BASE_URL` tidak diatur atau menunjuk ke `api.anthropic.com`.
 

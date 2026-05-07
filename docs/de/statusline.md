@@ -134,7 +134,7 @@ Claude Code führt Ihr Skript aus und leitet [JSON-Sitzungsdaten](#available-dat
 
 **Wann es aktualisiert wird**
 
-Ihr Skript wird nach jeder neuen Assistentnachricht ausgeführt, wenn sich der Berechtigungsmodus ändert oder wenn der Vim-Modus umgeschaltet wird. Aktualisierungen werden mit 300 ms entprellt, was bedeutet, dass schnelle Änderungen zusammengefasst werden und Ihr Skript einmal ausgeführt wird, wenn sich die Dinge beruhigen. Wenn eine neue Aktualisierung ausgelöst wird, während Ihr Skript noch läuft, wird die laufende Ausführung abgebrochen. Wenn Sie Ihr Skript bearbeiten, werden die Änderungen erst bei Ihrer nächsten Interaktion mit Claude Code angezeigt, die eine Aktualisierung auslöst.
+Ihr Skript wird nach jeder neuen Assistentnachricht ausgeführt, nachdem `/compact` abgeschlossen ist, wenn sich der Berechtigungsmodus ändert oder wenn der Vim-Modus umgeschaltet wird. Aktualisierungen werden mit 300 ms entprellt, was bedeutet, dass schnelle Änderungen zusammengefasst werden und Ihr Skript einmal ausgeführt wird, wenn sich die Dinge beruhigen. Wenn eine neue Aktualisierung ausgelöst wird, während Ihr Skript noch läuft, wird die laufende Ausführung abgebrochen. Wenn Sie Ihr Skript bearbeiten, werden die Änderungen erst bei Ihrer nächsten Interaktion mit Claude Code angezeigt, die eine Aktualisierung auslöst.
 
 Diese Trigger können ruhig werden, wenn die Hauptsitzung untätig ist, z. B. während ein Koordinator auf Hintergrund-Subagenten wartet. Um zeitbasierte oder extern bezogene Segmente während untätiger Perioden aktuell zu halten, setzen Sie [`refreshInterval`](#manually-configure-a-status-line), um den Befehl auch auf einem festen Timer erneut auszuführen.
 
@@ -161,7 +161,7 @@ Claude Code sendet die folgenden JSON-Felder über stdin an Ihr Skript:
 | `cost.total_duration_ms`                                                         | Gesamtverstrichene Zeit seit Sitzungsbeginn in Millisekunden                                                                                                                                                                                                                     |
 | `cost.total_api_duration_ms`                                                     | Gesamtzeit, die auf API-Antworten wartet, in Millisekunden                                                                                                                                                                                                                       |
 | `cost.total_lines_added`, `cost.total_lines_removed`                             | Geänderte Codezeilen                                                                                                                                                                                                                                                             |
-| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | Kumulative Token-Zählungen über die Sitzung                                                                                                                                                                                                                                      |
+| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | Token-Zählungen, die sich derzeit im Kontextfenster befinden, aus der letzten API-Antwort. Die Eingabe umfasst Cache-Lesevorgänge und -Schreibvorgänge. Vor v2.1.132 waren diese kumulative Sitzungssummen                                                                       |
 | `context_window.context_window_size`                                             | Maximale Kontextfenstergröße in Token. Standardmäßig 200.000 oder 1.000.000 für Modelle mit erweitertem Kontext.                                                                                                                                                                 |
 | `context_window.used_percentage`                                                 | Vorberechneter Prozentsatz der Kontextfensternutzung                                                                                                                                                                                                                             |
 | `context_window.remaining_percentage`                                            | Vorberechneter Prozentsatz des verbleibenden Kontextfensters                                                                                                                                                                                                                     |
@@ -215,8 +215,8 @@ Claude Code sendet die folgenden JSON-Felder über stdin an Ihr Skript:
       "total_lines_removed": 23
     },
     "context_window": {
-      "total_input_tokens": 15234,
-      "total_output_tokens": 4521,
+      "total_input_tokens": 15500,
+      "total_output_tokens": 1200,
       "context_window_size": 200000,
       "used_percentage": 8,
       "remaining_percentage": 92,
@@ -272,7 +272,7 @@ Claude Code sendet die folgenden JSON-Felder über stdin an Ihr Skript:
 
   **Felder, die `null` sein können**:
 
-  * `context_window.current_usage`: `null` vor dem ersten API-Aufruf in einer Sitzung
+  * `context_window.current_usage`: `null` vor dem ersten API-Aufruf in einer Sitzung und erneut nach `/compact`, bis der nächste API-Aufruf es erneut füllt
   * `context_window.used_percentage`, `context_window.remaining_percentage`: können früh in der Sitzung `null` sein
 
   Behandeln Sie fehlende Felder mit bedingtem Zugriff und Null-Werte mit Fallback-Standardwerten in Ihren Skripten.
@@ -280,10 +280,10 @@ Claude Code sendet die folgenden JSON-Felder über stdin an Ihr Skript:
 
 ### Kontextfenster-Felder
 
-Das `context_window` Objekt bietet zwei Möglichkeiten, die Kontextnutzung zu verfolgen:
+Das `context_window` Objekt beschreibt das Live-Kontextfenster aus der letzten API-Antwort. Ab v2.1.132 spiegeln `total_input_tokens` und `total_output_tokens` die aktuelle Kontextnutzung wider, nicht kumulative Sitzungssummen.
 
-* **Kumulative Summen** (`total_input_tokens`, `total_output_tokens`): Summe aller Token über die gesamte Sitzung, nützlich zur Verfolgung des Gesamtverbrauchs
-* **Aktuelle Nutzung** (`current_usage`): Token-Zählungen aus dem letzten API-Aufruf, verwenden Sie dies für einen genauen Kontextprozentsatz, da er den tatsächlichen Kontextzustand widerspiegelt
+* **Kombinierte Summen** (`total_input_tokens`, `total_output_tokens`): Token, die sich derzeit im Kontextfenster befinden. `total_input_tokens` ist die Summe von `input_tokens`, `cache_creation_input_tokens` und `cache_read_input_tokens`; `total_output_tokens` sind die Ausgabe-Token aus der letzten Antwort. Beide sind `0` vor der ersten API-Antwort.
+* **Pro-Komponenten-Nutzung** (`current_usage`): die gleichen Token-Zählungen nach Kategorie aufgeschlüsselt. Verwenden Sie dies, wenn Sie Cache-Treffer separat von frischer Eingabe benötigen.
 
 Das `current_usage` Objekt enthält:
 
@@ -296,7 +296,7 @@ Das `used_percentage` Feld wird nur aus Eingabe-Token berechnet: `input_tokens +
 
 Wenn Sie den Kontextprozentsatz manuell aus `current_usage` berechnen, verwenden Sie die gleiche Eingabe-only-Formel, um `used_percentage` zu entsprechen.
 
-Das `current_usage` Objekt ist `null` vor dem ersten API-Aufruf in einer Sitzung.
+Das `current_usage` Objekt ist `null` vor dem ersten API-Aufruf in einer Sitzung und erneut unmittelbar nach `/compact`, bis der nächste API-Aufruf es erneut füllt.
 
 ## Beispiele
 
@@ -1011,8 +1011,7 @@ Community-Projekte wie [ccstatusline](https://github.com/sirmalloc/ccstatusline)
 
 **Kontextprozentsatz zeigt unerwartete Werte**
 
-* Verwenden Sie `used_percentage` für genauen Kontextzustand anstelle von kumulativen Summen
-* Die `total_input_tokens` und `total_output_tokens` sind kumulativ über die Sitzung und können die Kontextfenstergröße überschreiten
+* Verwenden Sie `used_percentage` für den einfachsten genauen Kontextzustand
 * Der Kontextprozentsatz kann sich von der `/context` Ausgabe unterscheiden, je nachdem, wann jeder berechnet wird
 
 **OSC 8-Links nicht anklickbar**

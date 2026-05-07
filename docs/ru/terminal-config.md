@@ -23,11 +23,11 @@ Claude Code работает в любом терминале без конфи�
 
 В большинстве терминалов вы также можете нажать Shift+Enter, но поддержка варьируется в зависимости от эмулятора терминала:
 
-| Терминал                                                                            | Shift+Enter для разрыва строки                     |
-| :---------------------------------------------------------------------------------- | :------------------------------------------------- |
-| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal                               | Работает без настройки                             |
-| VS Code, Cursor, Windsurf, Alacritty, Zed                                           | Запустите `/terminal-setup` один раз               |
-| Windows Terminal, gnome-terminal, JetBrains IDEs такие как PyCharm и Android Studio | Недоступно; используйте Ctrl+J или `\` затем Enter |
+| Терминал                                                                | Shift+Enter для разрыва строки                     |
+| :---------------------------------------------------------------------- | :------------------------------------------------- |
+| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal, Windows Terminal | Работает без настройки                             |
+| VS Code, Cursor, Windsurf, Alacritty, Zed                               | Запустите `/terminal-setup` один раз               |
+| gnome-terminal, JetBrains IDEs такие как PyCharm и Android Studio       | Недоступно; используйте Ctrl+J или `\` затем Enter |
 
 Для VS Code, Cursor, Windsurf, Alacritty и Zed, `/terminal-setup` записывает Shift+Enter и другие сочетания клавиш в файл конфигурации терминала. В VS Code, Cursor и Windsurf он также устанавливает `terminal.integrated.mouseWheelScrollSensitivity` в параметрах редактора для более плавной прокрутки в [полноэкранном режиме](/ru/fullscreen). Существующие привязки и параметры остаются на месте; если вы видите сообщение, такое как `VSCode terminal Shift+Enter key binding already configured`, никаких изменений не было сделано. Запустите `/terminal-setup` непосредственно в хост-терминале, а не внутри tmux или screen, так как ему нужно записать в конфигурацию хост-терминала.
 

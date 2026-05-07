@@ -53,7 +53,7 @@ Claude Code는 또한 클라이언트 버전과 대화에서 파생된 지문을
 
 기본적으로 Claude Code는 선택한 API 형식에 대해 표준 모델 이름을 사용합니다.
 
-`ANTHROPIC_BASE_URL`이 Anthropic Messages 형식을 노출하는 게이트웨이를 가리킬 때, Claude Code는 시작 시 게이트웨이의 `/v1/models` 엔드포인트를 쿼리하고 반환된 모델을 `/model` 선택기에 추가합니다. 발견된 각 항목은 "From gateway"로 레이블이 지정되며, 응답에서 제공될 때 `display_name` 필드를 사용합니다. 이는 Claude Code v2.1.126 이상이 필요합니다.
+`ANTHROPIC_BASE_URL`이 Anthropic Messages 형식을 노출하는 게이트웨이를 가리킬 때, Claude Code는 시작 시 게이트웨이의 `/v1/models` 엔드포인트를 쿼리하고 반환된 모델을 `/model` 선택기에 추가할 수 있습니다. `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1`을 설정하여 이를 활성화합니다. 발견은 기본적으로 꺼져 있으므로 공유 API 키로 지원되는 게이트웨이가 키가 액세스할 수 있는 모든 모델을 모든 사용자에게 노출하지 않습니다. 발견된 각 항목은 "From gateway"로 레이블이 지정되며, 응답에서 제공될 때 `display_name` 필드를 사용합니다. 이는 Claude Code v2.1.129 이상이 필요합니다.
 
 발견은 Anthropic Messages 형식에만 적용됩니다. Bedrock 또는 Vertex 통과 엔드포인트에서는 실행되지 않으며, `ANTHROPIC_BASE_URL`이 설정되지 않았거나 `api.anthropic.com`을 가리킬 때도 실행되지 않습니다.
 

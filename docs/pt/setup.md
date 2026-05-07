@@ -175,14 +175,18 @@ Após a instalação, faça login executando `claude` e seguindo os prompts do n
 
 ## Atualizar Claude Code
 
-As instalações nativas são atualizadas automaticamente em segundo plano. Você pode [configurar o canal de lançamento](#configure-release-channel) para controlar se recebe atualizações imediatamente ou em um cronograma estável com atraso, ou [desabilitar atualizações automáticas](#disable-auto-updates) completamente. As instalações do Homebrew, WinGet e [gerenciador de pacotes Linux](#install-with-linux-package-managers) requerem atualizações manuais.
+As instalações nativas são atualizadas automaticamente em segundo plano. Você pode [configurar o canal de lançamento](#configure-release-channel) para controlar se recebe atualizações imediatamente ou em um cronograma estável com atraso, ou [desabilitar atualizações automáticas](#disable-auto-updates) completamente. As instalações do Homebrew, WinGet e [gerenciador de pacotes Linux](#install-with-linux-package-managers) requerem atualizações manuais por padrão.
 
 ### Atualizações automáticas
 
 Claude Code verifica atualizações na inicialização e periodicamente durante a execução. As atualizações são baixadas e instaladas em segundo plano, depois entram em vigor na próxima vez que você inicia Claude Code.
 
 <Note>
-  As instalações do Homebrew, WinGet, apt, dnf e apk não são atualizadas automaticamente. Para Homebrew, execute `brew upgrade claude-code` ou `brew upgrade claude-code@latest`, dependendo de qual cask você instalou. Para WinGet, execute `winget upgrade Anthropic.ClaudeCode`. Para gerenciadores de pacotes Linux, consulte os comandos de atualização em [Instalar com gerenciadores de pacotes Linux](#install-with-linux-package-managers).
+  As instalações do Homebrew, WinGet, apt, dnf e apk não são atualizadas automaticamente por padrão; veja abaixo para optar por Homebrew e WinGet. Para atualizar o Homebrew manualmente, execute `brew upgrade claude-code` ou `brew upgrade claude-code@latest`, dependendo de qual cask você instalou. Para WinGet, execute `winget upgrade Anthropic.ClaudeCode`. Para gerenciadores de pacotes Linux, consulte os comandos de atualização em [Instalar com gerenciadores de pacotes Linux](#install-with-linux-package-managers).
+
+  Para que Claude Code execute o comando de atualização para você no Homebrew ou WinGet, defina [`CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE`](/pt/env-vars) como `1`. Claude Code então executa a atualização em segundo plano quando uma nova versão está disponível e mostra um prompt de reinicialização em caso de sucesso. A atualização visa apenas o pacote Claude Code e não afeta outro software que você tenha instalado.
+
+  No WinGet, a atualização pode falhar enquanto Claude Code está em execução porque o Windows bloqueia o executável. Nesse caso, Claude Code mostra o comando manual em vez disso. apt, dnf e apk continuam a exigir uma atualização manual porque esses comandos precisam de privilégios elevados.
 
   **Problema conhecido:** Claude Code pode notificá-lo sobre atualizações antes que a nova versão esteja disponível nesses gerenciadores de pacotes. Se uma atualização falhar, aguarde e tente novamente mais tarde.
 
@@ -489,7 +493,7 @@ Além do manifesto assinado, os binários individuais carregam assinaturas de c�
 
 ## Desinstalar Claude Code
 
-Para remover Claude Code, siga as instruções para seu método de instalação.
+Para remover Claude Code, siga as instruções para seu método de instalação. Se `claude` ainda for executado depois, você provavelmente tem uma segunda instalação ou um alias de shell residual de um instalador mais antigo. Consulte [Verificar instalações conflitantes](/pt/troubleshoot-install#check-for-conflicting-installations) para encontrá-lo e removê-lo.
 
 ### Instalação nativa
 
@@ -572,7 +576,7 @@ npm uninstall -g @anthropic-ai/claude-code
 ### Remover arquivos de configuração
 
 <Warning>
-  Remover arquivos de configuração excluirá todas as suas configurações, ferramentas permitidas, configurações do MCP server e histórico de sessão.
+  Remover arquivos de configuração excluirá todas as suas configurações, ferramentas permitidas, configurações do servidor MCP e histórico de sessão.
 </Warning>
 
 A extensão VS Code, o plugin JetBrains e o aplicativo de desktop também escrevem em `~/.claude/`. Se algum deles ainda estiver instalado, o diretório será recriado na próxima vez que for executado. Para remover Claude Code completamente, desinstale a [extensão VS Code](/pt/vs-code#uninstall-the-extension), o plugin JetBrains e o aplicativo de desktop antes de excluir esses arquivos.

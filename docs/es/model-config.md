@@ -184,7 +184,9 @@ Cada nivel intercambia gasto de tokens contra capacidad. El predeterminado es ad
 
 La escala de esfuerzo se calibra por modelo, por lo que el mismo nombre de nivel no representa el mismo valor subyacente en todos los modelos.
 
-Para razonamiento profundo único sin cambiar su configuración de sesión, incluya "ultrathink" en su indicación. Esto agrega una instrucción en contexto que le dice al modelo que razone más en ese turno; no cambia el nivel de esfuerzo enviado a la API.
+#### Utilizar ultrathink para razonamiento profundo único
+
+Incluya `ultrathink` en cualquier lugar de su indicación para solicitar un razonamiento más profundo en ese turno sin cambiar su configuración de esfuerzo de sesión. Claude Code reconoce la palabra clave y añade una instrucción en contexto. El nivel de esfuerzo enviado a la API no cambia. Otras frases como "think", "think hard" y "think more" se pasan como texto de indicación ordinario y no se reconocen como palabras clave.
 
 #### Establecer el nivel de esfuerzo
 
@@ -208,6 +210,18 @@ El razonamiento adaptativo hace que el pensamiento sea opcional en cada paso, po
 Opus 4.7 siempre utiliza razonamiento adaptativo. El modo de presupuesto de pensamiento fijo y `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` no se aplican a él.
 
 En Opus 4.6 y Sonnet 4.6, puede establecer `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` para revertir al presupuesto de pensamiento fijo anterior controlado por `MAX_THINKING_TOKENS`. Consulte [variables de entorno](/es/env-vars).
+
+### Pensamiento extendido
+
+El pensamiento extendido es el razonamiento que Claude emite antes de responder. En modelos que admiten [razonamiento adaptativo](#adjust-effort-level), el nivel de esfuerzo es el control principal de cuánto pensamiento ocurre; la configuración a continuación activa o desactiva el pensamiento y controla cómo se muestra.
+
+| Control                                    | Cómo configurarlo                                                                                                                                                          |
+| :----------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Alternar para la sesión actual             | Presione `Option+T` en macOS o `Alt+T` en Windows y Linux                                                                                                                  |
+| Establecer el predeterminado global        | Ejecute `/config` y alterne el modo de pensamiento. Se guarda como `alwaysThinkingEnabled` en `~/.claude/settings.json`                                                    |
+| Desactivar independientemente del esfuerzo | Establezca [`MAX_THINKING_TOKENS=0`](/es/env-vars). Otros valores se aplican solo con un [presupuesto de pensamiento fijo](#adaptive-reasoning-and-fixed-thinking-budgets) |
+
+La salida de pensamiento se colapsa de forma predeterminada. Presione `Ctrl+O` para alternar el modo detallado y ver el razonamiento como texto gris en cursiva. Las sesiones interactivas en la API de Anthropic reciben bloques de pensamiento redactados de forma predeterminada, por lo que establezca `showThinkingSummaries: true` en [configuración](/es/settings) si desea que los resúmenes completos estén disponibles cuando se expandan. Se le cobra por todos los tokens de pensamiento generados, incluso cuando se colapsan o se redactan.
 
 ### Contexto extendido
 
@@ -247,7 +261,7 @@ Puede ver qué modelo está utilizando actualmente de varias formas:
 
 ## Agregar una opción de modelo personalizado
 
-Utilice `ANTHROPIC_CUSTOM_MODEL_OPTION` para agregar una única entrada personalizada al selector `/model` sin reemplazar los alias integrados. Esto es útil para probar IDs de modelo que Claude Code no enumera de forma predeterminada. Para implementaciones de puerta de enlace LLM, Claude Code completa automáticamente el selector desde el punto final `/v1/models` de la puerta de enlace, por lo que esta variable solo es necesaria cuando el descubrimiento no devuelve el modelo que desea. Consulte [Selección de modelo de puerta de enlace LLM](/es/llm-gateway#model-selection).
+Utilice `ANTHROPIC_CUSTOM_MODEL_OPTION` para agregar una única entrada personalizada al selector `/model` sin reemplazar los alias integrados. Esto es útil para probar IDs de modelo que Claude Code no enumera de forma predeterminada. Para implementaciones de puerta de enlace LLM, Claude Code puede completar automáticamente el selector desde el punto final `/v1/models` de la puerta de enlace cuando se establece `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1`, por lo que esta variable solo es necesaria cuando el descubrimiento está deshabilitado o no devuelve el modelo que desea. Consulte [Selección de modelo de puerta de enlace LLM](/es/llm-gateway#model-selection).
 
 Este ejemplo establece las tres variables para hacer que una implementación de Opus enrutada por puerta de enlace sea seleccionable:
 
@@ -320,14 +334,14 @@ Estas variables tienen efecto en proveedores de terceros como Bedrock, Vertex AI
 
 Los mismos sufijos `_NAME`, `_DESCRIPTION` y `_SUPPORTED_CAPABILITIES` están disponibles para `ANTHROPIC_DEFAULT_SONNET_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL` y `ANTHROPIC_CUSTOM_MODEL_OPTION`.
 
-Claude Code habilita características como [niveles de esfuerzo](#adjust-effort-level) y [pensamiento extendido](/es/common-workflows#use-extended-thinking-thinking-mode) haciendo coincidir el ID de modelo con patrones conocidos. Los IDs específicos del proveedor como ARNs de Bedrock o nombres de implementación personalizados a menudo no coinciden con estos patrones, dejando las características compatibles deshabilitadas. Establezca `_SUPPORTED_CAPABILITIES` para indicar a Claude Code qué características admite realmente el modelo:
+Claude Code habilita características como [niveles de esfuerzo](#adjust-effort-level) y [pensamiento extendido](#extended-thinking) haciendo coincidir el ID de modelo con patrones conocidos. Los IDs específicos del proveedor como ARNs de Bedrock o nombres de implementación personalizados a menudo no coinciden con estos patrones, dejando las características compatibles deshabilitadas. Establezca `_SUPPORTED_CAPABILITIES` para indicar a Claude Code qué características admite realmente el modelo:
 
 | Valor de capacidad     | Habilita                                                                                             |
 | ---------------------- | ---------------------------------------------------------------------------------------------------- |
 | `effort`               | [Niveles de esfuerzo](#adjust-effort-level) y el comando `/effort`                                   |
 | `xhigh_effort`         | {/* min-version: 2.1.111 */}El nivel de esfuerzo `xhigh`                                             |
 | `max_effort`           | El nivel de esfuerzo `max`                                                                           |
-| `thinking`             | [Pensamiento extendido](/es/common-workflows#use-extended-thinking-thinking-mode)                    |
+| `thinking`             | [Pensamiento extendido](#extended-thinking)                                                          |
 | `adaptive_thinking`    | Razonamiento adaptativo que asigna dinámicamente el pensamiento basado en la complejidad de la tarea |
 | `interleaved_thinking` | Pensamiento entre llamadas de herramientas                                                           |
 

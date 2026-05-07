@@ -184,7 +184,9 @@ Setiap tingkat menukar pengeluaran token terhadap kemampuan. Default cocok untuk
 
 Skala usaha dikalibrasi per model, jadi nama tingkat yang sama tidak mewakili nilai yang sama di seluruh model.
 
-Untuk penalaran mendalam sekali tanpa mengubah pengaturan sesi Anda, sertakan "ultrathink" dalam prompt Anda. Ini menambahkan instruksi dalam konteks yang memberi tahu model untuk bernalar lebih pada giliran itu; ini tidak mengubah tingkat usaha yang dikirim ke API.
+#### Gunakan ultrathink untuk penalaran mendalam sekali
+
+Sertakan `ultrathink` di mana saja dalam prompt Anda untuk meminta penalaran lebih dalam pada giliran itu tanpa mengubah pengaturan usaha sesi Anda. Claude Code mengenali kata kunci dan menambahkan instruksi dalam konteks. Tingkat usaha yang dikirim ke API tidak berubah. Frasa lain seperti "think", "think hard", dan "think more" dilewatkan sebagai teks prompt biasa dan tidak dikenali sebagai kata kunci.
 
 #### Atur tingkat usaha
 
@@ -208,6 +210,18 @@ Penalaran adaptif membuat pemikiran opsional pada setiap langkah, jadi Claude da
 Opus 4.7 selalu menggunakan penalaran adaptif. Mode anggaran pemikiran tetap dan `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` tidak berlaku untuk itu.
 
 Di Opus 4.6 dan Sonnet 4.6, Anda dapat mengatur `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` untuk kembali ke anggaran pemikiran tetap sebelumnya yang dikendalikan oleh `MAX_THINKING_TOKENS`. Lihat [variabel lingkungan](/id/env-vars).
+
+### Pemikiran diperluas
+
+Pemikiran diperluas adalah penalaran yang Claude keluarkan sebelum merespons. Pada model yang mendukung [penalaran adaptif](#adjust-effort-level), tingkat usaha adalah kontrol utama untuk berapa banyak pemikiran yang terjadi; pengaturan di bawah ini menghidupkan atau mematikan pemikiran dan mengontrol cara tampilannya.
+
+| Kontrol                         | Cara menetapkannya                                                                                                                                       |
+| :------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Toggle untuk sesi saat ini      | Tekan `Option+T` di macOS atau `Alt+T` di Windows dan Linux                                                                                              |
+| Atur default global             | Jalankan `/config` dan toggle thinking mode. Disimpan sebagai `alwaysThinkingEnabled` dalam `~/.claude/settings.json`                                    |
+| Nonaktifkan terlepas dari usaha | Atur [`MAX_THINKING_TOKENS=0`](/id/env-vars). Nilai lain berlaku hanya dengan [anggaran pemikiran tetap](#adaptive-reasoning-and-fixed-thinking-budgets) |
+
+Output pemikiran dilipat secara default. Tekan `Ctrl+O` untuk toggle verbose mode dan lihat penalaran sebagai teks miring abu-abu. Sesi interaktif di Anthropic API menerima blok pemikiran yang diredaksi secara default, jadi atur `showThinkingSummaries: true` dalam [pengaturan](/id/settings) jika Anda menginginkan ringkasan lengkap yang tersedia saat Anda memperluas. Anda dikenakan biaya untuk semua token pemikiran yang dihasilkan, bahkan ketika dilipat atau diredaksi.
 
 ### Konteks diperluas
 
@@ -247,7 +261,7 @@ Anda dapat melihat model mana yang sedang Anda gunakan dengan beberapa cara:
 
 ## Tambahkan opsi model kustom
 
-Gunakan `ANTHROPIC_CUSTOM_MODEL_OPTION` untuk menambahkan satu entri kustom ke pemilih `/model` tanpa mengganti alias bawaan. Ini berguna untuk pengujian ID model yang tidak tercantum Claude Code secara default. Untuk deployment gateway LLM, Claude Code mengisi pemilih secara otomatis dari endpoint `/v1/models` gateway, jadi variabel ini diperlukan hanya ketika penemuan tidak mengembalikan model yang Anda inginkan. Lihat [pemilihan model gateway LLM](/id/llm-gateway#model-selection).
+Gunakan `ANTHROPIC_CUSTOM_MODEL_OPTION` untuk menambahkan satu entri kustom ke pemilih `/model` tanpa mengganti alias bawaan. Ini berguna untuk pengujian ID model yang tidak tercantum Claude Code secara default. Untuk deployment gateway LLM, Claude Code dapat mengisi pemilih dari endpoint `/v1/models` gateway ketika `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` diatur, jadi variabel ini diperlukan hanya ketika penemuan dinonaktifkan atau tidak mengembalikan model yang Anda inginkan. Lihat [pemilihan model gateway LLM](/id/llm-gateway#model-selection).
 
 Contoh ini menetapkan ketiga variabel untuk membuat deployment Opus yang dirutekan gateway dapat dipilih:
 
@@ -320,14 +334,14 @@ Variabel ini berlaku pada penyedia pihak ketiga seperti Bedrock, Vertex AI, dan 
 
 Akhiran `_NAME`, `_DESCRIPTION`, dan `_SUPPORTED_CAPABILITIES` yang sama tersedia untuk `ANTHROPIC_DEFAULT_SONNET_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL`, dan `ANTHROPIC_CUSTOM_MODEL_OPTION`.
 
-Claude Code mengaktifkan fitur seperti [tingkat usaha](#adjust-effort-level) dan [extended thinking](/id/common-workflows#use-extended-thinking-thinking-mode) dengan mencocokkan ID model terhadap pola yang dikenal. ID spesifik penyedia seperti ARN Bedrock atau nama deployment kustom sering kali tidak cocok dengan pola ini, meninggalkan fitur yang didukung dinonaktifkan. Atur `_SUPPORTED_CAPABILITIES` untuk memberi tahu Claude Code fitur mana yang benar-benar didukung model:
+Claude Code mengaktifkan fitur seperti [tingkat usaha](#adjust-effort-level) dan [extended thinking](#extended-thinking) dengan mencocokkan ID model terhadap pola yang dikenal. ID spesifik penyedia seperti ARN Bedrock atau nama deployment kustom sering kali tidak cocok dengan pola ini, meninggalkan fitur yang didukung dinonaktifkan. Atur `_SUPPORTED_CAPABILITIES` untuk memberi tahu Claude Code fitur mana yang benar-benar didukung model:
 
 | Nilai kemampuan        | Mengaktifkan                                                                                  |
 | ---------------------- | --------------------------------------------------------------------------------------------- |
 | `effort`               | [Tingkat usaha](#adjust-effort-level) dan perintah `/effort`                                  |
 | `xhigh_effort`         | {/* min-version: 2.1.111 */}Tingkat usaha `xhigh`                                             |
 | `max_effort`           | Tingkat usaha `max`                                                                           |
-| `thinking`             | [Extended thinking](/id/common-workflows#use-extended-thinking-thinking-mode)                 |
+| `thinking`             | [Extended thinking](#extended-thinking)                                                       |
 | `adaptive_thinking`    | Penalaran adaptif yang secara dinamis mengalokasikan pemikiran berdasarkan kompleksitas tugas |
 | `interleaved_thinking` | Pemikiran antara panggilan alat                                                               |
 

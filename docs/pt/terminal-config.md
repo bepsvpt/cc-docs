@@ -23,11 +23,11 @@ Pressionar Enter envia sua mensagem. Para adicionar uma quebra de linha sem envi
 
 Na maioria dos terminais você também pode pressionar Shift+Enter, mas o suporte varia por emulador de terminal:
 
-| Terminal                                                                       | Shift+Enter para quebra de linha               |
-| :----------------------------------------------------------------------------- | :--------------------------------------------- |
-| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal                          | Funciona sem configuração                      |
-| VS Code, Cursor, Windsurf, Alacritty, Zed                                      | Execute `/terminal-setup` uma vez              |
-| Windows Terminal, gnome-terminal, JetBrains IDEs como PyCharm e Android Studio | Não disponível; use Ctrl+J ou `\` depois Enter |
+| Terminal                                                                | Shift+Enter para quebra de linha               |
+| :---------------------------------------------------------------------- | :--------------------------------------------- |
+| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal, Windows Terminal | Funciona sem configuração                      |
+| VS Code, Cursor, Windsurf, Alacritty, Zed                               | Execute `/terminal-setup` uma vez              |
+| gnome-terminal, JetBrains IDEs como PyCharm e Android Studio            | Não disponível; use Ctrl+J ou `\` depois Enter |
 
 Para VS Code, Cursor, Windsurf, Alacritty e Zed, `/terminal-setup` escreve Shift+Enter e outros atalhos de teclado no arquivo de configuração do terminal. Em VS Code, Cursor e Windsurf, também define `terminal.integrated.mouseWheelScrollSensitivity` nas configurações do editor para rolagem mais suave no [modo de tela cheia](/pt/fullscreen). As vinculações e configurações existentes são mantidas no lugar; se você vir uma mensagem como `VSCode terminal Shift+Enter key binding already configured`, nenhuma alteração foi feita. Execute `/terminal-setup` diretamente no terminal do host em vez de dentro do tmux ou screen, pois ele precisa escrever na configuração do terminal do host.
 

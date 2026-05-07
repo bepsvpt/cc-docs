@@ -54,7 +54,7 @@ claude --bare -p "Summarize this file" --allowedTools "Read"
 | 設定        | `--settings <file-or-json>`                             |
 | MCP 伺服器   | `--mcp-config <file-or-json>`                           |
 | 自訂 agents | `--agents <json>`                                       |
-| 外掛程式目錄    | `--plugin-dir <path>`                                   |
+| 外掛程式      | `--plugin-dir <path>`, `--plugin-url <url>`             |
 
 裸機模式跳過 OAuth 和鑰匙圈讀取。Anthropic 驗證必須來自 `ANTHROPIC_API_KEY` 或傳遞給 `--settings` 的 JSON 中的 `apiKeyHelper`。Bedrock、Vertex 和 Foundry 使用其通常的提供者認證。
 
@@ -65,6 +65,36 @@ claude --bare -p "Summarize this file" --allowedTools "Read"
 ## 範例
 
 這些範例突出顯示常見的 CLI 模式。對於 CI 和其他指令碼呼叫，新增 [`--bare`](#start-faster-with-bare-mode) 以便它們不會選擇本地設定的任何內容。
+
+### 透過 Claude 管道傳送資料
+
+非互動模式讀取 stdin，因此您可以像任何其他命令列工具一樣管道傳送資料並重新導向回應。
+
+此範例將建置日誌管道傳送至 Claude 並將說明寫入檔案：
+
+```bash theme={null}
+cat build-error.txt | claude -p 'concisely explain the root cause of this build error' > output.txt
+```
+
+使用 `--output-format json`，回應承載包括 `total_cost_usd` 和每個模型的成本明細，因此指令碼呼叫者可以追蹤每次叫用的支出，而無需查詢 [使用儀表板](/zh-TW/costs)。
+
+<Note>
+  自 Claude Code v2.1.128 起，管道傳送的 stdin 上限為 10MB。如果超過上限，Claude Code 會以清晰的錯誤和非零狀態代碼退出。若要處理更大的輸入，請將內容寫入檔案，並在提示中參考檔案路徑，而不是管道傳送它。
+</Note>
+
+### 將 Claude 新增至建置指令碼
+
+您可以在指令碼中包裝非互動呼叫，以將 Claude 用作專案特定的 linter 或審查者。
+
+此 `package.json` 指令碼將針對 `main` 的差異管道傳送至 Claude，並要求它報告拼寫錯誤。管道傳送差異意味著 Claude 不需要 Bash 權限來讀取它，而逸出的雙引號使指令碼可移植到 Windows：
+
+```json theme={null}
+{
+  "scripts": {
+    "lint:claude": "git diff main | claude -p \"you are a typo linter. for each typo in this diff, report filename:line on one line and the issue on the next. return nothing else.\""
+  }
+}
+```
 
 ### 取得結構化輸出
 
@@ -136,10 +166,10 @@ claude -p "Write a poem" --output-format stream-json --verbose --include-partial
 
 `system/init` 事件報告工作階段中繼資料，包括模型、工具、MCP 伺服器和載入的外掛程式。除非設定了 [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/zh-TW/env-vars)，否則它是串流中的第一個事件，在這種情況下 `plugin_install` 事件在其之前。使用外掛程式欄位在外掛程式未載入時使 CI 失敗：
 
-| 欄位              | 類型 | 描述                                                                                               |
-| --------------- | -- | ------------------------------------------------------------------------------------------------ |
-| `plugins`       | 陣列 | 成功載入的外掛程式，每個都有 `name` 和 `path`                                                                   |
-| `plugin_errors` | 陣列 | 外掛程式載入時間錯誤，例如不滿足的相依性版本，每個都有 `plugin`、`type` 和 `message`。受影響的外掛程式被降級並從 `plugins` 中缺失。當沒有錯誤時，金鑰被省略 |
+| 欄位              | 類型 | 描述                                                                                                                                  |
+| --------------- | -- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `plugins`       | 陣列 | 成功載入的外掛程式，每個都有 `name` 和 `path`                                                                                                      |
+| `plugin_errors` | 陣列 | 外掛程式載入時間錯誤，每個都有 `plugin`、`type` 和 `message`。包括不滿足的相依性版本和 `--plugin-dir` 載入失敗，例如遺失的路徑或無效的封存。受影響的外掛程式被降級並從 `plugins` 中缺失。當沒有錯誤時，金鑰被省略 |
 
 當設定了 [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/zh-TW/env-vars) 時，Claude Code 在第一次轉換前發出 `system/plugin_install` 事件，同時市場外掛程式安裝。使用這些在您自己的 UI 中顯示安裝進度。
 

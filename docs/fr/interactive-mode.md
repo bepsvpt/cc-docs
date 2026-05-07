@@ -11,7 +11,7 @@
 <Note>
   Les raccourcis clavier peuvent varier selon la plateforme et le terminal. Appuyez sur `?` pour voir les raccourcis disponibles pour votre environnement.
 
-  **Utilisateurs macOS** : Les raccourcis de la touche Option/Alt (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`, `Alt+T`) nécessitent de configurer Option en tant que Meta dans votre terminal :
+  **Utilisateurs macOS** : Les raccourcis de la touche Option/Alt (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`) nécessitent de configurer Option en tant que Meta dans votre terminal :
 
   * **iTerm2** : Paramètres → Profils → Touches → Général → définir la touche Option gauche/droite sur « Esc+ »
   * **Terminal Apple** : Paramètres → Profils → Clavier → cocher « Utiliser Option comme touche Meta »
@@ -39,7 +39,7 @@
 | `Esc` + `Esc`                                     | Rembobiner ou résumer                                                                         | Restaurer le code et/ou la conversation à un point antérieur, ou résumer à partir d'un message sélectionné                                                                                                                                                                                                                                                                                     |
 | `Shift+Tab` ou `Alt+M` (certaines configurations) | Basculer les modes de permission                                                              | Basculer entre `default`, `acceptEdits`, `plan` et tous les modes que vous avez activés, comme `auto` ou `bypassPermissions`. Consultez [modes de permission](/fr/permission-modes).                                                                                                                                                                                                           |
 | `Option+P` (macOS) ou `Alt+P` (Windows/Linux)     | Changer de modèle                                                                             | Changez de modèles sans effacer votre invite                                                                                                                                                                                                                                                                                                                                                   |
-| `Option+T` (macOS) ou `Alt+T` (Windows/Linux)     | Basculer la réflexion étendue                                                                 | Activez ou désactivez le mode de réflexion étendue. Sur macOS, configurez votre terminal pour envoyer Option en tant que Meta pour que ce raccourci fonctionne                                                                                                                                                                                                                                 |
+| `Option+T` (macOS) ou `Alt+T` (Windows/Linux)     | Basculer la réflexion étendue                                                                 | Activez ou désactivez le mode de réflexion étendue. {/* min-version: 2.1.132 */}À partir de la v2.1.132, ce raccourci fonctionne sur macOS sans configurer Option en tant que Meta                                                                                                                                                                                                             |
 | `Option+O` (macOS) ou `Alt+O` (Windows/Linux)     | Basculer le mode rapide                                                                       | Activez ou désactivez le [mode rapide](/fr/fast-mode)                                                                                                                                                                                                                                                                                                                                          |
 
 ### Édition de texte
@@ -68,12 +68,12 @@
 | :------------------- | :----------------- | :---------------------------------------------------------------------------------------------------------- |
 | Échappement rapide   | `\` + `Entrée`     | Fonctionne dans tous les terminaux                                                                          |
 | Touche Option        | `Option+Entrée`    | Après activation de [Option comme Meta](/fr/terminal-config#enable-option-key-shortcuts-on-macos) sur macOS |
-| Shift+Entrée         | `Shift+Entrée`     | Natif dans iTerm2, WezTerm, Ghostty, Kitty, Warp, Terminal Apple                                            |
+| Shift+Entrée         | `Shift+Entrée`     | Natif dans iTerm2, WezTerm, Ghostty, Kitty, Warp, Terminal Apple, Windows Terminal                          |
 | Séquence de contrôle | `Ctrl+J`           | Fonctionne dans n'importe quel terminal sans configuration                                                  |
 | Mode collage         | Coller directement | Pour les blocs de code, les journaux                                                                        |
 
 <Tip>
-  Shift+Entrée fonctionne sans configuration dans iTerm2, WezTerm, Ghostty, Kitty, Warp et Terminal Apple. Pour VS Code, Cursor, Windsurf, Alacritty et Zed, exécutez `/terminal-setup` pour installer la liaison.
+  Shift+Entrée fonctionne sans configuration dans iTerm2, WezTerm, Ghostty, Kitty, Warp, Terminal Apple et Windows Terminal. Pour VS Code, Cursor, Windsurf, Alacritty et Zed, exécutez `/terminal-setup` pour installer la liaison.
 </Tip>
 
 ### Commandes rapides
@@ -130,6 +130,7 @@ Activez l'édition de style vim via `/config` → Mode éditeur.
 | Commande        | Action                                                  |
 | :-------------- | :------------------------------------------------------ |
 | `h`/`j`/`k`/`l` | Déplacer gauche/bas/haut/droite                         |
+| `Space`         | Déplacer à droite                                       |
 | `w`             | Mot suivant                                             |
 | `e`             | Fin du mot                                              |
 | `b`             | Mot précédent                                           |
@@ -220,7 +221,7 @@ Appuyez sur `Ctrl+R` pour rechercher de manière interactive dans votre historiq
 1. **Démarrer la recherche** : appuyez sur `Ctrl+R` pour activer la recherche d'historique inversée
 2. **Tapez la requête** : entrez le texte à rechercher dans les commandes précédentes. Le terme de recherche est mis en évidence dans les résultats correspondants
 3. **Naviguer dans les correspondances** : appuyez à nouveau sur `Ctrl+R` pour parcourir les correspondances plus anciennes
-4. **Changer la portée** : appuyez sur `Ctrl+S` pour basculer entre cette session, ce projet et tous les projets
+4. **Changer la portée** : la recherche s'applique par défaut aux invites de tous les projets. Appuyez sur `Ctrl+S` pour basculer la portée entre cette session, ce projet et tous les projets
 5. **Accepter la correspondance** :
    * Appuyez sur `Tab` ou `Esc` pour accepter la correspondance actuelle et continuer l'édition
    * Appuyez sur `Entrée` pour accepter et exécuter la commande immédiatement

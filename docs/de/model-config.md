@@ -184,7 +184,9 @@ Jede Ebene tauscht Token-Ausgabe gegen Fähigkeit. Der Standard eignet sich für
 
 Die Aufwandsskala ist pro Modell kalibriert, daher stellt der gleiche Ebenenname nicht den gleichen zugrunde liegenden Wert über Modelle hinweg dar.
 
-Für einmaliges tiefes Reasoning ohne Änderung Ihrer Sitzungseinstellung fügen Sie „ultrathink" in Ihren Prompt ein. Dies fügt eine In-Context-Anweisung hinzu, die das Modell anweist, bei diesem Durchgang mehr zu denken; es ändert nicht das an die API gesendete Aufwandsniveau.
+#### Verwenden Sie ultrathink für einmaliges tiefes Reasoning
+
+Fügen Sie `ultrathink` überall in Ihrem Prompt ein, um tieferes Reasoning bei diesem Durchgang anzufordern, ohne Ihre Sitzungsaufwandseinstellung zu ändern. Claude Code erkennt das Schlüsselwort und fügt eine In-Context-Anweisung hinzu. Das an die API gesendete Aufwandsniveau bleibt unverändert. Andere Phrasen wie „think", „think hard" und „think more" werden als gewöhnlicher Prompt-Text weitergeleitet und werden nicht als Schlüsselwörter erkannt.
 
 #### Setzen Sie das Aufwandsniveau
 
@@ -208,6 +210,18 @@ Adaptives Reasoning macht Thinking bei jedem Schritt optional, daher kann Claude
 Opus 4.7 verwendet immer adaptives Reasoning. Der Modus mit festem Thinking-Budget und `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` gelten nicht dafür.
 
 Bei Opus 4.6 und Sonnet 4.6 können Sie `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` setzen, um zum vorherigen festen Thinking-Budget zurückzukehren, das von `MAX_THINKING_TOKENS` gesteuert wird. Siehe [Umgebungsvariablen](/de/env-vars).
+
+### Erweitertes Thinking
+
+Erweitertes Thinking ist das Reasoning, das Claude vor der Antwort ausgibt. Bei Modellen, die [adaptives Reasoning](#adjust-effort-level) unterstützen, ist das Aufwandsniveau die primäre Kontrolle dafür, wie viel Thinking stattfindet; die folgenden Einstellungen schalten Thinking ein oder aus und steuern, wie es angezeigt wird.
+
+| Kontrolle                               | Wie man es setzt                                                                                                                                               |
+| :-------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Umschalter für die aktuelle Sitzung     | Drücken Sie `Option+T` auf macOS oder `Alt+T` auf Windows und Linux                                                                                            |
+| Setzen Sie den globalen Standard        | Führen Sie `/config` aus und schalten Sie den Thinking-Modus um. Gespeichert als `alwaysThinkingEnabled` in `~/.claude/settings.json`                          |
+| Deaktivieren Sie unabhängig vom Aufwand | Setzen Sie [`MAX_THINKING_TOKENS=0`](/de/env-vars). Andere Werte gelten nur mit einem [festen Thinking-Budget](#adaptive-reasoning-and-fixed-thinking-budgets) |
+
+Die Thinking-Ausgabe ist standardmäßig zusammengeklappt. Drücken Sie `Ctrl+O`, um den ausführlichen Modus umzuschalten und das Reasoning als grauer kursiver Text zu sehen. Interaktive Sitzungen auf der Anthropic API erhalten standardmäßig redigierte Thinking-Blöcke, daher setzen Sie `showThinkingSummaries: true` in [Einstellungen](/de/settings), wenn Sie die vollständigen Zusammenfassungen verfügbar haben möchten, wenn Sie erweitern. Ihnen werden alle generierten Thinking-Token berechnet, auch wenn sie zusammengeklappt oder redigiert sind.
 
 ### Erweiterter Kontext
 
@@ -247,7 +261,7 @@ Sie können sehen, welches Modell Sie derzeit verwenden, auf mehrere Arten:
 
 ## Benutzerdefinierte Modelloption hinzufügen
 
-Verwenden Sie `ANTHROPIC_CUSTOM_MODEL_OPTION`, um einen einzelnen benutzerdefinierten Eintrag zur `/model`-Auswahl hinzuzufügen, ohne die integrierten Aliase zu ersetzen. Dies ist nützlich zum Testen von Modell-IDs, die Claude Code standardmäßig nicht auflistet. Für LLM-Gateway-Bereitstellungen füllt Claude Code die Auswahl automatisch vom `/v1/models`-Endpunkt des Gateways auf, daher ist diese Variable nur erforderlich, wenn die Erkennung das gewünschte Modell nicht zurückgibt. Siehe [LLM-Gateway-Modellauswahl](/de/llm-gateway#model-selection).
+Verwenden Sie `ANTHROPIC_CUSTOM_MODEL_OPTION`, um einen einzelnen benutzerdefinierten Eintrag zur `/model`-Auswahl hinzuzufügen, ohne die integrierten Aliase zu ersetzen. Dies ist nützlich zum Testen von Modell-IDs, die Claude Code standardmäßig nicht auflistet. Für LLM-Gateway-Bereitstellungen kann Claude Code die Auswahl vom `/v1/models`-Endpunkt des Gateways auffüllen, wenn `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` gesetzt ist. Daher ist diese Variable nur erforderlich, wenn die Erkennung deaktiviert ist oder das gewünschte Modell nicht zurückgibt. Siehe [LLM-Gateway-Modellauswahl](/de/llm-gateway#model-selection).
 
 Dieses Beispiel setzt alle drei Variablen, um eine Gateway-gesteuerte Opus-Bereitstellung auswählbar zu machen:
 
@@ -320,14 +334,14 @@ Diese Variablen wirken sich auf Drittanbieter wie Bedrock, Vertex AI und Foundry
 
 Die gleichen `_NAME`-, `_DESCRIPTION`- und `_SUPPORTED_CAPABILITIES`-Suffixe sind für `ANTHROPIC_DEFAULT_SONNET_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL` und `ANTHROPIC_CUSTOM_MODEL_OPTION` verfügbar.
 
-Claude Code aktiviert Funktionen wie [Aufwandsniveaus](#adjust-effort-level) und [erweitertes Denken](/de/common-workflows#use-extended-thinking-thinking-mode) durch Abgleich der Modell-ID mit bekannten Mustern. Anbieterspezifische IDs wie Bedrock-ARNs oder benutzerdefinierte Bereitstellungsnamen stimmen oft nicht mit diesen Mustern überein, wodurch unterstützte Funktionen deaktiviert bleiben. Setzen Sie `_SUPPORTED_CAPABILITIES`, um Claude Code mitzuteilen, welche Funktionen das Modell tatsächlich unterstützt:
+Claude Code aktiviert Funktionen wie [Aufwandsniveaus](#adjust-effort-level) und [erweitertes Denken](#extended-thinking) durch Abgleich der Modell-ID mit bekannten Mustern. Anbieterspezifische IDs wie Bedrock-ARNs oder benutzerdefinierte Bereitstellungsnamen stimmen oft nicht mit diesen Mustern überein, wodurch unterstützte Funktionen deaktiviert bleiben. Setzen Sie `_SUPPORTED_CAPABILITIES`, um Claude Code mitzuteilen, welche Funktionen das Modell tatsächlich unterstützt:
 
 | Funktionswert          | Aktiviert                                                                                    |
 | ---------------------- | -------------------------------------------------------------------------------------------- |
 | `effort`               | [Aufwandsniveaus](#adjust-effort-level) und der `/effort`-Befehl                             |
 | `xhigh_effort`         | {/* min-version: 2.1.111 */}Das `xhigh`-Aufwandsniveau                                       |
 | `max_effort`           | Das `max`-Aufwandsniveau                                                                     |
-| `thinking`             | [Erweitertes Denken](/de/common-workflows#use-extended-thinking-thinking-mode)               |
+| `thinking`             | [Erweitertes Denken](#extended-thinking)                                                     |
 | `adaptive_thinking`    | Adaptives Reasoning, das das Denken dynamisch basierend auf der Aufgabenkomplexität zuordnet |
 | `interleaved_thinking` | Denken zwischen Tool-Aufrufen                                                                |
 

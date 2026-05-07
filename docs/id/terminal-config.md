@@ -23,11 +23,11 @@ Menekan Enter mengirimkan pesan Anda. Untuk menambahkan jeda baris tanpa mengiri
 
 Di sebagian besar terminal Anda juga dapat menekan Shift+Enter, tetapi dukungan bervariasi menurut emulator terminal:
 
-| Terminal                                                                            | Shift+Enter untuk baris baru                           |
-| :---------------------------------------------------------------------------------- | :----------------------------------------------------- |
-| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal                               | Bekerja tanpa setup                                    |
-| VS Code, Cursor, Windsurf, Alacritty, Zed                                           | Jalankan `/terminal-setup` sekali                      |
-| Windows Terminal, gnome-terminal, JetBrains IDEs seperti PyCharm dan Android Studio | Tidak tersedia; gunakan Ctrl+J atau `\` kemudian Enter |
+| Terminal                                                                | Shift+Enter untuk baris baru                           |
+| :---------------------------------------------------------------------- | :----------------------------------------------------- |
+| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal, Windows Terminal | Bekerja tanpa setup                                    |
+| VS Code, Cursor, Windsurf, Alacritty, Zed                               | Jalankan `/terminal-setup` sekali                      |
+| gnome-terminal, JetBrains IDEs seperti PyCharm dan Android Studio       | Tidak tersedia; gunakan Ctrl+J atau `\` kemudian Enter |
 
 Untuk VS Code, Cursor, Windsurf, Alacritty, dan Zed, `/terminal-setup` menulis Shift+Enter dan pintasan keyboard lainnya ke dalam file konfigurasi terminal. Di VS Code, Cursor, dan Windsurf, ini juga menetapkan `terminal.integrated.mouseWheelScrollSensitivity` dalam pengaturan editor untuk scrolling yang lebih halus dalam [mode fullscreen](/id/fullscreen). Binding dan pengaturan yang ada dibiarkan tetap ada; jika Anda melihat pesan seperti `VSCode terminal Shift+Enter key binding already configured`, tidak ada perubahan yang dilakukan. Jalankan `/terminal-setup` langsung di terminal host daripada di dalam tmux atau screen, karena perlu menulis ke konfigurasi terminal host.
 

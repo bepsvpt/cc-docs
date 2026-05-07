@@ -54,7 +54,7 @@ Dalam bare mode Claude memiliki akses ke alat Bash, pembacaan file, dan pengedit
 | Pengaturan               | `--settings <file-or-json>`                             |
 | Server MCP               | `--mcp-config <file-or-json>`                           |
 | Agen kustom              | `--agents <json>`                                       |
-| Direktori plugin         | `--plugin-dir <path>`                                   |
+| Plugin                   | `--plugin-dir <path>`, `--plugin-url <url>`             |
 
 Bare mode melewati pembacaan OAuth dan keychain. Autentikasi Anthropic harus berasal dari `ANTHROPIC_API_KEY` atau `apiKeyHelper` dalam JSON yang diteruskan ke `--settings`. Bedrock, Vertex, dan Foundry menggunakan kredensial penyedia biasa mereka.
 
@@ -65,6 +65,36 @@ Bare mode melewati pembacaan OAuth dan keychain. Autentikasi Anthropic harus ber
 ## Contoh
 
 Contoh-contoh ini menyoroti pola CLI umum. Untuk CI dan panggilan skrip lainnya, tambahkan [`--bare`](#start-faster-with-bare-mode) sehingga mereka tidak mengambil apa pun yang kebetulan dikonfigurasi secara lokal.
+
+### Saluran data melalui Claude
+
+Mode non-interaktif membaca stdin, sehingga Anda dapat menyalurkan data dan mengarahkan respons keluar seperti alat baris perintah lainnya.
+
+Contoh ini menyalurkan log build ke Claude dan menulis penjelasan ke file:
+
+```bash theme={null}
+cat build-error.txt | claude -p 'concisely explain the root cause of this build error' > output.txt
+```
+
+Dengan `--output-format json`, payload respons mencakup `total_cost_usd` dan rincian biaya per-model, sehingga pemanggil skrip dapat melacak pengeluaran per invokasi tanpa berkonsultasi dengan [dashboard penggunaan](/id/costs).
+
+<Note>
+  Sejak Claude Code v2.1.128, stdin yang disalurkan dibatasi pada 10MB. Jika Anda melampaui batas, Claude Code keluar dengan kesalahan yang jelas dan status bukan nol. Untuk bekerja dengan input yang lebih besar, tulis konten ke file dan referensikan jalur file dalam prompt Anda alih-alih menyalurkannya.
+</Note>
+
+### Tambahkan Claude ke skrip build
+
+Anda dapat membungkus panggilan non-interaktif dalam skrip untuk menggunakan Claude sebagai linter atau reviewer khusus proyek.
+
+Skrip `package.json` ini menyalurkan diff terhadap `main` ke Claude dan memintanya untuk melaporkan typo. Menyalurkan diff berarti Claude tidak memerlukan izin Bash untuk membacanya, dan tanda kutip ganda yang di-escape menjaga skrip portabel ke Windows:
+
+```json theme={null}
+{
+  "scripts": {
+    "lint:claude": "git diff main | claude -p \"you are a typo linter. for each typo in this diff, report filename:line on one line and the issue on the next. return nothing else.\""
+  }
+}
+```
 
 ### Dapatkan output terstruktur
 
@@ -136,10 +166,10 @@ Ketika permintaan API gagal dengan kesalahan yang dapat dicoba ulang, Claude Cod
 
 Acara `system/init` melaporkan metadata sesi termasuk model, alat, server MCP, dan plugin yang dimuat. Ini adalah acara pertama dalam aliran kecuali [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/id/env-vars) diatur, dalam hal ini acara `plugin_install` mendahuluinya. Gunakan bidang plugin untuk gagal CI ketika plugin tidak dimuat:
 
-| Bidang          | Tipe  | Deskripsi                                                                                                                                                                                                                                    |
-| --------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `plugins`       | array | plugin yang berhasil dimuat, masing-masing dengan `name` dan `path`                                                                                                                                                                          |
-| `plugin_errors` | array | kesalahan waktu muat plugin seperti versi dependensi yang tidak terpenuhi, masing-masing dengan `plugin`, `type`, dan `message`. Plugin yang terpengaruh diturunkan dan tidak ada di `plugins`. Kunci dihilangkan ketika tidak ada kesalahan |
+| Bidang          | Tipe  | Deskripsi                                                                                                                                                                                                                                                                                                                              |
+| --------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plugins`       | array | plugin yang berhasil dimuat, masing-masing dengan `name` dan `path`                                                                                                                                                                                                                                                                    |
+| `plugin_errors` | array | kesalahan waktu muat plugin, masing-masing dengan `plugin`, `type`, dan `message`. Mencakup versi dependensi yang tidak terpenuhi dan kegagalan muat `--plugin-dir` seperti jalur yang hilang atau arsip yang tidak valid. Plugin yang terpengaruh diturunkan dan tidak ada di `plugins`. Kunci dihilangkan ketika tidak ada kesalahan |
 
 Ketika [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/id/env-vars) diatur, Claude Code memancarkan acara `system/plugin_install` saat plugin marketplace dipasang sebelum giliran pertama. Gunakan ini untuk menampilkan kemajuan pemasangan di UI Anda sendiri.
 

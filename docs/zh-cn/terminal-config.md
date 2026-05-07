@@ -23,11 +23,11 @@ Claude Code 在任何终端中都可以无需配置而工作。此页面适用�
 
 在大多数终端中，您也可以按 Shift+Enter，但支持因终端模拟器而异：
 
-| 终端                                                                        | Shift+Enter 换行               |
-| :------------------------------------------------------------------------ | :--------------------------- |
-| Ghostty、Kitty、iTerm2、WezTerm、Warp、Apple Terminal                          | 无需设置即可工作                     |
-| VS Code、Cursor、Windsurf、Alacritty、Zed                                     | 运行一次 `/terminal-setup`       |
-| Windows Terminal、gnome-terminal、JetBrains IDE（如 PyCharm 和 Android Studio） | 不可用；使用 Ctrl+J 或 `\` 然后 Enter |
+| 终端                                                                | Shift+Enter 换行               |
+| :---------------------------------------------------------------- | :--------------------------- |
+| Ghostty、Kitty、iTerm2、WezTerm、Warp、Apple Terminal、Windows Terminal | 无需设置即可工作                     |
+| VS Code、Cursor、Windsurf、Alacritty、Zed                             | 运行一次 `/terminal-setup`       |
+| gnome-terminal、JetBrains IDE（如 PyCharm 和 Android Studio）          | 不可用；使用 Ctrl+J 或 `\` 然后 Enter |
 
 对于 VS Code、Cursor、Windsurf、Alacritty 和 Zed，`/terminal-setup` 将 Shift+Enter 和其他快捷键写入终端的配置文件。在 VS Code、Cursor 和 Windsurf 中，它还在编辑器设置中设置 `terminal.integrated.mouseWheelScrollSensitivity`，以在[全屏模式](/zh-CN/fullscreen)中实现更平滑的滚动。现有的绑定和设置保持不变；如果您看到诸如 `VSCode terminal Shift+Enter key binding already configured` 之类的消息，则未进行任何更改。在主机终端中直接运行 `/terminal-setup` 而不是在 tmux 或 screen 内运行，因为它需要写入主机终端的配置。
 

@@ -53,7 +53,7 @@ Claude Code também adiciona um bloco de atribuição curto ao prompt do sistema
 
 Por padrão, Claude Code usa nomes de modelo padrão para o formato de API selecionado.
 
-Quando `ANTHROPIC_BASE_URL` aponta para um gateway que expõe o formato Anthropic Messages, Claude Code consulta o endpoint `/v1/models` do gateway na inicialização e adiciona os modelos retornados ao seletor `/model`. Cada entrada descoberta é rotulada como "From gateway" e usa o campo `display_name` da resposta quando um é fornecido. Isso requer Claude Code v2.1.126 ou posterior.
+Quando `ANTHROPIC_BASE_URL` aponta para um gateway que expõe o formato Anthropic Messages, Claude Code consulta o endpoint `/v1/models` do gateway na inicialização e adiciona os modelos retornados ao seletor `/model`. Defina `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` para ativar isso. A descoberta está desativada por padrão para que gateways apoiados por uma chave de API compartilhada não exponham todos os modelos que a chave pode acessar para cada usuário. Cada entrada descoberta é rotulada como "From gateway" e usa o campo `display_name` da resposta quando um é fornecido. Isso requer Claude Code v2.1.129 ou posterior.
 
 A descoberta se aplica apenas ao formato Anthropic Messages. Ela não é executada para endpoints de passagem Bedrock ou Vertex, e não é executada quando `ANTHROPIC_BASE_URL` não está definido ou aponta para `api.anthropic.com`.
 

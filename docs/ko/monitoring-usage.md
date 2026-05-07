@@ -64,6 +64,8 @@ claude
   관리 설정은 MDM(Mobile Device Management) 또는 기타 장치 관리 솔루션을 통해 배포할 수 있습니다. 관리 설정 파일에 정의된 환경 변수는 높은 우선순위를 가지며 사용자가 재정의할 수 없습니다.
 </Note>
 
+Claude Code는 `OTEL_*` 환경 변수를 Bash 도구, 훅, MCP 서버 및 언어 서버를 포함하여 생성하는 하위 프로세스에 전달하지 않습니다. Bash 도구를 통해 실행하는 OpenTelemetry 계측 애플리케이션은 Claude Code의 내보내기 엔드포인트 또는 헤더를 상속하지 않으므로 해당 애플리케이션이 자신의 원격 측정을 내보내야 하는 경우 명령에서 직접 이러한 변수를 설정합니다.
+
 ## 구성 세부 정보
 
 ### 일반적인 구성 변수
@@ -80,8 +82,6 @@ claude
 | `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | 로그 프로토콜 (일반 설정 재정의)                                                                                                                                                                                                                            | `grpc`, `http/json`, `http/protobuf`                                        |
 | `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | OTLP 로그 엔드포인트 (일반 설정 재정의)                                                                                                                                                                                                                      | `http://localhost:4318/v1/logs`                                             |
 | `OTEL_EXPORTER_OTLP_HEADERS`                        | OTLP용 인증 헤더                                                                                                                                                                                                                                    | `Authorization=Bearer token`                                                |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | mTLS 인증용 클라이언트 키                                                                                                                                                                                                                               | 클라이언트 키 파일 경로                                                               |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | mTLS 인증용 클라이언트 인증서                                                                                                                                                                                                                             | 클라이언트 인증서 파일 경로                                                             |
 | `OTEL_METRIC_EXPORT_INTERVAL`                       | 내보내기 간격 (밀리초 단위, 기본값: 60000)                                                                                                                                                                                                                   | `5000`, `60000`                                                             |
 | `OTEL_LOGS_EXPORT_INTERVAL`                         | 로그 내보내기 간격 (밀리초 단위, 기본값: 5000)                                                                                                                                                                                                                 | `1000`, `10000`                                                             |
 | `OTEL_LOG_USER_PROMPTS`                             | 사용자 프롬프트 콘텐츠 로깅 활성화 (기본값: 비활성화)                                                                                                                                                                                                                | `1`로 활성화                                                                    |
@@ -90,6 +90,17 @@ claude
 | `OTEL_LOG_RAW_API_BODIES`                           | 전체 Anthropic Messages API 요청 및 응답 JSON을 `api_request_body` / `api_response_body` 로그 이벤트로 내보냅니다 (기본값: 비활성화). 본문에는 전체 대화 기록이 포함됩니다. 이를 활성화하면 `OTEL_LOG_USER_PROMPTS`, `OTEL_LOG_TOOL_DETAILS` 및 `OTEL_LOG_TOOL_CONTENT`가 공개할 모든 것에 동의하는 것을 의미합니다 | `1`로 60KB에서 잘린 인라인 본문, 또는 `file:<dir>`로 디스크의 잘리지 않은 본문과 이벤트의 `body_ref` 포인터 |
 | `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | 메트릭 시간성 선호도 (기본값: `delta`). 백엔드가 누적 시간성을 예상하는 경우 `cumulative`로 설정                                                                                                                                                                              | `delta`, `cumulative`                                                       |
 | `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | 동적 헤더 새로 고침 간격 (기본값: 1740000ms / 29분)                                                                                                                                                                                                          | `900000`                                                                    |
+
+### mTLS 인증
+
+OTLP 내보내기를 위한 클라이언트 인증서를 구성하는 방법은 해당 신호에 사용되는 OTLP 프로토콜에 따라 다르며, `OTEL_EXPORTER_OTLP_PROTOCOL` 또는 신호별 재정의를 통해 설정됩니다. 동일한 구성이 메트릭, 로그 및 추적에 적용됩니다.
+
+| 프로토콜                         | 클라이언트 인증서 변수                                                                                                                                          | 수집기의 CA 신뢰                       |
+| :--------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------- |
+| `http/protobuf`, `http/json` | `CLAUDE_CODE_CLIENT_CERT`, `CLAUDE_CODE_CLIENT_KEY` 및 선택적으로 `CLAUDE_CODE_CLIENT_KEY_PASSPHRASE`. [네트워크 구성](/ko/network-config#mtls-authentication) 참조 | `NODE_EXTRA_CA_CERTS`            |
+| `grpc`                       | `OTEL_EXPORTER_OTLP_CLIENT_KEY` 및 `OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE`, 또는 신호별 인증서를 사용하기 위한 `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`와 같은 신호별 변형     | `OTEL_EXPORTER_OTLP_CERTIFICATE` |
+
+`grpc`의 경우 OpenTelemetry SDK는 표준 OTLP 변수를 직접 읽으므로 신호별 메트릭 변수를 설정하는 기존 구성은 계속 작동합니다.
 
 ### 메트릭 카디널리티 제어
 
@@ -107,7 +118,7 @@ claude
 
 분산 추적은 각 사용자 프롬프트를 해당 프롬프트가 트리거하는 API 요청 및 도구 실행에 연결하는 스팬을 내보내므로 추적 백엔드에서 전체 요청을 단일 추적으로 볼 수 있습니다.
 
-추적은 기본적으로 꺼져 있습니다. 활성화하려면 `CLAUDE_CODE_ENABLE_TELEMETRY=1` 및 `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`을 모두 설정한 다음 `OTEL_TRACES_EXPORTER`를 설정하여 스팬을 보낼 위치를 선택합니다. 추적은 엔드포인트, 프로토콜 및 헤더에 대해 [일반적인 OTLP 구성](#common-configuration-variables)을 재사용합니다.
+추적은 기본적으로 꺼져 있습니다. 활성화하려면 `CLAUDE_CODE_ENABLE_TELEMETRY=1` 및 `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`을 모두 설정한 다음 `OTEL_TRACES_EXPORTER`를 설정하여 스팬을 보낼 위치를 선택합니다. 추적은 엔드포인트, 프로토콜, 헤더 및 [mTLS](#mtls-authentication)에 대해 [일반적인 OTLP 구성](#common-configuration-variables)을 재사용합니다.
 
 | 환경 변수                                 | 설명                                                    | 예제 값                                 |
 | ------------------------------------- | ----------------------------------------------------- | ------------------------------------ |
@@ -233,7 +244,7 @@ Agent SDK 및 `claude -p` 세션에서 `TRACEPARENT`가 환경에 설정되면 `
 
 ### 동적 헤더
 
-동적 인증이 필요한 엔터프라이즈 환경의 경우 스크립트를 구성하여 헤더를 동적으로 생성할 수 있습니다:
+동적 인증이 필요한 엔터프라이즈 환경의 경우 스크립트를 구성하여 헤더를 동적으로 생성할 수 있습니다. 동적 헤더는 `http/protobuf` 및 `http/json` 프로토콜에만 적용됩니다. `grpc` 내보내기는 정적 `OTEL_EXPORTER_OTLP_HEADERS` 값만 사용합니다.
 
 #### 설정 구성
 
@@ -898,6 +909,67 @@ Claude Code는 실패한 API 요청을 내부적으로 재시도하고 포기한
 * 도구 유형별 오류 패턴
 
 **성능 모니터링**: API 요청 지속 시간 및 도구 실행 시간을 추적하여 성능 병목 현상을 식별합니다.
+
+## 감사 보안 이벤트
+
+OpenTelemetry 이벤트는 Claude Code 활동의 감사 데이터 소스입니다. 모든 이벤트는 도구 호출, MCP 활동 및 권한 결정을 해당 이벤트를 트리거한 사용자에게 연결하는 ID 속성을 전달하며, OTLP 로그 내보내기는 이러한 이벤트를 OTLP 수신기가 있는 모든 SIEM(Security Information and Event Management) 플랫폼 또는 SIEM으로 전달하는 OpenTelemetry Collector에 전달할 수 있습니다.
+
+### 속성 작업을 사용자에게 연결
+
+각 이벤트의 [표준 속성](#standard-attributes)에는 인증된 사용자의 ID가 포함됩니다: Claude 계정으로 로그인할 때 `user.email`, `user.account_uuid`, `user.account_id` 및 `organization.id`, 그리고 설치 범위 `user.id` 및 세션별 `session.id`.
+
+MCP 도구 호출, Bash 명령 및 파일 편집은 따라서 세션을 시작한 개발자에게 귀속됩니다. Claude Code는 별도의 서비스 계정으로 작동하지 않습니다. 각 이벤트에 기록된 ID는 개발자 자신의 Claude 계정입니다.
+
+Claude Code가 직접 API 키로 인증하거나 Bedrock, Vertex AI 또는 Microsoft Foundry에 대해 인증할 때 세션에 Claude 계정이 없으며 `user.id` 및 `session.id`만 채워집니다. 이러한 배포에서는 `OTEL_RESOURCE_ATTRIBUTES`를 사용하여 사용자 ID를 직접 첨부하고, [관리 설정](#administrator-configuration) 파일 또는 시작 래퍼를 통해 사용자별로 설정합니다:
+
+```bash theme={null}
+export OTEL_RESOURCE_ATTRIBUTES="enduser.id=jdoe@example.com,enduser.directory_id=S-1-5-21-..."
+```
+
+### MCP 활동 감사
+
+전체 호출 세부 정보로 MCP 서버 활동을 캡처하려면 로그 내보내기를 활성화하고 `OTEL_LOG_TOOL_DETAILS=1`을 설정합니다. 각 MCP 작업은 표준 ID 속성과 함께 서버 이름, 도구 이름 및 호출 인수를 전달하는 구조화된 이벤트를 생성합니다:
+
+| 이벤트                     | MCP에 대해 기록하는 것                                                                                                                                     |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mcp_server_connection` | 서버 연결, 연결 해제 및 연결 실패 (`server_name`, `transport_type`, `server_scope` 및 오류 세부 정보 포함)                                                               |
+| `tool_result`           | 각 MCP 도구 호출 (`tool_name` 및 `mcp_server_scope` 포함, `mcp_server_name` 및 `mcp_tool_name`을 포함하는 `tool_parameters` 페이로드, 호출 인수를 포함하는 `tool_input` 페이로드) |
+| `tool_decision`         | 호출이 허용되었는지 거부되었는지, 그리고 결정이 구성, 훅 또는 사용자에서 나왔는지 여부                                                                                                  |
+
+`OTEL_LOG_TOOL_DETAILS` 없이 `tool_result` 이벤트는 여전히 `tool_name` 및 `mcp_server_scope`를 전달하지만 `mcp_server_name`/`mcp_tool_name` 분류 및 인수를 생략하고, `mcp_server_connection` 이벤트는 `server_name` 및 오류 메시지를 생략합니다.
+
+### 보안 질문을 이벤트에 매핑
+
+감지 규칙을 구축할 때 모니터링하려는 신호를 찾고 해당 이벤트 및 속성에 대해 백엔드를 쿼리합니다:
+
+| 신호                      | 이벤트                                          | 주요 속성                                                        |
+| ----------------------- | -------------------------------------------- | ------------------------------------------------------------ |
+| 도구 호출 허용 또는 거부, 그리고 어떻게 | `tool_decision`                              | `decision`, `source`, `tool_name`                            |
+| 권한 모드 에스컬레이션            | `permission_mode_changed`                    | `from_mode`, `to_mode`, `trigger`                            |
+| 정책 훅이 작업을 차단함           | `hook_execution_complete`                    | `hook_event`, `num_blocking`                                 |
+| 로그인, 로그아웃 및 인증 실패       | `auth`                                       | `action`, `success`, `error_category`                        |
+| MCP 서버 연결 또는 실패         | `mcp_server_connection`                      | `status`, `server_name`, `error_code`                        |
+| 플러그인 설치 및 출처            | `plugin_installed`                           | `plugin.name`, `marketplace.name`, `marketplace.is_official` |
+| 실행된 명령 및 터치된 파일         | `tool_result` (`OTEL_LOG_TOOL_DETAILS=1` 포함) | `tool_parameters`, `tool_input`                              |
+
+Claude Code는 원본 이벤트 스트림만 내보냅니다. 이상 감지, 기준선 설정, 세션 간 상관 관계 및 경고는 SIEM 또는 관찰성 백엔드의 책임입니다.
+
+### SIEM에 이벤트 전송
+
+`OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`를 SIEM의 OTLP 수신기 또는 SIEM의 기본 수집 API로 전달하는 OpenTelemetry Collector로 지정합니다. 다음 관리 설정 예는 이벤트만 내보내고 MCP 및 Bash 감사를 위해 전체 도구 세부 정보를 활성화합니다:
+
+```json theme={null}
+{
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "OTEL_LOGS_EXPORTER": "otlp",
+    "OTEL_LOG_TOOL_DETAILS": "1",
+    "OTEL_EXPORTER_OTLP_LOGS_PROTOCOL": "http/protobuf",
+    "OTEL_EXPORTER_OTLP_LOGS_ENDPOINT": "https://siem.example.com:4318/v1/logs",
+    "OTEL_EXPORTER_OTLP_HEADERS": "Authorization=Bearer your-siem-token"
+  }
+}
+```
 
 ## 백엔드 고려 사항
 

@@ -54,7 +54,7 @@ In modalità bare Claude ha accesso agli strumenti Bash, lettura file e modifica
 | Impostazioni                  | `--settings <file-or-json>`                             |
 | Server MCP                    | `--mcp-config <file-or-json>`                           |
 | Agenti personalizzati         | `--agents <json>`                                       |
-| Una directory plugin          | `--plugin-dir <path>`                                   |
+| Un plugin                     | `--plugin-dir <path>`, `--plugin-url <url>`             |
 
 La modalità bare salta le letture OAuth e keychain. L'autenticazione Anthropic deve provenire da `ANTHROPIC_API_KEY` o da un `apiKeyHelper` nel JSON passato a `--settings`. Bedrock, Vertex e Foundry utilizzano le loro credenziali provider usuali.
 
@@ -65,6 +65,36 @@ La modalità bare salta le letture OAuth e keychain. L'autenticazione Anthropic 
 ## Esempi
 
 Questi esempi evidenziano i modelli CLI comuni. Per CI e altre chiamate con script, aggiungi [`--bare`](#start-faster-with-bare-mode) in modo che non raccolgano qualsiasi cosa sia configurata localmente.
+
+### Inviare dati attraverso Claude
+
+La modalità non interattiva legge stdin, quindi puoi inviare dati e reindirizzare la risposta come qualsiasi altro strumento da riga di comando.
+
+Questo esempio invia un log di compilazione a Claude e scrive la spiegazione in un file:
+
+```bash theme={null}
+cat build-error.txt | claude -p 'concisely explain the root cause of this build error' > output.txt
+```
+
+Con `--output-format json`, il payload della risposta include `total_cost_usd` e una suddivisione dei costi per modello, quindi i chiamanti con script possono tracciare la spesa per invocazione senza consultare il [dashboard di utilizzo](/it/costs).
+
+<Note>
+  A partire da Claude Code v2.1.128, stdin inviato tramite pipe è limitato a 10MB. Se superi il limite, Claude Code esce con un errore chiaro e uno stato diverso da zero. Per lavorare con input più grandi, scrivi il contenuto in un file e fai riferimento al percorso del file nel tuo prompt invece di inviarlo tramite pipe.
+</Note>
+
+### Aggiungere Claude a uno script di compilazione
+
+Puoi avvolgere una chiamata non interattiva in uno script per utilizzare Claude come linter o revisore specifico del progetto.
+
+Questo script `package.json` invia il diff rispetto a `main` a Claude e gli chiede di segnalare i refusi. Inviare il diff tramite pipe significa che Claude non ha bisogno del permesso Bash per leggerlo, e le virgolette doppie sfuggite mantengono lo script portabile su Windows:
+
+```json theme={null}
+{
+  "scripts": {
+    "lint:claude": "git diff main | claude -p \"you are a typo linter. for each typo in this diff, report filename:line on one line and the issue on the next. return nothing else.\""
+  }
+}
+```
 
 ### Ottenere output strutturato
 
@@ -136,10 +166,10 @@ Quando una richiesta API non riesce con un errore ritentabile, Claude Code emett
 
 L'evento `system/init` segnala i metadati della sessione inclusi il modello, gli strumenti, i server MCP e i plugin caricati. È il primo evento nel flusso a meno che [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/it/env-vars) non sia impostato, nel qual caso gli eventi `plugin_install` lo precedono. Utilizza i campi plugin per far fallire CI quando un plugin non è stato caricato:
 
-| Campo           | Tipo  | Descrizione                                                                                                                                                                                                                                 |
-| --------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `plugins`       | array | plugin che sono stati caricati con successo, ognuno con `name` e `path`                                                                                                                                                                     |
-| `plugin_errors` | array | errori di caricamento del plugin come una versione di dipendenza non soddisfatta, ognuno con `plugin`, `type` e `message`. I plugin interessati vengono declassati e assenti da `plugins`. La chiave viene omessa quando non ci sono errori |
+| Campo           | Tipo  | Descrizione                                                                                                                                                                                                                                                                                                                              |
+| --------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plugins`       | array | plugin che sono stati caricati con successo, ognuno con `name` e `path`                                                                                                                                                                                                                                                                  |
+| `plugin_errors` | array | errori di caricamento del plugin, ognuno con `plugin`, `type` e `message`. Include versioni di dipendenza non soddisfatte e errori di caricamento di `--plugin-dir` come un percorso mancante o un archivio non valido. I plugin interessati vengono declassati e assenti da `plugins`. La chiave viene omessa quando non ci sono errori |
 
 Quando [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/it/env-vars) è impostato, Claude Code emette eventi `system/plugin_install` mentre i plugin del marketplace si installano prima del primo turno. Utilizza questi per visualizzare il progresso dell'installazione nella tua interfaccia utente.
 

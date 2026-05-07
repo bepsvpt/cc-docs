@@ -301,7 +301,7 @@ Plugin monitors 使用与[Monitor tool](/zh-CN/tools-reference#monitor-tool)相�
 ]
 ```
 
-要内联声明 monitors，请将 `plugin.json` 中的 `monitors` 键设置为相同的数组。要从非默认路径加载，请将 `monitors` 设置为相对路径字符串，例如 `"./config/monitors.json"`。
+要内联声明 monitors，请将 `plugin.json` 中的 `experimental.monitors` 设置为相同的数组。要从非默认路径加载，请将 `experimental.monitors` 设置为相对路径字符串，例如 `"./config/monitors.json"`。Monitors 是一个[实验性组件](#experimental-components)。
 
 **必需字段：**
 
@@ -323,7 +323,7 @@ Plugin monitors 使用与[Monitor tool](/zh-CN/tools-reference#monitor-tool)相�
 
 ### Themes
 
-Plugins 可以提供颜色主题，这些主题与内置预设和用户的本地主题一起出现在 `/theme` 中。主题是 `themes/` 中的 JSON 文件，具有 `base` 预设和稀疏的 `overrides` 颜色令牌映射。
+Plugins 可以提供颜色主题，这些主题与内置预设和用户的本地主题一起出现在 `/theme` 中。主题是 `themes/` 中的 JSON 文件，具有 `base` 预设和稀疏的 `overrides` 颜色令牌映射。Themes 是一个[实验性组件](#experimental-components)。
 
 ```json theme={null}
 {
@@ -384,9 +384,11 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
   "hooks": "./config/hooks.json",
   "mcpServers": "./mcp-config.json",
   "outputStyles": "./styles/",
-  "themes": "./themes/",
   "lspServers": "./.lsp.json",
-  "monitors": "./monitors.json",
+  "experimental": {
+    "themes": "./themes/",
+    "monitors": "./monitors.json"
+  },
   "dependencies": [
     "helper-lib",
     { "name": "secrets-vault", "version": "~2.1.0" }
@@ -419,20 +421,24 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
 
 ### 组件路径字段
 
-| 字段             | 类型                    | 描述                                                                                                     | 示例                                                   |
-| :------------- | :-------------------- | :----------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
-| `skills`       | string\|array         | 包含 `<name>/SKILL.md` 的自定义 skill 目录（替换默认 `skills/`）                                                     | `"./custom/skills/"`                                 |
-| `commands`     | string\|array         | 自定义平面 `.md` skill 文件或目录（替换默认 `commands/`）                                                              | `"./custom/cmd.md"` 或 `["./cmd1.md"]`                |
-| `agents`       | string\|array         | 自定义 agent 文件（替换默认 `agents/`）                                                                           | `"./custom/agents/reviewer.md"`                      |
-| `hooks`        | string\|array\|object | Hook 配置路径或内联配置                                                                                         | `"./my-extra-hooks.json"`                            |
-| `mcpServers`   | string\|array\|object | MCP 配置路径或内联配置                                                                                          | `"./my-extra-mcp-config.json"`                       |
-| `outputStyles` | string\|array         | 自定义输出样式文件/目录（替换默认 `output-styles/`）                                                                    | `"./styles/"`                                        |
-| `themes`       | string\|array         | 颜色主题文件/目录（替换默认 `themes/`）。请参阅[Themes](#themes)                                                         | `"./themes/"`                                        |
-| `lspServers`   | string\|array\|object | [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) 配置用于代码智能（转到定义、查找引用等） | `"./.lsp.json"`                                      |
-| `monitors`     | string\|array         | 后台[Monitor](/zh-CN/tools-reference#monitor-tool)配置，在 plugin 激活时自动启动。请参阅[Monitors](#monitors)           | `"./monitors.json"`                                  |
-| `userConfig`   | object                | 用户可配置的值，在启用时提示。请参阅[用户配置](#user-configuration)                                                          | 见下文                                                  |
-| `channels`     | array                 | 消息注入的频道声明（Telegram、Slack、Discord 风格）。请参阅[Channels](#channels)                                          | 见下文                                                  |
-| `dependencies` | array                 | 此 plugin 需要的其他 plugins，可选择带有 semver 版本约束。请参阅[约束 plugin 依赖版本](/zh-CN/plugin-dependencies)               | `[{ "name": "secrets-vault", "version": "~2.1.0" }]` |
+| 字段                      | 类型                    | 描述                                                                                                     | 示例                                                   |
+| :---------------------- | :-------------------- | :----------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
+| `skills`                | string\|array         | 包含 `<name>/SKILL.md` 的自定义 skill 目录（替换默认 `skills/`）                                                     | `"./custom/skills/"`                                 |
+| `commands`              | string\|array         | 自定义平面 `.md` skill 文件或目录（替换默认 `commands/`）                                                              | `"./custom/cmd.md"` 或 `["./cmd1.md"]`                |
+| `agents`                | string\|array         | 自定义 agent 文件（替换默认 `agents/`）                                                                           | `"./custom/agents/reviewer.md"`                      |
+| `hooks`                 | string\|array\|object | Hook 配置路径或内联配置                                                                                         | `"./my-extra-hooks.json"`                            |
+| `mcpServers`            | string\|array\|object | MCP 配置路径或内联配置                                                                                          | `"./my-extra-mcp-config.json"`                       |
+| `outputStyles`          | string\|array         | 自定义输出样式文件/目录（替换默认 `output-styles/`）                                                                    | `"./styles/"`                                        |
+| `lspServers`            | string\|array\|object | [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) 配置用于代码智能（转到定义、查找引用等） | `"./.lsp.json"`                                      |
+| `experimental.themes`   | string\|array         | 颜色主题文件/目录（替换默认 `themes/`）。请参阅[Themes](#themes)                                                         | `"./themes/"`                                        |
+| `experimental.monitors` | string\|array         | 后台[Monitor](/zh-CN/tools-reference#monitor-tool)配置，在 plugin 激活时自动启动。请参阅[Monitors](#monitors)           | `"./monitors.json"`                                  |
+| `userConfig`            | object                | 用户可配置的值，在启用时提示。请参阅[用户配置](#user-configuration)                                                          | 见下文                                                  |
+| `channels`              | array                 | 消息注入的频道声明（Telegram、Slack、Discord 风格）。请参阅[Channels](#channels)                                          | 见下文                                                  |
+| `dependencies`          | array                 | 此 plugin 需要的其他 plugins，可选择带有 semver 版本约束。请参阅[约束 plugin 依赖版本](/zh-CN/plugin-dependencies)               | `[{ "name": "secrets-vault", "version": "~2.1.0" }]` |
+
+### 实验性组件
+
+`experimental` 键下的组件，`themes` 和 `monitors`，具有在稳定期间可能在版本之间更改的清单架构。您声明它们的位置是一个单独的迁移：顶级仍然有效，`claude plugin validate` 发出警告，未来的版本将需要 `experimental.*`。
 
 ### 用户配置
 
@@ -504,7 +510,7 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
 
 ### 路径行为规则
 
-对于 `skills`、`commands`、`agents`、`outputStyles`、`themes` 和 `monitors`，自定义路径替换默认值。如果清单指定 `skills`，则不会扫描默认 `skills/` 目录；如果指定 `monitors`，则不会加载默认 `monitors/monitors.json`。[Hooks](#hooks)、[MCP servers](#mcp-servers) 和[LSP servers](#lsp-servers)对处理多个源有不同的语义。
+对于 `skills`、`commands`、`agents`、`outputStyles`、`experimental.themes` 和 `experimental.monitors`，自定义路径替换默认值。如果清单指定 `skills`，则不会扫描默认 `skills/` 目录；如果指定 `experimental.monitors`，则不会加载默认 `monitors/monitors.json`。[Hooks](#hooks)、[MCP servers](#mcp-servers) 和[LSP servers](#lsp-servers)对处理多个源有不同的语义。
 
 * 所有路径必须相对于 plugin 根目录，并以 `./` 开头
 * 来自自定义路径的组件使用相同的命名和命名空间规则
@@ -605,7 +611,7 @@ Claude Code 提供两个变量用于引用 plugin 路径。两者都在 skill �
 
 Plugins 通过以下两种方式之一指定：
 
-* 通过 `claude --plugin-dir`，用于会话期间。
+* 通过 `claude --plugin-dir` 或 `claude --plugin-url`，用于会话期间。
 * 通过市场，为将来的会话安装。
 
 出于安全和验证目的，Claude Code 将\_市场\_ plugins 复制到用户的本地 **plugin 缓存**（`~/.claude/plugins/cache`），而不是就地使用它们。在开发引用外部文件的 plugins 时，理解此行为很重要。

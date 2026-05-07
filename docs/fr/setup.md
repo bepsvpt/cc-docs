@@ -175,14 +175,18 @@ Après l'installation, connectez-vous en exécutant `claude` et en suivant les i
 
 ## Mettre à jour Claude Code
 
-Les installations natives se mettent à jour automatiquement en arrière-plan. Vous pouvez [configurer le canal de version](#configure-release-channel) pour contrôler si vous recevez les mises à jour immédiatement ou selon un calendrier stable retardé, ou [désactiver les mises à jour automatiques](#disable-auto-updates) entièrement. Les installations Homebrew, WinGet et [gestionnaire de paquets Linux](#install-with-linux-package-managers) nécessitent des mises à jour manuelles.
+Les installations natives se mettent à jour automatiquement en arrière-plan. Vous pouvez [configurer le canal de version](#configure-release-channel) pour contrôler si vous recevez les mises à jour immédiatement ou selon un calendrier stable retardé, ou [désactiver les mises à jour automatiques](#disable-auto-updates) entièrement. Les installations Homebrew, WinGet et [gestionnaire de paquets Linux](#install-with-linux-package-managers) nécessitent des mises à jour manuelles par défaut.
 
 ### Mises à jour automatiques
 
 Claude Code vérifie les mises à jour au démarrage et périodiquement pendant l'exécution. Les mises à jour se téléchargent et s'installent en arrière-plan, puis prennent effet la prochaine fois que vous démarrez Claude Code.
 
 <Note>
-  Les installations Homebrew, WinGet, apt, dnf et apk ne se mettent pas à jour automatiquement. Pour Homebrew, exécutez `brew upgrade claude-code` ou `brew upgrade claude-code@latest`, selon le cask que vous avez installé. Pour WinGet, exécutez `winget upgrade Anthropic.ClaudeCode`. Pour les gestionnaires de paquets Linux, consultez les commandes de mise à niveau dans [Installer avec les gestionnaires de paquets Linux](#install-with-linux-package-managers).
+  Les installations Homebrew, WinGet, apt, dnf et apk ne se mettent pas à jour automatiquement par défaut ; consultez ci-dessous pour opter pour Homebrew et WinGet. Pour mettre à niveau Homebrew manuellement, exécutez `brew upgrade claude-code` ou `brew upgrade claude-code@latest`, selon le cask que vous avez installé. Pour WinGet, exécutez `winget upgrade Anthropic.ClaudeCode`. Pour les gestionnaires de paquets Linux, consultez les commandes de mise à niveau dans [Installer avec les gestionnaires de paquets Linux](#install-with-linux-package-managers).
+
+  Pour que Claude Code exécute la commande de mise à niveau pour vous sur Homebrew ou WinGet, définissez [`CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE`](/fr/env-vars) à `1`. Claude Code exécute ensuite la mise à niveau en arrière-plan lorsqu'une nouvelle version est disponible et affiche une invite de redémarrage en cas de succès. La mise à niveau cible uniquement le paquet Claude Code et n'affecte pas les autres logiciels que vous avez installés.
+
+  Sur WinGet, la mise à niveau peut échouer pendant que Claude Code s'exécute car Windows verrouille l'exécutable. Dans ce cas, Claude Code affiche la commande manuelle à la place. apt, dnf et apk continuent à nécessiter une mise à niveau manuelle car ces commandes ont besoin de privilèges élevés.
 
   **Problème connu :** Claude Code peut vous notifier des mises à jour avant que la nouvelle version soit disponible dans ces gestionnaires de paquets. Si une mise à niveau échoue, attendez et réessayez plus tard.
 
@@ -489,7 +493,7 @@ En plus du manifeste signé, les binaires individuels portent des signatures de 
 
 ## Désinstaller Claude Code
 
-Pour supprimer Claude Code, suivez les instructions correspondant à votre méthode d'installation.
+Pour supprimer Claude Code, suivez les instructions correspondant à votre méthode d'installation. Si `claude` s'exécute toujours après cela, vous avez probablement une deuxième installation ou un alias shell résiduel d'un ancien installateur. Consultez [Vérifier les installations en conflit](/fr/troubleshoot-install#check-for-conflicting-installations) pour le trouver et le supprimer.
 
 ### Installation native
 

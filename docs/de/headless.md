@@ -54,7 +54,7 @@ Im Bare-Modus hat Claude Zugriff auf die Bash-, Dateilesungs- und Dateibearbeitu
 | Einstellungen              | `--settings <file-or-json>`                             |
 | MCP-Server                 | `--mcp-config <file-or-json>`                           |
 | Benutzerdefinierte Agenten | `--agents <json>`                                       |
-| Ein Plugin-Verzeichnis     | `--plugin-dir <path>`                                   |
+| Ein Plugin                 | `--plugin-dir <path>`, `--plugin-url <url>`             |
 
 Der Bare-Modus überspringt OAuth und Keychain-Lesevorgänge. Die Anthropic-Authentifizierung muss von `ANTHROPIC_API_KEY` oder einem `apiKeyHelper` in der an `--settings` übergebenen JSON stammen. Bedrock, Vertex und Foundry verwenden ihre üblichen Anmeldedaten des Anbieters.
 
@@ -65,6 +65,36 @@ Der Bare-Modus überspringt OAuth und Keychain-Lesevorgänge. Die Anthropic-Auth
 ## Beispiele
 
 Diese Beispiele zeigen häufige CLI-Muster. Für CI und andere skriptgesteuerte Aufrufe fügen Sie [`--bare`](#start-faster-with-bare-mode) hinzu, damit sie nicht abhängig von lokalen Konfigurationen sind.
+
+### Daten durch Claude leiten
+
+Der nicht-interaktive Modus liest stdin, sodass Sie Daten wie bei jedem anderen Befehlszeilentool einleiten und die Antwort umleiten können.
+
+Dieses Beispiel leitet ein Build-Protokoll in Claude ein und schreibt die Erklärung in eine Datei:
+
+```bash theme={null}
+cat build-error.txt | claude -p 'concisely explain the root cause of this build error' > output.txt
+```
+
+Mit `--output-format json` enthält die Antwort-Payload `total_cost_usd` und eine Kostenaufschlüsselung pro Modell, sodass skriptgesteuerte Aufrufer die Ausgaben pro Aufruf verfolgen können, ohne das [Nutzungs-Dashboard](/de/costs) zu konsultieren.
+
+<Note>
+  Ab Claude Code v2.1.128 ist eingeleiter stdin auf 10 MB begrenzt. Wenn Sie die Grenze überschreiten, beendet sich Claude Code mit einer klaren Fehlermeldung und einem Nicht-Null-Status. Um mit größeren Eingaben zu arbeiten, schreiben Sie den Inhalt in eine Datei und verweisen Sie auf den Dateipfad in Ihrer Eingabeaufforderung, anstatt ihn einzuleiten.
+</Note>
+
+### Claude zu einem Build-Skript hinzufügen
+
+Sie können einen nicht-interaktiven Aufruf in einem Skript einbinden, um Claude als projektspezifischen Linter oder Reviewer zu verwenden.
+
+Dieses `package.json`-Skript leitet den Diff gegen `main` in Claude ein und fordert ihn auf, Tippfehler zu melden. Das Einleiten des Diff bedeutet, dass Claude keine Bash-Berechtigung zum Lesen benötigt, und die maskierten doppelten Anführungszeichen halten das Skript portabel zu Windows:
+
+```json theme={null}
+{
+  "scripts": {
+    "lint:claude": "git diff main | claude -p \"you are a typo linter. for each typo in this diff, report filename:line on one line and the issue on the next. return nothing else.\""
+  }
+}
+```
 
 ### Strukturierte Ausgabe abrufen
 
@@ -136,10 +166,10 @@ Wenn eine API-Anfrage mit einem wiederholbaren Fehler fehlschlägt, gibt Claude 
 
 Das `system/init`-Ereignis meldet Sitzungsmetadaten einschließlich des Modells, Tools, MCP-Server und geladener Plugins. Es ist das erste Ereignis im Stream, es sei denn, [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/de/env-vars) ist gesetzt. In diesem Fall gehen `plugin_install`-Ereignisse voraus. Verwenden Sie die Plugin-Felder, um CI fehlschlagen zu lassen, wenn ein Plugin nicht geladen wurde:
 
-| Feld            | Typ   | Beschreibung                                                                                                                                                                                                                          |
-| --------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `plugins`       | Array | Plugins, die erfolgreich geladen wurden, jeweils mit `name` und `path`                                                                                                                                                                |
-| `plugin_errors` | Array | Plugin-Ladefehler wie eine nicht erfüllte Abhängigkeitsversion, jeweils mit `plugin`, `type` und `message`. Betroffene Plugins werden herabgestuft und fehlen in `plugins`. Der Schlüssel wird weggelassen, wenn es keine Fehler gibt |
+| Feld            | Typ   | Beschreibung                                                                                                                                                                                                                                                                                                              |
+| --------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plugins`       | Array | Plugins, die erfolgreich geladen wurden, jeweils mit `name` und `path`                                                                                                                                                                                                                                                    |
+| `plugin_errors` | Array | Plugin-Ladefehler, jeweils mit `plugin`, `type` und `message`. Umfasst nicht erfüllte Abhängigkeitsversionen und `--plugin-dir`-Ladefehler wie einen fehlenden Pfad oder ein ungültiges Archiv. Betroffene Plugins werden herabgestuft und fehlen in `plugins`. Der Schlüssel wird weggelassen, wenn es keine Fehler gibt |
 
 Wenn [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/de/env-vars) gesetzt ist, gibt Claude Code `system/plugin_install`-Ereignisse aus, während Marketplace-Plugins vor dem ersten Zug installiert werden. Verwenden Sie diese, um Installationsfortschritt in Ihrer eigenen Benutzeroberfläche anzuzeigen.
 

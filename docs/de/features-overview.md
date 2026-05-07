@@ -219,7 +219,7 @@ Jede Funktion hat eine andere Ladestrategie und Kontextkosten:
 | **Subagents**  | Wenn gespawnt                  | Frischer Kontext mit angegebenen Skills                        | Isoliert von Hauptsitzung                                |
 | **Hooks**      | Bei Auslösung                  | Nichts (läuft extern)                                          | Null, es sei denn, Hook gibt zusätzlichen Kontext zurück |
 
-\*Standardmäßig werden Skill-Beschreibungen beim Sitzungsstart geladen, damit Claude entscheiden kann, wann sie verwendet werden. Setzen Sie `disable-model-invocation: true` in das Frontmatter eines Skills, um es vollständig vor Claude zu verbergen, bis Sie es manuell aufrufen. Dies reduziert die Kontextkosten auf Null für Skills, die Sie nur selbst auslösen.
+\*Standardmäßig werden Skill-Beschreibungen beim Sitzungsstart geladen, damit Claude entscheiden kann, wann sie verwendet werden. Setzen Sie `disable-model-invocation: true` in das Frontmatter eines Skills, um es vollständig vor Claude zu verbergen, bis Sie es manuell aufrufen. Dies reduziert die Kontextkosten auf Null für Skills, die Sie nur selbst auslösen. Für einen Skill, den Sie nicht geschrieben haben, setzen Sie [`skillOverrides`](/de/skills#override-skill-visibility-from-settings) in den Einstellungen, um dasselbe zu tun, ohne die Datei zu bearbeiten.
 
 ### Verstehen Sie, wie Funktionen geladen werden
 
@@ -233,7 +233,7 @@ Jede Funktion wird an verschiedenen Punkten in Ihrer Sitzung geladen. Die Regist
 
     **Was lädt:** Vollständiger Inhalt aller CLAUDE.md-Dateien (verwaltet, Benutzer und Projektebenen).
 
-    **Vererbung:** Claude liest CLAUDE.md-Dateien aus Ihrem Arbeitsverzeichnis bis zur Wurzel und entdeckt verschachtelte in Unterverzeichnissen, wenn es auf diese Dateien zugreift. Weitere Informationen finden Sie unter [How CLAUDE.md files load](/de/memory#how-claudemd-files-load).
+    **Vererbung:** Claude liest CLAUDE.md-Dateien aus Ihrem Arbeitsverzeichnis bis zur Wurzel und entdeckt verschachtelte in Unterverzeichnissen, wenn es auf diese Dateien zugreift. Weitere Informationen finden Sie unter [Wie CLAUDE.md-Dateien geladen werden](/de/memory#how-claude-md-files-load).
 
     <Tip>Halten Sie CLAUDE.md unter 200 Zeilen. Verschieben Sie Referenzmaterial zu Skills, die On-Demand geladen werden.</Tip>
   </Tab>

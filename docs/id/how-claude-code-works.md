@@ -94,33 +94,25 @@ Anda dapat mengakses Claude Code melalui terminal, [desktop app](/id/desktop), [
 
 ## Bekerja dengan session
 
-Claude Code menyimpan percakapan Anda secara lokal saat Anda bekerja. Setiap pesan, penggunaan tool, dan hasil disimpan, yang memungkinkan [rewinding](#undo-changes-with-checkpoints), [resuming, dan forking](#resume-or-fork-sessions) session. Sebelum Claude membuat perubahan kode, Claude juga membuat snapshot file yang terpengaruh sehingga Anda dapat mengembalikan jika diperlukan.
+Claude Code menyimpan percakapan Anda secara lokal saat Anda bekerja. Setiap pesan, penggunaan tool, dan hasil ditulis ke file plaintext JSONL di bawah `~/.claude/projects/`, yang memungkinkan [rewinding](#undo-changes-with-checkpoints), [resuming, dan forking](#resume-or-fork-sessions) session. Sebelum Claude membuat perubahan kode, Claude juga membuat snapshot file yang terpengaruh sehingga Anda dapat mengembalikan jika diperlukan. Untuk path, retention, dan cara menghapus data ini, lihat [application data in `~/.claude`](/id/claude-directory#application-data).
 
 **Session bersifat independen.** Setiap session baru dimulai dengan context window segar, tanpa riwayat percakapan dari session sebelumnya. Claude dapat mempertahankan pembelajaran di seluruh session menggunakan [auto memory](/id/memory#auto-memory), dan Anda dapat menambahkan instruksi persisten Anda sendiri di [CLAUDE.md](/id/memory).
 
 ### Bekerja di seluruh branch
 
-Setiap percakapan Claude Code adalah session yang terikat pada direktori saat ini Anda. Ketika Anda melanjutkan, Anda hanya melihat session dari direktori itu.
+Setiap percakapan Claude Code adalah session yang terikat pada direktori saat ini Anda. Picker `/resume` menampilkan session dari worktree saat ini secara default, dengan pintasan keyboard untuk memperluas daftar ke worktree atau proyek lain. Lihat [Manage sessions](/id/sessions#use-the-session-picker) untuk daftar lengkap pintasan picker dan bagaimana name resolution bekerja.
 
 Claude melihat file branch saat ini Anda. Ketika Anda beralih branch, Claude melihat file branch baru, tetapi riwayat percakapan Anda tetap sama. Claude mengingat apa yang Anda diskusikan bahkan setelah beralih.
 
-Karena session terikat pada direktori, Anda dapat menjalankan session Claude paralel dengan menggunakan [git worktrees](/id/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees), yang membuat direktori terpisah untuk branch individual.
+Karena session terikat pada direktori, Anda dapat menjalankan session Claude paralel dengan menggunakan [git worktrees](/id/worktrees), yang membuat direktori terpisah untuk branch individual.
 
 ### Resume atau fork session
 
-Ketika Anda melanjutkan session dengan `claude --continue` atau `claude --resume`, Anda melanjutkan dari tempat Anda berhenti menggunakan session ID yang sama. Pesan baru ditambahkan ke percakapan yang ada. Riwayat percakapan lengkap Anda dipulihkan, tetapi izin session-scoped tidak. Anda perlu menyetujui ulang.
+Melanjutkan session dengan `claude --continue` atau `claude --resume` membuka kembali session di bawah session ID yang sama dan menambahkan pesan baru ke percakapan yang ada. Forking dengan `--fork-session` atau `/branch` menyalin riwayat ke session ID baru, meninggalkan yang asli tidak berubah.
 
 <img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/session-continuity.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=fa41d12bfb57579cabfeece907151d30" alt="Kontinuitas session: resume melanjutkan session yang sama, fork membuat branch baru dengan ID baru." width="560" height="280" data-path="images/session-continuity.svg" />
 
-Untuk membuat cabang dan mencoba pendekatan berbeda tanpa mempengaruhi session asli, gunakan flag `--fork-session`:
-
-```bash theme={null}
-claude --continue --fork-session
-```
-
-Ini membuat session ID baru sambil mempertahankan riwayat percakapan hingga titik itu. Session asli tetap tidak berubah. Seperti resume, session yang di-fork tidak mewarisi izin session-scoped.
-
-**Session yang sama di multiple terminal**: Jika Anda melanjutkan session yang sama di multiple terminal, kedua terminal menulis ke file session yang sama. Pesan dari keduanya saling tumpang tindih, seperti dua orang menulis di notebook yang sama. Tidak ada yang rusak, tetapi percakapan menjadi kacau. Setiap terminal hanya melihat pesan miliknya sendiri selama session, tetapi jika Anda melanjutkan session itu nanti, Anda akan melihat semuanya saling tumpang tindih. Untuk pekerjaan paralel dari titik awal yang sama, gunakan `--fork-session` untuk memberikan setiap terminal session bersihnya sendiri.
+Untuk flag resume, picker `/resume`, naming, dan apa yang terjadi ketika session yang sama terbuka di dua terminal, lihat [Manage sessions](/id/sessions).
 
 ### Context window
 
@@ -134,13 +126,15 @@ Claude Code mengelola konteks secara otomatis saat Anda mendekati batas. Claude 
 
 Untuk mengontrol apa yang dipertahankan selama compacting, tambahkan bagian "Compact Instructions" ke CLAUDE.md atau jalankan `/compact` dengan fokus (seperti `/compact focus on the API changes`).
 
+Jika file tunggal atau output tool sangat besar sehingga konteks terisi kembali segera setelah setiap ringkasan, Claude Code berhenti auto-compacting setelah beberapa upaya dan menampilkan error sebagai gantinya dari looping. Lihat [Auto-compaction stops with a thrashing error](/id/troubleshooting#auto-compaction-stops-with-a-thrashing-error) untuk langkah pemulihan.
+
 Jalankan `/context` untuk melihat apa yang menggunakan ruang. Definisi tool MCP ditunda secara default dan dimuat sesuai permintaan melalui [tool search](/id/mcp#scale-with-mcp-tool-search), jadi hanya nama tool yang mengonsumsi konteks sampai Claude menggunakan tool spesifik. Jalankan `/mcp` untuk memeriksa biaya per-server.
 
 #### Kelola konteks dengan skills dan subagents
 
 Selain compacting, Anda dapat menggunakan fitur lain untuk mengontrol apa yang dimuat ke dalam konteks.
 
-[Skills](/id/skills) dimuat sesuai permintaan. Claude melihat deskripsi skill pada awal session, tetapi konten lengkap hanya dimuat ketika skill digunakan. Untuk skill yang Anda panggil secara manual, atur `disable-model-invocation: true` untuk menjaga deskripsi keluar dari konteks sampai Anda membutuhkannya.
+[Skills](/id/skills) dimuat sesuai permintaan. Claude melihat deskripsi skill pada awal session, tetapi konten lengkap hanya dimuat ketika skill digunakan. Untuk skill yang Anda panggil secara manual, atur `disable-model-invocation: true` untuk menjaga deskripsi keluar dari konteks sampai Anda membutuhkannya. Untuk skill yang tidak Anda tulis, gunakan [`skillOverrides`](/id/skills#override-skill-visibility-from-settings) untuk melakukan hal yang sama dari settings.
 
 [Subagents](/id/sub-agents) mendapatkan konteks segar mereka sendiri, sepenuhnya terpisah dari percakapan utama Anda. Pekerjaan mereka tidak membengkak konteks Anda. Ketika selesai, mereka mengembalikan ringkasan. Isolasi ini adalah alasan mengapa subagents membantu dengan session yang panjang.
 
@@ -161,7 +155,7 @@ Checkpoint bersifat lokal untuk session Anda, terpisah dari git. Mereka hanya me
 Tekan `Shift+Tab` untuk melakukan siklus melalui mode permission:
 
 * **Default**: Claude bertanya sebelum edit file dan perintah shell
-* **Auto-accept edits**: Claude mengedit file tanpa bertanya, masih bertanya untuk perintah
+* **Auto-accept edits**: Claude mengedit file dan menjalankan perintah filesystem umum seperti `mkdir` dan `mv` tanpa bertanya, masih bertanya untuk perintah lain
 * **Plan mode**: Claude hanya menggunakan tools read-only, membuat rencana yang dapat Anda setujui sebelum eksekusi
 * **Auto mode**: Claude mengevaluasi semua tindakan dengan pemeriksaan keamanan latar belakang. Saat ini preview penelitian
 

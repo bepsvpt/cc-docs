@@ -219,7 +219,7 @@ Cada recurso tem uma estratégia de carregamento e custo de contexto diferentes:
 | **Subagents**      | Quando gerado                   | Contexto fresco com skills especificadas             | Isolado da sessão principal                       |
 | **Hooks**          | No disparo                      | Nada (executa externamente)                          | Zero, a menos que hook retorne contexto adicional |
 
-\*Por padrão, descrições de skill carregam no início da sessão para que Claude possa decidir quando usá-las. Defina `disable-model-invocation: true` no frontmatter de uma skill para ocultá-la de Claude inteiramente até que você a invoque manualmente. Isso reduz o custo de contexto para zero para skills que você só dispara você mesmo.
+\*Por padrão, descrições de skill carregam no início da sessão para que Claude possa decidir quando usá-las. Defina `disable-model-invocation: true` no frontmatter de uma skill para ocultá-la de Claude inteiramente até que você a invoque manualmente. Isso reduz o custo de contexto para zero para skills que você só dispara você mesmo. Para uma skill que você não escreveu, defina [`skillOverrides`](/pt/skills#override-skill-visibility-from-settings) em configurações para fazer o mesmo sem editar seu arquivo.
 
 ### Entender como os recursos carregam
 
@@ -233,7 +233,7 @@ Cada recurso carrega em diferentes pontos em sua sessão. As abas abaixo explica
 
     **O que carrega:** Conteúdo completo de todos os arquivos CLAUDE.md (níveis gerenciado, usuário e projeto).
 
-    **Herança:** Claude lê arquivos CLAUDE.md do seu diretório de trabalho até a raiz e descobre aninhados em subdiretórios conforme acessa esses arquivos. Consulte [Como arquivos CLAUDE.md carregam](/pt/memory#how-claudemd-files-load) para detalhes.
+    **Herança:** Claude lê arquivos CLAUDE.md do seu diretório de trabalho até a raiz e descobre aninhados em subdiretórios conforme acessa esses arquivos. Consulte [Como arquivos CLAUDE.md carregam](/pt/memory#how-claude-md-files-load) para detalhes.
 
     <Tip>Mantenha CLAUDE.md com menos de 200 linhas. Mova material de referência para skills, que carregam sob demanda.</Tip>
   </Tab>
@@ -282,7 +282,7 @@ Cada recurso carrega em diferentes pontos em sua sessão. As abas abaixo explica
   </Tab>
 
   <Tab title="Hooks">
-    **Quando:** No disparo. Hooks disparam em eventos de ciclo de vida específicos como execução de ferramenta, limites de sessão, envio de prompt, solicitações de permissão e compactação. Consulte [Hooks](/pt/hooks-guide) para a lista completa.
+    **Quando:** No disparo. Hooks disparam em eventos de ciclo de vida específicos como execução de ferramenta, limites de sessão, envio de prompt, solicitações de permissão e compactação. Consulte [Hooks](/pt/hooks) para a lista completa.
 
     **O que carrega:** Nada por padrão. Hooks são executados fora da conversa principal.
 

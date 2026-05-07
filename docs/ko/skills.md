@@ -8,7 +8,7 @@
 
 Skills는 Claude가 할 수 있는 작업을 확장합니다. `SKILL.md` 파일을 지침과 함께 생성하면 Claude가 이를 자신의 도구 모음에 추가합니다. Claude는 관련이 있을 때 skills를 사용하거나 `/skill-name`으로 직접 호출할 수 있습니다.
 
-같은 플레이북, 체크리스트 또는 다단계 절차를 계속 채팅에 붙여넣거나, CLAUDE.md의 섹션이 사실이 아닌 절차로 성장했을 때 skill을 생성합니다. CLAUDE.md 콘텐츠와 달리, skill의 본문은 사용할 때만 로드되므로 긴 참조 자료는 필요할 때까지 거의 비용이 들지 않습니다.
+같은 지침, 체크리스트 또는 다단계 절차를 계속 채팅에 붙여넣거나, CLAUDE.md의 섹션이 사실이 아닌 절차로 성장했을 때 skill을 생성합니다. CLAUDE.md 콘텐츠와 달리, skill의 본문은 사용할 때만 로드되므로 긴 참조 자료는 필요할 때까지 거의 비용이 들지 않습니다.
 
 <Note>
   `/help` 및 `/compact`와 같은 기본 제공 명령어와 `/debug` 및 `/simplify`와 같은 번들 skills는 [명령어 참조](/ko/commands)를 참조하세요.
@@ -20,7 +20,7 @@ Claude Code skills는 [Agent Skills](https://agentskills.io) 개방형 표준을
 
 ## 번들 skills
 
-Claude Code에는 모든 세션에서 사용 가능한 번들 skills 세트가 포함되어 있으며, `/simplify`, `/batch`, `/debug`, `/loop`, `/claude-api`를 포함합니다. 고정 로직을 직접 실행하는 대부분의 기본 제공 명령어와 달리, 번들 skills는 프롬프트 기반입니다: Claude에 상세한 플레이북을 제공하고 도구를 사용하여 작업을 조율하도록 합니다. 다른 skill과 동일한 방식으로 호출합니다: `/` 다음에 skill 이름을 입력합니다.
+Claude Code에는 모든 세션에서 사용 가능한 번들 skills 세트가 포함되어 있으며, `/simplify`, `/batch`, `/debug`, `/loop`, `/claude-api`를 포함합니다. 고정 로직을 직접 실행하는 대부분의 기본 제공 명령어와 달리, 번들 skills는 프롬프트 기반입니다: Claude에 상세한 지시사항을 제공하고 도구를 사용하여 작업을 조율하도록 합니다. 다른 skill과 동일한 방식으로 호출합니다: `/` 다음에 skill 이름을 입력합니다.
 
 번들 skills는 [명령어 참조](/ko/commands)에 나열되어 있으며, 목적 열에 **Skill**로 표시됩니다.
 
@@ -28,54 +28,55 @@ Claude Code에는 모든 세션에서 사용 가능한 번들 skills 세트가 �
 
 ### 첫 번째 skill 생성
 
-이 예제는 Claude에게 시각적 다이어그램과 유추를 사용하여 코드를 설명하도록 가르치는 skill을 생성합니다. 기본 frontmatter를 사용하므로 Claude는 코드가 어떻게 작동하는지 물어볼 때 자동으로 로드하거나 `/explain-code`로 직접 호출할 수 있습니다.
+이 예제는 git 저장소의 커밋되지 않은 변경 사항을 요약하고 위험한 항목을 표시하는 skill을 생성합니다. 라이브 diff를 Claude가 읽기 전에 프롬프트로 가져오므로, 응답은 Claude가 열린 파일에서 추측할 수 있는 것이 아니라 실제 작업 트리에 기반합니다. Claude는 변경 사항에 대해 물어볼 때 자동으로 skill을 로드하거나 `/summarize-changes`로 직접 호출할 수 있습니다.
 
 <Steps>
   <Step title="skill 디렉토리 생성">
     개인 skills 폴더에 skill을 위한 디렉토리를 생성합니다. 개인 skills는 모든 프로젝트에서 사용 가능합니다.
 
     ```bash theme={null}
-    mkdir -p ~/.claude/skills/explain-code
+    mkdir -p ~/.claude/skills/summarize-changes
     ```
   </Step>
 
   <Step title="SKILL.md 작성">
-    모든 skill에는 두 부분이 있는 `SKILL.md` 파일이 필요합니다: Claude에게 skill을 언제 사용할지 알려주는 YAML frontmatter (`---` 마커 사이)와 skill이 호출될 때 Claude가 따르는 지침이 있는 markdown 콘텐츠입니다. 디렉토리 이름이 `/slash-command`가 되고, `description`은 Claude가 자동으로 로드할 시기를 결정하는 데 도움이 됩니다.
+    모든 skill에는 두 부분이 있는 `SKILL.md` 파일이 필요합니다: Claude에게 skill을 언제 사용할지 알려주는 YAML frontmatter (`---` 마커 사이)와 skill이 실행될 때 Claude가 따르는 지침이 있는 markdown 콘텐츠입니다. 디렉토리 이름이 입력하는 명령어가 되고, `description`은 Claude가 자동으로 skill을 로드할 시기를 결정하는 데 도움이 됩니다.
 
-    `~/.claude/skills/explain-code/SKILL.md` 생성:
+    이를 `~/.claude/skills/summarize-changes/SKILL.md`에 저장합니다:
 
     ```yaml theme={null}
     ---
-    description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
+    description: Summarizes uncommitted changes and flags anything risky. Use when the user asks what changed, wants a commit message, or asks to review their diff.
     ---
 
-    When explaining code, always include:
+    ## Current changes
 
-    1. **Start with an analogy**: Compare the code to something from everyday life
-    2. **Draw a diagram**: Use ASCII art to show the flow, structure, or relationships
-    3. **Walk through the code**: Explain step-by-step what happens
-    4. **Highlight a gotcha**: What's a common mistake or misconception?
+    !`git diff HEAD`
 
-    Keep explanations conversational. For complex concepts, use multiple analogies.
+    ## Instructions
+
+    Summarize the changes above in two or three bullet points, then list any risks you notice such as missing error handling, hardcoded values, or tests that need updating. If the diff is empty, say there are no uncommitted changes.
     ```
+
+    `` !`git diff HEAD` `` 줄은 [동적 컨텍스트 주입](#inject-dynamic-context)을 사용합니다: Claude Code는 명령어를 실행하고 Claude가 skill 콘텐츠를 보기 전에 줄을 출력으로 바꾸므로, 지침은 현재 diff가 이미 인라인된 상태로 도착합니다.
   </Step>
 
   <Step title="skill 테스트">
-    두 가지 방법으로 테스트할 수 있습니다:
+    git 프로젝트를 열고, 파일을 약간 편집한 후, `claude`를 실행하여 Claude Code를 시작합니다. 두 가지 방법으로 skill을 테스트할 수 있습니다.
 
     **Claude가 자동으로 호출하도록 하기** - 설명과 일치하는 항목을 물어봅니다:
 
     ```text theme={null}
-    How does this code work?
+    What did I change?
     ```
 
     **또는 skill 이름으로 직접 호출하기**:
 
     ```text theme={null}
-    /explain-code src/auth/login.ts
+    /summarize-changes
     ```
 
-    어느 쪽이든 Claude는 설명에 유추와 ASCII 다이어그램을 포함해야 합니다.
+    어느 쪽이든 Claude는 편집의 짧은 요약과 위험 목록으로 응답해야 합니다.
   </Step>
 </Steps>
 
@@ -167,6 +168,8 @@ Deploy the application:
 ```
 
 `SKILL.md`는 모든 것을 포함할 수 있지만, skill을 호출하는 방식(사용자, Claude 또는 둘 다)과 실행 위치(인라인 또는 subagent)를 생각하면 포함할 내용을 안내하는 데 도움이 됩니다. 복잡한 skills의 경우, [지원 파일을 추가](#add-supporting-files)하여 주요 skill을 집중적으로 유지할 수도 있습니다.
+
+본문 자체는 간결하게 유지합니다. Skill이 로드되면, 그 콘텐츠는 [턴 전체에 걸쳐 컨텍스트에 유지](#skill-content-lifecycle)되므로, 모든 줄이 반복되는 토큰 비용입니다. 어떻게 또는 왜인지 설명하기보다는 무엇을 할지 명시하고, [CLAUDE.md 콘텐츠](/ko/best-practices#write-an-effective-claude-md)에 적용할 동일한 간결성 테스트를 적용합니다.
 
 ### Frontmatter 참조
 
@@ -305,6 +308,8 @@ skill이 첫 번째 응답 후 동작에 영향을 미치지 않는 것처럼 �
 
 `allowed-tools` 필드는 skill이 활성화되었을 때 나열된 도구에 대한 권한을 부여하므로 Claude는 승인을 요청하지 않고 사용할 수 있습니다. 사용 가능한 도구를 제한하지 않습니다: 모든 도구는 호출 가능하게 유지되며, [권한 설정](/ko/permissions)은 나열되지 않은 도구에 대한 도구를 계속 관리합니다.
 
+프로젝트의 `.claude/skills/` 디렉토리에 체크인된 skills의 경우, `allowed-tools`는 해당 폴더에 대한 작업 공간 신뢰 대화를 수락한 후 적용되며, `.claude/settings.json`의 권한 규칙과 동일합니다. 프로젝트 skills를 신뢰하기 전에 검토하세요. skill은 자신에게 광범위한 도구 액세스 권한을 부여할 수 있습니다.
+
 이 skill은 skill을 호출할 때마다 Claude가 승인을 요청하지 않고 git 명령어를 실행할 수 있게 합니다:
 
 ```yaml theme={null}
@@ -416,7 +421,7 @@ git status --short
 사용자, 프로젝트, 플러그인 또는 [추가 디렉토리](#skills-from-additional-directories) 소스의 skills 및 사용자 정의 명령어에 대해 이 동작을 비활성화하려면, [설정](/ko/settings)에서 `"disableSkillShellExecution": true`를 설정합니다. 각 명령어는 실행되는 대신 `[shell command execution disabled by policy]`로 대체됩니다. 번들 및 관리 skills는 영향을 받지 않습니다. 이 설정은 사용자가 재정의할 수 없는 [관리 설정](/ko/permissions#managed-settings)에서 가장 유용합니다.
 
 <Tip>
-  skill에서 [확장 사고](/ko/common-workflows#use-extended-thinking-thinking-mode)를 활성화하려면 skill 콘텐츠의 어디든 "ultrathink"라는 단어를 포함합니다.
+  skill에서 더 깊은 추론을 요청하려면 skill 콘텐츠의 어디든 `ultrathink`를 포함합니다. [일회성 깊은 추론을 위해 ultrathink 사용](/ko/model-config#use-ultrathink-for-one-off-deep-reasoning)을 참조하세요.
 </Tip>
 
 ### Subagent에서 Skills 실행
@@ -496,6 +501,32 @@ Skill(deploy *)
   `user-invocable` 필드는 메뉴 가시성만 제어하고 Skill 도구 액세스는 제어하지 않습니다. 프로그래밍 방식 호출을 차단하려면 `disable-model-invocation: true`를 사용합니다.
 </Note>
 
+### 설정에서 Skill 가시성 재정의
+
+`skillOverrides` 설정은 skill의 자체 frontmatter 대신 [설정](/ko/settings)에서 skill 가시성을 제어합니다. 공유 프로젝트 리포지토리에 체크인되거나 MCP 서버에서 제공하는 것처럼 SKILL.md를 편집하고 싶지 않은 skills에 사용합니다. `/skills` 메뉴가 이를 작성합니다: skill을 강조하고 `Space`를 눌러 상태를 순환한 다음 `Enter`를 눌러 `.claude/settings.local.json`에 저장합니다.
+
+각 키는 skill 이름이고 각 값은 다음 네 가지 상태 중 하나입니다:
+
+| 값                       | Claude에 나열됨 | `/` 메뉴에서 |
+| :---------------------- | :---------- | :------- |
+| `"on"`                  | 이름 및 설명     | 예        |
+| `"name-only"`           | 이름만         | 예        |
+| `"user-invocable-only"` | 숨김          | 예        |
+| `"off"`                 | 숨김          | 숨김       |
+
+`skillOverrides`에 없는 skill은 `"on"`으로 처리됩니다. 아래 예제는 한 skill을 이름으로 축소하고 다른 skill을 완전히 끕니다:
+
+```json theme={null}
+{
+  "skillOverrides": {
+    "legacy-context": "name-only",
+    "deploy": "off"
+  }
+}
+```
+
+플러그인 skills은 `skillOverrides`의 영향을 받지 않습니다. `/plugin`을 통해 이를 관리합니다.
+
 ## Skills 공유
 
 Skills는 대상에 따라 다양한 범위에서 배포할 수 있습니다:
@@ -516,13 +547,13 @@ Skill 디렉토리 생성:
 mkdir -p ~/.claude/skills/codebase-visualizer/scripts
 ```
 
-`~/.claude/skills/codebase-visualizer/SKILL.md` 생성. 설명은 Claude에게 이 Skill을 언제 활성화할지 알려주고, 지침은 Claude에게 번들 스크립트를 실행하도록 알려줍니다:
+`~/.claude/skills/codebase-visualizer/SKILL.md`에 저장합니다. 설명은 Claude에게 이 Skill을 언제 활성화할지 알려주고, 지침은 Claude에게 번들 스크립트를 실행하도록 알려줍니다. 스크립트 경로는 [`${CLAUDE_SKILL_DIR}`](#available-string-substitutions)를 사용하므로 skill이 개인, 프로젝트 또는 플러그인 수준에서 설치되었는지 여부에 관계없이 올바르게 해석됩니다:
 
 ````yaml theme={null}
 ---
 name: codebase-visualizer
 description: Generate an interactive collapsible tree visualization of your codebase. Use when exploring a new repo, understanding project structure, or identifying large files.
-allowed-tools: Bash(python *)
+allowed-tools: Bash(python3 *)
 ---
 
 # Codebase Visualizer
@@ -534,7 +565,7 @@ Generate an interactive HTML tree view that shows your project's file structure 
 Run the visualization script from your project root:
 
 ```bash
-python ~/.claude/skills/codebase-visualizer/scripts/visualize.py .
+python3 ${CLAUDE_SKILL_DIR}/scripts/visualize.py .
 ```
 
 This creates `codebase-map.html` in the current directory and opens it in your default browser.
@@ -547,13 +578,13 @@ This creates `codebase-map.html` in the current directory and opens it in your d
 - **Directory totals**: Shows aggregate size of each folder
 ````
 
-`~/.claude/skills/codebase-visualizer/scripts/visualize.py` 생성. 이 스크립트는 디렉토리 트리를 스캔하고 다음을 포함하는 자체 포함 HTML 파일을 생성합니다:
+`~/.claude/skills/codebase-visualizer/scripts/visualize.py`에 저장합니다. 이 스크립트는 디렉토리 트리를 스캔하고 다음을 포함하는 자체 포함 HTML 파일을 생성합니다:
 
 * 파일 수, 디렉토리 수, 총 크기 및 파일 유형 수를 보여주는 **요약 사이드바**
 * 파일 유형별로 코드베이스를 분석하는 **막대 차트**(크기 기준 상위 8개)
 * 디렉토리를 확장 및 축소할 수 있는 **축소 가능한 트리**로, 색상으로 코딩된 파일 유형 표시기 포함
 
-스크립트는 Python이 필요하지만 기본 제공 라이브러리만 사용하므로 설치할 패키지가 없습니다:
+스크립트는 Python 3이 필요하지만 기본 제공 라이브러리만 사용하므로 설치할 패키지가 없습니다:
 
 ```python expandable theme={null}
 #!/usr/bin/env python3
@@ -562,6 +593,7 @@ This creates `codebase-map.html` in the current directory and opens it in your d
 import json
 import sys
 import webbrowser
+from html import escape
 from pathlib import Path
 from collections import Counter
 
@@ -650,7 +682,7 @@ def generate_html(data: dict, stats: dict, output: Path) -> None:
       {lang_bars}
     </div>
     <div class="main">
-      <h1>📁 {data["name"]}</h1>
+      <h1>📁 {escape(data["name"])}</h1>
       <ul class="tree" id="root"></ul>
     </div>
   </div>
@@ -658,11 +690,12 @@ def generate_html(data: dict, stats: dict, output: Path) -> None:
     const data = {json.dumps(data)};
     const colors = {json.dumps(colors)};
     function fmt(b) {{ if (b < 1024) return b + ' B'; if (b < 1048576) return (b/1024).toFixed(1) + ' KB'; return (b/1048576).toFixed(1) + ' MB'; }}
+    function esc(s) {{ return s.replace(/[&<>"']/g, c => ({{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}}[c])); }}
     function render(node, parent) {{
       if (node.children) {{
         const det = document.createElement('details');
         det.open = parent === document.getElementById('root');
-        det.innerHTML = `<summary><span class="folder">📁 ${{node.name}}</span><span class="size">${{fmt(node.size)}}</span></summary>`;
+        det.innerHTML = `<summary><span class="folder">📁 ${{esc(node.name)}}</span><span class="size">${{fmt(node.size)}}</span></summary>`;
         const ul = document.createElement('ul'); ul.className = 'tree';
         node.children.sort((a,b) => (b.children?1:0)-(a.children?1:0) || a.name.localeCompare(b.name));
         node.children.forEach(c => render(c, ul));
@@ -670,7 +703,7 @@ def generate_html(data: dict, stats: dict, output: Path) -> None:
         const li = document.createElement('li'); li.appendChild(det); parent.appendChild(li);
       }} else {{
         const li = document.createElement('li'); li.className = 'file';
-        li.innerHTML = `<span class="dot" style="background:${{colors[node.ext]||'#6b7280'}}"></span>${{node.name}}<span class="size">${{fmt(node.size)}}</span>`;
+        li.innerHTML = `<span class="dot" style="background:${{colors[node.ext]||'#6b7280'}}"></span>${{esc(node.name)}}<span class="size">${{fmt(node.size)}}</span>`;
         parent.appendChild(li);
       }}
     }}
@@ -715,7 +748,7 @@ Claude가 원하지 않을 때 skill을 사용하는 경우:
 
 Skill 설명은 Claude가 사용 가능한 항목을 알 수 있도록 컨텍스트에 로드됩니다. 모든 skill 이름은 항상 포함되지만, 많은 skills가 있으면 설명이 단축되어 문자 예산에 맞출 수 있으며, 이는 Claude가 요청과 일치하는 데 필요한 키워드를 제거할 수 있습니다. 예산은 컨텍스트 윈도우의 1%에서 동적으로 확장되며, 8,000자의 폴백이 있습니다.
 
-제한을 높이려면 `SLASH_COMMAND_TOOL_CHAR_BUDGET` 환경 변수를 설정합니다. 또는 소스에서 설명을 자릅니다: 주요 사용 사례를 앞에 배치합니다. 각 항목의 결합된 텍스트는 예산과 관계없이 1,536자로 제한됩니다.
+제한을 높이려면 `SLASH_COMMAND_TOOL_CHAR_BUDGET` 환경 변수를 설정합니다. 다른 skills를 위해 예산을 확보하려면 [`skillOverrides`](#override-skill-visibility-from-settings)에서 낮은 우선순위 항목을 `"name-only"`로 설정하여 설명 없이 나열되도록 합니다. 또한 소스에서 `description` 및 `when_to_use` 텍스트를 자를 수 있습니다: 주요 사용 사례를 먼저 배치합니다. 각 항목의 결합된 텍스트는 예산과 관계없이 1,536자로 제한됩니다.
 
 ## 관련 리소스
 

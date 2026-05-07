@@ -175,14 +175,18 @@ Nach der Installation melden Sie sich an, indem Sie `claude` ausführen und den 
 
 ## Claude Code aktualisieren
 
-Native Installationen werden automatisch im Hintergrund aktualisiert. Sie können [den Release-Kanal konfigurieren](#configure-release-channel), um zu steuern, ob Sie Updates sofort oder nach einem verzögerten stabilen Zeitplan erhalten, oder [Auto-Updates vollständig deaktivieren](#disable-auto-updates). Homebrew-, WinGet- und [Linux-Paketmanager](#install-with-linux-package-managers)-Installationen erfordern manuelle Updates.
+Native Installationen werden automatisch im Hintergrund aktualisiert. Sie können [den Release-Kanal konfigurieren](#configure-release-channel), um zu steuern, ob Sie Updates sofort oder nach einem verzögerten stabilen Zeitplan erhalten, oder [Auto-Updates vollständig deaktivieren](#disable-auto-updates). Homebrew-, WinGet- und [Linux-Paketmanager](#install-with-linux-package-managers)-Installationen erfordern standardmäßig manuelle Updates.
 
 ### Auto-Updates
 
 Claude Code prüft beim Start und regelmäßig während der Ausführung auf Updates. Updates werden im Hintergrund heruntergeladen und installiert und treten beim nächsten Start von Claude Code in Kraft.
 
 <Note>
-  Homebrew-, WinGet-, apt-, dnf- und apk-Installationen werden nicht automatisch aktualisiert. Für Homebrew führen Sie `brew upgrade claude-code` oder `brew upgrade claude-code@latest` aus, je nachdem, welches Cask Sie installiert haben. Für WinGet führen Sie `winget upgrade Anthropic.ClaudeCode` aus. Für Linux-Paketmanager siehe die Upgrade-Befehle in [Mit Linux-Paketmanagern installieren](#install-with-linux-package-managers).
+  Homebrew-, WinGet-, apt-, dnf- und apk-Installationen werden standardmäßig nicht automatisch aktualisiert. Weitere Informationen finden Sie unten, um sich für Homebrew und WinGet anzumelden. Um Homebrew manuell zu aktualisieren, führen Sie `brew upgrade claude-code` oder `brew upgrade claude-code@latest` aus, je nachdem, welches Cask Sie installiert haben. Für WinGet führen Sie `winget upgrade Anthropic.ClaudeCode` aus. Für Linux-Paketmanager siehe die Upgrade-Befehle in [Mit Linux-Paketmanagern installieren](#install-with-linux-package-managers).
+
+  Um Claude Code den Upgrade-Befehl für Sie auf Homebrew oder WinGet ausführen zu lassen, setzen Sie [`CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE`](/de/env-vars) auf `1`. Claude Code führt dann das Upgrade im Hintergrund aus, wenn eine neue Version verfügbar ist, und zeigt bei Erfolg eine Neustartaufforderung an. Das Upgrade zielt nur auf das Claude Code-Paket ab und beeinträchtigt keine andere Software, die Sie installiert haben.
+
+  Unter WinGet kann das Upgrade fehlschlagen, während Claude Code ausgeführt wird, da Windows die ausführbare Datei sperrt. In diesem Fall zeigt Claude Code stattdessen den manuellen Befehl an. apt, dnf und apk erfordern weiterhin ein manuelles Upgrade, da diese Befehle erhöhte Berechtigungen benötigen.
 
   **Bekanntes Problem:** Claude Code kann Sie über Updates benachrichtigen, bevor die neue Version in diesen Paketmanagern verfügbar ist. Wenn ein Upgrade fehlschlägt, warten Sie und versuchen Sie es später erneut.
 
@@ -489,7 +493,7 @@ Zusätzlich zum signierten Manifest tragen einzelne Binärdateien plattformspezi
 
 ## Claude Code deinstallieren
 
-Um Claude Code zu entfernen, folgen Sie den Anweisungen für Ihre Installationsmethode.
+Um Claude Code zu entfernen, folgen Sie den Anweisungen für Ihre Installationsmethode. Wenn `claude` danach immer noch ausgeführt wird, haben Sie wahrscheinlich eine zweite Installation oder einen verbleibenden Shell-Alias von einem älteren Installer. Siehe [Nach konfliktierenden Installationen prüfen](/de/troubleshoot-install#check-for-conflicting-installations), um diese zu finden und zu entfernen.
 
 ### Native Installation
 

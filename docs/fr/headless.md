@@ -54,7 +54,7 @@ En mode bare, Claude a accès aux outils Bash, lecture de fichier et modificatio
 | Paramètres               | `--settings <file-or-json>`                             |
 | Serveurs MCP             | `--mcp-config <file-or-json>`                           |
 | Agents personnalisés     | `--agents <json>`                                       |
-| Un répertoire de plugin  | `--plugin-dir <path>`                                   |
+| Un plugin                | `--plugin-dir <path>`, `--plugin-url <url>`             |
 
 Le mode bare ignore OAuth et les lectures du trousseau. L'authentification Anthropic doit provenir de `ANTHROPIC_API_KEY` ou d'un `apiKeyHelper` dans le JSON passé à `--settings`. Bedrock, Vertex et Foundry utilisent leurs identifiants de fournisseur habituels.
 
@@ -65,6 +65,36 @@ Le mode bare ignore OAuth et les lectures du trousseau. L'authentification Anthr
 ## Exemples
 
 Ces exemples mettent en évidence les modèles CLI courants. Pour CI et autres appels scriptés, ajoutez [`--bare`](#start-faster-with-bare-mode) pour qu'ils ne reprennent pas ce qui se trouve configuré localement.
+
+### Transmettre des données via Claude
+
+Le mode non-interactif lit stdin, vous pouvez donc transmettre des données et rediriger la réponse comme n'importe quel autre outil en ligne de commande.
+
+Cet exemple transmet un journal de compilation à Claude et écrit l'explication dans un fichier :
+
+```bash theme={null}
+cat build-error.txt | claude -p 'concisely explain the root cause of this build error' > output.txt
+```
+
+Avec `--output-format json`, la charge utile de réponse inclut `total_cost_usd` et une ventilation des coûts par modèle, afin que les appelants scriptés puissent suivre les dépenses par invocation sans consulter le [tableau de bord d'utilisation](/fr/costs).
+
+<Note>
+  À partir de Claude Code v2.1.128, stdin transmis est limité à 10 Mo. Si vous dépassez la limite, Claude Code se ferme avec une erreur claire et un statut non nul. Pour travailler avec des entrées plus grandes, écrivez le contenu dans un fichier et référencez le chemin du fichier dans votre prompt au lieu de le transmettre.
+</Note>
+
+### Ajouter Claude à un script de compilation
+
+Vous pouvez envelopper un appel non-interactif dans un script pour utiliser Claude comme linter ou examinateur spécifique au projet.
+
+Ce script `package.json` transmet le diff par rapport à `main` à Claude et lui demande de signaler les fautes de frappe. Transmettre le diff signifie que Claude n'a pas besoin de permission Bash pour le lire, et les guillemets échappés gardent le script portable vers Windows :
+
+```json theme={null}
+{
+  "scripts": {
+    "lint:claude": "git diff main | claude -p \"you are a typo linter. for each typo in this diff, report filename:line on one line and the issue on the next. return nothing else.\""
+  }
+}
+```
 
 ### Obtenir une sortie structurée
 
@@ -136,10 +166,10 @@ Quand une requête API échoue avec une erreur réessayable, Claude Code émet u
 
 L'événement `system/init` rapporte les métadonnées de session, y compris le modèle, les outils, les serveurs MCP et les plugins chargés. C'est le premier événement du flux sauf si [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/fr/env-vars) est défini, auquel cas les événements `plugin_install` le précèdent. Utilisez les champs de plugin pour échouer CI quand un plugin n'a pas pu être chargé :
 
-| Champ           | Type    | Description                                                                                                                                                                                                                                  |
-| --------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `plugins`       | tableau | plugins qui se sont chargés avec succès, chacun avec `name` et `path`                                                                                                                                                                        |
-| `plugin_errors` | tableau | erreurs de chargement de plugin telles qu'une version de dépendance non satisfaite, chacune avec `plugin`, `type` et `message`. Les plugins affectés sont rétrogradés et absents de `plugins`. La clé est omise quand il n'y a pas d'erreurs |
+| Champ           | Type    | Description                                                                                                                                                                                                                                                                                                                                        |
+| --------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plugins`       | tableau | plugins qui se sont chargés avec succès, chacun avec `name` et `path`                                                                                                                                                                                                                                                                              |
+| `plugin_errors` | tableau | erreurs de chargement de plugin, chacune avec `plugin`, `type` et `message`. Inclut les versions de dépendance non satisfaites et les défaillances de chargement `--plugin-dir` telles qu'un chemin manquant ou une archive invalide. Les plugins affectés sont rétrogradés et absents de `plugins`. La clé est omise quand il n'y a pas d'erreurs |
 
 Quand [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/fr/env-vars) est défini, Claude Code émet des événements `system/plugin_install` pendant que les plugins de marketplace s'installent avant le premier tour. Utilisez-les pour afficher la progression de l'installation dans votre propre interface utilisateur.
 

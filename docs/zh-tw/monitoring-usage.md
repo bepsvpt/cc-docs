@@ -64,6 +64,8 @@ claude
   受管設定可以透過 MDM（行動裝置管理）或其他裝置管理解決方案進行分發。在受管設定檔中定義的環境變數具有高優先順序，使用者無法覆蓋。
 </Note>
 
+Claude Code 不會將 `OTEL_*` 環境變數傳遞給它產生的子程序，包括 Bash 工具、hooks、MCP 伺服器和語言伺服器。透過 Bash 工具執行的 OpenTelemetry 檢測應用程式不會繼承 Claude Code 的匯出器端點或標頭，因此如果該應用程式需要匯出自己的遙測，請直接在命令中設定這些變數。
+
 ## 配置詳情
 
 ### 常見配置變數
@@ -80,8 +82,6 @@ claude
 | `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | 日誌協議，覆蓋一般設定                                                                                                                                                                                                 | `grpc`、`http/json`、`http/protobuf`                                   |
 | `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | OTLP 日誌端點，覆蓋一般設定                                                                                                                                                                                            | `http://localhost:4318/v1/logs`                                      |
 | `OTEL_EXPORTER_OTLP_HEADERS`                        | OTLP 的身份驗證標頭                                                                                                                                                                                                | `Authorization=Bearer token`                                         |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | mTLS 身份驗證的用戶端金鑰                                                                                                                                                                                             | 用戶端金鑰檔案的路徑                                                           |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | mTLS 身份驗證的用戶端憑證                                                                                                                                                                                             | 用戶端憑證檔案的路徑                                                           |
 | `OTEL_METRIC_EXPORT_INTERVAL`                       | 匯出間隔（毫秒）（預設：60000）                                                                                                                                                                                          | `5000`、`60000`                                                       |
 | `OTEL_LOGS_EXPORT_INTERVAL`                         | 日誌匯出間隔（毫秒）（預設：5000）                                                                                                                                                                                         | `1000`、`10000`                                                       |
 | `OTEL_LOG_USER_PROMPTS`                             | 啟用使用者提示內容的日誌記錄（預設：停用）                                                                                                                                                                                       | `1` 以啟用                                                              |
@@ -90,6 +90,17 @@ claude
 | `OTEL_LOG_RAW_API_BODIES`                           | 將完整的 Anthropic Messages API 請求和回應 JSON 作為 `api_request_body` / `api_response_body` 日誌事件發出（預設：停用）。主體包括整個對話歷史記錄。啟用此選項意味著同意 `OTEL_LOG_USER_PROMPTS`、`OTEL_LOG_TOOL_DETAILS` 和 `OTEL_LOG_TOOL_CONTENT` 會揭露的所有內容 | `1` 用於在 60 KB 處截斷的內聯主體，或 `file:<dir>` 用於磁碟上未截斷的主體，事件中有 `body_ref` 指標 |
 | `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | 指標時間性偏好（預設：`delta`）。如果您的後端期望累積時間性，請設定為 `cumulative`                                                                                                                                                         | `delta`、`cumulative`                                                 |
 | `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | 重新整理動態標頭的間隔（預設：1740000ms / 29 分鐘）                                                                                                                                                                           | `900000`                                                             |
+
+### mTLS 身份驗證
+
+您為 OTLP 匯出器配置用戶端憑證的方式取決於該訊號使用的 OTLP 協議，透過 `OTEL_EXPORTER_OTLP_PROTOCOL` 或每個訊號的覆蓋設定。相同的配置適用於指標、日誌和追蹤。
+
+| 協議                          | 用戶端憑證變數                                                                                                                                          | 信任收集器的 CA                        |
+| :-------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------- |
+| `http/protobuf`、`http/json` | `CLAUDE_CODE_CLIENT_CERT`、`CLAUDE_CODE_CLIENT_KEY` 和可選的 `CLAUDE_CODE_CLIENT_KEY_PASSPHRASE`。請參閱[網路配置](/zh-TW/network-config#mtls-authentication) | `NODE_EXTRA_CA_CERTS`            |
+| `grpc`                      | `OTEL_EXPORTER_OTLP_CLIENT_KEY` 和 `OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE`，或每個訊號的變體，例如 `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY` 以針對每個訊號使用不同的憑證     | `OTEL_EXPORTER_OTLP_CERTIFICATE` |
+
+對於 `grpc`，OpenTelemetry SDK 直接讀取標準 OTLP 變數，因此設定每個訊號指標變數的現有配置會繼續運作。
 
 ### 指標基數控制
 
@@ -107,7 +118,7 @@ claude
 
 分散式追蹤匯出跨度，將每個使用者提示連結到它觸發的 API 請求和工具執行，因此您可以在追蹤後端中將完整請求檢視為單個追蹤。
 
-追蹤預設為關閉。若要啟用它，請同時設定 `CLAUDE_CODE_ENABLE_TELEMETRY=1` 和 `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`，然後設定 `OTEL_TRACES_EXPORTER` 以選擇跨度的傳送位置。追蹤重複使用[常見 OTLP 配置](#common-configuration-variables)以取得端點、協議和標頭。
+追蹤預設為關閉。若要啟用它，請同時設定 `CLAUDE_CODE_ENABLE_TELEMETRY=1` 和 `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`，然後設定 `OTEL_TRACES_EXPORTER` 以選擇跨度的傳送位置。追蹤重複使用[常見 OTLP 配置](#common-configuration-variables)以取得端點、協議、標頭和 [mTLS](#mtls-authentication)。
 
 | 環境變數                                  | 描述                                              | 範例值                                |
 | ------------------------------------- | ----------------------------------------------- | ---------------------------------- |
@@ -233,7 +244,7 @@ claude_code.interaction
 
 ### 動態標頭
 
-對於需要動態身份驗證的企業環境，您可以配置指令碼來動態產生標頭：
+對於需要動態身份驗證的企業環境，您可以配置指令碼來動態產生標頭。動態標頭僅適用於 `http/protobuf` 和 `http/json` 協議。`grpc` 匯出器僅使用靜態 `OTEL_EXPORTER_OTLP_HEADERS` 值。
 
 #### 設定配置
 
@@ -898,6 +909,67 @@ Claude Code 在內部重試失敗的 API 請求，並僅在放棄後才發出單
 * 按工具類型的錯誤模式
 
 **效能監控**：追蹤 API 請求持續時間和工具執行時間以識別效能瓶頸。
+
+## 稽核安全事件
+
+OpenTelemetry 事件是 Claude Code 活動的稽核資料來源。每個事件都帶有身份屬性，將工具呼叫、MCP 活動和權限決定與觸發它們的使用者相關聯，OTLP 日誌匯出器可以將這些事件傳遞到任何具有 OTLP 接收器的安全資訊和事件管理 (SIEM) 平台或轉發到您的 SIEM 的 OpenTelemetry Collector。
+
+### 將屬性操作歸因於使用者
+
+每個事件上的[標準屬性](#standard-attributes)包括已驗證使用者的身份：使用 Claude 帳戶登入時的 `user.email`、`user.account_uuid`、`user.account_id` 和 `organization.id`，加上安裝範圍的 `user.id` 和每個工作階段的 `session.id`。
+
+MCP 工具呼叫、Bash 命令和檔案編輯因此歸因於啟動工作階段的開發人員。Claude Code 不在單獨的服務帳戶下運作；每個事件上記錄的身份是開發人員自己的 Claude 帳戶。
+
+當 Claude Code 使用直接 API 金鑰進行身份驗證，或針對 Bedrock、Vertex AI 或 Microsoft Foundry 進行身份驗證時，工作階段中沒有 Claude 帳戶，僅填充 `user.id` 和 `session.id`。在這些部署中，使用 `OTEL_RESOURCE_ATTRIBUTES` 自行附加使用者身份，透過[受管設定](#administrator-configuration)檔案或啟動包裝器按使用者設定：
+
+```bash theme={null}
+export OTEL_RESOURCE_ATTRIBUTES="enduser.id=jdoe@example.com,enduser.directory_id=S-1-5-21-..."
+```
+
+### 稽核 MCP 活動
+
+若要使用完整呼叫詳情捕捉 MCP 伺服器活動，請啟用日誌匯出器並設定 `OTEL_LOG_TOOL_DETAILS=1`。每個 MCP 操作然後產生結構化事件，其中包含伺服器名稱、工具名稱和呼叫引數以及標準身份屬性：
+
+| 事件                      | 它為 MCP 記錄的內容                                                                                                                            |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `mcp_server_connection` | 伺服器連線、斷開連線和連線失敗，包含 `server_name`、`transport_type`、`server_scope` 和錯誤詳情                                                                  |
+| `tool_result`           | 每個 MCP 工具呼叫，包含 `tool_name` 和 `mcp_server_scope`、包含 `mcp_server_name` 和 `mcp_tool_name` 的 `tool_parameters` 承載，以及包含呼叫引數的 `tool_input` 承載 |
+| `tool_decision`         | 呼叫是否被允許或拒絕，以及決定是來自配置、hook 還是使用者                                                                                                         |
+
+沒有 `OTEL_LOG_TOOL_DETAILS`，`tool_result` 事件仍然帶有 `tool_name` 和 `mcp_server_scope` 但省略 `mcp_server_name`/`mcp_tool_name` 細分和引數，`mcp_server_connection` 事件省略 `server_name` 和錯誤訊息。
+
+### 將安全問題對應到事件
+
+建立偵測規則時，查詢您想要監控的訊號並查詢您的後端以取得相應的事件和屬性：
+
+| 訊號               | 事件                                           | 關鍵屬性                                                       |
+| ---------------- | -------------------------------------------- | ---------------------------------------------------------- |
+| 工具呼叫被允許或拒絕，以及由什麼 | `tool_decision`                              | `decision`、`source`、`tool_name`                            |
+| 權限模式升級           | `permission_mode_changed`                    | `from_mode`、`to_mode`、`trigger`                            |
+| 原則 hook 阻止了操作    | `hook_execution_complete`                    | `hook_event`、`num_blocking`                                |
+| 登入、登出和身份驗證失敗     | `auth`                                       | `action`、`success`、`error_category`                        |
+| MCP 伺服器連線或失敗     | `mcp_server_connection`                      | `status`、`server_name`、`error_code`                        |
+| Plugin 已安裝及其來源   | `plugin_installed`                           | `plugin.name`、`marketplace.name`、`marketplace.is_official` |
+| 執行的命令和觸及的檔案      | `tool_result` with `OTEL_LOG_TOOL_DETAILS=1` | `tool_parameters`、`tool_input`                             |
+
+Claude Code 僅發出原始事件流。異常偵測、基線設定、跨工作階段關聯和警報是您的 SIEM 或可觀測性後端的責任。
+
+### 將事件傳送到 SIEM
+
+將 `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT` 指向您的 SIEM 的 OTLP 接收器，或指向轉發到您的 SIEM 的原生擷取 API 的 OpenTelemetry Collector。以下受管設定範例僅匯出事件，並啟用完整工具詳情以進行 MCP 和 Bash 稽核：
+
+```json theme={null}
+{
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "OTEL_LOGS_EXPORTER": "otlp",
+    "OTEL_LOG_TOOL_DETAILS": "1",
+    "OTEL_EXPORTER_OTLP_LOGS_PROTOCOL": "http/protobuf",
+    "OTEL_EXPORTER_OTLP_LOGS_ENDPOINT": "https://siem.example.com:4318/v1/logs",
+    "OTEL_EXPORTER_OTLP_HEADERS": "Authorization=Bearer your-siem-token"
+  }
+}
+```
 
 ## 後端考量
 

@@ -64,6 +64,8 @@ Contoh konfigurasi pengaturan terkelola:
   Pengaturan terkelola dapat didistribusikan melalui MDM (Mobile Device Management) atau solusi manajemen perangkat lainnya. Variabel lingkungan yang ditentukan dalam file pengaturan terkelola memiliki prioritas tinggi dan tidak dapat ditimpa oleh pengguna.
 </Note>
 
+Claude Code tidak meneruskan variabel lingkungan `OTEL_*` ke subproses yang dihasilkannya, termasuk alat Bash, hooks, server MCP, dan language servers. Aplikasi yang diinstrumentasi OpenTelemetry yang Anda jalankan melalui alat Bash tidak mewarisi titik akhir pengekspor atau header Claude Code, jadi atur variabel tersebut langsung dalam perintah jika aplikasi itu perlu mengekspor telemetrinya sendiri.
+
 ## Detail konfigurasi
 
 ### Variabel konfigurasi umum
@@ -80,8 +82,6 @@ Contoh konfigurasi pengaturan terkelola:
 | `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | Protokol untuk log, menimpa pengaturan umum                                                                                                                                                                                                                                                                                                                         | `grpc`, `http/json`, `http/protobuf`                                                                                                   |
 | `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | Titik akhir log OTLP, menimpa pengaturan umum                                                                                                                                                                                                                                                                                                                       | `http://localhost:4318/v1/logs`                                                                                                        |
 | `OTEL_EXPORTER_OTLP_HEADERS`                        | Header autentikasi untuk OTLP                                                                                                                                                                                                                                                                                                                                       | `Authorization=Bearer token`                                                                                                           |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | Kunci klien untuk autentikasi mTLS                                                                                                                                                                                                                                                                                                                                  | Jalur ke file kunci klien                                                                                                              |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | Sertifikat klien untuk autentikasi mTLS                                                                                                                                                                                                                                                                                                                             | Jalur ke file sertifikat klien                                                                                                         |
 | `OTEL_METRIC_EXPORT_INTERVAL`                       | Interval ekspor dalam milidetik (default: 60000)                                                                                                                                                                                                                                                                                                                    | `5000`, `60000`                                                                                                                        |
 | `OTEL_LOGS_EXPORT_INTERVAL`                         | Interval ekspor log dalam milidetik (default: 5000)                                                                                                                                                                                                                                                                                                                 | `1000`, `10000`                                                                                                                        |
 | `OTEL_LOG_USER_PROMPTS`                             | Aktifkan pencatatan konten prompt pengguna (default: dinonaktifkan)                                                                                                                                                                                                                                                                                                 | `1` untuk mengaktifkan                                                                                                                 |
@@ -90,6 +90,17 @@ Contoh konfigurasi pengaturan terkelola:
 | `OTEL_LOG_RAW_API_BODIES`                           | Emit badan permintaan dan respons JSON API Anthropic Messages lengkap sebagai acara log `api_request_body` / `api_response_body` (default: dinonaktifkan). Badan mencakup seluruh riwayat percakapan. Mengaktifkan ini menyiratkan persetujuan untuk semua yang akan diungkapkan oleh `OTEL_LOG_USER_PROMPTS`, `OTEL_LOG_TOOL_DETAILS`, dan `OTEL_LOG_TOOL_CONTENT` | `1` untuk badan inline dipotong pada 60 KB, atau `file:<dir>` untuk badan tidak dipotong di disk dengan pointer `body_ref` dalam acara |
 | `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | Preferensi temporalitas metrik (default: `delta`). Atur ke `cumulative` jika backend Anda mengharapkan temporalitas kumulatif                                                                                                                                                                                                                                       | `delta`, `cumulative`                                                                                                                  |
 | `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | Interval untuk menyegarkan header dinamis (default: 1740000ms / 29 menit)                                                                                                                                                                                                                                                                                           | `900000`                                                                                                                               |
+
+### Autentikasi mTLS
+
+Cara Anda mengonfigurasi sertifikat klien untuk pengekspor OTLP tergantung pada protokol OTLP yang digunakan untuk sinyal tersebut, diatur melalui `OTEL_EXPORTER_OTLP_PROTOCOL` atau override per-sinyal. Konfigurasi yang sama berlaku untuk metrik, log, dan traces.
+
+| Protokol                     | Variabel sertifikat klien                                                                                                                                                                           | Percayai CA pengumpul dengan     |
+| :--------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------- |
+| `http/protobuf`, `http/json` | `CLAUDE_CODE_CLIENT_CERT`, `CLAUDE_CODE_CLIENT_KEY`, dan secara opsional `CLAUDE_CODE_CLIENT_KEY_PASSPHRASE`. Lihat [Konfigurasi jaringan](/id/network-config#mtls-authentication)                  | `NODE_EXTRA_CA_CERTS`            |
+| `grpc`                       | `OTEL_EXPORTER_OTLP_CLIENT_KEY` dan `OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE`, atau varian per-sinyal seperti `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY` untuk menggunakan sertifikat berbeda per sinyal | `OTEL_EXPORTER_OTLP_CERTIFICATE` |
+
+Untuk `grpc`, SDK OpenTelemetry membaca variabel OTLP standar secara langsung, jadi konfigurasi yang ada yang menetapkan variabel metrik per-sinyal terus berfungsi.
 
 ### Kontrol kardinalitas metrik
 
@@ -107,7 +118,7 @@ Variabel-variabel ini membantu mengontrol kardinalitas metrik, yang mempengaruhi
 
 Distributed tracing mengekspor spans yang menghubungkan setiap prompt pengguna ke permintaan API dan eksekusi alat yang dipicunya, sehingga Anda dapat melihat permintaan lengkap sebagai satu trace di backend tracing Anda.
 
-Tracing dimatikan secara default. Untuk mengaktifkannya, atur `CLAUDE_CODE_ENABLE_TELEMETRY=1` dan `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`, kemudian atur `OTEL_TRACES_EXPORTER` untuk memilih tempat spans dikirim. Traces menggunakan kembali [konfigurasi OTLP umum](#common-configuration-variables) untuk titik akhir, protokol, dan header.
+Tracing dimatikan secara default. Untuk mengaktifkannya, atur `CLAUDE_CODE_ENABLE_TELEMETRY=1` dan `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`, kemudian atur `OTEL_TRACES_EXPORTER` untuk memilih tempat spans dikirim. Traces menggunakan kembali [konfigurasi OTLP umum](#common-configuration-variables) untuk titik akhir, protokol, header, dan [mTLS](#mtls-authentication).
 
 | Variabel Lingkungan                   | Deskripsi                                                                          | Nilai Contoh                         |
 | ------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------ |
@@ -233,7 +244,7 @@ Span ini dipancarkan hanya saat detailed beta tracing aktif, yang memerlukan `EN
 
 ### Header dinamis
 
-Untuk lingkungan perusahaan yang memerlukan autentikasi dinamis, Anda dapat mengonfigurasi skrip untuk menghasilkan header secara dinamis:
+Untuk lingkungan perusahaan yang memerlukan autentikasi dinamis, Anda dapat mengonfigurasi skrip untuk menghasilkan header secara dinamis. Header dinamis hanya berlaku untuk protokol `http/protobuf` dan `http/json`. Pengekspor `grpc` hanya menggunakan nilai statis `OTEL_EXPORTER_OTLP_HEADERS`.
 
 #### Konfigurasi pengaturan
 
@@ -410,7 +421,7 @@ Ditingkatkan saat kode ditambahkan atau dihapus.
 
 #### Penghitung permintaan tarik
 
-Ditingkatkan saat membuat permintaan tarik melalui Claude Code.
+Ditingkatkan saat Claude Code membuat permintaan tarik atau merge request melalui perintah shell atau alat MCP.
 
 **Atribut**:
 

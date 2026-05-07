@@ -64,6 +64,8 @@ Ejemplo de configuración de ajustes administrados:
   Los ajustes administrados pueden distribuirse a través de MDM (Mobile Device Management) u otras soluciones de gestión de dispositivos. Las variables de entorno definidas en el archivo de configuración administrada tienen alta precedencia y no pueden ser anuladas por los usuarios.
 </Note>
 
+Claude Code no pasa variables de entorno `OTEL_*` a los subprocesos que genera, incluyendo la herramienta Bash, hooks, servidores MCP, y servidores de lenguaje. Una aplicación instrumentada con OpenTelemetry que ejecutes a través de la herramienta Bash no hereda el punto final del exportador de Claude Code ni los encabezados, así que establece esas variables directamente en el comando si esa aplicación necesita exportar su propia telemetría.
+
 ## Detalles de configuración
 
 ### Variables de configuración comunes
@@ -80,8 +82,6 @@ Ejemplo de configuración de ajustes administrados:
 | `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | Protocolo para registros, anula la configuración general                                                                                                                                                                                                                                                                                                                                             | `grpc`, `http/json`, `http/protobuf`                                                                                                  |
 | `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | Punto final de registros OTLP, anula la configuración general                                                                                                                                                                                                                                                                                                                                        | `http://localhost:4318/v1/logs`                                                                                                       |
 | `OTEL_EXPORTER_OTLP_HEADERS`                        | Encabezados de autenticación para OTLP                                                                                                                                                                                                                                                                                                                                                               | `Authorization=Bearer token`                                                                                                          |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | Clave de cliente para autenticación mTLS                                                                                                                                                                                                                                                                                                                                                             | Ruta al archivo de clave de cliente                                                                                                   |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | Certificado de cliente para autenticación mTLS                                                                                                                                                                                                                                                                                                                                                       | Ruta al archivo de certificado de cliente                                                                                             |
 | `OTEL_METRIC_EXPORT_INTERVAL`                       | Intervalo de exportación en milisegundos (predeterminado: 60000)                                                                                                                                                                                                                                                                                                                                     | `5000`, `60000`                                                                                                                       |
 | `OTEL_LOGS_EXPORT_INTERVAL`                         | Intervalo de exportación de registros en milisegundos (predeterminado: 5000)                                                                                                                                                                                                                                                                                                                         | `1000`, `10000`                                                                                                                       |
 | `OTEL_LOG_USER_PROMPTS`                             | Habilitar registro del contenido del mensaje del usuario (predeterminado: deshabilitado)                                                                                                                                                                                                                                                                                                             | `1` para habilitar                                                                                                                    |
@@ -90,6 +90,17 @@ Ejemplo de configuración de ajustes administrados:
 | `OTEL_LOG_RAW_API_BODIES`                           | Emitir el cuerpo completo de solicitud y respuesta JSON de la API de Mensajes de Anthropic como eventos de registro `api_request_body` / `api_response_body` (predeterminado: deshabilitado). Los cuerpos incluyen el historial de conversación completo. Habilitar esto implica consentimiento a todo lo que `OTEL_LOG_USER_PROMPTS`, `OTEL_LOG_TOOL_DETAILS`, y `OTEL_LOG_TOOL_CONTENT` revelarían | `1` para cuerpos en línea truncados en 60 KB, o `file:<dir>` para cuerpos sin truncar en disco con un puntero `body_ref` en el evento |
 | `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | Preferencia de temporalidad de métricas (predeterminado: `delta`). Establece en `cumulative` si tu backend espera temporalidad acumulativa                                                                                                                                                                                                                                                           | `delta`, `cumulative`                                                                                                                 |
 | `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | Intervalo para actualizar encabezados dinámicos (predeterminado: 1740000ms / 29 minutos)                                                                                                                                                                                                                                                                                                             | `900000`                                                                                                                              |
+
+### Autenticación mTLS
+
+Cómo configures certificados de cliente para el exportador OTLP depende del protocolo OTLP en uso para esa señal, establecido a través de `OTEL_EXPORTER_OTLP_PROTOCOL` o la anulación por señal. La misma configuración se aplica a métricas, registros y trazas.
+
+| Protocolo                    | Variables de certificado de cliente                                                                                                                                                            | Confiar en la CA del recopilador con |
+| :--------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------- |
+| `http/protobuf`, `http/json` | `CLAUDE_CODE_CLIENT_CERT`, `CLAUDE_CODE_CLIENT_KEY`, y opcionalmente `CLAUDE_CODE_CLIENT_KEY_PASSPHRASE`. Consulta [Configuración de red](/es/network-config#mtls-authentication)              | `NODE_EXTRA_CA_CERTS`                |
+| `grpc`                       | `OTEL_EXPORTER_OTLP_CLIENT_KEY` y `OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE`, o las variantes por señal como `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY` para usar un certificado diferente por señal | `OTEL_EXPORTER_OTLP_CERTIFICATE`     |
+
+Para `grpc`, el SDK de OpenTelemetry lee las variables OTLP estándar directamente, por lo que las configuraciones existentes que establecen las variables de métricas por señal continúan funcionando.
 
 ### Control de cardinalidad de métricas
 
@@ -107,7 +118,7 @@ Estas variables ayudan a controlar la cardinalidad de las métricas, lo que afec
 
 Las trazas distribuidas exportan spans que vinculan cada mensaje del usuario a las solicitudes de API y ejecuciones de herramientas que desencadena, para que puedas ver una solicitud completa como una única traza en tu backend de trazas.
 
-Las trazas están deshabilitadas por defecto. Para habilitarlas, establece tanto `CLAUDE_CODE_ENABLE_TELEMETRY=1` como `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`, luego establece `OTEL_TRACES_EXPORTER` para elegir dónde se envían los spans. Las trazas reutilizan la [configuración OTLP común](#common-configuration-variables) para punto final, protocolo y encabezados.
+Las trazas están deshabilitadas por defecto. Para habilitarlas, establece tanto `CLAUDE_CODE_ENABLE_TELEMETRY=1` como `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`, luego establece `OTEL_TRACES_EXPORTER` para elegir dónde se envían los spans. Las trazas reutilizan la [configuración OTLP común](#common-configuration-variables) para punto final, protocolo, encabezados, y [mTLS](#mtls-authentication).
 
 | Variable de Entorno                   | Descripción                                                                              | Valores de Ejemplo                   |
 | ------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------ |
@@ -233,7 +244,7 @@ Este span se emite solo cuando el trazado beta detallado está activo, lo que re
 
 ### Encabezados dinámicos
 
-Para entornos empresariales que requieren autenticación dinámica, puedes configurar un script para generar encabezados dinámicamente:
+Para entornos empresariales que requieren autenticación dinámica, puedes configurar un script para generar encabezados dinámicamente. Los encabezados dinámicos se aplican solo a los protocolos `http/protobuf` e `http/json`. El exportador `grpc` usa solo el valor estático `OTEL_EXPORTER_OTLP_HEADERS`.
 
 #### Configuración de ajustes
 
@@ -410,7 +421,7 @@ Se incrementa cuando se agrega o se elimina código.
 
 #### Contador de solicitud de extracción
 
-Se incrementa al crear solicitudes de extracción a través de Claude Code.
+Se incrementa cuando Claude Code crea una solicitud de extracción o solicitud de fusión a través de un comando de shell o una herramienta MCP.
 
 **Atributos**:
 
@@ -556,7 +567,7 @@ Se registra para cada solicitud de API a Claude.
 * `cache_creation_tokens`: Número de tokens utilizados para la creación del caché
 * `request_id`: ID de solicitud de API de Anthropic del encabezado `request-id` de la respuesta, como `"req_011..."`. Presente solo cuando la API devuelve uno.
 * `speed`: `"fast"` o `"normal"`, indicando si el modo rápido estaba activo
-* `query_source`: Subsistema que emitió la solicitud, como `"repl_main_thread"`, `"compact"`, o un nombre de subagenteagente
+* `query_source`: Subsistema que emitió la solicitud, como `"repl_main_thread"`, `"compact"`, o un nombre de subagente
 * `effort`: [Nivel de esfuerzo](/es/model-config#adjust-effort-level) aplicado a la solicitud: `"low"`, `"medium"`, `"high"`, `"xhigh"`, o `"max"`. Ausente cuando el modelo no admite esfuerzo.
 
 #### Evento de error de API
@@ -578,7 +589,7 @@ Se registra cuando una solicitud de API a Claude falla.
 * `attempt`: Número total de intentos realizados, incluyendo la solicitud inicial (`1` significa que no ocurrieron reintentos)
 * `request_id`: ID de solicitud de API de Anthropic del encabezado `request-id` de la respuesta, como `"req_011..."`. Presente solo cuando la API devuelve uno.
 * `speed`: `"fast"` o `"normal"`, indicando si el modo rápido estaba activo
-* `query_source`: Subsistema que emitió la solicitud, como `"repl_main_thread"`, `"compact"`, o un nombre de subagenteagente
+* `query_source`: Subsistema que emitió la solicitud, como `"repl_main_thread"`, `"compact"`, o un nombre de subagente
 * `effort`: [Nivel de esfuerzo](/es/model-config#adjust-effort-level) aplicado a la solicitud. Ausente cuando el modelo no admite esfuerzo.
 
 #### Evento de cuerpo de solicitud de API
@@ -865,7 +876,7 @@ La métrica `claude_code.cost.usage` ayuda con:
 * Identificar sesiones de alto uso para optimización
 
 <Note>
-  Las métricas de costo son aproximaciones. Para datos de facturación oficiales, consulte su proveedor de API (Claude Console, Amazon Bedrock, o Google Cloud Vertex).
+  Las métricas de costo son aproximaciones. Para datos de facturación oficiales, consulta tu proveedor de API (Claude Console, Amazon Bedrock, o Google Cloud Vertex).
 </Note>
 
 ### Alertas y segmentación
@@ -890,14 +901,14 @@ Para distinguir una sesión que se recuperó de una que se estancó, agrupe even
 
 Los datos de eventos proporcionan información detallada sobre las interacciones de Claude Code:
 
-**Patrones de Uso de Herramientas**: analice eventos de resultado de herramientas para identificar:
+**Patrones de Uso de Herramientas**: analiza eventos de resultado de herramientas para identificar:
 
 * Herramientas más utilizadas frecuentemente
 * Tasas de éxito de herramientas
 * Tiempos de ejecución promedio de herramientas
 * Patrones de error por tipo de herramienta
 
-**Monitoreo de Rendimiento**: rastreé duraciones de solicitudes de API y tiempos de ejecución de herramientas para identificar cuellos de botella de rendimiento.
+**Monitoreo de Rendimiento**: rastrea duraciones de solicitudes de API y tiempos de ejecución de herramientas para identificar cuellos de botella de rendimiento.
 
 ## Consideraciones de backend
 

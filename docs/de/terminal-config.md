@@ -23,11 +23,11 @@ Durch Drücken von Enter wird Ihre Nachricht gesendet. Um einen Zeilenumbruch oh
 
 In den meisten Terminals können Sie auch Shift+Enter drücken, aber die Unterstützung variiert je nach Terminal-Emulator:
 
-| Terminal                                                                        | Shift+Enter für Zeilenumbruch                             |
-| :------------------------------------------------------------------------------ | :-------------------------------------------------------- |
-| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal                           | Funktioniert ohne Setup                                   |
-| VS Code, Cursor, Windsurf, Alacritty, Zed                                       | Führen Sie `/terminal-setup` einmal aus                   |
-| Windows Terminal, gnome-terminal, JetBrains IDEs wie PyCharm und Android Studio | Nicht verfügbar; verwenden Sie Ctrl+J oder `\` dann Enter |
+| Terminal                                                                | Shift+Enter für Zeilenumbruch                             |
+| :---------------------------------------------------------------------- | :-------------------------------------------------------- |
+| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal, Windows Terminal | Funktioniert ohne Setup                                   |
+| VS Code, Cursor, Windsurf, Alacritty, Zed                               | Führen Sie `/terminal-setup` einmal aus                   |
+| gnome-terminal, JetBrains IDEs wie PyCharm und Android Studio           | Nicht verfügbar; verwenden Sie Ctrl+J oder `\` dann Enter |
 
 Für VS Code, Cursor, Windsurf, Alacritty und Zed schreibt `/terminal-setup` Shift+Enter und andere Tastenbelegungen in die Konfigurationsdatei des Terminals. In VS Code, Cursor und Windsurf wird auch `terminal.integrated.mouseWheelScrollSensitivity` in den Editor-Einstellungen für sanfteres Scrollen im [Vollbildmodus](/de/fullscreen) gesetzt. Vorhandene Bindungen und Einstellungen bleiben erhalten; wenn Sie eine Meldung wie `VSCode terminal Shift+Enter key binding already configured` sehen, wurde keine Änderung vorgenommen. Führen Sie `/terminal-setup` direkt im Host-Terminal aus, nicht in tmux oder screen, da es in die Konfiguration des Host-Terminals schreiben muss.
 

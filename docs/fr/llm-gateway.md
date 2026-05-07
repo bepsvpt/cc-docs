@@ -53,7 +53,7 @@ Claude Code ajoute également un court bloc d'attribution au début de l'invite 
 
 Par défaut, Claude Code utilise les noms de modèles standard pour le format API sélectionné.
 
-Lorsque `ANTHROPIC_BASE_URL` pointe vers une passerelle qui expose le format Messages d'Anthropic, Claude Code interroge le point de terminaison `/v1/models` de la passerelle au démarrage et ajoute les modèles retournés au sélecteur `/model`. Chaque entrée découverte est étiquetée « From gateway » et utilise le champ `display_name` de la réponse lorsqu'un est fourni. Cela nécessite Claude Code v2.1.126 ou version ultérieure.
+Lorsque `ANTHROPIC_BASE_URL` pointe vers une passerelle qui expose le format Messages d'Anthropic, Claude Code interroge le point de terminaison `/v1/models` de la passerelle au démarrage et ajoute les modèles retournés au sélecteur `/model`. Définissez `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` pour activer cette fonctionnalité. La découverte est désactivée par défaut afin que les passerelles soutenues par une clé API partagée ne révèlent pas tous les modèles auxquels la clé peut accéder à chaque utilisateur. Chaque entrée découverte est étiquetée « From gateway » et utilise le champ `display_name` de la réponse lorsqu'un est fourni. Cela nécessite Claude Code v2.1.129 ou version ultérieure.
 
 La découverte s'applique uniquement au format Messages d'Anthropic. Elle ne s'exécute pas pour les points de terminaison de passage Bedrock ou Vertex, et elle ne s'exécute pas lorsque `ANTHROPIC_BASE_URL` n'est pas défini ou pointe vers `api.anthropic.com`.
 

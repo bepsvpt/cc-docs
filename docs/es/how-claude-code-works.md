@@ -94,33 +94,25 @@ Puede acceder a Claude Code a través de la terminal, la [aplicación de escrito
 
 ## Trabajar con sesiones
 
-Claude Code guarda su conversación localmente mientras trabaja. Cada mensaje, uso de herramienta y resultado se almacena, lo que permite [rebobinar](#undo-changes-with-checkpoints), [reanudar y bifurcar](#resume-or-fork-sessions) sesiones. Antes de que Claude realice cambios de código, también toma una instantánea de los archivos afectados para que pueda revertir si es necesario.
+Claude Code guarda su conversación localmente mientras trabaja. Cada mensaje, uso de herramienta y resultado se escribe en un archivo JSONL de texto plano bajo `~/.claude/projects/`, lo que permite [rebobinar](#undo-changes-with-checkpoints), [reanudar y bifurcar](#resume-or-fork-sessions) sesiones. Antes de que Claude realice cambios de código, también toma una instantánea de los archivos afectados para que pueda revertir si es necesario. Para rutas, retención y cómo borrar estos datos, consulte [datos de aplicación en `~/.claude`](/es/claude-directory#application-data).
 
 **Las sesiones son independientes.** Cada nueva sesión comienza con una ventana de contexto nueva, sin el historial de conversación de sesiones anteriores. Claude puede persistir aprendizajes entre sesiones usando [auto memory](/es/memory#auto-memory), y puede agregar sus propias instrucciones persistentes en [CLAUDE.md](/es/memory).
 
 ### Trabajar entre ramas
 
-Cada conversación de Claude Code es una sesión vinculada a su directorio actual. Cuando reanuda, solo ve sesiones de ese directorio.
+Cada conversación de Claude Code es una sesión vinculada a su directorio actual. El selector `/resume` muestra sesiones del worktree actual de forma predeterminada, con atajos de teclado para ampliar la lista a otros worktrees o proyectos. Consulte [Gestionar sesiones](/es/sessions#use-the-session-picker) para la lista completa de atajos de teclado del selector y cómo funciona la resolución de nombres.
 
 Claude ve los archivos de su rama actual. Cuando cambia de rama, Claude ve los archivos de la nueva rama, pero el historial de conversación permanece igual. Claude recuerda lo que discutió incluso después de cambiar de rama.
 
-Dado que las sesiones están vinculadas a directorios, puede ejecutar sesiones paralelas de Claude Code usando [git worktrees](/es/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees), que crean directorios separados para ramas individuales.
+Dado que las sesiones están vinculadas a directorios, puede ejecutar sesiones paralelas de Claude Code usando [git worktrees](/es/worktrees), que crean directorios separados para ramas individuales.
 
 ### Reanudar o bifurcar sesiones
 
-Cuando reanuda una sesión con `claude --continue` o `claude --resume`, continúa donde lo dejó usando el mismo ID de sesión. Los nuevos mensajes se agregan a la conversación existente. Su historial de conversación completo se restaura, pero los permisos con alcance de sesión no. Deberá volver a aprobarlos.
+Reanudar una sesión con `claude --continue` o `claude --resume` la reabre bajo el mismo ID de sesión y agrega nuevos mensajes a la conversación existente. Bifurcar con `--fork-session` o `/branch` copia el historial en un nuevo ID de sesión, dejando el original sin cambios.
 
 <img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/session-continuity.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=fa41d12bfb57579cabfeece907151d30" alt="Continuidad de sesión: reanudar continúa la misma sesión, bifurcar crea una nueva rama con un nuevo ID." width="560" height="280" data-path="images/session-continuity.svg" />
 
-Para ramificar e intentar un enfoque diferente sin afectar la sesión original, use la bandera `--fork-session`:
-
-```bash theme={null}
-claude --continue --fork-session
-```
-
-Esto crea un nuevo ID de sesión mientras preserva el historial de conversación hasta ese punto. La sesión original permanece sin cambios. Como reanudar, las sesiones bifurcadas no heredan permisos con alcance de sesión.
-
-**Misma sesión en múltiples terminales**: Si reanuda la misma sesión en múltiples terminales, ambos terminales escriben en el mismo archivo de sesión. Los mensajes de ambos se intercalan, como dos personas escribiendo en el mismo cuaderno. Nada se corrompe, pero la conversación se vuelve confusa. Cada terminal solo ve sus propios mensajes durante la sesión, pero si reanuda esa sesión más tarde, verá todo intercalado. Para trabajo paralelo desde el mismo punto de partida, use `--fork-session` para dar a cada terminal su propia sesión limpia.
+Para las banderas de reanudación, el selector `/resume`, nombres y qué sucede cuando la misma sesión está abierta en dos terminales, consulte [Gestionar sesiones](/es/sessions).
 
 ### La ventana de contexto
 
@@ -134,13 +126,15 @@ Claude Code gestiona el contexto automáticamente a medida que se acerca al lím
 
 Para controlar qué se preserva durante la compactación, agregue una sección "Compact Instructions" a CLAUDE.md o ejecute `/compact` con un enfoque (como `/compact focus on the API changes`).
 
+Si un archivo único o salida de herramienta es tan grande que el contexto se vuelve a llenar inmediatamente después de cada resumen, Claude Code deja de compactarse automáticamente después de algunos intentos y muestra un error en lugar de hacer un bucle. Consulte [Auto-compaction stops with a thrashing error](/es/troubleshooting#auto-compaction-stops-with-a-thrashing-error) para pasos de recuperación.
+
 Ejecute `/context` para ver qué está usando espacio. Las definiciones de herramientas MCP se difieren por defecto y se cargan bajo demanda a través de [búsqueda de herramientas](/es/mcp#scale-with-mcp-tool-search), por lo que solo los nombres de herramientas consumen contexto hasta que Claude use una herramienta específica. Ejecute `/mcp` para verificar costos por servidor.
 
 #### Gestionar contexto con skills y subagents
 
 Más allá de la compactación, puede usar otras características para controlar qué se carga en el contexto.
 
-[Skills](/es/skills) se cargan bajo demanda. Claude ve descripciones de skills al inicio de la sesión, pero el contenido completo solo se carga cuando se usa una skill. Para skills que invoca manualmente, establezca `disable-model-invocation: true` para mantener descripciones fuera del contexto hasta que las necesite.
+[Skills](/es/skills) se cargan bajo demanda. Claude ve descripciones de skills al inicio de la sesión, pero el contenido completo solo se carga cuando se usa una skill. Para skills que invoca manualmente, establezca `disable-model-invocation: true` para mantener descripciones fuera del contexto hasta que las necesite. Para skills que no escribió, use [`skillOverrides`](/es/skills#override-skill-visibility-from-settings) para hacer lo mismo desde la configuración.
 
 [Subagents](/es/sub-agents) obtienen su propio contexto nuevo, completamente separado de su conversación principal. Su trabajo no infla su contexto. Cuando terminan, devuelven un resumen. Este aislamiento es por qué los subagents ayudan con sesiones largas.
 
@@ -161,7 +155,7 @@ Los checkpoints son locales a su sesión, separados de git. Solo cubren cambios 
 Presione `Shift+Tab` para ciclar a través de modos de permiso:
 
 * **Predeterminado**: Claude pregunta antes de ediciones de archivo y comandos de shell
-* **Auto-aceptar ediciones**: Claude edita archivos sin preguntar, aún pregunta por comandos
+* **Auto-aceptar ediciones**: Claude edita archivos y ejecuta comandos comunes del sistema de archivos como `mkdir` y `mv` sin preguntar, aún pregunta por otros comandos
 * **Plan Mode**: Claude usa solo herramientas de solo lectura, creando un plan que puede aprobar antes de la ejecución
 * **Auto mode**: Claude evalúa todas las acciones con verificaciones de seguridad en segundo plano. Actualmente una vista previa de investigación
 

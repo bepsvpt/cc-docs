@@ -54,7 +54,7 @@ No modo bare, Claude tem acesso às ferramentas Bash, leitura de arquivo e ediç
 | Configurações                | `--settings <file-or-json>`                             |
 | Servidores MCP               | `--mcp-config <file-or-json>`                           |
 | Agentes personalizados       | `--agents <json>`                                       |
-| Um diretório de plugin       | `--plugin-dir <path>`                                   |
+| Um plugin                    | `--plugin-dir <path>`, `--plugin-url <url>`             |
 
 O modo bare pula leituras de OAuth e keychain. A autenticação do Anthropic deve vir de `ANTHROPIC_API_KEY` ou um `apiKeyHelper` no JSON passado para `--settings`. Bedrock, Vertex e Foundry usam suas credenciais de provedor usuais.
 
@@ -65,6 +65,36 @@ O modo bare pula leituras de OAuth e keychain. A autenticação do Anthropic dev
 ## Exemplos
 
 Estes exemplos destacam padrões comuns de CLI. Para CI e outras chamadas com script, adicione [`--bare`](#start-faster-with-bare-mode) para que não captem o que quer que esteja configurado localmente.
+
+### Canalizar dados através do Claude
+
+O modo não interativo lê stdin, então você pode canalizar dados e redirecionar a resposta como qualquer outra ferramenta de linha de comando.
+
+Este exemplo canaliza um log de compilação para Claude e escreve a explicação em um arquivo:
+
+```bash theme={null}
+cat build-error.txt | claude -p 'concisely explain the root cause of this build error' > output.txt
+```
+
+Com `--output-format json`, a carga de resposta inclui `total_cost_usd` e um detalhamento de custo por modelo, para que os chamadores com script possam rastrear gastos por invocação sem consultar o [painel de uso](/pt/costs).
+
+<Note>
+  A partir do Claude Code v2.1.128, stdin canalizado é limitado a 10MB. Se você exceder o limite, Claude Code sai com um erro claro e um status diferente de zero. Para trabalhar com entradas maiores, escreva o conteúdo em um arquivo e faça referência ao caminho do arquivo em seu prompt em vez de canalizá-lo.
+</Note>
+
+### Adicionar Claude a um script de compilação
+
+Você pode envolver uma chamada não interativa em um script para usar Claude como um linter ou revisor específico do projeto.
+
+Este script `package.json` canaliza o diff contra `main` para Claude e pede que ele relate erros de digitação. Canalizar o diff significa que Claude não precisa de permissão Bash para lê-lo, e as aspas duplas escapadas mantêm o script portável para Windows:
+
+```json theme={null}
+{
+  "scripts": {
+    "lint:claude": "git diff main | claude -p \"you are a typo linter. for each typo in this diff, report filename:line on one line and the issue on the next. return nothing else.\""
+  }
+}
+```
 
 ### Obter saída estruturada
 
@@ -136,10 +166,10 @@ Quando uma solicitação de API falha com um erro que pode ser repetido, Claude 
 
 O evento `system/init` relata metadados de sessão incluindo o modelo, ferramentas, servidores MCP e plugins carregados. É o primeiro evento no stream a menos que [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/pt/env-vars) esteja definido, caso em que eventos `plugin_install` o precedem. Use os campos de plugin para falhar CI quando um plugin não foi carregado:
 
-| Campo           | Tipo  | Descrição                                                                                                                                                                                                                          |
-| --------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `plugins`       | array | plugins que foram carregados com sucesso, cada um com `name` e `path`                                                                                                                                                              |
-| `plugin_errors` | array | erros de tempo de carregamento de plugin, como uma versão de dependência insatisfeita, cada um com `plugin`, `type` e `message`. Os plugins afetados são rebaixados e ausentes de `plugins`. A chave é omitida quando não há erros |
+| Campo           | Tipo  | Descrição                                                                                                                                                                                                                                                                                                                 |
+| --------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plugins`       | array | plugins que foram carregados com sucesso, cada um com `name` e `path`                                                                                                                                                                                                                                                     |
+| `plugin_errors` | array | erros de tempo de carregamento de plugin, cada um com `plugin`, `type` e `message`. Inclui versões de dependência insatisfeitas e falhas de carregamento de `--plugin-dir` como um caminho ausente ou arquivo inválido. Os plugins afetados são rebaixados e ausentes de `plugins`. A chave é omitida quando não há erros |
 
 Quando [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/pt/env-vars) está definido, Claude Code emite eventos `system/plugin_install` enquanto plugins do marketplace instalam antes da primeira volta. Use estes para exibir o progresso de instalação em sua própria UI.
 

@@ -94,33 +94,25 @@ Puoi accedere a Claude Code tramite il terminale, l'[app desktop](/it/desktop), 
 
 ## Lavora con le sessioni
 
-Claude Code salva la tua conversazione localmente mentre lavori. Ogni messaggio, utilizzo di strumento e risultato viene archiviato, il che consente [il rewind](#undo-changes-with-checkpoints), [la ripresa e il fork](#resume-or-fork-sessions) delle sessioni. Prima che Claude apporta modifiche al codice, crea anche uno snapshot dei file interessati in modo da poter ripristinare se necessario.
+Claude Code salva la tua conversazione localmente mentre lavori. Ogni messaggio, utilizzo di strumento e risultato viene scritto in un file JSONL in testo semplice sotto `~/.claude/projects/`, il che consente [il rewind](#undo-changes-with-checkpoints), [la ripresa e il fork](#resume-or-fork-sessions) delle sessioni. Prima che Claude apporta modifiche al codice, crea anche uno snapshot dei file interessati in modo da poter ripristinare se necessario. Per i percorsi, la conservazione e come cancellare questi dati, consulta [dati dell'applicazione in `~/.claude`](/it/claude-directory#application-data).
 
 **Le sessioni sono indipendenti.** Ogni nuova sessione inizia con una finestra di contesto fresca, senza la cronologia della conversazione dalle sessioni precedenti. Claude può persistere gli apprendimenti tra le sessioni utilizzando [auto memory](/it/memory#auto-memory) e puoi aggiungere le tue istruzioni persistenti in [CLAUDE.md](/it/memory).
 
 ### Lavora tra i rami
 
-Ogni conversazione di Claude Code è una sessione legata alla tua directory corrente. Quando riprendi, vedi solo le sessioni da quella directory.
+Ogni conversazione di Claude Code è una sessione legata alla tua directory corrente. Il picker `/resume` mostra sessioni dal worktree corrente per impostazione predefinita, con scorciatoie da tastiera per ampliare l'elenco ad altri worktrees o progetti. Consulta [Gestisci sessioni](/it/sessions#use-the-session-picker) per l'elenco completo delle scorciatoie del picker e come funziona la risoluzione dei nomi.
 
 Claude vede i file del tuo ramo corrente. Quando cambi ramo, Claude vede i file del nuovo ramo, ma la cronologia della tua conversazione rimane la stessa. Claude ricorda quello che hai discusso anche dopo il cambio di ramo.
 
-Poiché le sessioni sono legate alle directory, puoi eseguire sessioni Claude parallele utilizzando [git worktrees](/it/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees), che creano directory separate per singoli rami.
+Poiché le sessioni sono legate alle directory, puoi eseguire sessioni Claude parallele utilizzando [git worktrees](/it/worktrees), che creano directory separate per singoli rami.
 
 ### Riprendi o fai il fork delle sessioni
 
-Quando riprendi una sessione con `claude --continue` o `claude --resume`, riprendi da dove hai lasciato utilizzando lo stesso ID di sessione. I nuovi messaggi si aggiungono alla conversazione esistente. La tua cronologia completa della conversazione viene ripristinata, ma i permessi con ambito di sessione non lo sono. Dovrai approvarli di nuovo.
+Riprendere una sessione con `claude --continue` o `claude --resume` la riapre con lo stesso ID di sessione e aggiunge nuovi messaggi alla conversazione esistente. Fare il fork con `--fork-session` o `/branch` copia la cronologia in un nuovo ID di sessione, lasciando l'originale invariato.
 
 <img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/session-continuity.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=fa41d12bfb57579cabfeece907151d30" alt="Continuità della sessione: resume continua la stessa sessione, fork crea un nuovo ramo con un nuovo ID." width="560" height="280" data-path="images/session-continuity.svg" />
 
-Per creare un ramo e provare un approccio diverso senza influenzare la sessione originale, utilizza il flag `--fork-session`:
-
-```bash theme={null}
-claude --continue --fork-session
-```
-
-Questo crea un nuovo ID di sessione preservando la cronologia della conversazione fino a quel punto. La sessione originale rimane invariata. Come resume, le sessioni forkate non ereditano i permessi con ambito di sessione.
-
-**Stessa sessione in più terminali**: Se riprendi la stessa sessione in più terminali, entrambi i terminali scrivono nello stesso file di sessione. I messaggi da entrambi vengono intercalati, come due persone che scrivono nello stesso quaderno. Nulla si corrompe, ma la conversazione diventa confusa. Ogni terminale vede solo i suoi messaggi durante la sessione, ma se riprendi quella sessione in seguito, vedrai tutto intercalato. Per il lavoro parallelo dallo stesso punto di partenza, utilizza `--fork-session` per dare a ogni terminale la sua sessione pulita.
+Per i flag di ripresa, il picker `/resume`, la denominazione e cosa succede quando la stessa sessione è aperta in due terminali, consulta [Gestisci sessioni](/it/sessions).
 
 ### La finestra di contesto
 
@@ -134,13 +126,15 @@ Claude Code gestisce il contesto automaticamente mentre ti avvicini al limite. C
 
 Per controllare cosa viene preservato durante la compattazione, aggiungi una sezione "Compact Instructions" a CLAUDE.md o esegui `/compact` con un focus (come `/compact focus on the API changes`).
 
+Se un singolo file o output di strumento è così grande che il contesto si riempie immediatamente dopo ogni riassunto, Claude Code smette di compattare automaticamente dopo alcuni tentativi e mostra un errore invece di fare un ciclo. Consulta [Auto-compaction stops with a thrashing error](/it/troubleshooting#auto-compaction-stops-with-a-thrashing-error) per i passaggi di recupero.
+
 Esegui `/context` per vedere cosa sta usando lo spazio. Le definizioni degli strumenti MCP vengono differite per impostazione predefinita e caricate su richiesta tramite [ricerca degli strumenti](/it/mcp#scale-with-mcp-tool-search), quindi solo i nomi degli strumenti consumano contesto fino a quando Claude utilizza uno strumento specifico. Esegui `/mcp` per controllare i costi per server.
 
 #### Gestisci il contesto con skills e subagents
 
 Oltre alla compattazione, puoi utilizzare altre funzionalità per controllare cosa viene caricato nel contesto.
 
-[Skills](/it/skills) si caricano su richiesta. Claude vede le descrizioni delle skills all'inizio della sessione, ma il contenuto completo si carica solo quando una skill viene utilizzata. Per le skills che invochi manualmente, imposta `disable-model-invocation: true` per mantenere le descrizioni fuori dal contesto fino a quando non ne hai bisogno.
+[Skills](/it/skills) si caricano su richiesta. Claude vede le descrizioni delle skills all'inizio della sessione, ma il contenuto completo si carica solo quando una skill viene utilizzata. Per le skills che invochi manualmente, imposta `disable-model-invocation: true` per mantenere le descrizioni fuori dal contesto fino a quando non ne hai bisogno. Per le skills che non hai scritto, utilizza [`skillOverrides`](/it/skills#override-skill-visibility-from-settings) per fare lo stesso dalle impostazioni.
 
 [Subagents](/it/sub-agents) ottengono il loro contesto fresco, completamente separato dalla tua conversazione principale. Il loro lavoro non gonfia il tuo contesto. Quando finito, restituiscono un riassunto. Questo isolamento è il motivo per cui i subagents aiutano con le sessioni lunghe.
 
@@ -161,7 +155,7 @@ I checkpoint sono locali alla tua sessione, separati da git. Coprono solo le mod
 Premi `Shift+Tab` per scorrere le modalità di permesso:
 
 * **Predefinito**: Claude chiede prima delle modifiche ai file e dei comandi shell
-* **Auto-accept edits**: Claude modifica i file senza chiedere, chiede ancora per i comandi
+* **Auto-accept edits**: Claude modifica i file ed esegue comandi comuni del file system come `mkdir` e `mv` senza chiedere, chiede ancora per altri comandi
 * **Plan Mode**: Claude utilizza solo strumenti di sola lettura, creando un piano che puoi approvare prima dell'esecuzione
 * **Auto mode**: Claude valuta tutte le azioni con controlli di sicurezza in background. Attualmente un'anteprima di ricerca
 

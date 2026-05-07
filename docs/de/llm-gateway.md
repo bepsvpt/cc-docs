@@ -53,7 +53,7 @@ Claude Code stellt auch einen kurzen Attributionsblock dem System-Prompt voran, 
 
 Standardmäßig verwendet Claude Code Standard-Modellnamen für das ausgewählte API-Format.
 
-Wenn `ANTHROPIC_BASE_URL` auf ein Gateway verweist, das das Anthropic Messages-Format bereitstellt, fragt Claude Code beim Start den `/v1/models`-Endpunkt des Gateways ab und fügt die zurückgegebenen Modelle zur `/model`-Auswahl hinzu. Jeder erkannte Eintrag ist mit „Aus Gateway" gekennzeichnet und verwendet das Feld `display_name` aus der Antwort, wenn eines bereitgestellt wird. Dies erfordert Claude Code v2.1.126 oder später.
+Wenn `ANTHROPIC_BASE_URL` auf ein Gateway verweist, das das Anthropic Messages-Format bereitstellt, fragt Claude Code beim Start den `/v1/models`-Endpunkt des Gateways ab und fügt die zurückgegebenen Modelle zur `/model`-Auswahl hinzu. Setzen Sie `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1`, um dies zu aktivieren. Die Erkennung ist standardmäßig deaktiviert, damit Gateways, die durch einen gemeinsamen API-Schlüssel unterstützt werden, nicht jedes Modell, auf das der Schlüssel zugreifen kann, jedem Benutzer anzeigen. Jeder erkannte Eintrag ist mit „Aus Gateway" gekennzeichnet und verwendet das Feld `display_name` aus der Antwort, wenn eines bereitgestellt wird. Dies erfordert Claude Code v2.1.129 oder später.
 
 Die Erkennung gilt nur für das Anthropic Messages-Format. Sie wird nicht für Bedrock- oder Vertex-Pass-Through-Endpunkte ausgeführt und wird nicht ausgeführt, wenn `ANTHROPIC_BASE_URL` nicht gesetzt ist oder auf `api.anthropic.com` verweist.
 

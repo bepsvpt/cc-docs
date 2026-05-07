@@ -315,6 +315,12 @@ claude --plugin-dir ./my-plugin
   ```
 </Tip>
 
+若要測試已打包為 `.zip` 檔案並託管在 URL 上的 plugin（例如 CI 建置成品），請改用 `--plugin-url`。Claude Code 在啟動時擷取檔案並僅為該工作階段載入它。如果擷取失敗或檔案無效，Claude Code 會報告 plugin 載入錯誤並在沒有它的情況下啟動。與任何 plugin 來源相同的[信任考量](/zh-TW/discover-plugins#security)適用：只將此旗標指向您控制或信任的檔案。
+
+```bash theme={null}
+claude --plugin-url https://example.com/my-plugin.zip
+```
+
 ### 偵錯 plugin 問題
 
 如果您的 plugin 未按預期工作：

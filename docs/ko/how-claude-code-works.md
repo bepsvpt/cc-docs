@@ -94,39 +94,31 @@ Claude Code는 세 가지 환경에서 실행되며, 각각은 코드가 실행�
 
 ## 세션으로 작업
 
-Claude Code는 작업하면서 대화를 로컬에 저장합니다. 각 메시지, 도구 사용, 결과가 저장되어 [되돌리기](#undo-changes-with-checkpoints), [재개 및 포크](#resume-or-fork-sessions) 세션을 활성화합니다. Claude가 코드를 변경하기 전에 영향을 받는 파일을 스냅샷하므로 필요하면 되돌릴 수 있습니다.
+Claude Code는 작업하면서 대화를 로컬에 저장합니다. 각 메시지, 도구 사용, 결과가 `~/.claude/projects/` 아래의 일반 텍스트 JSONL 파일에 기록되어 [되돌리기](#undo-changes-with-checkpoints), [재개 및 포크](#resume-or-fork-sessions) 세션을 활성화합니다. Claude가 코드를 변경하기 전에 영향을 받는 파일을 스냅샷하므로 필요하면 되돌릴 수 있습니다. 경로, 보존, 이 데이터를 지우는 방법은 [`~/.claude`의 애플리케이션 데이터](/ko/claude-directory#application-data)를 참조하세요.
 
 **세션은 독립적입니다.** 각 새 세션은 이전 세션의 대화 기록 없이 새로운 컨텍스트 윈도우로 시작합니다. Claude는 [자동 메모리](/ko/memory#auto-memory)를 사용하여 세션 간에 학습을 유지할 수 있으며, [CLAUDE.md](/ko/memory)에 자신의 지속적인 지침을 추가할 수 있습니다.
 
 ### 브랜치 간 작업
 
-각 Claude Code 대화는 현재 디렉토리에 연결된 세션입니다. 재개할 때 해당 디렉토리의 세션만 표시됩니다.
+각 Claude Code 대화는 현재 디렉토리에 연결된 세션입니다. `/resume` 선택기는 기본적으로 현재 worktree의 세션을 표시하며, 다른 worktrees 또는 프로젝트로 목록을 확장하는 키보드 단축키가 있습니다. 전체 선택기 단축키 목록과 이름 해석 방식은 [세션 관리](/ko/sessions#use-the-session-picker)를 참조하세요.
 
 Claude는 현재 브랜치의 파일을 봅니다. 브랜치를 전환하면 Claude는 새 브랜치의 파일을 보지만 대화 기록은 동일하게 유지됩니다. Claude는 전환 후에도 논의한 내용을 기억합니다.
 
-세션이 디렉토리에 연결되어 있으므로 [git worktrees](/ko/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees)를 사용하여 병렬 Claude 세션을 실행할 수 있으며, 이는 개별 브랜치에 대한 별도 디렉토리를 생성합니다.
+세션이 디렉토리에 연결되어 있으므로 [git worktrees](/ko/worktrees)를 사용하여 병렬 Claude 세션을 실행할 수 있으며, 이는 개별 브랜치에 대한 별도 디렉토리를 생성합니다.
 
 ### 세션 재개 또는 포크
 
-`claude --continue` 또는 `claude --resume`으로 세션을 재개하면 동일한 세션 ID를 사용하여 중단한 지점부터 시작합니다. 새 메시지는 기존 대화에 추가됩니다. 전체 대화 기록이 복원되지만 세션 범위 권한은 복원되지 않습니다. 다시 승인해야 합니다.
+`claude --continue` 또는 `claude --resume`으로 세션을 재개하면 동일한 세션 ID를 사용하여 중단한 지점부터 시작합니다. 새 메시지는 기존 대화에 추가됩니다. `--fork-session` 또는 `/branch`로 포크하면 기록을 새 세션 ID로 복사하여 원본은 변경되지 않은 상태로 유지합니다.
 
 <img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/session-continuity.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=fa41d12bfb57579cabfeece907151d30" alt="세션 연속성: 재개는 동일한 세션을 계속하고, 포크는 새 ID로 새 브랜치를 생성합니다." width="560" height="280" data-path="images/session-continuity.svg" />
 
-원본 세션에 영향을 주지 않고 다른 접근 방식을 시도하려면 `--fork-session` 플래그를 사용하세요:
-
-```bash theme={null}
-claude --continue --fork-session
-```
-
-이는 그 시점까지의 대화 기록을 유지하면서 새 세션 ID를 생성합니다. 원본 세션은 변경되지 않습니다. 재개와 마찬가지로 포크된 세션은 세션 범위 권한을 상속하지 않습니다.
-
-**여러 터미널에서 동일한 세션**: 여러 터미널에서 동일한 세션을 재개하면 두 터미널 모두 동일한 세션 파일에 쓰기를 수행합니다. 두 터미널의 메시지가 같은 노트북에 두 사람이 쓰는 것처럼 인터리브됩니다. 아무것도 손상되지 않지만 대화가 뒤섞입니다. 각 터미널은 세션 중에 자신의 메시지만 보지만, 나중에 해당 세션을 재개하면 모든 것이 인터리브된 것을 볼 수 있습니다. 동일한 시작점에서 병렬 작업을 하려면 `--fork-session`을 사용하여 각 터미널에 자신의 깨끗한 세션을 제공하세요.
+재개 플래그, `/resume` 선택기, 이름 지정, 동일한 세션이 두 터미널에서 열려 있을 때 발생하는 상황은 [세션 관리](/ko/sessions)를 참조하세요.
 
 ### 컨텍스트 윈도우
 
 Claude의 컨텍스트 윈도우는 대화 기록, 파일 콘텐츠, 명령 출력, [CLAUDE.md](/ko/memory), [자동 메모리](/ko/memory#auto-memory), 로드된 skills, 시스템 지침을 보유합니다. 작업하면서 컨텍스트가 채워집니다. Claude는 자동으로 압축하지만 대화 초반의 지침이 손실될 수 있습니다. 지속적인 규칙을 CLAUDE.md에 넣고 `/context`를 실행하여 공간을 사용하는 것을 확인하세요.
 
-대화형 설명을 보려면 [컨텍스트 윈도우 탐색](/ko/context-window)을 참조하세요.
+컨텍스트 윈도우의 대화형 설명은 [컨텍스트 윈도우 탐색](/ko/context-window)을 참조하세요.
 
 #### 컨텍스트가 채워질 때
 
@@ -134,13 +126,15 @@ Claude Code는 한계에 접근할 때 컨텍스트를 자동으로 관리합니
 
 압축 중에 보존되는 것을 제어하려면 CLAUDE.md에 "Compact Instructions" 섹션을 추가하거나 `/compact`를 포커스와 함께 실행하세요 (예: `/compact focus on the API changes`).
 
+단일 파일 또는 도구 출력이 너무 커서 각 요약 후 컨텍스트가 즉시 다시 채워지면 Claude Code는 몇 번의 시도 후 자동 압축을 중지하고 루핑 대신 오류를 표시합니다. 복구 단계는 [자동 압축이 thrashing 오류로 중지됨](/ko/troubleshooting#auto-compaction-stops-with-a-thrashing-error)을 참조하세요.
+
 `/context`를 실행하여 공간을 사용하는 것을 확인하세요. MCP 도구 정의는 기본적으로 지연되며 [도구 검색](/ko/mcp#scale-with-mcp-tool-search)을 통해 요청 시 로드되므로 Claude가 특정 도구를 사용할 때까지 도구 이름만 컨텍스트를 소비합니다. `/mcp`를 실행하여 서버별 비용을 확인하세요.
 
 #### skills 및 subagents로 컨텍스트 관리
 
 압축 외에도 다른 기능을 사용하여 컨텍스트에 로드되는 것을 제어할 수 있습니다.
 
-[Skills](/ko/skills)는 요청 시 로드됩니다. Claude는 세션 시작 시 skill 설명을 보지만 전체 콘텐츠는 skill이 사용될 때만 로드됩니다. 수동으로 호출하는 skills의 경우 `disable-model-invocation: true`를 설정하여 필요할 때까지 설명을 컨텍스트 밖으로 유지하세요.
+[Skills](/ko/skills)는 요청 시 로드됩니다. Claude는 세션 시작 시 skill 설명을 보지만 전체 콘텐츠는 skill이 사용될 때만 로드됩니다. 수동으로 호출하는 skills의 경우 `disable-model-invocation: true`를 설정하여 필요할 때까지 설명을 컨텍스트 밖으로 유지하세요. 작성하지 않은 skills의 경우 [`skillOverrides`](/ko/skills#override-skill-visibility-from-settings)를 사용하여 설정에서 동일하게 수행하세요.
 
 [Subagents](/ko/sub-agents)는 주 대화와 완전히 분리된 자신의 새로운 컨텍스트를 얻습니다. 그들의 작업은 컨텍스트를 부풀리지 않습니다. 완료되면 요약을 반환합니다. 이 격리가 긴 세션에서 subagents가 도움이 되는 이유입니다.
 
@@ -161,7 +155,7 @@ Claude는 두 가지 안전 메커니즘을 가지고 있습니다: 체크포인
 `Shift+Tab`을 눌러 권한 모드를 순환하세요:
 
 * **기본값**: Claude는 파일 편집 및 셸 명령 전에 요청
-* **자동 수락 편집**: Claude는 파일을 편집하지만 명령은 여전히 요청
+* **자동 수락 편집**: Claude는 파일을 편집하고 `mkdir` 및 `mv`와 같은 일반적인 파일시스템 명령을 요청 없이 실행하지만 다른 명령은 여전히 요청
 * **계획 모드**: Claude는 읽기 전용 도구만 사용하여 실행 전에 승인할 수 있는 계획을 생성
 * **자동 모드**: Claude는 백그라운드 안전 검사로 모든 작업을 평가합니다. 현재 연구 미리보기입니다
 

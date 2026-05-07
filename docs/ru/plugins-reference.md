@@ -301,7 +301,7 @@ disallowedTools: Write, Edit
 ]
 ```
 
-Для объявления monitors встроенным образом установите ключ `monitors` в `plugin.json` на тот же массив. Для загрузки из пути, отличного от пути по умолчанию, установите `monitors` на строку относительного пути, такую как `"./config/monitors.json"`.
+Для объявления monitors встроенным образом установите `experimental.monitors` в `plugin.json` на тот же массив. Для загрузки из пути, отличного от пути по умолчанию, установите `experimental.monitors` на строку относительного пути, такую как `"./config/monitors.json"`. Monitors — это [экспериментальный компонент](#experimental-components).
 
 **Обязательные поля:**
 
@@ -323,7 +323,7 @@ disallowedTools: Write, Edit
 
 ### Themes
 
-Плагины могут поставлять цветовые темы, которые появляются в `/theme` наряду со встроенными предустановками и локальными темами пользователя. Тема — это JSON файл в `themes/` с предустановкой `base` и разреженной картой переопределений `overrides` цветовых токенов.
+Плагины могут поставлять цветовые темы, которые появляются в `/theme` наряду со встроенными предустановками и локальными темами пользователя. Тема — это JSON файл в `themes/` с предустановкой `base` и разреженной картой переопределений `overrides` цветовых токенов. Themes — это [экспериментальный компонент](#experimental-components).
 
 ```json theme={null}
 {
@@ -384,9 +384,11 @@ disallowedTools: Write, Edit
   "hooks": "./config/hooks.json",
   "mcpServers": "./mcp-config.json",
   "outputStyles": "./styles/",
-  "themes": "./themes/",
   "lspServers": "./.lsp.json",
-  "monitors": "./monitors.json",
+  "experimental": {
+    "themes": "./themes/",
+    "monitors": "./monitors.json"
+  },
   "dependencies": [
     "helper-lib",
     { "name": "secrets-vault", "version": "~2.1.0" }
@@ -419,20 +421,24 @@ disallowedTools: Write, Edit
 
 ### Поля пути компонента
 
-| Поле           | Тип                   | Описание                                                                                                                                                                            | Пример                                               |
-| :------------- | :-------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
-| `skills`       | string\|array         | Пользовательские каталоги skills, содержащие `<name>/SKILL.md` (заменяет по умолчанию `skills/`)                                                                                    | `"./custom/skills/"`                                 |
-| `commands`     | string\|array         | Пользовательские плоские файлы `.md` skill или каталоги (заменяет по умолчанию `commands/`)                                                                                         | `"./custom/cmd.md"` или `["./cmd1.md"]`              |
-| `agents`       | string\|array         | Пользовательские файлы агентов (заменяет по умолчанию `agents/`)                                                                                                                    | `"./custom/agents/reviewer.md"`                      |
-| `hooks`        | string\|array\|object | Пути конфигурации hooks или встроенная конфигурация                                                                                                                                 | `"./my-extra-hooks.json"`                            |
-| `mcpServers`   | string\|array\|object | Пути конфигурации MCP или встроенная конфигурация                                                                                                                                   | `"./my-extra-mcp-config.json"`                       |
-| `outputStyles` | string\|array         | Пользовательские файлы/каталоги стилей вывода (заменяет по умолчанию `output-styles/`)                                                                                              | `"./styles/"`                                        |
-| `themes`       | string\|array         | Файлы/каталоги цветовых тем (заменяет по умолчанию `themes/`). Смотрите [Themes](#themes)                                                                                           | `"./themes/"`                                        |
-| `lspServers`   | string\|array\|object | Конфигурации [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) для интеллектуальной информации о коде (переход к определению, поиск ссылок и т. д.) | `"./.lsp.json"`                                      |
-| `monitors`     | string\|array         | Конфигурации фонового [Monitor](/ru/tools-reference#monitor-tool), которые запускаются автоматически при активации плагина. Смотрите [Monitors](#monitors)                          | `"./monitors.json"`                                  |
-| `userConfig`   | object                | Значения, настраиваемые пользователем, запрашиваемые при включении. Смотрите [Конфигурация пользователя](#user-configuration)                                                       | Смотрите ниже                                        |
-| `channels`     | array                 | Объявления каналов для внедрения сообщений (стиль Telegram, Slack, Discord). Смотрите [Каналы](#channels)                                                                           | Смотрите ниже                                        |
-| `dependencies` | array                 | Другие плагины, которые требует этот плагин, опционально с ограничениями версии semver. Смотрите [Ограничение версий зависимостей плагина](/ru/plugin-dependencies)                 | `[{ "name": "secrets-vault", "version": "~2.1.0" }]` |
+| Поле                    | Тип                   | Описание                                                                                                                                                                            | Пример                                               |
+| :---------------------- | :-------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
+| `skills`                | string\|array         | Пользовательские каталоги skills, содержащие `<name>/SKILL.md` (заменяет по умолчанию `skills/`)                                                                                    | `"./custom/skills/"`                                 |
+| `commands`              | string\|array         | Пользовательские плоские файлы `.md` skill или каталоги (заменяет по умолчанию `commands/`)                                                                                         | `"./custom/cmd.md"` или `["./cmd1.md"]`              |
+| `agents`                | string\|array         | Пользовательские файлы агентов (заменяет по умолчанию `agents/`)                                                                                                                    | `"./custom/agents/reviewer.md"`                      |
+| `hooks`                 | string\|array\|object | Пути конфигурации hooks или встроенная конфигурация                                                                                                                                 | `"./my-extra-hooks.json"`                            |
+| `mcpServers`            | string\|array\|object | Пути конфигурации MCP или встроенная конфигурация                                                                                                                                   | `"./my-extra-mcp-config.json"`                       |
+| `outputStyles`          | string\|array         | Пользовательские файлы/каталоги стилей вывода (заменяет по умолчанию `output-styles/`)                                                                                              | `"./styles/"`                                        |
+| `lspServers`            | string\|array\|object | Конфигурации [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) для интеллектуальной информации о коде (переход к определению, поиск ссылок и т. д.) | `"./.lsp.json"`                                      |
+| `experimental.themes`   | string\|array         | Файлы/каталоги цветовых тем (заменяет по умолчанию `themes/`). Смотрите [Themes](#themes)                                                                                           | `"./themes/"`                                        |
+| `experimental.monitors` | string\|array         | Конфигурации фонового [Monitor](/ru/tools-reference#monitor-tool), которые запускаются автоматически при активации плагина. Смотрите [Monitors](#monitors)                          | `"./monitors.json"`                                  |
+| `userConfig`            | object                | Значения, настраиваемые пользователем, запрашиваемые при включении. Смотрите [Конфигурация пользователя](#user-configuration)                                                       | Смотрите ниже                                        |
+| `channels`              | array                 | Объявления каналов для внедрения сообщений (стиль Telegram, Slack, Discord). Смотрите [Каналы](#channels)                                                                           | Смотрите ниже                                        |
+| `dependencies`          | array                 | Другие плагины, которые требует этот плагин, опционально с ограничениями версии semver. Смотрите [Ограничение версий зависимостей плагина](/ru/plugin-dependencies)                 | `[{ "name": "secrets-vault", "version": "~2.1.0" }]` |
+
+### Экспериментальные компоненты
+
+Компоненты под ключом `experimental`, `themes` и `monitors`, имеют схему манифеста, которая может измениться между выпусками во время их стабилизации. Место, где вы их объявляете, — это отдельная миграция: верхний уровень всё ещё работает, `claude plugin validate` выдаёт предупреждение, и будущий выпуск потребует `experimental.*`.
 
 ### Конфигурация пользователя
 
@@ -504,7 +510,7 @@ disallowedTools: Write, Edit
 
 ### Правила поведения пути
 
-Для `skills`, `commands`, `agents`, `outputStyles`, `themes` и `monitors` пользовательский путь заменяет путь по умолчанию. Если манифест указывает `skills`, каталог по умолчанию `skills/` не сканируется; если он указывает `monitors`, по умолчанию `monitors/monitors.json` не загружается. [Hooks](#hooks), [MCP servers](#mcp-servers) и [LSP servers](#lsp-servers) имеют другую семантику для обработки нескольких источников.
+Для `skills`, `commands`, `agents`, `outputStyles`, `experimental.themes` и `experimental.monitors` пользовательский путь заменяет путь по умолчанию. Если манифест указывает `skills`, каталог по умолчанию `skills/` не сканируется; если он указывает `experimental.monitors`, по умолчанию `monitors/monitors.json` не загружается. [Hooks](#hooks), [MCP servers](#mcp-servers) и [LSP servers](#lsp-servers) имеют другую семантику для обработки нескольких источников.
 
 * Все пути должны быть относительны к корню плагина и начинаться с `./`
 * Компоненты из пользовательских путей используют те же правила именования и пространства имён
@@ -605,7 +611,7 @@ Claude Code предоставляет две переменные для ссы
 
 Плагины указываются одним из двух способов:
 
-* Через `claude --plugin-dir`, на время сеанса.
+* Через `claude --plugin-dir` или `claude --plugin-url`, на время сеанса.
 * Через маркетплейс, установленный для будущих сеансов.
 
 В целях безопасности и проверки Claude Code копирует плагины *маркетплейса* в локальный **кэш плагина** пользователя (`~/.claude/plugins/cache`) вместо использования их на месте. Понимание этого поведения важно при разработке плагинов, которые ссылаются на внешние файлы.

@@ -315,6 +315,12 @@ Wenn Sie Änderungen an Ihrem Plugin vornehmen, führen Sie `/reload-plugins` au
   ```
 </Tip>
 
+Um ein Plugin zu testen, das bereits als `.zip`-Archiv verpackt und unter einer URL gehostet wird, z. B. ein CI-Build-Artefakt, verwenden Sie stattdessen `--plugin-url`. Claude Code ruft das Archiv beim Start ab und lädt es nur für diese Sitzung. Wenn das Abrufen fehlschlägt oder das Archiv ungültig ist, meldet Claude Code einen Plugin-Ladefehler und startet ohne es. Die gleichen [Vertrauensüberlegungen](/de/discover-plugins#security) gelten wie für jede andere Plugin-Quelle: Verweisen Sie dieses Flag nur auf Archive, die Sie kontrollieren oder denen Sie vertrauen.
+
+```bash theme={null}
+claude --plugin-url https://example.com/my-plugin.zip
+```
+
 ### Debuggen Sie Plugin-Probleme
 
 Wenn Ihr Plugin nicht wie erwartet funktioniert:

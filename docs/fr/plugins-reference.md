@@ -301,7 +301,7 @@ Le `monitors/monitors.json` suivant surveille un point de terminaison de statut 
 ]
 ```
 
-Pour déclarer les moniteurs en ligne, définissez la clé `monitors` dans `plugin.json` sur le même tableau. Pour charger à partir d'un chemin non par défaut, définissez `monitors` sur une chaîne de chemin relatif telle que `"./config/monitors.json"`.
+Pour déclarer les moniteurs en ligne, définissez `experimental.monitors` dans `plugin.json` sur le même tableau. Pour charger à partir d'un chemin non par défaut, définissez `experimental.monitors` sur une chaîne de chemin relatif telle que `"./config/monitors.json"`. Les moniteurs sont un [composant expérimental](#experimental-components).
 
 **Champs obligatoires :**
 
@@ -323,7 +323,7 @@ La désactivation d'un plugin en cours de session n'arrête pas les moniteurs qu
 
 ### Thèmes
 
-Les plugins peuvent livrer des thèmes de couleur qui apparaissent dans `/theme` aux côtés des présets intégrés et des thèmes locaux de l'utilisateur. Un thème est un fichier JSON dans `themes/` avec un préset `base` et une carte `overrides` clairsemée de jetons de couleur.
+Les plugins peuvent livrer des thèmes de couleur qui apparaissent dans `/theme` aux côtés des présets intégrés et des thèmes locaux de l'utilisateur. Un thème est un fichier JSON dans `themes/` avec un préset `base` et une carte `overrides` clairsemée de jetons de couleur. Les thèmes sont un [composant expérimental](#experimental-components).
 
 ```json theme={null}
 {
@@ -384,9 +384,11 @@ Le manifeste est optionnel. S'il est omis, Claude Code découvre automatiquement
   "hooks": "./config/hooks.json",
   "mcpServers": "./mcp-config.json",
   "outputStyles": "./styles/",
-  "themes": "./themes/",
   "lspServers": "./.lsp.json",
-  "monitors": "./monitors.json",
+  "experimental": {
+    "themes": "./themes/",
+    "monitors": "./monitors.json"
+  },
   "dependencies": [
     "helper-lib",
     { "name": "secrets-vault", "version": "~2.1.0" }
@@ -419,20 +421,24 @@ Ce nom est utilisé pour l'espace de noms des composants. Par exemple, dans l'in
 
 ### Champs de chemin de composant
 
-| Champ          | Type                  | Description                                                                                                                                                                             | Exemple                                              |
-| :------------- | :-------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
-| `skills`       | string\|array         | Répertoires de skills personnalisés contenant `<name>/SKILL.md` (remplace le répertoire par défaut `skills/`)                                                                           | `"./custom/skills/"`                                 |
-| `commands`     | string\|array         | Fichiers de skill markdown plats personnalisés ou répertoires (remplace le répertoire par défaut `commands/`)                                                                           | `"./custom/cmd.md"` ou `["./cmd1.md"]`               |
-| `agents`       | string\|array         | Fichiers d'agents personnalisés (remplace le répertoire par défaut `agents/`)                                                                                                           | `"./custom/agents/reviewer.md"`                      |
-| `hooks`        | string\|array\|object | Chemins de configuration des hooks ou configuration en ligne                                                                                                                            | `"./my-extra-hooks.json"`                            |
-| `mcpServers`   | string\|array\|object | Chemins de configuration MCP ou configuration en ligne                                                                                                                                  | `"./my-extra-mcp-config.json"`                       |
-| `outputStyles` | string\|array         | Fichiers/répertoires de styles de sortie personnalisés (remplace le répertoire par défaut `output-styles/`)                                                                             | `"./styles/"`                                        |
-| `themes`       | string\|array         | Fichiers/répertoires de thèmes de couleur (remplace le répertoire par défaut `themes/`). Consultez [Thèmes](#themes)                                                                    | `"./themes/"`                                        |
-| `lspServers`   | string\|array\|object | Configurations [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) pour l'intelligence de code (aller à la définition, trouver les références, etc.)      | `"./.lsp.json"`                                      |
-| `monitors`     | string\|array         | Configurations de [Monitor](/fr/tools-reference#monitor-tool) en arrière-plan qui démarrent automatiquement quand le plugin est actif. Consultez [Moniteurs](#monitors)                 | `"./monitors.json"`                                  |
-| `userConfig`   | object                | Valeurs configurables par l'utilisateur demandées au moment de l'activation. Consultez [Configuration utilisateur](#user-configuration)                                                 | Voir ci-dessous                                      |
-| `channels`     | array                 | Déclarations de canaux pour l'injection de messages (style Telegram, Slack, Discord). Consultez [Canaux](#channels)                                                                     | Voir ci-dessous                                      |
-| `dependencies` | array                 | Autres plugins que ce plugin nécessite, optionnellement avec des contraintes de version semver. Consultez [Contraindre les versions de dépendance des plugins](/fr/plugin-dependencies) | `[{ "name": "secrets-vault", "version": "~2.1.0" }]` |
+| Champ                   | Type                  | Description                                                                                                                                                                             | Exemple                                              |
+| :---------------------- | :-------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
+| `skills`                | string\|array         | Répertoires de skills personnalisés contenant `<name>/SKILL.md` (remplace le répertoire par défaut `skills/`)                                                                           | `"./custom/skills/"`                                 |
+| `commands`              | string\|array         | Fichiers de skill markdown plats personnalisés ou répertoires (remplace le répertoire par défaut `commands/`)                                                                           | `"./custom/cmd.md"` ou `["./cmd1.md"]`               |
+| `agents`                | string\|array         | Fichiers d'agents personnalisés (remplace le répertoire par défaut `agents/`)                                                                                                           | `"./custom/agents/reviewer.md"`                      |
+| `hooks`                 | string\|array\|object | Chemins de configuration des hooks ou configuration en ligne                                                                                                                            | `"./my-extra-hooks.json"`                            |
+| `mcpServers`            | string\|array\|object | Chemins de configuration MCP ou configuration en ligne                                                                                                                                  | `"./my-extra-mcp-config.json"`                       |
+| `outputStyles`          | string\|array         | Fichiers/répertoires de styles de sortie personnalisés (remplace le répertoire par défaut `output-styles/`)                                                                             | `"./styles/"`                                        |
+| `lspServers`            | string\|array\|object | Configurations [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) pour l'intelligence de code (aller à la définition, trouver les références, etc.)      | `"./.lsp.json"`                                      |
+| `experimental.themes`   | string\|array         | Fichiers/répertoires de thèmes de couleur (remplace le répertoire par défaut `themes/`). Consultez [Thèmes](#themes)                                                                    | `"./themes/"`                                        |
+| `experimental.monitors` | string\|array         | Configurations de [Monitor](/fr/tools-reference#monitor-tool) en arrière-plan qui démarrent automatiquement quand le plugin est actif. Consultez [Moniteurs](#monitors)                 | `"./monitors.json"`                                  |
+| `userConfig`            | object                | Valeurs configurables par l'utilisateur demandées au moment de l'activation. Consultez [Configuration utilisateur](#user-configuration)                                                 | Voir ci-dessous                                      |
+| `channels`              | array                 | Déclarations de canaux pour l'injection de messages (style Telegram, Slack, Discord). Consultez [Canaux](#channels)                                                                     | Voir ci-dessous                                      |
+| `dependencies`          | array                 | Autres plugins que ce plugin nécessite, optionnellement avec des contraintes de version semver. Consultez [Contraindre les versions de dépendance des plugins](/fr/plugin-dependencies) | `[{ "name": "secrets-vault", "version": "~2.1.0" }]` |
+
+### Composants expérimentaux
+
+Les composants sous la clé `experimental`, `themes` et `monitors`, ont un schéma de manifeste qui peut changer entre les versions pendant qu'ils se stabilisent. L'endroit où vous les déclarez est une migration distincte : le niveau supérieur fonctionne toujours, `claude plugin validate` avertit, et une version future exigera `experimental.*`.
 
 ### Configuration utilisateur
 
@@ -469,7 +475,7 @@ Les clés doivent être des identifiants valides. Chaque option prend en charge 
 | `multiple`    | Non         | Pour le type `string`, autoriser un tableau de chaînes                                              |
 | `min` / `max` | Non         | Limites pour le type `number`                                                                       |
 
-Chaque valeur est disponible pour la substitution en tant que `${user_config.KEY}` dans les configurations de serveurs MCP et LSP, les commandes de hook, les commandes de moniteur, et (pour les valeurs non sensibles uniquement) le contenu des skills et des agents. Toutes les valeurs sont exportées vers les sous-processus du plugin en tant que variables d'environnement `CLAUDE_PLUGIN_OPTION_<KEY>`.
+Chaque valeur est disponible pour la substitution en tant que `${user_config.KEY}` dans les configurations de serveurs MCP et LSP, les commandes de hook, et les commandes de moniteur. Les valeurs non sensibles peuvent également être substituées dans le contenu des skills et des agents. Toutes les valeurs sont exportées vers les sous-processus du plugin en tant que variables d'environnement `CLAUDE_PLUGIN_OPTION_<KEY>`.
 
 Les valeurs non sensibles sont stockées dans `settings.json` sous `pluginConfigs[<plugin-id>].options`. Les valeurs sensibles vont au trousseau système (ou `~/.claude/.credentials.json` où le trousseau n'est pas disponible). Le stockage du trousseau est partagé avec les jetons OAuth et a une limite totale d'environ 2 KB, donc gardez les valeurs sensibles petites.
 
@@ -504,7 +510,7 @@ Le champ `server` est obligatoire et doit correspondre à une clé dans les `mcp
 
 ### Règles de comportement des chemins
 
-Pour `skills`, `commands`, `agents`, `outputStyles`, `themes` et `monitors`, un chemin personnalisé remplace le répertoire par défaut. Si le manifeste spécifie `skills`, le répertoire par défaut `skills/` n'est pas analysé ; si il spécifie `monitors`, le fichier par défaut `monitors/monitors.json` n'est pas chargé. Les [Hooks](#hooks), les [Serveurs MCP](#mcp-servers) et les [Serveurs LSP](#lsp-servers) ont une sémantique différente pour gérer plusieurs sources.
+Pour `skills`, `commands`, `agents`, `outputStyles`, `experimental.themes` et `experimental.monitors`, un chemin personnalisé remplace le répertoire par défaut. Si le manifeste spécifie `skills`, le répertoire par défaut `skills/` n'est pas analysé ; si il spécifie `experimental.monitors`, le fichier par défaut `monitors/monitors.json` n'est pas chargé. Les [Hooks](#hooks), les [Serveurs MCP](#mcp-servers) et les [Serveurs LSP](#lsp-servers) ont une sémantique différente pour gérer plusieurs sources.
 
 * Tous les chemins doivent être relatifs à la racine du plugin et commencer par `./`
 * Les composants des chemins personnalisés utilisent les mêmes règles de nommage et d'espace de noms
@@ -605,7 +611,7 @@ Le répertoire de données est supprimé automatiquement quand vous désinstalle
 
 Les plugins sont spécifiés de deux façons :
 
-* Via `claude --plugin-dir`, pour la durée d'une session.
+* Via `claude --plugin-dir` ou `claude --plugin-url`, pour la durée d'une session.
 * Via une marketplace, installés pour les sessions futures.
 
 À des fins de sécurité et de vérification, Claude Code copie les plugins de *marketplace* dans le **cache de plugins** local de l'utilisateur (`~/.claude/plugins/cache`) plutôt que de les utiliser sur place. Comprendre ce comportement est important lors du développement de plugins qui référencent des fichiers externes.

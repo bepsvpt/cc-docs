@@ -301,7 +301,7 @@ Plugin monitors menggunakan mekanisme yang sama seperti [Monitor tool](/id/tools
 ]
 ```
 
-Untuk mendeklarasikan monitors inline, atur kunci `monitors` di `plugin.json` ke array yang sama. Untuk memuat dari jalur non-default, atur `monitors` ke string jalur relatif seperti `"./config/monitors.json"`.
+Untuk mendeklarasikan monitors inline, atur `experimental.monitors` di `plugin.json` ke array yang sama. Untuk memuat dari jalur non-default, atur `experimental.monitors` ke string jalur relatif seperti `"./config/monitors.json"`. Monitors adalah [komponen eksperimental](#experimental-components).
 
 **Field yang diperlukan:**
 
@@ -323,7 +323,7 @@ Menonaktifkan plugin di tengah sesi tidak menghentikan monitors yang sudah berja
 
 ### Themes
 
-Plugins dapat mengirimkan color themes yang muncul di `/theme` bersama preset bawaan dan themes lokal pengguna. Sebuah theme adalah file JSON di `themes/` dengan preset `base` dan peta `overrides` yang sparse dari color tokens.
+Plugins dapat mengirimkan color themes yang muncul di `/theme` bersama preset bawaan dan themes lokal pengguna. Sebuah theme adalah file JSON di `themes/` dengan preset `base` dan peta `overrides` yang sparse dari color tokens. Themes adalah [komponen eksperimental](#experimental-components).
 
 ```json theme={null}
 {
@@ -384,9 +384,11 @@ Manifest bersifat opsional. Jika dihilangkan, Claude Code secara otomatis menemu
   "hooks": "./config/hooks.json",
   "mcpServers": "./mcp-config.json",
   "outputStyles": "./styles/",
-  "themes": "./themes/",
   "lspServers": "./.lsp.json",
-  "monitors": "./monitors.json",
+  "experimental": {
+    "themes": "./themes/",
+    "monitors": "./monitors.json"
+  },
   "dependencies": [
     "helper-lib",
     { "name": "secrets-vault", "version": "~2.1.0" }
@@ -419,20 +421,24 @@ Nama ini digunakan untuk namespacing komponen. Misalnya, di UI, agent `agent-cre
 
 ### Field jalur komponen
 
-| Field          | Tipe                  | Deskripsi                                                                                                                                                   | Contoh                                               |
-| :------------- | :-------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
-| `skills`       | string\|array         | Direktori skill khusus yang berisi `<name>/SKILL.md` (menggantikan default `skills/`)                                                                       | `"./custom/skills/"`                                 |
-| `commands`     | string\|array         | File skill `.md` datar atau direktori khusus (menggantikan default `commands/`)                                                                             | `"./custom/cmd.md"` atau `["./cmd1.md"]`             |
-| `agents`       | string\|array         | File agent khusus (menggantikan default `agents/`)                                                                                                          | `"./custom/agents/reviewer.md"`                      |
-| `hooks`        | string\|array\|object | Jalur konfigurasi hook atau konfigurasi inline                                                                                                              | `"./my-extra-hooks.json"`                            |
-| `mcpServers`   | string\|array\|object | Jalur konfigurasi MCP atau konfigurasi inline                                                                                                               | `"./my-extra-mcp-config.json"`                       |
-| `outputStyles` | string\|array         | File/direktori gaya output khusus (menggantikan default `output-styles/`)                                                                                   | `"./styles/"`                                        |
-| `themes`       | string\|array         | File/direktori tema warna (menggantikan default `themes/`). Lihat [Themes](#themes)                                                                         | `"./themes/"`                                        |
-| `lspServers`   | string\|array\|object | Konfigurasi [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) untuk intelijen kode (buka definisi, temukan referensi, dll.) | `"./.lsp.json"`                                      |
-| `monitors`     | string\|array         | Konfigurasi [Monitor](/id/tools-reference#monitor-tool) latar belakang yang dimulai secara otomatis saat plugin aktif. Lihat [Monitors](#monitors)          | `"./monitors.json"`                                  |
-| `userConfig`   | object                | Nilai yang dapat dikonfigurasi pengguna yang diminta saat enable. Lihat [User configuration](#user-configuration)                                           | Lihat di bawah                                       |
-| `channels`     | array                 | Deklarasi channel untuk message injection (Telegram, Slack, Discord style). Lihat [Channels](#channels)                                                     | Lihat di bawah                                       |
-| `dependencies` | array                 | Plugin lain yang diperlukan plugin ini, secara opsional dengan batasan versi semver. Lihat [Constrain plugin dependency versions](/id/plugin-dependencies)  | `[{ "name": "secrets-vault", "version": "~2.1.0" }]` |
+| Field                   | Tipe                  | Deskripsi                                                                                                                                                   | Contoh                                               |
+| :---------------------- | :-------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
+| `skills`                | string\|array         | Direktori skill khusus yang berisi `<name>/SKILL.md` (menggantikan default `skills/`)                                                                       | `"./custom/skills/"`                                 |
+| `commands`              | string\|array         | File skill `.md` datar atau direktori khusus (menggantikan default `commands/`)                                                                             | `"./custom/cmd.md"` atau `["./cmd1.md"]`             |
+| `agents`                | string\|array         | File agent khusus (menggantikan default `agents/`)                                                                                                          | `"./custom/agents/reviewer.md"`                      |
+| `hooks`                 | string\|array\|object | Jalur konfigurasi hook atau konfigurasi inline                                                                                                              | `"./my-extra-hooks.json"`                            |
+| `mcpServers`            | string\|array\|object | Jalur konfigurasi MCP atau konfigurasi inline                                                                                                               | `"./my-extra-mcp-config.json"`                       |
+| `outputStyles`          | string\|array         | File/direktori gaya output khusus (menggantikan default `output-styles/`)                                                                                   | `"./styles/"`                                        |
+| `lspServers`            | string\|array\|object | Konfigurasi [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) untuk intelijen kode (buka definisi, temukan referensi, dll.) | `"./.lsp.json"`                                      |
+| `experimental.themes`   | string\|array         | File/direktori tema warna (menggantikan default `themes/`). Lihat [Themes](#themes)                                                                         | `"./themes/"`                                        |
+| `experimental.monitors` | string\|array         | Konfigurasi [Monitor](/id/tools-reference#monitor-tool) latar belakang yang dimulai secara otomatis saat plugin aktif. Lihat [Monitors](#monitors)          | `"./monitors.json"`                                  |
+| `userConfig`            | object                | Nilai yang dapat dikonfigurasi pengguna yang diminta saat enable. Lihat [User configuration](#user-configuration)                                           | Lihat di bawah                                       |
+| `channels`              | array                 | Deklarasi channel untuk message injection (Telegram, Slack, Discord style). Lihat [Channels](#channels)                                                     | Lihat di bawah                                       |
+| `dependencies`          | array                 | Plugin lain yang diperlukan plugin ini, secara opsional dengan batasan versi semver. Lihat [Constrain plugin dependency versions](/id/plugin-dependencies)  | `[{ "name": "secrets-vault", "version": "~2.1.0" }]` |
+
+### Komponen eksperimental
+
+Komponen di bawah kunci `experimental`, `themes` dan `monitors`, memiliki skema manifest yang mungkin berubah antar rilis saat mereka stabil. Di mana Anda mendeklarasikannya adalah migrasi terpisah: tingkat atas masih berfungsi, `claude plugin validate` memperingatkan, dan rilis mendatang akan memerlukan `experimental.*`.
 
 ### User configuration
 
@@ -504,7 +510,7 @@ Field `server` diperlukan dan harus cocok dengan kunci di `mcpServers` plugin. F
 
 ### Aturan perilaku jalur
 
-Untuk `skills`, `commands`, `agents`, `outputStyles`, `themes`, dan `monitors`, jalur khusus menggantikan default. Jika manifest menentukan `skills`, direktori default `skills/` tidak dipindai; jika menentukan `monitors`, default `monitors/monitors.json` tidak dimuat. [Hooks](#hooks), [MCP servers](#mcp-servers), dan [LSP servers](#lsp-servers) memiliki semantik berbeda untuk menangani beberapa sumber.
+Untuk `skills`, `commands`, `agents`, `outputStyles`, `experimental.themes`, dan `experimental.monitors`, jalur khusus menggantikan default. Jika manifest menentukan `skills`, direktori default `skills/` tidak dipindai; jika menentukan `experimental.monitors`, default `monitors/monitors.json` tidak dimuat. [Hooks](#hooks), [MCP servers](#mcp-servers), dan [LSP servers](#lsp-servers) memiliki semantik berbeda untuk menangani beberapa sumber.
 
 * Semua jalur harus relatif terhadap root plugin dan dimulai dengan `./`
 * Komponen dari jalur khusus menggunakan aturan penamaan dan namespacing yang sama
@@ -601,11 +607,11 @@ Direktori data dihapus secara otomatis saat Anda menghapus plugin dari cakupan t
 
 ***
 
-## Caching plugin dan resolusi file
+## Plugin caching dan resolusi file
 
 Plugins ditentukan dalam salah satu dari dua cara:
 
-* Melalui `claude --plugin-dir`, untuk durasi sesi.
+* Melalui `claude --plugin-dir` atau `claude --plugin-url`, untuk durasi sesi.
 * Melalui marketplace, dipasang untuk sesi mendatang.
 
 Untuk tujuan keamanan dan verifikasi, Claude Code menyalin plugin *marketplace* ke **plugin cache** lokal pengguna (`~/.claude/plugins/cache`) daripada menggunakannya di tempat. Memahami perilaku ini penting saat mengembangkan plugins yang mereferensikan file eksternal.

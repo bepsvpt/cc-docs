@@ -95,7 +95,7 @@ Das Eingabefeld unterstützt mehrere Funktionen:
 * **Genehmigungsmodi**: Klicken Sie auf den Modusindikator am unteren Rand des Eingabefelds, um Modi zu wechseln. Im normalen Modus fragt Claude vor jeder Aktion um Genehmigung. Im Plan Mode beschreibt Claude, was es tun wird, und wartet auf Genehmigung, bevor es Änderungen vornimmt. VS Code öffnet den Plan automatisch als vollständiges Markdown-Dokument, in dem Sie Inline-Kommentare hinzufügen können, um Feedback zu geben, bevor Claude beginnt. Im Auto-Accept-Modus nimmt Claude Bearbeitungen vor, ohne zu fragen. Legen Sie den Standard in den VS Code-Einstellungen unter `claudeCode.initialPermissionMode` fest.
 * **Befehlsmenü**: Klicken Sie auf `/` oder geben Sie `/` ein, um das Befehlsmenü zu öffnen. Zu den Optionen gehören das Anhängen von Dateien, das Wechseln von Modellen, das Umschalten von erweitertem Denken, das Anzeigen der Plannutzung (`/usage`) und das Starten einer [Remote Control](/de/remote-control)-Sitzung (`/remote-control`). Der Abschnitt „Anpassen" bietet Zugriff auf MCP servers, hooks, memory, permissions und plugins. Elemente mit einem Terminal-Symbol werden im integrierten Terminal geöffnet.
 * **Kontextindikator**: Das Eingabefeld zeigt, wie viel von Claudes context window Sie verwenden. Claude komprimiert automatisch bei Bedarf, oder Sie können `/compact` manuell ausführen.
-* **Erweitertes Denken**: Ermöglicht Claude, mehr Zeit für die Überlegung komplexer Probleme aufzuwenden. Aktivieren Sie es über das Befehlsmenü (`/`). Claudes Überlegungen werden im Gespräch als zusammengeklappte Blöcke angezeigt: Klicken Sie auf einen Block, um ihn zu lesen, oder drücken Sie `Ctrl+O`, um jeden Denkblock in der Sitzung zu erweitern oder zu reduzieren. Siehe [Erweitertes Denken](/de/common-workflows#use-extended-thinking-thinking-mode) für Details.
+* **Erweitertes Denken**: Ermöglicht Claude, mehr Zeit für die Überlegung komplexer Probleme aufzuwenden. Aktivieren Sie es über das Befehlsmenü (`/`). Claudes Überlegungen werden im Gespräch als zusammengeklappte Blöcke angezeigt: Klicken Sie auf einen Block, um ihn zu lesen, oder drücken Sie `Ctrl+O`, um jeden Denkblock in der Sitzung zu erweitern oder zu reduzieren. Siehe [Erweitertes Denken](/de/model-config#extended-thinking) für Details.
 * **Mehrzeilige Eingabe**: Drücken Sie `Shift+Enter`, um eine neue Zeile hinzuzufügen, ohne zu senden. Dies funktioniert auch in der Freitexteingabe „Sonstiges" von Frage-Dialogen.
 
 ### Referenzdateien und Ordner
@@ -115,7 +115,7 @@ Sie können auch `Shift` gedrückt halten, während Sie Dateien in das Eingabefe
 
 ### Frühere Gespräche fortsetzen
 
-Klicken Sie auf die Schaltfläche **Sitzungsverlauf** oben im Claude Code-Panel, um auf Ihren Gesprächsverlauf zuzugreifen. Sie können nach Schlüsselwort suchen oder nach Zeit durchsuchen (Heute, Gestern, Letzte 7 Tage usw.). Klicken Sie auf ein beliebiges Gespräch, um es mit dem vollständigen Nachrichtenverlauf fortzusetzen. Neue Sitzungen erhalten KI-generierte Titel basierend auf Ihrer ersten Nachricht. Bewegen Sie den Mauszeiger über eine Sitzung, um Umbenennungs- und Entfernungsaktionen anzuzeigen: Benennen Sie um, um ihr einen beschreibenden Titel zu geben, oder entfernen Sie sie, um sie aus der Liste zu löschen. Weitere Informationen zum Fortsetzen von Sitzungen finden Sie unter [Häufige Workflows](/de/common-workflows#resume-previous-conversations).
+Klicken Sie auf die Schaltfläche **Sitzungsverlauf** oben im Claude Code-Panel, um auf Ihren Gesprächsverlauf zuzugreifen. Sie können nach Schlüsselwort suchen oder nach Zeit durchsuchen (Heute, Gestern, Letzte 7 Tage usw.). Klicken Sie auf ein beliebiges Gespräch, um es mit dem vollständigen Nachrichtenverlauf fortzusetzen. Neue Sitzungen erhalten KI-generierte Titel basierend auf Ihrer ersten Nachricht. Bewegen Sie den Mauszeiger über eine Sitzung, um Umbenennungs- und Entfernungsaktionen anzuzeigen: Benennen Sie um, um ihr einen beschreibenden Titel zu geben, oder entfernen Sie sie, um sie aus der Liste zu löschen. Weitere Informationen zum Fortsetzen von Sitzungen finden Sie unter [Sitzungen verwalten](/de/sessions).
 
 ### Fortsetzen von Remote-Sitzungen von Claude.ai
 
@@ -399,7 +399,7 @@ Verwenden Sie das Flag `--worktree` (`-w`), um Claude in einem isolierten worktr
 claude --worktree feature-auth
 ```
 
-Jeder worktree behält einen unabhängigen Dateizustand bei, während er die Git-Historie teilt. Dies verhindert, dass Claude-Instanzen sich gegenseitig beeinflussen, wenn sie an verschiedenen Aufgaben arbeiten. Weitere Details finden Sie unter [Führen Sie parallele Claude Code-Sitzungen mit Git worktrees aus](/de/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees).
+Jeder worktree behält einen unabhängigen Dateizustand bei, während er die Git-Historie teilt. Dies verhindert, dass Claude-Instanzen sich gegenseitig beeinflussen, wenn sie an verschiedenen Aufgaben arbeiten. Weitere Details finden Sie unter [Führen Sie parallele Sitzungen mit Git worktrees aus](/de/worktrees).
 
 ## Verwenden Sie Drittanbieter
 
@@ -475,6 +475,16 @@ Das Spark-Symbol wird in der **Editor-Symbolleiste** (oben rechts des Editors) a
 5. **Überprüfen Sie die Arbeitsbereichsvertrauenswürdigkeit**: Die Erweiterung funktioniert nicht im Restricted Mode
 
 Alternativ klicken Sie auf „✱ Claude Code" in der **Statusleiste** (untere rechte Ecke). Dies funktioniert auch ohne offene Datei. Sie können auch die **Befehlspalette** (`Cmd+Shift+P` / `Ctrl+Shift+P`) verwenden und „Claude Code" eingeben.
+
+### Cmd+Esc funktioniert auf macOS nicht
+
+Auf macOS Tahoe und später ist die System-Game-Overlay-Verknüpfung standardmäßig an `Cmd+Esc` gebunden und fängt den Tastendruck ab, bevor er VS Code erreicht. Um die Verknüpfung freizugeben:
+
+1. Öffnen Sie die Systemeinstellungen
+2. Gehen Sie zu Tastatur, dann Tastaturkürzel, dann Game Controller
+3. Deaktivieren Sie das Kontrollkästchen für Game Overlay
+
+Alternativ können Sie die Erweiterung an eine andere Taste binden: Öffnen Sie den VS Code [Tastaturkürzel-Editor](https://code.visualstudio.com/docs/configure/keybindings) (`Cmd+K Cmd+S`), suchen Sie nach `Claude Code: Focus input`, und weisen Sie eine neue Bindung zu.
 
 ### Claude Code antwortet nie
 

@@ -8,7 +8,7 @@
 
 Skills 扩展了 Claude 能做的事情。创建一个 `SKILL.md` 文件，其中包含说明，Claude 会将其添加到其工具包中。Claude 在相关时使用 skills，或者你可以使用 `/skill-name` 直接调用一个。
 
-当你不断将相同的剧本、检查清单或多步骤程序粘贴到聊天中时，或者当 CLAUDE.md 的一部分已经演变成程序而不是事实时，创建一个 skill。与 CLAUDE.md 内容不同，skill 的正文仅在使用时加载，因此长参考资料在你需要它之前几乎不花费任何成本。
+当你不断将相同的说明、检查清单或多步骤程序粘贴到聊天中时，或者当 CLAUDE.md 的一部分已经演变成程序而不是事实时，创建一个 skill。与 CLAUDE.md 内容不同，skill 的正文仅在使用时加载，因此长参考资料在你需要它之前几乎不花费任何成本。
 
 <Note>
   对于内置命令（如 `/help` 和 `/compact`）以及捆绑 skills（如 `/debug` 和 `/simplify`），请参阅[命令参考](/zh-CN/commands)。
@@ -20,7 +20,7 @@ Claude Code skills 遵循 [Agent Skills](https://agentskills.io) 开放标准，
 
 ## 捆绑 skills
 
-Claude Code 包括一组捆绑 skills，在每个会话中都可用，包括 `/simplify`、`/batch`、`/debug`、`/loop` 和 `/claude-api`。与大多数内置命令不同，内置命令直接执行固定逻辑，捆绑 skills 是基于提示的：它们为 Claude 提供详细的剧本，让它使用其工具来编排工作。你调用捆绑 skills 的方式与调用任何其他 skill 相同，输入 `/` 后跟 skill 名称。
+Claude Code 包括一组捆绑 skills，在每个会话中都可用，包括 `/simplify`、`/batch`、`/debug`、`/loop` 和 `/claude-api`。与大多数内置命令不同，内置命令直接执行固定逻辑，捆绑 skills 是基于提示的：它们为 Claude 提供详细的说明，让它使用其工具来编排工作。你调用捆绑 skills 的方式与调用任何其他 skill 相同，输入 `/` 后跟 skill 名称。
 
 捆绑 skills 在[命令参考](/zh-CN/commands)中与内置命令一起列出，在"目的"列中标记为 **Skill**。
 
@@ -28,54 +28,55 @@ Claude Code 包括一组捆绑 skills，在每个会话中都可用，包括 `/s
 
 ### 创建你的第一个 skill
 
-此示例创建一个 skill，教 Claude 使用视觉图表和类比来解释代码。由于它使用默认 frontmatter，Claude 可以在你询问某事如何工作时自动加载它，或者你可以使用 `/explain-code` 直接调用它。
+此示例创建一个 skill，用于总结你的 git 仓库中未提交的更改，并标记任何风险的内容。它在 Claude 读取之前将实时 diff 拉入提示中，因此响应基于你的实际工作树，而不是 Claude 从打开的文件中猜测的内容。当你询问你的更改时，Claude 会自动加载该 skill，或者你可以使用 `/summarize-changes` 直接调用它。
 
 <Steps>
   <Step title="创建 skill 目录">
     在你的个人 skills 文件夹中为 skill 创建一个目录。个人 skills 在你的所有项目中都可用。
 
     ```bash theme={null}
-    mkdir -p ~/.claude/skills/explain-code
+    mkdir -p ~/.claude/skills/summarize-changes
     ```
   </Step>
 
   <Step title="编写 SKILL.md">
-    每个 skill 都需要一个 `SKILL.md` 文件，包含两部分：YAML frontmatter（在 `---` 标记之间）告诉 Claude 何时使用该 skill，以及包含 Claude 在调用该 skill 时遵循的说明的 markdown 内容。目录名称变成 `/slash-command`，`description` 帮助 Claude 决定何时自动加载它。
+    每个 skill 都需要一个 `SKILL.md` 文件，包含两部分：YAML frontmatter（在 `---` 标记之间）告诉 Claude 何时使用该 skill，以及包含 Claude 在调用该 skill 时遵循的说明的 markdown 内容。目录名称变成你输入的命令，`description` 帮助 Claude 决定何时自动加载该 skill。
 
-    创建 `~/.claude/skills/explain-code/SKILL.md`：
+    将此保存到 `~/.claude/skills/summarize-changes/SKILL.md`：
 
     ```yaml theme={null}
     ---
-    description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
+    description: Summarizes uncommitted changes and flags anything risky. Use when the user asks what changed, wants a commit message, or asks to review their diff.
     ---
 
-    When explaining code, always include:
+    ## Current changes
 
-    1. **Start with an analogy**: Compare the code to something from everyday life
-    2. **Draw a diagram**: Use ASCII art to show the flow, structure, or relationships
-    3. **Walk through the code**: Explain step-by-step what happens
-    4. **Highlight a gotcha**: What's a common mistake or misconception?
+    !`git diff HEAD`
 
-    Keep explanations conversational. For complex concepts, use multiple analogies.
+    ## Instructions
+
+    Summarize the changes above in two or three bullet points, then list any risks you notice such as missing error handling, hardcoded values, or tests that need updating. If the diff is empty, say there are no uncommitted changes.
     ```
+
+    `` !`git diff HEAD` `` 这一行使用[动态上下文注入](#inject-dynamic-context)：Claude Code 运行该命令，并在 Claude 看到 skill 内容之前将该行替换为其输出，因此说明会随着当前 diff 已内联而到达。
   </Step>
 
   <Step title="测试 skill">
-    你可以通过两种方式测试它：
+    打开一个 git 项目，对任何文件进行小的编辑，并通过运行 `claude` 启动 Claude Code。你可以通过两种方式测试该 skill。
 
     **让 Claude 自动调用它**，通过询问与描述匹配的内容：
 
     ```text theme={null}
-    How does this code work?
+    What did I change?
     ```
 
     **或直接使用 skill 名称调用它**：
 
     ```text theme={null}
-    /explain-code src/auth/login.ts
+    /summarize-changes
     ```
 
-    无论哪种方式，Claude 都应该在其解释中包含类比和 ASCII 图表。
+    无论哪种方式，Claude 都应该用你的编辑的简短摘要和风险列表来响应。
   </Step>
 </Steps>
 
@@ -167,6 +168,8 @@ Deploy the application:
 ```
 
 你的 `SKILL.md` 可以包含任何内容，但思考你想如何调用该 skill（由你、由 Claude 或两者）以及你想在哪里运行它（内联或在 subagent 中）有助于指导要包含的内容。对于复杂的 skills，你也可以[添加支持文件](#add-supporting-files)以保持主 skill 的专注。
+
+保持主体本身简洁。一旦 skill 加载，其内容[在整个会话中保持在上下文中](#skill-content-lifecycle)，因此每一行都是一个重复的令牌成本。说明要做什么而不是叙述如何或为什么，并应用与[CLAUDE.md 内容](/zh-CN/best-practices#write-an-effective-claude-md)相同的简洁性测试。
 
 ### Frontmatter 参考
 
@@ -416,7 +419,7 @@ git status --short
 要禁用来自用户、项目、插件或[其他目录](#skills-from-additional-directories)源的 skills 和自定义命令的此行为，请在[设置](/zh-CN/settings)中设置 `"disableSkillShellExecution": true`。每个命令都被替换为 `[shell command execution disabled by policy]` 而不是被运行。捆绑和托管 skills 不受影响。此设置在[托管设置](/zh-CN/permissions#managed-settings)中最有用，用户无法覆盖它。
 
 <Tip>
-  要在 skill 中启用[扩展思考](/zh-CN/common-workflows#use-extended-thinking-thinking-mode)，在你的 skill 内容中的任何地方包含单词"ultrathink"。
+  要在 skill 运行时请求更深入的推理，在 skill 内容中的任何地方包含 `ultrathink`。请参阅[使用 ultrathink 进行一次性深度推理](/zh-CN/model-config#use-ultrathink-for-one-off-deep-reasoning)。
 </Tip>
 
 ### 在 subagent 中运行 skills
@@ -496,6 +499,32 @@ Skill(deploy *)
   `user-invocable` 字段仅控制菜单可见性，不控制 Skill 工具访问。使用 `disable-model-invocation: true` 来阻止程序调用。
 </Note>
 
+### 从设置覆盖 skill 可见性
+
+`skillOverrides` 设置从你的[设置](/zh-CN/settings)控制 skill 可见性，而不是从 skill 自己的 frontmatter。将其用于你不想编辑 SKILL.md 的 skills，例如检入共享项目仓库或由 MCP 服务器提供的 skills。`/skills` 菜单为你编写它：突出显示一个 skill 并按 `Space` 循环切换状态，然后按 `Enter` 保存到 `.claude/settings.local.json`。
+
+每个键是一个 skill 名称，每个值是以下四种状态之一：
+
+| 值                       | 列出给 Claude | 在 `/` 菜单中 |
+| :---------------------- | :--------- | :-------- |
+| `"on"`                  | 名称和描述      | 是         |
+| `"name-only"`           | 仅名称        | 是         |
+| `"user-invocable-only"` | 隐藏         | 是         |
+| `"off"`                 | 隐藏         | 隐藏        |
+
+`skillOverrides` 中不存在的 skill 被视为 `"on"`。下面的示例将一个 skill 折叠为其名称，并完全关闭另一个：
+
+```json theme={null}
+{
+  "skillOverrides": {
+    "legacy-context": "name-only",
+    "deploy": "off"
+  }
+}
+```
+
+插件 skills 不受 `skillOverrides` 影响。通过 `/plugin` 管理这些。
+
 ## 共享 skills
 
 Skills 可以根据你的受众在不同范围内分发：
@@ -516,13 +545,13 @@ Skills 可以捆绑并运行任何语言的脚本，为 Claude 提供单个提�
 mkdir -p ~/.claude/skills/codebase-visualizer/scripts
 ```
 
-创建 `~/.claude/skills/codebase-visualizer/SKILL.md`。描述告诉 Claude 何时激活此 Skill，说明告诉 Claude 运行捆绑的脚本：
+保存到 `~/.claude/skills/codebase-visualizer/SKILL.md`。描述告诉 Claude 何时激活此 Skill，说明告诉 Claude 运行捆绑的脚本。脚本路径使用 [`${CLAUDE_SKILL_DIR}`](#available-string-substitutions)，因此无论 skill 是在个人、项目还是插件级别安装，它都能正确解析：
 
 ````yaml theme={null}
 ---
 name: codebase-visualizer
 description: Generate an interactive collapsible tree visualization of your codebase. Use when exploring a new repo, understanding project structure, or identifying large files.
-allowed-tools: Bash(python *)
+allowed-tools: Bash(python3 *)
 ---
 
 # Codebase Visualizer
@@ -534,7 +563,7 @@ Generate an interactive HTML tree view that shows your project's file structure 
 Run the visualization script from your project root:
 
 ```bash
-python ~/.claude/skills/codebase-visualizer/scripts/visualize.py .
+python3 ${CLAUDE_SKILL_DIR}/scripts/visualize.py .
 ```
 
 This creates `codebase-map.html` in the current directory and opens it in your default browser.
@@ -547,13 +576,13 @@ This creates `codebase-map.html` in the current directory and opens it in your d
 - **Directory totals**: Shows aggregate size of each folder
 ````
 
-创建 `~/.claude/skills/codebase-visualizer/scripts/visualize.py`。此脚本扫描目录树并生成一个自包含的 HTML 文件，包含：
+保存到 `~/.claude/skills/codebase-visualizer/scripts/visualize.py`。此脚本扫描目录树并生成一个自包含的 HTML 文件，包含：
 
 * 一个**摘要侧边栏**，显示文件计数、目录计数、总大小和文件类型数量
 * 一个**条形图**，按文件类型（按大小排名前 8）分解代码库
 * 一个**可折叠树**，你可以在其中展开和折叠目录，带有颜色编码的文件类型指示器
 
-该脚本需要 Python，但仅使用内置库，因此无需安装包：
+该脚本需要 Python 3，但仅使用内置库，因此无需安装包：
 
 ```python expandable theme={null}
 #!/usr/bin/env python3
@@ -562,6 +591,7 @@ This creates `codebase-map.html` in the current directory and opens it in your d
 import json
 import sys
 import webbrowser
+from html import escape
 from pathlib import Path
 from collections import Counter
 
@@ -650,7 +680,7 @@ def generate_html(data: dict, stats: dict, output: Path) -> None:
       {lang_bars}
     </div>
     <div class="main">
-      <h1>📁 {data["name"]}</h1>
+      <h1>📁 {escape(data["name"])}</h1>
       <ul class="tree" id="root"></ul>
     </div>
   </div>
@@ -658,11 +688,12 @@ def generate_html(data: dict, stats: dict, output: Path) -> None:
     const data = {json.dumps(data)};
     const colors = {json.dumps(colors)};
     function fmt(b) {{ if (b < 1024) return b + ' B'; if (b < 1048576) return (b/1024).toFixed(1) + ' KB'; return (b/1048576).toFixed(1) + ' MB'; }}
+    function esc(s) {{ return s.replace(/[&<>"']/g, c => ({{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}}[c])); }}
     function render(node, parent) {{
       if (node.children) {{
         const det = document.createElement('details');
         det.open = parent === document.getElementById('root');
-        det.innerHTML = `<summary><span class="folder">📁 ${{node.name}}</span><span class="size">${{fmt(node.size)}}</span></summary>`;
+        det.innerHTML = `<summary><span class="folder">📁 ${{esc(node.name)}}</span><span class="size">${{fmt(node.size)}}</span></summary>`;
         const ul = document.createElement('ul'); ul.className = 'tree';
         node.children.sort((a,b) => (b.children?1:0)-(a.children?1:0) || a.name.localeCompare(b.name));
         node.children.forEach(c => render(c, ul));
@@ -670,7 +701,7 @@ def generate_html(data: dict, stats: dict, output: Path) -> None:
         const li = document.createElement('li'); li.appendChild(det); parent.appendChild(li);
       }} else {{
         const li = document.createElement('li'); li.className = 'file';
-        li.innerHTML = `<span class="dot" style="background:${{colors[node.ext]||'#6b7280'}}"></span>${{node.name}}<span class="size">${{fmt(node.size)}}</span>`;
+        li.innerHTML = `<span class="dot" style="background:${{colors[node.ext]||'#6b7280'}}"></span>${{esc(node.name)}}<span class="size">${{fmt(node.size)}}</span>`;
         parent.appendChild(li);
       }}
     }}
@@ -715,7 +746,7 @@ if __name__ == '__main__':
 
 Skill 描述被加载到上下文中，以便 Claude 知道什么可用。所有 skill 名称始终包括，但如果你有许多 skills，描述会被缩短以适应字符预算，这可能会删除 Claude 需要匹配你的请求的关键字。预算在上下文窗口的 1% 处动态扩展，回退为 8,000 个字符。
 
-要提高限制，设置 `SLASH_COMMAND_TOOL_CHAR_BUDGET` 环境变量。或在源处修剪 `description` 和 `when_to_use` 文本：前置关键用例，因为每个条目的组合文本被限制为 1,536 个字符，无论预算如何。
+要提高限制，设置 `SLASH_COMMAND_TOOL_CHAR_BUDGET` 环境变量。要为其他 skills 释放预算，在 [`skillOverrides`](#override-skill-visibility-from-settings) 中将低优先级条目设置为 `"name-only"`，以便它们列出而不显示描述。你也可以在源处修剪 `description` 和 `when_to_use` 文本：前置关键用例，因为每个条目的组合文本被限制为 1,536 个字符，无论预算如何。
 
 ## 相关资源
 

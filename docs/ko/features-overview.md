@@ -219,7 +219,7 @@ Claude Code는 코드를 추론하는 모델과 파일 작업, 검색, 실행 �
 | **Subagents** | 생성 시         | 지정된 skill이 있는 신선한 컨텍스트 | 주 세션에서 격리됨                  |
 | **Hooks**     | 트리거 시        | 없음(외부에서 실행)            | 0, hook이 추가 컨텍스트를 반환하지 않는 한 |
 
-\*기본적으로 skill 설명은 세션 시작 시 로드되므로 Claude가 사용할 시기를 결정할 수 있습니다. Skill의 frontmatter에서 `disable-model-invocation: true`를 설정하여 수동으로 호출할 때까지 Claude에서 완전히 숨깁니다. 이는 skill의 컨텍스트 비용을 0으로 줄입니다.
+\*기본적으로 skill 설명은 세션 시작 시 로드되므로 Claude가 사용할 시기를 결정할 수 있습니다. Skill의 frontmatter에서 `disable-model-invocation: true`를 설정하여 수동으로 호출할 때까지 Claude에서 완전히 숨깁니다. 이는 skill의 컨텍스트 비용을 0으로 줄입니다. 작성하지 않은 skill의 경우, 파일을 편집하지 않고도 동일한 작업을 수행하도록 설정에서 [`skillOverrides`](/ko/skills#override-skill-visibility-from-settings)를 설정하세요.
 
 ### 기능이 어떻게 로드되는지 이해하기
 

@@ -301,7 +301,7 @@ LSP 통합은 다음을 제공합니다:
 ]
 ```
 
-monitors를 인라인으로 선언하려면 `plugin.json`의 `monitors` 키를 동일한 배열로 설정하세요. 기본이 아닌 경로에서 로드하려면 `monitors`를 `"./config/monitors.json"`과 같은 상대 경로 문자열로 설정하세요.
+monitors를 인라인으로 선언하려면 `plugin.json`의 `experimental.monitors`를 동일한 배열로 설정하세요. 기본이 아닌 경로에서 로드하려면 `experimental.monitors`를 `"./config/monitors.json"`과 같은 상대 경로 문자열로 설정하세요. Monitors는 [실험적 컴포넌트](#experimental-components)입니다.
 
 **필수 필드:**
 
@@ -323,7 +323,7 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `monitors` 키를 �
 
 ### Themes
 
-플러그인은 `/theme`에 기본 제공 프리셋 및 사용자의 로컬 테마와 함께 나타나는 색상 테마를 제공할 수 있습니다. 테마는 `themes/` 디렉토리의 JSON 파일로, `base` 프리셋과 색상 토큰의 sparse `overrides` 맵을 포함합니다.
+플러그인은 `/theme`에 기본 제공 프리셋 및 사용자의 로컬 테마와 함께 나타나는 색상 테마를 제공할 수 있습니다. 테마는 `themes/` 디렉토리의 JSON 파일로, `base` 프리셋과 색상 토큰의 sparse `overrides` 맵을 포함합니다. Themes는 [실험적 컴포넌트](#experimental-components)입니다.
 
 ```json theme={null}
 {
@@ -384,9 +384,11 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `monitors` 키를 �
   "hooks": "./config/hooks.json",
   "mcpServers": "./mcp-config.json",
   "outputStyles": "./styles/",
-  "themes": "./themes/",
   "lspServers": "./.lsp.json",
-  "monitors": "./monitors.json",
+  "experimental": {
+    "themes": "./themes/",
+    "monitors": "./monitors.json"
+  },
   "dependencies": [
     "helper-lib",
     { "name": "secrets-vault", "version": "~2.1.0" }
@@ -419,20 +421,24 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `monitors` 키를 �
 
 ### 컴포넌트 경로 필드
 
-| 필드             | 타입                    | 설명                                                                                                              | 예시                                                   |
-| :------------- | :-------------------- | :-------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
-| `skills`       | string\|array         | `<name>/SKILL.md`를 포함하는 사용자 정의 skill 디렉토리 (기본 `skills/` 대체)                                                     | `"./custom/skills/"`                                 |
-| `commands`     | string\|array         | 사용자 정의 평면 `.md` skill 파일 또는 디렉토리 (기본 `commands/` 대체)                                                            | `"./custom/cmd.md"` 또는 `["./cmd1.md"]`               |
-| `agents`       | string\|array         | 사용자 정의 agent 파일 (기본 `agents/` 대체)                                                                               | `"./custom/agents/reviewer.md"`                      |
-| `hooks`        | string\|array\|object | Hook 구성 경로 또는 인라인 구성                                                                                            | `"./my-extra-hooks.json"`                            |
-| `mcpServers`   | string\|array\|object | MCP 구성 경로 또는 인라인 구성                                                                                             | `"./my-extra-mcp-config.json"`                       |
-| `outputStyles` | string\|array         | 사용자 정의 출력 스타일 파일/디렉토리 (기본 `output-styles/` 대체)                                                                  | `"./styles/"`                                        |
-| `themes`       | string\|array         | 색상 테마 파일/디렉토리 (기본 `themes/` 대체). [테마](#themes) 참조                                                               | `"./themes/"`                                        |
-| `lspServers`   | string\|array\|object | [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) 코드 인텔리전스 구성 (정의로 이동, 참조 찾기 등) | `"./.lsp.json"`                                      |
-| `monitors`     | string\|array         | 플러그인이 활성화될 때 자동으로 시작되는 백그라운드 [Monitor](/ko/tools-reference#monitor-tool) 구성. [Monitors](#monitors) 참조           | `"./monitors.json"`                                  |
-| `userConfig`   | object                | 플러그인이 활성화될 때 사용자에게 프롬프트하는 사용자 구성 가능 값. [사용자 구성](#user-configuration) 참조                                         | 아래 참조                                                |
-| `channels`     | array                 | 메시지 주입을 위한 채널 선언 (Telegram, Slack, Discord 스타일). [채널](#channels) 참조                                             | 아래 참조                                                |
-| `dependencies` | array                 | 이 플러그인이 필요로 하는 다른 플러그인, 선택적으로 semver 버전 제약 포함. [플러그인 종속성 버전 제약](/ko/plugin-dependencies) 참조                     | `[{ "name": "secrets-vault", "version": "~2.1.0" }]` |
+| 필드                      | 타입                    | 설명                                                                                                              | 예시                                                   |
+| :---------------------- | :-------------------- | :-------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
+| `skills`                | string\|array         | `<name>/SKILL.md`를 포함하는 사용자 정의 skill 디렉토리 (기본 `skills/` 대체)                                                     | `"./custom/skills/"`                                 |
+| `commands`              | string\|array         | 사용자 정의 평면 `.md` skill 파일 또는 디렉토리 (기본 `commands/` 대체)                                                            | `"./custom/cmd.md"` 또는 `["./cmd1.md"]`               |
+| `agents`                | string\|array         | 사용자 정의 agent 파일 (기본 `agents/` 대체)                                                                               | `"./custom/agents/reviewer.md"`                      |
+| `hooks`                 | string\|array\|object | Hook 구성 경로 또는 인라인 구성                                                                                            | `"./my-extra-hooks.json"`                            |
+| `mcpServers`            | string\|array\|object | MCP 구성 경로 또는 인라인 구성                                                                                             | `"./my-extra-mcp-config.json"`                       |
+| `outputStyles`          | string\|array         | 사용자 정의 출력 스타일 파일/디렉토리 (기본 `output-styles/` 대체)                                                                  | `"./styles/"`                                        |
+| `lspServers`            | string\|array\|object | [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) 코드 인텔리전스 구성 (정의로 이동, 참조 찾기 등) | `"./.lsp.json"`                                      |
+| `experimental.themes`   | string\|array         | 색상 테마 파일/디렉토리 (기본 `themes/` 대체). [테마](#themes) 참조                                                               | `"./themes/"`                                        |
+| `experimental.monitors` | string\|array         | 플러그인이 활성화될 때 자동으로 시작되는 백그라운드 [Monitor](/ko/tools-reference#monitor-tool) 구성. [Monitors](#monitors) 참조           | `"./monitors.json"`                                  |
+| `userConfig`            | object                | 플러그인이 활성화될 때 사용자에게 프롬프트하는 사용자 구성 가능 값. [사용자 구성](#user-configuration) 참조                                         | 아래 참조                                                |
+| `channels`              | array                 | 메시지 주입을 위한 채널 선언 (Telegram, Slack, Discord 스타일). [채널](#channels) 참조                                             | 아래 참조                                                |
+| `dependencies`          | array                 | 이 플러그인이 필요로 하는 다른 플러그인, 선택적으로 semver 버전 제약 포함. [플러그인 종속성 버전 제약](/ko/plugin-dependencies) 참조                     | `[{ "name": "secrets-vault", "version": "~2.1.0" }]` |
+
+### 실험적 컴포넌트
+
+`experimental` 키 아래의 컴포넌트인 `themes` 및 `monitors`는 안정화되는 동안 릴리스 간에 변경될 수 있는 매니페스트 스키마를 가집니다. 이들을 선언하는 위치는 별도의 마이그레이션입니다. 최상위 수준은 여전히 작동하고, `claude plugin validate`는 경고하며, 향후 릴리스에서는 `experimental.*`이 필요합니다.
 
 ### 사용자 구성
 
@@ -504,7 +510,7 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `monitors` 키를 �
 
 ### 경로 동작 규칙
 
-`skills`, `commands`, `agents`, `outputStyles`, `themes` 및 `monitors`의 경우 사용자 정의 경로는 기본값을 대체합니다. 매니페스트가 `skills`를 지정하면 기본 `skills/` 디렉토리는 스캔되지 않습니다. 매니페스트가 `monitors`를 지정하면 기본 `monitors/monitors.json`은 로드되지 않습니다. [Hooks](#hooks), [MCP servers](#mcp-servers) 및 [LSP servers](#lsp-servers)는 여러 소스를 처리하기 위한 다른 의미를 가집니다.
+`skills`, `commands`, `agents`, `outputStyles`, `experimental.themes` 및 `experimental.monitors`의 경우 사용자 정의 경로는 기본값을 대체합니다. 매니페스트가 `skills`를 지정하면 기본 `skills/` 디렉토리는 스캔되지 않습니다. 매니페스트가 `experimental.monitors`를 지정하면 기본 `monitors/monitors.json`은 로드되지 않습니다. [Hooks](#hooks), [MCP servers](#mcp-servers) 및 [LSP servers](#lsp-servers)는 여러 소스를 처리하기 위한 다른 의미를 가집니다.
 
 * 모든 경로는 플러그인 루트에 상대적이어야 하며 `./`로 시작해야 합니다.
 * 사용자 정의 경로의 컴포넌트는 동일한 명명 및 네임스페이싱 규칙을 사용합니다.
@@ -605,7 +611,7 @@ Claude Code는 플러그인 경로를 참조하기 위한 두 가지 변수를 �
 
 플러그인은 두 가지 방법 중 하나로 지정됩니다:
 
-* `claude --plugin-dir`을 통해, 세션 기간 동안.
+* `claude --plugin-dir` 또는 `claude --plugin-url`을 통해, 세션 기간 동안.
 * 마켓플레이스를 통해, 향후 세션을 위해 설치됨.
 
 보안 및 검증 목적으로 Claude Code는 *마켓플레이스* 플러그인을 제자리에서 사용하는 대신 사용자의 로컬 **플러그인 캐시** (`~/.claude/plugins/cache`)에 복사합니다. 외부 파일을 참조하는 플러그인을 개발할 때 이 동작을 이해하는 것이 중요합니다.
@@ -616,7 +622,7 @@ Claude의 Glob 및 Grep 도구는 검색 중에 고아 버전 디렉토리를 �
 
 ### 경로 순회 제한
 
-설치된 플러그인은 해당 디렉토리 외부의 파일을 참조할 수 없습니다. 플러그인 루트 외부를 순회하는 경로 (예: `../shared-utils`)는 설치 후 작동하지 않습니다. 왜냐하면 이러한 외부 파일이 캐시에 복사되지 않기 때문입니다.
+설치된 플러그인은 해당 디렉토리 외부의 파일을 참조할 수 없습니다. 플러그인 루트 외부를 순회하는 경로(예: `../shared-utils`)는 설치 후 작동하지 않습니다. 왜냐하면 이러한 외부 파일이 캐시에 복사되지 않기 때문입니다.
 
 ### 외부 종속성 작업
 

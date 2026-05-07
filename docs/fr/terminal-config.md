@@ -23,11 +23,11 @@ Appuyer sur Entrée soumet votre message. Pour ajouter un saut de ligne sans sou
 
 Dans la plupart des terminaux, vous pouvez également appuyer sur Maj+Entrée, mais le support varie selon l'émulateur de terminal :
 
-| Terminal                                                                            | Maj+Entrée pour saut de ligne                       |
-| :---------------------------------------------------------------------------------- | :-------------------------------------------------- |
-| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal                               | Fonctionne sans configuration                       |
-| VS Code, Cursor, Windsurf, Alacritty, Zed                                           | Exécutez `/terminal-setup` une fois                 |
-| Windows Terminal, gnome-terminal, JetBrains IDEs tels que PyCharm et Android Studio | Non disponible ; utilisez Ctrl+J ou `\` puis Entrée |
+| Terminal                                                                | Maj+Entrée pour saut de ligne                       |
+| :---------------------------------------------------------------------- | :-------------------------------------------------- |
+| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal, Windows Terminal | Fonctionne sans configuration                       |
+| VS Code, Cursor, Windsurf, Alacritty, Zed                               | Exécutez `/terminal-setup` une fois                 |
+| gnome-terminal, JetBrains IDEs tels que PyCharm et Android Studio       | Non disponible ; utilisez Ctrl+J ou `\` puis Entrée |
 
 Pour VS Code, Cursor, Windsurf, Alacritty et Zed, `/terminal-setup` écrit Maj+Entrée et d'autres liaisons de clavier dans le fichier de configuration du terminal. Dans VS Code, Cursor et Windsurf, il définit également `terminal.integrated.mouseWheelScrollSensitivity` dans les paramètres de l'éditeur pour un défilement plus fluide en [mode plein écran](/fr/fullscreen). Les liaisons et paramètres existants sont conservés ; si vous voyez un message tel que `VSCode terminal Shift+Enter key binding already configured`, aucune modification n'a été apportée. Exécutez `/terminal-setup` directement dans le terminal hôte plutôt qu'à l'intérieur de tmux ou screen, car il doit écrire dans la configuration du terminal hôte.
 

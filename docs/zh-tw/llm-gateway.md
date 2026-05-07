@@ -53,7 +53,7 @@ Claude Code 還在系統提示前面添加了一個簡短的歸屬塊，其中�
 
 默認情況下，Claude Code 使用所選 API 格式的標準模型名稱。
 
-當 `ANTHROPIC_BASE_URL` 指向公開 Anthropic Messages 格式的 gateway 時，Claude Code 在啟動時會查詢 gateway 的 `/v1/models` 端點，並將返回的模型添加到 `/model` 選擇器中。每個發現的條目都標記為「From gateway」，並在提供時使用響應中的 `display_name` 欄位。這需要 Claude Code v2.1.126 或更高版本。
+當 `ANTHROPIC_BASE_URL` 指向公開 Anthropic Messages 格式的 gateway 時，Claude Code 在啟動時會查詢 gateway 的 `/v1/models` 端點，並將返回的模型添加到 `/model` 選擇器中。設置 `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` 以啟用此功能。發現功能默認關閉，以便由共享 API 金鑰支持的 gateway 不會向每個用戶公開該金鑰可以訪問的每個模型。每個發現的條目都標記為「From gateway」，並在提供時使用響應中的 `display_name` 欄位。這需要 Claude Code v2.1.129 或更高版本。
 
 發現功能僅適用於 Anthropic Messages 格式。它不會針對 Bedrock 或 Vertex 傳遞端點運行，也不會在 `ANTHROPIC_BASE_URL` 未設置或指向 `api.anthropic.com` 時運行。
 

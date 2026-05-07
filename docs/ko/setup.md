@@ -175,14 +175,18 @@ Claude Code는 Pro, Max, Team, Enterprise 또는 Console 계정이 필요합니�
 
 ## Claude Code 업데이트
 
-네이티브 설치는 백그라운드에서 자동으로 업데이트됩니다. [릴리스 채널을 구성](#configure-release-channel)하여 즉시 업데이트를 받을지 또는 지연된 안정적인 일정으로 받을지 제어하거나, [자동 업데이트를 비활성화](#disable-auto-updates)할 수 있습니다. Homebrew, WinGet 및 [Linux 패키지 관리자](#install-with-linux-package-managers) 설치는 수동 업데이트가 필요합니다.
+네이티브 설치는 백그라운드에서 자동으로 업데이트됩니다. [릴리스 채널을 구성](#configure-release-channel)하여 즉시 업데이트를 받을지 또는 지연된 안정적인 일정으로 받을지 제어하거나, [자동 업데이트를 비활성화](#disable-auto-updates)할 수 있습니다. Homebrew, WinGet 및 [Linux 패키지 관리자](#install-with-linux-package-managers) 설치는 기본적으로 수동 업데이트가 필요합니다.
 
 ### 자동 업데이트
 
 Claude Code는 시작 시 및 실행 중에 주기적으로 업데이트를 확인합니다. 업데이트는 백그라운드에서 다운로드 및 설치되며 다음 번에 Claude Code를 시작할 때 적용됩니다.
 
 <Note>
-  Homebrew, WinGet, apt, dnf 및 apk 설치는 자동으로 업데이트되지 않습니다. Homebrew의 경우 `brew upgrade claude-code` 또는 `brew upgrade claude-code@latest`를 실행하세요(설치한 cask에 따라 다름). WinGet의 경우 `winget upgrade Anthropic.ClaudeCode`를 실행하세요. Linux 패키지 관리자의 경우 [Linux 패키지 관리자로 설치](#install-with-linux-package-managers)의 업그레이드 명령을 참조하세요.
+  Homebrew, WinGet, apt, dnf 및 apk 설치는 기본적으로 자동으로 업데이트되지 않습니다. Homebrew 및 WinGet에 대해 옵트인하려면 아래를 참조하세요. Homebrew를 수동으로 업그레이드하려면 `brew upgrade claude-code` 또는 `brew upgrade claude-code@latest`를 실행하세요(설치한 cask에 따라 다름). WinGet의 경우 `winget upgrade Anthropic.ClaudeCode`를 실행하세요. Linux 패키지 관리자의 경우 [Linux 패키지 관리자로 설치](#install-with-linux-package-managers)의 업그레이드 명령을 참조하세요.
+
+  Claude Code가 Homebrew 또는 WinGet에서 업그레이드 명령을 실행하도록 하려면 [`CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE`](/ko/env-vars)를 `1`로 설정하세요. Claude Code는 새 버전을 사용할 수 있을 때 백그라운드에서 업그레이드를 실행하고 성공 시 재시작 프롬프트를 표시합니다. 업그레이드는 Claude Code 패키지만 대상으로 하며 설치한 다른 소프트웨어에는 영향을 주지 않습니다.
+
+  WinGet에서는 Claude Code가 실행 중일 때 Windows가 실행 파일을 잠그기 때문에 업그레이드가 실패할 수 있습니다. 이 경우 Claude Code는 수동 명령을 대신 표시합니다. apt, dnf 및 apk는 이러한 명령이 상승된 권한이 필요하기 때문에 계속 수동 업그레이드가 필요합니다.
 
   **알려진 문제:** Claude Code는 새 버전이 이러한 패키지 관리자에서 사용 가능하기 전에 업데이트를 알릴 수 있습니다. 업그레이드가 실패하면 잠시 기다렸다가 나중에 다시 시도하세요.
 
@@ -489,7 +493,7 @@ npm 패키지는 독립 실행형 설치 프로그램과 동일한 네이티브 
 
 ## Claude Code 제거
 
-Claude Code를 제거하려면 설치 방법에 따른 지침을 따르세요.
+Claude Code를 제거하려면 설치 방법에 따른 지침을 따르세요. 제거 후에도 `claude`가 계속 실행되면 두 번째 설치 또는 이전 설치 프로그램의 남은 셸 별칭이 있을 가능성이 높습니다. [충돌하는 설치 확인](/ko/troubleshoot-install#check-for-conflicting-installations)을 참조하여 이를 찾아 제거하세요.
 
 ### 네이티브 설치
 

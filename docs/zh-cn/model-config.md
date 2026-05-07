@@ -184,7 +184,9 @@ Opus 4.7、Opus 4.6 和 Sonnet 4.6 支持工作量。可用的级别取决于模
 
 工作量规模按模型校准，因此相同的级别名称在不同模型中不代表相同的基础值。
 
-对于一次性深入推理而不改变您的会话设置，在您的提示中包含"ultrathink"。这会添加一个上下文内指令，告诉模型在该轮进行更多推理；它不会改变发送到 API 的工作量级别。
+#### 使用 ultrathink 进行一次性深入推理
+
+在您的提示中的任何位置包含 `ultrathink` 以请求在该轮进行更深入的推理，而无需更改您的会话工作量设置。Claude Code 识别该关键字并添加上下文内指令。发送到 API 的工作量级别保持不变。其他短语如"think"、"think hard"和"think more"会作为普通提示文本传递，不被识别为关键字。
 
 #### 设置工作量级别
 
@@ -208,6 +210,18 @@ Opus 4.7、Opus 4.6 和 Sonnet 4.6 支持工作量。可用的级别取决于模
 Opus 4.7 始终使用自适应推理。固定思考预算模式和 `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` 不适用于它。
 
 在 Opus 4.6 和 Sonnet 4.6 上，您可以设置 `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` 以恢复到由 `MAX_THINKING_TOKENS` 控制的先前固定思考预算。请参阅[环境变量](/zh-CN/env-vars)。
+
+### 扩展思考
+
+扩展思考是 Claude 在响应前发出的推理。在支持[自适应推理](#adjust-effort-level)的模型上，工作量级别是控制发生多少思考的主要方式；下面的设置打开或关闭思考并控制其显示方式。
+
+| 控制        | 如何设置                                                                                                          |
+| :-------- | :------------------------------------------------------------------------------------------------------------ |
+| 当前会话的切换   | 在 macOS 上按 `Option+T` 或在 Windows 和 Linux 上按 `Alt+T`                                                           |
+| 设置全局默认值   | 运行 `/config` 并切换思考模式。保存为 `~/.claude/settings.json` 中的 `alwaysThinkingEnabled`                                 |
+| 无论工作量如何禁用 | 设置 [`MAX_THINKING_TOKENS=0`](/zh-CN/env-vars)。其他值仅适用于[固定思考预算](#adaptive-reasoning-and-fixed-thinking-budgets) |
+
+思考输出默认折叠。按 `Ctrl+O` 切换详细模式并将推理显示为灰色斜体文本。Anthropic API 上的交互式会话默认接收编辑后的思考块，因此如果您想在展开时获得完整摘要，请在[设置](/zh-CN/settings)中设置 `showThinkingSummaries: true`。您需要为所有生成的思考令牌付费，即使它们被折叠或编辑。
 
 ### 扩展上下文
 
@@ -247,7 +261,7 @@ Opus 4.7、Opus 4.6 和 Sonnet 4.6 支持[100 万令牌上下文窗口](https://
 
 ## 添加自定义模型选项
 
-使用 `ANTHROPIC_CUSTOM_MODEL_OPTION` 向 `/model` 选择器添加单个自定义条目，而无需替换内置别名。这对于测试 Claude Code 默认不列出的模型 ID 很有用。对于 LLM 网关部署，Claude Code 会从网关的 `/v1/models` 端点自动填充选择器，因此仅当发现未返回您想要的模型时才需要此变量。请参阅 [LLM 网关模型选择](/zh-CN/llm-gateway#model-selection)。
+使用 `ANTHROPIC_CUSTOM_MODEL_OPTION` 向 `/model` 选择器添加单个自定义条目，而无需替换内置别名。这对于测试 Claude Code 默认不列出的模型 ID 很有用。对于 LLM 网关部署，当设置 `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` 时，Claude Code 可以从网关的 `/v1/models` 端点自动填充选择器，因此仅当发现被禁用或未返回您想要的模型时才需要此变量。请参阅 [LLM 网关模型选择](/zh-CN/llm-gateway#model-selection)。
 
 此示例设置所有三个变量以使网关路由的 Opus 部署可选择：
 
@@ -320,16 +334,16 @@ export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7[1m]'
 
 相同的 `_NAME`、`_DESCRIPTION` 和 `_SUPPORTED_CAPABILITIES` 后缀可用于 `ANTHROPIC_DEFAULT_SONNET_MODEL`、`ANTHROPIC_DEFAULT_HAIKU_MODEL` 和 `ANTHROPIC_CUSTOM_MODEL_OPTION`。
 
-Claude Code 通过将模型 ID 与已知模式匹配来启用[工作量级别](#adjust-effort-level)和[扩展思考](/zh-CN/common-workflows#use-extended-thinking-thinking-mode)等功能。提供商特定的 ID（如 Bedrock ARN 或自定义部署名称）通常与这些模式不匹配，导致支持的功能被禁用。设置 `_SUPPORTED_CAPABILITIES` 以告诉 Claude Code 模型实际支持的功能：
+Claude Code 通过将模型 ID 与已知模式匹配来启用[工作量级别](#adjust-effort-level)和[扩展思考](#extended-thinking)等功能。提供商特定的 ID（如 Bedrock ARN 或自定义部署名称）通常与这些模式不匹配，导致支持的功能被禁用。设置 `_SUPPORTED_CAPABILITIES` 以告诉 Claude Code 模型实际支持的功能：
 
-| 功能值                    | 启用                                                                  |
-| ---------------------- | ------------------------------------------------------------------- |
-| `effort`               | [工作量级别](#adjust-effort-level)和 `/effort` 命令                         |
-| `xhigh_effort`         | {/* min-version: 2.1.111 */}`xhigh` 工作量级别                           |
-| `max_effort`           | `max` 工作量级别                                                         |
-| `thinking`             | [扩展思考](/zh-CN/common-workflows#use-extended-thinking-thinking-mode) |
-| `adaptive_thinking`    | 根据任务复杂性动态分配思考的自适应推理                                                 |
-| `interleaved_thinking` | 工具调用之间的思考                                                           |
+| 功能值                    | 启用                                          |
+| ---------------------- | ------------------------------------------- |
+| `effort`               | [工作量级别](#adjust-effort-level)和 `/effort` 命令 |
+| `xhigh_effort`         | {/* min-version: 2.1.111 */}`xhigh` 工作量级别   |
+| `max_effort`           | `max` 工作量级别                                 |
+| `thinking`             | [扩展思考](#extended-thinking)                  |
+| `adaptive_thinking`    | 根据任务复杂性动态分配思考的自适应推理                         |
+| `interleaved_thinking` | 工具调用之间的思考                                   |
 
 设置 `_SUPPORTED_CAPABILITIES` 时，列出的功能对匹配的固定模型启用，未列出的功能被禁用。未设置变量时，Claude Code 回退到基于模型 ID 的内置检测。
 

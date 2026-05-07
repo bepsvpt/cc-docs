@@ -134,7 +134,7 @@ Claude Code menjalankan skrip Anda dan menyalurkan [data sesi JSON](#available-d
 
 **Kapan itu diperbarui**
 
-Skrip Anda berjalan setelah setiap pesan asisten baru, ketika mode izin berubah, atau ketika vim mode beralih. Pembaruan dibatasi pada 300ms, berarti perubahan cepat dikumpulkan bersama dan skrip Anda berjalan sekali semuanya stabil. Jika pembaruan baru dipicu saat skrip Anda masih berjalan, eksekusi yang sedang berlangsung dibatalkan. Jika Anda mengedit skrip Anda, perubahan tidak akan muncul sampai interaksi berikutnya Anda dengan Claude Code memicu pembaruan.
+Skrip Anda berjalan setelah setiap pesan asisten baru, setelah `/compact` selesai, ketika mode izin berubah, atau ketika vim mode beralih. Pembaruan dibatasi pada 300ms, berarti perubahan cepat dikumpulkan bersama dan skrip Anda berjalan sekali semuanya stabil. Jika pembaruan baru dipicu saat skrip Anda masih berjalan, eksekusi yang sedang berlangsung dibatalkan. Jika Anda mengedit skrip Anda, perubahan tidak akan muncul sampai interaksi berikutnya Anda dengan Claude Code memicu pembaruan.
 
 Pemicu ini dapat menjadi senyap ketika sesi utama menganggur, misalnya saat koordinator menunggu subagen latar belakang. Untuk menjaga segmen berbasis waktu atau bersumber eksternal tetap terkini selama periode menganggur, atur [`refreshInterval`](#manually-configure-a-status-line) untuk juga menjalankan kembali perintah pada timer tetap.
 
@@ -161,7 +161,7 @@ Claude Code mengirim bidang JSON berikut ke skrip Anda melalui stdin:
 | `cost.total_duration_ms`                                                         | Total waktu dinding jam sejak sesi dimulai, dalam milidetik                                                                                                                                                                                                |
 | `cost.total_api_duration_ms`                                                     | Total waktu yang dihabiskan menunggu respons API dalam milidetik                                                                                                                                                                                           |
 | `cost.total_lines_added`, `cost.total_lines_removed`                             | Baris kode yang diubah                                                                                                                                                                                                                                     |
-| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | Jumlah token kumulatif di seluruh sesi                                                                                                                                                                                                                     |
+| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | Jumlah token saat ini dalam jendela konteks, dari respons API terbaru. Input mencakup pembacaan dan penulisan cache. Sebelum v2.1.132 ini adalah total sesi kumulatif                                                                                      |
 | `context_window.context_window_size`                                             | Ukuran jendela konteks maksimum dalam token. 200000 secara default, atau 1000000 untuk model dengan konteks diperpanjang.                                                                                                                                  |
 | `context_window.used_percentage`                                                 | Persentase jendela konteks yang digunakan yang telah dihitung sebelumnya                                                                                                                                                                                   |
 | `context_window.remaining_percentage`                                            | Persentase jendela konteks yang tersisa yang telah dihitung sebelumnya                                                                                                                                                                                     |
@@ -215,8 +215,8 @@ Claude Code mengirim bidang JSON berikut ke skrip Anda melalui stdin:
       "total_lines_removed": 23
     },
     "context_window": {
-      "total_input_tokens": 15234,
-      "total_output_tokens": 4521,
+      "total_input_tokens": 15500,
+      "total_output_tokens": 1200,
       "context_window_size": 200000,
       "used_percentage": 8,
       "remaining_percentage": 92,
@@ -272,7 +272,7 @@ Claude Code mengirim bidang JSON berikut ke skrip Anda melalui stdin:
 
   **Bidang yang mungkin `null`**:
 
-  * `context_window.current_usage`: `null` sebelum panggilan API pertama dalam sesi
+  * `context_window.current_usage`: `null` sebelum panggilan API pertama dalam sesi, dan lagi setelah `/compact` hingga panggilan API berikutnya mengisinya kembali
   * `context_window.used_percentage`, `context_window.remaining_percentage`: mungkin `null` awal dalam sesi
 
   Tangani bidang yang hilang dengan akses bersyarat dan nilai null dengan default fallback dalam skrip Anda.
@@ -280,10 +280,10 @@ Claude Code mengirim bidang JSON berikut ke skrip Anda melalui stdin:
 
 ### Bidang jendela konteks
 
-Objek `context_window` menyediakan dua cara untuk melacak penggunaan konteks:
+Objek `context_window` menjelaskan jendela konteks langsung dari respons API terbaru. Mulai dari v2.1.132, `total_input_tokens` dan `total_output_tokens` mencerminkan penggunaan konteks saat ini, bukan total sesi kumulatif.
 
-* **Total kumulatif** (`total_input_tokens`, `total_output_tokens`): jumlah semua token di seluruh sesi, berguna untuk melacak konsumsi total
-* **Penggunaan saat ini** (`current_usage`): jumlah token dari panggilan API terbaru, gunakan ini untuk persentase konteks yang akurat karena mencerminkan keadaan konteks aktual
+* **Total gabungan** (`total_input_tokens`, `total_output_tokens`): token saat ini dalam jendela konteks. `total_input_tokens` adalah jumlah dari `input_tokens`, `cache_creation_input_tokens`, dan `cache_read_input_tokens`; `total_output_tokens` adalah token output dari respons terbaru. Keduanya adalah `0` sebelum respons API pertama.
+* **Penggunaan per komponen** (`current_usage`): jumlah token yang sama dipecah menurut kategori. Gunakan ini ketika Anda memerlukan cache hits terpisah dari input segar.
 
 Objek `current_usage` berisi:
 
@@ -296,7 +296,7 @@ Bidang `used_percentage` dihitung dari token input saja: `input_tokens + cache_c
 
 Jika Anda menghitung persentase konteks secara manual dari `current_usage`, gunakan formula input-only yang sama untuk mencocokkan `used_percentage`.
 
-Objek `current_usage` adalah `null` sebelum panggilan API pertama dalam sesi.
+Objek `current_usage` adalah `null` sebelum panggilan API pertama dalam sesi, dan lagi segera setelah `/compact` hingga panggilan API berikutnya mengisinya kembali.
 
 ## Contoh
 
@@ -1011,8 +1011,7 @@ Proyek komunitas seperti [ccstatusline](https://github.com/sirmalloc/ccstatuslin
 
 **Persentase konteks menampilkan nilai yang tidak terduga**
 
-* Gunakan `used_percentage` untuk keadaan konteks yang akurat daripada total kumulatif
-* `total_input_tokens` dan `total_output_tokens` adalah kumulatif di seluruh sesi dan mungkin melebihi ukuran jendela konteks
+* Gunakan `used_percentage` untuk keadaan konteks yang paling akurat
 * Persentase konteks mungkin berbeda dari output `/context` karena kapan masing-masing dihitung
 
 **Tautan OSC 8 tidak dapat diklik**
@@ -1043,6 +1042,11 @@ Proyek komunitas seperti [ccstatusline](https://github.com/sirmalloc/ccstatuslin
 * Jika Anda melihat teks yang rusak, coba sederhanakan skrip Anda ke output teks biasa
 * Baris status multi-baris dengan kode escape lebih rentan terhadap masalah rendering daripada teks biasa satu baris
 
+**Kepercayaan ruang kerja diperlukan**
+
+* Perintah baris status hanya berjalan jika Anda telah menerima dialog kepercayaan ruang kerja untuk direktori saat ini. Karena `statusLine` mengeksekusi perintah shell, itu memerlukan penerimaan kepercayaan yang sama seperti hooks dan pengaturan lain yang mengeksekusi shell.
+* Jika kepercayaan tidak diterima, Anda akan melihat notifikasi `statusline skipped · restart to fix` alih-alih output baris status Anda. Mulai ulang Claude Code dan terima prompt kepercayaan untuk mengaktifkannya.
+
 **Kesalahan skrip atau hang**
 
 * Skrip yang keluar dengan kode non-nol atau tidak menghasilkan output menyebabkan baris status menjadi kosong
@@ -1055,8 +1059,3 @@ Proyek komunitas seperti [ccstatusline](https://github.com/sirmalloc/ccstatuslin
 * Notifikasi sistem seperti kesalahan server MCP dan pembaruan otomatis ditampilkan di sisi kanan baris yang sama dengan baris status Anda. Notifikasi sementara seperti peringatan konteks-rendah juga bersiklus melalui area ini.
 * Mengaktifkan mode verbose menambahkan penghitung token ke area ini
 * Di terminal sempit, notifikasi ini mungkin memotong output baris status Anda
-
-**Kepercayaan ruang kerja diperlukan**
-
-* Perintah baris status hanya berjalan jika Anda telah menerima dialog kepercayaan ruang kerja untuk direktori saat ini. Karena `statusLine` mengeksekusi perintah shell, itu memerlukan penerimaan kepercayaan yang sama seperti hooks dan pengaturan lain yang mengeksekusi shell.
-* Jika kepercayaan tidak diterima, Anda akan melihat notifikasi `statusline skipped · restart to fix` alih-alih output baris status Anda. Mulai ulang Claude Code dan terima prompt kepercayaan untuk mengaktifkannya.

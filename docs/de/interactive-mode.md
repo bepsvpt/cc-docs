@@ -11,7 +11,7 @@
 <Note>
   Tastaturkürzel können je nach Plattform und Terminal variieren. Drücken Sie `?`, um die verfügbaren Kürzel für Ihre Umgebung anzuzeigen.
 
-  **macOS-Benutzer**: Option/Alt-Tastenkürzel (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`, `Alt+T`) erfordern die Konfiguration von Option als Meta in Ihrem Terminal:
+  **macOS-Benutzer**: Option/Alt-Tastenkürzel (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`) erfordern die Konfiguration von Option als Meta in Ihrem Terminal:
 
   * **iTerm2**: Einstellungen → Profile → Keys → General → Left/Right Option key auf „Esc+" setzen
   * **Apple Terminal**: Einstellungen → Profile → Keyboard → „Use Option as Meta Key" aktivieren
@@ -39,7 +39,7 @@
 | `Esc` + `Esc`                                         | Zurückspulen oder zusammenfassen                                                             | Stellen Sie Code und/oder Gespräch auf einen vorherigen Punkt wieder her, oder fassen Sie ab einer ausgewählten Nachricht zusammen                                                                                                                                                                                                                       |
 | `Shift+Tab` oder `Alt+M` (einige Konfigurationen)     | Berechtigungsmodi umschalten                                                                 | Wechseln Sie zwischen `default`, `acceptEdits`, `plan` und allen Modi, die Sie aktiviert haben, z. B. `auto` oder `bypassPermissions`. Siehe [Berechtigungsmodi](/de/permission-modes).                                                                                                                                                                  |
 | `Option+P` (macOS) oder `Alt+P` (Windows/Linux)       | Modell wechseln                                                                              | Wechseln Sie Modelle, ohne Ihren Prompt zu löschen                                                                                                                                                                                                                                                                                                       |
-| `Option+T` (macOS) oder `Alt+T` (Windows/Linux)       | Extended Thinking umschalten                                                                 | Aktivieren oder deaktivieren Sie den Extended Thinking-Modus. Konfigurieren Sie auf macOS Ihr Terminal, um Option als Meta zu senden, damit dieses Kürzel funktioniert                                                                                                                                                                                   |
+| `Option+T` (macOS) oder `Alt+T` (Windows/Linux)       | Extended Thinking umschalten                                                                 | Aktivieren oder deaktivieren Sie den Extended Thinking-Modus. {/* min-version: 2.1.132 */}Ab v2.1.132 funktioniert dieses Kürzel auf macOS ohne Konfiguration von Option als Meta                                                                                                                                                                        |
 | `Option+O` (macOS) oder `Alt+O` (Windows/Linux)       | Schnellmodus umschalten                                                                      | Aktivieren oder deaktivieren Sie den [Schnellmodus](/de/fast-mode)                                                                                                                                                                                                                                                                                       |
 
 ### Textbearbeitung
@@ -68,12 +68,12 @@
 | :--------------- | :-------------- | :--------------------------------------------------------------------------------------------------------- |
 | Schneller Escape | `\` + `Enter`   | Funktioniert in allen Terminals                                                                            |
 | Option-Taste     | `Option+Enter`  | Nach Aktivierung von [Option als Meta](/de/terminal-config#enable-option-key-shortcuts-on-macos) auf macOS |
-| Shift+Enter      | `Shift+Enter`   | Nativ in iTerm2, WezTerm, Ghostty, Kitty, Warp, Apple Terminal                                             |
+| Shift+Enter      | `Shift+Enter`   | Nativ in iTerm2, WezTerm, Ghostty, Kitty, Warp, Apple Terminal, Windows Terminal                           |
 | Steuersequenz    | `Ctrl+J`        | Funktioniert in jedem Terminal ohne Konfiguration                                                          |
 | Einfügemodus     | Direkt einfügen | Für Code-Blöcke, Protokolle                                                                                |
 
 <Tip>
-  Shift+Enter funktioniert ohne Konfiguration in iTerm2, WezTerm, Ghostty, Kitty, Warp und Apple Terminal. Für VS Code, Cursor, Windsurf, Alacritty und Zed führen Sie `/terminal-setup` aus, um die Bindung zu installieren.
+  Shift+Enter funktioniert ohne Konfiguration in iTerm2, WezTerm, Ghostty, Kitty, Warp, Apple Terminal und Windows Terminal. Für VS Code, Cursor, Windsurf, Alacritty und Zed führen Sie `/terminal-setup` aus, um die Bindung zu installieren.
 </Tip>
 
 ### Schnellbefehle
@@ -81,7 +81,7 @@
 | Kürzel        | Beschreibung        | Notizen                                                                              |
 | :------------ | :------------------ | :----------------------------------------------------------------------------------- |
 | `/` am Anfang | Befehl oder Skill   | Siehe [Befehle](#commands) und [Skills](/de/skills)                                  |
-| `!` am Anfang | Bash-Modus          | Führen Sie Befehle direkt aus und fügen Sie die Ausführungsausgabe zur Sitzung hinzu |
+| `!` am Anfang | Shell-Modus         | Führen Sie Befehle direkt aus und fügen Sie die Ausführungsausgabe zur Sitzung hinzu |
 | `@`           | Dateipfad-Erwähnung | Trigger für Dateipfad-Autovervollständigung                                          |
 
 ### Transkript-Viewer
@@ -130,6 +130,7 @@ Aktivieren Sie Vim-ähnliche Bearbeitung über `/config` → Editor mode.
 | Befehl          | Aktion                                                         |
 | :-------------- | :------------------------------------------------------------- |
 | `h`/`j`/`k`/`l` | Nach links/unten/oben/rechts bewegen                           |
+| `Space`         | Nach rechts bewegen                                            |
 | `w`             | Nächstes Wort                                                  |
 | `e`             | Ende des Wortes                                                |
 | `b`             | Vorheriges Wort                                                |
@@ -220,7 +221,7 @@ Drücken Sie `Ctrl+R`, um interaktiv durch Ihren Befehlsverlauf zu suchen:
 1. **Suche starten**: Drücken Sie `Ctrl+R`, um die Reverse-Verlaufssuche zu aktivieren
 2. **Abfrage eingeben**: Geben Sie Text ein, um in vorherigen Befehlen zu suchen. Der Suchbegriff wird in übereinstimmenden Ergebnissen hervorgehoben
 3. **Übereinstimmungen navigieren**: Drücken Sie `Ctrl+R` erneut, um durch ältere Übereinstimmungen zu navigieren
-4. **Bereich ändern**: Drücken Sie `Ctrl+S`, um zwischen dieser Sitzung, diesem Projekt und allen Projekten zu wechseln
+4. **Bereich ändern**: Die Suche bezieht sich standardmäßig auf Eingabeaufforderungen aus allen Projekten. Drücken Sie `Ctrl+S`, um den Bereich durch diese Sitzung, dieses Projekt und alle Projekte zu durchlaufen
 5. **Übereinstimmung akzeptieren**:
    * Drücken Sie `Tab` oder `Esc`, um die aktuelle Übereinstimmung zu akzeptieren und die Bearbeitung fortzusetzen
    * Drücken Sie `Enter`, um die Übereinstimmung zu akzeptieren und den Befehl sofort auszuführen

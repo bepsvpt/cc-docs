@@ -11,7 +11,7 @@
 <Note>
   키보드 단축키는 플랫폼 및 터미널에 따라 다를 수 있습니다. `?`를 눌러 사용자 환경에서 사용 가능한 단축키를 확인하세요.
 
-  **macOS 사용자**: Option/Alt 키 단축키(`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`, `Alt+T`)를 사용하려면 터미널에서 Option을 Meta로 구성해야 합니다:
+  **macOS 사용자**: Option/Alt 키 단축키(`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`)를 사용하려면 터미널에서 Option을 Meta로 구성해야 합니다:
 
   * **iTerm2**: 설정 → 프로필 → 키 → 일반 → Left/Right Option 키를 "Esc+"로 설정
   * **Apple Terminal**: 설정 → 프로필 → 키보드 → "Option을 Meta 키로 사용" 확인
@@ -39,7 +39,7 @@
 | `Esc` + `Esc`                                     | 되돌리기 또는 요약                          | 코드 및/또는 대화를 이전 지점으로 복원하거나 선택한 메시지에서 요약                                                                                                                                             |
 | `Shift+Tab` 또는 `Alt+M` (일부 구성)                    | 권한 모드 순환                            | `default`, `acceptEdits`, `plan` 및 `auto` 또는 `bypassPermissions`와 같이 활성화한 모든 모드를 순환합니다. [권한 모드](/ko/permission-modes)를 참조하세요.                                                      |
 | `Option+P` (macOS) 또는 `Alt+P` (Windows/Linux)     | 모델 전환                               | 프롬프트를 지우지 않고 모델 전환                                                                                                                                                                 |
-| `Option+T` (macOS) 또는 `Alt+T` (Windows/Linux)     | 확장 사고 토글                            | 확장 사고 모드를 활성화 또는 비활성화합니다. macOS에서 이 단축키가 작동하려면 터미널에서 Option을 Meta로 보내도록 구성하세요                                                                                                      |
+| `Option+T` (macOS) 또는 `Alt+T` (Windows/Linux)     | 확장 사고 토글                            | 확장 사고 모드를 활성화 또는 비활성화합니다. {/* min-version: 2.1.132 */}v2.1.132부터 이 단축키는 macOS에서 Option을 Meta로 구성하지 않고도 작동합니다                                                                       |
 | `Option+O` (macOS) 또는 `Alt+O` (Windows/Linux)     | 빠른 모드 토글                            | [빠른 모드](/ko/fast-mode) 활성화 또는 비활성화                                                                                                                                                 |
 
 ### 텍스트 편집
@@ -68,12 +68,12 @@
 | :---------- | :------------- | :--------------------------------------------------------------------------------------- |
 | 빠른 이스케이프    | `\` + `Enter`  | 모든 터미널에서 작동                                                                              |
 | Option 키    | `Option+Enter` | macOS에서 [Option을 Meta로](/ko/terminal-config#enable-option-key-shortcuts-on-macos) 활성화한 후 |
-| Shift+Enter | `Shift+Enter`  | iTerm2, WezTerm, Ghostty, Kitty, Warp, Apple Terminal에서 기본적으로 작동                         |
+| Shift+Enter | `Shift+Enter`  | iTerm2, WezTerm, Ghostty, Kitty, Warp, Apple Terminal, Windows Terminal에서 기본적으로 작동       |
 | 제어 시퀀스      | `Ctrl+J`       | 구성 없이 모든 터미널에서 작동                                                                        |
 | 붙여넣기 모드     | 직접 붙여넣기        | 코드 블록, 로그의 경우                                                                            |
 
 <Tip>
-  Shift+Enter는 iTerm2, WezTerm, Ghostty, Kitty, Warp 및 Apple Terminal에서 구성 없이 작동합니다. VS Code, Cursor, Windsurf, Alacritty 및 Zed의 경우 `/terminal-setup`을 실행하여 바인딩을 설치하세요.
+  Shift+Enter는 iTerm2, WezTerm, Ghostty, Kitty, Warp, Apple Terminal 및 Windows Terminal에서 구성 없이 작동합니다. VS Code, Cursor, Windsurf, Alacritty 및 Zed의 경우 `/terminal-setup`을 실행하여 바인딩을 설치하세요.
 </Tip>
 
 ### 빠른 명령
@@ -130,6 +130,7 @@ Claude Code에 포함된 명령의 전체 목록은 [명령 참조](/ko/commands
 | 명령              | 작업                      |
 | :-------------- | :---------------------- |
 | `h`/`j`/`k`/`l` | 왼쪽/아래/위/오른쪽 이동          |
+| `Space`         | 오른쪽 이동                  |
 | `w`             | 다음 단어                   |
 | `e`             | 단어 끝                    |
 | `b`             | 이전 단어                   |

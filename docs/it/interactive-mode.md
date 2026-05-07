@@ -11,7 +11,7 @@
 <Note>
   Le scorciatoie da tastiera possono variare a seconda della piattaforma e del terminale. Premere `?` per visualizzare le scorciatoie disponibili per il vostro ambiente.
 
-  **Utenti macOS**: Le scorciatoie con il tasto Option/Alt (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`, `Alt+T`) richiedono la configurazione di Option come Meta nel vostro terminale:
+  **Utenti macOS**: Le scorciatoie con il tasto Option/Alt (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`) richiedono la configurazione di Option come Meta nel vostro terminale:
 
   * **iTerm2**: Impostazioni → Profili → Tasti → Generale → impostare il tasto Option sinistro/destro su "Esc+"
   * **Apple Terminal**: Impostazioni → Profili → Tastiera → selezionare "Usa Option come Meta Key"
@@ -39,7 +39,7 @@
 | `Esc` + `Esc`                                   | Riavvolgi o riassumi                                                                     | Ripristina il codice e/o la conversazione a un punto precedente, o riassumi da un messaggio selezionato                                                                                                                                                                                                                                                               |
 | `Shift+Tab` o `Alt+M` (alcune configurazioni)   | Cicla le modalità di permesso                                                            | Cicla attraverso `default`, `acceptEdits`, `plan` e qualsiasi modalità abilitata, come `auto` o `bypassPermissions`. Vedere [modalità di permesso](/it/permission-modes).                                                                                                                                                                                             |
 | `Option+P` (macOS) o `Alt+P` (Windows/Linux)    | Cambia modello                                                                           | Cambia modelli senza cancellare il vostro prompt                                                                                                                                                                                                                                                                                                                      |
-| `Option+T` (macOS) o `Alt+T` (Windows/Linux)    | Attiva/disattiva il pensiero esteso                                                      | Abilita o disabilita la modalità di pensiero esteso. Su macOS, configurare il vostro terminale per inviare Option come Meta affinché questa scorciatoia funzioni                                                                                                                                                                                                      |
+| `Option+T` (macOS) o `Alt+T` (Windows/Linux)    | Attiva/disattiva il pensiero esteso                                                      | Abilita o disabilita la modalità di pensiero esteso. A partire dalla v2.1.132 questa scorciatoia funziona su macOS senza configurare Option come Meta                                                                                                                                                                                                                 |
 | `Option+O` (macOS) o `Alt+O` (Windows/Linux)    | Attiva/disattiva la modalità veloce                                                      | Abilita o disabilita la [modalità veloce](/it/fast-mode)                                                                                                                                                                                                                                                                                                              |
 
 ### Modifica del testo
@@ -68,12 +68,12 @@
 | :-------------------- | :------------------- | :-------------------------------------------------------------------------------------------------------- |
 | Escape rapido         | `\` + `Enter`        | Funziona in tutti i terminali                                                                             |
 | Tasto Option          | `Option+Enter`       | Dopo aver abilitato [Option come Meta](/it/terminal-config#enable-option-key-shortcuts-on-macos) su macOS |
-| Shift+Enter           | `Shift+Enter`        | Nativo in iTerm2, WezTerm, Ghostty, Kitty, Warp, Apple Terminal                                           |
+| Shift+Enter           | `Shift+Enter`        | Nativo in iTerm2, WezTerm, Ghostty, Kitty, Warp, Apple Terminal, Windows Terminal                         |
 | Sequenza di controllo | `Ctrl+J`             | Funziona in qualsiasi terminale senza configurazione                                                      |
 | Modalità incolla      | Incolla direttamente | Per blocchi di codice, log                                                                                |
 
 <Tip>
-  Shift+Enter funziona senza configurazione in iTerm2, WezTerm, Ghostty, Kitty, Warp e Apple Terminal. Per VS Code, Cursor, Windsurf, Alacritty e Zed, eseguire `/terminal-setup` per installare il binding.
+  Shift+Enter funziona senza configurazione in iTerm2, WezTerm, Ghostty, Kitty, Warp, Apple Terminal e Windows Terminal. Per VS Code, Cursor, Windsurf, Alacritty e Zed, eseguire `/terminal-setup` per installare il binding.
 </Tip>
 
 ### Comandi rapidi
@@ -130,6 +130,7 @@ Abilitate la modifica in stile vim tramite `/config` → Editor mode.
 | Comando         | Azione                                                     |
 | :-------------- | :--------------------------------------------------------- |
 | `h`/`j`/`k`/`l` | Sposta sinistra/giù/su/destra                              |
+| `Space`         | Sposta a destra                                            |
 | `w`             | Parola successiva                                          |
 | `e`             | Fine della parola                                          |
 | `b`             | Parola precedente                                          |
@@ -220,7 +221,7 @@ Premete `Ctrl+R` per cercare in modo interattivo nella vostra cronologia dei com
 1. **Avvia ricerca**: premete `Ctrl+R` per attivare la ricerca inversa nella cronologia
 2. **Digita query**: inserite il testo da cercare nei comandi precedenti. Il termine di ricerca è evidenziato nei risultati corrispondenti
 3. **Naviga tra i risultati**: premete `Ctrl+R` di nuovo per scorrere i risultati più vecchi
-4. **Cambia ambito**: premete `Ctrl+S` per alternare tra questa sessione, questo progetto e tutti i progetti
+4. **Cambia ambito**: la ricerca è impostata per impostazione predefinita su prompt da tutti i progetti. Premete `Ctrl+S` per alternare l'ambito tra questa sessione, questo progetto e tutti i progetti
 5. **Accetta il risultato**:
    * Premete `Tab` o `Esc` per accettare il risultato corrente e continuare a modificare
    * Premete `Enter` per accettare ed eseguire il comando immediatamente

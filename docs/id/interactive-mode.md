@@ -11,7 +11,7 @@
 <Note>
   Pintasan keyboard mungkin berbeda menurut platform dan terminal. Tekan `?` untuk melihat pintasan yang tersedia untuk lingkungan Anda.
 
-  **Pengguna macOS**: Pintasan tombol Option/Alt (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`, `Alt+T`) memerlukan konfigurasi Option sebagai Meta di terminal Anda:
+  **Pengguna macOS**: Pintasan tombol Option/Alt (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`) memerlukan konfigurasi Option sebagai Meta di terminal Anda:
 
   * **iTerm2**: Settings → Profiles → Keys → General → atur Left/Right Option key ke "Esc+"
   * **Apple Terminal**: Settings → Profiles → Keyboard → centang "Use Option as Meta Key"
@@ -39,7 +39,7 @@
 | `Esc` + `Esc`                                         | Putar ulang atau ringkas                                                            | Kembalikan kode dan/atau percakapan ke titik sebelumnya, atau ringkas dari pesan yang dipilih                                                                                                                                                                                                                       |
 | `Shift+Tab` atau `Alt+M` (beberapa konfigurasi)       | Alihkan mode izin                                                                   | Beralih antara `default`, `acceptEdits`, `plan`, dan mode apa pun yang telah Anda aktifkan, seperti `auto` atau `bypassPermissions`. Lihat [permission modes](/id/permission-modes).                                                                                                                                |
 | `Option+P` (macOS) atau `Alt+P` (Windows/Linux)       | Alihkan model                                                                       | Alihkan model tanpa menghapus prompt Anda                                                                                                                                                                                                                                                                           |
-| `Option+T` (macOS) atau `Alt+T` (Windows/Linux)       | Alihkan extended thinking                                                           | Aktifkan atau nonaktifkan mode extended thinking. Di macOS, konfigurasi terminal Anda untuk mengirim Option sebagai Meta agar pintasan ini berfungsi                                                                                                                                                                |
+| `Option+T` (macOS) atau `Alt+T` (Windows/Linux)       | Alihkan extended thinking                                                           | Aktifkan atau nonaktifkan mode extended thinking. Mulai dari v2.1.132 pintasan ini berfungsi di macOS tanpa mengonfigurasi Option sebagai Meta                                                                                                                                                                      |
 | `Option+O` (macOS) atau `Alt+O` (Windows/Linux)       | Alihkan mode cepat                                                                  | Aktifkan atau nonaktifkan [fast mode](/id/fast-mode)                                                                                                                                                                                                                                                                |
 
 ### Pengeditan teks
@@ -68,12 +68,12 @@
 | :------------- | :-------------- | :------------------------------------------------------------------------------------------------------- |
 | Escape cepat   | `\` + `Enter`   | Berfungsi di semua terminal                                                                              |
 | Tombol Option  | `Option+Enter`  | Setelah mengaktifkan [Option as Meta](/id/terminal-config#enable-option-key-shortcuts-on-macos) di macOS |
-| Shift+Enter    | `Shift+Enter`   | Bawaan di iTerm2, WezTerm, Ghostty, Kitty, Warp, Apple Terminal                                          |
+| Shift+Enter    | `Shift+Enter`   | Bawaan di iTerm2, WezTerm, Ghostty, Kitty, Warp, Apple Terminal, Windows Terminal                        |
 | Urutan kontrol | `Ctrl+J`        | Berfungsi di terminal apa pun tanpa konfigurasi                                                          |
 | Mode tempel    | Tempel langsung | Untuk blok kode, log                                                                                     |
 
 <Tip>
-  Shift+Enter berfungsi tanpa konfigurasi di iTerm2, WezTerm, Ghostty, Kitty, Warp, dan Apple Terminal. Untuk VS Code, Cursor, Windsurf, Alacritty, dan Zed, jalankan `/terminal-setup` untuk memasang binding.
+  Shift+Enter berfungsi tanpa konfigurasi di iTerm2, WezTerm, Ghostty, Kitty, Warp, Apple Terminal, dan Windows Terminal. Untuk VS Code, Cursor, Windsurf, Alacritty, dan Zed, jalankan `/terminal-setup` untuk memasang binding.
 </Tip>
 
 ### Perintah cepat
@@ -130,6 +130,7 @@ Aktifkan pengeditan gaya vim melalui `/config` → Editor mode.
 | Perintah        | Tindakan                                                    |
 | :-------------- | :---------------------------------------------------------- |
 | `h`/`j`/`k`/`l` | Pindah kiri/bawah/atas/kanan                                |
+| `Space`         | Pindah ke kanan                                             |
 | `w`             | Kata berikutnya                                             |
 | `e`             | Akhir kata                                                  |
 | `b`             | Kata sebelumnya                                             |

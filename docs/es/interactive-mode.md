@@ -11,7 +11,7 @@
 <Note>
   Los atajos de teclado pueden variar según la plataforma y la terminal. Presione `?` para ver los atajos disponibles en su entorno.
 
-  **Usuarios de macOS**: Los atajos de la tecla Option/Alt (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`, `Alt+T`) requieren configurar Option como Meta en su terminal:
+  **Usuarios de macOS**: Los atajos de la tecla Option/Alt (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`) requieren configurar Option como Meta en su terminal:
 
   * **iTerm2**: Configuración → Perfiles → Teclas → General → establecer la tecla Option izquierda/derecha en "Esc+"
   * **Terminal de Apple**: Configuración → Perfiles → Teclado → marcar "Usar Option como tecla Meta"
@@ -39,7 +39,7 @@
 | `Esc` + `Esc`                                   | Rebobinar o resumir                                                                  | Restaurar código y/o conversación a un punto anterior, o resumir desde un mensaje seleccionado                                                                                                                                                                                                                                                                |
 | `Shift+Tab` o `Alt+M` (algunas configuraciones) | Ciclar modos de permiso                                                              | Ciclar a través de `default`, `acceptEdits`, `plan` y cualquier modo que haya habilitado, como `auto` o `bypassPermissions`. Consulte [modos de permiso](/es/permission-modes).                                                                                                                                                                               |
 | `Option+P` (macOS) o `Alt+P` (Windows/Linux)    | Cambiar modelo                                                                       | Cambiar modelos sin borrar su indicación                                                                                                                                                                                                                                                                                                                      |
-| `Option+T` (macOS) o `Alt+T` (Windows/Linux)    | Alternar pensamiento extendido                                                       | Habilitar o deshabilitar el modo de pensamiento extendido. En macOS, configure su terminal para enviar Option como Meta para que este atajo funcione                                                                                                                                                                                                          |
+| `Option+T` (macOS) o `Alt+T` (Windows/Linux)    | Alternar pensamiento extendido                                                       | Habilitar o deshabilitar el modo de pensamiento extendido. {/* min-version: 2.1.132 */}A partir de v2.1.132, este atajo funciona en macOS sin configurar Option como Meta                                                                                                                                                                                     |
 | `Option+O` (macOS) o `Alt+O` (Windows/Linux)    | Alternar modo rápido                                                                 | Habilitar o deshabilitar [modo rápido](/es/fast-mode)                                                                                                                                                                                                                                                                                                         |
 
 ### Edición de texto
@@ -68,12 +68,12 @@
 | :------------------- | :----------------- | :--------------------------------------------------------------------------------------------------------- |
 | Escape rápido        | `\` + `Enter`      | Funciona en todas las terminales                                                                           |
 | Tecla Option         | `Option+Enter`     | Después de habilitar [Option como Meta](/es/terminal-config#enable-option-key-shortcuts-on-macos) en macOS |
-| Shift+Enter          | `Shift+Enter`      | Nativo en iTerm2, WezTerm, Ghostty, Kitty, Warp, Terminal de Apple                                         |
+| Shift+Enter          | `Shift+Enter`      | Nativo en iTerm2, WezTerm, Ghostty, Kitty, Warp, Terminal de Apple, Windows Terminal                       |
 | Secuencia de control | `Ctrl+J`           | Funciona en cualquier terminal sin configuración                                                           |
 | Modo de pegado       | Pegar directamente | Para bloques de código, registros                                                                          |
 
 <Tip>
-  Shift+Enter funciona sin configuración en iTerm2, WezTerm, Ghostty, Kitty, Warp y Terminal de Apple. Para VS Code, Cursor, Windsurf, Alacritty y Zed, ejecute `/terminal-setup` para instalar el enlace.
+  Shift+Enter funciona sin configuración en iTerm2, WezTerm, Ghostty, Kitty, Warp, Terminal de Apple y Windows Terminal. Para VS Code, Cursor, Windsurf, Alacritty y Zed, ejecute `/terminal-setup` para instalar el enlace.
 </Tip>
 
 ### Comandos rápidos
@@ -130,6 +130,7 @@ Habilite la edición de estilo vim a través de `/config` → Editor mode.
 | Comando         | Acción                                                      |
 | :-------------- | :---------------------------------------------------------- |
 | `h`/`j`/`k`/`l` | Mover izquierda/abajo/arriba/derecha                        |
+| `Space`         | Mover a la derecha                                          |
 | `w`             | Siguiente palabra                                           |
 | `e`             | Final de palabra                                            |
 | `b`             | Palabra anterior                                            |
@@ -220,7 +221,7 @@ Presione `Ctrl+R` para buscar de forma interactiva a través de su historial de 
 1. **Iniciar búsqueda**: presione `Ctrl+R` para activar la búsqueda de historial inverso
 2. **Escribir consulta**: ingrese texto para buscar en comandos anteriores. El término de búsqueda se resalta en los resultados coincidentes
 3. **Navegar coincidencias**: presione `Ctrl+R` nuevamente para ciclar a través de coincidencias más antiguas
-4. **Cambiar alcance**: presione `Ctrl+S` para ciclar entre esta sesión, este proyecto y todos los proyectos
+4. **Cambiar alcance**: la búsqueda se establece de forma predeterminada en indicaciones de todos los proyectos. Presione `Ctrl+S` para ciclar el alcance entre esta sesión, este proyecto y todos los proyectos
 5. **Aceptar coincidencia**:
    * Presione `Tab` o `Esc` para aceptar la coincidencia actual y continuar editando
    * Presione `Enter` para aceptar y ejecutar el comando inmediatamente

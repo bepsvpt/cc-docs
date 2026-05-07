@@ -219,7 +219,7 @@ Claude Code 结合了一个能够推理代码的模型和[内置工具](/zh-CN/h
 | **Subagents** | 生成时        | 具有指定 skills 的新鲜上下文 | 与主会话隔离            |
 | **Hooks**     | 触发时        | 无（外部运行）            | 零，除非 hook 返回额外上下文 |
 
-\*默认情况下，skill 描述在会话开始时加载，以便 Claude 可以决定何时使用它们。在 skill 的 frontmatter 中设置 `disable-model-invocation: true` 以将其完全隐藏在 Claude 中，直到您手动调用它。这将 skills 的上下文成本降低到零，您只需自己触发这些 skills。
+\*默认情况下，skill 描述在会话开始时加载，以便 Claude 可以决定何时使用它们。在 skill 的 frontmatter 中设置 `disable-model-invocation: true` 以将其完全隐藏在 Claude 中，直到您手动调用它。这将 skills 的上下文成本降低到零，您只需自己触发这些 skills。对于您未编写的 skill，在设置中设置 [`skillOverrides`](/zh-CN/skills#override-skill-visibility-from-settings) 以在不编辑其文件的情况下执行相同操作。
 
 ### 了解功能如何加载
 
@@ -233,7 +233,7 @@ Claude Code 结合了一个能够推理代码的模型和[内置工具](/zh-CN/h
 
     **加载内容：** 所有 CLAUDE.md 文件的完整内容（托管、用户和项目级别）。
 
-    **继承：** Claude 从您的工作目录读取 CLAUDE.md 文件直到根目录，并在访问这些文件时发现子目录中的嵌套文件。有关详细信息，请参阅 [CLAUDE.md 文件如何加载](/zh-CN/memory#how-claudemd-files-load)。
+    **继承：** Claude 从您的工作目录读取 CLAUDE.md 文件直到根目录，并在访问这些文件时发现子目录中的嵌套文件。有关详细信息，请参阅 [CLAUDE.md 文件如何加载](/zh-CN/memory#how-claude-md-files-load)。
 
     <Tip>保持 CLAUDE.md 在 200 行以下。将参考材料移到 skills，这些 skills 按需加载。</Tip>
   </Tab>
@@ -282,7 +282,7 @@ Claude Code 结合了一个能够推理代码的模型和[内置工具](/zh-CN/h
   </Tab>
 
   <Tab title="Hooks">
-    **何时：** 触发时。Hooks 在特定的生命周期事件上触发，如工具执行、会话边界、提示提交、权限请求和压缩。有关完整列表，请参阅 [Hooks](/zh-CN/hooks-guide)。
+    **何时：** 触发时。Hooks 在特定的生命周期事件上触发，如工具执行、会话边界、提示提交、权限请求和压缩。有关完整列表，请参阅 [Hooks](/zh-CN/hooks)。
 
     **加载内容：** 默认情况下无。Hooks 在主对话外执行。
 

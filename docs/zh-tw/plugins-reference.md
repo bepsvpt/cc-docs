@@ -301,7 +301,7 @@ Plugin monitors 使用與 [Monitor tool](/zh-TW/tools-reference#monitor-tool) �
 ]
 ```
 
-若要內聯宣告 monitors，請將 `plugin.json` 中的 `monitors` 金鑰設定為相同的陣列。若要從非預設路徑載入，請將 `monitors` 設定為相對路徑字串，例如 `"./config/monitors.json"`。
+若要內聯宣告 monitors，請將 `plugin.json` 中的 `experimental.monitors` 設定為相同的陣列。若要從非預設路徑載入，請將 `experimental.monitors` 設定為相對路徑字串，例如 `"./config/monitors.json"`。Monitors 是 [experimental component](#experimental-components)。
 
 **必需欄位：**
 
@@ -323,7 +323,7 @@ Plugin monitors 使用與 [Monitor tool](/zh-TW/tools-reference#monitor-tool) �
 
 ### Themes
 
-Plugins 可以提供顏色主題，這些主題與內建預設值和使用者的本機主題一起出現在 `/theme` 中。主題是 `themes/` 中的 JSON 檔案，具有 `base` 預設值和稀疏的 `overrides` 顏色令牌對應。
+Plugins 可以提供顏色主題，這些主題與內建預設值和使用者的本機主題一起出現在 `/theme` 中。主題是 `themes/` 中的 JSON 檔案，具有 `base` 預設值和稀疏的 `overrides` 顏色令牌對應。Themes 是 [experimental component](#experimental-components)。
 
 ```json theme={null}
 {
@@ -384,9 +384,11 @@ manifest 是選用的。如果省略，Claude Code 會自動探索 [預設位置
   "hooks": "./config/hooks.json",
   "mcpServers": "./mcp-config.json",
   "outputStyles": "./styles/",
-  "themes": "./themes/",
   "lspServers": "./.lsp.json",
-  "monitors": "./monitors.json",
+  "experimental": {
+    "themes": "./themes/",
+    "monitors": "./monitors.json"
+  },
   "dependencies": [
     "helper-lib",
     { "name": "secrets-vault", "version": "~2.1.0" }
@@ -419,20 +421,24 @@ manifest 是選用的。如果省略，Claude Code 會自動探索 [預設位置
 
 ### 元件路徑欄位
 
-| 欄位             | 類型                    | 描述                                                                                                              | 範例                                                   |
-| :------------- | :-------------------- | :-------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
-| `skills`       | string\|array         | 包含 `<name>/SKILL.md` 的自訂 skill 目錄（取代預設 `skills/`）                                                               | `"./custom/skills/"`                                 |
-| `commands`     | string\|array         | 自訂平面 `.md` skill 檔案或目錄（取代預設 `commands/`）                                                                        | `"./custom/cmd.md"` 或 `["./cmd1.md"]`                |
-| `agents`       | string\|array         | 自訂 agent 檔案（取代預設 `agents/`）                                                                                     | `"./custom/agents/reviewer.md"`                      |
-| `hooks`        | string\|array\|object | Hook 設定路徑或內聯設定                                                                                                  | `"./my-extra-hooks.json"`                            |
-| `mcpServers`   | string\|array\|object | MCP 設定路徑或內聯設定                                                                                                   | `"./my-extra-mcp-config.json"`                       |
-| `outputStyles` | string\|array         | 自訂輸出樣式檔案/目錄（取代預設 `output-styles/`）                                                                              | `"./styles/"`                                        |
-| `themes`       | string\|array         | 色彩主題檔案/目錄（取代預設 `themes/`）。請參閱 [Themes](#themes)                                                                 | `"./themes/"`                                        |
-| `lspServers`   | string\|array\|object | [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) 設定，用於程式碼智慧（前往定義、尋找參考等）        | `"./.lsp.json"`                                      |
-| `monitors`     | string\|array         | 背景 [Monitor](/zh-TW/tools-reference#monitor-tool) 設定，在 plugin 啟用時自動啟動。請參閱 [Monitors](#monitors)                 | `"./monitors.json"`                                  |
-| `userConfig`   | object                | 在啟用時提示使用者的使用者可設定值。請參閱 [User configuration](#user-configuration)                                                 | 請參閱下方                                                |
-| `channels`     | array                 | 訊息注入的頻道宣告（Telegram、Slack、Discord 風格）。請參閱 [Channels](#channels)                                                  | 請參閱下方                                                |
-| `dependencies` | array                 | 此 plugin 需要的其他 plugins，可選擇使用 semver 版本限制。請參閱 [Constrain plugin dependency versions](/zh-TW/plugin-dependencies) | `[{ "name": "secrets-vault", "version": "~2.1.0" }]` |
+| 欄位                      | 類型                    | 描述                                                                                                              | 範例                                                   |
+| :---------------------- | :-------------------- | :-------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
+| `skills`                | string\|array         | 包含 `<name>/SKILL.md` 的自訂 skill 目錄（取代預設 `skills/`）                                                               | `"./custom/skills/"`                                 |
+| `commands`              | string\|array         | 自訂平面 `.md` skill 檔案或目錄（取代預設 `commands/`）                                                                        | `"./custom/cmd.md"` 或 `["./cmd1.md"]`                |
+| `agents`                | string\|array         | 自訂 agent 檔案（取代預設 `agents/`）                                                                                     | `"./custom/agents/reviewer.md"`                      |
+| `hooks`                 | string\|array\|object | Hook 設定路徑或內聯設定                                                                                                  | `"./my-extra-hooks.json"`                            |
+| `mcpServers`            | string\|array\|object | MCP 設定路徑或內聯設定                                                                                                   | `"./my-extra-mcp-config.json"`                       |
+| `outputStyles`          | string\|array         | 自訂輸出樣式檔案/目錄（取代預設 `output-styles/`）                                                                              | `"./styles/"`                                        |
+| `lspServers`            | string\|array\|object | [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) 設定，用於程式碼智慧（前往定義、尋找參考等）        | `"./.lsp.json"`                                      |
+| `experimental.themes`   | string\|array         | 色彩主題檔案/目錄（取代預設 `themes/`）。請參閱 [Themes](#themes)                                                                 | `"./themes/"`                                        |
+| `experimental.monitors` | string\|array         | 背景 [Monitor](/zh-TW/tools-reference#monitor-tool) 設定，在 plugin 啟用時自動啟動。請參閱 [Monitors](#monitors)                 | `"./monitors.json"`                                  |
+| `userConfig`            | object                | 在啟用時提示使用者的使用者可設定值。請參閱 [User configuration](#user-configuration)                                                 | 請參閱下方                                                |
+| `channels`              | array                 | 訊息注入的頻道宣告（Telegram、Slack、Discord 風格）。請參閱 [Channels](#channels)                                                  | 請參閱下方                                                |
+| `dependencies`          | array                 | 此 plugin 需要的其他 plugins，可選擇使用 semver 版本限制。請參閱 [Constrain plugin dependency versions](/zh-TW/plugin-dependencies) | `[{ "name": "secrets-vault", "version": "~2.1.0" }]` |
+
+### 實驗性元件
+
+`experimental` 金鑰下的元件 `themes` 和 `monitors` 具有在版本之間穩定時可能會變更的 manifest 架構。您宣告它們的位置是一個單獨的遷移：頂層仍然有效，`claude plugin validate` 會發出警告，未來的版本將需要 `experimental.*`。
 
 ### User configuration
 
@@ -504,7 +510,7 @@ manifest 是選用的。如果省略，Claude Code 會自動探索 [預設位置
 
 ### 路徑行為規則
 
-對於 `skills`、`commands`、`agents`、`outputStyles`、`themes` 和 `monitors`，自訂路徑取代預設值。如果 manifest 指定 `skills`，預設 `skills/` 目錄不會被掃描；如果它指定 `monitors`，預設 `monitors/monitors.json` 不會被載入。[Hooks](#hooks)、[MCP servers](#mcp-servers) 和 [LSP servers](#lsp-servers) 有不同的語義來處理多個來源。
+對於 `skills`、`commands`、`agents`、`outputStyles`、`experimental.themes` 和 `experimental.monitors`，自訂路徑取代預設值。如果 manifest 指定 `skills`，預設 `skills/` 目錄不會被掃描；如果它指定 `experimental.monitors`，預設 `monitors/monitors.json` 不會被載入。[Hooks](#hooks)、[MCP servers](#mcp-servers) 和 [LSP servers](#lsp-servers) 有不同的語義來處理多個來源。
 
 * 所有路徑必須相對於 plugin 根目錄，並以 `./` 開頭
 * 來自自訂路徑的元件使用相同的命名和命名空間規則
@@ -605,7 +611,7 @@ Claude Code 提供兩個變數用於參考 plugin 路徑。兩者都在 skill �
 
 Plugins 可以透過以下兩種方式之一指定：
 
-* 透過 `claude --plugin-dir`，在工作階段期間。
+* 透過 `claude --plugin-dir` 或 `claude --plugin-url`，在工作階段期間。
 * 透過 marketplace，為未來的工作階段安裝。
 
 出於安全和驗證目的，Claude Code 將 *marketplace* plugins 複製到使用者的本機 **plugin 快取**（`~/.claude/plugins/cache`），而不是就地使用它們。在開發參考外部檔案的 plugins 時，理解此行為很重要。

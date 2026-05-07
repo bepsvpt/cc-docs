@@ -64,6 +64,8 @@ Exemplo de configuração de configurações gerenciadas:
   As configurações gerenciadas podem ser distribuídas via MDM (Mobile Device Management) ou outras soluções de gerenciamento de dispositivos. As variáveis de ambiente definidas no arquivo de configurações gerenciadas têm alta precedência e não podem ser substituídas pelos usuários.
 </Note>
 
+Claude Code não passa variáveis de ambiente `OTEL_*` para os subprocessos que ele gera, incluindo a ferramenta Bash, hooks, servidores MCP e servidores de linguagem. Um aplicativo instrumentado com OpenTelemetry que você executa através da ferramenta Bash não herda o endpoint do exportador ou cabeçalhos do Claude Code, então defina essas variáveis diretamente no comando se esse aplicativo precisar exportar sua própria telemetria.
+
 ## Detalhes de configuração
 
 ### Variáveis de configuração comuns
@@ -80,8 +82,6 @@ Exemplo de configuração de configurações gerenciadas:
 | `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | Protocolo para logs, substitui configuração geral                                                                                                                                                                                                                                                                                                         | `grpc`, `http/json`, `http/protobuf`                                                                                               |
 | `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | Endpoint de logs OTLP, substitui configuração geral                                                                                                                                                                                                                                                                                                       | `http://localhost:4318/v1/logs`                                                                                                    |
 | `OTEL_EXPORTER_OTLP_HEADERS`                        | Cabeçalhos de autenticação para OTLP                                                                                                                                                                                                                                                                                                                      | `Authorization=Bearer token`                                                                                                       |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | Chave do cliente para autenticação mTLS                                                                                                                                                                                                                                                                                                                   | Caminho para arquivo de chave do cliente                                                                                           |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | Certificado do cliente para autenticação mTLS                                                                                                                                                                                                                                                                                                             | Caminho para arquivo de certificado do cliente                                                                                     |
 | `OTEL_METRIC_EXPORT_INTERVAL`                       | Intervalo de exportação em milissegundos (padrão: 60000)                                                                                                                                                                                                                                                                                                  | `5000`, `60000`                                                                                                                    |
 | `OTEL_LOGS_EXPORT_INTERVAL`                         | Intervalo de exportação de logs em milissegundos (padrão: 5000)                                                                                                                                                                                                                                                                                           | `1000`, `10000`                                                                                                                    |
 | `OTEL_LOG_USER_PROMPTS`                             | Ativar registro de conteúdo de prompt do usuário (padrão: desativado)                                                                                                                                                                                                                                                                                     | `1` para ativar                                                                                                                    |
@@ -90,6 +90,17 @@ Exemplo de configuração de configurações gerenciadas:
 | `OTEL_LOG_RAW_API_BODIES`                           | Emitir o corpo JSON completo da solicitação e resposta da API Anthropic Messages como eventos de log `api_request_body` / `api_response_body` (padrão: desativado). Os corpos incluem todo o histórico de conversa. Ativar isso implica consentimento para tudo que `OTEL_LOG_USER_PROMPTS`, `OTEL_LOG_TOOL_DETAILS` e `OTEL_LOG_TOOL_CONTENT` revelariam | `1` para corpos inline truncados em 60 KB, ou `file:<dir>` para corpos não truncados em disco com um ponteiro `body_ref` no evento |
 | `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | Preferência de temporalidade de métricas (padrão: `delta`). Defina como `cumulative` se seu backend espera temporalidade cumulativa                                                                                                                                                                                                                       | `delta`, `cumulative`                                                                                                              |
 | `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | Intervalo para atualizar cabeçalhos dinâmicos (padrão: 1740000ms / 29 minutos)                                                                                                                                                                                                                                                                            | `900000`                                                                                                                           |
+
+### Autenticação mTLS
+
+Como você configura certificados de cliente para o exportador OTLP depende do protocolo OTLP em uso para esse sinal, definido via `OTEL_EXPORTER_OTLP_PROTOCOL` ou a substituição por sinal. A mesma configuração se aplica a métricas, logs e rastreamentos.
+
+| Protocolo                    | Variáveis de certificado do cliente                                                                                                                                                            | Confiar na CA do coletor com     |
+| :--------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------- |
+| `http/protobuf`, `http/json` | `CLAUDE_CODE_CLIENT_CERT`, `CLAUDE_CODE_CLIENT_KEY` e opcionalmente `CLAUDE_CODE_CLIENT_KEY_PASSPHRASE`. Veja [Configuração de rede](/pt/network-config#mtls-authentication)                   | `NODE_EXTRA_CA_CERTS`            |
+| `grpc`                       | `OTEL_EXPORTER_OTLP_CLIENT_KEY` e `OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE`, ou as variantes por sinal como `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY` para usar um certificado diferente por sinal | `OTEL_EXPORTER_OTLP_CERTIFICATE` |
+
+Para `grpc`, o SDK OpenTelemetry lê as variáveis OTLP padrão diretamente, então as configurações existentes que definem as variáveis de métricas por sinal continuam funcionando.
 
 ### Controle de cardinalidade de métricas
 
@@ -107,7 +118,7 @@ Essas variáveis ajudam a controlar a cardinalidade das métricas, o que afeta o
 
 O rastreamento distribuído exporta spans que vinculam cada prompt do usuário às solicitações de API e execuções de ferramentas que ele dispara, para que você possa visualizar uma solicitação completa como um único rastreamento no seu backend de rastreamento.
 
-O rastreamento está desativado por padrão. Para ativá-lo, defina tanto `CLAUDE_CODE_ENABLE_TELEMETRY=1` quanto `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`, depois defina `OTEL_TRACES_EXPORTER` para escolher para onde os spans são enviados. Os rastreamentos reutilizam a [configuração OTLP comum](#variáveis-de-configuração-comuns) para endpoint, protocolo e cabeçalhos.
+O rastreamento está desativado por padrão. Para ativá-lo, defina tanto `CLAUDE_CODE_ENABLE_TELEMETRY=1` quanto `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`, depois defina `OTEL_TRACES_EXPORTER` para escolher para onde os spans são enviados. Os rastreamentos reutilizam a [configuração OTLP comum](#variáveis-de-configuração-comuns) para endpoint, protocolo, cabeçalhos e [mTLS](#autenticação-mtls).
 
 | Variável de Ambiente                  | Descrição                                                                                   | Valores de Exemplo                   |
 | ------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------ |
@@ -197,11 +208,11 @@ Quando `OTEL_LOG_TOOL_CONTENT=1`, este span também registra um evento de span `
 
 **`claude_code.tool.blocked_on_user`**
 
-| Atributo      | Descrição                                                                              | Controlado Por |
-| ------------- | -------------------------------------------------------------------------------------- | -------------- |
-| `duration_ms` | Tempo gasto esperando a decisão de permissão                                           |                |
-| `decision`    | `accept` ou `reject`                                                                   |                |
-| `source`      | Fonte de decisão, correspondendo ao evento [Tool decision event](#tool-decision-event) |                |
+| Atributo      | Descrição                                                                                                      | Controlado Por |
+| ------------- | -------------------------------------------------------------------------------------------------------------- | -------------- |
+| `duration_ms` | Tempo gasto esperando a decisão de permissão                                                                   |                |
+| `decision`    | `accept` ou `reject`                                                                                           |                |
+| `source`      | Fonte de decisão, correspondendo ao evento [Evento de decisão da ferramenta](#evento-de-decisão-da-ferramenta) |                |
 
 **`claude_code.tool.execution`**
 
@@ -233,7 +244,7 @@ Este span é emitido apenas quando rastreamento beta detalhado está ativo, o qu
 
 ### Cabeçalhos dinâmicos
 
-Para ambientes corporativos que exigem autenticação dinâmica, você pode configurar um script para gerar cabeçalhos dinamicamente:
+Para ambientes corporativos que exigem autenticação dinâmica, você pode configurar um script para gerar cabeçalhos dinamicamente. Cabeçalhos dinâmicos se aplicam apenas aos protocolos `http/protobuf` e `http/json`. O exportador `grpc` usa apenas o valor estático `OTEL_EXPORTER_OTLP_HEADERS`.
 
 #### Configuração de configurações
 
@@ -410,7 +421,7 @@ Incrementado quando código é adicionado ou removido.
 
 #### Contador de pull request
 
-Incrementado ao criar pull requests via Claude Code.
+Incrementado quando Claude Code cria um pull request ou merge request através de um comando shell ou uma ferramenta MCP.
 
 **Atributos**:
 

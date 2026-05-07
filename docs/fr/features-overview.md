@@ -219,7 +219,7 @@ Chaque fonctionnalité a une stratégie de chargement et un coût de contexte di
 | **Subagents**    | Quand généré                     | Contexte frais avec les skills spécifiées                | Isolé de la session principale                            |
 | **Hooks**        | Au déclenchement                 | Rien (s'exécute en externe)                              | Zéro, sauf si le hook retourne du contexte supplémentaire |
 
-\*Par défaut, les descriptions de skills se chargent au début de la session afin que Claude puisse décider quand les utiliser. Définissez `disable-model-invocation: true` dans le frontmatter d'une skill pour la masquer complètement à Claude jusqu'à ce que vous l'invoquiez manuellement. Cela réduit le coût du contexte à zéro pour les skills que vous ne déclenchez que vous-même.
+\*Par défaut, les descriptions de skills se chargent au début de la session afin que Claude puisse décider quand les utiliser. Définissez `disable-model-invocation: true` dans le frontmatter d'une skill pour la masquer complètement à Claude jusqu'à ce que vous l'invoquiez manuellement. Cela réduit le coût du contexte à zéro pour les skills que vous ne déclenchez que vous-même. Pour une skill que vous n'avez pas écrite, définissez [`skillOverrides`](/fr/skills#override-skill-visibility-from-settings) dans les paramètres pour faire la même chose sans modifier son fichier.
 
 ### Comprendre comment les fonctionnalités se chargent
 
@@ -282,7 +282,7 @@ Chaque fonctionnalité se charge à différents points de votre session. Les ong
   </Tab>
 
   <Tab title="Hooks">
-    **Quand :** Au déclenchement. Les hooks se déclenchent à des événements de cycle de vie spécifiques comme l'exécution d'outils, les limites de session, la soumission d'invite, les demandes de permission et la compaction. Consultez [Hooks](/fr/hooks-guide) pour la liste complète.
+    **Quand :** Au déclenchement. Les hooks se déclenchent à des événements de cycle de vie spécifiques comme l'exécution d'outils, les limites de session, la soumission d'invite, les demandes de permission et la compaction. Consultez [Hooks](/fr/hooks) pour la liste complète.
 
     **Ce qui se charge :** Rien par défaut. Les hooks s'exécutent en dehors de la conversation principale.
 

@@ -134,7 +134,7 @@ Claude Code exécute votre script et envoie les [données de session JSON](#avai
 
 **Quand elle se met à jour**
 
-Votre script s'exécute après chaque nouveau message d'assistant, quand le mode de permission change, ou quand le mode vim bascule. Les mises à jour sont débogées à 300 ms, ce qui signifie que les changements rapides se regroupent et votre script s'exécute une fois que les choses se stabilisent. Si une nouvelle mise à jour se déclenche pendant que votre script s'exécute encore, l'exécution en cours est annulée. Si vous modifiez votre script, les modifications n'apparaîtront pas avant que votre prochaine interaction avec Claude Code ne déclenche une mise à jour.
+Votre script s'exécute après chaque nouveau message d'assistant, après que `/compact` se termine, quand le mode de permission change, ou quand le mode vim bascule. Les mises à jour sont débogées à 300 ms, ce qui signifie que les changements rapides se regroupent et votre script s'exécute une fois que les choses se stabilisent. Si une nouvelle mise à jour se déclenche pendant que votre script s'exécute encore, l'exécution en cours est annulée. Si vous modifiez votre script, les modifications n'apparaîtront pas avant que votre prochaine interaction avec Claude Code ne déclenche une mise à jour.
 
 Ces déclencheurs peuvent devenir silencieux quand la session principale est inactive, par exemple pendant qu'un coordinateur attend les sous-agents en arrière-plan. Pour garder les segments basés sur le temps ou provenant de sources externes à jour pendant les périodes inactives, définissez [`refreshInterval`](#manually-configure-a-status-line) pour aussi réexécuter la commande sur un minuteur fixe.
 
@@ -161,12 +161,14 @@ Claude Code envoie les champs JSON suivants à votre script via stdin :
 | `cost.total_duration_ms`                                                         | Temps écoulé total depuis le début de la session, en millisecondes                                                                                                                                                                                                                  |
 | `cost.total_api_duration_ms`                                                     | Temps total passé à attendre les réponses API en millisecondes                                                                                                                                                                                                                      |
 | `cost.total_lines_added`, `cost.total_lines_removed`                             | Lignes de code modifiées                                                                                                                                                                                                                                                            |
-| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | Comptages de jetons cumulatifs dans la session                                                                                                                                                                                                                                      |
+| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | Comptages de jetons actuellement dans la fenêtre de contexte, à partir de la réponse API la plus récente. L'entrée inclut les lectures et écritures du cache. Avant v2.1.132, il s'agissait de totaux cumulatifs de session                                                         |
 | `context_window.context_window_size`                                             | Taille maximale de la fenêtre de contexte en jetons. 200 000 par défaut, ou 1 000 000 pour les modèles avec contexte étendu.                                                                                                                                                        |
 | `context_window.used_percentage`                                                 | Pourcentage pré-calculé de fenêtre de contexte utilisée                                                                                                                                                                                                                             |
 | `context_window.remaining_percentage`                                            | Pourcentage pré-calculé de fenêtre de contexte restante                                                                                                                                                                                                                             |
 | `context_window.current_usage`                                                   | Comptages de jetons du dernier appel API, décrits dans [champs de fenêtre de contexte](#context-window-fields)                                                                                                                                                                      |
 | `exceeds_200k_tokens`                                                            | Si le comptage total de jetons (jetons d'entrée, de cache et de sortie combinés) de la réponse API la plus récente dépasse 200 k. C'est un seuil fixe indépendamment de la taille réelle de la fenêtre de contexte.                                                                 |
+| `effort.level`                                                                   | Effort de raisonnement actuel (`low`, `medium`, `high`, `xhigh`, ou `max`). Reflète la valeur de session en direct, y compris les changements `/effort` en cours de session. Absent quand le modèle actuel ne supporte pas le paramètre d'effort                                    |
+| `thinking.enabled`                                                               | Si la réflexion étendue est activée pour la session                                                                                                                                                                                                                                 |
 | `rate_limits.five_hour.used_percentage`, `rate_limits.seven_day.used_percentage` | Pourcentage de la limite de débit de 5 heures ou 7 jours consommée, de 0 à 100                                                                                                                                                                                                      |
 | `rate_limits.five_hour.resets_at`, `rate_limits.seven_day.resets_at`             | Secondes d'époque Unix quand la fenêtre de limite de débit de 5 heures ou 7 jours se réinitialise                                                                                                                                                                                   |
 | `session_id`                                                                     | Identifiant de session unique                                                                                                                                                                                                                                                       |
@@ -213,8 +215,8 @@ Claude Code envoie les champs JSON suivants à votre script via stdin :
       "total_lines_removed": 23
     },
     "context_window": {
-      "total_input_tokens": 15234,
-      "total_output_tokens": 4521,
+      "total_input_tokens": 15500,
+      "total_output_tokens": 1200,
       "context_window_size": 200000,
       "used_percentage": 8,
       "remaining_percentage": 92,
@@ -270,7 +272,7 @@ Claude Code envoie les champs JSON suivants à votre script via stdin :
 
   **Champs qui peuvent être `null`** :
 
-  * `context_window.current_usage` : `null` avant le premier appel API dans une session
+  * `context_window.current_usage` : `null` avant le premier appel API dans une session, et à nouveau après `/compact` jusqu'à ce que le prochain appel API le remplisse à nouveau
   * `context_window.used_percentage`, `context_window.remaining_percentage` : peuvent être `null` au début de la session
 
   Gérez les champs manquants avec un accès conditionnel et les valeurs null avec des valeurs par défaut de secours dans vos scripts.
@@ -278,10 +280,10 @@ Claude Code envoie les champs JSON suivants à votre script via stdin :
 
 ### Champs de fenêtre de contexte
 
-L'objet `context_window` fournit deux façons de suivre l'utilisation du contexte :
+L'objet `context_window` décrit la fenêtre de contexte en direct à partir de la réponse API la plus récente. À partir de v2.1.132, `total_input_tokens` et `total_output_tokens` reflètent l'utilisation du contexte actuel, et non les totaux cumulatifs de session.
 
-* **Totaux cumulatifs** (`total_input_tokens`, `total_output_tokens`) : somme de tous les jetons dans toute la session, utile pour suivre la consommation totale
-* **Utilisation actuelle** (`current_usage`) : comptages de jetons du dernier appel API, utilisez ceci pour un pourcentage de contexte précis car il reflète l'état réel du contexte
+* **Totaux combinés** (`total_input_tokens`, `total_output_tokens`) : jetons actuellement dans la fenêtre de contexte. `total_input_tokens` est la somme de `input_tokens`, `cache_creation_input_tokens`, et `cache_read_input_tokens` ; `total_output_tokens` est les jetons de sortie de la réponse la plus récente. Les deux sont `0` avant la première réponse API.
+* **Utilisation par composant** (`current_usage`) : les mêmes comptages de jetons ventilés par catégorie. Utilisez ceci quand vous avez besoin des accès au cache séparés de l'entrée fraîche.
 
 L'objet `current_usage` contient :
 
@@ -294,7 +296,7 @@ Le champ `used_percentage` est calculé à partir des jetons d'entrée uniquemen
 
 Si vous calculez le pourcentage de contexte manuellement à partir de `current_usage`, utilisez la même formule d'entrée uniquement pour correspondre à `used_percentage`.
 
-L'objet `current_usage` est `null` avant le premier appel API dans une session.
+L'objet `current_usage` est `null` avant le premier appel API dans une session, et à nouveau immédiatement après `/compact` jusqu'à ce que le prochain appel API le remplisse à nouveau.
 
 ## Exemples
 
@@ -1009,8 +1011,7 @@ Les projets communautaires comme [ccstatusline](https://github.com/sirmalloc/ccs
 
 **Le pourcentage de contexte affiche des valeurs inattendues**
 
-* Utilisez `used_percentage` pour un état de contexte précis plutôt que les totaux cumulatifs
-* Les `total_input_tokens` et `total_output_tokens` sont cumulatifs dans la session et peuvent dépasser la taille de la fenêtre de contexte
+* Utilisez `used_percentage` pour l'état de contexte le plus simple et précis
 * Le pourcentage de contexte peut différer de la sortie `/context` en raison du moment où chacun est calculé
 
 **Les liens OSC 8 ne sont pas cliquables**

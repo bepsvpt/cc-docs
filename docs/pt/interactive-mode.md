@@ -11,7 +11,7 @@
 <Note>
   Os atalhos de teclado podem variar por plataforma e terminal. Pressione `?` para ver os atalhos disponíveis para seu ambiente.
 
-  **Usuários de macOS**: Os atalhos da tecla Option/Alt (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`, `Alt+T`) exigem configurar Option como Meta no seu terminal:
+  **Usuários de macOS**: Os atalhos da tecla Option/Alt (`Alt+B`, `Alt+F`, `Alt+Y`, `Alt+M`, `Alt+P`) exigem configurar Option como Meta no seu terminal:
 
   * **iTerm2**: Configurações → Profiles → Keys → General → defina Left/Right Option key para "Esc+"
   * **Apple Terminal**: Configurações → Profiles → Keyboard → marque "Use Option as Meta Key"
@@ -39,7 +39,7 @@
 | `Esc` + `Esc`                                     | Retroceder ou resumir                                                                         | Restaurar código e/ou conversa para um ponto anterior, ou resumir a partir de uma mensagem selecionada                                                                                                                                                                                                                                      |
 | `Shift+Tab` ou `Alt+M` (algumas configurações)    | Alternar modos de permissão                                                                   | Alternar entre `default`, `acceptEdits`, `plan` e qualquer modo que você tenha ativado, como `auto` ou `bypassPermissions`. Veja [modos de permissão](/pt/permission-modes).                                                                                                                                                                |
 | `Option+P` (macOS) ou `Alt+P` (Windows/Linux)     | Alternar modelo                                                                               | Alternar modelos sem limpar seu prompt                                                                                                                                                                                                                                                                                                      |
-| `Option+T` (macOS) ou `Alt+T` (Windows/Linux)     | Alternar pensamento estendido                                                                 | Ativar ou desativar modo de pensamento estendido. No macOS, configure seu terminal para enviar Option como Meta para que este atalho funcione                                                                                                                                                                                               |
+| `Option+T` (macOS) ou `Alt+T` (Windows/Linux)     | Alternar pensamento estendido                                                                 | Ativar ou desativar modo de pensamento estendido. A partir da v2.1.132, este atalho funciona no macOS sem configurar Option como Meta                                                                                                                                                                                                       |
 | `Option+O` (macOS) ou `Alt+O` (Windows/Linux)     | Alternar modo rápido                                                                          | Ativar ou desativar [modo rápido](/pt/fast-mode)                                                                                                                                                                                                                                                                                            |
 
 ### Edição de texto
@@ -68,12 +68,12 @@
 | :-------------------- | :---------------- | :------------------------------------------------------------------------------------------------ |
 | Escape rápido         | `\` + `Enter`     | Funciona em todos os terminais                                                                    |
 | Tecla Option          | `Option+Enter`    | Após ativar [Option como Meta](/pt/terminal-config#enable-option-key-shortcuts-on-macos) no macOS |
-| Shift+Enter           | `Shift+Enter`     | Nativo em iTerm2, WezTerm, Ghostty, Kitty, Warp, Apple Terminal                                   |
+| Shift+Enter           | `Shift+Enter`     | Nativo em iTerm2, WezTerm, Ghostty, Kitty, Warp, Apple Terminal, Windows Terminal                 |
 | Sequência de controle | `Ctrl+J`          | Funciona em qualquer terminal sem configuração                                                    |
 | Modo de cola          | Colar diretamente | Para blocos de código, logs                                                                       |
 
 <Tip>
-  Shift+Enter funciona sem configuração em iTerm2, WezTerm, Ghostty, Kitty, Warp e Apple Terminal. Para VS Code, Cursor, Windsurf, Alacritty e Zed, execute `/terminal-setup` para instalar o atalho.
+  Shift+Enter funciona sem configuração em iTerm2, WezTerm, Ghostty, Kitty, Warp, Apple Terminal e Windows Terminal. Para VS Code, Cursor, Windsurf, Alacritty e Zed, execute `/terminal-setup` para instalar o atalho.
 </Tip>
 
 ### Comandos rápidos
@@ -130,6 +130,7 @@ Ative edição no estilo vim via `/config` → Editor mode.
 | Comando         | Ação                                                     |
 | :-------------- | :------------------------------------------------------- |
 | `h`/`j`/`k`/`l` | Mover esquerda/baixo/cima/direita                        |
+| `Space`         | Mover para a direita                                     |
 | `w`             | Próxima palavra                                          |
 | `e`             | Final da palavra                                         |
 | `b`             | Palavra anterior                                         |
@@ -220,7 +221,7 @@ Pressione `Ctrl+R` para pesquisar interativamente através do seu histórico de 
 1. **Iniciar pesquisa**: pressione `Ctrl+R` para ativar pesquisa de histórico reverso
 2. **Digitar consulta**: insira texto para pesquisar em comandos anteriores. O termo de pesquisa é destacado nos resultados correspondentes
 3. **Navegar correspondências**: pressione `Ctrl+R` novamente para ciclar através de correspondências mais antigas
-4. **Mudar escopo**: pressione `Ctrl+S` para alternar entre esta sessão, este projeto e todos os projetos
+4. **Mudar escopo**: a pesquisa padrão é de prompts de todos os projetos. Pressione `Ctrl+S` para alternar o escopo entre esta sessão, este projeto e todos os projetos
 5. **Aceitar correspondência**:
    * Pressione `Tab` ou `Esc` para aceitar a correspondência atual e continuar editando
    * Pressione `Enter` para aceitar e executar o comando imediatamente

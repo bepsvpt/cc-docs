@@ -28,54 +28,55 @@ Los skills agrupados se enumeran junto con los comandos integrados en la [refere
 
 ### Crear su primer skill
 
-Este ejemplo crea un skill que enseña a Claude a explicar código usando diagramas visuales y analogías. Como utiliza frontmatter predeterminado, Claude puede cargarlo automáticamente cuando pregunta cómo funciona algo, o puede invocarlo directamente con `/explain-code`.
+Este ejemplo crea un skill que resume los cambios sin confirmar en su repositorio git e identifica cualquier cosa arriesgada. Extrae el diff en vivo en el prompt antes de que Claude lo lea, por lo que la respuesta se basa en su árbol de trabajo real en lugar de lo que Claude puede adivinar a partir de archivos abiertos. Claude carga el skill automáticamente cuando pregunta sobre sus cambios, o puede invocarlo directamente con `/summarize-changes`.
 
 <Steps>
   <Step title="Crear el directorio del skill">
     Cree un directorio para el skill en su carpeta de skills personales. Los skills personales están disponibles en todos sus proyectos.
 
     ```bash theme={null}
-    mkdir -p ~/.claude/skills/explain-code
+    mkdir -p ~/.claude/skills/summarize-changes
     ```
   </Step>
 
   <Step title="Escribir SKILL.md">
-    Cada skill necesita un archivo `SKILL.md` con dos partes: frontmatter YAML (entre marcadores `---`) que le dice a Claude cuándo usar el skill, y contenido markdown con instrucciones que Claude sigue cuando se invoca el skill. El nombre del directorio se convierte en el `/slash-command`, y la `description` ayuda a Claude a decidir cuándo cargarlo automáticamente.
+    Cada skill necesita un archivo `SKILL.md` con dos partes: frontmatter YAML entre marcadores `---` que le dice a Claude cuándo usar el skill, y contenido markdown con las instrucciones que Claude sigue cuando se ejecuta el skill. El nombre del directorio se convierte en el comando que escribe, y la `description` ayuda a Claude a decidir cuándo cargar el skill automáticamente.
 
-    Cree `~/.claude/skills/explain-code/SKILL.md`:
+    Guarde esto en `~/.claude/skills/summarize-changes/SKILL.md`:
 
     ```yaml theme={null}
     ---
-    description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
+    description: Summarizes uncommitted changes and flags anything risky. Use when the user asks what changed, wants a commit message, or asks to review their diff.
     ---
 
-    When explaining code, always include:
+    ## Current changes
 
-    1. **Start with an analogy**: Compare the code to something from everyday life
-    2. **Draw a diagram**: Use ASCII art to show the flow, structure, or relationships
-    3. **Walk through the code**: Explain step-by-step what happens
-    4. **Highlight a gotcha**: What's a common mistake or misconception?
+    !`git diff HEAD`
 
-    Keep explanations conversational. For complex concepts, use multiple analogies.
+    ## Instructions
+
+    Summarize the changes above in two or three bullet points, then list any risks you notice such as missing error handling, hardcoded values, or tests that need updating. If the diff is empty, say there are no uncommitted changes.
     ```
+
+    La línea `` !`git diff HEAD` `` utiliza [inyección de contexto dinámico](#inject-dynamic-context): Claude Code ejecuta el comando y reemplaza la línea con su salida antes de que Claude vea el contenido del skill, por lo que las instrucciones llegan con el diff actual ya insertado.
   </Step>
 
   <Step title="Probar el skill">
-    Puede probarlo de dos maneras:
+    Abra un proyecto git, realice una pequeña edición en cualquier archivo e inicie Claude Code ejecutando `claude`. Puede probar el skill de dos maneras.
 
     **Dejar que Claude lo invoque automáticamente** haciendo una pregunta que coincida con la descripción:
 
     ```text theme={null}
-    How does this code work?
+    What did I change?
     ```
 
     **O invocarlo directamente** con el nombre del skill:
 
     ```text theme={null}
-    /explain-code src/auth/login.ts
+    /summarize-changes
     ```
 
-    De cualquier manera, Claude debe incluir una analogía y un diagrama ASCII en su explicación.
+    De cualquier manera, Claude debe responder con un breve resumen de su edición y una lista de riesgos.
   </Step>
 </Steps>
 
@@ -167,6 +168,8 @@ Deploy the application:
 ```
 
 Su `SKILL.md` puede contener cualquier cosa, pero pensar en cómo desea que se invoque el skill (por usted, por Claude, o ambos) y dónde desea que se ejecute (en línea o en un subagent) ayuda a guiar qué incluir. Para skills complejos, también puede [añadir archivos de apoyo](#add-supporting-files) para mantener el skill principal enfocado.
+
+Mantenga el cuerpo en sí conciso. Una vez que se carga un skill, su contenido [permanece en contexto entre turnos](#skill-content-lifecycle), por lo que cada línea es un costo de token recurrente. Indique qué hacer en lugar de narrar cómo o por qué, y aplique la misma prueba de concisión que haría para [contenido de CLAUDE.md](/es/best-practices#write-an-effective-claude-md).
 
 ### Referencia de frontmatter
 
@@ -305,6 +308,8 @@ Si un skill parece dejar de influir en el comportamiento después de la primera 
 
 El campo `allowed-tools` otorga permiso para las herramientas enumeradas mientras el skill está activo, por lo que Claude puede usarlas sin solicitarle aprobación. No restringe qué herramientas están disponibles: cada herramienta sigue siendo invocable, y su [configuración de permisos](/es/permissions) sigue rigiendo las herramientas que no están enumeradas.
 
+Para skills verificados en el directorio `.claude/skills/` de un proyecto, `allowed-tools` entra en vigor después de que acepte el diálogo de confianza del espacio de trabajo para esa carpeta, igual que las reglas de permisos en `.claude/settings.json`. Revise los skills del proyecto antes de confiar en un repositorio, ya que un skill puede otorgarse a sí mismo acceso amplio a herramientas.
+
 Este skill permite que Claude ejecute comandos git sin aprobación por uso cada vez que lo invoca:
 
 ```yaml theme={null}
@@ -413,10 +418,10 @@ git status --short
 ```
 ````
 
-Para deshabilitar este comportamiento para skills y comandos personalizados de fuentes de usuario, proyecto, plugin o [directorio adicional](#skills-from-additional-directories), establezca `"disableSkillShellExecution": true` en [configuración](/es/settings). Cada comando se reemplaza con `[shell command execution disabled by policy]` en lugar de ejecutarse. Los skills agrupados y gestionados no se ven afectados. Esta configuración es más útil en [configuración gestionada](/es/permissions#managed-settings), donde los usuarios no pueden anularla.
+Para deshabilitar este comportamiento para skills y comandos personalizados de fuentes de usuario, proyecto, plugin o [directorio adicional](#skills-from-additional-directories), establezca `"disableSkillShellExecution": true` en [settings](/es/settings). Cada comando se reemplaza con `[shell command execution disabled by policy]` en lugar de ejecutarse. Los skills agrupados y gestionados no se ven afectados. Esta configuración es más útil en [managed settings](/es/permissions#managed-settings), donde los usuarios no pueden anularla.
 
 <Tip>
-  Para habilitar [pensamiento extendido](/es/common-workflows#use-extended-thinking-thinking-mode) en un skill, incluya la palabra "ultrathink" en cualquier lugar en el contenido de su skill.
+  Para solicitar un razonamiento más profundo cuando se ejecuta un skill, incluya `ultrathink` en cualquier lugar en el contenido del skill. Consulte [Use ultrathink for one-off deep reasoning](/es/model-config#use-ultrathink-for-one-off-deep-reasoning).
 </Tip>
 
 ### Ejecutar skills en un subagent
@@ -496,6 +501,32 @@ Sintaxis de permisos: `Skill(name)` para coincidencia exacta, `Skill(name *)` pa
   El campo `user-invocable` solo controla la visibilidad del menú, no el acceso a la herramienta Skill. Utilice `disable-model-invocation: true` para bloquear la invocación programática.
 </Note>
 
+### Anular la visibilidad del skill desde la configuración
+
+La configuración `skillOverrides` controla la visibilidad del skill desde su [settings](/es/settings) en lugar del frontmatter del skill. Úselo para skills cuyo SKILL.md no desea editar, como los que se registran en un repositorio de proyecto compartido o proporcionados por un servidor MCP. El menú `/skills` lo escribe por usted: resalte un skill y presione `Space` para ciclar entre estados, luego `Enter` para guardar en `.claude/settings.local.json`.
+
+Cada clave es un nombre de skill y cada valor es uno de cuatro estados:
+
+| Valor                   | Listado para Claude  | En menú `/` |
+| :---------------------- | :------------------- | :---------- |
+| `"on"`                  | Nombre y descripción | Sí          |
+| `"name-only"`           | Solo nombre          | Sí          |
+| `"user-invocable-only"` | Oculto               | Sí          |
+| `"off"`                 | Oculto               | Oculto      |
+
+Un skill que está ausente de `skillOverrides` se trata como `"on"`. El ejemplo a continuación colapsa un skill a su nombre y desactiva otro por completo:
+
+```json theme={null}
+{
+  "skillOverrides": {
+    "legacy-context": "name-only",
+    "deploy": "off"
+  }
+}
+```
+
+Los skills de plugin no se ven afectados por `skillOverrides`. Gestione esos a través de `/plugin` en su lugar.
+
 ## Compartir skills
 
 Los skills se pueden distribuir en diferentes ámbitos dependiendo de su audiencia:
@@ -516,13 +547,13 @@ Cree el directorio Skill:
 mkdir -p ~/.claude/skills/codebase-visualizer/scripts
 ```
 
-Cree `~/.claude/skills/codebase-visualizer/SKILL.md`. La descripción le dice a Claude cuándo activar este Skill, y las instrucciones le dicen a Claude que ejecute el script incluido:
+Guarde esto en `~/.claude/skills/codebase-visualizer/SKILL.md`. La descripción le dice a Claude cuándo activar este Skill, y las instrucciones le dicen a Claude que ejecute el script incluido. La ruta del script utiliza [`${CLAUDE_SKILL_DIR}`](#available-string-substitutions) para que se resuelva correctamente si el skill está instalado a nivel personal, de proyecto o de plugin:
 
 ````yaml theme={null}
 ---
 name: codebase-visualizer
 description: Generate an interactive collapsible tree visualization of your codebase. Use when exploring a new repo, understanding project structure, or identifying large files.
-allowed-tools: Bash(python *)
+allowed-tools: Bash(python3 *)
 ---
 
 # Codebase Visualizer
@@ -534,7 +565,7 @@ Generate an interactive HTML tree view that shows your project's file structure 
 Run the visualization script from your project root:
 
 ```bash
-python ~/.claude/skills/codebase-visualizer/scripts/visualize.py .
+python3 ${CLAUDE_SKILL_DIR}/scripts/visualize.py .
 ```
 
 This creates `codebase-map.html` in the current directory and opens it in your default browser.
@@ -547,13 +578,13 @@ This creates `codebase-map.html` in the current directory and opens it in your d
 - **Directory totals**: Shows aggregate size of each folder
 ````
 
-Cree `~/.claude/skills/codebase-visualizer/scripts/visualize.py`. Este script escanea un árbol de directorios y genera un archivo HTML independiente con:
+Guarde esto en `~/.claude/skills/codebase-visualizer/scripts/visualize.py`. Este script escanea un árbol de directorios y genera un archivo HTML independiente con:
 
 * Una **barra lateral de resumen** que muestra el recuento de archivos, recuento de directorios, tamaño total y número de tipos de archivo
 * Un **gráfico de barras** que desglosa la base de código por tipo de archivo (los 8 principales por tamaño)
 * Un **árbol contraíble** donde puede expandir y contraer directorios, con indicadores de tipo de archivo codificados por color
 
-El script requiere Python pero utiliza solo bibliotecas integradas, por lo que no hay paquetes para instalar:
+El script requiere Python 3 pero utiliza solo bibliotecas integradas, por lo que no hay paquetes para instalar:
 
 ```python expandable theme={null}
 #!/usr/bin/env python3
@@ -562,6 +593,7 @@ El script requiere Python pero utiliza solo bibliotecas integradas, por lo que n
 import json
 import sys
 import webbrowser
+from html import escape
 from pathlib import Path
 from collections import Counter
 
@@ -650,7 +682,7 @@ def generate_html(data: dict, stats: dict, output: Path) -> None:
       {lang_bars}
     </div>
     <div class="main">
-      <h1>📁 {data["name"]}</h1>
+      <h1>📁 {escape(data["name"])}</h1>
       <ul class="tree" id="root"></ul>
     </div>
   </div>
@@ -658,11 +690,12 @@ def generate_html(data: dict, stats: dict, output: Path) -> None:
     const data = {json.dumps(data)};
     const colors = {json.dumps(colors)};
     function fmt(b) {{ if (b < 1024) return b + ' B'; if (b < 1048576) return (b/1024).toFixed(1) + ' KB'; return (b/1048576).toFixed(1) + ' MB'; }}
+    function esc(s) {{ return s.replace(/[&<>"']/g, c => ({{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}}[c])); }}
     function render(node, parent) {{
       if (node.children) {{
         const det = document.createElement('details');
         det.open = parent === document.getElementById('root');
-        det.innerHTML = `<summary><span class="folder">📁 ${{node.name}}</span><span class="size">${{fmt(node.size)}}</span></summary>`;
+        det.innerHTML = `<summary><span class="folder">📁 ${{esc(node.name)}}</span><span class="size">${{fmt(node.size)}}</span></summary>`;
         const ul = document.createElement('ul'); ul.className = 'tree';
         node.children.sort((a,b) => (b.children?1:0)-(a.children?1:0) || a.name.localeCompare(b.name));
         node.children.forEach(c => render(c, ul));
@@ -670,7 +703,7 @@ def generate_html(data: dict, stats: dict, output: Path) -> None:
         const li = document.createElement('li'); li.appendChild(det); parent.appendChild(li);
       }} else {{
         const li = document.createElement('li'); li.className = 'file';
-        li.innerHTML = `<span class="dot" style="background:${{colors[node.ext]||'#6b7280'}}"></span>${{node.name}}<span class="size">${{fmt(node.size)}}</span>`;
+        li.innerHTML = `<span class="dot" style="background:${{colors[node.ext]||'#6b7280'}}"></span>${{esc(node.name)}}<span class="size">${{fmt(node.size)}}</span>`;
         parent.appendChild(li);
       }}
     }}
@@ -715,7 +748,7 @@ Si Claude usa su skill cuando no desea:
 
 Las descripciones de skills se cargan en contexto para que Claude sepa qué está disponible. Todos los nombres de skills siempre se incluyen, pero si tiene muchos skills, las descripciones se acortan para ajustarse al presupuesto de caracteres, lo que puede eliminar las palabras clave que Claude necesita para coincidir con su solicitud. El presupuesto se escala dinámicamente al 1% de la ventana de contexto, con un respaldo de 8.000 caracteres.
 
-Para aumentar el límite, establezca la variable de entorno `SLASH_COMMAND_TOOL_CHAR_BUDGET`. O recorte el texto de `description` y `when_to_use` en la fuente: coloque la clave de uso al principio, ya que el texto combinado de cada entrada está limitado a 1.536 caracteres independientemente del presupuesto.
+Para aumentar el límite, establezca la variable de entorno `SLASH_COMMAND_TOOL_CHAR_BUDGET`. Para liberar presupuesto para otros skills, establezca las entradas de baja prioridad en `"name-only"` en [`skillOverrides`](#override-skill-visibility-from-settings) para que se enumeren sin descripción. También puede recortar el texto de `description` y `when_to_use` en la fuente: coloque el caso de uso clave primero, ya que el texto combinado de cada entrada está limitado a 1.536 caracteres independientemente del presupuesto.
 
 ## Recursos relacionados
 

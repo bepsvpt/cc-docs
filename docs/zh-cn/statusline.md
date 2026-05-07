@@ -130,19 +130,19 @@
 
 ## 状态行如何工作
 
-Claude Code 运行你的脚本并通过 stdin 向其传输[JSON 会话数据](#available-data)。你的脚本读取 JSON，提取它需要的内容，并将文本打印到 stdout。Claude Code 显示你的脚本打印的任何内容。
+Claude Code 运行你的脚本并通过 stdin 向其传输 [JSON 会话数据](#available-data)。你的脚本读取 JSON，提取它需要的内容，并将文本打印到 stdout。Claude Code 显示你的脚本打印的任何内容。
 
 **何时更新**
 
-你的脚本在每条新的助手消息之后、权限模式更改时或 vim 模式切换时运行。更新在 300ms 处进行防抖，这意味着快速更改会批处理在一起，你的脚本在事情稳定后运行一次。如果在你的脚本仍在运行时触发新的更新，则会取消正在进行的执行。如果你编辑你的脚本，更改在 Claude Code 的下一次交互触发更新之前不会出现。
+你的脚本在每条新的助手消息之后、`/compact` 完成后、权限模式更改时或 vim 模式切换时运行。更新在 300ms 处进行防抖，这意味着快速更改会批处理在一起，你的脚本在事情稳定后运行一次。如果在你的脚本仍在运行时触发新的更新，则会取消正在进行的执行。如果你编辑你的脚本，更改在 Claude Code 的下一次交互触发更新之前不会出现。
 
 这些触发器在主会话空闲时可能会安静，例如当协调器等待后台子代理时。为了在空闲期间保持基于时间或外部来源的段的最新状态，将 [`refreshInterval`](#manually-configure-a-status-line) 设置为也在固定计时器上重新运行命令。
 
 **你的脚本可以输出什么**
 
 * **多行**：每个 `echo` 或 `print` 语句显示为单独的行。请参阅[多行示例](#display-multiple-lines)。
-* **颜色**：使用[ANSI 转义码](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors)，如 `\033[32m` 表示绿色（终端必须支持它们）。请参阅[git 状态示例](#git-status-with-colors)。
-* **链接**：使用[OSC 8 转义序列](https://en.wikipedia.org/wiki/ANSI_escape_code#OSC)使文本可点击（macOS 上为 Cmd+click，Windows/Linux 上为 Ctrl+click）。需要支持超链接的终端，如 iTerm2、Kitty 或 WezTerm。请参阅[可点击链接示例](#clickable-links)。
+* **颜色**：使用 [ANSI 转义码](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors)，如 `\033[32m` 表示绿色（终端必须支持它们）。请参阅 [git 状态示例](#git-status-with-colors)。
+* **链接**：使用 [OSC 8 转义序列](https://en.wikipedia.org/wiki/ANSI_escape_code#OSC) 使文本可点击（macOS 上为 Cmd+click，Windows/Linux 上为 Ctrl+click）。需要支持超链接的终端，如 iTerm2、Kitty 或 WezTerm。请参阅[可点击链接示例](#clickable-links)。
 
 <Note>状态行在本地运行，不消耗 API 令牌。在某些 UI 交互期间，它会临时隐藏，包括自动完成建议、帮助菜单和权限提示。</Note>
 
@@ -161,7 +161,7 @@ Claude Code 通过 stdin 向你的脚本发送以下 JSON 字段：
 | `cost.total_duration_ms`                                                         | 自会话开始以来的总挂钟时间（毫秒）                                                                                                                    |
 | `cost.total_api_duration_ms`                                                     | 等待 API 响应的总时间（毫秒）                                                                                                                    |
 | `cost.total_lines_added`, `cost.total_lines_removed`                             | 更改的代码行数                                                                                                                              |
-| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | 整个会话中的累积令牌计数                                                                                                                         |
+| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | 当前在上下文窗口中的令牌计数，来自最近的 API 响应。输入包括缓存读取和写入。在 v2.1.132 之前，这些是累积的会话总计                                                                     |
 | `context_window.context_window_size`                                             | 最大上下文窗口大小（令牌）。默认为 200000，或对于具有扩展上下文的模型为 1000000。                                                                                     |
 | `context_window.used_percentage`                                                 | 预计算的已使用上下文窗口百分比                                                                                                                      |
 | `context_window.remaining_percentage`                                            | 预计算的剩余上下文窗口百分比                                                                                                                       |
@@ -215,8 +215,8 @@ Claude Code 通过 stdin 向你的脚本发送以下 JSON 字段：
       "total_lines_removed": 23
     },
     "context_window": {
-      "total_input_tokens": 15234,
-      "total_output_tokens": 4521,
+      "total_input_tokens": 15500,
+      "total_output_tokens": 1200,
       "context_window_size": 200000,
       "used_percentage": 8,
       "remaining_percentage": 92,
@@ -272,7 +272,7 @@ Claude Code 通过 stdin 向你的脚本发送以下 JSON 字段：
 
   **可能为 `null` 的字段**：
 
-  * `context_window.current_usage`：在会话中第一次 API 调用之前为 `null`
+  * `context_window.current_usage`：在会话中第一次 API 调用之前为 `null`，以及在 `/compact` 之后直到下一次 API 调用重新填充它为止为 `null`
   * `context_window.used_percentage`, `context_window.remaining_percentage`：在会话早期可能为 `null`
 
   在你的脚本中使用条件访问处理缺失字段，使用回退默认值处理 null 值。
@@ -280,10 +280,10 @@ Claude Code 通过 stdin 向你的脚本发送以下 JSON 字段：
 
 ### 上下文窗口字段
 
-`context_window` 对象提供了两种跟踪上下文使用情况的方式：
+`context_window` 对象描述来自最近一次 API 响应的实时上下文窗口。从 v2.1.132 开始，`total_input_tokens` 和 `total_output_tokens` 反映当前上下文使用情况，而不是累积的会话总计。
 
-* **累积总计**（`total_input_tokens`, `total_output_tokens`）：整个会话中所有令牌的总和，用于跟踪总消耗
-* **当前使用情况**（`current_usage`）：来自最近一次 API 调用的令牌计数，使用此来获得准确的上下文百分比，因为它反映了实际的上下文状态
+* **合并总计**（`total_input_tokens`, `total_output_tokens`）：当前在上下文窗口中的令牌。`total_input_tokens` 是 `input_tokens`、`cache_creation_input_tokens` 和 `cache_read_input_tokens` 的总和；`total_output_tokens` 是最近一次响应中的输出令牌。在第一次 API 响应之前，两者都是 `0`。
+* **按组件使用情况**（`current_usage`）：相同的令牌计数按类别分解。当你需要将缓存命中与新输入分开时，使用此选项。
 
 `current_usage` 对象包含：
 
@@ -296,7 +296,7 @@ Claude Code 通过 stdin 向你的脚本发送以下 JSON 字段：
 
 如果你从 `current_usage` 手动计算上下文百分比，使用相同的仅输入公式来匹配 `used_percentage`。
 
-`current_usage` 对象在会话中第一次 API 调用之前为 `null`。
+`current_usage` 对象在会话中第一次 API 调用之前为 `null`，以及在 `/compact` 之后直到下一次 API 调用重新填充它为止再次为 `null`。
 
 ## 示例
 
@@ -1011,8 +1011,7 @@ Bash 示例使用 [`jq`](https://jqlang.github.io/jq/) 来解析 JSON。Python �
 
 **上下文百分比显示意外值**
 
-* 使用 `used_percentage` 获得准确的上下文状态，而不是累积总计
-* `total_input_tokens` 和 `total_output_tokens` 在整个会话中是累积的，可能超过上下文窗口大小
+* 使用 `used_percentage` 获得最简单的准确上下文状态
 * 上下文百分比可能与 `/context` 输出不同，因为每个的计算时间不同
 
 **OSC 8 链接不可点击**

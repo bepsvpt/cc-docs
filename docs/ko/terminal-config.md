@@ -23,11 +23,11 @@ Enter를 누르면 메시지가 제출됩니다. 제출하지 않고 줄 바꿈�
 
 대부분의 터미널에서 Shift+Enter를 누를 수도 있지만 터미널 에뮬레이터에 따라 지원이 다릅니다:
 
-| 터미널                                                                          | 줄 바꿈을 위한 Shift+Enter             |
-| :--------------------------------------------------------------------------- | :------------------------------- |
-| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal                        | 구성 없이 작동                         |
-| VS Code, Cursor, Windsurf, Alacritty, Zed                                    | 한 번 `/terminal-setup` 실행         |
-| Windows Terminal, gnome-terminal, PyCharm 및 Android Studio와 같은 JetBrains IDE | 사용 불가; Ctrl+J 또는 `\` 다음 Enter 사용 |
+| 터미널                                                                     | 줄 바꿈을 위한 Shift+Enter             |
+| :---------------------------------------------------------------------- | :------------------------------- |
+| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal, Windows Terminal | 구성 없이 작동                         |
+| VS Code, Cursor, Windsurf, Alacritty, Zed                               | 한 번 `/terminal-setup` 실행         |
+| gnome-terminal, PyCharm 및 Android Studio와 같은 JetBrains IDE              | 사용 불가; Ctrl+J 또는 `\` 다음 Enter 사용 |
 
 VS Code, Cursor, Windsurf, Alacritty 및 Zed의 경우 `/terminal-setup`은 Shift+Enter 및 기타 키 바인딩을 터미널의 구성 파일에 씁니다. VS Code, Cursor 및 Windsurf에서는 [전체 화면 모드](/ko/fullscreen)에서 더 부드러운 스크롤링을 위해 편집기 설정에서 `terminal.integrated.mouseWheelScrollSensitivity`도 설정합니다. 기존 바인딩 및 설정은 그대로 유지됩니다. `VSCode terminal Shift+Enter key binding already configured`와 같은 메시지가 표시되면 변경이 이루어지지 않았습니다. tmux 또는 screen 내부가 아닌 호스트 터미널에서 직접 `/terminal-setup`을 실행하세요. 호스트 터미널의 구성에 써야 하기 때문입니다.
 

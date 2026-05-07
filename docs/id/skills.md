@@ -8,7 +8,7 @@
 
 Skills memperluas apa yang dapat dilakukan Claude. Buat file `SKILL.md` dengan instruksi, dan Claude menambahkannya ke toolkit-nya. Claude menggunakan skills saat relevan, atau Anda dapat menginvokasinya secara langsung dengan `/skill-name`.
 
-Buat skill ketika Anda terus menempel playbook yang sama, checklist, atau prosedur multi-langkah ke dalam chat, atau ketika bagian dari CLAUDE.md telah berkembang menjadi prosedur daripada fakta. Tidak seperti konten CLAUDE.md, badan skill hanya dimuat saat digunakan, jadi materi referensi yang panjang hampir tidak ada biayanya sampai Anda membutuhkannya.
+Buat skill ketika Anda terus menempel instruksi yang sama, checklist, atau prosedur multi-langkah ke dalam chat, atau ketika bagian dari CLAUDE.md telah berkembang menjadi prosedur daripada fakta. Tidak seperti konten CLAUDE.md, badan skill hanya dimuat saat digunakan, jadi materi referensi yang panjang hampir tidak ada biayanya sampai Anda membutuhkannya.
 
 <Note>
   Untuk perintah bawaan seperti `/help` dan `/compact`, dan skills bundel seperti `/debug` dan `/simplify`, lihat [referensi perintah](/id/commands).
@@ -20,7 +20,7 @@ Skills Claude Code mengikuti standar terbuka [Agent Skills](https://agentskills.
 
 ## Skills bundel
 
-Claude Code menyertakan serangkaian skills bundel yang tersedia di setiap sesi, termasuk `/simplify`, `/batch`, `/debug`, `/loop`, dan `/claude-api`. Tidak seperti sebagian besar perintah bawaan, yang menjalankan logika tetap secara langsung, skills bundel berbasis prompt: mereka memberikan Claude playbook terperinci dan membiarkannya mengorkestrasi pekerjaan menggunakan tools-nya. Anda menginvokasinya dengan cara yang sama seperti skill lainnya, dengan mengetik `/` diikuti dengan nama skill.
+Claude Code menyertakan serangkaian skills bundel yang tersedia di setiap sesi, termasuk `/simplify`, `/batch`, `/debug`, `/loop`, dan `/claude-api`. Tidak seperti sebagian besar perintah bawaan, yang menjalankan logika tetap secara langsung, skills bundel berbasis prompt: mereka memberikan Claude instruksi terperinci dan membiarkannya mengorkestrasi pekerjaan menggunakan tools-nya. Anda menginvokasinya dengan cara yang sama seperti skill lainnya, dengan mengetik `/` diikuti dengan nama skill.
 
 Skills bundel terdaftar bersama perintah bawaan dalam [referensi perintah](/id/commands), ditandai **Skill** di kolom Tujuan.
 
@@ -28,54 +28,55 @@ Skills bundel terdaftar bersama perintah bawaan dalam [referensi perintah](/id/c
 
 ### Buat skill pertama Anda
 
-Contoh ini membuat skill yang mengajarkan Claude menjelaskan kode menggunakan diagram visual dan analogi. Karena menggunakan frontmatter default, Claude dapat memuatnya secara otomatis saat Anda bertanya bagaimana sesuatu bekerja, atau Anda dapat menginvokasinya secara langsung dengan `/explain-code`.
+Contoh ini membuat skill yang merangkum perubahan yang belum di-commit dalam repositori git Anda dan menandai apa pun yang berisiko. Ini menarik diff langsung ke dalam prompt sebelum Claude membacanya, sehingga respons didasarkan pada pohon kerja aktual Anda daripada apa yang dapat Claude tebak dari file terbuka. Claude memuat skill secara otomatis saat Anda bertanya tentang perubahan Anda, atau Anda dapat menginvokasinya secara langsung dengan `/summarize-changes`.
 
 <Steps>
   <Step title="Buat direktori skill">
     Buat direktori untuk skill di folder skills pribadi Anda. Skills pribadi tersedia di semua proyek Anda.
 
     ```bash theme={null}
-    mkdir -p ~/.claude/skills/explain-code
+    mkdir -p ~/.claude/skills/summarize-changes
     ```
   </Step>
 
   <Step title="Tulis SKILL.md">
-    Setiap skill memerlukan file `SKILL.md` dengan dua bagian: frontmatter YAML (antara penanda `---`) yang memberi tahu Claude kapan menggunakan skill, dan konten markdown dengan instruksi yang diikuti Claude saat skill diinvokasinya. Nama direktori menjadi `/slash-command`, dan `description` membantu Claude memutuskan kapan memuatnya secara otomatis.
+    Setiap skill memerlukan file `SKILL.md` dengan dua bagian: frontmatter YAML antara penanda `---` yang memberi tahu Claude kapan menggunakan skill, dan konten markdown dengan instruksi yang diikuti Claude saat skill dijalankan. Nama direktori menjadi perintah yang Anda ketik, dan `description` membantu Claude memutuskan kapan memuatnya secara otomatis.
 
-    Buat `~/.claude/skills/explain-code/SKILL.md`:
+    Simpan ini ke `~/.claude/skills/summarize-changes/SKILL.md`:
 
     ```yaml theme={null}
     ---
-    description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
+    description: Summarizes uncommitted changes and flags anything risky. Use when the user asks what changed, wants a commit message, or asks to review their diff.
     ---
 
-    When explaining code, always include:
+    ## Current changes
 
-    1. **Start with an analogy**: Compare the code to something from everyday life
-    2. **Draw a diagram**: Use ASCII art to show the flow, structure, or relationships
-    3. **Walk through the code**: Explain step-by-step what happens
-    4. **Highlight a gotcha**: What's a common mistake or misconception?
+    !`git diff HEAD`
 
-    Keep explanations conversational. For complex concepts, use multiple analogies.
+    ## Instructions
+
+    Summarize the changes above in two or three bullet points, then list any risks you notice such as missing error handling, hardcoded values, or tests that need updating. If the diff is empty, say there are no uncommitted changes.
     ```
+
+    Baris `` !`git diff HEAD` `` menggunakan [injeksi konteks dinamis](#inject-dynamic-context): Claude Code menjalankan perintah dan mengganti baris dengan outputnya sebelum Claude melihat konten skill, sehingga instruksi tiba dengan diff saat ini sudah inline.
   </Step>
 
   <Step title="Uji skill">
-    Anda dapat mengujinya dengan dua cara:
+    Buka proyek git, buat edit kecil ke file apa pun, dan mulai Claude Code dengan menjalankan `claude`. Anda dapat menguji skill dengan dua cara.
 
     **Biarkan Claude menginvokasinya secara otomatis** dengan menanyakan sesuatu yang cocok dengan deskripsi:
 
     ```text theme={null}
-    How does this code work?
+    What did I change?
     ```
 
     **Atau invokasinya secara langsung** dengan nama skill:
 
     ```text theme={null}
-    /explain-code src/auth/login.ts
+    /summarize-changes
     ```
 
-    Baik cara apa pun, Claude harus menyertakan analogi dan diagram ASCII dalam penjelasannya.
+    Baik cara apa pun, Claude harus merespons dengan ringkasan singkat edit Anda dan daftar risiko.
   </Step>
 </Steps>
 
@@ -167,6 +168,8 @@ Deploy the application:
 ```
 
 `SKILL.md` Anda dapat berisi apa pun, tetapi memikirkan bagaimana Anda ingin skill diinvokasinya (oleh Anda, oleh Claude, atau keduanya) dan di mana Anda ingin menjalankannya (inline atau di subagent) membantu memandu apa yang harus disertakan. Untuk skills kompleks, Anda juga dapat [menambahkan file pendukung](#add-supporting-files) untuk menjaga skill utama tetap fokus.
+
+Jaga isi itu sendiri tetap ringkas. Setelah skill dimuat, kontennya [tetap dalam konteks di seluruh giliran](#skill-content-lifecycle), jadi setiap baris adalah biaya token berulang. Nyatakan apa yang harus dilakukan daripada menceritakan bagaimana atau mengapa, dan terapkan tes keringkasan yang sama yang akan Anda lakukan untuk [konten CLAUDE.md](/id/best-practices#write-an-effective-claude-md).
 
 ### Referensi frontmatter
 
@@ -305,6 +308,8 @@ Jika skill tampaknya berhenti mempengaruhi perilaku setelah respons pertama, kon
 
 Bidang `allowed-tools` memberikan izin untuk tools yang terdaftar saat skill aktif, sehingga Claude dapat menggunakannya tanpa meminta persetujuan Anda. Ini tidak membatasi tools mana yang tersedia: setiap tool tetap dapat dipanggil, dan [pengaturan izin](/id/permissions) Anda masih mengatur tools yang tidak terdaftar.
 
+Untuk skills yang diperiksa ke dalam direktori `.claude/skills/` proyek, `allowed-tools` berlaku setelah Anda menerima dialog kepercayaan workspace untuk folder itu, sama seperti aturan izin dalam `.claude/settings.json`. Tinjau skills proyek sebelum mempercayai repositori, karena skill dapat memberikan dirinya sendiri akses tools yang luas.
+
 Skill ini memungkinkan Claude menjalankan perintah git tanpa persetujuan per-penggunaan kapan pun Anda menginvokasinya:
 
 ```yaml theme={null}
@@ -416,7 +421,7 @@ git status --short
 Untuk menonaktifkan perilaku ini untuk skills dan perintah kustom dari sumber pengguna, proyek, plugin, atau [direktori tambahan](#skills-from-additional-directories), atur `"disableSkillShellExecution": true` dalam [pengaturan](/id/settings). Setiap perintah diganti dengan `[shell command execution disabled by policy]` sebagai gantinya dijalankan. Skills bundel dan terkelola tidak terpengaruh. Pengaturan ini paling berguna dalam [pengaturan terkelola](/id/permissions#managed-settings), di mana pengguna tidak dapat menimpanya.
 
 <Tip>
-  Untuk mengaktifkan [extended thinking](/id/common-workflows#use-extended-thinking-thinking-mode) dalam skill, sertakan kata "ultrathink" di mana pun dalam konten skill Anda.
+  Untuk meminta penalaran yang lebih dalam saat skill berjalan, sertakan `ultrathink` di mana pun dalam konten skill. Lihat [Gunakan ultrathink untuk penalaran mendalam sekali jalan](/id/model-config#use-ultrathink-for-one-off-deep-reasoning).
 </Tip>
 
 ### Jalankan skills dalam subagent
@@ -496,6 +501,32 @@ Sintaks izin: `Skill(name)` untuk kecocokan tepat, `Skill(name *)` untuk kecocok
   Bidang `user-invocable` hanya mengontrol visibilitas menu, bukan akses tool Skill. Gunakan `disable-model-invocation: true` untuk memblokir invokasi programatik.
 </Note>
 
+### Ganti visibilitas skill dari pengaturan
+
+Pengaturan `skillOverrides` mengontrol visibilitas skill dari [pengaturan](/id/settings) Anda sebagai gantinya dari frontmatter skill itu sendiri. Gunakan untuk skills yang SKILL.md-nya Anda tidak ingin edit, seperti yang diperiksa ke dalam repo proyek bersama atau disediakan oleh server MCP. Menu `/skills` menulisnya untuk Anda: sorot skill dan tekan `Space` untuk mengubah status, kemudian `Enter` untuk menyimpan ke `.claude/settings.local.json`.
+
+Setiap kunci adalah nama skill dan setiap nilai adalah salah satu dari empat status:
+
+| Nilai                   | Terdaftar ke Claude | Dalam menu `/` |
+| :---------------------- | :------------------ | :------------- |
+| `"on"`                  | Nama dan deskripsi  | Ya             |
+| `"name-only"`           | Nama saja           | Ya             |
+| `"user-invocable-only"` | Tersembunyi         | Ya             |
+| `"off"`                 | Tersembunyi         | Tersembunyi    |
+
+Skill yang tidak ada dalam `skillOverrides` diperlakukan sebagai `"on"`. Contoh di bawah ini menciutkan satu skill menjadi namanya dan mematikan yang lain sepenuhnya:
+
+```json theme={null}
+{
+  "skillOverrides": {
+    "legacy-context": "name-only",
+    "deploy": "off"
+  }
+}
+```
+
+Plugin skills tidak terpengaruh oleh `skillOverrides`. Kelola yang melalui `/plugin` sebagai gantinya.
+
 ## Bagikan skills
 
 Skills dapat didistribusikan pada cakupan berbeda tergantung pada audiens Anda:
@@ -516,13 +547,13 @@ Buat direktori Skill:
 mkdir -p ~/.claude/skills/codebase-visualizer/scripts
 ```
 
-Buat `~/.claude/skills/codebase-visualizer/SKILL.md`. Deskripsi memberi tahu Claude kapan mengaktifkan Skill ini, dan instruksi memberi tahu Claude untuk menjalankan script yang dikemas:
+Simpan ini ke `~/.claude/skills/codebase-visualizer/SKILL.md`. Deskripsi memberi tahu Claude kapan mengaktifkan Skill ini, dan instruksi memberi tahu Claude untuk menjalankan script yang dikemas. Jalur script menggunakan [`${CLAUDE_SKILL_DIR}`](#available-string-substitutions) sehingga dapat diselesaikan dengan benar apakah skill diinstal pada tingkat personal, proyek, atau plugin:
 
 ````yaml theme={null}
 ---
 name: codebase-visualizer
 description: Generate an interactive collapsible tree visualization of your codebase. Use when exploring a new repo, understanding project structure, or identifying large files.
-allowed-tools: Bash(python *)
+allowed-tools: Bash(python3 *)
 ---
 
 # Codebase Visualizer
@@ -534,7 +565,7 @@ Generate an interactive HTML tree view that shows your project's file structure 
 Run the visualization script from your project root:
 
 ```bash
-python ~/.claude/skills/codebase-visualizer/scripts/visualize.py .
+python3 ${CLAUDE_SKILL_DIR}/scripts/visualize.py .
 ```
 
 This creates `codebase-map.html` in the current directory and opens it in your default browser.
@@ -547,13 +578,13 @@ This creates `codebase-map.html` in the current directory and opens it in your d
 - **Directory totals**: Shows aggregate size of each folder
 ````
 
-Buat `~/.claude/skills/codebase-visualizer/scripts/visualize.py`. Script ini memindai pohon direktori dan menghasilkan file HTML yang mandiri dengan:
+Simpan ini ke `~/.claude/skills/codebase-visualizer/scripts/visualize.py`. Script ini memindai pohon direktori dan menghasilkan file HTML yang mandiri dengan:
 
 * **Sidebar ringkasan** yang menunjukkan jumlah file, jumlah direktori, ukuran total, dan jumlah jenis file
 * **Bagan batang** yang memecah codebase berdasarkan jenis file (8 teratas berdasarkan ukuran)
 * **Pohon yang dapat diciutkan** di mana Anda dapat memperluas dan menciutkan direktori, dengan indikator jenis file berkode warna
 
-Script memerlukan Python tetapi hanya menggunakan library bawaan, jadi tidak ada paket yang perlu diinstal:
+Script memerlukan Python 3 tetapi hanya menggunakan library bawaan, jadi tidak ada paket yang perlu diinstal:
 
 ```python expandable theme={null}
 #!/usr/bin/env python3
@@ -562,6 +593,7 @@ Script memerlukan Python tetapi hanya menggunakan library bawaan, jadi tidak ada
 import json
 import sys
 import webbrowser
+from html import escape
 from pathlib import Path
 from collections import Counter
 
@@ -650,7 +682,7 @@ def generate_html(data: dict, stats: dict, output: Path) -> None:
       {lang_bars}
     </div>
     <div class="main">
-      <h1>📁 {data["name"]}</h1>
+      <h1>📁 {escape(data["name"])}</h1>
       <ul class="tree" id="root"></ul>
     </div>
   </div>
@@ -658,11 +690,12 @@ def generate_html(data: dict, stats: dict, output: Path) -> None:
     const data = {json.dumps(data)};
     const colors = {json.dumps(colors)};
     function fmt(b) {{ if (b < 1024) return b + ' B'; if (b < 1048576) return (b/1024).toFixed(1) + ' KB'; return (b/1048576).toFixed(1) + ' MB'; }}
+    function esc(s) {{ return s.replace(/[&<>"']/g, c => ({{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}}[c])); }}
     function render(node, parent) {{
       if (node.children) {{
         const det = document.createElement('details');
         det.open = parent === document.getElementById('root');
-        det.innerHTML = `<summary><span class="folder">📁 ${{node.name}}</span><span class="size">${{fmt(node.size)}}</span></summary>`;
+        det.innerHTML = `<summary><span class="folder">📁 ${{esc(node.name)}}</span><span class="size">${{fmt(node.size)}}</span></summary>`;
         const ul = document.createElement('ul'); ul.className = 'tree';
         node.children.sort((a,b) => (b.children?1:0)-(a.children?1:0) || a.name.localeCompare(b.name));
         node.children.forEach(c => render(c, ul));
@@ -670,7 +703,7 @@ def generate_html(data: dict, stats: dict, output: Path) -> None:
         const li = document.createElement('li'); li.appendChild(det); parent.appendChild(li);
       }} else {{
         const li = document.createElement('li'); li.className = 'file';
-        li.innerHTML = `<span class="dot" style="background:${{colors[node.ext]||'#6b7280'}}"></span>${{node.name}}<span class="size">${{fmt(node.size)}}</span>`;
+        li.innerHTML = `<span class="dot" style="background:${{colors[node.ext]||'#6b7280'}}"></span>${{esc(node.name)}}<span class="size">${{fmt(node.size)}}</span>`;
         parent.appendChild(li);
       }}
     }}
@@ -715,7 +748,7 @@ Jika Claude menggunakan skill Anda saat Anda tidak menginginkannya:
 
 Deskripsi skill dimuat ke dalam konteks sehingga Claude tahu apa yang tersedia. Semua nama skill selalu disertakan, tetapi jika Anda memiliki banyak skills, deskripsi diperpendek agar sesuai dengan anggaran karakter, yang dapat menghilangkan kata kunci yang dibutuhkan Claude untuk mencocokkan permintaan Anda. Anggaran diskalakan secara dinamis pada 1% dari jendela konteks, dengan fallback 8.000 karakter.
 
-Untuk menaikkan batas, atur variabel lingkungan `SLASH_COMMAND_TOOL_CHAR_BUDGET`. Atau potong teks `description` dan `when_to_use` di sumbernya: depankan kasus penggunaan utama, karena teks gabungan setiap entri dibatasi pada 1.536 karakter terlepas dari anggaran.
+Untuk menaikkan batas, atur variabel lingkungan `SLASH_COMMAND_TOOL_CHAR_BUDGET`. Untuk membebaskan anggaran bagi skill lainnya, atur entri prioritas rendah ke `"name-only"` di [`skillOverrides`](#override-skill-visibility-from-settings) sehingga mereka terdaftar tanpa deskripsi. Anda juga dapat memangkas teks `description` dan `when_to_use` di sumbernya: depankan kasus penggunaan utama, karena teks gabungan setiap entri dibatasi pada 1.536 karakter terlepas dari anggaran.
 
 ## Sumber daya terkait
 

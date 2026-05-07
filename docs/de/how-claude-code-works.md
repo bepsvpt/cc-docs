@@ -94,33 +94,25 @@ Sie können auf Claude Code über das Terminal, die [Desktop-App](/de/desktop), 
 
 ## Mit Sitzungen arbeiten
 
-Claude Code speichert Ihre Konversation lokal, während Sie arbeiten. Jede Nachricht, Tool-Nutzung und jedes Ergebnis wird gespeichert, was [Zurückspulen](#undo-changes-with-checkpoints), [Fortsetzen und Verzweigen](#resume-or-fork-sessions) von Sitzungen ermöglicht. Bevor Claude Code-Änderungen vornimmt, erstellt er auch einen Snapshot der betroffenen Dateien, damit Sie bei Bedarf zurückrollen können.
+Claude Code speichert Ihre Konversation lokal, während Sie arbeiten. Jede Nachricht, Tool-Nutzung und jedes Ergebnis wird in einer Klartextdatei im JSONL-Format unter `~/.claude/projects/` geschrieben, was [Zurückspulen](#undo-changes-with-checkpoints), [Fortsetzen und Verzweigen](#resume-or-fork-sessions) von Sitzungen ermöglicht. Bevor Claude Code-Änderungen vornimmt, erstellt er auch einen Snapshot der betroffenen Dateien, damit Sie bei Bedarf zurückrollen können. Für Pfade, Aufbewahrung und wie Sie diese Daten löschen, siehe [Anwendungsdaten in `~/.claude`](/de/claude-directory#application-data).
 
 **Sitzungen sind unabhängig.** Jede neue Sitzung beginnt mit einem frischen Kontextfenster, ohne die Konversationshistorie aus vorherigen Sitzungen. Claude kann Erkenntnisse über Sitzungen hinweg mit [Auto-Speicher](/de/memory#auto-memory) beibehalten, und Sie können Ihre eigenen persistenten Anweisungen in [CLAUDE.md](/de/memory) hinzufügen.
 
 ### Über Branches arbeiten
 
-Jede Claude Code-Konversation ist eine Sitzung, die an Ihr aktuelles Verzeichnis gebunden ist. Wenn Sie fortsetzen, sehen Sie nur Sitzungen aus diesem Verzeichnis.
+Jede Claude Code-Konversation ist eine Sitzung, die an Ihr aktuelles Verzeichnis gebunden ist. Die `/resume`-Auswahl zeigt standardmäßig Sitzungen aus dem aktuellen Worktree an, mit Tastaturkürzeln zum Erweitern der Liste auf andere Worktrees oder Projekte. Siehe [Sitzungen verwalten](/de/sessions#use-the-session-picker) für die vollständige Liste der Auswahl-Tastaturkürzeln und wie die Namensauflösung funktioniert.
 
 Claude sieht die Dateien Ihres aktuellen Branches. Wenn Sie Branches wechseln, sieht Claude die Dateien des neuen Branches, aber Ihre Konversationshistorie bleibt gleich. Claude erinnert sich an das, was Sie besprochen haben, auch nach dem Wechsel.
 
-Da Sitzungen an Verzeichnisse gebunden sind, können Sie parallele Claude-Sitzungen ausführen, indem Sie [git worktrees](/de/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) verwenden, die separate Verzeichnisse für einzelne Branches erstellen.
+Da Sitzungen an Verzeichnisse gebunden sind, können Sie parallele Claude-Sitzungen ausführen, indem Sie [git worktrees](/de/worktrees) verwenden, die separate Verzeichnisse für einzelne Branches erstellen.
 
 ### Sitzungen fortsetzen oder verzweigen
 
-Wenn Sie eine Sitzung mit `claude --continue` oder `claude --resume` fortsetzen, setzen Sie dort fort, wo Sie aufgehört haben, mit derselben Sitzungs-ID. Neue Nachrichten werden an die bestehende Konversation angehängt. Ihre vollständige Konversationshistorie wird wiederhergestellt, aber sitzungsspezifische Berechtigungen nicht. Sie müssen diese erneut genehmigen.
+Wenn Sie eine Sitzung mit `claude --continue` oder `claude --resume` fortsetzen, setzen Sie diese unter derselben Sitzungs-ID fort und hängen neue Nachrichten an die bestehende Konversation an. Wenn Sie mit `--fork-session` oder `/branch` verzweigen, wird die Historie in eine neue Sitzungs-ID kopiert, wobei die ursprüngliche unverändert bleibt.
 
 <img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/session-continuity.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=fa41d12bfb57579cabfeece907151d30" alt="Sitzungskontinuität: Fortsetzen setzt dieselbe Sitzung fort, Verzweigung erstellt einen neuen Branch mit einer neuen ID." width="560" height="280" data-path="images/session-continuity.svg" />
 
-Um abzuzweigen und einen anderen Ansatz zu versuchen, ohne die ursprüngliche Sitzung zu beeinflussen, verwenden Sie das Flag `--fork-session`:
-
-```bash theme={null}
-claude --continue --fork-session
-```
-
-Dies erstellt eine neue Sitzungs-ID, während die Konversationshistorie bis zu diesem Punkt beibehalten wird. Die ursprüngliche Sitzung bleibt unverändert. Wie beim Fortsetzen erben verzweigte Sitzungen keine sitzungsspezifischen Berechtigungen.
-
-**Dieselbe Sitzung in mehreren Terminals**: Wenn Sie dieselbe Sitzung in mehreren Terminals fortsetzen, schreiben beide Terminals in dieselbe Sitzungsdatei. Nachrichten von beiden werden verschachtelt, wie zwei Personen, die in dasselbe Notizbuch schreiben. Nichts wird beschädigt, aber die Konversation wird durcheinander. Jedes Terminal sieht nur seine eigenen Nachrichten während der Sitzung, aber wenn Sie diese Sitzung später fortsetzen, sehen Sie alles verschachtelt. Für parallele Arbeit vom selben Ausgangspunkt verwenden Sie `--fork-session`, um jedem Terminal seine eigene saubere Sitzung zu geben.
+Für die Fortsetzen-Flags, die `/resume`-Auswahl, Benennung und was passiert, wenn dieselbe Sitzung in zwei Terminals offen ist, siehe [Sitzungen verwalten](/de/sessions).
 
 ### Das Kontextfenster
 
@@ -134,13 +126,15 @@ Claude Code verwaltet den Kontext automatisch, wenn Sie sich dem Limit nähern. 
 
 Um zu kontrollieren, was während der Komprimierung beibehalten wird, fügen Sie einen Abschnitt „Compact Instructions" zu CLAUDE.md hinzu oder führen Sie `/compact` mit einem Fokus aus (wie `/compact focus on the API changes`).
 
+Wenn eine einzelne Datei oder Tool-Ausgabe so groß ist, dass sich der Kontext unmittelbar nach jeder Zusammenfassung wieder füllt, stoppt Claude Code die automatische Komprimierung nach einigen Versuchen und zeigt stattdessen einen Fehler an. Siehe [Auto-Komprimierung stoppt mit einem Thrashing-Fehler](/de/troubleshooting#auto-compaction-stops-with-a-thrashing-error) für Wiederherstellungsschritte.
+
 Führen Sie `/context` aus, um zu sehen, was Platz verbraucht. MCP-Tool-Definitionen werden standardmäßig aufgeschoben und bei Bedarf über [Tool-Suche](/de/mcp#scale-with-mcp-tool-search) geladen, daher verbrauchen nur Tool-Namen Kontext, bis Claude ein bestimmtes Tool verwendet. Führen Sie `/mcp` aus, um die Kosten pro Server zu überprüfen.
 
 #### Kontext mit skills und subagents verwalten
 
 Über die Komprimierung hinaus können Sie andere Funktionen verwenden, um zu kontrollieren, was in den Kontext geladen wird.
 
-[Skills](/de/skills) werden bei Bedarf geladen. Claude sieht Skill-Beschreibungen zu Sitzungsbeginn, aber der vollständige Inhalt wird nur geladen, wenn ein Skill verwendet wird. Für Skills, die Sie manuell aufrufen, setzen Sie `disable-model-invocation: true`, um Beschreibungen aus dem Kontext zu halten, bis Sie sie benötigen.
+[Skills](/de/skills) werden bei Bedarf geladen. Claude sieht Skill-Beschreibungen zu Sitzungsbeginn, aber der vollständige Inhalt wird nur geladen, wenn ein Skill verwendet wird. Für Skills, die Sie manuell aufrufen, setzen Sie `disable-model-invocation: true`, um Beschreibungen aus dem Kontext zu halten, bis Sie sie benötigen. Für Skills, die Sie nicht geschrieben haben, verwenden Sie [`skillOverrides`](/de/skills#override-skill-visibility-from-settings), um dasselbe aus den Einstellungen zu tun.
 
 [Subagents](/de/sub-agents) erhalten ihren eigenen frischen Kontext, völlig getrennt von Ihrer Hauptkonversation. Ihre Arbeit bläht Ihren Kontext nicht auf. Wenn sie fertig sind, geben sie eine Zusammenfassung zurück. Diese Isolation ist der Grund, warum subagents bei langen Sitzungen helfen.
 
@@ -161,7 +155,7 @@ Checkpoints sind lokal für Ihre Sitzung, getrennt von git. Sie decken nur Datei
 Drücken Sie `Shift+Tab`, um durch die Berechtigungsmodi zu wechseln:
 
 * **Standard**: Claude fragt vor Dateibearbeitungen und Shell-Befehlen
-* **Auto-accept edits**: Claude bearbeitet Dateien ohne zu fragen, fragt aber immer noch nach Befehlen
+* **Auto-accept edits**: Claude bearbeitet Dateien und führt häufige Dateisystem-Befehle wie `mkdir` und `mv` ohne Nachfrage aus, fragt aber immer noch nach anderen Befehlen
 * **Plan Mode**: Claude verwendet nur schreibgeschützte Tools und erstellt einen Plan, den Sie vor der Ausführung genehmigen können
 * **Auto Mode**: Claude bewertet alle Aktionen mit Hintergrund-Sicherheitsprüfungen. Derzeit eine Forschungsvorschau
 

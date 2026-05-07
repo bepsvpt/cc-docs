@@ -134,7 +134,7 @@ O Claude Code executa seu script e envia [dados de sessão JSON](#available-data
 
 **Quando é atualizado**
 
-Seu script é executado após cada nova mensagem do assistente, quando o modo de permissão muda ou quando o modo vim alterna. As atualizações são debounced em 300ms, significando que mudanças rápidas são agrupadas e seu script é executado uma vez que as coisas se estabilizam. Se uma nova atualização for acionada enquanto seu script ainda está em execução, a execução em andamento é cancelada. Se você editar seu script, as alterações não aparecerão até que sua próxima interação com o Claude Code acione uma atualização.
+Seu script é executado após cada nova mensagem do assistente, após `/compact` terminar, quando o modo de permissão muda ou quando o modo vim alterna. As atualizações são debounced em 300ms, significando que mudanças rápidas são agrupadas e seu script é executado uma vez que as coisas se estabilizam. Se uma nova atualização for acionada enquanto seu script ainda está em execução, a execução em andamento é cancelada. Se você editar seu script, as alterações não aparecerão até que sua próxima interação com o Claude Code acione uma atualização.
 
 Estes gatilhos podem ficar silenciosos quando a sessão principal está ociosa, por exemplo enquanto um coordenador aguarda subagentes em segundo plano. Para manter segmentos baseados em tempo ou de origem externa atualizados durante períodos ociosos, defina [`refreshInterval`](#manually-configure-a-status-line) para também executar novamente o comando em um temporizador fixo.
 
@@ -161,7 +161,7 @@ O Claude Code envia os seguintes campos JSON para seu script via stdin:
 | `cost.total_duration_ms`                                                         | Tempo total decorrido desde o início da sessão, em milissegundos                                                                                                                                                                                                    |
 | `cost.total_api_duration_ms`                                                     | Tempo total gasto aguardando respostas de API em milissegundos                                                                                                                                                                                                      |
 | `cost.total_lines_added`, `cost.total_lines_removed`                             | Linhas de código alteradas                                                                                                                                                                                                                                          |
-| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | Contagens de tokens cumulativas em toda a sessão                                                                                                                                                                                                                    |
+| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | Contagens de tokens atualmente na janela de contexto, da resposta de API mais recente. A entrada inclui leituras e escritas de cache. Antes da v2.1.132, estas eram totais cumulativos de sessão                                                                    |
 | `context_window.context_window_size`                                             | Tamanho máximo da janela de contexto em tokens. 200000 por padrão, ou 1000000 para modelos com contexto estendido.                                                                                                                                                  |
 | `context_window.used_percentage`                                                 | Porcentagem pré-calculada da janela de contexto usada                                                                                                                                                                                                               |
 | `context_window.remaining_percentage`                                            | Porcentagem pré-calculada da janela de contexto restante                                                                                                                                                                                                            |
@@ -215,8 +215,8 @@ O Claude Code envia os seguintes campos JSON para seu script via stdin:
       "total_lines_removed": 23
     },
     "context_window": {
-      "total_input_tokens": 15234,
-      "total_output_tokens": 4521,
+      "total_input_tokens": 15500,
+      "total_output_tokens": 1200,
       "context_window_size": 200000,
       "used_percentage": 8,
       "remaining_percentage": 92,
@@ -272,7 +272,7 @@ O Claude Code envia os seguintes campos JSON para seu script via stdin:
 
   **Campos que podem ser `null`**:
 
-  * `context_window.current_usage`: `null` antes da primeira chamada de API em uma sessão
+  * `context_window.current_usage`: `null` antes da primeira chamada de API em uma sessão, e novamente após `/compact` até que a próxima chamada de API a repopule
   * `context_window.used_percentage`, `context_window.remaining_percentage`: podem ser `null` no início da sessão
 
   Trate campos ausentes com acesso condicional e valores nulos com padrões de fallback em seus scripts.
@@ -280,10 +280,10 @@ O Claude Code envia os seguintes campos JSON para seu script via stdin:
 
 ### Campos de janela de contexto
 
-O objeto `context_window` fornece duas maneiras de rastrear o uso de contexto:
+O objeto `context_window` descreve a janela de contexto em tempo real da resposta de API mais recente. A partir da v2.1.132, `total_input_tokens` e `total_output_tokens` refletem o uso de contexto atual, não totais cumulativos de sessão.
 
-* **Totais cumulativos** (`total_input_tokens`, `total_output_tokens`): soma de todos os tokens em toda a sessão, útil para rastrear o consumo total
-* **Uso atual** (`current_usage`): contagens de tokens da chamada de API mais recente, use isto para porcentagem de contexto precisa, pois reflete o estado real do contexto
+* **Totais combinados** (`total_input_tokens`, `total_output_tokens`): tokens atualmente na janela de contexto. `total_input_tokens` é a soma de `input_tokens`, `cache_creation_input_tokens` e `cache_read_input_tokens`; `total_output_tokens` são os tokens de saída da resposta mais recente. Ambos são `0` antes da primeira resposta de API.
+* **Uso por componente** (`current_usage`): as mesmas contagens de tokens divididas por categoria. Use isto quando você precisar de acertos de cache separados da entrada fresca.
 
 O objeto `current_usage` contém:
 
@@ -296,7 +296,7 @@ O campo `used_percentage` é calculado apenas a partir de tokens de entrada: `in
 
 Se você calcular a porcentagem de contexto manualmente a partir de `current_usage`, use a mesma fórmula apenas de entrada para corresponder a `used_percentage`.
 
-O objeto `current_usage` é `null` antes da primeira chamada de API em uma sessão.
+O objeto `current_usage` é `null` antes da primeira chamada de API em uma sessão, e novamente imediatamente após `/compact` até que a próxima chamada de API a repopule.
 
 ## Exemplos
 
@@ -1011,8 +1011,7 @@ Projetos comunitários como [ccstatusline](https://github.com/sirmalloc/ccstatus
 
 **Porcentagem de contexto mostra valores inesperados**
 
-* Use `used_percentage` para estado de contexto preciso em vez de totais cumulativos
-* `total_input_tokens` e `total_output_tokens` são cumulativos em toda a sessão e podem exceder o tamanho da janela de contexto
+* Use `used_percentage` para o estado de contexto mais simples e preciso
 * A porcentagem de contexto pode diferir da saída `/context` devido a quando cada uma é calculada
 
 **Links OSC 8 não clicáveis**

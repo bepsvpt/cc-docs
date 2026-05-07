@@ -219,7 +219,7 @@ Claude Code 結合了一個能夠推理您程式碼的模型與[內建工具](/z
 | **Subagents** | 生成時        | 具有指定 skills 的新鮮上下文 | 與主會話隔離            |
 | **Hooks**     | 觸發時        | 無（外部運行）            | 零，除非 hook 返回額外上下文 |
 
-\*預設情況下，skill 描述在會話開始時載入，以便 Claude 決定何時使用它們。在 skill 的 frontmatter 中設置 `disable-model-invocation: true` 以將其完全隱藏在 Claude 中，直到您手動調用它。這將 skills 的上下文成本降低到零，您只需自己觸發這些 skills。
+\*預設情況下，skill 描述在會話開始時載入，以便 Claude 決定何時使用它們。在 skill 的 frontmatter 中設置 `disable-model-invocation: true` 以將其完全隱藏在 Claude 中，直到您手動調用它。這將 skills 的上下文成本降低到零，您只需自己觸發這些 skills。對於您未編寫的 skill，在設置中設置 [`skillOverrides`](/zh-TW/skills#override-skill-visibility-from-settings) 以執行相同操作，而無需編輯其檔案。
 
 ### 了解功能如何載入
 
@@ -282,9 +282,9 @@ Claude Code 結合了一個能夠推理您程式碼的模型與[內建工具](/z
   </Tab>
 
   <Tab title="Hooks">
-    **何時：** 觸發時。Hooks 在特定生命週期事件（如工具執行、會話邊界、提示提交、權限請求和壓縮）時觸發。有關完整清單，請參閱 [Hooks](/zh-TW/hooks-guide)。
+    **何時：** 觸發時。Hooks 在特定生命週期事件（如工具執行、會話邊界、提示提交、權限請求和壓縮）時觸發。有關完整清單，請參閱 [Hooks](/zh-TW/hooks)。
 
-    **什麼載入：** 預設情況下無。Hooks 作為外部指令碼運行。
+    **什麼載入：** 預設情況下無。Hooks 在主對話外執行。
 
     **上下文成本：** 零，除非 hook 返回添加為訊息到您的對話的輸出。
 

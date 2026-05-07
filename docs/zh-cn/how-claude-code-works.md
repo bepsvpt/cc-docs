@@ -94,33 +94,25 @@ Claude Code 在三个环境中运行，每个环境对代码执行位置有不�
 
 ## 使用会话
 
-Claude Code 在您工作时将您的对话保存在本地。每条消息、工具使用和结果都被存储，这使得[回退](#undo-changes-with-checkpoints)、[恢复和分叉](#resume-or-fork-sessions)会话成为可能。在 Claude 进行代码更改之前，它还会对受影响的文件进行快照，以便您在需要时可以恢复。
+Claude Code 在您工作时将您的对话保存在本地。每条消息、工具使用和结果都被写入 `~/.claude/projects/` 下的纯文本 JSONL 文件，这使得[回退](#undo-changes-with-checkpoints)、[恢复和分叉](#resume-or-fork-sessions)会话成为可能。在 Claude 进行代码更改之前，它还会对受影响的文件进行快照，以便您在需要时可以恢复。有关路径、保留和如何清除此数据，请参阅[`~/.claude` 中的应用数据](/zh-CN/claude-directory#application-data)。
 
 **会话是独立的。** 每个新会话都以新的上下文窗口开始，没有来自以前会话的对话历史。Claude 可以使用[自动内存](/zh-CN/memory#auto-memory)跨会话保持学习，您可以在 [CLAUDE.md](/zh-CN/memory) 中添加您自己的持久说明。
 
 ### 跨分支工作
 
-每个 Claude Code 对话都是一个与您当前目录相关的会话。当您恢复时，您只会看到来自该目录的会话。
+每个 Claude Code 对话都是一个与您当前目录相关的会话。`/resume` 选择器默认显示来自当前 worktree 的会话，带有键盘快捷键以扩展列表到其他 worktrees 或项目。有关选择器快捷键的完整列表以及名称解析如何工作，请参阅[管理会话](/zh-CN/sessions#use-the-session-picker)。
 
 Claude 看到您当前分支的文件。当您切换分支时，Claude 看到新分支的文件，但您的对话历史保持不变。Claude 记得您讨论过的内容，即使在切换后也是如此。
 
-由于会话与目录相关，您可以通过使用 [git worktrees](/zh-CN/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) 运行并行 Claude 会话，这为各个分支创建单独的目录。
+由于会话与目录相关，您可以通过使用 [git worktrees](/zh-CN/worktrees) 运行并行 Claude 会话，这为各个分支创建单独的目录。
 
 ### 恢复或分叉会话
 
-当您使用 `claude --continue` 或 `claude --resume` 恢复会话时，您使用相同的会话 ID 从中断处继续。新消息附加到现有对话。您的完整对话历史被恢复，但会话范围的权限不会。您需要重新批准这些。
+使用 `claude --continue` 或 `claude --resume` 恢复会话会在相同的会话 ID 下重新打开它，并将新消息附加到现有对话。使用 `--fork-session` 或 `/branch` 分叉会将历史复制到新的会话 ID 中，保持原始会话不变。
 
 <img src="https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/images/session-continuity.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=fa41d12bfb57579cabfeece907151d30" alt="会话连续性：恢复继续相同的会话，分叉创建一个具有新 ID 的新分支。" width="560" height="280" data-path="images/session-continuity.svg" />
 
-要分支并尝试不同的方法而不影响原始会话，请使用 `--fork-session` 标志：
-
-```bash theme={null}
-claude --continue --fork-session
-```
-
-这会创建一个新的会话 ID，同时保留到该点的对话历史。原始会话保持不变。与恢复一样，分叉的会话不继承会话范围的权限。
-
-**在多个终端中的相同会话**：如果您在多个终端中恢复相同的会话，两个终端都会写入相同的会话文件。来自两者的消息会交错，就像两个人在同一个笔记本中写字一样。没有任何内容损坏，但对话变得混乱。每个终端在会话期间只看到自己的消息，但如果您稍后恢复该会话，您会看到所有内容交错。对于从相同起点的并行工作，使用 `--fork-session` 为每个终端提供自己的干净会话。
+有关恢复标志、`/resume` 选择器、命名以及当相同会话在两个终端中打开时会发生什么，请参阅[管理会话](/zh-CN/sessions)。
 
 ### 上下文窗口
 
@@ -134,13 +126,15 @@ Claude Code 在您接近限制时自动管理上下文。它首先清除较旧�
 
 要控制在压缩期间保留的内容，请在 CLAUDE.md 中添加"Compact Instructions"部分或使用焦点运行 `/compact`（如 `/compact focus on the API changes`）。
 
+如果单个文件或工具输出太大，以至于在每次总结后上下文立即重新填充，Claude Code 会在几次尝试后停止自动压缩，并显示错误而不是循环。有关恢复步骤，请参阅[自动压缩停止并出现抖动错误](/zh-CN/troubleshooting#auto-compaction-stops-with-a-thrashing-error)。
+
 运行 `/context` 以查看什么在占用空间。MCP 工具定义默认被延迟，并通过[工具搜索](/zh-CN/mcp#scale-with-mcp-tool-search)按需加载，因此只有工具名称消耗上下文，直到 Claude 使用特定工具。运行 `/mcp` 以检查每个服务器的成本。
 
 #### 使用 skills 和 subagents 管理上下文
 
 除了压缩，您可以使用其他功能来控制什么加载到上下文中。
 
-[Skills](/zh-CN/skills) 按需加载。Claude 在会话开始时看到 skill 描述，但完整内容仅在使用 skill 时加载。对于您手动调用的 skills，设置 `disable-model-invocation: true` 以将描述保留在上下文之外，直到您需要它们。
+[Skills](/zh-CN/skills) 按需加载。Claude 在会话开始时看到 skill 描述，但完整内容仅在使用 skill 时加载。对于您手动调用的 skills，设置 `disable-model-invocation: true` 以将描述保留在上下文之外，直到您需要它们。对于您没有编写的 skills，使用 [`skillOverrides`](/zh-CN/skills#override-skill-visibility-from-settings) 从设置中执行相同操作。
 
 [Subagents](/zh-CN/sub-agents) 获得自己的新上下文，完全独立于您的主对话。他们的工作不会使您的上下文膨胀。完成后，他们返回一个摘要。这种隔离是为什么 subagents 有助于长会话。
 
@@ -161,7 +155,7 @@ Claude 有两个安全机制：检查点让您撤销文件更改，权限控制 
 按 `Shift+Tab` 循环通过权限模式：
 
 * **默认**：Claude 在文件编辑和 shell 命令之前询问
-* **自动接受编辑**：Claude 编辑文件而不询问，仍然询问命令
+* **自动接受编辑**：Claude 编辑文件并运行常见的文件系统命令（如 `mkdir` 和 `mv`）而不询问，仍然询问其他命令
 * **Plan Mode**：Claude 仅使用只读工具，创建您可以在执行前批准的计划
 * **自动模式**：Claude 使用后台安全检查评估所有操作。目前是研究预览
 

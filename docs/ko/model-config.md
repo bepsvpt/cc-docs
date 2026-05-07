@@ -184,7 +184,9 @@ Opus 4.7을 처음 실행할 때 Claude Code는 이전에 Opus 4.6 또는 Sonnet
 
 노력 척도는 모델별로 보정되므로 동일한 수준 이름이 모델 전체에서 동일한 기본 값을 나타내지 않습니다.
 
-세션 설정을 변경하지 않고 일회성 깊은 추론을 위해 프롬프트에 "ultrathink"를 포함하세요. 이는 모델에 해당 턴에서 더 많이 추론하도록 지시하는 컨텍스트 내 지시를 추가합니다. 노력 수준을 변경하지 않습니다.
+#### 일회성 깊은 추론을 위해 ultrathink 사용
+
+프롬프트에 `ultrathink`를 포함하여 세션 노력 설정을 변경하지 않고 해당 턴에서 더 깊은 추론을 요청하세요. Claude Code는 키워드를 인식하고 컨텍스트 내 지시를 추가합니다. API로 전송되는 노력 수준은 변경되지 않습니다. "think", "think hard", "think more"와 같은 다른 구문은 일반 프롬프트 텍스트로 전달되며 키워드로 인식되지 않습니다.
 
 #### 노력 수준 설정
 
@@ -208,6 +210,18 @@ Opus 4.7을 처음 실행할 때 Claude Code는 이전에 Opus 4.6 또는 Sonnet
 Opus 4.7은 항상 적응형 추론을 사용합니다. 고정 사고 예산 모드 및 `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING`은 이에 적용되지 않습니다.
 
 Opus 4.6 및 Sonnet 4.6에서 `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1`을 설정하여 `MAX_THINKING_TOKENS`로 제어되는 이전의 고정 사고 예산으로 되돌릴 수 있습니다. [환경 변수](/ko/env-vars)를 참조하세요.
+
+### 확장 사고
+
+확장 사고는 Claude가 응답하기 전에 내보내는 추론입니다. [적응형 추론](#adjust-effort-level)을 지원하는 모델에서 노력 수준은 얼마나 많은 사고가 발생하는지에 대한 주요 제어입니다. 아래 설정은 사고를 켜거나 끄고 표시 방식을 제어합니다.
+
+| 제어            | 설정 방법                                                                                                                    |
+| :------------ | :----------------------------------------------------------------------------------------------------------------------- |
+| 현재 세션에 대한 토글  | macOS에서 `Option+T` 또는 Windows 및 Linux에서 `Alt+T`를 누릅니다                                                                    |
+| 전역 기본값 설정     | `/config`를 실행하고 사고 모드를 토글합니다. `~/.claude/settings.json`에 `alwaysThinkingEnabled`로 저장됩니다                                  |
+| 노력에 관계없이 비활성화 | [`MAX_THINKING_TOKENS=0`](/ko/env-vars)을 설정합니다. 다른 값은 [고정 사고 예산](#adaptive-reasoning-and-fixed-thinking-budgets)에만 적용됩니다 |
+
+사고 출력은 기본적으로 축소됩니다. `Ctrl+O`를 눌러 자세한 모드를 토글하고 추론을 회색 기울임꼴 텍스트로 봅니다. Anthropic API의 대화형 세션은 기본적으로 편집된 사고 블록을 수신하므로 확장할 때 전체 요약을 사용할 수 있도록 하려면 [설정](/ko/settings)에서 `showThinkingSummaries: true`를 설정하세요. 축소되거나 편집된 경우에도 생성된 모든 사고 토큰에 대해 요금이 청구됩니다.
 
 ### 확장 컨텍스트
 
@@ -247,7 +261,7 @@ Opus 4.7, Opus 4.6 및 Sonnet 4.6은 대규모 코드베이스를 사용한 긴 
 
 ## 사용자 정의 모델 옵션 추가
 
-`ANTHROPIC_CUSTOM_MODEL_OPTION`을 사용하여 기본 제공 별칭을 대체하지 않고 `/model` 선택기에 단일 사용자 정의 항목을 추가합니다. 이는 Claude Code가 기본적으로 나열하지 않는 모델 ID를 테스트하는 데 유용합니다. LLM 게이트웨이 배포의 경우, Claude Code는 게이트웨이의 `/v1/models` 엔드포인트에서 선택기를 자동으로 채우므로, 이 변수는 검색에서 원하는 모델을 반환하지 않을 때만 필요합니다. [LLM 게이트웨이 모델 선택](/ko/llm-gateway#model-selection)을 참조하십시오.
+`ANTHROPIC_CUSTOM_MODEL_OPTION`을 사용하여 기본 제공 별칭을 대체하지 않고 `/model` 선택기에 단일 사용자 정의 항목을 추가합니다. 이는 Claude Code가 기본적으로 나열하지 않는 모델 ID를 테스트하는 데 유용합니다. LLM 게이트웨이 배포의 경우, Claude Code는 `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1`이 설정되어 있을 때 게이트웨이의 `/v1/models` 엔드포인트에서 선택기를 자동으로 채울 수 있으므로, 이 변수는 검색이 비활성화되었거나 원하는 모델을 반환하지 않을 때만 필요합니다. [LLM 게이트웨이 모델 선택](/ko/llm-gateway#model-selection)을 참조하십시오.
 
 이 예시는 게이트웨이 라우팅된 Opus 배포를 선택 가능하게 하기 위해 세 가지 변수를 모두 설정합니다:
 
@@ -278,7 +292,7 @@ Claude Code는 `ANTHROPIC_CUSTOM_MODEL_OPTION`에 설정된 모델 ID에 대한 
 
 [Bedrock](/ko/amazon-bedrock), [Vertex AI](/ko/google-vertex-ai) 또는 [Foundry](/ko/microsoft-foundry)를 통해 Claude Code를 배포할 때 사용자에게 롤아웃하기 전에 모델 버전을 고정합니다.
 
-고정하지 않으면 Claude Code는 최신 버전으로 확인되는 모델 별칭(`sonnet`, `opus`, `haiku`)을 사용합니다. Anthropic이 새 모델을 출시할 때 새 버전이 활성화되지 않은 계정의 사용자는 공지 없이 이전 버전으로 폴백되며, Foundry 사용자는 Foundry에 동등한 시작 확인이 없기 때문에 오류를 봅니다.
+고정하지 않으면 Claude Code는 최신 버전으로 확인되는 모델 별칭(`sonnet`, `opus`, `haiku`)을 사용합니다. Anthropic이 새 모델을 출시할 때 새 버전이 아직 사용자 계정에서 활성화되지 않으면 Bedrock 및 Vertex AI 사용자는 공지를 보고 해당 세션에 대해 이전 버전으로 폴백되며, Foundry 사용자는 Foundry에 동등한 시작 확인이 없기 때문에 오류를 봅니다.
 
 <Warning>
   초기 설정의 일부로 세 가지 모델 환경 변수를 모두 특정 버전 ID로 설정합니다. 고정하면 사용자가 새 모델로 이동할 시기를 제어할 수 있습니다.
@@ -320,16 +334,16 @@ export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7[1m]'
 
 동일한 `_NAME`, `_DESCRIPTION` 및 `_SUPPORTED_CAPABILITIES` 접미사는 `ANTHROPIC_DEFAULT_SONNET_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL` 및 `ANTHROPIC_CUSTOM_MODEL_OPTION`에 사용 가능합니다.
 
-Claude Code는 모델 ID를 알려진 패턴과 비교하여 [노력 수준](#adjust-effort-level) 및 [확장 사고](/ko/common-workflows#use-extended-thinking-thinking-mode)와 같은 기능을 활성화합니다. Bedrock ARN 또는 사용자 정의 배포 이름과 같은 제공자별 ID는 종종 이러한 패턴과 일치하지 않아 지원되는 기능이 비활성화됩니다. `_SUPPORTED_CAPABILITIES`를 설정하여 Claude Code에 모델이 실제로 지원하는 기능을 알립니다:
+Claude Code는 모델 ID를 알려진 패턴과 비교하여 [노력 수준](#adjust-effort-level) 및 [확장 사고](#extended-thinking)와 같은 기능을 활성화합니다. Bedrock ARN 또는 사용자 정의 배포 이름과 같은 제공자별 ID는 종종 이러한 패턴과 일치하지 않아 지원되는 기능이 비활성화됩니다. `_SUPPORTED_CAPABILITIES`를 설정하여 Claude Code에 모델이 실제로 지원하는 기능을 알립니다:
 
-| 기능 값                   | 활성화                                                               |
-| ---------------------- | ----------------------------------------------------------------- |
-| `effort`               | [노력 수준](#adjust-effort-level) 및 `/effort` 명령                      |
-| `xhigh_effort`         | {/* min-version: 2.1.111 */}`xhigh` 노력 수준                         |
-| `max_effort`           | `max` 노력 수준                                                       |
-| `thinking`             | [확장 사고](/ko/common-workflows#use-extended-thinking-thinking-mode) |
-| `adaptive_thinking`    | 작업 복잡도에 따라 동적으로 사고를 할당하는 적응형 추론                                   |
-| `interleaved_thinking` | 도구 호출 간의 사고                                                       |
+| 기능 값                   | 활성화                                          |
+| ---------------------- | -------------------------------------------- |
+| `effort`               | [노력 수준](#adjust-effort-level) 및 `/effort` 명령 |
+| `xhigh_effort`         | {/* min-version: 2.1.111 */}`xhigh` 노력 수준    |
+| `max_effort`           | `max` 노력 수준                                  |
+| `thinking`             | [확장 사고](#extended-thinking)                  |
+| `adaptive_thinking`    | 작업 복잡도에 따라 동적으로 사고를 할당하는 적응형 추론              |
+| `interleaved_thinking` | 도구 호출 간의 사고                                  |
 
 `_SUPPORTED_CAPABILITIES`가 설정되면 나열된 기능이 활성화되고 나열되지 않은 기능은 일치하는 고정된 모델에 대해 비활성화됩니다. 변수가 설정되지 않으면 Claude Code는 모델 ID를 기반으로 한 기본 제공 감지로 폴백합니다.
 

@@ -219,7 +219,7 @@ Setiap fitur memiliki strategi pemuatan dan biaya konteks yang berbeda:
 | **Subagents**  | Ketika dispawn               | Konteks segar dengan skills yang ditentukan      | Terisolasi dari sesi utama                       |
 | **Hooks**      | Saat dipicu                  | Tidak ada (berjalan secara eksternal)            | Nol, kecuali hook mengembalikan konteks tambahan |
 
-\*Secara default, deskripsi skill dimuat saat awal sesi sehingga Claude dapat memutuskan kapan menggunakannya. Atur `disable-model-invocation: true` di frontmatter skill untuk menyembunyikannya dari Claude sepenuhnya sampai Anda memanggilnya secara manual. Ini mengurangi biaya konteks menjadi nol untuk skills yang hanya Anda picu sendiri.
+\*Secara default, deskripsi skill dimuat saat awal sesi sehingga Claude dapat memutuskan kapan menggunakannya. Atur `disable-model-invocation: true` di frontmatter skill untuk menyembunyikannya dari Claude sepenuhnya sampai Anda memanggilnya secara manual. Ini mengurangi biaya konteks menjadi nol untuk skills yang hanya Anda picu sendiri. Untuk skill yang tidak Anda tulis, atur [`skillOverrides`](/id/skills#override-skill-visibility-from-settings) di settings untuk melakukan hal yang sama tanpa mengedit filenya.
 
 ### Pahami bagaimana fitur dimuat
 
@@ -233,7 +233,7 @@ Setiap fitur dimuat pada titik berbeda dalam sesi Anda. Tab di bawah menjelaskan
 
     **Apa yang dimuat:** Konten penuh semua file CLAUDE.md (tingkat terkelola, pengguna, dan proyek).
 
-    **Warisan:** Claude membaca file CLAUDE.md dari direktori kerja Anda hingga ke root, dan menemukan yang tersarang di subdirektori saat mengakses file tersebut. Lihat [Bagaimana file CLAUDE.md dimuat](/id/memory#how-claudemd-files-load) untuk detail.
+    **Warisan:** Claude membaca file CLAUDE.md dari direktori kerja Anda hingga ke root, dan menemukan yang tersarang di subdirektori saat mengakses file tersebut. Lihat [Bagaimana file CLAUDE.md dimuat](/id/memory#how-claude-md-files-load) untuk detail.
 
     <Tip>Jaga CLAUDE.md di bawah 200 baris. Pindahkan materi referensi ke skills, yang dimuat on-demand.</Tip>
   </Tab>
@@ -282,7 +282,7 @@ Setiap fitur dimuat pada titik berbeda dalam sesi Anda. Tab di bawah menjelaskan
   </Tab>
 
   <Tab title="Hooks">
-    **Kapan:** Saat dipicu. Hooks berjalan pada acara siklus hidup tertentu seperti eksekusi alat, batas sesi, pengajuan prompt, permintaan izin, dan pemadatan. Lihat [Hooks](/id/hooks-guide) untuk daftar lengkap.
+    **Kapan:** Saat dipicu. Hooks berjalan pada acara siklus hidup tertentu seperti eksekusi alat, batas sesi, pengajuan prompt, permintaan izin, dan pemadatan. Lihat [Hooks](/id/hooks) untuk daftar lengkap.
 
     **Apa yang dimuat:** Tidak ada secara default. Hooks berjalan di luar percakapan utama.
 

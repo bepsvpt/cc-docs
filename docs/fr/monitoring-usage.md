@@ -64,6 +64,8 @@ Exemple de configuration des paramètres gérés :
   Les paramètres gérés peuvent être distribués via MDM (Mobile Device Management) ou d'autres solutions de gestion d'appareils. Les variables d'environnement définies dans le fichier de paramètres gérés ont une haute priorité et ne peuvent pas être remplacées par les utilisateurs.
 </Note>
 
+Claude Code ne transmet pas les variables d'environnement `OTEL_*` aux sous-processus qu'il génère, y compris l'outil Bash, les hooks, les serveurs MCP et les serveurs de langage. Une application instrumentée par OpenTelemetry que vous exécutez via l'outil Bash n'hérite pas du point de terminaison de l'exportateur ou des en-têtes de Claude Code, donc définissez ces variables directement dans la commande si cette application doit exporter sa propre télémétrie.
+
 ## Détails de la configuration
 
 ### Variables de configuration courantes
@@ -80,8 +82,6 @@ Exemple de configuration des paramètres gérés :
 | `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | Protocole pour les journaux, remplace le paramètre général                                                                                                                                                                                                                                                                                                                                                                   | `grpc`, `http/json`, `http/protobuf`                                                                                                              |
 | `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | Point de terminaison des journaux OTLP, remplace le paramètre général                                                                                                                                                                                                                                                                                                                                                        | `http://localhost:4318/v1/logs`                                                                                                                   |
 | `OTEL_EXPORTER_OTLP_HEADERS`                        | En-têtes d'authentification pour OTLP                                                                                                                                                                                                                                                                                                                                                                                        | `Authorization=Bearer token`                                                                                                                      |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | Clé client pour l'authentification mTLS                                                                                                                                                                                                                                                                                                                                                                                      | Chemin vers le fichier de clé client                                                                                                              |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | Certificat client pour l'authentification mTLS                                                                                                                                                                                                                                                                                                                                                                               | Chemin vers le fichier de certificat client                                                                                                       |
 | `OTEL_METRIC_EXPORT_INTERVAL`                       | Intervalle d'export en millisecondes (par défaut : 60000)                                                                                                                                                                                                                                                                                                                                                                    | `5000`, `60000`                                                                                                                                   |
 | `OTEL_LOGS_EXPORT_INTERVAL`                         | Intervalle d'export des journaux en millisecondes (par défaut : 5000)                                                                                                                                                                                                                                                                                                                                                        | `1000`, `10000`                                                                                                                                   |
 | `OTEL_LOG_USER_PROMPTS`                             | Activer la journalisation du contenu des invites utilisateur (par défaut : désactivé)                                                                                                                                                                                                                                                                                                                                        | `1` pour activer                                                                                                                                  |
@@ -90,6 +90,17 @@ Exemple de configuration des paramètres gérés :
 | `OTEL_LOG_RAW_API_BODIES`                           | Émettre les corps JSON complets de la demande et de la réponse de l'API Messages d'Anthropic sous forme d'événements de journaux `api_request_body` / `api_response_body` (par défaut : désactivé). Les corps incluent l'historique complet de la conversation. L'activation de cette option implique le consentement à tout ce que `OTEL_LOG_USER_PROMPTS`, `OTEL_LOG_TOOL_DETAILS` et `OTEL_LOG_TOOL_CONTENT` révèleraient | `1` pour les corps en ligne tronqués à 60 Ko, ou `file:<dir>` pour les corps non tronqués sur disque avec un pointeur `body_ref` dans l'événement |
 | `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | Préférence de temporalité des métriques (par défaut : `delta`). Définissez sur `cumulative` si votre backend attend une temporalité cumulative                                                                                                                                                                                                                                                                               | `delta`, `cumulative`                                                                                                                             |
 | `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | Intervalle d'actualisation des en-têtes dynamiques (par défaut : 1740000ms / 29 minutes)                                                                                                                                                                                                                                                                                                                                     | `900000`                                                                                                                                          |
+
+### Authentification mTLS
+
+La façon dont vous configurez les certificats clients pour l'exportateur OTLP dépend du protocole OTLP utilisé pour ce signal, défini via `OTEL_EXPORTER_OTLP_PROTOCOL` ou le remplacement par signal. La même configuration s'applique aux métriques, journaux et traces.
+
+| Protocole                    | Variables de certificat client                                                                                                                                                                              | Faire confiance au CA du collecteur avec |
+| :--------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------- |
+| `http/protobuf`, `http/json` | `CLAUDE_CODE_CLIENT_CERT`, `CLAUDE_CODE_CLIENT_KEY`, et optionnellement `CLAUDE_CODE_CLIENT_KEY_PASSPHRASE`. Voir [Configuration réseau](/fr/network-config#mtls-authentication)                            | `NODE_EXTRA_CA_CERTS`                    |
+| `grpc`                       | `OTEL_EXPORTER_OTLP_CLIENT_KEY` et `OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE`, ou les variantes par signal telles que `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY` pour utiliser un certificat différent par signal | `OTEL_EXPORTER_OTLP_CERTIFICATE`         |
+
+Pour `grpc`, le SDK OpenTelemetry lit les variables OTLP standard directement, donc les configurations existantes qui définissent les variables de métriques par signal continuent de fonctionner.
 
 ### Contrôle de la cardinalité des métriques
 
@@ -107,7 +118,7 @@ Ces variables aident à contrôler la cardinalité des métriques, ce qui affect
 
 Le traçage distribué exporte des intervalles qui lient chaque invite utilisateur aux demandes d'API et aux exécutions d'outils qu'elle déclenche, afin que vous puissiez afficher une demande complète sous forme de trace unique dans votre backend de traçage.
 
-Le traçage est désactivé par défaut. Pour l'activer, définissez à la fois `CLAUDE_CODE_ENABLE_TELEMETRY=1` et `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`, puis définissez `OTEL_TRACES_EXPORTER` pour choisir où les intervalles sont envoyés. Les traces réutilisent la [configuration OTLP courante](#common-configuration-variables) pour le point de terminaison, le protocole et les en-têtes.
+Le traçage est désactivé par défaut. Pour l'activer, définissez à la fois `CLAUDE_CODE_ENABLE_TELEMETRY=1` et `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`, puis définissez `OTEL_TRACES_EXPORTER` pour choisir où les intervalles sont envoyés. Les traces réutilisent la [configuration OTLP courante](#common-configuration-variables) pour le point de terminaison, le protocole, les en-têtes et [mTLS](#mtls-authentication).
 
 | Variable d'environnement              | Description                                                                                           | Exemples de valeurs                  |
 | ------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------ |
@@ -233,7 +244,7 @@ Cet intervalle est émis uniquement lorsque le traçage bêta détaillé est act
 
 ### En-têtes dynamiques
 
-Pour les environnements d'entreprise qui nécessitent une authentification dynamique, vous pouvez configurer un script pour générer des en-têtes dynamiquement :
+Pour les environnements d'entreprise qui nécessitent une authentification dynamique, vous pouvez configurer un script pour générer des en-têtes dynamiquement. Les en-têtes dynamiques s'appliquent uniquement aux protocoles `http/protobuf` et `http/json`. L'exportateur `grpc` utilise uniquement la valeur statique `OTEL_EXPORTER_OTLP_HEADERS`.
 
 #### Configuration des paramètres
 
@@ -898,6 +909,67 @@ Les données d'événements fournissent des informations détaillées sur les in
 * Les modèles d'erreur par type d'outil
 
 **Surveillance des performances** : suivre les durées des demandes d'API et les temps d'exécution des outils pour identifier les goulots d'étranglement de performance.
+
+## Audit des événements de sécurité
+
+Les événements OpenTelemetry sont la source de données d'audit pour l'activité de Claude Code. Chaque événement porte des attributs d'identité qui lient les appels d'outils, l'activité MCP et les décisions de permission à l'utilisateur qui les a déclenchés, et l'exportateur de journaux OTLP peut livrer ces événements à n'importe quelle plateforme SIEM (Security Information and Event Management) avec un récepteur OTLP ou à un collecteur OpenTelemetry qui transfère vers votre SIEM.
+
+### Attribuer les actions aux utilisateurs
+
+Les [attributs standard](#standard-attributes) sur chaque événement incluent l'identité de l'utilisateur authentifié : `user.email`, `user.account_uuid`, `user.account_id`, et `organization.id` lorsqu'il est connecté avec un compte Claude, plus l'installation-scoped `user.id` et le per-session `session.id`.
+
+Les appels d'outils MCP, les commandes Bash et les éditions de fichiers sont donc attribués au développeur qui a démarré la session. Claude Code n'agit pas sous un compte de service distinct ; l'identité enregistrée sur chaque événement est le propre compte Claude du développeur.
+
+Lorsque Claude Code s'authentifie avec une clé API directe, ou contre Bedrock, Vertex AI ou Microsoft Foundry, il n'y a pas de compte Claude dans la session et seuls `user.id` et `session.id` sont remplis. Dans ces déploiements, attachez l'identité utilisateur vous-même avec `OTEL_RESOURCE_ATTRIBUTES`, défini par utilisateur via le fichier [paramètres gérés](#administrator-configuration) ou un wrapper de lancement :
+
+```bash theme={null}
+export OTEL_RESOURCE_ATTRIBUTES="enduser.id=jdoe@example.com,enduser.directory_id=S-1-5-21-..."
+```
+
+### Audit de l'activité MCP
+
+Pour capturer l'activité du serveur MCP avec tous les détails d'appel, activez l'exportateur de journaux et définissez `OTEL_LOG_TOOL_DETAILS=1`. Chaque opération MCP produit alors des événements structurés qui portent le nom du serveur, le nom de l'outil et les arguments d'appel aux côtés des attributs d'identité standard :
+
+| Événement               | Ce qu'il enregistre pour MCP                                                                                                                                                                                         |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mcp_server_connection` | Connexion du serveur, déconnexion et défaillance de connexion avec `server_name`, `transport_type`, `server_scope`, et détail d'erreur                                                                               |
+| `tool_result`           | Chaque appel d'outil MCP avec `tool_name` et `mcp_server_scope`, une charge utile `tool_parameters` contenant `mcp_server_name` et `mcp_tool_name`, et une charge utile `tool_input` contenant les arguments d'appel |
+| `tool_decision`         | Si l'appel a été autorisé ou refusé, et si la décision provenait de la configuration, d'un hook ou de l'utilisateur                                                                                                  |
+
+Sans `OTEL_LOG_TOOL_DETAILS`, les événements `tool_result` portent toujours `tool_name` et `mcp_server_scope` mais omettent la ventilation `mcp_server_name`/`mcp_tool_name` et les arguments, et les événements `mcp_server_connection` omettent `server_name` et le message d'erreur.
+
+### Mapper les questions de sécurité aux événements
+
+Lors de la création de règles de détection, recherchez le signal que vous souhaitez surveiller et interrogez votre backend pour l'événement correspondant et les attributs :
+
+| Signal                                                   | Événement                                    | Attributs clés                                               |
+| -------------------------------------------------------- | -------------------------------------------- | ------------------------------------------------------------ |
+| Appel d'outil autorisé ou refusé, et par quoi            | `tool_decision`                              | `decision`, `source`, `tool_name`                            |
+| Escalade du mode de permission                           | `permission_mode_changed`                    | `from_mode`, `to_mode`, `trigger`                            |
+| Hook de politique a bloqué une action                    | `hook_execution_complete`                    | `hook_event`, `num_blocking`                                 |
+| Connexion, déconnexion et défaillance d'authentification | `auth`                                       | `action`, `success`, `error_category`                        |
+| Connexion du serveur MCP ou défaillance                  | `mcp_server_connection`                      | `status`, `server_name`, `error_code`                        |
+| Plugin installé et sa source                             | `plugin_installed`                           | `plugin.name`, `marketplace.name`, `marketplace.is_official` |
+| Commandes exécutées et fichiers touchés                  | `tool_result` avec `OTEL_LOG_TOOL_DETAILS=1` | `tool_parameters`, `tool_input`                              |
+
+Claude Code émet uniquement le flux d'événements brut. La détection d'anomalies, l'établissement de lignes de base, la corrélation entre les sessions et les alertes sont la responsabilité de votre SIEM ou backend d'observabilité.
+
+### Envoyer les événements à un SIEM
+
+Pointez `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT` vers le récepteur OTLP de votre SIEM, ou vers un collecteur OpenTelemetry qui transfère vers l'API d'ingestion native de votre SIEM. L'exemple de paramètres gérés suivant exporte uniquement les événements, avec tous les détails d'outil activés pour l'audit MCP et Bash :
+
+```json theme={null}
+{
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "OTEL_LOGS_EXPORTER": "otlp",
+    "OTEL_LOG_TOOL_DETAILS": "1",
+    "OTEL_EXPORTER_OTLP_LOGS_PROTOCOL": "http/protobuf",
+    "OTEL_EXPORTER_OTLP_LOGS_ENDPOINT": "https://siem.example.com:4318/v1/logs",
+    "OTEL_EXPORTER_OTLP_HEADERS": "Authorization=Bearer your-siem-token"
+  }
+}
+```
 
 ## Considérations relatives aux backends
 

@@ -23,11 +23,11 @@ Claude Code 在任何終端機中都可以無需配置而運作。此頁面適�
 
 在大多數終端機中，您也可以按 Shift+Enter，但支援因終端機模擬器而異：
 
-| 終端機                                                                        | Shift+Enter 用於換行符            |
-| :------------------------------------------------------------------------- | :--------------------------- |
-| Ghostty、Kitty、iTerm2、WezTerm、Warp、Apple Terminal                           | 無需設置即可運作                     |
-| VS Code、Cursor、Windsurf、Alacritty、Zed                                      | 執行一次 `/terminal-setup`       |
-| Windows Terminal、gnome-terminal、JetBrains IDE（例如 PyCharm 和 Android Studio） | 不可用；使用 Ctrl+J 或 `\` 然後 Enter |
+| 終端機                                                               | Shift+Enter 用於換行符            |
+| :---------------------------------------------------------------- | :--------------------------- |
+| Ghostty、Kitty、iTerm2、WezTerm、Warp、Apple Terminal、Windows Terminal | 無需設置即可運作                     |
+| VS Code、Cursor、Windsurf、Alacritty、Zed                             | 執行一次 `/terminal-setup`       |
+| gnome-terminal、JetBrains IDE（例如 PyCharm 和 Android Studio）         | 不可用；使用 Ctrl+J 或 `\` 然後 Enter |
 
 對於 VS Code、Cursor、Windsurf、Alacritty 和 Zed，`/terminal-setup` 將 Shift+Enter 和其他快捷鍵寫入終端機的配置檔案。在 VS Code、Cursor 和 Windsurf 中，它也會在編輯器設定中設定 `terminal.integrated.mouseWheelScrollSensitivity`，以在[全螢幕模式](/zh-TW/fullscreen)中實現更平順的滾動。現有的綁定和設定會保留在原位；如果您看到類似 `VSCode terminal Shift+Enter key binding already configured` 的訊息，則未進行任何變更。直接在主機終端機中執行 `/terminal-setup` 而不是在 tmux 或 screen 內，因為它需要寫入主機終端機的配置。
 

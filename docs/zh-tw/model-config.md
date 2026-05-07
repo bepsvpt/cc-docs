@@ -184,7 +184,9 @@ Plan Mode Opus 階段使用標準 200K context window 執行。[擴展 context](
 
 努力量表按模型進行校準，因此相同的等級名稱在模型之間不代表相同的基礎值。
 
-對於一次性的深入推理而不改變您的會話設定，在您的提示中包含「ultrathink」。這會新增一個上下文指令，告訴模型在該輪上進行更多推理；它不會改變發送到 API 的努力等級。
+#### 使用 ultrathink 進行一次性深入推理
+
+在您的提示中的任何地方包含 `ultrathink` 以請求在該輪上進行更深入的推理，而不改變您的會話努力設定。Claude Code 識別該關鍵字並新增一個上下文指令。發送到 API 的努力等級保持不變。其他短語如「think」、「think hard」和「think more」會作為普通提示文本傳遞，不被識別為關鍵字。
 
 #### 設定努力等級
 
@@ -208,6 +210,18 @@ Plan Mode Opus 階段使用標準 200K context window 執行。[擴展 context](
 Opus 4.7 始終使用自適應推理。固定思考預算模式和 `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` 不適用於它。
 
 在 Opus 4.6 和 Sonnet 4.6 上，您可以設定 `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` 以恢復到由 `MAX_THINKING_TOKENS` 控制的先前固定思考預算。請參閱[環境變數](/zh-TW/env-vars)。
+
+### 擴展思考
+
+擴展思考是 Claude 在回應前發出的推理。在支援[自適應推理](#adjust-effort-level)的模型上，努力等級是控制發生多少思考的主要控制項；下面的設定會開啟或關閉思考，並控制其顯示方式。
+
+| 控制項      | 如何設定                                                                                                          |
+| :------- | :------------------------------------------------------------------------------------------------------------ |
+| 目前會話的切換  | 在 macOS 上按 `Option+T` 或在 Windows 和 Linux 上按 `Alt+T`                                                           |
+| 設定全域預設值  | 執行 `/config` 並切換思考模式。儲存為 `~/.claude/settings.json` 中的 `alwaysThinkingEnabled`                                 |
+| 無論努力如何禁用 | 設定 [`MAX_THINKING_TOKENS=0`](/zh-TW/env-vars)。其他值僅適用於[固定思考預算](#adaptive-reasoning-and-fixed-thinking-budgets) |
+
+思考輸出預設為摺疊。按 `Ctrl+O` 以切換詳細模式並將推理視為灰色斜體文本。Anthropic API 上的互動式會話預設會收到編輯的思考區塊，因此如果您想要在展開時可用的完整摘要，請在[設定](/zh-TW/settings)中設定 `showThinkingSummaries: true`。您需要為所有生成的思考 token 付費，即使它們被摺疊或編輯。
 
 ### 擴展 context
 
@@ -247,7 +261,7 @@ Opus 4.7、Opus 4.6 和 Sonnet 4.6 支援[100 萬個 token 的 context window](h
 
 ## 新增自訂模型選項
 
-使用 `ANTHROPIC_CUSTOM_MODEL_OPTION` 將單一自訂項目新增到 `/model` 選擇器，而無需取代內建別名。這對於測試 Claude Code 預設不列出的模型 ID 很有用。對於 LLM 閘道部署，Claude Code 會自動從閘道的 `/v1/models` 端點填入選擇器，因此只有在探索未傳回您想要的模型時，才需要此變數。請參閱 [LLM 閘道模型選擇](/zh-TW/llm-gateway#model-selection)。
+使用 `ANTHROPIC_CUSTOM_MODEL_OPTION` 將單一自訂項目新增到 `/model` 選擇器，而無需取代內建別名。這對於測試 Claude Code 預設不列出的模型 ID 很有用。對於 LLM 閘道部署，當設定 `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` 時，Claude Code 可以從閘道的 `/v1/models` 端點填入選擇器，因此只有在探索被停用或未傳回您想要的模型時，才需要此變數。請參閱 [LLM 閘道模型選擇](/zh-TW/llm-gateway#model-selection)。
 
 此範例設定所有三個變數以使閘道路由的 Opus 部署可選擇：
 
@@ -320,16 +334,16 @@ export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7[1m]'
 
 相同的 `_NAME`、`_DESCRIPTION` 和 `_SUPPORTED_CAPABILITIES` 後綴可用於 `ANTHROPIC_DEFAULT_SONNET_MODEL`、`ANTHROPIC_DEFAULT_HAIKU_MODEL` 和 `ANTHROPIC_CUSTOM_MODEL_OPTION`。
 
-Claude Code 透過將模型 ID 與已知模式進行匹配來啟用[努力等級](#adjust-effort-level)和[擴展思考](/zh-TW/common-workflows#use-extended-thinking-thinking-mode)等功能。提供者特定的 ID（例如 Bedrock ARN 或自訂部署名稱）通常不符合這些模式，導致支援的功能被禁用。設定 `_SUPPORTED_CAPABILITIES` 以告訴 Claude Code 模型實際支援的功能：
+Claude Code 透過將模型 ID 與已知模式進行匹配來啟用[努力等級](#adjust-effort-level)和[擴展思考](#extended-thinking)等功能。提供者特定的 ID（例如 Bedrock ARN 或自訂部署名稱）通常不符合這些模式，導致支援的功能被禁用。設定 `_SUPPORTED_CAPABILITIES` 以告訴 Claude Code 模型實際支援的功能：
 
-| 能力值                    | 啟用                                                                  |
-| ---------------------- | ------------------------------------------------------------------- |
-| `effort`               | [努力等級](#adjust-effort-level)和 `/effort` 命令                          |
-| `xhigh_effort`         | {/* min-version: 2.1.111 */}`xhigh` 努力等級                            |
-| `max_effort`           | `max` 努力等級                                                          |
-| `thinking`             | [擴展思考](/zh-TW/common-workflows#use-extended-thinking-thinking-mode) |
-| `adaptive_thinking`    | 根據任務複雜性動態分配思考的自適應推理                                                 |
-| `interleaved_thinking` | 工具呼叫之間的思考                                                           |
+| 能力值                    | 啟用                                         |
+| ---------------------- | ------------------------------------------ |
+| `effort`               | [努力等級](#adjust-effort-level)和 `/effort` 命令 |
+| `xhigh_effort`         | {/* min-version: 2.1.111 */}`xhigh` 努力等級   |
+| `max_effort`           | `max` 努力等級                                 |
+| `thinking`             | [擴展思考](#extended-thinking)                 |
+| `adaptive_thinking`    | 根據任務複雜性動態分配思考的自適應推理                        |
+| `interleaved_thinking` | 工具呼叫之間的思考                                  |
 
 當設定 `_SUPPORTED_CAPABILITIES` 時，列出的能力會為匹配的固定模型啟用，未列出的能力會被禁用。當變數未設定時，Claude Code 會回退到基於模型 ID 的內建檢測。
 

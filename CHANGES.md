@@ -1,5 +1,395 @@
 # Documentation Changes
 
+## 2026-05-07
+
+184 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **CLI-Referenz** (`cli-reference.md`): 4 lines added, 3 removed
+- **Claude Code erweitern** (`features-overview.md`): 2 lines added, 2 removed
+- **Claude Code programmgesteuert ausführen** (`headless.md`): 35 lines added, 5 removed
+  - New section: "### Daten durch Claude leiten"
+  - New section: "### Claude zu einem Build-Skript hinzufügen"
+- **So funktioniert Claude Code** (`how-claude-code-works.md`): 9 lines added, 15 removed
+- **Interaktiver Modus** (`interactive-mode.md`): 7 lines added, 6 removed
+- **LLM-Gateway-Konfiguration** (`llm-gateway.md`): 1 lines added, 1 removed
+- **Modellkonfiguration** (`model-config.md`): 18 lines added, 4 removed
+  - New section: "#### Verwenden Sie ultrathink für einmaliges tiefes Reasoning"
+  - New section: "### Erweitertes Thinking"
+- **Überwachung** (`monitoring-usage.md`): 78 lines added, 6 removed
+  - New section: "### mTLS-Authentifizierung"
+  - New section: "## Audit-Sicherheitsereignisse"
+  - New section: "### Attribut-Aktionen an Benutzer"
+  - New section: "### Audit MCP-Aktivität"
+  - New section: "### Sicherheitsfragen zu Ereignissen zuordnen"
+- **Plugins-Referenz** (`plugins-reference.md`): 26 lines added, 20 removed
+  - New section: "### Experimentelle Komponenten"
+- **Plugins erstellen** (`plugins.md`): 6 lines added, 0 removed
+- **Claude Code-Einstellungen** (`settings.md`): 3 lines added, 2 removed
+- **Erweiterte Einrichtung** (`setup.md`): 7 lines added, 3 removed
+- **Claude mit Skills erweitern** (`skills.md`): 77 lines added, 44 removed
+  - New section: "## Current changes"
+  - New section: "## Instructions"
+  - New section: "### Skill-Sichtbarkeit aus Einstellungen überschreiben"
+- **Passen Sie Ihre Statuszeile an** (`statusline.md`): 10 lines added, 11 removed
+- **Konfigurieren Sie Ihr Terminal für Claude Code** (`terminal-config.md`): 5 lines added, 5 removed
+- **Claude Code in VS Code verwenden** (`vs-code.md`): 13 lines added, 3 removed
+  - New section: "### Cmd+Esc funktioniert auf macOS nicht"
+
+### English
+
+
+**Modified**
+
+- **Changelog** (`changelog.md`): 31 lines added, 0 removed
+- **CLI reference** (`cli-reference.md`): 65 lines added, 64 removed
+- **Commands** (`commands.md`): 1 lines added, 1 removed
+- **Environment variables** (`env-vars.md`): 11 lines added, 5 removed
+- **Extend Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Run Claude Code programmatically** (`headless.md`): 1 lines added, 1 removed
+- **How Claude Code works** (`how-claude-code-works.md`): 1 lines added, 1 removed
+- **Interactive mode** (`interactive-mode.md`): 5 lines added, 5 removed
+- **LLM gateway configuration** (`llm-gateway.md`): 1 lines added, 1 removed
+- **Model configuration** (`model-config.md`): 2 lines added, 2 removed
+- **Monitoring** (`monitoring-usage.md`): 1 lines added, 1 removed
+- **Plugins reference** (`plugins-reference.md`): 26 lines added, 20 removed
+  - New section: "### Experimental components"
+- **Create plugins** (`plugins.md`): 6 lines added, 0 removed
+- **Claude Code settings** (`settings.md`): 18 lines added, 17 removed
+- **Advanced setup** (`setup.md`): 6 lines added, 2 removed
+- **Extend Claude with skills** (`skills.md`): 27 lines added, 1 removed
+  - New section: "### Override skill visibility from settings"
+- **Customize your status line** (`statusline.md`): 7 lines added, 8 removed
+- **Configure your terminal for Claude Code** (`terminal-config.md`): 5 lines added, 5 removed
+
+### Español
+
+
+**Modified**
+
+- **Referencia de CLI** (`cli-reference.md`): 4 lines added, 3 removed
+- **Extender Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Ejecutar Claude Code mediante programación** (`headless.md`): 35 lines added, 5 removed
+  - New section: "### Canalizar datos a través de Claude"
+  - New section: "### Agregar Claude a un script de compilación"
+- **Cómo funciona Claude Code** (`how-claude-code-works.md`): 9 lines added, 15 removed
+- **Modo interactivo** (`interactive-mode.md`): 6 lines added, 5 removed
+- **Configuración de la puerta de enlace LLM** (`llm-gateway.md`): 2 lines added, 2 removed
+- **Configuración del modelo** (`model-config.md`): 18 lines added, 4 removed
+  - New section: "#### Utilizar ultrathink para razonamiento profundo único"
+  - New section: "### Pensamiento extendido"
+- **Monitoreo** (`monitoring-usage.md`): 21 lines added, 10 removed
+  - New section: "### Autenticación mTLS"
+- **Referencia de plugins** (`plugins-reference.md`): 28 lines added, 22 removed
+  - New section: "### Componentes experimentales"
+- **Crear plugins** (`plugins.md`): 6 lines added, 0 removed
+- **Configuración de Claude Code** (`settings.md`): 3 lines added, 2 removed
+- **Configuración avanzada** (`setup.md`): 7 lines added, 3 removed
+- **Ampliar Claude con skills** (`skills.md`): 59 lines added, 26 removed
+  - New section: "## Current changes"
+  - New section: "## Instructions"
+  - New section: "### Anular la visibilidad del skill desde la configuración"
+- **Personaliza tu línea de estado** (`statusline.md`): 10 lines added, 11 removed
+- **Configura tu terminal para Claude Code** (`terminal-config.md`): 6 lines added, 6 removed
+
+### Français
+
+
+**Modified**
+
+- **Référence CLI** (`cli-reference.md`): 4 lines added, 3 removed
+- **Étendre Claude Code** (`features-overview.md`): 2 lines added, 2 removed
+- **Exécuter Claude Code par programmation** (`headless.md`): 35 lines added, 5 removed
+  - New section: "### Transmettre des données via Claude"
+  - New section: "### Ajouter Claude à un script de compilation"
+- **Comment fonctionne Claude Code** (`how-claude-code-works.md`): 9 lines added, 15 removed
+- **Mode interactif** (`interactive-mode.md`): 6 lines added, 5 removed
+- **Configuration de la passerelle LLM** (`llm-gateway.md`): 1 lines added, 1 removed
+- **Configuration du modèle** (`model-config.md`): 18 lines added, 4 removed
+  - New section: "#### Utiliser ultrathink pour un raisonnement profond ponctuel"
+  - New section: "### Réflexion étendue"
+- **Surveillance** (`monitoring-usage.md`): 76 lines added, 4 removed
+  - New section: "### Authentification mTLS"
+  - New section: "## Audit des événements de sécurité"
+  - New section: "### Attribuer les actions aux utilisateurs"
+  - New section: "### Audit de l'activité MCP"
+  - New section: "### Mapper les questions de sécurité aux événements"
+- **Référence des plugins** (`plugins-reference.md`): 27 lines added, 21 removed
+  - New section: "### Composants expérimentaux"
+- **Créer des plugins** (`plugins.md`): 6 lines added, 0 removed
+- **Paramètres Claude Code** (`settings.md`): 3 lines added, 2 removed
+- **Configuration avancée** (`setup.md`): 7 lines added, 3 removed
+- **Étendre Claude avec des skills** (`skills.md`): 59 lines added, 26 removed
+  - New section: "## Modifications actuelles"
+  - New section: "## Instructions"
+  - New section: "### Remplacer la visibilité des skills à partir des paramètres"
+- **Personnalisez votre barre de statut** (`statusline.md`): 12 lines added, 11 removed
+- **Configurez votre terminal pour Claude Code** (`terminal-config.md`): 5 lines added, 5 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Referensi CLI** (`cli-reference.md`): 4 lines added, 3 removed
+- **Perluas Claude Code** (`features-overview.md`): 3 lines added, 3 removed
+- **Jalankan Claude Code secara programatis** (`headless.md`): 35 lines added, 5 removed
+  - New section: "### Saluran data melalui Claude"
+  - New section: "### Tambahkan Claude ke skrip build"
+- **Cara Kerja Claude Code** (`how-claude-code-works.md`): 9 lines added, 15 removed
+- **Mode interaktif** (`interactive-mode.md`): 5 lines added, 4 removed
+- **Konfigurasi LLM gateway** (`llm-gateway.md`): 1 lines added, 1 removed
+- **Konfigurasi model** (`model-config.md`): 18 lines added, 4 removed
+  - New section: "#### Gunakan ultrathink untuk penalaran mendalam sekali"
+  - New section: "### Pemikiran diperluas"
+- **Pemantauan** (`monitoring-usage.md`): 16 lines added, 5 removed
+  - New section: "### Autentikasi mTLS"
+- **Referensi Plugins** (`plugins-reference.md`): 27 lines added, 21 removed
+  - New section: "### Komponen eksperimental"
+  - New section: "## Plugin caching dan resolusi file"
+- **Buat plugins** (`plugins.md`): 6 lines added, 0 removed
+- **Pengaturan Claude Code** (`settings.md`): 3 lines added, 2 removed
+- **Pengaturan lanjutan** (`setup.md`): 7 lines added, 3 removed
+- **Perluas Claude dengan skills** (`skills.md`): 60 lines added, 27 removed
+  - New section: "## Current changes"
+  - New section: "## Instructions"
+  - New section: "### Ganti visibilitas skill dari pengaturan"
+- **Sesuaikan baris status Anda** (`statusline.md`): 15 lines added, 16 removed
+- **Konfigurasi terminal Anda untuk Claude Code** (`terminal-config.md`): 5 lines added, 5 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Riferimento CLI** (`cli-reference.md`): 4 lines added, 3 removed
+- **Estendi Claude Code** (`features-overview.md`): 2 lines added, 2 removed
+- **Eseguire Claude Code a livello programmatico** (`headless.md`): 35 lines added, 5 removed
+  - New section: "### Inviare dati attraverso Claude"
+  - New section: "### Aggiungere Claude a uno script di compilazione"
+- **Come funziona Claude Code** (`how-claude-code-works.md`): 9 lines added, 15 removed
+- **Modalità interattiva** (`interactive-mode.md`): 6 lines added, 5 removed
+- **Configurazione del gateway LLM** (`llm-gateway.md`): 1 lines added, 1 removed
+- **Configurazione del modello** (`model-config.md`): 24 lines added, 10 removed
+  - New section: "#### Utilizzare ultrathink per il ragionamento profondo una tantum"
+  - New section: "### Pensiero esteso"
+- **Monitoraggio** (`monitoring-usage.md`): 77 lines added, 5 removed
+  - New section: "### Autenticazione mTLS"
+  - New section: "## Audit degli eventi di sicurezza"
+  - New section: "### Attribuisci le azioni agli utenti"
+  - New section: "### Audit dell'attività MCP"
+  - New section: "### Mappa le domande di sicurezza agli eventi"
+- **Riferimento dei plugin** (`plugins-reference.md`): 27 lines added, 21 removed
+  - New section: "### Componenti sperimentali"
+- **Creare plugin** (`plugins.md`): 6 lines added, 0 removed
+- **Impostazioni di Claude Code** (`settings.md`): 3 lines added, 2 removed
+- **Configurazione avanzata** (`setup.md`): 7 lines added, 3 removed
+- **Estendi Claude con skills** (`skills.md`): 59 lines added, 26 removed
+  - New section: "## Current changes"
+  - New section: "## Instructions"
+  - New section: "### Sovrascrivi la visibilità della skill dalle impostazioni"
+- **Personalizza la tua barra di stato** (`statusline.md`): 10 lines added, 11 removed
+- **Configura il tuo terminale per Claude Code** (`terminal-config.md`): 5 lines added, 5 removed
+
+### 日本語
+
+
+**Modified**
+
+- **CLI リファレンス** (`cli-reference.md`): 4 lines added, 3 removed
+- **Claude Code を拡張する** (`features-overview.md`): 4 lines added, 4 removed
+- **Claude Code をプログラムで実行する** (`headless.md`): 31 lines added, 1 removed
+  - New section: "### Claude にデータをパイプする"
+  - New section: "### ビルドスクリプトに Claude を追加する"
+- **Claude Code の仕組み** (`how-claude-code-works.md`): 9 lines added, 15 removed
+- **インタラクティブモード** (`interactive-mode.md`): 4 lines added, 3 removed
+- **LLM gateway設定** (`llm-gateway.md`): 2 lines added, 2 removed
+- **モデル設定** (`model-config.md`): 28 lines added, 14 removed
+  - New section: "#### 1 回限りの深い推論に ultrathink を使用"
+  - New section: "### 拡張思考"
+- **監視** (`monitoring-usage.md`): 77 lines added, 5 removed
+  - New section: "### mTLS 認証"
+  - New section: "## 監査セキュリティイベント"
+  - New section: "### 属性アクションをユーザーに関連付ける"
+  - New section: "### MCP アクティビティを監査する"
+  - New section: "### セキュリティの質問をイベントにマップする"
+- **プラグインリファレンス** (`plugins-reference.md`): 26 lines added, 20 removed
+  - New section: "### 実験的コンポーネント"
+- **プラグインを作成する** (`plugins.md`): 6 lines added, 0 removed
+- **Claude Code の設定** (`settings.md`): 81 lines added, 80 removed
+- **高度なセットアップ** (`setup.md`): 7 lines added, 3 removed
+- **スキルで Claude を拡張する** (`skills.md`): 67 lines added, 28 removed
+  - New section: "## Current changes"
+  - New section: "## Instructions"
+  - New section: "### 設定からスキルの可視性をオーバーライドする"
+- **ステータスラインをカスタマイズする** (`statusline.md`): 26 lines added, 12 removed
+- **Claude Code 用にターミナルを設定する** (`terminal-config.md`): 5 lines added, 5 removed
+
+### 한국어
+
+
+**Modified**
+
+- **CLI 참조** (`cli-reference.md`): 4 lines added, 3 removed
+- **Claude Code 확장하기** (`features-overview.md`): 1 lines added, 1 removed
+- **Claude Code를 프로그래밍 방식으로 실행하기** (`headless.md`): 31 lines added, 1 removed
+  - New section: "### Claude를 통해 데이터 파이프하기"
+  - New section: "### 빌드 스크립트에 Claude 추가"
+- **Claude Code의 작동 방식** (`how-claude-code-works.md`): 10 lines added, 16 removed
+- **대화형 모드** (`interactive-mode.md`): 5 lines added, 4 removed
+- **LLM gateway 구성** (`llm-gateway.md`): 1 lines added, 1 removed
+- **모델 구성** (`model-config.md`): 26 lines added, 12 removed
+  - New section: "#### 일회성 깊은 추론을 위해 ultrathink 사용"
+  - New section: "### 확장 사고"
+- **모니터링** (`monitoring-usage.md`): 76 lines added, 4 removed
+  - New section: "### mTLS 인증"
+  - New section: "## 감사 보안 이벤트"
+  - New section: "### 속성 작업을 사용자에게 연결"
+  - New section: "### MCP 활동 감사"
+  - New section: "### 보안 질문을 이벤트에 매핑"
+- **플러그인 참조** (`plugins-reference.md`): 27 lines added, 21 removed
+  - New section: "### 실험적 컴포넌트"
+- **플러그인 만들기** (`plugins.md`): 6 lines added, 0 removed
+- **Claude Code 설정** (`settings.md`): 81 lines added, 80 removed
+- **고급 설정** (`setup.md`): 7 lines added, 3 removed
+- **Claude를 skills로 확장하기** (`skills.md`): 60 lines added, 27 removed
+  - New section: "## Current changes"
+  - New section: "## Instructions"
+  - New section: "### 설정에서 Skill 가시성 재정의"
+- **상태 표시줄 사용자 정의** (`statusline.md`): 10 lines added, 11 removed
+- **Claude Code를 위한 터미널 구성** (`terminal-config.md`): 5 lines added, 5 removed
+
+### Português
+
+
+**Modified**
+
+- **Referência de CLI** (`cli-reference.md`): 4 lines added, 3 removed
+- **Estender Claude Code** (`features-overview.md`): 3 lines added, 3 removed
+- **Executar Claude Code programaticamente** (`headless.md`): 35 lines added, 5 removed
+  - New section: "### Canalizar dados através do Claude"
+  - New section: "### Adicionar Claude a um script de compilação"
+- **Como Claude Code funciona** (`how-claude-code-works.md`): 9 lines added, 15 removed
+- **Modo interativo** (`interactive-mode.md`): 6 lines added, 5 removed
+- **Configuração do gateway LLM** (`llm-gateway.md`): 1 lines added, 1 removed
+- **Configuração de modelo** (`model-config.md`): 18 lines added, 4 removed
+  - New section: "#### Usar ultrathink para raciocínio profundo único"
+  - New section: "### Pensamento estendido"
+- **Monitoramento** (`monitoring-usage.md`): 21 lines added, 10 removed
+  - New section: "### Autenticação mTLS"
+- **Referência de plugins** (`plugins-reference.md`): 26 lines added, 20 removed
+  - New section: "### Componentes experimentais"
+- **Criar plugins** (`plugins.md`): 6 lines added, 0 removed
+- **Configurações do Claude Code** (`settings.md`): 3 lines added, 2 removed
+- **Configuração avançada** (`setup.md`): 8 lines added, 4 removed
+- **Estenda Claude com skills** (`skills.md`): 61 lines added, 28 removed
+  - New section: "## Current changes"
+  - New section: "## Instructions"
+  - New section: "### Substitua visibilidade de skill a partir de configurações"
+- **Personalize sua linha de status** (`statusline.md`): 10 lines added, 11 removed
+- **Configure seu terminal para Claude Code** (`terminal-config.md`): 5 lines added, 5 removed
+
+### Русский
+
+
+**Modified**
+
+- **Справочник CLI** (`cli-reference.md`): 4 lines added, 3 removed
+- **Расширение Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Запуск Claude Code программно** (`headless.md`): 35 lines added, 5 removed
+  - New section: "### Передача данных через Claude"
+  - New section: "### Добавление Claude в скрипт сборки"
+- **Как работает Claude Code** (`how-claude-code-works.md`): 9 lines added, 15 removed
+- **Интерактивный режим** (`interactive-mode.md`): 8 lines added, 6 removed
+- **Конфигурация LLM gateway** (`llm-gateway.md`): 1 lines added, 1 removed
+- **Конфигурация модели** (`model-config.md`): 18 lines added, 4 removed
+  - New section: "#### Используйте ultrathink для одноразового глубокого рассуждения"
+  - New section: "### Расширенное мышление"
+- **Мониторинг** (`monitoring-usage.md`): 16 lines added, 5 removed
+  - New section: "### Аутентификация mTLS"
+- **Справочник по плагинам** (`plugins-reference.md`): 26 lines added, 20 removed
+  - New section: "### Экспериментальные компоненты"
+- **Создание plugins** (`plugins.md`): 6 lines added, 0 removed
+- **Параметры Claude Code** (`settings.md`): 3 lines added, 2 removed
+- **Расширенная настройка** (`setup.md`): 7 lines added, 3 removed
+- **Расширьте Claude с помощью skills** (`skills.md`): 58 lines added, 25 removed
+  - New section: "## Current changes"
+  - New section: "## Instructions"
+  - New section: "### Переопределите видимость skill из параметров"
+- **Настройка строки состояния** (`statusline.md`): 10 lines added, 11 removed
+- **Настройте ваш терминал для Claude Code** (`terminal-config.md`): 5 lines added, 5 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **CLI 参考** (`cli-reference.md`): 65 lines added, 64 removed
+- **扩展 Claude Code** (`features-overview.md`): 3 lines added, 3 removed
+- **以编程方式运行 Claude Code** (`headless.md`): 35 lines added, 5 removed
+  - New section: "### 通过 Claude 管道传输数据"
+  - New section: "### 将 Claude 添加到构建脚本"
+- **Claude Code 如何工作** (`how-claude-code-works.md`): 9 lines added, 15 removed
+- **交互模式** (`interactive-mode.md`): 7 lines added, 6 removed
+- **LLM gateway 配置** (`llm-gateway.md`): 1 lines added, 1 removed
+- **模型配置** (`model-config.md`): 25 lines added, 11 removed
+  - New section: "#### 使用 ultrathink 进行一次性深入推理"
+  - New section: "### 扩展思考"
+- **监控** (`monitoring-usage.md`): 16 lines added, 5 removed
+  - New section: "### mTLS 身份验证"
+- **Plugins 参考** (`plugins-reference.md`): 26 lines added, 20 removed
+  - New section: "### 实验性组件"
+- **创建插件** (`plugins.md`): 6 lines added, 0 removed
+- **Claude Code 设置** (`settings.md`): 81 lines added, 80 removed
+- **高级设置** (`setup.md`): 7 lines added, 3 removed
+- **使用 skills 扩展 Claude** (`skills.md`): 58 lines added, 27 removed
+  - New section: "## Current changes"
+  - New section: "## Instructions"
+  - New section: "### 从设置覆盖 skill 可见性"
+- **自定义你的状态行** (`statusline.md`): 13 lines added, 14 removed
+- **为 Claude Code 配置您的终端** (`terminal-config.md`): 5 lines added, 5 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **CLI 參考** (`cli-reference.md`): 65 lines added, 64 removed
+- **擴展 Claude Code** (`features-overview.md`): 3 lines added, 3 removed
+- **以程式方式執行 Claude Code** (`headless.md`): 35 lines added, 5 removed
+  - New section: "### 透過 Claude 管道傳送資料"
+  - New section: "### 將 Claude 新增至建置指令碼"
+- **Claude Code 如何運作** (`how-claude-code-works.md`): 9 lines added, 15 removed
+- **互動模式** (`interactive-mode.md`): 6 lines added, 5 removed
+- **LLM gateway 配置** (`llm-gateway.md`): 1 lines added, 1 removed
+- **模型配置** (`model-config.md`): 25 lines added, 11 removed
+  - New section: "#### 使用 ultrathink 進行一次性深入推理"
+  - New section: "### 擴展思考"
+- **監控** (`monitoring-usage.md`): 76 lines added, 4 removed
+  - New section: "### mTLS 身份驗證"
+  - New section: "## 稽核安全事件"
+  - New section: "### 將屬性操作歸因於使用者"
+  - New section: "### 稽核 MCP 活動"
+  - New section: "### 將安全問題對應到事件"
+- **Plugins 參考** (`plugins-reference.md`): 26 lines added, 20 removed
+  - New section: "### 實驗性元件"
+- **建立 plugins** (`plugins.md`): 6 lines added, 0 removed
+- **Claude Code 設定** (`settings.md`): 82 lines added, 81 removed
+- **進階設定** (`setup.md`): 7 lines added, 3 removed
+- **使用 skills 擴展 Claude** (`skills.md`): 58 lines added, 25 removed
+  - New section: "## Current changes"
+  - New section: "## Instructions"
+  - New section: "### 從設定覆蓋 skill 可見性"
+- **自訂您的狀態列** (`statusline.md`): 12 lines added, 13 removed
+- **為 Claude Code 配置您的終端機** (`terminal-config.md`): 5 lines added, 5 removed
+
+---
+
 ## 2026-05-06
 
 111 pages modified

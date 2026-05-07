@@ -134,7 +134,7 @@ Claude Code esegue il tuo script e invia i [dati di sessione JSON](#available-da
 
 **Quando si aggiorna**
 
-Il tuo script viene eseguito dopo ogni nuovo messaggio dell'assistente, quando cambia la modalità di autorizzazione o quando la modalità vim si attiva/disattiva. Gli aggiornamenti vengono debounced a 300ms, il che significa che i cambiamenti rapidi si raggruppano insieme e il tuo script viene eseguito una volta che le cose si stabilizzano. Se un nuovo aggiornamento si attiva mentre il tuo script è ancora in esecuzione, l'esecuzione in corso viene annullata. Se modifichi il tuo script, le modifiche non appariranno fino al prossimo aggiornamento di Claude Code.
+Il tuo script viene eseguito dopo ogni nuovo messaggio dell'assistente, dopo che `/compact` termina, quando cambia la modalità di autorizzazione o quando la modalità vim si attiva/disattiva. Gli aggiornamenti vengono debounced a 300ms, il che significa che i cambiamenti rapidi si raggruppano insieme e il tuo script viene eseguito una volta che le cose si stabilizzano. Se un nuovo aggiornamento si attiva mentre il tuo script è ancora in esecuzione, l'esecuzione in corso viene annullata. Se modifichi il tuo script, le modifiche non appariranno fino al prossimo aggiornamento di Claude Code.
 
 Questi trigger possono diventare silenziosi quando la sessione principale è inattiva, ad esempio mentre un coordinatore attende i subagent in background. Per mantenere i segmenti basati sul tempo o provenienti da fonti esterne aggiornati durante i periodi di inattività, imposta [`refreshInterval`](#manually-configure-a-status-line) per eseguire nuovamente il comando anche su un timer fisso.
 
@@ -161,7 +161,7 @@ Claude Code invia i seguenti campi JSON al tuo script tramite stdin:
 | `cost.total_duration_ms`                                                         | Tempo totale trascorso dal momento dell'avvio della sessione, in millisecondi                                                                                                                                                                                                     |
 | `cost.total_api_duration_ms`                                                     | Tempo totale trascorso in attesa delle risposte API in millisecondi                                                                                                                                                                                                               |
 | `cost.total_lines_added`, `cost.total_lines_removed`                             | Righe di codice modificate                                                                                                                                                                                                                                                        |
-| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | Conteggi cumulativi dei token nella sessione                                                                                                                                                                                                                                      |
+| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | Conteggi dei token attualmente nella finestra di contesto, dalla risposta API più recente. L'input include letture e scritture della cache. Prima della v2.1.132 questi erano totali cumulativi della sessione                                                                    |
 | `context_window.context_window_size`                                             | Dimensione massima della finestra di contesto in token. 200000 per impostazione predefinita, o 1000000 per i modelli con contesto esteso.                                                                                                                                         |
 | `context_window.used_percentage`                                                 | Percentuale pre-calcolata della finestra di contesto utilizzata                                                                                                                                                                                                                   |
 | `context_window.remaining_percentage`                                            | Percentuale pre-calcolata della finestra di contesto rimanente                                                                                                                                                                                                                    |
@@ -215,8 +215,8 @@ Claude Code invia i seguenti campi JSON al tuo script tramite stdin:
       "total_lines_removed": 23
     },
     "context_window": {
-      "total_input_tokens": 15234,
-      "total_output_tokens": 4521,
+      "total_input_tokens": 15500,
+      "total_output_tokens": 1200,
       "context_window_size": 200000,
       "used_percentage": 8,
       "remaining_percentage": 92,
@@ -272,7 +272,7 @@ Claude Code invia i seguenti campi JSON al tuo script tramite stdin:
 
   **Campi che potrebbero essere `null`**:
 
-  * `context_window.current_usage`: `null` prima della prima chiamata API in una sessione
+  * `context_window.current_usage`: `null` prima della prima chiamata API in una sessione, e di nuovo dopo `/compact` fino a quando la prossima chiamata API non lo ripopola
   * `context_window.used_percentage`, `context_window.remaining_percentage`: potrebbero essere `null` all'inizio della sessione
 
   Gestisci i campi mancanti con accesso condizionale e i valori null con fallback predefiniti nei tuoi script.
@@ -280,10 +280,10 @@ Claude Code invia i seguenti campi JSON al tuo script tramite stdin:
 
 ### Campi della finestra di contesto
 
-L'oggetto `context_window` fornisce due modi per tracciare l'utilizzo del contesto:
+L'oggetto `context_window` descrive la finestra di contesto attiva dalla risposta API più recente. A partire dalla v2.1.132, `total_input_tokens` e `total_output_tokens` riflettono l'utilizzo del contesto corrente, non i totali cumulativi della sessione.
 
-* **Totali cumulativi** (`total_input_tokens`, `total_output_tokens`): somma di tutti i token nell'intera sessione, utile per tracciare il consumo totale
-* **Utilizzo corrente** (`current_usage`): conteggi dei token dall'ultima chiamata API, usa questo per una percentuale di contesto accurata poiché riflette lo stato effettivo del contesto
+* **Totali combinati** (`total_input_tokens`, `total_output_tokens`): token attualmente nella finestra di contesto. `total_input_tokens` è la somma di `input_tokens`, `cache_creation_input_tokens` e `cache_read_input_tokens`; `total_output_tokens` sono i token di output dalla risposta più recente. Entrambi sono `0` prima della prima risposta API.
+* **Utilizzo per componente** (`current_usage`): gli stessi conteggi dei token suddivisi per categoria. Usa questo quando hai bisogno di separare i cache hit dall'input fresco.
 
 L'oggetto `current_usage` contiene:
 
@@ -296,7 +296,7 @@ Il campo `used_percentage` viene calcolato solo dai token di input: `input_token
 
 Se calcoli manualmente la percentuale di contesto da `current_usage`, usa la stessa formula solo per l'input per corrispondere a `used_percentage`.
 
-L'oggetto `current_usage` è `null` prima della prima chiamata API in una sessione.
+L'oggetto `current_usage` è `null` prima della prima chiamata API in una sessione, e di nuovo immediatamente dopo `/compact` fino a quando la prossima chiamata API non lo ripopola.
 
 ## Esempi
 
@@ -1011,8 +1011,7 @@ Progetti della comunità come [ccstatusline](https://github.com/sirmalloc/ccstat
 
 **La percentuale di contesto mostra valori inaspettati**
 
-* Usa `used_percentage` per uno stato di contesto accurato piuttosto che i totali cumulativi
-* `total_input_tokens` e `total_output_tokens` sono cumulativi nella sessione e potrebbero superare la dimensione della finestra di contesto
+* Usa `used_percentage` per lo stato di contesto più semplice e accurato
 * La percentuale di contesto potrebbe differire dall'output `/context` a causa di quando ciascuno viene calcolato
 
 **I link OSC 8 non sono cliccabili**

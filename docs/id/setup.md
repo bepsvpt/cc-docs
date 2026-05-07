@@ -175,14 +175,18 @@ Setelah menginstal, masuk dengan menjalankan `claude` dan mengikuti petunjuk bro
 
 ## Perbarui Claude Code
 
-Instalasi asli secara otomatis diperbarui di latar belakang. Anda dapat [mengonfigurasi saluran rilis](#configure-release-channel) untuk mengontrol apakah Anda menerima pembaruan segera atau sesuai jadwal stabil yang tertunda, atau [menonaktifkan pembaruan otomatis](#disable-auto-updates) sepenuhnya. Instalasi Homebrew, WinGet, dan [manajer paket Linux](#install-with-linux-package-managers) memerlukan pembaruan manual.
+Instalasi asli secara otomatis diperbarui di latar belakang. Anda dapat [mengonfigurasi saluran rilis](#configure-release-channel) untuk mengontrol apakah Anda menerima pembaruan segera atau sesuai jadwal stabil yang tertunda, atau [menonaktifkan pembaruan otomatis](#disable-auto-updates) sepenuhnya. Instalasi Homebrew, WinGet, dan [manajer paket Linux](#install-with-linux-package-managers) memerlukan pembaruan manual secara default.
 
 ### Pembaruan otomatis
 
 Claude Code memeriksa pembaruan saat startup dan secara berkala saat berjalan. Pembaruan diunduh dan diinstal di latar belakang, kemudian berlaku saat Anda memulai Claude Code berikutnya.
 
 <Note>
-  Instalasi Homebrew, WinGet, apt, dnf, dan apk tidak auto-update. Untuk Homebrew, jalankan `brew upgrade claude-code` atau `brew upgrade claude-code@latest`, tergantung cask mana yang Anda instal. Untuk WinGet, jalankan `winget upgrade Anthropic.ClaudeCode`. Untuk manajer paket Linux, lihat perintah upgrade di [Install with Linux package managers](#install-with-linux-package-managers).
+  Instalasi Homebrew, WinGet, apt, dnf, dan apk tidak auto-update secara default; lihat di bawah untuk memilih masuk untuk Homebrew dan WinGet. Untuk upgrade Homebrew secara manual, jalankan `brew upgrade claude-code` atau `brew upgrade claude-code@latest`, tergantung cask mana yang Anda instal. Untuk WinGet, jalankan `winget upgrade Anthropic.ClaudeCode`. Untuk manajer paket Linux, lihat perintah upgrade di [Install with Linux package managers](#install-with-linux-package-managers).
+
+  Untuk membuat Claude Code menjalankan perintah upgrade untuk Anda di Homebrew atau WinGet, atur [`CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE`](/id/env-vars) ke `1`. Claude Code kemudian menjalankan upgrade di latar belakang ketika versi baru tersedia dan menampilkan prompt restart saat berhasil. Upgrade menargetkan hanya paket Claude Code dan tidak mempengaruhi perangkat lunak lain yang telah Anda instal.
+
+  Di WinGet upgrade mungkin gagal saat Claude Code berjalan karena Windows mengunci executable. Dalam hal itu Claude Code menampilkan perintah manual sebagai gantinya. apt, dnf, dan apk terus memerlukan upgrade manual karena perintah tersebut memerlukan privilege yang ditingkatkan.
 
   **Masalah yang diketahui:** Claude Code dapat memberi tahu Anda tentang pembaruan sebelum versi baru tersedia di manajer paket ini. Jika upgrade gagal, tunggu dan coba lagi nanti.
 
@@ -489,7 +493,7 @@ Selain manifes yang ditandatangani, biner individual membawa tanda tangan kode n
 
 ## Hapus instalasi Claude Code
 
-Untuk menghapus Claude Code, ikuti instruksi untuk metode instalasi Anda.
+Untuk menghapus Claude Code, ikuti instruksi untuk metode instalasi Anda. Jika `claude` masih berjalan setelahnya, Anda kemungkinan memiliki instalasi kedua atau alias shell yang tertinggal dari installer yang lebih lama. Lihat [Periksa instalasi yang bertentangan](/id/troubleshoot-install#check-for-conflicting-installations) untuk menemukan dan menghapusnya.
 
 ### Instalasi asli
 

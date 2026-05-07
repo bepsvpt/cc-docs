@@ -11,7 +11,7 @@
 <Note>
   键盘快捷键可能因平台和终端而异。按 `?` 查看您的环境中可用的快捷键。
 
-  **macOS 用户**：Option/Alt 键快捷键（`Alt+B`、`Alt+F`、`Alt+Y`、`Alt+M`、`Alt+P`、`Alt+T`）需要在终端中将 Option 配置为 Meta：
+  **macOS 用户**：Option/Alt 键快捷键（`Alt+B`、`Alt+F`、`Alt+Y`、`Alt+M`、`Alt+P`）需要在终端中将 Option 配置为 Meta：
 
   * **iTerm2**：设置 → 配置文件 → 键 → 常规 → 将左/右 Option 键设置为"Esc+"
   * **Apple Terminal**：设置 → 配置文件 → 键盘 → 勾选"使用 Option 作为 Meta 键"
@@ -39,7 +39,7 @@
 | `Esc` + `Esc`                                | 回退或总结                 | 将代码和/或对话恢复到上一个点，或从选定的消息进行总结                                                                                                         |
 | `Shift+Tab` 或 `Alt+M`（某些配置）                  | 循环权限模式                | 在 `default`、`acceptEdits`、`plan` 和您启用的任何模式（如 `auto` 或 `bypassPermissions`）之间循环。请参阅[权限模式](/zh-CN/permission-modes)。                  |
 | `Option+P`（macOS）或 `Alt+P`（Windows/Linux）    | 切换模型                  | 在不清除提示的情况下切换模型                                                                                                                      |
-| `Option+T`（macOS）或 `Alt+T`（Windows/Linux）    | 切换扩展思考                | 启用或禁用扩展思考模式。在 macOS 上，配置您的终端以发送 Option 作为 Meta，以便此快捷键工作                                                                             |
+| `Option+T`（macOS）或 `Alt+T`（Windows/Linux）    | 切换扩展思考                | 启用或禁用扩展思考模式。{/* min-version: 2.1.132 */}从 v2.1.132 开始，此快捷键在 macOS 上无需配置 Option 作为 Meta 即可工作                                         |
 | `Option+O`（macOS）或 `Alt+O`（Windows/Linux）    | 切换快速模式                | 启用或禁用[快速模式](/zh-CN/fast-mode)                                                                                                       |
 
 ### 文本编辑
@@ -68,12 +68,12 @@
 | :---------- | :------------- | :------------------------------------------------------------------------------------------- |
 | 快速转义        | `\` + `Enter`  | 在所有终端中工作                                                                                     |
 | Option 键    | `Option+Enter` | 在 macOS 上启用[将 Option 作为 Meta](/zh-CN/terminal-config#enable-option-key-shortcuts-on-macos) 后 |
-| Shift+Enter | `Shift+Enter`  | 在 iTerm2、WezTerm、Ghostty、Kitty、Warp、Apple Terminal 中开箱即用                                     |
+| Shift+Enter | `Shift+Enter`  | 在 iTerm2、WezTerm、Ghostty、Kitty、Warp、Apple Terminal、Windows Terminal 中开箱即用                    |
 | 控制序列        | `Ctrl+J`       | 在任何终端中工作，无需配置                                                                                |
 | 粘贴模式        | 直接粘贴           | 对于代码块、日志                                                                                     |
 
 <Tip>
-  Shift+Enter 在 iTerm2、WezTerm、Ghostty、Kitty、Warp 和 Apple Terminal 中无需配置即可工作。对于 VS Code、Cursor、Windsurf、Alacritty 和 Zed，运行 `/terminal-setup` 以安装绑定。
+  Shift+Enter 在 iTerm2、WezTerm、Ghostty、Kitty、Warp、Apple Terminal 和 Windows Terminal 中无需配置即可工作。对于 VS Code、Cursor、Windsurf、Alacritty 和 Zed，运行 `/terminal-setup` 以安装绑定。
 </Tip>
 
 ### 快速命令
@@ -81,7 +81,7 @@
 | 快捷键     | 描述        | 注释                                          |
 | :------ | :-------- | :------------------------------------------ |
 | `/` 在开始 | 命令或 skill | 请参阅[命令](#commands)和 [skills](/zh-CN/skills) |
-| `!` 在开始 | Bash 模式   | 直接运行命令并将执行输出添加到会话                           |
+| `!` 在开始 | Shell 模式  | 直接运行命令并将执行输出添加到会话                           |
 | `@`     | 文件路径提及    | 触发文件路径自动完成                                  |
 
 ### 转录查看器
@@ -130,6 +130,7 @@
 | 命令              | 操作                  |
 | :-------------- | :------------------ |
 | `h`/`j`/`k`/`l` | 向左/向下/向上/向右移动       |
+| `Space`         | 向右移动                |
 | `w`             | 下一个单词               |
 | `e`             | 单词末尾                |
 | `b`             | 上一个单词               |
@@ -220,7 +221,7 @@ Claude Code 为当前会话维护命令历史：
 1. **开始搜索**：按 `Ctrl+R` 激活反向历史搜索
 2. **键入查询**：输入文本以在以前的命令中搜索。搜索词在匹配结果中突出显示
 3. **导航匹配**：再次按 `Ctrl+R` 以循环浏览较旧的匹配
-4. **更改范围**：按 `Ctrl+S` 在此会话、此项目和所有项目之间循环
+4. **更改范围**：搜索默认为来自所有项目的提示。按 `Ctrl+S` 在此会话、此项目和所有项目之间循环范围
 5. **接受匹配**：
    * 按 `Tab` 或 `Esc` 接受当前匹配并继续编辑
    * 按 `Enter` 接受并立即执行命令

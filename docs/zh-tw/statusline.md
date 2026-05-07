@@ -130,11 +130,11 @@
 
 ## 狀態列如何運作
 
-Claude Code 執行您的指令碼並透過 stdin 將 [JSON 工作階段資料](#available-data)傳送給它。您的指令碼讀取 JSON、提取所需內容並將文字列印到 stdout。Claude Code 顯示您的指令碼列印的任何內容。
+Claude Code 執行您的指令碼並透過 stdin 將 [JSON 工作階段資料](#available-data) 傳送給它。您的指令碼讀取 JSON、提取所需內容並將文字列印到 stdout。Claude Code 顯示您的指令碼列印的任何內容。
 
 **何時更新**
 
-您的指令碼在每個新的助手訊息之後、權限模式變更時或 vim 模式切換時執行。更新在 300ms 處進行去抖動，這意味著快速變更會批次在一起，您的指令碼在事情穩定後執行一次。如果在您的指令碼仍在執行時觸發新的更新，則會取消進行中的執行。如果您編輯指令碼，變更在您與 Claude Code 的下一次互動觸發更新之前不會出現。
+您的指令碼在每個新的助手訊息之後、`/compact` 完成後、權限模式變更時或 vim 模式切換時執行。更新在 300ms 處進行去抖動，這意味著快速變更會批次在一起，您的指令碼在事情穩定後執行一次。如果在您的指令碼仍在執行時觸發新的更新，則會取消進行中的執行。如果您編輯指令碼，變更在您與 Claude Code 的下一次互動觸發更新之前不會出現。
 
 這些觸發器在主工作階段閒置時可能會安靜，例如當協調器等待背景子代理時。為了在閒置期間保持基於時間或外部來源的片段最新，請將 [`refreshInterval`](#manually-configure-a-status-line) 設定為也在固定計時器上重新執行命令。
 
@@ -142,7 +142,7 @@ Claude Code 執行您的指令碼並透過 stdin 將 [JSON 工作階段資料](#
 
 * **多行**：每個 `echo` 或 `print` 陳述式顯示為單獨的行。請參閱[多行範例](#display-multiple-lines)。
 * **顏色**：使用 [ANSI 逃逸碼](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors)，例如 `\033[32m` 表示綠色（終端必須支援它們）。請參閱 [git 狀態範例](#git-status-with-colors)。
-* **連結**：使用 [OSC 8 逃逸序列](https://en.wikipedia.org/wiki/ANSI_escape_code#OSC)使文字可點擊（macOS 上為 Cmd+click，Windows/Linux 上為 Ctrl+click）。需要支援超連結的終端，例如 iTerm2、Kitty 或 WezTerm。請參閱[可點擊連結範例](#clickable-links)。
+* **連結**：使用 [OSC 8 逃逸序列](https://en.wikipedia.org/wiki/ANSI_escape_code#OSC) 使文字可點擊（macOS 上為 Cmd+click，Windows/Linux 上為 Ctrl+click）。需要支援超連結的終端，例如 iTerm2、Kitty 或 WezTerm。請參閱[可點擊連結範例](#clickable-links)。
 
 <Note>狀態列在本地執行，不消耗 API 令牌。在某些 UI 互動期間，它會暫時隱藏，包括自動完成建議、說明功能表和權限提示。</Note>
 
@@ -161,7 +161,7 @@ Claude Code 透過 stdin 將以下 JSON 欄位傳送到您的指令碼：
 | `cost.total_duration_ms`                                                         | 自工作階段開始以來的總掛鐘時間（毫秒）                                                                                                                     |
 | `cost.total_api_duration_ms`                                                     | 等待 API 回應所花費的總時間（毫秒）                                                                                                                    |
 | `cost.total_lines_added`, `cost.total_lines_removed`                             | 變更的程式碼行數                                                                                                                                |
-| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | 整個工作階段中的累積令牌計數                                                                                                                          |
+| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | 目前在 context window 中的令牌計數，來自最近的 API 回應。輸入包括快取讀取和寫入。{/* min-version: 2.1.132 */}v2.1.132 之前這些是累積工作階段總計                                   |
 | `context_window.context_window_size`                                             | 最大 context window 大小（令牌）。預設為 200000，或具有擴展 context 的模型為 1000000。                                                                         |
 | `context_window.used_percentage`                                                 | 預先計算的已使用 context window 百分比                                                                                                             |
 | `context_window.remaining_percentage`                                            | 預先計算的剩餘 context window 百分比                                                                                                              |
@@ -215,8 +215,8 @@ Claude Code 透過 stdin 將以下 JSON 欄位傳送到您的指令碼：
       "total_lines_removed": 23
     },
     "context_window": {
-      "total_input_tokens": 15234,
-      "total_output_tokens": 4521,
+      "total_input_tokens": 15500,
+      "total_output_tokens": 1200,
       "context_window_size": 200000,
       "used_percentage": 8,
       "remaining_percentage": 92,
@@ -272,7 +272,7 @@ Claude Code 透過 stdin 將以下 JSON 欄位傳送到您的指令碼：
 
   **可能為 `null` 的欄位**：
 
-  * `context_window.current_usage`：在工作階段中第一次 API 呼叫之前為 `null`
+  * `context_window.current_usage`：在工作階段中第一次 API 呼叫之前為 `null`，以及在 `/compact` 之後直到下一次 API 呼叫重新填入為止
   * `context_window.used_percentage`, `context_window.remaining_percentage`：在工作階段早期可能為 `null`
 
   在您的指令碼中使用條件存取處理遺漏的欄位，並使用後備預設值處理 null 值。
@@ -280,10 +280,10 @@ Claude Code 透過 stdin 將以下 JSON 欄位傳送到您的指令碼：
 
 ### Context window 欄位
 
-`context_window` 物件提供兩種追蹤 context 使用情況的方式：
+`context_window` 物件描述來自最近 API 回應的即時 context window。自 v2.1.132 起，`total_input_tokens` 和 `total_output_tokens` 反映目前 context 使用情況，而非累積工作階段總計。
 
-* **累積總計**（`total_input_tokens`, `total_output_tokens`）：整個工作階段中所有令牌的總和，用於追蹤總消耗
-* **目前使用情況**（`current_usage`）：最後一次 API 呼叫中的令牌計數，使用此來取得準確的 context 百分比，因為它反映實際的 context 狀態
+* **合併總計**（`total_input_tokens`, `total_output_tokens`）：目前在 context window 中的令牌。`total_input_tokens` 是 `input_tokens`、`cache_creation_input_tokens` 和 `cache_read_input_tokens` 的總和；`total_output_tokens` 是最近回應中的輸出令牌。在第一次 API 回應之前兩者都是 `0`。
+* **按元件使用情況**（`current_usage`）：相同的令牌計數按類別分解。當您需要將快取命中與新輸入分開時，請使用此項。
 
 `current_usage` 物件包含：
 
@@ -296,7 +296,7 @@ Claude Code 透過 stdin 將以下 JSON 欄位傳送到您的指令碼：
 
 如果您從 `current_usage` 手動計算 context 百分比，請使用相同的僅輸入公式以符合 `used_percentage`。
 
-`current_usage` 物件在工作階段中第一次 API 呼叫之前為 `null`。
+`current_usage` 物件在工作階段中第一次 API 呼叫之前為 `null`，以及在 `/compact` 之後直到下一次 API 呼叫重新填入為止再次為 `null`。
 
 ## 範例
 
@@ -1011,8 +1011,7 @@ Bash 範例使用 [`jq`](https://jqlang.github.io/jq/) 來解析 JSON。Python �
 
 **Context 百分比顯示意外值**
 
-* 使用 `used_percentage` 以取得準確的 context 狀態，而不是累積總計
-* `total_input_tokens` 和 `total_output_tokens` 在整個工作階段中累積，可能超過 context window 大小
+* 使用 `used_percentage` 以取得最簡單的準確 context 狀態
 * Context 百分比可能與 `/context` 輸出不同，因為每個計算時間不同
 
 **OSC 8 連結不可點擊**

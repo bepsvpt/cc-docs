@@ -175,14 +175,18 @@ Claude Code 需要 Pro、Max、Team、Enterprise 或 Console 账户。免费的 
 
 ## 更新 Claude Code
 
-原生安装会在后台自动更新。您可以[配置发布渠道](#configure-release-channel)来控制您是立即接收更新还是按延迟的稳定计划接收更新，或者[完全禁用自动更新](#disable-auto-updates)。Homebrew、WinGet 和[Linux 包管理器](#install-with-linux-package-managers)安装需要手动更新。
+原生安装会在后台自动更新。您可以[配置发布渠道](#configure-release-channel)来控制您是立即接收更新还是按延迟的稳定计划接收更新，或者[完全禁用自动更新](#disable-auto-updates)。Homebrew、WinGet 和[Linux 包管理器](#install-with-linux-package-managers)安装默认需要手动更新。
 
 ### 自动更新
 
 Claude Code 在启动时和运行时定期检查更新。更新在后台下载和安装，然后在您下次启动 Claude Code 时生效。
 
 <Note>
-  Homebrew、WinGet、apt、dnf 和 apk 安装不会自动更新。对于 Homebrew，运行 `brew upgrade claude-code` 或 `brew upgrade claude-code@latest`，具体取决于您安装的 cask。对于 WinGet，运行 `winget upgrade Anthropic.ClaudeCode`。对于 Linux 包管理器，请参阅[使用 Linux 包管理器安装](#install-with-linux-package-managers)中的升级命令。
+  Homebrew、WinGet、apt、dnf 和 apk 安装默认不会自动更新；请参阅下文以选择加入 Homebrew 和 WinGet。要手动升级 Homebrew，请运行 `brew upgrade claude-code` 或 `brew upgrade claude-code@latest`，具体取决于您安装的 cask。对于 WinGet，请运行 `winget upgrade Anthropic.ClaudeCode`。对于 Linux 包管理器，请参阅[使用 Linux 包管理器安装](#install-with-linux-package-managers)中的升级命令。
+
+  要让 Claude Code 在 Homebrew 或 WinGet 上为您运行升级命令，请将 [`CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE`](/zh-CN/env-vars) 设置为 `1`。Claude Code 随后会在新版本可用时在后台运行升级，并在成功时显示重启提示。升级仅针对 Claude Code 包，不会影响您已安装的其他软件。
+
+  在 WinGet 上，当 Claude Code 运行时升级可能会失败，因为 Windows 会锁定可执行文件。在这种情况下，Claude Code 会改为显示手动命令。apt、dnf 和 apk 继续需要手动升级，因为这些命令需要提升的权限。
 
   **已知问题**：Claude Code 可能会在新版本在这些包管理器中可用之前通知您有更新。如果升级失败，请稍候后重试。
 
@@ -489,7 +493,7 @@ npm 包安装与独立安装程序相同的原生二进制文件。npm 通过每
 
 ## 卸载 Claude Code
 
-要删除 Claude Code，请按照您的安装方法的说明进行操作。
+要删除 Claude Code，请按照您的安装方法的说明进行操作。如果之后 `claude` 仍然运行，您可能有第二个安装或来自较旧安装程序的遗留 shell 别名。请参阅[检查冲突的安装](/zh-CN/troubleshoot-install#check-for-conflicting-installations)以查找并删除它。
 
 ### 原生安装
 

@@ -315,6 +315,12 @@ Man mano che apporti modifiche al tuo plugin, esegui `/reload-plugins` per racco
   ```
 </Tip>
 
+Per testare un plugin che è già stato confezionato come archivio `.zip` e ospitato su un URL, come un artefatto di build CI, usa `--plugin-url` invece. Claude Code recupera l'archivio all'avvio e lo carica solo per quella sessione. Se il recupero fallisce o l'archivio non è valido, Claude Code segnala un errore di caricamento del plugin e si avvia senza di esso. Le stesse [considerazioni sulla fiducia](/it/discover-plugins#security) si applicano come per qualsiasi fonte di plugin: punta questo flag solo ad archivi che controlli o di cui ti fidi.
+
+```bash theme={null}
+claude --plugin-url https://example.com/my-plugin.zip
+```
+
 ### Esegui il debug dei problemi del plugin
 
 Se il tuo plugin non funziona come previsto:

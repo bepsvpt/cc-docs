@@ -219,7 +219,7 @@ Ogni funzionalità ha una strategia di caricamento e un costo di contesto divers
 | **Subagents**  | Quando generati                           | Contesto fresco con skills specificate                       | Isolato dalla sessione principale                           |
 | **Hooks**      | Al trigger                                | Niente (viene eseguito esternamente)                         | Zero, a meno che l'hook non restituisca contesto aggiuntivo |
 
-\*Per impostazione predefinita, le descrizioni delle skills si caricano all'inizio della sessione in modo che Claude possa decidere quando utilizzarle. Impostate `disable-model-invocation: true` nel frontmatter di una skill per nasconderla completamente a Claude fino a quando non la invocate manualmente. Questo riduce il costo del contesto a zero per le skills che invocate solo voi.
+\*Per impostazione predefinita, le descrizioni delle skills si caricano all'inizio della sessione in modo che Claude possa decidere quando utilizzarle. Impostate `disable-model-invocation: true` nel frontmatter di una skill per nasconderla completamente a Claude fino a quando non la invocate manualmente. Questo riduce il costo del contesto a zero per le skills che invocate solo voi. Per una skill che non avete scritto, impostate [`skillOverrides`](/it/skills#override-skill-visibility-from-settings) nelle impostazioni per fare lo stesso senza modificare il suo file.
 
 ### Comprendete come le funzionalità si caricano
 
@@ -282,7 +282,7 @@ Ogni funzionalità si carica in diversi punti della vostra sessione. Le schede s
   </Tab>
 
   <Tab title="Hooks">
-    **Quando:** Al trigger. Gli hooks si attivano su eventi del ciclo di vita specifici come esecuzione dello strumento, confini della sessione, invio del prompt, richieste di autorizzazione e compattazione. Consultate [Hooks](/it/hooks-guide) per l'elenco completo.
+    **Quando:** Al trigger. Gli hooks si attivano su eventi del ciclo di vita specifici come esecuzione dello strumento, confini della sessione, invio del prompt, richieste di autorizzazione e compattazione. Consultate [Hooks](/it/hooks) per l'elenco completo.
 
     **Cosa si carica:** Niente per impostazione predefinita. Gli hooks vengono eseguiti al di fuori della conversazione principale.
 

@@ -64,6 +64,8 @@ claude
   托管设置可以通过 MDM（移动设备管理）或其他设备管理解决方案分发。在托管设置文件中定义的环境变量具有高优先级，用户无法覆盖。
 </Note>
 
+Claude Code 不会将 `OTEL_*` 环境变量传递给它生成的子进程，包括 Bash 工具、hooks、MCP 服务器和语言服务器。通过 Bash 工具运行的已进行 OpenTelemetry 检测的应用程序不会继承 Claude Code 的导出器端点或标头，因此如果该应用程序需要导出自己的遥测，请直接在命令中设置这些变量。
+
 ## 配置详情
 
 ### 常见配置变量
@@ -80,8 +82,6 @@ claude
 | `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`                  | 日志协议，覆盖常规设置                                                                                                                                                                                               | `grpc`、`http/json`、`http/protobuf`                                    |
 | `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`                  | OTLP 日志端点，覆盖常规设置                                                                                                                                                                                          | `http://localhost:4318/v1/logs`                                       |
 | `OTEL_EXPORTER_OTLP_HEADERS`                        | OTLP 的身份验证标头                                                                                                                                                                                              | `Authorization=Bearer token`                                          |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY`             | mTLS 身份验证的客户端密钥                                                                                                                                                                                           | 客户端密钥文件的路径                                                            |
-| `OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE`     | mTLS 身份验证的客户端证书                                                                                                                                                                                           | 客户端证书文件的路径                                                            |
 | `OTEL_METRIC_EXPORT_INTERVAL`                       | 导出间隔（毫秒）（默认：60000）                                                                                                                                                                                        | `5000`、`60000`                                                        |
 | `OTEL_LOGS_EXPORT_INTERVAL`                         | 日志导出间隔（毫秒）（默认：5000）                                                                                                                                                                                       | `1000`、`10000`                                                        |
 | `OTEL_LOG_USER_PROMPTS`                             | 启用用户提示内容的日志记录（默认：禁用）                                                                                                                                                                                      | `1` 启用                                                                |
@@ -90,6 +90,17 @@ claude
 | `OTEL_LOG_RAW_API_BODIES`                           | 将完整的 Anthropic Messages API 请求和响应 JSON 作为 `api_request_body` / `api_response_body` 日志事件发出（默认：禁用）。主体包括整个对话历史。启用此选项意味着同意 `OTEL_LOG_USER_PROMPTS`、`OTEL_LOG_TOOL_DETAILS` 和 `OTEL_LOG_TOOL_CONTENT` 会揭示的所有内容 | `1` 用于在 60 KB 处截断的内联主体，或 `file:<dir>` 用于磁盘上的未截断主体，事件中带有 `body_ref` 指针 |
 | `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | 指标时间性偏好（默认：`delta`）。如果您的后端期望累积时间性，请设置为 `cumulative`                                                                                                                                                       | `delta`、`cumulative`                                                  |
 | `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`       | 刷新动态标头的间隔（默认：1740000ms / 29 分钟）                                                                                                                                                                           | `900000`                                                              |
+
+### mTLS 身份验证
+
+您为 OTLP 导出器配置客户端证书的方式取决于用于该信号的 OTLP 协议，通过 `OTEL_EXPORTER_OTLP_PROTOCOL` 或每个信号的覆盖设置。相同的配置适用于指标、日志和跟踪。
+
+| 协议                          | 客户端证书变量                                                                                                                                           | 信任收集器的 CA                        |
+| :-------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------- |
+| `http/protobuf`、`http/json` | `CLAUDE_CODE_CLIENT_CERT`、`CLAUDE_CODE_CLIENT_KEY` 和可选的 `CLAUDE_CODE_CLIENT_KEY_PASSPHRASE`。请参阅 [网络配置](/zh-CN/network-config#mtls-authentication) | `NODE_EXTRA_CA_CERTS`            |
+| `grpc`                      | `OTEL_EXPORTER_OTLP_CLIENT_KEY` 和 `OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE`，或每个信号的变体，例如 `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY` 以为每个信号使用不同的证书       | `OTEL_EXPORTER_OTLP_CERTIFICATE` |
+
+对于 `grpc`，OpenTelemetry SDK 直接读取标准 OTLP 变量，因此设置每个信号指标变量的现有配置继续工作。
 
 ### 指标基数控制
 
@@ -107,7 +118,7 @@ claude
 
 分布式跟踪导出 span，将每个用户提示链接到它触发的 API 请求和工具执行，因此您可以在跟踪后端中将完整请求视为单个 trace。
 
-跟踪默认关闭。要启用它，请同时设置 `CLAUDE_CODE_ENABLE_TELEMETRY=1` 和 `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`，然后设置 `OTEL_TRACES_EXPORTER` 以选择 span 的发送位置。Traces 重用 [常见 OTLP 配置](#common-configuration-variables) 用于端点、协议和标头。
+跟踪默认关闭。要启用它，请同时设置 `CLAUDE_CODE_ENABLE_TELEMETRY=1` 和 `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`，然后设置 `OTEL_TRACES_EXPORTER` 以选择 span 的发送位置。Traces 重用 [常见 OTLP 配置](#common-configuration-variables) 用于端点、协议、标头和 [mTLS](#mtls-authentication)。
 
 | 环境变量                                  | 描述                                                  | 示例值                                |
 | ------------------------------------- | --------------------------------------------------- | ---------------------------------- |
@@ -233,7 +244,7 @@ claude_code.interaction
 
 ### 动态标头
 
-对于需要动态身份验证的企业环境，您可以配置脚本来动态生成标头：
+对于需要动态身份验证的企业环境，您可以配置脚本来动态生成标头。动态标头仅适用于 `http/protobuf` 和 `http/json` 协议。`grpc` 导出器仅使用静态 `OTEL_EXPORTER_OTLP_HEADERS` 值。
 
 #### 设置配置
 
@@ -410,7 +421,7 @@ Claude Code 导出以下指标：
 
 #### 拉取请求计数器
 
-通过 Claude Code 创建拉取请求时递增。
+通过 Claude Code 创建拉取请求或合并请求时递增。
 
 **属性**：
 

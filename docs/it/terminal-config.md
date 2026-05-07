@@ -23,11 +23,11 @@ Premere Invio invia il tuo messaggio. Per aggiungere un'interruzione di riga sen
 
 Nella maggior parte dei terminali puoi anche premere Shift+Invio, ma il supporto varia a seconda dell'emulatore di terminale:
 
-| Terminale                                                                      | Shift+Invio per nuova riga                  |
-| :----------------------------------------------------------------------------- | :------------------------------------------ |
-| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal                          | Funziona senza configurazione               |
-| VS Code, Cursor, Windsurf, Alacritty, Zed                                      | Esegui `/terminal-setup` una volta          |
-| Windows Terminal, gnome-terminal, JetBrains IDEs come PyCharm e Android Studio | Non disponibile; usa Ctrl+J o `\` poi Invio |
+| Terminale                                                               | Shift+Invio per nuova riga                  |
+| :---------------------------------------------------------------------- | :------------------------------------------ |
+| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal, Windows Terminal | Funziona senza configurazione               |
+| VS Code, Cursor, Windsurf, Alacritty, Zed                               | Esegui `/terminal-setup` una volta          |
+| gnome-terminal, JetBrains IDEs come PyCharm e Android Studio            | Non disponibile; usa Ctrl+J o `\` poi Invio |
 
 Per VS Code, Cursor, Windsurf, Alacritty e Zed, `/terminal-setup` scrive Shift+Invio e altre scorciatoie da tastiera nel file di configurazione del terminale. In VS Code, Cursor e Windsurf imposta anche `terminal.integrated.mouseWheelScrollSensitivity` nelle impostazioni dell'editor per uno scorrimento più fluido in [modalità a schermo intero](/it/fullscreen). I binding e le impostazioni esistenti rimangono in posizione; se vedi un messaggio come `VSCode terminal Shift+Enter key binding already configured`, non è stata apportata alcuna modifica. Esegui `/terminal-setup` direttamente nel terminale host piuttosto che dentro tmux o screen, poiché ha bisogno di scrivere nella configurazione del terminale host.
 

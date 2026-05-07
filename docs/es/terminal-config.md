@@ -23,13 +23,13 @@ Presionar Enter envía tu mensaje. Para agregar un salto de línea sin enviar, p
 
 En la mayoría de terminales también puedes presionar Shift+Enter, pero el soporte varía según el emulador de terminal:
 
-| Terminal                                                                          | Shift+Enter para salto de línea             |
-| :-------------------------------------------------------------------------------- | :------------------------------------------ |
-| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal                             | Funciona sin configuración                  |
-| VS Code, Cursor, Windsurf, Alacritty, Zed                                         | Ejecuta `/terminal-setup` una vez           |
-| Windows Terminal, gnome-terminal, IDEs de JetBrains como PyCharm y Android Studio | No disponible; usa Ctrl+J o `\` luego Enter |
+| Terminal                                                                | Shift+Enter para salto de línea             |
+| :---------------------------------------------------------------------- | :------------------------------------------ |
+| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal, Windows Terminal | Funciona sin configuración                  |
+| VS Code, Cursor, Windsurf, Alacritty, Zed                               | Ejecuta `/terminal-setup` una vez           |
+| gnome-terminal, IDEs de JetBrains como PyCharm y Android Studio         | No disponible; usa Ctrl+J o `\` luego Enter |
 
-Para VS Code, Cursor, Windsurf, Alacritty y Zed, `/terminal-setup` escribe Shift+Enter y otros atajos de teclado en el archivo de configuración de la terminal. En VS Code, Cursor y Windsurf también establece `terminal.integrated.mouseWheelScrollSensitivity` en la configuración del editor para un desplazamiento más suave en [modo pantalla completa](/es/fullscreen). Los enlaces existentes y la configuración se dejan en su lugar; si ve un mensaje como `VSCode terminal Shift+Enter key binding already configured`, no se realizó ningún cambio. Ejecuta `/terminal-setup` directamente en la terminal del host en lugar de dentro de tmux o screen, ya que necesita escribir en la configuración de la terminal del host.
+Para VS Code, Cursor, Windsurf, Alacritty y Zed, `/terminal-setup` escribe Shift+Enter y otros atajos de teclado en el archivo de configuración de la terminal. En VS Code, Cursor y Windsurf también establece `terminal.integrated.mouseWheelScrollSensitivity` en la configuración del editor para un desplazamiento más suave en [modo pantalla completa](/es/fullscreen). Los enlaces existentes y la configuración se dejan en su lugar; si ves un mensaje como `VSCode terminal Shift+Enter key binding already configured`, no se realizó ningún cambio. Ejecuta `/terminal-setup` directamente en la terminal del host en lugar de dentro de tmux o screen, ya que necesita escribir en la configuración de la terminal del host.
 
 Si estás ejecutando dentro de tmux, Shift+Enter también requiere la [configuración de tmux a continuación](#configure-tmux) incluso cuando la terminal externa la soporta.
 

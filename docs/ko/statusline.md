@@ -134,7 +134,7 @@ Claude Code는 스크립트를 실행하고 stdin을 통해 [JSON 세션 데이�
 
 **업데이트 시기**
 
-스크립트는 새로운 어시스턴트 메시지 후, 권한 모드가 변경될 때 또는 vim 모드가 전환될 때 실행됩니다. 업데이트는 300ms에서 디바운스되므로 빠른 변경이 함께 일괄 처리되고 스크립트는 상황이 안정화되면 한 번 실행됩니다. 스크립트가 여전히 실행 중인 동안 새 업데이트가 트리거되면 진행 중인 실행이 취소됩니다. 스크립트를 편집하면 Claude Code와의 다음 상호 작용이 업데이트를 트리거할 때까지 변경 사항이 나타나지 않습니다.
+스크립트는 새로운 어시스턴트 메시지 후, `/compact` 완료 후, 권한 모드가 변경될 때 또는 vim 모드가 전환될 때 실행됩니다. 업데이트는 300ms에서 디바운스되므로 빠른 변경이 함께 일괄 처리되고 스크립트는 상황이 안정화되면 한 번 실행됩니다. 스크립트가 여전히 실행 중인 동안 새 업데이트가 트리거되면 진행 중인 실행이 취소됩니다. 스크립트를 편집하면 Claude Code와의 다음 상호 작용이 업데이트를 트리거할 때까지 변경 사항이 나타나지 않습니다.
 
 이러한 트리거는 주 세션이 유휴 상태일 때(예: 코디네이터가 백그라운드 서브에이전트를 기다릴 때) 조용해질 수 있습니다. 유휴 기간 동안 시간 기반 또는 외부 소스 세그먼트를 최신 상태로 유지하려면 [`refreshInterval`](#manually-configure-a-status-line)을 설정하여 고정 타이머에서도 명령을 다시 실행합니다.
 
@@ -161,7 +161,7 @@ Claude Code는 stdin을 통해 스크립트에 다음 JSON 필드를 보냅니�
 | `cost.total_duration_ms`                                                         | 세션 시작 이후의 총 벽시계 시간(밀리초)                                                                                                                                         |
 | `cost.total_api_duration_ms`                                                     | API 응답 대기에 소비된 총 시간(밀리초)                                                                                                                                        |
 | `cost.total_lines_added`, `cost.total_lines_removed`                             | 변경된 코드 줄                                                                                                                                                        |
-| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | 세션 전체의 누적 토큰 수                                                                                                                                                  |
+| `context_window.total_input_tokens`, `context_window.total_output_tokens`        | 컨텍스트 윈도우에 현재 있는 토큰 수(가장 최근 API 응답에서). 입력에는 캐시 읽기 및 쓰기가 포함됩니다. v2.1.132 이전에는 누적 세션 합계였습니다                                                                        |
 | `context_window.context_window_size`                                             | 토큰 단위의 최대 컨텍스트 윈도우 크기. 기본값은 200,000이거나 확장된 컨텍스트가 있는 모델의 경우 1,000,000입니다.                                                                                        |
 | `context_window.used_percentage`                                                 | 사용된 컨텍스트 윈도우의 사전 계산된 백분율                                                                                                                                        |
 | `context_window.remaining_percentage`                                            | 남은 컨텍스트 윈도우의 사전 계산된 백분율                                                                                                                                         |
@@ -215,8 +215,8 @@ Claude Code는 stdin을 통해 스크립트에 다음 JSON 필드를 보냅니�
       "total_lines_removed": 23
     },
     "context_window": {
-      "total_input_tokens": 15234,
-      "total_output_tokens": 4521,
+      "total_input_tokens": 15500,
+      "total_output_tokens": 1200,
       "context_window_size": 200000,
       "used_percentage": 8,
       "remaining_percentage": 92,
@@ -272,7 +272,7 @@ Claude Code는 stdin을 통해 스크립트에 다음 JSON 필드를 보냅니�
 
   **`null`일 수 있는 필드**:
 
-  * `context_window.current_usage`: 세션의 첫 번째 API 호출 전에 `null`
+  * `context_window.current_usage`: 세션의 첫 번째 API 호출 전에 `null`이고, `/compact` 후에 다시 `null`이 되었다가 다음 API 호출이 이를 다시 채울 때까지 유지됩니다
   * `context_window.used_percentage`, `context_window.remaining_percentage`: 세션 초기에 `null`일 수 있음
 
   스크립트에서 조건부 액세스로 누락된 필드를 처리하고 null 값을 폴백 기본값으로 처리합니다.
@@ -280,10 +280,10 @@ Claude Code는 stdin을 통해 스크립트에 다음 JSON 필드를 보냅니�
 
 ### 컨텍스트 윈도우 필드
 
-`context_window` 객체는 컨텍스트 사용량을 추적하는 두 가지 방법을 제공합니다:
+`context_window` 객체는 가장 최근 API 응답의 라이브 컨텍스트 윈도우를 설명합니다. v2.1.132부터 `total_input_tokens` 및 `total_output_tokens`는 누적 세션 합계가 아닌 현재 컨텍스트 사용량을 반영합니다.
 
-* **누적 합계** (`total_input_tokens`, `total_output_tokens`): 전체 세션 전체의 모든 토큰의 합계로, 총 소비량을 추적하는 데 유용합니다
-* **현재 사용량** (`current_usage`): 가장 최근 API 호출의 토큰 수로, 실제 컨텍스트 상태를 반영하므로 정확한 컨텍스트 백분율에 사용합니다
+* **결합된 합계** (`total_input_tokens`, `total_output_tokens`): 컨텍스트 윈도우에 현재 있는 토큰. `total_input_tokens`는 `input_tokens`, `cache_creation_input_tokens` 및 `cache_read_input_tokens`의 합계입니다. `total_output_tokens`는 가장 최근 응답의 출력 토큰입니다. 둘 다 첫 번째 API 응답 전에는 `0`입니다.
+* **구성 요소별 사용량** (`current_usage`): 카테고리별로 분류된 동일한 토큰 수. 캐시 히트를 새로운 입력과 분리해야 할 때 이를 사용합니다.
 
 `current_usage` 객체에는 다음이 포함됩니다:
 
@@ -296,7 +296,7 @@ Claude Code는 stdin을 통해 스크립트에 다음 JSON 필드를 보냅니�
 
 `current_usage`에서 컨텍스트 백분율을 수동으로 계산하는 경우 동일한 입력 전용 공식을 사용하여 `used_percentage`와 일치시킵니다.
 
-`current_usage` 객체는 세션의 첫 번째 API 호출 전에 `null`입니다.
+`current_usage` 객체는 세션의 첫 번째 API 호출 전에 `null`이고, `/compact` 직후에 다시 `null`이 되었다가 다음 API 호출이 이를 다시 채울 때까지 유지됩니다.
 
 ## 예제
 
@@ -1011,8 +1011,7 @@ Windows에서 Claude Code는 Git Bash가 설치되어 있을 때 Git Bash를 통
 
 **컨텍스트 백분율이 예상치 못한 값을 표시함**
 
-* 누적 합계 대신 정확한 컨텍스트 상태를 위해 `used_percentage`를 사용합니다
-* `total_input_tokens` 및 `total_output_tokens`는 세션 전체에 누적되며 컨텍스트 윈도우 크기를 초과할 수 있습니다
+* 가장 간단한 정확한 컨텍스트 상태를 위해 `used_percentage`를 사용합니다
 * 각각이 계산되는 시기로 인해 컨텍스트 백분율이 `/context` 출력과 다를 수 있습니다
 
 **OSC 8 링크를 클릭할 수 없음**

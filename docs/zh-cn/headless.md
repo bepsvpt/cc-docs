@@ -54,7 +54,7 @@ claude --bare -p "Summarize this file" --allowedTools "Read"
 | 设置         | `--settings <file-or-json>`                             |
 | MCP 服务器    | `--mcp-config <file-or-json>`                           |
 | 自定义 agents | `--agents <json>`                                       |
-| 插件目录       | `--plugin-dir <path>`                                   |
+| 插件         | `--plugin-dir <path>`, `--plugin-url <url>`             |
 
 裸模式跳过 OAuth 和钥匙链读取。Anthropic 身份验证必须来自 `ANTHROPIC_API_KEY` 或传递给 `--settings` 的 JSON 中的 `apiKeyHelper`。Bedrock、Vertex 和 Foundry 使用其常规提供商凭证。
 
@@ -65,6 +65,36 @@ claude --bare -p "Summarize this file" --allowedTools "Read"
 ## 示例
 
 这些示例突出了常见的 CLI 模式。对于 CI 和其他脚本调用，添加 [`--bare`](#start-faster-with-bare-mode) 以便它们不会选择本地配置的任何内容。
+
+### 通过 Claude 管道传输数据
+
+非交互模式读取 stdin，因此您可以像任何其他命令行工具一样管道传输数据并重定向响应。
+
+此示例将构建日志管道传输到 Claude 并将说明写入文件：
+
+```bash theme={null}
+cat build-error.txt | claude -p 'concisely explain the root cause of this build error' > output.txt
+```
+
+使用 `--output-format json`，响应有效负载包括 `total_cost_usd` 和按模型的成本分解，因此脚本调用者可以跟踪每次调用的支出，而无需查询 [使用情况仪表板](/zh-CN/costs)。
+
+<Note>
+  从 Claude Code v2.1.128 开始，管道 stdin 的上限为 10MB。如果超过上限，Claude Code 会以清晰的错误和非零状态退出。要处理更大的输入，请将内容写入文件并在提示中引用文件路径，而不是管道传输它。
+</Note>
+
+### 将 Claude 添加到构建脚本
+
+您可以在脚本中包装非交互调用，以将 Claude 用作项目特定的 linter 或审查者。
+
+此 `package.json` 脚本将针对 `main` 的 diff 管道传输到 Claude，并要求它报告拼写错误。管道传输 diff 意味着 Claude 不需要 Bash 权限来读取它，转义的双引号使脚本可移植到 Windows：
+
+```json theme={null}
+{
+  "scripts": {
+    "lint:claude": "git diff main | claude -p \"you are a typo linter. for each typo in this diff, report filename:line on one line and the issue on the next. return nothing else.\""
+  }
+}
+```
 
 ### 获取结构化输出
 
@@ -136,10 +166,10 @@ claude -p "Write a poem" --output-format stream-json --verbose --include-partial
 
 `system/init` 事件报告会话元数据，包括模型、工具、MCP 服务器和加载的插件。它是流中的第一个事件，除非设置了 [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/zh-CN/env-vars)，在这种情况下 `plugin_install` 事件在其之前。使用插件字段在插件未加载时使 CI 失败：
 
-| 字段              | 类型 | 描述                                                                                         |
-| --------------- | -- | ------------------------------------------------------------------------------------------ |
-| `plugins`       | 数组 | 成功加载的插件，每个都有 `name` 和 `path`                                                               |
-| `plugin_errors` | 数组 | 插件加载时错误，例如不满足的依赖版本，每个都有 `plugin`、`type` 和 `message`。受影响的插件被降级并从 `plugins` 中缺失。当没有错误时，该键被省略 |
+| 字段              | 类型 | 描述                                                                                                                          |
+| --------------- | -- | --------------------------------------------------------------------------------------------------------------------------- |
+| `plugins`       | 数组 | 成功加载的插件，每个都有 `name` 和 `path`                                                                                                |
+| `plugin_errors` | 数组 | 插件加载时错误，每个都有 `plugin`、`type` 和 `message`。包括不满足的依赖版本和 `--plugin-dir` 加载失败，例如缺失路径或无效存档。受影响的插件被降级并从 `plugins` 中缺失。当没有错误时，该键被省略 |
 
 当设置了 [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/zh-CN/env-vars) 时，Claude Code 在第一轮之前安装市场插件时发出 `system/plugin_install` 事件。使用这些在您自己的 UI 中显示安装进度。
 

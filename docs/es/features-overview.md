@@ -219,7 +219,7 @@ Cada característica tiene una estrategia de carga y costo de contexto diferente
 | **Subagents**      | Cuando se generan                | Contexto fresco con skills especificadas                  | Aislado de la sesión principal                        |
 | **Hooks**          | Al desencadenar                  | Nada (se ejecuta externamente)                            | Cero, a menos que el hook devuelva contexto adicional |
 
-\*Por defecto, las descripciones de skills se cargan al inicio de sesión para que Claude pueda decidir cuándo usarlas. Establezca `disable-model-invocation: true` en el frontmatter de una skill para ocultarla de Claude completamente hasta que la invoque manualmente. Esto reduce el costo de contexto a cero para las skills que solo desencadena usted mismo.
+\*Por defecto, las descripciones de skills se cargan al inicio de sesión para que Claude pueda decidir cuándo usarlas. Establezca `disable-model-invocation: true` en el frontmatter de una skill para ocultarla de Claude completamente hasta que la invoque manualmente. Esto reduce el costo de contexto a cero para las skills que solo desencadena usted mismo. Para una skill que no escribió, establezca [`skillOverrides`](/es/skills#override-skill-visibility-from-settings) en la configuración para hacer lo mismo sin editar su archivo.
 
 ### Entender cómo se cargan las características
 

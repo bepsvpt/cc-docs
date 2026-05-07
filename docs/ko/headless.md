@@ -54,7 +54,7 @@ claude --bare -p "Summarize this file" --allowedTools "Read"
 | 설정          | `--settings <file-or-json>`                             |
 | MCP 서버      | `--mcp-config <file-or-json>`                           |
 | 사용자 정의 에이전트 | `--agents <json>`                                       |
-| 플러그인 디렉토리   | `--plugin-dir <path>`                                   |
+| 플러그인        | `--plugin-dir <path>`, `--plugin-url <url>`             |
 
 베어 모드는 OAuth 및 키체인 읽기를 건너뜁니다. Anthropic 인증은 `ANTHROPIC_API_KEY` 또는 `--settings`에 전달된 JSON의 `apiKeyHelper`에서 가져와야 합니다. Bedrock, Vertex 및 Foundry는 일반적인 공급자 자격 증명을 사용합니다.
 
@@ -65,6 +65,36 @@ claude --bare -p "Summarize this file" --allowedTools "Read"
 ## 예제
 
 이 예제들은 일반적인 CLI 패턴을 강조합니다. CI 및 기타 스크립트 호출의 경우 로컬에 구성된 항목을 선택하지 않도록 [`--bare`](#start-faster-with-bare-mode)를 추가합니다.
+
+### Claude를 통해 데이터 파이프하기
+
+비대화형 모드는 stdin을 읽으므로 다른 명령줄 도구처럼 데이터를 파이프하고 응답을 리디렉션할 수 있습니다.
+
+이 예제는 빌드 로그를 Claude에 파이프하고 설명을 파일에 씁니다:
+
+```bash theme={null}
+cat build-error.txt | claude -p 'concisely explain the root cause of this build error' > output.txt
+```
+
+`--output-format json`을 사용하면 응답 페이로드에 `total_cost_usd`와 모델별 비용 분석이 포함되므로 스크립트 호출자는 [사용 대시보드](/ko/costs)를 참조하지 않고도 호출당 지출을 추적할 수 있습니다.
+
+<Note>
+  Claude Code v2.1.128부터 파이프된 stdin은 10MB로 제한됩니다. 제한을 초과하면 Claude Code는 명확한 오류 메시지와 함께 0이 아닌 상태로 종료됩니다. 더 큰 입력으로 작업하려면 콘텐츠를 파일에 작성하고 파이프하는 대신 프롬프트에서 파일 경로를 참조합니다.
+</Note>
+
+### 빌드 스크립트에 Claude 추가
+
+비대화형 호출을 스크립트로 래핑하여 Claude를 프로젝트별 린터 또는 검토자로 사용할 수 있습니다.
+
+이 `package.json` 스크립트는 `main`에 대한 diff를 Claude에 파이프하고 오타를 보고하도록 요청합니다. diff를 파이프하면 Claude가 이를 읽기 위해 Bash 권한이 필요하지 않으며, 이스케이프된 큰따옴표는 스크립트를 Windows에 이식 가능하게 유지합니다:
+
+```json theme={null}
+{
+  "scripts": {
+    "lint:claude": "git diff main | claude -p \"you are a typo linter. for each typo in this diff, report filename:line on one line and the issue on the next. return nothing else.\""
+  }
+}
+```
 
 ### 구조화된 출력 가져오기
 

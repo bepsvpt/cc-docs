@@ -11,7 +11,7 @@
 <Note>
   鍵盤快捷鍵可能因平台和終端而異。按 `?` 查看您環境中可用的快捷鍵。
 
-  **macOS 使用者**：Option/Alt 鍵快捷鍵（`Alt+B`、`Alt+F`、`Alt+Y`、`Alt+M`、`Alt+P`、`Alt+T`）需要在終端中將 Option 配置為 Meta：
+  **macOS 使用者**：Option/Alt 鍵快捷鍵（`Alt+B`、`Alt+F`、`Alt+Y`、`Alt+M`、`Alt+P`）需要在終端中將 Option 配置為 Meta：
 
   * **iTerm2**：設定 → Profiles → Keys → General → 將 Left/Right Option 鍵設定為「Esc+」
   * **Apple Terminal**：設定 → Profiles → Keyboard → 勾選「Use Option as Meta Key」
@@ -39,7 +39,7 @@
 | `Esc` + `Esc`                                | 回溯或摘要                 | 將程式碼和/或對話恢復到先前的點，或從選定的訊息進行摘要                                                                                                              |
 | `Shift+Tab` 或 `Alt+M`（某些配置）                  | 循環權限模式                | 在 `default`、`acceptEdits`、`plan` 和您啟用的任何模式（例如 `auto` 或 `bypassPermissions`）之間循環。詳見[權限模式](/zh-TW/permission-modes)。                        |
 | `Option+P`（macOS）或 `Alt+P`（Windows/Linux）    | 切換模型                  | 在不清除提示的情況下切換模型                                                                                                                            |
-| `Option+T`（macOS）或 `Alt+T`（Windows/Linux）    | 切換擴展思考                | 啟用或停用擴展思考模式。在 macOS 上，配置您的終端以傳送 Option 作為 Meta，此快捷鍵才能運作                                                                                   |
+| `Option+T`（macOS）或 `Alt+T`（Windows/Linux）    | 切換擴展思考                | 啟用或停用擴展思考模式。{/* min-version: 2.1.132 */}自 v2.1.132 起，此快捷鍵在 macOS 上無需配置 Option 為 Meta 即可運作                                                 |
 | `Option+O`（macOS）或 `Alt+O`（Windows/Linux）    | 切換快速模式                | 啟用或停用[快速模式](/zh-TW/fast-mode)                                                                                                             |
 
 ### 文字編輯
@@ -68,12 +68,12 @@
 | :---------- | :------------- | :------------------------------------------------------------------------------------------- |
 | 快速逃脫        | `\` + `Enter`  | 適用於所有終端                                                                                      |
 | Option 鍵    | `Option+Enter` | 在 macOS 上啟用[將 Option 設定為 Meta](/zh-TW/terminal-config#enable-option-key-shortcuts-on-macos)後 |
-| Shift+Enter | `Shift+Enter`  | 在 iTerm2、WezTerm、Ghostty、Kitty、Warp、Apple Terminal 中開箱即用                                     |
+| Shift+Enter | `Shift+Enter`  | 在 iTerm2、WezTerm、Ghostty、Kitty、Warp、Apple Terminal、Windows Terminal 中開箱即用                    |
 | 控制序列        | `Ctrl+J`       | 在任何終端中無需配置即可使用                                                                               |
 | 貼上模式        | 直接貼上           | 適用於程式碼區塊、日誌                                                                                  |
 
 <Tip>
-  Shift+Enter 在 iTerm2、WezTerm、Ghostty、Kitty、Warp 和 Apple Terminal 中無需配置即可使用。對於 VS Code、Cursor、Windsurf、Alacritty 和 Zed，執行 `/terminal-setup` 以安裝繫結。
+  Shift+Enter 在 iTerm2、WezTerm、Ghostty、Kitty、Warp、Apple Terminal 和 Windows Terminal 中無需配置即可使用。對於 VS Code、Cursor、Windsurf、Alacritty 和 Zed，執行 `/terminal-setup` 以安裝繫結。
 </Tip>
 
 ### 快速命令
@@ -130,6 +130,7 @@
 | 命令              | 動作                 |
 | :-------------- | :----------------- |
 | `h`/`j`/`k`/`l` | 向左/向下/向上/向右移動      |
+| `Space`         | 向右移動               |
 | `w`             | 下一個單字              |
 | `e`             | 單字結尾               |
 | `b`             | 上一個單字              |
@@ -220,7 +221,7 @@ Claude Code 維護目前會話的命令歷史：
 1. **開始搜尋**：按 `Ctrl+R` 啟動反向歷史搜尋
 2. **輸入查詢**：輸入文字以在先前的命令中搜尋。搜尋詞在匹配結果中醒目提示
 3. **導航匹配項**：再次按 `Ctrl+R` 以循環瀏覽較舊的匹配項
-4. **變更範圍**：按 `Ctrl+S` 以在此會話、此專案和所有專案之間循環
+4. **變更範圍**：搜尋預設為所有專案的提示。按 `Ctrl+S` 以在此會話、此專案和所有專案之間循環範圍
 5. **接受匹配項**：
    * 按 `Tab` 或 `Esc` 以接受目前匹配項並繼續編輯
    * 按 `Enter` 以接受並立即執行命令

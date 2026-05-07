@@ -53,13 +53,13 @@ Claude Code también antepone un bloque de atribución corto al mensaje del sist
 
 Por defecto, Claude Code utiliza nombres de modelo estándar para el formato de API seleccionado.
 
-Cuando `ANTHROPIC_BASE_URL` apunta a una puerta de enlace que expone el formato de Mensajes de Anthropic, Claude Code consulta el punto final `/v1/models` de la puerta de enlace al inicio y añade los modelos devueltos al selector `/model`. Cada entrada descubierta se etiqueta como "Desde puerta de enlace" y utiliza el campo `display_name` de la respuesta cuando se proporciona uno. Esto requiere Claude Code v2.1.126 o posterior.
+Cuando `ANTHROPIC_BASE_URL` apunta a una puerta de enlace que expone el formato de Mensajes de Anthropic, Claude Code puede consultar el punto final `/v1/models` de la puerta de enlace al inicio y añadir los modelos devueltos al selector `/model`. Establezca `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` para habilitar esto. El descubrimiento está desactivado por defecto para que las puertas de enlace respaldadas por una clave de API compartida no expongan todos los modelos a los que la clave puede acceder a cada usuario. Cada entrada descubierta se etiqueta como "Desde puerta de enlace" y utiliza el campo `display_name` de la respuesta cuando se proporciona uno. Esto requiere Claude Code v2.1.129 o posterior.
 
 El descubrimiento se aplica solo al formato de Mensajes de Anthropic. No se ejecuta para puntos finales de paso a través de Bedrock o Vertex, y no se ejecuta cuando `ANTHROPIC_BASE_URL` no está configurado o apunta a `api.anthropic.com`.
 
 La solicitud de descubrimiento se autentica de la misma manera que las solicitudes de inferencia: envía `ANTHROPIC_AUTH_TOKEN` como un token portador, o `ANTHROPIC_API_KEY` como el encabezado `x-api-key` cuando no hay un token de autenticación configurado, junto con cualquier encabezado de `ANTHROPIC_CUSTOM_HEADERS`. Solo se añaden al selector los modelos cuyo ID comienza con `claude` o `anthropic`. Los resultados se almacenan en caché en `~/.claude/cache/gateway-models.json` y se actualizan en cada inicio. Si la solicitud falla o la puerta de enlace no implementa `/v1/models`, el selector vuelve a la lista en caché del inicio anterior o a la lista de modelos integrada.
 
-Si tu puerta de enlace utiliza nombres de modelo que no coinciden con el filtro de descubrimiento, utiliza las variables de entorno documentadas en [Configuración de modelo](/es/model-config) para añadirlos manualmente.
+Si su puerta de enlace utiliza nombres de modelo que no coinciden con el filtro de descubrimiento, utilice las variables de entorno documentadas en [Configuración de modelo](/es/model-config) para añadirlos manualmente.
 
 ## Configuración de LiteLLM
 
